@@ -1,1187 +1,1015 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "الـ event loop",
-      l: 3,
-      n: "JS بيشغّل حاجة واحدة في المرة، فإزاي بيعمل async؟ الـ call stack والـ queues والـ microtasks، وليه الصفحة بتتجمد",
+      t: "التواريخ والوقت",
+      l: 2,
+      n: "Date ومطبّاته، وتخزّن UTC وتعرض بتوقيت اليوزر بـ Intl، و «من ٥ دقايق»، و date-fns ولا Temporal في 2026",
       projects: [
-        { lvl: 'صغير', t: R`اختبار «اتوقع الناتج»`, what: R`ملف فيه ٥ snippets بتخلط sync و then و setTimeout و await و queueMicrotask، ولكل واحد توقعك كـ array. سكربت بيشغّل كل snippet بـ [[log]] مخصوص بيحط الناتج في array، ويستنى بـ setTimeout لحد ما الكل يخلص، ويقارن. من درسي event loop و microtasks.`, done: R`لكل snippet بيطبع «صح» أو «غلط» ومعاه المتوقع والحقيقي، ومثال الدرس اللي ناتجه [[A F H C E G D B]] واحد منهم وبينجح، وsnippet غلطت فيه عمدًا بيطلع «غلط».` },
-        { lvl: 'صغير', t: R`زرار بيجمّد وزرار لأ`, what: R`صفحة فيها عدّاد بيزيد كل 100ms بـ setInterval، وزرار بيعمل [[while]] ثانيتين، وزرار بيعمل نفس الشغل على دفعات بـ setTimeout. من درس blocking و الـ main thread.`, done: R`الزرار الأول بيوقّف العدّاد ثانيتين وبعدها بيكمّل من غير ما يعوّض الأرقام اللي فاتت. مع التاني العدّاد بيفضل شغال. وتسجيل Performance في DevTools بيوري long task للأول بس.` },
-        { lvl: 'متوسط', t: R`progress bar لمعالجة كبيرة`, what: R`معالجة ٢٠٠ ألف نص (مثلًا تعد الحروف العربي في كل واحد) على دفعات، و [[<progress>]] بيتحدث بعد كل دفعة، وزرار «إلغاء» بيوقّف في خلال دفعة واحدة، و «ابدأ» مبيشتغلش مرتين مع بعض. من دروس الوحدة ووحدة async.`, done: R`الـ bar بيوصل 100% والصفحة بتعمل scroll وانت مستني. الإلغاء بيوقّف ويطبع العدد اللي اتعالج. والنتيجة بعد ما يكمّل نفس نتيجة loop واحدة على نفس الداتا.` },
-        { lvl: 'متوسط', t: R`محاكي event loop`, what: R`[[class Loop]] فيها طابورين ([[macro]] و [[micro]]) و methods [[log]] و [[timeout(fn)]] و [[then(fn)]]. [[run(program)]] بتشغّل الـ program sync، وبعدين تفضّي الـ micro كله، وبعدين تاخد macro واحد وتكرر. من درسي event loop و microtasks ووحدة الـ classes.`, done: R`نفس الـ program مرة بالمحاكي ومرة بالحقيقي (setTimeout و queueMicrotask) بيطلعوا نفس الترتيب في ٥ أمثلة على الأقل، منهم microtask بيسجّل microtask، و timeout جوه then، ومثال الدرس [[A F H C E G D B]].` },
-        { lvl: 'كبير', t: R`Web Worker لـ CSV ضخم`, what: R`صفحة بتولّد (أو بتلزق في textarea) CSV فيه ٢٠٠ ألف سطر مبيعات، و Worker بيفكّه ويحسب إجمالي كل منتج، ويبعت [[{ type: "progress", done }]] كل ١٠ آلاف سطر و [[{ type: "result" }]] في الآخر. السطور البايظة بترجع في [[errors]] برقمها من غير ما يقع، وزرار إلغاء بيعمل [[terminate()]] ويعمل worker جديد، و [[worker.onerror]] بيعرض رسالة لو الـ worker نفسه وقع. من الوحدة دي ووحدات async والأخطاء والـ DOM.`, done: R`وانت المعالجة شغالة، الـ input بيكتب عادي والـ progress بيتحرك، و Performance مفيهوش long task على الـ main thread. CSV فيه ٣ سطور بايظة ← النتيجة سليمة و [[errors.length === 3]] بأرقامهم. الإلغاء في النص وبعدين ابدأ ← بيشتغل من الأول بنتيجة صح. والإجماليات زي اللي بتطلع لو حسبتها في الـ main thread.`, ext: R`زوّد [[<input type="file">]] يقرا CSV حقيقي من جهازك، وخلّي الـ worker يبعت الإجماليات كجدول متترتب، وزرار تصدير.` },
-        { lvl: 'فكرة', t: R`لاقي الـ long task في موقع حقيقي`, what: R`افتح موقع بتستخدمه (أو مشروع ليك)، وسجّل Performance وانت بتعمل حاجة تقيلة (فلتر، أو بحث، أو scroll)، ولاقي أطول task والدالة اللي عاملاها. لو المشروع بتاعك، صلّحها.`, done: R`عندك ملاحظة فيها مدة الـ task قبل وبعد، واسم الدالة المسؤولة، والطريقة اللي صلّحت بيها (دفعات، أو Worker، أو شغل أقل).`, ext: R`اكتب [[measure(name, fn)]] بتحذّر في الـ console لو أي دالة أخدت أكتر من 50ms، وحطها حوالين الدوال المشكوك فيها.` },
+        { lvl: 'صغير', t: R`فاضل كام يوم`, what: R`صفحة بتاخد تاريخ مناسبة من [[<input type="date">]] (قيمته [["YYYY-MM-DD"]]) وتطبع «فاضل X يوم» محسوبة بأيام التقويم في القاهرة، ولو التاريخ فات «من X يوم»، ولو النهارده «النهارده!». من دروس Date و UTC و Intl.`, done: R`تاريخ بكرة ← «فاضل 1 يوم» مهما الساعة كام دلوقتي (حتى 11:59 بالليل). النهارده ← «النهارده!». التاريخ الفاضي ← رسالة بدل NaN.` },
+        { lvl: 'صغير', t: R`ساعة عالمية`, what: R`٤ مدن (القاهرة والرياض ولندن ونيويورك) بالوقت الحالي، بتتحدث كل ثانية بـ setInterval، وكل واحدة بـ Intl.DateTimeFormat وجنبها الفرق عن UTC. من درس UTC و Intl.DateTimeFormat.`, done: R`الأوقات بتتغير كل ثانية، ولو غيّرت توقيت جهازك الأرقام مبتتغيرش (كل مدينة ليها timeZone)، والـ ٤ formatters متعمولين مرة واحدة بره الـ interval.` },
+        { lvl: 'متوسط', t: R`تعليقات بـ «من ٥ دقايق»`, what: R`array تعليقات فيها [[createdAt]] ISO، بتتعرض بـ [[timeAgo]]، و [[title]] على كل وقت فيه التاريخ الكامل بـ Intl، والأوقات بتتحدث كل دقيقة من غير ما تعيد رسم التعليقات، واللي أقدم من أسبوع بيظهر التاريخ بدل «قبل ٣ أسابيع». من دروس الوحدة ووحدة الـ DOM.`, done: R`تعليق من 10 ثواني ← «الآن»، من 26 ساعة ← «أمس»، من 10 أيام ← تاريخ. الـ hover بيدّي الوقت الكامل بتوقيت القاهرة. وبعد دقيقة النص بيتغير لوحده، والـ input اللي في التعليق (لو فيه) مبيفقدش الـ focus لأنك مبتعيدش رسم العنصر.` },
+        { lvl: 'متوسط', t: R`حجز مواعيد بين بلدين`, what: R`فورم بتختار فيه يوم وساعة بتوقيت القاهرة، والكود بيحوّلهم لـ UTC ISO للتخزين بـ [[Temporal.ZonedDateTime]]، ويعرض الميعاد لليوزر بتوقيته ([[resolvedOptions().timeZone]]) ولزميل في لندن. من دروس الوحدة.`, done: R`[[2026-10-15 10:00]] في القاهرة ← [[2026-10-15T07:00:00Z]]، و [[2026-11-15 10:00]] ← [[2026-11-15T08:00:00Z]] (بعد ما الصيفي خلص)، ولندن بتشوف 08:00 في الحالتين. وساعة مش موجودة أو يوم غلط بيطلع رسالة تحت الحقل.` },
+        { lvl: 'كبير', t: R`مواعيد تجديد الاشتراكات`, what: R`[[renewals(startDate, count, plan)]] بتطلع مواعيد التجديد الجاية لاشتراك [[monthly]] أو [[yearly]]. كل تجديد محسوب من تاريخ البداية الأصلي (مش من اللي قبله)، ولو اليوم مش موجود يقف على آخر الشهر. الـ input بيتفحص (تاريخ سليم بـ parseISODate، و count من 1 لـ 120، و plan من الاتنين دول بس) بـ ValidationError، والتواريخ بتتعرض بالعربي، وفيه [[test.js]] بحالات معروفة. من الوحدة دي ووحدات الأخطاء والـ modules.`, done: R`من [[2026-01-31]] شهري ← [[2026-02-28]] و [[2026-03-31]] و [[2026-04-30]] (مش 28 و 28 و 28). من [[2028-02-29]] سنوي ← [[2029-02-28]] و [[2030-02-28]] و [[2031-02-28]] و [[2032-02-29]]. و [["2026-02-30"]] ← ValidationError مش تاريخ في مارس. والاختبارات كلها بتنجح بـ [[TZ]] القاهرة ونيويورك.`, ext: R`زوّد خطة [[weekly]] وفترة تجربة مجانية بالأيام، واطلع ملف [[.ics]] بالمواعيد يتفتح في Google Calendar.` },
+        { lvl: 'فكرة', t: R`أداة وقت لشغلك`, what: R`فكّر في حاجة وقتها بيلخبطك: ميعاد اجتماع مع ناس في بلاد تانية، أو حساب ساعات شغل، أو تذكير دفع شهري، أو جدول مذاكرة. ابنيها.`, done: R`الأداة بتخزن UTC وبتعرض بتوقيت اليوزر، ومفيش [[new Date("01/02/2026")]] في الكود، وفيها اختبار لليوم اللي فيه تغيير التوقيت.`, ext: R`خليها تشتغل بلغتين ([["ar-EG"]] و [["en"]]) بزرار، وكل التواريخ والأرقام بتتغير بالـ locale.` },
       ],
       items: [
         {
-          cmd: "event loop",
-          title: "JS بـ thread واحد، فإزاي بيعمل كذا حاجة مع بعض؟",
-          desc: R`JavaScript بينفّذ الكود على thread واحد: حاجة واحدة في المرة، في call stack واحد. الحاجات اللي بتاخد وقت (timers و fetch و events و الملفات) مش JS اللي بيستناها، المتصفح أو Node هو اللي بيعملها برّه، ولما تخلص بيحط الـ callback بتاعها في طابور (queue).
+          cmd: "Date ومطبّاته",
+          title: "ليه الشهر في Date بيبدأ من 0، وليه new Date(string) خطر؟",
+          desc: R`[[Date]] في JavaScript قيمة واحدة من جوه: عدد الـ milliseconds من [[1970-01-01T00:00:00Z]] (الـ epoch)، ومفيش time zone متخزّن جواه. الـ time zone بيظهر بس لما تقرا ([[getHours]]) أو تطبع: الـ methods العادية بتستخدم توقيت الجهاز، واللي فيها [[UTC]] ([[getUTCHours]]) بتستخدم UTC.
 
-الـ event loop لفّة بسيطة: لو الـ call stack فاضي، خد أول حاجة من الطابور وشغّلها. عشان كده [[setTimeout(fn, 0)]] مبيشتغلش فورًا: بيستنى الكود الحالي كله يخلص.`,
-          example: R`function a() { b(); }
-function b() { console.trace("الـ stack دلوقتي: b ← a ← global"); }
-a();
-setTimeout(() => console.log("3: timeout"), 0);
-fetch("https://example.com").then(() => console.log("4: fetch خلص"));
-console.log("1: آخر سطر sync");
-console.log("2: لسه sync");`,
-          try: R`افتح loupe (latentflip.com/loupe) أو أي visualizer للـ event loop وحط كود فيه setTimeout و console.log، وشوف الـ stack والـ queue بيتحركوا. وبعدين في DevTools حط breakpoint جوه [[b]] وبص على Call Stack على اليمين.`,
+والمطبّات المشهورة: الشهر من 0 ([[new Date(2026, 0, 31)]] يعني ٣١ يناير)، واليوم من 1. و Date بيتعدّل في مكانه ([[setMonth]] بتغيّر نفس الـ object). و الـ overflow: ٣١ يناير + شهر = ٣ مارس مش ٢٨ فبراير. و الـ parsing: [["2026-03-01"]] لوحدها بتتفهم UTC، بس [["2026-03-01T00:00"]] من غير Z بتتفهم بتوقيت الجهاز، وأي شكل تاني ([["01/02/2026"]]) مش standard وكل engine بيفهمه بمزاجه.`,
+          example: R`const d = new Date(2026, 0, 31);
+console.log(d.getMonth(), d.getDate());
+d.setMonth(1);
+console.log(d.toDateString());
+console.log(new Date("2026-03-01").toISOString());
+console.log(new Date("2026-03-01T00:00").toISOString());
+console.log(new Date("01/02/2026").getMonth());
+console.log(new Date("32/01/2026").getTime());
+const a = new Date("2026-09-29T10:00:00Z");
+const b = new Date(a);
+b.setDate(b.getDate() + 3);
+console.log(a.getDate(), b.getDate(), b - a);`,
+          try: R`شغّل الملف مرتين: [[TZ=Africa/Cairo node dates.js]] و [[TZ=America/New_York node dates.js]] (على Windows في PowerShell: [[$env:TZ = "America/New_York"; node dates.js]]، أو WSL. Git Bash مش بيعدّي [[TZ]] لـ node). أنهي سطور اتغيرت وليه؟ وبعدين اكتب [[addMonths(date, n)]] ترجّع Date جديد ولو اليوم مش موجود في الشهر الجديد تقف على آخر يوم ([[2026-01-31]] + 1 ← [[2026-02-28]]). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[addMonths]].`,
           practice: [
-            { lvl: 'سريع', t: R`صلّح الكود البايظ: زرار «احسب» بيعمل [[status.textContent = "جاري الحساب..."]] وبعدها على طول loop بيلف ٣ ثواني، وبعدين [[status.textContent = "خلص"]]. اليوزر عمره ما بيشوف «جاري». فسّر ليه وصلّحه.`, done: R`قبل التصليح النص بيفضل زي ما هو ٣ ثواني وبعدين يبقى «خلص» على طول: المتصفح مبيرسمش غير لما الـ call stack يفضى. بعد ما تأجل الشغل التقيل لحد بعد الرسم ([[requestAnimationFrame(() => setTimeout(heavy, 0))]]) «جاري الحساب...» بتظهر الأول.` },
-            { lvl: 'تطبيق', t: R`اقرا وتوقّع: [[setTimeout(() => { console.log("A"); setTimeout(() => console.log("C"), 0); }, 0); setTimeout(() => console.log("B"), 0);]]. اكتب الترتيب وبعدين شغّله.`, done: R`[[A B C]]: الـ C اتسجّل في الطابور وهو بيتنفّذ A، فبيقف ورا B اللي كان مستني من الأول. ولو كتبت [[A C B]] انت متخيّل إن الـ timer الجديد بيتنفّذ جوه اللي سجّله.` },
-            { lvl: 'تحدي', t: R`اشرحها بالـ stack: اكتب [[function count(n) { return n === 0 ? "done" : count(n - 1); }]] ونادي [[count(1e6)]]. وبعدين نسخة async: [[async function countA(n) { if (n === 0) return "done"; await null; return countA(n - 1); }]] و [[countA(1e5).then(console.log)]]. اكتب ٣ سطور لزميل بتشرح الفرق.`, done: R`الأولى بتقع بـ [[RangeError: Maximum call stack size exceeded]]. والتانية بتطبع [[done]] من غير ما تقع. والشرح فيه إن كل [[await]] بيرجّع للـ event loop والـ stack بيفضى قبل اللفة اللي بعدها، فالعمق مبيتجمعش.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[new Date(2026, 1, 30)]] هيبقى أنهي يوم؟ اكتب توقعك، وبعدين اطبع [[getMonth()]] و [[getDate()]].`, done: R`بيطبع [[2 2]]: يعني ٢ مارس، لأن فبراير 2026 ٢٨ يوم فالـ ٣٠ فاضت يومين، والشهر [[2]] هو مارس لأن العد من 0. ومفيش error ولا Invalid Date.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة فاتورة فيها [[function addDays(d, n) { d.setDate(d.getDate() + n); return d; }]] و [[const due = addDays(issued, 30)]]، وبعدها بتعرض «اتعملت» و «آخر ميعاد». اليوزرز بيشتكوا إن التاريخين زي بعض. لاقي السبب وصلّح [[addDays]] بس.`, done: R`قبل التصليح [[issued === due]] بتدّي [[true]] والتاريخين بيطلعوا ٣٠ يوم بعد الإصدار، لأن setDate بتعدّل نفس الـ object. بعد التصليح (نسخة جديدة [[new Date(d)]] وتعدّل فيها) [[issued]] مبيتغيرش و [[due - issued]] بيساوي ٣٠ يوم بالـ ms (أو ساعة أقل أو أكتر لو التوقيت الصيفي اتغيّر في النص).` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[ageOn(birth, today)]] بتاخد تاريخين [["YYYY-MM-DD"]] وترجّع السن بالسنين الكاملة: اطرح السنين، وانقص واحد لو عيد الميلاد لسه مجاش السنة دي. من غير ما تقسم ms على 365.`, done: R`[[ageOn("2000-11-04", "2026-11-03")]] بترجّع 25 (فاضل يوم)، و [[ageOn("2000-11-03", "2026-11-03")]] بترجّع 26، والمولود 29 فبراير: [[ageOn("2004-02-29", "2026-02-28")]] بـ 21 و [["2026-03-01"]] بـ 22.` },
+            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[parseISODate(s)]] بتقبل [["YYYY-MM-DD"]] بس وترجّع Date أو [[null]]. قبل ما تكتب، جرّب [[new Date("2026-02-30")]] لوحدها.`, done: R`[[new Date("2026-02-30")]] مش Invalid Date: V8 بيقبلها وبتبقى [[2026-03-02T00:00:00.000Z]]، و [["2026-02-32"]] بس هي اللي NaN. فدالتك لازم تقارن السنة والشهر واليوم اللي رجعوا (بـ getUTC) باللي اتكتب: [["2026-02-30"]] و [["2026-13-01"]] و [["26-1-1"]] و [[""]] ← null، و [["2028-02-29"]] ← Date سليم.` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** شغّل بتوقيت القاهرة ([[TZ=Africa/Cairo node file.js]] في Git Bash أو Linux): [[new Date("2026-11-03").toISOString()]] و [[new Date("2026-11-03T00:00").toISOString()]]. نفس اليوم؟`, done: R`طلع [[2026-11-03T00:00:00.000Z]] و [[2026-11-02T22:00:00.000Z]]: التاريخ لوحده بيتقري UTC، والتاريخ ومعاه وقت من غير Z بيتقري بتوقيت الجهاز. وبـ [[TZ=UTC]] الاتنين بقوا زي بعض، فعرفت ليه باج زي ده بيظهر عند اليوزر ومش عندك.` }
           ],
           flag: "script",
           deep: {
-            why: R`ده أشهر سؤال JS في الانترفيو للـ mid و senior: «اشرح الـ event loop». وفهمه بيفسّر كل حاجة غريبة في async: ليه الـ setTimeout بتتأخر، وليه loop تقيل بيجمّد الصفحة، وليه Promise بيشتغل قبل setTimeout.`,
-            how: R`الأجزاء: الـ call stack (الدوال اللي شغالة دلوقتي، فوق بعض)، والـ heap (الـ objects)، والـ Web APIs في المتصفح أو libuv في Node (اللي بيعملوا الشغل البطيء فعلًا، وأحيانًا على threads تانية)، والطوابير.
+            why: "كل مشروع فيه تواريخ: created_at، وطلبات النهارده، ومواعيد الحجز، وانتهاء الاشتراك. وأخطاء التواريخ خبيثة: الكود بيشتغل تمام على جهازك وعلى السيرفر بيطلع يوم قبله، أو بيبوظ مرتين في السنة بس (التوقيت الصيفي).",
+            how: R`[[new Date(y, m, d)]] بيفهم الأرقام بتوقيت الجهاز، والشهر من 0 (ورث ده من Java سنة 1995). ولو الرقم برّه الحدود بيرحّله: [[new Date(2026, 1, 31)]] (٣١ فبراير) بتبقى ٣ مارس. ده اللي حصل مع [[setMonth(1)]] على ٣١ يناير.
 
-اللفة الواحدة في المتصفح تقريبًا: ١. خد task واحدة من طابور الـ tasks (macrotask) وشغّلها لحد ما الـ stack يفضى. ٢. شغّل كل الـ microtasks (Promises) لحد ما طابورها يفضى. ٣. لو جه وقت رسم الشاشة (حوالي كل 16ms على شاشة 60Hz)، شغّل [[requestAnimationFrame]] callbacks، واحسب الـ layout، وارسم. وارجع لـ ١.
+الـ parsing حسب المواصفات: [["YYYY-MM-DD"]] لوحدها UTC، وتاريخ + وقت من غير offset محلي، وبـ [[Z]] أو [[+03:00]] محدد. عشان كده السطر الخامس نفس الناتج في أي بلد، والسادس بيتغير: في القاهرة [[2026-02-28T22:00:00.000Z]] (القاهرة UTC+2 في مارس)، وفي نيويورك [[2026-03-01T05:00:00.000Z]]. و [["01/02/2026"]] V8 فهمها أمريكي (MM/DD) فالشهر 0، ومتصفح أو مكتبة تانية ممكن تفهمها ١ فبراير. و [["32/01/2026"]] بتدّي Invalid Date و [[getTime()]] بـ NaN، ومفيش error: لازم تفحص [[Number.isNaN(d.getTime())]] بنفسك.
 
-يعني مفيش حاجة بتقطع الكود وهو شغال. أي دالة بتبدأ بتخلص للآخر (run-to-completion). وعشان كده مش محتاج locks زي اللغات اللي فيها threads.
-
-في Node الفكرة نفسها بس الطوابير مقسمة phases (timers ثم I/O ثم setImmediate...)، و [[process.nextTick]] بيشتغل قبل الـ Promises. التفاصيل في تاب «Node و npm» وتاب الانترفيو (concurrency vs parallelism).`,
-            when: "كل ما تشوف ترتيب تنفيذ غريب، أو صفحة بتهنّج، أو callback بيتأخر. وفي أي انترفيو فرونت أو Node.",
-            mistakes: R`تفتكر إن setTimeout بـ 1000 معناه بعد ثانية بالظبط: معناها «مش قبل ثانية»، ولو الـ stack مشغول هتتأخر. وتفتكر إن async معناه parallel: الكود بتاعك لسه على thread واحد، اللي بيحصل بالتوازي هو الـ I/O بس. وفي الانترفيو ارسم الـ stack والـ queue والـ microtask queue، واشرح مثال بالترتيب.`
+الطرح [[b - a]] بيحوّلهم milliseconds، فالفرق [[259200000]] (٣ أيام). و [[new Date(a)]] بتعمل نسخة، ومن غيرها [[b = a]] هيبقى نفس الـ object.`,
+            when: R`Date لسه موجود في كل API وكل مكتبة، فلازم تعرفه. استخدمه للـ timestamps ([[Date.now()]] و [[toISOString()]])، وللحسابات والعرض استخدم Intl ومكتبة أو Temporal (الدروس الجاية).`,
+            mistakes: R`[[new Date(2026, 9, 1)]] وانت فاكرها سبتمبر (دي أكتوبر). وتعمل parse لتاريخ من اليوزر بشكل [["DD/MM/YYYY"]]. وتعدّل Date جاي من برّه ([[setDate]]) فتبوّظه عند الـ caller. وتحسب الأيام بـ [[/ 86400000]] وتنسى إن يوم التوقيت الصيفي ٢٣ أو ٢٥ ساعة. وفي الانترفيو: «ليه [[new Date("2026-03-01")]] ممكن تطبع ٢٨ فبراير؟» الإجابة: اتفهمت UTC منتصف الليل، ولما اتعرضت بتوقيت أمريكا بقت اليوم اللي قبله.`
           },
-          teach: R`## المثال بيوريك إيه
+          teach: R`## الأول: Date من جوه رقم واحد
 
-حاجتين: الـ **call stack** (مين بينادي مين دلوقتي)، وإن أي حاجة async بتستنى الكود المتزامن كله يخلص، حتى لو مستنية 0ms. اتشغّل بـ Node 24 على Windows كملف [[app.mjs]].
+المثال ١٢ سطر، وكل سطر بيوريك مطبّ من مطبّات [[Date]]. قبل ما نفكّه، لازم تعرف حاجة واحدة: الـ Date مش «تاريخ» متخزّن كيوم وشهر وسنة. هو **رقم واحد**: عدد الـ milliseconds (جزء من ألف من الثانية، اختصارها ms) من لحظة اسمها الـ **epoch**: أول يناير 1970 الساعة 12 بالليل بتوقيت UTC.
+
+~~~text app.js
+console.log(new Date(0).toISOString(), typeof Date.now());
+~~~
+
+~~~text الناتج (Node 24 على Windows)
+1970-01-01T00:00:00.000Z number
+~~~
+
+[[new Date(0)]] يعني «صفر ms من الـ epoch»، فطلعت اللحظة نفسها. و [[Date.now()]] بيرجّع اللحظة الحالية كرقم ([[number]]). والـ [[Z]] في الآخر معناها UTC (اختصار Zulu، اسم UTC في الطيران).
+
+والـ time zone؟ **مش متخزّن جوه الـ Date خالص.** هو بيظهر بس لما تسأل «الساعة كام؟» أو «النهارده كام؟»، ساعتها الـ methods العادية بتحسب بتوقيت الجهاز اللي الكود شغال عليه. كل الشرح تحت مبني على الجملة دي.
+
+> الناتج كله تحت اتشغّل بـ Node 24 على Windows والجهاز مضبوط على توقيت القاهرة، إلا لو مكتوب غير كده.
 
 ---
 
-## ١. الـ call stack: [[console.trace]]
+## ١. [[new Date(2026, 0, 31)]]: الشهر بيبدأ من 0
 
 ~~~text app.js
-function a() { b(); }
-function b() { console.trace("الـ stack دلوقتي: b ← a ← global"); }
-a();
+const d = new Date(2026, 0, 31);
+console.log(d.getMonth(), d.getDate());
 ~~~
 
-- [[a]] بتنادي [[b]]، و [[b]] بتطبع الـ stack.
-- **الـ call stack** (كومة النداءات): قايمة الدوال اللي شغالة دلوقتي، فوق بعض. لما دالة تتنادى بتتحط فوق، ولما تخلص بتتشال. والـ JavaScript بيشتغل على اللي فوق خالص بس.
-- [[console.trace(رسالة)]]: بيطبع الرسالة ومعاها الـ stack اللي وصّلنا هنا.
-
-~~~text الناتج (أوله)
-Trace: الـ stack دلوقتي: b ← a ← global
-    at b (file:///C:/Users/ali/js/app.mjs:2:24)
-    at a (file:///C:/Users/ali/js/app.mjs:1:16)
-    at file:///C:/Users/ali/js/app.mjs:3:1
-    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
-~~~
-
-اقراه من فوق لتحت = من الأحدث للأقدم:
-
-| السطر | معناه |
-|---|---|
-| [[at b (...app.mjs:2:24)]] | دلوقتي جوه b، السطر 2 العمود 24 (مكان [[console.trace]]) |
-| [[at a (...:1:16)]] | b اتنادت من a، السطر 1 العمود 16 |
-| [[at file:///...:3:1]] | و a اتنادت من الكود الـ global (برّه أي دالة)، السطر 3 |
-| [[at ModuleJob.run ...]] | وتحت ده كود Node الداخلي اللي شغّل الملف |
-
-و [[b]] لما تخلص بتتشال، وبعدها [[a]]، والـ stack يرجع للكود الـ global.
-
----
-
-## ٢. ٤ رسايل: مين يطلع الأول؟
-
-~~~text app.js
-setTimeout(() => console.log("3: timeout"), 0);
-fetch("https://example.com").then(() => console.log("4: fetch خلص"));
-console.log("1: آخر سطر sync");
-console.log("2: لسه sync");
-~~~
-
-- [[setTimeout(fn, 0)]]: «شغّل fn بعد 0ms». JavaScript مش هو اللي بيعدّ الوقت: بيسلّم الـ timer لـ Node (أو المتصفح) ويكمّل على طول. ولما الوقت يخلص، الـ callback بيتحط في **طابور** (queue).
-- [[fetch(...).then(fn)]]: الطلب بيتبعت على الشبكة برّه JavaScript، و [[fn]] هتتشغّل لما الرد ييجي.
-- السطرين الأخيرين **sync** (متزامنين): بيتنفّذوا فورًا بالترتيب.
+- [[const d]]: متغير اسمه d مش هيتغير يشاور على حاجة تانية (بس الـ object نفسه ممكن يتعدّل، وده هيفرق في الخطوة الجاية).
+- [[new Date(...)]]: [[new]] بتعمل object جديد من النوع Date.
+- الأرقام التلاتة: السنة، و **رقم الشهر من 0** (يناير 0، فبراير 1، ... ديسمبر 11)، واليوم من 1 عادي.
+- [[getMonth()]]: بيرجّع رقم الشهر (من 0 برضه)، و [[getDate()]]: رقم اليوم في الشهر. (لاحظ: [[getDay()]] حاجة تانية خالص، يوم الأسبوع من 0 للحد.)
 
 ~~~text الناتج
-1: آخر سطر sync
-2: لسه sync
-3: timeout
-4: fetch خلص
+0 31
 ~~~
 
-### ليه بالترتيب ده؟
-
-الـ **event loop** لفّة بسيطة:
-
-1. شغّل الكود الحالي لحد ما الـ stack يفضى (ده اسمه run-to-completion: مفيش حاجة بتقطع دالة شغالة).
-2. لو الـ stack فاضي: خد أول callback من الطابور وشغّله.
-3. ارجع لـ ١.
-
-فـ 1 و 2 أولًا لأنهم في الكود اللي شغال دلوقتي. وبعدين الـ timeout، لأن 0ms خلصت بسرعة والـ callback بتاعه كان مستني في الطابور. والـ fetch آخر حاجة لأن الشبكة أبطأ (ممكن تسبق الـ timeout لو الرد جه أسرع، الاتنين async).
-
-> [[setTimeout(fn, 0)]] معناها «مش قبل 0ms، وبعد ما الـ stack يفضى»، مش «دلوقتي». ونفس الكلام لـ [[setTimeout(fn, 1000)]]: بعد ثانية **على الأقل**.
-
----
-
-## ٣. مين بيعمل الشغل البطيء؟
-
-| الجزء | دوره |
-|---|---|
-| الـ call stack | الكود اللي شغال دلوقتي، واحد بس في المرة |
-| الـ Web APIs (المتصفح) أو libuv (Node) | بيعملوا الـ timers والشبكة والملفات برّه JavaScript |
-| الطابور (queue) | callbacks جاهزة ومستنية دورها |
-| الـ event loop | لما الـ stack يفضى، ياخد من الطابور |
-
-يعني الـ JavaScript نفسه thread واحد، بس الانتظار نفسه مش عليه.
-
----
-
-## الخلاصة
-
-- الكود المتزامن كله بيخلص الأول، وبعدين الـ callbacks بالدور.
-- [[setTimeout(fn, 0)]] مش فوري.
-- [[console.trace]] (أو breakpoint في DevTools ← Call Stack) بيوريك مين نادى مين.
-- الدرس الجاي: ليه [[Promise.then]] بيسبق [[setTimeout]] حتى لو اتسجّل بعده.`,
-          lines: [
-            R`[[a]] بتنادي [[b]]، عشان نشوف الـ call stack: كل دالة بتتنادى بتتحط فوق اللي ناداها، وبتتشال لما ترجع.`,
-            R`[[console.trace]] بيطبع الرسالة ومعاها الـ call stack اللي فيه دلوقتي: [[b]] فوق، وتحتها [[a]]، وتحتهم الكود الأساسي. ده نفس اللي بتشوفه تحت أي error، ومفيد لما تحتاج تعرف «مين نادى الدالة دي».`,
-            R`[[a]] بتدخل الـ stack، وتنادي [[b]] فوقها، و [[b]] تطبع وتخرج، وبعدين [[a]] تخرج. كل ده متزامن: السطر اللي بعده مش هيبدأ غير لما الـ stack يرجع زي ما كان.`,
-            R`[[setTimeout]] بتسجّل الـ timer وترجع فورًا. بعد 0ms الـ callback بيتحط في طابور الـ tasks، بس مش هيتنفّذ غير لما الـ stack يفضى خالص، فهيطلع بعد السطرين المتزامنين اللي تحت مع إنه مكتوب قبلهم.`,
-            R`الطلب بيتبعت في الخلفية و [[fetch]] ترجّع Promise على طول من غير ما تستنى. الـ [[then]] هتشتغل لما الرد ييجي، يعني أكيد بعد كل الكود المتزامن، وغالبًا بعد الـ timeout كمان لأن الشبكة أبطأ من 0ms.`,
-            R`كود متزامن، فبيتطبع فورًا وقبل الـ timeout والـ fetch مع إنهم اتكتبوا قبله. الأرقام في الرسايل هي ترتيب الطباعة الحقيقي.`,
-            R`برضه متزامن فبيتطبع قبلهم. بعد السطر ده الـ stack بيفضى، ووقتها بس الـ event loop يبدأ ياخد من الطوابير.`,
-          ],
-          sol: R`في loupe هتشوف [[console.log]] تدخل الـ Call Stack وتخرج على طول، والـ [[setTimeout]] تدخل وتسيب الـ callback عند الـ Web APIs، وبعد الوقت يروح الـ Callback Queue، ومبيدخلش الـ stack غير لما يفضى. حتى لو الوقت 0.
-
-في DevTools لما الكود يقف عند الـ breakpoint جوه b، الـ Call Stack هيبقى [[b]] فوق، وتحتها [[a]]، وتحتها [[(anonymous)]] وده الكود الـ global. ونفس الترتيب بيطبعه [[console.trace]] في Node ([[at b]] ثم [[at a]]). والناتج كله: الـ trace، و [[1: آخر سطر sync]]، و [[2: لسه sync]]، وبعدين [[3: timeout]] (أو fetch قبلها لو خلصت أسرع، لأنهم الاتنين async). اللي بيتوقع [[3]] قبل [[1]] ده اللي محتاج الدرس ده.`
-        },
-        {
-          cmd: "microtasks و macrotasks",
-          title: "ليه Promise.then بيشتغل قبل setTimeout 0؟",
-          desc: R`فيه طابورين مش واحد. الـ macrotasks (أو tasks): setTimeout و setInterval و events و الـ I/O. والـ microtasks: [[.then]] و [[await]] و [[queueMicrotask]] و MutationObserver.
-
-القاعدة: بعد كل task، الـ event loop بيفضّي طابور الـ microtasks كله قبل ما ياخد task تانية. عشان كده أي Promise جاهز بيشتغل قبل أي setTimeout، حتى لو الـ setTimeout اتسجّل الأول.
-
-و [[await x]] معناه: الجزء اللي بعد الـ await في الدالة دي بقى microtask.`,
-          example: R`console.log("A");
-setTimeout(() => console.log("B"), 0);
-Promise.resolve()
-  .then(() => console.log("C"))
-  .then(() => console.log("D"));
-queueMicrotask(() => console.log("E"));
-(async () => {
-  console.log("F");
-  await null;
-  console.log("G");
-})();
-console.log("H");
-// الناتج: A F H C E G D B`,
-          try: R`اكتب الناتج على ورقة قبل ما تشغّل، وبعدين شغّله بـ [[node]]. وبعدين ضيف [[setTimeout(() => console.log("I"), 0)]] جوه أول then، وحاول تتوقع مكانه.`,
-          practice: [
-            { lvl: 'سريع', t: R`اقرا وتوقّع: [[setTimeout(() => console.log("timeout"), 0); Promise.resolve().then(() => console.log("then")); console.log("sync");]]`, done: R`[[sync then timeout]]، حتى إن الـ setTimeout اتكتب الأول: الـ microtasks بتتفضّى كلها قبل أي task.` },
-            { lvl: 'تطبيق', t: R`اشرحها بجدول: [[async function one() { console.log("1a"); await two(); console.log("1b"); }]] و [[async function two() { console.log("2"); }]] وبعدهم [[console.log("start"); one(); console.log("end");]]. اعمل جدول ٣ أعمدة (الـ stack، والـ microtasks، واللي اتطبع) واملاه بعد كل خطوة، وبعدين شغّل.`, done: R`الطباعة [[start 1a 2 end 1b]]، والجدول بيوضح إن [[two]] بتشتغل sync لحد آخرها، و [[1b]] بس هي اللي دخلت طابور الـ microtasks ساعة الـ await، وخرجت بعد ما [[end]] اتطبعت والـ stack فضي.` },
-            { lvl: 'تحدي', t: R`محاكاة وقارن: (١) microtask بيسجّل نفسه تاني ١٠٠ ألف مرة بـ [[queueMicrotask]]، وقبله [[setTimeout(() => console.log("timeout"), 0)]]: مين يطبع الأول؟ (٢) في Node: [[Promise.resolve().then(() => console.log("then")); process.nextTick(() => console.log("tick"));]] مرة في ملف [[.cjs]] ومرة في [[.mjs]].`, done: R`(١) رسالة الـ microtasks بتطلع بعد الـ ١٠٠ ألف لفة وبعدها بس [[timeout]]: microtasks مبتخلصش بتجوّع الطابور التاني كله (ولو لا نهائية الصفحة تقف). (٢) في الـ cjs [[tick]] وبعدين [[then]]، وفي الـ mjs العكس [[then]] وبعدين [[tick]]، لأن الـ ES module نفسه بيتنفّذ من جوه Promise فالـ microtasks بتخلص قبل ما Node يوصل لطابور nextTick.` },
-          ],
-          flag: "script",
-          deep: {
-            why: "سؤال «رتّب الـ console.log» ده بيتسأل تقريبًا في كل انترفيو JS. وفي الشغل بيفسّر ليه الـ state مش متحدثة لما تقراها بعد await، وليه microtasks كتير ممكن تجمّد الصفحة زي loop تقيل.",
-            how: R`نمشي على المثال: الكود المتزامن الأول: A، ثم تسجيل B في طابور الـ tasks، ثم C في الـ microtasks، ثم E في الـ microtasks. الـ async function بتبدأ متزامن فبتطبع F، وأول await بيحط الباقي (G) في الـ microtasks ويرجع. ثم H.
-
-الـ stack فضي، فنفضّي الـ microtasks بالترتيب: C (ولما خلصت، D اتسجّلت في آخر الطابور)، ثم E، ثم G، ثم D. الطابور فضي. دلوقتي بس task واحدة: B.
-
-ليه الـ microtasks موجودة؟ عشان نتيجة الـ Promise تتعالج في أقرب وقت ممكن وبترتيب ثابت، قبل ما المتصفح يرسم أو يعالج events جديدة.
-
-الخطر: microtask بتعمل microtask بتعمل microtask... الطابور مش هيفضى أبدًا، والصفحة هتتجمد، لأن الرسم مبيحصلش غير بعد ما يفضى. setTimeout المتكرر مش بيعمل كده لأنه بيدي فرصة للرسم بين كل مرة.
-
-في Node: [[process.nextTick]] ليه طابور بيتفضّى قبل الـ Promises كمان، و [[setImmediate]] بيشتغل بعد مرحلة الـ I/O.`,
-            when: R`[[queueMicrotask]] لما عايز حاجة تشتغل بعد الكود الحالي بس قبل أي event أو رسم (نادرًا في كود التطبيقات). setTimeout 0 لما عايز تدي المتصفح فرصة يرسم ويستجيب الأول.`,
-            mistakes: R`تفتكر إن الترتيب حسب وقت التسجيل بس. وتنسى إن الجزء قبل أول await في async function متزامن (F اتطبعت قبل H). وتنسى إن كل then بتسجّل اللي بعدها لما تخلص بس (D جت بعد E و G).`
-          },
-          teach: R`## الفكرة
-
-فيه **طابورين** مش واحد:
-
-| الطابور | فيه إيه |
-|---|---|
-| macrotasks (أو tasks) | [[setTimeout]] و [[setInterval]] و events (ضغطة، كتابة) و I/O |
-| microtasks | [[.then]] و [[await]] و [[queueMicrotask]] |
-
-والقاعدة: بعد ما الكود اللي شغال يخلص، الـ event loop **بيفضّي طابور الـ microtasks كله** قبل ما ياخد macrotask واحدة. والمثال بيوريك ده بـ ٨ حروف. اتشغّل بـ Node 24 على Windows.
-
----
-
-## ١. المثال حتة حتة
+يعني ٣١ يناير. والأرقام دي متفسّرة **بتوقيت الجهاز**: نص ليل ٣١ يناير في القاهرة. شوف الرقم الحقيقي اللي جوه:
 
 ~~~text app.js
-console.log("A");
-setTimeout(() => console.log("B"), 0);
-Promise.resolve()
-  .then(() => console.log("C"))
-  .then(() => console.log("D"));
-queueMicrotask(() => console.log("E"));
-(async () => {
-  console.log("F");
-  await null;
-  console.log("G");
-})();
-console.log("H");
+console.log(d.getTime(), d.toISOString());
 ~~~
-
-- [[Promise.resolve()]]: Promise **خلصان بالفعل** (resolved). فأول [[.then]] جاهزة تتسجّل microtask على طول.
-- [[.then(...).then(...)]]: التانية متسلسلة على Promise اللي الأولى بترجّعه، فمش هتتسجّل غير لما C **تخلص**.
-- [[queueMicrotask(fn)]]: بتحط fn في طابور الـ microtasks مباشرة.
-- [[(async () => { ... })()]]: async arrow function، والأقواس [[()]] في الآخر بتناديها على طول (IIFE). والـ async function بتشتغل **متزامن** لحد أول [[await]].
-- [[await null]]: أي [[await]]، حتى على حاجة مش Promise، بيوقف الدالة ويحط **باقيها** (هنا G) كـ microtask، ويرجع للي ناداها.
-
----
-
-## ٢. التتبّع خطوة بخطوة
-
-**المرحلة ١: الكود المتزامن**
-
-| السطر | يطبع | macrotasks | microtasks |
-|---|---|---|---|
-| [[console.log("A")]] | A | | |
-| [[setTimeout(B)]] | | B | |
-| [[.then(C)]] | | B | C |
-| [[queueMicrotask(E)]] | | B | C، E |
-| الـ async: [[console.log("F")]] | F | B | C، E |
-| [[await null]] | | B | C، E، G |
-| [[console.log("H")]] | H | B | C، E، G |
-
-الـ stack فضي. اتطبع لحد دلوقتي: A F H.
-
-**المرحلة ٢: فضّي الـ microtasks**
-
-| بيتنفّذ | يطبع | اللي حصل | microtasks بعدها |
-|---|---|---|---|
-| C | C | خلصت، فـ D اتسجّلت في **آخر** الطابور | E، G، D |
-| E | E | | G، D |
-| G | G | الـ async function خلصت | D |
-| D | D | | فاضي |
-
-**المرحلة ٣: macrotask واحدة**: B.
 
 ~~~text الناتج
-A
-F
-H
-C
-E
-G
-D
-B
+1769810400000 2026-01-30T22:00:00.000Z
 ~~~
+
+[[getTime()]] بيطلّع الرقم الخام، و [[toISOString()]] بيكتبه بتوقيت UTC: الساعة ١٠ بالليل يوم ٣٠. ليه؟ لأن القاهرة في يناير UTC+2، فنص الليل عندنا هو ١٠ بالليل في UTC. نفس اللحظة، مكتوبة بتوقيتين.
 
 ---
 
-## ٣. التجربة: [[setTimeout]] جوه أول then
-
-غيّرنا أول then لـ [[.then(() => { console.log("C"); setTimeout(() => console.log("I"), 0); })]]:
-
-~~~text الناتج (على سطر واحد)
-A F H C E G D B I
-~~~
-
-I اتسجّلت في طابور الـ macrotasks **وقت ما C اشتغلت**، يعني بعد B اللي كانت هناك من المرحلة ١. والـ timers بتطلع بترتيب تسجيلها، فـ B الأول وبعدها I.
-
----
-
-## ٤. ليه ده يفرق في الشغل؟
-
-- أي [[await]] معناه إن الكود اللي بعده **مش** هيشتغل دلوقتي، حتى لو الـ Promise خلصان.
-- الـ microtasks كلها بتخلص قبل ما المتصفح يرسم. فلو microtask بتعمل microtask بتعمل microtask من غير نهاية، الصفحة هتتجمد زي loop تقيل.
-
----
-
-## ٥. event loop في Node: setImmediate و nextTick والمراحل
-
-Node عنده نفس الفكرة (كود متزامن، وبعدين microtasks، وبعدين task)، بس الـ tasks مقسومة على **مراحل** (phases) بترتيب ثابت، ومعاه طابورين زيادة: [[process.nextTick]] و [[setImmediate]]. الترتيب ده من وثائق Node («The Node.js Event Loop»):
-
-~~~text مراحل كل لفة (من وثائق Node)
-   ┌─> timers           setTimeout و setInterval اللي وقتهم جه
-   │   pending          callbacks متأجّلة من النظام (أخطاء TCP مثلًا)
-   │   poll             استنى I/O جديد (ملفات، شبكة) ونفّذ الـ callbacks بتاعته
-   │   check            setImmediate
-   └── close            زي socket.on("close")
-   وبين أي callback والتاني: nextTick الأول، وبعدين الـ Promises
-~~~
-
-### الأربعة مع بعض
-
-~~~text order.cjs
-setTimeout(() => console.log("timeout"), 0);
-setImmediate(() => console.log("immediate"));
-process.nextTick(() => console.log("nextTick"));
-Promise.resolve().then(() => console.log("promise"));
-console.log("sync");
-~~~
-
-~~~text الناتج (Node 24، order.cjs، ٦ مرات نفس النتيجة)
-sync nextTick promise timeout immediate
-~~~
-
-- [[process.nextTick(fn)]]: مش جزء من المراحل. طابور بيتفضّى **قبل** الـ Promises، بعد كل callback على طول. اسمه مضلّل: مش «الـ tick الجاي»، ده «حالًا بعد الكود ده».
-- [[setImmediate(fn)]]: بيشتغل في مرحلة **check**، يعني بعد ما الـ poll (I/O) يخلص في اللفة دي.
-
-### المفاجأة: نفس الكود في [[.mjs]]
-
-~~~text الناتج (Node 24، نفس الكود بالظبط في order.mjs، ٦ مرات)
-sync promise nextTick timeout immediate
-~~~
-
-الـ promise بقى **قبل** الـ nextTick. ليه؟ الـ ES module بيتنفّذ هو نفسه جوه Promise job، فلما الكود يخلص V8 بيكمّل يفضّي طابور الـ Promises اللي هو فيه أصلًا، وبعدين بس Node بيرجع يفضّي طابور الـ nextTick. يعني ترتيب «nextTick قبل promise» مضمون جوه callbacks، مش في أول تشغيل ملف ESM. ده سبب كافي إنك متبنيش كود على الترتيب بين الاتنين.
-
-### [[setTimeout(0)]] ولا [[setImmediate]]: مين الأول؟
-
-| فين | النتيجة (Node 24) | ليه |
-|---|---|---|
-| في أول الملف (main module) | مش ثابتة: ملف فيه السطرين دول بس، ٣٠ تشغيل: [[immediate]] الأول ٢٩ مرة و [[timeout]] مرة | الـ [[0]] بيبقى 1ms. لو اللفة الأولى وصلت مرحلة timers قبل ما الـ 1ms يعدّي، الـ timer بيستنى للفة الجاية |
-| جوه callback بتاع I/O ([[fs.readFile]]) | [[immediate timeout]] كل مرة (٥ من ٥) | إحنا في مرحلة poll، واللي بعدها على طول check، والـ timers في اللفة الجاية |
-
-~~~text io.mjs
-import { readFile } from "node:fs";
-readFile(import.meta.filename, () => {
-  setTimeout(() => console.log("timeout"), 0);
-  setImmediate(() => console.log("immediate"));
-});
-~~~
-
-فلو عايز «شغّل ده بعد الـ I/O اللي شغال دلوقتي» استخدم [[setImmediate]]، مش [[setTimeout(fn, 0)]].
-
-### nextTick ممكن يجوّع البرنامج
-
-~~~text starve.cjs
-let n = 0;
-setTimeout(() => console.log("timeout بعد", n, "nextTick"), 0);
-function again() { if (++n < 100000) process.nextTick(again); }
-process.nextTick(again);
-~~~
-
-~~~text الناتج (Node 24)
-timeout بعد 100000 nextTick
-~~~
-
-الـ timer مااشتغلش غير بعد الـ ١٠٠ ألف nextTick كلهم، لأن الطابور بيتفضّى كله قبل أي مرحلة. لو كان من غير حد، الـ I/O والـ timers عمرهم ما هيشتغلوا. نفس فكرة الـ microtasks في المتصفح. ولو عايز تقسّم شغل تقيل وتدّي الـ I/O فرصة، [[setImmediate]] هو الصح (درس «blocking و الـ main thread»).
-
-جوه timer كمان: [[timer 1]] وبعده الـ nextTick والـ promise بتوعه **قبل** [[timer 2]]، لأن الطابورين بيتفضّوا بعد كل callback مش بعد المرحلة كلها (من Node 11).
-
----
-
-## الخلاصة
-
-| الترتيب | مين |
-|---|---|
-| ١ | الكود المتزامن كله (ومنه أول جزء في أي async function لحد أول await) |
-| ٢ | كل الـ microtasks، والجديدة اللي بتتسجّل أثناءها بتتعمل كمان قبل أي macrotask |
-| ٣ | macrotask **واحدة**، وبعدها ارجع لـ ٢ |
-
-| في Node | بيشتغل إمتى |
-|---|---|
-| [[process.nextTick]] | بعد كل callback على طول، وقبل الـ Promises (غير أول تشغيل ملف ESM) |
-| [[setTimeout(fn, 0)]] | مرحلة timers، بعد 1ms على الأقل |
-| [[setImmediate]] | مرحلة check، بعد الـ I/O بتاع اللفة دي على طول |`,
-          lines: [
-            R`كود متزامن، فبيتطبع أول حاجة.`,
-            R`بتسجّل task (macrotask). حتى بـ 0ms مش هتشتغل غير بعد ما الكود المتزامن يخلص **وكمان** طابور الـ microtasks يفضى كله، فـ [[B]] هتبقى آخر حاجة.`,
-            R`Promise متحل خلاص، فأي [[then]] عليه هتتحط في طابور الـ microtasks على طول، بس متتنفّذش دلوقتي.`,
-            R`أول microtask في الطابور. هتتنفذ أول ما الكود المتزامن يخلص، قبل أي timer.`,
-            R`الـ [[then]] دي متعلقة بالـ Promise اللي راجع من [[then]] اللي قبلها، فمش هتدخل الطابور غير لما [[C]] تخلص. وقتها [[E]] و [[G]] يكونوا قدامها، فـ [[D]] تطلع بعدهم.`,
-            R`[[queueMicrotask]] بتحط دالة مباشرة في طابور الـ microtasks من غير Promise. اتسجّلت بعد [[C]] فهتتنفّذ بعدها.`,
-            R`async arrow function بتتنادى فورًا (IIFE). الـ async function بتبدأ تشتغل **متزامن** عادي لحد أول [[await]].`,
-            R`لسه قبل أي [[await]]، فـ [[F]] بتتطبع فورًا، قبل [[H]] اللي في الكود الأساسي.`,
-            R`أي [[await]] (حتى على قيمة مش Promise زي [[null]]) بيوقف الدالة ويرجّع للي ناداها، وباقي الدالة بيتحط microtask. فالكود الأساسي بيكمّل لـ [[H]].`,
-            R`باقي الدالة بعد الـ [[await]]: بيتنفّذ كـ microtask بعد [[C]] و [[E]] اللي اتسجّلوا قبله.`,
-            R`نهاية الدالة، و [[()]] بتناديها في نفس اللحظة.`,
-            R`آخر سطر متزامن. بعده الطابور بيتفضى: [[C]] و [[E]] و [[G]] و [[D]]، وبعدين الـ task [[B]]. الترتيب كله: [[A F H C E G D B]].`,
-          ],
-          sol: R`الناتج [[A F H C E G D B]]. الـ sync الأول (A و F و H، و F لأن الـ async function بتشتغل sync لحد أول await). بعدين كل الـ microtasks بالترتيب اللي اتسجلت بيه: C و E و G، وبعدها D لأنها اتسجلت لما C خلصت. وفي الآخر الـ macrotask: B.
-
-لما تضيف [[setTimeout(() => console.log("I"), 0)]] جوه أول then، I بتطلع بعد B: [[A F H C E G D B I]]. الـ timeout ده اتسجّل وقت ما C اتنفّذت، يعني بعد ما B كان في الطابور أصلًا، والـ timers بتطلع بترتيب تسجيلها. اللي بيحط I قبل D فاكر إن setTimeout بيقاطع الـ microtasks، وده الغلط.`
-        },
-        {
-          cmd: "blocking و الـ main thread",
-          title: "ليه الصفحة بتتجمد، وإزاي تشغّل حسابات تقيلة من غير تجميد",
-          desc: R`في المتصفح، نفس الـ thread اللي بيشغّل JS هو اللي بيرسم الصفحة ويستجيب للضغط والكتابة. أي كود متزامن بياخد وقت طويل (loop على مليون عنصر، أو JSON ضخم، أو sort كبير) بيجمّد كل ده. المتصفح بيعتبر أي task أطول من 50ms «long task»، وده بيبوظ مقياس INP في Core Web Vitals.
-
-الحلول: قسّم الشغل لدفعات وسيب المتصفح يتنفس بينهم، أو انقله لـ Web Worker على thread تاني خالص، أو اتأكد إن التعديلات البصرية في [[requestAnimationFrame]].`,
-          example: R`const start = Date.now();
-while (Date.now() - start < 2000) {}   // الصفحة متجمدة ثانيتين
-async function processInChunks(items, fn, size = 500) {
-  for (let i = 0; i < items.length; i += size) {
-    items.slice(i, i + size).forEach(fn);
-    await (globalThis.scheduler?.yield?.() ?? new Promise((r) => setTimeout(r, 0)));
-  }
-}
-const worker = new Worker(new URL("./sum.worker.js", import.meta.url), { type: "module" });
-worker.postMessage({ n: 1e9 });
-worker.onmessage = (e) => console.log("النتيجة:", e.data);
-// sum.worker.js: self.onmessage = (e) => { let s = 0; for (let i = 0; i < e.data.n; i++) s += i; self.postMessage(s); };
-requestAnimationFrame(() => { document.body.style.opacity = "0.9"; });`,
-          try: R`في Console على أي صفحة شغّل أول سطرين، وحاول تعمل scroll أو تضغط زرار وانت مستني. وبعدين افتح تاب Performance في DevTools وسجّل وانت بتشغّله: هتشوف long task بالأحمر.`,
-          practice: [
-            { lvl: 'سريع', t: R`محاكاة في Node: [[setInterval]] بيطبع [["tick"]] والوقت من البداية كل 100ms، وبعدها على طول [[while]] بيلف ثانية كاملة ([[Date.now() - s < 1000]])، وبعد ما الـ while يخلص بـ 150ms وقّف الـ interval واطبع عدد الـ ticks.`, done: R`مفيش ولا tick وقت الـ while. بعدها tick واحد بس على طول (حوالي 1000ms) مش ١٠ ورا بعض بيعوّضوا، وإجمالي الـ ticks حوالي ٢ مش ١١: الـ timers مبتتراكمش، بتتأخر.` },
-            { lvl: 'تطبيق', t: R`قارن وقيس: array مليون رقم، و [[setInterval]] بيعد ticks كل 20ms. اجمعهم مرة بـ forEach واحدة، ومرة بـ [[processInChunks]] بتاعة الدرس بـ size [[10000]]، واطبع عدد الـ ticks اللي حصلت وقت المعالجة والمجموع في كل مرة.`, done: R`مع الـ forEach الواحدة الـ ticks اللي جواها صفر. مع الـ chunks فيه ticks اتنفّذت في النص لأن كل دفعة بتسيب الـ event loop يتنفس، والمعالجة نفسها بتاخد وقت أطول شوية. والمجموع واحد في الحالتين ([[499999500000]]).` },
-            { lvl: 'تحدي', t: R`ابني صفحة فيها input وزرار «احسب» بيجمع من 0 لـ [[1e9]]: مرة الحساب في الـ main thread، ومرة في Web Worker زي الدرس. اكتب في الـ input وانت مستني. وزوّد زرار «إلغاء» بيعمل [[worker.terminate()]] ويعمل worker جديد للمرة الجاية.`, done: R`في الـ main thread الحروف اللي بتكتبها مبتظهرش لحد ما الحساب يخلص. في الـ Worker بتكتب عادي والنتيجة نفس الرقم. الإلغاء بيوقف الحساب ومفيش [[onmessage]] بيوصل بعده، و «احسب» بعدها بيشتغل تاني.` },
-          ],
-          flag: "script",
-          deep: {
-            why: "«الموقع بيهنّج لما أدوس على الزرار» مشكلة حقيقية بيحسها اليوزر أكتر من أي حاجة. و Google بيقيس الاستجابة (INP) كجزء من الـ SEO. وسؤال انترفيو: «إزاي تعالج ١٠٠ ألف صف من غير ما الصفحة تقف؟».",
-            how: R`طول ما فيه task شغالة، الـ event loop مش هيوصل لمرحلة الرسم ولا هيعالج الضغطات. فالحل يا إما تقصّر الـ tasks، يا إما تطلّعها برّه الـ main thread.
-
-التقسيم (chunking): كل دفعة task لوحدها، و [[setTimeout(r, 0)]] بينهم بيدي الـ event loop فرصة يرسم ويستجيب. و [[scheduler.yield()]] (موجود في Chrome و Edge ومتصفحات تانية بتلحق) بيعمل نفس الحاجة بس بيرجّعك في أول الطابور بدل آخره. الكود فوق بيستخدمه لو موجود.
-
-Web Worker: ملف JS بيشتغل على thread تاني، مالوش DOM ولا window. بتكلّمه بـ [[postMessage]]، والداتا بتتنسخ (structured clone، زي structuredClone) مش بتتشارك، إلا لو بعت ArrayBuffer كـ transferable. في Node فيه [[worker_threads]] بنفس الفكرة.
-
-[[requestAnimationFrame(fn)]] بيشغّل fn قبل الرسم الجاي بالظبط، فأي animation أو تعديل بصري فيه بيبقى ناعم ومتزامن مع الشاشة، ومبيشتغلش والتاب في الخلفية.
-
-وقبل أي حاجة من دول: قيس الأول بـ Performance tab، وغالبًا المشكلة الحقيقية حاجة أبسط (تاب HTML و CSS: layout thrashing، وتاب React للـ re-renders).`,
-            when: "Worker للحسابات التقيلة المستقلة (معالجة صور، parsing ملفات كبيرة، تشفير، بحث في داتا ضخمة). Chunking لما الشغل محتاج الـ DOM. rAF لأي animation بـ JS. و virtualization لليستات الطويلة جدًا.",
-            mistakes: R`تحط الشغل التقيل في Promise وتفتكر إنه بقى «في الخلفية»: الـ Promise مش thread، والكود جوه الـ executor بيشتغل متزامن على نفس الـ thread. وتعمل animation بـ setInterval. وتبعت objects ضخمة للـ worker كل شوية فالنسخ نفسه يبقى تقيل.`
-          },
-          teach: R`## المثال بيعمل إيه
-
-٤ أجزاء: loop بيجمّد الصفحة ثانيتين (المشكلة)، وبعدين ٣ حلول: تقسيم الشغل لدفعات، و Web Worker على thread تاني، و [[requestAnimationFrame]] للتعديلات البصرية.
-
-الكود ده للمتصفح: في Node بيقف عند سطر الـ Worker بـ [[ReferenceError: Worker is not defined]]. فشغّلناه في Chrome (headless، من صفحة على سيرفر محلي) ومعاه [[setInterval]] بيسجّل الوقت كل 100ms عشان نشوف الصفحة كانت شغالة ولا واقفة.
-
----
-
-## ١. التجميد
+## ٢. [[setMonth(1)]]: التعديل في نفس الـ object، والـ overflow
 
 ~~~text app.js
-const start = Date.now();
-while (Date.now() - start < 2000) {}   // الصفحة متجمدة ثانيتين
+d.setMonth(1);
+console.log(d.toDateString());
 ~~~
 
-- [[Date.now()]]: الوقت الحالي بالـ ms.
-- [[while (شرط) {}]]: طول ما الشرط true، لف. والجسم [[{}]] فاضي: الـ loop مش بيعمل حاجة غير إنه يسأل «عدّت ثانيتين؟» ملايين المرات.
+[[setMonth(1)]] معناها «خلي الشهر فبراير» (1 = فبراير). حاجتين بيحصلوا:
 
-النتيجة: الـ main thread مشغول ثانيتين، فمفيش رسم ولا scroll ولا ضغط ولا timers. الـ [[setInterval]] اللي كان بيسجّل كل 100ms طلّع الأوقات دي (بالـ ms من فتح الصفحة):
+1. **التعديل في مكانه (mutable):** مفيش Date جديد، الـ object اللي في [[d]] نفسه اتغيّر. عشان كده [[const]] مامنعتش ده: const بتمنع إنك تكتب [[d = ...]]، مش إنك تعدّل جوه الـ object.
+2. **الـ overflow:** اليوم لسه 31، فالتاريخ بقى «٣١ فبراير 2026». ده مش موجود (فبراير 2026 فيه 28 يوم بس، مش سنة كبيسة)، فـ Date مش بيرمي error، بيرحّل الزيادة: 31 − 28 = 3 أيام زيادة، يعني ٣ مارس.
 
-~~~text الناتج (أول التسجيلات)
-269, 383, 474, 2531, 2577, 2670, 2778, ...
+و [[toDateString()]] بيكتب التاريخ بشكل إنجليزي مختصر من غير الساعة:
+
+~~~text الناتج
+Tue Mar 03 2026
 ~~~
-
-كل 100ms تقريبًا، وبعدين **قفزة من 474 لـ 2531**: ٢ ثانية مفيش ولا تسجيل، لأن الـ timer مقدرش يشتغل والـ stack مشغول. وده بالظبط اللي اليوزر بيحسه: الصفحة «هنّجت».
-
-المتصفح بيعتبر أي task أطول من 50ms **long task**. وفي DevTools، تاب Performance، هتشوفها مستطيل عليه مثلث أحمر (ده من الـ docs ومن التجربة اليدوية في الـ «جرّب»).
-
----
-
-## ٢. الحل الأول: دفعات (chunking)
-
-~~~text app.js
-async function processInChunks(items, fn, size = 500) {
-  for (let i = 0; i < items.length; i += size) {
-    items.slice(i, i + size).forEach(fn);
-    await (globalThis.scheduler?.yield?.() ?? new Promise((r) => setTimeout(r, 0)));
-  }
-}
-~~~
-
-- [[async function]]: عشان نقدر نستخدم [[await]] جواها.
-- [[size = 500]]: قيمة افتراضية: ٥٠٠ عنصر في الدفعة.
-- [[i += size]]: [[i]] بيقفز ٥٠٠ كل لفة: 0، 500، 1000...
-- [[items.slice(i, i + size)]]: نسخة من العناصر من [[i]] لحد [[i + size]] (من غير الأخير). و [[.forEach(fn)]]: نادي fn على كل واحد.
-
-### السطر المهم: [[await (...)]]
-
-نفكّه من جوه لبرّه:
 
 | الحتة | معناها |
 |---|---|
-| [[globalThis]] | الـ object الـ global في أي بيئة ([[window]] في المتصفح) |
-| [[.scheduler?.]] | لو [[scheduler]] مش موجود، وقف ورجّع [[undefined]] من غير error |
-| [[.yield?.()]] | لو [[yield]] موجودة نادِيها، ولو لأ [[undefined]] |
-| [[??]] | لو اللي على الشمال [[undefined]] أو [[null]]، خد اللي على اليمين |
-| [[new Promise((r) => setTimeout(r, 0))]] | Promise بيخلص بعد setTimeout 0 |
+| [[Tue]] | يوم الأسبوع (Tuesday، التلات) |
+| [[Mar]] | الشهر (March، مارس) |
+| [[03]] | اليوم في الشهر، برقمين دايمًا |
+| [[2026]] | السنة كاملة بأربع أرقام |
 
-يعني: استخدم [[scheduler.yield()]] لو المتصفح فيه (Chrome فيه: جرّبنا [[typeof scheduler.yield]] وطلع [[function]])، وإلا setTimeout 0. الاتنين معناهم «سيب المتصفح يرسم ويرد على اليوزر، وبعدين كمّل».
+نفس الترحيل بيحصل لو كتبتها مباشرة: [[new Date(2026, 1, 31).toDateString()]] بيطلع [[Tue Mar 03 2026]] برضه.
 
-في Node مفيش [[scheduler]] فبيستخدم setTimeout. جرّبناها على ٢٠٠٠ رقم بتتجمع، ومعاها [[setTimeout]] اتسجّل قبلها:
+---
+
+## ٣. الـ parsing: النص اللي بتديه لـ Date بيتفهم إزاي؟
+
+ده أخطر جزء. [[new Date("...")]] بنص بيعمل parse (يقرا النص ويحوّله لحظة)، والقاعدة في المواصفات:
+
+| شكل النص | بيتفهم بتوقيت إيه |
+|---|---|
+| [["2026-03-01"]] (تاريخ بس) | UTC، يعني منتصف الليل في جرينتش مش عندك |
+| [["2026-03-01T00:00"]] (تاريخ + وقت من غير Z) | توقيت الجهاز اللي الكود شغال عليه |
+| [["2026-03-01T00:00Z"]] أو [[+02:00]] في الآخر | التوقيت المكتوب في النص بالظبط، على أي جهاز |
+| أي شكل تاني ([["01/02/2026"]]) | مش standard، كل engine على مزاجه |
+
+### السطر الخامس: تاريخ بس
+
+~~~text app.js
+console.log(new Date("2026-03-01").toISOString());
+~~~
 
 ~~~text الناتج
-timer اشتغل في النص، sum وقتها = 124750
-خلص: 1999000
+2026-03-01T00:00:00.000Z
 ~~~
 
-124750 = مجموع 0 لـ 499، يعني الـ timer لقى فرصة يشتغل **بعد أول دفعة** على طول، مش بعد ما الكل يخلص. وده نفس اللي بيحصل مع الضغطات والرسم في المتصفح.
+اتفهمت نص الليل UTC، و [[toISOString()]] بيكتب بـ UTC، فطلعت زي ما هي في أي بلد.
 
----
-
-## ٣. الحل التاني: Web Worker
+### السطر السادس: تاريخ ووقت من غير Z
 
 ~~~text app.js
-const worker = new Worker(new URL("./sum.worker.js", import.meta.url), { type: "module" });
-worker.postMessage({ n: 1e9 });
-worker.onmessage = (e) => console.log("النتيجة:", e.data);
+console.log(new Date("2026-03-01T00:00").toISOString());
 ~~~
 
-والملف التاني [[sum.worker.js]]:
+هنا اتفهمت «نص الليل بتوقيت الجهاز». جرّبنا نفس الملف على توقيتين:
 
-~~~text sum.worker.js
-self.onmessage = (e) => { let s = 0; for (let i = 0; i < e.data.n; i++) s += i; self.postMessage(s); };
+~~~text الناتج (القاهرة)
+2026-02-28T22:00:00.000Z
 ~~~
 
-- [[new Worker(url, { type: "module" })]]: بيشغّل ملف JS على **thread تاني**. والـ worker مالوش DOM ولا [[window]].
-- [[new URL("./sum.worker.js", import.meta.url)]]: [[import.meta.url]] هو عنوان الملف الحالي، فالسطر ده بيقول «sum.worker.js اللي جنبي». (وده الشكل اللي Vite بيفهمه ويحزم الـ worker.)
-- [[postMessage({ n: 1e9 })]]: بيبعت رسالة للـ worker. [[1e9]] = 1 × 10 أس 9 = مليار. والـ object **بيتنسخ** مش بيتشارك.
-- جوه الـ worker: [[self]] هو الـ worker نفسه. لما رسالة توصل، [[e.data]] فيها الـ object، فبيجمع من 0 لمليار ويرجّع النتيجة بـ [[self.postMessage]].
-- [[worker.onmessage]]: لما الرد يرجع، [[e.data]] فيها الرقم.
-
-~~~text الناتج (Console في Chrome)
-النتيجة: 499999999067109000
+~~~text الناتج (نيويورك)
+2026-03-01T05:00:00.000Z
 ~~~
 
-الحساب خد وقت طويل (بين ٤٠ و ٥٥ ثانية في Chrome headless على الجهاز ده في مرتين، و ٧ ثواني في Node لما جرّبنا نفس الـ loop)، **والصفحة كانت شغالة طول الوقت**: الـ setInterval سجّل 441 مرة، وأكبر فرق بين تسجيلين بعد التجميد الأولاني كان 115ms. ده الفرق كله: نفس الشغل التقيل، بس على thread تاني.
+القاهرة في مارس UTC+2، فنص الليل عندها هو ١٠ بالليل يوم ٢٨ فبراير في UTC. ونيويورك في أول مارس 2026 لسه UTC−5 (التوقيت الصيفي عندهم بيبدأ ٨ مارس)، فنص الليل عندها هو ٥ الصبح UTC. نفس السطر، نفس الكود، لحظتين مختلفتين.
 
-> ليه الرقم مش 499999999500000000 بالظبط (المجموع الصح)؟ لأن أي number في JavaScript بيتحفظ دقيق لحد [[Number.MAX_SAFE_INTEGER]] = 9007199254740991 بس، والمجموع عدّى ده بكتير، فالكسور الصغيرة ضاعت. للأرقام دي استخدم [[BigInt]].
-
----
-
-## ٤. الحل التالت: [[requestAnimationFrame]]
+### السطرين السابع والتامن: أشكال مش standard
 
 ~~~text app.js
-requestAnimationFrame(() => { document.body.style.opacity = "0.9"; });
+console.log(new Date("01/02/2026").getMonth());
+console.log(new Date("32/01/2026").getTime());
 ~~~
 
-[[requestAnimationFrame(fn)]] (اختصارها rAF): «شغّل fn قبل ما ترسم الشاشة الجاية». الشاشة 60Hz بترسم كل حوالي 16ms، فأي تعديل بصري جوه rAF بيبقى متزامن مع الرسم ومش بيتعمل مرتين في نفس الـ frame. وبعد التشغيل قرينا [[document.body.style.opacity]] وطلع [[0.9]].
+~~~text الناتج
+0
+NaN
+~~~
+
+- [["01/02/2026"]]: V8 (الـ engine بتاع Node و Chrome) قراها بالطريقة الأمريكية MM/DD، فالشهر يناير (0). اللي كاتبها مصري كان قاصد ١ فبراير. ومتصفح تاني ممكن يقراها بشكل تالت.
+- [["32/01/2026"]]: مفيش شهر 32، فالنتيجة **Invalid Date**. ومفيش error بيترمي، الرقم اللي جوه بقى [[NaN]] (Not a Number) وخلاص:
+
+~~~text app.js
+console.log(String(new Date("32/01/2026")), Number.isNaN(new Date("32/01/2026").getTime()));
+~~~
+
+~~~text الناتج
+Invalid Date true
+~~~
+
+فلو بتعمل parse لتاريخ جاي من برّه، افحصه بنفسك بـ [[Number.isNaN(d.getTime())]].
 
 ---
 
-## ٥. scheduler.postTask و scheduler.yield (المتصفح)
+## ٤. النسخ والطرح
 
-الـ [[scheduler]] API في المتصفح بيدّيك تحكّم أدق من [[setTimeout]]: تحط task بأولوية، وتلغيها، وتعمل yield في نص شغل طويل. موجود في Chrome و Edge، ودعمه في Firefox و Safari بيختلف حسب النسخة (شوف جدول التوافق في MDN قبل ما تعتمد عليه، وخلي عندك fallback زي سطر الـ [[??]] فوق)، ومش موجود في Node. جرّبته في Chrome 156 (headless بـ playwright).
-
-### [[scheduler.postTask(fn, options)]]: task بأولوية
-
-~~~text index.html
-scheduler.postTask(() => console.log("background"), { priority: "background" });
-scheduler.postTask(() => console.log("user-visible (الافتراضي)"));
-scheduler.postTask(() => console.log("user-blocking"), { priority: "user-blocking" });
-setTimeout(() => console.log("setTimeout 0"), 0);
-const ctrl = new TaskController({ priority: "background" });
-scheduler.postTask(() => console.log("مش هتتطبع"), { signal: ctrl.signal }).catch((e) => console.log("اتلغت:", e.name));
-ctrl.abort();
-scheduler.postTask(() => 42, { delay: 50 }).then((v) => console.log("بعد delay:", v));
+~~~text app.js
+const a = new Date("2026-09-29T10:00:00Z");
+const b = new Date(a);
+b.setDate(b.getDate() + 3);
+console.log(a.getDate(), b.getDate(), b - a);
 ~~~
 
-~~~text الناتج (Chrome 156)
-اتلغت: AbortError
-user-blocking
-user-visible (الافتراضي)
-setTimeout 0
-background
-بعد delay: 42
+- السطر الأول: لحظة محددة بـ [[Z]]، فمش هتختلف من جهاز لجهاز.
+- [[new Date(a)]]: Date **جديد** بنفس اللحظة، يعني نسخة. ليه مش [[const b = a]]؟ لأن ده مش نسخ، ده اسم تاني لنفس الـ object. جرّبناها: [[const same = a; same.setDate(1);]] وبعدها [[a.getDate()]] طلع [[1]]، الأصل باظ.
+- [[b.getDate() + 3]]: اليوم الحالي (29) + 3 = 32، و [[setDate(32)]] بيرحّل زي ما شفنا: ٢ أكتوبر.
+- [[b - a]]: الطرح بيحوّل الاتنين للرقم اللي جوه (ms) ويطرح.
+
+~~~text الناتج
+29 2 259200000
 ~~~
 
-- [[priority]]: تلات مستويات: [["user-blocking"]] (حاجة اليوزر مستنيها حالًا، زي رد على ضغطة)، و [["user-visible"]] (الافتراضي)، و [["background"]] (لوج، أو analytics، أو prefetch). اتسجّلوا بالعكس وطلعوا بالأولوية.
-- [[setTimeout 0]] جه بعد الـ user-visible وقبل الـ background: يعني الـ background بيستنى لحد ما مفيش حاجة أهم.
-- [[postTask]] بترجّع Promise بقيمة الدالة ([[42]])، و [[delay]] بيأجّلها زي setTimeout.
-- [[TaskController]]: زي [[AbortController]] بس بيقدر كمان يغيّر الأولوية ([[ctrl.setPriority("user-blocking")]]). والـ abort بيرفض الـ Promise بـ [[AbortError]].
+[[a]] لسه ٢٩ (النسخة حمته)، و [[b]] بقت ٢ (أكتوبر). والفرق: 3 أيام × 24 ساعة × 60 دقيقة × 60 ثانية × 1000 = 259,200,000 ms.
 
-### [[scheduler.yield()]]: استراحة في نص شغل طويل
+---
 
-ده اللي الـ chunking فوق بيستخدمه لو موجود. قارنته بـ [[setTimeout]]: نفس الشغل، ٢٠ دفعة كل واحدة 10ms، وقبل الشغل timer واحد:
+## تشغّله بتوقيت تاني إزاي؟
 
-~~~text الناتج (Chrome 156)
-setTimeout : timer لقى فرصة بعد 10 ms
-setTimeout : خلص في 267 ms
-scheduler.yield : خلص في 200 ms
-scheduler.yield : timer لقى فرصة بعد 201 ms
+Node بيقرا متغير البيئة [[TZ]] (Time Zone) عشان يعرف توقيت الجهاز:
+
+~~~powershell
+$env:TZ = "America/New_York"; node dates.js
 ~~~
 
-- بـ setTimeout الشغل خد 267ms مش 200: المتصفح بيخلّي أي setTimeout متداخل أكتر من ٥ مرات يستنى 4ms على الأقل، فالـ ٢٠ استراحة ضاعوا فيهم حوالي 67ms.
-- بـ [[scheduler.yield()]] خلص في 200ms بالظبط: الكمّل بعد الـ yield بيدخل **قبل** الـ tasks العادية اللي بنفس الأولوية. عشان كده الـ timer استنى لآخر الشغل.
-- بس الاستراحة حقيقية: المتصفح بيقدر يرسم ويرد على ضغطات اليوزر بين الدفعات (وده الهدف، عشان رقم INP يبقى كويس)، حسب وثائق Chrome. يعني [[yield]] «اسمح للأهم يعدّي وارجعلي على طول»، و setTimeout «حطني في آخر الطابور».
+ده اتجرّب في PowerShell 7 و Windows PowerShell 5.1 وطلّع سطر نيويورك اللي فوق. والمتغير ده بيفضل في نافذة الترمنال دي بس، وتشيله بـ [[Remove-Item Env:TZ]].
+
+~~~bash
+TZ=America/New_York node dates.js
+~~~
+
+ده الشكل في لينكس و WSL والماك (اتجرّب على Linux في Docker بصورة [[node:22-slim]]). **على Git Bash في Windows مش بيشتغل:** جرّبناه وفضل يطلّع توقيت القاهرة، لأن Git Bash بيشيل قيمة زي [[America/New_York]] من [[TZ]] قبل ما يشغّل برنامج Windows زي node ([[process.env.TZ]] طلع [[undefined]]، و [[TZ=UTC]] بس هي اللي عدّت).
 
 ---
 
 ## الخلاصة
 
-| المشكلة | الحل | إمتى |
-|---|---|---|
-| task واحدة طويلة | قسّمها دفعات و yield بينها | الشغل محتاج الـ DOM |
-| حساب تقيل مستقل | Web Worker | صور، ملفات كبيرة، تشفير |
-| تعديل بصري أو animation | [[requestAnimationFrame]] | أي حركة بـ JS |
+| المطبّ | الصح |
+|---|---|
+| الشهر من 0 | [[new Date(2026, 0, 31)]] = ٣١ يناير |
+| [[setMonth]] و [[setDate]] بيعدّلوا الأصل | اعمل نسخة بـ [[new Date(a)]] الأول |
+| تاريخ مش موجود بيترحّل من غير error | ٣١ فبراير = ٣ مارس |
+| [["YYYY-MM-DD"]] = UTC، ومع وقت من غير Z = توقيت الجهاز | ابعت وخزّن بـ Z دايمًا |
+| أي شكل تاني مش standard | متعملش parse لـ [["DD/MM/YYYY"]] بـ Date |
+| Invalid Date مش بترمي error | افحص [[Number.isNaN(d.getTime())]] |
 
-والـ Promise لوحده **مش** thread: كود تقيل جوه Promise بيجمّد الصفحة برضه.`,
+والـ Date جواه رقم ms واحد بس، والتوقيت بيدخل في الحساب لحظة ما تقرا أو تطبع.`,
           lines: [
-            R`بناخد الوقت الحالي بالملي ثانية عشان الـ loop اللي جاي يعرف عدّى قد إيه.`,
-            R`loop فاضي بيفضل يسأل عن الوقت لحد ما ثانيتين يعدّوا. طول الوقت ده الـ main thread مشغول: المتصفح مبيرسمش، والضغطات والـ scroll بتستنى، والـ timers بتتأخر. ده بالظبط اللي بيحصل مع أي حسبة تقيلة متزامنة.`,
-            R`الحل الأول: بدل ما نعالج array كبيرة مرة واحدة، نعالجها دفعات ([[size]] عنصر كل دفعة) ونريّح المتصفح بينهم. [[async]] عشان نقدر نستخدم [[await]] جواها.`,
-            R`كل لفة بتنقل [[i]] بحجم دفعة كاملة: 0 و 500 و 1000 وهكذا.`,
-            R`[[slice(i, i + size)]] بتاخد الدفعة الحالية بس (من غير ما تغيّر الأصل)، و [[forEach(fn)]] بتعالج كل عنصر فيها. الدفعة نفسها متزامنة، فخليها صغيرة كفاية إنها تخلص في ملي ثواني قليلة.`,
-            R`بنوقف لحظة نرجّع فيها السيطرة للمتصفح يرسم ويرد على اليوزر قبل الدفعة الجاية. لو [[scheduler.yield]] موجود (Chrome و Edge) بنستخدمه، وإلا [[?.]] بترجّع [[undefined]] و [[??]] بتاخد البديل: Promise بتتحل بعد [[setTimeout(r, 0)]].`,
-            R`نهاية الـ loop.`,
-            R`نهاية [[processInChunks]].`,
-            R`الحل التاني: Web Worker بيشغّل الملف [[sum.worker.js]] على thread تاني خالص، فالحسبة التقيلة مش بتلمس الـ main thread. [[new URL(..., import.meta.url)]] بتحسب مسار الملف بالنسبة للملف الحالي، و [[type: "module"]] عشان الـ worker يقدر يستخدم [[import]].`,
-            R`بنبعت الشغل للـ worker كرسالة. الـ data بتتنسخ (structured clone)، فالـ worker مش بيشوف متغيرات الصفحة، ومينفعش يلمس الـ DOM.`,
-            R`لما الـ worker يخلص ويعمل [[postMessage]]، الدالة دي بتتنادى والنتيجة في [[e.data]]. وطول ما هو بيحسب، الصفحة بتستجيب عادي.`,
-            R`[[requestAnimationFrame]] بتأجّل الدالة لحد قبل الرسمة الجاية بالظبط، فالتغيير يترسم مع الـ frame اللي جاي. ده المكان الصح للتعديلات البصرية والـ animations، بدل [[setTimeout]] اللي توقيته مش متزامن مع الرسم.`,
+            R`بيعمل Date لـ ٣١ يناير ٢٠٢٦ بتوقيت الجهاز. الشهر هنا بيبدأ من 0، فـ [[0]] يعني يناير و [[11]] يعني ديسمبر، أما اليوم فبيبدأ من 1 عادي. لو كتبت [[1]] وانت قاصد يناير هتلاقي نفسك في فبراير.`,
+            R`بيطبع [[0 31]]: [[getMonth]] بترجّع الشهر بنفس العدّ من صفر، و [[getDate]] بترجّع رقم اليوم في الشهر (مش [[getDay]] اللي بترجّع يوم الأسبوع). عشان تعرض الشهر لليوزر لازم تزوّد عليه 1.`,
+            R`بيغيّر الشهر لفبراير ([[1]]) **في نفس الـ object**، مش بيرجّع نسخة جديدة. يعني أي كود تاني شايل [[d]] هيشوف التغيير، وده مطب لو الـ Date جايلك من برّه.`,
+            R`بيطبع [[Tue Mar 03 2026]] مش فبراير: اليوم لسه 31، وفبراير ٢٠٢٦ فيه ٢٨ يوم بس، فالـ ٣ أيام الزيادة بتترحّل للشهر اللي بعده من غير أي error. عشان كده «زوّد شهر» محتاجة تتعمل بحرص.`,
+            R`نص فيه تاريخ بس من غير وقت، والمواصفات بتقول يتفهم UTC نص الليل، فالناتج [[2026-03-01T00:00:00.000Z]] في أي بلد. و [[toISOString]] دايمًا بتطبع بتوقيت UTC وآخرها [[Z]].`,
+            R`نفس اليوم بس معاه وقت ومن غير [[Z]]: هنا بيتفهم بتوقيت الجهاز. في القاهرة (UTC+2 في مارس) نص الليل المحلي = [[2026-02-28T22:00:00.000Z]]، وفي نيويورك هيطلع رقم تاني. مجرد إضافة الوقت غيّرت المعنى.`,
+            R`الشكل [["01/02/2026"]] مش من المواصفات، فكل engine بيفهمه بمزاجه. V8 (Node و Chrome) فهمه بالأمريكي (شهر/يوم) فطلع الشهر [[0]] يعني يناير، واحنا في مصر بنقراه ١ فبراير. متعملش parse لنص بالشكل ده أبدًا.`,
+            R`مفيش شهر ٣٢، فالناتج Invalid Date و [[getTime()]] بترجّع [[NaN]]، **من غير ما يرمي error**. الكود هيكمّل عادي بقيمة بايظة، فلازم تفحص بنفسك بـ [[Number.isNaN(d.getTime())]] قبل ما تستخدم أي تاريخ جاي من يوزر.`,
+            R`لحظة محددة بالظبط: الـ [[Z]] في الآخر معناها UTC، فالنص ده يعني نفس اللحظة على أي جهاز. ده الشكل اللي المفروض تخزّن وتبعت بيه التواريخ.`,
+            R`[[new Date(a)]] بتعمل Date جديد بنفس اللحظة: نسخة مستقلة. لو كتبت [[const b = a]] بدلها، الاتنين هيشاوروا على نفس الـ object، والسطر اللي بعده هيعدّل [[a]] كمان.`,
+            R`بيزوّد ٣ أيام على النسخة: [[getDate()]] بترجّع ٢٩ فبنحط ٣٢. ومع إن سبتمبر ٣٠ يوم بس، الـ overflow هنا مفيد: [[setDate(32)]] بتترحّل لوحدها لـ ٢ أكتوبر.`,
+            R`بيطبع [[29 2 259200000]] في القاهرة: [[a]] لسه ٢٩ لأننا عدّلنا النسخة بس، و [[b]] بقت ٢ أكتوبر. والطرح [[b - a]] بيحوّل الاتنين milliseconds، فالفرق ٣ × ٢٤ ساعة بالـ ms.`,
           ],
-          sol: R`وانت مستني الـ ٢ ثانية: الـ scroll مبيتحركش، والضغط على أي زرار مبيعملش حاجة، وحتى الـ hover. أول ما الـ loop تخلص كل اللي ضغطته بيتنفذ مرة واحدة، لأن الأحداث كانت واقفة في الطابور. الـ main thread مشغول، ومفيش حد يرسم أو يرد.
+          sol: R`بين القاهرة ونيويورك اتغير السطر السادس بس: [[2026-02-28T22:00:00.000Z]] مقابل [[2026-03-01T05:00:00.000Z]]، لأن نص الليل «المحلي» لحظة مختلفة في كل بلد. الباقي ثابت: السطر الخامس UTC بالمواصفات، والأرقام اللي بعده متحسبة من لحظة بـ Z. (لو غيّرت [[a]] لـ [["2026-09-29T02:00:00Z"]] هتلاقي [[a.getDate()]] بقت 28 في نيويورك.)
 
-في تاب Performance هتلاقي مستطيل طويل في الـ Main track عليه مثلث أحمر في الركن مكتوب [[Task]] بطول حوالي 2000ms، ولو عدّيت عليه هيقولك إنه long task (أي task أطول من 50ms). ده اللي بيبوّظ INP. لو ملقتهوش، اتأكد إنك دوست Record قبل ما تشغّل الكود ووقفت بعده.`
-        }
-      ]
-    },
-    {
-      t: "الأداء والذاكرة",
-      l: 3,
-      n: "debounce و throttle للأحداث الكتير، والـ memory leaks وإزاي تمنعها",
-      projects: [
-        { lvl: 'صغير', t: R`بحث بـ debounce وعدّاد`, what: R`input بحث على لستة ١٠٠٠ اسم محلية، والفلترة بـ debounce 300ms، وجنبه عدّاد «اتنفّذ كام مرة» وعدّاد «اتكتب كام حرف». من درس debounce و throttle.`, done: R`كتابة كلمة ١٠ حروف بسرعة ← الحروف ١٠ والتنفيذ ١، والنتايج بتظهر بعد ما تقف بحوالي 300ms، ومسح الـ input بيرجّع اللستة كاملة.` },
-        { lvl: 'صغير', t: R`زرار ميتداسش مرتين`, what: R`زرار «ادفع» بيبعت طلب وهمي بياخد ثانيتين. امنع التكرار مرة بـ throttle ومرة بـ [[disabled]] لحد ما الطلب يخلص، وقارن. من درس debounce و throttle ووحدة async.`, done: R`٥ ضغطات ورا بعض ← طلب واحد في الطريقتين. بس لو الطلب أخد أطول من فترة الـ throttle، الـ throttle بيسمح بطلب تاني والـ disabled لأ، وكاتب ده في تعليق جنب الكود.` },
-        { lvl: 'متوسط', t: R`بحث حي كامل`, what: R`input بيبحث في API بـ debounce 300ms، و AbortController للطلب القديم، و cache بـ LRU حده ٥٠ عشان نفس الكلمة متتطلبش تاني، و «بيحمّل» و «مفيش نتايج» ورسالة غلط. من دروس الوحدة ووحدة async.`, done: R`نفس الكلمة مرتين ← طلب واحد في Network. كتابة سريعة ← طلب واحد بعد ما تقف. حجم الـ cache مبيعدّيش ٥٠ بعد ١٠٠ كلمة مختلفة. والـ AbortError مبيظهرش كرسالة.` },
-        { lvl: 'متوسط', t: R`شريط تقدم القراية وزرار لفوق`, what: R`صفحة مقال طويل فوقها شريط بيوضح نسبة القراية، وزرار «لفوق» بيظهر بعد نص الصفحة. الـ scroll handler بـ throttle trailing (من تحدي الدرس) و [[{ passive: true }]]. من درس debounce و throttle.`, done: R`الـ handler بيتنفّذ أقل بكتير من عدد أحداث scroll (عدّادين في الـ console). لما توصل لآخر الصفحة الشريط بيقف على 100% بالظبط (ده اللي الـ throttle العادي بيفوّته). والزرار بيظهر ويختفي صح.` },
-        { lvl: 'كبير', t: R`dashboard عايش طول اليوم`, what: R`صفحة فيها widgets بتتفتح وتتقفل (ساعة، وطقس وهمي بـ polling كل ٥ ثواني، وعدّاد كتابة). كل widget عنده [[mount()]] بيرجّع [[unmount]] بيشيل كل listener (AbortController) وكل interval ويلغي أي fetch شغال، والـ fetch بيعمل retry بـ backoff لو فشل، و cache الطقس LRU حده ٢٠، وكل mount و unmount بيتسجّل في لوج صغير على الصفحة. من الوحدة دي ووحدات async والأخطاء والـ DOM والـ closures.`, done: R`افتح وقفل كل widget ٥٠ مرة، وبعدين Heap snapshot Comparison: مفيش زيادة ثابتة ولا Detached elements بتزيد. [[getEventListeners(window)]] بعد ما الكل يتقفل مفيهوش listeners بتاعتك. مفيش طلب polling في Network بعد unmount. والنت المقطوع بيعمل retry وبعدين رسالة، مش loop لا نهائي.`, ext: R`خلّي الـ polling يقف لوحده لما التاب يتخبّى (درس visibilitychange في وحدة APIs المتصفح)، وزوّد صفحة «صحة» بتعرض عدد الـ listeners والـ intervals الشغالة دلوقتي.` },
-        { lvl: 'فكرة', t: R`قيس وصلّح صفحة بطيئة`, what: R`خد صفحة من مشاريعك فيها input أو scroll أو resize، وقيس عدد مرات تنفيذ الـ handlers والذاكرة بعد استخدام طويل، وصلّح أكبر مشكلة بـ debounce أو throttle أو cleanup.`, done: R`عندك رقمين قبل وبعد (عدد التنفيذات في ١٠ ثواني، أو حجم الـ heap بعد ٢٠ مرة)، والتصليح مبيغيّرش شكل الصفحة ولا سلوكها.`, ext: R`اكتب الأرقام في README المشروع مع screenshots من DevTools، عشان تبقى قصة تحكيها في انترفيو.` },
-      ],
-      items: [
-        {
-          cmd: "debounce و throttle",
-          title: "تقلل عدد مرات تنفيذ دالة بتتنادي كتير",
-          desc: R`أحداث زي [[input]] و [[scroll]] و [[resize]] بتتنادي عشرات المرات في الثانية. لو كل مرة بتبعت request أو تحسب layout، الصفحة هتتقل والسيرفر هيتضرب.
-
-debounce: استنى لحد ما الأحداث تقف فترة (مثلًا 300ms بعد آخر حرف)، ونفّذ مرة واحدة. مثالي للبحث وأنت بتكتب وحفظ الـ drafts.
-
-throttle: نفّذ مرة واحدة بالكتير كل فترة (مثلًا كل 200ms)، مهما الحدث اتكرر. مثالي للـ scroll والـ resize وتتبّع الماوس.`,
-          example: R`function debounce(fn, ms) {
-  let timer;
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, args), ms);
-  };
+[[addMonths]]: اعمل نسخة، وخد اليوم الأصلي، وحط اليوم 1 قبل ما تغيّر الشهر (عشان متحصلش الترحيلة)، وبعدين رجّع اليوم بـ [[Math.min]] مع آخر يوم في الشهر الجديد. وآخر يوم في أي شهر حيلة معروفة: اليوم 0 من الشهر اللي بعده. [[addMonths(new Date(2026, 0, 31), 1)]] ← ٢٨ فبراير، و 2028 ← ٢٩ فبراير (كبيسة).`,
+          solCode: R`function addMonths(date, n) {
+  const d = new Date(date);
+  const day = d.getDate();
+  d.setDate(1);
+  d.setMonth(d.getMonth() + n);
+  const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  d.setDate(Math.min(day, lastDay));
+  return d;
 }
-function throttle(fn, ms) {
-  let last = 0;
-  return function (...args) {
-    const now = Date.now();
-    if (now - last < ms) return;
-    last = now;
-    fn.apply(this, args);
-  };
-}
-const input = document.querySelector("#search");
-const search = debounce((q) => console.log("ابحث عن", q), 300);
-input.addEventListener("input", (e) => search(e.target.value));
-window.addEventListener("scroll", throttle(() => console.log(scrollY), 200), { passive: true });`,
-          try: R`حط counter بيعد مرات تنفيذ الـ callback الأصلي، واكتب كلمة ١٠ حروف بسرعة: من غير debounce ١٠ مرات، ومعاه مرة. وبعدين ضيف لـ debounce method اسمها [[cancel]] بتلغي الـ timer. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات مش بتستنى وقت حقيقي، بتبعت ساعة وهمية كـ argument تالت [[clock]] فيها [[setTimeout]] و [[clearTimeout]]، فاستخدم [[clock.setTimeout]] و [[clock.clearTimeout]]، وضيف [[cancel]].`,
-          practice: [
-            { lvl: 'سريع', t: R`اقرا وتوقّع: في Node انسخ [[debounce]] من الدرس، واعمل [[const s = debounce((q) => console.log("ابحث عن", q), 100)]]، ونادي [[s(1)]] لحد [[s(5)]] في loop ورا بعض. كام سطر هيطبع وفيه إيه؟`, done: R`سطر واحد بس بعد حوالي 100ms: [[ابحث عن 5]]، آخر قيمة، والأربعة اللي قبلها اتلغوا.` },
-            { lvl: 'تطبيق', t: R`ابني autosave: [[<textarea>]] بيبعت النص لـ [[saveDraft(text)]] وهمية (بتطبع وتزوّد عدّاد في الصفحة) بعد ثانية من آخر حرف بـ debounce، وجنبه «اتحفظ الساعة ...» بـ [[toLocaleTimeString]].`, done: R`وانت بتكتب مفيش ولا حفظ، وبعد ما تقف بثانية العدّاد بيزيد ١ والنص المحفوظ هو كل اللي كتبته لحد آخر حرف. ولو استخدمت arrow function كـ fn وجواها [[this]]، تعرف ليه الدرس كاتب [[fn.apply(this, args)]].` },
-            { lvl: 'تحدي', t: R`مسألة واكتب اختبار: الـ throttle اللي في الدرس leading بس، فآخر نداء في الفترة بيضيع (آخر مكان scroll مش بيتحسب). اكتب نسخة trailing: لو فيه نداء اتمنع، يتنفّذ في آخر الفترة بآخر arguments. واختبرها بنداءات في 0 و 50 و 100 و 150ms بـ throttle 200ms.`, done: R`النسخة القديمة بتنفّذ مرة واحدة بالـ argument الأول بس. الجديدة بتنفّذ مرتين: فورًا بالأول، وبعد حوالي 200ms بالرابع (الأخير)، ومفيش تنفيذ تالت.` },
-          ],
-          flag: "script",
-          deep: {
-            why: "بحث بيبعت request مع كل حرف = ١٠ requests لكلمة واحدة، والردود ممكن توصل بترتيب غلط. و scroll handler تقيل = scroll بيقطّع. والاتنين من أشهر أسئلة انترفيو الفرونت: «اكتب debounce بإيدك».",
-            how: R`debounce مبني على closure: [[timer]] متغير عايش بين النداءات. كل نداء بيلغي الـ timer القديم ويبدأ واحد جديد، فالتنفيذ الفعلي بيحصل بس لما يعدّي ms من غير نداء جديد. الشكل ده اسمه trailing (في الآخر). فيه نسخة leading بتنفّذ أول نداء على طول وتتجاهل الباقي لحد ما يهدى.
-
-throttle بيحفظ وقت آخر تنفيذ، ويتجاهل أي نداء قبل ما الفترة تعدّي. النسخة البسيطة دي ممكن تضيّع آخر نداء، والنسخ الكاملة (lodash) بتضمن تنفيذ أخير في الآخر.
-
-[[function (...args)]] مش arrow، و [[fn.apply(this, args)]]، عشان لو الدالة المتغلفة method محتاجة this، تفضل شغالة.
-
-للـ scroll والـ animation، [[requestAnimationFrame]] كـ throttle طبيعي (مرة لكل frame) غالبًا أحسن. وللبحث: debounce + AbortController (درس fetch) عشان الرد القديم ميكتبش فوق الجديد.
-
-في React لازم الدالة الـ debounced تتعمل مرة واحدة ([[useMemo]] أو [[useRef]])، وإلا كل render بيعمل واحدة جديدة بـ timer جديد.`,
-            when: "debounce: بحث، و autosave، و validation وانت بتكتب، و resize نهائي. throttle: scroll، و mousemove، و infinite scroll، و analytics events.",
-            mistakes: R`تعمل debounce جوه الـ handler نفسه ([[input.oninput = () => debounce(fn, 300)()]]) فكل مرة timer جديد ومفيش حاجة بتتلغي. وتنسى this و args. و debounce للزرار «ادفع»: الأحسن تعطّل الزرار. وفي الانترفيو: «الفرق بين debounce و throttle؟» بمثال لكل واحد.`
-          },
-          teach: R`## المثال بيعمل إيه
-
-بيكتب دالتين «بتغلّف» أي دالة تانية وترجّع نسخة منها بتتنفّذ مرات أقل: [[debounce]] (نفّذ مرة بعد ما الحدث يهدى) و [[throttle]] (نفّذ مرة بالكتير كل فترة). وبعدين بيربطهم بخانة بحث وبالـ scroll.
-
-الكود فيه [[document]] و [[window]]، فده للمتصفح. شغّلناه في Chrome (headless) على صفحة فيها [[<input id="search">]]، وكتبنا فيها وعملنا scroll أوتوماتيك.
-
-> المربع اللي تحت الدرس بيطلب نسخة من [[debounce]] بساعة وهمية و [[cancel]]. الشرح هنا للمثال والفكرة، والحل عليك.
-
----
-
-## ١. [[debounce]] سطر سطر
-
-~~~text app.js
-function debounce(fn, ms) {
-  let timer;
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, args), ms);
-  };
-}
-~~~
-
-- **[[debounce(fn, ms)]]**: بتاخد الدالة الأصلية والمدة، و**بترجّع دالة جديدة**. الدالة اللي بترجّع دالة اسمها higher-order function.
-- **[[let timer;]]**: متغير برّه الدالة اللي راجعة. كل مرة تنادي النسخة الجديدة، بتشوف **نفس** [[timer]]. ده اسمه **closure**: الدالة الداخلية فاكرة المتغيرات اللي اتعملت حواليها حتى بعد ما [[debounce]] نفسها خلصت.
-- **[[function (...args)]]**: [[...args]] (rest) بتلم أي arguments تتبعت في array. وهي [[function]] عادية مش arrow عشان يبقى ليها [[this]] بتاعها (تحت).
-- **[[clearTimeout(timer)]]**: الغي الـ timer اللي فات لو لسه مستني. (أول مرة [[timer]] = [[undefined]] و [[clearTimeout(undefined)]] مبتعملش حاجة.)
-- **[[timer = setTimeout(..., ms)]]**: ابدأ timer جديد واحفظ رقمه. [[setTimeout]] بترجّع رقم (id) بيتلغي بيه.
-- **[[fn.apply(this, args)]]**: نادي الدالة الأصلية، و [[apply]] بتسمح تحدد [[this]] وتبعت الـ arguments كـ array. والـ arrow [[() => ...]] حواليها مالهاش [[this]] خاص، فبتاخد [[this]] بتاع الـ function الخارجية.
-
-يعني كل نداء بيأجّل التنفيذ ms من جديد. التنفيذ بيحصل بس لما يعدّي ms **من غير** نداء جديد:
-
-~~~text نداءات كل 50ms و ms = 300
-j     ja    jav   ...   javascript   (هدوء 300ms)   ← fn("javascript")
-  ↑ كل نداء بيلغي الـ timer اللي قبله
-~~~
-
----
-
-## ٢. [[throttle]] سطر سطر
-
-~~~text app.js
-function throttle(fn, ms) {
-  let last = 0;
-  return function (...args) {
-    const now = Date.now();
-    if (now - last < ms) return;
-    last = now;
-    fn.apply(this, args);
-  };
-}
-~~~
-
-- [[last]]: وقت آخر تنفيذ (في الـ closure برضه). بيبدأ 0، فأول نداء دايمًا بيعدّي.
-- [[now - last < ms]]: لسه معدّاش ms من آخر تنفيذ؟ [[return]]: تجاهل النداء ده خالص.
-- غير كده: سجّل الوقت ونفّذ على طول.
-
-الفرق: debounce بيستنى الهدوء ويتنفّذ **في الآخر**. throttle بيتنفّذ **على طول** وبعدين يقفل الباب ms.
-
----
-
-## ٣. الربط بالصفحة
-
-~~~text app.js
-const input = document.querySelector("#search");
-const search = debounce((q) => console.log("ابحث عن", q), 300);
-input.addEventListener("input", (e) => search(e.target.value));
-window.addEventListener("scroll", throttle(() => console.log(scrollY), 200), { passive: true });
-~~~
-
-- [[document.querySelector("#search")]]: العنصر اللي [[id]] بتاعه search.
-- [[search]]: النسخة الـ debounced **اتعملت مرة واحدة** برّه الـ listener. ده أهم سطر: لو عملتها جوه الـ listener، كل حرف هيعمل closure جديد بـ [[timer]] جديد، ومفيش حاجة هتتلغي.
-- حدث [[input]]: بيحصل مع كل تغيير في الخانة، و [[e.target.value]] النص اللي فيها.
-- [[scrollY]]: المسافة اللي اتعمل لها scroll من فوق بالـ pixels.
-- [[{ passive: true }]]: وعد للمتصفح إن الـ listener مش هيعمل [[preventDefault()]]. في الـ scroll ملوش تأثير فعلي (الحدث ده مبيتلغيش أصلًا)، فايدته الحقيقية مع [[wheel]] و [[touchmove]].
-
-### اللي حصل في Chrome
-
-كتبنا [["javascript"]] حرف حرف، بين كل حرف والتاني 50ms، يعني ١٠ أحداث [[input]]:
-
-~~~text الناتج (Console)
-ابحث عن javascript
-~~~
-
-**مرة واحدة**، بالكلمة كاملة، بعد 300ms من آخر حرف.
-
-وبعدين عملنا ٢٠ scroll، كل واحد 100px وبينهم حوالي 30ms:
-
-~~~text الناتج (Console)
-100
-700
-1300
-1900
-~~~
-
-٤ مرات بس من ٢٠ حدث: كل 200ms مرة. ولاحظ إن الصفحة وصلت 2000 بس آخر رقم اتطبع 1900: النسخة البسيطة دي ممكن **تضيّع آخر نداء** لو جه جوه الـ 200ms. النسخ الكاملة (زي lodash) بتنفّذ مرة أخيرة في الآخر.
-
----
-
-## ٤. العدّاد (من الحل)
-
-الحل بيعمل loop بيبعت الـ ١٠ حروف لنسخة debounced كل 50ms، ويعدّ مرتين: كام مرة الحدث حصل ([[raw]])، وكام مرة الدالة الأصلية اتنفّذت فعلًا ([[calls]]). اتشغّل في Node 24:
-
-~~~text الناتج
-ابحث عن javascript
-{ raw: 10, calls: 1 }
-~~~
-
-١٠ أحداث، تنفيذ واحد.
-
----
-
-## الخلاصة
-
-| | debounce | throttle |
-|---|---|---|
-| بيتنفّذ إمتى | بعد ما النداءات تقف ms | أول نداء، وبعدين مرة كل ms بالكتير |
-| بيفتكر إيه في الـ closure | [[timer]] | [[last]] |
-| أمثلة | بحث وانت بتكتب، autosave | scroll، resize، mousemove |
-
-والنسخة الملفوفة تتعمل **مرة واحدة** برّه الـ handler، و [[fn.apply(this, args)]] عشان [[this]] والـ arguments يوصلوا زي ما هم.`,
-          lines: [
-            R`بتاخد الدالة الأصلية ([[fn]]) والمدة بالملي ثانية، وترجّع نسخة منها مبتشتغلش غير لما النداءات تبطّل لمدة [[ms]].`,
-            R`[[timer]] برّه الدالة اللي هترجع، فهو في الـ closure ومشترك بين كل نداءاتها. ده اللي بيخليها تفتكر الـ timer اللي فات عشان تلغيه.`,
-            R`بترجّع دالة جديدة بتاخد أي arguments في [[args]]. اتكتبت بـ [[function]] مش arrow عشان [[this]] بتاعتها تبقى بتاعة اللي ناداها (زي العنصر في event handler عادي)، ونعدّيها لـ [[fn]].`,
-            R`كل نداء جديد بيلغي الـ timer اللي فات، فالتنفيذ اللي كان مستني مبيحصلش. أول مرة [[timer]] بـ [[undefined]]، و [[clearTimeout(undefined)]] مبتعملش حاجة.`,
-            R`بيبدأ timer جديد، و [[fn]] هتتنادى بس لو عدّت [[ms]] من غير نداء تاني. الـ arrow جوه بتاخد [[this]] من الدالة اللي فوقها، و [[apply]] بتنادي [[fn]] بنفس [[this]] وبالـ arguments بتاعة **آخر** نداء.`,
-            R`نهاية الدالة اللي راجعة.`,
-            R`نهاية [[debounce]].`,
-            R`العكس تقريبًا: بدل ما تستنى لحد ما النداءات تبطّل، بتنفّذ مرة كل [[ms]] بالكتير وتتجاهل اللي بينهم.`,
-            R`وقت آخر تنفيذ، في الـ closure برضه. بادئ بـ 0 فأول نداء دايمًا بيتنفّذ.`,
-            R`الدالة الجديدة اللي هتتنادى مكان الأصلية، بـ [[function]] عشان [[this]] زي ما في debounce.`,
-            R`الوقت الحالي بالملي ثانية عشان نقارنه بآخر تنفيذ.`,
-            R`لو لسه معدّاش [[ms]] من آخر تنفيذ، بنخرج من غير ما نعمل حاجة. النداء ده بيضيع خالص (مش بيتأجّل)، فآخر نداء في السلسلة ممكن ميتنفّذش.`,
-            R`بنسجّل إن فيه تنفيذ حصل دلوقتي، فأي نداء في الـ [[ms]] الجاية هيتجاهل.`,
-            R`بننادي الأصلية فورًا بنفس [[this]] ونفس الـ arguments.`,
-            R`نهاية الدالة اللي راجعة.`,
-            R`نهاية [[throttle]].`,
-            R`بنجيب خانة البحث من الصفحة عشان نسمع لكتابة اليوزر فيها.`,
-            R`بنعمل نسخة debounced من البحث **مرة واحدة** برّه الـ handler. لو عملناها جوه الـ handler كل حرف هيعمل debounce جديد بـ [[timer]] جديد، فمفيش حاجة هتتلغي وكل حرف هيبحث.`,
-            R`كل حرف بيطلق [[input]] وينادي [[search]] بالنص الحالي، بس البحث الحقيقي بيحصل مرة واحدة بعد 300ms من آخر حرف. فكتابة [["laptop"]] بسرعة بتعمل بحث واحد بدل 6.`,
-            R`الـ scroll ممكن يطلق event عشرات المرات في الثانية، فالـ throttle بيخلي الدالة تشتغل مرة كل 200ms بالكتير. و [[passive: true]] بيقول للمتصفح إنك مش هتعمل [[preventDefault]]؛ مع [[scroll]] ملوش تأثير فعلي لأن الـ event ده مش cancelable أصلًا، وفايدته الحقيقية مع [[wheel]] و [[touchstart]] و [[touchmove]].`,
-          ],
-          sol: R`مع ١٠ حروف بسرعة: الـ counter بتاع الـ callback الأصلي بيعد 10، ونسخة debounce بتعد 1 بآخر قيمة ([["javascript"]] كاملة) بعد 300ms من آخر حرف. لو بتكتب ببطء (أكتر من 300ms بين الحروف) هتلاقيها اشتغلت أكتر من مرة، وده صح.
-
-[[cancel]] بتعمل [[clearTimeout(timer)]]، فلو ناديت [[search("x")]] وبعدين [[search.cancel()]] على طول، الـ callback مش هيشتغل خالص. مفيدة لما الـ component يتشال أو اليوزر يمسح الـ input. الغلطة الشائعة إنك تعمل debounce جوه الـ listener نفسه ([[input.addEventListener("input", (e) => debounce(fn, 300)(e.target.value))]]): كده بتعمل timer جديد في كل حرف، فمفيش debounce خالص.`,
-          solCode: R`function debounce(fn, ms) {
-  let timer;
-  function debounced(...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, args), ms);
-  }
-  debounced.cancel = () => clearTimeout(timer);
-  return debounced;
-}
-let raw = 0, calls = 0;
-const search = debounce((q) => { calls++; console.log("ابحث عن", q); }, 300);
-const word = "javascript";
-for (let i = 1; i <= word.length; i++) {
-  raw++;
-  search(word.slice(0, i));
-  await new Promise((r) => setTimeout(r, 50));
-}
-await new Promise((r) => setTimeout(r, 400));
-console.log({ raw, calls }); // { raw: 10, calls: 1 }`,
+const jan31 = new Date(2026, 0, 31);
+console.log(addMonths(jan31, 1).toDateString(), jan31.toDateString());
+console.log(addMonths(new Date(2028, 0, 31), 1).toDateString(), addMonths(jan31, 12).toDateString());`,
           check: {
             lang: "js",
-            starter: R`function debounce(fn, ms, clock = globalThis) {
-  let timer;
-  function debounced(...args) {
-    // clock.clearTimeout(timer) وبعدين timer = clock.setTimeout(...)
-  }
-  debounced.cancel = () => {};
-  return debounced;
+            starter: R`function addMonths(date, n) {
+  const d = new Date(date);
+  d.setMonth(d.getMonth() + n);
+  return d;
 }`,
-            tests: R`function fakeClock() {
-  let now = 0, id = 0;
-  const timers = new Map();
-  return {
-    setTimeout(f, ms) { timers.set(++id, { at: now + ms, f }); return id; },
-    clearTimeout(t) { timers.delete(t); },
-    tick(ms) {
-      now += ms;
-      for (const [t, { at, f }] of [...timers].sort((a, b) => a[1].at - b[1].at)) if (at <= now) { timers.delete(t); f(); }
-    }
-  };
-}
-test("10 نداءات ورا بعض ← الـ fn بتتنادي مرة واحدة بآخر قيمة", () => {
-  const clock = fakeClock(), got = [];
-  const search = debounce((q) => got.push(q), 300, clock);
-  const word = "javascript";
-  for (let i = 1; i <= word.length; i++) { search(word.slice(0, i)); clock.tick(50); }
-  clock.tick(300);
-  expect(got).toEqual(["javascript"]);
-});
-test("قبل ما الـ ms تخلص مفيش نداء", () => {
-  const clock = fakeClock();
-  let calls = 0;
-  const f = debounce(() => calls++, 300, clock);
-  f();
-  clock.tick(299);
-  expect(calls).toBe(0);
-  clock.tick(1);
-  expect(calls).toBe(1);
-});
-test("نداءين بينهم أكتر من ms ← مرتين", () => {
-  const clock = fakeClock();
-  let calls = 0;
-  const f = debounce(() => calls++, 100, clock);
-  f(); clock.tick(150); f(); clock.tick(150);
-  expect(calls).toBe(2);
-});
-test("cancel بتلغي النداء اللي مستني", () => {
-  const clock = fakeClock();
-  let calls = 0;
-  const f = debounce(() => calls++, 100, clock);
-  f("x"); f.cancel(); clock.tick(500);
-  expect(calls).toBe(0);
-});
-test("بتعدّي الـ arguments و this", () => {
-  const clock = fakeClock();
-  const obj = { name: "Sara", hi: debounce(function (g) { obj.out = g + " " + this.name; }, 10, clock) };
-  obj.hi("Hi"); clock.tick(10);
-  expect(obj.out).toBe("Hi Sara");
+            tests: R`const ymd = d => [d.getFullYear(), d.getMonth() + 1, d.getDate()];
+test("31 يناير 2026 + شهر ← 28 فبراير (مش 3 مارس)", () => expect(ymd(addMonths(new Date(2026, 0, 31), 1))).toEqual([2026, 2, 28]));
+test("2028 كبيسة ← 29 فبراير", () => expect(ymd(addMonths(new Date(2028, 0, 31), 1))).toEqual([2028, 2, 29]));
+test("15 مارس + شهر ← 15 أبريل (اليوم العادي زي ما هو)", () => expect(ymd(addMonths(new Date(2026, 2, 15), 1))).toEqual([2026, 4, 15]));
+test("بتعدّي السنة: 30 نوفمبر 2026 + 3 ← 28 فبراير 2027", () => expect(ymd(addMonths(new Date(2026, 10, 30), 3))).toEqual([2027, 2, 28]));
+test("n سالب: 31 مارس - 1 ← 28 فبراير", () => expect(ymd(addMonths(new Date(2026, 2, 31), -1))).toEqual([2026, 2, 28]));
+test("الأصل ميتغيرش", () => {
+  const jan31 = new Date(2026, 0, 31);
+  addMonths(jan31, 1);
+  expect(ymd(jan31)).toEqual([2026, 1, 31]);
 });`,
-            solution: R`function debounce(fn, ms, clock = globalThis) {
-  let timer;
-  function debounced(...args) {
-    clock.clearTimeout(timer);
-    timer = clock.setTimeout(() => fn.apply(this, args), ms);
-  }
-  debounced.cancel = () => clock.clearTimeout(timer);
-  return debounced;
+            solution: R`function addMonths(date, n) {
+  const d = new Date(date);
+  const day = d.getDate();
+  d.setDate(1);
+  d.setMonth(d.getMonth() + n);
+  const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  d.setDate(Math.min(day, lastDay));
+  return d;
 }`
           }
         },
         {
-          cmd: "memory leaks",
-          title: "الذاكرة بتكبر ومبتنزلش: إيه اللي بيمسكها؟",
-          desc: R`JS فيه garbage collector: أي object محدش يقدر يوصله (من الـ globals أو الـ stack أو closures عايشة) بيتمسح لوحده. الـ memory leak معناه إنك سايب reference لحاجة مش محتاجها، فمبتتمسحش.
+          cmd: "UTC و Intl.DateTimeFormat",
+          title: "تخزّن الوقت إزاي، وتعرضه بتوقيت اليوزر ولغته إزاي؟",
+          desc: R`القاعدة: خزّن وابعت UTC، واعرض بتوقيت اليوزر. في الداتابيز [[timestamptz]] (تاب SQL و Prisma)، وفي الـ JSON نص ISO بـ Z زي [["2026-09-29T21:30:00.000Z"]] ([[toISOString()]]، و [[JSON.stringify]] بيعملها لوحده). ومتحوّلش لتوقيت محلي غير في آخر لحظة: وانت بترسم على الشاشة.
 
-أشهر الأسباب: event listeners متشالتش، و setInterval متوقفش، و cache أو Map بيكبر للأبد، و closures شايلة objects ضخمة، وعناصر DOM اتشالت من الصفحة بس لسه في متغير.
-
-الحلول: شيل اللي ضفته (cleanup)، و [[AbortController]] لـ listeners كتير مرة واحدة، و [[WeakMap]] لداتا مربوطة بـ objects، وحد أقصى لأي cache.`,
-          example: R`const cache = new Map();
-function remember(key, value) { cache.set(key, value); }  // بيكبر للأبد: حط حد أقصى
-const meta = new WeakMap();
-function tag(el, info) { meta.set(el, info); }            // لما el يتمسح، info تتمسح معاه
-function startPolling() {
-  const id = setInterval(() => fetch("/api/ping"), 5000);
-  return () => clearInterval(id);
-}
-const stopPolling = startPolling();
-stopPolling();
-const controller = new AbortController();
-window.addEventListener("resize", () => console.log(innerWidth), { signal: controller.signal });
-document.addEventListener("keydown", (e) => console.log(e.key), { signal: controller.signal });
-controller.abort();`,
-          try: R`في DevTools افتح Memory، وخد Heap snapshot، واعمل حاجة في الصفحة ١٠ مرات (افتح وقفل modal)، وخد snapshot تاني، واختار «Comparison». لو فيه objects بتزيد مع كل مرة ومبتقلش، عندك leak. دوّر على «Detached» عشان عناصر DOM اتشالت ولسه ممسوكة.`,
+والعرض بـ [[Intl.DateTimeFormat(locale, options)]]: الـ locale زي [["ar-EG"]] أو [["en-GB"]] بيحدد اللغة والترتيب والأرقام، و [[timeZone]] زي [["Africa/Cairo"]] بيحدد التوقيت، و [[dateStyle]] و [[timeStyle]] ([["full"]] و [["long"]] و [["medium"]] و [["short"]]) بيختاروا الشكل. و [[date.toLocaleString(locale, options)]] نفس الكلام في سطر.`,
+          example: R`const createdAt = new Date("2026-09-29T21:30:00Z");
+console.log(createdAt.toISOString(), JSON.stringify({ createdAt }));
+const cairo = new Intl.DateTimeFormat("ar-EG", { dateStyle: "full", timeStyle: "short", timeZone: "Africa/Cairo" });
+console.log(cairo.format(createdAt));
+const riyadh = new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Riyadh" });
+console.log(riyadh.format(createdAt));
+console.log(createdAt.toLocaleString("ar-EG-u-nu-latn", { timeZone: "Africa/Cairo", day: "numeric", month: "long", hour: "numeric", minute: "2-digit" }));
+const dayInCairo = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" }).format(createdAt);
+console.log(dayInCairo, createdAt.toISOString().slice(0, 10));
+console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);`,
+          try: R`اعرض نفس اللحظة بـ ٣ توقيتات: [["Africa/Cairo"]] و [["Europe/London"]] و [["America/New_York"]] بالعربي والأرقام اللاتيني. وبعدين غيّر اللحظة لـ [["2026-01-15T21:30:00Z"]] (شتا): الفرق بين القاهرة و UTC بقى كام؟ وآخر حاجة: اكتب [[isTodayInCairo(date)]] بترجّع true لو اللحظة دي في نفس يوم «النهارده» بتوقيت القاهرة.`,
           practice: [
-            { lvl: 'سريع', t: R`قيس: شغّل [[node --expose-gc]] واطبع [[process.memoryUsage().heapUsed]] بالـ MB قبل ما تملا array بمليون object، وبعد، وبعد [[arr = null]] و [[gc()]]. وبعدين كرّر بس احفظ [[globalThis.keep = arr]] قبل الـ null.`, done: R`الرقم بيزيد عشرات الـ MB بعد الملا، ويرجع قريب من الأول بعد null و gc. ومع [[globalThis.keep]] مبينزلش: لسه فيه reference عايش، وده الـ leak بالظبط. اكتب الـ ٣ أرقام في كل مرة.` },
-            { lvl: 'تطبيق', t: R`محاكاة cache: [[class LRU]] بحد أقصى: [[get]] بترجّع القيمة وتخليها «الأحدث»، و [[set]] لو الحجم عدّى الحد تمسح الأقدم. استخدم إن [[Map]] بيحفظ ترتيب الإضافة: [[map.keys().next().value]] هو الأقدم.`, done: R`[[new LRU(2)]]، و [[set("a", 1)]] و [[set("b", 2)]] و [[get("a")]] و [[set("c", 3)]]: المفاتيح الباقية [[a]] و [[c]] (اتمسح b لأنه الأقدم استخدامًا)، و [[get("zz")]] بترجّع undefined من غير ما تضيف حاجة، والحجم عمره ما بيعدّي 2 حتى بعد ألف set.` },
-            { lvl: 'تحدي', t: R`صلّح الكود البايظ: widget فيه [[mount()]] بيعمل [[addEventListener("resize", ...)]] و [[addEventListener("keydown", ...)]] و [[setInterval]] كل ثانية، و [[unmount()]] بيشيل العنصر من الصفحة بس. اعمل mount و unmount ١٠٠ مرة، وبعدين صلّحه بـ [[AbortController]] و [[clearInterval]] واعمل نفس الحكاية.`, done: R`قبل التصليح [[getEventListeners(window).resize.length]] في Console بتاع Chrome بيدّي [[100]] و ١٠٠ interval شغالين. بعد التصليح ومعاهم mount أخيرة، بيدّي [[1]] وفيه interval واحد بس بيطبع. وفي Memory، snapshot قبل وبعد الـ ١٠٠ مرة مفيهوش زيادة ثابتة.` },
+            { lvl: 'سريع', t: R`**ابني:** صفحة فيها ٣ عناصر [[<time datetime="2026-09-29T21:30:00Z"></time>]] بأوقات ISO مختلفة. اكتب كام سطر بيلفوا على كل [[time]] ويكتبوا جواه الوقت بتوقيت اليوزر بـ [[Intl.DateTimeFormat("ar-EG", { dateStyle: "medium", timeStyle: "short" })]].`, done: R`الـ [[datetime]] attribute فاضل ISO زي ما هو (للمكائن)، والنص اللي جوه بقى بالعربي وبتوقيت جهازك. ولو غيّرت [[timeZone]] لـ [["America/New_York"]] النص بيتغيّر والـ attribute لأ.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const d = new Date("2026-09-29T21:30:00Z");]] وشغّل بـ [[TZ=Africa/Cairo]]: [[d.getDate()]] و [[d.getUTCDate()]] و [[d.getHours()]] هيطبعوا إيه؟`, done: R`توقعت وطلع 30 و 29 و 0: في القاهرة اللحظة دي بعد نص الليل (UTC+3 في سبتمبر 2026). فلو تقرير بيستخدم [[getDate()]] على سيرفر وتاني على جهاز اليوزر، الأيام بتختلف.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** اكتب [[dayIn(iso, timeZone)]] بترجّع [["YYYY-MM-DD"]] للحظة دي في المدينة دي (بحيلة [["en-CA"]] اللي في الدرس). جرّبها على [["2026-09-29T21:30:00Z"]] في القاهرة والرياض ولندن، وعلى نص مش تاريخ.`, done: R`القاهرة ← [["2026-09-30"]]، والرياض ← [["2026-09-30"]]، ولندن ← [["2026-09-29"]]: نفس اللحظة في يوم مختلف حسب المدينة. والنص الغلط بيرجّع null أو يرمي error واضح انت اخترته (مش [[RangeError: Invalid time value]] من جوه Intl).` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من صفحة [[Intl.DateTimeFormat]] على MDN، لاقي الـ options اللي تطبع [[2026-11-03T12:00:00Z]] بالعربي كده: اسم اليوم كامل، واليوم، واسم الشهر، والسنة، بتوقيت القاهرة.`, done: R`[[{ weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "Africa/Cairo" }]] مع [["ar-EG"]] بتطبع [[الثلاثاء، ٣ نوفمبر ٢٠٢٦]]. ولقيت إن [[dateStyle]] مينفعش يتجمع مع [[weekday]] في نفس الـ options: Node 24 بيرمي [[TypeError: Invalid option : option]] (رسالة مش واضحة، فافتكر السبب).` },
+            { lvl: 'تحدي', t: R`**بيانات حقيقية:** عندك طلبات [[createdAt]] بتاعتها [["2026-09-29T10:00:00Z"]] و [["2026-09-29T21:30:00Z"]] و [["2026-09-30T05:00:00Z"]] و [["2026-09-30T22:15:00Z"]]. اعمل تقرير «طلبات كل يوم» مرة بـ [[toISOString().slice(0, 10)]] ومرة بـ [[dayIn]] بتوقيت القاهرة.`, done: R`بـ UTC: ٢٩ سبتمبر ٢ و ٣٠ سبتمبر ٢. بالقاهرة: ٢٩ سبتمبر ١، و ٣٠ سبتمبر ٢، و ١ أكتوبر ١. نفس الداتا، تقرير مختلف: وده اللي بيحصل لما «مبيعات النهارده» تتحسب بـ UTC لمحل في مصر.` }
           ],
           flag: "script",
           deep: {
-            why: "في SPA الصفحة مبتعملش reload بالساعات، فأي leak صغير في كل navigation بيتراكم لحد ما التاب يتقل أو يقع. وفي Node، leak في سيرفر شغال أسابيع بيوصل لـ «JavaScript heap out of memory» (تاب «Node و npm»: الذاكرة).",
-            how: R`الـ GC في V8 بيستخدم mark-and-sweep: بيبدأ من الـ roots (الـ globals والـ stack) ويعلّم كل حاجة يقدر يوصلها، والباقي يتمسح. فالـ references الدائرية (a بيشاور على b و b على a) مش مشكلة لو محدش من برّه بيوصلهم. المشكلة دايمًا reference من حاجة عايشة.
+            why: "السيرفر غالبًا شغال UTC (Docker و VPS و Vercel)، واليوزر في القاهرة، وفريق الدعم في الرياض. لو خزّنت «الساعة 12:30» من غير توقيت محدش هيعرف دي 12:30 فين. ولو حسبت «طلبات النهارده» بتوقيت السيرفر، طلب الساعة 1 بالليل في القاهرة هيتحسب على امبارح.",
+            how: R`[[21:30Z]] في القاهرة [[00:30]] اليوم اللي بعده (٣٠ سبتمبر)، لأن مصر رجّعت التوقيت الصيفي من 2023 فهي UTC+3 من آخر جمعة في أبريل لآخر خميس في أكتوبر، و UTC+2 باقي السنة. انت مش محتاج تحفظ ده: [[timeZone: "Africa/Cairo"]] بيستخدم قاعدة بيانات IANA اللي في المتصفح و Node وبتتحدّث معاهم. عشان كده متكتبش offset بإيدك ([[+2]] أو [[+3]]): هيبقى غلط نص السنة.
 
-الـ listener على [[window]] أو [[document]] عايش طول الصفحة، والـ callback بتاعه closure شايل كل اللي حواليه. لو الـ component اتشال ومشلتش الـ listener، الـ component وكل داتته لسه ممسوكين. ده سبب cleanup function في useEffect (تاب React).
+[[ar-EG]] بيطلع أرقام عربية مشرقية (٣٠) افتراضيًا، و [[-u-nu-latn]] في آخر الـ locale بيخليها لاتيني (30). و [[en-CA]] حيلة معروفة: شكله [[YYYY-MM-DD]]، فبيدّيك التاريخ في توقيت معيّن كنص، وده اللي تستخدمه لـ «طلبات النهارده في القاهرة». لاحظ إن [[toISOString().slice(0, 10)]] بيدّي تاريخ UTC (29) مش تاريخ القاهرة (30).
 
-[[setInterval]] نفس الفكرة: المتصفح شايل الـ callback لحد clearInterval.
-
-[[WeakMap]] مفاتيحها objects ومبتمنعش الـ GC يمسحها. لما المفتاح يتمسح، الـ entry كلها بتختفي. عشان كده مفيهاش size ولا تقدر تلف عليها. و [[WeakRef]] و [[FinalizationRegistry]] موجودين بس نادرًا بتحتاجهم ومش مضمون إمتى بيشتغلوا.
-
-[[{ signal }]] في addEventListener: أول ما تعمل [[abort()]] كل الـ listeners اللي بنفس الـ signal بتتشال مرة واحدة.`,
-            when: R`اسأل نفسك مع كل [[addEventListener]] و [[setInterval]] و [[subscribe]] و [[new WebSocket]]: «مين هيقفل ده وإمتى؟». و WeakMap لما تربط داتا بعناصر DOM أو objects مش بتاعتك.`,
-            mistakes: R`useEffect بيضيف listener أو interval من غير return cleanup. و cache global في سيرفر Node بمفاتيح من الـ requests من غير حد. و [[console.log]] لـ objects كبيرة في الإنتاج (DevTools بيمسكها). وفي الانترفيو: «إيه أسباب الـ memory leak في JS وإزاي تلاقيها؟».`
+عمل [[new Intl.DateTimeFormat]] مكلف شوية، فلو بتعرض ليستة طويلة اعمله مرة واحدة برّه الـ loop واستخدم [[format]]. و [[resolvedOptions().timeZone]] بيقولك توقيت الجهاز ([["UTC"]] على أغلب السيرفرات)، وتقدر تبعته من المتصفح للسيرفر لو محتاج تحسب بتوقيت اليوزر هناك.`,
+            when: R`أي عرض لتاريخ أو وقت. وفي Next.js/SSR خلي بالك: السيرفر UTC والمتصفح القاهرة، فلو عملت format في الاتنين من غير [[timeZone]] محدد هيطلع نص مختلف وتاخد hydration error (تاب Next.js). حدّد timeZone صريح أو اعرض الوقت في client component.`,
+            mistakes: R`تخزّن التاريخ كنص محلي ([["29/09/2026 12:30"]]). و [[toISOString().slice(0, 10)]] على إنه «النهارده» فيطلع امبارح بعد نص الليل في القاهرة. و offset ثابت بإيدك. و [[toLocaleString()]] من غير locale ولا timeZone فالناتج يختلف من جهاز لجهاز. وفي الانترفيو: «إزاي تتعامل مع time zones في تطبيق فيه يوزرز من بلاد مختلفة؟» الإجابة: UTC في التخزين والـ API، والتحويل عند العرض بـ IANA zone، والـ zone بتاع اليوزر محفوظ في البروفايل لو محتاجه في السيرفر (إيميلات، تقارير).`
           },
-          teach: R`## الفكرة
+          teach: R`## الفكرة في سطرين
 
-الـ **garbage collector** (GC، «جامع الزبالة») بيمسح أي object محدش يقدر يوصله. فالـ leak مش «نسيت تمسح»، الـ leak إن **فيه حاجة لسه ماسكة** reference لحاجة مش محتاجها. والمثال ٤ أجزاء، كل جزء مصدر leak مشهور وعلاجه. الكود للمتصفح، فشغّلناه في Chrome (headless) على صفحة محلية.
+اللحظة بتتخزّن وتتبعت بـ UTC (نص بـ [[Z]] في الآخر)، وبتتحوّل لتوقيت ولغة اليوزر في آخر خطوة بس، وهي بتتعرض. والأداة اللي بتعمل التحويل ده جوه اللغة نفسها اسمها [[Intl.DateTimeFormat]]. المثال بياخد لحظة واحدة ويعرضها بكذا شكل. الناتج كله من Node 24 على Windows.
 
 ---
 
-## ١. [[Map]] بتكبر للأبد
+## ١. اللحظة نفسها
 
 ~~~text app.js
-const cache = new Map();
-function remember(key, value) { cache.set(key, value); }  // بيكبر للأبد: حط حد أقصى
+const createdAt = new Date("2026-09-29T21:30:00Z");
+console.log(createdAt.toISOString(), JSON.stringify({ createdAt }));
 ~~~
 
-[[Map]] بتحتفظ بكل key و value اتحطوا فيها لحد ما تمسحهم بإيدك ([[delete]] أو [[clear]]). و [[cache]] هنا [[const]] على مستوى الملف، يعني عايشة طول عمر الصفحة (أو السيرفر). فلو بتحط فيها حاجة مع كل request أو كل صفحة، الذاكرة بتزيد ومبتنزلش. العلاج: حد أقصى (لو [[cache.size]] عدّى رقم، امسح أقدم واحد)، أو مكتبة LRU cache.
+- [["2026-09-29T21:30:00Z"]]: شكل اسمه **ISO 8601**: السنة-الشهر-اليوم، وبعدين [[T]] (فاصل بين التاريخ والوقت)، والوقت، و [[Z]] = UTC. ده الشكل اللي بييجي من أي API أو داتابيز.
+- [[toISOString()]]: بيكتب اللحظة بنفس الشكل ده، بـ UTC دايمًا، ومعاه الـ ms ([[.000]]).
+- [[JSON.stringify({ createdAt })]]: [[{ createdAt }]] اختصار لـ [[{ createdAt: createdAt }]]. و JSON مالوش نوع «تاريخ»، فـ JSON.stringify بينادي [[toJSON()]] بتاع الـ Date، وده بيرجّع نفس نص [[toISOString()]].
 
----
-
-## ٢. [[WeakMap]]: داتا مربوطة بـ object
-
-~~~text app.js
-const meta = new WeakMap();
-function tag(el, info) { meta.set(el, info); }            // لما el يتمسح، info تتمسح معاه
+~~~text الناتج
+2026-09-29T21:30:00.000Z {"createdAt":"2026-09-29T21:30:00.000Z"}
 ~~~
 
-[[WeakMap]] زي Map بفرق واحد: الـ key **مش بيمنع** الـ GC يمسح الـ object. فلو [[el]] (عنصر في الصفحة مثلًا) اتشال ومبقاش فيه حد ماسكه، الـ GC بيمسحه، والـ entry بتاعته في [[meta]] بتختفي معاه، و [[info]] كمان.
-
-وده ليه تمن:
-
-- الـ key لازم يبقى object: [[meta.set("x", 1)]] بترمي [[TypeError: Invalid value used as weak map key]].
-- مفيش [[size]] ولا تقدر تلف عليها: جرّبنا [[meta.size]] وطلع [[undefined]]. منطقي: عدد العناصر بيتغير لوحده لما الـ GC يشتغل.
+النص ده هو اللي يتخزّن ويتبعت. محدش يقدر يفهمه غلط، لأن الـ Z بتقول هو بتوقيت إيه.
 
 ---
 
-## ٣. [[setInterval]] من غير إيقاف
+## ٢. formatter بالعربي وتوقيت القاهرة
 
 ~~~text app.js
-function startPolling() {
-  const id = setInterval(() => fetch("/api/ping"), 5000);
-  return () => clearInterval(id);
+const cairo = new Intl.DateTimeFormat("ar-EG", { dateStyle: "full", timeStyle: "short", timeZone: "Africa/Cairo" });
+console.log(cairo.format(createdAt));
+~~~
+
+[[Intl]] (اختصار Internationalization) object جوه JavaScript فيه أدوات لكل حاجة بتختلف من بلد لبلد: تواريخ وأرقام وعملات وجمع. و [[new Intl.DateTimeFormat(locale, options)]] بيعمل **formatter**: حاجة بتحفظ الإعدادات، وبعدين [[format(date)]] بتطبّقها على أي تاريخ.
+
+### الـ locale: [["ar-EG"]]
+
+نص بيقول اللغة والبلد: [[ar]] = عربي، و [[EG]] = مصر. بيحدد أسماء الأيام والشهور، وترتيب اليوم والشهر، وشكل الأرقام.
+
+### الـ options
+
+| الخيار | القيمة هنا | معناه |
+|---|---|---|
+| [[dateStyle]] | [["full"]] | التاريخ كامل باسم اليوم (فيه كمان [["long"]] و [["medium"]] و [["short"]]) |
+| [[timeStyle]] | [["short"]] | الساعة والدقيقة من غير ثواني |
+| [[timeZone]] | [["Africa/Cairo"]] | اعرض بتوقيت القاهرة، مهما كان توقيت الجهاز |
+
+~~~text الناتج
+الأربعاء، ٣٠ سبتمبر ٢٠٢٦ في ١٢:٣٠ ص
+~~~
+
+ليه ٣٠ مش ٢٩؟ اللحظة ٩:٣٠ بالليل UTC، ومصر في سبتمبر UTC+3 (التوقيت الصيفي)، فعندنا ١٢:٣٠ بعد نص الليل، يعني اليوم اللي بعده. و [[ص]] يعني صباحًا (AM). والأرقام طلعت مشرقية (٣٠) لأن ده الافتراضي في [["ar-EG"]].
+
+[["Africa/Cairo"]] اسم من قاعدة بيانات اسمها **IANA time zone database**، وفيها لكل بلد تاريخ تغييرات التوقيت الصيفي كله. فمش محتاج تعرف إمتى مصر بتبقى +2 وإمتى +3: Node والمتصفح عارفين.
+
+---
+
+## ٣. نفس اللحظة بلغة وتوقيت تانيين
+
+~~~text app.js
+const riyadh = new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Riyadh" });
+console.log(riyadh.format(createdAt));
+~~~
+
+[["en-GB"]] = إنجليزي بريطاني (اليوم قبل الشهر، و 24 ساعة)، و [["medium"]] = اسم الشهر مختصر. والرياض UTC+3 طول السنة.
+
+~~~text الناتج
+30 Sept 2026, 00:30
+~~~
+
+---
+
+## ٤. [[toLocaleString]]: نفس الحكاية في سطر
+
+~~~text app.js
+console.log(createdAt.toLocaleString("ar-EG-u-nu-latn", { timeZone: "Africa/Cairo", day: "numeric", month: "long", hour: "numeric", minute: "2-digit" }));
+~~~
+
+[[date.toLocaleString(locale, options)]] بيعمل formatter ويستخدمه مرة واحدة. وفيه حاجتين جداد:
+
+**١. [[-u-nu-latn]] في آخر الـ locale.** [[u]] = Unicode extension (إضافة على الـ locale)، و [[nu]] = numbering system (نظام الأرقام)، و [[latn]] = لاتيني (0123). يعني «عربي، بس بأرقام 30 مش ٣٠».
+
+**٢. بدل [[dateStyle]]، حدّدنا كل حتة لوحدها:**
+
+| الخيار | القيمة | النتيجة |
+|---|---|---|
+| [[day]] | [["numeric"]] | 30 |
+| [[month]] | [["long"]] | سبتمبر (اسم كامل) |
+| [[hour]] | [["numeric"]] | 12 |
+| [[minute]] | [["2-digit"]] | 30 (دايمًا رقمين: 05 مش 5) |
+
+اللي محدّدتوش (السنة، اسم اليوم) مش بيظهر.
+
+~~~text الناتج
+30 سبتمبر في 12:30 ص
+~~~
+
+> [[dateStyle]] و [[timeStyle]] مينفعوش مع [[day]] و [[month]] وأخواتهم في نفس الـ options (جرّبناها: [[TypeError: Invalid option : option]]): اختار طريقة من الاتنين.
+
+---
+
+## ٥. حيلة [["en-CA"]]: «التاريخ ده في القاهرة كام؟»
+
+~~~text app.js
+const dayInCairo = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" }).format(createdAt);
+console.log(dayInCairo, createdAt.toISOString().slice(0, 10));
+~~~
+
+[["en-CA"]] = إنجليزي كندي، والشكل الافتراضي للتاريخ فيه [[YYYY-MM-DD]]. فمن غير options غير الـ zone، بيطلّعلك تاريخ اللحظة دي في القاهرة كنص تقدر تقارنه أو تستخدمه كـ key.
+
+والجزء التاني: [[toISOString()]] بيدّي النص الـ UTC كله، و [[.slice(0, 10)]] بياخد أول 10 حروف (من index 0 لحد 10 من غير ما ياخده)، يعني [[2026-09-29]].
+
+~~~text الناتج
+2026-09-30 2026-09-29
+~~~
+
+ده الفخ: تاريخ القاهرة ٣٠، وتاريخ UTC ٢٩. لو حسبت «طلبات النهارده» بـ [[toISOString().slice(0, 10)]] على سيرفر، الطلب ده هيتحسب على امبارح.
+
+---
+
+## ٦. الجهاز ده توقيته إيه؟
+
+~~~text app.js
+console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
+~~~
+
+[[Intl.DateTimeFormat()]] من غير أي حاجة بيستخدم الإعدادات الافتراضية للجهاز، و [[resolvedOptions()]] بيقولك الإعدادات اللي اتختارت فعلًا، ومنها [[timeZone]].
+
+~~~text الناتج (جهاز في مصر)
+Africa/Cairo
+~~~
+
+~~~text الناتج (Linux في Docker، صورة node:22-slim)
+UTC
+~~~
+
+وده بالظبط شكل الموضوع في الحقيقة: جهازك القاهرة، والسيرفر UTC.
+
+---
+
+## ٧. الحل (solCode): لحظة واحدة في ٣ مدن، و [[isTodayInCairo]]
+
+~~~text app.js
+const cairoDay = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" });
+const isTodayInCairo = (date, now = new Date()) => cairoDay.format(date) === cairoDay.format(now);
+const t = new Date("2026-09-29T21:30:00Z");
+for (const tz of ["Africa/Cairo", "Europe/London", "America/New_York"]) {
+  console.log(tz, t.toLocaleString("ar-EG-u-nu-latn", { timeZone: tz, dateStyle: "medium", timeStyle: "short" }));
 }
-const stopPolling = startPolling();
-stopPolling();
+console.log(isTodayInCairo(t, new Date("2026-09-30T08:00:00Z")), isTodayInCairo(t, new Date("2026-09-29T20:00:00Z")));
 ~~~
 
-- [[setInterval(fn, 5000)]]: نادي fn كل 5 ثواني **للأبد**، وبترجّع رقم ([[id]]).
-- المتصفح شايل الـ callback ده (وكل اللي الـ closure بتاعه ماسكه) لحد ما حد ينادي [[clearInterval(id)]].
-- [[return () => clearInterval(id)]]: الدالة بترجّع **دالة إيقاف**. فاللي بيبدأ الحاجة بياخد في إيده طريقة قفلها. وده نفس شكل الـ cleanup في [[useEffect]] في React.
+- [[cairoDay]]: formatter واحد بيتعمل **مرة واحدة** برّه الدالة، لأن عمل formatter جديد مكلف نسبيًا.
+- [[(date, now = new Date()) => ...]]: arrow function بـ parameter تاني ليه قيمة افتراضية: لو منادتهوش، [[now]] = اللحظة الحالية. وده بيخلّينا نجرّبها بـ «دلوقتي» وهمي.
+- [[===]]: بتقارن النصين ([["2026-09-30"]] مع [["2026-09-30"]]).
+- [[for (const tz of [...])]]: بيلف على الـ ٣ zones.
 
-في Chrome جرّبنا نسخة من غير ما نوقّفها ١١ ثانية: السيرفر استقبل [[/api/ping]] مرتين (عند 5 و 10 ثواني). ومع [[stopPolling()]] على طول زي المثال: صفر طلبات.
-
----
-
-## ٤. listeners كتير، سطر واحد يشيلهم: [[AbortController]]
-
-~~~text app.js
-const controller = new AbortController();
-window.addEventListener("resize", () => console.log(innerWidth), { signal: controller.signal });
-document.addEventListener("keydown", (e) => console.log(e.key), { signal: controller.signal });
-controller.abort();
+~~~text الناتج
+Africa/Cairo 30/09/2026، 12:30 ص
+Europe/London 29/09/2026، 10:30 م
+America/New_York 29/09/2026، 5:30 م
+true false
 ~~~
 
-- [[AbortController]]: object بيدّيك [[signal]] (إشارة) و [[abort()]] (اقفل). نفس اللي بتلغي بيه fetch.
-- [[addEventListener(event, fn, { signal })]]: الـ listener **مربوط** بالإشارة. أول ما تعمل [[abort()]]، كل الـ listeners اللي واخدين نفس الـ signal بيتشالوا مرة واحدة.
-- ليه ده مهم؟ الـ listener على [[window]] أو [[document]] عايش طول عمر الصفحة، والـ arrow function بتاعه closure ماسك كل اللي حواليه. لو الـ component اتقفل والـ listener فضل، كل داتته لسه ممسوكة. والطريقة القديمة ([[removeEventListener]]) محتاجة نفس الدالة بالظبط، فلازم تحفظها في متغير.
+لندن UTC+1 صيفًا، ونيويورك UTC−4. وأول نداء true: الساعة 8 الصبح UTC يوم ٣٠ في القاهرة يوم ٣٠، زي اللحظة. والتاني false: ٨ بالليل UTC يوم ٢٩ في القاهرة لسه ٢٩.
 
-جرّبنا في Chrome: ضغطنا [[a]] قبل [[abort()]] فاتطبع [[a]]، وبعدها ضغطنا [[b]] فمتطبعش حاجة:
-
-~~~text الناتج (Console)
-a
-~~~
-
----
-
-## ٥. WeakRef و FinalizationRegistry
-
-[[WeakMap]] بتربط داتا بـ object. [[WeakRef]] أبسط: «إشارة» لـ object **مبتمنعش** الـ garbage collector (GC) إنه يمسحه. و [[FinalizationRegistry]] بتقولك بعدين إن object اتمسح. الاتنين ES2021، في Node والمتصفحات.
-
-~~~text weak.mjs
-const registry = new FinalizationRegistry((label) => console.log("اتمسح من الذاكرة:", label));
-let big = { data: new Array(1e6).fill(7) };
-const ref = new WeakRef(big);
-registry.register(big, "big");
-console.log("قبل:", ref.deref()?.data.length);
-big = null;
-await new Promise((r) => setTimeout(r, 0));
-globalThis.gc();
-await new Promise((r) => setTimeout(r, 0));
-console.log("بعد gc:", ref.deref());
-~~~
-
-~~~powershell
-node --expose-gc weak.mjs
-~~~
-
-~~~text الناتج (Node 24)
-قبل: 1000000
-اتمسح من الذاكرة: big
-بعد gc: undefined
-~~~
-
-- [[new WeakRef(obj)]]: بتعمل الإشارة. و [[ref.deref()]]: بترجّع الـ object لو لسه عايش، أو [[undefined]] لو اتمسح. عشان كده [[?.]] بعدها دايمًا.
-- [[registry.register(obj, "big")]]: لما [[obj]] يتمسح، الـ callback هيتنادى بالقيمة التانية ([["big"]]). متبعتش الـ object نفسه كقيمة تانية، كده انت اللي ماسكه ومش هيتمسح أبدًا.
-- [[big = null]]: شيلنا آخر إشارة قوية. الـ [[WeakRef]] مبيتحسبش.
-- [[globalThis.gc()]]: بيشغّل الـ GC بالعافية، وموجود بس مع flag [[--expose-gc]] (للتجربة بس). من غيره: [[TypeError: globalThis.gc is not a function]].
-- الـ [[await]] قبل الـ gc مهم: الـ engine بيمسك أي object اتعمله [[deref()]] لحد آخر الـ task الحالية، فلازم نعدّي task.
-
-### استخدام حقيقي: cache مبيمسكش الحاجات بالعافية
-
-~~~text cache.mjs
-const cache = new Map();
-const registry = new FinalizationRegistry((key) => {
-  if (!cache.get(key)?.deref()) cache.delete(key);
-});
-function getImage(key) {
-  const hit = cache.get(key)?.deref();
-  if (hit) return hit;
-  const img = { key, pixels: new Uint8Array(5e6) };
-  cache.set(key, new WeakRef(img));
-  registry.register(img, key);
-  return img;
-}
-~~~
-
-~~~text الناتج (Node 24 بـ --expose-gc: بعد getImage مرتين، و a = null، و gc)
-true 1
-بعد gc: 0
-~~~
-
-- نفس الـ key مرتين رجّع **نفس** الـ object ([[true]]) من غير ما يعمل 5MB تانيين.
-- لما محدش بقى ماسك الصورة، الـ GC مسحها، والـ registry شال الـ key من الـ Map، فالـ [[size]] بقى 0.
-- الـ [[if]] جوه الـ callback: لو نفس الـ key اتعمل له صورة جديدة قبل ما الـ callback ييجي، متمسحهاش.
-
-> **مش مضمون إمتى (ولا إذا كان) الـ callback هيتنادى.** الـ GC بيشتغل على مزاجه، وممكن البرنامج يقفل قبله. وثائق اللغة نفسها بتقول تجنّبهم لو تقدر. استخدمهم لـ cache أو تنضيف «لو حصل كويس»، عمرك ما تحط فيهم حاجة لازم تحصل (قفل ملف، حفظ داتا): دي محتاجة [[close()]] صريحة أو [[using]].
-
----
-
-## ٦. إزاي تلاقي leak: heap snapshot
-
-### في المتصفح (DevTools)
-
-ده من الـ docs ومن الـ «جرّب»، مش متشغّل أوتوماتيك هنا:
-
-1. DevTools ← تاب **Memory** ← **Heap snapshot** ← Take snapshot.
-2. اعمل الحاجة اللي شاكك فيها كذا مرة (افتح وقفل modal ١٠ مرات).
-3. دوس أيقونة الزبالة (Collect garbage)، وخد snapshot تاني.
-4. في الـ snapshot التاني اختار **Comparison**: أي نوع بيزيد بنفس عدد المرات وما بيقلش = leak.
-5. اكتب **Detached** في الفلتر: عناصر DOM اتشالت من الصفحة ولسه حد ماسكها، وتحت في **Retainers** هتلاقي مين.
-
-### heap snapshot في Node: node --inspect و writeHeapSnapshot
-
-نفس الـ DevTools بتفتح على برنامج Node:
-
-~~~powershell
-node --inspect server.js
-~~~
-
-~~~text الناتج (Node 24)
-Debugger listening on ws://127.0.0.1:9229/f8949dca-483b-4bcf-8593-a1b230c3a8f0
-For help, see: https://nodejs.org/learn/getting-started/debugging
-~~~
-
-- [[--inspect]]: بيفتح بورت debugging على [[127.0.0.1:9229]] (محلي بس، متفتحوش على [[0.0.0.0]] في سيرفر: أي حد يوصله يقدر يشغّل كود).
-- افتح [[chrome://inspect]] في Chrome، وتحت Remote Target دوس **inspect**، وهيفتحلك DevTools فيه تاب Memory بنفس الخطوات اللي فوق (الخطوات دي من وثائق Node، اتشغّل منها هنا الـ flag بس).
-- [[--inspect-brk]]: نفس الكلام بس بيقف على أول سطر، عشان تلحق تفتح الـ DevTools قبل ما الكود يشتغل.
-
-ولو السيرفر في مكان مفيهوش Chrome، اكتب الـ snapshot لملف من الكود نفسه:
-
-~~~text leak.mjs
-import { writeHeapSnapshot } from "node:v8";
-const sessions = new Map();
-class Session { constructor(id) { this.id = id; this.buf = new Array(1000).fill(id); } }
-function onRequest(id) { sessions.set(id, new Session(id)); }
-for (let i = 0; i < 5000; i++) onRequest(i);
-console.log("heapUsed MB:", Math.round(process.memoryUsage().heapUsed / 1e6));
-console.log("snapshot:", writeHeapSnapshot());
-~~~
-
-~~~text الناتج (Node 24)
-heapUsed MB: 46
-snapshot: Heap.20261029.235508.20492.0.001.heapsnapshot
-~~~
-
-- [[process.memoryUsage().heapUsed]]: الذاكرة المستخدمة في الـ heap بالبايت. راقبها مع الوقت: لو بتزيد ومبتنزلش بعد ما الـ requests تخلص، فيه leak.
-- [[writeHeapSnapshot()]]: بيكتب ملف [[.heapsnapshot]] (هنا حوالي 6MB) في الفولدر الحالي ويرجّع اسمه. البرنامج بيقف لحظة وهو بيكتبه، وبياخد ذاكرة قد الـ heap تقريبًا، فمتعملوش كل دقيقة في production.
-- افتح الملف من DevTools ← Memory ← Load. عدّيت الـ objects اللي اسمها [[Session]] جوه الملف ده بسكربت صغير: **5000**، يعني كل session لسه في الذاكرة، والـ Retainers هيقولك إن اللي ماسكهم الـ [[sessions]] Map. ده نفس leak الجزء ١.
-- فيه كمان [[node --heapsnapshot-near-heap-limit=1 app.js]] بيكتب snapshot لوحده قبل ما البرنامج يقع بـ out of memory (من وثائق Node).
+> لو هتقارن نص الناتج ده بنص كتبته بإيدك: العربي بيحط علامة اتجاه مخفية (U+200F) جنب الـ [[/]]، فـ [["30/09/2026"]] اللي انت كتبتها مش هتساوي اللي طالع. قارن نصوص [[en-CA]] زي ما عملنا، مش نصوص عرض.
 
 ---
 
 ## الخلاصة
 
-| مصدر الـ leak | العلاج |
+| عايز | استخدم |
 |---|---|
-| Map أو cache بيكبر | حد أقصى، أو WeakMap لو الـ key object |
-| [[setInterval]] أو subscription | دالة إيقاف ترجع مع البداية، وتتنادى في الـ cleanup |
-| listeners على window و document | [[{ signal }]] و [[abort()]]، أو removeEventListener |
-| عنصر DOM اتشال ولسه في متغير | امسح المتغير، أو WeakMap |
-| cache لحاجات تقيلة ممكن تتمسح | [[WeakRef]] و [[FinalizationRegistry]]، من غير ما تعتمد على إمتى |
-| مش عارف مين ماسك الذاكرة | heap snapshot: DevTools، أو [[node --inspect]]، أو [[writeHeapSnapshot()]] |
+| تخزّن أو تبعت لحظة | [[toISOString()]] (أو JSON.stringify لوحده) |
+| تعرضها لليوزر | [[Intl.DateTimeFormat(locale, { timeZone, ... })]] |
+| أرقام لاتيني مع العربي | [[-u-nu-latn]] في الـ locale |
+| تاريخ اللحظة في zone معيّن | [[en-CA]] + [[timeZone]] |
+| تعرف توقيت الجهاز | [[resolvedOptions().timeZone]] |
 
-والسؤال اللي تسأله مع كل حاجة بتبدأها: «مين هيقفل ده وإمتى؟».`,
+ومتكتبش offset بإيدك (+2 أو +3): اكتب اسم الـ zone وسيب IANA يعرف التوقيت الصيفي.`,
           lines: [
-            R`[[Map]] عادية بتمسك المفاتيح والقيم بقوة: طول ما [[cache]] نفسه موجود، أي حاجة جواه مش هتتمسح من الذاكرة.`,
-            R`كل نداء بيضيف عنصر ومحدش بيمسح. لو المفاتيح بتتغيّر (id لكل request مثلًا) الـ Map بتكبر للأبد والذاكرة تزيد لحد ما الصفحة أو السيرفر يتقل. الحل: حد أقصى ([[cache.size]]) وامسح الأقدم بـ [[delete]].`,
-            R`[[WeakMap]] المفاتيح فيها لازم objects، وبتمسكهم «بضعف»: وجود الـ object كمفتاح هنا مش بيمنع الـ garbage collector إنه يمسحه.`,
-            R`بنربط معلومات بعنصر DOM من غير ما نعدّل العنصر. لما العنصر يتشال من الصفحة ومفيش حد تاني ماسكه، هو و [[info]] بتاعته يتمسحوا لوحدهم. لو كانت [[Map]] عادية كانت هتفضل ماسكة العنصر المشال (detached) في الذاكرة.`,
-            R`بتبدأ request كل شوية (polling). أي [[setInterval]] من غير [[clearInterval]] بيفضل شغال حتى لو الصفحة أو الـ component اللي بدأه مبقاش موجود.`,
-            R`كل 5 ثواني [[fetch]] لـ [[/api/ping]]. و [[setInterval]] بترجّع [[id]] للـ timer ده، ومن غيره مفيش طريقة توقفه.`,
-            R`بترجّع دالة توقف الـ polling (closure فاكر [[id]]). نفس فكرة الـ unsubscribe: اللي بيبدأ حاجة يرجّع طريقة إيقافها، ودي اللي تتنادى في الـ cleanup زي الـ return بتاع useEffect.`,
-            R`نهاية [[startPolling]].`,
-            R`بنبدأ الـ polling ونحفظ دالة الإيقاف. لو مسكتش الدالة اللي راجعة، الـ interval هيفضل شغال ومش هتقدر توقفه.`,
-            R`بنوقف الـ interval لما مبقناش محتاجينه (مثلًا اليوزر خرج من الصفحة دي). ساعتها الـ callback وكل اللي ماسكه يقدروا يتمسحوا من الذاكرة.`,
-            R`controller واحد هنربط بيه كذا listener: [[controller.signal]] بيتبعت لكل listener، ولما نعمل [[abort()]] كلهم يتشالوا مرة واحدة.`,
-            R`listener على [[resize]] بيطبع العرض. الـ [[signal]] في الـ options بيربطه بالـ controller، فمش محتاجين نحتفظ بالدالة عشان [[removeEventListener]].`,
-            R`listener تاني على حدث مختلف وعنصر مختلف بنفس الـ [[signal]]. أي عدد listeners ممكن يتربطوا بنفس الـ controller.`,
-            R`سطر واحد بيشيل الـ listeners الاتنين. من غيره كنت محتاج [[removeEventListener]] لكل واحد بنفس الدالة بالظبط، والـ arrow functions هنا مش محفوظة في متغير، فمكنتش هتقدر تشيلها أصلًا.`,
+            R`لحظة جاية بـ [[Z]] في آخرها، يعني UTC: ٩:٣٠ بالليل يوم ٢٩ سبتمبر بتوقيت جرينتش. ده الشكل اللي بييجي عادة من API أو داتابيز، وهو لحظة واحدة مش مربوطة بأي بلد.`,
+            R`بيطبع نفس النص مرتين: [[toISOString()]] بتطبع بـ UTC وآخرها [[Z]]، و [[JSON.stringify]] لما يلاقي Date بينادي [[toJSON]] اللي بترجّع نفس الشكل. فالـ Date بيوصل في JSON كـ **string** مش Date، والطرف التاني لازم يعمل [[new Date(...)]] تاني.`,
+            R`بيعمل formatter مرة واحدة: [[ar-EG]] عربي بشكل مصر (أسماء أيام وأرقام عربية)، و [[dateStyle]] و [[timeStyle]] أشكال جاهزة بدل ما تختار كل جزء، و [[timeZone]] بيحدد التوقيت اللي يتعرض بيه بدل توقيت الجهاز. ومتخلطش [[dateStyle]] مع [[day]] أو [[month]] في نفس الـ options، ده بيرمي TypeError.`,
+            R`بيطبع [[الأربعاء، ٣٠ سبتمبر ٢٠٢٦ في ١٢:٣٠ ص]]: نفس اللحظة اللي كانت يوم ٢٩ في UTC بقت ٣٠ بعد نص الليل في القاهرة (UTC+3 وقتها). ده سبب إن التاريخ «بيتزحلق يوم» لو عرضته بتوقيت غلط.`,
+            R`formatter تاني لنفس اللحظة: لغة [[en-GB]] (اليوم قبل الشهر) وتوقيت الرياض. الـ Date نفسه مبيتغيرش، اللي بيتغير طريقة العرض بس، فتقدر تعرض نفس اللحظة لكل يوزر بلغته وبلده.`,
+            R`بيطبع [[30 Sept 2026, 00:30]]: الرياض UTC+3 طول السنة، فطلعت نفس ساعة القاهرة في سبتمبر. والساعة بنظام ٢٤ ساعة لأن ده عُرف [[en-GB]].`,
+            R`[[toLocaleString]] بتاخد نفس الـ options من غير ما تعمل formatter بإيدك، وهنا اخترنا الأجزاء واحد واحد ([[day]] و [[month]] و [[hour]] و [[minute]]). والإضافة [[-u-nu-latn]] في آخر اللغة معناها «numbering system لاتيني»: كلام عربي بأرقام [[0-9]]، فيطبع [[30 سبتمبر في 12:30 ص]].`,
+            R`حيلة معروفة: [[en-CA]] بتطبع التاريخ بشكل [[YYYY-MM-DD]]، فبتاخد «تاريخ اللحظة دي في القاهرة» كنص جاهز للمقارنة أو كمفتاح. من غير [[timeZone]] هتاخد تاريخ الجهاز، وده على السيرفر غالبًا UTC.`,
+            R`بيطبع [[2026-09-30 2026-09-29]]: الأول تاريخ القاهرة، والتاني أول ١٠ حروف من الـ ISO يعني تاريخ UTC. الغلطة المشهورة إنك تاخد [[toISOString().slice(0, 10)]] على إنه «النهارده»، فطلبات بعد نص الليل في مصر تتحسب على اليوم اللي قبله.`,
+            R`[[resolvedOptions().timeZone]] بترجّع الـ time zone اللي الجهاز شغّال بيه: على السيرفرات و Docker غالبًا [["UTC"]]، وعلى جهازك [["Africa/Cairo"]]. اطبعه أول حاجة لما تلاقي تاريخ مختلف بين جهازك والسيرفر.`,
           ],
-          sol: R`صفحة سليمة: في الـ Comparison الـ [[# Delta]] حوالي صفر، أو بيزيد مرة وبعدين يثبت. صفحة فيها leak: رقم بيزيد بنفس النسبة مع كل مرة (فتحت 10 مرات فزاد 10 أو مضاعفاتها)، زي [[HTMLDivElement]] أو [[Detached HTMLDivElement]] أو closures بتاعة listeners.
+          sol: R`لـ [[21:30Z]] يوم ٢٩ سبتمبر: القاهرة ٣٠ سبتمبر 12:30 ص، ولندن ٢٩ سبتمبر 10:30 م (لندن UTC+1 صيفًا)، ونيويورك ٢٩ سبتمبر 5:30 م (UTC-4). وفي ١٥ يناير القاهرة بقت 11:30 م نفس اليوم: الفرق بقى ساعتين مش ٣، لأن التوقيت الصيفي خلص. ولا سطر في الكود اتغير، و Intl هو اللي عارف.
 
-لو كتبت «Detached» في خانة الفلتر ولقيت عناصر، دي عناصر اتشالت من الصفحة بس لسه فيه حاجة ماسكاها: listener على window مش اتشال، أو متغير أو Map شايلها، أو setInterval لسه شغال. افتح العنصر وبص في «Retainers» تحت، هتلاقي السلسلة لحد اللي ماسكه. وقبل الـ snapshot التاني دوس زرار الزبالة (Collect garbage) عشان متتلخبطش بحاجات لسه متمسحتش.`
+[[isTodayInCairo]]: حوّل اللحظة واللحظة الحالية لنص تاريخ بتوقيت القاهرة بـ [[en-CA]] وقارن النصين. متقارنش بـ [[getDate()]]: ده بتوقيت الجهاز. ومتطرحش [[Date.now() - date < 86400000]]: دي «آخر ٢٤ ساعة» مش «النهارده».`,
+          solCode: R`const cairoDay = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" });
+const isTodayInCairo = (date, now = new Date()) => cairoDay.format(date) === cairoDay.format(now);
+const t = new Date("2026-09-29T21:30:00Z");
+for (const tz of ["Africa/Cairo", "Europe/London", "America/New_York"]) {
+  console.log(tz, t.toLocaleString("ar-EG-u-nu-latn", { timeZone: tz, dateStyle: "medium", timeStyle: "short" }));
+}
+console.log(isTodayInCairo(t, new Date("2026-09-30T08:00:00Z")), isTodayInCairo(t, new Date("2026-09-29T20:00:00Z")));`
+        },
+        {
+          cmd: "Intl.RelativeTimeFormat",
+          title: "تكتب «من ٥ دقايق» و «امبارح» إزاي من غير مكتبة؟",
+          desc: R`[[Intl.RelativeTimeFormat(locale, { numeric: "auto" })]] بيحوّل رقم ووحدة لجملة: [[format(-1, "day")]] بالعربي «أمس»، و [[format(-3, "hour")]] «قبل 3 ساعات»، و [[format(2, "week")]] «خلال أسبوعين». السالب للماضي والموجب للمستقبل. و [[numeric: "auto"]] هو اللي بيخلي -1 day «أمس» بدل «قبل يوم واحد».
+
+هو مبيحسبش الفرق، انت اللي بتحسبه: الفرق بالثواني، وبعدين تختار أكبر وحدة مناسبة (سنة، شهر، أسبوع، يوم، ساعة، دقيقة)، وتقسم عليها. ده كل اللي [[timeAgo]] بتعمله.`,
+          example: R`const rtf = new Intl.RelativeTimeFormat("ar", { numeric: "auto" });
+console.log(rtf.format(-1, "day"), "|", rtf.format(-3, "hour"), "|", rtf.format(2, "week"));
+const UNITS = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60]];
+function timeAgo(date, now = Date.now()) {
+  const sec = Math.round((date - now) / 1000);
+  for (const [unit, size] of UNITS) {
+    if (Math.abs(sec) >= size) return rtf.format(Math.round(sec / size), unit);
+  }
+  return rtf.format(sec, "second");
+}
+const now = Date.now();
+console.log(timeAgo(now - 5 * 60 * 1000), "|", timeAgo(now - 26 * 3600 * 1000));
+console.log(timeAgo(now + 3 * 86400 * 1000), "|", timeAgo(now - 10 * 1000));`,
+          try: R`عدّل [[timeAgo]] بحيث أي حاجة أقل من 45 ثانية تطلع «الآن» (جرّب [[rtf.format(0, "second")]]). وبعدين خليها ترجّع التاريخ نفسه (بـ Intl.DateTimeFormat) لو الفرق أكتر من أسبوع، زي ما السوشيال ميديا بتعمل. وجرّب [[new Intl.RelativeTimeFormat("ar-EG", { numeric: "auto" })]] بدل [["ar"]]: إيه الفرق في الأرقام؟`,
+          practice: [
+            { lvl: 'سريع', t: R`قارن: اعمل [[rtf]] بالعربي مرة بـ [[numeric: "auto"]] ومرة من غيره، واطبع من الاتنين [[format(-1, "day")]] و [[format(1, "day")]] و [[format(0, "day")]] و [[format(0, "second")]].`, done: R`مع auto: [[أمس]] و [[غدًا]] و [[اليوم]] و [[الآن]]. من غيره: [[قبل يوم واحد]] و [[خلال يوم واحد]] و [[خلال 0 يوم]] و [[خلال 0 ثانية]]، والأخيرتين واضح إنهم غلط في واجهة حقيقية.` },
+            { lvl: 'تطبيق', t: R`ابني badge «آخر ظهور»: [[<span class="seen" data-ts="...">]] لكذا يوزر، و function بتملا كل واحد بـ [[timeAgo]] (اللي بتاخد locale كـ argument)، وبتتنادي تاني كل ٣٠ ثانية بـ setInterval. جرّب [["ar"]] و [["ar-EG"]] و [["en"]].`, done: R`يوزر من ٥ دقايق: [["en"]] ← [[5 minutes ago]]، و [["ar"]] ← [[قبل 5 دقائق]]. ويوزر من ٣ ساعات بـ [["ar-EG"]] ← [[قبل ٣ ساعات]] بالأرقام العربي. وبعد دقيقة النص بيتحدث لوحده من غير reload، والـ formatter بيتعمل مرة واحدة مش جوه الـ interval.` },
+            { lvl: 'تحدي', t: R`مسألة: [[timeAgo]] بتحسب «أمس» بالثواني (من 24 لـ 48 ساعة). اكتب [[dayLabel(date, now, timeZone)]] بتقارن يوم التقويم في المدينة (بـ [[dayIn]] من الدرس اللي فات): نفس اليوم ← [[rtf.format(0, "day")]]، اليوم اللي قبله ← [[rtf.format(-1, "day")]]، غير كده التاريخ نفسه.`, done: R`رسالة [["2026-10-14T20:50:00Z"]] والوقت دلوقتي [["2026-10-14T21:10:00Z"]] (يعني 23:50 و 00:10 في القاهرة): [[dayLabel]] بترجّع [[أمس]] مع إن الفرق ٢٠ دقيقة، و [[timeAgo]] بترجّع [[قبل 20 دقيقة]]. والعكس: رسالة قبل نفس الـ now بـ ٣٠ ساعة ([["2026-10-13T15:10:00Z"]]، يعني يوم ١٣ في القاهرة والنهارده ١٥): [[dayLabel]] بترجّع تاريخ، و [[timeAgo]] بترجّع [[أمس]] غلط.` },
+          ],
+          flag: "script",
+          deep: {
+            why: "«من ٥ دقايق» أسهل في القراية من «29/09/2026 23:25» في التعليقات والإشعارات والرسايل. وزمان كان الحل moment.js كلها (مكتبة ضخمة) عشان الجملة دي. دلوقتي هي جوه اللغة، ومترجمة لكل لغة صح (المثنى في العربي: «خلال أسبوعين» مش «خلال 2 أسبوع»).",
+            how: R`الوحدات المسموحة: [[year]] و [[quarter]] و [[month]] و [[week]] و [[day]] و [[hour]] و [[minute]] و [[second]]. والرسالة متبنية من قواعد اللغة في ICU (نفس اللي تحت Intl.DateTimeFormat)، فالعربي بيطلع «قبل 5 دقائق» و «قبل 10 ثوانِ» بالمفرد والجمع الصح.
+
+الـ locale [["ar"]] في Node بيطلع أرقام لاتيني، و [["ar-EG"]] بيطلع أرقام مشرقية (٥)، وتقدر تفرض أي واحد بـ [[-u-nu-latn]] أو [[-u-nu-arab]].
+
+[[timeAgo]] بتفترض إن الشهر ٣٠ يوم والسنة ٣٦٥: تقريب مقبول للعرض بس مش للحسابات. و [[Math.round]] بتخلي ٢٦ ساعة «أمس» (يوم واحد)، و ٣٦ ساعة «قبل يومين»، وده غالبًا اللي اليوزر متوقعه. لو عايز «أمس» تبقى أمس بالتقويم فعلًا (مش ٢٤ ساعة) محتاج تقارن التواريخ بتوقيت اليوزر (الدرس اللي فات).
+
+والنص ده بيتغير مع الوقت، فلو الصفحة مفتوحة ساعة لازم تحدّثه ([[setInterval]] كل دقيقة)، ويُفضّل تحط التاريخ الكامل في [[<time datetime="...">]] و [[title]] عشان اليوزر يعرف الوقت بالظبط.`,
+            when: R`تعليقات، وإشعارات، و «آخر ظهور»، و «اتعدّل من ...». وللمواعيد المهمة (فاتورة، حجز، مهلة) اعرض التاريخ الكامل، مش «من ٣ أيام».`,
+            mistakes: R`تحسبه في السيرفر (SSR) وتبعته نص ثابت: هيبقى قديم، وهيعمل hydration mismatch في Next.js لو اتحسب تاني في المتصفح بثانية مختلفة. وتكتب الجملة بإيدك ([[$__bt منذ $__{n} دقيقة$__bt]]) فتطلع «منذ 2 دقيقة» و «منذ 11 دقيقة» غلط نحويًا. وتنسى المستقبل (مواعيد جاية) فتطلع «قبل -3 أيام».`
+          },
+          teach: R`## المثال بيعمل إيه
+
+جزئين: الأول بيوريك [[Intl.RelativeTimeFormat]] لوحده (رقم + وحدة ← جملة)، والتاني دالة [[timeAgo]] بتحسب الفرق بين لحظتين وتختار الوحدة المناسبة. الناتج كله من Node 24 على Windows.
+
+---
+
+## ١. الـ formatter
+
+~~~text app.js
+const rtf = new Intl.RelativeTimeFormat("ar", { numeric: "auto" });
+console.log(rtf.format(-1, "day"), "|", rtf.format(-3, "hour"), "|", rtf.format(2, "week"));
+~~~
+
+- [[Intl.RelativeTimeFormat]]: من عيلة [[Intl]] (الأدوات اللي بتختلف من لغة للغة). «Relative» يعني نسبي: الوقت بالنسبة لدلوقتي.
+- [["ar"]]: الـ locale، عربي من غير بلد.
+- [[numeric: "auto"]]: لو فيه كلمة خاصة للرقم ده استخدمها («أمس» و «غدًا» و «الآن»). الافتراضي [["always"]]: رقم دايمًا.
+- [[rtf.format(رقم, وحدة)]]: السالب ماضي، والموجب مستقبل.
+
+~~~text الناتج
+أمس | قبل 3 ساعات | خلال أسبوعين
+~~~
+
+لاحظ [["خلال أسبوعين"]]: الـ formatter عارف المثنى في العربي، مش [["خلال 2 أسبوع"]]. وده سبب إنك متكتبش الجملة بإيدك.
+
+### الفرق بتاع [[numeric]]
+
+~~~text app.js
+const rtfA = new Intl.RelativeTimeFormat("ar");
+console.log(rtfA.format(-1, "day"), "|", rtf.format(0, "second"), "|", rtfA.format(0, "second"), "|", rtf.format(-2, "day"));
+~~~
+
+~~~text الناتج
+قبل يوم واحد | الآن | خلال 0 ثانية | أول أمس
+~~~
+
+من غير [["auto"]] بتطلع «قبل يوم واحد» و «خلال 0 ثانية». ومعاه «الآن» و «أول أمس».
+
+### الوحدات
+
+[[year]] و [[quarter]] و [[month]] و [[week]] و [[day]] و [[hour]] و [[minute]] و [[second]] (والجمع زي [["days"]] بيتقبل كمان). أي حاجة تانية بترمي error:
+
+~~~text الناتج لـ rtf.format(-1, "decade")
+RangeError: Invalid unit argument for Intl.RelativeTimeFormat.prototype.format() 'decade'
+~~~
+
+---
+
+## ٢. جدول الوحدات
+
+~~~text app.js
+const UNITS = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60]];
+~~~
+
+array فيها arrays صغيرة، كل واحدة [[[اسم الوحدة, حجمها بالثواني]]]، **من الأكبر للأصغر** (الترتيب مهم، هتشوف ليه).
+
+| الوحدة | الحساب | ثواني |
+|---|---|---|
+| minute | 60 | 60 |
+| hour | 60 × 60 | 3,600 |
+| day | 24 × 3600 | 86,400 |
+| week | 7 × 86400 | 604,800 |
+| month | 30 × 86400 | 2,592,000 |
+| year | 365 × 86400 | 31,536,000 |
+
+الشهر ٣٠ يوم والسنة ٣٦٥ تقريب. مقبول لجملة زي «قبل ٣ شهور»، مش لحسابات.
+
+---
+
+## ٣. دالة [[timeAgo]] سطر سطر
+
+~~~text app.js
+function timeAgo(date, now = Date.now()) {
+  const sec = Math.round((date - now) / 1000);
+  for (const [unit, size] of UNITS) {
+    if (Math.abs(sec) >= size) return rtf.format(Math.round(sec / size), unit);
+  }
+  return rtf.format(sec, "second");
+}
+~~~
+
+1. **[[now = Date.now()]]**: parameter بقيمة افتراضية. لو مبعتّوش، بياخد اللحظة الحالية كرقم ms. ولو بعته (في التجارب) تقدر تثبّت «دلوقتي».
+2. **[[(date - now) / 1000]]**: الطرح بيحوّل الاتنين لـ ms (حتى لو [[date]] كان Date، الطرح بيحوّله رقم). والقسمة على 1000 = ثواني. و [[Math.round]] بتقرّب لأقرب رقم صحيح. الماضي بيطلع **سالب**.
+3. **[[for (const [unit, size] of UNITS)]]**: بيلف على الجدول، وكل عنصر بيتفك (destructuring) لاسمين: [[unit]] و [[size]].
+4. **[[Math.abs(sec) >= size]]**: [[Math.abs]] بتشيل السالب (abs = absolute، القيمة المطلقة)، عشان الماضي والمستقبل يتقارنوا بنفس الطريقة. أول وحدة الفرق أكبر منها أو يساويها هي اللي نختارها، وعشان كده الجدول من الأكبر.
+5. **[[Math.round(sec / size)]]**: كام وحدة؟ والإشارة (سالب أو موجب) بتفضل زي ما هي، فالـ formatter يعرف ماضي ولا مستقبل.
+6. **[[return]]**: أول ما نلاقي الوحدة نرجع على طول، والـ loop بيقف.
+7. **السطر الأخير**: لو ولا وحدة نفعت (أقل من دقيقة)، رجّع بالثواني.
+
+---
+
+## ٤. التجربة
+
+~~~text app.js
+const now = Date.now();
+console.log(timeAgo(now - 5 * 60 * 1000), "|", timeAgo(now - 26 * 3600 * 1000));
+console.log(timeAgo(now + 3 * 86400 * 1000), "|", timeAgo(now - 10 * 1000));
+~~~
+
+بنثبّت [[now]] مرة واحدة، ونعمل لحظات قبلها وبعدها بالـ ms ([[5 * 60 * 1000]] = ٥ دقايق). نتتبّع الـ ٤ نداءات:
+
+| النداء | [[sec]] | أول وحدة تنفع | [[Math.round(sec / size)]] | الناتج |
+|---|---|---|---|---|
+| قبل ٥ دقايق | −300 | minute (60) | −5 | قبل 5 دقائق |
+| قبل ٢٦ ساعة | −93,600 | day (86,400) | −1.08 ← −1 | أمس |
+| بعد ٣ أيام | 259,200 | day | 3 | خلال 3 أيام |
+| قبل ١٠ ثواني | −10 | ولا واحدة | (بالثواني) −10 | قبل 10 ثوانِ |
+
+~~~text الناتج
+قبل 5 دقائق | أمس
+خلال 3 أيام | قبل 10 ثوانِ
+~~~
+
+لاحظ إن ٢٦ ساعة طلعت «أمس» بسبب [[Math.round]]. و «أمس» هنا معناها «حوالي يوم»، مش «امبارح في التقويم».
+
+---
+
+## ٥. الحل (solCode): «الآن» وتاريخ كامل بعد أسبوع
+
+~~~text app.js
+const rtf = new Intl.RelativeTimeFormat("ar-EG", { numeric: "auto" });
+const dateFmt = new Intl.DateTimeFormat("ar-EG", { dateStyle: "long", timeZone: "Africa/Cairo" });
+const UNITS = [["day", 86400], ["hour", 3600], ["minute", 60]];
+function timeAgo(date, now = Date.now()) {
+  const sec = Math.round((date - now) / 1000);
+  if (Math.abs(sec) < 45) return rtf.format(0, "second");
+  if (Math.abs(sec) >= 604800) return dateFmt.format(date);
+  for (const [unit, size] of UNITS) {
+    if (Math.abs(sec) >= size) return rtf.format(Math.round(sec / size), unit);
+  }
+  return rtf.format(Math.round(sec / 60), "minute");
+}
+~~~
+
+الفرق عن المثال:
+
+- [["ar-EG"]] بدل [["ar"]]: أرقام مشرقية (٥ مش 5).
+- أقل من 45 ثانية: [[rtf.format(0, "second")]] = «الآن».
+- أسبوع أو أكتر: التاريخ نفسه بـ [[Intl.DateTimeFormat]]، فالجدول بقى فيه day و hour و minute بس.
+- من 45 لـ 59 ثانية: مفيش وحدة تنفع في الـ loop، فالسطر الأخير بيقرّبها لدقيقة.
+
+~~~text app.js
+const now = Date.now();
+console.log(timeAgo(now - 20 * 1000), "|", timeAgo(now - 50 * 1000), "|", timeAgo(now - 5 * 3600 * 1000));
+console.log(timeAgo(new Date("2026-09-12T10:00:00Z"), new Date("2026-09-29T10:00:00Z")));
+~~~
+
+~~~text الناتج
+الآن | قبل دقيقة واحدة | قبل ٥ ساعات
+١٢ سبتمبر ٢٠٢٦
+~~~
+
+50 ثانية: [[Math.round(-50 / 60)]] = −1، فطلعت «قبل دقيقة واحدة». والسطر التاني: الفرق ١٧ يوم (أكتر من أسبوع)، فطلع التاريخ.
+
+---
+
+## الخلاصة
+
+| الحتة | دورها |
+|---|---|
+| [[Intl.RelativeTimeFormat(locale, { numeric: "auto" })]] | رقم + وحدة ← جملة صح نحويًا |
+| السالب / الموجب | ماضي / مستقبل |
+| [[timeAgo]] | انت اللي بتحسب الفرق وتختار الوحدة، الـ formatter بيكتب بس |
+| الجدول من الأكبر للأصغر | عشان أول وحدة تنفع تبقى الأنسب |
+
+والجملة دي بتقدم مع الوقت: لو الصفحة مفتوحة، حدّثها كل دقيقة.`,
+          lines: [
+            R`بيعمل formatter للوقت النسبي بالعربي. [[numeric: "auto"]] بيخليه يستخدم كلمات زي «أمس» و«غدًا» و«الآن» لما تنفع، ومن غيره (الافتراضي [["always"]]) هيقول «قبل يوم واحد».`,
+            R`[[format]] بتاخد رقم ووحدة: السالب ماضي والموجب مستقبل. فبيطبع [[أمس | قبل 3 ساعات | خلال أسبوعين]]، والمثنى والجمع بيتظبطوا لوحدهم. بس هو مبيحسبش فرق بين تاريخين: انت اللي لازم تديله الرقم والوحدة، وده شغل الدالة اللي تحت.`,
+            R`جدول الوحدات من الأكبر للأصغر، وجنب كل وحدة عدد ثوانيها: السنة ٣٦٥ يوم والشهر ٣٠ يوم. الأرقام دي **تقريبية**، وكفاية لـ «من قد إيه» في كومنت أو إشعار، مش لحساب فواتير أو أعمار.`,
+            R`[[timeAgo]] بتاخد التاريخ اللي عايزين نوصفه، و [[now]] قيمتها الافتراضية [[Date.now()]]. خلّيناها باراميتر عشان في الاختبارات تقدر تثبّت «دلوقتي» وتاخد نفس الناتج كل مرة.`,
+            R`الفرق بالثواني: طرح تاريخ من تاريخ بيدّي milliseconds، فبنقسم على ١٠٠٠ ونقرّب. والإشارة مهمة: سالب لو التاريخ في الماضي وموجب لو في المستقبل، وده بالظبط اللي [[format]] مستنياه.`,
+            R`بنلف على الوحدات بالترتيب، وكل عنصر بنفكّه لاسم الوحدة ([[unit]]) وعدد ثوانيها ([[size]]). البداية من الأكبر مهمة: لو بدأنا بالدقيقة كان أي فرق هيطلع «قبل ٣٠٠٠ دقيقة».`,
+            R`أول وحدة الفرق أكبر منها أو يساويها (بـ [[Math.abs]] عشان السالب) هي الوحدة المناسبة: بنقسم عليها ونقرّب ونرجّع النص على طول. فـ ٢٦ ساعة بتبقى يوم واحد وتطلع «أمس».`,
+            R`نهاية الـ [[for]].`,
+            R`لو اللفة خلصت من غير ما نرجع، يبقى الفرق أقل من دقيقة فبنعرضه بالثواني. ولو الفرق صفر بالظبط هيطبع «الآن» بسبب [[auto]].`,
+            R`نهاية [[timeAgo]].`,
+            R`بناخد «دلوقتي» مرة واحدة كرقم milliseconds، وكل التجارب تحت بتطرح منه أو تزوّد عليه، فكلها بتتقاس من نفس اللحظة.`,
+            R`بيطبع [[قبل 5 دقائق | أمس]]: ٥ دقايق في الماضي وقفت عند وحدة الدقيقة، و ٢٦ ساعة اتقرّبت ليوم واحد فطلعت «أمس» مش «قبل 26 ساعة».`,
+            R`بيطبع [[خلال 3 أيام | قبل 10 ثوانِ]]: الموجب بيدّي «خلال» للمستقبل، و ١٠ ثواني أقل من دقيقة فوصلت للسطر الأخير في [[timeAgo]].`,
+          ],
+          sol: R`[[rtf.format(0, "second")]] مع [[numeric: "auto"]] بتطلع «الآن». فحط في أول الدالة [[if (Math.abs(sec) < 45) return rtf.format(0, "second");]].
+
+وللأسبوع: [[if (Math.abs(sec) >= 604800) return dateFmt.format(date)]] قبل الـ loop، والناتج مع [[dateStyle: "long"]] مثلًا «١٢ سبتمبر ٢٠٢٦» (مع [["medium"]] بالعربي بيطلع أرقام بس «١٢‏/٠٩‏/٢٠٢٦»).
+
+[[ar-EG]] بيطلع «قبل ٥ دقائق» بأرقام مشرقية، و [["ar"]] بيطلع «قبل 5 دقائق». الاتنين صح، اختار حسب تصميم موقعك وخليه ثابت في كل الصفحات.`,
+          solCode: R`const rtf = new Intl.RelativeTimeFormat("ar-EG", { numeric: "auto" });
+const dateFmt = new Intl.DateTimeFormat("ar-EG", { dateStyle: "long", timeZone: "Africa/Cairo" });
+const UNITS = [["day", 86400], ["hour", 3600], ["minute", 60]];
+function timeAgo(date, now = Date.now()) {
+  const sec = Math.round((date - now) / 1000);
+  if (Math.abs(sec) < 45) return rtf.format(0, "second");
+  if (Math.abs(sec) >= 604800) return dateFmt.format(date);
+  for (const [unit, size] of UNITS) {
+    if (Math.abs(sec) >= size) return rtf.format(Math.round(sec / size), unit);
+  }
+  return rtf.format(Math.round(sec / 60), "minute");
+}
+const now = Date.now();
+console.log(timeAgo(now - 20 * 1000), "|", timeAgo(now - 50 * 1000), "|", timeAgo(now - 5 * 3600 * 1000));
+console.log(timeAgo(new Date("2026-09-12T10:00:00Z"), new Date("2026-09-29T10:00:00Z")));`
+        },
+        {
+          cmd: "date-fns و dayjs و Temporal",
+          title: "date-fns ولا dayjs ولا Temporal في 2026؟",
+          desc: R`Date مبيعرفش يعمل حسابات تقويم صح (زوّد شهر، أول الأسبوع، الفرق بالأيام) ومبيعرفش time zones غير توقيت الجهاز و UTC. عشان كده كان فيه مكتبات:
+
+[[date-fns]]: دوال صغيرة بتاخد Date وترجّع Date جديد ([[addMonths]] و [[format]] و [[differenceInCalendarDays]])، وبتستورد اللي محتاجه بس. و [[date-fns-tz]] أو [[@date-fns/tz]] للـ time zones. [[dayjs]]: API شبه moment.js القديمة ([[dayjs().add(1, "month")]]) وحجمها صغير، والـ time zones بـ plugin.
+
+و Temporal: الـ API الجديد جوه اللغة نفسها، بدل Date. أنواع منفصلة لكل معنى: [[Temporal.Instant]] (لحظة)، و [[PlainDate]] (تاريخ من غير وقت ولا zone، زي عيد ميلاد)، و [[ZonedDateTime]] (لحظة + zone، بيفهم التوقيت الصيفي)، و [[Duration]]. وكله immutable، والشهر من 1. وصل Stage 4 في TC39 سنة 2026 (جزء من ES2026)، وشغال في Firefox (من 139) و Chrome و Edge (من 144)، و Node 26 شغّله افتراضيًا. Safari وقت كتابة الدرس لسه مش في النسخة المستقرة، فللمتصفحات محتاج polyfill ([[@js-temporal/polyfill]] أو [[temporal-polyfill]]). اتأكد من caniuse قبل ما تعتمد عليه من غير polyfill.`,
+          example: R`import { Temporal } from "@js-temporal/polyfill";
+const jan31 = Temporal.PlainDate.from("2026-01-31");
+console.log(jan31.add({ months: 1 }).toString());
+const meeting = Temporal.ZonedDateTime.from("2026-10-29T12:00[Africa/Cairo]");
+console.log(meeting.add({ hours: 24 }).toString());
+console.log(meeting.add({ days: 1 }).toString());
+const created = Temporal.Instant.from("2026-09-29T21:30:00Z");
+console.log(created.toZonedDateTimeISO("Africa/Cairo").toPlainDate().toString());
+const left = Temporal.PlainDate.from("2026-09-29").until("2026-12-25");
+console.log(left.days, left.toString());`,
+          try: R`في فولدر تجربة: [[npm i @js-temporal/polyfill date-fns dayjs]]، واحفظ المثال كـ [[temporal.mjs]] وشغّله. وبعدين اكتب نفس الـ ٣ حسابات (٣١ يناير + شهر، والأيام لحد ٢٥ ديسمبر، وتاريخ اللحظة [[21:30Z]] في القاهرة) بـ date-fns، وقارن الكود.`,
+          practice: [
+            { lvl: 'سريع', t: R`دوّر بنفسك: من صفحة [[Temporal.PlainDate.prototype.add]] على MDN، لاقي الـ option اللي بتخلي الحساب يرمي error بدل ما يقف على آخر الشهر. وبعدين في فولدر التجربة (بعد [[npm i @js-temporal/polyfill]]) جرّب [[Temporal.PlainDate.from("2028-02-29").add({ years: 1 })]] بيه ومن غيره. وجرّب [[typeof Temporal]] في Node من غير import.`, done: R`من غير الـ option بيطلع [[2029-02-28]]، ومع [[{ overflow: "reject" }]] بيرمي [[RangeError]]. و [[typeof Temporal]] في Node 24 بيطلع [["undefined"]]، وعشان كده الـ polyfill.` },
+            { lvl: 'تطبيق', t: R`قارن وقيس: احسب الأيام من ٢٩ سبتمبر لـ ٢٥ ديسمبر 2026 بـ ٣ طرق: Date عادي (فرق الـ ms على 86400000)، و [[differenceInCalendarDays]] من date-fns، و [[PlainDate.until]]. وبعدين خلّي الأول الساعة 23:00 والتاني الساعة 01:00 وجرّب الطريقتين الأولانيين تاني.`, done: R`التلاتة [[87]] للتواريخ من غير وقت. مع الساعات، طريقة الـ ms بتطلع رقم بكسور حوالي [[86.1]] (و Math.floor بيدّي 86، والرقم بالظبط بيتغير حسب التوقيت الصيفي في جهازك)، و date-fns لسه [[87]] لأنها بتعد أيام تقويم.` },
+            { lvl: 'تحدي', t: R`محاكاة اجتماع يومي: بـ Temporal لاقي أول تغيير توقيت جاي في القاهرة بعد يونيو 2026 بـ [[getTimeZoneTransition("next")]]. وبعدين اعمل اجتماع الساعة 12 الضهر يوم التغيير وزوّد عليه [[{ days: 1 }]] مرة و [[{ hours: 24 }]] مرة.`, done: R`التغيير الجاي ليلة ٢٩ أكتوبر 2026 (اللحظة [[2026-10-29T21:00:00Z]]، والساعة بترجع من 24:00 لـ 23:00). و [[days: 1]] بيدّي [[2026-10-30T12:00:00+02:00]] (نفس الساعة على الحيطة)، و [[hours: 24]] بيدّي [[11:00]] لأن اليوم ده ٢٥ ساعة.` },
+          ],
+          flag: "script",
+          deep: {
+            why: "Date اتصمم في ١٠ أيام سنة 1995 ومليان مشاكل (الشهر من 0، mutable، مفيش zones). المكتبات حلّت ده لسنين، و Temporal هو الحل الرسمي. في 2026 انت في فترة انتقالية: لازم تعرف Date لأنه في كل حتة، ومكتبة للمشاريع اللي شغالة، و Temporal للي جاي.",
+            how: R`في المثال: [[PlainDate]] + شهر على ٣١ يناير بيقف على ٢٨ فبراير ([[overflow: "constrain"]] الافتراضي) مش ٣ مارس زي Date. وتقدر تقول [[{ overflow: "reject" }]] يرمي error بدل ما يخمّن.
+
+السطرين بتوع الاجتماع بيوضّحوا الفرق بين «٢٤ ساعة» و «يوم»: مصر بترجع من التوقيت الصيفي نص ليل الخميس ٢٩ أكتوبر 2026، فاليوم ده ٢٥ ساعة. [[add({ hours: 24 })]] بتوصل ١١ الصبح يوم ٣٠، و [[add({ days: 1 })]] بتوصل ١٢ الضهر زي ما اليوزر متوقع. Date مبيقدرش يفرق بينهم لأنه مش عارف الـ zone أصلًا.
+
+[[Instant]] ← [[toZonedDateTimeISO("Africa/Cairo")]] ← [[toPlainDate()]]: نفس «التاريخ في القاهرة» اللي عملناه بحيلة en-CA، بس صريح. و [[until]] بترجّع [[Duration]] ([[P87D]] بصيغة ISO 8601).
+
+الـ polyfill حجمه مش صغير، فلو المشروع بيتحمّل في Safari وهيحتاج حاجات بسيطة، date-fns لسه اختيار عملي. وفي Node 22 و 24 مفيش Temporal جوّه، فالـ polyfill لازم.`,
+            when: R`مشروع جديد في 2026: Temporal (مع polyfill للمتصفحات لحد ما Safari يدعمه) لو فيه حسابات zones ومواعيد بجد (حجوزات، جداول). مشروع شغال: خليك على المكتبة اللي فيه. حاجات بسيطة (عرض تاريخ، timeAgo): Intl لوحده كفاية ومفيش مكتبة. و moment.js في maintenance mode من 2020، متبدأش بيها.`,
+            mistakes: R`تخلط Date و Temporal في نفس الكود من غير تحويل واضح (بيتحوّلوا عن طريق [[Instant]] و [[epochMilliseconds]]). وتستخدم [[PlainDateTime]] لحاجة ليها توقيت (اجتماع): استخدم ZonedDateTime. وتعتمد إن Temporal موجود في المتصفح من غير ما تفحص. وتخزّن ZonedDateTime في الداتابيز كنص وتتوقع timestamptz يفهمه: خزّن [[Instant]] ([[toString()]] بـ Z) والـ zone في عمود لوحده لو محتاجه.`
+          },
+          teach: R`## المثال بيعمل إيه
+
+٣ حسابات Date بيغلط فيها أو مبيعرفش يعملها: «٣١ يناير + شهر»، و «بكرة نفس الميعاد» في يوم التوقيت الصيفي اتغيّر فيه، و «اللحظة دي في القاهرة يوم كام». وكلها بـ Temporal. وبعدين الحل بيعمل نفس الحسابات بـ date-fns و dayjs عشان تقارن.
+
+الكل اتشغّل بـ Node 24 على Windows، في فولدر تجربة فيه:
+
+~~~powershell
+npm i @js-temporal/polyfill date-fns dayjs
+~~~
+
+والنسخ اللي اتسطّبت: [[@js-temporal/polyfill@0.5.1]] و [[date-fns@4.4.0]] و [[dayjs@1.11.23]].
+
+---
+
+## ١. [[import]]: ليه polyfill؟
+
+~~~text app.js
+import { Temporal } from "@js-temporal/polyfill";
+~~~
+
+- [[import { Temporal } from "..."]]: بيجيب حاجة اسمها [[Temporal]] من package. الأقواس [[{ }]] معناها «هات الحاجة اللي بالاسم ده بالظبط» (named import، درس [[import و export]]).
+- **polyfill** يعني كود مكتوب بـ JavaScript عادي بيعمل نفس الـ API الجديد، للأماكن اللي لسه مفيهاش. في Node 24 جرّبنا [[typeof Temporal]] وطلع [[undefined]]، يعني مش موجود، فلازم الـ polyfill.
+- الملف لازم يبقى ES module عشان [[import]] تشتغل: سمّيه [[.mjs]] (أو حط [["type": "module"]] في [[package.json]]).
+
+---
+
+## ٢. [[PlainDate]]: تاريخ وبس
+
+~~~text app.js
+const jan31 = Temporal.PlainDate.from("2026-01-31");
+console.log(jan31.add({ months: 1 }).toString());
+~~~
+
+- [[Temporal.PlainDate]]: نوع معناه «تاريخ في التقويم»: من غير ساعة ومن غير time zone. زي عيد ميلاد: ٣١ يناير هو ٣١ يناير في أي بلد.
+- [[.from("2026-01-31")]]: بيعمله من نص ISO. والشهر هنا من **1** مش 0: جرّبنا [[jan31.month]] وطلع [[1]].
+- [[.add({ months: 1 })]]: زوّد شهر. الـ object اللي بتبعته بيقول تزوّد إيه وقد إيه ([[{ days: 3 }]] و [[{ years: 1, months: 2 }]] وهكذا).
+- [[.toString()]]: يكتبه نص ISO.
+
+~~~text الناتج
+2026-02-28
+~~~
+
+٣١ فبراير مش موجود، فـ Temporal **وقف على آخر الشهر** (ده اسمه constrain، الافتراضي). Date في الدرس الأول رحّلها لـ ٣ مارس. ولو عايز error بدل التخمين:
+
+~~~text الناتج لـ jan31.add({ months: 1 }, { overflow: "reject" })
+RangeError: value out of range: 1 <= 31 <= 28
+~~~
+
+يعني «اليوم لازم يبقى بين 1 و 28، وانت جايب 31».
+
+وكمان: [[add]] بترجّع object **جديد**، و [[jan31]] نفسه متغيرش (طبعناه بعدها وطلع [[2026-01-31]]). وكل أنواع Temporal كده (immutable): حتى [[jan31.month = 5]] في module بترمي:
+
+~~~text الناتج
+TypeError: Cannot set property month of [object Temporal.PlainDate] which has only a getter
+~~~
+
+---
+
+## ٣. [[ZonedDateTime]]: «٢٤ ساعة» مش زي «يوم»
+
+~~~text app.js
+const meeting = Temporal.ZonedDateTime.from("2026-10-29T12:00[Africa/Cairo]");
+console.log(meeting.add({ hours: 24 }).toString());
+console.log(meeting.add({ days: 1 }).toString());
+~~~
+
+- [[ZonedDateTime]]: لحظة **ومعاها** time zone. ده النوع الصح لاجتماع أو حجز.
+- النص: تاريخ ووقت، وبعدين اسم الـ zone بين [[[ ]]]. وده شكل ISO الجديد (اسمه RFC 9557) اللي بيحفظ اسم الـ zone مش بس الـ offset.
+
+الـ ٢٩ أكتوبر 2026 يوم خميس، وهو آخر يوم في التوقيت الصيفي في مصر: آخر الليلة دي الساعة بترجع ساعة. شوف:
+
+~~~text الناتج (meeting.toString() و offset و hoursInDay)
+2026-10-29T12:00:00+03:00[Africa/Cairo] +03:00 25
+~~~
+
+الاجتماع الساعة 12 والقاهرة [[+03:00]]، واليوم ده [[hoursInDay]] = **25 ساعة**. ويوم ٣٠ طلع [[+02:00]] و 24 ساعة.
+
+~~~text الناتج
+2026-10-30T11:00:00+02:00[Africa/Cairo]
+2026-10-30T12:00:00+02:00[Africa/Cairo]
+~~~
+
+- [[add({ hours: 24 })]]: ٢٤ ساعة بالظبط من الزمن. بس اليوم كان ٢٥ ساعة، فوصلنا ١١ الصبح.
+- [[add({ days: 1 })]]: «نفس الساعة بكرة» على الحيطة، فوصلنا ١٢ الضهر، وده اللي اليوزر قاصده لما يقول «كرر الاجتماع كل يوم».
+
+---
+
+## ٤. [[Instant]]: لحظة جاية من API
+
+~~~text app.js
+const created = Temporal.Instant.from("2026-09-29T21:30:00Z");
+console.log(created.toZonedDateTimeISO("Africa/Cairo").toPlainDate().toString());
+~~~
+
+- [[Instant]]: نقطة على خط الزمن وبس، زي Date من جوه، ولازم النص يكون فيه [[Z]] أو offset.
+- السطر التاني ٣ خطوات من الشمال لليمين:
+
+| الخطوة | الناتج |
+|---|---|
+| [[created]] | اللحظة [[2026-09-29T21:30:00Z]] |
+| [[.toZonedDateTimeISO("Africa/Cairo")]] | [[2026-09-30T00:30:00+03:00[Africa/Cairo]]] |
+| [[.toPlainDate()]] | خُد التاريخ بس: [[2026-09-30]] |
+
+([[ISO]] في اسم الدالة معناها التقويم الميلادي العادي.)
+
+~~~text الناتج
+2026-09-30
+~~~
+
+ده نفس اللي عملناه في الدرس اللي فات بحيلة [[en-CA]]، بس هنا كل خطوة نوعها واضح.
+
+---
+
+## ٥. [[until]] و [[Duration]]
+
+~~~text app.js
+const left = Temporal.PlainDate.from("2026-09-29").until("2026-12-25");
+console.log(left.days, left.toString());
+~~~
+
+[[a.until(b)]]: المدة من a لحد b، وبترجّع [[Temporal.Duration]].
+
+~~~text الناتج
+87 P87D
+~~~
+
+[[P87D]] شكل ISO 8601 للمدة: [[P]] = Period، و [[87D]] = 87 يوم. والافتراضي إن أكبر وحدة الأيام. ولو عايز شهور: [[until("2026-12-25", { largestUnit: "months" })]] طلّع [[P2M26D]] (شهرين و ٢٦ يوم).
+
+---
+
+## ٦. الحل (solCode): نفس الحسابات بـ date-fns و dayjs
+
+~~~text app.js
+import { addMonths, format, differenceInCalendarDays } from "date-fns";
+import dayjs from "dayjs";
+console.log(format(addMonths(new Date(2026, 0, 31), 1), "yyyy-MM-dd"));
+console.log(differenceInCalendarDays(new Date(2026, 11, 25), new Date(2026, 8, 29)));
+console.log(new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" }).format(new Date("2026-09-29T21:30:00Z")));
+console.log(dayjs("2026-01-31").add(1, "month").format("YYYY-MM-DD"));
+~~~
+
+- **date-fns**: [[import { ... }]] بتجيب الدوال اللي محتاجها بس. كلها بتاخد Date وترجّع Date جديد. [[addMonths(date, 1)]]، و [[format(date, "yyyy-MM-dd")]] (في date-fns [[yyyy]] السنة و [[MM]] الشهر و [[dd]] اليوم، بحروف صغيرة للسنة واليوم). و [[differenceInCalendarDays(b, a)]]: كام يوم في التقويم من a لـ b. ولاحظ إن الشهر في [[new Date(2026, 11, 25)]] لسه من 0 (11 = ديسمبر)، لأن date-fns شغالة فوق Date.
+- **dayjs**: [[import dayjs from "dayjs"]] من غير أقواس = default import. وكل حاجة بتتسلسل: [[dayjs(نص).add(1, "month").format(...)]]. والـ format هنا [[YYYY]] و [[DD]] كابيتال.
+- سطر Intl: تاريخ القاهرة من غير مكتبة.
+
+~~~text الناتج
+2026-02-28
+87
+2026-09-30
+2026-02-28
+~~~
+
+الـ ٣ وصلوا لنفس الإجابات.
+
+---
+
+## الخلاصة
+
+| النوع في Temporal | معناه | مثال |
+|---|---|---|
+| [[PlainDate]] | تاريخ من غير وقت ولا zone | عيد ميلاد |
+| [[ZonedDateTime]] | لحظة + zone (بيفهم التوقيت الصيفي) | اجتماع، حجز |
+| [[Instant]] | لحظة بس | [[created_at]] من API |
+| [[Duration]] | مدة | [[P87D]] |
+
+والشهر من 1، وكل حاجة immutable، و [[days: 1]] غير [[hours: 24]]. وفي Node 24 محتاج polyfill.`,
+          lines: [
+            R`بيستورد [[Temporal]] من الـ polyfill الرسمي، عشان الكود يشتغل في أي بيئة لسه معندهاش Temporal. في Node 26 و Chrome و Firefox الحديثين [[Temporal]] موجود global، فتقدر تشيل السطر ده.`,
+            R`[[PlainDate]] تاريخ بس: يوم وشهر وسنة، من غير ساعة ولا time zone. ده المناسب لعيد ميلاد أو ميعاد استحقاق، لأنه مش «لحظة» فمش هيتزحلق يوم لما يتعرض في بلد تاني. والشهور هنا من 1 عادي، مش من 0 زي Date.`,
+            R`[[add]] بترجّع object **جديد** (Temporal كله immutable) و [[jan31]] نفسه متغيرش. وبيطبع [[2026-02-28]]: لما اليوم مش موجود في الشهر الجديد بيقف على آخر يوم، مش بيرحّل لـ ٣ مارس زي Date. ولو عايز error بدل كده ادّيله [[overflow: "reject"]].`,
+            R`[[ZonedDateTime]] لحظة ومعاها time zone باسمه، والاسم بيتكتب بين قوسين مربعين بعد الوقت. الفرق عن offset ثابت زي [[+03:00]] إنه عارف قواعد التوقيت الصيفي في مصر، فالحسابات بعد كده بتتظبط لوحدها.`,
+            R`بيزوّد ٢٤ ساعة حقيقية. ليلة ٢٩ أكتوبر ٢٠٢٦ التوقيت الصيفي في مصر بيخلص، فبعد ٢٤ ساعة الساعة بقت ١١ مش ١٢ والـ offset بقى [[+02:00]]: [[2026-10-30T11:00:00+02:00]] وبعده اسم الـ zone بين قوسين مربعين. ده الصح لو بتحسب مدة (زي «الـ token يخلص بعد ٢٤ ساعة»).`,
+            R`[[days: 1]] معناها «نفس الساعة بكرة» على التقويم، فبيطبع ١٢:٠٠ يوم ٣٠ بـ [[+02:00]] مع إن اللي عدّى فعليًا ٢٥ ساعة. ده الصح لمواعيد زي «الاجتماع بكرة نفس الميعاد». والفرق بين السطرين هو الفرق بين مدة وتقويم.`,
+            R`[[Instant]] لحظة بس، من غير time zone ولا تقويم، زي اللي جاية من API بـ [[Z]]. هو أقرب حاجة لـ Date القديم، بس مبيعرضش بتوقيت الجهاز من ورا ضهرك.`,
+            R`بيحوّل اللحظة لتوقيت القاهرة، وبعدين ياخد الجزء التاريخ بس. فبيطبع [[2026-09-30]] (اليوم اللي بعد تاريخ UTC، زي ما شفنا مع Intl)، وكل خطوة مكتوب فيها انت عايز إيه بدل حيلة [[en-CA]].`,
+            R`[[until]] بتحسب المدة من التاريخ الأول لحد التاني وبترجّع [[Duration]]، وبتقبل نص زي [["2026-12-25"]] مش لازم PlainDate. ومن غير options أكبر وحدة بترجعها مع PlainDate هي الأيام، فمش هتلاقي شهور.`,
+            R`بيطبع [[87 P87D]]: [[days]] عدد الأيام كرقم، و [[toString()]] بيطبع المدة بصيغة ISO 8601 ([[P]] = period و [[D]] = أيام). لو عايزها شهور وأيام ادّي [[until]] الـ option [[largestUnit: "month"]] فتبقى [[P2M26D]].`,
+          ],
+          sol: R`ناتج [[temporal.mjs]]: [[2026-02-28]]، و [[2026-10-30T11:00:00+02:00[Africa/Cairo]]]، و [[2026-10-30T12:00:00+02:00[Africa/Cairo]]]، و [[2026-09-30]]، و [[87 P87D]].
+
+بـ date-fns: [[addMonths(new Date(2026, 0, 31), 1)]] بترجّع ٢٨ فبراير كمان (date-fns بتعمل clamp زي Temporal)، و [[differenceInCalendarDays(new Date(2026, 11, 25), new Date(2026, 8, 29))]] بـ 87. لاحظ الشهر من 0 لسه، لأن date-fns شغالة على Date. وتاريخ القاهرة محتاج [[@date-fns/tz]] أو حيلة en-CA.
+
+و dayjs: [[dayjs("2026-01-31").add(1, "month").format("YYYY-MM-DD")]] بـ [["2026-02-28"]]. الـ ٣ وصلوا لنفس الإجابة، الفرق في الوضوح: Temporal بيقولك نوع كل قيمة (تاريخ، لحظة، لحظة في zone).`,
+          solCode: R`import { addMonths, format, differenceInCalendarDays } from "date-fns";
+import dayjs from "dayjs";
+console.log(format(addMonths(new Date(2026, 0, 31), 1), "yyyy-MM-dd"));
+console.log(differenceInCalendarDays(new Date(2026, 11, 25), new Date(2026, 8, 29)));
+console.log(new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" }).format(new Date("2026-09-29T21:30:00Z")));
+console.log(dayjs("2026-01-31").add(1, "month").format("YYYY-MM-DD"));`
         }
       ]
     }

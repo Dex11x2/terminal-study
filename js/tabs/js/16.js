@@ -1,1015 +1,888 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "التواريخ والوقت",
+      t: "الأخطاء",
       l: 2,
-      n: "Date ومطبّاته، وتخزّن UTC وتعرض بتوقيت اليوزر بـ Intl، و «من ٥ دقايق»، و date-fns ولا Temporal في 2026",
+      n: "try و catch و finally، وأنواع الـ errors، و errors مخصصة بـ cause و AggregateError، والأخطاء العامة اللي محدش مسكها",
       projects: [
-        { lvl: 'صغير', t: R`فاضل كام يوم`, what: R`صفحة بتاخد تاريخ مناسبة من [[<input type="date">]] (قيمته [["YYYY-MM-DD"]]) وتطبع «فاضل X يوم» محسوبة بأيام التقويم في القاهرة، ولو التاريخ فات «من X يوم»، ولو النهارده «النهارده!». من دروس Date و UTC و Intl.`, done: R`تاريخ بكرة ← «فاضل 1 يوم» مهما الساعة كام دلوقتي (حتى 11:59 بالليل). النهارده ← «النهارده!». التاريخ الفاضي ← رسالة بدل NaN.` },
-        { lvl: 'صغير', t: R`ساعة عالمية`, what: R`٤ مدن (القاهرة والرياض ولندن ونيويورك) بالوقت الحالي، بتتحدث كل ثانية بـ setInterval، وكل واحدة بـ Intl.DateTimeFormat وجنبها الفرق عن UTC. من درس UTC و Intl.DateTimeFormat.`, done: R`الأوقات بتتغير كل ثانية، ولو غيّرت توقيت جهازك الأرقام مبتتغيرش (كل مدينة ليها timeZone)، والـ ٤ formatters متعمولين مرة واحدة بره الـ interval.` },
-        { lvl: 'متوسط', t: R`تعليقات بـ «من ٥ دقايق»`, what: R`array تعليقات فيها [[createdAt]] ISO، بتتعرض بـ [[timeAgo]]، و [[title]] على كل وقت فيه التاريخ الكامل بـ Intl، والأوقات بتتحدث كل دقيقة من غير ما تعيد رسم التعليقات، واللي أقدم من أسبوع بيظهر التاريخ بدل «قبل ٣ أسابيع». من دروس الوحدة ووحدة الـ DOM.`, done: R`تعليق من 10 ثواني ← «الآن»، من 26 ساعة ← «أمس»، من 10 أيام ← تاريخ. الـ hover بيدّي الوقت الكامل بتوقيت القاهرة. وبعد دقيقة النص بيتغير لوحده، والـ input اللي في التعليق (لو فيه) مبيفقدش الـ focus لأنك مبتعيدش رسم العنصر.` },
-        { lvl: 'متوسط', t: R`حجز مواعيد بين بلدين`, what: R`فورم بتختار فيه يوم وساعة بتوقيت القاهرة، والكود بيحوّلهم لـ UTC ISO للتخزين بـ [[Temporal.ZonedDateTime]]، ويعرض الميعاد لليوزر بتوقيته ([[resolvedOptions().timeZone]]) ولزميل في لندن. من دروس الوحدة.`, done: R`[[2026-10-15 10:00]] في القاهرة ← [[2026-10-15T07:00:00Z]]، و [[2026-11-15 10:00]] ← [[2026-11-15T08:00:00Z]] (بعد ما الصيفي خلص)، ولندن بتشوف 08:00 في الحالتين. وساعة مش موجودة أو يوم غلط بيطلع رسالة تحت الحقل.` },
-        { lvl: 'كبير', t: R`مواعيد تجديد الاشتراكات`, what: R`[[renewals(startDate, count, plan)]] بتطلع مواعيد التجديد الجاية لاشتراك [[monthly]] أو [[yearly]]. كل تجديد محسوب من تاريخ البداية الأصلي (مش من اللي قبله)، ولو اليوم مش موجود يقف على آخر الشهر. الـ input بيتفحص (تاريخ سليم بـ parseISODate، و count من 1 لـ 120، و plan من الاتنين دول بس) بـ ValidationError، والتواريخ بتتعرض بالعربي، وفيه [[test.js]] بحالات معروفة. من الوحدة دي ووحدات الأخطاء والـ modules.`, done: R`من [[2026-01-31]] شهري ← [[2026-02-28]] و [[2026-03-31]] و [[2026-04-30]] (مش 28 و 28 و 28). من [[2028-02-29]] سنوي ← [[2029-02-28]] و [[2030-02-28]] و [[2031-02-28]] و [[2032-02-29]]. و [["2026-02-30"]] ← ValidationError مش تاريخ في مارس. والاختبارات كلها بتنجح بـ [[TZ]] القاهرة ونيويورك.`, ext: R`زوّد خطة [[weekly]] وفترة تجربة مجانية بالأيام، واطلع ملف [[.ics]] بالمواعيد يتفتح في Google Calendar.` },
-        { lvl: 'فكرة', t: R`أداة وقت لشغلك`, what: R`فكّر في حاجة وقتها بيلخبطك: ميعاد اجتماع مع ناس في بلاد تانية، أو حساب ساعات شغل، أو تذكير دفع شهري، أو جدول مذاكرة. ابنيها.`, done: R`الأداة بتخزن UTC وبتعرض بتوقيت اليوزر، ومفيش [[new Date("01/02/2026")]] في الكود، وفيها اختبار لليوم اللي فيه تغيير التوقيت.`, ext: R`خليها تشتغل بلغتين ([["ar-EG"]] و [["en"]]) بزرار، وكل التواريخ والأرقام بتتغير بالـ locale.` },
+        { lvl: 'صغير', t: R`فاحص فورم بيقول كل الغلطات مرة واحدة`, what: R`[[validateSignup(data)]] بتفحص [[name]] و [[email]] و [[age]]، ولو فيه غلط واحد أو أكتر بترمي [[ValidationError]] واحد فيه [[fields]] (لكل حقل رسالته بالعربي)، ولو كله سليم بترجّع object نضيف (الاسم من غير مسافات في الأطراف، والسن رقم). وفورم في صفحة بيعرض كل رسالة تحت حقلها. من درسي الوحدة.`, done: R`[[validateSignup({ name: " ", email: "x", age: "abc" })]] بترمي error واحد و [[Object.keys(e.fields).length]] بيدّي 3، و [[e instanceof ValidationError]] بيدّي true. والبيانات السليمة بترجّع [[age]] كرقم مش string، والفورم بيمسح الرسالة لما الحقل يتصلّح.` },
+        { lvl: 'صغير', t: R`عيلة errors لتطبيقك`, what: R`ملف [[errors.js]] فيه [[AppError]] و [[NotFoundError]] و [[ValidationError]] و [[AuthError]]، كل واحد بـ status، و [[toJSON()]] بترجّع [[name]] و [[message]] و [[status]] من غير stack. من درس custom errors و cause ودرس import و export.`, done: R`[[JSON.stringify(new NotFoundError("المنتج"))]] فيه [["المنتج مش موجود"]] و [[404]] (ومن غير toJSON الرسالة مبتظهرش خالص: جرّب). و [[instanceof AppError]] بيدّي true للأربعة، و [[err.name]] صح لكل واحد من غير ما تكتبه بإيدك في كل class.` },
+        { lvl: 'متوسط', t: R`قارئ إعدادات مبيقعش`, what: R`[[loadConfig(text)]] بتعمل JSON.parse جوه try، ولو بايظ ترمي [[ConfigError("ملف الإعدادات بايظ", { cause })]]، وبعدين تتأكد من [[port]] (رقم صحيح من 1 لـ 65535) و [[dbUrl]] (نص مش فاضي)، وتحط default لأي حقل اختياري. و [[main]] بيمسك الـ ConfigError ويطبع الرسالة والـ cause بس ويخرج بكود ١. من درسي الوحدة ووحدة الـ objects.`, done: R`JSON بايظ بيطبع «ملف الإعدادات بايظ» وتحتها رسالة الـ SyntaxError الأصلية. [[port: 70000]] و [[port: "80"]] كل واحد بيطبع رسالة فيها اسم الحقل. والإعدادات السليمة بترجّع object فيه الـ defaults. ومفيش stack trace بيوصل لليوزر في أي حالة.` },
+        { lvl: 'متوسط', t: R`wrapper للـ handlers`, what: R`[[handle(fn)]] بتاخد دالة async وترجّع دالة بترجّع دايمًا [[{ status, body }]]: لو نجحت 200 والنتيجة، ولو رمت AppError الـ status بتاعه ورسالته، ولو أي حاجة تانية 500 برسالة عامة، والـ error الأصلي بيتطبع في [[console.error]] بس. من درسي الوحدة.`, done: R`٤ handlers تجريبية (بتنجح، و NotFound، و Validation، وواحد فيه [[undefined.x]]) بيرجّعوا 200 و 404 و 400 و 500 بالترتيب، والـ 500 مفيهوش [[Cannot read properties]] في الـ body، والـ wrapper نفسه عمره ما بيرمي.` },
+        { lvl: 'كبير', t: R`مستورد CSV للطلاب`, what: R`[[importStudents(csvText)]] بتقسم السطور، وتتأكد إن الـ header هو [[name,age,email]]، وتفحص كل سطر بـ ValidationError فيه رقم السطر والحقل، وتكمّل لآخر الملف من غير ما تقف عند أول غلط، وترجّع [[{ imported, errors }]]. وأي error مش متوقع يتلف في [[ImportError]] بـ cause ويترمي. وفي الآخر تقرير: كام سطر اتقري وكام اتضاف وكل غلط في سطره. ومعاه [[test.js]] فيه ٥ حالات. من وحدات النصوص والـ arrays والـ classes والـ modules والوحدة دي.`, done: R`ملف سليم ← errors فاضية. ملف فيه سطرين غلط ← [[errors.length === 2]] وكل واحد فيه رقم السطر الصح (عادّ الـ header). ملف فاضي أو header غلط ← ValidationError واضح من غير ما يكمّل. سطر فيه فاصلة زيادة أو سطر فاضي في الآخر ← غلط مفهوم أو تجاهل، مش crash. والـ ٥ اختبارات بتطبع نجح.`, ext: R`خلّي الإيميل المكرر غلط، واعرض التقرير في صفحة فيها [[textarea]] تلزق فيها الـ CSV وجدول بالسطور الغلط باللون الأحمر.` },
+        { lvl: 'فكرة', t: R`سياسة أخطاء لمشروعك`, what: R`خد مشروع من اللي عملتهم وحط فيه سياسة أخطاء: أنواع errors بتاعتك، ومكان واحد بيمسك ويقرر يعرض إيه لليوزر وإيه يتسجّل، و cause في كل مرة بتلف error.`, done: R`مفيش [[catch {}]] فاضي في المشروع كله، وكل رسالة بتظهر لليوزر مفهومة بالعربي، وكل error في اللوج فيه السبب الأصلي.`, ext: R`اعرض الأخطاء في الصفحة كـ toast بدل alert، وزوّد [[code]] ثابت لكل نوع (زي [[E_NOT_FOUND]]) عشان الواجهة تقرر من غير ما تقرا النص.` },
       ],
       items: [
         {
-          cmd: "Date ومطبّاته",
-          title: "ليه الشهر في Date بيبدأ من 0، وليه new Date(string) خطر؟",
-          desc: R`[[Date]] في JavaScript قيمة واحدة من جوه: عدد الـ milliseconds من [[1970-01-01T00:00:00Z]] (الـ epoch)، ومفيش time zone متخزّن جواه. الـ time zone بيظهر بس لما تقرا ([[getHours]]) أو تطبع: الـ methods العادية بتستخدم توقيت الجهاز، واللي فيها [[UTC]] ([[getUTCHours]]) بتستخدم UTC.
+          cmd: "try و catch و finally",
+          title: "تمسك error قبل ما البرنامج يقع",
+          desc: R`[[throw]] بيوقف الدالة ويطلع لفوق لحد أول [[try/catch]]، ولو ملقاش، البرنامج يقع (أو في المتصفح error في Console). [[catch (err)]] بتمسكه، و [[finally]] بتشتغل في الحالتين (نجح أو فشل)، ومكانها التنضيف: قفل loading أو connection.
 
-والمطبّات المشهورة: الشهر من 0 ([[new Date(2026, 0, 31)]] يعني ٣١ يناير)، واليوم من 1. و Date بيتعدّل في مكانه ([[setMonth]] بتغيّر نفس الـ object). و الـ overflow: ٣١ يناير + شهر = ٣ مارس مش ٢٨ فبراير. و الـ parsing: [["2026-03-01"]] لوحدها بتتفهم UTC، بس [["2026-03-01T00:00"]] من غير Z بتتفهم بتوقيت الجهاز، وأي شكل تاني ([["01/02/2026"]]) مش standard وكل engine بيفهمه بمزاجه.`,
-          example: R`const d = new Date(2026, 0, 31);
-console.log(d.getMonth(), d.getDate());
-d.setMonth(1);
-console.log(d.toDateString());
-console.log(new Date("2026-03-01").toISOString());
-console.log(new Date("2026-03-01T00:00").toISOString());
-console.log(new Date("01/02/2026").getMonth());
-console.log(new Date("32/01/2026").getTime());
-const a = new Date("2026-09-29T10:00:00Z");
-const b = new Date(a);
-b.setDate(b.getDate() + 3);
-console.log(a.getDate(), b.getDate(), b - a);`,
-          try: R`شغّل الملف مرتين: [[TZ=Africa/Cairo node dates.js]] و [[TZ=America/New_York node dates.js]] (على Windows في PowerShell: [[$env:TZ = "America/New_York"; node dates.js]]، أو WSL. Git Bash مش بيعدّي [[TZ]] لـ node). أنهي سطور اتغيرت وليه؟ وبعدين اكتب [[addMonths(date, n)]] ترجّع Date جديد ولو اليوم مش موجود في الشهر الجديد تقف على آخر يوم ([[2026-01-31]] + 1 ← [[2026-02-28]]). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[addMonths]].`,
+ارمي دايمًا [[Error]] أو حاجة وارثة منه ([[TypeError]] و [[RangeError]]...)، مش string، عشان يبقى فيه [[message]] و [[stack]].`,
+          example: R`function parseAge(input) {
+  const age = Number(input);
+  if (Number.isNaN(age)) throw new TypeError($__btمش رقم: $__{input}$__bt);
+  if (age < 0) throw new RangeError("السن مينفعش يبقى سالب");
+  return age;
+}
+try {
+  parseAge("abc");
+} catch (err) {
+  console.log(err.name, err.message);
+  if (!(err instanceof TypeError)) throw err;
+} finally {
+  console.log("خلصنا");
+}
+try { JSON.parse("{"); } catch { console.log("JSON بايظ"); }`,
+          try: R`اطبع [[err.stack]] وشوف أرقام السطور. وبعدين خلي الـ try يرجّع [[return "a"]] والـ finally يرجّع [[return "b"]] جوه دالة، وشوف مين بيكسب.`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[new Date(2026, 1, 30)]] هيبقى أنهي يوم؟ اكتب توقعك، وبعدين اطبع [[getMonth()]] و [[getDate()]].`, done: R`بيطبع [[2 2]]: يعني ٢ مارس، لأن فبراير 2026 ٢٨ يوم فالـ ٣٠ فاضت يومين، والشهر [[2]] هو مارس لأن العد من 0. ومفيش error ولا Invalid Date.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة فاتورة فيها [[function addDays(d, n) { d.setDate(d.getDate() + n); return d; }]] و [[const due = addDays(issued, 30)]]، وبعدها بتعرض «اتعملت» و «آخر ميعاد». اليوزرز بيشتكوا إن التاريخين زي بعض. لاقي السبب وصلّح [[addDays]] بس.`, done: R`قبل التصليح [[issued === due]] بتدّي [[true]] والتاريخين بيطلعوا ٣٠ يوم بعد الإصدار، لأن setDate بتعدّل نفس الـ object. بعد التصليح (نسخة جديدة [[new Date(d)]] وتعدّل فيها) [[issued]] مبيتغيرش و [[due - issued]] بيساوي ٣٠ يوم بالـ ms (أو ساعة أقل أو أكتر لو التوقيت الصيفي اتغيّر في النص).` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[ageOn(birth, today)]] بتاخد تاريخين [["YYYY-MM-DD"]] وترجّع السن بالسنين الكاملة: اطرح السنين، وانقص واحد لو عيد الميلاد لسه مجاش السنة دي. من غير ما تقسم ms على 365.`, done: R`[[ageOn("2000-11-04", "2026-11-03")]] بترجّع 25 (فاضل يوم)، و [[ageOn("2000-11-03", "2026-11-03")]] بترجّع 26، والمولود 29 فبراير: [[ageOn("2004-02-29", "2026-02-28")]] بـ 21 و [["2026-03-01"]] بـ 22.` },
-            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[parseISODate(s)]] بتقبل [["YYYY-MM-DD"]] بس وترجّع Date أو [[null]]. قبل ما تكتب، جرّب [[new Date("2026-02-30")]] لوحدها.`, done: R`[[new Date("2026-02-30")]] مش Invalid Date: V8 بيقبلها وبتبقى [[2026-03-02T00:00:00.000Z]]، و [["2026-02-32"]] بس هي اللي NaN. فدالتك لازم تقارن السنة والشهر واليوم اللي رجعوا (بـ getUTC) باللي اتكتب: [["2026-02-30"]] و [["2026-13-01"]] و [["26-1-1"]] و [[""]] ← null، و [["2028-02-29"]] ← Date سليم.` },
-            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** شغّل بتوقيت القاهرة ([[TZ=Africa/Cairo node file.js]] في Git Bash أو Linux): [[new Date("2026-11-03").toISOString()]] و [[new Date("2026-11-03T00:00").toISOString()]]. نفس اليوم؟`, done: R`طلع [[2026-11-03T00:00:00.000Z]] و [[2026-11-02T22:00:00.000Z]]: التاريخ لوحده بيتقري UTC، والتاريخ ومعاه وقت من غير Z بيتقري بتوقيت الجهاز. وبـ [[TZ=UTC]] الاتنين بقوا زي بعض، فعرفت ليه باج زي ده بيظهر عند اليوزر ومش عندك.` }
+            { lvl: 'سريع', t: R`**ابني:** زرار «احفظ» بينادي [[save()]]: الدالة بتقفل الزرار وتكتب عليه «بيحفظ...»، وبعدين بتنادي [[fakeSave()]] اللي بترمي Error عشوائيًا نص المرات، ولو فشلت تكتب الرسالة في [[<p>]] تحت. رجّع الزرار لحالته في [[finally]].`, done: R`في النجاح والفشل الاتنين الزرار بيرجع مفتوح ومكتوب عليه «احفظ»، ورسالة الغلط بتظهر في الفشل بس. ولو نقلت سطر الرجوع لآخر الـ try بدل finally، أول فشل بيسيب الزرار مقفول للأبد.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[function f() { try { console.log("a"); return "b"; } finally { console.log("c"); } } console.log(f());]]. اكتب الترتيب.`, done: R`توقعت وطلع [[a]] ثم [[c]] ثم [[b]]: الـ finally بتشتغل قبل ما الدالة ترجع فعلًا، حتى مع return.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** اكتب [[safeJSON(text, fallback)]] بترجّع الـ object لو النص سليم، و fallback لو [[SyntaxError]] بس، وأي error تاني تعمله throw تاني. جرّبها على [['{"a":1}']] و [["{"]] و [[undefined]].`, done: R`النتايج [[{ a: 1 }]] وبعدين الـ fallback مرتين: [[undefined]] كمان بيدّي SyntaxError ورسالته [["undefined" is not valid JSON]]. وجرّب كمان [[function g() { try { throw new Error("x"); } finally { return "ok"; } }]]: بترجّع [["ok"]] والـ error بيختفي، وده سبب إنك متعملش return جوه finally.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[try { setTimeout(() => { throw new Error("x"); }, 0); } catch (e) { console.log("caught"); } console.log("after");]]. صاحبه فاكر إن الـ try حامية الـ timer. شغّله، وفسّر ليه، وصلّحه بحيث الغلط يتمسك ويتطبع والبرنامج يكمّل.`, done: R`قبل التصليح بيطبع [[after]]، وبعدها البرنامج بيقع بـ [[Error: x]] ويخرج بكود ١، و [[caught]] عمرها ما بتطبع: الـ try خلص قبل ما الـ callback يشتغل بكتير. بعد ما تنقل الـ try/catch جوه الـ callback نفسه بيطبع [[after]] وبعدين [[caught]] والكود ٠.` },
+            { lvl: 'تحدي', t: R`**بيانات حقيقية:** لوج فيه سطر JSON لكل حدث، وفيه سطر بايظ: [[['{"level":"info"}', '{bad', '{"level":"error"}']]]. اقرا كل سطر بـ try/catch جوه الـ loop، وعدّ السليم، واطبع رقم السطر البايظ ورسالته، ومتوقفش عنده.`, done: R`بيطبع [[سطر 2 Expected property name or '}' in JSON at position 1 (line 1 column 2)]] وبعدين عدد السليم 2. ولو حطيت الـ try برّه الـ loop، أول سطر بايظ بيوقّف القراية وتضيع الأحداث اللي بعده.` }
           ],
           flag: "script",
           deep: {
-            why: "كل مشروع فيه تواريخ: created_at، وطلبات النهارده، ومواعيد الحجز، وانتهاء الاشتراك. وأخطاء التواريخ خبيثة: الكود بيشتغل تمام على جهازك وعلى السيرفر بيطلع يوم قبله، أو بيبوظ مرتين في السنة بس (التوقيت الصيفي).",
-            how: R`[[new Date(y, m, d)]] بيفهم الأرقام بتوقيت الجهاز، والشهر من 0 (ورث ده من Java سنة 1995). ولو الرقم برّه الحدود بيرحّله: [[new Date(2026, 1, 31)]] (٣١ فبراير) بتبقى ٣ مارس. ده اللي حصل مع [[setMonth(1)]] على ٣١ يناير.
+            why: "الداتا الغلط والنت اللي بيقطع والـ JSON البايظ هيحصلوا أكيد. الفرق بين تطبيق محترم وتطبيق بيقع إنك تمسك الـ error في المكان الصح، وتعرض رسالة مفهومة، وتسجّل التفاصيل.",
+            how: R`الـ throw بيفك الـ call stack: بيطلع من الدوال واحدة واحدة لحد ما يلاقي try. أي كود بعد الـ throw في نفس الدالة مبيشتغلش.
 
-الـ parsing حسب المواصفات: [["YYYY-MM-DD"]] لوحدها UTC، وتاريخ + وقت من غير offset محلي، وبـ [[Z]] أو [[+03:00]] محدد. عشان كده السطر الخامس نفس الناتج في أي بلد، والسادس بيتغير: في القاهرة [[2026-02-28T22:00:00.000Z]] (القاهرة UTC+2 في مارس)، وفي نيويورك [[2026-03-01T05:00:00.000Z]]. و [["01/02/2026"]] V8 فهمها أمريكي (MM/DD) فالشهر 0، ومتصفح أو مكتبة تانية ممكن تفهمها ١ فبراير. و [["32/01/2026"]] بتدّي Invalid Date و [[getTime()]] بـ NaN، ومفيش error: لازم تفحص [[Number.isNaN(d.getTime())]] بنفسك.
+[[catch]] بتمسك أي حاجة اترمت، مش Error بس، عشان كده في TypeScript نوعها unknown. و [[catch {}]] من غير متغير مسموحة لو مش محتاجه (ES2019).
 
-الطرح [[b - a]] بيحوّلهم milliseconds، فالفرق [[259200000]] (٣ أيام). و [[new Date(a)]] بتعمل نسخة، ومن غيرها [[b = a]] هيبقى نفس الـ object.`,
-            when: R`Date لسه موجود في كل API وكل مكتبة، فلازم تعرفه. استخدمه للـ timestamps ([[Date.now()]] و [[toISOString()]])، وللحسابات والعرض استخدم Intl ومكتبة أو Temporal (الدروس الجاية).`,
-            mistakes: R`[[new Date(2026, 9, 1)]] وانت فاكرها سبتمبر (دي أكتوبر). وتعمل parse لتاريخ من اليوزر بشكل [["DD/MM/YYYY"]]. وتعدّل Date جاي من برّه ([[setDate]]) فتبوّظه عند الـ caller. وتحسب الأيام بـ [[/ 86400000]] وتنسى إن يوم التوقيت الصيفي ٢٣ أو ٢٥ ساعة. وفي الانترفيو: «ليه [[new Date("2026-03-01")]] ممكن تطبع ٢٨ فبراير؟» الإجابة: اتفهمت UTC منتصف الليل، ولما اتعرضت بتوقيت أمريكا بقت اليوم اللي قبله.`
+[[finally]] بتشتغل دايمًا، حتى لو فيه return جوه try أو catch. ولو الـ finally نفسها عملت return، بتلغي أي return أو throw قبلها، وده بيخبّي errors، فمتعملش كده.
+
+try/catch بتمسك الـ errors المتزامنة بس. لو الـ error حصل جوه setTimeout أو Promise من غير await، الـ try اللي حوالين مش هتشوفه. مع async/await، [[await]] جوه try بيمسك رفض الـ Promise (درس async).
+
+الأنواع المدمجة: [[TypeError]] (عملية على نوع غلط، زي نداء undefined)، و [[ReferenceError]] (متغير مش موجود)، و [[SyntaxError]] (كود أو JSON بايظ)، و [[RangeError]] (قيمة برا المدى).`,
+            when: R`حوالين أي حاجة ممكن تفشل لأسباب برّه الكود: JSON.parse، و fetch، والملفات، و input اليوزر. وفي الطبقة اللي تعرف تعمل حاجة مفيدة بالـ error (تعرض رسالة، تعيد المحاولة). وفي Express فيه error middleware بيلم كله (تاب Backend بـ Node).`,
+            mistakes: R`[[catch (e) {}]] فاضية: الـ error اختفى وانت مش عارف. و [[throw "error"]] كـ string: مفيش stack. وتلف كل دالة في try/catch بدل مكان واحد مناسب. وتمسك كل الـ errors وانت عايز نوع واحد: افحص النوع وارمي الباقي تاني زي المثال.`
           },
-          teach: R`## الأول: Date من جوه رقم واحد
+          teach: R`## الكود ده بيعمل إيه؟
 
-المثال ١٢ سطر، وكل سطر بيوريك مطبّ من مطبّات [[Date]]. قبل ما نفكّه، لازم تعرف حاجة واحدة: الـ Date مش «تاريخ» متخزّن كيوم وشهر وسنة. هو **رقم واحد**: عدد الـ milliseconds (جزء من ألف من الثانية، اختصارها ms) من لحظة اسمها الـ **epoch**: أول يناير 1970 الساعة 12 بالليل بتوقيت UTC.
-
-~~~text app.js
-console.log(new Date(0).toISOString(), typeof Date.now());
-~~~
-
-~~~text الناتج (Node 24 على Windows)
-1970-01-01T00:00:00.000Z number
-~~~
-
-[[new Date(0)]] يعني «صفر ms من الـ epoch»، فطلعت اللحظة نفسها. و [[Date.now()]] بيرجّع اللحظة الحالية كرقم ([[number]]). والـ [[Z]] في الآخر معناها UTC (اختصار Zulu، اسم UTC في الطيران).
-
-والـ time zone؟ **مش متخزّن جوه الـ Date خالص.** هو بيظهر بس لما تسأل «الساعة كام؟» أو «النهارده كام؟»، ساعتها الـ methods العادية بتحسب بتوقيت الجهاز اللي الكود شغال عليه. كل الشرح تحت مبني على الجملة دي.
-
-> الناتج كله تحت اتشغّل بـ Node 24 على Windows والجهاز مضبوط على توقيت القاهرة، إلا لو مكتوب غير كده.
+دالة [[parseAge]] بتحوّل input لسن، وبترمي error بنوع واضح لو الـ input غلط. وبعدين بنناديها بحاجة غلط جوه [[try]]، ونمسك الـ error في [[catch]]، ونطبع رسالة في [[finally]] في كل الأحوال. وفي الآخر [[catch]] من غير متغير. اتشغّل في Node 24.
 
 ---
 
-## ١. [[new Date(2026, 0, 31)]]: الشهر بيبدأ من 0
+## ١. الدالة اللي بترمي
 
 ~~~text app.js
-const d = new Date(2026, 0, 31);
-console.log(d.getMonth(), d.getDate());
+function parseAge(input) {
+  const age = Number(input);
 ~~~
 
-- [[const d]]: متغير اسمه d مش هيتغير يشاور على حاجة تانية (بس الـ object نفسه ممكن يتعدّل، وده هيفرق في الخطوة الجاية).
-- [[new Date(...)]]: [[new]] بتعمل object جديد من النوع Date.
-- الأرقام التلاتة: السنة، و **رقم الشهر من 0** (يناير 0، فبراير 1، ... ديسمبر 11)، واليوم من 1 عادي.
-- [[getMonth()]]: بيرجّع رقم الشهر (من 0 برضه)، و [[getDate()]]: رقم اليوم في الشهر. (لاحظ: [[getDay()]] حاجة تانية خالص، يوم الأسبوع من 0 للحد.)
+[[Number(input)]] بيحوّل أي حاجة لرقم. لو مقدرش بيرجّع [[NaN]] (Not a Number، «مش رقم»). جرّبنا شوية قيم:
 
-~~~text الناتج
-0 31
+~~~text الناتج: Number("abc"), Number("25"), Number(""), Number(" 7 "), Number("-3")
+NaN 25 0 7 -3
 ~~~
 
-يعني ٣١ يناير. والأرقام دي متفسّرة **بتوقيت الجهاز**: نص ليل ٣١ يناير في القاهرة. شوف الرقم الحقيقي اللي جوه:
+لاحظ إن النص الفاضي بيبقى 0 مش NaN، والمسافات حوالين الرقم بتتشال.
 
 ~~~text app.js
-console.log(d.getTime(), d.toISOString());
+  if (Number.isNaN(age)) throw new TypeError($__btمش رقم: $__{input}$__bt);
 ~~~
 
-~~~text الناتج
-1769810400000 2026-01-30T22:00:00.000Z
+- [[Number.isNaN(age)]]: هل age هي NaN؟ (مينفعش تكتب [[age === NaN]]: NaN مش بتساوي حتى نفسها.)
+- [[throw]]: ارمي error. التنفيذ **بيقف هنا فورًا**، والدالة مبترجّعش حاجة، والـ error بيطلع لفوق لحد أول try.
+- [[new TypeError(...)]]: نوع جاهز من الـ errors معناه «القيمة نوعها غلط». والرسالة template فيها الـ input.
+
+~~~text app.js
+  if (age < 0) throw new RangeError("السن مينفعش يبقى سالب");
+  return age;
+}
 ~~~
 
-[[getTime()]] بيطلّع الرقم الخام، و [[toISOString()]] بيكتبه بتوقيت UTC: الساعة ١٠ بالليل يوم ٣٠. ليه؟ لأن القاهرة في يناير UTC+2، فنص الليل عندنا هو ١٠ بالليل في UTC. نفس اللحظة، مكتوبة بتوقيتين.
+- [[RangeError]]: نوع تاني معناه «القيمة نوعها صح بس برّه المدى المسموح».
+- [[return age]]: لو عدّى الفحصين، رجّع الرقم. [[parseAge("25")]] رجّعت [[25]].
 
 ---
 
-## ٢. [[setMonth(1)]]: التعديل في نفس الـ object، والـ overflow
+## ٢. [[try]] و [[catch]]
 
 ~~~text app.js
-d.setMonth(1);
-console.log(d.toDateString());
+try {
+  parseAge("abc");
+} catch (err) {
+  console.log(err.name, err.message);
 ~~~
 
-[[setMonth(1)]] معناها «خلي الشهر فبراير» (1 = فبراير). حاجتين بيحصلوا:
-
-1. **التعديل في مكانه (mutable):** مفيش Date جديد، الـ object اللي في [[d]] نفسه اتغيّر. عشان كده [[const]] مامنعتش ده: const بتمنع إنك تكتب [[d = ...]]، مش إنك تعدّل جوه الـ object.
-2. **الـ overflow:** اليوم لسه 31، فالتاريخ بقى «٣١ فبراير 2026». ده مش موجود (فبراير 2026 فيه 28 يوم بس، مش سنة كبيسة)، فـ Date مش بيرمي error، بيرحّل الزيادة: 31 − 28 = 3 أيام زيادة، يعني ٣ مارس.
-
-و [[toDateString()]] بيكتب التاريخ بشكل إنجليزي مختصر من غير الساعة:
+- [[try { ... }]]: «جرّب الكود ده، ولو رمى error متوقعش البرنامج».
+- [[parseAge("abc")]] رمت TypeError، فباقي الـ try اتلغى، والتنفيذ نط على الـ catch.
+- [[catch (err)]]: [[err]] هو الـ object اللي اترمى. وأي Error ليه ٣ خصايص: [[name]] اسم النوع ([["TypeError"]])، و [[message]] الرسالة اللي كتبناها، و [[stack]] مكان الـ error بالسطر (تحت).
 
 ~~~text الناتج
-Tue Mar 03 2026
+TypeError مش رقم: abc
 ~~~
 
-| الحتة | معناها |
+---
+
+## ٣. ارمي اللي مش بتاعك تاني
+
+~~~text app.js
+  if (!(err instanceof TypeError)) throw err;
+~~~
+
+- [[err instanceof TypeError]]: الـ error ده من نوع TypeError؟
+- [[!( ... )]]: عكس الشرط. يعني «لو **مش** TypeError، ارميه تاني لفوق».
+
+الفكرة: الـ catch ده عارف يتعامل مع «مش رقم» بس. أي حاجة تانية (bug حقيقي مثلًا) متبلعهاش في صمت. جرّبنا [[parseAge(-3)]] بدل abc:
+
+~~~text الناتج
+RangeError السن مينفعش يبقى سالب
+خلصنا
+C:\Users\ali\code\app.js:11
+  if (!(err instanceof TypeError)) throw err;
+                                   ^
+
+RangeError: السن مينفعش يبقى سالب
+    at parseAge (C:\Users\ali\code\app.js:4:22)
+~~~
+
+الـ catch طبع الرسالة، والـ RangeError اترمى تاني، ومفيش try فوقه فالبرنامج وقع. بس لاحظ [[خلصنا]] اتطبعت **قبل** ما يقع: ده الـ finally.
+
+---
+
+## ٤. [[finally]]
+
+~~~text app.js
+} finally {
+  console.log("خلصنا");
+}
+~~~
+
+[[finally]] بتشتغل **دايمًا**: لو الـ try نجح، لو الـ catch مسك، ولو حتى الـ catch نفسه رمى error زي اللي فوق. مكانها التنضيف: قفل loading أو connection أو ملف.
+
+~~~text الناتج: المثال كامل
+TypeError مش رقم: abc
+خلصنا
+JSON بايظ
+~~~
+
+---
+
+## ٥. [[catch]] من غير متغير
+
+~~~text app.js
+try { JSON.parse("{"); } catch { console.log("JSON بايظ"); }
+~~~
+
+- [[JSON.parse("{")]]: نص JSON ناقص، فبيرمي SyntaxError. لما طبعناه:
+
+~~~text الناتج
+SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+~~~
+
+يعني «بعد [[{]] كنت مستني اسم خاصية أو [[}]]». و [[position 1]] بالعدّ من صفر، يعني الحرف التاني.
+
+- [[catch { ... }]] من غير [[(err)]]: مسموحة لو مش محتاج تعرف الـ error (من ES2019).
+
+---
+
+## ٦. [[err.stack]] (الـ solCode)
+
+~~~text app.js
+try { parseAge("abc"); } catch (err) { console.log(err.stack); }
+~~~
+
+~~~text الناتج
+TypeError: مش رقم: abc
+    at parseAge (C:\Users\ali\code\app.js:3:32)
+    at Object.<anonymous> (C:\Users\ali\code\app.js:6:7)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    ...
+~~~
+
+اقراه من فوق لتحت: أول سطر النوع والرسالة، وبعده **مكان الرمي** ([[app.js:3:32]] يعني الملف، سطر 3، عمود 32)، وبعده مين نادى الدالة دي (سطر 6). السطور اللي فيها [[node:internal]] ده كود Node نفسه، سيبها.
+
+---
+
+## ٧. return جوه finally (الـ solCode)
+
+~~~text app.js
+function who() {
+  try { return "a"; } finally { return "b"; }
+}
+console.log(who());
+~~~
+
+~~~text الناتج
+b
+~~~
+
+الـ try قال «رجّع a»، بس قبل ما الدالة تخرج فعلًا الـ finally اشتغلت ورجّعت b، فغطّت عليها. نفس الحاجة لو الـ try كان رمى error: return في finally بتبلعه. عشان كده **متكتبش return جوه finally أبدًا**.
+
+---
+
+## ٨. ليه try مبيمسكش error جوه callback
+
+[[try]] بيحمي الكود اللي بيشتغل **وهو لسه جواه**. الـ callback اللي بتبعته لـ [[setTimeout]] أو [[addEventListener]] أو [[.then]] مش بيشتغل دلوقتي: بيتسجّل، والـ try يخلص، وبعدين الـ event loop يناديه بعدين في لفة لوحدها (درس «event loop»).
+
+~~~text cb.mjs
+try {
+  setTimeout(() => { throw new Error("جوه الـ timer"); }, 0);
+} catch (e) {
+  console.log("caught", e.message);
+}
+console.log("after try");
+~~~
+
+~~~text الناتج (Node 24)
+after try
+file:///C:/.../cb.mjs:2
+  setTimeout(() => { throw new Error("جوه الـ timer"); }, 0);
+                     ^
+
+Error: جوه الـ timer
+    at Timeout._onTimeout (file:///C:/.../cb.mjs:2:28)
+    at listOnTimeout (node:internal/timers:685:17)
+
+Node.js v24.22.1
+~~~
+
+[[caught]] عمرها ما اتطبعت، والبرنامج وقع بكود خروج ١. شوف الـ stack: أول سطر [[Timeout._onTimeout]] جاي من [[node:internal/timers]] مش من الـ try بتاعك. يعني ساعة ما الـ error اترمى، الـ try كان خلص من زمان ومش موجود في الـ call stack.
+
+### التصليح: الـ try يبقى جوه الـ callback، أو await
+
+~~~text cb2.mjs
+function later(fn) { setTimeout(fn, 0); }
+later(() => {
+  try { JSON.parse("{"); } catch (e) { console.log("اتمسك جوه الـ callback:", e.name); }
+});
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+async function main() {
+  try {
+    await wait(10);
+    JSON.parse("{");
+  } catch (e) { console.log("اتمسك بعد await:", e.name); }
+  try {
+    Promise.reject(new Error("من غير await"));
+  } catch { console.log("مش هتتطبع"); }
+}
+main();
+~~~
+
+~~~text الناتج (Node 24)
+اتمسك جوه الـ callback: SyntaxError
+اتمسك بعد await: SyntaxError
+file:///C:/.../cb2.mjs:12
+    Promise.reject(new Error("من غير await"));
+                   ^
+
+Error: من غير await
+~~~
+
+- الأول: الـ try **جوه** الـ callback، فهو موجود ساعة ما الكود بيشتغل.
+- التاني: [[await]] بيوقّف [[main]] ويرجّعها **جوه نفس الـ try** لما الـ Promise يخلص، فالـ error بعده بيتمسك. ده أحسن حل: حوّل الـ callback لـ Promise وخلّي [[await]] جوه try.
+- التالت: Promise اترفض من غير [[await]] ولا [[.catch]]: الـ try مش شايفه، و Node وقّع البرنامج كله (ده اسمه unhandled rejection، ليه درس لوحده: «الأخطاء العامة: unhandledrejection و uncaughtException»).
+
+| الكود | الـ try اللي برّه بيمسكه؟ | ليه |
+|---|---|---|
+| [[JSON.parse]] جوه الـ try على طول | أيوه | بيشتغل والـ try لسه مفتوح |
+| [[setTimeout(() => { throw ... })]] | لأ | الـ callback بيشتغل بعد ما الـ try خلص |
+| [[el.addEventListener("click", () => { throw ... })]] | لأ | نفس الكلام: بيشتغل مع كل ضغطة بعدين |
+| [[promise.then(() => { throw ... })]] من غير await | لأ | بيبقى rejection، محتاج [[.catch]] أو await |
+| [[await promise]] جوه try | أيوه | الـ await بيرجّع التنفيذ جوه الـ try |
+
+---
+
+## الخلاصة
+
+| الحتة | بتشتغل إمتى |
 |---|---|
-| [[Tue]] | يوم الأسبوع (Tuesday، التلات) |
-| [[Mar]] | الشهر (March، مارس) |
-| [[03]] | اليوم في الشهر، برقمين دايمًا |
-| [[2026]] | السنة كاملة بأربع أرقام |
+| [[try]] | دايمًا، لحد أول throw |
+| [[catch (err)]] | لو حصل throw في الـ try بس |
+| [[finally]] | دايمًا في الآخر، حتى لو catch رمى تاني |
+| [[throw err]] جوه catch | لو الـ error مش من النوع اللي انت عارف تتعامل معاه |
 
-نفس الترحيل بيحصل لو كتبتها مباشرة: [[new Date(2026, 1, 31).toDateString()]] بيطلع [[Tue Mar 03 2026]] برضه.
-
----
-
-## ٣. الـ parsing: النص اللي بتديه لـ Date بيتفهم إزاي؟
-
-ده أخطر جزء. [[new Date("...")]] بنص بيعمل parse (يقرا النص ويحوّله لحظة)، والقاعدة في المواصفات:
-
-| شكل النص | بيتفهم بتوقيت إيه |
+| النوع | معناه |
 |---|---|
-| [["2026-03-01"]] (تاريخ بس) | UTC، يعني منتصف الليل في جرينتش مش عندك |
-| [["2026-03-01T00:00"]] (تاريخ + وقت من غير Z) | توقيت الجهاز اللي الكود شغال عليه |
-| [["2026-03-01T00:00Z"]] أو [[+02:00]] في الآخر | التوقيت المكتوب في النص بالظبط، على أي جهاز |
-| أي شكل تاني ([["01/02/2026"]]) | مش standard، كل engine على مزاجه |
+| [[TypeError]] | نوع القيمة غلط (نداء undefined، رقم مكان نص) |
+| [[RangeError]] | القيمة برّه المدى |
+| [[SyntaxError]] | كود أو JSON بايظ |
+| [[ReferenceError]] | متغير مش موجود |
 
-### السطر الخامس: تاريخ بس
+- ارمي [[new Error]] أو نوع منه، مش string، عشان يبقى فيه name و stack.
+- الـ try مبيشوفش errors جوه callbacks بتشتغل بعدين (timer، أو event، أو [[.then]]): حط الـ try جوه الـ callback، أو استخدم await جوه try.`,
+          lines: [
+            R`دالة بتاخد input (غالبًا string جاي من فورم) وتحوّله سن، أو ترمي error لو القيمة مينفعش تبقى سن.`,
+            R`[[Number()]] بتحوّل الـ string لرقم، ولو مش رقم بترجّع [[NaN]] من غير error. خلي بالك: [[Number("")]] بترجّع [[0]] مش NaN، فالخانة الفاضية هتعدّي كسن صفر لو مشيكتش عليها.`,
+            R`[[NaN]] مبيساويش أي حاجة ولا حتى نفسه، فلازم [[Number.isNaN]] مش [[===]]. [[throw]] بتوقف الدالة فورًا وترمي [[TypeError]] برسالة فيها القيمة الغلط، وأقرب [[catch]] فوق هي اللي بتمسكه.`,
+            R`السن سالب: مشكلة من نوع تاني (رقم بس برّه المسموح)، فبنرمي [[RangeError]]. النوع المختلف بيخلي اللي ماسك الـ error يفرّق بين الحالتين.`,
+            R`لو وصلنا هنا يبقى القيمة عدّت الفحصين، فبنرجّعها رقم.`,
+            R`نهاية [[parseAge]].`,
+            R`[[try]]: الكود اللي ممكن يرمي. لو رمى، باقي السطور جوه الـ try بتتلغي والتنفيذ ينط على [[catch]] على طول.`,
+            R`[[abc]] مش رقم، فـ [[parseAge]] هترمي TypeError، وأي سطر كان بعده جوه الـ try مش هيتنفّذ.`,
+            R`[[catch]] بتمسك الـ error في [[err]]، فالبرنامج مبيقعش ويكمّل.`,
+            R`بيطبع [[TypeError مش رقم: abc]]: [[name]] نوع الـ error و [[message]] الرسالة اللي كتبناها في الـ throw.`,
+            R`إحنا مستعدين لـ TypeError بس. لو جالنا نوع تاني (RangeError، أو bug في الكود) بنرميه تاني لفوق بدل ما نبلعه، عشان منخبّيش مشكلة مش فاهمينها. هنا هو TypeError فمش هيترمي تاني.`,
+            R`[[finally]] بتشتغل في كل الأحوال: الـ try نجح، أو اتمسك error، أو حتى الـ catch رمى تاني. مكانها الطبيعي للتنضيف، زي قفل ملف أو إخفاء الـ loading.`,
+            R`بيطبع «خلصنا» بعد الـ catch. ولو الـ catch كان رمى الـ error تاني، كانت هتتطبع برضه قبل ما الـ error يطلع لفوق.`,
+            R`نهاية الـ try/catch/finally.`,
+            R`[[catch]] من غير [[(err)]] لما مش محتاج تفاصيل الـ error: هنا يكفينا نعرف إن الـ JSON بايظ. [[JSON.parse("{")]] بترمي SyntaxError فبيطبع «JSON بايظ».`,
+          ],
+          sol: R`[[err.stack]] بيطبع [[TypeError: مش رقم: abc]] وتحته سطور [[at parseAge (file.js:3:...)]] وبعدها السطر اللي ناداها. اقراه من فوق لتحت: أول سطر هو المكان اللي الـ error اترمى فيه، واللي تحته مين نادى مين.
 
-~~~text app.js
-console.log(new Date("2026-03-01").toISOString());
-~~~
+الدالة اللي فيها [[try { return "a"; } finally { return "b"; }]] بترجّع [["b"]]: الـ finally بيشتغل دايمًا قبل ما الدالة تخرج، والـ return بتاعته بيغطّي على اللي في الـ try (وكمان بيبلع أي error اترمى). عشان كده متكتبش return جوه finally أبدًا، استخدمه للتنضيف بس. ولو finally من غير return، الدالة بترجّع [["a"]] بعد ما الـ finally يشتغل.`,
+          solCode: R`function parseAge(input) {
+  const age = Number(input);
+  if (Number.isNaN(age)) throw new TypeError($__btمش رقم: $__{input}$__bt);
+  return age;
+}
+try { parseAge("abc"); } catch (err) { console.log(err.stack); }
+function who() {
+  try { return "a"; } finally { return "b"; }
+}
+console.log(who()); // "b"`
+        },
+        {
+          cmd: "custom errors و cause",
+          title: "تعمل أنواع errors بتاعتك وتحافظ على السبب الأصلي",
+          desc: R`[[class NotFoundError extends Error]] بتخليك تفرّق بين الأخطاء بـ [[instanceof]]: الـ NotFound يرجّع 404، والـ Validation يرجّع 400، والباقي 500.
 
-~~~text الناتج
-2026-03-01T00:00:00.000Z
-~~~
+ولما تمسك error وترمي واحد أوضح منه، ابعت الأصلي في [[{ cause: err }]] (ES2022). كده الرسالة مفهومة، والتفاصيل التقنية مضاعتش للـ debugging.`,
+          example: R`class AppError extends Error {
+  constructor(message, { status = 500, cause } = {}) {
+    super(message, { cause });
+    this.name = this.constructor.name;
+    this.status = status;
+  }
+}
+class NotFoundError extends AppError {
+  constructor(what) { super($__bt$__{what} مش موجود$__bt, { status: 404 }); }
+}
+async function loadUser(id) {
+  try {
+    const res = await fetch($__bthttps://api.example.com/users/$__{id}$__bt);
+    if (res.status === 404) throw new NotFoundError("اليوزر");
+    return await res.json();
+  } catch (err) {
+    if (err instanceof AppError) throw err;
+    throw new AppError("فشل تحميل اليوزر", { cause: err });
+  }
+}
+loadUser(1).catch((e) => console.log(e.name, e.status, e.message, e.cause?.message));`,
+          try: R`شغّل الكود من غير نت (أو بدومين غلط) واطبع [[e.cause]]. وبعدين اعمل [[ValidationError]] بـ status 400 وفيه [[fields]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اعمل [[class ValidationError extends Error]] فيها [[this.name = "ValidationError"]]، و [[const e = new ValidationError("الإيميل ناقص")]]، واكتب على ورقة إيه اللي هيطلع من [[e instanceof ValidationError]] و [[e instanceof Error]] و [[String(e)]] و [[JSON.stringify(e)]]، وبعدين شغّل وقارن.`, done: R`[[true true]] وبعدين [[ValidationError: الإيميل ناقص]]. والـ JSON بيطلع [[{"name":"ValidationError"}]] من غير الرسالة: [[message]] و [[stack]] مش enumerable، فلو هتبعت error في API لازم تكتب الحقول بإيدك أو تعمل [[toJSON()]].` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[class AppError extends Error { constructor(msg) { super(msg); } }]] وفي الـ catch [[if (e.name === "AppError")]] مبيدخلش. اطبع [[String(new AppError("x"))]] وصلّح.`, done: R`قبل التصليح بيطبع [[Error: x]] والـ name [["Error"]]. بعد [[this.name = new.target.name]] في الـ constructor بيطبع [[AppError: x]]، وأي كلاس بيورث منه زي [[DbError]] بياخد اسمه هو لوحده ([[DbError: y]]).` },
+            { lvl: 'تطبيق', t: R`**ابني:** اكتب [[toHttp(err)]] بترجّع [[{ status, body }]]: [[NotFoundError]] ← 404 ورسالته، و [[ValidationError]] ← 400 ومعاها [[fields]]، وأي حاجة تانية ← 500 برسالة عامة «حصل خطأ» من غير رسالة الـ error الأصلية.`, done: R`[[toHttp(new NotFoundError("المنتج"))]] بترجّع [[{ status: 404, body: { error: "المنتج مش موجود" } }]]، و [[toHttp(new TypeError("db password wrong"))]] بترجّع 500 والـ body مفيهوش كلمة password خالص، و [[toHttp("نص")]] (حد رمى string) بترجّع 500 برضه من غير ما تقع.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** لـ [[toHttp]] اللي في التمرين التاني اكتب ٤ سطور [[console.assert]] أو [[console.log(x === y)]]: NotFoundError بـ 404، و ValidationError بـ 400 وفيها fields، و TypeError بـ 500 والـ body مفيهوش رسالته، و string مرمي بـ 500.`, done: R`الـ ٤ بيعدّوا. ولو غيّرت ترتيب الـ instanceof بحيث فحص [[Error]] ييجي الأول، اختبار 404 و 400 بيفشلوا، فعرفت إن الكلاس الأخص لازم يتفحص الأول.` },
+            { lvl: 'تحدي', t: R`**مسألة:** اعمل سلسلة ٣ مستويات: [[readFileFake]] بترمي [[new Error("ENOENT")]]، و [[loadConfig]] بتمسكه وترمي [[ConfigError]] بـ cause، و [[startApp]] بتمسكه وترمي [[AppError("السيرفر مقامش")]] بـ cause. واكتب [[explain(err)]] بتمشي على [[.cause]] وتطبع كل مستوى في سطر، وبحد أقصى ١٠ مستويات.`, done: R`[[explain]] بتطبع ٣ سطور بالترتيب: AppError، وبعدين ConfigError، وبعدين Error ENOENT. و [[console.log(err)]] العادي في Node بيطبع الـ cause تحت كلمة [[[cause]:]]. ولو عملت [[a.cause = b; b.cause = a]]، الدالة بتقف بعد ١٠ سطور ومبتعلّقش.` }
+          ],
+          flag: "script",
+          deep: {
+            why: R`في أي backend أو تطبيق كبير، طريقة التعامل مع الـ error بتعتمد على نوعه: تعرض رسالة لليوزر؟ تعيد المحاولة؟ تسجّل وتنبّه؟ لو كله [[Error]] بـ message بس، هتقارن نصوص، وده بيبوظ أول ما حد يعدّل الرسالة.`,
+            how: R`[[super(message, { cause })]] بيحط الـ message والـ cause على الـ error. و [[this.name = this.constructor.name]] بيخلي الـ name يطلع اسم الكلاس الفعلي في الـ logs والـ stack، بدل "Error".
 
-اتفهمت نص الليل UTC، و [[toISOString()]] بيكتب بـ UTC، فطلعت زي ما هي في أي بلد.
+[[cause]] بيتعرض في Node وفي DevTools مع الـ stack، فبتشوف السلسلة كاملة: «فشل تحميل اليوزر» سببه «fetch failed» سببه «ECONNREFUSED».
 
-### السطر السادس: تاريخ ووقت من غير Z
+وفيه [[AggregateError]] لما عندك كذا error مع بعض، وده اللي [[Promise.any]] بترميه لو كله فشل.
 
-~~~text app.js
-console.log(new Date("2026-03-01T00:00").toISOString());
-~~~
+والفكرة العامة: الطبقات التحت ترمي errors بنوع ومعنى، وطبقة واحدة فوق (error middleware في Express، أو error boundary في React) بتقرر تعمل إيه بيها.`,
+            when: "في أي backend (errors بـ status codes)، وفي المكتبات، وفي أي مكان بتمسك error تقني وتحوّله لحاجة ليها معنى.",
+            mistakes: R`ترمي error جديد وتضيّع الأصلي من غير cause. وترجّع [[err.message]] الداخلي لليوزر (ممكن يكون فيه تفاصيل قاعدة بيانات أو paths). وتفرّق بين الأخطاء بـ [[err.message.includes(...)]].`
+          },
+          teach: R`## الكود ده بيعمل إيه؟
 
-هنا اتفهمت «نص الليل بتوقيت الجهاز». جرّبنا نفس الملف على توقيتين:
+بيعمل نوعين errors بتوعنا: [[AppError]] (أي خطأ في التطبيق ومعاه HTTP status)، و [[NotFoundError]] (حاجة مش موجودة، 404). وبعدين دالة [[loadUser]] بتجيب يوزر من API، وأي error تقني بيحصل بتلفّه في AppError برسالة مفهومة، والأصلي بيفضل محفوظ في [[cause]].
 
-~~~text الناتج (القاهرة)
-2026-02-28T22:00:00.000Z
-~~~
-
-~~~text الناتج (نيويورك)
-2026-03-01T05:00:00.000Z
-~~~
-
-القاهرة في مارس UTC+2، فنص الليل عندها هو ١٠ بالليل يوم ٢٨ فبراير في UTC. ونيويورك في أول مارس 2026 لسه UTC−5 (التوقيت الصيفي عندهم بيبدأ ٨ مارس)، فنص الليل عندها هو ٥ الصبح UTC. نفس السطر، نفس الكود، لحظتين مختلفتين.
-
-### السطرين السابع والتامن: أشكال مش standard
-
-~~~text app.js
-console.log(new Date("01/02/2026").getMonth());
-console.log(new Date("32/01/2026").getTime());
-~~~
-
-~~~text الناتج
-0
-NaN
-~~~
-
-- [["01/02/2026"]]: V8 (الـ engine بتاع Node و Chrome) قراها بالطريقة الأمريكية MM/DD، فالشهر يناير (0). اللي كاتبها مصري كان قاصد ١ فبراير. ومتصفح تاني ممكن يقراها بشكل تالت.
-- [["32/01/2026"]]: مفيش شهر 32، فالنتيجة **Invalid Date**. ومفيش error بيترمي، الرقم اللي جوه بقى [[NaN]] (Not a Number) وخلاص:
-
-~~~text app.js
-console.log(String(new Date("32/01/2026")), Number.isNaN(new Date("32/01/2026").getTime()));
-~~~
-
-~~~text الناتج
-Invalid Date true
-~~~
-
-فلو بتعمل parse لتاريخ جاي من برّه، افحصه بنفسك بـ [[Number.isNaN(d.getTime())]].
+[[api.example.com]] دومين محجوز للأمثلة، مفيش عليه API. فشغّلنا الكود في Node 24 مرتين: مرة زي ما هو (فالطلب بيفشل)، ومرة على سيرفر صغير محلي فيه [[/users/1]] بس، وأي حاجة تانية 404.
 
 ---
 
-## ٤. النسخ والطرح
+## ١. [[AppError]]
 
 ~~~text app.js
-const a = new Date("2026-09-29T10:00:00Z");
-const b = new Date(a);
-b.setDate(b.getDate() + 3);
-console.log(a.getDate(), b.getDate(), b - a);
+class AppError extends Error {
+  constructor(message, { status = 500, cause } = {}) {
 ~~~
 
-- السطر الأول: لحظة محددة بـ [[Z]]، فمش هتختلف من جهاز لجهاز.
-- [[new Date(a)]]: Date **جديد** بنفس اللحظة، يعني نسخة. ليه مش [[const b = a]]؟ لأن ده مش نسخ، ده اسم تاني لنفس الـ object. جرّبناها: [[const same = a; same.setDate(1);]] وبعدها [[a.getDate()]] طلع [[1]]، الأصل باظ.
-- [[b.getDate() + 3]]: اليوم الحالي (29) + 3 = 32، و [[setDate(32)]] بيرحّل زي ما شفنا: ٢ أكتوبر.
-- [[b - a]]: الطرح بيحوّل الاتنين للرقم اللي جوه (ms) ويطرح.
+- [[extends Error]]: AppError نوع من Error، فبياخد message و stack وكل حاجة (درس extends).
+- [[{ status = 500, cause } = {}]]: التاني object خيارات، بنفكّه في السطر نفسه (destructuring):
+- [[status = 500]]: لو مبعتش status، يبقى 500 (خطأ في السيرفر).
+- [[cause]]: الـ error الأصلي لو فيه.
+- [[= {}]] في الآخر: لو مبعتش الـ object خالص، اعتبره object فاضي. من غيرها [[new AppError("x")]] كانت هتقع لأن مينفعش تفك undefined. بيها [[new AppError("x").status]] طلعت [[500]].
 
-~~~text الناتج
-29 2 259200000
+~~~text app.js
+    super(message, { cause });
+    this.name = this.constructor.name;
+    this.status = status;
+  }
+}
 ~~~
 
-[[a]] لسه ٢٩ (النسخة حمته)، و [[b]] بقت ٢ (أكتوبر). والفرق: 3 أيام × 24 ساعة × 60 دقيقة × 60 ثانية × 1000 = 259,200,000 ms.
+- [[super(message, { cause })]]: نادي constructor بتاع Error. و Error نفسه بيقبل [[{ cause }]] من ES2022 وبيحطها على الـ error كخاصية [[cause]].
+- [[this.constructor.name]]: [[this.constructor]] هو الكلاس اللي اتعمل بيه الـ object فعلًا، و [[.name]] اسمه. فلو اتعمل بـ NotFoundError، الاسم يطلع [["NotFoundError"]] **من غير** ما تكتبه في كل كلاس. ومن غير السطر ده، جرّبنا [[class NoName extends Error {}]]: الاسم طلع [["Error"]]، فالـ logs متقولكش النوع.
+- [[this.status = status]]: خاصية زيادة بتاعتنا.
 
 ---
 
-## تشغّله بتوقيت تاني إزاي؟
+## ٢. [[NotFoundError]]
 
-Node بيقرا متغير البيئة [[TZ]] (Time Zone) عشان يعرف توقيت الجهاز:
+~~~text app.js
+class NotFoundError extends AppError {
+  constructor(what) { super($__bt$__{what} مش موجود$__bt, { status: 404 }); }
+}
+~~~
+
+بياخد اسم الحاجة بس، ويبني الرسالة لوحده، ويثبّت status على 404. واتأكدنا إن [[new NotFoundError("x")]] هو [[instanceof]] الاتنين: NotFoundError و AppError و Error كمان. ده اللي بيخليك تفرّق بالنوع.
+
+---
+
+## ٣. [[loadUser]]: الطلب
+
+~~~text app.js
+async function loadUser(id) {
+  try {
+    const res = await fetch($__bthttps://api.example.com/users/$__{id}$__bt);
+    if (res.status === 404) throw new NotFoundError("اليوزر");
+    return await res.json();
+~~~
+
+- [[async]] و [[await]]: استنى الطلب من غير ما توقف البرنامج (درس async و await).
+- [[res.status === 404]]: fetch **مبترميش** error على 404، فبنفحص بنفسنا ونرمي النوع الواضح.
+- [[return await res.json()]]: حوّل الرد لـ object ورجّعه.
+
+---
+
+## ٤. الـ catch: عدّي أو لِف
+
+~~~text app.js
+  } catch (err) {
+    if (err instanceof AppError) throw err;
+    throw new AppError("فشل تحميل اليوزر", { cause: err });
+  }
+}
+~~~
+
+- [[err instanceof AppError]]: لو ده error **بتاعنا** (زي الـ NotFoundError اللي رميناه فوق)، عدّيه زي ما هو، معناه واضح أصلًا.
+- غير كده يبقى error تقني مش متوقع (النت، DNS، JSON بايظ): اعمل AppError برسالة مفهومة، وحط الأصلي في [[cause]] عشان التفاصيل متضيعش.
+
+---
+
+## ٥. التشغيل
+
+~~~text app.js
+loadUser(1).catch((e) => console.log(e.name, e.status, e.message, e.cause?.message));
+~~~
+
+[[.catch(...)]] على الـ Promise اللي loadUser رجّعته، وبنطبع ٤ حاجات. و [[e.cause?.message]]: [[?.]] عشان لو مفيش cause ميقعش.
+
+### على [[api.example.com]] (الدومين مش موجود)
+
+~~~text الناتج
+AppError 500 فشل تحميل اليوزر fetch failed
+~~~
+
+fetch رمت [[TypeError: fetch failed]]، والـ catch لفّها. وفي Node الـ error الأصلي جواه cause **تاني** بالسبب الحقيقي، طبعناه:
+
+~~~text الناتج: e.cause.cause.code, e.cause.cause.message
+ENOTFOUND getaddrinfo ENOTFOUND api.example.com
+~~~
+
+[[ENOTFOUND]] يعني الـ DNS ملقاش الدومين. فالسلسلة كاملة: «فشل تحميل اليوزر» ← سببه «fetch failed» ← سببه «ENOTFOUND». وفي Chrome نفس الطلب لدومين مش موجود رمى [[TypeError: Failed to fetch]].
+
+### على السيرفر المحلي
+
+~~~text الناتج
+{ id: 1, name: 'Sara' }                         ← loadUser(1)
+NotFoundError 404 اليوزر مش موجود undefined     ← loadUser(2)
+~~~
+
+مع 2، الـ NotFoundError عدّى من الـ catch زي ما هو، و cause بـ undefined لأنه مش ملفوف.
+
+### شكل الـ error في Node
+
+لما تطبع AppError فيه cause بـ console.log، Node بيعرض الاتنين (من ملف تجربة، السطر 37 فيه [[new AppError("فشل تحميل اليوزر", { cause: new TypeError("fetch failed") })]]):
+
+~~~text الناتج
+AppError: فشل تحميل اليوزر
+    at file:///C:/Users/ali/code/test.mjs:37:14
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  status: 500,
+  [cause]: TypeError: fetch failed
+      at file:///C:/Users/ali/code/test.mjs:37:56
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+}
+~~~
+
+---
+
+## ٦. نوع تالت (الـ solCode)
+
+~~~text app.js
+class ValidationError extends AppError {
+  constructor(fields) {
+    super("البيانات مش صحيحة", { status: 400 });
+    this.fields = fields;
+  }
+}
+const err = new ValidationError({ email: "لازم يبقى إيميل صحيح" });
+console.log(err.name, err.status, err.fields, err instanceof AppError);
+~~~
+
+- [[super(...)]] الأول دايمًا، وبعدين [[this.fields]]: object فيه كل خانة غلط ورسالتها، عشان الفورم يعرض كل غلطة جنب خانتها.
+
+~~~text الناتج
+ValidationError 400 { email: 'لازم يبقى إيميل صحيح' } true
+~~~
+
+الاسم طلع ValidationError لوحده بفضل [[this.constructor.name]] في AppError.
+
+---
+
+## ٧. AggregateError: كذا error في error واحد
+
+ساعات الفشل مش سبب واحد: كل الـ mirrors وقعت، أو الفورم فيه ٣ غلطات. [[AggregateError]] نوع مدمج (ES2021) شايل array من الـ errors في [[errors]]، و [[message]] واحدة فوقهم.
+
+### بيجيلك من [[Promise.any]]
+
+[[Promise.any]] بتستنى **أول** Promise ينجح. لو كلهم فشلوا، بترمي AggregateError فيه كل الأسباب:
+
+~~~text agg.mjs
+const fail = (name, ms) => new Promise((_, rej) => setTimeout(() => rej(new Error($__bt$__{name} واقع$__bt)), ms));
+try {
+  await Promise.any([fail("mirror1", 10), fail("mirror2", 20)]);
+} catch (e) {
+  console.log(e.name, "|", e.message, "|", e instanceof AggregateError);
+  console.log(e.errors.map((x) => x.message));
+}
+~~~
+
+~~~text الناتج (Node 24)
+AggregateError | All promises were rejected | true
+[ 'mirror1 واقع', 'mirror2 واقع' ]
+~~~
+
+- [[e.message]] عامة («كلهم اترفضوا»)، فمتعرضهاش لليوزر لوحدها.
+- [[e.errors]]: الأسباب الحقيقية بنفس ترتيب الـ promises (مش ترتيب الفشل)، فتقدر تسجّل كل واحد.
+- لو واحد بس نجح، [[Promise.any]] بترجّعه ومفيش error خالص (جرّبتها: [["b شغال"]]).
+- [[Promise.any([])]] على array فاضية بترمي AggregateError على طول و [[errors.length]] بـ 0.
+
+### تعمله بنفسك: كل غلطات الفورم مرة واحدة
+
+~~~text agg.mjs
+const errs = [new RangeError("age"), new TypeError("email")];
+const agg = new AggregateError(errs, "الفورم فيه 2 غلط");
+console.log(agg.message, agg.errors.length, agg.errors[1].name);
+throw agg;
+~~~
+
+~~~text الناتج (Node 24)
+الفورم فيه 2 غلط 2 TypeError
+AggregateError: الفورم فيه 2 غلط
+    at file:///C:/.../agg.mjs:9:13 {
+  [errors]: [
+    RangeError: age
+        at file:///C:/.../agg.mjs:8:15,
+    TypeError: email
+        at file:///C:/.../agg.mjs:8:38
+  ]
+}
+~~~
+
+- [[new AggregateError(errors, message)]]: الأول الـ array (أي iterable)، وبعدها الرسالة. وبيقبل [[{ cause }]] كتالت argument زي أي Error.
+- لما يوقع من غير ما يتمسك، Node بيطبع كل error جواه بالـ stack بتاعه تحت [[[errors]]]، فاللوج بيبقى فيه كل حاجة.
+- الفرق عن [[ValidationError]] بتاع الـ solCode: هناك [[fields]] object رسايل بالخانة، وهنا errors كاملة بـ stack. استخدم AggregateError لما كل سبب error حقيقي (طلبات فشلت)، و [[fields]] لما هي رسايل للفورم.
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| [[class X extends Error]] | تفرّق بين الأخطاء بـ [[instanceof]] مش بمقارنة الرسايل |
+| [[this.name = this.constructor.name]] | اسم النوع الحقيقي يظهر في الـ logs |
+| [[status]] | الطبقة اللي فوق تعرف ترد بأنهي HTTP code |
+| [[{ cause: err }]] | رسالة مفهومة فوق، والسبب التقني محفوظ تحت |
+| [[if (err instanceof AppError) throw err]] | errors بتاعتك تعدّي، والغريبة تتلف |
+| [[AggregateError]] و [[e.errors]] | كذا سبب في error واحد، زي اللي بترميه [[Promise.any]] لما كله يفشل |`,
+          lines: [
+            R`كلاس أساسي لكل أخطاء التطبيق، بيورث من [[Error]] فبياخد [[message]] و [[stack]] وبيعدّي [[instanceof Error]]. وجود أب واحد بيخليك تفرّق بين «خطأ إحنا عارفينه» وأي error تاني.`,
+            R`الـ constructor بياخد الرسالة ومعاها object خيارات بيتفك على طول: [[status]] (افتراضي 500) و [[cause]]. و [[= {}]] الأخيرة عشان لو مبعتش خيارات خالص ميرميش وهو بيفك [[undefined]].`,
+            R`[[super]] بينادي constructor بتاع [[Error]]، ولازم ييجي قبل أي استخدام لـ [[this]]. وبنبعتله [[cause]]، و [[Error]] نفسه بيقبلها وبيحطها في [[err.cause]].`,
+            R`من غير السطر ده [[name]] هيفضل [["Error"]] لكل الأنواع. [[this.constructor.name]] بيجيب اسم الكلاس الفعلي اللي اتعمل منه الـ object، فـ [[NotFoundError]] اسمه يبقى [["NotFoundError"]] من غير ما يكتبه بنفسه.`,
+            R`status الـ HTTP اللي المفروض يرجع للعميل، فالـ error handler في السيرفر يقرا [[err.status]] على طول بدل ما يخمّن.`,
+            R`نهاية الـ constructor.`,
+            R`نهاية [[AppError]].`,
+            R`نوع أخص لحالة «مش موجود». بيورث من [[AppError]]، فـ [[instanceof AppError]] و [[instanceof NotFoundError]] الاتنين [[true]] عليه.`,
+            R`constructor بياخد اسم الحاجة بس ويبني الرسالة ويثبّت [[status: 404]]، فاللي بيرمي يكتب [[new NotFoundError("اليوزر")]] من غير ما يفتكر رقم الـ status.`,
+            R`نهاية [[NotFoundError]].`,
+            R`دالة [[async]] بتجيب يوزر من API، وبتحوّل أي فشل لنوع من أخطاءنا.`,
+            R`[[try]] حوالين الطلب وقراية الرد، عشان أي error منهم يتجمع في الـ catch.`,
+            R`الطلب. لو الشبكة وقعت أو الـ domain مش موجود، [[fetch]] بترمي TypeError (رسالته في Node [[fetch failed]]).`,
+            R`404 مش error عند fetch، فبنرمي النوع الواضح بنفسنا عشان اللي فوق يعرف يتصرف (يعرض «مش موجود» بدل «حصلت مشكلة»).`,
+            R`بنرجّع الداتا. الـ [[await]] هنا مهمة: من غيرها لو [[res.json()]] فشلت، الـ rejection هتطلع برّه الـ try والـ catch اللي تحت مش هيشوفها.`,
+            R`هنا بيوصل أي error من فوق: [[NotFoundError]] بتاعنا، أو error الشبكة، أو JSON بايظ.`,
+            R`لو الـ error من أخطاءنا (زي [[NotFoundError]]) بنعدّيه زي ما هو، عشان منلفّهوش تاني ويضيع الـ status بتاعه.`,
+            R`غير كده ده error غريب (شبكة مثلًا)، فبنلفه في [[AppError]] برسالة مفهومة، والأصلي محفوظ في [[cause]] فالتفاصيل مبتضيعش وانت بتدوّر على المشكلة.`,
+            R`نهاية الـ catch.`,
+            R`نهاية [[loadUser]].`,
+            R`[[catch]] على الـ Promise بتطبع السلسلة كلها. الـ domain هنا وهمي فالطلب بيفشل: بيطبع [[AppError 500 فشل تحميل اليوزر]] ومعاه [[fetch failed]] من [[e.cause?.message]]. و [[?.]] عشان مش كل error ليه cause.`,
+          ],
+          sol: R`من غير نت أو بدومين غلط، [[fetch]] نفسها بترمي [[TypeError: fetch failed]] (في المتصفح [[Failed to fetch]])، فالـ catch بيلفّها في AppError. الناتج: [[AppError 500 فشل تحميل اليوزر]] و [[e.cause]] هو الـ TypeError الأصلي، وفي Node جواه كمان [[cause]] فيه كود زي [[ENOTFOUND]]. يعني الرسالة العامة لليوزر، والسبب الحقيقي محفوظ للـ logs.
+
+[[ValidationError]] بتورث من AppError وبتضيف [[fields]]، و [[this.name]] بيطلع [["ValidationError"]] لوحده بفضل [[this.constructor.name]]. الغلطة الشائعة إنك تعمل [[this.fields = fields]] قبل [[super(...)]] فيطلع ReferenceError.`,
+          solCode: R`class ValidationError extends AppError {
+  constructor(fields) {
+    super("البيانات مش صحيحة", { status: 400 });
+    this.fields = fields;
+  }
+}
+const err = new ValidationError({ email: "لازم يبقى إيميل صحيح" });
+console.log(err.name, err.status, err.fields, err instanceof AppError);
+// ValidationError 400 { email: 'لازم يبقى إيميل صحيح' } true`
+        },
+        {
+          cmd: "الأخطاء العامة: unhandledrejection و uncaughtException",
+          title: "تمسك أي error محدش مسكه قبل ما البرنامج يقع ساكت",
+          desc: R`أي error محدش مسكه بيوصل لآخر مكان: في Node بيوقّع البرنامج كله بكود خروج ١، وفي المتصفح بيطلع أحمر في Console والصفحة تكمّل. الـ global handlers هي آخر شبكة: [[process.on("unhandledRejection")]] و [[process.on("uncaughtException")]] في Node، و [[window]] events اسمها [[error]] و [[unhandledrejection]] في المتصفح.
+
+وظيفتهم **تسجّل** الـ error (لوج أو خدمة زي Sentry) وتقفل بنضافة، مش إنهم يخلّوا البرنامج يكمّل كأن مفيش حاجة. الـ try/catch في المكان الصح لسه هو الأساس (درس «try و catch و finally»).`,
+          example: R`process.on("unhandledRejection", (reason) => {
+  console.error("[unhandledRejection]", reason instanceof Error ? reason.message : reason);
+  process.exitCode = 1;
+});
+process.on("uncaughtException", (err, origin) => {
+  console.error("[uncaughtException]", origin, err.message);
+  process.exit(1);
+});
+process.on("exit", (code) => console.error("exit code", code));
+Promise.reject(new Error("DB اتقفلت"));
+setTimeout(() => { throw new Error("bug في timer"); }, 10);
+setTimeout(() => console.log("مش هتتطبع"), 50);`,
+          try: R`احفظ المثال [[gh.mjs]] وشغّله، وبعدين امسح الـ handler الأول بس وشغّل تاني: الـ rejection بقى بيوصل لأنهي handler، و [[origin]] بقى إيه؟ وبعدين اعمل صفحة HTML فيها [[window.addEventListener("unhandledrejection", ...)]] و [[fetch("/nope.json").then((r) => r.json())]] وشوف الـ reason.`,
+          practice: [
+            { lvl: 'سريع', t: R`اقرا وتوقّع: [[const p = Promise.reject(new Error("late")); setTimeout(() => p.catch(() => console.log("اتمسك")), 0);]] في Node 24 من غير أي handler. هيطبع «اتمسك» ولا هيقع؟ وبعدين غيّر [[setTimeout(..., 0)]] لـ [[queueMicrotask(...)]] وتوقّع تاني، وشغّل الاتنين.`, done: R`نسخة [[setTimeout]] بتقع بـ [[Error: late]] وكود ١ و «اتمسك» مبتتطبعش، لأن Node بيفحص الـ rejections اللي ملهاش handler بعد ما الـ microtasks تخلص وقبل الـ timer. نسخة [[queueMicrotask]] بتطبع «اتمسك في microtask» ومبتقعش، وتقدر تقول القاعدة: الـ [[.catch]] لازم يتحط قبل ما اللفة الحالية تخلص.` },
+            { lvl: 'تطبيق', t: R`ابني [[crash-guard.mjs]] تعمله import في أول أي سكربت: بيسجّل [[unhandledRejection]] و [[uncaughtException]]، ولكل واحد بيكتب سطر JSON في [[crash.log]] فيه [[time]] و [[type]] و [[message]] و [[stack]]، وبعدين [[process.exit(1)]]. و [[process.on("exit")]] بيطبع كود الخروج.`, done: R`سكربت فيه [[Promise.reject(new Error("x"))]] وسكربت فيه [[setTimeout(() => null.a)]] الاتنين بيخرجوا بكود ١ ([[echo $?]] أو [[$LASTEXITCODE]])، و [[crash.log]] فيه سطرين JSON صالحين ([[JSON.parse]] لكل سطر بينجح) فيهم النوع الصح والـ stack، وتشغيل السكربت مرتين بيزوّد سطور مش بيمسح القديم.` },
+            { lvl: 'تحدي', t: R`صلّح الكود البايظ: سيرفر فيه [[process.on("uncaughtException", (e) => console.log("تمام، كمّل", e.message))]] وبعدين request handler بيعمل [[connections++]] وبعدها بيرمي قبل [[connections--]]. ابعت ١٠ requests بايظة واطبع [[connections]]. اشرح ليه «كمّل عادي» غلط، وصلّحه بإن الـ handler يسجّل ويقفل السيرفر بـ [[server.close()]] ويخرج بكود ١، والـ restart يبقى شغل الـ process manager.`, done: R`قبل التصليح [[connections]] بيوصل 10 والسيرفر لسه شغال وبيكذب (الـ state باظ ومحدش عارف)، وبعد التصليح أول request بايظ بيكتب الـ error ويخرج بكود ١ بعد ما الـ requests المفتوحة تخلص، وكتبت في سطرين ليه وثائق Node بتقول إن الكمّل بعد [[uncaughtException]] مش آمن.` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`في Node من النسخة 15، أي Promise اترفض ومحدش مسكه بيوقّع الـ process كله، فـ API كامل بيقع عشان [[await]] واحدة ناقصة. والـ global handler هو اللي بيضمن إن السبب يتسجّل في اللوج بدل ما السيرفر يموت ساكت، وإن الخروج يبقى بكود ١ فالـ process manager (systemd أو Docker أو PM2) يعرف ويعيد التشغيل. وفي المتصفح من غيرهم الـ errors اللي بتحصل عند اليوزرز بتضيع في Console محدش بيفتحه.`,
+            how: R`Node: لما Promise يترفض، بيتسجّل في لستة. بعد ما الـ microtasks تخلص، أي واحد لسه ملوش handler بيطلّع [[unhandledRejection]]. لو مفيش listener للحدث ده، Node (الوضع الافتراضي [[--unhandled-rejections=throw]]) بيحوّله لـ uncaught exception، فلو فيه [[uncaughtException]] listener بياخده و [[origin]] بيبقى [["unhandledRejection"]]، ولو مفيش البرنامج بيقع. ولو الـ reason مش Error (زي [[Promise.reject("نص")]]) Node بيطبع [[UnhandledPromiseRejection]] بكود [[ERR_UNHANDLED_REJECTION]].
+
+[[uncaughtException]] بيتنادى لأي throw وصل لآخر الـ stack. وجوده بيمنع الخروج، فالبرنامج **بيكمّل** (جرّبتها: timer بعده اشتغل عادي)، وده الخطر: نص عملية اتنفّذت والـ state ممكن يكون باظ. عشان كده بنسجّل ونعمل [[process.exit(1)]].
+
+[[process.exitCode = 1]] بيحدد كود الخروج من غير ما يقفل فورًا (اللي شغال يكمّل)، و [[process.exit(1)]] بيقفل حالًا. و [[exit]] event بيتنادى في الحالتين، وجواه كود synchronous بس.
+
+المتصفح: [[window]] بيطلّع [[error]] لأي throw محدش مسكه ([[event.message]] و [[event.filename]] و [[event.lineno]] و [[event.error]])، و [[unhandledrejection]] لأي Promise مترفض ([[event.reason]] و [[event.promise]]). و [[event.preventDefault()]] بيمنع الرسالة الافتراضية في Console (من MDN). والصفحة بتكمّل في الحالتين.`,
+            when: R`في أي سيرفر أو سكربت Node هيشتغل لوحده (cron، worker، API): handler واحد في أول ملف بيسجّل ويخرج. وفي أي تطبيق ويب في production: listener على الحدثين بيبعت الـ error لخدمة تتبّع. ومش بديل عن try/catch: الـ handler بيعرف إن فيه حاجة وقعت، بس مبيعرفش يعرض رسالة مفيدة لليوزر في المكان الصح.`,
+            mistakes: R`تحط [[uncaughtException]] وتكمّل عادي بعده كأن مفيش حاجة: الـ state باظ. وتحط [[unhandledRejection]] فاضي عشان «التحذير يختفي»: كده بتبلع bugs. وتنسى إن [[.catch]] اللي بيتحط في [[setTimeout]] متأخر: البرنامج بيكون وقع. وتعمل حاجة async جوه [[exit]] event (مش هتخلص). وفي المتصفح تقرا [[event.reason.message]] من غير ما تتأكد إن الـ reason Error أصلًا. والـ scripts من دومين تاني بتوصّل [[Script error.]] من غير تفاصيل إلا لو [[crossorigin]] متحطوط والسيرفر بيبعت CORS (من MDN).`
+          },
+          teach: R`## الفكرة في سطر
+
+أي error محدش مسكه بيوصل لـ «آخر الدنيا». المثال بيحط شبكة هناك في Node: handler للـ Promise اللي اترفض من غير catch، و handler لأي throw وصل لفوق، وبعدين بيعمل الغلطتين عمدًا عشان نشوفهم بيتمسكوا. كل حاجة هنا اتشغّلت على ويندوز 11 بـ Node 24.22، وجزء المتصفح في Chrome 156 (headless بـ playwright).
+
+---
+
+## ١. من غير أي handler: Node بيقع
+
+~~~text crash.mjs
+Promise.reject(new Error("DB اتقفلت"));
+~~~
+
+~~~text الناتج (Node 24)
+file:///C:/.../crash.mjs:1
+Promise.reject(new Error("DB اتقفلت"));
+               ^
+
+Error: DB اتقفلت
+    at file:///C:/.../crash.mjs:1:16
+
+Node.js v24.22.1
+~~~
+
+وكود الخروج ١. من Node 15 ده الافتراضي: Promise اترفض ومحدش عمله [[.catch]] ولا [[await]] جوه try = البرنامج كله يقع. ولو الـ reason مش Error:
+
+~~~text الناتج (Node 24، Promise.reject("نص مش Error"))
+UnhandledPromiseRejection: This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). The promise rejected with the reason "نص مش Error".
+  code: 'ERR_UNHANDLED_REJECTION'
+~~~
+
+مفيش stack يقولك فين، وده سبب تاني إنك ترمي [[Error]] دايمًا مش string.
+
+---
+
+## ٢. [[process.on("unhandledRejection")]]
+
+~~~text gh.mjs
+process.on("unhandledRejection", (reason) => {
+  console.error("[unhandledRejection]", reason instanceof Error ? reason.message : reason);
+  process.exitCode = 1;
+});
+~~~
+
+- [[process]]: object عام في Node بيمثّل البرنامج الشغال، وهو EventEmitter (درس «EventEmitter»)، فـ [[.on(name, fn)]] بتشترك في حدث.
+- [[reason]]: القيمة اللي الـ Promise اترفض بيها (غالبًا Error، بس ممكن أي حاجة). الـ listener بياخد كمان [[promise]] نفسه كـ argument تاني لو محتاجه.
+- [[reason instanceof Error ? reason.message : reason]]: لو Error اطبع الرسالة، غير كده اطبع القيمة زي ما هي.
+- [[console.error]]: بيكتب على stderr مش stdout، فاللوج بيفصل الأخطاء.
+- [[process.exitCode = 1]]: «لما تخلص، اخرج بكود ١». مش بيقفل دلوقتي.
+
+مجرد وجود الـ listener ده بيوقّف الوقوع الافتراضي. يعني انت اللي مسؤول تقرر: تخرج ولا لأ.
+
+---
+
+## ٣. [[process.on("uncaughtException")]]
+
+~~~text gh.mjs
+process.on("uncaughtException", (err, origin) => {
+  console.error("[uncaughtException]", origin, err.message);
+  process.exit(1);
+});
+~~~
+
+- بيتنادى لأي [[throw]] وصل لآخر الـ call stack من غير ما try يمسكه، زي throw جوه [[setTimeout]] (ليه try اللي برّه مبيمسكوش؟ درس «try و catch و finally» الجزء ٨).
+- [[origin]]: نص بيقول جه منين: [["uncaughtException"]] لـ throw عادي، و [["unhandledRejection"]] لو Promise اترفض ومفيش listener للحدث اللي فوق (جرّبت: شيلت الـ handler الأول فالـ rejection وصل هنا و [[origin]] بقى [[unhandledRejection]]).
+- [[process.exit(1)]]: اقفل **حالًا** بكود ١.
+
+### ليه لازم تخرج؟
+
+جرّبت handler بيطبع بس ومبيخرجش، وبعده timer:
+
+~~~text الناتج (Node 24)
+caught a
+كمّل عادي بعد uncaught
+~~~
+
+البرنامج كمّل. ده شكله حلو بس خطر: الـ error حصل في نص حاجة (اتصال اتفتح ومتقفلش، عداد زاد ومنقصش)، ومحدش عارف الـ state بقى عامل إزاي. وثائق Node نفسها بتقول إن الكمّل بعد [[uncaughtException]] مش آمن، والصح: سجّل، واقفل، وخلّي الـ process manager (systemd أو Docker [[restart: always]] أو PM2) يشغّله من جديد نضيف.
+
+---
+
+## ٤. [[exit]] والتشغيل
+
+~~~text gh.mjs
+process.on("exit", (code) => console.error("exit code", code));
+Promise.reject(new Error("DB اتقفلت"));
+setTimeout(() => { throw new Error("bug في timer"); }, 10);
+setTimeout(() => console.log("مش هتتطبع"), 50);
+~~~
 
 ~~~powershell
-$env:TZ = "America/New_York"; node dates.js
+node gh.mjs; $LASTEXITCODE
 ~~~
 
-ده اتجرّب في PowerShell 7 و Windows PowerShell 5.1 وطلّع سطر نيويورك اللي فوق. والمتغير ده بيفضل في نافذة الترمنال دي بس، وتشيله بـ [[Remove-Item Env:TZ]].
-
-~~~bash
-TZ=America/New_York node dates.js
+~~~text الناتج (Node 24)
+[unhandledRejection] DB اتقفلت
+[uncaughtException] uncaughtException bug في timer
+exit code 1
+1
 ~~~
 
-ده الشكل في لينكس و WSL والماك (اتجرّب على Linux في Docker بصورة [[node:22-slim]]). **على Git Bash في Windows مش بيشتغل:** جرّبناه وفضل يطلّع توقيت القاهرة، لأن Git Bash بيشيل قيمة زي [[America/New_York]] من [[TZ]] قبل ما يشغّل برنامج Windows زي node ([[process.env.TZ]] طلع [[undefined]]، و [[TZ=UTC]] بس هي اللي عدّت).
+| اللي حصل | مين مسكه | ليه بالترتيب ده |
+|---|---|---|
+| [[Promise.reject]] | [[unhandledRejection]]، وحط exitCode بـ 1 | Node بيفحص الـ rejections بعد ما الكود المتزامن والـ microtasks يخلصوا، قبل أي timer |
+| throw في timer بعد 10ms | [[uncaughtException]] و [[origin]] بـ [[uncaughtException]] | ده throw عادي مش Promise |
+| [[process.exit(1)]] | | بيقفل حالًا، فالـ timer بتاع 50ms عمره ما اشتغل |
+| [[exit]] event | بيطبع الكود | بيتنادى قبل الخروج في كل الأحوال |
+
+في bash بتشوف الكود بـ [[echo $?]] بدل [[$LASTEXITCODE]].
+
+---
+
+## ٥. الـ catch المتأخر
+
+Node بيقرر «الـ Promise ده ملوش handler» بعد ما **الـ microtasks** تخلص. فلو حطيت الـ catch في timer، متأخر:
+
+~~~text late.mjs
+const p = Promise.reject(new Error("late"));
+setTimeout(() => p.catch(() => console.log("اتمسك متأخر")), 0);
+~~~
+
+~~~text الناتج (Node 24)
+Error: late
+    at file:///C:/.../late.mjs:1:24
+~~~
+
+وقع، و «اتمسك متأخر» متطبعتش. نفس الكود بـ [[queueMicrotask(() => p.catch(...))]] بدل [[setTimeout]] طبع «اتمسك في microtask» ومقعش، لأن الـ microtask بيشتغل قبل الفحص. القاعدة العملية: اعمل [[await]] أو [[.catch]] في نفس المكان اللي عملت فيه الـ Promise.
+
+(ولو فيه [[unhandledRejection]] listener والـ catch اتحط بعدين، Node بيطلّع حدث [[rejectionHandled]] وتحذير [[PromiseRejectionHandledWarning]]. جرّبتها.)
+
+---
+
+## ٦. في المتصفح: [[error]] و [[unhandledrejection]] على [[window]]
+
+~~~text index.html
+<script>
+window.addEventListener("error", (event) => {
+  console.log("[error]", event.message, "|", event.filename, event.lineno, "|", event.error instanceof Error);
+});
+window.addEventListener("unhandledrejection", (event) => {
+  console.log("[unhandledrejection]", event.reason.message, event.promise instanceof Promise);
+  event.preventDefault();
+});
+setTimeout(() => { null.x; }, 0);
+fetch("/nope.json").then((r) => r.json());
+Promise.reject(new Error("API وقع"));
+setTimeout(() => console.log("الصفحة لسه شغالة"), 200);
+</script>
+~~~
+
+~~~text الناتج (Chrome 156، الصفحة على http://127.0.0.1)
+[error] Uncaught TypeError: Cannot read properties of null (reading 'x') | http://127.0.0.1:64275/ 10 | true
+[unhandledrejection] API وقع true
+[unhandledrejection] Failed to execute 'json' on 'Response': Unexpected end of JSON input true
+الصفحة لسه شغالة
+~~~
+
+- [[event.message]]: نص الـ error زي ما Console بيكتبه، و [[event.filename]] و [[event.lineno]]: الملف والسطر (هنا الصفحة نفسها لأن الـ script جوه HTML)، و [[event.error]]: الـ Error object نفسه بالـ stack.
+- [[event.reason]]: زي [[reason]] في Node، و [[event.promise]]: الـ Promise اللي اترفض.
+- الـ fetch لملف مش موجود مرماش (404 مش error عند fetch)، بس [[r.json()]] على صفحة 404 فاضية رمت، ومحدش مسكها. ده أشهر unhandled rejection في الويب.
+- [[event.preventDefault()]]: بيمنع المتصفح يطبع الرسالة الحمرا الافتراضية في Console (من MDN). مفيد لو انت بتسجّلها بنفسك.
+- **الفرق الكبير عن Node**: الصفحة مبتقعش. «الصفحة لسه شغالة» اتطبعت. فمن غير listener محدش هيعرف إن فيه حاجة باظت عند اليوزر.
+
+> لو الـ script جاي من دومين تاني (CDN)، المتصفح بيخبّي التفاصيل وبيدّيك [[Script error.]] بس، إلا لو [[<script crossorigin>]] والسيرفر بيبعت [[Access-Control-Allow-Origin]] (من MDN). خدمات زي Sentry بتعمل نفس الـ listeners دول ومعاهم إرسال للسيرفر.
 
 ---
 
 ## الخلاصة
 
-| المطبّ | الصح |
-|---|---|
-| الشهر من 0 | [[new Date(2026, 0, 31)]] = ٣١ يناير |
-| [[setMonth]] و [[setDate]] بيعدّلوا الأصل | اعمل نسخة بـ [[new Date(a)]] الأول |
-| تاريخ مش موجود بيترحّل من غير error | ٣١ فبراير = ٣ مارس |
-| [["YYYY-MM-DD"]] = UTC، ومع وقت من غير Z = توقيت الجهاز | ابعت وخزّن بـ Z دايمًا |
-| أي شكل تاني مش standard | متعملش parse لـ [["DD/MM/YYYY"]] بـ Date |
-| Invalid Date مش بترمي error | افحص [[Number.isNaN(d.getTime())]] |
-
-والـ Date جواه رقم ms واحد بس، والتوقيت بيدخل في الحساب لحظة ما تقرا أو تطبع.`,
-          lines: [
-            R`بيعمل Date لـ ٣١ يناير ٢٠٢٦ بتوقيت الجهاز. الشهر هنا بيبدأ من 0، فـ [[0]] يعني يناير و [[11]] يعني ديسمبر، أما اليوم فبيبدأ من 1 عادي. لو كتبت [[1]] وانت قاصد يناير هتلاقي نفسك في فبراير.`,
-            R`بيطبع [[0 31]]: [[getMonth]] بترجّع الشهر بنفس العدّ من صفر، و [[getDate]] بترجّع رقم اليوم في الشهر (مش [[getDay]] اللي بترجّع يوم الأسبوع). عشان تعرض الشهر لليوزر لازم تزوّد عليه 1.`,
-            R`بيغيّر الشهر لفبراير ([[1]]) **في نفس الـ object**، مش بيرجّع نسخة جديدة. يعني أي كود تاني شايل [[d]] هيشوف التغيير، وده مطب لو الـ Date جايلك من برّه.`,
-            R`بيطبع [[Tue Mar 03 2026]] مش فبراير: اليوم لسه 31، وفبراير ٢٠٢٦ فيه ٢٨ يوم بس، فالـ ٣ أيام الزيادة بتترحّل للشهر اللي بعده من غير أي error. عشان كده «زوّد شهر» محتاجة تتعمل بحرص.`,
-            R`نص فيه تاريخ بس من غير وقت، والمواصفات بتقول يتفهم UTC نص الليل، فالناتج [[2026-03-01T00:00:00.000Z]] في أي بلد. و [[toISOString]] دايمًا بتطبع بتوقيت UTC وآخرها [[Z]].`,
-            R`نفس اليوم بس معاه وقت ومن غير [[Z]]: هنا بيتفهم بتوقيت الجهاز. في القاهرة (UTC+2 في مارس) نص الليل المحلي = [[2026-02-28T22:00:00.000Z]]، وفي نيويورك هيطلع رقم تاني. مجرد إضافة الوقت غيّرت المعنى.`,
-            R`الشكل [["01/02/2026"]] مش من المواصفات، فكل engine بيفهمه بمزاجه. V8 (Node و Chrome) فهمه بالأمريكي (شهر/يوم) فطلع الشهر [[0]] يعني يناير، واحنا في مصر بنقراه ١ فبراير. متعملش parse لنص بالشكل ده أبدًا.`,
-            R`مفيش شهر ٣٢، فالناتج Invalid Date و [[getTime()]] بترجّع [[NaN]]، **من غير ما يرمي error**. الكود هيكمّل عادي بقيمة بايظة، فلازم تفحص بنفسك بـ [[Number.isNaN(d.getTime())]] قبل ما تستخدم أي تاريخ جاي من يوزر.`,
-            R`لحظة محددة بالظبط: الـ [[Z]] في الآخر معناها UTC، فالنص ده يعني نفس اللحظة على أي جهاز. ده الشكل اللي المفروض تخزّن وتبعت بيه التواريخ.`,
-            R`[[new Date(a)]] بتعمل Date جديد بنفس اللحظة: نسخة مستقلة. لو كتبت [[const b = a]] بدلها، الاتنين هيشاوروا على نفس الـ object، والسطر اللي بعده هيعدّل [[a]] كمان.`,
-            R`بيزوّد ٣ أيام على النسخة: [[getDate()]] بترجّع ٢٩ فبنحط ٣٢. ومع إن سبتمبر ٣٠ يوم بس، الـ overflow هنا مفيد: [[setDate(32)]] بتترحّل لوحدها لـ ٢ أكتوبر.`,
-            R`بيطبع [[29 2 259200000]] في القاهرة: [[a]] لسه ٢٩ لأننا عدّلنا النسخة بس، و [[b]] بقت ٢ أكتوبر. والطرح [[b - a]] بيحوّل الاتنين milliseconds، فالفرق ٣ × ٢٤ ساعة بالـ ms.`,
-          ],
-          sol: R`بين القاهرة ونيويورك اتغير السطر السادس بس: [[2026-02-28T22:00:00.000Z]] مقابل [[2026-03-01T05:00:00.000Z]]، لأن نص الليل «المحلي» لحظة مختلفة في كل بلد. الباقي ثابت: السطر الخامس UTC بالمواصفات، والأرقام اللي بعده متحسبة من لحظة بـ Z. (لو غيّرت [[a]] لـ [["2026-09-29T02:00:00Z"]] هتلاقي [[a.getDate()]] بقت 28 في نيويورك.)
-
-[[addMonths]]: اعمل نسخة، وخد اليوم الأصلي، وحط اليوم 1 قبل ما تغيّر الشهر (عشان متحصلش الترحيلة)، وبعدين رجّع اليوم بـ [[Math.min]] مع آخر يوم في الشهر الجديد. وآخر يوم في أي شهر حيلة معروفة: اليوم 0 من الشهر اللي بعده. [[addMonths(new Date(2026, 0, 31), 1)]] ← ٢٨ فبراير، و 2028 ← ٢٩ فبراير (كبيسة).`,
-          solCode: R`function addMonths(date, n) {
-  const d = new Date(date);
-  const day = d.getDate();
-  d.setDate(1);
-  d.setMonth(d.getMonth() + n);
-  const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
-  d.setDate(Math.min(day, lastDay));
-  return d;
-}
-const jan31 = new Date(2026, 0, 31);
-console.log(addMonths(jan31, 1).toDateString(), jan31.toDateString());
-console.log(addMonths(new Date(2028, 0, 31), 1).toDateString(), addMonths(jan31, 12).toDateString());`,
-          check: {
-            lang: "js",
-            starter: R`function addMonths(date, n) {
-  const d = new Date(date);
-  d.setMonth(d.getMonth() + n);
-  return d;
-}`,
-            tests: R`const ymd = d => [d.getFullYear(), d.getMonth() + 1, d.getDate()];
-test("31 يناير 2026 + شهر ← 28 فبراير (مش 3 مارس)", () => expect(ymd(addMonths(new Date(2026, 0, 31), 1))).toEqual([2026, 2, 28]));
-test("2028 كبيسة ← 29 فبراير", () => expect(ymd(addMonths(new Date(2028, 0, 31), 1))).toEqual([2028, 2, 29]));
-test("15 مارس + شهر ← 15 أبريل (اليوم العادي زي ما هو)", () => expect(ymd(addMonths(new Date(2026, 2, 15), 1))).toEqual([2026, 4, 15]));
-test("بتعدّي السنة: 30 نوفمبر 2026 + 3 ← 28 فبراير 2027", () => expect(ymd(addMonths(new Date(2026, 10, 30), 3))).toEqual([2027, 2, 28]));
-test("n سالب: 31 مارس - 1 ← 28 فبراير", () => expect(ymd(addMonths(new Date(2026, 2, 31), -1))).toEqual([2026, 2, 28]));
-test("الأصل ميتغيرش", () => {
-  const jan31 = new Date(2026, 0, 31);
-  addMonths(jan31, 1);
-  expect(ymd(jan31)).toEqual([2026, 1, 31]);
-});`,
-            solution: R`function addMonths(date, n) {
-  const d = new Date(date);
-  const day = d.getDate();
-  d.setDate(1);
-  d.setMonth(d.getMonth() + n);
-  const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
-  d.setDate(Math.min(day, lastDay));
-  return d;
-}`
-          }
-        },
-        {
-          cmd: "UTC و Intl.DateTimeFormat",
-          title: "تخزّن الوقت إزاي، وتعرضه بتوقيت اليوزر ولغته إزاي؟",
-          desc: R`القاعدة: خزّن وابعت UTC، واعرض بتوقيت اليوزر. في الداتابيز [[timestamptz]] (تاب SQL و Prisma)، وفي الـ JSON نص ISO بـ Z زي [["2026-09-29T21:30:00.000Z"]] ([[toISOString()]]، و [[JSON.stringify]] بيعملها لوحده). ومتحوّلش لتوقيت محلي غير في آخر لحظة: وانت بترسم على الشاشة.
-
-والعرض بـ [[Intl.DateTimeFormat(locale, options)]]: الـ locale زي [["ar-EG"]] أو [["en-GB"]] بيحدد اللغة والترتيب والأرقام، و [[timeZone]] زي [["Africa/Cairo"]] بيحدد التوقيت، و [[dateStyle]] و [[timeStyle]] ([["full"]] و [["long"]] و [["medium"]] و [["short"]]) بيختاروا الشكل. و [[date.toLocaleString(locale, options)]] نفس الكلام في سطر.`,
-          example: R`const createdAt = new Date("2026-09-29T21:30:00Z");
-console.log(createdAt.toISOString(), JSON.stringify({ createdAt }));
-const cairo = new Intl.DateTimeFormat("ar-EG", { dateStyle: "full", timeStyle: "short", timeZone: "Africa/Cairo" });
-console.log(cairo.format(createdAt));
-const riyadh = new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Riyadh" });
-console.log(riyadh.format(createdAt));
-console.log(createdAt.toLocaleString("ar-EG-u-nu-latn", { timeZone: "Africa/Cairo", day: "numeric", month: "long", hour: "numeric", minute: "2-digit" }));
-const dayInCairo = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" }).format(createdAt);
-console.log(dayInCairo, createdAt.toISOString().slice(0, 10));
-console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);`,
-          try: R`اعرض نفس اللحظة بـ ٣ توقيتات: [["Africa/Cairo"]] و [["Europe/London"]] و [["America/New_York"]] بالعربي والأرقام اللاتيني. وبعدين غيّر اللحظة لـ [["2026-01-15T21:30:00Z"]] (شتا): الفرق بين القاهرة و UTC بقى كام؟ وآخر حاجة: اكتب [[isTodayInCairo(date)]] بترجّع true لو اللحظة دي في نفس يوم «النهارده» بتوقيت القاهرة.`,
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** صفحة فيها ٣ عناصر [[<time datetime="2026-09-29T21:30:00Z"></time>]] بأوقات ISO مختلفة. اكتب كام سطر بيلفوا على كل [[time]] ويكتبوا جواه الوقت بتوقيت اليوزر بـ [[Intl.DateTimeFormat("ar-EG", { dateStyle: "medium", timeStyle: "short" })]].`, done: R`الـ [[datetime]] attribute فاضل ISO زي ما هو (للمكائن)، والنص اللي جوه بقى بالعربي وبتوقيت جهازك. ولو غيّرت [[timeZone]] لـ [["America/New_York"]] النص بيتغيّر والـ attribute لأ.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const d = new Date("2026-09-29T21:30:00Z");]] وشغّل بـ [[TZ=Africa/Cairo]]: [[d.getDate()]] و [[d.getUTCDate()]] و [[d.getHours()]] هيطبعوا إيه؟`, done: R`توقعت وطلع 30 و 29 و 0: في القاهرة اللحظة دي بعد نص الليل (UTC+3 في سبتمبر 2026). فلو تقرير بيستخدم [[getDate()]] على سيرفر وتاني على جهاز اليوزر، الأيام بتختلف.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** اكتب [[dayIn(iso, timeZone)]] بترجّع [["YYYY-MM-DD"]] للحظة دي في المدينة دي (بحيلة [["en-CA"]] اللي في الدرس). جرّبها على [["2026-09-29T21:30:00Z"]] في القاهرة والرياض ولندن، وعلى نص مش تاريخ.`, done: R`القاهرة ← [["2026-09-30"]]، والرياض ← [["2026-09-30"]]، ولندن ← [["2026-09-29"]]: نفس اللحظة في يوم مختلف حسب المدينة. والنص الغلط بيرجّع null أو يرمي error واضح انت اخترته (مش [[RangeError: Invalid time value]] من جوه Intl).` },
-            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** من صفحة [[Intl.DateTimeFormat]] على MDN، لاقي الـ options اللي تطبع [[2026-11-03T12:00:00Z]] بالعربي كده: اسم اليوم كامل، واليوم، واسم الشهر، والسنة، بتوقيت القاهرة.`, done: R`[[{ weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "Africa/Cairo" }]] مع [["ar-EG"]] بتطبع [[الثلاثاء، ٣ نوفمبر ٢٠٢٦]]. ولقيت إن [[dateStyle]] مينفعش يتجمع مع [[weekday]] في نفس الـ options: Node 24 بيرمي [[TypeError: Invalid option : option]] (رسالة مش واضحة، فافتكر السبب).` },
-            { lvl: 'تحدي', t: R`**بيانات حقيقية:** عندك طلبات [[createdAt]] بتاعتها [["2026-09-29T10:00:00Z"]] و [["2026-09-29T21:30:00Z"]] و [["2026-09-30T05:00:00Z"]] و [["2026-09-30T22:15:00Z"]]. اعمل تقرير «طلبات كل يوم» مرة بـ [[toISOString().slice(0, 10)]] ومرة بـ [[dayIn]] بتوقيت القاهرة.`, done: R`بـ UTC: ٢٩ سبتمبر ٢ و ٣٠ سبتمبر ٢. بالقاهرة: ٢٩ سبتمبر ١، و ٣٠ سبتمبر ٢، و ١ أكتوبر ١. نفس الداتا، تقرير مختلف: وده اللي بيحصل لما «مبيعات النهارده» تتحسب بـ UTC لمحل في مصر.` }
-          ],
-          flag: "script",
-          deep: {
-            why: "السيرفر غالبًا شغال UTC (Docker و VPS و Vercel)، واليوزر في القاهرة، وفريق الدعم في الرياض. لو خزّنت «الساعة 12:30» من غير توقيت محدش هيعرف دي 12:30 فين. ولو حسبت «طلبات النهارده» بتوقيت السيرفر، طلب الساعة 1 بالليل في القاهرة هيتحسب على امبارح.",
-            how: R`[[21:30Z]] في القاهرة [[00:30]] اليوم اللي بعده (٣٠ سبتمبر)، لأن مصر رجّعت التوقيت الصيفي من 2023 فهي UTC+3 من آخر جمعة في أبريل لآخر خميس في أكتوبر، و UTC+2 باقي السنة. انت مش محتاج تحفظ ده: [[timeZone: "Africa/Cairo"]] بيستخدم قاعدة بيانات IANA اللي في المتصفح و Node وبتتحدّث معاهم. عشان كده متكتبش offset بإيدك ([[+2]] أو [[+3]]): هيبقى غلط نص السنة.
-
-[[ar-EG]] بيطلع أرقام عربية مشرقية (٣٠) افتراضيًا، و [[-u-nu-latn]] في آخر الـ locale بيخليها لاتيني (30). و [[en-CA]] حيلة معروفة: شكله [[YYYY-MM-DD]]، فبيدّيك التاريخ في توقيت معيّن كنص، وده اللي تستخدمه لـ «طلبات النهارده في القاهرة». لاحظ إن [[toISOString().slice(0, 10)]] بيدّي تاريخ UTC (29) مش تاريخ القاهرة (30).
-
-عمل [[new Intl.DateTimeFormat]] مكلف شوية، فلو بتعرض ليستة طويلة اعمله مرة واحدة برّه الـ loop واستخدم [[format]]. و [[resolvedOptions().timeZone]] بيقولك توقيت الجهاز ([["UTC"]] على أغلب السيرفرات)، وتقدر تبعته من المتصفح للسيرفر لو محتاج تحسب بتوقيت اليوزر هناك.`,
-            when: R`أي عرض لتاريخ أو وقت. وفي Next.js/SSR خلي بالك: السيرفر UTC والمتصفح القاهرة، فلو عملت format في الاتنين من غير [[timeZone]] محدد هيطلع نص مختلف وتاخد hydration error (تاب Next.js). حدّد timeZone صريح أو اعرض الوقت في client component.`,
-            mistakes: R`تخزّن التاريخ كنص محلي ([["29/09/2026 12:30"]]). و [[toISOString().slice(0, 10)]] على إنه «النهارده» فيطلع امبارح بعد نص الليل في القاهرة. و offset ثابت بإيدك. و [[toLocaleString()]] من غير locale ولا timeZone فالناتج يختلف من جهاز لجهاز. وفي الانترفيو: «إزاي تتعامل مع time zones في تطبيق فيه يوزرز من بلاد مختلفة؟» الإجابة: UTC في التخزين والـ API، والتحويل عند العرض بـ IANA zone، والـ zone بتاع اليوزر محفوظ في البروفايل لو محتاجه في السيرفر (إيميلات، تقارير).`
-          },
-          teach: R`## الفكرة في سطرين
-
-اللحظة بتتخزّن وتتبعت بـ UTC (نص بـ [[Z]] في الآخر)، وبتتحوّل لتوقيت ولغة اليوزر في آخر خطوة بس، وهي بتتعرض. والأداة اللي بتعمل التحويل ده جوه اللغة نفسها اسمها [[Intl.DateTimeFormat]]. المثال بياخد لحظة واحدة ويعرضها بكذا شكل. الناتج كله من Node 24 على Windows.
-
----
-
-## ١. اللحظة نفسها
-
-~~~text app.js
-const createdAt = new Date("2026-09-29T21:30:00Z");
-console.log(createdAt.toISOString(), JSON.stringify({ createdAt }));
-~~~
-
-- [["2026-09-29T21:30:00Z"]]: شكل اسمه **ISO 8601**: السنة-الشهر-اليوم، وبعدين [[T]] (فاصل بين التاريخ والوقت)، والوقت، و [[Z]] = UTC. ده الشكل اللي بييجي من أي API أو داتابيز.
-- [[toISOString()]]: بيكتب اللحظة بنفس الشكل ده، بـ UTC دايمًا، ومعاه الـ ms ([[.000]]).
-- [[JSON.stringify({ createdAt })]]: [[{ createdAt }]] اختصار لـ [[{ createdAt: createdAt }]]. و JSON مالوش نوع «تاريخ»، فـ JSON.stringify بينادي [[toJSON()]] بتاع الـ Date، وده بيرجّع نفس نص [[toISOString()]].
-
-~~~text الناتج
-2026-09-29T21:30:00.000Z {"createdAt":"2026-09-29T21:30:00.000Z"}
-~~~
-
-النص ده هو اللي يتخزّن ويتبعت. محدش يقدر يفهمه غلط، لأن الـ Z بتقول هو بتوقيت إيه.
-
----
-
-## ٢. formatter بالعربي وتوقيت القاهرة
-
-~~~text app.js
-const cairo = new Intl.DateTimeFormat("ar-EG", { dateStyle: "full", timeStyle: "short", timeZone: "Africa/Cairo" });
-console.log(cairo.format(createdAt));
-~~~
-
-[[Intl]] (اختصار Internationalization) object جوه JavaScript فيه أدوات لكل حاجة بتختلف من بلد لبلد: تواريخ وأرقام وعملات وجمع. و [[new Intl.DateTimeFormat(locale, options)]] بيعمل **formatter**: حاجة بتحفظ الإعدادات، وبعدين [[format(date)]] بتطبّقها على أي تاريخ.
-
-### الـ locale: [["ar-EG"]]
-
-نص بيقول اللغة والبلد: [[ar]] = عربي، و [[EG]] = مصر. بيحدد أسماء الأيام والشهور، وترتيب اليوم والشهر، وشكل الأرقام.
-
-### الـ options
-
-| الخيار | القيمة هنا | معناه |
+| المكان | الحدث | بيتنادى لما |
 |---|---|---|
-| [[dateStyle]] | [["full"]] | التاريخ كامل باسم اليوم (فيه كمان [["long"]] و [["medium"]] و [["short"]]) |
-| [[timeStyle]] | [["short"]] | الساعة والدقيقة من غير ثواني |
-| [[timeZone]] | [["Africa/Cairo"]] | اعرض بتوقيت القاهرة، مهما كان توقيت الجهاز |
+| Node | [[unhandledRejection]] | Promise اترفض ومفيش catch لحد ما الـ microtasks خلصت |
+| Node | [[uncaughtException]] | throw وصل لآخر الـ stack، أو rejection مفيش ليه listener |
+| Node | [[exit]] | قبل الخروج دايمًا، وجواه كود synchronous بس |
+| المتصفح | [[window]] و [[error]] | throw محدش مسكه، والصفحة بتكمّل |
+| المتصفح | [[window]] و [[unhandledrejection]] | Promise اترفض من غير catch، والصفحة بتكمّل |
 
-~~~text الناتج
-الأربعاء، ٣٠ سبتمبر ٢٠٢٦ في ١٢:٣٠ ص
-~~~
-
-ليه ٣٠ مش ٢٩؟ اللحظة ٩:٣٠ بالليل UTC، ومصر في سبتمبر UTC+3 (التوقيت الصيفي)، فعندنا ١٢:٣٠ بعد نص الليل، يعني اليوم اللي بعده. و [[ص]] يعني صباحًا (AM). والأرقام طلعت مشرقية (٣٠) لأن ده الافتراضي في [["ar-EG"]].
-
-[["Africa/Cairo"]] اسم من قاعدة بيانات اسمها **IANA time zone database**، وفيها لكل بلد تاريخ تغييرات التوقيت الصيفي كله. فمش محتاج تعرف إمتى مصر بتبقى +2 وإمتى +3: Node والمتصفح عارفين.
-
----
-
-## ٣. نفس اللحظة بلغة وتوقيت تانيين
-
-~~~text app.js
-const riyadh = new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Riyadh" });
-console.log(riyadh.format(createdAt));
-~~~
-
-[["en-GB"]] = إنجليزي بريطاني (اليوم قبل الشهر، و 24 ساعة)، و [["medium"]] = اسم الشهر مختصر. والرياض UTC+3 طول السنة.
-
-~~~text الناتج
-30 Sept 2026, 00:30
-~~~
-
----
-
-## ٤. [[toLocaleString]]: نفس الحكاية في سطر
-
-~~~text app.js
-console.log(createdAt.toLocaleString("ar-EG-u-nu-latn", { timeZone: "Africa/Cairo", day: "numeric", month: "long", hour: "numeric", minute: "2-digit" }));
-~~~
-
-[[date.toLocaleString(locale, options)]] بيعمل formatter ويستخدمه مرة واحدة. وفيه حاجتين جداد:
-
-**١. [[-u-nu-latn]] في آخر الـ locale.** [[u]] = Unicode extension (إضافة على الـ locale)، و [[nu]] = numbering system (نظام الأرقام)، و [[latn]] = لاتيني (0123). يعني «عربي، بس بأرقام 30 مش ٣٠».
-
-**٢. بدل [[dateStyle]]، حدّدنا كل حتة لوحدها:**
-
-| الخيار | القيمة | النتيجة |
-|---|---|---|
-| [[day]] | [["numeric"]] | 30 |
-| [[month]] | [["long"]] | سبتمبر (اسم كامل) |
-| [[hour]] | [["numeric"]] | 12 |
-| [[minute]] | [["2-digit"]] | 30 (دايمًا رقمين: 05 مش 5) |
-
-اللي محدّدتوش (السنة، اسم اليوم) مش بيظهر.
-
-~~~text الناتج
-30 سبتمبر في 12:30 ص
-~~~
-
-> [[dateStyle]] و [[timeStyle]] مينفعوش مع [[day]] و [[month]] وأخواتهم في نفس الـ options (جرّبناها: [[TypeError: Invalid option : option]]): اختار طريقة من الاتنين.
-
----
-
-## ٥. حيلة [["en-CA"]]: «التاريخ ده في القاهرة كام؟»
-
-~~~text app.js
-const dayInCairo = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" }).format(createdAt);
-console.log(dayInCairo, createdAt.toISOString().slice(0, 10));
-~~~
-
-[["en-CA"]] = إنجليزي كندي، والشكل الافتراضي للتاريخ فيه [[YYYY-MM-DD]]. فمن غير options غير الـ zone، بيطلّعلك تاريخ اللحظة دي في القاهرة كنص تقدر تقارنه أو تستخدمه كـ key.
-
-والجزء التاني: [[toISOString()]] بيدّي النص الـ UTC كله، و [[.slice(0, 10)]] بياخد أول 10 حروف (من index 0 لحد 10 من غير ما ياخده)، يعني [[2026-09-29]].
-
-~~~text الناتج
-2026-09-30 2026-09-29
-~~~
-
-ده الفخ: تاريخ القاهرة ٣٠، وتاريخ UTC ٢٩. لو حسبت «طلبات النهارده» بـ [[toISOString().slice(0, 10)]] على سيرفر، الطلب ده هيتحسب على امبارح.
-
----
-
-## ٦. الجهاز ده توقيته إيه؟
-
-~~~text app.js
-console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
-~~~
-
-[[Intl.DateTimeFormat()]] من غير أي حاجة بيستخدم الإعدادات الافتراضية للجهاز، و [[resolvedOptions()]] بيقولك الإعدادات اللي اتختارت فعلًا، ومنها [[timeZone]].
-
-~~~text الناتج (جهاز في مصر)
-Africa/Cairo
-~~~
-
-~~~text الناتج (Linux في Docker، صورة node:22-slim)
-UTC
-~~~
-
-وده بالظبط شكل الموضوع في الحقيقة: جهازك القاهرة، والسيرفر UTC.
-
----
-
-## ٧. الحل (solCode): لحظة واحدة في ٣ مدن، و [[isTodayInCairo]]
-
-~~~text app.js
-const cairoDay = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" });
-const isTodayInCairo = (date, now = new Date()) => cairoDay.format(date) === cairoDay.format(now);
-const t = new Date("2026-09-29T21:30:00Z");
-for (const tz of ["Africa/Cairo", "Europe/London", "America/New_York"]) {
-  console.log(tz, t.toLocaleString("ar-EG-u-nu-latn", { timeZone: tz, dateStyle: "medium", timeStyle: "short" }));
-}
-console.log(isTodayInCairo(t, new Date("2026-09-30T08:00:00Z")), isTodayInCairo(t, new Date("2026-09-29T20:00:00Z")));
-~~~
-
-- [[cairoDay]]: formatter واحد بيتعمل **مرة واحدة** برّه الدالة، لأن عمل formatter جديد مكلف نسبيًا.
-- [[(date, now = new Date()) => ...]]: arrow function بـ parameter تاني ليه قيمة افتراضية: لو منادتهوش، [[now]] = اللحظة الحالية. وده بيخلّينا نجرّبها بـ «دلوقتي» وهمي.
-- [[===]]: بتقارن النصين ([["2026-09-30"]] مع [["2026-09-30"]]).
-- [[for (const tz of [...])]]: بيلف على الـ ٣ zones.
-
-~~~text الناتج
-Africa/Cairo 30/09/2026، 12:30 ص
-Europe/London 29/09/2026، 10:30 م
-America/New_York 29/09/2026، 5:30 م
-true false
-~~~
-
-لندن UTC+1 صيفًا، ونيويورك UTC−4. وأول نداء true: الساعة 8 الصبح UTC يوم ٣٠ في القاهرة يوم ٣٠، زي اللحظة. والتاني false: ٨ بالليل UTC يوم ٢٩ في القاهرة لسه ٢٩.
-
-> لو هتقارن نص الناتج ده بنص كتبته بإيدك: العربي بيحط علامة اتجاه مخفية (U+200F) جنب الـ [[/]]، فـ [["30/09/2026"]] اللي انت كتبتها مش هتساوي اللي طالع. قارن نصوص [[en-CA]] زي ما عملنا، مش نصوص عرض.
-
----
-
-## الخلاصة
-
-| عايز | استخدم |
-|---|---|
-| تخزّن أو تبعت لحظة | [[toISOString()]] (أو JSON.stringify لوحده) |
-| تعرضها لليوزر | [[Intl.DateTimeFormat(locale, { timeZone, ... })]] |
-| أرقام لاتيني مع العربي | [[-u-nu-latn]] في الـ locale |
-| تاريخ اللحظة في zone معيّن | [[en-CA]] + [[timeZone]] |
-| تعرف توقيت الجهاز | [[resolvedOptions().timeZone]] |
-
-ومتكتبش offset بإيدك (+2 أو +3): اكتب اسم الـ zone وسيب IANA يعرف التوقيت الصيفي.`,
+- من غير handlers: Node بيقع بكود ١، والمتصفح بيكتب في Console وبس.
+- الـ handler بيسجّل ويخرج، مش بيكمّل كأن مفيش حاجة.
+- [[process.exitCode = 1]] بيستنى، و [[process.exit(1)]] بيقفل حالًا.`,
           lines: [
-            R`لحظة جاية بـ [[Z]] في آخرها، يعني UTC: ٩:٣٠ بالليل يوم ٢٩ سبتمبر بتوقيت جرينتش. ده الشكل اللي بييجي عادة من API أو داتابيز، وهو لحظة واحدة مش مربوطة بأي بلد.`,
-            R`بيطبع نفس النص مرتين: [[toISOString()]] بتطبع بـ UTC وآخرها [[Z]]، و [[JSON.stringify]] لما يلاقي Date بينادي [[toJSON]] اللي بترجّع نفس الشكل. فالـ Date بيوصل في JSON كـ **string** مش Date، والطرف التاني لازم يعمل [[new Date(...)]] تاني.`,
-            R`بيعمل formatter مرة واحدة: [[ar-EG]] عربي بشكل مصر (أسماء أيام وأرقام عربية)، و [[dateStyle]] و [[timeStyle]] أشكال جاهزة بدل ما تختار كل جزء، و [[timeZone]] بيحدد التوقيت اللي يتعرض بيه بدل توقيت الجهاز. ومتخلطش [[dateStyle]] مع [[day]] أو [[month]] في نفس الـ options، ده بيرمي TypeError.`,
-            R`بيطبع [[الأربعاء، ٣٠ سبتمبر ٢٠٢٦ في ١٢:٣٠ ص]]: نفس اللحظة اللي كانت يوم ٢٩ في UTC بقت ٣٠ بعد نص الليل في القاهرة (UTC+3 وقتها). ده سبب إن التاريخ «بيتزحلق يوم» لو عرضته بتوقيت غلط.`,
-            R`formatter تاني لنفس اللحظة: لغة [[en-GB]] (اليوم قبل الشهر) وتوقيت الرياض. الـ Date نفسه مبيتغيرش، اللي بيتغير طريقة العرض بس، فتقدر تعرض نفس اللحظة لكل يوزر بلغته وبلده.`,
-            R`بيطبع [[30 Sept 2026, 00:30]]: الرياض UTC+3 طول السنة، فطلعت نفس ساعة القاهرة في سبتمبر. والساعة بنظام ٢٤ ساعة لأن ده عُرف [[en-GB]].`,
-            R`[[toLocaleString]] بتاخد نفس الـ options من غير ما تعمل formatter بإيدك، وهنا اخترنا الأجزاء واحد واحد ([[day]] و [[month]] و [[hour]] و [[minute]]). والإضافة [[-u-nu-latn]] في آخر اللغة معناها «numbering system لاتيني»: كلام عربي بأرقام [[0-9]]، فيطبع [[30 سبتمبر في 12:30 ص]].`,
-            R`حيلة معروفة: [[en-CA]] بتطبع التاريخ بشكل [[YYYY-MM-DD]]، فبتاخد «تاريخ اللحظة دي في القاهرة» كنص جاهز للمقارنة أو كمفتاح. من غير [[timeZone]] هتاخد تاريخ الجهاز، وده على السيرفر غالبًا UTC.`,
-            R`بيطبع [[2026-09-30 2026-09-29]]: الأول تاريخ القاهرة، والتاني أول ١٠ حروف من الـ ISO يعني تاريخ UTC. الغلطة المشهورة إنك تاخد [[toISOString().slice(0, 10)]] على إنه «النهارده»، فطلبات بعد نص الليل في مصر تتحسب على اليوم اللي قبله.`,
-            R`[[resolvedOptions().timeZone]] بترجّع الـ time zone اللي الجهاز شغّال بيه: على السيرفرات و Docker غالبًا [["UTC"]]، وعلى جهازك [["Africa/Cairo"]]. اطبعه أول حاجة لما تلاقي تاريخ مختلف بين جهازك والسيرفر.`,
+            R`بنشترك في حدث [[unhandledRejection]] على [[process]] (الـ object اللي بيمثّل البرنامج في Node). بيتنادى لأي Promise اترفض ومحدش عمله catch، ووجوده لوحده بيمنع الوقوع الافتراضي.`,
+            R`بنطبع على stderr: لو الـ [[reason]] Error بنطبع رسالته، ولو حاجة تانية (نص مثلًا) بنطبعها زي ما هي، لأن مش كل rejection جواه Error.`,
+            R`[[process.exitCode = 1]]: لما البرنامج يخلص يخرج بكود ١ (يعني فشل)، من غير ما يقفل دلوقتي. كده اللي شغّل السكربت (CI أو cron) يعرف إن فيه حاجة وقعت.`,
+            R`قفلة الـ listener.`,
+            R`حدث [[uncaughtException]]: لأي [[throw]] محدش مسكه. [[origin]] بيقول هل هو throw عادي ([["uncaughtException"]]) ولا rejection ملوش listener ([["unhandledRejection"]]).`,
+            R`بنسجّل النوع والرسالة. في الشغل الحقيقي هنا بتكتب في ملف لوج أو تبعت لخدمة تتبّع، ومعاها [[err.stack]].`,
+            R`[[process.exit(1)]] بيقفل حالًا بكود ١. ده مقصود: بعد error محدش توقّعه الـ state ممكن يكون باظ، والأمان إنك تقفل ويتشغّل من جديد.`,
+            R`قفلة الـ listener.`,
+            R`حدث [[exit]] بيتنادى قبل ما البرنامج يقفل في كل الأحوال وبياخد الكود. بنطبعه عشان نشوف إن الكود فعلًا 1. جواه كود synchronous بس، أي حاجة async مش هتلحق.`,
+            R`Promise مترفض ومحدش عمله catch ولا await: بعد ما الكود المتزامن يخلص، Node بينادي الـ [[unhandledRejection]] listener اللي فوق، فيطبع [[[unhandledRejection] DB اتقفلت]]. من غير الـ listener البرنامج كان هيقع هنا.`,
+            R`throw جوه timer بعد 10ms: مفيش try حواليه ساعة ما بيشتغل، فبيروح للـ [[uncaughtException]] listener اللي بيطبع ويقفل بـ [[process.exit(1)]].`,
+            R`timer بعد 50ms عمره ما بيشتغل: البرنامج اتقفل عند الـ 10ms. ده بيثبت إن [[process.exit]] بيقفل حالًا مش بيستنى اللي فاضل.`,
           ],
-          sol: R`لـ [[21:30Z]] يوم ٢٩ سبتمبر: القاهرة ٣٠ سبتمبر 12:30 ص، ولندن ٢٩ سبتمبر 10:30 م (لندن UTC+1 صيفًا)، ونيويورك ٢٩ سبتمبر 5:30 م (UTC-4). وفي ١٥ يناير القاهرة بقت 11:30 م نفس اليوم: الفرق بقى ساعتين مش ٣، لأن التوقيت الصيفي خلص. ولا سطر في الكود اتغير، و Intl هو اللي عارف.
+          sol: R`[[node gh.mjs]] بيطبع [[[unhandledRejection] DB اتقفلت]] وبعدين [[[uncaughtException] uncaughtException bug في timer]] وبعدين [[exit code 1]]، وكود الخروج 1، و «مش هتتطبع» فعلًا مبتتطبعش.
 
-[[isTodayInCairo]]: حوّل اللحظة واللحظة الحالية لنص تاريخ بتوقيت القاهرة بـ [[en-CA]] وقارن النصين. متقارنش بـ [[getDate()]]: ده بتوقيت الجهاز. ومتطرحش [[Date.now() - date < 86400000]]: دي «آخر ٢٤ ساعة» مش «النهارده».`,
-          solCode: R`const cairoDay = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" });
-const isTodayInCairo = (date, now = new Date()) => cairoDay.format(date) === cairoDay.format(now);
-const t = new Date("2026-09-29T21:30:00Z");
-for (const tz of ["Africa/Cairo", "Europe/London", "America/New_York"]) {
-  console.log(tz, t.toLocaleString("ar-EG-u-nu-latn", { timeZone: tz, dateStyle: "medium", timeStyle: "short" }));
+لما تمسح الـ handler الأول: الـ rejection بيروح لـ [[uncaughtException]] و [[origin]] بيبقى [[unhandledRejection]]، فبيطبع [[[uncaughtException] unhandledRejection DB اتقفلت]] ويخرج على طول بكود 1، والـ timer بتاع الـ 10ms مبيلحقش يشتغل.
+
+في المتصفح (جرّبتها في Chrome 156): [[fetch("/nope.json")]] بيرجّع 404 من غير error، و [[r.json()]] على الصفحة الفاضية بترمي، فالـ listener بيطبع [[Failed to execute 'json' on 'Response': Unexpected end of JSON input]]، والصفحة بتكمّل عادي. التصليح: افحص [[r.ok]] قبل [[r.json()]] واعمل [[.catch]] أو [[await]] جوه try.`,
+          solCode: R`// crash-guard.mjs: اعمله import في أول أي سكربت
+import { appendFileSync } from "node:fs";
+function record(type, err) {
+  const line = JSON.stringify({
+    time: new Date().toISOString(),
+    type,
+    message: err instanceof Error ? err.message : String(err),
+    stack: err instanceof Error ? err.stack : undefined,
+  });
+  appendFileSync("crash.log", line + "\n");
 }
-console.log(isTodayInCairo(t, new Date("2026-09-30T08:00:00Z")), isTodayInCairo(t, new Date("2026-09-29T20:00:00Z")));`
-        },
-        {
-          cmd: "Intl.RelativeTimeFormat",
-          title: "تكتب «من ٥ دقايق» و «امبارح» إزاي من غير مكتبة؟",
-          desc: R`[[Intl.RelativeTimeFormat(locale, { numeric: "auto" })]] بيحوّل رقم ووحدة لجملة: [[format(-1, "day")]] بالعربي «أمس»، و [[format(-3, "hour")]] «قبل 3 ساعات»، و [[format(2, "week")]] «خلال أسبوعين». السالب للماضي والموجب للمستقبل. و [[numeric: "auto"]] هو اللي بيخلي -1 day «أمس» بدل «قبل يوم واحد».
-
-هو مبيحسبش الفرق، انت اللي بتحسبه: الفرق بالثواني، وبعدين تختار أكبر وحدة مناسبة (سنة، شهر، أسبوع، يوم، ساعة، دقيقة)، وتقسم عليها. ده كل اللي [[timeAgo]] بتعمله.`,
-          example: R`const rtf = new Intl.RelativeTimeFormat("ar", { numeric: "auto" });
-console.log(rtf.format(-1, "day"), "|", rtf.format(-3, "hour"), "|", rtf.format(2, "week"));
-const UNITS = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60]];
-function timeAgo(date, now = Date.now()) {
-  const sec = Math.round((date - now) / 1000);
-  for (const [unit, size] of UNITS) {
-    if (Math.abs(sec) >= size) return rtf.format(Math.round(sec / size), unit);
-  }
-  return rtf.format(sec, "second");
-}
-const now = Date.now();
-console.log(timeAgo(now - 5 * 60 * 1000), "|", timeAgo(now - 26 * 3600 * 1000));
-console.log(timeAgo(now + 3 * 86400 * 1000), "|", timeAgo(now - 10 * 1000));`,
-          try: R`عدّل [[timeAgo]] بحيث أي حاجة أقل من 45 ثانية تطلع «الآن» (جرّب [[rtf.format(0, "second")]]). وبعدين خليها ترجّع التاريخ نفسه (بـ Intl.DateTimeFormat) لو الفرق أكتر من أسبوع، زي ما السوشيال ميديا بتعمل. وجرّب [[new Intl.RelativeTimeFormat("ar-EG", { numeric: "auto" })]] بدل [["ar"]]: إيه الفرق في الأرقام؟`,
-          practice: [
-            { lvl: 'سريع', t: R`قارن: اعمل [[rtf]] بالعربي مرة بـ [[numeric: "auto"]] ومرة من غيره، واطبع من الاتنين [[format(-1, "day")]] و [[format(1, "day")]] و [[format(0, "day")]] و [[format(0, "second")]].`, done: R`مع auto: [[أمس]] و [[غدًا]] و [[اليوم]] و [[الآن]]. من غيره: [[قبل يوم واحد]] و [[خلال يوم واحد]] و [[خلال 0 يوم]] و [[خلال 0 ثانية]]، والأخيرتين واضح إنهم غلط في واجهة حقيقية.` },
-            { lvl: 'تطبيق', t: R`ابني badge «آخر ظهور»: [[<span class="seen" data-ts="...">]] لكذا يوزر، و function بتملا كل واحد بـ [[timeAgo]] (اللي بتاخد locale كـ argument)، وبتتنادي تاني كل ٣٠ ثانية بـ setInterval. جرّب [["ar"]] و [["ar-EG"]] و [["en"]].`, done: R`يوزر من ٥ دقايق: [["en"]] ← [[5 minutes ago]]، و [["ar"]] ← [[قبل 5 دقائق]]. ويوزر من ٣ ساعات بـ [["ar-EG"]] ← [[قبل ٣ ساعات]] بالأرقام العربي. وبعد دقيقة النص بيتحدث لوحده من غير reload، والـ formatter بيتعمل مرة واحدة مش جوه الـ interval.` },
-            { lvl: 'تحدي', t: R`مسألة: [[timeAgo]] بتحسب «أمس» بالثواني (من 24 لـ 48 ساعة). اكتب [[dayLabel(date, now, timeZone)]] بتقارن يوم التقويم في المدينة (بـ [[dayIn]] من الدرس اللي فات): نفس اليوم ← [[rtf.format(0, "day")]]، اليوم اللي قبله ← [[rtf.format(-1, "day")]]، غير كده التاريخ نفسه.`, done: R`رسالة [["2026-10-14T20:50:00Z"]] والوقت دلوقتي [["2026-10-14T21:10:00Z"]] (يعني 23:50 و 00:10 في القاهرة): [[dayLabel]] بترجّع [[أمس]] مع إن الفرق ٢٠ دقيقة، و [[timeAgo]] بترجّع [[قبل 20 دقيقة]]. والعكس: رسالة قبل نفس الـ now بـ ٣٠ ساعة ([["2026-10-13T15:10:00Z"]]، يعني يوم ١٣ في القاهرة والنهارده ١٥): [[dayLabel]] بترجّع تاريخ، و [[timeAgo]] بترجّع [[أمس]] غلط.` },
-          ],
-          flag: "script",
-          deep: {
-            why: "«من ٥ دقايق» أسهل في القراية من «29/09/2026 23:25» في التعليقات والإشعارات والرسايل. وزمان كان الحل moment.js كلها (مكتبة ضخمة) عشان الجملة دي. دلوقتي هي جوه اللغة، ومترجمة لكل لغة صح (المثنى في العربي: «خلال أسبوعين» مش «خلال 2 أسبوع»).",
-            how: R`الوحدات المسموحة: [[year]] و [[quarter]] و [[month]] و [[week]] و [[day]] و [[hour]] و [[minute]] و [[second]]. والرسالة متبنية من قواعد اللغة في ICU (نفس اللي تحت Intl.DateTimeFormat)، فالعربي بيطلع «قبل 5 دقائق» و «قبل 10 ثوانِ» بالمفرد والجمع الصح.
-
-الـ locale [["ar"]] في Node بيطلع أرقام لاتيني، و [["ar-EG"]] بيطلع أرقام مشرقية (٥)، وتقدر تفرض أي واحد بـ [[-u-nu-latn]] أو [[-u-nu-arab]].
-
-[[timeAgo]] بتفترض إن الشهر ٣٠ يوم والسنة ٣٦٥: تقريب مقبول للعرض بس مش للحسابات. و [[Math.round]] بتخلي ٢٦ ساعة «أمس» (يوم واحد)، و ٣٦ ساعة «قبل يومين»، وده غالبًا اللي اليوزر متوقعه. لو عايز «أمس» تبقى أمس بالتقويم فعلًا (مش ٢٤ ساعة) محتاج تقارن التواريخ بتوقيت اليوزر (الدرس اللي فات).
-
-والنص ده بيتغير مع الوقت، فلو الصفحة مفتوحة ساعة لازم تحدّثه ([[setInterval]] كل دقيقة)، ويُفضّل تحط التاريخ الكامل في [[<time datetime="...">]] و [[title]] عشان اليوزر يعرف الوقت بالظبط.`,
-            when: R`تعليقات، وإشعارات، و «آخر ظهور»، و «اتعدّل من ...». وللمواعيد المهمة (فاتورة، حجز، مهلة) اعرض التاريخ الكامل، مش «من ٣ أيام».`,
-            mistakes: R`تحسبه في السيرفر (SSR) وتبعته نص ثابت: هيبقى قديم، وهيعمل hydration mismatch في Next.js لو اتحسب تاني في المتصفح بثانية مختلفة. وتكتب الجملة بإيدك ([[$__bt منذ $__{n} دقيقة$__bt]]) فتطلع «منذ 2 دقيقة» و «منذ 11 دقيقة» غلط نحويًا. وتنسى المستقبل (مواعيد جاية) فتطلع «قبل -3 أيام».`
-          },
-          teach: R`## المثال بيعمل إيه
-
-جزئين: الأول بيوريك [[Intl.RelativeTimeFormat]] لوحده (رقم + وحدة ← جملة)، والتاني دالة [[timeAgo]] بتحسب الفرق بين لحظتين وتختار الوحدة المناسبة. الناتج كله من Node 24 على Windows.
-
----
-
-## ١. الـ formatter
-
-~~~text app.js
-const rtf = new Intl.RelativeTimeFormat("ar", { numeric: "auto" });
-console.log(rtf.format(-1, "day"), "|", rtf.format(-3, "hour"), "|", rtf.format(2, "week"));
-~~~
-
-- [[Intl.RelativeTimeFormat]]: من عيلة [[Intl]] (الأدوات اللي بتختلف من لغة للغة). «Relative» يعني نسبي: الوقت بالنسبة لدلوقتي.
-- [["ar"]]: الـ locale، عربي من غير بلد.
-- [[numeric: "auto"]]: لو فيه كلمة خاصة للرقم ده استخدمها («أمس» و «غدًا» و «الآن»). الافتراضي [["always"]]: رقم دايمًا.
-- [[rtf.format(رقم, وحدة)]]: السالب ماضي، والموجب مستقبل.
-
-~~~text الناتج
-أمس | قبل 3 ساعات | خلال أسبوعين
-~~~
-
-لاحظ [["خلال أسبوعين"]]: الـ formatter عارف المثنى في العربي، مش [["خلال 2 أسبوع"]]. وده سبب إنك متكتبش الجملة بإيدك.
-
-### الفرق بتاع [[numeric]]
-
-~~~text app.js
-const rtfA = new Intl.RelativeTimeFormat("ar");
-console.log(rtfA.format(-1, "day"), "|", rtf.format(0, "second"), "|", rtfA.format(0, "second"), "|", rtf.format(-2, "day"));
-~~~
-
-~~~text الناتج
-قبل يوم واحد | الآن | خلال 0 ثانية | أول أمس
-~~~
-
-من غير [["auto"]] بتطلع «قبل يوم واحد» و «خلال 0 ثانية». ومعاه «الآن» و «أول أمس».
-
-### الوحدات
-
-[[year]] و [[quarter]] و [[month]] و [[week]] و [[day]] و [[hour]] و [[minute]] و [[second]] (والجمع زي [["days"]] بيتقبل كمان). أي حاجة تانية بترمي error:
-
-~~~text الناتج لـ rtf.format(-1, "decade")
-RangeError: Invalid unit argument for Intl.RelativeTimeFormat.prototype.format() 'decade'
-~~~
-
----
-
-## ٢. جدول الوحدات
-
-~~~text app.js
-const UNITS = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60]];
-~~~
-
-array فيها arrays صغيرة، كل واحدة [[[اسم الوحدة, حجمها بالثواني]]]، **من الأكبر للأصغر** (الترتيب مهم، هتشوف ليه).
-
-| الوحدة | الحساب | ثواني |
-|---|---|---|
-| minute | 60 | 60 |
-| hour | 60 × 60 | 3,600 |
-| day | 24 × 3600 | 86,400 |
-| week | 7 × 86400 | 604,800 |
-| month | 30 × 86400 | 2,592,000 |
-| year | 365 × 86400 | 31,536,000 |
-
-الشهر ٣٠ يوم والسنة ٣٦٥ تقريب. مقبول لجملة زي «قبل ٣ شهور»، مش لحسابات.
-
----
-
-## ٣. دالة [[timeAgo]] سطر سطر
-
-~~~text app.js
-function timeAgo(date, now = Date.now()) {
-  const sec = Math.round((date - now) / 1000);
-  for (const [unit, size] of UNITS) {
-    if (Math.abs(sec) >= size) return rtf.format(Math.round(sec / size), unit);
-  }
-  return rtf.format(sec, "second");
-}
-~~~
-
-1. **[[now = Date.now()]]**: parameter بقيمة افتراضية. لو مبعتّوش، بياخد اللحظة الحالية كرقم ms. ولو بعته (في التجارب) تقدر تثبّت «دلوقتي».
-2. **[[(date - now) / 1000]]**: الطرح بيحوّل الاتنين لـ ms (حتى لو [[date]] كان Date، الطرح بيحوّله رقم). والقسمة على 1000 = ثواني. و [[Math.round]] بتقرّب لأقرب رقم صحيح. الماضي بيطلع **سالب**.
-3. **[[for (const [unit, size] of UNITS)]]**: بيلف على الجدول، وكل عنصر بيتفك (destructuring) لاسمين: [[unit]] و [[size]].
-4. **[[Math.abs(sec) >= size]]**: [[Math.abs]] بتشيل السالب (abs = absolute، القيمة المطلقة)، عشان الماضي والمستقبل يتقارنوا بنفس الطريقة. أول وحدة الفرق أكبر منها أو يساويها هي اللي نختارها، وعشان كده الجدول من الأكبر.
-5. **[[Math.round(sec / size)]]**: كام وحدة؟ والإشارة (سالب أو موجب) بتفضل زي ما هي، فالـ formatter يعرف ماضي ولا مستقبل.
-6. **[[return]]**: أول ما نلاقي الوحدة نرجع على طول، والـ loop بيقف.
-7. **السطر الأخير**: لو ولا وحدة نفعت (أقل من دقيقة)، رجّع بالثواني.
-
----
-
-## ٤. التجربة
-
-~~~text app.js
-const now = Date.now();
-console.log(timeAgo(now - 5 * 60 * 1000), "|", timeAgo(now - 26 * 3600 * 1000));
-console.log(timeAgo(now + 3 * 86400 * 1000), "|", timeAgo(now - 10 * 1000));
-~~~
-
-بنثبّت [[now]] مرة واحدة، ونعمل لحظات قبلها وبعدها بالـ ms ([[5 * 60 * 1000]] = ٥ دقايق). نتتبّع الـ ٤ نداءات:
-
-| النداء | [[sec]] | أول وحدة تنفع | [[Math.round(sec / size)]] | الناتج |
-|---|---|---|---|---|
-| قبل ٥ دقايق | −300 | minute (60) | −5 | قبل 5 دقائق |
-| قبل ٢٦ ساعة | −93,600 | day (86,400) | −1.08 ← −1 | أمس |
-| بعد ٣ أيام | 259,200 | day | 3 | خلال 3 أيام |
-| قبل ١٠ ثواني | −10 | ولا واحدة | (بالثواني) −10 | قبل 10 ثوانِ |
-
-~~~text الناتج
-قبل 5 دقائق | أمس
-خلال 3 أيام | قبل 10 ثوانِ
-~~~
-
-لاحظ إن ٢٦ ساعة طلعت «أمس» بسبب [[Math.round]]. و «أمس» هنا معناها «حوالي يوم»، مش «امبارح في التقويم».
-
----
-
-## ٥. الحل (solCode): «الآن» وتاريخ كامل بعد أسبوع
-
-~~~text app.js
-const rtf = new Intl.RelativeTimeFormat("ar-EG", { numeric: "auto" });
-const dateFmt = new Intl.DateTimeFormat("ar-EG", { dateStyle: "long", timeZone: "Africa/Cairo" });
-const UNITS = [["day", 86400], ["hour", 3600], ["minute", 60]];
-function timeAgo(date, now = Date.now()) {
-  const sec = Math.round((date - now) / 1000);
-  if (Math.abs(sec) < 45) return rtf.format(0, "second");
-  if (Math.abs(sec) >= 604800) return dateFmt.format(date);
-  for (const [unit, size] of UNITS) {
-    if (Math.abs(sec) >= size) return rtf.format(Math.round(sec / size), unit);
-  }
-  return rtf.format(Math.round(sec / 60), "minute");
-}
-~~~
-
-الفرق عن المثال:
-
-- [["ar-EG"]] بدل [["ar"]]: أرقام مشرقية (٥ مش 5).
-- أقل من 45 ثانية: [[rtf.format(0, "second")]] = «الآن».
-- أسبوع أو أكتر: التاريخ نفسه بـ [[Intl.DateTimeFormat]]، فالجدول بقى فيه day و hour و minute بس.
-- من 45 لـ 59 ثانية: مفيش وحدة تنفع في الـ loop، فالسطر الأخير بيقرّبها لدقيقة.
-
-~~~text app.js
-const now = Date.now();
-console.log(timeAgo(now - 20 * 1000), "|", timeAgo(now - 50 * 1000), "|", timeAgo(now - 5 * 3600 * 1000));
-console.log(timeAgo(new Date("2026-09-12T10:00:00Z"), new Date("2026-09-29T10:00:00Z")));
-~~~
-
-~~~text الناتج
-الآن | قبل دقيقة واحدة | قبل ٥ ساعات
-١٢ سبتمبر ٢٠٢٦
-~~~
-
-50 ثانية: [[Math.round(-50 / 60)]] = −1، فطلعت «قبل دقيقة واحدة». والسطر التاني: الفرق ١٧ يوم (أكتر من أسبوع)، فطلع التاريخ.
-
----
-
-## الخلاصة
-
-| الحتة | دورها |
-|---|---|
-| [[Intl.RelativeTimeFormat(locale, { numeric: "auto" })]] | رقم + وحدة ← جملة صح نحويًا |
-| السالب / الموجب | ماضي / مستقبل |
-| [[timeAgo]] | انت اللي بتحسب الفرق وتختار الوحدة، الـ formatter بيكتب بس |
-| الجدول من الأكبر للأصغر | عشان أول وحدة تنفع تبقى الأنسب |
-
-والجملة دي بتقدم مع الوقت: لو الصفحة مفتوحة، حدّثها كل دقيقة.`,
-          lines: [
-            R`بيعمل formatter للوقت النسبي بالعربي. [[numeric: "auto"]] بيخليه يستخدم كلمات زي «أمس» و«غدًا» و«الآن» لما تنفع، ومن غيره (الافتراضي [["always"]]) هيقول «قبل يوم واحد».`,
-            R`[[format]] بتاخد رقم ووحدة: السالب ماضي والموجب مستقبل. فبيطبع [[أمس | قبل 3 ساعات | خلال أسبوعين]]، والمثنى والجمع بيتظبطوا لوحدهم. بس هو مبيحسبش فرق بين تاريخين: انت اللي لازم تديله الرقم والوحدة، وده شغل الدالة اللي تحت.`,
-            R`جدول الوحدات من الأكبر للأصغر، وجنب كل وحدة عدد ثوانيها: السنة ٣٦٥ يوم والشهر ٣٠ يوم. الأرقام دي **تقريبية**، وكفاية لـ «من قد إيه» في كومنت أو إشعار، مش لحساب فواتير أو أعمار.`,
-            R`[[timeAgo]] بتاخد التاريخ اللي عايزين نوصفه، و [[now]] قيمتها الافتراضية [[Date.now()]]. خلّيناها باراميتر عشان في الاختبارات تقدر تثبّت «دلوقتي» وتاخد نفس الناتج كل مرة.`,
-            R`الفرق بالثواني: طرح تاريخ من تاريخ بيدّي milliseconds، فبنقسم على ١٠٠٠ ونقرّب. والإشارة مهمة: سالب لو التاريخ في الماضي وموجب لو في المستقبل، وده بالظبط اللي [[format]] مستنياه.`,
-            R`بنلف على الوحدات بالترتيب، وكل عنصر بنفكّه لاسم الوحدة ([[unit]]) وعدد ثوانيها ([[size]]). البداية من الأكبر مهمة: لو بدأنا بالدقيقة كان أي فرق هيطلع «قبل ٣٠٠٠ دقيقة».`,
-            R`أول وحدة الفرق أكبر منها أو يساويها (بـ [[Math.abs]] عشان السالب) هي الوحدة المناسبة: بنقسم عليها ونقرّب ونرجّع النص على طول. فـ ٢٦ ساعة بتبقى يوم واحد وتطلع «أمس».`,
-            R`نهاية الـ [[for]].`,
-            R`لو اللفة خلصت من غير ما نرجع، يبقى الفرق أقل من دقيقة فبنعرضه بالثواني. ولو الفرق صفر بالظبط هيطبع «الآن» بسبب [[auto]].`,
-            R`نهاية [[timeAgo]].`,
-            R`بناخد «دلوقتي» مرة واحدة كرقم milliseconds، وكل التجارب تحت بتطرح منه أو تزوّد عليه، فكلها بتتقاس من نفس اللحظة.`,
-            R`بيطبع [[قبل 5 دقائق | أمس]]: ٥ دقايق في الماضي وقفت عند وحدة الدقيقة، و ٢٦ ساعة اتقرّبت ليوم واحد فطلعت «أمس» مش «قبل 26 ساعة».`,
-            R`بيطبع [[خلال 3 أيام | قبل 10 ثوانِ]]: الموجب بيدّي «خلال» للمستقبل، و ١٠ ثواني أقل من دقيقة فوصلت للسطر الأخير في [[timeAgo]].`,
-          ],
-          sol: R`[[rtf.format(0, "second")]] مع [[numeric: "auto"]] بتطلع «الآن». فحط في أول الدالة [[if (Math.abs(sec) < 45) return rtf.format(0, "second");]].
-
-وللأسبوع: [[if (Math.abs(sec) >= 604800) return dateFmt.format(date)]] قبل الـ loop، والناتج مع [[dateStyle: "long"]] مثلًا «١٢ سبتمبر ٢٠٢٦» (مع [["medium"]] بالعربي بيطلع أرقام بس «١٢‏/٠٩‏/٢٠٢٦»).
-
-[[ar-EG]] بيطلع «قبل ٥ دقائق» بأرقام مشرقية، و [["ar"]] بيطلع «قبل 5 دقائق». الاتنين صح، اختار حسب تصميم موقعك وخليه ثابت في كل الصفحات.`,
-          solCode: R`const rtf = new Intl.RelativeTimeFormat("ar-EG", { numeric: "auto" });
-const dateFmt = new Intl.DateTimeFormat("ar-EG", { dateStyle: "long", timeZone: "Africa/Cairo" });
-const UNITS = [["day", 86400], ["hour", 3600], ["minute", 60]];
-function timeAgo(date, now = Date.now()) {
-  const sec = Math.round((date - now) / 1000);
-  if (Math.abs(sec) < 45) return rtf.format(0, "second");
-  if (Math.abs(sec) >= 604800) return dateFmt.format(date);
-  for (const [unit, size] of UNITS) {
-    if (Math.abs(sec) >= size) return rtf.format(Math.round(sec / size), unit);
-  }
-  return rtf.format(Math.round(sec / 60), "minute");
-}
-const now = Date.now();
-console.log(timeAgo(now - 20 * 1000), "|", timeAgo(now - 50 * 1000), "|", timeAgo(now - 5 * 3600 * 1000));
-console.log(timeAgo(new Date("2026-09-12T10:00:00Z"), new Date("2026-09-29T10:00:00Z")));`
-        },
-        {
-          cmd: "date-fns و dayjs و Temporal",
-          title: "date-fns ولا dayjs ولا Temporal في 2026؟",
-          desc: R`Date مبيعرفش يعمل حسابات تقويم صح (زوّد شهر، أول الأسبوع، الفرق بالأيام) ومبيعرفش time zones غير توقيت الجهاز و UTC. عشان كده كان فيه مكتبات:
-
-[[date-fns]]: دوال صغيرة بتاخد Date وترجّع Date جديد ([[addMonths]] و [[format]] و [[differenceInCalendarDays]])، وبتستورد اللي محتاجه بس. و [[date-fns-tz]] أو [[@date-fns/tz]] للـ time zones. [[dayjs]]: API شبه moment.js القديمة ([[dayjs().add(1, "month")]]) وحجمها صغير، والـ time zones بـ plugin.
-
-و Temporal: الـ API الجديد جوه اللغة نفسها، بدل Date. أنواع منفصلة لكل معنى: [[Temporal.Instant]] (لحظة)، و [[PlainDate]] (تاريخ من غير وقت ولا zone، زي عيد ميلاد)، و [[ZonedDateTime]] (لحظة + zone، بيفهم التوقيت الصيفي)، و [[Duration]]. وكله immutable، والشهر من 1. وصل Stage 4 في TC39 سنة 2026 (جزء من ES2026)، وشغال في Firefox (من 139) و Chrome و Edge (من 144)، و Node 26 شغّله افتراضيًا. Safari وقت كتابة الدرس لسه مش في النسخة المستقرة، فللمتصفحات محتاج polyfill ([[@js-temporal/polyfill]] أو [[temporal-polyfill]]). اتأكد من caniuse قبل ما تعتمد عليه من غير polyfill.`,
-          example: R`import { Temporal } from "@js-temporal/polyfill";
-const jan31 = Temporal.PlainDate.from("2026-01-31");
-console.log(jan31.add({ months: 1 }).toString());
-const meeting = Temporal.ZonedDateTime.from("2026-10-29T12:00[Africa/Cairo]");
-console.log(meeting.add({ hours: 24 }).toString());
-console.log(meeting.add({ days: 1 }).toString());
-const created = Temporal.Instant.from("2026-09-29T21:30:00Z");
-console.log(created.toZonedDateTimeISO("Africa/Cairo").toPlainDate().toString());
-const left = Temporal.PlainDate.from("2026-09-29").until("2026-12-25");
-console.log(left.days, left.toString());`,
-          try: R`في فولدر تجربة: [[npm i @js-temporal/polyfill date-fns dayjs]]، واحفظ المثال كـ [[temporal.mjs]] وشغّله. وبعدين اكتب نفس الـ ٣ حسابات (٣١ يناير + شهر، والأيام لحد ٢٥ ديسمبر، وتاريخ اللحظة [[21:30Z]] في القاهرة) بـ date-fns، وقارن الكود.`,
-          practice: [
-            { lvl: 'سريع', t: R`دوّر بنفسك: من صفحة [[Temporal.PlainDate.prototype.add]] على MDN، لاقي الـ option اللي بتخلي الحساب يرمي error بدل ما يقف على آخر الشهر. وبعدين في فولدر التجربة (بعد [[npm i @js-temporal/polyfill]]) جرّب [[Temporal.PlainDate.from("2028-02-29").add({ years: 1 })]] بيه ومن غيره. وجرّب [[typeof Temporal]] في Node من غير import.`, done: R`من غير الـ option بيطلع [[2029-02-28]]، ومع [[{ overflow: "reject" }]] بيرمي [[RangeError]]. و [[typeof Temporal]] في Node 24 بيطلع [["undefined"]]، وعشان كده الـ polyfill.` },
-            { lvl: 'تطبيق', t: R`قارن وقيس: احسب الأيام من ٢٩ سبتمبر لـ ٢٥ ديسمبر 2026 بـ ٣ طرق: Date عادي (فرق الـ ms على 86400000)، و [[differenceInCalendarDays]] من date-fns، و [[PlainDate.until]]. وبعدين خلّي الأول الساعة 23:00 والتاني الساعة 01:00 وجرّب الطريقتين الأولانيين تاني.`, done: R`التلاتة [[87]] للتواريخ من غير وقت. مع الساعات، طريقة الـ ms بتطلع رقم بكسور حوالي [[86.1]] (و Math.floor بيدّي 86، والرقم بالظبط بيتغير حسب التوقيت الصيفي في جهازك)، و date-fns لسه [[87]] لأنها بتعد أيام تقويم.` },
-            { lvl: 'تحدي', t: R`محاكاة اجتماع يومي: بـ Temporal لاقي أول تغيير توقيت جاي في القاهرة بعد يونيو 2026 بـ [[getTimeZoneTransition("next")]]. وبعدين اعمل اجتماع الساعة 12 الضهر يوم التغيير وزوّد عليه [[{ days: 1 }]] مرة و [[{ hours: 24 }]] مرة.`, done: R`التغيير الجاي ليلة ٢٩ أكتوبر 2026 (اللحظة [[2026-10-29T21:00:00Z]]، والساعة بترجع من 24:00 لـ 23:00). و [[days: 1]] بيدّي [[2026-10-30T12:00:00+02:00]] (نفس الساعة على الحيطة)، و [[hours: 24]] بيدّي [[11:00]] لأن اليوم ده ٢٥ ساعة.` },
-          ],
-          flag: "script",
-          deep: {
-            why: "Date اتصمم في ١٠ أيام سنة 1995 ومليان مشاكل (الشهر من 0، mutable، مفيش zones). المكتبات حلّت ده لسنين، و Temporal هو الحل الرسمي. في 2026 انت في فترة انتقالية: لازم تعرف Date لأنه في كل حتة، ومكتبة للمشاريع اللي شغالة، و Temporal للي جاي.",
-            how: R`في المثال: [[PlainDate]] + شهر على ٣١ يناير بيقف على ٢٨ فبراير ([[overflow: "constrain"]] الافتراضي) مش ٣ مارس زي Date. وتقدر تقول [[{ overflow: "reject" }]] يرمي error بدل ما يخمّن.
-
-السطرين بتوع الاجتماع بيوضّحوا الفرق بين «٢٤ ساعة» و «يوم»: مصر بترجع من التوقيت الصيفي نص ليل الخميس ٢٩ أكتوبر 2026، فاليوم ده ٢٥ ساعة. [[add({ hours: 24 })]] بتوصل ١١ الصبح يوم ٣٠، و [[add({ days: 1 })]] بتوصل ١٢ الضهر زي ما اليوزر متوقع. Date مبيقدرش يفرق بينهم لأنه مش عارف الـ zone أصلًا.
-
-[[Instant]] ← [[toZonedDateTimeISO("Africa/Cairo")]] ← [[toPlainDate()]]: نفس «التاريخ في القاهرة» اللي عملناه بحيلة en-CA، بس صريح. و [[until]] بترجّع [[Duration]] ([[P87D]] بصيغة ISO 8601).
-
-الـ polyfill حجمه مش صغير، فلو المشروع بيتحمّل في Safari وهيحتاج حاجات بسيطة، date-fns لسه اختيار عملي. وفي Node 22 و 24 مفيش Temporal جوّه، فالـ polyfill لازم.`,
-            when: R`مشروع جديد في 2026: Temporal (مع polyfill للمتصفحات لحد ما Safari يدعمه) لو فيه حسابات zones ومواعيد بجد (حجوزات، جداول). مشروع شغال: خليك على المكتبة اللي فيه. حاجات بسيطة (عرض تاريخ، timeAgo): Intl لوحده كفاية ومفيش مكتبة. و moment.js في maintenance mode من 2020، متبدأش بيها.`,
-            mistakes: R`تخلط Date و Temporal في نفس الكود من غير تحويل واضح (بيتحوّلوا عن طريق [[Instant]] و [[epochMilliseconds]]). وتستخدم [[PlainDateTime]] لحاجة ليها توقيت (اجتماع): استخدم ZonedDateTime. وتعتمد إن Temporal موجود في المتصفح من غير ما تفحص. وتخزّن ZonedDateTime في الداتابيز كنص وتتوقع timestamptz يفهمه: خزّن [[Instant]] ([[toString()]] بـ Z) والـ zone في عمود لوحده لو محتاجه.`
-          },
-          teach: R`## المثال بيعمل إيه
-
-٣ حسابات Date بيغلط فيها أو مبيعرفش يعملها: «٣١ يناير + شهر»، و «بكرة نفس الميعاد» في يوم التوقيت الصيفي اتغيّر فيه، و «اللحظة دي في القاهرة يوم كام». وكلها بـ Temporal. وبعدين الحل بيعمل نفس الحسابات بـ date-fns و dayjs عشان تقارن.
-
-الكل اتشغّل بـ Node 24 على Windows، في فولدر تجربة فيه:
-
-~~~powershell
-npm i @js-temporal/polyfill date-fns dayjs
-~~~
-
-والنسخ اللي اتسطّبت: [[@js-temporal/polyfill@0.5.1]] و [[date-fns@4.4.0]] و [[dayjs@1.11.23]].
-
----
-
-## ١. [[import]]: ليه polyfill؟
-
-~~~text app.js
-import { Temporal } from "@js-temporal/polyfill";
-~~~
-
-- [[import { Temporal } from "..."]]: بيجيب حاجة اسمها [[Temporal]] من package. الأقواس [[{ }]] معناها «هات الحاجة اللي بالاسم ده بالظبط» (named import، درس [[import و export]]).
-- **polyfill** يعني كود مكتوب بـ JavaScript عادي بيعمل نفس الـ API الجديد، للأماكن اللي لسه مفيهاش. في Node 24 جرّبنا [[typeof Temporal]] وطلع [[undefined]]، يعني مش موجود، فلازم الـ polyfill.
-- الملف لازم يبقى ES module عشان [[import]] تشتغل: سمّيه [[.mjs]] (أو حط [["type": "module"]] في [[package.json]]).
-
----
-
-## ٢. [[PlainDate]]: تاريخ وبس
-
-~~~text app.js
-const jan31 = Temporal.PlainDate.from("2026-01-31");
-console.log(jan31.add({ months: 1 }).toString());
-~~~
-
-- [[Temporal.PlainDate]]: نوع معناه «تاريخ في التقويم»: من غير ساعة ومن غير time zone. زي عيد ميلاد: ٣١ يناير هو ٣١ يناير في أي بلد.
-- [[.from("2026-01-31")]]: بيعمله من نص ISO. والشهر هنا من **1** مش 0: جرّبنا [[jan31.month]] وطلع [[1]].
-- [[.add({ months: 1 })]]: زوّد شهر. الـ object اللي بتبعته بيقول تزوّد إيه وقد إيه ([[{ days: 3 }]] و [[{ years: 1, months: 2 }]] وهكذا).
-- [[.toString()]]: يكتبه نص ISO.
-
-~~~text الناتج
-2026-02-28
-~~~
-
-٣١ فبراير مش موجود، فـ Temporal **وقف على آخر الشهر** (ده اسمه constrain، الافتراضي). Date في الدرس الأول رحّلها لـ ٣ مارس. ولو عايز error بدل التخمين:
-
-~~~text الناتج لـ jan31.add({ months: 1 }, { overflow: "reject" })
-RangeError: value out of range: 1 <= 31 <= 28
-~~~
-
-يعني «اليوم لازم يبقى بين 1 و 28، وانت جايب 31».
-
-وكمان: [[add]] بترجّع object **جديد**، و [[jan31]] نفسه متغيرش (طبعناه بعدها وطلع [[2026-01-31]]). وكل أنواع Temporal كده (immutable): حتى [[jan31.month = 5]] في module بترمي:
-
-~~~text الناتج
-TypeError: Cannot set property month of [object Temporal.PlainDate] which has only a getter
-~~~
-
----
-
-## ٣. [[ZonedDateTime]]: «٢٤ ساعة» مش زي «يوم»
-
-~~~text app.js
-const meeting = Temporal.ZonedDateTime.from("2026-10-29T12:00[Africa/Cairo]");
-console.log(meeting.add({ hours: 24 }).toString());
-console.log(meeting.add({ days: 1 }).toString());
-~~~
-
-- [[ZonedDateTime]]: لحظة **ومعاها** time zone. ده النوع الصح لاجتماع أو حجز.
-- النص: تاريخ ووقت، وبعدين اسم الـ zone بين [[[ ]]]. وده شكل ISO الجديد (اسمه RFC 9557) اللي بيحفظ اسم الـ zone مش بس الـ offset.
-
-الـ ٢٩ أكتوبر 2026 يوم خميس، وهو آخر يوم في التوقيت الصيفي في مصر: آخر الليلة دي الساعة بترجع ساعة. شوف:
-
-~~~text الناتج (meeting.toString() و offset و hoursInDay)
-2026-10-29T12:00:00+03:00[Africa/Cairo] +03:00 25
-~~~
-
-الاجتماع الساعة 12 والقاهرة [[+03:00]]، واليوم ده [[hoursInDay]] = **25 ساعة**. ويوم ٣٠ طلع [[+02:00]] و 24 ساعة.
-
-~~~text الناتج
-2026-10-30T11:00:00+02:00[Africa/Cairo]
-2026-10-30T12:00:00+02:00[Africa/Cairo]
-~~~
-
-- [[add({ hours: 24 })]]: ٢٤ ساعة بالظبط من الزمن. بس اليوم كان ٢٥ ساعة، فوصلنا ١١ الصبح.
-- [[add({ days: 1 })]]: «نفس الساعة بكرة» على الحيطة، فوصلنا ١٢ الضهر، وده اللي اليوزر قاصده لما يقول «كرر الاجتماع كل يوم».
-
----
-
-## ٤. [[Instant]]: لحظة جاية من API
-
-~~~text app.js
-const created = Temporal.Instant.from("2026-09-29T21:30:00Z");
-console.log(created.toZonedDateTimeISO("Africa/Cairo").toPlainDate().toString());
-~~~
-
-- [[Instant]]: نقطة على خط الزمن وبس، زي Date من جوه، ولازم النص يكون فيه [[Z]] أو offset.
-- السطر التاني ٣ خطوات من الشمال لليمين:
-
-| الخطوة | الناتج |
-|---|---|
-| [[created]] | اللحظة [[2026-09-29T21:30:00Z]] |
-| [[.toZonedDateTimeISO("Africa/Cairo")]] | [[2026-09-30T00:30:00+03:00[Africa/Cairo]]] |
-| [[.toPlainDate()]] | خُد التاريخ بس: [[2026-09-30]] |
-
-([[ISO]] في اسم الدالة معناها التقويم الميلادي العادي.)
-
-~~~text الناتج
-2026-09-30
-~~~
-
-ده نفس اللي عملناه في الدرس اللي فات بحيلة [[en-CA]]، بس هنا كل خطوة نوعها واضح.
-
----
-
-## ٥. [[until]] و [[Duration]]
-
-~~~text app.js
-const left = Temporal.PlainDate.from("2026-09-29").until("2026-12-25");
-console.log(left.days, left.toString());
-~~~
-
-[[a.until(b)]]: المدة من a لحد b، وبترجّع [[Temporal.Duration]].
-
-~~~text الناتج
-87 P87D
-~~~
-
-[[P87D]] شكل ISO 8601 للمدة: [[P]] = Period، و [[87D]] = 87 يوم. والافتراضي إن أكبر وحدة الأيام. ولو عايز شهور: [[until("2026-12-25", { largestUnit: "months" })]] طلّع [[P2M26D]] (شهرين و ٢٦ يوم).
-
----
-
-## ٦. الحل (solCode): نفس الحسابات بـ date-fns و dayjs
-
-~~~text app.js
-import { addMonths, format, differenceInCalendarDays } from "date-fns";
-import dayjs from "dayjs";
-console.log(format(addMonths(new Date(2026, 0, 31), 1), "yyyy-MM-dd"));
-console.log(differenceInCalendarDays(new Date(2026, 11, 25), new Date(2026, 8, 29)));
-console.log(new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" }).format(new Date("2026-09-29T21:30:00Z")));
-console.log(dayjs("2026-01-31").add(1, "month").format("YYYY-MM-DD"));
-~~~
-
-- **date-fns**: [[import { ... }]] بتجيب الدوال اللي محتاجها بس. كلها بتاخد Date وترجّع Date جديد. [[addMonths(date, 1)]]، و [[format(date, "yyyy-MM-dd")]] (في date-fns [[yyyy]] السنة و [[MM]] الشهر و [[dd]] اليوم، بحروف صغيرة للسنة واليوم). و [[differenceInCalendarDays(b, a)]]: كام يوم في التقويم من a لـ b. ولاحظ إن الشهر في [[new Date(2026, 11, 25)]] لسه من 0 (11 = ديسمبر)، لأن date-fns شغالة فوق Date.
-- **dayjs**: [[import dayjs from "dayjs"]] من غير أقواس = default import. وكل حاجة بتتسلسل: [[dayjs(نص).add(1, "month").format(...)]]. والـ format هنا [[YYYY]] و [[DD]] كابيتال.
-- سطر Intl: تاريخ القاهرة من غير مكتبة.
-
-~~~text الناتج
-2026-02-28
-87
-2026-09-30
-2026-02-28
-~~~
-
-الـ ٣ وصلوا لنفس الإجابات.
-
----
-
-## الخلاصة
-
-| النوع في Temporal | معناه | مثال |
-|---|---|---|
-| [[PlainDate]] | تاريخ من غير وقت ولا zone | عيد ميلاد |
-| [[ZonedDateTime]] | لحظة + zone (بيفهم التوقيت الصيفي) | اجتماع، حجز |
-| [[Instant]] | لحظة بس | [[created_at]] من API |
-| [[Duration]] | مدة | [[P87D]] |
-
-والشهر من 1، وكل حاجة immutable، و [[days: 1]] غير [[hours: 24]]. وفي Node 24 محتاج polyfill.`,
-          lines: [
-            R`بيستورد [[Temporal]] من الـ polyfill الرسمي، عشان الكود يشتغل في أي بيئة لسه معندهاش Temporal. في Node 26 و Chrome و Firefox الحديثين [[Temporal]] موجود global، فتقدر تشيل السطر ده.`,
-            R`[[PlainDate]] تاريخ بس: يوم وشهر وسنة، من غير ساعة ولا time zone. ده المناسب لعيد ميلاد أو ميعاد استحقاق، لأنه مش «لحظة» فمش هيتزحلق يوم لما يتعرض في بلد تاني. والشهور هنا من 1 عادي، مش من 0 زي Date.`,
-            R`[[add]] بترجّع object **جديد** (Temporal كله immutable) و [[jan31]] نفسه متغيرش. وبيطبع [[2026-02-28]]: لما اليوم مش موجود في الشهر الجديد بيقف على آخر يوم، مش بيرحّل لـ ٣ مارس زي Date. ولو عايز error بدل كده ادّيله [[overflow: "reject"]].`,
-            R`[[ZonedDateTime]] لحظة ومعاها time zone باسمه، والاسم بيتكتب بين قوسين مربعين بعد الوقت. الفرق عن offset ثابت زي [[+03:00]] إنه عارف قواعد التوقيت الصيفي في مصر، فالحسابات بعد كده بتتظبط لوحدها.`,
-            R`بيزوّد ٢٤ ساعة حقيقية. ليلة ٢٩ أكتوبر ٢٠٢٦ التوقيت الصيفي في مصر بيخلص، فبعد ٢٤ ساعة الساعة بقت ١١ مش ١٢ والـ offset بقى [[+02:00]]: [[2026-10-30T11:00:00+02:00]] وبعده اسم الـ zone بين قوسين مربعين. ده الصح لو بتحسب مدة (زي «الـ token يخلص بعد ٢٤ ساعة»).`,
-            R`[[days: 1]] معناها «نفس الساعة بكرة» على التقويم، فبيطبع ١٢:٠٠ يوم ٣٠ بـ [[+02:00]] مع إن اللي عدّى فعليًا ٢٥ ساعة. ده الصح لمواعيد زي «الاجتماع بكرة نفس الميعاد». والفرق بين السطرين هو الفرق بين مدة وتقويم.`,
-            R`[[Instant]] لحظة بس، من غير time zone ولا تقويم، زي اللي جاية من API بـ [[Z]]. هو أقرب حاجة لـ Date القديم، بس مبيعرضش بتوقيت الجهاز من ورا ضهرك.`,
-            R`بيحوّل اللحظة لتوقيت القاهرة، وبعدين ياخد الجزء التاريخ بس. فبيطبع [[2026-09-30]] (اليوم اللي بعد تاريخ UTC، زي ما شفنا مع Intl)، وكل خطوة مكتوب فيها انت عايز إيه بدل حيلة [[en-CA]].`,
-            R`[[until]] بتحسب المدة من التاريخ الأول لحد التاني وبترجّع [[Duration]]، وبتقبل نص زي [["2026-12-25"]] مش لازم PlainDate. ومن غير options أكبر وحدة بترجعها مع PlainDate هي الأيام، فمش هتلاقي شهور.`,
-            R`بيطبع [[87 P87D]]: [[days]] عدد الأيام كرقم، و [[toString()]] بيطبع المدة بصيغة ISO 8601 ([[P]] = period و [[D]] = أيام). لو عايزها شهور وأيام ادّي [[until]] الـ option [[largestUnit: "month"]] فتبقى [[P2M26D]].`,
-          ],
-          sol: R`ناتج [[temporal.mjs]]: [[2026-02-28]]، و [[2026-10-30T11:00:00+02:00[Africa/Cairo]]]، و [[2026-10-30T12:00:00+02:00[Africa/Cairo]]]، و [[2026-09-30]]، و [[87 P87D]].
-
-بـ date-fns: [[addMonths(new Date(2026, 0, 31), 1)]] بترجّع ٢٨ فبراير كمان (date-fns بتعمل clamp زي Temporal)، و [[differenceInCalendarDays(new Date(2026, 11, 25), new Date(2026, 8, 29))]] بـ 87. لاحظ الشهر من 0 لسه، لأن date-fns شغالة على Date. وتاريخ القاهرة محتاج [[@date-fns/tz]] أو حيلة en-CA.
-
-و dayjs: [[dayjs("2026-01-31").add(1, "month").format("YYYY-MM-DD")]] بـ [["2026-02-28"]]. الـ ٣ وصلوا لنفس الإجابة، الفرق في الوضوح: Temporal بيقولك نوع كل قيمة (تاريخ، لحظة، لحظة في zone).`,
-          solCode: R`import { addMonths, format, differenceInCalendarDays } from "date-fns";
-import dayjs from "dayjs";
-console.log(format(addMonths(new Date(2026, 0, 31), 1), "yyyy-MM-dd"));
-console.log(differenceInCalendarDays(new Date(2026, 11, 25), new Date(2026, 8, 29)));
-console.log(new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" }).format(new Date("2026-09-29T21:30:00Z")));
-console.log(dayjs("2026-01-31").add(1, "month").format("YYYY-MM-DD"));`
+process.on("unhandledRejection", (reason) => { record("unhandledRejection", reason); process.exit(1); });
+process.on("uncaughtException", (err, origin) => { record(origin, err); process.exit(1); });
+// المتصفح: نفس الفكرة
+// window.addEventListener("error", (e) => send({ type: "error", message: e.message, stack: e.error?.stack }));
+// window.addEventListener("unhandledrejection", (e) => send({ type: "rejection", message: String(e.reason?.message ?? e.reason) }));`
         }
       ]
     }

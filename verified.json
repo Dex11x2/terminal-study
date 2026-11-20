@@ -9559,6 +9559,41 @@
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
+ "js|Array: Array.of و fill و copyWithin": {
+  "hash": "c0ba20d56f82",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
+ "js|Array: at و slice و concat": {
+  "hash": "c95077a4a504",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
+ "js|Array: flat و flatMap و reduceRight": {
+  "hash": "45f5004a3d94",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
+ "js|Array: keys و values و entries و toString": {
+  "hash": "7e19fd368c4a",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
+ "js|Array: lastIndexOf و findLastIndex و forEach": {
+  "hash": "4fce42f3ea8a",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
+ "js|Array: splice و toSpliced و toReversed و with": {
+  "hash": "df77b0dda227",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
+ "js|Array[Symbol.species] و Symbol.unscopables": {
+  "hash": "c8f630a549b0",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
  "js|AssemblyScript": {
   "hash": "11a141f63b54",
   "date": "2026-10-29",
@@ -9604,6 +9639,11 @@
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
+ "js|Function: length و name و toString و new.target": {
+  "hash": "e8d9c7e7749f",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
  "js|IndexedDB و BroadcastChannel": {
   "hash": "7803c90be75f",
   "date": "2026-10-29",
@@ -9633,6 +9673,11 @@
   "hash": "3c2e6854c218",
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+ },
+ "js|Map: كل الـ methods و getOrInsert": {
+  "hash": "549e804cd0c3",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
  },
  "js|Math.sumPrecise و fround و f16round": {
   "hash": "d1ea14c138a6",
@@ -9674,6 +9719,16 @@
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
+ "js|Object.preventExtensions و seal و freeze": {
+  "hash": "7cb4dce5a367",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
+ "js|Object.setPrototypeOf و isPrototypeOf": {
+  "hash": "02e825136c45",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
  "js|Promise": {
   "hash": "c58fe4b29b8f",
   "date": "2026-11-03",
@@ -9694,10 +9749,25 @@
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
+ "js|Proxy: باقي الـ traps و Proxy.revocable": {
+  "hash": "6a12224c369e",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
+ "js|Reflect: الـ ١٣ دالة": {
+  "hash": "2fde73c279d3",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
  "js|ResizeObserver": {
   "hash": "294a5b14da08",
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|Set: كل الـ methods وجبر المجموعات": {
+  "hash": "ea673965cec1",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
  },
  "js|Strategy pattern": {
   "hash": "2dd6d97e7f11",
@@ -9719,6 +9789,11 @@
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
+ "js|WeakMap و WeakSet": {
+  "hash": "c55e67874813",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
  "js|Web Components في React و Vue": {
   "hash": "3727f68bd278",
   "date": "2026-10-29",
@@ -9739,10 +9814,20 @@
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
+ "js|arguments object": {
+  "hash": "d524f0802d6b",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
  "js|array destructuring و spread": {
   "hash": "fc5b77ab480d",
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+ },
+ "js|array literals و index و length": {
+  "hash": "6362f1bd0992",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
  },
  "js|arrow و this": {
   "hash": "8eb2896d6242",
@@ -9874,6 +9959,11 @@
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
+ "js|enumerability و ownership": {
+  "hash": "ae735f339500",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
  "js|escape sequences و String.raw": {
   "hash": "c728856b98ad",
   "date": "2026-11-20",
@@ -9999,6 +10089,11 @@
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
+ "js|method definitions و property accessors": {
+  "hash": "2f91da283562",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
  "js|microtasks و macrotasks": {
   "hash": "8906deca05c8",
   "date": "2026-10-29",
@@ -10058,6 +10153,11 @@
   "hash": "869dd756edec",
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+ },
+ "js|property descriptors: Object.defineProperty": {
+  "hash": "a4cc11349c5b",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
  },
  "js|prototype chain": {
   "hash": "6b7b3915d035",
@@ -10183,6 +10283,11 @@
   "hash": "206ca5e3325a",
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+ },
+ "js|valueOf و toString و Symbol.toPrimitive": {
+  "hash": "4838e0d94ad3",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
  },
  "js|visibilitychange و bfcache": {
   "hash": "77cca2ac4062",

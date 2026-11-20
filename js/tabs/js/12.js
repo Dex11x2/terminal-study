@@ -1,835 +1,693 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "prototypes و classes",
+      t: "this",
       l: 2,
-      n: "الوراثة في JS بالـ prototype chain، و class شكل أوضح لنفس الفكرة، و extends و super و private fields",
+      n: "this بتتحدد وقت النداء مش وقت الكتابة، والـ arrow بتاخدها من برّه، و call و bind بيحددوها بإيدك",
       projects: [
-        { lvl: 'صغير', t: R`كلاس فلوس`, what: R`[[class Money]] بتخزّن المبلغ بالقروش في [[#cents]] (عدد صحيح)، وفيها [[add(other)]] بترجّع Money جديدة، و [[format()]] بترجّع [["12.50 جنيه"]]، و [[static from(pounds)]]. من درس class.`, done: R`[[Money.from(0.1).add(Money.from(0.2)).format()]] بترجّع [["0.30 جنيه"]] (مش [[0.30000000000000004]])، و [[add]] مبتغيرش الأصل، ومبلغ سالب أو مش رقم بيرمي RangeError.` },
-        { lvl: 'صغير', t: R`Stack بـ private field`, what: R`[[class Stack]] فيها [[#items]] و [[push]] و [[pop]] و [[peek]] و getter [[size]]، و [[pop]] على stack فاضي بيرمي Error برسالة. من درس class.`, done: R`[[push(1).push(2)]] بتتسلسل (لأنها بترجّع this)، و [[pop()]] بترجّع [[2]]، و [[size]] صح، و [[stack.items]] بترجّع [[undefined]] من برّه.` },
-        { lvl: 'متوسط', t: R`عيلة errors للـ API`, what: R`[[class AppError extends Error]] فيها [[status]]، ومنها [[NotFoundError]] (404) و [[ValidationError]] (400 ومعاها [[field]]) و [[AuthError]] (401). ودالة [[toResponse(err)]] بترجّع [[{ status, body }]] حسب النوع بـ [[instanceof]]، وأي error مش معروف بيبقى 500 من غير تفاصيله. من درس extends و super ودرس class.`, done: R`كل نوع بيطلع الـ status بتاعه، و [[new TypeError("x")]] بيطلع 500 والـ body مفيهوش [["x"]]، و [[err.name]] صح لكل نوع، وكل ده متجرّب بـ [[console.assert]].` },
-        { lvl: 'متوسط', t: R`أشكال على الصفحة`, what: R`[[Shape]] وتحتها [[Circle]] و [[Rect]] و [[Square extends Rect]]، كل واحدة بتعرف [[area()]] و [[render(root)]] بترسم [[div]] بالمقاس الصح بـ [[style]]. فورم بتختار منه الشكل والمقاسات وبيضيفه. من دروس الوحدة ووحدة الـ DOM.`, done: R`[[new Square(3) instanceof Rect]] بترجّع [[true]]، والمساحة الكلية تحت الرسمة بتتحدث مع كل شكل جديد، والمقاس السالب أو الفاضي بيطلع رسالة ومبيرسمش.` },
-        { lvl: 'كبير', t: R`نظام مكتبة كتب`, what: R`classes [[Book]] و [[Member]] و [[Library]]: الـ Library فيها Maps خاصة للكتب والأعضاء والاستعارات، و [[borrow(memberId, isbn)]] و [[returnBook]] بيرموا errors من عيلة [[LibraryError]] ([[NotFoundError]] و [[AlreadyBorrowedError]] و [[LimitError]] لو العضو عنده ٣ كتب). و [[toJSON]] و [[static fromJSON]] عشان الحالة تتحفظ في ملف وترجع. وفي [[test.js]] حالات بـ [[console.assert]] لكل error ولرحلة حفظ وتحميل كاملة، وكل عملية بتتكتب في لوج بـ [[console.info]]. من الوحدة دي، و JSON و Map من وحدة الـ objects، و this.`, done: R`[[node test.js]] بيعدّي كل الـ asserts: استعارة كتاب مستعار بترمي [[AlreadyBorrowedError]] والحالة متغيرتش، والكتاب الرابع بيرمي [[LimitError]]، وبعد [[fromJSON(JSON.stringify(lib))]] كل الاستعارات زي ما هي و [[borrow]] شغالة على النسخة الجديدة، وملف JSON بايظ بيطلع error واضح مش crash غامض.`, ext: R`زوّد مواعيد إرجاع وغرامات بالتواريخ، وواجهة DOM فوقه، وبحث بالعنوان والمؤلف.` },
-        { lvl: 'فكرة', t: R`موديل لحاجة حقيقية`, what: R`اختار حاجة فيها أنواع ووراثة حقيقية (حسابات بنك بأنواعها، أو موظفين ومديرين، أو وسائل مواصلات، أو عناصر في لعبة)، واعملها classes بـ private fields و validation و errors خاصة بيها. وقبل أي extends اسأل نفسك: ينفع تركيب أحسن؟ انت اللي بتختار.`, done: R`فيه مكان واحد على الأقل اخترت فيه composition بدل الوراثة وكاتب ليه في كومنت، ومفيش field مهم يتعدل من برّه غير من method بتتحقق، وفيه ٥ asserts على الأقل بتعدّي.`, ext: R`اربطه بصفحة، واحفظه JSON، وبعد قسم TypeScript اكتب الـ types بتاعته.` },
+        { lvl: 'صغير', t: R`ساعة إيقاف`, what: R`object فيه [[start]] و [[stop]] و [[reset]] بيعرض الوقت في الصفحة، والـ interval جواه arrow عشان تشوف this بتاعة الـ object. من درس arrow و this.`, done: R`start و stop و reset شغالين بأي ترتيب، و start مرتين مبتعدّش الضعف، والأزرار متربوطة صح ([[btn.addEventListener("click", () => sw.start())]] مش [[sw.start]] لوحدها).` },
+        { lvl: 'صغير', t: R`loggers بأسامي`, what: R`[[makeLogger(name)]] بترجّع [[{ info, warn, error }]] كل واحدة [[console.x.bind(console, "[" + name + "]")]]، واستخدمها في جزئين من الكود. من درس call و apply و bind.`, done: R`[[db.info("connected")]] بيطبع [[[db] connected]] و [[ui.warn("slow")]] بيطلع تحذير أصفر فيه [[[ui] slow]]، ورقم السطر في Console بيشاور على مكان النداء مش على ملف الـ logger.` },
+        { lvl: 'متوسط', t: R`jQuery صغير بتاعك`, what: R`[[$(selector)]] بترجّع object فيه [[els]] (array العناصر) و methods بترجّع [[this]] عشان تتسلسل: [[addClass]] و [[text]] و [[on(event, fn)]]، و [[on]] بتنادي fn بـ [[fn.call(el, e)]] عشان this جوه الـ handler يبقى العنصر. من دروس this و call و apply و bind، والـ DOM.`, done: R`[[$("li").addClass("x").text("hi")]] بتشتغل في سطر واحد على كل العناصر، وجوه [[on("click", function () { ... })]] الـ [[this]] هو العنصر اللي اتضغط، و [[$("#nope")]] مبيقعش وبيعمل ولا حاجة.` },
+        { lvl: 'متوسط', t: R`widget tabs بيتشال نضيف`, what: R`object [[tabs]] فيه [[init(root)]] بيضيف listeners و [[destroy()]] بيشيلهم. الـ handlers methods على الـ object، فبتربطها بـ bind مرة واحدة في init وتخزّنها. من دروس this و call و apply و bind، و event delegation.`, done: R`بعد [[destroy()]] الضغط على أي tab مبيعملش حاجة، و [[init]] تاني بيرجّعه شغال، و [[init]] على اتنين root مختلفين كل واحد بيشتغل لوحده (اعمل نسخة object لكل واحد).` },
+        { lvl: 'كبير', t: R`modal بيتعمل لأي حاجة`, what: R`[[createModal({ title, body, onConfirm })]] بترجّع object فيه [[open]] و [[close]] و [[destroy]]. وهو مفتوح: Esc والضغط على الخلفية بيقفلوه، والـ listeners دول بيتضافوا في [[open]] ويتشالوا في [[close]] (بنسخ مربوطة متخزنة)، والفوكس بيرجع للزرار اللي فتحه. التحقق: [[title]] لازم string مش فاضية وإلا [[TypeError]] برسالة واضحة، والنصوص بـ [[textContent]]، و [[onConfirm]] لو رمت error المودال ميتقفلش وبيعرض الرسالة. وكل open و close بيتكتبوا بـ [[console.debug]]. من الوحدة دي و scope و closures والـ DOM.`, done: R`مودالين في نفس الصفحة كل واحد بيقفل لوحده، و ١٠ مرات فتح وقفل وبعدهم Esc بيشغّل handler واحد بس (حط log واتأكد)، وبعد [[destroy()]] مفيش عنصر باقي في الـ DOM، و [[createModal({})]] بيرمي TypeError، و title فيه [[<b>]] بيظهر كنص.`, ext: R`زوّد trap للفوكس جوه المودال بـ Tab، وأنيميشن فتح وقفل، وحوّله لـ [[<dialog>]] الحقيقي وقارن الكود.` },
+        { lvl: 'فكرة', t: R`لعبة صغيرة بـ objects`, what: R`لعبة بسيطة (XO، أو اضرب الخلد، أو memory cards) فيها object للعبة نفسها بـ methods ([[start]] و [[move]] و [[reset]])، و timers و listeners كتير بيستخدموا this. انت اللي بتختار اللعبة وقواعدها.`, done: R`بتتلعب من الأول للآخر وبتعرف مين كسب، و reset بيرجّعها من غير ما تعمل refresh ومن غير timers زيادة شغالة، ومفيش ولا [[TypeError]] بتاع this في Console.`, ext: R`زوّد أعلى سكور في localStorage، ومستويات صعوبة، وصوت، وحوّلها لـ classes بعد الوحدة الجاية.` },
       ],
       items: [
         {
-          cmd: "prototype chain",
-          title: "إزاي [].map موجودة وانت معرّفتهاش؟",
-          desc: R`كل object في JS ليه لينك مخفي لـ object تاني اسمه الـ prototype. لما تقرا خاصية مش موجودة في الـ object، JS بيدوّر في الـ prototype، وبعدين في الـ prototype بتاعه، لحد [[Object.prototype]] وبعده null. ده اسمه prototype chain.
+          cmd: "this",
+          title: "this بتشاور على إيه؟",
+          desc: R`[[this]] في دالة عادية بتتحدد لحظة النداء، حسب طريقة النداء مش مكان الكتابة. ٤ قواعد بالترتيب:
 
-عشان كده [[[1, 2].map]] شغالة: map مش على الـ array نفسها، هي على [[Array.prototype]]، وكل array لينكها بيشاور عليه. والـ classes نفسها مبنية على ده.`,
-          example: R`const arr = [1, 2];
-Object.getPrototypeOf(arr) === Array.prototype;               // true
-Object.getPrototypeOf(Array.prototype) === Object.prototype;  // true
-Object.hasOwn(arr, "map");     // false: مش عنده
-"map" in arr;                  // true: لقاها في السلسلة
-const animal = { speak() { return $__bt$__{this.name} بيتكلم$__bt; } };
-const cat = Object.create(animal);
-cat.name = "Mishmish";
-cat.speak();                   // "Mishmish بيتكلم"
-Object.getPrototypeOf(cat) === animal;  // true
-cat.speak = () => "مياو";      // shadowing: بقت على cat نفسه
-animal.speak.call(cat);        // لسه موجودة على الـ prototype`,
-          try: R`في Console اكتب [[console.dir([1, 2])]] وافتح [[[[Prototype]]]] جوه بعض لحد ما توصل null. وبعدين جرّب [[Object.create(null)]] وشوف مفيهوش [[toString]] خالص.`,
+١. [[new Fn()]]: this هو الـ object الجديد.
+٢. [[fn.call(obj)]] أو [[apply]] أو [[bind]]: this هو obj.
+٣. [[obj.fn()]]: this هو اللي قبل النقطة.
+٤. [[fn()]] لوحدها: undefined في strict mode (والـ modules والـ classes)، أو الـ global object في الكود القديم.
+
+والـ arrow function مالهاش this خالص، بتاخدها من الـ scope اللي اتكتبت فيه (الدرس الجاي).`,
+          example: R`"use strict";
+const user = {
+  name: "Sara",
+  hi() { return this?.name; },
+};
+user.hi();                       // "Sara": اللي قبل النقطة
+const fn = user.hi;
+fn();                            // undefined: من غير نقطة this = undefined
+user.hi.call({ name: "Ali" });   // "Ali": انت اللي حددت
+function Person(name) { this.name = name; }
+const p = new Person("Omar");    // this = الـ object الجديد
+const btn = { label: "Save", click() { console.log(this?.label); } };
+setTimeout(btn.click, 0);        // undefined: اتبعتت من غير btn`,
+          try: R`شيل [[?.]] من [[hi]] وشغّل تاني واقرا الـ TypeError. وبعدين صلّح سطر setTimeout بطريقتين: [[() => btn.click()]] و [[btn.click.bind(btn)]].`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const base = { greet() { return "hi " + this.name; } }; const u = Object.create(base); u.name = "Sara";]] واطبع [[u.greet()]] و [[Object.hasOwn(u, "greet")]] و [["greet" in u]].`, done: R`[["hi Sara"]] ثم [[false]] ثم [[true]]: الـ method مش على u، اتلقت في الـ prototype.` },
-            { lvl: 'تطبيق', t: R`**ابني:** اكتب [[chainOf(obj)]] بتلف بـ [[Object.getPrototypeOf]] لحد null، وترجّع أسامي الـ constructors اللي في السلسلة ([[proto.constructor.name]]).`, done: R`[[chainOf([ ])]] بترجّع [[[ 'Array', 'Object' ] ]]، و [[chainOf(new Map())]] بترجّع [[[ 'Map', 'Object' ] ]]، و [[chainOf(Object.create(null))]] بترجّع array فاضية.` },
-            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** في Console اكتب [[[]]] وافتح سهم [[Prototype]] مرتين. لاقي ٣ methods على Array.prototype عمرك ما استخدمتها، واقرا صفحة واحدة منهم على MDN وجرّبها. واطبع [[Object.getOwnPropertyNames(Array.prototype).length]].`, done: R`كتبت ٣ أسامي (مثلًا [[with]] و [[copyWithin]] و [[findLast]]) ومثال شغّال لواحدة. والرقم في Node 24 طلع 40 (ممكن يختلف شوية في المتصفح)، والمستوى التاني كان Object.prototype وفيه [[hasOwnProperty]] و [[toString]].` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** عدّاد كلمات بـ object عادي: [[const c = {}; for (const w of text.split(" ")) c[w] = (c[w] || 0) + 1;]]. جرّبه على [["constructor constructor"]]. وصلّحه بطريقتين: [[Object.create(null)]] و [[Object.hasOwn]].`, done: R`قبل التصليح [[c.constructor]] بتطلع نص غريب فيه [[native code]] و [[11]] بدل [[2]]، لأن [[c["constructor"] ]] لقت [[Object]] في الـ prototype. وبعد أي تصليح [[c.constructor]] بترجّع [[2]].` },
-            { lvl: 'تحدي', t: R`**اشرحها:** لـ [[class Animal {}]] و [[class Dog extends Animal {}]] و [[const d = new Dog()]]: ارسم السلسلة من d لحد null، وأثبت كل سهم بسطر [[Object.getPrototypeOf(...) === ...]].`, done: R`الرسمة: d ← Dog.prototype ← Animal.prototype ← Object.prototype ← null، و ٤ سطور كلهم بيطبعوا [[true]]. وكمان [[Object.getPrototypeOf(Dog) === Animal]] true (الكلاس نفسه وارث للـ static).` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const counter = { n: 0, inc() { this.n++; return this.n; } }]]: نادي [[counter.inc()]] مرتين، وبعدين [[const inc = counter.inc; inc();]] في ملف [[.mjs]] (strict).`, done: R`النداء التاني بيرجّع [[2]]، و [[inc()]] بتطلع [[TypeError: Cannot read properties of undefined (reading 'n')]]. ولو شغّلته في ملف [[.js]] عادي في Node من غير strict بيرجّع [[NaN]] بهدوء (this بقت الـ global object)، ودي أوحش.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const user = { name: "Sara", greet() { console.log("Hi " + this.name); } }; setTimeout(user.greet, 0);]]. شغّله في Node.`, done: R`بيطبع [[Hi undefined]] لأن setTimeout نادت الدالة لوحدها من غير [[user.]]. بعد [[setTimeout(() => user.greet(), 0)]] أو [[user.greet.bind(user)]] بيطبع [[Hi Sara]].` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** في صفحة: زرار عليه [[addEventListener("click", function () { this.textContent = "اتضغط"; })]]. وبعدين نفس الحاجة بـ arrow جوه [[<script type="module">]].`, done: R`مع function نص الزرار بيتغير (this هي الزرار، زي [[e.currentTarget]])، ومع الـ arrow بيطلع TypeError في Console فيه [[setting 'textContent']] والزرار زي ما هو، لأن this في الـ module بـ [[undefined]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** object [[cart]] فيه [[items]] و [[add(name, price)]] بترجّع [[this]] (عشان تقدر تسلسل) و [[total()]] بتجمع بـ this.items.`, done: R`[[cart.add("mug", 120).add("cap", 90).total()]] بترجّع 210. ولو add مبترجّعش this، النداء التاني بيوقع بـ TypeError إن add مش موجودة على undefined.` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** دالة واحدة [[function who() { return this?.tag; }]] ونادِها بست طرق: [[obj.who()]]، و متخزّنة في متغير، و [[who.call({ tag: "C" })]]، و [[new]] (اطبع الـ object نفسه)، وجوه [[setTimeout(obj.who)]]، و [[[1].forEach(function () {...}, { tag: "F" })]] بالـ thisArg. اكتب توقعك الأول.`, done: R`عندك جدول ٦ سطور فيه توقعك والناتج الحقيقي جنب بعض، وكل سطر مختلف مكتوب جنبه أنهي قاعدة من الأربعة اتطبّقت. مثلًا الـ forEach بيرجّع [["F"]] لأن التاني بتاعها هو this.` }
           ],
           flag: "script",
           deep: {
-            why: "ده نظام الوراثة الحقيقي في JS، والـ class مجرد syntax فوقه. لو فاهمه، هتفهم instanceof، وليه methods الـ class مش بتتنسخ لكل instance، وإيه هو prototype pollution، وسؤال انترفيو ثابت: «اشرح prototypal inheritance».",
-            how: R`اللينك ده اسمه في الـ spec [[[[Prototype]]]]، وبتقراه بـ [[Object.getPrototypeOf(obj)]]. فيه [[obj.__proto__]] القديمة، بس متستخدمهاش في كود جديد.
+            why: R`[[this]] أكتر حاجة بتلخبط اللي جايين من Java أو Python، وسبب bugs زي «Cannot read properties of undefined (reading 'name')» لما تبعت method كـ callback. وسؤال انترفيو مضمون تقريبًا.`,
+            how: R`فكّر فيها كـ باراميتر مخفي بيتبعت مع كل نداء. [[user.hi()]] معناها «نادي hi وابعت user كـ this». لما تعمل [[const fn = user.hi]]، انت خدت الدالة لوحدها، والعلاقة بـ user اتقطعت، لأن الدالة نفسها مش «ملك» الـ object، هي بس متحطوطة فيه.
 
-متتلخبطش: [[Fn.prototype]] (خاصية على الدوال) هو الـ object اللي هيبقى prototype لأي حاجة تتعمل بـ [[new Fn()]]. يعني [[Object.getPrototypeOf(new Fn()) === Fn.prototype]].
+نفس الحاجة لما تبعت method كـ callback: [[setTimeout(btn.click)]] و [[addEventListener("click", obj.method)]] و [[promise.then(obj.method)]] كلهم بيبعتوا الدالة من غير الـ object.
 
-القراية بتمشي في السلسلة، بس الكتابة لأ: [[cat.speak = ...]] بتعمل خاصية جديدة على cat وتخبّي اللي في الـ prototype (shadowing)، والـ prototype متلمسش.
+في الـ event listeners العادية (function مش arrow) الـ this هو العنصر اللي عليه الـ listener ([[currentTarget]]).
 
-[[Object.create(proto)]] بتعمل object فاضي الـ prototype بتاعه proto. و [[Object.create(null)]] object من غير prototype خالص: مفيهوش toString ولا hasOwnProperty، ومفيد كـ dictionary نضيف.
+و [[new]] بيعمل ٤ حاجات: object جديد، ويربط الـ prototype بتاعه بـ [[Fn.prototype]]، وينادي Fn بـ this = الـ object ده، ويرجّعه (درس prototypes).
 
-و [[a instanceof B]] بيمشي في سلسلة a ويسأل: [[B.prototype]] موجود فيها؟
-
-الـ methods على الـ prototype موجودة مرة واحدة في الذاكرة ومشتركة بين كل الـ instances، عكس لو حطيتها في الـ constructor.`,
-            when: "مش هتكتب Object.create كتير في الشغل اليومي، هتستخدم class. بس هتحتاج الفهم ده في الـ debugging، وفي الانترفيو، ولما تقرا كود مكتبات قديم.",
-            mistakes: R`تعدّل [[Array.prototype]] أو [[Object.prototype]] (monkey patching): بيأثر على كل الكود وكل المكتبات. وتدمج objects جاية من اليوزر من غير فحص فمفتاح زي [["__proto__"]] يعدّل الـ prototype (prototype pollution، ثغرة حقيقية اتلاقت في lodash). وتتلخبط بين [[__proto__]] و [[prototype]].`
+في الـ top level بتاع ES module الـ this بـ undefined، وفي CommonJS بـ [[module.exports]].`,
+            when: "مع الـ methods في الـ objects والـ classes. ولما تبعت method كـ callback، لفّها في arrow أو bind.",
+            mistakes: R`تبعت method كـ callback من غير bind. وتستخدم arrow كـ method وتستنى this تبقى الـ object. وتستخدم this جوه function عادية جوه method (callback في forEach مثلًا) وتستنى نفس this. وفي الانترفيو: «إيه الناتج؟» على كود فيه [[const f = obj.method; f()]]، واذكر القواعد الأربعة بالترتيب.`
           },
           teach: R`## الكود ده بيعمل إيه؟
 
-جزئين: الأول بيثبت إن [[map]] مش موجودة على الـ array نفسها، موجودة «فوقها» في السلسلة. والتاني بيعمل سلسلة بإيدنا: object اسمه [[cat]] بيورث method من object اسمه [[animal]]. اتشغّل في Node 24، وكل سطر طبعناه بـ console.log.
+بيجيب **نفس الدالة** وينادِيها بـ ٥ طرق مختلفة، وكل مرة [[this]] جواها بتطلع حاجة مختلفة. الفكرة اللي هتطلع بيها: [[this]] مش مكتوبة جوه الدالة، دي بتتحدد **لحظة النداء** من شكل سطر النداء نفسه. الكود اتشغّل كملف في Node 24، وجزء الـ setTimeout اتجرّب كمان في Chrome.
 
 ---
 
-## ١. مين الـ prototype بتاع الـ array؟
+## ١. [["use strict";]]
 
 ~~~text app.js
-const arr = [1, 2];
-Object.getPrototypeOf(arr) === Array.prototype;
+"use strict";
 ~~~
 
-- [[Object.getPrototypeOf(x)]]: دالة جاهزة بترجّع الـ **prototype** بتاع x، يعني الـ object اللي x بيدوّر فيه لما ميلاقيش حاجة عنده.
-- [[Array.prototype]]: object واحد في JS كلها، متخزّن فيه map و filter و push وكل methods الـ arrays.
-- [[===]]: هل الاتنين **نفس** الـ object بالظبط؟
+ده نص لوحده في أول الملف، و JS فاهمه كأمر اسمه **directive**: «شغّل الملف ده في **strict mode**». الـ strict mode نسخة أصرم من JS بتقفل شوية تصرفات قديمة غلط، واللي يهمنا منها هنا واحدة بس:
 
-~~~text الناتج
-true
-~~~
+> الدالة اللي تتنادي من غير حاجة قبلها، [[this]] جواها بتبقى [[undefined]].
 
-يعني كل array بتعملها، الـ prototype بتاعها هو نفس الـ [[Array.prototype]].
-
----
-
-## ٢. وفوقه؟
+ومن غير strict، [[this]] في الحالة دي بتبقى الـ **global object** (في المتصفح [[window]]، وفي Node [[globalThis]]). جرّبناها في ملف من غير "use strict":
 
 ~~~text app.js
-Object.getPrototypeOf(Array.prototype) === Object.prototype;
+function show() { return this === globalThis; }
+console.log(show());
 ~~~
 
 ~~~text الناتج
 true
 ~~~
 
-و [[Object.prototype]] ده آخر محطة، الـ prototype بتاعه [[null]] (طبعناه: [[Object.getPrototypeOf(Object.prototype)]] طلع [[null]]). فالسلسلة:
-
-~~~text السلسلة
-arr  →  Array.prototype  →  Object.prototype  →  null
-~~~
+وفي أي ES module أو جوه أي [[class]]، الـ strict mode شغال لوحده من غير ما تكتب السطر ده.
 
 ---
 
-## ٣. [[Object.hasOwn]] ضد [[in]]
+## ٢. الـ object والـ method
 
 ~~~text app.js
-Object.hasOwn(arr, "map");
-"map" in arr;
+const user = {
+  name: "Sara",
+  hi() { return this?.name; },
+};
 ~~~
 
-- [[Object.hasOwn(obj, key)]] (من ES2022): الخاصية دي **على الـ object نفسه**؟ من غير ما يدوّر فوق.
-- [[key in obj]]: الخاصية دي موجودة **في أي حتة في السلسلة**؟
-
-~~~text الناتج
-false
-true
-~~~
-
-map مش على arr، بس [[in]] لقاها في Array.prototype. وللمقارنة: [[Object.hasOwn(arr, 0)]] و [[Object.hasOwn(arr, "length")]] طلعوا [[true]]: العناصر و length على الـ array نفسها.
+- [[const user = { ... }]]: **object literal**، يعني object مكتوب بإيدك بين [[{ }]].
+- [[name: "Sara"]]: خاصية (property) اسمها name وقيمتها النص Sara.
+- [[hi() { ... }]]: **method**، يعني دالة متحطوطة جوه object. الشكل ده اختصار لـ [[hi: function () { ... }]].
+- [[this?.name]]: اقرا name من [[this]]. والـ [[?.]] اسمها **optional chaining**: لو اللي قبلها [[undefined]] أو [[null]]، رجّع [[undefined]] بدل ما البرنامج يقع. حطّيناها عشان المثال يكمّل للآخر.
 
 ---
 
-## ٤. سلسلة بإيدك: [[Object.create]]
+## ٣. قاعدة النقطة: [[user.hi()]]
 
 ~~~text app.js
-const animal = { speak() { return $__bt$__{this.name} بيتكلم$__bt; } };
-const cat = Object.create(animal);
-cat.name = "Mishmish";
-~~~
-
-- [[animal]]: object عادي فيه method واحدة. و [[$__bt...$__bt]] نص template، و [[$__{this.name}]] بتتبدل بالاسم.
-- [[Object.create(animal)]]: اعمل object **فاضي** والـ prototype بتاعه animal.
-- [[cat.name = "Mishmish"]]: خاصية على cat نفسه.
-
-~~~text الناتج: console.log(cat)
-{ name: 'Mishmish' }
-~~~
-
-لاحظ إن [[speak]] مش ظاهرة: هي مش على cat.
-
----
-
-## ٥. القراية بتمشي في السلسلة
-
-~~~text app.js
-cat.speak();
-Object.getPrototypeOf(cat) === animal;
+user.hi();   // "Sara"
 ~~~
 
 ~~~text الناتج
-Mishmish بيتكلم
-true
+Sara
 ~~~
 
-اللي حصل خطوة خطوة:
-
-1. JS دوّر على [[speak]] في cat: مش موجودة.
-2. طلع للـ prototype (animal): لقاها.
-3. نادها، و **this = cat** لأن النداء كان [[cat.speak()]] (قاعدة النقطة)، فـ [[this.name]] = Mishmish.
+لما الدالة تتنادي بعد نقطة، [[this]] بيبقى **اللي قبل النقطة**. هنا قبل النقطة [[user]]، فـ [[this.name]] هي [["Sara"]].
 
 ---
 
-## ٦. الكتابة مبتمشيش في السلسلة (shadowing)
+## ٤. الدالة لوحدها: [[fn()]]
 
 ~~~text app.js
-cat.speak = () => "مياو";
-animal.speak.call(cat);
+const fn = user.hi;
+fn();        // undefined
 ~~~
 
-- [[cat.speak = ...]]: الكتابة **دايمًا** بتحط الخاصية على cat نفسه. فبقى فيه speak على cat «بتغطّي» على اللي فوق. ده اسمه **shadowing**.
-- [[animal.speak.call(cat)]]: اللي فوق لسه موجودة زي ما هي، ندهناها بـ this = cat بـ [[call]].
-
-~~~text الناتج
-مياو                    ← cat.speak()
-Mishmish بيتكلم        ← animal.speak.call(cat)
-~~~
-
-و [[Object.keys(cat)]] بقت فيها [['name']] و [['speak']]، و animal ملمستش.
-
----
-
-## ٧. object من غير prototype
-
-جرّبنا [[Object.create(null)]] (من التجربة):
-
-~~~text app.js
-const o = Object.create(null);
-o.toString;
-"toString" in o;
-String(o);
-~~~
+- [[user.hi]] من غير [[()]] معناها «هات الدالة نفسها، متنادِيهاش». فـ [[fn]] بقى بيشاور على **نفس** الدالة.
+- [[fn()]]: نداء من غير نقطة. مفيش حاجة قبل النقطة، فـ [[this]] بـ [[undefined]] (strict mode)، و [[?.]] رجّعت undefined.
 
 ~~~text الناتج
 undefined
-false
-TypeError: Cannot convert object to primitive value
 ~~~
 
-مفيش سلسلة خالص، فمفيش toString، و [[String(o)]] مش لاقي طريقة يحوّله لنص. ده مفيد كـ dictionary نضيف من غير مفاتيح موروثة.
+ولو شلت [[?.]] وكتبت [[this.name]]، Node بيقول:
+
+~~~text الناتج
+TypeError: Cannot read properties of undefined (reading 'name')
+~~~
+
+يعني «بتحاول تقرا name من حاجة undefined». ده أشهر error ليه علاقة بـ this. الدرس هنا: الدالة **مش ملك** الـ object، هي بس متخزنة فيه. أول ما تاخدها لوحدها، العلاقة بـ user بتتقطع.
 
 ---
+
+## ٥. انت اللي بتحدد: [[call]]
+
+~~~text app.js
+user.hi.call({ name: "Ali" });   // "Ali"
+~~~
+
+[[call]] method موجودة على كل دالة: بتنادي الدالة **دلوقتي**، وأول argument ليها بيبقى [[this]]. هنا بعتنا object جديد فيه name = Ali:
+
+~~~text الناتج
+Ali
+~~~
+
+تفاصيل [[call]] و [[apply]] و [[bind]] في درس «call و apply و bind».
+
+---
+
+## ٦. [[new]]: object جديد
+
+~~~text app.js
+function Person(name) { this.name = name; }
+const p = new Person("Omar");
+~~~
+
+- [[function Person(name)]]: دالة عادية، بس اسمها بحرف كبير كعُرف إنها **constructor function** (الشكل القديم للـ class).
+- [[new Person("Omar")]]: [[new]] بيعمل object فاضي جديد، وينادي Person و [[this]] = الـ object ده، وفي الآخر يرجّعه.
+
+~~~text الناتج: console.log(p)
+Person { name: 'Omar' }
+~~~
+
+ولو نسيت [[new]] ([[Person("x")]]) في strict mode، this بـ undefined، و [[this.name = ...]] بتقع:
+
+~~~text الناتج
+TypeError: Cannot set properties of undefined (setting 'name')
+~~~
+
+---
+
+## ٧. الفخ: method كـ callback
+
+~~~text app.js
+const btn = { label: "Save", click() { console.log(this?.label); } };
+setTimeout(btn.click, 0);   // undefined
+~~~
+
+- [[setTimeout(fn, 0)]]: نادي fn بعد ٠ ملي ثانية، يعني «أول ما الكود الحالي يخلص».
+- [[btn.click]] من غير [[()]]: احنا بعتنا **الدالة لوحدها**، زي خطوة ٤ بالظبط. و setTimeout هي اللي هتناديها بعدين، ومش عارفة حاجة عن btn.
+
+~~~text الناتج
+undefined
+~~~
+
+وطب this كانت إيه ساعتها؟ جرّبنا نطبعها: في Node طلعت object اسمه [[Timeout]] (Node بينادي الـ callback و this = الـ timer نفسه)، وفي Chrome طلعت [[window]]. في الحالتين **مش btn**، وده المهم.
+
+والتصليح بطريقتين (اتجرّبوا والاتنين طبعوا [[Save]]):
+
+~~~text app.js
+setTimeout(() => btn.click(), 0);     // نادي بنقطة جوه arrow
+setTimeout(btn.click.bind(btn), 0);   // ثبّت this بـ bind
+~~~
+
+---
+
+## القواعد الأربعة بالترتيب
+
+| شكل النداء | [[this]] | في المثال |
+|---|---|---|
+| [[new Fn()]] | الـ object الجديد | [[new Person("Omar")]] |
+| [[fn.call(obj)]] أو [[apply]] أو [[bind]] | obj | [[{ name: "Ali" }]] |
+| [[obj.fn()]] | اللي قبل النقطة | [[user]] |
+| [[fn()]] لوحدها | undefined (strict) أو global (من غير strict) | [[fn()]] |
 
 ## الخلاصة
 
-| العملية | بتعمل إيه |
-|---|---|
-| [[Object.getPrototypeOf(x)]] | هات الحلقة اللي فوق x |
-| [[Object.create(p)]] | object جديد فوقه p |
-| [[Object.hasOwn(x, k)]] | k على x نفسه؟ |
-| [[k in x]] | k في أي حتة في السلسلة؟ |
-| قراية [[x.k]] | دوّر في x وبعدين فوق لحد null |
-| كتابة [[x.k = v]] | على x نفسه دايمًا (shadowing) |
-
-- كل array و object و دالة جزء من سلسلة كده، والـ class (الدرس الجاي) بتبني نفس السلسلة بشكل أوضح.`,
+- [[this]] بتتحدد وقت النداء، مش وقت الكتابة. بص على **سطر النداء**: فيه new؟ فيه call أو bind؟ فيه نقطة؟ ولا لوحدها؟
+- [[obj.method]] من غير أقواس بتاخد الدالة لوحدها، فـ this بتضيع. ده اللي بيحصل في setTimeout و addEventListener و then.
+- الـ arrow function مالهاش this خالص، وده موضوع الدرس الجاي.`,
           lines: [
-            R`array عادية. هنستخدمها نشوف منين جات [[map]] و [[filter]] مع إننا عمرنا ما عرّفناهم عليها.`,
-            R`كل object ليه لينك مخفي لـ object تاني اسمه الـ prototype. الـ array بتاعتنا الـ prototype بتاعها [[Array.prototype]]، وده المكان اللي فيه [[map]] و [[filter]] و [[push]] متعرّفين **مرة واحدة** لكل الـ arrays.`,
-            R`و [[Array.prototype]] نفسه ليه prototype هو [[Object.prototype]] (فيه [[toString]] و [[hasOwnProperty]]). ده آخر حلقة، والـ prototype بتاعه [[null]]: هنا السلسلة بتخلص.`,
-            R`[[Object.hasOwn]] بيسأل عن الخصايص اللي على الـ object **نفسه** بس، ورجّع [[false]]: [[arr]] مفيهاش [[map]] فعلًا.`,
-            R`[[in]] بيدوّر في السلسلة كلها، فلاقى [[map]] على [[Array.prototype]] ورجّع [[true]]. ده نفس اللي بيحصل لما تكتب [[arr.map]]: JS بيدوّر في الـ object، ولو ملقاش يطلع للـ prototype، وهكذا لحد [[null]].`,
-            R`object فيه method [[speak]] بتستخدم [[this.name]]. هنخليه prototype لـ object تاني بدل ما نكرر الـ method.`,
-            R`[[Object.create]] بيعمل object فاضي جديد ويخلي الـ prototype بتاعه [[animal]]. فـ [[cat]] نفسه مفيهوش أي خاصية، بس يقدر يستخدم أي حاجة في [[animal]].`,
-            R`بيحط [[name]] على [[cat]] نفسه (own property) مش على [[animal]]، فلو عملنا object تاني من نفس الـ [[animal]] مش هيشوف الاسم ده.`,
-            R`[[speak]] مش على [[cat]]، فـ JS طلع في السلسلة ولقاها على [[animal]]. بس [[this]] لسه [[cat]] (اللي قبل النقطة)، فـ [[this.name]] بقت [["Mishmish"]].`,
-            R`بيأكد إن اللينك المخفي بتاع [[cat]] رايح لـ [[animal]] بالظبط، ورجّع [[true]].`,
-            R`الكتابة **عمرها ما بتطلع في السلسلة**: بتعمل [[speak]] جديدة على [[cat]] نفسه. ودلوقتي [[cat.speak()]] بترجّع [["مياو"]] لأن JS بيلاقيها على [[cat]] الأول وميطلعش لفوق (shadowing).`,
-            R`النسخة الأصلية لسه على [[animal]] متلمستش، و [[call(cat)]] بتشغّلها بـ [[this]] هو [[cat]] فترجّع [["Mishmish بيتكلم"]]. يعني الـ shadowing خبّى الـ method على [[cat]] بس، ممسحهاش.`,
+            R`بيشغّل strict mode للملف كله. الفرق اللي يهمنا: دالة متنادية لوحدها [[this]] جواها بتبقى [[undefined]] بدل الـ global object، فالغلطة تبان بدل ما الكود يقرا من [[window]] بالسكوت. والـ modules والـ classes strict لوحدهم.`,
+            R`object هنستخدمه نشوف [[this]] بتتحدد إزاي من شكل سطر النداء.`,
+            R`الخاصية اللي الـ method هتحاول تقراها عن طريق [[this]].`,
+            R`method بترجّع [[this.name]]. [[this]] مش متثبتة هنا وقت الكتابة، بتتحدد كل مرة الدالة تتنادى. والـ [[?.]] عشان لما [[this]] تبقى [[undefined]] نرجّع [[undefined]] بدل ما المثال يقع بـ TypeError.`,
+            R`نهاية الـ object.`,
+            R`قاعدة ٣: نادينا بنقطة، فـ [[this]] هو اللي قبل النقطة ([[user]]) ورجّعت [["Sara"]].`,
+            R`بناخد الدالة نفسها من غير ما نناديها (مفيش [[()]]). [[fn]] دلوقتي نفس الدالة بالظبط، بس مبقاش فيه حاجة بتربطها بـ [[user]].`,
+            R`قاعدة ٤: نداء من غير نقطة، فـ [[this]] بقت [[undefined]] (strict mode) ورجّعت [[undefined]]. نفس الدالة، نداء مختلف، نتيجة مختلفة: ده أهم حاجة في [[this]].`,
+            R`قاعدة ٢: [[call]] بتنادي الدالة وانت بتحدد [[this]] بإيدك كأول argument، فرجّعت [["Ali"]] مع إن الدالة متعرّفة جوه [[user]].`,
+            R`constructor function: الشكل القديم قبل [[class]]. لما تتنادى بـ [[new]]، [[this.name = name]] بتحط الخاصية على الـ object الجديد.`,
+            R`قاعدة ١: [[new]] بيعمل object فاضي جديد، ويخليه [[this]] جوه [[Person]]، ويرجّعه، فـ [[p.name]] بقت [["Omar"]]. ومن غير [[new]] في strict mode، [[this]] هتبقى [[undefined]] و [[this.name = name]] هترمي TypeError.`,
+            R`object تاني فيه method بتطبع [[this.label]]، عشان نشوف أشهر مكان [[this]] بتضيع فيه.`,
+            R`بعتنا الدالة لوحدها من غير [[()]]، و [[setTimeout]] هي اللي هتناديها بعدين من غير [[btn.]] قبلها. فـ [[this]] مبقتش [[btn]] (في Node بتبقى object الـ [[Timeout]] وفي Chrome [[window]]) ويطبع [[undefined]]. الحل [[btn.click.bind(btn)]] أو [[() => btn.click()]].`,
           ],
-          sol: R`[[console.dir([1, 2])]] بيوريك الـ array، وجواها خانة Prototype مكتوب جنبها [[Array(0)]] وفيه map و filter وكل الـ methods، وجواه خانة Prototype تانية مكتوب جنبها [[Object]] وفيه toString و hasOwnProperty، وده آخرها: الـ prototype بتاعه null (مش هيظهرلك سطر تالت). يعني السلسلة [[arr → Array.prototype → Object.prototype → null]].
+          sol: R`من غير [[?.]]، سطر [[fn()]] بيطلع [[TypeError: Cannot read properties of undefined (reading 'name')]]: في strict mode الدالة لما تتنادي من غير نقطة قبلها this بتبقى undefined، ومفيش name جوه undefined.
 
-[[const o = Object.create(null)]] بيعمل object مفيش فوقيه أي حاجة: [[o.toString]] بـ undefined، و [["toString" in o]] بـ false، و [[String(o)]] أو [[$__bt$__{o}$__bt]] بتطلع [[TypeError: Cannot convert object to primitive value]]. بيستخدم كـ dictionary نضيف مفيهوش مفاتيح موروثة (عشان مفتاح زي [["constructor"]] ميضربش)، ودي نفس فكرة الـ null prototype اللي [[Object.groupBy]] بترجّعها.`
+سطر setTimeout بعد التصليح بيطبع [["Save"]] في الطريقتين. [[() => btn.click()]] بتنادي click والنقطة موجودة، فـ this بقت btn. و [[btn.click.bind(btn)]] بتعمل دالة جديدة this فيها متثبتة على btn. الغلطة الشائعة إنك تكتب [[setTimeout(btn.click(), 0)]]: كده انت بتنادي الدالة فورًا وبتبعت ناتجها (undefined) لـ setTimeout.`
         },
         {
-          cmd: "class",
-          title: "تكتب class بـ constructor و methods و private fields",
-          desc: R`[[class]] طريقة واضحة تعمل «قالب» لـ objects: [[constructor]] بيتنادي مع [[new]]، والـ methods بتتحط على الـ prototype (مشتركة بين كل الـ instances).
+          cmd: "arrow و this",
+          title: "ليه الـ arrow function بتحل مشكلة this جوه callback؟",
+          desc: R`الـ arrow function مالهاش [[this]] بتاعتها. لما تقرا this جواها، بتاخدها من الـ scope اللي اتكتبت فيه، زي أي متغير عادي (lexical this).
 
-وفيه: fields ([[count = 0]])، و private fields بـ [[#]] ([[#balance]]) محدش يوصلها من برّه الكلاس خالص، و [[static]] للحاجات اللي على الكلاس نفسه مش على الـ instance، و [[get]] و [[set]] لخصايص محسوبة.
-
-و [[typeof BankAccount]] هيطلع [["function"]]: الكلاس في الآخر constructor function فوق الـ prototypes.`,
-          example: R`class BankAccount {
-  static count = 0;
-  #balance = 0;
-  constructor(owner) {
-    this.owner = owner;
-    BankAccount.count++;
-  }
-  deposit(amount) {
-    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
-    this.#balance += amount;
-    return this;
-  }
-  get balance() {
-    return this.#balance;
-  }
-}
-const acc = new BankAccount("Sara");
-acc.deposit(100).deposit(50);
-acc.balance;          // 150
-acc.balance = 1e6;    // مفيش setter: بيتجاهل (وفي strict TypeError)
-BankAccount.count;    // 1
-typeof BankAccount;   // "function"`,
-          try: R`ضيف [[withdraw(amount)]] بترمي error لو الرصيد مش كفاية. وبعدين جرّب تكتب [[acc.#balance]] برا الكلاس: هتلاقي SyntaxError قبل ما الملف يشتغل أصلًا. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الكلاس جاهز في المربع: ضيف [[withdraw]]، و getter اسمه [[history]] بيرجّع العمليات اللي نجحت بس بالترتيب، كل واحدة [[{ type: "deposit", amount: 100 }]] (أو [["withdraw"]]). خزّن السجل في field خاص [[#log]]، واللي بره ميقدرش يعدّل السجل حتى لو عمل push في الـ array اللي رجعتله.`,
+ده بيخليها مثالية للـ callbacks جوه methods: [[setInterval(() => this.tick(), 1000)]] بتشوف this بتاعة الـ method. وبيخليها غلط كـ method في object، لأنها هتاخد this من برّه الـ object.`,
+          example: R`const timer = {
+  seconds: 0,
+  startBroken() {
+    setTimeout(function () {
+      console.log(this?.seconds); // undefined: this مش timer
+    }, 0);
+  },
+  start() {
+    setTimeout(() => {
+      this.seconds++;             // this = timer، أخدها من start
+      console.log(this.seconds);  // 1
+    }, 0);
+  },
+  bad: () => typeof this,         // arrow كـ method: this من برّه الـ object
+};
+timer.startBroken();
+timer.start();`,
+          try: R`قبل الـ arrows كان الحل [[const self = this;]] قبل الـ callback. صلّح [[startBroken]] بالطريقة دي، وبعدين بـ [[.bind(this)]] بعد الـ function.`,
           practice: [
-            { lvl: 'سريع', t: R`**ابني:** [[class Temperature]] فيها [[#celsius]] من الـ constructor، و getter [[fahrenheit]]، و [[static fromFahrenheit(f)]] بترجّع instance جديدة.`, done: R`[[new Temperature(100).fahrenheit]] بترجّع [[212]]، و [[Temperature.fromFahrenheit(32)]] بترجّع instance الـ fahrenheit بتاعها [[32]]، و [[new Temperature(0).fromFahrenheit]] بترجّع [[undefined]] (الـ static على الكلاس مش الـ instance).` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[class Cart {}]] وبعدها [[const c = Cart();]]. اقرا الرسالة وصلّح.`, done: R`الرسالة [[TypeError: Class constructor Cart cannot be invoked without 'new']]. بعد [[new Cart()]] بيشتغل. وعرفت إن ده فرق بين الكلاس والـ function العادية اللي كانت هتشتغل غلط من غير ما تقول.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[class C { static count = 0; constructor() { C.count++; } }]]، وبعدين [[new C(); new C();]] واطبع [[C.count]] و [[new C().count]] و [[C.count]] تاني.`, done: R`توقعت وطلع 2 و undefined و 3: الـ static على الكلاس نفسه مش على الـ instance، وسطر [[new C().count]] نفسه زوّد العدّاد.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[class Cart]] فيها [[#items]] (Map)، و [[add(name, price, qty = 1)]] بترمي [[TypeError]] لو السعر مش رقم و [[RangeError]] لو الكمية صفر أو سالبة، و [[remove(name)]]، و getters [[total]] و [[count]].`, done: R`بعد [[add("mug", 120, 2)]] و [[add("cap", 90)]]: [[total]] بترجّع [[330]] و [[count]] بترجّع [[3]]، و [[add("x", "10")]] بترمي TypeError والسلة متغيرتش، و [[cart.#items]] برّه الكلاس SyntaxError.` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[JSON.stringify(acc)]] على الـ BankAccount بتاعة الدرس. وبعدين زوّد [[toJSON()]] بترجّع [[{ owner, balance }]] و [[static fromJSON(text)]] بترجّع instance حقيقية بنفس الرصيد (من غير ما تكسر الـ private field).`, done: R`من غير toJSON بيطلع [['{"owner":"Sara"}']] بس (الـ private fields مش بتتحفظ). وبعدها [[BankAccount.fromJSON(JSON.stringify(acc))]] بترجّع object [[instanceof BankAccount]] بـ [[true]]، والرصيد نفسه، و [[deposit]] شغالة عليه.` },
-            { lvl: 'تحدي', t: R`**محاكاة:** [[class Queue]] لطابور البنك بـ [[#items]]: [[enqueue(name)]] و [[dequeue()]] و [[peek()]] و getter [[size]]. دخّل Ali و Mona و Omar، وخدّم اتنين.`, done: R`[[dequeue()]] مرتين بترجّع Ali ثم Mona، و [[size]] بقى 1، و [[peek()]] بترجّع Omar. و [[dequeue()]] على طابور فاضي بترجّع undefined من غير error.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const o = { a: () => this, b() { return this; } }]] واطبع [[o.b() === o]] و [[o.a() === o]].`, done: R`الأول [[true]] والتاني [[false]]: الـ arrow كـ method أخدت this من برّه الـ object.` },
+            { lvl: 'تطبيق', t: R`**ابني:** stopwatch object: [[seconds]] و [[start()]] بـ [[this.id = setInterval(() => this.seconds++, 1000)]] و [[stop()]] بـ [[clearInterval(this.id)]] و [[reset()]]. اعرض الثواني في صفحة.`, done: R`بعد [[start()]] بحوالي ٣ ثواني [[seconds]] بقت [[3]]، و [[stop()]] بيوقفها فعلًا، و [[start()]] مرتين ورا بعض مبيعدّش أسرع (اتأكد إن مفيش interval شغال قبل ما تعمل واحد جديد).` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** [[class A { f = () => 1; g() { return 1; } }]]. اعمل instanceين واطبع [[a1.f === a2.f]] و [[a1.g === a2.g]].`, done: R`طلع [[false]] و [[true]]: الـ arrow كـ class field بتتعمل نسخة جديدة مع كل instance (this مربوطة لوحدها بس بتاخد ذاكرة)، والـ method العادية واحدة على الـ prototype. فلو عندك آلاف instances ومش محتاج تبعت الدالة كـ callback، الـ method أوفر.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[const scaler = { factor: 2, scale(arr) { return arr.map(function (x) { return x * this.factor; }); } }]]. شغّل [[scaler.scale([1, 2, 3])]] في ملف [[.mjs]] وبعدين في [[.js]] عادي، وصلّحها بتلات طرق: arrow، و thisArg التاني بتاع [[map]]، و [[const self = this]].`, done: R`في [[.mjs]] بتطلع [[TypeError: Cannot read properties of undefined (reading 'factor')]]، وفي [[.js]] من غير strict بترجّع [[[ NaN, NaN, NaN ] ]]. والتلات تصليحات بيرجّعوا [[[ 2, 4, 6 ] ]].` },
+            { lvl: 'تحدي', t: R`**اشرحها:** اكتب قاعدة من سطرين لزميلك: إمتى تكتب method عادية وإمتى arrow، وطبّقها على ٣ أماكن: method في object، و callback جوه method، و event handler محتاج العنصر نفسه.`, done: R`القاعدة: method عادية للدوال اللي على الـ object، و arrow للـ callbacks جواها عشان تاخد this بتاعة الـ method. والتلات أماكن: method عادية، و arrow، و function عادية (أو [[e.currentTarget]]) للـ handler.` }
           ],
           flag: "script",
           deep: {
-            why: R`الـ classes في كل حتة: Error مخصص، و services في الباك، و SDKs زي [[new PrismaClient()]] و [[new Stripe()]]، و Web Components. ومع private fields بقى عندك encapsulation حقيقي، مش underscore بالاتفاق.`,
-            how: R`[[class A {}]] بتعمل constructor function، والـ methods بتتحط على [[A.prototype]] (مش enumerable). الفروق عن الـ function القديمة: الكلاس لازم يتنادي بـ new (وإلا TypeError)، وكل الكود جواه strict mode، والكلاس في TDZ زي let (مفيش hoisting بقيمة).
+            why: "مشكلة this جوه callbacks كانت أشهر مشكلة في JS قبل ES2015، وكان الحل [[var self = this]] في كل حتة. الـ arrows حلّتها، بس لو مش فاهم ليه، هتستخدمها في المكان الغلط.",
+            how: R`الـ arrow بتعامل this زي أي متغير من برّه: بتدوّر عليها في الـ scope chain. عشان كده [[call]] و [[bind]] و [[apply]] مبيغيّروش this بتاعة arrow خالص، ومينفعش تتعمل بـ [[new]].
 
-الـ fields ([[count = 0]] و [[#balance = 0]]) بتتحط على كل instance لوحده، وقت الـ constructor. عشان كده arrow function كـ field بتتعمل نسخة لكل instance (ذاكرة أكتر، بس this متثبت).
+جوه [[start]]، الـ this هو timer (قاعدة النقطة). الـ arrow اتكتبت جوه start فبتشوف نفس الـ this.
 
-الـ private fields ([[#x]]) مش خصايص عادية: مش بتظهر في [[Object.keys]] ولا [[JSON.stringify]] ولا console.log العادي (DevTools بيعرضها)، والكتابة ليها برا الكلاس SyntaxError. و [[#x in obj]] بيفحص لو الـ object عنده الـ field ده.
+أما [[bad]] فاتكتبت في الـ object literal، والـ object literal مش scope. فالـ this بتاعتها هي بتاعة المكان اللي فيه الـ object كله: undefined في ES module، أو [[module.exports]] في CommonJS.
 
-[[return this]] في آخر method بيخليك تعمل chaining. و [[static]] بيتقرا من الكلاس نفسه، وفيه [[static { }]] block للتهيئة.
-
-الـ getter بيتقرا كأنه خاصية ([[acc.balance]] من غير أقواس). ولو مفيش setter، الكتابة بتتجاهل في sloppy mode وبترمي TypeError في strict.`,
-            when: "لما عندك state وسلوك مرتبطين ببعض وهتعمل منهم instances كتير، أو مكتبة بتطلب كده (Error و Web Components). للداتا البسيطة، objects ودوال أبسط. وفي React الحديثة مفيش classes تقريبًا.",
-            mistakes: R`تنسى [[new]]. وتبعت method كـ callback فـ this تضيع (درس this). وتحط كل حاجة في class على طريقة Java حتى لو دوال عادية كفاية. وتعتمد على [[_balance]] كـ private: أي حد يقدر يوصلها. وفي الانترفيو: «الفرق بين class و constructor function؟» الإجابة: syntax فوق نفس الـ prototypes، مع strict و new إجباري و private fields.`
+وفي الـ classes، فيه شكل شائع: [[handleClick = () => { ... }]] كـ class field. هنا الـ arrow بتاخد this = الـ instance، لأن الـ fields بتتعمل جوه الـ constructor. ده كان منتشر في React class components.`,
+            when: "arrow لأي callback جوه method محتاج this. method عادية (مش arrow) لأي دالة في object أو class هتتنادي بـ obj.method().",
+            mistakes: R`arrow كـ method في object. و arrow كـ event listener وانت محتاج [[this]] = العنصر (استخدم [[e.currentTarget]] بدالها). وتحاول تغيّر this بتاعة arrow بـ bind. وفي الانترفيو: «ليه arrow function مالهاش this؟» و «ينفع تعمل new لـ arrow؟» (لأ، TypeError).`
           },
           teach: R`## الكود ده بيعمل إيه؟
 
-بيعرّف «قالب» لحساب بنكي: كل حساب ليه صاحب ورصيد، والرصيد **private** محدش يقدر يلعب فيه من برّه، وتزوّده بـ [[deposit]] بس. وفي الآخر بيجرّب الحاجات اللي الكلاس بيوفّرها. اتشغّل في Node 24 كملف [[.cjs]] وكملف [[.mjs]].
+object اسمه [[timer]] فيه ٣ methods، وكل واحدة بتجرّب [[this]] في مكان مختلف: callback بـ [[function]] عادية (بايظة)، و callback بـ arrow (شغالة)، و arrow مستخدمة كـ method (غلط). اتشغّل في Node 24 كملف [[.cjs]] وكملف [[.mjs]]، وجزء منه في Chrome.
 
 ---
 
-## ١. [[class]] والـ static
+## ١. الـ object والعداد
 
 ~~~text app.js
-class BankAccount {
-  static count = 0;
+const timer = {
+  seconds: 0,
 ~~~
 
-- [[class BankAccount { ... }]]: بيعرّف كلاس اسمه BankAccount. العُرف إن اسم الكلاس يبدأ بحرف كبير.
-- [[static count = 0;]]: خاصية على **الكلاس نفسه** مش على كل حساب. فيه [[BankAccount.count]] واحدة بس مشتركة. بنستخدمها نعدّ الحسابات اللي اتعملت.
+[[seconds]] خاصية رقم بتبدأ من 0، وهي اللي عايزين نزوّدها من جوه callback.
 
 ---
 
-## ٢. الـ private field
+## ٢. [[startBroken]]: callback بـ function عادية
 
 ~~~text app.js
-  #balance = 0;
+  startBroken() {
+    setTimeout(function () {
+      console.log(this?.seconds);
+    }, 0);
+  },
 ~~~
 
-- [[#balance]]: الـ [[#]] جزء من الاسم، ومعناها **private**: الخاصية دي موجودة على كل حساب، بس مفيش أي كود يقدر يقراها أو يكتبها **غير الكود اللي جوه الكلاس**.
-- [[= 0]]: كل حساب جديد بيبدأ رصيده 0. ده اسمه **field**: بيتحط على كل instance لوحده وقت ما يتعمل.
-
----
-
-## ٣. الـ constructor
-
-~~~text app.js
-  constructor(owner) {
-    this.owner = owner;
-    BankAccount.count++;
-  }
-~~~
-
-- [[constructor]]: دالة خاصة بتتنادي **لوحدها** مع [[new]]. الـ arguments اللي بتبعتها لـ new بتوصل هنا.
-- [[this.owner = owner]]: [[this]] هنا = الحساب الجديد (قاعدة new). فبنحط عليه خاصية **عامة** اسمها owner.
-- [[BankAccount.count++]]: زوّد العداد اللي على الكلاس.
-
----
-
-## ٤. method بتعدّل الرصيد
-
-~~~text app.js
-  deposit(amount) {
-    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
-    this.#balance += amount;
-    return this;
-  }
-~~~
-
-- [[deposit(amount)]]: method. كل methods الكلاس بتتحط **مرة واحدة** على [[BankAccount.prototype]]، وكل الحسابات بتشوفها من السلسلة (درس prototype chain).
-- [[if (amount <= 0) throw ...]]: افحص الـ input الأول. [[throw new RangeError(...)]] بيوقف الدالة ويرمي error من نوع RangeError (قيمة برّه المدى المسموح).
-- [[this.#balance += amount]]: زوّد الرصيد. ده مسموح لأننا **جوه** الكلاس.
-- [[return this]]: رجّع الحساب نفسه. ده اللي بيخلّي [[acc.deposit(100).deposit(50)]] تشتغل: أول deposit بترجّع acc، فالتانية بتتنادي عليه. ده اسمه **chaining**.
-
----
-
-## ٥. getter
-
-~~~text app.js
-  get balance() {
-    return this.#balance;
-  }
-}
-~~~
-
-- [[get balance()]]: **getter**: دالة بتتقري كأنها خاصية عادية. تكتب [[acc.balance]] **من غير أقواس**، وهي بتشتغل وترجّع الرصيد.
-- مفيش [[set balance()]]، يعني الرصيد **للقراية بس** من برّه.
-
----
-
-## ٦. الاستخدام
-
-~~~text app.js
-const acc = new BankAccount("Sara");
-acc.deposit(100).deposit(50);
-acc.balance;
-~~~
+- [[startBroken() { ... }]]: method. لما نناديها [[timer.startBroken()]]، الـ this **جواها هي** = timer (قاعدة النقطة).
+- [[setTimeout(function () { ... }, 0)]]: بنبعت لـ setTimeout دالة جديدة مكتوبة بـ [[function]]. الدالة دي ليها **this بتاعتها**، بتتحدد لما setTimeout تناديها، ومش هي اللي بتاخدها من startBroken.
+- setTimeout بتناديها من غير [[timer.]] قبلها، فـ this جواها مش timer.
 
 ~~~text الناتج
-BankAccount { owner: 'Sara' }      ← console.log(acc)
-true                               ← acc.deposit(100) === acc
-150                                ← acc.balance
+undefined
 ~~~
 
-لاحظ إن [[console.log(acc)]] في Node مبيعرضش [[#balance]] خالص. ولا [[Object.keys(acc)]] (طلعت [['owner']] بس) ولا [[JSON.stringify(acc)]] (طلعت [[{"owner":"Sara"}]]).
+وطبعنا this نفسها جوه الـ callback: في Node طلعت object من نوع [[Timeout]]، وفي Chrome طلعت [[window]]. الاتنين مفيهمش seconds، فالنتيجة undefined.
 
 ---
 
-## ٧. تحاول تكتب الرصيد من برّه
+## ٣. [[start]]: callback بـ arrow
 
 ~~~text app.js
-acc.balance = 1e6;
+  start() {
+    setTimeout(() => {
+      this.seconds++;
+      console.log(this.seconds);
+    }, 0);
+  },
 ~~~
 
-[[1e6]] يعني 1 × 10 أس 6 = مليون. النتيجة بتفرق حسب الملف:
-
-| الملف | اللي حصل |
-|---|---|
-| [[.cjs]] (من غير "use strict") | الكتابة اتجاهلت في صمت، و [[acc.balance]] فضلت [[150]] |
-| [[.mjs]] (strict لوحده) | [[TypeError: Cannot set property balance of #<BankAccount> which has only a getter]] |
-
-ولو حاولت توصل للـ private نفسه من برّه الكلاس:
-
-~~~text app.js
-console.log(acc.#balance);
-~~~
-
-~~~text الناتج
-SyntaxError: Private field '#balance' must be declared in an enclosing class
-~~~
-
-ده **SyntaxError**: الملف كله مش بيشتغل، حتى السطور اللي قبل الغلطة، لأن JS بيلاقيها وهو بيقرا الكود قبل ما ينفّذه.
-
----
-
-## ٨. الكلاس من جوه
-
-~~~text app.js
-BankAccount.count;
-typeof BankAccount;
-~~~
+- [[() => { ... }]]: **arrow function**. الفرق المهم: **مالهاش this بتاعتها**. لما تكتب this جواها، JS بيدوّر عليها برّه، في المكان اللي الـ arrow **اتكتبت** فيه، بالظبط زي ما بيدوّر على أي متغير. ده اسمه **lexical this**.
+- الـ arrow اتكتبت جوه [[start]]، و this بتاعة start = timer، فـ this جوه الـ arrow = timer.
+- [[this.seconds++]]: زوّد seconds واحد ([[++]] = زوّد 1).
 
 ~~~text الناتج
 1
-function
-~~~
-
-- [[BankAccount.count]] = 1 (حساب واحد اتعمل). و [[acc.count]] طلعت [[undefined]]: الـ static على الكلاس مش على الـ instance.
-- [[typeof BankAccount]] = [["function"]]: الكلاس في الآخر constructor function. وطبعنا [[Object.getOwnPropertyNames(BankAccount.prototype)]]:
-
-~~~text الناتج
-[ 'constructor', 'deposit', 'balance' ]
-~~~
-
-يعني deposit والـ getter على الـ prototype، و [[Object.hasOwn(acc, "deposit")]] طلعت [[false]].
-
-ومن الفروق عن الـ function العادية: مينفعش تنادي الكلاس من غير new:
-
-~~~text الناتج: BankAccount("x")
-TypeError: Class constructor BankAccount cannot be invoked without 'new'
 ~~~
 
 ---
 
-## ٩. setter: الكتابة بتعدّي على فحص
+## ٤. [[bad]]: arrow كـ method
 
-الـ getter بيخلي القراية تبان خاصية. والـ **setter** هو الجزء التاني: [[obj.price = 50]] شكلها كتابة عادية، بس بتنادي دالة بتفحص الأول.
-
-~~~js setter.mjs
-class Product {
-  #price = 0;
-  constructor(name, price) {
-    this.name = name;
-    this.price = price;            // بيعدّي على الـ setter كمان
-  }
-  get price() { return this.#price; }
-  set price(value) {
-    if (!Number.isFinite(value) || value < 0) throw new RangeError($__btسعر غلط: $__{value}$__bt);
-    this.#price = Math.round(value * 100) / 100;
-  }
-}
-const p = new Product('mug', 120);
-p.price = 99.999;
-console.log(p.price);
-try { p.price = -5; } catch (e) { console.log(e.name + ':', e.message); }
-try { new Product('cap', '90'); } catch (e) { console.log(e.name + ':', e.message); }
-console.log(Object.keys(p), JSON.stringify(p));
+~~~text app.js
+  bad: () => typeof this,
+};
 ~~~
 
-~~~text الناتج · Node 24.22.1
-100
-RangeError: سعر غلط: -5
-RangeError: سعر غلط: 90
-[ 'name' ] {"name":"mug"}
+- [[bad: () => ...]]: خاصية قيمتها arrow function.
+- [[typeof this]]: [[typeof]] بيرجّع نوع القيمة كنص ([["object"]] أو [["undefined"]] ...).
+
+هنا الـ arrow اتكتبت **جوه الـ object literal**، والـ [[{ }]] بتاعة الـ object **مش scope**، مش زي جسم الدالة. فالـ arrow بتطلع تدوّر على this برّه الـ object خالص، في الملف نفسه:
+
+| مكان التشغيل | [[timer.bad()]] | ليه |
+|---|---|---|
+| ملف [[.cjs]] (CommonJS) | [["object"]] | this في أول الملف = [[module.exports]] |
+| ملف [[.mjs]] (ES module) | [["undefined"]] | this في أول الـ module = undefined |
+| Chrome (script عادي) | [["object"]] | this في أول الصفحة = [[window]] |
+
+كلهم اتجرّبوا. وفي ولا واحدة this = timer. ولما جرّبنا [[timer.bad.call(timer)]] الناتج فضل نفسه: [[call]] مبتقدرش تغيّر this بتاعة arrow. وكمان [[new]] على arrow بيقع:
+
+~~~text الناتج: const A = () => 1; new A();
+TypeError: A is not a constructor
 ~~~
 
-- [[set price(value)]]: دالة بتاخد parameter واحد بالظبط، القيمة اللي على يمين الـ [[=]].
-- الـ constructor نفسه بيكتب [[this.price = price]]، فالفحص بيحصل **من أول لحظة**. لو كتب في [[this.#price]] مباشرة، [[new Product('cap', -5)]] كانت هتعدّي.
-- [['90']] اترفضت لأن [[Number.isFinite('90')]] بـ [[false]] (مبتحوّلش نصوص، عكس [[isFinite]] القديمة).
-- [[99.999]] اتقرّبت لـ [[100]]: الـ setter مش بس بيفحص، ممكن **ينضّف** كمان.
-- [[Object.keys]] و [[JSON.stringify]] مبيشوفوش [[price]]، لأن الـ getter والـ setter متعرّفين على [[Product.prototype]] مش على الـ object. فـ [[Object.hasOwn(p, 'price')]] بـ [[false]] و [['price' in p]] بـ [[true]]. ولو محتاجها في الـ JSON، [[toJSON()]] (التحدي اللي تحت).
+---
 
-### الفخ الكلاسيكي: setter بيكتب في نفسه
+## ٥. التشغيل
 
-~~~js
-class Bad { set price(v) { this.price = v; } }
-new Bad().price = 1;
+~~~text app.js
+timer.startBroken();
+timer.start();
 ~~~
+
+~~~text الناتج (Node)
+undefined
+1
+~~~
+
+الاتنين بيرجعوا فورًا، والـ callbacks بتشتغل بعد ما الكود المتزامن يخلص، بنفس الترتيب اللي اتسجّلت بيه.
+
+---
+
+## ٦. الحل القديم (الـ solCode)
+
+قبل الـ arrows (ES2015)، كان فيه طريقتين:
+
+~~~text app.js
+  withSelf() {
+    const self = this;
+    setTimeout(function () {
+      self.seconds++;
+      console.log("self", self.seconds);
+    }, 0);
+  },
+~~~
+
+- [[const self = this;]]: احفظ this بتاعة الـ method في متغير عادي **قبل** الـ callback. والـ callback بيشوف [[self]] بالـ closure (أي دالة بتشوف المتغيرات اللي حواليها).
+
+~~~text app.js
+  withBind() {
+    setTimeout(function () {
+      this.seconds++;
+      console.log("bind", this.seconds);
+    }.bind(this), 0);
+  },
+~~~
+
+- [[function () { ... }.bind(this)]]: [[bind]] بترجّع **نسخة** من الدالة this فيها متثبتة على القيمة اللي بعتها. والـ [[this]] اللي جوه أقواس bind اتقرت وقت تنفيذ withBind، يعني = timer.
 
 ~~~text الناتج
-RangeError: Maximum call stack size exceeded
+self 1
+bind 2
 ~~~
 
-[[this.price = v]] جوه الـ setter بتنادي الـ setter تاني، وهكذا للأبد (recursion من غير base case، درس «function و arrow»). عشان كده القيمة نفسها بتتخزن في اسم تاني: [[#price]] أو [[_price]].
-
-### ونفس الكلام في object عادي
-
-~~~js
-const temp = { c: 0, get f() { return this.c * 9 / 5 + 32; }, set f(v) { this.c = (v - 32) * 5 / 9; } };
-temp.f = 212;
-console.log(temp.c, temp.f);   // 100 212
-~~~
-
-| الشكل | امتى |
-|---|---|
-| خاصية عادية | مفيش قاعدة، أي قيمة مقبولة |
-| [[get]] لوحده | قيمة محسوبة أو للقراية بس |
-| [[get]] و [[set]] | الكتابة لازم تتفحص أو تتحوّل (سعر، درجة حرارة، إيميل) |
-| method زي [[setPrice(v)]] | لو العملية تقيلة أو ممكن تفشل كتير، عشان اللي بيقرا الكود يعرف إنها مش مجرد كتابة |
+الاتنين زوّدوا نفس الـ seconds (1 وبعدين 2)، يعني الاتنين شافوا timer فعلًا.
 
 ---
 
 ## الخلاصة
 
-| الحتة | مكانها | مين يوصلها |
+| | function عادية | arrow |
 |---|---|---|
-| [[static count]] | الكلاس نفسه | [[BankAccount.count]] |
-| [[#balance]] | كل instance | كود الكلاس بس |
-| [[this.owner]] | كل instance | أي حد |
-| [[deposit]] و [[get balance]] | [[BankAccount.prototype]] | كل الـ instances بالسلسلة |
+| ليها this بتاعتها؟ | أيوه، بتتحدد وقت النداء | لأ، بتاخدها من المكان اللي اتكتبت فيه |
+| call و bind بيغيّروها؟ | أيوه | لأ |
+| ينفع new؟ | أيوه | لأ (TypeError) |
+| تنفع كـ method في object؟ | أيوه | لأ: this هتيجي من برّه الـ object |
+| تنفع كـ callback جوه method؟ | محتاجة bind أو self | أيوه، وده استخدامها الأساسي |
 
-- [[return this]] في آخر method = chaining.
-- getter من غير setter = خاصية للقراية بس.
-- في التمرين تحت هتضيف [[withdraw]] وسجل للعمليات: بص على deposit كويس، وفكّر إيه الحالات الغلط اللي لازم ترفضها، وإيه اللي لازم ترجّعه عشان الـ chaining يفضل شغال، وفين تخزّن السجل بحيث محدش من بره يقدر يعدّله.
-- setter بيفحص وينضّف قبل ما يكتب، والقيمة نفسها في [[#field]] تاني، وإلا recursion للأبد.`,
+القاعدة: **method = function عادية، callback جوه method = arrow**.`,
           lines: [
-            R`بيعرّف كلاس: قالب نعمل منه حسابات بـ [[new BankAccount(...)]]. كل حساب object ليه رصيده، والـ methods متشاركة بينهم.`,
-            R`[[static]] معناها الخاصية دي على الكلاس **نفسه** مش على كل حساب. فيه [[count]] واحد بس للكل ([[BankAccount.count]])، ومش هتلاقيه في [[acc.count]].`,
-            R`private field: كل حساب بيبدأ برصيد 0، والـ [[#]] بتمنع أي كود برّه الكلاس يقرا أو يكتب الرصيد (حتى المحاولة نفسها SyntaxError). فالطريقة الوحيدة لتغييره هي [[deposit]].`,
-            R`الدالة اللي بتتنادى أوتوماتيك مع [[new]]، والـ arguments اللي في [[new BankAccount("Sara")]] بتوصلها. هنا بنجهّز الحساب الجديد.`,
-            R`بتحط اسم صاحب الحساب كخاصية عادية (public) على الـ instance الجديد، فأي حد يقدر يقرا [[acc.owner]].`,
-            R`كل مرة حساب يتعمل نزوّد العداد المشترك اللي على الكلاس. استخدمنا اسم الكلاس مش [[this]]، لأن [[this]] هنا الحساب الجديد مش الكلاس.`,
-            R`نهاية الـ [[constructor]].`,
-            R`method: بتتحط على [[BankAccount.prototype]] مرة واحدة، وكل الحسابات بتستخدم نفس الدالة عن طريق الـ prototype chain بدل ما كل حساب ياخد نسخة.`,
-            R`بنرفض أي مبلغ صفر أو سالب فورًا بـ error واضح. من غير الفحص ده [[deposit(-100)]] كانت هتسحب فلوس من غير ما حد يلاحظ. و [[RangeError]] نوع error مناسب لقيمة برّه المدى المسموح.`,
-            R`بنزوّد الرصيد الخاص. ده مسموح لأن السطر جوه الكلاس.`,
-            R`بترجّع الحساب نفسه، فتقدر تكمّل نداء تاني على طول ([[acc.deposit(100).deposit(50)]]). من غيرها [[deposit]] هترجّع [[undefined]] والنداء التاني هيرمي TypeError.`,
-            R`نهاية [[deposit]].`,
-            R`getter: دالة بتتقري كإنها خاصية، فتكتب [[acc.balance]] من غير [[()]]. ولأن مفيش [[set balance]]، الرصيد يتقري بس ومحدش يغيّره من برّه.`,
-            R`بترجّع قيمة الـ private field. كده الرصيد ظاهر للقراية بس، والتعديل الوحيد عن طريق [[deposit]] اللي بتفحص المبلغ.`,
-            R`نهاية الـ getter.`,
-            R`نهاية الكلاس [[BankAccount]].`,
-            R`[[new]] بيعمل object جديد، وينادي الـ [[constructor]] بـ [["Sara"]]، ويرجّع الحساب. دلوقتي [[owner]] بقى [["Sara"]]، والرصيد 0، و [[BankAccount.count]] بقى 1.`,
-            R`chaining: أول [[deposit]] رجّعت [[acc]] نفسه، فاتنادت التانية عليه. الرصيد بقى 150.`,
-            R`الـ getter اشتغل من غير [[()]] ورجّع [[150]].`,
-            R`محاولة تغيير الرصيد لمليون. ولأن [[balance]] getter من غير setter، الكتابة بتتجاهل بالسكوت في الكود العادي، وفي strict mode (وجوه الـ modules) بترمي TypeError. والرصيد يفضل 150.`,
-            R`بنقرا الـ [[static]] من الكلاس نفسه: [[1]] لأننا عملنا حساب واحد. أما [[acc.count]] كانت هترجّع [[undefined]].`,
-            R`بيرجّع [["function"]]: الكلاس في الآخر constructor function بشكل أنضف، والـ methods بتتحط على الـ prototype زي ما شفنا في درس الـ prototype chain.`,
+            R`object فيه عداد وتلات methods، هنقارن فيهم [[function]] و arrow جوه callback.`,
+            R`العداد اللي الـ callbacks هتحاول توصله عن طريق [[this.seconds]].`,
+            R`method عادية: لما تتنادى [[timer.startBroken()]] بتبقى [[this]] جواها [[timer]]. المشكلة هتبقى في الدالة اللي جواها.`,
+            R`بنبعت لـ [[setTimeout]] دالة مكتوبة بـ [[function]]. الدالة دي ليها [[this]] خاصة بيها بتتحدد لما [[setTimeout]] تناديها، ومش بتورث [[this]] بتاعة [[startBroken]].`,
+            R`[[setTimeout]] نادتها من غير [[timer.]]، فـ [[this]] هنا مش [[timer]] (في Node object الـ [[Timeout]] وفي Chrome [[window]]) ومفيهاش [[seconds]]، فبيطبع [[undefined]]. والـ [[?.]] بس عشان المثال ميقعش لو [[this]] طلعت [[undefined]].`,
+            R`نهاية الـ callback، والـ [[0]] هو التأخير بالملي ثانية: «أول ما الكود الحالي يخلص».`,
+            R`نهاية [[startBroken]].`,
+            R`method تانية بنفس الفكرة بس بالطريقة الصح. لما تتنادى [[timer.start()]]، [[this]] جواها [[timer]].`,
+            R`الـ callback المرة دي arrow function، والـ arrow مالهاش [[this]] بتاعتها خالص: بتستخدم [[this]] بتاعة المكان اللي اتكتبت فيه، يعني [[start]].`,
+            R`[[this]] هنا هي [[this]] بتاعة [[start]]، يعني [[timer]]، فـ [[seconds]] بتزيد من 0 لـ 1 فعلًا. ده السبب إن الـ arrow هي الاختيار المعتاد للـ callbacks جوه methods.`,
+            R`بيطبع [[1]]: الزيادة حصلت على [[timer]] نفسه.`,
+            R`نهاية الـ arrow callback.`,
+            R`نهاية [[start]].`,
+            R`العكس: arrow مستخدمة كـ method. الـ object literal مش scope، فـ [[this]] جواها جاية من المكان اللي الـ object كله متكتب فيه (مش [[timer]])، فـ [[this.seconds]] جواها مكانتش هتشتغل. القاعدة: الـ methods بـ [[function]] أو الشكل المختصر، والـ arrow للـ callbacks اللي جواها.`,
+            R`نهاية الـ object [[timer]].`,
+            R`بيشغّل النسخة الغلط: بعد ما الكود الحالي يخلص بيطبع [[undefined]].`,
+            R`بيشغّل النسخة الصح: بيطبع [[1]] بعد الـ [[undefined]] بتاعة اللي قبله، لأن الـ timers اللي ليها نفس التأخير بتشتغل بترتيب تسجيلها.`,
           ],
-          sol: R`[[withdraw]] بتفحص إن المبلغ موجب وإنه مش أكبر من الرصيد، وترمي error لو لأ. بعد [[deposit(100).deposit(50).withdraw(30)]] الـ balance بـ 120، و [[withdraw(500)]] بترمي error برسالة فيها الرصيد والمطلوب.
+          sol: R`بـ self: جوه الـ function العادية اكتب [[self.seconds++]] بدل this. وبـ bind: [[setTimeout(function () { ... }.bind(this), 0)]]. في الاتنين الـ callback بقى شايف timer، ولو ناديت الطريقتين ورا بعض هتلاقي seconds بتزيد (1 وبعدين 2).
 
-[[acc.#balance]] برّه الكلاس بيطلع [[SyntaxError: Private field '#balance' must be declared in an enclosing class]] والملف كله مبيشتغلش، حتى أول console.log فيه، لأن الغلطة بتتمسك وقت الـ parsing. ده الفرق بين [[#balance]] و [[_balance]] (convention بس وأي حد يقدر يقراه). ولو نسيت [[return this]] في withdraw، الـ chaining اللي بعدها هيقع بـ [[Cannot read properties of undefined]].`,
-          solCode: R`class BankAccount {
-  #balance = 0;
-  constructor(owner) { this.owner = owner; }
-  deposit(amount) {
-    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
-    this.#balance += amount;
-    return this;
-  }
-  withdraw(amount) {
-    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
-    if (amount > this.#balance) {
-      throw new Error($__btالرصيد مش كفاية: معاك $__{this.#balance} وعايز تسحب $__{amount}$__bt);
-    }
-    this.#balance -= amount;
-    return this;
-  }
-  get balance() { return this.#balance; }
-}
-const acc = new BankAccount("Sara");
-acc.deposit(100).deposit(50).withdraw(30);
-console.log(acc.balance); // 120
-try { acc.withdraw(500); } catch (e) { console.log(e.message); }`,
-          check: {
-            lang: "js",
-            starter: R`class BankAccount {
-  #balance = 0;
-  constructor(owner) { this.owner = owner; }
-  deposit(amount) {
-    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
-    this.#balance += amount;
-    return this;
-  }
-  withdraw(amount) {
-    // موجب، ومش أكبر من الرصيد، و return this
-  }
-  get balance() { return this.#balance; }
-  get history() {
-    return [];
-  }
-}`,
-            tests: R`test("deposit(100).deposit(50).withdraw(30) ← balance 120", () => expect(new BankAccount("Sara").deposit(100).deposit(50).withdraw(30).balance).toBe(120));
-test("withdraw أكبر من الرصيد بترمي error، والرصيد ميتغيّرش", () => {
-  const acc = new BankAccount("Ali").deposit(100);
-  expect(() => acc.withdraw(500)).toThrow();
-  expect(() => acc.withdraw(0)).toThrow();
-  expect(acc.balance).toBe(100);
-});
-test("history: العمليات اللي نجحت بس، بالترتيب", () => {
-  const acc = new BankAccount("Sara").deposit(100).withdraw(30);
-  try { acc.withdraw(500); } catch {}
-  try { acc.deposit(-1); } catch {}
-  acc.deposit(5);
-  expect(acc.history).toEqual([{ type: "deposit", amount: 100 }, { type: "withdraw", amount: 30 }, { type: "deposit", amount: 5 }]);
-});
-test("اللي بره ميقدرش يعدّل السجل", () => {
-  const acc = new BankAccount("Mona").deposit(10);
-  acc.history.push({ type: "deposit", amount: 1e6 });
-  acc.history.length = 0;
-  expect(acc.history).toEqual([{ type: "deposit", amount: 10 }]);
-});
-test("كل حساب ليه سجله", () => {
-  const a = new BankAccount("A").deposit(1), b = new BankAccount("B");
-  expect([a.history.length, b.history.length]).toEqual([1, 0]);
-});
-test("withdraw بترجّع this عشان الـ chaining", () => {
-  const acc = new BankAccount("Omar").deposit(50);
-  expect(acc.withdraw(10) === acc).toBe(true);
-});`,
-            solution: R`class BankAccount {
-  #balance = 0;
-  #log = [];
-  constructor(owner) { this.owner = owner; }
-  deposit(amount) {
-    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
-    this.#balance += amount;
-    this.#log.push({ type: "deposit", amount });
-    return this;
-  }
-  withdraw(amount) {
-    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
-    if (amount > this.#balance) throw new Error($__btالرصيد مش كفاية: معاك $__{this.#balance} وعايز تسحب $__{amount}$__bt);
-    this.#balance -= amount;
-    this.#log.push({ type: "withdraw", amount });
-    return this;
-  }
-  get balance() { return this.#balance; }
-  get history() { return this.#log.map(e => ({ ...e })); }
-}`
-          }
+[[timer.bad()]] في ملف Node بترجّع [["object"]] (this بتاع الملف CommonJS هو module.exports)، وفي ES module بترجّع [["undefined"]]، وفي Console المتصفح [["object"]] (window). المهم إنها أبدًا مش timer. والغلطة إنك تكتب [[const self = this]] جوه الـ callback نفسه: ساعتها بتاخد this الغلط. لازم تتكتب في startBroken قبل setTimeout.`,
+          solCode: R`const timer = {
+  seconds: 0,
+  withSelf() {
+    const self = this;
+    setTimeout(function () {
+      self.seconds++;
+      console.log("self", self.seconds);
+    }, 0);
+  },
+  withBind() {
+    setTimeout(function () {
+      this.seconds++;
+      console.log("bind", this.seconds);
+    }.bind(this), 0);
+  },
+};
+timer.withSelf(); // self 1
+timer.withBind(); // bind 2`
         },
         {
-          cmd: "extends و super",
-          title: "كلاس بيورث من كلاس تاني",
-          desc: R`[[class Admin extends User]] بتخلي Admin ياخد كل methods بتاعة User، ويضيف أو يغيّر عليها. جوه الـ constructor لازم تنادي [[super(...)]] قبل ما تستخدم [[this]]، و [[super.method()]] بتنادي النسخة بتاعة الأب.
+          cmd: "call و apply و bind",
+          title: "تحدد this بإيدك",
+          desc: R`التلاتة بيخلوك تقرر this هتبقى إيه:
 
-أشهر استخدام عملي: [[class NotFoundError extends Error]] عشان يبقى عندك أنواع errors تفرّق بينها بـ instanceof (درس الأخطاء).
-
-وقبل ما تورّث، اسأل: هل ينفع أركّب (composition) بدل ما أورّث؟ غالبًا أبسط.`,
-          example: R`class User {
-  constructor(name) {
-    this.name = name;
-  }
-  describe() {
-    return $__btUser: $__{this.name}$__bt;
-  }
+[[fn.call(obj, a, b)]]: نادي دلوقتي و this = obj، والـ arguments ورا بعض.
+[[fn.apply(obj, [a, b])]]: نفس الكلام بس الـ arguments في array.
+[[fn.bind(obj, a)]]: متناديش، رجّع دالة جديدة this بتاعتها متثبتة دايمًا على obj، وممكن تثبّت أول arguments كمان (partial application).`,
+          example: R`function intro(greeting, punct) {
+  return $__bt$__{greeting}, I'm $__{this.name}$__{punct}$__bt;
 }
-class Admin extends User {
-  constructor(name, permissions) {
-    super(name);
-    this.permissions = permissions;
-  }
-  describe() {
-    return $__bt$__{super.describe()} (admin: $__{this.permissions.join(", ")})$__bt;
-  }
-}
-const a = new Admin("Sara", ["users", "billing"]);
-a.describe();          // "User: Sara (admin: users, billing)"
-a instanceof Admin;    // true
-a instanceof User;     // true`,
-          try: R`امسح سطر [[super(name)]] وشغّل واقرا الـ error. وبعدين اعمل [[class Guest extends User]] من غير constructor خالص وجرّب [[new Guest("x").describe()]].`,
+const sara = { name: "Sara" };
+intro.call(sara, "Hi", "!");          // "Hi, I'm Sara!"
+intro.apply(sara, ["Hey", "."]);      // "Hey, I'm Sara."
+const saraIntro = intro.bind(sara, "Hello");
+saraIntro("?");                       // "Hello, I'm Sara?"
+saraIntro.call({ name: "Ali" }, "!"); // "Hello, I'm Sara!": bind مبيتغيرش
+const btn = { label: "Save", click() { console.log(this.label); } };
+setTimeout(btn.click.bind(btn), 0);   // "Save"`,
+          try: R`اكتب [[myBind(fn, ctx, ...args)]] بإيدك: بترجّع دالة بتنادي [[fn.apply(ctx, [...args, ...newArgs])]]. ده سؤال انترفيو مشهور (المستوى ٣ فيه نسخة كاملة). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
-            { lvl: 'سريع', t: R`**ابني:** [[class Shape]] فيها [[area()]] بترجّع 0 و [[describe()]] بترجّع [[this.constructor.name]] والمساحة. ورّث منها [[Circle]] و [[Rect]] وغيّر [[area]] في كل واحد.`, done: R`[[new Circle(1).describe()]] بترجّع [["Circle: 3.14"]] (لو قرّبت بـ [[Number(area.toFixed(2))]])، و [[new Rect(2, 3).describe()]] بترجّع [["Rect: 6"]]، و [[describe]] نفسها مكتوبة مرة واحدة في Shape.` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[class Child extends Parent { constructor(n) { this.x = 1; super(n); } }]]. اعمل [[new Child(1)]] واقرا الرسالة.`, done: R`الرسالة [[ReferenceError: Must call super constructor in derived class before accessing 'this' or returning from derived constructor]]. بعد ما تخلي [[super(n)]] أول سطر بيشتغل، و [[this.x]] بـ 1.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[class ValidationError extends Error]] بتاخد [[(message, field)]]، وبتنادي [[super(message)]]، وبتحط [[this.name]] و [[this.field]]. ارميها من [[validateUser(user)]] لو الإيميل مفيهوش [[@]]، وامسكها في [[try]] وفرّق بـ [[instanceof]].`, done: R`[[err instanceof ValidationError]] و [[err instanceof Error]] الاتنين [[true]]، و [[err.field]] بترجّع [["email"]]، و [[String(err)]] بترجّع [["ValidationError: "]] وبعدها الرسالة، وأي error تاني (زي TypeError) مبيتمسكش في نفس الفرع.` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[class A { hi() { return "A"; } } class B extends A { hi() { return super.hi() + "B"; } }]]. اكتب ناتج [[new B().hi()]] و [[new B() instanceof A]] و [[Object.getPrototypeOf(B) === A]].`, done: R`توقعت وطلع [["AB"]] و [[true]] و [[true]]. و [[super.hi()]] نادت نسخة A من غير ما تدخل في loop.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** [[class Store extends EventTarget]] فيها Map خاصة و [[set(key, value)]] بتعمل [[dispatchEvent(new CustomEvent("change", { detail: { key, value } }))]]. وبعدين اكتبها تاني بالتركيب (composition): [[#events = new EventTarget()]] جواها و [[on(fn)]] بتاعتك.`, done: R`في Node والمتصفح: [[store.addEventListener("change", (e) => console.log(e.detail))]] وبعدها [[store.set("theme", "dark")]] بيطبع [[{ key: 'theme', value: 'dark' }]]. والنسخة اللي بالتركيب بتطبع نفس الحاجة، بس من برّه مفيش [[dispatchEvent]] تقدر تناديها، وتقدر تقول أنهي أأمن وليه.` }
+            { lvl: 'سريع', t: R`**قارن وقيس:** [[Math.max.apply(null, [3, 9, 2])]] وقارنها بـ [[Math.max(...[3, 9, 2])]]. وجرّب الاتنين على array فاضية.`, done: R`الاتنين بيرجّعوا [[9]]، ومع array فاضية الاتنين بيرجّعوا [[-Infinity]] (فاتأكد إن الـ array مش فاضية قبلها).` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[function show(a, b) { return this.x + a + b; }]]. اكتب ناتج [[show.call({ x: 1 }, 2, 3)]] و [[show.apply({ x: 1 }, [2, 3])]] و [[show.bind({ x: 10 }, 1)(2)]] و [[show.bind({ x: 1 }).bind({ x: 100 })(0, 0)]].`, done: R`توقعت وطلع 6 و 6 و 13 و 1. والأخيرة لأن الـ bind التاني مبيقدرش يغيّر this بعد أول bind.` },
+            { lvl: 'تطبيق', t: R`**ابني:** اعمل logger بـ prefix: [[const log = console.log.bind(console, "[app]")]]، و [[const add5 = add.bind(null, 5)]] لـ [[add = (a, b) => a + b]].`, done: R`[[log("started")]] بيطبع [[[app] started]]، و [[add5(3)]] بترجّع [[8]]: الـ bind ثبّت أول argument، و [[null]] مكان this عشان add مش بتستخدمها.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** widget فيه [[onClick() { console.log(this.name); }]]. ضيفه على زرار بـ [[btn.addEventListener("click", widget.onClick.bind(widget))]] وحاول تشيله بـ [[removeEventListener]] بنفس الكتابة. وبعدين صلّحه.`, done: R`الشيل مبيشتغلش والضغط لسه بيطبع، لأن [[widget.onClick.bind(widget) === widget.onClick.bind(widget)]] بترجّع [[false]] (كل bind دالة جديدة). وبعد ما تخزّن النسخة المربوطة في متغير وتبعته للاتنين، الضغط بعد الشيل مبيطبعش حاجة.` },
+            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[myBind(fn, thisArg, ...preset)]] من غير [[bind]]: بترجّع دالة بتنادي fn بـ apply أو call بالـ this والـ arguments المثبتة وبعدها الجديدة.`, done: R`[[myBind(show, { x: 1 }, 2)(3)]] بترجّع 6 زي [[show.bind({ x: 1 }, 2)(3)]]، و [[myBind(Math.max, null)(4, 9)]] بترجّع 9.` }
           ],
           flag: "script",
           deep: {
-            why: "هتقابلها في الـ Errors المخصصة، وفي مكتبات بتطلب إنك تورّث من كلاس بتاعها (Web Components بـ HTMLElement مثلًا)، وفي أسئلة OOP في الانترفيو (تاب الانترفيو فيه OOP بالتفصيل).",
-            how: R`[[extends]] بيعمل سلسلتين prototype: [[Admin.prototype]] الـ prototype بتاعه [[User.prototype]] (عشان الـ methods)، و [[Admin]] نفسه الـ prototype بتاعه [[User]] (عشان الـ static).
+            why: "بتحتاجهم لما تبعت method كـ callback (bind)، أو تستعير method من object لـ object تاني (call). و bind بالذات بيحل مشكلة this الضايعة في setTimeout و addEventListener.",
+            how: R`[[call]] و [[apply]] بينادوا فورًا، والفرق بس في شكل الـ arguments. قبل الـ spread كان [[Math.max.apply(null, arr)]] الطريقة الوحيدة تبعت array كـ arguments، ودلوقتي [[Math.max(...arr)]] أوضح.
 
-في كلاس بيورث، الـ this مبيتعملش لحد ما [[super()]] يتنادى، لأن الأب هو اللي بيعمل الـ object. عشان كده this قبل super بترمي ReferenceError. ولو مكتبتش constructor خالص، JS بيعمل واحد بينادي [[super(...args)]] لوحده.
+[[bind]] بترجّع «bound function»، والـ this فيها متثبت للأبد: call و apply و bind تاني مش بيغيّروه. الاستثناء الوحيد [[new]]، اللي بيتجاهل الـ this المتثبت.
 
-[[super.describe()]] بتدوّر على describe في prototype الأب، وبتناديها بنفس الـ this. ده بيخليك تكمّل على سلوك الأب بدل ما تكرره.
+كل [[bind]] بيعمل دالة جديدة. فلو عملت [[addEventListener("click", this.fn.bind(this))]] مش هتعرف تشيله بـ removeEventListener، لأن الـ bind التاني هيعمل دالة مختلفة. احفظ الـ bound function في متغير الأول.
 
-تقدر تورّث من built-ins: [[class MyArray extends Array]] و [[extends Error]] و [[extends EventTarget]].`,
-            when: "علاقة «نوع من» حقيقية ومستقرة (NotFoundError نوع من Error). لو بتورّث عشان تاخد دالتين بس، استخدم composition أو دوال مساعدة.",
-            mistakes: R`this قبل super. وسلسلة وراثة عميقة (A extends B extends C extends D) كل تعديل فيها بيكسر حاجة. وتنسى إن الـ override بيلغي method الأب لو منادتش super. وفي الانترفيو: «composition vs inheritance؟» (تاب الانترفيو وتاب هندسة البرمجيات).`
+واستعارة methods: [[Array.prototype.slice.call(arguments)]] كانت الطريقة القديمة لتحويل array-like لـ array، ودلوقتي [[Array.from]].`,
+            when: R`[[bind]] لما تبعت method كـ callback وعايز this تفضل. [[call]] لما تستعير method أو تنادي بـ this معيّن. [[apply]] نادرًا دلوقتي.`,
+            mistakes: R`[[bind]] وتفتكرها نادت الدالة. و bind جوه render أو loop فتعمل دوال جديدة كل مرة. وتحاول تعمل bind لـ arrow. وفي الانترفيو: «الفرق بين call و apply و bind؟» و «اكتب bind بإيدك».`
           },
           teach: R`## الكود ده بيعمل إيه؟
 
-كلاس أب [[User]] فيه اسم و method بتوصفه، وكلاس ابن [[Admin]] بياخد كل حاجة من User ويزوّد عليها صلاحيات، ويعدّل الوصف **من غير ما يعيد كتابة** وصف الأب. اتشغّل في Node 24.
+دالة واحدة [[intro]] بتستخدم [[this]]، وبنناديها ٣ مرات بـ this مختلفة بإيدنا: بـ [[call]]، وبـ [[apply]]، وبنسخة متثبتة بـ [[bind]]. وفي الآخر بنستخدم bind عشان نصلّح مشكلة setTimeout من درس this. اتشغّل في Node 24.
 
 ---
 
-## ١. الكلاس الأب
+## ١. الدالة
 
 ~~~text app.js
-class User {
-  constructor(name) {
-    this.name = name;
-  }
-  describe() {
-    return $__btUser: $__{this.name}$__bt;
-  }
+function intro(greeting, punct) {
+  return $__bt$__{greeting}, I'm $__{this.name}$__{punct}$__bt;
 }
 ~~~
 
-كلاس عادي زي الدرس اللي فات: constructor بيحط [[name]] على الـ instance، و method [[describe]] بترجّع نص template. [[new User("Ali").describe()]] بترجّع [[User: Ali]].
+- [[greeting]] و [[punct]] (اختصار punctuation، علامة الترقيم): باراميترين عاديين.
+- النص اللي بين علامتين [[$__bt]] اسمه **template literal**: نص تقدر تحط جواه قيم بـ [[$__{...}]]. فـ [[$__{greeting}]] بتتبدل بقيمة greeting، و [[$__{this.name}]] بقيمة name من this.
+- الدالة نفسها مش عارفة this هتبقى إيه. ده هيتحدد **وقت النداء**.
 
 ---
 
-## ٢. [[extends]]
+## ٢. [[call]]: نادي دلوقتي و this = اللي تقوله
 
 ~~~text app.js
-class Admin extends User {
+const sara = { name: "Sara" };
+intro.call(sara, "Hi", "!");
 ~~~
 
-[[extends User]] معناها «Admin نوع من User». JS بيوصّل سلسلتين prototype (اتأكدنا من الاتنين، طلعوا [[true]]):
-
-- [[Object.getPrototypeOf(Admin.prototype) === User.prototype]]: أي admin لما ميلاقيش method عنده، بيدوّر في methods بتاعة User.
-- [[Object.getPrototypeOf(Admin) === User]]: حتى الـ static بتاعة User بتتورث.
-
----
-
-## ٣. constructor الابن و [[super()]]
-
-~~~text app.js
-  constructor(name, permissions) {
-    super(name);
-    this.permissions = permissions;
-  }
-~~~
-
-- الـ constructor بياخد باراميتر زيادة: [[permissions]] (array صلاحيات).
-- [[super(name)]]: **نادي constructor الأب** وابعتله name. هو اللي بيعمل الـ object ويحط عليه [[this.name]].
-- [[this.permissions = ...]]: بعد كده بس نقدر نستخدم this ونزوّد.
-
-ليه الترتيب ده إجباري؟ في كلاس وارث، الـ object **مبيتعملش** غير لما الأب يعمله جوه super. فـ this قبل super مش موجودة أصلًا. جرّبنا [[this.x = 1; super(n);]]:
+- [[intro.call(...)]]: كل دالة في JS هي object، وعليها methods جاهزة منها [[call]].
+- أول argument ([[sara]]) بيبقى **this**، والباقي ([["Hi"]] و [["!"]]) بيتبعتوا للدالة ورا بعض.
 
 ~~~text الناتج
-ReferenceError: Must call super constructor in derived class before accessing 'this' or returning from derived constructor
+Hi, I'm Sara!
 ~~~
-
-يعني «في الكلاس الوارث (derived) لازم تنادي super قبل ما تلمس this».
 
 ---
 
-## ٤. override و [[super.describe()]]
+## ٣. [[apply]]: نفس الكلام بس الـ arguments في array
 
 ~~~text app.js
-  describe() {
-    return $__bt$__{super.describe()} (admin: $__{this.permissions.join(", ")})$__bt;
-  }
-}
+intro.apply(sara, ["Hey", "."]);
 ~~~
 
-- كتبنا [[describe]] تاني في Admin: دي اسمها **override**. لما تنادي [[a.describe()]]، JS بيلاقيها في Admin.prototype الأول فبيوقف هناك.
-- [[super.describe()]]: «هات نسخة **الأب** من describe ونادِيها على نفس this». فبترجّع [[User: Sara]].
-- [[this.permissions.join(", ")]]: [[join]] بتلزق عناصر الـ array في نص واحد بالفاصل اللي تديهولها: [["users, billing"]].
-- والنص كله: نتيجة الأب + الزيادة بين أقواس.
-
----
-
-## ٥. الاستخدام
-
-~~~text app.js
-const a = new Admin("Sara", ["users", "billing"]);
-a.describe();
-a instanceof Admin;
-a instanceof User;
-~~~
+الفرق الوحيد إن الـ arguments جوه array واحدة: [[apply(sara, ["Hey", "."])]]. وسهل تفتكرها: **a**pply = **a**rray.
 
 ~~~text الناتج
-Admin { name: 'Sara', permissions: [ 'users', 'billing' ] }   ← console.log(a)
-User: Sara (admin: users, billing)
-true
-true
+Hey, I'm Sara.
 ~~~
 
-- [[name]] جت من constructor الأب (عن طريق super)، و [[permissions]] من الابن، والاتنين على نفس الـ object.
-- [[a instanceof User]] = [[true]]: [[instanceof]] بيمشي في سلسلة a ويسأل «User.prototype موجود فيها؟»، وهو موجود.
+apply كانت مهمة زمان لما تكون الـ arguments عندك في array، زي [[Math.max.apply(null, [3, 9, 2])]]. دلوقتي الـ spread [[...]] بيعمل نفس الشغل: [[Math.max(...[3, 9, 2])]]، والاتنين طلّعوا [[9]].
 
 ---
 
-## ٦. من غير constructor خالص
-
-من التجربة:
+## ٤. [[bind]]: متناديش، رجّع دالة جديدة
 
 ~~~text app.js
-class Guest extends User {}
-new Guest("x").describe();
+const saraIntro = intro.bind(sara, "Hello");
+saraIntro("?");
 ~~~
+
+- [[intro.bind(sara, "Hello")]]: **مبتنفّذش** intro. بترجّع دالة **جديدة**: this فيها متثبتة على sara، وأول argument متثبت على [["Hello"]] (ده اسمه **partial application**: تثبّت جزء من الـ arguments).
+- [[saraIntro("?")]]: لما تنادي النسخة الجديدة، اللي بتبعته بييجي **بعد** المتثبت، فـ [["?"]] بقت punct.
 
 ~~~text الناتج
-User: x
+Hello, I'm Sara?
 ~~~
 
-لو مكتبتش constructor، JS بيعمل واحد لوحده كده: [[constructor(...args) { super(...args); }]]، يعني بيبعت كل حاجة للأب زي ما هي.
+وطبعنا شوية معلومات عن الدالة الجديدة:
+
+~~~text الناتج: typeof saraIntro, saraIntro.name, saraIntro.length, intro.length
+function bound intro 1 2
+~~~
+
+يعني: هي function، واسمها [["bound intro"]] (Node بيعلّم إنها نسخة bind)، و [[length]] (عدد الباراميترات المتوقعة) بقى 1 بدل 2، لأن واحد اتثبت.
+
+---
+
+## ٥. bind مبتتغيرش
+
+~~~text app.js
+saraIntro.call({ name: "Ali" }, "!");
+~~~
+
+جرّبنا نغيّر this بـ call على النسخة المتثبتة:
+
+~~~text الناتج
+Hello, I'm Sara!
+~~~
+
+الـ [["!"]] وصلت (arguments عادية)، بس this فضلت Sara. الـ bound function this فيها متثبتة **للأبد**: لا call ولا apply ولا bind تاني يغيّروها. (الاستثناء الوحيد [[new]]، وده نادر.)
+
+وحاجة مهمة: كل [[bind]] بيعمل دالة جديدة:
+
+~~~text الناتج: intro.bind(sara) === intro.bind(sara)
+false
+~~~
+
+عشان كده لو عملت [[addEventListener("click", obj.fn.bind(obj))]]، مش هتعرف تشيله بـ [[removeEventListener]] بـ bind تاني. احفظ النسخة في متغير الأول.
+
+---
+
+## ٦. الاستخدام الأشهر: callback
+
+~~~text app.js
+const btn = { label: "Save", click() { console.log(this.label); } };
+setTimeout(btn.click.bind(btn), 0);
+~~~
+
+من غير bind، setTimeout كانت هتنادي click لوحدها و this تضيع (درس this). [[btn.click.bind(btn)]] بتعمل نسخة this فيها btn، و setTimeout تنادي النسخة دي:
+
+~~~text الناتج
+Save
+~~~
 
 ---
 
 ## الخلاصة
 
-| الحتة | معناها |
-|---|---|
-| [[class B extends A]] | B بيورث methods و static بتاعة A |
-| [[super(...)]] في الـ constructor | نادي constructor الأب. إجباري قبل أي this |
-| [[super.method()]] | نادي نسخة الأب من method على نفس this |
-| method بنفس الاسم في الابن | override: بتغطّي على بتاعة الأب |
-| مفيش constructor في الابن | JS بيبعت كل الـ arguments للأب لوحده |
+| | بينادي دلوقتي؟ | الـ arguments | بيرجّع |
+|---|---|---|---|
+| [[fn.call(obj, a, b)]] | أيوه | ورا بعض | ناتج fn |
+| [[fn.apply(obj, [a, b])]] | أيوه | في array | ناتج fn |
+| [[fn.bind(obj, a)]] | لأ | تثبّت أولهم (اختياري) | دالة جديدة this فيها obj للأبد |
 
-- اكتب constructor في الابن بس لو عندك حاجة **زيادة** تعملها.
-- استخدم الوراثة لعلاقة «نوع من» حقيقية (Admin نوع من User، و NotFoundError نوع من Error).`,
+- call و apply للنداء مرة واحدة بـ this معيّنة. bind لما هتبعت الدالة لحد تاني يناديها بعدين.
+- التمرين تحت بيطلب منك تكتب [[myBind]] بنفسك. فكّر في اللي شفته في خطوة ٤ و ٥: bind بترجّع **دالة**، والدالة دي لما تتنادي لازم تستخدم الـ this المحفوظ والـ arguments القديمة والجديدة بالترتيب.`,
           lines: [
-            R`الكلاس الأب: فيه اللي أي مستخدم محتاجه (اسم و [[describe]])، والكلاسات اللي هتورث منه هتاخد ده من غير ما تكرره.`,
-            R`بيتنادى مع [[new User(...)]]، أو من الكلاس الابن عن طريق [[super(...)]].`,
-            R`بيحط الاسم على الـ instance. ولما [[Admin]] ينادي [[super(name)]]، السطر ده هو اللي بيحط الاسم على الـ admin.`,
-            R`نهاية constructor الأب.`,
-            R`method على [[User.prototype]]، فأي [[User]] وأي كلاس ابن يقدر يناديها.`,
-            R`بترجّع وصف بسيط زي [["User: Sara"]]. و [[this]] هنا هتبقى الـ instance اللي اتنادت عليه، حتى لو كان [[Admin]].`,
-            R`نهاية [[describe]].`,
-            R`نهاية الكلاس [[User]].`,
-            R`[[extends]] بيخلي [[Admin.prototype]] يورث من [[User.prototype]]، فأي admin عنده [[describe]] وأي method تانية في [[User]] أوتوماتيك، ونضيف عليها اللي يخص الـ admin بس.`,
-            R`constructor خاص بالابن، بياخد الاسم زي الأب وكمان قايمة الصلاحيات.`,
-            R`بينادي constructor الأب بالاسم عشان يعمل الجزء بتاعه. في كلاس ابن لازم [[super()]] قبل أي استخدام لـ [[this]]، وإلا ReferenceError، لأن الأب هو اللي بيجهّز [[this]] أصلًا.`,
-            R`بعد [[super]] بقى مسموح نستخدم [[this]]، فبنضيف الخاصية اللي الـ admin بس عنده.`,
-            R`نهاية constructor الابن.`,
-            R`override: [[describe]] جديدة على [[Admin.prototype]]. لما تنادي [[a.describe()]]، JS بيلاقي دي الأول في السلسلة فمبيوصلش لنسخة الأب.`,
-            R`[[super.describe()]] بتنادي نسخة الأب (بنفس [[this]]) فترجّع [["User: Sara"]]، وبنكمّل عليها الصلاحيات مفصولة بـ [[join(", ")]]. كده بنعيد استخدام كود الأب بدل ما ننسخه.`,
-            R`نهاية [[describe]] الجديدة.`,
-            R`نهاية الكلاس [[Admin]].`,
-            R`بيعمل admin: constructor [[Admin]] بينادي [[super("Sara")]] فيتحط [[name]]، وبعدين [[permissions]] تتحط.`,
-            R`بيشغّل النسخة الجديدة (الـ override)، اللي جواها نادت نسخة الأب: [["User: Sara (admin: users, billing)"]].`,
-            R`[[instanceof]] بيدوّر في الـ prototype chain بتاعة [[a]] على [[Admin.prototype]]، ولقاها فرجّع [[true]].`,
-            R`و [[User.prototype]] برضه في السلسلة (فوق [[Admin.prototype]])، فـ [[true]]. يعني الـ admin يتعامل كـ user في أي كود مستني user.`,
+            R`دالة عادية بتستخدم [[this]] مع إنها مش جوه object. [[this]] هتتحدد وقت النداء، و [[greeting]] و [[punct]] باراميترات عادية.`,
+            R`بترجّع جملة متركّبة بـ template literal: التحية، وبعدين [[this.name]] من الـ object اللي هيتحدد، وبعدين علامة الترقيم. لو اتنادت [[intro()]] كده من غير [[this]] في strict mode هترمي TypeError لأن [[this]] بـ [[undefined]].`,
+            R`نهاية [[intro]].`,
+            R`object عادي فيه [[name]] بس، ومفيهوش [[intro]] كـ method. هنستعير الدالة ونشغّلها عليه.`,
+            R`[[call]] بتنادي الدالة **فورًا**: أول argument بيبقى [[this]] ([[sara]])، والباقي arguments الدالة ورا بعض. النتيجة [["Hi, I'm Sara!"]].`,
+            R`نفس [[call]] بالظبط، الفرق الوحيد إن arguments الدالة بتتبعت في array واحدة. مفيدة لما الـ arguments تكون جاهزة في array، والنهارده [[intro.call(sara, ...args)]] بتعمل نفس الحاجة.`,
+            R`[[bind]] **مبتنادِيش** الدالة: بترجّع دالة جديدة [[this]] فيها متثبتة على [[sara]] على طول، وكمان أول argument ([["Hello"]]) متثبت (partial application).`,
+            R`بننادي الدالة الجديدة بالـ argument الباقي بس، فـ [["Hello"]] المتثبت يبقى [[greeting]] و [["?"]] يبقى [[punct]]: [["Hello, I'm Sara?"]].`,
+            R`حتى [[call]] مقدرتش تغيّر [[this]] بتاعة دالة اتعملها [[bind]]: لسه [[Sara]]، و [["!"]] بس اتبعت كـ argument. فلو عايز [[this]] تانية، اعمل [[bind]] من الدالة الأصلية [[intro]] مش من [[saraIntro]].`,
+            R`object فيه method بتعتمد على [[this.label]]، وهنبعتها لـ [[setTimeout]] زي ما بيحصل مع الـ event handlers.`,
+            R`[[bind(btn)]] بتعمل نسخة [[this]] فيها متثبتة على [[btn]] **قبل** ما نبعتها، فلما [[setTimeout]] تناديها لوحدها تفضل [[this]] هي [[btn]] ويطبع [[Save]]. من غير [[bind]] كانت هتطبع [[undefined]].`,
           ],
-          sol: R`من غير [[super(name)]] بيطلع [[ReferenceError: Must call super constructor in derived class before accessing 'this' or returning from derived constructor]]: في الكلاس الابن this مبتتعملش غير لما الأب يعملها بـ super، فأي [[this.x]] قبلها ممنوع. ولو حطيت super بعد [[this.permissions = ...]] نفس الـ error.
+          sol: R`[[myBind(intro, sara, "Hi")("!")]] لازم ترجّع [["Hi, I'm Sara!"]]، زي bind المدمجة. والـ args اللي اتحددت وقت الـ bind بتيجي الأول، وبعدها اللي بتتبعت وقت النداء.
 
-[[class Guest extends User {}]] من غير constructor و [[new Guest("x").describe()]] بترجّع [["User: x"]]: لو مكتبتش constructor، JS بيعملك واحد لوحده [[constructor(...args) { super(...args); }]] بيبعت كل حاجة للأب. فمتكتبش constructor غير لو عندك حاجة زيادة تعملها.`
+ولو ناديت الناتج بـ [[.call({ name: "Ali" }, "!")]] هيفضل Sara، لأن جوه الدالة اللي رجّعتها انت بتنادي [[fn.apply(ctx, ...)]] بالـ ctx المحفوظ في الـ closure وبتتجاهل this الجديدة. الغلطة الشائعة إنك ترجّع [[fn.apply(ctx, args)]] على طول بدل ما ترجّع دالة، فالدالة تتنفّذ وقت الـ bind نفسه. والنسخة دي مبتدعمش [[new]]، والمستوى ٣ بيكمّلها.`,
+          solCode: R`function myBind(fn, ctx, ...args) {
+  return function (...newArgs) {
+    return fn.apply(ctx, [...args, ...newArgs]);
+  };
+}
+function intro(greeting, punct) {
+  return $__bt$__{greeting}, I'm $__{this.name}$__{punct}$__bt;
+}
+const saraIntro = myBind(intro, { name: "Sara" }, "Hi");
+console.log(saraIntro("!"));                    // "Hi, I'm Sara!"
+console.log(saraIntro.call({ name: "Ali" }, "?")); // "Hi, I'm Sara?"`,
+          check: {
+            lang: "js",
+            starter: R`function myBind(fn, ctx, ...args) {
+  // رجّع دالة، متنفّذش fn دلوقتي
+}`,
+            tests: R`function intro(greeting, punct) { return greeting + ", I'm " + this.name + punct; }
+test("myBind(intro, sara, 'Hi')('!') ← \"Hi, I'm Sara!\"", () => expect(myBind(intro, { name: "Sara" }, "Hi")("!")).toBe("Hi, I'm Sara!"));
+test("بترجّع دالة ومش بتنادي fn وقت الـ bind", () => {
+  let calls = 0;
+  const b = myBind(() => calls++, null);
+  expect([typeof b, calls]).toEqual(["function", 0]);
+});
+test("الـ args بتاعة الـ bind الأول وبعدها بتاعة النداء", () => expect(myBind((...a) => a.join(""), null, "a", "b")("c", "d")).toBe("abcd"));
+test("this متتغيرش بـ call بعد الـ bind", () => expect(myBind(intro, { name: "Sara" }, "Hi").call({ name: "Ali" }, "?")).toBe("Hi, I'm Sara?"));
+test("بترجّع ناتج fn", () => expect(myBind(function () { return this.x * 2; }, { x: 21 })()).toBe(42));`,
+            solution: R`function myBind(fn, ctx, ...args) {
+  return function (...newArgs) {
+    return fn.apply(ctx, [...args, ...newArgs]);
+  };
+}`
+          }
         }
       ]
     }

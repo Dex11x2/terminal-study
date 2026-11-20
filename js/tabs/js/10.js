@@ -1,756 +1,1492 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "scope و closures",
-      l: 2,
-      n: "المتغير شايفه مين، والـ hoisting، وليه الدالة بتفتكر متغيرات اتعملت برّاها",
+      t: "الـ DOM",
+      l: 1,
+      n: "تمسك عناصر الصفحة وتعدّلها، وتسمع للـ events، و event delegation",
       projects: [
-        { lvl: 'صغير', t: R`عدّاد لكل زرار`, what: R`٣ أزرار في صفحة، وكل واحد معاه counter من [[createCounter()]] بتاعة درس closure، وبيكتب عدد ضغطاته جنبه. ومفيش ولا متغير global للأعداد.`, done: R`كل زرار بيعد لوحده، وفي Console مش لاقي أي متغير اسمه count أو clicks على [[window]]، وزرار رابع بيتضاف بسطر واحد.` },
-        { lvl: 'صغير', t: R`زرار الدفع مرة واحدة`, what: R`زرار «ادفع» الـ handler بتاعه ملفوف في [[once(fn)]] اللي كتبتها في درس closure، فالضغط المكرر مبيدفعش تاني. من درس closure.`, done: R`٥ ضغطات ورا بعض بيطبعوا «اتدفع» مرة واحدة بس، والضغطات اللي بعدها بترجّع نفس الناتج الأول من غير ما الدالة تشتغل.` },
-        { lvl: 'متوسط', t: R`store صغير بـ subscribe`, what: R`[[createStore(initial)]] فيها state خاصة، وبترجّع [[getState()]] و [[setState(changes)]] (بتعمل object جديد بـ spread) و [[subscribe(fn)]] اللي بترجّع دالة [[unsubscribe]]. ده نفس شكل الـ stores في React و Vue. من دروس closure و scope ودرس destructuring و spread.`, done: R`بعد [[subscribe]] كل [[setState]] بيندهلك بالـ state الجديدة، وبعد [[unsubscribe()]] مبيندهلكش، و [[getState()]] قبل وبعد مش نفس الـ object، واتنين stores مش شايفين بعض.` },
-        { lvl: 'متوسط', t: R`كاش بعمر`, what: R`[[cached(fn, ms)]] بترجّع دالة بتفتكر الناتج لكل argument في Map جوه الـ closure لمدة [[ms]] بس، وبعدها بتنادي fn تاني. استخدم [[Date.now()]]. من دروس closure و Map و Set.`, done: R`نداء مرتين في نفس الثانية بيشغّل fn مرة واحدة، وبعد المدة بيشغّلها تاني (العدّاد بيزيد)، و [[arguments]] مختلفة ليها كاش مختلف.` },
-        { lvl: 'كبير', t: R`todo app كـ factory`, what: R`[[createTodoApp(root, storageKey)]] بتبني todo list كاملة جوه العنصر اللي اتبعتلها: الحالة كلها في الـ closure (مش global)، وevent delegation على الـ root، والحفظ في localStorage تحت [[storageKey]] بـ [[safeParse]]. اعمل نسختين في نفس الصفحة («البيت» و «الشغل»). التحقق: نص فاضي أو أطول من ١٠٠ حرف بيترفض برسالة جنب الفورم. وفي [[tests.js]] شوية [[console.assert]] على الدوال اللي مش DOM (add و toggle و remove). من الوحدة دي ووحدة الـ DOM والـ objects.`, done: R`النسختين مستقلين: مهمة في واحدة مبتظهرش في التانية، و refresh بيرجّع كل واحدة ببياناتها، و [[window]] مفيهوش أي متغير للحالة، والـ asserts كلها بتعدّي، و JSON بايظ في مفتاح واحد بيفتح النسخة دي فاضية والتانية سليمة.`, ext: R`زوّد [[destroy()]] بتشيل الـ listeners وتفضّي الـ root، و undo لآخر عملية، وسحب وإفلات للترتيب بعد درس drag and drop.` },
-        { lvl: 'فكرة', t: R`مكتبة utilities بتاعتك`, what: R`لم كل الدوال اللي فيها closure واللي محتاجها في مشاريعك ([[once]] و [[memoize]] و [[createCounter]] و [[cached]]، أو حاجات جديدة زي [[after(n, fn)]] أو [[limit(fn, max)]]) في ملف واحد، وكل دالة معاها مثال تشغيل. انت اللي بتختار الدوال.`, done: R`كل دالة ليها ٣ أمثلة على الأقل بـ [[console.assert]]، والملف بيشتغل بـ [[node utils.js]] من غير ولا assertion فاشلة.`, ext: R`حوّله لـ module بـ export بعد قسم modules، وانشره كـ package صغير، وزوّد debounce و throttle بعد درسهم.` },
+        { lvl: 'صغير', t: R`عدّاد كلمات حي`, what: R`صفحة فيها textarea وتحتها عدد الحروف والكلمات والسطور، وبيتحدث وانت بتكتب بـ event [[input]]، ولو عدّيت ٢٨٠ حرف الرقم يبقى أحمر بـ [[classList]]. من دروس querySelector و textContent و addEventListener.`, done: R`الأرقام صح على نص فاضي (٠ كلمات مش ١)، وعلى مسافات كتير ورا بعض، وعلى لصق نص طويل، واللون بيرجع عادي لما تمسح تحت ٢٨٠.` },
+        { lvl: 'صغير', t: R`الوضع الليلي اللي بيفتكر`, what: R`زرار بيعمل toggle لكلاس [[dark]] على الـ body، والاختيار بيتخزّن في [[localStorage]] وبيتقري أول ما الصفحة تفتح، والسكربت بـ [[defer]]. من دروس textContent و classList و defer و async و module، و JSON.`, done: R`تختار غامق وتعمل refresh: الصفحة بتفتح غامقة ونص الزرار صح. ولو مسحت الـ localStorage من DevTools بتفتح فاتحة من غير error.` },
+        { lvl: 'متوسط', t: R`todo list كاملة`, what: R`فورم بيضيف مهمة (submit و [[preventDefault]] و [[FormData]])، وكل مهمة ليها done و delete بـ event delegation، وعدّاد «فاضل كام»، وفلتر الكل والمتبقي واللي خلص، وحالة empty لما الليستة فاضية. كل النصوص بـ [[textContent]]. من كل دروس الوحدة.`, done: R`مهمة فاضية أو مسافات بس مبتتضافش، و [[<img src=x onerror=alert(1)>]] بتظهر كنص ومفيش alert، والعدّاد صح بعد أي خليط عمليات، وفي الكود listener واحد بس للضغطات على الليستة.` },
+        { lvl: 'متوسط', t: R`دليل يوزرز بفلتر في الـ URL`, what: R`صفحة بتجيب يوزرز من API بـ [[fetch]] وبتعرضهم بـ [[<template>]]، مع حالات loading و empty و error وزرار «جرّب تاني»، وفورم بحث وترتيب بيقرا بـ [[FormData]] ويحط الاختيار في الـ URL بـ [[URLSearchParams]]. من دروس اعرض داتا من fetch و FormData و URLSearchParams.`, done: R`اللينك [[?q=le&sort=name]] بيفتح الليستة متفلترة ومترتبة، والـ Offline بيطلع رسالة وزرار جرّب تاني شغال لما الشبكة ترجع، والبحث مبيعملش request جديد.` },
+        { lvl: 'كبير', t: R`صفحة منتجات وسلة متينة`, what: R`[[products.json]] محلي بتجيبه بـ [[fetch]] من سيرفر محلي، وبتعرض الكروت من [[<template>]]، وفلتر بالقسم والسعر من فورم متزامن مع الـ URL، و «ضيف للسلة» بـ event delegation، والسلة (object أو Map من الـ id للكمية) بتتحفظ في localStorage بـ [[safeParse]]. التحقق: الكمية من ١ لـ ١٠، والسعر في الـ JSON لازم رقم (المنتج اللي سعره مش رقم بيتساب وبيطبع [[console.warn]]). وكل خطوة مهمة بتتكتب في Console بـ [[console.info]]. من الوحدة دي ووحدة الـ objects.`, done: R`الحالات دي كلها شغالة ومتجرّبة بإيدك: [[products.json]] مش موجود (404) بيطلع رسالة و «جرّب تاني»؛ JSON بايظ في localStorage الصفحة بتفتح بسلة فاضية؛ منتج اسمه [[<script>]] بيظهر كنص؛ refresh بيرجّع نفس الفلتر ونفس السلة؛ ومجموع السلة صح بعد ما تزوّد وتشيل.`, ext: R`زوّد صفحة «السلة» بـ [[pushState]] (هتيجي في APIs المتصفح)، وكود خصم، وتحويل العملة بـ [[Intl.NumberFormat]].` },
+        { lvl: 'فكرة', t: R`أداة صغيرة لحاجة بتعملها كل يوم`, what: R`اختار حاجة بتعملها بإيدك على الويب (تحسب حاجة، تنظّم لينكات، تتابع مذاكرة، تعمل قايمة مشتريات) واعملها صفحة واحدة: فورم للإدخال، وليستة بـ delegation، وفلتر، وبتفتكر بعد الـ refresh. انت اللي بتقرر الشكل والخصايص.`, done: R`بتستخدمها فعلًا أسبوع، ومفيش ولا [[innerHTML]] فيه داتا من اليوزر، وبتشتغل من سيرفر محلي من غير errors في Console.`, ext: R`زوّد تصدير واستيراد JSON بملف، واختصارات كيبورد بـ [[keydown]]، وخلّيها PWA بعد قسم PWA.` },
       ],
       items: [
         {
-          cmd: "scope",
-          title: "المتغير ده شايفه مين؟ (lexical scope)",
-          desc: R`الـ scope هو المكان اللي المتغير عايش فيه. فيه ٣ مستويات: global (الملف أو الصفحة كلها)، و function (جوه الدالة)، و block (بين [[{ }]] مع let و const).
+          cmd: "querySelector",
+          title: "تمسك عنصر من الصفحة بالـ CSS selector",
+          desc: R`الـ DOM هو الصفحة بعد ما المتصفح قراها وحوّلها شجرة objects. [[document.querySelector(selector)]] بترجّع أول عنصر مطابق (أو null)، و [[querySelectorAll]] بترجّع كلهم في NodeList. والـ selector نفس اللي بتكتبه في CSS (تاب HTML و CSS).
 
-الـ scope في JS «lexical»: بيتحدد من مكان الكود وانت بتكتبه، مش من مكان النداء. الدالة الداخلية شايفة متغيرات الدوال اللي حواليها، والعكس لأ. ولما تقرا متغير، JS بيدوّر في الـ scope الحالي، ولو ملقاهوش يطلع للي فوقه، لحد الـ global (scope chain).`,
-          example: R`const app = "shop";                 // global scope
-function checkout() {
-  const total = 100;                // function scope
-  if (total > 50) {
-    const discount = 10;            // block scope
-    console.log(app, total, discount);
-  }
-  console.log(typeof discount);     // "undefined": برا الـ block
-}
-function outer() {
-  const secret = "x";
-  function inner() {
-    return secret;                  // مش لاقيه هنا، فطلع لـ outer
-  }
-  return inner();
-}
-checkout();
-outer(); // "x"`,
-          try: R`عرّف [[const app = "admin"]] جوه [[checkout]] قبل الـ if، وشوف الـ console.log بيطبع أنهي app (الأقرب بيكسب، ودي اسمها shadowing). وبعدين نادي [[inner()]] من برا outer واقرا الـ error.`,
+وتقدر تدوّر جوه عنصر معيّن بدل الصفحة كلها: [[form.querySelector("input")]].`,
+          example: R`document.querySelector("h1")
+document.querySelector("#login-form")
+document.querySelector(".card .price")
+document.querySelector("[data-id='42']")
+document.querySelectorAll("li").length
+document.querySelectorAll("li").forEach((li) => console.log(li.textContent))
+[...document.querySelectorAll("a")].map((a) => a.href)
+document.getElementById("app")
+const form = document.querySelector("form"); form?.querySelector("input[name=email]")
+$0`,
+          try: R`افتح أي موقع، واعمل Inspect على عنصر، وبعدين في Console اكتب [[$0]] (العنصر اللي اخترته). جرّب [[[...document.querySelectorAll("a")].map((a) => a.href)]] عشان تجيب كل لينكات الصفحة.`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** قبل ما تشغّل خمّن: [[let x = 1; { let x = 2; console.log(x); } console.log(x);]]`, done: R`بيطبع [[2]] وبعدين [[1]]: الـ x اللي جوه الـ block متغير تاني خالص (shadowing) والبرّاني متلمسش.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الدالة دي فيها bug: [[function sum(prices) { let total = 0; for (const p of prices) { let total = total + p; } return total; }]]. شغّلها على [[[10, 20] ]] واقرا الـ error، وصلّحها.`, done: R`قبل التصليح بتطلع [[ReferenceError: Cannot access 'total' before initialization]] (الـ total الجديد جوه الـ block بيغطي البرّاني وهو لسه في الـ TDZ). وبعد ما تشيل [[let]] اللي جوه بترجّع [[30]].` },
-            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** دالة [[inner]] جوه [[outer]]، وفي الملف [[const APP = "shop"]]. حط breakpoint جوه inner (في DevTools أو VS Code) وافتح لوحة Scope، واكتب كل متغير ظاهر تحت أنهي قسم.`, done: R`لقيت أقسام Local (متغيرات inner) و Closure (متغيرات outer اللي inner بتستخدمها) و Script (الـ [[const APP]]) و Global (window أو globalThis)، وكل متغير في القسم اللي توقعته من الـ scope chain.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** [[countInRange(nums, min, max)]] جواها دالة صغيرة [[inRange(n)]] بتقرا min و max من الـ scope اللي برّاها من غير ما تاخدهم parameters، والـ count بيتحسب بـ filter.`, done: R`[[countInRange([1, 5, 10, 15], 5, 10)]] بترجّع 2، و [[countInRange([], 0, 9)]] بترجّع 0. ولو ناديت [[inRange(3)]] برّه countInRange بيطلع [[ReferenceError: inRange is not defined]].` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** اكتب [[function leak() { count = 5; }]] من غير [[let]]، ونادي [[leak()]] واطبع [[count]] برّه. وبعدين حط [["use strict";]] في أول الملف وجرّب تاني. وبعدها ارسم الـ scope chain لدالة جوه دالة جوه دالة، وكل واحدة بتقرا متغير من مستوى مختلف.`, done: R`من غير strict mode [[count]] بيطبع [[5]] (اتعمل global من غير ما تقصد)، ومع strict بيطلع [[ReferenceError: count is not defined]]. والرسمة بتقول كل متغير اتلقى في أنهي مستوى، والكود بيطبع اللي الرسمة قالته.` },
-            { lvl: 'تحدي', t: R`**refactor:** كود فيه [[let items = []; let total = 0;]] برّه، ودالتين [[addItem(price)]] و [[reset()]] بيعدّلوا فيهم مباشرة. خليه بدوال بتاخد الحالة كـ parameter وترجّع حالة جديدة: [[addItem(state, price)]] و [[reset()]]، من غير ولا متغير global بيتغيّر.`, done: R`[[let s = reset(); s = addItem(s, 100); s = addItem(s, 50);]] بيدّي [[s.total]] بـ 150 و [[s.items.length]] بـ 2 زي الكود القديم. ومفيش ولا دالة بتلمس متغير برّاها، فتقدر تختبر كل واحدة لوحدها.` }
+            { lvl: 'سريع', t: R`**بيانات حقيقية:** افتح أي موقع، وفي Console اعدّ الصور اللي مالهاش alt: [[document.querySelectorAll("img:not([alt])").length]]. وبعدين جرّب [[.map]] مباشرة على نتيجة [[querySelectorAll]].`, done: R`بيطلع رقم، ولو حطيت [[alt]] لصورة منهم من تاب Elements العدد بيقل واحد. و [[.map]] بتطلع [[TypeError: document.querySelectorAll(...).map is not a function]]: الـ NodeList فيها forEach بس، فلازم [[[...list] ]] الأول.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الـ HTML: [[<ul id="menu"><li class="item active">A</li><li class="item">B</li><li>C</li></ul>]]. اكتب ناتج [[document.querySelectorAll("#menu .item").length]] و [[document.querySelector("li:not(.item)").textContent]] و [[document.querySelector(".item.active").textContent]] و [[document.querySelector("#menu > li:nth-child(2)").textContent]] قبل ما تجرّب في Console.`, done: R`توقعت وطلع [[2]] و [["C"]] و [["A"]] و [["B"]]. وتقدر تقول الفرق بين [[".item.active"]] (الاتنين على نفس العنصر) و [[".item .active"]] (واحد جوه التاني).` },
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة فيها كروت منتجات [[<div class="card" data-price="120">]] (اعمل ٤). اجمع الأسعار كلها بـ [[querySelectorAll]] و [[dataset.price]] و [[reduce]]، وطلّع اسم أغلى كارت.`, done: R`المجموع اللي بيتطبع بيساوي مجموع الأرقام اللي كاتبها في الـ HTML (مش نصوص متلزقة جنب بعض زي [["12080"]])، ولو زوّدت كارت خامس الرقم بيتغير لوحده.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[document.querySelector("card").addEventListener("click", open);]] والكروت [[<div class="card">]]. افتح Console واقرا الرسالة، وصلّح.`, done: R`الرسالة [[TypeError: Cannot read properties of null (reading 'addEventListener')]]: الـ selector [["card"]] بيدوّر على tag اسمه card فرجّع null. بعد [[".card"]] الـ listener اشتغل على أول كارت، ولو عايز كلهم استخدمت [[querySelectorAll]] و forEach.` },
+            { lvl: 'تحدي', t: R`**ابني:** اكتب helper [[qs(selector, root = document)]] بترمي Error فيه الـ selector لو مفيش عنصر بدل ما ترجّع null، و [[qsa(selector, root)]] بترجّع array حقيقية. واستخدمهم في صفحة فيها فورم وجواه inputs.`, done: R`[[qs("#nope")]] بترمي Error رسالته فيها [[#nope]] (فبتعرف فورًا أنهي selector غلط)، و [[qsa("li").map((li) => li.textContent)]] شغالة، و [[qs("input", form)]] بتدوّر جوه الفورم بس.` }
           ],
-          flag: "script",
+          flag: "console",
           deep: {
-            why: "أي bug من نوع «المتغير ده undefined ليه؟» أو «مين اللي غيّر القيمة دي؟» بيرجع للـ scope. وهو الأساس اللي الـ closures مبنية عليه، ودي أشهر سؤال انترفيو JS.",
-            how: R`كل دالة وكل block بيعملوا environment جديد فيه متغيراتهم، ومعاه reference للـ environment اللي اتكتبوا جواه. البحث عن متغير بيمشي في السلسلة دي لفوق. وعشان السلسلة بتتحدد وقت الكتابة (lexical)، الدالة لو اتنادت من مكان تاني خالص، لسه شايفة المتغيرات بتاعة مكان تعريفها. ده عكس dynamic scope اللي في bash مثلًا.
+            why: "أي تفاعل في صفحة من غير framework بيبدأ إنك تمسك العنصر: الزرار اللي هتسمع له، والـ div اللي هتعرض فيه النتيجة. وحتى مع React هتحتاجه في الـ tests (Testing Library) وفي سكربتات Console والـ extensions.",
+            how: R`المتصفح بيقرا الـ HTML ويبني شجرة (Document Object Model): كل tag بيبقى object ([[HTMLElement]]) ليه خصايص و methods، والـ JS بيقرا ويعدّل فيها، والمتصفح بيعيد الرسم.
 
-الـ modules (ESM) ليها scope خاص بيها: الـ const في أول ملف module مش global، ومش بيظهر في ملف تاني غير لو عملته export. أما الـ script العادي في المتصفح، فالـ var والدوال في أوله بيبقوا على [[window]].
+[[querySelectorAll]] بترجّع NodeList ثابتة (static): لو ضفت عناصر بعدها مش هتظهر فيها. وعندها [[forEach]] بس مفيهاش [[map]] و [[filter]]، عشان كده بتحوّلها array بـ [[[...list]]] أو [[Array.from]].
 
-و [[globalThis]] هو الـ global object في أي بيئة ([[window]] في المتصفح و [[global]] في Node).`,
-            when: "خلّي كل متغير في أضيق scope ممكن. الـ global للحاجات اللي فعلًا مشتركة، ويستحسن تبقى في module وتتعمل import.",
-            mistakes: R`نفس اسم المتغير جوه وبرا (shadowing) فتفتكر انك بتعدّل اللي برا. وتعتمد على متغيرات global بين ملفات. وتنسى let/const فتعمل global بالغلط. وفي الانترفيو: «يعني إيه lexical scope؟» و «scope chain».`
+[[getElementById]] أقدم وأسرع شوية، و [[getElementsByClassName]] بترجّع HTMLCollection «live» بتتحدث لوحدها، وده ساعات بيعمل مفاجآت في الـ loops.
+
+لو الـ script في [[<head>]] من غير [[defer]]، العناصر لسه متعملتش وقت ما الكود يشتغل فهترجع null. الحل: [[<script src="app.js" defer>]] أو [[type="module"]] (الاتنين بيستنوا الـ HTML يخلص).`,
+            when: R`في أي صفحة JS عادي، وفي سكربتات Console، وفي الـ tests. في React متستخدمهاش جوه الـ components: استخدم [[useRef]] (تاب React).`,
+            mistakes: R`تنسى إن querySelector ممكن ترجّع null فتقع على [[.addEventListener]] («Cannot read properties of null»): السبب غالبًا selector غلط أو الـ script اشتغل قبل الـ HTML. وتنسى [[#]] أو [[.]] في الـ selector. وتنادي map على NodeList.`
           },
           teach: R`## الفكرة في سطرين
 
-كل متغير ليه «حدود» عايش جواها، ودي اسمها **scope**. المثال فيه ٣ مستويات: global، وجوه دالة، وجوه block. وبعدين دالة جوه دالة عشان تشوف إن الداخلية بتشوف اللي حواليها. النواتج من تشغيله في [[app.js]] بـ Node 24.
+قبل ما تغيّر أي حاجة في الصفحة لازم «تمسكها». [[document.querySelector]] بتاخد CSS selector (نفس اللي بتكتبه في ملف CSS) وترجّعلك العنصر. السطور دي بتتكتب في Console المتصفح (F12 ثم Console). جرّبتها كلها في Chrome headless على صفحة تجربة دي:
 
----
-
-## ١. global scope
-
-~~~text app.js
-const app = "shop";                 // global scope
-~~~
-
-متغير متعرّف برّه أي دالة أو block، فكل الكود في الملف شايفه.
-
----
-
-## ٢. function scope و block scope
-
-~~~text app.js
-function checkout() {
-  const total = 100;                // function scope
-  if (total > 50) {
-    const discount = 10;            // block scope
-    console.log(app, total, discount);
-  }
-  console.log(typeof discount);     // "undefined": برا الـ block
-}
-~~~
-
-- [[total]] اتعرّف جوه الدالة، فعايش جواها بس.
-- [[{ }]] بتاعة الـ if اسمها **block**، و [[const]] و [[let]] جوه block عايشين جواه بس. فـ discount موجود بين القوسين دول وبس.
-- السطر اللي جوه الـ if شايف التلاتة: discount من الـ block نفسه، و total من الدالة اللي حواليه، و app من الـ global.
-
-### إزاي JS لقى app؟
-
-لما بتكتب اسم متغير، JS بيدوّر عليه في الـ scope الحالي. لو ملقاهوش يطلع للي فوقه، وهكذا لحد الـ global. السلسلة دي اسمها **scope chain**:
-
-~~~text البحث عن app
-block بتاع الـ if   →  مش موجود
-دالة checkout      →  مش موجود
-global             →  "shop"  لقيته
-~~~
-
-### [[typeof discount]] برّه الـ block
-
-[[typeof]] بيرجّع نوع القيمة كـ string. ولو المتغير مش موجود خالص مبيرميش error، بيرجّع [["undefined"]]. لو كتبت [[console.log(discount)]] بدلها:
-
-~~~text الناتج
-ReferenceError: discount is not defined
+~~~text index.html
+<h1>متجر</h1>
+<div id="app">
+  <form id="login-form"><input name="email" type="email"><input name="pass"></form>
+  <div class="card"><span class="price">120</span></div>
+  <div data-id="42">item 42</div>
+  <ul><li>شاي</li><li>قهوة</li><li>عصير</li></ul>
+  <a href="/about">عن</a> <a href="https://example.com/x">برا</a>
+</div>
 ~~~
 
 ---
 
-## ٣. دالة جوه دالة
+## ١. [[document]]
 
-~~~text app.js
-function outer() {
-  const secret = "x";
-  function inner() {
-    return secret;                  // مش لاقيه هنا، فطلع لـ outer
-  }
-  return inner();
-}
-~~~
-
-inner مكتوبة **جوه** outer، فالـ scope اللي فوقها هو outer. لما تدوّر على secret ومتلاقيهوش جواها، تطلع لـ outer وتلاقيه. والعكس مش شغال: outer مش شايفة أي متغير جوه inner.
-
-ودي معنى **lexical**: السلسلة بتتحدد من مكان كتابة الدالة في الكود، مش من المكان اللي اتنادت منه.
+[[document]] object جاهز في المتصفح بيمثّل الصفحة كلها. المتصفح قرا الـ HTML وعمل منه شجرة objects اسمها **DOM** (Document Object Model)، و document هو أصلها. ومش موجود في Node، عشان كده الدرس ده في المتصفح بس.
 
 ---
 
-## ٤. التشغيل
+## ٢. أنواع الـ selectors
 
-~~~text app.js
-checkout();
-outer(); // "x"
+~~~text Console
+document.querySelector("h1")
+document.querySelector("#login-form")
+document.querySelector(".card .price")
+document.querySelector("[data-id='42']")
 ~~~
+
+| الـ selector | معناه | اللي رجع |
+|---|---|---|
+| [[h1]] | أول tag اسمه h1 | [[<h1>متجر</h1>]] |
+| [[#login-form]] | [[#]] = id | الفورم |
+| [[.card .price]] | [[.]] = class، والمسافة = «جوه» | [[<span class="price">120</span>]] |
+| [[[data-id='42']]] | الأقواس = attribute بقيمة معيّنة | [[<div data-id="42">item 42</div>]] |
+
+querySelector بترجّع **أول** عنصر مطابق بس. ولو مفيش:
 
 ~~~text الناتج
-shop 100 10
-undefined
-x
+document.querySelector(".nope")   →  null
 ~~~
-
-(السطر الأخير طبعته بـ [[console.log(outer())]].)
 
 ---
 
-## ٥. «جرّب»: shadowing و inner من برّه
+## ٣. [[querySelectorAll]]: كلهم
 
-لو ضفت [[const app = "admin";]] جوه checkout قبل الـ if:
-
-~~~text الناتج
-admin 100 10
+~~~text Console
+document.querySelectorAll("li").length
+document.querySelectorAll("li").forEach((li) => console.log(li.textContent))
 ~~~
 
-وبعد الدالة [[console.log(app)]] لسه [[shop]]. ده **shadowing**: المتغير الداخلي «بيغطّي» على اللي برّه بنفس الاسم، لأن البحث بيقف عند أول واحد يلاقيه. الـ global متغيرتش.
-
-ولو حطيت نفس السطر **بعد** الـ if بدل قبلها:
+بترجّع **NodeList**: شبه array، فيها [[length]] و [[forEach]].
 
 ~~~text الناتج
-ReferenceError: Cannot access 'app' before initialization
+3
+شاي
+قهوة
+عصير
 ~~~
 
-مش [["shop"]]! الاسم app بقى محجوز في الدالة من أولها، والسطر بتاعه لسه موصلش (ده TDZ، الدرس الجاي).
+[[textContent]] النص اللي جوه العنصر.
 
-و [[inner()]] من برّه outer:
+---
+
+## ٤. NodeList مش array
+
+~~~text Console
+[...document.querySelectorAll("a")].map((a) => a.href)
+~~~
+
+NodeList معندهاش map. جرّبت من غير تحويل:
 
 ~~~text الناتج
-ReferenceError: inner is not defined
+TypeError: document.querySelectorAll(...).map is not a function
 ~~~
+
+فبنحوّلها array الأول بـ [[[...list]]]: الـ spread بيفرد عناصرها جوه array جديدة. وبعدين [[map]] بتاخد [[href]] من كل لينك:
+
+~~~text الناتج
+["http://127.0.0.1:58602/about","https://example.com/x"]
+~~~
+
+لاحظ إن [[/about]] بقت URL كامل: الخاصية [[a.href]] بترجّع العنوان المحسوب (الرقم بعد 127.0.0.1 هو بورت السيرفر المحلي اللي جرّبت عليه). ولو عايز المكتوب في الـ HTML زي ما هو: [[a.getAttribute("href")]] رجّعت [[/about]].
+
+---
+
+## ٥. الطريقة القديمة بالـ id
+
+~~~text Console
+document.getElementById("app")
+~~~
+
+بتاخد الـ id **من غير** [[#]]. رجّعت الـ div ([[tagName]] بتاعه [[DIV]]).
+
+---
+
+## ٦. تدوّر جوه عنصر
+
+~~~text Console
+const form = document.querySelector("form"); form?.querySelector("input[name=email]")
+~~~
+
+- [[;]] بتفصل جملتين في نفس السطر.
+- [[form.querySelector(...)]]: نفس الدالة بس على عنصر، فبتدوّر جواه بس.
+- [[?.]]: لو form طلع null، متكملش وارجع undefined بدل error.
+- [[input[name=email]]]: input الـ attribute بتاعه name قيمته email.
+
+~~~text الناتج
+<input name="email" type="email">
+~~~
+
+---
+
+## ٧. [[$0]]
+
+ده مش JS عادي، ده اختصار في Console بتاع DevTools (Chrome و Edge و Firefox): العنصر اللي مختاره دلوقتي في تاب Elements. مش هيشتغل في ملف [[app.js]]. (الكلام ده من docs الـ Chrome DevTools، مش متجرّب في السكربت.)
+
+---
+
+## ٨. الـ error المشهور
+
+~~~text الناتج
+document.querySelector("#nope").addEventListener("click", () => {})
+TypeError: Cannot read properties of null (reading 'addEventListener')
+~~~
+
+querySelector رجّعت null (selector غلط، أو السكربت اشتغل قبل ما العنصر يتعمل)، وانت حاولت تقرا منه.
 
 ---
 
 ## الخلاصة
 
-| المستوى | بيتعمل بـ | عايش فين |
+| الدالة | بترجّع | لو مفيش |
 |---|---|---|
-| global | تعريف برّه أي حاجة | الملف كله |
-| function | تعريف جوه دالة | الدالة دي وأي حاجة جواها |
-| block | [[let]] / [[const]] جوه [[{ }]] | الـ block ده بس |
+| [[querySelector(sel)]] | أول عنصر | [[null]] |
+| [[querySelectorAll(sel)]] | NodeList ثابتة | NodeList فاضية |
+| [[getElementById(id)]] | العنصر | [[null]] |
+| [[el.querySelector(sel)]] | جوه el بس | [[null]] |
 
-> البحث بيطلع لفوق بس، من مكان الكتابة. وفي script عادي في المتصفح، [[var]] في الأول بيبقى خاصية على [[window]] و [[let]] لأ (جرّبتها في Chrome: [[window.gv]] طلعت 1 و [[window.gl]] طلعت undefined).`,
+> NodeList ثابتة: جرّبت أضيف [[.card]] جديد بعد [[querySelectorAll(".card")]] وفضلت 1، أما [[getElementsByClassName("card")]] (live) بقت 2 لوحدها.`,
           lines: [
-            R`متغير متعرّف برّه أي دالة أو block، فده global scope: أي كود في الملف يقدر يقراه، وعشان كده [[checkout]] تحت شايفاه. ولأن الكل شايفه، خلّي الـ globals قليلة: أي حتة ممكن تعتمد عليها أو تغيّرها.`,
-            R`كل دالة بتعمل scope جديد: المتغيرات اللي هتتعرّف جواها مش هتبان برّه.`,
-            R`[[total]] في الـ function scope بتاع [[checkout]]: موجود طول ما الدالة شغالة، ومحدش برّه الدالة يقدر يوصله.`,
-            R`الـ [[{ }]] بتاعة [[if]] بتعمل block scope: أي [[let]] أو [[const]] جواها بيعيش جواها بس.`,
-            R`[[discount]] في block scope: موجود لحد القوس اللي بيقفل الـ [[if]]. ولو كان [[var]] كان هيهرب للدالة كلها، لأن [[var]] مبيعترفش بالـ blocks.`,
-            R`الـ block بيشوف نفسه وكل اللي برّاه: [[discount]] من الـ block، و [[total]] من الدالة، و [[app]] من الـ global، فبيطبع [[shop 100 10]].`,
-            R`نهاية الـ block بتاع [[if]]، ومعاها [[discount]] بيختفي.`,
-            R`برّه الـ block [[discount]] مش موجود. استخدمنا [[typeof]] لأنها بترجّع [["undefined"]] لمتغير مش متعرّف بدل ما ترمي error، أما [[console.log(discount)]] لوحدها كانت هترمي ReferenceError.`,
-            R`نهاية [[checkout]].`,
-            R`دالة جواها دالة، عشان نشوف الـ scope chain: الدالة الداخلية تقدر تشوف متغيرات الدوال اللي حواليها.`,
-            R`متغير في scope [[outer]]: [[inner]] هتقدر تشوفه، لكن الكود برّه [[outer]] لأ.`,
-            R`دالة متعرّفة جوه [[outer]]، فالـ scope بتاعها متوصّل بـ scope [[outer]] من مكان ما اتكتبت (lexical scope)، مش من المكان اللي هتتنادى منه.`,
-            R`[[secret]] مش متعرّف جوه [[inner]]، فـ JS بيدوّر في الـ scope اللي فوقها ([[outer]]) ويلاقيه. لو ملقاهوش كان هيكمّل للـ global، ولو مش موجود خالص ReferenceError.`,
-            R`نهاية [[inner]].`,
-            R`بننادي [[inner]] جوه [[outer]] ونرجّع ناتجها، فـ [[outer()]] كلها بترجّع [["x"]].`,
-            R`نهاية [[outer]].`,
-            R`بتشغّل [[checkout]]: بتطبع [[shop 100 10]] من جوه الـ block، وبعدها [[undefined]] من [[typeof]] برّه الـ block.`,
-            R`بترجّع [["x"]]: [[inner]] وصلت لـ [[secret]] عن طريق الـ scope chain. لكن [[console.log(secret)]] هنا برّه [[outer]] كانت هترمي ReferenceError.`,
+            R`[[querySelector]] بتاخد CSS selector وترجّع **أول** عنصر بيطابقه في الصفحة، أو [[null]] لو مفيش. هنا أول [[h1]]، حتى لو الصفحة فيها كذا واحد.`,
+            R`[[#]] في الـ selector معناها id، فده العنصر اللي [[id="login-form"]]. الـ [[#]] لازم: من غيرها هيدوّر على tag اسمه [[login-form]] ويرجّع [[null]].`,
+            R`المسافة بين الاتنين معناها «جوه»: عنصر عليه كلاس [[price]] في أي مستوى جوه عنصر عليه كلاس [[card]]. أي selector بتكتبه في CSS ينفع هنا بنفس الشكل.`,
+            R`الأقواس المربعة بتدوّر بالـ attribute: العنصر اللي [[data-id]] بتاعه [["42"]]. مفيد لما كل عنصر في الـ HTML شايل id من الداتا في [[data-*]].`,
+            R`[[querySelectorAll]] بترجّع **كل** العناصر اللي بتطابق في NodeList، و [[length]] عددهم. لو مفيش ولا واحد بترجّع NodeList فاضية (طولها 0) مش [[null]]، فمفيش error.`,
+            R`الـ NodeList عندها [[forEach]]، فبنلف عليها مباشرة ونطبع نص كل [[li]]. وهي static: لو ضفت [[li]] بعد كده مش هيظهر فيها، لازم تنادي [[querySelectorAll]] تاني.`,
+            R`بس الـ NodeList مش array ومفيهاش [[map]] ولا [[filter]]، فـ [[...]] بتحوّلها array الأول، وبعدها [[map]] بتطلّع الـ [[href]] بتاع كل لينك. ([[Array.from()]] بتعمل نفس التحويل.)`,
+            R`الطريقة القديمة بالـ id، ولسه شغالة وسريعة. خد بالك إنها بتاخد الـ id من غير [[#]]: [[getElementById("#app")]] هترجّع [[null]].`,
+            R`[[querySelector]] موجودة على أي عنصر مش [[document]] بس، فهنا بتدوّر جوه الفورم ده بس على الـ input اللي [[name]] بتاعه [[email]]. و [[?.]] عشان لو مفيش فورم [[form]] هيبقى [[null]] والنداء عليه كان هيرمي TypeError.`,
+            R`في Console بتاع DevTools بس: [[$0]] هو العنصر اللي انت مختاره دلوقتي في تبويب Elements، فتجرّب عليه أي سطر من اللي فوق بسرعة. متكتبهاش في كود حقيقي، لأنها مش موجودة برّه الـ Console.`,
           ],
-          sol: R`بعد ما تضيف [[const app = "admin"]] جوه checkout، الـ console.log بيطبع [[admin 100 10]]: JS بيدوّر على الاسم من الـ scope الأقرب ويطلع لبرّه، فلقى app بتاعة checkout قبل ما يوصل للـ global. الـ global نفسها متغيرتش، ولو طبعت app برّه الدالة هتلاقيها [["shop"]].
+          sol: R`[[$0]] بيطبع نفس العنصر اللي اخترته في Elements (ولما تعدّي عليه بالماوس بيتلوّن في الصفحة). و [[$1]] العنصر اللي قبله، وهكذا. ده موجود في DevTools بس، مش في كودك.
 
-[[inner()]] من برّه outer بتطلع [[ReferenceError: inner is not defined]]: inner متعرّفة جوه outer، فمش موجودة في الـ global scope. الـ scope بيتحدد بمكان كتابة الكود (lexical)، مش بمكان النداء. ولو حطيت [[const app]] بعد الـ if بدل قبلها، هيطلع ReferenceError (TDZ) مش «shop»، لأن الاسم محجوز في الـ scope من أوله (الدرس الجاي).`
+السطر التاني بيرجّع array فيها كل الـ URLs كاملة (absolute)، حتى لو في الـ HTML مكتوبة [[/about]]: [[a.href]] الخاصية بتطلع الـ URL المحسوب، و [[a.getAttribute("href")]] بتطلع المكتوب زي ما هو. والـ [[[...]]] لازمة لأن querySelectorAll بترجّع NodeList، وفيها forEach بس معندهاش map، فلو كتبت [[document.querySelectorAll("a").map]] هيطلعلك [[is not a function]].`
         },
         {
-          cmd: "hoisting و TDZ",
-          title: "ليه تقدر تنادي دالة قبل ما تكتبها؟",
-          desc: R`قبل ما الكود يشتغل، JS بيعدّي على الـ scope ويسجّل كل التعريفات. ده اسمه hoisting: كأن التعريفات اتشالت لأول الـ scope.
+          cmd: "textContent و classList",
+          title: "تغيّر النص والكلاسات وتضيف عناصر",
+          desc: R`[[el.textContent = "..."]] بتغيّر النص، وأمان لأن أي HTML فيه بيظهر كنص. و [[el.classList.add / remove / toggle]] للكلاسات، و [[el.dataset.x]] لـ attributes [[data-x]]. و [[document.createElement]] ثم [[append]] لإضافة عنصر.
 
-بس كل نوع بيتسجّل بشكل مختلف: الـ function declaration بتتسجّل كاملة (تقدر تناديها قبل سطرها). و [[var]] بيتسجّل بقيمة undefined. و [[let]] و [[const]] و [[class]] بيتسجّلوا من غير قيمة، ولو لمستهم قبل سطرهم يطلع ReferenceError. الفترة دي اسمها TDZ (temporal dead zone).`,
-          example: R`sayHi();                        // شغال: الدالة متسجّلة كاملة
-function sayHi() { console.log("hi"); }
-console.log(a);                 // undefined: var من غير قيمة
-var a = 1;
-greet();                        // TypeError: greet is not a function
-var greet = () => console.log("hey");
-console.log(b);                 // ReferenceError: Cannot access 'b' before initialization
-let b = 2;`,
-          try: R`شغّل الكود في ملف بـ Node، هتلاقيه وقف عند [[greet()]]. علّق السطر ده وشغّل تاني عشان توصل للـ ReferenceError. وبعدين غيّر [[var greet]] لـ [[const greet]] وشوف الرسالة اتغيرت لإيه.`,
+[[innerHTML]] بيحط HTML حقيقي، وده خطر لو فيه أي حاجة من اليوزر: ممكن يحط سكربت (XSS). استخدمه مع نصوص انت كاتبها بس.`,
+          example: R`const list = document.querySelector("#todos");
+const title = document.querySelector("h1");
+title.textContent = "مهامي";
+title.classList.add("big");
+title.classList.toggle("done");
+title.dataset.count = "3";
+title.style.color = "tomato";
+const li = document.createElement("li");
+li.textContent = "اكتب درس JS";
+list.append(li);
+const userInput = "<img src=x onerror=alert(1)>";
+list.innerHTML += $__bt<li>$__{userInput}</li>$__bt;
+list.querySelector("li").remove();`,
+          try: R`اعمل ملف [[index.html]] فيه [[<h1>]] و [[<ul id="todos">]] و [[<script src="app.js" defer>]]، وحط الكود في [[app.js]]، وافتحه بسيرفر محلي (تاب المتصفح). شوف الـ alert بيطلع من السطر الخطر، وبعدين غيّره لـ createElement و textContent وشوفه بيظهر كنص.`,
           practice: [
-            { lvl: 'سريع', t: R`**قارن وقيس:** قارن [[console.log(typeof x); let x;]] بـ [[console.log(typeof y);]] (y مش متعرّف خالص).`, done: R`الأول بيطلع [[ReferenceError: Cannot access 'x' before initialization]]، والتاني بيطبع [["undefined"]] عادي: الـ TDZ أشد من متغير مش موجود أصلًا.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[function show() { return LIMIT; }]] وبعدها [[show();]] وبعدها [[const LIMIT = 5;]]. شغّل، وبعدين انقل سطر [[show()]] تحت الـ const.`, done: R`الترتيب الأول بيطلع [[ReferenceError: Cannot access 'LIMIT' before initialization]]، والتاني بيرجّع [[5]] مع إن الدالة مكتوبة فوق الـ const: الـ TDZ بتتحسب بوقت التنفيذ مش بمكان السطر.` },
-            { lvl: 'تطبيق', t: R`**ابني:** ملف [[report.js]] مترتّب «الصورة الكبيرة الأول»: [[const CURRENCY = "ج.م";]] فوق، وتحته [[function main()]] بتنادي [[total(prices)]] و [[format(n)]] المكتوبين تحتها كـ function declarations، وسطر [[main();]] في آخر الملف.`, done: R`[[main()]] بتطبع [[300 ج.م]] لـ [[[100, 200]]]. ولما نقلت سطر [[main();]] لأول الملف قبل الـ const طلع [[ReferenceError: Cannot access 'CURRENCY' before initialization]]، فعرفت ليه الـ declarations تقدر تيجي تحت بس النداء لازم يبقى بعد الـ const.` },
-            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** خمّن الناتج قبل ما تشغّل: [[console.log(typeof foo); var foo = 1; function foo() {} console.log(typeof foo);]]. وبعدين جرّب [[new A(); class A {}]].`, done: R`الأول بيطبع [["function"]] وبعدين [["number"]] (الـ function declaration متسجّلة كاملة، وسطر [[var foo = 1]] هو اللي غيّرها وقت التنفيذ)، و [[new A()]] بتطلع [[ReferenceError: Cannot access 'A' before initialization]]، وتقدر تشرح الاتنين في سطرين.` },
-            { lvl: 'تحدي', t: R`**اشرحها:** اكتب لزميلك ٣ سطور: function declaration، و [[var]]، و [[let/const/class]]، كل واحد بيحصل له إيه لو استخدمته قبل سطره، بمثال سطر واحد لكل واحد.`, done: R`الـ ٣ سطور صح: الـ function بتشتغل كاملة، و var بترجّع undefined، و let/const/class بيرموا [[ReferenceError: Cannot access '...' before initialization]]. وزميلك قدر يتوقع ناتج تمرين «اقرا وتوقّع» اللي فوق من شرحك.` }
+            { lvl: 'سريع', t: R`**ابني:** زرار «الوضع الليلي»: كل ضغطة بتعمل [[classList.toggle("dark")]] على [[document.body]] وبتغيّر نص الزرار بـ [[textContent]] لـ «فاتح» أو «غامق».`, done: R`الألوان بتتبدل مع كل ضغطة، و [[document.body.classList.contains("dark")]] في Console بترجّع [[true]] و [[false]] بالتبادل، ونص الزرار دايمًا عكس الوضع الحالي.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** على [[<p id="x">Hi <b>there</b></p>]]: اكتب [[x.textContent]] و [[x.innerHTML]] و [[x.children.length]] و [[x.childNodes.length]]، وناتج [[x.classList.toggle("a")]] مرتين ورا بعض.`, done: R`طلع [["Hi there"]] و [[Hi <b>there</b>]] و [[1]] و [[2]] (النص [["Hi "]] عقدة لوحده)، و toggle رجّعت [[true]] وبعدين [[false]]: بترجّع الكلاس بقى موجود ولا لأ.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** todo صغيرة: input وزرار «ضيف» بيعملوا [[li]] جديد بـ [[createElement]] و [[textContent]] و [[append]]. جرّب تكتب [[<b>hi</b>]] في الـ input.`, done: R`الـ li بيظهر فيه [[<b>hi</b>]] كنص بالحروف مش bold، و [[li.children.length]] بترجّع [[0]]. ولو غيّرتها لـ [[innerHTML]] الكلمة بتبقى bold: يعني أي حد يقدر يحط HTML في صفحتك.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[btn.classList.add("btn primary");]]. شغّله واقرا الـ error في Console.`, done: R`الرسالة [[InvalidCharacterError: Failed to execute 'add' on 'DOMTokenList': The token provided ('btn primary') contains HTML space characters, which are not valid in tokens.]]. بعد [[classList.add("btn", "primary")]] الكلاسين اتضافوا، و [[btn.className]] بقى [["btn primary"]].` },
+            { lvl: 'تحدي', t: R`**ابني:** على ليستة مهام، كل [[li]] جنبه زرار ✓ بيعمل toggle لكلاس [[done]]، وفوق الليستة عدّاد «٢ من ٥ خلصوا» بيتحسب من [[querySelectorAll("li.done").length]]، وبيتخزّن في [[data-count]] على العنوان.`, done: R`العدّاد بيتحدث مع كل ضغطة ومع كل مهمة جديدة، و [[h1.dataset.count]] بيساوي الرقم اللي في النص، ولو شلت كلاس done من Elements بإيدك وضغطت أي زرار العدّاد بيصلّح نفسه.` }
           ],
           flag: "script",
           deep: {
-            why: "بيفسّر رسايل errors غريبة زي «Cannot access before initialization» و «is not a function» على حاجة انت شايفها متعرّفة. ومن أشهر أسئلة «اتوقع الناتج».",
-            how: R`الـ engine بيشتغل على مرحلتين: الأولى بيعمل الـ environment ويسجّل فيه كل الأسماء، والتانية بينفّذ سطر سطر.
+            why: "ده كل اللي React بيعمله من تحت: بيغيّر نصوص وكلاسات ويضيف ويشيل عناصر. لما تفهمه هتفهم ليه React موجود أصلًا، وهتعرف تكتب صفحة صغيرة من غير framework.",
+            how: R`[[textContent]] بيحط النص زي ما هو، فمفيش أي حاجة بتتنفذ. [[innerText]] شبهه بس بيراعي الـ CSS (العناصر المخفية) وأبطأ لأنه بيحتاج layout.
 
-في المرحلة الأولى: [[function f() {}]] بتتسجّل ومعاها جسمها. [[var x]] بيتسجّل ويتحط فيه undefined. [[let]] و [[const]] و [[class]] بيتسجّلوا «uninitialized»، وأي قراية ليهم قبل ما التنفيذ يوصل لسطرهم بترمي ReferenceError.
+[[innerHTML]] بيخلي المتصفح يعمل parse للنص كـ HTML. [[<script>]] مش بتشتغل فيه، بس [[<img onerror=...>]] بتشتغل، وده أشهر شكل XSS. و [[innerHTML +=]] بيعيد بناء كل العناصر اللي جوه، فبيضيّع الـ listeners والـ state بتاعتهم.
 
-عشان كده [[var greet = () => ...]] بتدي TypeError مش ReferenceError: المتغير موجود وقيمته undefined، وانت بتحاول تنادي undefined.
+[[classList]] أحسن من [[className]] لأنه بيعدّل كلاس واحد من غير ما يمسح الباقي. و [[dataset]] بيحوّل [[data-user-id]] لـ [[dataset.userId]].
 
-الـ TDZ حاجة كويسة: بتمسك الغلط بدل ما تديك undefined بهدوء. وهي زمنية مش مكانية: دالة مكتوبة فوق [[let x]] تقدر تقرا x عادي لو اتنادت بعد السطر ده.`,
-            when: R`استفيد من hoisting الدوال لو عايز تكتب الـ main فوق والتفاصيل تحت. غير كده، عرّف قبل ما تستخدم.`,
-            mistakes: R`تفتكر إن let و const مبيتعملهمش hoisting خالص: بيتعمل، بس في TDZ. وتنادي arrow function متعرّفة تحت. وفي الانترفيو: «إيه الناتج؟» على كود زي اللي فوق، و «إيه هو TDZ؟».`
+[[append]] بيقبل أكتر من عنصر ونصوص، و [[prepend]] و [[before]] و [[after]] و [[replaceWith]] و [[remove]] كلهم حديثين وأبسط من [[appendChild]] و [[removeChild]] القديمة.
+
+وكل تعديل ممكن يخلي المتصفح يعيد حساب الصفحة؛ لو هتضيف مية عنصر، اعملهم في [[DocumentFragment]] أو ابنيهم وضيفهم مرة واحدة (تاب HTML و CSS: layout thrashing).`,
+            when: R`صفحات بسيطة، و widgets صغيرة، والـ extensions. و [[classList]] مع CSS بدل [[style]] في أغلب الحالات: الشكل في CSS والـ JS بيغيّر الكلاس بس.`,
+            mistakes: R`[[innerHTML]] مع داتا من اليوزر أو من API. و [[style.x]] لكل حاجة بدل كلاس. و [[innerHTML +=]] جوه loop. وفي الانترفيو: «الفرق بين textContent و innerHTML و innerText؟» و «إزاي تمنع XSS؟».`
           },
           teach: R`## الفكرة في سطرين
 
-JS مبيقراش الكود ويشغّله سطر سطر من غير تحضير. قبل التنفيذ بيعدّي على الـ scope ويسجّل كل الأسامي المتعرّفة فيه. فلما تستخدم اسم قبل سطره، النتيجة بتعتمد على **نوع التعريف**. المثال فيه ٤ أنواع، وكل واحد بيدّي نتيجة مختلفة. شغّلته في [[app.js]] بـ Node 24.
+بعد ما تمسك العنصر (الدرس اللي فات) بتغيّر فيه: النص، والكلاسات، والـ attributes، وتضيف عناصر جديدة أو تشيل. وفي نص المثال سطر خطر عن قصد عشان تشوف XSS بعينك. شغّلت الكود بالظبط في Chrome headless بالصفحة دي:
+
+~~~text index.html
+<h1>عنوان</h1>
+<ul id="todos"></ul>
+<script src="app.js" defer></script>
+~~~
 
 ---
 
-## ١. التسجيل قبل التنفيذ
-
-لو تخيلنا المرحلة الأولى للملف ده، JS بيكتب لنفسه ورقة كده:
-
-| الاسم | اتعرّف بـ | قيمته قبل التنفيذ |
-|---|---|---|
-| sayHi | [[function sayHi() {}]] | الدالة كاملة |
-| a | [[var]] | [[undefined]] |
-| greet | [[var]] | [[undefined]] |
-| b | [[let]] | ممنوع اللمس (TDZ) |
-
-وبعدين يبدأ ينفّذ من أول سطر. التسجيل ده اسمه **hoisting** (رفع)، كأن التعريفات اتشالت لفوق.
-
----
-
-## ٢. function declaration
+## ١. تمسك العنصرين
 
 ~~~text app.js
-sayHi();                        // شغال: الدالة متسجّلة كاملة
-function sayHi() { console.log("hi"); }
+const list = document.querySelector("#todos");
+const title = document.querySelector("h1");
 ~~~
 
-[[function اسم() {}]] مكتوبة لوحدها كجملة اسمها **function declaration**، وبتتسجّل بجسمها. فالنداء قبلها شغال: [[hi]].
+[[defer]] في الـ HTML هو اللي مخلّي السطرين دول يلاقوا العناصر (درس defer و async).
 
 ---
 
-## ٣. [[var]]
+## ٢. [[textContent]]: النص
 
 ~~~text app.js
-console.log(a);                 // undefined: var من غير قيمة
-var a = 1;
+title.textContent = "مهامي";
 ~~~
 
-[[var a = 1]] فيها حاجتين: تعريف (اتسجّل في المرحلة الأولى بـ undefined)، وإسناد [[= 1]] (بيحصل لما التنفيذ يوصل للسطر). فالقراية قبله بتدّي [[undefined]] من غير error.
+بتستبدل كل اللي جوه العنصر بالنص ده. وأي [[<]] أو [[>]] بيتعامل كحرف عادي مش tag.
 
 ---
 
-## ٤. [[var]] فيها arrow function
+## ٣. [[classList]]: الكلاسات
 
 ~~~text app.js
-greet();                        // TypeError: greet is not a function
-var greet = () => console.log("hey");
+title.classList.add("big");
+title.classList.toggle("done");
 ~~~
 
-greet زي a بالظبط: متغير var قيمته undefined لحد سطره. والـ arrow function قيمة بتتحط في المتغير، مش declaration. فـ [[greet()]] معناها «نادي undefined»:
+- [[classList]] object فيه كلاسات العنصر، ومعاه methods.
+- [[add("big")]]: ضيف الكلاس من غير ما تمسح الموجود.
+- [[toggle("done")]]: لو موجود شيله، ولو مش موجود ضيفه. هنا مكانش موجود فاتضاف.
 
-~~~text الناتج: Node 24 (البرنامج وقف هنا)
-hi
-undefined
-.../app.js:5
-greet();                        // TypeError: greet is not a function
-^
-
-TypeError: greet is not a function
-    at Object.<anonymous> (.../app.js:5:1)
-~~~
-
-اقرا الـ error: [[app.js:5]] رقم السطر، والـ [[^]] تحت مكان المشكلة، و [[5:1]] سطر 5 عمود 1. النوع **TypeError**: الاسم موجود، بس قيمته من النوع الغلط (undefined مش function).
+جرّبت toggle مرتين ورا بعض: الكلاسات بقت [[big]] وبعدين رجعت [[big done]].
 
 ---
 
-## ٥. [[let]] و TDZ
-
-علّقت سطر [[greet()]] بـ [[//]] في أوله وشغّلت تاني:
+## ٤. [[dataset]] و [[style]]
 
 ~~~text app.js
-console.log(b);                 // ReferenceError: Cannot access 'b' before initialization
-let b = 2;
+title.dataset.count = "3";
+title.style.color = "tomato";
 ~~~
 
-~~~text الناتج: Node 24
-hi
-undefined
-ReferenceError: Cannot access 'b' before initialization
-~~~
+- [[dataset]] بيكتب attributes بتبدأ بـ [[data-]]. [[dataset.count]] بقت [[data-count="3"]]. والاسم المكتوب camelCase بيتحوّل لشُرَط: [[dataset.userId = "5"]] طلعت [[data-user-id="5"]].
+- [[style.color]] بيحط CSS مباشر على العنصر ([[style="color: tomato;"]]). الأحسن في العادي تغيّر كلاس وسيب الشكل في CSS.
 
-b **متسجّلة** (عشان كده الرسالة مش «b is not defined»)، بس [[let]] و [[const]] و [[class]] بيفضلوا «مش جاهزين» لحد سطرهم. الفترة من أول الـ scope لحد سطر التعريف اسمها **TDZ** (temporal dead zone = المنطقة الميتة الزمنية). و initialization = أول قيمة.
-
----
-
-## ٦. «جرّب»: [[const greet]]
-
-لما غيّرت [[var greet]] لـ [[const greet]] ورجّعت النداء:
+بعد الخطوات دي الـ h1 بقى:
 
 ~~~text الناتج
-ReferenceError: Cannot access 'greet' before initialization
+<h1 class="big done" data-count="3" style="color: tomato;">مهامي</h1>
 ~~~
-
-نفس الغلطة، بس الرسالة بقت بتقولك المشكلة بالظبط: استخدمت greet قبل سطرها. و [[class]] نفس الحكاية: [[new C()]] قبل [[class C {}]] طلعت [[ReferenceError: Cannot access 'C' before initialization]].
 
 ---
 
-## ٧. ليه «زمنية»؟
+## ٥. عنصر جديد
 
 ~~~text app.js
-function f() { return x; }
-f();          // ReferenceError: Cannot access 'x' before initialization
-let x = 5;
-f();          // 5
+const li = document.createElement("li");
+li.textContent = "اكتب درس JS";
+list.append(li);
 ~~~
 
-جرّبتها: نفس الدالة طلّعت error الأول و [[5]] بعد سطر let. اللي بيفرق **وقت** النداء، مش مكان الدالة في الملف.
+1. [[createElement("li")]]: بيعمل عنصر li في الذاكرة. لسه مش في الصفحة.
+2. نحطله نص.
+3. [[append]]: دخّله كآخر ابن جوه list. دلوقتي ظهر.
+
+~~~text الناتج
+<ul id="todos"><li>اكتب درس JS</li></ul>
+~~~
+
+---
+
+## ٦. السطر الخطر: [[innerHTML]]
+
+~~~text app.js
+const userInput = "<img src=x onerror=alert(1)>";
+list.innerHTML += $__bt<li>$__{userInput}</li>$__bt;
+~~~
+
+تخيّل إن userInput ده حاجة يوزر كتبها. [[innerHTML]] بيقرا النص **كـ HTML**:
+
+1. [[+=]] معناها [[list.innerHTML = list.innerHTML + ...]]: اقرا الـ HTML الحالي كنص، ضيف عليه، وابني كل العناصر من جديد.
+2. المتصفح لقى [[<img src=x>]]: صورة عنوانها [[x]]، والعنوان ده مش موجود فالتحميل فشل.
+3. [[onerror=alert(1)]]: كود بيشتغل لما التحميل يفشل. فاشتغل.
+
+والنتيجة في Chrome:
+
+~~~text الناتج
+alert: 1     (نافذة alert طلعت ومكتوب فيها 1)
+~~~
+
+ده **XSS** (Cross-Site Scripting): كود حد تاني اشتغل في صفحتك. وكان ممكن يبقى سرقة توكن بدل alert.
+
+وفيه أثر جانبي: الـ li بتاعة createElement اتشالت من الصفحة واتعمل بدالها li جديدة بنفس الشكل. [[li.isConnected]] كانت true قبل السطر ده وبقت false بعده. يعني أي listener كان على العناصر القديمة ضاع.
+
+---
+
+## ٧. [[remove()]]
+
+~~~text app.js
+list.querySelector("li").remove();
+~~~
+
+بيشيل أول li من الصفحة (النسخة الجديدة من «اكتب درس JS»). الصفحة في الآخر:
+
+~~~text الناتج
+<ul id="todos"><li><img src="x" onerror="alert(1)"></li></ul>
+~~~
+
+---
+
+## ٨. الحل الآمن (الـ solCode)
+
+~~~text app.js
+const safe = document.createElement("li");
+safe.textContent = userInput;
+list.append(safe);
+~~~
+
+مفيش alert، والعنصر في الـ HTML بقى:
+
+~~~text الناتج
+<li>&lt;img src=x onerror=alert(1)&gt;</li>
+~~~
+
+[[&lt;]] و [[&gt;]] هما [[<]] و [[>]] بس كـ **حروف** تتعرض، مش tag. فاليوزر بيشوف النص زي ما كتبه.
 
 ---
 
 ## الخلاصة
 
-| التعريف | قبل سطره | الرسالة |
+| عايز | استخدم | ملاحظة |
 |---|---|---|
-| [[function f() {}]] | شغال كامل | |
-| [[var x]] | [[undefined]] | |
-| [[var f = () => {}]] ونادتها | TypeError | [[f is not a function]] |
-| [[let]] / [[const]] / [[class]] | ReferenceError | [[Cannot access 'x' before initialization]] |
-| اسم مش موجود خالص | ReferenceError | [[x is not defined]] |`,
+| تغيّر نص | [[textContent]] | آمن مع أي داتا |
+| كلاس | [[classList.add/remove/toggle]] | مبيمسحش الباقي |
+| [[data-x]] | [[dataset.x]] | camelCase ↔ شرطة |
+| عنصر جديد | [[createElement]] + [[append]] | |
+| تشيل عنصر | [[el.remove()]] | |
+| HTML حقيقي | [[innerHTML]] | لنصوص انت كاتبها بس |`,
           lines: [
-            R`بننادي [[sayHi]] قبل سطر تعريفها، وبتشتغل وتطبع [[hi]]. السبب إن JS قبل ما ينفّذ أي سطر بيسجّل كل function declaration بجسمها كامل (hoisting).`,
-            R`التعريف نفسه. ولأنه declaration ([[function]] في أول السطر) اتسجّل كامل قبل التنفيذ، فمكانه في الملف مش بيفرق.`,
-            R`[[var a]] اتعملها hoisting بس **من غير قيمتها**: المتغير بيتسجّل بـ [[undefined]] لحد ما التنفيذ يوصل لسطر التعيين. فبيطبع [[undefined]] بدل error، ودي مشكلة لأنها بتخبّي الغلطة.`,
-            R`هنا بس القيمة [[1]] بتتحط. التعيين نفسه مبيترفعش، اللي بيترفع الإعلان بس.`,
-            R`[[greet]] متعرّف بـ [[var]]، فاتسجّل بـ [[undefined]] زي [[a]]. ونداء [[undefined]] كدالة بيرمي [[TypeError: greet is not a function]]، مع إن الاسم موجود.`,
-            R`الدالة بتتحط في [[greet]] هنا بس. فالـ arrow والـ function expression مش بيتعملهم hoisting زي الـ declaration: بيمشوا بقواعد المتغير اللي شايلهم.`,
-            R`[[let]] و [[const]] بيترفعوا برضه، بس من غير أي قيمة: من أول الـ scope لحد سطر التعريف هما في TDZ (Temporal Dead Zone)، وأي محاولة توصلهم بترمي ReferenceError. ده أحسن من [[var]] لأن الغلطة بتبان فورًا بدل [[undefined]] ساكتة.`,
-            R`هنا [[b]] بيخرج من الـ TDZ وياخد [[2]]، ومن بعد السطر ده تقدر تستخدمه عادي.`,
+            R`العنصر اللي [[id]] بتاعه [[todos]]، الليستة اللي هنضيف فيها المهام. بنحفظه في متغير مرة واحدة، ولو الـ id غلط هيبقى [[null]] وأول استخدام ليه هيرمي TypeError.`,
+            R`أول [[h1]] في الصفحة، وده اللي هنغيّر نصه وشكله في السطور اللي جاية.`,
+            R`[[textContent]] بتحط نص عادي: أي [[<]] أو [[>]] بيظهر كحروف ومبيتحوّلش HTML، فده الآمن مع أي داتا جاية من اليوزر. وبتمسح أي حاجة كانت جوه العنصر قبلها.`,
+            R`[[classList.add]] بتضيف كلاس على العنصر من غير ما تلمس الكلاسات اللي عليه. لو كتبت [[className = "big"]] بدلها هتمسح كل الكلاسات القديمة وتسيب دي بس.`,
+            R`[[toggle]]: لو الكلاس موجود بتشيله، ولو مش موجود بتضيفه، وبترجّع [[true]] لو بقى موجود. مناسبة لزرار فتح وقفل أو «المهمة خلصت».`,
+            R`[[dataset]] بيقرا ويكتب الـ attributes اللي بتبدأ بـ [[data-]]: السطر ده بيعمل [[data-count="3"]] على العنصر. القيم دايمًا strings، والاسم بيتحوّل: [[dataset.userId]] تبقى [[data-user-id]].`,
+            R`[[style]] بيحط CSS inline على العنصر مباشرة، والـ inline بيكسب على قواعد ملف الـ CSS العادية. ينفع لقيم بتتحسب وقت التشغيل زي عرض progress bar، لكن للشكل الثابت الأحسن كلاس في CSS وتضيفه بـ [[classList]].`,
+            R`[[createElement]] بتعمل عنصر [[li]] جديد في الميموري، بس لسه مش في الصفحة ومحدش شايفه لحد ما تضيفه.`,
+            R`نص العنصر الجديد بـ [[textContent]] برضه، فلو النص ده جاي من اليوزر محدش يقدر يحقن HTML فيه.`,
+            R`[[append]] بتدخّل العنصر في آخر الليستة، وساعتها بس بيظهر في الصفحة. وتقدر تديها كذا عنصر مرة واحدة: [[list.append(a, b)]].`,
+            R`نص شكله بريء بس هو HTML: صورة [[src]] بتاعها غلط، فالـ [[onerror]] بيشتغل وينفّذ JavaScript. ده نوع الكلام اللي أي حد يقدر يكتبه في خانة اسم أو تعليق.`,
+            R`[[innerHTML]] بيعامل النص كـ HTML، فالـ [[img]] اتعملت والـ [[onerror]] نفّذ [[alert]]: ده XSS، وبدل alert ممكن يسرق التوكن أو يبعت طلبات باسم اليوزر. وكمان [[+=]] بتبني محتوى الليستة كله من جديد، فالـ listeners اللي على العناصر القديمة بتضيع. استخدم [[createElement]] و [[textContent]] زي اللي فوق.`,
+            R`[[remove]] بتشيل العنصر من الصفحة، وهنا بتشيل أول [[li]] في الليستة. ده نسخة جديدة مش الـ [[li]] اللي عملناه: [[innerHTML +=]] اللي فوق عمل العناصر من النص من جديد، فالمتغير [[li]] بقى بيشاور على عنصر برّه الصفحة.`,
           ],
-          sol: R`أول تشغيل بيطبع [[hi]] وبعدين [[undefined]]، وبيقف عند [[TypeError: greet is not a function]]: [[var greet]] اتعمله hoisting بقيمة undefined، والنداء على undefined كـ function بيطلع TypeError مش ReferenceError.
+          sol: R`لما تفتح الصفحة: العنوان بيبقى «مهامي» باللون الأحمر، وفيه [[<li>]] من createElement، وبعدين الـ alert بيطلع (رقم 1) لأن الـ [[<img>]] اتحط كـ HTML حقيقي، والـ [[src=x]] فشل فاشتغل [[onerror]]. ده XSS: أي نص من يوزر في innerHTML ممكن يشغّل كود. وآخر سطر بيشيل أول li (بتاعة createElement) مش التانية.
 
-بعد ما تعلّق سطر [[greet()]]: بيطبع hi و undefined وبعدين [[ReferenceError: Cannot access 'b' before initialization]]. الـ let اتعمله hoisting برضه، بس في الـ TDZ لحد سطر التعريف.
-
-ولو خليت [[const greet]] (ورجّعت سطر النداء): الرسالة بتبقى [[ReferenceError: Cannot access 'greet' before initialization]]. يعني نفس الغلطة بقت error أوضح بيقولك المشكلة فين بالظبط، وده سبب إن const أحسن من var حتى في الدوال.`
+لما تغيّر السطر الخطر لـ [[const li2 = document.createElement("li"); li2.textContent = userInput; list.append(li2);]] مفيش alert، وهتشوف النص [[<img src=x onerror=alert(1)>]] مكتوب في الصفحة زي ما هو: textContent بيعامل أي حاجة كنص. ولو الصفحة فاضية خالص افتح Console: غالبًا انت فاتحها كـ file:// أو نسيت [[defer]] فالسكريبت اشتغل قبل ما [[#todos]] يتعمل، و querySelector رجّع null.`,
+          solCode: R`const list = document.querySelector("#todos");
+const userInput = "<img src=x onerror=alert(1)>";
+const safe = document.createElement("li");
+safe.textContent = userInput; // بيظهر كنص، مفيش alert
+list.append(safe);`
         },
         {
-          cmd: "closure",
-          title: "يعني إيه closure؟",
-          desc: R`الـ closure دالة فاكرة المتغيرات اللي كانت حواليها وقت ما اتعملت، حتى بعد ما الدالة اللي حواليها خلصت ورجعت.
+          cmd: "addEventListener",
+          title: "تسمع لضغطة أو كتابة أو submit",
+          desc: R`[[el.addEventListener("click", handler)]] بتنادي الدالة كل ما الحدث يحصل، وبتبعتلها object الـ event: فيه [[event.target]] (العنصر اللي الحدث حصل عليه) و [[event.preventDefault()]] (امنع السلوك الافتراضي، زي إن الفورم يعمل reload).
 
-ده بيحصل تلقائي مع كل دالة في JS، وبيستخدم في: متغيرات private محدش يوصلها غير من دوال معينة، ودوال «متظبطة» (factory)، والـ callbacks والـ event handlers اللي بتقرا متغيرات، و hooks في React.`,
-          example: R`function createCounter(start = 0) {
-  let count = start;
-  return {
-    increment() { return ++count; },
-    get() { return count; },
-  };
+أشهر الأحداث: [[click]] و [[input]] (كل حرف) و [[change]] و [[submit]] و [[keydown]]. وعشان تشيل الـ listener لازم تبعت نفس الدالة لـ [[removeEventListener]].`,
+          example: R`const btn = document.querySelector("#save");
+const form = document.querySelector("form");
+function onSave(event) {
+  console.log("اتضغط", event.target);
 }
-const c1 = createCounter();
-const c2 = createCounter(10);
-c1.increment();          // 1
-c1.increment();          // 2
-c2.increment();          // 11: كل counter ليه count بتاعه
-console.log(c1.count);   // undefined: مفيش طريقة توصله غير من الدوال
-console.log(c1.get());   // 2`,
-          try: R`اكتب [[once(fn)]] بترجّع دالة بتنادي fn أول مرة بس، وبعد كده بترجّع نفس الناتج الأول. هتحتاج متغيرين في الـ closure: [[called]] و [[result]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** اكتب [[makeGreeter(greeting)]] بترجّع دالة بتاخد [[name]] وترجّع التحية والاسم.`, done: R`[[const hi = makeGreeter("أهلا"); hi("Sara")]] بترجّع [["أهلا Sara"]]، و [[makeGreeter("صباح الخير")("Omar")]] بترجّع جملتها هي، والاتنين مش بيأثروا على بعض.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[function counter() { let n = 0; return () => ++n; } const a = counter(), b = counter(); a(); a(); b(); console.log(a(), b());]]`, done: R`توقعت وطلع [[3 2]]: كل نداء لـ [[counter()]] عمل [[n]] جديدة، فـ a و b مش بيشتركوا في حاجة.` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[function makeCounter() { return () => { let count = 0; count++; return count; }; }]]. نادي العدّاد ٣ مرات.`, done: R`قبل التصليح كل نداء بيرجّع 1 لأن [[count]] بتتعمل من جديد جوه الدالة اللي بترجع. بعد ما تنقل [[let count = 0]] لـ makeCounter (برّه الدالة اللي بترجع) النداءات بترجّع 1 و 2 و 3.` },
-            { lvl: 'تطبيق', t: R`**ابني:** اكتب [[createTodoStore()]] فيها array خاصة في الـ closure، وبترجّع [[add(text)]] و [[remove(index)]] و [[list()]]. و [[list()]] بترجّع نسخة مش الـ array نفسها (درس reference و copy).`, done: R`[[store.list().push("hack")]] مبيغيرش اللي جوه ([[store.list().length]] زي ما هو)، ومفيش طريقة توصل للـ array من برّه، واتنين store منفصلين كل واحد ليه مهامه.` },
-            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[memoize(fn)]]: Map في الـ closure بتخزّن الناتج لكل argument، فلو اتندهت بنفس القيمة تاني ترجّع المتخزّن من غير ما تنادي fn. جرّبها على دالة بطيئة بتزوّد عدّاد كل ما تشتغل.`, done: R`[[memo(5)]] مرتين و [[memo(6)]] مرة: العدّاد بيبقى [[2]] مش [[3]]، والنتيجة صح في المرات التلاتة، و memoize على دالتين مختلفتين كل واحدة ليها Map لوحدها.` },
-            { lvl: 'تحدي', t: R`**محاكاة:** [[createAccount(initial)]] بترجّع [[deposit]] و [[withdraw]] و [[balance]]، والرصيد متغير في الـ closure. السحب أكبر من الرصيد بيرجّع «الرصيد مش كفاية» من غير ما يغيّره.`, done: R`من 1000: [[deposit(500)]] بترجّع 1500، و [[withdraw(2000)]] الرسالة، و [[withdraw(300)]] بترجّع 1200، و [[balance()]] 1200، و [[acc.bal]] بترجّع undefined (مفيش طريقة توصل للرصيد من برّه).` }
-          ],
-          flag: "script",
-          deep: {
-            why: "ده السؤال رقم واحد في انترفيوهات JS. وهو اللي بيفسّر ليه الـ callbacks بتشتغل، وليه React hooks بتقرا قيم «قديمة» ساعات (stale closure)، وإزاي تعمل private state من غير classes.",
-            how: R`لما دالة بتتعمل، بتاخد معاها reference للـ environment اللي اتعملت فيه (الـ scope chain من درس scope). لما [[createCounter]] بتخلص، الـ environment بتاعها كان المفروض يتمسح، بس الـ methods اللي رجعت لسه شايلة reference ليه، فالـ garbage collector مبيمسحوش.
-
-كل نداء لـ createCounter بيعمل environment جديد، عشان كده c1 و c2 منفصلين.
-
-الـ closure بيشيل reference للمتغير نفسه مش نسخة من قيمته. فلو المتغير اتغير بعد كده، الدالة هتشوف القيمة الجديدة. والعكس في React: كل render بيعمل دوال جديدة شايلة قيم الـ render ده، فـ [[setInterval]] اتعمل في أول render هيفضل شايف الـ state القديمة (stale closure)، والحل dependency array أو [[setCount((c) => c + 1)]] (تاب React).
-
-وتكلفتها: أي متغير في closure عايش طول ما الدالة عايشة. لو الـ closure شايل object ضخم وأنت ناسيه في listener، ده memory leak (المستوى ٣).`,
-            when: "private state، و factories، و memoize، و debounce، و once، وأي callback محتاج داتا من السياق اللي حواليه.",
-            mistakes: R`تفتكر إن الـ closure بياخد نسخة من القيمة. وتنسى إن كل نداء بيعمل state جديدة، فتنادي [[createCounter()]] في كل مرة بدل ما تحفظ الناتج. وفي الانترفيو: متعرّفش closure بـ «دالة جوه دالة» بس؛ قول «دالة فاكرة الـ lexical environment بتاعها حتى بعد ما الدالة الخارجية خلصت» واديهم مثال counter.`
-          },
-          teach: R`## الفكرة في سطرين
-
-في الطبيعي، متغيرات الدالة بتختفي لما الدالة تخلص. بس لو الدالة رجّعت دالة تانية بتستخدم المتغيرات دي، المتغيرات بتفضل عايشة عشانها. الدالة اللي «شايلة» متغيرات مكان ولادتها معاها اسمها **closure**. المثال بيعمل counter بالطريقة دي، والنواتج من Node 24.
-
----
-
-## ١. الـ factory
-
-~~~text app.js
-function createCounter(start = 0) {
-  let count = start;
-  return {
-    increment() { return ++count; },
-    get() { return count; },
-  };
-}
-~~~
-
-- [[createCounter]] دالة بتعمل counter وترجّعه، فبنسميها **factory** (مصنع).
-- [[start = 0]]: باراميتر بـ default.
-- [[let count = start]]: متغير **محلي** جوه الدالة. [[let]] مش const لأننا هنغيّره.
-- الدالة بترجّع object فيه method اتنين، والاتنين مكتوبين **جوه** createCounter، فالـ scope اللي فوقهم فيه count (درس scope).
-
-### [[++count]]
-
-[[++]] قبل المتغير معناها: زوّده واحد ورجّع القيمة **الجديدة**. ولو بعده ([[count++]]) بيرجّع القديمة. جرّبت: [[let n = 5; n++]] رجّعت 5 و n بقت 6، وبعدها [[++n]] رجّعت 7.
-
----
-
-## ٢. اتنين counters
-
-~~~text app.js
-const c1 = createCounter();
-const c2 = createCounter(10);
-~~~
-
-كل نداء لـ createCounter بيعمل **count جديد** خاص بيه. c1 شايل count بدأ من 0، و c2 شايل count تاني بدأ من 10. الـ closure هنا هو إن increment و get فاكرين count بتاع النداء اللي اتولدوا فيه.
-
----
-
-## ٣. التشغيل
-
-~~~text app.js
-c1.increment();          // 1
-c1.increment();          // 2
-c2.increment();          // 11
-~~~
-
-~~~text الناتج
-1
-2
-11
-~~~
-
-- createCounter **خلصت** من زمان، ومع ذلك count لسه موجود وبيزيد: 1 ثم 2. ده الـ closure.
-- c2 مأثرش على c1 ولا العكس: 11 جاية من count بتاع c2.
-
-ولو ناديت [[createCounter().increment()]] مرتين ورا بعض، الناتج [[1 1]]: كل مرة counter جديد بـ count جديد. الصح تحفظ الناتج في متغير زي c1.
-
----
-
-## ٤. محدش يوصل لـ count
-
-~~~text app.js
-console.log(c1.count);   // undefined
-console.log(c1.get());   // 2
-~~~
-
-count **مش خاصية** على الـ object، ده متغير في الـ closure. فـ [[c1.count]] بتدوّر على خاصية مش موجودة: [[undefined]]. ولو طبعت c1 كله:
-
-~~~text الناتج: console.log(c1)
-{ increment: [Function: increment], get: [Function: get] }
-~~~
-
-مفيش count خالص. ولو حاولت تكتب [[c1.count = 999]]، ده بيعمل خاصية جديدة اسمها count على الـ object، وملهاش علاقة بالمتغير: [[c1.get()]] فضلت [[2]]. ده **private state**: الطريقة الوحيدة توصل للقيمة هي الدوال اللي انت سمحت بيها.
-
----
-
-## ٥. قبل التمرين
-
-تمرين [[once]] تحت بيستخدم نفس الفكرة بالظبط: دالة بترجّع دالة، ومتغيرات في الـ scope **برّه** الدالة اللي بترجّعها عشان تفضل فاكرة بين النداءات. اسأل نفسك وانت بتحل: لو حطيت المتغير **جوه** الدالة اللي بترجّعها، هيتعمل جديد كل نداء ولا هيفضل واحد؟ (فكّر في [[createCounter().increment()]] اللي طلعت 1 كل مرة.)
-
----
-
-## الخلاصة
-
-| الحتة | دورها |
-|---|---|
-| [[let count]] جوه createCounter | الحالة اللي هتتفتكر |
-| الدوال اللي بترجع | شايلة reference لـ count (closure) |
-| كل نداء لـ createCounter | environment جديد و count جديد |
-| [[c1.count]] | undefined: count مش خاصية |
-
-> الـ closure بيشيل **المتغير نفسه** مش نسخة من قيمته، فلو اتغير الدالة بتشوف القيمة الجديدة.`,
-          lines: [
-            R`دالة بتصنع counter. كل نداء ليها بيعمل [[count]] جديد ودوال جديدة شايلاه، و [[start = 0]] قيمة البداية لو متبعتتش.`,
-            R`[[count]] متغير محلي في الدالة. العادي إنه يختفي أول ما [[createCounter]] ترجع، بس هنا هيفضل عايش لأن فيه دوال لسه محتاجاه.`,
-            R`بترجّع object فيه دالتين. الـ object ده الطريقة الوحيدة اللي الكود برّه هيوصل بيها لـ [[count]].`,
-            R`[[++count]] بتزوّد [[count]] بواحد وترجّع القيمة الجديدة. الدالة دي اتعرّفت جوه [[createCounter]]، فهي closure: شايلة إشارة لنفس [[count]] حتى بعد ما [[createCounter]] تخلص.`,
-            R`بترجّع قيمة [[count]] الحالية من غير ما تغيّرها. وهي شايفة **نفس** المتغير اللي [[increment]] بتزوّده، مش نسخة منه.`,
-            R`نهاية الـ object اللي راجع.`,
-            R`نهاية [[createCounter]].`,
-            R`أول counter بيبدأ من 0 (الـ default). النداء ده عمل [[count]] خاص بيه.`,
-            R`نداء تاني: [[count]] جديد بيبدأ من 10، ملوش دعوة بتاع [[c1]] خالص.`,
-            R`[[count]] بتاع [[c1]] بقى 1، والدالة رجّعته.`,
-            R`بقى 2: القيمة اتفتكرت بين النداءين، لأن الـ closure ماسك المتغير نفسه ومش بيعمله من أول كل مرة.`,
-            R`[[c2]] بدأ من 10 فبقى 11، و [[c1]] لسه 2. كل نداء لـ [[createCounter]] عمل «صندوق» منفصل.`,
-            R`بيطبع [[undefined]] لأن [[count]] متغير جوه الـ closure مش خاصية على الـ object. فمحدش يقدر يقراه أو يغيّره من برّه غير عن طريق [[increment]] و [[get]]: private state من غير class.`,
-            R`الطريقة الوحيدة للقراية: [[get]] شايفة [[count]] ورجّعت [[2]].`,
-          ],
-          sol: R`[[once]] بتحتفظ بـ [[called]] و [[result]] في الـ closure. لو [[init = once((x) => x * 2)]]، يبقى [[init(5)]] بـ 10، و [[init(100)]] بـ 10 برضه، والدالة الأصلية اتنادت مرة واحدة بس.
-
-الغلطة الشائعة إنك تحط [[let called = false]] جوه الدالة اللي بترجّعها بدل ما تحطه برّاها: ساعتها كل نداء بيعمل متغير جديد بـ false وكأن مفيش once. والغلطة التانية إنك تفحص [[if (!result)]] بدل called، فلو fn رجّعت 0 أو undefined هتتنادي تاني. ده pattern حقيقي بيستخدم في init لمرة واحدة، وبيتسأل في الانترفيو.`,
-          solCode: R`function once(fn) {
-  let called = false;
-  let result;
-  return function (...args) {
-    if (!called) {
-      called = true;
-      result = fn.apply(this, args);
-    }
-    return result;
-  };
-}
-let runs = 0;
-const init = once((x) => { runs++; return x * 2; });
-console.log(init(5), init(100), runs); // 10 10 1`,
-          check: {
-            lang: "js",
-            starter: R`function once(fn) {
-  // called و result هنا، برّا الدالة اللي هترجّعها
-  return fn;
-}`,
-            tests: R`test("init(5) ← 10 وبعدين init(100) ← 10 برضه", () => {
-  const init = once((x) => x * 2);
-  expect([init(5), init(100)]).toEqual([10, 10]);
+btn.addEventListener("click", onSave);
+btn.removeEventListener("click", onSave);
+btn.addEventListener("click", () => console.log("مرة واحدة"), { once: true });
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(form));
+  console.log(data);
 });
-test("الدالة الأصلية بتتنادي مرة واحدة بس", () => {
-  let runs = 0;
-  const f = once(() => runs++);
-  f(); f(); f();
-  expect(runs).toBe(1);
-});
-test("لو fn رجّعت 0 أو undefined متتناديش تاني (افحص called مش result)", () => {
-  let runs = 0;
-  const f = once(() => { runs++; return 0; });
-  f(); f();
-  expect([runs, f()]).toEqual([1, 0]);
-});
-test("كل once ليها closure لوحدها", () => {
-  const a = once(() => "a"), b = once(() => "b");
-  expect([a(), b()]).toEqual(["a", "b"]);
-});
-test("بتعدّي الـ arguments و this", () => {
-  const obj = { n: 3, get: once(function (x) { return this.n + x; }) };
-  expect(obj.get(4)).toBe(7);
+form.querySelector("input").addEventListener("input", (e) => {
+  console.log(e.target.value);
 });`,
-            solution: R`function once(fn) {
-  let called = false;
-  let result;
-  return function (...args) {
-    if (!called) {
-      called = true;
-      result = fn.apply(this, args);
-    }
-    return result;
-  };
-}`
-          }
-        },
-        {
-          cmd: "closures في loop",
-          title: "ليه اللوب ده بيطبع 3 3 3 مش 0 1 2؟",
-          desc: R`أشهر سؤال «اتوقع الناتج» في JS: loop بـ [[var]] جواها [[setTimeout]]. الإجابة 3 3 3، لأن كل الـ callbacks شايلة نفس المتغير [[i]]، ولما اشتغلوا (بعد ما اللوب خلص) كان بقى 3.
-
-الحل: [[let]] بدل [[var]]. الـ let في for بيعمل متغير جديد لكل لفة، فكل callback شايل الـ i بتاعته. والحل القديم قبل let كان IIFE.`,
-          example: R`for (var i = 0; i < 3; i++) {
-  setTimeout(() => console.log("var", i), 0);
-}
-for (let j = 0; j < 3; j++) {
-  setTimeout(() => console.log("let", j), 0);
-}
-for (var k = 0; k < 3; k++) {
-  ((n) => setTimeout(() => console.log("iife", n), 0))(k);
-}`,
-          try: R`قبل ما تشغّل، اكتب الناتج اللي متوقعه على ورقة (٩ سطور). شغّل وقارن. وبعدين غيّر الـ [[0]] في أول setTimeout لـ [[1000]]: سطور var اتأخرت للآخر، بس قيمتها لسه 3 3 3؟ ليه؟`,
+          try: R`اعمل فورم فيه input اسمه email وزرار submit. شيل [[e.preventDefault()]] وشوف الصفحة بتعمل reload والـ URL اتغير. وبعدين جرّب [[{ once: true }]] واضغط الزرار مرتين.`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const fns = []; for (var i = 0; i < 3; i++) fns.push(() => i);]] واطبع [[fns.map((f) => f())]]. وبعدين غيّر var لـ let.`, done: R`مع var بيطبع [[[ 3, 3, 3 ] ]] ومع let بيطبع [[[ 0, 1, 2 ] ]].` },
-            { lvl: 'تطبيق', t: R`**ابني:** في صفحة: loop بيعمل ٣ أزرار بـ [[createElement]]، وكل زرار listener بيكتب رقمه في [[<p>]]. اكتبه بـ [[var i]] الأول، وبعدين صلّحه.`, done: R`مع [[var]] أي زرار بيكتب [[3]]، وبعد التصليح (let، أو [[forEach]] على array أرقام) كل زرار بيكتب رقمه هو: ٠ و ١ و ٢.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** [[makeMultipliers(n)]] بترجّع array فيها n دالة، والدالة رقم k بتضرب في k. اكتبها بـ [[Array.from]] أو loop بـ let.`, done: R`[[makeMultipliers(4)[3](5)]] بترجّع 15، و [[makeMultipliers(4)[0](5)]] بترجّع 0. ولو كتبتها بـ [[var]] في for عادية كل الدوال كانت هتضرب في 4.` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** عدّ تنازلي: [[for (var i = 3; i >= 1; i--) setTimeout(() => console.log(i), (4 - i) * 1000);]]. خمّن، شغّل، وبعدين صلّحه من غير ما تغيّر var: ابعت [[i]] كـ argument تالت لـ [[setTimeout]].`, done: R`قبل التصليح بيطبع [[0]] تلات مرات (ثانية بين كل واحدة)، وبعد [[setTimeout(console.log, (4 - i) * 1000, i)]] بيطبع [[3]] ثم [[2]] ثم [[1]]، وتقدر تقول ليه ده شغال (القيمة اتنسخت وقت النداء).` },
-            { lvl: 'تحدي', t: R`**اشرحها:** ارسم صناديق للـ loop [[for (var i = 0; i < 3; i++) fns.push(() => i)]] ولنفسه بـ let: كام صندوق اسمه i في كل حالة، وكل دالة سهمها بيشاور على أنهي صندوق.`, done: R`الرسمة: مع var صندوق واحد قيمته في الآخر 3 والتلات دوال بيشاوروا عليه، ومع let ٣ صناديق (0 و 1 و 2) وكل دالة على صندوقها. وتقدر من الرسمة تقول ناتج التمرين الأول من غير تشغيل.` }
+            { lvl: 'سريع', t: R`**ابني:** textarea وتحتها [[<p>]] بيكتب عدد الحروف وانت بتكتب، باستخدام event [[input]].`, done: R`الرقم بيتغير مع كل حرف، ومع المسح، ومع اللصق بالماوس (اللي [[keydown]] كان هيفوّته).` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[btn.addEventListener("click", handleClick());]] و handleClick بتعمل [[console.log("clicked")]]. افتح الصفحة واضغط ٣ مرات.`, done: R`«clicked» اتطبعت مرة واحدة وقت التحميل والضغطات مبتعملش حاجة، لأن الأقواس نادت الدالة فورًا وبعتت نتيجتها (undefined). بعد [[addEventListener("click", handleClick)]] بتتطبع مع كل ضغطة بس.` },
+            { lvl: 'تطبيق', t: R`**ابني:** modal: زرار «افتح» بيشيل [[hidden]] من الـ dialog، وزرار × بيرجّعه. وأول ما يتفتح ضيف [[keydown]] على [[document]] بيقفله لما [[e.key === "Escape"]]، وشيل الـ listener ده بـ [[removeEventListener]] لما يتقفل.`, done: R`Esc بتقفل المودال، وحط [[console.log]] في handler الـ keydown: وهو مقفول مبيطبعش حاجة لو دوست أي زرار، يعني الـ listener اتشال فعلًا (لأنك بعت نفس الدالة مش arrow جديدة).` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[<div id="outer"><div id="inner">in</div></div>]] وعليهم ٣ listeners click: على inner بيطبع «inner»، وعلى outer «outer»، وعلى document «document». اضغط على inner: إيه الترتيب؟ وبعدين حط [[e.stopPropagation()]] في بتاع inner.`, done: R`الترتيب [[inner]] ثم [[outer]] ثم [[document]] (الـ event بيطلع لفوق: bubbling). وبعد stopPropagation بيطبع [[inner]] بس.` },
+            { lvl: 'تحدي', t: R`**ابني:** فورم تسجيل فيه باسورد وتأكيد باسورد: الـ submit بيعمل [[preventDefault]] لو الباسورد أقل من ٨ حروف أو التأكيد مختلف، وبيكتب رسالة الغلط تحت الـ input نفسه، والرسالة بتختفي أول ما تصلّح (event [[input]]) من غير ما تدوس submit تاني.`, done: R`فورم غلط مبيعملش reload والـ URL متغيرش، والرسالة بتظهر تحت الحقل الغلط بس، وبتختفي وانت بتكتب أول ما الشرط يتحقق، وفورم صح بيطبع الداتا في Console.` },
+            { lvl: 'تحدي', t: R`**محاكاة:** لوحة أسانسير: ٥ زراير أدوار بتضيف الدور لطابور (Set عشان التكرار)، وزرار «اتحرك» كل ضغطة بيطلع أو ينزل دور واحد ناحية أول دور في الطابور، ولما يوصل بيشيله، والدور الحالي ظاهر في [[<output>]].`, done: R`من الدور 1، الضغط على 4 ثم 2 ثم 4 تاني بيخلّي الطابور [[4، 2]] بس. «اتحرك» ٣ مرات بيوصّل للدور 4 ويشيله، و ٢ كمان بيوصّل للدور 2، وبعدها «اتحرك» مبيعملش حاجة والطابور فاضي.` }
           ],
           flag: "script",
           deep: {
-            why: "السؤال ده بيختبر ٣ حاجات مع بعض: الـ scope بتاع var و let، والـ closures، وإن setTimeout بيشتغل بعد الكود المتزامن (event loop، المستوى ٣). ونفس المشكلة بتحصل في الحقيقة مع event listeners جوه loops.",
-            how: R`مع [[var]]: فيه متغير [[i]] واحد للدالة كلها. اللوب بيلف ٣ مرات ويسجّل ٣ callbacks، وكلهم شايلين نفس المتغير. اللوب بيخلص و i بقى 3 (الشرط وقف عنده). وبعدين الـ callbacks بتشتغل وكلها تقرا 3.
+            why: "أي تفاعل مع اليوزر حدث: ضغطة، كتابة، scroll، إرسال فورم. ده الأساس اللي [[onClick]] في React مبني عليه، و React نفسه بيعمل listener واحد على الـ root (درس event delegation).",
+            how: R`لما تضغط على عنصر، الحدث بيمشي ٣ مراحل: capture من الـ document لتحت لحد العنصر، وبعدين target، وبعدين bubble من العنصر لفوق لحد الـ document. الـ listeners العادية بتشتغل في الـ bubble، و [[{ capture: true }]] بيخليها في الـ capture.
 
-مع [[let]] في رأس الـ for: الـ spec بيقول اعمل binding جديد لكل لفة وانسخ فيه القيمة، فكل callback شايل متغير مختلف.
+[[event.target]] العنصر اللي اتضغط فعلًا (ممكن يكون span جوه الزرار)، و [[event.currentTarget]] العنصر اللي عليه الـ listener. و [[stopPropagation()]] بيوقف الـ bubble، و [[preventDefault()]] بيمنع سلوك المتصفح (submit، أو فتح لينك، أو checkbox).
 
-الـ IIFE (Immediately Invoked Function Expression) بتعمل scope جديد يدويًا: [[n]] باراميتر بياخد نسخة من k كل لفة.
+الخيارات: [[once]] (يتشال لوحده بعد أول مرة)، و [[passive: true]] (وعد إنك مش هتعمل preventDefault، فالـ scroll يبقى ناعم على الموبايل)، و [[signal]] (تشيل listeners كتير مرة واحدة بـ AbortController).
 
-والـ setTimeout بـ 0 مش معناه «دلوقتي»: معناه «بعد ما الكود الحالي يخلص وأقرب فرصة». عشان كده اللوب كله بيخلص الأول.`,
-            when: R`دايمًا [[let]] أو [[const]] في الـ loops ([[for (const x of arr)]]). و forEach كمان حل، لأن كل نداء للـ callback ليه scope بتاعه.`,
-            mistakes: R`تفتكر إن setTimeout بـ 0 بيشتغل فورًا. وتحل المشكلة بـ let من غير ما تعرف تشرح ليه. وفي الانترفيو: اشرح الـ 3 حاجات (var واحد مشترك، الـ callbacks بتشتغل بعد اللوب، let بيعمل binding لكل لفة) واذكر حل IIFE كحل قديم.`
+[[new FormData(form)]] بتقرا كل الـ inputs اللي ليها [[name]]، و [[Object.fromEntries]] بتحوّلها object.`,
+            when: R`أي تفاعل في صفحة من غير framework. و [[submit]] على الفورم مش [[click]] على الزرار، عشان Enter يشتغل كمان.`,
+            mistakes: R`[[removeEventListener]] بـ arrow جديدة: دالة مختلفة فمش هتتشال. و [[addEventListener("click", save())]]: نادتها فورًا. وتضيف listener جوه دالة بتتنادي كتير فالحدث يشتغل ٥ مرات. وتنسى preventDefault في الـ submit. وفي الانترفيو: «اشرح event bubbling و capturing» و «الفرق بين target و currentTarget».`
           },
           teach: R`## الفكرة في سطرين
 
-٣ loops شبه بعض، كل واحدة بتسجّل ٣ دوال تشتغل «بعدين» بـ [[setTimeout]]. الفرق الوحيد: المتغير اتعرّف بـ var ولا let ولا اتنسخ في IIFE. ونتيجة الأولى مختلفة تمامًا عن الاتنين التانيين. النواتج من Node 24.
+الـ event (حدث) حاجة بتحصل في الصفحة: ضغطة، أو حرف اتكتب، أو فورم اتبعت. [[addEventListener]] بتقول للمتصفح: «لما الحدث ده يحصل على العنصر ده، نادي الدالة دي». الدالة دي اسمها **handler** أو **listener**. شغّلت المثال في Chrome headless على الفورم اللي في الـ solCode (input اسمه email وزرار id بتاعه save)، وكتبت وضغطت بـ playwright.
 
 ---
 
-## ١. [[setTimeout]] بسرعة
+## ١. نمسك العنصرين
 
 ~~~text app.js
-setTimeout(() => console.log("hi"), 0);
+const btn = document.querySelector("#save");
+const form = document.querySelector("form");
 ~~~
 
-بتاخد دالة (callback) ووقت بالملّي ثانية، ومعناها «نادي الدالة دي بعد الوقت ده **على الأقل**». و [[0]] مش معناها دلوقتي: معناها «أول ما الكود اللي شغال حاليًا يخلص». فكل الـ loops هتخلص الأول، وبعدين الدوال تشتغل (التفاصيل في درس event loop).
-
 ---
 
-## ٢. اللوب الأولى: [[var]]
+## ٢. handler باسم
 
 ~~~text app.js
-for (var i = 0; i < 3; i++) {
-  setTimeout(() => console.log("var", i), 0);
+function onSave(event) {
+  console.log("اتضغط", event.target);
 }
+btn.addEventListener("click", onSave);
 ~~~
 
-- [[for (بداية; شرط; خطوة)]]: ابدأ i من 0، ولف طول ما i أقل من 3، وبعد كل لفة زوّد واحد.
-- [[var i]]: var مالهاش block scope، فـ i **متغير واحد** للملف (أو الدالة) كله.
-- كل لفة بتسجّل arrow function بتقرا i. التلاتة شايلين **نفس** المتغير، مش قيمته وقت التسجيل.
-- اللوب بتلف: 0 ثم 1 ثم 2، وبعدين i بقت 3 والشرط [[3 < 3]] false فوقفت.
-
-وبعد اللوبات i لسه موجودة برّه:
-
-~~~text الناتج: console.log بعد اللوبات
-بعد اللوبات: i = 3 k = 3 undefined
-~~~
-
-(i و k بـ 3 لأنهم var، و [[typeof j]] بـ undefined لأن let مش موجودة برّه اللوب.) فلما الدوال تشتغل، التلاتة يقروا i دلوقتي: 3.
+- [[addEventListener("click", onSave)]]: أول argument اسم الحدث كـ string، والتاني الدالة نفسها. لاحظ: [[onSave]] من غير [[()]]. لو كتبت [[onSave()]] هتتنادي **دلوقتي** واللي هيتسجّل هو الناتج بتاعها (undefined).
+- المتصفح لما ينادي الدالة بيبعتلها object الحدث، واحنا سمّيناه event. وفيه [[event.target]]: العنصر اللي الحدث حصل عليه فعلًا.
 
 ---
 
-## ٣. اللوب التانية: [[let]]
+## ٣. تشيله
 
 ~~~text app.js
-for (let j = 0; j < 3; j++) {
-  setTimeout(() => console.log("let", j), 0);
-}
+btn.removeEventListener("click", onSave);
 ~~~
 
-[[let]] في رأس الـ for ليها قاعدة خاصة: كل لفة بتاخد **j جديدة** وفيها قيمة اللفة دي. فأول دالة شايلة j قيمتها 0، والتانية j تانية قيمتها 1، والتالتة 2. كل closure ماسك متغير مختلف.
+لازم تبعت **نفس الدالة** بالظبط. عشان كده عملناها باسم. لو كانت arrow مكتوبة جوه الـ addEventListener، كل arrow جديدة دالة مختلفة ومفيش طريقة تشيلها.
+
+بعد السطر ده onSave مش هتتنادي خالص، وفعلًا في التجربة «اتضغط» مطلعتش ولا مرة.
 
 ---
 
-## ٤. اللوب التالتة: IIFE
+## ٤. [[{ once: true }]]
 
 ~~~text app.js
-for (var k = 0; k < 3; k++) {
-  ((n) => setTimeout(() => console.log("iife", n), 0))(k);
-}
+btn.addEventListener("click", () => console.log("مرة واحدة"), { once: true });
 ~~~
 
-IIFE = Immediately Invoked Function Expression، يعني دالة بتتعمل وتتنادى في نفس اللحظة. نفكها:
+التالت object خيارات. [[once: true]] يعني بعد أول تنفيذ اتشال لوحدك. ضغطت الزرار مرتين:
 
-1. [[(n) => setTimeout(...)]]: arrow بتاخد باراميتر n.
-2. القوسين حواليها [[( ... )]]: عشان نقدر نناديها على طول.
-3. [[(k)]] في الآخر: نادها دلوقتي وابعت قيمة k.
+~~~text الناتج
+-- ضغطة 1
+مرة واحدة
+{"email":"sara@example.com"}
+-- ضغطة 2
+{"email":"sara@example.com"}
+~~~
 
-كل نداء بيعمل **n جديد** (الباراميترات بتتعمل جديدة مع كل نداء) وفيه نسخة من k وقتها. فالـ callback شايل n مش k. ده كان الحل قبل ما let تيجي في ES2015.
+السطر التاني في كل ضغطة جاي من الـ submit (الخطوة الجاية): الزرار جوه فورم، فالضغط عليه بيبعت الفورم.
 
 ---
 
-## ٥. الناتج
+## ٥. [[submit]] و [[preventDefault]]
 
-~~~text الناتج: Node 24
-var 3
-var 3
-var 3
-let 0
-let 1
-let 2
-iife 0
-iife 1
-iife 2
+~~~text app.js
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(form));
+  console.log(data);
+});
 ~~~
 
-الترتيب بين المجموعات هو ترتيب التسجيل، لأن كلهم بـ 0.
+- [[submit]] على **الفورم** مش click على الزرار، عشان Enter جوه الـ input يشغّله كمان.
+- [[e]] نفس object الحدث، بس باسم أقصر.
+- [[e.preventDefault()]]: «امنع اللي المتصفح كان هيعمله». المتصفح كان هيبعت الفورم ويعمل reload للصفحة.
+- [[new FormData(form)]]: بتقرا كل input ليه [[name]]، و [[Object.fromEntries]] بتحوّلها object (درس Object.keys و entries).
+
+ولما شلت preventDefault في التجربة (نسخة تانية من الصفحة)، الصفحة اتنقلت فعلًا والـ URL بقى:
+
+~~~text الناتج
+http://127.0.0.1:51364/ev.html?email=a%40b.co
+~~~
+
+الفورم من غير [[method]] بيبعت GET، فالحقول بتتحط في الـ URL بعد [[?]]، و [[@]] بقت [[%40]] (encoding). والـ console.log بيظهر ثانية ويختفي مع الـ reload.
+
+> ملاحظة من التجربة: لما كتبت [[ab]] في [[type="email"]] وضغطت، الـ submit **مشتغلش خالص**. المتصفح عمل validation الأول ورفض، ورسالته كانت [[Please include an '@' in the email address. 'ab' is missing an '@'.]]. فلو الـ handler مش بيشتغل، اتأكد إن الفورم valid.
 
 ---
 
-## ٦. «جرّب»: أول setTimeout بـ 1000
+## ٦. [[input]]: مع كل حرف
 
-~~~text الناتج: Node 24
-let 0
-let 1
-let 2
-iife 0
-iife 1
-iife 2
-var 3
-var 3
-var 3
+~~~text app.js
+form.querySelector("input").addEventListener("input", (e) => {
+  console.log(e.target.value);
+});
 ~~~
 
-سطور var اتأخرت ثانية وبقت في الآخر، بس لسه **3**. لأن القيمة بتتقري لما الـ callback يشتغل، مش لما اتسجّل، و i كانت 3 من بدري.
+كتبت [[ab]] حرف حرف:
+
+~~~text الناتج
+a string
+ab string
+~~~
+
+[[e.target]] هو الـ input، و [[.value]] اللي مكتوب فيه، ونوعها دايمًا string حتى لو كتبت أرقام. أما [[change]] فبتشتغل مرة لما تخرج من الـ input بعد ما غيّرته.
 
 ---
 
 ## الخلاصة
 
-| اللوب | كام متغير؟ | الـ callback شايل | الناتج |
-|---|---|---|---|
-| [[var i]] | واحد للكل | نفس i | 3 3 3 |
-| [[let j]] | واحد لكل لفة | j بتاعة لفته | 0 1 2 |
-| [[var k]] + IIFE | n جديد لكل نداء | n | 0 1 2 |
-
-> الإجابة في الانترفيو في ٣ جمل: var متغير واحد مشترك، والـ callbacks بتشتغل بعد ما اللوب تخلص، و let بتعمل متغير جديد لكل لفة.`,
+| الحاجة | الشكل | تفتكر إيه |
+|---|---|---|
+| تسمع | [[el.addEventListener("click", fn)]] | fn من غير [[()]] |
+| تشيل | [[el.removeEventListener("click", fn)]] | نفس الدالة بالظبط |
+| مرة واحدة | [[{ once: true }]] | بيتشال لوحده |
+| فورم | [[submit]] على الفورم | بيشتغل بـ Enter وبعد الـ validation |
+| امنع المتصفح | [[e.preventDefault()]] | من غيرها reload |
+| مين؟ | [[e.target]] | العنصر اللي الحدث حصل عليه |`,
           lines: [
-            R`[[var]] مالوش block scope، فـ [[i]] متغير **واحد** للـ loop كلها، قيمته بتتغيّر من 0 لحد 3.`,
-            R`كل لفة بتسجّل callback يتنفّذ بعدين (حتى بـ 0ms بيستنى لحد الكود الحالي ما يخلص). التلاتة ماسكين نفس [[i]]، ولما يشتغلوا تكون الـ loop خلصت و [[i]] بقى 3، فيطبع [[var 3]] تلات مرات.`,
-            R`نهاية الـ loop الأولى.`,
-            R`[[let]] في [[for]] بيعمل [[j]] **جديد لكل لفة**، بقيمة اللفة دي.`,
-            R`كل callback ماسك الـ [[j]] بتاع لفته، فيطبع [[let 0]] و [[let 1]] و [[let 2]]. ده الحل المعتاد النهارده: استخدم [[let]] في الـ loops.`,
-            R`نهاية الـ loop التانية.`,
-            R`[[var]] تاني، عشان نشوف إزاي كانوا بيحلّوها قبل [[let]] ما تيجي.`,
-            R`IIFE: arrow function بتتنادى فورًا بـ [[(k)]]. الباراميتر [[n]] بياخد **نسخة** من قيمة [[k]] في اللفة دي، والـ callback جواها ماسك [[n]] مش [[k]]، فيطبع [[iife 0]] و [[iife 1]] و [[iife 2]].`,
-            R`نهاية الـ loop التالتة.`,
+            R`الزرار اللي [[id="save"]]. بنحفظه في متغير عشان هنضيف ونشيل عليه listeners أكتر من مرة.`,
+            R`أول [[form]] في الصفحة، عشان نسمع لـ [[submit]] بتاعه تحت.`,
+            R`دالة ليها اسم بدل arrow مكتوبة جوه النداء، عشان [[removeEventListener]] محتاجة نفس الدالة بالظبط. المتصفح بيناديها ويبعتلها object الـ [[event]] فيه تفاصيل اللي حصل.`,
+            R`[[event.target]] هو العنصر اللي اتضغط فعلًا. لو جوه الزرار [[span]] أو أيقونة وضغطت عليها، [[target]] هيبقى الـ span؛ أما [[event.currentTarget]] فدايمًا العنصر اللي عليه الـ listener (الزرار).`,
+            R`نهاية [[onSave]].`,
+            R`[[addEventListener]] بتسجّل [[onSave]] تتنادى مع كل ضغطة. بنبعت الدالة نفسها من غير أقواس: لو كتبت [[onSave()]] كانت هتتنادى فورًا مرة واحدة ويتسجّل اللي رجّعته ([[undefined]]).`,
+            R`[[removeEventListener]] بتشيل الـ listener، ولازم نفس اسم الحدث ونفس الدالة بالظبط. لو كنت سجّلت arrow مكتوبة جوه النداء مش هتعرف تشيلها، لأن أي arrow تانية زيها في الشكل دالة جديدة.`,
+            R`[[once: true]] بتخلي الـ listener يشتغل أول ضغطة بس ويتشال لوحده، فمش محتاج تحفظ الدالة ولا تنادي remove.`,
+            R`[[submit]] على الفورم بيشتغل بالضغط على زرار الإرسال وبـ Enter جوه أي input، وبعد ما validation الـ HTML (زي [[required]]) تعدّي. عشان كده نسمع لـ submit على الفورم مش لـ click على الزرار.`,
+            R`من غير السطر ده الفورم بيعمل reload للصفحة (أو يروح للـ [[action]] بتاعه) وكل اللي في الصفحة يضيع. [[preventDefault()]] بتلغي التصرف ده عشان نتعامل إحنا مع الداتا بالـ JavaScript.`,
+            R`[[new FormData(form)]] بتقرا كل الـ inputs اللي ليها [[name]]، و [[Object.fromEntries]] بتحوّلها object زي [[{ email: "..." }]]. الـ input اللي مالوش [[name]] مش هيظهر، ولو فيه اسم متكرر (checkboxes) هتفضل آخر قيمة بس.`,
+            R`بيطبع الـ object في الـ console، فتشوف بالظبط الداتا اللي كنت هتبعتها للسيرفر.`,
+            R`نهاية الـ submit listener.`,
+            R`حدث [[input]] بيشتغل مع كل تغيير في القيمة (كل حرف، والـ paste، والمسح)، عكس [[change]] اللي في خانات الكتابة بيستنى لحد ما تسيب الخانة. مناسب للبحث وانت بتكتب أو للـ validation الفوري.`,
+            R`[[e.target.value]] هي اللي اليوزر كاتبها دلوقتي، ودايمًا string حتى في [[type="number"]]، فلو محتاجها رقم حوّلها بـ [[Number()]].`,
+            R`نهاية الـ input listener.`,
           ],
-          sol: R`الناتج بـ 0 في كل حتة: [[var 3]] ٣ مرات، و [[let 0]] و [[let 1]] و [[let 2]]، و [[iife 0]] و [[iife 1]] و [[iife 2]]. var فيها متغير i واحد للـ loop كلها، ولما الـ callbacks اشتغلت كانت الـ loop خلصت و i بقى 3. let بتعمل j جديد لكل لفة، والـ IIFE بتعمل n جديد بنسخة من k.
+          sol: R`من غير [[e.preventDefault()]]: لما تضغط submit الصفحة بتعمل reload، والـ console.log بيظهر ويختفي بسرعة، والـ URL بيبقى فيه [[?email=...]] لأن الفورم default method بتاعه GET وبيبعت الحقول في الـ URL. مع preventDefault الصفحة ثابتة والـ console بيطبع [[{ email: "..." }]].
 
-بعد ما تخلي أول timeout بـ 1000: الناتج [[let 0 let 1 let 2 iife 0 iife 1 iife 2]] وبعد ثانية [[var 3 var 3 var 3]]. التأخير غيّر الترتيب بس مش القيمة، لأن القيمة مش بتتاخد وقت ما الـ setTimeout اتكتب، بتتقري وقت ما الـ callback يشتغل، و i ساعتها 3 سواء استنيت 0 ولا 1000. لو كنت متوقع 0 1 2 مع var فده بالظبط الغلط اللي السؤال بيختبره.`
+مع [[{ once: true }]]: أول ضغطة تطبع «مرة واحدة»، والتانية ولا حاجة، لأن الـ listener اتشال لوحده بعد أول تنفيذ. لو شايف الرسالة مرتين فغالبًا الكود نفسه اتنفّذ مرتين (سكريبت متحمّل مرتين)، ولو [[querySelector("input")]] رجّعت null يبقى الفورم ملوش input وقت تشغيل السكريبت.`,
+          solCode: R`<form>
+  <input name="email" type="email" />
+  <button>Send</button>
+</form>
+<script>
+  const form = document.querySelector("form");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    console.log(Object.fromEntries(new FormData(form))); // { email: "..." }
+  });
+</script>`
+        },
+        {
+          cmd: "event delegation",
+          title: "listener واحد على الأب بدل listener لكل عنصر",
+          desc: R`بدل ما تحط listener على كل زرار في ليستة (ولما تضيف عنصر جديد تفتكر تحطله)، حط listener واحد على الأب، وجواه اعرف مين اتضغط بـ [[e.target.closest(...)]]. ده شغال لأن الحدث بيطلع لفوق (bubbling).
+
+الميزة: listener واحد مهما كان عدد العناصر، والعناصر اللي هتتضاف بعدين شغالة لوحدها.`,
+          example: R`const list = document.querySelector("#todos");
+function deleteTodo(id) { list.querySelector($__bt[data-id="$__{id}"]$__bt)?.remove(); }
+function toggleTodo(id) { console.log("done", id); }
+list.addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-action]");
+  if (!btn || !list.contains(btn)) return;
+  const id = btn.closest("li").dataset.id;
+  if (btn.dataset.action === "delete") deleteTodo(id);
+  if (btn.dataset.action === "done") toggleTodo(id);
+});
+list.insertAdjacentHTML("beforeend", '<li data-id="9">جديد <button data-action="delete">x</button></li>');`,
+          try: R`ضيف ٣ عناصر بـ insertAdjacentHTML، واضغط delete على الأخير: شغال من غير ما تضيف listener. وبعدين حط [[<span>]] جوه الزرار واضغط عليه، وجرّب تشيل [[closest]] وتستخدم [[e.target.dataset]] مباشرة وشوف ليه بيبوظ.`,
+          practice: [
+            { lvl: 'سريع', t: R`**ابني:** [[ul]] فيها ٥ [[li]]: حط listener واحد على الـ ul بيطبع [[textContent]] بتاع الـ li اللي اتضغط بـ [[e.target.closest("li")]]. وبعدين ضيف li سادس من Console.`, done: R`الضغط على أي واحد بيطبع نصه، والسادس اللي اتضاف بعدين بيطبع برضه، والضغط على الفراغ في الـ ul برّه أي li مبيطبعش حاجة ومبيطلعش error.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<ul>]] عليها listener واحد، وجواها [[<li><button><span>✓</span></button></li>]]. لو ضغطت على الـ ✓ بالظبط، [[e.target.tagName]] و [[e.currentTarget.tagName]] هيطبعوا إيه؟`, done: R`طلع [["SPAN"]] و [["UL"]]: الـ target هو أعمق عنصر اتضغط، والـ currentTarget هو اللي عليه الـ listener. وده سبب إنك محتاج [[closest]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** todo list: كل li فيه زرارين [[data-action="done"]] و [[data-action="delete"]]، وفورم بيضيف مهام جديدة. كل الضغطات بـ listener واحد على الـ ul.`, done: R`delete على مهمة لسه مضافة بيشيلها، و done بيعمل toggle للكلاس، وفي الكود كله [[addEventListener("click"]] مكتوبة مرة واحدة بس.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[if (e.target.dataset.action === "delete") li.remove();]] والزرار [[<button data-action="delete"><i class="icon"></i> مسح</button>]]. اضغط على الأيقونة نفسها.`, done: R`قبل التصليح الضغط على الأيقونة مبيمسحش (الـ target هو الـ [[<i>]] ومالوش data-action)، والضغط على كلمة «مسح» بيمسح. بعد [[const btn = e.target.closest("[data-action]")]] الاتنين بيمسحوا.` },
+            { lvl: 'تحدي', t: R`**ابني:** tabs: أزرار [[button[data-tab="..."]]] جوه [[nav]]، وكل زرار جواه [[<span>]] أيقونة ونص. listener واحد على الـ nav بيدّي كلاس [[active]] للزرار اللي اتضغط ويظهر اللوحة اللي الـ id بتاعها زي [[data-tab]] ويخفي الباقي.`, done: R`الضغط على الأيقونة نفسها بيشتغل زي الضغط على الزرار (لأن [[e.target]] هنا الـ span و [[closest]] بتطلع للزرار)، وفي أي وقت فيه لوحة واحدة بس ظاهرة وزرار واحد بس عليه [[active]].` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** اعمل 1000 [[li]]: مرة بـ listener لكل li، ومرة بـ listener واحد على الـ ul. في Console بتاع Chrome استخدم [[getEventListeners(el)]] وعدّ.`, done: R`في الطريقة الأولى كل li عليه listener واحد (يعني 1000)، وفي التانية [[getEventListeners(ul).click.length]] بـ 1 و الـ li مفيش عليها حاجة. و li جديد بعد التحميل بيشتغل في التانية بس من غير كود زيادة.` }
+          ],
+          flag: "script",
+          deep: {
+            why: "ليستات بتتغير (todos، سلة، تعليقات، جدول) بتتعب لو كل عنصر ليه listener: لازم تضيف وتشيل مع كل تغيير، والذاكرة بتكبر. ودي من أشهر أسئلة انترفيو الفرونت.",
+            how: R`الضغطة على الزرار بتعمل bubble: الزرار ثم الـ li ثم الـ ul ثم ... لحد الـ document. فالـ listener على الـ ul بيشوف كل ضغطة جواه.
+
+[[e.target]] ممكن يكون عنصر جوه الزرار (أيقونة أو span)، عشان كده [[closest(selector)]] بتطلع لفوق من الـ target لحد ما تلاقي أول أب مطابق (أو العنصر نفسه). و [[list.contains(btn)]] بتتأكد إنه جوه الليستة دي مش في مكان تاني فوقيها.
+
+React بيعمل ده على مستوى التطبيق كله: listener واحد لكل نوع حدث على الـ root، وبيوزّع على الـ components.
+
+بعض الأحداث مبتعملش bubble زي [[focus]] و [[blur]] و [[mouseenter]]؛ بدالهم [[focusin]] و [[focusout]] و [[mouseover]].`,
+            when: "أي ليستة أو جدول عناصره بتتضاف وتتشال، أو فيه عدد كبير من العناصر بنفس السلوك.",
+            mistakes: R`تعتمد على [[e.target]] مباشرة فتبوظ لما حد يضغط على أيقونة جوه الزرار. وتعمل [[stopPropagation]] في مكان تاني فالـ delegation تقف من غير ما تعرف. وفي الانترفيو: «إيه هو event delegation وليه مفيد؟» والإجابة: bubbling، و listener واحد، وعناصر جديدة شغالة لوحدها، وذاكرة أقل.`
+          },
+          teach: R`## الفكرة في سطرين
+
+لما تضغط على زرار، الحدث مش بيحصل على الزرار بس: بيطلع لأبوه، وجده، لحد الـ document. ده اسمه **bubbling** (زي الفقاعة اللي بتطلع لفوق). فبدل listener على كل زرار، بنحط واحد على الليستة كلها ونسأل «مين اتضغط؟». جرّبت المثال في Chrome headless على الصفحة دي (الزرار التاني فيه span جواه عن قصد):
+
+~~~text index.html
+<ul id="todos">
+  <li data-id="1">أول <button data-action="done">✓</button>
+    <button data-action="delete"><span>x</span></button></li>
+</ul>
+~~~
+
+---
+
+## ١. الليستة ودالتين مساعدتين
+
+~~~text app.js
+const list = document.querySelector("#todos");
+function deleteTodo(id) { list.querySelector($__bt[data-id="$__{id}"]$__bt)?.remove(); }
+function toggleTodo(id) { console.log("done", id); }
+~~~
+
+- deleteTodo بتبني selector زي [[[data-id="1"]]] بـ template literal، وتدوّر بيه جوه الليستة، و [[?.remove()]] تشيله لو لقته (لو مش موجود [[?.]] بتوقف من غير error).
+- toggleTodo مثال بيطبع بس.
+
+---
+
+## ٢. listener واحد على الأب
+
+~~~text app.js
+list.addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-action]");
+  if (!btn || !list.contains(btn)) return;
+  const id = btn.closest("li").dataset.id;
+  if (btn.dataset.action === "delete") deleteTodo(id);
+  if (btn.dataset.action === "done") toggleTodo(id);
+});
+~~~
+
+أي ضغطة في أي حتة جوه الـ ul هتوصل هنا. نمشي سطر سطر:
+
+### [[e.target.closest("button[data-action]")]]
+
+[[e.target]] العنصر اللي اتضغط فعلًا، ممكن يكون الـ span جوه الزرار. [[closest(selector)]] بتبدأ من العنصر نفسه وتطلع لأبوه وجده لحد ما تلاقي أول واحد مطابق، ولو ملقتش ترجّع null.
+
+### [[if (!btn || !list.contains(btn)) return;]]
+
+- [[!btn]]: الضغطة مش على زرار أو جواه (مثلًا على كلام الـ li)، اخرج.
+- [[list.contains(btn)]]: الزرار جوه الليستة دي؟ احتياط لو الـ closest طلعت لزرار برّه الليستة.
+- [[||]] = «أو»، و [[return]] جوه الـ handler معناها «خلّص هنا».
+
+### [[btn.closest("li").dataset.id]]
+
+من الزرار اطلع لأقرب li، وخد [[data-id]] بتاعه. لاحظ إنه string: [["1"]].
+
+### آخر سطرين
+
+[[btn.dataset.action]] هي قيمة [[data-action]]: يا [["delete"]] يا [["done"]]، ونادي الدالة المناسبة.
+
+---
+
+## ٣. عنصر بيتضاف بعدين
+
+~~~text app.js
+list.insertAdjacentHTML("beforeend", '<li data-id="9">جديد <button data-action="delete">x</button></li>');
+~~~
+
+[[insertAdjacentHTML]] بتضيف HTML في مكان معيّن من غير ما تعيد بناء الموجود (عكس [[innerHTML +=]]). و [[beforeend]] يعني جوه العنصر في الآخر. محدش حط listener للزرار الجديد.
+
+---
+
+## ٤. التجربة
+
+طبعت [[e.target.tagName]] في أول الـ handler، وضغطت بالترتيب:
+
+~~~text الناتج
+الـ li الموجودة: 1,9
+ضغطة على ✓ في 1          target: BUTTON  →  done 1
+ضغطة على الـ x (span) في 1  target: SPAN    →  action: delete id: 1
+الـ li الموجودة: 9
+ضغطة على كلام li 9        target: LI      →  (ولا حاجة: return)
+ضغطة على x في 9           target: BUTTON  →  action: delete id: 9
+الـ li الموجودة: (فاضية)
+~~~
+
+اللي تاخده من الجدول:
+
+1. الضغطة على الـ span: target كان SPAN، و closest طلعت للزرار، فاشتغل. لو كنا استخدمنا [[e.target.dataset.action]] مباشرة كانت هتبقى undefined ومفيش حاجة تحصل.
+2. الضغطة على الكلام: closest رجّعت null، فالـ return اشتغل.
+3. li 9 اتضافت **بعد** الـ listener، وزرارها اشتغل عادي.
+
+---
+
+## ٥. تفاصيل الـ delegation: اللي بيكسرها واللي بيصلّحها
+
+ليستة فيها زرار جواه [[<b>]]، وخانة [[input]]. وعلى الـ [[ul]] أربع listeners. اتشغّل فعلًا على jsdom 30 و Node 24.22.1:
+
+~~~js
+list.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-action]');
+  log.push($__btclick: target=$__{e.target.tagName} currentTarget=$__{e.currentTarget.id} btn=$__{btn?.dataset.action}$__bt);
+});
+list.addEventListener('focus', () => log.push('focus على الأب (bubble)'));
+list.addEventListener('focusin', (e) => log.push('focusin: ' + e.target.name));
+list.addEventListener('focus', (e) => log.push('focus بـ capture: ' + e.target.name), { capture: true });
+
+document.querySelector('b').click();
+document.querySelector('button').addEventListener('click', (e) => e.stopPropagation());
+document.querySelector('b').click();
+document.querySelector('input').focus();
+~~~
+
+~~~text الناتج
+click: target=B currentTarget=list btn=delete
+focus بـ capture: qty
+focusin: qty
+~~~
+
+| اللي اتشاف | معناه |
+|---|---|
+| [[target=B]] و [[currentTarget=list]] | [[e.target]] أعمق عنصر اتضغط، و [[e.currentTarget]] العنصر اللي عليه الـ listener (الـ ul). عشان كده [[closest]] بتبدأ من [[target]] |
+| تاني ضغطة **مطلعتش** سطر | [[stopPropagation]] على الزرار وقفت الـ bubbling قبل ما يوصل للـ ul، فالـ delegation بطلت تشتغل من غير أي error |
+| [[focus]] العادي ماوصلش للأب | [[focus]] و [[blur]] مبيعملوش bubble |
+| [[focusin]] وصل | ده الـ focus اللي بيعمل bubble، واستخدمه مع الـ delegation |
+| [[focus]] بـ [[{ capture: true }]] وصل | الـ capture بيمسك الحدث وهو **نازل** للعنصر، فبيشتغل حتى مع الأحداث اللي مبتطلعش |
+
+**والقاعدة في [[stopPropagation]]:** متستخدمهاش عشان «تمنع الضغطة توصل لحتة تانية» إلا لو مفيش حل تاني، لأن أي delegation فوق (بتاعتك، أو analytics، أو فريمورك) بتقف من غير ما حد يعرف. لو عايز تمنع سلوك المتصفح (submit أو فتح لينك) فده [[preventDefault]] مش [[stopPropagation]]. ولو عايز الـ listener اللي فوق يتجاهل حاجة، خليه هو يفحص بـ [[closest]].
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| listener على الأب | واحد بس، والعناصر الجديدة شغالة لوحدها |
+| [[e.target]] | اللي اتضغط فعلًا (ممكن يكون جوه الزرار) |
+| [[closest(sel)]] | اطلع لأقرب أب مطابق |
+| [[list.contains(btn)]] | اتأكد إنه جوه الليستة دي |
+| [[data-action]] و [[data-id]] | الزرار بيقول هو مين وعايز إيه |
+
+> أحداث زي focus و blur و mouseenter مبتعملش bubble، فالـ delegation معاها بـ focusin و focusout و mouseover.`,
+          lines: [
+            R`الليستة الأب. هنحط عليها listener واحد بدل listener على كل زرار جواها.`,
+            R`بتدوّر جوه الليستة على العنصر اللي [[data-id]] بتاعه هو الـ id ده وتشيله. [[?.]] عشان لو مش موجود [[querySelector]] ترجّع [[null]] و [[remove]] عليها كانت هترمي TypeError.`,
+            R`مكان تعليم المهمة إنها خلصت. هنا بتطبع بس، وفي تطبيق حقيقي هتغيّر الـ state وتعيد الرسم.`,
+            R`listener واحد على الأب. الضغطة على أي حاجة جوه الليستة بتطلع لفوق (event bubbling) لحد ما توصل لـ [[list]]، فالـ listener ده بيشوف كل الضغطات، حتى على العناصر اللي هتتضاف بعدين.`,
+            R`[[e.target]] ممكن يكون حاجة جوه الزرار (أيقونة مثلًا)، فـ [[closest]] بتبدأ من العنصر اللي اتضغط نفسه وتطلع لفوق لحد أول [[button]] عليه [[data-action]]، أو ترجّع [[null]] لو مفيش.`,
+            R`لو الضغطة مش على زرار ([[btn]] بقى [[null]]) نخرج. و [[list.contains]] بتتأكد إن الزرار جوه الليستة فعلًا، لأن [[closest]] ممكن تطلع برّه الليستة وتلاقي زرار في عنصر أكبر شايلها.`,
+            R`الزرار نفسه مفيهوش الـ id، فبنطلع للـ [[li]] اللي شايله وناخد [[data-id]] بتاعه من [[dataset.id]]. القيمة دي string حتى لو شكلها رقم.`,
+            R`[[dataset.action]] بتقرا [[data-action]] من الزرار وتحدد هنعمل إيه: الزرار اللي مكتوب عليه [["delete"]] بينادي [[deleteTodo]].`,
+            R`واللي عليه [["done"]] بينادي [[toggleTodo]]. نوع زرار جديد = سطر زي ده، من غير ما تسجّل listeners جديدة.`,
+            R`نهاية الـ listener.`,
+            R`بنضيف [[li]] جديد بزرار مسح بعد ما الـ listener اتسجّل، والزرار ده شغّال من غير ما نسجّل عليه حاجة لأن الـ listener على الأب. ودي أهم ميزة في الـ delegation. و [[insertAdjacentHTML]] بتعامل النص كـ HTML، فمتحطش فيها داتا جاية من اليوزر.`,
+          ],
+          sol: R`الضغط على delete في العنصر الأخير بيشيله فورًا، مع إن الـ listener اتحط على الـ [[<ul>]] قبل ما العنصر يتعمل: الـ click بيطلع (bubbling) من الزرار للـ ul، والـ listener هناك بيعرف مين اتضغط من [[e.target]].
+
+لما تحط [[<span>x</span>]] جوه الزرار وتضغط على الـ x: [[e.target]] بيبقى الـ SPAN مش الـ BUTTON، و [[e.target.dataset.action]] بـ undefined، فمفيش حاجة بتحصل. [[closest("button[data-action]")]] بتطلع من الـ span لأقرب زرار فوقيه، فبتشتغل مهما ضغطت على أي حاجة جوه. ده بالظبط سبب إنها موجودة، وسؤال انترفيو مشهور: «ليه e.target مش دايمًا العنصر اللي حاطط عليه البيانات؟».`
+        },
+        {
+          cmd: "اعرض داتا من fetch",
+          title: "تعرض ليستة من API بحالات loading و empty و error",
+          desc: R`ده الدرس اللي بيربط كل اللي فات: تجيب JSON من API بـ [[fetch]]، وترسمه في الصفحة، وتعرض ٣ حالات غير النجاح: بيحمّل (loading)، ومفيش داتا (empty)، وحصلت مشكلة (error). أي شاشة حقيقية فيها الحالات الأربعة دي، ولو نسيت واحدة اليوزر هيشوف صفحة فاضية ومش فاهم.
+
+الـ HTML فيه [[<ul id="list">]] و [[<p id="status">]] و [[<template id="row">]]. الـ [[<template>]] حتة HTML مش بتتعرض، بتنسخها بـ [[content.cloneNode(true)]] لكل عنصر وتملاها بـ [[textContent]]، فالشكل يفضل في الـ HTML والداتا بتدخل بأمان من غير innerHTML.
+
+[[fetch]] و [[await]] هتتشرح بالتفصيل في المستوى ٢ (قسم async). دلوقتي كفاية تعرف إن [[await]] معناها «استنى النتيجة»، وإنها بتشتغل جوه [[async function]].`,
+          example: R`// HTML: <p id="status"></p> <ul id="list"></ul> <button id="reload">حدّث</button>
+// <template id="row"><li><strong></strong> — <span></span></li></template>
+const listEl = document.querySelector("#list");
+const statusEl = document.querySelector("#status");
+const tpl = document.querySelector("#row");
+function setStatus(text, kind = "") {
+  statusEl.textContent = text;
+  statusEl.className = kind;
+}
+function render(users) {
+  listEl.replaceChildren();
+  if (users.length === 0) return setStatus("مفيش يوزرز لسه", "empty");
+  setStatus("");
+  for (const u of users) {
+    const row = tpl.content.cloneNode(true);
+    row.querySelector("strong").textContent = u.name;
+    row.querySelector("span").textContent = u.email;
+    listEl.append(row);
+  }
+}
+async function load() {
+  setStatus("بيحمّل...", "loading");
+  try {
+    const res = await fetch("https://jsonplaceholder.typicode.com/users");
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    render(await res.json());
+  } catch (err) {
+    listEl.replaceChildren();
+    setStatus("حصلت مشكلة: " + err.message, "error");
+  }
+}
+document.querySelector("#reload").addEventListener("click", load);
+load();`,
+          try: R`اعمل [[index.html]] بالـ HTML اللي في أول سطرين و [[<script src="app.js" defer>]]، وافتحه بسيرفر محلي ([[npx serve]] أو Live Server). جرّب الحالات الأربعة: عادي، وغيّر الـ URL لـ [[/users?id=999]] (empty)، وغيّره لـ [[/nope]] (error بـ 404)، وافصل النت من DevTools ← Network ← Offline واضغط «حدّث». وبعدين زوّد: الزرار يتعطّل وهو بيحمّل، وفي حالة الـ error يظهر زرار «جرّب تاني».`,
+          practice: [
+            { lvl: 'سريع', t: R`**ابني:** بعد ما الليستة تتحمّل، اكتب في [[#status]] عدد اليوزرز اللي اتعرضوا («١٠ يوزر» مثلًا)، وزوّد في كل سطر اسم الشركة من [[u.company.name]].`, done: R`الرقم اللي في الـ status بيساوي [[users.length]] (اطبعه في Console وقارن)، وكل سطر فيه اسم الشركة، ولو الـ API رجّع لستة فاضية الـ status بيقول «مفيش يوزرز لسه» مش «٠ يوزر».` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[console.log(1); fetch(url).then(() => console.log(3)); console.log(2);]]. إيه الترتيب؟`, done: R`توقعت وطلع [[1]] ثم [[2]] ثم [[3]]: الـ fetch بيبدأ ومبيستناش، والـ then بتشتغل بعد ما الكود اللي بعده يخلص. وده سبب إن [[render]] لازم تتنادى جوه الـ then أو بعد await.` },
+            { lvl: 'تطبيق', t: R`**ابني:** زوّد input بحث فوق الليستة بيفلتر اليوزرز المتحمّلين بالاسم وانت بتكتب، من غير fetch جديد: خزّن الداتا في متغير مرة واحدة، و [[render]] الجزء المفلتر بس.`, done: R`الكتابة مبتعملش ولا request جديد في تاب Network، والبحث مش حسّاس للحروف الكبيرة، ولو مفيش نتيجة بيظهر «مفيش نتايج لـ «الكلمة»» والكلمة مكتوبة فيه بـ [[textContent]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[const users = fetch(url).json();]]. شغّله واقرا الرسالة، وصلّحه بـ await.`, done: R`الرسالة [[TypeError: fetch(...).json is not a function]]: fetch بترجّع Promise مش Response. بعد [[const res = await fetch(url); const users = await res.json();]] الـ users array فيها 10 يوزرز.` },
+            { lvl: 'تحدي', t: R`**ابني:** لما تضغط على يوزر (event delegation على الليستة) هات بوستاته من [[/posts?userId=ID]] واعرضهم تحته، بحالات loading و error لليوزر ده لوحده، والزرار يبقى [[disabled]] وهو بيحمّل عشان الضغطتين ورا بعض ميبعتوش طلبين.`, done: R`ضغطتين بسرعة بيعملوا request واحد بس في Network، و Offline من DevTools بيطلّع رسالة error تحت اليوزر ده بس والباقي سليم، وضغطة تانية بعد ما الشبكة ترجع بتجيب البوستات.` },
+            { lvl: 'تحدي', t: R`**بيانات حقيقية:** افتح [[https://jsonplaceholder.typicode.com/users]] في تاب لوحده واقرا شكل الـ JSON. اكتب قبل ما تكتب كود: كام عنصر، والمسار لاسم المدينة واسم الشركة وأول جزء من الـ lat.`, done: R`كتبت 10 عناصر، و [[u.address.city]] و [[u.company.name]] و [[u.address.geo.lat]]، ولاحظت إن lat نص مش رقم. ولما كتبت الكود عرض المدينة صح من أول مرة.` }
+          ],
+          flag: "script",
+          deep: {
+            why: "الـ DOM لوحده (querySelector و textContent) مبيعملش تطبيق. التطبيق الحقيقي بيجيب داتا من سيرفر ويعرضها، والجزء اللي المبتدئين بينسوه هو الحالات اللي مش «كله تمام». ده بالظبط اللي React و TanStack Query بيعملوه (isLoading و isError و data)، فلما تكتبه بإيدك مرة هتفهم هما بيحلوا إيه.",
+            how: R`الترتيب: [[load()]] تحط «بيحمّل» فورًا (قبل ما الشبكة ترد)، وبعدين [[await fetch]]. [[fetch]] مش بترمي error لو السيرفر رد بـ 404 أو 500، بترمي بس لو الشبكة نفسها وقعت. عشان كده [[if (!res.ok) throw]] بنفسك، فالحالتين يروحوا للـ [[catch]]. و [[res.json()]] كمان ممكن ترمي لو الرد مش JSON.
+
+[[render]] بتمسح القديم بـ [[replaceChildren()]] (من غير arguments بتفضّي العنصر)، وتفحص الـ empty قبل الرسم، وبعدين تنسخ الـ template لكل يوزر. [[cloneNode(true)]] بترجّع DocumentFragment، و [[append]] بتنقل محتواه للّيستة.
+
+[[textContent]] مش [[innerHTML]]: الأسماء جاية من API، ولو فيها [[<img onerror>]] هتظهر كنص (درس textContent و classList). و [[className = kind]] بيخلي الـ CSS يلوّن كل حالة ([[.error { color: red }]]).
+
+لو ضغطت «حدّث» مرتين بسرعة، الطلبين شغالين والأبطأ هو اللي بيكسب حتى لو هو القديم (race condition). الحل الكامل [[AbortController]] (درس «fetch و AbortController» في المستوى ٢)، والبسيط إنك تعطّل الزرار وهو بيحمّل.`,
+            when: R`أي صفحة بتعرض داتا من API من غير framework: dashboard صغيرة، أو widget، أو extension. ولما تنقل لـ React، نفس الحالات الأربعة هتفضل موجودة (تاب React).`,
+            mistakes: R`تنسى [[res.ok]] فالـ 404 تتعامل كنجاح و [[res.json()]] تقع برسالة غريبة. و «بيحمّل» تفضل ظاهرة للأبد لأنك مسحتها في حالة النجاح بس (حط المسح في الحالتين أو في [[finally]]). ومفيش empty state فاليوزر يشوف صفحة فاضية. وتبني الـ HTML بـ template literal و innerHTML بداتا من API (XSS). وفي الانترفيو: «إيه الحالات اللي لازم أي شاشة بتجيب داتا تتعامل معاها؟».`
+          },
+          teach: R`## الفكرة في سطرين
+
+البرنامج بيطلب ليستة يوزرز من API، ويرسمها في الصفحة، وطول الوقت بيقول لليوزر الصفحة في أنهي حالة: بتحمّل، أو فاضية، أو فيها مشكلة، أو تمام. الكود مقسوم ٣ دوال: [[setStatus]] (سطر الحالة)، و [[render]] (الرسم)، و [[load]] (الطلب). شغّلته في Chrome headless من سيرفر محلي، وطلب الـ API الحقيقي [[jsonplaceholder.typicode.com]] (API مجاني فيه داتا وهمية للتجارب).
+
+---
+
+## ١. الـ HTML
+
+~~~text index.html
+<p id="status"></p> <ul id="list"></ul> <button id="reload">حدّث</button>
+<template id="row"><li><strong></strong> — <span></span></li></template>
+<script src="app.js" defer></script>
+~~~
+
+[[<template>]] tag خاص: المتصفح بيقراه بس **مش بيعرضه**. هو «قالب» لشكل الصف، هننسخه لكل يوزر.
+
+---
+
+## ٢. نمسك العناصر
+
+~~~text app.js
+const listEl = document.querySelector("#list");
+const statusEl = document.querySelector("#status");
+const tpl = document.querySelector("#row");
+~~~
+
+[[El]] في آخر الاسم عادة عشان تفتكر إن ده عنصر DOM مش داتا.
+
+---
+
+## ٣. [[setStatus]]
+
+~~~text app.js
+function setStatus(text, kind = "") {
+  statusEl.textContent = text;
+  statusEl.className = kind;
+}
+~~~
+
+- [[kind = ""]]: default، لو مبعتّوش يبقى string فاضي.
+- [[className = kind]]: بيستبدل كل كلاسات العنصر بالكلاس ده ([[loading]] أو [[empty]] أو [[error]] أو ولا حاجة)، فالـ CSS يقدر يلوّن كل حالة.
+
+---
+
+## ٤. [[render]]: الرسم
+
+~~~text app.js
+function render(users) {
+  listEl.replaceChildren();
+  if (users.length === 0) return setStatus("مفيش يوزرز لسه", "empty");
+  setStatus("");
+  for (const u of users) {
+    const row = tpl.content.cloneNode(true);
+    row.querySelector("strong").textContent = u.name;
+    row.querySelector("span").textContent = u.email;
+    listEl.append(row);
+  }
+}
+~~~
+
+1. [[replaceChildren()]] من غير arguments: فضّي الليستة من أي رسم قديم.
+2. **empty state**: لو الـ array فاضية، اكتب الرسالة و [[return]] عشان منكملش. ([[return setStatus(...)]] اختصار لسطرين: نادي واخرج.)
+3. فيه داتا: امسح سطر الحالة.
+4. لكل يوزر: [[tpl.content]] محتوى الـ template، و [[cloneNode(true)]] نسخة منه، و [[true]] يعني انسخ كل اللي جواه كمان. اللي بيرجع **DocumentFragment** (جرّبت: [[constructor.name]] طلع DocumentFragment): صندوق مؤقت فيه الـ li.
+5. نملا الـ strong بالاسم والـ span بالإيميل بـ [[textContent]]، فلو API رجّع اسم فيه HTML هيظهر كنص (درس textContent).
+6. [[append(row)]] بينقل الـ li من الصندوق للّيستة.
+
+---
+
+## ٥. [[load]]: الطلب
+
+~~~text app.js
+async function load() {
+  setStatus("بيحمّل...", "loading");
+  try {
+    const res = await fetch("https://jsonplaceholder.typicode.com/users");
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    render(await res.json());
+  } catch (err) {
+    listEl.replaceChildren();
+    setStatus("حصلت مشكلة: " + err.message, "error");
+  }
+}
+~~~
+
+- [[async function]]: دالة مسموح جواها [[await]].
+- **loading state** أول حاجة، قبل ما الشبكة ترد.
+- [[fetch(url)]]: اطلب الـ URL، و [[await]] يعني استنى الرد. [[res]] (response) فيه [[status]] (رقم زي 200 أو 404) و [[ok]] (true لو الرقم بين 200 و 299).
+- [[if (!res.ok) throw ...]]: fetch مبترميش error على 404 أو 500. جرّبت: [[fetch(".../nope")]] رجّعت [[404 false]] والـ body [[{}]] من غير أي error. فاحنا بنرمي بنفسنا عشان نروح للـ catch.
+- [[await res.json()]]: اقرا الـ body وحوّله من JSON، وابعته لـ render.
+- **error state** في الـ catch: امسح أي داتا قديمة واكتب الرسالة.
+
+---
+
+## ٦. آخر سطرين
+
+~~~text app.js
+document.querySelector("#reload").addEventListener("click", load);
+load();
+~~~
+
+الزرار بيعيد التحميل، و [[load()]] بتبدأ أول ما الصفحة تفتح.
+
+---
+
+## ٧. الحالات الأربعة في التجربة
+
+| التجربة | سطر الحالة | الكلاس | عدد الـ li |
+|---|---|---|---|
+| أول ما الصفحة تفتح | بيحمّل... | loading | 0 |
+| الـ URL العادي | (فاضي) | (ولا حاجة) | 10، أولهم Leanne Graham |
+| [[/users?id=999]] | مفيش يوزرز لسه | empty | 0 |
+| [[/nope]] | حصلت مشكلة: HTTP 404 | error | 0 |
+| Offline وضغطت «حدّث» | حصلت مشكلة: Failed to fetch | error | 0 |
+
+[[Failed to fetch]] هي رسالة Chrome لما الشبكة نفسها مش موجودة. ولو شلت سطر [[res.ok]]، الـ [[{}]] بتاع 404 بيروح لـ render: [[users.length]] بـ undefined فمش 0، وبعدين [[for...of]] على object:
+
+~~~text الناتج
+TypeError: users is not iterable
+~~~
+
+---
+
+## ٨. حل «جرّب» (الـ solCode)
+
+الحل بيضيف ٣ حاجات على load:
+
+- [[btn.disabled = true]] في الأول: الزرار بيتعطّل وهو بيحمّل (جرّبت: [[disabled]] كانت true وقت التحميل).
+- [[finally { btn.disabled = false; }]]: [[finally]] بيتنفذ بعد الـ try أو الـ catch في كل الحالات، فالزرار بيرجع مهما حصل (بقت false بعد النجاح وبعد الفشل).
+- في الـ catch: زرار «جرّب تاني» بـ createElement، و [[statusEl.append(" ", retry)]] بتحط مسافة وبعدها الزرار جنب الرسالة.
+
+~~~text الناتج: Offline ثم Online وضغطت «جرّب تاني»
+حصلت مشكلة: Failed to fetch <button>جرّب تاني</button>
+(بعد الضغط)  سطر الحالة فاضي، و 10 يوزرز
+~~~
+
+---
+
+## الخلاصة
+
+| الحالة | إمتى | في الكود |
+|---|---|---|
+| loading | قبل الرد | أول سطر في load |
+| success | فيه داتا | render |
+| empty | array فاضية | الـ if في render |
+| error | شبكة، أو HTTP غلط، أو JSON بايظ | catch (مع [[res.ok]]) |
+
+> fetch مبترميش على 404 و 500، بترمي بس لو الشبكة وقعت. [[res.ok]] دايمًا.`,
+          lines: [
+            R`الليستة اللي هنرسم فيها اليوزرز. بنجيبها مرة واحدة فوق بدل ما ندوّر عليها في كل رسمة.`,
+            R`سطر الحالة اللي هيقول لليوزر «بيحمّل» أو «مفيش داتا» أو «حصلت مشكلة»، عشان الصفحة متبقاش فاضية وساكتة ومحدش فاهم فيه إيه.`,
+            R`الـ [[<template>]]: HTML مكتوب في الصفحة بس مبيترسمش، بنستخدمه قالب للصف وننسخه لكل يوزر. أنضف وأأمن من بناء الصف بـ strings و [[innerHTML]].`,
+            R`دالة صغيرة لسطر الحالة، عشان كل حالة (loading و empty و error) تتعمل بنفس الطريقة في سطر واحد. [[kind = ""]] قيمة default لو مبعتناش نوع.`,
+            R`الرسالة بتتحط بـ [[textContent]]، فحتى رسالة خطأ جاية من برّه متتحوّلش HTML.`,
+            R`[[className]] بتستبدل كل الكلاسات بالكلاس ده ([[loading]] أو [[error]] أو [[empty]])، والـ CSS بيلوّن السطر على حسبه. الاستبدال هنا مقصود، عشان كلاس الحالة القديمة يتشال لوحده.`,
+            R`نهاية [[setStatus]].`,
+            R`[[render]] بتاخد array اليوزرز وترسمهم. فصلناها عن التحميل عشان الرسم حاجة والشبكة حاجة، وتقدر تجرّب الرسم بداتا مزيّفة من غير سيرفر.`,
+            R`[[replaceChildren()]] من غير arguments بتمسح كل اللي جوه الليستة. من غيرها كل ضغطة «حدّث» هتضيف اليوزرز تاني تحت القديم فيتكرروا.`,
+            R`empty state: الطلب نجح بس رجّع array فاضية، فبنقول ده صراحة بدل صفحة فاضية. و [[return]] بتخرج من الدالة فمش هنوصل للـ loop.`,
+            R`فيه داتا، فبنمسح سطر الحالة عشان «بيحمّل» متفضلش ظاهرة جنب اليوزرز.`,
+            R`بنلف على كل يوزر في الـ array ونعمله صف.`,
+            R`[[tpl.content]] هو محتوى الـ template كـ [[DocumentFragment]]، و [[cloneNode(true)]] بتعمل نسخة جديدة منه بكل اللي جواه ([[true]] = انسخ العناصر اللي جوه كمان). من غير [[true]] النسخة هتطلع فاضية.`,
+            R`بندوّر جوه النسخة على [[strong]] ونحط فيه الاسم بـ [[textContent]]: لو اسم اليوزر فيه HTML هيظهر كنص ومش هيتنفّذ.`,
+            R`والإيميل في الـ [[span]] بنفس الطريقة الآمنة.`,
+            R`[[append]] بتنقل محتوى النسخة جوه الليستة. بعد السطر ده الـ fragment بيفضى، فلو عملت [[row.querySelector]] بعده هترجّع [[null]]: املا الأول وبعدين ضيف.`,
+            R`نهاية الـ loop.`,
+            R`نهاية [[render]].`,
+            R`[[async]] بتخلي الدالة ترجّع Promise وتسمح بـ [[await]] جواها، فنكتب الكود اللي بيستنى الشبكة من فوق لتحت زي الكود العادي.`,
+            R`loading state قبل أي حاجة: اليوزر يعرف إن فيه حاجة شغالة بدل ما يفتكر إن الصفحة بايظة ويضغط تاني.`,
+            R`أي error جوه الـ [[try]] (شبكة وقعت، أو [[throw]] بتاعنا، أو JSON بايظ) بيقفز على [[catch]] بدل ما يوقف الكود ويسيب الصفحة على «بيحمّل».`,
+            R`[[fetch]] بتبعت GET للـ URL، و [[await]] بتستنى لحد ما الرد يبدأ يوصل وترجّع object الـ [[Response]] (الـ status والـ headers). الـ body لسه متقريش.`,
+            R`[[fetch]] مش بترمي error مع 404 أو 500، بترمي بس لو الشبكة نفسها فشلت. فبنشيك على [[res.ok]] (بيبقى [[true]] لما الـ status من 200 لـ 299) ونرمي بنفسنا عشان نروح للـ catch.`,
+            R`[[res.json()]] بتقرا الـ body وتعمله parse، وهي كمان Promise فمحتاجة [[await]]. وبعدها الـ array بتروح لـ [[render]].`,
+            R`error state: بنوصل هنا لو الشبكة وقعت، أو الـ status غلط، أو الـ JSON بايظ. و [[err]] فيه رسالة اللي حصل.`,
+            R`بنمسح أي يوزرز من تحميل قبل كده، عشان اليوزر ميشوفش داتا قديمة جنب رسالة الخطأ ويفتكرها جديدة.`,
+            R`بنعرض رسالة فيها [[err.message]] (زي [[HTTP 500]]) بكلاس [[error]] اللي الـ CSS بيلوّنه.`,
+            R`نهاية الـ catch.`,
+            R`نهاية [[load]].`,
+            R`زرار «حدّث» بينادي [[load]] تاني: نفس الدالة بكل حالاتها، فالـ loading والـ error بيشتغلوا في إعادة التحميل كمان. بنبعت [[load]] من غير أقواس عشان تتنادى وقت الضغطة مش دلوقتي.`,
+            R`أول تحميل أول ما السكريبت يشتغل، من غير ما اليوزر يضغط حاجة.`,
+          ],
+          sol: R`الحالات الأربعة: عادي هتشوف ١٠ يوزرز (jsonplaceholder بيرجّع ١٠)، و [[?id=999]] بيرجّع [[[]]] فتظهر «مفيش يوزرز لسه»، و [[/nope]] بيطلع «حصلت مشكلة: HTTP 404»، و Offline بيطلع «حصلت مشكلة: Failed to fetch» (الرسالة بتختلف شوية بين المتصفحات، في Firefox «NetworkError when attempting to fetch resource.»).
+
+لو شيلت سطر [[if (!res.ok)]] وجرّبت [[/nope]]: السيرفر بيرد بـ [[{}]] مش array، فـ [[users.length]] بـ undefined، والـ loop [[for...of]] على object بيرمي «users is not iterable». يعني الخطأ بيطلع في مكان تاني وبرسالة مالهاش علاقة بالسبب الحقيقي.
+
+للزرار: في أول [[load]] اعمل [[btn.disabled = true]]، وفي [[finally]] رجّعه false. و «جرّب تاني»: زرار جوه سطر الحالة بيظهر بس في الـ error ويستدعي [[load]]. الكود تحت بيحل محل [[load]] القديمة، وباقي الملف زي ما هو (و [[setStatus]] بتمسح الزرار في المحاولة الجاية لأن [[textContent]] بيمسح كل اللي جوه العنصر).`,
+          solCode: R`const btn = document.querySelector("#reload");
+async function load() {
+  btn.disabled = true;
+  setStatus("بيحمّل...", "loading");
+  try {
+    const res = await fetch("https://jsonplaceholder.typicode.com/users");
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    render(await res.json());
+  } catch (err) {
+    listEl.replaceChildren();
+    setStatus("حصلت مشكلة: " + err.message, "error");
+    const retry = document.createElement("button");
+    retry.textContent = "جرّب تاني";
+    retry.addEventListener("click", load);
+    statusEl.append(" ", retry);
+  } finally {
+    btn.disabled = false;
+  }
+}`
+        },
+        {
+          cmd: "FormData و URLSearchParams",
+          title: "تقرا فورم وتبعته أو تحطه في الـ URL إزاي؟",
+          desc: R`الفورم في HTML لوحده بيعمل submit ويعمل reload للصفحة. عشان تتحكم فيه بـ JS: اسمع لـ [[submit]] على الفورم (مش click على الزرار)، واعمل [[e.preventDefault()]]، واقرا القيم بـ [[new FormData(form)]]: بتجيب كل input ليه [[name]].
+
+[[fd.get("q")]] قيمة واحدة، و [[fd.getAll("tag")]] كل القيم لنفس الاسم (checkboxes). ولو عايز تحوّلها query string زي [[?q=قهوة&tag=hot]] استخدم [[new URLSearchParams(fd)]]: بتعمل الـ encoding صح للعربي والمسافات والـ [[&]].
+
+وتبعتها للسيرفر بطريقتين: [[fetch(url, { method: "POST", body: fd })]] كـ multipart (لازم لو فيه ملفات)، أو [[JSON.stringify(Object.fromEntries(fd))]] مع [[Content-Type: application/json]].`,
+          example: R`// HTML: <form id="search"><input name="q" required> <label><input type="checkbox" name="tag" value="hot"> سخن</label>
+// <label><input type="checkbox" name="tag" value="new"> جديد</label> <button>دوّر</button></form>
+const form = document.querySelector("#search");
+const initial = new URLSearchParams(location.search);
+form.elements.q.value = initial.get("q") ?? "";
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const fd = new FormData(form);
+  console.log(fd.get("q"), fd.getAll("tag"));
+  const params = new URLSearchParams(fd);
+  params.set("page", "1");
+  history.replaceState(null, "", "?" + params);
+  const btn = form.querySelector("button");
+  btn.disabled = true;
+  try {
+    const res = await fetch("/api/search?" + params);
+    console.log(res.status, params.toString());
+  } finally {
+    btn.disabled = false;
+  }
+});`,
+          try: R`اعمل الفورم ده، واكتب «قهوة سادة»، وعلّم الاتنين checkboxes، واضغط Enter. بص على الـ URL وعلى تاب Network: شكل الـ query string إيه؟ اعمل refresh: الـ input لسه فيه الكلمة؟ وبعدين في Node جرّب [[new URLSearchParams({ q: "قهوة سادة", sort: "price&desc" }).toString()]] وشوف الـ encoding.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في Node أو Console: [[const p = new URLSearchParams("?q=js&tag=a&tag=b")]] واطبع [[p.get("tag")]] و [[p.getAll("tag")]] و [[p.toString()]].`, done: R`[[get]] بترجّع [["a"]] (أول واحدة بس)، و [[getAll]] بترجّع [[[ 'a', 'b' ] ]]، و [[toString()]] بترجّع [["q=js&tag=a&tag=b"]] من غير علامة الاستفهام.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const url = "/search?q=" + q;]] و q اليوزر كتبها [["a&b c"]]. اطبع الـ URL، وبعدين ابنيه بـ [[new URLSearchParams({ q })]].`, done: R`الأول طلّع [[/search?q=a&b c]] (السيرفر هيشوف q بـ [["a"]] وبارامتر تاني اسمه [["b c"]]). التاني طلّع [[/search?q=a%26b+c]] والسيرفر بيقرا q كاملة.` },
+            { lvl: 'تطبيق', t: R`**ابني:** فلتر منتجات في صفحة: فورم فيه [[select]] للقسم و checkbox «المتاح بس». الـ submit بيقرا القيم بـ [[FormData]]، ويخفي الكروت اللي مش مطابقة بـ [[hidden]]، ويحط الفلتر في الـ URL بـ [[history.replaceState]]، ولما الصفحة تفتح بيقرا الـ URL ويطبّق الفلتر.`, done: R`بعد الفلتر الـ URL شكله [[?cat=cups&available=on]]، و refresh بيرجّع نفس الكروت ونفس اختيارات الفورم، ولو بعت اللينك لنفسك في تاب جديد بيفتح متفلتر.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** [[new URL("https://shop.example/products?cat=cups&sort=price&page=2&tag=hot&tag=new")]]. اطبع كل البارامترز بـ [[[...u.searchParams] ]]، ونوع page، وكل الـ tags.`, done: R`طلع ٥ أزواج بالترتيب، و [[typeof u.searchParams.get("page")]] بـ [["string"]] (محتاج Number قبل الحساب)، و [[getAll("tag")]] بـ [[["hot", "new"]]].` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[Object.fromEntries(fd)]] بتضيّع الـ checkboxes اللي ليها نفس الاسم. اكتب [[formToObject(fd)]] بتخلي أي اسم متكرر array، والأسامي اللي ظاهرة مرة واحدة تفضل string.`, done: R`على FormData فيها [[q=x]] و [[tag=hot]] و [[tag=new]]: [[Object.fromEntries(fd)]] بترجّع [[{ q: 'x', tag: 'new' }]] (آخر واحدة كسبت)، و [[formToObject(fd)]] بترجّع [[{ q: 'x', tag: [ 'hot', 'new' ] }]].` }
+          ],
+          flag: "script",
+          deep: {
+            why: "كل فورم في أي موقع (login، بحث، checkout) محتاج نفس الخطوات: امنع الـ reload، واقرا القيم، واتأكد منها، وابعتها، وامنع الضغط المزدوج. ولو البحث والفلاتر في الـ URL، اليوزر يقدر يعمل refresh أو يبعت اللينك لحد ويشوف نفس النتيجة.",
+            how: R`[[submit]] بيحصل بالضغط على أي زرار جوه الفورم (الـ [[<button>]] الافتراضي نوعه submit) وبـ Enter في أي input. وقبله المتصفح بيعمل الـ validation بتاع HTML ([[required]] و [[type="email"]] و [[minlength]])، ولو فيه غلط مش هيطلق الحدث أصلًا. لو عايز تعمل submit من JS بنفس الـ validation استخدم [[form.requestSubmit()]] مش [[form.submit()]] (دي بتنط الـ validation والـ event).
+
+[[FormData]] بتاخد كل عنصر ليه [[name]] ومش [[disabled]]: الـ checkbox بيتاخد بس لو متعلّم وقيمته [[value]] بتاعه (أو "on")، والـ [[<select multiple>]] بيدّي كذا قيمة. و [[form.elements.q]] بيوصلك للعنصر اللي [[name="q"]] (فيه كمان اختصار [[form.q]]، بس بيتضرب لو عندك input اسمه زي خاصية في الفورم نفسه زي [[submit]] أو [[action]]).
+
+[[URLSearchParams]] بيعمل encoding بطريقة الفورمز: المسافة [[+]] والعربي [[%D9%82...]]. [[set]] بتستبدل، و [[append]] بتضيف قيمة كمان لنفس المفتاح. و [[history.replaceState]] بيغيّر الـ URL من غير reload ومن غير ما يضيف خطوة في الـ back (لو عايز back يرجع للبحث اللي قبله استخدم [[pushState]]، في المستوى ٣).
+
+لما تبعت FormData كـ body متحطش Content-Type بنفسك: المتصفح بيحط [[multipart/form-data; boundary=...]] والـ boundary لازم يبقى فيه.`,
+            when: R`أي فورم من غير framework. وحتى في React/Next، FormData هي اللي بتوصل لـ server actions ([[<form action={fn}>]])، و URLSearchParams هي اللي تحت [[useSearchParams]].`,
+            mistakes: R`input من غير [[name]] فمش بيظهر في FormData. و [[Content-Type: multipart/form-data]] بإيدك فالسيرفر مش لاقي الـ boundary. و [[Object.fromEntries(fd)]] مع checkboxes بنفس الاسم: بياخد آخر قيمة بس. وتبني الـ query بـ [[$__bt?q=$__{q}$__bt]] من غير encoding فأي [[&]] في البحث يكسر الـ URL. وتنسى إن الـ validation في المتصفح للراحة بس، والسيرفر لازم يتحقق تاني (تاب Backend بـ Node).`
+          },
+          teach: R`## الفكرة في سطرين
+
+فورم بحث: input للكلمة و checkboxes للفلاتر. لما اليوزر يدوّر، الكود بيقرا القيم بـ [[FormData]]، ويحوّلها query string بـ [[URLSearchParams]]، ويحطها في الـ URL، ويبعت الطلب، والزرار متعطّل لحد ما الرد ييجي. جرّبت الفورم في Chrome headless من سيرفر محلي (مفيهوش [[/api/search]]، فالرد 404 وده متوقع)، والـ solCode في Node 24.
+
+---
+
+## ١. الـ HTML
+
+~~~text index.html
+<form id="search">
+  <input name="q" required>
+  <label><input type="checkbox" name="tag" value="hot"> سخن</label>
+  <label><input type="checkbox" name="tag" value="new"> جديد</label>
+  <button>دوّر</button>
+</form>
+~~~
+
+- [[name]] هو المفتاح اللي هيظهر في FormData. input من غير name مش هيتقري.
+- الـ checkboxes الاتنين ليهم **نفس الاسم** tag، وكل واحد ليه [[value]].
+- [[required]]: المتصفح مش هيبعت الفورم والـ input فاضي.
+- [[<button>]] جوه فورم نوعه الافتراضي submit.
+
+---
+
+## ٢. ترجّع البحث القديم من الـ URL
+
+~~~text app.js
+const form = document.querySelector("#search");
+const initial = new URLSearchParams(location.search);
+form.elements.q.value = initial.get("q") ?? "";
+~~~
+
+- [[location.search]]: الجزء من الـ URL من أول [[?]]، زي [[?q=...&tag=hot]].
+- [[new URLSearchParams(...)]] بتفكه لمفاتيح وقيم، و [[get("q")]] بترجّع القيمة **بعد فك الـ encoding** (عربي عادي)، أو null لو مش موجودة.
+- [[?? ""]]: لو null حط نص فاضي.
+- [[form.elements.q]]: العنصر اللي [[name="q"]] جوه الفورم. ([[form.elements.tag]] بقى RadioNodeList لأن فيه اتنين بنفس الاسم.)
+
+---
+
+## ٣. الـ submit
+
+~~~text app.js
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const fd = new FormData(form);
+  console.log(fd.get("q"), fd.getAll("tag"));
+~~~
+
+- [[async (e) =>]]: الـ handler نفسه async عشان هنعمل await جواه.
+- [[preventDefault]]: من غيرها المتصفح هيعمل reload.
+- [[fd.get("q")]] أول قيمة للاسم ده، و [[fd.getAll("tag")]] **كل** القيم في array، والـ checkbox بيتحسب بس لو متعلّم.
+
+لما ضغطت Enter والـ input فاضي، الـ handler **مشتغلش**، ورسالة المتصفح كانت [[Please fill out this field.]]. ولما كتبت «قهوة سادة» وعلّمت الاتنين:
+
+~~~text الناتج
+قهوة سادة ["hot","new"]
+~~~
+
+---
+
+## ٤. query string
+
+~~~text app.js
+  const params = new URLSearchParams(fd);
+  params.set("page", "1");
+  history.replaceState(null, "", "?" + params);
+~~~
+
+- [[new URLSearchParams(fd)]]: نفس الداتا، بس بتعرف تتكتب كـ query string.
+- [[set("page", "1")]]: حط المفتاح (ولو موجود استبدله). القيم strings، عشان كده [["1"]].
+- [[history.replaceState(state, title, url)]]: غيّر الـ URL في شريط العنوان **من غير reload** ومن غير خطوة جديدة في Back. أول اتنين مش مهمين هنا ([[null]] و [[""]]).
+- [[+ params]]: لما تجمع string مع URLSearchParams، JS بينادي [[toString()]] لوحده.
+
+الـ URL بعد Enter:
+
+~~~text الناتج
+http://127.0.0.1:52765/form.html?q=%D9%82%D9%87%D9%88%D8%A9+%D8%B3%D8%A7%D8%AF%D8%A9&tag=hot&tag=new&page=1
+~~~
+
+نقراه: [[&]] بتفصل المفاتيح، و tag اتكرر مرتين، والمسافة بقت [[+]]، وكل حرف عربي بقى bytes الـ UTF-8 بتاعته (كل حرف عربي = ٢ بايت، زي [[%D9%82]] = ق). ده الـ **encoding**: عشان الـ URL يتبعت بحروف آمنة بس.
+
+---
+
+## ٥. الطلب والزرار
+
+~~~text app.js
+  const btn = form.querySelector("button");
+  btn.disabled = true;
+  try {
+    const res = await fetch("/api/search?" + params);
+    console.log(res.status, params.toString());
+  } finally {
+    btn.disabled = false;
+  }
+});
+~~~
+
+- [[disabled = true]]: اليوزر ميقدرش يضغط تاني والطلب لسه شغال.
+- [[fetch("/api/search?" + params)]]: GET على نفس السيرفر.
+- [[finally]]: بيتنفذ في النجاح وفي الفشل، فالزرار بيرجع دايمًا.
+
+~~~text الناتج
+404 q=%D9%82%D9%87%D9%88%D8%A9+%D8%B3%D8%A7%D8%AF%D8%A9&tag=hot&tag=new&page=1
+~~~
+
+وبعد reload للصفحة الـ input رجع فيه «قهوة سادة» (من خطوة ٢)، والـ checkboxes لأ.
+
+---
+
+## ٦. الـ solCode في Node
+
+~~~text app.js
+const p = new URLSearchParams({ q: "قهوة سادة", sort: "price&desc" });
+console.log(p.toString());
+~~~
+
+~~~text الناتج
+q=%D9%82%D9%87%D9%88%D8%A9+%D8%B3%D8%A7%D8%AF%D8%A9&sort=price%26desc
+~~~
+
+الـ [[&]] اللي **جوه** القيمة بقت [[%26]]، فمبقتش تتلخبط مع الفاصل.
+
+~~~text app.js
+p.append("tag", "hot");
+p.append("tag", "new");
+console.log(p.getAll("tag"), p.get("q"));
+~~~
+
+~~~text الناتج
+[ 'hot', 'new' ] قهوة سادة
+~~~
+
+[[append]] بتضيف قيمة كمان لنفس المفتاح، و [[set]] كانت هتمسح القديم (جرّبت [[p.set("tag", "x")]] فبقى فيه tag=x بس).
+
+~~~text app.js
+const fd = new FormData();
+fd.append("q", "قهوة");
+fd.append("tag", "hot");
+fd.append("tag", "new");
+console.log(new URLSearchParams(fd).toString(), Object.fromEntries(fd));
+~~~
+
+~~~text الناتج
+q=%D9%82%D9%87%D9%88%D8%A9&tag=hot&tag=new { q: 'قهوة', tag: 'new' }
+~~~
+
+FormData موجودة في Node كمان. والمهم: [[Object.fromEntries]] خدت **آخر** tag بس، لأن الـ object ميقدرش يشيل مفتاحين بنفس الاسم. للقيم المتكررة استخدم [[getAll]].
+
+---
+
+## الخلاصة
+
+| عايز | استخدم |
+|---|---|
+| تقرا الفورم | [[new FormData(form)]] (الحقول اللي ليها name) |
+| قيمة / كل القيم | [[get]] / [[getAll]] |
+| query string بـ encoding صح | [[new URLSearchParams(fd)]] |
+| تستبدل / تضيف | [[set]] / [[append]] |
+| تقرا الـ URL الحالي | [[new URLSearchParams(location.search)]] |
+| تغيّر الـ URL من غير reload | [[history.replaceState(null, "", "?" + params)]] |
+| تمنع الضغط المزدوج | [[disabled]] + [[finally]] |`,
+          lines: [
+            R`فورم البحث اللي [[id="search"]]، هنسمع لـ submit بتاعه ونقرا خاناته.`,
+            R`[[location.search]] هو الجزء اللي بعد [[?]] في الـ URL (زي [[?q=js&page=1]])، و [[URLSearchParams]] بتفكه وتعمل decode للحروف، فتقرا كل مفتاح بالاسم بدل ما تقطّع الـ string بإيدك.`,
+            R`[[form.elements.q]] هو الـ input اللي [[name="q"]]. بنحط فيه البحث اللي في الـ URL، فلو اليوزر عمل refresh أو بعت اللينك لحد البحث يفضل موجود. [[get]] بترجّع [[null]] لو مفيش [[q]]، و [[?? ""]] بتسيب الخانة فاضية بدل ما يتكتب فيها null.`,
+            R`[[submit]] مش click: بيشتغل بـ Enter كمان، وبعد ما validation الـ HTML تعدّي. والـ listener [[async]] عشان هنعمل [[await]] جواه.`,
+            R`من غيرها المتصفح هيعمل reload ويبعت الفورم بنفسه، والكود اللي تحت مش هيلحق يشتغل.`,
+            R`[[FormData]] بتاخد كل الـ inputs اللي ليها [[name]] (ومش disabled) بقيمها في اللحظة دي. الـ input اللي مالوش name مش هيتبعت خالص، ودي غلطة شائعة.`,
+            R`[[get]] بترجّع أول قيمة للاسم ده، و [[getAll]] بترجّع array بكل القيم، ودي اللي تحتاجها مع checkboxes كتير بنفس [[name="tag"]]. لو استخدمت [[get]] معاهم هتاخد أول واحدة بس.`,
+            R`[[new URLSearchParams(fd)]] بتحوّل الداتا لـ query string زي [[q=js&tag=a&tag=b]] وبتعمل encoding صح للمسافات والرموز (المسافة [[+]] و [[&]] بتبقى [[%26]])، بدل ما تلزق strings بإيدك وتبوظ مع أول رمز.`,
+            R`[[set]] بتحط [[page=1]]: لو المفتاح موجود بتستبدل كل قيمه، ولو مش موجود بتضيفه. بحث جديد يبدأ من أول صفحة. ([[append]] كانت هتضيف قيمة تانية جنب القديمة.)`,
+            R`[[history.replaceState]] بتغيّر الـ URL في شريط العنوان من غير reload، فالبحث يتحفظ في اللينك. ومش بتزوّد خطوة في الـ history، فزرار Back مش هيعدّي على كل بحث؛ لو عايز ده استخدم [[pushState]].`,
+            R`زرار الإرسال اللي جوه الفورم.`,
+            R`بنعطّل الزرار وإحنا مستنيين الرد، عشان الضغط مرتين ميبعتش نفس الطلب مرتين.`,
+            R`الـ [[try]] هنا مش عشان نمسك الـ error، عشان الـ [[finally]] اللي تحت يرجّع الزرار مهما حصل.`,
+            R`بنبعت الطلب والبحث في الـ URL. [[+ params]] بتحوّل الـ object لـ string بنفسها (بتنادي [[toString()]])، و [[await]] بتستنى الرد.`,
+            R`بنطبع الـ status والـ query عشان نتأكد إن اللي اتبعت هو اللي متوقعينه. هنا مفيش API حقيقي، فغالبًا هتشوف 404.`,
+            R`[[finally]] بيتنفّذ في النجاح وفي الفشل، حتى لو [[fetch]] رمت error وكمّل لبرّه الدالة.`,
+            R`بنرجّع الزرار شغال. لو السطر ده كان بعد الـ fetch عادي من غير finally، أي error كان هيسيب الزرار متعطّل لحد ما اليوزر يعمل refresh.`,
+            R`نهاية الـ try/finally.`,
+            R`نهاية الـ submit listener.`,
+          ],
+          sol: R`بعد Enter الـ URL بيبقى [[?q=%D9%82%D9%87%D9%88%D8%A9+%D8%B3%D8%A7%D8%AF%D8%A9&tag=hot&tag=new&page=1]]: المسافة بقت [[+]]، والعربي بقى bytes بـ UTF-8، و [[tag]] اتكرر مرتين. المتصفح في شريط العنوان ممكن يعرضه عربي مقروء بس اللي بيتبعت هو الـ encoded. الـ console بتطبع [[قهوة سادة [ 'hot', 'new' ] ]] وبعدها رقم الـ status (غالبًا 404 لأن [[/api/search]] مش موجود عندك، وده طبيعي).
+
+بعد refresh الـ input فيه «قهوة سادة» لأن السطر التالت بيقراها من الـ URL. (الـ checkboxes مش هترجع: ده تمرين زيادة بـ [[initial.getAll("tag")]].)
+
+وفي Node: [[q=%D9%82%D9%87%D9%88%D8%A9+%D8%B3%D8%A7%D8%AF%D8%A9&sort=price%26desc]]. لاحظ [[&]] بقت [[%26]]، فمبقتش بتتلخبط مع الفاصل بين المفاتيح.`,
+          solCode: R`const p = new URLSearchParams({ q: "قهوة سادة", sort: "price&desc" });
+console.log(p.toString());
+p.append("tag", "hot");
+p.append("tag", "new");
+console.log(p.getAll("tag"), p.get("q"));
+const fd = new FormData();
+fd.append("q", "قهوة");
+fd.append("tag", "hot");
+fd.append("tag", "new");
+console.log(new URLSearchParams(fd).toString(), Object.fromEntries(fd));`
+        },
+        {
+          cmd: "defer و async و module",
+          title: "تحط الـ script فين، وإيه الفرق بين defer و async و type=module؟",
+          desc: R`[[<script src="app.js">]] العادي في الـ [[<head>]] بيوقّف قراية الـ HTML لحد ما الملف يتحمّل ويشتغل. ودي مشكلتين: الصفحة بتتأخر، والكود مش لاقي العناصر (querySelector بترجّع null).
+
+[[defer]]: حمّل في الخلفية، وشغّل بعد ما الـ HTML يخلص، بالترتيب اللي في الصفحة، وقبل [[DOMContentLoaded]]. ده الافتراضي الصح لكود الصفحة بتاعك.
+
+[[async]]: حمّل في الخلفية، وشغّل أول ما يوصل، في أي ترتيب، حتى لو الـ HTML لسه بيتقري. مناسب لسكربتات مستقلة زي analytics.
+
+[[type="module"]]: بيتصرف زي defer لوحده، وكمان بيسمح بـ [[import]] و [[export]]، و strict mode، والمتغيرات مش global.`,
+          example: R`<script src="https://example.com/analytics.js" async></script>
+<script src="app.js" defer></script>
+<script type="module" src="main.js"></script>
+<script>
+  console.log("inline:", document.readyState);
+  document.addEventListener("DOMContentLoaded", () => console.log("DOMContentLoaded"));
+  window.addEventListener("load", () => console.log("load"));
+</script>`,
+          try: R`اعمل [[index.html]] فيه السطور دي في الـ [[<head>]] (شيل سطر analytics)، واعمل [[app.js]] فيه [[console.log("app.js", document.querySelector("h1"))]] و [[main.js]] فيه نفس السطر بـ "main.js"، وحط [[<h1>]] في الـ body. خمّن ترتيب الـ logs، وبعدين افتح Console. وبعدين شيل [[defer]] من app.js وشوف إيه اللي اتغير.`,
+          practice: [
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** حط [[<script src="app.js">]] من غير [[defer]] في الـ [[<head>]]، و [[app.js]] فيه [[document.querySelector("h1").textContent = "اتغيّر"]]. افتح Console. وبعدين زوّد [[defer]].`, done: R`من غير defer بيطلع [[TypeError: Cannot set properties of null (setting 'textContent')]] والعنوان زي ما هو، ومع defer العنوان بيتغير ومفيش error.` },
+            { lvl: 'تطبيق', t: R`**ابني:** اعمل [[greet.js]] فيه [[export function greet(name)]]، و [[main.js]] بيعمل import ليها وبيكتب التحية في الصفحة، بـ [[<script type="module" src="main.js">]]. افتحه مرة بدبل كليك على الملف ([[file://]]) ومرة من سيرفر محلي. وجرّب [[const secret = 1]] في main.js وبعدين [[window.secret]] في Console.`, done: R`من [[file://]] بيطلع error في Console فيه كلمة CORS ومفيش تحية، ومن [[localhost]] التحية بتظهر. و [[window.secret]] بترجّع [[undefined]] لأن متغيرات الـ module مش global.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** في الـ [[<head>]] بالترتيب: [[<script>]] عادي بيطبع «inline» وبيسجّل listener لـ DOMContentLoaded بيطبع اسمه، وبعده [[<script defer src="d.js">]] بيطبع «defer»، وبعده [[<script type="module">]] بيطبع «module». إيه الترتيب؟`, done: R`توقعت وطلع [[inline]] ثم [[defer]] ثم [[module]] ثم [[DOMContentLoaded]]: العادي بيشتغل فورًا، والـ defer والـ module بيستنوا الـ HTML يخلص ويشتغلوا بترتيبهم في الصفحة، وبعدهم DOMContentLoaded.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** ٣ سكربتات [[a.js]] و [[b.js]] و [[c.js]]، كل واحد بيعمل [[console.log]] لاسمه، و [[b.js]] بيستخدم متغير [[window.config]] اللي [[a.js]] بيعرّفه. جرّبهم بـ [[defer]] وبعدين بـ [[async]]، مع Network throttling «Slow 4G» و [[a.js]] أكبر حجمًا (حط فيه كومنت طويل).`, done: R`مع defer الترتيب دايمًا a ثم b ثم c و b شايف الـ config، ومع async الترتيب بيتغير بين reload وتاني وأحيانًا b بيطبع [[undefined]] أو error، وتقدر تكتب في سطر ليه defer هو الصح لكود بيعتمد على بعضه.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ارسم ٣ سطور زمن (عادي، و defer، و async): خط لقراية الـ HTML، وخط لتحميل الـ script، ونقطة التشغيل. وقول تحت كل واحد إمتى تستخدمه.`, done: R`الرسمة بتبيّن: العادي بيوقف قراية الـ HTML لحد ما يتحمّل ويشتغل، والـ defer بيتحمّل جنبه ويشتغل بعد ما الـ HTML يخلص بالترتيب، والـ async بيتحمّل جنبه ويشتغل أول ما يوصل (ممكن في النص ومن غير ترتيب). وكتبت: defer لكود الصفحة، و async لـ analytics مستقل.` }
+          ],
+          flag: "script",
+          deep: {
+            why: "«الكود شغال لو حطيته في آخر الـ body ومش شغال في الـ head» من أشهر حيرات المبتدئين. ولما الصفحة بطيئة، أول حاجة بيبص عليها أي حد في الأداء هي السكربتات اللي بتوقف الـ parsing (render-blocking).",
+            how: R`المتصفح بيقرا الـ HTML من فوق لتحت ويبني الـ DOM. [[<script>]] عادي بيوقّف ده: يحمّل، وينفّذ، ويكمّل. عشان كده زمان كانوا بيحطوه في آخر الـ [[<body>]].
+
+[[defer]] و [[type="module"]] بيدخلوا نفس الطابور: بيتحمّلوا بالتوازي مع الـ parsing، وبيتنفذوا بترتيبهم في الصفحة بعد ما الـ parsing يخلص، وبعدهم [[DOMContentLoaded]]. فـ [[app.js]] قبل [[main.js]] لأنه قبله في الصفحة. [[async]] ملوش ترتيب: أي وقت يوصل يتنفذ، ممكن قبل الـ DOM ما يكمل.
+
+الترتيب في المثال: inline (بيطبع [["loading"]] لأنه شغال والـ HTML لسه بيتقري) ← app.js ← main.js ← DOMContentLoaded ← load. و [[load]] بتستنى كل الصور والـ CSS والـ iframes، فهي متأخرة كتير. عشان كده الكود اللي محتاج العناصر يستخدم defer (أو DOMContentLoaded)، مش load.
+
+[[defer]] و [[async]] بيشتغلوا بس مع [[src]]؛ على inline script بيتجاهلوا. الـ module script الـ inline كمان deferred. والـ modules بتتحمّل بـ CORS، فمش هتشتغل من [[file://]]: لازم سيرفر محلي.`,
+            when: R`[[type="module"]] لأي كود جديد (Vite بيعمل كده لوحده). [[defer]] لسكربت قديم مش module. [[async]] لسكربتات طرف تالت مستقلة. وفي Next.js ده متحكم فيه بـ [[next/script]] و strategy.`,
+            mistakes: R`script عادي في الـ head بيقرا عنصر فيلاقيه null. و [[async]] لكود بيعتمد على كود تاني (jQuery ثم plugin): الترتيب مش مضمون. و [[window.onload]] لكل حاجة فالصفحة تستنى الصور. وتفتح ملف فيه module بدبل كليك ([[file://]]) فيطلع CORS error. وفي الانترفيو: «الفرق بين defer و async؟» والإجابة: الاتنين بيحمّلوا في الخلفية، defer بيستنى الـ HTML وبيحافظ على الترتيب، و async لأ.`
+          },
+          teach: R`## الفكرة في سطرين
+
+المتصفح بيقرا الـ HTML من فوق لتحت، وكل ما يقابل [[<script>]] لازم يقرر: يقف يشغّله دلوقتي، ولا يكمّل ويشغّله بعدين؟ الكلمات [[defer]] و [[async]] و [[type="module"]] هي اللي بتقوله. جرّبت ده في Chrome headless بالصفحة دي من سيرفر محلي (من غير سطر analytics):
+
+~~~text index.html
+<head>
+  <script src="app.js" defer></script>
+  <script type="module" src="main.js"></script>
+  <script>
+    console.log("inline:", document.readyState);
+    document.addEventListener("DOMContentLoaded", () => console.log("DOMContentLoaded"));
+    window.addEventListener("load", () => console.log("load"));
+  </script>
+</head>
+<body><h1>Hi</h1></body>
+~~~
+
+و [[app.js]] و [[main.js]] كل واحد فيه سطر بيطبع اسمه و [[document.querySelector("h1")]].
+
+---
+
+## ١. السطور واحد واحد
+
+### [[<script src="..." async>]]
+
+حمّل الملف في الخلفية والـ HTML بيتقري عادي، وأول ما يوصل **نفّذه فورًا**، حتى لو الـ HTML لسه مخلصش، ومن غير ترتيب مع باقي السكربتات. مناسب لحاجة مستقلة زي analytics.
+
+### [[<script src="app.js" defer>]]
+
+defer = أجّل. حمّل في الخلفية، ونفّذ **بعد** ما الـ HTML كله يتقري، وبترتيب السكربتات في الصفحة.
+
+### [[<script type="module" src="main.js">]]
+
+module بيتأجّل لوحده زي defer، وكمان: بيسمح بـ [[import]] و [[export]]، والكود فيه strict mode، والمتغيرات اللي فيه مش global. جرّبت أطبع [[this]] في أعلى main.js وطلع [[undefined]] (في الـ script العادي بيبقى window).
+
+### الـ inline script
+
+- [[document.readyState]]: حالة الصفحة: [["loading"]] (لسه بيتقري) أو [["interactive"]] أو [["complete"]].
+- [[DOMContentLoaded]]: حدث على document، بيحصل لما الـ HTML يخلص وكل سكربتات defer و module تشتغل.
+- [[load]]: حدث على window، بيستنى كمان الصور والـ CSS وكل حاجة.
+
+---
+
+## ٢. الترتيب الحقيقي
+
+~~~text الناتج: Chrome
+inline: loading
+app.js <h1>Hi</h1>
+main.js <h1>Hi</h1>
+DOMContentLoaded
+load
+~~~
+
+1. inline اتنفذ في مكانه فورًا، والـ HTML لسه بيتقري ([[loading]]).
+2. app.js و main.js استنوا الـ HTML يخلص، فلاقيوا الـ h1، وبالترتيب اللي في الصفحة.
+3. بعدهم DOMContentLoaded، وفي الآخر load.
+
+---
+
+## ٣. من غير defer
+
+شلت [[defer]] من app.js:
+
+~~~text الناتج: Chrome
+app.js null
+inline: loading
+main.js <h1>Hi</h1>
+DOMContentLoaded
+load
+~~~
+
+app.js اشتغل **أول ما المتصفح قابله** في الـ head، والـ body لسه متقراش، فـ querySelector رجّعت [[null]]. ده الـ bug الشهير «الكود مش لاقي العنصر». و main.js لسه تمام لأنه module.
+
+---
+
+## ٤. فتح الملف بدبل كليك ([[file://]])
+
+~~~text الناتج: Chrome
+inline: loading
+Access to script at 'file:///C:/Users/ali/.../main.js' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: chrome, chrome-experimental-site-token-provider, chrome-extension, chrome-untrusted, data, http, https, isolated-app.
+Failed to load resource: net::ERR_FAILED
+app.js <h1>Hi</h1>
+DOMContentLoaded
+load
+~~~
+
+الـ modules بتتحمّل بقواعد CORS، والصفحة المفتوحة من ملف ملهاش origin ([[null]])، فـ main.js اترفض خالص. app.js العادي اشتغل. الحل سيرفر محلي ([[npx serve]] أو Live Server).
+
+---
+
+## الخلاصة
+
+| النوع | بيوقف قراية الـ HTML؟ | بيتنفذ إمتى | الترتيب |
+|---|---|---|---|
+| [[<script>]] عادي | أيوه | فورًا | مكانه |
+| [[async]] | لأ | أول ما يتحمّل | مش مضمون |
+| [[defer]] | لأ | بعد الـ HTML، قبل DOMContentLoaded | بترتيب الصفحة |
+| [[type="module"]] | لأ | زي defer | بترتيب الصفحة، ومحتاج http |
+
+> defer و async بيشتغلوا مع [[src]] بس؛ على script inline بيتجاهلوا.`,
+          lines: [
+            R`[[async]]: المتصفح بيحمّل الملف في الخلفية وهو بيكمّل قراية الـ HTML، وأول ما يوصل بيشغّله فورًا من غير ما يستنى حد. مناسب لحاجة مستقلة زي analytics؛ لكن سكريبتين async ترتيبهم مش مضمون، فمينفعش واحد يعتمد على التاني.`,
+            R`[[defer]]: بيتحمّل في الخلفية برضه، بس مش بيشتغل غير بعد ما الـ HTML كله يتقري، وسكريبتات defer بتشتغل بترتيب كتابتها. ده الاختيار الطبيعي لكود صفحتك اللي بيلمس الـ DOM.`,
+            R`[[type="module"]] بيبقى deferred لوحده من غير ما تكتب defer، وبيسمح بـ [[import]] و [[export]]، والمتغيرات اللي فوق في الملف مبتبقاش global. وفي Chrome مش هيشتغل لو فتحت الصفحة من [[file://]]، لازم سيرفر محلي.`,
+            R`سكريبت inline عادي من غير [[src]] ولا defer: بيشتغل فورًا في مكانه، والمتصفح بيوقف قراية الـ HTML لحد ما يخلص.`,
+            R`بيطبع [["loading"]]: الـ HTML لسه بيتقري، فالعناصر اللي مكتوبة بعد السكريبت ده لسه مش موجودة، و [[querySelector]] عليها هترجّع [[null]].`,
+            R`[[DOMContentLoaded]] بيحصل بعد ما الـ HTML كله يتقري وسكريبتات defer و module تشتغل، من غير ما يستنى الصور. لو مضطر لسكريبت عادي في الـ head ومحتاج الـ DOM، حط الكود جوه الـ listener ده.`,
+            R`[[load]] على [[window]] بيحصل بعد كل حاجة: الصور والـ CSS كمان، فهو متأخر. استخدمه لو محتاج حاجة زي مقاسات الصور، مش لتشغيل كودك العادي.`,
+            R`نهاية السكريبت الـ inline.`,
+          ],
+          sol: R`الترتيب: [[inline: loading]] ← [[app.js <h1>]] ← [[main.js <h1>]] ← [[DOMContentLoaded]] ← [[load]]. الاتنين لاقيين الـ h1 لأنهم استنوا الـ HTML.
+
+لما تشيل [[defer]]: [[app.js]] بيطلع الأول وبيطبع [[app.js null]]، لأنه اشتغل وهو في الـ head قبل ما المتصفح يوصل للـ body. ده بالظبط الـ bug الشهير. و main.js لسه تمام لأن module = deferred.
+
+لو فتحت الملف بدبل كليك هتلاقي main.js مشتغلش وفيه error عن CORS أو origin: الـ modules محتاجة [[http://]]، استخدم [[npx serve]] أو Live Server.`
         }
       ]
     }

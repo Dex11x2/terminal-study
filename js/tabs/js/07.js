@@ -14,6 +14,503 @@ MORE("js", [
       ],
       items: [
         {
+          cmd: "array literals و index و length",
+          title: "array يعني إيه: لستة في متغير واحد، تقرا عنصر وتعدّله برقمه، وتزوّد وتشيل من أولها وآخرها",
+          desc: R`الـ array لستة قيم مترتبة في متغير واحد: [[const cart = ["عيش", "لبن", "جبنة"];]]. بتكتبها بين [[[ ]]] (ده اسمه array literal)، وكل عنصر ليه رقم مكانه (الـ index) **بيبدأ من 0**: [[cart[0]]] أول عنصر، و [[cart[cart.length - 1]]] آخر عنصر.
+• تقرا بـ [[arr[i]]] وتعدّل بـ [[arr[i] = y]]، و [[length]] عدد العناصر (وتقدر تكتب فيه كمان: [[arr.length = 0]] بتفضّيها).
+• [[push]] و [[pop]] بيزوّدوا ويشيلوا من **الآخر**، و [[unshift]] و [[shift]] من **الأول**.
+• [[indexOf(x)]] مكان العنصر أو [[-1]]، و [[join(", ")]] بتحوّل الـ array لنص، و [[split(", ")]] بترجّع النص array.
+ولو قريت index مش موجود مفيش error: بيرجع [[undefined]]. وده أول فخ في الـ arrays.`,
+          example: R`const cart = ["عيش", "لبن", "جبنة"];
+console.log(cart[0], cart[2], cart.length);
+cart[1] = "لبن قليل الدسم";
+cart.push("بيض");
+const last = cart.pop();
+cart.unshift("مية");
+const first = cart.shift();
+console.log(cart.indexOf("جبنة"), cart.indexOf("شاي"));
+const text = cart.join("، ");
+console.log(text, text.split("، "));`,
+          try: R`اعمل [[const scores = [70, 85, 90];]]. اطبع أول درجة وآخر درجة من غير ما تكتب الرقم 2 (استخدم [[length]]). زوّد درجة 60 في الآخر، وغيّر أول درجة لـ 75، واطبع مكان 90 بـ [[indexOf]]. وبعدين اطبع [[scores[10]]] وشوف بيحصل إيه، واكتب [[scores[10] = 100]] واطبع الـ array كلها و [[length]].`,
+          sol: R`~~~js scores.js
+const scores = [70, 85, 90];
+console.log(scores[0], scores[scores.length - 1]);
+scores.push(60);
+scores[0] = 75;
+console.log(scores, scores.indexOf(90));
+console.log(scores[10]);
+scores[10] = 100;
+console.log(scores, scores.length);
+~~~
+
+~~~text الناتج
+70 90
+[ 75, 85, 90, 60 ] 2
+undefined
+[ 75, 85, 90, 60, <6 empty items>, 100 ] 11
+~~~
+
+- [[scores[scores.length - 1]]]: الطول 3، والـ index بيبدأ من 0، فآخر عنصر عند 2. كده الكود شغال مهما الطول اتغيّر.
+- [[scores[10]]] مش error: بيرجّع [[undefined]] بهدوء لأن مفيش عنصر هناك.
+- الكتابة في [[scores[10]]] **بتطوّل** الـ array لـ 11، والأماكن من 4 لـ 9 بقت فاضية (holes). Node بيكتبها [[<6 empty items>]]. ده نادرًا ما بيبقى قصدك: في القسم ٩ من الشرح هتعرف ليه تتجنبه.`,
+          teach: R`## الفكرة: لستة في متغير واحد
+
+عندك ٣ حاجات تشتريها. من غير array هتكتب:
+
+~~~js
+const item1 = "عيش";
+const item2 = "لبن";
+const item3 = "جبنة";
+~~~
+
+وبعدين؟ لو بقوا ٢٠؟ ولو عايز تلف عليهم بـ loop، أو تعدّهم، أو تضيف واحد وانت شغال؟ مفيش طريقة تقول «كل المتغيرات اللي اسمها item». الـ **array** (مصفوفة) بتحل ده: **قيمة واحدة جواها لستة قيم مترتبة**، في متغير واحد:
+
+~~~js
+const cart = ["عيش", "لبن", "جبنة"];
+~~~
+
+ودلوقتي تقدر: تعدّهم ([[cart.length]])، وتلف عليهم ([[for (const item of cart)]] من درس «for...of و for...in»)، وتزوّد وتشيل، وتبعتهم لدالة كحاجة واحدة. أي «لستة» في برنامج حقيقي (منتجات، رسايل، درجات، صفوف من داتابيز) هي array. كل الأرقام اللي تحت من تشغيل الكود على Node 24.22 (ويندوز 11).
+
+---
+
+## ١. array literals: [[[a, b, c]]]
+
+الطريقة اللي هتكتب بيها array في ٩٩٪ من الوقت اسمها **array literal**: قوسين مربعين، والعناصر جواهم مفصولة بـ [[,]].
+
+~~~js literals.js
+const mixed = [1, "اتنين", true, null, { id: 3 }, [4, 5]];
+console.log(mixed.length, typeof mixed, Array.isArray(mixed), Array.isArray("abc"));
+const empty = [];
+console.log(empty, empty.length);
+const long = [
+  "سطر أول",
+  "سطر تاني",
+];
+console.log(long.length);
+~~~
+
+~~~text الناتج
+6 object true false
+[] 0
+2
+~~~
+
+- **أي نوع ينفع يبقى عنصر**، حتى خليط: رقم ونص و boolean و [[null]] و object و array جوه array. في الشغل الحقيقي بتخلّي العناصر من نوع واحد (كلها أرقام، أو كلها objects بنفس الشكل) عشان الكود اللي بيلف عليها يبقى بسيط.
+- [[typeof]] بيقول [["object"]] مش [["array"]]: الـ array نوع خاص من الـ objects (درس «typeof»). عشان تسأل «ده array؟» استخدم [[Array.isArray(x)]].
+- [[[]]] array فاضية طولها 0، وهي البداية المعتادة قبل ما تملاها بـ [[push]].
+- **الفاصلة الأخيرة** ([["سطر تاني",]]) مسموحة ومش بتزوّد عنصر: الطول 2. بنكتبها لما الـ array على كذا سطر، عشان لما تزوّد سطر الـ diff في Git يبقى سطر واحد.
+
+---
+
+## ٢. الـ index من 0: [[arr[i]]] للقراية
+
+كل عنصر ليه رقم مكانه، اسمه **index**، و**بيبدأ من 0** مش 1:
+
+~~~text الأماكن
+ index:    0       1       2
+ القيمة:  "عيش"   "لبن"   "جبنة"
+~~~
+
+~~~js read.js
+const a = [10, 20, 30];
+console.log(a[0], a[a.length - 1], a[3], a[-1], a["1"], a[1.5]);
+~~~
+
+~~~text الناتج
+10 30 undefined undefined 20 undefined
+~~~
+
+| القراية | النتيجة | ليه |
+|---|---|---|
+| [[a[0]]] | 10 | أول عنصر دايمًا عند 0 |
+| [[a[a.length - 1]]] | 30 | آخر عنصر: الطول 3، فآخر index هو 2 |
+| [[a[3]]] | [[undefined]] | برّه المدى: مفيش error، بيرجع [[undefined]] بهدوء |
+| [[a[-1]]] | [[undefined]] | السالب مش «من الآخر» مع الأقواس. [[a.at(-1)]] هي اللي بتعمل كده (وحدة «المصفوفات و Map و Set كاملين») |
+| [[a["1"]]] | 20 | الـ index بيتحوّل لنص من جوه، فـ [["1"]] و [[1]] نفس المكان |
+| [[a[1.5]]] | [[undefined]] | مفيش مكان نص: [["1.5"]] اسم خاصية مش موجودة |
+
+**ليه من 0؟** الرقم معناه «بعد أول عنصر بكام خطوة»: الأول بعد 0 خطوات. وده نفس اللي شفته في النصوص: [["abc"[0]]] بـ [["a"]] (درس «string methods»).
+
+**الفخ الأشهر:** [[undefined]] بيكمّل في الكود لحد ما يوقع بعيد عن مكان الغلط:
+
+~~~text الناتج: names[names.length].length
+TypeError: Cannot read properties of undefined (reading 'length')
+~~~
+
+[[names[names.length]]] برّه المدى دايمًا (آخر index هو [[length - 1]])، فرجع [[undefined]]، وبعدين [[.length]] عليه وقعت. لو شفت الرسالة دي جنب array، دوّر على index غلط.
+
+---
+
+## ٣. [[arr[i] = y]]: تعدّل عنصر
+
+نفس الأقواس، بس على شمال [[=]]:
+
+~~~js write.js
+const b = ["x", "y"];
+b[0] = "X";
+b[4] = "Z";
+console.log(b, b.length);
+~~~
+
+~~~text الناتج
+[ 'X', 'y', <2 empty items>, 'Z' ] 5
+~~~
+
+- [[b[0] = "X"]]: بدّلت أول عنصر. الـ array نفسها هي هي، اللي اتغيّر جواها.
+- [[b[4] = "Z"]]: الـ index ده برّه المدى، فالـ array **طوّلت** لـ 5، والمكانين 2 و 3 بقوا فاضيين (القسم ٩). لو قصدك تزوّد في الآخر استخدم [[push]].
+- **[[const]] مش بيمنع التعديل:** [[const]] معناها إن المتغير مينفعش يشاور على array تانية، مش إن الـ array متجمّدة. فـ [[b[0] = "X"]] شغالة، أما [[b = ["new"]]] فبتوقع:
+
+~~~text الناتج: const c = ["a"]; c = ["b"];
+TypeError: Assignment to constant variable.
+~~~
+
+---
+
+## ٤. Array.prototype.length: العدد، وتكتب فيه كمان
+
+[[length]] خاصية (من غير قوسين) = **آخر index + 1**. ومش للقراية بس:
+
+~~~js length.js
+const d = [1, 2, 3, 4, 5];
+d.length = 2; console.log(d);
+d.length = 4; console.log(d);
+d.length = 0; console.log(d);
+~~~
+
+~~~text الناتج
+[ 1, 2 ]
+[ 1, 2, <2 empty items> ]
+[]
+~~~
+
+| الكتابة | بيحصل إيه |
+|---|---|
+| [[d.length = 2]] | بيقص: العناصر من index 2 ولبعد اتمسحت **ومش بترجع** لو كبّرت الطول تاني |
+| [[d.length = 4]] | بيطوّل بأماكن فاضية مش [[undefined]] حقيقية |
+| [[d.length = 0]] | بيفضّي الـ array نفسها: أي متغير تاني بيشاور عليها هيشوفها فاضية كمان |
+
+والفرق بين [[d.length = 0]] و [[d = []]]: التانية بتعمل array **جديدة** (ومش هتنفع مع [[const]] أصلًا)، والقديمة لسه موجودة عند أي حد شايلها (درس «reference و copy»).
+
+---
+
+## ٥. Array.prototype.push و Array.prototype.pop: من الآخر
+
+~~~js end.js
+const cart = ["عيش", "لبن قليل الدسم", "جبنة"];
+console.log(cart.push("بيض"), cart);
+const last = cart.pop();
+console.log(last, cart);
+console.log([1, 2].push(3, 4, 5));
+console.log([].pop());
+~~~
+
+~~~text الناتج
+4 [ 'عيش', 'لبن قليل الدسم', 'جبنة', 'بيض' ]
+بيض [ 'عيش', 'لبن قليل الدسم', 'جبنة' ]
+5
+undefined
+~~~
+
+- [[push(x)]] بيزوّد في الآخر و**بيرجّع الطول الجديد** (4)، مش الـ array. وتقدر تبعتله كذا عنصر مرة واحدة: [[push(3, 4, 5)]] رجّعت 5.
+- [[pop()]] بيشيل آخر عنصر و**بيرجّعه** ("بيض")، فتقدر تشيله في متغير.
+- [[pop()]] على array فاضية: [[undefined]] من غير error. فلو بتلف بـ [[while]] اسأل عن [[length]] مش عن الناتج (لأن عنصر قيمته [[undefined]] هيلخبطك).
+- الاتنين **بيعدّلوا الـ array نفسها**. وده اسمه stack (كومة أطباق): آخر واحد دخل أول واحد يطلع. زي «تراجع» (Ctrl+Z).
+
+---
+
+## ٦. Array.prototype.shift و Array.prototype.unshift: من الأول
+
+~~~js start.js
+const cart = ["عيش", "لبن قليل الدسم", "جبنة"];
+console.log(cart.unshift("مية"), cart);
+const first = cart.shift();
+console.log(first, cart);
+const q = [3, 4];
+console.log(q.unshift(1, 2), q);
+~~~
+
+~~~text الناتج
+4 [ 'مية', 'عيش', 'لبن قليل الدسم', 'جبنة' ]
+مية [ 'عيش', 'لبن قليل الدسم', 'جبنة' ]
+4 [ 1, 2, 3, 4 ]
+~~~
+
+- [[unshift(x)]] بيزوّد في **الأول** وبيرجّع الطول الجديد. و [[unshift(1, 2)]] بيحطّهم بنفس ترتيبهم: [[[1, 2, 3, 4]]].
+- [[shift()]] بيشيل **أول** عنصر وبيرجّعه، و[[undefined]] لو فاضية.
+- **كل العناصر بتتحرك:** بعد [[shift]] اللي كان عند 1 بقى عند 0. عشان كده [[shift]] على array كبيرة أبطأ بكتير من [[pop]] (اتقاس في التمرين السادس: على 100 ألف عنصر [[shift]] حوالي ثانية و [[pop]] حوالي ملي ثانية).
+- [[push]] + [[shift]] = طابور (queue): أول واحد دخل أول واحد يطلع، زي طابور البنك.
+
+---
+
+## ٧. Array.prototype.indexOf: العنصر ده فين؟
+
+~~~js find.js
+console.log(cart.indexOf("جبنة"), cart.indexOf("شاي"));
+console.log([NaN].indexOf(NaN), [NaN].includes(NaN), [{ id: 1 }].indexOf({ id: 1 }), ["1", 1].indexOf(1), [1, 2, 1].indexOf(1, 1));
+~~~
+
+~~~text الناتج
+2 -1
+-1 true -1 1 2
+~~~
+
+| النداء | النتيجة | ليه |
+|---|---|---|
+| [[indexOf("جبنة")]] | 2 | مكان **أول** مرة لقاه |
+| [[indexOf("شاي")]] | [[-1]] | مش موجود. اسأل [[=== -1]]، مش [[if (i)]]: لأن 0 مكان حقيقي و falsy |
+| [[[NaN].indexOf(NaN)]] | [[-1]] | بيقارن بـ [[===]]، و [[NaN === NaN]] بـ [[false]]. [[includes]] بتلاقيه |
+| [[[{ id: 1 }].indexOf({ id: 1 })]] | [[-1]] | object تاني بنفس الشكل مش هو نفسه (درس «reference و copy») |
+| [[["1", 1].indexOf(1)]] | 1 | [[===]] مبيحوّلش أنواع: النص [["1"]] مش الرقم 1 |
+| [[[1, 2, 1].indexOf(1, 1)]] | 2 | الباراميتر التاني: ابدأ الدوّير من index 1 |
+
+لو عايز «موجود ولا لأ» بس، [[includes]] أوضح (درس «find و some و includes»). و [[indexOf]] لما محتاج المكان نفسه عشان تعدّل فيه: [[cart[cart.indexOf("لبن")] = "زبادي"]] (بس اتأكد الأول إنه مش [[-1]]، وإلا [[cart[-1] = ...]] هتعمل خاصية غريبة اسمها [["-1"]]).
+
+---
+
+## ٨. Array.prototype.join و [[split]]: من array لنص وبالعكس
+
+~~~js text.js
+const text = cart.join("، ");
+console.log(text, text.split("، "));
+console.log([1, 2, 3].join(), [1, 2, 3].join(""), [1, null, undefined, 3].join("-"), [].join(","));
+console.log("abc".split(""), "".split(","), "a,,b".split(","), "a, b".split(","));
+~~~
+
+~~~text الناتج
+عيش، لبن قليل الدسم، جبنة [ 'عيش', 'لبن قليل الدسم', 'جبنة' ]
+1,2,3 123 1---3
+[ 'a', 'b', 'c' ] [ '' ] [ 'a', '', 'b' ] [ 'a', ' b' ]
+~~~
+
+- [[join(sep)]] بتلزق العناصر بالفاصل اللي تختاره وترجّع **نص**. من غير فاصل: [[,]]. و [[""]] من غير فاصل خالص.
+- [[null]] و [[undefined]] بيبقوا نص فاضي في [[join]] ([["1---3"]]: مكانهم فاضي بين الشرط). و [[[].join(",")]] نص فاضي.
+- [[split(sep)]] (من درس «string methods») العكس: بتقطّع النص عند الفاصل وترجّع array. فـ [[text.split("، ")]] رجّعت نفس الـ array: ده الـ **round trip**.
+- فخاخ [[split]]: [[""]] بيرجّع [[[""]]] (عنصر واحد فاضي، مش [[[]]])، والفاصلتين ورا بعض بيعملوا عنصر فاضي، و [["a, b".split(",")]] سابت المسافة في [[" b"]] (نضّفها بـ [[trim]]).
+- **الـ round trip بيبوظ** لو عنصر جواه الفاصل نفسه: [["مصنع النور, فرع 2"]] بعد [[join(",")]] و [[split(",")]] بقت عنصرين (التمرين الرابع). ده سبب إن CSV الحقيقي بيحط القيم دي بين علامات تنصيص، وإن JSON (درس «JSON») أأمن لتخزين array.
+
+---
+
+## ٩. الفراغات (holes) والـ index برّه المدى
+
+~~~js holes.js
+const h = [1, , 3];
+console.log(h, h.length, 1 in h, h[1]);
+for (const x of h) console.log("for of", x);
+h.forEach(x => console.log("forEach", x));
+~~~
+
+~~~text الناتج
+[ 1, <1 empty item>, 3 ] 3 false undefined
+for of 1
+for of undefined
+for of 3
+forEach 1
+forEach 3
+~~~
+
+- [[[1, , 3]]] (فاصلتين ورا بعض) أو [[arr[10] = x]] أو [[length]] أكبر: بيعملوا **hole**: مكان محسوب في [[length]] بس **مفيهوش عنصر أصلًا**. [[1 in h]] بـ [[false]] (السؤال «فيه عنصر عند 1؟»).
+- القراية منه [[undefined]]، زي index برّه المدى. بس الدوال مش بتتعامل معاه زي بعض: [[for...of]] بيدّيك [[undefined]]، و [[forEach]] **بيتخطاه** خالص (سطرين بس). جدول كامل بمين بيتخطى ومين لأ في وحدة «المصفوفات و Map و Set كاملين».
+- **القاعدة:** متعملش holes. زوّد بـ [[push]]، واعمل array بطول معين بـ [[Array.from({ length: n }, ...)]] (الوحدة الجاية) مش بـ [[arr[n] = x]].
+
+---
+
+## الخلاصة
+
+| عايز | اكتب | بيعدّل الأصل؟ | بيرجّع |
+|---|---|---|---|
+| array جديدة | [[[a, b, c]]] أو [[[]]] | لأ | الـ array |
+| أول / آخر عنصر | [[arr[0]]] / [[arr[arr.length - 1]]] | لأ | العنصر أو [[undefined]] |
+| تغيّر عنصر | [[arr[i] = y]] | أيوه | [[y]] |
+| العدد | [[arr.length]] | لأ | رقم |
+| تفضّي أو تقص | [[arr.length = 0]] / [[arr.length = n]] | أيوه | |
+| تزوّد / تشيل من الآخر | [[push(x)]] / [[pop()]] | أيوه | الطول الجديد / العنصر اللي اتشال |
+| تزوّد / تشيل من الأول | [[unshift(x)]] / [[shift()]] | أيوه (وكل العناصر بتتحرك) | الطول الجديد / العنصر اللي اتشال |
+| مكان عنصر | [[indexOf(x)]] | لأ | الـ index أو [[-1]] |
+| array لنص ورجوع | [[join(sep)]] و [[split(sep)]] | لأ | نص / array |
+
+> الدروس اللي بعد كده في الوحدة دي بتلف على الـ array كلها: [[map]] و [[filter]] و [[reduce]] و [[find]] و [[sort]]. وكل method تانية (عددهم أكتر من ٣٠) في وحدة «المصفوفات و Map و Set كاملين».`,
+          lines: [
+            R`array literal: قوسين مربعين وجواهم ٣ نصوص مفصولة بفواصل. المتغير [[cart]] شايل اللستة كلها كقيمة واحدة، وأماكنها 0 و 1 و 2.`,
+            R`[[cart[0]]] أول عنصر «عيش» (الـ index بيبدأ من 0)، و [[cart[2]]] تالت عنصر «جبنة»، و [[cart.length]] بـ 3 عدد العناصر. الناتج: [[عيش جبنة 3]].`,
+            R`[[cart[1] = ...]] بتبدّل العنصر اللي عند index 1 («لبن») بقيمة جديدة. ده تعديل جوه الـ array، فـ [[const]] مش بيمنعه.`,
+            R`[[push]] بتزوّد «بيض» في الآخر، فالطول بقى 4، وبترجّع الطول الجديد (4) لو حبيت تستخدمه.`,
+            R`[[pop]] بتشيل آخر عنصر («بيض») وترجّعه في [[last]]، فالـ array رجعت ٣ عناصر.`,
+            R`[[unshift]] بتزوّد «مية» في **الأول**، فكل العناصر اتزحزحت خطوة: «عيش» بقى عند 1.`,
+            R`[[shift]] بتشيل أول عنصر («مية») وترجّعه في [[first]]، والباقي رجع مكانه: «عيش» عند 0 تاني.`,
+            R`[[indexOf]] بيدوّر على القيمة ويرجّع مكانها: «جبنة» عند 2، و «شاي» مش موجود فـ [[-1]]. الناتج: [[2 -1]].`,
+            R`[[join("، ")]] بتلزق العناصر في نص واحد بينهم فاصلة عربي ومسافة: [["عيش، لبن قليل الدسم، جبنة"]].`,
+            R`بيطبع النص، وبعده [[split]] بنفس الفاصل اللي رجّع نفس الـ array: ده الـ round trip من array لنص ورجوع.`,
+          ],
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const a = [10, 20, 30]; a[5] = 60;]]. اكتب قبل التشغيل: [[a.length]] و [[a[4]]] و [[a.indexOf(60)]] و [[a.indexOf(undefined)]]، وشكل [[console.log(a)]] (من القسم ٣ و ٩ في الشرح).`, done: R`كتبت 6 و [[undefined]] و 5 و [[-1]]، و [[[ 10, 20, 30, <2 empty items>, 60 ]]]، وعرفت ليه [[indexOf(undefined)]] مش 3.`, sol: R`~~~js predict.js
+const a = [10, 20, 30];
+a[5] = 60;
+console.log(a.length, a[4], a.indexOf(60), a.indexOf(undefined));
+console.log(a);
+~~~
+
+~~~text الناتج
+6 undefined 5 -1
+[ 10, 20, 30, <2 empty items>, 60 ]
+~~~
+
+- الكتابة عند index 5 خلّت الطول 6 (آخر index + 1)، والمكانين 3 و 4 **فاضيين** (holes).
+- [[a[4]]] بـ [[undefined]] لأنه مفيش عنصر هناك، والقراية من مكان فاضي زي القراية من برّه المدى.
+- [[a.indexOf(undefined)]] بـ [[-1]] مش 3: [[indexOf]] **بيتخطى الأماكن الفاضية** خالص (مفيش عنصر يتقارن). لو كانت [[[10, undefined]]] (قيمة [[undefined]] حقيقية) كانت هترجّع 1. وده سبب إن الـ holes بتلخبط.` },
+            { lvl: 'سريع', t: R`**محاكاة:** (١) طابور عيادة: ٣ مرضى بيوصلوا بـ [[push]]، والدكتور بيدخّل أول واحد بـ [[shift]]، وبعدين حالة طوارئ بتيجي في **أول** الطابور بـ [[unshift]]، واطبع الطابور بـ [[join(" ← ")]]. (٢) زرار «تراجع»: ٣ عمليات بـ [[push]] وتراجع واحد بـ [[pop]] (من القسم ٥ و ٦ في الشرح).`, done: R`أول من دخل «سارة»، والطوارئ دخلت قبل «عمر»، والطابور في الآخر [[عمر ← منى]]، والتراجع شال آخر عملية بس.`, sol: R`~~~js clinic.js
+const queue = [];
+queue.push("سارة");
+queue.push("عمر");
+queue.push("منى");
+console.log("دخل الدكتور:", queue.shift(), "| مستنيين:", queue.length);
+queue.unshift("حالة طوارئ");
+console.log("دخل الدكتور:", queue.shift(), "| الطابور:", queue.join(" ← "));
+const undo = [];
+undo.push("كتب: أهلا");
+undo.push("مسح كلمة");
+undo.push("كتب: بيكم");
+console.log("تراجع عن:", undo.pop(), "| فاضل:", undo);
+~~~
+
+~~~text الناتج
+دخل الدكتور: سارة | مستنيين: 2
+دخل الدكتور: حالة طوارئ | الطابور: عمر ← منى
+تراجع عن: كتب: بيكم | فاضل: [ 'كتب: أهلا', 'مسح كلمة' ]
+~~~
+
+- **الطابور (queue):** بتزوّد من آخر ([[push]]) وبتاخد من أول ([[shift]])، فاللي وصل الأول بيدخل الأول. و [[unshift]] بتكسر الدور عمدًا للطوارئ.
+- **التراجع (stack):** بتزوّد وبتاخد من نفس الناحية (الآخر)، فآخر عملية هي أول واحدة تتلغي. ده بالظبط إزاي Ctrl+Z شغال في أي محرر.
+- [[shift]] و [[pop]] بيرجّعوا العنصر اللي اتشال، فاستخدمناه في نفس سطر الطباعة.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[for (let i = 0; i <= names.length; i++) console.log(i, names[i].length);]] على [[["سارة", "عمر", "منى"]]] بيطبع ٣ سطور وبعدين يوقع. شغّله، اقرا الـ error، ولاقي السطر اللي فيه المشكلة وصلّحه (من القسم ٢ في الشرح).`, done: R`شفت [[TypeError: Cannot read properties of undefined (reading 'length')]]، وعرفت إن [[i]] وصل 3 و [[names[3]]] برّه المدى، والتصليح بـ [[<]] بيطبع ٣ سطور ومفيش error.`, sol: R`~~~js loop-bug.js
+const names = ["سارة", "عمر", "منى"];
+for (let i = 0; i <= names.length; i++) console.log(i, names[i]);
+try { console.log(names[names.length].length); } catch (e) { console.log(e.constructor.name + ": " + e.message); }
+for (let i = 0; i < names.length; i++) console.log(i, names[i], names[i].length);
+~~~
+
+~~~text الناتج
+0 سارة
+1 عمر
+2 منى
+3 undefined
+TypeError: Cannot read properties of undefined (reading 'length')
+0 سارة 4
+1 عمر 3
+2 منى 3
+~~~
+
+- الطول 3، فالأماكن 0 و 1 و 2. الشرط [[i <= names.length]] بيخلي [[i]] يوصل 3، و [[names[3]]] بـ [[undefined]] (مش error)، وبعدين [[.length]] على [[undefined]] هي اللي وقعت.
+- التصليح: [[i < names.length]]. ده اسمه off-by-one، أشهر باج في الـ loops.
+- الأحسن خالص: [[for (const name of names)]] مفيهوش index تغلط فيه أصلًا. استخدم الـ index بس لما محتاج الرقم نفسه.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** سطر CSV من شيت عملاء: [["1023,منى علي,القاهرة,250"]] (الرقم، والاسم، والمدينة، والرصيد). قطّعه بـ [[split]]، وغيّر المدينة لـ «الجيزة»، وزوّد الرصيد 50، ورجّعه سطر بـ [[join]]. وبعدين جرّب عميل اسمه [["مصنع النور, فرع 2"]] وشوف الـ round trip بيعمل إيه (من القسم ٨ في الشرح).`, done: R`السطر بقى [[1023,منى علي,الجيزة,300]] (مش [[25050]])، وعرفت إن الاسم اللي فيه فاصلة بيطلع ٥ حتت بدل ٤.`, sol: R`~~~js csv-row.js
+const row = "1023,منى علي,القاهرة,250";
+const cells = row.split(",");
+cells[3] = String(Number(cells[3]) + 50);
+cells[2] = "الجيزة";
+console.log(cells, cells.join(","));
+const bad = ["1024", "مصنع النور, فرع 2", "طنطا", "90"].join(",");
+console.log(bad, bad.split(",").length);
+~~~
+
+~~~text الناتج
+[ '1023', 'منى علي', 'الجيزة', '300' ] 1023,منى علي,الجيزة,300
+1024,مصنع النور, فرع 2,طنطا,90 5
+~~~
+
+- [[split(",")]] رجّعت ٤ نصوص، فالرصيد [["250"]] **نص**. لو كتبت [[cells[3] + 50]] كان طلع [["25050"]] (لزق نصوص). عشان كده [[Number(...)]] الأول، وبعدين [[String]] عشان يرجع نص زي باقي الخانات.
+- [[cells[2] = ...]] تعديل بالـ index: عارفين إن المدينة الخانة التالتة من شكل الملف.
+- السطر التاني: اسم فيه [[,]] اتقسم لاتنين، فالخانات بقت ٥ والرصيد اتزحزح لمكان المدينة. CSV الحقيقي بيحل ده بعلامات تنصيص حوالين القيمة، فمتقراش CSV حقيقي بـ [[split(",")]] (استخدم مكتبة، أو JSON لما انت اللي بتكتب الملف).` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[rotate(list, k)]] بترجّع array **جديدة** فيها العناصر متلفّة [[k]] خطوات لشمال ([[rotate(["سبت", "أحد", "اتنين", "تلات"], 1)]] = [[["أحد", "اتنين", "تلات", "سبت"]]])، من غير ما تغيّر الأصل. واتعامل مع: array فاضية، و [[k]] أكبر من الطول، و [[k = 0]]. استخدم [[push]] و [[shift]] بس. حلّها في المربع اللي تحت.`, done: R`كل الاختبارات عدّت: [[rotate(days, 6)]] زي [[rotate(days, 2)]]، و [[rotate([], 3)]] بترجّع [[[]]] من غير loop لا نهائي، و [[days]] بعد كل ده لسه زي ما هي.`, sol: R`~~~js rotate.js
+function rotate(list, k) {
+  const out = [];
+  for (const x of list) out.push(x);
+  if (out.length === 0) return out;
+  const steps = k % out.length;
+  for (let i = 0; i < steps; i++) out.push(out.shift());
+  return out;
+}
+const days = ["سبت", "أحد", "اتنين", "تلات"];
+console.log(rotate(days, 1), rotate(days, 6), rotate([], 3), rotate(days, 0), days);
+~~~
+
+~~~text الناتج
+[ 'أحد', 'اتنين', 'تلات', 'سبت' ] [ 'اتنين', 'تلات', 'سبت', 'أحد' ] [] [ 'سبت', 'أحد', 'اتنين', 'تلات' ] [ 'سبت', 'أحد', 'اتنين', 'تلات' ]
+~~~
+
+- **النسخة الأول:** [[out]] array جديدة بنملاها من [[list]]. لو اشتغلنا على [[list]] نفسها بـ [[shift]] و [[push]] كنا هنبوّظ الـ array بتاعة اللي نادى الدالة.
+- **لفة واحدة = [[out.push(out.shift())]]:** شيل الأول وحطه في الآخر. السطر بيتقري من جوه لبرة.
+- **[[k % out.length]]:** ٦ لفات على ٤ عناصر زي لفتين بالظبط، فبنوفّر اللف الزيادة.
+- **الفاضية قبل [[%]]:** [[k % 0]] بـ [[NaN]]، و [[i < NaN]] دايمًا [[false]] فكانت هتعدّي بالصدفة. بس الشرط الصريح أوضح لأي حد هيقرا الكود.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** اعمل array فيها 10000 رقم، وفضّيها مرة بـ [[pop]] في [[while (a.length)]] ومرة بـ [[shift]]، وقيس كل مرة بـ [[performance.now()]]. وبعدين نفس الكلام على 100000. اكتب الأرقام، واشرح في سطرين ليه الفرق بيكبر كده (من القسم ٦ في الشرح).`, done: R`عندك ٤ أرقام حقيقية من جهازك، والفرق على 100000 بقى مئات المرات مش الضعف، وكتبت إن [[shift]] بتحرّك كل العناصر الباقية.`, sol: R`~~~js shift-vs-pop.js
+function build(n) { const a = []; for (let i = 0; i < n; i++) a.push(i); return a; }
+for (const n of [10000, 100000]) {
+  let a = build(n);
+  let t = performance.now();
+  while (a.length) a.pop();
+  const pop = performance.now() - t;
+  a = build(n);
+  t = performance.now();
+  while (a.length) a.shift();
+  const shift = performance.now() - t;
+  console.log(n, "pop:", pop.toFixed(2) + "ms", "shift:", shift.toFixed(2) + "ms");
+}
+~~~
+
+~~~text الناتج (Node 24.22، تشغيلتين على نفس الجهاز)
+10000 pop: 0.26ms shift: 0.64ms
+100000 pop: 1.24ms shift: 780.19ms
+
+10000 pop: 0.20ms shift: 0.58ms
+100000 pop: 1.02ms shift: 1004.38ms
+~~~
+
+- [[pop]] بيشيل آخر عنصر ويقلّل [[length]]، ومفيش حاجة تانية تتحرك، فكل نداء تقريبًا نفس الوقت.
+- [[shift]] لازم ينقل كل العناصر الباقية خطوة لشمال عشان الـ index يبدأ من 0 تاني. لو عندك n عنصر، أول [[shift]] بيحرّك n-1، واللي بعده n-2... المجموع حوالي n²/2 حركة. عشان كده ١٠ أضعاف العناصر خلّت الوقت أكتر من ألف ضعف.
+- على 10000 الفرق صغير لأن V8 عنده حيلة للـ arrays الصغيرة (بيحرّك بداية الـ array في الذاكرة بدل ما ينقل العناصر)، وجرّبنا أرقام تانية: 20000 أخدت 49ms و 50000 أخدت 263ms. **الخلاصة:** طابور كبير ([[shift]] كتير) محتاج تصميم تاني (index بيتحرك بدل [[shift]]، وده في المستوى ٣)، وطابور فيه مية عنصر مفيهوش أي مشكلة.` },
+          ],
+          check: {
+            lang: "js",
+            starter: R`function rotate(list, k) {
+  return list;
+}`,
+            tests: R`const days = ["سبت", "أحد", "اتنين", "تلات"];
+test("لفة واحدة", () => expect(rotate(days, 1)).toEqual(["أحد", "اتنين", "تلات", "سبت"]));
+test("k أكبر من الطول", () => expect(rotate(days, 6)).toEqual(["اتنين", "تلات", "سبت", "أحد"]));
+test("k = 0 بترجّع نفس الترتيب", () => expect(rotate(days, 0)).toEqual(["سبت", "أحد", "اتنين", "تلات"]));
+test("array فاضية", () => expect(rotate([], 3)).toEqual([]));
+test("الأصل متغيّرش وراجعت array جديدة", () => { const r = rotate(days, 2); expect(days).toEqual(["سبت", "أحد", "اتنين", "تلات"]); expect(r === days).toBe(false); });`,
+            solution: R`function rotate(list, k) {
+  const out = [];
+  for (const x of list) out.push(x);
+  if (out.length === 0) return out;
+  const steps = k % out.length;
+  for (let i = 0; i < steps; i++) out.push(out.shift());
+  return out;
+}`
+          },
+          flag: "script",
+          ref: [
+            { t: "MDN: Array", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" },
+            { t: "MDN: Array literal notation", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Array#array_literal_notation" },
+            { t: "MDN: Array.prototype.length", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length" },
+            { t: "MDN: Array.prototype.push()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push" },
+            { t: "MDN: Array.prototype.pop()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/pop" },
+            { t: "MDN: Array.prototype.shift()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/shift" },
+            { t: "MDN: Array.prototype.unshift()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/unshift" },
+            { t: "MDN: Array.prototype.indexOf()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf" },
+            { t: "MDN: Array.prototype.join()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join" },
+            { t: "MDN: String.prototype.split()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split" },
+            { t: "MDN Curriculum: JavaScript fundamentals، Arrays", url: "https://developer.mozilla.org/en-US/curriculum/core/javascript-fundamentals/" },
+          ],
+          pre: ["js/المتغيرات والأنواع والعمليات", "js/for و while", { to: "js/string methods", why: R`[[split]] اتشرحت هناك، وهنا هنستخدمها مع [[join]] رايح جاي` }],
+          deep: {
+            why: R`أي برنامج حقيقي بيتعامل مع **لستات**: منتجات في سلة، ورسايل في شات، وصفوف راجعة من API. الـ array هي الطريقة اللي اللغة بتشيل بيها لستة مترتبة في قيمة واحدة تتبعت لدالة وتتلف عليها وتتحوّل JSON. وكل الدروس اللي جاية ([[map]] و [[filter]] و [[sort]] وفي React [[items.map(...)]]) مبنية على إنك فاهم الـ index والـ length و push و pop كويس.`,
+            how: R`الـ array من جوه object عادي بخاصية [[length]] ومفاتيح أرقام ([["0"]] و [["1"]]...)، عشان كده [[typeof]] بيقول [["object"]] و [[a["1"]]] زي [[a[1]]]. [[length]] دايمًا «أكبر index + 1»: لما تكتب عند index أكبر منه بيكبر لوحده، ولما تصغّره بنفسك العناصر اللي بعده بتتمسح. والمحرك (V8) بيخزّن الـ array اللي من غير holes وعناصرها نوع واحد بشكل مضغوط وسريع جدًا، والـ holes بتخليه يحوّلها لشكل أبطأ. و [[push]] و [[pop]] بيشتغلوا على الآخر فمش محتاجين يحرّكوا حاجة، أما [[shift]] و [[unshift]] فبيعيدوا ترقيم كل العناصر (اتقاس في التمرين السادس).`,
+            when: R`array لما الترتيب مهم أو بتلف على الكل: لستة منتجات، خطوات، رسايل. [[push]] و [[pop]] لأي stack (تراجع، تاريخ الصفحات، أقواس مفتوحة). [[push]] و [[shift]] لطابور صغير. [[indexOf]] لما محتاج **المكان** (عشان تعدّل فيه)، و [[includes]] لما عايز «موجود؟» بس. و [[join]] لعرض اللستة كنص، و [[split]] لقراية نص بسيط (سطر إعدادات، تاجات مفصولة بفواصل). ولو بتدوّر بالـ id كتير، أو عايز من غير تكرار: [[Map]] و [[Set]] (درس «Map و Set»).`,
+            mistakes: R`[[arr[arr.length]]] بدل [[arr[arr.length - 1]]] لآخر عنصر. و [[i <= arr.length]] في الـ loop. و [[if (arr.indexOf(x))]] (المكان 0 falsy، و [[-1]] truthy). و [[arr[-1]]] متوقع آخر عنصر (ده [[at(-1)]]). و [[const arr = []; arr = [...]]] (TypeError)، أو العكس: فاكر إن [[const]] بتمنع [[push]]. و [[push]] بترجّع الطول مش الـ array: [[const list = [].push(1)]] بيخلي [[list]] = 1. و [[shift]] جوه loop على array ضخمة. و [[arr[100] = x]] بيعمل 99 hole. و [[split(",")]] على CSV فيه فواصل جوه القيم.`
+          }
+        },
+        {
           cmd: "map و filter و reduce",
           title: "تحوّل وتفلتر وتجمع array من غير for",
           desc: R`[[map]] بتحوّل كل عنصر وترجّع array جديدة بنفس الطول. [[filter]] بترجّع العناصر اللي الشرط بتاعها true بس. [[reduce]] بتجمع الـ array كلها في قيمة واحدة (مجموع، أو object، أو أي حاجة).
