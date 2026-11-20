@@ -1,2407 +1,1737 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "أسئلة انترفيو",
+      t: "APIs المتصفح",
       l: 3,
-      n: "الأسئلة اللي بتتكرر في انترفيوهات JavaScript: إجابات تقولها بصوتك، وكود تكتبه على السبورة",
+      n: "IntersectionObserver و ResizeObserver و MutationObserver، ورفع الملفات بمعاينة و progress، ودورة حياة الصفحة و bfcache، و pushState، والإشعارات و Permissions API",
       projects: [
-        { lvl: 'صغير', t: R`بنك أسئلة «إيه الناتج؟» بيصحح نفسه`, what: R`ملف [[quiz.mjs]] فيه ١٥ سؤال من درس «اتوقع الناتج» ومن الوحدات اللي فاتت (coercion و this و hoisting و event loop)، كل سؤال [[{ code, expected, rule }]]. انت بتكتب [[expected]] قبل ما تشغّل، والسكربت بيشغّل كل [[code]] بـ [[new Function]] ويقارن، ولو غلط يطبع الـ [[rule]].`, done: R`[[node quiz.mjs]] بيطبع كل سؤال وجنبه صح ولا غلط وعدد الصح من ١٥، وكل سؤال غلطت فيه بيطبع القاعدة بكلامك، والسؤال اللي فيه [[setTimeout]] أو Promise بيتصحح صح (السكربت بيستنى الناتج)، ولما تعيد بعد يومين تجيب ١٥ من ١٥.` },
-        { lvl: 'صغير', t: R`includes بإيدك وفخ NaN`, what: R`[[Array.prototype.myIncludes(value, fromIndex = 0)]] بنفس شكل درس الـ polyfills، بس بالمقارنة اللي الأصلي بيستخدمها (SameValueZero): [[NaN]] بيساوي [[NaN]] و 0 بيساوي -0، و [[fromIndex]] السالب بيتحسب من الآخر، والـ holes بتتعامل كـ [[undefined]].`, done: R`[[[NaN].myIncludes(NaN)]] بيرجّع [[true]] مع إن [[[NaN].indexOf(NaN)]] بيرجّع -1، و [[[1, 2, 3].myIncludes(1, -2)]] بيرجّع [[false]] و [[[1, 2, 3].myIncludes(3, -1)]] بيرجّع [[true]]، و [[[1, , 3].myIncludes(undefined)]] بيرجّع [[true]]، وكل ده نفس اللي [[includes]] الأصلي بيرجّعه بالظبط (قارنهم في loop).` },
-        { lvl: 'متوسط', t: R`مكتبة utils بتستات`, what: R`ملف [[utils.mjs]] فيه [[promiseAll]] و [[myMap]] و [[myBind]] و [[curry]] و [[deepEqual]] من دروس الوحدة، وملف [[utils.test.mjs]] بـ [[node:test]] و [[node:assert]] فيه ٣ تستات على الأقل لكل دالة، منهم حالة طرفية واحدة على الأقل (array فاضية، أو hole، أو [[new]]، أو [[NaN]]).`, done: R`[[node --test]] بيعدّي كل التستات، وكل تست بيفشل فعلًا لو بوّظت الدالة (جرّب تشيل [[if (i in this)]] أو [[Object.is]] وشوف تست بيقع)، وكل دالة بترمي [[TypeError]] لو اتبعتلها حاجة غلط (callback مش function مثلًا).` },
-        { lvl: 'متوسط', t: R`انترفيو تجريبي متسجّل`, what: R`اختار ٣ أسئلة من الوحدة (واحد شرح زي null و undefined، وواحد كود زي curry، وواحد output)، وادّي نفسك ٢٠ دقيقة لكل سؤال، وسجّل صوتك وانت بتشرح وبتكتب على ورقة أو editor من غير تشغيل. بعدها شغّل الكود واسمع التسجيل.`, done: R`فيه ٣ تسجيلات، والكود اللي كتبته من غير تشغيل اشتغل من أول مرة أو مكتوب جنبه الغلطة بالظبط، وتقدر تشرح كل سؤال في دقيقتين من غير سكوت أطول من ١٠ ثواني، وكتبت لكل سؤال الحالات الطرفية اللي كان ممكن تتسأل عليها.` },
-        { lvl: 'كبير', t: R`lodash صغير بتاعك`, what: R`مكتبة فيها [[debounce]] و [[throttle]] (وحدة الأداء)، و [[deepClone]] بيدعم Date و Map و Set والـ objects اللي بتشاور على نفسها بـ WeakMap، و [[deepEqual]] بنفس الدعم (درس deep equal)، و [[get(obj, "a.b.0.c", fallback)]]، و [[mapLimit(items, limit, fn)]] (فكرة Promise.all بإيدك بحد للتوازي)، و [[curry]]. كل دالة بتفحص المدخلات وبترمي [[TypeError]] برسالة واضحة.`, done: R`[[node --test]] فيه تستات للحالات الطرفية وبتعدّي: object بيشاور على نفسه بيتنسخ ويتقارن من غير stack overflow، و [[deepEqual(new Date(1), new Date(2))]] بيرجّع [[false]]، و [[mapLimit]] على ٥ مهام كل واحدة 100ms بحد 2 بياخد حوالي 300ms والنتايج بترتيب المدخلات، و [[get]] على path مش موجود بيرجّع الـ fallback من غير error، و [[node --test --experimental-test-coverage]] بيقول فوق 90٪ سطور.`, ext: R`انشرها كـ package على npm (أو GitHub Packages) بـ README و types، وزوّد [[memoize]] و [[groupBy]] و [[retry]]، وقارن أداء [[deepClone]] بتاعك بـ [[structuredClone]] برقم.` },
-        { lvl: 'فكرة', t: R`اشرحها لحد تاني`, what: R`اختار سؤال من الوحدة دي حسيت إنه صعب عليك، واعمله شرح بتاعك: بوست أو فيديو قصير أو صفحة HTML تفاعلية، فيه الإجابة اللي تتقال في الانترفيو، والكود، والحالات اللي بتوقع الناس.`, done: R`الشرح فيه كود حد يقدر ينسخه ويشغّله ويطلعله نفس الناتج اللي انت كاتبه، وفيه غلطة شائعة واحدة على الأقل وإزاي تكتشفها، وحد تاني قراه وفهمه من غير ما تشرح له جنبه.`, ext: R`اعمل سلسلة لكل أسئلة الوحدة، أو حوّلها لـ quiz تفاعلي، أو سجّل نفسك بتجاوب بالإنجليزي عشان الانترفيوهات الأجنبي.` },
+        { lvl: 'صغير', t: R`زرار «ارجع لفوق» من غير scroll listener`, what: R`div صغير في أول الصفحة عليه [[IntersectionObserver]] (درس ١): لما يخرج من الشاشة يظهر زرار «لفوق» ثابت في الركن، ولما يرجع يختفي. والزرار بيعمل [[scrollTo({ top: 0, behavior: "smooth" })]].`, done: R`الزرار مش ظاهر وانت في أول الصفحة، بيظهر بعد ما تنزل شوية ويختفي لما ترجع، ومفيش ولا [[addEventListener("scroll")]] في الكود، و Performance في DevTools مفيهوش شغل JS مستمر وانت بتعمل scroll.` },
+        { lvl: 'صغير', t: R`اختيار صورة البروفايل`, what: R`[[<input type="file" accept="image/*">]] لصورة واحدة (درس ٣): معاينة في دايرة بـ [[URL.createObjectURL]]، ورفض أي ملف أكبر من 1MB أو مش صورة فعلًا (أول bytes بتوعه مش PNG ولا JPEG)، و [[revokeObjectURL]] للقديمة كل ما تختار جديدة.`, done: R`صورة PNG أو JPEG بتظهر في الدايرة، وملف [[.txt]] اتغيّر اسمه لـ [[.png]] بيترفض برسالة مع إن [[file.type]] بتاعه [[image/png]]، والملف الكبير بيترفض ومعاه حجمه بالـ MB، واختيار ٥ صور ورا بعض بيسيب blob URL واحد بس شغال.` },
+        { lvl: 'متوسط', t: R`رافع صور كامل`, what: R`منطقة سحب وإفلات (درس ٤) وجواها [[<label>]] و [[<input type="file" multiple>]] للي مش بيستخدم ماوس (درس ٣)، ومعاينة لكل صورة ومعاها حجمها ومقاسها، وفحص النوع والحجم قبل أي رفع، وشريط تقدم وزرار إلغاء لكل ملف لوحده بـ [[XMLHttpRequest]]، على سيرفر Express فيه multer على localhost.`, done: R`تسحب ٤ صور منهم واحدة كبيرة: ٣ بيترفعوا كل واحد بشريطه والكبيرة بتترفض قبل ما تتبعت (مفيش request ليها في Network)، والإلغاء بيوقّف ملف واحد بس والباقي يكمّل، و Tab ثم Enter بيفتح اختيار الملفات من غير ماوس، والشكل مبيرعشش وانت بتسحب فوق الصور اللي جوه المنطقة.` },
+        { lvl: 'متوسط', t: R`SPA صغير بيفتكر مكانك`, what: R`راوتر بـ [[pushState]] و [[popstate]] (درس ٦) لـ ٣ صفحات، وصفحة «اكتب رسالة» بتحفظ المسودة في [[localStorage]] على [[visibilitychange]] (درس ٥)، والأقسام بتظهر بـ reveal بـ IntersectionObserver (درس ١)، والبحث في [[?q=]] بـ [[replaceState]].`, done: R`back و forward بيرجّعوا الصفحة الصح من غير reload (Network مفيهوش طلب document جديد)، والمسودة بترجع بعد ما تقفل التاب وتفتحه، و refresh على [[/contact?q=x]] بيفتح نفس الصفحة ونفس البحث، و Ctrl+Click على أي لينك بيفتح تاب جديد زي أي موقع.` },
+        { lvl: 'كبير', t: R`feed لانهائي متين`, what: R`feed من [[jsonplaceholder.typicode.com]] أو API على localhost بـ IntersectionObserver (درس ١)، والكروت بتتقسم أعمدة حسب عرض الـ container بـ ResizeObserver (درس ٢)، ورقم الصفحة في الـ URL بـ [[replaceState]] (درس ٦)، و [[pageshow]] بيحدّث لو رجعت من bfcache (درس ٥). ومن الوحدات اللي فاتت: [[AbortController]] و timeout على كل fetch، و debounce على الـ resize، ورسالة خطأ فيها زرار «حاول تاني».`, done: R`مفيش صفحة بتتطلب مرتين حتى لو نزلت بسرعة جدًا (Network يأكد)، وفي آخر الداتا بتظهر «خلصت» والـ observer بيقف، ولو قطعت النت من DevTools بتظهر رسالة الخطأ والزرار بيكمّل من نفس الصفحة، و refresh بيرجّعك لنفس رقم الصفحة، وعدد الأعمدة بيتغير لما تصغّر الـ sidebar مش الشاشة بس، و Test back/forward cache بيقول الصفحة اترجعت من الـ cache.`, ext: R`زوّد virtual scrolling لما الكروت تعدّي ١٠٠٠ عشان الـ DOM ميتقلش، وبحث بـ [[?q=]]، وحوّله لـ component تستخدمه في مشروع حقيقي.` },
+        { lvl: 'فكرة', t: R`سلوك بتحبه في موقع تاني`, what: R`اختار حاجة بتعجبك في موقع بتستخدمه: الفيديو اللي بيقف لما تسيب التاب، أو الفهرس اللي بيعلّم القسم اللي انت فيه، أو الصورة اللي بتتحمّل وانت قربت منها، أو اللينك اللي بيتغيّر وانت بتفلتر. ابنيها بـ APIs الوحدة دي من غير مكتبات.`, done: R`السلوك شغال في صفحة لوحدها، ومكتوب جنبه الـ API اللي استخدمته، ومفيش listener بيفضل شغال بعد ما العنصر يتشال (اتأكد إن فيه [[disconnect]] أو [[unobserve]] أو [[removeEventListener]] في مكانه).`, ext: R`حوّله لدالة أو component بتاخد options، وحطه في مشروع بتاعك، وقيس الفرق بـ Lighthouse قبل وبعد.` },
       ],
       items: [
         {
-          cmd: "null و undefined",
-          title: "إيه الفرق بين null و undefined؟ (null vs undefined)",
-          desc: R`الاتنين معناهم «مفيش قيمة»، والفرق مين اللي قال كده. [[undefined]] بتحطها JS لوحدها: متغير من غير قيمة، أو خاصية مش موجودة، أو argument متبعتش، أو دالة من غير return. [[null]] بيحطها المبرمج بقصد عشان يقول «فاضي». [[typeof null]] بيطلع "object" كغلطة تاريخية، و [[null == undefined]] true لكن بـ === لأ. في JSON الـ undefined بتختفي والـ null بتفضل، والـ default parameters بتشتغل مع undefined بس.`,
-          example: R`let a;
-const obj = {};
-function f(x) { return x; }
-a;                                // undefined: متعرّف من غير قيمة
-obj.missing;                      // undefined: خاصية مش موجودة
-f();                              // undefined: argument متبعتش
-const user = { middleName: null }; // null: قلت «مفيش» بقصد
-typeof null;                      // "object"
-null == undefined;                // true
-null === undefined;               // false
-JSON.stringify({ a: undefined, b: null }); // '{"b":null}'`,
-          try: R`اكتب [[isNil(v)]] بترجّع true لـ null و undefined بس، بطريقتين: [[v == null]] و [[v === null || v === undefined]].`,
-          practice: [
-            { lvl: 'سريع', t: R`اتوقع على ورقة وبعدين شغّل: [[typeof undefined]] و [[typeof null]] و [[null + 1]] و [[undefined + 1]] و [[[null, undefined].join("-")]].`, done: R`الناتج بالترتيب: [["undefined"]] و [["object"]] و 1 و [[NaN]] و [["-"]]، وتقدر تقول ليه [[null]] بقى 0 و [[undefined]] بقى [[NaN]] في الجمع، وليه [[join]] حطّهم نص فاضي.` },
-            { lvl: 'تطبيق', t: R`refactor فيه باج: [[const opts = { port: config.port || 3000, retries: config.retries || 3, name: config.name || "app" };]]. اليوزر بعت [[{ retries: 0, name: "" }]] قاصد. صلّحه بـ [[??]] واكتب ٣ assertions تثبت التصليح.`, done: R`قبل التصليح [[opts.retries]] بيطلع 3 و [[opts.name]] بيطلع [["app"]] (الـ [[||]] بلع 0 و [[""]])، وبعده [[retries]] بـ 0 و [[name]] نص فاضي، و [[port]] لسه 3000 لما ميتبعتش، والـ assertions بتعدّي، وتقدر تقول إمتى [[||]] لسه هو الصح.` },
-            { lvl: 'تحدي', t: R`مسألة: اكتب [[pickDefined(obj)]] بتشيل كل key قيمته [[undefined]] وتسيب [[null]]، جوه الـ objects المتداخلة كمان، والـ arrays بتفضل بنفس طولها. وبعدين قارن ناتجها بـ [[JSON.parse(JSON.stringify(obj))]].`, done: R`[[pickDefined({ a: undefined, b: null, c: { d: undefined, e: 0 } })]] بيرجّع [[{ b: null, c: { e: 0 } }]]، والأصل متغيرش، و [[Date]] بيفضل [[Date]] عندك لكن الـ JSON حوّله string، وتقدر تشرح ليه [[JSON.stringify([undefined])]] بيطلع [['[null]']] مش [['[]']].` },
-          ],
-          flag: "script",
-          deep: {
-            why: "سؤال افتتاحي في انترفيوهات كتير، بيختبر إنك فاهم إن القيمتين ليهم استخدامات مختلفة مش مجرد حاجة واحدة باسمين.",
-            how: R`نقط تقولها لو اتسألت أكتر: [[??]] و [[?.]] بيعاملوا الاتنين زي بعض. و [[Number(null)]] بـ 0 و [[Number(undefined)]] بـ NaN. وفي APIs كتير null معناها «اتمسحت» (PATCH بـ null بيفضّي الحقل) و undefined معناها «متلمستش». وقواعد البيانات فيها NULL بس مفيهاش undefined، و Prisma بيفرّق بينهم بنفس المعنى ده.`,
-            when: "«إمتى تستخدم null بنفسك؟» (لما تقصد تفضّي قيمة)، و «typeof null؟»، و «إزاي تفحص الاتنين مرة واحدة؟» (== null أو ??).",
-            mistakes: R`«الاتنين زي بعض». و «undefined يعني المتغير مش متعرّف» (ده ReferenceError، حاجة تانية). وتحط undefined بإيدك كقيمة بدل null.`
-          },
-          teach: R`## الفكرة في سطر
-
-الاتنين معناهم «مفيش قيمة». [[undefined]] JS هي اللي بتحطها لوحدها، و [[null]] انت اللي بتحطها بقصد. المثال بيوريك كل مكان بتطلع فيه كل واحدة، وإزاي بيتقارنوا.
-
-شغّلت كل سطر جوه [[console.log]] في Node 24 (المثال نفسه مكتوب من غير console.log زي ما بتكتبه في Console المتصفح، وهناك بيطبع نفس القيم).
-
----
-
-## ١. أماكن [[undefined]]
-
-~~~text app.js
-let a;
-const obj = {};
-function f(x) { return x; }
-a;
-obj.missing;
-f();
-~~~
-
-~~~text الناتج
-undefined
-undefined
-undefined
-~~~
-
-| السطر | ليه undefined |
-|---|---|
-| [[a]] | [[let a;]] اتعرّف من غير [[=]] |
-| [[obj.missing]] | الـ object مفيهوش خاصية بالاسم ده |
-| [[f()]] | الباراميتر [[x]] محدش بعتله قيمة، والدالة رجّعته |
-
-ومكان رابع: دالة من غير [[return]] بترجّع [[undefined]].
-
-> «undefined» مش «مش متعرّف». لو استخدمت اسم عمرك ما عرّفته، ده error تاني خالص:
-
-~~~text الناتج (Node)
-ReferenceError: notDeclared is not defined
-~~~
-
----
-
-## ٢. [[null]]: بإيدك
-
-~~~text app.js
-const user = { middleName: null };
-~~~
-
-~~~text الناتج
-{ middleName: null }
-~~~
-
-يعني «اليوزر ده معندوش اسم وسطاني، وأنا عارف كده». الفرق عن إن الخاصية مش موجودة خالص: هنا الحقل موجود وقيمته «فاضي» بقصد.
-
----
-
-## ٣. [[typeof null]]
-
-~~~text app.js
-typeof null;
-~~~
-
-~~~text الناتج
-object
-~~~
-
-- [[typeof]]: بيرجّع اسم النوع كـ string.
-- [[null]] مش object. ده bug من أول نسخة من JavaScript سنة 1995، ومحدش يقدر يصلّحه عشان مواقع قديمة بتعتمد عليه. و [[typeof undefined]] بيرجّع [["undefined"]] عادي.
-
-يعني لو عايز تعرف حاجة object حقيقي: [[typeof x === "object" && x !== null]].
-
----
-
-## ٤. المقارنة
-
-~~~text app.js
-null == undefined;
-null === undefined;
-~~~
-
-~~~text الناتج
-true
-false
-~~~
-
-- [[==]] (loose equality): قاعدة خاصة في اللغة: [[null]] و [[undefined]] بيساووا بعض **وبس**، ومش بيساووا أي حاجة تانية. جربت: [[null == 0]] و [[undefined == 0]] و [[null == false]] كلهم [[false]].
-- [[===]] (strict): لازم نفس النوع، وهما نوعين مختلفين.
-
----
-
-## ٥. JSON
-
-~~~text app.js
-JSON.stringify({ a: undefined, b: null });
-~~~
-
-~~~text الناتج
-{"b":null}
-~~~
-
-- [[JSON.stringify]]: بيحوّل الـ object لنص JSON.
-- JSON مفيهوش [[undefined]] أصلًا، فالخاصية [[a]] اختفت. و [[null]] موجودة في JSON ففضلت.
-
-ده مهم في الـ APIs: لو بعتت [[{ name: undefined }]] السيرفر مش هيشوف الحقل خالص، ولو بعتت [[{ name: null }]] هيشوفه وهيفضّيه.
-
----
-
-## ٦. حاجات زيادة بتتسأل (جربتها)
-
-~~~text app.js
-function g(x = "default") { return x; }
-console.log(g(undefined), g(null));
-console.log(null ?? "x", undefined ?? "x", 0 ?? "x");
-console.log(Number(null), Number(undefined));
-~~~
-
-~~~text الناتج
-default null
-x x 0
-0 NaN
-~~~
-
-- الـ default parameter بيشتغل مع [[undefined]] بس. [[null]] قيمة اتبعتت فعلًا.
-- [[??]] بيعامل الاتنين زي بعض، ومش بيلمس [[0]].
-- [[Number(null)]] بـ 0 و [[Number(undefined)]] بـ [[NaN]] (Not a Number).
-
----
-
-## ٧. الـ solCode: [[isNil]]
-
-~~~text app.js
-const isNil = (v) => v == null;
-const isNilStrict = (v) => v === null || v === undefined;
-for (const v of [null, undefined, 0, "", false, NaN, []]) {
-  console.log(v, isNil(v), isNilStrict(v));
-}
-~~~
-
-- [[v == null]]: بسبب قاعدة [[==]] اللي فوق، دي true لـ [[null]] و [[undefined]] بس.
-- [[v === null || v === undefined]]: نفس الكلام مكتوب صريح. [[||]] يعني «أو».
-- [[for (const v of [...])]]: لف على كل قيمة في الـ array.
-
-~~~text الناتج (Node 24)
-null true true
-undefined true true
-0 false false
- false false
-false false false
-NaN false false
-[] false false
-~~~
-
-السطر اللي شكله فاضي في الأول ده الـ string الفاضي [[""]]: Node بيطبعه من غير علامات. الطريقتين متطابقتين، وكل القيم «الـ falsy» التانية (0 و "" و false و NaN) طلعت false، عكس [[!v]] اللي كان هيرجّع true ليهم.
-
----
-
-## الخلاصة
-
-| | [[undefined]] | [[null]] |
-|---|---|---|
-| مين بيحطها | اللغة | انت بقصد |
-| [[typeof]] | [["undefined"]] | [["object"]] (غلطة قديمة) |
-| في JSON | بتختفي | بتفضل |
-| default parameter | بيشتغل | لأ |
-| [[Number(...)]] | NaN | 0 |
-
-- [[null == undefined]] true، و [[===]] false.
-- [[v == null]] هي الطريقة المختصرة تفحص الاتنين، والوحيدة اللي [[==]] فيها مقبولة.`,
-          lines: [
-            R`بيعرّف متغير من غير ما يدّيله قيمة، فـ JavaScript بتحط فيه [[undefined]] لوحدها. ده ينفع مع [[let]] و [[var]] بس، أما [[const]] فلازم تدّيها قيمة في نفس السطر.`,
-            R`object فاضي مفيهوش أي خاصية، هنستخدمه عشان نشوف إيه اللي بيرجع لما تقرا خاصية مش موجودة.`,
-            R`دالة بترجّع الباراميتر زي ما هو، عشان نشوف قيمة باراميتر محدش بعتله argument.`,
-            R`[[a]] متعرّف بس محدش حط فيه قيمة، فقيمته [[undefined]]. ده غير متغير مش متعرّف خالص: ده بيرمي [[ReferenceError]].`,
-            R`قراية خاصية مش موجودة بترجّع [[undefined]] من غير error. بس لو كمّلت خطوة كمان زي [[obj.missing.x]] هيرمي [[TypeError]]، وعشان كده اتعملت [[?.]].`,
-            R`ناديت الدالة من غير argument، فالباراميتر [[x]] بقى [[undefined]]. JavaScript مبتشتكيش لو بعتّ arguments أقل من المطلوب، وده سبب إن الـ default parameters زي [[x = 0]] مهمة.`,
-            R`[[null]] عمره ما بييجي لوحده: لازم حد يكتبه بإيده. فمعناه «فاضي بقصد»: اليوزر ده معندوش اسم وسطاني، مش إننا نسينا نحط الخاصية.`,
-            R`[[typeof null]] بيرجّع [["object"]]، وده bug من أول نسخة في JavaScript ومينفعش يتصلّح عشان مواقع كتير بتعتمد عليه. فلو بتفحص «ده object؟» لازم تفحص [[x !== null]] كمان.`,
-            R`[[==]] (المقارنة السايبة) بتعتبر [[null]] و [[undefined]] متساويين، ومبيساووش أي حاجة تانية زي [[0]] أو [[false]]. عشان كده [[x == null]] اختصار مقبول لـ «x فاضي بأي شكل من الاتنين».`,
-            R`[[===]] (المقارنة الصارمة) بتفحص النوع كمان، والاتنين نوعين مختلفين فالناتج [[false]]. استخدمها لما الفرق بين «مش موجود» و«فاضي بقصد» يفرق معاك.`,
-            R`[[JSON.stringify]] بيشيل أي خاصية قيمتها [[undefined]] كأنها مش موجودة، وبيسيب [[null]]. فلو عايز تقول للـ API «امسح القيمة دي» ابعت [[null]]، لأن [[undefined]] مش هيوصل خالص.`,
-          ],
-          sol: R`الطريقتين بيرجّعوا true لـ null و undefined بس، و false لـ [[0]] و [[""]] و [[false]] و [[NaN]] و [[[]]]. ده الاستثناء الوحيد اللي [[==]] فيه مقبولة في الكود المحترف: [[v == null]] بتساوي null و undefined بس، ومش بتحوّل أي حاجة تانية. ESLint بيسمح بيها بإعداد [[eqeqeq: ["error", "always", { null: "ignore" }]]].
-
-الغلطة الشائعة إنك تكتب [[!v]] بدالها: دي بترجّع true لـ 0 و "" كمان، فحقل قيمته 0 هيتعامل كأنه مش موجود. وفي الانترفيو قول الفرق في جملة: undefined يعني «لسه مفيش قيمة» (اللغة اللي حطّاها)، و null يعني «مفيش قيمة بقصد» (انت اللي حاططها).`,
-          solCode: R`const isNil = (v) => v == null;
-const isNilStrict = (v) => v === null || v === undefined;
-for (const v of [null, undefined, 0, "", false, NaN, []]) {
-  console.log(v, isNil(v), isNilStrict(v));
-}
-// null true true / undefined true true / والباقي false false`
-        },
-        {
-          cmd: "Promise.all بإيدك",
-          title: "اكتب Promise.all بنفسك (implement Promise.all)",
-          desc: R`بترجّع Promise جديد. بلف على العناصر، وكل واحد بحوّله Promise بـ [[Promise.resolve]] (عشان القيم العادية تشتغل). لما واحد ينجح بحط قيمته في نفس الـ index مش بـ push، عشان الترتيب يفضل زي المدخلات مهما مين خلص الأول، وبعد عدّاد. لما العدّاد يوصل للطول أعمل resolve. وأول rejection أعمل reject على طول. والـ array الفاضية ترجع [[[]]] فورًا.`,
-          example: R`function promiseAll(items) {
-  return new Promise((resolve, reject) => {
-    const list = Array.from(items);
-    const results = new Array(list.length);
-    let done = 0;
-    if (list.length === 0) return resolve(results);
-    list.forEach((item, i) => {
-      Promise.resolve(item).then((value) => {
-        results[i] = value;
-        done++;
-        if (done === list.length) resolve(results);
-      }, reject);
-    });
-  });
-}
-const slow = new Promise((r) => setTimeout(() => r("slow"), 100));
-promiseAll([slow, 2, Promise.resolve(3)]).then(console.log); // ["slow", 2, 3]`,
-          try: R`اكتب [[promiseAllSettled]] بنفس الطريقة، وبعدين [[promiseRace]] (أسهل بكتير: كل واحد بيعمل resolve أو reject مباشرة). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[promiseAllSettled]] و [[promiseRace]] (الاختبارات بـ promises جاهزة من غير timers).`,
-          practice: [
-            { lvl: 'سريع', t: R`اتوقع بصوتك وبعدين شغّل: [[Promise.all([])]] و [[Promise.all([1, Promise.reject(new Error("x")), 3])]] و [[Promise.all(5)]].`, done: R`الأول بيتحل بـ array فاضية، والتاني بيترفض بالـ error اللي رسالته [["x"]]، والتالت بيترفض بـ [[TypeError]] لأن 5 مش iterable، وتقدر تقول إن الـ promises التانية في التاني بتكمّل شغلها عادي (مفيش إلغاء).` },
-            { lvl: 'تطبيق', t: R`مسألة: اكتب [[promiseAny(items)]]: أول واحد ينجح بيكسب، ولو كلهم فشلوا ترفض بـ [[new AggregateError(errors, "All promises were rejected")]] والأخطاء بترتيب المدخلات مش بترتيب الفشل.`, done: R`[[promiseAny([Promise.reject(1), Promise.resolve(2)])]] بيتحل بـ 2، ولو الاتنين مرفوضين بـ 1 و 2 الـ error [[instanceof AggregateError]] و [[errors]] فيها 1 و 2 بالترتيب ده، و [[promiseAny([])]] بيترفض بـ [[AggregateError]] على طول، وده نفس اللي [[Promise.any]] الأصلي بيعمله.` },
-            { lvl: 'تحدي', t: R`محاكاة pool: اكتب [[mapLimit(items, limit, fn)]]: زي Promise.all بس مفيش أكتر من [[limit]] شغالين في نفس الوقت، والنتايج بترتيب المدخلات. جرّبه على ٥ مهام كل واحدة [[setTimeout]] بـ 100ms و [[limit]] بـ 2، وعدّاد بيقيس أكبر عدد شغال مع بعض.`, done: R`النتايج بنفس ترتيب المدخلات، والعدّاد أكبر قيمة وصلها 2، والوقت الكلي حوالي 300ms (٣ دفعات) مش 100 ولا 500، و [[mapLimit([], 2, fn)]] بيرجّع array فاضية من غير ما يعلّق، ومهمة بترمي error بترفض الكل زي Promise.all.` },
-          ],
-          flag: "script",
-          deep: {
-            why: "بيختبر فهمك للـ Promises مش حفظ الـ API: الترتيب، والعدّاد، و fail-fast، والقيم اللي مش Promises، والحالة الفاضية.",
-            how: R`نقط تقولها: [[results.push]] غلط لأن الترتيب هيبقى حسب مين خلص الأول. و [[results.length]] مينفعش كعدّاد لأن [[results[2] = x]] بتخلي الطول 3 وأول عنصرين لسه فاضيين. والـ reject بعد أول مرة ملهوش تأثير لأن الـ Promise مبيتغيرش بعد ما يخلص. والباقي مبيتلغيش. ومع Array.from بيقبل أي iterable زي الأصلي.`,
-            when: "«اكتب allSettled»، و «اعمل concurrency limit: شغّل n بس في نفس الوقت» (السؤال الأصعب والأشهر للـ senior)، و «retry مع exponential backoff».",
-            mistakes: R`push بدل index. ونسيان الـ array الفاضية (هتفضل pending للأبد). ونسيان [[Promise.resolve]] للقيم العادية.`
-          },
-          teach: R`## الفكرة في سطر
-
-[[promiseAll]] بتاخد ليستة (Promises أو قيم عادية) وبترجّع Promise واحد: بيخلص لما **كلهم** يخلصوا، بالنتايج بنفس ترتيب الليستة، وبيترفض أول ما **أي واحد** يترفض.
-
-شغّلت المثال في Node 24، وضفت [[console.log]] جوه الـ [[then]] عشان نشوف مين خلص إمتى.
-
----
-
-## ١. الهيكل: Promise جديد
-
-~~~text app.js
-function promiseAll(items) {
-  return new Promise((resolve, reject) => {
-    ...
-  });
-}
-~~~
-
-- [[new Promise((resolve, reject) => {...})]]: بتعمل Promise بإيدك. الدالة اللي جوه بتتنفذ فورًا، وبتاخد زرارين: [[resolve(value)]] (خلص بنجاح بالقيمة دي) و [[reject(error)]] (فشل).
-- الـ Promise بيتحسم **مرة واحدة بس**. أي [[resolve]] أو [[reject]] بعد كده بيتجاهل. دي حاجة هنعتمد عليها.
-
----
-
-## ٢. التحضير
-
-~~~text app.js
-const list = Array.from(items);
-const results = new Array(list.length);
-let done = 0;
-if (list.length === 0) return resolve(results);
-~~~
-
-- [[Array.from(items)]]: حوّل أي iterable لـ array. كده الدالة بتقبل Set مثلًا زي [[Promise.all]] الحقيقية. جربت [[Array.from("abc")]] طلعت [[[ 'a', 'b', 'c' ]]].
-- [[new Array(3)]]: array طولها 3 بس فاضية. Node بيطبعها [[[ <3 empty items> ]]].
-- [[done]]: عدّاد اللي خلصوا. [[let]] عشان هيتغير.
-- الحالة الفاضية: لو مفيش عناصر، مفيش [[then]] هيتنادى عشان يعمل [[resolve]]، فالـ Promise كان هيفضل pending للأبد. فبنخلص فورًا بـ [[[]]].
-
----
-
-## ٣. اللفة
-
-~~~text app.js
-list.forEach((item, i) => {
-  Promise.resolve(item).then((value) => {
-    results[i] = value;
-    done++;
-    if (done === list.length) resolve(results);
-  }, reject);
-});
-~~~
-
-### [[Promise.resolve(item)]]
-
-لو [[item]] Promise بيرجّعه زي ما هو، ولو قيمة عادية زي [[2]] بيلفها في Promise خلص بيها. من غيره، [[(2).then]] مش موجودة:
-
-~~~text الناتج (Node)
-x.then is not a function
-~~~
-
-### [[.then(onSuccess, reject)]]
-
-[[then]] بتاخد دالتين: الأولى لما ينجح، والتانية لما يفشل. التانية هنا [[reject]] نفسها، يعني أول عنصر يفشل بيرفض الـ Promise الكبير على طول.
-
-### جوه الـ onSuccess
-
-1. [[results[i] = value]]: حط النتيجة في **مكانها** حسب الـ index، مش [[push]].
-2. [[done++]]: زوّد العدّاد.
-3. لو العدّاد وصل لعدد العناصر، خلصنا: [[resolve(results)]].
-
-ليه عدّاد ومش [[results.length]]؟ جربت:
-
-~~~text app.js
-const r = []; r[2] = "x"; console.log(r.length, r);
-~~~
-
-~~~text الناتج
-3 [ <2 empty items>, 'x' ]
-~~~
-
-حطيت عنصر واحد والطول بقى 3. فالطول ميقولش كام واحد خلص فعلًا.
-
----
-
-## ٤. التشغيل
-
-~~~text app.js
-const slow = new Promise((r) => setTimeout(() => r("slow"), 100));
-promiseAll([slow, 2, Promise.resolve(3)]).then(console.log);
-~~~
-
-- [[slow]]: Promise بيخلص بعد 100 millisecond بقيمة [["slow"]].
-- [[2]]: قيمة عادية.
-- [[Promise.resolve(3)]]: Promise خلص خلاص.
-
-~~~text الناتج (مع الـ console.log اللي ضفته)
-  خلص index 1 بقيمة 2 ← done=1 [ <1 empty item>, 2, <1 empty item> ]
-  خلص index 2 بقيمة 3 ← done=2 [ <1 empty item>, 2, 3 ]
-  خلص index 0 بقيمة "slow" ← done=3 [ 'slow', 2, 3 ]
-[ 'slow', 2, 3 ] (بعد ~100ms)
-~~~
-
-- [[2]] و [[3]] خلصوا الأول (في الـ microtasks على طول)، و [["slow"]] بعد 100ms.
-- مع كده الناتج [[[ 'slow', 2, 3 ]]] بنفس ترتيب المدخلات، بفضل [[results[i]]]. لو كان [[push]] كان هيطلع [[[2, 3, "slow"]]].
-
-### حالات تانية جربتها
-
-~~~text الناتج
-empty: []
-rejected: boom 30ms
-Set: [ 1, 2 ]
-~~~
-
-- [[promiseAll([])]] خلصت فورًا بـ [[[]]].
-- [[promiseAll([slow2(), boom])]] حيث [[slow2]] بياخد 200ms و [[boom]] بيترفض بعد 20ms: اترفضت بعد حوالي 20 إلى 30ms (التوقيت مش دقيق بالظبط)، من غير ما تستنى الـ 200ms. ده fail-fast.
-- بس [[slow2]] نفسه **ماتلغاش**: بعدها بشوية لسه اشتغل وخلص (الـ log بتاعه ظهر في الآخر). Promise.all مبتلغيش الباقي.
-- [[new Set([1, 2])]] اشتغلت بسبب [[Array.from]].
-
----
-
-## الخلاصة
-
-| الحتة | ليه |
-|---|---|
-| [[new Promise]] | نرجّع Promise واحد نتحكم إمتى يخلص |
-| [[Array.from]] | يقبل أي iterable ونعرف الطول |
-| [[if (length === 0)]] | وإلا pending للأبد |
-| [[Promise.resolve(item)]] | القيم العادية تشتغل |
-| [[results[i]]] | الترتيب زي المدخلات |
-| عدّاد [[done]] | الطول مش بيعد اللي خلصوا |
-| [[reject]] كتاني argument لـ [[then]] | أول فشل يرفض الكل |
-
-> في التمرين اللي تحت هتكتب [[promiseAllSettled]] و [[promiseRace]]. فكّر: إيه اللي لازم يتغير في الـ onSuccess والـ onFailure عشان الفشل ميوقفش كل حاجة؟ وفي race، محتاج عدّاد أصلًا؟`,
-          lines: [
-            R`[[promiseAll]] بتاخد أي iterable (array أو Set أو generator) فيه Promises أو قيم عادية، زي [[Promise.all]] الأصلية بالظبط.`,
-            R`بترجّع Promise جديد واحد بيمثّل «كلهم». الـ executor بياخد [[resolve]] و [[reject]]، واحنا اللي هنقرر إمتى نناديهم: [[resolve]] لما الكل يخلص، و [[reject]] مع أول فشل.`,
-            R`[[Array.from]] بيحوّل الـ iterable لـ array عادية. محتاجينها عشان نعرف الطول من الأول، ولأن generator مثلًا ينفع يتلف عليه مرة واحدة بس.`,
-            R`array فاضية بنفس عدد العناصر. هنحط كل نتيجة في الـ index بتاعها، فالترتيب يفضل زي المدخلات حتى لو التاني خلص قبل الأول.`,
-            R`عدّاد للي خلصوا. مينفعش نستخدم [[results.length]] بداله لأنه ثابت من الأول، ومينفعش نعتمد على «آخر واحد خلص» لأن ترتيب الخلصان مش مضمون.`,
-            R`لو الليستة فاضية مفيش [[then]] هيتنادى أصلًا عشان يعمل resolve، فالـ Promise هيفضل pending للأبد. فبنعمل resolve بـ array فاضية على طول، زي [[Promise.all]] الأصلية لما تدّيها array فاضية.`,
-            R`بنلف على كل عنصر ومعاه الـ index بتاعه [[i]]، وبنعلّق handler على كل واحد في نفس اللحظة من غير ما نستنى اللي قبله. ده اللي بيخلي [[Promise.all]] أسرع من [[await]] واحد ورا التاني.`,
-            R`[[Promise.resolve(item)]] بتلف أي قيمة في Promise: لو كانت Promise بترجّعها زي ما هي، ولو رقم زي [[2]] بتعمل Promise خلص بيه. كده بنعامل الاتنين بنفس الكود، ومن غيرها [[then]] على رقم هيرمي TypeError.`,
-            R`بنحط النتيجة في نفس الـ index بتاع العنصر، مش [[push]]. لو استخدمنا [[push]] الترتيب هيبقى حسب مين خلص الأول، مش حسب المدخلات.`,
-            R`واحد كمان خلص. العدّاد ده هو الطريقة الوحيدة نعرف بيها إن الكل وصل، لأن كل [[then]] بيشتغل لوحده في وقت مختلف.`,
-            R`لو ده آخر واحد، نعمل resolve بالـ array كلها. السطر ده بيتنفذ جوه آخر Promise يخلص، أيًّا كان مكانه في الليستة.`,
-            R`[[reject]] متبعتة كتاني argument لـ [[then]]، فأول عنصر يفشل بيعمل reject للـ Promise الكبير بالـ error بتاعه. وأي resolve أو reject بعد كده بيتجاهل، لأن الـ Promise مبيتغيرش بعد ما يخلص.`,
-            R`نهاية الـ [[forEach]].`,
-            R`نهاية الـ executor بتاع [[new Promise]].`,
-            R`نهاية [[promiseAll]].`,
-            R`Promise بيخلص بعد ١٠٠ms بالقيمة [["slow"]]. حطيناه الأول في الليستة عشان نثبت إن الترتيب مش حسب مين خلص الأول.`,
-            R`جرّبناها بخليط: Promise بطيء، ورقم عادي، و Promise خلص على طول. الناتج [["slow"]] ثم [[2]] ثم [[3]] بنفس ترتيب المدخلات مع إن [[slow]] خلص الأخير، وده بفضل إننا حطينا كل نتيجة في الـ index بتاعها.`,
-          ],
-          sol: R`[[promiseAllSettled([slow, 2, Promise.reject(new Error("x"))])]] لازم ترجّع بعد 100ms: [[{ status: "fulfilled", value: "slow" }]] و [[{ status: "fulfilled", value: 2 }]] و [[{ status: "rejected", reason: Error: x }]] بنفس الترتيب، ومبتترفضش أبدًا. الفرق عن promiseAll إن الـ reject handler بيسجّل النتيجة بدل ما يرفض.
-
-[[promiseRace]] بتلف على كل واحد وتعمل [[Promise.resolve(item).then(resolve, reject)]]: أول واحد يخلص بيحدد النتيجة، والباقي نداءاتهم على resolve أو reject بتتجاهل لأن الـ promise متحسمة. والحالة اللي بتتسأل: [[promiseRace([])]] بتفضل pending للأبد، زي [[Promise.race([])]] الحقيقية. والغلطة الشائعة إنك تنسى [[Promise.resolve(item)]] فالقيم العادية زي 2 تطلع [[item.then is not a function]].`,
-          solCode: R`function promiseAllSettled(items) {
-  return new Promise((resolve) => {
-    const list = Array.from(items);
-    const results = new Array(list.length);
-    let done = 0;
-    if (list.length === 0) return resolve(results);
-    list.forEach((item, i) => {
-      Promise.resolve(item)
-        .then(
-          (value) => { results[i] = { status: "fulfilled", value }; },
-          (reason) => { results[i] = { status: "rejected", reason }; }
-        )
-        .then(() => { if (++done === list.length) resolve(results); });
-    });
-  });
-}
-function promiseRace(items) {
-  return new Promise((resolve, reject) => {
-    for (const item of items) Promise.resolve(item).then(resolve, reject);
-  });
-}
-const slow = new Promise((r) => setTimeout(() => r("slow"), 100));
-const fast = new Promise((r) => setTimeout(() => r("fast"), 10));
-promiseAllSettled([slow, 2, Promise.reject(new Error("x"))]).then(console.log);
-promiseRace([slow, fast]).then((v) => console.log("race:", v)); // race: fast`,
-          check: {
-            lang: "js",
-            starter: R`function promiseAllSettled(items) {
-  return Promise.all(items);
-}
-function promiseRace(items) {
-  return new Promise((resolve, reject) => {
-    // كل واحد: Promise.resolve(item).then(resolve, reject)
-  });
-}`,
-            tests: R`const later = (v, steps = 5) => { let p = Promise.resolve(v); for (let i = 0; i < steps; i++) p = p.then(x => x); return p; };
-const within = p => Promise.race([p, later("لسه pending", 60)]);
-const rejected = msg => { const p = Promise.reject(new Error(msg)); p.catch(() => {}); return p; };
-test("fulfilled و rejected وقيمة عادية، بنفس الترتيب ومبترفضش", async () => {
-  const r = await within(promiseAllSettled([later("slow"), 2, rejected("x")]));
-  expect([r[0], r[1], r[2].status, r[2].reason.message]).toEqual([{ status: "fulfilled", value: "slow" }, { status: "fulfilled", value: 2 }, "rejected", "x"]);
-});
-test("الترتيب حسب الـ input مش حسب مين خلص الأول", async () => {
-  const r = await within(promiseAllSettled([later("a", 10), "b"]));
-  expect(r.map(x => x.value)).toEqual(["a", "b"]);
-});
-test("[] ← []", async () => expect(await within(promiseAllSettled([]))).toEqual([]));
-test("promiseRace: الأسرع يكسب", async () => expect(await within(promiseRace([later("slow", 10), later("fast", 1)]))).toBe("fast"));
-test("promiseRace: لو الأسرع اترفض، بترفض", async () => {
-  let msg = "";
-  try { await within(promiseRace([later("slow", 10), rejected("fail")])); } catch (e) { msg = e.message; }
-  expect(msg).toBe("fail");
-});
-test("promiseRace([]) بتفضل pending للأبد، زي Promise.race([])", async () => {
-  const r = await Promise.race([promiseRace([]).then(() => "resolved"), later("still pending", 20)]);
-  expect(r).toBe("still pending");
-});`,
-            solution: R`function promiseAllSettled(items) {
-  return new Promise((resolve) => {
-    const list = Array.from(items);
-    const results = new Array(list.length);
-    let done = 0;
-    if (list.length === 0) return resolve(results);
-    list.forEach((item, i) => {
-      Promise.resolve(item)
-        .then(
-          (value) => { results[i] = { status: "fulfilled", value }; },
-          (reason) => { results[i] = { status: "rejected", reason }; }
-        )
-        .then(() => { if (++done === list.length) resolve(results); });
-    });
-  });
-}
-function promiseRace(items) {
-  return new Promise((resolve, reject) => {
-    for (const item of items) Promise.resolve(item).then(resolve, reject);
-  });
-}`
-          }
-        },
-        {
-          cmd: "polyfills: map و bind",
-          title: "اكتب map و bind بنفسك (polyfill)",
-          desc: R`الـ polyfill كود بيعمل feature موجودة في اللغة، عشان يشتغل في بيئات قديمة، وفي الانترفيو عشان يشوفوا فاهم الـ feature من جوه. [[map]]: بلف على [[this]] (الـ array)، وبنادي الـ callback بـ (العنصر، الـ index، الـ array)، وبحط الناتج في array جديدة بنفس الطول، وبتخطى الأماكن الفاضية (holes). [[bind]]: بحفظ الدالة الأصلية ([[this]])، وبرجّع دالة جديدة بتناديها بـ [[apply]] على الـ context اللي اتحدد، مع الـ arguments المتثبتة الأول والجديدة بعدها.`,
-          example: R`Array.prototype.myMap = function (callback, thisArg) {
-  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
-  const result = new Array(this.length);
-  for (let i = 0; i < this.length; i++) {
-    if (i in this) result[i] = callback.call(thisArg, this[i], i, this);
-  }
-  return result;
-};
-Function.prototype.myBind = function (ctx, ...preset) {
-  const fn = this;
-  return function (...args) {
-    return fn.apply(ctx, [...preset, ...args]);
-  };
-};
-[1, 2, 3].myMap((x) => x * 2);                    // [2, 4, 6]
-const hi = function (greet) { return greet + " " + this.name; };
-hi.myBind({ name: "Sara" }, "Hi")();              // "Hi Sara"`,
-          try: R`اكتب [[myFilter]] و [[myReduce]] (خد بالك من حالة من غير قيمة أولية على array فاضية: لازم TypeError). وبعدين خلي [[myBind]] تشتغل مع [[new]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[myFilter]] و [[myReduce]] و [[myBind]] اللي بتشتغل مع [[new]].`,
-          practice: [
-            { lvl: 'سريع', t: R`اتوقع على ورقة: إيه اللي Node هيطبعه لـ [[[1, , 3].map((x) => x * 2)]]؟ والـ callback هيتنادى كام مرة؟ وبعدين شغّله بـ [[map]] وبـ [[myMap]] بتاع الدرس.`, done: R`Node بيطبع [[2, <1 empty item>, 6]] جوه أقواس، والاتنين نفس الناتج و [[length]] بتاعهم 3، والـ callback اتنادى مرتين بس (الـ hole بيتعدّى).` },
-            { lvl: 'تطبيق', t: R`مسألة: اكتب [[myCall(ctx, ...args)]] من غير [[call]] ولا [[apply]] ولا [[bind]]: حط الدالة على [[ctx]] تحت key من نوع [[Symbol()]]، وناديها، وامسحها في [[finally]].`, done: R`[[greet.myCall({ name: "Sara" }, "Hi")]] بيرجّع [["Hi Sara"]]، وبعدها [[Object.getOwnPropertySymbols(ctx).length]] بيرجّع 0 (مفيش أثر)، ولو الدالة رمت error الـ symbol برضه بيتمسح، و [[ctx]] اللي فيه key اسمه [[fn]] أصلًا مبيتبوّظش.` },
-            { lvl: 'تحدي', t: R`اكتب اختبار: زميلك كتب [[myMap]] من غير [[if (i in this)]] ومن غير [[thisArg]]. اكتب بـ [[node:test]] تستات تمسك الغلطتين دول وحاجة تالتة من عندك، من غير ما تقرا الكود بتاعه، وشغّلها على نسخته وعلى نسخة الدرس.`, done: R`على نسخة الدرس كل التستات بتعدّي، وعلى نسخة زميلك على الأقل تستين بيقعوا: واحد بيعدّ نداءات الـ callback على [[[1, , 3]]] (المفروض 2)، وواحد بيتأكد إن [[this]] جوه callback عادي ([[function]] مش arrow) هو الـ [[thisArg]].` },
-          ],
-          flag: "script",
-          deep: {
-            why: "بيختبر this، و prototypes، و call و apply، والـ closures في سؤال واحد. و map و reduce و bind و debounce و Promise.all هم أشهر ٥ polyfills بتتسأل.",
-            how: R`نقط تقولها: [[function]] مش arrow عشان this تبقى الـ array أو الدالة. و [[i in this]] عشان الـ sparse arrays ([[[1, , 3]]]): الـ map الأصلية بتسيب الـ holes فاضية. و thisArg التاني لـ map. والـ bind الحقيقية لما تتنادي بـ new بتتجاهل ctx، والنسخة الكاملة بتفحص [[new.target]]. وقول إنك في كود حقيقي مش هتعدّل الـ prototypes المدمجة، ده للانترفيو بس.`,
-            when: "«اكتب reduce»، و «اكتب call من غير call» (حط الدالة كخاصية مؤقتة على الـ object ونادي)، و «اكتب flat بـ recursion».",
-            mistakes: R`arrow function للـ polyfill فـ this تضيع. ونسيان الـ index والـ array في الـ callback. وتعدّل الـ prototype في كود إنتاج.`
-          },
-          teach: R`## الفكرة في سطر
-
-بنكتب [[myMap]] بتعمل اللي [[map]] بتعمله، و [[myBind]] بتعمل اللي [[bind]] بتعمله، وبنحطهم على الـ prototype عشان كل array وكل دالة تقدر تناديهم. المفتاح في الاتنين هو [[this]].
-
-شغّلت المثال في Node 24، وضفت تجارب تانية تحت.
-
----
-
-## ١. [[myMap]]
-
-~~~text app.js
-Array.prototype.myMap = function (callback, thisArg) {
-  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
-  const result = new Array(this.length);
-  for (let i = 0; i < this.length; i++) {
-    if (i in this) result[i] = callback.call(thisArg, this[i], i, this);
-  }
-  return result;
-};
-~~~
-
-### [[Array.prototype.myMap = function ...]]
-
-- [[Array.prototype]]: الـ object اللي كل الـ arrays بتورث منه. أي method تتحط عليه تبقى متاحة لـ [[[1, 2, 3].myMap(...)]].
-- [[function]] مش arrow: لما تنادي [[arr.myMap()]]، [[this]] جوه الدالة بيبقى [[arr]]. الـ arrow معندهاش [[this]] بتاعها، بتاخده من المكان اللي اتكتبت فيه. جربت arrow على الـ prototype في ملف CommonJS:
-
-~~~text الناتج (Node)
-undefined
-~~~
-
-[[this.length]] طلع [[undefined]] لأن [[this]] بقى [[module.exports]] (object فاضي)، مش الـ array.
-
-### فحص الـ callback
-
-[[typeof callback !== "function"]]: لو حد بعت حاجة مش دالة ارمي [[TypeError]] زي الأصلية:
-
-~~~text الناتج
-TypeError: 5 is not a function
-TypeError: number 5 is not a function
-~~~
-
-الأول من [[myMap(5)]] والتاني من [[map(5)]] الأصلية. نفس النوع، والرسالة قريبة.
-
-### اللفة
-
-- [[new Array(this.length)]]: array جديدة بنفس الطول (map مبتغيّرش الأصلية).
-- [[i in this]]: [[in]] بيسأل «فيه عنصر في الـ index ده أصلًا؟». في [[[1, , 3]]] (sparse array، فيها خانة فاضية) [[1 in arr]] بـ false و [[0 in arr]] بـ true.
-- [[callback.call(thisArg, this[i], i, this)]]: نادي الـ callback، و [[call]] أول argument فيها هو الـ [[this]] جوه الـ callback، والباقي arguments عادية: العنصر، والـ index، والـ array كلها.
-
-~~~text الناتج
-[ 2, 4, 6 ]
-[ 10, <1 empty item>, 30 ] [ 10, <1 empty item>, 30 ]
-[ '>a02', '>b12' ]
-~~~
-
-- [[[1, 2, 3].myMap((x) => x * 2)]] = [[[2, 4, 6]]].
-- الخانة الفاضية فضلت فاضية في [[myMap]] وفي [[map]] الأصلية بالظبط.
-- الأخير: [[["a","b"].myMap(function (v, i, arr) { return this.p + v + i + arr.length; }, { p: ">" })]]: [[this.p]] جه من [[thisArg]]، و [[i]] و [[arr.length]] اتبعتوا صح.
-
----
-
-## ٢. [[myBind]]
-
-~~~text app.js
-Function.prototype.myBind = function (ctx, ...preset) {
-  const fn = this;
-  return function (...args) {
-    return fn.apply(ctx, [...preset, ...args]);
-  };
-};
-~~~
-
-- [[Function.prototype]]: كل الدوال بتورث منه، فـ [[hi.myBind(...)]] تشتغل.
-- [[(ctx, ...preset)]]: أول argument هو الـ [[this]] اللي عايزينه، و [[...preset]] (rest) بيلم أي arguments بعده في array.
-- [[const fn = this]]: [[this]] هنا هي الدالة اللي اتنادت عليها [[myBind]] ([[hi]]). بنحفظها في متغير لأن الدالة اللي جوه ليها [[this]] بتاعها.
-- [[return function (...args)]]: بنرجّع دالة جديدة. لما تتنادى بعدين، بتلم الـ arguments الجديدة في [[args]].
-- [[fn.apply(ctx, [...])]]: [[apply]] زي [[call]] بس الـ arguments بتتبعت array. [[[...preset, ...args]]] يعني المتثبتين الأول وبعدين الجداد.
-- الدالة الجديدة فاكرة [[fn]] و [[ctx]] و [[preset]] بعد ما [[myBind]] خلصت: ده closure.
-
-### التشغيل
-
-~~~text app.js
-const hi = function (greet) { return greet + " " + this.name; };
-hi.myBind({ name: "Sara" }, "Hi")();
-~~~
-
-~~~text الناتج
-Hi Sara
-~~~
-
-[[myBind({ name: "Sara" }, "Hi")]] رجّعت دالة، و [[()]] اللي بعدها نادتها من غير arguments. جوه: [[fn.apply({ name: "Sara" }, ["Hi"])]].
-
-### مقارنة بـ [[call]] و [[apply]] ومن غير حاجة
-
-~~~text الناتج
-Yo Mona Ahlan Omar
-x undefined
-TypeError: Cannot read properties of undefined (reading 'name')
-~~~
-
-- [[hi.call({ name: "Mona" }, "Yo")]] و [[hi.apply({ name: "Omar" }, ["Ahlan"])]]: بينادوا فورًا. [[bind]] بترجّع دالة تتنادى بعدين.
-- [[hi("x")]] من غير أي حاجة في ملف CommonJS عادي: [[this]] بقى الـ global object، ومفيهوش [[name]]، فطلع [[x undefined]].
-- نفس السطر في ES module (strict mode): [[this]] بقى [[undefined]] فوقع بالـ TypeError.
-
-وتثبيت جزء من الـ arguments:
-
-~~~text app.js
-const add = function (a, b, c) { return a + b + c; };
-add.myBind(null, 1)(2, 3);
-add.myBind(null, 1, 2)(3);
-~~~
-
-~~~text الناتج
-6 6
-~~~
-
----
-
-## الخلاصة
-
-| الحتة | ليه |
-|---|---|
-| [[function]] مش arrow | [[this]] يبقى الـ array أو الدالة |
-| [[i in this]] | الخانات الفاضية تفضل فاضية |
-| [[callback.call(thisArg, el, i, arr)]] | نفس arguments الأصلية |
-| [[const fn = this]] | نحفظ الدالة قبل ما ندخل دالة جديدة |
-| [[...preset]] و [[...args]] | المتثبتين الأول وبعدين الجداد |
-| [[fn.apply(ctx, [...])]] | نادي بالـ this اللي اخترناه |
-
-> في التمرين اللي تحت: [[myFilter]] قريبة جدًا من [[myMap]] (فكّر: إمتى تحط العنصر؟). و [[myReduce]] محتاجة تفرّق بين «مفيش قيمة أولية» و «القيمة الأولية undefined»: افتكر إن [[...init]] array، وطولها بيقولك اتبعت كام. و [[new]] مع [[myBind]]: ابحث عن [[new.target]].`,
-          lines: [
-            R`بنضيف method اسمها [[myMap]] على [[Array.prototype]]، فكل array في البرنامج تقدر تناديها. ولازم [[function]] مش arrow: الـ arrow مالهاش [[this]] بتاعها، فمش هتعرف الـ array اللي اتنادت عليها. في كود حقيقي متعدّلش prototypes الجاهزة، دي للتعلّم والانترفيو.`,
-            R`لو الـ callback مش دالة بنرمي [[TypeError]] زي [[map]] الأصلية بالظبط. من غير الفحص ده الـ error هيطلع من جوه اللفة برسالة أقل وضوحًا، أو مش هيطلع خالص لو الـ array فاضية.`,
-            R`array جديدة بنفس الطول، فاضية من جوه. [[map]] عمرها ما بتعدّل الأصلية، دايمًا بترجّع واحدة جديدة.`,
-            R`لفة عادية على الـ indexes من 0 لآخر الـ array. و [[this]] هنا هي الـ array اللي ناديت عليها [[myMap]].`,
-            R`[[i in this]] بيفحص إن الخانة دي فيها عنصر فعلًا، فالخانات الفاضية (زي اللي في [[new Array(3)]]) بتتخطى وتفضل فاضية في الناتج زي الأصلية. و [[callback.call(thisArg, ...)]] بتنادي الدالة بالـ [[this]] اللي اليوزر اختاره، وبنفس التلات arguments: العنصر والـ index والـ array كلها.`,
-            R`نهاية الـ [[for]].`,
-            R`بترجّع الـ array الجديدة والأصلية زي ما هي، وده اللي بيخلي [[map]] آمنة في الـ chaining.`,
-            R`نهاية [[myMap]].`,
-            R`نفس الفكرة على [[Function.prototype]]: كل دالة هيبقى عندها [[myBind]]. بتاخد الـ [[this]] اللي عايزين نثبّته ([[ctx]])، و [[...preset]] أي arguments عايزين نثبّتها من الأول.`,
-            R`جوه [[myBind]]، [[this]] هي الدالة اللي ناديناها عليها (زي [[hi]] تحت). بنحفظها في [[fn]] لأن الدالة اللي هنرجّعها هيبقى ليها [[this]] تاني خالص.`,
-            R`بترجّع دالة جديدة ومبتنديش حاجة دلوقتي: [[bind]] بتجهّز بس، والنداء الحقيقي بيحصل بعدين لما حد ينادي الدالة الراجعة.`,
-            R`[[apply]] بتنادي الأصلية بـ [[ctx]] كـ [[this]]، وبتاخد الـ arguments كـ array: المتثبتة الأول وبعدها اللي جت وقت النداء. النسخة دي مبتدعمش [[new]] زي [[bind]] الأصلية، وده غالبًا كفاية في الانترفيو.`,
-            R`نهاية الدالة الراجعة.`,
-            R`نهاية [[myBind]].`,
-            R`تجربة: كل عنصر مضروب في 2 والناتج [[2, 4, 6]] في array جديدة، نفس ناتج [[map]] الأصلية.`,
-            R`دالة عادية (مش arrow) بتقرا [[this.name]]، فقيمة [[this]] بتتحدد وقت النداء. لو ناديتها لوحدها مش هتلاقي [[name]] اللي انت عايزه، وده بالظبط اللي [[bind]] بيحلّه.`,
-            R`[[myBind]] ثبّتت [[this]] على [[{ name: "Sara" }]] وثبّتت أول argument [["Hi"]]، والقوسين [[()]] في الآخر بينادوا الدالة الراجعة من غير arguments زيادة، فالناتج [["Hi Sara"]].`,
-          ],
-          sol: R`[[[1, 2, 3, 4].myFilter((x) => x % 2 === 0)]] بترجّع [[[2, 4]]]، و [[[1, 2, 3].myReduce((a, b) => a + b)]] بـ 6، و [[[].myReduce((a, b) => a + b)]] بترمي [[TypeError: Reduce of empty array with no initial value]] زي الأصلية بالظبط. عشان تفرّق بين «مفيش قيمة أولية» و «القيمة الأولية undefined» استخدم rest [[...init]] وافحص [[init.length]]، مش [[init === undefined]].
-
-myBind مع new: جوه الدالة اللي بترجّعها افحص [[new.target]]، ولو موجود اعمل [[new fn(...preset, ...args)]] وتجاهل الـ ctx. النتيجة: [[new (Point.myBind(null, 1))(2)]] بترجّع [[Point { x: 1, y: 2 }]] و [[instanceof Point]] بـ true. من غير الفحص ده النسخة البسيطة بترجّع [[{}]] فاضي و instanceof بـ false، لأن this راحت للـ ctx مش للـ object الجديد.`,
-          solCode: R`Array.prototype.myFilter = function (callback, thisArg) {
-  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
-  const result = [];
-  for (let i = 0; i < this.length; i++) {
-    if (i in this && callback.call(thisArg, this[i], i, this)) result.push(this[i]);
-  }
-  return result;
-};
-Array.prototype.myReduce = function (callback, ...init) {
-  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
-  let i = 0;
-  let acc;
-  if (init.length > 0) {
-    acc = init[0];
-  } else {
-    while (i < this.length && !(i in this)) i++;
-    if (i >= this.length) throw new TypeError("Reduce of empty array with no initial value");
-    acc = this[i++];
-  }
-  for (; i < this.length; i++) if (i in this) acc = callback(acc, this[i], i, this);
-  return acc;
-};
-Function.prototype.myBind = function (ctx, ...preset) {
-  const fn = this;
-  function bound(...args) {
-    if (new.target) return new fn(...preset, ...args);
-    return fn.apply(ctx, [...preset, ...args]);
-  }
-  if (fn.prototype) bound.prototype = Object.create(fn.prototype);
-  return bound;
-};
-function Point(x, y) { this.x = x; this.y = y; }
-const P = Point.myBind(null, 1);
-console.log(new P(2), new P(2) instanceof Point); // Point { x: 1, y: 2 } true`,
-          check: {
-            lang: "js",
-            starter: R`Array.prototype.myFilter = function (callback, thisArg) {
-  // ...
-};
-Array.prototype.myReduce = function (callback, ...init) {
-  // init.length بيفرّق بين «مفيش قيمة أولية» و «القيمة الأولية undefined»
-};
-Function.prototype.myBind = function (ctx, ...preset) {
-  const fn = this;
-  return function (...args) {
-    return fn.apply(ctx, [...preset, ...args]);
-  };
-};`,
-            tests: R`test("[1, 2, 3, 4].myFilter(زوجي) ← [2, 4]", () => expect([1, 2, 3, 4].myFilter((x) => x % 2 === 0)).toEqual([2, 4]));
-test("myFilter بتبعت (value, index, array)", () => expect(["a", "b", "c"].myFilter((v, i, arr) => i > 0 && arr.length === 3)).toEqual(["b", "c"]));
-test("[1, 2, 3].myReduce(جمع) ← 6، ومع قيمة أولية 10 ← 16", () => expect([[1, 2, 3].myReduce((a, b) => a + b), [1, 2, 3].myReduce((a, b) => a + b, 10)]).toEqual([6, 16]));
-test("[].myReduce من غير قيمة أولية ← TypeError", () => {
-  let err;
-  try { [].myReduce((a, b) => a + b); } catch (e) { err = e; }
-  expect(err instanceof TypeError).toBe(true);
-});
-test("القيمة الأولية undefined مش زي مفيش قيمة: [1].myReduce(f, undefined) ← [undefined, 1]", () => expect([1].myReduce((a, b) => [a, b], undefined)).toEqual([undefined, 1]));
-test("[].myReduce(f, 0) ← 0", () => expect([].myReduce((a, b) => a + b, 0)).toBe(0));
-test("myBind مع new: new (Point.myBind(null, 1))(2) instanceof Point و x = 1 و y = 2", () => {
-  function Point(x, y) { this.x = x; this.y = y; }
-  const P = Point.myBind(null, 1);
-  const p = new P(2);
-  expect([p instanceof Point, p.x, p.y]).toEqual([true, 1, 2]);
-});`,
-            solution: R`Array.prototype.myFilter = function (callback, thisArg) {
-  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
-  const result = [];
-  for (let i = 0; i < this.length; i++) {
-    if (i in this && callback.call(thisArg, this[i], i, this)) result.push(this[i]);
-  }
-  return result;
-};
-Array.prototype.myReduce = function (callback, ...init) {
-  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
-  let i = 0;
-  let acc;
-  if (init.length > 0) {
-    acc = init[0];
-  } else {
-    while (i < this.length && !(i in this)) i++;
-    if (i >= this.length) throw new TypeError("Reduce of empty array with no initial value");
-    acc = this[i++];
-  }
-  for (; i < this.length; i++) if (i in this) acc = callback(acc, this[i], i, this);
-  return acc;
-};
-Function.prototype.myBind = function (ctx, ...preset) {
-  const fn = this;
-  function bound(...args) {
-    if (new.target) return new fn(...preset, ...args);
-    return fn.apply(ctx, [...preset, ...args]);
-  }
-  if (fn.prototype) bound.prototype = Object.create(fn.prototype);
-  return bound;
-};`
-          }
-        },
-        {
-          cmd: "curry",
-          title: "اكتب دالة curry (currying)",
-          desc: R`الـ currying بيحوّل دالة بتاخد كذا argument مرة واحدة [[f(a, b, c)]] لسلسلة دوال كل واحدة بتاخد جزء [[f(a)(b)(c)]]. الـ implementation: بقارن عدد الـ arguments اللي اتجمعت بـ [[fn.length]] (عدد باراميترات الدالة). لو كفاية بنادي الدالة، ولو لأ برجّع دالة بتجمع الباقي وتنادي نفسها تاني. الفايدة العملية: تعمل نسخ «متظبطة» من دالة عامة، زي [[addTax]] بنسبة ثابتة.`,
-          example: R`function curry(fn) {
-  return function curried(...args) {
-    if (args.length >= fn.length) return fn.apply(this, args);
-    return (...more) => curried.apply(this, [...args, ...more]);
-  };
-}
-const add3 = (a, b, c) => a + b + c;
-const add = curry(add3);
-add(1)(2)(3);    // 6
-add(1, 2)(3);    // 6
-add(1)(2, 3);    // 6
-const withTax = curry((ratePct, price) => (price * (100 + ratePct)) / 100);
-const addVat = withTax(14);
-addVat(100);     // 114`,
-          try: R`اكتب [[sum(1)(2)(3)()]] بيرجّع 6 بأي عدد نداءات، ويخلص لما تناديه من غير arguments. ده سؤال تاني مشهور بنفس الفكرة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[sum]].`,
-          practice: [
-            { lvl: 'سريع', t: R`اتوقع وبعدين شغّل بـ [[curry]] بتاع الدرس: [[curry((...a) => a.length)(1, 2)]] و [[curry((...a) => a.length)()]] و [[((a, b = 2) => {}).length]] و [[curry((a, b = 2) => a + b)(1)]].`, done: R`الناتج: 2 و 0 و 1 و 3، وتقدر تشرح إن [[fn.length]] مبيعدّش الـ rest parameter ولا أي باراميتر بعد أول default، فالـ curry بينادي الدالة على طول في الحالات دي.` },
-            { lvl: 'تطبيق', t: R`ابني على بيانات حقيقية الشكل: [[users.json]] فيه ٢٠ يوزر ([[{ name, role, city }]])، و [[const filterBy = curry((key, value, list) => list.filter((o) => o[key] === value))]]، واعمل منها [[admins]] و [[fromCairo]] جاهزين.`, done: R`[[admins(users)]] بيرجّع اليوزرز اللي [[role]] بتاعهم [["admin"]] بس، و [[fromCairo(admins(users))]] بيجمع الشرطين، و [[filterBy("role", "admin", users)]] مرة واحدة بيرجّع نفس نتيجة [[admins(users)]]، ولستة فاضية بترجّع لستة فاضية.` },
-            { lvl: 'تحدي', t: R`مسألة: اكتب [[pipe(...fns)]] و [[compose(...fns)]]، واستخدمهم مع [[curry]]: [[const split = curry((sep, s) => s.split(sep));]] و [[pipe((s) => s.trim(), (s) => s.toLowerCase(), split(" "))]].`, done: R`الـ pipe على [["  Hello World "]] بيرجّع [["hello", "world"]]، و [[compose]] بنفس الدوال بالعكس بيرجّع نفس الناتج، و [[pipe()]] من غير دوال بترجّع المدخل زي ما هو، وتقدر تقول الفرق بين currying و partial application في جملتين.` },
-          ],
-          flag: "script",
-          deep: {
-            why: "بيختبر closures و recursion و fn.length و rest/spread. وفكرته (partial application) موجودة في الشغل الحقيقي حتى لو مش بالاسم ده: [[bind]] مع arguments، و factories، و middleware.",
-            how: R`نقط تقولها: [[fn.length]] بيعد الباراميترات قبل أول واحد ليه default أو rest، فمع [[(a, b = 1) => ...]] الطول 1، ومع [[(...args)]] صفر، فالـ curry مش هيشتغل صح معاهم. وكل نداء جزئي بيعمل closure جديد شايل الـ args اللي اتجمعت، فتقدر تعيد استخدام [[add(1)]] مع أرقام مختلفة من غير ما يتلخبطوا. والفرق بين currying (argument واحد كل مرة) و partial application (تثبيت جزء).`,
-            when: "«الفرق بين currying و partial application؟»، و «sum(1)(2)(3)» بكل أشكاله، و «compose و pipe».",
-            mistakes: R`تعدّل [[args]] المتجمعة (push) فالنداءات الجزئية تتلخبط مع بعض: اعمل array جديدة كل مرة. وتنسى الحالة اللي فيها arguments أكتر من المطلوب.`
-          },
-          teach: R`## الفكرة في سطر
-
-[[curry(fn)]] بترجّع نسخة من [[fn]] تقدر تبعتلها الـ arguments على دفعات. كل مرة بتعدّ اللي اتجمع: لو كفاية تنادي [[fn]]، ولو لأ ترجّع دالة تستنى الباقي.
-
-شغّلت المثال في Node 24، وضفت سطر [[console.log]] جوه [[curried]] يطبع الـ arguments اللي اتجمعت كل مرة.
-
----
-
-## ١. [[fn.length]]
-
-~~~text app.js
-const add3 = (a, b, c) => a + b + c;
-console.log(add3.length);
-~~~
-
-~~~text الناتج
-3
-~~~
-
-[[length]] على دالة = عدد الباراميترات اللي مكتوبة. ده اللي [[curry]] بتعرف منه «محتاج كام؟».
-
-بس فيه استثناء: بيعد لحد أول باراميتر ليه default أو rest:
-
-~~~text الناتج
-1 0
-~~~
-
-ده [[((a, b = 1) => a).length]] و [[((...r) => r).length]]. مع دوال زي دي [[curry]] هتنادي بدري.
-
----
-
-## ٢. [[curry]] سطر سطر
-
-~~~text app.js
-function curry(fn) {
-  return function curried(...args) {
-    if (args.length >= fn.length) return fn.apply(this, args);
-    return (...more) => curried.apply(this, [...args, ...more]);
-  };
-}
-~~~
-
-1. [[curry(fn)]] مش بتنادي [[fn]]: بترجّع دالة اسمها [[curried]].
-2. [[function curried(...args)]]: دالة **ليها اسم** عشان تقدر تنادي نفسها من جوه. [[...args]] بيلم كل اللي اتبعت في array.
-3. [[args.length >= fn.length]]: اتجمع كفاية (أو أكتر)؟ نادي الأصلية بيهم. [[apply(this, args)]] بتبعت الـ array كـ arguments منفصلة، وبتعدّي [[this]] زي ما هو لو كانت method.
-4. لو مش كفاية: رجّع arrow بتستنى [[...more]]، ولما تتنادى تنادي [[curried]] تاني بـ [[[...args, ...more]]]: اللي فات واللي جه، في array **جديدة**.
-
-ليه array جديدة ومش [[args.push(...more)]]؟ لأن [[args]] محفوظة في الـ closure. لو عدّلتها، أي نداء تاني من نفس الدالة الجزئية هيلاقيها متغيرة.
-
----
-
-## ٣. التشغيل
-
-~~~text app.js
-const add = curry(add3);
-add(1)(2)(3);
-add(1, 2)(3);
-add(1)(2, 3);
-~~~
-
-~~~text الناتج (مع الـ console.log اللي ضفته)
-  curried اتنادت بـ [ 1 ] ← محتاجين 3
-  curried اتنادت بـ [ 1, 2 ] ← محتاجين 3
-  curried اتنادت بـ [ 1, 2, 3 ] ← محتاجين 3
-6
-  curried اتنادت بـ [ 1, 2 ] ← محتاجين 3
-  curried اتنادت بـ [ 1, 2, 3 ] ← محتاجين 3
-6
-  curried اتنادت بـ [ 1 ] ← محتاجين 3
-  curried اتنادت بـ [ 1, 2, 3 ] ← محتاجين 3
-6
-~~~
-
-- [[add(1)(2)(3)]]: [[curried]] اتنادت ٣ مرات، والـ array كبرت لحد ما بقت 3.
-- [[add(1, 2)(3)]]: أول مرة جه اتنين، فمرتين بس.
-- [[add(1)(2, 3)]]: نفس الكلام بالعكس.
-
-وجربت كمان:
-
-~~~text الناتج
-function
-6
-~~~
-
-- [[typeof add(1)]] = [["function"]]: لسه مستنية.
-- [[add(1, 2, 3, 4)]] = 6: [[>=]] بتسمح بأكتر من المطلوب، و [[add3]] بتتجاهل الرابع.
-
----
-
-## ٤. الاستخدام العملي: ضريبة
-
-~~~text app.js
-const withTax = curry((ratePct, price) => (price * (100 + ratePct)) / 100);
-const addVat = withTax(14);
-addVat(100);
-~~~
-
-~~~text الناتج
-  curried اتنادت بـ [ 14 ] ← محتاجين 2
-  curried اتنادت بـ [ 14, 100 ] ← محتاجين 2
-114
-  curried اتنادت بـ [ 14, 250 ] ← محتاجين 2
-285
-~~~
-
-- [[withTax(14)]]: ثبّتنا النسبة 14٪، فرجعت دالة [[addVat]] فاكرة [[[14]]].
-- [[addVat(100)]]: [[100 × 114 ÷ 100 = 114]].
-- [[addVat(250)]]: [[250 × 114 ÷ 100 = 285]]، ومن غير ما تتلخبط بالنداء اللي قبله، لأن كل نداء بيعمل array جديدة.
-- ليه [[price * (100 + ratePct) / 100]] مش [[price * 1.14]]؟ عشان الضرب في كسر عشري ممكن يطلع أرقام غريبة: جربت [[100 * 1.14]] في Node وطلعت [[113.99999999999999]] (درس floating point)، والضرب في أرقام صحيحة الأول أأمن.
-
----
-
-## الخلاصة
-
-| الحتة | ليه |
-|---|---|
-| [[fn.length]] | عدد الباراميترات المطلوبة |
-| [[function curried]] بالاسم | تنادي نفسها |
-| [[>=]] | arguments زيادة مسموحة |
-| [[[...args, ...more]]] | array جديدة كل مرة، فالنسخ الجزئية متتلخبطش |
-| closure | كل دالة جزئية فاكرة اللي اتجمع لحد عندها |
-
-> في التمرين اللي تحت ([[sum(1)(2)(3)()]]) مفيش [[fn.length]] تعرف منه إمتى تخلص، فالنهاية هي النداء الفاضي. وخلي بالك من الـ starter: فيه مجموع global، وده بالظبط اللي الاختبار الرابع بيمسكه.`,
-          lines: [
-            R`[[curry]] بتاخد دالة عادية بكذا باراميتر، وبترجّع نسخة تقدر تدّيها الـ arguments على دفعات بدل مرة واحدة.`,
-            R`بترجّع دالة ليها اسم [[curried]] عشان تقدر تنادي نفسها في السطر الجاي. و [[...args]] بتجمع اللي اتبعت في النداء ده في array.`,
-            R`[[fn.length]] عدد الباراميترات اللي الدالة الأصلية متعرّفة بيها. لو اللي اتجمع لحد دلوقتي كفاية بننادي الأصلية بيه ونرجّع الناتج. خلي بالك: الباراميتر اللي ليه default أو [[...rest]] مبيتحسبش في [[length]]، فـ curry دي مش هتشتغل صح مع الدوال دي.`,
-            R`لو مش كفاية، بنرجّع دالة جديدة مستنية الباقي ([[...more]]). لما تتنادى بتلزق القديم على الجديد وتنادي [[curried]] تاني، فتتأكد هل كفاية ولا لسه. والـ arrow هنا بتحافظ على [[this]] بتاع النداء الأول.`,
-            R`نهاية [[curried]].`,
-            R`نهاية [[curry]].`,
-            R`دالة جمع عادية بتلات باراميترات، فـ [[fn.length]] بتاعها 3. ده الرقم اللي [[curry]] هتستناه قبل ما تحسب.`,
-            R`[[add]] النسخة الـ curried من [[add3]]. لسه محسبتش حاجة، هي بس مستنية arguments.`,
-            R`كل نداء بياخد argument واحد: [[add(1)]] بترجّع دالة، و [[(2)]] بترجّع دالة، و [[(3)]] أخيرًا بتكمّل التلاتة وتحسب 6.`,
-            R`أول نداء بياخد اتنين مرة واحدة فيفضل ناقص واحد بس، والنداء التاني بيكمّله. نفس الناتج 6.`,
-            R`العكس: واحد الأول واتنين بعده. يعني [[curry]] دي مرنة، وأي تقسيمة للـ arguments بتوصل لنفس الناتج.`,
-            R`الاستخدام الحقيقي: دالة ضريبة عامة بتاخد النسبة الأول والسعر بعدها، و [[curry]] بتخلينا نثبّت النسبة مرة. ترتيب الباراميترات مهم: اللي بيتثبّت الأول، واللي بيتغير كل مرة في الآخر.`,
-            R`ادّيناها النسبة بس، فرجعت دالة مستنية السعر ومتظبطة على ١٤٪ (ضريبة القيمة المضافة في مصر). تقدر تستخدمها في أي مكان محتاج دالة بتاخد سعر، زي [[prices.map(addVat)]].`,
-            R`بيحسب [[100 * 114 / 100]] = 114. ضربنا في ١١٤ الأول وقسمنا بعدين بدل [[price * 1.14]]، لأن [[100 * 1.14]] في JavaScript بتطلع [[113.99999999999999]].`,
-          ],
-          sol: R`[[sum(1)(2)(3)()]] بترجّع 6، و [[sum(5)()]] بترجّع 5، و [[sum(1)(2)(3)(4)(10)()]] بترجّع 20. الفكرة إن كل نداء فيه رقم بيرجّع دالة جديدة شايلة المجموع لحد دلوقتي في الـ closure، والنداء الفاضي هو اللي بيرجّع الرقم.
-
-الفرق عن curry اللي فوق إن هنا مفيش عدد arguments معروف ([[fn.length]])، فلازم إشارة للنهاية، وهي النداء الفاضي. الغلطة الشائعة إنك تخزّن المجموع في متغير برّه الدالة (global)، فنداء [[sum(1)(2)()]] التاني يبدأ من المجموع القديم. ولو نسيت [[()]] في الآخر هتطبع [[[Function: next]]] بدل الرقم.`,
-          solCode: R`function sum(a) {
-  return function next(b) {
-    if (b === undefined) return a;
-    return sum(a + b);
-  };
-}
-console.log(sum(1)(2)(3)());        // 6
-console.log(sum(5)());              // 5
-console.log(sum(1)(2)(3)(4)(10)()); // 20`,
-          check: {
-            lang: "js",
-            starter: R`let total = 0;
-function sum(a) {
-  total += a;
-  return function next(b) {
-    if (b === undefined) return total;
-    return sum(b);
-  };
-}`,
-            tests: R`test("sum(1)(2)(3)() ← 6", () => expect(sum(1)(2)(3)()).toBe(6));
-test("sum(5)() ← 5", () => expect(sum(5)()).toBe(5));
-test("sum(1)(2)(3)(4)(10)() ← 20", () => expect(sum(1)(2)(3)(4)(10)()).toBe(20));
-test("كل سلسلة مستقلة (مفيش مجموع global): a = sum(1)، و a(2)() ← 3، و a(10)() ← 11", () => {
-  const a = sum(1);
-  expect([a(2)(), a(10)()]).toEqual([3, 11]);
-});
-test("النداء الفاضي بس اللي بيرجّع رقم", () => expect(typeof sum(1)(2)).toBe("function"));`,
-            solution: R`function sum(a) {
-  return function next(b) {
-    if (b === undefined) return a;
-    return sum(a + b);
-  };
-}`
-          }
-        },
-        {
-          cmd: "deep equal",
-          title: "قارن اتنين objects بالمحتوى (deep equal)",
-          desc: R`=== بيقارن الـ reference، فمحتاج دالة recursive. الأول لو [[Object.is(a, b)]] يبقى متساويين (بتغطي الـ primitives و NaN ونفس الـ reference). لو واحد فيهم مش object أو null يبقى مختلفين. لو واحد array والتاني لأ مختلفين. بعد كده أقارن عدد المفاتيح، وبعدين كل مفتاح موجود في التاني وقيمته متساوية بنفس الدالة.`,
-          example: R`function deepEqual(a, b) {
-  if (Object.is(a, b)) return true;
-  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
-  if (Array.isArray(a) !== Array.isArray(b)) return false;
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-  if (keysA.length !== keysB.length) return false;
-  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k]));
-}
-deepEqual({ a: [1, { b: 2 }] }, { a: [1, { b: 2 }] }); // true
-deepEqual({ a: 1 }, { a: "1" });                       // false
-deepEqual([1, 2], { 0: 1, 1: 2 });                     // false
-deepEqual(NaN, NaN);                                   // true
-deepEqual(new Date(1), new Date(2));                   // true! غلط: حدود النسخة دي
-deepEqual(/a/g, /b/i);                                 // true! غلط برضه`,
-          try: R`ضيف دعم لـ Date (قارن [[getTime()]]) و RegExp (قارن [[source]] و [[flags]]) و Map و Set. وبعدين جرّب object بيشاور على نفسه ([[a.self = a]]) وشوف الـ stack overflow، وفكّر إزاي تحلها بـ WeakMap للأزواج اللي اتقارنت. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[deepEqual]] مع Date و RegExp و Map و Set، والـ object اللي بيشاور على نفسه.`,
-          practice: [
-            { lvl: 'سريع', t: R`اتوقع بـ [[deepEqual]] بتاع الدرس: [[deepEqual([1, 2, 3], [1, 2, 3])]] و [[deepEqual({ a: 1, b: 2 }, { b: 2, a: 1 })]] و [[deepEqual({ a: undefined }, { b: undefined })]] و [[deepEqual(0, -0)]] و [[deepEqual(new Date(1), new Date(2))]].`, done: R`الناتج: [[true]] و [[true]] و [[false]] و [[false]] و [[true]]. الأخير مفاجأة: الـ Date ملوش keys خاصة بيه فالدالة بتشوف اتنين objects فاضيين، و 0 و -0 مختلفين عشان [[Object.is]]، وتقدر تقول إمتى ده يبقى bug.` },
-            { lvl: 'تطبيق', t: R`قارن: ليه [[JSON.stringify(a) === JSON.stringify(b)]] مش deep equal؟ جرّب [[{ a: 1, b: 2 }]] مقابل [[{ b: 2, a: 1 }]]، و [[{ a: undefined }]] مقابل [[{}]]، و [[NaN]] مقابل [[null]] جوه array، واكتب جدول صغير بالنتيجة بالطريقتين.`, done: R`الـ JSON بيقول [[false]] للأولى (ترتيب المفاتيح) و [[true]] للتانية و [[true]] للتالتة ([[NaN]] بيتحوّل [[null]])، و [[deepEqual]] بيقول [[true]] و [[false]] و [[false]]، والجدول فيه الست نتايج دول.` },
-            { lvl: 'تحدي', t: R`مسألة: اكتب [[diff(a, b)]] بترجّع لستة الـ paths اللي فيها اختلاف، بالـ recursion، و [[Object.is]] للقيم البسيطة.`, done: R`[[diff({ a: 1, b: { c: 2 } }, { a: 1, b: { c: 3 }, d: 4 })]] بيرجّع [["b.c", "d"]]، و [[diff(x, x)]] بيرجّع لستة فاضية، و key موجود في الأول بس بيظهر، والـ arrays بتطلع paths زي [["items.0"]].` },
-          ],
-          flag: "script",
-          deep: {
-            why: "بيختبر recursion، والفرق بين الـ reference والقيمة، والحالات الحدية (null و NaN و arrays مقابل objects). وهي نفس الفكرة اللي ورا [[expect(x).toEqual(y)]] في الـ tests و [[assert.deepStrictEqual]] في Node.",
-            how: R`نقط تقولها: [[typeof null]] بـ "object" فلازم فحص null لوحده. و [[Object.is]] بدل === عشان NaN. والـ prototype مش بيتقارن هنا (instance من class ممكن يساوي object عادي بنفس المفاتيح)، والنسخ الكاملة بتقارن [[Object.getPrototypeOf]]. والتعقيد O(n) في عدد القيم كلها. والمراجع الدائرية محتاجة تتبّع الأزواج اللي بتتقارن. وفي الشغل: [[node:util]] فيه [[isDeepStrictEqual]] جاهز.`,
-            when: R`«اكتب deep clone» (نفس الـ recursion، واذكر structuredClone)، و «flatten object لمفاتيح بنقط» ([[{a: {b: 1}}]] → [[{"a.b": 1}]])، و «get(obj, 'a.b.c')».`,
-            mistakes: R`تقارن بـ [[JSON.stringify]]: ترتيب المفاتيح بيفرق، و undefined بيختفي، و NaN بتبقى null. ونسيان فحص null. ونسيان إن [[[]]] و [[{}]] الفاضيين ليهم نفس عدد المفاتيح.`
-          },
-          teach: R`## الفكرة في سطر
-
-[[===]] على objects بيسأل «ده نفس الـ object في الميموري؟» مش «جواهم نفس الحاجة؟». [[deepEqual]] بتنزل جوه الاتنين وتقارن كل مفتاح، وبتنادي نفسها (recursion) لما القيمة تبقى object أو array.
-
-شغّلت المثال في Node 24، وجربت حالات زيادة.
-
----
-
-## ١. ليه [[===]] مش كفاية
-
-~~~text الناتج (Node)
-false false true false true
-~~~
-
-ده بالترتيب:
-
-| التعبير | الناتج | ليه |
-|---|---|---|
-| [[{a:1} === {a:1}]] | false | اتنين objects مختلفين في الميموري |
-| [[NaN === NaN]] | false | قاعدة في الأرقام العشرية: NaN مبيساويش حاجة، ولا نفسه |
-| [[Object.is(NaN, NaN)]] | true | [[Object.is]] بتعتبرهم متساويين |
-| [[Object.is(0, -0)]] | false | بتفرّق بين الصفر الموجب والسالب |
-| [[0 === -0]] | true | [[===]] مبتفرّقش |
-
----
-
-## ٢. الدالة سطر سطر
-
-~~~text app.js
-function deepEqual(a, b) {
-  if (Object.is(a, b)) return true;
-  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
-  if (Array.isArray(a) !== Array.isArray(b)) return false;
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-  if (keysA.length !== keysB.length) return false;
-  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k]));
-}
-~~~
-
-### السطر ١: نفس القيمة؟
-
-[[Object.is(a, b)]]: لو نفس الرقم أو النص، أو نفس الـ object بالظبط، أو الاتنين NaN، خلصنا: متساويين.
-
-### السطر ٢: واحد فيهم مش object؟
-
-لو وصلنا هنا يبقى مش متساويين بـ [[Object.is]]. لو أي واحد primitive (رقم، نص، boolean...) يبقى مختلفين ومفيش حاجة ننزل جواها.
-
-- [[typeof a !== "object"]]: [[typeof]] بيرجّع [["object"]] للـ objects والـ arrays.
-- [[a === null]]: لازم فحص لوحده لأن [[typeof null]] بيرجّع [["object"]] برضه (جربت: [[object object true]] لـ [[typeof null]] و [[typeof []]] و [[Array.isArray([])]]).
-- [[||]]: لو أي شرط من دول صح.
-
-### السطر ٣: array قدام object؟
-
-[[Array.isArray(a) !== Array.isArray(b)]]: لو واحد array والتاني لأ، مختلفين. ليه محتاجينه؟ لأن مفاتيحهم ممكن تبقى زي بعض:
-
-~~~text الناتج
-[ '0', '1' ] [ '0', '1' ]
-~~~
-
-ده [[Object.keys([1, 2])]] و [[Object.keys({ 0: 1, 1: 2 })]]: نفس المفاتيح بالظبط (والمفاتيح دايمًا strings).
-
-### السطور ٤ و ٥ و ٦: عدد المفاتيح
-
-[[Object.keys(x)]]: array بأسماء المفاتيح بتاعة الـ object نفسه. لو العدد مختلف، مختلفين، ووفّرنا اللفة.
-
-### السطر ٧: كل مفتاح
-
-- [[keysA.every(fn)]]: true لو [[fn]] رجّعت true لكل عنصر، وبتقف عند أول false.
-- [[Object.hasOwn(b, k)]]: [[b]] فيه المفتاح ده نفسه؟
-- [[deepEqual(a[k], b[k])]]: قارن القيمتين **بنفس الدالة**. لو القيمة object، الدالة هتنزل جواه، وهكذا لحد ما توصل لـ primitives.
-- [[&&]]: الاتنين لازم يبقوا صح. ولو [[hasOwn]] false، الـ recursion مش بيتنادى أصلًا.
-
-ليه [[hasOwn]] مهم؟ جربت [[deepEqual({a:1, b:undefined}, {a:1, c:undefined})]]: نفس العدد، و [[a.b]] و [[b.b]] الاتنين [[undefined]]، بس النتيجة [[false]] صح بسبب [[hasOwn]].
-
----
-
-## ٣. التشغيل
-
-~~~text app.js
-deepEqual({ a: [1, { b: 2 }] }, { a: [1, { b: 2 }] });
-deepEqual({ a: 1 }, { a: "1" });
-deepEqual([1, 2], { 0: 1, 1: 2 });
-deepEqual(NaN, NaN);
-~~~
-
-~~~text الناتج
-true
-false
-false
-true
-~~~
-
-خلينا نمشي ورا الأول:
-
-1. الـ objects الخارجية مختلفة في الميموري، والاتنين objects مش arrays، والمفاتيح [[["a"]]] و [[["a"]]].
-2. [[deepEqual([1, {b: 2}], [1, {b: 2}])]]: الاتنين arrays، المفاتيح [[["0", "1"]]].
-3. [[deepEqual(1, 1)]]: [[Object.is]] ← true.
-4. [[deepEqual({b: 2}, {b: 2})]] ← [[deepEqual(2, 2)]] ← true.
-5. كله true فالنتيجة true.
-
-والتاني: [[deepEqual(1, "1")]] ← مش [[Object.is]]، و [[typeof 1]] مش [["object"]] ← false.
-
-### حالات تانية جربتها
-
-~~~text الناتج
-true
-false
-false
-false true
-~~~
-
-| التعبير | الناتج |
-|---|---|
-| [[deepEqual({a:1,b:2}, {b:2,a:1})]] | true، الترتيب مش مهم |
-| [[JSON.stringify]] لنفس الاتنين ومقارنة النصوص | false، عشان كده JSON مش حل |
-| [[deepEqual(0, -0)]] | false، بسبب [[Object.is]] |
-| [[deepEqual([], {})]] و [[deepEqual([], [])]] | false و true، بفضل فحص الـ array |
-
----
-
-## ٤. اللي النسخة دي مش بتعرفه
-
-~~~text الناتج
-true []
-true [] a g
-true
-RangeError: Maximum call stack size exceeded
-~~~
-
-- [[deepEqual(new Date(1), new Date(2))]] رجّعت **true** غلط: [[Object.keys(new Date(1))]] بـ [[[]]]، يعني الـ Date معندهاش مفاتيح عادية (التاريخ متخزن جوه بطريقة تانية)، فاتنين Dates أي كانوا شكلهم «متساويين».
-- [[deepEqual(/a/g, /b/i)]]: **true** غلط برضه. السطر التاني في الناتج فيه [[Object.keys(/a/g)]] بـ [[[]]]، وبعدها [[/a/g.source]] بـ [[a]] و [[/a/g.flags]] بـ [[g]]: دول اللي المفروض يتقارنوا.
-- [[new Map([ [1, 1] ])]] و [[new Map([ [2, 2] ])]]: true غلط، لنفس السبب.
-- object بيشاور على نفسه ([[x.self = x]]): الدالة بتنزل في [[self]] ثم [[self]] ثم... للأبد لحد ما الـ call stack (المكان اللي بيتسجل فيه كل نداء لسه مخلصش) يتملي.
-
-ودي بالظبط اللي التمرين اللي تحت بيطلبها.
-
----
-
-## الخلاصة
-
-| الفحص | بيمسك إيه |
-|---|---|
-| [[Object.is]] | نفس القيمة، و NaN |
-| [[typeof]] و [[null]] | primitive قدام object |
-| [[Array.isArray]] | array قدام object بنفس المفاتيح |
-| عدد [[Object.keys]] | مفتاح زيادة أو ناقص |
-| [[hasOwn]] + recursion | كل قيمة بنفس الدالة |
-
-> في التمرين: فكّر إزاي تعرف إن [[a]] Date أو RegExp أو Map أو Set، وإيه اللي تقارنه في كل واحد بدل المفاتيح. وللـ object اللي بيشاور على نفسه: محتاج «تفتكر» الأزواج اللي بدأت تقارنها قبل كده، والـ [[WeakMap]] بتشيل object كمفتاح.`,
-          lines: [
-            R`دالة recursive: بتقارن قيمتين، ولو لقت جواهم objects أو arrays بتنادي نفسها على كل جزء لحد ما توصل لقيم بسيطة.`,
-            R`[[Object.is]] زي [[===]] بس بتعتبر [[NaN]] بيساوي [[NaN]]. لو القيمتين نفس الحاجة أو نفس الـ reference نخلص بـ [[true]] على طول من غير لف. وخلي بالك إنها بتفرّق بين [[0]] و [[-0]]، فـ [[deepEqual(0, -0)]] بتطلع [[false]].`,
-            R`لو وصلنا هنا يبقى القيمتين مش متساويين، فلو أي واحدة فيهم مش object (رقم أو نص مثلًا) أو [[null]] يبقوا مختلفين. فحص [[null]] لازم لوحده لأن [[typeof null]] بيرجّع [["object"]]، ومن غيره [[Object.keys(null)]] هيرمي error.`,
-            R`array و object عادي ممكن يبقى ليهم نفس المفاتيح ([["0"]] و [["1"]])، فبنفرّق بينهم الأول. من غير السطر ده المثال التالت تحت كان هيطلع [[true]] غلط.`,
-            R`[[Object.keys]] بترجّع أسامي الخصايص بتاعة [[a]] نفسه بس (مش اللي ورثها)، وفي array بترجّع الـ indexes كنصوص. ولأن Date و Map مالهمش مفاتيح من النوع ده، الدالة دي هتشوف أي اتنين Date متساويين، فمحتاجة فحص زيادة لو هتقارنهم.`,
-            R`نفس الكلام لـ [[b]]. محتاجين الاتنين عشان نقارن العدد.`,
-            R`لو العدد مختلف يبقوا مختلفين أكيد، ونوفّر اللفة. والفحص ده كمان بيمسك حالة إن [[b]] فيه مفتاح زيادة مش في [[a]]، لأن السطر الجاي بيلف على مفاتيح [[a]] بس.`,
-            R`[[every]] بترجّع [[true]] لو كل مفتاح عدّى: [[Object.hasOwn(b, k)]] بتتأكد إن المفتاح موجود في [[b]] (عشان [[{ a: undefined }]] ميساويش [[{ b: undefined }]])، و [[deepEqual]] بتنادي نفسها على القيمتين. وأول مفتاح يفشل اللفة بتقف.`,
-            R`نهاية [[deepEqual]].`,
-            R`objects متداخلة: array جواها object. الـ [[===]] هنا هتدّي [[false]] لأنهم objects مختلفة في الذاكرة، بس [[deepEqual]] بتنزل لحد الأرقام وتلاقيها متساوية فترجّع [[true]].`,
-            R`[[1]] و [["1"]]: [[Object.is]] بتقول مختلفين، وواحد منهم مش object فبنرجّع [[false]]. لو كنا استخدمنا [[==]] بدل [[Object.is]] كانوا هيطلعوا متساويين غلط.`,
-            R`array و object ليهم نفس المفاتيح والقيم، وفحص [[Array.isArray]] هو اللي مسكهم وقال [[false]].`,
-            R`[[NaN === NaN]] بـ [[false]] في JavaScript، بس [[Object.is]] بتقول [[true]]، فـ [[deepEqual]] بتعتبرهم متساويين. ده اللي عادة عايزه لما تقارن داتا.`,
-            R`حدود النسخة دي بصراحة: تاريخين مختلفين بيطلعوا [[true]] غلط، لأن [[Object.keys(new Date(1))]] بترجّع [[[]]]: الوقت متخزن جوه الـ Date في خانة داخلية مش مفتاح، فالدالة شايفة اتنين objects فاضيين. نفس الكلام لـ [[Map]] و [[Set]]. التمرين تحت بيصلّحها.`,
-            R`نفس الغلطة مع الـ regex: [[/a/g]] و [[/b/i]] مالهمش مفاتيح عادية ([[Object.keys(/a/g)]] بـ [[[]]]، و [[lastIndex]] مش enumerable)، فبيطلعوا متساويين. الصح تقارن [[a.source]] (النص [["a"]]) و [[a.flags]] (النص [["g"]]).`,
-          ],
-          sol: R`بعد الإضافات: [[deepEqual(new Date(1), new Date(2))]] بترجّع false (النسخة الأصلية كانت بترجّع true غلط، لأن الـ Date معندهاش keys فبتبان متساوية)، ونفس المشكلة مع Map و Set: الأصلية بتقول [[new Map([ [1, 1] ])]] بتساوي [[new Map([ [2, 2] ])]]. ونفسها مع الـ regex: [[deepEqual(/a/g, /b/i)]] في الأصلية [[true]]، وفي الحل [[false]]، و [[deepEqual(/a/g, /a/g)]] [[true]] (جرّبت الاتنين في Node 24). الحل إنك تفحص النوع بـ instanceof وتقارن [[getTime()]] للـ Date، و [[source]] و [[flags]] للـ RegExp، و size وكل مفتاح للـ Map، و has للـ Set.
-
-الـ object اللي بيشاور على نفسه بيوقّع النسخة الأصلية بـ [[RangeError: Maximum call stack size exceeded]]. الحل [[WeakMap]] بتسجّل كل زوج [[a → b]] دخلت تقارنه، ولو قابلته تاني ترجّع true (افترضنا إنهم متساويين لحد ما يثبت العكس). مع الحل، اتنين objects كل واحد بيشاور على نفسه بيطلعوا متساويين. ولـ Set جوه objects المقارنة بـ has بتقارن بالـ reference، ودي حدود مقبولة في الانترفيو لو قلتها.`,
-          solCode: R`function deepEqual(a, b, seen = new WeakMap()) {
-  if (Object.is(a, b)) return true;
-  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
-  if (Object.getPrototypeOf(a) !== Object.getPrototypeOf(b)) return false;
-  if (seen.get(a) === b) return true;
-  seen.set(a, b);
-  if (a instanceof Date) return a.getTime() === b.getTime();
-  if (a instanceof RegExp) return a.source === b.source && a.flags === b.flags;
-  if (a instanceof Map) {
-    if (a.size !== b.size) return false;
-    for (const [k, v] of a) if (!b.has(k) || !deepEqual(v, b.get(k), seen)) return false;
-    return true;
-  }
-  if (a instanceof Set) {
-    if (a.size !== b.size) return false;
-    for (const v of a) if (!b.has(v)) return false;
-    return true;
-  }
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-  if (keysA.length !== keysB.length) return false;
-  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k], seen));
-}
-const x = { v: 1 }; x.self = x;
-const y = { v: 1 }; y.self = y;
-console.log(deepEqual(x, y));                                  // true
-console.log(deepEqual(new Date(1), new Date(2)));              // false
-console.log(deepEqual(/a/g, /b/i), deepEqual(/a/g, /a/g));     // false true
-console.log(deepEqual(new Map([["a", [1]]]), new Map([["a", [1]]]))); // true`,
-          check: {
-            lang: "js",
-            starter: R`function deepEqual(a, b) {
-  if (Object.is(a, b)) return true;
-  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
-  if (Array.isArray(a) !== Array.isArray(b)) return false;
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-  if (keysA.length !== keysB.length) return false;
-  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k]));
-}`,
-            tests: R`test("objects و arrays متداخلة", () => expect([deepEqual({ a: [1, { b: 2 }] }, { a: [1, { b: 2 }] }), deepEqual({ a: 1 }, { a: "1" }), deepEqual([1, 2], { 0: 1, 1: 2 })]).toEqual([true, false, false]));
-test("Date: new Date(1) و new Date(2) مش متساويين (الأصلية كانت بتقول true)", () => expect([deepEqual(new Date(1), new Date(2)), deepEqual(new Date(5), new Date(5))]).toEqual([false, true]));
-test("Map: بالمفاتيح والقيم", () => expect([deepEqual(new Map([[1, 1]]), new Map([[2, 2]])), deepEqual(new Map([["a", [1]]]), new Map([["a", [1]]]))]).toEqual([false, true]));
-test("RegExp: بالـ source والـ flags (الأصلية كانت بتقول /a/g زي /b/i)", () => expect([deepEqual(/a/g, /b/i), deepEqual(/a/g, /a/i), deepEqual(/a/g, /a/g)]).toEqual([false, false, true]));
-test("Set: نفس العناصر", () => expect([deepEqual(new Set([1, 2]), new Set([2, 1])), deepEqual(new Set([1]), new Set([2]))]).toEqual([true, false]));
-test("Date مش زي {} فاضي", () => expect(deepEqual(new Date(1), {})).toBe(false));
-test("NaN زي NaN", () => expect(deepEqual({ x: NaN }, { x: NaN })).toBe(true));
-test("اتنين بيشاوروا على نفسهم ← true من غير stack overflow (WeakMap)", () => {
-  const x = { v: 1 }; x.self = x;
-  const y = { v: 1 }; y.self = y;
-  expect(deepEqual(x, y)).toBe(true);
-});`,
-            solution: R`function deepEqual(a, b, seen = new WeakMap()) {
-  if (Object.is(a, b)) return true;
-  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
-  if (Object.getPrototypeOf(a) !== Object.getPrototypeOf(b)) return false;
-  if (seen.get(a) === b) return true;
-  seen.set(a, b);
-  if (a instanceof Date) return a.getTime() === b.getTime();
-  if (a instanceof RegExp) return a.source === b.source && a.flags === b.flags;
-  if (a instanceof Map) {
-    if (a.size !== b.size) return false;
-    for (const [k, v] of a) if (!b.has(k) || !deepEqual(v, b.get(k), seen)) return false;
-    return true;
-  }
-  if (a instanceof Set) {
-    if (a.size !== b.size) return false;
-    for (const v of a) if (!b.has(v)) return false;
-    return true;
-  }
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-  if (keysA.length !== keysB.length) return false;
-  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k], seen));
-}`
-          }
-        },
-        {
-          cmd: "debounce و throttle في الانترفيو",
-          title: "تكتب debounce و throttle بإيدك على السبورة بالحالات اللي بيسألوا عليها",
-          desc: R`سؤال «اكتب debounce» بيتسأل في أغلب انترفيوهات الـ frontend، وبعده على طول «طب و throttle؟». المطلوب مش النسخة اللي في ٥ سطور وبس: لازم [[this]] والـ arguments يوصلوا للدالة الأصلية، و [[cancel()]]، ونسخة [[leading]] بتنفّذ أول نداء فورًا، و throttle مبيرميش آخر نداء.
-
-الفكرة نفسها واستخدامها في البحث والـ scroll متشرحة في درس «debounce و throttle» (وحدة الأداء والذاكرة). الدرس ده عن الكتابة تحت ضغط الانترفيو، والأسئلة اللي بتيجي بعد الكود، وإزاي تختبرهم من غير ما تستنى الوقت بجد.`,
-          example: R`function debounce(fn, ms, { leading = false } = {}) {
-  let timer = null;
-  function debounced(...args) {
-    const callNow = leading && timer === null;
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      timer = null;
-      if (!leading) fn.apply(this, args);
-    }, ms);
-    if (callNow) fn.apply(this, args);
-  }
-  debounced.cancel = () => { clearTimeout(timer); timer = null; };
-  return debounced;
-}
-function throttle(fn, ms) {
-  let last = -Infinity, timer = null, lastArgs, lastThis;
-  return function (...args) {
-    lastArgs = args; lastThis = this;
-    const wait = ms - (Date.now() - last);
-    if (wait <= 0) { last = Date.now(); fn.apply(this, args); return; }
-    if (timer === null) timer = setTimeout(() => {
-      timer = null; last = Date.now(); fn.apply(lastThis, lastArgs);
-    }, wait);
-  };
-}
-const search = debounce((q) => console.log("search", q), 100);
-search("j"); search("ja"); search("jav");          // بعد 100ms: search jav
-const save = debounce((n) => console.log("save", n), 100, { leading: true });
-save(1); save(2);                                   // فورًا: save 1
-const move = throttle((i) => console.log("move", i), 50);
-for (let i = 1; i <= 5; i++) move(i);               // فورًا move 1، وبعد 50ms move 5`,
-          try: R`ضيف [[flush()]] للـ debounce: لو فيه نداء مستني، نفّذه دلوقتي حالًا وامسح الـ timer، ولو مفيش متعملش حاجة. وبعدين ضيف للـ throttle خيار [[{ trailing: false }]] بيلغي النداء الأخير. جرّب [[search("x"); search.flush();]] واتأكد إنه طبع فورًا ومطبعش تاني بعد 100ms.`,
-          practice: [
-            { lvl: 'سريع', t: R`اقرا وتوقّع: نفس الكتابة بتوصل للاتنين: [[const d = debounce((q) => console.log("debounce", q), 100)]] و [[const t = throttle((q) => console.log("throttle", q), 100)]]، والنداءات [[d(q); t(q);]] بتحصل عند 0 و 50 و 120 و 300ms بالنصوص [["a"]] و [["ab"]] و [["abc"]] و [["abcd"]] (اعملها بـ [[setTimeout]] لكل وقت). اكتب على ورقة اللي هيتطبع بالترتيب، وبعدين شغّل.`, done: R`الناتج في Node 24 (اتشغّل ٣ مرات وطلع نفس الترتيب): [[throttle a]] و [[throttle ab]] و [[throttle abc]] و [[debounce abc]] و [[throttle abcd]] و [[debounce abcd]]. وتقدر تقول ليه [["a"]] و [["ab"]] اختفوا من الـ debounce (كل نداء جديد بيلغي اللي قبله لحد ما ييجي سكوت 100ms)، وليه الـ throttle مضيّعش ولا كلمة.` },
-            { lvl: 'تطبيق', t: R`صلّح الكود البايظ: [[function debounceBad(fn, ms) { return (...a) => setTimeout(() => fn(...a), ms); }]] فيه غلطتين. جرّبه بـ [[const g = debounceBad(() => calls++, 10); g(); g(); g();]] وبعد 30ms اطبع [[calls]]، وبـ [[const o = { n: 7, f: debounceBad(function () { console.log(this?.n); }, 10) }; o.f();]].`, done: R`قبل التصليح [[calls]] بـ 3 (مفيش [[clearTimeout]] فكل نداء عمل timer لوحده) و [[this?.n]] بـ [[undefined]] (الـ arrow اللي راجعة مالهاش [[this]]، و [[fn(...a)]] بتنادي من غير object). بعد ما ترجّع [[function]] عادية وتحفظ الـ timer وتنادي [[fn.apply(this, a)]]: [[calls]] بـ 1 و [[this?.n]] بـ 7.` },
-            { lvl: 'تحدي', t: R`اكتب اختبار: ملف [[debounce.test.mjs]] بـ [[node:test]] بيختبر الاتنين من غير ما يستنى وقت حقيقي، بـ [[mock.timers.enable({ apis: ["setTimeout", "Date"] })]] و [[mock.timers.tick(ms)]]. على الأقل: debounce بينفّذ آخر نداء بس بعد [[ms]] من آخر نداء، و [[cancel()]] بيمنعه، و throttle بينفّذ الأول فورًا والأخير في آخر الفترة، و [[this]] بيوصل.`, done: R`[[node --test]] بيعدّي كل الاختبارات في أقل من ثانية (مش مستني 100ms بجد)، ولو شلت [[clearTimeout(timer)]] من الـ debounce اختبار واحد على الأقل بيقع، ولو شلت [[lastArgs]] من الـ throttle وخليته ينادي بالـ args الأولانية، اختبار «الأخير في آخر الفترة» بيقع.` },
-          ],
-          flag: "script",
-          deep: {
-            why: "السؤال ده بيختبر closures (الـ timer فاضل عايش بين النداءات)، و this و apply، والـ event loop (setTimeout مش بيستنى بالظبط)، والتفكير في الحالات الطرفية، كلهم في ١٥ سطر. واللي بيكتب النسخة البسيطة بس ومبيعرفش يرد على «طب لو عايز أول نداء يتنفّذ فورًا؟» بياخد نص الدرجة.",
-            how: R`debounce بيحفظ timer واحد في closure: كل نداء بيعمل [[clearTimeout]] للقديم ويعمل واحد جديد، فالدالة مبتتنفذش غير لما النداءات تسكت [[ms]]. نسخة [[leading]] بتنفّذ لو مفيش timer شغال ([[timer === null]])، وبتستخدم الـ timer كـ «فترة سكوت» بس.
-
-throttle بيحفظ وقت آخر تنفيذ ([[last]]). لو عدّى [[ms]] بينفّذ فورًا، ولو لأ بيحجز تنفيذ واحد في آخر الفترة بآخر arguments وصلت ([[lastArgs]])، فمفيش نداء أخير بيضيع.
-
-الاتنين بيرجّعوا [[function]] عادية مش arrow عشان ياخدوا [[this]] بتاع اللي نادى، وبيستخدموا [[fn.apply(this, args)]] عشان يعدّوه للأصلية. واختبارهم بيبقى بـ fake timers ([[mock.timers]] في Node، أو [[vi.useFakeTimers()]] في Vitest) بدل ما الاختبار يستنى وقت حقيقي.`,
-            when: R`في الانترفيو: اكتب النسخة البسيطة الأول وقول إنها شغالة، وبعدين زوّد [[this]] و [[cancel]] و [[leading]] لوحدك قبل ما يتسألوا. وفي الشغل: [[lodash.debounce]] أو الـ hook الجاهز في مكتبتك، إلا لو المشروع صغير ومش عايز dependency. وللـ animation والـ scroll البصري، throttle بـ [[requestAnimationFrame]] أحسن من رقم ثابت.`,
-            mistakes: R`ترجّع arrow function فـ [[this]] يضيع. وتنسى [[clearTimeout]] فيبقى «delay» مش debounce. وتعمل [[debounce(fn, 300)]] جوه component بيترسم كل مرة (في React مثلًا) فكل رسمة بيبقى ليها timer جديد ومفيش حاجة بتتلغي: لازم تتعمل مرة واحدة ([[useMemo]] أو [[useRef]]). وتنسى [[cancel()]] لما الصفحة أو الـ component يتقفل، فالدالة بتتنادى على حاجة اتمسحت. و throttle من غير trailing بيضيّع آخر قيمة (آخر مكان للـ scroll مثلًا).`
-          },
-          teach: R`## الفكرة في سطر
-
-debounce: «استنى لحد ما الناس تسكت، ونفّذ آخر طلب». throttle: «نفّذ مرة كل فترة، مهما الطلبات كترت». الكود اتشغّل على ويندوز 11 بـ Node 24.22، وشرح الفكرة والاستخدام في الصفحة موجود في درس «debounce و throttle» في وحدة الأداء والذاكرة.
-
----
-
-## ١. الفرق في جدول
-
-نفس ٥ نداءات ورا بعض بسرعة:
-
-| | debounce (trailing) | debounce بـ [[leading]] | throttle |
-|---|---|---|---|
-| أول نداء | مبيتنفّذش دلوقتي | بيتنفّذ فورًا | بيتنفّذ فورًا |
-| النداءات اللي في النص | كل واحد بيلغي اللي قبله | بتتجاهل وبتطوّل فترة السكوت | واحد بس منهم بيتحجز لآخر الفترة |
-| إمتى بيتنفّذ تاني | بعد [[ms]] من **آخر** نداء | بعد سكوت [[ms]] وييجي نداء جديد | كل [[ms]] بالكتير مرة |
-| مثال | البحث وانت بتكتب | زرار «احفظ» ميتضغطش مرتين | الـ scroll و [[mousemove]] |
-
----
-
-## ٢. debounce سطر سطر
-
-~~~text app.js
-function debounce(fn, ms, { leading = false } = {}) {
-  let timer = null;
-~~~
-
-- [[{ leading = false } = {}]]: الباراميتر التالت object، وبنفكّه (destructuring) ونحط قيمة افتراضية. و [[= {}]] اللي في الآخر عشان لو محدش بعت التالت خالص، منفكّش [[undefined]] (كان هيرمي TypeError).
-- [[let timer = null]]: رقم الـ timer الحالي. ده عايش في الـ closure بين كل النداءات، وهو اللي بيخلّي النداء الجديد يعرف إن فيه قديم مستني.
-
-~~~text app.js
-  function debounced(...args) {
-    const callNow = leading && timer === null;
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      timer = null;
-      if (!leading) fn.apply(this, args);
-    }, ms);
-    if (callNow) fn.apply(this, args);
-  }
-~~~
-
-1. [[function debounced]] مش arrow: عشان [[this]] جواها يبقى اللي نادى ([[obj.save()]] ← [[obj]]). الـ arrow مالهاش [[this]] بتاعها.
-2. [[callNow]]: «نفّذ دلوقتي» لو احنا في وضع [[leading]] **و** مفيش فترة سكوت شغالة. بنحسبها **قبل** ما نعمل timer جديد، وإلا [[timer]] هيبقى رقم دايمًا.
-3. [[clearTimeout(timer)]]: الغي القديم. [[clearTimeout(null)]] مبيعملش حاجة ومبيرميش، فمش محتاجين [[if]].
-4. [[setTimeout(() => {...}, ms)]]: الـ arrow هنا مقصودة: بتاخد [[this]] و [[args]] من [[debounced]].
-5. [[timer = null]] جوه الـ timer: الفترة خلصت، فأول نداء بعدها يتعامل كـ «أول مرة» تاني (مهم للـ leading).
-6. [[fn.apply(this, args)]]: نادي الأصلية بنفس الـ [[this]] ونفس الـ arguments كـ array. [[apply]] زي [[call]] بس بتاخد الـ arguments array.
-
-~~~text app.js
-  debounced.cancel = () => { clearTimeout(timer); timer = null; };
-  return debounced;
-}
-~~~
-
-الدوال objects، فينفع نعلّق عليها خاصية. [[cancel]] بتلغي النداء المستني، ودي اللي بتناديها لما الصفحة أو الـ component يتقفل.
-
----
-
-## ٣. throttle سطر سطر
-
-~~~text app.js
-function throttle(fn, ms) {
-  let last = -Infinity, timer = null, lastArgs, lastThis;
-~~~
-
-- [[last]]: وقت آخر تنفيذ بالـ milliseconds. بيبدأ [[-Infinity]] (سالب ما لا نهاية) عشان أول نداء يتنفّذ فورًا: أي وقت ناقص [[-Infinity]] بـ [[Infinity]]، أكبر من أي [[ms]].
-- [[lastArgs]] و [[lastThis]]: آخر حاجة وصلت، عشان النداء المتحجز في آخر الفترة يتنفّذ بآخر قيمة مش بأول قيمة.
-
-~~~text app.js
-  return function (...args) {
-    lastArgs = args; lastThis = this;
-    const wait = ms - (Date.now() - last);
-    if (wait <= 0) { last = Date.now(); fn.apply(this, args); return; }
-    if (timer === null) timer = setTimeout(() => {
-      timer = null; last = Date.now(); fn.apply(lastThis, lastArgs);
-    }, wait);
-  };
-}
-~~~
-
-1. [[Date.now() - last]]: عدّى قد إيه من آخر تنفيذ. [[wait]]: فاضل قد إيه لحد ما يبقى مسموح.
-2. [[wait <= 0]]: الفترة خلصت، نفّذ فورًا وسجّل الوقت.
-3. غير كده، لو مفيش نداء محجوز، احجز واحد بعد [[wait]] بالظبط. ولو فيه واحد محجوز خلاص، النداء ده بس بيحدّث [[lastArgs]].
-
----
-
-## ٤. التشغيل
-
-~~~text الناتج (Node 24)
-save 1
-move 1
-move 5
-search jav
-~~~
-
-| السطر | اتطبع إمتى | ليه |
-|---|---|---|
-| [[save 1]] | فورًا، قبل أي timer | [[leading]]: أول نداء اتنفّذ، و [[save(2)]] جه وفترة السكوت شغالة فاتجاهل |
-| [[move 1]] | فورًا | [[last]] كان [[-Infinity]]، فـ [[wait]] سالب |
-| [[move 5]] | بعد حوالي 50ms | النداءات من 2 لـ 5 حجزت timer واحد، و [[lastArgs]] كان [[5]] ساعتها |
-| [[search jav]] | بعد حوالي 100ms | [[j]] و [[ja]] اتلغوا بـ [[clearTimeout]]، وفضل آخر واحد بس |
-
-جرّبت كمان الحالة اللي بتتسأل في الانترفيو: نسخة debounce بترجّع arrow وبتنادي [[fn(...a)]] على [[{ n: 7, f }]] طبعت [[undefined]] بدل 7، ونسخة من غير [[clearTimeout]] اتنادت ٣ مرات ونفّذت ٣ مرات.
-
----
-
-## ٥. اختبرهم من غير ما تستنى
-
-الاختبار اللي بيستنى 100ms حقيقية بطيء وبيفشل ساعات لو الجهاز مشغول. Node فيه fake timers جوه [[node:test]]:
-
-~~~text debounce.test.mjs
-import { test, mock } from "node:test";
-import assert from "node:assert/strict";
-test("debounce: آخر نداء بس", () => {
-  mock.timers.enable({ apis: ["setTimeout", "Date"] });
-  const calls = [];
-  const f = debounce((x) => calls.push(x), 100);
-  f(1); mock.timers.tick(60); f(2); mock.timers.tick(60);
-  assert.deepEqual(calls, []);
-  mock.timers.tick(40);
-  assert.deepEqual(calls, [2]);
-  mock.timers.reset();
-});
-~~~
-
-- [[mock.timers.enable]]: بيبدّل [[setTimeout]] و [[Date]] بنسخة مزيفة الوقت فيها مبيتحركش لوحده.
-- [[mock.timers.tick(60)]]: «حرّك الساعة 60ms»، وأي timer وقته جه بيتنفّذ فورًا.
-- بعد 60 + 60 = 120ms مفيش حاجة اتنفّذت، لأن [[f(2)]] عند 60 لغت الأول وبدأت عدّ جديد. بعد 40 كمان (100 من آخر نداء) [[calls]] بقت [[[2]]].
-
-~~~text الناتج (node --test، مع اختبار throttle واختبار this)
-✔ debounce: آخر نداء بس، بعد 100ms من آخر نداء (2.0846ms)
-✔ throttle: الأول فورًا والأخير في آخر الفترة (0.3279ms)
-✔ this بيوصل (0.9489ms)
-ℹ tests 3
-ℹ pass 3
-~~~
-
-الاختبار كله خلص في ٢ ملي ثانية مع إنه «بيستنى» 160ms. وفي Vitest نفس الفكرة: [[vi.useFakeTimers()]] و [[vi.advanceTimersByTime(100)]].
-
----
-
-## ٦. الأسئلة اللي بتيجي بعد الكود
-
-| السؤال | الإجابة المختصرة |
-|---|---|
-| ليه [[function]] مش arrow؟ | عشان [[this]] بتاع اللي نادى يوصل للأصلية بـ [[apply]] |
-| لو المستخدم فضل يكتب ١٠ ثواني؟ | debounce مش هينفّذ ولا مرة؛ الحل خيار [[maxWait]] (زي lodash) بينفّذ غصب عنه كل فترة |
-| throttle بـ [[requestAnimationFrame]]؟ | بدل رقم ثابت، نفّذ مرة كل frame: احجز بـ [[requestAnimationFrame]] لو مفيش حاجة محجوزة |
-| إزاي تستخدمه في React؟ | اعمله مرة واحدة بـ [[useMemo]] أو [[useRef]]، ونادي [[cancel()]] في الـ cleanup بتاع [[useEffect]] |
-| الدالة الأصلية بترجّع قيمة؟ | debounce مش بيرجّعها (النداء بيحصل بعدين)؛ لو محتاجها رجّع Promise |
-
----
-
-## الخلاصة
-
-| الدالة | بتحفظ إيه في الـ closure | القاعدة |
-|---|---|---|
-| debounce | [[timer]] واحد | كل نداء يلغي القديم ويبدأ عدّ جديد |
-| debounce بـ [[leading]] | [[timer]] كفترة سكوت | نفّذ لو مفيش فترة شغالة، وطوّلها مع كل نداء |
-| throttle | [[last]] و [[timer]] و [[lastArgs]] | نفّذ لو عدّى [[ms]]، وإلا احجز واحد بآخر قيمة |
-
-- رجّع [[function]] عادية ونادي [[fn.apply(this, args)]].
-- [[cancel()]] جزء من الإجابة، مش زيادة.
-- اختبرهم بـ fake timers، مش بـ [[await sleep(100)]].`,
-          lines: [
-            R`[[debounce]] بتاخد الدالة الأصلية، والمدة بالـ milliseconds، و object خيارات فيه [[leading]] (افتراضي [[false]]). الـ [[= {}]] الأخيرة بتخلّي النداء من غير خيارات ميقعش.`,
-            R`رقم الـ timer الحالي، أو [[null]] لو مفيش حاجة مستنية. عايش في الـ closure، فكل النداءات اللي جاية شايفة نفس المتغير.`,
-            R`الدالة اللي هترجع للمستخدم. [[function]] عادية مش arrow عشان [[this]] جواها يبقى اللي نادى، و [[...args]] بتلم كل الـ arguments في array.`,
-            R`في وضع [[leading]]، نفّذ دلوقتي لو مفيش فترة سكوت شغالة. بنحسبها قبل ما نعمل timer جديد، لأن بعده [[timer]] هيبقى رقم دايمًا.`,
-            R`الغي الـ timer القديم لو فيه. ده قلب الـ debounce: من غيره كل نداء هيتنفّذ متأخر بس، ومش هيتلغى حاجة.`,
-            R`ابدأ عدّ جديد. الـ arrow هنا مقصودة: بتاخد [[this]] و [[args]] من [[debounced]] اللي حواليها.`,
-            R`الفترة خلصت: رجّع [[timer]] لـ [[null]] عشان أول نداء بعد كده يتعامل كأنه أول مرة (مهم للـ leading).`,
-            R`في الوضع العادي (trailing) نفّذ الأصلية هنا، بآخر arguments و [[this]]. [[apply]] بتاخد الـ [[this]] والـ arguments كـ array.`,
-            R`قفلة الـ timer، والمدة [[ms]] اللي بيستناها.`,
-            R`في وضع [[leading]] التنفيذ بيحصل هنا فورًا، والـ timer اللي فوق بيشتغل بس كفترة سكوت.`,
-            R`نهاية [[debounced]].`,
-            R`[[cancel]] خاصية متعلّقة على الدالة نفسها (الدوال objects)، بتلغي أي نداء مستني. بتناديها لما الصفحة أو الـ component يتقفل.`,
-            R`رجّع الدالة الجديدة، وهي اللي هتستخدمها مكان الأصلية في الـ event listener.`,
-            R`نهاية [[debounce]].`,
-            R`[[throttle]]: نفّذ مرة بالكتير كل [[ms]].`,
-            R`[[last]] وقت آخر تنفيذ، وبيبدأ [[-Infinity]] عشان أول نداء يتنفّذ فورًا. [[timer]] للنداء المحجوز، و [[lastArgs]] و [[lastThis]] آخر حاجة وصلت.`,
-            R`الدالة اللي بترجع، [[function]] عادية برضه عشان [[this]].`,
-            R`احفظ آخر arguments وآخر [[this]] مع كل نداء، عشان النداء المحجوز ينفّذ بأحدث قيمة مش بأقدم واحدة.`,
-            R`[[wait]] = فاضل قد إيه لحد ما يبقى مسموح. [[Date.now() - last]] = عدّى قد إيه من آخر تنفيذ بالـ milliseconds.`,
-            R`لو الفترة خلصت ([[wait]] صفر أو سالب): سجّل الوقت، ونفّذ فورًا، واخرج بـ [[return]].`,
-            R`غير كده: لو مفيش نداء محجوز، احجز واحد بعد [[wait]] بالظبط. ولو فيه واحد محجوز، النداء ده كفاية إنه حدّث [[lastArgs]] فوق.`,
-            R`لما الحجز ييجي: فضّي [[timer]]، وسجّل الوقت، ونفّذ بآخر قيمة. كده آخر نداء عمره ما بيضيع.`,
-            R`قفلة الحجز، والمدة هي [[wait]] مش [[ms]]، عشان التنفيذ ييجي في آخر الفترة بالظبط.`,
-            R`نهاية الدالة اللي بترجع.`,
-            R`نهاية [[throttle]].`,
-            R`[[search]] نسخة debounced من دالة بتطبع، بمدة 100ms.`,
-            R`٣ نداءات ورا بعض: كل واحد بيلغي اللي قبله، فبعد 100ms من آخر واحد بيتطبع [[search jav]] بس.`,
-            R`[[save]] debounce بـ [[leading: true]]: أول نداء يتنفّذ فورًا.`,
-            R`[[save(1)]] بيطبع [[save 1]] فورًا، و [[save(2)]] جه وفترة السكوت شغالة فاتجاهل. ده اللي بيمنع زرار «احفظ» يبعت مرتين.`,
-            R`[[move]] نسخة throttled بمدة 50ms.`,
-            R`٥ نداءات في نفس اللحظة: الأول بيطبع [[move 1]] فورًا، والباقي بيحجزوا نداء واحد بيطبع [[move 5]] بعد 50ms. الناتج كله بالترتيب: [[save 1]] و [[move 1]] و [[move 5]] و [[search jav]].`,
-          ],
-          sol: R`[[flush]] بتشوف لو فيه timer مستني: تلغيه وتنفّذ الأصلية بآخر [[args]] و [[this]] (لازم تحفظهم في الـ closure زي [[lastArgs]] في الـ throttle)، وترجّع [[timer]] لـ [[null]]. [[search("x"); search.flush();]] بيطبع [[search x]] فورًا، ومبيطبعش حاجة تاني بعد 100ms لأن الـ timer اتلغى (جرّبتها في Node 24).
-
-[[{ trailing: false }]] في الـ throttle: لو [[trailing]] بـ [[false]] متحجزش timer خالص، فالنداءات اللي في النص بتضيع. بـ ٥ نداءات ورا بعض بيتطبع [[move 1]] بس. ده مناسب لزرار مش عايز تكرره، ومش مناسب للـ scroll لأن آخر مكان هيضيع.`,
-          solCode: R`function debounce(fn, ms) {
-  let timer = null, lastArgs, lastThis;
-  function debounced(...args) {
-    lastArgs = args; lastThis = this;
-    clearTimeout(timer);
-    timer = setTimeout(() => { timer = null; fn.apply(lastThis, lastArgs); }, ms);
-  }
-  debounced.cancel = () => { clearTimeout(timer); timer = null; };
-  debounced.flush = () => {
-    if (timer === null) return;
-    clearTimeout(timer); timer = null;
-    fn.apply(lastThis, lastArgs);
-  };
-  return debounced;
-}
-const search = debounce((q) => console.log("search", q), 100);
-search("x");
-search.flush(); // search x فورًا، ومفيش حاجة بعد 100ms`
-        },
-        {
-          cmd: "memoize",
-          title: "تحفظ نتيجة دالة عشان متتحسبش تاني بنفس المدخلات (memoize)",
-          desc: R`[[memoize(fn)]] بترجّع نسخة من [[fn]] بتفتكر: أول مرة تتنادى بمدخلات معينة بتحسب وتحفظ النتيجة في [[Map]]، وأي مرة بعد كده بنفس المدخلات بترجّع المحفوظ من غير ما تحسب. ده بيحوّل [[fib(50)]] من حاجة مبتخلصش لـ أقل من ملي ثانية.
-
-السؤال في الانترفيو مش بس «اكتبها»: هيسألك المفتاح بيتعمل إزاي لو فيه أكتر من argument، وليه [[cache.has]] مش [[if (cache.get(key))]]، وإيه اللي يحصل للميموري، وإزاي تعمل memoize لدالة async من غير ما تحفظ الفشل.`,
-          example: R`function memoize(fn, keyFn = (...args) => JSON.stringify(args)) {
-  const cache = new Map();
-  return function (...args) {
-    const key = keyFn(...args);
-    if (cache.has(key)) return cache.get(key);
-    const result = fn.apply(this, args);
-    cache.set(key, result);
-    return result;
-  };
-}
-let calls = 0;
-const square = memoize((n) => { calls++; return n * n; });
-console.log(square(4), square(4), square(5), calls); // 16 16 25 2
-const fib = memoize((n) => (n < 2 ? n : fib(n - 1) + fib(n - 2)));
-console.log(fib(50));                                 // 12586269025`,
-          try: R`ضيف خيار [[max]]: الـ cache ميشيلش أكتر من [[max]] نتيجة، ولما يتملي يمسح **أقدم واحدة اتستخدمت** (LRU). الـ [[Map]] بتحافظ على ترتيب الإضافة، فلما تقرا مفتاح امسحه وحطه تاني عشان يروح للآخر، والأقدم يبقى [[cache.keys().next().value]]. اكتب [[memoize]] الأساسية في المربع اللي تحت ودوس «شغّل واختبر».`,
-          practice: [
-            { lvl: 'سريع', t: R`قارن وقيس: [[function slowFib(n) { return n < 2 ? n : slowFib(n - 1) + slowFib(n - 2); }]]. قيس بـ [[performance.now()]] تلات حاجات: [[slowFib(32)]]، و [[const wrapped = memoize(slowFib)]] ونداء [[wrapped(32)]] مرتين، و [[fib(32)]] بتاع الدرس.`, done: R`على جهازي (Node 24): [[slowFib(32)]] حوالي 21ms، و [[wrapped(32)]] أول مرة حوالي 22ms (مفيش أي فرق!) وتاني مرة 0.008ms، و [[fib(32)]] بتاع الدرس 0.1ms. وتقدر تشرح ليه: [[slowFib]] بتنادي نفسها مش [[wrapped]]، فالـ recursion جوه مبيعدّيش على الـ cache خالص؛ الـ memo بيفيد الـ recursion بس لو الدالة بتنادي النسخة الـ memoized.` },
-            { lvl: 'تطبيق', t: R`صلّح الكود البايظ: [[const bad = (fn) => { const c = {}; return (x) => c[x] || (c[x] = fn(x)); };]] فيه باج لما الدالة ترجّع [[0]] أو [[""]] أو [[false]]. وكمان نسخة بتعمل المفتاح [[args.join()]]: جرّب [[m(1, 2)]] و [[m("1,2")]].`, done: R`مع [[bad(() => 0)]] ونداء [[z(1)]] ٣ مرات، الدالة الأصلية بتتنادى ٣ مرات مش مرة (الـ [[0]] falsy فالـ [[||]] بيحسب تاني)، وبعد ما تستخدم [[Map]] و [[has]] بتتنادى مرة. و [[[1, 2].join()]] و [[["1,2"].join()]] الاتنين [["1,2"]] فالنداءين بياخدوا نفس النتيجة غلط، و [[JSON.stringify]] بيفرّق بينهم: الأول بيبقى [[[1,2]]] والتاني فيه علامات التنصيص حوالين [["1,2"]].` },
-            { lvl: 'تحدي', t: R`محاكاة: [[memoizeAsync(fn)]] لدالة بتجيب يوزر من API (اعملها [[async (id) => { hits++; if (id < 0) throw new Error("bad id"); return { id }; }]]). المطلوب: نداءين في نفس اللحظة لنفس [[id]] يعملوا request واحد بس (احفظ الـ Promise نفسه مش النتيجة)، ولو الـ Promise اترفض يتشال من الـ cache عشان المحاولة الجاية تجرّب تاني.`, done: R`[[await Promise.all([getUser(1), getUser(1)])]] بيرجّع نفس الـ object مرتين ([[a === b]] بـ [[true]]) و [[hits]] بـ 1. وبـ [[memoize]] بتاع الدرس زي ما هو، [[getUser(-1)]] مرتين بيرمي [[bad id]] مرتين بس [[hits]] بيزيد مرة واحدة (الفشل اتحفظ!). بعد ما تضيف [[.catch((e) => { cache.delete(key); throw e; })]] المحاولة التانية بتنادي الدالة تاني فعلًا.` },
-          ],
-          flag: "script",
-          deep: {
-            why: "memoize بيختبر closures (الـ cache فاضل عايش)، و Map، والتفكير في المفتاح والميموري. وهي الفكرة اللي ورا useMemo و React.memo و reselect، وورا الـ dynamic programming في أسئلة الخوارزميات (fib و climbing stairs و coin change).",
-            how: R`الـ cache [[Map]] جوه closure: المفتاح بيتعمل من الـ arguments، والقيمة النتيجة. [[JSON.stringify(args)]] مفتاح كويس للأرقام والنصوص والـ objects البسيطة، و [[keyFn]] بتخلّي اللي بيستخدمها يختار مفتاح تاني (مثلًا [[(user) => user.id]]).
-
-[[cache.has(key)]] مش [[cache.get(key)]] عشان النتيجة ممكن تبقى [[0]] أو [[undefined]]. و [[fn.apply(this, args)]] عشان [[this]] يوصل.
-
-الـ recursion بيستفيد بس لو الدالة بتنادي النسخة الـ memoized ([[fib]] نفسها memoized هنا). [[fib(50)]] من غير memo محتاجة حوالي ٤٠ مليار نداء، ومعاه ٥١ حساب بس.
-
-الميموري: الـ cache بيكبر للأبد. الحلول: حد أقصى بـ LRU، أو [[WeakMap]] لو الـ argument object واحد (بيتمسح لما الـ object يتمسح)، أو مدة صلاحية.`,
-            when: R`دالة pure (نفس المدخلات دايمًا نفس الناتج ومن غير side effects)، وغالية، وبتتنادى بنفس المدخلات كتير: حسابات، وparsing، وفلترة لستة كبيرة بنفس الفلتر. متعملهاش لدالة بتقرا الوقت أو random أو state برّه، ولا لدالة رخيصة (الـ [[JSON.stringify]] نفسه ممكن يبقى أغلى من الحساب).`,
-            mistakes: R`[[if (cache.get(key))]] فالنتايج الـ falsy بتتحسب كل مرة. و [[args.join()]] أو [[String(args)]] كمفتاح فـ [[(1, 2)]] و [[("1,2")]] بيتلخبطوا. و [[JSON.stringify]] نفسه بيخلّي [[undefined]] و [[null]] نفس المفتاح ([[[undefined]]] و [[[null]]] الاتنين [["[null]"]])، وبيحترم ترتيب المفاتيح، فـ [[{ a: 1, b: 2 }]] و [[{ b: 2, a: 1 }]] مفتاحين مختلفين والنتيجة بتتحسب مرتين. و memoize لدالة async بتحفظ الـ Promise المرفوض. ونسيان إن الـ cache مبيتمسحش أبدًا.`
-          },
-          teach: R`## الفكرة في سطر
-
-[[memoize(fn)]] بترجّع دالة جديدة معاها كراسة ([[Map]]): قبل ما تحسب بتبص في الكراسة، ولو لقت الإجابة بترجّعها، ولو ملقتهاش بتحسب وتكتب. الكود اتشغّل على ويندوز 11 بـ Node 24.22.
-
----
-
-## ١. الدالة سطر سطر
-
-~~~text app.js
-function memoize(fn, keyFn = (...args) => JSON.stringify(args)) {
-  const cache = new Map();
-~~~
-
-- [[fn]]: الدالة الأصلية اللي عايزين نسرّعها.
-- [[keyFn]]: دالة بتحوّل الـ arguments لمفتاح واحد. القيمة الافتراضية [[JSON.stringify(args)]]: [[square(4)]] مفتاحها النص [["[4]"]]، و [[add(1, 2)]] مفتاحها [["[1,2]"]].
-- [[const cache = new Map()]]: الكراسة. متعرّفة **برّه** الدالة اللي بترجع، فبتفضل عايشة بين كل النداءات (closure، درس «closure» في المستوى ٢). وكل [[memoize(...)]] ليها كراسة لوحدها.
-
-~~~text app.js
-  return function (...args) {
-    const key = keyFn(...args);
-    if (cache.has(key)) return cache.get(key);
-    const result = fn.apply(this, args);
-    cache.set(key, result);
-    return result;
-  };
-}
-~~~
-
-1. [[function (...args)]]: [[function]] عادية عشان [[this]]، و [[...args]] بتلم الـ arguments في array.
-2. [[keyFn(...args)]]: اعمل المفتاح.
-3. [[cache.has(key)]]: المفتاح موجود؟ رجّع المحفوظ. لازم [[has]] مش [[get]]: لو النتيجة [[0]]، [[if (cache.get(key))]] هيشوفها false ويحسب تاني.
-4. [[fn.apply(this, args)]]: احسب بالدالة الأصلية بنفس [[this]] ونفس الـ arguments.
-5. [[cache.set(key, result)]] و [[return result]]: اكتب في الكراسة ورجّع.
-
----
-
-## ٢. التشغيل
-
-~~~text app.js
-let calls = 0;
-const square = memoize((n) => { calls++; return n * n; });
-console.log(square(4), square(4), square(5), calls);
-const fib = memoize((n) => (n < 2 ? n : fib(n - 1) + fib(n - 2)));
-console.log(fib(50));
-~~~
-
-~~~text الناتج (Node 24)
-16 16 25 2
-12586269025
-~~~
-
-- [[calls]] بـ 2 مش 3: [[square(4)]] التانية جت من الكراسة. [[calls]] بيتقري **بعد** ما الـ ٣ نداءات اتنفذوا لأن الـ arguments بتتحسب من الشمال لليمين قبل [[console.log]].
-- [[fib]] بتنادي [[fib]] نفسها، و [[fib]] هنا هي النسخة الـ memoized، فكل [[fib(k)]] بيتحسب مرة واحدة بس: ٥١ حساب لـ [[fib(50)]]. من غير memo، [[fib(50)]] بتنادي نفسها حوالي ٤٠ مليار مرة.
-
-### قيست الفرق
-
-~~~text الناتج (Node 24، ويندوز 11)
-slowFib(32) 21.0 ms
-memo fib(32) 0.096 ms
-memoize(slowFib)(32) first 22.3 ms
-second 0.008 ms
-~~~
-
-السطر التالت هو الفخ: [[memoize(slowFib)]] أول مرة بنفس بطء الأصلية، لأن [[slowFib]] جواها بتنادي [[slowFib]] الأصلية مش النسخة الـ memoized. الكراسة بتستفيد منها بس النداءات اللي **بتعدّي عليها**.
-
----
-
-## ٣. المفتاح: الحتة اللي بتتسأل عليها
-
-~~~text الناتج (node -e)
-[null] [null] 1,2 1,2
-~~~
-
-ده [[JSON.stringify([undefined])]] و [[JSON.stringify([null])]] و [[[1, 2].join()]] و [[["1,2"].join()]]:
-
-| المفتاح | المشكلة | الحل |
-|---|---|---|
-| [[args.join()]] أو [[String(args)]] | [[(1, 2)]] و [[("1,2")]] نفس المفتاح | [[JSON.stringify(args)]] بيحط علامات التنصيص |
-| [[JSON.stringify(args)]] | [[undefined]] و [[null]] نفس المفتاح، والدوال والـ Map بتتحوّل [[null]] أو [[{}]] | [[keyFn]] مخصوصة للحالة دي |
-| [[JSON.stringify]] لـ object كبير | تحويله لنص ممكن ياخد وقت أكتر من الحساب نفسه | [[keyFn]] بترجّع [[user.id]] بس |
-| object كـ مفتاح مباشرة | الـ [[Map]] بتقارن بالـ reference، فـ object جديد بنفس المحتوى مفتاح جديد | [[WeakMap]] لو ده المقصود (وبتتمسح لوحدها) |
-
----
-
-## ٤. الميموري و async
-
-الكراسة بتكبر للأبد: لو الدالة بتتنادى بمليون مدخل مختلف، فيه مليون نتيجة في الميموري (درس «memory leaks»). الحل الشائع LRU (Least Recently Used): حد أقصى، ولما تتملي امسح أقدم حاجة اتستخدمت. ده المطلوب في «جرّب».
-
-ومع دالة async، اللي بيتحفظ هو الـ Promise. ده كويس (نداءين في نفس اللحظة بيعملوا request واحد)، بس الـ Promise المرفوض بيتحفظ كمان:
-
-~~~text الناتج (Node 24)
-true 1
-bad id
-bad id 2
-~~~
-
-- [[true 1]]: [[getUser(1)]] مرتين في [[Promise.all]] رجّعوا نفس الـ object و [[hits]] بـ 1.
-- [[getUser(-1)]] مرتين: الاتنين رموا [[bad id]]، بس [[hits]] بقى 2 بس (1 للـ id 1 و 1 للـ -1)، يعني المحاولة التانية مجرّبتش تاني: الفشل اتحفظ. الحل [[.catch]] بتمسح المفتاح وترمي الـ error تاني (التمرين التالت).
-
----
-
-## الخلاصة
-
-| النقطة | ليه | اللي تقوله في الانترفيو |
-|---|---|---|
-| [[Map]] في closure | الكراسة تعيش بين النداءات | كل [[memoize]] ليها cache لوحدها |
-| [[has]] مش [[get]] | النتيجة ممكن تبقى [[0]] أو [[undefined]] | [[if (cache.get(k))]] بيحسب الـ falsy تاني |
-| [[JSON.stringify(args)]] | مفتاح لأكتر من argument | ومعاه [[keyFn]] للحالات الخاصة |
-| الـ recursion | لازم تنادي النسخة الـ memoized | [[memoize(slowFib)]] مبيسرّعش أول نداء |
-| الميموري و async | الكراسة مبتتمسحش، والفشل بيتحفظ | LRU، و [[cache.delete]] في الـ [[catch]] |`,
-          lines: [
-            R`[[memoize]] بتاخد الدالة الأصلية، ودالة اختيارية بتعمل المفتاح من الـ arguments. الافتراضي [[JSON.stringify(args)]]، فـ [[(1, 2)]] مفتاحها النص [["[1,2]"]].`,
-            R`الكراسة: [[Map]] من المفتاح للنتيجة. متعرّفة برّه الدالة اللي بترجع فبتفضل عايشة بين النداءات، وكل نداء لـ [[memoize]] بيعمل واحدة جديدة.`,
-            R`الدالة اللي بترجع وهتستخدمها بدل الأصلية. [[function]] عادية عشان [[this]]، و [[...args]] بتلم الـ arguments في array.`,
-            R`اعمل المفتاح من الـ arguments بالدالة اللي اتبعتت أو الافتراضية.`,
-            R`المفتاح موجود؟ رجّع النتيجة المحفوظة من غير حساب. [[has]] مش [[get]] عشان النتيجة لو [[0]] أو [[undefined]] متتحسبش كل مرة.`,
-            R`مش موجود: احسب بالدالة الأصلية بنفس [[this]] ونفس الـ arguments. [[apply]] بتاخد الـ arguments كـ array.`,
-            R`اكتب النتيجة في الكراسة عشان المرة الجاية.`,
-            R`رجّع النتيجة اللي اتحسبت لسه، وهي نفس اللي هيرجع من الكراسة في النداءات الجاية.`,
-            R`نهاية الدالة اللي بترجع.`,
-            R`نهاية [[memoize]].`,
-            R`عدّاد بيقول الدالة الأصلية اتنادت كام مرة فعلًا، عشان نشوف الكراسة بتشتغل.`,
-            R`[[square]] نسخة memoized من دالة بتزوّد العدّاد وترجّع المربّع.`,
-            R`[[square(4)]] الأولى بتحسب، والتانية من الكراسة، و [[square(5)]] مفتاح جديد فبتحسب. فـ [[calls]] بـ 2 مش 3، والناتج [[16 16 25 2]].`,
-            R`[[fib]] بتنادي [[fib]] نفسها، وهي هنا النسخة الـ memoized، فكل رقم بيتحسب مرة واحدة. لو [[fib]] كانت بتنادي نسخة مش memoized، الكراسة مكانتش هتفيد الـ recursion.`,
-            R`[[fib(50)]] بتخلص فورًا بـ ٥١ حساب. من غير memo كانت هتحتاج حوالي ٤٠ مليار نداء. والرقم [[12586269025]] أقل من [[Number.MAX_SAFE_INTEGER]] فمظبوط؛ بعد [[fib(78)]] الأرقام بتبدأ تبقى تقريبية ومحتاج [[BigInt]].`,
-          ],
-          sol: R`LRU بـ [[Map]]: لما تلاقي المفتاح، امسحه وحطه تاني ([[cache.delete(key); cache.set(key, value)]]) عشان يروح لآخر الترتيب. ولما تضيف جديد و [[cache.size]] عدّى [[max]]، امسح [[cache.keys().next().value]] (أول مفتاح = أقدم واحد اتستخدم).
-
-جرّبت بـ [[max: 2]]: [[f(1); f(2); f(1); f(3);]] بيمسح [[2]] مش [[1]] (لأن [[1]] اتستخدم تاني)، فـ [[f(1)]] بعدها من الكراسة و [[f(2)]] بتتحسب تاني، والـ [[calls]] بيزيد ٤ مرات بالظبط: 1 و 2 و 3 وبعدين 2 تاني.`,
-          solCode: R`function memoize(fn, { max = Infinity, keyFn = (...a) => JSON.stringify(a) } = {}) {
-  const cache = new Map();
-  return function (...args) {
-    const key = keyFn(...args);
-    if (cache.has(key)) {
-      const value = cache.get(key);
-      cache.delete(key); cache.set(key, value); // روح لآخر الترتيب
-      return value;
+          cmd: "IntersectionObserver",
+          title: "تعرف إن عنصر ظهر على الشاشة إزاي؟ (infinite scroll و reveal)",
+          desc: R`[[IntersectionObserver]] بيقولك لما عنصر يدخل أو يخرج من الشاشة (أو من عنصر أب بيعمل scroll)، من غير ما تسمع لـ [[scroll]] وتحسب المقاسات بنفسك. بتعمله مرة بـ callback وخيارات، وبعدين [[observe(el)]] لأي عدد عناصر.
+
+أشهر استخدامين: infinite scroll (عنصر فاضي في آخر الليستة اسمه sentinel، أول ما يقرّب من الشاشة حمّل الصفحة الجاية)، وأنيميشن عند الظهور (ضيف كلاس لما الكارت يظهر، وبطّل تراقبه). و [[rootMargin: "300px"]] بيوسّع منطقة الشاشة ٣٠٠ بكسل، فالتحميل يبدأ قبل ما اليوزر يوصل للآخر. و [[threshold: 0.2]] يعني «لما ٢٠٪ من العنصر يظهر».`,
+          example: R`const feed = document.querySelector("#feed");
+const sentinel = document.querySelector("#sentinel");
+let page = 1, loading = false, done = false;
+async function loadMore() {
+  if (loading || done) return;
+  loading = true;
+  try {
+    const res = await fetch($__bt/api/posts?page=$__{page}$__bt);
+    const posts = await res.json();
+    if (posts.length === 0) done = true;
+    for (const p of posts) {
+      const li = document.createElement("li");
+      li.textContent = p.title;
+      feed.append(li);
     }
-    const result = fn.apply(this, args);
-    cache.set(key, result);
-    if (cache.size > max) cache.delete(cache.keys().next().value);
-    return result;
-  };
-}
-let calls = 0;
-const f = memoize((n) => { calls++; return n * 10; }, { max: 2 });
-f(1); f(2); f(1); f(3); // الكراسة: 1 و 3 (اتمسح 2)
-f(1); f(2);
-console.log(calls); // 4`,
-          check: {
-            lang: "js",
-            starter: R`function memoize(fn) {
-  // رجّع دالة بتفتكر النتايج
-}`,
-            tests: R`test("نفس المدخلات ← الأصلية بتتنادى مرة واحدة", () => {
-  let calls = 0;
-  const sq = memoize((n) => { calls++; return n * n; });
-  expect([sq(4), sq(4), sq(4), calls]).toEqual([16, 16, 16, 1]);
-});
-test("مدخلات مختلفة ← نتايج مختلفة", () => {
-  const sq = memoize((n) => n * n);
-  expect([sq(2), sq(3)]).toEqual([4, 9]);
-});
-test("النتيجة 0 أو undefined بتتحفظ برضه (has مش get)", () => {
-  let calls = 0;
-  const zero = memoize(() => { calls++; return 0; });
-  const none = memoize(() => { calls++; });
-  zero(1); zero(1); none(1); none(1);
-  expect(calls).toBe(2);
-});
-test("أكتر من argument: (1, 2) غير (2, 1) وغير (\"1,2\")", () => {
-  const f = memoize((...a) => a.length + ":" + a.join("-"));
-  expect([f(1, 2), f(2, 1), f("1,2")]).toEqual(["2:1-2", "2:2-1", "1:1,2"]);
-});
-test("this بيوصل للدالة الأصلية", () => {
-  const obj = { base: 10, add: memoize(function (n) { return this.base + n; }) };
-  expect(obj.add(5)).toBe(15);
-});
-test("fib recursive بالـ memo بيخلص فورًا", () => {
-  const fib = memoize((n) => (n < 2 ? n : fib(n - 1) + fib(n - 2)));
-  expect(fib(70)).toBe(190392490709135);
-});`,
-            solution: R`function memoize(fn, keyFn = (...args) => JSON.stringify(args)) {
-  const cache = new Map();
-  return function (...args) {
-    const key = keyFn(...args);
-    if (cache.has(key)) return cache.get(key);
-    const result = fn.apply(this, args);
-    cache.set(key, result);
-    return result;
-  };
-}`
-          }
-        },
-        {
-          cmd: "deepClone و structuredClone",
-          title: "تنسخ object نسخة عميقة: بإيدك بـ WeakMap ولا structuredClone",
-          desc: R`«اكتب deepClone» بيتسأل بعد deep equal على طول، وهو نفس الـ recursion بس بيبني بدل ما يقارن. المطلوب يتعامل مع Date و RegExp و Map و Set، ومع object بيشاور على نفسه (circular) من غير stack overflow، وده بيتحل بـ [[WeakMap]] بتفتكر كل object اتنسخ ونسخته.
-
-وفي الشغل الإجابة الأولى [[structuredClone(value)]]: مدمجة في المتصفح و Node، وبتعمل كل ده لوحدها. الانترفيو عايز يسمع الاتنين: إزاي تكتبها، وإيه اللي [[structuredClone]] مبتعملوش (الدوال، والـ class prototype)، وليه [[JSON.parse(JSON.stringify(x))]] مش نسخة.`,
-          example: R`function deepClone(value, seen = new WeakMap()) {
-  if (typeof value !== "object" || value === null) return value;
-  if (seen.has(value)) return seen.get(value);
-  if (value instanceof Date) return new Date(value.getTime());
-  if (value instanceof RegExp) return new RegExp(value.source, value.flags);
-  if (value instanceof Map) {
-    const out = new Map();
-    seen.set(value, out);
-    for (const [k, v] of value) out.set(k, deepClone(v, seen));
-    return out;
+    page++;
+  } finally {
+    loading = false;
   }
-  if (value instanceof Set) {
-    const out = new Set();
-    seen.set(value, out);
-    for (const v of value) out.add(deepClone(v, seen));
-    return out;
-  }
-  const out = Array.isArray(value) ? [] : Object.create(Object.getPrototypeOf(value));
-  seen.set(value, out);
-  for (const key of Object.keys(value)) out[key] = deepClone(value[key], seen);
-  return out;
+  if (!done) { io.unobserve(sentinel); io.observe(sentinel); }
 }
-const user = { name: "Sara", born: new Date(0), tags: new Set(["admin"]), scores: [1, [2, 3], 4] };
-user.self = user;
-const a = deepClone(user);
-const b = structuredClone(user);
-console.log(a !== user, a.self === a, b.self === b);                    // true true true
-console.log(a.born instanceof Date, a.tags.has("admin"), a.scores[1] !== user.scores[1]); // true true true
-class Point { constructor(x) { this.x = x; } double() { return this.x * 2; } }
-console.log(deepClone(new Point(3)).double(), structuredClone(new Point(3)) instanceof Point); // 6 false`,
-          try: R`جرّب [[structuredClone({ save() {} })]] واقرا الـ error، وبعدين نفس الـ object بـ [[deepClone]] بتاعك. وبعدين اعمل object فيه حتتين بيشاوروا على نفس الـ array ([[const shared = [1]; const o = { x: shared, y: shared };]]) واتأكد إن في النسخة [[c.x === c.y]] لسه [[true]]. اكتب [[deepClone]] في المربع اللي تحت ودوس «شغّل واختبر».`,
+const io = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) loadMore();
+}, { rootMargin: "300px" });
+io.observe(sentinel);
+const reveal = new IntersectionObserver((entries, obs) => {
+  for (const e of entries) {
+    if (!e.isIntersecting) continue;
+    e.target.classList.add("visible");
+    obs.unobserve(e.target);
+  }
+}, { threshold: 0.2 });
+document.querySelectorAll(".reveal").forEach((el) => reveal.observe(el));`,
+          try: R`اعمل صفحة فيها [[<ul id="feed">]] وبعدها [[<div id="sentinel">]]، واستبدل الـ fetch بـ [[https://jsonplaceholder.typicode.com/posts?_page=$__{page}&_limit=5]]. افتح Network وانزل: الطلبات بتحصل إمتى؟ وبعدين شيل سطر [[unobserve/observe]] وخلي الـ limit 2 على شاشة كبيرة: التحميل بيكمّل لوحده ولا بيقف؟`,
           practice: [
-            { lvl: 'سريع', t: R`اقرا وتوقّع: [[const o = { d: new Date(0), u: undefined, n: NaN, m: new Map([ [1, 2] ]) }; const o2 = JSON.parse(JSON.stringify(o)); console.log(o2, typeof o2.d);]]، وبعدين [[const c = {}; c.c = c; JSON.stringify(c);]]. اكتب الناتج على ورقة قبل ما تشغّل.`, done: R`الناتج في Node 24: [[{ d: '1970-01-01T00:00:00.000Z', n: null, m: {} } string]]: الـ Date بقت نص، و [[u]] اختفى خالص، و [[NaN]] بقى [[null]]، والـ Map بقت object فاضي. والتاني بيرمي [[TypeError]] رسالته بتبدأ بـ [[Converting circular structure to JSON]]. وتقدر تقول ٤ حاجات JSON بيبوّظها في النسخ.` },
-            { lvl: 'تطبيق', t: R`صلّح الكود البايظ: نسخة [[deepClone]] فيها [[seen.set(value, out)]] بعد اللفة على المفاتيح مش قبلها (يعني بعد ما ينسخ العيال). جرّبها على [[const o = { v: 1 }; o.self = o;]].`, done: R`قبل التصليح بترمي [[RangeError: Maximum call stack size exceeded]]: لما بتوصل لـ [[o.self]] الـ [[seen]] لسه فاضي، فبتبدأ تنسخ [[o]] من الأول للأبد. بعد ما تنقل [[seen.set]] قبل اللفة: [[c.self === c]] بـ [[true]]، وتقدر تشرح في سطر ليه لازم تسجّل النسخة **قبل** ما تنزل جوه.` },
-            { lvl: 'تحدي', t: R`قارن وقيس: array فيها ١٠٠ ألف object بالشكل [[{ id: i, name: "user" + i, tags: ["a", "b"], meta: { score: i % 7 } }]]. قيس بـ [[performance.now()]] الوقت بتاع [[deepClone]] و [[structuredClone]] و [[JSON.parse(JSON.stringify(x))]]، كل واحدة مرتين.`, done: R`عندي (Node 24، ويندوز 11) طلع [[deepClone]] حوالي 190–210ms، و [[structuredClone]] حوالي 205ms، و JSON حوالي 100–110ms. يعني JSON أسرع **للداتا البسيطة** دي، بس بيبوّظ Date و Map و undefined (التمرين الأول). كتبت الأرقام بتاعتك، وجملة إمتى تستخدم أنهي واحدة.` },
+            { lvl: 'سريع', t: R`ابني سكشن «أرقامنا» فيه ٣ أرقام ([[data-to="1200"]] مثلًا) تحت أول شاشة: الأرقام بتعدّ من 0 لحد [[data-to]] في ثانية واحدة أول ما السكشن يظهر بـ [[threshold: 0.5]]، وبعدين [[unobserve]].`, done: R`الأرقام بتفضل 0 لحد ما تنزل للسكشن، وبتعدّ مرة واحدة بس وتقف على الرقم بالظبط (مش 1199 ولا 1201) مهما طلعت ونزلت، وفتح الصفحة على السكشن على طول بيعدّ برضه.` },
+            { lvl: 'تطبيق', t: R`refactor: صفحة منتجات فيها [[cards.forEach((el) => new IntersectionObserver(cb).observe(el))]] لـ ١٠٠ كارت وبتحمّل صورة كل كارت لما يظهر. خليها observer واحد لكل الكروت، مع [[unobserve]] بعد التحميل و [[rootMargin: "200px"]]، من غير ما السلوك يتغير.`, done: R`عدد الـ observers بقى 1 بدل 100 (عدّهم بمتغير)، وكل صورة لسه بتتطلب مرة واحدة لما تقرّب منها (Network يأكد)، والكارت اللي اتحمّل مبيتناداش تاني لو طلعت ونزلت، وتقدر تقول ليه observer واحد أرخص.` },
+            { lvl: 'تحدي', t: R`ابني فهرس جانبي (scroll spy) لمقالة: لينك لكل [[<section>]]، واللينك بتاع القسم اللي في نص الشاشة عليه [[class="active"]] بـ [[rootMargin: "-50% 0px -50% 0px"]]، والـ URL بيتحدّث بـ [[#id]] القسم بـ [[replaceState]] (درس pushState).`, done: R`اللينك النشط بيتغير لما القسم يعدّي نص الشاشة، وفي أي لحظة لينك واحد بس عليه [[active]] (حتى في آخر الصفحة)، و refresh على [[#section-3]] بيفتح عنده واللينك بتاعه نشط، ومفيش [[getBoundingClientRect]] ولا scroll listener في الكود.` },
           ],
           flag: "script",
           deep: {
-            why: "deepClone بيختبر recursion، والتفرقة بين الأنواع (Date و Map مش زي object عادي)، والمراجع الدائرية، وده نفس اللي بيحصل في state management (نسخة مستقلة قبل التعديل)، وفي إرسال الداتا لـ Web Worker أو [[postMessage]] (اللي بيستخدم نفس خوارزمية structuredClone).",
-            how: R`القيم البسيطة (primitives) بترجع زي ما هي لأنها مبتتغيرش. الـ objects بتتفصّل حسب النوع: Date بـ [[getTime()]]، و RegExp بـ [[source]] و [[flags]]، و Map و Set بلفة على العناصر، والـ arrays والـ objects بلفة على [[Object.keys]].
+            why: "الطريقة القديمة: [[scroll]] listener بيشتغل عشرات المرات في الثانية، وجواه [[getBoundingClientRect()]] لكل عنصر، وده بيجبر المتصفح يحسب الـ layout كل مرة (layout thrashing، تاب HTML و CSS) فالـ scroll يقطّع على الموبايل. IntersectionObserver بيعمل الحساب ده جوه المتصفح بكفاءة ويناديك بس لما الحالة تتغير.",
+            how: R`الـ callback بيتنادى مرة أول ما تعمل observe (بالحالة الحالية)، وبعدين كل ما العنصر يعدّي threshold دخول أو خروج. كل entry فيه [[isIntersecting]] و [[intersectionRatio]] (نسبة الظاهر) و [[target]] و [[boundingClientRect]]. الـ callback بيشتغل async بعد الـ frame، مش أثناء الـ scroll.
 
-الـ [[WeakMap]] اسمها [[seen]]: من الأصل للنسخة. قبل ما تنزل جوه أي object بتسجّل نسخته الفاضية، فلو قابلته تاني (circular أو حتتين بيشاوروا على نفس الحاجة) بترجّع نفس النسخة. [[WeakMap]] مش [[Map]] عشان المفاتيح متفضلش ماسكة الميموري بعد ما النسخ يخلص.
+الفخ الشهير: لو الصفحة الأولى قصيرة والـ sentinel لسه ظاهر بعد التحميل، مفيش «تغيير» في الحالة (كان ظاهر وفضل ظاهر)، فالـ callback مش هيتنادى تاني والتحميل يقف. [[unobserve]] ثم [[observe]] بيجبره يبعت entry جديد بالحالة الحالية، فلو لسه ظاهر يحمّل الصفحة اللي بعدها.
 
-[[Object.create(Object.getPrototypeOf(value))]] بتحافظ على الـ prototype، فالـ methods بتاعة الـ class بتشتغل في النسخة، وده فرق عن [[structuredClone]] اللي بترجّع object عادي. بس الـ class اللي فيها private fields ([[#x]]) النسخة مبيبقاش فيها الـ field، والـ methods اللي بتستخدمه بترمي TypeError.`,
-            when: R`في الشغل: [[structuredClone]] لأي داتا عادية (JSON-like و Date و Map و Set). [[deepClone]] بإيدك لو محتاج تحافظ على class instances أو تنسخ دوال (بالـ reference)، أو مكتبة زي [[lodash.cloneDeep]]. وفي React و Redux غالبًا مش محتاج deep clone خالص: نسخة سطحية للمستوى اللي بيتغير بس (درس «immutability»)، أو Immer.`,
-            mistakes: R`[[JSON.parse(JSON.stringify(x))]] كـ deep clone: Date بتبقى نص، و undefined بيختفي، و NaN بيبقى null، والـ Map بتبقى [[{}]]، والـ circular بيرمي. وتسجّل في [[seen]] بعد النسخ مش قبله فالـ circular يوقع. وتنسخ مفاتيح الـ Map كمان (غالبًا الـ key المفروض يفضل نفس الـ reference). وتفتكر إن [[structuredClone]] بتنسخ الدوال: بترمي [[DataCloneError]].`
+و [[loading]] بيمنع طلبين مع بعض (الـ callback ممكن يتنادى تاني قبل ما الأول يخلص)، و [[done]] بيوقف لما السيرفر يرجّع ليستة فاضية. و [[finally]] بيضمن إن loading يرجع false حتى لو الطلب فشل.
+
+في الـ reveal: [[unobserve]] بعد أول ظهور عشان الأنيميشن يحصل مرة، ومنراقبش عناصر خلاص. وللصور مش محتاج JS أصلًا: [[<img loading="lazy">]] بيعمل lazy loading لوحده.`,
+            when: R`infinite scroll، و lazy loading لحاجات تقيلة (فيديو، خرايط، iframes، charts)، وأنيميشن عند الظهور، وتحديد القسم الحالي في جدول المحتويات، و analytics «الإعلان اتشاف». وفي React فيه hooks جاهزة زي [[react-intersection-observer]]، أو [[useEffect]] + ref (تاب React).`,
+            mistakes: R`تنسى الفخ ده فالتحميل يقف على الشاشات الكبيرة. ومفيش حماية من التحميل المزدوج. وتنسى [[disconnect()]] لما الـ component يتشال (memory leak، درس memory leaks). و [[threshold: 1]] على عنصر أطول من الشاشة: عمره ما هيبقى ظاهر ١٠٠٪. وفي infinite scroll: الفوتر بقى مستحيل توصله، وزرار back بيرجّعك لأول الليستة؛ فكّر في زرار «حمّل أكتر» أو احفظ الصفحة في الـ URL.`
           },
           teach: R`## الفكرة في سطر
 
-[[deepClone]] بتمشي على الـ object مستوى مستوى، وكل حاجة مش primitive بتعمل لها نسخة جديدة من نفس النوع. و [[seen]] دفتر بيفتكر «الأصل ده نسخته فين»، فالـ object اللي بيشاور على نفسه ميخلّيهاش تلف للأبد. الكود اتشغّل على ويندوز 11 بـ Node 24.22.
+بدل ما تسأل المتصفح كل شوية «العنصر ده ظهر؟»، بتقوله مرة: «لما يظهر، ناديني». المثال فيه استخدامين: تحميل صفحة بوستات جديدة لما عنصر فاضي في آخر الليستة يقرّب، وإضافة كلاس لكروت أول ما تظهر.
+
+جرّبت الكود ده في Chrome headless (عن طريق playwright-core) على صفحة فيها [[<ul id="feed">]] وبعدها [[<div id="sentinel">]]، وسيرفر Node صغير على localhost بيرد على [[/api/posts?page=N]] بـ 12 بوست متقسمين صفحات، والشاشة 1280×900. كل سطر [[li]] طوله 60px.
 
 ---
 
-## ١. الدالة سطر سطر
+## ١. التجهيز
 
 ~~~text app.js
-function deepClone(value, seen = new WeakMap()) {
-  if (typeof value !== "object" || value === null) return value;
-  if (seen.has(value)) return seen.get(value);
+const feed = document.querySelector("#feed");
+const sentinel = document.querySelector("#sentinel");
+let page = 1, loading = false, done = false;
 ~~~
 
-1. [[seen = new WeakMap()]]: الدفتر، بيتعمل مرة واحدة في أول نداء، وبيتبعت لكل نداء جوه. [[WeakMap]] زي [[Map]] بس مفاتيحها objects بس، ومبتمنعش الـ object يتمسح من الميموري.
-2. أي حاجة مش object (رقم، نص، boolean، [[undefined]]، دالة) أو [[null]]: رجّعها زي ما هي. الـ primitives مبتتغيرش أصلًا، فمفيش داعي لنسخة. (الدالة [[typeof]] بتاعها [["function"]] فبترجع بنفس الـ reference.)
-3. [[seen.has(value)]]: نسخنا الـ object ده قبل كده؟ رجّع نفس النسخة. ده اللي بيحل الـ circular.
+- [[document.querySelector("#feed")]]: هات أول عنصر الـ id بتاعه feed ([[#]] في CSS معناها id).
+- [[sentinel]] يعني «الحارس»: div فاضي تحت الليستة. مش بيعرض حاجة، وظيفته الوحيدة إنه لما يقرّب من الشاشة يبقى اليوزر وصل للآخر.
+- ٣ متغيرات في سطر واحد: [[page]] رقم الصفحة الجاية، و [[loading]] «فيه طلب شغال دلوقتي؟»، و [[done]] «السيرفر خلّص البوستات؟».
+
+---
+
+## ٢. [[loadMore]]: حمّل صفحة
 
 ~~~text app.js
-  if (value instanceof Date) return new Date(value.getTime());
-  if (value instanceof RegExp) return new RegExp(value.source, value.flags);
-~~~
-
-- Date: [[getTime()]] بيرجّع الوقت كرقم milliseconds، و [[new Date(رقم)]] بتعمل تاريخ جديد بنفس الوقت.
-- RegExp: [[source]] نص الـ pattern ([["x"]]) و [[flags]] الحروف ([["gi"]]). (نفس السبب اللي خلّى [[deepEqual]] يحتاجهم: [[Object.keys(/a/g)]] فاضية.)
-
-~~~text app.js
-  if (value instanceof Map) {
-    const out = new Map();
-    seen.set(value, out);
-    for (const [k, v] of value) out.set(k, deepClone(v, seen));
-    return out;
+async function loadMore() {
+  if (loading || done) return;
+  loading = true;
+  try {
+    const res = await fetch($__bt/api/posts?page=$__{page}$__bt);
+    const posts = await res.json();
+    if (posts.length === 0) done = true;
+    for (const p of posts) {
+      const li = document.createElement("li");
+      li.textContent = p.title;
+      feed.append(li);
+    }
+    page++;
+  } finally {
+    loading = false;
   }
-~~~
-
-- [[seen.set(value, out)]] **قبل** اللفة: لو قيمة جوه الـ Map بتشاور على الـ Map نفسها، هتلاقيها في الدفتر.
-- [[for (const [k, v] of value)]]: اللفة على Map بتدّي [[[key, value]]]، وبنفكّهم.
-- [[out.set(k, deepClone(v, seen))]]: المفتاح زي ما هو (نفس الـ reference، زي lodash)، والقيمة بتتنسخ.
-- الـ Set نفس الكلام بالظبط، بس عناصر من غير مفاتيح.
-
-~~~text app.js
-  const out = Array.isArray(value) ? [] : Object.create(Object.getPrototypeOf(value));
-  seen.set(value, out);
-  for (const key of Object.keys(value)) out[key] = deepClone(value[key], seen);
-  return out;
+  if (!done) { io.unobserve(sentinel); io.observe(sentinel); }
 }
 ~~~
 
-- [[? :]]: لو array ابدأ بـ [[[]]]، غير كده [[Object.create(proto)]]: object فاضي الـ prototype بتاعه نفس prototype الأصل، فلو الأصل [[new Point(3)]]، النسخة فيها [[double()]].
-- [[Object.keys(value)]]: المفاتيح بتاعة الـ object نفسه (في الـ array: [["0"]] و [["1"]]...).
-- كل قيمة بتتنسخ بنفس الدالة ونفس الدفتر.
+1. [[if (loading || done) return]]: لو فيه طلب شغال **أو** خلصنا، اخرج. الـ [[||]] يعني «أو».
+2. [[loading = true]]: اقفل الباب قبل أي [[await]]، عشان أي نداء تاني ييجي وإحنا مستنيين يخرج من السطر اللي فوق.
+3. [[fetch($__bt/api/posts?page=$__{page}$__bt)]]: اطلب الصفحة. الـ template literal بيحط رقم الصفحة في الـ URL، و [[await]] بتستنى الرد.
+4. [[res.json()]]: حوّل الرد لـ array (وهي كمان بتتستنى).
+5. [[posts.length === 0]]: السيرفر رجّع ليستة فاضية، يبقى مفيش أكتر.
+6. الـ loop: لكل بوست اعمل [[<li>]] جديد بـ [[createElement]]، وحط العنوان بـ [[textContent]] (نص عادي، فلو العنوان فيه HTML مش هيتنفّذ)، وضيفه في آخر الليستة بـ [[append]].
+7. [[page++]]: المرة الجاية اطلب اللي بعدها.
+8. [[try { ... } finally { ... }]]: الـ [[finally]] بيتنفّذ **دايمًا**، سواء الطلب نجح أو رمى error. فـ [[loading]] بيرجع false حتى لو النت وقع، وإلا التحميل كان هيتقفل للأبد.
+9. آخر سطر هو أهم سطر، وهنشرحه بعد ما نفهم الـ observer.
 
 ---
 
-## ٢. التشغيل
+## ٣. الـ observer نفسه
 
-~~~text الناتج (Node 24)
-true true true
-true true true
-6 false
+~~~text app.js
+const io = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) loadMore();
+}, { rootMargin: "300px" });
+io.observe(sentinel);
 ~~~
 
-| السطر | يعني إيه |
+- [[new IntersectionObserver(callback, options)]]: بتعمل مراقب. intersection يعني «تقاطع»: هل العنصر متقاطع مع منطقة الشاشة؟
+- [[entries]]: array، كل عنصر فيها (entry) بيوصف عنصر واحد اتغيرت حالته. إحنا بنراقب الـ sentinel بس، فـ [[entries[0]]] هو هو.
+- [[isIntersecting]]: [[true]] لو العنصر جوه المنطقة دلوقتي.
+- [[rootMargin: "300px"]]: كبّر المنطقة 300px من كل ناحية، فالـ sentinel يتحسب «ظاهر» وهو لسه تحت الشاشة بـ 300px. فالتحميل يبدأ قبل ما اليوزر يوصل.
+- [[io.observe(sentinel)]]: ابدأ راقب. وأول ما تعمل observe، الـ callback بيتنادى **مرة فورًا** بالحالة الحالية.
+
+### اللي حصل لما شغّلته (5 بوستات في الصفحة)
+
+حطيت [[console.log]] جوه الـ callback:
+
+~~~text الناتج (السيرفر والـ Console بالترتيب)
+GET /api/posts?page=1
+IO callback: isIntersecting = true
+GET /api/posts?page=2
+IO callback: isIntersecting = true
+GET /api/posts?page=3
+IO callback: isIntersecting = true
+IO callback: isIntersecting = true
+GET /api/posts?page=4
+li count after load: 12
+~~~
+
+- الصفحات 1 و 2 و 3 جابوا 5 و 5 و 2 (الـ 12 كلهم)، و 12 × 60px = 720px، يعني الليستة كلها لسه أقصر من الشاشة، والـ sentinel فضل ظاهر، فالتحميل كمّل لوحده.
+- الصفحة 4 رجعت [[[]]] فـ [[done = true]] ووقف.
+- فيه callback اتنادى من غير طلب: وصل والطلب اللي قبله لسه شغال، فـ [[loading]] خرّجه من أول سطر. ده بالظبط ليه الحماية دي موجودة.
+
+---
+
+## ٤. الفخ: [[unobserve]] ثم [[observe]]
+
+الـ observer بيناديك لما الحالة **تتغير**: من برّه لجوه أو العكس. لو الـ sentinel كان ظاهر، واتحمّلت صفحة، وفضل ظاهر، فمفيش تغيير، فمفيش نداء، والتحميل بيقف.
+
+السطر [[io.unobserve(sentinel); io.observe(sentinel);]] بيشيل المراقبة ويرجّعها، و [[observe]] جديدة بتبعت callback فورًا بالحالة الحالية، فلو لسه ظاهر يحمّل الصفحة اللي بعدها. والـ [[if (!done)]] عشان لو خلصنا منعملش كده على الفاضي.
+
+جرّبت الفرق بصفحات من بوستين بس (2 × 60 = 120px، يعني الشاشة فاضية تقريبًا):
+
+| | من غير السطر | مع السطر |
+|---|---|---|
+| الطلبات | صفحة 1 بس | من 1 لحد 7 (الـ 7 رجعت [[[]]]) |
+| عدد الـ [[li]] | 2 | 12 |
+| الشاشة | فاضية والتحميل واقف | اتملت لحد ما الداتا خلصت |
+
+من غير السطر، الـ callback اتنادى مرة واحدة بـ [[true]] ومرجعش تاني غير لما عملت scroll ونزل بـ [[false]] (الـ sentinel خرج). يعني على شاشة لابتوب ممكن متلاحظش، وعلى شاشة كبيرة الليستة بتقف.
+
+---
+
+## ٥. الـ reveal: أنيميشن عند الظهور
+
+~~~text app.js
+const reveal = new IntersectionObserver((entries, obs) => {
+  for (const e of entries) {
+    if (!e.isIntersecting) continue;
+    e.target.classList.add("visible");
+    obs.unobserve(e.target);
+  }
+}, { threshold: 0.2 });
+document.querySelectorAll(".reveal").forEach((el) => reveal.observe(el));
+~~~
+
+- observer واحد بيراقب **كل** العناصر اللي عليها كلاس [[reveal]]، فالـ entries ممكن يبقى فيها أكتر من واحد، عشان كده loop.
+- [[obs]]: التاني في الـ callback هو الـ observer نفسه.
+- [[continue]]: لو العنصر ده مش ظاهر، عدّي للي بعده.
+- [[e.target]]: العنصر نفسه. [[classList.add("visible")]] بتضيفله كلاس، والـ CSS بيعمل الأنيميشن.
+- [[obs.unobserve(e.target)]]: بطّل تراقبه، فالأنيميشن يحصل مرة واحدة.
+- [[threshold: 0.2]]: نادي لما 20٪ من العنصر يبقى ظاهر.
+
+جرّبته بكارتين: [[r1]] فوق الصفحة و [[r2]] تحت بـ 1500px:
+
+~~~text الناتج
+reveal callback: entries = 2 r1:true r2:false
+r1: reveal visible | r2: reveal
+(scroll لتحت)
+reveal callback: entries = 1 r2:true
+r2: reveal visible
+~~~
+
+أول نداء جه فيه الاتنين مع بعض (الحالة الأولى)، [[r1]] ظاهر فاخد الكلاس، و [[r2]] لأ. وبعد الـ scroll جه [[r2]] لوحده. و [[r1]] مجاش تاني لأننا شلناه من المراقبة.
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
 |---|---|
-| [[a !== user]] | النسخة object جديد مش نفس الأصل |
-| [[a.self === a]] | الـ [[self]] في النسخة بيشاور على النسخة مش على الأصل، بفضل [[seen]] |
-| [[b.self === b]] | [[structuredClone]] بتعمل نفس الحكاية لوحدها |
-| [[a.born instanceof Date]] | الـ Date رجعت Date مش نص |
-| [[a.scores[1] !== user.scores[1]]] | الـ array اللي جوه array اتنسخت كمان، مش بس المستوى الأول |
-| [[6 false]] | [[deepClone]] حافظ على الـ class فـ [[double()]] اشتغلت، و [[structuredClone]] رجّعت object عادي مش [[Point]] |
+| [[new IntersectionObserver(cb, opts)]] | مراقب واحد لأي عدد عناصر |
+| [[observe(el)]] / [[unobserve(el)]] | ابدأ / وقّف مراقبة عنصر (و observe بتنادي فورًا) |
+| [[entry.isIntersecting]] | العنصر في المنطقة دلوقتي؟ |
+| [[entry.target]] | العنصر نفسه |
+| [[rootMargin]] | كبّر المنطقة (ابدأ بدري) |
+| [[threshold]] | نسبة الظهور المطلوبة (0 لـ 1) |
 
----
-
-## ٣. اللي [[structuredClone]] مبتعملوش
-
-~~~text الناتج (Node 24)
-DataCloneError save() {} could not be cloned.
-ok
-~~~
-
-- [[structuredClone({ save() {} })]] بترمي [[DataCloneError]]: الدوال مبتتنسخش (ممكن تكون closure شايلة state مستحيل يتنقل).
-- [[deepClone]] بتاعنا بيرجّع نفس الدالة (السطر التاني: [[save()]] رجّعت [[ok]]). ده مقبول غالبًا، بس قوله: الدالة مشتركة مش منسوخة.
-
-| | [[structuredClone]] | [[deepClone]] بإيدك | [[JSON.parse(JSON.stringify())]] |
-|---|---|---|---|
-| Date و RegExp و Map و Set | بتنسخهم صح | صح لو كتبتهم | بيبوّظهم (نص و [[{}]]) |
-| circular | شغال | شغال بـ [[seen]] | بيرمي [[TypeError]] |
-| الدوال | بترمي [[DataCloneError]] | بترجع نفس الدالة | بتختفي من غير ما تقول |
-| class instance | بترجع object عادي | بيحافظ على الـ prototype | object عادي |
-| [[undefined]] و [[NaN]] | بتحافظ عليهم | بيحافظ عليهم | الأول بيختفي والتاني بيبقى [[null]] |
-
----
-
-## ٤. قيست السرعة
-
-array فيها ١٠٠ ألف object بسيط (أرقام ونصوص و array صغيرة و object جوه)، مرتين:
-
-~~~text الناتج (Node 24، ويندوز 11)
-deepClone 212 ms
-structuredClone 208 ms
-JSON 98 ms
-deepClone 192 ms
-structuredClone 204 ms
-JSON 109 ms
-~~~
-
-JSON أسرع بحوالي الضعف **في الداتا البسيطة دي**، لأن الـ parser بتاعه متظبط جامد. بس ده مش سبب تستخدمه كنسخة: الجدول اللي فوق بيوضح هو بيبوّظ إيه. الإجابة اللي تقولها: «[[structuredClone]] افتراضيًا، وبإيدك لو محتاج prototype أو حاجة مخصوصة».
-
----
-
-## الخلاصة
-
-| الخطوة | ليه | لو نسيتها |
-|---|---|---|
-| primitive ← رجّعه | مبيتغيرش أصلًا | ولا حاجة، بس لف مالوش لازمة |
-| [[seen.has]] أول حاجة | نفس الأصل ← نفس النسخة | الـ circular يوقّع بـ stack overflow |
-| [[seen.set]] قبل النزول جوه | العيال اللي بتشاور على الأب تلاقيه | نفس الـ stack overflow |
-| Date و RegExp و Map و Set لوحدهم | مالهمش مفاتيح عادية | نسخة فاضية من غير بيانات |
-| [[Object.create(proto)]] | الـ methods تفضل شغالة | النسخة object عادي |`,
+- الـ callback بيتنادى عند **تغيّر** الحالة بس، فلازم الحركة بتاعة unobserve/observe في infinite scroll.
+- [[loading]] يمنع طلبين مع بعض، و [[finally]] يضمن إنه يرجع false.`,
           lines: [
-            R`[[deepClone]] بتاخد القيمة، ودفتر [[seen]] (WeakMap من الأصل للنسخة) بيتعمل في أول نداء ويتبعت لكل النداءات اللي جوه.`,
-            R`أي حاجة مش object (رقم، نص، [[undefined]]، دالة) أو [[null]]: رجّعها زي ما هي. الـ primitives مبتتعدّلش فمش محتاجة نسخة، و [[null]] لازم لوحده لأن [[typeof null]] بـ [["object"]].`,
-            R`الـ object ده اتنسخ قبل كده؟ رجّع نفس النسخة. ده اللي بيخلّي object بيشاور على نفسه ميلفّش للأبد، وبيخلّي حتتين بيشاوروا على نفس الحاجة يفضلوا كده في النسخة.`,
-            R`Date: اعمل تاريخ جديد بنفس الوقت بالـ milliseconds. لو سبتها للفة المفاتيح تحت، هتطلع object فاضي لأن الـ Date مالهاش مفاتيح عادية.`,
-            R`RegExp: نفس الـ pattern ([[source]]) ونفس الـ flags ([[g]] و [[i]]...). برضه مالهاش مفاتيح عادية.`,
-            R`Map: محتاجة لفة خاصة على [[[key, value]]] بدل [[Object.keys]].`,
-            R`النسخة الجديدة، فاضية لسه.`,
-            R`سجّلها في الدفتر **قبل** ما تنزل جوه، عشان لو قيمة جوه بتشاور على الـ Map نفسها تلاقي النسخة.`,
-            R`لف على كل زوج: المفتاح زي ما هو (نفس الـ reference)، والقيمة بتتنسخ بنفس الدالة ونفس الدفتر.`,
-            R`رجّع نسخة الـ Map، وكل القيم اللي جواها بقت نسخ مستقلة عن الأصل.`,
-            R`نهاية فرع الـ Map.`,
-            R`Set: نفس فكرة الـ Map بس عناصر من غير مفاتيح.`,
-            R`Set جديدة فاضية هتبقى النسخة، وبنعملها قبل اللفة عشان نسجّلها في الدفتر.`,
-            R`سجّلها في الدفتر قبل اللفة، لنفس السبب.`,
-            R`كل عنصر بيتنسخ ويتضاف.`,
-            R`رجّع نسخة الـ Set بعد ما كل عنصر اتنسخ واتضاف بنفس الترتيب.`,
-            R`نهاية فرع الـ Set.`,
-            R`array أو object: لو array ابدأ بـ [[[]]]، غير كده object فاضي الـ prototype بتاعه زي الأصل، فلو الأصل instance من class الـ methods تفضل شغالة في النسخة.`,
-            R`سجّل النسخة في الدفتر قبل اللفة. لو السطر ده اتنقل بعد اللفة، object بيشاور على نفسه هيوقّع بـ [[RangeError: Maximum call stack size exceeded]].`,
-            R`لف على مفاتيح الأصل نفسه، وكل قيمة اتنسخت بنفس الدالة. في الـ array المفاتيح [["0"]] و [["1"]]...`,
-            R`رجّع الـ array أو الـ object الجديد، ولو ده أول نداء يبقى ده الناتج النهائي للنسخة كلها.`,
-            R`نهاية [[deepClone]].`,
-            R`object فيه نص و Date و Set و array جواها array: كل نوع بيعدّي على فرع مختلف.`,
-            R`[[self]] بيشاور على الـ object نفسه (circular). [[JSON.stringify(user)]] هنا هيرمي TypeError.`,
-            R`النسخة بالدالة اللي كتبناها: نداء واحد من برّه، والـ [[seen]] بيتعمل جواه لوحده.`,
-            R`النسخة بالدالة المدمجة في Node والمتصفح.`,
-            R`[[true true true]]: النسخة object جديد، و [[self]] في كل نسخة بيشاور على النسخة نفسها مش على الأصل.`,
-            R`[[true true true]]: الـ Date رجعت Date، والـ Set فيها [["admin"]]، والـ array اللي جوه اتنسخت كمان (مش نفس الـ reference).`,
-            R`class صغيرة فيها method، عشان نشوف مين بيحافظ على الـ prototype.`,
-            R`[[6 false]]: [[deepClone]] حافظ على [[Point]] فـ [[double()]] اشتغلت، و [[structuredClone]] رجّعت object عادي فـ [[instanceof Point]] بـ [[false]].`,
+            R`بنمسك الليستة ([[#feed]]) اللي البوستات هتتضاف فيها. بنجيبها مرة واحدة برّه الدالة بدل ما ندوّر عليها في الـ DOM مع كل تحميل.`,
+            R`الـ sentinel: عنصر فاضي حاطينه بعد الليستة مباشرة. مش هنراقب الـ scroll نفسه (event بيتنادى مئات المرات)، هنراقب العنصر ده: لما يقرّب من الشاشة يبقى اليوزر قرّب من الآخر ونحمّل الجديد.`,
+            R`تلات متغيرات حالة: [[page]] رقم الصفحة الجاية، و [[loading]] بتمنع طلبين في نفس الوقت (من غيرها ممكن نفس الصفحة تتجاب مرتين وتتكرر البوستات)، و [[done]] بتوقف التحميل لما السيرفر يقول مفيش أكتر.`,
+            R`دالة التحميل. [[async]] عشان جواها [[await]] للـ [[fetch]]، والـ observer هو اللي بيناديها كل ما الـ sentinel يظهر.`,
+            R`الحارس: لو فيه تحميل شغّال أو الداتا خلصت، اخرج من غير ما تعمل حاجة. من غيره، scroll سريع ممكن يبعت كذا طلب لنفس الصفحة.`,
+            R`بنقفل الباب قبل أي [[await]]: من اللحظة دي أي نداء تاني لـ [[loadMore]] هيخرج من السطر اللي فوق لحد ما نفتحه تاني.`,
+            R`[[try]] معاها [[finally]] (من غير catch) عشان [[loading]] يرجع [[false]] مهما حصل. لو الطلب فشل ومرجّعناهاش، التحميل هيفضل مقفول للأبد والليستة تقف.`,
+            R`بنطلب الصفحة الحالية من الـ API، ورقمها داخل في الـ URL بالـ template literal. الـ [[await]] بيستنى الرد من غير ما يجمّد الصفحة.`,
+            R`[[res.json()]] بتقرا الـ body وتحوّله من JSON لـ array of objects، وهي كمان Promise فمحتاجة [[await]]. ملحوظة: [[fetch]] مبيرميش error على 404 أو 500، فلو عايز تتعامل معاهم افحص [[res.ok]] الأول.`,
+            R`لو السيرفر رجّع array فاضية يبقى خلصنا، فنعلّم [[done]] عشان منبعتش طلبات تانية على الفاضي.`,
+            R`بنلف على البوستات اللي جت عشان نضيف كل واحد في الليستة.`,
+            R`بنعمل [[<li>]] جديد لكل بوست. العنصر لسه في الذاكرة ومش ظاهر لحد ما نضيفه.`,
+            R`بنحط العنوان بـ [[textContent]] مش [[innerHTML]]: لو العنوان جواه HTML أو script كاتبه يوزر هيظهر كنص عادي ومش هيتنفذ، فمفيش XSS.`,
+            R`بنضيف الـ [[<li>]] في آخر الليستة فيظهر. ولأن الـ sentinel بعد الليستة، بيتزق لتحت مع كل بوست جديد.`,
+            R`نهاية الـ [[for]] اللي بتضيف البوستات.`,
+            R`نزوّد رقم الصفحة عشان المرة الجاية نطلب اللي بعدها. موجود جوه الـ [[try]] بعد النجاح، فلو الطلب فشل هنعيد نفس الصفحة المرة الجاية.`,
+            R`[[finally]] بيتنفذ في كل الحالات: نجح الطلب، أو رمى error، أو حتى عمل [[return]].`,
+            R`نفتح الباب تاني عشان التحميل الجاي يقدر يبدأ.`,
+            R`نهاية الـ [[finally]].`,
+            R`الفخ: الـ observer بيبلّغ لما الحالة **تتغير** بس (دخل أو خرج). لو البوستات الجديدة قليلة والـ sentinel لسه ظاهر، مفيش تغيير فمفيش نداء والتحميل يقف. [[unobserve]] وبعدها [[observe]] بيجبره يبلّغ بالحالة الحالية من جديد، فلو لسه ظاهر هيحمّل الصفحة اللي بعدها.`,
+            R`نهاية [[loadMore]].`,
+            R`بنعمل الـ observer وبنديله callback بيتنادى كل ما حالة عنصر متراقب تتغير. [[entries]] array فيها entry لكل عنصر اتغيّر، وهنا بنراقب عنصر واحد فبناخد الأول.`,
+            R`[[isIntersecting]] بـ [[true]] لما الـ sentinel يدخل المنطقة المراقبة، فنحمّل. ولازم نفحصها لأن الـ callback بيتنادى برضه لما العنصر **يخرج**، ومن غير الفحص هتحمّل وهو بيختفي.`,
+            R`[[rootMargin: "300px"]] بيكبّر منطقة المراقبة 300 بكسل حوالين الشاشة، فالتحميل يبدأ قبل ما اليوزر يوصل للآخر فعلًا ومش هيشوف فراغ وهو مستني. ونهاية الـ observer.`,
+            R`نبدأ نراقب الـ sentinel. الـ observer بينادي الـ callback مرة فورًا بالحالة الحالية، فلو الـ sentinel ظاهر من الأول، أول صفحة هتتحمّل لوحدها من غير ما نناديها بإيدنا.`,
+            R`observer تاني منفصل للأنيميشن: عناصر تظهر بحركة لما توصلها في الـ scroll. الـ callback بياخد [[obs]] كمان (الـ observer نفسه) عشان نقدر نوقف المراقبة من جوه.`,
+            R`بنلف على كل الـ entries، لأن لو اليوزر عمل scroll سريع ممكن كذا عنصر يدخلوا مع بعض ويتبلّغوا في نفس النداء.`,
+            R`العنصر ده خرج من الشاشة مش دخل، فـ [[continue]] تعدّيه للي بعده.`,
+            R`نضيف كلاس [[visible]]، والـ CSS هو اللي عامل الحركة: [[.reveal]] مستخبي و [[.reveal.visible]] ظاهر بـ transition. الـ JS بيقول «إمتى» بس، والـ CSS بيقول «إزاي».`,
+            R`بطّل تراقب العنصر ده بعد ما ظهر، فالأنيميشن يحصل مرة واحدة ومش بيتعاد كل ما تطلع وتنزل، وكمان بيوفّر شغل على المتصفح.`,
+            R`نهاية الـ [[for]].`,
+            R`[[threshold: 0.2]] معناها بلّغني لما 20٪ من العنصر يبقى ظاهر، مش أول بكسل. كده الحركة تبدأ والعنصر باين فعلًا. ونهاية الـ observer.`,
+            R`بنجيب كل العناصر اللي عليها كلاس [[reveal]] ونراقبهم كلهم بنفس الـ observer. observer واحد لعناصر كتير أوفر من observer لكل عنصر.`,
           ],
-          sol: R`[[structuredClone({ save() {} })]] بترمي [[DataCloneError]] ورسالتها في Node 24 [[save() {} could not be cloned.]]، و [[deepClone]] بيرجّع object فيه نفس الدالة، و [[c.save()]] بتشتغل.
+          sol: R`الطلبات بتحصل قبل ما توصل للآخر بشوية (الـ 300px)، وكل طلب بيضيف ٥ عناصر. ولما [[_page]] يعدّي 20 (١٠٠ بوست ÷ ٥) السيرفر بيرجّع [[[]]] فـ [[done = true]] والطلبات تقف.
 
-والـ shared: [[const shared = [1]; const o = { x: shared, y: shared }; const c = deepClone(o);]] بيدّي [[c.x === c.y]] بـ [[true]] و [[c.x !== shared]] بـ [[true]]: أول مرة [[shared]] اتنسخ واتسجّل في [[seen]]، وتاني مرة اتجاب من الدفتر. من غير [[seen]] كان هيبقى فيه نسختين مختلفتين، و [[c.x.push(2)]] مكانتش هتبان في [[c.y]] زي الأصل. [[structuredClone(o)]] بتعمل نفس الحكاية.`,
-          solCode: R`const shared = [1];
-const o = { x: shared, y: shared, save() { return "ok"; } };
-const c = deepClone(o);
-console.log(c.x === c.y, c.x !== shared, c.save()); // true true ok
-try {
-  structuredClone(o);
-} catch (e) {
-  console.log(e.name, e.message); // DataCloneError save() { return "ok"; } could not be cloned.
-}`,
-          check: {
-            lang: "js",
-            starter: R`function deepClone(value, seen = new WeakMap()) {
-  // رجّع نسخة عميقة
-}`,
-            tests: R`test("primitives بترجع زي ما هي", () => expect([deepClone(5), deepClone("x"), deepClone(null), deepClone(undefined)]).toEqual([5, "x", null, undefined]));
-test("objects و arrays متداخلة مستقلة عن الأصل", () => {
-  const src = { a: { b: [1, { c: 2 }] } };
-  const copy = deepClone(src);
-  copy.a.b[1].c = 99;
-  expect([src.a.b[1].c, copy !== src, copy.a.b !== src.a.b, Array.isArray(copy.a.b)]).toEqual([2, true, true, true]);
-});
-test("Date بتتنسخ Date جديدة بنفس الوقت", () => {
-  const d = new Date(5000), c = deepClone({ d }).d;
-  expect([c instanceof Date, c !== d, c.getTime()]).toEqual([true, true, 5000]);
-});
-test("RegExp بنفس الـ source والـ flags", () => {
-  const r = deepClone(/ab+/gi);
-  expect([r instanceof RegExp, r.source, r.flags]).toEqual([true, "ab+", "gi"]);
-});
-test("Map و Set بتتنسخ والقيم اللي جواها كمان", () => {
-  const inner = { n: 1 };
-  const m = deepClone(new Map([["k", inner]]));
-  const s = deepClone(new Set([1, 2]));
-  expect([m instanceof Map, m.get("k").n, m.get("k") !== inner, s instanceof Set, [...s]]).toEqual([true, 1, true, true, [1, 2]]);
-});
-test("circular: النسخة بتشاور على نفسها من غير stack overflow", () => {
-  const o = { v: 1 }; o.self = o;
-  const c = deepClone(o);
-  expect([c.self === c, c !== o]).toEqual([true, true]);
-});
-test("حتتين بيشاوروا على نفس الـ array ← نفس النسخة", () => {
-  const shared = [1];
-  const c = deepClone({ x: shared, y: shared });
-  expect([c.x === c.y, c.x !== shared]).toEqual([true, true]);
-});`,
-            solution: R`function deepClone(value, seen = new WeakMap()) {
-  if (typeof value !== "object" || value === null) return value;
-  if (seen.has(value)) return seen.get(value);
-  if (value instanceof Date) return new Date(value.getTime());
-  if (value instanceof RegExp) return new RegExp(value.source, value.flags);
-  if (value instanceof Map) {
-    const out = new Map();
-    seen.set(value, out);
-    for (const [k, v] of value) out.set(k, deepClone(v, seen));
-    return out;
-  }
-  if (value instanceof Set) {
-    const out = new Set();
-    seen.set(value, out);
-    for (const v of value) out.add(deepClone(v, seen));
-    return out;
-  }
-  const out = Array.isArray(value) ? [] : Object.create(Object.getPrototypeOf(value));
-  seen.set(value, out);
-  for (const key of Object.keys(value)) out[key] = deepClone(value[key], seen);
-  return out;
-}`
-          }
+من غير سطر [[unobserve/observe]] وبـ limit 2 على شاشة كبيرة: بيحمّل الصفحة الأولى، والعنصرين مش مالين الشاشة، فالـ sentinel لسه ظاهر، وبيقف هنا. ولو عملت scroll بسيط لفوق ولتحت يحمّل تاني (لأن الحالة اتغيرت). ده بالظبط الـ bug اللي بيظهر على الشاشات الكبيرة بس ومحدش بيلاحظه على اللابتوب. مع السطر، بيحمّل لوحده لحد ما الشاشة تتملي.`
         },
         {
-          cmd: "اتوقع الناتج",
-          title: "أسئلة «إيه الناتج؟» المشهورة (output questions)",
-          desc: R`أسئلة سريعة بتختبر coercion و this والـ sort والـ floating point. الطريقة: متخمنش، قول القاعدة بصوتك. [[+]] مع string بيلزق، والعمليات التانية ([[-]] و [[*]]) بتحوّل لأرقام. الـ arrays والـ objects بيتحوّلوا string ([[[]]] بقى [[""]]، و [[{}]] بقى [["[object Object]"]]). و [[sort()]] من غير دالة بيرتّب كنصوص. والـ arrow بتاخد this من الدالة اللي حواليها.
+          cmd: "ResizeObserver",
+          title: "مكوّن يتصرف حسب مقاسه هو، مش مقاس الشاشة",
+          desc: R`[[ResizeObserver]] بيناديك لما عنصر يتغير مقاسه، مهما كان السبب: الشاشة اتغيرت، أو sidebar اتقفل، أو المحتوى زاد. [[window.resize]] بيعرف مقاس الشاشة بس، والكارت ممكن يكون في عمود ضيق على شاشة كبيرة.
 
-وفي آخر الشرح سؤالين ترتيب للـ event loop (setTimeout و then و await مع بعض)، وسؤال [[this]] فيه ٩ نداءات لنفس الدوال بأشكال مختلفة.`,
-          example: R`console.log([] + []);              // ""
-console.log([] + {});              // "[object Object]"
-console.log(1 + "2" - 1);          // 11
-console.log("5" * "2");            // 10
-console.log(typeof typeof 1);      // "string"
-console.log([1, 2, 3] + "");       // "1,2,3"
-console.log(0.1 * 3 === 0.3);      // false
-console.log([3, 20, 100].sort());  // [100, 20, 3]
-console.log(!!"false");            // true
-const obj = { name: "A", get() { return () => this.name; } };
-console.log(obj.get()());          // "A"`,
-          try: R`غطّي التعليقات، واكتب إجابتك لكل سطر، وبعدين شغّل. وبعدين حل سؤالين الترتيب (event loop) وسؤال [[this]] في آخر الشرح قبل ما تبص على الإجابة. وضيف ٣ أسئلة من عندك من الدروس اللي فاتت (hoisting و closures في loop من المستوى ٢، و microtasks من المستوى ٣).`,
+الـ entry فيه [[contentBoxSize[0].inlineSize]] (العرض) و [[blockSize]] (الطول)، وفيه [[contentRect]] الأقدم بـ [[width]] و [[height]].
+
+قبل ما تكتب JS: لو كل اللي عايزه تغيير شكل حسب عرض الأب، [[@container]] في CSS بيعمل ده من غير JS (درس «container queries» في تاب HTML و CSS). ResizeObserver للحاجات اللي CSS ميقدرش عليها: canvas، و charts، وحساب عدد عناصر، ومحرر نص.`,
+          example: R`const card = document.querySelector(".card");
+const ro = new ResizeObserver((entries) => {
+  for (const entry of entries) {
+    const width = entry.contentBoxSize[0].inlineSize;
+    entry.target.dataset.size = width < 400 ? "s" : width < 700 ? "m" : "l";
+  }
+});
+ro.observe(card);
+// CSS لازم للـ canvas: canvas { display: block; width: 100%; height: 100%; } والأب ليه ارتفاع، وإلا هيكبر لوحده
+const canvas = document.querySelector("canvas");
+new ResizeObserver(([entry]) => {
+  const { width, height } = entry.contentRect;
+  canvas.width = Math.round(width * devicePixelRatio);
+  canvas.height = Math.round(height * devicePixelRatio);
+  draw();
+}).observe(canvas.parentElement);
+function draw() {
+  const ctx = canvas.getContext("2d");
+  ctx.fillRect(0, 0, canvas.width / 2, canvas.height / 2);
+}`,
+          try: R`حط الكارت جوه div عرضه [[resize: horizontal; overflow: auto]] عشان تقدر تسحبه بالماوس، واكتب CSS لـ [[.card[data-size="s"]]] يخلي الصورة فوق النص. اسحب وشوف الـ data-size بيتغير في Elements. وبعدين اعمل نفس الشكل بـ [[container-type: inline-size]] و [[@container (width < 400px)]] من غير JS. أنهي أسهل؟`,
           practice: [
-            { lvl: 'سريع', t: R`اتوقع على ورقة وبعدين شغّل: [[console.log(typeof NaN, [] == false, null >= 0, null == 0)]]، وبعدها [[console.log(1); setTimeout(() => console.log(2)); Promise.resolve().then(() => console.log(3)); queueMicrotask(() => console.log(4)); console.log(5);]].`, done: R`الأول بيطبع [[number true true false]]، والتاني بيطبع 1 و 5 و 3 و 4 و 2 بالترتيب ده، وتقدر تقول القاعدة ورا كل واحدة (مثلًا [[>=]] بيحوّل لرقم لكن [[==]] مع [[null]] ليه قاعدة لوحده).` },
-            { lvl: 'تطبيق', t: R`صلّح الكود البايظ بطريقتين لكل واحد: [[for (var i = 0; i < 3; i++) setTimeout(() => console.log(i));]] (المفروض 0 1 2)، و [[["1", "7", "11"].map(parseInt)]] (المفروض 1 و 7 و 11).`, done: R`قبل التصليح الأول بيطبع 3 تلات مرات والتاني [[1, NaN, 3]]. بعده الأول بيطبع 0 و 1 و 2 (بـ [[let]] أو بـ IIFE)، والتاني 1 و 7 و 11 (بـ [[map(Number)]] أو [[map((s) => parseInt(s, 10))]])، وتقدر تشرح إن [[parseInt]] خد الـ index كـ radix.` },
-            { lvl: 'تحدي', t: R`اشرحها: اكتب ٥ أسئلة «إيه الناتج؟» من عندك، كل واحد بيختبر قاعدة مختلفة من الوحدات اللي فاتت (hoisting و this و closures و microtasks و sort)، وكل سؤال معاه الإجابة والشرح في سطرين لزميل. ادّيهم لحد يحلهم.`, done: R`كل سؤال اتشغّل والناتج المكتوب صح، ومفيش سؤالين بيختبروا نفس القاعدة، والزميل حلّهم ولو غلط في واحد الشرح بتاعك وصّله للإجابة من غير ما تكلمه.` },
+            { lvl: 'سريع', t: R`ابني عنوان عمود في جدول بيكتب اسم اليوم كامل ([[Wednesday]]) لو عرضه 120px أو أكتر، ومختصر ([[Wed]]) لو أقل، بـ ResizeObserver على العنوان نفسه و [[Intl.DateTimeFormat]] بـ [[weekday: "long"]] و [["short"]].`, done: R`لما تضيّق العمود الأسماء بتتقلب مختصرة والعكس، ومفيش نص بيتقص بـ «...»، والتبديل بيحصل عند 120px من عرض العمود مش الشاشة (جرّب تضيّق العمود بس والشاشة كبيرة).` },
+            { lvl: 'تطبيق', t: R`مسألة: اكتب [[pickSize(width, breakpoints)]] من غير DOM: [[pickSize(399, { m: 400, l: 700 })]] بترجّع [["s"]]. وبعدين استخدمها جوه الـ callback بتاع الدرس بدل الـ ternary.`, done: R`400 بالظبط بترجّع [["m"]] و 700 بترجّع [["l"]]، والـ breakpoints لو اتبعتت بترتيب عكسي ([[{ l: 700, m: 400 }]]) بترجّع نفس النتيجة، و [[NaN]] أو رقم سالب بيرمي [[RangeError]]، و ٦ assertions بـ [[node:assert]] في Node بيعدّوا، والكارت في المتصفح لسه بيتصرف زي الأول.` },
+            { lvl: 'تحدي', t: R`ابني navbar «priority+»: لينكات كتير في سطر واحد، واللي مش لاقي مكان يتنقل لقايمة «المزيد». راقب الـ nav نفسه مش اللينكات اللي بتنقلها، واسمع لـ [[window.addEventListener("error", (e) => console.log(e.message))]] عشان لو وقعت في loop تعرف.`, done: R`وانت بتضيّق الشاشة اللينكات بتتنقل لـ «المزيد» من الآخر للأول، ولما توسّع بترجع بنفس الترتيب، ومفيش لينك بيلف لسطر تاني، وزرار «المزيد» بيختفي لما كل اللينكات تكفي، والـ listener مطبعش أي رسالة فيها «ResizeObserver loop» (نصها الكامل: «ResizeObserver loop completed with undelivered notifications.»).` },
           ],
           flag: "script",
           deep: {
-            why: "الأسئلة دي بتتسأل كـ warm-up، والمقصود مش إنك تكون حافظ، المقصود تشرح القاعدة. الإجابة الصح من غير سبب بتتحسب نص درجة.",
-            how: R`القواعد اللي بتحل أغلبهم: [[+]] لو أي طرف string (بعد تحويل الـ objects لـ primitive) بيبقى لزق نصوص، وإلا جمع. [[1 + "2"]] بقت "12"، و [["12" - 1]] بقت 11. الـ array بتتحوّل بـ [[join(",")]]، والـ object العادي بـ [["[object Object]"]]. [[typeof]] دايمًا بيرجّع string، فـ typeof بتاعه "string". أي string مش فاضي truthy حتى "false". والـ arrow جوه method بتاخد this بتاعة الـ method، اللي هي obj.`,
-            when: R`بيتسألوا مع أسئلة hoisting ([[console.log(x); var x = 1]])، و closures في loop، وترتيب الـ event loop، و this في callbacks. كلهم في دروس فوق.`,
-            mistakes: R`تجاوب بسرعة من غير ما تقول القاعدة. وتفتكر إن [[{} + []]] في Console زي [[[] + {}]]: في أول السطر الـ [[{}]] ممكن يتفهم block فالناتج 0، فالأسئلة دي بتتكتب جوه console.log عشان تتجنب ده.`
+            why: "الـ components بقت بتتحط في أماكن مختلفة: نفس الكارت في grid بـ ٤ أعمدة وفي sidebar ضيق. الـ media queries بتسأل عن الشاشة، والسؤال الصح «أنا عرضي كام». و canvas بالذات لازم تعرف مقاسه بالبكسل الحقيقي وإلا الرسمة تبقى مغبشة.",
+            how: R`المتصفح بيحسب المقاسات في الـ layout، وبعده (قبل الرسم) بيبعت للـ ResizeObservers التغييرات مرة في الـ frame. فمفيش حاجة زي resize event بيتنادى ١٠٠ مرة، ومش محتاج debounce غالبًا.
+
+[[contentBoxSize]] array لأن عنصر ممكن يتقسم (multi-column)، وعادةً [[[0]]]. و [[inlineSize]] العرض في الكتابة الأفقية (عربي أو إنجليزي). و [[borderBoxSize]] لو عايز المقاس بالـ padding والـ border.
+
+الـ canvas له مقاسين: الـ CSS (بيتحكم فيه الـ layout) والداخلي [[canvas.width]] (عدد البكسلات). لو الداخلي أقل، الرسمة بتتمط وتغبش. [[devicePixelRatio]] بـ 2 أو 3 على شاشات الموبايل، فبنضرب فيه. وتغيير [[canvas.width]] بيمسح الرسمة، فلازم [[draw()]] بعده.
+
+لو غيّرت جوه الـ callback حاجة بتغيّر مقاس نفس العنصر، ممكن تدخل loop، والمتصفح بيوقفها ويطبع [[ResizeObserver loop completed with undelivered notifications]] في الـ console. غالبًا مش خطر بس معناه إن التصميم بيتذبذب.`,
+            when: R`charts و canvas و محررات، و virtualized lists (تحسب كام صف يظهر)، و «اعرض ٣ tags والباقي +2». ولتغيير الشكل بس: container queries أولًا.`,
+            mistakes: R`ResizeObserver لحاجة CSS يقدر عليها. وتنسى [[ro.disconnect()]] لما العنصر يتشال. وتغيّر مقاس العنصر المراقب جوه الـ callback (loop). و [[canvas.width = el.clientWidth]] من غير devicePixelRatio فالرسمة مغبشة على الموبايل. و canvas من غير [[width: 100%; height: 100%]] في الـ CSS: مقاسه على الشاشة بيبقى هو [[canvas.width]] نفسه، فالأب بيكبر، فالـ observer يكبّره تاني، وهكذا للأبد.`
           },
           teach: R`## الفكرة في سطر
 
-١١ سطر كل واحد بيختبر قاعدة واحدة في اللغة. الطريقة: لكل سطر قول القاعدة الأول، وبعدين الناتج بيطلع لوحده.
+بتقول للمتصفح «لما مقاس العنصر ده يتغير، ناديني بالمقاس الجديد». المثال فيه استخدامين: كارت بياخد [[data-size]] حسب عرضه هو، و canvas بيظبط عدد البكسلات بتاعته على مقاس أبوه.
 
-شغّلت المثال في Node 24. Node بيطبع الـ strings من غير علامات تنصيص، فالـ string الفاضي بيطلع سطر فاضي.
-
-~~~text الناتج (Node 24)
-
-[object Object]
-11
-10
-string
-1,2,3
-false
-[ 100, 20, 3 ]
-true
-A
-~~~
+جرّبت الكود في Chrome headless (عن طريق playwright-core) بشاشة [[deviceScaleFactor: 2]] (زي شاشات الموبايل والماك)، والكارت جوه [[.wrap]] غيّرت عرضه بالـ JS.
 
 ---
 
-## ١. [[+]] مع arrays و objects
+## ١. الكارت
 
 ~~~text app.js
-console.log([] + []);
-console.log([] + {});
+const card = document.querySelector(".card");
+const ro = new ResizeObserver((entries) => {
+  for (const entry of entries) {
+    const width = entry.contentBoxSize[0].inlineSize;
+    entry.target.dataset.size = width < 400 ? "s" : width < 700 ? "m" : "l";
+  }
+});
+ro.observe(card);
 ~~~
 
-[[+]] مبيعرفش يجمع arrays، فبيحوّل الاتنين لـ primitive الأول. الـ array بتتحوّل بـ [[join(",")]]، والـ object العادي بيتحوّل للنص [["[object Object]"]]:
+- [[new ResizeObserver(callback)]]: مراقب. مفيش options زي IntersectionObserver، بس callback.
+- [[entries]]: array، entry لكل عنصر اتغير مقاسه في الـ frame ده. observer واحد ينفع تراقب بيه كروت كتير، عشان كده loop.
+- [[entry.contentBoxSize]]: مقاس الـ **content** بس (من غير padding ولا border). وهي array لأن العنصر ممكن يتقسم على كذا عمود، وعادةً [[[0]]].
+- [[.inlineSize]]: المقاس في اتجاه السطر، يعني العرض في العربي والإنجليزي. والطول اسمه [[blockSize]].
+- [[entry.target]]: العنصر نفسه.
+- [[dataset.size = ...]]: [[dataset]] بيكتب attributes اسمها [[data-*]]، فده بيحط [[data-size="s"]] على العنصر، والـ CSS يستخدمه: [[.card[data-size="s"] { ... }]].
+- [[width < 400 ? "s" : width < 700 ? "m" : "l"]]: ternary جوه ternary: أقل من 400 ← s، غير كده أقل من 700 ← m، غير كده l.
+- [[ro.observe(card)]]: ابدأ راقب، وأول مرة بيتنادى على طول بالمقاس الحالي.
 
-| القيمة | بقت | ليه |
-|---|---|---|
-| [[[]]] | [[""]] | [[join(",")]] على array فاضية بيدّي نص فاضي |
-| [[{}]] | [["[object Object]"]] | الـ object العادي بيستخدم [[toString]] الافتراضية |
-| [[[1, 2, 3]]] | [["1,2,3"]] | العناصر بينهم فاصلة من غير مسافات |
+### الناتج
 
-ولما واحد على الأقل يبقى string، [[+]] بيلزق: [[""]] + [[""]] = [[""]]، و [[""]] + [["[object Object]"]] = [["[object Object]"]]. جربت [[JSON.stringify([] + [])]] عشان أشوف الفاضي: طلع [[""]].
-
----
-
-## ٢. [[+]] قدام [[-]] و [[*]]
-
-~~~text app.js
-console.log(1 + "2" - 1);
-console.log("5" * "2");
-~~~
-
-السطر الأول من الشمال لليمين:
-
-1. [[1 + "2"]]: فيه string، فـ [[+]] بيلزق: [["12"]]. (جربت: [[12]].)
-2. [["12" - 1]]: [[-]] ملهاش معنى مع نصوص، فبتحوّل لأرقام: [[12 - 1 = 11]].
-
-[[*]] زي [[-]]: [["5" * "2"]] = [[10]] رقم.
-
----
-
-## ٣. [[typeof typeof 1]]
-
-~~~text app.js
-console.log(typeof typeof 1);
-~~~
-
-من جوه لبرّه:
-
-1. [[typeof 1]] = [["number"]]، وده **string**.
-2. [[typeof "number"]] = [["string"]].
-
-[[typeof]] دايمًا بيرجّع string، فـ [[typeof typeof]] أي حاجة = [["string"]].
-
----
-
-## ٤. array + [[""]]
-
-~~~text app.js
-console.log([1, 2, 3] + "");
-~~~
-
-نفس قاعدة ١: [[join(",")]] = [["1,2,3"]]. ده بالظبط اللي بيحصل لما تحط array جوه template string.
-
----
-
-## ٥. الأرقام العشرية
-
-~~~text app.js
-console.log(0.1 * 3 === 0.3);
-~~~
-
-الكمبيوتر بيخزّن الأرقام بالـ binary (base 2)، و [[0.1]] ملهاش تمثيل مظبوط فيه، زي ما [[1/3]] ملهاش تمثيل مظبوط بالعشري. فـ [[0.1 * 3]] طلعت:
+الكارت فيه [[padding: 10px]] و [[border: 1px]]، وغيّرت عرض الأب 800 ثم 500 ثم 300 ثم 799:
 
 ~~~text الناتج
-0.30000000000000004
+card 778 l
+card 478 m
+card 278 s
+card 777 l
 ~~~
 
-مش [[0.3]]، فالمقارنة false. (الحل في الفلوس: اشتغل بالقروش كأرقام صحيحة.)
+ليه 778 مش 800؟ لأن [[contentBoxSize]] من غير الـ padding (10 من كل ناحية) والـ border (1 من كل ناحية): 800 − 22 = 778. لو عايز المقاس بالـ padding والـ border استخدم [[borderBoxSize[0].inlineSize]] (طلعت 799 لما الأب كان 799). وفيه [[entry.contentRect.width]] الأقدم وبيدّي نفس رقم الـ content.
+
+### مرة واحدة في الـ frame
+
+غيّرت عرض الأب 50 مرة ورا بعض في نفس الكود: الـ callback اتنادى **مرة واحدة** بالمقاس الأخير. المتصفح بيجمّع التغييرات ويناديك بعد ما يحسب الـ layout وقبل ما يرسم، فمش محتاج debounce زي [[window.resize]].
 
 ---
 
-## ٦. [[sort()]] من غير دالة
+## ٢. الـ canvas
 
 ~~~text app.js
-console.log([3, 20, 100].sort());
+const canvas = document.querySelector("canvas");
+new ResizeObserver(([entry]) => {
+  const { width, height } = entry.contentRect;
+  canvas.width = Math.round(width * devicePixelRatio);
+  canvas.height = Math.round(height * devicePixelRatio);
+  draw();
+}).observe(canvas.parentElement);
 ~~~
 
-[[sort()]] من غير compare function بتحوّل كل حاجة لـ string وترتّب حرف حرف زي القاموس: [["100"]] قبل [["20"]] لأن [["1"]] قبل [["2"]]، و [["20"]] قبل [["3"]]. جربت:
+- [[([entry]) => ...]]: array destructuring في الـ parameter: خد أول عنصر من [[entries]] في متغير اسمه entry (بنراقب عنصر واحد).
+- [[const { width, height } = entry.contentRect]]: object destructuring: خد الخاصيتين دول في متغيرين بنفس الاسم.
+- [[canvas.parentElement]]: بنراقب **الأب** مش الـ canvas، لأن الأب هو اللي الـ layout بيحدد مقاسه.
+- [[new ResizeObserver(...).observe(...)]]: عملنا المراقب ونادينا observe في نفس السطر من غير ما نحفظه في متغير (يعني مش هنقدر نعمله disconnect بعدين).
+
+### ليه [[devicePixelRatio]]؟
+
+الـ canvas ليه مقاسين:
+
+| المقاس | بيتحدد بـ | معناه |
+|---|---|---|
+| على الشاشة | الـ CSS | قد إيه بياخد مكان في الصفحة (CSS pixels) |
+| الداخلي | [[canvas.width]] و [[canvas.height]] | عدد البكسلات اللي بترسم فيها |
+
+[[devicePixelRatio]] عدد بكسلات الشاشة الحقيقية في كل CSS pixel: 1 على شاشة عادية، و 2 أو 3 على الموبايل. لو الداخلي = مقاس الـ CSS بس، المتصفح بيمط الرسمة فتغبش. فبنضرب في الـ ratio، و [[Math.round]] عشان عدد البكسلات لازم رقم صحيح.
+
+و [[draw()]] بعدها لأن أي تغيير في [[canvas.width]] بيمسح الرسمة كلها.
+
+### الفخ اللي ظهر لما شغّلته
+
+جرّبت الكود زي ما هو، والأب عرضه 300px ومن غير ارتفاع ثابت ومن غير أي CSS للـ canvas:
 
 ~~~text الناتج
-[ '100', '20', '3' ] true [ 3, 20, 100 ]
+canvas parent 300 x 154 → 600 x 308 css 600 x 308
+canvas parent 300 x 312 → 600 x 624 css 600 x 624
+canvas parent 300 x 628 → 600 x 1256 css 600 x 1256
+window error: ResizeObserver loop completed with undelivered notifications.
+...
 ~~~
 
-- ترتيب النصوص [[["100","20","3"]]] نفس الترتيب.
-- [["100" < "20"]] = true.
-- والحل: [[sort((a, b) => a - b)]] = [[[ 3, 20, 100 ]]]. الدالة بترجّع سالب لو [[a]] يتحط الأول.
+canvas من غير CSS مقاسه على الشاشة **بيساوي** المقاس الداخلي. فلما خليناه 600×308، بقى 600×308 على الشاشة، فالأب طوله زاد، فالـ observer اتنادى تاني فضربنا في 2 تاني... والمتصفح بيوقف اللفة دي كل frame ويطبع [[ResizeObserver loop completed with undelivered notifications]]، بس الـ canvas بيفضل يكبر.
 
----
+الحل في الـ CSS (عشان كده ضفته كتعليق في المثال):
 
-## ٧. [[!!"false"]]
-
-~~~text app.js
-console.log(!!"false");
+~~~text style.css
+canvas { display: block; width: 100%; height: 100%; }
+.cw { width: 300px; height: 150px; }
 ~~~
 
-- [[!]] بيحوّل لـ boolean ويعكس، و [[!!]] بيحوّل بس.
-- أي string مش فاضي truthy، مهما كان مكتوب فيه. جربت [[Boolean("")]] و [[Boolean("0")]] و [[Boolean(" ")]]: [[false true true]].
-
----
-
-## ٨. arrow جوه method
-
-~~~text app.js
-const obj = { name: "A", get() { return () => this.name; } };
-console.log(obj.get()());
-~~~
-
-1. [[get() { ... }]]: method عادية (اختصار [[get: function () {...}]]).
-2. [[obj.get()]]: اتنادت بنقطة على [[obj]]، فـ [[this]] جوه [[get]] = [[obj]]. ورجّعت arrow.
-3. الـ arrow معندهاش [[this]] بتاعها، بتاخده من [[get]]: يعني [[obj]].
-4. [[()]] التانية نادت الـ arrow: [[obj.name]] = [["A"]].
-
-جربت حالتين قريبين في ES module:
+وبعدها:
 
 ~~~text الناتج
-undefined
-TypeError: Cannot read properties of undefined (reading 'name')
+canvas parent 300 x 150 → 600 x 300 css 300 x 150
 ~~~
 
-- لو جوه [[get]] رجّعنا [[function]] عادية بدل arrow، [[this]] جواها اتحدد ساعة ما اتنادت من غير نقطة، فبقى [[undefined]] (وكتبت [[this?.name]] فطلع [[undefined]]).
-- لو خدنا [[get]] نفسها في متغير وناديناها من غير [[obj.]]، [[this]] جوه [[get]] بقى [[undefined]]، والـ arrow ورثت [[undefined]] فوقعت.
-
-يعني الـ arrow مش «مربوطة بـ obj»، هي مربوطة بـ this بتاعة الدالة اللي حواليها **ساعة ما اتنادت**.
+على الشاشة 300×150، وجواه 600×300 بكسل: رسمة حادة، والـ callback اتنادى مرة واحدة بس. و [[display: block]] بتشيل المسافة الصغيرة اللي تحت أي عنصر inline.
 
 ---
 
-## ٩. الـ solCode
+## ٣. [[draw]]
 
 ~~~text app.js
-console.log(typeof hoisted);
-var hoisted = 1;
-for (var i = 0; i < 3; i++) setTimeout(() => console.log("loop", i), 0);
-setTimeout(() => console.log("T"), 0);
-Promise.resolve().then(() => console.log("P"));
-console.log("S");
+function draw() {
+  const ctx = canvas.getContext("2d");
+  ctx.fillRect(0, 0, canvas.width / 2, canvas.height / 2);
+}
 ~~~
 
-~~~text الناتج (Node 24)
-undefined
-S
-P
-loop 3
-loop 3
-loop 3
-T
-~~~
-
-- [[typeof hoisted]]: [[var]] بيتعرّف (hoisting) في أول الملف بقيمة [[undefined]]، والقيمة 1 بتتحط لما السطر يتنفذ.
-- [[var i]]: متغير واحد للّفة كلها. الـ ٣ timers بيشتغلوا بعد ما اللفة خلصت و [[i]] بقت 3. (بـ [[let]] كل لفة ليها [[i]] بتاعها فتطلع 0 1 2، وجربتها: [[loop 0]] و [[loop 1]] و [[loop 2]].)
-- الترتيب: الكود العادي الأول ([[S]])، وبعدين الـ microtasks (الـ [[then]]: [[P]])، وبعدين الـ timers بالترتيب اللي اتسجلوا بيه (الـ ٣ loops وبعدين [[T]]).
+- [[getContext("2d")]]: هات أداة الرسم ثنائية الأبعاد.
+- [[fillRect(x, y, w, h)]]: ارسم مستطيل مليان يبدأ من الركن الشمال فوق [[(0, 0)]]، وعرضه وطوله نص الـ canvas، يعني ربعه.
 
 ---
 
-## ١٠. فخ [[{} + []]]
-
-~~~text الناتج (node -p '{} + []')
-0
-~~~
-
-لما [[{}]] تبقى أول السطر، JS بتفهمها block فاضي مش object، فالباقي [[+[]]] = [[+""]] = [[0]]. وفي نص تعبير ([[console.log({} + [])]]) بتبقى object عادي. عشان كده كل الأسئلة فوق جوه [[console.log]].
-
----
-
-## ١١. event loop: اتوقع الترتيب
-
-ده أشهر سؤال ترتيب، وفيه كل الأنواع مرة واحدة:
-
-~~~text order.mjs
-console.log("1");
-setTimeout(() => console.log("2"), 0);
-Promise.resolve()
-  .then(() => { console.log("3"); setTimeout(() => console.log("4"), 0); })
-  .then(() => console.log("5"));
-queueMicrotask(() => console.log("6"));
-(async () => { console.log("7"); await null; console.log("8"); })();
-console.log("9");
-~~~
-
-اكتب إجابتك قبل ما تكمّل. القاعدة: الكود العادي كله الأول، وبعدين **كل** الـ microtasks (الـ [[then]] و [[queueMicrotask]] واللي بعد [[await]])، حتى اللي بتتضاف وهي بتشتغل، وبعدين timer واحد، وبعدين الـ microtasks تاني لو فيه، وهكذا (درس «microtasks و macrotasks»).
-
-~~~text الناتج (node order.mjs، Node 24)
-1 7 9 3 6 8 5 2 4
-~~~
-
-| الدور | اللي اتطبع | ليه |
-|---|---|---|
-| الكود العادي | [[1]] و [[7]] و [[9]] | الـ async function بتشتغل عادي لحد أول [[await]]، فـ [[7]] بيطلع قبل [[9]] |
-| طابور الـ microtasks | [[3]] و [[6]] و [[8]] | التلاتة اتحطوا في الطابور بالترتيب ده وقت الكود العادي |
-| microtask جديد | [[5]] | الـ [[then]] التانية مبتدخلش الطابور غير لما الأولى تخلص، فجت بعد [[8]] |
-| الـ timers | [[2]] وبعده [[4]] | [[2]] اتسجّل الأول، و [[4]] اتسجّل من جوه [[3]] |
-
-### سؤال تاني: [[await]] على async function
-
-~~~text order2.mjs
-async function a() { console.log("a1"); await b(); console.log("a2"); }
-async function b() { console.log("b"); }
-console.log("start");
-setTimeout(() => console.log("timeout"), 0);
-a();
-new Promise((resolve) => { console.log("executor"); resolve(); }).then(() => console.log("then"));
-console.log("end");
-~~~
-
-~~~text الناتج (Node 24)
-start a1 b executor end a2 then timeout
-~~~
-
-- [[b()]] بتتنفذ فورًا جوه [[a]] (مفيش [[await]] جوه [[b]])، فـ [[b]] بيطلع بعد [[a1]] على طول.
-- الدالة اللي بتتبعت لـ [[new Promise]] (اسمها executor) بتشتغل **فورًا** مش بعدين، فـ [[executor]] قبل [[end]].
-- [[a2]] قبل [[then]]: الاتنين microtasks، و [[await b()]] اتسجّل الأول. (حسب مدونة V8 عن «faster async functions»، في Node 10 وأقدم الـ [[await]] كان بياخد لفات زيادة و [[then]] كان بيطلع قبل [[a2]]؛ ده من الـ docs مش متجرّب هنا، فلو لقيت إجابة قديمة بالعكس ده السبب.)
-
----
-
-## ١٢. this: اتوقع الناتج
-
-~~~text this.mjs
-const o = {
-  name: "o",
-  regular() { return this?.name; },
-  arrow: () => typeof this,
-  inner() { return [1].map(function () { return this?.name; })[0]; },
-  innerArrow() { return [1].map(() => this.name)[0]; },
-};
-const f = o.regular;
-console.log(o.regular(), f(), o.arrow(), o.inner(), o.innerArrow());
-console.log(o.regular.call({ name: "c" }), f.bind({ name: "b" }).bind({ name: "b2" })());
-class User { name = "u"; greet() { return this.name; } hi = () => this.name; }
-const { greet, hi } = new User();
-console.log(hi());
-greet();
-~~~
-
-~~~text الناتج (node this.mjs، Node 24)
-o undefined undefined undefined o
-c b
-u
-TypeError: Cannot read properties of undefined (reading 'name')
-~~~
-
-القاعدة اللي بتحل كل ده: [[this]] في [[function]] عادية بيتحدد **ساعة النداء** من اللي قبل النقطة، والـ arrow مالهاش [[this]] بتاعها وبتاخده من المكان اللي اتكتبت فيه (درس «this» في المستوى ٢).
-
-| النداء | الناتج | ليه |
-|---|---|---|
-| [[o.regular()]] | [[o]] | اتنادت بنقطة على [[o]]، فـ [[this]] هو [[o]] |
-| [[f()]] | [[undefined]] | نفس الدالة بس من غير نقطة، وفي module (strict) [[this]] بيبقى [[undefined]]، و [[?.]] منعت الـ error |
-| [[o.arrow()]] | [[undefined]] | الـ arrow اتكتبت في أعلى الملف، و [[this]] في أعلى الـ ES module بـ [[undefined]]. في ملف CommonJS ([[.cjs]]) نفس السطر طلع [[object]] لأن [[this]] هناك [[module.exports]] |
-| [[o.inner()]] | [[undefined]] | الـ [[function]] اللي جوه [[map]] بتتنادى من [[map]] من غير object، فـ [[this]] جواها مش [[o]] |
-| [[o.innerArrow()]] | [[o]] | الـ arrow أخدت [[this]] من [[innerArrow]]، وهي اتنادت على [[o]] |
-| [[o.regular.call({ name: "c" })]] | [[c]] | [[call]] بتحدد [[this]] بإيدك للنداء ده |
-| [[bind]] مرتين | [[b]] | [[bind]] التانية ملهاش تأثير: الدالة المربوطة [[this]] بتاعها ثابت للأبد |
-| [[hi()]] بعد ما اتفكّت | [[u]] | class field بـ arrow: اتعملت في الـ constructor وأخدت [[this]] بتاع الـ instance |
-| [[greet()]] بعد ما اتفكّت | [[TypeError]] | method عادية اتفصلت عن الـ object، والـ class دايمًا strict، فـ [[this]] بـ [[undefined]] |
-
-السطر الأخير هو نفس باج [[onClick={this.handleClick}]] في React الـ class components، وحله إما [[bind]] في الـ constructor أو arrow كـ class field زي [[hi]].
-
----
 ## الخلاصة
 
-| القاعدة | المثال | الناتج |
-|---|---|---|
-| [[+]] مع أي string = لزق | [[1 + "2"]] | [["12"]] |
-| [[-]] و [[*]] = أرقام | [["12" - 1]] | [[11]] |
-| array ← [[join(",")]]، object ← [["[object Object]"]] | [[[] + {}]] | [["[object Object]"]] |
-| [[typeof]] بيرجّع string | [[typeof typeof 1]] | [["string"]] |
-| [[0.1]] مش مظبوطة بالـ binary | [[0.1 * 3 === 0.3]] | [[false]] |
-| [[sort()]] بترتّب كنصوص | [[[3, 20, 100].sort()]] | [[[100, 20, 3]]] |
-| أي string مش فاضي truthy | [[!!"false"]] | [[true]] |
-| arrow بتاخد this من اللي حواليها | [[obj.get()()]] | [["A"]] |
-| الكود العادي ← كل الـ microtasks ← timer | [[setTimeout]] و [[then]] و [[await]] | [[1 7 9 3 6 8 5 2 4]] |
-| [[this]] بيتحدد ساعة النداء من اللي قبل النقطة | [[const f = o.regular; f()]] | [[undefined]] في module |`,
-          lines: [
-            R`[[+]] مع arrays بيحوّلهم primitive الأول، والـ array الفاضية بتتحوّل لنص فاضي. نص فاضي + نص فاضي = [[""]]، مش array ولا [[0]].`,
-            R`الـ array بقت [[""]]، والـ object العادي بيتحوّل لنص بـ [[toString]] فيبقى الكلمتين [[object Object]] جوه قوسين مربعين، ولزقهم بيدّي النص ده. هتشوفه كتير لما تحط object جوه نص بالغلط.`,
-            R`[[+]] بيتنفذ من الشمال لليمين: [[1 + "2"]] فيها نص فبيلزق ويبقى [["12"]]. وبعدين [[-]] مالهاش معنى مع النصوص، فبتحوّل [["12"]] لرقم 12 وتطرح 1 = 11. [[+]] هي الوحيدة اللي بتفضّل النصوص.`,
-            R`[[*]] زي [[-]] و [[/]] شغالة على أرقام بس، فبتحوّل النصين لأرقام وتضرب = 10 كرقم. ولو أي نص منهم مش رقم زي [["a"]] الناتج [[NaN]].`,
-            R`[[typeof 1]] بيرجّع النص [["number"]]، و [[typeof]] على أي نص بيرجّع [["string"]]. فـ [[typeof typeof]] أي حاجة دايمًا [["string"]].`,
-            R`لما array تتلزق مع نص بتتحوّل نص بنفس طريقة [[join(",")]]: العناصر بينهم فاصلة من غير مسافات ولا أقواس. ده بيحصل كمان لو حطيت array جوه template string.`,
-            R`الأرقام العشرية متخزنة binary، و [[0.1]] مينفعش تتمثّل بالظبط، فـ [[0.1 * 3]] بتطلع [[0.30000000000000004]] ومش [[===]] لـ [[0.3]]. قارن بفرق صغير زي [[Math.abs(a - b) < Number.EPSILON]] أو اشتغل بالقروش كأرقام صحيحة.`,
-            R`[[sort()]] من غير دالة مقارنة بيحوّل العناصر نصوص ويرتّبها حرف حرف: [["100"]] قبل [["20"]] لأن [["1"]] قبل [["2"]]. وكمان بيعدّل الـ array نفسها. للأرقام اكتب [[sort((a, b) => a - b)]].`,
-            R`[[!!]] بتحوّل أي قيمة لـ boolean. النص [["false"]] مش فاضي، وأي نص مش فاضي truthy مهما كان مكتوب فيه، فالناتج [[true]]. خلي بالك منها لما تقرا قيم من query string أو [[localStorage]]، لأنها بتيجي نصوص.`,
-            R`[[get]] method عادية بترجّع arrow function. الـ arrow مالهاش [[this]] بتاعها، فبتاخد [[this]] من المكان اللي اتكتبت فيه، يعني [[this]] بتاع [[get]] وقت ما اتنادت.`,
-            R`[[obj.get()]] اتنادت كـ method على [[obj]] فـ [[this]] جواها [[obj]]، والـ arrow اللي رجعت شايلة نفس الـ [[this]]، والقوسين التانيين نادوها فطبعت [["A"]]. لو [[get]] نفسها كانت arrow، [[this]] كان هييجي من برّه الـ object والناتج مش هيبقى [["A"]].`,
-          ],
-          sol: R`الناتج الحقيقي في Node: سطر فاضي (string فاضي)، [[[object Object]]]، [[11]]، [[10]]، [[string]]، [[1,2,3]]، [[false]]، [[[ 100, 20, 3 ]]]، [[true]]، [[A]]. (Node بيطبع الـ strings من غير quotes.) الأسباب في سطر: [[+]] مع object بيحوّله string، و [[-]] و [[*]] بيحوّلوا لأرقام، و typeof بترجّع string دايمًا، و sort من غير compare بترتّب كنصوص، و [["false"]] string مش فاضي فـ truthy، والـ arrow أخدت this من get.
+| الحاجة | معناها |
+|---|---|
+| [[new ResizeObserver(cb)]] و [[observe(el)]] | ناديني لما مقاس el يتغير |
+| [[contentBoxSize[0].inlineSize]] | العرض من غير padding و border |
+| [[borderBoxSize[0].inlineSize]] | العرض بالـ padding و border |
+| [[contentRect.width/height]] | الطريقة الأقدم لمقاس الـ content |
+| [[devicePixelRatio]] | بكسلات الشاشة لكل CSS pixel |
+| [[disconnect()]] | وقّف المراقبة كلها |
 
-أمثلة للأسئلة اللي تضيفها: [[console.log(typeof x); var x = 1;]] بتطبع [[undefined]]، و [[for (var i = 0; i < 3; i++) setTimeout(() => console.log(i))]] بتطبع [[3 3 3]]، و [[setTimeout(() => console.log("T")); Promise.resolve().then(() => console.log("P")); console.log("S");]] بتطبع [[S P T]]. لو غلطت في أكتر من ٣ من العشرة الأصليين، ارجع لدروس «القيم والأنواع» قبل الانترفيو.`,
-          solCode: R`console.log(typeof hoisted); // undefined
-var hoisted = 1;
-for (var i = 0; i < 3; i++) setTimeout(() => console.log("loop", i), 0); // 3 3 3
-setTimeout(() => console.log("T"), 0);
-Promise.resolve().then(() => console.log("P"));
-console.log("S");
-// S ثم P ثم loop 3 ×3 ثم T`
+- بيتنادى مرة في الـ frame، فمش محتاج debounce.
+- متغيّرش جوه الـ callback حاجة بتكبّر نفس العنصر اللي بتراقبه، والـ canvas لازم مقاسه على الشاشة يتحدد بالـ CSS.
+- لو المطلوب تغيير شكل بس، [[@container]] في CSS أسهل ومن غير JS.`,
+          lines: [
+            R`الكارت اللي عايزين شكله يتغير حسب **عرضه هو** مش عرض الشاشة. ده الفرق عن media query: نفس الكارت ممكن يبقى في sidebar ضيق أو واخد الصفحة كلها.`,
+            R`[[ResizeObserver]] بينادي الـ callback كل ما مقاس عنصر متراقب يتغير، مهما كان السبب (الشاشة اتصغرت، أو sidebar اتقفل، أو المحتوى زاد). و observer واحد ينفع تراقب بيه كذا عنصر.`,
+            R`[[entries]] فيها entry لكل عنصر مقاسه اتغير من آخر مرة، فبنلف عليهم.`,
+            R`العرض الجديد لمحتوى العنصر (من غير الـ padding والـ border). [[contentBoxSize]] array فبناخد أول عنصر فيها، و [[inlineSize]] هو العرض في الكتابة الأفقية. القيمة جاهزة في الـ entry، فمش محتاج تقيس بنفسك.`,
+            R`بنحوّل العرض لمقاس من تلاتة ([["s"]] أو [["m"]] أو [["l"]]) ونحطه في [[data-size]] على العنصر، والـ CSS بيختار الشكل بـ attribute selector على [[data-size]]. فالـ JS بيقيس بس والـ CSS بيرسم. وخلي بالك: لو غيّرت جوه الـ callback حاجة بتغيّر مقاس نفس العنصر، ممكن تعمل loop والمتصفح يكتب تحذير «ResizeObserver loop» في الـ console.`,
+            R`نهاية الـ [[for]].`,
+            R`نهاية الـ callback والـ [[ResizeObserver]].`,
+            R`نبدأ نراقب الكارت. أول ما تعمل [[observe]] الـ callback بيتنادى مرة بالمقاس الحالي (لو العنصر ظاهر)، فالـ [[data-size]] بيتحط من أول ما الصفحة تفتح.`,
+            R`مثال تاني: الـ [[<canvas>]] لازم نظبط مقاسه بإيدنا، لأن عدد البكسلات اللي بيرسم عليها منفصل عن مقاسه في الـ CSS.`,
+            R`بنعمل observer من غير ما نحفظه في متغير، والـ destructuring في الباراميتر بياخد أول entry بس لأننا بنراقب عنصر واحد.`,
+            R`[[contentRect]] فيه عرض وطول المحتوى بالـ CSS pixels، يعني المقاس اللي انت شايفه في DevTools.`,
+            R`بنظبط عدد بكسلات الرسم = المقاس في الـ CSS مضروب في [[devicePixelRatio]] (1 على شاشة عادية، و 2 أو 3 على الموبايل والشاشات الكثيفة). من غيرها الرسمة هتتمط وتطلع مغبّشة. و [[Math.round]] لأن [[canvas.width]] بياخد عدد صحيح من البكسلات.`,
+            R`نفس الكلام للطول، عشان النسبة بين العرض والطول تفضل مظبوطة.`,
+            R`تغيير [[canvas.width]] أو [[canvas.height]] بيمسح كل اللي اترسم ويرجّع الـ context لحالته الأولانية، فلازم نرسم تاني بعد كل تغيير مقاس، وإلا الـ canvas هيفضل فاضي.`,
+            R`بنراقب **أب** الـ canvas مش الـ canvas نفسه: الأب هو اللي مقاسه بيتغير مع الصفحة، واحنا بنغيّر مقاس الـ canvas جوه الـ callback، فلو راقبناه هو ممكن نعمل loop. ونهاية الـ observer.`,
+            R`دالة رسم بسيطة عشان نشوف النتيجة.`,
+            R`[[getContext("2d")]] بيرجّع الـ object اللي فيه أوامر الرسم الـ 2D (مستطيلات، خطوط، نصوص)، وبيرجّع نفس الـ context كل مرة لنفس الـ canvas.`,
+            R`بيرسم مستطيل مليان بيبدأ من الركن [[(0, 0)]]، عرضه نص عرض الـ canvas وطوله نص طوله، يعني ربع المساحة. ولأنه بيعتمد على [[canvas.width]] بيفضل ربع مهما المقاس اتغير.`,
+            R`نهاية [[draw]].`,
+          ],
+          sol: R`لما تسحب الـ div تحت 400px الـ [[data-size]] يبقى [["s"]] والـ CSS يقلب الترتيب، وبين 400 و 700 [["m"]]. التغيير بيحصل مع السحب نفسه من غير تأخير ومن غير debounce.
+
+نسخة CSS: [[.wrap { container-type: inline-size }]] على الأب، و [[@container (width < 400px) { .card { flex-direction: column } }]]. نفس النتيجة، ومفيش JS، وبتشتغل قبل ما الـ JS يتحمّل (من غير flash). عشان كده للشكل استخدم CSS، وخلي ResizeObserver للحاجات اللي محتاجة رقم في JS (الـ canvas مثلًا).`
+        },
+        {
+          cmd: "input type=file",
+          title: "تختار صور وتعاينها قبل الرفع إزاي؟",
+          desc: R`[[<input type="file">]] بيفتح اختيار الملفات. [[accept="image/png,image/jpeg,image/webp"]] أو [[accept="image/*"]] بيفلتر اللي يظهر (اقتراح بس، اليوزر يقدر يختار أي حاجة)، و [[multiple]] يسمح بأكتر من ملف، وعلى الموبايل [[capture="environment"]] بيفتح الكاميرا.
+
+[[input.files]] ليستة [[File]]: كل واحد فيه [[name]] و [[size]] (بالبايت) و [[type]] (MIME زي [["image/png"]]). و [[URL.createObjectURL(file)]] بيعمل URL مؤقت ([[blob:...]]) تحطه في [[img.src]] فتعرض الصورة من غير ما ترفعها، وبعد ما تخلص [[URL.revokeObjectURL(url)]] عشان الذاكرة.`,
+          example: R`// HTML: <input type="file" id="pics" accept="image/png,image/jpeg,image/webp" multiple> <div id="preview"></div>
+const input = document.querySelector("#pics");
+const preview = document.querySelector("#preview");
+const MAX = 2 * 1024 * 1024;
+let urls = [];
+input.addEventListener("change", () => {
+  urls.forEach((u) => URL.revokeObjectURL(u));
+  urls = [];
+  preview.replaceChildren();
+  for (const file of input.files) {
+    if (!file.type.startsWith("image/")) continue;
+    if (file.size > MAX) {
+      preview.append($__bt$__{file.name}: أكبر من 2MB. $__bt);
+      continue;
+    }
+    const url = URL.createObjectURL(file);
+    urls.push(url);
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = file.name;
+    img.width = 120;
+    preview.append(img);
+  }
+});`,
+          try: R`اختار ٣ صور منهم واحدة أكبر من 2MB وملف PDF (غيّر الـ accept لـ [[*/*]] عشان يظهر). إيه اللي اتعرض؟ وبعدين غيّر اسم ملف [[.txt]] لـ [[.png]] واختاره: [[file.type]] بيقول إيه؟ وآخر حاجة: اعرض تحت كل صورة حجمها بالـ KB ومقاسها بالبكسل ([[img.naturalWidth]] بعد [[img.onload]]).`,
+          practice: [
+            { lvl: 'سريع', t: R`ابني تحت [[<input type="file" multiple>]] جدول فيه لكل ملف: الاسم، والحجم بالـ KB بـ [[(file.size / 1024).toFixed(1)]]، والنوع، وزرار «شيل». الشيل بيبني [[input.files]] من جديد بـ [[new DataTransfer()]] و [[dt.items.add(file)]] و [[input.files = dt.files]].`, done: R`ملف 1536 بايت بيظهر 1.5 KB، والنوع الفاضي بيظهر «غير معروف»، و «شيل» بيمسح السطر و [[input.files.length]] بيقل واحد، والفورم لما تبعته مبيبعتش الملف اللي شلته.` },
+            { lvl: 'تطبيق', t: R`مسألة: اكتب [[async function sniffImage(file)]] بترجّع [["png"]] أو [["jpeg"]] أو [[null]] من أول bytes مش من الامتداد: [[new Uint8Array(await file.slice(0, 4).arrayBuffer())]]. PNG بيبدأ بـ [[89 50 4E 47]] و JPEG بـ [[FF D8 FF]]. جرّبها في Node بملفات بتعملها بـ [[new File([bytes], "a.png")]].`, done: R`ملف أوله bytes الـ PNG بيرجّع [["png"]]، وملف [[new File(["hello"], "fake.png", { type: "image/png" })]] بيرجّع [[null]] مع إن [[file.type]] بتاعه [[image/png]] (في المتصفح النوع بيتخمّن من الامتداد)، وملف فاضي أو أقل من 4 bytes بيرجّع [[null]] من غير error.` },
+            { lvl: 'تحدي', t: R`قارن وقيس: [[resizeImage(file, max = 1024)]] بـ [[createImageBitmap(file)]] و canvas أكبر ضلع فيه [[max]] بنفس النسبة، و [[canvas.toBlob(cb, "image/jpeg", 0.8)]] ملفوفة في Promise، وبترجّع [[File]] جديد. اعرض الحجم والمقاس قبل وبعد لـ ٣ صور.`, done: R`صورة 4000×3000 بتطلع 1024×768 بالظبط، وصورة طولية 3000×4000 بتطلع 768×1024، وصورة أصغر من 1024 أصلًا بترجع بمقاسها مبتكبرش، وجدول قبل وبعد فيه الحجم بالـ KB للتلات صور، وملف مش صورة بيرفض الـ Promise برسالة مفهومة.` },
+          ],
+          flag: "script",
+          deep: {
+            why: "صورة بروفايل، وصور منتجات، ومرفقات. المعاينة قبل الرفع بتوفر وقت اليوزر والباندويدث، والفحص في المتصفح بيقول «الملف كبير» فورًا بدل ما يستنى رفع ٢٠ ميجا يترفض في الآخر.",
+            how: R`[[File]] نوع من [[Blob]] (داتا binary) ومعاه اسم وتاريخ تعديل. المتصفح مبيقراش الملف لما تختاره، بيدّيك reference بس. [[createObjectURL]] بيربط الـ reference ده بـ URL جوه الصفحة، فالـ img بيقرا من الديسك مباشرة، وده أسرع وأخف من [[FileReader.readAsDataURL]] (اللي بيحوّل الملف كله نص base64 في الذاكرة، أكبر بحوالي الثلث).
+
+كل URL بيفضل شايل الملف في الذاكرة لحد ما تعمل revoke أو الصفحة تتقفل، فلو اليوزر اختار صور ١٠ مرات من غير revoke، الذاكرة بتتراكم.
+
+[[file.type]] المتصفح بيخمّنه من الامتداد (مش من محتوى الملف)، و [[accept]] اقتراح لنافذة الاختيار. يعني الاتنين للراحة (UX) مش للأمان. السيرفر لازم يفحص الحجم وأول bytes في الملف (magic bytes) ويعيد تسمية الملف (درس «multer» في تاب Backend بـ Node، و «presigned URL» في تاب Cloud و DevOps). ولو عايز تصغّر الصورة قبل الرفع: ارسمها على canvas بمقاس أصغر و [[canvas.toBlob(cb, "image/webp", 0.8)]].`,
+            when: R`أي رفع ملفات. و [[multiple]] للمعارض والمرفقات. والتصغير في المتصفح للصور الكبيرة من الموبايل (١٢ ميجا بكسل) قبل ما ترفعها.`,
+            mistakes: R`تعتمد على accept أو file.type كأمان. و createObjectURL من غير revoke. و FileReader base64 لملفات كبيرة. وتعرض [[file.name]] بـ innerHTML (اسم الملف input من اليوزر: [["<img onerror=...>.png"]] اسم ملف قانوني). وتنسى إن اختيار نفس الملف مرتين مش بيطلق [[change]] (اعمل [[input.value = ""]] بعد ما تخلص).`
+          },
+          teach: R`## الفكرة في سطر
+
+اليوزر يختار صور، فنعرضها على طول من الجهاز بتاعه من غير ما نرفع حاجة، ونتخطى أي ملف مش صورة أو أكبر من 2MB.
+
+جرّبته في Chrome headless (عن طريق playwright-core): اخترت للـ input بـ [[setInputFiles]] خمس ملفات عملتهم بنفسي: [[cat.png]] (صورة 1×1)، و [[big.png]] (3MB)، و [[doc.pdf]]، و [[notes.png]] (ملف نص اسمه png)، و [[dog.jpg]].
+
+---
+
+## ١. الـ HTML
+
+~~~text index.html
+<input type="file" id="pics" accept="image/png,image/jpeg,image/webp" multiple>
+<div id="preview"></div>
+~~~
+
+- [[type="file"]]: زرار «Choose Files» بيفتح نافذة اختيار الملفات.
+- [[accept="image/png,image/jpeg,image/webp"]]: أنواع (MIME types) مفصولة بـ [[,]]. نافذة الاختيار بتعرض دول بس. **اقتراح** مش منع: اليوزر يقدر يغيّر الفلتر لـ «All files».
+- [[multiple]]: يسمح باختيار أكتر من ملف.
+- [[#preview]]: المكان اللي هنحط فيه المعاينات.
+
+---
+
+## ٢. التجهيز
+
+~~~text app.js
+const input = document.querySelector("#pics");
+const preview = document.querySelector("#preview");
+const MAX = 2 * 1024 * 1024;
+let urls = [];
+~~~
+
+- [[MAX = 2 * 1024 * 1024]]: 2MB بالبايت = [[2097152]]. (1KB = 1024 byte، و 1MB = 1024KB.) كتبناها ضرب عشان تتقري «2 ميجا» بدل رقم مش مفهوم.
+- [[urls]]: هنحفظ فيها كل URL مؤقت بنعمله، عشان نمسحه بعدين. [[let]] مش [[const]] لأننا هنبدّلها بـ array فاضية.
+
+---
+
+## ٣. لما اليوزر يختار: [[change]]
+
+~~~text app.js
+input.addEventListener("change", () => {
+  urls.forEach((u) => URL.revokeObjectURL(u));
+  urls = [];
+  preview.replaceChildren();
+~~~
+
+- [[change]]: بيحصل لما اليوزر يقفل نافذة الاختيار وهو مختار حاجة **مختلفة** عن اللي كان مختارها.
+- أول ٣ سطور تنضيف للاختيار اللي فات: [[revokeObjectURL]] لكل URL قديم (هنفهمها تحت)، وفضّي الـ array، و [[replaceChildren()]] من غير arguments بتمسح كل اللي جوه [[preview]].
+
+### [[input.files]]
+
+~~~text app.js
+  for (const file of input.files) {
+~~~
+
+[[input.files]] ليستة (FileList) فيها object من نوع [[File]] لكل ملف. طبعت اللي فيها بعد ما اخترت الخمسة:
+
+~~~text الناتج
+change: files = 5 cat.png image/png 70 | big.png image/png 3145798 | doc.pdf application/pdf 9 | notes.png image/png 16 | dog.jpg image/jpeg 70
+~~~
+
+| الخاصية | معناها | مثال |
+|---|---|---|
+| [[name]] | اسم الملف من غير المسار | [[cat.png]] |
+| [[type]] | الـ MIME type | [[image/png]] |
+| [[size]] | الحجم بالبايت | [[3145798]] |
+
+لاحظ [[notes.png]]: ملف نص جواه [[hello, I am text]]، و [[type]] بتاعه [[image/png]]. المتصفح بيخمّن النوع من **الامتداد** مش من المحتوى.
+
+### الفلترة
+
+~~~text app.js
+    if (!file.type.startsWith("image/")) continue;
+    if (file.size > MAX) {
+      preview.append($__bt$__{file.name}: أكبر من 2MB. $__bt);
+      continue;
+    }
+~~~
+
+- [[startsWith("image/")]]: النص بيبدأ بـ [["image/"]]؟ الـ PDF نوعه [["application/pdf"]] فـ [[continue]] تعدّيه من غير ما تعرض حاجة.
+- [[file.size > MAX]]: [[big.png]] حجمه 3145798 أكبر من 2097152، فبنضيف رسالة. [[append]] بنص (string) بيضيفه كـ **نص** مش HTML، فلو اسم الملف فيه [[<img onerror=...>]] مش هيتنفّذ.
+
+---
+
+## ٤. المعاينة: [[URL.createObjectURL]]
+
+~~~text app.js
+    const url = URL.createObjectURL(file);
+    urls.push(url);
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = file.name;
+    img.width = 120;
+    preview.append(img);
+  }
+});
+~~~
+
+- [[URL.createObjectURL(file)]]: بيعمل URL مؤقت بيشاور على الملف اللي على جهاز اليوزر. شكله على صفحة شغالة من localhost:
+
+~~~text الناتج
+blob:http://localhost:PORT/b238a9a3-8884-45b4-8586-18d241d0729d
+~~~
+
+[[blob:]] + الـ origin بتاع الصفحة + ID عشوائي. الـ URL ده شغال **جوه الصفحة دي بس**، ومحدش غيرك يقدر يفتحه.
+- [[img.src = url]]: الصورة بتتقري من الجهاز مباشرة، من غير رفع ومن غير base64.
+- [[img.alt = file.name]]: نص بديل للي مش شايف الصورة. ولأنه property مش HTML فآمن.
+- [[img.width = 120]]: عرض المعاينة 120px.
+
+### النتيجة
+
+~~~text الناتج (محتوى #preview)
+<img src="blob:..." alt="cat.png" width="120">
+big.png: أكبر من 2MB.
+<img src="blob:..." alt="notes.png" width="120">
+<img src="blob:..." alt="dog.jpg" width="120">
+~~~
+
+| الملف | حصل إيه | ليه |
+|---|---|---|
+| [[cat.png]] | اتعرض | صورة وصغيرة |
+| [[big.png]] | رسالة | أكبر من MAX |
+| [[doc.pdf]] | ولا حاجة | type مش image |
+| [[notes.png]] | img مكسور (المقاس [[0x0]]) | type بتاعه image/png من الامتداد، بس المحتوى نص |
+| [[dog.jpg]] | اتعرض | |
+
+> [[file.type]] و [[accept]] للراحة بس. السيرفر لازم يفحص الملف بنفسه.
+
+### ليه [[revokeObjectURL]]؟
+
+كل blob URL بيفضل ماسك الملف في الذاكرة لحد ما الصفحة تتقفل. جرّبت: [[fetch(url)]] قبل الـ revoke رجّع الملف (70 byte)، وبعد [[URL.revokeObjectURL(url)]]:
+
+~~~text الناتج
+TypeError: Failed to fetch
+~~~
+
+يعني الـ URL اتقفل والذاكرة اتحررت. عشان كده بنعمل revoke للقديم في أول كل [[change]].
+
+### نفس الملف مرتين
+
+اخترت [[cat.png]] لوحده، وبعدين [[cat.png]] تاني: المرة التانية مطلعتش [[change]] خالص، لأن الاختيار متغيرش. لو محتاج تسمح بكده، اعمل [[input.value = ""]] بعد ما تخلص.
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| [[accept]] و [[multiple]] | فلتر لنافذة الاختيار، وأكتر من ملف |
+| [[input.files]] | ليستة [[File]]: name و type و size |
+| [[URL.createObjectURL(file)]] | URL مؤقت [[blob:...]] للملف |
+| [[URL.revokeObjectURL(url)]] | اقفله وحرّر الذاكرة |
+| [[replaceChildren()]] | فضّي العنصر |
+
+- النوع جاي من الامتداد، فمتعتمدش عليه للأمان.
+- الحجم بالبايت: 2MB = [[2 * 1024 * 1024]].`,
+          lines: [
+            R`بنمسك الـ [[<input type="file">]] اللي اليوزر بيختار منه الصور.`,
+            R`العنصر اللي هنحط فيه صور المعاينة ورسايل الأخطاء.`,
+            R`أقصى حجم مسموح: 2 ميجابايت بالبايت (2 × 1024 × 1024)، لأن [[file.size]] بيتقاس بالبايت. كتابتها كده أوضح من رقم كبير محدش فاهم جه منين. والفحص ده لراحة اليوزر بس، والسيرفر لازم يفحص تاني.`,
+            R`هنحفظ هنا كل blob URL بنعمله عشان نمسحهم بعدين. كل URL من دول ماسك الملف في الذاكرة لحد ما تعمله revoke أو الصفحة تتقفل.`,
+            R`[[change]] بيحصل لما اليوزر يخلص اختيار ويقفل نافذة الملفات، مش مع كل ضغطة. وكل اختيار جديد بيستبدل اللي قبله في [[input.files]].`,
+            R`قبل ما نعرض الاختيار الجديد، بنمسح الـ blob URLs بتاعة الاختيار اللي فات بـ [[revokeObjectURL]]. من غير ده، كل مرة اليوزر يختار صور، القديمة تفضل في الذاكرة (memory leak).`,
+            R`نرجّع الليستة فاضية، لأن الـ URLs اللي كانت فيها اتمسحت ومبقتش تشتغل.`,
+            R`[[replaceChildren()]] من غير arguments بتمسح كل اللي جوه المعاينة، فالصور القديمة متفضلش جنب الجديدة.`,
+            R`[[input.files]] هي [[FileList]] فيها object [[File]] لكل ملف اختاره، وفيه [[name]] و [[size]] و [[type]]. مش array حقيقية (مفيهاش [[map]])، بس [[for...of]] بتلف عليها عادي.`,
+            R`[[file.type]] هو الـ MIME type زي [["image/png"]]. بنفحص هنا لأن [[accept]] في الـ HTML مجرد اقتراح لنافذة الاختيار، واليوزر يقدر يختار «All files» ويجيب أي ملف. ولو مش صورة، [[continue]] تعدّيه.`,
+            R`[[file.size]] حجم الملف بالبايت. لو أكبر من الحد هنعرض رسالة بدل الصورة.`,
+            R`بنضيف رسالة فيها اسم الملف. [[append]] لما تديها string بتحطه كـ text node، يعني اسم ملف فيه [[<script>]] هيظهر كنص ومش هيتنفذ، زي [[textContent]] بالظبط.`,
+            R`نكمّل على الملف اللي بعده من غير ما نعمل blob URL للملف الكبير ده.`,
+            R`نهاية الـ [[if]] بتاع الحجم.`,
+            R`[[URL.createObjectURL]] بتعمل URL مؤقت شكله [[blob:...]] بيشاور على الملف اللي على جهاز اليوزر. كده المعاينة بتظهر فورًا من غير ما ترفع حاجة للسيرفر.`,
+            R`نحفظ الـ URL في الليستة عشان نعمله revoke في الاختيار الجاي.`,
+            R`نعمل عنصر [[<img>]] جديد لكل صورة، لسه في الذاكرة ومش ظاهر لحد ما نضيفه في المعاينة.`,
+            R`الـ [[src]] هو الـ blob URL، فالمتصفح بيعرض الصورة من الملف المحلي مباشرة.`,
+            R`[[alt]] باسم الملف، عشان قارئ الشاشة يقول الصورة دي إيه. وبنحطه كـ property مش بنركّب HTML، فلو اسم الملف فيه علامات HTML مش هتتنفذ.`,
+            R`عرض المعاينة 120 بكسل. بنحدد العرض بس، فالمتصفح بيحسب الطول بنفس نسبة الصورة.`,
+            R`نضيف الصورة جوه المعاينة، وهنا بتظهر لليوزر.`,
+            R`نهاية الـ [[for]] اللي على الملفات.`,
+            R`نهاية الـ listener بتاع [[change]].`,
+          ],
+          sol: R`الصورتين الصغيرين بيظهروا، والكبيرة بيظهر مكانها «اسمها: أكبر من 2MB.»، والـ PDF مش بيظهر خالص (اتنط بـ continue لأن type بتاعه [["application/pdf"]]).
+
+الـ [[.txt]] اللي اسمه [[.png]]: [[file.type]] بـ [["image/png"]]، والـ img بيظهر مكسور. ده الدليل إن النوع جاي من الامتداد، ودي بالظبط الحركة اللي حد هيعملها عشان يرفع حاجة مش صورة على السيرفر بتاعك.
+
+الحجم: [[(file.size / 1024).toFixed(0) + " KB"]]، والمقاس لازم يستنى التحميل: [[img.onload = () => caption.textContent += $__bt $__{img.naturalWidth}×$__{img.naturalHeight}$__bt]]. قبل الـ onload الـ naturalWidth بـ 0.`
+        },
+        {
+          cmd: "drag and drop و progress",
+          title: "تسحب ملف وترفعه بشريط تقدم إزاي؟",
+          desc: R`السحب والإفلات: على العنصر اللي هيستقبل اسمع لـ [[dragover]] واعمل [[preventDefault()]] (من غيرها المتصفح مش هيسمح بالإفلات هنا وهيفتح الملف في التاب)، و [[drop]] واعمل [[preventDefault()]] واقرا [[e.dataTransfer.files]] (نفس نوع [[input.files]]). و [[dragenter]] و [[dragleave]] عشان تغيّر الشكل.
+
+شريط التقدم: [[XMLHttpRequest]] عنده [[xhr.upload.onprogress]] بيقولك اترفع كام byte من كام. [[fetch]] مفيهوش حدث تقدم للرفع. فلحد النهارده لو عايز progress bar للرفع بتستخدم XHR (أو مكتبة زي axios، اللي هي XHR من تحت في المتصفح).`,
+          example: R`const zone = document.querySelector("#drop");
+const bar = document.querySelector("progress");
+zone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  zone.classList.add("over");
+});
+zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+zone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  zone.classList.remove("over");
+  for (const file of e.dataTransfer.files) upload(file);
+});
+function upload(file) {
+  const fd = new FormData();
+  fd.append("file", file);
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "/api/upload");
+  xhr.upload.onprogress = (e) => {
+    if (e.lengthComputable) bar.value = e.loaded / e.total;
+  };
+  xhr.onload = () => console.log(xhr.status, xhr.responseText);
+  xhr.onerror = () => console.log("النت وقع");
+  xhr.send(fd);
+}`,
+          try: R`اعمل سيرفر Express صغير فيه [[POST /api/upload]] بـ multer (تاب Backend بـ Node)، وافتح DevTools ← Network ← Throttling ← «Slow 4G»، واسحب صورة ٥ ميجا. الشريط بيتحرك؟ وبعدين زوّد زرار «إلغاء» بيعمل [[xhr.abort()]]، و keyboard fallback: الـ zone يبقى [[<label>]] فيه [[<input type="file">]] مخفي، عشان اللي مبيستخدمش ماوس.`,
+          practice: [
+            { lvl: 'سريع', t: R`ابني Kanban صغير: عمودين «لسه» و «خلص» وكروت عليها [[draggable="true"]]. في [[dragstart]] اعمل [[e.dataTransfer.setData("text/plain", card.id)]]، وفي [[dragover]] على العمود [[preventDefault()]]، وفي [[drop]] انقل الكارت بـ [[append]].`, done: R`الكارت بيتنقل للعمود اللي تفلته فيه، والإفلات برا العمودين مبيعملش حاجة، والكارت مبيتكررش، وعدد الكروت في عنوان كل عمود بيتحدّث بعد كل نقلة.` },
+            { lvl: 'تطبيق', t: R`صلّح الباج: حط جوه منطقة الإفلات بتاعة الدرس أيقونة ونص، واسحب ملف فوقهم: الـ class [[over]] بيرعش. صلّحها بعدّاد بيزيد في [[dragenter]] ويقل في [[dragleave]] ويتصفّر في [[drop]]، وارفض أي سحب مش ملفات ([[e.dataTransfer.types.includes("Files")]]).`, done: R`قبل التصليح الإطار بيختفي ويظهر كل ما تعدّي فوق الأيقونة أو النص (لأن [[dragleave]] بيحصل على الأب لما تدخل عنصر جواه)، وبعده بيفضل ثابت لحد ما تخرج من المنطقة كلها أو تفلت، وسحب نص متعلّم من الصفحة مبيفعّلش المنطقة.` },
+            { lvl: 'تحدي', t: R`محاكاة طابور رفع: اكتبه الأول في Node، كل «رفع» [[setTimeout]] وقته عشوائي ونسبة فشل ٢٠٪: ١٠ ملفات، ٢ بس في نفس الوقت، والفاشل يتعاد مرة واحدة. وبعدين بدّل الـ setTimeout بـ XHR بتاع الدرس ومعاه [[<progress>]] وزرار إلغاء ([[xhr.abort()]]) لكل ملف.`, done: R`الـ simulation بيطبع إن أكبر عدد شغال مع بعض 2، وكل ملف نهايته «تم» أو «فشل بعد محاولتين»، ومجموعهم 10. وفي المتصفح على Slow 4G مفيش أكتر من ٢ upload في Network في أي لحظة، والإلغاء بيكتب «اتلغى» وبيسيب مكانه للي بعده.` },
+          ],
+          flag: "script",
+          deep: {
+            why: "رفع ملف كبير على نت بطيء من غير أي مؤشر، اليوزر بيفتكر إن الموقع علّق فيعمل refresh ويضيّع الرفع. والسحب والإفلات متوقع في أي dashboard أو محرر.",
+            how: R`[[dragover]] بيتنادى كل كام ملّي ثانية وانت ساحب فوق العنصر، و [[preventDefault]] فيه هي اللي بتقول للمتصفح «العنصر ده بيقبل drop». [[dragleave]] بيحصل كمان لما تعدّي فوق عنصر ابن جوه الـ zone، فالشكل ممكن يرمش؛ الحل عداد بـ dragenter/dragleave أو [[pointer-events: none]] على الأبناء وقت السحب.
+
+XHR بيبعت الـ body وبيطلق [[upload.progress]] كل ما جزء يخرج من الجهاز. [[lengthComputable]] بتبقى true لما الحجم الكلي معروف (مع FormData و File دايمًا معروف). والتقدم ده «اتبعت من الجهاز»، مش «السيرفر حفظه»؛ بعد ١٠٠٪ لسه فيه وقت لحد [[onload]].
+
+ليه fetch لأ؟ [[fetch]] بيدّيك download progress عن طريق [[res.body.getReader()]] (تقرا الرد chunk chunk). بس الرفع: المواصفات فيها streaming request body ([[body: ReadableStream]] مع [[duplex: "half"]])، وده مدعوم في Chromium بس ومحتاج HTTP/2، وحتى معاه اللي بتعدّه هو اللي الـ stream بتاعك سلّمه للمتصفح مش اللي وصل للشبكة فعلًا. فمفيش طريقة بسيطة ومضمونة. عشان كده XHR لسه موجود ومش deprecated.
+
+للملفات الكبيرة (فيديو): ارفع مباشرة لـ S3/R2 بـ presigned URL من غير ما تعدّي على سيرفرك (بـ XHR PUT برضه عشان الـ progress)، أو multipart/resumable uploads (tus) عشان لو النت قطع تكمّل.`,
+            when: R`أي رفع أكبر من كام ميجا، أو على موبايل. والسحب للـ dashboards والمحررات، مع input عادي دايمًا.`,
+            mistakes: R`تنسى preventDefault في dragover فالمتصفح يفتح الصورة بدل ما يرفعها. و progress بـ fetch. وتحط [[Content-Type]] بإيدك مع FormData. وتعتبر ١٠٠٪ نجاح قبل ما [[onload]] يقول status 200. ومفيش بديل للكيبورد والموبايل (السحب مش شغال على iOS Safari من الملفات). وفي الانترفيو: «إزاي تعمل progress bar لرفع ملف؟» الإجابة XHR upload.onprogress، وليه fetch مبيعملهاش.`
+          },
+          teach: R`## الفكرة في سطر
+
+جزئين: منطقة تسحب عليها ملف من الجهاز وتسيبه (drag and drop)، ودالة بترفع الملف للسيرفر وبتحرّك شريط تقدم وهي بترفع.
+
+جرّبته في Chrome headless (عن طريق playwright-core): صفحة فيها [[<div id="drop">]] و [[<progress>]]، وسيرفر Node صغير على localhost بيستقبل [[POST /api/upload]] ويرد بعدد البايتات اللي وصلته. عملت في الصفحة [[File]] حجمه 5MB، وبعتّه للـ zone بأحداث [[dragover]] و [[dragleave]] و [[drop]] مصنوعة بـ [[new DragEvent(...)]] (headless مفيهوش ماوس يسحب من الديسك)، وبطّأت الشبكة بـ DevTools Protocol لـ 1MB في الثانية رفع و 100ms latency.
+
+---
+
+## ١. العناصر
+
+~~~text app.js
+const zone = document.querySelector("#drop");
+const bar = document.querySelector("progress");
+~~~
+
+[[<progress>]] عنصر HTML جاهز بيرسم شريط. [[value]] بتاعه من 0 لحد [[max]]، و [[max]] الافتراضي [[1]] (طبعته وطلع 1)، فلو حطيت [[bar.value = 0.5]] يبقى نص الشريط مليان.
+
+---
+
+## ٢. السحب فوق المنطقة: [[dragover]]
+
+~~~text app.js
+zone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  zone.classList.add("over");
+});
+~~~
+
+- [[dragover]]: بيتنادى كل شوية (كل كام ملّي ثانية) طول ما انت ساحب حاجة فوق العنصر.
+- [[e.preventDefault()]]: أهم سطر. الافتراضي في المتصفح إن العناصر **مبتقبلش** drop، ولو سبت الملف المتصفح بيفتحه في التاب (صورة أو PDF). [[preventDefault]] في dragover معناها «العنصر ده بيقبل». (ده من المواصفات ومن MDN، وتقدر تجرّبه بإيدك: شيل السطر واسحب صورة.)
+- [[classList.add("over")]]: كلاس الـ CSS بتاعه يغيّر الشكل («سيبه هنا»).
+
+~~~text app.js
+zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+~~~
+
+[[dragleave]]: الماوس خرج برّه المنطقة، فرجّع الشكل. بعد dragover الكلاس كان [["over"]]، وبعد dragleave بقى [[""]].
+
+---
+
+## ٣. الإفلات: [[drop]]
+
+~~~text app.js
+zone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  zone.classList.remove("over");
+  for (const file of e.dataTransfer.files) upload(file);
+});
+~~~
+
+- [[preventDefault()]] تاني: هنا بتمنع المتصفح يفتح الملف.
+- [[e.dataTransfer]]: الـ object اللي شايل الحاجة المسحوبة. و [[.files]] فيه نفس نوع [[input.files]] بالظبط (ليستة [[File]])، فكل اللي اتعلمته في درس «input type=file» شغال هنا.
+- لكل ملف نادي [[upload]].
+
+---
+
+## ٤. [[upload]]: الرفع بـ XHR
+
+### الـ body: [[FormData]]
+
+~~~text app.js
+  const fd = new FormData();
+  fd.append("file", file);
+~~~
+
+[[FormData]] بيبني body من نوع [[multipart/form-data]]، نفس اللي بيتبعت لو فورم HTML فيه input file. [[append("file", file)]] بيضيف الملف تحت اسم [["file"]] (السيرفر بيدوّر بالاسم ده، زي [[upload.single("file")]] في multer). السيرفر عندي طبع الـ header اللي وصله:
+
+~~~text الناتج
+multipart/form-data; boundary=----WebKit...
+~~~
+
+المتصفح حط الـ [[Content-Type]] **و** الـ boundary (الفاصل بين الأجزاء) لوحده، عشان كده متكتبش Content-Type بإيدك مع FormData.
+
+### الطلب
+
+~~~text app.js
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "/api/upload");
+~~~
+
+[[XMLHttpRequest]] (اختصاره XHR) الطريقة القديمة لعمل requests قبل [[fetch]]. الاسم فيه XML لأسباب تاريخية، وبيبعت أي حاجة. [[open(method, url)]] بتجهّز الطلب بس، ولسه مبعتش.
+
+### التقدم
+
+~~~text app.js
+  xhr.upload.onprogress = (e) => {
+    if (e.lengthComputable) bar.value = e.loaded / e.total;
+  };
+~~~
+
+- [[xhr.upload]]: object منفصل لأحداث **الرفع** (و [[xhr.onprogress]] من غير upload للتحميل).
+- [[e.loaded]]: اتبعت كام byte لحد دلوقتي. [[e.total]]: الحجم الكلي.
+- [[e.lengthComputable]]: الحجم الكلي معروف؟ مع FormData فيها File دايمًا [[true]].
+- [[e.loaded / e.total]]: نسبة من 0 لـ 1، بالظبط اللي [[<progress>]] عايزه.
+
+### الرد والأخطاء والإرسال
+
+~~~text app.js
+  xhr.onload = () => console.log(xhr.status, xhr.responseText);
+  xhr.onerror = () => console.log("النت وقع");
+  xhr.send(fd);
+~~~
+
+- [[onload]]: السيرفر رد، **أي** رد (200 أو 404 أو 500)، فلازم تبص على [[xhr.status]].
+- [[onerror]]: مفيش رد خالص: النت قطع أو السيرفر مش موجود.
+- [[send(fd)]]: دلوقتي بس الطلب بيتبعت.
+
+---
+
+## ٥. اللي حصل لما رفعت 5MB على 1MB/s
+
+حطيت [[console.log]] جوه onprogress بالوقت من لحظة الـ drop (مختصر):
+
+~~~text الناتج
+progress 106ms 98304 / 5243063 lengthComputable true bar 0.02
+progress 211ms 196608 / 5243063 lengthComputable true bar 0.04
+progress 325ms 311296 / 5243063 lengthComputable true bar 0.06
+...
+progress 2719ms 2670592 / 5243063 lengthComputable true bar 0.51
+...
+progress 5338ms 5243063 / 5243063 lengthComputable true bar 1.00
+5448ms 200 {"ok":true,"bytes":5243063,...}
+~~~
+
+- الحدث اتنادى تقريبًا كل 100ms، وكل مرة زيادة حوالي 100KB، وده منطقي مع 1MB في الثانية.
+- الـ [[total]] بـ 5243063 مش 5242880 (5 × 1024 × 1024): الفرق 183 byte هما الـ boundary والـ headers بتاعة الجزء جوه الـ multipart.
+- الشريط وصل 1.00 عند 5338ms، والـ [[onload]] جه بعدها بحوالي 110ms. الـ 100٪ معناها «اتبعت من الجهاز»، والنجاح الحقيقي هو [[200]] في onload.
+- السيرفر عدّ نفس الرقم [[bytes: 5243063]].
+
+### وليه مش [[fetch]]؟
+
+[[fetch]] مفيهوش حدث زي [[upload.onprogress]]. عشان كده لحد النهارده أي progress bar للرفع بيبقى XHR، ومكتبة axios في المتصفح XHR من تحت برضه.
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| [[dragover]] + [[preventDefault()]] | العنصر ده بيقبل drop |
+| [[drop]] + [[preventDefault()]] | متفتحش الملف، و [[e.dataTransfer.files]] فيها الملفات |
+| [[dragleave]] | خرج برّه، رجّع الشكل |
+| [[FormData]] + [[append]] | body من نوع multipart، والمتصفح بيحط الـ Content-Type |
+| [[xhr.upload.onprogress]] | [[e.loaded]] من [[e.total]] |
+| [[onload]] / [[onerror]] | رد (افحص status) / مفيش رد |
+
+- [[<progress>]] قيمته من 0 لـ 1 افتراضيًا.
+- ١٠٠٪ مش نجاح: استنى [[onload]] و [[status]].`,
+          lines: [
+            R`المنطقة اللي اليوزر هيسيب فيها الملفات ([[#drop]])، غالبًا [[<div>]] عليه كلام زي «اسحب الملفات هنا».`,
+            R`[[<progress>]] عنصر HTML جاهز بيرسم شريط تقدم. الـ [[max]] الافتراضي بتاعه 1، فبنحط [[value]] من 0 لـ 1 والشريط بيتملا لوحده.`,
+            R`[[dragover]] بيتكرر طول ما اليوزر ساحب حاجة فوق المنطقة، فبنعرف منه إنه فوقها.`,
+            R`افتراضيًا المتصفح مش بيسمح بالإفلات على أي عنصر، و [[preventDefault]] هنا معناها «اسمح بالإفلات هنا». من غيرها حدث [[drop]] مش هيحصل خالص، والمتصفح هيفتح الملف في التاب بدل صفحتك.`,
+            R`نضيف كلاس [[over]] عشان الـ CSS يغيّر شكل المنطقة (border أو لون) ويقول لليوزر «سيبه هنا». ولأن [[classList.add]] مبتكررش الكلاس، تكرار الحدث مش مشكلة.`,
+            R`نهاية الـ listener بتاع [[dragover]].`,
+            R`[[dragleave]] بيحصل لما الماوس يخرج برّه المنطقة، فبنشيل الكلاس ونرجّع الشكل. خلي بالك: بيحصل كمان لما تعدّي فوق عنصر جوه المنطقة، فالشكل ممكن يرمش، وحل شائع ليها [[pointer-events: none]] على العناصر اللي جوه.`,
+            R`[[drop]] بيحصل لما اليوزر يسيب الماوس فوق المنطقة، وده الحدث اللي فيه الملفات.`,
+            R`[[preventDefault]] تاني هنا عشان المتصفح ميعملش السلوك الافتراضي، وهو إنه يفتح الملف اللي اتسحب ويسيب صفحتك.`,
+            R`نرجّع شكل المنطقة، لأن [[dragleave]] مش بيحصل بعد الإفلات.`,
+            R`[[e.dataTransfer.files]] من نفس نوع [[input.files]] ([[FileList]])، فنفس الكود اللي بيتعامل مع ملفات الـ input ينفع هنا. وبنرفع كل ملف لوحده.`,
+            R`نهاية الـ listener بتاع [[drop]].`,
+            R`دالة بترفع ملف واحد وتحدّث الشريط.`,
+            R`[[FormData]] بيبني body بصيغة [[multipart/form-data]]، الصيغة اللي الفورمز بتبعت بيها ملفات.`,
+            R`نحط الملف تحت اسم [[file]]. الاسم ده لازم يطابق اللي السيرفر مستنيه (زي [[upload.single("file")]] في multer)، وإلا السيرفر مش هيلاقي الملف.`,
+            R`بنستخدم [[XMLHttpRequest]] القديم مش [[fetch]] لسبب واحد: XHR عنده [[upload.onprogress]] بيقولك اترفع كام، و [[fetch]] مالوش طريقة بسيطة لكده.`,
+            R`نجهّز طلب [[POST]] على الـ endpoint. [[open]] مش بيبعت حاجة لسه، بيجهّز بس.`,
+            R`[[xhr.upload.onprogress]] بيتنادى كذا مرة والملف بيترفع. لاحظ الـ [[upload]]: [[xhr.onprogress]] من غيرها بتاعة تحميل **الرد** مش الرفع.`,
+            R`[[lengthComputable]] بتقول إن الحجم الكلي معروف. لو معروف، [[e.loaded / e.total]] بتدّي نسبة من 0 لـ 1، وده بالظبط اللي الـ [[<progress>]] مستنيه.`,
+            R`نهاية الـ [[onprogress]].`,
+            R`[[onload]] بيتنادى لما السيرفر يرد بأي status، حتى 400 أو 500. فلازم تبص على [[xhr.status]] عشان تعرف الرفع نجح فعلًا ولا لأ.`,
+            R`[[onerror]] بيتنادى بس لو الطلب موصلش خالص (النت قطع أو السيرفر مش شغّال)، مش لما السيرفر يرد بخطأ.`,
+            R`نبعت الطلب بالـ [[FormData]]. متحطش [[Content-Type]] بإيدك: المتصفح بيحطه لوحده ومعاه الـ boundary اللي بيفصل الأجزاء، ولو كتبته من غيره السيرفر مش هيعرف يقرا الملف.`,
+            R`نهاية [[upload]].`,
+          ],
+          sol: R`مع Slow 4G والـ ٥ ميجا الشريط بيتحرك تدريجيًا على مدار ثواني، وبعد ما يوصل ١٠٠٪ فيه لحظة لحد ما [[onload]] يطبع [[200]] والرد (السيرفر لسه بيكتب الملف).
+
+الإلغاء: خزّن الـ xhr في متغير برّه، والزرار [[xhr.abort()]]، واسمع لـ [[xhr.onabort]] ورجّع الشريط 0. في Network الطلب هيظهر «(canceled)».
+
+الـ fallback: [[<label id="drop"><input type="file" hidden multiple> اسحب هنا أو اضغط للاختيار</label>]]، والضغط على الـ label بيفتح اختيار الملفات لوحده، و [[change]] على الـ input بتنادي نفس [[upload]]. كده الكيبورد (Tab ثم Enter) والموبايل شغالين.`
+        },
+        {
+          cmd: "visibilitychange و bfcache",
+          title: "تعرف إن اليوزر ساب الصفحة أو رجعلها إزاي؟",
+          desc: R`[[visibilitychange]]: الصفحة بقت مخفية (اليوزر غيّر التاب، أو صغّر، أو قفل الشاشة، أو ساب التطبيق على الموبايل) أو ظهرت تاني. ده آخر حدث مضمون تقريبًا على الموبايل، فأي حفظ مسودة أو إرسال analytics يبقى هنا، بـ [[navigator.sendBeacon]] اللي بيبعت حتى لو الصفحة بتتقفل.
+
+[[beforeunload]]: الحدث اللي يطلّع «متأكد إنك عايز تخرج؟». استخدمه بس لما فيه تغييرات مش محفوظة، وشيله أول ما تتحفظ.
+
+وbfcache (back/forward cache): لما اليوزر يضغط back، المتصفح بيرجّع الصفحة زي ما هي من الذاكرة (JS و state و scroll) من غير تحميل. [[pageshow]] بـ [[e.persisted === true]] بيقولك إنها رجعت من الـ bfcache، فحدّث الداتا اللي ممكن تكون قدمت.`,
+          example: R`const form = document.querySelector("#post-form");
+function warn(e) {
+  e.preventDefault();
+  e.returnValue = "";
+}
+form.addEventListener("input", () => window.addEventListener("beforeunload", warn));
+form.addEventListener("submit", () => window.removeEventListener("beforeunload", warn));
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState !== "hidden") return;
+  const draft = JSON.stringify(Object.fromEntries(new FormData(form)));
+  navigator.sendBeacon("/api/draft", draft);
+});
+window.addEventListener("pageshow", (e) => {
+  if (e.persisted) console.log("رجعت من الـ bfcache: حدّث السلة والإشعارات");
+});
+window.addEventListener("pagehide", (e) => console.log("pagehide، هتتحفظ في bfcache؟", e.persisted));`,
+          try: R`افتح الصفحة، واكتب في الفورم، وجرّب تقفل التاب: الرسالة ظهرت؟ اعمل submit وجرّب تاني. وبعدين روح لصفحة تانية وارجع بـ back وبص على Console (فعّل Preserve log). وآخر حاجة: DevTools ← Application ← Back/forward cache ← «Test back/forward cache»: الصفحة eligible؟ ولو لأ، إيه السبب اللي بيقوله؟`,
+          practice: [
+            { lvl: 'سريع', t: R`محاكاة شات: [[setInterval]] بيضيف رسالة وهمية كل ٣ ثواني. لما الصفحة تبقى [[hidden]] عدّ الرسايل اللي جت وخلّي [[document.title]] يبقى «(3) الشات»، ولما ترجع [[visible]] رجّع العنوان وصفّر العدّاد.`, done: R`تسيب التاب ١٠ ثواني: عنوان التاب بيبان فيه رقم بيزيد (حوالي 3)، وأول ما ترجع العنوان بيرجع «الشات» والعدّاد صفر، وانت جوه الصفحة العنوان مبيتغيرش خالص.` },
+            { lvl: 'تطبيق', t: R`ابني عدّاد «وقت المذاكرة الفعلي» لصفحة درس: بيعدّ الوقت اللي الصفحة كانت ظاهرة فيه بس، بـ [[performance.now()]] مش بعدّ ticks، وبيبعت المجموع بـ [[navigator.sendBeacon("/api/time", ...)]] كل ما الصفحة تتخبى.`, done: R`تسيب التاب ١٠ ثواني وترجع: العدّاد مزادش الـ ١٠ ثواني دول (بفرق ثانية بالكتير)، و Network فيه request لـ [[/api/time]] كل مرة الصفحة اتخبت، والرقم اللي اتبعت هو المجموع لحد اللحظة دي.` },
+            { lvl: 'تحدي', t: R`صلّح صفحة bfcache مبيرجّعهاش: صفحة فاتحة WebSocket لسيرفر [[ws]] على localhost. اقفل الـ socket في [[pagehide]]، وافتحه تاني في [[pageshow]] لما [[e.persisted]] يبقى [[true]]، وشغّل Test back/forward cache قبل وبعد.`, done: R`لو الاختبار قال الصفحة مش eligible قبل التصليح، بتكتب السبب اللي DevTools طلّعه. بعد التصليح: back بيرجّع الصفحة من bfcache، و [[pageshow]] بيطبع [[persisted: true]]، والـ socket اتفتح تاني والرسايل بتوصل، ولوج السيرفر فيه اتصال اتقفل واتصال جديد.` },
+          ],
+          flag: "script",
+          deep: {
+            why: "اليوزر كتب بوست طويل وقفل التاب بالغلط. أو فتح الموبايل بعد ساعة ولقى السلة قديمة. أو الـ analytics بتقول إن نص الزيارات «ملهاش نهاية». كل ده دورة حياة الصفحة، وأغلب المواقع بتتعامل معاها غلط بـ [[unload]].",
+            how: R`[[beforeunload]]: [[preventDefault()]] هي الطريقة الحديثة، و [[returnValue = ""]] للمتصفحات القديمة. والرسالة نفسها بتاعة المتصفح ومتقدرش تغيّرها. وبيطلع بس لو اليوزر اتفاعل مع الصفحة قبل كده. وإضافة الـ listener بس وقت الحاجة مهمة لأن وجود beforeunload طول الوقت بيمنع الـ bfcache في بعض المتصفحات (Firefox مثلًا).
+
+[[unload]] متستخدمهاش: مش بتتنادى بشكل موثوق على الموبايل (النظام بيقفل التطبيق من غير ما يسأل)، ووجودها بيمنع الـ bfcache، و Chrome بيلغيها تدريجيًا. البديل [[visibilitychange]] (hidden) للحفظ، و [[pagehide]] لو محتاج لحظة الخروج نفسها.
+
+[[sendBeacon(url, data)]] بيبعت POST صغير (حوالي 64KB كحد) والمتصفح بيكمّله حتى لو الصفحة اتقفلت، ومبيرجّعش رد. البديل الحديث [[fetch(url, { method: "POST", body, keepalive: true })]].
+
+الـ bfcache بيجمّد الصفحة كلها: الـ timers واقفة، والـ promises متعلقة، ولما ترجع بتكمّل. أسباب إن الصفحة متدخلوش: [[unload]] listener، أو WebSocket أو IndexedDB transaction مفتوحين، أو (تاريخيًا) [[Cache-Control: no-store]] على الـ HTML. والـ DevTools test بيقولك السبب بالظبط.`,
+            when: R`حفظ مسودات، و analytics نهاية الزيارة، و pause للفيديو والـ polling لما التاب مخفي (توفير بطارية وrequests)، وتحديث داتا حساسة للوقت لما الصفحة ترجع (سلة، رصيد، إشعارات).`,
+            mistakes: R`[[unload]] لأي حاجة. و beforeunload متسجل على طول. و [[fetch]] عادي في visibilitychange من غير keepalive فيتلغي. وتفترض إن الصفحة «فتحت من جديد» لما اليوزر يرجع بـ back فمتحدّثش الداتا. و polling شغال في تاب مخفي طول اليوم.`
+          },
+          teach: R`## الفكرة في سطر
+
+٣ حاجات بتحصل للصفحة واليوزر مش بيقولك: هيقفل وهو كاتب حاجة (نحذّره)، أو التاب اتخفى (نحفظ المسودة)، أو رجع للصفحة بزرار back (نحدّث الداتا). المثال بيسمع للتلاتة.
+
+جرّبته في Chrome headless (عن طريق playwright-core) على صفحة من سيرفر Node على localhost فيها فورم بـ [[<input name="title">]] و [[<textarea name="body">]]، والسيرفر بيطبع أي [[POST /api/draft]] يوصله. ولاحظ: Playwright بيقفل الـ bfcache افتراضيًا ([[--disable-back-forward-cache]])، فشغّلته بـ [[ignoreDefaultArgs]] عشان أجرّب الـ bfcache بجد.
+
+---
+
+## ١. التحذير قبل الخروج: [[beforeunload]]
+
+~~~text app.js
+const form = document.querySelector("#post-form");
+function warn(e) {
+  e.preventDefault();
+  e.returnValue = "";
+}
+form.addEventListener("input", () => window.addEventListener("beforeunload", warn));
+form.addEventListener("submit", () => window.removeEventListener("beforeunload", warn));
+~~~
+
+- [[beforeunload]]: حدث على [[window]] قبل ما الصفحة تتقفل أو تروح لصفحة تانية أو تعمل refresh.
+- [[warn]] دالة **ليها اسم** (مش arrow جوه addEventListener)، لأن [[removeEventListener]] محتاج نفس الدالة بالظبط عشان يشيلها.
+- [[e.preventDefault()]]: الطريقة الحديثة تقول «اسأل اليوزر». و [[e.returnValue = ""]] نفس الطلب للمتصفحات القديمة. النص اللي بتحطه مبيظهرش: المتصفح بيعرض رسالته هو.
+- [[input]] على الفورم: بيحصل مع أي حرف في أي خانة جواه (الـ event بيطلع من الخانة للفورم). أول ما يكتب نسجّل التحذير، وتسجيل نفس الدالة مرتين مبيعملش حاجة، فمش مشكلة إنه بيتنادى مع كل حرف.
+- [[submit]]: اتحفظ، فشيل التحذير.
+
+### اللي حصل
+
+| الحالة | قفلت التاب | النتيجة |
+|---|---|---|
+| مكتبتش حاجة | اتقفل على طول | مفيش listener أصلًا |
+| كتبت في الخانتين | ظهر dialog نوعه [[beforeunload]] ورسالته [[""]] | رفضته فالتاب فضل مفتوح ([[closed? false]]) |
+| كتبت وعملت submit | اتقفل على طول | الـ listener اتشال |
+
+الرسالة فاضية من ناحية الكود لأن المتصفح هو اللي بيكتب «Leave site? Changes you made may not be saved» (أو بلغة المتصفح).
+
+---
+
+## ٢. حفظ المسودة: [[visibilitychange]]
+
+~~~text app.js
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState !== "hidden") return;
+  const draft = JSON.stringify(Object.fromEntries(new FormData(form)));
+  navigator.sendBeacon("/api/draft", draft);
+});
+~~~
+
+- [[visibilitychange]] على [[document]]: الصفحة اتخفت أو ظهرت (تاب تاني، تصغير، قفل الشاشة، الخروج من التطبيق على الموبايل، أو قفل التاب نفسه).
+- [[document.visibilityState]]: [["visible"]] أو [["hidden"]]. بنكمّل لما تبقى hidden بس.
+- السطر التالت من جوه لبرّه:
+
+| الخطوة | الناتج |
+|---|---|
+| [[new FormData(form)]] | كل خانات الفورم بأساميها ([[name]]) |
+| [[Object.fromEntries(...)]] | بتحوّل الأزواج دي لـ object عادي: [[{ title: "...", body: "..." }]] |
+| [[JSON.stringify(...)]] | حوّله نص JSON |
+
+- [[navigator.sendBeacon(url, data)]]: بيبعت POST صغير، والمتصفح **بيكمّله حتى لو الصفحة اتقفلت**. بيرجّع [[true]] لو قبل يبعته (مش لو السيرفر رد)، ومفيش طريقة تقرا الرد.
+
+### اللي وصل السيرفر
+
+كل مرة الصفحة اتقفلت أو اتنقلت منها، السيرفر طبع:
+
+~~~text الناتج (السيرفر)
+SERVER got POST /api/draft content-type=text/plain;charset=UTF-8 body={"title":"","body":""}
+SERVER got POST /api/draft content-type=text/plain;charset=UTF-8 body={"title":"","body":"x"}
+SERVER got POST /api/draft content-type=text/plain;charset=UTF-8 body={"title":"draft1","body":""}
+~~~
+
+- الطلبات وصلت حتى من التابات اللي اتقفلت.
+- لاحظ [[content-type=text/plain]]: لما تبعت string لـ sendBeacon بيروح كنص. فالسيرفر لازم يقراه نص ويعمل [[JSON.parse]] (مثلًا [[express.text()]] مش [[express.json()]])، أو ابعت [[new Blob([draft], { type: "application/json" })]].
+
+---
+
+## ٣. الرجوع بـ back: [[pageshow]] و [[pagehide]]
+
+~~~text app.js
+window.addEventListener("pageshow", (e) => {
+  if (e.persisted) console.log("رجعت من الـ bfcache: حدّث السلة والإشعارات");
+});
+window.addEventListener("pagehide", (e) => console.log("pagehide، هتتحفظ في bfcache؟", e.persisted));
+~~~
+
+- [[pageshow]]: الصفحة اتعرضت، سواء تحميل جديد أو رجوع من الـ bfcache.
+- [[pagehide]]: الصفحة بتمشي. ده البديل الصح لـ [[unload]].
+- [[e.persisted]]: في pageshow معناها «رجعت من الـ bfcache»، وفي pagehide معناها «هتتحفظ في الـ bfcache».
+
+bfcache اختصار back/forward cache: المتصفح بيجمّد الصفحة كلها في الذاكرة (الـ JS والمتغيرات والخانات ومكان الـ scroll)، ولما ترجع بيصحّيها بدل ما يحمّلها من الأول.
+
+### اللي حصل
+
+كتبت [[draft1]] في الخانة، ورحت لصفحة تانية ([[/other]])، ورجعت بـ back (بالترتيب، بعد ما وافقت على dialog الـ beforeunload):
+
+~~~text الناتج (Console)
+pageshow persisted = false
+pagehide، هتتحفظ في bfcache؟ true
+visibilitychange: hidden
+sendBeacon returned true
+visibilitychange: visible
+pageshow persisted = true
+رجعت من الـ bfcache: حدّث السلة والإشعارات
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[pageshow persisted = false]] | أول تحميل عادي |
+| [[pagehide ... true]] | ماشي، والصفحة هتتجمّد في الـ bfcache |
+| [[visibilitychange: hidden]] + beacon | الصفحة اختفت، فالمسودة اتبعتت بـ [[sendBeacon]] قبل ما المتصفح يجمّدها |
+| [[visibilitychange: visible]] | الصفحة رجعت تظهر تاني لما دوست Back |
+| [[pageshow persisted = true]] | من الـ bfcache، مش تحميل جديد |
+
+وبعد الرجوع، الخانة لسه فيها [[draft1]]: الصفحة نفسها رجعت زي ما هي. يعني أي كود في أول الصفحة (زي «هات السلة من السيرفر») **مش هيتنفّذ تاني**، وعشان كده بنحدّث في [[pageshow]] لما [[persisted]] تبقى true.
+
+ولما قفلت التاب (مش navigation) [[pagehide]] طلعت [[false]]: تاب اتقفل مفيش حاجة يرجعلها.
+
+> Chrome حط الصفحة في الـ bfcache هنا مع إن الـ beforeunload listener كان متسجّل. بس Firefox ممكن يرفض بسببه، وده سبب تاني إنك تسجّله وقت الحاجة بس.
+
+---
+
+## الخلاصة
+
+| الحدث | على | إمتى تستخدمه |
+|---|---|---|
+| [[beforeunload]] | [[window]] | تحذير لو فيه تغييرات مش محفوظة، وشيله بعد الحفظ |
+| [[visibilitychange]] (hidden) | [[document]] | احفظ واعمل analytics، مع [[sendBeacon]] |
+| [[pagehide]] | [[window]] | لحظة الخروج نفسها (بدل [[unload]]) |
+| [[pageshow]] + [[persisted]] | [[window]] | رجع من الـ bfcache: حدّث الداتا |
+
+- [[removeEventListener]] محتاج نفس الدالة، فاديها اسم.
+- [[sendBeacon]] مبيرجّعش رد، والـ string بيروح [[text/plain]].
+- متستخدمش [[unload]].`,
+          lines: [
+            R`الفورم اللي اليوزر بيكتب فيه البوست، وده اللي مش عايزين كلامه يضيع.`,
+            R`دالة التحذير متعرّفة باسم (مش arrow جوه [[addEventListener]]) عشان [[removeEventListener]] محتاج **نفس** الدالة بالظبط علشان يشيلها.`,
+            R`في [[beforeunload]]، [[preventDefault]] بيطلب من المتصفح يسأل اليوزر «عايز تمشي فعلًا؟». النص اللي بيظهر بتاع المتصفح ومتقدرش تغيّره.`,
+            R`متصفحات قديمة كانت بتبص على [[returnValue]] مش [[preventDefault]] عشان تظهر التحذير، فبنحطه برضه عشان يشتغل عندهم كمان.`,
+            R`نهاية [[warn]].`,
+            R`أول ما اليوزر يكتب أي حاجة نفعّل التحذير، فصفحة فاضية متسألوش على الفاضي. [[input]] بيحصل مع كل حرف، بس إضافة نفس الدالة لنفس الحدث أكتر من مرة بتتجاهل، فمفيش تكرار.`,
+            R`لما الفورم يتبعت الكلام اتحفظ، فبنشيل التحذير عشان الصفحة تمشي من غير سؤال.`,
+            R`[[visibilitychange]] بيحصل لما التاب يتخفى أو يرجع يظهر: اليوزر غيّر التاب، أو صغّر المتصفح، أو قفل الموبايل. ده أضمن وقت تحفظ فيه، لأن الموبايل ممكن يقفل الصفحة وهي في الخلفية من غير أي حدث تاني.`,
+            R`يهمنا لحظة الاختفاء بس، فلو التاب رجع ظاهر نخرج.`,
+            R`[[new FormData(form)]] بيقرا كل خانات الفورم، و [[Object.fromEntries]] بيحوّلها لـ object عادي، و [[JSON.stringify]] بيحوّله لنص نبعته.`,
+            R`[[sendBeacon]] بيبعت POST صغير والمتصفح بيكمّله حتى لو الصفحة اتقفلت. مالوش رد تقراه، وبيرجّع [[true]] لو الطلب اتحط في الطابور بس. ولأن الـ body string، السيرفر هيستقبله [[text/plain]] فلازم يعمل parse للـ JSON بنفسه.`,
+            R`نهاية الـ listener بتاع [[visibilitychange]].`,
+            R`[[pageshow]] بيحصل كل ما الصفحة تظهر: أول تحميل، أو رجوع ليها بزرار back.`,
+            R`[[e.persisted]] بـ [[true]] معناها الصفحة رجعت من الـ bfcache (المتصفح كان حافظها في الذاكرة زي ما هي)، فالكود مش بيشتغل من الأول والداتا اللي فيها ممكن تكون قديمة. ده المكان اللي تحدّث فيه السلة والإشعارات.`,
+            R`نهاية الـ listener بتاع [[pageshow]].`,
+            R`[[pagehide]] بيحصل لما اليوزر يسيب الصفحة، و [[e.persisted]] بتقول هتتحفظ في الـ bfcache ولا لأ. استخدمه بدل [[unload]]: وجود listener على [[unload]] بيمنع الصفحة من الـ bfcache في متصفحات كتير.`,
+          ],
+          sol: R`قبل الـ submit: قفل التاب بيطلّع رسالة المتصفح «Leave site?» (أو بالعربي حسب لغة المتصفح)، ونصها ثابت. بعد الـ submit مفيش رسالة لأن الـ listener اتشال. لو مطلعتش خالص، غالبًا مكتبتش حاجة بجد (المتصفح بيطلب تفاعل).
+
+الـ back: Console فيها [[pagehide، هتتحفظ في bfcache؟ true]] وبعد الرجوع [[رجعت من الـ bfcache...]]. ولاحظ إن الـ input لسه فيه اللي كتبته والـ scroll مكانه: ده الـ bfcache.
+
+لو الـ test قال «not eligible» الأسباب الشائعة: listener على [[unload]] (من مكتبة أو analytics)، أو الصفحة مفتوحة من DevTools بطريقة معيّنة، أو WebSocket مفتوح. وفي الحالة دي back بتعمل تحميل كامل و [[persisted]] بـ false.`
+        },
+        {
+          cmd: "pushState و popstate",
+          title: "تغيّر الـ URL من غير تحميل صفحة جديدة إزاي؟ (راوتر صغير)",
+          desc: R`[[history.pushState(state, "", "/about")]] بيغيّر الـ URL في الشريط ويضيف خطوة في الـ history من غير ما يطلب الصفحة من السيرفر. و [[replaceState]] نفس الكلام بس بيستبدل الخطوة الحالية (للفلاتر والبحث). ومفيش حاجة بتتعرض لوحدها: انت اللي بترسم المحتوى المناسب.
+
+و [[popstate]] بيتنادى لما اليوزر يضغط back أو forward، فتقرا [[location.pathname]] وترسم. ده كل الـ SPA router (React Router و Next.js client navigation) من تحت: اعترض ضغطة اللينك، و pushState، وارسم، واسمع لـ popstate.`,
+          example: R`const content = document.querySelector("#content");
+const pages = { "/": "الرئيسية", "/about": "عننا", "/contact": "كلمنا" };
+function render(path) {
+  content.textContent = pages[path] ?? "404: الصفحة مش موجودة";
+  document.title = pages[path] ?? "مش موجود";
+}
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("a[data-link]");
+  if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
+  e.preventDefault();
+  const path = new URL(a.href).pathname;
+  if (path === location.pathname) return;
+  history.pushState({ path }, "", path);
+  render(path);
+});
+window.addEventListener("popstate", () => render(location.pathname));
+render(location.pathname);`,
+          try: R`اعمل [[index.html]] فيه ٣ لينكات [[<a href="/about" data-link>]] و [[<main id="content">]]، وشغّله بـ [[npx serve -s]] (الـ [[-s]] بيرجّع index.html لأي path). اتنقل، واضغط back و forward، واعمل refresh على [[/about]]. وبعدين شغّله بـ [[npx serve]] من غير [[-s]] واعمل refresh على [[/about]]: إيه اللي حصل؟ وجرّب Ctrl+Click على لينك.`,
+          practice: [
+            { lvl: 'سريع', t: R`ابني tabs component (٣ تابات «الوصف» و «المواصفات» و «التقييمات»): الضغط على تاب بيعمل [[pushState]] لـ [[?tab=specs]]، و [[popstate]] بيرجّع التاب الصح، وفتح الصفحة بيقرا [[?tab=]] من [[location.search]].`, done: R`تضغط تابين ورا بعض وتعمل back مرتين: بترجع للتابين اللي قبل بالترتيب، و refresh على [[?tab=reviews]] بيفتح التقييمات، و [[?tab=xyz]] بيفتح التاب الأول من غير error.` },
+            { lvl: 'تطبيق', t: R`صلّح الباج: راوتر الدرس بيمسك كل [[a[data-link]]] حتى لو اللينك لموقع تاني، أو عليه [[target="_blank"]] أو [[download]]. حط ٣ لينكات زي دول جنب اللينكات العادية وصلّح الشرط عشان يسيبهم للمتصفح.`, done: R`لينك لـ [[https://example.com]] بيفتح الموقع ده فعلًا، و [[target="_blank"]] بيفتح تاب جديد، و [[download]] بينزّل الملف، واللينكات الداخلية لسه بتتنقل من غير reload، والشرط فيه مقارنة [[a.origin !== location.origin]].` },
+            { lvl: 'تحدي', t: R`مسألة: اكتب [[matchRoute(path, routes)]] بترجّع [[{ route, params }]] أو [[null]]، لـ routes زي [[/users/:id]] و [[/users/:id/posts]]، بـ [[URLPattern]] أو regex، واكتب لها تستات بـ [[node:test]]، وبعدين وصّلها بالراوتر.`, done: R`[[matchRoute("/users/42", routes).params.id]] بيرجّع [["42"]]، و [[/users/42/posts]] بيطابق الـ route التاني، و [[/users]] لوحدها و [[/users/42/x]] بيرجّعوا [[null]] (يعني 404)، و [[node --test]] بيعدّي، و back و forward و refresh (مع [[npx serve -s]]) بيفتحوا الصفحة الصح.` },
+          ],
+          flag: "script",
+          deep: {
+            why: "تحميل الصفحة كلها مع كل ضغطة بيضيّع الـ state (فيديو شغال، فورم نص مكتوب) وبيحمّل الـ JS والـ CSS تاني. الـ SPA بيغيّر الجزء اللي اتغير بس. بس اليوزر لسه متوقع إن back يشتغل، وإن اللينك يتنسخ ويتبعت، وإن refresh يرجّعه لنفس المكان، و pushState هو اللي بيحافظ على ده.",
+            how: R`[[pushState]] بيغيّر [[location]] ويضيف entry في الـ history stack ومبيطلقش أي event. [[popstate]] بيتنادى لما الـ entry الحالي يتغير بـ back/forward (أو [[history.back()]])، مش لما تعمل pushState بنفسك. عشان كده بتنادي [[render]] بإيدك بعد pushState.
+
+الـ [[state]] (أول argument) object بيتحفظ مع الـ entry وبيرجعلك في [[e.state]] وقت popstate، مفيد لحاجات زي مكان الـ scroll. لازم يبقى قابل للنسخ (structured clone): مفيش دوال ولا عناصر DOM.
+
+شرط اللينك: [[e.button !== 0]] (مش الزرار الشمال) وأزرار Ctrl/Cmd/Shift معناها «افتح في تاب جديد»، فسيبها للمتصفح. و [[data-link]] عشان اللينكات الخارجية أو التحميلات تفضل عادية.
+
+السيرفر: لما اليوزر يعمل refresh على [[/about]]، المتصفح بيطلب [[/about]] من السيرفر فعلًا. لو السيرفر مش عارفه هيرد 404. لازم أي path مش ملف يرجّع [[index.html]] (درس «SPA» في تاب Nginx: [[try_files $uri /index.html]]).
+
+وفيه Navigation API الأحدث ([[navigation.addEventListener("navigate", ...)]]) بيعترض كل التنقلات في مكان واحد بدل click و popstate. دعمه اتسع في 2025/2026، بس اتأكد من caniuse قبل ما تعتمد عليه من غير fallback.`,
+            when: R`لما تبني SPA صغير من غير framework، أو تحط الفلاتر والتابات في الـ URL ([[replaceState]]). وفي React/Next استخدم الراوتر بتاعهم، بس افهم إن ده اللي تحته.`,
+            mistakes: R`تستنى popstate بعد pushState. ومتعملش render في الأول ([[render(location.pathname)]]) فالـ refresh يعرض صفحة فاضية. والسيرفر مش راجع index.html. وتعترض Ctrl+Click. وتنسى [[document.title]] والـ focus (قارئات الشاشة مش هتعرف إن الصفحة اتغيرت: حرّك الـ focus للعنوان الجديد). و pushState لكل حرف في البحث فالـ back يبقى ١٠٠ خطوة (استخدم replaceState).`
+          },
+          teach: R`## الفكرة في سطر
+
+راوتر SPA كامل في 17 سطر: لما اليوزر يدوس لينك، بنمنع التحميل، ونغيّر الـ URL بإيدنا، ونرسم المحتوى المناسب. ولما يدوس back أو forward، نرسم حسب الـ URL الجديد.
+
+جرّبته في Chrome headless (عن طريق playwright-core) على [[index.html]] فيه ٤ لينكات عليها [[data-link]] ([[/]] و [[/about]] و [[/contact]] و [[/nope]]) و [[<main id="content">]]. بدل [[npx serve -s]] استخدمت سيرفر Node صغير على localhost بنفس السلوك: مرة بيرجّع [[index.html]] لأي path (زي [[-s]])، ومرة بيرجّعه لـ [[/]] بس و 404 لأي حاجة تانية (زي [[serve]] من غير [[-s]]).
+
+---
+
+## ١. الصفحات والرسم
+
+~~~text app.js
+const content = document.querySelector("#content");
+const pages = { "/": "الرئيسية", "/about": "عننا", "/contact": "كلمنا" };
+function render(path) {
+  content.textContent = pages[path] ?? "404: الصفحة مش موجودة";
+  document.title = pages[path] ?? "مش موجود";
+}
+~~~
+
+- [[pages]]: object كل key فيه path وكل value المحتوى بتاعه. في مشروع حقيقي الـ value بتبقى دالة بترسم component.
+- [[pages[path]]]: الأقواس المربعة بتجيب الخاصية اللي اسمها في متغير. [[pages["/about"]]] = [["عننا"]]، و [[pages["/nope"]]] = [[undefined]].
+- [[?? "404: ..."]]: لو [[undefined]] خد النص ده.
+- [[document.title]]: العنوان اللي في التاب. لازم نغيّره بإيدنا، المتصفح مش هيعمل كده لوحده.
+
+---
+
+## ٢. اعتراض الضغط على اللينكات
+
+~~~text app.js
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("a[data-link]");
+  if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
+  e.preventDefault();
+  const path = new URL(a.href).pathname;
+  if (path === location.pathname) return;
+  history.pushState({ path }, "", path);
+  render(path);
+});
+~~~
+
+### listener واحد على الـ document
+
+بدل listener على كل لينك، واحد على [[document]] بيمسك أي ضغطة في الصفحة (event delegation، درس في نفس التاب). كده لو ضفت لينكات بعدين هتشتغل لوحدها.
+
+### [[e.target.closest("a[data-link]")]]
+
+- [[e.target]]: العنصر اللي اتضغط عليه بالظبط (ممكن [[<span>]] أو أيقونة جوه اللينك).
+- [[closest(selector)]]: اطلع من العنصر ده لفوق (هو نفسه، وأبوه، وجدّه...) ورجّع أول واحد بيطابق الـ selector، أو [[null]].
+- [[a[data-link]]]: لينك [[<a>]] عليه attribute اسمه [[data-link]]. اللينكات من غيره (موقع خارجي، ملف للتحميل) بتفضل عادية.
+
+### الشرط الطويل
+
+[[return]] (سيب المتصفح يتصرف عادي) لو أي واحدة من دول صح، و [[||]] يعني «أو»:
+
+| الشرط | معناه |
+|---|---|
+| [[!a]] | مش لينك من بتوعنا |
+| [[e.button !== 0]] | مش الزرار الشمال (0 الشمال، 1 العجلة، 2 اليمين) |
+| [[e.metaKey]] | Cmd على الماك ماسك (تاب جديد) |
+| [[e.ctrlKey]] | Ctrl ماسك (تاب جديد) |
+| [[e.shiftKey]] | Shift ماسك (شباك جديد) |
+
+### الباقي
+
+1. [[e.preventDefault()]]: امنع المتصفح يحمّل الصفحة من السيرفر.
+2. [[new URL(a.href).pathname]]: [[a.href]] بيرجّع الـ URL **كامل** ([[http://localhost:PORT/about]]) حتى لو مكتوب في الـ HTML [[/about]]. [[new URL]] بيفكّه، و [[.pathname]] الجزء بتاع المسار بس: [["/about"]].
+3. [[path === location.pathname]]: [[location.pathname]] المسار الحالي. لو نفس الصفحة اخرج، عشان منضيفش خطوة في الـ history على الفاضي.
+4. [[history.pushState({ path }, "", path)]]: غيّر الـ URL وضيف خطوة في الـ history (تحت تفصيل الـ arguments).
+5. [[render(path)]]: [[pushState]] بيغيّر الـ URL **بس**، ومش بيطلق أي event ولا بيرسم حاجة، فبنرسم بإيدنا.
+
+| الـ argument | معناه |
+|---|---|
+| [[{ path }]] | الـ state: object بيتحفظ مع الخطوة دي ويرجعلك وقت back. وهو اختصار [[{ path: path }]] |
+| [[""]] | مكان قديم لعنوان، المتصفحات بتتجاهله |
+| [[path]] | الـ URL الجديد اللي هيظهر في الشريط |
+
+---
+
+## ٣. back و forward: [[popstate]]
+
+~~~text app.js
+window.addEventListener("popstate", () => render(location.pathname));
+render(location.pathname);
+~~~
+
+- [[popstate]]: بيتنادى لما اليوزر يتنقّل في الـ history بـ back أو forward. وقتها [[location.pathname]] بقى الـ path الجديد، فبنرسمه. (والـ state اللي حفظناه في [[e.state]].)
+- آخر سطر: ارسم أول مرة حسب الـ URL اللي الصفحة فتحت عليه. من غيره، refresh على [[/about]] يعرض [[<main>]] فاضي.
+
+---
+
+## ٤. اللي حصل لما شغّلته (السيرفر بيرجّع index.html لأي path)
+
+ضفت [[console.log]] في popstate يطبع الـ path والـ state:
+
+~~~text الناتج
+load /             → url=/        content=الرئيسية  history.length=2
+click about        → url=/about   content=عننا      history.length=3
+click about again  → url=/about   content=عننا      history.length=3
+click contact      → url=/contact content=كلمنا     history.length=4
+click nope         → url=/nope    content=404: الصفحة مش موجودة  history.length=5
+popstate /contact {"path":"/contact"}
+back               → url=/contact content=كلمنا
+popstate /about {"path":"/about"}
+back               → url=/about   content=عننا
+popstate /contact {"path":"/contact"}
+forward            → url=/contact content=كلمنا
+~~~
+
+- [[history.length]] (عدد الخطوات في الـ history) بدأ 2 لأن التاب كان فاتح [[about:blank]] الأول، وزاد واحد مع كل [[pushState]].
+- الضغط على about وانت في about: [[history.length]] فضل 3، بسبب سطر [[path === location.pathname]].
+- [[/nope]] مش في [[pages]] فاتعرض نص الـ 404 والعنوان [[مش موجود]].
+- back و forward بيطلقوا [[popstate]]، والـ state رجع زي ما حفظناه.
+- السيرفر مجالوش ولا طلب صفحة طول التنقل ده (غير [[favicon.ico]] اللي المتصفح بيطلبه لأيقونة التاب).
+
+### refresh على [[/about]] و Ctrl+Click
+
+| | السيرفر بيرجّع index.html لأي path | السيرفر بيرجّع 404 |
+|---|---|---|
+| refresh على [[/about]] | status 200، والمحتوى «عننا» | status 404، ولا [[#content]] ولا JS |
+| Ctrl+Click على about | تاب جديد اتفتح وطلب [[/about]] من السيرفر، والتاب الأصلي فضل مكانه | نفس الكلام، بس التاب الجديد 404 |
+
+ليه؟ في الـ refresh المتصفح بيطلب [[/about]] من السيرفر **فعلًا**. لو السيرفر مش عارف إن ده مسار في الـ SPA بيرد 404، والـ JS بتاعك مبيوصلش أصلًا. الحل في السيرفر (fallback لـ index.html)، مش في الـ JS. و Ctrl+Click اتساب للمتصفح بسبب [[e.ctrlKey]]، فاتفتح تاب جديد عادي.
+
+---
+
+## الخلاصة
+
+| الحاجة | بتعمل إيه | بتطلق event؟ |
+|---|---|---|
+| [[history.pushState(state, "", url)]] | تغيّر الـ URL وتضيف خطوة | لأ، ارسم بإيدك |
+| [[history.replaceState(state, "", url)]] | تغيّر الـ URL من غير خطوة جديدة | لأ |
+| back / forward | اليوزر اتنقل | [[popstate]] |
+| [[location.pathname]] | المسار الحالي | |
+
+- اعترض بس الضغطة الشمال من غير Ctrl/Cmd/Shift، على لينكات [[data-link]].
+- ارسم مرة في الأول بـ [[render(location.pathname)]].
+- السيرفر لازم يرجّع [[index.html]] لأي path من بتاع الـ SPA.`,
+          lines: [
+            R`العنصر اللي هنحط فيه محتوى كل «صفحة». الصفحة نفسها مش هتتحمّل تاني، احنا اللي هنغيّر اللي جوه العنصر ده.`,
+            R`object بيربط كل path بمحتواه. في تطبيق حقيقي القيمة هتبقى دالة بترسم الصفحة، بس الفكرة واحدة: الـ URL مفتاح بنختار بيه نرسم إيه.`,
+            R`دالة بترسم الصفحة المناسبة للـ path. هي المكان الوحيد اللي بيرسم، فكل الطرق (ضغطة لينك، back، أول تحميل) بتعدّي عليها.`,
+            R`بنحط المحتوى بـ [[textContent]]، ولو الـ path مش موجود في [[pages]] الـ [[??]] بتحط رسالة 404 بدل [[undefined]].`,
+            R`ونغيّر عنوان التاب كمان، لأن مفيش تحميل صفحة جديد هيغيّره لوحده، وده اللي بيظهر في الـ history والـ bookmarks.`,
+            R`نهاية [[render]].`,
+            R`listener واحد على الـ [[document]] كله بدل listener على كل لينك (event delegation): الضغطة بتطلع لفوق (bubbling) لحد الـ document، فحتى اللينكات اللي هتتضاف بعدين هتشتغل من غير ما تسجّلها.`,
+            R`[[closest]] بيدوّر من العنصر اللي اتضغط ولفوق على أقرب [[<a>]] عليه [[data-link]]. محتاجينها لأن الضغطة ممكن تكون على أيقونة أو [[<span>]] جوه اللينك، و [[data-link]] بتفرّق اللينكات الداخلية عن اللي رايحة لموقع تاني.`,
+            R`نسيب المتصفح يتصرف عادي لو مش لينك داخلي، أو مش الزرار الشمال ([[e.button !== 0]])، أو اليوزر داس Ctrl أو Cmd أو Shift: دول معناهم «افتح في تاب أو نافذة جديدة»، ولو منعناهم هنكسر حاجة اليوزر متعوّد عليها.`,
+            R`نمنع المتصفح يروح للينك ويحمّل الصفحة من السيرفر، احنا اللي هنرسم.`,
+            R`[[a.href]] كـ property بيرجّع الـ URL كامل حتى لو الـ HTML فيه [[/about]] بس، فبنعدّيه على [[new URL]] وناخد [[pathname]] لوحده.`,
+            R`لو اليوزر داس على لينك الصفحة اللي هو فيها، منضيفش خطوة جديدة في الـ history، وإلا زرار back هيحتاج كذا ضغطة عشان يرجع.`,
+            R`[[pushState]] بيغيّر الـ URL في شريط العنوان ويضيف خطوة في الـ history من غير ما يحمّل حاجة. الأول (state) بيتحفظ مع الخطوة دي، والتاني مش مستخدم فبيتساب [[""]]، والتالت هو الـ URL الجديد.`,
+            R`[[pushState]] مش بيرسم ولا بيطلق أي حدث، فلازم ننادي [[render]] بنفسنا. لو نسيت السطر ده، الـ URL هيتغير والصفحة زي ما هي.`,
+            R`نهاية الـ click listener.`,
+            R`[[popstate]] بيحصل لما اليوزر يدوس back أو forward، والمتصفح بيكون غيّر الـ URL خلاص، فبنرسم حسب [[location.pathname]] الجديد. ومش بيحصل مع [[pushState]] نفسها.`,
+            R`أول ما الصفحة تفتح بنرسم الـ path الحالي، عشان لو اليوزر فتح [[/about]] مباشرة أو عمل refresh يشوف الصفحة الصح. وده محتاج السيرفر يرجّع نفس الـ [[index.html]] لأي path، وإلا الـ refresh هيدّي 404 من السيرفر.`,
+          ],
+          sol: R`مع [[serve -s]]: التنقل من غير تحميل (Network مفيهاش طلبات HTML جديدة)، و back/forward بيغيّروا المحتوى والعنوان، و refresh على [[/about]] بيرجّع «عننا» لأن السيرفر رجّع index.html والسطر الأخير رسم الـ path.
+
+من غير [[-s]]: refresh على [[/about]] بيطلع 404 من السيرفر نفسه، والـ JS بتاعك مشتغلش أصلًا. ده أشهر bug بعد نشر SPA، والحل في السيرفر مش في الـ JS.
+
+Ctrl+Click بيفتح تاب جديد عادي لأن الشرط سابه للمتصفح، والتاب الجديد بيطلب [[/about]] من السيرفر (فمحتاج [[-s]] برضه).`
+        },
+        {
+          cmd: "MutationObserver",
+          title: "تعرف إن الـ DOM اتغيّر (عنصر اتضاف أو اتشال، أو attribute اتغيّر) إزاي؟",
+          desc: R`[[MutationObserver]] بيناديك لما حاجة تتغيّر في الـ DOM: عنصر اتضاف أو اتشال ([[childList]])، أو attribute اتغيّر ([[attributes]])، أو نص اتعدّل ([[characterData]]). بتديله callback، وبعدين [[observe(el, options)]] بتقوله يراقب إيه بالظبط.
+
+التغييرات مش بتوصلك واحدة واحدة وقت ما تحصل: المتصفح بيجمّعها في array ويناديك مرة واحدة كـ **microtask** بعد ما الكود اللي شغّال يخلص. ده نفس عيلة [[IntersectionObserver]] و [[ResizeObserver]] (الدرسين الأولانيين في الوحدة دي)، بس بيراقب **شكل الشجرة** مش الشاشة ولا المقاس.
+
+بتستخدمه لما مش انت اللي بتغيّر الـ DOM: widget من بره بيحط عناصر، أو مكتبة قديمة، أو extension، أو محتوى بييجي من السيرفر وعايز تعمله حاجة أول ما يظهر. لو انت اللي بتضيف العنصر بإيدك، اعمل اللي عايزه في نفس السطر من غير observer.`,
+          example: R`const chat = document.querySelector("#chat");
+const mo = new MutationObserver((records) => {
+  console.log("records:", records.length);
+  for (const r of records) {
+    if (r.type === "childList") console.log("childList +" + r.addedNodes.length, "-" + r.removedNodes.length);
+    else console.log(r.attributeName, r.oldValue, "→", r.target.getAttribute(r.attributeName));
+  }
+});
+mo.observe(chat, { childList: true, subtree: true, attributeFilter: ["data-state"], attributeOldValue: true });
+const msg = document.createElement("li");
+msg.textContent = "أهلًا";
+chat.append(msg);
+chat.dataset.state = "busy";
+chat.dataset.state = "idle";
+chat.title = "مش متراقب";
+msg.remove();
+console.log("الكود خلص");
+// استخدام حقيقي: الشات ينزل لآخر رسالة لوحده
+new MutationObserver(() => { chat.scrollTop = chat.scrollHeight; }).observe(chat, { childList: true });`,
+          try: R`اعمل صفحة فيها [[<ul id="chat">]] و [[<script>]] بالمثال، وافتح الـ Console. اتوقع الأول: «الكود خلص» هتتطبع قبل ولا بعد [[records: 4]]؟ وبعدين ضيف [[mo.disconnect()]] كآخر سطر في الـ script وشوف الـ callback لسه بيتنادى ولا لأ، وصلّحها بـ [[mo.takeRecords()]] قبل الـ disconnect.`,
+          practice: [
+            { lvl: 'سريع', t: R`اقرا وتوقّع: [[observe(el, { attributes: true })]] وبعدين [[el.className = "a"; el.className = "b"; el.className = "b";]] في نفس الكود. الـ callback هيتنادى كام مرة؟ وكام record؟ وإيه [[oldValue]] في كل واحد لو ضفت [[attributeOldValue: true]]؟ اكتب توقعك وبعدين شغّله.`, done: R`الـ callback اتنادى **مرة واحدة** بـ ٣ records (حتى التالت اللي مغيّرش القيمة اتسجّل)، و [[oldValue]] بالترتيب [[null]] و [["a"]] و [["b"]]، وتقدر تشرح ليه مرة واحدة: الـ records بتتجمّع وتتبعت كـ microtask بعد ما الكود يخلص.` },
+            { lvl: 'تطبيق', t: R`ابني «عدّاد غير مقروء»: [[<ul id="inbox">]] فيه رسايل [[<li data-read="false">]]، وزرار بيضيف رسالة جديدة، وضغطة على رسالة بتخلّي [[data-read="true"]]. العدّاد في العنوان ([[document.title = "(3) البريد"]]) بيتحسب من MutationObserver واحد بس، مش من كود الزرار ولا كود الضغطة.`, done: R`إضافة رسالة بتزوّد الرقم، وقراية رسالة بتنقّصه، و [[inbox.innerHTML = ""]] من الـ Console بيخلّي العنوان [[البريد]] من غير رقم، والـ observer عليه [[attributeFilter: ["data-read"]]] و [[subtree: true]]، والعدّ بيحصل مرة واحدة لكل دفعة تغييرات مش لكل record.` },
+            { lvl: 'تحدي', t: R`صلّح الكود البايظ: observer على [[document.body]] بـ [[{ childList: true, subtree: true }]] بيضيف [[<span class="badge">جديد</span>]] جوه أي [[li]] جديد. شغّله وشوف الصفحة بتعلّق، واعرف ليه، وصلّحه من غير ما تشيل الـ subtree.`, done: R`عرفت إن إضافة الـ badge نفسها mutation جديدة فالـ callback بينادي نفسه للأبد (ومن غير ما الصفحة ترسم، لأنه microtask)، وصلّحته بإنك تتجاهل العناصر اللي عليها الـ badge أو تعمل [[disconnect]] وتضيف وتعمل [[observe]] تاني، وإضافة ١٠٠ [[li]] بتطلّع ١٠٠ badge بالظبط والصفحة مبتعلّقش.` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`قبل MutationObserver كان فيه Mutation Events ([[DOMNodeInserted]] وأخواتها) وكانت بتتنادى **جوه** كل تغيير، فالصفحة كانت بتبطأ جدًا، واتشالت من Chrome خالص (من الـ docs: اتشالت في Chrome 127 سنة 2024). الحل الجديد بيجمّع التغييرات ويبعتها مرة واحدة بعد ما الكود يخلص، فمش بيقاطع شغلك.`,
+            how: R`كل observer ليه طابور records. أي تغيير متراقب بيضيف record، وأول record بيحجز microtask واحدة. لما الكود الحالي يخلص (قبل أي [[setTimeout]] وقبل الرسم)، المتصفح بيدّي الـ callback كل الـ records مرة واحدة. عشان كده «الكود خلص» بتطلع الأول.
+
+الـ options: [[childList]] للأولاد المباشرين، و [[subtree]] يمدّها لكل الأحفاد، و [[attributes]] أو [[attributeFilter: [...]]] (الفلتر لوحده بيشغّل الـ attributes)، و [[characterData]] لنص الـ text nodes، و [[attributeOldValue]] و [[characterDataOldValue]] عشان تاخد القيمة القديمة. لازم واحد على الأقل من التلاتة الأولانيين وإلا [[TypeError]].
+
+[[disconnect()]] بيوقّف كل حاجة **وبيرمي** الـ records اللي لسه موصلتش، و [[takeRecords()]] بيرجّعهم ليك ويفضّي الطابور.`,
+            when: R`widget من بره (chat أو إعلانات أو تعليقات) بيضيف عناصر وعايز تظبطها، و auto-scroll لشات، و تفعيل حاجة على أي عنصر جديد بـ class معين (زي tooltips)، و تستات بتستنى عنصر يظهر، و extensions. ومش لحاجة انت اللي بتعملها بإيدك: نادي الدالة في نفس المكان.`,
+            mistakes: R`تعدّل نفس الجزء المتراقب جوه الـ callback فيبقى loop بيعلّق الصفحة. و [[subtree: true]] على [[document.body]] في صفحة كبيرة من غير فلتر فالـ callback بيشتغل على كل حاجة. و [[disconnect()]] من غير [[takeRecords()]] فتضيع آخر التغييرات. وتفتكر إن [[r.target.getAttribute(...)]] هي القيمة وقت التغيير: هي القيمة **دلوقتي**، والقديمة في [[oldValue]] بس. وتنسى إن [[textContent = "..."]] بيبدّل الـ text node (childList) مش characterData.`
+          },
+          teach: R`## الفكرة في سطر
+
+بتقول للمتصفح «لو حاجة اتغيرت جوه العنصر ده، ابعتلي لستة باللي حصل». المثال بيراقب شات: رسالة بتتضاف وتتشال، و [[data-state]] بيتغير مرتين، و [[title]] بيتغير بس مش متراقب.
+
+شغّلت المثال في Chrome 156 headless (عن طريق playwright-core) وفي jsdom 30، والناتج طلع واحد بالحرف.
+
+---
+
+## ١. الـ observer والـ callback
+
+~~~text app.js
+const mo = new MutationObserver((records) => {
+  console.log("records:", records.length);
+  for (const r of records) { ... }
+});
+~~~
+
+- [[new MutationObserver(callback)]]: بتعمل مراقب. لسه مبيراقبش حاجة لحد ما تنادي [[observe]].
+- [[records]]: array من [[MutationRecord]]، record لكل تغيير حصل من آخر مرة اتنادى فيها.
+- [[r.type]]: نوع التغيير، واحد من تلاتة: [["childList"]] (أولاد اتضافوا أو اتشالوا)، أو [["attributes"]]، أو [["characterData"]] (نص اتعدّل).
+- [[r.addedNodes]] و [[r.removedNodes]]: الـ nodes اللي اتضافت واللي اتشالت (NodeList، فبنستخدم [[.length]]).
+- [[r.attributeName]]: اسم الـ attribute اللي اتغير، و [[r.oldValue]] قيمته **قبل** التغيير، و [[r.target]] العنصر اللي اتغير.
+
+## ٢. [[observe]]: تراقب إيه بالظبط
+
+~~~text app.js
+mo.observe(chat, { childList: true, subtree: true, attributeFilter: ["data-state"], attributeOldValue: true });
+~~~
+
+| الـ option | معناه |
+|---|---|
+| [[childList: true]] | أولاد [[chat]] المباشرين لما يتضافوا أو يتشالوا |
+| [[subtree: true]] | نفس الكلام على كل الأحفاد كمان، مش الأولاد المباشرين بس |
+| [[attributeFilter: ["data-state"]]] | راقب الـ attributes دي بس، وأي attribute تاني (زي [[title]]) يتجاهل |
+| [[attributeOldValue: true]] | سجّل القيمة القديمة في [[r.oldValue]]، من غيرها بتبقى [[null]] |
+| [[characterData: true]] | تعديل نص جوه text node (مع [[subtree]] عشان توصل للنص اللي جوه العنصر) |
+
+جرّبت [[attributeFilter]] لوحده من غير [[attributes: true]]: شغّال، لأن الفلتر بيشغّل الـ attributes لوحده. وجرّبت [[observe(chat, {})]]:
+
+~~~text الناتج (Chrome)
+TypeError: Failed to execute 'observe' on 'MutationObserver': The options object must set at least one of 'attributes', 'characterData', or 'childList' to true.
+~~~
+
+ونفس الرسالة لو نسيت الـ options خالص. ولو العنصر مش موجود ([[querySelector]] رجّع [[null]]):
+
+~~~text الناتج (Chrome)
+TypeError: Failed to execute 'observe' on 'MutationObserver': parameter 1 is not of type 'Node'.
+~~~
+
+## ٣. التغييرات والناتج
+
+~~~text app.js
+const msg = document.createElement("li");
+msg.textContent = "أهلًا";
+chat.append(msg);
+chat.dataset.state = "busy";
+chat.dataset.state = "idle";
+chat.title = "مش متراقب";
+msg.remove();
+console.log("الكود خلص");
+~~~
+
+~~~text الناتج (Chrome 156 و jsdom)
+الكود خلص
+records: 4
+childList +1 -0
+data-state null → idle
+data-state busy → idle
+childList +0 -1
+~~~
+
+خمس حاجات تتعلمها من الناتج ده:
+
+1. **«الكود خلص» طلعت الأول.** الـ callback مش بيتنادى جوه [[append]]، بيتنادى بعد ما الـ script كله يخلص، كـ microtask (درس «microtasks و macrotasks»).
+2. **مرة واحدة بـ 4 records**، مش ٤ مرات. المتصفح جمّعهم.
+3. **[[msg.textContent = "أهلًا"]] مااتسجّلش**: ساعتها [[msg]] كان لسه برّه [[chat]]، والـ observer بيشوف اللي جوه بس.
+4. **[[title]] مااتسجّلش** بسبب [[attributeFilter]].
+5. **السطرين بتوع [[data-state]] بيقولوا [[→ idle]] الاتنين.** [[r.oldValue]] صح لكل record ([[null]] وبعدين [[busy]])، بس [[r.target.getAttribute(...)]] بيقرا القيمة **دلوقتي** وقت الـ callback، وهي [[idle]]. لو عايز القيمة الجديدة لكل خطوة، هي الـ [[oldValue]] بتاع الـ record اللي بعده.
+
+## ٤. الاستخدام الحقيقي: auto-scroll
+
+~~~text app.js
+new MutationObserver(() => { chat.scrollTop = chat.scrollHeight; }).observe(chat, { childList: true });
+~~~
+
+- [[chat.scrollHeight]]: طول المحتوى كله جوه الـ [[ul]]، حتى الجزء المستخبي.
+- [[chat.scrollTop = ...]]: انزل لحد كده، يعني آخر رسالة.
+- مش فارق مين اللي ضاف الرسالة (WebSocket، أو مكتبة، أو انت): الشات بينزل لوحده. جرّبت ٥ رسايل ورا بعض في [[ul]] طوله 40px: الـ callback اتنادى مرة واحدة، و [[scrollTop]] بقى 104 وده بالظبط [[scrollHeight - clientHeight]] (يعني تحت خالص).
+
+## ٥. [[disconnect]] و [[takeRecords]]
+
+جرّبت أضيف عنصر وبعدين [[mo.disconnect()]] على طول في نفس الكود: الـ callback **عمره ما اتنادى**. الـ disconnect بيرمي أي records لسه في الطابور. لو محتاجهم:
+
+~~~text app.js
+const pending = mo.takeRecords();
+mo.disconnect();
+console.log(pending.length, pending[0].type);
+~~~
+
+~~~text الناتج (Chrome، بعد إضافة عنصرين)
+2 childList
+~~~
+
+## ٦. الفخ: الـ callback بيغيّر اللي بيراقبه
+
+لو الـ callback ضاف عنصر جوه نفس الـ [[chat]]، ده تغيير جديد، فيتنادى تاني، ويضيف تاني... جرّبتها بعدّاد بيقف عند 1000: الـ callback اتنادى 1000 مرة و [[setTimeout(..., 0)]] اللي كان مستني اتنفّذ **بعدهم كلهم**. يعني من غير العدّاد الصفحة كانت هتعلّق ومش هترسم أبدًا، لأن الـ microtasks بتخلص كلها قبل أي رسم.
+
+الحل: اتجاهل التغييرات اللي انت عملتها (فحص زي [[if (el.querySelector(".badge")) continue]])، أو [[disconnect]] وعدّل وبعدين [[observe]] تاني.
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| [[new MutationObserver(cb)]] و [[observe(el, opts)]] | ابعتلي لستة بالتغييرات اللي حصلت جوه el |
+| [[childList]] و [[subtree]] | عناصر اتضافت أو اتشالت، في الأولاد بس أو في الشجرة كلها |
+| [[attributeFilter]] و [[attributeOldValue]] | attributes معينة بس، ومعاها قيمتها القديمة |
+| [[characterData]] | نص اتعدّل جوه text node موجود |
+| [[takeRecords()]] | هات اللي في الطابور دلوقتي وفضّيه |
+| [[disconnect()]] | وقّف المراقبة وارمي اللي لسه موصلش |
+
+- الـ callback microtask: بيتنادى مرة واحدة بعد ما الكود يخلص، وقبل الـ timers والرسم.
+- [[getAttribute]] جوه الـ callback = القيمة دلوقتي، والقديمة في [[oldValue]].
+- متغيّرش اللي بتراقبه جوه الـ callback من غير شرط يوقف.`,
+          lines: [
+            R`العنصر اللي هنراقبه: لستة رسايل الشات. لازم يكون موجود في الصفحة قبل السطر ده، وإلا [[querySelector]] هيرجّع [[null]] و [[observe]] هيرمي TypeError.`,
+            R`بنعمل المراقب ونديله callback. الـ callback بياخد [[records]]: array فيها record لكل تغيير حصل من آخر مرة اتنادى، مش تغيير واحد.`,
+            R`بنطبع عدد التغييرات في الدفعة دي، عشان نشوف بعينينا إن المتصفح جمّعهم ونادانا مرة واحدة بس.`,
+            R`بنلف على كل record. كل واحد فيه [[type]] و [[target]] وحاجات تانية حسب النوع.`,
+            R`لو النوع [["childList"]] يبقى عناصر اتضافت أو اتشالت: [[addedNodes]] و [[removedNodes]] لستتين بالـ nodes، وبنطبع عددهم.`,
+            R`غير كده هنا يبقى [["attributes"]]: بنطبع اسم الـ attribute وقيمته القديمة ([[oldValue]]) والقيمة **الحالية** من [[getAttribute]]. والحالية دي وقت الـ callback مش وقت التغيير، عشان كده الاتنين هيطلعوا [[idle]].`,
+            R`نهاية الـ [[for]].`,
+            R`نهاية الـ callback والـ [[MutationObserver]].`,
+            R`نبدأ نراقب [[chat]]: الأولاد اللي بيتضافوا أو بيتشالوا ([[childList]]) في كل الشجرة ([[subtree]])، والـ attribute [[data-state]] بس ([[attributeFilter]])، ومعاه القيمة القديمة ([[attributeOldValue]]).`,
+            R`بنعمل [[li]] جديد. لسه في الذاكرة بس، مش في الصفحة.`,
+            R`بنحط فيه نص. التغيير ده مش هيتسجّل، لأن [[msg]] لسه برّه [[chat]] اللي بنراقبه.`,
+            R`بنضيفه في آخر [[chat]]: أول record من نوع [[childList]] فيه [[addedNodes]] بعنصر واحد.`,
+            R`[[dataset.state]] بيكتب الـ attribute [[data-state="busy"]]: record من نوع [[attributes]] و [[oldValue]] بتاعه [[null]] لأنه مكانش موجود.`,
+            R`تغيير تاني لنفس الـ attribute: record تالت، و [[oldValue]] بتاعه [[busy]].`,
+            R`تغيير [[title]]: مش هيتسجّل خالص، لأن [[attributeFilter]] فيه [[data-state]] بس.`,
+            R`بنشيل الرسالة: record رابع من نوع [[childList]] فيه [[removedNodes]] بعنصر واحد.`,
+            R`السطر ده بيطلع **قبل** [[records: 4]]، لأن الـ callback microtask بيستنى الكود اللي شغّال يخلص.`,
+            R`observer تاني صغير بيعمل حاجة حقيقية: كل ما رسالة تتضاف، بينزّل الشات لآخره بإنه يخلّي [[scrollTop]] قد [[scrollHeight]]. مش فارق مين ضاف الرسالة، ومش محتاج تفتكر تنادي دالة scroll في كل مكان بيضيف رسايل.`,
+          ],
+          sol: R`«الكود خلص» بتطلع الأول، وبعدها [[records: 4]] والأربع سطور: [[childList +1 -0]]، و [[data-state null → idle]]، و [[data-state busy → idle]]، و [[childList +0 -1]] (اتجرّب في Chrome 156 و jsdom 30).
+
+لما تضيف [[mo.disconnect()]] كآخر سطر، الـ callback مبيتناداش خالص: الـ disconnect رمى الأربع records اللي كانوا مستنيين الـ microtask. التصليح: [[const pending = mo.takeRecords(); mo.disconnect();]] وبعدين لف على [[pending]] بنفسك، وهتلاقي فيها نفس الأربعة.`
+        },
+        {
+          cmd: "Notification و permissions",
+          title: "تبعت إشعار للنظام، وتسأل عن الإذن الأول من غير ما تزعج اليوزر",
+          desc: R`[[Notification]] بيطلّع إشعار من النظام نفسه (الركن بتاع ويندوز أو ماك أو أندرويد)، حتى لو التاب مش قدامك. بس لازم اليوزر يوافق الأول: [[Notification.requestPermission()]] بتطلّع سؤال المتصفح، وبترجّع [["granted"]] أو [["denied"]] أو [["default"]] (قفل السؤال من غير ما يختار).
+
+و [[navigator.permissions.query({ name })]] (اسمها Permissions API) بتقولك حالة أي إذن **من غير ما تسأل**: [["granted"]] أو [["denied"]] أو [["prompt"]]، وبتدّيك [[onchange]] لو اتغيّرت. دي نفس الطريقة اللي بتسأل بيها عن الكاميرا والموقع والـ clipboard (الـ Clipboard والـ Share ليهم درس لوحدهم في التاب ده: «Clipboard و Geolocation و Share»).
+
+القاعدة الذهبية: متسألش أول ما الصفحة تفتح. اسأل بعد ضغطة على زرار اليوزر فاهم هو بيعمل إيه. و [["denied"]] مبيتغيّرش من الكود أبدًا: اليوزر بس يغيّره من إعدادات الموقع.`,
+          example: R`const btn = document.querySelector("#notify");
+const status = await navigator.permissions.query({ name: "notifications" });
+console.log("الحالة:", status.state, "| Notification.permission:", Notification.permission);
+status.onchange = () => console.log("اتغيرت لـ", status.state);
+btn.addEventListener("click", async () => {
+  if (!("Notification" in window)) return console.log("المتصفح مبيدعمش");
+  if (Notification.permission === "denied") return console.log("اترفض قبل كده: من إعدادات الموقع بس");
+  const result = await Notification.requestPermission();
+  console.log("الرد:", result);
+  if (result !== "granted") return;
+  const n = new Notification("طلب جديد", { body: "رقم 42", tag: "order-42", icon: "/icon-192.png" });
+  n.onshow = () => console.log("ظهر:", n.title, n.body, n.tag);
+  n.onclick = () => { window.focus(); n.close(); };
+});`,
+          try: R`حط المثال في [[<script type="module">]] (عشان الـ [[await]] اللي برّه أي دالة) مع [[<button id="notify">]]، وافتحه من [[http://localhost]] (بـ [[npx serve]] مثلًا)، لأن الـ service worker في درس الـ push مش هيشتغل غير كده. دوس الزرار ووافق، وبعدين من القفل اللي جنب العنوان ← Site settings ← Notifications خليها Block، وارجع الصفحة ودوس تاني. وجرّب كمان تبعت نفس الإشعار مرتين بنفس الـ [[tag]] وشوف بيظهروا كام واحد.`,
+          practice: [
+            { lvl: 'سريع', t: R`دوّر بنفسك: من MDN (صفحة [[Permissions.query()]] وصفحة [[Notification.requestPermission()]])، إيه الفرق بين [["prompt"]] و [["default"]]؟ وإيه اللي بيحصل لو ناديت [[requestPermission()]] من غير ضغطة من اليوزر في Firefox و Safari؟`, done: R`كتبت إن الاتنين معناهم «لسه مسألناش» بس [["prompt"]] اسمها في Permissions API و [["default"]] في [[Notification.permission]]، وإن Firefox و Safari بيطلبوا user gesture (ضغطة) وإلا السؤال مبيظهرش، ومعاك لينك الصفحتين.` },
+            { lvl: 'تطبيق', t: R`ابني زرار «فعّل الإشعارات» بـ ٣ أشكال حسب الحالة: [["prompt"]] زرار عادي، و [["granted"]] علامة ✓ «الإشعارات شغالة»، و [["denied"]] رسالة بتقول «اتقفلت من إعدادات الموقع» من غير زرار. والشكل بيتغير لوحده بـ [[status.onchange]] لو اليوزر غيّر الإعدادات والصفحة مفتوحة.`, done: R`كل حالة من التلاتة بتطلّع شكلها، وتغيير الإذن من القفل اللي جنب العنوان بيقلب الشكل من غير refresh، وفي حالة [["denied"]] مفيش أي نداء لـ [[requestPermission]] (اتأكد بـ [[console.log]] جواها).` },
+            { lvl: 'تحدي', t: R`محاكاة: «مؤقّت بومودورو» بيبعت إشعار بعد ٢٥ دقيقة (خليها ١٠ ثواني وانت بتجرّب)، بس **لو التاب مستخبي بس** ([[document.hidden]] من درس «visibilitychange و bfcache»)، ولو التاب قدامك يطلّع رسالة جوه الصفحة بدل الإشعار. والإشعار بـ [[tag: "pomodoro"]] عشان ميتكوّموش، والضغط عليه يرجّعك للتاب.`, done: R`وانت في التاب مفيش إشعار نظام وفيه رسالة في الصفحة، ولو بدّلت لتاب تاني بيظهر إشعار واحد، وتشغيل المؤقت مرتين ورا بعض بيسيب إشعار واحد بس في مركز الإشعارات (نفس الـ [[tag]] بيبدّل القديم)، والضغط عليه بيجيب التاب قدام.` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`الإشعار أقوى طريقة توصل بيها لليوزر وهو مش بيبص على موقعك، وعشان كده أكتر حاجة بتتساء استخدامها. المتصفحات بقت بتخبّي السؤال لو المواقع بتسأل كتير من غير سبب (Chrome بيعمله «quiet UI» جنب العنوان)، واليوزر اللي داس Block مش هيرجع. فالسؤال في الوقت الغلط ممكن يخسّرك الإذن للأبد.`,
+            how: R`[[Notification.permission]] قيمة متزامنة بتقرا الحالة دلوقتي. و [[requestPermission()]] بترجّع Promise: لو الحالة [["default"]] بتطلّع السؤال، ولو [["granted"]] أو [["denied"]] بترجّع على طول من غير سؤال (جرّبتها: في [["denied"]] الكود وقف عند الشرط قبل ما يسأل أصلًا).
+
+[[new Notification(title, options)]] بيطلّع الإشعار على طول. أهم الـ options: [[body]] النص، و [[icon]]، و [[tag]] (إشعار جديد بنفس الـ tag بيبدّل القديم بدل ما يتكوّموا)، و [[data]] أي داتا تحتاجها في الضغطة.
+
+[[navigator.permissions.query]] بتاخد [[{ name }]] من لستة أسامي ثابتة ([["notifications"]] و [["geolocation"]] و [["camera"]] و [["clipboard-read"]]...)، واسم غلط بيرمي [[TypeError]]، وبترجّع [[PermissionStatus]] فيه [[state]] و [[onchange]].
+
+الإشعار ده بيشتغل والصفحة مفتوحة بس. عشان يوصل والموقع مقفول محتاج Push API و service worker (درس «push و Background Sync» في وحدة PWA)، وهناك بيبقى [[registration.showNotification]] مش [[new Notification]].`,
+            when: R`حاجة اليوزر طلبها بنفسه ومهمة له وهو مش في التاب: رسالة جديدة في شات، أو طلب اتوصّل، أو مؤقت خلص، أو build خلص. ومش للإعلانات ولا «ارجعلنا وحشتنا». ولو اليوزر قدام الصفحة، رسالة جوه الصفحة أحسن من إشعار نظام.`,
+            mistakes: R`[[requestPermission()]] أول ما الصفحة تفتح، فاليوزر يرفض من غير ما يفهم. وتفتكر إنك تقدر تسأل تاني بعد [["denied"]]: مش هيظهر حاجة. وتجرّب من الموبايل على [[http://192.168.1.5:3000]] فالـ API مش موجود، لأنه محتاج secure context: HTTPS أو localhost (و Chrome بيعتبر [[file://]] secure كمان: جرّبتها و [[isSecureContext]] طلع [[true]]). و [[new Notification]] على Chrome أندرويد بيرمي [[TypeError: Illegal constructor]] (من الـ docs): هناك لازم [[registration.showNotification]] من service worker. ونسيان الـ [[tag]] فاليوزر يلاقي ٢٠ إشعار لنفس الحاجة.`
+          },
+          teach: R`## الفكرة في سطر
+
+قبل ما تبعت إشعار لازم تعرف الإذن حالته إيه، ولو لسه مسألتش، تسأل بعد ضغطة زرار. المثال بيعمل التلاتة: يقرا الحالة، ويسمع لو اتغيّرت، ويسأل ويبعت إشعار لما اليوزر يدوس.
+
+جرّبت المثال في Chrome 156 headless (عن طريق playwright-core، من [[http://127.0.0.1]]) في ٣ حالات: إذن لسه متسألش وبعدين اتوافق عليه والصفحة مفتوحة، وإذن مرفوض، وإذن موافق عليه من الأول. الـ playwright بيوافق أو بيرفض مكان اليوزر، فشكل نافذة السؤال نفسها والإشعار على الشاشة **من الـ docs** مش من التجربة.
+
+---
+
+## ١. الحالة من غير ما تسأل: [[navigator.permissions.query]]
+
+~~~text app.js
+const status = await navigator.permissions.query({ name: "notifications" });
+console.log("الحالة:", status.state, "| Notification.permission:", Notification.permission);
+status.onchange = () => console.log("اتغيرت لـ", status.state);
+~~~
+
+- [[navigator.permissions]]: الـ Permissions API. فيها دالة واحدة مهمة: [[query]].
+- [[{ name: "notifications" }]]: اسم الإذن. الأسامي ثابتة، وأي اسم غلط بيرمي:
+
+~~~text الناتج (Chrome، name: "banana")
+TypeError: Failed to execute 'query' on 'Permissions': Failed to read the 'name' property from 'PermissionDescriptor': The provided value 'banana' is not a valid enum value of type PermissionName.
+~~~
+
+- [[await]]: [[query]] بترجّع Promise. و [[await]] برّه أي دالة محتاج [[<script type="module">]].
+- [[status.state]]: [["granted"]] أو [["denied"]] أو [["prompt"]].
+- [[status.onchange]]: بيتنادى لو الحالة اتغيرت والصفحة مفتوحة (اليوزر غيّرها من الإعدادات، أو وافق على السؤال).
+
+جرّبت أسامي تانية في نفس الصفحة:
+
+~~~text الناتج (Chrome 156، إذن مااتسألش)
+notifications prompt
+geolocation prompt
+camera prompt
+clipboard-read prompt
+push NotSupportedError: Push Permission without userVisibleOnly:true isn't supported yet.
+~~~
+
+الـ [["push"]] محتاج [[{ name: "push", userVisibleOnly: true }]]، ودي بتاعة درس الـ push في وحدة PWA.
+
+### [["prompt"]] و [["default"]]: نفس المعنى باسمين
+
+~~~text الناتج
+الحالة: prompt | Notification.permission: default
+~~~
+
+الاتنين معناهم «لسه مسألناش». الـ Permissions API بتسمّيها [["prompt"]]، و [[Notification.permission]] (الأقدم) بتسمّيها [["default"]]. والتانيين ([["granted"]] و [["denied"]]) نفس الاسم في الاتنين.
+
+## ٢. الزرار: الفحص قبل السؤال
+
+~~~text app.js
+btn.addEventListener("click", async () => {
+  if (!("Notification" in window)) return console.log("المتصفح مبيدعمش");
+  if (Notification.permission === "denied") return console.log("اترفض قبل كده: من إعدادات الموقع بس");
+~~~
+
+- [[async]] على الـ listener عشان نقدر نستخدم [[await]] جواه.
+- [[("Notification" in window)]]: هل الـ API موجود أصلًا؟ مش موجود على Safari على iPhone غير لو الموقع متسطّب كـ PWA على الشاشة الرئيسية (من الـ docs)، ومش موجود لو الصفحة مش secure context.
+- [[return console.log(...)]]: اطبع واخرج من الدالة في سطر واحد.
+- [[=== "denied"]]: اليوزر رفض قبل كده. مفيش أي كود يقدر يسأله تاني، فبدل ما تنادي [[requestPermission]] على الفاضي، قوله يغيّرها من الإعدادات.
+
+## ٣. السؤال
+
+~~~text app.js
+  const result = await Notification.requestPermission();
+  console.log("الرد:", result);
+  if (result !== "granted") return;
+~~~
+
+- [[requestPermission()]]: لو الحالة [["default"]] بتطلّع نافذة المتصفح «Allow / Block». بترجّع Promise بالرد.
+- لو اليوزر قفل النافذة من غير ما يختار، الرد [["default"]] وتقدر تسأل تاني بعدين.
+- [[!== "granted"]]: أي حاجة غير الموافقة، خلاص.
+
+ليه السؤال جوه الـ click؟ Firefox و Safari مبيطلّعوش السؤال أصلًا غير بعد ضغطة من اليوزر (user gesture)، و Chrome بيخبّي السؤال في أيقونة صغيرة جنب العنوان (اسمها quiet UI) للمواقع اللي الناس بترفضها كتير (من الـ docs). فالسؤال بعد ضغطة بيشتغل في كله وبيجيب موافقات أكتر.
+
+## ٤. الإشعار نفسه
+
+~~~text app.js
+  const n = new Notification("طلب جديد", { body: "رقم 42", tag: "order-42", icon: "/icon-192.png" });
+  n.onshow = () => console.log("ظهر:", n.title, n.body, n.tag);
+  n.onclick = () => { window.focus(); n.close(); };
+~~~
+
+| الـ option | معناه |
+|---|---|
+| أول argument ([["طلب جديد"]]) | العنوان، بيظهر بخط تقيل |
+| [[body]] | السطر اللي تحت العنوان |
+| [[tag]] | إشعار جديد بنفس الـ tag بيبدّل القديم بدل ما يتكوّموا جنب بعض |
+| [[icon]] | صورة صغيرة جنب الكلام (لو مش موجودة الإشعار بيظهر من غيرها) |
+
+- [[onshow]]: الإشعار ظهر فعلًا.
+- [[onclick]]: اليوزر داس عليه. [[window.focus()]] بيجيب التاب قدام، و [[n.close()]] بيشيله من مركز الإشعارات.
+
+## ٥. اللي حصل لما شغّلته
+
+~~~text الناتج (إذن مااتسألش، وبعدين اتوافق عليه والصفحة مفتوحة، وبعدين ضغطة)
+الحالة: prompt | Notification.permission: default
+اتغيرت لـ granted
+الرد: granted
+ظهر: طلب جديد رقم 42 order-42
+~~~
+
+~~~text الناتج (الإذن مرفوض قبل كده)
+الحالة: denied | Notification.permission: denied
+اترفض قبل كده: من إعدادات الموقع بس
+~~~
+
+~~~text الناتج (موافق عليه من الأول)
+الحالة: granted | Notification.permission: granted
+الرد: granted
+ظهر: طلب جديد رقم 42 order-42
+~~~
+
+- في الأولى [[onchange]] اشتغل لوحده أول ما الإذن اتغير، قبل ما ندوس الزرار.
+- في التالتة [[requestPermission]] رجّعت [["granted"]] على طول من غير سؤال.
+
+## ٦. الإشعار والموقع مقفول؟
+
+[[new Notification]] بيشتغل بس والصفحة مفتوحة (في أي تاب). عشان إشعار يوصل والمتصفح مش فاتح موقعك، محتاج service worker و Push API، وهناك بتستخدم [[registration.showNotification(...)]] من جوه الـ service worker. ده درس «push و Background Sync» في وحدة PWA. وعلى Chrome أندرويد، [[new Notification]] من الصفحة نفسها بيرمي [[TypeError: Illegal constructor]] وبيقولك تستخدم [[showNotification]] (من الـ docs).
+
+---
+
+## الخلاصة
+
+| الحاجة | بترجّع | بتسأل اليوزر؟ |
+|---|---|---|
+| [[Notification.permission]] | [["default"]] أو [["granted"]] أو [["denied"]] على طول | لأ، بتقرا الحالة بس |
+| [[navigator.permissions.query({ name })]] | Promise بـ [[state]] و [[onchange]] | لأ، وبتشتغل لأي إذن |
+| [[Notification.requestPermission()]] | Promise بالرد | آه، لو الحالة لسه [["default"]] |
+| [[new Notification(title, opts)]] | الإشعار، ومعاه [[onclick]] و [[close()]] | لأ، ولازم الإذن [["granted"]] |
+
+- اسأل بعد ضغطة، مش أول ما الصفحة تفتح.
+- [["denied"]] نهائي من ناحية الكود: وجّه اليوزر للإعدادات.
+- محتاج HTTPS أو localhost، و [[tag]] عشان الإشعارات متتكوّمش.`,
+          lines: [
+            R`الزرار اللي اليوزر هيدوس عليه عشان يفعّل الإشعارات. السؤال لازم يطلع من ضغطة عليه، مش لوحده.`,
+            R`بنسأل الـ Permissions API عن حالة إذن الإشعارات **من غير** ما نطلّع أي سؤال لليوزر. [[await]] هنا برّه أي دالة، فالـ script لازم يكون [[type="module"]].`,
+            R`بنطبع الحالة بالطريقتين: [[status.state]] بتقول [["prompt"]] لو لسه مسألناش، و [[Notification.permission]] بتقول نفس المعنى بكلمة [["default"]].`,
+            R`[[onchange]] بيتنادى لو الإذن اتغيّر والصفحة مفتوحة، سواء اليوزر وافق على السؤال أو غيّرها من إعدادات الموقع. فتقدر تحدّث شكل الزرار لوحده.`,
+            R`بنسمع للضغطة، و [[async]] عشان هنستنى رد السؤال بـ [[await]] جوه.`,
+            R`لو المتصفح مفيهوش [[Notification]] أصلًا (Safari على iPhone من غير ما الموقع يتسطّب، أو صفحة مش HTTPS) بنطبع رسالة ونخرج بدل ما الكود يقع.`,
+            R`لو اليوزر رفض قبل كده، مفيش كود يقدر يسأله تاني: [[requestPermission]] هترجّع [["denied"]] من غير ما يظهر حاجة. فبنقوله يغيّرها من الإعدادات ونخرج.`,
+            R`بنطلّع سؤال المتصفح «Allow / Block» ونستنى الرد. لو الحالة كانت [["granted"]] خلاص بترجّع على طول من غير سؤال.`,
+            R`بنطبع الرد: [["granted"]] أو [["denied"]] أو [["default"]] لو اليوزر قفل النافذة من غير ما يختار.`,
+            R`أي رد غير الموافقة، بنخرج ومبنحاولش نبعت إشعار (كان هيترمي أو ميظهرش).`,
+            R`بنطلّع الإشعار: العنوان، و [[body]] السطر اللي تحته، و [[tag]] اللي بيخلّي إشعار تاني بنفس الاسم يبدّل ده بدل ما يتكوّموا، و [[icon]] صورة صغيرة.`,
+            R`[[onshow]] بيتنادى لما الإشعار يظهر فعلًا، وبنطبع العنوان والنص والـ tag عشان نتأكد إنهم وصلوا صح.`,
+            R`لما اليوزر يدوس على الإشعار: [[window.focus()]] بيجيب التاب بتاعنا قدام، و [[n.close()]] بيشيل الإشعار من مركز الإشعارات.`,
+            R`نهاية الـ click listener.`,
+          ],
+          sol: R`اتجرّب في Chrome 156 headless من [[http://127.0.0.1]] (playwright بيوافق ويرفض مكانك): أول تحميل بيطبع [[الحالة: prompt | Notification.permission: default]]، ولما الإذن اتوافق عليه والصفحة مفتوحة [[onchange]] طبع [[اتغيرت لـ granted]]، والضغطة طبعت [[الرد: granted]] وبعدها [[ظهر: طلب جديد رقم 42 order-42]]. ولما الإذن مرفوض الضغطة طبعت [[اترفض قبل كده: من إعدادات الموقع بس]] ومسألتش.
+
+شكل نافذة السؤال والإشعار على الشاشة، وإن إشعارين بنفس الـ [[tag]] بيبقوا واحد في مركز الإشعارات، من الـ docs (MDN: Notification و Notification.tag)، لأن الـ headless مبيرسمش إشعارات حقيقية. ولو فتحتها من الموبايل على IP الجهاز بـ [[http]]، [[Notification]] مش هيبقى موجود أصلًا لأن الصفحة مش secure context، فشرط [["Notification" in window]] هو اللي هيشتغل.`
         }
       ]
     }

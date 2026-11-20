@@ -95,7 +95,9 @@ function matcher(it, ELS) {
       // a name only one object has (call, matchAll, flags) is enough; a shared one (toString, size, entries) needs its object named
       // in the heading or cell itself, the lesson's name, or its category
       const own = ownerRe(it.owner), alone = it.owner !== 'TypedArray' && (SHARED.get(it.short) || new Set()).size === 1;
-      const about = (t, l) => alone || !l || own.test(t) || own.test(l.cmd) || own.test(l.cat) || CAT_OWNER[l.cat] === it.owner;
+      // the unique-name shortcut needs the name written as code ([[unicode]] or .unicode), not as an English word in a heading («unicode escape sequences»)
+      const asCode = t => spans(t).some(s => re.test(s)) || new RegExp('\\.' + esc(short) + '(?![\\w$])').test(t);
+      const about = (t, l) => (alone && asCode(t)) || !l || own.test(t) || own.test(l.cmd) || own.test(l.cat) || CAT_OWNER[l.cat] === it.owner;
       return { cmd: (t, l) => re.test(t) && about(t, l), named: (t, h, l) => re.test(t) && about(t, l), mention: t => own.test(t) && new RegExp('\\.' + esc(short) + '\\b').test(t) };
     }
     case 'operator': case 'statement': case 'syntax': case 'regex': case 'concept': {

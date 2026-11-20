@@ -1,1452 +1,1131 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "مشروع: fetch محترم",
+      t: "WebAssembly",
       l: 3,
-      time: R`حوالي ساعتين`,
-      goal: [
-        R`تفهم ليه [[fetch]] **مش بترمي** على 404، وتعمل أخطاء ليها نوع.`,
-        R`تحط مهلة لأي طلب بـ [[AbortSignal.timeout]]، وتسمح لليوزر يلغي.`,
-        R`تعيد المحاولة على الأخطاء المؤقتة بس، بمهلة أُسّية فيها عشوائية.`,
-        R`تختبر كل ده **من غير شبكة** خالص.`,
-        R`تفهم خطأ CORS من ناحية [[fetch]] وتبعت الكوكيز بـ [[credentials]] صح.`,
-      ],
-      use: {
-        prog: R`كل تطبيق فيه طلبات شبكة محتاج الأربع حاجات دي. والمكتبات الجاهزة بتعملهم — بس اللي بيفهمهم بيعرف يظبطهم ويشخّص لما يقعوا.`,
-        net: R`الشبكة بتفشل. و٥٠٣ مؤقتة غير ٤٠٤ دائمة، وإعادة المحاولة على التانية هدر وعلى الأولى إنقاذ. والتفرقة دي هي المشروع كله.`,
-        cs: R`الـ exponential backoff with jitter خوارزمية حقيقية: من غير العشوائية، كل العملاء بيعيدوا في نفس اللحظة وبيوقّعوا السيرفر تاني (thundering herd).`,
-        work: R`الطلب اللي بيعلّق للأبد بيخلي واجهتك تبان مكسورة. والمهلة سطر واحد.`,
-      },
-      lab: R`mkdir -p ~/lab/jslab && cd ~/lab/jslab && npm init -y && npm pkg set type=module`,
+      lab: R`mkdir -p ~/lab/wasm-as && cd ~/lab/wasm-as && npm i -D -E assemblyscript && npx asinit . -y  # فولدر جديد فاضي: من غير npm init -y قبلها`,
       projects: [
-        { lvl: 'صغير', t: R`حطّها في مشروع حقيقي`, what: R`بدّل [[fetch]] في مشروع عندك بـ [[request]]. وشوف كام مكان كنت ناسي فيه تفحص [[res.ok]]. من درس «مشروع — fetch مش بترمي على 404».`, done: R`البحث عن [[fetch(]] في المشروع مبيطلّعش غير ملف [[request.js]]، وكاتب عدد الأماكن اللي كانت ناسية [[res.ok]]، وكل [[catch]] بقى بيفرّق بـ [[instanceof]].` },
-        { lvl: 'صغير', t: R`فاحص روابط بمهلة`, what: R`[[check-links.mjs]] بياخد لستة روابط ويطلب كل واحد بـ [[request]] ومهلة ٣ ثواني و [[retries: 0]]، ويطبع لكل رابط الـ status أو نوع الخطأ. جرّبه على [[https://example.com]] وسيرفرات محلية. من الدرسين الأولانيين.`, done: R`رابط شغال بيطبع 200، وبورت مقفول بيطبع [[NetworkError]] و [[ECONNREFUSED]]، وسيرفر بطيء بيطبع [[TimeoutError]] بعد حوالي ٣ ثواني، ورابط 404 بيطبع [[HttpError 404]]، وولا رابط بيوقّف اللي بعده.` },
-        { lvl: 'متوسط', t: R`كاش للطلبات المتكررة`, what: R`[[Map]] من الـ URL للـ Promise. لو نفس الطلب اتطلب وهو لسه شغال، رجّع نفس الـ Promise بدل ما تعمل طلب تاني. اسمها request deduplication.`, done: R`٣ نداءات في نفس اللحظة لنفس الرابط: [[fakeFetch]] اتنادى مرة واحدة والتلاتة خدوا نفس الداتا. ولو الطلب فشل المدخل بيتشال من الـ [[Map]]، فالنداء اللي بعده بيعمل طلب جديد ([[calls.length]] بقت 2). ومكتوبين اختبارات بـ [[node --test]].` },
-        { lvl: 'متوسط', t: R`حدّ للتزامن`, what: R`لو بتعمل ٥٠ طلب، متعملهمش كلهم مرة واحدة. اكتب [[pool(items, limit, fn)]] بتشغّل [[limit]] بس في نفس الوقت. هتحتاج [[Promise.race]] ومصفوفة شغالة.`, done: R`مع ٢٠ عنصر و [[limit]] بـ 3، عدّاد «شغال دلوقتي» عمره ما عدّى 3، والنتايج بنفس ترتيب المدخل مهما مين خلص الأول، وعنصر بيرمي بيتسجّل كـ [[{ ok: false, error }]] ومبيوقّفش الباقي.` },
-        { lvl: 'كبير', t: R`قاطع الدايرة (circuit breaker)`, what: R`لو الخدمة فشلت ٥ مرات ورا بعض، بطّل تحاول لمدة دقيقة وارمي على طول. ده بيحمي السيرفر اللي واقع من إنك تزوّد عليه. الوقت بييجي من [[now]] بتمرره (عشان تختبر من غير ما تستنى)، وفيه [[onStateChange]] للوج. من درس «إعادة المحاولة الذكية» و «اختبرها من غير شبكة».`, done: R`اختبارات بـ [[node --test]] وساعة مزيّفة: بعد ٥ فشل النداء السادس بيرمي [[CircuitOpenError]] و [[calls.length]] فاضلة 5. بعد ٦٠ ثانية (مزيّفة) بيسمح بمحاولة واحدة: لو نجحت الدايرة بتتقفل، ولو فشلت بتفتح تاني. و 404 مبيتحسبش فشل للخدمة. وكل تغيير حالة بيطلع سطر لوج.`, ext: R`خلّي فيه دايرة لكل host لوحده، واعرض حالتهم في صفحة صغيرة بتتحدّث كل ثانية.` },
-        { lvl: 'كبير', t: R`عميل API كامل`, what: R`[[createClient({ baseUrl, timeout, retries, onRetry })]] بيرجّع [[get(path)]] و [[post(path, body, { idempotencyKey })]]: JSON رايح جاي، ومهلة وإلغاء، وإعادة على المؤقت بس، و [[POST]] مبيتعادش من غير مفتاح، وأخطاء ليها نوع. والوحدة كلها.`, done: R`ملف اختبارات بـ [[fakeFetch]] فيه ١٠ حالات على الأقل بيعدّوا من غير شبكة: 404 من غير إعادة، و 503 بتنجح في التالتة، و 429 بـ [[Retry-After]]، ومهلة، وإلغاء، و POST بيفشل من غير إعادة، و POST بمفتاح بيتعاد والهيدر وصل في كل محاولة، و [[baseUrl]] بـ [[/]] في الآخر ومن غيرها بيدّوا نفس الرابط. و [[onRetry]] بيطلع سطر لكل إعادة.`, ext: R`زوّد كاش للـ GET، وحدّ تزامن، وقاطع دايرة من المشاريع اللي فوق، وانشره كـ package بـ README.` },
-        { lvl: 'فكرة', t: R`غلّف API بتستخدمه`, what: R`اختار API حقيقي بتحتاجه (طقس، أسعار، GitHub...) واعمل له client صغير فوق [[request]] بأسماء دوال بتوصف الشغل ([[getWeather(city)]] مش [[get('/x')]]). انت اللي بتقرر الدوال.`, done: R`كل دالة فيها مهلة ورسالة خطأ مفهومة بالعربي، والاختبارات شغالة بـ [[fakeFetch]] من غير مفتاح API ولا شبكة، والمفتاح بييجي من متغير بيئة مش مكتوب في الكود.`, ext: R`اعمل صفحة أو أداة ترمنال بتستخدمه، وكاش على الديسك أو [[localStorage]] عشان متكررش نفس الطلب.` },
+        { lvl: 'صغير', t: R`آلة حاسبة wasm من الترمنال`, what: R`[[calc.c]] فيه [[add]] و [[sub]] و [[mul]] و [[divi]] بـ [[EXPORT]] (درس «wasm من C»)، و [[calc.mjs]] بيقرا [[process.argv]] بالشكل [[node calc.mjs 6 x 7]] (استخدم [[x]] مش [[*]] عشان الشيل بيفك النجمة) وينادي الدالة الصح.`, done: R`[[node calc.mjs 6 x 7]] بيطبع [[42]]. والقسمة على صفر بتطبع رسالة واضحة وبتخرج بكود ١ لأن الغلاف فحص قبل النداء، ولو شلت الفحص wasm بيرمي [[RuntimeError: divide by zero]]. وعملية مش معروفة أو رقم مش رقم بيطبعوا طريقة الاستخدام.` },
+        { lvl: 'صغير', t: R`مكتبة نصوص بـ AssemblyScript`, what: R`[[reverse(s)]] و [[isPalindrome(s)]] و [[countWords(s)]] في [[assembly/index.ts]] (درس «AssemblyScript»)، وملف [[demo.mjs]] بيستوردهم من [[build/release.js]].`, done: R`[[reverse("abc")]] بترجّع [[cba]]، و [[isPalindrome("level")]] [[true]]، و [[reverse("")]] نص فاضي، و [[reverse(null)]] بترمي [[TypeError]] من الـ bindings بدل ما توقّع الـ wasm. وحجم [[release.wasm]] مكتوب في README.` },
+        { lvl: 'متوسط', t: R`صفحة تكبير حروف حيّة ومتينة`, what: R`صفحة فيها [[textarea]] ونتيجة وعداد (درس «WebAssembly في المتصفح»)، بتحمّل [[text.wasm]] بدالة [[loadWasm(url, imports)]] بتجرّب [[instantiateStreaming]] ولو رميت [[TypeError]] بتاع الـ MIME ترجع لـ [[arrayBuffer()]] + [[instantiate]]، وبتقطّع النص الطويل بـ [[encodeInto]].`, done: R`مع سيرفر بيبعت [[application/wasm]] مفيش تحذير، ومع [[application/octet-stream]] بيظهر [[console.warn]] مرة واحدة والصفحة شغالة. ولو الملف 404 بتظهر رسالة فيها الـ status بدل [[CompileError]] (يعني فحصت [[res.ok]] قبل الـ compile). ونص 10 آلاف حرف عربي وانجليزي بيرجع سليم.` },
+        { lvl: 'متوسط', t: R`تقرير: wasm ولا JS؟`, what: R`سكربت [[report.mjs]] بيقيس بـ [[bench]] (الوسيط بعد warm-up) تلات حاجات في JS وفي wasm: الأعداد الأولية، ونداء [[add]] ملايين المرات، و [[countWords]] بتاعة AssemblyScript على نص كبير. من دروس «wasm من C» و «AssemblyScript» و «wasm يستاهل إمتى».`, done: R`بيطبع جدول بالعمودين ونسبة الفرق لكل حالة، ونفس الناتج في JS و wasm (لو اختلفوا بيطبع تحذير)، واتشغّل مرتين والترتيب ما اتغيّرش، و README فيه رأيك بالأرقام.` },
+        { lvl: 'كبير', t: R`موديول wasm بغلاف JS متين`, what: R`[[wasm-math.mjs]] بيحمّل [[sum.wasm]] مرة واحدة بس (بيحفظ الـ Promise)، وبيعمل export لـ [[sumArray]] و [[maxOf]]: بيفحص المدخل (مصفوفة أرقام int32)، وبيقطّع أي مصفوفة أكبر من 1024 لحتت ويجمع نواتجها BigInt، وبيرمي error فيه المسار لو الـ [[.wasm]] مش موجود. ومعاه [[check.mjs]] بـ [[node:assert/strict]]. من الوحدة كلها ومن درس الأخطاء.`, done: R`[[node check.mjs]] بيعدّي على ٨ حالات على الأقل: مصفوفة فاضية، ورقم واحد، و 3000 رقم (نفس ناتج [[reduce]] في JS)، وسوالب، و [[1.5]] مرفوض، ونص مرفوض، ورقم أكبر من int32 مرفوض، وملف مش موجود رسالته فيها اسم الملف. والتحميل حصل مرة واحدة حتى لو ناديت الدالة ١٠٠ مرة، والسكربت بيشتغل مرتين ورا بعض بنفس الناتج.`, ext: R`زوّد نسخة بتشتغل في Web Worker عشان الصفحة متعلقش مع المصفوفات الكبيرة، وانشره كـ package صغير فيه README وأمثلة.` },
+        { lvl: 'فكرة', t: R`حاجة تستاهل wasm بجد`, what: R`اختار شغل تقيل حقيقي (فلتر صور، أو hash لملف كبير، أو ضغط، أو محاكاة فيزيا) واعمله في JS الأول، وبعدين في C أو AssemblyScript، وقيس قبل ما تقرر. انت اللي بتختار المشكلة وشكل الصفحة.`, done: R`فيه نسختين بنفس الناتج بالظبط، وجدول قياس فيه وقت النسخ للذاكرة، وقرار مكتوب في README: wasm كسب ولا لأ وبكام.`, ext: R`جرّب [[-msimd128]]، أو مكتبة C جاهزة معمولها compile، أو Rust بـ wasm-pack، وقارن الحجم والسرعة.` },
       ],
-      n: R`هنبني [[request()]]: غلاف حوالين [[fetch]] فيه مهلة، وإعادة محاولة ذكية، وأخطاء ليها نوع. أربع خطوات، وكل خطوة بتحل مشكلة بتحصل في الإنتاج`,
+      n: "كود C أو AssemblyScript بيتحول ملف .wasm يشتغل في المتصفح و Node، وبرا المتصفح بـ WASI: تعمله compile، وتحمّله من JS، وتعدّي داتا في الذاكرة، وتشغّله في Worker، وتعرف إمتى يستاهل",
       items: [
         {
-          cmd: "مشروع — fetch مش بترمي على 404",
-          title: "ok و status، وأخطاء ليها نوع",
-          learn: R`تعرف إن [[fetch]] بتنجح على ٤٠٤ و٥٠٠، وتعمل كلاسات أخطاء تفرّق بينهم.`,
-          out: R`[[catch]] واحد بيفرّق بين فشل الشبكة وفشل الـ HTTP.`,
-          use: {
-            prog: R`الفرق بين «الطلب وصل والسيرفر رد بخطأ» و«الطلب موصلش» كبير: الأولى بيانات، والتانية شبكة. والمعالجة مختلفة.`,
-            net: R`[[TypeError: fetch failed]] مبتقولش حاجة. والسبب الحقيقي في [[e.cause]] — [[ECONNREFUSED]] أو [[ENOTFOUND]] أو [[CERT_HAS_EXPIRED]].`,
-            cs: R`تصنيف الأخطاء بأنواع بدل نصوص بيخلي [[catch]] يقرر، مش يخمّن. وده الفرق بين [[e.message.includes('404')]] و [[e instanceof HttpError]].`,
-          },
-          desc: R`أول حاجة لازم تعرفها عن [[fetch]]، وأكتر حاجة بتوقّع الناس:
+          cmd: "wasm من C",
+          title: "تحوّل C لـ .wasm بـ clang في Docker وتناديه من Node",
+          desc: R`[[clang --target=wasm32]] بيحوّل ملف C لـ [[.wasm]] صغير (المثال طلع 722 byte). الدوال اللي عليها [[export_name]] بتبقى دوال JavaScript، و [[memory]] (ذاكرة الـ wasm) بتبقى [[ArrayBuffer]] تقدر تقرا وتكتب فيه من JS.
 
-**[[fetch]] مبترميش على أخطاء HTTP.**
-
-طلب رجّع ٤٠٤؟ الـ Promise **بتنجح**. ٥٠٠؟ بتنجح. الـ [[await]] بيعدّي عادي، و [[catch]] مبيشتغلش.
-
-وبترمي في حالة واحدة: **الطلب نفسه موصلش** — شبكة مقطوعة، أو DNS فشل، أو شهادة غلط، أو اليوزر لغى.
-
-جرّبتها: طلب على [[/404]] رجّع [[ok: false]] و [[status: 404]]، والكود كمّل عادي. وطلب على بورت مقفول رمى [[TypeError: fetch failed]].
-
-والرسالة دي **مبتقولش حاجة**. السبب الحقيقي في [[e.cause]]: جرّبتها وطلعت [[ECONNREFUSED]].
-
-**فالغلاف بتاعنا بيعمل تلات حاجات:**
-
-يفحص [[res.ok]] ويرمي [[HttpError]] فيها الـ status والـ body.
-يلفّ خطأ الشبكة في [[NetworkError]] فيها السبب الحقيقي من [[cause]].
-ويسيب أخطاء الإلغاء زي ما هي.
-
-وبكده، اللي بيستخدم الأداة بيكتب [[catch]] واحد بيفرّق بـ [[instanceof]] بدل ما يفحص نصوص.`,
-          example: R`export class HttpError extends Error {
-  constructor(response, body) {
-    super($__btHTTP $__{response.status} $__{response.statusText} على $__{response.url}$__bt);
-    this.name = 'HttpError';
-    this.status = response.status;
-    this.url = response.url;
-    this.body = body;
-  }
+مش محتاج تسطّب compiler على جهازك: [[alpine]] + [[clang]] و [[lld]] جوه Docker. ولو أول مرة تشوف [[.wasm]]، ابدأ بدرس [[.wasm]] في تاب الملفات (البصمة والـ sections).`,
+          example: R`// sum.c: دوال C هتتحول WebAssembly
+#define EXPORT(name) __attribute__((export_name(name)))
+EXPORT("add")
+int add(int a, int b) { return a + b; }
+static int buffer[1024];
+EXPORT("buffer_ptr")
+int *buffer_ptr(void) { return buffer; }
+EXPORT("sum_array")
+long long sum_array(int *arr, int len) {
+  long long total = 0;
+  for (int i = 0; i < len; i++) total += arr[i];
+  return total;
 }
-
-export class NetworkError extends Error {
-  constructor(cause) {
-    super($__btفشل الاتصال: $__{cause?.code ?? cause?.message ?? 'سبب مش معروف'}$__bt);
-    this.name = 'NetworkError';
-    this.cause = cause;
+EXPORT("count_primes")
+int count_primes(int limit) {
+  int count = 0;
+  for (int n = 2; n < limit; n++) {
+    int prime = 1;
+    for (int d = 2; d * d <= n; d++) {
+      if (n % d == 0) { prime = 0; break; }
+    }
+    count += prime;
   }
+  return count;
 }`,
-          lines: [
-            R`كلاس error خاص بأخطاء الـ HTTP (زي 404 و 500)، بيورث [[Error]] فبياخد [[message]] و stack trace ببلاش، و [[e instanceof HttpError]] بتشتغل عشان تفرّقه عن أي error تاني. و [[export]] عشان الملفات التانية والاختبارات تستورده.`,
-            R`الـ constructor بياخد الـ [[response]] نفسه (منه الـ status والرابط)، والـ [[body]] اللي قريناه منه قبل كده، لأن الـ body بيتقري مرة واحدة بس.`,
-            R`[[super]] بينادي constructor بتاع [[Error]] بالرسالة، ولازم يتنادى قبل أي [[this]]. الرسالة فيها الكود والنص والرابط، فلو شفتها في اللوج لوحدها تعرف إيه اللي فشل وفين.`,
-            R`[[name]] بتظهر في أول الـ stack وفي [[console.log]]. **لازم تحطها**: من غيرها هتفضل «Error» حتى لو الكلاس اسمه [[HttpError]]، فاللوج مش هيقولك نوع الغلط.`,
-            R`بنحفظ الـ status كرقم في خاصية لوحدها، عشان اللي يمسك الـ error يقرر بسهولة ([[e.status === 404]]) من غير ما يقرا الرسالة النصية ويحللها.`,
-            R`بنحفظ الرابط اللي فشل، مفيد في اللوج لما يبقى عندك طلبات كتير لأماكن مختلفة.`,
-            R`وبنحفظ الـ body: ساعات السيرفر بيحط فيه سبب الرفض (زي «الإيميل مستخدم قبل كده»)، وده اللي تعرضه لليوزر.`,
-            R`نهاية الـ constructor.`,
-            R`نهاية كلاس [[HttpError]].`,
-            R`كلاس تاني لنوع مختلف من الفشل: الاتصال نفسه مكملش (DNS، السيرفر مش شغال، النت قاطع)، يعني مفيش رد خالص. فصلهم بيخلي اللي فوق يقرر: ده يستاهل إعادة ولا لأ.`,
-            R`الـ constructor بياخد [[cause]]: الـ error الأصلي الواطي اللي جه من [[fetch]] (في Node غالبًا فيه [[code]] زي [[ECONNREFUSED]]).`,
-            R`الرسالة بتجرّب [[code]] الأول، ولو مش موجود الرسالة، ولو الاتنين مش موجودين نص ثابت. و [[?.]] عشان لو [[cause]] نفسها [[undefined]] ميرميش TypeError جوه الـ constructor.`,
-            R`نفس فكرة [[HttpError]]: الاسم بيظهر في اللوج وفي الـ stack، فتعرف من أول نظرة إن المشكلة في الاتصال مش في رد السيرفر.`,
-            R`**بنحتفظ بالسبب الأصلي** في [[cause]]، وده الاسم المتعارف عليه اللي [[console.log]] و Node بيعرضوه تحت الـ error. من غيره هتعرف إن الاتصال فشل بس مش هتعرف ليه.`,
-            R`نهاية الـ constructor.`,
-            R`نهاية كلاس [[NetworkError]].`
-          ],
-          try: R`شغّل [[const r = await fetch('https://httpbin.org/status/404')]] وشوف هل الكود كمّل. واطبع [[r.ok]] و [[r.status]]. وبعدين جرّب [[fetch]] على بورت مقفول واطبع [[e.cause]].`,
+          try: R`احفظ المثال [[sum.c]]، وفي نفس الفولدر شغّل:
+[[docker run --rm -v "$PWD:/src" -w /src alpine:3.22 sh -c "apk add --no-cache clang lld && clang --target=wasm32 -O2 -nostdlib -Wl,--no-entry -o sum.wasm sum.c"]]
+(في PowerShell بدّل [[$PWD]] بـ [[$__{PWD}]]). وبعدين اعمل [[run.mjs]] يحمّل [[sum.wasm]] ويطبع [[add(2, 3)]]، ويكتب [[[10, 20, 30, 40]]] في [[buffer_ptr()]] وينادي [[sum_array]]. إيه نوع الناتج؟`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سيرفر [[node:http]] على [[127.0.0.1:8111]] بيرجّع 404 على أي مسار. قبل ما تشغّل [[try { const r = await fetch(url); console.log('نجح', r.ok, r.status, r.statusText); } catch (e) { console.log('وقع', e.name); }]]، اكتب أنهي سطر هيطبع. وبعدين نفس الكود على بورت مفيش عليه سيرفر.`, done: R`على الـ 404 طبع [[نجح false 404 Not Found]]، وعلى البورت المقفول طبع [[وقع TypeError]] و [[e.cause.code]] بـ [[ECONNREFUSED]]. وكاتب توقعك جنب كل واحدة.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[try { data = await res.json(); } catch { data = await res.text(); }]] المفروض يرجّع النص لو الـ JSON بايظ، بس بيرمي error تاني. لاقي ليه، واكتب [[readBody(res)]] صح.`, done: R`عرفت إن الـ body بيتقرا مرة واحدة: بعد ما [[res.json()]] فشلت، [[res.text()]] رمت [[TypeError: Body is unusable: Body has already been read]]. والنسخة الصح بتقرا [[text()]] الأول وبعدين [[JSON.parse]] لو الـ [[content-type]] فيه json: JSON سليم يرجع object، و [[{bad]] يرجع النص، و [[text/plain]] يرجع نص.` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[userMessage(err)]] بترجّع الرسالة اللي تتعرض لليوزر: [[HttpError]] 401 «سجّل دخول تاني»، و 404 «مش موجود»، و 5xx «السيرفر عنده مشكلة، جرّب كمان شوية»، و [[NetworkError]] «اتأكد من النت»، و [[TimeoutError]] «الرد اتأخر»، وإلغاء اليوزر من غير رسالة.`, done: R`٧ حالات (منهم 500 و 503 بنفس الرسالة) بترجّع الصح، والكود كله [[instanceof]] و [[status]] و [[name]] من غير ولا [[e.message.includes]]، ونوع مش معروف بيرجّع رسالة عامة ويعمل [[console.error]] للخطأ الأصلي.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** قبل ما تشغّل، اكتب في تعليق في [[run.mjs]] إيه اللي هيطبعه [[add(2147483647, 1)]]، وإيه [[typeof]] اللي هترجّعه [[sum_array]]. بعدين شغّل وقارن.`, done: R`كاتب توقعك قبل التشغيل، والناتج الحقيقي: [[add]] بترجّع [[-2147483648]] (الـ [[int]] لفّ من غير ولا error)، و [[typeof]] ناتج [[sum_array]] هو [[bigint]] لأن [[long long]] بيبقى BigInt في JS. ولو توقعك غلط، كاتب السبب في سطر.` },
+            { lvl: 'تطبيق', t: R`**مسألة بحالات طرفية:** زوّد على [[sum.c]] دالة [[max_array(int *arr, int len)]] بترجّع أكبر رقم، واكتب في JS غلاف [[maxOf(nums)]] بيكتب الأرقام في [[buffer_ptr()]] وينادي الدالة.`, done: R`[[maxOf([5, 99, -100, 3])]] بترجّع [[99]]، و [[maxOf([-7, -3, -9])]] بترجّع [[-3]] مش [[0]] (يعني بدأت من أول عنصر مش من صفر)، و [[maxOf([])]] بترمي error من JS قبل ما توصل للـ C.` },
+            { lvl: 'تحدي', t: R`**ابني غلاف متين:** [[sumArray(nums)]] بيرفض أكتر من 1024 رقم (حجم [[buffer]])، وأي رقم مش [[Number.isInteger]] أو برا حدود int32، وبيرجّع Number عادي لو الناتج أصغر من [[Number.MAX_SAFE_INTEGER]].`, done: R`1024 مرة [[2147483647]] بترجّع [[2199023254528]] (بيساوي [[2147483647n * 1024n]])، و 1025 رقم، و [[1.5]]، و [[2 ** 31]] كل واحد بيرمي error برسالة بتقول المشكلة فين، من غير ما يكتب حاجة في الذاكرة.` },
           ],
+          flag: "script",
           deep: {
-            why: R`الكود اللي مبيفحصش [[res.ok]] بيكمّل على بيانات مش موجودة. وبعدين بتلاقي [[Cannot read properties of undefined]] في مكان تاني خالص — بعيد عن السبب.`,
-            how: R`**ليه [[fetch]] كده؟** لأن الرد **وصل**. السيرفر رد، والـ ٤٠٤ ده **رد صحيح** من ناحية الشبكة. الـ Promise بتوصف نجاح العملية (الطلب راح ورجع)، مش رضاك عن المحتوى.
+            why: R`عندك كود C أو C++ أو Rust موجود ومتجرّب (ضغط، تشفير، معالجة صور، parser) وعايز تستخدمه في المتصفح أو Node من غير ما تعيد كتابته. WebAssembly هو الطريقة: نفس الكود، ملف [[.wasm]] بيشتغل في أي مكان فيه JavaScript.`,
+            how: R`[[clang]] جزء من LLVM، و [[--target=wasm32]] يعني «اطلع كود WebAssembly 32-bit» بدل كود المعالج بتاعك. [[lld]] هو الـ linker ([[wasm-ld]]) اللي بيجمّع الناتج ملف واحد.
 
-ودي كانت قرار مقصود في المواصفة، والناس بتختلف عليه لحد دلوقتي. و [[axios]] بتعمل العكس (بترمي على ٤xx و٥xx) — وده الفرق الأساسي بينهم.
+[[-nostdlib]]: من غير مكتبة C القياسية (مفيش [[printf]] ولا [[malloc]]). عشان كده الكود بيستخدم array ثابت [[buffer]] بدل [[malloc]]. لو محتاج المكتبة القياسية استخدم WASI SDK أو Emscripten. [[-Wl,--no-entry]]: مفيش [[main]]، ده library. [[-O2]]: optimization.
 
-**الحالات اللي [[fetch]] بترمي فيها:**
+[[__attribute__((export_name("add")))]]: الدالة دي تبان لـ JavaScript بالاسم ده. والـ [[#define EXPORT]] بس عشان نختصرها.
 
-| السبب | الشكل |
-|---|---|
-| شبكة / DNS / اتصال | [[TypeError: fetch failed]] و [[cause]] فيها الكود |
-| إلغاء | [[AbortError]] أو اللي مررته لـ [[abort()]] |
-| مهلة | [[TimeoutError]] |
-| CORS (في المتصفح) | [[TypeError: Failed to fetch]] |
-| URL غلط | [[TypeError: Failed to parse URL]] |
-
-**و [[e.cause]] في Node** فيها كائن فيه [[code]] زي [[ECONNREFUSED]] و [[ENOTFOUND]] و [[ETIMEDOUT]] و [[CERT_HAS_EXPIRED]]. وفي المتصفح، [[cause]] غالبًا فاضية والرسالة مبهمة عن قصد (أمان).
-
-**وقراية الـ body مرة واحدة بس**: [[res.json()]] أو [[res.text()]] بتستهلك الـ stream. فلو قريت [[text()]] عشان رسالة الخطأ، مش هتقدر تقرا [[json()]] بعدها. و [[res.clone()]] بتدّيك نسخة لو محتاج الاتنين.
-
-وعشان كده [[HttpError]] بتاخد الـ [[body]] اللي اتقرا، مش الـ [[Response]] عشان تقراه بعدين.
-
-**و [[this.name]]**: من غيرها، [[e.name]] بتفضل [[Error]] والـ stack بتبدأ بـ [[Error:]]. وكلاسك بيشتغل مع [[instanceof]] برضه، بس اللوج بيبقى أقل وضوحًا.`,
-            when: R`أي كود بيستخدم [[fetch]]. والفحص من أول سطر.`,
-            mistakes: R`تفترض إن [[await fetch]] اللي عدّى معناه نجاح. أو تقرا الـ body مرتين. أو تفحص [[e.message.includes('404')]] بدل [[e.status === 404]]. أو تنسى [[this.name]].`
+الأنواع: [[int]] في wasm32 هو [[i32]] = number في JS. [[long long]] هو [[i64]]، و JS بيستلمه **BigInt** ([[100n]]). والـ pointer ([[int *]]) مجرد رقم: مكان (offset) جوه [[memory]]. JS بيكتب في الذاكرة بـ [[new Int32Array(memory.buffer, ptr, len)]] ويدّي الـ pointer للدالة.`,
+            when: R`كود native موجود عايز تشغّله في الويب، أو حسابات تقيلة على أرقام (درس [[wasm يستاهل إمتى]]). مش لكود عادي بيتعامل مع DOM أو JSON.`,
+            mistakes: R`تنسى [[lld]] فـ clang يقع بـ [[unable to execute command: Executable "wasm-ld" doesn't exist]]. وتنسى [[export_name]] فالدالة متبانش (أو يشيلها الـ optimizer). وتقارن ناتج [[long long]] بـ [[===]] مع number: [[100n === 100]] بـ false. وتكتب في الـ buffer أكتر من حجمه (1024 [[int]]): مفيش حماية، هتكتب فوق داتا تانية جوه الـ wasm.`
           },
-          teach: R`## الحاجة اللي بتوقّع الكل
+          teach: R`## من C لـ [[.wasm]] لـ JavaScript
 
-~~~js
-const res = await fetch('/api/user/999');   // السيرفر رد 404
-console.log('وصلنا هنا');                    // ✅ بيطبع
-const user = await res.json();               // { error: '...' }
-console.log(user.name);                      // undefined
-~~~
-
-**[[fetch]] مبترميش على ٤٠٤.** ولا على ٥٠٠.
-
-~~~text اتشغّل فعلًا · Node 24
-=== fetch على 404 ===
-رمى؟ لأ — وصلنا هنا
-ok: false | status: 404 | statusText: "Not Found"
-body: {"error":"مش موجود"}
-~~~
-
-**ليه؟** لأن الرد **وصل**. السيرفر رد، والـ ٤٠٤ رد صحيح من ناحية الشبكة. الـ Promise بتوصف «الطلب راح ورجع»، مش رضاك عن المحتوى.
-
-> و [[axios]] بتعمل العكس (بترمي على 4xx و5xx). وده الفرق الأساسي بينهم.
+اتعمله compile بـ clang 20.1.8 جوه [[alpine:3.22]]، واتشغّل بـ Node 24.22 على ويندوز.
 
 ---
 
-## ١. وبترمي إمتى؟
-
-| السبب | الشكل |
-|---|---|
-| شبكة / DNS / اتصال | [[TypeError: fetch failed]] |
-| إلغاء | [[AbortError]] أو اللي مررته |
-| مهلة | [[TimeoutError]] |
-| CORS (في المتصفح) | [[TypeError: Failed to fetch]] |
-| URL غلط | [[TypeError: Failed to parse URL]] |
-
-~~~text اتشغّل فعلًا — بورت مقفول
-name: TypeError | message: fetch failed
-e.cause: ECONNREFUSED | connect ECONNREFUSED 127.0.0.1:8199
-~~~
-
-**[[fetch failed]] مبتقولش حاجة. و [[e.cause]] بتقول كل حاجة.**
-
-وأكواد شائعة: [[ECONNREFUSED]] (مفيش حاجة بتسمع)، و [[ENOTFOUND]] (DNS)، و [[ETIMEDOUT]]، و [[CERT_HAS_EXPIRED]].
-
-> في المتصفح، [[cause]] غالبًا فاضية والرسالة مبهمة **عن قصد** (أمان: متقولش لصفحة ليه الطلب فشل).
-
----
-
-## ٢. أخطاء ليها نوع
-
-~~~js
-export class HttpError extends Error {
-  constructor(response, body) {
-    super($__btHTTP $__{response.status} $__{response.statusText} على $__{response.url}$__bt);
-    this.name = 'HttpError';
-    this.status = response.status;
-    this.body = body;
-  }
-}
-~~~
-
-~~~text والنتيجة (اتشغّل فعلًا)
-instanceof HttpError: true
-name: HttpError | status: 404
-message: HTTP 404 Not Found على http://127.0.0.1:8120/404
-body: {"error":"مش موجود"}
-~~~
-
-**[[this.name]] مش زينة**: من غيرها [[e.name]] بتفضل [[Error]] واللوج بيبقى أقل وضوحًا.
-
----
-
-## ٣. والـ body بيتقرا **مرة واحدة**
-
-~~~js ده هيفشل
-const text = await res.text();
-const data = await res.json();   // ❌ الـ stream اتستهلك
-~~~
-
-~~~js والحل لو محتاج الاتنين
-const data = await res.clone().json();
-const text = await res.text();
-~~~
-
-وعشان كده [[HttpError]] بتاخد الـ [[body]] **اللي اتقرا**، مش الـ [[Response]] عشان تقراه بعدين.
-
----
-
-## ٤. والفايدة في الاستخدام
-
-~~~js من غير أنواع
-catch (e) {
-  if (e.message.includes('404')) { ... }   // هشّ
-}
-~~~
-
-~~~js بأنواع
-catch (e) {
-  if (e instanceof HttpError && e.status === 404) { showNotFound(); }
-  else if (e instanceof NetworkError)             { showOffline(); }
-  else throw e;                                    // اللي متعرفوش، ارميه
-}
-~~~
-
-**[[else throw e]] مهمة.** الـ [[catch]] اللي بيبلع كل حاجة بيخفي الباگات.
-
----
-
-## ٥. تقدّم التحميل: الـ body كـ Streams
-
-[[await res.json()]] بتستنى الـ body كله. ولو الملف ٥٠ ميجا، اليوزر بيبص على شاشة ساكتة. بس [[res.body]] نفسه **stream**، فتقدر تقراه حتة حتة وتحسب النسبة (التفاصيل في درس «Streams»).
-
-~~~js progress.mjs
-const res = await fetch('http://127.0.0.1:8302/big');
-const total = Number(res.headers.get('content-length')) || 0;
-const reader = res.body.getReader();
-const chunks = [];
-let received = 0;
-for (;;) {
-  const { done, value } = await reader.read();
-  if (done) break;
-  chunks.push(value);
-  received += value.length;
-  const pct = total ? Math.floor(received / total * 100) : null;
-  process.stdout.write($__bt\r$__{pct ?? '?'}% ($__{received} من $__{total || 'مش معروف'})$__bt);
-}
-const blob = new Blob(chunks);
-console.log('\nخلص:', blob.size, 'byte في', chunks.length, 'حتة');
-~~~
-
-- [[res.body.getReader()]]: بيقفل الـ stream لصالحك وبيرجّع reader. بعدها [[res.json()]] مش هتشتغل (الـ body بيتقرا مرة واحدة، زي ما شفنا فوق).
-- [[reader.read()]]: بترجّع [[{ done, value }]]. و [[value]] حتة [[Uint8Array]] بحجم الشبكة قررته، مش انت.
-- [[content-length]]: الحجم الكلي **لو السيرفر بعته**. لو مبعتوش ([[chunked]]) النسبة مش معروفة، فاعرض الـ bytes بس أو progress bar مش محدد.
-- [[new Blob(chunks)]]: بتلم الحتت في الآخر. ولو JSON: [[JSON.parse(await blob.text())]].
-
-~~~text اتشغّل فعلًا · Node 24.22.1 · سيرفر بيبعت 5MB على حتت
-10% (500000 من 5000000)
-20% (1000000 من 5000000)
-...
-100% (5000000 من 5000000)
-خلص: 5000000 byte في 80 حتة
-~~~
-
-ونفس الكود (من غير [[process.stdout]]) في Chrome 156 قرا نفس الـ 5000000 byte في 58 حتة. **عدد الحتت بيختلف** من مكان للتاني، فمتعتمدش عليه.
-
-### الفخ: [[content-length]] مع gzip
-
-لو السيرفر بعت الرد مضغوط ([[content-encoding: gzip]])، [[content-length]] بيبقى حجم **المضغوط**، و [[fetch]] بيفك الضغط قبل ما يدّيك الحتت:
-
-~~~text اتشغّل فعلًا · مليون حرف مضغوطين
-content-length: 1004 | اللي وصل فعلًا: 1000000 | النسبة: 99601%
-~~~
-
-فالنسبة بتعدّي ١٠٠٪ بكتير. الحل: السيرفر يبعت الحجم الأصلي في هيدر تاني (زي [[x-total-size]])، أو تحط [[Math.min(pct, 100)]] وتعرف إنها تقريبية.
-
-> والرفع (upload) progress مش بيتعمل بـ [[fetch]] النهارده في كل المتصفحات؛ [[XMLHttpRequest]] و [[upload.onprogress]] لسه الطريقة المضمونة (درس «drag and drop و progress»).
-
----
-
-## الخلاصة
-
-- [[fetch]] بتنجح على ٤٠٤ و٥٠٠ — **افحص [[res.ok]]**.
-- بترمي على الشبكة والإلغاء والمهلة بس.
-- [[e.cause]] فيها السبب الحقيقي في Node.
-- الـ body بيتقرا مرة — [[clone()]] لو محتاج الاتنين.
-- كلاسات أخطاء + [[this.name]] + [[instanceof]].
-- تقدّم التحميل: [[res.body.getReader()]] و [[content-length]]، وخلي بالك من gzip.`,
-          sol: R`الحقيقة الأساسية بناتجها: [[fetch]] عدّت على ٤٠٤، ورمت على بورت مقفول بسبب في [[cause]].`,
-          solCode: R`const r404 = await fetch('http://127.0.0.1:8111/404');
-console.log('رمى؟ لأ — وصلنا هنا');
-console.log('ok:', r404.ok, '| status:', r404.status);
-// رمى؟ لأ — وصلنا هنا
-// ok: false | status: 404 | statusText: "Not Found"
-// body: {"error":"مش موجود"}
-
-try { await fetch('http://127.0.0.1:8199/'); }
-catch (e) {
-  console.log('name:', e.name, '| message:', e.message);
-  console.log('e.cause:', e.cause?.code);
-}
-// name: TypeError | message: fetch failed
-// e.cause: ECONNREFUSED | connect ECONNREFUSED 127.0.0.1:8199
-
-// (اتشغّلوا فعلًا على Node 24.22.1)`
-        },
-
-        {
-          cmd: "مشروع — المهلة والإلغاء",
-          title: "AbortSignal.timeout و any، والفرق بينهم",
-          learn: R`تحط مهلة لأي طلب، وتسمح لليوزر يلغي، وتجمع الإشارتين.`,
-          out: R`مفيش طلب بيعلّق للأبد، واليوزر يقدر يوقف.`,
-          use: {
-            prog: R`[[AbortSignal]] معيار عام — مش لـ [[fetch]] بس. أي دالة بتاخد [[signal]] بتبقى قابلة للإلغاء، وده بيخلي الإلغاء يمشي في كل الطبقات.`,
-            net: R`الطلب اللي مالوش مهلة بيعلّق لحد ما نظام التشغيل يقرر. ودي دقايق أحيانًا، وفي الوقت ده الواجهة بتبان مكسورة.`,
-            cs: R`الإلغاء التعاوني: مفيش حاجة بتقتل العملية — الإشارة بتتبعت، والكود بيتصرّف. وده الشكل الوحيد الآمن للإلغاء.`,
-          },
-          desc: R`[[fetch]] من غير مهلة بيستنى لحد ما نظام التشغيل يستسلم. ودي ممكن تكون دقيقتين.
-
-**[[AbortSignal.timeout(ms)]]** بتعمل إشارة بتلغي نفسها بعد المدة دي:
-
-[[await fetch(url, { signal: AbortSignal.timeout(5000) })]]
-
-سطر واحد. وبترمي [[TimeoutError]] — جرّبتها على سيرفر بطيء وطلعت بعد ٥١١ms بـ [[name: 'TimeoutError']].
-
-**[[AbortController]]** للإلغاء اليدوي: بتعمل واحد، وبتدّي [[ac.signal]] للطلب، وبتنادي [[ac.abort()]] لما تحب.
-
-ولو مررت قيمة: [[ac.abort(new Error('اليوزر لغى'))]] — **القيمة دي هي اللي بتترمي**. جرّبتها وطلعت بنفس الرسالة بالظبط.
-
-**[[AbortSignal.any([a, b])]]** بتجمع إشارتين: أول واحدة تلغي، الكل بيتلغي. ودي اللي بتخليك تحط مهلة **وتسمح لليوزر يلغي** في نفس الوقت.
-
-**والفرق اللي الأداة محتاجة تعرفه:** المهلة سبب يستاهل إعادة محاولة (الشبكة كانت بطيئة لحظة). وإلغاء اليوزر **مش** سبب يستاهل إعادة — هو قال لأ.
-
-فالأداة بتفحص [[outer?.aborted]]: لو اليوزر هو اللي لغى، بترمي على طول من غير إعادة.`,
-          example: R`// مهلة: سطر واحد
-await fetch(url, { signal: AbortSignal.timeout(5000) });
-
-// إلغاء يدوي
-const ac = new AbortController();
-setTimeout(() => ac.abort(new Error('اليوزر ضغط إلغاء')), 300);
-await fetch(url, { signal: ac.signal });
-
-// والاتنين سوا
-const signal = AbortSignal.any([ac.signal, AbortSignal.timeout(5000)]);
-await fetch(url, { signal });
-
-// وفي الأداة: اليوزر لغى؟ متعيدش
-try {
-  res = await fetchImpl(url, { ...init, signal });
-} catch (e) {
-  if (outer?.aborted) throw outer.reason;
-  lastError = e.name === 'TimeoutError' ? e : new NetworkError(e.cause ?? e);
-}`,
-          lines: [
-            R`[[AbortSignal.timeout]] بتعمل signal بيلغي نفسه بعد ٥ ثواني. لو الطلب مخلصش في المدة دي، [[fetch]] بيترفض بـ error اسمه [[TimeoutError]]، فمفيش طلب يفضل معلّق للأبد.`,
-            R`[[AbortController]] هو المتحكّم اللي انت بتلغي بيه بإيدك (زرار «إلغاء» مثلًا). جواه [[signal]] بتبعته للطلب، و [[abort]] اللي بتنادي بيها.`,
-            R`بنقلّد يوزر ضغط إلغاء بعد ٣٠٠ms. **القيمة اللي بتمررها لـ [[abort]] هي اللي [[fetch]] بيترفض بيها**؛ من غيرها هيترفض بـ [[AbortError]] عام مالوش سياق.`,
-            R`بنمرر [[ac.signal]] للطلب، فأول ما [[ac.abort]] تتنادى الطلب بيتقطع و [[await]] ده يرمي الـ Error اللي بعتناه.`,
-            R`[[AbortSignal.any]] بتجمع أكتر من signal في واحد: أول واحد يلغي (اليوزر أو المهلة)، المجمّع بيتلغي، و [[signal.reason]] بيبقى سبب اللي لغى. موجودة من Node 20.`,
-            R`بنمرر الـ signal المجمّع، فالطلب بيتقطع لو اليوزر لغى أو لو الخمس ثواني خلصوا، أيهم يحصل الأول.`,
-            R`ده جزء من أداة [[request]]: [[try]] حوالين الطلب عشان نقرر بعد الفشل نعيد ولا لأ.`,
-            R`الطلب نفسه بـ [[fetchImpl]] (يا [[fetch]] الحقيقي يا واحد مزيّف في الاختبار)، و [[...init]] بيفرد إعدادات اليوزر، و [[signal]] المجمّع بيتحط آخر حاجة عشان يغطّي أي signal تاني.`,
-            R`أي فشل (مهلة، إلغاء، شبكة) بييجي هنا، وهنا بنفرّق بينهم.`,
-            R`[[outer]] هو الـ signal اللي اليوزر بعته. لو هو اللي اتلغى يبقى اليوزر قال «لأ»، فبنرمي سببه على طول. **الإعادة هنا هدر وإزعاج**: اليوزر مش عايز الطلب ده أصلًا.`,
-            R`غير كده نحتفظ بالخطأ عشان المحاولة الجاية: المهلة تفضل [[TimeoutError]] زي ما هي، وأي حاجة تانية تتلف في [[NetworkError]] ومعاها السبب الأصلي ([[e.cause]] لو موجود).`,
-            R`نهاية [[catch]].`
-          ],
-          try: R`شغّل سيرفر بيستنى ٣ ثواني، وجرّب [[AbortSignal.timeout(500)]] عليه واقرا [[e.name]]. وبعدين جرّب [[ac.abort(new Error('كذا'))]] وشوف الرسالة اللي بتوصل.`,
-          practice: [
-            { lvl: 'سريع', t: R`**قارن وقيس:** سيرفر [[/slow]] بيرد بعد ٣ ثواني. اطلبه مرة بـ [[AbortSignal.timeout(500)]] ومرة من غير، وقيس الوقت بـ [[performance.now()]].`, done: R`مع المهلة وقع بـ [[TimeoutError]] بعد حوالي 500ms، و [[e instanceof DOMException]] بـ [[true]]، ومن غيرها خلص بعد حوالي ٣ ثواني. والرقمين مكتوبين.` },
-            { lvl: 'تطبيق', t: R`**ابني حتة صفحة:** خانة بحث بتعمل [[fetch]] مع كل حرف، وكل طلب جديد بيلغي اللي قبله بـ [[AbortController]] خاص بيه، وفيه مهلة ٥ ثواني بـ [[AbortSignal.any]]، وزرار «إلغاء».`, done: R`لما تكتب ٥ حروف بسرعة، الـ Network في DevTools فيها ٤ طلبات canceled وواحد بس كمّل، والنتيجة المعروضة دايمًا بتاعة آخر كلمة، والإلغاء مبيظهرش رسالة خطأ، والمهلة بتظهر «الرد اتأخر».` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[const sleep = (ms) => new Promise(r => setTimeout(r, ms))]] واتلغت الإشارة بعد 100ms وانت نايم [[sleep(5000)]]. اكتب سكربت يطبع الوقت لحد ما البروسيس يخرج ([[process.on('exit')]])، وبعدين صلّح [[sleep]] تاخد [[signal]].`, done: R`بالنسخة الغلط البروسيس فضل حوالي ٥ ثواني قبل ما يخرج والـ Promise ما رميتش، وبالنسخة الصح رميت [[signal.reason]] وخرج بعد حوالي 100ms، و [[clearTimeout]] موجود في الكود.` },
-          ],
-          deep: {
-            why: R`الطلب اللي بيعلّق بيخلي الواجهة تبان مكسورة. واليوزر اللي ضغط إلغاء وبرضه بيستنى بيفقد الثقة في البرنامج.`,
-            how: R`**[[AbortSignal]] معيار عام**، مش لـ [[fetch]] بس. أي API بتاخد [[{ signal }]] بتبقى قابلة للإلغاء: [[fs.readFile]] في Node، و [[addEventListener]] (الـ listener بيتشال لما الإشارة تلغي)، وكود انت كاتبه.
-
-والـ API بتاعها:
-
-| | بتعمل إيه |
-|---|---|
-| [[signal.aborted]] | [[true]] لو الإشارة اتلغت خلاص، و [[false]] لو لسه |
-| [[signal.reason]] | **اللي مررته لـ [[abort()]]**، أو [[AbortError]] لو مامررتش حاجة |
-| [[signal.throwIfAborted()]] | بترمي [[reason]] لو اتلغت، ومبتعملش حاجة لو لأ |
-| [[signal.addEventListener('abort', fn)]] | بتنادي [[fn]] أول ما الإلغاء يحصل، مرة واحدة |
-
-**[[AbortSignal.timeout]]** (من Node 17.3 وكل المتصفحات الحديثة) بترمي [[TimeoutError]] — وده [[DOMException]] مش [[Error]] عادي. جرّبت: [[e instanceof DOMException]] بترجّع [[true]].
-
-**و [[AbortSignal.any]]** (من Node 20) بتجمع. ولو اتلغت، [[reason]] بتبقى بتاعة أول واحدة لغت.
-
-**وفي الأداة، الفرق بين الحالتين:**
-
-| الحالة | تعيد؟ | ليه |
-|---|---|---|
-| [[TimeoutError]] | **أيوه** | الشبكة كانت بطيئة لحظة |
-| اليوزر لغى | **لأ** | هو قال لأ |
-
-والفحص [[outer?.aborted]] بيفرّق: الإشارة الخارجية (بتاعة اليوزر) هي اللي بنبص عليها، مش إشارة المهلة اللي الأداة عملتها.
-
-**وتنضيف المؤقتات**: لو عملت [[setTimeout]] للانتظار بين المحاولات، لازم تلغيه لو الإشارة لغت — وإلا الـ Promise بتفضل معلقة. وعشان كده [[sleep]] في الأداة بتاخد [[signal]]:
-
-~~~text
-const sleep = (ms, signal) => new Promise((resolve, reject) => {
-  const t = setTimeout(resolve, ms);
-  signal?.addEventListener('abort', () => { clearTimeout(t); reject(signal.reason); }, { once: true });
-});
-~~~
-
-و [[{ once: true }]] عشان الـ listener يتشال بعد أول مرة.`,
-            when: R`كل طلب شبكة. والمهلة من أول سطر، مش بعدين.`,
-            mistakes: R`تنسى المهلة خالص. أو تعيد المحاولة بعد إلغاء اليوزر. أو تنسى [[clearTimeout]] في الـ sleep فتسيب Promise معلقة. أو تفترض إن [[TimeoutError]] نوع فرعي من [[Error]] العادي (هو [[DOMException]]).`
-          },
-          teach: R`## الطلب اللي مالوش مهلة
-
-~~~js
-await fetch(url);   // ممكن يستنى دقيقتين
-~~~
-
-~~~js والحل سطر واحد
-await fetch(url, { signal: AbortSignal.timeout(5000) });
-~~~
-
-~~~text اتشغّل فعلًا على سيرفر بيستنى 3 ثواني · Node 24
-رمى بعد 511 ms
-name: TimeoutError
-message: The operation was aborted due to timeout
-instanceof DOMException: true
-~~~
-
-> لاحظ: [[TimeoutError]] **[[DOMException]]** مش [[Error]] عادي. فافحصه بـ [[e.name]] مش بـ [[instanceof Error]].
-
----
-
-## ١. الإلغاء اليدوي
-
-~~~js
-const ac = new AbortController();
-setTimeout(() => ac.abort(new Error('اليوزر ضغط إلغاء')), 300);
-await fetch(url, { signal: ac.signal });
-~~~
-
-~~~text اتشغّل فعلًا
-وقف بعد 203 ms | Error | اليوزر ضغط إلغاء
-~~~
-
-**القيمة اللي بتمررها لـ [[abort()]] هي اللي بتترمي.** من غيرها بترمي [[AbortError]] عام مالوش سياق.
-
----
-
-## ٢. الاتنين سوا
-
-~~~js
-const signal = AbortSignal.any([ac.signal, AbortSignal.timeout(5000)]);
-await fetch(url, { signal });
-~~~
-
-أول واحدة تلغي، الكل بيتلغي. و [[signal.reason]] بتبقى بتاعة اللي لغت.
-
----
-
-## ٣. والفرق اللي الأداة محتاجة تعرفه
-
-| الحالة | تعيد المحاولة؟ |
-|---|---|
-| [[TimeoutError]] | **أيوه** — الشبكة كانت بطيئة لحظة |
-| اليوزر لغى | **لأ** — هو قال لأ |
-
-~~~js في الأداة
-catch (e) {
-  if (outer?.aborted) throw outer.reason;     // اليوزر لغى: اخرج
-  lastError = e.name === 'TimeoutError' ? e : new NetworkError(e.cause ?? e);
-  ...
-}
-~~~
-
-~~~text والنتيجة (اتشغّلوا فعلًا)
-=== مهلة: بيعيد وبيفشل في الآخر ===
-  محاولة 0: TimeoutError
-  محاولة 1: TimeoutError
-في الآخر: TimeoutError | بعد 1555 ms
-
-=== اليوزر لغى: بيوقف فورًا، من غير إعادة ===
-وقف بعد 203 ms | Error | اليوزر ضغط إلغاء
-~~~
-
-في الحالة التانية، [[onRetry]] اتسجّل عشان يطبع لو اتنادى — **وماتناداش ولا مرة**.
-
----
-
-## ٤. [[AbortSignal]] مش لـ fetch بس
-
-| الاستخدام | إزاي |
-|---|---|
-| [[fs.readFile]] في Node | تمرر [[{ signal }]] والقراية بتتلغي |
-| [[addEventListener]] | تمرر [[{ signal }]] والـ listener بيتشال لوحده |
-| كودك انت | تنادي [[signal.throwIfAborted()]] في أول كل خطوة |
-
-~~~js listener بيتنضّف لوحده
-el.addEventListener('click', fn, { signal: ac.signal });
-ac.abort();   // الـ listener اتشال
-~~~
-
-ودي حاجة نضيفة جدًا بدل ما تفتكر [[removeEventListener]].
-
----
-
-## ٥. والفخ: المؤقت اللي بيفضل
-
-~~~js غلط
-const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-~~~
-
-لو الإشارة لغت وانت في النوم، الـ Promise بتفضل **معلقة** والمؤقت شغال.
-
-~~~js صح
-const sleep = (ms, signal) => new Promise((resolve, reject) => {
-  const t = setTimeout(resolve, ms);
-  signal?.addEventListener('abort', () => { clearTimeout(t); reject(signal.reason); }, { once: true });
-});
-~~~
-
-و [[{ once: true }]] عشان الـ listener يتشال بعد أول مرة.
-
----
-
-## ٦. و API الإشارة
-
-| | بتعمل إيه |
-|---|---|
-| [[signal.aborted]] | [[true]] لو الإشارة اتلغت خلاص |
-| [[signal.reason]] | **اللي مررته لـ [[abort()]]**، وهو اللي بيترمي |
-| [[signal.throwIfAborted()]] | بترمي [[reason]] لو اتلغت، وغير كده بتعدّي |
-
-[[throwIfAborted()]] مفيدة في لوب طويلة: حطها في أول كل دورة.
-
----
-
-## الخلاصة
-
-- [[AbortSignal.timeout(ms)]] — سطر واحد، وبيمنع التعليق.
-- [[ac.abort(new Error('...'))]] — السبب بيوصل.
-- [[AbortSignal.any]] للمهلة والإلغاء سوا.
-- المهلة تستاهل إعادة، وإلغاء اليوزر لأ.
-- [[sleep]] لازم تاخد [[signal]] وتعمل [[clearTimeout]].`,
-          sol: R`الحالتين بناتجهم: المهلة بتتعاد، وإلغاء اليوزر بيوقف فورًا من غير ولا إعادة.`,
-          solCode: R`// مهلة 300ms على سيرفر بيستنى 3 ثواني، و retries: 2
-//   محاولة 0: TimeoutError
-//   محاولة 1: TimeoutError
-// في الآخر: TimeoutError | بعد 1555 ms
-
-// واليوزر لغى بعد 200ms، و retries: 5
-const ac = new AbortController();
-setTimeout(() => ac.abort(new Error('اليوزر ضغط إلغاء')), 200);
-await request(url, { timeout: 5000, retries: 5, signal: ac.signal,
-                     onRetry: () => console.log('أعاد — مش المفروض!') });
-// وقف بعد 203 ms | Error | اليوزر ضغط إلغاء
-// (و onRetry ماتناداش ولا مرة)
-
-// (اتشغّلوا فعلًا على Node 24.22.1)`
-        },
-
-        {
-          cmd: "مشروع — إعادة المحاولة الذكية",
-          title: "أي أخطاء تتعاد، و backoff فيه عشوائية",
-          learn: R`تعيد المحاولة على المؤقت بس، بمهلة أُسّية فيها عشوائية، ومحترمة لـ [[Retry-After]].`,
-          out: R`٥٠٣ مؤقتة بتنجح من غير ما حد يحس، و٤٠٤ بتفشل على طول.`,
-          use: {
-            prog: R`إعادة المحاولة على خطأ دائم هدر: ٤٠٤ هتفضل ٤٠٤. والتفرقة بين المؤقت والدائم هي كل الذكاء في الموضوع.`,
-            net: R`من غير عشوائية، كل العملاء بيعيدوا في نفس اللحظة وبيوقّعوا السيرفر اللي لسه بيقوم. الظاهرة دي اسمها thundering herd، وبتحصل فعلًا.`,
-            cs: R`الـ exponential backoff with jitter خوارزمية موصوفة في أوراق هندسية، وبتتطبّق في AWS SDK وكل عميل جاد.`,
-          },
-          desc: R`إعادة المحاولة سهلة تكتبها غلط. وفيه تلات قرارات:
-
-**١. تعيد على إيه؟**
-
-| الحالة | تعيد؟ |
-|---|---|
-| ٤٠٠، ٤٠١، ٤٠٣، ٤٠٤ | **لأ** — هتفضل زي ما هي |
-| ٤٠٨، ٤٢٥، ٤٢٩ | أيوه — مؤقتة |
-| ٥٠٠، ٥٠٢، ٥٠٣، ٥٠٤ | أيوه |
-| فشل شبكة | أيوه |
-| مهلة | أيوه |
-| إلغاء اليوزر | **لأ** |
-
-**٢. تستنى قد إيه؟**
-
-مش مدة ثابتة. الأُسّي: [[300ms]] ثم [[600]] ثم [[1200]] — بيدي السيرفر وقت يقوم.
-
-**وفيه عشوائية (jitter) إجبارية.** لو ألف عميل فشلوا في نفس اللحظة وكلهم استنوا ٣٠٠ms بالظبط، هيرجعوا كلهم في نفس اللحظة. ودي بتوقّع السيرفر تاني.
-
-الحل: المدة بين نصف القيمة وكاملها:
-
-[[Math.round(exp / 2 + Math.random() * (exp / 2))]]
-
-**٣. تحترم السيرفر؟**
-
-لما السيرفر يرد [[429]] مع [[Retry-After: 1]]، هو بيقولك «استنى ثانية». واحترامها أحسن من حسابك — جرّبتها والأداة استنت ١٠٠٠ms بالظبط.
-
-و [[Retry-After]] ليها شكلين: عدد ثواني، أو تاريخ HTTP. والكود بيتعامل مع الاتنين، وأي قيمة تانية ([[-5]] أو [[1.5]] أو [[1e3]] أو كلام) بيعتبرها **مش موجودة** ويرجع للحساب العادي.
-
-**ولو السيرفر قال «استنى دقيقتين» والحد بتاعنا ١٠ ثواني؟** الحد ([[cap]]) بتاع الحساب **بتاعنا** بس. لو استنينا ١٠ ثواني بدل ١٢٠ هناخد ٤٢٩ تاني أكيد، ونحرق محاولة، وسيرفرات كتير بتطوّل الحظر لما تلاقيك بتخبط بدري. فالقرار: **نستنى اللي السيرفر قاله بالظبط لحد [[maxRetryAfter]] (دقيقة افتراضيًا)، ولو أكتر من كده متعيدش خالص**: نرمي الـ [[HttpError]] على طول ومعاه [[retryAfter]]، والواجهة تقول «جرّب بعد دقيقتين» بدل ما تعلّق.`,
-          example: R`const RETRY_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
-const SECONDS = /^\d+$/;
-const HTTP_DATE = /^[A-Z][a-z]{2}, \d{2} [A-Z][a-z]{2} \d{4} \d{2}:\d{2}:\d{2} GMT$/;
-
-export function backoff(attempt, { base = 300, cap = 10_000, retryAfter = null, maxRetryAfter = 60_000 } = {}) {
-  if (retryAfter != null) {
-    const ms = retryAfter * 1000;
-    return ms <= maxRetryAfter ? ms : null;
-  }
-  const exp = Math.min(base * 2 ** attempt, cap);
-  return Math.round(exp / 2 + Math.random() * (exp / 2));
-}
-
-function parseRetryAfter(res) {
-  const raw = res.headers.get('retry-after');
-  if (!raw) return null;
-  if (SECONDS.test(raw)) return Number(raw);
-  if (!HTTP_DATE.test(raw)) return null;
-  const when = Date.parse(raw);
-  return Number.isNaN(when) ? null : Math.max(0, (when - Date.now()) / 1000);
-}
-
-// وجوه لوب request، بعد رد فشل يستاهل إعادة:
-const retryAfter = res ? parseRetryAfter(res) : null;
-const wait = backoff(attempt, { base, retryAfter, maxRetryAfter });
-if (wait == null) { lastError.retryAfter = retryAfter; break; }`,
-          lines: [
-            R`الـ status codes اللي فشلها غالبًا مؤقت وتستاهل إعادة: 408 و 429 (استنى شوية) و 5xx (السيرفر واقع لحظة). 404 و 400 مش فيها، لأن الإعادة مش هتغيّر النتيجة. و [[Set]] عشان [[.has()]] تبقى سريعة وواضحة.`,
-            R`شكل «عدد الثواني» في RFC 9110 أرقام بس: [[^]] أول النص و [[\d+]] رقم واحد أو أكتر و [[$]] آخره. فـ [[-5]] و [[1.5]] و [[1e3]] مش هيعدّوا، مع إن [[Number]] كان بيقبلهم كلهم.`,
-            R`وشكل التاريخ الوحيد اللي السيرفرات بتبعته النهارده (IMF-fixdate): [[Wed, 21 Oct 2026 07:28:00 GMT]]. بنفحص الشكل قبل [[Date.parse]] لأن V8 متساهل: [[Date.parse('-5')]] بترجّع تاريخ سنة 2001 مش [[NaN]] (جرّبتها)، فكانت هتبقى «استنى صفر».`,
-            R`[[backoff]] بتحسب المدة اللي نستناها قبل المحاولة رقم [[attempt]]. الخيارات بقيم افتراضية: [[base]] أول مدة، و [[cap]] أقصى مدة لحسابنا (١٠ ثواني)، و [[retryAfter]] لو السيرفر قال يستنى قد إيه، و [[maxRetryAfter]] أطول مدة نقبل نستناها من السيرفر (دقيقة).`,
-            R`**السيرفر قال؟ اسمع.** [[!= null]] بتمسك [[null]] و [[undefined]] الاتنين، يعني الفرع ده بيشتغل بس لو [[parseRetryAfter]] لقت رقم سليم.`,
-            R`بنحوّل الثواني لـ ms عشان [[setTimeout]] بياخد ملي ثانية.`,
-            R`**القرار:** المدة اللي السيرفر قالها بالظبط من غير [[cap]]، لأن الاستعجال هنا معناه ٤٢٩ تاني أكيد. ولو أكتر من [[maxRetryAfter]] بنرجّع [[null]]، ومعناها «متعيدش، بلّغ اللي فوق».`,
-            R`نهاية فرع [[retryAfter]].`,
-            R`exponential backoff: المدة بتتضاعف كل محاولة: [[300]] ثم [[600]] ثم [[1200]]… و [[Math.min]] بتوقفها عند [[cap]]. الفكرة إن السيرفر لو تعبان نديله وقت أطول كل مرة بدل ما نضربه.`,
-            R`**الـ jitter (العشوائية)**: المدة النهائية رقم عشوائي بين نص القيمة وكاملها. من غيرها، ألف عميل فشلوا مع بعض هيرجعوا كلهم في نفس الملي ثانية ويوقّعوا السيرفر تاني.`,
-            R`نهاية [[backoff]].`,
-            R`[[parseRetryAfter]] بتقرا هيدر [[Retry-After]] من الرد وترجّع عدد الثواني (رقم مش سالب)، أو [[null]] لو مفيش أو لو القيمة مش سليمة. الهيدر ده بييجي غالبًا مع 429 و 503.`,
-            R`[[headers.get]] بترجّع قيمة الهيدر كنص، أو [[null]] لو مش موجود. واسم الهيدر مش بيفرق فيه الحروف الكبيرة والصغيرة، و [[Headers]] بتشيل المسافات من الأول والآخر لوحدها ([[' 7 ']] بتيجي [['7']]).`,
-            R`لو الهيدر مش موجود (أو فاضي) بنرجّع [[null]] على طول، و [[backoff]] هتستخدم الحساب العادي.`,
-            R`أرقام بس؟ يبقى عدد ثواني، و [[Number]] هنا آمنة لأن الـ regex ضمنت إن مفيش سالب ولا كسر ولا [[e]].`,
-            R`مش أرقام ومش بشكل التاريخ؟ قيمة بايظة، فبنعاملها كأنها **مش موجودة** ([[null]]) بدل ما نخمّن. كده [[-5]] بقت [[null]] بعد ما كانت بترجّع [[-5]] وبتخلي المهلة [[-5000]]ms.`,
-            R`[[Date.parse]] بتحوّل التاريخ لـ ms من ١٩٧٠. ممكن برضه ترجّع [[NaN]] لتاريخ شكله صح وقيمه غلط زي [[Mon, 99 Abc 2026 99:99:99 GMT]].`,
-            R`لو التاريخ بايظ نرجّع [[null]]، غير كده نحسب الفرق بينه وبين دلوقتي بالثواني. و [[Math.max]] مع صفر عشان لو التاريخ فات نرجّع صفر مش رقم سالب.`,
-            R`نهاية [[parseRetryAfter]].`,
-            R`جوه لوب [[request]]: لو فيه رد (مش فشل شبكة) بنقرا منه [[Retry-After]]، ولو مفيش رد خالص مفيش هيدر نقراه.`,
-            R`بنسأل [[backoff]] نستنى قد إيه، ومعاها [[maxRetryAfter]] اللي اليوزر ممكن يغيّره في الخيارات.`,
-            R`[[null]] معناها «السيرفر طلب أكتر من اللي نقدر نستناه»: بنعلّق [[retryAfter]] على الخطأ عشان الواجهة تقول «جرّب بعد كذا»، و [[break]] تخرج من اللوب فـ [[throw lastError]] اللي بعدها بترمي على طول.`,
-          ],
-          try: R`شغّل سيرفر بيرجّع ٥٠٣ أول مرتين وبعدين ٢٠٠، وشوف الأداة بتنجح بعد كام محاولة وبكام ms. وبعدين سيرفر بيرجّع ٤٢٩ مع [[Retry-After: 1]] وقارن المدة، ومرة مع [[Retry-After: 120]] وشوف إنه مبيعيدش خالص.`,
-          practice: [
-            { lvl: 'سريع', t: R`**محاكاة:** ١٠٠٠ عميل فشلوا في نفس اللحظة. احسب وقت رجوع كل واحد مرة بـ 300ms ثابتة ومرة بـ [[backoff(0)]]، وقسّم الأوقات لخانات كل 10ms ([[Math.floor(t / 10)]]) واطبع أكبر خانة.`, done: R`من غير عشوائية الـ 1000 كلهم في خانة واحدة، ومع [[backoff(0)]] أكبر خانة أقل من 150 في كل تشغيلة. وده الـ thundering herd بالأرقام.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** نسخة قديمة من [[parseRetryAfter]] كانت بتعمل [[const n = Number(raw); if (Number.isFinite(n)) return n;]] بدل الـ regex. اكتب جدول حالات يمسك غلطها، وبعدين قارنه بنسخة الدرس.`, done: R`الجدول بيطلّع الفرق بالظبط: القديمة رجّعت [[-5]] لـ [[Retry-After: -5]] (فـ [[backoff]] رجّعت [[-5000]]) و [[1000]] لـ [[1e3]] و [[1.5]] لـ [[1.5]]، ونسخة الدرس رجّعت [[null]] للتلاتة. والاتنين متفقين على [[120]] بـ 120، وتاريخ بعد ٣٠ ثانية بين 29 و 30، وتاريخ فات بـ 0، و [[bad]] بـ [[null]].` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[shouldRetry({ status, error, method, headers, userAborted })]] بترجّع [[true]] أو [[false]] حسب جدول الدرس، و [[POST]] مبيتعادش غير لو فيه [[Idempotency-Key]].`, done: R`جدول فيه ٩ حالات بـ [[assert.equal]] بيعدّي: 404 لأ، و 503 GET أيوه، و 503 POST من غير المفتاح لأ وبيه أيوه، و 429 أيوه، و [[TimeoutError]] أيوه، و [[NetworkError]] أيوه، وإلغاء اليوزر لأ حتى مع 503، و 400 لأ.` },
-          ],
-          deep: {
-            why: R`إعادة المحاولة من غير عشوائية بتحوّل عطل بسيط لعطل كبير. والإعادة على ٤٠٤ بتضيّع وقت المستخدم على حاجة مش هتتغيّر.`,
-            how: R`**ليه [[2 ** attempt]]؟** لأن السيرفر اللي بيقوم محتاج وقت متزايد. ولو كل العملاء بيعيدوا بنفس المعدل الثابت، الضغط بيفضل ثابت.
-
-**والعشوائية** ليها أشكال:
-
-| الشكل | الحساب |
-|---|---|
-| Full jitter | [[random() * exp]] |
-| **Equal jitter** | [[exp/2 + random() * exp/2]] |
-| Decorrelated | بيعتمد على القيمة اللي قبلها |
-
-إحنا استخدمنا الوسطانية: مش أقل من النص، ومش أكتر من الكامل. فيه ضمان حد أدنى وفيه تشتيت.
-
-**[[cap]]** مهمة: من غيرها، بعد ١٠ محاولات المهلة بتبقى [[300 * 1024]] = ٥ دقايق. بس [[cap]] بتتطبّق على **حسابنا** بس، مش على [[Retry-After]]: لو السيرفر قال ١٢٠ ثانية واحنا رجعنا بعد ١٠، هناخد ٤٢٩ تاني أكيد. فـ [[Retry-After]] بتتحترم بالظبط لحد [[maxRetryAfter]] (دقيقة)، وأكتر من كده [[backoff]] بترجّع [[null]] والأداة بترمي على طول ومعاها [[e.retryAfter]]. ولو السيرفر بعت قيمة بايظة ([[-5]] أو [[1.5]]) بنعتبرها مش موجودة.
-
-**و [[Retry-After]]** معرّفة في RFC 9110. وبتيجي مع ٤٢٩ و٥٠٣ عادة. وشكلين:
-
-~~~text
-Retry-After: 120              عدد ثواني
-Retry-After: Wed, 21 Oct 2026 07:28:00 GMT    تاريخ
-~~~
-
-و [[Number('120')]] بترجّع [[120]]، و [[Number('Wed, 21...')]] بترجّع [[NaN]] — فالفحص بـ [[Number.isFinite]] بيفرّق.
-
-**وحاجة مهمة في الأمان**: متعيدش على طلبات **مش idempotent** من غير ما تفكر. [[GET]] آمن، و [[POST]] اللي بيعمل دفعة ممكن يتعمل مرتين. والحل المعياري هو [[Idempotency-Key]] — رقم فريد بتبعته مع الطلب، والسيرفر بيتجاهل التكرار.
-
-والأداة بتاعتنا بتعيد على أي طريقة. ولو هتستخدمها مع [[POST]]، ضيف الهيدر ده أو اقفل الإعادة.
-
-**وعن [[onRetry]]**: الأداة بتاخد callback بدل ما تطبع. وده بيخلي اللي بيستخدمها يقرر — لوج، أو مقياس، أو سكوت.`,
-            when: R`أي طلب على شبكة مش بتاعتك. والـ jitter دايمًا.`,
-            mistakes: R`تعيد على ٤٠٤. أو مهلة ثابتة من غير عشوائية. أو تنسى الحد الأقصى. أو تعيد على [[POST]] من غير [[Idempotency-Key]]. أو تتجاهل [[Retry-After]] وتحسب بنفسك. أو تطبّق [[cap]] على [[Retry-After]] فترجع بدري وتاخد ٤٢٩ تاني. أو تقرا الهيدر بـ [[Number]] فتقبل [[-5]] وتستنى مدة سالبة.`
-          },
-          teach: R`## تلات قرارات
-
----
-
-## ١. تعيد على إيه؟
-
-~~~js
-const RETRY_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
-~~~
-
-| الحالة | تعيد؟ | ليه |
-|---|---|---|
-| ٤٠٠، ٤٠١، ٤٠٣، ٤٠٤ | **لأ** | هتفضل زي ما هي |
-| ٤٢٩ | أيوه | تجاوزت الحد — استنى |
-| ٥٠٠، ٥٠٢، ٥٠٣، ٥٠٤ | أيوه | مشكلة مؤقتة في السيرفر |
-| شبكة / مهلة | أيوه | ممكن تعدّي |
-| إلغاء اليوزر | **لأ** | هو قال لأ |
-
----
-
-## ٢. تستنى قد إيه؟
-
-~~~js
-const exp = Math.min(base * 2 ** attempt, cap);
-return Math.round(exp / 2 + Math.random() * (exp / 2));
-~~~
-
-~~~text مع base=300
-المحاولة 0:  300 -> بين 150 و 300
-المحاولة 1:  600 -> بين 300 و 600
-المحاولة 2: 1200 -> بين 600 و 1200
-~~~
-
-### والعشوائية مش رفاهية
-
-لو ألف عميل فشلوا في نفس اللحظة وكلهم استنوا **٣٠٠ms بالظبط**، هيرجعوا كلهم في نفس اللحظة — ويوقّعوا السيرفر اللي لسه بيقوم.
-
-الظاهرة دي اسمها **thundering herd**، وبتحصل فعلًا.
-
-| الشكل | الحساب |
-|---|---|
-| Full jitter | [[random() * exp]] |
-| **Equal jitter** (اللي استخدمناه) | [[exp/2 + random() * exp/2]] |
-
-الوسطانية فيها حد أدنى مضمون وفيها تشتيت.
-
-> و [[cap]] مهمة: من غيرها، بعد ١٠ محاولات المهلة بتبقى **٥ دقايق**.
-
----
-
-## ٣. والسيرفر لو قال، اسمع
-
-~~~text
-Retry-After: 120                               عدد ثواني
-Retry-After: Wed, 21 Oct 2026 07:28:00 GMT     تاريخ
-~~~
-
-~~~js الشكلين سوا، وأي حاجة تانية null
-if (SECONDS.test(raw)) return Number(raw);     // /^\d+$/: أرقام بس
-if (!HTTP_DATE.test(raw)) return null;         // مش تاريخ بالشكل ده؟ اعتبره مش موجود
-const when = Date.parse(raw);
-return Number.isNaN(when) ? null : Math.max(0, (when - Date.now()) / 1000);
-~~~
-
-### ليه regex مش [[Number]]؟
-
-النسخة الأولى من الدرس كانت [[Number(raw)]] و [[Number.isFinite]]، وده كان باج حقيقي. جدول الحالات (اتشغّل فعلًا · Node 24.22.1):
-
-~~~text Retry-After: القيمة -> القديمة | الجديدة
-"120"     -> 120     | 120
-"-5"      -> -5      | null      <- القديمة خلّت backoff ترجّع -5000ms
-"1.5"     -> 1.5     | null
-"1e3"     -> 1000    | null
-"bad"     -> null    | null
-تاريخ بعد 30 ثانية -> 29.681 | 29.681
-تاريخ فات          -> 0      | 0
-~~~
-
-ولاحظ إن [[Date.parse('-5')]] لوحدها بترجّع **تاريخ سنة ٢٠٠١** في V8 مش [[NaN]]، فلو شلت فحص [[HTTP_DATE]] الـ [[-5]] كانت هتبقى «استنى صفر». عشان كده بنفحص **الشكل** الأول.
-
-> المعيار (RFC 9110) بيقول عدد الثواني [[1*DIGIT]]: أرقام بس. والسيرفر اللي بيبعت غير كده غلطان، والأمان إنك تتجاهله وترجع لحسابك.
-
-### ولو السيرفر قال «استنى دقيقتين»؟
-
-[[cap]] (١٠ ثواني) بتاعة الحساب **بتاعنا**. لو طبّقناها على [[Retry-After: 120]] هنرجع بعد ١٠ ثواني وناخد ٤٢٩ تاني أكيد، ونحرق المحاولة، وفيه سيرفرات بتطوّل الحظر للي بيخبط بدري.
-
-| السيرفر قال | الأداة بتعمل إيه | ليه كده |
-|---|---|---|
-| لحد [[maxRetryAfter]] (دقيقة) | تستنى المدة دي **بالظبط** | الاستعجال معناه ٤٢٩ تاني |
-| أكتر من دقيقة | **متعيدش**، ترمي [[HttpError]] ومعاه [[e.retryAfter]] | مش هنعلّق الواجهة دقايق |
-| قيمة بايظة | تتجاهلها وتحسب [[backoff]] عادي | الهيدر الغلط زي مفيش هيدر |
-
-~~~text سيرفر محلي بيرجّع 429 دايمًا، و retries: 2 — اتشغّل فعلًا
-  هستنى 1000 ms
-  هستنى 1000 ms
-Retry-After: 1   -> HttpError 429 | retryAfter: undefined | طلبات: 3 | 2032 ms
-Retry-After: 120 -> HttpError 429 | retryAfter: 120       | طلبات: 1 | 3 ms
-  هستنى 268 ms
-  هستنى 586 ms
-Retry-After: -5  -> HttpError 429 | retryAfter: undefined | طلبات: 3 | 874 ms
-~~~
-
-- **[[1]]**: استنى ثانية بالظبط مرتين، وفي الآخر استسلم بعد ٣ طلبات.
-- **[[120]]**: طلب واحد ورمى في ٣ms، ومعاه [[retryAfter: 120]] عشان الواجهة تقول «جرّب بعد دقيقتين».
-- **[[-5]]**: اتعامل كأن مفيش هيدر، فاستخدم الحساب العادي بالعشوائية (268 و 586).
-
-ولو تطبيقك (سكربت ليلي مثلًا) يقدر يستنى، مرّر [[maxRetryAfter: 300_000]]: [[backoff(0, { retryAfter: 120, maxRetryAfter: 300_000 })]] بترجّع [[120000]].
-
----
-
-## ٤. والنتيجة الحقيقية
-
-~~~text ٥٠٣ مؤقتة (السيرفر بيرجّع 503 أول مرتين) — اتشغّل فعلًا
-  محاولة 0: 503، هستنى 159ms
-  محاولة 1: 503، هستنى 485ms
-النتيجة: { ok: true, 'بعد': '3 محاولات' } | الوقت الكلي: 670 ms
-~~~
-
-**١٥٩ و٤٨٥** — مش ٣٠٠ و٦٠٠. دي العشوائية شغالة.
-
-~~~text ٤٢٩ مع Retry-After: 1 — اتشغّل فعلًا
-  429: Retry-After قال استنى 1000ms
-وفي الآخر: HttpError 429
-~~~
-
-**١٠٠٠ms بالظبط** — الأداة احترمت السيرفر بدل ما تحسب.
-
-~~~text و٤٠٤ — اتشغّل فعلًا
-instanceof HttpError: true
-name: HttpError | status: 404
-~~~
-
-ولا إعادة واحدة.
-
----
-
-## ٥. وتحذير: [[POST]] مش زي [[GET]]
-
-[[GET]] آمن تعيده. و [[POST]] اللي بيعمل دفعة ممكن **يتنفّذ مرتين** لو الرد ضاع في الطريق.
-
-~~~text الحل المعياري
-Idempotency-Key: 7f3a9c12-...
-~~~
-
-رقم فريد بتبعته مع الطلب، والسيرفر بيتجاهل التكرار بنفس المفتاح. وAPIs الدفع كلها بتدعمه.
-
-**الأداة بتاعتنا بتعيد على أي طريقة.** فلو هتستخدمها مع [[POST]]، ضيف الهيدر ده أو حط [[retries: 0]].
-
----
-
-## ٦. و [[onRetry]] بدل الطباعة
-
-~~~js
-await json(url, {
-  onRetry: ({ attempt, status, wait }) => log.warn({ attempt, status, wait }, 'بعيد'),
-});
-~~~
-
-الأداة بتاخد callback بدل ما تطبع. فاللي بيستخدمها يقرر: لوج، أو مقياس، أو سكوت.
-
----
-
-## الخلاصة
-
-- أعد على المؤقت بس: 408/425/429/5xx وشبكة ومهلة.
-- أُسّي **مع عشوائية** — من غيرها بتوقّع السيرفر.
-- [[cap]] عشان المهلة متوصلش لدقايق.
-- [[Retry-After]] بتكسب على حسابك، بالظبط ومن غير [[cap]]، لحد [[maxRetryAfter]]؛ وأكتر من كده متعيدش.
-- قيمة [[Retry-After]] بايظة ([[-5]] و [[1e3]]) = مفيش هيدر.
-- [[POST]] محتاج [[Idempotency-Key]].`,
-          sol: R`التلات حالات بناتجهم: المؤقتة بتنجح بمهلة عشوائية، و [[Retry-After]] بتتحترم، والدائمة بتفشل على طول.`,
-          solCode: R`// 503 مؤقتة، والسيرفر بينجح في التالتة:
-//   محاولة 0: 503، هستنى 159ms
-//   محاولة 1: 503، هستنى 485ms
-// النتيجة: { ok: true, 'بعد': '3 محاولات' } | الوقت الكلي: 670 ms
-//   (159 و485 — مش 300 و600. دي العشوائية)
-
-// 429 مع Retry-After: 1
-//   429: Retry-After قال استنى 1000ms
-//   (1000ms بالظبط — احترم السيرفر بدل ما يحسب)
-
-// 404
-// instanceof HttpError: true
-// name: HttpError | status: 404
-//   (ولا إعادة واحدة)
-
-// (اتشغّلوا فعلًا على Node 24.22.1)`
-        },
-
-        {
-          cmd: "مشروع — اختبرها من غير شبكة",
-          title: "fetch مزيّف، و node --test المدمج",
-          learn: R`تحقن [[fetch]] بديل فتختبر كل المسارات من غير إنترنت.`,
-          out: R`٨ اختبارات بتعدّي في أقل من ثانية ونص، من غير أي سيرفر.`,
-          use: {
-            prog: R`حقن الاعتمادية ([[fetchImpl = fetch]]) سطر واحد بيحوّل كود مستحيل يتختبر لكود بيتختبر في ملي ثانية.`,
-            work: R`الاختبار اللي محتاج شبكة بيفشل في الطيارة وفي CI وفي أي يوم الخدمة فيه بطيئة. واللي مش محتاجها بيعدّي دايمًا.`,
-            cs: R`الـ test double: بتبدّل التبعية بحاجة بتتحكم فيها. ومنها بتختبر الحالات اللي صعب توصلها في الواقع (٥٠٣ ثلاث مرات ورا بعض).`,
-          },
-          desc: R`الأداة بتعمل طلبات شبكة. فإزاي تختبرها من غير شبكة؟
-
-**الحل سطر واحد في التوقيع:**
-
-[[export async function request(url, { fetchImpl = fetch, ...init } = {})]]
-
-الافتراضي هو [[fetch]] الحقيقي. وفي الاختبار بتمرر واحد بتاعك.
-
-والمزيّف بسيط: بياخد قايمة ردود وبيرجّعها بالترتيب، وبيسجّل النداءات:
-
-~~~text
-function fakeFetch(responses) {
-  const calls = [];
-  const impl = async (url, init) => {
-    calls.push({ url, init });
-    const next = responses[Math.min(calls.length - 1, responses.length - 1)];
-    if (next instanceof Error) throw next;
-    return next.clone();
-  };
-  impl.calls = calls;
-  return impl;
-}
-~~~
-
-و [[Response]] موجود في Node من نسخة ١٨، فتقدر تعمل رد حقيقي: [[new Response('{"ok":true}', { status: 200 })]].
-
-**والـ [[calls]] هي اللي بتثبت السلوك**: اختبار «٤٠٤ مبتتعادش» بيتأكد إن [[calls.length === 1]]، مش بس إن الخطأ اتر مى.
-
-**والاختبارات نفسها بـ [[node --test]]** — مدمج من Node 18، مفيش تسطيب. و [[assert.rejects]] بتاخد دالة فحص بترجّع [[true]] لو الخطأ هو المتوقّع.`,
-          example: R`import { test } from 'node:test';
-import assert from 'node:assert/strict';
-import { request, HttpError, NetworkError, backoff } from './request.js';
-
-function fakeFetch(responses) {
-  const calls = [];
-  const impl = async (url, init) => {
-    calls.push({ url, init });
-    const next = responses[Math.min(calls.length - 1, responses.length - 1)];
-    if (next instanceof Error) throw next;
-    return next.clone();
-  };
-  impl.calls = calls;
-  return impl;
-}
-
-const res = (status, body = '') => new Response(body, { status });
-
-test('بترمي HttpError على 404 ومبتعيدش', async () => {
-  const f = fakeFetch([res(404, '{"e":1}')]);
-  await assert.rejects(
-    () => request('https://x.test/', { fetchImpl: f, retries: 3 }),
-    (e) => e instanceof HttpError && e.status === 404,
-  );
-  assert.equal(f.calls.length, 1, '404 مش المفروض يتعاد');
-});
-
-test('بتعيد على 503 وبتنجح', async () => {
-  const f = fakeFetch([res(503), res(503), res(200, '{"ok":true}')]);
-  const r = await request('https://x.test/', { fetchImpl: f, retries: 3 });
-  assert.equal(r.status, 200);
-  assert.equal(f.calls.length, 3);
-});`,
-          lines: [
-            R`[[test]] من مشغّل الاختبارات المدمج في Node، مش محتاج تسطّب Jest ولا Vitest. بتشغّل الملف بـ [[node --test]].`,
-            R`[[node:assert/strict]] نسخة الـ assert الصارمة: [[assert.equal]] فيها بتقارن بـ [[===]] (النوع والقيمة)، فـ [[1]] و [["1"]] مش هيبقوا متساويين.`,
-            R`بنستورد [[request]] اللي هنختبرها، وكلاسات الأخطاء عشان نتأكد إن الـ error اللي اترمى من النوع الصح، و [[backoff]] لاختبار المدد في اختبار تاني في نفس الملف (المثال ده مبيستخدمهاش).`,
-            R`[[fakeFetch]] بتعمل [[fetch]] مزيّف: بتاخد array ردود جاهزة يرجّعها بالترتيب، فنختبر 404 و 503 وفشل الشبكة من غير سيرفر ولا نت.`,
-            R`array بنسجّل فيها كل نداء حصل، عشان الاختبار يعرف بعدين [[request]] نادت كام مرة وبإيه.`,
-            R`[[impl]] هي الدالة اللي هتتبعت مكان [[fetch]]، بنفس شكله: بتاخد [[url]] و [[init]] وبترجّع Promise لأنها [[async]].`,
-            R`كل نداء بنسجّل الرابط والإعدادات. **التسجيل هو نص فايدة المزيّف**: كده تقدر تتأكد إن الإعادة حصلت (أو محصلتش) بعدد النداءات.`,
-            R`بنختار الرد اللي عليه الدور حسب عدد النداءات. و [[Math.min]] بتخلي آخر رد يتكرر لو [[request]] نادت أكتر من الردود اللي جهزناها، بدل ما ترجّع [[undefined]].`,
-            R`لو العنصر ده [[Error]] بنرميه، وكده بنقلّد فشل الشبكة بالظبط زي [[fetch]] الحقيقي لما الاتصال يقع.`,
-            R`غير كده بنرجّع **نسخة** من الـ [[Response]] اللي جهزناه بـ [[clone()]]، و [[request]] هتتعامل معاها كأنها رد حقيقي. النسخة مهمة: [[request]] بتقرا الـ body عشان تحطه في [[HttpError]]، والـ body بيتقري مرة واحدة، فلو رجّعنا نفس الـ object تاني المحاولة التانية هترمي [[TypeError: Body is unusable: Body has already been read]] (جرّبتها).`,
-            R`نهاية [[impl]].`,
-            R`الدوال في JS objects، فبنعلّق [[calls]] عليها كخاصية. كده الاختبار يقرا [[f.calls.length]] من نفس المتغير اللي بعته لـ [[request]].`,
-            R`بنرجّع الدالة المزيّفة (ومعاها [[calls]])، وهي اللي هتتبعت لـ [[request]] في [[fetchImpl]].`,
-            R`نهاية [[fakeFetch]].`,
-            R`[[res]] اختصار يعمل [[Response]] حقيقي بأي status و body. [[Response]] موجود في Node من ١٨، فـ [[ok]] و [[json()]] بيشتغلوا زي الحقيقي بالظبط.`,
-            R`أول اختبار: 404 لازم يترمي كـ [[HttpError]] ومن غير إعادة، لأن الصفحة مش موجودة والإعادة مش هتغيّر ده. الدالة [[async]] عشان جواها [[await]].`,
-            R`مزيّف بيرجّع رد واحد: 404 ومعاه body فيه JSON، زي سيرفر حقيقي بيقول «مش لاقي».`,
-            R`[[assert.rejects]] بتتأكد إن الـ Promise اترفضت فعلًا؛ لو نجحت الاختبار يفشل بـ «Missing expected rejection». ولازم [[await]] قبلها، وإلا الاختبار يخلص قبل ما الفحص يحصل.`,
-            R`بنبعت دالة بتنادي [[request]] بالمزيّف ومسموحلها ٣ إعادات. لو اتعادت على 404 هنعرف من عدد النداءات تحت.`,
-            R`**دالة الفحص**: بتستلم الـ error ولازم ترجّع [[true]] لو هو المتوقّع (من نوع [[HttpError]] و status بـ 404). لو رجّعت [[false]] الاختبار بيفشل.`,
-            R`نهاية [[assert.rejects]].`,
-            R`**وده السطر المهم**: المزيّف اتنادى مرة واحدة بس، يعني [[request]] معادتش رغم إن [[retries]] بـ ٣. الرسالة التالتة بتظهر لو الاختبار فشل.`,
-            R`نهاية أول اختبار.`,
-            R`تاني اختبار: 503 (السيرفر واقع لحظة) لازم يتعاد لحد ما ينجح.`,
-            R`المزيّف بيرجّع 503 مرتين وبعدين 200 ومعاه JSON، فالطلب هينجح بس في المحاولة التالتة.`,
-            R`بننادي [[request]] بنفس الإعدادات. المرة دي متوقعين إنها تنجح، فبنستنى النتيجة على طول من غير [[assert.rejects]].`,
-            R`الرد اللي رجع في الآخر هو الـ 200، يعني [[request]] مستسلمتش بعد أول 503.`,
-            R`والمزيّف اتنادى ٣ مرات بالظبط: مرتين فشل ومرة نجاح. لو [[request]] مبتعيدش كان الرقم هيبقى 1 والاختبار يفشل.`,
-            R`نهاية تاني اختبار.`
-          ],
-          try: R`اكتب الاختبارات وشغّل [[node --test]]. وبعدين غيّر [[retries: 3]] لـ [[retries: 0]] في اختبار الـ ٥٠٣ وشوف الفشل شكله إيه.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اكتب اختبار:** اختبر [[backoff]] لوحدها من غير انتظار: [[t.mock.method(Math, 'random', () => 0)]] جوه الاختبار.`, done: R`الاختبار بيعدّي: [[backoff(0)]] بـ 150، و [[backoff(2)]] بـ 600، و [[backoff(0, { retryAfter: 2 })]] بـ 2000، ومع [[() => 0.999999]] [[backoff(0)]] بـ 300. و [[Math.random]] رجعت طبيعية بعد الاختبار لوحدها.` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[fakeFetch([res(503)])]] (رد واحد بس) مع [[retries: 2]]. قبل ما تشغّل، اكتب [[f.calls.length]] هيبقى كام، والخطأ اللي هيترمي نوعه إيه. وبعدين حوّله لاختبار.`, done: R`[[calls.length]] بـ 3 (المزيّف بيكرر آخر رد بسبب [[Math.min]])، والخطأ [[HttpError]] و [[status]] بـ 503، والاختبار مكتوب بـ [[assert.rejects]] وبيعدّي.` },
-            { lvl: 'تحدي', t: R`**محاكاة:** [[slowFetch()]] مزيّف مبيردش أبدًا، بس بيرمي [[signal.reason]] أول ما الإشارة تتلغي. اختبر بيه المهلة ([[timeout: 50]] و [[retries: 1]]) وإلغاء اليوزر بعد 20ms.`, done: R`اختبار المهلة: [[TimeoutError]] و [[calls.length]] بـ 2. واختبار الإلغاء: الخطأ هو اللي مررته لـ [[abort()]] و [[calls.length]] بـ 1 و [[onRetry]] ماتناداش. والملف كله بيخلص في أقل من ثانيتين من غير شبكة.` },
-          ],
-          deep: {
-            why: R`الاختبار اللي محتاج شبكة بيفشل في الطيارة، وفي CI من غير إنترنت، وفي أي يوم الخدمة بطيئة. واللي مش محتاجها بيعدّي دايمًا وفي ملي ثانية.`,
-            how: R`**حقن الاعتمادية** هنا في أبسط صورة: parameter بقيمة افتراضية. مفيش framework ومفيش container.
-
-~~~text
-{ fetchImpl = fetch }
-~~~
-
-الإنتاج بياخد الافتراضي، والاختبار بيمرر بديل.
-
-**البديل التاني** هو [[mock]] المدمج في Node: [[import { mock } from 'node:test']] و [[mock.method(globalThis, 'fetch', fn)]]. وده بيبدّل الـ global — أقوى، وأخطر: لو نسيت [[mock.restoreAll()]] الاختبارات اللي بعده بتتأثر.
-
-والحقن أوضح: اللي بيقرا التوقيع بيعرف إن الدالة دي بتاخد [[fetch]] من بره.
-
-**[[node --test]]** من Node 18 (ومستقر من 20). بيلاقي ملفات [[*.test.js]] و [[*.test.mjs]] و [[test/]] تلقائيًا. و [[--test-concurrency]] بتتحكم في التوازي، و [[--test-only]] بتشغّل اللي عليهم [[only: true]].
-
-**[[assert.rejects]]** بتاخد:
-
-| الشكل | المعنى |
-|---|---|
-| كلاس | الخطأ من النوع ده |
-| كائن | الصفات دي بتتطابق |
-| **دالة** | ترجّع [[true]] لو الخطأ صح |
-
-والدالة أمرن: [[(e) => e instanceof HttpError && e.status === 404]].
-
-**و [[assert/strict]]**: [[assert.equal]] فيها بتستخدم [[===]]. من غير [[/strict]] بتستخدم [[==]] — و [[assert.equal(1, '1')]] بتعدّي. استخدم [[/strict]] دايمًا.
-
-**ولاحظ إن الاختبارات اللي فيها إعادة بتاخد وقت حقيقي** (٥٨٥ms و٦٢٥ms في النتيجة) — لأن الـ [[sleep]] بتستنى فعلًا. ولو ده أزعجك، مرّر [[base]] صغيرة، أو استخدم [[mock.timers]] في Node 20+ اللي بتتحكم في الوقت.`,
-            when: R`أي كود بيتكلم مع الشبكة أو الملفات أو الوقت. والحقن من أول يوم.`,
-            mistakes: R`تختبر بشبكة حقيقية. أو تبدّل [[globalThis.fetch]] وتنسى ترجّعه. أو تستخدم [[assert]] من غير [[/strict]]. أو تختبر إن الخطأ اتر مى من غير ما تتأكد إن مفيش إعادة حصلت.`
-          },
-          teach: R`## السطر اللي بيخلي الاختبار ممكن
-
-~~~js
-export async function request(url, { fetchImpl = fetch, ...init } = {}) {
-  ...
-  res = await fetchImpl(url, { ...init, signal });
-}
-~~~
-
-الإنتاج بياخد [[fetch]] الحقيقي. والاختبار بيمرر بديل. **سطر واحد.**
-
----
-
-## ١. المزيّف
-
-~~~js
-function fakeFetch(responses) {
-  const calls = [];
-  const impl = async (url, init) => {
-    calls.push({ url, init });
-    const next = responses[Math.min(calls.length - 1, responses.length - 1)];
-    if (next instanceof Error) throw next;
-    return next.clone();
-  };
-  impl.calls = calls;
-  return impl;
-}
-
-const res = (status, body = '') => new Response(body, { status });
-~~~
-
-حاجتين بيعملهم:
-
-- **بيرجّع ردود محضّرة** بالترتيب (وآخر واحد بيتكرر لو خلصت القايمة)، **نسخة** بـ [[clone()]] كل مرة.
-
-> ليه [[clone()]]؟ [[request]] بتقرا الـ body في كل رد فاشل عشان [[HttpError]]. ولو المزيّف رجّع نفس الـ [[Response]] مرتين، تاني مرة بترمي [[TypeError: Body is unusable: Body has already been read]] والاختبار بيفشل بسبب المزيّف نفسه مش الكود. اتشغّل فعلًا: اختبار «بتوقف بعد عدد المحاولات» بـ [[fakeFetch([res(503)])]] فشل كده من غير [[clone()]] وعدّى بيها.
-- **وبيسجّل كل نداء** في [[calls]].
-
-> [[Response]] موجود في Node من نسخة ١٨. فالرد **حقيقي** — بـ [[.status]] و [[.ok]] و [[.json()]] — مش كائن مزيّف ناقص.
-
----
-
-## ٢. والتسجيل هو نص الفايدة
-
-~~~js
-test('بترمي HttpError على 404 ومبتعيدش', async () => {
-  const f = fakeFetch([res(404, '{"e":1}')]);
-  await assert.rejects(
-    () => request('https://x.test/', { fetchImpl: f, retries: 3 }),
-    (e) => e instanceof HttpError && e.status === 404,
-  );
-  assert.equal(f.calls.length, 1, '404 مش المفروض يتعاد');
-});
-~~~
-
-**السطر الأخير هو الاختبار الحقيقي.** إن الخطأ اتر مى حاجة، وإن الأداة **ماحاولتش تاني** حاجة تانية خالص. ومن غير التسجيل مكنتش هتقدر تتأكد.
-
----
-
-## ٣. وحالات صعب توصلها في الواقع
-
-~~~js ٥٠٣ مرتين ورا بعض وبعدين ٢٠٠
-const f = fakeFetch([res(503), res(503), res(200, '{"ok":true}')]);
-~~~
-
-دي حالة بتاخد وقت وحظ عشان تحصل مع سيرفر حقيقي. ومع المزيّف، سطر.
-
----
-
-## ٤. الناتج
+## ١. الـ compile
 
 ~~~bash
-node --test
+docker run --rm -v "$PWD:/src" -w /src alpine:3.22 sh -c "apk add --no-cache clang lld && clang --target=wasm32 -O2 -nostdlib -Wl,--no-entry -o sum.wasm sum.c"
 ~~~
 
-~~~text اتشغّل فعلًا · Node 24
-✔ بترجّع الرد لو 200 (24.2328ms)
-✔ بترمي HttpError على 404 ومبتعيدش (1.7255ms)
-✔ بتعيد على 503 وبتنجح (585.5703ms)
-✔ بتوقف بعد عدد المحاولات (625.489ms)
-✔ خطأ الشبكة بيتلف في NetworkError (0.5392ms)
-✔ backoff بيزيد وبيقف عند الحد (0.127ms)
-✔ Retry-After بتكسب على الحساب (0.0909ms)
-✔ Retry-After أكبر من الحد: مبتعيدش وبترمي ومعاها المدة (0.6686ms)
-ℹ tests 8
-ℹ pass 8
-ℹ fail 0
-ℹ duration_ms 1369.2815
-~~~
-
-**مفيش سيرفر، ومفيش إنترنت.**
-
-> ولاحظ إن اختبارات الإعادة أخدت ٥٨٥ و٦٢٥ms — لأن الـ [[sleep]] بتستنى فعلًا. ولو ده أزعجك، [[mock.timers]] في Node 20+ بتتحكم في الوقت.
-
----
-
-## ٥. [[assert.rejects]] بتاخد دالة
-
-| الشكل | المعنى |
+| الحتة | معناها |
 |---|---|
-| كلاس | الخطأ من النوع ده |
-| كائن | الصفات بتتطابق |
-| **دالة** | ترجّع [[true]] لو الخطأ صح |
+| [[-v "$PWD:/src" -w /src]] | الفولدر الحالي يبقى [[/src]] جوه الـ container ونشتغل فيه |
+| [[apk add --no-cache clang lld]] | سطّب الـ compiler والـ linker (جوه الـ container بس) |
+| [[--target=wasm32]] | اطلع WebAssembly 32-bit |
+| [[-O2]] | optimization |
+| [[-nostdlib]] | من غير مكتبة C القياسية |
+| [[-Wl,--no-entry]] | [[-Wl,]] = مرّر للـ linker. [[--no-entry]] = مفيش [[main]] |
+| [[-o sum.wasm]] | اسم الناتج |
 
-~~~js الأمرن
-(e) => e instanceof HttpError && e.status === 404
+~~~text الناتج
+Alpine clang version 20.1.8
+-rwxr-xr-x    1 root     root           722 Oct 27 17:17 sum.wasm
 ~~~
 
-> و [[assert/strict]] بتخلي [[assert.equal]] تستخدم [[===]]. من غيرها [[assert.equal(1, '1')]] **بتعدّي**. استخدم [[/strict]] دايمًا.
+722 byte لـ ٤ دوال.
 
 ---
 
-## ٦. والبديل: [[mock]] المدمج
+## ٢. الكود C سطر سطر
 
-~~~js
-import { mock } from 'node:test';
-mock.method(globalThis, 'fetch', fakeImpl);
-// ... وفي الآخر
-mock.restoreAll();
-~~~
-
-أقوى — بيشتغل حتى لو الكود مش بياخد [[fetchImpl]]. وأخطر: لو نسيت [[restoreAll]]، الاختبارات اللي بعده بتتأثر.
-
-**والحقن أوضح**: اللي بيقرا التوقيع بيعرف إن الدالة بتاخد [[fetch]] من بره.
+- [[// sum.c: ...]]: تعليق C (نفس [[//]] بتاع JS).
+- [[#define EXPORT(name) __attribute__((export_name(name)))]]: macro. أي [[EXPORT("add")]] بيتبدّل بالـ attribute الطويل اللي بيقول لـ clang «صدّر الدالة دي بالاسم ده».
+- [[int add(int a, int b)]]: دالة بترجّع [[int]] وبتاخد [[int]] اتنين.
+- [[static int buffer[1024];]]: array ثابت من 1024 [[int]] جوه ذاكرة الـ wasm (4096 byte). [[static]] = خاص بالملف ده.
+- [[int *buffer_ptr(void)]]: بترجّع **عنوان** الـ buffer ([[int *]] = pointer لـ int). JS محتاجه عشان يعرف يكتب فين.
+- [[long long sum_array(int *arr, int len)]]: بتاخد عنوان وطول، وبتجمع. [[long long]] = 64-bit عشان المجموع ميعدّيش.
+- [[count_primes]]: بتعدّ الأعداد الأولية تحت [[limit]] (للقياس في درس [[wasm يستاهل إمتى]]). [[d * d <= n]] = جرّب القسمة لحد الجذر بس.
 
 ---
 
-## ٧. واختبر الحساب لوحده
+## ٣. [[run.mjs]]
+
+~~~text run.mjs
+import { readFile } from "node:fs/promises";
+
+const { instance } = await WebAssembly.instantiate(await readFile("sum.wasm"));
+const { add, buffer_ptr, sum_array, count_primes, memory } = instance.exports;
+
+console.log("exports:", Object.keys(instance.exports).join(", "));
+console.log("add(2, 3) =", add(2, 3));
+console.log("memory:", memory.buffer.byteLength / 1024, "KB");
+
+const ptr = buffer_ptr();
+const view = new Int32Array(memory.buffer, ptr, 1024);
+view.set([10, 20, 30, 40]);
+console.log("ptr =", ptr, "| sum_array =", sum_array(ptr, 4));
+console.log("count_primes(100) =", count_primes(100));
+~~~
+
+~~~text node run.mjs
+exports: memory, add, buffer_ptr, sum_array, count_primes
+add(2, 3) = 5
+memory: 128 KB
+ptr = 1024 | sum_array = 100n
+count_primes(100) = 25
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[exports: memory, ...]] | clang صدّر [[memory]] لوحده جنب الدوال |
+| [[memory: 128 KB]] | الذاكرة صفحتين، كل صفحة wasm = 64KB |
+| [[ptr = 1024]] | الـ buffer بيبدأ عند byte رقم 1024 جوه الذاكرة |
+| [[sum_array = 100n]] | [[10+20+30+40]]، و [[n]] لأن [[long long]] بيوصل BigInt |
+| [[count_primes(100) = 25]] | 2، 3، 5، ... 97: ٢٥ عدد أولي |
+
+- [[new Int32Array(memory.buffer, ptr, 1024)]]: «شوف الذاكرة من عند [[ptr]] كـ 1024 [[int]]». ده **view** مش نسخة: الكتابة فيه بتكتب في ذاكرة الـ wasm نفسها.
+- [[view.set([...])]]: اكتب الأرقام. وبعدين [[sum_array(ptr, 4)]] قرا من نفس المكان.
+
+---
+
+## الخلاصة
+
+| C | WebAssembly | JavaScript |
+|---|---|---|
+| [[int]] | [[i32]] | number |
+| [[long long]] | [[i64]] | **BigInt** |
+| [[int *]] (pointer) | [[i32]] (offset) | number = مكان في [[memory.buffer]] |
+| [[export_name("x")]] | export | [[instance.exports.x]] |
+
+النصوص والـ arrays مبتتبعتش مباشرة: تكتبها في [[memory]] وتبعت المكان والطول (درس [[WebAssembly في المتصفح]]).`,
+          lines: [
+            R`[[#define]] بيعمل macro اسمه [[EXPORT]]: أي مكان تكتب فيه [[EXPORT("add")]] الـ preprocessor بيبدّله بالـ attribute [[export_name("add")]] قبل الـ compile. والـ attribute ده بيقول لـ clang «طلّع الدالة دي من الـ wasm بالاسم ده عشان JS يشوفها». من غيره الدالة بتفضل جوه الـ wasm ومش هتلاقيها في [[instance.exports]].`,
+            R`بيعلّم الدالة اللي تحته إنها تتصدّر باسم [[add]]. لازم ييجي قبل تعريف الدالة على طول، لأنه attribute بيتلزق في التعريف اللي بعده.`,
+            R`دالة بتجمع رقمين. [[int]] في wasm32 بيبقى [[i32]]، فـ JS بيبعت ويستقبل numbers عادية. ولو الناتج عدّى حدود الـ 32-bit (حوالي ٢.١ مليار) ده overflow ممنوع في C، وعمليًا في wasm بيلف للسالب بدل ما يكبر زي أرقام JS.`,
+            R`array ثابتة فيها ١٠٢٤ [[int]] (يعني 4096 byte) جوه ذاكرة الـ wasm. [[static]] معناها إنها موجودة طول عمر البرنامج ومش ظاهرة برّه الملف ده. هي المكان اللي JS هيكتب فيه الأرقام قبل ما يطلب جمعها، لأننا من غير مكتبة C مفيش [[malloc]].`,
+            R`بيصدّر الدالة اللي تحته باسم [[buffer_ptr]]، عشان JS يقدر يسأل «الـ buffer فين في الذاكرة؟».`,
+            R`بترجّع عنوان الـ buffer، والعنوان في wasm مجرد رقم: offset بالـ bytes من أول الذاكرة. JS بياخد الرقم ده ويعمل [[Int32Array]] على [[memory.buffer]] من المكان ده. JS ميقدرش يعرف المكان لوحده، لأن الـ compiler هو اللي بيحدده.`,
+            R`بيصدّر الدالة اللي تحته باسم [[sum_array]]، عشان JS يناديها بعد ما يكتب الأرقام في الـ buffer.`,
+            R`بتاخد عنوان أول عنصر وعدد العناصر، لأن C مبيعرفش طول الـ array من الـ pointer لوحده. وبترجّع [[long long]] (64-bit) عشان مجموع أرقام [[int]] كتير ممكن يعدّي حدود الـ 32-bit. والـ 64-bit بيوصل JS كـ [[BigInt]]، فهتشوف الناتج وفي آخره [[n]].`,
+            R`المجموع بيبدأ من صفر ونوعه 64-bit. لو كان [[int]] كان هيلف للسالب أول ما المجموع يعدّي ٢.١ مليار تقريبًا.`,
+            R`بيلف على العناصر من 0 لحد قبل [[len]] ويزوّد كل عنصر على [[total]]. ومفيش أي فحص للحدود: لو JS بعت [[len]] أكبر من الحقيقي، C هيقرا أي حاجة موجودة في الذاكرة بعد الـ buffer من غير error.`,
+            R`بيرجّع المجموع لـ JS. ولأن نوعه [[long long]] هيوصل [[BigInt]]، ولو عايزه number عادي حوّله بـ [[Number(...)]].`,
+            R`نهاية [[sum_array]].`,
+            R`بيصدّر الدالة اللي تحته باسم [[count_primes]]، ودي اللي هنقيس بيها سرعة wasm قدام JS في درس جاي.`,
+            R`بتعدّ الأعداد الأولية الأصغر من [[limit]]. شغل حسابي تقيل على أرقام بس، من غير ذاكرة ولا نصوص، فمناسب نشوف بيه wasm بيعمل إيه.`,
+            R`عدّاد الأعداد الأولية اللي لقيناها، بيبدأ من صفر.`,
+            R`بنجرّب كل رقم من 2 لحد قبل [[limit]]. البداية من 2 لأن 0 و 1 مش أوليين.`,
+            R`بنفترض إن الرقم أولي، واللفة اللي جاية هتحاول تثبت العكس. الكود مستخدم [[int]] كـ true/false: [[1]] أولي و [[0]] لأ، وده هيفيدنا تحت لما نجمعه على العدّاد.`,
+            R`بنجرّب القواسم من 2 لحد الجذر التربيعي بس ([[d * d <= n]]): لو الرقم ليه قاسم أكبر من الجذر، لازم يبقى ليه قاسم تاني أصغر منه كنا هنلاقيه قبل كده. ده بيوفّر شغل كتير قدام اللف لحد [[n]].`,
+            R`لو [[n]] بيقبل القسمة على [[d]] من غير باقي يبقى مش أولي: بنحط 0، و [[break]] تخرج من لفة القواسم على طول لأن مفيش داعي نكمّل.`,
+            R`نهاية لفة القواسم.`,
+            R`[[prime]] يا 1 يا 0، فبنزوّده على العدّاد على طول من غير [[if]]: الأولي بيزوّد واحد، والمش أولي بيزوّد صفر.`,
+            R`نهاية لفة الأرقام.`,
+            R`بيرجّع عدد الأعداد الأولية لـ JS كـ number عادي، لأن [[int]] = [[i32]].`,
+            R`نهاية [[count_primes]].`,
+          ],
+          sol: R`الناتج الحقيقي ([[sum.wasm]] 722 byte، Node 24.22):
+[[add(2, 3) = 5]]
+[[ptr = 1024 | sum_array = 100n]]
+النوع [[bigint]]: الدالة بترجّع [[long long]] (يعني [[i64]] في wasm)، و JavaScript بيستلم [[i64]] كـ BigInt. لو عايزه number: [[Number(sum_array(ptr, 4))]]، أو خلّي الدالة ترجّع [[int]] أو [[double]].`
+        },
+        {
+          cmd: "WebAssembly في المتصفح",
+          title: "تحمّل .wasm في المتصفح: instantiateStreaming و imports و نصوص في الذاكرة",
+          desc: R`في المتصفح: [[WebAssembly.instantiateStreaming(fetch("text.wasm"), imports)]] بينزّل ويعمل compile وهو بينزّل، والسيرفر **لازم** يبعته بـ [[Content-Type: application/wasm]]. و [[imports]] دوال JavaScript الـ wasm يقدر يناديها (الـ wasm ميقدرش يلمس [[console]] ولا الـ DOM لوحده).
+
+والنصوص: wasm مبيعرفش غير أرقام. فبتحوّل النص bytes بـ [[TextEncoder]]، وتكتبه في [[memory]]، وتدّي الدالة الطول، وتقرا الناتج بـ [[TextDecoder]].`,
+          example: R`const imports = {
+  env: {
+    log_count: (n) => console.log($__btwasm changed $__{n} letters$__bt),
+  },
+};
+const { instance } = await WebAssembly.instantiateStreaming(fetch("text.wasm"), imports);
+const { memory, buf_ptr, upper } = instance.exports;
+function toUpper(text) {
+  const bytes = new TextEncoder().encode(text);
+  const ptr = buf_ptr();
+  new Uint8Array(memory.buffer, ptr, bytes.length).set(bytes);
+  const len = upper(bytes.length);
+  return new TextDecoder().decode(new Uint8Array(memory.buffer, ptr, len));
+}
+console.log(toUpper("hello wasm, مرحبا 123"));
+document.querySelector("#out").textContent = toUpper("from the browser");`,
+          try: R`اعمل [[text.c]] (في الشرح) واعمله compile زي درس [[wasm من C]]. حط [[text.wasm]] و [[main.js]] (المثال) و [[index.html]] فيه [[<p id="out">]] و [[<script type="module" src="main.js">]] على سيرفر محلي ([[npx serve]] أو Vite). افتح Console. وبعدين خلي السيرفر يبعت الـ [[.wasm]] بـ [[application/octet-stream]]: إيه اللي حصل؟`,
+          practice: [
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** زميلك كتب [[const imports = { log_count: (n) => console.log(n) };]] والصفحة وقعت قبل ما تطبع حاجة. اقرا الـ error ولاقي الغلطة من غير ما تبص على المثال.`, done: R`لقيت إن الرسالة بتقول [[Import #0 "env": module is not an object or function]] (الدالة لازم تبقى جوه [[env]] زي ما الـ C طالبها)، وبعد التصليح الصفحة بتطبع عدد الحروف. وجرّبت كمان [[{ env: {} }]] وشفت [[LinkError]] فيها اسم [[log_count]].` },
+            { lvl: 'تطبيق', t: R`**ابني حتة صفحة:** خانة [[<input>]]، وتحتها [[<p id="out">]] و [[<span id="count">]]. مع كل حدث [[input]] اعرض [[toUpper(value)]] في [[out]]، وعدد الحروف اللي اتغيرت (من [[log_count]]) في [[count]].`, done: R`لما تكتب [[hello مرحبا]] الصفحة بتعرض [[HELLO مرحبا]] والعداد [[5]]، والعربي زي ما هو، والخانة الفاضية بتعرض نص فاضي والعداد [[0]]، والـ wasm بيتحمّل مرة واحدة بس مش مع كل حرف.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[toUpper]] بتبوّظ الذاكرة لو النص أكبر من 4096 byte. اكتب [[toUpperLong(text)]] بتقطّع النص بـ [[new TextEncoder().encodeInto(rest, view)]] (بترجّع [[read]] و [[written]] ومبتقسمش حرف في النص)، وتنادي [[upper]] على كل حتة.`, done: R`[[('مرحبا hello ').repeat(500)]] (8500 byte) بيرجع مساوي بالظبط لـ [[text.replace(/[a-z]/g, c => c.toUpperCase())]]، ومفيهوش ولا [[�]] (علامة الحرف المكسور)، والنص الفاضي بيرجع فاضي.` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`الـ wasm معزول: مفيش [[console.log]] ولا [[fetch]] ولا DOM ولا نصوص. عشان يعمل حاجة مفيدة في صفحة لازم JavaScript يدّيله دوال (imports) ويتبادل معاه داتا عن طريق الذاكرة. ده الشغل اللي المكتبات زي [[wasm-bindgen]] (Rust) و Emscripten و AssemblyScript بتعمله لك، وفهمه بيخليك تعرف تصلّح لما يقع.`,
+            how: R`[[instantiateStreaming(response, imports)]]: بيبدأ compile للـ bytes وهي لسه جاية من الشبكة (أسرع من [[instantiate]] على [[arrayBuffer()]])، وعشان كده بيتأكد إن الـ [[Content-Type]] هو [[application/wasm]] وإلا بيرفض.
+
+[[imports]]: object بالشكل [[{ module: { name: fn } }]]. في C الدالة متعرّفة بـ [[import_module("env")]] و [[import_name("log_count")]]، فلازم [[imports.env.log_count]] يكون موجود وإلا الـ instantiate يقع بـ [[LinkError]].
+
+النصوص: [[TextEncoder().encode(text)]] بيرجّع [[Uint8Array]] بـ UTF-8. الحروف الإنجليزي byte واحد، و «مرحبا» كل حرف 2 bytes. الكود C بيكبّر [[a-z]] بس، فالعربي والأرقام بيعدّوا زي ما هم. [[TextDecoder().decode(bytes)]] بيرجّعهم نص.
+
+[[memory.buffer]] ممكن يتغير لو الـ wasm كبّر ذاكرته ([[memory.grow]]): أي [[Uint8Array]] قديم بيبقى «detached» وطوله صفر. اعمل view جديد كل مرة زي المثال.`,
+            when: R`لما تكتب الـ glue code بإيدك لمكتبة صغيرة، أو تفهم مكتبة wasm بتقع. ولو بتستخدم Rust فـ [[wasm-bindgen]] بيكتب ده لوحده، ولو AssemblyScript فالـ bindings (الدرس الجاي).`,
+            mistakes: R`السيرفر بيبعت [[application/octet-stream]]: [[Incorrect response MIME type. Expected 'application/wasm']]. وتفتح [[index.html]] كملف ([[file://]]): [[fetch]] مش هيشتغل، لازم سيرفر. وتكتب نص أطول من الـ buffer (4096 byte في المثال) فتكتب فوق ذاكرة تانية. وتحتفظ بـ [[Uint8Array]] على [[memory.buffer]] بعد [[grow]].`
+          },
+          teach: R`## الـ C اللي اتعمله compile
+
+اتعمله compile بـ clang 20.1.8 في [[alpine:3.22]] (نفس أمر درس [[wasm من C]])، وطلع 633 byte. واتجرّب في Chrome 156 headless من سيرفر Node صغير على localhost.
+
+~~~text text.c
+// text.c: بياخد نص من JS، يكبّر حروفه، ويبلّغ JS بعدد الحروف اللي اتغيرت
+#define EXPORT(name) __attribute__((export_name(name)))
+#define IMPORT(name) __attribute__((import_module("env"), import_name(name)))
+
+IMPORT("log_count") void log_count(int changed);
+
+static unsigned char buf[4096];
+
+EXPORT("buf_ptr") unsigned char *buf_ptr(void) { return buf; }
+
+EXPORT("upper") int upper(int len) {
+  int changed = 0;
+  for (int i = 0; i < len; i++) {
+    if (buf[i] >= 'a' && buf[i] <= 'z') { buf[i] -= 32; changed++; }
+  }
+  log_count(changed);
+  return len;
+}
+~~~
+
+- [[IMPORT("log_count") void log_count(int changed);]]: دالة **من بره** (JavaScript)، في module اسمه [[env]]. الـ C بيناديها عادي.
+- [[unsigned char buf[4096]]]: 4096 byte للنص.
+- [[buf[i] -= 32]]: في ASCII الحرف الكبير أقل من الصغير بـ 32 ([[a]] = 97، [[A]] = 65).
+
+---
+
+## ١. [[imports]]
+
+~~~text main.js
+const imports = {
+  env: {
+    log_count: (n) => console.log($__btwasm changed $__{n} letters$__bt),
+  },
+};
+~~~
+
+[[env]] و [[log_count]] لازم نفس الأسامي اللي في [[import_module]] و [[import_name]].
+
+---
+
+## ٢. [[instantiateStreaming]]
+
+~~~text main.js
+const { instance } = await WebAssembly.instantiateStreaming(fetch("text.wasm"), imports);
+const { memory, buf_ptr, upper } = instance.exports;
+~~~
+
+- [[fetch("text.wasm")]]: Promise لـ [[Response]]. [[instantiateStreaming]] بياخده مباشرة ويبدأ compile مع التنزيل.
+- [[await]] في أول الملف: شغال لأن [[<script type="module">]].
+
+---
+
+## ٣. [[toUpper(text)]]: نص رايح جاي
+
+1. [[new TextEncoder().encode(text)]]: النص ← bytes بـ UTF-8.
+2. [[buf_ptr()]]: مكان الـ buffer في ذاكرة الـ wasm.
+3. [[new Uint8Array(memory.buffer, ptr, bytes.length).set(bytes)]]: اكتب الـ bytes هناك.
+4. [[upper(bytes.length)]]: الـ wasm بيكبّر في مكانه، وبينادي [[log_count]].
+5. [[new TextDecoder().decode(new Uint8Array(memory.buffer, ptr, len))]]: اقرا الـ bytes ورجّعها نص.
+
+~~~text Console
+wasm changed 9 letters
+HELLO WASM, مرحبا 123
+wasm changed 14 letters
+~~~
+
+- [[9]]: [[hello]] (5) + [[wasm]] (4). العربي والأرقام والمسافات اتسابوا.
+- [[مرحبا]] رجعت سليمة: كل حرف عربي 2 bytes في UTF-8 وقيمهم أكبر من 127، فمش بين [[a]] و [[z]]، فالـ C ملمسهمش.
+- [[14]]: [[from the browser]] من غير المسافتين، والـ [[#out]] بقى فيه [[FROM THE BROWSER]].
+
+---
+
+## ٤. الـ MIME غلط
+
+خليت السيرفر يبعت [[.wasm]] بـ [[application/octet-stream]]:
+
+~~~text Console
+[pageerror] Failed to execute 'compile' on 'WebAssembly': Incorrect response MIME type. Expected 'application/wasm'.
+~~~
+
+ولا سطر اتنفذ. الحل في السيرفر: [[mime.types]] بتاع Nginx (اتأكدت في [[nginx:alpine]] نسخة 1.31) فيه [[application/wasm wasm;]]، فلو بتستخدمه مع [[include mime.types;]] الـ MIME صح. ولو سيرفر تاني، اتأكد بـ [[curl -I]]. أو (أبطأ) [[WebAssembly.instantiate(await (await fetch(url)).arrayBuffer(), imports)]] مش بيهتم بالـ MIME.
+
+---
+
+## ٥. [[memory.grow]]: ليه الـ view القديم بيبقى فاضي
+
+ذاكرة الـ wasm بتكبر بصفحات، كل صفحة 64KB. وبتكبر في حالتين: JS ينادي [[memory.grow(n)]]، أو الـ wasm نفسه يحتاج مكان (زي [[malloc]] في C أو [[new Uint8Array(n)]] في AssemblyScript). ولما تكبر، **الـ [[ArrayBuffer]] القديم بيتفصل (detached)** وبيتعمل واحد جديد أكبر. وأي [[Uint8Array]] كان عامله على القديم بيبقى طوله صفر.
+
+~~~js grow.mjs
+const memory = new WebAssembly.Memory({ initial: 1, maximum: 4 });
+const old = new Uint8Array(memory.buffer);
+old[0] = 42;
+console.log("قبل grow:", memory.buffer.byteLength, "| old.length =", old.length);
+const prev = memory.grow(1);
+console.log("grow رجّع:", prev, "| بعده:", memory.buffer.byteLength);
+console.log("old.length =", old.length, "| old[0] =", old[0], "| old.buffer.detached =", old.buffer.detached);
+const fresh = new Uint8Array(memory.buffer);
+console.log("fresh.length =", fresh.length, "| fresh[0] =", fresh[0]);
+try { memory.grow(10); } catch (e) { console.log(e.name + ":", e.message); }
+~~~
+
+~~~text node grow.mjs (Node 24.22.1)
+قبل grow: 65536 | old.length = 65536
+grow رجّع: 1 | بعده: 131072
+old.length = 0 | old[0] = undefined | old.buffer.detached = true
+fresh.length = 131072 | fresh[0] = 42
+RangeError: WebAssembly.Memory.grow(): Maximum memory size exceeded
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[new WebAssembly.Memory({ initial: 1, maximum: 4 })]] | ذاكرة بتبدأ صفحة واحدة (64KB) ومتعدّيش 4 صفحات. ده نفس اللي الـ wasm بيصدّره باسم [[memory]] |
+| [[memory.grow(1)]] | زوّد صفحة، وبيرجّع **عدد الصفحات القديم** (1) مش الجديد |
+| [[old.length = 0]] و [[detached = true]] | الـ view القديم بقى بيشاور على buffer اتفصل، فمفيش قراية ولا كتابة، ومن غير ولا error |
+| [[fresh[0] = 42]] | الداتا نفسها اتنقلت للـ buffer الجديد، اللي اتغيّر هو الـ view بس |
+| [[RangeError]] | طلبت أكتر من [[maximum]]، فـ [[grow]] رمى ومكبرتش |
+
+### والـ wasm بيكبّر لوحده
+
+نفس الحاجة بتحصل من جوه. دالة AssemblyScript بتعمل [[new Uint8Array(1_000_000)]] (درس «AssemblyScript»)، والذاكرة كبرت من غير ما JS يطلب:
+
+~~~text node g.mjs (AssemblyScript 0.28.20)
+قبل: 65536 view.length = 65536
+بعد bigArray(1e6): 1114112 view.length = 0
+~~~
+
+من 64KB لـ 1088KB (17 صفحة)، والـ view اللي اتعمل قبل النداء طوله بقى صفر. **وده بالظبط سبب إن [[toUpper]] في المثال بتعمل [[new Uint8Array(memory.buffer, ...)]] جديد كل مرة**، وسبب إن الـ bindings بتاعة AssemblyScript بتعمل [[new Uint16Array(memory.buffer)]] جوه كل [[__liftString]].
+
+> القاعدة: متخزّنش view على [[memory.buffer]] في متغير بيعيش طول البرنامج. اعمله وقت ما تحتاجه، أو افحص [[view.length === 0]] واعمله تاني.
+
+---
+
+## الخلاصة
+
+| الحاجة | الطريقة |
+|---|---|
+| تحمّل في المتصفح | [[instantiateStreaming(fetch(url), imports)]] + [[application/wasm]] |
+| wasm ينادي JS | [[imports.env.name]] ↔ [[import_module("env"), import_name("name")]] |
+| نص من JS لـ wasm | [[TextEncoder]] ← اكتب في [[memory]] ← ابعت الطول |
+| نص من wasm لـ JS | [[Uint8Array(memory.buffer, ptr, len)]] ← [[TextDecoder]] |`,
+          lines: [
+            R`[[imports]] هو الـ object اللي بنديه للـ wasm وفيه دوال JavaScript يقدر يناديها. الـ wasm معزول: ميقدرش يطبع ولا يلمس الصفحة لوحده، فأي حاجة زي دي لازم تيجي من هنا.`,
+            R`المستوى الأول اسم الـ module، وهنا [[env]] لأن الـ C معرّف الدالة بـ [[import_module("env")]]. الاسم لازم يطابق بالظبط، وإلا الـ instantiate يقع بـ [[LinkError]].`,
+            R`الدالة نفسها، واسمها لازم يطابق [[import_name("log_count")]] في الـ C. الـ wasm بيناديها بعد ما يخلص ويبعتلها [[n]] = عدد الحروف اللي اتغيرت، فبتطبعه في الـ Console. ده الطريق الوحيد إن الـ wasm «يتكلم».`,
+            R`نهاية [[env]].`,
+            R`نهاية [[imports]].`,
+            R`[[fetch]] بيبدأ ينزّل الملف، و [[instantiateStreaming]] بيعمل compile للـ bytes **وهي لسه جاية** من الشبكة، وبعدين instance موصّل بالـ imports. ولازم السيرفر يبعت الملف بـ [[Content-Type: application/wasm]] وإلا بيرفض. و [[await]] هنا برّه أي دالة، فلازم الـ script يبقى [[type="module"]].`,
+            R`[[instance.exports]] فيه كل اللي الـ wasm صدّره: [[memory]] (ذاكرته كلها، والـ bytes بتاعتها في [[memory.buffer]])، و [[buf_ptr]] اللي بترجّع مكان الـ buffer، و [[upper]] اللي بتكبّر الحروف. أسامي الدوال جاية من [[export_name]] في الـ C.`,
+            R`دالة JavaScript عادية بتخبّي كل شغل الذاكرة: اللي بيستخدمها يدّيها نص وياخد نص من غير ما يعرف إن في wasm. ده نفس اللي المكتبات زي [[wasm-bindgen]] بتعمله لك.`,
+            R`الـ wasm مبيعرفش نصوص، بيعرف bytes بس. [[TextEncoder]] بيحوّل النص لـ [[Uint8Array]] بـ UTF-8: كل حرف إنجليزي byte واحد وكل حرف عربي 2 bytes، فطول الـ bytes مش دايمًا طول النص.`,
+            R`بنسأل الـ wasm «الـ buffer بتاعك فين؟» والرد رقم: offset بالـ bytes جوه الذاكرة. JS ميقدرش يخمّن المكان ده، الـ compiler هو اللي بيحدده.`,
+            R`بنعمل view بـ [[Uint8Array]] على ذاكرة الـ wasm من مكان الـ buffer وبطول الـ bytes، و [[set]] بتنسخهم فيه. ده view مش نسخة، فالكتابة بتوصل لذاكرة الـ wasm نفسها. ومحدش بيفحص الطول: نص أطول من الـ buffer (4096 byte) هيكتب فوق ذاكرة تانية.`,
+            R`بننادي [[upper]] بعدد الـ bytes بس لأنه عارف مكان الـ buffer. بيكبّر [[a-z]] في مكانها (العربي والأرقام بتعدّي زي ما هي)، وبينادي [[log_count]]، وبيرجّع الطول.`,
+            R`بنعمل view **جديد** على [[memory.buffer]] بدل ما نستخدم القديم، لأن لو الذاكرة كبرت أي view قديم بيبقى detached وطوله صفر. و [[TextDecoder]] بيحوّل الـ bytes لنص تاني.`,
+            R`نهاية [[toUpper]].`,
+            R`تجربة بنص فيه إنجليزي وعربي وأرقام: الحروف الإنجليزي بس اللي بتتكبّر، فتشوف [[HELLO WASM, مرحبا 123]]، وقبله سطر [[log_count]] بيقول إن ٩ حروف اتغيروا.`,
+            R`نفس الدالة بتكتب في الصفحة: [[textContent]] بيحط الناتج كنص عادي في العنصر [[#out]]. لازم العنصر يبقى موجود في الـ HTML، وإلا [[querySelector]] هترجّع [[null]] والسطر يرمي TypeError.`,
+          ],
+          sol: R`الناتج الحقيقي في Chrome 156:
+[[wasm changed 9 letters]]
+[[HELLO WASM, مرحبا 123]]
+[[wasm changed 14 letters]] والـ [[#out]] بقى [[FROM THE BROWSER]].
+
+ومع [[Content-Type: application/octet-stream]]:
+[[Failed to execute 'compile' on 'WebAssembly': Incorrect response MIME type. Expected 'application/wasm'.]]`
+        },
+        {
+          cmd: "AssemblyScript",
+          title: "AssemblyScript: تكتب wasm بشكل TypeScript",
+          desc: R`AssemblyScript لغة شكلها TypeScript بس بأنواع wasm ([[i32]] و [[f64]] و [[u8]]) وبتتحول [[.wasm]] بـ [[asc]]، من npm من غير Docker ولا compiler. والأهم: بتعمل ملف JS (bindings) بيحوّل النصوص والـ typed arrays لوحده، فتعمل [[import { greet } from "./build/release.js"]] وتنادي [[greet("Sara")]] عادي.
+
+اتجرّب بـ AssemblyScript 0.28.20.`,
+          example: R`// assembly/index.ts: AssemblyScript، شكله TypeScript بس بيتحول wasm
+export function add(a: i32, b: i32): i32 {
+  return a + b;
+}
+export function countPrimes(limit: i32): i32 {
+  let count = 0;
+  for (let n = 2; n < limit; n++) {
+    let prime = true;
+    for (let d = 2; d * d <= n; d++) {
+      if (n % d == 0) { prime = false; break; }
+    }
+    if (prime) count++;
+  }
+  return count;
+}
+export function greet(name: string): string {
+  return "Hello, " + name + "!";
+}
+export function sum(values: Float64Array): f64 {
+  let total = 0.0;
+  for (let i = 0; i < values.length; i++) total += values[i];
+  return total;
+}`,
+          try: R`في فولدر **جديد فاضي** (مش [[~/lab/jslab]] اللي عملت فيه [[npm init -y]] في وحدة تانية): [[npm i -D -E assemblyscript]] ثم [[npx asinit . -y]]، أو استخدم أوامر «جهّز معملك» تحت الوحدة. حط المثال في [[assembly/index.ts]] واعمل [[npm run asbuild]]. اعمل [[test.mjs]] بيعمل [[import { add, countPrimes, greet, sum } from "./build/release.js"]] ويناديهم، وجرّب [[add(2147483647, 1)]]. وبص على حجم [[build/release.wasm]] و [[build/release.js]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**مسألة:** [[export function countWords(s: string): i32]] بتعدّ الكلمات المفصولة بمسافة أو tab أو سطر جديد، من غير [[split]].`, done: R`[[countWords("  hello   world ")]] بترجّع [[2]]، و [[countWords("")]] بترجّع [[0]]، و [[countWords("واحد اتنين تلاتة")]] بترجّع [[3]].` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** اكتب توقعك لـ [[add("5", 2)]] و [[add(1.9, 1)]] و [[add(2147483647, 1)]]، وزوّد [[isEven(n: i32): bool]] وتوقّع [[typeof isEven(4)]]. بعدين شغّل.`, done: R`الناتج على AssemblyScript 0.28.20: [[7]] و [[2]] و [[-2147483648]] من غير ولا error (الـ bindings بتحوّل أي حاجة لـ i32)، و [[typeof isEven(4)]] هو [[boolean]]. وكاتب جنب كل واحدة توقعك كان صح ولا لأ.` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** [[addSafe(a: i32, b: i32): i64]]، وغلاف JS [[safeAdd]] بيرفض أي حاجة مش [[Number.isInteger]]. واكتب [[test.mjs]] بـ [[node:assert/strict]] فيه ٦ حالات على الأقل للاتنين.`, done: R`[[node test.mjs]] بيعدّي من غير ولا error: [[addSafe(2147483647, 1)]] بترجّع [[2147483648n]] (BigInt)، و [[safeAdd("5", 2)]] و [[safeAdd(1.9, 1)]] بيرموا [[TypeError]]، ولو شلت الفحص من الغلاف الاختبار بيفشل.` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`لو انت مطوّر JavaScript وعايز wasm لحتة حسابات، تعلّم C أو Rust كتير. AssemblyScript قريب من TypeScript اللي تعرفه، وبيتسطّب من npm، وبيكتب الـ glue code بتاع النصوص والـ arrays لوحده.`,
+            how: R`الأنواع مش أنواع TypeScript: [[number]] مش موجود، بدله [[i32]] (صحيح 32-bit) و [[i64]] و [[f32]] و [[f64]] (عشري 64-bit زي number في JS) و [[u8]] وغيرهم. [[string]] و [[Array]] و [[Float64Array]] موجودين، بس بيتخزّنوا في ذاكرة الـ wasm ومعاهم garbage collector صغير جوه الـ wasm (فالملف أكبر من C).
+
+[[asc assembly/index.ts --target release]] بيقرا [[asconfig.json]]: [[optimizeLevel: 3]]، و [["bindings": "esm"]] = اعمل [[release.js]] كـ ES module. ملف الـ bindings بيحمّل الـ [[.wasm]] (بـ [[fetch]] في المتصفح أو [[readFile]] في Node)، ولكل دالة فيها string أو typed array بيعمل غلاف: يكتب الـ argument في الذاكرة ([[__lowerString]])، ينادي، ويقرا الناتج ([[__liftString]]). والدوال اللي أرقام بس بيصدّرها زي ما هي.
+
+[[==]] في AssemblyScript مقارنة عادية (مفيش coercion زي JS)، و [[i32]] بيعمل overflow زي C.`,
+            when: R`حسابات أرقام أو bytes (ضغط، hashing، معالجة صور، فيزيا) وانت مش عايز تكتب C أو Rust. لو عندك مكتبة C أو Rust جاهزة، استخدمها هي بدل ما تعيد كتابتها.`,
+            mistakes: R`تعمل [[npm init -y]] قبل [[asinit]] فيرفض بـ [[The "type" field in ./package.json is set to "commonjs"]] (npm 11 بيكتب الحقل ده): ابدأ في فولدر فاضي أو اعمل [[npm pkg set type=module]] الأول. وتفتكره TypeScript: [[number]] و [[any]] و union types و closures بتلقط متغيرات مش مدعومين أو ليهم شروط. وتعمل [[import]] للـ [[.wasm]] مباشرة بدل [[release.js]] فتلاقي [[greet]] بترجّع رقم (pointer) مش نص. وتنسى إن [[i32]] بيلف: [[add(2147483647, 1)]] = [[-2147483648]].`
+          },
+          teach: R`## من [[npm i]] لـ [[import]]
+
+اتجرّب على ويندوز بـ AssemblyScript 0.28.20 و Node 24.22.
+
+---
+
+## ١. [[npx asinit . -y]]
+
+بيعمل [[assembly/index.ts]] و [[asconfig.json]] وفولدر [[build]] ويضيف سكربتات:
+
+~~~text package.json (اللي اتضاف)
+"type": "module",
+"exports": { ".": { "import": "./build/release.js", "types": "./build/release.d.ts" } },
+"scripts": {
+  "asbuild:debug": "asc assembly/index.ts --target debug",
+  "asbuild:release": "asc assembly/index.ts --target release",
+  "asbuild": "npm run asbuild:debug && npm run asbuild:release"
+}
+~~~
+
+و [[asconfig.json]] فيه [[target]] اتنين: [[debug]] (من غير optimization، و source map) و [[release]] ([["optimizeLevel": 3]])، و [["bindings": "esm"]].
+
+### لو عملت [[npm init -y]] الأول: [[asinit]] بيرفض
+
+npm 11 (اتجرّب على 11.19.1) بيكتب [["type": "commonjs"]] في [[package.json]] لما تعمل [[npm init -y]]. و [[asinit]] محتاج ES modules، فبيرفض ومبيعملش ولا ملف:
+
+~~~text npm init -y ثم npm i -D -E assemblyscript ثم npx asinit . -y
+Error: The "type" field in ./package.json is set to "commonjs".
+       asinit requires the "type" field to be set to "module" (ES modules).
+~~~
+
+والفولدر فضل فيه [[node_modules]] و [[package.json]] و [[package-lock.json]] بس، من غير [[assembly]] ولا [[asconfig.json]].
+
+| الحل | الأمر | ليه بيشتغل |
+|---|---|---|
+| ابدأ في فولدر فاضي | [[npm i -D -E assemblyscript]] ثم [[npx asinit . -y]] | [[npm i]] لوحده بيعمل [[package.json]] فيه [[devDependencies]] بس من غير [[type]]، و [[asinit]] بيحط [["type": "module"]] بنفسه |
+| صلّح الفولدر الموجود | [[npm pkg set type=module]] ثم [[npx asinit . -y]] | بيغيّر الحقل لـ [[module]] قبل ما [[asinit]] يفحصه، واتجرّب وكمّل عادي |
+
+وتشغيل [[npx asinit . -y]] تاني على نفس الفولدر آمن: بيكتب [[Exists]] جنب كل ملف موجود ومبيمسحش [[assembly/index.ts]] بتاعك.
+
+---
+
+## ٢. الكود
+
+- [[add(a: i32, b: i32): i32]]: نفس شكل TypeScript، بس [[i32]] مكان [[number]].
+- [[countPrimes]]: نفس خوارزمية الـ C. [[let prime = true]] = [[bool]].
+- [[greet(name: string): string]]: نص داخل ونص خارج، و [[+]] بيلزق النصوص زي JS.
+- [[sum(values: Float64Array): f64]]: typed array داخل، و [[f64]] (زي number في JS) خارج.
+
+---
+
+## ٣. [[npm run asbuild]]
+
+~~~text ls -l build
+debug.wasm      10335
+debug.wat       58771
+release.js       3475
+release.wasm     4700
+release.wat     38931
+release.d.ts      662
+~~~
+
+- [[release.wasm]] 4.7KB (الـ C كان 722 byte): جواه runtime صغير للنصوص والـ arrays والذاكرة.
+- [[.wat]]: نفس الـ wasm بصيغة نصية تقدر تقراها (درس [[.wasm]] في تاب الملفات).
+- [[release.js]]: الـ bindings. و [[release.d.ts]]: الأنواع لـ TypeScript.
+
+---
+
+## ٤. [[test.mjs]]
+
+~~~text test.mjs
+import { add, countPrimes, greet, sum } from "./build/release.js";
+console.log(add(2, 3));
+console.log(countPrimes(100));
+console.log(greet("Sara"));
+console.log(sum(new Float64Array([1.5, 2.5, 3])));
+console.log(add(2147483647, 1));
+~~~
+
+~~~text node test.mjs
+5
+25
+Hello, Sara!
+7
+-2147483648
+~~~
+
+- [[Hello, Sara!]]: الـ bindings كتبت [["Sara"]] في الذاكرة، ونادت، وقرت الناتج. انت ماشفتش pointers خالص.
+- [[7]]: [[1.5 + 2.5 + 3]].
+- [[-2147483648]]: [[2147483647]] أكبر [[i32]]، و +1 لفّ للسالب (overflow). في JS العادي كان [[2147483648]].
+
+### جوه [[release.js]]
+
+~~~text release.js (جزء)
+greet(name) {
+  // assembly/index/greet(~lib/string/String) => ~lib/string/String
+  name = __lowerString(name) || __notnull();
+  return __liftString(exports.greet(name) >>> 0);
+},
+~~~
+
+- [[__lowerString(name)]]: اكتب النص في ذاكرة الـ wasm ورجّع مكانه.
+- [[exports.greet(ptr)]]: الدالة الحقيقية: pointer داخل، pointer خارج.
+- [[__liftString(...)]]: اقرا النص من الذاكرة. AssemblyScript بيخزّن النصوص UTF-16 (زي JS)، والطول مكتوب قبل النص بـ 4 bytes.
+- [[>>> 0]]: حوّل الرقم لـ unsigned 32-bit (الـ pointers مش سالبة).
+
+ده نفس اللي عملناه بإيدنا بـ [[TextEncoder]] في الدرس اللي فات.
+
+---
+
+## الخلاصة
+
+| | C + clang | AssemblyScript |
+|---|---|---|
+| اللغة | C | شبه TypeScript |
+| التسطيب | Docker أو clang | [[npm i -D assemblyscript]] |
+| الحجم هنا | 722 byte | 4.7KB |
+| النصوص والـ arrays | بإيدك في [[memory]] | الـ bindings بتعملها |
+| أنواع الأرقام | [[int]] و [[long long]] و [[double]] | [[i32]] و [[i64]] و [[f64]] |`,
+          lines: [
+            R`[[export]] بيخلي الدالة تطلع من الـ wasm، و [[i32]] نوع wasm حقيقي (رقم صحيح 32-bit) مش [[number]] بتاع TypeScript. الأنواع هنا مش اختيارية، لأن الـ compiler محتاجها عشان يطلّع تعليمات wasm.`,
+            R`جمع عادي بس على [[i32]]: لو الناتج عدّى حوالي ٢.١ مليار بيلف للسالب من غير error، مش بيبقى رقم أكبر زي JS.`,
+            R`نهاية [[add]].`,
+            R`نفس خوارزمية الأعداد الأولية اللي كتبناها في C بس بشكل TypeScript، عشان نقارن الاتنين. بتاخد [[limit]] وبترجّع العدد كـ [[i32]].`,
+            R`العدّاد. AssemblyScript بيستنتج من [[0]] إن نوعه [[i32]] (رقم صحيح)، مش زي JS اللي كل أرقامه عشرية 64-bit.`,
+            R`بنجرّب كل رقم من 2 لحد قبل [[limit]]، لأن 0 و 1 مش أوليين.`,
+            R`بنفترض إن الرقم أولي، واللفة اللي جاية هتحاول تثبت العكس. هنا بنستخدم [[true]] و [[false]] بجد لأن AssemblyScript عنده [[bool]]، مش 1 و 0 زي الـ C.`,
+            R`القواسم من 2 لحد الجذر التربيعي بس ([[d * d <= n]]): أي قاسم أكبر من الجذر ليه قاسم مقابل أصغر منه كنا هنلاقيه قبل كده.`,
+            R`لو [[n]] بيتقسم على [[d]] من غير باقي يبقى مش أولي، و [[break]] تخرج من لفة القواسم على طول. و [[==]] هنا على أرقام من نفس النوع، فمفيش تحويل أنواع زي [[==]] في JS.`,
+            R`نهاية لفة القواسم.`,
+            R`لو فضل [[prime]] بـ [[true]] بعد ما جرّبنا كل القواسم، يبقى أولي فنزوّد العدّاد واحد.`,
+            R`نهاية لفة الأرقام.`,
+            R`بيرجّع عدد الأعداد الأولية لـ JS كـ number عادي.`,
+            R`نهاية [[countPrimes]].`,
+            R`هنا الفرق الكبير عن C: [[string]] داخل و [[string]] خارج. الـ wasm نفسه مبيعرفش نصوص، فالـ bindings اللي [[asc]] بيعملها بتكتب النص في ذاكرة الـ wasm قبل النداء وتقراه بعده، وانت بتنادي [[greet("Sara")]] عادي.`,
+            R`لزق نصوص عادي زي TypeScript، والنص الجديد بيتعمل جوه ذاكرة الـ wasm. ده اللي في C كان محتاج buffer و [[TextEncoder]] و [[TextDecoder]] بإيدك.`,
+            R`نهاية [[greet]].`,
+            R`بتاخد [[Float64Array]] (array أرقام عشرية 64-bit) وبترجّع [[f64]] = number عادي في JS. والـ bindings بتنسخ الأرقام لذاكرة الـ wasm قبل النداء، فانت مش محتاج تكتب في [[memory]] بإيدك.`,
+            R`المجموع بيبدأ من [[0.0]]، والكتابة دي بتخلي AssemblyScript يستنتج النوع [[f64]]. لو كتبت [[0]] بس كان النوع هيبقى [[i32]] (رقم صحيح)، وده غلط لمجموع أرقام عشرية.`,
+            R`بيلف على كل الأرقام بالـ index ويزوّد كل واحد على [[total]]، بنفس شكل TypeScript العادي.`,
+            R`بيرجّع المجموع، والـ bindings بترجّعه لـ JS كـ number عادي.`,
+            R`نهاية [[sum]].`,
+          ],
+          sol: R`الناتج الحقيقي:
+[[5]] و [[25]] و [[Hello, Sara!]] و [[7]] و [[-2147483648]].
+[[build/release.wasm]] = 4700 byte، و [[build/release.js]] = 3475 byte. والـ [[-2147483648]] لأن [[i32]] لفّ (overflow) زي C، مش زي number في JS.`
+        },
+        {
+          cmd: "WASI و node:wasi",
+          title: "WASI: wasm برا المتصفح، برنامج C بـ printf و fopen بيشتغل بـ node:wasi",
+          desc: R`WASI (WebAssembly System Interface) هو الطريقة اللي بيها ملف [[.wasm]] يطبع ويقرا ملفات ويشوف الـ arguments ومتغيرات البيئة **برا المتصفح**. البرنامج بيستورد دوال بأسماء معيارية ([[fd_write]] و [[path_open]] و [[args_get]]...) من module اسمه [[wasi_snapshot_preview1]]، وأي runtime بيدعم WASI بيدّيها له: Node بـ [[node:wasi]]، أو wasmtime، أو wasmer.
+
+والفرق المهم عن الـ native: البرنامج **مبيشوفش غير الفولدرات اللي انت تفتحهاله** ([[preopens]]). [[fopen("/data/../run.mjs")]] رجّع [[Capabilities insufficient]].
+
+اتعمله compile بـ clang 20.1.8 و [[wasi-sdk]] جوه [[alpine:3.22]]، واتشغّل على Node 24.22.1 على ويندوز. ولو أول مرة تعمل compile لـ C، ابدأ بدرس «wasm من C».`,
+          example: R`// run.mjs: بيشغّل wcat.wasm (برنامج C) بـ node:wasi
+import { readFile } from "node:fs/promises";
+import { WASI } from "node:wasi";
+import { argv } from "node:process";
+const wasi = new WASI({
+  version: "preview1",
+  args: ["wcat", ...argv.slice(2)],
+  env: { USER: "sara" },
+  preopens: { "/data": "./data" },
+});
+const wasm = await WebAssembly.compile(await readFile("wcat.wasm"));
+const instance = await WebAssembly.instantiate(wasm, wasi.getImportObject());
+const code = wasi.start(instance);
+console.log("exit code:", code);`,
+          lines: [
+            R`[[readFile]] من نسخة الـ promises في [[node:fs]]، عشان نقرا bytes ملف الـ [[.wasm]] من الديسك بـ [[await]].`,
+            R`[[WASI]] كلاس مدمج في Node (من غير تسطيب). هو اللي بيعمل الدوال اللي البرنامج مستنيها: [[fd_write]] للطباعة، و [[path_open]] لفتح ملف، و [[args_get]] للـ arguments. ولسه experimental، فـ Node بيطبع [[ExperimentalWarning]] أول ما تستورده.`,
+            R`[[argv]] هي الـ arguments اللي اتكتبت بعد [[node run.mjs]] في الترمنال، عشان نعدّيها للبرنامج C.`,
+            R`بنعمل بيئة WASI للبرنامج ده بس. كل حاجة البرنامج هيشوفها (arguments وبيئة وملفات) بتتحدد هنا، ومفيش حاجة تانية من جهازك بتوصله.`,
+            R`[[version]] إجباري: [["preview1"]] هي النسخة اللي clang و wasi-sdk بيطلّعوها (الـ imports اسمها [[wasi_snapshot_preview1]]). لو نسيته: [[The "options.version" property must be of type string. Received undefined]].`,
+            R`الـ arguments اللي البرنامج هيشوفها في [[argv]] بتاع C. أول عنصر اسم البرنامج (زي أي برنامج native)، وبعده اللي اتكتب في الترمنال، و [[...]] بيفرد [[argv.slice(2)]] (من غير [[node]] واسم الملف).`,
+            R`متغيرات البيئة. **مش بتتورّث** من جهازك: لو مكتبتهاش هنا، [[getenv("USER")]] في C هترجّع [[NULL]]. وده مقصود: البرنامج ميشوفش أسرار زي [[API_KEY]] اللي في بيئتك.`,
+            R`**الفولدرات المسموحة**. المفتاح [["/data"]] هو الاسم اللي البرنامج هيشوفه، والقيمة [["./data"]] هي الفولدر الحقيقي على جهازك. أي مسار برا [[/data]] مش موجود بالنسبة للبرنامج، وأي محاولة يطلع منه بـ [[..]] بترجع [[Capabilities insufficient]].`,
+            R`نهاية الإعدادات.`,
+            R`[[compile]] بيحوّل الـ bytes لـ [[WebAssembly.Module]] (كود جاهز من غير ذاكرة ولا imports). ممكن تعمله مرة وتشغّله كذا مرة أو تبعته لـ Worker.`,
+            R`[[getImportObject()]] بيرجّع [[{ wasi_snapshot_preview1: { fd_write, path_open, ... } }]]، وده بالظبط اللي البرنامج مستنيه. من غيره: [[Import #0 "wasi_snapshot_preview1": module is not an object or function]].`,
+            R`[[start]] بينادي [[_start]] اللي clang عمله (بيجهّز مكتبة C وينادي [[main]])، ويرجّع الرقم اللي [[main]] رجّعته: exit code. ومينفعش تناديه مرتين على نفس الـ instance: [[WASI instance has already started]].`,
+            R`بنطبع الـ exit code: [[0]] نجح، و [[2]] لو [[fopen]] فشل (من [[return 2]] في الـ C). وتقدر تمرره لـ [[process.exitCode]] لو السكربت نفسه جزء من pipeline.`,
+          ],
+          try: R`اعمل فولدر جديد فيه [[wcat.c]] (في الشرح) وفولدر [[data]] فيه [[note.txt]] بسطرين. اعمل compile بأمر Docker اللي في الشرح، وشغّل [[node run.mjs]]، وبعدين [[node run.mjs /data/note.txt]] و [[node run.mjs /data/../run.mjs]] و [[node run.mjs /etc/passwd]]. وبعدين خلّي [[preopens]] فاضي وشوف إيه اللي اتغيّر. (في Git Bash على ويندوز اكتب [[MSYS_NO_PATHCONV=1]] قبل [[node]]، وإلا [[/data]] بيتحول لـ [[C:/Program Files/Git/data]].)`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** قبل ما تشغّل، اكتب السطر اللي [[perror]] هيطبعه والـ exit code لكل واحدة: [[/data/note.txt]]، و [[/data/missing.txt]]، و [[/data/../run.mjs]]، ونفس [[/data/note.txt]] بس و [[preopens: {}]].`, done: R`الناتج الحقيقي: الأولى طبعت السطرين و [[exit code: 0]]، والتانية [[fopen: No such file or directory]] و 2، والتالتة [[fopen: Capabilities insufficient]] و 2 (مش «مش موجود»: البرنامج حاول يطلع برا الفولدر)، والرابعة [[No such file or directory]] و 2 لأن [[/data]] نفسها مش موجودة بالنسبة له. وكاتب جنب كل واحدة توقعك.` },
+            { lvl: 'تطبيق', t: R`**ابني أداة:** [[wcount.c]] زي [[wc]]: بياخد اسم ملف ويطبع عدد السطور والكلمات والـ bytes، ومن غير ملف يطبع [[usage: wcount FILE]] على [[stderr]] ويرجّع 1. شغّله بـ [[node:wasi]] وخلّي [[stdout]] يروح لملف [[out.txt]] بـ [[openSync]] و خيار [[stdout]] في [[new WASI]].`, done: R`على [[note.txt]] (سطرين: «سطر أول من ملف حقيقي» و «second line») [[out.txt]] فيه [[2 7 49 /data/note.txt]] والـ exit code صفر، وعلى ملف مش موجود الترمنال طبع [[/data/nope.txt: No such file or directory]] و [[out.txt]] فاضي والـ exit code 1، ومن غير arguments طبع [[usage: wcount FILE]] و 1.` },
+            { lvl: 'تحدي', t: R`**اكتب غلاف متين واختباره:** [[runWasi(file, { args, env, dirs })]] بترجّع [[{ code }]] وبتعمل [[new WASI]] جديد كل نداء. ارمي error واضح لو الملف مش موجود، ولو الـ wasm مالوش [[_start]] (زي [[sum.wasm]] بتاع درس «wasm من C»)، واختبرها بـ [[node:assert/strict]].`, done: R`[[node test.mjs]] بيعدّي: [[wcat.wasm]] بيرجّع [[{ code: 0 }]] مرتين ورا بعض (مفيش [[WASI instance has already started]] لأن كل نداء بـ WASI جديد)، و [[sum.wasm]] بيرمي رسالتك انت بدل [[The "instance.exports._start" property must be of type function]]، والملف المش موجود رسالته فيها اسم الملف.` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`الـ wasm لوحده مبيعرفش يعمل ولا حاجة برا ذاكرته: مفيش طباعة ولا ملفات ولا وقت. في المتصفح JavaScript بيدّيله دوال بإيده (درس «WebAssembly في المتصفح»). WASI بيوحّد الدوال دي، فنفس الـ [[.wasm]] يشتغل على Node و wasmtime و wasmer وجوه Docker وعلى أي نظام، وبرنامج C أو Rust عادي بـ [[printf]] و [[fopen]] يتعمله compile من غير ما تغيّر سطر.`,
+            how: R`**الـ compile:** [[--target=wasm32-wasi]] بيقول لـ clang يستخدم [[wasi-libc]] (مكتبة C مكتوبة فوق WASI) بدل [[-nostdlib]]. [[printf]] جوه wasi-libc بينادي [[fd_write]] على fd رقم 1 (stdout)، و [[fopen]] بينادي [[path_open]]. والناتج 33KB بدل 722 byte لأن فيه مكتبة C (printf لوحدها كبيرة).
+
+**الـ imports:** [[WebAssembly.Module.imports(wasm)]] على [[wcat.wasm]] طلّع ١٤ دالة كلها من [[wasi_snapshot_preview1]]: [[args_get]] و [[environ_get]] و [[fd_write]] و [[fd_read]] و [[path_open]] و [[proc_exit]] وغيرهم. والـ exports اتنين بس: [[memory]] و [[_start]].
+
+**الـ capabilities:** مفيش «افتح أي مسار». البرنامج بيستلم file descriptors جاهزة لكل فولدر في [[preopens]] (بـ [[fd_prestat_get]])، وكل [[path_open]] لازم يبقى جوه واحد منهم. عشان كده [[/data/../run.mjs]] رجعت [[Capabilities insufficient]] (اسمها [[ENOTCAPABLE]] في WASI) مش [[No such file]].
+
+**بس خد بالك:** docs بتاعة Node بتقول صراحة إن [[node:wasi]] **مش sandbox آمن** لكود مش واثق فيه: الحماية دي مش كاملة زي runtimes تانية. لكود من برا استخدم wasmtime أو عزل حقيقي (container).
+
+**Reactor ولا command:** البرنامج اللي فيه [[main]] اسمه command وبيتشغّل بـ [[wasi.start()]]. والمكتبة اللي من غير [[main]] (زي [[sum.wasm]]) اسمها reactor: بتعمل [[wasi.initialize(instance)]] لو محتاجة WASI، وبعدين تنادي الدوال عادي.
+
+**preview1 و preview2:** [[wasi_snapshot_preview1]] هي اللي شغالة في كل مكان النهارده. و WASI 0.2 (preview2) مبني على الـ Component Model وفيه sockets و HTTP، ومدعوم في wasmtime، و Node لسه بيدعم preview1 بس (من docs بتاعة Node و wasmtime).`,
+            when: R`نفس الأداة (parser، ضاغط، محوّل صور) محتاجها على كذا نظام من ملف واحد. أو plugins لبرنامجك بتشتغل معزولة (Envoy و Zed و Shopify Functions بيستخدموا wasm للسبب ده). أو تشغّل أداة C في سكربت Node من غير compiler على جهاز اليوزر. مش بديل لـ addon native لو محتاج سرعة الـ syscalls أو threads كاملة.`,
+            mistakes: R`تنسى [[version: "preview1"]] فيرمي [[ERR_INVALID_ARG_TYPE]]. تنسى [[getImportObject()]] فتاخد [[Import #0 "wasi_snapshot_preview1": module is not an object or function]]. تنادي [[start]] مرتين على نفس الـ instance ([[ERR_WASI_ALREADY_STARTED]]). تنادي [[start]] على reactor مالوش [[_start]]. تحط مسار فولدر في [[preopens]] مش موجود فيرمي [[UVWASI_ENOENT]] من [[new WASI]] نفسها. تفتكر إن البرنامج شايف متغيرات البيئة بتاعتك. وفي Git Bash على ويندوز، [[/data]] في الـ arguments بيتحول لمسار ويندوز لو مكتبتش [[MSYS_NO_PATHCONV=1]].`
+          },
+          teach: R`## نفس برنامج C، برا المتصفح
+
+في درس «wasm من C» عملنا compile بـ [[-nostdlib]]: من غير [[printf]] ولا [[fopen]]، والـ JS كان بيكتب في الذاكرة بإيده. هنا برنامج C **عادي** بمكتبة C كاملة، بيقرا arguments وبيئة وملف، وبيتشغّل بـ [[node:wasi]].
+
+كله اتشغّل فعلًا: clang 20.1.8 و wasi-sdk 25 جوه [[alpine:3.22]]، و Node 24.22.1 على ويندوز.
+
+---
+
+## ١. البرنامج: [[wcat.c]]
+
+~~~text wcat.c
+// wcat.c: بيطبع ملف زي cat، C عادي بـ printf و fopen
+#include <stdio.h>
+#include <stdlib.h>
+int main(int argc, char **argv) {
+  const char *path = argc > 1 ? argv[1] : "/data/note.txt";
+  const char *user = getenv("USER");
+  printf("hi %s, reading %s\n", user ? user : "nobody", path);
+  FILE *f = fopen(path, "r");
+  if (!f) { perror("fopen"); return 2; }
+  char line[256];
+  while (fgets(line, sizeof line, f)) printf("| %s", line);
+  fclose(f);
+  return 0;
+}
+~~~
+
+- [[#include <stdio.h>]]: [[printf]] و [[fopen]] و [[fgets]] و [[perror]]. ده اللي مكنش موجود مع [[-nostdlib]].
+- [[argc > 1 ? argv[1] : "/data/note.txt"]]: لو اتبعت مسار خده، وإلا الملف الافتراضي.
+- [[getenv("USER")]]: متغير بيئة، وهيرجع [[NULL]] لو الـ runtime مدّاهوش.
+- [[perror("fopen")]]: بيطبع [[fopen: ]] وبعدها سبب آخر غلطة بالكلام (من [[errno]]).
+- [[return 2]]: الـ exit code لما الفتح يفشل.
+
+---
+
+## ٢. الـ compile: [[wasm32-wasi]]
+
+~~~bash
+docker run --rm -v "$PWD:/src" -w /src alpine:3.22 sh -c "apk add --no-cache clang lld wasi-sdk && clang --target=wasm32-wasi -O2 -o wcat.wasm wcat.c"
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[wasi-sdk]] | باكدج في Alpine بيسطّب [[wasi-libc]] (مكتبة C فوق WASI) و [[wasi-compiler-rt]] |
+| [[--target=wasm32-wasi]] | wasm 32-bit بيستورد دوال WASI، ومعاه مكتبة C بدل [[-nostdlib]] |
+| من غير [[--no-entry]] | المرة دي فيه [[main]]، و clang بيعمل [[_start]] بينادي عليها |
+
+(في PowerShell بدّل [[$PWD]] بـ [[$__{PWD}]] زي درس «wasm من C». والتسطيب نزّل حوالي 500MB جوه الـ container ومش بيفضل على جهازك.)
+
+~~~text ls -l
+-rwxr-xr-x    1 root     root         33577 wcat.wasm
+~~~
+
+33KB بدل 722 byte: جواه wasi-libc (و [[printf]] لوحدها كبيرة).
+
+### بيستورد إيه؟
 
 ~~~js
-test('backoff بيزيد وبيقف عند الحد', () => {
-  const a = backoff(0, { base: 100, cap: 1000 });
-  const b = backoff(5, { base: 100, cap: 1000 });
-  assert.ok(a >= 50 && a <= 100);
-  assert.ok(b >= 500 && b <= 1000);
+const m = await WebAssembly.compile(fs.readFileSync("wcat.wasm"));
+WebAssembly.Module.imports(m).map(i => i.module + "." + i.name);
+~~~
+
+~~~text الناتج (14 دالة)
+wasi_snapshot_preview1.args_get
+wasi_snapshot_preview1.args_sizes_get
+wasi_snapshot_preview1.environ_get
+wasi_snapshot_preview1.environ_sizes_get
+wasi_snapshot_preview1.fd_close
+wasi_snapshot_preview1.fd_fdstat_get
+wasi_snapshot_preview1.fd_fdstat_set_flags
+wasi_snapshot_preview1.fd_prestat_get
+wasi_snapshot_preview1.fd_prestat_dir_name
+wasi_snapshot_preview1.fd_read
+wasi_snapshot_preview1.fd_seek
+wasi_snapshot_preview1.fd_write
+wasi_snapshot_preview1.path_open
+wasi_snapshot_preview1.proc_exit
+exports: memory:memory, _start:function
+~~~
+
+| الدالة | جاية منين في الـ C |
+|---|---|
+| [[args_get]] و [[args_sizes_get]] | [[argc]] و [[argv]] اللي [[main]] بتستلمهم |
+| [[environ_get]] | [[getenv]]: بيقرا من [[env]] اللي في [[new WASI]] بس |
+| [[fd_write]] | [[printf]] بيكتب على fd 1 (stdout)، و [[perror]] على fd 2 (stderr) |
+| [[path_open]] و [[fd_read]] | [[fopen]] بيفتح، و [[fgets]] بيقرا سطر سطر |
+| [[fd_prestat_get]] | مكتبة C بتسأل بيه «إيه الفولدرات اللي اتفتحتلي؟» أول ما البرنامج يقوم |
+| [[proc_exit]] | الخروج بالـ exit code |
+
+ده **كل** اللي البرنامج يقدر يعمله في العالم: مفيش import تاني، فمفيش شبكة ولا تشغيل برامج.
+
+---
+
+## ٣. التشغيل بـ [[node:wasi]]
+
+~~~text node run.mjs
+(node:46324) ExperimentalWarning: WASI is an experimental feature and might change at any time
+(Use $__btnode --trace-warnings ...$__bt to show where the warning was created)
+hi sara, reading /data/note.txt
+| سطر أول من ملف حقيقي
+| second line
+exit code: 0
+~~~
+
+- [[ExperimentalWarning]]: في Node 24 لسه experimental. [[node --no-warnings run.mjs]] بيخفيه، والرقم [[46324]] هو الـ PID وبيتغيّر كل مرة.
+- [[hi sara]]: [[getenv("USER")]] رجّعت القيمة اللي في [[env]] بتاعة [[new WASI]]، مش اسم اليوزر بتاع جهازك.
+- [[reading /data/note.txt]]: مفيش arguments، فالبرنامج خد المسار الافتراضي. و [[/data]] ده الاسم اللي في [[preopens]]، والملف الحقيقي [[./data/note.txt]] جنب [[run.mjs]].
+- العربي اتقرا واتطبع سليم: الملف UTF-8 والبرنامج بينقل bytes من غير ما يفهمها.
+- [[exit code: 0]]: اللي [[main]] رجّعته، و [[wasi.start]] رجّعهولنا.
+
+---
+
+## ٤. الـ sandbox: [[preopens]]
+
+نفس [[wcat.wasm]] بمسارات مختلفة ([[node --no-warnings run.mjs PATH]]):
+
+~~~text
+== /data/note.txt
+hi sara, reading /data/note.txt
+| سطر أول من ملف حقيقي
+| second line
+exit code: 0
+== /data/../run.mjs
+hi sara, reading /data/../run.mjs
+fopen: Capabilities insufficient
+exit code: 2
+== /etc/passwd   (من هنا شلت سطر hi للاختصار)
+fopen: No such file or directory
+== C:/Windows/win.ini
+fopen: No such file or directory
+== /data/missing.txt
+fopen: No such file or directory
+~~~
+
+| المسار | النتيجة | ليه |
+|---|---|---|
+| [[/data/note.txt]] | اتقرا | جوه الفولدر اللي في [[preopens]] |
+| [[/data/../run.mjs]] | [[Capabilities insufficient]] | بيحاول يطلع برا [[/data]] بـ [[..]]، و WASI بيرفض (اسمها [[ENOTCAPABLE]]) |
+| [[/etc/passwd]] و [[C:/Windows/win.ini]] | [[No such file or directory]] | بالنسبة للبرنامج، مفيش أي مسار غير [[/data]] |
+
+ولما خليت [[preopens: {}]]، حتى [[/data/note.txt]] بقت [[No such file or directory]]. ولو كتبت فولدر مش موجود على جهازك ([[preopens: { "/data": "./nope" }]])، [[new WASI]] نفسها بترمي [[Error: UVWASI_ENOENT, uvwasi_init]] قبل ما البرنامج يبدأ.
+
+> **مهم:** docs بتاعة Node بتقول إن [[node:wasi]] مش sandbox كامل لكود مش واثق فيه. الـ preopens بتمنع الغلط العادي، بس لكود جاي من برا استخدم wasmtime أو container.
+
+---
+
+## ٥. الأخطاء اللي هتقابلها (اتشغّلت كلها)
+
+| الغلطة | الرسالة | التصليح |
+|---|---|---|
+| [[new WASI({})]] | [[The "options.version" property must be of type string. Received undefined]] | زوّد [[version: "preview1"]] |
+| [[instantiate(wasm, {})]] | [[Import #0 "wasi_snapshot_preview1": module is not an object or function]] | ابعت [[wasi.getImportObject()]] |
+| [[start]] مرتين | [[ERR_WASI_ALREADY_STARTED]]: [[WASI instance has already started]] | اعمل [[new WASI]] و instance جديد لكل تشغيلة |
+| [[start]] على [[sum.wasm]] | [[The "instance.exports._start" property must be of type function. Received undefined]] | استخدم [[wasi.initialize(instance)]] |
+
+والأخيرة لأن [[sum.wasm]] مكتبة من غير [[main]] (اسمها reactor). ودي بتتنادى دوالها عادي، ولو محتاجة WASI بتعمل [[wasi.initialize(instance)]] بدل [[start]].
+
+---
+
+## ٦. [[stdout]] لملف
+
+~~~js
+const out = openSync("out.txt", "w");
+const wasi = new WASI({ version: "preview1", args: ["wcount", "/data/note.txt"], preopens: { "/data": "./data" }, stdout: out });
+~~~
+
+[[stdout]] و [[stderr]] و [[stdin]] بياخدوا file descriptor. هنا [[printf]] جوه الـ C راح لـ [[out.txt]] بدل الترمنال (التمرين التاني).
+
+---
+
+## ٧. برا Node
+
+نفس [[wcat.wasm]] بيشتغل على أي runtime بيدعم WASI preview1 من غير compile تاني (من docs بتاعة wasmtime):
+
+~~~bash
+wasmtime run --dir ./data::/data wcat.wasm /data/note.txt
+~~~
+
+[[--dir ./data::/data]] هي نفس فكرة [[preopens]]. و WASI 0.2 (preview2) الجديد فيه sockets و HTTP مبني على الـ Component Model، وشغال في wasmtime، و [[node:wasi]] لسه preview1 بس.
+
+---
+
+## الخلاصة
+
+| | [[-nostdlib]] (درس «wasm من C») | WASI |
+|---|---|---|
+| مكتبة C | مفيش، كل حاجة بإيدك | [[wasi-libc]]: [[printf]] و [[fopen]] شغالين |
+| الحجم هنا | 722 byte | حوالي 33KB |
+| بيتشغّل إزاي | [[instance.exports.add(...)]] | [[wasi.start(instance)]] بينادي [[main]] |
+| الملفات | مفيش | جوه [[preopens]] بس |
+| يشتغل فين | أي مكان فيه JS | Node و wasmtime و wasmer وغيرهم |
+
+- [[version: "preview1"]] و [[getImportObject()]] إجباريين.
+- البيئة مش بتتورّث، والفولدرات لازم تتفتح بالاسم.
+- [[start]] مرة واحدة لكل instance.`,
+          sol: R`الناتج الحقيقي (Node 24.22.1، [[wcat.wasm]] 33577 byte):
+[[node run.mjs]] طبع [[hi sara, reading /data/note.txt]] والسطرين و [[exit code: 0]].
+[[/data/../run.mjs]]: [[fopen: Capabilities insufficient]] و [[exit code: 2]]، لأن البرنامج حاول يطلع برا الفولدر اللي اتفتحله.
+[[/etc/passwd]]: [[fopen: No such file or directory]]، لأن مفيش أي مسار بالنسبة له غير [[/data]].
+ومع [[preopens: {}]] حتى [[/data/note.txt]] بقت [[No such file or directory]]. وفي أول تشغيل Node طبع [[ExperimentalWarning: WASI is an experimental feature and might change at any time]].`
+        },
+        {
+          cmd: "wasm يستاهل إمتى",
+          title: "WebAssembly أسرع من JavaScript؟ قياس حقيقي",
+          desc: R`مش دايمًا. JavaScript في V8 بيتعمله JIT، فلوب أرقام بسيط بيبقى قريب من wasm جدًا. وكل نداء من JS لـ wasm ليه تمن، فدالة صغيرة بتتنادى ملايين المرات بتبقى **أبطأ** في wasm. الفرق الحقيقي بيظهر في الشغل الكبير على bytes و SIMD (عملية واحدة على كذا رقم مع بعض)، وفي إنك تستخدم مكتبة C أو Rust جاهزة.
+
+المثال بيقيس الحالتين الأولانيين على Node 24.`,
+          example: R`import { readFile } from "node:fs/promises";
+const { instance } = await WebAssembly.instantiate(await readFile("sum.wasm"));
+const wasm = instance.exports;
+function countPrimesJS(limit) {
+  let count = 0;
+  for (let n = 2; n < limit; n++) {
+    let prime = 1;
+    for (let d = 2; d * d <= n; d++) {
+      if (n % d === 0) { prime = 0; break; }
+    }
+    count += prime;
+  }
+  return count;
+}
+function time(label, fn) {
+  fn();
+  const t = performance.now();
+  const r = fn();
+  console.log(label.padEnd(26), String(r).padStart(9), (performance.now() - t).toFixed(1).padStart(7), "ms");
+}
+time("JS   countPrimes(5e6)", () => countPrimesJS(5_000_000));
+time("wasm count_primes(5e6)", () => wasm.count_primes(5_000_000));
+const jsAdd = (a, b) => (a + b) | 0;
+time("JS   add x 10M", () => { let s = 0; for (let i = 0; i < 1e7; i++) s = jsAdd(s, 1); return s; });
+time("wasm add x 10M", () => { let s = 0; for (let i = 0; i < 1e7; i++) s = wasm.add(s, 1); return s; });`,
+          try: R`خد [[sum.wasm]] من درس [[wasm من C]] وشغّل المثال [[bench.mjs]] مرتين بـ [[node bench.mjs]]. مين كسب في الأولية؟ وفي [[add]]؟ وبعدين قيس حاجة على bytes كبيرة (زي تفتيح 32MB «بكسلات») في JS وفي C عادي وفي C بـ [[-msimd128]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**قارن وقيس:** زوّد في C دالة [[add_many(int n)]] بتعمل اللوب كلها جوه wasm ([[s = add(s, 1)]] عشر مليون مرة)، وقيسها بـ [[time]] اللي في المثال جنب ١٠ مليون نداء [[wasm.add]] من JS.`, done: R`عندك رقمين بالـ ms بعد الـ warm-up، والناتجين [[10000000]]، وكاتب جملة بتقول مين كسب وليه (كل نداء من JS لـ wasm ليه تمن).` },
+            { lvl: 'تطبيق', t: R`**refactor:** [[time(label, fn)]] بتقيس مرة واحدة بس. خليها [[bench(label, fn, runs = 7)]]: warm-up مرة، وبعدين ٧ قياسات، وتطبع الأقل والوسيط (median)، من غير ما تغيّر أي سطر في الدوال اللي بتتقاس.`, done: R`كل سطر بيطبع الاسم والناتج والأقل والوسيط، والـ warm-up مش داخل في الحساب، ولما تشغّل مرتين الوسيط بيبقى قريب أكتر من القياس الواحد القديم.` },
+            { lvl: 'تحدي', t: R`**اشرحها بأرقام:** في تلات حالات (تكبير حروف نص ١٠ حروف مرة واحدة، وفلتر على صورة 32MB، وجمع رقمين في لوب) قرر wasm يستاهل ولا لأ، وقيس الحالة التانية **ومعاها** وقت نسخ الـ bytes للـ [[memory]] ورجوعها.`, done: R`عندك جدول: لكل حالة قرارك وسببه في سطر، وللصورة ٣ أرقام (JS، و wasm من غير النسخ، و wasm بالنسخ رايح جاي)، وجملة بتقول القرار اتغيّر ولا لأ لما حسبت النسخ.` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`ناس كتير بتفتكر «wasm = أسرع»، فتنقل كود عادي لـ Rust/wasm وتتعب وفي الآخر مفيش فرق، أو يبقى أبطأ. القرار لازم يبقى بقياس على شغلك انت.`,
+            how: R`V8 بيراقب الكود الـ JS وهو شغال، ولو لاقى دالة سخنة بأنواع ثابتة (أرقام صحيحة دايمًا) بيعملها compile لكود معالج قريب من C. فلوب [[countPrimes]] بيتحول تقريبًا لنفس الكود اللي clang طلّعه.
+
+النداء من JS لـ wasm بيعدّي «حدود»: تحويل الـ arguments، وتغيير الـ context. ده رخيص بس مش ببلاش، فلما الدالة نفسها تافهة ([[add]]) التمن ده بيبقى هو كل الوقت. وفي JS الـ JIT بيعمل inline لـ [[jsAdd]] (بيحط جسمها مكان النداء) فبتختفي.
+
+wasm بيكسب: لما الشغل كتير جوه نداء واحد، وعلى bytes و typed arrays، ولما الـ compiler يقدر يستخدم SIMD (128-bit: 16 byte مع بعض في تعليمة واحدة)، ولما الأداء لازم يبقى ثابت (مفيش «JIT لسه ماسخنش» ولا deopt). وأكبر سبب عملي: كود C/C++/Rust موجود (SQLite و ffmpeg و image codecs و PGlite اللي الموقع ده بيستخدمه لتمارين SQL).`,
+            when: R`استخدمه: مكتبة native جاهزة، أو شغل تقيل على bytes/صور/صوت، أو SIMD، أو نفس الكود محتاجه في المتصفح والسيرفر والموبايل. متستخدموش: كود بيكلم DOM أو JSON أو الشبكة، أو دوال صغيرة بتتنادى كتير من JS.`,
+            mistakes: R`تقيس مرة واحدة من غير تسخين (أول تشغيل فيه compile). وتقيس دالة فاضية وتحكم. وتنسى إن تحويل الداتا (نصوص ← memory ← نصوص) بياكل الفرق. وتشحن wasm 2MB عشان توفّر 10ms: التنزيل والـ compile أغلى.`
+          },
+          teach: R`## القياس
+
+[[sum.wasm]] هو بتاع درس [[wasm من C]] (clang [[-O2]]). اتشغّل بـ Node 24.22 على ويندوز (Ryzen 9 5900HX)، مرتين.
+
+---
+
+## ١. [[time(label, fn)]]
+
+- [[fn();]] الأول: تسخين. أول نداء فيه compile و JIT، فمش بنحسبه.
+- [[performance.now()]] قبل وبعد التاني: الوقت بالـ ms بكسور.
+- [[padEnd(26)]] و [[padStart(9)]]: يكمّلوا بمسافات عشان الأعمدة تتصف.
+
+## ٢. الأعداد الأولية تحت ٥ مليون
+
+نفس الخوارزمية بالظبط في JS ([[countPrimesJS]]) و C ([[count_primes]]). [[5_000_000]]: الـ [[_]] بيفصل الأرقام للقراية بس.
+
+## ٣. [[add]] عشرة مليون مرة
+
+- [[(a + b) | 0]]: [[| 0]] بيحوّل الناتج لـ int 32-bit زي الـ C، عشان المقارنة تبقى عادلة.
+- كل لفة نداء واحد: من JS لـ JS، أو من JS لـ wasm.
+
+---
+
+## النتيجة
+
+~~~text node bench.mjs (المرة الأولى)
+JS   countPrimes(5e6)         348513  1089.2 ms
+wasm count_primes(5e6)        348513  1108.7 ms
+JS   add x 10M              10000000     4.0 ms
+wasm add x 10M              10000000    38.3 ms
+~~~
+
+~~~text node bench.mjs (المرة التانية)
+JS   countPrimes(5e6)         348513  1164.5 ms
+wasm count_primes(5e6)        348513   985.4 ms
+JS   add x 10M              10000000     3.5 ms
+wasm add x 10M              10000000    31.2 ms
+~~~
+
+| | JS | wasm | مين كسب |
+|---|---|---|---|
+| الأولية (شغل كتير في نداء واحد) | 1089 / 1164 ms | 1109 / 985 ms | **تعادل تقريبًا** (الفرق بين التشغيلتين أكبر من الفرق بينهم) |
+| [[add]] × 10M (نداءات صغيرة) | 4.0 / 3.5 ms | 38.3 / 31.2 ms | **JS أسرع ~9 مرات** |
+
+[[348513]]: عدد الأعداد الأولية تحت 5 مليون، نفس الرقم في الاتنين (الكود صح).
+
+---
+
+## ٤. حالة wasm بيكسب فيها: bytes و SIMD
+
+قست دالة بتفتّح صورة: بتزوّد 1 على كل byte في 32MB (بحد أقصى 255). نفس الكود C اتعمله compile مرتين: عادي، ومرة بـ [[-O3 -msimd128]] (SIMD: تعليمة واحدة على 16 byte). والذاكرة واحدة بين التلاتة.
+
+~~~text node bench2.mjs (مرتين)
+JS   brightness 32MB        36.2 ms      40.6 ms
+wasm brightness             23.2 ms      23.2 ms
+wasm+SIMD brightness         8.0 ms       7.9 ms
+~~~
+
+| | الوقت | مقارنة بـ JS |
+|---|---|---|
+| JS ([[Uint8Array]]) | 36 لـ 41 ms | 1× |
+| wasm عادي | 23 ms | أسرع ~1.7× |
+| wasm + SIMD | 8 ms | **أسرع ~4.8×** |
+
+هنا wasm كسب: شغل كبير على bytes في نداء واحد، و SIMD بيعمل 16 byte مرة واحدة. والرقم ثابت بين التشغيلتين (JS اتذبذب).
+
+---
+
+## ٥. wasm في Worker: الحساب التقيل من غير ما الصفحة تعلّق
+
+الأعداد الأولية تحت ٥ مليون بتاخد ثانية. وفي الثانية دي، **لو اتنادت على الـ main thread، مفيش أي حاجة تانية بتشتغل**: ولا timer، ولا click، ولا رسم. wasm مش بيحل ده، لأنه بيشتغل على نفس الـ thread اللي ناداه. الحل إنك تنقله لـ Worker (درس «blocking و الـ main thread» في وحدة الـ event loop).
+
+اتجرّب في Node بـ [[worker_threads]] و [[sum.wasm]] بتاع درس «wasm من C»:
+
+~~~js worker.mjs
+// worker.mjs: بيشغّل الـ wasm في thread لوحده
+import { parentPort } from "node:worker_threads";
+parentPort.on("message", async ({ module, limit }) => {
+  const instance = await WebAssembly.instantiate(module);
+  parentPort.postMessage(instance.exports.count_primes(limit));
 });
 ~~~
 
-[[backoff]] دالة نقية — مفيش فيها شبكة ولا وقت. فبتتختبر في **٠.١ms**.
+~~~js main.mjs
+import { readFile } from "node:fs/promises";
+import { Worker } from "node:worker_threads";
+const module = await WebAssembly.compile(await readFile("sum.wasm"));
+let ticks = 0;
+const timer = setInterval(() => ticks++, 100);
+const t = performance.now();
+const worker = new Worker(new URL("./worker.mjs", import.meta.url));
+worker.postMessage({ module, limit: 5_000_000 });
+worker.once("message", (count) => {
+  console.log("worker:", count, "|", Math.round(performance.now() - t), "ms | ticks:", ticks);
+  clearInterval(timer);
+  worker.terminate();
+});
+~~~
 
-وده اللي بيخلي تصديرها قرار كويس: الحساب يتختبر لوحده.
+~~~text node main.mjs (مرتين)، وبعدين نفس الحساب على الـ main thread (مرتين)
+worker: 348513 | 1187 ms | ticks: 10
+worker: 348513 | 1098 ms | ticks: 10
+main thread: 348513 | 1028 ms | ticks: 0
+main thread: 348513 | 1006 ms | ticks: 0
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[ticks: 10]] مع الـ Worker | الـ timer اشتغل كل 100ms طول الحساب، يعني الـ main thread كان فاضي يرد على أي حاجة |
+| [[ticks: 0]] من غيره | الحساب حجز الـ thread ثانية كاملة، والـ timer ما اشتغلش ولا مرة |
+| الوقت | تقريبًا نفسه (حوالي ثانية)، والـ Worker بياخد شوية زيادة عشان يقوم. هو مش أسرع، هو **مش بيعلّق** |
+
+- [[WebAssembly.compile]] مرة واحدة في الـ main thread، وبعدين [[postMessage({ module })]]: الـ [[WebAssembly.Module]] بيتبعت لـ Worker من غير ما يتعمله compile تاني (structured clone بيدعمه).
+- [[instantiate(module)]] جوه الـ Worker: كل Worker لازم يعمل instance خاص بيه بذاكرة خاصة بيه. الذاكرة **مش** متشاركة إلا لو [[shared: true]] (تحت).
+- [[worker.terminate()]]: من غيرها البروسيس مش هيخرج لأن الـ Worker لسه شغال ومستني رسايل.
+
+### في المتصفح (من MDN)
+
+~~~js worker.js
+self.onmessage = async ({ data }) => {
+  const { instance } = await WebAssembly.instantiateStreaming(fetch("sum.wasm"));
+  self.postMessage(instance.exports.count_primes(data));
+};
+~~~
+
+~~~js main.js
+const worker = new Worker("worker.js", { type: "module" });
+worker.onmessage = (e) => (document.querySelector("#out").textContent = e.data);
+worker.postMessage(5_000_000);
+~~~
+
+نفس الفكرة: [[self]] مكان [[parentPort]]، و [[{ type: "module" }]] عشان [[import]] جوه الـ Worker. والـ Worker مالوش DOM، فالنتيجة بترجع بـ [[postMessage]] والـ main thread هو اللي بيكتبها في الصفحة.
+
+### وذاكرة مشتركة بين كذا Worker
+
+[[new WebAssembly.Memory({ initial: 1, maximum: 10, shared: true })]] بتعمل ذاكرة [[buffer]] بتاعها [[SharedArrayBuffer]]، فكذا Worker يشتغلوا على نفس الـ bytes. ده محتاج wasm اتعمله compile بـ threads ([[-pthread]] في Emscripten مثلًا)، وفي المتصفح الصفحة لازم تبقى cross-origin isolated (هيدرز [[Cross-Origin-Opener-Policy: same-origin]] و [[Cross-Origin-Embedder-Policy: require-corp]]). (من MDN، ماتجرّبش هنا.)
+
+---
+
+## ٦. Rust و wasm-pack (من الـ docs، ماتجرّبش هنا)
+
+لو مكتبتك Rust، الطريق المعتاد هو [[wasm-pack]] و [[wasm-bindgen]]: نفس فكرة bindings بتاعة AssemblyScript (درس «AssemblyScript»)، بس لـ Rust.
+
+~~~text src/lib.rs
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+pub fn greet(name: &str) -> String {
+    format!("Hello, {}!", name)
+}
+~~~
+
+~~~bash
+cargo install wasm-pack
+wasm-pack build --target web
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[wasm_bindgen]] | العلامة اللي فوق الدالة في الكود: اعمل لها غلاف JS بيحوّل [[&str]] و [[String]] لنصوص JS، زي [[__lowerString]] و [[__liftString]] |
+| [[--target web]] | الناتج ES module للمتصفح. وفيه [[--target nodejs]] لـ Node، و [[--target bundler]] لـ Vite و webpack |
+| الناتج | فولدر [[pkg/]] فيه [[.wasm]] وملف JS و [[.d.ts]] و [[package.json]]، تعمله [[import]] أو تنشره على npm |
+
+وفي [[Cargo.toml]] لازم السطرين دول عشان Rust يطلّع wasm مكتبة:
+
+~~~text Cargo.toml
+[lib]
+crate-type = ["cdylib"]
+~~~
+
+ ولـ WASI من غير JS خالص: [[rustup target add wasm32-wasip1]] و [[cargo build --target wasm32-wasip1]]، والناتج بيشتغل بـ [[node:wasi]] زي درس «WASI و node:wasi».
+
+| | C + clang | AssemblyScript | Rust + wasm-pack |
+|---|---|---|---|
+| النصوص | بإيدك في [[memory]] | الـ bindings | [[wasm-bindgen]] |
+| التسطيب | Docker أو clang | [[npm i]] | [[rustup]] و [[cargo]] |
+| بيستاهل لما | عندك كود C جاهز | انت مطوّر TS وعايز حتة سريعة | مكتبة Rust جاهزة، أو مشروع wasm كبير |
 
 ---
 
 ## الخلاصة
 
-- [[fetchImpl = fetch]] — سطر واحد بيخلي الاختبار ممكن.
-- [[Response]] حقيقي في Node 18+.
-- سجّل النداءات: «مبتعيدش» بتتثبت بالعدد.
-- [[node --test]] مدمج، و [[assert/strict]] دايمًا.
-- الدوال النقية ([[backoff]]) بتتختبر في جزء من الملي ثانية.`,
-          sol: R`الاختبارات التمانية بناتجها — من غير شبكة ومن غير سيرفر. والتامن جديد: [[Retry-After: 120]] أكبر من [[maxRetryAfter]]، فالأداة رمت من أول طلب ومعاها [[e.retryAfter]] بـ 120.`,
-          solCode: R`node --test
+| الحالة | wasm يستاهل؟ |
+|---|---|
+| مكتبة C/C++/Rust جاهزة (SQLite، ffmpeg، codecs) | **آه**: ده أكبر سبب |
+| شغل كبير على bytes / صور / صوت، خصوصًا مع SIMD | آه (هنا 4.8×) |
+| لوب أرقام عادي | غالبًا لأ (تعادل) |
+| دوال صغيرة بتتنادى كتير من JS | لأ (هنا أبطأ 9×) |
+| DOM و JSON و الشبكة | لأ |
 
-# الناتج (اتشغّل فعلًا على Node 24.22.1):
-# ✔ بترجّع الرد لو 200 (24.2328ms)
-# ✔ بترمي HttpError على 404 ومبتعيدش (1.7255ms)
-# ✔ بتعيد على 503 وبتنجح (585.5703ms)
-# ✔ بتوقف بعد عدد المحاولات (625.489ms)
-# ✔ خطأ الشبكة بيتلف في NetworkError (0.5392ms)
-# ✔ backoff بيزيد وبيقف عند الحد (0.127ms)
-# ✔ Retry-After بتكسب على الحساب (0.0909ms)
-# ✔ Retry-After أكبر من الحد: مبتعيدش وبترمي ومعاها المدة (0.6686ms)
-# ℹ tests 8
-# ℹ pass 8
-# ℹ fail 0
-#
-# الاختبار التامن (الجديد):
-#   assert.equal(backoff(0, { retryAfter: 120 }), null);
-#   const f = fakeFetch([new Response('', { status: 429, headers: { 'Retry-After': '120' } })]);
-#   await assert.rejects(() => request(url, { fetchImpl: f, retries: 3 }),
-#     (e) => e.status === 429 && e.retryAfter === 120);
-#   assert.equal(f.calls.length, 1);
-#
-# والسطر اللي بيثبت إن 404 مبتتعادش:
-#   assert.equal(f.calls.length, 1, '404 مش المفروض يتعاد');`
-        },
-
-        {
-          cmd: "مشروع — CORS والكوكيز",
-          title: "Failed to fetch من غير سبب، و credentials",
-          learn: R`تقرا خطأ CORS من ناحية اللي بيستخدم [[fetch]]، وتعرف ليه السيرفر هو اللي يصلّحه، وتبعت الكوكيز بـ [[credentials]] صح.`,
-          out: R`لما تشوف [[TypeError: Failed to fetch]] تعرف تفرّق بين CORS والشبكة في دقيقة، وتكتب للـ backend الهيدر الناقص بالاسم.`,
-          use: {
-            prog: R`CORS أكتر خطأ بيضيّع وقت المبتدئ في الفرونت، لأن رسالته في الكود فاضية ورسالته الحقيقية في الـ console بس.`,
-            net: R`الطلب **بيوصل** السيرفر وبيترد عليه، والمتصفح هو اللي بيمنع صفحتك تقرا الرد. يعني CORS مش firewall، ده إذن قراية.`,
-            work: R`كل فرونت على [[localhost:5173]] بيكلّم API على بورت تاني بيقابل ده من أول يوم. والحل الصح هيدر في السيرفر أو proxy في الـ dev server، مش إضافة في المتصفح.`,
-          },
-          desc: R`لو صفحتك على origin والـ API على origin تاني (بروتوكول أو دومين أو **بورت** مختلف)، المتصفح مش هيسيب الكود بتاعك يقرا الرد إلا لو السيرفر قال «مسموح للـ origin ده» بهيدر [[Access-Control-Allow-Origin]]. ولو مقالش، [[fetch]] بترمي [[TypeError: Failed to fetch]] من غير أي تفاصيل، والسبب الحقيقي بيتكتب في الـ console بس.
-
-**وده اتشغّل فعلًا في Chrome 156:** صفحة على [[http://127.0.0.1:8301]] بتطلب API على [[http://127.0.0.1:8302]] (نفس الجهاز، بورت تاني = origin تاني).
-
-| الطلب | اللي الكود شافه | اللي الـ console قاله |
-|---|---|---|
-| السيرفر مبعتش هيدر CORS | [[TypeError: Failed to fetch]] | No 'Access-Control-Allow-Origin' header is present |
-| [[credentials: 'include']] والسيرفر بعت [[*]] | [[TypeError: Failed to fetch]] | must not be the wildcard '*' when the request's credentials mode is 'include' |
-| [[include]] من غير [[Allow-Credentials]] | [[TypeError: Failed to fetch]] | must be 'true' when the request's credentials mode is 'include' |
-| [[PUT]] بـ JSON والـ preflight ناقص | [[TypeError: Failed to fetch]] | Method PUT is not allowed by Access-Control-Allow-Methods |
-
-**أربع أسباب مختلفة، ونفس الـ error بالظبط في الكود.** وده مقصود: المتصفح مش عايز صفحة غريبة تعرف تفاصيل عن سيرفر مش بتاعها.
-
-**والأهم: السيرفر هو اللي يصلّح، مش انت.** لوج السيرفر أثبت إن الطلب الأول **وصل واترد عليه** بـ 200. الكود بتاعك مالوش أي خيار يخلي المتصفح يقرا الرد ده.`,
-          example: R`// صفحة على http://127.0.0.1:8301 والـ API على http://127.0.0.1:8302
-const API = 'http://127.0.0.1:8302';
-
-try {
-  await fetch(API + '/nocors');
-} catch (e) {
-  console.log(e.name, e.message);
-}
-
-const opaque = await fetch(API + '/nocors', { mode: 'no-cors' });
-console.log(opaque.type, opaque.status);
-
-await fetch(API + '/login', { method: 'POST', credentials: 'include' });
-const me = await fetch(API + '/me', { credentials: 'include' });
-console.log(await me.json());`,
+قيس على شغلك انت، مع تسخين، وأكتر من مرة.`,
           lines: [
-            R`عنوان الـ API في متغير. البورت 8302 غير بورت الصفحة 8301، فالمتصفح بيعتبرهم **origin مختلف** حتى لو نفس الجهاز ونفس [[127.0.0.1]]. الـ origin هو البروتوكول والدومين والبورت مع بعض.`,
-            R`[[try]] عشان نمسك الخطأ ونطبعه بدل ما الكود يقف.`,
-            R`طلب لـ endpoint مبيبعتش أي هيدر CORS. الطلب ده **بيروح فعلًا** والسيرفر بيرد 200 (لوج السيرفر سجّله)، بس المتصفح بيمنع الكود يشوف الرد ويرفض الـ Promise.`,
-            R`أي فشل في [[fetch]] بييجي هنا، سواء CORS أو شبكة واقعة. ومن الكود لوحده مش هتعرف الفرق.`,
-            R`بيطبع [[TypeError Failed to fetch]] بس في Chrome (و Firefox بيقول [[NetworkError when attempting to fetch resource.]] حسب MDN). السبب الحقيقي بيتكتب في الـ console بالأحمر، ومش متاح للكود بأي طريقة.`,
-            R`نهاية [[catch]].`,
-            R`[[mode: 'no-cors']] **مش حل**: بتخلي الـ Promise تنجح، بس بترجّع رد «opaque» (مقفول): مفيش status ولا headers ولا body تقدر تقراهم. بتنفع بس لحاجات زي إنك تحط الرد في cache أو تبعت ping مش مستني رده.`,
-            R`بيطبع [[opaque 0]]: النوع [[opaque]] و [[status]] صفر، و [[await opaque.text()]] رجّعت نص فاضي. يعني نجحت من غير ما تديك أي حاجة.`,
-            R`تسجيل دخول: السيرفر بيرد بـ [[Set-Cookie: sid=abc123; HttpOnly]]. ومن غير [[credentials: 'include']] المتصفح **مش هيحفظ** الكوكي اللي جاية من origin تاني أصلًا. و [[HttpOnly]] معناها إن [[document.cookie]] مش هيشوفها (طلع نص فاضي)، ودي حماية من XSS.`,
-            R`نفس الكلام في الطلب اللي بعده: [[include]] بتخلي المتصفح يبعت الكوكي مع الطلب. الافتراضي [[same-origin]] بيبعتها لنفس الـ origin بس، فمن غير [[include]] السيرفر استلم [[cookie=-]] (فاضي).`,
-            R`بيطبع [[{ cookie: 'sid=abc123' }]]، بس **بشرط** إن السيرفر رد بـ [[Access-Control-Allow-Origin: http://127.0.0.1:8301]] بالظبط (مش [[*]]) ومعاه [[Access-Control-Allow-Credentials: true]]. لو ناقص واحد منهم، [[TypeError: Failed to fetch]] تاني.`,
+            R`[[readFile]] من نسخة الـ promises في [[node:fs]]، عشان نقرا ملف الـ [[.wasm]] من الديسك بـ [[await]]. في Node بنقرا الـ bytes كلها الأول، وبعدين ندّيها لـ WebAssembly.`,
+            R`[[readFile]] بيرجّع Buffer فيه bytes الملف، و [[WebAssembly.instantiate]] بيعمل compile و instance مرة واحدة. مفيش imports هنا لأن [[sum.wasm]] مبيناديش أي دالة من JS. و [[await]] برّه أي دالة شغالة لأن الملف [[.mjs]] (ES module).`,
+            R`[[exports]] فيه الدوال اللي اتصدّرت من الـ C زي [[add]] و [[count_primes]]. بنحطه في اسم قصير عشان سطور القياس تحت.`,
+            R`نفس خوارزمية [[count_primes]] اللي في الـ C سطر بسطر، بـ JS. لازم الاتنين يعملوا نفس الشغل بالظبط، وإلا المقارنة ملهاش معنى.`,
+            R`العدّاد. V8 بيلاحظ إن الأرقام في اللوب ده صحيحة دايمًا فبيعمل لها كود محسّن، وده سبب إن JS بيقرّب من wasm هنا.`,
+            R`بنجرّب كل رقم من 2 لحد قبل [[limit]]، بنفس حدود لفة الـ C بالظبط.`,
+            R`بنفترض إنه أولي، وبنستخدم [[1]] و [[0]] مش [[true]] و [[false]] عشان نقلّد الـ C، ونقدر نجمعه على العدّاد تحت.`,
+            R`القواسم من 2 لحد الجذر التربيعي ([[d * d <= n]])، نفس الحيلة اللي بتوفّر معظم الشغل.`,
+            R`لو اتقسم من غير باقي يبقى مش أولي، و [[break]] تخرج من لفة القواسم. هنا [[===]] بدل [[==]] بتاع C، والنتيجة واحدة لأن الاتنين أرقام.`,
+            R`نهاية لفة القواسم.`,
+            R`بنزوّد [[prime]] (1 أو 0) على العدّاد من غير [[if]]، زي الـ C.`,
+            R`نهاية لفة الأرقام.`,
+            R`بنرجّع العدد، وده اللي بيتطبع جنب الوقت عشان نتأكد إن JS و wasm طلّعوا نفس الناتج.`,
+            R`نهاية [[countPrimesJS]].`,
+            R`دالة قياس صغيرة: بتاخد اسم يتطبع، ودالة فيها الشغل اللي هنقيسه.`,
+            R`تشغيل تسخين مش محسوب: أول مرة V8 بيشغّل الكود ببطء وبعدين بيعمله JIT، والـ wasm كمان ممكن يتعمله compile أحسن بعد أول استخدام. من غير التسخين هتقيس وقت الـ compile مش وقت الشغل.`,
+            R`[[performance.now()]] بترجّع الوقت بالـ milliseconds وبكسور، أدق من [[Date.now()]] اللي بالـ ms الصحيحة بس. ده لحظة البداية.`,
+            R`التشغيل اللي بنقيسه فعلًا، وبنحفظ الناتج في [[r]] عشان نطبعه. استخدام الناتج مهم: الـ JIT ممكن يشيل شغل نتيجته مش مستخدمة، والقياس يطلع أسرع من الحقيقة.`,
+            R`بيطبع سطر واحد: [[padEnd]] و [[padStart]] بيكمّلوا بمسافات عشان الأعمدة تبقى تحت بعض، و [[toFixed(1)]] بيقرّب الوقت لرقم عشري واحد. والطرح من [[t]] هو المدة.`,
+            R`نهاية [[time]].`,
+            R`بيقيس [[countPrimesJS]] على ٥ مليون. الـ [[_]] في [[5_000_000]] للقراية بس، و JavaScript بيتجاهلها.`,
+            R`نفس الشغل بـ wasm: نداء واحد بس من JS، وكل اللف جوه الـ wasm. هنا بيبان فرق السرعة الحقيقي بين الاتنين، وهو عادة صغير لأن JS متعمله JIT.`,
+            R`نسخة JS من [[add]]. الـ [[| 0]] بيحوّل الناتج لرقم صحيح 32-bit زي [[int]] في C، فالدالتين يعملوا نفس الحاجة بالظبط حتى لو الرقم كبر.`,
+            R`عشرة مليون نداء من JS لدالة JS صغيرة. V8 غالبًا بيدخّل [[jsAdd]] جوه اللوب نفسه (inlining)، فالنداء بيبقى شبه ببلاش.`,
+            R`نفس العشرة مليون نداء بس لـ [[wasm.add]]: كل نداء بيعدّي الحدود بين JS و wasm وليه تمن، فالنسخة دي غالبًا **أبطأ** مع إن الدالة نفسها أبسط حاجة. الدرس: wasm بيكسب في شغل كبير جوه نداء واحد، مش في دوال صغيرة بتتنادى ملايين المرات.`,
           ],
-          try: R`شغّل سيرفرين بـ [[node:http]] على 8301 (بيرجّع صفحة فاضية) و 8302 (فيه [[/nocors]] من غير هيدرز و [[/ok]] بـ [[Access-Control-Allow-Origin]])، وافتح الصفحة واطلب الاتنين من الـ console. اقرا رسالة الـ console الحمرا، وبص في لوج السيرفر: الطلب الأولاني وصل؟`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** قبل ما تشغّل، اكتب لكل طلب: الكود هيشوف إيه، والسيرفر هيستلم إيه في لوجه. (١) [[fetch(API + '/nocors')]]، (٢) نفسه بـ [[mode: 'no-cors']]، (٣) [[PUT]] بـ [[content-type: application/json]] لسيرفر بيرد على [[OPTIONS]] من غير [[Allow-Methods]].`, done: R`(١) [[TypeError: Failed to fetch]] والسيرفر سجّل [[GET]] ورد 200. (٢) [[opaque 0]] والسيرفر سجّل [[GET]] من غير [[origin]]. (٣) [[TypeError]] والسيرفر سجّل [[OPTIONS]] بس، و [[PUT]] **ماوصلش خالص**. وكاتب جنب كل واحدة توقعك.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[cors(allowed)]] middleware صغير لسيرفر [[node:http]]: بيرد على [[OPTIONS]] بـ 204 ومعاه [[Allow-Methods]] و [[Allow-Headers]]، وبيحط [[Access-Control-Allow-Origin]] بالـ origin اللي جاي **لو هو في اللستة بس**، ومعاه [[Vary: Origin]] و [[Allow-Credentials: true]].`, done: R`صفحة من origin مسموح بتقرا [[/me]] بـ [[credentials: 'include']] وبتشوف الكوكي، وصفحة من بورت تالت مش في اللستة بتاخد [[Failed to fetch]] ورسالة «No 'Access-Control-Allow-Origin'»، و [[PUT]] بـ JSON بيعدّي، و [[curl -i -H 'Origin: http://evil.test']] مبيرجّعش الهيدر.` },
-            { lvl: 'تحدي', t: R`**اشرحها:** زميلك ركّب إضافة «Allow CORS» في Chrome وقال «اتحلّت». اكتب له ٥ سطور: ليه ده مش حل، وإيه اللي هيحصل عند اليوزرز، وإيه الحل الصح في الـ dev (proxy في Vite) وفي الإنتاج (هيدر في السيرفر أو نفس الـ origin).`, done: R`الشرح فيه: الإضافة شغالة على متصفحك انت بس، واليوزرز هيشوفوا نفس [[Failed to fetch]]، وإن CORS حماية لليوزر مش للسيرفر (السيرفر استلم الطلب أصلًا)، وسطر [[server.proxy]] في [[vite.config.js]] بيخلي الطلب same-origin، وإن [[*]] مع الكوكيز مرفوضة.` },
-          ],
-          deep: {
-            why: R`من غير CORS، أي موقع بتفتحه كان هيقدر يعمل [[fetch]] لـ [[bank.example/api/balance]] بكوكيز البنك بتاعتك ويقرا رصيدك. الـ same-origin policy بتمنع القراية دي، و CORS هو الطريقة اللي السيرفر بيقول بيها «الموقع الفلاني مسموحله يقرا».`,
-            how: R`**المتصفح بيقسم الطلبات نوعين:**
-
-| النوع | شرطه | اللي بيحصل |
-|---|---|---|
-| simple | [[GET]] أو [[HEAD]] أو [[POST]]، و [[content-type]] من التلاتة بتوع الفورم، ومن غير هيدرز خاصة | الطلب بيتبعت على طول، والمتصفح بيفحص الرد قبل ما يدّيه لكودك |
-| preflighted | أي حاجة تانية: [[PUT]]، أو [[application/json]]، أو [[Authorization]] | المتصفح بيبعت [[OPTIONS]] الأول، ولو الرد مسمحش الطلب الحقيقي **مبيتبعتش** |
-
-وده اتشاف في اللوج: [[PUT]] بـ JSON لسيرفر مبيرجّعش [[Allow-Methods]] طلّع [[OPTIONS]] بس. بس الـ simple request بيوصل وبيتنفّذ حتى لو الرد اتمنع. فـ CORS **مش حماية للسيرفر من الطلبات**؛ الحماية من التنفيذ شغلة CSRF tokens و [[SameSite]].
-
-**[[credentials]] ليها تلات قيم:**
-
-| القيمة | بيبعت الكوكيز لمين | ملاحظة |
-|---|---|---|
-| [[omit]] | ولا حد | ومبيحفظش [[Set-Cookie]] كمان |
-| [[same-origin]] | نفس الـ origin بس | ده الافتراضي في [[fetch]] |
-| [[include]] | أي origin | السيرفر لازم يرد بـ origin بالظبط و [[Allow-Credentials: true]] |
-
-و [[XMLHttpRequest]] القديمة بتعمل نفس الحكاية بـ [[withCredentials = true]].
-
-**والكوكي نفسها ليها شروط** فوق CORS: [[SameSite=Lax]] (الافتراضي في Chrome) مبتتبعتش مع [[fetch]] لموقع **site** تاني خالص (دومين تاني)، فلو الـ API على دومين مختلف محتاج [[SameSite=None; Secure]] و HTTPS (من MDN). في التجربة الاتنين على [[127.0.0.1]] فهما نفس الـ site، فـ [[Lax]] كفاية.
-
-**والحل في الشغل:** في الـ dev، proxy في الـ dev server (Vite [[server.proxy]]) بيخلي الصفحة والـ API نفس الـ origin فمفيش CORS أصلًا. وفي الإنتاج، يا الـ API على نفس الدومين ورا reverse proxy، يا السيرفر يرد بـ origin من لستة مسموحة (تاب api).`,
-            when: R`أول ما الفرونت والـ API يبقوا على بورتين أو دومينين. ولما تشوف [[Failed to fetch]] والسيرفر شغال، افتح الـ console قبل أي حاجة.`,
-            mistakes: R`تحط [[mode: 'no-cors']] وتستغرب إن الـ body فاضي. أو تركّب إضافة CORS وتفتكر المشكلة اتحلت. أو تحط [[Access-Control-Allow-Origin]] في **الطلب** من الفرونت (هيدر رد، ملوش أي تأثير في الطلب). أو [[*]] مع [[credentials: 'include']]. أو تنسى [[credentials]] فالكوكي متتحفظش ومتتبعتش وتفضل «مش مسجّل دخول». أو تفتكر إن CORS بيحمي السيرفر.`
-          },
-          teach: R`## الصفحة والـ API على origin مختلف
-
-الـ origin = البروتوكول + الدومين + البورت. فـ [[http://127.0.0.1:8301]] و [[http://127.0.0.1:8302]] **اتنين مختلفين**، و [[http://localhost:5173]] و [[http://localhost:3000]] كمان.
-
-والتجربة كلها اتشغّلت فعلًا في Chrome 156: صفحة على 8301، و API بـ [[node:http]] على 8302 بيطبع كل طلب بيوصله.
-
----
-
-## ١. خطأ CORS: اللي الكود بيشوفه، واللي الـ console بيشوفه
-
-~~~js
-try {
-  await fetch('http://127.0.0.1:8302/nocors');
-} catch (e) {
-  console.log(e.name, e.message);
-}
-~~~
-
-~~~text اللي الكود شافه
-TypeError Failed to fetch
-~~~
-
-~~~text اللي الـ console كتبه بالأحمر
-Access to fetch at 'http://127.0.0.1:8302/nocors' from origin 'http://127.0.0.1:8301'
-has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present
-on the requested resource.
-Failed to load resource: net::ERR_FAILED
-~~~
-
-~~~text ولوج السيرفر
-GET /nocors origin=http://127.0.0.1:8301
-~~~
-
-**تلات حاجات من دول:**
-
-- **الكود مبيعرفش السبب.** [[e.message]] هي هي لو السيرفر واقع أو CORS. ومفيش [[e.cause]] في المتصفح.
-- **الـ console بيعرف**، وفيه اسم الهيدر الناقص بالظبط. فأول خطوة دايمًا: افتح DevTools.
-- **الطلب وصل.** السيرفر استلمه ورد 200. المتصفح هو اللي خبّى الرد عن صفحتك.
-
-> وفي تاب Network هتلاقي الطلب مكتوب جنبه [[CORS error]]، ولو ضغطت عليه مش هتشوف الـ body.
-
----
-
-## ٢. ليه السيرفر هو اللي يصلّح CORS
-
-الإذن بيتكتب في **الرد**. المتصفح بيسأل «السيرفر ده قال إن [[http://127.0.0.1:8301]] مسموحله يقرا؟». ومفيش أي حاجة في الطلب بتاعك تقدر تجاوب بالنيابة عن السيرفر.
-
-~~~js على السيرفر (node:http)
-res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:8301');
-res.setHeader('Vary', 'Origin');
-~~~
-
-| اللي ممكن تجرّبه | بيحل؟ | ليه |
-|---|---|---|
-| [[mode: 'no-cors']] | **لأ** | الرد بيرجع [[opaque]]: [[status]] صفر و body فاضي |
-| إضافة «Allow CORS» في المتصفح | **لأ** | بتشتغل عندك انت بس، واليوزرز بيشوفوا نفس الخطأ |
-| [[Access-Control-Allow-Origin]] في هيدرز الطلب | **لأ** | ده هيدر رد، والمتصفح بيتجاهله في الطلب |
-| proxy في الـ dev server | **أيوه** | الصفحة والـ API بقوا نفس الـ origin، فمفيش CORS |
-| السيرفر يبعت الهيدر | **أيوه** | ده الحل المقصود |
-
-~~~text no-cors — اتشغّل فعلًا
-type=opaque status=0 body=""
-~~~
-
-### الـ preflight: طلب قبل الطلب
-
-[[PUT]]، أو [[content-type: application/json]]، أو هيدر زي [[Authorization]]: المتصفح بيبعت [[OPTIONS]] الأول يسأل.
-
-~~~text لوج السيرفر لما الـ OPTIONS مرجّعش Allow-Methods
-OPTIONS /json origin=http://127.0.0.1:8301
-~~~
-
-~~~text والـ console
-Method PUT is not allowed by Access-Control-Allow-Methods in preflight response.
-~~~
-
-**الـ [[PUT]] نفسه مااتبعتش.** ولما السيرفر رد على [[OPTIONS]] بـ [[Access-Control-Allow-Methods: PUT]] و [[Access-Control-Allow-Headers: content-type]]، اللوج بقى [[OPTIONS]] وبعده [[PUT]]، والكود قرا [[{"put":true}]].
-
----
-
-## ٣. [[credentials]] والكوكيز
-
-~~~js
-await fetch(API + '/login', { method: 'POST', credentials: 'include' });
-const me = await fetch(API + '/me', { credentials: 'include' });
-~~~
-
-| الطلب | السيرفر بعت | النتيجة (اتشغّلت فعلًا) |
-|---|---|---|
-| [[/me]] من غير [[credentials]] | origin بالظبط | الرد اتقرا، والسيرفر استلم [[cookie=-]] |
-| [[/me]] بـ [[include]] | origin من غير [[Allow-Credentials]] | [[Failed to fetch]]، والسيرفر **استلم الكوكي** |
-| [[/me]] بـ [[include]] | origin و [[Allow-Credentials: true]] | [[{"cookie":"sid=abc123"}]] |
-| [[/star]] بـ [[include]] | [[Access-Control-Allow-Origin: *]] | [[Failed to fetch]]: النجمة ممنوعة مع الكوكيز |
-
-~~~text رسايل الـ console بالنص
-The value of the 'Access-Control-Allow-Credentials' header in the response is ''
-which must be 'true' when the request's credentials mode is 'include'.
-
-The value of the 'Access-Control-Allow-Origin' header in the response must not be
-the wildcard '*' when the request's credentials mode is 'include'.
-~~~
-
-- **[[document.cookie]] طلع [[""]]** بعد الـ login، مع إن الكوكي اتحفظت واتبعتت. ده لأنها [[HttpOnly]]: الـ JavaScript مبيشوفهاش، فـ XSS مبيقدرش يسرقها. ودي حاجة كويسة.
-- **السطر التاني في الجدول مهم:** الطلب اتبعت بالكوكي والسيرفر اشتغل عليه، والقراية بس اللي اتمنعت. فـ CORS مش حماية من تنفيذ الطلب (دي شغلة CSRF و [[SameSite]]، تاب sec).
-
-> و [[SameSite=Lax]] (الافتراضي في Chrome) مبتتبعتش مع [[fetch]] لدومين **تاني خالص**. لو الـ API على [[api.other.com]] محتاج [[SameSite=None; Secure]] و HTTPS. ده من MDN، والتجربة هنا كانت على نفس الـ site ([[127.0.0.1]]).
-
----
-
-## ٤. إزاي تفرّق CORS عن الشبكة الواقعة
-
-| العلامة | CORS | الشبكة أو السيرفر واقع |
-|---|---|---|
-| الـ console | «blocked by CORS policy» | [[net::ERR_CONNECTION_REFUSED]] |
-| تاب Network | [[CORS error]] | [[(failed)]] |
-| لوج السيرفر | الطلب **موجود** | مفيش حاجة |
-| [[curl -i]] لنفس الرابط | بيرد عادي (curl مبيعملش CORS) | بيفشل برضه |
-
----
-
-## الخلاصة
-
-- origin = بروتوكول + دومين + بورت، وأي فرق = CORS.
-- [[TypeError: Failed to fetch]] مبتقولش السبب؛ الـ console بيقول.
-- الطلب بيوصل، والمتصفح بيخبّي الرد. **السيرفر يصلّح** بالهيدر، أو proxy يخليهم نفس الـ origin.
-- [[no-cors]] بيرجّع [[opaque]] فاضي، مش حل.
-- الكوكيز: [[credentials: 'include']] + origin بالظبط + [[Allow-Credentials: true]]، ومن غير [[*]].`,
-          sol: R`اتشغّل فعلًا في Chrome 156 بسيرفرين [[node:http]] على 8301 و 8302: [[/nocors]] رمى [[TypeError: Failed to fetch]] والـ console قال «No 'Access-Control-Allow-Origin' header is present»، ولوج السيرفر فيه [[GET /nocors]] يعني الطلب وصل. و [[no-cors]] رجّع [[opaque]] و [[status]] صفر. والكوكي وصلت بس مع [[credentials: 'include']] و [[Allow-Credentials: true]] و origin بالظبط. والـ simple requests بتوصل السيرفر حتى لو الرد اتمنع، و [[PUT]] بـ JSON مبيتبعتش غير لو الـ preflight سمح.`,
-          solCode: R`// server.mjs: الـ API على 8302 (الصفحة على 8301 من سيرفر تاني)
-import http from 'node:http';
-const PAGE = 'http://127.0.0.1:8301';
-http.createServer((req, res) => {
-  console.log(req.method, req.url, 'origin=' + req.headers.origin, 'cookie=' + (req.headers.cookie ?? '-'));
-  if (req.url === '/nocors') { res.end('{"secret":1}'); return; }
-  res.setHeader('Access-Control-Allow-Origin', PAGE);
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Vary', 'Origin');
-  if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Methods', 'PUT');
-    res.setHeader('Access-Control-Allow-Headers', 'content-type');
-    res.writeHead(204); res.end(); return;
-  }
-  if (req.url === '/login') res.setHeader('Set-Cookie', 'sid=abc123; Path=/; HttpOnly; SameSite=Lax');
-  res.end(JSON.stringify({ cookie: req.headers.cookie ?? null }));
-}).listen(8302);
-
-// الناتج في الصفحة (Chrome 156):
-// nocors -> TypeError: Failed to fetch
-// nocors no-cors -> type=opaque status=0 body=""
-// login include -> 200 {"cookie":null}
-// document.cookie -> ""
-// me include -> {"cookie":"sid=abc123"}
-// put json -> {"cookie":null}          (يعني الـ preflight عدّى والـ PUT وصل)
-//
-// ولوج السيرفر (اتشغّل فعلًا · Node 24.22.1 و Chrome 156):
-// GET /nocors origin=http://127.0.0.1:8301 cookie=-
-// GET /nocors origin=undefined cookie=-      (ده طلب no-cors)
-// POST /login origin=http://127.0.0.1:8301 cookie=-
-// GET /me origin=http://127.0.0.1:8301 cookie=sid=abc123
-// OPTIONS /json origin=http://127.0.0.1:8301 cookie=-
-// PUT /json origin=http://127.0.0.1:8301 cookie=-`
+          sol: R`الناتج الحقيقي (Node 24.22، مرتين):
+الأولية: JS [[1089.2 ms]] و [[1164.5 ms]]، wasm [[1108.7 ms]] و [[985.4 ms]]: تعادل.
+[[add]] × 10M: JS [[4.0 ms]] و [[3.5 ms]]، wasm [[38.3 ms]] و [[31.2 ms]]: JS أسرع ~9 مرات بسبب تمن النداء.
+وتفتيح 32MB: JS حوالي 36 لـ 41 ms، و wasm عادي 23 ms، و wasm بـ [[-msimd128]] حوالي 8 ms.`
         }
       ]
     }

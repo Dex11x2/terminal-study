@@ -197,7 +197,7 @@ const ALIAS = {
   'gr:binary_numeric_literals': '(?<![\\w])0b[01]+', 'gr:octal_numeric_literals': '(?<![\\w])0o[0-7]+', 'gr:hashbang_comments': 'hashbang|^#!', 'gr:shorthand_object_literals': 'shorthand propert',
   'gr:regular_expression_literals': 'regex literal|regular expression literal', 'gr:unicode_point_escapes': '\\\\u\\{', 'gr:unicode_escape_sequences': '\\\\u[0-9a-f]{4}', 'gr:hexadecimal_escape_sequences': '\\\\x[0-9a-f]{2}',
   're:Lookahead_assertion': 'lookahead|\\(\\?[=!]', 're:Lookbehind_assertion': 'lookbehind|\\(\\?<[=!]', 're:Named_capturing_group': 'named (capturing )?group|\\(\\?<\\w', 're:Non-capturing_group': 'non-capturing|\\(\\?:',
-  're:Capturing_group': 'capturing group|(?<![\\w-])groups?(?![\\w])', 're:Backreference': 'backreference|\\\\[1-9]', 're:Named_backreference': 'named backreference|\\\\k<', 're:Quantifier': 'quantifier|\\{\\d+,?\\d*\\}',
+  're:Capturing_group': 'capturing group|(?<![\\w-])groups?(?![\\w])', 're:Backreference': 'back-?reference', 're:Named_backreference': 'named backreference|\\\\k<', 're:Quantifier': 'quantifier|\\{\\d+,?\\d*\\}',
   're:Character_class_escape': 'character class escape|\\\\[dDwWsS]', 're:Character_class': 'character class|\\[\\^?[a-z0-9]-[a-z0-9]\\]', 're:Unicode_character_class_escape': '\\\\p\\{', 're:Word_boundary_assertion': 'word boundary|\\\\b',
   're:Input_boundary_assertion': 'anchor|\\^.*\\$', 're:Disjunction': 'alternation|disjunction', 're:Wildcard': 'wildcard', 're:Modifier': 'modifier|\\(\\?[ims]+:',
   'c:Guide/Grammar_and_types': 'المتغيرات والأنواع|variables', 'c:Guide/Control_flow_and_error_handling': '(?<![\\w.])if(?![\\w])', 'c:Guide/Loops_and_iteration': '(?<![\\w.])(for|while)(?![\\w])',

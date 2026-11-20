@@ -1,1492 +1,858 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "الـ DOM",
+      t: "المصفوفات",
       l: 1,
-      n: "تمسك عناصر الصفحة وتعدّلها، وتسمع للـ events، و event delegation",
+      n: "map و filter و reduce بدل اللوبات، و find و some، ومين بيعدّل الـ array ومين بيرجّع واحدة جديدة",
       projects: [
-        { lvl: 'صغير', t: R`عدّاد كلمات حي`, what: R`صفحة فيها textarea وتحتها عدد الحروف والكلمات والسطور، وبيتحدث وانت بتكتب بـ event [[input]]، ولو عدّيت ٢٨٠ حرف الرقم يبقى أحمر بـ [[classList]]. من دروس querySelector و textContent و addEventListener.`, done: R`الأرقام صح على نص فاضي (٠ كلمات مش ١)، وعلى مسافات كتير ورا بعض، وعلى لصق نص طويل، واللون بيرجع عادي لما تمسح تحت ٢٨٠.` },
-        { lvl: 'صغير', t: R`الوضع الليلي اللي بيفتكر`, what: R`زرار بيعمل toggle لكلاس [[dark]] على الـ body، والاختيار بيتخزّن في [[localStorage]] وبيتقري أول ما الصفحة تفتح، والسكربت بـ [[defer]]. من دروس textContent و classList و defer و async و module، و JSON.`, done: R`تختار غامق وتعمل refresh: الصفحة بتفتح غامقة ونص الزرار صح. ولو مسحت الـ localStorage من DevTools بتفتح فاتحة من غير error.` },
-        { lvl: 'متوسط', t: R`todo list كاملة`, what: R`فورم بيضيف مهمة (submit و [[preventDefault]] و [[FormData]])، وكل مهمة ليها done و delete بـ event delegation، وعدّاد «فاضل كام»، وفلتر الكل والمتبقي واللي خلص، وحالة empty لما الليستة فاضية. كل النصوص بـ [[textContent]]. من كل دروس الوحدة.`, done: R`مهمة فاضية أو مسافات بس مبتتضافش، و [[<img src=x onerror=alert(1)>]] بتظهر كنص ومفيش alert، والعدّاد صح بعد أي خليط عمليات، وفي الكود listener واحد بس للضغطات على الليستة.` },
-        { lvl: 'متوسط', t: R`دليل يوزرز بفلتر في الـ URL`, what: R`صفحة بتجيب يوزرز من API بـ [[fetch]] وبتعرضهم بـ [[<template>]]، مع حالات loading و empty و error وزرار «جرّب تاني»، وفورم بحث وترتيب بيقرا بـ [[FormData]] ويحط الاختيار في الـ URL بـ [[URLSearchParams]]. من دروس اعرض داتا من fetch و FormData و URLSearchParams.`, done: R`اللينك [[?q=le&sort=name]] بيفتح الليستة متفلترة ومترتبة، والـ Offline بيطلع رسالة وزرار جرّب تاني شغال لما الشبكة ترجع، والبحث مبيعملش request جديد.` },
-        { lvl: 'كبير', t: R`صفحة منتجات وسلة متينة`, what: R`[[products.json]] محلي بتجيبه بـ [[fetch]] من سيرفر محلي، وبتعرض الكروت من [[<template>]]، وفلتر بالقسم والسعر من فورم متزامن مع الـ URL، و «ضيف للسلة» بـ event delegation، والسلة (object أو Map من الـ id للكمية) بتتحفظ في localStorage بـ [[safeParse]]. التحقق: الكمية من ١ لـ ١٠، والسعر في الـ JSON لازم رقم (المنتج اللي سعره مش رقم بيتساب وبيطبع [[console.warn]]). وكل خطوة مهمة بتتكتب في Console بـ [[console.info]]. من الوحدة دي ووحدة الـ objects.`, done: R`الحالات دي كلها شغالة ومتجرّبة بإيدك: [[products.json]] مش موجود (404) بيطلع رسالة و «جرّب تاني»؛ JSON بايظ في localStorage الصفحة بتفتح بسلة فاضية؛ منتج اسمه [[<script>]] بيظهر كنص؛ refresh بيرجّع نفس الفلتر ونفس السلة؛ ومجموع السلة صح بعد ما تزوّد وتشيل.`, ext: R`زوّد صفحة «السلة» بـ [[pushState]] (هتيجي في APIs المتصفح)، وكود خصم، وتحويل العملة بـ [[Intl.NumberFormat]].` },
-        { lvl: 'فكرة', t: R`أداة صغيرة لحاجة بتعملها كل يوم`, what: R`اختار حاجة بتعملها بإيدك على الويب (تحسب حاجة، تنظّم لينكات، تتابع مذاكرة، تعمل قايمة مشتريات) واعملها صفحة واحدة: فورم للإدخال، وليستة بـ delegation، وفلتر، وبتفتكر بعد الـ refresh. انت اللي بتقرر الشكل والخصايص.`, done: R`بتستخدمها فعلًا أسبوع، ومفيش ولا [[innerHTML]] فيه داتا من اليوزر، وبتشتغل من سيرفر محلي من غير errors في Console.`, ext: R`زوّد تصدير واستيراد JSON بملف، واختصارات كيبورد بـ [[keydown]]، وخلّيها PWA بعد قسم PWA.` },
+        { lvl: 'صغير', t: R`لوحة طلبات اليوم`, what: R`array طلبات ([[{ id, total, status }]]): عدد كل status، وإجمالي المدفوع، ومتوسط الطلب، وأكبر طلب. كله بـ [[filter]] و [[map]] و [[reduce]] من غير for. من درس «map و filter و reduce».`, done: R`على طلبات الدرس (250 paid و 900 pending و 400 paid) إجمالي المدفوع 650 وأكبر طلب 900. ولو الـ array فاضية مفيش NaN ولا [[TypeError: Reduce of empty array with no initial value]].` },
+        { lvl: 'صغير', t: R`ترتيب الطلاب`, what: R`array طلاب ([[{ name, score }]]): رتّبهم بالدرجة تنازلي، واللي درجاتهم زي بعض بالاسم أبجدي، من غير ما تبوّظ الأصل. من درس «sort و toSorted».`, done: R`المترتب صح، والـ array الأصلية لسه بنفس ترتيبها (اطبعها بعد الترتيب واتأكد).` },
+        { lvl: 'متوسط', t: R`سلة مشتريات immutable`, what: R`[[addItem]] و [[removeItem]] و [[updateQty]] و [[cartTotal]]، كل دالة بترجّع سلة جديدة بـ spread و [[map]] و [[filter]] ومبتعدّلش القديمة. وإضافة منتج موجود بتزوّد الكمية. من وحدة «المصفوفات» و «default و rest و spread».`, done: R`لو عملت [[Object.freeze(cart)]] الأول كل الدوال لسه شغالة (لو دالة بتعمل push هتوقع بـ [[TypeError: Cannot add property ...]]). و [[updateQty(cart, id, 0)]] بتشيل المنتج، وإضافة نفس المنتج مرتين بتخلي الكمية 2 مش سطرين.` },
+        { lvl: 'متوسط', t: R`بحث وفلترة منتجات`, what: R`[[search(products, { q, min, max, inStock, sortBy, page })]]: بحث بالاسم من غير ما يفرق في الحروف الكبيرة ([[includes]])، ومدى سعر، والمتاح بس، وترتيب، وصفحة ٥ منتجات بـ [[slice]]. كل الـ options ليها defaults. من وحدة «المصفوفات» و «default و rest و spread» و «string methods».`, done: R`[[search(products)]] من غير options بيرجّع أول ٥، والبحث بـ [["MUG"]] بيلاقي "Mug"، والصفحة بعد الآخر بترجّع [[[]]]، والـ products الأصلية مبتتغيّرش.` },
+        { lvl: 'كبير', t: R`تقرير مبيعات من داتا API`, what: R`الصق JSON مبيعات (٢٠ عملية: id و product و qty و price و date زي [["2026-03-14"]]) في متغير، وفيهم ٣ بايظين (qty نص، price سالب، date ناقص). [[report(sales)]] بتفصل البايظ مع سببه، وتجمع الإجمالي لكل شهر (من [[date.slice(0, 7)]])، وأكتر ٣ منتجات بيعًا، وتعرض بـ [[console.table]]. واختبارات بـ [[check]]. من وحدة «المصفوفات» و «القيم والأنواع» و «الدوال».`, done: R`الـ ٣ البايظين ظاهرين في جدول لوحدهم بسبب كل واحد، والإجمالي الكلي = مجموع الشهور بالظبط (بالقروش)، والـ top 3 مترتبين تنازلي، و [[report([])]] بيطبع «مفيش مبيعات» من غير error، والـ sales الأصلية زي ما هي.`, ext: R`زوّد مقارنة كل شهر باللي قبله بالنسبة المئوية، وخلّيه يقبل فلتر بمدى تاريخ.` },
+        { lvl: 'فكرة', t: R`داتا من حياتك`, what: R`اختار لستة حقيقية عندك: مصاريف الشهر، أفلام اتفرجت عليها، ماتشات فريقك، ساعات مذاكرة. اكتبها array objects وطلّع منها ٥ أسئلة ليها إجابة بـ map و filter و reduce و sort و find.`, done: R`كل سؤال إجابته دالة لوحدها ورقمها مطابق لحسبتك بإيدك على الأقل في سؤالين.`, ext: R`اعرضها في صفحة HTML بعد وحدة الـ DOM، وزوّد رسم بسيط بالـ CSS.` }
       ],
       items: [
         {
-          cmd: "querySelector",
-          title: "تمسك عنصر من الصفحة بالـ CSS selector",
-          desc: R`الـ DOM هو الصفحة بعد ما المتصفح قراها وحوّلها شجرة objects. [[document.querySelector(selector)]] بترجّع أول عنصر مطابق (أو null)، و [[querySelectorAll]] بترجّع كلهم في NodeList. والـ selector نفس اللي بتكتبه في CSS (تاب HTML و CSS).
+          cmd: "map و filter و reduce",
+          title: "تحوّل وتفلتر وتجمع array من غير for",
+          desc: R`[[map]] بتحوّل كل عنصر وترجّع array جديدة بنفس الطول. [[filter]] بترجّع العناصر اللي الشرط بتاعها true بس. [[reduce]] بتجمع الـ array كلها في قيمة واحدة (مجموع، أو object، أو أي حاجة).
 
-وتقدر تدوّر جوه عنصر معيّن بدل الصفحة كلها: [[form.querySelector("input")]].`,
-          example: R`document.querySelector("h1")
-document.querySelector("#login-form")
-document.querySelector(".card .price")
-document.querySelector("[data-id='42']")
-document.querySelectorAll("li").length
-document.querySelectorAll("li").forEach((li) => console.log(li.textContent))
-[...document.querySelectorAll("a")].map((a) => a.href)
-document.getElementById("app")
-const form = document.querySelector("form"); form?.querySelector("input[name=email]")
-$0`,
-          try: R`افتح أي موقع، واعمل Inspect على عنصر، وبعدين في Console اكتب [[$0]] (العنصر اللي اخترته). جرّب [[[...document.querySelectorAll("a")].map((a) => a.href)]] عشان تجيب كل لينكات الصفحة.`,
+التلاتة مبيعدّلوش الـ array الأصلية، وتقدر توصّلهم ورا بعض. ودول أكتر ٣ دوال هتكتبهم في React: [[items.map((item) => <Row key={item.id} />)]].
+
+و [[Object.groupBy]] (ES2024) بتقسّم array لمجموعات حسب مفتاح، بدل ما تكتب reduce بإيدك.`,
+          example: R`const orders = [
+  { id: 1, total: 250, status: "paid" },
+  { id: 2, total: 900, status: "pending" },
+  { id: 3, total: 400, status: "paid" },
+];
+const paid = orders.filter((o) => o.status === "paid");
+const totals = paid.map((o) => o.total);
+const revenue = totals.reduce((sum, t) => sum + t, 0);
+console.log(revenue); // 650
+const revenue2 = orders
+  .filter((o) => o.status === "paid")
+  .reduce((sum, o) => sum + o.total, 0);
+const byStatus = Object.groupBy(orders, (o) => o.status);`,
+          try: R`من نفس الـ orders اطلع: عدد الطلبات الـ pending، وأكبر total، و object شكله [[{ 1: 250, 2: 900, 3: 400 }]] بـ reduce. وبعدين اطبع [[byStatus]] وشوف شكله.`,
           practice: [
-            { lvl: 'سريع', t: R`**بيانات حقيقية:** افتح أي موقع، وفي Console اعدّ الصور اللي مالهاش alt: [[document.querySelectorAll("img:not([alt])").length]]. وبعدين جرّب [[.map]] مباشرة على نتيجة [[querySelectorAll]].`, done: R`بيطلع رقم، ولو حطيت [[alt]] لصورة منهم من تاب Elements العدد بيقل واحد. و [[.map]] بتطلع [[TypeError: document.querySelectorAll(...).map is not a function]]: الـ NodeList فيها forEach بس، فلازم [[[...list] ]] الأول.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الـ HTML: [[<ul id="menu"><li class="item active">A</li><li class="item">B</li><li>C</li></ul>]]. اكتب ناتج [[document.querySelectorAll("#menu .item").length]] و [[document.querySelector("li:not(.item)").textContent]] و [[document.querySelector(".item.active").textContent]] و [[document.querySelector("#menu > li:nth-child(2)").textContent]] قبل ما تجرّب في Console.`, done: R`توقعت وطلع [[2]] و [["C"]] و [["A"]] و [["B"]]. وتقدر تقول الفرق بين [[".item.active"]] (الاتنين على نفس العنصر) و [[".item .active"]] (واحد جوه التاني).` },
-            { lvl: 'تطبيق', t: R`**ابني:** صفحة فيها كروت منتجات [[<div class="card" data-price="120">]] (اعمل ٤). اجمع الأسعار كلها بـ [[querySelectorAll]] و [[dataset.price]] و [[reduce]]، وطلّع اسم أغلى كارت.`, done: R`المجموع اللي بيتطبع بيساوي مجموع الأرقام اللي كاتبها في الـ HTML (مش نصوص متلزقة جنب بعض زي [["12080"]])، ولو زوّدت كارت خامس الرقم بيتغير لوحده.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[document.querySelector("card").addEventListener("click", open);]] والكروت [[<div class="card">]]. افتح Console واقرا الرسالة، وصلّح.`, done: R`الرسالة [[TypeError: Cannot read properties of null (reading 'addEventListener')]]: الـ selector [["card"]] بيدوّر على tag اسمه card فرجّع null. بعد [[".card"]] الـ listener اشتغل على أول كارت، ولو عايز كلهم استخدمت [[querySelectorAll]] و forEach.` },
-            { lvl: 'تحدي', t: R`**ابني:** اكتب helper [[qs(selector, root = document)]] بترمي Error فيه الـ selector لو مفيش عنصر بدل ما ترجّع null، و [[qsa(selector, root)]] بترجّع array حقيقية. واستخدمهم في صفحة فيها فورم وجواه inputs.`, done: R`[[qs("#nope")]] بترمي Error رسالته فيها [[#nope]] (فبتعرف فورًا أنهي selector غلط)، و [[qsa("li").map((li) => li.textContent)]] شغالة، و [[qs("input", form)]] بتدوّر جوه الفورم بس.` }
-          ],
-          flag: "console",
-          deep: {
-            why: "أي تفاعل في صفحة من غير framework بيبدأ إنك تمسك العنصر: الزرار اللي هتسمع له، والـ div اللي هتعرض فيه النتيجة. وحتى مع React هتحتاجه في الـ tests (Testing Library) وفي سكربتات Console والـ extensions.",
-            how: R`المتصفح بيقرا الـ HTML ويبني شجرة (Document Object Model): كل tag بيبقى object ([[HTMLElement]]) ليه خصايص و methods، والـ JS بيقرا ويعدّل فيها، والمتصفح بيعيد الرسم.
-
-[[querySelectorAll]] بترجّع NodeList ثابتة (static): لو ضفت عناصر بعدها مش هتظهر فيها. وعندها [[forEach]] بس مفيهاش [[map]] و [[filter]]، عشان كده بتحوّلها array بـ [[[...list]]] أو [[Array.from]].
-
-[[getElementById]] أقدم وأسرع شوية، و [[getElementsByClassName]] بترجّع HTMLCollection «live» بتتحدث لوحدها، وده ساعات بيعمل مفاجآت في الـ loops.
-
-لو الـ script في [[<head>]] من غير [[defer]]، العناصر لسه متعملتش وقت ما الكود يشتغل فهترجع null. الحل: [[<script src="app.js" defer>]] أو [[type="module"]] (الاتنين بيستنوا الـ HTML يخلص).`,
-            when: R`في أي صفحة JS عادي، وفي سكربتات Console، وفي الـ tests. في React متستخدمهاش جوه الـ components: استخدم [[useRef]] (تاب React).`,
-            mistakes: R`تنسى إن querySelector ممكن ترجّع null فتقع على [[.addEventListener]] («Cannot read properties of null»): السبب غالبًا selector غلط أو الـ script اشتغل قبل الـ HTML. وتنسى [[#]] أو [[.]] في الـ selector. وتنادي map على NodeList.`
-          },
-          teach: R`## الفكرة في سطرين
-
-قبل ما تغيّر أي حاجة في الصفحة لازم «تمسكها». [[document.querySelector]] بتاخد CSS selector (نفس اللي بتكتبه في ملف CSS) وترجّعلك العنصر. السطور دي بتتكتب في Console المتصفح (F12 ثم Console). جرّبتها كلها في Chrome headless على صفحة تجربة دي:
-
-~~~text index.html
-<h1>متجر</h1>
-<div id="app">
-  <form id="login-form"><input name="email" type="email"><input name="pass"></form>
-  <div class="card"><span class="price">120</span></div>
-  <div data-id="42">item 42</div>
-  <ul><li>شاي</li><li>قهوة</li><li>عصير</li></ul>
-  <a href="/about">عن</a> <a href="https://example.com/x">برا</a>
-</div>
-~~~
-
----
-
-## ١. [[document]]
-
-[[document]] object جاهز في المتصفح بيمثّل الصفحة كلها. المتصفح قرا الـ HTML وعمل منه شجرة objects اسمها **DOM** (Document Object Model)، و document هو أصلها. ومش موجود في Node، عشان كده الدرس ده في المتصفح بس.
-
----
-
-## ٢. أنواع الـ selectors
-
-~~~text Console
-document.querySelector("h1")
-document.querySelector("#login-form")
-document.querySelector(".card .price")
-document.querySelector("[data-id='42']")
-~~~
-
-| الـ selector | معناه | اللي رجع |
-|---|---|---|
-| [[h1]] | أول tag اسمه h1 | [[<h1>متجر</h1>]] |
-| [[#login-form]] | [[#]] = id | الفورم |
-| [[.card .price]] | [[.]] = class، والمسافة = «جوه» | [[<span class="price">120</span>]] |
-| [[[data-id='42']]] | الأقواس = attribute بقيمة معيّنة | [[<div data-id="42">item 42</div>]] |
-
-querySelector بترجّع **أول** عنصر مطابق بس. ولو مفيش:
-
-~~~text الناتج
-document.querySelector(".nope")   →  null
-~~~
-
----
-
-## ٣. [[querySelectorAll]]: كلهم
-
-~~~text Console
-document.querySelectorAll("li").length
-document.querySelectorAll("li").forEach((li) => console.log(li.textContent))
-~~~
-
-بترجّع **NodeList**: شبه array، فيها [[length]] و [[forEach]].
-
-~~~text الناتج
-3
-شاي
-قهوة
-عصير
-~~~
-
-[[textContent]] النص اللي جوه العنصر.
-
----
-
-## ٤. NodeList مش array
-
-~~~text Console
-[...document.querySelectorAll("a")].map((a) => a.href)
-~~~
-
-NodeList معندهاش map. جرّبت من غير تحويل:
-
-~~~text الناتج
-TypeError: document.querySelectorAll(...).map is not a function
-~~~
-
-فبنحوّلها array الأول بـ [[[...list]]]: الـ spread بيفرد عناصرها جوه array جديدة. وبعدين [[map]] بتاخد [[href]] من كل لينك:
-
-~~~text الناتج
-["http://127.0.0.1:58602/about","https://example.com/x"]
-~~~
-
-لاحظ إن [[/about]] بقت URL كامل: الخاصية [[a.href]] بترجّع العنوان المحسوب (الرقم بعد 127.0.0.1 هو بورت السيرفر المحلي اللي جرّبت عليه). ولو عايز المكتوب في الـ HTML زي ما هو: [[a.getAttribute("href")]] رجّعت [[/about]].
-
----
-
-## ٥. الطريقة القديمة بالـ id
-
-~~~text Console
-document.getElementById("app")
-~~~
-
-بتاخد الـ id **من غير** [[#]]. رجّعت الـ div ([[tagName]] بتاعه [[DIV]]).
-
----
-
-## ٦. تدوّر جوه عنصر
-
-~~~text Console
-const form = document.querySelector("form"); form?.querySelector("input[name=email]")
-~~~
-
-- [[;]] بتفصل جملتين في نفس السطر.
-- [[form.querySelector(...)]]: نفس الدالة بس على عنصر، فبتدوّر جواه بس.
-- [[?.]]: لو form طلع null، متكملش وارجع undefined بدل error.
-- [[input[name=email]]]: input الـ attribute بتاعه name قيمته email.
-
-~~~text الناتج
-<input name="email" type="email">
-~~~
-
----
-
-## ٧. [[$0]]
-
-ده مش JS عادي، ده اختصار في Console بتاع DevTools (Chrome و Edge و Firefox): العنصر اللي مختاره دلوقتي في تاب Elements. مش هيشتغل في ملف [[app.js]]. (الكلام ده من docs الـ Chrome DevTools، مش متجرّب في السكربت.)
-
----
-
-## ٨. الـ error المشهور
-
-~~~text الناتج
-document.querySelector("#nope").addEventListener("click", () => {})
-TypeError: Cannot read properties of null (reading 'addEventListener')
-~~~
-
-querySelector رجّعت null (selector غلط، أو السكربت اشتغل قبل ما العنصر يتعمل)، وانت حاولت تقرا منه.
-
----
-
-## الخلاصة
-
-| الدالة | بترجّع | لو مفيش |
-|---|---|---|
-| [[querySelector(sel)]] | أول عنصر | [[null]] |
-| [[querySelectorAll(sel)]] | NodeList ثابتة | NodeList فاضية |
-| [[getElementById(id)]] | العنصر | [[null]] |
-| [[el.querySelector(sel)]] | جوه el بس | [[null]] |
-
-> NodeList ثابتة: جرّبت أضيف [[.card]] جديد بعد [[querySelectorAll(".card")]] وفضلت 1، أما [[getElementsByClassName("card")]] (live) بقت 2 لوحدها.`,
-          lines: [
-            R`[[querySelector]] بتاخد CSS selector وترجّع **أول** عنصر بيطابقه في الصفحة، أو [[null]] لو مفيش. هنا أول [[h1]]، حتى لو الصفحة فيها كذا واحد.`,
-            R`[[#]] في الـ selector معناها id، فده العنصر اللي [[id="login-form"]]. الـ [[#]] لازم: من غيرها هيدوّر على tag اسمه [[login-form]] ويرجّع [[null]].`,
-            R`المسافة بين الاتنين معناها «جوه»: عنصر عليه كلاس [[price]] في أي مستوى جوه عنصر عليه كلاس [[card]]. أي selector بتكتبه في CSS ينفع هنا بنفس الشكل.`,
-            R`الأقواس المربعة بتدوّر بالـ attribute: العنصر اللي [[data-id]] بتاعه [["42"]]. مفيد لما كل عنصر في الـ HTML شايل id من الداتا في [[data-*]].`,
-            R`[[querySelectorAll]] بترجّع **كل** العناصر اللي بتطابق في NodeList، و [[length]] عددهم. لو مفيش ولا واحد بترجّع NodeList فاضية (طولها 0) مش [[null]]، فمفيش error.`,
-            R`الـ NodeList عندها [[forEach]]، فبنلف عليها مباشرة ونطبع نص كل [[li]]. وهي static: لو ضفت [[li]] بعد كده مش هيظهر فيها، لازم تنادي [[querySelectorAll]] تاني.`,
-            R`بس الـ NodeList مش array ومفيهاش [[map]] ولا [[filter]]، فـ [[...]] بتحوّلها array الأول، وبعدها [[map]] بتطلّع الـ [[href]] بتاع كل لينك. ([[Array.from()]] بتعمل نفس التحويل.)`,
-            R`الطريقة القديمة بالـ id، ولسه شغالة وسريعة. خد بالك إنها بتاخد الـ id من غير [[#]]: [[getElementById("#app")]] هترجّع [[null]].`,
-            R`[[querySelector]] موجودة على أي عنصر مش [[document]] بس، فهنا بتدوّر جوه الفورم ده بس على الـ input اللي [[name]] بتاعه [[email]]. و [[?.]] عشان لو مفيش فورم [[form]] هيبقى [[null]] والنداء عليه كان هيرمي TypeError.`,
-            R`في Console بتاع DevTools بس: [[$0]] هو العنصر اللي انت مختاره دلوقتي في تبويب Elements، فتجرّب عليه أي سطر من اللي فوق بسرعة. متكتبهاش في كود حقيقي، لأنها مش موجودة برّه الـ Console.`,
-          ],
-          sol: R`[[$0]] بيطبع نفس العنصر اللي اخترته في Elements (ولما تعدّي عليه بالماوس بيتلوّن في الصفحة). و [[$1]] العنصر اللي قبله، وهكذا. ده موجود في DevTools بس، مش في كودك.
-
-السطر التاني بيرجّع array فيها كل الـ URLs كاملة (absolute)، حتى لو في الـ HTML مكتوبة [[/about]]: [[a.href]] الخاصية بتطلع الـ URL المحسوب، و [[a.getAttribute("href")]] بتطلع المكتوب زي ما هو. والـ [[[...]]] لازمة لأن querySelectorAll بترجّع NodeList، وفيها forEach بس معندهاش map، فلو كتبت [[document.querySelectorAll("a").map]] هيطلعلك [[is not a function]].`
-        },
-        {
-          cmd: "textContent و classList",
-          title: "تغيّر النص والكلاسات وتضيف عناصر",
-          desc: R`[[el.textContent = "..."]] بتغيّر النص، وأمان لأن أي HTML فيه بيظهر كنص. و [[el.classList.add / remove / toggle]] للكلاسات، و [[el.dataset.x]] لـ attributes [[data-x]]. و [[document.createElement]] ثم [[append]] لإضافة عنصر.
-
-[[innerHTML]] بيحط HTML حقيقي، وده خطر لو فيه أي حاجة من اليوزر: ممكن يحط سكربت (XSS). استخدمه مع نصوص انت كاتبها بس.`,
-          example: R`const list = document.querySelector("#todos");
-const title = document.querySelector("h1");
-title.textContent = "مهامي";
-title.classList.add("big");
-title.classList.toggle("done");
-title.dataset.count = "3";
-title.style.color = "tomato";
-const li = document.createElement("li");
-li.textContent = "اكتب درس JS";
-list.append(li);
-const userInput = "<img src=x onerror=alert(1)>";
-list.innerHTML += $__bt<li>$__{userInput}</li>$__bt;
-list.querySelector("li").remove();`,
-          try: R`اعمل ملف [[index.html]] فيه [[<h1>]] و [[<ul id="todos">]] و [[<script src="app.js" defer>]]، وحط الكود في [[app.js]]، وافتحه بسيرفر محلي (تاب المتصفح). شوف الـ alert بيطلع من السطر الخطر، وبعدين غيّره لـ createElement و textContent وشوفه بيظهر كنص.`,
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** زرار «الوضع الليلي»: كل ضغطة بتعمل [[classList.toggle("dark")]] على [[document.body]] وبتغيّر نص الزرار بـ [[textContent]] لـ «فاتح» أو «غامق».`, done: R`الألوان بتتبدل مع كل ضغطة، و [[document.body.classList.contains("dark")]] في Console بترجّع [[true]] و [[false]] بالتبادل، ونص الزرار دايمًا عكس الوضع الحالي.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** على [[<p id="x">Hi <b>there</b></p>]]: اكتب [[x.textContent]] و [[x.innerHTML]] و [[x.children.length]] و [[x.childNodes.length]]، وناتج [[x.classList.toggle("a")]] مرتين ورا بعض.`, done: R`طلع [["Hi there"]] و [[Hi <b>there</b>]] و [[1]] و [[2]] (النص [["Hi "]] عقدة لوحده)، و toggle رجّعت [[true]] وبعدين [[false]]: بترجّع الكلاس بقى موجود ولا لأ.` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** todo صغيرة: input وزرار «ضيف» بيعملوا [[li]] جديد بـ [[createElement]] و [[textContent]] و [[append]]. جرّب تكتب [[<b>hi</b>]] في الـ input.`, done: R`الـ li بيظهر فيه [[<b>hi</b>]] كنص بالحروف مش bold، و [[li.children.length]] بترجّع [[0]]. ولو غيّرتها لـ [[innerHTML]] الكلمة بتبقى bold: يعني أي حد يقدر يحط HTML في صفحتك.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[btn.classList.add("btn primary");]]. شغّله واقرا الـ error في Console.`, done: R`الرسالة [[InvalidCharacterError: Failed to execute 'add' on 'DOMTokenList': The token provided ('btn primary') contains HTML space characters, which are not valid in tokens.]]. بعد [[classList.add("btn", "primary")]] الكلاسين اتضافوا، و [[btn.className]] بقى [["btn primary"]].` },
-            { lvl: 'تحدي', t: R`**ابني:** على ليستة مهام، كل [[li]] جنبه زرار ✓ بيعمل toggle لكلاس [[done]]، وفوق الليستة عدّاد «٢ من ٥ خلصوا» بيتحسب من [[querySelectorAll("li.done").length]]، وبيتخزّن في [[data-count]] على العنوان.`, done: R`العدّاد بيتحدث مع كل ضغطة ومع كل مهمة جديدة، و [[h1.dataset.count]] بيساوي الرقم اللي في النص، ولو شلت كلاس done من Elements بإيدك وضغطت أي زرار العدّاد بيصلّح نفسه.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[[1, 2, 3, 4].map(n => n * 10)]] و [[[1, 2, 3, 4].filter(n => n % 2 === 0)]].`, done: R`[[[10, 20, 30, 40]]] و [[[2, 4]]]، والأصل لسه [[[1, 2, 3, 4]]].` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const total = cart.reduce((s, item) => s + item.price);]] على [[[{ price: 10 }, { price: 20 }]]]. شغّلها، وجرّبها كمان على [[[]]].`, done: R`قبل التصليح بترجّع [["[object Object]20"]] (أول عنصر بقى الـ s وهو object)، وعلى [[[]]] بتوقع بـ [[TypeError: Reduce of empty array with no initial value]]. بعد ما تزوّد [[, 0]] كقيمة بداية: 30 و 0.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** منتجات جاية من API فيها [[{ name, price, inStock }]]: طلّع أسامي المتاح اللي أقل من 200، وإجمالي أسعار المتاح بس، في سلسلة filter و map و reduce.`, done: R`على Mug 120 متاح و Shirt 300 متاح و Cap 90 مش متاح: الأسامي [[["Mug"]]] والإجمالي 420.` },
+            { lvl: 'تطبيق', t: R`**أشكال:** من [[[3, 5, 2]]] اطبع bar chart أفقي: كل رقم سطر [[#]] بعدده، بـ [[map]] و [[repeat]] و [[join("\n")]] من غير ولا for.`, done: R`بيطبع [[###]] ثم [[#####]] ثم [[##]]. ولو زوّدت قبل كل سطر الرقم نفسه ([[n + " " + "#".repeat(n)]]) الشكل بيبقى زي تقرير.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** جمّع الطلبات حسب الـ status بـ reduce في object من الـ ids: [[{ paid: [1, 3], pending: [2] }]]، وبعدين قارن بـ [[Object.groupBy]].`, done: R`الـ reduce بيرجّع [[{ paid: [1, 3], pending: [2] }]]، و [[Object.groupBy(orders, o => o.status)]] بيجمع الـ objects كاملة مش الـ ids، و Node بيطبعه [[[Object: null prototype]]].` },
+            { lvl: 'تحدي', t: R`**refactor:** ده كود بـ for: [[const out = []; for (const p of products) { if (p.inStock) { out.push(p.name.toUpperCase()); } }]]. حوّله لسلسلة filter و map في سطر، وتأكد إن الناتج واحد على نفس البيانات.`, done: R`على Mug و Shirt متاحين و Cap مش متاح الاتنين بيرجّعوا [[["MUG", "SHIRT"]]]، و [[JSON.stringify]] بتاعهم واحد. ومفيش [[push]] ولا متغير بيتغيّر في النسخة الجديدة.` }
           ],
           flag: "script",
           deep: {
-            why: "ده كل اللي React بيعمله من تحت: بيغيّر نصوص وكلاسات ويضيف ويشيل عناصر. لما تفهمه هتفهم ليه React موجود أصلًا، وهتعرف تكتب صفحة صغيرة من غير framework.",
-            how: R`[[textContent]] بيحط النص زي ما هو، فمفيش أي حاجة بتتنفذ. [[innerText]] شبهه بس بيراعي الـ CSS (العناصر المخفية) وأبطأ لأنه بيحتاج layout.
+            why: "أغلب الشغل على الداتا: فلتر المنتجات المتاحة، واعرض أسماء المستخدمين، واحسب إجمالي السلة. بالـ for هتكتب متغيرات مؤقتة و push و if، وبالدوال دي الكود بيقول «عايز إيه» مش «اعمله إزاي».",
+            how: R`الـ callback بياخد ٣ حاجات: العنصر، والـ index، والـ array نفسها. و [[reduce]] بياخد callback بـ (المجمّع، العنصر) وقيمة أولية.
 
-[[innerHTML]] بيخلي المتصفح يعمل parse للنص كـ HTML. [[<script>]] مش بتشتغل فيه، بس [[<img onerror=...>]] بتشتغل، وده أشهر شكل XSS. و [[innerHTML +=]] بيعيد بناء كل العناصر اللي جوه، فبيضيّع الـ listeners والـ state بتاعتهم.
+[[reduce]] من غير قيمة أولية بيستخدم أول عنصر كبداية، ولو الـ array فاضية بيرمي TypeError. عشان كده دايمًا ابعت القيمة الأولية.
 
-[[classList]] أحسن من [[className]] لأنه بيعدّل كلاس واحد من غير ما يمسح الباقي. و [[dataset]] بيحوّل [[data-user-id]] لـ [[dataset.userId]].
+الدوال دي بتعمل array جديدة كل مرة، فـ [[filter]] ثم [[map]] بيلفّوا مرتين. ده مش مشكلة في ٩٩٪ من الحالات (آلاف العناصر بتخلص في أقل من ملي ثانية). لو الـ array ضخمة جدًا، reduce واحدة أو for loop عادي.
 
-[[append]] بيقبل أكتر من عنصر ونصوص، و [[prepend]] و [[before]] و [[after]] و [[replaceWith]] و [[remove]] كلهم حديثين وأبسط من [[appendChild]] و [[removeChild]] القديمة.
-
-وكل تعديل ممكن يخلي المتصفح يعيد حساب الصفحة؛ لو هتضيف مية عنصر، اعملهم في [[DocumentFragment]] أو ابنيهم وضيفهم مرة واحدة (تاب HTML و CSS: layout thrashing).`,
-            when: R`صفحات بسيطة، و widgets صغيرة، والـ extensions. و [[classList]] مع CSS بدل [[style]] في أغلب الحالات: الشكل في CSS والـ JS بيغيّر الكلاس بس.`,
-            mistakes: R`[[innerHTML]] مع داتا من اليوزر أو من API. و [[style.x]] لكل حاجة بدل كلاس. و [[innerHTML +=]] جوه loop. وفي الانترفيو: «الفرق بين textContent و innerHTML و innerText؟» و «إزاي تمنع XSS؟».`
+[[forEach]] بتلف بس ومبترجّعش حاجة، ومينفعش توقفها بـ break. لو محتاج توقف، [[for...of]] أو [[some]] / [[find]].`,
+            when: R`[[map]] لما عايز نفس العدد بشكل تاني. [[filter]] لما عايز جزء. [[reduce]] لما عايز قيمة واحدة (مجموع، object بالـ id، تجميع). ولو reduce بقت معقدة ومش مفهومة، for loop عادي أوضح.`,
+            mistakes: R`تستخدم [[map]] عشان تلف بس ومتستخدمش الناتج: استخدم forEach أو for...of. وتنسى الـ return في callback بجسم [[{ }]]. وتنسى القيمة الأولية في reduce. وتعدّل العنصر جوه map ([[o.total *= 2]]): كده عدّلت الأصل لأن العناصر objects. وفي الانترفيو: «اكتب map بإيدك» (المستوى ٣).`
           },
-          teach: R`## الفكرة في سطرين
+          teach: R`## الفكرة
 
-بعد ما تمسك العنصر (الدرس اللي فات) بتغيّر فيه: النص، والكلاسات، والـ attributes، وتضيف عناصر جديدة أو تشيل. وفي نص المثال سطر خطر عن قصد عشان تشوف XSS بعينك. شغّلت الكود بالظبط في Chrome headless بالصفحة دي:
+عندنا ليستة طلبات، وعايزين إجمالي الفلوس من الطلبات المدفوعة بس. المثال بيعملها على ٣ خطوات: [[filter]] (خد المدفوع)، و [[map]] (خد الـ total من كل واحد)، و [[reduce]] (اجمع). وبعدين نفس الحساب بسلسلة واحدة، وفي الآخر [[Object.groupBy]]. اتشغّل كملف [[orders.js]] في Node 24.
 
-~~~text index.html
-<h1>عنوان</h1>
-<ul id="todos"></ul>
-<script src="app.js" defer></script>
+---
+
+## ١. الداتا
+
+~~~text orders.js
+const orders = [
+  { id: 1, total: 250, status: "paid" },
+  { id: 2, total: 900, status: "pending" },
+  { id: 3, total: 400, status: "paid" },
+];
+~~~
+
+array فيها ٣ objects، وكل object طلب ليه [[id]] و [[total]] (المبلغ) و [[status]] (الحالة: paid يعني مدفوع، pending يعني مستني). ده شكل الداتا اللي بتيجي من أي API. والفاصلة بعد آخر عنصر مسموحة (trailing comma).
+
+---
+
+## ٢. [[filter]]: خد المدفوع بس
+
+~~~text orders.js
+const paid = orders.filter((o) => o.status === "paid");
+~~~
+
+- [[filter]] بتلف على كل عنصر، وتنادي الدالة اللي اديتها عليه.
+- [[(o) => o.status === "paid"]]: [[o]] الطلب الحالي، والدالة بترجّع true لو حالته paid.
+- العناصر اللي رجعت true بس بتدخل array جديدة.
+
+~~~text الناتج من console.log(paid)
+[
+  { id: 1, total: 250, status: 'paid' },
+  { id: 3, total: 400, status: 'paid' }
+]
 ~~~
 
 ---
 
-## ١. تمسك العنصرين
+## ٣. [[map]]: حوّل كل طلب لرقمه
 
-~~~text app.js
-const list = document.querySelector("#todos");
-const title = document.querySelector("h1");
+~~~text orders.js
+const totals = paid.map((o) => o.total);
 ~~~
 
-[[defer]] في الـ HTML هو اللي مخلّي السطرين دول يلاقوا العناصر (درس defer و async).
+[[map]] بتلف على كل عنصر، وتحط **اللي الدالة رجّعته** في array جديدة بنفس الطول. الدالة هنا بترجّع [[o.total]].
+
+~~~text الناتج من console.log(totals)
+[ 250, 400 ]
+~~~
 
 ---
 
-## ٢. [[textContent]]: النص
+## ٤. [[reduce]]: اجمعهم في رقم واحد
 
-~~~text app.js
-title.textContent = "مهامي";
+~~~text orders.js
+const revenue = totals.reduce((sum, t) => sum + t, 0);
+console.log(revenue); // 650
 ~~~
 
-بتستبدل كل اللي جوه العنصر بالنص ده. وأي [[<]] أو [[>]] بيتعامل كحرف عادي مش tag.
+[[reduce]] بتاخد حاجتين:
 
----
+1. دالة [[(sum, t) => sum + t]]: [[sum]] اسمه الـ **accumulator** (المجمّع: الناتج لحد دلوقتي)، و [[t]] العنصر الحالي. اللي الدالة بترجّعه يبقى الـ sum الجديد.
+2. [[0]]: القيمة اللي sum بيبدأ بيها.
 
-## ٣. [[classList]]: الكلاسات
-
-~~~text app.js
-title.classList.add("big");
-title.classList.toggle("done");
-~~~
-
-- [[classList]] object فيه كلاسات العنصر، ومعاه methods.
-- [[add("big")]]: ضيف الكلاس من غير ما تمسح الموجود.
-- [[toggle("done")]]: لو موجود شيله، ولو مش موجود ضيفه. هنا مكانش موجود فاتضاف.
-
-جرّبت toggle مرتين ورا بعض: الكلاسات بقت [[big]] وبعدين رجعت [[big done]].
-
----
-
-## ٤. [[dataset]] و [[style]]
-
-~~~text app.js
-title.dataset.count = "3";
-title.style.color = "tomato";
-~~~
-
-- [[dataset]] بيكتب attributes بتبدأ بـ [[data-]]. [[dataset.count]] بقت [[data-count="3"]]. والاسم المكتوب camelCase بيتحوّل لشُرَط: [[dataset.userId = "5"]] طلعت [[data-user-id="5"]].
-- [[style.color]] بيحط CSS مباشر على العنصر ([[style="color: tomato;"]]). الأحسن في العادي تغيّر كلاس وسيب الشكل في CSS.
-
-بعد الخطوات دي الـ h1 بقى:
+حطينا طباعة جوه الدالة عشان نشوف كل لفة:
 
 ~~~text الناتج
-<h1 class="big done" data-count="3" style="color: tomato;">مهامي</h1>
+sum = 0 t = 250 → 250
+sum = 250 t = 400 → 650
 ~~~
 
----
-
-## ٥. عنصر جديد
-
-~~~text app.js
-const li = document.createElement("li");
-li.textContent = "اكتب درس JS";
-list.append(li);
-~~~
-
-1. [[createElement("li")]]: بيعمل عنصر li في الذاكرة. لسه مش في الصفحة.
-2. نحطله نص.
-3. [[append]]: دخّله كآخر ابن جوه list. دلوقتي ظهر.
-
-~~~text الناتج
-<ul id="todos"><li>اكتب درس JS</li></ul>
-~~~
-
----
-
-## ٦. السطر الخطر: [[innerHTML]]
-
-~~~text app.js
-const userInput = "<img src=x onerror=alert(1)>";
-list.innerHTML += $__bt<li>$__{userInput}</li>$__bt;
-~~~
-
-تخيّل إن userInput ده حاجة يوزر كتبها. [[innerHTML]] بيقرا النص **كـ HTML**:
-
-1. [[+=]] معناها [[list.innerHTML = list.innerHTML + ...]]: اقرا الـ HTML الحالي كنص، ضيف عليه، وابني كل العناصر من جديد.
-2. المتصفح لقى [[<img src=x>]]: صورة عنوانها [[x]]، والعنوان ده مش موجود فالتحميل فشل.
-3. [[onerror=alert(1)]]: كود بيشتغل لما التحميل يفشل. فاشتغل.
-
-والنتيجة في Chrome:
-
-~~~text الناتج
-alert: 1     (نافذة alert طلعت ومكتوب فيها 1)
-~~~
-
-ده **XSS** (Cross-Site Scripting): كود حد تاني اشتغل في صفحتك. وكان ممكن يبقى سرقة توكن بدل alert.
-
-وفيه أثر جانبي: الـ li بتاعة createElement اتشالت من الصفحة واتعمل بدالها li جديدة بنفس الشكل. [[li.isConnected]] كانت true قبل السطر ده وبقت false بعده. يعني أي listener كان على العناصر القديمة ضاع.
-
----
-
-## ٧. [[remove()]]
-
-~~~text app.js
-list.querySelector("li").remove();
-~~~
-
-بيشيل أول li من الصفحة (النسخة الجديدة من «اكتب درس JS»). الصفحة في الآخر:
-
-~~~text الناتج
-<ul id="todos"><li><img src="x" onerror="alert(1)"></li></ul>
-~~~
-
----
-
-## ٨. الحل الآمن (الـ solCode)
-
-~~~text app.js
-const safe = document.createElement("li");
-safe.textContent = userInput;
-list.append(safe);
-~~~
-
-مفيش alert، والعنصر في الـ HTML بقى:
-
-~~~text الناتج
-<li>&lt;img src=x onerror=alert(1)&gt;</li>
-~~~
-
-[[&lt;]] و [[&gt;]] هما [[<]] و [[>]] بس كـ **حروف** تتعرض، مش tag. فاليوزر بيشوف النص زي ما كتبه.
-
----
-
-## الخلاصة
-
-| عايز | استخدم | ملاحظة |
-|---|---|---|
-| تغيّر نص | [[textContent]] | آمن مع أي داتا |
-| كلاس | [[classList.add/remove/toggle]] | مبيمسحش الباقي |
-| [[data-x]] | [[dataset.x]] | camelCase ↔ شرطة |
-| عنصر جديد | [[createElement]] + [[append]] | |
-| تشيل عنصر | [[el.remove()]] | |
-| HTML حقيقي | [[innerHTML]] | لنصوص انت كاتبها بس |`,
-          lines: [
-            R`العنصر اللي [[id]] بتاعه [[todos]]، الليستة اللي هنضيف فيها المهام. بنحفظه في متغير مرة واحدة، ولو الـ id غلط هيبقى [[null]] وأول استخدام ليه هيرمي TypeError.`,
-            R`أول [[h1]] في الصفحة، وده اللي هنغيّر نصه وشكله في السطور اللي جاية.`,
-            R`[[textContent]] بتحط نص عادي: أي [[<]] أو [[>]] بيظهر كحروف ومبيتحوّلش HTML، فده الآمن مع أي داتا جاية من اليوزر. وبتمسح أي حاجة كانت جوه العنصر قبلها.`,
-            R`[[classList.add]] بتضيف كلاس على العنصر من غير ما تلمس الكلاسات اللي عليه. لو كتبت [[className = "big"]] بدلها هتمسح كل الكلاسات القديمة وتسيب دي بس.`,
-            R`[[toggle]]: لو الكلاس موجود بتشيله، ولو مش موجود بتضيفه، وبترجّع [[true]] لو بقى موجود. مناسبة لزرار فتح وقفل أو «المهمة خلصت».`,
-            R`[[dataset]] بيقرا ويكتب الـ attributes اللي بتبدأ بـ [[data-]]: السطر ده بيعمل [[data-count="3"]] على العنصر. القيم دايمًا strings، والاسم بيتحوّل: [[dataset.userId]] تبقى [[data-user-id]].`,
-            R`[[style]] بيحط CSS inline على العنصر مباشرة، والـ inline بيكسب على قواعد ملف الـ CSS العادية. ينفع لقيم بتتحسب وقت التشغيل زي عرض progress bar، لكن للشكل الثابت الأحسن كلاس في CSS وتضيفه بـ [[classList]].`,
-            R`[[createElement]] بتعمل عنصر [[li]] جديد في الميموري، بس لسه مش في الصفحة ومحدش شايفه لحد ما تضيفه.`,
-            R`نص العنصر الجديد بـ [[textContent]] برضه، فلو النص ده جاي من اليوزر محدش يقدر يحقن HTML فيه.`,
-            R`[[append]] بتدخّل العنصر في آخر الليستة، وساعتها بس بيظهر في الصفحة. وتقدر تديها كذا عنصر مرة واحدة: [[list.append(a, b)]].`,
-            R`نص شكله بريء بس هو HTML: صورة [[src]] بتاعها غلط، فالـ [[onerror]] بيشتغل وينفّذ JavaScript. ده نوع الكلام اللي أي حد يقدر يكتبه في خانة اسم أو تعليق.`,
-            R`[[innerHTML]] بيعامل النص كـ HTML، فالـ [[img]] اتعملت والـ [[onerror]] نفّذ [[alert]]: ده XSS، وبدل alert ممكن يسرق التوكن أو يبعت طلبات باسم اليوزر. وكمان [[+=]] بتبني محتوى الليستة كله من جديد، فالـ listeners اللي على العناصر القديمة بتضيع. استخدم [[createElement]] و [[textContent]] زي اللي فوق.`,
-            R`[[remove]] بتشيل العنصر من الصفحة، وهنا بتشيل أول [[li]] في الليستة. ده نسخة جديدة مش الـ [[li]] اللي عملناه: [[innerHTML +=]] اللي فوق عمل العناصر من النص من جديد، فالمتغير [[li]] بقى بيشاور على عنصر برّه الصفحة.`,
-          ],
-          sol: R`لما تفتح الصفحة: العنوان بيبقى «مهامي» باللون الأحمر، وفيه [[<li>]] من createElement، وبعدين الـ alert بيطلع (رقم 1) لأن الـ [[<img>]] اتحط كـ HTML حقيقي، والـ [[src=x]] فشل فاشتغل [[onerror]]. ده XSS: أي نص من يوزر في innerHTML ممكن يشغّل كود. وآخر سطر بيشيل أول li (بتاعة createElement) مش التانية.
-
-لما تغيّر السطر الخطر لـ [[const li2 = document.createElement("li"); li2.textContent = userInput; list.append(li2);]] مفيش alert، وهتشوف النص [[<img src=x onerror=alert(1)>]] مكتوب في الصفحة زي ما هو: textContent بيعامل أي حاجة كنص. ولو الصفحة فاضية خالص افتح Console: غالبًا انت فاتحها كـ file:// أو نسيت [[defer]] فالسكريبت اشتغل قبل ما [[#todos]] يتعمل، و querySelector رجّع null.`,
-          solCode: R`const list = document.querySelector("#todos");
-const userInput = "<img src=x onerror=alert(1)>";
-const safe = document.createElement("li");
-safe.textContent = userInput; // بيظهر كنص، مفيش alert
-list.append(safe);`
-        },
-        {
-          cmd: "addEventListener",
-          title: "تسمع لضغطة أو كتابة أو submit",
-          desc: R`[[el.addEventListener("click", handler)]] بتنادي الدالة كل ما الحدث يحصل، وبتبعتلها object الـ event: فيه [[event.target]] (العنصر اللي الحدث حصل عليه) و [[event.preventDefault()]] (امنع السلوك الافتراضي، زي إن الفورم يعمل reload).
-
-أشهر الأحداث: [[click]] و [[input]] (كل حرف) و [[change]] و [[submit]] و [[keydown]]. وعشان تشيل الـ listener لازم تبعت نفس الدالة لـ [[removeEventListener]].`,
-          example: R`const btn = document.querySelector("#save");
-const form = document.querySelector("form");
-function onSave(event) {
-  console.log("اتضغط", event.target);
-}
-btn.addEventListener("click", onSave);
-btn.removeEventListener("click", onSave);
-btn.addEventListener("click", () => console.log("مرة واحدة"), { once: true });
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const data = Object.fromEntries(new FormData(form));
-  console.log(data);
-});
-form.querySelector("input").addEventListener("input", (e) => {
-  console.log(e.target.value);
-});`,
-          try: R`اعمل فورم فيه input اسمه email وزرار submit. شيل [[e.preventDefault()]] وشوف الصفحة بتعمل reload والـ URL اتغير. وبعدين جرّب [[{ once: true }]] واضغط الزرار مرتين.`,
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** textarea وتحتها [[<p>]] بيكتب عدد الحروف وانت بتكتب، باستخدام event [[input]].`, done: R`الرقم بيتغير مع كل حرف، ومع المسح، ومع اللصق بالماوس (اللي [[keydown]] كان هيفوّته).` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[btn.addEventListener("click", handleClick());]] و handleClick بتعمل [[console.log("clicked")]]. افتح الصفحة واضغط ٣ مرات.`, done: R`«clicked» اتطبعت مرة واحدة وقت التحميل والضغطات مبتعملش حاجة، لأن الأقواس نادت الدالة فورًا وبعتت نتيجتها (undefined). بعد [[addEventListener("click", handleClick)]] بتتطبع مع كل ضغطة بس.` },
-            { lvl: 'تطبيق', t: R`**ابني:** modal: زرار «افتح» بيشيل [[hidden]] من الـ dialog، وزرار × بيرجّعه. وأول ما يتفتح ضيف [[keydown]] على [[document]] بيقفله لما [[e.key === "Escape"]]، وشيل الـ listener ده بـ [[removeEventListener]] لما يتقفل.`, done: R`Esc بتقفل المودال، وحط [[console.log]] في handler الـ keydown: وهو مقفول مبيطبعش حاجة لو دوست أي زرار، يعني الـ listener اتشال فعلًا (لأنك بعت نفس الدالة مش arrow جديدة).` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[<div id="outer"><div id="inner">in</div></div>]] وعليهم ٣ listeners click: على inner بيطبع «inner»، وعلى outer «outer»، وعلى document «document». اضغط على inner: إيه الترتيب؟ وبعدين حط [[e.stopPropagation()]] في بتاع inner.`, done: R`الترتيب [[inner]] ثم [[outer]] ثم [[document]] (الـ event بيطلع لفوق: bubbling). وبعد stopPropagation بيطبع [[inner]] بس.` },
-            { lvl: 'تحدي', t: R`**ابني:** فورم تسجيل فيه باسورد وتأكيد باسورد: الـ submit بيعمل [[preventDefault]] لو الباسورد أقل من ٨ حروف أو التأكيد مختلف، وبيكتب رسالة الغلط تحت الـ input نفسه، والرسالة بتختفي أول ما تصلّح (event [[input]]) من غير ما تدوس submit تاني.`, done: R`فورم غلط مبيعملش reload والـ URL متغيرش، والرسالة بتظهر تحت الحقل الغلط بس، وبتختفي وانت بتكتب أول ما الشرط يتحقق، وفورم صح بيطبع الداتا في Console.` },
-            { lvl: 'تحدي', t: R`**محاكاة:** لوحة أسانسير: ٥ زراير أدوار بتضيف الدور لطابور (Set عشان التكرار)، وزرار «اتحرك» كل ضغطة بيطلع أو ينزل دور واحد ناحية أول دور في الطابور، ولما يوصل بيشيله، والدور الحالي ظاهر في [[<output>]].`, done: R`من الدور 1، الضغط على 4 ثم 2 ثم 4 تاني بيخلّي الطابور [[4، 2]] بس. «اتحرك» ٣ مرات بيوصّل للدور 4 ويشيله، و ٢ كمان بيوصّل للدور 2، وبعدها «اتحرك» مبيعملش حاجة والطابور فاضي.` }
-          ],
-          flag: "script",
-          deep: {
-            why: "أي تفاعل مع اليوزر حدث: ضغطة، كتابة، scroll، إرسال فورم. ده الأساس اللي [[onClick]] في React مبني عليه، و React نفسه بيعمل listener واحد على الـ root (درس event delegation).",
-            how: R`لما تضغط على عنصر، الحدث بيمشي ٣ مراحل: capture من الـ document لتحت لحد العنصر، وبعدين target، وبعدين bubble من العنصر لفوق لحد الـ document. الـ listeners العادية بتشتغل في الـ bubble، و [[{ capture: true }]] بيخليها في الـ capture.
-
-[[event.target]] العنصر اللي اتضغط فعلًا (ممكن يكون span جوه الزرار)، و [[event.currentTarget]] العنصر اللي عليه الـ listener. و [[stopPropagation()]] بيوقف الـ bubble، و [[preventDefault()]] بيمنع سلوك المتصفح (submit، أو فتح لينك، أو checkbox).
-
-الخيارات: [[once]] (يتشال لوحده بعد أول مرة)، و [[passive: true]] (وعد إنك مش هتعمل preventDefault، فالـ scroll يبقى ناعم على الموبايل)، و [[signal]] (تشيل listeners كتير مرة واحدة بـ AbortController).
-
-[[new FormData(form)]] بتقرا كل الـ inputs اللي ليها [[name]]، و [[Object.fromEntries]] بتحوّلها object.`,
-            when: R`أي تفاعل في صفحة من غير framework. و [[submit]] على الفورم مش [[click]] على الزرار، عشان Enter يشتغل كمان.`,
-            mistakes: R`[[removeEventListener]] بـ arrow جديدة: دالة مختلفة فمش هتتشال. و [[addEventListener("click", save())]]: نادتها فورًا. وتضيف listener جوه دالة بتتنادي كتير فالحدث يشتغل ٥ مرات. وتنسى preventDefault في الـ submit. وفي الانترفيو: «اشرح event bubbling و capturing» و «الفرق بين target و currentTarget».`
-          },
-          teach: R`## الفكرة في سطرين
-
-الـ event (حدث) حاجة بتحصل في الصفحة: ضغطة، أو حرف اتكتب، أو فورم اتبعت. [[addEventListener]] بتقول للمتصفح: «لما الحدث ده يحصل على العنصر ده، نادي الدالة دي». الدالة دي اسمها **handler** أو **listener**. شغّلت المثال في Chrome headless على الفورم اللي في الـ solCode (input اسمه email وزرار id بتاعه save)، وكتبت وضغطت بـ playwright.
-
----
-
-## ١. نمسك العنصرين
-
-~~~text app.js
-const btn = document.querySelector("#save");
-const form = document.querySelector("form");
-~~~
-
----
-
-## ٢. handler باسم
-
-~~~text app.js
-function onSave(event) {
-  console.log("اتضغط", event.target);
-}
-btn.addEventListener("click", onSave);
-~~~
-
-- [[addEventListener("click", onSave)]]: أول argument اسم الحدث كـ string، والتاني الدالة نفسها. لاحظ: [[onSave]] من غير [[()]]. لو كتبت [[onSave()]] هتتنادي **دلوقتي** واللي هيتسجّل هو الناتج بتاعها (undefined).
-- المتصفح لما ينادي الدالة بيبعتلها object الحدث، واحنا سمّيناه event. وفيه [[event.target]]: العنصر اللي الحدث حصل عليه فعلًا.
-
----
-
-## ٣. تشيله
-
-~~~text app.js
-btn.removeEventListener("click", onSave);
-~~~
-
-لازم تبعت **نفس الدالة** بالظبط. عشان كده عملناها باسم. لو كانت arrow مكتوبة جوه الـ addEventListener، كل arrow جديدة دالة مختلفة ومفيش طريقة تشيلها.
-
-بعد السطر ده onSave مش هتتنادي خالص، وفعلًا في التجربة «اتضغط» مطلعتش ولا مرة.
-
----
-
-## ٤. [[{ once: true }]]
-
-~~~text app.js
-btn.addEventListener("click", () => console.log("مرة واحدة"), { once: true });
-~~~
-
-التالت object خيارات. [[once: true]] يعني بعد أول تنفيذ اتشال لوحدك. ضغطت الزرار مرتين:
-
-~~~text الناتج
--- ضغطة 1
-مرة واحدة
-{"email":"sara@example.com"}
--- ضغطة 2
-{"email":"sara@example.com"}
-~~~
-
-السطر التاني في كل ضغطة جاي من الـ submit (الخطوة الجاية): الزرار جوه فورم، فالضغط عليه بيبعت الفورم.
-
----
-
-## ٥. [[submit]] و [[preventDefault]]
-
-~~~text app.js
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const data = Object.fromEntries(new FormData(form));
-  console.log(data);
-});
-~~~
-
-- [[submit]] على **الفورم** مش click على الزرار، عشان Enter جوه الـ input يشغّله كمان.
-- [[e]] نفس object الحدث، بس باسم أقصر.
-- [[e.preventDefault()]]: «امنع اللي المتصفح كان هيعمله». المتصفح كان هيبعت الفورم ويعمل reload للصفحة.
-- [[new FormData(form)]]: بتقرا كل input ليه [[name]]، و [[Object.fromEntries]] بتحوّلها object (درس Object.keys و entries).
-
-ولما شلت preventDefault في التجربة (نسخة تانية من الصفحة)، الصفحة اتنقلت فعلًا والـ URL بقى:
-
-~~~text الناتج
-http://127.0.0.1:51364/ev.html?email=a%40b.co
-~~~
-
-الفورم من غير [[method]] بيبعت GET، فالحقول بتتحط في الـ URL بعد [[?]]، و [[@]] بقت [[%40]] (encoding). والـ console.log بيظهر ثانية ويختفي مع الـ reload.
-
-> ملاحظة من التجربة: لما كتبت [[ab]] في [[type="email"]] وضغطت، الـ submit **مشتغلش خالص**. المتصفح عمل validation الأول ورفض، ورسالته كانت [[Please include an '@' in the email address. 'ab' is missing an '@'.]]. فلو الـ handler مش بيشتغل، اتأكد إن الفورم valid.
-
----
-
-## ٦. [[input]]: مع كل حرف
-
-~~~text app.js
-form.querySelector("input").addEventListener("input", (e) => {
-  console.log(e.target.value);
-});
-~~~
-
-كتبت [[ab]] حرف حرف:
-
-~~~text الناتج
-a string
-ab string
-~~~
-
-[[e.target]] هو الـ input، و [[.value]] اللي مكتوب فيه، ونوعها دايمًا string حتى لو كتبت أرقام. أما [[change]] فبتشتغل مرة لما تخرج من الـ input بعد ما غيّرته.
-
----
-
-## الخلاصة
-
-| الحاجة | الشكل | تفتكر إيه |
-|---|---|---|
-| تسمع | [[el.addEventListener("click", fn)]] | fn من غير [[()]] |
-| تشيل | [[el.removeEventListener("click", fn)]] | نفس الدالة بالظبط |
-| مرة واحدة | [[{ once: true }]] | بيتشال لوحده |
-| فورم | [[submit]] على الفورم | بيشتغل بـ Enter وبعد الـ validation |
-| امنع المتصفح | [[e.preventDefault()]] | من غيرها reload |
-| مين؟ | [[e.target]] | العنصر اللي الحدث حصل عليه |`,
-          lines: [
-            R`الزرار اللي [[id="save"]]. بنحفظه في متغير عشان هنضيف ونشيل عليه listeners أكتر من مرة.`,
-            R`أول [[form]] في الصفحة، عشان نسمع لـ [[submit]] بتاعه تحت.`,
-            R`دالة ليها اسم بدل arrow مكتوبة جوه النداء، عشان [[removeEventListener]] محتاجة نفس الدالة بالظبط. المتصفح بيناديها ويبعتلها object الـ [[event]] فيه تفاصيل اللي حصل.`,
-            R`[[event.target]] هو العنصر اللي اتضغط فعلًا. لو جوه الزرار [[span]] أو أيقونة وضغطت عليها، [[target]] هيبقى الـ span؛ أما [[event.currentTarget]] فدايمًا العنصر اللي عليه الـ listener (الزرار).`,
-            R`نهاية [[onSave]].`,
-            R`[[addEventListener]] بتسجّل [[onSave]] تتنادى مع كل ضغطة. بنبعت الدالة نفسها من غير أقواس: لو كتبت [[onSave()]] كانت هتتنادى فورًا مرة واحدة ويتسجّل اللي رجّعته ([[undefined]]).`,
-            R`[[removeEventListener]] بتشيل الـ listener، ولازم نفس اسم الحدث ونفس الدالة بالظبط. لو كنت سجّلت arrow مكتوبة جوه النداء مش هتعرف تشيلها، لأن أي arrow تانية زيها في الشكل دالة جديدة.`,
-            R`[[once: true]] بتخلي الـ listener يشتغل أول ضغطة بس ويتشال لوحده، فمش محتاج تحفظ الدالة ولا تنادي remove.`,
-            R`[[submit]] على الفورم بيشتغل بالضغط على زرار الإرسال وبـ Enter جوه أي input، وبعد ما validation الـ HTML (زي [[required]]) تعدّي. عشان كده نسمع لـ submit على الفورم مش لـ click على الزرار.`,
-            R`من غير السطر ده الفورم بيعمل reload للصفحة (أو يروح للـ [[action]] بتاعه) وكل اللي في الصفحة يضيع. [[preventDefault()]] بتلغي التصرف ده عشان نتعامل إحنا مع الداتا بالـ JavaScript.`,
-            R`[[new FormData(form)]] بتقرا كل الـ inputs اللي ليها [[name]]، و [[Object.fromEntries]] بتحوّلها object زي [[{ email: "..." }]]. الـ input اللي مالوش [[name]] مش هيظهر، ولو فيه اسم متكرر (checkboxes) هتفضل آخر قيمة بس.`,
-            R`بيطبع الـ object في الـ console، فتشوف بالظبط الداتا اللي كنت هتبعتها للسيرفر.`,
-            R`نهاية الـ submit listener.`,
-            R`حدث [[input]] بيشتغل مع كل تغيير في القيمة (كل حرف، والـ paste، والمسح)، عكس [[change]] اللي في خانات الكتابة بيستنى لحد ما تسيب الخانة. مناسب للبحث وانت بتكتب أو للـ validation الفوري.`,
-            R`[[e.target.value]] هي اللي اليوزر كاتبها دلوقتي، ودايمًا string حتى في [[type="number"]]، فلو محتاجها رقم حوّلها بـ [[Number()]].`,
-            R`نهاية الـ input listener.`,
-          ],
-          sol: R`من غير [[e.preventDefault()]]: لما تضغط submit الصفحة بتعمل reload، والـ console.log بيظهر ويختفي بسرعة، والـ URL بيبقى فيه [[?email=...]] لأن الفورم default method بتاعه GET وبيبعت الحقول في الـ URL. مع preventDefault الصفحة ثابتة والـ console بيطبع [[{ email: "..." }]].
-
-مع [[{ once: true }]]: أول ضغطة تطبع «مرة واحدة»، والتانية ولا حاجة، لأن الـ listener اتشال لوحده بعد أول تنفيذ. لو شايف الرسالة مرتين فغالبًا الكود نفسه اتنفّذ مرتين (سكريبت متحمّل مرتين)، ولو [[querySelector("input")]] رجّعت null يبقى الفورم ملوش input وقت تشغيل السكريبت.`,
-          solCode: R`<form>
-  <input name="email" type="email" />
-  <button>Send</button>
-</form>
-<script>
-  const form = document.querySelector("form");
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    console.log(Object.fromEntries(new FormData(form))); // { email: "..." }
-  });
-</script>`
-        },
-        {
-          cmd: "event delegation",
-          title: "listener واحد على الأب بدل listener لكل عنصر",
-          desc: R`بدل ما تحط listener على كل زرار في ليستة (ولما تضيف عنصر جديد تفتكر تحطله)، حط listener واحد على الأب، وجواه اعرف مين اتضغط بـ [[e.target.closest(...)]]. ده شغال لأن الحدث بيطلع لفوق (bubbling).
-
-الميزة: listener واحد مهما كان عدد العناصر، والعناصر اللي هتتضاف بعدين شغالة لوحدها.`,
-          example: R`const list = document.querySelector("#todos");
-function deleteTodo(id) { list.querySelector($__bt[data-id="$__{id}"]$__bt)?.remove(); }
-function toggleTodo(id) { console.log("done", id); }
-list.addEventListener("click", (e) => {
-  const btn = e.target.closest("button[data-action]");
-  if (!btn || !list.contains(btn)) return;
-  const id = btn.closest("li").dataset.id;
-  if (btn.dataset.action === "delete") deleteTodo(id);
-  if (btn.dataset.action === "done") toggleTodo(id);
-});
-list.insertAdjacentHTML("beforeend", '<li data-id="9">جديد <button data-action="delete">x</button></li>');`,
-          try: R`ضيف ٣ عناصر بـ insertAdjacentHTML، واضغط delete على الأخير: شغال من غير ما تضيف listener. وبعدين حط [[<span>]] جوه الزرار واضغط عليه، وجرّب تشيل [[closest]] وتستخدم [[e.target.dataset]] مباشرة وشوف ليه بيبوظ.`,
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** [[ul]] فيها ٥ [[li]]: حط listener واحد على الـ ul بيطبع [[textContent]] بتاع الـ li اللي اتضغط بـ [[e.target.closest("li")]]. وبعدين ضيف li سادس من Console.`, done: R`الضغط على أي واحد بيطبع نصه، والسادس اللي اتضاف بعدين بيطبع برضه، والضغط على الفراغ في الـ ul برّه أي li مبيطبعش حاجة ومبيطلعش error.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[<ul>]] عليها listener واحد، وجواها [[<li><button><span>✓</span></button></li>]]. لو ضغطت على الـ ✓ بالظبط، [[e.target.tagName]] و [[e.currentTarget.tagName]] هيطبعوا إيه؟`, done: R`طلع [["SPAN"]] و [["UL"]]: الـ target هو أعمق عنصر اتضغط، والـ currentTarget هو اللي عليه الـ listener. وده سبب إنك محتاج [[closest]].` },
-            { lvl: 'تطبيق', t: R`**ابني:** todo list: كل li فيه زرارين [[data-action="done"]] و [[data-action="delete"]]، وفورم بيضيف مهام جديدة. كل الضغطات بـ listener واحد على الـ ul.`, done: R`delete على مهمة لسه مضافة بيشيلها، و done بيعمل toggle للكلاس، وفي الكود كله [[addEventListener("click"]] مكتوبة مرة واحدة بس.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[if (e.target.dataset.action === "delete") li.remove();]] والزرار [[<button data-action="delete"><i class="icon"></i> مسح</button>]]. اضغط على الأيقونة نفسها.`, done: R`قبل التصليح الضغط على الأيقونة مبيمسحش (الـ target هو الـ [[<i>]] ومالوش data-action)، والضغط على كلمة «مسح» بيمسح. بعد [[const btn = e.target.closest("[data-action]")]] الاتنين بيمسحوا.` },
-            { lvl: 'تحدي', t: R`**ابني:** tabs: أزرار [[button[data-tab="..."]]] جوه [[nav]]، وكل زرار جواه [[<span>]] أيقونة ونص. listener واحد على الـ nav بيدّي كلاس [[active]] للزرار اللي اتضغط ويظهر اللوحة اللي الـ id بتاعها زي [[data-tab]] ويخفي الباقي.`, done: R`الضغط على الأيقونة نفسها بيشتغل زي الضغط على الزرار (لأن [[e.target]] هنا الـ span و [[closest]] بتطلع للزرار)، وفي أي وقت فيه لوحة واحدة بس ظاهرة وزرار واحد بس عليه [[active]].` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** اعمل 1000 [[li]]: مرة بـ listener لكل li، ومرة بـ listener واحد على الـ ul. في Console بتاع Chrome استخدم [[getEventListeners(el)]] وعدّ.`, done: R`في الطريقة الأولى كل li عليه listener واحد (يعني 1000)، وفي التانية [[getEventListeners(ul).click.length]] بـ 1 و الـ li مفيش عليها حاجة. و li جديد بعد التحميل بيشتغل في التانية بس من غير كود زيادة.` }
-          ],
-          flag: "script",
-          deep: {
-            why: "ليستات بتتغير (todos، سلة، تعليقات، جدول) بتتعب لو كل عنصر ليه listener: لازم تضيف وتشيل مع كل تغيير، والذاكرة بتكبر. ودي من أشهر أسئلة انترفيو الفرونت.",
-            how: R`الضغطة على الزرار بتعمل bubble: الزرار ثم الـ li ثم الـ ul ثم ... لحد الـ document. فالـ listener على الـ ul بيشوف كل ضغطة جواه.
-
-[[e.target]] ممكن يكون عنصر جوه الزرار (أيقونة أو span)، عشان كده [[closest(selector)]] بتطلع لفوق من الـ target لحد ما تلاقي أول أب مطابق (أو العنصر نفسه). و [[list.contains(btn)]] بتتأكد إنه جوه الليستة دي مش في مكان تاني فوقيها.
-
-React بيعمل ده على مستوى التطبيق كله: listener واحد لكل نوع حدث على الـ root، وبيوزّع على الـ components.
-
-بعض الأحداث مبتعملش bubble زي [[focus]] و [[blur]] و [[mouseenter]]؛ بدالهم [[focusin]] و [[focusout]] و [[mouseover]].`,
-            when: "أي ليستة أو جدول عناصره بتتضاف وتتشال، أو فيه عدد كبير من العناصر بنفس السلوك.",
-            mistakes: R`تعتمد على [[e.target]] مباشرة فتبوظ لما حد يضغط على أيقونة جوه الزرار. وتعمل [[stopPropagation]] في مكان تاني فالـ delegation تقف من غير ما تعرف. وفي الانترفيو: «إيه هو event delegation وليه مفيد؟» والإجابة: bubbling، و listener واحد، وعناصر جديدة شغالة لوحدها، وذاكرة أقل.`
-          },
-          teach: R`## الفكرة في سطرين
-
-لما تضغط على زرار، الحدث مش بيحصل على الزرار بس: بيطلع لأبوه، وجده، لحد الـ document. ده اسمه **bubbling** (زي الفقاعة اللي بتطلع لفوق). فبدل listener على كل زرار، بنحط واحد على الليستة كلها ونسأل «مين اتضغط؟». جرّبت المثال في Chrome headless على الصفحة دي (الزرار التاني فيه span جواه عن قصد):
-
-~~~text index.html
-<ul id="todos">
-  <li data-id="1">أول <button data-action="done">✓</button>
-    <button data-action="delete"><span>x</span></button></li>
-</ul>
-~~~
-
----
-
-## ١. الليستة ودالتين مساعدتين
-
-~~~text app.js
-const list = document.querySelector("#todos");
-function deleteTodo(id) { list.querySelector($__bt[data-id="$__{id}"]$__bt)?.remove(); }
-function toggleTodo(id) { console.log("done", id); }
-~~~
-
-- deleteTodo بتبني selector زي [[[data-id="1"]]] بـ template literal، وتدوّر بيه جوه الليستة، و [[?.remove()]] تشيله لو لقته (لو مش موجود [[?.]] بتوقف من غير error).
-- toggleTodo مثال بيطبع بس.
-
----
-
-## ٢. listener واحد على الأب
-
-~~~text app.js
-list.addEventListener("click", (e) => {
-  const btn = e.target.closest("button[data-action]");
-  if (!btn || !list.contains(btn)) return;
-  const id = btn.closest("li").dataset.id;
-  if (btn.dataset.action === "delete") deleteTodo(id);
-  if (btn.dataset.action === "done") toggleTodo(id);
-});
-~~~
-
-أي ضغطة في أي حتة جوه الـ ul هتوصل هنا. نمشي سطر سطر:
-
-### [[e.target.closest("button[data-action]")]]
-
-[[e.target]] العنصر اللي اتضغط فعلًا، ممكن يكون الـ span جوه الزرار. [[closest(selector)]] بتبدأ من العنصر نفسه وتطلع لأبوه وجده لحد ما تلاقي أول واحد مطابق، ولو ملقتش ترجّع null.
-
-### [[if (!btn || !list.contains(btn)) return;]]
-
-- [[!btn]]: الضغطة مش على زرار أو جواه (مثلًا على كلام الـ li)، اخرج.
-- [[list.contains(btn)]]: الزرار جوه الليستة دي؟ احتياط لو الـ closest طلعت لزرار برّه الليستة.
-- [[||]] = «أو»، و [[return]] جوه الـ handler معناها «خلّص هنا».
-
-### [[btn.closest("li").dataset.id]]
-
-من الزرار اطلع لأقرب li، وخد [[data-id]] بتاعه. لاحظ إنه string: [["1"]].
-
-### آخر سطرين
-
-[[btn.dataset.action]] هي قيمة [[data-action]]: يا [["delete"]] يا [["done"]]، ونادي الدالة المناسبة.
-
----
-
-## ٣. عنصر بيتضاف بعدين
-
-~~~text app.js
-list.insertAdjacentHTML("beforeend", '<li data-id="9">جديد <button data-action="delete">x</button></li>');
-~~~
-
-[[insertAdjacentHTML]] بتضيف HTML في مكان معيّن من غير ما تعيد بناء الموجود (عكس [[innerHTML +=]]). و [[beforeend]] يعني جوه العنصر في الآخر. محدش حط listener للزرار الجديد.
-
----
-
-## ٤. التجربة
-
-طبعت [[e.target.tagName]] في أول الـ handler، وضغطت بالترتيب:
-
-~~~text الناتج
-الـ li الموجودة: 1,9
-ضغطة على ✓ في 1          target: BUTTON  →  done 1
-ضغطة على الـ x (span) في 1  target: SPAN    →  action: delete id: 1
-الـ li الموجودة: 9
-ضغطة على كلام li 9        target: LI      →  (ولا حاجة: return)
-ضغطة على x في 9           target: BUTTON  →  action: delete id: 9
-الـ li الموجودة: (فاضية)
-~~~
-
-اللي تاخده من الجدول:
-
-1. الضغطة على الـ span: target كان SPAN، و closest طلعت للزرار، فاشتغل. لو كنا استخدمنا [[e.target.dataset.action]] مباشرة كانت هتبقى undefined ومفيش حاجة تحصل.
-2. الضغطة على الكلام: closest رجّعت null، فالـ return اشتغل.
-3. li 9 اتضافت **بعد** الـ listener، وزرارها اشتغل عادي.
-
----
-
-## ٥. تفاصيل الـ delegation: اللي بيكسرها واللي بيصلّحها
-
-ليستة فيها زرار جواه [[<b>]]، وخانة [[input]]. وعلى الـ [[ul]] أربع listeners. اتشغّل فعلًا على jsdom 30 و Node 24.22.1:
-
-~~~js
-list.addEventListener('click', (e) => {
-  const btn = e.target.closest('button[data-action]');
-  log.push($__btclick: target=$__{e.target.tagName} currentTarget=$__{e.currentTarget.id} btn=$__{btn?.dataset.action}$__bt);
-});
-list.addEventListener('focus', () => log.push('focus على الأب (bubble)'));
-list.addEventListener('focusin', (e) => log.push('focusin: ' + e.target.name));
-list.addEventListener('focus', (e) => log.push('focus بـ capture: ' + e.target.name), { capture: true });
-
-document.querySelector('b').click();
-document.querySelector('button').addEventListener('click', (e) => e.stopPropagation());
-document.querySelector('b').click();
-document.querySelector('input').focus();
-~~~
-
-~~~text الناتج
-click: target=B currentTarget=list btn=delete
-focus بـ capture: qty
-focusin: qty
-~~~
-
-| اللي اتشاف | معناه |
-|---|---|
-| [[target=B]] و [[currentTarget=list]] | [[e.target]] أعمق عنصر اتضغط، و [[e.currentTarget]] العنصر اللي عليه الـ listener (الـ ul). عشان كده [[closest]] بتبدأ من [[target]] |
-| تاني ضغطة **مطلعتش** سطر | [[stopPropagation]] على الزرار وقفت الـ bubbling قبل ما يوصل للـ ul، فالـ delegation بطلت تشتغل من غير أي error |
-| [[focus]] العادي ماوصلش للأب | [[focus]] و [[blur]] مبيعملوش bubble |
-| [[focusin]] وصل | ده الـ focus اللي بيعمل bubble، واستخدمه مع الـ delegation |
-| [[focus]] بـ [[{ capture: true }]] وصل | الـ capture بيمسك الحدث وهو **نازل** للعنصر، فبيشتغل حتى مع الأحداث اللي مبتطلعش |
-
-**والقاعدة في [[stopPropagation]]:** متستخدمهاش عشان «تمنع الضغطة توصل لحتة تانية» إلا لو مفيش حل تاني، لأن أي delegation فوق (بتاعتك، أو analytics، أو فريمورك) بتقف من غير ما حد يعرف. لو عايز تمنع سلوك المتصفح (submit أو فتح لينك) فده [[preventDefault]] مش [[stopPropagation]]. ولو عايز الـ listener اللي فوق يتجاهل حاجة، خليه هو يفحص بـ [[closest]].
-
----
-
-## الخلاصة
-
-| الحتة | ليه |
-|---|---|
-| listener على الأب | واحد بس، والعناصر الجديدة شغالة لوحدها |
-| [[e.target]] | اللي اتضغط فعلًا (ممكن يكون جوه الزرار) |
-| [[closest(sel)]] | اطلع لأقرب أب مطابق |
-| [[list.contains(btn)]] | اتأكد إنه جوه الليستة دي |
-| [[data-action]] و [[data-id]] | الزرار بيقول هو مين وعايز إيه |
-
-> أحداث زي focus و blur و mouseenter مبتعملش bubble، فالـ delegation معاها بـ focusin و focusout و mouseover.`,
-          lines: [
-            R`الليستة الأب. هنحط عليها listener واحد بدل listener على كل زرار جواها.`,
-            R`بتدوّر جوه الليستة على العنصر اللي [[data-id]] بتاعه هو الـ id ده وتشيله. [[?.]] عشان لو مش موجود [[querySelector]] ترجّع [[null]] و [[remove]] عليها كانت هترمي TypeError.`,
-            R`مكان تعليم المهمة إنها خلصت. هنا بتطبع بس، وفي تطبيق حقيقي هتغيّر الـ state وتعيد الرسم.`,
-            R`listener واحد على الأب. الضغطة على أي حاجة جوه الليستة بتطلع لفوق (event bubbling) لحد ما توصل لـ [[list]]، فالـ listener ده بيشوف كل الضغطات، حتى على العناصر اللي هتتضاف بعدين.`,
-            R`[[e.target]] ممكن يكون حاجة جوه الزرار (أيقونة مثلًا)، فـ [[closest]] بتبدأ من العنصر اللي اتضغط نفسه وتطلع لفوق لحد أول [[button]] عليه [[data-action]]، أو ترجّع [[null]] لو مفيش.`,
-            R`لو الضغطة مش على زرار ([[btn]] بقى [[null]]) نخرج. و [[list.contains]] بتتأكد إن الزرار جوه الليستة فعلًا، لأن [[closest]] ممكن تطلع برّه الليستة وتلاقي زرار في عنصر أكبر شايلها.`,
-            R`الزرار نفسه مفيهوش الـ id، فبنطلع للـ [[li]] اللي شايله وناخد [[data-id]] بتاعه من [[dataset.id]]. القيمة دي string حتى لو شكلها رقم.`,
-            R`[[dataset.action]] بتقرا [[data-action]] من الزرار وتحدد هنعمل إيه: الزرار اللي مكتوب عليه [["delete"]] بينادي [[deleteTodo]].`,
-            R`واللي عليه [["done"]] بينادي [[toggleTodo]]. نوع زرار جديد = سطر زي ده، من غير ما تسجّل listeners جديدة.`,
-            R`نهاية الـ listener.`,
-            R`بنضيف [[li]] جديد بزرار مسح بعد ما الـ listener اتسجّل، والزرار ده شغّال من غير ما نسجّل عليه حاجة لأن الـ listener على الأب. ودي أهم ميزة في الـ delegation. و [[insertAdjacentHTML]] بتعامل النص كـ HTML، فمتحطش فيها داتا جاية من اليوزر.`,
-          ],
-          sol: R`الضغط على delete في العنصر الأخير بيشيله فورًا، مع إن الـ listener اتحط على الـ [[<ul>]] قبل ما العنصر يتعمل: الـ click بيطلع (bubbling) من الزرار للـ ul، والـ listener هناك بيعرف مين اتضغط من [[e.target]].
-
-لما تحط [[<span>x</span>]] جوه الزرار وتضغط على الـ x: [[e.target]] بيبقى الـ SPAN مش الـ BUTTON، و [[e.target.dataset.action]] بـ undefined، فمفيش حاجة بتحصل. [[closest("button[data-action]")]] بتطلع من الـ span لأقرب زرار فوقيه، فبتشتغل مهما ضغطت على أي حاجة جوه. ده بالظبط سبب إنها موجودة، وسؤال انترفيو مشهور: «ليه e.target مش دايمًا العنصر اللي حاطط عليه البيانات؟».`
-        },
-        {
-          cmd: "اعرض داتا من fetch",
-          title: "تعرض ليستة من API بحالات loading و empty و error",
-          desc: R`ده الدرس اللي بيربط كل اللي فات: تجيب JSON من API بـ [[fetch]]، وترسمه في الصفحة، وتعرض ٣ حالات غير النجاح: بيحمّل (loading)، ومفيش داتا (empty)، وحصلت مشكلة (error). أي شاشة حقيقية فيها الحالات الأربعة دي، ولو نسيت واحدة اليوزر هيشوف صفحة فاضية ومش فاهم.
-
-الـ HTML فيه [[<ul id="list">]] و [[<p id="status">]] و [[<template id="row">]]. الـ [[<template>]] حتة HTML مش بتتعرض، بتنسخها بـ [[content.cloneNode(true)]] لكل عنصر وتملاها بـ [[textContent]]، فالشكل يفضل في الـ HTML والداتا بتدخل بأمان من غير innerHTML.
-
-[[fetch]] و [[await]] هتتشرح بالتفصيل في المستوى ٢ (قسم async). دلوقتي كفاية تعرف إن [[await]] معناها «استنى النتيجة»، وإنها بتشتغل جوه [[async function]].`,
-          example: R`// HTML: <p id="status"></p> <ul id="list"></ul> <button id="reload">حدّث</button>
-// <template id="row"><li><strong></strong> — <span></span></li></template>
-const listEl = document.querySelector("#list");
-const statusEl = document.querySelector("#status");
-const tpl = document.querySelector("#row");
-function setStatus(text, kind = "") {
-  statusEl.textContent = text;
-  statusEl.className = kind;
-}
-function render(users) {
-  listEl.replaceChildren();
-  if (users.length === 0) return setStatus("مفيش يوزرز لسه", "empty");
-  setStatus("");
-  for (const u of users) {
-    const row = tpl.content.cloneNode(true);
-    row.querySelector("strong").textContent = u.name;
-    row.querySelector("span").textContent = u.email;
-    listEl.append(row);
-  }
-}
-async function load() {
-  setStatus("بيحمّل...", "loading");
-  try {
-    const res = await fetch("https://jsonplaceholder.typicode.com/users");
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    render(await res.json());
-  } catch (err) {
-    listEl.replaceChildren();
-    setStatus("حصلت مشكلة: " + err.message, "error");
-  }
-}
-document.querySelector("#reload").addEventListener("click", load);
-load();`,
-          try: R`اعمل [[index.html]] بالـ HTML اللي في أول سطرين و [[<script src="app.js" defer>]]، وافتحه بسيرفر محلي ([[npx serve]] أو Live Server). جرّب الحالات الأربعة: عادي، وغيّر الـ URL لـ [[/users?id=999]] (empty)، وغيّره لـ [[/nope]] (error بـ 404)، وافصل النت من DevTools ← Network ← Offline واضغط «حدّث». وبعدين زوّد: الزرار يتعطّل وهو بيحمّل، وفي حالة الـ error يظهر زرار «جرّب تاني».`,
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** بعد ما الليستة تتحمّل، اكتب في [[#status]] عدد اليوزرز اللي اتعرضوا («١٠ يوزر» مثلًا)، وزوّد في كل سطر اسم الشركة من [[u.company.name]].`, done: R`الرقم اللي في الـ status بيساوي [[users.length]] (اطبعه في Console وقارن)، وكل سطر فيه اسم الشركة، ولو الـ API رجّع لستة فاضية الـ status بيقول «مفيش يوزرز لسه» مش «٠ يوزر».` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[console.log(1); fetch(url).then(() => console.log(3)); console.log(2);]]. إيه الترتيب؟`, done: R`توقعت وطلع [[1]] ثم [[2]] ثم [[3]]: الـ fetch بيبدأ ومبيستناش، والـ then بتشتغل بعد ما الكود اللي بعده يخلص. وده سبب إن [[render]] لازم تتنادى جوه الـ then أو بعد await.` },
-            { lvl: 'تطبيق', t: R`**ابني:** زوّد input بحث فوق الليستة بيفلتر اليوزرز المتحمّلين بالاسم وانت بتكتب، من غير fetch جديد: خزّن الداتا في متغير مرة واحدة، و [[render]] الجزء المفلتر بس.`, done: R`الكتابة مبتعملش ولا request جديد في تاب Network، والبحث مش حسّاس للحروف الكبيرة، ولو مفيش نتيجة بيظهر «مفيش نتايج لـ «الكلمة»» والكلمة مكتوبة فيه بـ [[textContent]].` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[const users = fetch(url).json();]]. شغّله واقرا الرسالة، وصلّحه بـ await.`, done: R`الرسالة [[TypeError: fetch(...).json is not a function]]: fetch بترجّع Promise مش Response. بعد [[const res = await fetch(url); const users = await res.json();]] الـ users array فيها 10 يوزرز.` },
-            { lvl: 'تحدي', t: R`**ابني:** لما تضغط على يوزر (event delegation على الليستة) هات بوستاته من [[/posts?userId=ID]] واعرضهم تحته، بحالات loading و error لليوزر ده لوحده، والزرار يبقى [[disabled]] وهو بيحمّل عشان الضغطتين ورا بعض ميبعتوش طلبين.`, done: R`ضغطتين بسرعة بيعملوا request واحد بس في Network، و Offline من DevTools بيطلّع رسالة error تحت اليوزر ده بس والباقي سليم، وضغطة تانية بعد ما الشبكة ترجع بتجيب البوستات.` },
-            { lvl: 'تحدي', t: R`**بيانات حقيقية:** افتح [[https://jsonplaceholder.typicode.com/users]] في تاب لوحده واقرا شكل الـ JSON. اكتب قبل ما تكتب كود: كام عنصر، والمسار لاسم المدينة واسم الشركة وأول جزء من الـ lat.`, done: R`كتبت 10 عناصر، و [[u.address.city]] و [[u.company.name]] و [[u.address.geo.lat]]، ولاحظت إن lat نص مش رقم. ولما كتبت الكود عرض المدينة صح من أول مرة.` }
-          ],
-          flag: "script",
-          deep: {
-            why: "الـ DOM لوحده (querySelector و textContent) مبيعملش تطبيق. التطبيق الحقيقي بيجيب داتا من سيرفر ويعرضها، والجزء اللي المبتدئين بينسوه هو الحالات اللي مش «كله تمام». ده بالظبط اللي React و TanStack Query بيعملوه (isLoading و isError و data)، فلما تكتبه بإيدك مرة هتفهم هما بيحلوا إيه.",
-            how: R`الترتيب: [[load()]] تحط «بيحمّل» فورًا (قبل ما الشبكة ترد)، وبعدين [[await fetch]]. [[fetch]] مش بترمي error لو السيرفر رد بـ 404 أو 500، بترمي بس لو الشبكة نفسها وقعت. عشان كده [[if (!res.ok) throw]] بنفسك، فالحالتين يروحوا للـ [[catch]]. و [[res.json()]] كمان ممكن ترمي لو الرد مش JSON.
-
-[[render]] بتمسح القديم بـ [[replaceChildren()]] (من غير arguments بتفضّي العنصر)، وتفحص الـ empty قبل الرسم، وبعدين تنسخ الـ template لكل يوزر. [[cloneNode(true)]] بترجّع DocumentFragment، و [[append]] بتنقل محتواه للّيستة.
-
-[[textContent]] مش [[innerHTML]]: الأسماء جاية من API، ولو فيها [[<img onerror>]] هتظهر كنص (درس textContent و classList). و [[className = kind]] بيخلي الـ CSS يلوّن كل حالة ([[.error { color: red }]]).
-
-لو ضغطت «حدّث» مرتين بسرعة، الطلبين شغالين والأبطأ هو اللي بيكسب حتى لو هو القديم (race condition). الحل الكامل [[AbortController]] (درس «fetch و AbortController» في المستوى ٢)، والبسيط إنك تعطّل الزرار وهو بيحمّل.`,
-            when: R`أي صفحة بتعرض داتا من API من غير framework: dashboard صغيرة، أو widget، أو extension. ولما تنقل لـ React، نفس الحالات الأربعة هتفضل موجودة (تاب React).`,
-            mistakes: R`تنسى [[res.ok]] فالـ 404 تتعامل كنجاح و [[res.json()]] تقع برسالة غريبة. و «بيحمّل» تفضل ظاهرة للأبد لأنك مسحتها في حالة النجاح بس (حط المسح في الحالتين أو في [[finally]]). ومفيش empty state فاليوزر يشوف صفحة فاضية. وتبني الـ HTML بـ template literal و innerHTML بداتا من API (XSS). وفي الانترفيو: «إيه الحالات اللي لازم أي شاشة بتجيب داتا تتعامل معاها؟».`
-          },
-          teach: R`## الفكرة في سطرين
-
-البرنامج بيطلب ليستة يوزرز من API، ويرسمها في الصفحة، وطول الوقت بيقول لليوزر الصفحة في أنهي حالة: بتحمّل، أو فاضية، أو فيها مشكلة، أو تمام. الكود مقسوم ٣ دوال: [[setStatus]] (سطر الحالة)، و [[render]] (الرسم)، و [[load]] (الطلب). شغّلته في Chrome headless من سيرفر محلي، وطلب الـ API الحقيقي [[jsonplaceholder.typicode.com]] (API مجاني فيه داتا وهمية للتجارب).
-
----
-
-## ١. الـ HTML
-
-~~~text index.html
-<p id="status"></p> <ul id="list"></ul> <button id="reload">حدّث</button>
-<template id="row"><li><strong></strong> — <span></span></li></template>
-<script src="app.js" defer></script>
-~~~
-
-[[<template>]] tag خاص: المتصفح بيقراه بس **مش بيعرضه**. هو «قالب» لشكل الصف، هننسخه لكل يوزر.
-
----
-
-## ٢. نمسك العناصر
-
-~~~text app.js
-const listEl = document.querySelector("#list");
-const statusEl = document.querySelector("#status");
-const tpl = document.querySelector("#row");
-~~~
-
-[[El]] في آخر الاسم عادة عشان تفتكر إن ده عنصر DOM مش داتا.
-
----
-
-## ٣. [[setStatus]]
-
-~~~text app.js
-function setStatus(text, kind = "") {
-  statusEl.textContent = text;
-  statusEl.className = kind;
-}
-~~~
-
-- [[kind = ""]]: default، لو مبعتّوش يبقى string فاضي.
-- [[className = kind]]: بيستبدل كل كلاسات العنصر بالكلاس ده ([[loading]] أو [[empty]] أو [[error]] أو ولا حاجة)، فالـ CSS يقدر يلوّن كل حالة.
-
----
-
-## ٤. [[render]]: الرسم
-
-~~~text app.js
-function render(users) {
-  listEl.replaceChildren();
-  if (users.length === 0) return setStatus("مفيش يوزرز لسه", "empty");
-  setStatus("");
-  for (const u of users) {
-    const row = tpl.content.cloneNode(true);
-    row.querySelector("strong").textContent = u.name;
-    row.querySelector("span").textContent = u.email;
-    listEl.append(row);
-  }
-}
-~~~
-
-1. [[replaceChildren()]] من غير arguments: فضّي الليستة من أي رسم قديم.
-2. **empty state**: لو الـ array فاضية، اكتب الرسالة و [[return]] عشان منكملش. ([[return setStatus(...)]] اختصار لسطرين: نادي واخرج.)
-3. فيه داتا: امسح سطر الحالة.
-4. لكل يوزر: [[tpl.content]] محتوى الـ template، و [[cloneNode(true)]] نسخة منه، و [[true]] يعني انسخ كل اللي جواه كمان. اللي بيرجع **DocumentFragment** (جرّبت: [[constructor.name]] طلع DocumentFragment): صندوق مؤقت فيه الـ li.
-5. نملا الـ strong بالاسم والـ span بالإيميل بـ [[textContent]]، فلو API رجّع اسم فيه HTML هيظهر كنص (درس textContent).
-6. [[append(row)]] بينقل الـ li من الصندوق للّيستة.
-
----
-
-## ٥. [[load]]: الطلب
-
-~~~text app.js
-async function load() {
-  setStatus("بيحمّل...", "loading");
-  try {
-    const res = await fetch("https://jsonplaceholder.typicode.com/users");
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    render(await res.json());
-  } catch (err) {
-    listEl.replaceChildren();
-    setStatus("حصلت مشكلة: " + err.message, "error");
-  }
-}
-~~~
-
-- [[async function]]: دالة مسموح جواها [[await]].
-- **loading state** أول حاجة، قبل ما الشبكة ترد.
-- [[fetch(url)]]: اطلب الـ URL، و [[await]] يعني استنى الرد. [[res]] (response) فيه [[status]] (رقم زي 200 أو 404) و [[ok]] (true لو الرقم بين 200 و 299).
-- [[if (!res.ok) throw ...]]: fetch مبترميش error على 404 أو 500. جرّبت: [[fetch(".../nope")]] رجّعت [[404 false]] والـ body [[{}]] من غير أي error. فاحنا بنرمي بنفسنا عشان نروح للـ catch.
-- [[await res.json()]]: اقرا الـ body وحوّله من JSON، وابعته لـ render.
-- **error state** في الـ catch: امسح أي داتا قديمة واكتب الرسالة.
-
----
-
-## ٦. آخر سطرين
-
-~~~text app.js
-document.querySelector("#reload").addEventListener("click", load);
-load();
-~~~
-
-الزرار بيعيد التحميل، و [[load()]] بتبدأ أول ما الصفحة تفتح.
-
----
-
-## ٧. الحالات الأربعة في التجربة
-
-| التجربة | سطر الحالة | الكلاس | عدد الـ li |
+| اللفة | sum قبل | t | sum بعد |
 |---|---|---|---|
-| أول ما الصفحة تفتح | بيحمّل... | loading | 0 |
-| الـ URL العادي | (فاضي) | (ولا حاجة) | 10، أولهم Leanne Graham |
-| [[/users?id=999]] | مفيش يوزرز لسه | empty | 0 |
-| [[/nope]] | حصلت مشكلة: HTTP 404 | error | 0 |
-| Offline وضغطت «حدّث» | حصلت مشكلة: Failed to fetch | error | 0 |
+| ١ | 0 (القيمة الأولية) | 250 | 250 |
+| ٢ | 250 | 400 | 650 |
 
-[[Failed to fetch]] هي رسالة Chrome لما الشبكة نفسها مش موجودة. ولو شلت سطر [[res.ok]]، الـ [[{}]] بتاع 404 بيروح لـ render: [[users.length]] بـ undefined فمش 0، وبعدين [[for...of]] على object:
+والناتج النهائي [[650]]. لو نسيت القيمة الأولية والـ array فاضية:
 
-~~~text الناتج
-TypeError: users is not iterable
+~~~text الناتج من [].reduce((a, b) => a + b)
+TypeError: Reduce of empty array with no initial value
 ~~~
 
 ---
 
-## ٨. حل «جرّب» (الـ solCode)
+## ٥. نفس الحساب بسلسلة واحدة
 
-الحل بيضيف ٣ حاجات على load:
-
-- [[btn.disabled = true]] في الأول: الزرار بيتعطّل وهو بيحمّل (جرّبت: [[disabled]] كانت true وقت التحميل).
-- [[finally { btn.disabled = false; }]]: [[finally]] بيتنفذ بعد الـ try أو الـ catch في كل الحالات، فالزرار بيرجع مهما حصل (بقت false بعد النجاح وبعد الفشل).
-- في الـ catch: زرار «جرّب تاني» بـ createElement، و [[statusEl.append(" ", retry)]] بتحط مسافة وبعدها الزرار جنب الرسالة.
-
-~~~text الناتج: Offline ثم Online وضغطت «جرّب تاني»
-حصلت مشكلة: Failed to fetch <button>جرّب تاني</button>
-(بعد الضغط)  سطر الحالة فاضي، و 10 يوزرز
+~~~text orders.js
+const revenue2 = orders
+  .filter((o) => o.status === "paid")
+  .reduce((sum, o) => sum + o.total, 0);
 ~~~
+
+- كل method بترجّع array، فتكمّل عليها بنقطة. كتبناها على كذا سطر عشان تتقري، والسطر اللي بيبدأ بـ [[.]] تكملة للي قبله.
+- شلنا الـ map: الـ reduce بتاخد الطلب كله ([[o]]) وتجمع [[o.total]] على طول. الناتج برضه 650.
+
+> لو لزقت السطور دي في Node REPL سطر سطر، هيطلعلك [[Invalid REPL keyword]]، لأن الـ REPL بيفهم السطر اللي بيبدأ بنقطة كأمر خاص بيه زي [[.help]]. شغّلها من ملف.
+
+---
+
+## ٦. [[Object.groupBy]]: قسّم حسب الحالة
+
+~~~text orders.js
+const byStatus = Object.groupBy(orders, (o) => o.status);
+~~~
+
+بتاخد الـ array ودالة بترجّع «اسم المجموعة» لكل عنصر، وترجّع object: كل مفتاح اسم مجموعة، وقيمته array عناصرها.
+
+~~~text الناتج من console.log(byStatus) (Node 24)
+[Object: null prototype] {
+  paid: [
+    { id: 1, total: 250, status: 'paid' },
+    { id: 3, total: 400, status: 'paid' }
+  ],
+  pending: [ { id: 2, total: 900, status: 'pending' } ]
+}
+~~~
+
+[[null prototype]] معناها إن الـ object ده معمول من غير الخصايص الموروثة (زي [[toString]])، عشان لو مجموعة اسمها [["constructor"]] متتضربش مع حاجة جاهزة.
+
+---
+
+## ٧. حل الـ try
+
+~~~text try.js
+const pendingCount = orders.filter((o) => o.status === "pending").length;
+const maxTotal = Math.max(...orders.map((o) => o.total));
+const totalsById = orders.reduce((acc, o) => {
+  acc[o.id] = o.total;
+  return acc;
+}, {});
+console.log(pendingCount, maxTotal, totalsById);
+~~~
+
+- [[pendingCount]]: فلتر الـ pending وخد طول الناتج.
+- [[maxTotal]]: [[map]] بتطلّع [[[250, 900, 400]]]، و [[...]] بتفردهم لـ [[Math.max]].
+- [[totalsById]]: الـ reduce هنا بتبدأ بـ object فاضي [[{}]]، وكل لفة بتحط خانة [[acc[o.id] = o.total]]، و [[return acc]] عشان اللفة الجاية تستلمه.
+
+~~~text الناتج (Node 24)
+1 900 { '1': 250, '2': 900, '3': 400 }
+~~~
+
+المفاتيح بين [[' ']] لأن مفاتيح الـ objects دايمًا strings.
 
 ---
 
 ## الخلاصة
 
-| الحالة | إمتى | في الكود |
+| الدالة | بترجّع | الطول |
 |---|---|---|
-| loading | قبل الرد | أول سطر في load |
-| success | فيه داتا | render |
-| empty | array فاضية | الـ if في render |
-| error | شبكة، أو HTTP غلط، أو JSON بايظ | catch (مع [[res.ok]]) |
+| [[filter(fn)]] | array بالعناصر اللي fn رجّعت لها true | نفسه أو أقل |
+| [[map(fn)]] | array باللي fn رجّعته لكل عنصر | نفسه بالظبط |
+| [[reduce(fn, start)]] | قيمة واحدة (رقم، object، أي حاجة) | - |
+| [[Object.groupBy(arr, fn)]] | object مجموعات | - |
 
-> fetch مبترميش على 404 و 500، بترمي بس لو الشبكة وقعت. [[res.ok]] دايمًا.`,
+التلاتة مبيعدّلوش الـ array الأصلية، وابعت القيمة الأولية للـ reduce دايمًا.`,
           lines: [
-            R`الليستة اللي هنرسم فيها اليوزرز. بنجيبها مرة واحدة فوق بدل ما ندوّر عليها في كل رسمة.`,
-            R`سطر الحالة اللي هيقول لليوزر «بيحمّل» أو «مفيش داتا» أو «حصلت مشكلة»، عشان الصفحة متبقاش فاضية وساكتة ومحدش فاهم فيه إيه.`,
-            R`الـ [[<template>]]: HTML مكتوب في الصفحة بس مبيترسمش، بنستخدمه قالب للصف وننسخه لكل يوزر. أنضف وأأمن من بناء الصف بـ strings و [[innerHTML]].`,
-            R`دالة صغيرة لسطر الحالة، عشان كل حالة (loading و empty و error) تتعمل بنفس الطريقة في سطر واحد. [[kind = ""]] قيمة default لو مبعتناش نوع.`,
-            R`الرسالة بتتحط بـ [[textContent]]، فحتى رسالة خطأ جاية من برّه متتحوّلش HTML.`,
-            R`[[className]] بتستبدل كل الكلاسات بالكلاس ده ([[loading]] أو [[error]] أو [[empty]])، والـ CSS بيلوّن السطر على حسبه. الاستبدال هنا مقصود، عشان كلاس الحالة القديمة يتشال لوحده.`,
-            R`نهاية [[setStatus]].`,
-            R`[[render]] بتاخد array اليوزرز وترسمهم. فصلناها عن التحميل عشان الرسم حاجة والشبكة حاجة، وتقدر تجرّب الرسم بداتا مزيّفة من غير سيرفر.`,
-            R`[[replaceChildren()]] من غير arguments بتمسح كل اللي جوه الليستة. من غيرها كل ضغطة «حدّث» هتضيف اليوزرز تاني تحت القديم فيتكرروا.`,
-            R`empty state: الطلب نجح بس رجّع array فاضية، فبنقول ده صراحة بدل صفحة فاضية. و [[return]] بتخرج من الدالة فمش هنوصل للـ loop.`,
-            R`فيه داتا، فبنمسح سطر الحالة عشان «بيحمّل» متفضلش ظاهرة جنب اليوزرز.`,
-            R`بنلف على كل يوزر في الـ array ونعمله صف.`,
-            R`[[tpl.content]] هو محتوى الـ template كـ [[DocumentFragment]]، و [[cloneNode(true)]] بتعمل نسخة جديدة منه بكل اللي جواه ([[true]] = انسخ العناصر اللي جوه كمان). من غير [[true]] النسخة هتطلع فاضية.`,
-            R`بندوّر جوه النسخة على [[strong]] ونحط فيه الاسم بـ [[textContent]]: لو اسم اليوزر فيه HTML هيظهر كنص ومش هيتنفّذ.`,
-            R`والإيميل في الـ [[span]] بنفس الطريقة الآمنة.`,
-            R`[[append]] بتنقل محتوى النسخة جوه الليستة. بعد السطر ده الـ fragment بيفضى، فلو عملت [[row.querySelector]] بعده هترجّع [[null]]: املا الأول وبعدين ضيف.`,
-            R`نهاية الـ loop.`,
-            R`نهاية [[render]].`,
-            R`[[async]] بتخلي الدالة ترجّع Promise وتسمح بـ [[await]] جواها، فنكتب الكود اللي بيستنى الشبكة من فوق لتحت زي الكود العادي.`,
-            R`loading state قبل أي حاجة: اليوزر يعرف إن فيه حاجة شغالة بدل ما يفتكر إن الصفحة بايظة ويضغط تاني.`,
-            R`أي error جوه الـ [[try]] (شبكة وقعت، أو [[throw]] بتاعنا، أو JSON بايظ) بيقفز على [[catch]] بدل ما يوقف الكود ويسيب الصفحة على «بيحمّل».`,
-            R`[[fetch]] بتبعت GET للـ URL، و [[await]] بتستنى لحد ما الرد يبدأ يوصل وترجّع object الـ [[Response]] (الـ status والـ headers). الـ body لسه متقريش.`,
-            R`[[fetch]] مش بترمي error مع 404 أو 500، بترمي بس لو الشبكة نفسها فشلت. فبنشيك على [[res.ok]] (بيبقى [[true]] لما الـ status من 200 لـ 299) ونرمي بنفسنا عشان نروح للـ catch.`,
-            R`[[res.json()]] بتقرا الـ body وتعمله parse، وهي كمان Promise فمحتاجة [[await]]. وبعدها الـ array بتروح لـ [[render]].`,
-            R`error state: بنوصل هنا لو الشبكة وقعت، أو الـ status غلط، أو الـ JSON بايظ. و [[err]] فيه رسالة اللي حصل.`,
-            R`بنمسح أي يوزرز من تحميل قبل كده، عشان اليوزر ميشوفش داتا قديمة جنب رسالة الخطأ ويفتكرها جديدة.`,
-            R`بنعرض رسالة فيها [[err.message]] (زي [[HTTP 500]]) بكلاس [[error]] اللي الـ CSS بيلوّنه.`,
-            R`نهاية الـ catch.`,
-            R`نهاية [[load]].`,
-            R`زرار «حدّث» بينادي [[load]] تاني: نفس الدالة بكل حالاتها، فالـ loading والـ error بيشتغلوا في إعادة التحميل كمان. بنبعت [[load]] من غير أقواس عشان تتنادى وقت الضغطة مش دلوقتي.`,
-            R`أول تحميل أول ما السكريبت يشتغل، من غير ما اليوزر يضغط حاجة.`,
+            R`بنعمل array اسمها [[orders]]، كل عنصر فيها object بيمثّل طلب. ده بالظبط شكل الداتا اللي بترجعلك من API غالبًا: ليستة objects ليهم نفس المفاتيح.`,
+            R`أول طلب: [[id]] بيميّزه، و [[total]] المبلغ، و [[status]] حالته. حالته [[paid]] فهيدخل في الحساب.`,
+            R`تاني طلب، حالته [[pending]] (لسه متدفعش)، فالـ [[filter]] هيشيله ومش هيتحسب في الإيراد رغم إنه أكبر مبلغ.`,
+            R`تالت طلب، مدفوع برضه. يبقى عندنا طلبين مدفوعين مجموعهم [[250 + 400]].`,
+            R`نهاية الـ array. الفاصلة بعد آخر عنصر (trailing comma) مسموحة في JS ومش بتعمل عنصر فاضي، وبتخلي إضافة سطر جديد بعدين أسهل.`,
+            R`[[filter]] بتعدّي على كل طلب وتسأل الدالة: «أخليه؟». اللي بيرجّع [[true]] بيدخل array جديدة. النتيجة array فيها الطلبين المدفوعين بس، والأصل [[orders]] زي ما هو.`,
+            R`[[map]] بتحوّل كل عنصر لحاجة تانية وبترجّع array بنفس الطول. هنا كل طلب بقى رقم الـ [[total]] بتاعه، فـ [[totals]] بقت array فيها 250 و 400 بس.`,
+            R`[[reduce]] بتلم الـ array كلها في قيمة واحدة. [[sum]] هو الشايل اللي بيتراكم، بيبدأ من [[0]] (الـ argument التاني)، وكل لفة بيبقى [[sum + t]]. من غير الـ [[0]] هيبدأ بأول عنصر، ولو الـ array فاضية هيرمي TypeError.`,
+            R`بيطبع [[650]]، يعني مجموع الطلبين المدفوعين ([[250 + 400]]).`,
+            R`نفس الحساب بس في سلسلة (chaining): كل method بترجّع array فبنكمّل عليها بالـ method اللي بعدها من غير متغيرات وسيطة.`,
+            R`أول حلقة في السلسلة: نفس الـ [[filter]] اللي فوق، بيسيب الطلبات المدفوعة بس.`,
+            R`وبعدها [[reduce]] على طول بتجمع [[o.total]] من كل طلب، فاستغنينا عن الـ [[map]] لأن الدالة نفسها بتقرا الرقم من الـ object. النتيجة برضه [[650]].`,
+            R`[[Object.groupBy]] بتقسّم الـ array لمجموعات حسب اللي الدالة بترجّعه: النتيجة object فيه مفتاح [[paid]] جواه array الطلبين، ومفتاح [[pending]] جواه طلب واحد. موجودة في Node 21 والمتصفحات الحديثة بس.`
           ],
-          sol: R`الحالات الأربعة: عادي هتشوف ١٠ يوزرز (jsonplaceholder بيرجّع ١٠)، و [[?id=999]] بيرجّع [[[]]] فتظهر «مفيش يوزرز لسه»، و [[/nope]] بيطلع «حصلت مشكلة: HTTP 404»، و Offline بيطلع «حصلت مشكلة: Failed to fetch» (الرسالة بتختلف شوية بين المتصفحات، في Firefox «NetworkError when attempting to fetch resource.»).
+          sol: R`عدد الـ pending [[1]]، وأكبر total [[900]]، والـ object [[{ 1: 250, 2: 900, 3: 400 }]] (Node بيطبع المفاتيح بين quotes لأنها strings). و [[byStatus]] بيطبع [[[Object: null prototype] { paid: [ ...اتنين... ], pending: [ ...واحد... ] }]]: [[Object.groupBy]] بيرجّع object من غير prototype عشان مفتاح زي [["constructor"]] ميضربش.
 
-لو شيلت سطر [[if (!res.ok)]] وجرّبت [[/nope]]: السيرفر بيرد بـ [[{}]] مش array، فـ [[users.length]] بـ undefined، والـ loop [[for...of]] على object بيرمي «users is not iterable». يعني الخطأ بيطلع في مكان تاني وبرسالة مالهاش علاقة بالسبب الحقيقي.
-
-للزرار: في أول [[load]] اعمل [[btn.disabled = true]]، وفي [[finally]] رجّعه false. و «جرّب تاني»: زرار جوه سطر الحالة بيظهر بس في الـ error ويستدعي [[load]]. الكود تحت بيحل محل [[load]] القديمة، وباقي الملف زي ما هو (و [[setStatus]] بتمسح الزرار في المحاولة الجاية لأن [[textContent]] بيمسح كل اللي جوه العنصر).`,
-          solCode: R`const btn = document.querySelector("#reload");
-async function load() {
-  btn.disabled = true;
-  setStatus("بيحمّل...", "loading");
-  try {
-    const res = await fetch("https://jsonplaceholder.typicode.com/users");
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    render(await res.json());
-  } catch (err) {
-    listEl.replaceChildren();
-    setStatus("حصلت مشكلة: " + err.message, "error");
-    const retry = document.createElement("button");
-    retry.textContent = "جرّب تاني";
-    retry.addEventListener("click", load);
-    statusEl.append(" ", retry);
-  } finally {
-    btn.disabled = false;
-  }
-}`
+أشهر غلطة في الـ reduce إنك تنسى [[return acc]] جوه الـ callback، فتاني لفة الـ acc بيبقى undefined وتطلعلك [[TypeError: Cannot set properties of undefined]]. والتانية إنك تنسى القيمة الأولية [[{}]]، فأول acc يبقى أول order نفسه.`,
+          solCode: R`const orders = [
+  { id: 1, total: 250, status: "paid" },
+  { id: 2, total: 900, status: "pending" },
+  { id: 3, total: 400, status: "paid" },
+];
+const pendingCount = orders.filter((o) => o.status === "pending").length; // 1
+const maxTotal = Math.max(...orders.map((o) => o.total));                 // 900
+const totalsById = orders.reduce((acc, o) => {
+  acc[o.id] = o.total;
+  return acc;
+}, {});                                                                    // { 1: 250, 2: 900, 3: 400 }
+console.log(pendingCount, maxTotal, totalsById);
+console.log(Object.groupBy(orders, (o) => o.status));`
         },
         {
-          cmd: "FormData و URLSearchParams",
-          title: "تقرا فورم وتبعته أو تحطه في الـ URL إزاي؟",
-          desc: R`الفورم في HTML لوحده بيعمل submit ويعمل reload للصفحة. عشان تتحكم فيه بـ JS: اسمع لـ [[submit]] على الفورم (مش click على الزرار)، واعمل [[e.preventDefault()]]، واقرا القيم بـ [[new FormData(form)]]: بتجيب كل input ليه [[name]].
+          cmd: "find و some و includes",
+          title: "تدوّر على عنصر، أو تسأل «فيه واحد؟»",
+          desc: R`[[find]] بترجّع أول عنصر الشرط بتاعه true (أو undefined)، و [[findIndex]] مكانه (أو -1). و [[some]] بترجّع true لو عنصر واحد على الأقل حقق الشرط، و [[every]] لو كلهم. و [[includes]] بتسأل «القيمة دي موجودة؟».
 
-[[fd.get("q")]] قيمة واحدة، و [[fd.getAll("tag")]] كل القيم لنفس الاسم (checkboxes). ولو عايز تحوّلها query string زي [[?q=قهوة&tag=hot]] استخدم [[new URLSearchParams(fd)]]: بتعمل الـ encoding صح للعربي والمسافات والـ [[&]].
-
-وتبعتها للسيرفر بطريقتين: [[fetch(url, { method: "POST", body: fd })]] كـ multipart (لازم لو فيه ملفات)، أو [[JSON.stringify(Object.fromEntries(fd))]] مع [[Content-Type: application/json]].`,
-          example: R`// HTML: <form id="search"><input name="q" required> <label><input type="checkbox" name="tag" value="hot"> سخن</label>
-// <label><input type="checkbox" name="tag" value="new"> جديد</label> <button>دوّر</button></form>
-const form = document.querySelector("#search");
-const initial = new URLSearchParams(location.search);
-form.elements.q.value = initial.get("q") ?? "";
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const fd = new FormData(form);
-  console.log(fd.get("q"), fd.getAll("tag"));
-  const params = new URLSearchParams(fd);
-  params.set("page", "1");
-  history.replaceState(null, "", "?" + params);
-  const btn = form.querySelector("button");
-  btn.disabled = true;
-  try {
-    const res = await fetch("/api/search?" + params);
-    console.log(res.status, params.toString());
-  } finally {
-    btn.disabled = false;
-  }
-});`,
-          try: R`اعمل الفورم ده، واكتب «قهوة سادة»، وعلّم الاتنين checkboxes، واضغط Enter. بص على الـ URL وعلى تاب Network: شكل الـ query string إيه؟ اعمل refresh: الـ input لسه فيه الكلمة؟ وبعدين في Node جرّب [[new URLSearchParams({ q: "قهوة سادة", sort: "price&desc" }).toString()]] وشوف الـ encoding.`,
+والفرق عن [[filter]]: التلاتة دول بيقفوا أول ما يلاقوا الإجابة، فأسرع لما تكون محتاج عنصر واحد أو نعم/لا.`,
+          example: R`const users = [
+  { id: 1, name: "Sara", admin: true },
+  { id: 2, name: "Omar", admin: false },
+  { id: 3, name: "Ali", admin: false },
+];
+users.find((u) => u.id === 2);       // { id: 2, name: "Omar", ... }
+users.find((u) => u.id === 9);       // undefined
+users.findIndex((u) => u.id === 2);  // 1
+users.findLast((u) => !u.admin);     // { id: 3, name: "Ali", ... }
+users.some((u) => u.admin);          // true: واحد على الأقل
+users.every((u) => u.admin);         // false: مش كلهم
+["js", "ts"].includes("ts");         // true
+[NaN].includes(NaN);                 // true
+[NaN].indexOf(NaN);                  // -1`,
+          try: R`اكتب [[const user = users.find(...)]] على id مش موجود، وبعدين [[user.name]] واقرا الـ error. صلّحه بـ [[user?.name]]. وبعدين جرّب [[users.includes({ id: 1, name: "Sara", admin: true })]] وفكّر ليه false.`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في Node أو Console: [[const p = new URLSearchParams("?q=js&tag=a&tag=b")]] واطبع [[p.get("tag")]] و [[p.getAll("tag")]] و [[p.toString()]].`, done: R`[[get]] بترجّع [["a"]] (أول واحدة بس)، و [[getAll]] بترجّع [[[ 'a', 'b' ] ]]، و [[toString()]] بترجّع [["q=js&tag=a&tag=b"]] من غير علامة الاستفهام.` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const url = "/search?q=" + q;]] و q اليوزر كتبها [["a&b c"]]. اطبع الـ URL، وبعدين ابنيه بـ [[new URLSearchParams({ q })]].`, done: R`الأول طلّع [[/search?q=a&b c]] (السيرفر هيشوف q بـ [["a"]] وبارامتر تاني اسمه [["b c"]]). التاني طلّع [[/search?q=a%26b+c]] والسيرفر بيقرا q كاملة.` },
-            { lvl: 'تطبيق', t: R`**ابني:** فلتر منتجات في صفحة: فورم فيه [[select]] للقسم و checkbox «المتاح بس». الـ submit بيقرا القيم بـ [[FormData]]، ويخفي الكروت اللي مش مطابقة بـ [[hidden]]، ويحط الفلتر في الـ URL بـ [[history.replaceState]]، ولما الصفحة تفتح بيقرا الـ URL ويطبّق الفلتر.`, done: R`بعد الفلتر الـ URL شكله [[?cat=cups&available=on]]، و refresh بيرجّع نفس الكروت ونفس اختيارات الفورم، ولو بعت اللينك لنفسك في تاب جديد بيفتح متفلتر.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** [[new URL("https://shop.example/products?cat=cups&sort=price&page=2&tag=hot&tag=new")]]. اطبع كل البارامترز بـ [[[...u.searchParams] ]]، ونوع page، وكل الـ tags.`, done: R`طلع ٥ أزواج بالترتيب، و [[typeof u.searchParams.get("page")]] بـ [["string"]] (محتاج Number قبل الحساب)، و [[getAll("tag")]] بـ [[["hot", "new"]]].` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[Object.fromEntries(fd)]] بتضيّع الـ checkboxes اللي ليها نفس الاسم. اكتب [[formToObject(fd)]] بتخلي أي اسم متكرر array، والأسامي اللي ظاهرة مرة واحدة تفضل string.`, done: R`على FormData فيها [[q=x]] و [[tag=hot]] و [[tag=new]]: [[Object.fromEntries(fd)]] بترجّع [[{ q: 'x', tag: 'new' }]] (آخر واحدة كسبت)، و [[formToObject(fd)]] بترجّع [[{ q: 'x', tag: [ 'hot', 'new' ] }]].` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** على [[[5, 12, 8]]]: [[find(n => n > 10)]] و [[findIndex(n => n > 10)]] و [[find(n => n > 100)]].`, done: R`12 و 1 و undefined.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const roles = ["admin", "editor"]; if (roles.indexOf("admin")) console.log("أهلًا يا أدمن");]]. ليه الرسالة مبتظهرش؟`, done: R`[[roles.indexOf("admin")]] بترجّع 0 وده falsy، فالـ if مبتدخلش. بعد [[roles.includes("admin")]] الرسالة بتظهر، ولو [["admin"]] مش موجودة مبتظهرش.` },
+            { lvl: 'تطبيق', t: R`**ابني:** سلة: [[hasOutOfStock]] بـ some (فيه منتج stock بتاعه 0؟)، و [[allPaid]] بـ every على الطلبات.`, done: R`لو منتج واحد stock بتاعه 0 [[hasOutOfStock]] true، و [[[].every(...)]] على array فاضية بترجّع true (فكّر ليه ده ممكن يبقى bug).` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** [[users = [{ email: "Sara@Mail.com", name: "Sara" }, { email: "omar@mail.com", name: "Omar" }]]] واليوزر كتب [["sara@mail.com"]] في فورم الدخول. لاقيه بـ find.`, done: R`المقارنة العادية [[===]] بترجّع undefined، وبعد ما تصغّر الطرفين بـ [[toLowerCase()]] بترجّع object فيه Sara. وبتقول للمستخدم «مش موجود» لو find رجّعت undefined بدل ما توقع على [[.name]].` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[hasAll(perms, required)]] بترجّع true لو اليوزر عنده كل الصلاحيات المطلوبة. وجرّب [[[NaN].includes(NaN)]] و [[[NaN].indexOf(NaN)]].`, done: R`[[hasAll(["read", "write"], ["read"])]] true، و [[hasAll(["read"], ["read", "delete"])]] false. و includes بترجّع true و indexOf بترجّع -1.` }
           ],
           flag: "script",
           deep: {
-            why: "كل فورم في أي موقع (login، بحث، checkout) محتاج نفس الخطوات: امنع الـ reload، واقرا القيم، واتأكد منها، وابعتها، وامنع الضغط المزدوج. ولو البحث والفلاتر في الـ URL، اليوزر يقدر يعمل refresh أو يبعت اللينك لحد ويشوف نفس النتيجة.",
-            how: R`[[submit]] بيحصل بالضغط على أي زرار جوه الفورم (الـ [[<button>]] الافتراضي نوعه submit) وبـ Enter في أي input. وقبله المتصفح بيعمل الـ validation بتاع HTML ([[required]] و [[type="email"]] و [[minlength]])، ولو فيه غلط مش هيطلق الحدث أصلًا. لو عايز تعمل submit من JS بنفس الـ validation استخدم [[form.requestSubmit()]] مش [[form.submit()]] (دي بتنط الـ validation والـ event).
+            why: "«هات المنتج ده من السلة»، «فيه منتج خلص؟»، «اليوزر ده admin؟»: أسئلة بتتسأل في كل شاشة. واستخدام filter وأخد [0] بيلف على الـ array كلها من غير لزمة.",
+            how: R`[[find]] و [[some]] و [[every]] و [[findIndex]] بيوقفوا أول ما الإجابة تبان (short-circuit). [[every]] على array فاضية بترجّع true، و [[some]] على فاضية false (منطقيًا: مفيش عنصر كسر الشرط).
 
-[[FormData]] بتاخد كل عنصر ليه [[name]] ومش [[disabled]]: الـ checkbox بيتاخد بس لو متعلّم وقيمته [[value]] بتاعه (أو "on")، والـ [[<select multiple>]] بيدّي كذا قيمة. و [[form.elements.q]] بيوصلك للعنصر اللي [[name="q"]] (فيه كمان اختصار [[form.q]]، بس بيتضرب لو عندك input اسمه زي خاصية في الفورم نفسه زي [[submit]] أو [[action]]).
+[[includes]] بتقارن بـ SameValueZero، زي === بس بتلاقي NaN. و [[indexOf]] بتقارن بـ === فمبتلاقيش NaN. الاتنين بيقارنوا الـ objects بالـ reference، فـ object جديد بنفس المحتوى مش هيتلاقى.
 
-[[URLSearchParams]] بيعمل encoding بطريقة الفورمز: المسافة [[+]] والعربي [[%D9%82...]]. [[set]] بتستبدل، و [[append]] بتضيف قيمة كمان لنفس المفتاح. و [[history.replaceState]] بيغيّر الـ URL من غير reload ومن غير ما يضيف خطوة في الـ back (لو عايز back يرجع للبحث اللي قبله استخدم [[pushState]]، في المستوى ٣).
+[[findLast]] و [[findLastIndex]] (ES2023) بيدوّروا من الآخر.
 
-لما تبعت FormData كـ body متحطش Content-Type بنفسك: المتصفح بيحط [[multipart/form-data; boundary=...]] والـ boundary لازم يبقى فيه.`,
-            when: R`أي فورم من غير framework. وحتى في React/Next، FormData هي اللي بتوصل لـ server actions ([[<form action={fn}>]])، و URLSearchParams هي اللي تحت [[useSearchParams]].`,
-            mistakes: R`input من غير [[name]] فمش بيظهر في FormData. و [[Content-Type: multipart/form-data]] بإيدك فالسيرفر مش لاقي الـ boundary. و [[Object.fromEntries(fd)]] مع checkboxes بنفس الاسم: بياخد آخر قيمة بس. وتبني الـ query بـ [[$__bt?q=$__{q}$__bt]] من غير encoding فأي [[&]] في البحث يكسر الـ URL. وتنسى إن الـ validation في المتصفح للراحة بس، والسيرفر لازم يتحقق تاني (تاب Backend بـ Node).`
+لو هتدوّر بالـ id كتير على array كبيرة، حوّلها Map مرة واحدة: [[new Map(users.map((u) => [u.id, u]))]]، والبحث بقى O(1) بدل O(n) (تاب DSA).`,
+            when: R`[[find]] لعنصر واحد. [[some]] / [[every]] لسؤال نعم/لا. [[includes]] لقيم بسيطة (strings و numbers). و Map أو Set لو البحث بيتكرر كتير.`,
+            mistakes: R`[[filter(...)[0]]] بدل find. وتنسى إن find ممكن ترجّع undefined وتقرا منها على طول. و [[if (arr.indexOf(x))]]: لو العنصر في المكان 0 هتبقى false، ولو مش موجود -1 هتبقى true. استخدم includes.`
           },
-          teach: R`## الفكرة في سطرين
+          teach: R`## الفكرة
 
-فورم بحث: input للكلمة و checkboxes للفلاتر. لما اليوزر يدوّر، الكود بيقرا القيم بـ [[FormData]]، ويحوّلها query string بـ [[URLSearchParams]]، ويحطها في الـ URL، ويبعت الطلب، والزرار متعطّل لحد ما الرد ييجي. جرّبت الفورم في Chrome headless من سيرفر محلي (مفيهوش [[/api/search]]، فالرد 404 وده متوقع)، والـ solCode في Node 24.
-
----
-
-## ١. الـ HTML
-
-~~~text index.html
-<form id="search">
-  <input name="q" required>
-  <label><input type="checkbox" name="tag" value="hot"> سخن</label>
-  <label><input type="checkbox" name="tag" value="new"> جديد</label>
-  <button>دوّر</button>
-</form>
-~~~
-
-- [[name]] هو المفتاح اللي هيظهر في FormData. input من غير name مش هيتقري.
-- الـ checkboxes الاتنين ليهم **نفس الاسم** tag، وكل واحد ليه [[value]].
-- [[required]]: المتصفح مش هيبعت الفورم والـ input فاضي.
-- [[<button>]] جوه فورم نوعه الافتراضي submit.
+[[filter]] بترجّع **كل** اللي بيحقق الشرط. بس ساعات انت عايز عنصر واحد، أو إجابة نعم/لا. الدوال دي معمولة لكده، وبتقف أول ما تلاقي الإجابة. المثال بيسأل ليستة مستخدمين كذا سؤال. اتشغّل في Node 24 REPL.
 
 ---
 
-## ٢. ترجّع البحث القديم من الـ URL
+## ١. الداتا
 
-~~~text app.js
-const form = document.querySelector("#search");
-const initial = new URLSearchParams(location.search);
-form.elements.q.value = initial.get("q") ?? "";
+~~~text users.js
+const users = [
+  { id: 1, name: "Sara", admin: true },
+  { id: 2, name: "Omar", admin: false },
+  { id: 3, name: "Ali", admin: false },
+];
 ~~~
 
-- [[location.search]]: الجزء من الـ URL من أول [[?]]، زي [[?q=...&tag=hot]].
-- [[new URLSearchParams(...)]] بتفكه لمفاتيح وقيم، و [[get("q")]] بترجّع القيمة **بعد فك الـ encoding** (عربي عادي)، أو null لو مش موجودة.
-- [[?? ""]]: لو null حط نص فاضي.
-- [[form.elements.q]]: العنصر اللي [[name="q"]] جوه الفورم. ([[form.elements.tag]] بقى RadioNodeList لأن فيه اتنين بنفس الاسم.)
+٣ مستخدمين، واحد بس [[admin]] (مدير).
 
 ---
 
-## ٣. الـ submit
+## ٢. [[find]] و [[findIndex]] و [[findLast]]
 
-~~~text app.js
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const fd = new FormData(form);
-  console.log(fd.get("q"), fd.getAll("tag"));
+~~~text Node REPL
+> users.find((u) => u.id === 2)
+{ id: 2, name: 'Omar', admin: false }
+> users.find((u) => u.id === 9)
+undefined
+> users.findIndex((u) => u.id === 2)
+1
+> users.findLast((u) => !u.admin)
+{ id: 3, name: 'Ali', admin: false }
 ~~~
 
-- [[async (e) =>]]: الـ handler نفسه async عشان هنعمل await جواه.
-- [[preventDefault]]: من غيرها المتصفح هيعمل reload.
-- [[fd.get("q")]] أول قيمة للاسم ده، و [[fd.getAll("tag")]] **كل** القيم في array، والـ checkbox بيتحسب بس لو متعلّم.
+- [[find(fn)]]: بترجّع **أول عنصر** الدالة رجّعت له true. مش array، العنصر نفسه.
+- لو مفيش: [[undefined]]. وده اللي بيوقّع الناس (تحت).
+- [[findIndex(fn)]]: نفس الكلام بس بترجّع **مكانه**. Omar في المكان 1 (العدّ من 0). ولو مش موجود بترجّع [[-1]].
+- [[findLast(fn)]]: بتدوّر من الآخر. [[!u.admin]] يعني «مش admin»، وآخر واحد كده Ali.
 
-لما ضغطت Enter والـ input فاضي، الـ handler **مشتغلش**، ورسالة المتصفح كانت [[Please fill out this field.]]. ولما كتبت «قهوة سادة» وعلّمت الاتنين:
+### بتقف بدري فعلًا؟
+
+عدّينا كام مرة الدالة اتنادت وإحنا بندوّر على id 1:
 
 ~~~text الناتج
-قهوة سادة ["hot","new"]
+find calls 1
+filter calls 3
 ~~~
+
+[[find]] لقت Sara من أول مرة ووقفت، و [[filter]] لفت على الـ ٣.
 
 ---
 
-## ٤. query string
+## ٣. [[some]] و [[every]]: نعم أو لا
 
-~~~text app.js
-  const params = new URLSearchParams(fd);
-  params.set("page", "1");
-  history.replaceState(null, "", "?" + params);
+~~~text Node REPL
+> users.some((u) => u.admin)
+true
+> users.every((u) => u.admin)
+false
 ~~~
 
-- [[new URLSearchParams(fd)]]: نفس الداتا، بس بتعرف تتكتب كـ query string.
-- [[set("page", "1")]]: حط المفتاح (ولو موجود استبدله). القيم strings، عشان كده [["1"]].
-- [[history.replaceState(state, title, url)]]: غيّر الـ URL في شريط العنوان **من غير reload** ومن غير خطوة جديدة في Back. أول اتنين مش مهمين هنا ([[null]] و [[""]]).
-- [[+ params]]: لما تجمع string مع URLSearchParams، JS بينادي [[toString()]] لوحده.
+- [[some]]: «فيه واحد على الأقل admin؟» أيوة، Sara.
+- [[every]]: «كلهم admins؟» لأ.
 
-الـ URL بعد Enter:
-
-~~~text الناتج
-http://127.0.0.1:52765/form.html?q=%D9%82%D9%87%D9%88%D8%A9+%D8%B3%D8%A7%D8%AF%D8%A9&tag=hot&tag=new&page=1
-~~~
-
-نقراه: [[&]] بتفصل المفاتيح، و tag اتكرر مرتين، والمسافة بقت [[+]]، وكل حرف عربي بقى bytes الـ UTF-8 بتاعته (كل حرف عربي = ٢ بايت، زي [[%D9%82]] = ق). ده الـ **encoding**: عشان الـ URL يتبعت بحروف آمنة بس.
+وعلى array فاضية: [[[].every(...)]] بـ true و [[[].some(...)]] بـ false (اتجرّبوا). المنطق: مفيش عنصر كسر الشرط، ومفيش عنصر حققه.
 
 ---
 
-## ٥. الطلب والزرار
+## ٤. [[includes]] و [[indexOf]]
 
-~~~text app.js
-  const btn = form.querySelector("button");
-  btn.disabled = true;
-  try {
-    const res = await fetch("/api/search?" + params);
-    console.log(res.status, params.toString());
-  } finally {
-    btn.disabled = false;
-  }
-});
+~~~text Node REPL
+> ["js", "ts"].includes("ts")
+true
+> [NaN].includes(NaN)
+true
+> [NaN].indexOf(NaN)
+-1
 ~~~
 
-- [[disabled = true]]: اليوزر ميقدرش يضغط تاني والطلب لسه شغال.
-- [[fetch("/api/search?" + params)]]: GET على نفس السيرفر.
-- [[finally]]: بيتنفذ في النجاح وفي الفشل، فالزرار بيرجع دايمًا.
-
-~~~text الناتج
-404 q=%D9%82%D9%87%D9%88%D8%A9+%D8%B3%D8%A7%D8%AF%D8%A9&tag=hot&tag=new&page=1
-~~~
-
-وبعد reload للصفحة الـ input رجع فيه «قهوة سادة» (من خطوة ٢)، والـ checkboxes لأ.
+- [[includes(value)]]: بتاخد **قيمة** مش دالة: «القيمة دي موجودة؟».
+- [[indexOf(value)]]: مكان القيمة، أو [[-1]].
+- الفرق مع NaN: [[indexOf]] بتقارن بـ [[===]]، و [[NaN === NaN]] false فمبتلاقيهاش. [[includes]] بتستخدم مقارنة اسمها SameValueZero بتعتبر NaN زي نفسها.
 
 ---
 
-## ٦. الـ solCode في Node
+## ٥. اللي بيحصل في الـ try
+
+لو [[find]] ملقتش وقريت منها على طول:
 
 ~~~text app.js
-const p = new URLSearchParams({ q: "قهوة سادة", sort: "price&desc" });
-console.log(p.toString());
+const user = users.find((u) => u.id === 9);
+console.log(user.name);
 ~~~
 
-~~~text الناتج
-q=%D9%82%D9%87%D9%88%D8%A9+%D8%B3%D8%A7%D8%AF%D8%A9&sort=price%26desc
+~~~text الناتج (Node 24)
+TypeError: Cannot read properties of undefined (reading 'name')
 ~~~
 
-الـ [[&]] اللي **جوه** القيمة بقت [[%26]]، فمبقتش تتلخبط مع الفاصل.
+[[user]] بـ undefined، ومفيش خانات جوه undefined. [[user?.name]] بتحل ده: الـ [[?.]] (optional chaining) معناها «لو اللي قبلي null أو undefined، رجّع undefined وخلاص».
 
-~~~text app.js
-p.append("tag", "hot");
-p.append("tag", "new");
-console.log(p.getAll("tag"), p.get("q"));
+و [[includes]] مع object:
+
+~~~text الناتج من users.includes(users[0]) و users.includes({ id: 1, name: "Sara", admin: true })
+true false
 ~~~
 
-~~~text الناتج
-[ 'hot', 'new' ] قهوة سادة
-~~~
-
-[[append]] بتضيف قيمة كمان لنفس المفتاح، و [[set]] كانت هتمسح القديم (جرّبت [[p.set("tag", "x")]] فبقى فيه tag=x بس).
-
-~~~text app.js
-const fd = new FormData();
-fd.append("q", "قهوة");
-fd.append("tag", "hot");
-fd.append("tag", "new");
-console.log(new URLSearchParams(fd).toString(), Object.fromEntries(fd));
-~~~
-
-~~~text الناتج
-q=%D9%82%D9%87%D9%88%D8%A9&tag=hot&tag=new { q: 'قهوة', tag: 'new' }
-~~~
-
-FormData موجودة في Node كمان. والمهم: [[Object.fromEntries]] خدت **آخر** tag بس، لأن الـ object ميقدرش يشيل مفتاحين بنفس الاسم. للقيم المتكررة استخدم [[getAll]].
+الأول نفس الـ object اللي في الـ array فلقيته. التاني object **جديد** بنفس المحتوى، و [[includes]] بتقارن بالـ reference، فمش هو. للمحتوى استخدم [[some((u) => u.id === 1)]].
 
 ---
 
 ## الخلاصة
 
-| عايز | استخدم |
+| السؤال | الدالة | بترجّع لو ملقتش |
+|---|---|---|
+| هات أول واحد | [[find(fn)]] | [[undefined]] |
+| مكانه فين | [[findIndex(fn)]] | [[-1]] |
+| من الآخر | [[findLast(fn)]] / [[findLastIndex(fn)]] | [[undefined]] / [[-1]] |
+| فيه واحد على الأقل؟ | [[some(fn)]] | false |
+| كلهم؟ | [[every(fn)]] | - |
+| القيمة دي موجودة؟ | [[includes(value)]] | false |
+
+[[find]] ممكن ترجّع undefined، فاستخدم [[?.]] قبل ما تقرا منها.`,
+          lines: [
+            R`بنعمل array اسمها [[users]] فيها ٣ مستخدمين، كل واحد object فيه [[id]] و [[name]] و [[admin]] (true أو false). هنستخدمها نجرّب عليها دوال البحث.`,
+            R`سارة: [[id]] بتاعها 1 وهي admin. هي الوحيدة اللي [[admin: true]]، وده اللي هيفرق في [[some]] و [[every]] تحت.`,
+            R`عمر: [[id]] بتاعه 2 ومش admin. هو اللي هنلاقيه بـ [[find]] و [[findIndex]].`,
+            R`علي: آخر واحد في الليستة ومش admin، فهو اللي [[findLast]] هيرجّعه لما ندوّر من الآخر على حد مش admin.`,
+            R`نهاية الـ array.`,
+            R`[[find]] بتلف من الأول وترجّع أول عنصر الدالة ترجّعله [[true]] وتقف على طول. هنا بترجّع الـ object بتاع عمر نفسه (مش نسخة)، فلو عدّلت فيه هيتعدّل جوه [[users]].`,
+            R`مفيش حد [[id]] بتاعه 9، فـ [[find]] بترجّع [[undefined]]. لو كتبت بعدها [[.name]] على طول هيرمي TypeError، فاعمل check الأول أو استخدم [[?.name]].`,
+            R`[[findIndex]] زي [[find]] بس بترجّع المكان (index) مش العنصر: عمر في المكان [[1]] لأن العدّ بيبدأ من صفر. ولو مش لاقي بترجّع [[-1]] مش [[undefined]].`,
+            R`[[findLast]] بتدوّر من آخر الـ array لأولها، فأول واحد مش admin تقابله من الآخر هو علي. مفيدة لما عايز «أحدث» عنصر في ليستة مترتبة بالوقت.`,
+            R`[[some]] بتسأل: «فيه عنصر واحد على الأقل بيحقق الشرط؟». بترجّع [[true]] أول ما تلاقي سارة وتقف، من غير ما تكمّل على الباقي.`,
+            R`[[every]] بتسأل: «كلهم بيحققوا الشرط؟». عمر مش admin فترجّع [[false]] وتقف عنده. خلي بالك: على array فاضية [[every]] بترجّع [[true]].`,
+            R`[[includes]] بتسأل لو القيمة دي نفسها موجودة في الـ array، وبترجّع [[true]] أو [[false]]. بتنفع للقيم البسيطة (نصوص وأرقام)، مش للـ objects لأنها بتقارن الـ reference.`,
+            R`[[NaN]] مش بيساوي نفسه بـ [[===]]، بس [[includes]] بتستخدم مقارنة اسمها SameValueZero بتعتبر [[NaN]] زي [[NaN]]، فبترجّع [[true]].`,
+            R`[[indexOf]] بتقارن بـ [[===]]، و [[NaN === NaN]] بـ [[false]]، فعمرها ما بتلاقيه وبترجّع [[-1]]. عشان كده لما بتسأل «موجود ولا لأ» استخدم [[includes]].`
+          ],
+          sol: R`[[user.name]] على id مش موجود بتطلع [[TypeError: Cannot read properties of undefined (reading 'name')]]: find رجّعت undefined، ومفيش حاجة اسمها name جوه undefined. مع [[user?.name]] الناتج undefined من غير error. ولو عايز رسالة للمستخدم: [[user?.name ?? "مش موجود"]].
+
+[[users.includes({ id: 1, ... })]] بترجّع false حتى لو الخصايص نفسها: includes بتقارن بالـ reference (زي ===)، والـ object اللي كتبته في القوسين object جديد مختلف عن اللي في الـ array. لو عايز تدوّر بالمحتوى استخدم [[users.some((u) => u.id === 1)]].`
+        },
+        {
+          cmd: "sort و toSorted",
+          title: "ليه [10, 1, 2].sort() بتطلع [1, 10, 2]؟",
+          desc: R`[[sort()]] من غير دالة بتحوّل العناصر لـ strings وترتّبها كنصوص، فـ "10" قبل "2". للأرقام لازم تبعت دالة مقارنة: [[(a, b) => a - b]] تصاعدي.
+
+والأهم: [[sort]] و [[reverse]] و [[splice]] و [[push]] و [[pop]] و [[shift]] بيعدّلوا الـ array الأصلية (mutating). و ES2023 ضاف نسخ مبتعدّلش: [[toSorted]] و [[toReversed]] و [[toSpliced]] و [[with]]، وبيرجّعوا array جديدة. ودي اللي تستخدمها مع state في React.`,
+          example: R`[10, 1, 2].sort();                       // [1, 10, 2]: رتّب كنصوص
+[10, 1, 2].sort((a, b) => a - b);        // [1, 2, 10]
+const prices = [300, 100, 200];
+const sorted = prices.toSorted((a, b) => a - b);
+console.log(prices);                     // [300, 100, 200]: الأصل زي ما هو
+console.log(sorted);                     // [100, 200, 300]
+const names = ["Omar", "sara", "Ali"];
+names.toSorted((a, b) => a.localeCompare(b));  // ["Ali", "Omar", "sara"]
+const products = [{ name: "B", price: 50 }, { name: "A", price: 50 }];
+products.toSorted((a, b) => a.price - b.price || a.name.localeCompare(b.name));
+prices.with(0, 999);                     // [999, 100, 200]`,
+          try: R`رتّب [[products]] بالسعر تنازلي. وبعدين اعمل [[const x = prices.sort()]] واطبع [[prices]] و [[x === prices]]: هتلاقي sort عدّلت الأصل ورجّعت نفس الـ array.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[[10, 1, 2].sort()]] وبعدين [[[10, 1, 2].sort((a, b) => a - b)]].`, done: R`[[[1, 10, 2]]] و [[[1, 2, 10]]].` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const scores = [40, 90, 70, 100, 60]; const top = scores.sort((a, b) => b - a).slice(0, 3);]] وبعدها اطبع [[scores]]. المطلوب scores تفضل زي ما دخلت.`, done: R`قبل التصليح scores بقت [[[100, 90, 70, 60, 40]]] (sort بتغيّر الأصل). بعد [[toSorted]]: top [[[100, 90, 70]]] و scores لسه [[[40, 90, 70, 100, 60]]].` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** رتّب منتجات بالسعر تصاعدي، واللي سعرهم زي بعض بالاسم ([[localeCompare]])، بـ toSorted.`, done: R`المنتجين اللي بنفس السعر مترتبين أبجدي، والـ array الأصلية بنفس ترتيبها القديم.` },
+            { lvl: 'تطبيق', t: R`**ابني:** لوحة ترتيب لعبة: [[{ n, p, t }]] (الاسم، والنقط، والوقت بالثواني). رتّب بالنقط تنازلي، ولو النقط زي بعض الأسرع الأول، واطبع [[1. Omar 95]] وهكذا.`, done: R`على Sara 90 في 120، و Omar 95 في 200، و Ali 90 في 100: بيطبع [[1. Omar 95]] ثم [[2. Ali 90]] ثم [[3. Sara 90]]. والـ comparator سطر واحد: [[b.p - a.p || a.t - b.t]].` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** رتّب [[["file10", "file2", "file1"]]] بـ [[sort()]] عادي، وبعدين بـ [[localeCompare(b, undefined, { numeric: true })]]. وجرّب [[["Sara", "omar", "Ali"]]] بالطريقتين.`, done: R`العادي [[["file1", "file10", "file2"]]] والـ numeric [[["file1", "file2", "file10"]]]. والأسامي: [[sort()]] بيحط "omar" في الآخر (الحروف الكبيرة الأول)، و [[localeCompare]] بيرتّب Ali ثم omar ثم Sara.` }
+          ],
+          flag: "script",
+          deep: {
+            why: "الترتيب في كل جدول وليستة. و sort اللي بتعدّل الأصل سبب bugs كتير في React: الـ state اتعدّلت في مكانها، فـ React مش شايف تغيير ومبيعملش render، أو الترتيب بيتغير في مكان تاني بيستخدم نفس الـ array.",
+            how: R`دالة المقارنة بترجّع رقم: سالب يعني a قبل b، وموجب يعني b قبل a، وصفر يعني زي بعض. [[a - b]] بتطلع كده بالظبط للأرقام. وللنصوص [[localeCompare]]، اللي بتفهم الحروف العربي والـ accents.
+
+من ES2019 الـ sort مضمون stable: العناصر المتساوية بتفضل بترتيبها الأصلي، فلو رتّبت بالاسم الأول وبعدين بالسعر، اللي بنفس السعر هيفضلوا مترتبين بالاسم. والأسهل تعمل الاتنين في دالة واحدة بـ [[||]]: لو السعر زي بعض (الفرق 0 falsy)، قارن بالاسم.
+
+الـ mutating methods: [[push]] و [[pop]] و [[shift]] و [[unshift]] و [[splice]] و [[sort]] و [[reverse]] و [[fill]]. والباقي (map و filter و slice و concat و toSorted...) بيرجّعوا جديد. و [[with(i, v)]] نسخة فيها عنصر واحد متغير.
+
+قبل ES2023 كان الحل [[[...arr].sort()]]: انسخ الأول وبعدين رتّب، وده لسه شغال.`,
+            when: R`[[toSorted]] و [[toReversed]] و [[with]] مع أي state أو داتا مشتركة. و [[sort]] العادية لما الـ array بتاعتك انت ومحدش تاني بيستخدمها.`,
+            mistakes: R`[[sort()]] على أرقام من غير دالة. ودالة مقارنة بترجّع boolean ([[a > b]]): مش هترتّب صح في كل الحالات. و [[state.items.sort(...)]] في React. وفي الانترفيو: «[[[10, 1, 2].sort()]] بتطلع إيه؟»، و «إيه الـ methods اللي بتعدّل الـ array؟».`
+          },
+          teach: R`## الفكرة
+
+[[sort]] بترتّب الـ array، بس فيها مفاجأتين: من غير دالة بترتّب كـ **نصوص**، وبتعدّل الـ array الأصلية. المثال بيوري الاتنين، وبعدين [[toSorted]] اللي بترجّع نسخة، وترتيب نصوص، وترتيب بمفتاحين، و [[with]]. اتشغّل في Node 24.
+
+---
+
+## ١. [[sort()]] من غير دالة
+
+~~~text Node REPL
+> [10, 1, 2].sort()
+[ 1, 10, 2 ]
+~~~
+
+من غير دالة مقارنة، [[sort]] بتحوّل كل عنصر لـ string وتقارن حرف حرف زي القاموس: [["10"]] بيبدأ بـ [["1"]] فييجي قبل [["2"]]. نفس اللي بيحصل لو رتّبت كلمات.
+
+---
+
+## ٢. دالة المقارنة [[(a, b) => a - b]]
+
+~~~text Node REPL
+> [10, 1, 2].sort((a, b) => a - b)
+[ 1, 2, 10 ]
+~~~
+
+[[sort]] بتاخد عنصرين [[a]] و [[b]] وتسأل الدالة: مين الأول؟ والدالة ترد برقم:
+
+| الرد | المعنى |
 |---|---|
-| تقرا الفورم | [[new FormData(form)]] (الحقول اللي ليها name) |
-| قيمة / كل القيم | [[get]] / [[getAll]] |
-| query string بـ encoding صح | [[new URLSearchParams(fd)]] |
-| تستبدل / تضيف | [[set]] / [[append]] |
-| تقرا الـ URL الحالي | [[new URLSearchParams(location.search)]] |
-| تغيّر الـ URL من غير reload | [[history.replaceState(null, "", "?" + params)]] |
-| تمنع الضغط المزدوج | [[disabled]] + [[finally]] |`,
-          lines: [
-            R`فورم البحث اللي [[id="search"]]، هنسمع لـ submit بتاعه ونقرا خاناته.`,
-            R`[[location.search]] هو الجزء اللي بعد [[?]] في الـ URL (زي [[?q=js&page=1]])، و [[URLSearchParams]] بتفكه وتعمل decode للحروف، فتقرا كل مفتاح بالاسم بدل ما تقطّع الـ string بإيدك.`,
-            R`[[form.elements.q]] هو الـ input اللي [[name="q"]]. بنحط فيه البحث اللي في الـ URL، فلو اليوزر عمل refresh أو بعت اللينك لحد البحث يفضل موجود. [[get]] بترجّع [[null]] لو مفيش [[q]]، و [[?? ""]] بتسيب الخانة فاضية بدل ما يتكتب فيها null.`,
-            R`[[submit]] مش click: بيشتغل بـ Enter كمان، وبعد ما validation الـ HTML تعدّي. والـ listener [[async]] عشان هنعمل [[await]] جواه.`,
-            R`من غيرها المتصفح هيعمل reload ويبعت الفورم بنفسه، والكود اللي تحت مش هيلحق يشتغل.`,
-            R`[[FormData]] بتاخد كل الـ inputs اللي ليها [[name]] (ومش disabled) بقيمها في اللحظة دي. الـ input اللي مالوش name مش هيتبعت خالص، ودي غلطة شائعة.`,
-            R`[[get]] بترجّع أول قيمة للاسم ده، و [[getAll]] بترجّع array بكل القيم، ودي اللي تحتاجها مع checkboxes كتير بنفس [[name="tag"]]. لو استخدمت [[get]] معاهم هتاخد أول واحدة بس.`,
-            R`[[new URLSearchParams(fd)]] بتحوّل الداتا لـ query string زي [[q=js&tag=a&tag=b]] وبتعمل encoding صح للمسافات والرموز (المسافة [[+]] و [[&]] بتبقى [[%26]])، بدل ما تلزق strings بإيدك وتبوظ مع أول رمز.`,
-            R`[[set]] بتحط [[page=1]]: لو المفتاح موجود بتستبدل كل قيمه، ولو مش موجود بتضيفه. بحث جديد يبدأ من أول صفحة. ([[append]] كانت هتضيف قيمة تانية جنب القديمة.)`,
-            R`[[history.replaceState]] بتغيّر الـ URL في شريط العنوان من غير reload، فالبحث يتحفظ في اللينك. ومش بتزوّد خطوة في الـ history، فزرار Back مش هيعدّي على كل بحث؛ لو عايز ده استخدم [[pushState]].`,
-            R`زرار الإرسال اللي جوه الفورم.`,
-            R`بنعطّل الزرار وإحنا مستنيين الرد، عشان الضغط مرتين ميبعتش نفس الطلب مرتين.`,
-            R`الـ [[try]] هنا مش عشان نمسك الـ error، عشان الـ [[finally]] اللي تحت يرجّع الزرار مهما حصل.`,
-            R`بنبعت الطلب والبحث في الـ URL. [[+ params]] بتحوّل الـ object لـ string بنفسها (بتنادي [[toString()]])، و [[await]] بتستنى الرد.`,
-            R`بنطبع الـ status والـ query عشان نتأكد إن اللي اتبعت هو اللي متوقعينه. هنا مفيش API حقيقي، فغالبًا هتشوف 404.`,
-            R`[[finally]] بيتنفّذ في النجاح وفي الفشل، حتى لو [[fetch]] رمت error وكمّل لبرّه الدالة.`,
-            R`بنرجّع الزرار شغال. لو السطر ده كان بعد الـ fetch عادي من غير finally، أي error كان هيسيب الزرار متعطّل لحد ما اليوزر يعمل refresh.`,
-            R`نهاية الـ try/finally.`,
-            R`نهاية الـ submit listener.`,
-          ],
-          sol: R`بعد Enter الـ URL بيبقى [[?q=%D9%82%D9%87%D9%88%D8%A9+%D8%B3%D8%A7%D8%AF%D8%A9&tag=hot&tag=new&page=1]]: المسافة بقت [[+]]، والعربي بقى bytes بـ UTF-8، و [[tag]] اتكرر مرتين. المتصفح في شريط العنوان ممكن يعرضه عربي مقروء بس اللي بيتبعت هو الـ encoded. الـ console بتطبع [[قهوة سادة [ 'hot', 'new' ] ]] وبعدها رقم الـ status (غالبًا 404 لأن [[/api/search]] مش موجود عندك، وده طبيعي).
+| سالب | [[a]] قبل [[b]] |
+| موجب | [[b]] قبل [[a]] |
+| صفر | زي بعض، سيبهم |
 
-بعد refresh الـ input فيه «قهوة سادة» لأن السطر التالت بيقراها من الـ URL. (الـ checkboxes مش هترجع: ده تمرين زيادة بـ [[initial.getAll("tag")]].)
+و [[a - b]] بتطلع كده بالظبط: لو a أصغر، الفرق سالب فـ a الأول. حطينا طباعة جوه الدالة نشوف المقارنات:
 
-وفي Node: [[q=%D9%82%D9%87%D9%88%D8%A9+%D8%B3%D8%A7%D8%AF%D8%A9&sort=price%26desc]]. لاحظ [[&]] بقت [[%26]]، فمبقتش بتتلخبط مع الفاصل بين المفاتيح.`,
-          solCode: R`const p = new URLSearchParams({ q: "قهوة سادة", sort: "price&desc" });
-console.log(p.toString());
-p.append("tag", "hot");
-p.append("tag", "new");
-console.log(p.getAll("tag"), p.get("q"));
-const fd = new FormData();
-fd.append("q", "قهوة");
-fd.append("tag", "hot");
-fd.append("tag", "new");
-console.log(new URLSearchParams(fd).toString(), Object.fromEntries(fd));`
-        },
-        {
-          cmd: "defer و async و module",
-          title: "تحط الـ script فين، وإيه الفرق بين defer و async و type=module؟",
-          desc: R`[[<script src="app.js">]] العادي في الـ [[<head>]] بيوقّف قراية الـ HTML لحد ما الملف يتحمّل ويشتغل. ودي مشكلتين: الصفحة بتتأخر، والكود مش لاقي العناصر (querySelector بترجّع null).
-
-[[defer]]: حمّل في الخلفية، وشغّل بعد ما الـ HTML يخلص، بالترتيب اللي في الصفحة، وقبل [[DOMContentLoaded]]. ده الافتراضي الصح لكود الصفحة بتاعك.
-
-[[async]]: حمّل في الخلفية، وشغّل أول ما يوصل، في أي ترتيب، حتى لو الـ HTML لسه بيتقري. مناسب لسكربتات مستقلة زي analytics.
-
-[[type="module"]]: بيتصرف زي defer لوحده، وكمان بيسمح بـ [[import]] و [[export]]، و strict mode، والمتغيرات مش global.`,
-          example: R`<script src="https://example.com/analytics.js" async></script>
-<script src="app.js" defer></script>
-<script type="module" src="main.js"></script>
-<script>
-  console.log("inline:", document.readyState);
-  document.addEventListener("DOMContentLoaded", () => console.log("DOMContentLoaded"));
-  window.addEventListener("load", () => console.log("load"));
-</script>`,
-          try: R`اعمل [[index.html]] فيه السطور دي في الـ [[<head>]] (شيل سطر analytics)، واعمل [[app.js]] فيه [[console.log("app.js", document.querySelector("h1"))]] و [[main.js]] فيه نفس السطر بـ "main.js"، وحط [[<h1>]] في الـ body. خمّن ترتيب الـ logs، وبعدين افتح Console. وبعدين شيل [[defer]] من app.js وشوف إيه اللي اتغير.`,
-          practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** حط [[<script src="app.js">]] من غير [[defer]] في الـ [[<head>]]، و [[app.js]] فيه [[document.querySelector("h1").textContent = "اتغيّر"]]. افتح Console. وبعدين زوّد [[defer]].`, done: R`من غير defer بيطلع [[TypeError: Cannot set properties of null (setting 'textContent')]] والعنوان زي ما هو، ومع defer العنوان بيتغير ومفيش error.` },
-            { lvl: 'تطبيق', t: R`**ابني:** اعمل [[greet.js]] فيه [[export function greet(name)]]، و [[main.js]] بيعمل import ليها وبيكتب التحية في الصفحة، بـ [[<script type="module" src="main.js">]]. افتحه مرة بدبل كليك على الملف ([[file://]]) ومرة من سيرفر محلي. وجرّب [[const secret = 1]] في main.js وبعدين [[window.secret]] في Console.`, done: R`من [[file://]] بيطلع error في Console فيه كلمة CORS ومفيش تحية، ومن [[localhost]] التحية بتظهر. و [[window.secret]] بترجّع [[undefined]] لأن متغيرات الـ module مش global.` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** في الـ [[<head>]] بالترتيب: [[<script>]] عادي بيطبع «inline» وبيسجّل listener لـ DOMContentLoaded بيطبع اسمه، وبعده [[<script defer src="d.js">]] بيطبع «defer»، وبعده [[<script type="module">]] بيطبع «module». إيه الترتيب؟`, done: R`توقعت وطلع [[inline]] ثم [[defer]] ثم [[module]] ثم [[DOMContentLoaded]]: العادي بيشتغل فورًا، والـ defer والـ module بيستنوا الـ HTML يخلص ويشتغلوا بترتيبهم في الصفحة، وبعدهم DOMContentLoaded.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** ٣ سكربتات [[a.js]] و [[b.js]] و [[c.js]]، كل واحد بيعمل [[console.log]] لاسمه، و [[b.js]] بيستخدم متغير [[window.config]] اللي [[a.js]] بيعرّفه. جرّبهم بـ [[defer]] وبعدين بـ [[async]]، مع Network throttling «Slow 4G» و [[a.js]] أكبر حجمًا (حط فيه كومنت طويل).`, done: R`مع defer الترتيب دايمًا a ثم b ثم c و b شايف الـ config، ومع async الترتيب بيتغير بين reload وتاني وأحيانًا b بيطبع [[undefined]] أو error، وتقدر تكتب في سطر ليه defer هو الصح لكود بيعتمد على بعضه.` },
-            { lvl: 'تحدي', t: R`**اشرحها:** ارسم ٣ سطور زمن (عادي، و defer، و async): خط لقراية الـ HTML، وخط لتحميل الـ script، ونقطة التشغيل. وقول تحت كل واحد إمتى تستخدمه.`, done: R`الرسمة بتبيّن: العادي بيوقف قراية الـ HTML لحد ما يتحمّل ويشتغل، والـ defer بيتحمّل جنبه ويشتغل بعد ما الـ HTML يخلص بالترتيب، والـ async بيتحمّل جنبه ويشتغل أول ما يوصل (ممكن في النص ومن غير ترتيب). وكتبت: defer لكود الصفحة، و async لـ analytics مستقل.` }
-          ],
-          flag: "script",
-          deep: {
-            why: "«الكود شغال لو حطيته في آخر الـ body ومش شغال في الـ head» من أشهر حيرات المبتدئين. ولما الصفحة بطيئة، أول حاجة بيبص عليها أي حد في الأداء هي السكربتات اللي بتوقف الـ parsing (render-blocking).",
-            how: R`المتصفح بيقرا الـ HTML من فوق لتحت ويبني الـ DOM. [[<script>]] عادي بيوقّف ده: يحمّل، وينفّذ، ويكمّل. عشان كده زمان كانوا بيحطوه في آخر الـ [[<body>]].
-
-[[defer]] و [[type="module"]] بيدخلوا نفس الطابور: بيتحمّلوا بالتوازي مع الـ parsing، وبيتنفذوا بترتيبهم في الصفحة بعد ما الـ parsing يخلص، وبعدهم [[DOMContentLoaded]]. فـ [[app.js]] قبل [[main.js]] لأنه قبله في الصفحة. [[async]] ملوش ترتيب: أي وقت يوصل يتنفذ، ممكن قبل الـ DOM ما يكمل.
-
-الترتيب في المثال: inline (بيطبع [["loading"]] لأنه شغال والـ HTML لسه بيتقري) ← app.js ← main.js ← DOMContentLoaded ← load. و [[load]] بتستنى كل الصور والـ CSS والـ iframes، فهي متأخرة كتير. عشان كده الكود اللي محتاج العناصر يستخدم defer (أو DOMContentLoaded)، مش load.
-
-[[defer]] و [[async]] بيشتغلوا بس مع [[src]]؛ على inline script بيتجاهلوا. الـ module script الـ inline كمان deferred. والـ modules بتتحمّل بـ CORS، فمش هتشتغل من [[file://]]: لازم سيرفر محلي.`,
-            when: R`[[type="module"]] لأي كود جديد (Vite بيعمل كده لوحده). [[defer]] لسكربت قديم مش module. [[async]] لسكربتات طرف تالت مستقلة. وفي Next.js ده متحكم فيه بـ [[next/script]] و strategy.`,
-            mistakes: R`script عادي في الـ head بيقرا عنصر فيلاقيه null. و [[async]] لكود بيعتمد على كود تاني (jQuery ثم plugin): الترتيب مش مضمون. و [[window.onload]] لكل حاجة فالصفحة تستنى الصور. وتفتح ملف فيه module بدبل كليك ([[file://]]) فيطلع CORS error. وفي الانترفيو: «الفرق بين defer و async؟» والإجابة: الاتنين بيحمّلوا في الخلفية، defer بيستنى الـ HTML وبيحافظ على الترتيب، و async لأ.`
-          },
-          teach: R`## الفكرة في سطرين
-
-المتصفح بيقرا الـ HTML من فوق لتحت، وكل ما يقابل [[<script>]] لازم يقرر: يقف يشغّله دلوقتي، ولا يكمّل ويشغّله بعدين؟ الكلمات [[defer]] و [[async]] و [[type="module"]] هي اللي بتقوله. جرّبت ده في Chrome headless بالصفحة دي من سيرفر محلي (من غير سطر analytics):
-
-~~~text index.html
-<head>
-  <script src="app.js" defer></script>
-  <script type="module" src="main.js"></script>
-  <script>
-    console.log("inline:", document.readyState);
-    document.addEventListener("DOMContentLoaded", () => console.log("DOMContentLoaded"));
-    window.addEventListener("load", () => console.log("load"));
-  </script>
-</head>
-<body><h1>Hi</h1></body>
+~~~text الناتج (Node 24)
+compare(1, 10) = -9
+compare(2, 1) = 1
+compare(2, 10) = -8
+compare(2, 1) = 1
 ~~~
 
-و [[app.js]] و [[main.js]] كل واحد فيه سطر بيطبع اسمه و [[document.querySelector("h1")]].
+عدد المقارنات وترتيبها بيعتمد على الخوارزمية جوه المحرك، متعتمدش عليه. المهم إن الدالة ترجّع الإشارة الصح. و [[b - a]] بتعكس الترتيب (تنازلي).
 
 ---
 
-## ١. السطور واحد واحد
+## ٣. [[toSorted]]: نسخة مترتبة والأصل زي ما هو
 
-### [[<script src="..." async>]]
+~~~text sort.js
+const prices = [300, 100, 200];
+const sorted = prices.toSorted((a, b) => a - b);
+console.log(prices);                     // [300, 100, 200]: الأصل زي ما هو
+console.log(sorted);                     // [100, 200, 300]
+~~~
 
-حمّل الملف في الخلفية والـ HTML بيتقري عادي، وأول ما يوصل **نفّذه فورًا**، حتى لو الـ HTML لسه مخلصش، ومن غير ترتيب مع باقي السكربتات. مناسب لحاجة مستقلة زي analytics.
+~~~text الناتج
+[ 300, 100, 200 ]
+[ 100, 200, 300 ]
+~~~
 
-### [[<script src="app.js" defer>]]
+[[toSorted]] (من ES2023، يعني إصدار ٢٠٢٣ من JavaScript) بتعمل نفس شغل sort بس على **نسخة**. قارنها بـ [[sort]]:
 
-defer = أجّل. حمّل في الخلفية، ونفّذ **بعد** ما الـ HTML كله يتقري، وبترتيب السكربتات في الصفحة.
+~~~text app.js
+const prices = [300, 100, 200];
+const x = prices.sort();
+console.log(prices, x === prices);
+~~~
 
-### [[<script type="module" src="main.js">]]
+~~~text الناتج
+[ 100, 200, 300 ] true
+~~~
 
-module بيتأجّل لوحده زي defer، وكمان: بيسمح بـ [[import]] و [[export]]، والكود فيه strict mode، والمتغيرات اللي فيه مش global. جرّبت أطبع [[this]] في أعلى main.js وطلع [[undefined]] (في الـ script العادي بيبقى window).
-
-### الـ inline script
-
-- [[document.readyState]]: حالة الصفحة: [["loading"]] (لسه بيتقري) أو [["interactive"]] أو [["complete"]].
-- [[DOMContentLoaded]]: حدث على document، بيحصل لما الـ HTML يخلص وكل سكربتات defer و module تشتغل.
-- [[load]]: حدث على window، بيستنى كمان الصور والـ CSS وكل حاجة.
+[[sort]] رتّبت [[prices]] نفسها، ورجّعت نفس الـ array ([[x === prices]] true). ده اللي بيبوّظ الـ state في React.
 
 ---
 
-## ٢. الترتيب الحقيقي
+## ٤. ترتيب نصوص: [[localeCompare]]
 
-~~~text الناتج: Chrome
-inline: loading
-app.js <h1>Hi</h1>
-main.js <h1>Hi</h1>
-DOMContentLoaded
-load
+~~~text Node REPL
+> const names = ["Omar", "sara", "Ali"];
+undefined
+> names.toSorted((a, b) => a.localeCompare(b))
+[ 'Ali', 'Omar', 'sara' ]
 ~~~
 
-1. inline اتنفذ في مكانه فورًا، والـ HTML لسه بيتقري ([[loading]]).
-2. app.js و main.js استنوا الـ HTML يخلص، فلاقيوا الـ h1، وبالترتيب اللي في الصفحة.
-3. بعدهم DOMContentLoaded، وفي الآخر load.
+[[a.localeCompare(b)]] بتقارن نصين بقواعد اللغة وترجّع سالب أو موجب أو صفر، فبتنفع كدالة مقارنة على طول. ليه مش [[sort()]] العادية؟ اتجرّب بأسماء تانية:
+
+~~~text الناتج من ["sara", "Omar", "ali"].sort() ثم بـ localeCompare
+[ 'Omar', 'ali', 'sara' ] [ 'ali', 'Omar', 'sara' ]
+~~~
+
+الترتيب العادي بيحط كل الحروف الكبيرة قبل الصغيرة (لأن [["O"]] رقمه في الجدول أصغر من [["a"]])، فـ Omar قبل ali. [[localeCompare]] بترتّب زي القاموس.
 
 ---
 
-## ٣. من غير defer
+## ٥. الترتيب بمفتاحين
 
-شلت [[defer]] من app.js:
-
-~~~text الناتج: Chrome
-app.js null
-inline: loading
-main.js <h1>Hi</h1>
-DOMContentLoaded
-load
+~~~text sort.js
+const products = [{ name: "B", price: 50 }, { name: "A", price: 50 }];
+products.toSorted((a, b) => a.price - b.price || a.name.localeCompare(b.name));
 ~~~
 
-app.js اشتغل **أول ما المتصفح قابله** في الـ head، والـ body لسه متقراش، فـ querySelector رجّعت [[null]]. ده الـ bug الشهير «الكود مش لاقي العنصر». و main.js لسه تمام لأنه module.
+~~~text الناتج
+[ { name: 'A', price: 50 }, { name: 'B', price: 50 } ]
+~~~
+
+1. [[a.price - b.price]]: [[50 - 50]] بـ 0.
+2. [[||]]: الـ 0 falsy، فـ [[||]] بتكمّل للي بعدها (درس truthy).
+3. [[a.name.localeCompare(b.name)]]: قارن بالاسم، [["B"]] و [["A"]] بتطلع موجب، فـ A الأول.
+
+لو الأسعار مختلفة، الفرق مش صفر فـ [[||]] بترجّعه على طول ومبتبصش على الاسم.
 
 ---
 
-## ٤. فتح الملف بدبل كليك ([[file://]])
+## ٦. [[with]]: نسخة بعنصر واحد متغير
 
-~~~text الناتج: Chrome
-inline: loading
-Access to script at 'file:///C:/Users/ali/.../main.js' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: chrome, chrome-experimental-site-token-provider, chrome-extension, chrome-untrusted, data, http, https, isolated-app.
-Failed to load resource: net::ERR_FAILED
-app.js <h1>Hi</h1>
-DOMContentLoaded
-load
+~~~text Node REPL
+> prices.with(0, 999)
+[ 999, 100, 200 ]
 ~~~
 
-الـ modules بتتحمّل بقواعد CORS، والصفحة المفتوحة من ملف ملهاش origin ([[null]])، فـ main.js اترفض خالص. app.js العادي اشتغل. الحل سيرفر محلي ([[npx serve]] أو Live Server).
+(ده على [[prices]] قبل ما نعمل [[sort]] اللي في القسم ٣.) [[with(index, value)]] بترجّع نسخة فيها العنصر رقم 0 بقى 999، والأصل زي ما هو. ولو الـ index برا الحدود: [[RangeError: Invalid index : 5]].
 
 ---
 
 ## الخلاصة
 
-| النوع | بيوقف قراية الـ HTML؟ | بيتنفذ إمتى | الترتيب |
-|---|---|---|---|
-| [[<script>]] عادي | أيوه | فورًا | مكانه |
-| [[async]] | لأ | أول ما يتحمّل | مش مضمون |
-| [[defer]] | لأ | بعد الـ HTML، قبل DOMContentLoaded | بترتيب الصفحة |
-| [[type="module"]] | لأ | زي defer | بترتيب الصفحة، ومحتاج http |
+| بتعدّل الأصل | النسخة اللي مبتعدّلش | بترجّع إيه |
+|---|---|---|
+| [[sort(fn)]] | [[toSorted(fn)]] | array جديدة مترتبة |
+| [[reverse()]] | [[toReversed()]] | array جديدة معكوسة |
+| [[splice(i, n)]] | [[toSpliced(i, n)]] | array جديدة من غير العناصر دي (و [[splice]] بترجّع **المشال**) |
+| [[arr[i] = v]] | [[with(i, v)]] | array جديدة بعنصر واحد متغيّر |
 
-> defer و async بيشتغلوا مع [[src]] بس؛ على script inline بيتجاهلوا.`,
+- أرقام: [[(a, b) => a - b]] تصاعدي و [[b - a]] تنازلي. نصوص: [[localeCompare]].
+- مع state أو داتا مشتركة استخدم النسخ اللي على اليمين.`,
           lines: [
-            R`[[async]]: المتصفح بيحمّل الملف في الخلفية وهو بيكمّل قراية الـ HTML، وأول ما يوصل بيشغّله فورًا من غير ما يستنى حد. مناسب لحاجة مستقلة زي analytics؛ لكن سكريبتين async ترتيبهم مش مضمون، فمينفعش واحد يعتمد على التاني.`,
-            R`[[defer]]: بيتحمّل في الخلفية برضه، بس مش بيشتغل غير بعد ما الـ HTML كله يتقري، وسكريبتات defer بتشتغل بترتيب كتابتها. ده الاختيار الطبيعي لكود صفحتك اللي بيلمس الـ DOM.`,
-            R`[[type="module"]] بيبقى deferred لوحده من غير ما تكتب defer، وبيسمح بـ [[import]] و [[export]]، والمتغيرات اللي فوق في الملف مبتبقاش global. وفي Chrome مش هيشتغل لو فتحت الصفحة من [[file://]]، لازم سيرفر محلي.`,
-            R`سكريبت inline عادي من غير [[src]] ولا defer: بيشتغل فورًا في مكانه، والمتصفح بيوقف قراية الـ HTML لحد ما يخلص.`,
-            R`بيطبع [["loading"]]: الـ HTML لسه بيتقري، فالعناصر اللي مكتوبة بعد السكريبت ده لسه مش موجودة، و [[querySelector]] عليها هترجّع [[null]].`,
-            R`[[DOMContentLoaded]] بيحصل بعد ما الـ HTML كله يتقري وسكريبتات defer و module تشتغل، من غير ما يستنى الصور. لو مضطر لسكريبت عادي في الـ head ومحتاج الـ DOM، حط الكود جوه الـ listener ده.`,
-            R`[[load]] على [[window]] بيحصل بعد كل حاجة: الصور والـ CSS كمان، فهو متأخر. استخدمه لو محتاج حاجة زي مقاسات الصور، مش لتشغيل كودك العادي.`,
-            R`نهاية السكريبت الـ inline.`,
+            R`[[sort]] من غير دالة مقارنة بتحوّل كل عنصر لنص وترتّب بالحروف، و «10» بيبدأ بـ «1» فبييجي قبل «2». ده أشهر bug في ترتيب الأرقام.`,
+            R`مع دالة مقارنة: لو [[a - b]] سالب يبقى a قبل b، لو موجب b قبل a، ولو صفر يفضلوا زي ما هم. [[a - b]] يرتّب تصاعدي، و [[b - a]] تنازلي.`,
+            R`array أسعار مش مترتبة. هنرتّبها من غير ما نبوّظ ترتيبها الأصلي.`,
+            R`[[toSorted]] بترجّع array **جديدة** مترتبة، عكس [[sort]] اللي بترتّب الـ array نفسها في مكانها. ده مهم لما الـ array دي state في React مثلًا ومينفعش تتعدّل.`,
+            R`بيطبع الأصل 300 و 100 و 200 بنفس ترتيبه، وده الدليل إن [[toSorted]] ملمستهوش. لو كنا استخدمنا [[sort]] كان الأصل اترتّب هو كمان.`,
+            R`بيطبع النسخة الجديدة مترتبة تصاعدي.`,
+            R`أسماء فيها حروف كبيرة وصغيرة. [[sort]] العادية بتقارن أكواد الحروف، والحروف الكبيرة كلها قبل الصغيرة، فاسم زي «Zed» كان هييجي قبل «sara».`,
+            R`[[localeCompare]] بتقارن نصين حسب قواعد اللغة وبترجّع رقم سالب أو موجب أو صفر، فبتتحط مكان [[a - b]] في دالة المقارنة. بترتّب «sara» في مكانها الأبجدي بغض النظر عن الحرف الكبير، وبتشتغل مع العربي.`,
+            R`منتجين ليهم نفس السعر بالظبط، عشان نشوف هنرتّبهم إزاي لما الشرط الأولاني يتعادل.`,
+            R`ترتيب بأكتر من شرط: الأول بالسعر، ولو السعر واحد يبقى الفرق [[0]] وده falsy، فـ [[||]] بتروح للشرط التاني وترتّب بالاسم. فـ A بييجي قبل B.`,
+            R`[[with]] بترجّع نسخة من الـ array فيها العنصر في المكان ده متغيّر، والأصل زي ما هو. هي البديل الـ immutable للتعديل المباشر بالـ index (اللي بيغيّر الأصل)، ولو الـ index برّه الـ array بترمي RangeError.`
           ],
-          sol: R`الترتيب: [[inline: loading]] ← [[app.js <h1>]] ← [[main.js <h1>]] ← [[DOMContentLoaded]] ← [[load]]. الاتنين لاقيين الـ h1 لأنهم استنوا الـ HTML.
+          sol: R`[[products.toSorted((a, b) => b.price - a.price)]]: الأغلى الأول (خد بالك إن [[b - a]] تنازلي و [[a - b]] تصاعدي). ولو في المثال السعرين متساويين (50 و 50) الترتيب هيفضل زي ما هو، لأن sort في JS مضمون stable من ES2019.
 
-لما تشيل [[defer]]: [[app.js]] بيطلع الأول وبيطبع [[app.js null]]، لأنه اشتغل وهو في الـ head قبل ما المتصفح يوصل للـ body. ده بالظبط الـ bug الشهير. و main.js لسه تمام لأن module = deferred.
+[[const x = prices.sort()]] وبعدها [[prices]] بتطبع [[[100, 200, 300]]] و [[x === prices]] بـ true: sort رتّبت الأصل مكانه ورجّعت نفس الـ array، مش نسخة. ولاحظ إن الأرقام هنا طلعت صح صدفة لأنهم نفس عدد الخانات، بس [[[300, 100, 1000].sort()]] هتطلع [[[100, 1000, 300]]] لأن من غير compare function الترتيب كنصوص.`
+        },
+        {
+          cmd: "array destructuring و spread",
+          title: "تفك array لمتغيرات، وتنسخ وتدمج arrays",
+          desc: R`[[const [first, second] = arr]] بتاخد العناصر بالترتيب في متغيرات، ودي اللي بتشوفها في [[const [count, setCount] = useState(0)]]. وتقدر تسيب مكان فاضي عشان تتخطى عنصر، وتحط قيمة افتراضية، وتلم الباقي بـ [[...rest]].
 
-لو فتحت الملف بدبل كليك هتلاقي main.js مشتغلش وفيه error عن CORS أو origin: الـ modules محتاجة [[http://]]، استخدم [[npx serve]] أو Live Server.`
+و [[[...a, ...b]]] بيعمل array جديدة فيها عناصر الاتنين، و [[[...a]]] نسخة. و [[[...new Set(arr)]]] أشهر طريقة تشيل التكرار.`,
+          example: R`const [first, second] = ["a", "b", "c"];
+const [, , third] = ["a", "b", "c"];
+const [head, ...rest] = [1, 2, 3, 4];      // head = 1, rest = [2, 3, 4]
+const [x = 0] = [];                        // x = 0
+let a = 1, b = 2;
+[a, b] = [b, a];                           // تبديل: a = 2, b = 1
+const merged = [...[1, 2], ...[3, 4], 5];  // [1, 2, 3, 4, 5]
+const copy = [...merged];
+const unique = [...new Set([1, 1, 2, 3, 3])]; // [1, 2, 3]
+const withNew = [...merged, 6];            // إضافة من غير push
+const rows = [[1, 2], [3, 4]];
+rows.flat();                               // [1, 2, 3, 4]`,
+          try: R`اكتب دالة [[removeAt(arr, i)]] بترجّع array جديدة من غير العنصر رقم i، بـ spread و slice (من غير splice). وبعدين اعملها بـ [[toSpliced]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[removeAt]] (النسخة بتاعة spread و slice).`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const [first, , third] = ["a", "b", "c"];]] واطبع الاتنين.`, done: R`"a" و "c".` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** فك تاريخ جاي كنص: [[const [y, m, d] = "2026-10-29".split("-").map(Number);]].`, done: R`y بـ 2026 و m بـ 10 و d بـ 29، و [[typeof m]] "number" مش "string".` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[const [x = 5, y = 7] = [undefined, null];]] و [[const [p, ...rest] = "abc";]]. اكتب x و y و p و rest قبل التشغيل.`, done: R`توقعت وطلع x بـ 5 و y بـ null و p بـ [["a"]] و rest [[["b", "c"]]]. وعرفت إن الـ default بيشتغل مع undefined بس، وإن الـ string بتتفك حروف لأنها iterable.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[const a = [ [1], [2] ]; const b = [...a]; b[0].push(9);]] واطبع [[a[0]]]. وبعدين صلّح بـ [[structuredClone]].`, done: R`قبل التصليح [[a[0]]] بقت [[[1, 9]]] (الـ spread نسخ الـ array من برا بس)، وبعد [[structuredClone(a)]] بتفضل [[[1]]].` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[rotate(arr, k)]] بتلف الـ array لليمين k خطوة بـ spread و slice، ومن غير ما تغيّر الأصل. خلي بالك من k أكبر من الطول ومن الـ array الفاضية.`, done: R`[[rotate([1, 2, 3, 4], 1)]] بترجّع [[[4, 1, 2, 3]]]، و [[rotate([1, 2, 3, 4], 5)]] نفس الناتج، و [[rotate([], 2)]] بترجّع [[[]]]، و [[rotate([1, 2], 0)]] بترجّع [[[1, 2]]] نسخة جديدة.` }
+          ],
+          flag: "script",
+          deep: {
+            why: R`destructuring بيخلّي الكود أقصر وأوضح من [[arr[0]]] و [[arr[1]]]، وهو أساس الـ hooks في React. والـ spread هو الطريقة المعتادة تضيف أو تشيل من array من غير ما تعدّل الأصل.`,
+            how: R`الـ destructuring بيشتغل مع أي iterable مش arrays بس: strings و Map و Set. وبيقرا بالترتيب، فالأسماء اللي بتختارها ملهاش علاقة بمحتوى العنصر.
+
+الـ default بيشتغل لو العنصر [[undefined]] بس. و [[...rest]] لازم يبقى آخر حاجة.
+
+التبديل [[[a, b] = [b, a]]] بيعمل array مؤقتة ويفكها. خد بالك: لو السطر اللي قبله مش مقفول بـ [[;]]، السطر اللي بيبدأ بـ [[[]] ممكن يتلزق فيه ويتفهم كـ index. عشان كده الأسلم تحط [[;]] أو تخلي Prettier يظبطها.
+
+الـ spread نسخة سطحية (shallow): العناصر اللي هي objects مش بتتنسخ، النسخة الجديدة بتشاور على نفس الـ objects (درس reference و copy). و [[flat(depth)]] بتفرد arrays جوه arrays لعمق معيّن، و [[flatMap]] بتعمل map وبعدين flat مستوى واحد.`,
+            when: R`في الـ hooks، وفي تبديل قيم، وفي إضافة عنصر لـ state: [[setItems([...items, newItem])]]. وشيل التكرار بـ Set.`,
+            mistakes: R`تفتكر إن [[[...arr]]] نسخة عميقة. وتنسى [[;]] قبل سطر بيبدأ بـ [[[]]. وتفك من undefined: [[const [a] = undefined]] بترمي TypeError. وفي الانترفيو: «شيل التكرار من array» و «بدّل متغيرين من غير متغير تالت».`
+          },
+          teach: R`## الفكرة
+
+حاجتين بتمشوا مع بعض:
+
+- **destructuring**: تفك array لمتغيرات في سطر واحد، بالترتيب.
+- **spread** ([[...]]): تفرد عناصر array جوه array تانية، فتعمل نسخة أو تدمج أو تضيف من غير ما تعدّل الأصل.
+
+كل سطر في المثال اتشغّل في Node 24، وطبعنا المتغيرات بعده.
+
+---
+
+## ١. فك بالترتيب
+
+~~~text destructuring.js
+const [first, second] = ["a", "b", "c"];
+~~~
+
+الأقواس المربعة **على الشمال** من [[=]] مش array، دي «قالب»: أول اسم ياخد العنصر 0، والتاني ياخد العنصر 1. والـ [["c"]] ملهاش اسم فاتسابت.
+
+~~~text الناتج من console.log(first, second)
+a b
+~~~
+
+ده نفس [[const first = arr[0]; const second = arr[1];]] بس في سطر. وده اللي في React: [[const [count, setCount] = useState(0)]]، [[useState]] بترجّع array فيها عنصرين.
+
+---
+
+## ٢. تتخطى عناصر
+
+~~~text destructuring.js
+const [, , third] = ["a", "b", "c"];
+~~~
+
+كل فاصلة من غير اسم قبلها = «اتخطى العنصر ده». فاتخطينا 0 و 1، و [[third]] خد [["c"]].
+
+---
+
+## ٣. الباقي بـ [[...rest]]
+
+~~~text destructuring.js
+const [head, ...rest] = [1, 2, 3, 4];      // head = 1, rest = [2, 3, 4]
+~~~
+
+~~~text الناتج
+1 [ 2, 3, 4 ]
+~~~
+
+[[...]] هنا (على الشمال) معناها «لمّ الباقي في array». لازم تبقى آخر حاجة. ولو مفيش باقي بتبقى array فاضية: [[const [r1, ...r2] = [1]]] خلّت [[r2]] بـ [[[]]].
+
+---
+
+## ٤. قيمة افتراضية
+
+~~~text destructuring.js
+const [x = 0] = [];                        // x = 0
+~~~
+
+الـ array فاضية، فالعنصر 0 [[undefined]]، فـ [[x]] خد الـ default. والـ default زي الباراميترات: لـ undefined بس. اتجرّب [[const [y = 0] = [null]]] و [[y]] طلعت [[null]].
+
+---
+
+## ٥. تبديل متغيرين
+
+~~~text destructuring.js
+let a = 1, b = 2;
+[a, b] = [b, a];                           // تبديل: a = 2, b = 1
+~~~
+
+1. [[let a = 1, b = 2;]]: متغيرين في سطر واحد بفاصلة.
+2. اليمين [[[b, a]]] بيتحسب الأول: array مؤقتة [[[2, 1]]].
+3. الشمال [[[a, b]]] بيفكها: a بقت 2 و b بقت 1.
+
+~~~text الناتج
+2 1
+~~~
+
+مهم: [[;]] في آخر السطر الأول. اتجرّب من غيرها في ملف:
+
+~~~text الناتج من غير ; (Node 24)
+[a, b] = [b, a]
+    ^
+
+ReferenceError: Cannot access 'b' before initialization
+~~~
+
+JS قرا السطرين كأنهم [[let a = 1, b = 2[a, b] = [b, a]]]: الـ [[[]] في أول السطر اتلزقت في الـ 2 اللي قبلها.
+
+---
+
+## ٦. spread: دمج ونسخ وإضافة
+
+~~~text destructuring.js
+const merged = [...[1, 2], ...[3, 4], 5];  // [1, 2, 3, 4, 5]
+const copy = [...merged];
+const withNew = [...merged, 6];            // إضافة من غير push
+~~~
+
+- [[...[1, 2]]] جوه array جديدة = حط [[1, 2]] هنا كعناصر منفصلة. فـ merged بقت [[[1, 2, 3, 4, 5]]].
+- [[[...merged]]]: array جديدة بنفس العناصر. نسخة.
+- [[[...merged, 6]]]: نسخة + عنصر في الآخر، و merged نفسها متلمستش.
+
+~~~text الناتج من console.log(copy === merged, withNew, merged)
+false [ 1, 2, 3, 4, 5, 6 ] [ 1, 2, 3, 4, 5 ]
+~~~
+
+[[copy === merged]] false: array تانية في الذاكرة. بس النسخة **سطحية** (shallow): لو العناصر objects، النسخة بتشاور على نفس الـ objects:
+
+~~~text app.js
+const objs = [{ n: 1 }];
+const cp = [...objs];
+cp[0].n = 99;
+console.log(objs);
+~~~
+
+~~~text الناتج
+[ { n: 99 } ]
+~~~
+
+---
+
+## ٧. شيل التكرار بـ Set
+
+~~~text destructuring.js
+const unique = [...new Set([1, 1, 2, 3, 3])]; // [1, 2, 3]
+~~~
+
+~~~text الناتج من console.log(new Set([1, 1, 2, 3, 3]), unique)
+Set(3) { 1, 2, 3 } [ 1, 2, 3 ]
+~~~
+
+1. [[new Set([...])]]: [[Set]] مجموعة مبتقبلش تكرار، فبتشيل التكرار لوحدها. بس هي مش array.
+2. [[[...set]]]: افردها جوه array.
+
+---
+
+## ٨. [[flat]]
+
+~~~text destructuring.js
+const rows = [[1, 2], [3, 4]];
+rows.flat();                               // [1, 2, 3, 4]
+~~~
+
+[[rows]] array جواها arrays. [[flat()]] بتفردها مستوى واحد. ولو العمق أكتر:
+
+~~~text الناتج من [1, [2, [3, [4]]]].flat() و flat(Infinity)
+[ 1, 2, [ 3, [ 4 ] ] ] [ 1, 2, 3, 4 ]
+~~~
+
+---
+
+## الخلاصة
+
+| الكود | مكان [[...]] | المعنى |
+|---|---|---|
+| [[const [a, b] = arr]] | - | فك بالترتيب |
+| [[const [, , c] = arr]] | - | اتخطى عناصر |
+| [[const [h, ...rest] = arr]] | شمال [[=]] | لمّ الباقي |
+| [[const [x = 0] = arr]] | - | default لو undefined |
+| [[[...a, ...b]]] | يمين [[=]] | دمج / نسخة سطحية |
+| [[[...new Set(arr)]]] | يمين [[=]] | شيل التكرار |
+
+التمرين اللي تحت عايز array جديدة من غير عنصر معيّن والأصل يفضل زي ما هو: فكّر إزاي [[slice]] (درس string methods، وبتشتغل على الـ arrays بنفس الطريقة) و spread ممكن يساعدوك.`,
+          lines: [
+            R`array destructuring: بيفك الـ array لمتغيرات بالترتيب، فـ [[first]] بقى «a» و [[second]] بقى «b»، والعنصر التالت اتساب لأننا مطلبناهوش.`,
+            R`الفاصلة الفاضية معناها «اتخطى العنصر ده». فاصلتين يعني اتخطينا الأول والتاني، فـ [[third]] أخد «c».`,
+            R`[[...rest]] بيلم كل اللي فاضل في array جديدة. لازم ييجي في الآخر، ولو حطيته في النص هيدّي SyntaxError.`,
+            R`الـ array فاضية فمفيش عنصر أول، والقيمة [[undefined]]، فـ [[x]] بياخد القيمة الافتراضية [[0]]. خلي بالك: الافتراضي بيشتغل مع [[undefined]] بس، لو العنصر [[null]] هيفضل [[null]].`,
+            R`متغيرين بـ [[let]] (مش [[const]]) لأننا هنغيّر قيمتهم في السطر الجاي.`,
+            R`تبديل القيم في سطر واحد: اليمين بيتعمل array جديدة فيها قيمة b وبعدها قيمة a الأول، وبعدين بتتفك تاني في [[a]] و [[b]]. من غير الطريقة دي كنت محتاج متغير مؤقت تالت.`,
+            R`الـ spread [[...]] بيفرد عناصر كل array جوه array جديدة، فبندمج اتنين ونزوّد [[5]] في الآخر في خطوة واحدة.`,
+            R`نسخة جديدة من [[merged]]: تعديل [[copy]] مش هيأثر على [[merged]]. بس النسخة سطحية (shallow): لو جواها objects، الاتنين بيشاوروا على نفس الـ objects.`,
+            R`[[Set]] مبيقبلش قيمة مكررة، فبيشيل التكرار، وبعدين الـ spread بيرجّعه array عادية. ده أقصر طريقة تعمل array من غير تكرار للقيم البسيطة.`,
+            R`array جديدة فيها كل عناصر [[merged]] وفي آخرها [[6]]، والأصل متلمسش. [[push]] كانت هتعدّل [[merged]] نفسها، وده اللي بنتجنّبه في state.`,
+            R`[[rows]] array جواها arrays (مصفوفة ٢ في ٢)، زي صفوف جدول.`,
+            R`[[flat]] بتفك مستوى واحد من التداخل، فبقت array واحدة فيها ٤ أرقام. لو التداخل أعمق ابعتلها العمق، زي [[flat(2)]] أو [[flat(Infinity)]].`
+          ],
+          sol: R`[[removeAt(["a", "b", "c", "d"], 1)]] بترجّع [[["a", "c", "d"]]] والأصل زي ما هو. و [[arr.toSpliced(1, 1)]] بترجّع نفس الناتج في سطر واحد: هي splice بس من غير ما تعدّل الأصل.
+
+خلي بالك من index سالب: [[toSpliced(-1, 1)]] بتشيل آخر عنصر صح، لكن نسخة slice بتاعتك مع [[-1]] هتطلع array أطول من الأصل (لأن [[slice(0)]] بيرجّع كله). لو هتستخدم نسختك، افحص إن i بين 0 والطول.`,
+          solCode: R`const removeAt = (arr, i) => [...arr.slice(0, i), ...arr.slice(i + 1)];
+const letters = ["a", "b", "c", "d"];
+console.log(removeAt(letters, 1));     // ["a", "c", "d"]
+console.log(letters.toSpliced(1, 1));  // ["a", "c", "d"]
+console.log(letters);                  // ["a", "b", "c", "d"]: الأصل زي ما هو`,
+          check: {
+            lang: "js",
+            starter: R`const removeAt = (arr, i) => arr;`,
+            tests: R`test("removeAt(['a', 'b', 'c', 'd'], 1) ← ['a', 'c', 'd']", () => expect(removeAt(["a", "b", "c", "d"], 1)).toEqual(["a", "c", "d"]));
+test("الأصل زي ما هو", () => {
+  const letters = ["a", "b", "c"];
+  removeAt(letters, 0);
+  expect(letters).toEqual(["a", "b", "c"]);
+});
+test("بترجّع array جديدة مش نفس الـ reference", () => { const a = [1, 2]; expect(removeAt(a, 5) === a).toBe(false); });
+test("أول عنصر وآخر عنصر", () => expect([removeAt([1, 2, 3], 0), removeAt([1, 2, 3], 2)]).toEqual([[2, 3], [1, 2]]));
+test("index برا الحدود ← نسخة زي ما هي", () => expect(removeAt([1, 2, 3], 7)).toEqual([1, 2, 3]));`,
+            solution: R`const removeAt = (arr, i) => [...arr.slice(0, i), ...arr.slice(i + 1)];`
+          }
         }
       ]
     }

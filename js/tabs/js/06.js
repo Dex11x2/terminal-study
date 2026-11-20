@@ -1,1381 +1,728 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "الـ objects",
+      t: "الدوال",
       l: 1,
-      n: "تبني objects وتقرا منها وتنسخها وتلف عليها، و Map و Set و JSON، وليه التعديل في مكان بيظهر في مكان تاني",
+      n: "تكتب دالة بأكتر من شكل، وتتعامل مع الباراميترات، وتبعت دوال لدوال",
       projects: [
-        { lvl: 'صغير', t: R`كارت منتج في الـ console`, what: R`object لمنتج فيه اسم وسعر ومفتاح [["in-stock"]] وخصم ممكن يبقى موجود أو لأ، و method [[describe()]] بتطبع جملة فيها السعر بعد الخصم لو فيه. من درس object literal: الأقواس والـ shorthand و [[?.]].`, done: R`مع خصم ومن غير خصم [[describe()]] بتطلع جملة صح ومفيش TypeError، ولو [[in-stock]] بـ [[false]] الجملة بتقول «خلصان».` },
-        { lvl: 'صغير', t: R`منظّف لستة الإيميلات`, what: R`دالة بتاخد array إيميلات فيها تكرار ومسافات وحروف كبيرة ([[" A@x.com"]] و [["a@x.com"]])، وترجّع array نضيفة من غير تكرار بـ [[trim]] و [[toLowerCase]] و Set. من درس Map و Set.`, done: R`[[[" A@x.com", "a@x.com", "b@x.com "] ]] بترجّع [[[ 'a@x.com', 'b@x.com' ] ]]، و array فاضية بترجّع array فاضية.` },
-        { lvl: 'متوسط', t: R`سلة مشتريات من غير تعديل في مكان`, what: R`موديول فيه [[addItem(cart, item)]] و [[removeItem(cart, id)]] و [[changeQty(cart, id, qty)]] و [[total(cart)]]، كل واحدة بترجّع cart جديدة بـ spread (درس destructuring و spread، ودرس reference و copy)، وبعدين [[JSON.stringify]] للسلة و [[JSON.parse]] ليها تاني (درس JSON).`, done: R`بعد ٣ عمليات الـ cart الأصلية زي ما هي ([[cart !== next]])، و [[total]] صح بعد ما المنتج اتضاف مرتين (الكمية زادت مش سطر جديد)، والسلة بعد الـ JSON وراجعة بتطلع نفس [[total]].` },
-        { lvl: 'متوسط', t: R`قارن إعدادين`, what: R`دالة [[diffConfig(oldCfg, newCfg)]] بترجّع [[{ added, removed, changed }]]: المفاتيح الجديدة، واللي اتشالت، واللي قيمتها اتغيرت ومعاها القيمة القديمة والجديدة. من دروس Object.keys و entries و Map و Set ([[difference]]).`, done: R`على [[{ port: 3000, debug: false }]] و [[{ port: 8080, debug: false, cache: true }]]: [[added]] فيها [[cache]] بس، و [[removed]] فاضية، و [[changed]] فيها [[port]] من 3000 لـ 8080، و [[debug]] مش ظاهرة في أي حتة.` },
-        { lvl: 'كبير', t: R`مخزن بضاعة بيتحفظ في ملف`, what: R`سكربت Node [[inventory.js]] فيه دوال [[add]] و [[sell]] و [[report]] على object منتجات (المفتاح الـ SKU)، والحالة بتتحفظ في [[inventory.json]] وبتتقري منه في أول التشغيل بـ [[safeParse]] (درس JSON). كل دالة بتتحقق من المدخلات: الكمية رقم صحيح موجب، والبيع مش أكتر من المخزون، والـ SKU موجود؛ ولو فيه غلط بترمي Error برسالة واضحة والحالة متتغيرش (اشتغل على نسخة بـ [[structuredClone]] وبعدها بدّل). و [[report]] بيطلّع المنتجات الخلصانة بـ [[Object.entries]]. وفي ملف [[test.js]] شوية [[console.assert]] على كل حالة. من كل دروس الوحدة.`, done: R`[[node test.js]] بيخلص من غير ولا assertion فاشلة. بيع كمية أكبر من المخزون بيطبع رسالة والملف متغيّرش. ولو كتبت كلام بايظ في [[inventory.json]] السكربت بيبدأ بمخزن فاضي وبيطبع تحذير بدل ما يقع. وبتشغّله مرتين ورا بعض والأرقام بتكمّل من آخر مرة.`, ext: R`زوّد سجل عمليات (Map من التاريخ للعمليات)، و [[undo]] لآخر عملية، وتصدير CSV للتقرير.` },
-        { lvl: 'فكرة', t: R`دفتر حاجتك انت`, what: R`اختار حاجة بتتابعها بنفسك (مصاريفك، الكتب اللي قريتها، الأفلام، تمارين الجيم) واعملها كـ objects: كل سجل object، والكل في Map أو object بمفتاح، وفيه بحث وتجميع وإحصائيات بـ [[Object.entries]]، وبيتحفظ JSON. انت اللي بتقرر الخصايص.`, done: R`فيه ٣ أسئلة على الأقل الكود بيجاوبها (أكتر حاجة صرفت عليها، مجموع الشهر، إلخ)، والبيانات بتفضل بعد ما تقفل وتفتح، والملف البايظ مبيوقّعش البرنامج.`, ext: R`حوّله لصفحة بعد وحدة الـ DOM، وخلّيه يستورد CSV، وزوّد مقارنة بين شهرين بـ [[diffConfig]] بتاعتك.` },
+        { lvl: 'صغير', t: R`آلة حاسبة بـ object دوال`, what: R`object مفاتيحه العمليات ([["+"]] و [["-"]] و [["*"]] و [["/"]] و [["%"]]) وقيمه arrow functions، ودالة [[calc(a, op, b)]] بتدوّر عليه بدل switch. من دروس «function و arrow» و «switch ولا object lookup».`, done: R`[[calc(6, "*", 7)]] 42، والعملية المش موجودة بترجّع رسالة، وإضافة عملية جديدة ([["**"]]) سطر واحد في الـ object من غير ما تلمس [[calc]].` },
+        { lvl: 'صغير', t: R`logger بمستويات`, what: R`[[log(level = "info", ...parts)]] بتطبع الوقت ([[new Date().toISOString()]]) والمستوى بحروف كبيرة وكل الـ parts جنب بعض. من درس «default و rest و spread».`, done: R`[[log("warn", "disk", 91, "%")]] بيطبع سطر فيه [[WARN]] و [[disk 91 %]]، و [[log(undefined, "hi")]] بيطبع [[INFO]].` },
+        { lvl: 'متوسط', t: R`مصنع خصومات`, what: R`[[makeDiscount(percent)]] و [[makeCoupon(code, amount, minOrder)]] بيرجّعوا دوال بتاخد الإجمالي وترجّع الجديد، و [[applyAll(total, ...rules)]] بتطبقهم بالترتيب. من درس «higher-order functions» و «default و rest و spread».`, done: R`[[applyAll(1000, makeDiscount(10), makeCoupon("EID", 50, 500))]] بترجّع 850. الكوبون على طلب 300 مبيطبقش، والإجمالي عمره ما بيبقى سالب.` },
+        { lvl: 'متوسط', t: R`validator بيتركّب`, what: R`دوال صغيرة زي [[required]] و [[minLength(n)]] و [[isEmail]]، كل واحدة بترجّع رسالة أو null، و [[rules(...fns)]] بترجّع دالة بتشغّلهم كلهم على قيمة وتجمع الرسايل. من وحدة «الدوال» كلها و «string methods».`, done: R`[[rules(required, minLength(8))("")]] بترجّع array فيها رسالة «مطلوب»، و [[rules(required, minLength(8))("abc")]] فيها رسالة «قصير» بس، وقيمة سليمة بترجّع [[[]]]. وتقدر تزود قاعدة جديدة من غير ما تعدّل [[rules]].` },
+        { lvl: 'كبير', t: R`pipeline لتنضيف طلب`, what: R`[[pipe(...fns)]] بتاخد دوال وترجّع دالة واحدة بتعدّي القيمة عليهم بالترتيب. اعمل خطوات: [[trimFields]] و [[toNumbers]] و [[addTotal]] و [[validate]]، وكل خطوة بترجّع object جديد من غير ما تعدّل القديم (spread). ولفّ كل خطوة بـ [[withLog]] من الدرس. واختبرها بـ [[check]] على طلب سليم وطلب ناقص وطلب كميته نص. من وحدة «الدوال» و «القيم والأنواع» و «المتغيرات والنصوص».`, done: R`الطلب السليم بيطلع وفيه total صح، والطلب الأصلي لسه زي ما هو بعد الـ pipeline، والطلب البايظ بيطلع وفيه [[errors]] بتقول أنهي حقل، واللوج فيه سطر لكل خطوة. و [[pipe()]] من غير دوال بترجّع القيمة زي ما هي.`, ext: R`زوّد [[once]] لخطوة مكلفة، وخلي [[validate]] يوقّف الـ pipeline بدري، وعدّ وقت كل خطوة.` },
+        { lvl: 'فكرة', t: R`أدواتك الصغيرة`, what: R`فكّر في ٣ حاجات بتتكرر في كودك (تقريب فلوس، تنسيق تاريخ، اختصار نص طويل بـ «…»، تحويل أرقام عربي لإنجليزي) واعملهم دوال صغيرة بـ defaults معقولة، وواحدة منهم على الأقل higher-order.`, done: R`كل دالة ليها ٣ اختبارات بتعدّي، وكلها بتشتغل من غير ما تبعت كل الـ arguments.`, ext: R`اجمعهم في ملف واحد واستخدمه في مشاريع الوحدات الجاية.` }
       ],
       items: [
         {
-          cmd: "object literal",
-          title: "تعمل object وتقرا وتضيف وتمسح خصايص",
-          desc: R`الـ object مجموعة مفاتيح وقيم بين [[{ }]]. بتقرا بالنقطة [[product.price]]، أو بالأقواس [[product["in-stock"]]] لو المفتاح فيه شرطة أو مسافة أو في متغير.
+          cmd: "function و arrow",
+          title: "الفرق بين function و arrow function",
+          desc: R`فيه ٣ أشكال: function declaration ([[function add() {}]])، و function expression ([[const add = function () {}]])، و arrow function ([[const add = () => {}]]).
 
-وفيه اختصارات هتشوفها في كل كود: [[{ name }]] بدل [[{ name: name }]] (shorthand)، و [[[key]: value]] لمفتاح اسمه في متغير (computed)، و [[describe() {}]] لـ method.
+الـ arrow أقصر، ولو الجسم expression واحد بيرجّعه من غير [[return]]. بس فيه فروق حقيقية مش شكل بس: الـ arrow مالهاش [[this]] بتاعتها (بتاخدها من برّه)، ومينفعش تتعمل بـ [[new]]، ومفيهاش [[arguments]].
 
-ولو هتقرا خاصية ممكن متكونش موجودة، [[?.]] (optional chaining) بترجّع undefined بدل ما ترمي error.`,
-          example: R`const key = "color";
-const name = "Mug";
-const product = {
-  name,
-  price: 120,
-  [key]: "red",
-  "in-stock": true,
-  describe() {
-    return $__bt$__{this.name} بـ $__{this.price}$__bt;
-  },
+الاستخدام الشائع دلوقتي: arrow للـ callbacks والدوال الصغيرة، و function declaration للدوال الكبيرة على مستوى الملف.`,
+          example: R`function add(a, b) {
+  return a + b;
+}
+const multiply = function (a, b) {
+  return a * b;
 };
-product.price;            // 120
-product["in-stock"];      // true
-product[key];             // "red"
-product.size = "L";       // إضافة خاصية
-delete product.size;      // مسح خاصية
-"price" in product;       // true
-product.discount?.value;  // undefined من غير error`,
-          try: R`اطبع [[product.describe()]]. وبعدين جرّب [[product.discount.value]] من غير [[?.]] واقرا الـ error. وآخر حاجة: اعمل [[const f = product.describe; f()]] وشوف this راحت فين (هتفهمها في درس this).`,
+const square = (x) => x * x;
+const toUser = (name) => ({ name, active: true });
+const logAll = (...items) => {
+  items.forEach((item) => console.log(item));
+};
+add(2, 3);        // 5
+square(4);        // 16
+toUser("Sara");   // { name: "Sara", active: true }`,
+          try: R`حوّل [[add]] لـ arrow في سطر واحد. وبعدين امسح القوسين اللي حوالين الـ object في [[toUser]] وشغّل: هيطلع SyntaxError (Unexpected token ':')، لأن JS فهم الـ [[{]] بداية جسم دالة. ولو سبت جوه [[{ name }]] بس، مش هيطلع error، بس الدالة هترجّع undefined. فكّر ليه.`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اعمل object اسمه [[phone]] فيه [[brand]] و [[price]] ومفتاح [["in-stock"]]. اقرا كل واحد مرة بالنقطة ومرة بالأقواس، وجرّب [[phone.in-stock]] بالنقطة. وبعدين امسح [[price]] بـ [[delete]] واسأل [["price" in phone]].`, done: R`[[phone["in-stock"]]] بترجّع [[true]]، و [[phone.in-stock]] بتطلع [[ReferenceError: stock is not defined]] (JS قراها طرح: [[phone.in]] ناقص [[stock]])، و [["price" in phone]] بعد المسح بترجّع [[false]].` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const field = "price"; const product = { price: 120 }; console.log(product.field);]]. ليه undefined؟`, done: R`فهمت إن [[product.field]] بتدوّر على مفتاح اسمه حرفيًا [["field"]]. بعد [[product[field]]] بيطبع 120.` },
-            { lvl: 'تطبيق', t: R`**ابني:** اكتب [[makeProduct(name, price, field, value)]] بترجّع object فيه [[name]] و [[price]] بالـ shorthand، ومفتاح اسمه جاي في [[field]] (computed)، و method اسمها [[label()]] بترجّع الاسم والسعر في جملة.`, done: R`[[makeProduct("Mug", 120, "color", "red")]] بيرجّع object فيه [[color: 'red']] مش [[field]]، و [[.label()]] بترجّع [["Mug — 120 جنيه"]]، ونفس الدالة مع [["size", "L"]] بتعمل مفتاح [[size]].` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** سطر CSV [["Mug,120,red"]] والعناوين [[["name", "price", "color"]]]. حوّله لـ object بـ split و [[Object.fromEntries]]، وبعدين خلي price رقم.`, done: R`الأول بيطلع [[{ name: 'Mug', price: '120', color: 'red' }]] والسعر نص، وبعد [[Number]] على price بيبقى [[price: 120]] و [[typeof]] بتاعه "number".` },
-            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[getPath(obj, path)]] بتقرا خاصية متداخلة من نص فيه نقط زي [["user.address.city"]]، وترجّع [[undefined]] لو أي مستوى في النص ناقص. استخدم [[split(".")]] و [[reduce]] و [[?.]].`, done: R`[[getPath({ user: { address: { city: "Cairo" } } }, "user.address.city")]] بترجّع [["Cairo"]]، و [[getPath({}, "user.address.city")]] بترجّع [[undefined]] من غير TypeError، و [[getPath({ a: 0 }, "a")]] بترجّع [[0]] مش [[undefined]].` }
+            { lvl: 'سريع', t: R`**refactor:** حوّل [[function triple(n) { return n * 3; }]] لـ arrow في سطر واحد.`, done: R`[[triple(4)]] بترجّع 12، ومفيش [[return]] ولا [[{ }]] في السطر.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const add = (a, b) => { a + b };]] و [[console.log(add(2, 3))]]. ليه undefined؟ صلّحها بطريقتين.`, done: R`فهمت إن الأقواس [[{ }]] بتعمل body محتاج [[return]]. التصليح الأول [[(a, b) => a + b]] والتاني [[{ return a + b; }]]، والاتنين بيطبعوا 5.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[toProduct(name, price)]] arrow بترجّع object، في سطر واحد.`, done: R`[[toProduct("Mug", 120)]] بترجّع [[{ name: 'Mug', price: 120 }]]، ومن غير القوسين حوالين الـ object بترجّع undefined.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** نادي [[sayHi()]] قبل ما تعرّفها، مرة وهي [[function sayHi() {}]] ومرة [[const sayHi = () => {}]].`, done: R`الأولى بتشتغل، والتانية بتوقع بـ [[ReferenceError: Cannot access 'sayHi' before initialization]].` },
+            { lvl: 'تحدي', t: R`**ابني:** ٣ arrows صغيرة: [[addVat(p)]] (١٤٪) و [[applyCoupon(p, percent)]] و [[formatEGP(p)]] (رقمين عشريين و «ج.م»)، وركّبهم في سطر واحد على سعر 200 وكوبون 10٪.`, done: R`[[formatEGP(applyCoupon(addVat(200), 10))]] بيطبع [[205.20 ج.م]]. وكل دالة بترجّع قيمة ومبتطبعش، فتقدر تبدّل ترتيب الكوبون والضريبة وتقارن.` }
           ],
           flag: "script",
           deep: {
-            why: "كل حاجة تقريبًا objects: الـ user، والـ request، والـ props، والـ config، ورد الـ API. ومعظم الكود بيقرا ويبني objects.",
-            how: R`المفاتيح دايمًا strings أو symbols. لو كتبت [[{ 1: "a" }]] المفتاح بقى [["1"]]. عشان كده لو محتاج مفاتيح من أي نوع (objects أو أرقام حقيقية) استخدم Map.
+            why: "هتشوف الأشكال التلاتة في كل كود، ولازم تعرف تقراهم. والاختيار بينهم مش ذوق بس: فرق الـ this بيكسر كود حقيقي، والـ hoisting بيفرق في ترتيب الكود.",
+            how: R`الدوال في JS قيم (first-class): تتحط في متغير، وتتبعت كـ argument، وترجع من دالة، وليها خصايص ([[add.name]] و [[add.length]]).
 
-ترتيب المفاتيح: الأرقام الصحيحة الأول بالترتيب التصاعدي، وبعدين الـ strings بترتيب الإضافة.
+الـ function declaration بيتعملها hoisting كاملة، فتقدر تناديها قبل سطرها. الـ expression والـ arrow لأ، لأنهم متغيرات عادية (const) (درس hoisting).
 
-[[?.]] بيوقف السلسلة أول ما يلاقي null أو undefined ويرجّع undefined. بيشتغل مع الـ methods كمان: [[user.getName?.()]]، ومع الأقواس: [[obj?.[key]]].
+الـ arrow بجسم من غير [[{ }]] بترجّع الـ expression على طول (implicit return). ولو عايز ترجّع object لازم تلفّه في قوسين [[({ })]]، وإلا JS هيفتكر الـ [[{]] بداية جسم الدالة.
 
-[[in]] بيسأل «المفتاح موجود؟» حتى لو قيمته undefined، وبيدوّر في الـ prototype كمان. [[Object.hasOwn(obj, key)]] بيسأل عن الـ object نفسه بس.
-
-و [[delete]] بيشيل الخاصية فعلًا، مش زي [[obj.x = undefined]] اللي بيسيب المفتاح موجود وقيمته undefined.`,
-            when: R`النقطة في العادي. الأقواس لما المفتاح في متغير أو فيه حروف غريبة. [[?.]] لداتا ممكن تكون ناقصة (رد API)، مش في كل سطر.`,
-            mistakes: R`[[obj.key]] وانت قصدك [[obj[key]]] (المتغير): الأولى بتدوّر على مفتاح اسمه حرفيًا "key". وتحط [[?.]] في كل حتة فتخبّي bugs. و arrow function كـ method: this مش هتبقى الـ object. وتستخدم object كـ dictionary بمفاتيح من اليوزر: مفتاح زي [["__proto__"]] ممكن يعمل مشاكل (prototype pollution)، استخدم Map.`
+وفرق الـ this هو الأهم: الدالة العادية الـ this بتاعتها بتتحدد وقت النداء، والـ arrow بتاخد this من المكان اللي اتكتبت فيه (درس this في المستوى ٢).`,
+            when: R`arrow في الـ callbacks ([[map]] و [[filter]] و [[then]] و event handlers) وأي دالة صغيرة. function declaration للدوال الكبيرة اللي عايز تحطها تحت في الملف. و method عادية (مش arrow) جوه الـ objects والـ classes لما محتاج this.`,
+            mistakes: R`ترجّع object من arrow من غير قوسين فترجع undefined. وتستخدم arrow كـ method في object وتستنى this تبقى الـ object. وتنسى [[return]] في arrow بجسم [[{ }]]: [[arr.map((x) => { x * 2 })]] بترجّع array كلها undefined. وفي الانترفيو: «الفرق بين arrow و regular function؟» قول this و arguments و new و hoisting.`
           },
-          teach: R`## الفكرة في سطرين
+          teach: R`## الفكرة
 
-الـ object «شنطة» فيها حاجات ليها أسامي: كل حاجة **مفتاح** (key) و**قيمة** (value). المثال بيعمل object لمنتج اسمه product، وبعدين يقرا منه بكذا طريقة، ويضيف ويمسح، ويسأل «المفتاح ده موجود؟». كل الأرقام اللي تحت طالعة من تشغيل الكود في ملف [[app.js]] بـ Node 24 ([[node app.js]]) مع [[console.log]] حوالين كل سطر.
-
----
-
-## ١. المتغيرين اللي فوق
-
-~~~text app.js
-const key = "color";
-const name = "Mug";
-~~~
-
-[[const]] بيعمل متغير مينفعش يتربط بقيمة تانية. الاتنين strings عادية، بس هنستخدمهم جوه الـ object بطريقتين مختلفتين: [[key]] كـ **اسم مفتاح**، و [[name]] كـ **قيمة**.
+نفس الدالة ممكن تتكتب بـ ٣ أشكال. المثال بيكتب [[add]] و [[multiply]] و [[square]] كل واحدة بشكل، وبعدين بيوريك حالتين خاصين بالـ arrow: ترجيع object، و arrow بجسم كامل. اتشغّل في Node 24.
 
 ---
 
-## ٢. بناء الـ object سطر سطر
+## ١. function declaration
 
-~~~text app.js
-const product = {
-  name,
-  price: 120,
-  [key]: "red",
-  "in-stock": true,
-  describe() {
-    return $__bt$__{this.name} بـ $__{this.price}$__bt;
-  },
-};
-~~~
-
-### [[{ }]]: object literal
-
-القوسين المعووجين بعد [[=]] معناهم «اعمل object جديد دلوقتي». و literal يعني إنك كاتب القيمة نفسها في الكود، زي ما [["Mug"]] string literal. وكل خاصية بتتفصل عن اللي بعدها بـ [[,]]. والفاصلة بعد آخر خاصية (trailing comma) مسموحة، وبتسهّل إضافة سطر جديد.
-
-### [[name,]]: الـ shorthand
-
-لما اسم المفتاح زي اسم المتغير بالظبط، مش لازم تكتبه مرتين. [[name,]] هي نفسها [[name: name,]]: مفتاح اسمه name، وقيمته قيمة المتغير name يعني [["Mug"]].
-
-### [[price: 120]]: الشكل العادي
-
-المفتاح على الشمال، و [[:]] ، والقيمة على اليمين. المفتاح من غير علامات تنصيص لأنه اسم عادي (حروف وأرقام و [[_]] و [[$]]).
-
-### [[[key]: "red"]]: الـ computed key
-
-الأقواس المربعة حوالين المفتاح معناها: «متاخدش الكلمة key حرفيًا، احسب قيمتها». قيمة [[key]] هي [["color"]]، فالخاصية اللي اتعملت اسمها color.
-
-### [["in-stock": true]]: مفتاح بحروف غريبة
-
-[[-]] في JS معناها طرح، فمينفعش تكتب [[in-stock: true]] من غير تنصيص. أي مفتاح فيه شرطة أو مسافة أو يبدأ برقم لازم يتكتب كـ string.
-
-### [[describe() { ... }]]: method
-
-دالة جوه object اسمها **method**. الشكل [[describe() {}]] اختصار لـ [[describe: function () {}]]. وجواها:
-
-- [[this]]: الـ object اللي الـ method اتنادت عليه. لما تكتب [[product.describe()]]، اللي قبل النقطة هو product، فـ [[this.name]] تبقى [["Mug"]].
-- [[$__bt...$__bt]] مع [[$__{...}]]: template literal (درس template literals)، بيحط القيم جوه النص.
-
-لو طبعت الـ object كله:
-
-~~~text الناتج: console.log(product)
-{
-  name: 'Mug',
-  price: 120,
-  color: 'red',
-  'in-stock': true,
-  describe: [Function: describe]
+~~~text functions.js
+function add(a, b) {
+  return a + b;
 }
 ~~~
 
-لاحظ إن [[[key]]] بقت [[color]] فعلًا، و Node بيكتب [['in-stock']] بين تنصيص عشان فيها شرطة.
+- [[function]]: الكلمة اللي بتبدأ دالة.
+- [[add]]: اسمها.
+- [[(a, b)]]: الباراميترات: أسماء للقيم اللي هتتبعت وقت النداء.
+- [[{ ... }]]: جسم الدالة.
+- [[return a + b;]]: احسب وابعت الناتج لمكان النداء. من غير [[return]] الدالة بترجّع [[undefined]].
 
----
-
-## ٣. القراية بـ ٣ طرق
+الشكل ده بيتعمله **hoisting**: تقدر تناديه قبل سطره في الملف:
 
 ~~~text app.js
-product.price;            // 120
-product["in-stock"];      // true
-product[key];             // "red"
+console.log(early(2));
+function early(x) { return x * 10; }
 ~~~
-
-| الشكل | معناه | الناتج |
-|---|---|---|
-| [[product.price]] | النقطة: المفتاح اسمه حرفيًا price | [[120]] |
-| [[product["in-stock"]]] | الأقواس مع string: لازم هنا عشان الشرطة | [[true]] |
-| [[product[key]]] | الأقواس مع متغير: اسم المفتاح هو قيمة key | [[red]] |
-
-والفرق بين النقطة والأقواس مع المتغير هو أشهر لخبطة. جرّبتها:
 
 ~~~text الناتج
-product.key        →  undefined
-product[key]       →  red
+20
 ~~~
-
-[[product.key]] بتدوّر على مفتاح اسمه حرفيًا [["key"]]، ومفيش. ولو حاولت تقرا بالنقطة مفتاح فيه شرطة:
-
-~~~text الناتج: product.in-stock
-ReferenceError: stock is not defined
-~~~
-
-JS فهمها [[product.in - stock]]: يعني اقرا خاصية اسمها in واطرح منها متغير اسمه stock، والمتغير ده مش موجود.
 
 ---
 
-## ٤. إضافة ومسح خاصية
+## ٢. function expression
 
-~~~text app.js
-product.size = "L";       // إضافة خاصية
-delete product.size;      // مسح خاصية
+~~~text functions.js
+const multiply = function (a, b) {
+  return a * b;
+};
 ~~~
 
-- لو كتبت لخاصية مش موجودة، بتتعمل. فبعد السطر الأول [[product.size]] بقت [["L"]].
-- بس استنى: product معمول بـ [[const]]! [[const]] بيمنع إنك تربط **المتغير** بـ object تاني ([[product = {}]] غلط)، لكن مش بيمنع إنك تعدّل **جوه** الـ object.
-- [[delete]] بيشيل المفتاح نفسه. بعده [[product.size]] بترجع undefined و [["size" in product]] بترجع false.
+دالة من غير اسم بعد [[function]]، ومتحطة في متغير [[multiply]]. هي «قيمة» بتتعيّن زي أي رقم، عشان كده فيه [[;]] بعد [[}]]. ومش بيتعملها hoisting زي الأولى، لأنها متغير [[const]].
 
 ---
 
-## ٥. [[in]]: المفتاح موجود؟
+## ٣. arrow function بسطر واحد
 
-~~~text app.js
-"price" in product;       // true
+~~~text functions.js
+const square = (x) => x * x;
 ~~~
 
-[[in]] بترجّع true أو false. وفايدتها إنها بتفرّق بين «المفتاح مش موجود» و «موجود وقيمته undefined»:
+- [[(x)]]: الباراميتر.
+- [[=>]]: السهم، ومنه الاسم arrow.
+- [[x * x]]: من غير [[{ }]]، الـ expression ده **بيترجع لوحده** (implicit return).
+
+يعني ده نفس:
+
+~~~text functions.js
+const square = function (x) { return x * x; };
+~~~
+
+---
+
+## ٤. arrow بترجّع object: الأقواس
+
+~~~text functions.js
+const toUser = (name) => ({ name, active: true });
+~~~
+
+- [[{ name, active: true }]]: object. و [[name]] لوحدها اختصار لـ [[name: name]] (shorthand).
+- الأقواس [[( )]] حوالين الـ object ضرورية. من غيرها JS بيفهم [[{]] بداية جسم دالة:
+
+~~~text الناتج من غير القوسين (Node 24)
+const toUser = (name) => { name, active: true };
+                                       ^
+
+SyntaxError: Unexpected token ':'
+~~~
+
+ولو سبت جواه [[{ name }]] بس، مفيش error، بس الدالة بترجّع [[undefined]] لأن ده بقى جسم دالة فيه سطر [[name]] ومفيش return. اتجرّب: [[const toUser2 = (name) => { name };]] وبعدين [[toUser2("Sara")]] طلعت [[undefined]].
+
+---
+
+## ٥. arrow بجسم كامل
+
+~~~text functions.js
+const logAll = (...items) => {
+  items.forEach((item) => console.log(item));
+};
+~~~
+
+- [[...items]] (rest): لمّ كل الـ arguments اللي هتتبعت في array اسمها [[items]] (الدرس اللي جاي).
+- [[{ ... }]] بعد السهم: جسم كامل، فهنا لو عايز ترجّع لازم [[return]].
+- [[items.forEach((item) => console.log(item))]]: لف على كل عنصر واطبعه. والـ [[(item) => ...]] جواها arrow تانية بتتبعت كـ callback.
+
+~~~text app.js
+console.log(logAll("a", "b"));
+~~~
 
 ~~~text الناتج
-const p2 = { x: undefined };
-"x" in p2   →  true
-p2.x        →  undefined
-~~~
-
----
-
-## ٦. [[?.]]: optional chaining
-
-~~~text app.js
-product.discount?.value;  // undefined من غير error
-~~~
-
-اتقرا من الشمال: [[product.discount]] مش موجودة، فقيمتها undefined. من غير [[?.]]، قراية [[.value]] من undefined بترمي error:
-
-~~~text الناتج: product.discount.value
-TypeError: Cannot read properties of undefined (reading 'value')
-~~~
-
-الرسالة بتقولك بالظبط: حاولت تقرا [['value']] من حاجة undefined. أما [[?.]] فمعناها «لو اللي على الشمال null أو undefined، وقّف هنا ورجّع undefined». فالسطر بيطلع [[undefined]] بهدوء.
-
----
-
-## ٧. الـ method و this
-
-~~~text الناتج
-product.describe()   →  Mug بـ 120
-~~~
-
-ولو فصلت الدالة عن الـ object ([[const f = product.describe; f()]]) الناتج في Node كان [[undefined بـ undefined]]: النداء مبقاش قبله [[product.]]، فـ this مبقتش product. ده موضوع درس this.
-
----
-
-## ٨. فخاخ [[?.]] و [[??]]
-
-[[?.]] و [[??]] بيختصروا كتير، وليهم خمس حالات بتلخبط. كلهم اتجرّبوا على Node 24.22.1:
-
-~~~js opt.js
-const u1 = { profile: null };
-const u2 = { profile: {} };
-console.log(u1.profile?.address.city);
-console.log(u2.profile?.address.city);
-~~~
-
-~~~text الناتج (السطر التاني بيرمي)
+a
+b
 undefined
-TypeError: Cannot read properties of undefined (reading 'city')
 ~~~
 
-### ١. [[?.]] بتحمي **اللي قبلها** بس
+[[undefined]] في الآخر لأن [[logAll]] ملهاش return. ونفس الغلطة مع [[map]]:
 
-في [[u1]]: [[profile]] بـ [[null]] فـ [[?.]] وقفت السلسلة **كلها** ورجّعت [[undefined]]، و [[.city]] متنفذتش أصلًا (اسمها short-circuit).
-
-في [[u2]]: [[profile]] موجود ({})، فـ [[?.]] عدّت، و [[.address]] طلعت [[undefined]]، و [[.city]] اتقرت منها من غير حماية. لو [[address]] ممكن تبقى ناقصة كمان: [[u2.profile?.address?.city]] (طلعت [[undefined]]).
-
-### ٢. مينفعش تكتب بيها
-
-~~~text user?.name = "x"
-SyntaxError: Invalid left-hand side in assignment
+~~~text app.js
+console.log([1, 2].map((x) => { x * 2 }));
 ~~~
 
-[[?.]] للقراية والنداء بس. لو عايز تكتب لو موجود: [[if (user) user.name = "x"]].
-
-### ٣. [[??]] مع [[||]] من غير أقواس ممنوعة
-
-~~~text null ?? 0 || 5
-SyntaxError: Unexpected token '||'
+~~~text الناتج
+[ undefined, undefined ]
 ~~~
 
-اللغة رافضة تخمّن الأولوية. حط الأقواس: [[(null ?? 0) || 5]] طلعت [[5]].
+---
 
-### ٤. [[??]] و [[||]] مش نفس الحاجة مع الصفر والنص الفاضي
+## ٦. النداء
 
-| التعبير | الناتج | ليه |
+~~~text Node REPL
+> add(2, 3)
+5
+> square(4)
+16
+> toUser("Sara")
+{ name: 'Sara', active: true }
+~~~
+
+النداء واحد للأشكال التلاتة: الاسم وبعده [[( )]] فيها القيم. [[2]] بقت [[a]] و [[3]] بقت [[b]].
+
+---
+
+## ٧. فروق اتجرّبت
+
+~~~text app.js
+console.log(add.name, add.length, typeof add);
+const Arr = () => {};
+try { new Arr(); } catch (e) { console.log(e.name + ": " + e.message); }
+~~~
+
+~~~text الناتج
+add 2 function
+TypeError: Arr is not a constructor
+~~~
+
+- الدوال قيم ليها خصايص: [[name]] اسمها، و [[length]] عدد باراميتراتها.
+- الـ arrow مينفعش تتعمل بـ [[new]]. و [[try { ... } catch (e) { ... }]] بتمسك الـ error بدل ما البرنامج يقع، و [[e.name]] و [[e.message]] نوعه ورسالته.
+- ولو ناديت arrow (أو أي [[const]]) قبل سطرها: [[ReferenceError: Cannot access 'lateArrow' before initialization]].
+
+---
+
+## ٨. recursion: دالة بتنادي نفسها
+
+الدالة ممكن تنادي نفسها. ده اسمه **recursion**، وبيبقى أوضح من اللوب لما الداتا نفسها متداخلة (فولدر جواه فولدرات، تعليق عليه ردود، قايمة جواها قوايم).
+
+~~~js recursion.js
+function sumTo(n) {
+  if (n <= 0) return 0;          // الـ base case: هنا بنقف
+  return n + sumTo(n - 1);       // نفس المشكلة بس أصغر بواحد
+}
+console.log(sumTo(100));
+~~~
+
+~~~text الناتج · Node 24.22.1
+5050
+~~~
+
+**أي recursion محتاج حاجتين:**
+
+| الحتة | بتعمل إيه | لو نسيتها |
 |---|---|---|
-| [[0 \|\| 'd']] | [['d']] | [[0]] falsy، فـ [[\|\|]] عدّتها |
-| [[0 ?? 'd']] | [[0]] | [[0]] مش null ولا undefined |
-| [['' ?? 'd']] | [['']] | النص الفاضي مش nullish |
-| [[NaN ?? 'd']] | [[NaN]] | [[NaN]] رقم، فـ [[??]] مبتلمسهوش |
+| الـ base case ([[if (n <= 0) return 0]]) | أصغر حالة، إجابتها معروفة من غير نداء تاني | الدالة بتنادي نفسها للأبد لحد ما الـ stack يتملي |
+| الخطوة ([[n + sumTo(n - 1)]]) | بتحل جزء وبتدّي الباقي لنفس الدالة بمدخل **أصغر** | لو المدخل مبيصغرش (مثلًا [[sumTo(n)]])، نفس النتيجة: مبتقفش |
 
-يعني [[??]] **مبتنضّفش** القيم الغلط، بتملا الناقص بس. لو [[NaN]] ممكن ييجي (رقم من فورم مثلًا) افحصه بـ [[Number.isNaN]].
+### بتمشي إزاي من جوه
 
-### ٥. [[?.]] ممكن تخبّي الباج
+كل نداء بيستنى اللي بعده يخلص. فـ [[sumTo(3)]] بتبقى:
 
-[[order?.items?.length ?? 0]] بيطلع [[0]] بهدوء سواء الطلب مفيهوش بنود فعلًا أو الـ API بعت [[item]] بدل [[items]] بالغلط. الصفحة بتقول «مفيش بنود» والباج مستخبي. استخدم [[?.]] لما الحاجة **مسموح** تكون ناقصة، مش في كل نقطة «احتياطي» (درس «اقرا رسالة الخطأ في JavaScript» فيه الحالة دي بالتفصيل).
+~~~text
+sumTo(3) = 3 + sumTo(2)
+               2 + sumTo(1)
+                   1 + sumTo(0)
+                       0          <- base case، ومن هنا بنرجع لفوق
+               2 + 1 = 3
+3 + 3 = 6
+~~~
+
+كل نداء مستني بيتحفظ في الـ **call stack** (نفس السطور اللي بتشوفها في الـ stack trace، درس «اقرا الـ error»).
+
+### والـ stack ليه حد
+
+~~~js
+let depth = 0;
+function dive() { depth++; dive(); }      // مفيش base case
+try { dive(); } catch (e) { console.log(e.name + ':', e.message, '| depth', depth); }
+try { sumTo(100000); } catch (e) { console.log('sumTo(100000):', e.name, e.message); }
+~~~
+
+~~~text الناتج · Node 24.22.1
+RangeError: Maximum call stack size exceeded | depth 12502
+sumTo(100000): RangeError Maximum call stack size exceeded
+~~~
+
+- **حوالي ١٢ ألف نداء** على Node 24 وبعدها [[RangeError]]. الرقم بيختلف حسب حجم كل نداء والمتصفح، فمتعتمدش عليه.
+- يعني [[sumTo]] الـ recursive **أضعف** من اللوب اللي في تمرين sumTo: اللوب عدّ لـ ١٠٠ مليون في حوالي 68ms من غير أي مشكلة. فلما المشكلة «عدّ لحد n» استخدم لوب. و V8 مبيعملش tail call optimization: جرّبت نسخة [[tail(n, acc)]] النداء فيها آخر حاجة، و [[tail(100000)]] وقعت بنفس الـ [[RangeError]].
+
+### فين recursion بيكسب فعلًا: الداتا المتداخلة
+
+~~~js
+const tree = { name: 'src', children: [
+  { name: 'a.js' },
+  { name: 'lib', children: [{ name: 'b.js' }, { name: 'c.js' }] },
+] };
+const files = (node) => node.children ? node.children.flatMap(files) : [node.name];
+console.log(files(tree));
+~~~
+
+~~~text الناتج
+[ 'a.js', 'b.js', 'c.js' ]
+~~~
+
+- لو العنصر فيه [[children]]: هات الملفات من كل واحد منهم (بنفس الدالة) و [[flatMap]] بتلمّهم في array واحدة.
+- لو مفيهوش: ده ملف، والإجابة [[[node.name]]]. ده الـ base case.
+
+بلوب عادي كنت هتحتاج stack بإيدك. والعمق هنا عمق الفولدرات (عشرات مثلًا)، مش آلاف، فالـ stack مش مشكلة. وهتقابل نفس الشكل في الـ deep copy (درس «reference و copy») و deep equal (وحدة أسئلة انترفيو).
 
 ---
 
 ## الخلاصة
 
-| الحاجة | الشكل | تفتكر إيه |
-|---|---|---|
-| shorthand | [[{ name }]] | = [[{ name: name }]] |
-| computed key | [[{ [key]: v }]] | المفتاح = قيمة المتغير |
-| مفتاح غريب | [[{ "in-stock": v }]] | تنصيص، وتقراه بالأقواس |
-| method | [[describe() {}]] | this = اللي قبل النقطة |
-| قراية بمتغير | [[obj[key]]] | مش [[obj.key]] |
-| إضافة / مسح | [[obj.x = 1]] / [[delete obj.x]] | شغال مع const |
-| موجود؟ | [["x" in obj]] | true حتى لو القيمة undefined |
-| ممكن ناقص | [[obj.a?.b]] | undefined بدل TypeError |
+| | declaration | expression | arrow |
+|---|---|---|---|
+| الشكل | [[function f() {}]] | [[const f = function () {}]] | [[const f = () => ...]] |
+| hoisting (تتنادي قبل سطرها) | أيوة | لأ | لأ |
+| return من غير كلمة return | لأ | لأ | أيوة لو مفيش [[{ }]] |
+| [[new]] | أيوة | أيوة | لأ |
+| [[this]] بتاعتها | أيوة | أيوة | لأ، بتاخدها من برّه |
 
-> المفاتيح دايمًا strings (أو symbols): [[Object.keys({ 1: "a" })]] طلعت [[[ '1' ]]] والنوع string.
-- [[?.]] بتحمي اللي قبلها بس، ومينفعش تكتب بيها، و [[??]] مع [[||]] لازمها أقواس.`,
+arrow للـ callbacks والدوال الصغيرة، و declaration للدوال الكبيرة. ولو بترجّع object من arrow: [[({ ... })]].
+- recursion: base case وخطوة بتصغّر، والـ stack بيقع بعد حوالي ١٢ ألف نداء، فاستخدمه للداتا المتداخلة مش للعدّ.`,
           lines: [
-            R`اسم مفتاح محفوظ في متغير. هنستخدمه تحت كـ computed key، يعني اسم الخاصية نفسه هيتحدد وقت التشغيل من قيمة المتغير ده، مش وقت ما تكتب الكود.`,
-            R`متغير عادي اسمه [[name]]. موجود هنا عشان نشوف الـ shorthand في السطر الرابع: لما اسم المتغير هو هو اسم الخاصية اللي عايز تعملها.`,
-            R`بداية الـ object literal: الأقواس [[{ }]] بتعمل object جديد في الميموري، و [[product]] بيشاور عليه. الـ [[const]] بتمنع إن [[product]] يشاور على حاجة تانية، بس مش بتمنع تعديل اللي جواه.`,
-            R`shorthand: لما المتغير والخاصية نفس الاسم بتكتب الاسم مرة واحدة، وده بالظبط زي [[name: name]]. فالخاصية [[name]] قيمتها [["Mug"]] اللي في المتغير.`,
-            R`الشكل العادي: المفتاح وبعده [[:]] وبعده القيمة. المفتاح هنا string ([["price"]]) حتى لو مكتبتش علامات تنصيص، والفصلة بتفصل بين الخصايص.`,
-            R`computed key: الأقواس المربعة معناها «احسب اسم المفتاح من اللي جوايا». [[key]] قيمته [["color"]]، فالخاصية اللي اتعملت اسمها [[color]] وقيمتها [["red"]]. من غير الأقواس هيبقى عندك خاصية اسمها حرفيًا [[key]].`,
-            R`الاسم فيه شرطة فلازم يتكتب بين علامات تنصيص، لأن من غيرها JS هتفهم [[in-stock]] كـ «in ناقص stock» وتطلع SyntaxError. وهتقراه بعدين بالأقواس المربعة بس، مش بالنقطة.`,
-            R`method بالشكل المختصر: ده نفس [[describe: function () {}]] بس أقصر. الـ method هي دالة متخزنة كخاصية في الـ object، وبتتنادى بـ [[product.describe()]].`,
-            R`بترجّع نص مبني من خصايص الـ object. [[this]] هنا هو الـ object اللي قبل النقطة وقت النداء، فـ [[product.describe()]] بتطلع [["Mug بـ 120"]]. لو خدت الدالة في متغير وناديتها لوحدها [[this]] بيضيع (الـ sol فيه التفاصيل).`,
-            R`نهاية [[describe]]. الفصلة اللي بعدها مسموحة حتى لو دي آخر خاصية (trailing comma)، وبتسهّل إنك تضيف خاصية بعدها من غير ما تنسى فصلة.`,
-            R`نهاية الـ object. دلوقتي [[product]] فيه خمس خصايص: [[name]] و [[price]] و [[color]] و [["in-stock"]] و [[describe]].`,
-            R`قراية بالنقطة: أوضح طريقة، وبتنفع لما اسم الخاصية معروف وانت بتكتب الكود ومفيهوش رموز زي الشرطة أو المسافة.`,
-            R`قراية بالأقواس المربعة واسم الخاصية string، ولازم هنا عشان الشرطة: [[product.in-stock]] بالنقطة بتتقري طرح ([[product.in]] ناقص [[stock]]) وترمي ReferenceError لأن [[stock]] مش متعرّف.`,
-            R`الأقواس المربعة بتقبل متغير كمان: [[key]] قيمته [["color"]] فده نفس [[product.color]] ويرجّع [["red"]]. خلي بالك: [[product.key]] بالنقطة بتدوّر على خاصية اسمها حرفيًا [[key]] وترجّع [[undefined]].`,
-            R`إضافة خاصية بعد الإنشاء: أول ما تدّي قيمة لخاصية مش موجودة بتتعمل. ومسموح مع [[const]] لأنك بتعدّل جوه الـ object مش بتغيّر [[product]] نفسه. لو عايز تمنع ده فيه [[Object.freeze]].`,
-            R`[[delete]] بتشيل الخاصية من الـ object خالص، فبعدها [[product.size]] بترجّع [[undefined]] و [[Object.keys]] مش هتشوفها. ده غير إنك تكتب [[product.size = undefined]]: ساعتها المفتاح بيفضل موجود وقيمته فاضية.`,
-            R`[[in]] بتسأل «المفتاح ده موجود؟» وترجّع [[true]] أو [[false]]، وده أدق من [[if (product.price)]] اللي هتقول لأ لو السعر [[0]]. بس خلي بالك إنها بتعد الخصايص الموروثة كمان: [["toString" in product]] بترجّع [[true]].`,
-            R`[[discount]] مش موجودة فقيمتها [[undefined]]، و [[?.]] (optional chaining) بتوقف وترجّع [[undefined]] بدل ما تحاول تقرا [[value]] من [[undefined]]. من غيرها [[product.discount.value]] بترمي TypeError وتوقف البرنامج.`,
+            R`function declaration: بتعرّف دالة اسمها [[add]] بتاخد باراميترين. ولأنها declaration، JS بيسجّلها كاملة قبل ما ينفّذ أي سطر (hoisting)، فتقدر تناديها حتى من سطر قبل السطر ده.`,
+            R`بترجّع ناتج الجمع للي نادى الدالة. في الجسم اللي بين [[{ }]] الـ [[return]] لازمة: من غيرها الدالة بتشتغل عادي بس بترجّع [[undefined]].`,
+            R`نهاية [[add]].`,
+            R`function expression: دالة من غير اسم متحطة كقيمة في المتغير [[multiply]]. على عكس الـ declaration، مينفعش تناديها قبل السطر ده، لأن [[const]] لسه مالوش قيمة (TDZ) وهترمي ReferenceError.`,
+            R`نفس قواعد الجسم العادي: لازم [[return]] صريحة عشان الناتج يطلع برّه الدالة.`,
+            R`نهاية الدالة. الـ [[;]] هنا لأن السطر كله تعيين متغير ([[const multiply = ...]])، مش تعريف دالة زي [[add]].`,
+            R`arrow function في سطر واحد: من غير [[{ }]]، الـ expression اللي بعد [[=>]] بيترجّع لوحده (implicit return). ده الشكل اللي هتشوفه كتير في الـ callbacks الصغيرة.`,
+            R`بترجّع object جديد فيه [[name]] (اختصار لـ [[name: name]]) و [[active: true]]. القوسين حوالين الـ object ضروريين: من غيرهم JS بيفهم [[{]] بداية جسم دالة، فيا يطلع SyntaxError يا الدالة ترجّع [[undefined]].`,
+            R`arrow بجسم كامل بين [[{ }]]: هنا مفيش return تلقائي، فلو عايز ترجّع حاجة لازم تكتب [[return]]. و [[...items]] (rest) بيلم كل الـ arguments اللي تتبعت، أي عدد، في array واحدة.`,
+            R`بتلف على كل عنصر في [[items]] وتطبعه في سطر لوحده. والـ callback اللي جوه [[forEach]] نفسه arrow، وده الاستخدام المعتاد ليها.`,
+            R`نهاية [[logAll]].`,
+            R`نداء عادي بيرجّع [[5]]. ولاحظ إن شكل النداء واحد مهما كانت الدالة اتعرّفت بأنهي شكل.`,
+            R`نداء الـ arrow زي العادية بالظبط، ورجّعت [[16]] من غير ما نكتب [[return]].`,
+            R`بترجّع object جديد [[{ name: "Sara", active: true }]]، وكل نداء بيعمل object منفصل في الذاكرة مش نفس الـ object.`,
           ],
-          sol: R`[[product.describe()]] بتطبع [["Mug بـ 120"]]. و [[product.discount.value]] بتطلع [[TypeError: Cannot read properties of undefined (reading 'value')]] لأن discount مش موجودة، فانت بتقرا value من undefined.
+          sol: R`[[const add = (a, b) => a + b;]] وبترجّع 5 لـ [[add(2, 3)]]: من غير أقواس معقوفة الـ arrow بترجّع قيمة التعبير لوحدها من غير [[return]].
 
-[[const f = product.describe; f()]] في ملف Node بترجّع [["undefined بـ undefined"]]: الدالة اتنادت من غير نقطة قبلها، فـ this مبقاش product. في ملف عادي (مش strict) this بيبقى globalThis ومفيهوش name ولا price. في Console المتصفح ممكن تشوف [[" بـ undefined"]] لأن [[window.name]] موجود وقيمته فاضية. ولو الكود strict (module أو class) هيطلع TypeError. التفاصيل في درس this.`
+من غير القوسين حوالين الـ object، JS بيشوف [[{]] بداية جسم دالة، فـ [[name, active: true]] جوه جسم دالة مالهاش معنى، والـ [[:]] هي اللي بتطلع SyntaxError (Unexpected token ':'). ولو سبت [[{ name }]] بس فده جسم دالة فيه سطر واحد هو التعبير [[name]]، ومفيش [[return]]، فالدالة بترجّع undefined من غير أي error. ده أخطر من الـ SyntaxError لأنه بيعدّي بهدوء. الحل: [[(name) => ({ name, active: true })]].`
         },
         {
-          cmd: "object destructuring و spread",
-          title: "تفك خصايص في متغيرات، وتعمل نسخة معدّلة",
-          desc: R`[[const { name, email } = user]] بتطلّع الخصايص في متغيرات بنفس الاسم. وتقدر تغيّر الاسم [[{ name: fullName }]]، وتحط default [[{ role = "user" }]]، وتلم الباقي [[{ password, ...safeUser }]].
+          cmd: "default و rest و spread",
+          title: "باراميتر ليه قيمة افتراضية، ودالة بتاخد أي عدد",
+          desc: R`[[function greet(name = "Guest")]] بتدي الباراميتر قيمة لو اتبعت [[undefined]] أو متبعتش خالص. و [[...nums]] (rest) بيلم أي عدد arguments في array. و [[...arr]] وقت النداء (spread) بيفرد الـ array arguments.
 
-و [[{ ...user, name: "New" }]] بتعمل object جديد فيه كل خصايص user، والـ name متغيرة. اللي بيتكتب في الآخر بيكسب. ودي الطريقة اللي بتعدّل بيها state في React.`,
-          example: R`const user = { id: 1, name: "Sara", email: "s@example.com", password: "x" };
-const { name, email } = user;
-const { name: fullName, role = "user" } = user;
-const { password, ...safeUser } = user;
-const updated = { ...user, name: "Sara Ali" };
-const userSettings = { lang: "en" };
-const settings = { theme: "light", lang: "ar", ...userSettings };
-function show({ name, address: { city } = {} }) {
-  return $__bt$__{name} من $__{city ?? "مكان مش معروف"}$__bt;
+ولما الدالة بتاخد إعدادات كتير، الأحسن تاخد object واحد وتفكّه (destructuring) بقيم افتراضية: [[function createUser({ name, role = "user" } = {})]]. كده الترتيب ميفرقش والنداء بيتقري لوحده.`,
+          example: R`function greet(name = "Guest", greeting = "Hi") {
+  return $__bt$__{greeting}, $__{name}$__bt;
 }
-show(user);   // "Sara من مكان مش معروف"`,
-          try: R`اطبع [[safeUser]] واتأكد إن password مش فيه. وبعدين حط [[...userSettings]] في أول الـ object بدل آخره وشوف [[lang]] بقت إيه.`,
+greet();                   // "Hi, Guest"
+greet(undefined, "Hey");   // "Hey, Guest"
+greet(null);               // "Hi, null": الـ default للـ undefined بس
+function sum(...nums) {
+  return nums.reduce((a, b) => a + b, 0);
+}
+sum(1, 2, 3);              // 6
+const scores = [90, 75, 88];
+Math.max(...scores);       // 90
+function createUser({ name, role = "user", active = true } = {}) {
+  return { name, role, active };
+}
+createUser({ name: "Sara", active: false });`,
+          try: R`نادي [[createUser()]] من غير أي حاجة، وبعدين امسح [[= {}]] من الباراميتر ونادي تاني واقرا الـ error. وبعدين جرّب [[Math.max(...[])]] وشوف بترجّع إيه.`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** من [[const movie = { title: "Up", year: 2009 }]] طلّع [[title]] في متغير اسمه [[name]]، و [[lang]] بـ default [["en"]]، في سطر destructuring واحد.`, done: R`[[name]] بيطبع [["Up"]] و [[lang]] بيطبع [["en"]]، و [[movie]] لسه فيه مفتاحين بس ومفيش [[lang]] اتضاف له.` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const updated = { name: "New", ...user };]] على [[user = { name: "Ali", age: 30 }]]. ليه الاسم لسه Ali؟`, done: R`فهمت إن اللي بييجي آخر هو اللي بيكسب، فـ [[...user]] رجّعت الاسم القديم. بعد [[{ ...user, name: "New" }]] الاسم بقى New والـ age لسه 30.` },
-            { lvl: 'تطبيق', t: R`**ابني:** اكتب [[updateTodo(todos, id, changes)]] بترجّع array جديدة: الـ todo اللي الـ id بتاعه مطابق بيبقى [[{ ...todo, ...changes }]]، والباقي زي ما هو، ومن غير ما تلمس الـ array الأصلية.`, done: R`بعد [[const next = updateTodo(todos, 2, { done: true })]]: الـ todo رقم ٢ في [[todos]] لسه [[done: false]] وفي [[next]] بقى [[true]]، و [[next === todos]] بترجّع [[false]]، والعناصر اللي متعدّلتش هي هي ([[next.at(0) === todos.at(0)]] بترجّع [[true]]).` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** إعدادات افتراضية [[{ theme: "light", notify: { email: true, sms: false } }]] وإعدادات اليوزر المحفوظة [[{ notify: { sms: true } }]]. ادمجهم بـ spread واطبع النتيجة.`, done: R`الدمج العادي طلّع [[notify: { sms: true }]] و [[email]] ضاعت، لأن الـ spread سطحي. بعد ما تدمج [[notify]] لوحدها كمان ([[notify: { ...defaults.notify, ...saved.notify }]]) طلع [[{ email: true, sms: true }]].` },
-            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[omit(obj, key)]] بسطر destructuring واحد فيه computed key و rest ([[const { [key]: _, ...rest } = obj]]). وبعدين عمّمها لـ [[omit(obj, ...keys)]]، واكتب العكس [[pick(obj, ...keys)]].`, done: R`[[omit({ a: 1, b: 2, c: 3 }, "a", "c")]] بترجّع [[{ b: 2 }]]، و [[pick({ a: 1, b: 2 }, "a", "z")]] بترجّع [[{ a: 1 }]] من غير [[z: undefined]]، والـ object الأصلي متغيّرش في الحالتين.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[greet(name = "ضيف")]] وجرّب [[greet()]] و [[greet(undefined)]] و [[greet(null)]].`, done: R`الأولتين بيرجعوا «أهلًا يا ضيف»، و [[greet(null)]] بترجّع «أهلًا يا null» (الـ default للـ undefined بس).` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[function logAll(...items, level) { console.log(level, items); }]]. شغّل الملف واقرا الرسالة، وصلّح الترتيب.`, done: R`node بيوقع قبل أي سطر بـ [[SyntaxError: Rest parameter must be last formal parameter]]. بعد [[function logAll(level, ...items)]]: [[logAll("info", 1, 2)]] بيطبع [[info]] وبعدها [[[ 1, 2 ]]].` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[sumAll(...nums)]] بتجمع أي عدد أرقام.`, done: R`[[sumAll()]] 0، و [[sumAll(1, 2, 3)]] 6، و [[sumAll(...[4, 5])]] 9.` },
+            { lvl: 'تطبيق', t: R`**refactor:** [[function total(a, b, c, d) { return (a || 0) + (b || 0) + (c || 0) + (d || 0); }]] بتقبل ٤ أرقام بس. خليها بـ rest وتقبل أي عدد، من غير ما نتايج الـ ٤ تتغيّر.`, done: R`[[total(1, 2)]] 3 و [[total(1, 2, 3, 4)]] 10 زي الأول، و [[total(1, 2, 3, 4, 5)]] بقت 15 (القديمة كانت بتطلع 10 وتتجاهل الخامس من غير ما تقولك).` },
+            { lvl: 'تحدي', t: R`**ابني:** [[createUser({ name, role = "user", active = true } = {})]] بترجّع object. جرّب [[createUser()]] و [[createUser({ name: "Ali", role: null })]] و [[Math.max(...[])]].`, done: R`[[createUser()]] بيرجّع role "user" و active true من غير error، والتانية role بتاعها null مش "user"، و [[Math.max(...[])]] بترجّع [[-Infinity]].` }
           ],
           flag: "script",
           deep: {
-            why: R`بتقلل التكرار ([[user.name]] و [[user.email]] في كل سطر)، وبتخلي باراميترات الدوال والـ props في React واضحة من أول سطر. و [[...rest]] أنضف طريقة تشيل خاصية حساسة قبل ما تبعت الداتا.`,
-            how: R`الـ destructuring بيدوّر على المفاتيح بالاسم (عكس الـ arrays بالترتيب). ولو المفتاح مش موجود القيمة undefined، والـ default بيشتغل.
+            why: "دوال بباراميترات اختيارية في كل حتة: pagination (صفحة وحجم)، و fetch helpers، و formatters. من غير defaults هتكتب [[if (x === undefined) x = ...]] في أول كل دالة.",
+            how: R`الـ default بيتحسب وقت النداء مش وقت التعريف، فـ [[function f(list = [])]] بتعمل array جديدة كل مرة (عكس Python). وممكن يعتمد على باراميتر قبله: [[function f(a, b = a * 2)]].
 
-التفكيك المتداخل [[{ address: { city } }]] بيعمل متغير [[city]] بس، مش [[address]]. ولو address نفسها undefined هيرمي TypeError، عشان كده [[= {}]].
+الـ default بيشتغل مع [[undefined]] بس، فـ null و 0 و "" بيعدّوا زي ما هم.
 
-الـ spread بينسخ الخصايص الخاصة بالـ object (own enumerable) بترتيبها، واللي بعده بيكتب فوقه. وهو shallow: [[updated.address]] هي نفس الـ object اللي في [[user.address]]. ومبينسخش getters كـ getters (بياخد قيمتها) ولا الـ prototype، فـ spread لـ instance من class بيطلّع object عادي من غير methods.`,
-            when: R`في باراميترات الدوال والـ props، ولما تاخد جزء من رد API، ولما تعدّل state: [[setUser({ ...user, name })]]. وللقيم الافتراضية: [[{ ...defaults, ...options }]].`,
-            mistakes: R`ترتيب الـ spread غلط فالـ defaults تمسح اختيارات اليوزر. وتفتكر إن [[{ ...user }]] نسخة عميقة وتعدّل [[copy.address.city]] فالأصل يتغير. وتفك من undefined فيرمي «Cannot destructure property 'x' of 'undefined' as it is undefined.». وتعمل [[const { password, ...rest }]] وتنسى إن [[password]] بقت متغير unused (عادي، أو سمّيه [[password: _]]).`
+[[...rest]] لازم يبقى آخر باراميتر، وهو array حقيقية (عكس [[arguments]] القديمة اللي array-like ومش موجودة في الـ arrow).
+
+الـ object parameter مع destructuring هو أنضف API: [[createUser({ name: "Sara", active: false })]] بتتقري لوحدها، عكس [[createUser("Sara", undefined, false)]]. و [[= {}]] في الآخر عشان لو اتنادت من غير arguments، التفكيك ميقعش على undefined.`,
+            when: R`default لأي باراميتر اختياري. rest لدوال زي [[sum]] و [[log]]. و object parameter لما الباراميترات أكتر من ٢ أو ٣، أو فيه أكتر من boolean.`,
+            mistakes: R`تبعت [[null]] وتستنى الـ default يشتغل. وتنسى [[= {}]] فالنداء الفاضي يرمي «Cannot destructure property». و [[Math.max(...hugeArray)]] بمئات الآلاف من العناصر ممكن يعدّي حد الـ arguments ويرمي RangeError: استخدم reduce. وباراميترات boolean ورا بعض ([[fn(true, false, true)]]) محدش فاهم معناها.`
           },
-          teach: R`## الفكرة في سطرين
+          teach: R`## الفكرة
 
-**destructuring** يعني «فك»: بدل ما تكتب [[const name = user.name]] و [[const email = user.email]] كل واحدة في سطر، بتكتب الشكل اللي عايزه على الشمال و JS يطلّع القيم. و **spread** ([[...]]) العكس تقريبًا: بيفرد خصايص object جوه object جديد. كل النواتج تحت من تشغيل المثال في [[app.js]] بـ Node 24.
+٣ أدوات بتخلي الدالة مرنة في الباراميترات: **default** (قيمة افتراضية لو محدش بعت)، و **rest** (لمّ أي عدد arguments في array)، و **spread** (عكسها: افرد array لـ arguments). وفي الآخر الشكل اللي هتشوفه كتير: الدالة بتاخد object واحد بإعدادات. كل اللي تحت اتشغّل في Node 24.
 
----
-
-## ١. الـ object اللي هنفك منه
-
-~~~text app.js
-const user = { id: 1, name: "Sara", email: "s@example.com", password: "x" };
-~~~
-
-object عادي فيه ٤ خصايص، منهم [[password]] اللي مش عايزينها تطلع برّه.
+> **باراميتر** هو الاسم في تعريف الدالة ([[name]])، و **argument** هي القيمة اللي بتتبعت وقت النداء ([["Sara"]]).
 
 ---
 
-## ٢. فك بسيط
-
-~~~text app.js
-const { name, email } = user;
-~~~
-
-لما [[{ }]] تيجي **على شمال** [[=]] معناها مش «اعمل object»، معناها «فك». JS بيدوّر في user على مفتاح اسمه name ويحطه في متغير اسمه name، ونفس الكلام لـ email. التدوير **بالاسم** مش بالترتيب: لو كتبت [[{ email, name }]] هتاخد نفس القيم.
-
-~~~text الناتج: console.log(name, email)
-Sara s@example.com
-~~~
-
----
-
-## ٣. تغيير الاسم والـ default
-
-~~~text app.js
-const { name: fullName, role = "user" } = user;
-~~~
-
-- [[name: fullName]]: اقرا المفتاح name، بس حطه في متغير اسمه **fullName**. اتعوّد تقراها «name ← fullName». ومفيش متغير اسمه name بيتعمل من السطر ده (وده كويس، لأن name معمول في السطر اللي فوق، ولو اتعمل تاني بـ const هيبقى SyntaxError).
-- [[role = "user"]]: user مفيهوش role، فالقيمة كانت هتبقى undefined، و [[=]] هنا معناها «لو undefined خد دي».
-
-~~~text الناتج: console.log(fullName, role)
-Sara user
-~~~
-
----
-
-## ٤. [[...rest]]: لم الباقي
-
-~~~text app.js
-const { password, ...safeUser } = user;
-~~~
-
-[[password]] بيتفك لوحده، و [[...safeUser]] (لازم تكون الأخيرة) بتلم **كل اللي فضل** في object جديد:
-
-~~~text الناتج: console.log(password, safeUser)
-x { id: 1, name: 'Sara', email: 's@example.com' }
-~~~
-
-ده الشكل المعتاد عشان تشيل حقل حساس قبل ما ترجّع يوزر من API.
-
----
-
-## ٥. spread: نسخة معدّلة
-
-~~~text app.js
-const updated = { ...user, name: "Sara Ali" };
-~~~
-
-هنا [[{ }]] **على يمين** [[=]]، يعني object جديد. و [[...user]] جواه معناها «انسخ كل خصايص user هنا»، وبعدين [[name: "Sara Ali"]] بتكتب فوق الـ name اللي اتنسخت:
-
-~~~text الناتج: console.log(updated, user.name)
-{ id: 1, name: 'Sara Ali', email: 's@example.com', password: 'x' } Sara
-~~~
-
-الأصل لسه [["Sara"]]: احنا معدّلناش user، عملنا object تاني.
-
----
-
-## ٦. ترتيب الـ spread: الأخير بيكسب
-
-~~~text app.js
-const userSettings = { lang: "en" };
-const settings = { theme: "light", lang: "ar", ...userSettings };
-~~~
-
-الـ object بيتبني من الشمال لليمين: theme بـ light، و lang بـ ar، وبعدين [[...userSettings]] بتحط lang بـ en فوق ar:
-
-~~~text الناتج: console.log(settings)
-{ theme: 'light', lang: 'en' }
-~~~
-
-ولو عكست وحطيت [[...userSettings]] في الأول:
-
-~~~text الناتج
-{ lang: 'ar', theme: 'light' }
-~~~
-
-اختيار اليوزر اتمسح. ولاحظ كمان إن lang بقت أول مفتاح: المفتاح بياخد مكانه من أول مرة اتحط فيها، والقيمة من آخر مرة.
-
----
-
-## ٧. فك جوه باراميتر دالة
-
-~~~text app.js
-function show({ name, address: { city } = {} }) {
-  return $__bt$__{name} من $__{city ?? "مكان مش معروف"}$__bt;
-}
-show(user);   // "Sara من مكان مش معروف"
-~~~
-
-نفكها من جوه لبرّه:
-
-1. [[{ name, ... }]] مكان الباراميتر: الدالة بتاخد object وتفكه على طول.
-2. [[address: { city }]]: فك متداخل. ادخل جوه address وطلّع city. المتغير اللي بيتعمل هو **city بس**، مفيش متغير اسمه address.
-3. [[= {}]]: لو address مش موجودة، اعتبرها object فاضي. من غيرها جرّبت:
-
-~~~text الناتج: نفس الدالة من غير = {}
-TypeError: Cannot read properties of undefined (reading 'city')
-~~~
-
-4. [[city ?? "مكان مش معروف"]]: [[??]] (nullish coalescing) بترجّع اللي على اليمين لو الشمال null أو undefined بس.
-
-~~~text الناتج
-show(user)                                         →  Sara من مكان مش معروف
-show({ name: "Omar", address: { city: "Cairo" } }) →  Omar من Cairo
-show()                                             →  TypeError: Cannot destructure property 'name' of 'undefined' as it is undefined.
-~~~
-
-الأخيرة لأن مفيش object خالص يتفك. لو عايزها تشتغل، حط [[= {}]] للباراميتر كله كمان.
-
----
-
-## الخلاصة
-
-| الشكل | مكانه | معناه |
-|---|---|---|
-| [[const { a } = obj]] | شمال [[=]] | فك بالاسم |
-| [[{ a: b }]] | شمال | اقرا a وسمّيه b |
-| [[{ a = 1 }]] | شمال | default لو undefined |
-| [[{ a, ...rest }]] | شمال | الباقي في object جديد |
-| [[{ ...obj, a: 2 }]] | يمين | نسخة والأخير بيكسب |
-| [[{ a: { b } = {} }]] | باراميتر | فك متداخل بأمان |
-
-> الـ spread نسخة **سطحية**: لو جوه user فيه object تاني، النسخة والأصل بيشاوروا على نفس الـ object (الدرس الجاي).`,
-          lines: [
-            R`object فيه بيانات يوزر ومعاها [[password]]، ودي الخاصية اللي مش عايزينها تطلع في response ولا في log. هنستخدمه في كل السطور اللي جاية.`,
-            R`destructuring: بيعمل متغيرين [[name]] و [[email]] وياخد قيمهم من الخصايص اللي بنفس الاسم في [[user]]، بدل سطرين [[const name = user.name]]. لو الاسم مش موجود في الـ object المتغير بيبقى [[undefined]] من غير error.`,
-            R`[[name: fullName]] معناها «خد [[name]] وحطه في متغير اسمه [[fullName]]» (مفيدة هنا لأن [[name]] متعرّف في السطر اللي فوق). و [[role = "user"]] قيمة default اشتغلت لأن [[user]] مفيهوش [[role]]. الـ default بيشتغل مع [[undefined]] بس، مش مع [[null]].`,
-            R`rest: [[password]] اتحط في متغير لوحده، و [[...safeUser]] لمّ كل الخصايص الباقية في object جديد. فـ [[safeUser]] فيه [[id]] و [[name]] و [[email]] من غير الباسورد، وده اللي تبعته للـ frontend. الـ [[...]] لازم تبقى آخر حاجة جوه الأقواس.`,
-            R`spread: [[...user]] بينسخ كل خصايص [[user]] في object جديد، وبعدها [[name]] بتكتب فوق النسخة. الترتيب مهم: اللي بييجي بعد بيكسب. والأصل [[user]] متغيرش، وده اللي React محتاجه عشان يعرف إن الـ state اتغير.`,
-            R`إعدادات اختارها اليوزر، وفيها اللغة بس. هنحطها فوق الإعدادات الافتراضية في السطر الجاي.`,
-            R`الـ defaults الأول وبعدها [[...userSettings]]: أي مفتاح موجود في الاتنين بياخد قيمة اللي بعده، فـ [[lang]] بقت [["en"]] و [[theme]] فضلت [["light"]]. لو عكست الترتيب اختيارات اليوزر هتتداس تحت الـ defaults.`,
-            R`الدالة بتفك الـ object اللي جايلها في الباراميتر نفسه: [[name]] من أول مستوى، و [[address: { city }]] بتدخل جوه [[address]] وتطلّع [[city]] بس ([[address]] نفسها مش بتبقى متغير). و [[= {}]] بتحمي من إن [[address]] تكون ناقصة: من غيرها هيحاول يفك [[undefined]] ويرمي TypeError.`,
-            R`[[city]] هنا [[undefined]] لأن مفيش address، فـ [[??]] بتحط النص البديل. [[??]] بتشتغل مع [[null]] و [[undefined]] بس، عكس [[||]] اللي بتعتبر [[""]] و [[0]] فاضيين وتستبدلهم برضه.`,
-            R`نهاية [[show]].`,
-            R`بنبعت [[user]] كله والدالة بتاخد منه اللي محتاجاه بس. مفيش [[address]] فالـ [[= {}]] اشتغلت و [[city]] طلعت [[undefined]]، والناتج [["Sara من مكان مش معروف"]] من غير أي error.`,
-          ],
-          sol: R`[[safeUser]] بيطبع [[{ id: 1, name: "Sara", email: "s@example.com" }]] من غير password: الـ rest بياخد كل اللي فضل بعد اللي فكّيته. ودي الطريقة المعتادة تشيل حقل حساس قبل ما ترجّع اليوزر في API.
-
-لما [[...userSettings]] يبقى في الأول، [[lang]] بتبقى [["ar"]] بدل [["en"]]: في الـ object literal آخر قيمة لنفس المفتاح هي اللي بتكسب. فالقاعدة: الـ defaults الأول، وإعدادات اليوزر في الآخر عشان تغطّي عليها. لو عكست الترتيب اختيار اليوزر هيتجاهل وده bug صعب تلاحظه.`
-        },
-        {
-          cmd: "reference و copy",
-          title: "ليه لما عدّلت النسخة الأصل اتغير؟",
-          desc: R`المتغير اللي فيه object مش شايل الـ object نفسه، شايل reference (عنوان) ليه. [[const b = a]] مبتنسخش، بتخلي الاتنين يشاوروا على نفس الـ object.
-
-[[{ ...a }]] و [[Object.assign]] بيعملوا نسخة سطحية (shallow): المستوى الأول جديد، بس أي object أو array جوه لسه مشتركة. للنسخة العميقة (deep) استخدم [[structuredClone(a)]]، وهي موجودة في كل المتصفحات و Node.
-
-ونفس الكلام لما تبعت object لدالة: الدالة بتاخد نفس الـ reference، فأي تعديل جواها بيظهر برّه.`,
-          example: R`const a = { name: "Sara", tags: ["js"] };
-const b = a;
-b.name = "Omar";
-console.log(a.name);            // "Omar": a و b نفس الـ object
-const shallow = { ...a };
-shallow.tags.push("ts");
-console.log(a.tags);            // ["js", "ts"]: الـ array اللي جوه مشتركة
-const deep = structuredClone(a);
-deep.tags.push("react");
-console.log(a.tags);            // ["js", "ts"]: الأصل متلمسش
-console.log({ x: 1 } === { x: 1 }); // false
-function rename(obj) { obj.name = "X"; }
-rename(a);
-console.log(a.name);            // "X": الدالة عدّلت الأصل`,
-          try: R`جرّب [[structuredClone({ date: new Date(), fn() {} })]] واقرا الـ error: الدوال مبتتنسخش. وبعدين جرّبها من غير [[fn]] واتأكد إن الـ Date رجعت Date. قارن ده بـ [[JSON.parse(JSON.stringify(...))]].`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** قبل ما تشغّل، خمّن: [[const cart = { items: ["mug"] }; const copy = { ...cart }; copy.items.push("cap");]] وبعدها اطبع [[cart.items]] و [[copy === cart]] و [[copy.items === cart.items]].`, done: R`[[cart.items]] بيطبع [[[ 'mug', 'cap' ] ]] (الأصل اتغيّر)، و [[copy === cart]] بترجّع [[false]] بس [[copy.items === cart.items]] بترجّع [[true]]: النسخة جديدة والـ array اللي جواها مشتركة.` },
-            { lvl: 'تطبيق', t: R`**ابني:** اكتب [[addTag(user, tag)]] بترجّع user جديد فيه الـ tag زيادة في [[tags]]، من غير ما تلمس الأصل: spread على الـ object وعلى الـ array اللي جواه.`, done: R`بعد [[const u2 = addTag(u1, "vip")]]: [[u1.tags]] لسه زي ما كانت، و [[u2.tags]] فيها [["vip"]] في الآخر، و [[u2.tags === u1.tags]] بترجّع [[false]].` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[const DEFAULTS = { tags: [] }; const makeUser = (name) => ({ ...DEFAULTS, name });]]. اعمل يوزرين وزوّد [["vip"]] في tags الأول بس، واطبع tags التاني.`, done: R`قبل التصليح التاني كمان فيه [[["vip"]]] لأن الاتنين شايلين نفس الـ array. بعد [[tags: []]] جديدة جوه makeUser (أو [[tags: [...DEFAULTS.tags]]]) التاني بيفضل [[[]]].` },
-            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[deepCopy(value)]] بنفسك بـ recursion: لو array انسخ كل عنصر، ولو object انسخ كل مفتاح، ولو Date اعمل Date جديدة بنفس الوقت، وغير كده رجّع القيمة زي ما هي. قارنها بـ [[structuredClone]].`, done: R`[[deepCopy({ a: { b: [1] } })]] لما تعدّل [[a.b]] في النسخة الأصل مبيتغيرش، و [[deepCopy({ d: new Date(0) }).d instanceof Date]] بترجّع [[true]] و [[.getTime()]] بتاعها [[0]]، ونفس النتايج بتطلع من [[structuredClone]].` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** انسخ [[{ d: new Date(0), m: new Map([ [1, 2] ]), u: undefined }]] مرة بـ [[JSON.parse(JSON.stringify(x))]] ومرة بـ [[structuredClone(x)]]، واطبع النسختين و [[typeof]] لـ [[d]].`, done: R`نسخة JSON: [[d]] بقت string [["1970-01-01T00:00:00.000Z"]]، و [[m]] بقت [[{}]]، و [[u]] اختفت. نسخة structuredClone: [[d instanceof Date]] true و [[m]] لسه Map فيها [[1 => 2]] و [[u]] موجودة.` }
-          ],
-          flag: "script",
-          deep: {
-            why: R`أشهر مصدر bugs غريبة: «أنا معدّلتش الليستة دي!» بس عدّلت نسخة شايلة نفس الـ reference. وفي React الـ state لازم تتعمل جديدة، لأن React بيقارن بالـ reference ([[Object.is]])، فلو عدّلت في مكانها مش هيعمل render.`,
-            how: R`الـ primitives بتتنسخ بالقيمة، والـ objects (ومنها arrays والدوال) بتتنسخ بالـ reference. JS دايمًا pass by value، بس «القيمة» في حالة الـ object هي الـ reference نفسه. عشان كده الدالة تقدر تعدّل جوه الـ object، بس لو عملت [[obj = {}]] جوه الدالة المتغير اللي برّه مش هيتأثر.
-
-[[structuredClone]] بتستخدم نفس الخوارزمية اللي بتنقل الداتا بين workers: بتنسخ Date و Map و Set و RegExp و arrays متداخلة، وبتتعامل مع المراجع الدائرية (circular). ومبتنسخش الدوال ولا عناصر الـ DOM ولا الـ prototype (instance من class بترجع object عادي).
-
-[[JSON.parse(JSON.stringify(x))]] الحل القديم: بيضيّع undefined والدوال، والـ Date بتبقى string، و NaN بتبقى null، ويقع على circular.`,
-            when: R`نسخة سطحية للتعديل على المستوى الأول (أغلب تعديلات الـ state). [[structuredClone]] لما محتاج نسخة مستقلة تمامًا من داتا متداخلة. وفي React مع state متداخلة كبيرة ناس بتستخدم Immer.`,
-            mistakes: R`تعمل [[const copy = original]] وتفتكرها نسخة. وتعدّل object اتبعتلك كـ argument (دالة بتعدّل مدخلاتها اسمها impure، وده صعب تتبّعه). وتستخدم JSON للنسخ العميق مع Dates. وفي الانترفيو: «pass by value ولا reference؟» و «shallow vs deep copy».`
-          },
-          teach: R`## الفكرة في سطرين
-
-المتغير اللي فيه object مش شايل الـ object نفسه، شايل **reference**: عنوان بيقول «الـ object موجود هناك في الذاكرة». فلو نسخت المتغير، نسخت العنوان، والاتنين بيشاوروا على نفس الحاجة. المثال بيوري ٤ حالات: نسخ العنوان، ونسخة سطحية، ونسخة عميقة، ودالة بتعدّل اللي اتبعتلها. النواتج من تشغيله في Node 24.
-
----
-
-## ١. [[const b = a]]: مش نسخة
-
-~~~text app.js
-const a = { name: "Sara", tags: ["js"] };
-const b = a;
-b.name = "Omar";
-console.log(a.name);            // "Omar"
-~~~
-
-السطر التاني مبيعملش object جديد. فيه object **واحد** في الذاكرة، وعليه اسمين: a و b.
-
-~~~text الناتج
-Omar
-a === b  →  true
-~~~
-
-[[===]] على objects بتسأل «نفس العنوان؟» مش «نفس المحتوى؟»، وهنا الجواب true.
-
----
-
-## ٢. [[{ ...a }]]: نسخة سطحية (shallow)
-
-~~~text app.js
-const shallow = { ...a };
-shallow.tags.push("ts");
-console.log(a.tags);            // ["js", "ts"]
-~~~
-
-[[{ ...a }]] عملت object **جديد** ونسخت فيه خصايص a واحدة واحدة. بس قيمة tags نفسها reference لـ array، فاللي اتنسخ هو العنوان:
-
-~~~text الناتج
-shallow === a            →  false
-shallow.tags === a.tags  →  true
-a.tags بعد push          →  [ 'js', 'ts' ]
-~~~
-
-يعني المستوى الأول جديد (لو عملت [[shallow.name = "Mona"]] الأصل مش هيتأثر، جرّبتها و a.name فضلت Omar)، بس أي حاجة جوه مشتركة. و [[Object.assign({}, a)]] بتعمل نفس الحاجة بالظبط (tags برضه طلعت مشتركة).
-
----
-
-## ٣. [[structuredClone(a)]]: نسخة عميقة (deep)
-
-~~~text app.js
-const deep = structuredClone(a);
-deep.tags.push("react");
-console.log(a.tags);            // ["js", "ts"]
-~~~
-
-[[structuredClone]] دالة جاهزة في المتصفحات و Node، بتنسخ كل مستوى، فالـ array اللي جوه بقت array جديدة:
-
-~~~text الناتج
-deep.tags === a.tags  →  false
-a.tags                →  [ 'js', 'ts' ]
-deep.tags             →  [ 'js', 'ts', 'react' ]
-~~~
-
----
-
-## ٤. objects بنفس المحتوى مش متساويين
-
-~~~text app.js
-console.log({ x: 1 } === { x: 1 }); // false
-~~~
-
-كل [[{ }]] بتعمل object جديد بعنوان جديد. المحتوى نفسه، بس العنوانين مختلفين، فالناتج [[false]].
-
----
-
-## ٥. دالة بتعدّل اللي اتبعتلها
-
-~~~text app.js
-function rename(obj) { obj.name = "X"; }
-rename(a);
-console.log(a.name);            // "X"
-~~~
-
-لما بتنادي [[rename(a)]]، الباراميتر obj بياخد **نسخة من العنوان**، فـ obj و a بيشاوروا على نفس الـ object، والتعديل باين برّه. الناتج [[X]].
-
-بس لو جوه الدالة غيّرت الباراميتر نفسه لـ object تاني:
-
-~~~text app.js
-function replace(obj) { obj = { name: "new" }; }
-replace(a);
-~~~
-
-a.name فضلت [[X]]: انت غيّرت النسخة المحلية من العنوان، مش الـ object. عشان كده بنقول JS دايمًا **pass by value**، والقيمة في حالة الـ object هي العنوان.
-
----
-
-## ٦. حدود structuredClone و JSON
-
-~~~text الناتج: Node 24
-structuredClone({ date: new Date(), fn() {} })
-DataCloneError: fn() {} could not be cloned.
-~~~
-
-الدوال مبتتنسخش، فبيرمي error صريح. من غير fn، الـ Date بترجع Date حقيقية ([[instanceof Date]] بـ true). والطريقة القديمة:
-
-~~~text الناتج
-JSON.parse(JSON.stringify({ date: new Date("2026-01-01"), fn() {}, u: undefined, n: NaN }))
-{ date: '2026-01-01T00:00:00.000Z', n: null }    typeof date → string
-~~~
-
-fn و u اختفوا من غير ما حد يقولك، والـ Date بقت string، و NaN بقت null.
-
----
-
-## الخلاصة
-
-| الكود | object جديد؟ | اللي جوه مشترك؟ |
-|---|---|---|
-| [[const b = a]] | لأ | كله مشترك |
-| [[{ ...a }]] / [[Object.assign({}, a)]] | أيوه | أيوه |
-| [[structuredClone(a)]] | أيوه | لأ (ومبينسخش الدوال) |
-| [[JSON.parse(JSON.stringify(a))]] | أيوه | لأ، بس بيبوّظ Date و undefined و NaN |
-
-> [[===]] على objects بتقارن العناوين، مش المحتوى.`,
-          lines: [
-            R`object فيه string ([[name]]) وجواه array ([[tags]]). وجود الـ array جوه الـ object هو اللي هيبيّن الفرق بين النسخة السطحية والعميقة تحت.`,
-            R`ده مش نسخ. المتغير في JS مش شايل الـ object نفسه، شايل reference (عنوانه)، فـ [[b]] بقى بيشاور على نفس الـ object اللي [[a]] بيشاور عليه: object واحد في الميموري وليه اسمين.`,
-            R`بنعدّل [[name]] عن طريق [[b]]. ولأن مفيش غير object واحد، التعديل حصل في الحاجة اللي [[a]] شايفها برضه.`,
-            R`بيطبع [["Omar"]] رغم إننا عمرنا ما لمسنا [[a]]. ده من أشهر الـ bugs: تفتكر إنك عملت نسخة وتعدّل فيها، فالأصل يتغيّر من وراك في حتة تانية في الكود.`,
-            R`[[{ ...a }]] بتعمل object جديد فعلًا، بس بتنسخ أول مستوى بس: [[name]] string فاتنسخ، لكن [[tags]] reference فالنسخة بتشاور على نفس الـ array بتاع الأصل. ده اسمه shallow copy، و [[Object.assign]] بتعمل نفس الحاجة.`,
-            R`بنضيف لـ [[tags]] عن طريق النسخة. [[push]] بتعدّل الـ array نفسه مش بتعمل array جديد، والـ array ده مشترك بين [[shallow]] و [[a]].`,
-            R`[[a.tags]] بقت فيها [["ts"]]: التعديل وصل للأصل لأن الـ array اللي جوه مكانش اتنسخ. الحل لو عايز تعدّل حاجة متداخلة: اعمل array جديد للمستوى ده كمان، زي [[{ ...a, tags: [...a.tags, "ts"] }]].`,
-            R`[[structuredClone]] بتعمل deep copy: بتنسخ كل المستويات، فالـ object والـ array اللي جواه كلهم جداد. مدمجة في المتصفح و Node، وبتعرف تنسخ Date و Map و Set، بس بترمي [[DataCloneError]] لو جوه الـ object دالة.`,
-            R`بنضيف [["react"]] للـ [[tags]] بتاعة النسخة العميقة. المرة دي الـ array ده نسخة مستقلة، مش هو هو اللي في [[a]].`,
-            R`الأصل لسه [["js", "ts"]] من غير [["react"]]: النسخة العميقة مالهاش أي علاقة بالأصل، فعدّل فيها براحتك.`,
-            R`[[===]] مع الـ objects بتقارن الـ reference، يعني بتسأل «ده نفس الـ object؟» مش «نفس المحتوى؟». هنا فيه object-ين اتعملوا كل واحد لوحده، فالنتيجة [[false]]. عشان تقارن المحتوى لازم تقارن الخصايص بنفسك.`,
-            R`دالة بتغيّر خاصية في الـ object اللي جالها. الباراميتر [[obj]] بياخد نسخة من الـ reference مش من الـ object، يعني بيشاور على نفس الـ object اللي اتبعت.`,
-            R`بنبعت [[a]] للدالة. مفيش نسخ بيحصل وقت النداء: الدالة شغالة على نفس الـ object بالظبط.`,
-            R`[[a.name]] بقى [["X"]]: الدالة عدّلت الأصل. عشان كده الدوال اللي بتاخد objects (زي الـ reducers في React) المفروض ترجّع object جديد بدل ما تعدّل اللي جالها.`,
-          ],
-          sol: R`[[structuredClone({ date: new Date(), fn() {} })]] بتطلع [[DataCloneError]] ورسالتها [[fn() {} could not be cloned.]] (في Chrome قبلها [[Failed to execute 'structuredClone' on 'Window']]). من غير fn بيشتغل، و [[copy.date instanceof Date]] بـ true.
-
-مع [[JSON.parse(JSON.stringify(...))]] مفيش error، بس الـ fn بتختفي بهدوء، والـ Date بترجع string زي [["2026-01-01T00:00:00.000Z"]] (typeof بـ [["string"]])، وأي undefined بيضيع. يعني JSON «بينجح» وهو بيبوّظ الداتا، و structuredClone بيقولك صراحة. وده جواب سؤال «ليه structuredClone أحسن من JSON trick؟».`
-        },
-        {
-          cmd: "Object.keys و entries",
-          title: "تلف على object وتحوّله",
-          desc: R`[[Object.keys(obj)]] بترجّع array المفاتيح، و [[Object.values]] القيم، و [[Object.entries]] أزواج [[[key, value]]]. ومعاهم تقدر تستخدم map و filter على object.
-
-والعكس [[Object.fromEntries]]: بتاخد أزواج وترجّع object. فالحركة المشهورة: entries ثم map ثم fromEntries، عشان تعدّل كل القيم.`,
-          example: R`const prices = { mug: 120, shirt: 300, cap: 90 };
-Object.keys(prices);      // ["mug", "shirt", "cap"]
-Object.values(prices);    // [120, 300, 90]
-Object.entries(prices);   // [["mug", 120], ["shirt", 300], ["cap", 90]]
-for (const [item, price] of Object.entries(prices)) {
-  console.log(item, price);
-}
-const discounted = Object.fromEntries(
-  Object.entries(prices).map(([k, v]) => [k, v * 0.9])
-);
-const cheap = Object.fromEntries(Object.entries(prices).filter(([, v]) => v < 200));
-Object.hasOwn(prices, "mug"); // true`,
-          try: R`حوّل [[prices]] لـ array objects شكلها [[{ name: "mug", price: 120 }]]. وبعدين اعمل العكس. وجرّب [[for (const k in prices)]] وقارنها بـ Object.keys.`,
-          practice: [
-            { lvl: 'سريع', t: R`**مسألة:** من [[const stock = { mug: 5, cap: 0, shirt: 2 }]] اطبع عدد المنتجات بـ [[Object.keys]]، ومجموع القطع بـ [[Object.values]] و [[reduce]].`, done: R`العدد [[3]] والمجموع [[7]]، والكود بيشتغل من غير تعديل لو زوّدت منتج رابع في الـ object.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[Object.keys({ b: 1, 2: "x", a: 2, 1: "y" })]] بترجّع إيه وبأنهي ترتيب؟`, done: R`طلع [[["1", "2", "b", "a"]]]: المفاتيح اللي شكلها أرقام بتيجي الأول متربة تصاعدي، وبعدها النصوص بترتيب الإضافة، وكلهم strings. فمتعتمدش على ترتيب object فيه ids رقمية.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** عندك درجات [[{ sara: 85, omar: 42, ali: 67 }]]. طلّع object فيه الناجحين بس (٥٠ أو أكتر) بـ entries و filter و fromEntries، وطلّع اسم أعلى واحد بـ [[Object.entries]] و [[reduce]].`, done: R`الناجحين [[{ sara: 85, ali: 67 }]]، وأعلى واحد [["sara"]]، والـ object الأصلي لسه فيه [[omar]].` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[mapValues(obj, fn)]] بتطبّق fn على كل قيمة وترجّع object جديد بنفس المفاتيح، بـ entries و map و fromEntries. جرّبها بخصم ١٠٪ على قايمة أسعار.`, done: R`[[mapValues({ mug: 100, cap: 50 }, (p) => p * 0.9)]] بترجّع [[{ mug: 90, cap: 45 }]]، والـ object الأصلي لسه 100 و 50.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** اكتب [[groupBy(items, key)]] بترجّع object كل مفتاح فيه array العناصر اللي ليها القيمة دي (مثلًا منتجات مجمّعة بالـ [[category]]). وبعدين قارنها بـ [[Object.groupBy(items, (i) => i.category)]] اللي في Node 21 والمتصفحات الحديثة.`, done: R`الاتنين بيرجّعوا نفس المفاتيح ونفس الـ arrays بنفس الترتيب ([[JSON.stringify]] بتاعهم واحد)، و Node بيطبع بتاع [[Object.groupBy]] [[[Object: null prototype] ]] لأنه object مالوش prototype، فـ [[toString]] مش موجودة عليه.` }
-          ],
-          flag: "script",
-          deep: {
-            why: "الـ objects مفيهاش map و filter. ولما تيجيلك داتا شكلها dictionary (إعدادات، أو ترجمات، أو عدد لكل حالة)، دي الطريقة اللي تحوّلها بيها وتعرضها.",
-            how: R`التلاتة بيرجّعوا الخصايص الخاصة بالـ object بس (own) واللي enumerable، ومفاتيحها strings (مش symbols)، بنفس ترتيب المفاتيح.
-
-[[for...in]] القديمة بتلف على المفاتيح بس كمان بتدخل في الـ prototype chain، عشان كده كان لازم [[hasOwnProperty]] جواها. [[for...of]] مع [[Object.entries]] أنضف.
-
-[[Object.fromEntries]] بتقبل أي iterable أزواج، فـ [[Object.fromEntries(map)]] بيحوّل Map لـ object، و [[Object.fromEntries(new FormData(form))]] بيحوّل فورم لـ object (درس الـ DOM).
-
-و [[Object.hasOwn]] (ES2022) أحسن من [[obj.hasOwnProperty]]، لأن التانية ممكن متبقاش موجودة (object اتعمل بـ [[Object.create(null)]]) أو تتكتب فوقها.`,
-            when: R`عرض dictionary في ليستة، وتعديل كل القيم، وفلترة مفاتيح، وتحويل بين object و Map و FormData.`,
-            mistakes: R`[[for...in]] على array: بتلف على الـ indexes كـ strings ومعاها أي حاجة متضافة للـ prototype. استخدم for...of. وتفتكر إن [[Object.keys(obj).length]] بتعد كل حاجة: symbols لأ. و [[Object.entries]] على object كبير جوه loop كبيرة: بتعمل arrays جديدة كل مرة.`
-          },
-          teach: R`## الفكرة في سطرين
-
-الـ array عندها map و filter و for...of، والـ object معندوش. الحل: حوّل الـ object لـ array بـ [[Object.keys]] أو [[Object.values]] أو [[Object.entries]]، اشتغل عليها، ولو محتاج ترجع object استخدم [[Object.fromEntries]]. النواتج من تشغيل المثال في Node 24.
-
----
-
-## ١. التلات دوال
-
-~~~text app.js
-const prices = { mug: 120, shirt: 300, cap: 90 };
-Object.keys(prices);
-Object.values(prices);
-Object.entries(prices);
-~~~
-
-[[Object]] هنا مش object بتاعك، ده الـ constructor الجاهز في JS، وعليه دوال مساعدة بتاخد الـ object كـ argument.
-
-~~~text الناتج
-[ 'mug', 'shirt', 'cap' ]
-[ 120, 300, 90 ]
-[ [ 'mug', 120 ], [ 'shirt', 300 ], [ 'cap', 90 ] ]
-~~~
-
-- keys: المفاتيح (strings دايمًا).
-- values: القيم.
-- entries: array، كل عنصر فيها array صغيرة من اتنين [[[key, value]]]. ودي اسمها «أزواج» (pairs).
-
----
-
-## ٢. اللف على الأزواج
-
-~~~text app.js
-for (const [item, price] of Object.entries(prices)) {
-  console.log(item, price);
+## ١. default parameters
+
+~~~text params.js
+function greet(name = "Guest", greeting = "Hi") {
+  return $__bt$__{greeting}, $__{name}$__bt;
 }
 ~~~
 
-[[for...of]] بتلف على عناصر الـ array، وكل عنصر هو [[["mug", 120]]]. و [[[item, price]]] هنا **array destructuring**: أول عنصر في item، والتاني في price.
+[[name = "Guest"]] معناها: «لو [[name]] جت [[undefined]]، خليها [["Guest"]]». والـ return بيركّب الاتنين بـ template literal.
 
-~~~text الناتج
-mug 120
-shirt 300
-cap 90
+~~~text Node REPL
+> greet()
+'Hi, Guest'
+> greet(undefined, "Hey")
+'Hey, Guest'
+> greet(null)
+'Hi, null'
 ~~~
+
+| النداء | name | greeting | ليه |
+|---|---|---|---|
+| [[greet()]] | [["Guest"]] | [["Hi"]] | متبعتش حاجة، فالاتنين undefined |
+| [[greet(undefined, "Hey")]] | [["Guest"]] | [["Hey"]] | [[undefined]] صريحة بتشغّل الـ default، فتقدر تتخطى الأول |
+| [[greet(null)]] | [[null]] | [["Hi"]] | [[null]] قيمة، مش undefined، فالـ default مشتغلش |
+
+ونفس الكلام مع [[""]] و [[0]]: اتجرّب [[greet("")]] طلعت [['Hi, ']] و [[greet(0)]] طلعت [['Hi, 0']].
 
 ---
 
-## ٣. تعديل كل القيم: entries ← map ← fromEntries
+## ٢. rest: [[...nums]]
 
-~~~text app.js
-const discounted = Object.fromEntries(
-  Object.entries(prices).map(([k, v]) => [k, v * 0.9])
-);
+~~~text params.js
+function sum(...nums) {
+  return nums.reduce((a, b) => a + b, 0);
+}
 ~~~
 
-اتقرا من جوه لبرّه:
+- التلات نقط قبل اسم الباراميتر معناها «لمّ كل الـ arguments اللي جاية هنا في array».
+- [[nums.reduce((a, b) => a + b, 0)]]: اجمع عناصر الـ array، والجمع يبدأ من 0 (درس reduce تحت).
 
-### الخطوة ١: [[Object.entries(prices)]]
+عشان نشوف [[nums]] حطينا [[console.log(nums)]] جوه الدالة:
 
-الأزواج اللي شفناها فوق.
-
-### الخطوة ٢: [[.map(([k, v]) => [k, v * 0.9])]]
-
-لكل زوج: فكّه لـ k و v، ورجّع زوج جديد بنفس المفتاح والسعر بعد خصم ١٠٪.
-
-~~~text الناتج بعد map
-[ [ 'mug', 108 ], [ 'shirt', 270 ], [ 'cap', 81 ] ]
+~~~text الناتج
+[ 1, 2, 3 ]
+6
+[]
+0
 ~~~
 
-### الخطوة ٣: [[Object.fromEntries(...)]]
-
-العكس: بتاخد أزواج وترجّع object.
-
-~~~text الناتج: discounted
-{ mug: 108, shirt: 270, cap: 81 }
-~~~
+[[sum(1, 2, 3)]] خلّت [[nums]] بـ [[[1, 2, 3]]] والمجموع 6. و [[sum()]] خلّتها array فاضية، والـ reduce رجّعت القيمة الأولية 0. الـ rest لازم يبقى **آخر** باراميتر.
 
 ---
 
-## ٤. فلترة بالقيمة
+## ٣. spread: [[...scores]] وقت النداء
 
-~~~text app.js
-const cheap = Object.fromEntries(Object.entries(prices).filter(([, v]) => v < 200));
+~~~text params.js
+const scores = [90, 75, 88];
+Math.max(...scores);       // 90
 ~~~
 
-نفس الحركة بس بـ filter. والجديد [[[, v]]]: الفاصلة من غير اسم قبلها معناها «اتخطى أول عنصر»، لأننا محتاجين القيمة بس.
+[[Math.max]] بتاخد أرقام منفصلة: [[Math.max(90, 75, 88)]]. لو اديتها الـ array نفسها:
 
-~~~text الناتج
-{ mug: 120, cap: 90 }
+~~~text الناتج من Math.max(90, 75, 88), Math.max([90, 75]), Math.max(...[])
+90 NaN -Infinity
 ~~~
 
-shirt اتشالت لأن 300 مش أقل من 200.
+- الـ array كـ argument واحد مش رقم، فـ NaN.
+- [[...scores]] بتفرد الـ array أرقام منفصلة: نفس التلات نقط، بس هنا في **النداء** مش في التعريف، فشغلها العكس.
+- array فاضية بتطلع [[-Infinity]] (سالب ما لا نهاية): أي رقم أكبر منها.
 
 ---
 
-## ٥. [[Object.hasOwn]]
+## ٤. object parameter بقيم افتراضية
 
-~~~text app.js
-Object.hasOwn(prices, "mug"); // true
+~~~text params.js
+function createUser({ name, role = "user", active = true } = {}) {
+  return { name, role, active };
+}
+createUser({ name: "Sara", active: false });
 ~~~
 
-بتسأل «المفتاح ده موجود **على الـ object نفسه**؟». الفرق عن [[in]] بيبان مع حاجة موروثة:
+نفكّ أول سطر:
 
-~~~text الناتج
-Object.hasOwn(prices, "mug")       →  true
-Object.hasOwn(prices, "toString")  →  false
-"toString" in prices               →  true
-~~~
-
-toString مش في prices، جاية من [[Object.prototype]] اللي كل object بيورث منه (درس prototype chain)، و [[in]] بتدوّر هناك كمان.
-
----
-
-## ٦. حل «جرّب» (الـ solCode)
-
-~~~text app.js
-const list = Object.entries(prices).map(([name, price]) => ({ name, price }));
-const back = Object.fromEntries(list.map(({ name, price }) => [name, price]));
-~~~
-
-- [[({ name, price })]]: arrow بترجّع object، والقوسين حوالين [[{ }]] لازمين. من غيرهم JS هيفهم [[{]] كبداية جسم الدالة مش object.
-- الرجوع: كل object يتفك لـ name و price ويرجع زوج.
-
-~~~text الناتج
-[
-  { name: 'mug', price: 120 },
-  { name: 'shirt', price: 300 },
-  { name: 'cap', price: 90 }
-]
-{ mug: 120, shirt: 300, cap: 90 }
-~~~
-
-وبعدها الكود بيعمل [[Object.create({ inherited: 1 })]]: object جديد الـ prototype بتاعه فيه inherited، و [[Object.assign]] بتحط فيه الأسعار. والمقارنة:
-
-~~~text الناتج
-for...in: mug
-for...in: shirt
-for...in: cap
-for...in: inherited
-[ 'mug', 'shirt', 'cap' ]
-~~~
-
-[[for...in]] لفّت كمان على الموروث، و [[Object.keys]] لأ.
-
----
-
-## الخلاصة
-
-| الدالة | بترجّع |
+| الحتة | معناها |
 |---|---|
-| [[Object.keys(o)]] | array المفاتيح |
-| [[Object.values(o)]] | array القيم |
-| [[Object.entries(o)]] | array أزواج [[[k, v]]] |
-| [[Object.fromEntries(pairs)]] | object من أزواج |
-| [[Object.hasOwn(o, k)]] | true لو المفتاح على الـ object نفسه |
+| [[{ name, role, active }]] جوه القوسين | الدالة بتاخد object واحد، وتطلّع منه ٣ خانات في ٣ متغيرات (destructuring) |
+| [[role = "user"]] | لو الـ object مفيهوش role، خليها [["user"]] |
+| [[= {}]] في الآخر | لو الدالة اتنادت من غير أي حاجة، اعتبر الـ object فاضي |
+| [[return { name, role, active }]] | رجّع object بنفس الأسماء (shorthand) |
 
-> ترتيب المفاتيح: الأرقام الصحيحة الأول تصاعدي، وبعدها الـ strings بترتيب الإضافة. [[Object.keys({ b: 1, 10: "x", a: 2, 2: "y" })]] طلعت [[[ '2', '10', 'b', 'a' ]]].`,
-          lines: [
-            R`object بيربط اسم كل منتج بسعره. الـ object العادي مش iterable، فـ [[for...of]] عليه مباشرة بترمي TypeError، وعشان كده بنحتاج الدوال اللي جاية تحوّله array.`,
-            R`[[Object.keys]] بترجّع array فيها أسامي الخصايص (strings) بترتيب الإضافة. ولأنها array، تقدر تستخدم [[length]] و [[map]] و [[filter]] عليها. (المفاتيح اللي شكلها أرقام بتتحط الأول بالترتيب التصاعدي.)`,
-            R`[[Object.values]] بترجّع القيم بس من غير الأسامي. مفيدة لما الحساب على القيم بس، زي مجموع الأسعار بـ [[reduce]].`,
-            R`[[Object.entries]] بترجّع array، وكل عنصر فيها array صغيرة من اتنين: المفتاح والقيمة. ده الشكل اللي تلف عليه لما تكون محتاج الاتنين مع بعض.`,
-            R`بنلف على الأزواج بـ [[for...of]]، والأقواس المربعة بعد [[const]] بتفك كل زوج على طول: المفتاح في [[item]] والقيمة في [[price]]، بدل ما تقرا كل واحد بالـ index.`,
-            R`بيطبع اسم المنتج وسعره في كل لفة: [[mug 120]] وبعدها [[shirt 300]] وبعدها [[cap 90]]، بنفس ترتيب الإضافة.`,
-            R`نهاية الـ loop.`,
-            R`[[Object.fromEntries]] عكس [[entries]]: بتاخد array أزواج وترجّع object. الطريقة كلها: حوّل الـ object لـ array، استخدم أدوات الـ arrays، ورجّعه object تاني.`,
-            R`[[map]] بتلف على الأزواج وترجّع لكل زوج زوج جديد: نفس المفتاح والقيمة مضروبة في [[0.9]] (خصم ١٠٪). لازم ترجّع array من اتنين؛ لو رجّعت الرقم لوحده [[fromEntries]] هترمي TypeError إن القيمة مش entry.`,
-            R`نهاية نداء [[fromEntries]]. [[discounted]] object جديد بالأسعار بعد الخصم، والأصل [[prices]] زي ما هو.`,
-            R`نفس الفكرة بـ [[filter]]: سيب الأزواج اللي قيمتها أقل من ٢٠٠ بس، فالنتيجة فيها [[mug]] و [[cap]]. الفصلة اللي في الأول في [[([, v])]] معناها «اتخطى العنصر الأول (المفتاح) وخد التاني في [[v]]»، لأننا مش محتاجين المفتاح في الشرط.`,
-            R`[[Object.hasOwn]] بتسأل: المفتاح ده موجود في الـ object نفسه؟ أأمن من [[in]] لأنها مش بتعد الخصايص الموروثة زي [[toString]]، وأأمن من [[if (prices.mug)]] اللي هتقول لأ لو السعر [[0]].`,
-          ],
-          sol: R`[[Object.entries(prices).map(([name, price]) => ({ name, price }))]] بترجّع [[[{ name: "mug", price: 120 }, ...]]]، والعكس [[Object.fromEntries(list.map(({ name, price }) => [name, price]))]] بيرجّع [[{ mug: 120, shirt: 300, cap: 90 }]].
-
-على object عادي [[for...in]] و [[Object.keys]] بيطلعوا نفس المفاتيح. الفرق بيظهر لما الـ object ليه prototype فيه خصايص: [[for...in]] بتلف كمان على الخصايص الموروثة (القابلة للعد)، و [[Object.keys]] بتجيب اللي على الـ object نفسه بس. عشان كده [[Object.keys]] أو [[Object.entries]] هي الاختيار الآمن.`,
-          solCode: R`const prices = { mug: 120, shirt: 300, cap: 90 };
-const list = Object.entries(prices).map(([name, price]) => ({ name, price }));
-console.log(list);
-const back = Object.fromEntries(list.map(({ name, price }) => [name, price]));
-console.log(back); // { mug: 120, shirt: 300, cap: 90 }
-const child = Object.create({ inherited: 1 });
-Object.assign(child, prices);
-for (const k in child) console.log("for...in:", k); // mug shirt cap inherited
-console.log(Object.keys(child));                     // ["mug", "shirt", "cap"]`
-        },
-        {
-          cmd: "Map و Set",
-          title: "إمتى تستخدم Map و Set بدل object و array؟",
-          desc: R`[[Set]] مجموعة قيم مفيهاش تكرار، والسؤال [[has]] فيها سريع جدًا (O(1)) عكس [[includes]] على array (O(n)). و [[Map]] زي object بس المفتاح أي نوع (object أو رقم حقيقي)، وبتحافظ على ترتيب الإضافة، وعندها [[size]].
-
-ومن ES2025 الـ Set عندها عمليات المجموعات: [[union]] و [[intersection]] و [[difference]] و [[isSubsetOf]].`,
-          example: R`const visits = new Map();
-visits.set("/home", 1);
-visits.set("/about", 3);
-visits.get("/home");             // 1
-visits.has("/cart");             // false
-visits.size;                     // 2
-const userObj = { id: 1 };
-visits.set(userObj, "المفتاح object");
-for (const [path, count] of visits) console.log(path, count);
-const tags = new Set(["js", "ts", "js"]);
-tags.size;                       // 2
-tags.add("react").has("react");  // true
-const a = new Set([1, 2, 3]), b = new Set([2, 3, 4]);
-a.intersection(b);               // Set {2, 3}
-a.union(b);                      // Set {1, 2, 3, 4}
-a.difference(b);                 // Set {1}`,
-          try: R`اكتب دالة [[countWords(text)]] بترجّع Map فيها كل كلمة وعدد مرات ظهورها. وبعدين حوّل الناتج لـ object بـ [[Object.fromEntries]] واطبعه. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[countWords]] بترجّع Map، وبتتجاهل الحروف الكبيرة والمسافات الزيادة.`,
-          practice: [
-            { lvl: 'سريع', t: R`**مسألة:** شيل التكرار من لستة إيميلات: [[new Set(["a@x.com", "b@x.com", "a@x.com"])]]، واطبع [[size]]، ورجّعها array بـ [[[...set] ]].`, done: R`[[size]] بيطبع [[2]] والـ array [[[ 'a@x.com', 'b@x.com' ] ]] بنفس ترتيب أول ظهور.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const o = {}; o[1] = "a"; o["1"] = "b";]] و [[const m = new Map(); m.set(1, "a"); m.set("1", "b");]]. اكتب [[Object.keys(o).length]] و [[m.size]] و [[o[1]]] قبل التشغيل.`, done: R`طلع 1 و 2 و [["b"]]. الـ object حوّل [[1]] لـ [["1"]] فالتانية كتبت فوق الأولى، والـ Map فرّقت بين الرقم والنص.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** عندك لوج زيارات: array فيها [[{ user, page }]]. طلّع Map فيها كل صفحة وعدد زياراتها، و Set فيها اليوزرز المختلفين، واطبع الصفحات من الأكتر للأقل.`, done: R`على لوج فيه ٥ زيارات منهم ٣ لـ [["/"]] من يوزرين: [[map.get("/")]] بيرجّع [[3]]، و [[users.size]] بيرجّع عدد اليوزرز المختلفين بس، والصفحة اللي فيها ٣ زيارات بتطلع الأولى.` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** على 50000 رقم، ابحث عن 1000 قيمة مرة بـ [[arr.includes(x)]] ومرة بـ [[set.has(x)]]، وقيس كل واحدة بـ [[console.time]].`, done: R`الاتنين لقوا نفس العدد، والـ includes أخدت عشرات المللي ثواني والـ Set أقل من 1ms على أغلب الأجهزة. وعرفت إن Set تستاهل لما تسأل «موجود؟» كتير على لستة كبيرة.` },
-            { lvl: 'تحدي', t: R`**مسألة:** صلاحيات: [[required = new Set(["read", "write"])]] و [[userPerms = new Set(["read"])]]. استخدم [[isSubsetOf]] و [[difference]] عشان تقول اليوزر يقدر يدخل ولا لأ وناقصه إيه. وبعدين جرّب [[map.set({ id: 1 }, "x")]] وبعده [[map.get({ id: 1 })]].`, done: R`[[required.isSubsetOf(userPerms)]] بترجّع [[false]] و [[[...required.difference(userPerms)] ]] بترجّع [[[ 'write' ] ]]. و [[map.get({ id: 1 })]] بترجّع [[undefined]]، وتقدر تشرح ليه: الـ Map بتقارن الـ objects بالـ reference، فلازم تخزّن الـ object في متغير وتستخدمه هو.` },
-            { lvl: 'تحدي', t: R`**محاكاة:** cache بيشيل آخر عنصرين بس (LRU) بـ Map: [[get(key)]] بتنقل المفتاح للآخر (delete ثم set)، و [[set(key, v)]] لو الحجم عدّى 2 بتمسح أول مفتاح ([[map.keys().next().value]]). شغّل: set a، set b، get a، set c، واطبع المفاتيح.`, done: R`المفاتيح في الآخر [[["a", "c"]]]: b اتمسحت لأنها الأقدم استخدام (a اتقرت بعدها). و [[get("b")]] بترجّع undefined.` }
-          ],
-          flag: "script",
-          deep: {
-            why: "مسائل كتير (في الشغل وفي الانترفيو) بتبقى «اتأكد إن ده مكررش» أو «عدّ كل حاجة ظهرت كام مرة» أو «هات العنصر بالـ id بسرعة». Set و Map بيحوّلوا حلول O(n²) لـ O(n) (تاب DSA).",
-            how: R`الاتنين hash tables من جوه، فالإضافة والبحث والمسح O(1) في المتوسط. وبيقارنوا المفاتيح بـ SameValueZero: زي === بس NaN بتساوي NaN. يعني objects بنفس المحتوى مفاتيح مختلفة.
-
-Map أحسن من object كـ dictionary لما: المفاتيح مش strings، أو بتضيف وتمسح كتير، أو المفاتيح جاية من اليوزر (object عنده مفاتيح موروثة زي [[toString]]، و [[__proto__]] خطر). و object أحسن لما الشكل ثابت ومعروف، أو هتعمله JSON (الـ Map بيطلع [[{}]] في JSON.stringify).
-
-وفيه [[WeakMap]] و [[WeakSet]]: المفاتيح objects بس، ومبيمنعوش الـ garbage collector يمسحها. مفيدين لو عايز تربط داتا بـ object (عنصر DOM مثلًا) من غير ما تسبب memory leak (المستوى ٣).`,
-            when: R`Set لإزالة التكرار، و «شفت ده قبل كده؟»، وعمليات المجموعات. Map للعد والـ caches والبحث بالـ id، وأي dictionary مفاتيحه ديناميكية.`,
-            mistakes: R`[[JSON.stringify(map)]] وتستغرب [[{}]]: حوّله الأول بـ [[Object.fromEntries]]. و [[map[key] = v]] بدل [[map.set]]: كده حطيت خاصية عادية على الـ object مش entry في الـ Map. واستخدام array مع includes جوه loop على داتا كبيرة.`
-          },
-          teach: R`## الفكرة في سطرين
-
-[[Map]] زي object بس معمولة مخصوص عشان تبقى «قاموس»: مفتاح من أي نوع وقيمته، بـ methods واضحة. و [[Set]] زي array بس مفيهاش تكرار، وسؤال «موجود؟» فيها سريع. النواتج من تشغيل المثال في Node 24، وهو فيه عمليات المجموعات الجديدة (ES2025) زي intersection.
-
----
-
-## ١. Map: إنشاء وإضافة
-
-~~~text app.js
-const visits = new Map();
-visits.set("/home", 1);
-visits.set("/about", 3);
+~~~text Node REPL
+> createUser({ name: "Sara", active: false })
+{ name: 'Sara', role: 'user', active: false }
+> createUser()
+{ name: undefined, role: 'user', active: true }
 ~~~
 
-- [[new Map()]]: [[new]] بتعمل instance جديدة من الـ class الجاهز Map، فاضية.
-- [[set(key, value)]]: بتحط القيمة تحت المفتاح. لو المفتاح موجود بتستبدل قيمته. وبترجّع الـ Map نفسها:
+- الأول: [[role]] مش موجودة فخدت الـ default، و [[active]] اتبعتت [[false]] ففضلت false.
+- التاني: [[= {}]] اشتغلت، فكل الـ defaults اشتغلت و [[name]] مالهاش default فبقت undefined.
 
-~~~text الناتج: console.log(visits.set("/home", 1))
-Map(1) { '/home' => 1 }
+من غير [[= {}]]:
+
+~~~text الناتج (Node 24)
+TypeError: Cannot destructure property 'name' of 'undefined' as it is undefined.
 ~~~
 
-[[Map(1)]] يعني فيها عنصر واحد، والسهم [[=>]] في الطباعة معناه «المفتاح ده قيمته كذا».
+الدالة حاولت تطلّع [[name]] من [[undefined]].
 
----
-
-## ٢. القراية والسؤال والعدد
-
-~~~text app.js
-visits.get("/home");             // 1
-visits.has("/cart");             // false
-visits.size;                     // 2
-~~~
-
-| السطر | بيعمل إيه | الناتج |
-|---|---|---|
-| [[get(k)]] | هات القيمة | [[1]] |
-| [[has(k)]] | المفتاح موجود؟ | [[false]] |
-| [[size]] | عدد العناصر (خاصية من غير قوسين) | [[2]] |
-
-ولو عملت [[get]] لمفتاح مش موجود، بترجع [[undefined]] (جرّبت [[visits.get("/cart")]]).
-
----
-
-## ٣. مفتاح object
-
-~~~text app.js
-const userObj = { id: 1 };
-visits.set(userObj, "المفتاح object");
-~~~
-
-ده اللي object عادي ميقدرش يعمله: المفتاح نفسه object.
-
-~~~text الناتج: console.log(visits)
-Map(3) { '/home' => 1, '/about' => 3, { id: 1 } => 'المفتاح object' }
-~~~
-
-لو جرّبت نفس الحركة على object عادي، المفتاح بيتحوّل string:
-
-~~~text الناتج
-const o = {}; o[userObj] = 1; Object.keys(o)   →  [ '[object Object]' ]
-~~~
-
-وخلي بالك: الـ Map بتقارن المفاتيح بالعنوان (reference)، مش بالمحتوى:
-
-~~~text الناتج
-visits.get({ id: 1 })   →  undefined
-visits.get(userObj)     →  المفتاح object
-~~~
-
-[[{ id: 1 }]] الجديدة object تاني بعنوان تاني (درس reference و copy).
-
----
-
-## ٤. اللف على Map
-
-~~~text app.js
-for (const [path, count] of visits) console.log(path, count);
-~~~
-
-كل عنصر في Map وانت بتلف عليها هو زوج [[[key, value]]]، فبنفكه بـ [[[path, count]]]. والترتيب هو ترتيب الإضافة:
-
-~~~text الناتج
-/home 1
-/about 3
-{ id: 1 } المفتاح object
-~~~
-
----
-
-## ٥. Set: من غير تكرار
-
-~~~text app.js
-const tags = new Set(["js", "ts", "js"]);
-tags.size;                       // 2
-tags.add("react").has("react");  // true
-~~~
-
-- [[new Set([...])]]: بتاخد array (أو أي حاجة بتتلف عليها) وتشيل التكرار.
-
-~~~text الناتج: console.log(tags, tags.size)
-Set(2) { 'js', 'ts' } 2
-~~~
-
-- [[add]] بتضيف وترجّع الـ Set نفسها، فتقدر تكمّل عليها بـ [[.has]] في نفس السطر. الناتج [[true]].
-
-وأشهر استخدام: [[[...new Set([3, 1, 3, 2, 1])]]] طلعت [[[ 3, 1, 2 ]]]، يعني شيل التكرار من array وارجع array.
-
----
-
-## ٦. عمليات المجموعات
-
-~~~text app.js
-const a = new Set([1, 2, 3]), b = new Set([2, 3, 4]);
-a.intersection(b);
-a.union(b);
-a.difference(b);
-~~~
-
-~~~text الناتج
-Set(2) { 2, 3 }          intersection: الموجود في الاتنين
-Set(4) { 1, 2, 3, 4 }    union: الكل من غير تكرار
-Set(1) { 1 }             difference: اللي في a ومش في b
-~~~
-
-وكل واحدة بترجّع Set **جديدة**: بعدهم a لسه [[Set(3) { 1, 2, 3 }]].
-
----
-
-## ٧. فخين
-
-~~~text الناتج
-JSON.stringify(visits)       →  {}
-const m = new Map(); m["x"] = 1;  m.size → 0   m.get("x") → undefined
-~~~
-
-- JSON مبيعرفش Map، فبتطلع [[{}]] فاضية. حوّلها الأول بـ [[Object.fromEntries]].
-- [[m["x"] = 1]] حطت خاصية عادية على الـ object، مش entry في الـ Map. دايمًا [[set]] و [[get]].
+ليه الشكل ده أحسن من [[createUser("Sara", undefined, false)]]؟ النداء بيتقري لوحده، والترتيب ميفرقش، وتقدر تسيب أي خانة.
 
 ---
 
 ## الخلاصة
 
-| | Map | Set |
+| الأداة | مكانها | بتعمل إيه |
 |---|---|---|
-| بتشيل | أزواج مفتاح وقيمة | قيم من غير تكرار |
-| إضافة | [[set(k, v)]] | [[add(v)]] |
-| قراية | [[get(k)]] | (مفيش، بتسأل بس) |
-| موجود؟ | [[has(k)]] | [[has(v)]] |
-| مسح | [[delete(k)]] | [[delete(v)]] |
-| العدد | [[size]] | [[size]] |
-| اللف | [[[k, v]]] بالترتيب | القيم بالترتيب |
+| [[x = 5]] | في التعريف | قيمة لو x جت undefined بس |
+| [[...args]] | آخر باراميتر في التعريف | تلمّ الباقي في array |
+| [[...arr]] | في النداء | تفرد الـ array arguments |
+| [[({ a, b = 1 } = {})]] | في التعريف | تاخد object وتفكّه بـ defaults |
 
-> في تمرين [[countWords]] اللي تحت هتحتاج [[get]] و [[set]] و [[has]] أو [[??]]: فكّر إيه اللي [[get]] بترجّعه أول مرة تشوف فيها كلمة.`,
+[[null]] مبتشغّلش الـ default، وأي options object خليه [[= {}]].`,
           lines: [
-            R`[[Map]] جديدة فاضية. الـ Map معمولة مخصوص لـ key ← value: المفتاح يقدر يبقى أي نوع (حتى object)، وبتحفظ ترتيب الإضافة، وعندها [[size]] جاهز.`,
-            R`[[set]] بتضيف مفتاح وقيمته، ولو المفتاح موجود بتغيّر قيمته بس. هنا بنعدّ زيارات كل صفحة: [["/home"]] اتزارت مرة.`,
-            R`مفتاح تاني بقيمة تانية. [[set]] بترجّع الـ Map نفسها، فتقدر تكتب السطرين دول في سطر واحد: [[visits.set(a, 1).set(b, 2)]].`,
-            R`[[get]] بترجّع القيمة بتاعة المفتاح، أو [[undefined]] لو مش موجود. مع Map لازم [[get]]: القراية بالنقطة أو بالأقواس المربعة زي الـ object بترجّع [[undefined]]، لأن الداتا متخزنة جوه الـ Map مش كخصايص.`,
-            R`[[has]] بتسأل المفتاح موجود ولا لأ وترجّع [[true]] أو [[false]]. أدق من إنك تشيك على نتيجة [[get]]، لأن ممكن تكون مخزّن [[0]] أو [[undefined]] كقيمة فعلًا.`,
-            R`عدد العناصر جاهز في [[size]]، وهي خاصية مش method فمن غير أقواس ([[size()]] بترمي TypeError). في الـ object العادي محتاج [[Object.keys(obj).length]].`,
-            R`object عادي هنستخدمه كمفتاح في السطر الجاي.`,
-            R`في Map المفتاح ممكن يبقى object، والمقارنة بالـ reference: [[visits.get(userObj)]] ترجّع القيمة، لكن [[visits.get({ id: 1 })]] ترجّع [[undefined]] لأنه object تاني. في الـ object العادي المفتاح بيتحوّل string، فكل الـ objects بتبقى [["[object Object]"]] وتدوس على بعض.`,
-            R`الـ Map iterable: [[for...of]] بيلف عليها بترتيب الإضافة، وكل عنصر array من اتنين بنفكه في [[path]] و [[count]]. فبيطبع [[/home 1]] وبعدها [[/about 3]] وبعدها الـ object ومعاه قيمته.`,
-            R`[[Set]] مجموعة قيم مفيهاش تكرار: اديناها [["js"]] مرتين واتخزنت مرة واحدة. ودي أسهل طريقة تشيل التكرار من array: [[Array.from(new Set(arr))]].`,
-            R`[[size]] بتطلع [[2]] مش [[3]]، لأن التكرار اتشال وقت الإنشاء نفسه.`,
-            R`[[add]] بتضيف قيمة (ولو موجودة مبتعملش حاجة) وبترجّع الـ Set نفسها، فكمّلنا عليها بـ [[has]] اللي بتسأل القيمة موجودة. [[has]] في Set أسرع بكتير من [[includes]] في array كبيرة، لأنها مش بتلف على العناصر.`,
-            R`مجموعتين بينهم [[2]] و [[3]] مشتركين. هنستخدمهم في عمليات المجموعات اللي جاية.`,
-            R`[[intersection]]: القيم اللي موجودة في الاتنين. العمليات دي بترجّع Set جديدة ومش بتعدّل [[a]] ولا [[b]]. وهي جديدة (Node 22 والمتصفحات الحديثة)، فلو البيئة أقدم هتلاقيها مش موجودة وترمي [[is not a function]].`,
-            R`[[union]]: كل القيم من الاتنين، والمكرر بيتحسب مرة واحدة.`,
-            R`[[difference]]: اللي في [[a]] ومش في [[b]]. الترتيب فارق هنا: [[b.difference(a)]] هتطلع [[Set {4}]].`,
+            R`دالة بباراميترين ليهم قيم افتراضية: لو الـ argument متبعتش (أو اتبعت [[undefined]]) الباراميتر بياخد القيمة اللي بعد [[=]]. ده بيوفّر عليك [[if (!name) name = ...]] جوه الدالة.`,
+            R`بترجّع نص متركّب بـ template literal: كل [[$__{...}]] بيتحط مكانه قيمة المتغير، فبيطلع التحية وبعدها فاصلة ومسافة وبعدها الاسم.`,
+            R`نهاية [[greet]].`,
+            R`مفيش ولا argument، فالاتنين خدوا القيمة الافتراضية ورجّعت [["Hi, Guest"]].`,
+            R`[[undefined]] الصريحة بتتعامل كإنك مبعتّش حاجة، فـ [[name]] خد [["Guest"]] و [[greeting]] خد [["Hey"]]. دي الطريقة لو عايز تسيب الأول على الافتراضي وتغيّر التاني.`,
+            R`[[null]] قيمة حقيقية مش «مفيش»، فالـ default مبيشتغلش و [[name]] بقى [[null]] ويطلع [["Hi, null"]]. لو عايز تعامل [[null]] زي [[undefined]] استخدم [[name ?? "Guest"]] جوه الدالة.`,
+            R`[[...nums]] (rest parameter) بيلم كل الـ arguments في array حقيقية اسمها [[nums]]، مهما كان عددهم وحتى لو صفر. ولازم يبقى آخر باراميتر في الدالة.`,
+            R`[[reduce]] بتمشي على الـ array وتجمع كل رقم على اللي قبله ([[a]] المجموع لحد دلوقتي و [[b]] الرقم الحالي). والـ [[0]] في الآخر قيمة البداية: من غيرها [[sum()]] من غير أرقام هترمي TypeError (Reduce of empty array with no initial value).`,
+            R`نهاية [[sum]].`,
+            R`جوه الدالة [[nums]] بقت array فيها 1 و 2 و 3، فالناتج [[6]]. ولو بعت 10 أرقام هتشتغل بنفس الكود.`,
+            R`array عادية فيها 3 درجات، هنستخدمها نشوف الـ [[...]] لما تتكتب في النداء بدل التعريف.`,
+            R`هنا [[...]] اسمها spread: بتفرد عناصر الـ array كـ arguments منفصلة، كإنك كتبت [[Math.max(90, 75, 88)]]. من غيرها [[Math.max(scores)]] بترجّع [[NaN]] لأنها مستنية أرقام مش array.`,
+            R`الباراميتر object بيتفكك على طول (destructuring): بناخد [[name]] و [[role]] و [[active]] منه، والاتنين الأخيرين ليهم default لو مش موجودين. و [[= {}]] في الآخر عشان لو ناديت [[createUser()]] من غير حاجة، متحاولش تفكك [[undefined]] وترمي TypeError.`,
+            R`بترجّع object جديد بالـ shorthand: [[{ name }]] معناها [[{ name: name }]]، يعني الـ key اسمه زي اسم المتغير.`,
+            R`نهاية [[createUser]].`,
+            R`النداء بيتقري لوحده لأن كل قيمة جنب اسمها، والترتيب مش مهم. الناتج [[{ name: "Sara", role: "user", active: false }]]: [[role]] مش موجودة فخدت الـ default، و [[active]] اتبعتت [[false]] فالـ default متستخدمش (لأن [[false]] مش [[undefined]]).`,
           ],
-          sol: R`لـ [["js is fun and JS is fast"]] الـ Map بتطلع [[Map(5) { 'js' => 2, 'is' => 2, 'fun' => 1, 'and' => 1, 'fast' => 1 }]]، و [[Object.fromEntries]] بتحوّلها لـ [[{ js: 2, is: 2, fun: 1, and: 1, fast: 1 }]] (fromEntries بتقبل أي حاجة بتتلف عليها وبتطلع أزواج، والـ Map كده).
+          sol: R`[[createUser()]] بترجّع [[{ name: undefined, role: "user", active: true }]]: الـ [[= {}]] خلّت الباراميتر object فاضي بدل undefined، والـ defaults اشتغلت.
 
-السطر المهم [[m.set(w, (m.get(w) ?? 0) + 1)]]: أول مرة [[get]] بترجّع undefined فبنبدأ من 0. لو كتبت [[m.get(w) + 1]] من غير [[??]] هتطلع NaN لكل كلمة. ولو مش عامل [[toLowerCase]] هتلاقي [["JS"]] و [["js"]] كلمتين مختلفتين.`,
-          solCode: R`function countWords(text) {
-  const counts = new Map();
-  for (const word of text.toLowerCase().split(/\s+/).filter(Boolean)) {
-    counts.set(word, (counts.get(word) ?? 0) + 1);
-  }
-  return counts;
-}
-const counts = countWords("js is fun and JS is fast");
-console.log(counts);
-console.log(Object.fromEntries(counts)); // { js: 2, is: 2, fun: 1, and: 1, fast: 1 }`,
-          check: {
-            lang: "js",
-            starter: R`function countWords(text) {
-  const counts = new Map();
-  // ...
-  return counts;
-}`,
-            tests: R`test("بترجّع Map", () => expect(countWords("a b") instanceof Map).toBe(true));
-test("'js is fun and JS is fast' ← { js: 2, is: 2, fun: 1, and: 1, fast: 1 }", () => expect(Object.fromEntries(countWords("js is fun and JS is fast"))).toEqual({ js: 2, is: 2, fun: 1, and: 1, fast: 1 }));
-test("مسافات زيادة مش كلمات: '  a   b a ' ← { a: 2, b: 1 }", () => expect(Object.fromEntries(countWords("  a   b a "))).toEqual({ a: 2, b: 1 }));
-test("نص فاضي ← Map فاضية", () => expect(countWords("").size).toBe(0));
-test("مفيش NaN: (m.get(w) ?? 0) + 1", () => expect([...countWords("x x x").values()]).toEqual([3]));`,
-            solution: R`function countWords(text) {
-  const counts = new Map();
-  for (const word of text.toLowerCase().split(/\s+/).filter(Boolean)) {
-    counts.set(word, (counts.get(word) ?? 0) + 1);
-  }
-  return counts;
-}`
-          }
+من غير [[= {}]] بيطلع [[TypeError: Cannot destructure property 'name' of 'undefined' as it is undefined.]] لأنك بتحاول تفك undefined. عشان كده أي دالة بتاخد options object خليها دايمًا [[= {}]].
+
+[[Math.max(...[])]] بترجّع [[-Infinity]] مش 0 ومش error: دي «القيمة المحايدة» للـ max (أي رقم أكبر منها). ولو عندك array ممكن تبقى فاضية افحص الطول الأول، وإلا هتعرض [[-Infinity]] لليوزر.`
         },
         {
-          cmd: "JSON",
-          title: "تحوّل object لنص عشان تبعته أو تخزّنه، وترجّعه",
-          desc: R`JSON هو شكل النص اللي الـ APIs بتتكلم بيه. [[JSON.stringify(obj)]] بتحوّل لـ string، و [[JSON.parse(text)]] بترجّعه object.
+          cmd: "higher-order functions",
+          title: "دالة بتاخد دالة، أو بترجّع دالة",
+          desc: R`الدالة اللي بتاخد دالة كـ argument أو بترجّع دالة اسمها higher-order function. والدالة اللي بتتبعت اسمها callback.
 
-JSON أضيق من JS: المفاتيح لازم بين [[""]]، ومفيش دوال ولا undefined ولا Date ولا Map. عشان كده الـ Date بتبقى string، ولما ترجّعها لازم تحوّلها بنفسك. و [[JSON.parse]] بترمي error لو النص بايظ، فحطها في try.`,
-          example: R`const order = { id: 7, items: ["mug"], createdAt: new Date("2026-01-01"), note: undefined };
-const text = JSON.stringify(order);
-// '{"id":7,"items":["mug"],"createdAt":"2026-01-01T00:00:00.000Z"}'
-JSON.stringify(order, null, 2);
-const back = JSON.parse(text);
-typeof back.createdAt;          // "string": الـ Date رجعت نص
-new Date(back.createdAt);
-try {
-  JSON.parse("{bad json}");
-} catch (err) {
-  console.log("JSON بايظ:", err.message);
-}`,
-          try: R`خزّن object في [[localStorage.setItem("cart", ...)]] من Console المتصفح، وقفل الصفحة وافتحها، ورجّعه بـ [[JSON.parse(localStorage.getItem("cart"))]]. وبعدين جرّب [[JSON.stringify({ a: 1n })]] واقرا الـ error.`,
+انت بتستخدمهم طول الوقت: [[map]] و [[filter]] و [[addEventListener]] و [[setTimeout]] كلهم بياخدوا callback. وتقدر تكتب بتوعك: دالة بترجّع دالة «متظبطة» بإعدادات معينة، زي [[multiplier(2)]] اللي بترجّع دالة بتضرب في 2.`,
+          example: R`function repeat(times, action) {
+  for (let i = 0; i < times; i++) action(i);
+}
+repeat(3, (i) => console.log("مرة", i));
+function multiplier(factor) {
+  return (x) => x * factor;
+}
+const double = multiplier(2);
+const triple = multiplier(3);
+double(5);                 // 10
+triple(5);                 // 15
+[1, 2, 3].map(double);     // [2, 4, 6]
+const pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x);
+pipe(double, triple)(1);   // 6`,
+          try: R`اكتب [[withLog(fn)]] بترجّع دالة جديدة، بتطبع الـ arguments قبل ما تنادي fn وبتطبع الناتج بعدها. جرّبها على [[add]].`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** خمّن الأول، وبعدين شغّل [[JSON.stringify({ a: 1, b: undefined, c: () => 1, d: NaN })]] و [[JSON.stringify(new Map([ ["a", 1] ]))]].`, done: R`الأول بيطلع [['{"a":1,"d":null}']] (الـ undefined والدالة اختفوا، والـ NaN بقت null)، والتاني بيطلع [['{}']]: الـ Map بتضيع لو مش حوّلتها بـ [[Object.fromEntries]] الأول.` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[JSON.parse("{'a': 1}")]]. شغّلها واقرا الرسالة، وصلّح النص.`, done: R`بتوقع بـ [[SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)]]: الـ JSON مبيقبلش علامة [[']]. بعد [['{"a": 1}']] بترجّع [[{ a: 1 }]].` },
-            { lvl: 'تطبيق', t: R`**ابني:** اكتب [[safeParse(text, fallback)]]: بترجّع الـ object لو النص JSON سليم، وترجّع [[fallback]] لو النص بايظ أو الناتج [[null]]. ودي اللي هتستخدمها مع [[localStorage.getItem]].`, done: R`[[safeParse('{"x":1}', {})]] بترجّع [[{ x: 1 }]]، و [[safeParse("{bad", [ ])]] بترجّع [[[ ] ]] من غير error، و [[safeParse(null, [ ])]] بترجّع [[[ ] ]] (لأن [[JSON.parse(null)]] لوحدها بترجّع [[null]]).` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** نص JSON فيه ٣ طلبات [[{ id, name, price, qty, secret }]] (Mug 120×2، و Cap 90×1، و Shirt 300×1). احسب الإجمالي، واطبع الطلب الأول من غير secret بـ [[JSON.stringify(order, ["name", "price"], 2)]].`, done: R`الإجمالي 630. والطباعة ٤ سطور: [[{]] ثم [["name": "Mug",]] ثم [["price": 120]] ثم [[}]]، ومفيش id ولا qty ولا secret. وعرفت إن الـ array التانية في stringify بتختار المفاتيح.` },
-            { lvl: 'تحدي', t: R`**مسألة:** استخدم التاني بتاع [[JSON.parse(text, reviver)]]: دالة [[(key, value) => ...]] بتشوف أي string شكلها تاريخ ISO ([[/^\d{4}-\d{2}-\d{2}T/]]) وترجّعها [[new Date(value)]]. جرّبها على order فيه [[createdAt]] و [[note: "hello"]].`, done: R`بعد الـ parse [[back.createdAt instanceof Date]] بترجّع [[true]] و [[back.createdAt.getUTCFullYear()]] بترجّع السنة الصح، و [[back.note]] لسه string [["hello"]].` }
+            { lvl: 'سريع', t: R`**مسألة:** [[repeat(n, fn)]] بتنادي fn عدد n مرة وبتبعتلها رقم اللفة.`, done: R`[[repeat(3, i => console.log(i))]] بيطبع 0 و 1 و 2.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه ناتج [[["1", "2", "3"].map(parseInt)]]؟ خمّن وبعدين شغّل، وفسّر.`, done: R`طلع [[[1, NaN, NaN]]] مش [[[1, 2, 3]]]، لأن map بتبعت (العنصر، رقم مكانه) و parseInt بتاخد التاني كـ radix: [[parseInt("2", 1)]] NaN. والتصليح [[.map(Number)]] أو [[.map(s => parseInt(s, 10))]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[makeDiscount(percent)]] بترجّع دالة بتاخد السعر.`, done: R`[[const sale = makeDiscount(20);]] وبعدين [[sale(500)]] بترجّع 400، وتقدر تعمل خصمين مختلفين من نفس الدالة.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[once(fn)]] بترجّع دالة بتشغّل fn أول مرة بس، وبعد كده بترجّع نفس النتيجة الأولى.`, done: R`[[const init = once(() => { console.log("init"); return 42; });]] وبعدين [[init(); init();]]: «init» بتتطبع مرة واحدة، والمرتين بيرجعوا 42.` },
+            { lvl: 'تحدي', t: R`**محاكاة:** [[retry(fn, times)]] بتنادي fn، ولو رمت error بتحاول تاني لحد times، وبتطبع «محاولة n فشلت» كل مرة، ولو كلهم فشلوا بترمي آخر error. جرّبها على دالة بتفشل أول مرتين وتنجح في التالتة.`, done: R`[[retry(flaky, 3)]] بيطبع «محاولة 1 فشلت» و «محاولة 2 فشلت» وبعدين يرجّع [["ok"]]. ولو عدّاد flaky رجع صفر و [[retry(flaky, 2)]]، بيطبع نفس السطرين وبيرمي آخر error ([[فشل 2]]).` }
           ],
           flag: "script",
           deep: {
-            why: "كل request و response بين الفرونت والباك JSON، و localStorage بيخزّن strings بس، والإعدادات والـ package.json JSON. والفرق بين JSON و JS objects سبب bugs كتير (الـ Dates بالذات).",
-            how: R`[[stringify]] بيتجاهل الخصايص اللي قيمتها undefined أو دالة أو symbol، وجوه array بيحطها null. و NaN و Infinity بيبقوا null. والـ Date بتتحوّل لأن عندها method اسمها [[toJSON]] بترجّع [[toISOString()]]، وتقدر تعمل toJSON لـ objects بتاعتك.
+            why: "بتخليك تفصل «إيه اللي بيتعمل» عن «امتى وإزاي»: [[repeat]] بتعرف تكرر، والـ callback بيقرر يعمل إيه. ودي أساس React (الـ handlers والـ hooks)، و middleware في Express، و debounce و memoize في المستوى ٣.",
+            how: R`عشان الدوال قيم، تقدر تحطها في متغير أو تبعتها أو ترجّعها زي أي رقم.
 
-الباراميتر التاني replacer (دالة أو array مفاتيح)، والتالت المسافات للتنسيق. و [[JSON.parse(text, reviver)]] بتاخد دالة بتعدّي على كل قيمة، ممكن تحوّل بيها الـ dates.
+لما [[multiplier(2)]] بترجّع الدالة الداخلية، الدالة دي لسه فاكرة [[factor]] حتى بعد ما multiplier خلصت. ده اسمه closure، وهو درس كامل في المستوى ٢.
 
-و [[res.json()]] في fetch هي JSON.parse على الـ body. ولو السيرفر رجّع HTML (صفحة error مثلًا) هتلاقي «Unexpected token '<'» (تاب المتصفح).
-
-الـ BigInt بيرمي TypeError في stringify، والـ circular references بترمي «Converting circular structure to JSON».`,
-            when: "أي تبادل داتا مع API، أو تخزين في localStorage أو ملف، أو log منظم. والتنسيق بـ 2 مسافات للقراية والـ debugging بس.",
-            mistakes: R`تنسى [[JSON.stringify]] وانت بتبعت body في fetch، فيتبعت [["[object Object]"]]. و [[JSON.parse]] على داتا من برّه من غير try. وتقارن التاريخ اللي رجع من API كأنه Date وهو string. وتفتكر إن [[JSON.parse]] بتفحص الشكل: لأ، بترجّع أي حاجة، والفحص بتاعه Zod (تاب TypeScript).`
+[[pipe]] بتركّب دوال ورا بعض: ناتج الأولى داخل التانية. و [[map(double)]] بتبعت الدالة نفسها من غير ما تناديها: لاحظ مفيش [[()]]. لو كتبت [[map(double())]] هتنادي double دلوقتي وتبعت ناتجها.`,
+            when: "لما عندك منطق بيتكرر والجزء اللي بيتغير سلوك مش قيمة: retry و logging و caching و validation. وفي React: custom hooks و HOCs.",
+            mistakes: R`تبعت [[fn()]] بدل [[fn]] كـ callback: [[button.addEventListener("click", save())]] بتنادي save فورًا وتبعت ناتجها. وتبعت دالة بتاخد باراميترات أكتر من اللي بيتبعتلها، زي [[["1","2"].map(parseInt)]] اللي بتبعت index كـ radix.`
           },
-          teach: R`## الفكرة في سطرين
+          teach: R`## الفكرة
 
-الـ object عايش في ذاكرة البرنامج بس. عشان تبعته لسيرفر أو تخزّنه في ملف أو localStorage لازم يبقى **نص**. [[JSON.stringify]] بتحوّله نص، و [[JSON.parse]] بترجّع النص object. JSON = JavaScript Object Notation، يعني «طريقة كتابة objects زي JS» بس بقواعد أضيق. النواتج من Node 24، وحتة localStorage من Chrome headless.
-
----
-
-## ١. object فيه حاجات مش JSON
-
-~~~text app.js
-const order = { id: 7, items: ["mug"], createdAt: new Date("2026-01-01"), note: undefined };
-~~~
-
-[[new Date("2026-01-01")]] بتعمل object تاريخ (أول يوم في ٢٠٢٦ الساعة 00:00 UTC). و note قيمتها undefined. الاتنين ملهمش مكان في JSON، وهنشوف بيحصلهم إيه.
+في JS الدالة قيمة زي الرقم: تتحط في متغير، وتتبعت لدالة تانية، وترجع من دالة. الدالة اللي بتاخد دالة أو بترجّع دالة اسمها **higher-order function**، والدالة اللي بتتبعت اسمها **callback**. المثال فيه ٣ حالات: دالة بتاخد callback، ودالة بترجّع دالة، ودالة بتركّب دوال. اتشغّل في Node 24.
 
 ---
 
-## ٢. [[JSON.stringify]]: object ← نص
+## ١. دالة بتاخد دالة: [[repeat]]
 
-~~~text app.js
-const text = JSON.stringify(order);
-~~~
-
-~~~text الناتج: console.log(text, typeof text)
-{"id":7,"items":["mug"],"createdAt":"2026-01-01T00:00:00.000Z"} string
-~~~
-
-لاحظ ٣ حاجات:
-
-1. المفاتيح بقت بين [[""]]: ده إجباري في JSON.
-2. [[note]] اختفت خالص: stringify بيتجاهل أي خاصية قيمتها undefined أو دالة.
-3. الـ Date بقت string بشكل ISO. الـ T بتفصل التاريخ عن الوقت، و [[.000]] ملّي ثانية، و Z يعني UTC.
-
-ولو الحاجات دي جوه array بتبقى null بدل ما تختفي، عشان الترتيب ميبوظش: [[JSON.stringify([undefined, () => 1, NaN])]] طلعت [[[null,null,null]]].
-
----
-
-## ٣. نسخة منسقة للقراية
-
-~~~text app.js
-JSON.stringify(order, null, 2);
-~~~
-
-الباراميتر التاني (replacer) [[null]] يعني «متغيرش حاجة»، والتالت [[2]] عدد المسافات في كل مستوى:
-
-~~~text الناتج
-{
-  "id": 7,
-  "items": [
-    "mug"
-  ],
-  "createdAt": "2026-01-01T00:00:00.000Z"
+~~~text hof.js
+function repeat(times, action) {
+  for (let i = 0; i < times; i++) action(i);
 }
+repeat(3, (i) => console.log("مرة", i));
 ~~~
 
----
-
-## ٤. [[JSON.parse]]: نص ← object
-
-~~~text app.js
-const back = JSON.parse(text);
-typeof back.createdAt;          // "string"
-new Date(back.createdAt);
-~~~
+- [[repeat]] بتاخد رقم ([[times]]) ودالة ([[action]]).
+- [[for (let i = 0; i < times; i++)]]: لف من 0 لحد قبل [[times]]. و [[i++]] يعني زوّد i واحد كل لفة.
+- [[action(i)]]: نادي الدالة اللي اتبعتت، وابعتلها رقم اللفة.
+- في النداء، التاني [[(i) => console.log("مرة", i)]] دالة كاملة بتتبعت كـ argument. [[repeat]] متعرفش هي هتعمل إيه: هي بس بتعرف تكرر.
 
 ~~~text الناتج
-{ id: 7, items: [ 'mug' ], createdAt: '2026-01-01T00:00:00.000Z' }
-string
-2026-01-01T00:00:00.000Z
+مرة 0
+مرة 1
+مرة 2
 ~~~
-
-parse مبتعرفش إن النص ده كان Date، فبترجّعه string. لازم انت تعمل [[new Date(...)]] عليه عشان ترجع Date (و [[getFullYear()]] عليها طلعت 2026).
 
 ---
 
-## ٥. نص بايظ
+## ٢. دالة بترجّع دالة: [[multiplier]]
 
-~~~text app.js
-try {
-  JSON.parse("{bad json}");
-} catch (err) {
-  console.log("JSON بايظ:", err.message);
+~~~text hof.js
+function multiplier(factor) {
+  return (x) => x * factor;
 }
+const double = multiplier(2);
+const triple = multiplier(3);
 ~~~
 
-- [[try { }]]: جرّب الكود ده.
-- [[catch (err) { }]]: لو رمى error، متوقعش البرنامج، تعالى هنا، و err هو الـ error.
-- [[err.message]]: نص الرسالة.
+- [[multiplier(2)]] مبترجّعش رقم، بترجّع **دالة** [[(x) => x * factor]].
+- الدالة الراجعة فاكرة [[factor]] بـ 2 حتى بعد ما [[multiplier]] خلصت. ده اسمه **closure** (درس في المستوى ٢).
+- فـ [[double]] دالة بتضرب في 2، و [[triple]] دالة تانية بتضرب في 3.
 
-~~~text الناتج
-JSON بايظ: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+اطبع [[double]] نفسها:
+
+~~~text الناتج من console.log(double, typeof double)
+[Function (anonymous)] function
 ~~~
 
-نوعه [[SyntaxError]]. والرسالة بتقولك: عند الحرف رقم 1 (العد بيبدأ من 0، يعني حرف b) كان متوقع اسم مفتاح بين تنصيص أو [[}]].
+[[anonymous]] يعني «من غير اسم»: الدالة الراجعة arrow ملهاش اسم.
 
-ورسالتين هتشوفهم كتير:
-
-~~~text الناتج
-JSON.parse("[object Object]")   →  SyntaxError: "[object Object]" is not valid JSON
-JSON.parse("<!DOCTYPE html>")   →  SyntaxError: Unexpected token '<', "<!DOCTYPE html>" is not valid JSON
-~~~
-
-الأولى معناها إن حد خزّن object من غير stringify، والتانية إن السيرفر رجّع صفحة HTML بدل JSON.
-
----
-
-## ٦. localStorage (حل «جرّب»)
-
-~~~text app.js
-localStorage.setItem("cart", JSON.stringify({ items: ["mug"], total: 120 }));
-const cart = JSON.parse(localStorage.getItem("cart")) ?? { items: [], total: 0 };
-~~~
-
-شغّلته في Chrome headless على صفحة من سيرفر محلي، وعملت reload بين السطرين:
-
-~~~text الناتج
-getItem("cart")  →  '{"items":["mug"],"total":120}'   (typeof: string)
-cart.items       →  ["mug"]
-getItem("nope")  →  null
-~~~
-
-localStorage بيخزّن strings بس. ولو المفتاح مش موجود [[getItem]] بترجع null، و [[JSON.parse(null)]] بترجع null، فـ [[??]] بتحط القيمة الافتراضية. ولو نسيت stringify:
-
-~~~text الناتج: setItem("bad", { items: ["mug"] }) وبعدين parse
-[object Object] | SyntaxError: "[object Object]" is not valid JSON
+~~~text Node REPL
+> double(5)
+10
+> triple(5)
+15
 ~~~
 
 ---
 
-## ٧. BigInt
+## ٣. تبعت الدالة من غير ما تناديها
 
-~~~text الناتج: JSON.stringify({ a: 1n })
-TypeError: Do not know how to serialize a BigInt
+~~~text Node REPL
+> [1, 2, 3].map(double)
+[ 2, 4, 6 ]
 ~~~
 
-[[1n]] رقم BigInt (أرقام صحيحة كبيرة جدًا)، و JSON معندوش النوع ده، فبيرمي error بدل ما يخمّن.
+[[map]] بتنادي الدالة اللي اديتها على كل عنصر. لاحظ [[double]] **من غير** [[()]]: بنبعت الدالة نفسها. لو كتبت [[double()]] كنت هتناديها دلوقتي من غير رقم:
+
+~~~text الناتج من [1, 2].map(double())
+TypeError: number NaN is not a function
+~~~
+
+[[double()]] رجّعت [[undefined * 2]] = NaN، و map استلمت NaN بدل دالة.
+
+---
+
+## ٤. [[pipe]]: دالة بتركّب دوال
+
+~~~text hof.js
+const pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x);
+pipe(double, triple)(1);   // 6
+~~~
+
+السطر ده فيه سهمين، يعني دالة بترجّع دالة. نفكّه من برّه لجوه:
+
+1. [[(...fns) =>]]: [[pipe]] بتاخد أي عدد دوال في array [[fns]].
+2. [[(x) =>]]: وبترجّع دالة جديدة بتاخد قيمة البداية [[x]].
+3. [[fns.reduce((v, f) => f(v), x)]]: ابدأ بـ [[x]]، وكل لفة خد الدالة الجاية [[f]] وطبّقها على القيمة الحالية [[v]].
+
+والنداء [[pipe(double, triple)(1)]] فيه قوسين ورا بعض: الأولانيين بيعملوا الدالة، والتانيين بينادوها بـ 1. حطينا طباعة جوه الـ reduce عشان نشوف الخطوات:
+
+~~~text الناتج
+v = 1 → fn
+v = 2 → fn
+6
+~~~
+
+| اللفة | v | f | الناتج |
+|---|---|---|---|
+| ١ | 1 | double | 2 |
+| ٢ | 2 | triple | 6 |
+
+---
+
+## ٥. حل الـ try: [[withLog]]
+
+~~~text withLog.js
+function withLog(fn) {
+  return function (...args) {
+    console.log("args:", args);
+    const result = fn.apply(this, args);
+    console.log("result:", result);
+    return result;
+  };
+}
+const add = (a, b) => a + b;
+const loggedAdd = withLog(add);
+loggedAdd(2, 3);
+~~~
+
+- [[withLog(fn)]] بتاخد دالة وبترجّع دالة جديدة «ملفوفة» حواليها.
+- [[(...args)]]: الدالة الجديدة بتلمّ أي arguments.
+- [[fn.apply(this, args)]]: نادي الدالة الأصلية وابعتلها عناصر [[args]] كـ arguments منفصلة. [[apply]] بتاخد الـ [[this]] والـ array (درس call و apply في المستوى ٢). كان ممكن [[fn(...args)]] برضه، بس apply بتحافظ على this لو اتلفّت method.
+- [[return result]]: من غيرها الدالة الملفوفة هترجّع undefined.
+
+~~~text الناتج (Node 24)
+args: [ 2, 3 ]
+result: 5
+~~~
 
 ---
 
 ## الخلاصة
 
-| الحاجة في JS | بعد stringify |
-|---|---|
-| مفتاح | بين [[""]] |
-| undefined أو دالة في object | بتختفي |
-| undefined أو دالة أو NaN في array | [[null]] |
-| NaN و Infinity | [[null]] |
-| Date | string ISO (ومترجعش Date لوحدها) |
-| BigInt | TypeError |
+| النوع | مثال | معناه |
+|---|---|---|
+| بتاخد callback | [[repeat(3, fn)]] و [[arr.map(fn)]] | هي بتقرر امتى، والـ callback بيقرر إيه |
+| بترجّع دالة | [[multiplier(2)]] | تعمل دوال متظبطة بإعدادات |
+| بتركّب دوال | [[pipe(f, g)]] | ناتج كل واحدة يدخل اللي بعدها |
 
-> [[JSON.parse]] على أي نص جاي من برّه جوه [[try]] دايمًا.`,
+ابعت [[fn]] مش [[fn()]] لما المطلوب دالة.`,
           lines: [
-            R`object فيه حاجتين مالهمش مكان في JSON: [[Date]] (JSON مفيهوش نوع تاريخ) و [[undefined]] (JSON مفيهوش undefined أصلًا). هنشوف كل واحدة بيحصلها إيه.`,
-            R`[[JSON.stringify]] بتحوّل الـ object لـ string تقدر تبعته في request أو تحفظه في ملف أو localStorage. [[note]] اختفت خالص لأن قيمتها [[undefined]]، و [[createdAt]] بقت نص زي [["2026-01-01T00:00:00.000Z"]]. والدوال بتختفي بنفس الطريقة.`,
-            R`التاني [[null]] مكان الـ replacer (مش محتاجينه)، والتالت [[2]] عدد المسافات. الناتج نفس الداتا بس على سطور ومتزاحة، فينفع للطباعة وانت بتدوّر على مشكلة أو لملف config هيقراه بني آدم.`,
-            R`[[JSON.parse]] بتعمل العكس: بتاخد النص وترجّع object جديد. ده اللي بيحصل لما تقرا رد API أو ملف JSON.`,
-            R`[[typeof]] بيقول [["string"]]: [[JSON.parse]] متعرفش إن النص ده كان تاريخ، فبيرجع string عادي. لو ناديت عليه [[getFullYear()]] هيرمي TypeError إنها مش function.`,
-            R`لازم تحوّله تاريخ بنفسك بـ [[new Date()]] بعد الـ parse. ونفس الكلام لأي نوع مش موجود في JSON، زي Map و Set: بتحوّلهم بإيدك في الرايح وفي الجاي.`,
-            R`[[JSON.parse]] بترمي error لو النص مش JSON سليم، وأي نص جاي من برّه (API أو ملف أو localStorage) ممكن يكون بايظ، فبنحطها جوه [[try]].`,
-            R`JSON بيشترط إن المفاتيح تبقى بين علامات تنصيص مزدوجة، و [[{bad json}]] مش كده، فـ [[parse]] بترمي SyntaxError والتنفيذ بيقفز على [[catch]] على طول.`,
-            R`[[catch]] بتمسك الـ error في [[err]]، فالبرنامج مبيقعش ويكمّل اللي بعد الـ try/catch عادي.`,
-            R`بيطبع رسالة مفهومة ومعاها [[err.message]]، اللي هنا [[Expected property name or '}' in JSON at position 1]] فيعرّفك مكان المشكلة. وفي الكود الحقيقي هنا المكان اللي ترجّع فيه قيمة default بدل الداتا البايظة.`,
-            R`نهاية الـ try/catch.`,
+            R`دالة higher-order لأنها بتاخد دالة كـ argument: [[times]] عدد المرات، و [[action]] الحاجة اللي تتعمل كل مرة. فـ [[repeat]] بتتحكم في «كام مرة»، واللي بيناديها يقرر «يعمل إيه».`,
+            R`loop بتلف [[times]] مرة، وكل لفة تنادي [[action]] وتبعتلها رقم اللفة [[i]] (من 0). [[action]] هنا متغير شايل دالة، فبنناديه بـ [[()]] زي أي دالة.`,
+            R`نهاية [[repeat]].`,
+            R`بنبعت arrow function كـ callback، فـ [[repeat]] تناديها 3 مرات وتطبع «مرة 0» و«مرة 1» و«مرة 2». غيّر الـ callback ونفس [[repeat]] تعمل حاجة تانية خالص من غير ما تلمس كودها.`,
+            R`الشكل التاني من higher-order: دالة بترجّع دالة. بتاخد [[factor]] وتصنع دالة ضرب مخصوصة ليه.`,
+            R`الدالة الراجعة بتاخد [[x]] وتضربه في [[factor]]. ورغم إن [[multiplier]] هتخلص وترجع، الدالة الجديدة فاكرة [[factor]] بتاعها (ده الـ closure).`,
+            R`نهاية [[multiplier]].`,
+            R`[[multiplier(2)]] بترجّع دالة [[factor]] بتاعها 2، ونحفظها في [[double]]. فـ [[double]] دلوقتي دالة عادية تقدر تناديها.`,
+            R`نفس المصنع بـ 3: دالة منفصلة ليها [[factor]] بتاعها، ومش بتأثر على [[double]].`,
+            R`[[5 * 2]] يعني [[10]]: الـ [[factor]] اللي اتحفظ وقت [[multiplier(2)]] لسه موجود.`,
+            R`[[5 * 3]] يعني [[15]]: كل دالة فاكرة الـ [[factor]] بتاعها هي بس.`,
+            R`بنبعت [[double]] نفسها (من غير [[()]]) لـ [[map]]، فـ map تناديها على كل عنصر. لو كتبت [[map(double())]] كنت هتنادي double فورًا وتبعت ناتجها ([[NaN]]) بدل الدالة، فـ map ترمي TypeError.`,
+            R`بتاخد أي عدد دوال ([[...fns]]) وترجّع دالة جديدة. لما تتنادى بـ [[x]]، [[reduce]] بيعدّي القيمة على الدوال بالترتيب: ناتج كل دالة يبقى مدخل اللي بعدها.`,
+            R`أول قوسين بيبنوا الدالة المركّبة، والتانيين بيشغّلوها على [[1]]: [[double(1)]] يطلع 2، وبعدين [[triple(2)]] يطلع 6.`,
           ],
-          sol: R`بعد ما تقفل الصفحة وتفتحها، [[JSON.parse(localStorage.getItem("cart"))]] بيرجّعلك نفس الـ object. لو نسيت [[JSON.stringify]] في الـ setItem، localStorage هيخزن [["[object Object]"]] (لأنه بيخزن strings بس)، والـ parse بعدها هيطلع SyntaxError. ولو المفتاح مش موجود [[getItem]] بترجع null و [[JSON.parse(null)]] بترجع null، فاكتب [[?? []]] بعدها.
+          sol: R`[[withLog(add)(2, 3)]] المفروض تطبع [[args: [2, 3]]] وبعدها [[result: 5]] وترجّع 5. الفكرة إن withLog بتاخد دالة وبترجّع دالة: rest [[...args]] بتلم أي عدد arguments، و [[fn.apply(this, args)]] بتبعتهم زي ما هما.
 
-[[JSON.stringify({ a: 1n })]] بتطلع [[TypeError: Do not know how to serialize a BigInt]]: JSON معندوش نوع BigInt. الحل تحوّله لـ string بإيدك ([[String(v)]]) أو تستخدم replacer.`,
-          solCode: R`// في Console المتصفح
-localStorage.setItem("cart", JSON.stringify({ items: ["mug"], total: 120 }));
-// بعد reload
-const cart = JSON.parse(localStorage.getItem("cart")) ?? { items: [], total: 0 };
-cart.items; // ["mug"]`
+الغلطة الشائعة إنك تنسى [[return r]] في الآخر: الـ log هيظهر صح، بس الدالة الجديدة هترجّع undefined وأي كود بيستخدم الناتج هيبوظ. والغلطة التانية إنك تنادي [[fn()]] وانت بتعرّف withLog (بدل ما ترجّع دالة) فتتنفّذ مرة واحدة بدري.`,
+          solCode: R`function withLog(fn) {
+  return function (...args) {
+    console.log("args:", args);
+    const result = fn.apply(this, args);
+    console.log("result:", result);
+    return result;
+  };
+}
+const add = (a, b) => a + b;
+const loggedAdd = withLog(add);
+loggedAdd(2, 3); // args: [ 2, 3 ] ثم result: 5`
         }
       ]
     }

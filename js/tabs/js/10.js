@@ -1,835 +1,756 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "prototypes و classes",
+      t: "scope و closures",
       l: 2,
-      n: "الوراثة في JS بالـ prototype chain، و class شكل أوضح لنفس الفكرة، و extends و super و private fields",
+      n: "المتغير شايفه مين، والـ hoisting، وليه الدالة بتفتكر متغيرات اتعملت برّاها",
       projects: [
-        { lvl: 'صغير', t: R`كلاس فلوس`, what: R`[[class Money]] بتخزّن المبلغ بالقروش في [[#cents]] (عدد صحيح)، وفيها [[add(other)]] بترجّع Money جديدة، و [[format()]] بترجّع [["12.50 جنيه"]]، و [[static from(pounds)]]. من درس class.`, done: R`[[Money.from(0.1).add(Money.from(0.2)).format()]] بترجّع [["0.30 جنيه"]] (مش [[0.30000000000000004]])، و [[add]] مبتغيرش الأصل، ومبلغ سالب أو مش رقم بيرمي RangeError.` },
-        { lvl: 'صغير', t: R`Stack بـ private field`, what: R`[[class Stack]] فيها [[#items]] و [[push]] و [[pop]] و [[peek]] و getter [[size]]، و [[pop]] على stack فاضي بيرمي Error برسالة. من درس class.`, done: R`[[push(1).push(2)]] بتتسلسل (لأنها بترجّع this)، و [[pop()]] بترجّع [[2]]، و [[size]] صح، و [[stack.items]] بترجّع [[undefined]] من برّه.` },
-        { lvl: 'متوسط', t: R`عيلة errors للـ API`, what: R`[[class AppError extends Error]] فيها [[status]]، ومنها [[NotFoundError]] (404) و [[ValidationError]] (400 ومعاها [[field]]) و [[AuthError]] (401). ودالة [[toResponse(err)]] بترجّع [[{ status, body }]] حسب النوع بـ [[instanceof]]، وأي error مش معروف بيبقى 500 من غير تفاصيله. من درس extends و super ودرس class.`, done: R`كل نوع بيطلع الـ status بتاعه، و [[new TypeError("x")]] بيطلع 500 والـ body مفيهوش [["x"]]، و [[err.name]] صح لكل نوع، وكل ده متجرّب بـ [[console.assert]].` },
-        { lvl: 'متوسط', t: R`أشكال على الصفحة`, what: R`[[Shape]] وتحتها [[Circle]] و [[Rect]] و [[Square extends Rect]]، كل واحدة بتعرف [[area()]] و [[render(root)]] بترسم [[div]] بالمقاس الصح بـ [[style]]. فورم بتختار منه الشكل والمقاسات وبيضيفه. من دروس الوحدة ووحدة الـ DOM.`, done: R`[[new Square(3) instanceof Rect]] بترجّع [[true]]، والمساحة الكلية تحت الرسمة بتتحدث مع كل شكل جديد، والمقاس السالب أو الفاضي بيطلع رسالة ومبيرسمش.` },
-        { lvl: 'كبير', t: R`نظام مكتبة كتب`, what: R`classes [[Book]] و [[Member]] و [[Library]]: الـ Library فيها Maps خاصة للكتب والأعضاء والاستعارات، و [[borrow(memberId, isbn)]] و [[returnBook]] بيرموا errors من عيلة [[LibraryError]] ([[NotFoundError]] و [[AlreadyBorrowedError]] و [[LimitError]] لو العضو عنده ٣ كتب). و [[toJSON]] و [[static fromJSON]] عشان الحالة تتحفظ في ملف وترجع. وفي [[test.js]] حالات بـ [[console.assert]] لكل error ولرحلة حفظ وتحميل كاملة، وكل عملية بتتكتب في لوج بـ [[console.info]]. من الوحدة دي، و JSON و Map من وحدة الـ objects، و this.`, done: R`[[node test.js]] بيعدّي كل الـ asserts: استعارة كتاب مستعار بترمي [[AlreadyBorrowedError]] والحالة متغيرتش، والكتاب الرابع بيرمي [[LimitError]]، وبعد [[fromJSON(JSON.stringify(lib))]] كل الاستعارات زي ما هي و [[borrow]] شغالة على النسخة الجديدة، وملف JSON بايظ بيطلع error واضح مش crash غامض.`, ext: R`زوّد مواعيد إرجاع وغرامات بالتواريخ، وواجهة DOM فوقه، وبحث بالعنوان والمؤلف.` },
-        { lvl: 'فكرة', t: R`موديل لحاجة حقيقية`, what: R`اختار حاجة فيها أنواع ووراثة حقيقية (حسابات بنك بأنواعها، أو موظفين ومديرين، أو وسائل مواصلات، أو عناصر في لعبة)، واعملها classes بـ private fields و validation و errors خاصة بيها. وقبل أي extends اسأل نفسك: ينفع تركيب أحسن؟ انت اللي بتختار.`, done: R`فيه مكان واحد على الأقل اخترت فيه composition بدل الوراثة وكاتب ليه في كومنت، ومفيش field مهم يتعدل من برّه غير من method بتتحقق، وفيه ٥ asserts على الأقل بتعدّي.`, ext: R`اربطه بصفحة، واحفظه JSON، وبعد قسم TypeScript اكتب الـ types بتاعته.` },
+        { lvl: 'صغير', t: R`عدّاد لكل زرار`, what: R`٣ أزرار في صفحة، وكل واحد معاه counter من [[createCounter()]] بتاعة درس closure، وبيكتب عدد ضغطاته جنبه. ومفيش ولا متغير global للأعداد.`, done: R`كل زرار بيعد لوحده، وفي Console مش لاقي أي متغير اسمه count أو clicks على [[window]]، وزرار رابع بيتضاف بسطر واحد.` },
+        { lvl: 'صغير', t: R`زرار الدفع مرة واحدة`, what: R`زرار «ادفع» الـ handler بتاعه ملفوف في [[once(fn)]] اللي كتبتها في درس closure، فالضغط المكرر مبيدفعش تاني. من درس closure.`, done: R`٥ ضغطات ورا بعض بيطبعوا «اتدفع» مرة واحدة بس، والضغطات اللي بعدها بترجّع نفس الناتج الأول من غير ما الدالة تشتغل.` },
+        { lvl: 'متوسط', t: R`store صغير بـ subscribe`, what: R`[[createStore(initial)]] فيها state خاصة، وبترجّع [[getState()]] و [[setState(changes)]] (بتعمل object جديد بـ spread) و [[subscribe(fn)]] اللي بترجّع دالة [[unsubscribe]]. ده نفس شكل الـ stores في React و Vue. من دروس closure و scope ودرس destructuring و spread.`, done: R`بعد [[subscribe]] كل [[setState]] بيندهلك بالـ state الجديدة، وبعد [[unsubscribe()]] مبيندهلكش، و [[getState()]] قبل وبعد مش نفس الـ object، واتنين stores مش شايفين بعض.` },
+        { lvl: 'متوسط', t: R`كاش بعمر`, what: R`[[cached(fn, ms)]] بترجّع دالة بتفتكر الناتج لكل argument في Map جوه الـ closure لمدة [[ms]] بس، وبعدها بتنادي fn تاني. استخدم [[Date.now()]]. من دروس closure و Map و Set.`, done: R`نداء مرتين في نفس الثانية بيشغّل fn مرة واحدة، وبعد المدة بيشغّلها تاني (العدّاد بيزيد)، و [[arguments]] مختلفة ليها كاش مختلف.` },
+        { lvl: 'كبير', t: R`todo app كـ factory`, what: R`[[createTodoApp(root, storageKey)]] بتبني todo list كاملة جوه العنصر اللي اتبعتلها: الحالة كلها في الـ closure (مش global)، وevent delegation على الـ root، والحفظ في localStorage تحت [[storageKey]] بـ [[safeParse]]. اعمل نسختين في نفس الصفحة («البيت» و «الشغل»). التحقق: نص فاضي أو أطول من ١٠٠ حرف بيترفض برسالة جنب الفورم. وفي [[tests.js]] شوية [[console.assert]] على الدوال اللي مش DOM (add و toggle و remove). من الوحدة دي ووحدة الـ DOM والـ objects.`, done: R`النسختين مستقلين: مهمة في واحدة مبتظهرش في التانية، و refresh بيرجّع كل واحدة ببياناتها، و [[window]] مفيهوش أي متغير للحالة، والـ asserts كلها بتعدّي، و JSON بايظ في مفتاح واحد بيفتح النسخة دي فاضية والتانية سليمة.`, ext: R`زوّد [[destroy()]] بتشيل الـ listeners وتفضّي الـ root، و undo لآخر عملية، وسحب وإفلات للترتيب بعد درس drag and drop.` },
+        { lvl: 'فكرة', t: R`مكتبة utilities بتاعتك`, what: R`لم كل الدوال اللي فيها closure واللي محتاجها في مشاريعك ([[once]] و [[memoize]] و [[createCounter]] و [[cached]]، أو حاجات جديدة زي [[after(n, fn)]] أو [[limit(fn, max)]]) في ملف واحد، وكل دالة معاها مثال تشغيل. انت اللي بتختار الدوال.`, done: R`كل دالة ليها ٣ أمثلة على الأقل بـ [[console.assert]]، والملف بيشتغل بـ [[node utils.js]] من غير ولا assertion فاشلة.`, ext: R`حوّله لـ module بـ export بعد قسم modules، وانشره كـ package صغير، وزوّد debounce و throttle بعد درسهم.` },
       ],
       items: [
         {
-          cmd: "prototype chain",
-          title: "إزاي [].map موجودة وانت معرّفتهاش؟",
-          desc: R`كل object في JS ليه لينك مخفي لـ object تاني اسمه الـ prototype. لما تقرا خاصية مش موجودة في الـ object، JS بيدوّر في الـ prototype، وبعدين في الـ prototype بتاعه، لحد [[Object.prototype]] وبعده null. ده اسمه prototype chain.
+          cmd: "scope",
+          title: "المتغير ده شايفه مين؟ (lexical scope)",
+          desc: R`الـ scope هو المكان اللي المتغير عايش فيه. فيه ٣ مستويات: global (الملف أو الصفحة كلها)، و function (جوه الدالة)، و block (بين [[{ }]] مع let و const).
 
-عشان كده [[[1, 2].map]] شغالة: map مش على الـ array نفسها، هي على [[Array.prototype]]، وكل array لينكها بيشاور عليه. والـ classes نفسها مبنية على ده.`,
-          example: R`const arr = [1, 2];
-Object.getPrototypeOf(arr) === Array.prototype;               // true
-Object.getPrototypeOf(Array.prototype) === Object.prototype;  // true
-Object.hasOwn(arr, "map");     // false: مش عنده
-"map" in arr;                  // true: لقاها في السلسلة
-const animal = { speak() { return $__bt$__{this.name} بيتكلم$__bt; } };
-const cat = Object.create(animal);
-cat.name = "Mishmish";
-cat.speak();                   // "Mishmish بيتكلم"
-Object.getPrototypeOf(cat) === animal;  // true
-cat.speak = () => "مياو";      // shadowing: بقت على cat نفسه
-animal.speak.call(cat);        // لسه موجودة على الـ prototype`,
-          try: R`في Console اكتب [[console.dir([1, 2])]] وافتح [[[[Prototype]]]] جوه بعض لحد ما توصل null. وبعدين جرّب [[Object.create(null)]] وشوف مفيهوش [[toString]] خالص.`,
+الـ scope في JS «lexical»: بيتحدد من مكان الكود وانت بتكتبه، مش من مكان النداء. الدالة الداخلية شايفة متغيرات الدوال اللي حواليها، والعكس لأ. ولما تقرا متغير، JS بيدوّر في الـ scope الحالي، ولو ملقاهوش يطلع للي فوقه، لحد الـ global (scope chain).`,
+          example: R`const app = "shop";                 // global scope
+function checkout() {
+  const total = 100;                // function scope
+  if (total > 50) {
+    const discount = 10;            // block scope
+    console.log(app, total, discount);
+  }
+  console.log(typeof discount);     // "undefined": برا الـ block
+}
+function outer() {
+  const secret = "x";
+  function inner() {
+    return secret;                  // مش لاقيه هنا، فطلع لـ outer
+  }
+  return inner();
+}
+checkout();
+outer(); // "x"`,
+          try: R`عرّف [[const app = "admin"]] جوه [[checkout]] قبل الـ if، وشوف الـ console.log بيطبع أنهي app (الأقرب بيكسب، ودي اسمها shadowing). وبعدين نادي [[inner()]] من برا outer واقرا الـ error.`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const base = { greet() { return "hi " + this.name; } }; const u = Object.create(base); u.name = "Sara";]] واطبع [[u.greet()]] و [[Object.hasOwn(u, "greet")]] و [["greet" in u]].`, done: R`[["hi Sara"]] ثم [[false]] ثم [[true]]: الـ method مش على u، اتلقت في الـ prototype.` },
-            { lvl: 'تطبيق', t: R`**ابني:** اكتب [[chainOf(obj)]] بتلف بـ [[Object.getPrototypeOf]] لحد null، وترجّع أسامي الـ constructors اللي في السلسلة ([[proto.constructor.name]]).`, done: R`[[chainOf([ ])]] بترجّع [[[ 'Array', 'Object' ] ]]، و [[chainOf(new Map())]] بترجّع [[[ 'Map', 'Object' ] ]]، و [[chainOf(Object.create(null))]] بترجّع array فاضية.` },
-            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** في Console اكتب [[[]]] وافتح سهم [[Prototype]] مرتين. لاقي ٣ methods على Array.prototype عمرك ما استخدمتها، واقرا صفحة واحدة منهم على MDN وجرّبها. واطبع [[Object.getOwnPropertyNames(Array.prototype).length]].`, done: R`كتبت ٣ أسامي (مثلًا [[with]] و [[copyWithin]] و [[findLast]]) ومثال شغّال لواحدة. والرقم في Node 24 طلع 40 (ممكن يختلف شوية في المتصفح)، والمستوى التاني كان Object.prototype وفيه [[hasOwnProperty]] و [[toString]].` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** عدّاد كلمات بـ object عادي: [[const c = {}; for (const w of text.split(" ")) c[w] = (c[w] || 0) + 1;]]. جرّبه على [["constructor constructor"]]. وصلّحه بطريقتين: [[Object.create(null)]] و [[Object.hasOwn]].`, done: R`قبل التصليح [[c.constructor]] بتطلع نص غريب فيه [[native code]] و [[11]] بدل [[2]]، لأن [[c["constructor"] ]] لقت [[Object]] في الـ prototype. وبعد أي تصليح [[c.constructor]] بترجّع [[2]].` },
-            { lvl: 'تحدي', t: R`**اشرحها:** لـ [[class Animal {}]] و [[class Dog extends Animal {}]] و [[const d = new Dog()]]: ارسم السلسلة من d لحد null، وأثبت كل سهم بسطر [[Object.getPrototypeOf(...) === ...]].`, done: R`الرسمة: d ← Dog.prototype ← Animal.prototype ← Object.prototype ← null، و ٤ سطور كلهم بيطبعوا [[true]]. وكمان [[Object.getPrototypeOf(Dog) === Animal]] true (الكلاس نفسه وارث للـ static).` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** قبل ما تشغّل خمّن: [[let x = 1; { let x = 2; console.log(x); } console.log(x);]]`, done: R`بيطبع [[2]] وبعدين [[1]]: الـ x اللي جوه الـ block متغير تاني خالص (shadowing) والبرّاني متلمسش.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الدالة دي فيها bug: [[function sum(prices) { let total = 0; for (const p of prices) { let total = total + p; } return total; }]]. شغّلها على [[[10, 20] ]] واقرا الـ error، وصلّحها.`, done: R`قبل التصليح بتطلع [[ReferenceError: Cannot access 'total' before initialization]] (الـ total الجديد جوه الـ block بيغطي البرّاني وهو لسه في الـ TDZ). وبعد ما تشيل [[let]] اللي جوه بترجّع [[30]].` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** دالة [[inner]] جوه [[outer]]، وفي الملف [[const APP = "shop"]]. حط breakpoint جوه inner (في DevTools أو VS Code) وافتح لوحة Scope، واكتب كل متغير ظاهر تحت أنهي قسم.`, done: R`لقيت أقسام Local (متغيرات inner) و Closure (متغيرات outer اللي inner بتستخدمها) و Script (الـ [[const APP]]) و Global (window أو globalThis)، وكل متغير في القسم اللي توقعته من الـ scope chain.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[countInRange(nums, min, max)]] جواها دالة صغيرة [[inRange(n)]] بتقرا min و max من الـ scope اللي برّاها من غير ما تاخدهم parameters، والـ count بيتحسب بـ filter.`, done: R`[[countInRange([1, 5, 10, 15], 5, 10)]] بترجّع 2، و [[countInRange([], 0, 9)]] بترجّع 0. ولو ناديت [[inRange(3)]] برّه countInRange بيطلع [[ReferenceError: inRange is not defined]].` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** اكتب [[function leak() { count = 5; }]] من غير [[let]]، ونادي [[leak()]] واطبع [[count]] برّه. وبعدين حط [["use strict";]] في أول الملف وجرّب تاني. وبعدها ارسم الـ scope chain لدالة جوه دالة جوه دالة، وكل واحدة بتقرا متغير من مستوى مختلف.`, done: R`من غير strict mode [[count]] بيطبع [[5]] (اتعمل global من غير ما تقصد)، ومع strict بيطلع [[ReferenceError: count is not defined]]. والرسمة بتقول كل متغير اتلقى في أنهي مستوى، والكود بيطبع اللي الرسمة قالته.` },
+            { lvl: 'تحدي', t: R`**refactor:** كود فيه [[let items = []; let total = 0;]] برّه، ودالتين [[addItem(price)]] و [[reset()]] بيعدّلوا فيهم مباشرة. خليه بدوال بتاخد الحالة كـ parameter وترجّع حالة جديدة: [[addItem(state, price)]] و [[reset()]]، من غير ولا متغير global بيتغيّر.`, done: R`[[let s = reset(); s = addItem(s, 100); s = addItem(s, 50);]] بيدّي [[s.total]] بـ 150 و [[s.items.length]] بـ 2 زي الكود القديم. ومفيش ولا دالة بتلمس متغير برّاها، فتقدر تختبر كل واحدة لوحدها.` }
           ],
           flag: "script",
           deep: {
-            why: "ده نظام الوراثة الحقيقي في JS، والـ class مجرد syntax فوقه. لو فاهمه، هتفهم instanceof، وليه methods الـ class مش بتتنسخ لكل instance، وإيه هو prototype pollution، وسؤال انترفيو ثابت: «اشرح prototypal inheritance».",
-            how: R`اللينك ده اسمه في الـ spec [[[[Prototype]]]]، وبتقراه بـ [[Object.getPrototypeOf(obj)]]. فيه [[obj.__proto__]] القديمة، بس متستخدمهاش في كود جديد.
+            why: "أي bug من نوع «المتغير ده undefined ليه؟» أو «مين اللي غيّر القيمة دي؟» بيرجع للـ scope. وهو الأساس اللي الـ closures مبنية عليه، ودي أشهر سؤال انترفيو JS.",
+            how: R`كل دالة وكل block بيعملوا environment جديد فيه متغيراتهم، ومعاه reference للـ environment اللي اتكتبوا جواه. البحث عن متغير بيمشي في السلسلة دي لفوق. وعشان السلسلة بتتحدد وقت الكتابة (lexical)، الدالة لو اتنادت من مكان تاني خالص، لسه شايفة المتغيرات بتاعة مكان تعريفها. ده عكس dynamic scope اللي في bash مثلًا.
 
-متتلخبطش: [[Fn.prototype]] (خاصية على الدوال) هو الـ object اللي هيبقى prototype لأي حاجة تتعمل بـ [[new Fn()]]. يعني [[Object.getPrototypeOf(new Fn()) === Fn.prototype]].
+الـ modules (ESM) ليها scope خاص بيها: الـ const في أول ملف module مش global، ومش بيظهر في ملف تاني غير لو عملته export. أما الـ script العادي في المتصفح، فالـ var والدوال في أوله بيبقوا على [[window]].
 
-القراية بتمشي في السلسلة، بس الكتابة لأ: [[cat.speak = ...]] بتعمل خاصية جديدة على cat وتخبّي اللي في الـ prototype (shadowing)، والـ prototype متلمسش.
-
-[[Object.create(proto)]] بتعمل object فاضي الـ prototype بتاعه proto. و [[Object.create(null)]] object من غير prototype خالص: مفيهوش toString ولا hasOwnProperty، ومفيد كـ dictionary نضيف.
-
-و [[a instanceof B]] بيمشي في سلسلة a ويسأل: [[B.prototype]] موجود فيها؟
-
-الـ methods على الـ prototype موجودة مرة واحدة في الذاكرة ومشتركة بين كل الـ instances، عكس لو حطيتها في الـ constructor.`,
-            when: "مش هتكتب Object.create كتير في الشغل اليومي، هتستخدم class. بس هتحتاج الفهم ده في الـ debugging، وفي الانترفيو، ولما تقرا كود مكتبات قديم.",
-            mistakes: R`تعدّل [[Array.prototype]] أو [[Object.prototype]] (monkey patching): بيأثر على كل الكود وكل المكتبات. وتدمج objects جاية من اليوزر من غير فحص فمفتاح زي [["__proto__"]] يعدّل الـ prototype (prototype pollution، ثغرة حقيقية اتلاقت في lodash). وتتلخبط بين [[__proto__]] و [[prototype]].`
+و [[globalThis]] هو الـ global object في أي بيئة ([[window]] في المتصفح و [[global]] في Node).`,
+            when: "خلّي كل متغير في أضيق scope ممكن. الـ global للحاجات اللي فعلًا مشتركة، ويستحسن تبقى في module وتتعمل import.",
+            mistakes: R`نفس اسم المتغير جوه وبرا (shadowing) فتفتكر انك بتعدّل اللي برا. وتعتمد على متغيرات global بين ملفات. وتنسى let/const فتعمل global بالغلط. وفي الانترفيو: «يعني إيه lexical scope؟» و «scope chain».`
           },
-          teach: R`## الكود ده بيعمل إيه؟
+          teach: R`## الفكرة في سطرين
 
-جزئين: الأول بيثبت إن [[map]] مش موجودة على الـ array نفسها، موجودة «فوقها» في السلسلة. والتاني بيعمل سلسلة بإيدنا: object اسمه [[cat]] بيورث method من object اسمه [[animal]]. اتشغّل في Node 24، وكل سطر طبعناه بـ console.log.
+كل متغير ليه «حدود» عايش جواها، ودي اسمها **scope**. المثال فيه ٣ مستويات: global، وجوه دالة، وجوه block. وبعدين دالة جوه دالة عشان تشوف إن الداخلية بتشوف اللي حواليها. النواتج من تشغيله في [[app.js]] بـ Node 24.
 
 ---
 
-## ١. مين الـ prototype بتاع الـ array؟
+## ١. global scope
 
 ~~~text app.js
-const arr = [1, 2];
-Object.getPrototypeOf(arr) === Array.prototype;
+const app = "shop";                 // global scope
 ~~~
 
-- [[Object.getPrototypeOf(x)]]: دالة جاهزة بترجّع الـ **prototype** بتاع x، يعني الـ object اللي x بيدوّر فيه لما ميلاقيش حاجة عنده.
-- [[Array.prototype]]: object واحد في JS كلها، متخزّن فيه map و filter و push وكل methods الـ arrays.
-- [[===]]: هل الاتنين **نفس** الـ object بالظبط؟
+متغير متعرّف برّه أي دالة أو block، فكل الكود في الملف شايفه.
+
+---
+
+## ٢. function scope و block scope
+
+~~~text app.js
+function checkout() {
+  const total = 100;                // function scope
+  if (total > 50) {
+    const discount = 10;            // block scope
+    console.log(app, total, discount);
+  }
+  console.log(typeof discount);     // "undefined": برا الـ block
+}
+~~~
+
+- [[total]] اتعرّف جوه الدالة، فعايش جواها بس.
+- [[{ }]] بتاعة الـ if اسمها **block**، و [[const]] و [[let]] جوه block عايشين جواه بس. فـ discount موجود بين القوسين دول وبس.
+- السطر اللي جوه الـ if شايف التلاتة: discount من الـ block نفسه، و total من الدالة اللي حواليه، و app من الـ global.
+
+### إزاي JS لقى app؟
+
+لما بتكتب اسم متغير، JS بيدوّر عليه في الـ scope الحالي. لو ملقاهوش يطلع للي فوقه، وهكذا لحد الـ global. السلسلة دي اسمها **scope chain**:
+
+~~~text البحث عن app
+block بتاع الـ if   →  مش موجود
+دالة checkout      →  مش موجود
+global             →  "shop"  لقيته
+~~~
+
+### [[typeof discount]] برّه الـ block
+
+[[typeof]] بيرجّع نوع القيمة كـ string. ولو المتغير مش موجود خالص مبيرميش error، بيرجّع [["undefined"]]. لو كتبت [[console.log(discount)]] بدلها:
 
 ~~~text الناتج
-true
-~~~
-
-يعني كل array بتعملها، الـ prototype بتاعها هو نفس الـ [[Array.prototype]].
-
----
-
-## ٢. وفوقه؟
-
-~~~text app.js
-Object.getPrototypeOf(Array.prototype) === Object.prototype;
-~~~
-
-~~~text الناتج
-true
-~~~
-
-و [[Object.prototype]] ده آخر محطة، الـ prototype بتاعه [[null]] (طبعناه: [[Object.getPrototypeOf(Object.prototype)]] طلع [[null]]). فالسلسلة:
-
-~~~text السلسلة
-arr  →  Array.prototype  →  Object.prototype  →  null
+ReferenceError: discount is not defined
 ~~~
 
 ---
 
-## ٣. [[Object.hasOwn]] ضد [[in]]
+## ٣. دالة جوه دالة
 
 ~~~text app.js
-Object.hasOwn(arr, "map");
-"map" in arr;
+function outer() {
+  const secret = "x";
+  function inner() {
+    return secret;                  // مش لاقيه هنا، فطلع لـ outer
+  }
+  return inner();
+}
 ~~~
 
-- [[Object.hasOwn(obj, key)]] (من ES2022): الخاصية دي **على الـ object نفسه**؟ من غير ما يدوّر فوق.
-- [[key in obj]]: الخاصية دي موجودة **في أي حتة في السلسلة**؟
+inner مكتوبة **جوه** outer، فالـ scope اللي فوقها هو outer. لما تدوّر على secret ومتلاقيهوش جواها، تطلع لـ outer وتلاقيه. والعكس مش شغال: outer مش شايفة أي متغير جوه inner.
 
-~~~text الناتج
-false
-true
-~~~
-
-map مش على arr، بس [[in]] لقاها في Array.prototype. وللمقارنة: [[Object.hasOwn(arr, 0)]] و [[Object.hasOwn(arr, "length")]] طلعوا [[true]]: العناصر و length على الـ array نفسها.
+ودي معنى **lexical**: السلسلة بتتحدد من مكان كتابة الدالة في الكود، مش من المكان اللي اتنادت منه.
 
 ---
 
-## ٤. سلسلة بإيدك: [[Object.create]]
+## ٤. التشغيل
 
 ~~~text app.js
-const animal = { speak() { return $__bt$__{this.name} بيتكلم$__bt; } };
-const cat = Object.create(animal);
-cat.name = "Mishmish";
-~~~
-
-- [[animal]]: object عادي فيه method واحدة. و [[$__bt...$__bt]] نص template، و [[$__{this.name}]] بتتبدل بالاسم.
-- [[Object.create(animal)]]: اعمل object **فاضي** والـ prototype بتاعه animal.
-- [[cat.name = "Mishmish"]]: خاصية على cat نفسه.
-
-~~~text الناتج: console.log(cat)
-{ name: 'Mishmish' }
-~~~
-
-لاحظ إن [[speak]] مش ظاهرة: هي مش على cat.
-
----
-
-## ٥. القراية بتمشي في السلسلة
-
-~~~text app.js
-cat.speak();
-Object.getPrototypeOf(cat) === animal;
+checkout();
+outer(); // "x"
 ~~~
 
 ~~~text الناتج
-Mishmish بيتكلم
-true
-~~~
-
-اللي حصل خطوة خطوة:
-
-1. JS دوّر على [[speak]] في cat: مش موجودة.
-2. طلع للـ prototype (animal): لقاها.
-3. نادها، و **this = cat** لأن النداء كان [[cat.speak()]] (قاعدة النقطة)، فـ [[this.name]] = Mishmish.
-
----
-
-## ٦. الكتابة مبتمشيش في السلسلة (shadowing)
-
-~~~text app.js
-cat.speak = () => "مياو";
-animal.speak.call(cat);
-~~~
-
-- [[cat.speak = ...]]: الكتابة **دايمًا** بتحط الخاصية على cat نفسه. فبقى فيه speak على cat «بتغطّي» على اللي فوق. ده اسمه **shadowing**.
-- [[animal.speak.call(cat)]]: اللي فوق لسه موجودة زي ما هي، ندهناها بـ this = cat بـ [[call]].
-
-~~~text الناتج
-مياو                    ← cat.speak()
-Mishmish بيتكلم        ← animal.speak.call(cat)
-~~~
-
-و [[Object.keys(cat)]] بقت فيها [['name']] و [['speak']]، و animal ملمستش.
-
----
-
-## ٧. object من غير prototype
-
-جرّبنا [[Object.create(null)]] (من التجربة):
-
-~~~text app.js
-const o = Object.create(null);
-o.toString;
-"toString" in o;
-String(o);
-~~~
-
-~~~text الناتج
+shop 100 10
 undefined
-false
-TypeError: Cannot convert object to primitive value
+x
 ~~~
 
-مفيش سلسلة خالص، فمفيش toString، و [[String(o)]] مش لاقي طريقة يحوّله لنص. ده مفيد كـ dictionary نضيف من غير مفاتيح موروثة.
+(السطر الأخير طبعته بـ [[console.log(outer())]].)
+
+---
+
+## ٥. «جرّب»: shadowing و inner من برّه
+
+لو ضفت [[const app = "admin";]] جوه checkout قبل الـ if:
+
+~~~text الناتج
+admin 100 10
+~~~
+
+وبعد الدالة [[console.log(app)]] لسه [[shop]]. ده **shadowing**: المتغير الداخلي «بيغطّي» على اللي برّه بنفس الاسم، لأن البحث بيقف عند أول واحد يلاقيه. الـ global متغيرتش.
+
+ولو حطيت نفس السطر **بعد** الـ if بدل قبلها:
+
+~~~text الناتج
+ReferenceError: Cannot access 'app' before initialization
+~~~
+
+مش [["shop"]]! الاسم app بقى محجوز في الدالة من أولها، والسطر بتاعه لسه موصلش (ده TDZ، الدرس الجاي).
+
+و [[inner()]] من برّه outer:
+
+~~~text الناتج
+ReferenceError: inner is not defined
+~~~
 
 ---
 
 ## الخلاصة
 
-| العملية | بتعمل إيه |
-|---|---|
-| [[Object.getPrototypeOf(x)]] | هات الحلقة اللي فوق x |
-| [[Object.create(p)]] | object جديد فوقه p |
-| [[Object.hasOwn(x, k)]] | k على x نفسه؟ |
-| [[k in x]] | k في أي حتة في السلسلة؟ |
-| قراية [[x.k]] | دوّر في x وبعدين فوق لحد null |
-| كتابة [[x.k = v]] | على x نفسه دايمًا (shadowing) |
+| المستوى | بيتعمل بـ | عايش فين |
+|---|---|---|
+| global | تعريف برّه أي حاجة | الملف كله |
+| function | تعريف جوه دالة | الدالة دي وأي حاجة جواها |
+| block | [[let]] / [[const]] جوه [[{ }]] | الـ block ده بس |
 
-- كل array و object و دالة جزء من سلسلة كده، والـ class (الدرس الجاي) بتبني نفس السلسلة بشكل أوضح.`,
+> البحث بيطلع لفوق بس، من مكان الكتابة. وفي script عادي في المتصفح، [[var]] في الأول بيبقى خاصية على [[window]] و [[let]] لأ (جرّبتها في Chrome: [[window.gv]] طلعت 1 و [[window.gl]] طلعت undefined).`,
           lines: [
-            R`array عادية. هنستخدمها نشوف منين جات [[map]] و [[filter]] مع إننا عمرنا ما عرّفناهم عليها.`,
-            R`كل object ليه لينك مخفي لـ object تاني اسمه الـ prototype. الـ array بتاعتنا الـ prototype بتاعها [[Array.prototype]]، وده المكان اللي فيه [[map]] و [[filter]] و [[push]] متعرّفين **مرة واحدة** لكل الـ arrays.`,
-            R`و [[Array.prototype]] نفسه ليه prototype هو [[Object.prototype]] (فيه [[toString]] و [[hasOwnProperty]]). ده آخر حلقة، والـ prototype بتاعه [[null]]: هنا السلسلة بتخلص.`,
-            R`[[Object.hasOwn]] بيسأل عن الخصايص اللي على الـ object **نفسه** بس، ورجّع [[false]]: [[arr]] مفيهاش [[map]] فعلًا.`,
-            R`[[in]] بيدوّر في السلسلة كلها، فلاقى [[map]] على [[Array.prototype]] ورجّع [[true]]. ده نفس اللي بيحصل لما تكتب [[arr.map]]: JS بيدوّر في الـ object، ولو ملقاش يطلع للـ prototype، وهكذا لحد [[null]].`,
-            R`object فيه method [[speak]] بتستخدم [[this.name]]. هنخليه prototype لـ object تاني بدل ما نكرر الـ method.`,
-            R`[[Object.create]] بيعمل object فاضي جديد ويخلي الـ prototype بتاعه [[animal]]. فـ [[cat]] نفسه مفيهوش أي خاصية، بس يقدر يستخدم أي حاجة في [[animal]].`,
-            R`بيحط [[name]] على [[cat]] نفسه (own property) مش على [[animal]]، فلو عملنا object تاني من نفس الـ [[animal]] مش هيشوف الاسم ده.`,
-            R`[[speak]] مش على [[cat]]، فـ JS طلع في السلسلة ولقاها على [[animal]]. بس [[this]] لسه [[cat]] (اللي قبل النقطة)، فـ [[this.name]] بقت [["Mishmish"]].`,
-            R`بيأكد إن اللينك المخفي بتاع [[cat]] رايح لـ [[animal]] بالظبط، ورجّع [[true]].`,
-            R`الكتابة **عمرها ما بتطلع في السلسلة**: بتعمل [[speak]] جديدة على [[cat]] نفسه. ودلوقتي [[cat.speak()]] بترجّع [["مياو"]] لأن JS بيلاقيها على [[cat]] الأول وميطلعش لفوق (shadowing).`,
-            R`النسخة الأصلية لسه على [[animal]] متلمستش، و [[call(cat)]] بتشغّلها بـ [[this]] هو [[cat]] فترجّع [["Mishmish بيتكلم"]]. يعني الـ shadowing خبّى الـ method على [[cat]] بس، ممسحهاش.`,
+            R`متغير متعرّف برّه أي دالة أو block، فده global scope: أي كود في الملف يقدر يقراه، وعشان كده [[checkout]] تحت شايفاه. ولأن الكل شايفه، خلّي الـ globals قليلة: أي حتة ممكن تعتمد عليها أو تغيّرها.`,
+            R`كل دالة بتعمل scope جديد: المتغيرات اللي هتتعرّف جواها مش هتبان برّه.`,
+            R`[[total]] في الـ function scope بتاع [[checkout]]: موجود طول ما الدالة شغالة، ومحدش برّه الدالة يقدر يوصله.`,
+            R`الـ [[{ }]] بتاعة [[if]] بتعمل block scope: أي [[let]] أو [[const]] جواها بيعيش جواها بس.`,
+            R`[[discount]] في block scope: موجود لحد القوس اللي بيقفل الـ [[if]]. ولو كان [[var]] كان هيهرب للدالة كلها، لأن [[var]] مبيعترفش بالـ blocks.`,
+            R`الـ block بيشوف نفسه وكل اللي برّاه: [[discount]] من الـ block، و [[total]] من الدالة، و [[app]] من الـ global، فبيطبع [[shop 100 10]].`,
+            R`نهاية الـ block بتاع [[if]]، ومعاها [[discount]] بيختفي.`,
+            R`برّه الـ block [[discount]] مش موجود. استخدمنا [[typeof]] لأنها بترجّع [["undefined"]] لمتغير مش متعرّف بدل ما ترمي error، أما [[console.log(discount)]] لوحدها كانت هترمي ReferenceError.`,
+            R`نهاية [[checkout]].`,
+            R`دالة جواها دالة، عشان نشوف الـ scope chain: الدالة الداخلية تقدر تشوف متغيرات الدوال اللي حواليها.`,
+            R`متغير في scope [[outer]]: [[inner]] هتقدر تشوفه، لكن الكود برّه [[outer]] لأ.`,
+            R`دالة متعرّفة جوه [[outer]]، فالـ scope بتاعها متوصّل بـ scope [[outer]] من مكان ما اتكتبت (lexical scope)، مش من المكان اللي هتتنادى منه.`,
+            R`[[secret]] مش متعرّف جوه [[inner]]، فـ JS بيدوّر في الـ scope اللي فوقها ([[outer]]) ويلاقيه. لو ملقاهوش كان هيكمّل للـ global، ولو مش موجود خالص ReferenceError.`,
+            R`نهاية [[inner]].`,
+            R`بننادي [[inner]] جوه [[outer]] ونرجّع ناتجها، فـ [[outer()]] كلها بترجّع [["x"]].`,
+            R`نهاية [[outer]].`,
+            R`بتشغّل [[checkout]]: بتطبع [[shop 100 10]] من جوه الـ block، وبعدها [[undefined]] من [[typeof]] برّه الـ block.`,
+            R`بترجّع [["x"]]: [[inner]] وصلت لـ [[secret]] عن طريق الـ scope chain. لكن [[console.log(secret)]] هنا برّه [[outer]] كانت هترمي ReferenceError.`,
           ],
-          sol: R`[[console.dir([1, 2])]] بيوريك الـ array، وجواها خانة Prototype مكتوب جنبها [[Array(0)]] وفيه map و filter وكل الـ methods، وجواه خانة Prototype تانية مكتوب جنبها [[Object]] وفيه toString و hasOwnProperty، وده آخرها: الـ prototype بتاعه null (مش هيظهرلك سطر تالت). يعني السلسلة [[arr → Array.prototype → Object.prototype → null]].
+          sol: R`بعد ما تضيف [[const app = "admin"]] جوه checkout، الـ console.log بيطبع [[admin 100 10]]: JS بيدوّر على الاسم من الـ scope الأقرب ويطلع لبرّه، فلقى app بتاعة checkout قبل ما يوصل للـ global. الـ global نفسها متغيرتش، ولو طبعت app برّه الدالة هتلاقيها [["shop"]].
 
-[[const o = Object.create(null)]] بيعمل object مفيش فوقيه أي حاجة: [[o.toString]] بـ undefined، و [["toString" in o]] بـ false، و [[String(o)]] أو [[$__bt$__{o}$__bt]] بتطلع [[TypeError: Cannot convert object to primitive value]]. بيستخدم كـ dictionary نضيف مفيهوش مفاتيح موروثة (عشان مفتاح زي [["constructor"]] ميضربش)، ودي نفس فكرة الـ null prototype اللي [[Object.groupBy]] بترجّعها.`
+[[inner()]] من برّه outer بتطلع [[ReferenceError: inner is not defined]]: inner متعرّفة جوه outer، فمش موجودة في الـ global scope. الـ scope بيتحدد بمكان كتابة الكود (lexical)، مش بمكان النداء. ولو حطيت [[const app]] بعد الـ if بدل قبلها، هيطلع ReferenceError (TDZ) مش «shop»، لأن الاسم محجوز في الـ scope من أوله (الدرس الجاي).`
         },
         {
-          cmd: "class",
-          title: "تكتب class بـ constructor و methods و private fields",
-          desc: R`[[class]] طريقة واضحة تعمل «قالب» لـ objects: [[constructor]] بيتنادي مع [[new]]، والـ methods بتتحط على الـ prototype (مشتركة بين كل الـ instances).
+          cmd: "hoisting و TDZ",
+          title: "ليه تقدر تنادي دالة قبل ما تكتبها؟",
+          desc: R`قبل ما الكود يشتغل، JS بيعدّي على الـ scope ويسجّل كل التعريفات. ده اسمه hoisting: كأن التعريفات اتشالت لأول الـ scope.
 
-وفيه: fields ([[count = 0]])، و private fields بـ [[#]] ([[#balance]]) محدش يوصلها من برّه الكلاس خالص، و [[static]] للحاجات اللي على الكلاس نفسه مش على الـ instance، و [[get]] و [[set]] لخصايص محسوبة.
-
-و [[typeof BankAccount]] هيطلع [["function"]]: الكلاس في الآخر constructor function فوق الـ prototypes.`,
-          example: R`class BankAccount {
-  static count = 0;
-  #balance = 0;
-  constructor(owner) {
-    this.owner = owner;
-    BankAccount.count++;
-  }
-  deposit(amount) {
-    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
-    this.#balance += amount;
-    return this;
-  }
-  get balance() {
-    return this.#balance;
-  }
-}
-const acc = new BankAccount("Sara");
-acc.deposit(100).deposit(50);
-acc.balance;          // 150
-acc.balance = 1e6;    // مفيش setter: بيتجاهل (وفي strict TypeError)
-BankAccount.count;    // 1
-typeof BankAccount;   // "function"`,
-          try: R`ضيف [[withdraw(amount)]] بترمي error لو الرصيد مش كفاية. وبعدين جرّب تكتب [[acc.#balance]] برا الكلاس: هتلاقي SyntaxError قبل ما الملف يشتغل أصلًا. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الكلاس جاهز في المربع: ضيف [[withdraw]]، و getter اسمه [[history]] بيرجّع العمليات اللي نجحت بس بالترتيب، كل واحدة [[{ type: "deposit", amount: 100 }]] (أو [["withdraw"]]). خزّن السجل في field خاص [[#log]]، واللي بره ميقدرش يعدّل السجل حتى لو عمل push في الـ array اللي رجعتله.`,
+بس كل نوع بيتسجّل بشكل مختلف: الـ function declaration بتتسجّل كاملة (تقدر تناديها قبل سطرها). و [[var]] بيتسجّل بقيمة undefined. و [[let]] و [[const]] و [[class]] بيتسجّلوا من غير قيمة، ولو لمستهم قبل سطرهم يطلع ReferenceError. الفترة دي اسمها TDZ (temporal dead zone).`,
+          example: R`sayHi();                        // شغال: الدالة متسجّلة كاملة
+function sayHi() { console.log("hi"); }
+console.log(a);                 // undefined: var من غير قيمة
+var a = 1;
+greet();                        // TypeError: greet is not a function
+var greet = () => console.log("hey");
+console.log(b);                 // ReferenceError: Cannot access 'b' before initialization
+let b = 2;`,
+          try: R`شغّل الكود في ملف بـ Node، هتلاقيه وقف عند [[greet()]]. علّق السطر ده وشغّل تاني عشان توصل للـ ReferenceError. وبعدين غيّر [[var greet]] لـ [[const greet]] وشوف الرسالة اتغيرت لإيه.`,
           practice: [
-            { lvl: 'سريع', t: R`**ابني:** [[class Temperature]] فيها [[#celsius]] من الـ constructor، و getter [[fahrenheit]]، و [[static fromFahrenheit(f)]] بترجّع instance جديدة.`, done: R`[[new Temperature(100).fahrenheit]] بترجّع [[212]]، و [[Temperature.fromFahrenheit(32)]] بترجّع instance الـ fahrenheit بتاعها [[32]]، و [[new Temperature(0).fromFahrenheit]] بترجّع [[undefined]] (الـ static على الكلاس مش الـ instance).` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[class Cart {}]] وبعدها [[const c = Cart();]]. اقرا الرسالة وصلّح.`, done: R`الرسالة [[TypeError: Class constructor Cart cannot be invoked without 'new']]. بعد [[new Cart()]] بيشتغل. وعرفت إن ده فرق بين الكلاس والـ function العادية اللي كانت هتشتغل غلط من غير ما تقول.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[class C { static count = 0; constructor() { C.count++; } }]]، وبعدين [[new C(); new C();]] واطبع [[C.count]] و [[new C().count]] و [[C.count]] تاني.`, done: R`توقعت وطلع 2 و undefined و 3: الـ static على الكلاس نفسه مش على الـ instance، وسطر [[new C().count]] نفسه زوّد العدّاد.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[class Cart]] فيها [[#items]] (Map)، و [[add(name, price, qty = 1)]] بترمي [[TypeError]] لو السعر مش رقم و [[RangeError]] لو الكمية صفر أو سالبة، و [[remove(name)]]، و getters [[total]] و [[count]].`, done: R`بعد [[add("mug", 120, 2)]] و [[add("cap", 90)]]: [[total]] بترجّع [[330]] و [[count]] بترجّع [[3]]، و [[add("x", "10")]] بترمي TypeError والسلة متغيرتش، و [[cart.#items]] برّه الكلاس SyntaxError.` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[JSON.stringify(acc)]] على الـ BankAccount بتاعة الدرس. وبعدين زوّد [[toJSON()]] بترجّع [[{ owner, balance }]] و [[static fromJSON(text)]] بترجّع instance حقيقية بنفس الرصيد (من غير ما تكسر الـ private field).`, done: R`من غير toJSON بيطلع [['{"owner":"Sara"}']] بس (الـ private fields مش بتتحفظ). وبعدها [[BankAccount.fromJSON(JSON.stringify(acc))]] بترجّع object [[instanceof BankAccount]] بـ [[true]]، والرصيد نفسه، و [[deposit]] شغالة عليه.` },
-            { lvl: 'تحدي', t: R`**محاكاة:** [[class Queue]] لطابور البنك بـ [[#items]]: [[enqueue(name)]] و [[dequeue()]] و [[peek()]] و getter [[size]]. دخّل Ali و Mona و Omar، وخدّم اتنين.`, done: R`[[dequeue()]] مرتين بترجّع Ali ثم Mona، و [[size]] بقى 1، و [[peek()]] بترجّع Omar. و [[dequeue()]] على طابور فاضي بترجّع undefined من غير error.` }
+            { lvl: 'سريع', t: R`**قارن وقيس:** قارن [[console.log(typeof x); let x;]] بـ [[console.log(typeof y);]] (y مش متعرّف خالص).`, done: R`الأول بيطلع [[ReferenceError: Cannot access 'x' before initialization]]، والتاني بيطبع [["undefined"]] عادي: الـ TDZ أشد من متغير مش موجود أصلًا.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[function show() { return LIMIT; }]] وبعدها [[show();]] وبعدها [[const LIMIT = 5;]]. شغّل، وبعدين انقل سطر [[show()]] تحت الـ const.`, done: R`الترتيب الأول بيطلع [[ReferenceError: Cannot access 'LIMIT' before initialization]]، والتاني بيرجّع [[5]] مع إن الدالة مكتوبة فوق الـ const: الـ TDZ بتتحسب بوقت التنفيذ مش بمكان السطر.` },
+            { lvl: 'تطبيق', t: R`**ابني:** ملف [[report.js]] مترتّب «الصورة الكبيرة الأول»: [[const CURRENCY = "ج.م";]] فوق، وتحته [[function main()]] بتنادي [[total(prices)]] و [[format(n)]] المكتوبين تحتها كـ function declarations، وسطر [[main();]] في آخر الملف.`, done: R`[[main()]] بتطبع [[300 ج.م]] لـ [[[100, 200]]]. ولما نقلت سطر [[main();]] لأول الملف قبل الـ const طلع [[ReferenceError: Cannot access 'CURRENCY' before initialization]]، فعرفت ليه الـ declarations تقدر تيجي تحت بس النداء لازم يبقى بعد الـ const.` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** خمّن الناتج قبل ما تشغّل: [[console.log(typeof foo); var foo = 1; function foo() {} console.log(typeof foo);]]. وبعدين جرّب [[new A(); class A {}]].`, done: R`الأول بيطبع [["function"]] وبعدين [["number"]] (الـ function declaration متسجّلة كاملة، وسطر [[var foo = 1]] هو اللي غيّرها وقت التنفيذ)، و [[new A()]] بتطلع [[ReferenceError: Cannot access 'A' before initialization]]، وتقدر تشرح الاتنين في سطرين.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** اكتب لزميلك ٣ سطور: function declaration، و [[var]]، و [[let/const/class]]، كل واحد بيحصل له إيه لو استخدمته قبل سطره، بمثال سطر واحد لكل واحد.`, done: R`الـ ٣ سطور صح: الـ function بتشتغل كاملة، و var بترجّع undefined، و let/const/class بيرموا [[ReferenceError: Cannot access '...' before initialization]]. وزميلك قدر يتوقع ناتج تمرين «اقرا وتوقّع» اللي فوق من شرحك.` }
           ],
           flag: "script",
           deep: {
-            why: R`الـ classes في كل حتة: Error مخصص، و services في الباك، و SDKs زي [[new PrismaClient()]] و [[new Stripe()]]، و Web Components. ومع private fields بقى عندك encapsulation حقيقي، مش underscore بالاتفاق.`,
-            how: R`[[class A {}]] بتعمل constructor function، والـ methods بتتحط على [[A.prototype]] (مش enumerable). الفروق عن الـ function القديمة: الكلاس لازم يتنادي بـ new (وإلا TypeError)، وكل الكود جواه strict mode، والكلاس في TDZ زي let (مفيش hoisting بقيمة).
+            why: "بيفسّر رسايل errors غريبة زي «Cannot access before initialization» و «is not a function» على حاجة انت شايفها متعرّفة. ومن أشهر أسئلة «اتوقع الناتج».",
+            how: R`الـ engine بيشتغل على مرحلتين: الأولى بيعمل الـ environment ويسجّل فيه كل الأسماء، والتانية بينفّذ سطر سطر.
 
-الـ fields ([[count = 0]] و [[#balance = 0]]) بتتحط على كل instance لوحده، وقت الـ constructor. عشان كده arrow function كـ field بتتعمل نسخة لكل instance (ذاكرة أكتر، بس this متثبت).
+في المرحلة الأولى: [[function f() {}]] بتتسجّل ومعاها جسمها. [[var x]] بيتسجّل ويتحط فيه undefined. [[let]] و [[const]] و [[class]] بيتسجّلوا «uninitialized»، وأي قراية ليهم قبل ما التنفيذ يوصل لسطرهم بترمي ReferenceError.
 
-الـ private fields ([[#x]]) مش خصايص عادية: مش بتظهر في [[Object.keys]] ولا [[JSON.stringify]] ولا console.log العادي (DevTools بيعرضها)، والكتابة ليها برا الكلاس SyntaxError. و [[#x in obj]] بيفحص لو الـ object عنده الـ field ده.
+عشان كده [[var greet = () => ...]] بتدي TypeError مش ReferenceError: المتغير موجود وقيمته undefined، وانت بتحاول تنادي undefined.
 
-[[return this]] في آخر method بيخليك تعمل chaining. و [[static]] بيتقرا من الكلاس نفسه، وفيه [[static { }]] block للتهيئة.
-
-الـ getter بيتقرا كأنه خاصية ([[acc.balance]] من غير أقواس). ولو مفيش setter، الكتابة بتتجاهل في sloppy mode وبترمي TypeError في strict.`,
-            when: "لما عندك state وسلوك مرتبطين ببعض وهتعمل منهم instances كتير، أو مكتبة بتطلب كده (Error و Web Components). للداتا البسيطة، objects ودوال أبسط. وفي React الحديثة مفيش classes تقريبًا.",
-            mistakes: R`تنسى [[new]]. وتبعت method كـ callback فـ this تضيع (درس this). وتحط كل حاجة في class على طريقة Java حتى لو دوال عادية كفاية. وتعتمد على [[_balance]] كـ private: أي حد يقدر يوصلها. وفي الانترفيو: «الفرق بين class و constructor function؟» الإجابة: syntax فوق نفس الـ prototypes، مع strict و new إجباري و private fields.`
+الـ TDZ حاجة كويسة: بتمسك الغلط بدل ما تديك undefined بهدوء. وهي زمنية مش مكانية: دالة مكتوبة فوق [[let x]] تقدر تقرا x عادي لو اتنادت بعد السطر ده.`,
+            when: R`استفيد من hoisting الدوال لو عايز تكتب الـ main فوق والتفاصيل تحت. غير كده، عرّف قبل ما تستخدم.`,
+            mistakes: R`تفتكر إن let و const مبيتعملهمش hoisting خالص: بيتعمل، بس في TDZ. وتنادي arrow function متعرّفة تحت. وفي الانترفيو: «إيه الناتج؟» على كود زي اللي فوق، و «إيه هو TDZ؟».`
           },
-          teach: R`## الكود ده بيعمل إيه؟
+          teach: R`## الفكرة في سطرين
 
-بيعرّف «قالب» لحساب بنكي: كل حساب ليه صاحب ورصيد، والرصيد **private** محدش يقدر يلعب فيه من برّه، وتزوّده بـ [[deposit]] بس. وفي الآخر بيجرّب الحاجات اللي الكلاس بيوفّرها. اتشغّل في Node 24 كملف [[.cjs]] وكملف [[.mjs]].
+JS مبيقراش الكود ويشغّله سطر سطر من غير تحضير. قبل التنفيذ بيعدّي على الـ scope ويسجّل كل الأسامي المتعرّفة فيه. فلما تستخدم اسم قبل سطره، النتيجة بتعتمد على **نوع التعريف**. المثال فيه ٤ أنواع، وكل واحد بيدّي نتيجة مختلفة. شغّلته في [[app.js]] بـ Node 24.
 
 ---
 
-## ١. [[class]] والـ static
+## ١. التسجيل قبل التنفيذ
+
+لو تخيلنا المرحلة الأولى للملف ده، JS بيكتب لنفسه ورقة كده:
+
+| الاسم | اتعرّف بـ | قيمته قبل التنفيذ |
+|---|---|---|
+| sayHi | [[function sayHi() {}]] | الدالة كاملة |
+| a | [[var]] | [[undefined]] |
+| greet | [[var]] | [[undefined]] |
+| b | [[let]] | ممنوع اللمس (TDZ) |
+
+وبعدين يبدأ ينفّذ من أول سطر. التسجيل ده اسمه **hoisting** (رفع)، كأن التعريفات اتشالت لفوق.
+
+---
+
+## ٢. function declaration
 
 ~~~text app.js
-class BankAccount {
-  static count = 0;
+sayHi();                        // شغال: الدالة متسجّلة كاملة
+function sayHi() { console.log("hi"); }
 ~~~
 
-- [[class BankAccount { ... }]]: بيعرّف كلاس اسمه BankAccount. العُرف إن اسم الكلاس يبدأ بحرف كبير.
-- [[static count = 0;]]: خاصية على **الكلاس نفسه** مش على كل حساب. فيه [[BankAccount.count]] واحدة بس مشتركة. بنستخدمها نعدّ الحسابات اللي اتعملت.
+[[function اسم() {}]] مكتوبة لوحدها كجملة اسمها **function declaration**، وبتتسجّل بجسمها. فالنداء قبلها شغال: [[hi]].
 
 ---
 
-## ٢. الـ private field
+## ٣. [[var]]
 
 ~~~text app.js
-  #balance = 0;
+console.log(a);                 // undefined: var من غير قيمة
+var a = 1;
 ~~~
 
-- [[#balance]]: الـ [[#]] جزء من الاسم، ومعناها **private**: الخاصية دي موجودة على كل حساب، بس مفيش أي كود يقدر يقراها أو يكتبها **غير الكود اللي جوه الكلاس**.
-- [[= 0]]: كل حساب جديد بيبدأ رصيده 0. ده اسمه **field**: بيتحط على كل instance لوحده وقت ما يتعمل.
+[[var a = 1]] فيها حاجتين: تعريف (اتسجّل في المرحلة الأولى بـ undefined)، وإسناد [[= 1]] (بيحصل لما التنفيذ يوصل للسطر). فالقراية قبله بتدّي [[undefined]] من غير error.
 
 ---
 
-## ٣. الـ constructor
+## ٤. [[var]] فيها arrow function
 
 ~~~text app.js
-  constructor(owner) {
-    this.owner = owner;
-    BankAccount.count++;
-  }
+greet();                        // TypeError: greet is not a function
+var greet = () => console.log("hey");
 ~~~
 
-- [[constructor]]: دالة خاصة بتتنادي **لوحدها** مع [[new]]. الـ arguments اللي بتبعتها لـ new بتوصل هنا.
-- [[this.owner = owner]]: [[this]] هنا = الحساب الجديد (قاعدة new). فبنحط عليه خاصية **عامة** اسمها owner.
-- [[BankAccount.count++]]: زوّد العداد اللي على الكلاس.
+greet زي a بالظبط: متغير var قيمته undefined لحد سطره. والـ arrow function قيمة بتتحط في المتغير، مش declaration. فـ [[greet()]] معناها «نادي undefined»:
 
----
+~~~text الناتج: Node 24 (البرنامج وقف هنا)
+hi
+undefined
+.../app.js:5
+greet();                        // TypeError: greet is not a function
+^
 
-## ٤. method بتعدّل الرصيد
-
-~~~text app.js
-  deposit(amount) {
-    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
-    this.#balance += amount;
-    return this;
-  }
+TypeError: greet is not a function
+    at Object.<anonymous> (.../app.js:5:1)
 ~~~
 
-- [[deposit(amount)]]: method. كل methods الكلاس بتتحط **مرة واحدة** على [[BankAccount.prototype]]، وكل الحسابات بتشوفها من السلسلة (درس prototype chain).
-- [[if (amount <= 0) throw ...]]: افحص الـ input الأول. [[throw new RangeError(...)]] بيوقف الدالة ويرمي error من نوع RangeError (قيمة برّه المدى المسموح).
-- [[this.#balance += amount]]: زوّد الرصيد. ده مسموح لأننا **جوه** الكلاس.
-- [[return this]]: رجّع الحساب نفسه. ده اللي بيخلّي [[acc.deposit(100).deposit(50)]] تشتغل: أول deposit بترجّع acc، فالتانية بتتنادي عليه. ده اسمه **chaining**.
+اقرا الـ error: [[app.js:5]] رقم السطر، والـ [[^]] تحت مكان المشكلة، و [[5:1]] سطر 5 عمود 1. النوع **TypeError**: الاسم موجود، بس قيمته من النوع الغلط (undefined مش function).
 
 ---
 
-## ٥. getter
+## ٥. [[let]] و TDZ
+
+علّقت سطر [[greet()]] بـ [[//]] في أوله وشغّلت تاني:
 
 ~~~text app.js
-  get balance() {
-    return this.#balance;
-  }
+console.log(b);                 // ReferenceError: Cannot access 'b' before initialization
+let b = 2;
+~~~
+
+~~~text الناتج: Node 24
+hi
+undefined
+ReferenceError: Cannot access 'b' before initialization
+~~~
+
+b **متسجّلة** (عشان كده الرسالة مش «b is not defined»)، بس [[let]] و [[const]] و [[class]] بيفضلوا «مش جاهزين» لحد سطرهم. الفترة من أول الـ scope لحد سطر التعريف اسمها **TDZ** (temporal dead zone = المنطقة الميتة الزمنية). و initialization = أول قيمة.
+
+---
+
+## ٦. «جرّب»: [[const greet]]
+
+لما غيّرت [[var greet]] لـ [[const greet]] ورجّعت النداء:
+
+~~~text الناتج
+ReferenceError: Cannot access 'greet' before initialization
+~~~
+
+نفس الغلطة، بس الرسالة بقت بتقولك المشكلة بالظبط: استخدمت greet قبل سطرها. و [[class]] نفس الحكاية: [[new C()]] قبل [[class C {}]] طلعت [[ReferenceError: Cannot access 'C' before initialization]].
+
+---
+
+## ٧. ليه «زمنية»؟
+
+~~~text app.js
+function f() { return x; }
+f();          // ReferenceError: Cannot access 'x' before initialization
+let x = 5;
+f();          // 5
+~~~
+
+جرّبتها: نفس الدالة طلّعت error الأول و [[5]] بعد سطر let. اللي بيفرق **وقت** النداء، مش مكان الدالة في الملف.
+
+---
+
+## الخلاصة
+
+| التعريف | قبل سطره | الرسالة |
+|---|---|---|
+| [[function f() {}]] | شغال كامل | |
+| [[var x]] | [[undefined]] | |
+| [[var f = () => {}]] ونادتها | TypeError | [[f is not a function]] |
+| [[let]] / [[const]] / [[class]] | ReferenceError | [[Cannot access 'x' before initialization]] |
+| اسم مش موجود خالص | ReferenceError | [[x is not defined]] |`,
+          lines: [
+            R`بننادي [[sayHi]] قبل سطر تعريفها، وبتشتغل وتطبع [[hi]]. السبب إن JS قبل ما ينفّذ أي سطر بيسجّل كل function declaration بجسمها كامل (hoisting).`,
+            R`التعريف نفسه. ولأنه declaration ([[function]] في أول السطر) اتسجّل كامل قبل التنفيذ، فمكانه في الملف مش بيفرق.`,
+            R`[[var a]] اتعملها hoisting بس **من غير قيمتها**: المتغير بيتسجّل بـ [[undefined]] لحد ما التنفيذ يوصل لسطر التعيين. فبيطبع [[undefined]] بدل error، ودي مشكلة لأنها بتخبّي الغلطة.`,
+            R`هنا بس القيمة [[1]] بتتحط. التعيين نفسه مبيترفعش، اللي بيترفع الإعلان بس.`,
+            R`[[greet]] متعرّف بـ [[var]]، فاتسجّل بـ [[undefined]] زي [[a]]. ونداء [[undefined]] كدالة بيرمي [[TypeError: greet is not a function]]، مع إن الاسم موجود.`,
+            R`الدالة بتتحط في [[greet]] هنا بس. فالـ arrow والـ function expression مش بيتعملهم hoisting زي الـ declaration: بيمشوا بقواعد المتغير اللي شايلهم.`,
+            R`[[let]] و [[const]] بيترفعوا برضه، بس من غير أي قيمة: من أول الـ scope لحد سطر التعريف هما في TDZ (Temporal Dead Zone)، وأي محاولة توصلهم بترمي ReferenceError. ده أحسن من [[var]] لأن الغلطة بتبان فورًا بدل [[undefined]] ساكتة.`,
+            R`هنا [[b]] بيخرج من الـ TDZ وياخد [[2]]، ومن بعد السطر ده تقدر تستخدمه عادي.`,
+          ],
+          sol: R`أول تشغيل بيطبع [[hi]] وبعدين [[undefined]]، وبيقف عند [[TypeError: greet is not a function]]: [[var greet]] اتعمله hoisting بقيمة undefined، والنداء على undefined كـ function بيطلع TypeError مش ReferenceError.
+
+بعد ما تعلّق سطر [[greet()]]: بيطبع hi و undefined وبعدين [[ReferenceError: Cannot access 'b' before initialization]]. الـ let اتعمله hoisting برضه، بس في الـ TDZ لحد سطر التعريف.
+
+ولو خليت [[const greet]] (ورجّعت سطر النداء): الرسالة بتبقى [[ReferenceError: Cannot access 'greet' before initialization]]. يعني نفس الغلطة بقت error أوضح بيقولك المشكلة فين بالظبط، وده سبب إن const أحسن من var حتى في الدوال.`
+        },
+        {
+          cmd: "closure",
+          title: "يعني إيه closure؟",
+          desc: R`الـ closure دالة فاكرة المتغيرات اللي كانت حواليها وقت ما اتعملت، حتى بعد ما الدالة اللي حواليها خلصت ورجعت.
+
+ده بيحصل تلقائي مع كل دالة في JS، وبيستخدم في: متغيرات private محدش يوصلها غير من دوال معينة، ودوال «متظبطة» (factory)، والـ callbacks والـ event handlers اللي بتقرا متغيرات، و hooks في React.`,
+          example: R`function createCounter(start = 0) {
+  let count = start;
+  return {
+    increment() { return ++count; },
+    get() { return count; },
+  };
+}
+const c1 = createCounter();
+const c2 = createCounter(10);
+c1.increment();          // 1
+c1.increment();          // 2
+c2.increment();          // 11: كل counter ليه count بتاعه
+console.log(c1.count);   // undefined: مفيش طريقة توصله غير من الدوال
+console.log(c1.get());   // 2`,
+          try: R`اكتب [[once(fn)]] بترجّع دالة بتنادي fn أول مرة بس، وبعد كده بترجّع نفس الناتج الأول. هتحتاج متغيرين في الـ closure: [[called]] و [[result]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+          practice: [
+            { lvl: 'سريع', t: R`**ابني:** اكتب [[makeGreeter(greeting)]] بترجّع دالة بتاخد [[name]] وترجّع التحية والاسم.`, done: R`[[const hi = makeGreeter("أهلا"); hi("Sara")]] بترجّع [["أهلا Sara"]]، و [[makeGreeter("صباح الخير")("Omar")]] بترجّع جملتها هي، والاتنين مش بيأثروا على بعض.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[function counter() { let n = 0; return () => ++n; } const a = counter(), b = counter(); a(); a(); b(); console.log(a(), b());]]`, done: R`توقعت وطلع [[3 2]]: كل نداء لـ [[counter()]] عمل [[n]] جديدة، فـ a و b مش بيشتركوا في حاجة.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[function makeCounter() { return () => { let count = 0; count++; return count; }; }]]. نادي العدّاد ٣ مرات.`, done: R`قبل التصليح كل نداء بيرجّع 1 لأن [[count]] بتتعمل من جديد جوه الدالة اللي بترجع. بعد ما تنقل [[let count = 0]] لـ makeCounter (برّه الدالة اللي بترجع) النداءات بترجّع 1 و 2 و 3.` },
+            { lvl: 'تطبيق', t: R`**ابني:** اكتب [[createTodoStore()]] فيها array خاصة في الـ closure، وبترجّع [[add(text)]] و [[remove(index)]] و [[list()]]. و [[list()]] بترجّع نسخة مش الـ array نفسها (درس reference و copy).`, done: R`[[store.list().push("hack")]] مبيغيرش اللي جوه ([[store.list().length]] زي ما هو)، ومفيش طريقة توصل للـ array من برّه، واتنين store منفصلين كل واحد ليه مهامه.` },
+            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[memoize(fn)]]: Map في الـ closure بتخزّن الناتج لكل argument، فلو اتندهت بنفس القيمة تاني ترجّع المتخزّن من غير ما تنادي fn. جرّبها على دالة بطيئة بتزوّد عدّاد كل ما تشتغل.`, done: R`[[memo(5)]] مرتين و [[memo(6)]] مرة: العدّاد بيبقى [[2]] مش [[3]]، والنتيجة صح في المرات التلاتة، و memoize على دالتين مختلفتين كل واحدة ليها Map لوحدها.` },
+            { lvl: 'تحدي', t: R`**محاكاة:** [[createAccount(initial)]] بترجّع [[deposit]] و [[withdraw]] و [[balance]]، والرصيد متغير في الـ closure. السحب أكبر من الرصيد بيرجّع «الرصيد مش كفاية» من غير ما يغيّره.`, done: R`من 1000: [[deposit(500)]] بترجّع 1500، و [[withdraw(2000)]] الرسالة، و [[withdraw(300)]] بترجّع 1200، و [[balance()]] 1200، و [[acc.bal]] بترجّع undefined (مفيش طريقة توصل للرصيد من برّه).` }
+          ],
+          flag: "script",
+          deep: {
+            why: "ده السؤال رقم واحد في انترفيوهات JS. وهو اللي بيفسّر ليه الـ callbacks بتشتغل، وليه React hooks بتقرا قيم «قديمة» ساعات (stale closure)، وإزاي تعمل private state من غير classes.",
+            how: R`لما دالة بتتعمل، بتاخد معاها reference للـ environment اللي اتعملت فيه (الـ scope chain من درس scope). لما [[createCounter]] بتخلص، الـ environment بتاعها كان المفروض يتمسح، بس الـ methods اللي رجعت لسه شايلة reference ليه، فالـ garbage collector مبيمسحوش.
+
+كل نداء لـ createCounter بيعمل environment جديد، عشان كده c1 و c2 منفصلين.
+
+الـ closure بيشيل reference للمتغير نفسه مش نسخة من قيمته. فلو المتغير اتغير بعد كده، الدالة هتشوف القيمة الجديدة. والعكس في React: كل render بيعمل دوال جديدة شايلة قيم الـ render ده، فـ [[setInterval]] اتعمل في أول render هيفضل شايف الـ state القديمة (stale closure)، والحل dependency array أو [[setCount((c) => c + 1)]] (تاب React).
+
+وتكلفتها: أي متغير في closure عايش طول ما الدالة عايشة. لو الـ closure شايل object ضخم وأنت ناسيه في listener، ده memory leak (المستوى ٣).`,
+            when: "private state، و factories، و memoize، و debounce، و once، وأي callback محتاج داتا من السياق اللي حواليه.",
+            mistakes: R`تفتكر إن الـ closure بياخد نسخة من القيمة. وتنسى إن كل نداء بيعمل state جديدة، فتنادي [[createCounter()]] في كل مرة بدل ما تحفظ الناتج. وفي الانترفيو: متعرّفش closure بـ «دالة جوه دالة» بس؛ قول «دالة فاكرة الـ lexical environment بتاعها حتى بعد ما الدالة الخارجية خلصت» واديهم مثال counter.`
+          },
+          teach: R`## الفكرة في سطرين
+
+في الطبيعي، متغيرات الدالة بتختفي لما الدالة تخلص. بس لو الدالة رجّعت دالة تانية بتستخدم المتغيرات دي، المتغيرات بتفضل عايشة عشانها. الدالة اللي «شايلة» متغيرات مكان ولادتها معاها اسمها **closure**. المثال بيعمل counter بالطريقة دي، والنواتج من Node 24.
+
+---
+
+## ١. الـ factory
+
+~~~text app.js
+function createCounter(start = 0) {
+  let count = start;
+  return {
+    increment() { return ++count; },
+    get() { return count; },
+  };
 }
 ~~~
 
-- [[get balance()]]: **getter**: دالة بتتقري كأنها خاصية عادية. تكتب [[acc.balance]] **من غير أقواس**، وهي بتشتغل وترجّع الرصيد.
-- مفيش [[set balance()]]، يعني الرصيد **للقراية بس** من برّه.
+- [[createCounter]] دالة بتعمل counter وترجّعه، فبنسميها **factory** (مصنع).
+- [[start = 0]]: باراميتر بـ default.
+- [[let count = start]]: متغير **محلي** جوه الدالة. [[let]] مش const لأننا هنغيّره.
+- الدالة بترجّع object فيه method اتنين، والاتنين مكتوبين **جوه** createCounter، فالـ scope اللي فوقهم فيه count (درس scope).
+
+### [[++count]]
+
+[[++]] قبل المتغير معناها: زوّده واحد ورجّع القيمة **الجديدة**. ولو بعده ([[count++]]) بيرجّع القديمة. جرّبت: [[let n = 5; n++]] رجّعت 5 و n بقت 6، وبعدها [[++n]] رجّعت 7.
 
 ---
 
-## ٦. الاستخدام
+## ٢. اتنين counters
 
 ~~~text app.js
-const acc = new BankAccount("Sara");
-acc.deposit(100).deposit(50);
-acc.balance;
+const c1 = createCounter();
+const c2 = createCounter(10);
 ~~~
 
-~~~text الناتج
-BankAccount { owner: 'Sara' }      ← console.log(acc)
-true                               ← acc.deposit(100) === acc
-150                                ← acc.balance
-~~~
-
-لاحظ إن [[console.log(acc)]] في Node مبيعرضش [[#balance]] خالص. ولا [[Object.keys(acc)]] (طلعت [['owner']] بس) ولا [[JSON.stringify(acc)]] (طلعت [[{"owner":"Sara"}]]).
+كل نداء لـ createCounter بيعمل **count جديد** خاص بيه. c1 شايل count بدأ من 0، و c2 شايل count تاني بدأ من 10. الـ closure هنا هو إن increment و get فاكرين count بتاع النداء اللي اتولدوا فيه.
 
 ---
 
-## ٧. تحاول تكتب الرصيد من برّه
+## ٣. التشغيل
 
 ~~~text app.js
-acc.balance = 1e6;
-~~~
-
-[[1e6]] يعني 1 × 10 أس 6 = مليون. النتيجة بتفرق حسب الملف:
-
-| الملف | اللي حصل |
-|---|---|
-| [[.cjs]] (من غير "use strict") | الكتابة اتجاهلت في صمت، و [[acc.balance]] فضلت [[150]] |
-| [[.mjs]] (strict لوحده) | [[TypeError: Cannot set property balance of #<BankAccount> which has only a getter]] |
-
-ولو حاولت توصل للـ private نفسه من برّه الكلاس:
-
-~~~text app.js
-console.log(acc.#balance);
-~~~
-
-~~~text الناتج
-SyntaxError: Private field '#balance' must be declared in an enclosing class
-~~~
-
-ده **SyntaxError**: الملف كله مش بيشتغل، حتى السطور اللي قبل الغلطة، لأن JS بيلاقيها وهو بيقرا الكود قبل ما ينفّذه.
-
----
-
-## ٨. الكلاس من جوه
-
-~~~text app.js
-BankAccount.count;
-typeof BankAccount;
+c1.increment();          // 1
+c1.increment();          // 2
+c2.increment();          // 11
 ~~~
 
 ~~~text الناتج
 1
-function
+2
+11
 ~~~
 
-- [[BankAccount.count]] = 1 (حساب واحد اتعمل). و [[acc.count]] طلعت [[undefined]]: الـ static على الكلاس مش على الـ instance.
-- [[typeof BankAccount]] = [["function"]]: الكلاس في الآخر constructor function. وطبعنا [[Object.getOwnPropertyNames(BankAccount.prototype)]]:
+- createCounter **خلصت** من زمان، ومع ذلك count لسه موجود وبيزيد: 1 ثم 2. ده الـ closure.
+- c2 مأثرش على c1 ولا العكس: 11 جاية من count بتاع c2.
 
-~~~text الناتج
-[ 'constructor', 'deposit', 'balance' ]
-~~~
-
-يعني deposit والـ getter على الـ prototype، و [[Object.hasOwn(acc, "deposit")]] طلعت [[false]].
-
-ومن الفروق عن الـ function العادية: مينفعش تنادي الكلاس من غير new:
-
-~~~text الناتج: BankAccount("x")
-TypeError: Class constructor BankAccount cannot be invoked without 'new'
-~~~
+ولو ناديت [[createCounter().increment()]] مرتين ورا بعض، الناتج [[1 1]]: كل مرة counter جديد بـ count جديد. الصح تحفظ الناتج في متغير زي c1.
 
 ---
 
-## ٩. setter: الكتابة بتعدّي على فحص
+## ٤. محدش يوصل لـ count
 
-الـ getter بيخلي القراية تبان خاصية. والـ **setter** هو الجزء التاني: [[obj.price = 50]] شكلها كتابة عادية، بس بتنادي دالة بتفحص الأول.
-
-~~~js setter.mjs
-class Product {
-  #price = 0;
-  constructor(name, price) {
-    this.name = name;
-    this.price = price;            // بيعدّي على الـ setter كمان
-  }
-  get price() { return this.#price; }
-  set price(value) {
-    if (!Number.isFinite(value) || value < 0) throw new RangeError($__btسعر غلط: $__{value}$__bt);
-    this.#price = Math.round(value * 100) / 100;
-  }
-}
-const p = new Product('mug', 120);
-p.price = 99.999;
-console.log(p.price);
-try { p.price = -5; } catch (e) { console.log(e.name + ':', e.message); }
-try { new Product('cap', '90'); } catch (e) { console.log(e.name + ':', e.message); }
-console.log(Object.keys(p), JSON.stringify(p));
+~~~text app.js
+console.log(c1.count);   // undefined
+console.log(c1.get());   // 2
 ~~~
 
-~~~text الناتج · Node 24.22.1
-100
-RangeError: سعر غلط: -5
-RangeError: سعر غلط: 90
-[ 'name' ] {"name":"mug"}
+count **مش خاصية** على الـ object، ده متغير في الـ closure. فـ [[c1.count]] بتدوّر على خاصية مش موجودة: [[undefined]]. ولو طبعت c1 كله:
+
+~~~text الناتج: console.log(c1)
+{ increment: [Function: increment], get: [Function: get] }
 ~~~
 
-- [[set price(value)]]: دالة بتاخد parameter واحد بالظبط، القيمة اللي على يمين الـ [[=]].
-- الـ constructor نفسه بيكتب [[this.price = price]]، فالفحص بيحصل **من أول لحظة**. لو كتب في [[this.#price]] مباشرة، [[new Product('cap', -5)]] كانت هتعدّي.
-- [['90']] اترفضت لأن [[Number.isFinite('90')]] بـ [[false]] (مبتحوّلش نصوص، عكس [[isFinite]] القديمة).
-- [[99.999]] اتقرّبت لـ [[100]]: الـ setter مش بس بيفحص، ممكن **ينضّف** كمان.
-- [[Object.keys]] و [[JSON.stringify]] مبيشوفوش [[price]]، لأن الـ getter والـ setter متعرّفين على [[Product.prototype]] مش على الـ object. فـ [[Object.hasOwn(p, 'price')]] بـ [[false]] و [['price' in p]] بـ [[true]]. ولو محتاجها في الـ JSON، [[toJSON()]] (التحدي اللي تحت).
+مفيش count خالص. ولو حاولت تكتب [[c1.count = 999]]، ده بيعمل خاصية جديدة اسمها count على الـ object، وملهاش علاقة بالمتغير: [[c1.get()]] فضلت [[2]]. ده **private state**: الطريقة الوحيدة توصل للقيمة هي الدوال اللي انت سمحت بيها.
 
-### الفخ الكلاسيكي: setter بيكتب في نفسه
+---
 
-~~~js
-class Bad { set price(v) { this.price = v; } }
-new Bad().price = 1;
-~~~
+## ٥. قبل التمرين
 
-~~~text الناتج
-RangeError: Maximum call stack size exceeded
-~~~
-
-[[this.price = v]] جوه الـ setter بتنادي الـ setter تاني، وهكذا للأبد (recursion من غير base case، درس «function و arrow»). عشان كده القيمة نفسها بتتخزن في اسم تاني: [[#price]] أو [[_price]].
-
-### ونفس الكلام في object عادي
-
-~~~js
-const temp = { c: 0, get f() { return this.c * 9 / 5 + 32; }, set f(v) { this.c = (v - 32) * 5 / 9; } };
-temp.f = 212;
-console.log(temp.c, temp.f);   // 100 212
-~~~
-
-| الشكل | امتى |
-|---|---|
-| خاصية عادية | مفيش قاعدة، أي قيمة مقبولة |
-| [[get]] لوحده | قيمة محسوبة أو للقراية بس |
-| [[get]] و [[set]] | الكتابة لازم تتفحص أو تتحوّل (سعر، درجة حرارة، إيميل) |
-| method زي [[setPrice(v)]] | لو العملية تقيلة أو ممكن تفشل كتير، عشان اللي بيقرا الكود يعرف إنها مش مجرد كتابة |
+تمرين [[once]] تحت بيستخدم نفس الفكرة بالظبط: دالة بترجّع دالة، ومتغيرات في الـ scope **برّه** الدالة اللي بترجّعها عشان تفضل فاكرة بين النداءات. اسأل نفسك وانت بتحل: لو حطيت المتغير **جوه** الدالة اللي بترجّعها، هيتعمل جديد كل نداء ولا هيفضل واحد؟ (فكّر في [[createCounter().increment()]] اللي طلعت 1 كل مرة.)
 
 ---
 
 ## الخلاصة
 
-| الحتة | مكانها | مين يوصلها |
-|---|---|---|
-| [[static count]] | الكلاس نفسه | [[BankAccount.count]] |
-| [[#balance]] | كل instance | كود الكلاس بس |
-| [[this.owner]] | كل instance | أي حد |
-| [[deposit]] و [[get balance]] | [[BankAccount.prototype]] | كل الـ instances بالسلسلة |
+| الحتة | دورها |
+|---|---|
+| [[let count]] جوه createCounter | الحالة اللي هتتفتكر |
+| الدوال اللي بترجع | شايلة reference لـ count (closure) |
+| كل نداء لـ createCounter | environment جديد و count جديد |
+| [[c1.count]] | undefined: count مش خاصية |
 
-- [[return this]] في آخر method = chaining.
-- getter من غير setter = خاصية للقراية بس.
-- في التمرين تحت هتضيف [[withdraw]] وسجل للعمليات: بص على deposit كويس، وفكّر إيه الحالات الغلط اللي لازم ترفضها، وإيه اللي لازم ترجّعه عشان الـ chaining يفضل شغال، وفين تخزّن السجل بحيث محدش من بره يقدر يعدّله.
-- setter بيفحص وينضّف قبل ما يكتب، والقيمة نفسها في [[#field]] تاني، وإلا recursion للأبد.`,
+> الـ closure بيشيل **المتغير نفسه** مش نسخة من قيمته، فلو اتغير الدالة بتشوف القيمة الجديدة.`,
           lines: [
-            R`بيعرّف كلاس: قالب نعمل منه حسابات بـ [[new BankAccount(...)]]. كل حساب object ليه رصيده، والـ methods متشاركة بينهم.`,
-            R`[[static]] معناها الخاصية دي على الكلاس **نفسه** مش على كل حساب. فيه [[count]] واحد بس للكل ([[BankAccount.count]])، ومش هتلاقيه في [[acc.count]].`,
-            R`private field: كل حساب بيبدأ برصيد 0، والـ [[#]] بتمنع أي كود برّه الكلاس يقرا أو يكتب الرصيد (حتى المحاولة نفسها SyntaxError). فالطريقة الوحيدة لتغييره هي [[deposit]].`,
-            R`الدالة اللي بتتنادى أوتوماتيك مع [[new]]، والـ arguments اللي في [[new BankAccount("Sara")]] بتوصلها. هنا بنجهّز الحساب الجديد.`,
-            R`بتحط اسم صاحب الحساب كخاصية عادية (public) على الـ instance الجديد، فأي حد يقدر يقرا [[acc.owner]].`,
-            R`كل مرة حساب يتعمل نزوّد العداد المشترك اللي على الكلاس. استخدمنا اسم الكلاس مش [[this]]، لأن [[this]] هنا الحساب الجديد مش الكلاس.`,
-            R`نهاية الـ [[constructor]].`,
-            R`method: بتتحط على [[BankAccount.prototype]] مرة واحدة، وكل الحسابات بتستخدم نفس الدالة عن طريق الـ prototype chain بدل ما كل حساب ياخد نسخة.`,
-            R`بنرفض أي مبلغ صفر أو سالب فورًا بـ error واضح. من غير الفحص ده [[deposit(-100)]] كانت هتسحب فلوس من غير ما حد يلاحظ. و [[RangeError]] نوع error مناسب لقيمة برّه المدى المسموح.`,
-            R`بنزوّد الرصيد الخاص. ده مسموح لأن السطر جوه الكلاس.`,
-            R`بترجّع الحساب نفسه، فتقدر تكمّل نداء تاني على طول ([[acc.deposit(100).deposit(50)]]). من غيرها [[deposit]] هترجّع [[undefined]] والنداء التاني هيرمي TypeError.`,
-            R`نهاية [[deposit]].`,
-            R`getter: دالة بتتقري كإنها خاصية، فتكتب [[acc.balance]] من غير [[()]]. ولأن مفيش [[set balance]]، الرصيد يتقري بس ومحدش يغيّره من برّه.`,
-            R`بترجّع قيمة الـ private field. كده الرصيد ظاهر للقراية بس، والتعديل الوحيد عن طريق [[deposit]] اللي بتفحص المبلغ.`,
-            R`نهاية الـ getter.`,
-            R`نهاية الكلاس [[BankAccount]].`,
-            R`[[new]] بيعمل object جديد، وينادي الـ [[constructor]] بـ [["Sara"]]، ويرجّع الحساب. دلوقتي [[owner]] بقى [["Sara"]]، والرصيد 0، و [[BankAccount.count]] بقى 1.`,
-            R`chaining: أول [[deposit]] رجّعت [[acc]] نفسه، فاتنادت التانية عليه. الرصيد بقى 150.`,
-            R`الـ getter اشتغل من غير [[()]] ورجّع [[150]].`,
-            R`محاولة تغيير الرصيد لمليون. ولأن [[balance]] getter من غير setter، الكتابة بتتجاهل بالسكوت في الكود العادي، وفي strict mode (وجوه الـ modules) بترمي TypeError. والرصيد يفضل 150.`,
-            R`بنقرا الـ [[static]] من الكلاس نفسه: [[1]] لأننا عملنا حساب واحد. أما [[acc.count]] كانت هترجّع [[undefined]].`,
-            R`بيرجّع [["function"]]: الكلاس في الآخر constructor function بشكل أنضف، والـ methods بتتحط على الـ prototype زي ما شفنا في درس الـ prototype chain.`,
+            R`دالة بتصنع counter. كل نداء ليها بيعمل [[count]] جديد ودوال جديدة شايلاه، و [[start = 0]] قيمة البداية لو متبعتتش.`,
+            R`[[count]] متغير محلي في الدالة. العادي إنه يختفي أول ما [[createCounter]] ترجع، بس هنا هيفضل عايش لأن فيه دوال لسه محتاجاه.`,
+            R`بترجّع object فيه دالتين. الـ object ده الطريقة الوحيدة اللي الكود برّه هيوصل بيها لـ [[count]].`,
+            R`[[++count]] بتزوّد [[count]] بواحد وترجّع القيمة الجديدة. الدالة دي اتعرّفت جوه [[createCounter]]، فهي closure: شايلة إشارة لنفس [[count]] حتى بعد ما [[createCounter]] تخلص.`,
+            R`بترجّع قيمة [[count]] الحالية من غير ما تغيّرها. وهي شايفة **نفس** المتغير اللي [[increment]] بتزوّده، مش نسخة منه.`,
+            R`نهاية الـ object اللي راجع.`,
+            R`نهاية [[createCounter]].`,
+            R`أول counter بيبدأ من 0 (الـ default). النداء ده عمل [[count]] خاص بيه.`,
+            R`نداء تاني: [[count]] جديد بيبدأ من 10، ملوش دعوة بتاع [[c1]] خالص.`,
+            R`[[count]] بتاع [[c1]] بقى 1، والدالة رجّعته.`,
+            R`بقى 2: القيمة اتفتكرت بين النداءين، لأن الـ closure ماسك المتغير نفسه ومش بيعمله من أول كل مرة.`,
+            R`[[c2]] بدأ من 10 فبقى 11، و [[c1]] لسه 2. كل نداء لـ [[createCounter]] عمل «صندوق» منفصل.`,
+            R`بيطبع [[undefined]] لأن [[count]] متغير جوه الـ closure مش خاصية على الـ object. فمحدش يقدر يقراه أو يغيّره من برّه غير عن طريق [[increment]] و [[get]]: private state من غير class.`,
+            R`الطريقة الوحيدة للقراية: [[get]] شايفة [[count]] ورجّعت [[2]].`,
           ],
-          sol: R`[[withdraw]] بتفحص إن المبلغ موجب وإنه مش أكبر من الرصيد، وترمي error لو لأ. بعد [[deposit(100).deposit(50).withdraw(30)]] الـ balance بـ 120، و [[withdraw(500)]] بترمي error برسالة فيها الرصيد والمطلوب.
+          sol: R`[[once]] بتحتفظ بـ [[called]] و [[result]] في الـ closure. لو [[init = once((x) => x * 2)]]، يبقى [[init(5)]] بـ 10، و [[init(100)]] بـ 10 برضه، والدالة الأصلية اتنادت مرة واحدة بس.
 
-[[acc.#balance]] برّه الكلاس بيطلع [[SyntaxError: Private field '#balance' must be declared in an enclosing class]] والملف كله مبيشتغلش، حتى أول console.log فيه، لأن الغلطة بتتمسك وقت الـ parsing. ده الفرق بين [[#balance]] و [[_balance]] (convention بس وأي حد يقدر يقراه). ولو نسيت [[return this]] في withdraw، الـ chaining اللي بعدها هيقع بـ [[Cannot read properties of undefined]].`,
-          solCode: R`class BankAccount {
-  #balance = 0;
-  constructor(owner) { this.owner = owner; }
-  deposit(amount) {
-    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
-    this.#balance += amount;
-    return this;
-  }
-  withdraw(amount) {
-    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
-    if (amount > this.#balance) {
-      throw new Error($__btالرصيد مش كفاية: معاك $__{this.#balance} وعايز تسحب $__{amount}$__bt);
+الغلطة الشائعة إنك تحط [[let called = false]] جوه الدالة اللي بترجّعها بدل ما تحطه برّاها: ساعتها كل نداء بيعمل متغير جديد بـ false وكأن مفيش once. والغلطة التانية إنك تفحص [[if (!result)]] بدل called، فلو fn رجّعت 0 أو undefined هتتنادي تاني. ده pattern حقيقي بيستخدم في init لمرة واحدة، وبيتسأل في الانترفيو.`,
+          solCode: R`function once(fn) {
+  let called = false;
+  let result;
+  return function (...args) {
+    if (!called) {
+      called = true;
+      result = fn.apply(this, args);
     }
-    this.#balance -= amount;
-    return this;
-  }
-  get balance() { return this.#balance; }
+    return result;
+  };
 }
-const acc = new BankAccount("Sara");
-acc.deposit(100).deposit(50).withdraw(30);
-console.log(acc.balance); // 120
-try { acc.withdraw(500); } catch (e) { console.log(e.message); }`,
+let runs = 0;
+const init = once((x) => { runs++; return x * 2; });
+console.log(init(5), init(100), runs); // 10 10 1`,
           check: {
             lang: "js",
-            starter: R`class BankAccount {
-  #balance = 0;
-  constructor(owner) { this.owner = owner; }
-  deposit(amount) {
-    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
-    this.#balance += amount;
-    return this;
-  }
-  withdraw(amount) {
-    // موجب، ومش أكبر من الرصيد، و return this
-  }
-  get balance() { return this.#balance; }
-  get history() {
-    return [];
-  }
+            starter: R`function once(fn) {
+  // called و result هنا، برّا الدالة اللي هترجّعها
+  return fn;
 }`,
-            tests: R`test("deposit(100).deposit(50).withdraw(30) ← balance 120", () => expect(new BankAccount("Sara").deposit(100).deposit(50).withdraw(30).balance).toBe(120));
-test("withdraw أكبر من الرصيد بترمي error، والرصيد ميتغيّرش", () => {
-  const acc = new BankAccount("Ali").deposit(100);
-  expect(() => acc.withdraw(500)).toThrow();
-  expect(() => acc.withdraw(0)).toThrow();
-  expect(acc.balance).toBe(100);
+            tests: R`test("init(5) ← 10 وبعدين init(100) ← 10 برضه", () => {
+  const init = once((x) => x * 2);
+  expect([init(5), init(100)]).toEqual([10, 10]);
 });
-test("history: العمليات اللي نجحت بس، بالترتيب", () => {
-  const acc = new BankAccount("Sara").deposit(100).withdraw(30);
-  try { acc.withdraw(500); } catch {}
-  try { acc.deposit(-1); } catch {}
-  acc.deposit(5);
-  expect(acc.history).toEqual([{ type: "deposit", amount: 100 }, { type: "withdraw", amount: 30 }, { type: "deposit", amount: 5 }]);
+test("الدالة الأصلية بتتنادي مرة واحدة بس", () => {
+  let runs = 0;
+  const f = once(() => runs++);
+  f(); f(); f();
+  expect(runs).toBe(1);
 });
-test("اللي بره ميقدرش يعدّل السجل", () => {
-  const acc = new BankAccount("Mona").deposit(10);
-  acc.history.push({ type: "deposit", amount: 1e6 });
-  acc.history.length = 0;
-  expect(acc.history).toEqual([{ type: "deposit", amount: 10 }]);
+test("لو fn رجّعت 0 أو undefined متتناديش تاني (افحص called مش result)", () => {
+  let runs = 0;
+  const f = once(() => { runs++; return 0; });
+  f(); f();
+  expect([runs, f()]).toEqual([1, 0]);
 });
-test("كل حساب ليه سجله", () => {
-  const a = new BankAccount("A").deposit(1), b = new BankAccount("B");
-  expect([a.history.length, b.history.length]).toEqual([1, 0]);
+test("كل once ليها closure لوحدها", () => {
+  const a = once(() => "a"), b = once(() => "b");
+  expect([a(), b()]).toEqual(["a", "b"]);
 });
-test("withdraw بترجّع this عشان الـ chaining", () => {
-  const acc = new BankAccount("Omar").deposit(50);
-  expect(acc.withdraw(10) === acc).toBe(true);
+test("بتعدّي الـ arguments و this", () => {
+  const obj = { n: 3, get: once(function (x) { return this.n + x; }) };
+  expect(obj.get(4)).toBe(7);
 });`,
-            solution: R`class BankAccount {
-  #balance = 0;
-  #log = [];
-  constructor(owner) { this.owner = owner; }
-  deposit(amount) {
-    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
-    this.#balance += amount;
-    this.#log.push({ type: "deposit", amount });
-    return this;
-  }
-  withdraw(amount) {
-    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
-    if (amount > this.#balance) throw new Error($__btالرصيد مش كفاية: معاك $__{this.#balance} وعايز تسحب $__{amount}$__bt);
-    this.#balance -= amount;
-    this.#log.push({ type: "withdraw", amount });
-    return this;
-  }
-  get balance() { return this.#balance; }
-  get history() { return this.#log.map(e => ({ ...e })); }
+            solution: R`function once(fn) {
+  let called = false;
+  let result;
+  return function (...args) {
+    if (!called) {
+      called = true;
+      result = fn.apply(this, args);
+    }
+    return result;
+  };
 }`
           }
         },
         {
-          cmd: "extends و super",
-          title: "كلاس بيورث من كلاس تاني",
-          desc: R`[[class Admin extends User]] بتخلي Admin ياخد كل methods بتاعة User، ويضيف أو يغيّر عليها. جوه الـ constructor لازم تنادي [[super(...)]] قبل ما تستخدم [[this]]، و [[super.method()]] بتنادي النسخة بتاعة الأب.
+          cmd: "closures في loop",
+          title: "ليه اللوب ده بيطبع 3 3 3 مش 0 1 2؟",
+          desc: R`أشهر سؤال «اتوقع الناتج» في JS: loop بـ [[var]] جواها [[setTimeout]]. الإجابة 3 3 3، لأن كل الـ callbacks شايلة نفس المتغير [[i]]، ولما اشتغلوا (بعد ما اللوب خلص) كان بقى 3.
 
-أشهر استخدام عملي: [[class NotFoundError extends Error]] عشان يبقى عندك أنواع errors تفرّق بينها بـ instanceof (درس الأخطاء).
-
-وقبل ما تورّث، اسأل: هل ينفع أركّب (composition) بدل ما أورّث؟ غالبًا أبسط.`,
-          example: R`class User {
-  constructor(name) {
-    this.name = name;
-  }
-  describe() {
-    return $__btUser: $__{this.name}$__bt;
-  }
+الحل: [[let]] بدل [[var]]. الـ let في for بيعمل متغير جديد لكل لفة، فكل callback شايل الـ i بتاعته. والحل القديم قبل let كان IIFE.`,
+          example: R`for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log("var", i), 0);
 }
-class Admin extends User {
-  constructor(name, permissions) {
-    super(name);
-    this.permissions = permissions;
-  }
-  describe() {
-    return $__bt$__{super.describe()} (admin: $__{this.permissions.join(", ")})$__bt;
-  }
+for (let j = 0; j < 3; j++) {
+  setTimeout(() => console.log("let", j), 0);
 }
-const a = new Admin("Sara", ["users", "billing"]);
-a.describe();          // "User: Sara (admin: users, billing)"
-a instanceof Admin;    // true
-a instanceof User;     // true`,
-          try: R`امسح سطر [[super(name)]] وشغّل واقرا الـ error. وبعدين اعمل [[class Guest extends User]] من غير constructor خالص وجرّب [[new Guest("x").describe()]].`,
+for (var k = 0; k < 3; k++) {
+  ((n) => setTimeout(() => console.log("iife", n), 0))(k);
+}`,
+          try: R`قبل ما تشغّل، اكتب الناتج اللي متوقعه على ورقة (٩ سطور). شغّل وقارن. وبعدين غيّر الـ [[0]] في أول setTimeout لـ [[1000]]: سطور var اتأخرت للآخر، بس قيمتها لسه 3 3 3؟ ليه؟`,
           practice: [
-            { lvl: 'سريع', t: R`**ابني:** [[class Shape]] فيها [[area()]] بترجّع 0 و [[describe()]] بترجّع [[this.constructor.name]] والمساحة. ورّث منها [[Circle]] و [[Rect]] وغيّر [[area]] في كل واحد.`, done: R`[[new Circle(1).describe()]] بترجّع [["Circle: 3.14"]] (لو قرّبت بـ [[Number(area.toFixed(2))]])، و [[new Rect(2, 3).describe()]] بترجّع [["Rect: 6"]]، و [[describe]] نفسها مكتوبة مرة واحدة في Shape.` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[class Child extends Parent { constructor(n) { this.x = 1; super(n); } }]]. اعمل [[new Child(1)]] واقرا الرسالة.`, done: R`الرسالة [[ReferenceError: Must call super constructor in derived class before accessing 'this' or returning from derived constructor]]. بعد ما تخلي [[super(n)]] أول سطر بيشتغل، و [[this.x]] بـ 1.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[class ValidationError extends Error]] بتاخد [[(message, field)]]، وبتنادي [[super(message)]]، وبتحط [[this.name]] و [[this.field]]. ارميها من [[validateUser(user)]] لو الإيميل مفيهوش [[@]]، وامسكها في [[try]] وفرّق بـ [[instanceof]].`, done: R`[[err instanceof ValidationError]] و [[err instanceof Error]] الاتنين [[true]]، و [[err.field]] بترجّع [["email"]]، و [[String(err)]] بترجّع [["ValidationError: "]] وبعدها الرسالة، وأي error تاني (زي TypeError) مبيتمسكش في نفس الفرع.` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[class A { hi() { return "A"; } } class B extends A { hi() { return super.hi() + "B"; } }]]. اكتب ناتج [[new B().hi()]] و [[new B() instanceof A]] و [[Object.getPrototypeOf(B) === A]].`, done: R`توقعت وطلع [["AB"]] و [[true]] و [[true]]. و [[super.hi()]] نادت نسخة A من غير ما تدخل في loop.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** [[class Store extends EventTarget]] فيها Map خاصة و [[set(key, value)]] بتعمل [[dispatchEvent(new CustomEvent("change", { detail: { key, value } }))]]. وبعدين اكتبها تاني بالتركيب (composition): [[#events = new EventTarget()]] جواها و [[on(fn)]] بتاعتك.`, done: R`في Node والمتصفح: [[store.addEventListener("change", (e) => console.log(e.detail))]] وبعدها [[store.set("theme", "dark")]] بيطبع [[{ key: 'theme', value: 'dark' }]]. والنسخة اللي بالتركيب بتطبع نفس الحاجة، بس من برّه مفيش [[dispatchEvent]] تقدر تناديها، وتقدر تقول أنهي أأمن وليه.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const fns = []; for (var i = 0; i < 3; i++) fns.push(() => i);]] واطبع [[fns.map((f) => f())]]. وبعدين غيّر var لـ let.`, done: R`مع var بيطبع [[[ 3, 3, 3 ] ]] ومع let بيطبع [[[ 0, 1, 2 ] ]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** في صفحة: loop بيعمل ٣ أزرار بـ [[createElement]]، وكل زرار listener بيكتب رقمه في [[<p>]]. اكتبه بـ [[var i]] الأول، وبعدين صلّحه.`, done: R`مع [[var]] أي زرار بيكتب [[3]]، وبعد التصليح (let، أو [[forEach]] على array أرقام) كل زرار بيكتب رقمه هو: ٠ و ١ و ٢.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[makeMultipliers(n)]] بترجّع array فيها n دالة، والدالة رقم k بتضرب في k. اكتبها بـ [[Array.from]] أو loop بـ let.`, done: R`[[makeMultipliers(4)[3](5)]] بترجّع 15، و [[makeMultipliers(4)[0](5)]] بترجّع 0. ولو كتبتها بـ [[var]] في for عادية كل الدوال كانت هتضرب في 4.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** عدّ تنازلي: [[for (var i = 3; i >= 1; i--) setTimeout(() => console.log(i), (4 - i) * 1000);]]. خمّن، شغّل، وبعدين صلّحه من غير ما تغيّر var: ابعت [[i]] كـ argument تالت لـ [[setTimeout]].`, done: R`قبل التصليح بيطبع [[0]] تلات مرات (ثانية بين كل واحدة)، وبعد [[setTimeout(console.log, (4 - i) * 1000, i)]] بيطبع [[3]] ثم [[2]] ثم [[1]]، وتقدر تقول ليه ده شغال (القيمة اتنسخت وقت النداء).` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ارسم صناديق للـ loop [[for (var i = 0; i < 3; i++) fns.push(() => i)]] ولنفسه بـ let: كام صندوق اسمه i في كل حالة، وكل دالة سهمها بيشاور على أنهي صندوق.`, done: R`الرسمة: مع var صندوق واحد قيمته في الآخر 3 والتلات دوال بيشاوروا عليه، ومع let ٣ صناديق (0 و 1 و 2) وكل دالة على صندوقها. وتقدر من الرسمة تقول ناتج التمرين الأول من غير تشغيل.` }
           ],
           flag: "script",
           deep: {
-            why: "هتقابلها في الـ Errors المخصصة، وفي مكتبات بتطلب إنك تورّث من كلاس بتاعها (Web Components بـ HTMLElement مثلًا)، وفي أسئلة OOP في الانترفيو (تاب الانترفيو فيه OOP بالتفصيل).",
-            how: R`[[extends]] بيعمل سلسلتين prototype: [[Admin.prototype]] الـ prototype بتاعه [[User.prototype]] (عشان الـ methods)، و [[Admin]] نفسه الـ prototype بتاعه [[User]] (عشان الـ static).
+            why: "السؤال ده بيختبر ٣ حاجات مع بعض: الـ scope بتاع var و let، والـ closures، وإن setTimeout بيشتغل بعد الكود المتزامن (event loop، المستوى ٣). ونفس المشكلة بتحصل في الحقيقة مع event listeners جوه loops.",
+            how: R`مع [[var]]: فيه متغير [[i]] واحد للدالة كلها. اللوب بيلف ٣ مرات ويسجّل ٣ callbacks، وكلهم شايلين نفس المتغير. اللوب بيخلص و i بقى 3 (الشرط وقف عنده). وبعدين الـ callbacks بتشتغل وكلها تقرا 3.
 
-في كلاس بيورث، الـ this مبيتعملش لحد ما [[super()]] يتنادى، لأن الأب هو اللي بيعمل الـ object. عشان كده this قبل super بترمي ReferenceError. ولو مكتبتش constructor خالص، JS بيعمل واحد بينادي [[super(...args)]] لوحده.
+مع [[let]] في رأس الـ for: الـ spec بيقول اعمل binding جديد لكل لفة وانسخ فيه القيمة، فكل callback شايل متغير مختلف.
 
-[[super.describe()]] بتدوّر على describe في prototype الأب، وبتناديها بنفس الـ this. ده بيخليك تكمّل على سلوك الأب بدل ما تكرره.
+الـ IIFE (Immediately Invoked Function Expression) بتعمل scope جديد يدويًا: [[n]] باراميتر بياخد نسخة من k كل لفة.
 
-تقدر تورّث من built-ins: [[class MyArray extends Array]] و [[extends Error]] و [[extends EventTarget]].`,
-            when: "علاقة «نوع من» حقيقية ومستقرة (NotFoundError نوع من Error). لو بتورّث عشان تاخد دالتين بس، استخدم composition أو دوال مساعدة.",
-            mistakes: R`this قبل super. وسلسلة وراثة عميقة (A extends B extends C extends D) كل تعديل فيها بيكسر حاجة. وتنسى إن الـ override بيلغي method الأب لو منادتش super. وفي الانترفيو: «composition vs inheritance؟» (تاب الانترفيو وتاب هندسة البرمجيات).`
+والـ setTimeout بـ 0 مش معناه «دلوقتي»: معناه «بعد ما الكود الحالي يخلص وأقرب فرصة». عشان كده اللوب كله بيخلص الأول.`,
+            when: R`دايمًا [[let]] أو [[const]] في الـ loops ([[for (const x of arr)]]). و forEach كمان حل، لأن كل نداء للـ callback ليه scope بتاعه.`,
+            mistakes: R`تفتكر إن setTimeout بـ 0 بيشتغل فورًا. وتحل المشكلة بـ let من غير ما تعرف تشرح ليه. وفي الانترفيو: اشرح الـ 3 حاجات (var واحد مشترك، الـ callbacks بتشتغل بعد اللوب، let بيعمل binding لكل لفة) واذكر حل IIFE كحل قديم.`
           },
-          teach: R`## الكود ده بيعمل إيه؟
+          teach: R`## الفكرة في سطرين
 
-كلاس أب [[User]] فيه اسم و method بتوصفه، وكلاس ابن [[Admin]] بياخد كل حاجة من User ويزوّد عليها صلاحيات، ويعدّل الوصف **من غير ما يعيد كتابة** وصف الأب. اتشغّل في Node 24.
+٣ loops شبه بعض، كل واحدة بتسجّل ٣ دوال تشتغل «بعدين» بـ [[setTimeout]]. الفرق الوحيد: المتغير اتعرّف بـ var ولا let ولا اتنسخ في IIFE. ونتيجة الأولى مختلفة تمامًا عن الاتنين التانيين. النواتج من Node 24.
 
 ---
 
-## ١. الكلاس الأب
+## ١. [[setTimeout]] بسرعة
 
 ~~~text app.js
-class User {
-  constructor(name) {
-    this.name = name;
-  }
-  describe() {
-    return $__btUser: $__{this.name}$__bt;
-  }
+setTimeout(() => console.log("hi"), 0);
+~~~
+
+بتاخد دالة (callback) ووقت بالملّي ثانية، ومعناها «نادي الدالة دي بعد الوقت ده **على الأقل**». و [[0]] مش معناها دلوقتي: معناها «أول ما الكود اللي شغال حاليًا يخلص». فكل الـ loops هتخلص الأول، وبعدين الدوال تشتغل (التفاصيل في درس event loop).
+
+---
+
+## ٢. اللوب الأولى: [[var]]
+
+~~~text app.js
+for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log("var", i), 0);
 }
 ~~~
 
-كلاس عادي زي الدرس اللي فات: constructor بيحط [[name]] على الـ instance، و method [[describe]] بترجّع نص template. [[new User("Ali").describe()]] بترجّع [[User: Ali]].
+- [[for (بداية; شرط; خطوة)]]: ابدأ i من 0، ولف طول ما i أقل من 3، وبعد كل لفة زوّد واحد.
+- [[var i]]: var مالهاش block scope، فـ i **متغير واحد** للملف (أو الدالة) كله.
+- كل لفة بتسجّل arrow function بتقرا i. التلاتة شايلين **نفس** المتغير، مش قيمته وقت التسجيل.
+- اللوب بتلف: 0 ثم 1 ثم 2، وبعدين i بقت 3 والشرط [[3 < 3]] false فوقفت.
+
+وبعد اللوبات i لسه موجودة برّه:
+
+~~~text الناتج: console.log بعد اللوبات
+بعد اللوبات: i = 3 k = 3 undefined
+~~~
+
+(i و k بـ 3 لأنهم var، و [[typeof j]] بـ undefined لأن let مش موجودة برّه اللوب.) فلما الدوال تشتغل، التلاتة يقروا i دلوقتي: 3.
 
 ---
 
-## ٢. [[extends]]
+## ٣. اللوب التانية: [[let]]
 
 ~~~text app.js
-class Admin extends User {
-~~~
-
-[[extends User]] معناها «Admin نوع من User». JS بيوصّل سلسلتين prototype (اتأكدنا من الاتنين، طلعوا [[true]]):
-
-- [[Object.getPrototypeOf(Admin.prototype) === User.prototype]]: أي admin لما ميلاقيش method عنده، بيدوّر في methods بتاعة User.
-- [[Object.getPrototypeOf(Admin) === User]]: حتى الـ static بتاعة User بتتورث.
-
----
-
-## ٣. constructor الابن و [[super()]]
-
-~~~text app.js
-  constructor(name, permissions) {
-    super(name);
-    this.permissions = permissions;
-  }
-~~~
-
-- الـ constructor بياخد باراميتر زيادة: [[permissions]] (array صلاحيات).
-- [[super(name)]]: **نادي constructor الأب** وابعتله name. هو اللي بيعمل الـ object ويحط عليه [[this.name]].
-- [[this.permissions = ...]]: بعد كده بس نقدر نستخدم this ونزوّد.
-
-ليه الترتيب ده إجباري؟ في كلاس وارث، الـ object **مبيتعملش** غير لما الأب يعمله جوه super. فـ this قبل super مش موجودة أصلًا. جرّبنا [[this.x = 1; super(n);]]:
-
-~~~text الناتج
-ReferenceError: Must call super constructor in derived class before accessing 'this' or returning from derived constructor
-~~~
-
-يعني «في الكلاس الوارث (derived) لازم تنادي super قبل ما تلمس this».
-
----
-
-## ٤. override و [[super.describe()]]
-
-~~~text app.js
-  describe() {
-    return $__bt$__{super.describe()} (admin: $__{this.permissions.join(", ")})$__bt;
-  }
+for (let j = 0; j < 3; j++) {
+  setTimeout(() => console.log("let", j), 0);
 }
 ~~~
 
-- كتبنا [[describe]] تاني في Admin: دي اسمها **override**. لما تنادي [[a.describe()]]، JS بيلاقيها في Admin.prototype الأول فبيوقف هناك.
-- [[super.describe()]]: «هات نسخة **الأب** من describe ونادِيها على نفس this». فبترجّع [[User: Sara]].
-- [[this.permissions.join(", ")]]: [[join]] بتلزق عناصر الـ array في نص واحد بالفاصل اللي تديهولها: [["users, billing"]].
-- والنص كله: نتيجة الأب + الزيادة بين أقواس.
+[[let]] في رأس الـ for ليها قاعدة خاصة: كل لفة بتاخد **j جديدة** وفيها قيمة اللفة دي. فأول دالة شايلة j قيمتها 0، والتانية j تانية قيمتها 1، والتالتة 2. كل closure ماسك متغير مختلف.
 
 ---
 
-## ٥. الاستخدام
+## ٤. اللوب التالتة: IIFE
 
 ~~~text app.js
-const a = new Admin("Sara", ["users", "billing"]);
-a.describe();
-a instanceof Admin;
-a instanceof User;
+for (var k = 0; k < 3; k++) {
+  ((n) => setTimeout(() => console.log("iife", n), 0))(k);
+}
 ~~~
 
-~~~text الناتج
-Admin { name: 'Sara', permissions: [ 'users', 'billing' ] }   ← console.log(a)
-User: Sara (admin: users, billing)
-true
-true
-~~~
+IIFE = Immediately Invoked Function Expression، يعني دالة بتتعمل وتتنادى في نفس اللحظة. نفكها:
 
-- [[name]] جت من constructor الأب (عن طريق super)، و [[permissions]] من الابن، والاتنين على نفس الـ object.
-- [[a instanceof User]] = [[true]]: [[instanceof]] بيمشي في سلسلة a ويسأل «User.prototype موجود فيها؟»، وهو موجود.
+1. [[(n) => setTimeout(...)]]: arrow بتاخد باراميتر n.
+2. القوسين حواليها [[( ... )]]: عشان نقدر نناديها على طول.
+3. [[(k)]] في الآخر: نادها دلوقتي وابعت قيمة k.
+
+كل نداء بيعمل **n جديد** (الباراميترات بتتعمل جديدة مع كل نداء) وفيه نسخة من k وقتها. فالـ callback شايل n مش k. ده كان الحل قبل ما let تيجي في ES2015.
 
 ---
 
-## ٦. من غير constructor خالص
+## ٥. الناتج
 
-من التجربة:
-
-~~~text app.js
-class Guest extends User {}
-new Guest("x").describe();
+~~~text الناتج: Node 24
+var 3
+var 3
+var 3
+let 0
+let 1
+let 2
+iife 0
+iife 1
+iife 2
 ~~~
 
-~~~text الناتج
-User: x
+الترتيب بين المجموعات هو ترتيب التسجيل، لأن كلهم بـ 0.
+
+---
+
+## ٦. «جرّب»: أول setTimeout بـ 1000
+
+~~~text الناتج: Node 24
+let 0
+let 1
+let 2
+iife 0
+iife 1
+iife 2
+var 3
+var 3
+var 3
 ~~~
 
-لو مكتبتش constructor، JS بيعمل واحد لوحده كده: [[constructor(...args) { super(...args); }]]، يعني بيبعت كل حاجة للأب زي ما هي.
+سطور var اتأخرت ثانية وبقت في الآخر، بس لسه **3**. لأن القيمة بتتقري لما الـ callback يشتغل، مش لما اتسجّل، و i كانت 3 من بدري.
 
 ---
 
 ## الخلاصة
 
-| الحتة | معناها |
-|---|---|
-| [[class B extends A]] | B بيورث methods و static بتاعة A |
-| [[super(...)]] في الـ constructor | نادي constructor الأب. إجباري قبل أي this |
-| [[super.method()]] | نادي نسخة الأب من method على نفس this |
-| method بنفس الاسم في الابن | override: بتغطّي على بتاعة الأب |
-| مفيش constructor في الابن | JS بيبعت كل الـ arguments للأب لوحده |
+| اللوب | كام متغير؟ | الـ callback شايل | الناتج |
+|---|---|---|---|
+| [[var i]] | واحد للكل | نفس i | 3 3 3 |
+| [[let j]] | واحد لكل لفة | j بتاعة لفته | 0 1 2 |
+| [[var k]] + IIFE | n جديد لكل نداء | n | 0 1 2 |
 
-- اكتب constructor في الابن بس لو عندك حاجة **زيادة** تعملها.
-- استخدم الوراثة لعلاقة «نوع من» حقيقية (Admin نوع من User، و NotFoundError نوع من Error).`,
+> الإجابة في الانترفيو في ٣ جمل: var متغير واحد مشترك، والـ callbacks بتشتغل بعد ما اللوب تخلص، و let بتعمل متغير جديد لكل لفة.`,
           lines: [
-            R`الكلاس الأب: فيه اللي أي مستخدم محتاجه (اسم و [[describe]])، والكلاسات اللي هتورث منه هتاخد ده من غير ما تكرره.`,
-            R`بيتنادى مع [[new User(...)]]، أو من الكلاس الابن عن طريق [[super(...)]].`,
-            R`بيحط الاسم على الـ instance. ولما [[Admin]] ينادي [[super(name)]]، السطر ده هو اللي بيحط الاسم على الـ admin.`,
-            R`نهاية constructor الأب.`,
-            R`method على [[User.prototype]]، فأي [[User]] وأي كلاس ابن يقدر يناديها.`,
-            R`بترجّع وصف بسيط زي [["User: Sara"]]. و [[this]] هنا هتبقى الـ instance اللي اتنادت عليه، حتى لو كان [[Admin]].`,
-            R`نهاية [[describe]].`,
-            R`نهاية الكلاس [[User]].`,
-            R`[[extends]] بيخلي [[Admin.prototype]] يورث من [[User.prototype]]، فأي admin عنده [[describe]] وأي method تانية في [[User]] أوتوماتيك، ونضيف عليها اللي يخص الـ admin بس.`,
-            R`constructor خاص بالابن، بياخد الاسم زي الأب وكمان قايمة الصلاحيات.`,
-            R`بينادي constructor الأب بالاسم عشان يعمل الجزء بتاعه. في كلاس ابن لازم [[super()]] قبل أي استخدام لـ [[this]]، وإلا ReferenceError، لأن الأب هو اللي بيجهّز [[this]] أصلًا.`,
-            R`بعد [[super]] بقى مسموح نستخدم [[this]]، فبنضيف الخاصية اللي الـ admin بس عنده.`,
-            R`نهاية constructor الابن.`,
-            R`override: [[describe]] جديدة على [[Admin.prototype]]. لما تنادي [[a.describe()]]، JS بيلاقي دي الأول في السلسلة فمبيوصلش لنسخة الأب.`,
-            R`[[super.describe()]] بتنادي نسخة الأب (بنفس [[this]]) فترجّع [["User: Sara"]]، وبنكمّل عليها الصلاحيات مفصولة بـ [[join(", ")]]. كده بنعيد استخدام كود الأب بدل ما ننسخه.`,
-            R`نهاية [[describe]] الجديدة.`,
-            R`نهاية الكلاس [[Admin]].`,
-            R`بيعمل admin: constructor [[Admin]] بينادي [[super("Sara")]] فيتحط [[name]]، وبعدين [[permissions]] تتحط.`,
-            R`بيشغّل النسخة الجديدة (الـ override)، اللي جواها نادت نسخة الأب: [["User: Sara (admin: users, billing)"]].`,
-            R`[[instanceof]] بيدوّر في الـ prototype chain بتاعة [[a]] على [[Admin.prototype]]، ولقاها فرجّع [[true]].`,
-            R`و [[User.prototype]] برضه في السلسلة (فوق [[Admin.prototype]])، فـ [[true]]. يعني الـ admin يتعامل كـ user في أي كود مستني user.`,
+            R`[[var]] مالوش block scope، فـ [[i]] متغير **واحد** للـ loop كلها، قيمته بتتغيّر من 0 لحد 3.`,
+            R`كل لفة بتسجّل callback يتنفّذ بعدين (حتى بـ 0ms بيستنى لحد الكود الحالي ما يخلص). التلاتة ماسكين نفس [[i]]، ولما يشتغلوا تكون الـ loop خلصت و [[i]] بقى 3، فيطبع [[var 3]] تلات مرات.`,
+            R`نهاية الـ loop الأولى.`,
+            R`[[let]] في [[for]] بيعمل [[j]] **جديد لكل لفة**، بقيمة اللفة دي.`,
+            R`كل callback ماسك الـ [[j]] بتاع لفته، فيطبع [[let 0]] و [[let 1]] و [[let 2]]. ده الحل المعتاد النهارده: استخدم [[let]] في الـ loops.`,
+            R`نهاية الـ loop التانية.`,
+            R`[[var]] تاني، عشان نشوف إزاي كانوا بيحلّوها قبل [[let]] ما تيجي.`,
+            R`IIFE: arrow function بتتنادى فورًا بـ [[(k)]]. الباراميتر [[n]] بياخد **نسخة** من قيمة [[k]] في اللفة دي، والـ callback جواها ماسك [[n]] مش [[k]]، فيطبع [[iife 0]] و [[iife 1]] و [[iife 2]].`,
+            R`نهاية الـ loop التالتة.`,
           ],
-          sol: R`من غير [[super(name)]] بيطلع [[ReferenceError: Must call super constructor in derived class before accessing 'this' or returning from derived constructor]]: في الكلاس الابن this مبتتعملش غير لما الأب يعملها بـ super، فأي [[this.x]] قبلها ممنوع. ولو حطيت super بعد [[this.permissions = ...]] نفس الـ error.
+          sol: R`الناتج بـ 0 في كل حتة: [[var 3]] ٣ مرات، و [[let 0]] و [[let 1]] و [[let 2]]، و [[iife 0]] و [[iife 1]] و [[iife 2]]. var فيها متغير i واحد للـ loop كلها، ولما الـ callbacks اشتغلت كانت الـ loop خلصت و i بقى 3. let بتعمل j جديد لكل لفة، والـ IIFE بتعمل n جديد بنسخة من k.
 
-[[class Guest extends User {}]] من غير constructor و [[new Guest("x").describe()]] بترجّع [["User: x"]]: لو مكتبتش constructor، JS بيعملك واحد لوحده [[constructor(...args) { super(...args); }]] بيبعت كل حاجة للأب. فمتكتبش constructor غير لو عندك حاجة زيادة تعملها.`
+بعد ما تخلي أول timeout بـ 1000: الناتج [[let 0 let 1 let 2 iife 0 iife 1 iife 2]] وبعد ثانية [[var 3 var 3 var 3]]. التأخير غيّر الترتيب بس مش القيمة، لأن القيمة مش بتتاخد وقت ما الـ setTimeout اتكتب، بتتقري وقت ما الـ callback يشتغل، و i ساعتها 3 سواء استنيت 0 ولا 1000. لو كنت متوقع 0 1 2 مع var فده بالظبط الغلط اللي السؤال بيختبره.`
         }
       ]
     }

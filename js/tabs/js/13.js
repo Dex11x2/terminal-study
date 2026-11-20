@@ -1,1303 +1,741 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "async: الـ Promises و await",
+      t: "modules",
       l: 2,
-      n: "callbacks ثم Promises ثم async/await، و Promise.all وأخواتها، و fetch صح، و async جوه loops",
+      n: "import و export، والفرق بين ESM و CommonJS، والـ dynamic import",
       projects: [
-        { lvl: 'صغير', t: R`retry بسيط`, what: R`[[retry(fn, { times = 3, delay = 200 } = {})]] بتنادي fn، ولو فشلت تستنى delay وتحاول تاني لحد times، وتطبع رقم كل محاولة. من دروس Promise و async و await.`, done: R`دالة بتفشل مرتين وتنجح التالتة ← retry بترجّع قيمتها بعد ٣ محاولات في حوالي 400ms. دالة بتفشل دايمًا ← بيترمي آخر error بعد [[times]] محاولات بالظبط. و [[times: 1]] ← محاولة واحدة ومفيش استنا.` },
-        { lvl: 'صغير', t: R`عدّاد تنازلي بـ await`, what: R`صفحة فيها زرار «ابدأ» بيعد من 5 لـ 0 في عنصر بـ [[for]] و [[await wait(1000)]]، والزرار بيتقفل ([[disabled]]) لحد ما يخلص، وفي الآخر «يلا!». من درس async و await ووحدة الـ DOM.`, done: R`الأرقام بتتغير كل ثانية تقريبًا، والضغط على الزرار وهو شغال مبيبدأش عدّاد تاني، وبعد ما يخلص الزرار بيرجع يشتغل والعد بيبدأ من 5 تاني.` },
-        { lvl: 'متوسط', t: R`بروفايل GitHub`, what: R`input لاسم يوزر وزرار، بيجيب [[https://api.github.com/users/NAME]] و [[https://api.github.com/users/NAME/repos]] بـ [[Promise.all]]، ويعرض الاسم والصورة وأعلى ٥ repos بالنجوم، مع «بيحمّل...»، و 404 بتطلع «اليوزر مش موجود»، وأي error تاني رسالة عامة، والضغط مرة تانية بيلغي الطلب القديم بـ AbortController. من دروس الوحدة ووحدة الـ DOM.`, done: R`يوزر موجود ← طلبين بيبدأوا مع بعض في Network. يوزر مش موجود ← «اليوزر مش موجود» مش صفحة فاضية. ضغطتين ورا بعض ← طلبات الأولى canceled والنتيجة بتاعة التانية. والنت مقطوع (Offline في DevTools) ← رسالة مفهومة.` },
-        { lvl: 'متوسط', t: R`بحث بيلغي القديم`, what: R`input بحث على API منتجات (زي [[https://dummyjson.com/products/search?q=]] أو أي API عندك)، كل حرف بيلغي الطلب اللي قبله بـ AbortController، والنتايج بتتعرض في لستة مع «بيحمّل...» و «مفيش نتايج». من دروس fetch و AbortController و async و await.`, done: R`كتابة [[phone]] بسرعة ← في Network الطلبات القديمة canceled، والنتيجة اللي ظاهرة دايمًا بتاعة آخر نص. الـ AbortError مبيظهرش كرسالة غلط. والـ input الفاضي بيمسح النتايج من غير request.` },
-        { lvl: 'كبير', t: R`downloader بحد أقصى ومحاولات`, what: R`سكربت Node بياخد لستة URLs من ملف JSON، ويجيبهم بـ [[pool]] (٣ في نفس الوقت بالكتير)، ولكل طلب [[AbortSignal.timeout]]، و retry مرتين لو الشبكة فشلت أو 5xx بس (مش 4xx). كل نتيجة [[{ url, ok, status, ms, error }]]، وفي الآخر جدول بـ [[console.table]] وكود خروج ١ لو فيه فشل. وكل خطوة بتتكتب في لوج بالوقت، والأخطاء [[HttpError]] بـ status و cause. من الوحدة دي ووحدة الأخطاء.`, done: R`لستة فيها URL سليم و 404 ودومين مش موجود وواحد أبطأ من الـ timeout: الجدول بيقول ١ نجح و ٣ فشلوا وسبب كل واحد، والـ 404 اتجرب مرة واحدة بس، والدومين الغلط ٣ مرات. عدّاد [[active]] مبيعدّيش ٣. ملف JSON بايظ أو لستة فاضية ← رسالة واضحة وكود ١. والتشغيل مرتين بيدّي نفس الجدول.`, ext: R`خلّي الـ retry يستنى أكتر كل مرة (exponential backoff)، واحفظ الـ responses في ملفات، ولو التشغيل اتقطع في النص يكمّل من اللي فاضل بس.` },
-        { lvl: 'فكرة', t: R`لوحة بيانات لحاجة بتحبها`, what: R`اختار API مجاني (طقس، أو أسعار عملات، أو ماتشات، أو أفلام) واعمل صفحة بتجيب أكتر من endpoint مع بعض، وبتعرض اللي نجح حتى لو حاجة فشلت (allSettled)، وزرار تحديث بيلغي القديم. انت اللي بتختار الـ API والشكل.`, done: R`الصفحة بتشتغل لما endpoint واحد يفشل (غيّر الـ URL بتاعه وجرّب)، ومفيش [[await]] جوه forEach، وكل fetch بيفحص [[res.ok]].`, ext: R`زوّد cache في [[Map]] بحيث نفس الطلب في خلال ٣٠ ثانية ميتبعتش تاني، وزرار «جرّب تاني» للحتة اللي فشلت لوحدها.` },
+        { lvl: 'صغير', t: R`مكتبة utils بباب واحد`, what: R`فولدر [[utils]] فيه ٣ ملفات (نصوص، وأرقام، ومصفوفات)، كل واحد named exports بس، وملف [[index.js]] بيعمل [[export * from]] للتلاتة، و [[main.js]] بيستورد من مكان واحد. من درس import و export.`, done: R`[[main.js]] فيه سطر import واحد من [["./utils/index.js"]] وبيستخدم ٥ دوال على الأقل، ومفيش [[export default]] خالص. ولو غيّرت اسم دالة في ملفها، البرنامج بيقع بـ SyntaxError فيه اسم الـ export الناقص بالظبط.` },
+        { lvl: 'صغير', t: R`إعدادات حسب البيئة`, what: R`[[config/dev.js]] و [[config/prod.js]]، كل واحد [[export default]] فيه [[port]] و [[apiUrl]]، و [[main.js]] بيعمل [[await import()]] للملف حسب [[process.env.APP_ENV]] (والافتراضي dev). من درس dynamic import().`, done: R`[[APP_ENV=prod node main.js]] (في PowerShell [[$env:APP_ENV = "prod"]] الأول) بيطبع إعدادات prod، ومن غير المتغير بيطبع dev، و [[APP_ENV=xyz]] بيطبع رسالة فيها البيئات المتاحة ويخرج بكود ١ بدل stack trace طويل.` },
+        { lvl: 'متوسط', t: R`مكتبة بتشتغل مع require و import`, what: R`اكتب [[slug.mjs]] (ESM) فيه [[slugify]] كـ named و default، واستخدمه من [[app.cjs]] بـ [[require]] ومن [[app.mjs]] بـ import، وفي app.mjs اقرا [[version]] من package.json بـ [[createRequire]] واطبعها. من دروس import و export و CommonJS و ESM.`, done: R`الملفين بيطبعوا نفس الـ slug لنفس النص. وفيه README فيه أقل نسخة Node بتشغّل الـ require ده (22.12 أو 20.19). ولو زوّدت top-level await في slug.mjs، app.cjs بيقع بـ [[ERR_REQUIRE_ASYNC_MODULE]] وانت عارف تشرح ليه.` },
+        { lvl: 'متوسط', t: R`CLI أوامره بتتحمّل وقت الطلب`, what: R`[[cli.js]] بيقرا اسم الأمر ويعمل [[import()]] لـ [[commands/NAME.js]] بس للأمر اللي اتطلب. كل أمر فيه [[export default]] دالة و [[export const help]] نص. وأمر [[help]] بيلف على لستة الأوامر ويطبع الـ help بتاع كل واحد. من دروس الوحدة كلها.`, done: R`[[node cli.js help]] بيطبع كل الأوامر بوصفها، و [[node cli.js add 2 3]] بيطبع 5، والأمر الغلط بيطبع «مش معروف» ولستة الأوامر ويخرج بكود ١. وحط [[console.log]] في أول كل ملف أمر: لما تشغّل add بيتحمّل ملف add بس.` },
+        { lvl: 'كبير', t: R`نظام plugins`, what: R`برنامج بيقرا لستة أسامي ملفات من [[plugins.json]]، ولكل واحد [[await import()]] جوه try/catch، ويتأكد إن الـ default فيه [[name]] نص و [[run]] دالة، وبعدين يشغّلهم بالترتيب على نص داخل (واحد بيشيل المسافات الزيادة، وواحد بيعمل uppercase، وواحد بيعد الكلمات). وكل خطوة بتتكتب في لوج فيه الوقت واسم الـ plugin والنتيجة أو السبب. من وحدات الدوال والـ objects والـ classes ودروس الوحدة دي.`, done: R`plugin فيه syntax error، وملف مش موجود، وواحد من غير [[run]]: كل واحد بيطلع سطر تحذير فيه اسمه والسبب، والباقي بيشتغل عادي. ولو كل الـ plugins فشلت البرنامج بيخرج بكود ١. وفيه [[test.js]] بيجرّب ٣ لستات (سليمة، وفيها واحد بايظ، وفاضية) ويطبع نجح أو فشل لكل حالة، والتشغيل مرتين ورا بعض بيدّي نفس الناتج.`, ext: R`خلّي كل plugin يعلن عن [[options]] بتاعته في [[export const schema]] والبرنامج يتأكد منها قبل التشغيل، وزوّد [[--only name]] يشغّل plugin واحد بس.` },
+        { lvl: 'فكرة', t: R`قسّم سكربت قديم لـ modules`, what: R`خد أي ملف JS كبير كتبته في الوحدات اللي فاتت (لعبة، أو آلة حاسبة، أو todo) وقسّمه: كل ملف مسؤول عن حاجة واحدة، وفيه ملف دخول واحد، والحاجات التقيلة أو النادرة بتتحمّل بـ [[import()]]. انت اللي بتقرر التقسيمة.`, done: R`مفيش ملف فوق ١٥٠ سطر، ومفيش متغير global، ومفيش circular import (أو لو فيه، شارح في تعليق ليه آمن)، والتطبيق بيشتغل زي الأول بالظبط.`, ext: R`زوّد [[package.json]] فيه [["type": "module"]] و script للتشغيل، واعمله build بـ Vite وبص على الـ chunks اللي طلعت من الـ dynamic imports.` },
       ],
       items: [
         {
-          cmd: "Promise",
-          title: "يعني إيه Promise؟",
-          desc: R`الـ Promise object بيمثّل نتيجة لسه مجتش: طلب شبكة، أو قراية ملف، أو timer. ليه ٣ حالات: pending (لسه)، و fulfilled (نجح وفيه قيمة)، و rejected (فشل وفيه سبب). ولما يخلص مبيتغيرش تاني.
+          cmd: "import و export",
+          title: "تقسّم الكود على ملفات وتستورد منهم",
+          desc: R`كل ملف ES module ليه scope بتاعه، ومحدش يشوف حاجة منه غير اللي عملها [[export]]. فيه نوعين: named export ([[export function add]])، وده بيتعمله import بنفس الاسم بين [[{ }]]، و default export ([[export default]]) واحد في الملف، وبيتعمله import بأي اسم.
 
-بتسجّل اللي هيحصل بعد كده بـ [[.then(onSuccess)]] و [[.catch(onError)]] و [[.finally()]]، وكل واحدة بترجّع Promise جديد، فتقدر توصّلهم سلسلة. وده كان الحل لـ «callback hell»: callbacks جوه callbacks جوه callbacks.`,
-          example: R`function wait(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-function getUser(id) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (id <= 0) reject(new Error("id غلط"));
-      else resolve({ id, name: "Sara" });
-    }, 300);
-  });
-}
-getUser(1)
-  .then((user) => user.name)
-  .then((name) => console.log("الاسم:", name))
-  .catch((err) => console.log("فشل:", err.message))
-  .finally(() => console.log("خلص"));
-wait(500).then(() => console.log("بعد نص ثانية"));
-const { promise, resolve } = Promise.withResolvers();`,
-          try: R`نادي [[getUser(0)]] وشوف أنهي then اتخطت. وبعدين ارمي error جوه أول then ([[throw new Error("x")]]) وشوف الـ catch مسكته.`,
+في المتصفح: [[<script type="module" src="main.js">]]. وفي Node: [["type": "module"]] في package.json أو امتداد [[.mjs]].`,
+          example: R`// math.js
+export const PI = 3.14159;
+export function area(r) { return PI * r * r; }
+export default function round2(n) { return Math.round(n * 100) / 100; }
+// main.js
+import round2, { area, PI as pi } from "./math.js";
+import * as math from "./math.js";
+console.log(round2(area(2)), pi, math.PI);
+export { area as circleArea } from "./math.js";`,
+          try: R`اعمل الملفين في فولدر، وضيف [[package.json]] فيه [[{ "type": "module" }]]، وشغّل [[node main.js]]. وبعدين امسح [[.js]] من الـ import واقرا الـ error (ERR_MODULE_NOT_FOUND).`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[console.log("1"); new Promise((r) => { console.log("2"); r(); }).then(() => console.log("3")); console.log("4");]]. اكتب الترتيب على ورقة وبعدين شغّله.`, done: R`الترتيب [[1 2 4 3]]: الـ executor اللي جوه [[new Promise]] بيشتغل فورًا (sync)، والـ then بس هي اللي بتستنى. ولو كتبت [[1 4 2 3]] ارجع لجملة «الـ executor بيتنادي على طول».` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[getUser(1).then((u) => { getOrders(u.id); }).then((orders) => console.log("orders:", orders));]]. ليه بيطبع undefined؟`, done: R`قبل التصليح بيطبع [[orders: undefined]] لأن الـ then الأولى مرجّعتش الـ Promise (الأقواس [[{ }]] من غير return). بعد [[(u) => getOrders(u.id)]] بيطبع الطلبات.` },
-            { lvl: 'تطبيق', t: R`**refactor:** عندك دالة قديمة بـ callback: [[loadUser(id, cb)]] بتستنى 300ms بـ setTimeout وبتنادي [[cb(new Error("id غلط"))]] لو [[id <= 0]] أو [[cb(null, { id, name: "Sara" })]]. اكتب [[loadUserP(id)]] بترجّع Promise بتلفها بـ [[new Promise]] من غير ما تغيّر loadUser نفسها.`, done: R`[[loadUserP(1).then((u) => console.log(u.name))]] بيطبع [[Sara]] بعد حوالي 300ms، و [[loadUserP(0).catch((e) => console.log(e.message))]] بيطبع [[id غلط]]، و [[loadUser]] الأصلية لسه شغالة بالـ callback زي الأول.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[wait(ms)]] بترجّع Promise بيخلص بعد ms، واستخدمها في سلسلة then تطبع عدّ تنازلي [[3]] ثم [[2]] ثم [[1]] ثم «انطلق»، ثانية بين كل واحدة.`, done: R`الأربع سطور بيطلعوا بالترتيب، و [[console.time]] حواليهم بيقول حوالي 3 ثواني (3000ms وشوية). ومفيش setTimeout جوه setTimeout.` },
-            { lvl: 'تحدي', t: R`**محاكاة:** بوابة ماتش: اكتب [[createGate()]] بـ [[Promise.withResolvers()]] بترجّع [[{ wait, open }]]. ٣ مشجعين بينادوا [[gate.wait().then(() => console.log("دخل", name))]]، وبعد ثانية [[gate.open()]]، وبعدها [[gate.open()]] تاني، وبعدها مشجع رابع بيوصل متأخر وبينادي wait.`, done: R`محدش بيطبع قبل الثانية. بعد أول open التلاتة بيطبعوا «دخل» بنفس ترتيب ما وصلوا، و open التانية مبتعملش حاجة ومفيش error (الـ Promise بيتحسم مرة واحدة). والرابع بيدخل على طول لأن الـ Promise خلص خلاص.` }
+            { lvl: 'سريع', t: R`**ابني:** اعمل [[counter.js]] فيه [[export let count = 0]] و [[export function inc() { count++; }]]، وصفحة فيها زرار و [[<script type="module">]] بيعمل import للاتنين: كل ضغطة تنادي [[inc()]] وتكتب [[count]] في الزرار. وبعدين جرّب تكتب [[count = 5]] جوه الـ script.`, done: R`الزرار بيعد ١ و ٢ و ٣ مع كل ضغطة، يعني الـ import شايف المتغير نفسه مش نسخة منه (live binding). و [[count = 5]] بيرمي [[TypeError: Assignment to constant variable.]] حتى إن المتغير [[let]] في ملفه.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[stats.js]] أول سطر فيه [[console.log("loaded")]]. و [[a.js]] و [[b.js]] الاتنين بيعملوا [[import "./stats.js"]]، و [[main.js]] بيعمل import لـ a و b. «loaded» هتتطبع كام مرة لما تشغّل main.js؟`, done: R`توقعت وطلعت مرة واحدة: الـ module بيتنفّذ أول مرة بس وبعد كده كل اللي بيعمله import بياخد نفس النسخة. ودي اللي بتخلي ملف config أو اتصال database يتعمل مرة واحدة.` },
+            { lvl: 'تطبيق', t: R`**refactor:** اكتب [[main.js]] واحد فيه ٤ دوال ([[slugify]] و [[capitalize]] و [[formatPrice]] و [[clamp]]) وتحتهم ٤ سطور بتطبع نتايجهم، واحفظ الناتج. وبعدين قسّمه من غير ما الناتج يتغيّر: [[utils/strings.js]] و [[utils/numbers.js]]، وملف [[utils/index.js]] فيه [[export * from "./strings.js"]] وزيه لـ numbers، و main.js يستورد من [["./utils/index.js"]] بس.`, done: R`الناتج حرف بحرف زي ما كان قبل التقسيم، و main.js مفيهوش غير سطر import واحد وسطور الطباعة. ولو كتبت اسم مش موجود زي [[import { nope } from "./utils/index.js"]] البرنامج بيقع قبل أي سطر بـ [[SyntaxError: The requested module './utils/index.js' does not provide an export named 'nope']].` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** اعمل circular import: [[a.js]] بيستورد [[b]] من [[b.js]]، و b.js بيستورد [[a]] من a.js، وكل ملف بيطبع اللي استورده في الـ top level. شغّل [[node a.js]] وافهم مين اتنفّذ الأول، وبعدين صلّحها من غير ما تشيل ولا import.`, done: R`قبل التصليح بيقع بـ [[ReferenceError: Cannot access 'a' before initialization]] جوه b.js، لأن b.js اتنفّذ الأول و [[a]] لسه في الـ TDZ. وبعد ما تنقل الطباعة جوه دالة متصدّرة بتتنادي بعد ما الملفين يتحمّلوا، بيطبعوا [[a sees B]] و [[b sees A]] من غير error.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** اكتب لزميلك ٣ سطور: إمتى [[export default]] وإمتى named exports، وإيه اللي بيحصل لو كتبت [[import { x } from]] لملف عامل default بس، وليه فرق اسم الـ import بيفرق في named ومبيفرقش في default.`, done: R`الـ ٣ سطور فيهم: default لحاجة واحدة أساسية في الملف (component أو class)، و named لملفات أدوات فيها كذا دالة، وإن الغلطة بتطلّع [[SyntaxError: The requested module ... does not provide an export named 'x']]، وإن الـ default تقدر تسميه أي اسم وانت بتستورده.` }
           ],
           flag: "script",
           deep: {
-            why: "كل حاجة بتاخد وقت في JS async: fetch، و قاعدة البيانات، والملفات. وأي مكتبة حديثة بترجّع Promises، و async/await نفسها مبنية عليهم. من غير ما تفهمهم هتقابل bugs زي «الداتا undefined» لأنك قريتها قبل ما توصل.",
-            how: R`[[new Promise(executor)]]: الـ executor بيشتغل فورًا ومعاه دالتين، [[resolve(value)]] و [[reject(reason)]]. أول واحدة تتنادي بس هي اللي بتفرق.
+            why: "أي مشروع حقيقي عشرات الملفات. الـ modules بتخلي كل ملف مسؤول عن حاجة واحدة، ومتغيراته مش بتتلخبط مع غيره، والـ bundlers (Vite) بيشيلوا الكود اللي محدش عمله import (tree shaking).",
+            how: R`الـ imports بتتقري قبل ما الكود يشتغل (static): لازم تبقى في الـ top level (مش جوه if أو function)، وبتتعمل hoisting فبتتحمّل قبل أي سطر حتى لو اتكتبت تحت، والعادة تحطها في أول الملف. والـ path لازم string ثابت. ده اللي بيخلي الأدوات تعرف شجرة الملفات كلها وتعمل tree shaking.
 
-[[then]] بترجّع Promise جديد قيمته اللي الـ callback رجّعه. لو الـ callback رجّع Promise، السلسلة بتستناه (flattening). ولو رمى error، الـ Promise الجديد بيبقى rejected، والسلسلة بتتخطى لأقرب catch.
+الـ import بيجيب live binding مش نسخة: لو الملف الأصلي غيّر قيمة [[export let count]]، اللي عامل import هيشوف الجديد. ومينفعش تعيّن قيمة للـ import نفسه.
 
-الـ callbacks بتاعة then مبتشتغلش فورًا حتى لو الـ Promise خلص أصلًا: بتتحط في microtask queue وتشتغل بعد الكود المتزامن الحالي (درس event loop في المستوى ٣).
+كل module بيتنفّذ مرة واحدة بس مهما اتعمله import من كام ملف، والنتيجة بتتكاش. ES modules شغالة strict mode لوحدها.
 
-Promise اترفض ومحدش عمله catch: المتصفح بيطبع «Uncaught (in promise)»، و Node من نسخة 15 بيقفل البرنامج كله (unhandled rejection).
+الـ path: في Node والمتصفح لازم الامتداد ([[./math.js]])، والـ bundlers (Vite و Next) بيسامحوك. و [[import "lodash"]] من غير [[./]] معناها package من node_modules (bare specifier)، والمتصفح مبيفهمهاش لوحده من غير bundler أو import map.
 
-[[Promise.withResolvers()]] (ES2024) بترجّع promise و resolve و reject برّه الـ executor، مفيدة لما الـ resolve هيتنادي من مكان تاني (event مثلًا).`,
-            when: R`هتستخدم Promises جاهزة (fetch وغيره) كل يوم، غالبًا بـ await. و [[new Promise]] بنفسك لما تلف API قديم شغال بـ callbacks (زي setTimeout أو events).`,
-            mistakes: R`تنسى [[return]] جوه then فالـ then اللي بعدها تاخد undefined. وتنسى catch. وتلف Promise جاهز في [[new Promise]] من غير لزمة (explicit construction anti-pattern). وفي الانترفيو: «إيه حالات الـ Promise؟» و «callback vs promise؟».`
+و [[export ... from]] بيعمل re-export، ودي فكرة ملفات [[index.js]] اللي بتجمّع exports فولدر كامل (barrel file).`,
+            when: "دايمًا في كود جديد. named exports للأغلب لأنها أوضح في البحث والـ refactoring، و default للـ components والصفحات لما الـ framework بيطلبها (Next.js pages).",
+            mistakes: R`تنسى الامتداد في Node. وتخلط default و named: [[import { round2 }]] وهي default فتطلع undefined أو error. و barrel files كبيرة بتبطّأ الـ dev server والـ tests. و circular imports (a بيستورد من b و b من a) فتلاقي قيمة undefined وقت التشغيل.`
           },
           teach: R`## الكود ده بيعمل إيه؟
 
-بيعمل دالتين بيرجّعوا Promises بإيدنا: [[wait]] (استنى وقت معيّن)، و [[getUser]] (API وهمي بياخد 300ms وينجح أو يفشل). وبعدين بيوصّل سلسلة [[then]] و [[catch]] و [[finally]] على getUser. اتشغّل في Node 24، وزوّدنا قدام كل سطر مطبوع الوقت من أول البرنامج بالملي ثانية (ms) عشان تشوف الترتيب.
+ملفين: [[math.js]] بيعمل [[export]] لـ ٣ حاجات، و [[main.js]] بيستوردهم بـ ٣ أشكال مختلفة ويستخدمهم. عشان Node يعامل الملفات كـ ES modules، حطينا جنبهم [[package.json]] فيه سطر واحد:
+
+~~~text package.json
+{ "type": "module" }
+~~~
+
+واتشغّل بـ [[node main.js]] على Node 24.
 
 ---
 
-## ١. [[wait]]: أبسط Promise
+## ١. [[math.js]]: الـ exports
 
-~~~text app.js
-function wait(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+~~~text math.js
+export const PI = 3.14159;
+export function area(r) { return PI * r * r; }
+export default function round2(n) { return Math.round(n * 100) / 100; }
 ~~~
 
-- [[new Promise(executor)]]: بيعمل Promise جديد. الـ **executor** هو الدالة اللي بتديهاله، وبتشتغل **فورًا**، وبياخد منه دالة اسمها [[resolve]].
-- [[resolve]]: لما تناديها، الـ Promise بيخلص بنجاح (fulfilled).
-- [[setTimeout(resolve, ms)]]: نادي resolve بعد ms ملي ثانية.
+### [[export const PI]] و [[export function area]]
 
-يعني [[wait(500)]] بيرجّع Promise بيخلص بعد نص ثانية.
+دول **named exports**: كل واحد ليه اسم، واللي هيستورده لازم يطلبه **بنفس الاسم**. أي حاجة في الملف **من غير** export مستخبية، محدش برّه يشوفها: كل module ليه scope لوحده.
+
+- [[area(r)]]: مساحة الدايرة = PI × نص القطر × نص القطر.
+
+### [[export default function round2]]
+
+ده **default export**: واحد بس في الملف، و «الحاجة الأساسية» فيه. اللي بيستورده يسمّيه أي اسم.
+
+- [[Math.round(n * 100) / 100]]: حيلة للتقريب لرقمين عشريين: اضرب في 100، قرّب لأقرب رقم صحيح، واقسم على 100. يعني [[12.56636]] ← [[1256.636]] ← [[1257]] ← [[12.57]].
 
 ---
 
-## ٢. [[getUser]]: نجاح أو فشل
+## ٢. [[main.js]]: الـ imports
 
-~~~text app.js
-function getUser(id) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (id <= 0) reject(new Error("id غلط"));
-      else resolve({ id, name: "Sara" });
-    }, 300);
-  });
-}
+~~~text main.js
+import round2, { area, PI as pi } from "./math.js";
 ~~~
 
-- الـ executor هنا بياخد دالتين: [[resolve]] و [[reject]]. [[reject]] بتخلّي الـ Promise يفشل (rejected) بالسبب اللي تديهوله.
-- [[setTimeout(() => { ... }, 300)]]: بنقلّد طلب شبكة بياخد 300ms.
-- [[reject(new Error("id غلط"))]] لو id صفر أو سالب، و [[resolve({ id, name: "Sara" })]] غير كده. و [[{ id, name: "Sara" }]] اختصار [[{ id: id, name: "Sara" }]].
+نفكّه حتة حتة:
 
-### الـ Promise ليه ٣ حالات
-
-طبعنا Promise من getUser في ٣ أوقات:
-
-~~~text الناتج
-   0ms Promise { <pending> }                        ← لحظة النداء
- 407ms Promise { { id: 1, name: 'Sara' } }          ← بعد ما نجح
- 407ms Promise { <rejected> Error: id غلط ... }     ← getUser(0) بعد ما فشل
-~~~
-
-| الحالة | معناها |
+| الحتة | معناها |
 |---|---|
-| pending | لسه مخلصش |
-| fulfilled | نجح ومعاه قيمة |
-| rejected | فشل ومعاه سبب (error) |
+| [[round2]] (برّه الأقواس) | الـ default export. الاسم ده من اختيارك، كان ممكن [[import r from ...]] |
+| [[{ area }]] | named export اسمه area، لازم بنفس الاسم |
+| [[PI as pi]] | named export اسمه PI، بس سمّيه هنا pi |
+| [[from "./math.js"]] | من الملف ده. [[./]] = نفس الفولدر، والامتداد [[.js]] إجباري في Node |
 
-ولما يخلص (نجح أو فشل) **مبيتغيرش تاني**. ولو ناديت resolve أو reject تاني، بيتجاهلهم.
-
----
-
-## ٣. السلسلة
-
-~~~text app.js
-getUser(1)
-  .then((user) => user.name)
-  .then((name) => console.log("الاسم:", name))
-  .catch((err) => console.log("فشل:", err.message))
-  .finally(() => console.log("خلص"));
+~~~text main.js
+import * as math from "./math.js";
 ~~~
 
-نمشيها حلقة حلقة:
+[[* as math]]: هات **كل** الـ exports في object واحد اسمه math. طبعناه:
 
-1. [[getUser(1)]]: بيرجّع Promise pending **على طول**، والكود بيكمّل.
-2. [[.then((user) => user.name)]]: «لما ينجح، خد القيمة (user) ورجّع name منها». كل then بترجّع **Promise جديد** قيمته اللي الـ callback رجّعه، يعني هنا [["Sara"]].
-3. [[.then((name) => console.log(...))]]: اللي بعدها بتاخد [["Sara"]] وتطبعها.
-4. [[.catch((err) => ...)]]: لو **أي** حلقة قبلها فشلت (الـ Promise الأصلي أو throw جوه then)، التنفيذ بينط هنا على طول.
-5. [[.finally(() => ...)]]: بتشتغل في الحالتين، ومبتاخدش قيمة.
-
----
-
-## ٤. الترتيب الحقيقي
-
-~~~text app.js
-wait(500).then(() => console.log("بعد نص ثانية"));
-const { promise, resolve } = Promise.withResolvers();
-~~~
-
-- [[Promise.withResolvers()]] (ES2024): بترجّع object فيه [[promise]] و [[resolve]] و [[reject]] جاهزين، فتقدر تنادي resolve **من برّه** الـ executor (من event مثلًا). جرّبنا نعمل resolve بعد 700ms من setTimeout تانية.
-
-~~~text الناتج
-   2ms آخر سطر متزامن
- 312ms الاسم: Sara
- 313ms خلص
- 502ms بعد نص ثانية
- 705ms withResolvers: اتحلّت من برّه
-~~~
-
-لاحظ إن [[آخر سطر متزامن]] (console.log عادي في آخر الملف) اتطبع **الأول**: كل الـ Promises بتسجّل اللي هيحصل وتسيب الكود يكمّل، والـ callbacks بتشتغل بعدين.
-
----
-
-## ٥. الفشل (التجربة)
-
-مع [[getUser(0)]] بنفس السلسلة:
-
-~~~text الناتج
-فشل: id غلط
-خلص
-~~~
-
-الاتنين then اتخطّوا خالص، والـ catch مسك. ولما رمينا [[throw new Error("x")]] جوه أول then (مع getUser(1)):
-
-~~~text الناتج
-فشل: x
-خلص
-~~~
-
-نفس الـ catch مسك الاتنين: الرفض الأصلي وأي throw جوه then.
-
-### Promise فشل ومحدش عمله catch
-
-جرّبنا [[getUser(0)]] لوحده من غير catch (في ملف تجربة getUser فيه في أول سطر):
-
-~~~text الناتج
-C:\Users\ali\code\app.js:4
-      if (id <= 0) reject(new Error("id غلط"));
-                          ^
-
-Error: id غلط
-    at Timeout._onTimeout (C:\Users\ali\code\app.js:4:27)
-
-Node.js v24.19.0
-~~~
-
-ده اسمه **unhandled rejection**، و Node بيقفل البرنامج كله بـ exit code 1. في المتصفح بيظهر [[Uncaught (in promise)]] أحمر في Console.
-
----
-
-## ٦. unhandled rejection: ليه Node بيوقّع البرنامج كله
-
-من Node 15 الوضع الافتراضي إن أي Promise اترفض ومحدش مسكه **بيوقّع الـ process**، زي throw محدش مسكه بالظبط. قبل كده كان بيطبع تحذير ويكمّل، وده كان بيخبّي bugs لحد ما السيرفر يبقى في حالة غريبة. Node بيقرر إن الـ Promise «ملوش handler» بعد ما الكود المتزامن والـ microtasks يخلصوا، فـ [[.catch]] لازم يتحط قبل كده.
-
-الوضع ده بيتغيّر بـ flag اسمه [[--unhandled-rejections]]. جرّبت كل وضع على [[Promise.reject(new Error("x"))]] وبعده timer بيطبع «كمّل»، من غير أي listener:
-
-| الوضع | اللي حصل (Node 24) | كود الخروج |
-|---|---|---|
-| [[throw]] (الافتراضي) | البرنامج وقع بالـ stack، و «كمّل» متطبعتش | 1 |
-| [[warn]] | طبع [[UnhandledPromiseRejectionWarning: Error: x]] على stderr وكمّل | 0 |
-| [[none]] | ساكت خالص وكمّل، ودي أخطر حاجة | 0 |
-| [[strict]] | وقع حتى لو فيه [[unhandledRejection]] listener | 1 |
-
-> متغيّرش الافتراضي عشان «التحذير يختفي». الصح إنك تمسك الـ rejection في مكانه ([[.catch]] أو [[await]] جوه try)، وتحط handler عام يسجّل أي حاجة فلتت ويخرج. ده درس «الأخطاء العامة: unhandledrejection و uncaughtException» في وحدة الأخطاء.
-
-والمتصفح مختلف: الصفحة **مبتقعش**، بس بيكتب [[Uncaught (in promise)]] في Console وبيطلّع event اسمه [[unhandledrejection]] على [[window]] (نفس الدرس).
-
----
-
-## ٧. Promise.try: كود ممكن يرمي sync أو async في سلسلة واحدة
-
-مشكلة: دالة بترجّع Promise، بس جواها سطر ممكن يرمي **قبل** ما الـ Promise يتعمل. الـ [[.catch]] مش هيشوفه:
-
-~~~text pt.mjs
-function readConfig(text) {
-  return JSON.parse(text);
+~~~text الناتج: console.log(math)
+[Module: null prototype] {
+  PI: 3.14159,
+  area: [Function: area],
+  default: [Function: round2]
 }
-function readConfigAsync(text) {
-  return Promise.resolve(readConfig(text));
+~~~
+
+ده اسمه **module namespace object**: كل named export خاصية، والـ default موجود باسم [[default]]. ومينفعش تعدّل فيه: [[math.PI = 3]] طلّعت:
+
+~~~text الناتج
+TypeError: Cannot assign to read only property 'PI' of object '[object Module]'
+~~~
+
+---
+
+## ٣. الاستخدام
+
+~~~text main.js
+console.log(round2(area(2)), pi, math.PI);
+~~~
+
+من جوه لبرّه: [[area(2)]] = 3.14159 × 2 × 2 = [[12.56636]]، و [[round2]] قرّبتها [[12.57]]. و [[pi]] و [[math.PI]] نفس القيمة بطريقتين.
+
+~~~text الناتج: node main.js
+12.57 3.14159 3.14159
+~~~
+
+---
+
+## ٤. re-export
+
+~~~text main.js
+export { area as circleArea } from "./math.js";
+~~~
+
+ده **مش** import: main.js بيعدّي area من math.js لأي حد بيستورد من main.js، باسم جديد circleArea. جرّبنا ملف تالت:
+
+~~~text ns.js
+import { circleArea } from "./main.js";
+console.log(circleArea(1));
+~~~
+
+~~~text الناتج: node ns.js
+12.57 3.14159 3.14159
+3.14159
+~~~
+
+السطر الأول هو console.log بتاع main.js: لما ns.js استورد منه، main.js اتنفّذ **مرة واحدة**. ولو استورده ١٠ ملفات، برضه مرة واحدة، والباقي بياخدوا نفس النسخة. وده نفس فكرة ملفات [[index.js]] اللي بتجمّع exports فولدر كامل.
+
+---
+
+## ٥. الأخطاء المشهورة
+
+### نسيت [[.js]]
+
+غيّرنا السطر لـ [[from "./math"]]:
+
+~~~text الناتج
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\ali\code\math' imported from C:\Users\ali\code\main.js
+Did you mean to import "./math.js"?
+~~~
+
+Node في ES modules مبيخمّنش الامتداد، و Vite بيخمّن، فالكود يشتغل هناك ويقع هنا.
+
+### نسيت [[type: module]]
+
+بـ [[package.json]] فيه [[{}]] بس، Node 24 شغّله، بس بتحذير:
+
+~~~text الناتج
+[MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/ali/code/main.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to C:\Users\ali\code\package.json.
+12.57 3.14159 3.14159
+~~~
+
+يعني «حاولت أقراه CommonJS وفشلت، فقريته تاني ES module، وده أبطأ. حط الـ type».
+
+---
+
+## ٦. import map: أسامي packages في المتصفح من غير bundler
+
+في Node [[import x from "lodash"]] (اسم من غير [[./]]، اسمه **bare specifier**) بيدوّر في [[node_modules]]. المتصفح معندوش [[node_modules]]، فلو كتبتها في صفحة عادية:
+
+~~~text الناتج (Chrome 156)
+Failed to resolve module specifier "utils". Relative references must start with either "/", "./", or "../".
+~~~
+
+الـ **import map** بيقول للمتصفح «الاسم ده معناه الملف ده». بيتكتب JSON جوه [[<script type="importmap">]] **قبل** أي module بيستخدمه:
+
+~~~text index.html
+<script type="importmap">
+{
+  "imports": {
+    "utils": "./lib/utils.js",
+    "dayjs/": "./vendor/dayjs/"
+  }
 }
-try {
-  readConfigAsync("{").catch((e) => console.log("catch اتنادت؟"));
-} catch (e) { console.log("لأ: اترمى sync:", e.name); }
+</script>
+<script type="module">
+import { slug } from "utils";
+import { fmt } from "dayjs/format.js";
+console.log(slug("Hello World"), fmt(5));
+</script>
 ~~~
 
-~~~text الناتج (Node 24)
-لأ: اترمى sync: SyntaxError
+- [[type="importmap"]]: المتصفح مش بينفّذه كـ JavaScript، بيقراه كإعدادات.
+- [["imports"]]: object، المفتاح هو الاسم اللي هتكتبه في [[import]]، والقيمة الـ URL الحقيقي.
+- [["utils": "./lib/utils.js"]]: اسم بالظبط ← ملف واحد.
+- [["dayjs/": "./vendor/dayjs/"]]: مفتاح بيخلص بـ [[/]] معناه **prefix**: أي حاجة تبدأ بـ [[dayjs/]] بتتبدّل، فـ [[dayjs/format.js]] بقت [[./vendor/dayjs/format.js]].
+
+~~~text الناتج (Chrome 156، الصفحة على http://127.0.0.1)
+hello-world day 5
 ~~~
 
-[[readConfig("{")]] رمت وهي بتتحسب كـ argument لـ [[Promise.resolve]]، يعني قبل ما يبقى فيه Promise أصلًا، فالـ [[.catch]] عمره ما اتنادى. اللي بينادي الدالة لازم يحط try **و** catch، وده سهل يتنسي.
+ده بيخلّيك تكتب نفس الـ imports اللي في Node وتشغّلها في المتصفح من غير Vite، وده مفيد في صفحة صغيرة أو demo. والقيمة ممكن تبقى URL على CDN ([["https://esm.sh/dayjs@1"]]). في المشاريع الكبيرة الـ bundler أحسن: بيجمّع الملفات ويشيل اللي مش مستخدم. فيه كمان [["scopes"]] عشان نسخة مختلفة لفولدر معين، والتفاصيل في MDN (صفحة [[<script type="importmap">]]).
 
-[[Promise.try(fn, ...args)]] (ES2025، موجودة في Node 24 والمتصفحات الحديثة) بتنادي [[fn]] **على طول** وتحوّل أي نتيجة لـ Promise: لو رجّعت قيمة يبقى fulfilled، ولو رمت يبقى rejected، ولو رجّعت Promise بتستناه:
-
-~~~text pt.mjs
-Promise.try(readConfig, "{").catch((e) => console.log("Promise.try:", e.name));
-Promise.try(readConfig, '{"port":3000}').then((c) => console.log("port", c.port));
-Promise.try(async () => { throw new Error("async"); }).catch((e) => console.log("async:", e.message));
-console.log(Promise.try(() => 5) instanceof Promise);
-console.log("sync انتهى");
-~~~
-
-~~~text الناتج (Node 24)
-true
-sync انتهى
-Promise.try: SyntaxError
-port 3000
-async: async
-~~~
-
-- [[Promise.try(readConfig, "{")]]: الـ arguments بعد الدالة بتتبعتلها، فده زي [[readConfig("{")]] بس الـ throw بقى rejection.
-- الدالة اتنادت **فورًا** (sync)، بس الـ [[then]] و [[catch]] بيتنادوا بعدين كـ microtasks، عشان كده «sync انتهى» اتطبعت الأول.
-- الفرق عن [[Promise.resolve().then(fn)]] (الحيلة القديمة، وبتمسك الـ throw برضه): هناك [[fn]] بتتأجّل لـ microtask، وهنا بتتنفّذ في نفس اللحظة.
-
-| الطريقة | الـ throw المتزامن | [[fn]] بتتنفّذ إمتى |
-|---|---|---|
-| [[Promise.resolve(fn())]] | بيطلع برّه كـ throw عادي، والـ catch مش شايفه | فورًا |
-| [[Promise.resolve().then(fn)]] | بيبقى rejection | بعدين، في microtask |
-| [[Promise.try(fn)]] | بيبقى rejection | فورًا |
-| [[async () => fn()]] ونداها | بيبقى rejection | فورًا |
-
-آخر سطر: أي دالة [[async]] بتعمل نفس الحماية، فـ [[Promise.try]] مفيدة بالذات لما مش عايز تكتب wrapper، أو مع مكتبات بتاخد callback ممكن يرجّع قيمة أو Promise.
+> جرّبت كمان import map بعد module اتنفّذ في Chrome 156 واشتغل (النسخ الحديثة بتسمح بأكتر من map). النسخ الأقدم بتتجاهله، فحطه دايمًا في أول الـ [[<head>]].
 
 ---
 
 ## الخلاصة
 
-| الحتة | بتعمل إيه |
-|---|---|
-| [[new Promise((resolve, reject) => ...)]] | تعمل Promise وتقرر إمتى ينجح أو يفشل |
-| [[.then(fn)]] | لما ينجح. اللي fn بترجّعه يروح للحلقة اللي بعدها |
-| [[.catch(fn)]] | لو أي حاجة قبلها فشلت |
-| [[.finally(fn)]] | في الحالتين |
-| [[Promise.withResolvers()]] | promise و resolve و reject في متغيرات |
+| الكتابة | التصدير | الاستيراد |
+|---|---|---|
+| named | [[export function area]] | [[import { area } from ...]] بنفس الاسم |
+| default | [[export default ...]] | [[import anyName from ...]] بأي اسم |
+| تغيير اسم | [[export { a as b }]] | [[import { a as b }]] |
+| الكل | (مفيش) | [[import * as m]] والـ default في [[m.default]] |
+| تعدية | [[export { x } from "./y.js"]] | (مش import) |
 
-- كل then بترجّع Promise جديد، فالسلسلة ممكن تطول. **ولو نسيت return جوه then، الحلقة اللي بعدها هتاخد undefined**.
-- حط catch في آخر كل سلسلة، وإلا Node هيقفل البرنامج (الافتراضي من Node 15، ويتغيّر بـ [[--unhandled-rejections]] بس متغيّروش).
-- [[Promise.try(fn)]] بتخلّي الـ throw المتزامن rejection، فـ [[.catch]] واحد يمسك الاتنين.`,
+- الامتداد [[.js]] إجباري في Node والمتصفح.
+- كل module بيتنفّذ مرة واحدة، والـ imports مبتتعدّلش.`,
           lines: [
-            R`دالة [[wait]] بتاخد عدد milliseconds وبترجّع Promise بيخلص بعد المدة دي. هي نسخة من [[setTimeout]] تقدر تعمل عليها [[then]] أو [[await]].`,
-            R`[[new Promise]] بياخد دالة (executor) بتتنفذ على طول، وبيدّيها [[resolve]]. بنسلّم [[resolve]] نفسها للـ [[setTimeout]]، فأول ما الوقت يخلص بتتنادى والـ Promise يبقى fulfilled. مفيش [[reject]] هنا لأن الاستنا مبيفشلش.`,
-            R`نهاية [[wait]].`,
-            R`[[getUser]] بتمثّل API وهمي: بترجّع Promise فيه يوزر بعد شوية، أو بتفشل لو الـ id غلط. كده نجرّب حالة النجاح وحالة الفشل من غير شبكة.`,
-            R`الـ executor هنا بياخد [[resolve]] (نجاح) و [[reject]] (فشل). الـ Promise بيفضل pending لحد ما واحدة منهم تتنادى، وأول واحدة بس هي اللي بتحسب: أي نداء بعدها بيتجاهَل.`,
-            R`[[setTimeout]] بيأجّل الرد ٣٠٠ms عشان يقلّد وقت الطلب على الشبكة. من غيره الـ Promise هيخلص بسرعة جدًا ومش هتحس إن فيه استنا.`,
-            R`لو الـ id صفر أو سالب بننادي [[reject]] ومعاها [[Error]] (مش نص)، عشان اللي يمسكه يلاقي [[message]] و stack trace يعرف منهم الغلط حصل فين.`,
-            R`غير كده بننادي [[resolve]] بالـ object بتاع اليوزر، والقيمة دي هي اللي هتوصل لأول [[then]].`,
-            R`نهاية دالة الـ [[setTimeout]]، و [[300]] هي المدة بالـ milliseconds.`,
-            R`نهاية الـ executor والـ [[new Promise]].`,
-            R`نهاية [[getUser]].`,
-            R`النداء نفسه مبيستناش حاجة: بيرجّع Promise لسه pending على طول، والكود بيكمّل. اللي بعده بيقول «لما يخلص اعمل كذا».`,
-            R`[[then]] بتتنادى لما الـ Promise ينجح ومعاها القيمة (اليوزر). اللي الدالة بترجّعه (الاسم) بيبقى قيمة Promise جديد، وده اللي بيخلّي السلسلة تكمّل.`,
-            R`[[then]] التانية بتستلم الاسم اللي رجع من اللي قبلها وتطبعه: «الاسم: Sara». كل [[then]] بتشتغل بس بعد ما اللي قبلها تخلص.`,
-            R`[[catch]] بتمسك أي reject أو error اترمى في أي خطوة قبلها في السلسلة. جرّب [[getUser(0)]] وهتلاقي الـ [[then]] الاتنين اتخطّوا ووصلنا هنا على طول بـ «فشل: id غلط».`,
-            R`[[finally]] بتتنادى في الحالتين، نجاح أو فشل، ومبتاخدش القيمة. مكانها الطبيعي إنك تقفل loading spinner أو تنضّف حاجة.`,
-            R`استخدام [[wait]]: بعد ٥٠٠ms الـ Promise بيخلص والـ [[then]] تطبع. ولأن الكود مبيقفش، أي سطر بعده هيتنفذ قبل الطباعة دي.`,
-            R`[[Promise.withResolvers]] بترجّع Promise ومعاه [[resolve]] و [[reject]] بتوعه برّه الـ executor، فتقدر تخلّصه من مكان تاني خالص (زي event listener). موجودة في Node 22 والمتصفحات الحديثة.`
+            R`في [[math.js]]: [[export]] قبل التعريف بتخلي ملفات تانية تقدر تستورد [[PI]] باسمه بالظبط (named export). أي حاجة في الملف من غير [[export]] بتفضل خاصة بيه ومحدش برّه يشوفها.`,
+            R`named export لدالة بنفس الطريقة. الملف ممكن يبقى فيه named exports كتير، وكل واحد بيتستورد باسمه.`,
+            R`default export: الحاجة «الأساسية» في الملف، وواحد بس مسموح. اللي بيستورده بيسميه اللي هو عايزه. و [[Math.round(n * 100) / 100]] بتقرّب الرقم لرقمين بعد العلامة.`,
+            R`في [[main.js]]: الـ default من غير أقواس وبأي اسم ([[round2]] هنا)، والـ named بين [[{ }]] بأساميها بالظبط، و [[PI as pi]] بتستورد [[PI]] باسم محلي [[pi]]. الـ path لازم يبدأ بـ [[./]] وفيه [[.js]]، لأن ESM مش بيكمّل الامتداد لوحده. والحاجة المستوردة read-only: [[pi = 3]] بترمي TypeError.`,
+            R`[[* as math]] بتجيب كل الـ exports في object واحد: [[math.PI]] و [[math.area]]، والـ default موجود كـ [[math.default]]. مفيد لما الملف فيه دوال كتير وعايز تبان وانت بتقرا كل دالة جاية منين.`,
+            R`بيستخدم الاتنين: [[area(2)]] بتطلع 12.566… و [[round2]] بتخليها [[12.57]]. و [[pi]] و [[math.PI]] نفس القيمة لأنهم نفس الـ export اتستورد بطريقتين.`,
+            R`re-export: [[main.js]] بيعدّي [[area]] من [[math.js]] لبرّه باسم [[circleArea]]، من غير ما يستوردها لنفسه ([[area]] مش متعرّفة جوه الملف بالسطر ده). بيستخدموه في ملف [[index.js]] بيجمع exports فولدر كامل في مكان واحد.`,
           ],
-          sol: R`[[getUser(0)]] بتطبع [[فشل: id غلط]] وبعدين [[خلص]]: الـ promise اترفضت، فالاتنين then اتخطوا ونطّت على طول للـ catch، والـ finally اشتغلت في الآخر.
+          sol: R`[[node main.js]] بيطبع [[12.57 3.14159 3.14159]]: [[area(2)]] بـ 12.566 و round2 قرّبتها، و [[pi]] هو PI بعد إعادة التسمية، و [[math.PI]] من الـ namespace.
 
-لما ترمي [[throw new Error("x")]] جوه أول then (مع [[getUser(1)]])، التانية اتخطت والـ catch طبعت [[فشل: x]]: أي error جوه then بيحوّل الـ promise اللي بعدها لـ rejected. فـ catch واحدة في آخر السلسلة بتمسك الاتنين: الرفض الأصلي وأي throw بعده. لو ملقتش الرسالة خالص، غالبًا حطيت الـ catch قبل الـ then اللي فيها الـ throw.`
+لما تمسح [[.js]] بيطلع [[Error [ERR_MODULE_NOT_FOUND]: Cannot find module '.../math' imported from .../main.js]] ومعاه [[Did you mean to import "./math.js"?]]. في ESM الامتداد إجباري لأن Node مبيخمّنش زي CommonJS (بعض الـ bundlers زي Vite بيخمّن، فالكود يشتغل هناك ويقع في Node). ولو فيه [[package.json]] من غير [["type": "module"]]، Node 22 بيكتشف إن الملف ESM ويشغّله، بس بتحذير [[MODULE_TYPELESS_PACKAGE_JSON]] وبيحلّل الملف مرتين، فحط الـ type دايمًا.`
         },
         {
-          cmd: "async و await",
-          title: "تكتب كود async كأنه سطر ورا سطر",
-          desc: R`[[async function]] دايمًا بترجّع Promise. وجواها [[await promise]] بتوقف الدالة دي بس (مش البرنامج) لحد ما الـ Promise يخلص، وترجّع قيمته، أو ترمي الـ error لو اترفض.
+          cmd: "CommonJS و ESM",
+          title: "ليه فيه require و import، وأستخدم أنهي؟",
+          desc: R`CommonJS ([[require]] و [[module.exports]]) هو نظام Node القديم من قبل ما JS يبقى فيه modules. ESM ([[import]] و [[export]]) هو الرسمي في اللغة، وشغال في المتصفح و Node.
 
-فبدل سلسلة then، بتكتب كود شكله متزامن، وبتمسك الأخطاء بـ try/catch عادي. وفي ES modules تقدر تستخدم await في أول الملف من غير async (top-level await).`,
-          example: R`async function loadDashboard(userId) {
-  try {
-    const res = await fetch($__bthttps://api.example.com/users/$__{userId}$__bt);
-    if (!res.ok) throw new Error($__btHTTP $__{res.status}$__bt);
-    const user = await res.json();
-    const ordersRes = await fetch($__bthttps://api.example.com/orders?user=$__{user.id}$__bt);
-    return { user, orders: await ordersRes.json() };
-  } catch (err) {
-    console.error("فشل التحميل:", err);
-    return null;
-  }
-}
-const data = await loadDashboard(1);
-const p = loadDashboard(2);
-console.log(p instanceof Promise); // true`,
-          try: R`امسح [[await]] من قدام [[res.json()]] واطبع [[user]]: هتلاقي [[Promise { <pending> }]]. وبعدين نادي [[loadDashboard]] من غير await وشوف إيه اللي بيتطبع الأول.`,
+في ٢٠٢٦: اكتب ESM في أي مشروع جديد. و Node الحديث (22 و 24) بيسمح لـ [[require]] إنه يجيب ESM (require(esm)) طالما مفيهوش top-level await، فالخلط بقى أسهل من الأول. بس هتقابل CommonJS كتير في مشاريع ومكتبات قديمة.`,
+          example: R`// CommonJS: utils.cjs
+const path = require("node:path");
+function slug(s) { return s.toLowerCase().replaceAll(" ", "-"); }
+module.exports = { slug };
+// ESM: app.mjs
+import { slug } from "./utils.cjs";
+import { readFile } from "node:fs/promises";
+const pkg = JSON.parse(await readFile(new URL("./package.json", import.meta.url), "utf8"));
+console.log(slug("Hello World"), import.meta.dirname);`,
+          try: R`اعمل الملفين وجنبهم [[package.json]] (ولو فيه [[{}]] بس، لأن السطر التالت بيقراه)، وشغّل [[node app.mjs]]. وبعدين جرّب في ملف [[.cjs]] تكتب [[import]] واقرا الـ error. وجرّب [[__dirname]] في [[.mjs]] وشوف إنها مش موجودة.`,
           practice: [
-            { lvl: 'سريع', t: R`**ابني:** زرار «حمّل البروفايل» و [[<p id="out">]]: الـ click بينادي [[async function load()]] بتكتب «بيحمّل...» وبعدين [[await getUser(1)]] (من درس Promise) وتكتب الاسم، ولو [[getUser(0)]] تكتب «فشل: » والرسالة. وجرّب [[console.log(load())]].`, done: R`النص بيبقى «بيحمّل...» حوالي 300ms وبعدين [[Sara]]، ومع id صفر «فشل: id غلط». و [[console.log(load())]] بيطبع [[Promise { <pending> }]] مش الاسم: async دايمًا بترجّع Promise.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[async function g() { console.log(1); await null; console.log(3); } g(); console.log(2);]]. اكتب الترتيب.`, done: R`توقعت وطلع [[1]] ثم [[2]] ثم [[3]]: الـ async function بتشتغل sync لحد أول await، وبعدها الباقي بيستنى لحد ما الكود اللي بعد النداء يخلص.` },
-            { lvl: 'تطبيق', t: R`**refactor:** حوّل سلسلة [[getUser(1).then(...).then(...).catch(...).finally(...)]] اللي في درس Promise لـ [[async function show(id)]] بـ await و try/catch/finally، ونادي [[await show(1)]] وبعدها [[await show(0)]].`, done: R`[[show(1)]] بتطبع [[الاسم: Sara]] وبعدين [[خلص]]، و [[show(0)]] بتطبع [[فشل: id غلط]] وبعدين [[خلص]]: نفس ناتج سلسلة الـ then بالظبط، ومفيش ولا then فاضلة في الكود.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** في [[load.cjs]]: [[function load() { const d = await fetch("x"); }]]. شغّله بـ node واقرا الرسالة.`, done: R`node بيقع قبل أي سطر بـ [[SyntaxError: await is only valid in async functions and the top level bodies of modules]]. بعد [[async function load()]] الملف بيتقري عادي، وعرفت إن top-level await شغال في [[.mjs]] بس.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** قيس بـ [[console.time]]: (أ) [[await wait(300); await wait(300);]] ورا بعض، و (ب) [[const a = wait(300), b = wait(300); await a; await b;]]. وبعدين في (ب) خلّي [[a]] يترفض بعد 100ms و [[b]] 500ms، وحط الكل جوه try/catch.`, done: R`(أ) حوالي 600ms و (ب) حوالي 300ms لأن الاتنين بدأوا مع بعض. والفخ: لما a يترفض وانت لسه مستني b، Node بيقع ويخرج بكود ١ حتى إن فيه try/catch، لأن محدش كان عامل await على a ساعة ما اترفض (unhandled rejection). و [[await Promise.all([a, b])]] بتمسكه صح في الـ catch.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سطر [[console.log(typeof require, typeof module, typeof __filename)]] هيطبع إيه في [[t.cjs]] وإيه في [[t.mjs]]؟ اكتب توقعك وبعدين شغّلهم. وفي الـ mjs اطبع مسار الملف وفولدره بالطريقة بتاعة ESM ([[import.meta.filename]] و [[import.meta.dirname]]).`, done: R`الـ cjs بيطبع [[function object string]]، والـ mjs بيطبع [[undefined undefined undefined]] من غير error، وبعدها المسار والفولدر كاملين: نفس المعلومة بس بطريقة ESM.` },
+            { lvl: 'تطبيق', t: R`**ابني:** في ملف [[.mjs]] اقرا [[package.json]] بطريقتين: [[import pkg from "./package.json" with { type: "json" }]]، و [[createRequire(import.meta.url)]] من [[node:module]] وبعدها [[require("./package.json")]]. اطبع [[name]] من الأولى و [[version]] من التانية. وبعدين شيل [[with { type: "json" }]].`, done: R`الاتنين بيطبعوا القيم اللي في package.json بتاعك. ومن غير الـ attribute بيقع بـ [[ERR_IMPORT_ATTRIBUTE_MISSING]] ورسالة بتقول إن الملف محتاج [[type: json]].` },
+            { lvl: 'تطبيق', t: R`**refactor:** حوّل [[util.cjs]] ده لـ [[util.mjs]]: [[const fs = require("node:fs"); const path = require("node:path"); function readJson(name) { return JSON.parse(fs.readFileSync(path.join(__dirname, name), "utf8")); } module.exports = { readJson };]]، وخلّي ملف تاني يستورده ويقرا ملف JSON جنبه.`, done: R`النسخة الجديدة فيها [[import fs from "node:fs"]] و [[export function readJson]] و [[import.meta.dirname]] مكان [[__dirname]]، ومفيش require ولا module.exports. والملف التاني بيطبع نفس الـ object اللي كانت النسخة القديمة بتطبعه.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** اكتب [[lib.mjs]] فيه [[export const x = 1]] و [[export default function hi() { return "hi"; }]]، واعمله [[require]] من [[use.cjs]] واطبع اللي راجع ونادي الدالة. وبعدين زوّد في lib.mjs سطر top-level await زي [[await new Promise((r) => setTimeout(r, 10));]] وجرّب تاني، وصلّح use.cjs عشان يشتغل في الحالتين.`, done: R`على Node 22.12 وأحدث، الـ require بيرجّع module object فيه [[default]] و [[x: 1]] (و [[__esModule: true]])، فـ [[m.default()]] بترجّع [["hi"]]. ومع الـ top-level await بيقع بـ [[ERR_REQUIRE_ASYNC_MODULE]] ورسالة بتقولك استخدم [[import()]]، وبعد ما تستخدم [[await import("./lib.mjs")]] جوه دالة async بيشتغل.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** اكتب جدول قرار من ٤ سطور: مشروع Node جديد، ومكتبة قديمة بـ require بس، وكود بيشتغل في المتصفح، وسكربت صغير لوحده. لكل واحد: ESM ولا CommonJS، والامتداد أو [[type]] في package.json.`, done: R`الجدول: الجديد ESM بـ [["type": "module"]]، والمكتبة القديمة تفضل تستوردها عادي من ESM (أو [[createRequire]] لو لازم)، والمتصفح ESM بس، والسكربت الصغير [[.mjs]]. وكل سطر جنبه سبب في كلمتين.` }
           ],
           flag: "script",
           deep: {
-            why: "ده الشكل اللي هتكتب بيه كل كود async تقريبًا في 2026: fetch و Prisma و fs و أي SDK. أسهل في القراية من then، والـ try/catch والـ loops والـ if بيشتغلوا عادي.",
-            how: R`[[async]] بتخلي الدالة ترجّع Promise دايمًا: لو رجّعت قيمة بتتلف في Promise fulfilled، ولو رمت error بيبقى rejected.
+            why: R`أشهر errors في Node: «Cannot use import statement outside a module» و «require is not defined in ES module scope» و «ERR_REQUIRE_ESM». كلهم من خلط النظامين. لازم تعرف الملف ده بيتعامل كأنهي نوع وليه.`,
+            how: R`Node بيقرر نوع الملف كده: [[.mjs]] دايمًا ESM، و [[.cjs]] دايمًا CommonJS، و [[.js]] حسب [["type"]] في أقرب package.json (الافتراضي commonjs). والأحدث من كده إن Node بيحاول يكتشف ESM syntax لوحده في ملفات .js لو مفيش type، بس متعتمدش على ده، اكتب الـ type.
 
-[[await x]] بيوقف تنفيذ الدالة الحالية، ويرجّع التحكم للي ناداها، والـ event loop يكمّل شغل تاني. لما الـ Promise يخلص، الدالة بتكمّل من نفس المكان (كأنها generator من جوه). عشان كده await مبتجمّدش الصفحة.
+CommonJS: [[require]] دالة عادية بتشتغل وقت التنفيذ (sync)، وممكن تتنادي جوه if، وبترجّع الـ object بتاع [[module.exports]] نفسه (ونفس الـ object من الكاش في كل require)، ولو فكّيته بـ destructuring بتاخد القيم اللي كانت وقتها بس، مش live binding زي ESM. وفيه [[__dirname]] و [[__filename]].
 
-كل [[await]] ورا التاني بيستنى اللي قبله. في المثال طلب الـ orders محتاج [[user.id]] فلازم يستنى، بس لو الطلبين مستقلين، شغّلهم مع بعض بـ [[Promise.all]] (الدرس الجاي).
+ESM: الـ imports static وبتتحمّل async، وفيه top-level await (زي السطر اللي بيقرا package.json). ومفيش __dirname، بدالها [[import.meta.dirname]] و [[import.meta.filename]] (Node 20.11+) أو [[import.meta.url]].
 
-[[return await]] جوه try بيفرق: من غير await، الـ Promise بيترجع قبل ما يخلص، ولو اترفض الـ catch اللي في الدالة مش هتمسكه.
+ESM يقدر يعمل import لـ CommonJS، والـ [[module.exports]] بتبقى الـ default. والعكس: [[require(esm)]] شغال في Node 22.12+ و 20.19+ لو الـ module مفيهوش top-level await، وإلا [[await import()]].
 
-الـ top-level await شغال في ES modules بس (المتصفح بـ type=module، و Node مع ESM)، وبيخلّي أي module بيعمل import للملف ده يستناه.`,
-            when: "أي كود async جديد. then لسه مفيدة في سلسلة قصيرة أو لما مش عايز توقف الدالة.",
-            mistakes: R`تنسى await فتاخد Promise بدل القيمة. و await جوه [[forEach]] (الدرس الأخير هنا). و awaits ورا بعض لحاجات مستقلة فالصفحة تبقى أبطأ من غير سبب (waterfall). وتنسى إن fetch مبترميش error على 404 و 500، لازم تفحص [[res.ok]]. وفي الانترفيو: «async/await بيعمل إيه من تحت؟» (Promises و microtasks).`
+الـ prefix [[node:]] ([[node:fs]]) بيوضح إن ده built-in مش package.`,
+            when: R`ESM لكل حاجة جديدة، مع [["type": "module"]]. CommonJS لو بتعدّل مشروع قديم أو أداة config لسه بتطلبه. وتفاصيل package.json في تاب «Node و npm».`,
+            mistakes: R`تحط [[import]] في ملف .js من غير type: module. وتستخدم __dirname في ESM. وتعمل [[module.exports = x]] وبعدين [[exports.y = z]] فالتانية تضيع. وتنشر مكتبة ESM بس فمشاريع CommonJS قديمة متعرفش تستخدمها.`
           },
           teach: R`## الكود ده بيعمل إيه؟
 
-دالة [[loadDashboard]] بتجيب يوزر، وبعده طلباته (محتاجة id اليوزر)، وبترجّعهم مع بعض. لو أي حاجة فشلت، بتسجّل الـ error وترجّع [[null]]. مكتوبة بـ [[async]] و [[await]] فشكلها سطر ورا سطر، بس من تحت كلها Promises.
-
-اتشغّل في Node 24 كملف [[.mjs]] (عشان الـ await اللي في أول الملف). و [[api.example.com]] مش API حقيقي، فجرّبنا عليه مرة، ومرة على سيرفر صغير محلي فيه [[/users/1]] و [[/orders]].
+ملفين بنظامين مختلفين: [[utils.cjs]] مكتوب CommonJS (النظام القديم بتاع Node)، و [[app.mjs]] مكتوب ESM (النظام الرسمي). الـ ESM بيستورد من الـ CommonJS عادي، وبيقرا [[package.json]] بـ top-level await، وبيطبع مكان الفولدر. اتشغّل على Node 24 في فولدر فيه الملفين و [[package.json]] فيه [[{}]] بس.
 
 ---
 
-## ١. [[async function]]
+## ١. Node بيعرف نوع الملف إزاي؟
 
-~~~text app.mjs
-async function loadDashboard(userId) {
-~~~
+من الامتداد قبل أي حاجة:
 
-كلمة [[async]] قبل function بتعمل حاجتين:
-
-1. الدالة **دايمًا بترجّع Promise**. لو رجّعت قيمة عادية، بتتلف في Promise ناجح. ولو رمت error، الـ Promise بيفشل.
-2. بتسمح تستخدم [[await]] جواها.
-
----
-
-## ٢. الطلب الأول
-
-~~~text app.mjs
-  try {
-    const res = await fetch($__bthttps://api.example.com/users/$__{userId}$__bt);
-    if (!res.ok) throw new Error($__btHTTP $__{res.status}$__bt);
-~~~
-
-- [[try {]]: أي await جواه يفشل، التنفيذ ينط على الـ catch.
-- [[fetch(url)]]: بتبعت طلب HTTP وبترجّع Promise بالرد (Response).
-- [[await]]: «وقّف **الدالة دي** لحد ما الـ Promise يخلص، وهات قيمته». الدالة بس هي اللي بتقف، باقي البرنامج شغال عادي.
-- [[res.ok]]: [[true]] لو الـ status بين 200 و 299. fetch **مبترميش** error على 404 أو 500، فبنفحص بنفسنا.
-- [[res.status]]: الرقم نفسه (404 مثلًا).
-
-~~~text app.mjs
-    const user = await res.json();
-~~~
-
-[[res.json()]] بتقرا جسم الرد وتحوّله لـ object، وده كمان Promise (الجسم ممكن يكون لسه بيوصل)، فمحتاج await تاني.
-
----
-
-## ٣. الطلب التاني
-
-~~~text app.mjs
-    const ordersRes = await fetch($__bthttps://api.example.com/orders?user=$__{user.id}$__bt);
-    return { user, orders: await ordersRes.json() };
-~~~
-
-- الطلب ده **محتاج** [[user.id]]، فلازم يستنى الأول. لو الطلبين مستقلين كنا هنشغّلهم مع بعض بـ Promise.all (الدرس الجاي).
-- [[?user=...]]: الـ query string: بيانات زيادة في الـ URL بعد [[?]].
-- [[{ user, orders: await ordersRes.json() }]]: [[await]] ينفع جوه أي expression، حتى جوه object.
-
-اللي السيرفر المحلي شافه:
-
-~~~text الناتج
-[server] /users/1
-[server] /orders?user=1
-~~~
-
-طلبين ورا بعض، والتاني فيه id من الأول.
-
----
-
-## ٤. الـ catch
-
-~~~text app.mjs
-  } catch (err) {
-    console.error("فشل التحميل:", err);
-    return null;
-  }
-}
-~~~
-
-- [[console.error]]: زي console.log بس على قناة الأخطاء (stderr).
-- [[return null]]: رجّع قيمة واضحة معناها «مفيش داتا»، بدل ما الـ error يطلع للي نادى.
-
----
-
-## ٥. النداء
-
-~~~text app.mjs
-const data = await loadDashboard(1);
-~~~
-
-ده **top-level await**: await في أول الملف من غير async function، شغال في ES modules بس (ملف [[.mjs]] أو [[type="module"]]).
-
-~~~text الناتج: على api.example.com
-فشل التحميل: [TypeError: fetch failed] {
-  [cause]: Error: getaddrinfo ENOTFOUND api.example.com
-      at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
-    errno: -3008,
-    code: 'ENOTFOUND',
-    syscall: 'getaddrinfo',
-    hostname: 'api.example.com'
-  }
-}
-null
-~~~
-
-الدومين مش موجود: الـ DNS (اللي بيحوّل اسم الدومين لـ IP) رد بـ [[ENOTFOUND]]، فـ fetch رمت [[TypeError: fetch failed]] وجواها السبب في [[cause]]. والـ catch طبعه ورجّع null.
-
-~~~text الناتج: على السيرفر المحلي
-{"user":{"id":1,"name":"Sara"},"orders":[{"id":10,"total":250}]}
-~~~
-
----
-
-## ٦. من غير await
-
-~~~text app.mjs
-const p = loadDashboard(2);
-console.log(p instanceof Promise);
-~~~
-
-~~~text الناتج
-true
-فشل التحميل: Error: HTTP 404
-    at loadDashboard (file:///C:/Users/ali/code/app.mjs:...)
-    ...
-~~~
-
-- من غير await، [[p]] هو الـ **Promise** نفسه مش النتيجة. و [[instanceof Promise]] بـ true.
-- لاحظ الترتيب: [[true]] اتطبعت **قبل** رسالة الفشل. الدالة اشتغلت لحد أول await ورجعت Promise فورًا، والسطر اللي بعدها كمّل، وباقي الدالة اشتغل بعدين.
-- [[/users/2]] مش موجود في السيرفر المحلي، فرجع 404، و [[!res.ok]] رمت.
-
----
-
-## ٧. نسيت await (التجربة)
-
-~~~text app.mjs
-const user = res.json();
-console.log(user, user.id);
-~~~
-
-~~~text الناتج
-Promise { <pending> } undefined
-~~~
-
-[[user]] بقى Promise مش object، و [[user.id]] بـ undefined. والكود **مبيقعش**: الـ URL التاني هيبقى [[orders?user=undefined]]. ده أشهر bug في الـ async.
-
----
-
-## الخلاصة
-
-| الكتابة | معناها |
+| الامتداد | النوع |
 |---|---|
-| [[async function f()]] | f بترجّع Promise دايمًا |
-| [[await p]] | وقّف الدالة دي لحد ما p يخلص، وهات قيمته، أو ارمي الـ error |
-| [[try/catch]] حوالين await | بيمسك أي Promise فشل |
-| [[await]] في أول ملف ESM | top-level await |
-| نداء async من غير await | بتاخد Promise مش النتيجة |
+| [[.cjs]] | CommonJS دايمًا |
+| [[.mjs]] | ESM دايمًا |
+| [[.js]] | حسب [["type"]] في أقرب package.json ([["module"]] = ESM، غير كده CommonJS) |
 
-- كل await ورا التاني بيستنى اللي قبله. ده صح لو التاني محتاج الأول، وبطء من غير لازمة لو مستقلين.
-- [[res.ok]] لازم تتفحص، fetch مبترميش على 404 و 500.`,
-          lines: [
-            R`[[async]] قبل الدالة بتخليها ترجّع Promise دايمًا: اللي بترجّعه بـ [[return]] بيبقى قيمة الـ Promise، وأي error بيترمي جواها بيبقى reject. وكمان بتسمح تستخدم [[await]] جواها.`,
-            R`[[try]] بيلف كل الخطوات، فلو أي [[await]] اترفض أو أي [[throw]] حصل، التنفيذ ينط على [[catch]] بدل ما الـ error يطلع برّه الدالة.`,
-            R`[[await]] بيوقف الدالة دي بس (مش البرنامج كله) لحد ما الـ [[fetch]] يرجّع الرد، و [[res]] بيبقى object الـ Response. الـ body نفسه لسه مقريناهوش.`,
-            R`[[fetch]] بيترفض بس لو الشبكة وقعت؛ لو السيرفر رد بـ 404 أو 500 بيعتبرها نجاح. فبنفحص [[res.ok]] (true للـ status من 200 لـ 299) ونرمي error بنفسنا عشان يروح للـ [[catch]].`,
-            R`[[res.json]] بتقرا الـ body وتحوّله لـ object، وهي كمان بترجّع Promise فلازم [[await]]. لو الرد مش JSON صالح هترمي SyntaxError وهيوصل للـ [[catch]] برضه.`,
-            R`الطلب ده محتاج [[user.id]] من اللي قبله، فلازم يستناه. ده المكان الصح للـ [[await]] ورا بعض؛ لو الطلبين مستقلين يبقى [[Promise.all]] أسرع.`,
-            R`[[await]] ينفع في أي حتة في expression، فهنا بنقرا الـ JSON بتاع الطلبات جوه الـ object اللي راجع على طول. الدالة بترجّع Promise قيمته object فيه اليوزر وطلباته.`,
-            R`[[catch]] بيستلم الـ error من أي خطوة فوق: شبكة وقعت، أو status غلط، أو JSON بايظ.`,
-            R`[[console.error]] بيسجّل الـ error كامل (رسالة و stack) في الـ console كـ error مش log عادي، عشان تلاقيه وانت بتعمل debug.`,
-            R`بدل ما نرمي الـ error لبرّه، بنرجّع [[null]] كقيمة واضحة معناها «فشل». اللي نادى الدالة يفحص [[null]] بدل ما يحتاج [[try]] بنفسه. ده اختيار تصميم: أحيانًا الأحسن ترمي.`,
-            R`نهاية [[catch]].`,
-            R`نهاية [[loadDashboard]].`,
-            R`top-level await: [[await]] برّه أي دالة. شغال بس في ES modules (ملف [[.mjs]] أو [[type="module"]])، وفي script عادي هيدّي SyntaxError.`,
-            R`من غير [[await]] مش بتاخد النتيجة، بتاخد الـ Promise نفسه وهو لسه pending. ده غلط شائع: تنسى [[await]] وتلاقي [[Promise { pending }]] بدل الداتا.`,
-            R`بيطبع [[true]]: دليل إن أي دالة [[async]] بترجّع Promise مهما كانت بترجّع إيه جوّاها.`
-          ],
-          sol: R`من غير [[await]] قدام [[res.json()]]، [[user]] بيطبع [[Promise { <pending> }]]، و [[user.id]] بـ undefined، فالـ URL التاني بيبقى [[orders?user=undefined]]. ده أشهر bug في async: الكود مبيقعش، بس بيبعت داتا غلط.
-
-من غير await قدام loadDashboard، السطر اللي بعدها بيتطبع الأول ([[true]] من [[instanceof Promise]])، وبعدين النتيجة أو رسالة «فشل التحميل». الدالة الـ async بتشتغل لحد أول await وترجع promise فورًا، والباقي بيكمّل بعدين. ولو [[api.example.com]] مش شغال عندك، هتشوف «فشل التحميل» و [[null]]، وده برضه صح: الـ catch شغالة.`
-        },
-        {
-          cmd: "Promise.all و allSettled",
-          title: "تشغّل كذا طلب مع بعض بدل ورا بعض",
-          desc: R`[[await Promise.all([a, b, c])]] بتستنى كلهم مع بعض، وترجّع array بالنتايج بنفس الترتيب. لو واحد فشل، الكل بيفشل فورًا بالـ error بتاعه.
-
-[[Promise.allSettled]] بتستنى كلهم مهما حصل، وترجّع لكل واحد [[{ status, value }]] أو [[{ status, reason }]]. و [[Promise.race]] بترجّع أول واحد يخلص (نجح أو فشل)، و [[Promise.any]] أول واحد ينجح.`,
-          example: R`const api = (path) => fetch($__bthttps://api.example.com$__{path}$__bt).then((r) => r.json());
-const [user, orders, settings] = await Promise.all([
-  api("/me"),
-  api("/orders"),
-  api("/settings"),
-]);
-const results = await Promise.allSettled([api("/a"), api("/b")]);
-const ok = results.filter((r) => r.status === "fulfilled").map((r) => r.value);
-const failed = results.filter((r) => r.status === "rejected").map((r) => r.reason);
-const timeout = (ms) => new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), ms));
-const fast = await Promise.race([api("/slow"), timeout(3000)]);
-const first = await Promise.any([api("/mirror1"), api("/mirror2")]);`,
-          try: R`اعمل ٣ دوال بـ [[wait]] (500 و 1000 و 1500 ms). استناهم ورا بعض واحسب الوقت بـ [[console.time]]، وبعدين بـ Promise.all وقارن (3 ثواني مقابل 1.5).`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[await Promise.all([1, wait(100).then(() => 2), Promise.resolve(3)])]] و [[await Promise.all([])]] هيرجّعوا إيه؟ وبعدين شغّلهم في ملف [[.mjs]] (بـ wait بتاعة درس Promise).`, done: R`الأول [[[ 1, 2, 3 ]]] بنفس ترتيب الـ array مش ترتيب الخلصان، والقيمة العادية [[1]] بتتعامل كأنها Promise خلص. والتاني [[[]]] على طول.` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const users = await Promise.all(ids.map((id) => { getUser(id); }));]] على [[[1, 2]]]. اطبع users.`, done: R`قبل التصليح بيطبع [[[ undefined, undefined ]]] على طول ومن غير ما يستنى، لأن الـ map رجّعت undefined مش Promises. بعد [[ids.map((id) => getUser(id))]] (أو [[ids.map(getUser)]]) بيطبع اليوزرين.` },
-            { lvl: 'تطبيق', t: R`**محاكاة:** dashboard: ٣ دوال وهمية: [[getUser]] تنجح بعد 200ms، و [[getOrders]] تنجح بعد 300ms، و [[getAds]] تفشل بعد 100ms. حمّلهم مرة بـ [[Promise.all]] ومرة بـ [[Promise.allSettled]]، واعرض اللي نجح، وللي فشل «الإعلانات مش متاحة».`, done: R`الـ all بيترفض بعد حوالي 100ms برسالة getAds ومبيرجّعش ولا قيمة حتى اللي نجحوا. والـ allSettled بيخلص بعد حوالي 300ms ومعاك الـ user والـ orders، و [[status: 'rejected']] للـ ads ومعاه [[reason.message]]، والصفحة بتعرض الاتنين و «الإعلانات مش متاحة».` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** هات [[/users/1]] و [[/users/2]] و [[/users/3]] من jsonplaceholder مرة بـ for...of و await ورا بعض، ومرة بـ [[Promise.all]]، واطبع الأسامي والوقت بـ console.time.`, done: R`الطريقتين بيطبعوا نفس ٣ أسامي بنفس الترتيب (1 ثم 2 ثم 3)، والـ Promise.all وقتها قريب من وقت أبطأ طلب واحد، والـ for...of قريب من مجموع التلاتة. ولو الشبكة وقعت في النص، الـ Promise.all بيترفض كله، فتقدر تقول إمتى allSettled أحسن هنا.` },
-            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[withTimeout(promise, ms)]] بـ [[Promise.race]]، وبعدين [[firstOk(fns, ms)]] بتنادي كل الدوال وتاخد أول واحدة تنجح في خلال ms بـ [[Promise.any]] و withTimeout. جرّبها لما واحدة بس تنجح، ولما كلهم يفشلوا، ولما [[fns]] فاضية.`, done: R`لما واحدة تنجح بترجّع قيمتها حتى لو التانيين فشلوا قبلها. لما كلهم يفشلوا بيترمي [[AggregateError]] رسالته [[All promises were rejected]] و [[e.errors.length]] بيساوي عدد الدوال (وفيهم [[timeout]] للي اتأخرت). ومع لستة فاضية برضه AggregateError على طول، مش Promise بيستنى للأبد.` }
-          ],
-          flag: "script",
-          deep: {
-            why: R`صفحة dashboard بتجيب ٥ حاجات مستقلة: لو عملتهم await ورا بعض، كل طلب 300ms، يبقى 1.5 ثانية. مع Promise.all يبقوا 300ms. ده من أسهل تحسينات الأداء وأكترها تأثير، وسؤال انترفيو مشهور: «اكتب Promise.all بإيدك» (المستوى ٣).`,
-            how: R`الطلبات بتبدأ لحظة ما تنادي الدوال (وانت بتبني الـ array)، مش لما تعمل await. Promise.all بس بتستنى. عشان كده [[const a = api("/a"); const b = api("/b"); await a; await b;]] برضه بيشغّلهم مع بعض، بس خطر: لو b اترفض وانت لسه مستني a، الرفض بيبقى unhandled و Node بيقفل البرنامج حتى لو جوه try/catch. فاستخدم Promise.all.
-
-[[all]] بتفشل مع أول rejection (fail-fast)، بس الطلبات التانية مبتتلغيش، بتكمّل ونتايجها بتترمي. لو محتاج تلغيها فعلًا استخدم AbortController (الدرس الجاي).
-
-[[race]] مفيدة للـ timeout، بس الطلب الأصلي بيفضل شغال. [[any]] بتتجاهل الفشل لحد ما واحد ينجح، ولو كلهم فشلوا ترمي [[AggregateError]] فيه كل الأسباب.
-
-كل دول بيقبلوا أي iterable، والقيم اللي مش Promises بتتعامل كأنها نجحت.`,
-            when: R`[[all]] لما كلهم لازم ينجحوا (الصفحة محتاجة الكل). [[allSettled]] لما كل واحد مستقل (رفع صور متعددة، إشعارات). [[race]] للـ timeout. [[any]] لـ mirrors أو fallback.`,
-            mistakes: R`await ورا بعض لحاجات مستقلة. و Promise.all على آلاف الطلبات مرة واحدة فتضرب السيرفر أو الـ rate limit: قسّمهم batches أو استخدم مكتبة زي p-limit. وتفتكر إن race بتلغي الخاسر.`
-          },
-          teach: R`## الكود ده بيعمل إيه؟
-
-٤ طرق تستنى كذا Promise مع بعض: [[Promise.all]] (كلهم لازم ينجحوا)، و [[Promise.allSettled]] (هات نتيجة كل واحد مهما حصل)، و [[Promise.race]] (أول واحد يخلص)، و [[Promise.any]] (أول واحد ينجح).
-
-اتشغّل في Node 24 كملف [[.mjs]] على سيرفر صغير محلي بدل [[api.example.com]]، وكل مسار بيرد بعد وقت محدد: [[/me]] و [[/orders]] و [[/settings]] 300ms، و [[/a]] و [[/b]] 100ms (و [[/b]] بيرد 500 بنص مش JSON)، و [[/slow]] 5 ثواني، و [[/mirror1]] 400ms و [[/mirror2]] 200ms. وقِسنا الوقت حوالين كل خطوة.
+عشان كده المثال استخدم [[.cjs]] و [[.mjs]]: النوع واضح من غير ما نلمس package.json.
 
 ---
 
-## ١. الـ helper
+## ٢. [[utils.cjs]]: CommonJS
 
-~~~text app.mjs
-const api = (path) => fetch($__bthttps://api.example.com$__{path}$__bt).then((r) => r.json());
+~~~text utils.cjs
+const path = require("node:path");
+function slug(s) { return s.toLowerCase().replaceAll(" ", "-"); }
+module.exports = { slug };
 ~~~
 
-- arrow function بتاخد path، وتعمل fetch، و [[.then((r) => r.json())]] تحوّل الرد لـ object.
-- بترجّع Promise. ولاحظ إنها **مبتفحصش** [[r.ok]]، وده هيبان تحت.
+### [[require("node:path")]]
+
+- [[require]] **دالة عادية**: بتشتغل وقت التنفيذ، وبترجّع اللي الملف التاني صدّره. عشان كده ممكن تتنادي جوه if أو function.
+- [[node:path]]: الـ [[node:]] في الأول بتقول «ده module جاي مع Node نفسه»، مش package من npm. و [[path]] فيه دوال للمسارات.
+- في المثال [[path]] مش مستخدم، موجود بس عشان تشوف شكل require. جرّبناه في ملف تاني: [[path.join("a", "b")]] طلّعت [[a\b]] على ويندوز (وفي لينكس [[a/b]]).
+
+### [[slug]]
+
+دالة بتحوّل عنوان لشكل ينفع في URL:
+
+- [[s.toLowerCase()]]: حروف صغيرة: [["hello world"]].
+- [[.replaceAll(" ", "-")]]: كل مسافة تبقى شرطة: [["hello-world"]].
+
+### [[module.exports = { slug }]]
+
+في CommonJS، اللي بتحطه في [[module.exports]] هو اللي [[require]] هترجّعه. و [[{ slug }]] اختصار [[{ slug: slug }]].
 
 ---
 
-## ٢. [[Promise.all]]
+## ٣. [[app.mjs]]: ESM
 
 ~~~text app.mjs
-const [user, orders, settings] = await Promise.all([
-  api("/me"),
-  api("/orders"),
-  api("/settings"),
-]);
+import { slug } from "./utils.cjs";
+~~~
+
+ESM يقدر يستورد CommonJS. Node بيحوّل [[module.exports]] لـ **default**، ولو قدر يعرف أسامي الخصايص بيطلّعهم كـ named كمان. طبعنا الاتنين:
+
+~~~text الناتج: import u from "./utils.cjs" و import * as ns from "./utils.cjs"
+{ slug: [Function: slug] }
+[Module: null prototype] {
+  default: { slug: [Function: slug] },
+  'module.exports': { slug: [Function: slug] },
+  slug: [Function: slug]
+}
+~~~
+
+عشان كده [[{ slug }]] اشتغلت.
+
+~~~text app.mjs
+import { readFile } from "node:fs/promises";
+~~~
+
+[[fs]] = file system. و [[fs/promises]] النسخة اللي دوالها بترجّع Promises، فتنفع مع await.
+
+---
+
+## ٤. السطر الطويل: قراية package.json
+
+~~~text app.mjs
+const pkg = JSON.parse(await readFile(new URL("./package.json", import.meta.url), "utf8"));
 ~~~
 
 من جوه لبرّه:
 
-1. **وانت بتبني الـ array**، كل [[api(...)]] بيتنادي، فالـ ٣ طلبات **بيبدأوا فورًا مع بعض**. الـ array فيها ٣ Promises.
-2. [[Promise.all([...])]]: بترجّع Promise واحد بيخلص لما **كلهم** يخلصوا، وقيمته array بالنتايج **بنفس ترتيب** الـ array، مش بترتيب الوصول.
-3. [[await]]: استنى.
-4. [[const [user, orders, settings] = ...]]: array destructuring: أول نتيجة في user، والتانية في orders، والتالتة في settings.
+### [[import.meta.url]]
+
+[[import.meta]] object فيه معلومات عن الـ module الحالي، و [[.url]] عنوان الملف نفسه:
 
 ~~~text الناتج
-all: 362ms { path: '/me' } { path: '/orders' } { path: '/settings' }
-ورا بعض: 955ms
+file:///C:/Users/ali/code/meta.mjs
 ~~~
 
-الـ ٣ مع بعض خدوا وقت **واحد** منهم تقريبًا (300ms + شوية). ولما جرّبنا [[await]] ورا بعض للـ ٣، خدوا 300 + 300 + 300.
+### [[new URL("./package.json", import.meta.url)]]
 
-### لو واحد فشل
+[[URL]] بيحسب عنوان نسبي من عنوان أساسي: «package.json اللي **جنب الملف ده**»، مش جنب الفولدر اللي انت واقف فيه في الترمنال:
 
-جرّبنا [[Promise.all([api("/a"), api("/b")])]]: [[/b]] رجّع 500 ونص مش JSON، و api مبتفحصش ok، فـ [[r.json()]] وقعت:
-
-~~~text الناتج
-SyntaxError: Unexpected token 'o', "not json" is not valid JSON
+~~~text الناتج: .href
+file:///C:/Users/ali/code/package.json
 ~~~
 
-all **فشلت كلها** بالـ error ده، ونتيجة [[/a]] الناجحة ضاعت. ده اسمه **fail-fast**.
+### [[await readFile(..., "utf8")]]
+
+[[readFile]] بتقرا الملف وترجّع Promise، و [[utf8]] عشان يرجع نص مش bytes. و [[await]] هنا في **أول الملف** من غير async function: ده اسمه **top-level await**، شغال في ESM بس.
+
+### [[JSON.parse(...)]]
+
+بيحوّل النص لـ object. هنا [[{}]] فـ pkg بقى object فاضي. ولو مفيش package.json جنب الملف، السطر ده بيقع بـ [[ENOENT]] (الملف مش موجود).
 
 ---
 
-## ٣. [[Promise.allSettled]]
+## ٥. الطباعة
 
 ~~~text app.mjs
-const results = await Promise.allSettled([api("/a"), api("/b")]);
+console.log(slug("Hello World"), import.meta.dirname);
 ~~~
 
-بتستنى الكل مهما حصل، **ومبتفشلش أبدًا**. بترجّع لكل Promise object بيوصف حصله إيه:
+~~~text الناتج: node app.mjs
+hello-world C:\Users\ali\code
+~~~
 
-~~~text الناتج: console.log(results)
-[
-  { status: 'fulfilled', value: { path: '/a' } },
-  {
-    status: 'rejected',
-    reason: SyntaxError: Unexpected token 'o', "not json" is not valid JSON
-        at JSON.parse (<anonymous>)
-        ...
+[[import.meta.dirname]] (Node 20.11+) = الفولدر اللي فيه الملف. ومعاه [[import.meta.filename]] = المسار الكامل للملف. دول بدل [[__dirname]] و [[__filename]] بتوع CommonJS.
+
+---
+
+## ٦. لما تخلط غلط
+
+جرّبنا الأخطاء المشهورة واحدة واحدة:
+
+| اللي عملته | الناتج | التصليح |
+|---|---|---|
+| [[import]] في ملف [[.cjs]] | [[SyntaxError: Cannot use import statement outside a module]] | سمّي الملف [[.mjs]] أو استخدم [[require]] |
+| [[console.log(__dirname)]] في [[.mjs]] | [[ReferenceError: __dirname is not defined in ES module scope]] | [[import.meta.dirname]] بداله |
+| [[typeof require]] في [[.mjs]] | [["undefined"]]: مفيش require في ESM | [[import]]، أو [[createRequire(import.meta.url)]] من [[node:module]] لو لازم |
+| [[require("./app.mjs")]] من [[.cjs]] | [[Error [ERR_REQUIRE_ASYNC_MODULE]: require() cannot be used on an ESM graph with top-level await. Use import() instead.]] | [[await import("./app.mjs")]] جوه دالة async |
+
+الأخير مهم: Node 24 بيسمح لـ require إنها تجيب ESM، **إلا** لو فيه top-level await زي app.mjs. ساعتها استخدم [[await import()]] (الدرس الجاي).
+
+---
+
+## ٧. package.json: exports و imports
+
+لما بتكتب package (أو مشروع كبير)، [[package.json]] فيه حقلين بيتحكّموا في الـ imports:
+
+- [["exports"]]: مين برّه الـ package يقدر يستورد إيه منه، ومن أنهي ملف.
+- [["imports"]]: اختصارات **جوه** مشروعك، بتبدأ بـ [[#]].
+
+جرّبت الاتنين على Node 24 بـ package صغير اسمه [[greet]] جوه [[node_modules]]:
+
+~~~text node_modules/greet/package.json
+{
+  "name": "greet",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./lib/index.mjs",
+      "require": "./lib/index.cjs"
+    },
+    "./format": "./lib/format.mjs",
+    "./package.json": "./package.json"
   }
-]
+}
 ~~~
 
-- [[status]]: [["fulfilled"]] (نجح) أو [["rejected"]] (فشل).
-- [[value]]: القيمة لو نجح. [[reason]]: الـ error لو فشل.
+- [["."]]: الـ package نفسه، يعني [[import ... from "greet"]].
+- [["import"]] و [["require"]]: اسمها **conditional exports**. نفس الاسم بيروح لملف مختلف حسب مين بيستورد: [[import]] ياخد نسخة ESM، و [[require]] ياخد نسخة CommonJS. كده الـ package يشتغل مع الاتنين.
+- [["./format"]]: **subpath**: [[import { upper } from "greet/format"]] بيروح لـ [[lib/format.mjs]].
+- [["./package.json"]]: لازم تصدّره صراحة لو أدوات محتاجة تقراه، لأن أي ملف مش مكتوب هنا بقى مقفول.
 
 ~~~text app.mjs
-const ok = results.filter((r) => r.status === "fulfilled").map((r) => r.value);
-const failed = results.filter((r) => r.status === "rejected").map((r) => r.reason);
+import { hi } from "greet";
+import { upper } from "greet/format";
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+console.log(hi("sara"), require("greet").hi("sara"));
 ~~~
 
-- [[filter]]: سيب العناصر اللي الشرط عليها true بس. و [[map]]: حوّل كل عنصر لحاجة تانية.
-- فـ ok = قيم الناجحين، و failed = أسباب الفاشلين. طبعناهم (وحوّلنا كل reason لنص بـ [[e.name + ": " + e.message]]):
-
-~~~text الناتج
-ok: [ { path: '/a' } ] failed: [ $__btSyntaxError: Unexpected token 'o', "not json" is not valid JSON$__bt ]
+~~~text الناتج (Node 24)
+hi sara (esm) hi sara (cjs)
 ~~~
+
+نفس الاسم [["greet"]] جاب ملفين مختلفين: [[import]] جاب [[index.mjs]] و [[require]] جاب [[index.cjs]]. ([[createRequire]] بيعمل [[require]] جوه ملف ESM.)
+
+### الملفات اللي مش في exports مقفولة
+
+~~~text الناتج (Node 24)
+import("greet/internal/secret.mjs")
+ERR_PACKAGE_PATH_NOT_EXPORTED: Package subpath './internal/secret.mjs' is not defined by "exports" in ...\node_modules\greet\package.json
+~~~
+
+ده الهدف: صاحب الـ package يقدر يغيّر أي ملف داخلي من غير ما يكسر حد، لأن محدش يقدر يوصله. ولو انت **بتستخدم** package وقابلت الـ error ده، استورد الاسم اللي في [["exports"]] (اقرا [[package.json]] بتاعه)، ومتحاولش توصل لـ [[lib/...]] مباشرة.
+
+### [["imports"]]: اختصارات بـ [[#]] جوه مشروعك
+
+~~~text package.json
+{
+  "name": "shop",
+  "type": "module",
+  "imports": {
+    "#utils/*": "./src/utils/*.js",
+    "#db": {
+      "browser": "./src/db-browser.js",
+      "node": "./src/db-node.js",
+      "default": "./src/db-browser.js"
+    }
+  }
+}
+~~~
+
+- [["#utils/*"]]: الـ [[*]] بيتبدّل بأي حاجة، فـ [[import { money } from "#utils/money"]] بتروح لـ [[./src/utils/money.js]]. بدل [[../../../utils/money.js]] من ملف عميق.
+- [["#db"]]: conditions تاني: [["node"]] في Node و [["browser"]] لما bundler زي Vite يبني للمتصفح، و [["default"]] لو مفيش ولا واحد اتطابق.
+
+**الترتيب مهم**: Node بياخد **أول** مفتاح بيتطابق من فوق لتحت. جرّبت [["node"]] قبل [["browser"]] وشغّلت [[node --conditions=browser]]: طلع [[node]] برضه، لأن condition [["node"]] شغالة دايمًا في Node وجت الأول. لما حطيت [["browser"]] الأول طلع [[browser]]. والـ [["default"]] دايمًا آخر واحد.
+
+اسم مش موجود في [["imports"]]:
+
+~~~text الناتج (Node 24)
+ERR_PACKAGE_IMPORT_NOT_DEFINED: Package import specifier "#nothing" is not defined in package ...\package.json
+~~~
+
+> TypeScript بيفهم الاتنين لو [["moduleResolution": "nodenext"]] أو [["bundler"]]، و condition اسمه [["types"]] بيتحط **أول** واحد عشان TS يلاقي ملف الـ types (من وثائق TypeScript).
 
 ---
 
-## ٤. [[Promise.race]] للـ timeout
+## ٨. import.meta.resolve: الاسم ده هيروح لأنهي ملف؟
+
+[[import.meta.resolve(specifier)]] بترجّع الـ URL الكامل اللي الـ import كان هيروحله، **من غير** ما تحمّل الملف. مفيدة عشان تعرف package جاي منين، أو تبعت مسار ملف لـ Worker:
 
 ~~~text app.mjs
-const timeout = (ms) => new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), ms));
-const fast = await Promise.race([api("/slow"), timeout(3000)]);
+console.log(import.meta.resolve("greet"));
+console.log(import.meta.resolve("#utils/money"));
+console.log(import.meta.resolve("./nothing-here.js"));
 ~~~
 
-- [[timeout(ms)]]: Promise **بيفشل** بعد ms. و [[_]] اسم باراميتر معناه «مش محتاجه» (resolve مش مستخدمة).
-- [[Promise.race([...])]]: بتاخد نتيجة **أول واحد يخلص**، نجح أو فشل.
-- [[/slow]] بياخد 5 ثواني، و timeout بعد 3، فالـ timeout كسب:
-
-~~~text الناتج
-race: timeout 3011ms
+~~~text الناتج (Node 24)
+file:///C:/.../pk/node_modules/greet/lib/index.mjs
+file:///C:/.../pk/src/utils/money.js
+file:///C:/.../pk/nothing-here.js
 ~~~
 
-خلي بالك: الطلب نفسه **فضل شغال** في الخلفية لحد ما خلص. race مبتلغيش حاجة (الإلغاء الحقيقي بـ AbortController، الدرس الجاي).
+- الأول: طبّقت [["exports"]] والـ condition [["import"]] ورجّعت [[index.mjs]].
+- التاني: طبّقت [["imports"]].
+- التالت: مسار نسبي **مش موجود** ومع ذلك رجعت URL من غير error. هي بتحسب المسار بس، مش بتتأكد إن الملف موجود.
+- package مش متسطّب: [[import.meta.resolve("nopkg")]] بترمي [[ERR_MODULE_NOT_FOUND: Cannot find package 'nopkg']].
 
----
-
-## ٥. [[Promise.any]]
-
-~~~text app.mjs
-const first = await Promise.any([api("/mirror1"), api("/mirror2")]);
-~~~
-
-أول واحد **ينجح**، وبتتجاهل الفاشلين:
-
-~~~text الناتج
-any: { path: '/mirror2' } 217ms
-~~~
-
-[[/mirror2]] أسرع (200ms) فكسب. ولو **كلهم** فشلوا:
-
-~~~text الناتج: Promise.any على اتنين rejected
-AggregateError: All promises were rejected [ 'x1', 'x2' ]
-~~~
-
-[[AggregateError]] error فيه [[errors]]: array بكل الأسباب.
-
----
-
-## ٦. المقارنة بالوقت (الـ solCode)
-
-~~~text app.mjs
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-const a = () => wait(500), b = () => wait(1000), c = () => wait(1500);
-console.time("ورا بعض");
-await a(); await b(); await c();
-console.timeEnd("ورا بعض");
-console.time("Promise.all");
-await Promise.all([a(), b(), c()]);
-console.timeEnd("Promise.all");
-~~~
-
-- [[console.time("اسم")]] بيبدأ ساعة بالاسم ده، و [[console.timeEnd("اسم")]] بيطبع الوقت من ساعتها.
-
-~~~text الناتج
-ورا بعض: 3.020s
-Promise.all: 1.509s
-~~~
-
-ورا بعض = 0.5 + 1 + 1.5 = 3 ثواني. مع بعض = وقت **أطولهم** بس (1.5).
+وفي المتصفح نفس الدالة بتطبّق الـ import map: في الصفحة اللي فوق [[import.meta.resolve("utils")]] رجّعت [[http://127.0.0.1:.../lib/utils.js]]، و [[import.meta.resolve("lodash")]] (مش في الـ map) رمت [[TypeError: Failed to resolve module specifier lodash]] (جرّبتها في Chrome 156). وهي synchronous في Node 20.6+ والمتصفحات الحديثة.
 
 ---
 
 ## الخلاصة
 
-| الدالة | بتخلص إمتى | لو فيه فشل |
+| | CommonJS | ESM |
 |---|---|---|
-| [[Promise.all]] | لما كلهم ينجحوا | بتفشل فورًا بأول error |
-| [[Promise.allSettled]] | لما كلهم يخلصوا | مبتفشلش، كل واحد ليه status |
-| [[Promise.race]] | أول واحد يخلص | لو الأول فشل، بتفشل |
-| [[Promise.any]] | أول واحد ينجح | بتفشل بـ AggregateError لو كلهم فشلوا |
+| تستورد | [[require("x")]] | [[import ... from "x"]] |
+| تصدّر | [[module.exports = ...]] | [[export]] |
+| الفولدر الحالي | [[__dirname]] | [[import.meta.dirname]] |
+| await في أول الملف | لأ | أيوه |
+| الامتداد | [[.cjs]] أو [[.js]] من غير type | [[.mjs]] أو [[.js]] مع [["type": "module"]] |
+| package بيدعم الاتنين | [["require"]] في [["exports"]] | [["import"]] في [["exports"]] |
 
-- الطلبات بتبدأ **لحظة ما تنادي الدالة**، مش لحظة الـ await. والدوال دي بتستنى بس، ومبتلغيش حاجة.
-- وكمان القيم اللي مش Promises بتتقبل عادي: [[Promise.all([1, Promise.resolve(2), "three"])]] رجّعت 1 و 2 و [['three']] بالترتيب.`,
+- مشروع جديد = ESM و [["type": "module"]].
+- [["exports"]] بيقفل كل ملف مش مكتوب فيه ([[ERR_PACKAGE_PATH_NOT_EXPORTED]])، و [["imports"]] بـ [[#]] اختصارات جوه مشروعك، والـ conditions بتتقري بالترتيب.
+- [[import.meta.resolve]] بتقولك الاسم هيروح فين من غير ما تحمّل حاجة.
+- ESM يقدر يستورد CommonJS دايمًا، والعكس شغال بـ require في Node الحديث طالما مفيش top-level await.`,
           lines: [
-            R`helper صغير: بياخد path، يعمل [[fetch]]، ويحوّل الرد لـ JSON. كل نداء ليه بيرجّع Promise، وده اللي هنبعته لـ [[Promise.all]] تحت. (مش بيفحص [[res.ok]]، فده للتجربة بس.)`,
-            R`[[Promise.all]] بتاخد array من Promises بقت شغالة بالفعل، وتستنى الكل يخلص. النتيجة array بنفس ترتيب الطلبات (مش ترتيب اللي خلص الأول)، فبنفكها لـ ٣ متغيرات بالـ destructuring.`,
-            R`الطلب الأول ([[/me]]): بيبدأ فورًا أول ما السطر يتنفذ، مش لما [[Promise.all]] تتنادى. قيمته هتروح لـ [[user]].`,
-            R`الطلب التاني ([[/orders]]) بيتبعت في نفس الوقت من غير ما يستنى الأول، وقيمته تروح لـ [[orders]].`,
-            R`الطلب التالت ([[/settings]])، وقيمته تروح لـ [[settings]]. الوقت الكلي بقى وقت أبطأ طلب، مش مجموع التلاتة.`,
-            R`نهاية الـ array. لو أي طلب فشل، [[Promise.all]] بتترفض فورًا بالـ error بتاعه ومش هتدّيك نتايج الباقيين (رغم إنهم بيكمّلوا في الخلفية).`,
-            R`[[Promise.allSettled]] بتستنى الكل مهما حصل ومبتترفضش أبدًا. كل عنصر في النتيجة object فيه [[status]] ([[fulfilled]] أو [[rejected]]) ومعاه [[value]] أو [[reason]].`,
-            R`بنسيب الناجحين بس ([[status]] بـ [[fulfilled]])، ونطلّع من كل واحد [[value]] بتاعه، يعني الداتا اللي رجعت.`,
-            R`ونفس الفكرة للفاشلين: [[reason]] هو الـ error اللي اترفض بيه، فتقدر تسجّله أو تعرضه من غير ما يبوّظ الناجحين.`,
-            R`[[timeout]] بترجّع Promise ملوش غير نهاية واحدة: يترفض بـ Error بعد ms. الـ [[_]] معناها إننا مش محتاجين [[resolve]].`,
-            R`[[Promise.race]] بتاخد نتيجة أول واحد يخلص، نجاح أو فشل. لو الطلب أبطأ من ٣ ثواني الـ [[timeout]] يكسب ويرمي error. بس خلي بالك: الطلب مش بيتلغي وبيكمّل في الخلفية؛ عشان تلغيه فعلًا محتاج AbortController.`,
-            R`[[Promise.any]] بتاخد أول واحد **ينجح** وبتتجاهل الفشل. مفيدة مع سيرفرات بديلة (mirrors). لو كلهم فشلوا بترمي AggregateError فيه [[errors]] بكل الأسباب.`
+            R`في [[utils.cjs]] (الامتداد [[.cjs]] معناه CommonJS دايمًا): [[require]] دالة عادية بترجّع الـ module فورًا (synchronous)، فتقدر تناديها في أي مكان حتى جوه if. و [[node:]] بتقول صراحة إن ده module مدمج في Node مش package من npm. ([[path]] مش مستخدم تحت، السطر موجود عشان تشوف الشكل.)`,
+            R`دالة بتحوّل النص لـ slug: حروف صغيرة والمسافات شُرَط، فـ [["Hello World"]] تبقى [["hello-world"]].`,
+            R`CommonJS بيصدّر بإنه يحط اللي عايزه في [[module.exports]]: هنا object فيه [[slug]]، فاللي يعمل [[require("./utils.cjs")]] ياخد الـ object ده. لو كتبت [[exports = { slug }]] من غير [[module.]] مش هيتصدّر حاجة، لأنك غيّرت متغير محلي بس.`,
+            R`في [[app.mjs]] ([[.mjs]] = ESM دايمًا): ESM يقدر يستورد من CommonJS. Node بيحلل الملف ويطلّع [[slug]] كـ named export، و [[module.exports]] كله موجود كـ default. العكس ([[require]] لملف ESM) مدعوم في نسخ Node الحديثة بس، ومبيشتغلش لو الملف فيه top-level await.`,
+            R`[[node:fs/promises]] نسخة [[fs]] اللي دوالها بترجّع Promises، فتستخدمها مع [[await]] بدل الـ callbacks.`,
+            R`top-level await: [[await]] برّه أي دالة async، ومسموحة في ESM بس (في [[.cjs]] بترمي SyntaxError). و [[new URL("./package.json", import.meta.url)]] بتحسب المسار نسبةً لمكان الملف ده، مش للفولدر اللي شغّلت منه الأمر، فالملف يتلاقي من أي مكان. وبعدها [[JSON.parse]] بتحوّل النص لـ object.`,
+            R`بيطبع [[hello-world]] ومسار الفولدر اللي فيه الملف. [[import.meta.dirname]] هي البديل في ESM لـ [[__dirname]]، لأن [[__dirname]] و [[require]] مش موجودين في ESM أصلًا (موجودة من Node 20.11).`,
           ],
-          sol: R`الناتج حاجة زي [[ورا بعض: 3.004s]] و [[Promise.all: 1.500s]]. ورا بعض كل await بتستنى اللي قبلها (500 + 1000 + 1500)، و Promise.all بتبدأهم مع بعض فالوقت بيبقى وقت أطولهم بس.
+          sol: R`[[node app.mjs]] بيطبع [[hello-world]] ومسار الفولدر بتاعك (من [[import.meta.dirname]]). الـ ESM قدر يعمل import للـ CommonJS عادي، و [[await]] في أول الملف اشتغلت من غير async (top-level await، في ESM بس).
 
-خلي بالك إن الـ promises بتبدأ لحظة ما تنادي الدالة، مش لحظة الـ await. لو كتبت [[const pa = a(), pb = b(), pc = c();]] وبعدين [[await pa; await pb; await pc;]] هتاخد 1.5 ثانية برضه. والغلطة الشائعة العكس: تكتب [[Promise.all([await a(), await b()])]] فتستنى كل واحدة قبل ما Promise.all تشوفها وترجع لـ 3 ثواني.`,
-          solCode: R`const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-const a = () => wait(500), b = () => wait(1000), c = () => wait(1500);
-console.time("ورا بعض");
-await a(); await b(); await c();
-console.timeEnd("ورا بعض");      // ~3s
-console.time("Promise.all");
-await Promise.all([a(), b(), c()]);
-console.timeEnd("Promise.all");  // ~1.5s`
+[[import]] في ملف [[.cjs]] بيطلع [[SyntaxError: Cannot use import statement outside a module]]. و [[console.log(__dirname)]] في [[.mjs]] بيطلع [[ReferenceError: __dirname is not defined in ES module scope]]، والبديل [[import.meta.dirname]] و [[import.meta.filename]]. ولو package.json مش موجود جنب app.mjs السطر التالت هيقع بـ [[ENOENT]]، ودي الغلطة الأشهر في التجربة دي.`
         },
         {
-          cmd: "fetch و AbortController",
-          title: "تعمل fetch صح: تفحص الرد وتلغي الطلب",
-          desc: R`[[fetch(url, options)]] بترجّع Promise بالـ Response. خد بالك من حاجتين: fetch بتترفض بس لو النت فشل، أما 404 و 500 بيعدّوا عادي، فلازم تفحص [[res.ok]]. والـ body بيتقري مرة واحدة بـ [[res.json()]] أو [[res.text()]].
+          cmd: "dynamic import()",
+          title: "تحمّل module وقت ما تحتاجه بس",
+          desc: R`[[import("./heavy.js")]] (بأقواس) دالة بترجّع Promise بالـ module، وبتشتغل في أي مكان: جوه if، أو بعد ضغطة زرار، والـ path ممكن يبقى متغير.
 
-وعشان تلغي طلب (اليوزر خرج من الصفحة، أو كتب حرف جديد في البحث)، ابعت [[signal]] من [[AbortController]]، أو [[AbortSignal.timeout(ms)]] لـ timeout جاهز.`,
-          example: R`async function api(path, { body, ...options } = {}) {
-  const res = await fetch($__bthttps://api.example.com$__{path}$__bt, {
-    ...options,
-    headers: { "Content-Type": "application/json", ...options.headers },
-    body: body ? JSON.stringify(body) : undefined,
-    signal: options.signal ?? AbortSignal.timeout(8000),
-  });
-  if (!res.ok) throw new Error($__btHTTP $__{res.status}: $__{await res.text()}$__bt);
-  return res.status === 204 ? null : res.json();
-}
-await api("/orders", { method: "POST", body: { productId: 5 } });
-let controller;
-async function search(q) {
-  controller?.abort();
-  controller = new AbortController();
-  try {
-    return await api($__bt/search?q=$__{encodeURIComponent(q)}$__bt, { signal: controller.signal });
-  } catch (err) {
-    if (err.name === "AbortError") return;
-    throw err;
-  }
+فايدتها: الكود التقيل (محرر نصوص، أو مكتبة charts، أو لغة ترجمة) ميتحمّلش مع الصفحة، يتحمّل لما اليوزر يحتاجه. والـ bundlers بتفصله في ملف لوحده (code splitting)، وده اللي [[React.lazy]] و [[next/dynamic]] مبنيين عليه.`,
+          example: R`const btn = document.querySelector("#export");
+btn.addEventListener("click", async () => {
+  const { exportToPdf } = await import("./pdf-export.js");
+  exportToPdf(document.body);
+});
+const lang = navigator.language.startsWith("ar") ? "ar" : "en";
+const messages = (await import($__bt./locales/$__{lang}.js$__bt)).default;
+if (import.meta.env?.DEV) {
+  const { setupMocks } = await import("./mocks.js");
+  setupMocks();
 }`,
-          try: R`في Console على أي موقع، اعمل [[fetch("/not-found")]] واطبع [[res.ok]] و [[res.status]]: هتلاقيه نجح عادي بـ 404. وبعدين جرّب [[fetch(url, { signal: AbortSignal.timeout(1) })]] واقرا الـ error.`,
+          try: R`في مشروع Vite (تاب React)، حط [[import()]] لملف كبير جوه onClick، واعمل [[npm run build]]: هتلاقي الملف طلع chunk لوحده في dist. وافتح Network وشوفه بيتحمّل بس لما تضغط.`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** توقّع وبعدين جرّب في ملف [[.mjs]]: [[const r = await fetch("https://example.com/nope")]]، هل هيترمي error؟ اطبع [[r.ok]] و [[r.status]]، وبعدين اقرا [[await r.text()]] مرتين ورا بعض.`, done: R`مفيش error: بيطبع [[false 404]]. والقراية التانية بتقع بـ [[TypeError: Body is unusable: Body has already been read]]: الـ body بيتقري مرة واحدة.` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[fetch(url, { method: "POST", body: { name: "Sara" } })]]. اعمل سيرفر Node صغير بيرجّع الـ body والـ Content-Type اللي وصلوه، وشوف وصله إيه.`, done: R`قبل التصليح السيرفر استلم [[[object Object]]] و [[text/plain;charset=UTF-8]]. بعد [[body: JSON.stringify({ name: "Sara" })]] و [[headers: { "Content-Type": "application/json" }]] استلم [[{"name":"Sara"}]] و [[application/json]].` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[getJSON(url, { timeout = 5000 } = {})]]: بتعمل fetch بـ [[AbortSignal.timeout(timeout)]]، وترمي [[HttpError]] فيه [[status]] لو [[!res.ok]]، وفي الـ catch تفرّق بين ٣ أنواع بـ [[err.name]]. جرّبها على 404، وعلى [[timeout: 1]]، وعلى دومين مش موجود.`, done: R`الـ 404 بيطلع HttpError فيه [[status: 404]]. الـ timeout بيطلع [[err.name === "TimeoutError"]] (مش AbortError). والدومين الغلط بيطلع [[TypeError]] رسالته [[fetch failed]] والسبب الحقيقي في [[err.cause]]. والتلاتة رسايلهم لليوزر مختلفة.` },
-            { lvl: 'تحدي', t: R`**محاكاة:** بحث وانت بتكتب: استخدم [[search(q)]] اللي في الدرس، ونادي [[search("a")]] و [[search("ab")]] و [[search("abc")]] ورا بعض من غير await، وخزّن الـ ٣ Promises واطبع [[await Promise.all]] بتاعتهم. جرّبها على endpoint بيتأخر (مثلًا سيرفر Node صغير على localhost بيرد بعد 300ms).`, done: R`أول اتنين [[undefined]] (اتلغوا والـ catch رجّع من غير قيمة) والتالت بس فيه نتيجة [["abc"]]. وفي المتصفح، تاب Network بيكتب canceled جنب أول طلبين. ولو شلت [[controller?.abort()]] التلاتة بيرجعوا وأي واحد ممكن يوصل الأخير ويكتب فوق النتيجة الصح.` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من صفحة [[AbortSignal.any()]] على MDN، اعمل signal واحد بيتلغي لو اليوزر داس «إلغاء» ([[controller.abort()]]) أو عدّت 5 ثواني، وجرّب الحالتين على endpoint بطيء.`, done: R`[[AbortSignal.any([controller.signal, AbortSignal.timeout(5000)])]]: لما تنادي abort الـ catch بيشوف [[err.name]] بـ [["AbortError"]]، ولما المهلة تخلص بيشوف [["TimeoutError"]]، فرسالة اليوزر بتفرق بين «لغيت» و «الشبكة بطيئة».` }
+            { lvl: 'سريع', t: R`**ابني:** صفحة فيها زرار «اعرض الإحصائيات». اعمل [[stats.js]] أول سطر فيه [[console.log("stats.js اتحمّل")]] و [[export function render(el)]] بتكتب أي أرقام في عنصر. الزرار بيعمل [[await import("./stats.js")]] ويستدعي render. اضغط ٣ مرات.`, done: R`أول ما الصفحة تفتح stats.js مش في Network. أول ضغطة بيتحمّل وتظهر «stats.js اتحمّل» مرة واحدة، والضغطتين اللي بعدها الأرقام بتتكتب من غير ما الرسالة تتكرر ولا الملف يتحمّل تاني (الـ module بيتعمله cache).` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const { render } = import("./stats.js"); render();]]. شغّله واقرا الرسالة.`, done: R`الرسالة [[TypeError: render is not a function]]: [[import()]] بترجّع Promise فالـ destructuring طلّع undefined. بعد [[const { render } = await import("./stats.js");]] بيشتغل.` },
+            { lvl: 'تطبيق', t: R`**ابني:** اعمل [[locales/ar.js]] و [[locales/en.js]]، كل واحد [[export default]] object فيه [[hello]]. واكتب [[async function loadMessages(lang)]] بتعمل import للملف حسب اللغة، ولو [[err.code === "ERR_MODULE_NOT_FOUND"]] ترجع للإنجليزي.`, done: R`[[await loadMessages("ar")]] بيرجّع العربي، و [[await loadMessages("fr")]] بيرجّع الإنجليزي من غير ما البرنامج يقع، وأي error تاني (زي syntax error جوه ar.js) لسه بيترمي ومبيتبلعش.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[locales/ar.js]] فيه [[export default { hello: "مرحبا" }]]. بعد [[const m = await import("./locales/ar.js")]]، [[m.hello]] و [[m.default.hello]] هيطبعوا إيه؟`, done: R`توقعت وطلع [[undefined]] و [[مرحبا]]: الـ dynamic import بيرجّع الـ module كله، والـ default جوه [[.default]]. فالسطر الصح [[const { default: messages } = await import(...)]].` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** اعمل [[heavy.js]] في الـ top level بتاعه loop بيلف [[1e8]] مرة (كأنه مكتبة تقيلة بتجهّز نفسها) و [[export function run()]]. وفي [[app.js]] اطبع [[performance.now()]] أول ما البرنامج يبدأ يشتغل، مرة و heavy.js متعمله import عادي فوق، ومرة بـ [[await import()]] جوه [[if (process.argv.includes("--heavy"))]].`, done: R`مع الـ import العادي، الرقم كبير حتى لو مش هتستخدم run خالص، لأن الملف بيتنفّذ قبل أول سطر في app.js. ومع الـ dynamic import الرقم صغير، والوقت التقيل بيظهر بس لما تشغّل بـ [[--heavy]]. اكتب الرقمين اللي قستهم جنب بعض.` }
           ],
           flag: "script",
           deep: {
-            why: R`كل تطبيق بيكلّم API. ومشاكل زي «بيعرض داتا قديمة لما أكتب بسرعة في البحث» (race condition) و «الطلب واقف دقيقة» و «بيعرض صفحة 500 كأنها داتا» كلها من fetch مكتوب من غير فحص ولا إلغاء.`,
-            how: R`الـ Promise بتاع fetch بيخلص أول ما الـ headers توصل، والـ body لسه بيتقري. عشان كده [[res.json()]] Promise تاني. والـ body stream بيتقري مرة واحدة، فلو قريته بـ text مينفعش تقراه بـ json.
+            why: "حجم الـ JS أكبر سبب لبطء فتح الصفحات على الموبايل. أي كود مش محتاجه أول ما الصفحة تفتح، مكانه import().",
+            how: R`[[import()]] مش دالة عادية، هي syntax خاص، بس بيرجّع Promise بـ module namespace object: فيه كل الـ named exports، والـ default في [[.default]].
 
-[[AbortController]] عنده [[signal]] بتتبعت للـ fetch، و [[abort()]] بترفض الـ Promise بـ error اسمه AbortError، والمتصفح بيقفل الـ connection فعلًا. و [[AbortSignal.timeout(ms)]] signal جاهزة بتعمل abort بعد وقت (الـ error اسمه TimeoutError). و [[AbortSignal.any([a, b])]] بتجمع اتنين.
+الـ module بيتحمّل ويتنفّذ مرة واحدة، والنداءات اللي بعدها بترجّع نفس النسخة من الكاش.
 
-في البحث: كل حرف بيلغي الطلب اللي قبله. من غير كده، رد قديم بطيء ممكن يوصل بعد رد جديد ويكتب فوقه.
+الـ bundler بيشوف [[import("./x.js")]] ويعمل ملف لوحده (chunk). ولو الـ path فيه متغير زي [[$__btlocales/$__{lang}.js$__bt]]، Vite بيعمل chunk لكل ملف ممكن يطابق الـ pattern.
 
-الكوكيز: في نفس الدومين بتتبعت لوحدها. لو دومين تاني محتاج [[credentials: "include"]] والسيرفر يسمح بـ CORS (تاب المتصفح وتاب الانترفيو). و Node 18+ فيه fetch مدمج.
-
-وفي React، مكتبة زي TanStack Query بتعمل الإلغاء والكاش وإعادة المحاولة بدالك (تاب React).`,
-            when: R`helper واحد زي [[api()]] في المشروع كله بدل fetch متكررة. و AbortController في البحث والـ autocomplete و useEffect cleanup. و timeout لأي طلب لسيرفر خارجي.`,
-            mistakes: R`متفحصش [[res.ok]]. وتنسى [[JSON.stringify]] أو الـ Content-Type. وتبني URL بـ query من اليوزر من غير [[encodeURIComponent]] أو [[URLSearchParams]]. وتعرض AbortError كـ error لليوزر. وتقرا الـ body مرتين.`
+شغالة كمان في CommonJS، وده الطريقة الوحيدة CommonJS يجيب ESM فيه top-level await.`,
+            when: "المودالز والصفحات التقيلة، والمكتبات الكبيرة اللي بتستخدم في feature واحدة، وملفات الترجمة، والكود اللي في dev بس.",
+            mistakes: R`تعمل dynamic import لحاجة صغيرة محتاجها على طول، فتزود request من غير فايدة. وتنسى [[.default]]. ومتتعاملش مع فشل التحميل (نت ضعيف): حطها في try/catch واعرض رسالة.`
           },
           teach: R`## الكود ده بيعمل إيه؟
 
-جزئين: دالة [[api]] واحدة تستخدمها في المشروع كله بدل fetch مكررة (بتبعت JSON، وبتحط timeout، وبترمي error على 404 و 500)، ودالة [[search]] بتلغي طلب البحث القديم كل ما اليوزر يكتب حرف جديد.
+٣ أمثلة على تحميل ملف JS **وقت ما تحتاجه** بدل أول ما الصفحة تفتح: مكتبة تصدير PDF لما اليوزر يدوس الزرار، وملف ترجمة حسب لغة المتصفح، وكود تجارب في وضع التطوير بس. ده كود متصفح، فشغّلناه في Chrome (headless بـ playwright) في صفحة فيها:
 
-اتشغّل في Node 24 كملف [[.mjs]] على سيرفر صغير محلي بدل [[api.example.com]]، والسيرفر بيطبع كل طلب بيوصله: الـ method والمسار والـ Content-Type والـ body. وجزء [[res.ok]] والـ timeout اتجرّب كمان في Chrome.
-
----
-
-## ١. توقيع الدالة
-
-~~~text app.mjs
-async function api(path, { body, ...options } = {}) {
+~~~text index.html
+<button id="export">Export</button>
+<script type="module" src="main.js"></script>
 ~~~
 
-- [[path]]: المسار، زي [["/orders"]].
-- التاني object خيارات، وبنفكّه:
-- [[body]]: الداتا اللي هتتبعت، كـ object عادي.
-- [[...options]]: اسمها **rest**: «كل الخصايص الباقية (method و headers و signal...) حطها في object اسمه options». فـ body اتشالت منه.
-- [[= {}]]: لو مبعتش خيارات خالص.
+والمثال كله هو [[main.js]]، وجنبه ملفات صغيرة: [[pdf-export.js]] بيطبع رسالة لما يتحمّل وفيه [[exportToPdf]]، و [[locales/en.js]] و [[locales/ar.js]] فيهم [[export default { save: ... }]]. وسجّلنا كل طلب شبكة الصفحة عملته.
+
+> [[type="module"]] لازم: الكود فيه await في أول الملف، وده شغال في ES modules بس.
 
 ---
 
-## ٢. نداء fetch
+## ١. الزرار
 
-~~~text app.mjs
-  const res = await fetch($__bthttps://api.example.com$__{path}$__bt, {
-    ...options,
-    headers: { "Content-Type": "application/json", ...options.headers },
-    body: body ? JSON.stringify(body) : undefined,
-    signal: options.signal ?? AbortSignal.timeout(8000),
-  });
+~~~text main.js
+const btn = document.querySelector("#export");
+btn.addEventListener("click", async () => {
+  const { exportToPdf } = await import("./pdf-export.js");
+  exportToPdf(document.body);
+});
 ~~~
 
-fetch بتاخد URL و object خيارات. نبنيه سطر سطر:
+- [[document.querySelector("#export")]]: هات العنصر اللي id بتاعه export.
+- [[addEventListener("click", async () => { ... })]]: سجّل دالة تشتغل مع كل ضغطة. وهي [[async]] عشان نقدر نستخدم await جواها.
+- [[import("./pdf-export.js")]]: بأقواس، زي دالة. **ده مش** [[import ... from]] اللي في أول الملف: ده بيتنفّذ **في السطر ده بالظبط**، وبيرجّع Promise.
+- [[await]]: استنى لحد ما الملف يتحمّل ويتنفّذ. القيمة اللي بترجع هي الـ **module namespace object**: object فيه كل الـ exports.
+- [[const { exportToPdf } = ...]]: destructuring: خد خاصية exportToPdf منه في متغير بنفس الاسم.
+- [[exportToPdf(document.body)]]: نادِيها على جسم الصفحة.
 
-| السطر | معناه |
-|---|---|
-| [[...options]] | **spread**: انسخ كل الخيارات اللي اتبعتت (زي [[method: "POST"]]) |
-| [[headers: { ... }]] | الـ headers: معلومات زيادة مع الطلب |
-| [[Content-Type: application/json]] | قول للسيرفر «الـ body ده JSON» |
-| [[...options.headers]] | وزوّد أي headers اتبعتت (ولو فيها Content-Type تغطّي على الافتراضي) |
-| [[body ? JSON.stringify(body) : undefined]] | لو فيه body حوّله لنص JSON. fetch مبتبعتش object، بتبعت نص |
-| [[options.signal ?? AbortSignal.timeout(8000)]] | استخدم الـ signal اللي اتبعت، ولو مفيش، اعمل واحدة بتلغي بعد 8 ثواني. خلي بالك: لو اتبعت signal الـ timeout بيضيع، والحل بـ [[AbortSignal.any]] في الجزء ٦ |
+اللي حصل في الشبكة والـ Console:
 
-- [[??]] اسمها **nullish coalescing**: «لو اللي على الشمال null أو undefined، خد اللي على اليمين».
-- [[AbortSignal.timeout(ms)]]: signal جاهزة بتلغي الطلب لوحدها بعد الوقت ده.
+~~~text الناتج: فتح الصفحة
+[request] /index.html
+[request] /main.js
+[request] /locales/en.js
+~~~
+
+[[pdf-export.js]] **مش** في القايمة. ولما دوسنا الزرار:
+
+~~~text الناتج: الضغطة الأولى
+[request] /pdf-export.js
+pdf-export.js اتحمّل واتنفّذ
+exportToPdf على BODY
+~~~
+
+~~~text الناتج: الضغطة التانية
+exportToPdf على BODY
+~~~
+
+في التانية مفيش طلب جديد، والملف متنفّذش تاني: الـ module بيتحمّل **مرة واحدة**، وأي [[import()]] بعد كده بيرجّع نفس النسخة من الكاش. واتأكدنا بـ [[ns === await import(...)]] على نفس الملف: [[true]].
 
 ---
 
-## ٣. فحص الرد
+## ٢. ملف حسب اللغة
 
-~~~text app.mjs
-  if (!res.ok) throw new Error($__btHTTP $__{res.status}: $__{await res.text()}$__bt);
-  return res.status === 204 ? null : res.json();
+~~~text main.js
+const lang = navigator.language.startsWith("ar") ? "ar" : "en";
+const messages = (await import($__bt./locales/$__{lang}.js$__bt)).default;
+~~~
+
+- [[navigator.language]]: لغة المتصفح، زي [["en-US"]] أو [["ar-EG"]].
+- [[.startsWith("ar")]]: بتبدأ بـ ar؟
+- [[شرط ? أ : ب]]: اسمه **ternary**: لو الشرط صح خد أ، غير كده ب.
+- [[$__bt./locales/$__{lang}.js$__bt]]: الـ path **نص متغير**. ده مستحيل في [[import ... from]] (لازم نص ثابت)، وممكن في [[import()]].
+- [[(await import(...)).default]]: الأقواس عشان await تخلص الأول، وبعدين ناخد [[.default]]: الـ default export بيبقى في خاصية اسمها default.
+
+شغّلنا الصفحة مرتين بلغتين:
+
+~~~text الناتج
+locale en-US:  [request] /locales/en.js   messages: {"save":"Save"}
+locale ar-EG:  [request] /locales/ar.js   messages: {"save":"احفظ"}
+~~~
+
+كل لغة حمّلت ملفها بس.
+
+---
+
+## ٣. كود التطوير بس
+
+~~~text main.js
+if (import.meta.env?.DEV) {
+  const { setupMocks } = await import("./mocks.js");
+  setupMocks();
 }
 ~~~
 
-- [[res.ok]]: true لو الـ status من 200 لـ 299. fetch **مبترميش** error على 404 أو 500، الرد بيوصل عادي. جرّبنا [[fetch("/nope")]] من غير الدالة:
-
-~~~text الناتج
-fetch 404 بس: false 404 Not Found
-~~~
-
-يعني [[ok]] = false، و [[status]] = 404، و [[statusText]] = Not Found، ومفيش error. ونفس الحاجة في Chrome: ok بـ [[false]] و status بـ [[404]] من غير error.
-
-- [[await res.text()]]: اقرا نص الرد وحطه في رسالة الـ error، عشان تعرف السيرفر قال إيه.
-- [[res.status === 204]]: 204 = «No Content»، نجح بس مفيش body. لو ناديت json عليه هيقع، فبنرجّع null.
-
-~~~text الناتج: await api("/nope")
-HTTP 404: {"error":"Not found"}
-~~~
-
-ومن الحاجات اللي اتجرّبت: الـ body **بيتقري مرة واحدة**. بعد [[res.text()]] جرّبنا [[res.json()]]:
-
-~~~text الناتج
-TypeError: Body is unusable: Body has already been read
-~~~
+- [[import.meta.env]]: Vite بيحط فيه معلومات البيئة، و [[DEV]] بـ true وانت شغال [[npm run dev]].
+- برّه Vite مفيش env. طبعناها في Chrome: [[undefined]]. فالـ [[?.]] رجّعت undefined بدل ما تقع، والـ if متنفّذش، و [[mocks.js]] **متطلبش خالص** من السيرفر.
 
 ---
 
-## ٤. POST
+## ٤. لو الملف مش موجود
 
-~~~text app.mjs
-await api("/orders", { method: "POST", body: { productId: 5 } });
-~~~
+جرّبنا [[await import("./missing.js")]] جوه try:
 
 ~~~text الناتج
-[server] POST /orders application/json {"productId":5}
-POST: { id: 7, productId: 5 }
+TypeError: Failed to fetch dynamically imported module: http://demo.test/missing.js
 ~~~
 
-السيرفر استلم method = POST، و Content-Type = JSON، والـ body نص JSON. وجرّبنا [[DELETE]] على مسار بيرد 204: الدالة رجّعت [[null]] من غير ما تقع.
-
-### الـ timeout
-
-جرّبنا [[api("/slow", { signal: AbortSignal.timeout(300) })]] على مسار بياخد 10 ثواني:
-
-~~~text الناتج
-timeout: TimeoutError: The operation was aborted due to timeout
-~~~
-
-اسمه [[TimeoutError]]. وفي Chrome نفس التجربة طلّعت [[TimeoutError: signal timed out]].
-
----
-
-## ٥. [[search]]: الغي القديم
-
-~~~text app.mjs
-let controller;
-async function search(q) {
-  controller?.abort();
-  controller = new AbortController();
-~~~
-
-- [[let controller;]]: متغير برّه الدالة، بيفتكر الـ controller بتاع **آخر** بحث. [[let]] مش const لأننا هنغيّره.
-- [[controller?.abort()]]: لو فيه بحث قبل كده، الغيه. و [[?.]] عشان أول مرة controller بـ undefined.
-- [[new AbortController()]]: object فيه حاجتين: [[signal]] (بتتبعت مع الطلب)، و [[abort()]] (بتلغيه).
-
-~~~text app.mjs
-  try {
-    return await api($__bt/search?q=$__{encodeURIComponent(q)}$__bt, { signal: controller.signal });
-~~~
-
-- [[encodeURIComponent(q)]]: بيحوّل أي حروف خاصة أو عربي لشكل آمن في الـ URL. جرّبنا:
-
-~~~text الناتج: encodeURIComponent("قهوة & شاي")
-%D9%82%D9%87%D9%88%D8%A9%20%26%20%D8%B4%D8%A7%D9%8A
-~~~
-
-المسافة بقت [[%20]]، و [[&]] بقت [[%26]]. من غيرها، الـ [[&]] كانت هتقطع الـ query لحتتين.
-
-- [[{ signal: controller.signal }]]: اربط الطلب ده بالـ controller، فلو حد عمل abort، الطلب يتلغي.
-- [[return await]]: await هنا مهمة: من غيرها، لو الطلب اتلغى، الـ catch اللي تحت مش هيمسكه.
-
-~~~text app.mjs
-  } catch (err) {
-    if (err.name === "AbortError") return;
-    throw err;
-  }
-}
-~~~
-
-- الإلغاء بيرمي error اسمه [[AbortError]]. ده مش مشكلة، احنا اللي لغيناه، فرجّع من غير حاجة.
-- أي error تاني (404، timeout) ارميه عادي.
-
-### التجربة
-
-نادينا ٣ بحوث ورا بعض بسرعة: [["ق"]] ثم [["قه"]] ثم [["قهوة & شاي"]]:
-
-~~~text الناتج
-   اتلغى: ق | This operation was aborted
-   اتلغى: قه | This operation was aborted
-   [server] GET /search?q=قهوة & شاي application/json -
-results: undefined undefined { q: 'قهوة & شاي' }
-~~~
-
-أول اتنين اتلغوا قبل ما يوصلوا للسيرفر أصلًا، ورجّعوا undefined. وآخر واحد بس هو اللي وصل ورجع. ده بالظبط اللي محتاجه في autocomplete: رد قديم بطيء ميكتبش فوق رد جديد.
-
----
-
-## ٦. AbortSignal.any: timeout وإلغاء مع بعض
-
-فيه مشكلة في [[api]] فوق: [[signal: options.signal ?? AbortSignal.timeout(8000)]]. لو اللي نادى بعت signal (زي [[search]])، الـ timeout **بيضيع**، فطلب البحث ممكن يفضل معلّق للأبد. محتاج signal واحد بيتلغي لو **أي** واحد من الاتنين حصل. ده [[AbortSignal.any([...])]] (Node 20.3+ وكل المتصفحات الحديثة):
-
-~~~text any.mjs
-const user = new AbortController();
-const signal = AbortSignal.any([user.signal, AbortSignal.timeout(300)]);
-await fetch(url, { signal });
-~~~
-
-- [[AbortSignal.any(signals)]]: بتاخد array من الـ signals وترجّع signal جديد بيتعمله abort أول ما **أول** واحد فيهم يتلغي.
-- [[signal.reason]]: سبب الإلغاء، بياخده من الـ signal اللي اتلغى الأول.
-
-جرّبتها على سيرفر محلي بيرد بعد ٢ ثانية، ٣ مرات: مرة سيبت الـ timeout يخلص، ومرة عملت [[user.abort()]] بعد 100ms، ومرة [[user.abort(new Error("اليوزر قفل الصفحة"))]] بعد 50ms:
-
-~~~text الناتج (Node 24)
-TimeoutError | The operation was aborted due to timeout | 316 ms | reason: TimeoutError
-AbortError | This operation was aborted | 108 ms | reason: AbortError
-Error | اليوزر قفل الصفحة | 63 ms | reason: Error
-~~~
-
-- الأول: محدش لغى، فالـ timeout كسب بعد حوالي 300ms، والـ error اسمه [[TimeoutError]].
-- التاني: اليوزر لغى الأول، والـ error [[AbortError]].
-- التالت: [[abort(reason)]] بسبب بتاعك: الـ fetch بيرمي **السبب نفسه** (Error برسالتك)، فـ [[err.name === "AbortError"]] مش هتمسكه. افحص [[signal.aborted]] بدل الاسم لو بتبعت أسباب.
-
-والتصليح في [[api]]:
-
-~~~text app.mjs
-const timeout = AbortSignal.timeout(8000);
-const signal = options.signal ? AbortSignal.any([options.signal, timeout]) : timeout;
-~~~
-
-وكده [[search]] بيقدر يلغي الطلب القديم، وكل طلب برضه ليه حد أقصى ٨ ثواني. ولو signal من اللي في الـ array كان متلغي من الأول، الناتج بيبقى متلغي على طول ([[AbortSignal.any([AbortSignal.abort()]).aborted]] بـ [[true]]).
+[[import()]] Promise عادي، فبيترفض لو الملف مش موجود أو النت قطع. عشان كده في التطبيقات الحقيقية حطه في try/catch واعرض رسالة.
 
 ---
 
 ## الخلاصة
 
-| الحتة | ليه |
-|---|---|
-| [[if (!res.ok) throw]] | fetch مبترميش على 404 و 500 |
-| [[JSON.stringify(body)]] و Content-Type | fetch بتبعت نص، والسيرفر لازم يعرف إنه JSON |
-| [[AbortSignal.timeout(ms)]] | الطلب ميفضلش معلّق للأبد ([[TimeoutError]]) |
-| [[new AbortController()]] و [[abort()]] | تلغي طلب بإيدك ([[AbortError]]) |
-| [[encodeURIComponent]] | أي input من اليوزر في الـ URL |
-| [[res.json()]] أو [[res.text()]] | مرة واحدة بس للـ body |
-| [[AbortSignal.any([a, b])]] | signal بيتلغي مع أول واحد فيهم: إلغاء اليوزر والـ timeout مع بعض |`,
+| | [[import x from "./a.js"]] | [[await import("./a.js")]] |
+|---|---|---|
+| إمتى بيتحمّل | قبل ما أي سطر يشتغل | لما السطر ده يتنفّذ |
+| مكانه | أول الملف بس | أي حتة: if، دالة، onClick |
+| الـ path | نص ثابت | ممكن متغير |
+| الـ default | [[import x]] | [[.default]] |
+| بيرجّع | الـ exports مباشرة في متغيرات | Promise بالـ namespace object |
+
+- الـ bundlers (Vite) بيفصلوا كل ملف عليه [[import()]] في ملف لوحده (chunk)، فالصفحة الأولى تبقى أخف.
+- الملف بيتحمّل مرة واحدة مهما ناديته.`,
           lines: [
-            R`helper للـ API: بياخد path وخيارات. الـ destructuring بيطلّع [[body]] لوحده (عشان هنحوّله لنص)، والباقي كله في [[options]]. و [[= {}]] بتخلي نداءه من غير خيارات ميرميش error.`,
-            R`بيعمل الطلب على عنوان الـ API ومعاه object الإعدادات اللي جاي، و [[await]] بيستنى الرد.`,
-            R`بيفرد كل الخيارات اللي اتبعتت ([[method]] وغيرها) جوه إعدادات [[fetch]]. لازم ييجي الأول عشان اللي تحته يكتب فوقه.`,
-            R`بنحط [[Content-Type]] بـ JSON كافتراضي، وبعدين نفرد [[options.headers]]، فأي header بعته اللي نادى الدالة (زي Authorization) يتضاف أو يغطّي الافتراضي.`,
-            R`[[fetch]] مبيفهمش objects في الـ body، لازم نص. فلو فيه [[body]] بنحوّله بـ [[JSON.stringify]]، ولو مفيش بنبعت [[undefined]] (طلب GET ملوش body أصلًا).`,
-            R`لو اللي نادى بعت [[signal]] بتاعه بنستخدمه، وغير كده [[AbortSignal.timeout]] بيلغي الطلب بعد ٨ ثواني. من غيره طلب معلّق ممكن يفضل مستني للأبد. (الإلغاء بالـ timeout الـ error بتاعه اسمه [[TimeoutError]].) ولو اتبعت signal الـ timeout مبيتحطش خالص، فلو عايز الاتنين ادمجهم بـ [[AbortSignal.any([options.signal, AbortSignal.timeout(8000)])]].`,
-            R`نهاية إعدادات [[fetch]].`,
-            R`404 و 500 مبيرفضوش الـ Promise، فبنرمي error بنفسنا، ومعاه الـ status ونص الرد اللي غالبًا فيه سبب المشكلة من السيرفر، فالـ debugging يبقى أسهل.`,
-            R`الـ status [[204]] (No Content) معناه مفيش body، و [[res.json]] عليه بترمي SyntaxError، فبنرجّع [[null]]. غير كده بنحوّل الرد لـ JSON.`,
-            R`نهاية [[api]].`,
-            R`استخدامه: POST والـ body object عادي، والـ helper بيحوّله لنص ويضيف الـ header. لو مكانش الـ [[await]] هنا، أي error هيبقى unhandled rejection.`,
-            R`[[controller]] برّه الدالة عشان يفضل موجود بين كل نداء والتاني، ويشاور على controller آخر بحث لسه شغال.`,
-            R`[[search]] بتتنادى مع كل حرف بيكتبه اليوزر في خانة البحث، فممكن طلبات كتير تبقى شغالة في نفس الوقت.`,
-            R`قبل أي طلب جديد بنلغي القديم. من غير كده رد قديم بطيء ممكن يوصل بعد الجديد ويكتب فوقه نتايج غلط. و [[?.]] عشان أول مرة [[controller]] لسه [[undefined]].`,
-            R`controller جديد للطلب ده بالذات. الـ controller بيتلغي مرة واحدة بس، فمينفعش نعيد استخدام القديم.`,
-            R`[[try]] عشان نفرّق بين الإلغاء المقصود وبين الـ errors الحقيقية.`,
-            R`[[encodeURIComponent]] بيحوّل المسافات والـ [[&]] والعربي لشكل آمن في الـ URL، وإلا [[&]] في كلمة البحث هتتقري parameter جديد. وبنبعت [[controller.signal]]، فده بيغطّي الـ timeout الافتراضي (الطلب ده مبقاش ليه حد ٨ ثواني).`,
-            R`لو حصل error (شبكة، status غلط، أو إلغاء) بييجي هنا.`,
-            R`لما بنعمل [[abort]]، [[fetch]] بيترفض بـ error اسمه [[AbortError]]. ده إحنا اللي عملناه عن قصد، فبنرجع بهدوء من غير ما نعرض رسالة غلط لليوزر.`,
-            R`أي error تاني (شبكة أو 500) حقيقي، فبنرميه تاني عشان اللي نادى [[search]] يتعامل معاه.`,
-            R`نهاية [[catch]].`,
-            R`نهاية [[search]].`
+            R`زرار التصدير. الكود التقيل بتاع الـ PDF مش هيتحمّل غير لما حد يضغط عليه.`,
+            R`الـ listener [[async]] عشان نقدر نستنى تحميل الملف بـ [[await]] جواه.`,
+            R`[[import()]] بشكل دالة بترجّع Promise بالـ module، والملف بيتحمّل وقت الضغطة بس: الصفحة تفتح أسرع، واللي عمره ما صدّر PDF عمره ما يحمّله. الـ destructuring بيطلّع [[exportToPdf]] من الـ module. وبيتحمّل أول مرة بس، والضغطات اللي بعدها بترجّع نفس الـ module من غير تحميل تاني.`,
+            R`بننادي الدالة اللي لسه متحمّلة. لو التحميل فشل (النت قطع مثلًا) الـ [[await]] اللي فوق هترمي والسطر ده مش هيتنفذ، فيستاهل [[try/catch]] يعرض رسالة لليوزر.`,
+            R`نهاية الـ listener.`,
+            R`[[navigator.language]] لغة المتصفح زي [["ar-EG"]] أو [["en-US"]]. أي حاجة تبدأ بـ [["ar"]] تبقى عربي، وأي حاجة تانية إنجليزي.`,
+            R`الـ path متغير، فالمتصفح بيحمّل ملف لغة واحد بس مش كل اللغات. [[import()]] بترجّع الـ module كله، فالـ default export بييجي من [[.default]]، والأقواس حوالين الـ [[await]] لازمة عشان [[.default]] تتقري من النتيجة مش من الـ Promise. والـ [[await]] هنا top-level، فلازم السكريبت يبقى module.`,
+            R`[[import.meta.env]] بيحطه Vite، و [[DEV]] بتبقى [[true]] في الـ dev server بس. برّه Vite [[import.meta.env]] مش موجود، و [[?.]] بترجّع [[undefined]] بدل ما ترمي TypeError.`,
+            R`بنحمّل ملف الـ mocks في التطوير بس، فكود الداتا المزيّفة عمره ما يتحمّل عند اليوزرز في الـ production.`,
+            R`بنشغّل الـ mocks بعد ما الملف اتحمّل.`,
+            R`نهاية الـ if.`,
           ],
-          sol: R`[[const res = await fetch("/not-found")]] بعدها [[res.ok]] بـ false و [[res.status]] بـ 404، ومفيش error اترمى: fetch بترفض بس لو الطلب نفسه موصلش (نت واقع، DNS، CORS). أي رد من السيرفر، حتى 404 أو 500، يعتبر نجاح. عشان كده الـ [[if (!res.ok) throw]] في الدالة ضروري.
+          sol: R`بعد [[npm run build]] هتلاقي في الـ output ملفين JS مش واحد، حاجة زي [[dist/assets/index-xxxx.js]] (صغير) و [[dist/assets/pdf-export-xxxx.js]] (الملف الكبير لوحده). الاسم فيه hash بيتغير لما المحتوى يتغير. في Network (مع [[npm run preview]]) أول ما الصفحة تفتح هتشوف index بس، ولما تضغط الزرار هتلاقي طلب جديد لـ pdf-export، ومش هيتكرر لو ضغطت تاني لأن الـ module اتعمله cache.
 
-[[AbortSignal.timeout(1)]] بتطلع error اسمه [[TimeoutError]] (في Node الرسالة [[The operation was aborted due to timeout]]، وفي Chrome [[signal timed out]]). لاحظ إنه مش [[AbortError]]: الـ catch في search بيتجاهل AbortError بس، فالـ timeout هيوصل لليوزر كـ error، وده المطلوب (إلغاء مقصود ≠ timeout).`
-        },
-        {
-          cmd: "async في loops",
-          title: "ليه await جوه forEach مش بيستنى؟",
-          desc: R`[[arr.forEach(async (x) => await save(x))]] مبتستناش حاجة: forEach بتنادي الـ callback وبتتجاهل الـ Promise اللي راجع، فالكود اللي بعدها بيشتغل قبل ما أي save يخلص، والأخطاء بتضيع.
-
-لو عايز واحد ورا واحد: [[for...of]] مع await. ولو عايزهم مع بعض: [[Promise.all(arr.map(async ...))]]. ولو كتير وعايز حد أقصى في نفس الوقت: batches أو مكتبة زي p-limit.`,
-          example: R`const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-const save = async (id) => { await wait(100); console.log("saved", id); return id; };
-const ids = [1, 2, 3];
-ids.forEach(async (id) => { await save(id); });
-console.log("forEach خلصت؟ لأ، لسه محدش اتحفظ");
-for (const id of ids) {
-  await save(id);
-}
-const saved = await Promise.all(ids.map((id) => save(id)));
-for (let i = 0; i < ids.length; i += 2) {
-  await Promise.all(ids.slice(i, i + 2).map(save));
-}
-const all = await Array.fromAsync(ids, async (id) => save(id));`,
-          try: R`حط [[console.time("t")]] و [[console.timeEnd("t")]] حوالين كل طريقة وقارن الوقت: for...of حوالي 300ms، و Promise.all حوالي 100ms. وبعدين خلي save ترمي error لـ id 2 وشوف مين بيمسكه ومين لأ.`,
-          practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[async function saveAll(ids) { ids.forEach(async (id) => { await save(id); }); console.log("تم حفظ الكل"); }]] (بـ save اللي في الدرس). اليوزر بيشوف «تم حفظ الكل» قبل ما أي حاجة تتحفظ. صلّحها مرة ورا بعض ومرة مع بعض.`, done: R`قبل التصليح «تم حفظ الكل» أول سطر وبعدها [[saved 1]] و [[saved 2]] و [[saved 3]]. بعد التصليح «تم حفظ الكل» آخر سطر في الحالتين: بـ [[for...of]] في حوالي 300ms، وبـ [[await Promise.all(ids.map(save))]] في حوالي 100ms.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[console.log([1, 2, 3].map(async (x) => x * 2));]] هيطبع إيه في Node؟`, done: R`طلع [[[ Promise { 2 }, Promise { 4 }, Promise { 6 } ] ]] مش [[[2, 4, 6]]]: كل async function بترجّع Promise. والتصليح [[await Promise.all(...)]] بيرجّع [[[ 2, 4, 6 ] ]].` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[inBatches(items, size, fn)]] بتشغّل كل [[size]] مع بعض بـ Promise.all، والدفعة اللي بعدها بعد ما اللي قبلها تخلص، وترجّع كل النتايج بنفس ترتيب الـ input. جرّبها على 5 عناصر و size 2، و fn بتستنى 100ms وترجّع [[x * 10]]، وعلى array فاضية.`, done: R`النتيجة [[[ 10, 20, 30, 40, 50 ]]] بالترتيب في حوالي 300ms (٣ دفعات: ٢ و ٢ و ١)، مش 500 ولا 100. والـ array الفاضية بترجّع [[[]]] من غير ما تنادي fn.` },
-            { lvl: 'تحدي', t: R`**محاكاة:** كاشير: اكتب [[pool(items, limit, fn)]]: أول ما واحد يخلص اللي بعده يبدأ على طول، فدايمًا شغالين [[limit]] (زي ٣ كاشير قدامهم طابور). حط عدّاد [[active]] بيزيد قبل الـ await ويقل بعده واحفظ أكبر قيمة. خلّي الزباين الفردي ياخدوا 150ms والزوجي 100ms.`, done: R`النتايج بنفس ترتيب الـ input حتى لو الزباين خلصوا بترتيب تاني، وأكبر [[active]] بيساوي [[limit]] بالظبط ومبيعدّيهوش. ومع [[limit]] أكبر من عدد العناصر، أكبر active بيساوي عدد العناصر ومفيش worker بيعلّق.` },
-            { lvl: 'تحدي', t: R`**اكتب اختبار:** لـ [[inBatches]] اكتب اختبار بـ fn وهمية بتزوّد عدّاد [[active]] قبل الـ await وتقلّله بعده، وتحفظ أكبر قيمة. اتأكد من ٣ حاجات: الترتيب، وأكبر active، والوقت.`, done: R`على 5 عناصر و size 2 الاختبار بيطبع: الناتج [[[10, 20, 30, 40, 50]]] (true)، وأكبر active بـ 2 (true)، والوقت أقل من 400ms (true). ولو بوّظت inBatches وخليتها Promise.all على الكل، اختبار active بيطبع 5 ويفشل.` }
-          ],
-          flag: "script",
-          deep: {
-            why: "bug منتشر جدًا: «بحفظ كل العناصر وبعدين أبعت رسالة نجاح»، والرسالة بتطلع قبل الحفظ، أو الـ error بيضيع ومحدش يعرف إن نص العناصر متحفظتش.",
-            how: R`[[forEach]] و [[map]] و [[filter]] مبيعرفوش حاجة عن Promises. الـ async callback بيرجّع Promise، و forEach بترميه. و [[filter(async ...)]] أسوأ: كل Promise object truthy، فكل العناصر بتعدّي.
-
-[[for...of]] جوه async function بيستنى كل لفة، فالعمليات ورا بعض. مفيد لما الترتيب مهم، أو كل واحدة معتمدة على اللي قبلها، أو عايز ترحم السيرفر.
-
-[[Promise.all(arr.map(...))]] بيبدأ الكل مرة واحدة ويستناهم. أسرع، بس ممكن يضرب rate limit أو connection pool في قاعدة البيانات.
-
-الـ batches حل وسط: كل مرة n بس. و [[Array.fromAsync]] (ES2026، بس موجودة في Node 22 والمتصفحات الحديثة من بدري) بتعمل array من async iterable أو بتستنى كل عنصر بالترتيب.
-
-و [[for await (const x of stream)]] للـ async iterables زي streams وقراية ملف سطر سطر.`,
-            when: R`for...of للترتيب أو الاعتمادية. Promise.all للعمليات المستقلة القليلة. batches للكتير. ومتستخدمش forEach مع async أبدًا.`,
-            mistakes: R`async في forEach أو filter. و [[await]] جوه for...of لعمليات مستقلة فتبطّأ من غير سبب. و Promise.all على ١٠ آلاف insert. وفي الانترفيو: «إيه المشكلة في الكود ده؟» على forEach مع await.`
-          },
-          teach: R`## الكود ده بيعمل إيه؟
-
-بيحفظ ٣ عناصر بدالة [[save]] بتاخد 100ms، بـ ٥ طرق: [[forEach]] (غلط)، و [[for...of]] (واحد ورا واحد)، و [[Promise.all]] (كلهم مع بعض)، و batches (اتنين اتنين)، و [[Array.fromAsync]]. اتشغّل في Node 24 كملف [[.mjs]]، وقدام كل سطر مطبوع الوقت من أول البرنامج.
-
----
-
-## ١. التجهيز
-
-~~~text app.mjs
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-const save = async (id) => { await wait(100); console.log("saved", id); return id; };
-const ids = [1, 2, 3];
-~~~
-
-- [[wait(ms)]]: Promise بيخلص بعد ms (درس Promise).
-- [[save]]: async arrow function: بتستنى 100ms (كأنها بتكلم قاعدة بيانات)، وتطبع، وترجّع الـ id.
-
----
-
-## ٢. [[forEach]]: مبتستناش
-
-~~~text app.mjs
-ids.forEach(async (id) => { await save(id); });
-console.log("forEach خلصت؟ لأ، لسه محدش اتحفظ");
-~~~
-
-- [[forEach]] بتنادي الـ callback لكل عنصر. الـ callback هنا [[async]]، فبيرجّع Promise.
-- بس forEach **بترمي** اللي الـ callback بيرجّعه، ومبتستناش حاجة. هي نفسها بترجّع [[undefined]] (طبعناها).
-
-~~~text الناتج
-   2ms forEach خلصت؟ لأ، لسه محدش اتحفظ | forEach رجّعت: undefined
- 109ms saved 1
- 110ms saved 2
- 110ms saved 3
-~~~
-
-السطر اللي بعد forEach اتطبع عند 2ms، قبل أي حفظ. والـ ٣ اتحفظوا مع بعض بعد كده، ومحدش استناهم.
-
----
-
-## ٣. [[for...of]]: واحد ورا واحد
-
-~~~text app.mjs
-for (const id of ids) {
-  await save(id);
-}
-~~~
-
-- [[for (const id of ids)]]: لف على عناصر الـ array، وكل لفة id بقيمة عنصر.
-- [[await]] جوه الـ loop: الـ loop **نفسها** بتقف لحد ما save تخلص، وبعدين تروح للفة اللي بعدها.
-
-~~~text الناتج
- 266ms saved 1
- 376ms saved 2
- 484ms saved 3
-~~~
-
-كل واحد بعد اللي قبله بـ 100ms تقريبًا: 300ms كلهم. ده الصح لو الترتيب مهم، أو كل عملية محتاجة اللي قبلها.
-
----
-
-## ٤. [[Promise.all]] مع [[map]]: كلهم مع بعض
-
-~~~text app.mjs
-const saved = await Promise.all(ids.map((id) => save(id)));
-~~~
-
-من جوه لبرّه:
-
-1. [[ids.map((id) => save(id))]]: map بتنادي save لكل عنصر **فورًا**، وبترجّع array فيها ٣ Promises. (map زي forEach مبتستناش، بس على الأقل بترجّع الـ Promises.)
-2. [[Promise.all([...])]]: Promise واحد بيستنى الـ ٣.
-3. [[await]]: استنى، وهات النتايج بالترتيب.
-
-~~~text الناتج
- 592ms saved 1
- 592ms saved 2
- 593ms saved 3
- 593ms saved = [ 1, 2, 3 ]
-~~~
-
-الـ ٣ في نفس اللحظة: 100ms كلهم. أسرع، بس لو عندك ١٠ آلاف عنصر، هتبعت ١٠ آلاف طلب في نفس الوقت.
-
----
-
-## ٥. batches: اتنين اتنين
-
-~~~text app.mjs
-for (let i = 0; i < ids.length; i += 2) {
-  await Promise.all(ids.slice(i, i + 2).map(save));
-}
-~~~
-
-- [[for (let i = 0; i < ids.length; i += 2)]]: loop عادية بس بتزوّد i اتنين كل لفة: i = 0 ثم 2.
-- [[ids.slice(i, i + 2)]]: هات العناصر من i لحد قبل i + 2. فأول لفة [[slice(0, 2)]] = 1 و 2، والتانية [[slice(2, 4)]] = 3 بس (مفيش رابع).
-- [[.map(save)]]: نفس [[.map((id) => save(id))]]، بنبعت الدالة نفسها.
-- [[await Promise.all(...)]]: استنى الدفعة كلها قبل اللي بعدها.
-
-~~~text الناتج
- 702ms saved 1
- 702ms saved 2
- 812ms saved 3
-~~~
-
-1 و 2 مع بعض، وبعد 100ms الـ 3. حل وسط: سريع، ومش بتضرب السيرفر بكل حاجة مرة واحدة.
-
----
-
-## ٦. [[Array.fromAsync]]
-
-~~~text app.mjs
-const all = await Array.fromAsync(ids, async (id) => save(id));
-~~~
-
-بتلف على ids، وتنادي الدالة لكل عنصر، و**تستنى كل واحد قبل اللي بعده**، وترجّع array بالنتايج:
-
-~~~text الناتج
- 921ms saved 1
-1030ms saved 2
-1139ms saved 3
-1139ms all = [ 1, 2, 3 ]
-~~~
-
-يعني زي for...of بالظبط، بس بترجّع array في سطر واحد.
-
----
-
-## ٧. لو save فشلت (التجربة والـ solCode)
-
-خلّينا save ترمي error لـ id 2:
-
-~~~text app.mjs
-try {
-  for (const id of ids) await save(id);
-} catch (e) { console.log("for...of:", e.message); }
-try {
-  await Promise.all(ids.map(save));
-} catch (e) { console.log("Promise.all:", e.message); }
-~~~
-
-~~~text الناتج
-saved 1
-for...of: فشل حفظ 2
-saved 1
-Promise.all: فشل حفظ 2
-saved 3
-~~~
-
-- **for...of**: الـ catch مسك الـ error، والـ loop وقفت، فـ 3 **متحفظش**.
-- **Promise.all**: الـ catch مسك أول فشل، بس [[saved 3]] اتطبعت **بعده**: الـ ٣ كانوا بدأوا خلاص، و Promise.all بتفشل من غير ما تلغي الباقي.
-
-وجرّبنا **forEach** بنفس الـ save جوه try:
-
-~~~text الناتج: Node
-مفيش error هنا
-saved 1
-file:///C:/Users/ali/code/app.mjs:2
-...
-Error: فشل حفظ 2
-
-Node.js v24.19.0
-~~~
-
-الـ try **مامسكش حاجة** (السطر اللي بعد forEach اتطبع عادي)، والـ error طلع unhandled rejection، و Node قفل البرنامج بـ exit code 1 قبل ما يوصل لـ saved 3. وفي Chrome نفس الكود طبع [[saved 1]] و [[saved 3]]، والـ error ظهر أحمر في Console ومحدش مسكه.
-
----
-
-## الخلاصة
-
-| الطريقة | الوقت (3 × 100ms) | الترتيب | الـ error |
-|---|---|---|---|
-| [[forEach(async ...)]] | مبتستناش خالص | مع بعض ومحدش مستني | بيضيع (unhandled) |
-| [[for...of]] + await | ~300ms | واحد ورا واحد | try بيمسكه والباقي يقف |
-| [[Promise.all(map)]] | ~100ms | مع بعض | try بيمسكه، والباقي يكمّل |
-| batches | ~200ms | n في المرة | زي Promise.all جوه كل دفعة |
-| [[Array.fromAsync]] | ~300ms | واحد ورا واحد | try بيمسكه والباقي يقف (اتجرّبت) |
-
-- **متستخدمش forEach مع async أبدًا**. ونفس المشكلة في [[filter(async ...)]]: جرّبناها و رجّعت الـ ٣ عناصر كلهم، لأن كل Promise بيعتبر true.`,
-          lines: [
-            R`[[wait]] بترجّع Promise بيخلص بعد ms، وبنستخدمها نقلّد وقت حفظ حقيقي على سيرفر.`,
-            R`[[save]] حفظ وهمي: بيستنى ١٠٠ms، يطبع «saved» والـ id، ويرجّعه. كده نشوف بالطباعة الترتيب والوقت لكل طريقة loop.`,
-            R`٣ ids هنحفظهم بأكتر من طريقة ونقارن.`,
-            R`[[forEach]] بتنادي الدالة لكل عنصر بس مبتستناش الـ Promise اللي بترجّعه، فالتلاتة بيبدأوا مع بعض والـ loop بتخلص على طول. ومينفعش تعمل [[await]] على [[forEach]] نفسها لأنها بترجّع [[undefined]].`,
-            R`السطر ده بيتطبع قبل أي «saved»، وده الدليل إن [[forEach]] مستنتش. لو بعدها كود معتمد إن الحفظ خلص، هيشتغل على داتا لسه متحفظتش.`,
-            R`[[for...of]] بتحترم [[await]]: اللفة الجاية مش بتبدأ غير لما اللي قبلها تخلص. استخدمها لما الترتيب مهم أو السيرفر مش هيستحمل طلبات كتير مع بعض.`,
-            R`كل حفظ بيستنى اللي قبله، فالتلاتة بياخدوا ٣٠٠ms تقريبًا، وبيتطبعوا 1 و 2 و 3 بالترتيب.`,
-            R`نهاية [[for...of]].`,
-            R`[[map]] بتبدأ التلاتة مع بعض وترجّع array Promises، و [[Promise.all]] تستناهم. الوقت ١٠٠ms تقريبًا بدل ٣٠٠، والنتايج بترتيب الـ ids. بس لو واحد فشل الكل بيترفض.`,
-            R`batches: [[i]] بيزيد ٢ كل لفة، فبنشتغل على دفعات ٢ في المرة. ده الحل الوسط لما الـ ids كتير وعايز سرعة من غير ما تضرب السيرفر بألف طلب مرة واحدة.`,
-            R`[[slice]] بتاخد الدفعة الحالية (عنصرين)، و [[Promise.all]] بتشغّلهم مع بعض، و [[await]] بيستناهم قبل الدفعة اللي بعدها.`,
-            R`نهاية loop الـ batches.`,
-            R`[[Array.fromAsync]] بتعدّي على العناصر وتستنى دالة الـ map لكل عنصر قبل اللي بعده (ورا بعض زي [[for...of]])، وترجّع array النتايج. موجودة في Node 22 والمتصفحات الحديثة.`
-          ],
-          sol: R`مع [[console.time]]: forEach بتقول حوالي 0ms لأنها مبتستناش أي حاجة (الحفظ بيحصل بعدين)، و for...of حوالي 300ms، و Promise.all حوالي 100ms.
-
-لما save ترمي لـ id 2: مع forEach الـ error مش بيتمسك بأي try/catch حواليها، وبيطلع unhandled rejection: Node بيقفل البرنامج بـ exit code 1 قبل ما id 3 يتحفظ، وفي المتصفح id 3 بيتحفظ عادي والـ error بيظهر أحمر في Console. مع for...of الـ try/catch بيمسكه، و id 3 مبيتحفظش لأن الـ loop وقفت. مع Promise.all الـ catch بيمسكه بعد 100ms، بس id 3 بيتحفظ برضه لأن الـ promises كانت بدأت كلها، و Promise.all بترفض عند أول فشل من غير ما تلغي الباقي. لو عايز كل النتايج استخدم allSettled.`,
-          solCode: R`const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-const save = async (id) => {
-  await wait(100);
-  if (id === 2) throw new Error("فشل حفظ " + id);
-  console.log("saved", id);
-};
-const ids = [1, 2, 3];
-try {
-  for (const id of ids) await save(id); // saved 1 ثم يقف
-} catch (e) { console.log("for...of:", e.message); }
-try {
-  await Promise.all(ids.map(save));     // saved 1 و saved 3، والـ catch بيمسك 2
-} catch (e) { console.log("Promise.all:", e.message); }`
+لو ملقتش chunk منفصل، يبقى نفس الملف متعمله import عادي (static) في حتة تانية، فـ Vite حطه في الـ bundle الأساسي. الـ dynamic import بيفصل الملف بس لو ده الطريق الوحيد ليه.`
         }
       ]
     }

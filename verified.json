@@ -9549,6 +9549,11 @@
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
+ "js|++ و -- و += وأخواتها": {
+  "hash": "b0968b3d6690",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
+ },
  "js|== و ===": {
   "hash": "988fc1105448",
   "date": "2026-11-03",
@@ -9558,6 +9563,11 @@
   "hash": "11a141f63b54",
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|BigInt بعمق": {
+  "hash": "ffc148094d96",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
  },
  "js|Clipboard و Geolocation و Share": {
   "hash": "d18f29aa3559",
@@ -9609,6 +9619,11 @@
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
+ "js|Intl.Segmenter": {
+  "hash": "3abaa9db586c",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
+ },
  "js|JSON": {
   "hash": "1f1da0771004",
   "date": "2026-11-03",
@@ -9619,6 +9634,21 @@
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
+ "js|Math.sumPrecise و fround و f16round": {
+  "hash": "d1ea14c138a6",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
+ },
+ "js|Math: أسس وجذور ولوغاريتمات ومثلثات": {
+  "hash": "0188bbb9f90b",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
+ },
+ "js|Math: التقريب و min و max": {
+  "hash": "329c42184bdb",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
+ },
  "js|MutationObserver": {
   "hash": "14d558ed74e9",
   "date": "2026-10-29",
@@ -9628,6 +9658,16 @@
   "hash": "617f2d1ecfcb",
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|Number: toFixed و toString و toLocaleString": {
+  "hash": "d396d940d17b",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
+ },
+ "js|Number: الثوابت والفحص والتحويل": {
+  "hash": "fad551398ad5",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
  },
  "js|Object.keys و entries": {
   "hash": "66bdb6435734",
@@ -9723,6 +9763,11 @@
   "hash": "4db4b2d90825",
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|bitwise و shifts": {
+  "hash": "14476fc2e6b1",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
  },
  "js|blocking و الـ main thread": {
   "hash": "c6dbbb980cea",
@@ -9829,6 +9874,11 @@
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
+ "js|escape sequences و String.raw": {
+  "hash": "c728856b98ad",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
+ },
  "js|event delegation": {
   "hash": "b791fa866138",
   "date": "2026-11-03",
@@ -9914,6 +9964,11 @@
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
+ "js|isWellFormed و toWellFormed": {
+  "hash": "c6783a35e077",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
+ },
  "js|iterators و generators": {
   "hash": "9f6c79084226",
   "date": "2026-11-03",
@@ -9954,6 +10009,11 @@
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
+ "js|normalize و التشكيل": {
+  "hash": "eed49fa466fe",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
+ },
  "js|null و undefined": {
   "hash": "bd33665ec040",
   "date": "2026-10-29",
@@ -9964,6 +10024,11 @@
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
+ "js|numeric literals و numeric separators": {
+  "hash": "fdacdb70fb5a",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
+ },
  "js|object destructuring و spread": {
   "hash": "1a0b1c44f3b0",
   "date": "2026-11-03",
@@ -9973,6 +10038,16 @@
   "hash": "396283dffb2d",
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+ },
+ "js|operator precedence و grouping و comma": {
+  "hash": "caf594ce8e4e",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
+ },
+ "js|padEnd و trimEnd": {
+  "hash": "8da7bf0b98f9",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
  },
  "js|polyfills: map و bind": {
   "hash": "0393a45ea7fb",
@@ -10014,10 +10089,15 @@
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
+ "js|regex والعربي: Unicode properties": {
+  "hash": "e7a905feeda6",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
+ },
  "js|regex: classes و quantifiers": {
-  "hash": "74d7bd0b1f2e",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "338232d5a3cf",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
  },
  "js|scope": {
   "hash": "24c32339ab85",
@@ -10039,10 +10119,25 @@
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
+ "js|string literals و String()": {
+  "hash": "d3600a39ca3b",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
+ },
  "js|string methods": {
   "hash": "7d75be6f2041",
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+ },
+ "js|string و UTF-16: length و codePointAt": {
+  "hash": "c6173136c978",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
+ },
+ "js|string: indexOf و substring و concat": {
+  "hash": "3eeb5c4bcb97",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
  },
  "js|switch ولا object lookup": {
   "hash": "9ab996fe5bab",
@@ -10068,6 +10163,11 @@
   "hash": "903a18b6fb79",
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+ },
+ "js|toUpperCase و toLocaleUpperCase": {
+  "hash": "07ddb43a77b7",
+  "date": "2026-11-20",
+  "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
  },
  "js|truthy و falsy": {
   "hash": "9378d9d793f4",
