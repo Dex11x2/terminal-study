@@ -5,12 +5,1250 @@ MORE("css", [
       l: 2,
       n: "cn بيدمج الكلاسات، و cva بيعمل variants، و shadcn بينسخ مكونات accessible جاهزة في مشروعك",
       projects: [
-        { lvl: 'صغير', t: R`cn من الصفر بالاختبارات`, what: R`اكتب [[cn]] بنفسك (clsx و twMerge)، وملف اختبارات فيه ١٠ حالات منهم حالة [[text-display]] المخصوص و [[extendTailwindMerge]]. من درس [[cn()]].`, done: R`[[node --test]] بيعدّي الـ ١٠، وفيه README سطرين بيقولوا إمتى تحتاج [[extendTailwindMerge]].` },
-        { lvl: 'صغير', t: R`Badge بـ cva`, what: R`[[Badge]] بـ ٤ ألوان × شكلين، وكلها من توكنز، ومعاه [[className]] من برا عن طريق cn. من درس [[cva]].`, done: R`الـ ٨ تركيبات في صفحة واحدة، و TypeScript بيرفض قيمة مش موجودة، و [[className="px-1"]] بيكسب على padding الـ badge.` },
-        { lvl: 'متوسط', t: R`Button kit بكل الحالات`, what: R`زرار بـ cva فيه ٤ أشكال × ٣ أحجام، وحالات hover و active و focus-visible و disabled و loading، و [[asChild]] بـ [[Slot]] عشان يبقى لينك من غير ما تكرر الكلاسات. من دروس [[cn()]] و [[cva]] و [[shadcn/ui]].`, done: R`صفحة بتعرض الـ ١٢ تركيبة × الحالات، و [[<Button asChild><a href="/x">]] بيطلع [[<a>]] حقيقي بنفس الشكل، واختبار التعارض (twMerge على كل تركيبة) بيعدّي.` },
-        { lvl: 'متوسط', t: R`صفحة أسعار من بيانات`, what: R`array فيها ٣ باقات (اسم، وسعر شهري وسنوي، ومميزات، و [[highlighted]])، وكارت بـ cva و subgrid (درس [[subgrid]])، و toggle شهري وسنوي، وزرار الاشتراك بيفتح Dialog تأكيد. بيجمع [[cva]] و [[Dialog]].`, done: R`تغيير الـ array بس بيغيّر الصفحة كلها، والكروت متصفة، والـ Dialog بيرجّع الـ focus للزرار اللي فتحه، ومفيش scroll أفقي على 360.` },
-        { lvl: 'كبير', t: R`مكتبة مكونات صغيرة بصفحة توثيق`, what: R`مشروع Vite + React + Tailwind v4 فيه: Button و Badge و Card و Input و Dialog و Sheet، كل واحد بـ cva و cn، وألوان من [[@theme inline]] بتشتغل في light و dark، وعربي وإنجليزي بـ utilities منطقية. وصفحة توثيق بتعرض كل variant وكوده، واختبارات لـ cn والـ variants، واختبار Playwright للـ Dialog والـ Sheet، وفحص axe على صفحة التوثيق. بيجمع الوحدة دي مع وحدة Tailwind.`, done: R`[[npm test]] بيعدّي (cn و variants و Playwright)، و axe على صفحة التوثيق صفر مشاكل في الثيمين، و [[npm run build]] بيعدّي من غير warnings، وكل مكون بيقبل [[className]] من برا وبيكسب، وفيه [[CHANGELOG.md]] بأول نسخة.`, ext: R`انشرها كـ registry لـ shadcn (ملف JSON لكل مكون)، وزوّد Combobox و Toast، و visual regression بلقطات Playwright بتفشل لو مكون اتغيّر شكله.` },
-        { lvl: 'فكرة', t: R`design system بتاعك`, what: R`قرّر الهوية (ألوان وخطوط وتدوير ومسافات) واعمل منها مكتبة مكونات بالأسماء اللي تناسب مشروع حقيقي عندك، وانقل شاشة كاملة من مشروعك ليها.`, done: R`الشاشة المنقولة مفيهاش ولا كلاس لون أو تدوير مكتوب بإيدك برا المكونات، وفيه صفحة توثيق بتعرض كل مكون.`, ext: R`اعمل registry بتاعك (ملف JSON زي shadcn) عشان تضيف مكوناتك لأي مشروع بأمر واحد، وزوّد visual regression بلقطات Playwright.` },
+        { lvl: 'صغير', dir: "cn-tests", t: R`cn من الصفر بالاختبارات`, what: R`اكتب [[cn]] بنفسك (clsx و twMerge)، وملف اختبارات فيه ١٠ حالات منهم حالة [[text-display]] المخصوص و [[extendTailwindMerge]]. من درس [[cn()]].`, done: R`[[node --test]] بيعدّي الـ ١٠، وفيه README سطرين بيقولوا إمتى تحتاج [[extendTailwindMerge]].`, sol: R`~~~bash الترمنال
+npm init -y
+npm i clsx@2.1.1 tailwind-merge@3.7.0
+node --test
+~~~
+
+~~~js cn.mjs
+import { clsx } from "clsx";
+import { twMerge, extendTailwindMerge } from "tailwind-merge";
+
+// cn = clsx (join, skip false/null, read objects and arrays) + twMerge (the LAST class of the same kind wins)
+export function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}
+
+// our project has a custom font size "text-display" (from @theme: --text-display).
+// twMerge doesn't know it, so we tell it: "text-display" belongs to the font-size group
+const twMergeApp = extendTailwindMerge({
+  extend: { classGroups: { "font-size": [{ text: ["display"] }] } },
+});
+export function cnApp(...inputs) {
+  return twMergeApp(clsx(inputs));
+}
+~~~
+
+~~~js cn.test.mjs
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { cn, cnApp } from "./cn.mjs";
+
+test("1. joins classes", () => assert.equal(cn("p-4", "font-bold"), "p-4 font-bold"));
+test("2. skips false, null, undefined, empty", () => assert.equal(cn("p-4", false, null, undefined, "", "m-2"), "p-4 m-2"));
+test("3. object: only the true keys", () => assert.equal(cn("btn", { "opacity-50": true, hidden: false }), "btn opacity-50"));
+test("4. arrays, even nested", () => assert.equal(cn(["p-4", ["m-2", ["text-sm"]]]), "p-4 m-2 text-sm"));
+test("5. the last padding wins", () => assert.equal(cn("p-4", "p-2"), "p-2"));
+test("6. px after p: keeps p, overrides x only", () => assert.equal(cn("p-4", "px-2"), "p-4 px-2"));
+test("7. same property, different variant: both stay", () => assert.equal(cn("bg-red-500", "hover:bg-blue-500"), "bg-red-500 hover:bg-blue-500"));
+test("8. className from outside beats the default", () => assert.equal(cn("rounded-lg bg-brand px-4", "px-1"), "rounded-lg bg-brand px-1"));
+test("9. text-display + text-red-500 with plain cn: one is LOST (twMerge thinks both are colours)", () =>
+  assert.equal(cn("text-display", "text-red-500"), "text-red-500"));
+test("10. with extendTailwindMerge both stay (size and colour are different groups)", () =>
+  assert.equal(cnApp("text-display", "text-red-500"), "text-display text-red-500"));
+~~~
+
+~~~text README.md
+# cn
+
+تحتاج $__btextendTailwindMerge$__bt لما يبقى عندك كلاس من عندك (من $__bt@theme$__bt) اسمه شبه كلاس Tailwind بيعمل حاجة تانية، زي $__bttext-display$__bt (مقاس خط) و $__bttext-red-500$__bt (لون): twMerge بيفتكرهم نفس النوع ويمسح واحد.
+قولّه الكلاس بتاعك تبع أنهي مجموعة ($__btfont-size$__bt هنا)، وهو يدمج صح.
+~~~
+
+**هتشوف إيه:** مفيش صفحة هنا: الناتج هو [[node --test]] بيطبع ✔ قدام الـ ١٠ حالات.
+
+**[[cn]] = حاجتين ورا بعض:**
+- [[clsx]] بيجمع: نصوص، و objects (المفتاح بيدخل لو قيمته true)، و arrays جوه arrays، ويرمي [[false]] و [[null]] و [[undefined]] و [[""]].
+- [[twMerge]] بيشيل التعارض: لو فيه كلاسين بيعملوا نفس الحاجة ([[p-4]] و [[p-2]])، **الأخير** بيكسب والأول بيتمسح. ده اللي بيخلي [[className]] اللي جاي من برّه يغلب الافتراضي في أي مكون.
+
+**الحالات اللي محتاجة تفكير:** (٦) [[p-4 px-2]]: الاتنين بيفضلوا، لأن [[px-2]] بيغيّر الأفقي بس. (٧) [[bg-red-500 hover:bg-blue-500]]: الاتنين بيفضلوا، لأن الـ variant مختلف.
+
+**الحالة ٩ و ١٠ (ليه [[extendTailwindMerge]]):** [[text-display]] مقاس خط من [[@theme]] بتاعك ([[--text-display]]). [[twMerge]] ميعرفوش، وشايف [[text-]] في الأول، فبيفتكره لون زي [[text-red-500]] ويمسح واحد منهم. الاختبار ٩ بيثبت المشكلة (طلع [[text-red-500]] بس). [[extendTailwindMerge]] بيقوله إن [[display]] تبع مجموعة [[font-size]]، فبيسيب الاتنين (اختبار ١٠).
+
+~~~text node --test
+✔ 1. joins classes
+✔ 2. skips false, null, undefined, empty
+✔ 3. object: only the true keys
+✔ 4. arrays, even nested
+✔ 5. the last padding wins
+✔ 6. px after p: keeps p, overrides x only
+✔ 7. same property, different variant: both stay
+✔ 8. className from outside beats the default
+✔ 9. text-display + text-red-500 with plain cn: one is LOST (twMerge thinks both are colours)
+✔ 10. with extendTailwindMerge both stay (size and colour are different groups)
+ℹ tests 10
+ℹ pass 10
+ℹ fail 0
+~~~` },
+        { lvl: 'صغير', dir: "badge-cva", t: R`Badge بـ cva`, what: R`[[Badge]] بـ ٤ ألوان × شكلين، وكلها من توكنز، ومعاه [[className]] من برا عن طريق cn. من درس [[cva]].`, done: R`الـ ٨ تركيبات في صفحة واحدة، و TypeScript بيرفض قيمة مش موجودة، و [[className="px-1"]] بيكسب على padding الـ badge.`, sol: R`~~~text badge-cva/
+index.html  vite.config.ts  tsconfig.json  .gitignore  package.json
+src/main.tsx  src/index.css  src/lib/cn.ts  src/components/badge.tsx  src/App.tsx
+~~~
+
+~~~bash الترمنال
+npm init -y
+npm i react@19.3.1 react-dom@19.3.1 class-variance-authority@0.7.1 clsx@2.1.1 tailwind-merge@3.7.0 radix-ui@1.8.1
+npm i -D vite@8.3.6 @vitejs/plugin-react@6.2.1 typescript@7.0.2 @types/react@19.3.0 @types/react-dom@19.3.0 tailwindcss@4.3.4 @tailwindcss/vite@4.3.4
+npx tsc -p .          # فحص الأنواع
+npx vite              # تشغيل وانت بتكتب
+npx vite build        # النسخة النهائية في dist/
+~~~
+
+~~~ts vite.config.ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+});
+~~~
+
+~~~json tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "types": ["vite/client"]
+  },
+  "include": ["src"]
+}
+~~~
+
+~~~text .gitignore
+node_modules/
+dist/
+test-results/
+playwright-report/
+*.log
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Badge بـ cva</title>
+</head>
+<body>
+<div id="root"></div>
+<script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
+~~~
+
+~~~tsx src/main.tsx
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import App from "./App";
+
+createRoot(document.getElementById("root")!).render(<StrictMode><App /></StrictMode>);
+~~~
+
+~~~css src/index.css
+@import "tailwindcss";
+
+/* the components use these names only: bg-surface, text-fg, bg-primary… never a palette colour */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-ring: var(--ring);
+  --font-sans: system-ui, "Segoe UI", Tahoma, sans-serif;
+}
+
+:root {
+  --bg: #f8fafc; --surface: #ffffff; --fg: #0f172a; --muted: #475569; --line: #e2e8f0;
+  --primary: #4338ca; --on-primary: #ffffff; --primary-soft: #e0e7ff;
+  --ok: #15803d; --ok-soft: #dcfce7; --warn: #a16207; --warn-soft: #fef9c3;
+  --danger: #b91c1c; --danger-soft: #fee2e2; --ring: #f59e0b;
+}
+[data-theme="dark"] {
+  --bg: #0b1120; --surface: #111827; --fg: #e5e7eb; --muted: #9ca3af; --line: #1f2937;
+  --primary: #a5b4fc; --on-primary: #0b1120; --primary-soft: #1e1b4b;
+  --ok: #4ade80; --ok-soft: #052e16; --warn: #facc15; --warn-soft: #422006;
+  --danger: #f87171; --danger-soft: #450a0a; --ring: #fbbf24;
+}
+
+body { background: var(--bg); color: var(--fg); font-family: var(--font-sans); }
+~~~
+
+~~~ts src/lib/cn.ts
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+// join the classes, then let the LAST class of the same kind win (so className from outside beats the defaults)
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+~~~
+
+~~~tsx src/components/badge.tsx
+import type { ComponentProps } from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "../lib/cn";
+
+// the shared look, then a table: every tone and every look, and what to use when nothing is passed
+export const badgeVariants = cva(
+  "inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold",
+  {
+    variants: {
+      tone: {
+        primary: "",
+        ok: "",
+        warn: "",
+        danger: "",
+      },
+      look: {
+        soft: "",
+        solid: "text-on-primary",
+      },
+    },
+    // tone and look together decide the colours
+    compoundVariants: [
+      { tone: "primary", look: "soft", class: "bg-primary-soft text-primary" },
+      { tone: "ok", look: "soft", class: "bg-ok-soft text-ok" },
+      { tone: "warn", look: "soft", class: "bg-warn-soft text-warn" },
+      { tone: "danger", look: "soft", class: "bg-danger-soft text-danger" },
+      { tone: "primary", look: "solid", class: "bg-primary" },
+      { tone: "ok", look: "solid", class: "bg-ok" },
+      { tone: "warn", look: "solid", class: "bg-warn" },
+      { tone: "danger", look: "solid", class: "bg-danger" },
+    ],
+    defaultVariants: { tone: "primary", look: "soft" },
+  },
+);
+
+type BadgeProps = ComponentProps<"span"> & VariantProps<typeof badgeVariants>;
+
+export function Badge({ tone, look, className, ...props }: BadgeProps) {
+  // className from outside goes LAST into cn, so it wins over the defaults
+  return <span className={cn(badgeVariants({ tone, look }), className)} {...props} />;
+}
+~~~
+
+~~~tsx src/App.tsx
+import { Badge } from "./components/badge";
+
+const tones = ["primary", "ok", "warn", "danger"] as const;
+const looks = ["soft", "solid"] as const;
+const labels = { primary: "جديد", ok: "اتسلّم", warn: "متأخر", danger: "اتلغى" };
+
+export default function App() {
+  return (
+    <main className="mx-auto max-w-2xl space-y-6 p-4">
+      <h1 className="text-2xl font-bold">Badge: ٤ ألوان × شكلين</h1>
+      {looks.map(look => (
+        <section key={look} className="space-y-2">
+          <h2 className="font-semibold text-muted">{look === "soft" ? "فاتح" : "مليان"}</h2>
+          <div className="flex flex-wrap gap-2">
+            {tones.map(tone => <Badge key={tone} tone={tone} look={look}>{labels[tone]}</Badge>)}
+          </div>
+        </section>
+      ))}
+      <section className="space-y-2">
+        <h2 className="font-semibold text-muted">className من برّه: px-1 بيكسب على px-2.5</h2>
+        <div className="flex gap-2"><Badge>عادي</Badge><Badge className="px-1" data-test="override">px-1</Badge></div>
+      </section>
+    </main>
+  );
+}
+~~~
+
+~~~view 420 520 الشكل النهائي (المعاينة: الصفحة بعد ما React رسمها، من غير JavaScript)
+<!doctype html>
+<html lang="ar" dir="rtl"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Badge بـ cva</title>
+  
+  
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-space-y-reverse:0;--tw-font-weight:initial}}}@layer theme{:root,:host{--font-sans:system-ui, "Segoe UI", Tahoma, sans-serif;--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--spacing:.25rem;--container-2xl:42rem;--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--font-weight-semibold:600;--font-weight-bold:700;--default-font-family:system-ui, "Segoe UI", Tahoma, sans-serif;--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.mx-auto{margin-inline:auto}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.max-w-2xl{max-width:var(--container-2xl)}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.gap-2{gap:calc(var(--spacing) * 2)}:where(.space-y-2>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-6>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)))}.rounded-full{border-radius:2147483647px}.bg-danger{background-color:var(--danger)}.bg-danger-soft{background-color:var(--danger-soft)}.bg-ok{background-color:var(--ok)}.bg-ok-soft{background-color:var(--ok-soft)}.bg-primary{background-color:var(--primary)}.bg-primary-soft{background-color:var(--primary-soft)}.bg-warn{background-color:var(--warn)}.bg-warn-soft{background-color:var(--warn-soft)}.p-4{padding:calc(var(--spacing) * 4)}.px-1{padding-inline:var(--spacing)}.px-2\.5{padding-inline:calc(var(--spacing) * 2.5)}.py-0\.5{padding-block:calc(var(--spacing) * .5)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.text-danger{color:var(--danger)}.text-muted{color:var(--muted)}.text-ok{color:var(--ok)}.text-on-primary{color:var(--on-primary)}.text-primary{color:var(--primary)}.text-warn{color:var(--warn)}}:root{--bg:#f8fafc;--surface:#fff;--fg:#0f172a;--muted:#475569;--line:#e2e8f0;--primary:#4338ca;--on-primary:#fff;--primary-soft:#e0e7ff;--ok:#15803d;--ok-soft:#dcfce7;--warn:#a16207;--warn-soft:#fef9c3;--danger:#b91c1c;--danger-soft:#fee2e2;--ring:#f59e0b}[data-theme=dark]{--bg:#0b1120;--surface:#111827;--fg:#e5e7eb;--muted:#9ca3af;--line:#1f2937;--primary:#a5b4fc;--on-primary:#0b1120;--primary-soft:#1e1b4b;--ok:#4ade80;--ok-soft:#052e16;--warn:#facc15;--warn-soft:#422006;--danger:#f87171;--danger-soft:#450a0a;--ring:#fbbf24}body{background:var(--bg);color:var(--fg);font-family:var(--font-sans)}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-font-weight{syntax:"*";inherits:false}
+
+</style>
+</head>
+<body>
+<div id="root"><main class="mx-auto max-w-2xl space-y-6 p-4"><h1 class="text-2xl font-bold">Badge: ٤ ألوان × شكلين</h1><section class="space-y-2"><h2 class="font-semibold text-muted">فاتح</h2><div class="flex flex-wrap gap-2"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-primary-soft text-primary">جديد</span><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-ok-soft text-ok">اتسلّم</span><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-warn-soft text-warn">متأخر</span><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-danger-soft text-danger">اتلغى</span></div></section><section class="space-y-2"><h2 class="font-semibold text-muted">مليان</h2><div class="flex flex-wrap gap-2"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold text-on-primary bg-primary">جديد</span><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold text-on-primary bg-ok">اتسلّم</span><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold text-on-primary bg-warn">متأخر</span><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold text-on-primary bg-danger">اتلغى</span></div></section><section class="space-y-2"><h2 class="font-semibold text-muted">className من برّه: px-1 بيكسب على px-2.5</h2><div class="flex gap-2"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-primary-soft text-primary">عادي</span><span class="inline-flex items-center rounded-full py-0.5 text-sm font-semibold bg-primary-soft text-primary px-1" data-test="override">px-1</span></div></section></main></div>
+
+
+</body></html>
+~~~
+
+**هتشوف إيه:** سطرين شارات: فاتح (جديد، واتسلّم، ومتأخر، واتلغى بخلفيات فاتحة) ومليان (نفس الألوان مليانة وكلامها أبيض)، وتحتهم شارتين: عادية، والتانية [[px-1]] أضيق.
+
+**[[cva]] بيعمل جدول:** الكلاسات المشتركة (كبسولة، وخط صغير تقيل)، وبعدين [[variants]]: [[tone]] (٤) و [[look]] (٢)، و [[defaultVariants]] لو محدش بعت. وبيرجّع دالة: [[badgeVariants({ tone: "ok", look: "solid" })]] ← نص الكلاسات.
+
+**[[compoundVariants]]:** اللون بيعتمد على الاتنين مع بعض: «ok + soft» خلفية فاتحة وكلام أخضر، و «ok + solid» خلفية خضرا. فالـ [[tone]] والـ [[look]] نفسهم فاضيين، والتركيبات الـ ٨ في [[compoundVariants]].
+
+**التوكنز:** كل الألوان من [[@theme inline]] ([[bg-ok-soft]] و [[text-ok]]…)، فالمكون شغال في الثيم الغامق من غير ولا [[dark:]].
+
+**TypeScript بيرفض القيمة الغلط:** [[VariantProps<typeof badgeVariants>]] بيطلّع الأنواع من الجدول نفسه، فـ [[tone="pink"]] error وانت بتكتب.
+
+**[[className]] بيكسب:** [[cn(badgeVariants(...), className)]]: الـ className في الآخر، و [[twMerge]] بيمسح [[px-2.5]] لما ييجي [[px-1]].
+
+**[[.gitignore]] مش رفاهية هنا:** Tailwind 4 بيدوّر على الكلاسات في كل ملفات المشروع، ما عدا اللي في [[.gitignore]]. من غيره بيقرا [[dist/]] (الـ JS بتاع البناء اللي فات) وأي ملف تاني، ويولّد كلاسات ملهاش لازمة. اتقاس في مشروع المكتبة: الـ CSS بقى 28.92KB في البناء التاني، ومع [[.gitignore]] رجع 14.17KB.
+
+**[[types: ["vite/client"]]] في tsconfig:** من غيره TypeScript 7 قال [[error TS2882: Cannot find module or type declarations for side-effect import of './index.css']]: مبيعرفش يعني إيه [[import]] لملف CSS. أنواع Vite بتعرّفه.
+
+~~~text الناتج
+npx tsc -p .          (من غير رسايل = الأنواع سليمة)
+tsc على ملف فيه <Badge tone="pink">:
+src/wrong.tsx(2,25): error TS2322: Type '"pink"' is not assignable to type '"danger" | "ok" | "primary" | "warn" | null | undefined'.
+
+npx vite build
+dist/assets/index-BX7F2VyS.css    7.07 kB │ gzip:  2.34 kB
+✓ built in 166ms
+
+Chrome 157: 10 شارات، padding-inline-start العادية 10px والـ px-1 = 4px
+المليانة: rgb(67, 56, 202) و rgb(21, 128, 61) و rgb(161, 98, 7) و rgb(185, 28, 28)، والكلام rgb(255, 255, 255)
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'متوسط', dir: "button-kit", t: R`Button kit بكل الحالات`, what: R`زرار بـ cva فيه ٤ أشكال × ٣ أحجام، وحالات hover و active و focus-visible و disabled و loading، و [[asChild]] بـ [[Slot]] عشان يبقى لينك من غير ما تكرر الكلاسات. من دروس [[cn()]] و [[cva]] و [[shadcn/ui]].`, done: R`صفحة بتعرض الـ ١٢ تركيبة × الحالات، و [[<Button asChild><a href="/x">]] بيطلع [[<a>]] حقيقي بنفس الشكل، واختبار التعارض (twMerge على كل تركيبة) بيعدّي.`, sol: R`ملفات الإعداد ([[vite.config.ts]] و [[tsconfig.json]] و [[.gitignore]] و [[src/main.tsx]] و [[src/index.css]] و [[src/lib/cn.ts]]) زي مشروع «Badge بـ cva» بالظبط، وأوامر التثبيت نفسها.
+
+~~~ts src/components/button-variants.ts
+import { cva, type VariantProps } from "class-variance-authority";
+
+export const buttonVariants = cva(
+  // shared: layout, focus ring, disabled, and the loading look (from aria-busy)
+  "inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors " +
+    "focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring " +
+    "disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress",
+  {
+    variants: {
+      variant: {
+        solid: "bg-primary text-on-primary hover:opacity-90 active:opacity-80",
+        soft: "bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30",
+        outline: "border border-primary text-primary hover:bg-primary-soft active:bg-primary/20",
+        ghost: "text-primary hover:bg-primary-soft active:bg-primary/20",
+      },
+      size: {
+        sm: "h-8 px-3 text-sm",
+        md: "h-10 px-4",
+        lg: "h-12 px-6 text-lg",
+      },
+    },
+    defaultVariants: { variant: "solid", size: "md" },
+  },
+);
+
+export type ButtonVariantProps = VariantProps<typeof buttonVariants>;
+~~~
+
+~~~tsx src/components/button.tsx
+import type { ComponentProps } from "react";
+import { Slot } from "radix-ui";
+import { cn } from "../lib/cn.ts";
+import { buttonVariants, type ButtonVariantProps } from "./button-variants.ts";
+
+type ButtonProps = ComponentProps<"button"> & ButtonVariantProps & {
+  asChild?: boolean;     // true: no <button>; the classes go on the child (an <a> for example)
+  loading?: boolean;
+};
+
+export function Button({ variant, size, asChild, loading, className, disabled, children, ...props }: ButtonProps) {
+  const classes = cn(buttonVariants({ variant, size }), className);
+  if (asChild) return <Slot.Root className={classes} {...props}>{children}</Slot.Root>;
+  return (
+    <button
+      className={classes}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
+      {...props}
+    >
+      {loading && <span aria-hidden="true" className="size-4 animate-spin rounded-full border-2 border-current border-e-transparent motion-reduce:animate-none" />}
+      {children}
+    </button>
+  );
+}
+~~~
+
+~~~tsx src/App.tsx
+import { Button } from "./components/button.tsx";
+
+const variants = ["solid", "soft", "outline", "ghost"] as const;
+const sizes = ["sm", "md", "lg"] as const;
+const names = { solid: "مليان", soft: "فاتح", outline: "بحد", ghost: "شفاف" };
+
+export default function App() {
+  return (
+    <main className="mx-auto max-w-4xl space-y-8 p-4">
+      <h1 className="text-2xl font-bold">زراير: ٤ أشكال × ٣ مقاسات</h1>
+      {variants.map(v => (
+        <section key={v} className="space-y-3">
+          <h2 className="font-semibold text-muted">{names[v]}</h2>
+          <div className="flex flex-wrap items-center gap-3">
+            {sizes.map(s => <Button key={s} variant={v} size={s}>احجز ({s})</Button>)}
+            <Button variant={v} disabled>مقفول</Button>
+            <Button variant={v} loading>بيحفظ</Button>
+          </div>
+        </section>
+      ))}
+      <section className="space-y-3">
+        <h2 className="font-semibold text-muted">asChild: لينك بشكل زرار</h2>
+        <Button asChild variant="outline"><a href="#pricing">شوف الأسعار</a></Button>
+      </section>
+    </main>
+  );
+}
+~~~
+
+~~~ts button.test.ts
+// node --test : every one of the 12 combinations, with className from outside, keeps ONE padding and ONE height
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { buttonVariants } from "./src/components/button-variants.ts";
+import { cn } from "./src/lib/cn.ts";
+
+for (const variant of ["solid", "soft", "outline", "ghost"] as const) {
+  for (const size of ["sm", "md", "lg"] as const) {
+    test(variant + " " + size + " + px-1 h-20", () => {
+      const out = cn(buttonVariants({ variant, size }), "px-1 h-20").split(" ");
+      assert.deepEqual(out.filter(c => /^px-/.test(c)), ["px-1"]);   // the old px-* is gone
+      assert.deepEqual(out.filter(c => /^h-/.test(c)), ["h-20"]);     // the old h-* is gone
+    });
+  }
+}
+~~~
+
+~~~view 720 900 الشكل النهائي (المعاينة: الصفحة بعد ما React رسمها، من غير JavaScript)
+<!doctype html>
+<html lang="ar" dir="rtl"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Button kit</title>
+  
+  
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-space-y-reverse:0;--tw-border-style:solid;--tw-font-weight:initial;--tw-outline-style:solid}}}@layer theme{:root,:host{--font-sans:system-ui, "Segoe UI", Tahoma, sans-serif;--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--spacing:.25rem;--container-4xl:56rem;--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--font-weight-semibold:600;--font-weight-bold:700;--radius-lg:.5rem;--animate-spin:spin 1s linear infinite;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:system-ui, "Segoe UI", Tahoma, sans-serif;--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.mx-auto{margin-inline:auto}.flex{display:flex}.inline-flex{display:inline-flex}.size-4{width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.h-8{height:calc(var(--spacing) * 8)}.h-10{height:calc(var(--spacing) * 10)}.h-12{height:calc(var(--spacing) * 12)}.h-20{height:calc(var(--spacing) * 20)}.max-w-4xl{max-width:var(--container-4xl)}.animate-spin{animation:var(--animate-spin)}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-center{justify-content:center}.gap-2{gap:calc(var(--spacing) * 2)}.gap-3{gap:calc(var(--spacing) * 3)}:where(.space-y-3>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-8>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 8) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 8) * calc(1 - var(--tw-space-y-reverse)))}.rounded-full{border-radius:2147483647px}.rounded-lg{border-radius:var(--radius-lg)}.border{border-style:var(--tw-border-style);border-width:1px}.border-2{border-style:var(--tw-border-style);border-width:2px}.border-current{border-color:currentColor}.border-primary{border-color:var(--primary)}.border-e-transparent{border-inline-end-color:#0000}.bg-primary{background-color:var(--primary)}.bg-primary-soft{background-color:var(--primary-soft)}.p-4{padding:calc(var(--spacing) * 4)}.px-1{padding-inline:var(--spacing)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-6{padding-inline:calc(var(--spacing) * 6)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.text-muted{color:var(--muted)}.text-on-primary{color:var(--on-primary)}.text-primary{color:var(--primary)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}@media (hover:hover){.hover\:bg-primary-soft:hover{background-color:var(--primary-soft)}.hover\:bg-primary\/20:hover{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.hover\:bg-primary\/20:hover{background-color:color-mix(in oklab, var(--primary) 20%, transparent)}}.hover\:opacity-90:hover{opacity:.9}}.focus-visible\:outline-3:focus-visible{outline-style:var(--tw-outline-style);outline-width:3px}.focus-visible\:outline-offset-2:focus-visible{outline-offset:2px}.focus-visible\:outline-ring:focus-visible{outline-color:var(--ring)}.active\:bg-primary\/20:active{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.active\:bg-primary\/20:active{background-color:color-mix(in oklab, var(--primary) 20%, transparent)}}.active\:bg-primary\/30:active{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.active\:bg-primary\/30:active{background-color:color-mix(in oklab, var(--primary) 30%, transparent)}}.active\:opacity-80:active{opacity:.8}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-50:disabled{opacity:.5}.aria-busy\:cursor-progress[aria-busy=true]{cursor:progress}@media (prefers-reduced-motion:reduce){.motion-reduce\:animate-none{animation:none}}}:root{--bg:#f8fafc;--surface:#fff;--fg:#0f172a;--muted:#475569;--line:#e2e8f0;--primary:#4338ca;--on-primary:#fff;--primary-soft:#e0e7ff;--ok:#15803d;--ok-soft:#dcfce7;--warn:#a16207;--warn-soft:#fef9c3;--danger:#b91c1c;--danger-soft:#fee2e2;--ring:#f59e0b}[data-theme=dark]{--bg:#0b1120;--surface:#111827;--fg:#e5e7eb;--muted:#9ca3af;--line:#1f2937;--primary:#a5b4fc;--on-primary:#0b1120;--primary-soft:#1e1b4b;--ok:#4ade80;--ok-soft:#052e16;--warn:#facc15;--warn-soft:#422006;--danger:#f87171;--danger-soft:#450a0a;--ring:#fbbf24}body{background:var(--bg);color:var(--fg);font-family:var(--font-sans)}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@keyframes spin{to{transform:rotate(360deg)}}
+
+</style>
+</head>
+<body>
+<div id="root"><main class="mx-auto max-w-4xl space-y-8 p-4"><h1 class="text-2xl font-bold">زراير: ٤ أشكال × ٣ مقاسات</h1><section class="space-y-3"><h2 class="font-semibold text-muted">مليان</h2><div class="flex flex-wrap items-center gap-3"><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-8 px-3 text-sm">احجز (sm)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-10 px-4">احجز (md)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-12 px-6 text-lg">احجز (lg)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-10 px-4" disabled="">مقفول</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-10 px-4" disabled="" aria-busy="true"><span aria-hidden="true" class="size-4 animate-spin rounded-full border-2 border-current border-e-transparent motion-reduce:animate-none"></span>بيحفظ</button></div></section><section class="space-y-3"><h2 class="font-semibold text-muted">فاتح</h2><div class="flex flex-wrap items-center gap-3"><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-8 px-3 text-sm">احجز (sm)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-10 px-4">احجز (md)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-12 px-6 text-lg">احجز (lg)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-10 px-4" disabled="">مقفول</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-10 px-4" disabled="" aria-busy="true"><span aria-hidden="true" class="size-4 animate-spin rounded-full border-2 border-current border-e-transparent motion-reduce:animate-none"></span>بيحفظ</button></div></section><section class="space-y-3"><h2 class="font-semibold text-muted">بحد</h2><div class="flex flex-wrap items-center gap-3"><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-8 px-3 text-sm">احجز (sm)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4">احجز (md)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-12 px-6 text-lg">احجز (lg)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4" disabled="">مقفول</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4" disabled="" aria-busy="true"><span aria-hidden="true" class="size-4 animate-spin rounded-full border-2 border-current border-e-transparent motion-reduce:animate-none"></span>بيحفظ</button></div></section><section class="space-y-3"><h2 class="font-semibold text-muted">شفاف</h2><div class="flex flex-wrap items-center gap-3"><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress text-primary hover:bg-primary-soft active:bg-primary/20 h-8 px-3 text-sm">احجز (sm)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4">احجز (md)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress text-primary hover:bg-primary-soft active:bg-primary/20 h-12 px-6 text-lg">احجز (lg)</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4" disabled="">مقفول</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4" disabled="" aria-busy="true"><span aria-hidden="true" class="size-4 animate-spin rounded-full border-2 border-current border-e-transparent motion-reduce:animate-none"></span>بيحفظ</button></div></section><section class="space-y-3"><h2 class="font-semibold text-muted">asChild: لينك بشكل زرار</h2><a href="#pricing" class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4">شوف الأسعار</a></section></main></div>
+
+
+</body></html>
+~~~
+
+**هتشوف إيه:** ٤ مجموعات زراير (مليان، وفاتح، وبحد، وشفاف)، في كل واحدة ٣ مقاسات، وزرار مقفول باهت، وزرار «بيحفظ» فيه دايرة بتلف. وتحت «شوف الأسعار» لينك بشكل زرار بحد.
+
+**الكلاسات في ملف لوحده:** [[button-variants.ts]] مفيهوش JSX، فـ Node يقدر يختبره مباشرة ([[node --test button.test.ts]]: Node 24 بيقرا TypeScript من غير build لو مفيش JSX).
+
+**الحالات:** [[hover:]] و [[active:]] جوه كل variant، و [[focus-visible:outline-3]] في المشترك، و [[disabled:opacity-50]]. و [[loading]] بيعمل ٣ حاجات: [[disabled]] (ميتداسش مرتين)، و [[aria-busy]] (قارئ الشاشة يعرف إنه شغال، و [[aria-busy:cursor-progress]] بيغيّر شكل الماوس)، ودايرة بتلف بـ [[animate-spin]] وبتقف مع [[motion-reduce:]].
+
+**[[asChild]] و [[Slot]]:** [[<Button asChild><a href="#pricing">…</a></Button>]] مبيعملش [[<button>]] خالص: [[Slot]] من radix بيحط الكلاسات والـ props على الابن اللي جواه. فالنتيجة [[<a>]] حقيقي (بيفتح في tab جديدة، والـ crawler بيشوفه لينك) بشكل الزرار، ومن غير ما تكرر الكلاسات. اتقاس: العنصر [[A]] بـ [[href="#pricing"]] وفيه [[h-10]].
+
+**اختبار التعارض:** لكل تركيبة من الـ ١٢، [[cn(buttonVariants(...), "px-1 h-20")]] لازم يطلّع [[px-1]] واحد و [[h-20]] واحد. لو مقاس كان كاتب [[p-4]] بدل [[px-4]]، أو فيه كلاس طول ميعرفوش twMerge، الاختبار كان هيقع.
+
+~~~text الناتج
+node --test button.test.ts
+✔ solid sm + px-1 h-20
+... (الـ 12)
+✔ ghost lg + px-1 h-20
+ℹ tests 12   ℹ pass 12   ℹ fail 0
+
+Chrome 157: 20 زرار، والطول 32 و 40 و 48 (sm و md و lg)
+loading: disabled = true و aria-busy = true
+asChild: A #pricing، وفيه h-10
+Tab: حلقة solid 3px   hover على المليان: opacity 0.9
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'متوسط', dir: "pricing-data", t: R`صفحة أسعار من بيانات`, what: R`array فيها ٣ باقات (اسم، وسعر شهري وسنوي، ومميزات، و [[highlighted]])، وكارت بـ cva و subgrid (درس [[subgrid]])، و toggle شهري وسنوي، وزرار الاشتراك بيفتح Dialog تأكيد. بيجمع [[cva]] و [[Dialog]].`, done: R`تغيير الـ array بس بيغيّر الصفحة كلها، والكروت متصفة، والـ Dialog بيرجّع الـ focus للزرار اللي فتحه، ومفيش scroll أفقي على 360.`, sol: R`ملفات الإعداد ([[vite.config.ts]] و [[tsconfig.json]] و [[.gitignore]] و [[src/main.tsx]] و [[src/index.css]] و [[src/lib/cn.ts]]) زي مشروع «Badge بـ cva» بالظبط، وأوامر التثبيت نفسها. و [[button.tsx]] و [[button-variants.ts]] من مشروع «Button kit».
+
+~~~ts src/plans.ts
+// the whole page comes from here: change this array and the page changes
+export type Plan = { id: string; name: string; monthly: number; yearly: number; features: string[]; highlighted?: boolean };
+
+export const plans: Plan[] = [
+  { id: "kids", name: "أطفال", monthly: 450, yearly: 4300, features: ["حصتين في الأسبوع", "مدرب لكل ٦ أطفال"] },
+  { id: "adults", name: "كبار", monthly: 650, yearly: 6200, features: ["٣ حصص في الأسبوع", "حمام السباحة مفتوح الجمعة", "متابعة شهرية للمستوى"], highlighted: true },
+  { id: "family", name: "عيلة", monthly: 1500, yearly: 14400, features: ["٤ أفراد", "كل الحصص"] },
+];
+~~~
+
+~~~tsx src/components/plan-card.tsx
+import { cva } from "class-variance-authority";
+import type { ReactNode } from "react";
+import { cn } from "../lib/cn.ts";
+
+// a card is 4 rows of the parent grid (subgrid): name, price, features, button line up across the cards
+const card = cva("row-span-4 grid grid-rows-subgrid gap-3 rounded-2xl bg-surface p-6", {
+  variants: {
+    highlighted: {
+      true: "ring-2 ring-primary shadow-lg",
+      false: "ring-1 ring-line",
+    },
+  },
+  defaultVariants: { highlighted: false },
+});
+
+export function PlanCard({ highlighted, className, children }: { highlighted?: boolean; className?: string; children: ReactNode }) {
+  return <li className={cn(card({ highlighted }), className)}>{children}</li>;
+}
+~~~
+
+~~~tsx src/App.tsx
+import { useState } from "react";
+import { Dialog } from "radix-ui";
+import { plans } from "./plans.ts";
+import { PlanCard } from "./components/plan-card.tsx";
+import { Button } from "./components/button.tsx";
+
+const money = (n: number) => n.toLocaleString("ar-EG") + " ج";
+
+export default function App() {
+  const [yearly, setYearly] = useState(false);
+  return (
+    <main className="mx-auto max-w-5xl space-y-6 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h1 className="text-2xl font-bold">باقات نادي الموجة</h1>
+        <fieldset className="flex rounded-full bg-primary-soft p-1">
+          <legend className="sr-only">طريقة الدفع</legend>
+          {[["monthly", "شهري"], ["yearly", "سنوي"]].map(([v, label]) => (
+            <label key={v} className="cursor-pointer rounded-full px-4 py-1.5 font-semibold text-primary has-checked:bg-primary has-checked:text-on-primary has-focus-visible:outline-3 has-focus-visible:outline-ring">
+              <input type="radio" name="period" value={v} className="sr-only" checked={yearly === (v === "yearly")} onChange={() => setYearly(v === "yearly")} />
+              {label}
+            </label>
+          ))}
+        </fieldset>
+      </div>
+
+      <ul className="grid gap-4 md:grid-cols-3">
+        {plans.map(p => (
+          <PlanCard key={p.id} highlighted={p.highlighted}>
+            <h2 className="text-xl font-bold">{p.name}</h2>
+            <p className="text-3xl font-extrabold text-primary">{money(yearly ? p.yearly : p.monthly)} <span className="text-base font-normal text-muted">/ {yearly ? "سنة" : "شهر"}</span></p>
+            <ul className="list-disc space-y-1 ps-5 text-muted">{p.features.map(f => <li key={f}>{f}</li>)}</ul>
+            <Dialog.Root>
+              <Dialog.Trigger asChild>
+                <Button className="self-end" variant={p.highlighted ? "solid" : "outline"}>اشترك في {p.name}</Button>
+              </Dialog.Trigger>
+              <Dialog.Portal>
+                <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+                <Dialog.Content className="fixed inset-x-0 top-1/2 mx-auto w-[min(28rem,calc(100vw-2rem))] -translate-y-1/2 space-y-4 rounded-2xl bg-surface p-6 text-fg shadow-2xl">
+                  <Dialog.Title className="text-xl font-bold">تأكيد الاشتراك</Dialog.Title>
+                  <Dialog.Description className="text-muted">باقة {p.name}، {money(yearly ? p.yearly : p.monthly)} {yearly ? "في السنة" : "في الشهر"}.</Dialog.Description>
+                  <div className="flex gap-3">
+                    <Dialog.Close asChild><Button>أكّد</Button></Dialog.Close>
+                    <Dialog.Close asChild><Button variant="ghost">رجوع</Button></Dialog.Close>
+                  </div>
+                </Dialog.Content>
+              </Dialog.Portal>
+            </Dialog.Root>
+          </PlanCard>
+        ))}
+      </ul>
+    </main>
+  );
+}
+~~~
+
+~~~view 520 900 الشكل النهائي (المعاينة: الصفحة بعد ما React رسمها، من غير JavaScript)، والـ Dialog بيظهر لما تدوس «اشترك» في مشروعك
+<!doctype html>
+<html lang="ar" dir="rtl"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>باقات نادي سباحة</title>
+  
+  
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-space-y-reverse:0;--tw-border-style:solid;--tw-font-weight:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid}}}@layer theme{:root,:host{--font-sans:system-ui, "Segoe UI", Tahoma, sans-serif;--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-black:#000;--spacing:.25rem;--container-5xl:64rem;--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-base:1rem;--text-base--line-height:calc(1.5 / 1);--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--text-3xl:1.875rem;--text-3xl--line-height:calc(2.25 / 1.875);--font-weight-normal:400;--font-weight-semibold:600;--font-weight-bold:700;--font-weight-extrabold:800;--radius-lg:.5rem;--radius-2xl:1rem;--animate-spin:spin 1s linear infinite;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:system-ui, "Segoe UI", Tahoma, sans-serif;--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.fixed{position:fixed}.inset-0{inset:0}.inset-x-0{inset-inline:0}.top-1\/2{top:50%}.row-span-4{grid-row:span 4/span 4}.mx-auto{margin-inline:auto}.flex{display:flex}.grid{display:grid}.inline-flex{display:inline-flex}.size-4{width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.h-8{height:calc(var(--spacing) * 8)}.h-10{height:calc(var(--spacing) * 10)}.h-12{height:calc(var(--spacing) * 12)}.w-\[min\(28rem\,calc\(100vw-2rem\)\)\]{width:min(28rem,100vw - 2rem)}.max-w-5xl{max-width:var(--container-5xl)}.-translate-y-1\/2{--tw-translate-y:calc(calc(1 / 2 * 100%) * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.animate-spin{animation:var(--animate-spin)}.cursor-pointer{cursor:pointer}.list-disc{list-style-type:disc}.grid-rows-subgrid{grid-template-rows:subgrid}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.gap-2{gap:calc(var(--spacing) * 2)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}:where(.space-y-1>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(var(--spacing) * var(--tw-space-y-reverse));margin-block-end:calc(var(--spacing) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-4>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 4) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-6>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)))}.self-end{align-self:flex-end}.rounded-2xl{border-radius:var(--radius-2xl)}.rounded-full{border-radius:2147483647px}.rounded-lg{border-radius:var(--radius-lg)}.border{border-style:var(--tw-border-style);border-width:1px}.border-2{border-style:var(--tw-border-style);border-width:2px}.border-current{border-color:currentColor}.border-primary{border-color:var(--primary)}.border-e-transparent{border-inline-end-color:#0000}.bg-black\/50{background-color:#00000080}@supports (color:color-mix(in lab, red, red)){.bg-black\/50{background-color:color-mix(in oklab, var(--color-black) 50%, transparent)}}.bg-primary{background-color:var(--primary)}.bg-primary-soft{background-color:var(--primary-soft)}.bg-surface{background-color:var(--surface)}.p-1{padding:var(--spacing)}.p-4{padding:calc(var(--spacing) * 4)}.p-6{padding:calc(var(--spacing) * 6)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-6{padding-inline:calc(var(--spacing) * 6)}.py-1\.5{padding-block:calc(var(--spacing) * 1.5)}.ps-5{padding-inline-start:calc(var(--spacing) * 5)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.text-3xl{font-size:var(--text-3xl);line-height:var(--tw-leading,var(--text-3xl--line-height))}.text-base{font-size:var(--text-base);line-height:var(--tw-leading,var(--text-base--line-height))}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-extrabold{--tw-font-weight:var(--font-weight-extrabold);font-weight:var(--font-weight-extrabold)}.font-normal{--tw-font-weight:var(--font-weight-normal);font-weight:var(--font-weight-normal)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.text-fg{color:var(--fg)}.text-muted{color:var(--muted)}.text-on-primary{color:var(--on-primary)}.text-primary{color:var(--primary)}.shadow-2xl{--tw-shadow:0 25px 50px -12px var(--tw-shadow-color,#00000040);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a), 0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-1{--tw-ring-shadow:var(--tw-ring-inset, ) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-2{--tw-ring-shadow:var(--tw-ring-inset, ) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-line{--tw-ring-color:var(--line)}.ring-primary{--tw-ring-color:var(--primary)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}@media (hover:hover){.hover\:bg-primary-soft:hover{background-color:var(--primary-soft)}.hover\:bg-primary\/20:hover{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.hover\:bg-primary\/20:hover{background-color:color-mix(in oklab, var(--primary) 20%, transparent)}}.hover\:opacity-90:hover{opacity:.9}}.focus-visible\:outline-3:focus-visible{outline-style:var(--tw-outline-style);outline-width:3px}.focus-visible\:outline-offset-2:focus-visible{outline-offset:2px}.focus-visible\:outline-ring:focus-visible{outline-color:var(--ring)}.active\:bg-primary\/20:active{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.active\:bg-primary\/20:active{background-color:color-mix(in oklab, var(--primary) 20%, transparent)}}.active\:bg-primary\/30:active{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.active\:bg-primary\/30:active{background-color:color-mix(in oklab, var(--primary) 30%, transparent)}}.active\:opacity-80:active{opacity:.8}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-50:disabled{opacity:.5}.has-checked\:bg-primary:has(:checked){background-color:var(--primary)}.has-checked\:text-on-primary:has(:checked){color:var(--on-primary)}.has-focus-visible\:outline-3:has(:focus-visible){outline-style:var(--tw-outline-style);outline-width:3px}.has-focus-visible\:outline-ring:has(:focus-visible){outline-color:var(--ring)}.aria-busy\:cursor-progress[aria-busy=true]{cursor:progress}@media (prefers-reduced-motion:reduce){.motion-reduce\:animate-none{animation:none}}@media (width>=48rem){.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}}:root{--bg:#f8fafc;--surface:#fff;--fg:#0f172a;--muted:#475569;--line:#e2e8f0;--primary:#4338ca;--on-primary:#fff;--primary-soft:#e0e7ff;--ok:#15803d;--ok-soft:#dcfce7;--warn:#a16207;--warn-soft:#fef9c3;--danger:#b91c1c;--danger-soft:#fee2e2;--ring:#f59e0b}[data-theme=dark]{--bg:#0b1120;--surface:#111827;--fg:#e5e7eb;--muted:#9ca3af;--line:#1f2937;--primary:#a5b4fc;--on-primary:#0b1120;--primary-soft:#1e1b4b;--ok:#4ade80;--ok-soft:#052e16;--warn:#facc15;--warn-soft:#422006;--danger:#f87171;--danger-soft:#450a0a;--ring:#fbbf24}body{background:var(--bg);color:var(--fg);font-family:var(--font-sans)}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@keyframes spin{to{transform:rotate(360deg)}}
+
+</style>
+</head>
+<body>
+<div id="root"><main class="mx-auto max-w-5xl space-y-6 p-4"><div class="flex flex-wrap items-center justify-between gap-4"><h1 class="text-2xl font-bold">باقات نادي الموجة</h1><fieldset class="flex rounded-full bg-primary-soft p-1"><legend class="sr-only">طريقة الدفع</legend><label class="cursor-pointer rounded-full px-4 py-1.5 font-semibold text-primary has-checked:bg-primary has-checked:text-on-primary has-focus-visible:outline-3 has-focus-visible:outline-ring"><input class="sr-only" type="radio" value="monthly" checked="" name="period">شهري</label><label class="cursor-pointer rounded-full px-4 py-1.5 font-semibold text-primary has-checked:bg-primary has-checked:text-on-primary has-focus-visible:outline-3 has-focus-visible:outline-ring"><input class="sr-only" type="radio" value="yearly" name="period">سنوي</label></fieldset></div><ul class="grid gap-4 md:grid-cols-3"><li class="row-span-4 grid grid-rows-subgrid gap-3 rounded-2xl bg-surface p-6 ring-1 ring-line"><h2 class="text-xl font-bold">أطفال</h2><p class="text-3xl font-extrabold text-primary">٤٥٠ ج <span class="text-base font-normal text-muted">/ شهر</span></p><ul class="list-disc space-y-1 ps-5 text-muted"><li>حصتين في الأسبوع</li><li>مدرب لكل ٦ أطفال</li></ul><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4 self-end" type="button" aria-haspopup="dialog" aria-expanded="false" data-state="closed">اشترك في أطفال</button></li><li class="row-span-4 grid grid-rows-subgrid gap-3 rounded-2xl bg-surface p-6 ring-2 ring-primary shadow-lg"><h2 class="text-xl font-bold">كبار</h2><p class="text-3xl font-extrabold text-primary">٦٥٠ ج <span class="text-base font-normal text-muted">/ شهر</span></p><ul class="list-disc space-y-1 ps-5 text-muted"><li>٣ حصص في الأسبوع</li><li>حمام السباحة مفتوح الجمعة</li><li>متابعة شهرية للمستوى</li></ul><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-10 px-4 self-end" type="button" aria-haspopup="dialog" aria-expanded="false" data-state="closed">اشترك في كبار</button></li><li class="row-span-4 grid grid-rows-subgrid gap-3 rounded-2xl bg-surface p-6 ring-1 ring-line"><h2 class="text-xl font-bold">عيلة</h2><p class="text-3xl font-extrabold text-primary">١٬٥٠٠ ج <span class="text-base font-normal text-muted">/ شهر</span></p><ul class="list-disc space-y-1 ps-5 text-muted"><li>٤ أفراد</li><li>كل الحصص</li></ul><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4 self-end" type="button" aria-haspopup="dialog" aria-expanded="false" data-state="closed">اشترك في عيلة</button></li></ul></main></div>
+
+
+</body></html>
+~~~
+
+**هتشوف إيه:** «باقات نادي الموجة»، وجنبها مفتاح «شهري / سنوي»، و ٣ كروت باقات: «كبار» في النص بإطار أزرق وظل، وكل الزراير على خط واحد. الضغط على «سنوي» بيغيّر الأسعار، و «اشترك» بيفتح صندوق تأكيد في نص الشاشة فيه اسم الباقة والسعر.
+
+**الصفحة كلها من [[plans.ts]]:** الـ JSX بيلف على الـ array ([[plans.map]]). اتقاس: زوّدت باقة رابعة في الـ array بس، والصفحة بقت ٤ كروت.
+
+**الكارت بـ cva و subgrid:** [[highlighted]] variant فيه [[true]] و [[false]] (cva بيقبل boolean). و [[row-span-4 grid grid-rows-subgrid]]: الاسم والسعر والمميزات والزرار على نفس الخطوط في الـ ٣ كروت، حتى لو «كبار» فيها مميزات أكتر.
+
+**«شهري / سنوي»:** radio buttons حقيقية [[sr-only]] جوه labels، فالأسهم بتشتغل بينهم من الكيبورد. والشكل من [[has-checked:bg-primary]] على الـ label، والحلقة من [[has-focus-visible:]].
+
+**الـ Dialog من radix:** [[Dialog.Trigger asChild]] بيخلي زرارنا هو اللي بيفتح. و radix بيعمل الصعب: الـ focus بيدخل الـ Dialog ومبيخرجش منه بالـ Tab، و Escape بيقفل، والـ focus بيرجع للزرار اللي فتحه، و [[Dialog.Title]] بيبقى اسم الـ dialog لقارئ الشاشة. والتوسيط: [[fixed inset-x-0 mx-auto]] بعرض محدد، من غير [[translate]] أفقي، فبيشتغل في rtl و ltr. أول نسخة كانت [[start-1/2]] و [[translate-x]] بـ variants للاتجاهين، وده كان أعقد من اللازم.
+
+**فخ في الاختبار:** أول قياس على 360 قال إن الـ focus مرجعش للزرار. السكربت كان بيدوس Escape على طول بعد ما الـ Dialog يتفتح. بعد 200ms (زي ما أي حد بيستخدمه) الـ focus رجع في كل المقاسات.
+
+~~~text الناتج (Playwright بـ Chrome 157)
+360:  scrollWidth 360/360، الزراير تحت بعض (308 و 592 و 848)
+1280: الزراير على خط واحد: 288 و 288 و 288
+شهري «٤٥٠ ج / شهر» ← سنوي «٤٬٣٠٠ ج / سنة»
+«اشترك في كبار»: Dialog «تأكيد الاشتراك | باقة كبار، ٦٬٢٠٠ ج في السنة.»، ونصه في نص الشاشة (180 من 360، و 640 من 1280)
+Escape (بعد 200ms): الـ focus على «اشترك في كبار» في 360 و 1280
+باقة رابعة في plans.ts بس: 3 كروت ← 4 (أطفال، كبار، عيلة، محترفين)
+axe: 0 violations   الـ validator: مفيش رسايل
+~~~` },
+        { lvl: 'كبير', dir: "ui-kit", t: R`مكتبة مكونات صغيرة بصفحة توثيق`, what: R`مشروع Vite + React + Tailwind v4 فيه: Button و Badge و Card و Input و Dialog و Sheet، كل واحد بـ cva و cn، وألوان من [[@theme inline]] بتشتغل في light و dark، وعربي وإنجليزي بـ utilities منطقية. وصفحة توثيق بتعرض كل variant وكوده، واختبارات لـ cn والـ variants، واختبار Playwright للـ Dialog والـ Sheet، وفحص axe على صفحة التوثيق. بيجمع الوحدة دي مع وحدة Tailwind.`, done: R`[[npm test]] بيعدّي (cn و variants و Playwright)، و axe على صفحة التوثيق صفر مشاكل في الثيمين، و [[npm run build]] بيعدّي من غير warnings، وكل مكون بيقبل [[className]] من برا وبيكسب، وفيه [[CHANGELOG.md]] بأول نسخة.`, ext: R`انشرها كـ registry لـ shadcn (ملف JSON لكل مكون)، وزوّد Combobox و Toast، و visual regression بلقطات Playwright بتفشل لو مكون اتغيّر شكله.`, sol: R`~~~text ui-kit/
+package.json  vite.config.ts  tsconfig.json  .gitignore  playwright.config.ts  CHANGELOG.md
+index.html  src/main.tsx  src/index.css  src/lib/cn.ts  src/App.tsx (صفحة التوثيق)
+src/components/ui/  button-variants.ts  button.tsx  badge-variants.ts  badge.tsx  card.tsx  input.tsx  dialog.tsx  sheet.tsx
+tests/  button.test.ts  cn-badge.test.ts
+e2e/    ui.spec.ts
+~~~
+
+**ترتيب البناء:** (١) التوكنز في [[index.css]] (فاتح وغامق). (٢) [[cn]]. (٣) كل مكون بـ cva وملف variants لوحده. (٤) صفحة التوثيق. (٥) اختبارات الـ variants. (٦) Playwright و axe. (٧) [[npm run build]] من غير warnings.
+
+~~~json package.json
+{
+  "name": "nasig-ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p . && vite build",
+    "preview": "vite preview",
+    "test": "node --test tests/*.test.ts && playwright test"
+  },
+  "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "radix-ui": "^1.8.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwind-merge": "^3.7.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.0",
+    "@tailwindcss/vite": "^4.3.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.2.1",
+    "tailwindcss": "^4.3.4",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.6"
+  }
+}
+~~~
+
+~~~bash الترمنال
+npm i react@19.3.1 react-dom@19.3.1 class-variance-authority@0.7.1 clsx@2.1.1 tailwind-merge@3.7.0 radix-ui@1.8.1
+npm i -D vite@8.3.6 @vitejs/plugin-react@6.2.1 typescript@7.0.2 @types/react@19.3.0 @types/react-dom@19.3.0 tailwindcss@4.3.4 @tailwindcss/vite@4.3.4 @playwright/test@1.65.0 @axe-core/playwright@4.14.0
+npm run build
+npm test
+~~~
+
+[[vite.config.ts]] و [[tsconfig.json]] و [[src/main.tsx]] و [[src/index.css]] و [[src/lib/cn.ts]] زي مشروع «Badge بـ cva». و [[button-variants.ts]] و [[button.tsx]] من «Button kit» (بس الـ import بقى [[../../lib/cn.ts]]).
+
+~~~text .gitignore
+node_modules/
+dist/
+test-results/
+playwright-report/
+*.log
+~~~
+
+~~~ts src/components/ui/badge-variants.ts
+import { cva, type VariantProps } from "class-variance-authority";
+
+// the shared look, then a table: every tone and every look, and what to use when nothing is passed
+export const badgeVariants = cva(
+  "inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold",
+  {
+    variants: {
+      tone: {
+        primary: "",
+        ok: "",
+        warn: "",
+        danger: "",
+      },
+      look: {
+        soft: "",
+        solid: "text-on-primary",
+      },
+    },
+    // tone and look together decide the colours
+    compoundVariants: [
+      { tone: "primary", look: "soft", class: "bg-primary-soft text-primary" },
+      { tone: "ok", look: "soft", class: "bg-ok-soft text-ok" },
+      { tone: "warn", look: "soft", class: "bg-warn-soft text-warn" },
+      { tone: "danger", look: "soft", class: "bg-danger-soft text-danger" },
+      { tone: "primary", look: "solid", class: "bg-primary" },
+      { tone: "ok", look: "solid", class: "bg-ok" },
+      { tone: "warn", look: "solid", class: "bg-warn" },
+      { tone: "danger", look: "solid", class: "bg-danger" },
+    ],
+    defaultVariants: { tone: "primary", look: "soft" },
+  },
+);
+
+export type BadgeVariantProps = VariantProps<typeof badgeVariants>;
+~~~
+
+~~~tsx src/components/ui/badge.tsx
+import type { ComponentProps } from "react";
+import { cn } from "../../lib/cn.ts";
+import { badgeVariants, type BadgeVariantProps } from "./badge-variants.ts";
+
+type BadgeProps = ComponentProps<"span"> & BadgeVariantProps;
+
+export function Badge({ tone, look, className, ...props }: BadgeProps) {
+  // className from outside goes LAST into cn, so it wins over the defaults
+  return <span className={cn(badgeVariants({ tone, look }), className)} {...props} />;
+}
+~~~
+
+~~~tsx src/components/ui/card.tsx
+import type { ComponentProps } from "react";
+import { cn } from "../../lib/cn.ts";
+
+// a card is a few small parts, each one takes className so the page can adjust it
+export function Card({ className, ...props }: ComponentProps<"section">) {
+  return <section className={cn("rounded-2xl bg-surface p-5 ring-1 ring-line", className)} {...props} />;
+}
+// the heading level depends on the page around the card, so the page chooses it (h3 by default)
+export function CardTitle({ as: Tag = "h3", className, ...props }: ComponentProps<"h3"> & { as?: "h2" | "h3" | "h4" }) {
+  return <Tag className={cn("text-lg font-bold", className)} {...props} />;
+}
+export function CardText({ className, ...props }: ComponentProps<"p">) {
+  return <p className={cn("mt-1 text-muted", className)} {...props} />;
+}
+~~~
+
+~~~tsx src/components/ui/input.tsx
+import { useId, type ComponentProps } from "react";
+import { cn } from "../../lib/cn.ts";
+
+type InputProps = ComponentProps<"input"> & { label: string; hint?: string; error?: string };
+
+// the label, the hint and the error are wired to the input (htmlFor, aria-describedby, aria-invalid)
+export function Input({ label, hint, error, className, id, ...props }: InputProps) {
+  const auto = useId();
+  const inputId = id ?? auto;
+  const noteId = inputId + "-note";
+  return (
+    <div className="grid gap-1">
+      <label htmlFor={inputId} className="font-semibold">{label}</label>
+      <input
+        id={inputId}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={hint || error ? noteId : undefined}
+        className={cn(
+          "h-10 rounded-lg border border-muted bg-surface px-3 text-fg",
+          "focus-visible:outline-3 focus-visible:outline-offset-1 focus-visible:outline-ring",
+          "aria-invalid:border-danger",
+          className,
+        )}
+        {...props}
+      />
+      {(hint || error) && <p id={noteId} className={cn("text-sm", error ? "text-danger" : "text-muted")}>{error ?? hint}</p>}
+    </div>
+  );
+}
+~~~
+
+~~~tsx src/components/ui/dialog.tsx
+import type { ReactNode } from "react";
+import { Dialog as D } from "radix-ui";
+import { cn } from "../../lib/cn.ts";
+
+// radix gives the behaviour (focus trap, Escape, focus back to the trigger, aria); this file gives the look
+export const Dialog = D.Root;
+export const DialogTrigger = D.Trigger;
+export const DialogClose = D.Close;
+
+export function DialogContent({ title, description, className, children }: { title: string; description?: string; className?: string; children?: ReactNode }) {
+  return (
+    <D.Portal>
+      <D.Overlay className="fixed inset-0 bg-black/50" />
+      <D.Content
+        className={cn("fixed inset-x-0 top-1/2 mx-auto w-[min(28rem,calc(100vw-2rem))] -translate-y-1/2 space-y-4 rounded-2xl bg-surface p-6 text-fg shadow-2xl", className)}
+      >
+        <D.Title className="text-xl font-bold">{title}</D.Title>
+        {description ? <D.Description className="text-muted">{description}</D.Description> : <D.Description className="sr-only">{title}</D.Description>}
+        {children}
+      </D.Content>
+    </D.Portal>
+  );
+}
+~~~
+
+~~~tsx src/components/ui/sheet.tsx
+import type { ReactNode } from "react";
+import { Dialog as D } from "radix-ui";
+import { cn } from "../../lib/cn.ts";
+
+// a sheet is a dialog that sits on the END side of the screen, full height. Same behaviour, another look
+export const Sheet = D.Root;
+export const SheetTrigger = D.Trigger;
+export const SheetClose = D.Close;
+
+export function SheetContent({ title, className, children }: { title: string; className?: string; children?: ReactNode }) {
+  return (
+    <D.Portal>
+      <D.Overlay className="fixed inset-0 bg-black/50" />
+      <D.Content className={cn("fixed inset-y-0 end-0 w-[min(22rem,85vw)] space-y-4 bg-surface p-6 text-fg shadow-2xl", className)}>
+        <D.Title className="text-xl font-bold">{title}</D.Title>
+        <D.Description className="sr-only">{title}</D.Description>
+        {children}
+      </D.Content>
+    </D.Portal>
+  );
+}
+~~~
+
+~~~tsx src/App.tsx
+import { useEffect, useState, type ReactNode } from "react";
+import { Button } from "./components/ui/button.tsx";
+import { Badge } from "./components/ui/badge.tsx";
+import { Card, CardText, CardTitle } from "./components/ui/card.tsx";
+import { Input } from "./components/ui/input.tsx";
+import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./components/ui/dialog.tsx";
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from "./components/ui/sheet.tsx";
+
+// one docs block: a name, the live example, and the code that makes it
+function Demo({ id, title, code, children }: { id: string; title: string; code: string; children: ReactNode }) {
+  return (
+    <section aria-labelledby={id} className="space-y-3 rounded-2xl bg-surface p-5 ring-1 ring-line">
+      <h2 id={id} className="text-xl font-bold">{title}</h2>
+      <div className="flex flex-wrap items-center gap-3">{children}</div>
+      <pre dir="ltr" className="overflow-x-auto rounded-lg bg-bg p-3 text-sm" tabIndex={0} role="region" aria-label={"كود " + title}><code>{code}</code></pre>
+    </section>
+  );
+}
+
+export default function App() {
+  const [dark, setDark] = useState(false);
+  const [en, setEn] = useState(false);
+  useEffect(() => { document.documentElement.dataset.theme = dark ? "dark" : "light"; }, [dark]);
+  useEffect(() => { document.documentElement.dir = en ? "ltr" : "rtl"; document.documentElement.lang = en ? "en" : "ar"; }, [en]);
+
+  return (
+    <main className="mx-auto max-w-4xl space-y-6 p-4">
+      <header className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold">«نسيج»: مكتبة مكونات</h1>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" aria-pressed={dark} onClick={() => setDark(d => !d)}>الوضع الغامق</Button>
+          <Button variant="outline" size="sm" aria-pressed={en} onClick={() => setEn(e => !e)}>LTR</Button>
+        </div>
+      </header>
+
+      <Demo id="d-button" title="Button" code={'<Button variant="soft" size="lg">احجز</Button>\n<Button loading>بيحفظ</Button>\n<Button asChild><a href="#">لينك</a></Button>'}>
+        <Button>مليان</Button>
+        <Button variant="soft">فاتح</Button>
+        <Button variant="outline">بحد</Button>
+        <Button variant="ghost">شفاف</Button>
+        <Button size="sm">صغير</Button>
+        <Button size="lg">كبير</Button>
+        <Button loading>بيحفظ</Button>
+        <Button asChild variant="soft"><a href="#d-card">لينك بشكل زرار</a></Button>
+        <Button className="rounded-full" data-test="override">className من برّه</Button>
+      </Demo>
+
+      <Demo id="d-badge" title="Badge" code={'<Badge tone="ok">اتسلّم</Badge>\n<Badge tone="danger" look="solid">اتلغى</Badge>'}>
+        <Badge tone="ok">اتسلّم</Badge>
+        <Badge tone="warn">متأخر</Badge>
+        <Badge tone="danger">اتلغى</Badge>
+        <Badge tone="primary" look="solid">جديد</Badge>
+      </Demo>
+
+      <Demo id="d-card" title="Card" code={'<Card>\n  <CardTitle>العنوان</CardTitle>\n  <CardText>الكلام</CardText>\n</Card>'}>
+        <Card className="w-full sm:w-64"><CardTitle>طلب #٢٠٤١</CardTitle><CardText>٣ منتجات، ٤٥٠ ج</CardText></Card>
+      </Demo>
+
+      <Demo id="d-input" title="Input" code={'<Input label="الإيميل" type="email" hint="هنبعتلك الفاتورة عليه" />\n<Input label="الموبايل" error="الرقم ناقص" />'}>
+        <div className="grid w-full gap-4 sm:grid-cols-2">
+          <Input label="الإيميل" type="email" autoComplete="email" hint="هنبعتلك الفاتورة عليه" />
+          <Input label="الموبايل" type="tel" autoComplete="tel" defaultValue="0100" error="الرقم ناقص" />
+        </div>
+      </Demo>
+
+      <Demo id="d-dialog" title="Dialog" code={'<Dialog>\n  <DialogTrigger asChild><Button>امسح</Button></DialogTrigger>\n  <DialogContent title="متأكد؟">…</DialogContent>\n</Dialog>'}>
+        <Dialog>
+          <DialogTrigger asChild><Button variant="outline" data-test="open-dialog">امسح الطلب</Button></DialogTrigger>
+          <DialogContent title="تمسح الطلب؟" description="مش هتقدر ترجّعه بعد كده.">
+            <div className="flex gap-3">
+              <DialogClose asChild><Button>امسح</Button></DialogClose>
+              <DialogClose asChild><Button variant="ghost">رجوع</Button></DialogClose>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </Demo>
+
+      <Demo id="d-sheet" title="Sheet" code={'<Sheet>\n  <SheetTrigger asChild><Button>الفلاتر</Button></SheetTrigger>\n  <SheetContent title="فلاتر">…</SheetContent>\n</Sheet>'}>
+        <Sheet>
+          <SheetTrigger asChild><Button variant="outline" data-test="open-sheet">الفلاتر</Button></SheetTrigger>
+          <SheetContent title="فلاتر الطلبات">
+            <Input label="رقم الطلب" inputMode="numeric" />
+            <SheetClose asChild><Button className="w-full">طبّق</Button></SheetClose>
+          </SheetContent>
+        </Sheet>
+      </Demo>
+    </main>
+  );
+}
+~~~
+
+~~~ts tests/cn-badge.test.ts
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { cn } from "../src/lib/cn.ts";
+import { badgeVariants } from "../src/components/ui/badge-variants.ts";
+
+test("cn: className from outside wins", () => assert.equal(cn("rounded-lg px-4", "rounded-full"), "px-4 rounded-full"));
+test("cn: false and null are dropped", () => assert.equal(cn("a", false && "b", null), "a"));
+test("badge default = primary soft", () => assert.match(badgeVariants(), /bg-primary-soft text-primary/));
+test("badge ok solid", () => assert.match(badgeVariants({ tone: "ok", look: "solid" }), /bg-ok/));
+test("badge: every tone x look has a background", () => {
+  for (const tone of ["primary", "ok", "warn", "danger"] as const)
+    for (const look of ["soft", "solid"] as const)
+      assert.match(badgeVariants({ tone, look }), /\bbg-/);
+});
+~~~
+
+~~~ts playwright.config.ts
+import { defineConfig } from "@playwright/test";
+
+// builds the docs page, serves it, and runs the browser tests against it (Chrome installed on the machine)
+export default defineConfig({
+  testDir: "e2e",
+  use: { baseURL: "http://127.0.0.1:4173", channel: "chrome" },
+  webServer: { command: "npx vite preview --host 127.0.0.1 --port 4173 --strictPort", url: "http://127.0.0.1:4173", reuseExistingServer: false },
+});
+~~~
+
+~~~ts e2e/ui.spec.ts
+import { test, expect } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+
+test("Dialog: opens, traps focus, Escape closes, focus goes back", async ({ page }) => {
+  await page.goto("/");
+  const open = page.locator("[data-test=open-dialog]");
+  await open.click();
+  const dialog = page.getByRole("dialog", { name: "تمسح الطلب؟" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "امسح" })).toBeFocused();
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Tab");                       // two Tabs: still inside the dialog
+  await expect(dialog.locator(":focus")).toHaveCount(1);
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(open).toBeFocused();
+});
+
+test("Sheet: comes from the end side in rtl and in ltr", async ({ page }) => {
+  await page.goto("/");
+  for (const ltr of [false, true]) {
+    if (ltr) await page.getByRole("button", { name: "LTR" }).click();
+    await page.locator("[data-test=open-sheet]").click();
+    const sheet = page.getByRole("dialog", { name: "فلاتر الطلبات" });
+    const box = (await sheet.boundingBox())!;
+    const width = page.viewportSize()!.width;
+    if (ltr) expect(Math.round(box.x + box.width)).toBe(width);   // touches the right edge
+    else expect(Math.round(box.x)).toBe(0);                          // touches the left edge
+    await page.keyboard.press("Escape");
+  }
+});
+
+test("className from outside wins (rounded-full on a Button)", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("[data-test=override]")).toHaveClass(/rounded-full/);
+  await expect(page.locator("[data-test=override]")).not.toHaveClass(/rounded-lg/);
+});
+
+for (const dark of [false, true]) {
+  test("axe: no violations, " + (dark ? "dark" : "light"), async ({ page }) => {
+    await page.goto("/");
+    if (dark) await page.getByRole("button", { name: "الوضع الغامق" }).click();
+    const r = await new AxeBuilder({ page }).analyze();
+    expect(r.violations.map(v => v.id)).toEqual([]);
+  });
+}
+~~~
+
+~~~text CHANGELOG.md
+# Changelog
+
+## 0.1.0 (أول نسخة)
+
+- Button: ٤ أشكال × ٣ مقاسات، و loading و disabled، و asChild.
+- Badge: ٤ ألوان × شكلين.
+- Card و CardTitle و CardText.
+- Input: label و hint و error متربطين بالخانة.
+- Dialog و Sheet فوق radix-ui.
+- ثيم فاتح وغامق من @theme inline، وعربي وإنجليزي بـ utilities منطقية.
+~~~
+
+~~~view 760 900 الشكل النهائي (المعاينة: الصفحة بعد ما React رسمها، من غير JavaScript)
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>«نسيج»: مكتبة مكونات صغيرة</title>
+  
+  
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-space-y-reverse:0;--tw-border-style:solid;--tw-font-weight:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid}}}@layer theme{:root,:host{--font-sans:system-ui, "Segoe UI", Tahoma, sans-serif;--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-black:#000;--spacing:.25rem;--container-4xl:56rem;--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--font-weight-semibold:600;--font-weight-bold:700;--radius-lg:.5rem;--radius-2xl:1rem;--animate-spin:spin 1s linear infinite;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:system-ui, "Segoe UI", Tahoma, sans-serif;--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.fixed{position:fixed}.inset-0{inset:0}.inset-x-0{inset-inline:0}.inset-y-0{inset-block:0}.end-0{inset-inline-end:calc(var(--spacing) * 0)}.top-1{top:var(--spacing)}.top-1\/2{top:50%}.mx-auto{margin-inline:auto}.mt-1{margin-top:var(--spacing)}.block{display:block}.flex{display:flex}.grid{display:grid}.inline-flex{display:inline-flex}.table{display:table}.size-4{width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.h-8{height:calc(var(--spacing) * 8)}.h-10{height:calc(var(--spacing) * 10)}.h-12{height:calc(var(--spacing) * 12)}.h-20{height:calc(var(--spacing) * 20)}.w-\[min\(22rem\,85vw\)\]{width:min(22rem,85vw)}.w-\[min\(28rem\,calc\(100vw-2rem\)\)\]{width:min(28rem,100vw - 2rem)}.w-full{width:100%}.max-w-4xl{max-width:var(--container-4xl)}.-translate-y-1{--tw-translate-y:calc(var(--spacing) * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.-translate-y-1\/2{--tw-translate-y:calc(calc(1 / 2 * 100%) * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.animate-spin{animation:var(--animate-spin)}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.gap-1{gap:var(--spacing)}.gap-2{gap:calc(var(--spacing) * 2)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}:where(.space-y-3>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-4>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 4) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-6>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)))}.overflow-x-auto{overflow-x:auto}.rounded-2xl{border-radius:var(--radius-2xl)}.rounded-full{border-radius:2147483647px}.rounded-lg{border-radius:var(--radius-lg)}.border{border-style:var(--tw-border-style);border-width:1px}.border-2{border-style:var(--tw-border-style);border-width:2px}.border-current{border-color:currentColor}.border-muted{border-color:var(--muted)}.border-primary{border-color:var(--primary)}.border-e-transparent{border-inline-end-color:#0000}.bg-bg{background-color:var(--bg)}.bg-black{background-color:var(--color-black)}.bg-black\/50{background-color:#00000080}@supports (color:color-mix(in lab, red, red)){.bg-black\/50{background-color:color-mix(in oklab, var(--color-black) 50%, transparent)}}.bg-danger{background-color:var(--danger)}.bg-danger-soft{background-color:var(--danger-soft)}.bg-ok{background-color:var(--ok)}.bg-ok-soft{background-color:var(--ok-soft)}.bg-primary{background-color:var(--primary)}.bg-primary-soft{background-color:var(--primary-soft)}.bg-surface{background-color:var(--surface)}.bg-warn{background-color:var(--warn)}.bg-warn-soft{background-color:var(--warn-soft)}.p-3{padding:calc(var(--spacing) * 3)}.p-4{padding:calc(var(--spacing) * 4)}.p-5{padding:calc(var(--spacing) * 5)}.p-6{padding:calc(var(--spacing) * 6)}.px-1{padding-inline:var(--spacing)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-2\.5{padding-inline:calc(var(--spacing) * 2.5)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-6{padding-inline:calc(var(--spacing) * 6)}.py-0{padding-block:0}.py-0\.5{padding-block:calc(var(--spacing) * .5)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.text-danger{color:var(--danger)}.text-fg{color:var(--fg)}.text-muted{color:var(--muted)}.text-ok{color:var(--ok)}.text-on-primary{color:var(--on-primary)}.text-primary{color:var(--primary)}.text-warn{color:var(--warn)}.shadow-2xl{--tw-shadow:0 25px 50px -12px var(--tw-shadow-color,#00000040);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-1{--tw-ring-shadow:var(--tw-ring-inset, ) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-line{--tw-ring-color:var(--line)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}@media (hover:hover){.hover\:bg-primary-soft:hover{background-color:var(--primary-soft)}.hover\:bg-primary\/20:hover{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.hover\:bg-primary\/20:hover{background-color:color-mix(in oklab, var(--primary) 20%, transparent)}}.hover\:opacity-90:hover{opacity:.9}}.focus-visible\:outline-3:focus-visible{outline-style:var(--tw-outline-style);outline-width:3px}.focus-visible\:outline-offset-1:focus-visible{outline-offset:1px}.focus-visible\:outline-offset-2:focus-visible{outline-offset:2px}.focus-visible\:outline-ring:focus-visible{outline-color:var(--ring)}.active\:bg-primary\/20:active{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.active\:bg-primary\/20:active{background-color:color-mix(in oklab, var(--primary) 20%, transparent)}}.active\:bg-primary\/30:active{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.active\:bg-primary\/30:active{background-color:color-mix(in oklab, var(--primary) 30%, transparent)}}.active\:opacity-80:active{opacity:.8}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-50:disabled{opacity:.5}.aria-busy\:cursor-progress[aria-busy=true]{cursor:progress}.aria-invalid\:border-danger[aria-invalid=true]{border-color:var(--danger)}@media (prefers-reduced-motion:reduce){.motion-reduce\:animate-none{animation:none}}@media (width>=40rem){.sm\:w-64{width:calc(var(--spacing) * 64)}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}}:root{--bg:#f8fafc;--surface:#fff;--fg:#0f172a;--muted:#475569;--line:#e2e8f0;--primary:#4338ca;--on-primary:#fff;--primary-soft:#e0e7ff;--ok:#15803d;--ok-soft:#dcfce7;--warn:#a16207;--warn-soft:#fef9c3;--danger:#b91c1c;--danger-soft:#fee2e2;--ring:#f59e0b}[data-theme=dark]{--bg:#0b1120;--surface:#111827;--fg:#e5e7eb;--muted:#9ca3af;--line:#1f2937;--primary:#a5b4fc;--on-primary:#0b1120;--primary-soft:#1e1b4b;--ok:#4ade80;--ok-soft:#052e16;--warn:#facc15;--warn-soft:#422006;--danger:#f87171;--danger-soft:#450a0a;--ring:#fbbf24}body{background:var(--bg);color:var(--fg);font-family:var(--font-sans)}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@keyframes spin{to{transform:rotate(360deg)}}
+
+</style>
+</head>
+<body>
+<div id="root"><main class="mx-auto max-w-4xl space-y-6 p-4"><header class="flex flex-wrap items-center justify-between gap-3"><h1 class="text-2xl font-bold">«نسيج»: مكتبة مكونات</h1><div class="flex gap-2"><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-8 px-3 text-sm" aria-pressed="false">الوضع الغامق</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-8 px-3 text-sm" aria-pressed="false">LTR</button></div></header><section aria-labelledby="d-button" class="space-y-3 rounded-2xl bg-surface p-5 ring-1 ring-line"><h2 id="d-button" class="text-xl font-bold">Button</h2><div class="flex flex-wrap items-center gap-3"><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-10 px-4">مليان</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-10 px-4">فاتح</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4">بحد</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4">شفاف</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-8 px-3 text-sm">صغير</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-12 px-6 text-lg">كبير</button><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-10 px-4" disabled="" aria-busy="true"><span aria-hidden="true" class="size-4 animate-spin rounded-full border-2 border-current border-e-transparent motion-reduce:animate-none"></span>بيحفظ</button><a href="#d-card" class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-10 px-4">لينك بشكل زرار</a><button class="inline-flex items-center justify-center gap-2 font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary text-on-primary hover:opacity-90 active:opacity-80 h-10 px-4 rounded-full" data-test="override">className من برّه</button></div><pre dir="ltr" class="overflow-x-auto rounded-lg bg-bg p-3 text-sm" tabindex="0" role="region" aria-label="كود Button"><code>&lt;Button variant="soft" size="lg"&gt;احجز&lt;/Button&gt;
+&lt;Button loading&gt;بيحفظ&lt;/Button&gt;
+&lt;Button asChild&gt;&lt;a href="#"&gt;لينك&lt;/a&gt;&lt;/Button&gt;</code></pre></section><section aria-labelledby="d-badge" class="space-y-3 rounded-2xl bg-surface p-5 ring-1 ring-line"><h2 id="d-badge" class="text-xl font-bold">Badge</h2><div class="flex flex-wrap items-center gap-3"><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-ok-soft text-ok">اتسلّم</span><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-warn-soft text-warn">متأخر</span><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-danger-soft text-danger">اتلغى</span><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold text-on-primary bg-primary">جديد</span></div><pre dir="ltr" class="overflow-x-auto rounded-lg bg-bg p-3 text-sm" tabindex="0" role="region" aria-label="كود Badge"><code>&lt;Badge tone="ok"&gt;اتسلّم&lt;/Badge&gt;
+&lt;Badge tone="danger" look="solid"&gt;اتلغى&lt;/Badge&gt;</code></pre></section><section aria-labelledby="d-card" class="space-y-3 rounded-2xl bg-surface p-5 ring-1 ring-line"><h2 id="d-card" class="text-xl font-bold">Card</h2><div class="flex flex-wrap items-center gap-3"><section class="rounded-2xl bg-surface p-5 ring-1 ring-line w-full sm:w-64"><h3 class="text-lg font-bold">طلب #٢٠٤١</h3><p class="mt-1 text-muted">٣ منتجات، ٤٥٠ ج</p></section></div><pre dir="ltr" class="overflow-x-auto rounded-lg bg-bg p-3 text-sm" tabindex="0" role="region" aria-label="كود Card"><code>&lt;Card&gt;
+  &lt;CardTitle&gt;العنوان&lt;/CardTitle&gt;
+  &lt;CardText&gt;الكلام&lt;/CardText&gt;
+&lt;/Card&gt;</code></pre></section><section aria-labelledby="d-input" class="space-y-3 rounded-2xl bg-surface p-5 ring-1 ring-line"><h2 id="d-input" class="text-xl font-bold">Input</h2><div class="flex flex-wrap items-center gap-3"><div class="grid w-full gap-4 sm:grid-cols-2"><div class="grid gap-1"><label for="_r_0_" class="font-semibold">الإيميل</label><input id="_r_0_" aria-describedby="_r_0_-note" class="h-10 rounded-lg border border-muted bg-surface px-3 text-fg focus-visible:outline-3 focus-visible:outline-offset-1 focus-visible:outline-ring aria-invalid:border-danger" autocomplete="email" type="email"><p id="_r_0_-note" class="text-sm text-muted">هنبعتلك الفاتورة عليه</p></div><div class="grid gap-1"><label for="_r_1_" class="font-semibold">الموبايل</label><input id="_r_1_" aria-invalid="true" aria-describedby="_r_1_-note" class="h-10 rounded-lg border border-muted bg-surface px-3 text-fg focus-visible:outline-3 focus-visible:outline-offset-1 focus-visible:outline-ring aria-invalid:border-danger" autocomplete="tel" type="tel" value="0100"><p id="_r_1_-note" class="text-sm text-danger">الرقم ناقص</p></div></div></div><pre dir="ltr" class="overflow-x-auto rounded-lg bg-bg p-3 text-sm" tabindex="0" role="region" aria-label="كود Input"><code>&lt;Input label="الإيميل" type="email" hint="هنبعتلك الفاتورة عليه" /&gt;
+&lt;Input label="الموبايل" error="الرقم ناقص" /&gt;</code></pre></section><section aria-labelledby="d-dialog" class="space-y-3 rounded-2xl bg-surface p-5 ring-1 ring-line"><h2 id="d-dialog" class="text-xl font-bold">Dialog</h2><div class="flex flex-wrap items-center gap-3"><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4" data-test="open-dialog" type="button" aria-haspopup="dialog" aria-expanded="false" data-state="closed">امسح الطلب</button></div><pre dir="ltr" class="overflow-x-auto rounded-lg bg-bg p-3 text-sm" tabindex="0" role="region" aria-label="كود Dialog"><code>&lt;Dialog&gt;
+  &lt;DialogTrigger asChild&gt;&lt;Button&gt;امسح&lt;/Button&gt;&lt;/DialogTrigger&gt;
+  &lt;DialogContent title="متأكد؟"&gt;…&lt;/DialogContent&gt;
+&lt;/Dialog&gt;</code></pre></section><section aria-labelledby="d-sheet" class="space-y-3 rounded-2xl bg-surface p-5 ring-1 ring-line"><h2 id="d-sheet" class="text-xl font-bold">Sheet</h2><div class="flex flex-wrap items-center gap-3"><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress border border-primary text-primary hover:bg-primary-soft active:bg-primary/20 h-10 px-4" data-test="open-sheet" type="button" aria-haspopup="dialog" aria-expanded="false" data-state="closed">الفلاتر</button></div><pre dir="ltr" class="overflow-x-auto rounded-lg bg-bg p-3 text-sm" tabindex="0" role="region" aria-label="كود Sheet"><code>&lt;Sheet&gt;
+  &lt;SheetTrigger asChild&gt;&lt;Button&gt;الفلاتر&lt;/Button&gt;&lt;/SheetTrigger&gt;
+  &lt;SheetContent title="فلاتر"&gt;…&lt;/SheetContent&gt;
+&lt;/Sheet&gt;</code></pre></section></main></div>
+
+
+</body></html>
+~~~
+
+**هتشوف إيه:** صفحة توثيق «نسيج»: فوق زرارين (الوضع الغامق و LTR)، وتحت ٦ أقسام: Button و Badge و Card و Input و Dialog و Sheet. كل قسم فيه المكون شغال، وتحته الكود اللي بيعمله.
+
+**قاعدة المكتبة:** كل مكون ألوانه من التوكنز بس، وبياخد [[className]] من برّه ويحطه آخر حاجة في [[cn]]. فالصفحة تقدر تعدّل أي مكون من غير ما تفتح ملفه (اتختبر: [[className="rounded-full"]] على Button شال [[rounded-lg]]).
+
+**Input:** الـ label متربط بـ [[htmlFor]] و [[useId]] (اسم مختلف لكل خانة حتى لو المكون اتكرر)، والـ hint والـ error بـ [[aria-describedby]]، والخانة الغلط [[aria-invalid]] وحدها حمرا ([[aria-invalid:border-danger]]).
+
+**Dialog و Sheet:** الاتنين فوق [[Dialog]] بتاع radix (نفس السلوك: الـ focus جوه، و Escape، ورجوع الـ focus)، والفرق في الشكل بس: الـ Sheet [[fixed inset-y-0 end-0]] على النهاية بطول الشاشة. و radix بيطلب [[Description]] لكل dialog، فلو مفيش وصف بنحط العنوان [[sr-only]] بدل ما نسيبه فاضي.
+
+**الاختبارات (3 أنواع):**
+- [[node --test]] للـ variants و cn (من غير متصفح، سريع).
+- Playwright للسلوك في متصفح حقيقي: الـ Dialog بيمسك الـ focus ويرجّعه، والـ Sheet بيلمس الحافة الصح في rtl و ltr.
+- axe جوه Playwright في الثيمين.
+و [[playwright.config.ts]] بيشغّل [[vite preview]] لوحده قبل الاختبارات.
+
+**٣ غلطات مسكهم القياس:**
+- **الـ CSS اتضاعف:** البناء التاني طلع 28.92KB بدل 14.17KB. Tailwind 4 بيدوّر على كلاسات في كل ملفات المشروع ما عدا اللي في [[.gitignore]]، وقرا [[dist/]] و [[build.log]]. [[.gitignore]] رجّعه 14.17KB.
+- **[[Timed out waiting 60000ms from config.webServer]]:** [[vite preview]] كان سامع على [[localhost]] والاختبار مستني [[127.0.0.1]]. [[--host 127.0.0.1]] صلّحها.
+- **الـ validator على صفحة التوثيق:** [[aria-label]] على [[<pre>]] من غير role (نفس غلطة الـ div). الـ [[<pre>]] بيتسكرول وعليه [[tabIndex]]، فبقى [[role="region"]].
+
+~~~text npm run build
+> tsc -p . && vite build
+dist/index.html                   0.40 kB │ gzip:  0.31 kB
+dist/assets/index-BNgLzU64.css   14.17 kB │ gzip:  3.85 kB
+dist/assets/index-ByDekDJ0.js   295.87 kB │ gzip: 93.03 kB
+✓ built in 175ms
+(كلمة warn في الناتج: 0)
+~~~
+
+~~~text npm test
+> node --test tests/*.test.ts && playwright test
+ℹ tests 17   ℹ pass 17   ℹ fail 0
+
+Running 5 tests using 1 worker
+  ok 1 e2e\ui.spec.ts › Dialog: opens, traps focus, Escape closes, focus goes back
+  ok 2 e2e\ui.spec.ts › Sheet: comes from the end side in rtl and in ltr
+  ok 3 e2e\ui.spec.ts › className from outside wins (rounded-full on a Button)
+  ok 4 e2e\ui.spec.ts › axe: no violations, light
+  ok 5 e2e\ui.spec.ts › axe: no violations, dark
+  5 passed (5.9s)
+
+الـ validator على صفحة التوثيق بعد ما React رسمها: مفيش رسايل (كانت 6 على aria-label في pre)
+~~~` },
+        { lvl: 'فكرة', dir: "my-ds", t: R`design system بتاعك`, what: R`قرّر الهوية (ألوان وخطوط وتدوير ومسافات) واعمل منها مكتبة مكونات بالأسماء اللي تناسب مشروع حقيقي عندك، وانقل شاشة كاملة من مشروعك ليها.`, done: R`الشاشة المنقولة مفيهاش ولا كلاس لون أو تدوير مكتوب بإيدك برا المكونات، وفيه صفحة توثيق بتعرض كل مكون.`, ext: R`اعمل registry بتاعك (ملف JSON زي shadcn) عشان تضيف مكوناتك لأي مشروع بأمر واحد، وزوّد visual regression بلقطات Playwright.`, sol: R`المثال اللي عملته: «نسيج» نفسها (المشروع اللي فات) هويتي، والشاشة المنقولة «طلبات النهارده» لمتجر ورد متخيل: كروت طلبات، وكل كارت فيه شارة الحالة وزرار «التفاصيل» بيفتح Dialog بالمنتجات. ده بيغطي فكرة «مودال تفاصيل طلب بشارات الحالة» من بنك الأفكار.
+
+~~~text DECISIONS.md
+# «نسيج»: قرارات الهوية
+
+| القرار | القيمة | ليه |
+|---|---|---|
+| اللون الأساسي | $__bt--primary$__bt نيلي $__bt#4338ca$__bt (غامق: $__bt#a5b4fc$__bt) | متجر ورد: لون هادي مش وردي عشان الورد نفسه هو اللي يلفت النظر |
+| الحالات | $__btok$__bt أخضر، $__btwarn$__bt أصفر غامق، $__btdanger$__bt أحمر | المعنى المتعارف عليه، وكل واحد ليه $__bt-soft$__bt للخلفيات الفاتحة |
+| التدوير | $__btrounded-lg$__bt للزراير والخانات، $__btrounded-2xl$__bt للكروت، $__btrounded-full$__bt للشارات | كل ما العنصر أكبر التدوير أكبر |
+| الخط | خط النظام ($__btsystem-ui$__bt) | بيظهر على طول ومن غير تحميل، وبيدعم العربي |
+| المسافات | مقياس Tailwind ($__btgap-3$__bt، $__btp-5$__bt…) | مفيش ولا قيمة $__bt[...]$__bt غير عرض الـ Dialog والـ Sheet |
+
+القاعدة: الشاشات بتستخدم المكونات وكلاسات الـ layout بس (grid و gap و spacing). أي لون أو تدوير أو ظل جوه $__btsrc/components/ui$__bt.
+~~~
+
+~~~ts vite.config.ts
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+
+// two pages: the docs (index.html) and the real screen moved to the components (orders.html)
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+  build: { rollupOptions: { input: { docs: "index.html", orders: "orders.html" } } },
+});
+~~~
+
+~~~html orders.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>طلبات متجر ورد</title>
+</head>
+<body>
+<div id="root"></div>
+<script type="module" src="/src/orders-main.tsx"></script>
+</body>
+</html>
+~~~
+
+~~~tsx src/orders-main.tsx
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import Orders from "./Orders";
+
+createRoot(document.getElementById("root")!).render(<StrictMode><Orders /></StrictMode>);
+~~~
+
+~~~ts src/orders-data.ts
+export type Status = "paid" | "pending" | "shipped" | "cancelled";
+export type Order = { id: string; customer: string; total: number; items: string[]; status: Status };
+
+export const orders: Order[] = [
+  { id: "١٠٤١", customer: "هالة سمير", total: 450, items: ["بوكيه ورد بلدي", "كارت تهنئة"], status: "paid" },
+  { id: "١٠٤٢", customer: "مروان فتحي", total: 120, items: ["وردة جوري"], status: "pending" },
+  { id: "١٠٤٣", customer: "نادية عادل", total: 800, items: ["سلة ورد كبيرة", "شوكولاتة"], status: "shipped" },
+  { id: "١٠٤٤", customer: "طارق منير", total: 250, items: ["بوكيه توليب"], status: "cancelled" },
+];
+
+// the status decides the badge: the screen never picks a colour itself
+export const statusBadge = {
+  paid: { tone: "ok", label: "اتدفع" },
+  pending: { tone: "warn", label: "مستني الدفع" },
+  shipped: { tone: "primary", label: "في الطريق" },
+  cancelled: { tone: "danger", label: "اتلغى" },
+} as const;
+~~~
+
+~~~tsx src/Orders.tsx
+import { orders, statusBadge } from "./orders-data.ts";
+import { Badge } from "./components/ui/badge.tsx";
+import { Button } from "./components/ui/button.tsx";
+import { Card, CardText, CardTitle } from "./components/ui/card.tsx";
+import { Input } from "./components/ui/input.tsx";
+import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./components/ui/dialog.tsx";
+
+const money = (n: number) => n.toLocaleString("ar-EG") + " ج";
+
+// layout classes only (grid, gap, spacing). Every colour, radius and shadow comes from a component
+export default function Orders() {
+  return (
+    <main className="mx-auto max-w-4xl space-y-6 p-4">
+      <h1 className="text-2xl font-bold">طلبات النهارده</h1>
+      <div className="max-w-sm"><Input label="دوّر برقم الطلب" inputMode="numeric" /></div>
+      <ul className="grid gap-4 sm:grid-cols-2">
+        {orders.map(o => (
+          <li key={o.id}>
+            <Card className="flex h-full flex-col gap-3">
+              <div className="flex items-start justify-between gap-3">
+                <CardTitle as="h2">طلب #{o.id}</CardTitle>
+                <Badge tone={statusBadge[o.status].tone}>{statusBadge[o.status].label}</Badge>
+              </div>
+              <CardText>{o.customer}، {money(o.total)}</CardText>
+              <Dialog>
+                <DialogTrigger asChild><Button variant="soft" size="sm" className="mt-auto self-start">التفاصيل</Button></DialogTrigger>
+                <DialogContent title={"طلب #" + o.id} description={o.customer + "، " + money(o.total)}>
+                  <Badge tone={statusBadge[o.status].tone} look="solid">{statusBadge[o.status].label}</Badge>
+                  <ul className="list-disc space-y-1 ps-5">{o.items.map(i => <li key={i}>{i}</li>)}</ul>
+                  <DialogClose asChild><Button className="w-full">تمام</Button></DialogClose>
+                </DialogContent>
+              </Dialog>
+            </Card>
+          </li>
+        ))}
+      </ul>
+    </main>
+  );
+}
+~~~
+
+~~~tsx src/components/ui/card.tsx (بعد إضافة as)
+import type { ComponentProps } from "react";
+import { cn } from "../../lib/cn.ts";
+
+// a card is a few small parts, each one takes className so the page can adjust it
+export function Card({ className, ...props }: ComponentProps<"section">) {
+  return <section className={cn("rounded-2xl bg-surface p-5 ring-1 ring-line", className)} {...props} />;
+}
+// the heading level depends on the page around the card, so the page chooses it (h3 by default)
+export function CardTitle({ as: Tag = "h3", className, ...props }: ComponentProps<"h3"> & { as?: "h2" | "h3" | "h4" }) {
+  return <Tag className={cn("text-lg font-bold", className)} {...props} />;
+}
+export function CardText({ className, ...props }: ComponentProps<"p">) {
+  return <p className={cn("mt-1 text-muted", className)} {...props} />;
+}
+~~~
+
+باقي الملفات (المكونات وصفحة التوثيق [[index.html]]) زي مشروع المكتبة.
+
+~~~view 560 900 الشكل النهائي (المعاينة: الصفحة بعد ما React رسمها، من غير JavaScript)، و «التفاصيل» بيفتح الـ Dialog في مشروعك
+<!doctype html>
+<html lang="ar" dir="rtl"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>طلبات متجر ورد</title>
+  
+  
+  
+<style>
+/*! tailwindcss v4.3.4 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:block))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-space-y-reverse:0;--tw-border-style:solid;--tw-font-weight:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid}}}@layer theme{:root,:host{--font-sans:system-ui, "Segoe UI", Tahoma, sans-serif;--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-black:#000;--spacing:.25rem;--container-sm:24rem;--container-4xl:56rem;--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--font-weight-semibold:600;--font-weight-bold:700;--radius-lg:.5rem;--radius-2xl:1rem;--animate-spin:spin 1s linear infinite;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:system-ui, "Segoe UI", Tahoma, sans-serif;--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.fixed{position:fixed}.inset-0{inset:0}.inset-x-0{inset-inline:0}.inset-y-0{inset-block:0}.end-0{inset-inline-end:calc(var(--spacing) * 0)}.top-1{top:var(--spacing)}.top-1\/2{top:50%}.mx-auto{margin-inline:auto}.mt-1{margin-top:var(--spacing)}.mt-auto{margin-top:auto}.block{display:block}.flex{display:flex}.grid{display:grid}.inline-flex{display:inline-flex}.table{display:table}.size-4{width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.h-8{height:calc(var(--spacing) * 8)}.h-10{height:calc(var(--spacing) * 10)}.h-12{height:calc(var(--spacing) * 12)}.h-full{height:100%}.w-\[min\(22rem\,85vw\)\]{width:min(22rem,85vw)}.w-\[min\(28rem\,calc\(100vw-2rem\)\)\]{width:min(28rem,100vw - 2rem)}.w-full{width:100%}.max-w-4xl{max-width:var(--container-4xl)}.max-w-sm{max-width:var(--container-sm)}.-translate-y-1{--tw-translate-y:calc(var(--spacing) * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.-translate-y-1\/2{--tw-translate-y:calc(calc(1 / 2 * 100%) * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.animate-spin{animation:var(--animate-spin)}.list-disc{list-style-type:disc}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-start{align-items:flex-start}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.gap-1{gap:var(--spacing)}.gap-2{gap:calc(var(--spacing) * 2)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}:where(.space-y-1>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(var(--spacing) * var(--tw-space-y-reverse));margin-block-end:calc(var(--spacing) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-3>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-4>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 4) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-6>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)))}.self-start{align-self:flex-start}.overflow-x-auto{overflow-x:auto}.rounded-2xl{border-radius:var(--radius-2xl)}.rounded-full{border-radius:2147483647px}.rounded-lg{border-radius:var(--radius-lg)}.border{border-style:var(--tw-border-style);border-width:1px}.border-2{border-style:var(--tw-border-style);border-width:2px}.border-current{border-color:currentColor}.border-muted{border-color:var(--muted)}.border-primary{border-color:var(--primary)}.border-e-transparent{border-inline-end-color:#0000}.bg-bg{background-color:var(--bg)}.bg-black{background-color:var(--color-black)}.bg-black\/50{background-color:#00000080}@supports (color:color-mix(in lab, red, red)){.bg-black\/50{background-color:color-mix(in oklab, var(--color-black) 50%, transparent)}}.bg-danger{background-color:var(--danger)}.bg-danger-soft{background-color:var(--danger-soft)}.bg-ok{background-color:var(--ok)}.bg-ok-soft{background-color:var(--ok-soft)}.bg-primary{background-color:var(--primary)}.bg-primary-soft{background-color:var(--primary-soft)}.bg-surface{background-color:var(--surface)}.bg-warn{background-color:var(--warn)}.bg-warn-soft{background-color:var(--warn-soft)}.p-3{padding:calc(var(--spacing) * 3)}.p-4{padding:calc(var(--spacing) * 4)}.p-5{padding:calc(var(--spacing) * 5)}.p-6{padding:calc(var(--spacing) * 6)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-2\.5{padding-inline:calc(var(--spacing) * 2.5)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-6{padding-inline:calc(var(--spacing) * 6)}.py-0{padding-block:0}.py-0\.5{padding-block:calc(var(--spacing) * .5)}.ps-5{padding-inline-start:calc(var(--spacing) * 5)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.text-danger{color:var(--danger)}.text-fg{color:var(--fg)}.text-muted{color:var(--muted)}.text-ok{color:var(--ok)}.text-on-primary{color:var(--on-primary)}.text-primary{color:var(--primary)}.text-warn{color:var(--warn)}.shadow{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px var(--tw-shadow-color,#00000040);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-1{--tw-ring-shadow:var(--tw-ring-inset, ) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-line{--tw-ring-color:var(--line)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}@media (hover:hover){.hover\:bg-primary-soft:hover{background-color:var(--primary-soft)}.hover\:bg-primary\/20:hover{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.hover\:bg-primary\/20:hover{background-color:color-mix(in oklab, var(--primary) 20%, transparent)}}.hover\:opacity-90:hover{opacity:.9}}.focus-visible\:outline-3:focus-visible{outline-style:var(--tw-outline-style);outline-width:3px}.focus-visible\:outline-offset-1:focus-visible{outline-offset:1px}.focus-visible\:outline-offset-2:focus-visible{outline-offset:2px}.focus-visible\:outline-ring:focus-visible{outline-color:var(--ring)}.active\:bg-primary\/20:active{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.active\:bg-primary\/20:active{background-color:color-mix(in oklab, var(--primary) 20%, transparent)}}.active\:bg-primary\/30:active{background-color:var(--primary)}@supports (color:color-mix(in lab, red, red)){.active\:bg-primary\/30:active{background-color:color-mix(in oklab, var(--primary) 30%, transparent)}}.active\:opacity-80:active{opacity:.8}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-50:disabled{opacity:.5}.aria-busy\:cursor-progress[aria-busy=true]{cursor:progress}.aria-invalid\:border-danger[aria-invalid=true]{border-color:var(--danger)}@media (prefers-reduced-motion:reduce){.motion-reduce\:animate-none{animation:none}}@media (width>=40rem){.sm\:w-64{width:calc(var(--spacing) * 64)}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}}}:root{--bg:#f8fafc;--surface:#fff;--fg:#0f172a;--muted:#475569;--line:#e2e8f0;--primary:#4338ca;--on-primary:#fff;--primary-soft:#e0e7ff;--ok:#15803d;--ok-soft:#dcfce7;--warn:#a16207;--warn-soft:#fef9c3;--danger:#b91c1c;--danger-soft:#fee2e2;--ring:#f59e0b}[data-theme=dark]{--bg:#0b1120;--surface:#111827;--fg:#e5e7eb;--muted:#9ca3af;--line:#1f2937;--primary:#a5b4fc;--on-primary:#0b1120;--primary-soft:#1e1b4b;--ok:#4ade80;--ok-soft:#052e16;--warn:#facc15;--warn-soft:#422006;--danger:#f87171;--danger-soft:#450a0a;--ring:#fbbf24}body{background:var(--bg);color:var(--fg);font-family:var(--font-sans)}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@keyframes spin{to{transform:rotate(360deg)}}
+
+</style>
+</head>
+<body>
+<div id="root"><main class="mx-auto max-w-4xl space-y-6 p-4"><h1 class="text-2xl font-bold">طلبات النهارده</h1><div class="max-w-sm"><div class="grid gap-1"><label for="_r_0_" class="font-semibold">دوّر برقم الطلب</label><input id="_r_0_" class="h-10 rounded-lg border border-muted bg-surface px-3 text-fg focus-visible:outline-3 focus-visible:outline-offset-1 focus-visible:outline-ring aria-invalid:border-danger" inputmode="numeric"></div></div><ul class="grid gap-4 sm:grid-cols-2"><li><section class="rounded-2xl bg-surface p-5 ring-1 ring-line flex h-full flex-col gap-3"><div class="flex items-start justify-between gap-3"><h2 class="text-lg font-bold">طلب #١٠٤١</h2><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-ok-soft text-ok">اتدفع</span></div><p class="mt-1 text-muted">هالة سمير، ٤٥٠ ج</p><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-8 px-3 text-sm mt-auto self-start" type="button" aria-haspopup="dialog" aria-expanded="false" data-state="closed">التفاصيل</button></section></li><li><section class="rounded-2xl bg-surface p-5 ring-1 ring-line flex h-full flex-col gap-3"><div class="flex items-start justify-between gap-3"><h2 class="text-lg font-bold">طلب #١٠٤٢</h2><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-warn-soft text-warn">مستني الدفع</span></div><p class="mt-1 text-muted">مروان فتحي، ١٢٠ ج</p><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-8 px-3 text-sm mt-auto self-start" type="button" aria-haspopup="dialog" aria-expanded="false" data-state="closed">التفاصيل</button></section></li><li><section class="rounded-2xl bg-surface p-5 ring-1 ring-line flex h-full flex-col gap-3"><div class="flex items-start justify-between gap-3"><h2 class="text-lg font-bold">طلب #١٠٤٣</h2><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-primary-soft text-primary">في الطريق</span></div><p class="mt-1 text-muted">نادية عادل، ٨٠٠ ج</p><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-8 px-3 text-sm mt-auto self-start" type="button" aria-haspopup="dialog" aria-expanded="false" data-state="closed">التفاصيل</button></section></li><li><section class="rounded-2xl bg-surface p-5 ring-1 ring-line flex h-full flex-col gap-3"><div class="flex items-start justify-between gap-3"><h2 class="text-lg font-bold">طلب #١٠٤٤</h2><span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-semibold bg-danger-soft text-danger">اتلغى</span></div><p class="mt-1 text-muted">طارق منير، ٢٥٠ ج</p><button class="inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress bg-primary-soft text-primary hover:bg-primary/20 active:bg-primary/30 h-8 px-3 text-sm mt-auto self-start" type="button" aria-haspopup="dialog" aria-expanded="false" data-state="closed">التفاصيل</button></section></li></ul></main></div>
+
+
+</body></html>
+~~~
+
+**هتشوف إيه:** «طلبات النهارده»، وخانة بحث، و ٤ كروت طلبات، في كل كارت رقم الطلب وشارة حالته الملونة (اتدفع أخضر، ومستني الدفع أصفر، وفي الطريق نيلي، واتلغى أحمر) واسم العميل والمبلغ وزرار «التفاصيل».
+
+**الاختبار الحقيقي للـ design system:** الشاشة مفيهاش ولا كلاس لون أو تدوير أو ظل. اتعدّت بـ grep على [[Orders.tsx]] لـ [[bg-]] و [[text-]] (غير المقاسات) و [[border-]] و [[ring-]] و [[rounded-]] و [[shadow-]]: 0. كل اللي فيها layout ([[grid]] و [[gap]] و [[space-y]]) ومكونات.
+
+**الحالة بتختار الشارة، مش الشاشة:** [[statusBadge]] في [[orders-data.ts]] بيقول «paid = ok و اتدفع». الشاشة بتقول [[statusBadge[o.status].tone]] ومش بتعرف أي لون.
+
+**صفحتين في مشروع واحد:** [[build.rollupOptions.input]] في [[vite.config.ts]]: التوثيق ([[index.html]]) والشاشة ([[orders.html]])، والاتنين بيستخدموا نفس المكونات، و Vite حط المكونات المشتركة في ملف واحد.
+
+**غلطة مسكها axe وغيّرت المكتبة نفسها:** [[CardTitle]] كان دايمًا [[h3]]. في صفحة التوثيق ده صح (جوه أقسام [[h2]])، بس هنا الكروت تحت [[h1]] على طول، و axe قال [[heading-order]]. مستوى العنوان بيعتمد على الصفحة، فـ [[CardTitle]] بقى بياخد [[as="h2"]] (والافتراضي [[h3]]). design system حقيقي بيتغيّر لما شاشة حقيقية تتنقل ليه، وده المقصود من المشروع.
+
+~~~text الناتج (Playwright بـ Chrome 157)
+grep في Orders.tsx لـ bg- text-(لون) border- ring- rounded- shadow-: 0
+npx vite build: orders-*.js 2.20 kB و docs-*.js 5.15 kB، والمكونات المشتركة في ملف واحد
+«التفاصيل» في طلب ١٠٤٣: Dialog «طلب #١٠٤٣» فيه 2 منتج، و Escape رجّع الـ focus للزرار
+360: scrollWidth 360/360
+axe والـ Dialog مفتوح: 0   مقفول: 0 (كانت heading-order:1 قبل as="h2")   الـ validator: مفيش رسايل
+~~~` },
       ],
       items: [
         {
