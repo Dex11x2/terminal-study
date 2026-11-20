@@ -2027,7 +2027,7 @@ without content: none on the contact line pages 1 | header none | link ::after "
 
 ~~~html og.html
 <!doctype html>
-<html lang="ar" dir="rtl"><meta charset="utf-8">
+<html lang="ar" dir="rtl"><meta charset="utf-8"><title>كارت المشاركة</title>
 <style>
   body { margin: 0; width: 1200px; height: 630px; display: grid; place-content: center; gap: 12px;
     font-family: system-ui, "Segoe UI", sans-serif; background: radial-gradient(circle at 80% 20%, #dcefec, #f7f5f0 60%); color: #1c2230; }
@@ -2485,7 +2485,7 @@ document.getElementById("spark").setAttribute("points", sparkPoints(k.checkins))
       <section id="schedule" aria-labelledby="sch-h">
         <h2 id="sch-h">جدول الحصص</h2>
         <p class="hint">اضغط على حصة عشان تشوف تفاصيلها وتحجز مكان.</p>
-        <div class="week-wrap" tabindex="0" aria-label="جدول الأسبوع، بيتسكرول بالعرض">
+        <div class="week-wrap" tabindex="0" role="region" aria-label="جدول الأسبوع، بيتسكرول بالعرض">
           <div class="week" id="week"></div>
         </div>
       </section>

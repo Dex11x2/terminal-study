@@ -3554,7 +3554,7 @@ form.addEventListener('submit', (e) => {
     </div>
     <div class="field wide">
       <label for="addr">العنوان</label>
-      <input id="addr" name="addr" autocomplete="street-address">
+      <input id="addr" name="addr" autocomplete="address-line1">
     </div>
   </div>
   <button>اطلب</button>

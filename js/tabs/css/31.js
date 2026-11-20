@@ -1827,6 +1827,7 @@ background-color: #fde68a                  →  rgb(253, 230, 138)
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<title>عرض الـ body</title>
 <style>
   body { background-color: #fef3c7; margin: 24px; max-width: 200px; border: 2px dashed #b45309; }
 </style>

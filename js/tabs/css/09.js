@@ -1767,12 +1767,14 @@ Tab (focus)            6px     12px
 <head><meta charset="utf-8"><title>peer</title><link rel="stylesheet" href="out.css"></head>
 <body class="p-8">
 <main>
+<div>
   <span id="before" class="peer-invalid:visible invisible">خطأ</span>
   <input class="peer border" required aria-label="قبل">
-</main>
-<main>
+</div>
+<div>
   <input class="peer border" required aria-label="بعد">
   <span id="after" class="peer-invalid:visible invisible">خطأ</span>
+</div>
 </main>
 </body>
 </html>

@@ -1897,11 +1897,12 @@ await b.close();
       "@context": "https://schema.org",
       "@type": "Course",
       name: "كورس React",
-      description: "$__lt/script><script>alert(1)$__lt/script>",
+      // <\/ هنا عشان الملف نفسه HTML: لو كتبتها من غير \ الـ script ده نفسه هيتقفل
+      description: "<\/script><script>alert(1)<\/script>",
       provider: { "@type": "Organization", name: "أكاديمية حبّة" },
     };
-    // الخطوة المهمة: بعد JSON.stringify، كل < بتتكتب كـ escape جوه الـ JSON
-    const safe = JSON.stringify(course).replaceAll("<", "\u003c");
+    // الخطوة المهمة: بعد JSON.stringify، كل < تبقى الـ ٦ حروف \u003c جوه الـ JSON
+    const safe = JSON.stringify(course).replaceAll("<", "\\u003c");
     window.jsonLd = $__bt<script type="application/ld+json">$__{safe}<\/script>$__bt;
     console.log(window.jsonLd);
   $__lt/script>
@@ -1912,11 +1913,22 @@ await b.close();
 
 [[replaceAll("<", ...)]] بيبدّل [[<]] بـ escape مكتوب كـ [[\u003c]]: ده JSON صحيح، و [[JSON.parse]] بيرجّعه [[<]] لما يتقري، بس الـ HTML parser مش شايف [[<]] خالص فمفيش [[$__lt/script>]]. جوجل بيقرا القيمة السليمة، والصفحة مبتتكسرش.
 
+**غلطتين وقعت فيهم في أول نسخة من الحل ده، والـ HTML validator مسك أولهم:**
+
+- كتبت الوصف الخبيث في الكود زي ما هو: [[description: "$__lt/script>..."]]. بس الكود ده نفسه جوه [[<script>]] في ملف HTML، فالـ parser قفل الـ script عند أول [[$__lt/script>]] قبل ما JavaScript يشتغل خالص: الـ alert اشتغل، وباقي الكود ظهر كلام على الصفحة. نفس الثغرة اللي الدرس بيشرحها حصلت في ملف الحل. التصليح: [[<\/script>]] جوه نص JavaScript. الـ [[\/]] في JavaScript هي [[/]] عادي، فالنص هو هو، بس الـ parser مبقاش شايف [[$__lt/script>]].
+- كتبت [[replaceAll("<", "<")]]. بس [[<]] جوه نص JavaScript هي نفسها [[<]]، فالسطر كان بيبدّل [[<]] بـ [[<]] ومبيعملش حاجة. اللي محتاجه في الناتج هو الـ ٦ حروف [[<]] مكتوبين، فلازم [[\\u003c]] (الـ [[\\]] بتطلع [[\]] واحدة).
+
+اتأكد بنفسك: [[console.log(window.jsonLd)]] لازم تشوف فيه [[</script>]] مش [[$__lt/script>]].
+
 الغلطة الشائعة: [[encodeURIComponent]] أو تحويل لـ [[&lt;]]. الاتنين بيغيّروا النص نفسه، فجوجل هيقرا [[&lt;]] حرفيًا لأن جوه [[script]] الـ HTML entities مبتتفكش.
 
 Rich Results Test محتاج صفحة أو كود بيتلزق في موقع جوجل، فالخطوة دي من الوثائق ومتجربتش هنا.
 
-~~~text الناتج (Chrome 156، نفس الـ JSON اتكتب في HTML من السيرفر)
+~~~text الناتج (Chrome 157: course-ld.html، وبعدها الـ tag اللي طلع اتكتب في صفحة زي ما السيرفر بيعمل)
+console.log(window.jsonLd):
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Course","name":"كورس React","description":"\u003c/script>\u003cscript>alert(1)\u003c/script>","provider":{"@type":"Organization","name":"أكاديمية حبّة"}}$__lt/script>
+
+أول نسخة (الوصف من غير \/):  عدد الـ alert = 1، وباقي الكود ظهر كلام على الصفحة
 من غير escape:  عدد الـ alert = 1، والـ JSON اتقص: JSON.parse فشل
 بعد escape:     عدد الـ alert = 0، و JSON.parse نجح، والوصف رجع: $__lt/script><script>alert(1)$__lt/script>
 ~~~` },

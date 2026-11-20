@@ -246,6 +246,7 @@ document.getElementById("year").textContent = new Date().getFullYear();
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
+<title>مركز نغم لتعليم الموسيقى | المعادي</title>
 <style>
 body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 0 auto; padding: 16px; }
 header { background: #fef3c7 url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect x='6' y='20' width='6' height='22' fill='%23b45309'/><rect x='16' y='10' width='6' height='32' fill='%23b45309'/><rect x='26' y='26' width='6' height='16' fill='%23b45309'/><rect x='36' y='16' width='6' height='26' fill='%23b45309'/></svg>") no-repeat left 12px center / 48px; color: #1c1917; padding: 8px 16px; }

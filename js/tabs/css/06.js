@@ -2344,7 +2344,7 @@ axe: 0 violations
   <div class="row"><label for="n">الاسم</label><input id="n" autocomplete="name" aria-describedby="n-h"><small id="n-h">زي البطاقة</small></div>
   <div class="row"><label for="e">الإيميل</label><input id="e" type="email" autocomplete="email" aria-describedby="e-h"><small id="e-h">هنبعتلك تأكيد</small></div>
   <div class="row"><label for="p">الموبايل</label><input id="p" type="tel" dir="ltr" autocomplete="tel" aria-describedby="p-h"><small id="p-h">١١ رقم</small></div>
-  <div class="row"><label for="c">العنوان بالتفصيل</label><input id="c" autocomplete="street-address" aria-describedby="c-h"><small id="c-h">الشارع والمدينة</small></div>
+  <div class="row"><label for="c">العنوان بالتفصيل</label><input id="c" autocomplete="address-line1" aria-describedby="c-h"><small id="c-h">الشارع والمدينة</small></div>
   <div class="row"><label for="w">كلمة السر</label><input id="w" type="password" autocomplete="new-password" aria-describedby="w-h"><small id="w-h">٨ حروف على الأقل</small></div>
   <button>سجّل</button>
 </form>

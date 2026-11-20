@@ -160,7 +160,7 @@ zoom 200% على شاشة 1440 = الـ CSS بيشوف 720:  h1 = 44.9 CSS px ×
 خط المتصفح Large (20px)، Chrome headless بـ default_font_size 20 على شباك 1422:
   16px:  62.7  47.1  35.4  26.6  19.9  15.0
   20px:  69.4  53.0  40.6  31.1  23.9  18.4    (كلهم كبروا)
-scrollWidth = عرض الشاشة في كل العروض   axe: 0 violations   CSS validator: No Error Found
+scrollWidth = عرض الشاشة في كل العروض   axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
 ~~~
 
 **جرّب «Large» بنفسك:** في Chrome افتح [[chrome://settings/fonts]] وغيّر Font size لـ Large، وارجع للصفحة: كل الأرقام هتكبر. رجّعها Medium بعد ما تخلص.` },
@@ -361,7 +361,7 @@ lg      20px        12px / 24px            10px     (كله 0.6em و 1.2em و 0.
   primary       rgb(124, 58, 237)
   hover بتاعه   color(srgb 0.389 0.182 0.744) = 99, 46, 190
   secondary     color(srgb 0.923 0.884 0.989) (البنفسجي الفاتح)
-axe: 0 violations   CSS validator: No Error Found
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
 ~~~
 
 **خد بالك:** [[color-mix()]] بيرجّع اللون بصيغة [[color(srgb ...)]] مش [[rgb()]]. الأرقام فيه من 0 لـ 1 بدل 0 لـ 255. لو JavaScript بيقرا اللون ويقارنه بـ [[rgb(...)]] هيلاقيه مختلف.` },
@@ -531,7 +531,7 @@ body { margin: 0; padding: 1rem; background: var(--paper); color: var(--ink); fo
 على 360:   الكارتين: صندوقهم 328   العنوان 32.8px   padding 19.68px
 نفس العنوان بـ clamp(1.25rem, 5vw, 4rem):   على 1280: 64px و 64px    على 360: 20px و 20px
 scrollWidth = عرض الشاشة على 360 و 1280
-axe: 0 violations   CSS validator: 8 errors، كلهم container-type و cqi (الـ validator متأخر عن المتصفحات)
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: 8 errors، كلهم container-type و cqi (الـ validator متأخر عن المتصفحات)
 ~~~` },
         { lvl: 'متوسط', dir: "style-guide", t: R`صفحة «style guide» لمتجر قهوة متخيل`, what: R`صفحة بتعرض كل الـ tokens بتاعة «بُن الصباح»: الألوان (مربع لكل لون واسمه وقيمته من [[getPropertyValue]])، والمسافات ([[--space-1]] لحد [[--space-6]] مرسومين كمستطيلات)، والتدوير، والظلال (٣ مستويات: صغير حاد وكبير ناعم فوق بعض)، والخطوط. وفوق ٣ أزرار بتبدّل البراند (قهوة، ونعناع، وتوت) بتغيير ٥ متغيرات بس على [[:root]]. من دروس الوحدة كلها.`, done: R`الضغط على براند بيغيّر الصفحة كلها من غير ما ولا قاعدة غير [[:root]] تتلمس، والأرقام المكتوبة جنب كل token بتتحدّث لوحدها، ومفيش ولا لون مكتوب بإيده برّه [[:root]] (اعمل بحث على [[#]] و [[rgb(]] و [[oklch(]] في باقي الملف).`, sol: R`~~~html index.html
 <!doctype html>
@@ -845,7 +845,7 @@ showValues();
 بعد «نعناع»        #0f766e #dcf5ef #0369a1 #f7fdfb #10302b
 المسافات           0.25rem 0.5rem 1rem 1.5rem 2.5rem 4rem
 بحث على # و rgb( و oklch( في style.css بعد :root: ولا واحد
-axe في التلات براندات: 0 violations   CSS validator: No Error Found
+axe في التلات براندات: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
 ~~~` },
         { lvl: 'متوسط', dir: "club-hero", t: R`هيرو بيملا الشاشة صح على الموبايل`, what: R`هيرو لنادي كتاب متخيل: [[min-height: 100svh]] (و [[100vh]] قبلها احتياطي)، وعنوان [[clamp()]] كبير، ومسافات [[padding-block]] بـ clamp، وزرار «انضم» لازم يبان من غير scroll، وخلفية هالة بـ radial-gradients ألوانها من متغيرات. وتحته [[.app-shell]] صغير بـ [[100dvh]] (هيدر وفوتر ثابتين). من دروس «dvh» و «clamp()» و «CSS variables».`, done: R`على موبايل حقيقي (أو DevTools بأبعاد 375×667 و 360×640) الزرار ظاهر من غير scroll، ومفيش [[100vw]] في الملف ولا scroll أفقي، وعنوان الهيرو مبيعدّيش سطرين على 320px.`, sol: R`~~~html index.html
 <!doctype html>
@@ -1062,7 +1062,7 @@ body { margin: 0; color: var(--ink); background: var(--paper); font-family: syst
 320×568           الزرار تحته عند 397 والشاشة 568   العنوان 28.8px في سطرين   scrollWidth 320
 .app-shell        طوله = طول الشاشة (667 على 375×667)
 بحث على 100vw في style.css: مفيش
-axe: 0 violations (كانت landmark-one-main و region قبل <main>)   CSS validator: No Error Found
+axe: 0 violations (كانت landmark-one-main و region قبل <main>)   الـ validator: مفيش رسايل   CSS validator: No Error Found
 ~~~
 
 **حدود القياس:** DevTools مبيعملش شريط عنوان بيظهر ويستخبى، فـ [[svh]] و [[dvh]] و [[vh]] بيطلعوا نفس الرقم فيه. عشان تشوف الفرق افتح الصفحة على موبايل حقيقي: من نفس الـ Wi-Fi، شغّل [[npx serve]] على الكمبيوتر وافتح عنوانه من الموبايل.` },
@@ -1541,7 +1541,7 @@ addEventListener('DOMContentLoaded', () => {
   السعر rgb(29, 78, 216)   الزرار rgb(29, 78, 216)   soft rgb(219, 234, 254) وكلامه rgb(30, 58, 138)
 بعد «الوضع الغامق» و Refresh:   data-theme = dark   aria-pressed = true   localStorage bon-theme = dark
 scrollWidth = clientWidth على 360 (345) و 1280 (1265)
-axe في الثيمين: 0 violations (كانت page-has-heading-one قبل الـ h1)   CSS validator: No Error Found للملفين
+axe في الثيمين: 0 violations (كانت page-has-heading-one قبل الـ h1)   الـ validator: مفيش رسايل   CSS validator: No Error Found للملفين
 ~~~` },
         { lvl: 'فكرة', dir: "pharmacy-id", t: R`هوية لمكان حقيقي حواليك`, what: R`اختار مكان تعرفه (قهوة، أو صيدلية، أو جيم في الحي) واعمله tokens: ٥ ألوان بالمعنى، وخطين، ومقياس مسافات، وصفحة واحدة بتستخدمهم. انت اللي تختار الألوان والسبب.`, done: R`كل لون ليه سبب مكتوب (ليه الأخضر للحجز مثلًا)، والتباين سليم، وتقدر تغيّر الهوية كلها من [[:root]] بس.`, ext: R`اعمل منها ٣ صفحات (رئيسية، ومنيو، وتواصل) بنفس الـ tokens، وورّيها لصاحب المكان.`, sol: R`المكان اللي اخترته: صيدلية حي متخيلة اسمها «الشفا». ده مثال واحد، وانت اعمل لمكانك انت.
 
@@ -1744,7 +1744,7 @@ h2 { font-size: 1.25rem; margin: var(--space-6) 0 var(--space-3); }
 بحث على # و rgb( و white و black في الملف بعد :root: ولا واحد
 غيّرت --color-main و --color-call و --color-bg من DevTools بس:
   الشريط rgb(124, 45, 18)   زرار التليفون rgb(67, 56, 202)   الخلفية rgb(255, 251, 235)   دايرة اللون rgb(124, 45, 18)
-axe: 0 violations   CSS validator: No Error Found
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
 ~~~` },
       ],
       l: 1,

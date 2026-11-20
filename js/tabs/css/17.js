@@ -488,7 +488,7 @@ test("التنقل بالكيبورد في tabs عربي", async t => {
 <body>
   <main><h1>المدن</h1>
     <label for="q">دوّر على مدينة</label>
-    <input id="q" role="combobox" aria-expanded="true" aria-controls="list" aria-autocomplete="list" aria-activedescendant="">
+    <input id="q" role="combobox" aria-expanded="true" aria-controls="list" aria-autocomplete="list">
     <ul id="list" role="listbox" aria-label="النتايج">
       <li role="option" id="o1" aria-selected="false">القاهرة</li>
       <li role="option" id="o2" aria-selected="false">الإسكندرية</li>

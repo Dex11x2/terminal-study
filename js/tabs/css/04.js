@@ -540,7 +540,7 @@ margin-block-start      شهري 16px   ٣ شهور 16px   سنوي 0px (.mt-0)
 hover على «٣ شهور» (بالماوس فعلًا):
   ٣ شهور   top 94 → 90   transform: matrix(1, 0, 0, 1, 0, -4)
   شهري     left 805 top 94 زي ما هو       سنوي   left 176 top 78 زي ما هو
-axe: 0 violations   CSS validator: No Error Found
+axe: 0 violations   الـ validator: مفيش رسايل   CSS validator: No Error Found
 ~~~
 
 **خد بالك من التجربة التانية:** CSS مكتوب من غير [[@layer]] أقوى من أي طبقة. فلو ضفت مكتبة أو ملف قديم من غير طبقات، هيغلب الـ utilities بتاعتك. الحل: حطه هو كمان في طبقة ([[@import url(old.css) layer(legacy);]]).` },
