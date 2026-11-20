@@ -2041,6 +2041,616 @@ await b.close();
           what: R`الـ dictionary بيبدّل النص في المتصفح، بس جوجل بيشوف العربي بس. اكتب [[build.mjs]] بيقرا نفس [[dict]] ويطلّع نسختين ثابتين: [[/]] بالعربي و [[/en/]] بالإنجليزي، وكل نسخة فيها [[lang]] و [[dir]] صح من السيرفر، و [[<link rel="alternate" hreflang>]] للتانية، وزرار اللغة يبقى لينك عادي. ومعاه فحص بيفشل لو كلمة ناقصة في أي لغة.`,
           done: R`[[curl -s .../en/ | grep "<html"]] بيطلّع [[lang="en" dir="ltr"]] من غير JS، والنسختين صفر violations، و CLS صفر من غير [[boot.js]] (مفيش تبديل بعد الرسم أصلًا)، وتشغيل [[build.mjs]] مرتين بيطلّع نفس الملفات بالظبط.`,
           ext: R`زوّد لغة تالتة، وخلي [[sitemap.xml]] يتولد لوحده فيه كل الصفحات باللغات.`,
+          dir: R`pd-lab`,
+          cont: true,
+          sol: R`**الفكرة في جملة:** النهارده اللغة بتتقرر في المتصفح ([[boot.js]] و [[i18n.js]] بيبدّلوا الكلام بعد ما الصفحة توصل)، فاللي بيطلب [[/]] من غير JavaScript (جوجل، و [[curl]]، ومعاينة اللينك في واتساب) بيشوف العربي بس، والإنجليزي ملوش عنوان خاص بيه. [[build.mjs]] بيقرا **نفس** القاموس ويكتب نسختين ثابتين جاهزين: [[site-out/]] بالعربي و [[site-out/en/]] بالإنجليزي. كل صفحة بتوصل من السيرفر بلغتها و [[dir]] بتاعها، ومفيش حاجة بتتبدّل بعد الرسم.
+
+**الملفات:** [[build.mjs]] جديد، و ٤ صفحات المصدر بياخدوا [[data-i18n-content]] على الـ [[<meta>]] بتاعة الوصف والـ OG، و ٧ كلمات إنجليزي جديدة في [[i18n.js]] (الوصف والـ OG مكانوش في القاموس)، وسطر في [[serve.mjs]]، وسكربتين قياس. نسخة المعمل ([[portfolio/]]) بتفضل شغالة زي ما هي: [[check-portfolio.mjs]] بتاع الوحدة لسه صفر.
+
+~~~js build.mjs
+// node build.mjs: two static copies of the portfolio from the same dictionary, so every language is in the HTML itself
+//   site-out/            Arabic  (lang="ar" dir="rtl")
+//   site-out/en/         English (lang="en" dir="ltr")
+// no JS decides the language anymore: the server sends the right page, Google reads both, and nothing flips after the first paint
+import fs from "node:fs";
+import path from "node:path";
+
+const SRC = "portfolio", OUT = "site-out", ORIGIN = "https://nadine.example";
+const PAGES = ["index.html", "cv.html", "work/tide-notes.html"];
+
+// 1. the dictionary: dict.en is the object literal at the top of i18n.js; Arabic is what the HTML already says
+const i18n = fs.readFileSync(path.join(SRC, "js/i18n.js"), "utf8");
+const lit = i18n.slice(i18n.indexOf("{", i18n.indexOf("const dict")), i18n.indexOf("\n};") + 2);
+const en = new Function("return " + lit)().en;
+
+// every element with data-i18n holds plain text; anything else is a mistake the build must stop on
+const TEXT = /(<(\w+)\b[^>]*\sdata-i18n="(\w+)"[^>]*>)([^<]*)(<\/\2>)/g;
+const LABEL = /(<[^>]*\saria-label=")([^"]*)("[^>]*\sdata-i18n-label="(\w+)"[^>]*>)/g;
+const CONTENT = /(<meta\b[^>]*\scontent=")([^"]*)("[^>]*\sdata-i18n-content="(\w+)"[^>]*>)/g;
+
+const missing = [];
+const word = (lang, key, ar, page) => {
+  if (lang === "ar") { if (!ar.trim()) missing.push($__btar $__{key} ($__{page}): empty in the HTML$__bt); return ar; }
+  if (en[key] === undefined) { missing.push($__bten $__{key} ($__{page})$__bt); return ar; }
+  return en[key];
+};
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+
+function build(page, lang) {
+  let s = fs.readFileSync(path.join(SRC, page), "utf8");
+  if (/data-i18n="\w+"[^>]*>[^<]*<(?!\/)/.test(s)) throw new Error(page + ": an element with data-i18n has a tag inside it");
+  s = s.replace(TEXT, (m, open, tag, key, text, close) => open + esc(word(lang, key, text, page)) + close);
+  s = s.replace(LABEL, (m, a, text, b, key) => a + esc(word(lang, key, text, page)) + b);
+  s = s.replace(CONTENT, (m, a, text, b, key) => a + esc(word(lang, key, text, page)) + b);
+
+  const url = lang => ORIGIN + "/" + (lang === "en" ? "en/" : "") + page.replace(/index\.html$/, "");
+  const depth = page.split("/").length - 1 + (lang === "en" ? 1 : 0);   // how many folders below the site root
+  const up = "../".repeat(depth);
+
+  if (lang === "en") s = s.replace('<html lang="ar" dir="rtl">', '<html lang="en" dir="ltr">');
+  // the language comes from the URL now: boot.js would flip a page to the language saved last visit, so it goes; only the .js class stays
+  s = s.replace(/<script src="(\.\.\/)*js\/boot\.js"><\/script>/, '<script>document.documentElement.classList.add("js")</script>');
+  // canonical + og:url for this language, and the other language as an alternate (x-default = Arabic)
+  s = s.replace(/<link rel="canonical" href="[^"]*">/, $__bt<link rel="canonical" href="$__{url(lang)}">\n  <link rel="alternate" hreflang="ar" href="$__{url("ar")}">\n  <link rel="alternate" hreflang="en" href="$__{url("en")}">\n  <link rel="alternate" hreflang="x-default" href="$__{url("ar")}">$__bt);
+  s = s.replace(/<meta property="og:url" content="[^"]*">/, $__bt<meta property="og:url" content="$__{url(lang)}">\n  <meta property="og:locale" content="$__{lang === "en" ? "en_US" : "ar_EG"}">$__bt);
+  // the language button becomes a plain link to the same page in the other language
+  const other = lang === "ar" ? "en" : "ar";
+  const href = up + (other === "en" ? "en/" : "") + page.replace(/index\.html$/, "") || "./";   // up to the root, then en/ if going to English, then the same page
+  s = s.replace(/<button class="lang" type="button" id="lang" lang="en">English<\/button>/,
+    $__bt<a class="lang" href="$__{href}" hreflang="$__{other}" lang="$__{other}">$__{other === "en" ? "English" : "عربي"}</a>$__bt);
+  // the English copy sits one folder deeper: shared files (css, js, img) are one more ../ away
+  if (lang === "en") s = s.replace(/((?:href|src)=")((?:\.\.\/)*)((?:css|js|img)\/)/g, "$1../$2$3");
+  return s;
+}
+
+fs.rmSync(OUT, { recursive: true, force: true });
+for (const lang of ["ar", "en"]) for (const page of PAGES) {
+  const out = path.join(OUT, lang === "en" ? "en" : "", page);
+  fs.mkdirSync(path.dirname(out), { recursive: true });
+  fs.writeFileSync(out, build(page, lang));
+}
+for (const dir of ["css", "js", "img"]) fs.cpSync(path.join(SRC, dir), path.join(OUT, dir), { recursive: true });
+fs.rmSync(path.join(OUT, "js/boot.js"));   // not used by any built page
+
+if (missing.length) { console.error("missing words:\n  " + missing.join("\n  ")); process.exit(1); }
+console.log($__btbuilt $__{PAGES.length * 2} pages in $__{OUT}/ (ar + en)$__bt);
+~~~
+
+~~~html portfolio/index.html (الـ meta اللي اتعلّمت؛ ونفس الفكرة في work/tide-notes.html و cv.html)
+  <meta name="description" content="نادين فؤاد، مطوّرة واجهات: مواقع سريعة وسهلة الاستخدام بالعربي والإنجليزي." data-i18n-content="dHome">
+  <meta property="og:title" content="نادين فؤاد | مطوّرة واجهات" data-i18n-content="tHome">
+  <meta property="og:description" content="مواقع سريعة وسهلة الاستخدام بالعربي والإنجليزي." data-i18n-content="ogHomeD">
+  <meta property="og:image:alt" content="اسم نادين فؤاد ووظيفتها على خلفية فاتحة" data-i18n-content="ogAlt">
+~~~
+
+في [[work/tide-notes.html]]: الوصف [[dCase]]، و [[og:title]] بـ [[ogCase]]، و [[og:description]] بـ [[ogCaseD]]، و [[og:image:alt]] بـ [[ogAlt]]. وفي [[cv.html]] الوصف بس: [[dCv]].
+
+~~~js portfolio/js/i18n.js (أول dict.en)
+    dHome: "Nadine Fouad, front-end developer: fast, easy-to-use websites in Arabic and English.", ogHomeD: "Fast, easy-to-use websites in Arabic and English.",
+    ogAlt: "Nadine Fouad's name and job title on a light background",
+    dCase: "How a notes app came to work without internet: the problem, the decisions and the numbers.", ogCase: "Case study: Tide Notes", ogCaseD: "A notes app that works offline: from 4.1 seconds to 0.9.",
+    dCv: "The CV of Nadine Fouad, front-end developer. This page prints on one A4 sheet.",
+~~~
+
+~~~js serve.mjs (آخر سطر)
+site("site-out", 5503);
+~~~
+
+~~~view 720 720 النسخة الإنجليزي الثابتة (site-out/en/): جرّبها من غير ما تدوس حاجة، الكلام إنجليزي من الـ HTML
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="tHome">Nadine Fouad | Front-end developer</title>
+  <meta name="description" content="Nadine Fouad, front-end developer: fast, easy-to-use websites in Arabic and English." data-i18n-content="dHome">
+  <link rel="canonical" href="https://nadine.example/en/">
+  <link rel="alternate" hreflang="ar" href="https://nadine.example/">
+  <link rel="alternate" hreflang="en" href="https://nadine.example/en/">
+  <link rel="alternate" hreflang="x-default" href="https://nadine.example/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Nadine Fouad | Front-end developer" data-i18n-content="tHome">
+  <meta property="og:description" content="Fast, easy-to-use websites in Arabic and English." data-i18n-content="ogHomeD">
+  <meta property="og:url" content="https://nadine.example/en/">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://nadine.example/img/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Nadine Fouad's name and job title on a light background" data-i18n-content="ogAlt">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="color-scheme" content="light dark">
+  <script>document.documentElement.classList.add("js")</script>
+  <style>
+/* every colour, size and curve the site uses lives here; the rest of the CSS only reads var(--x) */
+:root {
+  color-scheme: light dark;
+  --paper: #f7f5f0;
+  --surface: #ffffff;
+  --ink: #1c2230;
+  --muted: #535b6b;
+  --line: #dcd8cf;
+  --accent: #0d6b63;
+  --accent-ink: #ffffff;
+  --accent-soft: #dcefec;
+  --warm: #9c4f12;
+  --font: system-ui, "Segoe UI", "Noto Sans Arabic", Tahoma, sans-serif;
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --step-1: clamp(1.25rem, 1.1rem + 0.6vw, 1.6rem);
+  --step-3: clamp(2rem, 1.4rem + 3vw, 3.6rem);
+  --gutter: clamp(16px, 4vw, 48px);
+  --r: 14px;
+  --r-sm: 8px;
+  --shadow: 0 1px 2px rgb(20 24 33 / 0.06), 0 8px 24px rgb(20 24 33 / 0.08);
+  --ease: cubic-bezier(0.22, 0.7, 0.2, 1);
+  --z-header: 10;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12161f; --surface: #1a202b; --ink: #e9ecf2; --muted: #a6aebd; --line: #2c3442;
+    --accent: #5fcfc3; --accent-ink: #0b1513; --accent-soft: #173834; --warm: #f0a868;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12161f; --surface: #1a202b; --ink: #e9ecf2; --muted: #a6aebd; --line: #2c3442;
+  --accent: #5fcfc3; --accent-ink: #0b1513; --accent-soft: #173834; --warm: #f0a868;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
+}
+</style>
+  <style>
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-padding-top: 5rem; -webkit-text-size-adjust: 100%; }
+body { margin: 0; font: var(--step-0)/1.7 var(--font); color: var(--ink); background: var(--paper); }
+:lang(en) body, body:lang(en) { line-height: 1.6; }
+h1, h2, h3 { line-height: 1.25; text-wrap: balance; }
+p { text-wrap: pretty; }
+a { color: var(--accent); text-underline-offset: 0.2em; }
+img, svg { max-width: 100%; height: auto; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+main > section { padding: clamp(48px, 8vw, 96px) var(--gutter); max-width: 72rem; margin-inline: auto; }
+
+.skip { position: absolute; inset-inline-start: 1rem; top: -4rem; padding: 0.5rem 1rem; background: var(--ink); color: var(--paper); z-index: 100; }
+.skip:focus { top: 1rem; }
+.sr-status { min-height: 1.7em; color: var(--muted); }
+
+/* ---------- header: sticky glass ---------- */
+.top {
+  position: sticky; top: 0; z-index: var(--z-header);
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.25rem;
+  padding: 0.75rem var(--gutter);
+  background: color-mix(in srgb, var(--paper) 82%, transparent);
+  backdrop-filter: blur(10px);
+  border-block-end: 1px solid var(--line);
+}
+.brand { font-weight: 700; color: var(--ink); text-decoration: none; margin-inline-end: auto; }
+.top nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; }
+.top nav a { color: var(--ink); text-decoration: none; padding-block: 0.5rem; }
+.top nav a:hover { color: var(--accent); }
+.lang { font: inherit; padding: 0.4rem 0.9rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); cursor: pointer; min-height: 44px; }
+
+/* ---------- hero ---------- */
+.hero { padding-block-start: clamp(56px, 12vw, 140px); }
+.eyebrow { color: var(--warm); font-weight: 600; margin: 0; }
+.hero h1 { font-size: var(--step-3); margin: 0.25em 0 0.4em; max-width: 18ch; }
+:lang(en) .hero h1 { letter-spacing: -0.02em; }
+.lead { font-size: var(--step-1); color: var(--muted); max-width: 46ch; margin: 0; }
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-block-start: 2rem; }
+.btn {
+  --bg: var(--accent); --fg: var(--accent-ink);
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0.5rem 1.25rem;
+  border: 2px solid var(--bg); border-radius: 999px; background: var(--bg); color: var(--fg);
+  font: inherit; font-weight: 600; text-decoration: none; cursor: pointer;
+}
+.btn.ghost { --bg: transparent; --fg: var(--accent); border-color: var(--accent); }
+
+/* ---------- work: cards + :has() filter ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: 0.5rem; border: 0; padding: 0; margin: 0 0 1.5rem; }
+.filters legend { width: 100%; margin-block-end: 0.5rem; color: var(--muted); }
+.filters label {
+  display: inline-flex; align-items: center; gap: 0.4rem; min-height: 44px; padding: 0.25rem 0.9rem;
+  border: 1px solid var(--line); border-radius: 999px; background: var(--surface); cursor: pointer;
+}
+.filters input { accent-color: var(--accent); }
+.filters label:has(input:checked) { background: var(--accent-soft); border-color: var(--accent); font-weight: 600; }
+.filters label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }
+.card { position: relative; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1rem; box-shadow: var(--shadow); }
+.card h3 { font-size: var(--step-1); margin: 0.75rem 0 0.25rem; }
+.card h3 a { color: var(--ink); }
+.card h3 a::after { content: ""; position: absolute; inset: 0; border-radius: var(--r); }
+.card:has(a:hover) { border-color: var(--accent); }
+.card p { margin: 0 0 0.75rem; color: var(--muted); }
+.thumb { aspect-ratio: 16 / 9; border-radius: var(--r-sm); background: linear-gradient(135deg, var(--a, #0d6b63), var(--b, #9c4f12)); }
+.t1 { --a: #0d6b63; --b: #4aa79d; view-transition-name: tide-thumb; }
+.t2 { --a: #2f4b7c; --b: #6b8fd1; }
+.t3 { --a: #7a3e65; --b: #c97fa9; }
+.t4 { --a: #6b5b1d; --b: #c2a64a; }
+.t5 { --a: #3c3c3c; --b: #9a9a9a; }
+.tags { list-style: none; padding: 0; margin: auto 0 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tags li { font-size: 0.85rem; padding: 0.1rem 0.6rem; border-radius: 999px; background: var(--paper); border: 1px solid var(--line); direction: ltr; }
+
+.work:has(input[value="web"]:checked) .card:not([data-tags~="web"]),
+.work:has(input[value="a11y"]:checked) .card:not([data-tags~="a11y"]),
+.work:has(input[value="api"]:checked) .card:not([data-tags~="api"]),
+.work:has(input[value="design"]:checked) .card:not([data-tags~="design"]) { display: none; }
+
+/* ---------- scroll reveal (only when JS runs) ---------- */
+.js [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity 0.6s var(--ease) var(--d, 0s), transform 0.6s var(--ease) var(--d, 0s); }
+.js [data-reveal].in { opacity: 1; transform: none; }
+
+/* ---------- about + contact ---------- */
+.about p, .contact p { max-width: 60ch; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: 1rem; margin: 2rem 0 0; }
+.facts div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1rem; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; font-size: var(--step-3); font-weight: 700; font-variant-numeric: tabular-nums; }
+.contact p:has(.btn) { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.foot { padding: 2rem var(--gutter); border-block-start: 1px solid var(--line); color: var(--muted); text-align: center; }
+
+/* ---------- page to page: View Transitions (Chrome/Edge 126+, Safari 18.2+; others just navigate) ---------- */
+@view-transition { navigation: auto; }
+::view-transition-group(tide-thumb) { animation-duration: 0.35s; animation-timing-function: var(--ease); }
+
+/* ---------- reduced motion: no reveal, no page animation ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] { opacity: 1; transform: none; transition: none; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
+
+/* ---------- print: any page prints as plain document ---------- */
+@media print {
+  .top, .skip, .actions, .filters, .lang, #copy, .foot, .thumb { display: none !important; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  main > section { padding: 0 0 12pt; max-width: none; }
+  .card { box-shadow: none; break-inside: avoid; }
+  .js [data-reveal] { opacity: 1; transform: none; }
+  a[href^="http"]::after, a[href^="mailto:"]::after { content: " (" attr(href) ")"; font-size: 0.85em; color: #333; }
+}
+</style>
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+  <header class="top">
+    <a class="brand" href="./" data-i18n="name">Nadine Fouad</a>
+    <nav aria-label="Sections" data-i18n-label="navLabel">
+      <a href="#work" data-i18n="navWork">Work</a>
+      <a href="#about" data-i18n="navAbout">About</a>
+      <a href="#contact" data-i18n="navContact">Contact</a>
+      <a href="cv.html" data-i18n="navCv">CV</a>
+    </nav>
+    <a class="lang" href="../" hreflang="ar" lang="ar">عربي</a>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <p class="eyebrow" data-i18n="role">Front-end developer</p>
+      <h1 data-i18n="heroTitle">I build fast websites anyone can use.</h1>
+      <p class="lead" data-i18n="heroLead">6 years writing HTML, CSS and JavaScript for Arabic and English sites, with a focus on performance and accessibility.</p>
+      <div class="actions">
+        <a class="btn" href="#work" data-i18n="ctaWork">See the work</a>
+        <a class="btn ghost" href="#contact" data-i18n="ctaContact">Get in touch</a>
+      </div>
+    </section>
+
+    <section id="work" class="work" aria-labelledby="work-h">
+      <h2 id="work-h" data-i18n="workTitle">Selected projects</h2>
+      <fieldset class="filters">
+        <legend data-i18n="filterBy">Filter by type</legend>
+        <label><input type="radio" name="f" value="all" checked> <span data-i18n="fAll">All</span></label>
+        <label><input type="radio" name="f" value="web"> <span data-i18n="fWeb">Websites</span></label>
+        <label><input type="radio" name="f" value="a11y"> <span data-i18n="fA11y">Accessibility</span></label>
+        <label><input type="radio" name="f" value="api"> <span data-i18n="fApi">API</span></label>
+        <label><input type="radio" name="f" value="design"> <span data-i18n="fDesign">Design</span></label>
+      </fieldset>
+      <ul class="cards" role="list">
+        <li class="card" data-tags="web a11y" data-reveal>
+          <div class="thumb t1" aria-hidden="true"></div>
+          <h3><a href="work/tide-notes.html" data-i18n="p1">Tide Notes: notes without internet</a></h3>
+          <p data-i18n="p1d">A notes app that works offline and syncs when the connection is back.</p>
+          <ul class="tags" role="list"><li>PWA</li><li>IndexedDB</li></ul>
+        </li>
+        <li class="card" data-tags="web" data-reveal>
+          <div class="thumb t2" aria-hidden="true"></div>
+          <h3 data-i18n="p2">Bus departures board</h3>
+          <p data-i18n="p2d">A station screen that refreshes every 30 seconds, readable from 5 metres.</p>
+          <ul class="tags" role="list"><li>SSE</li><li>CSS Grid</li></ul>
+        </li>
+        <li class="card" data-tags="a11y" data-reveal>
+          <div class="thumb t3" aria-hidden="true"></div>
+          <h3 data-i18n="p3">Clinic booking form</h3>
+          <p data-i18n="p3d">7 steps became 3, and errors are announced to screen readers.</p>
+          <ul class="tags" role="list"><li>WCAG 2.2</li><li>Forms</li></ul>
+        </li>
+        <li class="card" data-tags="api" data-reveal>
+          <div class="thumb t4" aria-hidden="true"></div>
+          <h3 data-i18n="p4">Recipes API</h3>
+          <p data-i18n="p4d">Search by ingredient, pagination, and a 60-second cache.</p>
+          <ul class="tags" role="list"><li>Node</li><li>PostgreSQL</li></ul>
+        </li>
+        <li class="card" data-tags="design web" data-reveal>
+          <div class="thumb t5" aria-hidden="true"></div>
+          <h3 data-i18n="p5">Design tokens library</h3>
+          <p data-i18n="p5d">Colours, spacing and type for 3 sites from one file.</p>
+          <ul class="tags" role="list"><li>CSS variables</li><li>Figma</li></ul>
+        </li>
+      </ul>
+    </section>
+
+    <section id="about" class="about" aria-labelledby="about-h">
+      <h2 id="about-h" data-i18n="aboutTitle">About</h2>
+      <p data-i18n="aboutText">I started with sites for small shops, and now I work with product teams on interfaces thousands of people use every day. I like code you can read, and pages that open in under a second.</p>
+      <dl class="facts">
+        <div><dt data-i18n="f1t">Years of experience</dt><dd>6</dd></div>
+        <div><dt data-i18n="f2t">Projects shipped</dt><dd><span dir="ltr">40+</span></dd></div>
+        <div><dt data-i18n="f3t">Lighthouse a11y</dt><dd>100</dd></div>
+      </dl>
+    </section>
+
+    <section id="contact" class="contact" aria-labelledby="contact-h">
+      <h2 id="contact-h" data-i18n="contactTitle">Work together?</h2>
+      <p data-i18n="contactText">Send me the idea and the deadline, and I'll reply within two working days.</p>
+      <p><a class="btn" href="mailto:hello@nadine.example" dir="ltr">hello@nadine.example</a>
+        <button class="btn ghost" type="button" id="copy" data-i18n="copy">Copy email</button></p>
+      <p class="sr-status" role="status" id="status"></p>
+    </section>
+  </main>
+
+  <footer class="foot"><p><span data-i18n="rights">All rights reserved</span> © 2026</p></footer>
+  <script>
+// dictionary + switch: every [data-i18n] gets its text from the current language, and <html> gets lang and dir
+const dict = {
+  en: {
+    dHome: "Nadine Fouad, front-end developer: fast, easy-to-use websites in Arabic and English.", ogHomeD: "Fast, easy-to-use websites in Arabic and English.",
+    ogAlt: "Nadine Fouad's name and job title on a light background",
+    dCase: "How a notes app came to work without internet: the problem, the decisions and the numbers.", ogCase: "Case study: Tide Notes", ogCaseD: "A notes app that works offline: from 4.1 seconds to 0.9.",
+    dCv: "The CV of Nadine Fouad, front-end developer. This page prints on one A4 sheet.",
+    tHome: "Nadine Fouad | Front-end developer", tCase: "Tide Notes case study | Nadine Fouad", tCv: "CV | Nadine Fouad",
+    skip: "Skip to content", name: "Nadine Fouad", navLabel: "Sections", navWork: "Work", navAbout: "About", navContact: "Contact", navCv: "CV",
+    role: "Front-end developer", heroTitle: "I build fast websites anyone can use.",
+    heroLead: "6 years writing HTML, CSS and JavaScript for Arabic and English sites, with a focus on performance and accessibility.",
+    ctaWork: "See the work", ctaContact: "Get in touch", workTitle: "Selected projects", filterBy: "Filter by type",
+    fAll: "All", fWeb: "Websites", fA11y: "Accessibility", fApi: "API", fDesign: "Design",
+    p1: "Tide Notes: notes without internet", p1d: "A notes app that works offline and syncs when the connection is back.",
+    p2: "Bus departures board", p2d: "A station screen that refreshes every 30 seconds, readable from 5 metres.",
+    p3: "Clinic booking form", p3d: "7 steps became 3, and errors are announced to screen readers.",
+    p4: "Recipes API", p4d: "Search by ingredient, pagination, and a 60-second cache.",
+    p5: "Design tokens library", p5d: "Colours, spacing and type for 3 sites from one file.",
+    aboutTitle: "About", aboutText: "I started with sites for small shops, and now I work with product teams on interfaces thousands of people use every day. I like code you can read, and pages that open in under a second.",
+    f1t: "Years of experience", f2t: "Projects shipped", f3t: "Lighthouse a11y",
+    contactTitle: "Work together?", contactText: "Send me the idea and the deadline, and I'll reply within two working days.",
+    copy: "Copy email", copied: "Email copied", rights: "All rights reserved",
+    caseKind: "Case study · 2025", caseTitle: "Tide Notes: notes that work without internet",
+    mRole: "My role", mRoleV: "The whole front end and offline", mTime: "Duration", mTimeV: "10 weeks", mStack: "Stack",
+    cProblem: "The problem", cProblemT: "The sales team writes visit notes in places with weak signal, so a note is lost if the page closes before it is sent.",
+    cDecisions: "Decisions", d1: "Every note is saved to IndexedDB first, and sent in the background.",
+    d2: "A Service Worker caches the page itself, so it opens offline.", d3: "A clear mark on each note: sent or not yet.",
+    cResults: "Results", rCap: "Before and after (3-week average)", rMetric: "Metric", rBefore: "Before", rAfter: "After",
+    r1: "Page open time on 3G", r2: "Notes lost per week", back: "Back to projects",
+    print: "Print or save PDF", exp: "Experience", skills: "Skills",
+    j1: "Senior front-end developer · Trips platform company", j1a: "Cut search page LCP on mobile from 3.2 to 1.4 seconds.", j1b: "Built a shared component library for 3 teams.",
+    j2: "Front-end developer · Small design agency", j2a: "25 sites for shops and clinics, all in Arabic and English.", j2b: "Ran the agency's first accessibility audit; it became a step in every delivery.",
+  },
+};
+const ar = {};                                   // Arabic is what the HTML already says: read it once, so it isn't written twice
+document.querySelectorAll("[data-i18n]").forEach(el => (ar[el.dataset.i18n] = el.textContent));
+document.querySelectorAll("[data-i18n-label]").forEach(el => (ar[el.dataset.i18nLabel] = el.getAttribute("aria-label")));
+ar.copied = "الإيميل اتنسخ";
+dict.ar = ar;
+
+function t(key) { return dict[document.documentElement.lang]?.[key] ?? ar[key] ?? key; }
+
+function apply(lang) {
+  const html = document.documentElement;
+  html.lang = lang;
+  html.dir = lang === "ar" ? "rtl" : "ltr";
+  document.querySelectorAll("[data-i18n]").forEach(el => (el.textContent = t(el.dataset.i18n)));
+  document.querySelectorAll("[data-i18n-label]").forEach(el => el.setAttribute("aria-label", t(el.dataset.i18nLabel)));
+  const btn = document.getElementById("lang");
+  if (btn) { btn.textContent = lang === "ar" ? "English" : "عربي"; btn.lang = lang === "ar" ? "en" : "ar"; }
+  try { localStorage.setItem("lang", lang); } catch {}
+}
+
+if (document.documentElement.lang === "en") apply("en");   // boot.js set it from the last visit; now fill the texts
+document.getElementById("lang")?.addEventListener("click", () => apply(document.documentElement.lang === "ar" ? "en" : "ar"));
+
+const copy = document.getElementById("copy");
+copy?.addEventListener("click", async () => {
+  const status = document.getElementById("status");
+  try { await navigator.clipboard.writeText("hello@nadine.example"); status.textContent = t("copied"); }
+  catch { status.textContent = "hello@nadine.example"; }
+});
+</script>
+  <script type="module">
+// cards fade in once when they reach the screen; nothing hides without JS (the .js class), and nothing moves with reduced motion
+const items = document.querySelectorAll("[data-reveal]");
+const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (still || !("IntersectionObserver" in window)) {
+  items.forEach(el => el.classList.add("in"));
+} else {
+  const io = new IntersectionObserver(entries => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+  }, { rootMargin: "0px 0px -10% 0px" });
+  items.forEach((el, i) => { el.style.setProperty("--d", (i % 3) * 80 + "ms"); io.observe(el); });
+}
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** نفس الـ portfolio بالظبط، بس بالإنجليزي ومن الشمال لليمين **من أول لحظة**، ومن غير ما تدوس على زرار اللغة. والزرار نفسه بقى لينك عادي مكتوب عليه «عربي» بيوديك لـ [[../]] (نفس الصفحة بالعربي). والفلتر والكروت والتنقل شغالين زي ما هم. والنسخة العربي في [[site-out/]] شكلها هو شكل المعمل، وزرارها «English» بيوديك [[en/]].
+
+**الخطوة ١: القاموس من نفس الملف.** [[i18n.js]] فيه [[const dict = { en: { … } }]] وبعده كود بيلمس الـ DOM. [[build.mjs]] بيقص الـ object literal من النص (من أول [[{]] بعد [[const dict]] لحد [[\n};]]) ويحوّله لـ object بـ [[new Function("return " + lit)]]. ده بيشغّل نص من ملف في المشروع نفسه، فمش خطر هنا، وده بيخلي القاموس مكتوب في مكان واحد: لو كلمة اتعدّلت في [[i18n.js]]، المعمل والنسخة الثابتة الاتنين بياخدوها. والعربي مش في القاموس أصلًا (زي ما الوحدة عملت): هو الكلام اللي في الـ HTML.
+
+**الخطوة ٢: الاستبدال بـ regex، وليه ده آمن هنا بس.** تلات أنواع:
+- [[TEXT]]: أي عنصر عليه [[data-i18n="key"]] وجواه نص بس. الـ regex بيمسك الفتحة والنص والقفلة ([[<\/\2>]] بيقول «نفس اسم التاج اللي اتفتح»)، وبيحط الكلمة مكان النص.
+- [[LABEL]]: الـ [[aria-label]] في التاج اللي عليه [[data-i18n-label]].
+- [[CONTENT]]: الـ [[content]] في [[<meta>]] عليها [[data-i18n-content]] (الجديد).
+
+الـ regex مبيعرفش HTML، فلو عنصر عليه [[data-i18n]] جواه تاج تاني ([[<b>]] مثلًا)، الاستبدال كان هيبوّظ الصفحة من غير ما حد ياخد باله. فأول سطر في [[build()]] بيدوّر على الحالة دي ويوقف الـ build. ومتأكد إنها مش موجودة النهارده: كل عناصر [[data-i18n]] في الصفحات التلاتة نص بس، والـ build عدّى عليهم من غير ما يوقف. لو المشروع كبر ومحتاج HTML جوه الترجمة، وقتها تنقل لـ parser (زي [[parse5]])، مش regex أعقد.
+
+**[[esc()]]:** الكلمة رايحة جوه HTML، فـ [[&]] و [[<]] و [["]] لازم يتكتبوا entities. من غيرها، وصف فيه [[&]] كان هيطلع HTML غلط، و [["]] جوه [[content="…"]] كان هيقفل الـ attribute بدري.
+
+**الخطوة ٣: كل صفحة بتعرف عنوانها.**
+- [[<html lang="en" dir="ltr">]] في النسخة الإنجليزي. ده اللي [[curl]] وجوجل بيشوفوه.
+- [[canonical]] لكل لغة على عنوانها، و [[<link rel="alternate" hreflang="ar|en">]] للاتنين في كل صفحة (الصفحة بتشاور على نفسها كمان، دي قاعدة جوجل: الـ hreflang لازم يرجع للاتنين)، و [[x-default]] للعربي: اللي لغته مش عربي ولا إنجليزي يروح للعربي.
+- [[og:url]] للعنوان الصح و [[og:locale]] ([[ar_EG]] أو [[en_US]])، فمعاينة اللينك بالإنجليزي في أي تطبيق بتطلع إنجليزي.
+
+**الخطوة ٤: زرار اللغة بقى لينك.** مفيش JS بيبدّل، فالزرار مالوش لازمة. اللينك بيتحسب: اطلع للـ root ([[up]] = [[../]] مكررة بعدد الفولدرات اللي الصفحة جواها)، وبعدين [[en/]] لو رايح للإنجليزي، وبعدين نفس اسم الصفحة. فمن [[work/tide-notes.html]] بالعربي: [[../en/work/tide-notes.html]]، ومن [[en/index.html]]: [[../]]. و [[hreflang]] على اللينك بيقول للمتصفح والزاحف إن اللي وراه لغة تانية.
+
+**الخطوة ٥: الملفات المشتركة.** الـ CSS والـ JS والصور نسخة واحدة في [[site-out/]]. النسخة الإنجليزي فولدر أعمق، فكل [[href]] و [[src]] بيبدأ بـ [[css/]] أو [[js/]] أو [[img/]] بياخد [[../]] زيادة. واللينكات بين الصفحات (زي [[cv.html]]) مبتتغيرش، لأن [[en/cv.html]] موجودة جنبها.
+
+**ليه [[boot.js]] اتشال (اتجرّب، مش رأي):** [[boot.js]] بيقرا اللغة اللي اتحفظت في الزيارة اللي فاتت ويقلب الصفحة ليها. في النسخة الثابتة اللغة جاية من العنوان، فده بقى غلط. حطيته تاني بإيدي في [[site-out/index.html]] وفتحت [[/]] لزائر كان مختار إنجليزي آخر مرة:
+
+~~~text اتشغّل فعلًا (Chrome 156)
+boot.js put back, saved en, open /: en ltr | h1: I build fast websites anyone can use. | link: English
+build.mjs as is, saved en, open /: ar rtl | h1: بابني مواقع سريعة، وأي حد يقدر يستخدمها.
+~~~
+
+العنوان العربي طلّع إنجليزي، واللينك جنبه لسه بيقول «English». يعني عنوان واحد بيدّي كلام مختلف لناس مختلفة، وجوجل بيشوف حاجة غير اللي القارئ شايفه. فالـ build بيحط مكانه سطر واحد بيحط الكلاس [[js]] بس (ده اللي الـ CSS بتاع الظهور بالسكرول محتاجه). و [[i18n.js]] فضل عشان زرار «انسخ الإيميل» بيقرا كلمة «اتنسخ» منه. على الصفحة الإنجليزي هو بيكتب نفس الكلام اللي في الـ HTML، فمفيش تغيير بيبان، والـ CLS صفر (تحت).
+
+**الكلمة الناقصة بتوقف الـ build:** [[word()]] بتلم أي مفتاح ملوش كلمة إنجليزي، أو مفتاح عربي فاضي في الـ HTML. وفي الآخر لو اللستة مش فاضية، [[process.exit(1)]]. شلت [[ogCase]] من القاموس بالقصد:
+
+~~~text node build.mjs (ogCase ناقص)
+missing words:
+  en ogCase (work/tide-notes.html)
+~~~
+
+وخرج بـ exit 1، فلو الـ build ده في CI، النشر مش هيكمل بصفحة نصها عربي. ولاحظ إن الفحص بيشوف [[data-i18n-content]] كمان، وده اللي [[keys.mjs]] بتاع الوحدة مبيشوفوش.
+
+**نفس الملفات كل مرة:** مفيش تاريخ ولا رقم عشوائي في الناتج، والفولدر بيتمسح الأول ([[fs.rmSync]])، فمفيش ملف قديم بيفضل. [[same-build.mjs]] بيشغّل الـ build مرتين ويقارن كل ملف بـ sha256:
+
+~~~js same-build.mjs
+// node same-build.mjs: run build.mjs twice and compare every output file byte for byte (sha256)
+import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import fs from "node:fs";
+const snap = () => Object.fromEntries(fs.readdirSync("site-out", { recursive: true }).filter(f => fs.statSync("site-out/" + f).isFile()).sort()
+  .map(f => [f.replaceAll("\\", "/"), createHash("sha256").update(fs.readFileSync("site-out/" + f)).digest("hex").slice(0, 12)]));
+execFileSync(process.execPath, ["build.mjs"]); const a = snap();
+execFileSync(process.execPath, ["build.mjs"]); const b = snap();
+const diff = Object.keys({ ...a, ...b }).filter(f => a[f] !== b[f]);
+console.log($__btfiles: $__{Object.keys(a).length} and $__{Object.keys(b).length} | different: $__{diff.length ? diff.join(", ") : "none"}$__bt);
+console.log("en/index.html", a["en/index.html"], "| index.html", a["index.html"]);
+~~~
+
+~~~text node same-build.mjs
+files: 14 and 14 | different: none
+en/index.html afa1c004c3a3 | index.html 6556eaf51356
+~~~
+
+ده مهم عشان لما الناتج يتغير في git، يبقى عشان المصدر اتغير، مش عشان الـ build نفسه بيطلّع حاجة مختلفة كل مرة.
+
+**القياس:**
+
+~~~text curl (من غير أي JavaScript)
+$ curl -s http://127.0.0.1:5503/en/ | grep "<html"
+<html lang="en" dir="ltr">
+$ curl -s http://127.0.0.1:5503/ | grep "<html"
+<html lang="ar" dir="rtl">
+$ curl -s http://127.0.0.1:5503/en/ | grep -oE '<meta property="og:(title|description|locale|url)" content="[^"]*"'
+<meta property="og:title" content="Nadine Fouad | Front-end developer"
+<meta property="og:description" content="Fast, easy-to-use websites in Arabic and English."
+<meta property="og:url" content="https://nadine.example/en/"
+<meta property="og:locale" content="en_US"
+~~~
+
+~~~js check-static.mjs
+// node check-static.mjs: the built site (site-out on :5503). Every page in both languages: lang/dir with JS off,
+// every local link and file answers 200, axe in both themes, no sideways scroll 360-1440, and CLS with a slow phone
+import { chromium } from "playwright-core";
+import { AxeBuilder } from "@axe-core/playwright";
+const B = "http://127.0.0.1:5503/";
+const PAGES = ["", "cv.html", "work/tide-notes.html", "en/", "en/cv.html", "en/work/tide-notes.html"];
+const browser = await chromium.launch({ channel: "chrome" });
+
+// 1. no JS at all: what Google and a reader with JS off get
+const nojs = await (await browser.newContext({ javaScriptEnabled: false })).newPage();
+const links = new Set();
+for (const p of PAGES) {
+  await nojs.goto(B + p);
+  const r = await nojs.evaluate(() => ({ lang: document.documentElement.lang, dir: document.documentElement.dir, h1: document.querySelector("h1").textContent.slice(0, 40),
+    other: document.querySelector("a.lang").getAttribute("href"), refs: [...document.querySelectorAll("[href],[src]")].map(e => e.href || e.src).filter(u => u.startsWith(location.origin)) }));
+  r.refs.forEach(u => links.add(u.split("#")[0]));
+  console.log($__btno JS $__{("/" + p).padEnd(25)} $__{r.lang} $__{r.dir} | $__{r.h1} | lang link → $__{r.other}$__bt);
+}
+// 2. every local link and file
+const bad = [];
+for (const u of [...links].sort()) { const res = await fetch(u); if (res.status !== 200) bad.push(res.status + " " + u); }
+console.log($__btlocal links and files: $__{links.size} checked, not 200: $__{bad.length ? bad.join(", ") : "none"}$__bt);
+// 3. axe, both themes
+for (const p of PAGES) for (const scheme of ["light", "dark"]) {
+  const c = await browser.newContext({ colorScheme: scheme, reducedMotion: "reduce" });
+  const pg = await c.newPage(); await pg.goto(B + p);
+  const r = await new AxeBuilder({ page: pg }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+  console.log($__btaxe $__{("/" + p).padEnd(25)} $__{scheme.padEnd(5)} violations: $__{r.violations.length} $__{r.violations.map(v => v.id).join(" ")}$__bt);
+  await c.close();
+}
+// 4. sideways scroll
+const page = await browser.newPage();
+for (const p of PAGES) {
+  const row = [];
+  for (const w of [360, 390, 768, 1024, 1280, 1440]) { await page.setViewportSize({ width: w, height: 800 }); await page.goto(B + p); const [sw, iw] = await page.evaluate(() => [document.documentElement.scrollWidth, innerWidth]); row.push(w + (sw > iw ? " OVERFLOW " + sw : " ok")); }
+  console.log($__btmatrix $__{("/" + p).padEnd(25)} $__{row.join(" | ")}$__bt);
+}
+// 5. CLS and LCP on a slow phone (4x CPU)
+const m = await browser.newContext({ viewport: { width: 390, height: 844 } }); const mp = await m.newPage();
+await (await m.newCDPSession(mp)).send("Emulation.setCPUThrottlingRate", { rate: 4 });
+await mp.addInitScript(() => { window.__cls = 0; new PerformanceObserver(l => l.getEntries().forEach(e => { if (!e.hadRecentInput) window.__cls += e.value; })).observe({ type: "layout-shift", buffered: true });
+  new PerformanceObserver(l => { window.__lcp = Math.round(l.getEntries().at(-1).startTime); }).observe({ type: "largest-contentful-paint", buffered: true }); });
+for (const p of PAGES) { await mp.goto(B + p); await mp.waitForTimeout(1500); console.log($__btvitals $__{("/" + p).padEnd(25)} CLS $__{(await mp.evaluate(() => window.__cls)).toFixed(4)} LCP $__{await mp.evaluate(() => window.__lcp)}ms$__bt); }
+await browser.close();
+~~~
+
+~~~text node check-static.mjs (اتشغّل فعلًا، Chrome 156، axe-core 4.14.0؛ سطور axe والـ matrix والـ vitals المتشابهة متلخصة)
+no JS /                         ar rtl | بابني مواقع سريعة، وأي حد يقدر يستخدمها. | lang link → en/
+no JS /cv.html                  ar rtl | نادين فؤاد | lang link → en/cv.html
+no JS /work/tide-notes.html     ar rtl | Tide Notes: ملاحظات بتشتغل من غير نت | lang link → ../en/work/tide-notes.html
+no JS /en/                      en ltr | I build fast websites anyone can use. | lang link → ../
+no JS /en/cv.html               en ltr | Nadine Fouad | lang link → ../cv.html
+no JS /en/work/tide-notes.html  en ltr | Tide Notes: notes that work without inte | lang link → ../../work/tide-notes.html
+local links and files: 14 checked, not 200: none
+axe (6 صفحات × ثيمين) violations: 0 في الـ 12
+matrix (6 صفحات) 360 ok | 390 ok | 768 ok | 1024 ok | 1280 ok | 1440 ok
+vitals /                         CLS 0.0000
+vitals /en/                      CLS 0.0000
+(والأربع صفحات التانيين CLS 0.0000 برضه)
+~~~
+
+**فخ في القياس: الـ LCP اللي طلع في الفحص ده مش للمقارنة.** الفحص طلّع LCP للرئيسية 356ms، والمعمل كان بيطلّع حوالي 1,250ms. شكلها كأن الـ build سرّع الصفحة ٣ مرات، بس [[check-static.mjs]] بيفتح الست صفحات ورا بعض في نفس الـ context، فالكاش بيبقى سخن من الصفحة اللي قبلها. [[lcp-compare.mjs]] بيفتح كل مرة context جديد:
+
+~~~js lcp-compare.mjs
+// node lcp-compare.mjs: the same home page from the lab (:5501, JS picks the language) and from the build (:5503), same phone, 3 runs each
+import { chromium } from "playwright-core";
+const b = await chromium.launch({ channel: "chrome" });
+for (const [label, url] of [["lab   :5501/", "http://127.0.0.1:5501/"], ["build :5503/", "http://127.0.0.1:5503/"], ["lab   :5501/ saved en", "http://127.0.0.1:5501/#en"], ["build :5503/en/", "http://127.0.0.1:5503/en/"]]) {
+  const out = [];
+  for (let i = 0; i < 3; i++) {
+    const c = await b.newContext({ viewport: { width: 390, height: 844 } }); const p = await c.newPage();
+    await (await c.newCDPSession(p)).send("Emulation.setCPUThrottlingRate", { rate: 4 });
+    if (url.endsWith("#en")) await p.addInitScript(() => localStorage.setItem("lang", "en"));
+    await p.addInitScript(() => { new PerformanceObserver(l => { const e = l.getEntries().at(-1); window.__lcp = Math.round(e.startTime) + "ms " + e.element?.tagName + "." + e.element?.className; }).observe({ type: "largest-contentful-paint", buffered: true });
+      new PerformanceObserver(l => { window.__fcp = Math.round(l.getEntriesByName("first-contentful-paint")[0]?.startTime ?? -1); }).observe({ type: "paint", buffered: true }); });
+    await p.goto(url.replace("#en", "")); await p.waitForTimeout(2500);
+    out.push(await p.evaluate(() => "FCP " + window.__fcp + " LCP " + window.__lcp));
+    await c.close();
+  }
+  console.log(label.padEnd(22), out.join(" | "));
+}
+await b.close();
+~~~
+
+~~~text node lcp-compare.mjs (٣ مرات لكل واحدة، كل مرة context جديد)
+lab   :5501/           FCP 1300 LCP 1300ms P.lead | FCP 1240 LCP 1240ms P.lead | FCP 1228 LCP 1228ms P.lead
+build :5503/           FCP 1272 LCP 1272ms P.lead | FCP 1252 LCP 1252ms P.lead | FCP 1252 LCP 1252ms P.lead
+lab   :5501/ saved en  FCP 1212 LCP 1212ms P.lead | FCP 1192 LCP 1192ms P.lead | FCP 712 LCP 712ms P.lead
+build :5503/en/        FCP 1176 LCP 1176ms P.lead | FCP 1224 LCP 1224ms P.lead | FCP 1168 LCP 1168ms P.lead
+~~~
+
+نفس الأرقام تقريبًا. الـ build مسرّعش الصفحة، والمقصود منه حاجة تانية: إن اللغة تبقى في الـ HTML. **الدرس:** لو رقم أداء اتحسن فجأة، اتأكد إنك بتقارن نفس الظروف (cold cache، و context جديد) قبل ما تكتبه.
+
+**ومفيش تبديل بعد الرسم:** في المعمل، الصفحة بتوصل بالعربي، و [[i18n.js]] في آخر الصفحة بيبدّل الكلام للي اختاره القارئ. في النسخة الثابتة الكلام بيوصل باللغة الصح، فمفيش حاجة تتبدّل أصلًا، ده اللي بيخلي الـ CLS صفر من غير [[boot.js]].`,
         },
         {
           lvl: R`فكرة`,
