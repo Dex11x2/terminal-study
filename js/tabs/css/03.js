@@ -3215,6 +3215,78 @@ $__lt/script>
 refresh على ?q=ماوس:
 قيمة الحقل = ماوس   عدد الصفوف = 3
 overflow على 360: 0px   axe: 0 violations
+~~~
+
+~~~view 410 410 الشكل في المتصفح (الحل نفسه، وسطور للـ preview بس)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<script>/* للـ preview بس: الصفحة جوه srcdoc مالهاش رابط، فـ replaceState بيرمي error. السطر ده بيخليه يتجاهل، والبحث يشتغل */
+for (const k of ["replaceState", "pushState"]) { const f = history[k].bind(history); history[k] = (...a) => { try { f(...a); } catch {} }; }
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>المنتجات</title>
+<style>
+  body { font-family: system-ui; margin: 16px; }
+  table { border-collapse: collapse; width: 100%; max-width: 480px; margin-block-start: 8px; }
+  th, td { padding: 8px; border-block-end: 1px solid #d4d4d8; text-align: start; }
+</style>
+</head>
+<body>
+<main>
+<h1>المنتجات</h1>
+<label for="q">دوّر</label>
+<input id="q" type="search">
+<p id="status" aria-live="polite"></p>
+<table>
+  <thead><tr><th scope="col">المنتج</th><th scope="col">السعر</th></tr></thead>
+  <tbody id="rows"></tbody>
+</table>
+</main>
+<script>
+  const PRODUCTS = [
+    { name: 'ماوس لاسلكي', price: 350 },
+    { name: 'ماوس ألعاب', price: 900 },
+    { name: 'ماوس مكتب', price: 200 },
+    { name: 'كيبورد ميكانيكال', price: 1500 },
+    { name: 'سماعة', price: 600 },
+  ];
+  const input = document.querySelector('#q');
+  const rows = document.querySelector('#rows');
+  const status = document.querySelector('#status');
+
+  function countText(n) {
+    if (n === 0) return 'مفيش نتايج';
+    if (n === 1) return 'لقينا منتج واحد';
+    return 'لقينا ' + n.toLocaleString('ar-EG') + ' منتجات';
+  }
+
+  function apply() {
+    console.count('filter');
+    const q = input.value.trim();
+    const found = PRODUCTS.filter((p) => p.name.includes(q));
+    rows.innerHTML = '';
+    for (const p of found) {
+      const tr = rows.insertRow();
+      tr.insertCell().textContent = p.name;
+      tr.insertCell().textContent = p.price + ' ج';
+    }
+    status.textContent = countText(found.length);
+    history.replaceState(null, '', q ? '?q=' + encodeURIComponent(q) : location.pathname);
+  }
+
+  let timer;
+  input.addEventListener('input', () => {
+    clearTimeout(timer);
+    timer = setTimeout(apply, 300);
+  });
+
+  input.value = new URLSearchParams(location.search).get('q') ?? '';
+  apply();
+</script>
+</body>
+</html>
 ~~~` },
             { lvl: 'سريع', t: R`**اشرحها:** ليه [[readState]] بترفض أي [[sort]] مش في [[COLS]] بدل ما تاخد اللي في الـ URL زي ما هو؟ اكتب ٣ سطور لزميل بيقول «ده جدول في المتصفح، إيه الخطر؟».`, done: R`الشرح فيه: الـ URL أي حد بيكتبه (يعني input مش مضمون)، ولو نفس القيمة اتبعتت للسيرفر وحطها في [[ORDER BY]] من غير allowlist يبقى فيه SQL injection، وحتى في المتصفح [[?sort=hack]] من غير الفحص كان هيرتب بعمود مش موجود ويبوّظ الصفحة.`, sol: R`**الرد النموذجي على زميلك:**
 

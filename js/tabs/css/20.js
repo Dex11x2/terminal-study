@@ -3100,6 +3100,61 @@ document.querySelector(".bottom-nav").addEventListener("click", (e) => {
 aria-current بعد ضغطة «الأعضاء»: - page -
 الـ drawer: display = none
 axe: 0
+~~~
+
+~~~view 160 230 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+:root { --surface: #ffffff; --line: #e5e7eb; --ink: #0f172a; --brand: #4f46e5; --z-drawer: 50; } body { margin: 0; font-family: system-ui, sans-serif; color: var(--ink); background: #f8fafc; }
+#shell { display: grid; grid-template-columns: 200px 1fr; min-height: 100vh; } .side { padding: 1rem; background: var(--surface); border-inline-end: 1px solid var(--line); } .side a { display: block; padding: 0.4rem 0; color: inherit; }
+.menu { display: none; } main { padding: 1rem; } @media (max-width: 40rem) { #shell { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-home" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M3 11 12 4l9 7v9H3z"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" d="M2 21c0-4 3-6 7-6s7 2 7 6"/></symbol><symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path stroke="currentColor" stroke-width="2" d="M3 10h18M8 3v4M16 3v4"/></symbol></svg>
+<div id="shell"><aside class="side"><a href="#overview">نظرة عامة</a><a href="#members">الأعضاء</a><a href="#schedule">الحصص</a></aside>
+<main><h1>لوحة التحكم</h1><p>على «موبايل» السايدبار بيختفي، وتحت بيظهر شريط فيه الـ ٣ أقسام بأيقونة واسم.</p></main>
+<nav class="bottom-nav" aria-label="الأقسام">
+  <a href="#overview" aria-current="page"><svg aria-hidden="true"><use href="#i-home"/></svg>نظرة عامة</a>
+  <a href="#members"><svg aria-hidden="true"><use href="#i-users"/></svg>الأعضاء</a>
+  <a href="#schedule"><svg aria-hidden="true"><use href="#i-cal"/></svg>الحصص</a>
+</nav>
+</div>
+<style>
+/* من الحل */
+.bottom-nav { display: none; }
+@media (max-width: 40rem) {
+  .side, .menu { display: none; }
+  .bottom-nav {
+    display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+    position: fixed; inset-inline: 0; bottom: 0; z-index: var(--z-drawer);
+    background: var(--surface); border-block-start: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .bottom-nav a {
+    display: grid; justify-items: center; align-content: center; gap: 2px;
+    min-block-size: 44px; padding-block: 6px; color: var(--ink); text-decoration: none; font-size: 0.8rem;
+  }
+  .bottom-nav svg { inline-size: 20px; block-size: 20px; }
+  .bottom-nav a[aria-current="page"] { color: var(--brand); font-weight: 700; }
+  main { padding-block-end: calc(4rem + env(safe-area-inset-bottom)); }
+}
+</style>
+<script>
+document.querySelector(".bottom-nav").addEventListener("click", (e) => {
+  const a = e.target.closest("a");
+  if (!a) return;
+  a.parentElement.querySelectorAll("a").forEach((x) => x.removeAttribute("aria-current"));
+  a.setAttribute("aria-current", "page");
+});
+</script>
+</body>
+</html>
 ~~~` },
             {
               lvl: R`تحدي`,

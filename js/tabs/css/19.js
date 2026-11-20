@@ -6144,6 +6144,41 @@ scrollY = 300:  scrolled = true، وارتفاع الـ header 57
 رجوع لفوق:     scrolled = false
 القفز لـ #pricing: h2 top = 244، و header bottom = 57
 addEventListener("scroll") في الكود: 0
+~~~
+
+~~~view 600 720 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+:root { --nav-h: 64px; } body { margin: 0; font-family: system-ui, sans-serif; }
+.top { position: sticky; top: 0; display: flex; align-items: center; gap: 1rem; min-height: var(--nav-h); padding-inline: 1rem; background: #fff; border-bottom: 1px solid #e5e7eb; transition: min-height .2s; }
+main { padding: 1rem; } main p { margin: 0 0 1rem; } .tall { height: 1400px; background: linear-gradient(#f8fafc, #e0e7ff); border-radius: 12px; padding: 1rem; }
+</style>
+</head>
+<body>
+<div class="sentinel" aria-hidden="true"></div>
+<header class="top"><b>اللوجو</b><span>اعمل scroll شوية: الـ header بيصغر وبيطلعله ظل</span></header>
+<main><div class="tall">محتوى طويل</div></main>
+<style>
+/* من الحل */
+.sentinel { position: absolute; inset-block-start: 0; block-size: 80px; inline-size: 1px; }
+.top { transition: box-shadow .2s; }
+.top.scrolled { --nav-h: 56px; box-shadow: 0 2px 10px rgb(0 0 0 / .15); }
+:root:has(.top.scrolled) { --nav-h: 56px; }
+</style>
+<script>
+const header = document.querySelector(".top");   // للـ preview بس: في الموقع المتغير ده جاي من أول site.js
+const sentinel = document.querySelector(".sentinel");
+new IntersectionObserver(([e]) => {
+  header.classList.toggle("scrolled", !e.isIntersecting);
+}).observe(sentinel);
+</script>
+</body>
+</html>
 ~~~` },
             { lvl: 'تحدي', t: R`**قارن وقيس:** شغّل السيرفر بـ [[SLOW_IMG=1500]] وقيس الـ CLS بـ ٣ نسخ من الصورة: من غير مقاس، وبـ [[width]] و [[height]]، ومن غير مقاس بس [[aspect-ratio: 4 / 3]] في الـ CSS على [[.hero-pic img]]. على ٣٦٠ و ١٤٤٠.`, done: R`جدول ٦ أرقام من [[perf.mjs]]، والنسختين التانية والتالتة صفر، وكتبت ليه الـ HTML أحسن (المتصفح بيعرفه قبل ما الـ CSS يوصل، والـ CSS ممكن يتأخر).`,
               sol: R`~~~html النسخة ١: من غير مقاس (شيل width و height من الـ img)
@@ -8401,6 +8436,27 @@ html, body { overflow-x: hidden; }
 overflow-x: hidden     -1000                          0                           360 من 500
 التصليح الحقيقي        0                             0                           360 من 360
 السطر لقى: DIV.promo 500
+~~~
+
+~~~view 200 220 الشكل في المتصفح (صفحة تجربة للـ CSS ده)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* صفحة التجربة بس */
+body { margin: 0; font-family: system-ui, sans-serif; } .hero { padding: 1rem; background: #fef3c7; } .promo { padding: 1rem; background: #f59e0b; color: #1c1917; border-radius: 10px; box-sizing: border-box; }
+</style>
+</head>
+<body>
+<section class="hero"><h1>عرض الأسبوع</h1><div class="promo">العنصر ده عرضه 500px، و max-inline-size: 100% بيخليه ميطلعش برّه الشاشة. جرّب «موبايل».</div></section>
+<style>
+/* من الحل */
+.promo { inline-size: 500px; max-inline-size: 100%; }
+</style>
+</body>
+</html>
 ~~~` },
             { lvl: 'تحدي', t: R`**قارن وقيس:** خلّي الصفحة تستخدم خط ويب عربي (أي ملف woff2 عندك أو من Google Fonts) مرة بـ [[font-display: swap]] ومرة [[block]] ومرة [[optional]]، وقيس بـ [[perf.mjs]] على ٣٦٠: FCP و LCP و CLS والـ bytes تحت [[font]]، ٣ مرات لكل واحدة. وقارن بخطوط الجهاز.`, done: R`جدول ٤ صفوف بأرقام حقيقية (أقل–أكبر)، ومكتوب فيه أنهي واحدة عملت CLS (غالبًا swap لو مقاسات الخط مختلفة) وأنهي أخّرت FCP، وقرارك لو العميل مصمم على خط معيّن.`,
               sol: R`~~~css css/tokens.css (التعديل على --font، والـ @font-face فوق :root)

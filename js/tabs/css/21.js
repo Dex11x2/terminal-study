@@ -6641,6 +6641,46 @@ axe: 0
 أول مبلغ: ٣٢٠
 الفحص الذاتي للفيضان: الصفحة: عرض الشاشة 360 وعرض المحتوى 360 ← مفيش scroll أفقي / PASS s الطلبات
 axe: 0
+~~~
+
+~~~view 360 360 الشكل في المتصفح (الحل نفسه، وسطور للـ preview بس)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<script>/* للـ preview بس: orders.json (العيّنة اللي في الحل) جوه الصفحة، و fetch بيرجّعه بدل ما يطلب ملف */
+const ORDERS = [{"id":1001,"customer":"منى عادل","amount":320,"status":"paid","date":"2026-10-01"},{"id":1002,"customer":"\u003cscript>alert(1)\u003c/script>","amount":150,"status":"paid","date":"2026-10-02"},{"id":1003,"customer":"كريم سامي","amount":0,"status":"refunded","date":"2026-10-03"},{"id":1004,"customer":"هدى علي","amount":90,"date":"2026-10-04"}];
+const realFetch = window.fetch;
+window.fetch = (u, o) => /orders\.json$/.test(String(u)) ? Promise.resolve(new Response(JSON.stringify(ORDERS), { headers: { "content-type": "application/json" } })) : realFetch(u, o);
+</script><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>الطلبات</title>
+<style>
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; }
+  th, td { padding: .5rem 1rem; white-space: nowrap; text-align: start; }
+  section { padding: 16px; }
+</style></head>
+<body>
+  <main><h1>لوحة الطلبات</h1><section id="s"><h2>الطلبات</h2><div class="table-wrap" id="out" tabindex="0" role="region" aria-label="جدول الطلبات"></div></section></main>
+  <script>
+    function escapeHtml(v) {
+      return String(v).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+    }
+    function buildTable(rows, columns) {
+      const head = "<thead><tr>" + columns.map((c) => '<th scope="col">' + escapeHtml(c.label) + "</th>").join("") + "</tr></thead>";
+      const body = rows.map((r) => "<tr>" + columns.map((c) => "<td>" + escapeHtml(r[c.key] ?? "") + "</td>").join("") + "</tr>").join("");
+      return "<table>" + head + "<tbody>" + body + "</tbody></table>";
+    }
+    const fmt = new Intl.NumberFormat("ar-EG");
+    async function show() {
+      const orders = await (await fetch("orders.json")).json();
+      const rows = orders.map((o) => ({ ...o, money: fmt.format(o.amount) }));
+      document.getElementById("out").innerHTML = buildTable(rows, [
+        { key: "id", label: "الرقم" }, { key: "customer", label: "العميل" },
+        { key: "money", label: "المبلغ" }, { key: "status", label: "الحالة" }, { key: "date", label: "التاريخ" },
+      ]);
+    }
+    show();
+  </script>
+</body></html>
 ~~~` },
             { lvl: 'تحدي', t: R`**اكتب اختبار:** زوّد ٥ اختبارات من عندك على [[fluidClamp]] و [[contrastRatio]]: مقاسين متساويين ([[fluidClamp(16, 16, 360, 1200)]])، و [[minPx]] أكبر من [[maxPx]] (خط بيصغر)، و hex بحروف كابيتال، و hex بـ ٨ حروف (فيه alpha)، ومسافات قبل وبعد اللون. قرر السلوك الصح لكل واحد واكتبه في اسم الاختبار.`, done: R`الخمس اختبارات شغالين في المربع جنب الـ ١٥ الأصليين، وكل واحد اسمه بيقول السلوك اللي اخترته (مثلًا «alpha مش مدعوم وبيرمي error»)، والدوال اتعدّلت لحد ما الـ ٢٠ عدّوا.`,
               sol: R`~~~js color.mjs (الدوال بعد القرارات)
