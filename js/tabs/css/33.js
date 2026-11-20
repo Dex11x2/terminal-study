@@ -3690,6 +3690,8 @@ align-content: center   justify-content: space-between
 
 ### [[flex-wrap: balance]] و [[flex-line-count]]: جديد في Chrome بس
 
+> ميزة جديدة لسه مش في كل المتصفحات. يعني إيه «مش Baseline» و «ورا flag»، وإزاي تتأكد بنفسك قبل ما تستخدم أي ميزة: درس «Baseline و @supports».
+
 لما العناصر بتلف، آخر سطر ممكن يبقى فيه عنصر واحد يتيم. [[flex-wrap: balance]] بيوزّعهم على السطور بالتساوي، و [[flex-line-count]] بيقول أقل عدد سطور:
 
 ~~~text القياس من Chrome 157 (٧ مربعات عرض كل واحد 60 في صف عرضه 400)

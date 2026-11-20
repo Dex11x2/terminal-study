@@ -5453,6 +5453,8 @@ calc(NaN * 1px)         0px
 
 ## ٧. [[calc-size()]]: لسه مش في كل حتة
 
+> ميزة جديدة لسه مش في كل المتصفحات. يعني إيه «مش Baseline» و «ورا flag»، وإزاي تتأكد بنفسك قبل ما تستخدم أي ميزة: درس «Baseline و @supports».
+
 [[calc-size(auto, size + 20px)]] بتخليك تحسب على كلمات زي [[auto]] و [[fit-content]] (مثلًا حركة من [[height: 0]] لـ [[auto]]). Chrome 157 بيدعمها ([[CSS.supports("height", "calc-size(auto, size)")]] ‏true) ومعاها [[interpolate-size: allow-keywords]]، بس Firefox و Safari لأ (MDN)، فمنهج الكورس معتبرها مش Baseline. استخدمها كتحسين بس.
 
 ---
