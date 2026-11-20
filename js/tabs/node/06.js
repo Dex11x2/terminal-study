@@ -1199,7 +1199,7 @@ console.log("top self time:", [...self].sort((a, b) => b[1] - a[1]).slice(0, 3).
 console.log("slowUnique share: of all " + (inSlow / total).toFixed(2) + ", of JS " + (inSlow / js).toFixed(2));
 const top = [...prof.samples.reduce((m, id, i) => m.set(id, (m.get(id) ?? 0) + prof.timeDeltas[i]), new Map())].sort((a, b) => b[1] - a[1])[0][0];
 const chain = []; for (let x = top; x !== undefined; x = parent.get(x)) { const c = byId.get(x).callFrame; chain.push((c.functionName || "(anonymous)") + "@" + (c.url.split("/").pop() || "-") + ":" + (c.lineNumber + 1) + ":" + (c.columnNumber + 1)); }
-console.log("heaviest node and its parents:", chain.join(" < "));`, expect: [R`unique: 15000`, R`heaviest node and its parents:`] },
+console.log("heaviest node and its parents:", chain.join(" < "));`, expect: [R`unique: 15000`, R`heaviest node and its parents:`], show: true },
           ],
         },
         {
