@@ -32,12 +32,1013 @@ node serve.mjs`,
           t: R`زرار الثيم للـ portfolio`,
           what: R`الـ portfolio بيتبع ثيم الجهاز بس، والـ tokens فيها [[[data-theme="dark"]]] جاهزة. زوّد زرار في الـ header بـ [[aria-pressed]] بيبدّل الثيم ويحفظه، و [[boot.js]] بيقراه قبل الرسم، زي الـ dashboard بالظبط. من درسين «بورتفوليو ١» و «داشبورد ٣».`,
           done: R`الزرار بيتقري «الوضع الداكن، pressed/not pressed» في تاب Accessibility، والاختيار بيفضل بعد refresh، و [[vitals.mjs]] بيقول CLS صفر في الحالتين، و axe صفر في الثيمين.`,
+          dir: R`pd-lab`,
+          cont: true,
+          sol: R`**الملفات اللي بتتغير:** ملف جديد [[js/theme.js]]، وزرار وسطر سكربت في الصفحات التلاتة ([[index.html]] و [[cv.html]] و [[work/tide-notes.html]])، وسطرين في [[css/site.css]]، وكلمة واحدة في [[js/i18n.js]]. [[boot.js]] و [[tokens.css]] زي ما هم: الاتنين كانوا جاهزين للثيم من الوحدة.
+
+~~~js portfolio/js/theme.js
+// theme switch: dark or light by hand, saved for the next visit (boot.js applies it before the first paint)
+const btn = document.getElementById("theme");
+if (btn) {
+  const root = document.documentElement;
+  const os = matchMedia("(prefers-color-scheme: dark)");
+  const dark = () => (root.dataset.theme ? root.dataset.theme === "dark" : os.matches);   // no choice yet = follow the device
+  const show = () => btn.setAttribute("aria-pressed", String(dark()));
+  show();
+  btn.addEventListener("click", () => {
+    const next = dark() ? "light" : "dark";
+    root.dataset.theme = next;
+    show();
+    try { localStorage.setItem("theme", next); } catch {}
+  });
+  os.addEventListener("change", show);   // the device switched while the page is open, and the reader hasn't chosen: the button follows
+}
+~~~
+
+~~~html portfolio/index.html (الـ header وآخر الصفحة؛ ونفس السطرين في cv.html و work/tide-notes.html)
+    <button class="lang" type="button" id="lang" lang="en">English</button>
+    <button class="lang theme" type="button" id="theme" aria-pressed="false" aria-label="الوضع الداكن" data-i18n-label="themeLabel"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z" fill="currentColor"/></svg></button>
+  </header>
+  …
+  <script src="js/theme.js"></script>
+  <script src="js/i18n.js"></script>
+~~~
+
+في [[work/tide-notes.html]] السكربت بيبقى [[../js/theme.js]]، زي [[../js/i18n.js]] اللي جنبه بالظبط.
+
+~~~css portfolio/css/site.css (تحت قاعدة .lang، مش فوقها)
+.lang { font: inherit; padding: 0.4rem 0.9rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); cursor: pointer; min-height: 44px; }
+.theme { display: inline-grid; place-items: center; padding: 0; width: 44px; }   /* round, the same border as the language button */
+.theme[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+~~~
+
+~~~js portfolio/js/i18n.js (في dict.en، جنب copy)
+    themeLabel: "Dark mode", copy: "Copy email", copied: "Email copied", rights: "All rights reserved",
+~~~
+
+~~~view 720 720 الصفحة الرئيسية بالزرار: دوس على القمر جنب English
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="tHome">نادين فؤاد | مطوّرة واجهات</title>
+  <meta name="description" content="نادين فؤاد، مطوّرة واجهات: مواقع سريعة وسهلة الاستخدام بالعربي والإنجليزي.">
+  <link rel="canonical" href="https://nadine.example/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="نادين فؤاد | مطوّرة واجهات">
+  <meta property="og:description" content="مواقع سريعة وسهلة الاستخدام بالعربي والإنجليزي.">
+  <meta property="og:url" content="https://nadine.example/">
+  <meta property="og:image" content="https://nadine.example/img/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="اسم نادين فؤاد ووظيفتها على خلفية فاتحة">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="color-scheme" content="light dark">
+  <script>
+// runs in <head> before the first paint: language and theme from last visit, so the page never flips after it shows
+try {
+  const lang = localStorage.getItem("lang");
+  if (lang === "en") { document.documentElement.lang = "en"; document.documentElement.dir = "ltr"; }
+  const theme = localStorage.getItem("theme");
+  if (theme) document.documentElement.dataset.theme = theme;
+} catch {}
+document.documentElement.classList.add("js");
+</script>
+  <style>
+/* every colour, size and curve the site uses lives here; the rest of the CSS only reads var(--x) */
+:root {
+  color-scheme: light dark;
+  --paper: #f7f5f0;
+  --surface: #ffffff;
+  --ink: #1c2230;
+  --muted: #535b6b;
+  --line: #dcd8cf;
+  --accent: #0d6b63;
+  --accent-ink: #ffffff;
+  --accent-soft: #dcefec;
+  --warm: #9c4f12;
+  --font: system-ui, "Segoe UI", "Noto Sans Arabic", Tahoma, sans-serif;
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --step-1: clamp(1.25rem, 1.1rem + 0.6vw, 1.6rem);
+  --step-3: clamp(2rem, 1.4rem + 3vw, 3.6rem);
+  --gutter: clamp(16px, 4vw, 48px);
+  --r: 14px;
+  --r-sm: 8px;
+  --shadow: 0 1px 2px rgb(20 24 33 / 0.06), 0 8px 24px rgb(20 24 33 / 0.08);
+  --ease: cubic-bezier(0.22, 0.7, 0.2, 1);
+  --z-header: 10;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12161f; --surface: #1a202b; --ink: #e9ecf2; --muted: #a6aebd; --line: #2c3442;
+    --accent: #5fcfc3; --accent-ink: #0b1513; --accent-soft: #173834; --warm: #f0a868;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12161f; --surface: #1a202b; --ink: #e9ecf2; --muted: #a6aebd; --line: #2c3442;
+  --accent: #5fcfc3; --accent-ink: #0b1513; --accent-soft: #173834; --warm: #f0a868;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
+}
+</style>
+  <style>
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-padding-top: 5rem; -webkit-text-size-adjust: 100%; }
+body { margin: 0; font: var(--step-0)/1.7 var(--font); color: var(--ink); background: var(--paper); }
+:lang(en) body, body:lang(en) { line-height: 1.6; }
+h1, h2, h3 { line-height: 1.25; text-wrap: balance; }
+p { text-wrap: pretty; }
+a { color: var(--accent); text-underline-offset: 0.2em; }
+img, svg { max-width: 100%; height: auto; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+main > section { padding: clamp(48px, 8vw, 96px) var(--gutter); max-width: 72rem; margin-inline: auto; }
+
+.skip { position: absolute; inset-inline-start: 1rem; top: -4rem; padding: 0.5rem 1rem; background: var(--ink); color: var(--paper); z-index: 100; }
+.skip:focus { top: 1rem; }
+.sr-status { min-height: 1.7em; color: var(--muted); }
+
+/* ---------- header: sticky glass ---------- */
+.top {
+  position: sticky; top: 0; z-index: var(--z-header);
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.25rem;
+  padding: 0.75rem var(--gutter);
+  background: color-mix(in srgb, var(--paper) 82%, transparent);
+  backdrop-filter: blur(10px);
+  border-block-end: 1px solid var(--line);
+}
+.brand { font-weight: 700; color: var(--ink); text-decoration: none; margin-inline-end: auto; }
+.top nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; }
+.top nav a { color: var(--ink); text-decoration: none; padding-block: 0.5rem; }
+.top nav a:hover { color: var(--accent); }
+.lang { font: inherit; padding: 0.4rem 0.9rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); cursor: pointer; min-height: 44px; }
+.theme { display: inline-grid; place-items: center; padding: 0; width: 44px; }   /* round, the same border as the language button */
+.theme[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
+/* ---------- hero ---------- */
+.hero { padding-block-start: clamp(56px, 12vw, 140px); }
+.eyebrow { color: var(--warm); font-weight: 600; margin: 0; }
+.hero h1 { font-size: var(--step-3); margin: 0.25em 0 0.4em; max-width: 18ch; }
+:lang(en) .hero h1 { letter-spacing: -0.02em; }
+.lead { font-size: var(--step-1); color: var(--muted); max-width: 46ch; margin: 0; }
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-block-start: 2rem; }
+.btn {
+  --bg: var(--accent); --fg: var(--accent-ink);
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0.5rem 1.25rem;
+  border: 2px solid var(--bg); border-radius: 999px; background: var(--bg); color: var(--fg);
+  font: inherit; font-weight: 600; text-decoration: none; cursor: pointer;
+}
+.btn.ghost { --bg: transparent; --fg: var(--accent); border-color: var(--accent); }
+
+/* ---------- work: cards + :has() filter ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: 0.5rem; border: 0; padding: 0; margin: 0 0 1.5rem; }
+.filters legend { width: 100%; margin-block-end: 0.5rem; color: var(--muted); }
+.filters label {
+  display: inline-flex; align-items: center; gap: 0.4rem; min-height: 44px; padding: 0.25rem 0.9rem;
+  border: 1px solid var(--line); border-radius: 999px; background: var(--surface); cursor: pointer;
+}
+.filters input { accent-color: var(--accent); }
+.filters label:has(input:checked) { background: var(--accent-soft); border-color: var(--accent); font-weight: 600; }
+.filters label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }
+.card { position: relative; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1rem; box-shadow: var(--shadow); }
+.card h3 { font-size: var(--step-1); margin: 0.75rem 0 0.25rem; }
+.card h3 a { color: var(--ink); }
+.card h3 a::after { content: ""; position: absolute; inset: 0; border-radius: var(--r); }
+.card:has(a:hover) { border-color: var(--accent); }
+.card p { margin: 0 0 0.75rem; color: var(--muted); }
+.thumb { aspect-ratio: 16 / 9; border-radius: var(--r-sm); background: linear-gradient(135deg, var(--a, #0d6b63), var(--b, #9c4f12)); }
+.t1 { --a: #0d6b63; --b: #4aa79d; view-transition-name: tide-thumb; }
+.t2 { --a: #2f4b7c; --b: #6b8fd1; }
+.t3 { --a: #7a3e65; --b: #c97fa9; }
+.t4 { --a: #6b5b1d; --b: #c2a64a; }
+.t5 { --a: #3c3c3c; --b: #9a9a9a; }
+.tags { list-style: none; padding: 0; margin: auto 0 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tags li { font-size: 0.85rem; padding: 0.1rem 0.6rem; border-radius: 999px; background: var(--paper); border: 1px solid var(--line); direction: ltr; }
+
+.work:has(input[value="web"]:checked) .card:not([data-tags~="web"]),
+.work:has(input[value="a11y"]:checked) .card:not([data-tags~="a11y"]),
+.work:has(input[value="api"]:checked) .card:not([data-tags~="api"]),
+.work:has(input[value="design"]:checked) .card:not([data-tags~="design"]) { display: none; }
+
+/* ---------- scroll reveal (only when JS runs) ---------- */
+.js [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity 0.6s var(--ease) var(--d, 0s), transform 0.6s var(--ease) var(--d, 0s); }
+.js [data-reveal].in { opacity: 1; transform: none; }
+
+/* ---------- about + contact ---------- */
+.about p, .contact p { max-width: 60ch; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: 1rem; margin: 2rem 0 0; }
+.facts div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1rem; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; font-size: var(--step-3); font-weight: 700; font-variant-numeric: tabular-nums; }
+.contact p:has(.btn) { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.foot { padding: 2rem var(--gutter); border-block-start: 1px solid var(--line); color: var(--muted); text-align: center; }
+
+/* ---------- page to page: View Transitions (Chrome/Edge 126+, Safari 18.2+; others just navigate) ---------- */
+@view-transition { navigation: auto; }
+::view-transition-group(tide-thumb) { animation-duration: 0.35s; animation-timing-function: var(--ease); }
+
+/* ---------- reduced motion: no reveal, no page animation ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] { opacity: 1; transform: none; transition: none; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
+
+/* ---------- print: any page prints as plain document ---------- */
+@media print {
+  .top, .skip, .actions, .filters, .lang, #copy, .foot, .thumb { display: none !important; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  main > section { padding: 0 0 12pt; max-width: none; }
+  .card { box-shadow: none; break-inside: avoid; }
+  .js [data-reveal] { opacity: 1; transform: none; }
+  a[href^="http"]::after, a[href^="mailto:"]::after { content: " (" attr(href) ")"; font-size: 0.85em; color: #333; }
+}
+</style>
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">اتخطّى للمحتوى</a>
+  <header class="top">
+    <a class="brand" href="./" data-i18n="name">نادين فؤاد</a>
+    <nav aria-label="الأقسام" data-i18n-label="navLabel">
+      <a href="#work" data-i18n="navWork">الشغل</a>
+      <a href="#about" data-i18n="navAbout">عني</a>
+      <a href="#contact" data-i18n="navContact">تواصل</a>
+      <a href="cv.html" data-i18n="navCv">السيرة الذاتية</a>
+    </nav>
+    <button class="lang" type="button" id="lang" lang="en">English</button>
+    <button class="lang theme" type="button" id="theme" aria-pressed="false" aria-label="الوضع الداكن" data-i18n-label="themeLabel"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z" fill="currentColor"/></svg></button>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <p class="eyebrow" data-i18n="role">مطوّرة واجهات</p>
+      <h1 data-i18n="heroTitle">بابني مواقع سريعة، وأي حد يقدر يستخدمها.</h1>
+      <p class="lead" data-i18n="heroLead">٦ سنين بكتب HTML و CSS و JavaScript لمواقع عربي وإنجليزي، ومهتمة بالأداء وسهولة الوصول.</p>
+      <div class="actions">
+        <a class="btn" href="#work" data-i18n="ctaWork">شوف الشغل</a>
+        <a class="btn ghost" href="#contact" data-i18n="ctaContact">كلّمني</a>
+      </div>
+    </section>
+
+    <section id="work" class="work" aria-labelledby="work-h">
+      <h2 id="work-h" data-i18n="workTitle">مشاريع مختارة</h2>
+      <fieldset class="filters">
+        <legend data-i18n="filterBy">فلتر حسب النوع</legend>
+        <label><input type="radio" name="f" value="all" checked> <span data-i18n="fAll">الكل</span></label>
+        <label><input type="radio" name="f" value="web"> <span data-i18n="fWeb">مواقع</span></label>
+        <label><input type="radio" name="f" value="a11y"> <span data-i18n="fA11y">سهولة الوصول</span></label>
+        <label><input type="radio" name="f" value="api"> <span data-i18n="fApi">API</span></label>
+        <label><input type="radio" name="f" value="design"> <span data-i18n="fDesign">تصميم</span></label>
+      </fieldset>
+      <ul class="cards" role="list">
+        <li class="card" data-tags="web a11y" data-reveal>
+          <div class="thumb t1" aria-hidden="true"></div>
+          <h3><a href="work/tide-notes.html" data-i18n="p1">Tide Notes: ملاحظات من غير نت</a></h3>
+          <p data-i18n="p1d">تطبيق ملاحظات بيشتغل offline، وبيتزامن لما النت يرجع.</p>
+          <ul class="tags" role="list"><li>PWA</li><li>IndexedDB</li></ul>
+        </li>
+        <li class="card" data-tags="web" data-reveal>
+          <div class="thumb t2" aria-hidden="true"></div>
+          <h3 data-i18n="p2">لوحة مواعيد الأتوبيس</h3>
+          <p data-i18n="p2d">شاشة محطة بتتحدّث كل ٣٠ ثانية، مقروءة من ٥ متر.</p>
+          <ul class="tags" role="list"><li>SSE</li><li>CSS Grid</li></ul>
+        </li>
+        <li class="card" data-tags="a11y" data-reveal>
+          <div class="thumb t3" aria-hidden="true"></div>
+          <h3 data-i18n="p3">فورم حجز لعيادة</h3>
+          <p data-i18n="p3d">٧ خطوات بقت ٣، والأخطاء بتتقري بقارئ الشاشة.</p>
+          <ul class="tags" role="list"><li>WCAG 2.2</li><li>Forms</li></ul>
+        </li>
+        <li class="card" data-tags="api" data-reveal>
+          <div class="thumb t4" aria-hidden="true"></div>
+          <h3 data-i18n="p4">API وصفات أكل</h3>
+          <p data-i18n="p4d">بحث بالمكوّنات، و pagination، وكاش ٦٠ ثانية.</p>
+          <ul class="tags" role="list"><li>Node</li><li>PostgreSQL</li></ul>
+        </li>
+        <li class="card" data-tags="design web" data-reveal>
+          <div class="thumb t5" aria-hidden="true"></div>
+          <h3 data-i18n="p5">مكتبة design tokens</h3>
+          <p data-i18n="p5d">ألوان ومسافات وخطوط لـ ٣ مواقع من ملف واحد.</p>
+          <ul class="tags" role="list"><li>CSS variables</li><li>Figma</li></ul>
+        </li>
+      </ul>
+    </section>
+
+    <section id="about" class="about" aria-labelledby="about-h">
+      <h2 id="about-h" data-i18n="aboutTitle">عني</h2>
+      <p data-i18n="aboutText">بدأت بمواقع لمحلات صغيرة، ودلوقتي بشتغل مع فرق منتج على واجهات بيستخدمها آلاف الناس كل يوم. بحب الكود اللي يتقري، والصفحة اللي تفتح في أقل من ثانية.</p>
+      <dl class="facts">
+        <div><dt data-i18n="f1t">سنين خبرة</dt><dd>6</dd></div>
+        <div><dt data-i18n="f2t">مشروع اتسلّم</dt><dd><span dir="ltr">40+</span></dd></div>
+        <div><dt data-i18n="f3t">Lighthouse a11y</dt><dd>100</dd></div>
+      </dl>
+    </section>
+
+    <section id="contact" class="contact" aria-labelledby="contact-h">
+      <h2 id="contact-h" data-i18n="contactTitle">نشتغل سوا؟</h2>
+      <p data-i18n="contactText">ابعتلي فكرة المشروع وميعاده، وهرد عليك خلال يومين شغل.</p>
+      <p><a class="btn" href="mailto:hello@nadine.example" dir="ltr">hello@nadine.example</a>
+        <button class="btn ghost" type="button" id="copy" data-i18n="copy">انسخ الإيميل</button></p>
+      <p class="sr-status" role="status" id="status"></p>
+    </section>
+  </main>
+
+  <footer class="foot"><p><span data-i18n="rights">كل الحقوق محفوظة</span> © 2026</p></footer>
+  <script>
+// theme switch: dark or light by hand, saved for the next visit (boot.js applies it before the first paint)
+const btn = document.getElementById("theme");
+if (btn) {
+  const root = document.documentElement;
+  const os = matchMedia("(prefers-color-scheme: dark)");
+  const dark = () => (root.dataset.theme ? root.dataset.theme === "dark" : os.matches);   // no choice yet = follow the device
+  const show = () => btn.setAttribute("aria-pressed", String(dark()));
+  show();
+  btn.addEventListener("click", () => {
+    const next = dark() ? "light" : "dark";
+    root.dataset.theme = next;
+    show();
+    try { localStorage.setItem("theme", next); } catch {}
+  });
+  os.addEventListener("change", show);   // the device switched while the page is open, and the reader hasn't chosen: the button follows
+}
+</script>
+  <script>
+// dictionary + switch: every [data-i18n] gets its text from the current language, and <html> gets lang and dir
+const dict = {
+  en: {
+    tHome: "Nadine Fouad | Front-end developer", tCase: "Tide Notes case study | Nadine Fouad", tCv: "CV | Nadine Fouad",
+    skip: "Skip to content", name: "Nadine Fouad", navLabel: "Sections", navWork: "Work", navAbout: "About", navContact: "Contact", navCv: "CV",
+    role: "Front-end developer", heroTitle: "I build fast websites anyone can use.",
+    heroLead: "6 years writing HTML, CSS and JavaScript for Arabic and English sites, with a focus on performance and accessibility.",
+    ctaWork: "See the work", ctaContact: "Get in touch", workTitle: "Selected projects", filterBy: "Filter by type",
+    fAll: "All", fWeb: "Websites", fA11y: "Accessibility", fApi: "API", fDesign: "Design",
+    p1: "Tide Notes: notes without internet", p1d: "A notes app that works offline and syncs when the connection is back.",
+    p2: "Bus departures board", p2d: "A station screen that refreshes every 30 seconds, readable from 5 metres.",
+    p3: "Clinic booking form", p3d: "7 steps became 3, and errors are announced to screen readers.",
+    p4: "Recipes API", p4d: "Search by ingredient, pagination, and a 60-second cache.",
+    p5: "Design tokens library", p5d: "Colours, spacing and type for 3 sites from one file.",
+    aboutTitle: "About", aboutText: "I started with sites for small shops, and now I work with product teams on interfaces thousands of people use every day. I like code you can read, and pages that open in under a second.",
+    f1t: "Years of experience", f2t: "Projects shipped", f3t: "Lighthouse a11y",
+    contactTitle: "Work together?", contactText: "Send me the idea and the deadline, and I'll reply within two working days.",
+    themeLabel: "Dark mode", copy: "Copy email", copied: "Email copied", rights: "All rights reserved",
+    caseKind: "Case study · 2025", caseTitle: "Tide Notes: notes that work without internet",
+    mRole: "My role", mRoleV: "The whole front end and offline", mTime: "Duration", mTimeV: "10 weeks", mStack: "Stack",
+    cProblem: "The problem", cProblemT: "The sales team writes visit notes in places with weak signal, so a note is lost if the page closes before it is sent.",
+    cDecisions: "Decisions", d1: "Every note is saved to IndexedDB first, and sent in the background.",
+    d2: "A Service Worker caches the page itself, so it opens offline.", d3: "A clear mark on each note: sent or not yet.",
+    cResults: "Results", rCap: "Before and after (3-week average)", rMetric: "Metric", rBefore: "Before", rAfter: "After",
+    r1: "Page open time on 3G", r2: "Notes lost per week", back: "Back to projects",
+    print: "Print or save PDF", exp: "Experience", skills: "Skills",
+    j1: "Senior front-end developer · Trips platform company", j1a: "Cut search page LCP on mobile from 3.2 to 1.4 seconds.", j1b: "Built a shared component library for 3 teams.",
+    j2: "Front-end developer · Small design agency", j2a: "25 sites for shops and clinics, all in Arabic and English.", j2b: "Ran the agency's first accessibility audit; it became a step in every delivery.",
+  },
+};
+const ar = {};                                   // Arabic is what the HTML already says: read it once, so it isn't written twice
+document.querySelectorAll("[data-i18n]").forEach(el => (ar[el.dataset.i18n] = el.textContent));
+document.querySelectorAll("[data-i18n-label]").forEach(el => (ar[el.dataset.i18nLabel] = el.getAttribute("aria-label")));
+ar.copied = "الإيميل اتنسخ";
+dict.ar = ar;
+
+function t(key) { return dict[document.documentElement.lang]?.[key] ?? ar[key] ?? key; }
+
+function apply(lang) {
+  const html = document.documentElement;
+  html.lang = lang;
+  html.dir = lang === "ar" ? "rtl" : "ltr";
+  document.querySelectorAll("[data-i18n]").forEach(el => (el.textContent = t(el.dataset.i18n)));
+  document.querySelectorAll("[data-i18n-label]").forEach(el => el.setAttribute("aria-label", t(el.dataset.i18nLabel)));
+  const btn = document.getElementById("lang");
+  if (btn) { btn.textContent = lang === "ar" ? "English" : "عربي"; btn.lang = lang === "ar" ? "en" : "ar"; }
+  try { localStorage.setItem("lang", lang); } catch {}
+}
+
+if (document.documentElement.lang === "en") apply("en");   // boot.js set it from the last visit; now fill the texts
+document.getElementById("lang")?.addEventListener("click", () => apply(document.documentElement.lang === "ar" ? "en" : "ar"));
+
+const copy = document.getElementById("copy");
+copy?.addEventListener("click", async () => {
+  const status = document.getElementById("status");
+  try { await navigator.clipboard.writeText("hello@nadine.example"); status.textContent = t("copied"); }
+  catch { status.textContent = "hello@nadine.example"; }
+});
+</script>
+  <script type="module">
+// cards fade in once when they reach the screen; nothing hides without JS (the .js class), and nothing moves with reduced motion
+const items = document.querySelectorAll("[data-reveal]");
+const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (still || !("IntersectionObserver" in window)) {
+  items.forEach(el => el.classList.add("in"));
+} else {
+  const io = new IntersectionObserver(entries => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+  }, { rootMargin: "0px 0px -10% 0px" });
+  items.forEach((el, i) => { el.style.setProperty("--d", (i % 3) * 80 + "ms"); io.observe(el); });
+}
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** جنب زرار «English» زرار مدوّر جواه قمر. لو جهازك فاتح، الدوسة بتقلب الصفحة كلها داكنة، والزرار نفسه بيبقى ملوّن (خلفية [[--accent-soft]] وحدود [[--accent]]) عشان تبان إنه «شغال». دوسة تانية بترجّعها فاتحة. ولو عملت refresh أو فتحت [[cv.html]] بتلاقي اختيارك زي ما هو. جوه صندوق العرض هنا الحفظ مش شغال (الصندوق معزول ومن غير [[localStorage]])، بس الدوسة نفسها شغالة. قارئ الشاشة بيقول «الوضع الداكن، زرار تبديل، مضغوط» أو «مش مضغوط».
+
+**ليه [[aria-pressed]] والاسم ثابت:** الزرار ده «تبديل» (toggle): ليه حالتين وبيفضل في واحدة منهم. [[aria-pressed="true"]] بيقول لقارئ الشاشة إن الحالة دلوقتي «مضغوط»، والاسم «الوضع الداكن» بيقول الحالة دي معناها إيه. لو غيّرت الاسم مع كل دوسة («الوضع الداكن» ← «الوضع الفاتح») وكمان غيّرت [[aria-pressed]]، اللي بيسمع هيتلخبط: «الوضع الفاتح، مضغوط» معناها الصفحة فاتحة ولا داكنة؟ فواحد يتغير بس: الحالة. ده نفس اللي عملناه في زرار الـ dashboard في «داشبورد ٣».
+
+**الدالة [[dark()]] بتسأل سؤالين بالترتيب:** لو القارئ اختار قبل كده ([[root.dataset.theme]] فيها [[dark]] أو [[light]])، يبقى اختياره هو الإجابة. ولو مختارش، الإجابة من الجهاز ([[matchMedia("(prefers-color-scheme: dark)")]]). من غير السؤال التاني، الزرار هيقول «مش مضغوط» على جهاز داكن والصفحة داكنة فعلًا، وأول دوسة مش هتعمل حاجة باينة (هتحط [[dark]] على صفحة هي أصلًا داكنة).
+
+**[[os.addEventListener("change", show)]]:** لو الجهاز اتقلب (الموبايل بيقلب داكن بالليل لوحده) والقارئ لسه ماختارش، الـ tokens بتتبع الجهاز لوحدها من [[@media (prefers-color-scheme: dark)]]، بس [[aria-pressed]] مكتوب مرة واحدة وقت الفتح. السطر ده بيحدّثه، فالزرار ميكدبش.
+
+**مفيش ومضة ومفيش CLS:** [[boot.js]] بيتشغّل في الـ [[<head>]] قبل أول رسم، وبيحط [[data-theme]] من الزيارة اللي فاتت، فالصفحة بتترسم من الأول بالثيم الصح. [[theme.js]] بيتحمّل في آخر الصفحة وبيظبط [[aria-pressed]] بس، ودي حاجة ملهاش شكل لحد ما الزرار يتلوّن، والزرار مقاسه ثابت (44×44) في الحالتين، فمفيش حاجة بتتزق.
+
+**الترجمة من غير ما تكتب العربي مرتين:** [[data-i18n-label="themeLabel"]] بيخلي [[i18n.js]] يبدّل الـ [[aria-label]] مع اللغة. العربي بيتقري من الـ HTML نفسه (السطر اللي بيلف على [[[data-i18n-label]]] في [[i18n.js]])، فالمطلوب كلمة الإنجليزي بس: [[themeLabel: "Dark mode"]].
+
+**الكلاس [[lang theme]]:** الزرار بياخد كل شكل زرار اللغة (الحدود المدورة، والخلفية، و [[min-height: 44px]]) من غير ما نكرره، و [[.theme]] بيغيّر اللي مختلف بس: مربع 44×44 والأيقونة في النص.
+
+**غلطة ١ (حصلت): القاعدة فوق [[.lang]] فالـ padding متشالش.** أول مرة حطيت [[.theme]] قبل [[.lang]] في الملف. الاتنين ليهم نفس الـ specificity (كلاس واحد)، فاللي تحت في الملف بيكسب، و [[.lang]] فيها [[padding: 0.4rem 0.9rem]]. السلوك كان صح (الفحص قال pressed و dark)، فالغلطة مكانتش هتبان غير بالقياس: [[getComputedStyle(theme).padding]]. بعد ما نزّلت القاعدتين تحت [[.lang]]:
+
+~~~text اتقاس فعلًا (Chrome 156، عرض 360)
+theme 44x44 padding 0px | header h 156 | scrollW 360
+~~~
+
+**غلطة ٢ (في القياس، مش في الكود): axe قال ٦ أخطاء تباين.** فحص الثيمين بتاع الوحدة بيغيّر ثيم **الجهاز** بس، وده مبيجرّبش الحالة الجديدة: الجهاز فاتح والقارئ اختار داكن. كتبت [[axe-cross.mjs]] للحالة دي، وأول مرة طلّع على [[index.html]]:
+
+~~~text أول تشغيل
+device light saved dark  index.html           violations: 1 color-contrast
+… foreground color: #52565e, background color: #12161f … contrast 2.45
+~~~
+
+اللون [[#52565e]] مش في [[tokens.css]] أصلًا. ده لون الكارت وهو في نص الـ fade بتاع الظهور بالسكرول (الشفافية بتطلع من 0 لـ 1 في 0.6 ثانية)، و axe قاس في النص. فحص الوحدة بيستنى 700ms لنفس السبب. بعد [[waitForTimeout(1500)]] قبل القياس، الست حالات طلعوا صفر. **الدرس:** لما axe يطلّع لون مش موجود في الـ tokens، شوف الأول هل فيه حركة شغالة وقت القياس.
+
+~~~js theme-check.mjs
+// node theme-check.mjs: the portfolio theme button. Name and state as a screen reader gets them, saved after reload, both languages
+import { chromium } from "playwright-core";
+const B = "http://127.0.0.1:5501/";
+const browser = await chromium.launch({ channel: "chrome" });
+for (const scheme of ["light", "dark"]) {
+  const c = await browser.newContext({ colorScheme: scheme, viewport: { width: 390, height: 844 } });
+  const p = await c.newPage(); const errs = []; p.on("pageerror", e => errs.push(e.message));
+  const cdp = await c.newCDPSession(p);
+  const ax = async () => { const { nodes } = await cdp.send("Accessibility.getFullAXTree"); const n = nodes.find(n => n.role?.value === "button" && /داكن|Dark/.test(n.name?.value || "")); return n.name.value + ", pressed=" + n.properties.find(x => x.name === "pressed")?.value.value; };
+  const bg = () => p.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  await p.goto(B);
+  console.log($__btdevice $__{scheme}: $__{await ax()} | bg $__{await bg()}$__bt);
+  await p.click("#theme");
+  console.log($__bt  click     : $__{await ax()} | bg $__{await bg()} | saved $__{await p.evaluate(() => localStorage.getItem("theme"))}$__bt);
+  await p.reload();
+  console.log($__bt  reload    : $__{await ax()} | bg $__{await bg()}$__bt);
+  await p.click("#lang");
+  console.log($__bt  English   : $__{await ax()}$__bt);
+  await p.goto(B + "cv.html");
+  console.log($__bt  cv.html   : $__{await ax()} | bg $__{await bg()}$__bt);
+  console.log("  errors: " + (errs.join(" | ") || "none"));
+  await c.close();
+}
+await browser.close();
+~~~
+
+[[Accessibility.getFullAXTree]] بيجيب الشجرة اللي قارئ الشاشة بيقراها (هي نفسها اللي في تاب Accessibility في DevTools)، فالاسم والحالة اللي بتطلع هنا هم اللي القارئ هيسمعهم فعلًا، مش اللي كتبناه في الـ HTML.
+
+~~~text node theme-check.mjs (اتشغّل فعلًا، Chrome 156)
+device light: الوضع الداكن, pressed=false | bg rgb(247, 245, 240)
+  click     : الوضع الداكن, pressed=true | bg rgb(18, 22, 31) | saved dark
+  reload    : الوضع الداكن, pressed=true | bg rgb(18, 22, 31)
+  English   : Dark mode, pressed=true
+  cv.html   : Dark mode, pressed=true | bg rgb(18, 22, 31)
+  errors: none
+device dark: الوضع الداكن, pressed=true | bg rgb(18, 22, 31)
+  click     : الوضع الداكن, pressed=false | bg rgb(247, 245, 240) | saved light
+  reload    : الوضع الداكن, pressed=false | bg rgb(247, 245, 240)
+  English   : Dark mode, pressed=false
+  cv.html   : Dark mode, pressed=false | bg rgb(247, 245, 240)
+  errors: none
+~~~
+
+~~~js axe-cross.mjs
+// node axe-cross.mjs: axe when the saved choice is the opposite of the device (device dark + saved light, and the reverse)
+import { chromium } from "playwright-core";
+import { AxeBuilder } from "@axe-core/playwright";
+const browser = await chromium.launch({ channel: "chrome" });
+for (const [scheme, saved] of [["dark", "light"], ["light", "dark"]]) for (const page of ["", "cv.html", "work/tide-notes.html"]) {
+  const c = await browser.newContext({ colorScheme: scheme });
+  const p = await c.newPage();
+  await p.addInitScript(t => localStorage.setItem("theme", t), saved);
+  await p.goto("http://127.0.0.1:5501/" + page);
+  await p.evaluate(() => document.querySelectorAll("[data-reveal]").forEach(e => e.classList.add("in")));
+  await p.waitForTimeout(1500);   // the reveal fades in over 0.6s (+ delay): measure the final colours, not the middle of the fade
+  const r = await new AxeBuilder({ page: p }).analyze();
+  console.log($__btdevice $__{scheme.padEnd(5)} saved $__{saved.padEnd(5)} $__{(page || "index.html").padEnd(20)} violations: $__{r.violations.length} $__{r.violations.map(v => v.id).join(" ")}$__bt);
+  await c.close();
+}
+await browser.close();
+~~~
+
+[[addInitScript]] بيتشغّل قبل أي سكربت في الصفحة، فـ [[boot.js]] بيلاقي الاختيار المحفوظ زي ما يحصل في زيارة تانية بالظبط.
+
+~~~text node axe-cross.mjs
+device dark  saved light index.html           violations: 0
+device dark  saved light cv.html              violations: 0
+device dark  saved light work/tide-notes.html violations: 0
+device light saved dark  index.html           violations: 0
+device light saved dark  cv.html              violations: 0
+device light saved dark  work/tide-notes.html violations: 0
+~~~
+
+**باقي القياس:** [[check-portfolio.mjs]] بتاع الوحدة زي ما هو: axe صفر في الـ ١٢ حالة (٣ صفحات × ثيمين × لغتين)، والـ matrix صفر scroll أفقي من 360 لـ 1440، ومفيش أخطاء. و [[vitals.mjs]] (390، CPU أبطأ ٤ مرات) اتشغّل بنسخة بتحط الاختيار قبل التحميل:
+
+~~~text CLS في التلات حالات (الوسط بتاع ٣ مرات)
+saved theme: none   CLS 0.0000 LCP 1264ms P
+saved theme: dark   CLS 0.0000 LCP 1336ms P
+saved theme: light  CLS 0.0000 LCP 1256ms P
+~~~
+
+وارتفاع الـ header قبل الزرار وبعده نفس الرقم على كل المقاسات (156 و 120 و 70 و 71 على 360 و 390 و 768 و 1280): الزرار دخل في نفس السطر اللي فيه «English» ومزوّدش سطر.`,
         },
         {
           lvl: R`صغير`,
           t: R`رسالة «مفيش مشاريع» في الفلتر`,
           what: R`زوّد فلتر سادس «موبايل» مفيش ولا كارت عليه، واعرض فقرة «مفيش مشاريع من النوع ده لسه» بـ CSS بس: [[.work:has(input[value="mobile"]:checked) .empty]] تظهر. وبعدين اكتبها بشكل عام بـ [[:not(:has(...))]] عشان متكتبش قاعدة لكل فلتر. من درس «بورتفوليو ٢».`,
           done: R`لما تختار «موبايل» الكروت كلها بتختفي والفقرة بتظهر، ولما تختار أي فلتر تاني الفقرة بتستخبى، ومن غير ولا سطر JavaScript جديد.`,
+          dir: R`pd-lab`,
+          cont: true,
+          sol: R`**الملفات اللي بتتغير:** [[index.html]] (فلتر سادس وفقرة)، و [[css/site.css]] (سطر في قاعدة الإخفاء وقاعدة الرسالة)، وكلمتين في [[js/i18n.js]]. ومفيش ولا سطر JavaScript جديد بيشغّل حاجة.
+
+~~~html portfolio/index.html (آخر الفلاتر، وتحت لستة الكروت)
+        <label><input type="radio" name="f" value="design"> <span data-i18n="fDesign">تصميم</span></label>
+        <label><input type="radio" name="f" value="mobile"> <span data-i18n="fMobile">موبايل</span></label>
+      </fieldset>
+      <ul class="cards" role="list">
+        …
+      </ul>
+      <p class="empty" data-i18n="empty">مفيش مشاريع من النوع ده لسه.</p>
+    </section>
+~~~
+
+~~~css portfolio/css/site.css (مكان قاعدة الإخفاء اللي في الوحدة، وتحتها الرسالة)
+.work:has(input[value="web"]:checked) .card:not([data-tags~="web"]),
+.work:has(input[value="a11y"]:checked) .card:not([data-tags~="a11y"]),
+.work:has(input[value="api"]:checked) .card:not([data-tags~="api"]),
+.work:has(input[value="design"]:checked) .card:not([data-tags~="design"]),
+.work:has(input[value="mobile"]:checked) .card:not([data-tags~="mobile"]) { display: none; }
+
+/* «no projects»: shows when the chosen type has no card at all, whatever the type and whatever cards are added later */
+.empty { display: none; padding: 1.5rem; border: 1px dashed var(--line); border-radius: var(--r); color: var(--muted); text-align: center; }
+.work:has(input[value="web"]:checked):not(:has(.card[data-tags~="web"])) .empty,
+.work:has(input[value="a11y"]:checked):not(:has(.card[data-tags~="a11y"])) .empty,
+.work:has(input[value="api"]:checked):not(:has(.card[data-tags~="api"])) .empty,
+.work:has(input[value="design"]:checked):not(:has(.card[data-tags~="design"])) .empty,
+.work:has(input[value="mobile"]:checked):not(:has(.card[data-tags~="mobile"])) .empty { display: block; }
+~~~
+
+~~~js portfolio/js/i18n.js (في dict.en، جنب fDesign)
+    fAll: "All", fWeb: "Websites", fA11y: "Accessibility", fApi: "API", fDesign: "Design", fMobile: "Mobile", empty: "No projects of this type yet.",
+~~~
+
+~~~view 720 720 الصفحة الرئيسية: انزل لـ «مشاريع مختارة» واختار «موبايل»
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="tHome">نادين فؤاد | مطوّرة واجهات</title>
+  <meta name="description" content="نادين فؤاد، مطوّرة واجهات: مواقع سريعة وسهلة الاستخدام بالعربي والإنجليزي.">
+  <link rel="canonical" href="https://nadine.example/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="نادين فؤاد | مطوّرة واجهات">
+  <meta property="og:description" content="مواقع سريعة وسهلة الاستخدام بالعربي والإنجليزي.">
+  <meta property="og:url" content="https://nadine.example/">
+  <meta property="og:image" content="https://nadine.example/img/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="اسم نادين فؤاد ووظيفتها على خلفية فاتحة">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="color-scheme" content="light dark">
+  <script>
+// runs in <head> before the first paint: language and theme from last visit, so the page never flips after it shows
+try {
+  const lang = localStorage.getItem("lang");
+  if (lang === "en") { document.documentElement.lang = "en"; document.documentElement.dir = "ltr"; }
+  const theme = localStorage.getItem("theme");
+  if (theme) document.documentElement.dataset.theme = theme;
+} catch {}
+document.documentElement.classList.add("js");
+</script>
+  <style>
+/* every colour, size and curve the site uses lives here; the rest of the CSS only reads var(--x) */
+:root {
+  color-scheme: light dark;
+  --paper: #f7f5f0;
+  --surface: #ffffff;
+  --ink: #1c2230;
+  --muted: #535b6b;
+  --line: #dcd8cf;
+  --accent: #0d6b63;
+  --accent-ink: #ffffff;
+  --accent-soft: #dcefec;
+  --warm: #9c4f12;
+  --font: system-ui, "Segoe UI", "Noto Sans Arabic", Tahoma, sans-serif;
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --step-1: clamp(1.25rem, 1.1rem + 0.6vw, 1.6rem);
+  --step-3: clamp(2rem, 1.4rem + 3vw, 3.6rem);
+  --gutter: clamp(16px, 4vw, 48px);
+  --r: 14px;
+  --r-sm: 8px;
+  --shadow: 0 1px 2px rgb(20 24 33 / 0.06), 0 8px 24px rgb(20 24 33 / 0.08);
+  --ease: cubic-bezier(0.22, 0.7, 0.2, 1);
+  --z-header: 10;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #12161f; --surface: #1a202b; --ink: #e9ecf2; --muted: #a6aebd; --line: #2c3442;
+    --accent: #5fcfc3; --accent-ink: #0b1513; --accent-soft: #173834; --warm: #f0a868;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #12161f; --surface: #1a202b; --ink: #e9ecf2; --muted: #a6aebd; --line: #2c3442;
+  --accent: #5fcfc3; --accent-ink: #0b1513; --accent-soft: #173834; --warm: #f0a868;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
+}
+</style>
+  <style>
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-padding-top: 5rem; -webkit-text-size-adjust: 100%; }
+body { margin: 0; font: var(--step-0)/1.7 var(--font); color: var(--ink); background: var(--paper); }
+:lang(en) body, body:lang(en) { line-height: 1.6; }
+h1, h2, h3 { line-height: 1.25; text-wrap: balance; }
+p { text-wrap: pretty; }
+a { color: var(--accent); text-underline-offset: 0.2em; }
+img, svg { max-width: 100%; height: auto; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+main > section { padding: clamp(48px, 8vw, 96px) var(--gutter); max-width: 72rem; margin-inline: auto; }
+
+.skip { position: absolute; inset-inline-start: 1rem; top: -4rem; padding: 0.5rem 1rem; background: var(--ink); color: var(--paper); z-index: 100; }
+.skip:focus { top: 1rem; }
+.sr-status { min-height: 1.7em; color: var(--muted); }
+
+/* ---------- header: sticky glass ---------- */
+.top {
+  position: sticky; top: 0; z-index: var(--z-header);
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.25rem;
+  padding: 0.75rem var(--gutter);
+  background: color-mix(in srgb, var(--paper) 82%, transparent);
+  backdrop-filter: blur(10px);
+  border-block-end: 1px solid var(--line);
+}
+.brand { font-weight: 700; color: var(--ink); text-decoration: none; margin-inline-end: auto; }
+.top nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; }
+.top nav a { color: var(--ink); text-decoration: none; padding-block: 0.5rem; }
+.top nav a:hover { color: var(--accent); }
+.lang { font: inherit; padding: 0.4rem 0.9rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); cursor: pointer; min-height: 44px; }
+
+/* ---------- hero ---------- */
+.hero { padding-block-start: clamp(56px, 12vw, 140px); }
+.eyebrow { color: var(--warm); font-weight: 600; margin: 0; }
+.hero h1 { font-size: var(--step-3); margin: 0.25em 0 0.4em; max-width: 18ch; }
+:lang(en) .hero h1 { letter-spacing: -0.02em; }
+.lead { font-size: var(--step-1); color: var(--muted); max-width: 46ch; margin: 0; }
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-block-start: 2rem; }
+.btn {
+  --bg: var(--accent); --fg: var(--accent-ink);
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0.5rem 1.25rem;
+  border: 2px solid var(--bg); border-radius: 999px; background: var(--bg); color: var(--fg);
+  font: inherit; font-weight: 600; text-decoration: none; cursor: pointer;
+}
+.btn.ghost { --bg: transparent; --fg: var(--accent); border-color: var(--accent); }
+
+/* ---------- work: cards + :has() filter ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: 0.5rem; border: 0; padding: 0; margin: 0 0 1.5rem; }
+.filters legend { width: 100%; margin-block-end: 0.5rem; color: var(--muted); }
+.filters label {
+  display: inline-flex; align-items: center; gap: 0.4rem; min-height: 44px; padding: 0.25rem 0.9rem;
+  border: 1px solid var(--line); border-radius: 999px; background: var(--surface); cursor: pointer;
+}
+.filters input { accent-color: var(--accent); }
+.filters label:has(input:checked) { background: var(--accent-soft); border-color: var(--accent); font-weight: 600; }
+.filters label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }
+.card { position: relative; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1rem; box-shadow: var(--shadow); }
+.card h3 { font-size: var(--step-1); margin: 0.75rem 0 0.25rem; }
+.card h3 a { color: var(--ink); }
+.card h3 a::after { content: ""; position: absolute; inset: 0; border-radius: var(--r); }
+.card:has(a:hover) { border-color: var(--accent); }
+.card p { margin: 0 0 0.75rem; color: var(--muted); }
+.thumb { aspect-ratio: 16 / 9; border-radius: var(--r-sm); background: linear-gradient(135deg, var(--a, #0d6b63), var(--b, #9c4f12)); }
+.t1 { --a: #0d6b63; --b: #4aa79d; view-transition-name: tide-thumb; }
+.t2 { --a: #2f4b7c; --b: #6b8fd1; }
+.t3 { --a: #7a3e65; --b: #c97fa9; }
+.t4 { --a: #6b5b1d; --b: #c2a64a; }
+.t5 { --a: #3c3c3c; --b: #9a9a9a; }
+.tags { list-style: none; padding: 0; margin: auto 0 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tags li { font-size: 0.85rem; padding: 0.1rem 0.6rem; border-radius: 999px; background: var(--paper); border: 1px solid var(--line); direction: ltr; }
+
+.work:has(input[value="web"]:checked) .card:not([data-tags~="web"]),
+.work:has(input[value="a11y"]:checked) .card:not([data-tags~="a11y"]),
+.work:has(input[value="api"]:checked) .card:not([data-tags~="api"]),
+.work:has(input[value="design"]:checked) .card:not([data-tags~="design"]),
+.work:has(input[value="mobile"]:checked) .card:not([data-tags~="mobile"]) { display: none; }
+
+/* «no projects»: shows when the chosen type has no card at all, whatever the type and whatever cards are added later */
+.empty { display: none; padding: 1.5rem; border: 1px dashed var(--line); border-radius: var(--r); color: var(--muted); text-align: center; }
+.work:has(input[value="web"]:checked):not(:has(.card[data-tags~="web"])) .empty,
+.work:has(input[value="a11y"]:checked):not(:has(.card[data-tags~="a11y"])) .empty,
+.work:has(input[value="api"]:checked):not(:has(.card[data-tags~="api"])) .empty,
+.work:has(input[value="design"]:checked):not(:has(.card[data-tags~="design"])) .empty,
+.work:has(input[value="mobile"]:checked):not(:has(.card[data-tags~="mobile"])) .empty { display: block; }
+
+/* ---------- scroll reveal (only when JS runs) ---------- */
+.js [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity 0.6s var(--ease) var(--d, 0s), transform 0.6s var(--ease) var(--d, 0s); }
+.js [data-reveal].in { opacity: 1; transform: none; }
+
+/* ---------- about + contact ---------- */
+.about p, .contact p { max-width: 60ch; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: 1rem; margin: 2rem 0 0; }
+.facts div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1rem; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; font-size: var(--step-3); font-weight: 700; font-variant-numeric: tabular-nums; }
+.contact p:has(.btn) { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.foot { padding: 2rem var(--gutter); border-block-start: 1px solid var(--line); color: var(--muted); text-align: center; }
+
+/* ---------- page to page: View Transitions (Chrome/Edge 126+, Safari 18.2+; others just navigate) ---------- */
+@view-transition { navigation: auto; }
+::view-transition-group(tide-thumb) { animation-duration: 0.35s; animation-timing-function: var(--ease); }
+
+/* ---------- reduced motion: no reveal, no page animation ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] { opacity: 1; transform: none; transition: none; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
+
+/* ---------- print: any page prints as plain document ---------- */
+@media print {
+  .top, .skip, .actions, .filters, .lang, #copy, .foot, .thumb { display: none !important; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  main > section { padding: 0 0 12pt; max-width: none; }
+  .card { box-shadow: none; break-inside: avoid; }
+  .js [data-reveal] { opacity: 1; transform: none; }
+  a[href^="http"]::after, a[href^="mailto:"]::after { content: " (" attr(href) ")"; font-size: 0.85em; color: #333; }
+}
+</style>
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">اتخطّى للمحتوى</a>
+  <header class="top">
+    <a class="brand" href="./" data-i18n="name">نادين فؤاد</a>
+    <nav aria-label="الأقسام" data-i18n-label="navLabel">
+      <a href="#work" data-i18n="navWork">الشغل</a>
+      <a href="#about" data-i18n="navAbout">عني</a>
+      <a href="#contact" data-i18n="navContact">تواصل</a>
+      <a href="cv.html" data-i18n="navCv">السيرة الذاتية</a>
+    </nav>
+    <button class="lang" type="button" id="lang" lang="en">English</button>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <p class="eyebrow" data-i18n="role">مطوّرة واجهات</p>
+      <h1 data-i18n="heroTitle">بابني مواقع سريعة، وأي حد يقدر يستخدمها.</h1>
+      <p class="lead" data-i18n="heroLead">٦ سنين بكتب HTML و CSS و JavaScript لمواقع عربي وإنجليزي، ومهتمة بالأداء وسهولة الوصول.</p>
+      <div class="actions">
+        <a class="btn" href="#work" data-i18n="ctaWork">شوف الشغل</a>
+        <a class="btn ghost" href="#contact" data-i18n="ctaContact">كلّمني</a>
+      </div>
+    </section>
+
+    <section id="work" class="work" aria-labelledby="work-h">
+      <h2 id="work-h" data-i18n="workTitle">مشاريع مختارة</h2>
+      <fieldset class="filters">
+        <legend data-i18n="filterBy">فلتر حسب النوع</legend>
+        <label><input type="radio" name="f" value="all" checked> <span data-i18n="fAll">الكل</span></label>
+        <label><input type="radio" name="f" value="web"> <span data-i18n="fWeb">مواقع</span></label>
+        <label><input type="radio" name="f" value="a11y"> <span data-i18n="fA11y">سهولة الوصول</span></label>
+        <label><input type="radio" name="f" value="api"> <span data-i18n="fApi">API</span></label>
+        <label><input type="radio" name="f" value="design"> <span data-i18n="fDesign">تصميم</span></label>
+        <label><input type="radio" name="f" value="mobile"> <span data-i18n="fMobile">موبايل</span></label>
+      </fieldset>
+      <ul class="cards" role="list">
+        <li class="card" data-tags="web a11y" data-reveal>
+          <div class="thumb t1" aria-hidden="true"></div>
+          <h3><a href="work/tide-notes.html" data-i18n="p1">Tide Notes: ملاحظات من غير نت</a></h3>
+          <p data-i18n="p1d">تطبيق ملاحظات بيشتغل offline، وبيتزامن لما النت يرجع.</p>
+          <ul class="tags" role="list"><li>PWA</li><li>IndexedDB</li></ul>
+        </li>
+        <li class="card" data-tags="web" data-reveal>
+          <div class="thumb t2" aria-hidden="true"></div>
+          <h3 data-i18n="p2">لوحة مواعيد الأتوبيس</h3>
+          <p data-i18n="p2d">شاشة محطة بتتحدّث كل ٣٠ ثانية، مقروءة من ٥ متر.</p>
+          <ul class="tags" role="list"><li>SSE</li><li>CSS Grid</li></ul>
+        </li>
+        <li class="card" data-tags="a11y" data-reveal>
+          <div class="thumb t3" aria-hidden="true"></div>
+          <h3 data-i18n="p3">فورم حجز لعيادة</h3>
+          <p data-i18n="p3d">٧ خطوات بقت ٣، والأخطاء بتتقري بقارئ الشاشة.</p>
+          <ul class="tags" role="list"><li>WCAG 2.2</li><li>Forms</li></ul>
+        </li>
+        <li class="card" data-tags="api" data-reveal>
+          <div class="thumb t4" aria-hidden="true"></div>
+          <h3 data-i18n="p4">API وصفات أكل</h3>
+          <p data-i18n="p4d">بحث بالمكوّنات، و pagination، وكاش ٦٠ ثانية.</p>
+          <ul class="tags" role="list"><li>Node</li><li>PostgreSQL</li></ul>
+        </li>
+        <li class="card" data-tags="design web" data-reveal>
+          <div class="thumb t5" aria-hidden="true"></div>
+          <h3 data-i18n="p5">مكتبة design tokens</h3>
+          <p data-i18n="p5d">ألوان ومسافات وخطوط لـ ٣ مواقع من ملف واحد.</p>
+          <ul class="tags" role="list"><li>CSS variables</li><li>Figma</li></ul>
+        </li>
+      </ul>
+      <p class="empty" data-i18n="empty">مفيش مشاريع من النوع ده لسه.</p>
+    </section>
+
+    <section id="about" class="about" aria-labelledby="about-h">
+      <h2 id="about-h" data-i18n="aboutTitle">عني</h2>
+      <p data-i18n="aboutText">بدأت بمواقع لمحلات صغيرة، ودلوقتي بشتغل مع فرق منتج على واجهات بيستخدمها آلاف الناس كل يوم. بحب الكود اللي يتقري، والصفحة اللي تفتح في أقل من ثانية.</p>
+      <dl class="facts">
+        <div><dt data-i18n="f1t">سنين خبرة</dt><dd>6</dd></div>
+        <div><dt data-i18n="f2t">مشروع اتسلّم</dt><dd><span dir="ltr">40+</span></dd></div>
+        <div><dt data-i18n="f3t">Lighthouse a11y</dt><dd>100</dd></div>
+      </dl>
+    </section>
+
+    <section id="contact" class="contact" aria-labelledby="contact-h">
+      <h2 id="contact-h" data-i18n="contactTitle">نشتغل سوا؟</h2>
+      <p data-i18n="contactText">ابعتلي فكرة المشروع وميعاده، وهرد عليك خلال يومين شغل.</p>
+      <p><a class="btn" href="mailto:hello@nadine.example" dir="ltr">hello@nadine.example</a>
+        <button class="btn ghost" type="button" id="copy" data-i18n="copy">انسخ الإيميل</button></p>
+      <p class="sr-status" role="status" id="status"></p>
+    </section>
+  </main>
+
+  <footer class="foot"><p><span data-i18n="rights">كل الحقوق محفوظة</span> © 2026</p></footer>
+  <script>
+// dictionary + switch: every [data-i18n] gets its text from the current language, and <html> gets lang and dir
+const dict = {
+  en: {
+    tHome: "Nadine Fouad | Front-end developer", tCase: "Tide Notes case study | Nadine Fouad", tCv: "CV | Nadine Fouad",
+    skip: "Skip to content", name: "Nadine Fouad", navLabel: "Sections", navWork: "Work", navAbout: "About", navContact: "Contact", navCv: "CV",
+    role: "Front-end developer", heroTitle: "I build fast websites anyone can use.",
+    heroLead: "6 years writing HTML, CSS and JavaScript for Arabic and English sites, with a focus on performance and accessibility.",
+    ctaWork: "See the work", ctaContact: "Get in touch", workTitle: "Selected projects", filterBy: "Filter by type",
+    fAll: "All", fWeb: "Websites", fA11y: "Accessibility", fApi: "API", fDesign: "Design", fMobile: "Mobile", empty: "No projects of this type yet.",
+    p1: "Tide Notes: notes without internet", p1d: "A notes app that works offline and syncs when the connection is back.",
+    p2: "Bus departures board", p2d: "A station screen that refreshes every 30 seconds, readable from 5 metres.",
+    p3: "Clinic booking form", p3d: "7 steps became 3, and errors are announced to screen readers.",
+    p4: "Recipes API", p4d: "Search by ingredient, pagination, and a 60-second cache.",
+    p5: "Design tokens library", p5d: "Colours, spacing and type for 3 sites from one file.",
+    aboutTitle: "About", aboutText: "I started with sites for small shops, and now I work with product teams on interfaces thousands of people use every day. I like code you can read, and pages that open in under a second.",
+    f1t: "Years of experience", f2t: "Projects shipped", f3t: "Lighthouse a11y",
+    contactTitle: "Work together?", contactText: "Send me the idea and the deadline, and I'll reply within two working days.",
+    copy: "Copy email", copied: "Email copied", rights: "All rights reserved",
+    caseKind: "Case study · 2025", caseTitle: "Tide Notes: notes that work without internet",
+    mRole: "My role", mRoleV: "The whole front end and offline", mTime: "Duration", mTimeV: "10 weeks", mStack: "Stack",
+    cProblem: "The problem", cProblemT: "The sales team writes visit notes in places with weak signal, so a note is lost if the page closes before it is sent.",
+    cDecisions: "Decisions", d1: "Every note is saved to IndexedDB first, and sent in the background.",
+    d2: "A Service Worker caches the page itself, so it opens offline.", d3: "A clear mark on each note: sent or not yet.",
+    cResults: "Results", rCap: "Before and after (3-week average)", rMetric: "Metric", rBefore: "Before", rAfter: "After",
+    r1: "Page open time on 3G", r2: "Notes lost per week", back: "Back to projects",
+    print: "Print or save PDF", exp: "Experience", skills: "Skills",
+    j1: "Senior front-end developer · Trips platform company", j1a: "Cut search page LCP on mobile from 3.2 to 1.4 seconds.", j1b: "Built a shared component library for 3 teams.",
+    j2: "Front-end developer · Small design agency", j2a: "25 sites for shops and clinics, all in Arabic and English.", j2b: "Ran the agency's first accessibility audit; it became a step in every delivery.",
+  },
+};
+const ar = {};                                   // Arabic is what the HTML already says: read it once, so it isn't written twice
+document.querySelectorAll("[data-i18n]").forEach(el => (ar[el.dataset.i18n] = el.textContent));
+document.querySelectorAll("[data-i18n-label]").forEach(el => (ar[el.dataset.i18nLabel] = el.getAttribute("aria-label")));
+ar.copied = "الإيميل اتنسخ";
+dict.ar = ar;
+
+function t(key) { return dict[document.documentElement.lang]?.[key] ?? ar[key] ?? key; }
+
+function apply(lang) {
+  const html = document.documentElement;
+  html.lang = lang;
+  html.dir = lang === "ar" ? "rtl" : "ltr";
+  document.querySelectorAll("[data-i18n]").forEach(el => (el.textContent = t(el.dataset.i18n)));
+  document.querySelectorAll("[data-i18n-label]").forEach(el => el.setAttribute("aria-label", t(el.dataset.i18nLabel)));
+  const btn = document.getElementById("lang");
+  if (btn) { btn.textContent = lang === "ar" ? "English" : "عربي"; btn.lang = lang === "ar" ? "en" : "ar"; }
+  try { localStorage.setItem("lang", lang); } catch {}
+}
+
+if (document.documentElement.lang === "en") apply("en");   // boot.js set it from the last visit; now fill the texts
+document.getElementById("lang")?.addEventListener("click", () => apply(document.documentElement.lang === "ar" ? "en" : "ar"));
+
+const copy = document.getElementById("copy");
+copy?.addEventListener("click", async () => {
+  const status = document.getElementById("status");
+  try { await navigator.clipboard.writeText("hello@nadine.example"); status.textContent = t("copied"); }
+  catch { status.textContent = "hello@nadine.example"; }
+});
+</script>
+  <script type="module">
+// cards fade in once when they reach the screen; nothing hides without JS (the .js class), and nothing moves with reduced motion
+const items = document.querySelectorAll("[data-reveal]");
+const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (still || !("IntersectionObserver" in window)) {
+  items.forEach(el => el.classList.add("in"));
+} else {
+  const io = new IntersectionObserver(entries => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+  }, { rootMargin: "0px 0px -10% 0px" });
+  items.forEach((el, i) => { el.style.setProperty("--d", (i % 3) * 80 + "ms"); io.observe(el); });
+}
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** في الفلاتر زرار سادس «موبايل». لما تختاره الكروت الخمسة بتختفي، ومكانها مستطيل بحدود متقطعة وجواه بالرمادي «مفيش مشاريع من النوع ده لسه.». اختار أي فلتر تاني والمستطيل بيستخبى والكروت بتاعة النوع ده بترجع. وبالإنجليزي: «Mobile» و «No projects of this type yet.».
+
+**إزاي اتبنى: نسختين، والتانية اتعملت عشان الأولى كانت بتكدب.**
+
+**النسخة ١ (زي أول جملة في المطلوب):** الفلتر، والفقرة، وقاعدة واحدة بتظهرها:
+
+~~~css النسخة ١
+.empty { display: none; … }
+.work:has(input[value="mobile"]:checked) .empty { display: block; }
+~~~
+
+**غلطة ١ (حصلت): الرسالة ظهرت والكروت كمان.** سكربت القياس ([[empty-check.mjs]] تحت) طلّع:
+
+~~~text node empty-check.mjs (النسخة ١)
+mobile  cards 5 | message shown: «مفيش مشاريع من النوع ده لسه.»
+~~~
+
+قواعد الإخفاء في الوحدة مكتوبة لكل فلتر باسمه (web و a11y و api و design)، فالفلتر الجديد ملوش قاعدة، والكروت مبتستخباش. أي فلتر جديد محتاج سطر في قاعدة الإخفاء. بعد السطر ده: [[mobile cards 0 | message shown]].
+
+**غلطة ٢ (اتقاست): النسخة ١ بتكدب لما يتضاف مشروع موبايل.** القاعدة بتقول «لو موبايل مختار، اعرض الرسالة» من غير ما تبص فيه كروت ولا لأ. السكربت بيضيف كارت عليه [[data-tags="mobile"]] (زي ما نادين هتعمل بعد أول تطبيق موبايل):
+
+~~~text node empty-check.mjs "" add-mobile (النسخة ١)
+mobile  cards 1 | message shown: «مفيش مشاريع من النوع ده لسه.»
+~~~
+
+كارت ظاهر وتحته «مفيش مشاريع». ودي غلطة مش هتاخد بالك منها وقت ما تكتب الكود، لأن وقتها مكانش فيه مشاريع موبايل فعلًا.
+
+**النسخة ٢:** القاعدة بتسأل السؤال الصح: «النوع المختار ده، فيه ولا كارت عليه؟».
+
+- [[.work:has(input[value="mobile"]:checked)]]: القسم فيه زرار «موبايل» مختار.
+- [[:not(:has(.card[data-tags~="mobile"]))]]: والقسم **مفيهوش** أي كارت في [[data-tags]] بتاعته كلمة [[mobile]]. [[~=]] معناها «كلمة من الكلمات اللي بينها مسافات»، فـ [[data-tags="design web"]] بيطابق [[~="web"]] بس مش [[~="we"]].
+- الاتنين على نفس العنصر ([[.work]])، فلازم الاتنين يبقوا صح مع بعض. وبعدهم مسافة و [[.empty]]: الفقرة اللي جوه القسم ده (المسافة معناها «جوه»).
+
+وبقت سطر لكل فلتر، **مش** سطر للفلتر الفاضي بس: النهارده «موبايل» هو الفاضي، بس لو شيلت كارت الـ API الوحيد بكرة، الرسالة هتظهر تحت «API» لوحدها من غير ما تلمس الـ CSS.
+
+**ليه مش سطر واحد لكل الفلاتر؟** لأن الـ CSS مبيعرفش يقارن قيمتين ببعض: مفيش selector بيقول «الكارت اللي [[data-tags]] بتاعته فيها نفس الـ [[value]] بتاع الزرار المختار». كل selector بيقارن بنص مكتوب فيه. عشان كده قواعد الإخفاء في الوحدة نفسها سطر لكل فلتر، والرسالة ماشية على نفس الطريقة. لو الفلاتر بقت ٣٠، ساعتها السطور دي بتتولد من لستة الأنواع (سكربت build أو سطرين JS)، مش بتتكتب بإيدك.
+
+**ليه [[display]] مش [[hidden]]:** الفقرة لازم تبان وتستخبى من غير JavaScript، و [[hidden]] attribute محتاج حد يشيله. [[display: none]] كمان بيشيلها من شجرة قارئ الشاشة، فقارئ الشاشة مش بيقرا «مفيش مشاريع» وفي كروت قدامه.
+
+**الشكل:** الحدود المتقطعة ([[dashed]]) بتقول «مكان فاضي»، مش «كارت»، فمحدش بيحاول يدوس عليها. واللون [[--muted]] من الـ tokens، فالوضع الداكن شغال لوحده، و axe عدّى عليها في الثيمين.
+
+~~~js empty-check.mjs
+// node empty-check.mjs: for every filter, how many cards show and whether the "no projects" message shows (390, ar and en)
+import { chromium } from "playwright-core";
+const browser = await chromium.launch({ channel: "chrome" });
+const p = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: "reduce" });
+const errs = []; p.on("pageerror", e => errs.push(e.message));
+await p.goto("http://127.0.0.1:5501/" + (process.argv[2] || ""));
+if (process.argv[3] === "add-mobile") await p.evaluate(() => {   // later on, a real mobile project is added: does the message go away?
+  const li = document.querySelector(".card").cloneNode(true); li.dataset.tags = "mobile"; li.querySelector("h3").textContent = "تطبيق موبايل"; document.querySelector(".cards").append(li);
+});
+for (const v of ["all", "web", "a11y", "api", "design", "mobile"]) {
+  await p.check($__btinput[value="$__{v}"]$__bt);
+  console.log(v.padEnd(7), await p.evaluate(() => {
+    const shown = [...document.querySelectorAll(".card")].filter(c => getComputedStyle(c).display !== "none").length;
+    const e = document.querySelector(".empty");
+    return $__btcards $__{shown} | message $__{getComputedStyle(e).display === "none" ? "hidden" : "shown: «" + e.textContent + "»"}$__bt;
+  }));
+}
+console.log("errors: " + (errs.join(" | ") || "none"));
+await browser.close();
+~~~
+
+[[getComputedStyle(c).display]] بيسأل المتصفح عن النتيجة النهائية بعد كل القواعد، مش عن اللي مكتوب في الكلاس. و [[reducedMotion: "reduce"]] بيلغي الـ fade بتاع الظهور، فالقياس مش بيستنى حركة.
+
+~~~text node empty-check.mjs (النسخة ٢، اتشغّل فعلًا)
+all     cards 5 | message hidden
+web     cards 3 | message hidden
+a11y    cards 2 | message hidden
+api     cards 1 | message hidden
+design  cards 1 | message hidden
+mobile  cards 0 | message shown: «مفيش مشاريع من النوع ده لسه.»
+errors: none
+~~~
+
+~~~text node empty-check.mjs "" add-mobile (النسخة ٢)
+mobile  cards 1 | message hidden
+~~~
+
+**باقي القياس:**
+
+~~~text اتقاس فعلًا (Chrome 156، axe-core 4.14.0)
+no JS, mobile: message block
+axe mobile light ar violations 0  | مفيش مشاريع من النوع ده لسه. / موبايل
+axe mobile dark ar violations 0  | مفيش مشاريع من النوع ده لسه. / موبايل
+axe mobile light en violations 0  | No projects of this type yet. / Mobile
+axe mobile dark en violations 0  | No projects of this type yet. / Mobile
+~~~
+
+السطر الأول اتقاس بـ [[javaScriptEnabled: false]]: الفلتر والرسالة شغالين والـ JavaScript مقفول خالص، ودي فايدة إن الحل CSS بس. و axe اتشغّل و«موبايل» مختار، لأن axe مبيفحصش تباين عنصر مستخبي، فلو شغّلته على الصفحة زي ما بتفتح مكانش هيشوف الفقرة أصلًا. و [[check-portfolio.mjs]] بتاع الوحدة لسه صفر في كل حاجة (axe في الـ ١٢ حالة، والـ matrix من 360 لـ 1440).`,
         },
         {
           lvl: R`متوسط`,
