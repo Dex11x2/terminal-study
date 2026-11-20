@@ -898,5 +898,9 @@ body:not([data-shell="ps"]):not([data-shell="cmd"]):not([data-shell="zsh"]):not(
 .copy{flex:none;white-space:nowrap}
 @media (max-width:520px){.psol-b{padding:8px 6px}.practice .projlist{padding-inline-start:0}.projlist>li{padding-inline:0}}
 /* «الشكل النهائي»: the finished page shown before the reader starts */
+/* a project's finished page opens in its own tab (openShow in app.js) instead of being drawn in the course page */
+.show-open{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:8px 14px;border:2px solid var(--accent);border-radius:10px;background:transparent;color:var(--accent);font:inherit;font-weight:600;cursor:pointer}
+.show-open:hover{background:var(--accent);color:var(--bg)}
+.show-open:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .live.show{border-color:var(--accent)}
 .live.show .live-bar span:first-child{color:var(--accent);font-weight:600}

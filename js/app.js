@@ -181,12 +181,43 @@ const solBox = (sol, first) => {
 };
 const solFences = sol => [...String(sol || '').matchAll(/^~~~(live|view|html)[ \t]*([^\n]*)\n([\s\S]*?)^~~~[ \t]*$/gm)].map(m => ({lang: m[1], title: m[2].trim(), code: m[3].replace(/\n$/, '')}));
 const fenceH = (f, cap) => { const m = f.title.match(/^(\d{2,4})(?:\s+(\d{2,4}))?/), h = m ? +m[1] : 280; return [Math.min(h, cap), Math.min(m && m[2] ? +m[2] : h, cap)]; };
+/* A project's «الشكل النهائي» is a button that opens the page in its own tab. Drawing it here put dozens of full pages
+   (with their images as data URIs) into one course page and made it slow (owner, 20 Nov: «زرار ادوس عليه يدخلني ع الصفحة»).
+   The page is kept in SHOWS and only turned into a frame when asked for. */
+const SHOWS = [];
 function projShowHTML(p){
   const fs = solFences(p.sol).filter(f => f.lang !== 'html');
   const f = fs.find(f => f.lang === 'view') || fs.find(f => /(^|[\s/])index\.html$/.test(f.title)) || fs[0];
   if (!f) return '';
   const [h, hm] = fenceH(f, 440);
-  return showHTML(f.code, 'الشكل النهائي اللي هتبنيه', h, hm);
+  SHOWS.push({code: f.code, title: String(p.t).split('[[').join('').split(']]').join(''), h, hm});
+  return '<button type="button" class="show-open" data-show="'+(SHOWS.length - 1)+'">شوف الشكل النهائي اللي هتبنيه <span aria-hidden="true">↗</span></button>';
+}
+// the new tab: a small page of our own (title, phone/tablet/full buttons) around the same sandboxed frame the site always uses.
+// window.open('') then document.write needs no extra file, so it also works in the single-file build (terminal.html)
+function showPage(s){
+  return '<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'+
+    '<title>الشكل النهائي: '+esc(s.title)+'</title><style>'+
+    'body{margin:0;font-family:system-ui,"Segoe UI",Tahoma,sans-serif;background:#1b1b24;color:#f3f3f7;height:100vh;display:flex;flex-direction:column}'+
+    'header{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:10px 16px;border-bottom:1px solid #3a3a48}'+
+    'h1{margin:0;font-size:16px;flex:1 1 16rem}button{font:inherit;padding:4px 12px;border:1px solid #55556a;border-radius:6px;background:#26263a;color:inherit;cursor:pointer}'+
+    'button.on{background:#f0a6ca;color:#1b1b24;border-color:#f0a6ca}button:focus-visible{outline:3px solid #f0a6ca;outline-offset:2px}'+
+    'main{flex:1;display:flex;justify-content:center;background:#e9e9ee;overflow:auto}iframe{border:0;background:#fff;width:100%;height:100%}'+
+    '</style></head><body><header><h1>الشكل النهائي: '+esc(s.title)+'</h1><span>'+
+    [['360', 'موبايل'], ['768', 'تابلت'], ['', 'كامل']].map(([w, l]) => '<button type="button" data-w="'+w+'"'+(w ? '' : ' class="on"')+'>'+l+'</button>').join(' ')+
+    '</span></header><main><iframe sandbox="allow-scripts allow-forms" title="الشكل النهائي" srcdoc="'+esc(liveFrame(s.code))+'"></iframe></main>'+
+    '<script>document.querySelector("header").addEventListener("click",function(e){var b=e.target.closest("[data-w]");if(!b)return;'+
+    'document.querySelector("iframe").style.width=b.dataset.w?b.dataset.w+"px":"100%";'+
+    'document.querySelectorAll("[data-w]").forEach(function(x){x.classList.toggle("on",x===b)})});<\/script></body></html>';
+}
+function openShow(btn){
+  const s = SHOWS[+btn.dataset.show];
+  if (!s) return;
+  const w = window.open('', '_blank');
+  if (w){ w.opener = null; w.document.write(showPage(s)); w.document.close(); return; }
+  // popups blocked: draw it here under the button, as before
+  btn.insertAdjacentHTML('afterend', showHTML(s.code, 'الشكل النهائي اللي هتبنيه', s.h, s.hm));
+  btn.remove();
 }
 function drillShowHTML(p){
   // a «predict» or «classify» drill would be given away by its answer; the rest show what the finished page looks like
@@ -1170,6 +1201,8 @@ document.addEventListener('click', e => {
   if (wr){ const box = wr.closest('.work'); box.querySelector('.work-code').value = box.querySelector('.work-orig').value; workUpdate(box); store.del ? store.del('work:'+box.dataset.wk) : store.set('work:'+box.dataset.wk, box.querySelector('.work-orig').value); return; }
   const lr = e.target.closest('[data-lr]');
   if (lr){ const ta = lr.closest('.live-ed').querySelector('textarea'); ta.value = ta.defaultValue; lr.closest('.live').querySelector('iframe').srcdoc = liveFrame(ta.value); return; }
+  const so = e.target.closest('[data-show]');
+  if (so){ openShow(so); return; }
   const lw = e.target.closest('[data-lw]');
   if (lw){ // a live preview at phone, tablet or full width
     const box = lw.closest('.live');
