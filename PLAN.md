@@ -147,7 +147,7 @@
 **الدفعة ١٠ (١٩ نوفمبر): البند ١١ بدأ، حلول المشاريع: ٨٤ من ٢٠٨ (كانت ٧٨).** وحدة «HTML: هيكل الصفحة ومعناها» (01.js): الـ ٦ مشاريع بقى ليهم `dir` و `sol` (كل ملف بكوده، و `view` بالشكل النهائي، والناتج المتقاس). كل صفحة اتعدّت على Nu validator (curl لـ validator.w3.org/nu بمحتوى مخترع) و axe-core 4.10.2 و Chrome 157. طريقة الشغل اللي نفعت: الملفات في الـ scratchpad ← سيرفر محلي ← قياس كل `done` ← مولّد بيبني الـ sol من الملفات المتجرّبة نفسها (`apply.js` بيحط `dir` و `sol` في سطر المشروع). الصور في الـ `view` بتتحط data URI لأن الـ srcdoc مبيحمّلش مسارات نسبية.
 - **اتقاس واتصلح في المطلوب نفسه:** `done` في «صفحة هبوط لعيادة» كان بيقول صور الأطبا مش هتتحمّل قبل النزول، و Chrome حمّلها لأنها على بعد 284px بس (الحد بين 1200 و 1300px على نت سريع)، فالتجربة بقت بـ div طوله 3000px و Disable cache (والصورة بتيجي من الذاكرة لو نفس التاب). و`done` في «موقع مكتبة» كان بيقول الموبايل بياخد ملف أصغر: موبايل DPR 3 خد `cover-600` وكمبيوتر DPR 1 خد `cover-300`، و `sizes` اتصلح لـ 300px (من غير CSS الصورة دايمًا 300px)، و Lighthouse اتشال من المطلوب (مش متاح يتشغّل هنا، و axe موجود).
 - اللي الـ validator مسكه في الحلول: `action=""` (Must be non-empty) و `<` جوه data URI في `src`. و axe مسك صفحة من غير `main` (`landmark-one-main` و `region`). اتكتبوا في الحلول.
-- [ ] فاضل في البند ١١: ٧ وحدات قديمة: الأداء، و CSS الحديث، و widgets، والانترفيو، والمشروعين الكاملين، وبنك التمارين. وحدة أو اتنين في الدفعة بنفس الطريقة. وبعدهم باقي البند ١١ (`work` و `pre` و `ref` للقديم، و `resplit`، وقرارات الاستبعاد).
+- [ ] فاضل في البند ١١: ٦ وحدات قديمة: CSS الحديث، و widgets، والانترفيو، والمشروعين الكاملين، وبنك التمارين. وحدة أو اتنين في الدفعة بنفس الطريقة. وبعدهم باقي البند ١١ (`work` و `pre` و `ref` للقديم، و `resplit`، وقرارات الاستبعاد).
 
 **الدفعة ١١ (١٩ نوفمبر): حلول المشاريع ٩٢ من ٢١٠.** وحدة «الفورم: كل أنواع الحقول والأخطاء» (02.js): الـ ٦ مشاريع بحلولها، و**مشروعين جداد من بنك الأفكار** (فورم «اقرا الفصل الأول ببلاش» بأرقام عربي و `:user-invalid`، وصفحة دفع بتابات من غير JavaScript وقيمة طويلة جنب زرار «انسخ»). اتقاس واتكتب في الحلول: الدبل كليك على فورم عادي بيوصّل طلبين للسيرفر على Slow 3G بس (على السيرفر المحلي السريع واحد حتى من غير حماية)؛ و `setInterval` بتاع المسودة رجّع كتبها بعد `removeItem` لأن الصفحة اللي بعدها خدت ثانيتين (باج في حلي أنا، الحل `clearInterval` الأول)؛ و Chrome شغّل `app.js` القديم من الذاكرة بعد التعديل؛ و `autocomplete="street-address"` مرفوض على `input` (للـ textarea بس)؛ والسهم الشمال هو «اللي بعده» في radios جوه `dir="rtl"`؛ و outline `3px` بيتقاس `2.4px` على شاشة 125%.
 - طلب صاحب المشروع (١٩ نوفمبر): «خد الحاجات الجديدة ال ف المواقع ال بنعملها… كمشاريع وتصماميم وافكار»، و «ده غير افكارك انت برده… المشاريع الكتير كويسه ف التعلم»، و «المشاكل والحلول ال عملناها برده دي مهمه جدا». يعني: كل وحدة بتاخد سلّمتها كاملة **وزيادة** مشاريع من البنك ده، والحالات بتتكتب في كورسها.
@@ -273,6 +273,23 @@
 - [ ] **درس (تاب web أو diag):** Chrome على Windows بيعمل proxy auto-detect (WPAD) أول طلب، فالقياس المحلي بيزيد ~850ms؛ اتقاس بـ `performance.getEntriesByType("navigation")[0].responseEnd` (824ms ← 4ms)، والحل `--no-proxy-server` في التشغيل أو إعدادات الـ proxy.
 - [ ] **درس (تاب perf أو css):** Playwright `browser.startTracing` بالـ categories `devtools.timeline` و `disabled-by-default-devtools.timeline.stack`، وعدّ أحداث `Layout` اللي فيها `args.beginData.stackTrace` (forced) واسم الدالة؛ و `Emulation.setCPUThrottlingRate` من `newCDPSession`.
 - [ ] **درس (تاب js):** `requestAnimationFrame(now)` و `performance.now()`: أول frame ممكن يبقى أقدم، فابدأ العد من أول frame.
+
+**الدفعة ٢٥ (٢٠ نوفمبر): وحدة «الأداء» (15.js)، حلول المشاريع 181 من 213.** الـ ٦ مشاريع: مقال CLS بتاعه 0.0023، وصياد forced reflow (٣ نسخ)، وهيرو «رحّال» LCP 1.5s، و ٢٠٠٠ منتج بـ content-visibility، وإنقاذ «دكّان» (٨ مشاكل و REPORT.md)، و«الخبر النهارده» (تقرير ٣ أسباب والتصليح). معمل مشترك: `serve.mjs` و `lab.mjs` (Slow 4G بـ CDP و CPU 4x و recorder لـ layout-shift) و `lh.mjs` و `gen-images.mjs` (صور WebP/PNG من canvas جوه Chrome). Lighthouse 13.6.0، و @fontsource/cairo@5.3.0. اتقاس واتكتب في الحلول:
+- **Lighthouse Mobile (simulated) ممكن يقول عكس الحقيقة في صفحة صغيرة:** الهيرو بالغلطات 1.2s مقابل 1.5s بعد التصليح، وبالـ throttling الحقيقي 2.05s مقابل 1.4s (٣ مرات).
+- **`contain-intrinsic-size` = الـ content box:** حطيت ارتفاع الكارت كله فالصفحة طولت 26px لكل كارت؛ بعد طرح الـ padding والـ border النطّة بقت 2px (من 77). ومن غيره خالص نطّة 5767px.
+- **Resource Timing بيحتفظ بـ 250 entry بس:** «249 صورة» بدل 2000؛ `performance.setResourceTimingBufferSize`.
+- **size-adjust للخط الاحتياطي:** Cairo/Segoe UI = 97.6٪، و Tahoma 96.8٪ (عرض نفس الجملة)؛ والقياس على `page.setContent` فشل بسبب CORS للخطوط.
+- forced reflow: 316 مقابل 0، والـ frames الطويلة مش ثابتة بين التشغيلات (13 و 1 و 2 و 41).
+- blur على عنصر fixed مبيبانش في Paint وقت الـ scroll، بيبان في raster وقت resize (51.9 مقابل 24.3ms).
+- long task اتسمّى غلط بأول سكربت جواه (chat-facade.js 143ms) وهو Layout 144ms؛ التسمية بأكبر حدث.
+- «دكّان» بالـ ٨ مشاكل: 64 لـ 70 مش تحت 50 (TBT صفر)؛ ماتعملتش مشاكل زيادة. وتغيير `<p>` لـ `<aside>` للبانر غيّر CLS (margin).
+- vnu: `aria-label` على `div` ممنوع (axe عدّاه). CSS validator مبيعرفش `animation-timeline`.
+- axe 0 على ١٢ صفحة، و vnu مفيش رسايل (24 صفحة).
+
+- [ ] **درس (تاب web أو perf):** Lighthouse Mobile بيعمل simulated throttling (Lantern)، والأرقام تقدير؛ قارنه بـ DevTools throttling الحقيقي (أو CDP `Network.emulateNetworkConditions` و `Emulation.setCPUThrottlingRate`) قبل ما تصدّق نتيجة مستغربة. مثال الهيرو بالأرقام.
+- [ ] **درس (تاب js أو perf):** `performance.getEntriesByType("resource")` بيقف عند 250؛ `setResourceTimingBufferSize` و `resourcetimingbufferfull`.
+- [ ] **درس (تاب css):** `contain-intrinsic-size` بيتحسب على الـ content box (اطرح padding و border)، وقياس النطّة بـ `scrollHeight` في كل خطوة scroll.
+- [ ] **درس (تاب perf):** Playwright `page.coverage.startCSSCoverage()` (نسبة الـ CSS المستخدم) و CDP `LayerTree.layerTreeDidChange` (عدد الطبقات) بدل الفتح اليدوي لـ Coverage و Layers.
 
 **قرارات صاحب المشروع (٢٠ نوفمبر، بعد الدفعة ١٧):**
 - الميزات التجريبية المشروحة (headingoffset و alpha/colorspace و selectedcontent و calc-size و corner-shape و flex-line-count و param) **تفضل**، بشرط الدارس يفهم هي إيه: كل قسم فيه هي إيه، وحالتها المتقاسة، وتستخدم إيه النهارده، وسطر ثابت بيودّي لدرس «Baseline و @supports» (اتضاف للـ ٧ أقسام).
