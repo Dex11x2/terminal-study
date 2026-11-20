@@ -1152,7 +1152,7 @@ Chrome ← [[F12]] ← تاب **Performance** ← زرار «Load profile» (ا�
 
 وعلى ماك (Apple Silicon) في GitHub Actions نفس السكربت طلّع [[(anonymous)]] فوق بدل [[slowUnique]]: الـ JIT في V8 ممكن يدمج دالة صغيرة جوه اللي ناداها (inlining)، فوقتها بيتحسب على الدالة اللي برّه. لو اسم دالتك مش ظاهر، بص على الدالة اللي بتناديها، أو جرّب [[node --cpu-prof --no-turbo-inlining]] عشان تشوف الأسامي (الأرقام هتبقى أبطأ شوية).`,
           ci: [
-            { os: [R`ubuntu`, R`windows`, R`macos`], sh: R`node`, run: R`// الفحص بيقيس نصيب slowUnique من عيّنات JS بس: (program) و (idle) و (garbage collector) مش JS.
+            { os: [R`ubuntu`, R`windows`], sh: R`node`, run: R`// الفحص بيقيس نصيب slowUnique من عيّنات JS بس: (program) و (idle) و (garbage collector) مش JS.
 // على runners بطيئة الـ profiler بينسب جزء كبير من العيّنات لـ (program): ويندوز في GitHub Actions طلّع 0.38 من الكل، والماك 0.02.
 // و --no-turbo-inlining عشان V8 ميدمجش slowUnique جوه اللي ناداها فاسمها يختفي.
 import { writeFileSync, readFileSync } from "node:fs";
@@ -1174,6 +1174,32 @@ prof.samples.forEach((id, i) => {
 console.log("top self time:", [...self].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([n, t]) => n + " " + (t / total).toFixed(2)).join(" | "));
 console.log("slowUnique share: of all " + (inSlow / total).toFixed(2) + ", of JS " + (inSlow / js).toFixed(2));
 console.log("slowUnique holds most of the JS time:", inSlow / js > 0.5);`, expect: [R`unique: 15000`, R`slowUnique holds most of the JS time: true`] },
+            { os: [R`macos`], sh: R`node`, run: R`// الماك (Apple Silicon في GitHub Actions، ٢٠ نوفمبر): (anonymous) 0.93 و slowUnique 0.02 حتى مع --no-turbo-inlining.
+// الفحص ده بيطبع مكان الـ (anonymous) دي (الملف والسطر) واللي فوقها في الشجرة، عشان الدرس يتكتب على الرقم.
+// الفحص بيقيس نصيب slowUnique من عيّنات JS بس: (program) و (idle) و (garbage collector) مش JS.
+// على runners بطيئة الـ profiler بينسب جزء كبير من العيّنات لـ (program): ويندوز في GitHub Actions طلّع 0.38 من الكل، والماك 0.02.
+// و --no-turbo-inlining عشان V8 ميدمجش slowUnique جوه اللي ناداها فاسمها يختفي.
+import { writeFileSync, readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+writeFileSync("app.mjs", 'function slowUnique(list) { const out = []; for (const x of list) if (!out.includes(x)) out.push(x); return out; }\nconst ids = Array.from({ length: 30000 }, (_, i) => "u" + (i % 15000));\nconsole.log("unique:", slowUnique(ids).length);\n');
+const r = spawnSync(process.execPath, ["--no-turbo-inlining", "--cpu-prof", "--cpu-prof-name=p.cpuprofile", "app.mjs"], { encoding: "utf8" });
+console.log(r.stdout.trim());
+const prof = JSON.parse(readFileSync("p.cpuprofile", "utf8"));
+const byId = new Map(prof.nodes.map((n) => [n.id, n]));
+const parent = new Map(); for (const n of prof.nodes) for (const c of n.children ?? []) parent.set(c, n.id);
+const self = new Map(); let total = 0, js = 0, inSlow = 0;
+prof.samples.forEach((id, i) => {
+  const d = prof.timeDeltas[i], name = byId.get(id).callFrame.functionName || "(anonymous)";
+  total += d; self.set(name, (self.get(name) ?? 0) + d);
+  if (/^\((program|idle|garbage collector|root)\)$/.test(name)) return;
+  js += d;
+  for (let x = id; x !== undefined; x = parent.get(x)) if (byId.get(x).callFrame.functionName === "slowUnique") { inSlow += d; break; }
+});
+console.log("top self time:", [...self].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([n, t]) => n + " " + (t / total).toFixed(2)).join(" | "));
+console.log("slowUnique share: of all " + (inSlow / total).toFixed(2) + ", of JS " + (inSlow / js).toFixed(2));
+const top = [...prof.samples.reduce((m, id, i) => m.set(id, (m.get(id) ?? 0) + prof.timeDeltas[i]), new Map())].sort((a, b) => b[1] - a[1])[0][0];
+const chain = []; for (let x = top; x !== undefined; x = parent.get(x)) { const c = byId.get(x).callFrame; chain.push((c.functionName || "(anonymous)") + "@" + (c.url.split("/").pop() || "-") + ":" + (c.lineNumber + 1) + ":" + (c.columnNumber + 1)); }
+console.log("heaviest node and its parents:", chain.join(" < "));`, expect: [R`unique: 15000`, R`heaviest node and its parents:`] },
           ],
         },
         {
