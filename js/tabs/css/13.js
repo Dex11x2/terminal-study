@@ -5,12 +5,2609 @@ MORE("css", [
       l: 3,
       n: "WCAG 2.2 AA هو المعيار، والأدوات الأوتوماتيك بتمسك جزء، والباقي بالكيبورد وقارئ الشاشة",
       projects: [
-        { lvl: 'صغير', t: R`سكربت فحص صفحة بـ axe`, what: R`سكربت Node بـ [[playwright-core]] و [[@axe-core/playwright]] بياخد URL من الـ arguments، ويفتح الصفحة، ويطبع جدول: الـ rule و الـ impact وعدد العناصر وأول selector، ويخرج بكود ١ لو فيه أي violation. من درس axe و Lighthouse.`, done: R`على صفحة فيها صورة من غير alt وحقل من غير label بيطبع [[image-alt]] و [[label]] ويخرج بـ ١، وعلى صفحة سليمة بيطبع «مفيش مشاكل» ويخرج بـ ٠، و URL غلط بيطبع رسالة مفهومة مش stack trace.` },
-        { lvl: 'صغير', t: R`خريطة الـ Tab على الصفحة`, what: R`snippet في DevTools › Sources › Snippets بيسمع لـ [[focusin]] ويحط رقم صغير جنب كل عنصر بياخد focus بالترتيب، ويطبع في الكونسول لستة بالـ role والاسم. من درس الكيبورد وقارئ الشاشة.`, done: R`بعد ما تعدّي الصفحة بـ Tab، الأرقام ظاهرة على الصفحة بالترتيب، وأي رقم «بيتنط» لمكان غريب أو عنصر مخفي واخد focus بيبان على طول، واللستة فيها نفس عدد الأرقام.` },
-        { lvl: 'متوسط', t: R`مراجعة landing فيها ٨ مشاكل`, what: R`ابني (أو خد) صفحة landing فيها المشاكل اللي بتتكرر في المشاريع الحقيقية: aria-labels إنجليزي في صفحة عربي، و marquee شغال على طول من غير زرار وقوف، و [[cursor: none]] بمؤشر مخصص، وكلام 10px باهت، و accordion من غير [[aria-controls]]، ومنيو موبايل مبيحبسش الـ focus، ومفيش [[prefers-reduced-motion]]، وأيقونات emoji من غير اسم. افحصها بـ axe وبإيدك، وصلّح، واكتب تقرير.`, done: R`التقرير فيه لكل مشكلة: اتمسكت إزاي (axe ولا يدوي)، وبند WCAG، ولقطة قبل وبعد. axe بعد التصليح صفر، والمشاكل اللي axe مشافهاش (الـ marquee، والـ cursor، والـ reduced motion، والـ focus في المنيو) متعلّم عليها «يدوي».` },
-        { lvl: 'متوسط', t: R`اختبارات a11y لأربع مكوّنات`, what: R`Vitest و Testing Library و axe-core لأربع مكوّنات: زرار أيقونة، و Dialog، و Tabs، وفورم تسجيل. كل اختبار بيجيب العناصر بـ [[getByRole]] بالاسم، ويتأكد من الـ focus بعد الفتح والقفل، و [[aria-expanded]] أو [[aria-selected]]، ومفيش violations. ومعاهم jsx-a11y في الـ lint. بيجمع درس jsx-a11y و getByRole مع aria من الوحدة اللي فاتت.`, done: R`كل الاختبارات خضرا، ولو شلت label أو [[aria-expanded]] أو رجّعت الـ focus غلط بيقع اختبار واحد على الأقل برسالة مفهومة، و [[npx eslint .]] صفر errors.` },
-        { lvl: 'كبير', t: R`بوابة a11y في الـ CI`, what: R`workflow في GitHub Actions بيبني الموقع ويشغّل Playwright على كل الصفحات (من [[sitemap.xml]] أو لستة)، وفي كل صفحة: axe بقواعد WCAG 2.2 AA، واختبار كيبورد بيمشي بـ Tab ويحفظ ترتيب العناصر ويقارنه بـ snapshot، واختبار تغيير الصفحة (الـ title اتغير والـ focus على [[h1]]). النتايج بتطلع تقرير HTML كـ artifact، وفيه ملف استثناءات لكل واحد سبب وتاريخ انتهاء. بيجمع الوحدة كلها مع وحدة Accessibility.`, done: R`PR بيشيل [[alt]] من صورة بيقع والتقرير بيقول الصفحة والعنصر، وPR بيغيّر ترتيب الـ Tab بيقع على الـ snapshot، والاستثناء اللي تاريخه عدّى بيوقّع الـ CI لوحده، والـ workflow بيتشغّل تاني على نفس الـ commit بنفس النتيجة.`, ext: R`زوّد فحص بالثيم الغامق و [[prefers-reduced-motion]]، واطبع ملخص في تعليق على الـ PR (عدد المشاكل قبل وبعد)، وخلّيه يفحص الصفحات اللي اتغيرت بس عشان يبقى أسرع.` },
-        { lvl: 'فكرة', t: R`أداة فحص بتاعتك`, what: R`فكّر في حاجة بتفحصها بإيدك كل مرة ومحدش بيعملها أوتوماتيك: أهداف أصغر من 24×24، أو عناصر بتستخبى تحت الهيدر الـ sticky، أو عناوين بتتنط مستوى، أو صور alt بتاعها اسم ملف. اعملها bookmarklet أو extension صغيرة أو rule زيادة لـ axe.`, done: R`الأداة بتلاقي المشكلة دي على ٣ مواقع حقيقية مختلفة، ومبتطلّعش إنذار غلط على صفحة سليمة اختبرتها بإيدك.`, ext: R`انشرها على GitHub بـ README فيه مثال، أو ابعتها كـ custom rule لـ axe في مشروعك.` },
+        { lvl: 'صغير', dir: "axe-scan", t: R`سكربت فحص صفحة بـ axe`, what: R`سكربت Node بـ [[playwright-core]] و [[@axe-core/playwright]] بياخد URL من الـ arguments، ويفتح الصفحة، ويطبع جدول: الـ rule و الـ impact وعدد العناصر وأول selector، ويخرج بكود ١ لو فيه أي violation. من درس axe و Lighthouse.`, done: R`على صفحة فيها صورة من غير alt وحقل من غير label بيطبع [[image-alt]] و [[label]] ويخرج بـ ١، وعلى صفحة سليمة بيطبع «مفيش مشاكل» ويخرج بـ ٠، و URL غلط بيطبع رسالة مفهومة مش stack trace.`, sol: R`~~~bash الترمنال
+mkdir axe-scan && cd axe-scan
+npm init -y
+npm pkg set type=module
+npm i -D playwright-core@1.64.1 @axe-core/playwright@4.14.0
+~~~
+
+[[playwright-core]] من غير متصفح: السكربت بيستخدم Chrome اللي على جهازك ([[channel: "chrome"]])، فمفيش تنزيل ٢٠٠ ميجا.
+
+~~~js scan.mjs
+// node scan.mjs <url>: opens the page in Chrome, runs axe (WCAG 2.2 A + AA), prints a table, exits 1 on any violation
+import { chromium } from "playwright-core";
+import AxeBuilder from "@axe-core/playwright";
+
+const url = process.argv[2];
+if (!url) {
+  console.error("اكتب الـ URL: node scan.mjs https://example.com");
+  process.exit(2);
+}
+
+let browser;
+try {
+  browser = await chromium.launch({ channel: "chrome" });   // the Chrome already on the machine, no download
+  const context = await browser.newContext();               // AxeBuilder refuses a page from browser.newPage()
+  const page = await context.newPage();
+  await page.goto(url, { waitUntil: "load", timeout: 15000 });
+
+  const { violations } = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+    .analyze();
+
+  if (violations.length === 0) {
+    console.log("مفيش مشاكل (" + url + ")");
+    process.exitCode = 0;
+  } else {
+    console.table(violations.map(v => ({
+      rule: v.id,
+      impact: v.impact,
+      count: v.nodes.length,
+      first: v.nodes[0].target.join(" "),
+    })));
+    for (const v of violations) console.log("- " + v.id + ": " + v.help + "\n  " + v.helpUrl);
+    process.exitCode = 1;
+  }
+} catch (err) {
+  // a wrong URL or a site that's down: one clear line, not a stack trace
+  const reason = err.message.split("\n")[0];
+  console.error("مقدرتش أفتح " + url + "\nالسبب: " + reason);
+  process.exitCode = 2;
+} finally {
+  await browser?.close();
+}
+~~~
+
+صفحتين للتجربة (والصورة [[map.svg]] جنبهم):
+
+~~~html pages/bad.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نشرة «مسار»</title>
+</head>
+<body>
+<main>
+  <h1>اشترك في نشرة «مسار»</h1>
+  <img src="map.svg" width="320" height="160">
+  <form>
+    <p>اسمك</p>
+    <input type="text">
+    <input type="email" placeholder="الإيميل">
+    <button>اشترك</button>
+  </form>
+</main>
+</body>
+</html>
+~~~
+
+~~~html pages/good.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نشرة «مسار»</title>
+</head>
+<body>
+<main>
+  <h1>اشترك في نشرة «مسار»</h1>
+  <img src="map.svg" width="320" height="160" alt="خريطة فيها ٣ محطات على خط واحد">
+  <form>
+    <label for="name">اسمك</label>
+    <input id="name" type="text" autocomplete="name">
+    <label for="email">الإيميل</label>
+    <input id="email" type="email" autocomplete="email">
+    <button>اشترك</button>
+  </form>
+</main>
+</body>
+</html>
+~~~
+
+~~~view 400 420 الصفحة اللي بنفحصها (bad.html)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نشرة «مسار»</title>
+</head>
+<body>
+<main>
+  <h1>اشترك في نشرة «مسار»</h1>
+  <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgMTYwIj48cmVjdCB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE2MCIgcng9IjEyIiBmaWxsPSIjZTBmMmZlIi8+PHBhdGggZD0iTTMwIDEyMCBDIDExMCAyMCwgMjEwIDE0MCwgMjkwIDQwIiBmaWxsPSJub25lIiBzdHJva2U9IiMwMzY5YTEiIHN0cm9rZS13aWR0aD0iNiIvPjxjaXJjbGUgY3g9IjMwIiBjeT0iMTIwIiByPSIxMCIgZmlsbD0iIzBjNGE2ZSIvPjxjaXJjbGUgY3g9IjE2MCIgY3k9IjgyIiByPSIxMCIgZmlsbD0iIzBjNGE2ZSIvPjxjaXJjbGUgY3g9IjI5MCIgY3k9IjQwIiByPSIxMCIgZmlsbD0iIzBjNGE2ZSIvPjwvc3ZnPgo=" width="320" height="160">
+  <form>
+    <p>اسمك</p>
+    <input type="text">
+    <input type="email" placeholder="الإيميل">
+    <button>اشترك</button>
+  </form>
+</main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** في الترمنال جدول فيه سطر لكل rule فيها مشكلة (الاسم، والخطورة، وعدد العناصر، وأول عنصر)، وتحته لينك يشرح كل rule. والصفحة نفسها بسيطة: عنوان، وصورة خريطة، وخانتين، وزرار.
+
+**أكواد الخروج:** ٠ = سليمة، ١ = فيه مشاكل، ٢ = مقدرتش أفحص أصلًا. الـ CI بيقرا ده من غير ما يفهم الكلام، فـ [[if node scan.mjs …]] في bash أو [[$LASTEXITCODE]] في PowerShell بيعرفوا يكمّلوا ولا يقفوا.
+
+**[[process.exitCode]] مش [[process.exit()]]:** [[exit]] بيقفل البرنامج فورًا، فالمتصفح يفضل مفتوح. [[exitCode]] بيسيب [[finally]] يقفل المتصفح الأول.
+
+**الـ URL الغلط:** الـ [[try/catch]] حوالين كل حاجة، وبيطبع أول سطر بس من الغلط. من غيره كنت هتشوف stack trace ٢٠ سطر.
+
+**غلطتين حصلوا وأنا ببنيه:**
+- **[[browser.newPage()]]:** أول تشغيل طلع «Please use browser.newContext()». الـ [[AxeBuilder]] محتاج page جوه context انت عامله بنفسك، عشان يقدر يفتح الـ iframes. التصليح سطر: [[browser.newContext()]] وبعدين [[context.newPage()]].
+- **axe مامسكش الـ placeholder:** الـ [[done]] بيقول «حقل من غير label». الحقل [[<input placeholder="الإيميل">]] **عدّى** قاعدة [[label]]: axe بيقبل الـ placeholder كاسم ([[non-empty-placeholder]])، و Chrome نفسه بيدي الخانة الاسم «الإيميل». بس ده لسه غلط يدوي: الكلام بيختفي أول ما تكتب. عشان قاعدة [[label]] تقع لازم حقل مالوش اسم خالص، زي «اسمك» المكتوب في [[<p>]] جنب الخانة.
+
+~~~text الناتج (Windows، Chrome 157)
+> node scan.mjs http://localhost:8813/axe-scan/pages/bad.html
+┌─────────┬─────────────┬────────────┬───────┬──────────────────────┐
+│ (index) │ rule        │ impact     │ count │ first                │
+├─────────┼─────────────┼────────────┼───────┼──────────────────────┤
+│ 0       │ 'image-alt' │ 'critical' │ 1     │ 'img'                │
+│ 1       │ 'label'     │ 'critical' │ 1     │ 'input[type="text"]' │
+└─────────┴─────────────┴────────────┴───────┴──────────────────────┘
+- image-alt: Images must have alternative text
+  https://dequeuniversity.com/rules/axe/4.14/image-alt?application=playwright
+- label: Form elements must have labels
+  https://dequeuniversity.com/rules/axe/4.14/label?application=playwright
+exit=1
+
+> node scan.mjs http://localhost:8813/axe-scan/pages/good.html
+مفيش مشاكل (http://localhost:8813/axe-scan/pages/good.html)
+exit=0
+
+> node scan.mjs http://localhost:9999/nothing.html
+مقدرتش أفتح http://localhost:9999/nothing.html
+السبب: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:9999/nothing.html
+exit=2
+
+> node scan.mjs not-a-url
+مقدرتش أفتح not-a-url
+السبب: page.goto: Protocol error (Page.navigate): Cannot navigate to invalid URL
+exit=2
+
+PowerShell: node scan.mjs <good>; $LASTEXITCODE → 0 | <bad> → 1 | URL غلط → 2
+~~~
+
+**فخ في PowerShell:** [[node scan.mjs … | Select-Object -First 1]] طلّع [[$LASTEXITCODE]] = ١ بدل ٢، لأن [[-First]] بيوقف البرنامج بدري. لو عايز الكود، شغّله من غير pipe.` },
+        { lvl: 'صغير', dir: "tab-map", t: R`خريطة الـ Tab على الصفحة`, what: R`snippet في DevTools › Sources › Snippets بيسمع لـ [[focusin]] ويحط رقم صغير جنب كل عنصر بياخد focus بالترتيب، ويطبع في الكونسول لستة بالـ role والاسم. من درس الكيبورد وقارئ الشاشة.`, done: R`بعد ما تعدّي الصفحة بـ Tab، الأرقام ظاهرة على الصفحة بالترتيب، وأي رقم «بيتنط» لمكان غريب أو عنصر مخفي واخد focus بيبان على طول، واللستة فيها نفس عدد الأرقام.`, sol: R`~~~js tabmap.js
+// Tab map: paste in DevTools › Sources › Snippets, run it (Ctrl+Enter), then press Tab through the page.
+// Every element that takes focus gets a number at its corner, in order; hidden ones get a red number.
+// Run it again to start over. tabmap.list() prints the table again.
+(() => {
+  window.tabmap?.stop();                                   // a second run cleans up the first one
+
+  const layer = document.createElement("div");
+  layer.style.cssText = "position:absolute;inset:0 auto auto 0;z-index:2147483647;pointer-events:none";
+  document.body.append(layer);
+  const rows = [];
+
+  const ROLES = { A: "link", BUTTON: "button", SELECT: "combobox", TEXTAREA: "textbox", SUMMARY: "button", H1: "heading", H2: "heading", MAIN: "main" };
+  function role(el) {
+    if (el.getAttribute("role")) return el.getAttribute("role");
+    if (el.tagName === "INPUT") return { checkbox: "checkbox", radio: "radio", range: "slider", submit: "button", button: "button" }[el.type] || "textbox";
+    return ROLES[el.tagName] || el.tagName.toLowerCase();
+  }
+  function name(el) {
+    const by = el.getAttribute("aria-labelledby");
+    const text =
+      el.getAttribute("aria-label") ||
+      (by && by.split(" ").map(id => document.getElementById(id)?.textContent).join(" ")) ||
+      (el.labels && el.labels[0]?.textContent) ||
+      el.textContent ||
+      el.querySelector("img")?.alt ||
+      el.getAttribute("title") ||
+      el.getAttribute("placeholder") || "";
+    return text.replace(/\s+/g, " ").trim().slice(0, 40);
+  }
+  // "hidden" = it took focus but you can't see it: no size, transparent, invisible, or outside the page
+  function hiddenWhy(el) {
+    const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+    if (r.width < 1 || r.height < 1) return "مقاسه صفر";
+    if (cs.visibility === "hidden") return "visibility hidden";
+    for (let e = el; e; e = e.parentElement) if (getComputedStyle(e).opacity === "0") return "opacity 0";
+    if (r.right < 0 || r.bottom < 0 || r.left > innerWidth + scrollX + 1000) return "برّه الشاشة";
+    return "";
+  }
+
+  function onFocus(e) {
+    const el = e.target;
+    if (el === document.body) return;
+    const r = el.getBoundingClientRect();
+    const why = hiddenWhy(el);
+    const n = rows.length + 1;
+    rows.push({ n, role: role(el), name: name(el) || "(من غير اسم!)", tabindex: el.getAttribute("tabindex") ?? "", hidden: why });
+
+    const tag = document.createElement("span");
+    tag.textContent = n;
+    tag.style.cssText =
+      "position:absolute;min-width:20px;height:20px;padding:0 4px;border-radius:10px;font:700 12px/20px system-ui;text-align:center;color:#fff;" +
+      "background:" + (why ? "#b91c1c" : "#1d4ed8") + ";box-shadow:0 0 0 2px #fff";
+    // pinned to the element's top-left corner in page coordinates, so it stays put when you scroll
+    tag.style.left = Math.max(0, r.left + scrollX - 8) + "px";
+    tag.style.top = Math.max(0, r.top + scrollY - 8) + "px";
+    layer.append(tag);
+    console.log(n + ". " + rows[n - 1].role + ' "' + rows[n - 1].name + '"' + (why ? "   ⚠ مخفي: " + why : ""));
+  }
+
+  document.addEventListener("focusin", onFocus);
+  window.tabmap = {
+    list: () => console.table(rows),
+    stop: () => { document.removeEventListener("focusin", onFocus); layer.remove(); },
+  };
+  console.log("خريطة الـ Tab شغالة: اضغط Tab. اكتب tabmap.list() للجدول، و tabmap.stop() للقفل.");
+})();
+~~~
+
+**تحطه إزاي:** DevTools › Sources › Snippets › New snippet، والصق الكود، و Ctrl+Enter. الـ snippet بيفضل محفوظ في DevTools لأي موقع. ولو عايز تجربه هنا، الصفحة دي فيها غلطتين مقصودين:
+
+~~~html demo.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تجربة خريطة الـ Tab: «سِكّة» لتأجير العجل</title>
+<style>
+  body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #1f2937; background: #f9fafb; }
+  header { display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; background: #fff; border-block-end: 1px solid #d1d5db; }
+  header nav { display: flex; gap: 1rem; margin-inline-start: auto; }
+  a { color: #1d4ed8; }
+  .logo { font-weight: 800; color: #1f2937; text-decoration: none; }
+  /* bug 1: the phone menu is "hidden" with opacity only, so its links still take focus */
+  .drawer { position: absolute; inset-inline-end: 1rem; top: 3.5rem; display: grid; padding: 0.75rem; background: #fff; box-shadow: 0 8px 20px #0002; opacity: 0; }
+  main { max-width: 40rem; margin: 2rem auto; padding: 0 1rem; }
+  .card { display: grid; gap: 0.5rem; padding: 1rem; margin-block-end: 1rem; background: #fff; border: 1px solid #d1d5db; border-radius: 0.75rem; }
+  button { justify-self: start; padding: 0.5rem 1rem; border: 0; border-radius: 0.5rem; background: #1d4ed8; color: #fff; font: inherit; }
+  :focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="#">سِكّة</a>
+  <nav aria-label="الأقسام"><a href="#bikes">العجل</a><a href="#prices">الأسعار</a></nav>
+  <div class="drawer"><a href="#">حسابي</a><a href="#">خروج</a></div>
+</header>
+<main>
+  <h1>أجّر عجلة بالساعة</h1>
+  <div class="card" id="bikes">
+    <h2>عجلة مدينة</h2>
+    <p>٢٥ ج الساعة.</p>
+    <button>احجز</button>
+  </div>
+  <div class="card" id="prices">
+    <h2>عجلة جبلي</h2>
+    <p>٤٠ ج الساعة.</p>
+    <!-- bug 2: a positive tabindex jumps the queue -->
+    <button tabindex="1">احجز الجبلي</button>
+  </div>
+</main>
+<script src="tabmap.js"></script>
+</body>
+</html>
+~~~
+
+~~~view 680 680 دوس جوه الصفحة واضغط Tab
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تجربة خريطة الـ Tab: «سِكّة» لتأجير العجل</title>
+<style>
+  body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #1f2937; background: #f9fafb; }
+  header { display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; background: #fff; border-block-end: 1px solid #d1d5db; }
+  header nav { display: flex; gap: 1rem; margin-inline-start: auto; }
+  a { color: #1d4ed8; }
+  .logo { font-weight: 800; color: #1f2937; text-decoration: none; }
+  /* bug 1: the phone menu is "hidden" with opacity only, so its links still take focus */
+  .drawer { position: absolute; inset-inline-end: 1rem; top: 3.5rem; display: grid; padding: 0.75rem; background: #fff; box-shadow: 0 8px 20px #0002; opacity: 0; }
+  main { max-width: 40rem; margin: 2rem auto; padding: 0 1rem; }
+  .card { display: grid; gap: 0.5rem; padding: 1rem; margin-block-end: 1rem; background: #fff; border: 1px solid #d1d5db; border-radius: 0.75rem; }
+  button { justify-self: start; padding: 0.5rem 1rem; border: 0; border-radius: 0.5rem; background: #1d4ed8; color: #fff; font: inherit; }
+  :focus-visible { outline: 3px solid #b45309; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="#">سِكّة</a>
+  <nav aria-label="الأقسام"><a href="#bikes">العجل</a><a href="#prices">الأسعار</a></nav>
+  <div class="drawer"><a href="#">حسابي</a><a href="#">خروج</a></div>
+</header>
+<main>
+  <h1>أجّر عجلة بالساعة</h1>
+  <div class="card" id="bikes">
+    <h2>عجلة مدينة</h2>
+    <p>٢٥ ج الساعة.</p>
+    <button>احجز</button>
+  </div>
+  <div class="card" id="prices">
+    <h2>عجلة جبلي</h2>
+    <p>٤٠ ج الساعة.</p>
+    <!-- bug 2: a positive tabindex jumps the queue -->
+    <button tabindex="1">احجز الجبلي</button>
+  </div>
+</main>
+<script>
+// Tab map: paste in DevTools › Sources › Snippets, run it (Ctrl+Enter), then press Tab through the page.
+// Every element that takes focus gets a number at its corner, in order; hidden ones get a red number.
+// Run it again to start over. tabmap.list() prints the table again.
+(() => {
+  window.tabmap?.stop();                                   // a second run cleans up the first one
+
+  const layer = document.createElement("div");
+  layer.style.cssText = "position:absolute;inset:0 auto auto 0;z-index:2147483647;pointer-events:none";
+  document.body.append(layer);
+  const rows = [];
+
+  const ROLES = { A: "link", BUTTON: "button", SELECT: "combobox", TEXTAREA: "textbox", SUMMARY: "button", H1: "heading", H2: "heading", MAIN: "main" };
+  function role(el) {
+    if (el.getAttribute("role")) return el.getAttribute("role");
+    if (el.tagName === "INPUT") return { checkbox: "checkbox", radio: "radio", range: "slider", submit: "button", button: "button" }[el.type] || "textbox";
+    return ROLES[el.tagName] || el.tagName.toLowerCase();
+  }
+  function name(el) {
+    const by = el.getAttribute("aria-labelledby");
+    const text =
+      el.getAttribute("aria-label") ||
+      (by && by.split(" ").map(id => document.getElementById(id)?.textContent).join(" ")) ||
+      (el.labels && el.labels[0]?.textContent) ||
+      el.textContent ||
+      el.querySelector("img")?.alt ||
+      el.getAttribute("title") ||
+      el.getAttribute("placeholder") || "";
+    return text.replace(/\s+/g, " ").trim().slice(0, 40);
+  }
+  // "hidden" = it took focus but you can't see it: no size, transparent, invisible, or outside the page
+  function hiddenWhy(el) {
+    const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+    if (r.width < 1 || r.height < 1) return "مقاسه صفر";
+    if (cs.visibility === "hidden") return "visibility hidden";
+    for (let e = el; e; e = e.parentElement) if (getComputedStyle(e).opacity === "0") return "opacity 0";
+    if (r.right < 0 || r.bottom < 0 || r.left > innerWidth + scrollX + 1000) return "برّه الشاشة";
+    return "";
+  }
+
+  function onFocus(e) {
+    const el = e.target;
+    if (el === document.body) return;
+    const r = el.getBoundingClientRect();
+    const why = hiddenWhy(el);
+    const n = rows.length + 1;
+    rows.push({ n, role: role(el), name: name(el) || "(من غير اسم!)", tabindex: el.getAttribute("tabindex") ?? "", hidden: why });
+
+    const tag = document.createElement("span");
+    tag.textContent = n;
+    tag.style.cssText =
+      "position:absolute;min-width:20px;height:20px;padding:0 4px;border-radius:10px;font:700 12px/20px system-ui;text-align:center;color:#fff;" +
+      "background:" + (why ? "#b91c1c" : "#1d4ed8") + ";box-shadow:0 0 0 2px #fff";
+    // pinned to the element's top-left corner in page coordinates, so it stays put when you scroll
+    tag.style.left = Math.max(0, r.left + scrollX - 8) + "px";
+    tag.style.top = Math.max(0, r.top + scrollY - 8) + "px";
+    layer.append(tag);
+    console.log(n + ". " + rows[n - 1].role + ' "' + rows[n - 1].name + '"' + (why ? "   ⚠ مخفي: " + why : ""));
+  }
+
+  document.addEventListener("focusin", onFocus);
+  window.tabmap = {
+    list: () => console.table(rows),
+    stop: () => { document.removeEventListener("focusin", onFocus); layer.remove(); },
+  };
+  console.log("خريطة الـ Tab شغالة: اضغط Tab. اكتب tabmap.list() للجدول، و tabmap.stop() للقفل.");
+})();
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** كل ما تضغط Tab يظهر رقم أزرق صغير على ركن العنصر اللي خد الـ focus، وفي الكونسول سطر «3. link "العجل"». والرقم الأحمر معناه إن العنصر خد focus وانت مش شايفه.
+
+**على الصفحة دي الخريطة كشفت الغلطتين:**
+- **رقم ١ على «احجز الجبلي» تحت خالص:** عليه [[tabindex="1"]]، فبيسبق كل حاجة. والـ Tab الأول بينط لآخر الصفحة.
+- **٥ و ٦ أحمر:** «حسابي» و «خروج» في منيو مستخبية بـ [[opacity: 0]] بس. الـ opacity بتخفي الشكل، بس العنصر لسه موجود وبياخد focus. [[visibility: hidden]] أو [[display: none]] بيشيلوه من الـ Tab كمان.
+
+بعد التصليح (شيل [[tabindex]]، و [[visibility: hidden]] على المنيو) الترتيب بقى طبيعي ومفيش أحمر.
+
+**إزاي الكود شغال:**
+- **[[focusin]] مش [[focus]]:** [[focus]] مبيطلعش لفوق (bubble)، فلازم تحط listener على كل عنصر. [[focusin]] بيطلع لـ [[document]]، فـ listener واحد بيكفي للصفحة كلها.
+- **الرقم في مكانه وانت بتعمل scroll:** [[getBoundingClientRect()]] بيدي المكان بالنسبة للشاشة، فبنزوّد [[scrollX]] و [[scrollY]] ونحط الرقم [[position: absolute]] في طبقة فوق الصفحة. ولو استخدمنا [[fixed]] الأرقام كانت هتمشي مع الـ scroll.
+- **[[pointer-events: none]] على الطبقة:** عشان الأرقام متاخدش الضغطات من الصفحة.
+- **الاسم:** [[aria-label]]، وبعده [[aria-labelledby]]، وبعده الـ [[<label>]]، وبعده الكلام. ده تقريب لحساب الاسم الحقيقي مش كله. للاسم الدقيق: DevTools › Accessibility.
+- **تشغيله تاني:** أول سطر بيقفل التشغيل اللي قبله ([[window.tabmap?.stop()]])، فمفيش أرقام مكررة.
+
+~~~text الناتج (Playwright بـ Chrome 157، ٨ ضغطات Tab)
+demo.html:
+1. button "احجز الجبلي"
+2. link "سِكّة"
+3. link "العجل"
+4. link "الأسعار"
+5. link "حسابي"   ⚠ مخفي: opacity 0
+6. link "خروج"   ⚠ مخفي: opacity 0
+7. button "احجز"
+الأرقام على الصفحة: 1 2 3 4 5(أحمر) 6(أحمر) 7، نفس عدد سطور الكونسول
+
+بعد التصليح:
+1. link "سِكّة"   2. link "العجل"   3. link "الأسعار"   4. button "احجز"   5. button "احجز الجبلي"
+ومفيش ولا رقم أحمر
+~~~
+
+**ملحوظة عن آخر الصفحة:** بعد آخر عنصر، الـ Tab في المتصفح بيروح لشريط العنوان. في Playwright headless بيلف لأول الصفحة على طول، فهتلاقي «سِكّة» بيتكرر. لو شفت الأرقام بتعيد نفسها، يبقى انت لفّيت.` },
+        { lvl: 'متوسط', dir: "landing-audit", t: R`مراجعة landing فيها ٨ مشاكل`, what: R`ابني (أو خد) صفحة landing فيها المشاكل اللي بتتكرر في المشاريع الحقيقية: aria-labels إنجليزي في صفحة عربي، و marquee شغال على طول من غير زرار وقوف، و [[cursor: none]] بمؤشر مخصص، وكلام 10px باهت، و accordion من غير [[aria-controls]]، ومنيو موبايل مبيحبسش الـ focus، ومفيش [[prefers-reduced-motion]]، وأيقونات emoji من غير اسم. افحصها بـ axe وبإيدك، وصلّح، واكتب تقرير.`, done: R`التقرير فيه لكل مشكلة: اتمسكت إزاي (axe ولا يدوي)، وبند WCAG، ولقطة قبل وبعد. axe بعد التصليح صفر، والمشاكل اللي axe مشافهاش (الـ marquee، والـ cursor، والـ reduced motion، والـ focus في المنيو) متعلّم عليها «يدوي».`, sol: R`المثال: landing لورشة خط عربي متخيلة «بيت الخط». [[before.html]] بالـ ٨ مشاكل، و [[index.html]] بعد التصليح، و [[check.mjs]] بيقيس الـ ٨ على النسختين، و [[REPORT.md]] التقرير.
+
+~~~html before.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بيت الخط: ورشة خط عربي</title>
+<link rel="stylesheet" href="before.css">
+<script src="before.js" defer></script>
+</head>
+<body>
+<div class="cursor" aria-hidden="true"></div>
+<header class="header">
+  <a class="logo" href="#">بيت الخط</a>
+  <nav class="links" aria-label="Main menu">
+    <a href="#courses">الكورسات</a>
+    <a href="#faq">أسئلة</a>
+    <a href="#join">احجز</a>
+  </nav>
+  <button class="menu-btn" aria-label="Open menu">☰</button>
+  <div class="drawer" id="drawer">
+    <a href="#courses">الكورسات</a>
+    <a href="#faq">أسئلة</a>
+    <a href="#join">احجز</a>
+    <button class="drawer-close" aria-label="Close">✕</button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>اتعلّم الرقعة والنسخ في ٨ أسابيع</h1>
+    <p>مجموعات صغيرة، وأدوات علينا، وكراسة بتاخدها معاك.</p>
+    <a class="btn" href="#join">احجز مكانك</a>
+  </section>
+
+  <section class="partners" aria-label="Partners">
+    <div class="marquee">
+      <ul class="track">
+        <li>مكتبة الورّاق</li><li>دار الحبر</li><li>جمعية الفنون</li><li>مرسم النيل</li><li>ورق وقلم</li>
+        <li>مكتبة الورّاق</li><li>دار الحبر</li><li>جمعية الفنون</li><li>مرسم النيل</li><li>ورق وقلم</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="courses" class="section">
+    <h2>الكورسات</h2>
+    <ul class="cards">
+      <li class="card"><h3>رقعة للمبتدئين</h3><p class="small">٨ حصص، كل سبت، ١٢٠٠ ج</p></li>
+      <li class="card"><h3>نسخ</h3><p class="small">١٠ حصص، كل اتنين، ١٥٠٠ ج</p></li>
+      <li class="card"><h3>ثلث متقدم</h3><p class="small">١٢ حصة، كل أربع، ٢٠٠٠ ج</p></li>
+    </ul>
+  </section>
+
+  <section id="faq" class="section">
+    <h2>أسئلة</h2>
+    <div class="acc">
+      <div class="acc-q">لازم أكون بعرف أرسم؟</div>
+      <div class="acc-a">لأ، بنبدأ من مسكة القلم.</div>
+    </div>
+    <div class="acc">
+      <div class="acc-q">الأدوات عليا؟</div>
+      <div class="acc-a">لأ، القلم والحبر والورق علينا في أول شهر.</div>
+    </div>
+  </section>
+
+  <section id="join" class="section">
+    <h2>احجز</h2>
+    <p>كلّمنا وهنرد في نفس اليوم.</p>
+    <div class="social">
+      <a href="#">📞</a>
+      <a href="#">💬</a>
+      <a href="#">📍</a>
+    </div>
+  </section>
+</main>
+<footer class="footer"><p class="small">بيت الخط، ورشة متخيلة للتجربة.</p></footer>
+</body>
+</html>
+~~~
+
+~~~css before.css
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #292524; background: #fffbf5; cursor: none; }
+a, button { cursor: none; }
+a { color: #9a3412; }
+
+.cursor { position: fixed; top: 0; left: 0; z-index: 50; width: 28px; height: 28px; border: 2px solid #9a3412; border-radius: 50%; pointer-events: none; transition: translate 0.15s ease-out; }
+
+.header { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; background: #fffbf5; border-block-end: 1px solid #e7e5e4; }
+.logo { font-weight: 800; color: #292524; text-decoration: none; }
+.links { display: flex; gap: 1rem; margin-inline-start: auto; }
+.menu-btn { display: none; margin-inline-start: auto; border: 0; background: none; font-size: 1.4rem; }
+.drawer { display: none; position: fixed; inset: 0 0 0 30%; padding: 4rem 1.5rem; background: #fff; box-shadow: 0 0 30px #0003; flex-direction: column; gap: 1rem; }
+.drawer.open { display: flex; }
+.drawer-close { position: absolute; top: 1rem; inset-inline-start: 1rem; border: 0; background: none; font-size: 1.2rem; }
+@media (max-width: 40rem) {
+  .links { display: none; }
+  .menu-btn { display: block; }
+}
+
+.hero { padding: 4rem 1rem; text-align: center; background: linear-gradient(#fde7d1, #fffbf5); }
+.hero h1 { margin: 0 0 0.5rem; font-size: clamp(1.8rem, 1.2rem + 3vw, 3rem); }
+.btn { display: inline-block; padding: 0.7rem 1.4rem; border-radius: 999px; background: #9a3412; color: #fff; text-decoration: none; font-weight: 700; }
+
+.partners { overflow: hidden; padding-block: 1rem; background: #292524; color: #fafaf9; }
+.track { display: flex; gap: 3rem; width: max-content; margin: 0; padding: 0; list-style: none; animation: slide 18s linear infinite; }
+@keyframes slide { to { translate: 50% 0; } }
+
+.section { max-width: 52rem; margin: 0 auto; padding: 2.5rem 1rem; }
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: 1.25rem; background: #fff; border: 1px solid #e7e5e4; border-radius: 1rem; }
+.card h3 { margin: 0 0 0.25rem; }
+.small { margin: 0; font-size: 10px; color: #b8b0a8; }
+
+.acc { border-block-end: 1px solid #e7e5e4; }
+.acc-q { padding: 0.75rem 0; font-weight: 700; }
+.acc-a { display: none; padding-block-end: 0.75rem; }
+.acc.open .acc-a { display: block; }
+
+.social { display: flex; gap: 1rem; font-size: 1.6rem; }
+.social a { text-decoration: none; }
+.footer { padding: 1.5rem 1rem; text-align: center; border-block-start: 1px solid #e7e5e4; }
+~~~
+
+~~~js before.js
+// custom cursor follows the mouse
+const cursor = document.querySelector(".cursor");
+addEventListener("mousemove", e => { cursor.style.translate = (e.clientX - 14) + "px " + (e.clientY - 14) + "px"; });
+
+// phone menu: opens and closes, nothing else
+const drawer = document.getElementById("drawer");
+document.querySelector(".menu-btn").addEventListener("click", () => drawer.classList.add("open"));
+document.querySelector(".drawer-close").addEventListener("click", () => drawer.classList.remove("open"));
+
+// accordion: click on the question
+document.querySelectorAll(".acc-q").forEach(q => q.addEventListener("click", () => q.parentElement.classList.toggle("open")));
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بيت الخط: ورشة خط عربي</title>
+<link rel="stylesheet" href="style.css">
+<script src="main.js" defer></script>
+</head>
+<body>
+<div class="cursor" aria-hidden="true"></div>
+<header class="header">
+  <a class="logo" href="#">بيت الخط</a>
+  <nav class="links" aria-label="القايمة الرئيسية">
+    <a href="#courses">الكورسات</a>
+    <a href="#faq">أسئلة</a>
+    <a href="#join">احجز</a>
+  </nav>
+  <button type="button" class="menu-btn" aria-label="افتح القايمة" aria-haspopup="dialog">☰</button>
+  <dialog class="drawer" id="drawer" aria-label="القايمة">
+    <nav aria-label="القايمة على الموبايل">
+      <a href="#courses">الكورسات</a>
+      <a href="#faq">أسئلة</a>
+      <a href="#join">احجز</a>
+    </nav>
+    <form method="dialog"><button class="drawer-close" aria-label="اقفل القايمة">✕</button></form>
+  </dialog>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>اتعلّم الرقعة والنسخ في ٨ أسابيع</h1>
+    <p>مجموعات صغيرة، وأدوات علينا، وكراسة بتاخدها معاك.</p>
+    <a class="btn" href="#join">احجز مكانك</a>
+  </section>
+
+  <section class="partners" aria-labelledby="partners-t">
+    <h2 id="partners-t" class="sr-only">شركاؤنا</h2>
+    <button type="button" class="pause" aria-pressed="false">وقّف الحركة</button>
+    <div class="marquee">
+      <ul class="track">
+        <li>مكتبة الورّاق</li><li>دار الحبر</li><li>جمعية الفنون</li><li>مرسم النيل</li><li>ورق وقلم</li>
+        <li aria-hidden="true">مكتبة الورّاق</li><li aria-hidden="true">دار الحبر</li><li aria-hidden="true">جمعية الفنون</li><li aria-hidden="true">مرسم النيل</li><li aria-hidden="true">ورق وقلم</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="courses" class="section">
+    <h2>الكورسات</h2>
+    <ul class="cards">
+      <li class="card"><h3>رقعة للمبتدئين</h3><p class="small">٨ حصص، كل سبت، ١٢٠٠ ج</p></li>
+      <li class="card"><h3>نسخ</h3><p class="small">١٠ حصص، كل اتنين، ١٥٠٠ ج</p></li>
+      <li class="card"><h3>ثلث متقدم</h3><p class="small">١٢ حصة، كل أربع، ٢٠٠٠ ج</p></li>
+    </ul>
+  </section>
+
+  <section id="faq" class="section">
+    <h2>أسئلة</h2>
+    <div class="acc">
+      <h3><button type="button" class="acc-q" aria-expanded="false" aria-controls="a1">لازم أكون بعرف أرسم؟</button></h3>
+      <div class="acc-a" id="a1" hidden>لأ، بنبدأ من مسكة القلم.</div>
+    </div>
+    <div class="acc">
+      <h3><button type="button" class="acc-q" aria-expanded="false" aria-controls="a2">الأدوات عليا؟</button></h3>
+      <div class="acc-a" id="a2" hidden>لأ، القلم والحبر والورق علينا في أول شهر.</div>
+    </div>
+  </section>
+
+  <section id="join" class="section">
+    <h2>احجز</h2>
+    <p>كلّمنا وهنرد في نفس اليوم.</p>
+    <ul class="social">
+      <li><a href="#"><span aria-hidden="true">📞</span> اتصل بينا</a></li>
+      <li><a href="#"><span aria-hidden="true">💬</span> واتساب</a></li>
+      <li><a href="#"><span aria-hidden="true">📍</span> العنوان على الخريطة</a></li>
+    </ul>
+  </section>
+</main>
+<footer class="footer"><p class="small">بيت الخط، ورشة متخيلة للتجربة.</p></footer>
+</body>
+</html>
+~~~
+
+~~~css style.css
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #292524; background: #fffbf5; }
+a { color: #9a3412; }
+:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* 3. the ring follows the mouse, but the real cursor stays (no cursor: none) */
+.cursor { position: fixed; top: 0; left: 0; z-index: 50; width: 28px; height: 28px; border: 2px solid #9a3412; border-radius: 50%; pointer-events: none; transition: translate 0.15s ease-out; }
+@media (pointer: coarse) { .cursor { display: none; } }
+
+.header { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; background: #fffbf5; border-block-end: 1px solid #e7e5e4; }
+.logo { font-weight: 800; color: #292524; text-decoration: none; }
+.links { display: flex; gap: 1rem; margin-inline-start: auto; }
+.menu-btn { display: none; margin-inline-start: auto; min-width: 44px; min-height: 44px; border: 0; background: none; color: inherit; font-size: 1.4rem; }
+/* 6. the phone menu is a modal <dialog>: Tab stays inside, Escape closes, focus goes back to ☰ */
+.drawer { margin: 0 0 0 auto; width: min(20rem, 85vw); height: 100dvh; max-height: none; padding: 4rem 1.5rem; border: 0; background: #fff; box-shadow: 0 0 30px #0003; }
+.drawer nav { display: grid; gap: 1rem; }
+.drawer::backdrop { background: rgb(0 0 0 / 0.4); }
+.drawer-close { position: absolute; top: 1rem; inset-inline-start: 1rem; min-width: 44px; min-height: 44px; border: 0; background: none; color: inherit; font-size: 1.2rem; }
+@media (max-width: 40rem) {
+  .links { display: none; }
+  .menu-btn { display: block; }
+}
+
+.hero { padding: 4rem 1rem; text-align: center; background: linear-gradient(#fde7d1, #fffbf5); }
+.hero h1 { margin: 0 0 0.5rem; font-size: clamp(1.8rem, 1.2rem + 3vw, 3rem); }
+.btn { display: inline-block; padding: 0.7rem 1.4rem; border-radius: 999px; background: #9a3412; color: #fff; text-decoration: none; font-weight: 700; }
+
+/* 2. the marquee: a pause button, and it also stops on hover and while focus is inside */
+.partners { position: relative; overflow: hidden; padding-block: 1rem; background: #292524; color: #fafaf9; }
+.pause { position: absolute; inset-inline-end: 0.5rem; top: 50%; translate: 0 -50%; z-index: 1; padding: 0.3rem 0.8rem; border: 1px solid #fafaf9; border-radius: 999px; background: #292524; color: #fafaf9; font: inherit; font-size: 0.875rem; }
+.track { display: flex; gap: 3rem; width: max-content; margin: 0; padding: 0; list-style: none; animation: slide 18s linear infinite; }
+.partners:hover .track, .partners:focus-within .track, .partners.paused .track { animation-play-state: paused; }
+@keyframes slide { to { translate: 50% 0; } }
+
+.section { max-width: 52rem; margin: 0 auto; padding: 2.5rem 1rem; }
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: 1.25rem; background: #fff; border: 1px solid #e7e5e4; border-radius: 1rem; }
+.card h3 { margin: 0 0 0.25rem; }
+/* 4. 10px #b8b0a8 (2.1:1) -> 0.875rem #57534e */
+.small { margin: 0; font-size: 0.875rem; color: #57534e; }
+
+/* 5. the accordion question is a real button inside a heading */
+.acc { border-block-end: 1px solid #e7e5e4; }
+.acc h3 { margin: 0; }
+.acc-q { display: flex; justify-content: space-between; width: 100%; padding: 0.75rem 0; border: 0; background: none; color: inherit; font: inherit; font-weight: 700; text-align: start; }
+.acc-q::after { content: "+"; }
+.acc-q[aria-expanded="true"]::after { content: "−"; }
+.acc-a { padding-block-end: 0.75rem; }
+
+/* 8. every link has words; the emoji is decoration */
+.social { display: flex; flex-wrap: wrap; gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.social a { display: inline-flex; gap: 0.4rem; align-items: center; padding: 0.4rem 0.9rem; border: 1px solid #d6d3d1; border-radius: 999px; text-decoration: none; }
+.footer { padding: 1.5rem 1rem; text-align: center; border-block-start: 1px solid #e7e5e4; }
+
+/* 7. reduced motion: no marquee (a plain row), no smooth scroll, no cursor ring */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .track { animation: none; flex-wrap: wrap; width: auto; gap: 0.5rem 2rem; padding-inline: 1rem; }
+  .track [aria-hidden="true"], .pause, .cursor { display: none; }
+}
+~~~
+
+~~~js main.js
+// 3. the ring follows the mouse (decoration only: the system cursor is still there)
+const cursor = document.querySelector(".cursor");
+addEventListener("mousemove", e => { cursor.style.translate = (e.clientX - 14) + "px " + (e.clientY - 14) + "px"; });
+
+// 6. phone menu: a modal dialog, so the browser keeps focus inside and Escape closes it
+const drawer = document.getElementById("drawer");
+document.querySelector(".menu-btn").addEventListener("click", () => drawer.showModal());
+drawer.querySelectorAll("nav a").forEach(a => a.addEventListener("click", () => drawer.close()));
+
+// 2. pause the marquee (WCAG 2.2.2): the button says its state with aria-pressed
+const partners = document.querySelector(".partners");
+const pause = document.querySelector(".pause");
+pause.addEventListener("click", () => {
+  const paused = pause.getAttribute("aria-pressed") !== "true";
+  pause.setAttribute("aria-pressed", String(paused));
+  pause.textContent = paused ? "شغّل الحركة" : "وقّف الحركة";
+  partners.classList.toggle("paused", paused);
+});
+
+// 5. accordion: aria-expanded on the button, hidden on the answer it controls
+document.querySelectorAll(".acc-q").forEach(btn => btn.addEventListener("click", () => {
+  const open = btn.getAttribute("aria-expanded") !== "true";
+  btn.setAttribute("aria-expanded", String(open));
+  document.getElementById(btn.getAttribute("aria-controls")).hidden = !open;
+}));
+~~~
+
+~~~js check.mjs
+// node check.mjs <base-url>: measures the 8 problems on before.html and index.html
+import { chromium } from "playwright-core";
+import AxeBuilder from "@axe-core/playwright";
+const base = process.argv[2] || "http://localhost:8813/landing-audit/";
+const TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
+
+// WCAG contrast from two "rgb(r, g, b)" strings
+const lum = c => { const [r, g, b] = c.match(/\d+(\.\d+)?/g).slice(0, 3).map(Number).map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return ((x + 0.05) / (y + 0.05)).toFixed(2); };
+
+const browser = await chromium.launch({ channel: "chrome" });
+for (const file of ["before.html", "index.html"]) {
+  console.log("\n=== " + file);
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  const page = await ctx.newPage();
+  await page.goto(base + file);
+
+  const axe = await new AxeBuilder({ page }).withTags(TAGS).analyze();
+  const axeMain = await new AxeBuilder({ page }).include("main").withTags(TAGS).analyze();
+  const cc = r => (r.violations.find(v => v.id === "color-contrast")?.nodes.length ?? 0);
+  console.log("axe الصفحة كلها: " + axe.violations.length + " violations (color-contrast " + cc(axe) + ")" + " | axe على main بس: " + axeMain.violations.map(v => v.id + ":" + v.nodes.length).join(", "));
+
+  // 1. aria-label language
+  console.log("1. aria-labels: " + (await page.$$eval("[aria-label]", els => els.map(e => e.getAttribute("aria-label")))).join(" | "));
+
+  // 2. marquee: can it be paused?
+  const pauseBtn = await page.$(".pause");
+  if (pauseBtn) { await pauseBtn.click(); await page.mouse.move(5, 790); }
+  console.log("2. marquee: زرار وقوف " + (pauseBtn ? "موجود" : "مش موجود") + " | الحركة بعد الضغط: " + await page.$eval(".track", t => t.getAnimations()[0]?.playState));
+
+  // 3. cursor
+  console.log("3. cursor على body و .btn: " + await page.$eval("body", e => getComputedStyle(e).cursor) + " و " + await page.$eval(".btn", e => getComputedStyle(e).cursor));
+
+  // 4. small text
+  const sm = await page.$eval(".card .small", e => { const cs = getComputedStyle(e); return { size: cs.fontSize, fg: cs.color, bg: getComputedStyle(e.closest(".card")).backgroundColor }; });
+  console.log("4. .small: " + sm.size + "، تباين " + ratio(sm.fg, sm.bg));
+
+  // 5. accordion by keyboard
+  const accFocusable = await page.$eval(".acc-q", e => e.tabIndex >= 0);
+  let acc = "مش بيتوصل بـ Tab";
+  if (accFocusable) { await page.focus(".acc-q"); await page.keyboard.press("Enter"); acc = "Enter: aria-expanded=" + await page.$eval(".acc-q", e => e.getAttribute("aria-expanded")) + " والإجابة hidden=" + await page.$eval("#a1", e => e.hidden) + " | aria-controls=" + await page.$eval(".acc-q", e => e.getAttribute("aria-controls")); }
+  console.log("5. accordion: " + acc);
+
+  // 6. phone menu: Tab 6 times after opening, is focus still inside?
+  await page.setViewportSize({ width: 375, height: 700 });
+  await page.focus(".menu-btn"); await page.keyboard.press("Enter"); await page.waitForTimeout(200);
+  const where = [];
+  for (let i = 0; i < 6; i++) { await page.keyboard.press("Tab"); where.push(await page.evaluate(() => (document.activeElement === document.body ? "المتصفح" : document.activeElement.closest("#drawer") ? "جوه" : "برّه:" + document.activeElement.textContent.trim().slice(0, 12)))); }
+  await page.keyboard.press("Escape"); await page.waitForTimeout(200);
+  console.log("6. المنيو: " + where.join(" ← ") + " | بعد Escape الـ focus على: " + await page.evaluate(() => document.activeElement.className || document.activeElement.tagName));
+  await page.setViewportSize({ width: 1280, height: 800 });
+
+  // 7. reduced motion
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  console.log("7. reduce: animation-name=" + await page.$eval(".track", e => getComputedStyle(e).animationName) + " | scroll-behavior=" + await page.$eval("html", e => getComputedStyle(e).scrollBehavior));
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+
+  // 8. emoji links: the accessibility tree
+  console.log("8. اللينكات:\n" + (await page.locator("#join").ariaSnapshot()).split("\n").filter(l => l.includes("link")).join("\n"));
+
+  await page.screenshot({ path: "shots/" + file.replace(".html", "") + ".png", fullPage: true });
+  await ctx.close();
+}
+await browser.close();
+~~~
+
+~~~text REPORT.md
+# بيت الخط: مراجعة الـ accessibility
+
+$__btbefore.html$__bt قبل، و $__btindex.html$__bt بعد. القياس كله من $__btnode check.mjs$__bt (Chrome 157، axe-core 4.14.0)، واللقطات في $__btshots/$__bt.
+
+## الملخص
+
+axe على الصفحة كلها قال **0** قبل وبعد. يعني axe لوحده كان هيقول إن الصفحة البايظة سليمة. ٧ من الـ ٨ مشاكل اتمسكوا يدوي، والتامنة (التباين) axe مسكها بس لما اتشغّل على $__btmain$__bt لوحده (السبب تحت).
+
+| # | المشكلة | اتمسكت إزاي | بند WCAG | قبل | بعد |
+|---|---|---|---|---|---|
+| ١ | $__btaria-label$__bt إنجليزي في صفحة عربي | يدوي: لستة كل $__bt[aria-label]$__bt | 3.1.2 Language of Parts | Main menu، Open menu، Close، Partners | القايمة الرئيسية، افتح القايمة، اقفل القايمة… |
+| ٢ | marquee شغال على طول من غير وقوف | يدوي | 2.2.2 Pause, Stop, Hide | مفيش زرار، والحركة $__btrunning$__bt | زرار «وقّف الحركة» ($__btaria-pressed$__bt)، والحركة $__btpaused$__bt |
+| ٣ | $__btcursor: none$__bt بمؤشر مخصص | يدوي: $__btgetComputedStyle().cursor$__bt | مفيش بند مباشر: اللي مكبّر مؤشر الويندوز أو لونه بيخسره | $__btnone$__bt | $__btauto$__bt و $__btpointer$__bt، والدايرة زينة بس |
+| ٤ | كلام 10px باهت | axe على $__btmain$__bt بس، والحساب بإيدك | 1.4.3 Contrast | 10px، تباين 2.14 | 14px، تباين 7.63 |
+| ٥ | accordion $__btdiv$__bt بيتفتح بالماوس بس، من غير $__btaria-expanded$__bt ولا $__btaria-controls$__bt | يدوي: Tab مبيوصلش | 2.1.1 Keyboard، 4.1.2 Name, Role, Value | مش بيتوصل بـ Tab | $__bt<button aria-expanded aria-controls>$__bt جوه $__bt<h3>$__bt، و Enter بيفتح |
+| ٦ | منيو الموبايل مبيحبسش الـ focus | يدوي: Tab ٦ مرات بعد الفتح | 2.4.3 Focus Order | جوه ×٤ ← «احجز مكانك» ← 📞 (ورا المنيو) | $__bt<dialog>$__bt بـ $__btshowModal()$__bt: جوه ← المتصفح ← جوه، و Escape بيرجّع للزرار |
+| ٧ | مفيش $__btprefers-reduced-motion$__bt | يدوي: $__btemulateMedia({ reducedMotion: "reduce" })$__bt | 2.3.3 Animation from Interactions (AAA)، و 2.2.2 | $__btslide$__bt و $__btsmooth$__bt | $__btnone$__bt و $__btauto$__bt |
+| ٨ | لينكات emoji بس | يدوي: شجرة الـ accessibility | 2.4.4 Link Purpose | $__btlink "📞"$__bt، $__btlink "💬"$__bt، $__btlink "📍"$__bt | $__btlink "اتصل بينا"$__bt، $__btlink "واتساب"$__bt، $__btlink "العنوان على الخريطة"$__bt |
+
+## ليه axe قال 0 على صفحة فيها تباين 2.14
+
+axe بيحاول يعرف الخطوط بتاعة الأيقونات (زي Material Icons) عشان مايقيسش تباينها: بيرسم الكلمة على canvas ويقارن. الحروف العربي المتوصلة بتطلع زي «ligature»، فـ axe بيعلّم «بيت الخط» و «الكورسات» و «أسئلة» إنهم أيقونات. وبعد ٣ مرات في نفس الخط، بيعتبر الخط كله ($__btsystem-ui…$__bt) خط أيقونات ويتخطى **كل** الكلام اللي بيه. فـ $__btcolor-contrast$__bt بتطلع $__btinapplicable$__bt للصفحة كلها.
+
+اتأكدت من ده بـ $__btaxe.commons.text.isIconLigature()$__bt على كل نص في الصفحة: أول ٣ نصوص عربي $__btICON$__bt. والتشغيل على $__btmain$__bt بس بيبدأ العد من جديد، فمسك الكارت الأول والتالت (2.13) وفاته التاني، والفوتر برّه $__btmain$__bt أصلًا.
+
+**الدرس:** على صفحة عربي، صفر في $__btcolor-contrast$__bt مش معناه إن التباين كويس. احسبه بنفسك (زي $__btcheck.mjs$__bt).
+~~~
+
+~~~view 760 900 بعد التصليح
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بيت الخط: ورشة خط عربي</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #292524; background: #fffbf5; }
+a { color: #9a3412; }
+:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* 3. the ring follows the mouse, but the real cursor stays (no cursor: none) */
+.cursor { position: fixed; top: 0; left: 0; z-index: 50; width: 28px; height: 28px; border: 2px solid #9a3412; border-radius: 50%; pointer-events: none; transition: translate 0.15s ease-out; }
+@media (pointer: coarse) { .cursor { display: none; } }
+
+.header { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; background: #fffbf5; border-block-end: 1px solid #e7e5e4; }
+.logo { font-weight: 800; color: #292524; text-decoration: none; }
+.links { display: flex; gap: 1rem; margin-inline-start: auto; }
+.menu-btn { display: none; margin-inline-start: auto; min-width: 44px; min-height: 44px; border: 0; background: none; color: inherit; font-size: 1.4rem; }
+/* 6. the phone menu is a modal <dialog>: Tab stays inside, Escape closes, focus goes back to ☰ */
+.drawer { margin: 0 0 0 auto; width: min(20rem, 85vw); height: 100dvh; max-height: none; padding: 4rem 1.5rem; border: 0; background: #fff; box-shadow: 0 0 30px #0003; }
+.drawer nav { display: grid; gap: 1rem; }
+.drawer::backdrop { background: rgb(0 0 0 / 0.4); }
+.drawer-close { position: absolute; top: 1rem; inset-inline-start: 1rem; min-width: 44px; min-height: 44px; border: 0; background: none; color: inherit; font-size: 1.2rem; }
+@media (max-width: 40rem) {
+  .links { display: none; }
+  .menu-btn { display: block; }
+}
+
+.hero { padding: 4rem 1rem; text-align: center; background: linear-gradient(#fde7d1, #fffbf5); }
+.hero h1 { margin: 0 0 0.5rem; font-size: clamp(1.8rem, 1.2rem + 3vw, 3rem); }
+.btn { display: inline-block; padding: 0.7rem 1.4rem; border-radius: 999px; background: #9a3412; color: #fff; text-decoration: none; font-weight: 700; }
+
+/* 2. the marquee: a pause button, and it also stops on hover and while focus is inside */
+.partners { position: relative; overflow: hidden; padding-block: 1rem; background: #292524; color: #fafaf9; }
+.pause { position: absolute; inset-inline-end: 0.5rem; top: 50%; translate: 0 -50%; z-index: 1; padding: 0.3rem 0.8rem; border: 1px solid #fafaf9; border-radius: 999px; background: #292524; color: #fafaf9; font: inherit; font-size: 0.875rem; }
+.track { display: flex; gap: 3rem; width: max-content; margin: 0; padding: 0; list-style: none; animation: slide 18s linear infinite; }
+.partners:hover .track, .partners:focus-within .track, .partners.paused .track { animation-play-state: paused; }
+@keyframes slide { to { translate: 50% 0; } }
+
+.section { max-width: 52rem; margin: 0 auto; padding: 2.5rem 1rem; }
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: 1.25rem; background: #fff; border: 1px solid #e7e5e4; border-radius: 1rem; }
+.card h3 { margin: 0 0 0.25rem; }
+/* 4. 10px #b8b0a8 (2.1:1) -> 0.875rem #57534e */
+.small { margin: 0; font-size: 0.875rem; color: #57534e; }
+
+/* 5. the accordion question is a real button inside a heading */
+.acc { border-block-end: 1px solid #e7e5e4; }
+.acc h3 { margin: 0; }
+.acc-q { display: flex; justify-content: space-between; width: 100%; padding: 0.75rem 0; border: 0; background: none; color: inherit; font: inherit; font-weight: 700; text-align: start; }
+.acc-q::after { content: "+"; }
+.acc-q[aria-expanded="true"]::after { content: "−"; }
+.acc-a { padding-block-end: 0.75rem; }
+
+/* 8. every link has words; the emoji is decoration */
+.social { display: flex; flex-wrap: wrap; gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.social a { display: inline-flex; gap: 0.4rem; align-items: center; padding: 0.4rem 0.9rem; border: 1px solid #d6d3d1; border-radius: 999px; text-decoration: none; }
+.footer { padding: 1.5rem 1rem; text-align: center; border-block-start: 1px solid #e7e5e4; }
+
+/* 7. reduced motion: no marquee (a plain row), no smooth scroll, no cursor ring */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .track { animation: none; flex-wrap: wrap; width: auto; gap: 0.5rem 2rem; padding-inline: 1rem; }
+  .track [aria-hidden="true"], .pause, .cursor { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="cursor" aria-hidden="true"></div>
+<header class="header">
+  <a class="logo" href="#">بيت الخط</a>
+  <nav class="links" aria-label="القايمة الرئيسية">
+    <a href="#courses">الكورسات</a>
+    <a href="#faq">أسئلة</a>
+    <a href="#join">احجز</a>
+  </nav>
+  <button type="button" class="menu-btn" aria-label="افتح القايمة" aria-haspopup="dialog">☰</button>
+  <dialog class="drawer" id="drawer" aria-label="القايمة">
+    <nav aria-label="القايمة على الموبايل">
+      <a href="#courses">الكورسات</a>
+      <a href="#faq">أسئلة</a>
+      <a href="#join">احجز</a>
+    </nav>
+    <form method="dialog"><button class="drawer-close" aria-label="اقفل القايمة">✕</button></form>
+  </dialog>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>اتعلّم الرقعة والنسخ في ٨ أسابيع</h1>
+    <p>مجموعات صغيرة، وأدوات علينا، وكراسة بتاخدها معاك.</p>
+    <a class="btn" href="#join">احجز مكانك</a>
+  </section>
+
+  <section class="partners" aria-labelledby="partners-t">
+    <h2 id="partners-t" class="sr-only">شركاؤنا</h2>
+    <button type="button" class="pause" aria-pressed="false">وقّف الحركة</button>
+    <div class="marquee">
+      <ul class="track">
+        <li>مكتبة الورّاق</li><li>دار الحبر</li><li>جمعية الفنون</li><li>مرسم النيل</li><li>ورق وقلم</li>
+        <li aria-hidden="true">مكتبة الورّاق</li><li aria-hidden="true">دار الحبر</li><li aria-hidden="true">جمعية الفنون</li><li aria-hidden="true">مرسم النيل</li><li aria-hidden="true">ورق وقلم</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="courses" class="section">
+    <h2>الكورسات</h2>
+    <ul class="cards">
+      <li class="card"><h3>رقعة للمبتدئين</h3><p class="small">٨ حصص، كل سبت، ١٢٠٠ ج</p></li>
+      <li class="card"><h3>نسخ</h3><p class="small">١٠ حصص، كل اتنين، ١٥٠٠ ج</p></li>
+      <li class="card"><h3>ثلث متقدم</h3><p class="small">١٢ حصة، كل أربع، ٢٠٠٠ ج</p></li>
+    </ul>
+  </section>
+
+  <section id="faq" class="section">
+    <h2>أسئلة</h2>
+    <div class="acc">
+      <h3><button type="button" class="acc-q" aria-expanded="false" aria-controls="a1">لازم أكون بعرف أرسم؟</button></h3>
+      <div class="acc-a" id="a1" hidden>لأ، بنبدأ من مسكة القلم.</div>
+    </div>
+    <div class="acc">
+      <h3><button type="button" class="acc-q" aria-expanded="false" aria-controls="a2">الأدوات عليا؟</button></h3>
+      <div class="acc-a" id="a2" hidden>لأ، القلم والحبر والورق علينا في أول شهر.</div>
+    </div>
+  </section>
+
+  <section id="join" class="section">
+    <h2>احجز</h2>
+    <p>كلّمنا وهنرد في نفس اليوم.</p>
+    <ul class="social">
+      <li><a href="#"><span aria-hidden="true">📞</span> اتصل بينا</a></li>
+      <li><a href="#"><span aria-hidden="true">💬</span> واتساب</a></li>
+      <li><a href="#"><span aria-hidden="true">📍</span> العنوان على الخريطة</a></li>
+    </ul>
+  </section>
+</main>
+<footer class="footer"><p class="small">بيت الخط، ورشة متخيلة للتجربة.</p></footer>
+<script>
+// 3. the ring follows the mouse (decoration only: the system cursor is still there)
+const cursor = document.querySelector(".cursor");
+addEventListener("mousemove", e => { cursor.style.translate = (e.clientX - 14) + "px " + (e.clientY - 14) + "px"; });
+
+// 6. phone menu: a modal dialog, so the browser keeps focus inside and Escape closes it
+const drawer = document.getElementById("drawer");
+document.querySelector(".menu-btn").addEventListener("click", () => drawer.showModal());
+drawer.querySelectorAll("nav a").forEach(a => a.addEventListener("click", () => drawer.close()));
+
+// 2. pause the marquee (WCAG 2.2.2): the button says its state with aria-pressed
+const partners = document.querySelector(".partners");
+const pause = document.querySelector(".pause");
+pause.addEventListener("click", () => {
+  const paused = pause.getAttribute("aria-pressed") !== "true";
+  pause.setAttribute("aria-pressed", String(paused));
+  pause.textContent = paused ? "شغّل الحركة" : "وقّف الحركة";
+  partners.classList.toggle("paused", paused);
+});
+
+// 5. accordion: aria-expanded on the button, hidden on the answer it controls
+document.querySelectorAll(".acc-q").forEach(btn => btn.addEventListener("click", () => {
+  const open = btn.getAttribute("aria-expanded") !== "true";
+  btn.setAttribute("aria-expanded", String(open));
+  document.getElementById(btn.getAttribute("aria-controls")).hidden = !open;
+}));
+</script>
+</body>
+</html>
+~~~
+
+~~~view 760 900 قبل
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بيت الخط: ورشة خط عربي</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #292524; background: #fffbf5; cursor: none; }
+a, button { cursor: none; }
+a { color: #9a3412; }
+
+.cursor { position: fixed; top: 0; left: 0; z-index: 50; width: 28px; height: 28px; border: 2px solid #9a3412; border-radius: 50%; pointer-events: none; transition: translate 0.15s ease-out; }
+
+.header { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; background: #fffbf5; border-block-end: 1px solid #e7e5e4; }
+.logo { font-weight: 800; color: #292524; text-decoration: none; }
+.links { display: flex; gap: 1rem; margin-inline-start: auto; }
+.menu-btn { display: none; margin-inline-start: auto; border: 0; background: none; font-size: 1.4rem; }
+.drawer { display: none; position: fixed; inset: 0 0 0 30%; padding: 4rem 1.5rem; background: #fff; box-shadow: 0 0 30px #0003; flex-direction: column; gap: 1rem; }
+.drawer.open { display: flex; }
+.drawer-close { position: absolute; top: 1rem; inset-inline-start: 1rem; border: 0; background: none; font-size: 1.2rem; }
+@media (max-width: 40rem) {
+  .links { display: none; }
+  .menu-btn { display: block; }
+}
+
+.hero { padding: 4rem 1rem; text-align: center; background: linear-gradient(#fde7d1, #fffbf5); }
+.hero h1 { margin: 0 0 0.5rem; font-size: clamp(1.8rem, 1.2rem + 3vw, 3rem); }
+.btn { display: inline-block; padding: 0.7rem 1.4rem; border-radius: 999px; background: #9a3412; color: #fff; text-decoration: none; font-weight: 700; }
+
+.partners { overflow: hidden; padding-block: 1rem; background: #292524; color: #fafaf9; }
+.track { display: flex; gap: 3rem; width: max-content; margin: 0; padding: 0; list-style: none; animation: slide 18s linear infinite; }
+@keyframes slide { to { translate: 50% 0; } }
+
+.section { max-width: 52rem; margin: 0 auto; padding: 2.5rem 1rem; }
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: 1.25rem; background: #fff; border: 1px solid #e7e5e4; border-radius: 1rem; }
+.card h3 { margin: 0 0 0.25rem; }
+.small { margin: 0; font-size: 10px; color: #b8b0a8; }
+
+.acc { border-block-end: 1px solid #e7e5e4; }
+.acc-q { padding: 0.75rem 0; font-weight: 700; }
+.acc-a { display: none; padding-block-end: 0.75rem; }
+.acc.open .acc-a { display: block; }
+
+.social { display: flex; gap: 1rem; font-size: 1.6rem; }
+.social a { text-decoration: none; }
+.footer { padding: 1.5rem 1rem; text-align: center; border-block-start: 1px solid #e7e5e4; }
+</style>
+</head>
+<body>
+<div class="cursor" aria-hidden="true"></div>
+<header class="header">
+  <a class="logo" href="#">بيت الخط</a>
+  <nav class="links" aria-label="Main menu">
+    <a href="#courses">الكورسات</a>
+    <a href="#faq">أسئلة</a>
+    <a href="#join">احجز</a>
+  </nav>
+  <button class="menu-btn" aria-label="Open menu">☰</button>
+  <div class="drawer" id="drawer">
+    <a href="#courses">الكورسات</a>
+    <a href="#faq">أسئلة</a>
+    <a href="#join">احجز</a>
+    <button class="drawer-close" aria-label="Close">✕</button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>اتعلّم الرقعة والنسخ في ٨ أسابيع</h1>
+    <p>مجموعات صغيرة، وأدوات علينا، وكراسة بتاخدها معاك.</p>
+    <a class="btn" href="#join">احجز مكانك</a>
+  </section>
+
+  <section class="partners" aria-label="Partners">
+    <div class="marquee">
+      <ul class="track">
+        <li>مكتبة الورّاق</li><li>دار الحبر</li><li>جمعية الفنون</li><li>مرسم النيل</li><li>ورق وقلم</li>
+        <li>مكتبة الورّاق</li><li>دار الحبر</li><li>جمعية الفنون</li><li>مرسم النيل</li><li>ورق وقلم</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="courses" class="section">
+    <h2>الكورسات</h2>
+    <ul class="cards">
+      <li class="card"><h3>رقعة للمبتدئين</h3><p class="small">٨ حصص، كل سبت، ١٢٠٠ ج</p></li>
+      <li class="card"><h3>نسخ</h3><p class="small">١٠ حصص، كل اتنين، ١٥٠٠ ج</p></li>
+      <li class="card"><h3>ثلث متقدم</h3><p class="small">١٢ حصة، كل أربع، ٢٠٠٠ ج</p></li>
+    </ul>
+  </section>
+
+  <section id="faq" class="section">
+    <h2>أسئلة</h2>
+    <div class="acc">
+      <div class="acc-q">لازم أكون بعرف أرسم؟</div>
+      <div class="acc-a">لأ، بنبدأ من مسكة القلم.</div>
+    </div>
+    <div class="acc">
+      <div class="acc-q">الأدوات عليا؟</div>
+      <div class="acc-a">لأ، القلم والحبر والورق علينا في أول شهر.</div>
+    </div>
+  </section>
+
+  <section id="join" class="section">
+    <h2>احجز</h2>
+    <p>كلّمنا وهنرد في نفس اليوم.</p>
+    <div class="social">
+      <a href="#">📞</a>
+      <a href="#">💬</a>
+      <a href="#">📍</a>
+    </div>
+  </section>
+</main>
+<footer class="footer"><p class="small">بيت الخط، ورشة متخيلة للتجربة.</p></footer>
+<script>
+// custom cursor follows the mouse
+const cursor = document.querySelector(".cursor");
+addEventListener("mousemove", e => { cursor.style.translate = (e.clientX - 14) + "px " + (e.clientY - 14) + "px"; });
+
+// phone menu: opens and closes, nothing else
+const drawer = document.getElementById("drawer");
+document.querySelector(".menu-btn").addEventListener("click", () => drawer.classList.add("open"));
+document.querySelector(".drawer-close").addEventListener("click", () => drawer.classList.remove("open"));
+
+// accordion: click on the question
+document.querySelectorAll(".acc-q").forEach(q => q.addEventListener("click", () => q.parentElement.classList.toggle("open")));
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** النسختين قريبين جدًا في الشكل: هيدر، وهيرو «اتعلّم الرقعة والنسخ»، وشريط أسود بأسامي الشركا بيتحرك، و ٣ كروت، وأسئلة، ولينكات تواصل. الفرق: في «بعد» الكلام الصغير غامق ومقري، وفيه زرار «وقّف الحركة»، والأسئلة بتتفتح بالكيبورد، ولينكات التواصل فيها كلام جنب الـ emoji، والماوس العادي باين.
+
+**أهم حاجة في المشروع: axe قال ٠ على الصفحة البايظة.** قبل وبعد، [[color-contrast]] طلعت [[inapplicable]] للصفحة كلها، مع إن الكلام الصغير تباينه 2.14. دوّرت ولقيت السبب بالترتيب ده:
+1. صفحة صغيرة فيها [[<p style="color:#aaa">]] عربي: axe مسكها. يبقى المشكلة في حاجة في صفحتي.
+2. شيلت أجزاء من الصفحة واحد واحد: لما الهيدر اتشال، axe رجع يقيس. وجوه الهيدر: لو اللوجو أو الـ nav اتشال، أو كلامهم بقى إنجليزي، axe بيقيس.
+3. القاعدة اتشغّلت ومطلعتش غلط: [[matches]] رجّعت [[false]] للـ 69 عنصر. والسطر اللي بيرجّع [[false]] هو [[hasRealTextChildren]].
+4. جواها [[isIconLigature]]: axe بيرسم الكلمة على canvas عشان يعرف خطوط الأيقونات. الحروف العربي المتوصلة بتتحسب ligature. وبعد ٣ مرات في نفس الخط، كل الكلام بالخط ده بيتعتبر أيقونات ويتساب.
+
+الحل العملي: احسب التباين بنفسك ([[check.mjs]] بيعمله، ومشروع «أداة فحص بتاعتك» تحت أداة لده). وتشغيل axe على [[main]] لوحده مسك كارتين من ٣، فده مش حل كفاية.
+
+**التصليحات بالترتيب اللي في الكود ([[style.css]] متعلّم عليه بالأرقام):**
+- **١:** كل [[aria-label]] بالعربي، زي كلام الصفحة. قارئ الشاشة بينطق الكلام بلغة الصفحة، فـ «Open menu» بالنطق العربي بتطلع حاجة غريبة.
+- **٢:** زرار [[aria-pressed]] بيوقّف الحركة، وكمان [[:hover]] و [[:focus-within]]. والنسخة التانية من الأسامي (عشان اللفة متقطعش) [[aria-hidden]]، فالقارئ مبيقراش كل اسم مرتين.
+- **٣:** شيلت [[cursor: none]]. الدايرة فضلت زينة بس، والمؤشر الحقيقي باين، ومع اللمس الدايرة مش موجودة.
+- **٤:** الكلام الصغير بقى 0.875rem و [[#57534e]].
+- **٥:** السؤال بقى [[<button aria-expanded aria-controls>]] جوه [[<h3>]]. ده نمط accordion في APG: العنوان بيفضل عنوان، والزرار بيقول مفتوح ولا مقفول.
+- **٦:** المنيو بقت [[<dialog>]] بـ [[showModal()]]. المتصفح بيحبس الـ Tab جواها، و Escape بيقفلها، والـ focus بيرجع لزرار ☰.
+- **٧:** [[@media (prefers-reduced-motion: reduce)]]: مفيش حركة، والأسامي بقت صف عادي، والـ scroll مبقاش smooth.
+- **٨:** كل لينك فيه كلام، والـ emoji [[aria-hidden]] للزينة.
+
+~~~text node check.mjs (Chrome 157، axe-core 4.14.0)
+=== before.html
+axe الصفحة كلها: 0 violations (color-contrast 0) | axe على main بس: color-contrast:2
+1. aria-labels: Main menu | Open menu | Close | Partners
+2. marquee: زرار وقوف مش موجود | الحركة بعد الضغط: running
+3. cursor على body و .btn: none و none
+4. .small: 10px، تباين 2.14
+5. accordion: مش بيتوصل بـ Tab
+6. المنيو: جوه ← جوه ← جوه ← جوه ← برّه:احجز مكانك ← برّه:📞 | بعد Escape الـ focus على: A
+7. reduce: animation-name=slide | scroll-behavior=smooth
+8. اللينكات:
+- link "📞"
+- link "💬"
+- link "📍"
+
+=== index.html
+axe الصفحة كلها: 0 violations (color-contrast 0) | axe على main بس:
+1. aria-labels: القايمة الرئيسية | افتح القايمة | القايمة | القايمة على الموبايل | اقفل القايمة
+2. marquee: زرار وقوف موجود | الحركة بعد الضغط: paused
+3. cursor على body و .btn: auto و pointer
+4. .small: 14px، تباين 7.63
+5. accordion: Enter: aria-expanded=true والإجابة hidden=false | aria-controls=a1
+6. المنيو: جوه ← جوه ← جوه ← المتصفح ← جوه ← جوه | بعد Escape الـ focus على: menu-btn
+7. reduce: animation-name=none | scroll-behavior=auto
+8. اللينكات:
+- link "اتصل بينا"
+- link "واتساب"
+- link "العنوان على الخريطة"
+
+السبب في axe (axe.commons.text.isIconLigature على كل نص بالترتيب):
+ICON بيت الخط: ورشة خط عربي   ICON بيت الخط   ICON الكورسات   ICON أسئلة   ICON احجز …
+الـ validator: مفيش رسايل على الصفحتين   CSS validator: No Error Found (الملفين)
+~~~
+
+**«المتصفح» في السطر ٦ مش غلط:** في المنيو المصلّحة، الـ Tab بعد آخر عنصر راح لشريط المتصفح ([[document.activeElement === document.body]]) ورجع جوه. الـ modal بيمنع الصفحة اللي وراه بس، مش المتصفح نفسه. في القديمة الـ Tab الخامس راح لـ «احجز مكانك»، يعني لينك ورا المنيو والمستخدم مش شايفه.
+
+**اللقطات:** [[check.mjs]] بيحفظ لقطة كاملة لكل نسخة في [[shots/]]، وهي اللي في التقرير. قارئ الشاشة نفسه ماتجرّبش: الأسامي من شجرة الـ accessibility.` },
+        { lvl: 'متوسط', dir: "a11y-tests", t: R`اختبارات a11y لأربع مكوّنات`, what: R`Vitest و Testing Library و axe-core لأربع مكوّنات: زرار أيقونة، و Dialog، و Tabs، وفورم تسجيل. كل اختبار بيجيب العناصر بـ [[getByRole]] بالاسم، ويتأكد من الـ focus بعد الفتح والقفل، و [[aria-expanded]] أو [[aria-selected]]، ومفيش violations. ومعاهم jsx-a11y في الـ lint. بيجمع درس jsx-a11y و getByRole مع aria من الوحدة اللي فاتت.`, done: R`كل الاختبارات خضرا، ولو شلت label أو [[aria-expanded]] أو رجّعت الـ focus غلط بيقع اختبار واحد على الأقل برسالة مفهومة، و [[npx eslint .]] صفر errors.`, sol: R`~~~json package.json
+{
+  "name": "a11y-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "react": "19.1.10",
+    "react-dom": "19.1.10"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.8",
+    "@vitejs/plugin-react": "6.2.1",
+    "axe-core": "4.14.0",
+    "eslint": "9.39.5",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "globals": "17.14.0",
+    "jsdom": "30.1.3",
+    "vite": "8.3.6",
+    "vitest": "5.1.0"
+  }
+}
+~~~
+
+**ليه eslint 9 مش 10:** [[eslint-plugin-jsx-a11y@6.10.2]] (آخر نسخة) بيقبل لحد [[eslint ^9]] بس. [[npm]] بيطلّع تحذير إن 9 بقت «no longer supported»، وده مقبول لحد ما الـ plugin يدعم 10.
+
+~~~js vitest.config.js
+import { defineConfig } from "vitest/config";
+import react from "@vitejs/plugin-react";
+
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    environment: "jsdom",
+    setupFiles: ["./src/setup.js"],
+  },
+});
+~~~
+
+~~~js eslint.config.js
+import jsxA11y from "eslint-plugin-jsx-a11y";
+import globals from "globals";
+
+export default [
+  { ignores: ["dist/"] },
+  {
+    files: ["**/*.{js,jsx}"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      parserOptions: { ecmaFeatures: { jsx: true } },
+      globals: { ...globals.browser },
+    },
+  },
+  jsxA11y.flatConfigs.recommended,
+];
+~~~
+
+~~~js src/setup.js
+import "@testing-library/jest-dom/vitest";
+import { afterEach, expect } from "vitest";
+import { cleanup } from "@testing-library/react";
+import axe from "axe-core";
+
+afterEach(cleanup);
+
+// jsdom has no <dialog> methods: just enough to flip "open" and fire "close" like the browser does.
+// The real browser also traps focus; that part can only be tested in a browser (Playwright).
+if (!HTMLDialogElement.prototype.showModal) {
+  HTMLDialogElement.prototype.showModal = function () { this.setAttribute("open", ""); };
+  HTMLDialogElement.prototype.close = function () {
+    if (!this.open) return;
+    this.removeAttribute("open");
+    this.dispatchEvent(new Event("close"));
+  };
+}
+
+// expect(container).toHaveNoA11yViolations(): runs axe and, on failure, names each rule and its first elements
+expect.extend({
+  async toHaveNoA11yViolations(container) {
+    const { violations } = await axe.run(container, {
+      rules: {
+        "color-contrast": { enabled: false },   // jsdom doesn't draw anything: contrast needs a real browser
+        region: { enabled: false },             // a component alone isn't a whole page with landmarks
+      },
+    });
+    return {
+      pass: violations.length === 0,
+      message: () => "axe لقى مشاكل:\n" + violations.map(v => "- " + v.id + ": " + v.help + "\n    " + v.nodes.slice(0, 3).map(n => n.target.join(" ")).join("\n    ")).join("\n"),
+    };
+  },
+});
+~~~
+
+~~~jsx src/IconButton.jsx
+// a button that shows only an icon: the name comes from label, the icon is hidden from screen readers
+export function IconButton({ label, icon, expanded, controls, pressed, onClick }) {
+  return (
+    <button
+      type="button"
+      className="icon-btn"
+      aria-label={label}
+      aria-expanded={expanded}
+      aria-controls={controls}
+      aria-pressed={pressed}
+      onClick={onClick}
+    >
+      <span aria-hidden="true">{icon}</span>
+    </button>
+  );
+}
+~~~
+
+~~~jsx src/IconButton.test.jsx
+import { useState } from "react";
+import { describe, it, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { IconButton } from "./IconButton.jsx";
+
+// a tiny menu that uses the button, the way a real header would
+function Menu() {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <IconButton label="القايمة" icon="☰" expanded={open} controls="nav" onClick={() => setOpen(!open)} />
+      <nav id="nav" aria-label="الأقسام" hidden={!open}><a href="#a">الكورسات</a></nav>
+    </>
+  );
+}
+
+describe("IconButton", () => {
+  it("has a name even though it shows only an icon", () => {
+    render(<IconButton label="المفضّلة" icon="♥" pressed={false} />);
+    expect(screen.getByRole("button", { name: "المفضّلة" })).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("opens and closes the menu, and says so with aria-expanded", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<Menu />);
+    const btn = screen.getByRole("button", { name: "القايمة" });
+
+    expect(btn).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("navigation")).not.toBeInTheDocument();   // hidden = not in the accessibility tree
+
+    await user.click(btn);
+    expect(btn).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("navigation", { name: "الأقسام" })).toBeVisible();
+    await expect(container).toHaveNoA11yViolations();
+
+    await user.keyboard("{Enter}");        // the keyboard closes it too (focus is still on the button)
+    expect(btn).toHaveAttribute("aria-expanded", "false");
+  });
+});
+~~~
+
+~~~jsx src/Dialog.jsx
+import { useEffect, useRef } from "react";
+
+// a modal on top of the native <dialog>: the browser traps Tab and closes on Escape;
+// we put focus on the first field when it opens, and back on the button that opened it when it closes
+export function Dialog({ open, onClose, title, children }) {
+  const ref = useRef(null);
+  const opener = useRef(null);
+
+  useEffect(() => {
+    const dialog = ref.current;
+    if (open && !dialog.open) {
+      opener.current = document.activeElement;
+      dialog.showModal();
+      dialog.querySelector("input, select, textarea, button")?.focus();
+    } else if (!open && dialog.open) {
+      dialog.close();
+    }
+  }, [open]);
+
+  return (
+    <dialog
+      ref={ref}
+      aria-labelledby="dialog-title"
+      onClose={() => { onClose(); opener.current?.focus(); }}
+      onKeyDown={e => { if (e.key === "Escape") { e.preventDefault(); ref.current.close(); } }}
+    >
+      <h2 id="dialog-title">{title}</h2>
+      {children}
+      <button type="button" onClick={() => ref.current.close()}>اقفل</button>
+    </dialog>
+  );
+}
+~~~
+
+~~~jsx src/Dialog.test.jsx
+import { useState } from "react";
+import { describe, it, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { Dialog } from "./Dialog.jsx";
+
+function Page() {
+  const [open, setOpen] = useState(false);
+  return (
+    <main>
+      <h1>الإعدادات</h1>
+      <button type="button" onClick={() => setOpen(true)}>غيّر الاسم</button>
+      <Dialog open={open} onClose={() => setOpen(false)} title="الاسم الجديد">
+        <label htmlFor="new-name">الاسم</label>
+        <input id="new-name" />
+      </Dialog>
+    </main>
+  );
+}
+
+describe("Dialog", () => {
+  it("puts focus inside when it opens, and back on the button when Escape closes it", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<Page />);
+    const opener = screen.getByRole("button", { name: "غيّر الاسم" });
+
+    await user.click(opener);
+    const dialog = screen.getByRole("dialog", { name: "الاسم الجديد" });
+    expect(dialog).toHaveAttribute("open");
+    expect(screen.getByRole("textbox", { name: "الاسم" })).toHaveFocus();
+    await expect(container).toHaveNoA11yViolations();
+
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(opener).toHaveFocus();
+  });
+
+  it("does the same with the close button", async () => {
+    const user = userEvent.setup();
+    render(<Page />);
+    await user.click(screen.getByRole("button", { name: "غيّر الاسم" }));
+    await user.click(screen.getByRole("button", { name: "اقفل" }));
+    expect(screen.getByRole("button", { name: "غيّر الاسم" })).toHaveFocus();
+  });
+});
+~~~
+
+~~~jsx src/Tabs.jsx
+import { useId, useRef, useState } from "react";
+
+// the APG Tabs pattern: one tab stop (roving tabindex), arrows move between tabs.
+// In RTL the next tab is on the left, so ArrowLeft goes forward.
+export function Tabs({ label, tabs }) {
+  const [current, setCurrent] = useState(0);
+  const refs = useRef([]);
+  const id = useId();
+
+  function onKeyDown(e) {
+    const rtl = getComputedStyle(e.currentTarget).direction === "rtl" || e.currentTarget.closest("[dir]")?.dir === "rtl";
+    const next = { ArrowLeft: rtl ? 1 : -1, ArrowRight: rtl ? -1 : 1 }[e.key];
+    let to = null;
+    if (next) to = (current + next + tabs.length) % tabs.length;
+    if (e.key === "Home") to = 0;
+    if (e.key === "End") to = tabs.length - 1;
+    if (to === null) return;
+    e.preventDefault();
+    setCurrent(to);
+    refs.current[to].focus();
+  }
+
+  return (
+    <div className="tabs">
+      <div role="tablist" aria-label={label}>
+        {tabs.map((t, i) => (
+          <button
+            key={t.title}
+            ref={el => (refs.current[i] = el)}
+            type="button"
+            role="tab"
+            id={id + "-tab-" + i}
+            aria-selected={i === current}
+            aria-controls={id + "-panel-" + i}
+            tabIndex={i === current ? 0 : -1}
+            onClick={() => setCurrent(i)}
+            onKeyDown={onKeyDown}
+          >
+            {t.title}
+          </button>
+        ))}
+      </div>
+      {tabs.map((t, i) => (
+        <div key={t.title} role="tabpanel" id={id + "-panel-" + i} aria-labelledby={id + "-tab-" + i} hidden={i !== current} tabIndex={0}>
+          {t.body}
+        </div>
+      ))}
+    </div>
+  );
+}
+~~~
+
+~~~jsx src/Tabs.test.jsx
+import { describe, it, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { Tabs } from "./Tabs.jsx";
+
+const tabs = [
+  { title: "المواعيد", body: "كل سبت من ٦ لـ ٨." },
+  { title: "الأسعار", body: "١٢٠٠ ج للكورس." },
+  { title: "المكان", body: "وسط البلد." },
+];
+
+describe("Tabs", () => {
+  it("one tab is selected and its panel is the only one shown", async () => {
+    const { container } = render(<div dir="rtl"><Tabs label="تفاصيل الكورس" tabs={tabs} /></div>);
+    expect(screen.getByRole("tablist", { name: "تفاصيل الكورس" })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "المواعيد" })).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByRole("tabpanel", { name: "المواعيد" })).toHaveTextContent("كل سبت");
+    expect(screen.getAllByRole("tabpanel")).toHaveLength(1);    // hidden panels are out of the tree
+    await expect(container).toHaveNoA11yViolations();
+  });
+
+  it("one Tab stop, then arrows move (ArrowLeft = next in RTL), Home and End", async () => {
+    const user = userEvent.setup();
+    render(<div dir="rtl"><button>قبل</button><Tabs label="تفاصيل الكورس" tabs={tabs} /></div>);
+
+    await user.click(screen.getByRole("button", { name: "قبل" }));
+    await user.tab();
+    expect(screen.getByRole("tab", { name: "المواعيد" })).toHaveFocus();
+
+    await user.keyboard("{ArrowLeft}");
+    const prices = screen.getByRole("tab", { name: "الأسعار" });
+    expect(prices).toHaveFocus();
+    expect(prices).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByRole("tabpanel", { name: "الأسعار" })).toHaveTextContent("١٢٠٠");
+
+    await user.keyboard("{End}");
+    expect(screen.getByRole("tab", { name: "المكان" })).toHaveAttribute("aria-selected", "true");
+    await user.keyboard("{Home}");
+    expect(screen.getByRole("tab", { name: "المواعيد" })).toHaveFocus();
+
+    await user.tab();                       // Tab leaves the tab list and lands on the panel
+    expect(screen.getByRole("tabpanel", { name: "المواعيد" })).toHaveFocus();
+  });
+});
+~~~
+
+~~~jsx src/SignupForm.jsx
+import { useRef, useState } from "react";
+
+const rules = {
+  name: v => (v.trim() ? "" : "اكتب اسمك."),
+  email: v => (!v ? "اكتب الإيميل." : /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v) ? "" : "الإيميل شكله غلط، مثلًا sara@example.com."),
+  password: v => (v.length >= 8 ? "" : "الباسورد ٨ حروف على الأقل."),
+};
+
+// each field: a <label>, a hint and an error tied with aria-describedby, aria-invalid when wrong,
+// and on submit the focus goes to the first wrong field
+export function SignupForm({ onSubmit }) {
+  const [errors, setErrors] = useState({});
+  const form = useRef(null);
+
+  function submit(e) {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form.current));
+    const found = Object.fromEntries(Object.entries(rules).map(([k, rule]) => [k, rule(data[k] ?? "")]));
+    setErrors(found);
+    const first = Object.keys(rules).find(k => found[k]);
+    if (first) form.current.elements[first].focus();
+    else onSubmit(data);
+  }
+
+  const field = (name, label, props, hint) => (
+    <div className="field">
+      <label htmlFor={name}>{label}</label>
+      <input
+        id={name}
+        name={name}
+        aria-invalid={errors[name] ? true : undefined}
+        aria-describedby={[hint && name + "-hint", errors[name] && name + "-err"].filter(Boolean).join(" ") || undefined}
+        {...props}
+      />
+      {hint && <p id={name + "-hint"} className="hint">{hint}</p>}
+      {errors[name] && <p id={name + "-err"} className="err">{errors[name]}</p>}
+    </div>
+  );
+
+  return (
+    <form ref={form} noValidate onSubmit={submit} aria-labelledby="signup-t">
+      <h2 id="signup-t">حساب جديد</h2>
+      {field("name", "الاسم", { autoComplete: "name" })}
+      {field("email", "الإيميل", { type: "email", autoComplete: "email", dir: "ltr" })}
+      {field("password", "الباسورد", { type: "password", autoComplete: "new-password", dir: "ltr" }, "٨ حروف على الأقل.")}
+      <button type="submit">سجّل</button>
+    </form>
+  );
+}
+~~~
+
+~~~jsx src/SignupForm.test.jsx
+import { describe, it, expect, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { SignupForm } from "./SignupForm.jsx";
+
+describe("SignupForm", () => {
+  it("every field is found by its label, and the hint is read with the password", async () => {
+    const { container } = render(<SignupForm onSubmit={() => {}} />);
+    expect(screen.getByRole("form", { name: "حساب جديد" })).toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: "الاسم" })).toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: "الإيميل" })).toBeInTheDocument();
+    expect(screen.getByLabelText("الباسورد")).toHaveAccessibleDescription("٨ حروف على الأقل.");
+    await expect(container).toHaveNoA11yViolations();
+  });
+
+  it("a wrong submit: focus on the first wrong field, and its error is its description", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    const { container } = render(<SignupForm onSubmit={onSubmit} />);
+
+    await user.type(screen.getByRole("textbox", { name: "الاسم" }), "سارة");
+    await user.type(screen.getByRole("textbox", { name: "الإيميل" }), "sara@");
+    await user.click(screen.getByRole("button", { name: "سجّل" }));
+
+    const email = screen.getByRole("textbox", { name: "الإيميل" });
+    expect(email).toHaveFocus();
+    expect(email).toBeInvalid();
+    expect(email).toHaveAccessibleDescription("الإيميل شكله غلط، مثلًا sara@example.com.");
+    expect(screen.getByLabelText("الباسورد")).toHaveAccessibleDescription("٨ حروف على الأقل. الباسورد ٨ حروف على الأقل.");
+    expect(onSubmit).not.toHaveBeenCalled();
+    await expect(container).toHaveNoA11yViolations();
+  });
+
+  it("a right submit sends the data", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    render(<SignupForm onSubmit={onSubmit} />);
+    await user.type(screen.getByRole("textbox", { name: "الاسم" }), "سارة");
+    await user.type(screen.getByRole("textbox", { name: "الإيميل" }), "sara@example.com");
+    await user.type(screen.getByLabelText("الباسورد"), "12345678");
+    await user.keyboard("{Enter}");
+    expect(onSubmit).toHaveBeenCalledWith({ name: "سارة", email: "sara@example.com", password: "12345678" });
+  });
+});
+~~~
+
+الشكل تحت اتعمل من نفس المكوّنات بـ [[renderToStaticMarkup]] ([[render-demo.jsx]] و [[src/demo.css]])، في الحالة اللي بتستاهل تتشاف: المنيو مفتوحة، والـ dialog ظاهر، والفورم بعد إرسال غلط.
+
+~~~css src/demo.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 1rem; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #1e293b; background: #f8fafc; }
+h1 { margin: 0 0 1rem; font-size: 1.4rem; }
+h2 { margin: 0 0 0.5rem; font-size: 1.1rem; }
+.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr)); }
+.box { padding: 1rem; background: #fff; border: 1px solid #cbd5e1; border-radius: 0.75rem; }
+.box > h2 { color: #475569; font-size: 0.9rem; }
+button { font: inherit; }
+:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
+
+.icon-btn { display: inline-grid; place-items: center; min-width: 44px; min-height: 44px; border: 1px solid #94a3b8; border-radius: 0.5rem; background: #fff; color: inherit; font-size: 1.2rem; }
+.icon-btn[aria-expanded="true"], .icon-btn[aria-pressed="true"] { background: #1e293b; color: #fff; }
+.menu-nav a { display: inline-block; margin-block-start: 0.5rem; color: #1d4ed8; }
+
+dialog { position: static; display: block; margin: 0; padding: 1rem; border: 1px solid #94a3b8; border-radius: 0.75rem; background: #fff; color: inherit; }
+dialog h2 { margin-top: 0; }
+dialog input, .field input { display: block; width: 100%; margin-block: 0.25rem 0.75rem; padding: 0.5rem 0.6rem; border: 1px solid #64748b; border-radius: 0.4rem; font: inherit; }
+dialog button { padding: 0.4rem 1rem; border: 1px solid #64748b; border-radius: 0.4rem; background: #fff; }
+
+[role="tablist"] { display: flex; gap: 0.25rem; border-block-end: 2px solid #cbd5e1; }
+[role="tab"] { padding: 0.5rem 0.9rem; border: 0; border-block-end: 3px solid transparent; margin-block-end: -2px; background: none; color: #475569; }
+[role="tab"][aria-selected="true"] { border-color: #1d4ed8; color: #1e293b; font-weight: 700; }
+[role="tabpanel"] { padding: 0.75rem 0.25rem; }
+
+.field label { font-weight: 700; }
+.field [aria-invalid="true"] { border: 2px solid #b91c1c; }
+.hint { margin: -0.5rem 0 0.75rem; color: #475569; font-size: 0.875rem; }
+.err { margin: -0.5rem 0 0.75rem; color: #b91c1c; font-weight: 700; font-size: 0.875rem; }
+form > button { padding: 0.5rem 1.4rem; border: 0; border-radius: 999px; background: #1d4ed8; color: #fff; font-weight: 700; }
+~~~
+
+~~~view 860 1180 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مكوّنات ليها اختبارات a11y</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 1rem; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #1e293b; background: #f8fafc; }
+h1 { margin: 0 0 1rem; font-size: 1.4rem; }
+h2 { margin: 0 0 0.5rem; font-size: 1.1rem; }
+.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr)); }
+.box { padding: 1rem; background: #fff; border: 1px solid #cbd5e1; border-radius: 0.75rem; }
+.box > h2 { color: #475569; font-size: 0.9rem; }
+button { font: inherit; }
+:focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
+
+.icon-btn { display: inline-grid; place-items: center; min-width: 44px; min-height: 44px; border: 1px solid #94a3b8; border-radius: 0.5rem; background: #fff; color: inherit; font-size: 1.2rem; }
+.icon-btn[aria-expanded="true"], .icon-btn[aria-pressed="true"] { background: #1e293b; color: #fff; }
+.menu-nav a { display: inline-block; margin-block-start: 0.5rem; color: #1d4ed8; }
+
+dialog { position: static; display: block; margin: 0; padding: 1rem; border: 1px solid #94a3b8; border-radius: 0.75rem; background: #fff; color: inherit; }
+dialog h2 { margin-top: 0; }
+dialog input, .field input { display: block; width: 100%; margin-block: 0.25rem 0.75rem; padding: 0.5rem 0.6rem; border: 1px solid #64748b; border-radius: 0.4rem; font: inherit; }
+dialog button { padding: 0.4rem 1rem; border: 1px solid #64748b; border-radius: 0.4rem; background: #fff; }
+
+[role="tablist"] { display: flex; gap: 0.25rem; border-block-end: 2px solid #cbd5e1; }
+[role="tab"] { padding: 0.5rem 0.9rem; border: 0; border-block-end: 3px solid transparent; margin-block-end: -2px; background: none; color: #475569; }
+[role="tab"][aria-selected="true"] { border-color: #1d4ed8; color: #1e293b; font-weight: 700; }
+[role="tabpanel"] { padding: 0.75rem 0.25rem; }
+
+.field label { font-weight: 700; }
+.field [aria-invalid="true"] { border: 2px solid #b91c1c; }
+.hint { margin: -0.5rem 0 0.75rem; color: #475569; font-size: 0.875rem; }
+.err { margin: -0.5rem 0 0.75rem; color: #b91c1c; font-weight: 700; font-size: 0.875rem; }
+form > button { padding: 0.5rem 1.4rem; border: 0; border-radius: 999px; background: #1d4ed8; color: #fff; font-weight: 700; }
+</style>
+</head>
+<body>
+<main><h1>٤ مكوّنات ليها اختبارات a11y</h1><div class="grid"><section class="box" aria-labelledby="t1"><h2 id="t1">IconButton (القايمة مفتوحة)</h2><button type="button" class="icon-btn" aria-label="القايمة" aria-expanded="true" aria-controls="nav"><span aria-hidden="true">☰</span></button> <button type="button" class="icon-btn" aria-label="المفضّلة" aria-pressed="true"><span aria-hidden="true">♥</span></button><nav id="nav" class="menu-nav" aria-label="الأقسام"><a href="#a">الكورسات</a></nav></section><section class="box" aria-labelledby="t2"><h2 id="t2">Dialog (مفتوح)</h2><dialog open="" aria-labelledby="dialog-title"><h2 id="dialog-title">الاسم الجديد</h2><label for="new-name">الاسم</label><input id="new-name" value="سارة"/><button type="button">اقفل</button></dialog></section><section class="box" aria-labelledby="t3"><h2 id="t3">Tabs</h2><div class="tabs"><div role="tablist" aria-label="تفاصيل الكورس"><button type="button" role="tab" id="«R2e»-tab-0" aria-selected="true" aria-controls="«R2e»-panel-0" tabindex="0">المواعيد</button><button type="button" role="tab" id="«R2e»-tab-1" aria-selected="false" aria-controls="«R2e»-panel-1" tabindex="-1">الأسعار</button><button type="button" role="tab" id="«R2e»-tab-2" aria-selected="false" aria-controls="«R2e»-panel-2" tabindex="-1">المكان</button></div><div role="tabpanel" id="«R2e»-panel-0" aria-labelledby="«R2e»-tab-0" tabindex="0">كل سبت من ٦ لـ ٨.</div><div role="tabpanel" id="«R2e»-panel-1" aria-labelledby="«R2e»-tab-1" hidden="" tabindex="0">١٢٠٠ ج للكورس.</div><div role="tabpanel" id="«R2e»-panel-2" aria-labelledby="«R2e»-tab-2" hidden="" tabindex="0">وسط البلد.</div></div></section><section class="box" aria-labelledby="t4"><h2 id="t4">SignupForm (بعد إرسال غلط)</h2><form noValidate="" aria-labelledby="signup-t"><h2 id="signup-t">حساب جديد</h2><div class="field"><label for="name">الاسم</label><input id="name" autoComplete="name" value="سارة"/></div><div class="field"><label for="email">الإيميل</label><input id="email" type="email" dir="ltr" aria-invalid="true" aria-describedby="email-err" autoComplete="email" value="sara@"/><p id="email-err" class="err">الإيميل شكله غلط، مثلًا sara@example.com.</p></div><div class="field"><label for="password">الباسورد</label><input id="password" type="password" dir="ltr" aria-invalid="true" aria-describedby="password-hint password-err" autoComplete="new-password"/><p id="password-hint" class="hint">٨ حروف على الأقل.</p><p id="password-err" class="err">الباسورد ٨ حروف على الأقل.</p></div><button type="submit">سجّل</button></form></section></div></main>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** ٤ كروت: زرارين أيقونة (☰ و ♥) غامقين لأنهم شغالين وتحتهم لينك المنيو، و dialog «الاسم الجديد»، و tabs «المواعيد / الأسعار / المكان»، وفورم «حساب جديد» فيه الإيميل والباسورد بحد أحمر ورسالة تحت كل واحد.
+
+**كل اختبار بيجيب العناصر زي ما المستخدم بيشوفها:** [[getByRole("button", { name: "القايمة" })]] مش [[querySelector(".icon-btn")]]. لو الاسم اتشال، الاختبار مش هيلاقي الزرار. يعني الاختبار نفسه بيتأكد من الـ accessibility.
+
+**[[toHaveNoA11yViolations]]:** matcher عملناه في [[setup.js]]. بيشغّل axe على المكوّن، ولو وقع بيطبع كل rule وأول عناصرها بدل «expected [] to equal [...]». قاعدتين مقفولين: [[color-contrast]] (jsdom مبيرسمش، فمفيش ألوان يقيسها) و [[region]] (مكوّن لوحده مش صفحة).
+
+**[[toHaveAccessibleDescription]]:** بيتأكد إن رسالة الغلط **مربوطة** بالخانة ([[aria-describedby]])، مش بس ظاهرة جنبها. ده اللي قارئ الشاشة بيقراه مع الخانة.
+
+**٣ مشاكل ظهرت وأنا ببنيه:**
+- **jsdom مفيهوش [[showModal()]]:** «dl.showModal is not a function». الـ Dialog بيستخدم [[<dialog>]] الحقيقي، وفي [[setup.js]] fallback صغير بيقلب [[open]] بس. حبس الـ Tab الحقيقي جوه الـ modal **مبيتختبرش في jsdom**: ده محتاج متصفح (Playwright، زي بوابة الـ CI). ولذلك الـ Dialog بيحط الـ focus ويرجّعه بنفسه، والاختبار بيتأكد من ده.
+- **jsx-a11y مسك Tabs:** «Elements with the 'tablist' interactive role must be focusable». كنت حاطط [[onKeyDown]] على الـ [[tablist]]. نقلته لكل [[tab]]، اللي هو العنصر اللي عليه الـ focus فعلًا.
+- **الإيميل اتقلب في RTL:** اللقطة الأولى طلّعت «@sara» بدل «sara@». خانات الإيميل والباسورد محتاجة [[dir="ltr"]]. اللقطة كشفت حاجة الاختبارات مكانتش هتشوفها.
+
+~~~text npx vitest run && npx eslint .
+✓ src/IconButton.test.jsx (2 tests)
+✓ src/Dialog.test.jsx (2 tests)
+✓ src/Tabs.test.jsx (2 tests)
+✓ src/SignupForm.test.jsx (3 tests)
+ Test Files  4 passed (4)
+      Tests  9 passed (9)
+npx eslint .  →  (مفيش ولا سطر) exit 0
+~~~
+
+~~~text جرّبت أكسّر ٣ حاجات، كل واحدة لوحدها
+١. <label> بقت <span> في SignupForm:
+   × 3 اختبارات: Unable to find an accessible element with the role "textbox" and name "الاسم"
+٢. شلت aria-expanded من IconButton:
+   × opens and closes the menu…: expect(element).toHaveAttribute("aria-expanded", "false")
+٣. شلت opener.current?.focus() من Dialog:
+   × 2 اختبارات: expect(element).toHaveFocus() عند السطر 35 و 43
+ورجعت كل حاجة: Tests 9 passed (9)
+
+ولو axe لقى حاجة (اختبار تجربة فيه <img> من غير alt وزرار فيه svg بس):
+Error: axe لقى مشاكل:
+- button-name: Buttons must have discernible text
+    button
+- image-alt: Images must have alternative text
+    img
+
+و jsx-a11y على ملف فيه الأخطاء المشهورة:
+  4:7   jsx-a11y/alt-text                       <img src="a.png" />
+  5:7   jsx-a11y/click-events-have-key-events   <div onClick={save}>
+  5:7   jsx-a11y/no-static-element-interactions
+  6:7   jsx-a11y/anchor-is-valid                <a href="#" onClick={save}>
+  7:14  jsx-a11y/no-autofocus                   <input autoFocus />
+✖ 5 problems (5 errors, 0 warnings)
+
+صفحة الشكل: axe على Chrome 0، الـ validator مفيش رسايل، CSS validator: No Error Found
+~~~` },
+        { lvl: 'كبير', dir: "a11y-gate", t: R`بوابة a11y في الـ CI`, what: R`workflow في GitHub Actions بيبني الموقع ويشغّل Playwright على كل الصفحات (من [[sitemap.xml]] أو لستة)، وفي كل صفحة: axe بقواعد WCAG 2.2 AA، واختبار كيبورد بيمشي بـ Tab ويحفظ ترتيب العناصر ويقارنه بـ snapshot، واختبار تغيير الصفحة (الـ title اتغير والـ focus على [[h1]]). النتايج بتطلع تقرير HTML كـ artifact، وفيه ملف استثناءات لكل واحد سبب وتاريخ انتهاء. بيجمع الوحدة كلها مع وحدة Accessibility.`, done: R`PR بيشيل [[alt]] من صورة بيقع والتقرير بيقول الصفحة والعنصر، وPR بيغيّر ترتيب الـ Tab بيقع على الـ snapshot، والاستثناء اللي تاريخه عدّى بيوقّع الـ CI لوحده، والـ workflow بيتشغّل تاني على نفس الـ commit بنفس النتيجة.`, ext: R`زوّد فحص بالثيم الغامق و [[prefers-reduced-motion]]، واطبع ملخص في تعليق على الـ PR (عدد المشاكل قبل وبعد)، وخلّيه يفحص الصفحات اللي اتغيرت بس عشان يبقى أسرع.`, sol: R`المثال: موقع صغير لاستوديو يوجا متخيل «نَفَس»: ٣ صفحات بـ hash router (‏[[#/classes]])، فاختبار تغيير الصفحة ليه معنى.
+
+~~~text a11y-gate/
+package.json  package-lock.json  playwright.config.js  serve.mjs
+pages.json  a11y-exceptions.json
+tests/a11y.spec.js  tests/__snapshots__/tab-home.txt  tab-classes.txt  tab-contact.txt
+site/index.html  site/app.js  site/style.css  site/img/garden.svg
+.github/workflows/a11y.yml
+~~~
+
+~~~json package.json
+{
+  "name": "a11y-gate",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:update": "playwright test --update-snapshots",
+    "serve": "node serve.mjs site 4173"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.64.1"
+  }
+}
+~~~
+
+~~~js playwright.config.js
+import { defineConfig } from "@playwright/test";
+
+export default defineConfig({
+  testDir: "tests",
+  // one snapshot for every OS: a Tab order is the same on Windows and on the Linux in CI (the default name ends in -win32 / -linux)
+  snapshotPathTemplate: "{testDir}/__snapshots__/{arg}{ext}",
+  fullyParallel: true,
+  retries: 0,                       // an a11y failure is not "flaky": no retries hiding it
+  reporter: [["list"], ["html", { open: "never" }]],
+  use: {
+    baseURL: "http://localhost:4173",
+    // in CI: the Chromium that $__btnpx playwright install$__bt downloads; on your machine: the Chrome you already have
+    channel: process.env.CI ? undefined : "chrome",
+  },
+  webServer: {
+    command: "node serve.mjs site 4173",
+    url: "http://localhost:4173",
+    reuseExistingServer: !process.env.CI,
+  },
+});
+~~~
+
+~~~js serve.mjs
+// node serve.mjs [dir] [port]: a static server with no packages, for Playwright's webServer
+import http from "node:http";
+import fs from "node:fs/promises";
+import path from "node:path";
+
+const root = path.resolve(process.argv[2] || "site");
+const port = Number(process.argv[3] || 4173);
+const types = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml", ".json": "application/json" };
+
+http.createServer(async (req, res) => {
+  const url = new URL(req.url, "http://x");
+  let file = path.join(root, decodeURIComponent(url.pathname));
+  if (!file.startsWith(root)) { res.writeHead(403).end(); return; }      // no ../ out of the folder
+  if (file.endsWith(path.sep)) file = path.join(file, "index.html");
+  try {
+    const body = await fs.readFile(file);
+    res.writeHead(200, { "content-type": types[path.extname(file)] || "application/octet-stream" }).end(body);
+  } catch {
+    res.writeHead(404).end("not found");
+  }
+}).listen(port, () => console.log("http://localhost:" + port));
+~~~
+
+~~~json pages.json
+[
+  { "name": "home", "path": "/#/" },
+  { "name": "classes", "path": "/#/classes" },
+  { "name": "contact", "path": "/#/contact" }
+]
+~~~
+
+~~~json a11y-exceptions.json
+[
+  {
+    "rule": "landmark-unique",
+    "page": "contact",
+    "reason": "مثال: مشكلة معروفة متسجلة في تذكرة A11Y-12، والتصليح في الـ sprint الجاي",
+    "until": "2026-12-31"
+  }
+]
+~~~
+
+~~~js tests/a11y.spec.js
+import { test, expect } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+import fs from "node:fs";
+
+const pages = JSON.parse(fs.readFileSync("pages.json", "utf8"));
+const exceptions = JSON.parse(fs.readFileSync("a11y-exceptions.json", "utf8"));
+const TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
+const today = new Date().toISOString().slice(0, 10);
+
+// 0. an exception is a debt with a date: once the date passes, the build fails until someone fixes it or renews it on purpose
+test("كل استثناء ليه سبب وتاريخه لسه ماعدّاش", () => {
+  for (const e of exceptions) {
+    expect(e.reason, "استثناء " + e.rule + " من غير سبب").toBeTruthy();
+    expect(e.until >= today, "الاستثناء " + e.rule + " على " + e.page + " انتهى في " + e.until + " (" + e.reason + ")").toBe(true);
+  }
+});
+
+// WCAG contrast of every text element, computed from the real colors (axe skips Arabic text it takes for icon ligatures)
+async function lowContrast(page) {
+  return page.evaluate(() => {
+    const rgb = s => s.match(/[\d.]+/g).map(Number);
+    const lum = ([r, g, b]) => [r, g, b].map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }).reduce((a, v, i) => a + v * [0.2126, 0.7152, 0.0722][i], 0);
+    const bg = el => { for (; el; el = el.parentElement) { const c = rgb(getComputedStyle(el).backgroundColor); if (c.length < 4 || c[3] === 1) return c.slice(0, 3); } return [255, 255, 255]; };
+    const bad = [];
+    for (const el of document.querySelectorAll("body *")) {
+      const own = [...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim());
+      const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+      if (!own || r.width === 0 || cs.visibility === "hidden" || r.bottom < 0) continue;   // offscreen skip link: skipped
+      const [a, b] = [lum(rgb(cs.color)), lum(bg(el))].sort((x, y) => y - x);
+      const ratio = (a + 0.05) / (b + 0.05);
+      const large = parseFloat(cs.fontSize) >= 24 || (parseFloat(cs.fontSize) >= 18.66 && Number(cs.fontWeight) >= 700);
+      if (ratio < (large ? 3 : 4.5)) bad.push(el.tagName.toLowerCase() + ' "' + el.textContent.trim().slice(0, 20) + '" ' + ratio.toFixed(2));
+    }
+    return bad;
+  });
+}
+
+// every page reached by keyboard: the order of the stops, written as "role name"
+async function tabOrder(page) {
+  const stops = [];
+  for (let i = 0; i < 40; i++) {
+    await page.keyboard.press("Tab");
+    const stop = await page.evaluate(() => {
+      const el = document.activeElement;
+      if (el === document.body) return null;
+      const role = el.getAttribute("role") || { A: "link", BUTTON: "button", INPUT: "textbox" }[el.tagName] || el.tagName.toLowerCase();
+      const name = (el.getAttribute("aria-label") || el.labels?.[0]?.textContent || el.textContent).trim().replace(/\s+/g, " ");
+      return role + " " + name;
+    });
+    if (!stop || stops[0] === stop) break;          // left the page, or came round to the start
+    stops.push(stop);
+  }
+  return stops;
+}
+
+for (const p of pages) {
+  test.describe(p.name, () => {
+    test.beforeEach(async ({ page }) => {
+      await page.goto(p.path);
+      await expect(page.locator("main h1")).toBeVisible();
+    });
+
+    test("axe: WCAG 2.2 AA", async ({ page }, testInfo) => {
+      const skip = exceptions.filter(e => e.page === p.name).map(e => e.rule);
+      const results = await new AxeBuilder({ page }).withTags(TAGS).disableRules(skip).analyze();
+      await testInfo.attach("axe-" + p.name + ".json", { body: JSON.stringify(results.violations, null, 2), contentType: "application/json" });
+      const list = results.violations.map(v => v.id + " (" + v.impact + "): " + v.nodes.map(n => n.target.join(" ")).join(" , "));
+      expect(list, "صفحة " + p.name).toEqual([]);
+    });
+
+    test("التباين محسوب بإيدينا", async ({ page }) => {
+      expect(await lowContrast(page), "صفحة " + p.name).toEqual([]);
+    });
+
+    test("ترتيب الـ Tab", async ({ page }) => {
+      expect((await tabOrder(page)).join("\n") + "\n").toMatchSnapshot("tab-" + p.name + ".txt");
+    });
+  });
+}
+
+test("تغيير الصفحة: الـ title بيتغير والـ focus على h1", async ({ page }) => {
+  await page.goto("/#/");
+  await page.getByRole("link", { name: "الحصص" }).focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveTitle("الحصص: نَفَس");
+  await expect(page.locator("main h1")).toBeFocused();
+  await expect(page.getByRole("link", { name: "الحصص" })).toHaveAttribute("aria-current", "page");
+});
+~~~
+
+~~~yaml .github/workflows/a11y.yml
+name: a11y
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  a11y:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # if your site has a build step, it goes here: - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test
+      - name: the HTML report, even when the tests fail
+        if: $__{{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: a11y-report
+          path: playwright-report/
+          retention-days: 14
+~~~
+
+~~~html site/index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نَفَس: يوجا في الجنينة</title>
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">اتخطى للمحتوى</a>
+<header class="header">
+  <a class="logo" href="#/">نَفَس</a>
+  <nav aria-label="الأقسام">
+    <ul>
+      <li><a href="#/">الرئيسية</a></li>
+      <li><a href="#/classes">الحصص</a></li>
+      <li><a href="#/contact">تواصل</a></li>
+    </ul>
+  </nav>
+</header>
+<main id="main"></main>
+
+<template id="page-home" data-title="نَفَس: يوجا في الجنينة">
+  <h1 tabindex="-1">يوجا الصبح في الجنينة</h1>
+  <p class="lead">حصص صغيرة، ٨ أشخاص بالكتير، والمات علينا.</p>
+  <img src="img/garden.svg" alt="ناس قاعدين على مات تحت شجرة" width="480" height="240">
+  <p><a class="btn" href="#/classes">شوف المواعيد</a></p>
+</template>
+
+<template id="page-classes" data-title="الحصص: نَفَس">
+  <h1 tabindex="-1">الحصص</h1>
+  <ul class="cards">
+    <li class="card"><h2>مبتدئين</h2><p class="muted">السبت ٧ الصبح، ١٥٠ ج</p></li>
+    <li class="card"><h2>تنفّس وتأمل</h2><p class="muted">التلات ٧ الصبح، ١٢٠ ج</p></li>
+    <li class="card"><h2>متوسط</h2><p class="muted">الخميس ٨ الصبح، ١٨٠ ج</p></li>
+  </ul>
+</template>
+
+<template id="page-contact" data-title="تواصل: نَفَس">
+  <h1 tabindex="-1">تواصل</h1>
+  <form class="form" novalidate>
+    <label for="name">الاسم</label>
+    <input id="name" name="name" autocomplete="name">
+    <label for="phone">الموبايل</label>
+    <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr">
+    <button type="submit">ابعت</button>
+  </form>
+</template>
+</body>
+</html>
+~~~
+
+~~~js site/app.js
+// a tiny hash router: #/classes shows <template id="page-classes">.
+// After every change: a new <title>, and focus on the new <h1> so a screen reader reads where you are.
+const main = document.getElementById("main");
+let first = true;
+
+function show() {
+  const name = location.hash.replace(/^#\/?/, "") || "home";
+  const tpl = document.getElementById("page-" + name) || document.getElementById("page-home");
+  main.replaceChildren(tpl.content.cloneNode(true));
+  document.title = tpl.dataset.title;
+  document.querySelectorAll("nav a").forEach(a => {
+    if (a.getAttribute("href") === "#/" + (name === "home" ? "" : name)) a.setAttribute("aria-current", "page");
+    else a.removeAttribute("aria-current");
+  });
+  if (!first) main.querySelector("h1").focus();   // not on the first load: the page starts at the top as usual
+  first = false;
+}
+
+addEventListener("hashchange", show);
+show();
+~~~
+
+~~~css site/style.css
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #1c1917; background: #f7fee7; }
+a { color: #3f6212; }
+:focus-visible { outline: 3px solid #7c2d12; outline-offset: 2px; }
+h1:focus { outline: none; }                    /* the heading gets focus from the router, not from the reader */
+h1:focus-visible { outline: 3px solid #7c2d12; }
+.skip { position: absolute; inset-inline-start: 1rem; top: -10rem; padding: 0.5rem 1rem; background: #1c1917; color: #fff; }
+.skip:focus { top: 1rem; }
+.header { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.5rem; padding: 0.75rem 1rem; background: #fff; border-block-end: 1px solid #a3a3a3; }
+.logo { font-weight: 800; font-size: 1.2rem; color: #1c1917; text-decoration: none; }
+nav ul { display: flex; gap: 1rem; margin: 0; padding: 0; list-style: none; }
+nav [aria-current="page"] { font-weight: 700; text-decoration-thickness: 3px; }
+main { max-width: 44rem; margin: 0 auto; padding: 2rem 1rem; }
+img { max-width: 100%; height: auto; border-radius: 1rem; }
+.lead { font-size: 1.15rem; }
+.btn { display: inline-block; padding: 0.6rem 1.3rem; border-radius: 999px; background: #3f6212; color: #fff; text-decoration: none; font-weight: 700; }
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: 1rem; background: #fff; border: 1px solid #a3a3a3; border-radius: 0.75rem; }
+.card h2 { margin: 0; font-size: 1.1rem; }
+.muted { margin: 0; color: #57534e; }
+.form { display: grid; gap: 0.3rem; max-width: 22rem; }
+.form input { margin-block-end: 0.7rem; padding: 0.5rem 0.6rem; border: 1px solid #78716c; border-radius: 0.4rem; font: inherit; }
+.form button { justify-self: start; padding: 0.5rem 1.4rem; border: 0; border-radius: 999px; background: #3f6212; color: #fff; font: inherit; font-weight: 700; }
+~~~
+
+~~~view 600 560 الموقع اللي البوابة بتفحصه
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نَفَس: يوجا في الجنينة</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #1c1917; background: #f7fee7; }
+a { color: #3f6212; }
+:focus-visible { outline: 3px solid #7c2d12; outline-offset: 2px; }
+h1:focus { outline: none; }                    /* the heading gets focus from the router, not from the reader */
+h1:focus-visible { outline: 3px solid #7c2d12; }
+.skip { position: absolute; inset-inline-start: 1rem; top: -10rem; padding: 0.5rem 1rem; background: #1c1917; color: #fff; }
+.skip:focus { top: 1rem; }
+.header { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.5rem; padding: 0.75rem 1rem; background: #fff; border-block-end: 1px solid #a3a3a3; }
+.logo { font-weight: 800; font-size: 1.2rem; color: #1c1917; text-decoration: none; }
+nav ul { display: flex; gap: 1rem; margin: 0; padding: 0; list-style: none; }
+nav [aria-current="page"] { font-weight: 700; text-decoration-thickness: 3px; }
+main { max-width: 44rem; margin: 0 auto; padding: 2rem 1rem; }
+img { max-width: 100%; height: auto; border-radius: 1rem; }
+.lead { font-size: 1.15rem; }
+.btn { display: inline-block; padding: 0.6rem 1.3rem; border-radius: 999px; background: #3f6212; color: #fff; text-decoration: none; font-weight: 700; }
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: 1rem; background: #fff; border: 1px solid #a3a3a3; border-radius: 0.75rem; }
+.card h2 { margin: 0; font-size: 1.1rem; }
+.muted { margin: 0; color: #57534e; }
+.form { display: grid; gap: 0.3rem; max-width: 22rem; }
+.form input { margin-block-end: 0.7rem; padding: 0.5rem 0.6rem; border: 1px solid #78716c; border-radius: 0.4rem; font: inherit; }
+.form button { justify-self: start; padding: 0.5rem 1.4rem; border: 0; border-radius: 999px; background: #3f6212; color: #fff; font: inherit; font-weight: 700; }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">اتخطى للمحتوى</a>
+<header class="header">
+  <a class="logo" href="#/">نَفَس</a>
+  <nav aria-label="الأقسام">
+    <ul>
+      <li><a href="#/">الرئيسية</a></li>
+      <li><a href="#/classes">الحصص</a></li>
+      <li><a href="#/contact">تواصل</a></li>
+    </ul>
+  </nav>
+</header>
+<main id="main"></main>
+
+<template id="page-home" data-title="نَفَس: يوجا في الجنينة">
+  <h1 tabindex="-1">يوجا الصبح في الجنينة</h1>
+  <p class="lead">حصص صغيرة، ٨ أشخاص بالكتير، والمات علينا.</p>
+  <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0ODAgMjQwIj48cmVjdCB3aWR0aD0iNDgwIiBoZWlnaHQ9IjI0MCIgZmlsbD0iI2Q5Zjk5ZCIvPjxyZWN0IHk9IjE3MCIgd2lkdGg9IjQ4MCIgaGVpZ2h0PSI3MCIgZmlsbD0iIzY1YTMwZCIvPjxyZWN0IHg9IjMzMCIgeT0iNzAiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxMTAiIGZpbGw9IiM3ODM1MGYiLz48Y2lyY2xlIGN4PSIzNDAiIGN5PSI3MCIgcj0iNjAiIGZpbGw9IiM0ZDdjMGYiLz48cmVjdCB4PSI2MCIgeT0iMTc1IiB3aWR0aD0iOTAiIGhlaWdodD0iMTIiIHJ4PSI2IiBmaWxsPSIjZmRlNjhhIi8+PHJlY3QgeD0iMTgwIiB5PSIxNzgiIHdpZHRoPSI5MCIgaGVpZ2h0PSIxMiIgcng9IjYiIGZpbGw9IiNmZWNhY2EiLz48Y2lyY2xlIGN4PSIxMDUiIGN5PSIxNDAiIHI9IjEyIiBmaWxsPSIjMWMxOTE3Ii8+PHBhdGggZD0iTTg1IDE3NSBsMjAgLTI1IGwyMCAyNSIgZmlsbD0iIzFjMTkxNyIvPjxjaXJjbGUgY3g9IjIyNSIgY3k9IjE0MyIgcj0iMTIiIGZpbGw9IiMxYzE5MTciLz48cGF0aCBkPSJNMjA1IDE3OCBsMjAgLTI1IGwyMCAyNSIgZmlsbD0iIzFjMTkxNyIvPjwvc3ZnPgo=" alt="ناس قاعدين على مات تحت شجرة" width="480" height="240">
+  <p><a class="btn" href="#/classes">شوف المواعيد</a></p>
+</template>
+
+<template id="page-classes" data-title="الحصص: نَفَس">
+  <h1 tabindex="-1">الحصص</h1>
+  <ul class="cards">
+    <li class="card"><h2>مبتدئين</h2><p class="muted">السبت ٧ الصبح، ١٥٠ ج</p></li>
+    <li class="card"><h2>تنفّس وتأمل</h2><p class="muted">التلات ٧ الصبح، ١٢٠ ج</p></li>
+    <li class="card"><h2>متوسط</h2><p class="muted">الخميس ٨ الصبح، ١٨٠ ج</p></li>
+  </ul>
+</template>
+
+<template id="page-contact" data-title="تواصل: نَفَس">
+  <h1 tabindex="-1">تواصل</h1>
+  <form class="form" novalidate>
+    <label for="name">الاسم</label>
+    <input id="name" name="name" autocomplete="name">
+    <label for="phone">الموبايل</label>
+    <input id="phone" name="phone" type="tel" autocomplete="tel" dir="ltr">
+    <button type="submit">ابعت</button>
+  </form>
+</template>
+<script>
+// a tiny hash router: #/classes shows <template id="page-classes">.
+// After every change: a new <title>, and focus on the new <h1> so a screen reader reads where you are.
+const main = document.getElementById("main");
+let first = true;
+
+function show() {
+  const name = location.hash.replace(/^#\/?/, "") || "home";
+  const tpl = document.getElementById("page-" + name) || document.getElementById("page-home");
+  main.replaceChildren(tpl.content.cloneNode(true));
+  document.title = tpl.dataset.title;
+  document.querySelectorAll("nav a").forEach(a => {
+    if (a.getAttribute("href") === "#/" + (name === "home" ? "" : name)) a.setAttribute("aria-current", "page");
+    else a.removeAttribute("aria-current");
+  });
+  if (!first) main.querySelector("h1").focus();   // not on the first load: the page starts at the top as usual
+  first = false;
+}
+
+addEventListener("hashchange", show);
+show();
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** موقع أخضر فاتح: هيدر «نَفَس» و ٣ لينكات، وعنوان «يوجا الصبح في الجنينة» ورسمة جنينة وزرار «شوف المواعيد». «الحصص» بيعرض ٣ كروت، و «تواصل» فورم. الأهم مش الموقع: [[npx playwright test]] بيطلع ١١ اختبار، وتقرير HTML في [[playwright-report/]].
+
+**الـ ١١ اختبار:** لكل صفحة من الـ ٣: axe، والتباين محسوب بإيدينا، وترتيب الـ Tab. وكمان اختبار الاستثناءات، واختبار تغيير الصفحة.
+
+**ليه فيه اختبار تباين غير axe:** على الصفحات العربي axe ممكن ميقيسش التباين خالص (مشروع «مراجعة landing» فوق شرح السبب). واتجرّب هنا: لما الكلام الهادي بقى [[#a8a29e]]، axe **عدّاه**، واختبارنا وقّع.
+
+**ترتيب الـ Tab كـ snapshot:** أول تشغيل بيكتب [[tests/__snapshots__/tab-home.txt]] ويقع. ده الطبيعي: راجع الملف بعينك، واعمله commit. بعد كده أي تغيير في الترتيب يوقّع الـ PR. ولو التغيير مقصود: [[npm run test:update]] وتعمل commit للملف الجديد، فالـ review بيشوف الترتيب الجديد.
+
+**الاستثناءات بتاريخ:** كل استثناء بيقفل rule على صفحة، ولازم يبقى ليه [[reason]] و [[until]]. أول ما التاريخ يعدّي، الاختبار الأول بيوقع برسالة فيها السبب. فالاستثناء ميبقاش دايم ومحدش فاكر ليه اتعمل.
+
+**غلطتين حصلوا وأنا ببنيه:**
+- **الـ snapshot اسمه فيه الـ OS:** Playwright كتب [[tab-home-win32.txt]]. على GitHub (Linux) كان هيدوّر على [[tab-home-linux.txt]] ومش هيلاقيه، فالـ CI يقع على طول. [[snapshotPathTemplate]] من غير [[{platform}]] بيخلّي ملف واحد للكل، وده صح هنا لأن ترتيب الـ Tab مش بيفرق بين نظام ونظام. (لقطات الشاشة **بتفرق**، فسيبهم بالـ OS.)
+- **[[retries: 0]]:** لو الـ CI بيعيد الاختبار اللي وقع، مشكلة a11y ممكن تعدّي في المحاولة التانية لو فيها توقيت. ومشكلة a11y مش «flaky».
+
+**[[channel]]:** على جهازك Chrome اللي عندك، وفي الـ CI ([[process.env.CI]] بيبقى موجود لوحده في GitHub Actions) الـ Chromium اللي [[npx playwright install]] بينزّله.
+
+~~~text npx playwright test (Windows، Chrome 157، ٣ مرات ورا بعض)
+أول مرة: 3 failed (A snapshot doesn't exist … writing actual.)  8 passed
+التانية: 11 passed (5.0s)
+التالتة: 11 passed (13.6s)
+
+tests/__snapshots__/tab-home.txt:
+link اتخطى للمحتوى
+link نَفَس
+link الرئيسية
+link الحصص
+link تواصل
+link شوف المواعيد
+~~~
+
+~~~text الـ ٤ حالات من الـ done، كل واحدة لوحدها
+١. شلت alt من صورة الرئيسية:
+  x  home › axe: WCAG 2.2 AA
+    Error: صفحة home
+    + Array [
+    +   "image-alt (critical): img",
+    + ]
+
+٢. tabindex="1" على «تواصل»:
+  x  home › ترتيب الـ Tab  (و classes و contact كمان)
+    Error: expect(string).toMatchSnapshot(expected) failed
+      +link تواصل
+       link اتخطى للمحتوى
+       link نَفَس
+       link الرئيسية
+       link الحصص
+      -link تواصل
+       link شوف المواعيد
+
+٣. until بقى "2026-11-01":
+  x  كل استثناء ليه سبب وتاريخه لسه ماعدّاش
+    Error: الاستثناء landmark-unique على contact انتهى في 2026-11-01 (مثال: مشكلة معروفة متسجلة في تذكرة A11Y-12، والتصليح في الـ sprint الجاي)
+
+٤. .muted بقى #a8a29e:
+  ok classes › axe: WCAG 2.2 AA           ← axe عدّاه
+  x  classes › التباين محسوب بإيدينا
+    + Array [
+    +   "p \"السبت ٧ الصبح، ١٥٠ ج\" 2.52",
+    +   "p \"التلات ٧ الصبح، ١٢٠ \" 2.52",
+    +   "p \"الخميس ٨ الصبح، ١٨٠ \" 2.52",
+    + ]
+
+بعد ما رجّعت كل حاجة: 11 passed
+الـ validator: مفيش رسايل   CSS validator: No Error Found
+~~~
+
+**اللي ماتجرّبش:** الـ workflow نفسه ماتشغّلش على GitHub. اللي اتعمل: نفس الأوامر اتشغّلت على Windows، والـ YAML اتقرا بـ [[js-yaml]] صح (الخطوات بالترتيب)، والـ actions بآخر نسخ ([[checkout@v7]] و [[setup-node@v7]] و [[upload-artifact@v7]]). [[npm ci]] محتاج [[package-lock.json]]: اعمله مرة بـ [[npm install]] واعمله commit. والـ ext (الثيم الغامق، وتعليق على الـ PR، والصفحات اللي اتغيرت بس) ماتعملش هنا.` },
+        { lvl: 'فكرة', dir: "contrast-tool", t: R`أداة فحص بتاعتك`, what: R`فكّر في حاجة بتفحصها بإيدك كل مرة ومحدش بيعملها أوتوماتيك: أهداف أصغر من 24×24، أو عناصر بتستخبى تحت الهيدر الـ sticky، أو عناوين بتتنط مستوى، أو صور alt بتاعها اسم ملف. اعملها bookmarklet أو extension صغيرة أو rule زيادة لـ axe.`, done: R`الأداة بتلاقي المشكلة دي على ٣ مواقع حقيقية مختلفة، ومبتطلّعش إنذار غلط على صفحة سليمة اختبرتها بإيدك.`, ext: R`انشرها على GitHub بـ README فيه مثال، أو ابعتها كـ custom rule لـ axe في مشروعك.`, sol: R`**الفكرة اللي اخترتها:** حاجة لقيت نفسي بعملها بإيدي في كل مشروع عربي في الوحدة دي: **حساب التباين**. axe بيعتبر الحروف العربي المتوصلة أيقونات، وبعد ٣ مرات بيسيب الخط كله (مشروع «مراجعة landing» شرح ده). فعملت bookmarklet اسمه «تباين بجد» بيقيس كل كلام في الصفحة.
+
+~~~js contrast-check.js
+// «تباين بجد»: measures WCAG contrast for every piece of text on the page, Arabic included.
+// Why: axe takes joined Arabic letters for icon-font ligatures and then skips the whole font,
+// so color-contrast can say 0 on a page full of pale Arabic text.
+// Red tag = fails, yellow "؟" = text over an image or gradient (check it by eye), nothing = passes.
+(() => {
+  document.getElementById("cc-layer")?.remove();               // a second click starts over
+
+  const parse = s => (s.match(/[\d.]+/g) || []).map(Number);    // "rgb(1, 2, 3)" or "rgba(1, 2, 3, 0.5)"
+  const lin = v => (v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+  const lum = ([r, g, b]) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+  const mix = (top, a, under) => top.map((c, i) => c * a + under[i] * (1 - a));   // a see-through color over another
+
+  // the color behind an element: walk up, blending semi-transparent backgrounds, until something solid
+  function behind(el) {
+    const layers = [];
+    for (let e = el; e; e = e.parentElement) {
+      const cs = getComputedStyle(e);
+      if (cs.backgroundImage !== "none") return { image: true };
+      const c = parse(cs.backgroundColor), a = c.length === 4 ? c[3] : 1;
+      if (a > 0) layers.push([c.slice(0, 3), a]);
+      if (a === 1) break;
+    }
+    let color = [255, 255, 255];                                 // the canvas is white when nothing is solid
+    for (const [c, a] of layers.reverse()) color = mix(c, a, color);
+    return { color };
+  }
+
+  const rows = [];
+  for (const el of document.body.querySelectorAll("*")) {
+    if (el.closest("#cc-layer, script, style, noscript, template")) continue;
+    const text = [...el.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join("").trim();
+    if (!text) continue;
+    const cs = getComputedStyle(el), r = el.getBoundingClientRect();
+    if (r.width < 1 || r.height < 1 || cs.visibility === "hidden" || Number(cs.opacity) === 0) continue;
+    if (el.closest('[aria-hidden="true"]') && /^\W*$/.test(text)) continue;     // decorative symbols
+
+    const size = parseFloat(cs.fontSize), bold = Number(cs.fontWeight) >= 700;
+    const large = size >= 24 || (size >= 18.66 && bold);             // WCAG "large": 18pt, or 14pt bold
+    const need = large ? 3 : 4.5;
+    const bg = behind(el);
+    const fgRaw = parse(cs.color), fgA = fgRaw.length === 4 ? fgRaw[3] : 1;
+    let ratio = null;
+    if (!bg.image) {
+      const fg = mix(fgRaw.slice(0, 3), fgA, bg.color);
+      const [hi, lo] = [lum(fg), lum(bg.color)].sort((a, b) => b - a);
+      ratio = Math.round(((hi + 0.05) / (lo + 0.05)) * 100) / 100;
+    }
+    const status = ratio === null ? "؟" : ratio < need ? "✗" : "✓";
+    rows.push({ status, ratio, need, size: Math.round(size) + "px", text: text.slice(0, 30), el });
+  }
+
+  // tags on the page
+  const layer = document.createElement("div");
+  layer.id = "cc-layer";
+  layer.style.cssText = "position:absolute;inset:0 auto auto 0;z-index:2147483647;pointer-events:none";
+  for (const row of rows.filter(r => r.status !== "✓")) {
+    const r = row.el.getBoundingClientRect();
+    const tag = document.createElement("span");
+    tag.textContent = row.status === "؟" ? "؟" : row.ratio;
+    tag.style.cssText = "position:absolute;padding:0 4px;border-radius:4px;font:700 11px/16px system-ui;direction:ltr;" +
+      (row.status === "؟" ? "background:#fde047;color:#000" : "background:#b91c1c;color:#fff");
+    tag.style.left = r.left + scrollX + "px";
+    tag.style.top = Math.max(0, r.top + scrollY - 16) + "px";
+    layer.append(tag);
+    if (row.status === "✗") row.el.style.outline = "2px dashed #b91c1c";
+  }
+  document.body.append(layer);
+
+  const fail = rows.filter(r => r.status === "✗"), check = rows.filter(r => r.status === "؟");
+  console.table(rows.filter(r => r.status !== "✓").map(({ el, ...r }) => r));
+  console.log("تباين بجد: " + rows.length + " نص، " + fail.length + " ساقط، " + check.length + " محتاج عينك (فوق صورة أو gradient).");
+  window.__contrast = { total: rows.length, fail: fail.map(r => r.text + " " + r.ratio), check: check.map(r => r.text) };
+})();
+~~~
+
+~~~js make-bookmarklet.mjs
+// node make-bookmarklet.mjs: turns contrast-check.js into one line you paste as a bookmark's URL
+import fs from "node:fs";
+
+const src = fs.readFileSync(new URL("contrast-check.js", import.meta.url), "utf8")
+  .split("\n")
+  .filter(line => !line.trim().startsWith("//"))       // whole-line comments out
+  .join("\n");
+const url = "javascript:" + encodeURIComponent(src);
+fs.writeFileSync(new URL("bookmarklet.txt", import.meta.url), url + "\n");
+console.log("bookmarklet.txt: " + url.length + " حرف");
+~~~
+
+~~~bash الترمنال
+node make-bookmarklet.mjs
+~~~
+
+**تركّبه إزاي:** اعمل bookmark جديد في المتصفح (Ctrl+Shift+O في Chrome › Add new bookmark)، والاسم «تباين بجد»، والـ URL محتوى [[bookmarklet.txt]] كله. افتح أي صفحة ودوس عليه.
+
+~~~view 760 900 الأداة شغالة على landing «قبل»
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بيت الخط: ورشة خط عربي</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.7; color: #292524; background: #fffbf5; cursor: none; }
+a, button { cursor: none; }
+a { color: #9a3412; }
+
+.cursor { position: fixed; top: 0; left: 0; z-index: 50; width: 28px; height: 28px; border: 2px solid #9a3412; border-radius: 50%; pointer-events: none; transition: translate 0.15s ease-out; }
+
+.header { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; background: #fffbf5; border-block-end: 1px solid #e7e5e4; }
+.logo { font-weight: 800; color: #292524; text-decoration: none; }
+.links { display: flex; gap: 1rem; margin-inline-start: auto; }
+.menu-btn { display: none; margin-inline-start: auto; border: 0; background: none; font-size: 1.4rem; }
+.drawer { display: none; position: fixed; inset: 0 0 0 30%; padding: 4rem 1.5rem; background: #fff; box-shadow: 0 0 30px #0003; flex-direction: column; gap: 1rem; }
+.drawer.open { display: flex; }
+.drawer-close { position: absolute; top: 1rem; inset-inline-start: 1rem; border: 0; background: none; font-size: 1.2rem; }
+@media (max-width: 40rem) {
+  .links { display: none; }
+  .menu-btn { display: block; }
+}
+
+.hero { padding: 4rem 1rem; text-align: center; background: linear-gradient(#fde7d1, #fffbf5); }
+.hero h1 { margin: 0 0 0.5rem; font-size: clamp(1.8rem, 1.2rem + 3vw, 3rem); }
+.btn { display: inline-block; padding: 0.7rem 1.4rem; border-radius: 999px; background: #9a3412; color: #fff; text-decoration: none; font-weight: 700; }
+
+.partners { overflow: hidden; padding-block: 1rem; background: #292524; color: #fafaf9; }
+.track { display: flex; gap: 3rem; width: max-content; margin: 0; padding: 0; list-style: none; animation: slide 18s linear infinite; }
+@keyframes slide { to { translate: 50% 0; } }
+
+.section { max-width: 52rem; margin: 0 auto; padding: 2.5rem 1rem; }
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); margin: 0; padding: 0; list-style: none; }
+.card { padding: 1.25rem; background: #fff; border: 1px solid #e7e5e4; border-radius: 1rem; }
+.card h3 { margin: 0 0 0.25rem; }
+.small { margin: 0; font-size: 10px; color: #b8b0a8; }
+
+.acc { border-block-end: 1px solid #e7e5e4; }
+.acc-q { padding: 0.75rem 0; font-weight: 700; }
+.acc-a { display: none; padding-block-end: 0.75rem; }
+.acc.open .acc-a { display: block; }
+
+.social { display: flex; gap: 1rem; font-size: 1.6rem; }
+.social a { text-decoration: none; }
+.footer { padding: 1.5rem 1rem; text-align: center; border-block-start: 1px solid #e7e5e4; }
+</style>
+</head>
+<body>
+<div class="cursor" aria-hidden="true"></div>
+<header class="header">
+  <a class="logo" href="#">بيت الخط</a>
+  <nav class="links" aria-label="Main menu">
+    <a href="#courses">الكورسات</a>
+    <a href="#faq">أسئلة</a>
+    <a href="#join">احجز</a>
+  </nav>
+  <button class="menu-btn" aria-label="Open menu">☰</button>
+  <div class="drawer" id="drawer">
+    <a href="#courses">الكورسات</a>
+    <a href="#faq">أسئلة</a>
+    <a href="#join">احجز</a>
+    <button class="drawer-close" aria-label="Close">✕</button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>اتعلّم الرقعة والنسخ في ٨ أسابيع</h1>
+    <p>مجموعات صغيرة، وأدوات علينا، وكراسة بتاخدها معاك.</p>
+    <a class="btn" href="#join">احجز مكانك</a>
+  </section>
+
+  <section class="partners" aria-label="Partners">
+    <div class="marquee">
+      <ul class="track">
+        <li>مكتبة الورّاق</li><li>دار الحبر</li><li>جمعية الفنون</li><li>مرسم النيل</li><li>ورق وقلم</li>
+        <li>مكتبة الورّاق</li><li>دار الحبر</li><li>جمعية الفنون</li><li>مرسم النيل</li><li>ورق وقلم</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="courses" class="section">
+    <h2>الكورسات</h2>
+    <ul class="cards">
+      <li class="card"><h3>رقعة للمبتدئين</h3><p class="small">٨ حصص، كل سبت، ١٢٠٠ ج</p></li>
+      <li class="card"><h3>نسخ</h3><p class="small">١٠ حصص، كل اتنين، ١٥٠٠ ج</p></li>
+      <li class="card"><h3>ثلث متقدم</h3><p class="small">١٢ حصة، كل أربع، ٢٠٠٠ ج</p></li>
+    </ul>
+  </section>
+
+  <section id="faq" class="section">
+    <h2>أسئلة</h2>
+    <div class="acc">
+      <div class="acc-q">لازم أكون بعرف أرسم؟</div>
+      <div class="acc-a">لأ، بنبدأ من مسكة القلم.</div>
+    </div>
+    <div class="acc">
+      <div class="acc-q">الأدوات عليا؟</div>
+      <div class="acc-a">لأ، القلم والحبر والورق علينا في أول شهر.</div>
+    </div>
+  </section>
+
+  <section id="join" class="section">
+    <h2>احجز</h2>
+    <p>كلّمنا وهنرد في نفس اليوم.</p>
+    <div class="social">
+      <a href="#">📞</a>
+      <a href="#">💬</a>
+      <a href="#">📍</a>
+    </div>
+  </section>
+</main>
+<footer class="footer"><p class="small">بيت الخط، ورشة متخيلة للتجربة.</p></footer>
+<script>
+// custom cursor follows the mouse
+const cursor = document.querySelector(".cursor");
+addEventListener("mousemove", e => { cursor.style.translate = (e.clientX - 14) + "px " + (e.clientY - 14) + "px"; });
+
+// phone menu: opens and closes, nothing else
+const drawer = document.getElementById("drawer");
+document.querySelector(".menu-btn").addEventListener("click", () => drawer.classList.add("open"));
+document.querySelector(".drawer-close").addEventListener("click", () => drawer.classList.remove("open"));
+
+// accordion: click on the question
+document.querySelectorAll(".acc-q").forEach(q => q.addEventListener("click", () => q.parentElement.classList.toggle("open")));
+</script>
+<script>
+// «تباين بجد»: measures WCAG contrast for every piece of text on the page, Arabic included.
+// Why: axe takes joined Arabic letters for icon-font ligatures and then skips the whole font,
+// so color-contrast can say 0 on a page full of pale Arabic text.
+// Red tag = fails, yellow "؟" = text over an image or gradient (check it by eye), nothing = passes.
+(() => {
+  document.getElementById("cc-layer")?.remove();               // a second click starts over
+
+  const parse = s => (s.match(/[\d.]+/g) || []).map(Number);    // "rgb(1, 2, 3)" or "rgba(1, 2, 3, 0.5)"
+  const lin = v => (v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+  const lum = ([r, g, b]) => 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+  const mix = (top, a, under) => top.map((c, i) => c * a + under[i] * (1 - a));   // a see-through color over another
+
+  // the color behind an element: walk up, blending semi-transparent backgrounds, until something solid
+  function behind(el) {
+    const layers = [];
+    for (let e = el; e; e = e.parentElement) {
+      const cs = getComputedStyle(e);
+      if (cs.backgroundImage !== "none") return { image: true };
+      const c = parse(cs.backgroundColor), a = c.length === 4 ? c[3] : 1;
+      if (a > 0) layers.push([c.slice(0, 3), a]);
+      if (a === 1) break;
+    }
+    let color = [255, 255, 255];                                 // the canvas is white when nothing is solid
+    for (const [c, a] of layers.reverse()) color = mix(c, a, color);
+    return { color };
+  }
+
+  const rows = [];
+  for (const el of document.body.querySelectorAll("*")) {
+    if (el.closest("#cc-layer, script, style, noscript, template")) continue;
+    const text = [...el.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join("").trim();
+    if (!text) continue;
+    const cs = getComputedStyle(el), r = el.getBoundingClientRect();
+    if (r.width < 1 || r.height < 1 || cs.visibility === "hidden" || Number(cs.opacity) === 0) continue;
+    if (el.closest('[aria-hidden="true"]') && /^\W*$/.test(text)) continue;     // decorative symbols
+
+    const size = parseFloat(cs.fontSize), bold = Number(cs.fontWeight) >= 700;
+    const large = size >= 24 || (size >= 18.66 && bold);             // WCAG "large": 18pt, or 14pt bold
+    const need = large ? 3 : 4.5;
+    const bg = behind(el);
+    const fgRaw = parse(cs.color), fgA = fgRaw.length === 4 ? fgRaw[3] : 1;
+    let ratio = null;
+    if (!bg.image) {
+      const fg = mix(fgRaw.slice(0, 3), fgA, bg.color);
+      const [hi, lo] = [lum(fg), lum(bg.color)].sort((a, b) => b - a);
+      ratio = Math.round(((hi + 0.05) / (lo + 0.05)) * 100) / 100;
+    }
+    const status = ratio === null ? "؟" : ratio < need ? "✗" : "✓";
+    rows.push({ status, ratio, need, size: Math.round(size) + "px", text: text.slice(0, 30), el });
+  }
+
+  // tags on the page
+  const layer = document.createElement("div");
+  layer.id = "cc-layer";
+  layer.style.cssText = "position:absolute;inset:0 auto auto 0;z-index:2147483647;pointer-events:none";
+  for (const row of rows.filter(r => r.status !== "✓")) {
+    const r = row.el.getBoundingClientRect();
+    const tag = document.createElement("span");
+    tag.textContent = row.status === "؟" ? "؟" : row.ratio;
+    tag.style.cssText = "position:absolute;padding:0 4px;border-radius:4px;font:700 11px/16px system-ui;direction:ltr;" +
+      (row.status === "؟" ? "background:#fde047;color:#000" : "background:#b91c1c;color:#fff");
+    tag.style.left = r.left + scrollX + "px";
+    tag.style.top = Math.max(0, r.top + scrollY - 16) + "px";
+    layer.append(tag);
+    if (row.status === "✗") row.el.style.outline = "2px dashed #b91c1c";
+  }
+  document.body.append(layer);
+
+  const fail = rows.filter(r => r.status === "✗"), check = rows.filter(r => r.status === "؟");
+  console.table(rows.filter(r => r.status !== "✓").map(({ el, ...r }) => r));
+  console.log("تباين بجد: " + rows.length + " نص، " + fail.length + " ساقط، " + check.length + " محتاج عينك (فوق صورة أو gradient).");
+  window.__contrast = { total: rows.length, fail: fail.map(r => r.text + " " + r.ratio), check: check.map(r => r.text) };
+})();
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** نفس صفحة «بيت الخط» البايظة، بس كل كلام ساقط عليه إطار أحمر متقطع ورقم التباين فوقه (2.14 على الكروت، و 2.08 في الفوتر). والعنوان والكلام اللي على الـ gradient عليهم «؟» أصفر. ولو فتحت الكونسول هتلاقي جدول.
+
+**بيحسب إزاي:**
+- **لون الكلام:** [[getComputedStyle(el).color]]، ولو شفاف شوية بيتخلط مع الخلفية ([[mix]]).
+- **لون الخلفية:** بيطلع من العنصر لفوق لحد أول خلفية مش شفافة، ويخلط كل الطبقات النص شفافة في السكة. ولو مفيش، الخلفية أبيض.
+- **صورة أو gradient:** مفيش لون واحد يتحسب، فبيقول «؟» بدل ما يخمّن. ده أحسن من رقم غلط، سواء بيقول «ساقط» على حاجة سليمة أو العكس.
+- **الكلام الكبير:** 24px، أو 18.66px و bold، محتاج 3:1 بس (WCAG 1.4.3).
+- **العناصر:** أي عنصر جواه كلام مباشر ([[nodeType === 3]])، فالكلمة اللي في [[<strong>]] جوه فقرة بتتقاس لوحدها بلونها.
+
+**اللي مبيعملهوش:** حدود الخانات والأيقونات (1.4.11، 3:1)، والكلام اللي جاي من [[::before]]، و [[text-shadow]]. ودول لسه بالعين أو بالـ DevTools color picker.
+
+~~~text على ٥ صفحات (Playwright بـ Chrome 157، والأداة جنب axe 4.14.0)
+== landing before | axe color-contrast: inapplicable 0 | الأداة: 33 نص، ساقط 4، ؟ 2
+  ✗ ٨ حصص، كل سبت، ١٢٠٠ ج 2.14
+  ✗ ١٠ حصص، كل اتنين، ١٥٠٠ ج 2.14
+  ✗ ١٢ حصة، كل أربع، ٢٠٠٠ ج 2.14
+  ✗ بيت الخط، ورشة متخيلة للتجربة. 2.08
+  ؟ اتعلّم الرقعة والنسخ في ٨ أساب
+  ؟ مجموعات صغيرة، وأدوات علينا، و
+== fix-a-site broken (وحدة Accessibility) | axe color-contrast: passes 0 | الأداة: 7 نص، ساقط 3
+  ✗ بنجمع الحيوانات من الشارع، ونع 2.32
+  ✗ مرة في الشهر بس، ومفيش إعلانات 1.92
+  ✗ اشترك 2.15
+== landing بعد  | الأداة: 30 نص، ساقط 0، ؟ 2 (الهيرو على gradient)
+== ابتسامة      | الأداة: 33 نص، ساقط 0، ؟ 2 (الهيرو على gradient)
+== نَفَس (gate) | الأداة: 12 نص، ساقط 0
+bookmarklet.txt: 6425 حرف، و new Function(decodeURIComponent(...)) بيقراه من غير غلط، وتشغيله على fix-a-site طلّع نفس الـ ٣
+~~~
+
+**الأرقام دي اتراجعت:** 2.32 و 1.92 و 2.15 هم نفس اللي اتحسبوا بإيدي في مشروع «صلّح موقع» في وحدة Accessibility. وعلى الـ ٣ صفحات السليمة مفيش ولا «ساقط» غلط. الـ «؟» بس على الكلام اللي فوق gradient، وده مقصود. واتجرّب على ٥ صفحات من الكورس، مش على مواقع حقيقية: جرّبه على مواقع حقيقية من عندك وقارن بالعين.` },
       ],
       items: [
         {
@@ -759,6 +3356,16 @@ Error: expect(received).toEqual(expected) // deep equality
 ~~~
 
 فالـ score العالي على موقع عربي مش ضمان للتباين: قيسه بإيدك.
+
+**وفيه حاجة بتخلّيها أسوأ في صفحة كاملة:** axe بيعدّ لكل [[font-family]]. بعد ٣ نصوص في نفس الخط كلهم «ligature»، بيعتبر **الخط كله** خط أيقونات ويتخطى كل كلام بيه في الصفحة، حتى الكلام اللي لو لوحده كان هيتقاس. اتقاس على axe-core 4.14.0 و Chrome 157:
+
+~~~text color-contrast على فقرة عربي لونها #aaa
+صفحة فيها الفقرة دي بس:                          violations 1 (2.32)
+نفس الفقرة في صفحة فيها هيدر عربي (لوجو و ٣ لينكات): inapplicable، ولا عنصر اتقاس
+isIconLigature بالترتيب: ICON (title)، ICON «بيت الخط»، ICON «الكورسات»، ICON «أسئلة»…
+~~~
+
+يعني الفقرة الواحدة اتمسكت، وفي صفحة حقيقية الهيدر لوحده كفاية يطفي القاعدة. أداة بتحسب التباين بنفسها موجودة في مشروع «أداة فحص بتاعتك» تحت.
 
 ---
 

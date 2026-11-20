@@ -4385,9 +4385,9 @@
   "on": "Chrome 157 headless on Windows 11 (DevTools Protocol, local Node server); docs: other browsers, screen readers, mobile keyboards, licensing"
  },
  "css|axe و Lighthouse": {
-  "hash": "27af7254f8a1",
-  "date": "2026-11-04",
-  "on": "drill solutions run in headless Chrome 156 (playwright-core, CDP, axe 4.14) + Node 24, Tailwind 4.3.4, Vite 8, Lighthouse 13.6 Node API; DevTools UI steps, Google services, GitHub Pages and real screen readers from docs"
+  "hash": "852f03651bc7",
+  "date": "2026-11-20",
+  "on": "Windows: Chrome 157 + axe-core 4.14.0 (Playwright 1.64.1): الفقرة لوحدها violations 1، ومع هيدر عربي inapplicable، و isIconLigature بالترتيب"
  },
  "css|background-color و background-image": {
   "hash": "9ff29cc280f7",
