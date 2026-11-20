@@ -1150,11 +1150,13 @@ Chrome ← [[F12]] ← تاب **Performance** ← زرار «Load profile» (ا�
           },
           sol: R`[[slowUnique]]: حوالي 928ms، و [[top.mjs]] طلّعها ٩٥.١٪ (806 من 847ms). [[fastUnique]]: حوالي 4ms، والـ profile الكلي 41ms وأوله [[(program)]]. و [[--prof-process]] في Docker طلّع [[Builtin: ArrayIncludesSmiOrObject]] ٨٨٪ تحتها [[*slowUnique]].
 
-وعلى ماك (Apple Silicon) في GitHub Actions نفس السكربت طلّع [[(anonymous)]] فوق بدل [[slowUnique]]: الـ JIT في V8 ممكن يدمج دالة صغيرة جوه اللي ناداها (inlining)، فوقتها بيتحسب على الدالة اللي برّه. لو اسم دالتك مش ظاهر، بص على الدالة اللي بتناديها، أو جرّب [[node --cpu-prof --no-turbo-inlining]] عشان تشوف الأسامي (الأرقام هتبقى أبطأ شوية).`,
+وعلى ماك (Apple Silicon) في GitHub Actions نفس السكربت طلّع أتقل نقطة [[(anonymous)]] عند [[app.mjs:1:1]] (الكود اللي بينادي [[slowUnique]])، و [[slowUnique]] نفسها ٠٫٠٢ بس. أول تخمين كان إن V8 دمج الدالة جوه اللي ناداها (inlining)، فقفلنا الدمج في الـ compilerين ([[--no-turbo-inlining]] و [[--no-maglev-inlining]]): نفس النتيجة، يعني مش ده. ولما شلنا [[includes()]] (دالة مبنية جوه V8، builtin) وحطينا مكانها loop عادي، [[slowUnique]] طلعت فوق (٠٫٥٥). يعني الـ profiler على ARM وهو جوه الـ builtin بيضيّع الدالة اللي نادته، فالوقت بيتحسب على اللي فوقها. لو اسم دالتك مش ظاهر على ماك، بص على السطر اللي الـ profile بيشاور عليه واللي بيناديه، أو اعمل الـ profile على لينكس.
+
+وعلى جهاز بطيء (ويندوز في GitHub Actions) [[slowUnique]] طلعت ٠٫٣٨ من **كل** العيّنات، لأن الـ profiler حط جزء كبير في [[(program)]] (وقت مش JavaScript). عشان كده الفحص بيقسم على عيّنات JS بس.`,
           ci: [
             { os: [R`ubuntu`, R`windows`], sh: R`node`, run: R`// الفحص بيقيس نصيب slowUnique من عيّنات JS بس: (program) و (idle) و (garbage collector) مش JS.
-// على runners بطيئة الـ profiler بينسب جزء كبير من العيّنات لـ (program): ويندوز في GitHub Actions طلّع 0.38 من الكل، والماك 0.02.
-// و --no-turbo-inlining عشان V8 ميدمجش slowUnique جوه اللي ناداها فاسمها يختفي.
+// على runner ويندوز بطيء الـ profiler حط جزء كبير في (program)، و slowUnique طلعت 0.38 من الكل والفحص القديم وقع.
+// (الماك ليه فحص لوحده تحت: هناك includes() بتضيّع اسم slowUnique.)
 import { writeFileSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 writeFileSync("app.mjs", 'function slowUnique(list) { const out = []; for (const x of list) if (!out.includes(x)) out.push(x); return out; }\nconst ids = Array.from({ length: 30000 }, (_, i) => "u" + (i % 15000));\nconsole.log("unique:", slowUnique(ids).length);\n');
@@ -1174,8 +1176,8 @@ prof.samples.forEach((id, i) => {
 console.log("top self time:", [...self].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([n, t]) => n + " " + (t / total).toFixed(2)).join(" | "));
 console.log("slowUnique share: of all " + (inSlow / total).toFixed(2) + ", of JS " + (inSlow / js).toFixed(2));
 console.log("slowUnique holds most of the JS time:", inSlow / js > 0.5);`, expect: [R`unique: 15000`, R`slowUnique holds most of the JS time: true`] },
-            { os: [R`macos`], sh: R`node`, run: R`// الماك (Apple Silicon في GitHub Actions، ٢٠ نوفمبر): أتقل نقطة (anonymous)@app.mjs:1:1 (الكود اللي بينادي slowUnique)، و slowUnique 0.01،
-// حتى مع --no-turbo-inlining و --no-maglev-inlining: يعني مش inlining. التشغيل التالت بيشيل includes() (دالة builtin جوه V8) ويحط loop عادي.
+            { os: [R`macos`], sh: R`node`, run: R`// الماك (Apple Silicon في GitHub Actions، ٢٠ نوفمبر): مع includes() أتقل نقطة (anonymous)@app.mjs:1:1 و slowUnique 0.01 أو 0.02،
+// حتى مع --no-turbo-inlining و --no-maglev-inlining (مش inlining). من غير includes() (loop عادي) slowUnique بتظهر فوق: الـ profiler بيضيّع اسمها جوه الـ builtin.
 import { writeFileSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 const runs = [
@@ -1194,7 +1196,7 @@ for (const [label, src, flags] of runs) {
   const top = [...prof.samples.reduce((m, id, i) => m.set(id, (m.get(id) ?? 0) + prof.timeDeltas[i]), new Map())].sort((a, b) => b[1] - a[1])[0][0];
   const c = byId.get(top).callFrame;
   console.log(r.stdout.trim(), "|", label, "| slowUnique " + (inSlow / total).toFixed(2), "| heaviest:", (c.functionName || "(anonymous)") + "@" + (c.url.split("/").pop() || "-") + ":" + (c.lineNumber + 1) + ":" + (c.columnNumber + 1));
-}`, expect: [R`unique: 15000`, R`heaviest:`], show: true },
+}`, expect: [R`unique: 15000`, R`loop عادي من غير builtin | slowUnique`, R`heaviest: slowUnique@app.mjs:1:20`], show: true },
           ],
         },
         {
