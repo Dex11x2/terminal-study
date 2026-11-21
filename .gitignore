@@ -10,3 +10,6 @@ node_modules/
 
 # the single-file build is published as a GitHub Release (release.yml), never committed
 dist/
+
+# downloaded references (copyrighted PDFs, data dumps): read by the generators, never committed
+/.cache/
