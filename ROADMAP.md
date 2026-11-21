@@ -72,5 +72,5 @@
     **البنود الخمسة متحققين: **الكورس خلص.** اللي بعده: JavaScript في شات جديد (القاعدة ٤).**
 - [ ] الرئيسية كمسارات، وعلامة «مرجع» على الباقي.
 - [ ] JavaScript (منهج ✓ ٢٠ نوفمبر، ثم الناقص، ثم حلول ٦٩١ تمرين و ١٩٩ مشروع).
-  - المنهج: `syllabus/js.json` (١٣٩٤ بند: ٩٣٤ في المنهج و ٤٦٠ مستبعد بسبب)، من مرجع MDN و ECMAScript و browser-compat-data و web-features و MDN Curriculum. القياس: `node tools/syllabus.js js`. **نقطة البداية: ٣٥٢ من ٩٣٤ (٣٧٪). بعد الدفعة ٢ (الأرقام والنصوص بعمق): ٤٨٧ (٥٢٪). بعد الدفعة ٣ (المصفوفات و Map و Set، والـ object model): ٦١٣ (٦٥٪). بعد الدفعة ٤ (Date و Intl): ٧١٥ (٧٦٪).** قايمة الناقص: `syllabus/js.md`، وترتيب الكتابة في `PLAN.md` «كورس JavaScript».
+  - المنهج: `syllabus/js.json` (١٣٩٤ بند: ٩٣٤ في المنهج و ٤٦٠ مستبعد بسبب)، من مرجع MDN و ECMAScript و browser-compat-data و web-features و MDN Curriculum. القياس: `node tools/syllabus.js js`. **نقطة البداية: ٣٥٢ من ٩٣٤ (٣٧٪). بعد الدفعة ٢ (الأرقام والنصوص بعمق): ٤٨٧ (٥٢٪). بعد الدفعة ٣ (المصفوفات و Map و Set، والـ object model): ٦١٣ (٦٥٪). بعد الدفعة ٤ (Date و Intl): ٧١٥ (٧٦٪). بعد الدفعة ٥ (المتصفح بعمق، والـ Symbols والـ iteration): ٧٧١ (٨٢٪).** قايمة الناقص: `syllabus/js.md`، وترتيب الكتابة في `PLAN.md` «كورس JavaScript».
 - [ ] Git، ثم React، ثم Node، ثم «ابدأ من هنا».

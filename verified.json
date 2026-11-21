@@ -9599,6 +9599,16 @@
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
+ "js|AsyncFunction و GeneratorFunction و AsyncGeneratorFunction": {
+  "hash": "197111cb5859",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
+ },
+ "js|AsyncIterator و async generators: for await بعمق": {
+  "hash": "5a0f78cc4f30",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
+ },
  "js|BigInt بعمق": {
   "hash": "ffc148094d96",
   "date": "2026-11-20",
@@ -9684,6 +9694,11 @@
   "date": "2026-11-20",
   "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
  },
+ "js|Generator: next و return و throw و yield*": {
+  "hash": "8fc8d8baa1f8",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
+ },
  "js|IndexedDB و BroadcastChannel": {
   "hash": "7803c90be75f",
   "date": "2026-10-29",
@@ -9753,6 +9768,11 @@
   "hash": "da20efc705dc",
   "date": "2026-11-20",
   "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
+ },
+ "js|Iterator helpers: Iterator.from و Iterator.concat": {
+  "hash": "47e9fa7e07e7",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
  },
  "js|JSON": {
   "hash": "1f1da0771004",
@@ -9844,10 +9864,20 @@
   "date": "2026-11-20",
   "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
  },
+ "js|REST و CRUD بـ fetch": {
+  "hash": "0a3127108833",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
+ },
  "js|Reflect: الـ ١٣ دالة": {
   "hash": "2fde73c279d3",
   "date": "2026-11-20",
   "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
+ "js|RegExp و Symbol.match و Symbol.replace: matcher بتاعك": {
+  "hash": "f7aa33cf21a1",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
  },
  "js|ResizeObserver": {
   "hash": "294a5b14da08",
@@ -9869,6 +9899,11 @@
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
+ "js|Symbol: description و Symbol.for و Symbol.keyFor": {
+  "hash": "1b69ea58a7a9",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
+ },
  "js|UTC و Intl.DateTimeFormat": {
   "hash": "7df9a6a6bdef",
   "date": "2026-11-03",
@@ -9884,10 +9919,20 @@
   "date": "2026-11-20",
   "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
  },
+ "js|Web Animations API: element.animate": {
+  "hash": "72e704e0648b",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
+ },
  "js|Web Components في React و Vue": {
   "hash": "3727f68bd278",
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|Web Storage: localStorage و sessionStorage": {
+  "hash": "bc5a50ce259f",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
  },
  "js|WebAssembly في المتصفح": {
   "hash": "da7d806fc3b2",
@@ -9964,6 +10009,11 @@
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
+ "js|callbacks و events: الـ async قبل Promise": {
+  "hash": "7bb44ab8da52",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
+ },
  "js|canvas: ارسم أشكال وحرّكها": {
   "hash": "83c28433f46c",
   "date": "2026-10-29",
@@ -10039,6 +10089,11 @@
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
+ "js|document.cookie": {
+  "hash": "e48e3d65befa",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
+ },
  "js|drag and drop و progress": {
   "hash": "e046f749db14",
   "date": "2026-10-29",
@@ -10063,6 +10118,11 @@
   "hash": "b791fa866138",
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+ },
+ "js|event handlers: addEventListener و onclick و onclick=\"\"": {
+  "hash": "ec53bb5f51e6",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
  },
  "js|event loop": {
   "hash": "f08913368283",
@@ -10098,6 +10158,11 @@
   "hash": "9f83857424ac",
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|function expression و class expression و expression statement": {
+  "hash": "f6047bc07657",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
  },
  "js|function و arrow": {
   "hash": "5956263bfe4f",
@@ -10148,6 +10213,11 @@
   "hash": "c6783a35e077",
   "date": "2026-11-20",
   "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
+ },
+ "js|iteration protocols: next و return و throw": {
+  "hash": "e955f09ab438",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
  },
  "js|iterators و generators": {
   "hash": "9f6c79084226",
@@ -10389,6 +10459,11 @@
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
+ "js|void: void 0 و fire-and-forget": {
+  "hash": "c96689457af5",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
+ },
  "js|wasm من C": {
   "hash": "c536033010b9",
   "date": "2026-10-29",
@@ -10398,6 +10473,16 @@
   "hash": "8afa09a6c5c7",
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|well-known symbols: Symbol.toStringTag و isConcatSpreadable": {
+  "hash": "585b02a29d83",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
+ },
+ "js|window و navigator و document": {
+  "hash": "597473e52581",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
  },
  "js|أشكال بالـ loops": {
   "hash": "eeb33eff63f3",
@@ -10473,6 +10558,11 @@
   "hash": "b4b2bd2f14f8",
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+ },
+ "js|تختار تخزين إيه: cookies و Storage و Cache و IndexedDB": {
+  "hash": "240ba749f820",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
  },
  "js|تمارين أساسيات ١": {
   "hash": "9e0a25a48884",
@@ -10568,6 +10658,11 @@
   "hash": "fabfd78baf3c",
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|شجرة الـ DOM: parent و children و siblings": {
+  "hash": "9fda16b22b3b",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
  },
  "js|صفحة: آلة حاسبة": {
   "hash": "ca63f33a946d",
