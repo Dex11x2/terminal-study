@@ -4,13 +4,1003 @@ MORE("js", [
       t: "الـ event loop",
       l: 3,
       n: "JS بيشغّل حاجة واحدة في المرة، فإزاي بيعمل async؟ الـ call stack والـ queues والـ microtasks، وليه الصفحة بتتجمد",
+      pre: [
+        { to: "js/callbacks و events: الـ async قبل Promise", why: R`الـ event loop هو اللي بيشغّل الـ callbacks دي، والوحدة بتشرح بيشغّلها إمتى وبأنهي ترتيب` },
+        { to: "js/Promise", why: R`[[then]] هو أشهر microtask، ومعظم أمثلة الترتيب فيها Promise` },
+        { to: "js/async و await", why: R`كل [[await]] بيرجّع للـ event loop، وده سبب ترتيب الطباعة في أمثلة الوحدة` },
+        { to: "js/addEventListener", why: R`تمارين الصفحات بتشوف الزرار والـ input بيستجيبوا ولا لأ وانت بتشغّل كود تقيل` },
+      ],
       projects: [
-        { lvl: 'صغير', t: R`اختبار «اتوقع الناتج»`, what: R`ملف فيه ٥ snippets بتخلط sync و then و setTimeout و await و queueMicrotask، ولكل واحد توقعك كـ array. سكربت بيشغّل كل snippet بـ [[log]] مخصوص بيحط الناتج في array، ويستنى بـ setTimeout لحد ما الكل يخلص، ويقارن. من درسي event loop و microtasks.`, done: R`لكل snippet بيطبع «صح» أو «غلط» ومعاه المتوقع والحقيقي، ومثال الدرس اللي ناتجه [[A F H C E G D B]] واحد منهم وبينجح، وsnippet غلطت فيه عمدًا بيطلع «غلط».` },
-        { lvl: 'صغير', t: R`زرار بيجمّد وزرار لأ`, what: R`صفحة فيها عدّاد بيزيد كل 100ms بـ setInterval، وزرار بيعمل [[while]] ثانيتين، وزرار بيعمل نفس الشغل على دفعات بـ setTimeout. من درس blocking و الـ main thread.`, done: R`الزرار الأول بيوقّف العدّاد ثانيتين وبعدها بيكمّل من غير ما يعوّض الأرقام اللي فاتت. مع التاني العدّاد بيفضل شغال. وتسجيل Performance في DevTools بيوري long task للأول بس.` },
-        { lvl: 'متوسط', t: R`progress bar لمعالجة كبيرة`, what: R`معالجة ٢٠٠ ألف نص (مثلًا تعد الحروف العربي في كل واحد) على دفعات، و [[<progress>]] بيتحدث بعد كل دفعة، وزرار «إلغاء» بيوقّف في خلال دفعة واحدة، و «ابدأ» مبيشتغلش مرتين مع بعض. من دروس الوحدة ووحدة async.`, done: R`الـ bar بيوصل 100% والصفحة بتعمل scroll وانت مستني. الإلغاء بيوقّف ويطبع العدد اللي اتعالج. والنتيجة بعد ما يكمّل نفس نتيجة loop واحدة على نفس الداتا.` },
-        { lvl: 'متوسط', t: R`محاكي event loop`, what: R`[[class Loop]] فيها طابورين ([[macro]] و [[micro]]) و methods [[log]] و [[timeout(fn)]] و [[then(fn)]]. [[run(program)]] بتشغّل الـ program sync، وبعدين تفضّي الـ micro كله، وبعدين تاخد macro واحد وتكرر. من درسي event loop و microtasks ووحدة الـ classes.`, done: R`نفس الـ program مرة بالمحاكي ومرة بالحقيقي (setTimeout و queueMicrotask) بيطلعوا نفس الترتيب في ٥ أمثلة على الأقل، منهم microtask بيسجّل microtask، و timeout جوه then، ومثال الدرس [[A F H C E G D B]].` },
-        { lvl: 'كبير', t: R`Web Worker لـ CSV ضخم`, what: R`صفحة بتولّد (أو بتلزق في textarea) CSV فيه ٢٠٠ ألف سطر مبيعات، و Worker بيفكّه ويحسب إجمالي كل منتج، ويبعت [[{ type: "progress", done }]] كل ١٠ آلاف سطر و [[{ type: "result" }]] في الآخر. السطور البايظة بترجع في [[errors]] برقمها من غير ما يقع، وزرار إلغاء بيعمل [[terminate()]] ويعمل worker جديد، و [[worker.onerror]] بيعرض رسالة لو الـ worker نفسه وقع. من الوحدة دي ووحدات async والأخطاء والـ DOM.`, done: R`وانت المعالجة شغالة، الـ input بيكتب عادي والـ progress بيتحرك، و Performance مفيهوش long task على الـ main thread. CSV فيه ٣ سطور بايظة ← النتيجة سليمة و [[errors.length === 3]] بأرقامهم. الإلغاء في النص وبعدين ابدأ ← بيشتغل من الأول بنتيجة صح. والإجماليات زي اللي بتطلع لو حسبتها في الـ main thread.`, ext: R`زوّد [[<input type="file">]] يقرا CSV حقيقي من جهازك، وخلّي الـ worker يبعت الإجماليات كجدول متترتب، وزرار تصدير.` },
-        { lvl: 'فكرة', t: R`لاقي الـ long task في موقع حقيقي`, what: R`افتح موقع بتستخدمه (أو مشروع ليك)، وسجّل Performance وانت بتعمل حاجة تقيلة (فلتر، أو بحث، أو scroll)، ولاقي أطول task والدالة اللي عاملاها. لو المشروع بتاعك، صلّحها.`, done: R`عندك ملاحظة فيها مدة الـ task قبل وبعد، واسم الدالة المسؤولة، والطريقة اللي صلّحت بيها (دفعات، أو Worker، أو شغل أقل).`, ext: R`اكتب [[measure(name, fn)]] بتحذّر في الـ console لو أي دالة أخدت أكتر من 50ms، وحطها حوالين الدوال المشكوك فيها.` },
+        { lvl: 'صغير', t: R`اختبار «اتوقع الناتج»`, what: R`ملف فيه ٥ snippets بتخلط sync و then و setTimeout و await و queueMicrotask، ولكل واحد توقعك كـ array. سكربت بيشغّل كل snippet بـ [[log]] مخصوص بيحط الناتج في array، ويستنى بـ setTimeout لحد ما الكل يخلص، ويقارن. من درسي event loop و microtasks.`, done: R`لكل snippet بيطبع «صح» أو «غلط» ومعاه المتوقع والحقيقي، ومثال الدرس اللي ناتجه [[A F H C E G D B]] واحد منهم وبينجح، وsnippet غلطت فيه عمدًا بيطلع «غلط».`, sol: R`## الشكل النهائي
+
+~~~text الناتج (node predict.js، Node 24)
+صح   مثال الدرس
+صح   timeout جوه then
+صح   microtask بيسجّل microtask
+صح   await لدالة async
+غلط  غلطت فيه عمدًا
+      المتوقع: x timeout then
+      الحقيقي: x then timeout
+4 من 5
+~~~
+
+## هتشوف إيه
+
+سطر لكل snippet: «صح» لو توقعك طلع زي الحقيقي، و «غلط» ومعاها السطرين (المتوقع والحقيقي) لو لأ. مثال الدرس ([[A F H C E G D B]]) واحد منهم ونجح، والأخير غلطنا فيه عمدًا (حطينا timeout قبل then) فطلع «غلط».
+
+## الكود
+
+~~~js predict.js
+// كل snippet بياخد log ويكتب بيه بدل console.log، ومعاه توقعك
+const snippets = [
+  {
+    name: "مثال الدرس",
+    expected: ["A", "F", "H", "C", "E", "G", "D", "B"],
+    run(log) {
+      log("A");
+      setTimeout(() => log("B"), 0);
+      Promise.resolve().then(() => log("C")).then(() => log("D"));
+      queueMicrotask(() => log("E"));
+      (async () => { log("F"); await null; log("G"); })();
+      log("H");
+    },
+  },
+  {
+    name: "timeout جوه then",
+    expected: ["sync", "then", "t1", "t2"],
+    run(log) {
+      setTimeout(() => log("t1"), 0);
+      Promise.resolve().then(() => { log("then"); setTimeout(() => log("t2"), 0); });
+      log("sync");
+    },
+  },
+  {
+    name: "microtask بيسجّل microtask",
+    expected: ["m1", "m2", "m3", "timeout"],
+    run(log) {
+      setTimeout(() => log("timeout"), 0);
+      queueMicrotask(() => { log("m1"); queueMicrotask(() => { log("m2"); queueMicrotask(() => log("m3")); }); });
+    },
+  },
+  {
+    name: "await لدالة async",
+    expected: ["start", "1a", "2", "end", "1b"],
+    run(log) {
+      async function two() { log("2"); }
+      async function one() { log("1a"); await two(); log("1b"); }
+      log("start");
+      one();
+      log("end");
+    },
+  },
+  {
+    name: "غلطت فيه عمدًا",
+    expected: ["x", "timeout", "then"],
+    run(log) {
+      setTimeout(() => log("timeout"), 0);
+      Promise.resolve().then(() => log("then"));
+      log("x");
+    },
+  },
+];
+
+const wait = ms => new Promise(r => setTimeout(r, ms));
+let right = 0;
+for (const s of snippets) {
+  const actual = [];
+  s.run(x => actual.push(x));
+  await wait(20); // timers بـ 0 كلها تكون خلصت
+  const ok = JSON.stringify(actual) === JSON.stringify(s.expected);
+  if (ok) right++;
+  console.log((ok ? "صح " : "غلط") + "  " + s.name);
+  if (!ok) {
+    console.log("      المتوقع:", s.expected.join(" "));
+    console.log("      الحقيقي:", actual.join(" "));
+  }
+}
+console.log(right + " من " + snippets.length);
+~~~
+
+~~~json package.json
+{ "type": "module" }
+~~~
+
+## كل حتة مهمة بتعمل إيه
+
+- **كل snippet ليه [[run(log)]]:** بدل [[console.log]]، الـ snippet بيكتب بـ [[log]] اللي بيحط في array، فنقدر نقارن الترتيب بعدين.
+- **[[await wait(20)]] بعد كل snippet:** الـ snippet بيسجّل timers و microtasks وبيرجع على طول. الـ microtasks بتخلص قبل أي timer، والـ timers بتاعة 0 بتخلص قبل timer الـ 20ms اللي احنا مستنيينه (اتسجّل بعدهم). فلما [[wait]] يخلص، كل حاجة اتطبعت.
+- **[[JSON.stringify(actual) === JSON.stringify(s.expected)]]:** مقارنة arrays بالقيم والترتيب. [[===]] على arrays لوحدها بتقارن الـ reference فهتطلع false دايمًا.
+- **snippet ورا التاني مش مع بعض:** الـ [[await]] جوه الـ [[for]] بيخلي كل واحد يخلص قبل اللي بعده، فالـ timers بتاعتهم متتلخبطش في نفس الـ array.
+- **[[await]] في أول مستوى:** شغال لأن [[package.json]] فيه [[{"type":"module"}]].
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **جرّبنا نشيل [[await wait(20)]]:** أول سطرين في الناتج بقوا [[غلط  مثال الدرس]] و «الحقيقي: [[A F H]]». الـ array اتقارن على طول، وفيه السطور الـ sync بس، لأن الـ snippet بيرجع قبل ما الـ callbacks بتوعه تشتغل. وده نفس درس الوحدة: اللي جوه timer أو then بيحصل **بعد** ما الكود الحالي يخلص.`  },
+        { lvl: 'صغير', dir: "freeze-vs-chunks", t: R`زرار بيجمّد وزرار لأ`, what: R`صفحة فيها عدّاد بيزيد كل 100ms بـ setInterval، وزرار بيعمل [[while]] ثانيتين، وزرار بيعمل نفس الشغل على دفعات بـ setTimeout. من درس blocking و الـ main thread.`, done: R`الزرار الأول بيوقّف العدّاد ثانيتين وبعدها بيكمّل من غير ما يعوّض الأرقام اللي فاتت. مع التاني العدّاد بيفضل شغال. وتسجيل Performance في DevTools بيوري long task للأول بس.`, sol: R`## الشكل النهائي
+
+~~~live 260 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بيجمّد ولا لأ</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
+  #counter { font-size: 40px; font-variant-numeric: tabular-nums; }
+  button { font: inherit; padding: 6px 12px; margin: 4px 4px 4px 0; }
+  #log { color: #555; font-size: 14px; white-space: pre-line; }
+</style>
+</head>
+<body>
+<div id="counter">0</div>
+<button id="freeze">شغل ثانيتين مرة واحدة</button>
+<button id="chunks">نفس الشغل على دفعات</button>
+<p id="log"></p>
+<script>
+  const counter = document.getElementById("counter");
+  const log = document.getElementById("log");
+  let n = 0;
+  setInterval(() => { counter.textContent = ++n; }, 100);
+
+  function say(msg) { log.textContent = msg + "\n" + log.textContent; }
+
+  // الـ long tasks: أي task أطول من 50ms المتصفح بيبلّغ عنها
+  if (PerformanceObserver.supportedEntryTypes.includes("longtask")) {
+    new PerformanceObserver(list => {
+      for (const e of list.getEntries()) say("long task: " + Math.round(e.duration) + "ms");
+    }).observe({ type: "longtask" });
+  }
+
+  document.getElementById("freeze").addEventListener("click", () => {
+    const before = n, s = performance.now();
+    while (performance.now() - s < 2000) {}
+    say("مرة واحدة: العدّاد كان " + before + " وبقى " + n + " بعد ثانيتين");
+  });
+
+  document.getElementById("chunks").addEventListener("click", async () => {
+    const before = n, s = performance.now();
+    while (performance.now() - s < 2000) {
+      const c = performance.now();
+      while (performance.now() - c < 20) {} // دفعة 20ms
+      await new Promise(r => setTimeout(r, 0));
+    }
+    say("دفعات: العدّاد كان " + before + " وبقى " + n + " بعد ثانيتين");
+  });
+</script>
+</body>
+</html>
+~~~
+
+## هتشوف إيه
+
+عدّاد كبير بيزيد ١٠ مرات في الثانية، وزرارين. الأول بيوقّف العدّاد ثانيتين بالظبط وبعدها بيكمّل من غير ما يعوّض. التاني بيشتغل نفس المدة والعدّاد ماشي. وتحت لوج بيقول العدّاد كان كام وبقى كام، وأي long task المتصفح بلّغ عنها.
+
+## اتقاس (Chrome 158 بـ Playwright)
+
+~~~text الناتج: الـ log في الصفحة
+(ضغطنا «مرة واحدة» وبعدين «دفعات»، والـ log بيكتب الأحدث فوق)
+دفعات: العدّاد كان 13 وبقى 32 بعد ثانيتين
+long task: 2000ms
+مرة واحدة: العدّاد كان 5 وبقى 5 بعد ثانيتين
+~~~
+
+- **مرة واحدة:** العدّاد كان 5 وفضل 5 بعد ثانيتين، يعني ولا tick اتنفّذ. والمتصفح بلّغ عن long task طولها 2000ms.
+- **دفعات:** العدّاد زاد من 13 لـ 32 (١٩ مرة في ثانيتين، تقريبًا العشرين اللي المفروض)، ومفيش long task اتبلّغ عنها، لأن كل دفعة 20ms بس.
+- ونفس الكلام في DevTools: تاب Performance ← Record ← اضغط الزرار ← Stop: بيبان مستطيل أحمر (long task) للأول بس.
+
+## كل حتة مهمة بتعمل إيه
+
+- **[[setInterval(... , 100)]]:** العدّاد هو «مقياس» الـ main thread: لو وقف يبقى الـ thread مشغول.
+- **[[PerformanceObserver]] بـ [[type: "longtask"]]:** المتصفح بيبلّغ عن أي task أطول من 50ms ومدتها. [[supportedEntryTypes.includes]] عشان Firefox و Safari مش بيدعموه.
+- **الزرار الأول:** [[while (performance.now() - s < 2000) {}]] task واحدة ثانيتين.
+- **الزرار التاني:** نفس الثانيتين، بس مقسومين دفعات 20ms، وبين كل دفعة [[await new Promise(r => setTimeout(r, 0))]] بيرجّع للـ event loop، فالـ interval والرسم والضغطات بياخدوا دورهم.
+- **[[say]] بيكتب الأحدث فوق:** عشان كده «دفعات» ظاهرة فوق «مرة واحدة» في الناتج.
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **التاب في الخلفية بيلخبط القياس:** أول تشغيل بـ Playwright كان التاب مش ظاهر، والمتصفح بيبطّأ الرسم والـ timers في التابات المخفية، فالأرقام كانت غريبة. القياس الصح والتاب قدام (في Playwright: [[page.bringToFront()]]). وده نفس اللي بيحصل عند اليوزر لما يسيب التاب ويروح لتاب تاني.`  },
+        { lvl: 'متوسط', dir: "chunked-progress", t: R`progress bar لمعالجة كبيرة`, what: R`معالجة ٢٠٠ ألف نص (مثلًا تعد الحروف العربي في كل واحد) على دفعات، و [[<progress>]] بيتحدث بعد كل دفعة، وزرار «إلغاء» بيوقّف في خلال دفعة واحدة، و «ابدأ» مبيشتغلش مرتين مع بعض. من دروس الوحدة ووحدة async.`, done: R`الـ bar بيوصل 100% والصفحة بتعمل scroll وانت مستني. الإلغاء بيوقّف ويطبع العدد اللي اتعالج. والنتيجة بعد ما يكمّل نفس نتيجة loop واحدة على نفس الداتا.`, sol: R`## الشكل النهائي
+
+~~~live 200 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>معالجة على دفعات</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
+  progress { width: 100%; height: 20px; }
+  button { font: inherit; padding: 6px 14px; margin: 6px 6px 6px 0; }
+  #out { white-space: pre-line; }
+</style>
+</head>
+<body>
+<progress id="bar" max="100" value="0"></progress>
+<p>
+  <button id="start">ابدأ</button>
+  <button id="cancel" disabled>إلغاء</button>
+</p>
+<p id="out" aria-live="polite"></p>
+<script>
+  const WORDS = ["مرحبا", "JavaScript", "event loop", "الدوال", "async"];
+  // ٢٠٠ ألف جملة، كل واحدة حوالي ١٥٠ حرف
+  const texts = Array.from({ length: 200000 }, (_, i) => (WORDS[i % 5] + " " + i + " ").repeat(10));
+  // الشغل لكل نص: نعدّ الكلمات العربي بـ Intl.Segmenter (أتقل بكتير من regex)
+  const ARABIC = /\p{Script=Arabic}/u;
+  const words = new Intl.Segmenter("ar", { granularity: "word" });
+  function countArabicWords(s) {
+    let n = 0;
+    for (const w of words.segment(s)) if (w.isWordLike && ARABIC.test(w.segment)) n++;
+    return n;
+  }
+
+  const bar = document.getElementById("bar");
+  const out = document.getElementById("out");
+  const startBtn = document.getElementById("start");
+  const cancelBtn = document.getElementById("cancel");
+  let controller = null;
+
+  const yieldToBrowser = () => globalThis.scheduler?.yield?.() ?? new Promise(r => setTimeout(r, 0));
+
+  async function processAll(items, signal, size = 2000) {
+    let total = 0;
+    for (let i = 0; i < items.length; i += size) {
+      if (signal.aborted) return { total, done: i, cancelled: true };
+      for (const s of items.slice(i, i + size)) total += countArabicWords(s);
+      bar.value = Math.round(((i + size) / items.length) * 100);
+      await yieldToBrowser();
+    }
+    return { total, done: items.length, cancelled: false };
+  }
+
+  startBtn.addEventListener("click", async () => {
+    if (controller) return;
+    controller = new AbortController();
+    startBtn.disabled = true;
+    cancelBtn.disabled = false;
+    bar.value = 0;
+    const t = performance.now();
+    const r = await processAll(texts, controller.signal);
+    const ms = Math.round(performance.now() - t);
+    out.textContent = r.cancelled
+      ? "اتلغى بعد " + r.done + " نص (" + ms + "ms)"
+      : "خلص: " + r.total + " كلمة عربي في " + r.done + " نص (" + ms + "ms)";
+    controller = null;
+    startBtn.disabled = false;
+    cancelBtn.disabled = true;
+  });
+
+  cancelBtn.addEventListener("click", () => controller?.abort());
+</script>
+</body>
+</html>
+~~~
+
+## هتشوف إيه
+
+progress bar بيتملي في حوالي ثانيتين، و «ابدأ» بيتقفل وهو شغال، و «إلغاء» بيوقّف في خلال دفعة. وفي الآخر عدد الكلمات العربي ووقت المعالجة.
+
+## اتقاس (Chrome 158 بـ Playwright، التاب قدام)
+
+~~~text الناتج
+loop واحدة على الـ main thread: 800000 كلمة في 1881ms (الصفحة واقفة طول الوقت ده)
+ابدأ، و requestAnimationFrame بيسجّل قيمة الـ bar في كل frame اترسم:
+   خلص: 800000 كلمة عربي في 200000 نص (1879ms) | frames اترسمت: 655 | قيم مختلفة للـ bar: 17
+ابدأ مرتين ورا بعض: اشتغلت مرة واحدة، وزرار ابدأ كان disabled وهو شغال
+ابدأ تاني، وبعد 500ms ضغطة ماوس حقيقية على «إلغاء»:
+   الضغطة اتنفّذت عند 530ms | اتلغى بعد 60000 نص (580ms)
+~~~
+
+- **النتيجة واحدة:** 800000 كلمة في الحالتين (loop واحدة ودفعات).
+- **الوقت تقريبًا واحد** (1881 مقابل 1879ms)، بس في الدفعات المتصفح رسم 655 frame وشاف الـ bar بـ 17 قيمة مختلفة، وفي الـ loop الواحدة الصفحة كانت واقفة.
+- **الإلغاء:** ضغطة ماوس حقيقية عند 500ms اتنفّذت عند 530ms (يعني بعد الدفعة اللي كانت شغالة بس)، والمعالجة وقفت بعد 60000 نص.
+
+## كل حتة مهمة بتعمل إيه
+
+- **[[countArabicWords]]:** الشغل لكل نص: [[Intl.Segmenter]] بيقسم الكلام لكلمات صح (العربي مبيتقسمش بالمسافات بس دايمًا)، و [[isWordLike]] بيشيل المسافات والعلامات، و [[/\p{Script=Arabic}/u]] بيشوف الكلمة عربي ولا لأ. اخترناه لأنه أتقل بكتير من regex لوحده، عشان التجربة تبان.
+- **[[processAll(items, signal, size = 2000)]]:** بيلف دفعات ٢٠٠٠ نص، وبعد كل دفعة بيحدّث الـ bar و **بيرجّع للمتصفح**.
+- **[[yieldToBrowser]]:** [[scheduler.yield()]] لو موجود (Chrome و Edge)، ولو لأ [[setTimeout(r, 0)]]. الاتنين بيسيبوا المتصفح يرسم ويستقبل الضغطات قبل الدفعة الجاية.
+- **[[AbortController]] و [[signal.aborted]]:** «إلغاء» بيعمل [[abort()]]، والـ loop بيسأل قبل كل دفعة، فبيقف في خلال دفعة واحدة ويرجّع لحد فين وصل.
+- **[[if (controller) return]] و [[startBtn.disabled]]:** «ابدأ» مبيشتغلش مرتين مع بعض. الزرار المقفول بيمنع الضغطة، والـ [[if]] بيحمي لو حد نادى الـ handler بطريقة تانية.
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **الشغل كان خفيف أوي:** أول نسخة كانت بتعد الحروف العربي بـ regex بس، والـ ٢٠٠ ألف خلصوا في 20ms، فمفيش progress يتشاف ولا إلغاء يتجرّب. خلّينا كل نص أطول والعدّ بـ Intl.Segmenter فبقى حوالي ثانيتين.
+- **الـ regex من غير [[g]] عمدًا:** [[test]] على regex فيه [[g]] بيفتكر [[lastIndex]] (مطب درس groups و flags). هنا بالصدفة النتيجة طلعت واحدة (جرّبناها على نص صغير: 20 و 20) لأن الكلمات اللي أرقام بتفشل وترجّع [[lastIndex]] لصفر، بس ده حظ، فمفيش [[g]].`  },
+        { lvl: 'متوسط', t: R`محاكي event loop`, what: R`[[class Loop]] فيها طابورين ([[macro]] و [[micro]]) و methods [[log]] و [[timeout(fn)]] و [[then(fn)]]. [[run(program)]] بتشغّل الـ program sync، وبعدين تفضّي الـ micro كله، وبعدين تاخد macro واحد وتكرر. من درسي event loop و microtasks ووحدة الـ classes.`, done: R`نفس الـ program مرة بالمحاكي ومرة بالحقيقي (setTimeout و queueMicrotask) بيطلعوا نفس الترتيب في ٥ أمثلة على الأقل، منهم microtask بيسجّل microtask، و timeout جوه then، ومثال الدرس [[A F H C E G D B]].`, sol: R`## الشكل النهائي
+
+~~~text الناتج (node main.js، Node 24)
+✓ مثال الدرس (C و D سلسلة then)  محاكي: A F H C E G D B | حقيقي: A F H C E G D B
+✓ microtask بيسجّل microtask     محاكي: m1 m2 t | حقيقي: m1 m2 t
+✓ timeout جوه then               محاكي: sync then t1 t2 | حقيقي: sync then t1 t2
+✓ then جوه timeout               محاكي: t1 m t2 | حقيقي: t1 m t2
+✓ timeout جوه timeout            محاكي: A B C | حقيقي: A B C
+~~~
+
+## هتشوف إيه
+
+٥ برامج صغيرة، كل واحد اتشغّل مرة على المحاكي ومرة على الـ event loop الحقيقي (setTimeout و queueMicrotask)، والترتيب طلع واحد في الخمسة.
+
+## الكود
+
+~~~js loop.js
+// محاكي: طابورين، والقاعدة: sync ← فضّي الـ micro كله ← macro واحد ← كرر
+export class Loop {
+  macro = [];
+  micro = [];
+  out = [];
+  log = x => this.out.push(x);
+  timeout = fn => this.macro.push(fn);
+  then = fn => this.micro.push(fn);
+
+  run(program) {
+    program(this);
+    do {
+      while (this.micro.length) this.micro.shift()();
+      const task = this.macro.shift();
+      if (task) task();
+    } while (this.micro.length || this.macro.length);
+    return this.out;
+  }
+}
+
+// نفس الـ API بس على الـ event loop الحقيقي
+export function real(program) {
+  return new Promise(resolve => {
+    const out = [];
+    program({ log: x => out.push(x), timeout: fn => setTimeout(fn, 0), then: fn => queueMicrotask(fn) });
+    setTimeout(() => resolve(out), 30);
+  });
+}
+~~~
+
+~~~js main.js
+import { Loop, real } from "./loop.js";
+
+const programs = {
+  "مثال الدرس (C و D سلسلة then)": ({ log, timeout, then }) => {
+    log("A");
+    timeout(() => log("B"));
+    then(() => { log("C"); then(() => log("D")); });
+    then(() => log("E"));
+    log("F");
+    then(() => log("G"));
+    log("H");
+  },
+  "microtask بيسجّل microtask": ({ log, timeout, then }) => {
+    timeout(() => log("t"));
+    then(() => { log("m1"); then(() => log("m2")); });
+  },
+  "timeout جوه then": ({ log, timeout, then }) => {
+    timeout(() => log("t1"));
+    then(() => { log("then"); timeout(() => log("t2")); });
+    log("sync");
+  },
+  "then جوه timeout": ({ log, timeout, then }) => {
+    timeout(() => { log("t1"); then(() => log("m")); });
+    timeout(() => log("t2"));
+  },
+  "timeout جوه timeout": ({ log, timeout }) => {
+    timeout(() => { log("A"); timeout(() => log("C")); });
+    timeout(() => log("B"));
+  },
+};
+
+for (const [name, p] of Object.entries(programs)) {
+  const sim = new Loop().run(p);
+  const act = await real(p);
+  const same = sim.join(" ") === act.join(" ");
+  console.log((same ? "✓ " : "✗ ") + name.padEnd(30), "محاكي:", sim.join(" "), "| حقيقي:", act.join(" "));
+}
+~~~
+
+~~~json package.json
+{ "type": "module" }
+~~~
+
+## كل حتة مهمة بتعمل إيه
+
+- **البرنامج function بياخد [[{ log, timeout, then }]]:** نفس البرنامج بيشتغل على أي «engine» بيدّيله الـ ٣ دوال دول. ده اللي بيخلي المقارنة عادلة.
+- **[[Loop.run]]:** بيشغّل البرنامج sync، وبعدين: فضّي **كل** الـ micro (حتى اللي بيتضاف وهو بيفضّي، لأن [[while (this.micro.length)]] بيبص على الطول كل لفة)، وبعدين macro **واحد**، وكرر لحد ما الطابورين يفضوا.
+- **[[real(program)]]:** نفس الـ API بـ [[setTimeout(fn, 0)]] و [[queueMicrotask(fn)]]، ويستنى 30ms ويرجّع اللي اتطبع.
+- **مثال الدرس:** المحاكي مفيهوش [[await]]، فـ [[await null]] اتكتبت [[then]] (ده اللي [[await]] بيعمله فعلًا: باقي الدالة بيبقى microtask)، و [[.then().then()]] اتكتبت [[then]] جوه [[then]]. وطلع [[A F H C E G D B]] زي الحقيقي.
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+أول نسخة من [[run]] كانت كده:
+
+~~~js first.mjs
+class Loop {
+  macro = []; micro = []; out = [];
+  log = x => this.out.push(x); timeout = fn => this.macro.push(fn); then = fn => this.micro.push(fn);
+  run(p) {
+    p(this);
+    while (this.macro.length) {
+      while (this.micro.length) this.micro.shift()();
+      this.macro.shift()();
+    }
+    return this.out;
+  }
+}
+console.log(new Loop().run(({ log, timeout, then }) => { timeout(() => { log("t1"); then(() => log("m")); }); }).join(" ") || "(فاضي)");
+console.log(new Loop().run(({ log, then }) => { then(() => log("m1")); log("sync"); }).join(" "));
+~~~
+
+~~~text الناتج (node first.mjs)
+t1
+sync
+~~~
+
+البرنامج الأول كان المفروض يطبع [[t1 m]] وطبع [[t1]] بس، والتاني المفروض [[sync m1]] وطبع [[sync]] بس. الشرط [[while (this.macro.length)]] بيقف أول ما الـ macro يفضى، فالـ microtasks اللي آخر macro سجّلها (أو اللي اتسجّلت ومفيش macro أصلًا) بتضيع. الحل [[do ... while (micro.length || macro.length)]]: فضّي الـ micro الأول دايمًا، والـ loop يكمّل طول ما فيه أي حاجة في أي طابور.`  },
+        { lvl: 'كبير', dir: "csv-worker", t: R`Web Worker لـ CSV ضخم`, what: R`صفحة بتولّد (أو بتلزق في textarea) CSV فيه ٢٠٠ ألف سطر مبيعات، و Worker بيفكّه ويحسب إجمالي كل منتج، ويبعت [[{ type: "progress", done }]] كل ١٠ آلاف سطر و [[{ type: "result" }]] في الآخر. السطور البايظة بترجع في [[errors]] برقمها من غير ما يقع، وزرار إلغاء بيعمل [[terminate()]] ويعمل worker جديد، و [[worker.onerror]] بيعرض رسالة لو الـ worker نفسه وقع. من الوحدة دي ووحدات async والأخطاء والـ DOM.`, done: R`وانت المعالجة شغالة، الـ input بيكتب عادي والـ progress بيتحرك، و Performance مفيهوش long task على الـ main thread. CSV فيه ٣ سطور بايظة ← النتيجة سليمة و [[errors.length === 3]] بأرقامهم. الإلغاء في النص وبعدين ابدأ ← بيشتغل من الأول بنتيجة صح. والإجماليات زي اللي بتطلع لو حسبتها في الـ main thread.`, ext: R`زوّد [[<input type="file">]] يقرا CSV حقيقي من جهازك، وخلّي الـ worker يبعت الإجماليات كجدول متترتب، وزرار تصدير.`, sol: R`## الشكل النهائي
+
+~~~view 330 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مبيعات CSV</title>
+<style>
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
+  button, input { font: inherit; padding: 5px 10px; margin: 3px 3px 3px 0; }
+  progress { width: 100%; }
+  table { border-collapse: collapse; margin-top: 8px; }
+  td, th { border: 1px solid #ccc; padding: 3px 10px; }
+  td.n { direction: ltr; text-align: right; font-variant-numeric: tabular-nums; }
+  #msg { white-space: pre-line; }
+  .err { color: #b91c1c; }
+</style>
+</head>
+<body>
+<p>
+  <button id="start">ولّد ٢٠٠ ألف سطر واحسب</button>
+  <button id="cancel" disabled>إلغاء</button>
+</p>
+<input id="typing" placeholder="اكتب هنا وانت مستني" aria-label="جرّب الكتابة">
+<progress id="bar" max="200000" value="0"></progress>
+<p id="msg" aria-live="polite"></p>
+<table id="table"></table>
+<script type="text/plain" id="worker-src">
+// الحساب نفسه: من غير DOM ومن غير Worker، فبيتجرّب في Node
+const HEADER = "date,product,qty,price";
+
+function makeCSV(rows, badLines = []) {
+  const products = ["قلم", "كشكول", "شنطة", "آلة حاسبة"];
+  const lines = [HEADER];
+  for (let i = 0; i < rows; i++) {
+    lines.push($__bt2026-11-$__{String((i % 28) + 1).padStart(2, "0")},$__{products[i % 4]},$__{(i % 5) + 1},$__{(i % 7) + 10}.5$__bt);
+  }
+  for (const at of badLines) lines.splice(at, 0, "سطر,بايظ");
+  return lines.join("\n");
+}
+
+// onProgress بيتنادى كل every سطر، و shouldStop بيتسأل قبل كل دفعة
+function totals(text, { every = 10000, onProgress = () => {}, shouldStop = () => false } = {}) {
+  const lines = text.split(/\r?\n/);
+  if (lines[0].trim() !== HEADER) throw new Error("أول سطر لازم يبقى: " + HEADER);
+  const byProduct = {};
+  const errors = [];
+  let rows = 0;
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.trim() === "") continue;
+    const parts = line.split(",");
+    const qty = Number(parts[2]);
+    const price = Number(parts[3]);
+    if (parts.length !== 4 || !parts[1] || !Number.isInteger(qty) || qty <= 0 || !Number.isFinite(price)) {
+      errors.push({ line: i + 1, text: line });
+    } else {
+      byProduct[parts[1]] = Math.round(((byProduct[parts[1]] ?? 0) + qty * price) * 100) / 100;
+      rows++;
+    }
+    if (i % every === 0) {
+      onProgress(i);
+      if (shouldStop()) return null;
+    }
+  }
+  return { rows, byProduct, errors };
+}
+
+
+// النص بييجي جاهز (لزق أو ملف)، أو الـ worker بيولّده بنفسه عشان التوليد كمان ميبقاش على الـ main thread
+self.onmessage = (e) => {
+  const text = e.data.text ?? makeCSV(e.data.generate, e.data.bad);
+  try {
+    const result = totals(text, {
+      onProgress: (done) => self.postMessage({ type: "progress", done }),
+    });
+    self.postMessage({ type: "result", ...result });
+  } catch (err) {
+    self.postMessage({ type: "error", message: err.message });
+  }
+};
+</script>
+<script>
+  const bar = document.getElementById("bar");
+  const msg = document.getElementById("msg");
+  const startBtn = document.getElementById("start");
+  const cancelBtn = document.getElementById("cancel");
+  let worker = null;
+
+  function setBusy(busy) {
+    startBtn.disabled = busy;
+    cancelBtn.disabled = !busy;
+  }
+
+  function showResult(r, ms) {
+    msg.textContent = r.rows + " سطر سليم في " + ms + "ms، و " + r.errors.length + " سطر بايظ" +
+      (r.errors.length ? ": " + r.errors.map(e => "سطر " + e.line).join("، ") : "");
+    msg.className = r.errors.length ? "err" : "";
+    const table = document.getElementById("table");
+    table.replaceChildren();
+    for (const [product, total] of Object.entries(r.byProduct)) {
+      const tr = table.insertRow();
+      tr.insertCell().textContent = product;
+      const td = tr.insertCell();
+      td.className = "n";
+      td.textContent = total.toLocaleString("en-US");
+    }
+  }
+
+  function start() {
+    const t = performance.now();
+    worker = new Worker(URL.createObjectURL(new Blob([document.getElementById("worker-src").textContent], { type: "text/javascript" })));
+    worker.onmessage = (e) => {
+      if (e.data.type === "progress") bar.value = e.data.done;
+      if (e.data.type === "error") {
+        msg.textContent = "الملف فيه مشكلة: " + e.data.message;
+        msg.className = "err";
+        worker.terminate();
+        worker = null;
+        setBusy(false);
+      }
+      if (e.data.type === "result") {
+        bar.value = bar.max;
+        showResult(e.data, Math.round(performance.now() - t));
+        worker.terminate();
+        worker = null;
+        setBusy(false);
+      }
+    };
+    worker.onerror = (e) => {
+      msg.textContent = "الـ worker وقع: " + e.message;
+      msg.className = "err";
+      worker = null;
+      setBusy(false);
+    };
+    worker.postMessage({ generate: 200000, bad: [50, 120000, 199000] });
+    setBusy(true);
+    msg.textContent = "بيحسب...";
+  }
+
+  startBtn.addEventListener("click", () => { if (!worker) start(); });
+  cancelBtn.addEventListener("click", () => {
+    worker?.terminate();
+    worker = null;
+    bar.value = 0;
+    msg.textContent = "اتلغى";
+    setBusy(false);
+  });
+</script>
+</body>
+</html>
+~~~
+
+(الـ preview فوق نفس الصفحة بس الـ worker متحط جواها كـ Blob، لأن الـ preview مبيقراش ملفات جنبه. في مشروعك [[index.html]] و [[worker.js]] و [[csv.js]] ملفات منفصلة زي تحت.)
+
+## هتشوف إيه
+
+زرار بيولّد ٢٠٠ ألف سطر مبيعات ويحسبهم في Worker، و progress bar، و input تكتب فيه وانت مستني، وفي الآخر سطر بعدد السطور السليمة والبايظة بأرقامها، وجدول إجمالي كل منتج. و «إلغاء» بيقتل الـ worker.
+
+## الملفات وترتيب البناء
+
+~~~text الشجرة
+csv-worker/
+├── package.json   "type": "module" و npm test
+├── csv.js         makeCSV و totals: الحساب كله، من غير DOM
+├── worker.js      بيستورد csv.js ويبعت progress و result
+├── index.html     الصفحة: بتعمل Worker وتعرض
+└── test.js        6 اختبارات لـ csv.js في Node
+~~~
+
+اتبنى بالترتيب: [[csv.js]] واختباراته في Node الأول (الحساب صح من غير أي متصفح)، وبعدين [[worker.js]] حواليه، وبعدين الصفحة.
+
+~~~json package.json
+{
+  "name": "csv-worker",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
+~~~
+
+~~~js csv.js
+// الحساب نفسه: من غير DOM ومن غير Worker، فبيتجرّب في Node
+export const HEADER = "date,product,qty,price";
+
+export function makeCSV(rows, badLines = []) {
+  const products = ["قلم", "كشكول", "شنطة", "آلة حاسبة"];
+  const lines = [HEADER];
+  for (let i = 0; i < rows; i++) {
+    lines.push($__bt2026-11-$__{String((i % 28) + 1).padStart(2, "0")},$__{products[i % 4]},$__{(i % 5) + 1},$__{(i % 7) + 10}.5$__bt);
+  }
+  for (const at of badLines) lines.splice(at, 0, "سطر,بايظ");
+  return lines.join("\n");
+}
+
+// onProgress بيتنادى كل every سطر، و shouldStop بيتسأل قبل كل دفعة
+export function totals(text, { every = 10000, onProgress = () => {}, shouldStop = () => false } = {}) {
+  const lines = text.split(/\r?\n/);
+  if (lines[0].trim() !== HEADER) throw new Error("أول سطر لازم يبقى: " + HEADER);
+  const byProduct = {};
+  const errors = [];
+  let rows = 0;
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.trim() === "") continue;
+    const parts = line.split(",");
+    const qty = Number(parts[2]);
+    const price = Number(parts[3]);
+    if (parts.length !== 4 || !parts[1] || !Number.isInteger(qty) || qty <= 0 || !Number.isFinite(price)) {
+      errors.push({ line: i + 1, text: line });
+    } else {
+      byProduct[parts[1]] = Math.round(((byProduct[parts[1]] ?? 0) + qty * price) * 100) / 100;
+      rows++;
+    }
+    if (i % every === 0) {
+      onProgress(i);
+      if (shouldStop()) return null;
+    }
+  }
+  return { rows, byProduct, errors };
+}
+~~~
+
+~~~js worker.js
+import { totals, makeCSV } from "./csv.js";
+
+// النص بييجي جاهز (لزق أو ملف)، أو الـ worker بيولّده بنفسه عشان التوليد كمان ميبقاش على الـ main thread
+self.onmessage = (e) => {
+  const text = e.data.text ?? makeCSV(e.data.generate, e.data.bad);
+  try {
+    const result = totals(text, {
+      onProgress: (done) => self.postMessage({ type: "progress", done }),
+    });
+    self.postMessage({ type: "result", ...result });
+  } catch (err) {
+    self.postMessage({ type: "error", message: err.message });
+  }
+};
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مبيعات CSV</title>
+<style>
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
+  button, input { font: inherit; padding: 5px 10px; margin: 3px 3px 3px 0; }
+  progress { width: 100%; }
+  table { border-collapse: collapse; margin-top: 8px; }
+  td, th { border: 1px solid #ccc; padding: 3px 10px; }
+  td.n { direction: ltr; text-align: right; font-variant-numeric: tabular-nums; }
+  #msg { white-space: pre-line; }
+  .err { color: #b91c1c; }
+</style>
+</head>
+<body>
+<p>
+  <button id="start">ولّد ٢٠٠ ألف سطر واحسب</button>
+  <button id="cancel" disabled>إلغاء</button>
+</p>
+<input id="typing" placeholder="اكتب هنا وانت مستني" aria-label="جرّب الكتابة">
+<progress id="bar" max="200000" value="0"></progress>
+<p id="msg" aria-live="polite"></p>
+<table id="table"></table>
+<script type="module">
+  const bar = document.getElementById("bar");
+  const msg = document.getElementById("msg");
+  const startBtn = document.getElementById("start");
+  const cancelBtn = document.getElementById("cancel");
+  let worker = null;
+
+  function setBusy(busy) {
+    startBtn.disabled = busy;
+    cancelBtn.disabled = !busy;
+  }
+
+  function showResult(r, ms) {
+    msg.textContent = r.rows + " سطر سليم في " + ms + "ms، و " + r.errors.length + " سطر بايظ" +
+      (r.errors.length ? ": " + r.errors.map(e => "سطر " + e.line).join("، ") : "");
+    msg.className = r.errors.length ? "err" : "";
+    const table = document.getElementById("table");
+    table.replaceChildren();
+    for (const [product, total] of Object.entries(r.byProduct)) {
+      const tr = table.insertRow();
+      tr.insertCell().textContent = product;
+      const td = tr.insertCell();
+      td.className = "n";
+      td.textContent = total.toLocaleString("en-US");
+    }
+  }
+
+  function start() {
+    const t = performance.now();
+    worker = new Worker(new URL("./worker.js", import.meta.url), { type: "module" });
+    worker.onmessage = (e) => {
+      if (e.data.type === "progress") bar.value = e.data.done;
+      if (e.data.type === "error") {
+        msg.textContent = "الملف فيه مشكلة: " + e.data.message;
+        msg.className = "err";
+        worker.terminate();
+        worker = null;
+        setBusy(false);
+      }
+      if (e.data.type === "result") {
+        bar.value = bar.max;
+        showResult(e.data, Math.round(performance.now() - t));
+        worker.terminate();
+        worker = null;
+        setBusy(false);
+      }
+    };
+    worker.onerror = (e) => {
+      msg.textContent = "الـ worker وقع: " + e.message;
+      msg.className = "err";
+      worker = null;
+      setBusy(false);
+    };
+    worker.postMessage({ generate: 200000, bad: [50, 120000, 199000] });
+    setBusy(true);
+    msg.textContent = "بيحسب...";
+  }
+
+  startBtn.addEventListener("click", () => { if (!worker) start(); });
+  cancelBtn.addEventListener("click", () => {
+    worker?.terminate();
+    worker = null;
+    bar.value = 0;
+    msg.textContent = "اتلغى";
+    setBusy(false);
+  });
+</script>
+</body>
+</html>
+~~~
+
+~~~js test.js
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { totals, makeCSV, HEADER } from "./csv.js";
+
+test("ملف صغير معروف: الإجماليات صح", () => {
+  const text = HEADER + "\n2026-11-01,قلم,2,10.5\n2026-11-02,قلم,1,10.5\n2026-11-02,شنطة,3,100\n";
+  assert.deepEqual(totals(text), { rows: 3, byProduct: { قلم: 31.5, شنطة: 300 }, errors: [] });
+});
+
+test("٣ سطور بايظة بترجع بأرقامها من غير ما يقع", () => {
+  const r = totals(makeCSV(1000, [50, 500, 900]));
+  assert.equal(r.rows, 1000);
+  assert.deepEqual(r.errors.map(e => e.line), [51, 501, 901]);
+});
+
+test("qty مش رقم صحيح أو سالب أو سطر ناقص = غلط", () => {
+  const text = HEADER + "\nd,قلم,abc,1\nd,قلم,-2,1\nd,قلم,2\nd,,1,1\nd,قلم,1,x";
+  assert.equal(totals(text).errors.length, 5);
+});
+
+test("header غلط بيرمي", () => {
+  assert.throws(() => totals("a,b,c\n1,2,3"), /أول سطر/);
+});
+
+test("progress كل 10000 سطر، والإلغاء بيوقف", () => {
+  const seen = [];
+  totals(makeCSV(50000), { onProgress: d => seen.push(d) });
+  assert.deepEqual(seen, [10000, 20000, 30000, 40000, 50000]);
+  let calls = 0;
+  assert.equal(totals(makeCSV(50000), { onProgress: () => calls++, shouldStop: () => calls >= 2 }), null);
+  assert.equal(calls, 2);
+});
+
+test("٢٠٠ ألف سطر: نفس النتيجة كل مرة وفي وقت معقول", () => {
+  const text = makeCSV(200000, [50, 120000, 199000]);
+  const t = performance.now();
+  const a = totals(text);
+  const ms = performance.now() - t;
+  assert.equal(a.rows, 200000);
+  assert.equal(a.errors.length, 3);
+  assert.deepEqual(totals(text), a);
+  console.log("  ٢٠٠ ألف سطر في", Math.round(ms), "ms على الـ thread ده");
+});
+~~~
+
+الصفحة لازم تتفتح من server ([[npx serve]] أو Live Server)، لأن module worker مبيشتغلش من [[file://]].
+
+## الاختبارات
+
+~~~text الناتج (npm test، Node 24)
+  ٢٠٠ ألف سطر في 89 ms على الـ thread ده
+✔ ملف صغير معروف: الإجماليات صح (1.8809ms)
+✔ ٣ سطور بايظة بترجع بأرقامها من غير ما يقع (1.6423ms)
+✔ qty مش رقم صحيح أو سالب أو سطر ناقص = غلط (0.1346ms)
+✔ header غلط بيرمي (0.3758ms)
+✔ progress كل 10000 سطر، والإلغاء بيوقف (67.7999ms)
+✔ ٢٠٠ ألف سطر: نفس النتيجة كل مرة وفي وقت معقول (245.1385ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 403.1732
+~~~
+
+## اتقاس في الصفحة (Chrome 158 بـ Playwright)
+
+~~~text الناتج
+200000 سطر سليم في 134ms، و 3 سطر بايظ: سطر 51، سطر 120001، سطر 199001
+قلم         2,024,993
+كشكول       2,024,993
+شنطة        2,025,004
+آلة حاسبة   2,024,991
+long tasks على الـ main thread وقت المعالجة: []
+حروف اتكتبت في الـ input بعد ابدأ: ظهرت عند 1 و 48 و 94ms (في وقتها)
+ابدأ ← إلغاء بعد 20ms: اتلغى | bar=0
+ابدأ تاني: 200000 سطر سليم في 125ms، و 3 سطر بايظ: سطر 51، سطر 120001، سطر 199001
+
+ونفس الحساب على الـ main thread للمقارنة (import لـ csv.js في نفس الصفحة):
+makeCSV: 43ms، totals: 67ms، long task اتسجّلت: [66]
+الإجماليات: قلم 2024993، كشكول 2024993، شنطة 2025004، آلة حاسبة 2024991 (نفس الأرقام)
+~~~
+
+- **مفيش long task على الـ main thread** وقت المعالجة، والحروف ظهرت في وقتها.
+- **نفس الحساب على الـ main thread** عمل long task 66ms (والتوليد 43ms كمان)، والإجماليات طلعت نفس الأرقام بالظبط.
+- الأرقام هنا صغيرة لأن الجهاز سريع؛ على موبايل ضعيف نفس الشغل بياخد أضعاف، وده بالظبط اللي الـ Worker بيحمي منه.
+
+## كل حتة مهمة بتعمل إيه
+
+- **[[csv.js]] من غير DOM:** نفس الملف بيشتغل في الـ worker وفي Node، فالاختبارات بتجرّب الحساب الحقيقي.
+- **[[totals(text, { every, onProgress, shouldStop })]]:** بيقسم السطور، ويتأكد من الـ header، وكل سطر بيتفحص (٤ حقول، والكمية رقم صحيح موجب، والسعر رقم)، والبايظ بيتحط في [[errors]] برقمه (الـ header سطر 1) ويكمّل. وكل [[every]] سطر بينادي [[onProgress]].
+- **[[Math.round(... * 100) / 100]]:** الأسعار فيها كسور ([[10.5]])، وجمع كسور كتير بيطلّع أرقام زي [[2024992.9999999]]، فبنقرّب لقرشين في كل خطوة.
+- **[[worker.js]]:** بيولّد الملف بنفسه لو جاله [[generate]]، أو ياخد [[text]] جاهز، ويبعت [[{ type: "progress" }]] و [[{ type: "result" }]]، ولو الحساب رمى (header غلط) بيبعت [[{ type: "error" }]] بدل ما يقع.
+- **[[new Worker(new URL("./worker.js", import.meta.url), { type: "module" })]]:** module worker عشان يقدر يعمل [[import]].
+- **[[worker.onerror]]:** لو الـ worker نفسه وقع (ملف مش موجود، أو syntax error)، الصفحة بتكتب رسالة وترجّع الزراير.
+- **الإلغاء = [[terminate()]] + worker جديد في المرة الجاية:** [[terminate]] بيقتل الـ thread فورًا حتى لو في نص loop، والـ worker المقتول مبيرجعش، فـ [[start()]] بتعمل واحد جديد كل مرة.
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **التوليد كان في الصفحة:** أول نسخة كانت بتعمل [[makeCSV(200000)]] في الـ main thread وتبعت النص للـ worker. التوليد لوحده 43ms، وبعت نص ٨ ميجا لـ worker بيتنسخ (structured clone) وده كمان وقت على الـ main thread. فبقى الـ worker هو اللي بيولّد.
+- **أرقام السطور:** [[line: i + 1]] عشان رقم السطر يبقى زي ما بيتشاف في أي editor (الـ header سطر 1)، والاختبار التاني بيتأكد إن السطور البايظة طلعت 51 و 501 و 901.`  },
+        { lvl: 'فكرة', t: R`لاقي الـ long task في موقع حقيقي`, what: R`افتح موقع بتستخدمه (أو مشروع ليك)، وسجّل Performance وانت بتعمل حاجة تقيلة (فلتر، أو بحث، أو scroll)، ولاقي أطول task والدالة اللي عاملاها. لو المشروع بتاعك، صلّحها.`, done: R`عندك ملاحظة فيها مدة الـ task قبل وبعد، واسم الدالة المسؤولة، والطريقة اللي صلّحت بيها (دفعات، أو Worker، أو شغل أقل).`, ext: R`اكتب [[measure(name, fn)]] بتحذّر في الـ console لو أي دالة أخدت أكتر من 50ms، وحطها حوالين الدوال المشكوك فيها.`, sol: R`## نسخة نموذجية: صفحة فلتر منتجات بطيئة
+
+مفيش «موقع حقيقي» واحد نقيس عليه في الدرس، فعملنا صفحة شبه اللي بتقابلك في الشغل: input بيفلتر ٢٠ ألف منتج. فيها نسخة بطيئة (زي كود كتير موجود) ونسخة مصلّحة، و [[measure(name, fn)]] اللي في الـ ext.
+
+## الشكل النهائي
+
+~~~live 330 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فلتر المنتجات</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
+  input { font: inherit; padding: 4px 8px; }
+  #list { height: 220px; overflow: auto; border: 1px solid #ccc; margin-top: 8px; }
+  #list div { padding: 2px 8px; border-bottom: 1px solid #eee; }
+  label { margin-inline-start: 10px; }
+</style>
+</head>
+<body>
+<input id="q" placeholder="فلتر..." aria-label="فلتر">
+<label><input type="checkbox" id="fast"> النسخة المصلّحة</label>
+<span id="count"></span>
+<div id="list"></div>
+<script>
+  // measure: أي دالة أطول من 50ms بتتحذّر في الـ console
+  function measure(name, fn) {
+    return function (...args) {
+      const t = performance.now();
+      const r = fn.apply(this, args);
+      const ms = performance.now() - t;
+      if (ms > 50) console.warn("⚠ " + name + " أخدت " + ms.toFixed(0) + "ms");
+      window.__last = { name, ms };
+      return r;
+    };
+  }
+
+  const products = Array.from({ length: 20000 }, (_, i) => ({ id: i, name: ["قلم", "كشكول", "شنطة", "مسطرة"][i % 4] + " " + i }));
+  const list = document.getElementById("list");
+  const count = document.getElementById("count");
+
+  // البطيء: بيرسم الـ ٢٠ ألف كلهم كعناصر، ومع كل عنصر بيقرا offsetHeight
+  const slowFilter = measure("slowFilter", (q) => {
+    list.innerHTML = "";
+    let shown = 0;
+    for (const p of products) {
+      if (!p.name.includes(q)) continue;
+      const div = document.createElement("div");
+      div.textContent = p.name;
+      list.append(div);
+      shown += div.offsetHeight > 0 ? 1 : 0;
+    }
+    count.textContent = shown + " نتيجة";
+  });
+
+  // المصلّح: فلتر الداتا الأول، وارسم أول 200 بس في fragment واحد من غير قراية layout
+  const fastFilter = measure("fastFilter", (q) => {
+    const hits = products.filter(p => p.name.includes(q));
+    const frag = document.createDocumentFragment();
+    for (const p of hits.slice(0, 200)) {
+      const div = document.createElement("div");
+      div.textContent = p.name;
+      frag.append(div);
+    }
+    list.replaceChildren(frag);
+    count.textContent = hits.length + " نتيجة" + (hits.length > 200 ? " (أول 200 ظاهرين)" : "");
+  });
+
+  document.getElementById("q").addEventListener("input", (e) => {
+    (document.getElementById("fast").checked ? fastFilter : slowFilter)(e.target.value);
+  });
+</script>
+</body>
+</html>
+~~~
+
+## الملاحظة (اللي المطلوب طالبها)
+
+~~~text اتقاس في Chrome 158 بـ Playwright
+البطيء  "ق":      4249ms | 5000 نتيجة
+البطيء  "قلم":    4802ms | 5000 نتيجة
+البطيء  "قلم 1":  1373ms | 2777 نتيجة
+المصلّح "ق":      3ms | 5000 نتيجة (أول 200 ظاهرين)
+المصلّح "قلم":    1ms | 5000 نتيجة (أول 200 ظاهرين)
+المصلّح "قلم 1":  1ms | 2777 نتيجة (أول 200 ظاهرين)
+
+الـ console:
+⚠ slowFilter أخدت 4249ms
+⚠ slowFilter أخدت 4802ms
+⚠ slowFilter أخدت 1373ms
+
+تفكيك البطيء ("ق"): append الـ 5000 عنصر من غير offsetHeight: 5ms، و layout واحدة في الآخر: 70ms
+~~~
+
+| | قبل | بعد |
+|---|---|---|
+| أطول task (حرف «ق») | 4249ms | 3ms |
+| الدالة المسؤولة | [[slowFilter]] | [[fastFilter]] |
+| الطريقة | | شغل أقل + مفيش قراية layout في الـ loop |
+
+## إزاي لقينا السبب
+
+1. **Performance في DevTools:** Record ← كتبنا حرف ← Stop. ظهرت task حمرا ٤ ثواني، وجواها مستطيلات بنفسجي صغيرة كتير جدًا اسمها **Layout** تحت [[slowFilter]].
+2. **[[measure]] حوالين الدالة:** [[⚠ slowFilter أخدت 4249ms]] في الـ console، فاتأكدنا مين.
+3. **فكّكناها:** بالـ append بس من غير [[offsetHeight]] الـ 5000 عنصر خدوا 5ms، و layout واحدة في الآخر 70ms. يعني الـ ٤ ثواني جت من **قراية [[offsetHeight]] بعد كل [[append]]**: كل قراية بتجبر المتصفح يحسب الـ layout من جديد لأن الصفحة اتغيرت (layout thrashing)، و ٥٠٠٠ مرة × حساب الصفحة كلها.
+
+## التصليح وليه
+
+- **[[products.filter]] الأول:** الفلترة على الداتا، مش على الـ DOM.
+- **أول ٢٠٠ بس:** محدش بيقرا ٥٠٠٠ سطر؛ والعدد الكلي بيتكتب. (ولو لازم الكل: virtual list بترسم اللي ظاهر بس.)
+- **[[DocumentFragment]] و [[replaceChildren]]:** كل العناصر بتدخل الصفحة مرة واحدة، فـ layout واحدة.
+- **مفيش [[offsetHeight]] جوه الـ loop:** لو محتاج تقرا مقاسات، اقرا الكل الأول وبعدين اكتب الكل.
+
+## [[measure(name, fn)]]
+
+بترجّع دالة بتلف الأصلية: بتاخد الوقت قبل وبعد بـ [[performance.now()]]، ولو أكتر من 50ms ([[long task]]) بتعمل [[console.warn]]. و [[fn.apply(this, args)]] عشان [[this]] والـ arguments يعدّوا زي ما هم، وبترجّع نتيجة الأصلية. حطها حوالين أي دالة مشكوك فيها وشيلها بعد ما تخلص.
+
+## لو المشروع بتاعك
+
+نفس الخطوات: سجّل، ولاقي أطول task، ودوّر جواها على Layout أو Recalculate Style متكررة (قراية مقاسات وسط كتابة)، أو Function Call طويلة (حساب تقيل: دفعات أو Worker). واكتب الرقمين قبل وبعد.`  },
       ],
       items: [
         {
@@ -27,10 +1017,145 @@ fetch("https://example.com").then(() => console.log("4: fetch خلص"));
 console.log("1: آخر سطر sync");
 console.log("2: لسه sync");`,
           try: R`افتح loupe (latentflip.com/loupe) أو أي visualizer للـ event loop وحط كود فيه setTimeout و console.log، وشوف الـ stack والـ queue بيتحركوا. وبعدين في DevTools حط breakpoint جوه [[b]] وبص على Call Stack على اليمين.`,
+          ref: [
+            { t: "MDN: JavaScript execution model", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Execution_model" },
+            { t: "MDN: Window.setTimeout()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout" },
+            { t: "MDN: Window.requestAnimationFrame()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame" },
+          ],
           practice: [
-            { lvl: 'سريع', t: R`صلّح الكود البايظ: زرار «احسب» بيعمل [[status.textContent = "جاري الحساب..."]] وبعدها على طول loop بيلف ٣ ثواني، وبعدين [[status.textContent = "خلص"]]. اليوزر عمره ما بيشوف «جاري». فسّر ليه وصلّحه.`, done: R`قبل التصليح النص بيفضل زي ما هو ٣ ثواني وبعدين يبقى «خلص» على طول: المتصفح مبيرسمش غير لما الـ call stack يفضى. بعد ما تأجل الشغل التقيل لحد بعد الرسم ([[requestAnimationFrame(() => setTimeout(heavy, 0))]]) «جاري الحساب...» بتظهر الأول.` },
-            { lvl: 'تطبيق', t: R`اقرا وتوقّع: [[setTimeout(() => { console.log("A"); setTimeout(() => console.log("C"), 0); }, 0); setTimeout(() => console.log("B"), 0);]]. اكتب الترتيب وبعدين شغّله.`, done: R`[[A B C]]: الـ C اتسجّل في الطابور وهو بيتنفّذ A، فبيقف ورا B اللي كان مستني من الأول. ولو كتبت [[A C B]] انت متخيّل إن الـ timer الجديد بيتنفّذ جوه اللي سجّله.` },
-            { lvl: 'تحدي', t: R`اشرحها بالـ stack: اكتب [[function count(n) { return n === 0 ? "done" : count(n - 1); }]] ونادي [[count(1e6)]]. وبعدين نسخة async: [[async function countA(n) { if (n === 0) return "done"; await null; return countA(n - 1); }]] و [[countA(1e5).then(console.log)]]. اكتب ٣ سطور لزميل بتشرح الفرق.`, done: R`الأولى بتقع بـ [[RangeError: Maximum call stack size exceeded]]. والتانية بتطبع [[done]] من غير ما تقع. والشرح فيه إن كل [[await]] بيرجّع للـ event loop والـ stack بيفضى قبل اللفة اللي بعدها، فالعمق مبيتجمعش.` },
+            { lvl: 'سريع', t: R`صلّح الكود البايظ: زرار «احسب» بيعمل [[status.textContent = "جاري الحساب..."]] وبعدها على طول loop بيلف ٣ ثواني، وبعدين [[status.textContent = "خلص"]]. اليوزر عمره ما بيشوف «جاري». فسّر ليه وصلّحه.`, done: R`قبل التصليح النص بيفضل زي ما هو ٣ ثواني وبعدين يبقى «خلص» على طول: المتصفح مبيرسمش غير لما الـ call stack يفضى. بعد ما تأجل الشغل التقيل لحد بعد الرسم ([[requestAnimationFrame(() => setTimeout(heavy, 0))]]) «جاري الحساب...» بتظهر الأول.`, sol: R`**التفسير:** المتصفح بيرسم الشاشة **بين** الـ tasks، مش في نصها. الـ click handler task واحدة: بتغيّر النص، وبعدين الـ loop بيمسك الـ main thread ٣ ثواني، وبعدين بتغيّر النص تاني. أول فرصة رسم بتيجي بعد ما الـ handler يخلص، وساعتها النص «خلص» خلاص، فـ «جاري الحساب...» عمرها ما اترسمت.
+
+~~~live 190 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>جاري الحساب</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
+  button { font: inherit; padding: 6px 14px; margin-inline-end: 8px; }
+  #status { font-size: 22px; font-weight: 700; min-height: 1.5em; }
+  #log { color: #555; font-size: 14px; }
+</style>
+</head>
+<body>
+<button id="bad">احسب (البايظ)</button>
+<button id="good">احسب (المصلّح)</button>
+<p id="status">جاهز</p>
+<p id="log"></p>
+<script>
+  const status = document.getElementById("status");
+  const log = document.getElementById("log");
+
+  function heavy() {
+    const s = performance.now();
+    while (performance.now() - s < 3000) {}
+    status.textContent = "خلص";
+  }
+
+  // بيقيس أول فرصة رسم بعد الضغط: requestAnimationFrame بيشتغل قبل الرسم على طول
+  function measureFirstPaint(t0) {
+    requestAnimationFrame(() => {
+      log.textContent = "أول فرصة رسم بعد الضغط: " + Math.round(performance.now() - t0) + "ms";
+    });
+  }
+
+  document.getElementById("bad").addEventListener("click", () => {
+    const t0 = performance.now();
+    status.textContent = "جاري الحساب...";
+    measureFirstPaint(t0);
+    heavy();
+  });
+
+  document.getElementById("good").addEventListener("click", () => {
+    const t0 = performance.now();
+    status.textContent = "جاري الحساب...";
+    measureFirstPaint(t0);
+    requestAnimationFrame(() => setTimeout(heavy, 0));
+  });
+</script>
+</body>
+</html>
+~~~
+
+~~~text اللي اتقاس في Chrome 158 (Playwright)
+الزرار البايظ:   أول فرصة رسم بعد الضغط: 3000ms   (و «جاري الحساب...» عمرها ما ظهرت)
+الزرار المصلّح:  أول فرصة رسم بعد الضغط: 6ms      (و «جاري الحساب...» ظهرت ٣ ثواني، وبعدين «خلص»)
+~~~
+
+**القياس:** [[measureFirstPaint]] بتسجّل [[requestAnimationFrame]]، والـ callback ده بيشتغل قبل الرسم الجاي على طول. في البايظ أول فرصة كانت بعد **3001ms** (بعد الـ loop كله). في المصلّح بعد **6ms**، والـ loop لسه مبدأش.
+
+**التصليح سطر سطر:** [[requestAnimationFrame(() => setTimeout(heavy, 0))]]
+
+1. الـ handler بيغيّر النص ويخلص على طول، فالـ stack فضي.
+2. [[requestAnimationFrame]]: «قبل الرسم الجاي شغّل ده». جواه بنسجّل [[setTimeout(heavy, 0)]]: task جديدة **بعد** الـ frame ده.
+3. المتصفح بيرسم «جاري الحساب...».
+4. الـ task بتاعة [[heavy]] بتشتغل، والصفحة بتتجمد ٣ ثواني (بس اليوزر شايف إن فيه حاجة شغالة)، وبعدين «خلص».
+
+ليه مش [[setTimeout(heavy, 0)]] لوحدها؟ ساعات بتشتغل قبل الرسم (لو الـ frame الجاي لسه مجاش وقته)، فـ rAF الأول بيضمن إن فيه frame عدّى.
+
+**الغلطة الشائعة:** تفتكر إن [[textContent = ...]] بيرسم على طول. هو بيغيّر الـ DOM بس، والرسم بيستنى الـ stack يفضى. والتصليح الحقيقي للشغل التقيل هو دفعات أو Worker (الدرس الجاي)؛ ده بس بيخلي الرسالة تبان.`  },
+            { lvl: 'تطبيق', t: R`اقرا وتوقّع: [[setTimeout(() => { console.log("A"); setTimeout(() => console.log("C"), 0); }, 0); setTimeout(() => console.log("B"), 0);]]. اكتب الترتيب وبعدين شغّله.`, done: R`[[A B C]]: الـ C اتسجّل في الطابور وهو بيتنفّذ A، فبيقف ورا B اللي كان مستني من الأول. ولو كتبت [[A C B]] انت متخيّل إن الـ timer الجديد بيتنفّذ جوه اللي سجّله.`, sol: R`**التوقع:** [[A B C]].
+
+~~~js timers-order.js
+setTimeout(() => {
+  console.log("A");
+  setTimeout(() => console.log("C"), 0);
+}, 0);
+setTimeout(() => console.log("B"), 0);
+~~~
+
+~~~text الناتج (node timers-order.js، Node 24)
+A
+B
+C
+~~~
+
+**بالترتيب:**
+
+1. الكود الـ sync بيسجّل timer الـ A وبعده timer الـ B. الطابور: [[A، B]].
+2. الـ stack فضي، فالـ event loop بياخد [[A]]: بيطبع A، و**جواه** بيسجّل timer الـ C. الطابور بقى: [[B، C]] (الـ C اتحط **في الآخر**).
+3. ياخد B ← يطبع B.
+4. ياخد C ← يطبع C.
+
+كل callback task لوحدها، والـ task مبتتقطعش عشان واحدة جديدة: الجديدة بتقف في آخر الطابور.
+
+**الغلطة الشائعة:** [[A C B]]، على أساس إن الـ C «جوه» A فهتتنفّذ معاها. [[setTimeout]] عمره ما بيشغّل حاجة جوه اللي سجّلته، حتى بـ 0.`  },
+            { lvl: 'تحدي', t: R`اشرحها بالـ stack: اكتب [[function count(n) { return n === 0 ? "done" : count(n - 1); }]] ونادي [[count(1e6)]]. وبعدين نسخة async: [[async function countA(n) { if (n === 0) return "done"; await null; return countA(n - 1); }]] و [[countA(1e5).then(console.log)]]. اكتب ٣ سطور لزميل بتشرح الفرق.`, done: R`الأولى بتقع بـ [[RangeError: Maximum call stack size exceeded]]. والتانية بتطبع [[done]] من غير ما تقع. والشرح فيه إن كل [[await]] بيرجّع للـ event loop والـ stack بيفضى قبل اللفة اللي بعدها، فالعمق مبيتجمعش.`, sol: R`~~~js stack-depth.js
+function count(n) {
+  return n === 0 ? "done" : count(n - 1);
+}
+try {
+  console.log(count(1e6));
+} catch (err) {
+  console.log(err.name + ": " + err.message);
+}
+
+async function countA(n) {
+  if (n === 0) return "done";
+  await null;
+  return countA(n - 1);
+}
+const t = performance.now();
+countA(1e5).then(r => console.log(r, "بعد", Math.round(performance.now() - t), "ms"));
+console.log("السطر ده بيتطبع قبل done: countA مش بتوقف الـ stack");
+~~~
+
+~~~text الناتج (node stack-depth.js، Node 24)
+RangeError: Maximum call stack size exceeded
+السطر ده بيتطبع قبل done: countA مش بتوقف الـ stack
+done بعد 90 ms
+~~~
+
+**الشرح لزميل في ٣ سطور (الإجابة النموذجية):**
+
+> [[count(1e6)]] بتنادي نفسها مليون مرة **وهي لسه مخلصتش**، فكل نداء بيفضل frame على الـ call stack لحد ما الـ stack يتملي ويرمي [[RangeError]].
+> في [[countA]]، كل [[await null]] بيوقّف الدالة ويرجّع للـ event loop، فالـ stack بيفضى خالص قبل ما الباقي يكمّل كـ microtask.
+> يعني في أي لحظة فيه نداء واحد بس على الـ stack، فالعمق مبيتجمعش، والتمن إنها أبطأ (90ms لـ ١٠٠ ألف) لأن كل لفة بتعدّي على الـ event loop.
+
+والسطر اللي اتطبع **قبل** [[done]] بيأكد ده: [[countA(1e5)]] رجّعت Promise على طول، والكود اللي بعدها كمّل.
+
+**الغلطة الشائعة:** تفتكر إن [[async]] لوحدها بتحل المشكلة. لو شلت [[await null]]، كل النداءات بتحصل sync جوه بعض، والـ stack بيتملي برضه.`  },
           ],
           flag: "script",
           deep: {
@@ -172,10 +1297,124 @@ queueMicrotask(() => console.log("E"));
 console.log("H");
 // الناتج: A F H C E G D B`,
           try: R`اكتب الناتج على ورقة قبل ما تشغّل، وبعدين شغّله بـ [[node]]. وبعدين ضيف [[setTimeout(() => console.log("I"), 0)]] جوه أول then، وحاول تتوقع مكانه.`,
+          ref: [
+            { t: "MDN: Using microtasks (Microtask guide)", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide" },
+            { t: "MDN: Window.queueMicrotask()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/queueMicrotask" },
+            { t: "MDN: JavaScript execution model", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Execution_model" },
+            { t: "Node.js: The event loop, timers, and process.nextTick()", url: "https://nodejs.org/learn/asynchronous-work/event-loop-timers-and-nexttick" },
+          ],
           practice: [
-            { lvl: 'سريع', t: R`اقرا وتوقّع: [[setTimeout(() => console.log("timeout"), 0); Promise.resolve().then(() => console.log("then")); console.log("sync");]]`, done: R`[[sync then timeout]]، حتى إن الـ setTimeout اتكتب الأول: الـ microtasks بتتفضّى كلها قبل أي task.` },
-            { lvl: 'تطبيق', t: R`اشرحها بجدول: [[async function one() { console.log("1a"); await two(); console.log("1b"); }]] و [[async function two() { console.log("2"); }]] وبعدهم [[console.log("start"); one(); console.log("end");]]. اعمل جدول ٣ أعمدة (الـ stack، والـ microtasks، واللي اتطبع) واملاه بعد كل خطوة، وبعدين شغّل.`, done: R`الطباعة [[start 1a 2 end 1b]]، والجدول بيوضح إن [[two]] بتشتغل sync لحد آخرها، و [[1b]] بس هي اللي دخلت طابور الـ microtasks ساعة الـ await، وخرجت بعد ما [[end]] اتطبعت والـ stack فضي.` },
-            { lvl: 'تحدي', t: R`محاكاة وقارن: (١) microtask بيسجّل نفسه تاني ١٠٠ ألف مرة بـ [[queueMicrotask]]، وقبله [[setTimeout(() => console.log("timeout"), 0)]]: مين يطبع الأول؟ (٢) في Node: [[Promise.resolve().then(() => console.log("then")); process.nextTick(() => console.log("tick"));]] مرة في ملف [[.cjs]] ومرة في [[.mjs]].`, done: R`(١) رسالة الـ microtasks بتطلع بعد الـ ١٠٠ ألف لفة وبعدها بس [[timeout]]: microtasks مبتخلصش بتجوّع الطابور التاني كله (ولو لا نهائية الصفحة تقف). (٢) في الـ cjs [[tick]] وبعدين [[then]]، وفي الـ mjs العكس [[then]] وبعدين [[tick]]، لأن الـ ES module نفسه بيتنفّذ من جوه Promise فالـ microtasks بتخلص قبل ما Node يوصل لطابور nextTick.` },
+            { lvl: 'سريع', t: R`اقرا وتوقّع: [[setTimeout(() => console.log("timeout"), 0); Promise.resolve().then(() => console.log("then")); console.log("sync");]]`, done: R`[[sync then timeout]]، حتى إن الـ setTimeout اتكتب الأول: الـ microtasks بتتفضّى كلها قبل أي task.`, sol: R`**التوقع:** [[sync then timeout]].
+
+~~~js micro-vs-macro.js
+setTimeout(() => console.log("timeout"), 0);
+Promise.resolve().then(() => console.log("then"));
+console.log("sync");
+~~~
+
+~~~text الناتج (node micro-vs-macro.js، Node 24)
+sync
+then
+timeout
+~~~
+
+1. السطر الأول بيسجّل الـ timeout في طابور الـ **tasks** (macrotasks).
+2. التاني: [[Promise.resolve()]] Promise خلصانة، فالـ [[then]] بيتحط في طابور الـ **microtasks** على طول.
+3. التالت بيطبع [[sync]]: الكود الـ sync دايمًا الأول.
+4. الـ stack فضي: الـ event loop بيفضّي **كل** الـ microtasks الأول ← [[then]].
+5. وبعدين task واحدة ← [[timeout]].
+
+**الغلطة الشائعة:** تفتكر إن اللي اتكتب الأول بيتنفّذ الأول، أو إن [[setTimeout(fn, 0)]] معناها «دلوقتي». صفر معناها «في أقرب task»، والـ microtasks دايمًا قبلها.`  },
+            { lvl: 'تطبيق', t: R`اشرحها بجدول: [[async function one() { console.log("1a"); await two(); console.log("1b"); }]] و [[async function two() { console.log("2"); }]] وبعدهم [[console.log("start"); one(); console.log("end");]]. اعمل جدول ٣ أعمدة (الـ stack، والـ microtasks، واللي اتطبع) واملاه بعد كل خطوة، وبعدين شغّل.`, done: R`الطباعة [[start 1a 2 end 1b]]، والجدول بيوضح إن [[two]] بتشتغل sync لحد آخرها، و [[1b]] بس هي اللي دخلت طابور الـ microtasks ساعة الـ await، وخرجت بعد ما [[end]] اتطبعت والـ stack فضي.`, sol: R`~~~js await-table.js
+async function one() {
+  console.log("1a");
+  await two();
+  console.log("1b");
+}
+async function two() {
+  console.log("2");
+}
+console.log("start");
+one();
+console.log("end");
+~~~
+
+~~~text الناتج (node await-table.js، Node 24)
+start
+1a
+2
+end
+1b
+~~~
+
+**الجدول (الإجابة النموذجية):**
+
+| الخطوة | الـ stack | الـ microtasks | اتطبع لحد دلوقتي |
+|---|---|---|---|
+| [[console.log("start")]] | global | فاضي | start |
+| [[one()]] بتبدأ | global ← one | فاضي | start 1a |
+| [[await two()]]: [[two]] بتتنادي الأول | global ← one ← two | فاضي | start 1a 2 |
+| [[two]] خلصت، و [[await]] بيوقّف [[one]] | global | باقي [[one]] (اللي هيطبع 1b) | start 1a 2 |
+| [[console.log("end")]] | global | باقي [[one]] | start 1a 2 end |
+| الـ global خلص، الـ stack فضي | باقي one | فاضي | start 1a 2 end 1b |
+
+**أهم نقطتين:**
+
+- [[two]] بتشتغل **sync** لحد آخرها: [[await two()]] بينادي [[two()]] عادي الأول، وبعدين يستنى الـ Promise اللي رجعت. عشان كده [[2]] قبل [[end]].
+- اللي بعد [[await]] بس ([[1b]]) هو اللي بيتحط في طابور الـ microtasks، وبيخرج لما الـ stack يفضى (بعد [[end]]).
+
+**الغلطة الشائعة:** تفتكر إن [[await]] بيوقّف البرنامج كله لحد ما [[two]] تخلص. هو بيوقّف الدالة اللي هو فيها بس، والـ caller بيكمّل.`  },
+            { lvl: 'تحدي', t: R`محاكاة وقارن: (١) microtask بيسجّل نفسه تاني ١٠٠ ألف مرة بـ [[queueMicrotask]]، وقبله [[setTimeout(() => console.log("timeout"), 0)]]: مين يطبع الأول؟ (٢) في Node: [[Promise.resolve().then(() => console.log("then")); process.nextTick(() => console.log("tick"));]] مرة في ملف [[.cjs]] ومرة في [[.mjs]].`, done: R`(١) رسالة الـ microtasks بتطلع بعد الـ ١٠٠ ألف لفة وبعدها بس [[timeout]]: microtasks مبتخلصش بتجوّع الطابور التاني كله (ولو لا نهائية الصفحة تقف). (٢) في الـ cjs [[tick]] وبعدين [[then]]، وفي الـ mjs العكس [[then]] وبعدين [[tick]]، لأن الـ ES module نفسه بيتنفّذ من جوه Promise فالـ microtasks بتخلص قبل ما Node يوصل لطابور nextTick.`, sol: R`**(١) microtask بيسجّل نفسه ١٠٠ ألف مرة:**
+
+~~~js starve.js
+setTimeout(() => console.log("timeout"), 0);
+let n = 0;
+const t = performance.now();
+function again() {
+  n++;
+  if (n < 100000) queueMicrotask(again);
+  else console.log("microtasks خلصت:", n, "لفة في", Math.round(performance.now() - t), "ms");
+}
+queueMicrotask(again);
+~~~
+
+~~~text الناتج (node starve.js، Node 24)
+microtasks خلصت: 100000 لفة في 9 ms
+timeout
+~~~
+
+الـ timeout اتسجّل الأول، بس طلع **آخر**. الـ event loop بيفضّي طابور الـ microtasks **لحد ما يبقى فاضي**، وكل microtask بيحط واحد جديد، فالطابور مفضيش غير بعد الـ ١٠٠ ألف. ولو الشرط كان مش موجود (تسجيل للأبد)، الـ timeout مكانش هيطلع خالص، وفي المتصفح الصفحة كانت هتقف من غير ما ترسم: ده الـ starvation (تجويع).
+
+**(٢) [[process.nextTick]] و [[then]] في ملفين:**
+
+~~~js order.cjs
+Promise.resolve().then(() => console.log("then"));
+process.nextTick(() => console.log("tick"));
+~~~
+
+~~~text الناتج (node order.cjs، Node 24)
+tick
+then
+~~~
+
+~~~js order.mjs
+Promise.resolve().then(() => console.log("then"));
+process.nextTick(() => console.log("tick"));
+~~~
+
+~~~text الناتج (node order.mjs، Node 24)
+then
+tick
+~~~
+
+نفس السطرين بالظبط، والترتيب اتعكس:
+
+- **في CommonJS ([[.cjs]]):** الملف بيتنفّذ كـ task عادية. لما يخلص، Node بيفضّي طابور [[nextTick]] **الأول**، وبعدين طابور الـ Promises. فـ [[tick]] قبل [[then]].
+- **في ES module ([[.mjs]]):** Node بيقيّم الـ module نفسه من جوه Promise (عشان الـ modules ممكن يبقى فيها top-level await). فالكود بتاعك بيتنفّذ وهو **جوه** microtask أصلًا، والـ [[then]] اللي سجّلته بيتنفّذ في نفس دورة الـ microtasks قبل ما Node يرجع لطابور [[nextTick]].
+
+**الدرس:** متبنيش كود على الترتيب بين [[nextTick]] والـ Promises. لو محتاج ترتيب، اربطهم ببعض صراحة ([[then]] جوه [[then]]، أو [[await]]).
+
+**الغلطة الشائعة:** تحفظ «nextTick دايمًا قبل then» من مقالة قديمة كانت كلها CommonJS.`  },
           ],
           flag: "script",
           deep: {
@@ -411,13 +1650,185 @@ async function processInChunks(items, fn, size = 500) {
 const worker = new Worker(new URL("./sum.worker.js", import.meta.url), { type: "module" });
 worker.postMessage({ n: 1e9 });
 worker.onmessage = (e) => console.log("النتيجة:", e.data);
-// sum.worker.js: self.onmessage = (e) => { let s = 0; for (let i = 0; i < e.data.n; i++) s += i; self.postMessage(s); };
+// sum.worker.js: self.onmessage = (e) => { const { n } = e.data; let s = 0; for (let i = 0; i < n; i++) s += i; self.postMessage(s); };
 requestAnimationFrame(() => { document.body.style.opacity = "0.9"; });`,
           try: R`في Console على أي صفحة شغّل أول سطرين، وحاول تعمل scroll أو تضغط زرار وانت مستني. وبعدين افتح تاب Performance في DevTools وسجّل وانت بتشغّله: هتشوف long task بالأحمر.`,
+          ref: [
+            { t: "MDN: Using Web Workers", url: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers" },
+            { t: "MDN: Worker.terminate()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Worker/terminate" },
+            { t: "MDN: PerformanceLongTaskTiming", url: "https://developer.mozilla.org/en-US/docs/Web/API/PerformanceLongTaskTiming" },
+            { t: "MDN: Window.setInterval()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/setInterval" },
+          ],
           practice: [
-            { lvl: 'سريع', t: R`محاكاة في Node: [[setInterval]] بيطبع [["tick"]] والوقت من البداية كل 100ms، وبعدها على طول [[while]] بيلف ثانية كاملة ([[Date.now() - s < 1000]])، وبعد ما الـ while يخلص بـ 150ms وقّف الـ interval واطبع عدد الـ ticks.`, done: R`مفيش ولا tick وقت الـ while. بعدها tick واحد بس على طول (حوالي 1000ms) مش ١٠ ورا بعض بيعوّضوا، وإجمالي الـ ticks حوالي ٢ مش ١١: الـ timers مبتتراكمش، بتتأخر.` },
-            { lvl: 'تطبيق', t: R`قارن وقيس: array مليون رقم، و [[setInterval]] بيعد ticks كل 20ms. اجمعهم مرة بـ forEach واحدة، ومرة بـ [[processInChunks]] بتاعة الدرس بـ size [[10000]]، واطبع عدد الـ ticks اللي حصلت وقت المعالجة والمجموع في كل مرة.`, done: R`مع الـ forEach الواحدة الـ ticks اللي جواها صفر. مع الـ chunks فيه ticks اتنفّذت في النص لأن كل دفعة بتسيب الـ event loop يتنفس، والمعالجة نفسها بتاخد وقت أطول شوية. والمجموع واحد في الحالتين ([[499999500000]]).` },
-            { lvl: 'تحدي', t: R`ابني صفحة فيها input وزرار «احسب» بيجمع من 0 لـ [[1e9]]: مرة الحساب في الـ main thread، ومرة في Web Worker زي الدرس. اكتب في الـ input وانت مستني. وزوّد زرار «إلغاء» بيعمل [[worker.terminate()]] ويعمل worker جديد للمرة الجاية.`, done: R`في الـ main thread الحروف اللي بتكتبها مبتظهرش لحد ما الحساب يخلص. في الـ Worker بتكتب عادي والنتيجة نفس الرقم. الإلغاء بيوقف الحساب ومفيش [[onmessage]] بيوصل بعده، و «احسب» بعدها بيشتغل تاني.` },
+            { lvl: 'سريع', t: R`محاكاة في Node: [[setInterval]] بيطبع [["tick"]] والوقت من البداية كل 100ms، وبعدها على طول [[while]] بيلف ثانية كاملة ([[Date.now() - s < 1000]])، وبعد ما الـ while يخلص بـ 150ms وقّف الـ interval واطبع عدد الـ ticks.`, done: R`مفيش ولا tick وقت الـ while. بعدها tick واحد بس على طول (حوالي 1000ms) مش ١٠ ورا بعض بيعوّضوا، وإجمالي الـ ticks حوالي ٢ مش ١١: الـ timers مبتتراكمش، بتتأخر.`, sol: R`~~~js blocked-interval.js
+const start = Date.now();
+let ticks = 0;
+const id = setInterval(() => {
+  ticks++;
+  console.log("tick", ticks, "عند", Date.now() - start, "ms");
+}, 100);
+
+while (Date.now() - start < 1000) {}
+console.log("الـ while خلص عند", Date.now() - start, "ms");
+
+setTimeout(() => {
+  clearInterval(id);
+  console.log("إجمالي الـ ticks:", ticks, "(لو مكانش فيه while كان هيبقى حوالي 11)");
+}, 150);
+~~~
+
+~~~text الناتج (node blocked-interval.js، Node 24 على Windows)
+الـ while خلص عند 1000 ms
+tick 1 عند 1007 ms
+tick 2 عند 1121 ms
+إجمالي الـ ticks: 2 (لو مكانش فيه while كان هيبقى حوالي 11)
+~~~
+
+**اللي حصل:**
+
+- مفيش ولا tick وقت الـ [[while]]: الـ interval بيتنفّذ كـ task، والـ task مبتشتغلش غير لما الـ stack يفضى، والـ while ماسك الـ stack ثانية كاملة.
+- أول ما الـ while خلص (1000ms)، tick **واحد** بس على طول (1007ms)، مش ١٠ ورا بعض بيعوّضوا اللي فات. الـ timer مبيعدّش المرات اللي فاتته؛ هو بيقول «أنا جاهز» مرة، وبعدين بيتحسب ميعاده الجاي من جديد.
+- التاني بعدها بحوالي 100ms (1121ms)، وبعدين الـ [[setTimeout]] بتاع الـ 150ms وقّف كل حاجة. الإجمالي **2** بدل حوالي 11.
+
+**اللي بيتغيّر عندك:** الأرقام بالظبط (1007 و 1121) بتختلف كام ms حسب جهازك، لكن «tick واحد بعد الـ while وإجمالي ٢» ثابتين.
+
+**الغلطة الشائعة:** تعمل ساعة أو عدّاد بـ [[ticks++]] كل ثانية وتعتمد على العدد. لو الصفحة اتجمدت (أو التاب اتخبى والمتصفح بطّأ الـ timers)، العدّاد هيتأخر. احسب الوقت من [[Date.now() - start]] دايمًا.`  },
+            { lvl: 'تطبيق', t: R`قارن وقيس: array مليون رقم، و [[setInterval]] بيعد ticks كل 20ms. اجمعهم مرة بـ forEach واحدة، ومرة بـ [[processInChunks]] بتاعة الدرس بـ size [[10000]]، واطبع عدد الـ ticks اللي حصلت وقت المعالجة والمجموع في كل مرة.`, done: R`مع الـ forEach الواحدة الـ ticks اللي جواها صفر. مع الـ chunks فيه ticks اتنفّذت في النص لأن كل دفعة بتسيب الـ event loop يتنفس، والمعالجة نفسها بتاخد وقت أطول (على Windows كتير: كل [[setTimeout(r, 0)]] بيستنى حوالي 15ms، فـ ١٠٠ دفعة قربت من ثانية ونص). والمجموع واحد في الحالتين ([[499999500000]]).`, sol: R`~~~js chunks-vs-foreach.js
+async function processInChunks(items, fn, size = 500) {
+  for (let i = 0; i < items.length; i += size) {
+    items.slice(i, i + size).forEach(fn);
+    await (globalThis.scheduler?.yield?.() ?? new Promise((r) => setTimeout(r, 0)));
+  }
+}
+
+const nums = Array.from({ length: 1_000_000 }, (_, i) => i);
+
+async function measure(label, work) {
+  let ticks = 0;
+  const id = setInterval(() => ticks++, 20);
+  let sum = 0;
+  const t = performance.now();
+  await work(x => { sum += x; });
+  const ms = Math.round(performance.now() - t);
+  clearInterval(id);
+  console.log(label.padEnd(22), "ticks:", String(ticks).padStart(3), "| المجموع:", sum, "| الوقت:", ms, "ms");
+}
+
+await measure("forEach واحدة", async add => nums.forEach(add));
+await measure("chunks بـ 10000", add => processInChunks(nums, add, 10000));
+~~~
+
+(الملف ده [[.js]] جنب [[package.json]] فيه [[{"type":"module"}]] عشان الـ [[await]] اللي برّه أي دالة.)
+
+~~~text الناتج (node chunks-vs-foreach.js، Node 24 على Windows)
+forEach واحدة          ticks:   0 | المجموع: 499999500000 | الوقت: 15 ms
+chunks بـ 10000        ticks:  46 | المجموع: 499999500000 | الوقت: 1463 ms
+~~~
+
+**اللي اتقاس:**
+
+- **forEach واحدة:** صفر ticks. المليون عملية خلصت في task واحدة (15ms)، والـ interval مكانش ليه فرصة.
+- **chunks بـ 10000:** ١٠٠ دفعة، وبعد كل دفعة [[await new Promise(r => setTimeout(r, 0))]] بيرجّع للـ event loop، فالـ interval اتنفّذ 46 مرة في النص.
+- **المجموع واحد** في الحالتين: [[499999500000]].
+- **بس الوقت:** 1463ms بدل 15ms! ده مش «أطول شوية». كل [[setTimeout(r, 0)]] على Windows بيستنى حوالي 15ms (دقة الـ timer في النظام)، و ١٠٠ دفعة × ~15ms = حوالي ١.٥ ثانية. على Linux أو Mac الـ setTimeout(0) أسرع بكتير، والرقم بيبقى أقل.
+- [[globalThis.scheduler?.yield?.()]] مش موجود في Node، فالـ [[??]] نزل على الـ setTimeout. في Chrome، [[scheduler.yield()]] موجود وأسرع لأنه مش بيستنى timer.
+
+**الخلاصة:** الدفعات بتخلي الصفحة تتنفس، والتمن وقت أطول، وكل ما الدفعة أكبر الوقت الضايع أقل (بس كل دفعة بتمسك الـ thread أطول). ١٠٠٠٠ هنا معقولة: كل دفعة أقل من 1ms.
+
+**الغلطة الشائعة:** [[size = 1]] أو دفعات صغيرة جدًا: مليون setTimeout = ساعات على Windows.`  },
+            { lvl: 'تحدي', t: R`ابني صفحة فيها input وزرار «احسب» بيجمع من 0 لـ [[1e9]]: مرة الحساب في الـ main thread، ومرة في Web Worker زي الدرس. اكتب في الـ input وانت مستني. وزوّد زرار «إلغاء» بيعمل [[worker.terminate()]] ويعمل worker جديد للمرة الجاية.`, done: R`في الـ main thread الحروف اللي بتكتبها مبتظهرش لحد ما الحساب يخلص. في الـ Worker بتكتب عادي والنتيجة نفس الرقم. الإلغاء بيوقف الحساب ومفيش [[onmessage]] بيوصل بعده، و «احسب» بعدها بيشتغل تاني.`, sol: R`~~~live 190 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Worker</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
+  button, input { font: inherit; padding: 5px 10px; margin: 4px 0; }
+  #out { font-weight: 700; direction: ltr; text-align: right; }
+</style>
+</head>
+<body>
+<input id="typing" placeholder="اكتب هنا وانت مستني" aria-label="اكتب هنا">
+<p>
+  <button id="main">احسب في الـ main thread</button>
+  <button id="work">احسب في Worker</button>
+  <button id="cancel">إلغاء</button>
+</p>
+<p id="out" aria-live="polite"></p>
+<script type="text/plain" id="worker-src">
+  self.onmessage = (e) => {
+    const { n } = e.data;
+    let s = 0;
+    for (let i = 0; i < n; i++) s += i;
+    self.postMessage(s);
+  };
+</script>
+<script>
+  const N = 1e9;
+  const out = document.getElementById("out");
+  // ملف الـ worker متحط في الصفحة نفسها كـ Blob عشان المثال يبقى ملف واحد
+  const workerURL = URL.createObjectURL(new Blob([document.getElementById("worker-src").textContent], { type: "text/javascript" }));
+  let worker = null;
+  let t0 = 0;
+
+  function newWorker() {
+    const w = new Worker(workerURL);
+    w.onmessage = (e) => {
+      out.textContent = "Worker: " + e.data + " في " + Math.round(performance.now() - t0) + "ms";
+      worker = null;
+    };
+    return w;
+  }
+
+  document.getElementById("main").addEventListener("click", () => {
+    t0 = performance.now();
+    let s = 0;
+    for (let i = 0; i < N; i++) s += i;
+    out.textContent = "main thread: " + s + " في " + Math.round(performance.now() - t0) + "ms";
+  });
+
+  document.getElementById("work").addEventListener("click", () => {
+    if (worker) return;
+    t0 = performance.now();
+    out.textContent = "بيحسب...";
+    worker = newWorker();
+    worker.postMessage({ n: N });
+  });
+
+  document.getElementById("cancel").addEventListener("click", () => {
+    if (!worker) return;
+    worker.terminate();
+    worker = null;
+    out.textContent = "اتلغى";
+  });
+</script>
+</body>
+</html>
+~~~
+
+~~~text اللي اتقاس في Chrome 158 (Playwright): كتبنا abc بعد الضغط بـ 100ms
+main thread:  الحروف ظهرت عند 785 و 873 و 966ms | main thread: 499999999067109000 في 727ms
+Worker:       الحروف ظهرت عند 163 و 259 و 352ms | Worker: 499999999067109000 في 690ms
+احسب ← إلغاء بعد 100ms ← استنينا 1.5 ثانية:  اتلغى
+احسب تاني:    Worker: 499999999067109000 في 691ms
+~~~
+
+**اللي اتقاس:**
+
+- **main thread:** الحساب خد 727ms، والحروف اللي اتكتبت في النص **ظهرت بعده** (785ms و 873 و 966). المتصفح خزّنها ورسمها لما الـ thread فضي.
+- **Worker:** الحساب خد 690ms على thread تاني، والحروف ظهرت في وقتها (163 و 259 و 352ms)، يعني بعد ما اتكتبت على طول.
+- **الإلغاء:** [[terminate()]] قتل الـ worker في النص، فمفيش [[onmessage]] وصل، والنص فضل «اتلغى». و «احسب» بعدها عمل worker جديد واشتغل.
+- **الرقم نفسه:** [[499999999067109000]] مش [[499999999500000000]] بالظبط، لأن المجموع عدّى [[Number.MAX_SAFE_INTEGER]]، فالكسور ضاعت (ده number مش BigInt).
+
+**كل حتة مهمة:**
+
+- **[[<script type="text/plain" id="worker-src">]]:** كود الـ worker في الصفحة نفسها كنص، و [[new Blob(...)]] و [[URL.createObjectURL]] بيعملوله URL، عشان المثال ملف واحد. في مشروع حقيقي بيبقى ملف [[sum.worker.js]] زي الدرس.
+- **[[const { n } = e.data]] قبل الـ loop:** [[e.data]] getter بيتنادى كل مرة. لو حطيته في شرط الـ loop ([[i < e.data.n]]) الحساب بياخد حوالي ٥٠ ثانية بدل 0.7 (قسناها: ١٠٠ مليون لفة 4127ms مقابل 76ms).
+- **[[if (worker) return]]:** «احسب» مبيشغّلش اتنين مع بعض.
+- **[[newWorker()]] كل مرة:** بعد [[terminate()]] الـ worker مبيرجعش يشتغل، فلازم واحد جديد.
+
+**الغلطة الشائعة:** تفتكر إن Worker بيخلي الحساب أسرع. الوقت تقريبًا هو هو (690 مقابل 727ms)؛ الفرق إن الصفحة مش واقفة.`  },
           ],
           flag: "script",
           deep: {
@@ -516,20 +1927,22 @@ worker.onmessage = (e) => console.log("النتيجة:", e.data);
 والملف التاني [[sum.worker.js]]:
 
 ~~~text sum.worker.js
-self.onmessage = (e) => { let s = 0; for (let i = 0; i < e.data.n; i++) s += i; self.postMessage(s); };
+self.onmessage = (e) => { const { n } = e.data; let s = 0; for (let i = 0; i < n; i++) s += i; self.postMessage(s); };
 ~~~
 
 - [[new Worker(url, { type: "module" })]]: بيشغّل ملف JS على **thread تاني**. والـ worker مالوش DOM ولا [[window]].
 - [[new URL("./sum.worker.js", import.meta.url)]]: [[import.meta.url]] هو عنوان الملف الحالي، فالسطر ده بيقول «sum.worker.js اللي جنبي». (وده الشكل اللي Vite بيفهمه ويحزم الـ worker.)
 - [[postMessage({ n: 1e9 })]]: بيبعت رسالة للـ worker. [[1e9]] = 1 × 10 أس 9 = مليار. والـ object **بيتنسخ** مش بيتشارك.
-- جوه الـ worker: [[self]] هو الـ worker نفسه. لما رسالة توصل، [[e.data]] فيها الـ object، فبيجمع من 0 لمليار ويرجّع النتيجة بـ [[self.postMessage]].
+- جوه الـ worker: [[self]] هو الـ worker نفسه. لما رسالة توصل، [[e.data]] فيها الـ object، و [[const { n } = e.data]] بيطلّع الرقم في متغير **قبل** الـ loop، وبعدين بيجمع من 0 لمليار ويرجّع النتيجة بـ [[self.postMessage]].
 - [[worker.onmessage]]: لما الرد يرجع، [[e.data]] فيها الرقم.
 
 ~~~text الناتج (Console في Chrome)
 النتيجة: 499999999067109000
 ~~~
 
-الحساب خد وقت طويل (بين ٤٠ و ٥٥ ثانية في Chrome headless على الجهاز ده في مرتين، و ٧ ثواني في Node لما جرّبنا نفس الـ loop)، **والصفحة كانت شغالة طول الوقت**: الـ setInterval سجّل 441 مرة، وأكبر فرق بين تسجيلين بعد التجميد الأولاني كان 115ms. ده الفرق كله: نفس الشغل التقيل، بس على thread تاني.
+في Chrome 158 الـ worker خلّص في حوالي 0.7 ثانية، **والصفحة كانت شغالة طول الوقت**.
+
+> **ليه [[const { n } = e.data]] قبل الـ loop:** النسخة الأولى من الدرس كانت كاتبة [[i < e.data.n]] في شرط الـ loop، وخدت بين ٤٠ و ٥٥ ثانية. [[e.data]] مش متغير عادي: ده getter بتاع [[MessageEvent]] بيتنادى في كل لفة من المليار. قسناها في Chrome 158: ١٠٠ مليون لفة خدت 4127ms و [[e.data.n]] في الشرط، و 76ms لما الرقم اتحط في متغير الأول. والحلو إن طول الـ ٤٠ ثانية دول الـ setInterval في الصفحة سجّل 441 مرة، وأكبر فرق بين تسجيلين كان 115ms: حتى الشغل البطيء ده مجمّدش الصفحة لأنه على thread تاني.
 
 > ليه الرقم مش 499999999500000000 بالظبط (المجموع الصح)؟ لأن أي number في JavaScript بيتحفظ دقيق لحد [[Number.MAX_SAFE_INTEGER]] = 9007199254740991 بس، والمجموع عدّى ده بكتير، فالكسور الصغيرة ضاعت. للأرقام دي استخدم [[BigInt]].
 
@@ -626,13 +2039,1154 @@ scheduler.yield : timer لقى فرصة بعد 201 ms
       t: "الأداء والذاكرة",
       l: 3,
       n: "debounce و throttle للأحداث الكتير، والـ memory leaks وإزاي تمنعها",
+      pre: [
+        { to: "js/closure", why: R`[[debounce]] و [[throttle]] closures: الـ timer محفوظ جوه الدالة اللي بترجع` },
+        { to: "js/call و apply و bind", why: R`[[fn.apply(this, args)]] هو اللي بيعدّي [[this]] والـ arguments للدالة الأصلية` },
+        { to: "js/Map و Set", why: R`الـ LRU cache مبني على إن [[Map]] بيحفظ ترتيب الإضافة` },
+        { to: "js/fetch و AbortController", why: R`البحث الحي بيلغي الطلب القديم، والـ widgets بتشيل كل listeners بـ [[AbortController]] واحد` },
+        { to: "js/WeakRef و FinalizationRegistry و resource management", why: R`درس الـ memory leaks بيكمّل عليه: إمتى الـ object بيتشال من الذاكرة وإمتى لأ` },
+      ],
       projects: [
-        { lvl: 'صغير', t: R`بحث بـ debounce وعدّاد`, what: R`input بحث على لستة ١٠٠٠ اسم محلية، والفلترة بـ debounce 300ms، وجنبه عدّاد «اتنفّذ كام مرة» وعدّاد «اتكتب كام حرف». من درس debounce و throttle.`, done: R`كتابة كلمة ١٠ حروف بسرعة ← الحروف ١٠ والتنفيذ ١، والنتايج بتظهر بعد ما تقف بحوالي 300ms، ومسح الـ input بيرجّع اللستة كاملة.` },
-        { lvl: 'صغير', t: R`زرار ميتداسش مرتين`, what: R`زرار «ادفع» بيبعت طلب وهمي بياخد ثانيتين. امنع التكرار مرة بـ throttle ومرة بـ [[disabled]] لحد ما الطلب يخلص، وقارن. من درس debounce و throttle ووحدة async.`, done: R`٥ ضغطات ورا بعض ← طلب واحد في الطريقتين. بس لو الطلب أخد أطول من فترة الـ throttle، الـ throttle بيسمح بطلب تاني والـ disabled لأ، وكاتب ده في تعليق جنب الكود.` },
-        { lvl: 'متوسط', t: R`بحث حي كامل`, what: R`input بيبحث في API بـ debounce 300ms، و AbortController للطلب القديم، و cache بـ LRU حده ٥٠ عشان نفس الكلمة متتطلبش تاني، و «بيحمّل» و «مفيش نتايج» ورسالة غلط. من دروس الوحدة ووحدة async.`, done: R`نفس الكلمة مرتين ← طلب واحد في Network. كتابة سريعة ← طلب واحد بعد ما تقف. حجم الـ cache مبيعدّيش ٥٠ بعد ١٠٠ كلمة مختلفة. والـ AbortError مبيظهرش كرسالة.` },
-        { lvl: 'متوسط', t: R`شريط تقدم القراية وزرار لفوق`, what: R`صفحة مقال طويل فوقها شريط بيوضح نسبة القراية، وزرار «لفوق» بيظهر بعد نص الصفحة. الـ scroll handler بـ throttle trailing (من تحدي الدرس) و [[{ passive: true }]]. من درس debounce و throttle.`, done: R`الـ handler بيتنفّذ أقل بكتير من عدد أحداث scroll (عدّادين في الـ console). لما توصل لآخر الصفحة الشريط بيقف على 100% بالظبط (ده اللي الـ throttle العادي بيفوّته). والزرار بيظهر ويختفي صح.` },
-        { lvl: 'كبير', t: R`dashboard عايش طول اليوم`, what: R`صفحة فيها widgets بتتفتح وتتقفل (ساعة، وطقس وهمي بـ polling كل ٥ ثواني، وعدّاد كتابة). كل widget عنده [[mount()]] بيرجّع [[unmount]] بيشيل كل listener (AbortController) وكل interval ويلغي أي fetch شغال، والـ fetch بيعمل retry بـ backoff لو فشل، و cache الطقس LRU حده ٢٠، وكل mount و unmount بيتسجّل في لوج صغير على الصفحة. من الوحدة دي ووحدات async والأخطاء والـ DOM والـ closures.`, done: R`افتح وقفل كل widget ٥٠ مرة، وبعدين Heap snapshot Comparison: مفيش زيادة ثابتة ولا Detached elements بتزيد. [[getEventListeners(window)]] بعد ما الكل يتقفل مفيهوش listeners بتاعتك. مفيش طلب polling في Network بعد unmount. والنت المقطوع بيعمل retry وبعدين رسالة، مش loop لا نهائي.`, ext: R`خلّي الـ polling يقف لوحده لما التاب يتخبّى (درس visibilitychange في وحدة APIs المتصفح)، وزوّد صفحة «صحة» بتعرض عدد الـ listeners والـ intervals الشغالة دلوقتي.` },
-        { lvl: 'فكرة', t: R`قيس وصلّح صفحة بطيئة`, what: R`خد صفحة من مشاريعك فيها input أو scroll أو resize، وقيس عدد مرات تنفيذ الـ handlers والذاكرة بعد استخدام طويل، وصلّح أكبر مشكلة بـ debounce أو throttle أو cleanup.`, done: R`عندك رقمين قبل وبعد (عدد التنفيذات في ١٠ ثواني، أو حجم الـ heap بعد ٢٠ مرة)، والتصليح مبيغيّرش شكل الصفحة ولا سلوكها.`, ext: R`اكتب الأرقام في README المشروع مع screenshots من DevTools، عشان تبقى قصة تحكيها في انترفيو.` },
+        { lvl: 'صغير', dir: "debounced-search", t: R`بحث بـ debounce وعدّاد`, what: R`input بحث على لستة ١٠٠٠ اسم محلية، والفلترة بـ debounce 300ms، وجنبه عدّاد «اتنفّذ كام مرة» وعدّاد «اتكتب كام حرف». من درس debounce و throttle.`, done: R`كتابة كلمة ١٠ حروف بسرعة ← الحروف ١٠ والتنفيذ ١، والنتايج بتظهر بعد ما تقف بحوالي 300ms، ومسح الـ input بيرجّع اللستة كاملة.`, sol: R`## الشكل النهائي
+
+~~~live 330 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بحث بـ debounce</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
+  input { font: inherit; padding: 5px 8px; width: 100%; box-sizing: border-box; }
+  .stats { display: flex; gap: 16px; color: #555; font-size: 14px; margin: 6px 0; }
+  ul { height: 200px; overflow: auto; border: 1px solid #ddd; margin: 0; padding: 4px 24px; }
+</style>
+</head>
+<body>
+<input id="q" type="search" placeholder="دوّر في ١٠٠٠ اسم..." aria-label="بحث">
+<div class="stats">
+  <span>حروف اتكتبت: <b id="typed">0</b></span>
+  <span>الفلترة اتنفّذت: <b id="runs">0</b></span>
+  <span>النتايج: <b id="count">0</b></span>
+</div>
+<ul id="list"></ul>
+<script>
+  const FIRST = ["سارة", "عمر", "ليلى", "يوسف", "مريم", "كريم", "نور", "آدم", "هنا", "زياد"];
+  const LAST = ["علي", "حسن", "سالم", "فؤاد", "نبيل", "رشدي", "منير", "شاكر", "عادل", "توفيق"];
+  const names = Array.from({ length: 1000 }, (_, i) => FIRST[i % 10] + " " + LAST[Math.floor(i / 10) % 10] + " " + (i + 1));
+
+  function debounce(fn, ms) {
+    let timer;
+    return function (...args) {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn.apply(this, args), ms);
+    };
+  }
+
+  const list = document.getElementById("list");
+  let typed = 0, runs = 0;
+
+  function render(q) {
+    runs++;
+    document.getElementById("runs").textContent = runs;
+    const hits = q ? names.filter(n => n.includes(q.trim())) : names;
+    const frag = document.createDocumentFragment();
+    for (const n of hits.slice(0, 100)) {
+      const li = document.createElement("li");
+      li.textContent = n;
+      frag.append(li);
+    }
+    list.replaceChildren(frag);
+    document.getElementById("count").textContent = hits.length;
+  }
+
+  const search = debounce(render, 300);
+  document.getElementById("q").addEventListener("input", (e) => {
+    document.getElementById("typed").textContent = ++typed;
+    search(e.target.value);
+  });
+  render("");
+</script>
+</body>
+</html>
+~~~
+
+## هتشوف إيه
+
+خانة بحث، وتحتها ٣ أرقام: حروف اتكتبت، ومرات الفلترة، وعدد النتايج، وتحتهم لستة (أول ١٠٠). اكتب بسرعة: الحروف بتزيد والفلترة لأ، وبعد ما تقف بثلث ثانية النتايج بتتغير مرة واحدة.
+
+## اتقاس (Chrome 158 بـ Playwright)
+
+~~~text الناتج
+كتبنا «سارة علي » (9 حروف، حرف كل 40ms):
+   وقت الكتابة: حروف 9، الفلترة اتنفّذت 1 (اللي أول ما الصفحة فتحت)
+   بعد ما وقفنا: 9 حروف، الفلترة 2 (يعني مرة واحدة للكلمة كلها)، 10 نتيجة
+   النتايج ظهرت بعد آخر حرف بـ 312ms
+مسحنا الخانة: 1000 نتيجة
+~~~
+
+## كل حتة مهمة بتعمل إيه
+
+- **[[names]]:** ١٠٠٠ اسم متولّدين من ١٠ أسامي أولى × ١٠ عائلات + رقم، عشان القايمة محلية ومن غير API.
+- **[[debounce(render, 300)]] مرة واحدة:** والـ input handler بيزوّد عدّاد الحروف **على طول** (عشان ده مش تقيل)، وبيبعت للـ debounce. الفلترة بتحصل بعد 300ms من آخر حرف بس (312ms في القياس).
+- **[[render(q)]]:** بتزوّد عدّاد التنفيذ، و [[filter]] بـ [[includes]]، وبترسم أول ١٠٠ في [[DocumentFragment]] و [[replaceChildren]] (layout واحدة). والخانة الفاضية بترجّع الـ ١٠٠٠.
+- **[[render("")]] في الآخر:** اللستة بتظهر أول ما الصفحة تفتح، وده سبب إن عدّاد التنفيذ بيبدأ من 1.
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **عدّاد الحروف في الـ handler مش جوه [[render]]:** لو اتحط جوه الدالة المتأجلة كان هيتعد مرة لكل فلترة، يعني نفس رقم التنفيذ، والمقارنة اللي المشروع طالبها تضيع. الحاجة الخفيفة اللي لازم تحصل مع كل حرف بتفضل في الـ handler نفسه، والتقيلة بس بتتأجل.
+- **الغلطة الشائعة:** [[debounce(render, 300)]] جوه الـ handler: كل حرف بيعمل debounce جديد بـ timer جديد، فمفيش حاجة بتتلغي والفلترة بتحصل مع كل حرف (زي تمرين debounce في Node).`  },
+        { lvl: 'صغير', dir: "pay-once", t: R`زرار ميتداسش مرتين`, what: R`زرار «ادفع» بيبعت طلب وهمي بياخد ثانيتين. امنع التكرار مرة بـ throttle ومرة بـ [[disabled]] لحد ما الطلب يخلص، وقارن. من درس debounce و throttle ووحدة async.`, done: R`٥ ضغطات ورا بعض ← طلب واحد في الطريقتين. بس لو الطلب أخد أطول من فترة الـ throttle، الـ throttle بيسمح بطلب تاني والـ disabled لأ، وكاتب ده في تعليق جنب الكود.`, sol: R`## الشكل النهائي
+
+~~~live 300 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>زرار الدفع</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
+  section { border: 1px solid #ccc; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; }
+  button { font: inherit; padding: 6px 18px; }
+  button:disabled { opacity: .6; }
+</style>
+</head>
+<body>
+<section>
+  <h3>throttle (ثانية)</h3>
+  <button id="t-pay">ادفع</button>
+  <p>طلبات اتبعتت: <b id="t-count">0</b></p>
+</section>
+<section>
+  <h3>disabled لحد ما الطلب يخلص</h3>
+  <button id="d-pay">ادفع</button>
+  <p>طلبات اتبعتت: <b id="d-count">0</b></p>
+</section>
+<script>
+  // طلب وهمي بياخد ثانيتين
+  const fakePay = () => new Promise(r => setTimeout(r, 2000));
+
+  function throttle(fn, ms) {
+    let last = 0;
+    return function (...args) {
+      const now = Date.now();
+      if (now - last < ms) return;
+      last = now;
+      fn.apply(this, args);
+    };
+  }
+
+  // (١) throttle: بيمنع الضغطات اللي في نفس الثانية، بس مش عارف الطلب خلص ولا لأ
+  let tCount = 0;
+  document.getElementById("t-pay").addEventListener("click", throttle(() => {
+    document.getElementById("t-count").textContent = ++tCount;
+    fakePay();
+  }, 1000));
+
+  // (٢) disabled: الزرار نفسه مقفول لحد ما الطلب يرجع، نجح أو فشل
+  let dCount = 0;
+  const dBtn = document.getElementById("d-pay");
+  dBtn.addEventListener("click", async () => {
+    if (dBtn.disabled) return;
+    dBtn.disabled = true;
+    dBtn.textContent = "بيدفع...";
+    document.getElementById("d-count").textContent = ++dCount;
+    try {
+      await fakePay();
+    } finally {
+      dBtn.disabled = false;
+      dBtn.textContent = "ادفع";
+    }
+  });
+</script>
+</body>
+</html>
+~~~
+
+## هتشوف إيه
+
+زرارين «ادفع»، كل واحد في صندوق وتحته عدد الطلبات اللي اتبعتت. الأول محمي بـ throttle ثانية، والتاني بيتقفل ويكتب «بيدفع...» لحد ما الطلب (ثانيتين) يرجع.
+
+## اتقاس (Chrome 158 بـ Playwright، ضغطات بـ [[click()]] من الـ console)
+
+~~~text الناتج
+٥ ضغطات على كل زرار في ربع ثانية: throttle=1 disabled=1
+ضغطة عند ~1.35 ثانية (الطلب الأول لسه مخلصش): throttle=2 disabled=1 | زرار disabled مقفول؟ true
+ضغطة بعد ما الطلب رجع (~2.4 ثانية): throttle=2 disabled=2
+~~~
+
+## المقارنة (التعليق اللي المطلوب طالبه)
+
+- **٥ ضغطات ورا بعض:** طلب واحد في الاتنين.
+- **الطلب بياخد ثانيتين والـ throttle ثانية:** عند 1.35 ثانية الـ throttle سمح بطلب **تاني** والأول لسه مرجعش، يعني دفع مرتين. الـ disabled رفض لأن الزرار لسه مقفول، ولما الطلب رجع (2.4 ثانية) بس سمح بالتاني.
+
+الـ throttle بيعرف **الوقت**، مش **حالة الطلب**. لأي عملية مينفعش تتكرر (دفع، إرسال فورم، حجز) الصح هو تقفل الزرار لحد ما العملية تخلص، ومعاها السيرفر نفسه يرفض التكرار (idempotency key). الـ throttle مكانه scroll و resize ونداءات API عادية.
+
+## كل حتة مهمة بتعمل إيه
+
+- **[[throttle(fn, 1000)]]:** نفس دالة الدرس: أول ضغطة تعدّي، وأي ضغطة في خلال ثانية بعدها تتجاهل.
+- **[[if (dBtn.disabled) return]]:** حماية زيادة: الزرار المقفول مبيبعتش click أصلًا، بس لو حد نادى الـ handler من كود تاني.
+- **[[try { await fakePay(); } finally { ... }]]:** الزرار بيرجع مفتوح في النجاح **والفشل** (درس try و finally). من غير [[finally]]، أول طلب يفشل يسيب الزرار مقفول للأبد.
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **القياس بـ [[page.click]] في Playwright:** أول تجربة استخدمت ضغطات Playwright العادية، وكل ضغطة بتاخد وقت لحد ما Playwright يتأكد إن الزرار جاهز، فالتوقيت باظ وطلع disabled=2 كأنه فشل. القياس الصح بـ [[click()]] من جوه الصفحة بتوقيتات معروفة (٥ ضغطات كل 50ms، وبعدين عند 1.35 و 2.4 ثانية).`  },
+        { lvl: 'متوسط', dir: "live-search", t: R`بحث حي كامل`, what: R`input بيبحث في API بـ debounce 300ms، و AbortController للطلب القديم، و cache بـ LRU حده ٥٠ عشان نفس الكلمة متتطلبش تاني، و «بيحمّل» و «مفيش نتايج» ورسالة غلط. من دروس الوحدة ووحدة async.`, done: R`نفس الكلمة مرتين ← طلب واحد في Network. كتابة سريعة ← طلب واحد بعد ما تقف. حجم الـ cache مبيعدّيش ٥٠ بعد ١٠٠ كلمة مختلفة. والـ AbortError مبيظهرش كرسالة.`, sol: R`## الشكل النهائي
+
+~~~live 300 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بحث حي</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
+  input { font: inherit; padding: 5px 8px; width: 100%; box-sizing: border-box; }
+  #state { color: #555; min-height: 1.6em; font-size: 14px; }
+  #state.err { color: #b91c1c; }
+  .stats { color: #555; font-size: 13px; }
+</style>
+</head>
+<body>
+<input id="q" type="search" placeholder="دوّر على منتج (اكتب error عشان تجرّب الغلط)" aria-label="بحث">
+<p id="state" aria-live="polite"></p>
+<ul id="results"></ul>
+<p class="stats">طلبات للـ API: <b id="reqs">0</b> · اتلغت: <b id="aborted">0</b> · من الـ cache: <b id="hits">0</b> · حجم الـ cache: <b id="size">0</b></p>
+<script>
+  // ---- API وهمي: بيرد بعد 600 لـ 900ms (أبطأ من الـ debounce عمدًا)، وبيحترم الـ AbortSignal زي fetch
+  const PRODUCTS = ["قلم رصاص", "قلم جاف", "كشكول ١٠٠ ورقة", "كشكول سلك", "شنطة ظهر", "شنطة لابتوب", "مسطرة", "آلة حاسبة", "ألوان خشب", "ألوان مائية"];
+  let reqs = 0;
+  function fakeApi(q, { signal }) {
+    reqs++;
+    document.getElementById("reqs").textContent = reqs;
+    return new Promise((resolve, reject) => {
+      const t = setTimeout(() => {
+        if (q.includes("error")) reject(new Error("السيرفر رجّع 500"));
+        else resolve(PRODUCTS.filter(p => p.includes(q)));
+      }, 600 + (q.length * 37) % 300);
+      signal.addEventListener("abort", () => {
+        clearTimeout(t);
+        reject(new DOMException("الطلب اتلغى", "AbortError"));
+      }, { once: true });
+    });
+  }
+
+  // ---- LRU
+  class LRU {
+    #map = new Map();
+    constructor(max) { this.max = max; }
+    get(k) {
+      if (!this.#map.has(k)) return undefined;
+      const v = this.#map.get(k);
+      this.#map.delete(k);
+      this.#map.set(k, v);
+      return v;
+    }
+    set(k, v) {
+      this.#map.delete(k);
+      this.#map.set(k, v);
+      if (this.#map.size > this.max) this.#map.delete(this.#map.keys().next().value);
+    }
+    get size() { return this.#map.size; }
+  }
+
+  function debounce(fn, ms) {
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn(...args), ms);
+    };
+  }
+
+  const cache = new LRU(50);
+  const state = document.getElementById("state");
+  const results = document.getElementById("results");
+  let controller = null;
+  let aborted = 0, hits = 0;
+
+  function show(list) {
+    results.replaceChildren(...list.map(p => Object.assign(document.createElement("li"), { textContent: p })));
+    state.className = "";
+    state.textContent = list.length ? list.length + " نتيجة" : "مفيش نتايج";
+  }
+
+  async function search(raw) {
+    const q = raw.trim();
+    controller?.abort();
+    if (!q) { results.replaceChildren(); state.textContent = ""; return; }
+    const cached = cache.get(q);
+    if (cached) {
+      document.getElementById("hits").textContent = ++hits;
+      return show(cached);
+    }
+    controller = new AbortController();
+    state.className = "";
+    state.textContent = "بيحمّل...";
+    try {
+      const list = await fakeApi(q, { signal: controller.signal });
+      cache.set(q, list);
+      document.getElementById("size").textContent = cache.size;
+      show(list);
+    } catch (err) {
+      if (err.name === "AbortError") {
+        document.getElementById("aborted").textContent = ++aborted;
+        return; // طلب قديم: مش غلط، مبنعرضش حاجة
+      }
+      results.replaceChildren();
+      state.className = "err";
+      state.textContent = "حصلت مشكلة: " + err.message + ". جرّب تاني.";
+    }
+  }
+
+  document.getElementById("q").addEventListener("input", debounce(e => search(e.target.value), 300));
+</script>
+</body>
+</html>
+~~~
+
+## هتشوف إيه
+
+خانة بحث في منتجات. وانت بتكتب مفيش حاجة، وبعد ما تقف «بيحمّل...» وبعدين النتايج أو «مفيش نتايج» أو رسالة حمرا. وتحت أرقام: طلبات الـ API، واللي اتلغى، واللي جه من الـ cache، وحجم الـ cache.
+
+## اتقاس (Chrome 158 بـ Playwright)
+
+~~~text الناتج
+كتبنا «قلم» بسرعة:            reqs=1 aborted=0 hits=0 size=1 | 2 نتيجة | قلم رصاص، قلم جاف
+نفس الكلمة تاني:               reqs=1 aborted=0 hits=1 size=1 | 2 نتيجة | قلم رصاص، قلم جاف
+«شنطة» والطلب طالع:            reqs=2 aborted=0 hits=1 size=1 | بيحمّل...
+كمّلنا «شنطة ظ» قبل ما يرجع:   reqs=3 aborted=1 hits=1 size=2 | 1 نتيجة | شنطة ظهر
+زرافة:                          reqs=4 aborted=1 hits=1 size=3 | مفيش نتايج
+error:                          reqs=5 aborted=1 hits=1 size=3 | حصلت مشكلة: السيرفر رجّع 500. جرّب تاني.
+بعد ١٠٠ كلمة مختلفة: حجم الـ cache = 50
+~~~
+
+- نفس الكلمة مرتين ← طلب واحد ([[hits=1]]).
+- كتابة سريعة ← طلب واحد بعد ما تقف.
+- كمّلنا كتابة والطلب طالع ← القديم اتلغى ([[aborted=1]]) ومظهرش كرسالة، والنتيجة بتاعة الكلمة الأخيرة بس.
+- ١٠٠ كلمة مختلفة ← الـ cache فضل 50.
+
+## كل حتة مهمة بتعمل إيه
+
+- **[[fakeApi(q, { signal })]]:** بيقلّد [[fetch]]: بيرد بعد 600 لـ 900ms، ولو الـ signal اتعمله abort بيرمي [[DOMException]] اسمه [[AbortError]] زي fetch بالظبط، ولو الكلمة فيها [[error]] بيرمي error عادي. تبدّله بـ [[fetch("/api/search?q=" + encodeURIComponent(q), { signal })]] في مشروع حقيقي.
+- **[[controller?.abort()]] في أول [[search]]:** أي طلب قديم لسه شغال بيتلغي قبل ما نبدأ الجديد. ده اللي بيمنع النتيجة القديمة توصل متأخر وتكتب فوق الجديدة (race condition).
+- **الـ cache الأول:** [[cache.get(q)]] قبل أي طلب، ولو موجود يتعرض على طول.
+- **[[LRU(50)]]:** نفس class تمرين الـ LRU: الحجم مبيعدّيش 50.
+- **[[err.name === "AbortError"]] ← [[return]]:** الإلغاء مش غلط، فمبنعرضش رسالة. أي error تاني بيظهر رسالة واضحة.
+- **[[show]] بـ [[textContent]]:** أسماء المنتجات بتتحط كنص.
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **الـ API الوهمي كان أسرع من الـ debounce:** أول نسخة كانت بترد في 200–500ms، فالطلب كان بيخلص قبل ما الكتابة الجديدة تعدّي الـ 300ms، و [[aborted]] فضل 0 ومعرفناش نجرّب الإلغاء. خلّيناه أبطأ (600–900ms) زي سيرفر حقيقي على نت عادي، فظهر الإلغاء.
+- **ليه الـ [[if]] على [[err.name]] مهم:** من غيره، كل طلب اتلغى (زي اللي في سطر «كمّلنا شنطة ظ») كان هيوصل للـ catch ويكتب «حصلت مشكلة» لحظة قبل ما النتيجة الجديدة توصل.`  },
+        { lvl: 'متوسط', dir: "reading-progress", t: R`شريط تقدم القراية وزرار لفوق`, what: R`صفحة مقال طويل فوقها شريط بيوضح نسبة القراية، وزرار «لفوق» بيظهر بعد نص الصفحة. الـ scroll handler بـ throttle trailing (من تحدي الدرس) و [[{ passive: true }]]. من درس debounce و throttle.`, done: R`الـ handler بيتنفّذ أقل بكتير من عدد أحداث scroll (عدّادين في الـ console). لما توصل لآخر الصفحة الشريط بيقف على 100% بالظبط (ده اللي الـ throttle العادي بيفوّته). والزرار بيظهر ويختفي صح.`, sol: R`## الشكل النهائي
+
+~~~live 360 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>شريط القراية</title>
+<style>
+  body { font: 17px/1.9 system-ui, sans-serif; margin: 0; }
+  #bar { position: fixed; top: 0; inset-inline-start: 0; height: 5px; width: 0; background: #2563eb; }
+  main { max-width: 640px; margin: 0 auto; padding: 24px 16px; }
+  #top { position: fixed; bottom: 16px; inset-inline-end: 16px; font: inherit; padding: 6px 14px; border-radius: 20px; border: 1px solid #888; background: #fff; }
+  #top[hidden] { display: none; }
+  #stats { position: fixed; bottom: 16px; inset-inline-start: 16px; font-size: 12px; background: #fff; padding: 2px 6px; }
+</style>
+</head>
+<body>
+<div id="bar" role="progressbar" aria-label="نسبة القراية" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+<main id="article"></main>
+<button id="top" hidden>لفوق ↑</button>
+<p id="stats">scroll: <b id="events">0</b> · handler: <b id="runs">0</b> · <b id="pct">0</b>%</p>
+<script>
+  // مقال طويل متولّد
+  const article = document.getElementById("article");
+  for (let i = 1; i <= 30; i++) {
+    const h = document.createElement("h2");
+    h.textContent = "الجزء " + i;
+    const p = document.createElement("p");
+    p.textContent = "ده كلام تجريبي عشان الصفحة تبقى طويلة كفاية. ".repeat(12);
+    article.append(h, p);
+  }
+
+  function throttleTrailing(fn, ms) {
+    let last = 0, timer = null;
+    return function (...args) {
+      const wait = ms - (Date.now() - last);
+      if (wait <= 0) {
+        last = Date.now();
+        fn.apply(this, args);
+      } else if (!timer) {
+        timer = setTimeout(() => {
+          timer = null;
+          last = Date.now();
+          fn.apply(this, args);
+        }, wait);
+      }
+    };
+  }
+
+  const bar = document.getElementById("bar");
+  const topBtn = document.getElementById("top");
+  let events = 0, runs = 0;
+
+  function update() {
+    runs++;
+    const max = document.documentElement.scrollHeight - innerHeight;
+    const pct = max > 0 ? Math.min(100, Math.round((scrollY / max) * 100)) : 100;
+    bar.style.width = pct + "%";
+    bar.setAttribute("aria-valuenow", pct);
+    topBtn.hidden = scrollY < max / 2;
+    document.getElementById("pct").textContent = pct;
+    document.getElementById("runs").textContent = runs;
+  }
+
+  const onScroll = throttleTrailing(update, 100);
+  addEventListener("scroll", () => {
+    document.getElementById("events").textContent = ++events;
+    onScroll();
+  }, { passive: true });
+  topBtn.addEventListener("click", () => scrollTo({ top: 0 }));
+  update();
+</script>
+</body>
+</html>
+~~~
+
+## هتشوف إيه
+
+مقال طويل، فوقه شريط أزرق رفيع بيتملي وانت بتنزل، ولما تعدّي نص الصفحة يظهر زرار «لفوق». وتحت عدّادين: أحداث الـ scroll، ومرات تنفيذ الـ handler.
+
+## اتقاس (Chrome 158 بـ Playwright، التاب قدام)
+
+~~~text الناتج
+scroll بـ scrollBy كل 16ms لحد آخر الصفحة (موبايل 400×700):
+   scroll events: 115 | handler: 19 (منهم واحد أول ما الصفحة فتحت) | 100% | عرض الشريط 100% | زرار لفوق ظاهر: true | scrollY 13716 من 13716
+بعد «لفوق»: scrollY 0 | 0% | الزرار ظاهر: false
+ونفس الـ scroll بـ throttle leading بس: handler 17 مرة، وآخر نسبة اتحسبت 99% وانت في آخر الصفحة
+~~~
+
+- **115 حدث scroll و 19 تنفيذ بس:** الـ throttle (100ms) قلّل الشغل حوالي ٦ مرات.
+- **الشريط وقف على 100% بالظبط** في آخر الصفحة، بفضل الـ trailing.
+- **الـ throttle العادي (leading بس)** على نفس الـ scroll: آخر حساب كان **99%** والشريط وقف قبل الآخر، لأن آخر حدث جه في نص فترة واتجاهل.
+
+## كل حتة مهمة بتعمل إيه
+
+- **[[throttleTrailing(update, 100)]]:** نسخة تحدي الدرس: لو الفترة خلصت ينفّذ على طول، ولو لأ يسجّل timer واحد لنهاية الفترة. والـ [[update]] بتقرا [[scrollY]] لحظة التنفيذ، فالتنفيذ الأخير دايمًا بآخر مكان.
+- **[[{ passive: true }]]:** بتقول للمتصفح «الـ handler ده مش هيعمل [[preventDefault]]»، فالمتصفح يعمل scroll على طول من غير ما يستنى الـ JavaScript. ده مهم على الموبايل.
+- **الحساب:** [[max = scrollHeight - innerHeight]] (أقصى scroll)، والنسبة [[scrollY / max]]، و [[Math.min(100, ...)]] عشان الـ bounce على الموبايل ممكن يدّي أكتر من 100.
+- **[[topBtn.hidden = scrollY < max / 2]]:** الزرار بيظهر بعد نص الصفحة.
+- **[[role="progressbar"]] و [[aria-valuenow]]:** قارئ الشاشة بيقرا النسبة.
+- **عدّاد الأحداث برّه الـ throttle:** عشان نقيس الفرق.
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **القياس والتاب في الخلفية:** أول قياس طلّع 2 حدث scroll بس، و «لفوق» مكانتش بتحدّث النسبة. التاب كان مش ظاهر، والمتصفح مش بيرسم frames لتاب مخفي، والـ scroll events بتتبعت مع الـ frames. القياس الصح والتاب قدام ([[page.bringToFront()]] في Playwright، و 301 frame في الثانية بعدها).
+- **ملاحظة [[inset-inline-start]] و [[inset-inline-end]] في RTL:** الزرار متحط بـ [[inset-inline-end]] فبيظهر على الشمال في الصفحة العربي، والعدّاد على اليمين، فمبيغطوش على بعض.`  },
+        { lvl: 'كبير', dir: "widgets-dashboard", t: R`dashboard عايش طول اليوم`, what: R`صفحة فيها widgets بتتفتح وتتقفل (ساعة، وطقس وهمي بـ polling كل ٥ ثواني، وعدّاد كتابة). كل widget عنده [[mount()]] بيرجّع [[unmount]] بيشيل كل listener (AbortController) وكل interval ويلغي أي fetch شغال، والـ fetch بيعمل retry بـ backoff لو فشل، و cache الطقس LRU حده ٢٠، وكل mount و unmount بيتسجّل في لوج صغير على الصفحة. من الوحدة دي ووحدات async والأخطاء والـ DOM والـ closures.`, done: R`افتح وقفل كل widget ٥٠ مرة، وبعدين Heap snapshot Comparison: مفيش زيادة ثابتة ولا Detached elements بتزيد. [[getEventListeners(window)]] بعد ما الكل يتقفل مفيهوش listeners بتاعتك. مفيش طلب polling في Network بعد unmount. والنت المقطوع بيعمل retry وبعدين رسالة، مش loop لا نهائي.`, ext: R`خلّي الـ polling يقف لوحده لما التاب يتخبّى (درس visibilitychange في وحدة APIs المتصفح)، وزوّد صفحة «صحة» بتعرض عدد الـ listeners والـ intervals الشغالة دلوقتي.`, sol: R`## الشكل النهائي
+
+~~~view 400 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard</title>
+<style>
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 6px; }
+  button { font: inherit; padding: 4px 10px; }
+  button[aria-pressed="true"] { background: #dbeafe; }
+  #host { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 10px 0; }
+  .widget { border: 1px solid #ccc; border-radius: 8px; padding: 6px 10px; }
+  .widget h3 { margin: 0; font-size: 15px; }
+  #log { font: 12px/1.5 monospace; height: 120px; overflow: auto; background: #f6f6f6; padding: 6px; white-space: pre-wrap; }
+  label { margin-inline-start: 8px; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <button data-w="clock" aria-pressed="false">الساعة</button>
+  <button data-w="weather" aria-pressed="false">الطقس</button>
+  <button data-w="typing" aria-pressed="false">عدّاد الكتابة</button>
+  <label><input type="checkbox" id="offline"> النت مقطوع (تجربة)</label>
+</div>
+<div id="host"></div>
+<div id="log" aria-label="اللوج"></div>
+<script>
+  // ---- lru.js
+  class LRU {
+    #map = new Map();
+    constructor(max) {
+      this.max = max;
+    }
+    get(key) {
+      if (!this.#map.has(key)) return undefined;
+      const value = this.#map.get(key);
+      this.#map.delete(key);
+      this.#map.set(key, value);
+      return value;
+    }
+    set(key, value) {
+      this.#map.delete(key);
+      this.#map.set(key, value);
+      if (this.#map.size > this.max) this.#map.delete(this.#map.keys().next().value);
+      return this;
+    }
+    get size() {
+      return this.#map.size;
+    }
+  }
+
+  // ---- retry.js
+  const realSleep = (ms, signal) => new Promise((resolve, reject) => {
+    const t = setTimeout(resolve, ms);
+    signal?.addEventListener("abort", () => { clearTimeout(t); reject(signal.reason); }, { once: true });
+  });
+
+  // بيجرّب fn لحد tries مرة، والانتظار بيتضاعف: base ثم 2×base ثم 4×base
+  async function retry(fn, { tries = 3, base = 500, signal, sleep = realSleep, onRetry = () => {} } = {}) {
+    let lastError;
+    for (let attempt = 1; attempt <= tries; attempt++) {
+      try {
+        return await fn(attempt);
+      } catch (err) {
+        if (err.name === "AbortError" || signal?.aborted) throw err;
+        lastError = err;
+        if (attempt < tries) {
+          const wait = base * 2 ** (attempt - 1);
+          onRetry(attempt, wait, err);
+          await sleep(wait, signal);
+        }
+      }
+    }
+    throw lastError;
+  }
+
+  // ---- lifecycle.js
+  // كل widget بياخد ctx فيه أدوات بتتنضف لوحدها: listeners و intervals و fetch
+  function mount(setup, { log = () => {}, name = "widget" } = {}) {
+    const controller = new AbortController();
+    const intervals = new Set();
+    const ctx = {
+      signal: controller.signal,
+      on(target, type, fn, opts = {}) {
+        target.addEventListener(type, fn, { ...opts, signal: controller.signal });
+      },
+      every(fn, ms) {
+        const id = setInterval(fn, ms);
+        intervals.add(id);
+        return id;
+      },
+      get active() {
+        return { intervals: intervals.size, aborted: controller.signal.aborted };
+      },
+    };
+    const cleanupExtra = setup(ctx) ?? (() => {});
+    log("mount " + name);
+    let done = false;
+    return function unmount() {
+      if (done) return;
+      done = true;
+      controller.abort(new DOMException(name + " اتقفل", "AbortError"));
+      for (const id of intervals) clearInterval(id);
+      intervals.clear();
+      cleanupExtra();
+      log("unmount " + name);
+    };
+  }
+
+  // ---- widgets.js
+  const weatherCache = new LRU(20);
+
+  function box(host, title) {
+    const el = document.createElement("section");
+    el.className = "widget";
+    const h = document.createElement("h3");
+    h.textContent = title;
+    const body = document.createElement("p");
+    el.append(h, body);
+    host.append(el);
+    return { el, body };
+  }
+
+  function clockWidget(host, opts) {
+    return mount((ctx) => {
+      const { el, body } = box(host, "الساعة");
+      const fmt = new Intl.DateTimeFormat("ar-EG", { timeStyle: "medium", timeZone: "Africa/Cairo" });
+      const tick = () => { body.textContent = fmt.format(new Date()); };
+      tick();
+      ctx.every(tick, 1000);
+      return () => el.remove();
+    }, { ...opts, name: "الساعة" });
+  }
+
+  function typingWidget(host, opts) {
+    return mount((ctx) => {
+      const { el, body } = box(host, "عدّاد الكتابة");
+      let keys = 0;
+      body.textContent = "اكتب أي حاجة في الصفحة: 0";
+      ctx.on(window, "keydown", () => { body.textContent = "اكتب أي حاجة في الصفحة: " + ++keys; });
+      return () => el.remove();
+    }, { ...opts, name: "عدّاد الكتابة" });
+  }
+
+  // api(city, { signal }) بترجّع Promise بالطقس (وهمي في الصفحة)
+  function weatherWidget(host, api, opts = {}) {
+    return mount((ctx) => {
+      const { el, body } = box(host, "الطقس");
+      const city = opts.city ?? "القاهرة";
+      async function load() {
+        const cached = weatherCache.get(city);
+        if (cached && Date.now() - cached.at < 4000) return show(cached.data);
+        body.textContent = "بيحمّل...";
+        try {
+          const data = await retry(() => api(city, { signal: ctx.signal }), {
+            tries: 3, base: 300, signal: ctx.signal,
+            onRetry: (n, wait) => opts.log?.("طقس: محاولة " + n + " فشلت، هيستنى " + wait + "ms"),
+          });
+          weatherCache.set(city, { at: Date.now(), data });
+          show(data);
+        } catch (err) {
+          if (err.name === "AbortError") return;
+          body.textContent = "مش قادر يجيب الطقس: " + err.message;
+        }
+      }
+      function show(d) { body.textContent = city + ": " + d.temp + "°"; }
+      load();
+      ctx.every(load, 5000);
+      return () => el.remove();
+    }, { ...opts, name: "الطقس" });
+  }
+
+  // ---- index.html
+
+  const host = document.getElementById("host");
+  const logEl = document.getElementById("log");
+  const log = (msg) => { logEl.textContent = new Date().toLocaleTimeString("en-GB") + " " + msg + "\n" + logEl.textContent; };
+
+  // API وهمي للطقس: بيحترم الـ signal، وبيفشل لو «النت مقطوع»
+  let apiCalls = 0;
+  function fakeWeatherApi(city, { signal }) {
+    apiCalls++;
+    return new Promise((resolve, reject) => {
+      const t = setTimeout(() => {
+        if (document.getElementById("offline").checked) reject(new Error("Failed to fetch"));
+        else resolve({ temp: 20 + (apiCalls % 7) });
+      }, 200);
+      signal.addEventListener("abort", () => { clearTimeout(t); reject(signal.reason); }, { once: true });
+    });
+  }
+
+  const factories = {
+    clock: () => clockWidget(host, { log }),
+    weather: () => weatherWidget(host, fakeWeatherApi, { log }),
+    typing: () => typingWidget(host, { log }),
+  };
+  const open = new Map();
+
+  document.querySelector(".bar").addEventListener("click", (e) => {
+    const name = e.target.dataset?.w;
+    if (!name) return;
+    if (open.has(name)) {
+      open.get(name)();
+      open.delete(name);
+    } else {
+      open.set(name, factories[name]());
+    }
+    e.target.setAttribute("aria-pressed", open.has(name));
+  });
+
+  window.__dash = { open, factories, apiCalls: () => apiCalls };
+</script>
+</body>
+</html>
+~~~
+
+(الـ preview نفس الصفحة بس الـ modules متحطين جواها، لأن الـ preview مبيقراش ملفات جنبه. في مشروعك الملفات منفصلة زي تحت.)
+
+## هتشوف إيه
+
+٣ زراير بيفتحوا ويقفلوا widgets: ساعة بتتحدث كل ثانية، وطقس وهمي بيتجاب كل ٥ ثواني، وعدّاد للحروف اللي بتكتبها في الصفحة. و checkbox «النت مقطوع» عشان تجرّب الـ retry، ولوج تحت فيه كل mount و unmount ومحاولة.
+
+## الملفات وترتيب البناء
+
+~~~text الشجرة
+widgets-dashboard/
+├── package.json    "type": "module" و npm test
+├── lru.js          LRU cache
+├── retry.js        retry بـ backoff، وبيحترم AbortSignal
+├── lifecycle.js    mount(setup): ctx.on و ctx.every و ctx.signal، و unmount بينضّف كله
+├── widgets.js      الساعة والطقس والكتابة، كل واحد mount
+├── index.html      الزراير واللوج والـ API الوهمي
+└── test.js         6 اختبارات (من غير متصفح)
+~~~
+
+اتبنى بالترتيب ده: [[lru.js]] و [[retry.js]] و [[lifecycle.js]] واختباراتهم في Node الأول، وبعدين الـ widgets فوقهم، وبعدين الصفحة.
+
+~~~json package.json
+{
+  "name": "widgets-dashboard",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
+~~~
+
+~~~js lru.js
+export class LRU {
+  #map = new Map();
+  constructor(max) {
+    this.max = max;
+  }
+  get(key) {
+    if (!this.#map.has(key)) return undefined;
+    const value = this.#map.get(key);
+    this.#map.delete(key);
+    this.#map.set(key, value);
+    return value;
+  }
+  set(key, value) {
+    this.#map.delete(key);
+    this.#map.set(key, value);
+    if (this.#map.size > this.max) this.#map.delete(this.#map.keys().next().value);
+    return this;
+  }
+  get size() {
+    return this.#map.size;
+  }
+}
+~~~
+
+~~~js retry.js
+const realSleep = (ms, signal) => new Promise((resolve, reject) => {
+  const t = setTimeout(resolve, ms);
+  signal?.addEventListener("abort", () => { clearTimeout(t); reject(signal.reason); }, { once: true });
+});
+
+// بيجرّب fn لحد tries مرة، والانتظار بيتضاعف: base ثم 2×base ثم 4×base
+export async function retry(fn, { tries = 3, base = 500, signal, sleep = realSleep, onRetry = () => {} } = {}) {
+  let lastError;
+  for (let attempt = 1; attempt <= tries; attempt++) {
+    try {
+      return await fn(attempt);
+    } catch (err) {
+      if (err.name === "AbortError" || signal?.aborted) throw err;
+      lastError = err;
+      if (attempt < tries) {
+        const wait = base * 2 ** (attempt - 1);
+        onRetry(attempt, wait, err);
+        await sleep(wait, signal);
+      }
+    }
+  }
+  throw lastError;
+}
+~~~
+
+~~~js lifecycle.js
+// كل widget بياخد ctx فيه أدوات بتتنضف لوحدها: listeners و intervals و fetch
+export function mount(setup, { log = () => {}, name = "widget" } = {}) {
+  const controller = new AbortController();
+  const intervals = new Set();
+  const ctx = {
+    signal: controller.signal,
+    on(target, type, fn, opts = {}) {
+      target.addEventListener(type, fn, { ...opts, signal: controller.signal });
+    },
+    every(fn, ms) {
+      const id = setInterval(fn, ms);
+      intervals.add(id);
+      return id;
+    },
+    get active() {
+      return { intervals: intervals.size, aborted: controller.signal.aborted };
+    },
+  };
+  const cleanupExtra = setup(ctx) ?? (() => {});
+  log("mount " + name);
+  let done = false;
+  return function unmount() {
+    if (done) return;
+    done = true;
+    controller.abort(new DOMException(name + " اتقفل", "AbortError"));
+    for (const id of intervals) clearInterval(id);
+    intervals.clear();
+    cleanupExtra();
+    log("unmount " + name);
+  };
+}
+~~~
+
+~~~js widgets.js
+import { mount } from "./lifecycle.js";
+import { retry } from "./retry.js";
+import { LRU } from "./lru.js";
+
+export const weatherCache = new LRU(20);
+
+function box(host, title) {
+  const el = document.createElement("section");
+  el.className = "widget";
+  const h = document.createElement("h3");
+  h.textContent = title;
+  const body = document.createElement("p");
+  el.append(h, body);
+  host.append(el);
+  return { el, body };
+}
+
+export function clockWidget(host, opts) {
+  return mount((ctx) => {
+    const { el, body } = box(host, "الساعة");
+    const fmt = new Intl.DateTimeFormat("ar-EG", { timeStyle: "medium", timeZone: "Africa/Cairo" });
+    const tick = () => { body.textContent = fmt.format(new Date()); };
+    tick();
+    ctx.every(tick, 1000);
+    return () => el.remove();
+  }, { ...opts, name: "الساعة" });
+}
+
+export function typingWidget(host, opts) {
+  return mount((ctx) => {
+    const { el, body } = box(host, "عدّاد الكتابة");
+    let keys = 0;
+    body.textContent = "اكتب أي حاجة في الصفحة: 0";
+    ctx.on(window, "keydown", () => { body.textContent = "اكتب أي حاجة في الصفحة: " + ++keys; });
+    return () => el.remove();
+  }, { ...opts, name: "عدّاد الكتابة" });
+}
+
+// api(city, { signal }) بترجّع Promise بالطقس (وهمي في الصفحة)
+export function weatherWidget(host, api, opts = {}) {
+  return mount((ctx) => {
+    const { el, body } = box(host, "الطقس");
+    const city = opts.city ?? "القاهرة";
+    async function load() {
+      const cached = weatherCache.get(city);
+      if (cached && Date.now() - cached.at < 4000) return show(cached.data);
+      body.textContent = "بيحمّل...";
+      try {
+        const data = await retry(() => api(city, { signal: ctx.signal }), {
+          tries: 3, base: 300, signal: ctx.signal,
+          onRetry: (n, wait) => opts.log?.("طقس: محاولة " + n + " فشلت، هيستنى " + wait + "ms"),
+        });
+        weatherCache.set(city, { at: Date.now(), data });
+        show(data);
+      } catch (err) {
+        if (err.name === "AbortError") return;
+        body.textContent = "مش قادر يجيب الطقس: " + err.message;
+      }
+    }
+    function show(d) { body.textContent = city + ": " + d.temp + "°"; }
+    load();
+    ctx.every(load, 5000);
+    return () => el.remove();
+  }, { ...opts, name: "الطقس" });
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard</title>
+<style>
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 6px; }
+  button { font: inherit; padding: 4px 10px; }
+  button[aria-pressed="true"] { background: #dbeafe; }
+  #host { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 10px 0; }
+  .widget { border: 1px solid #ccc; border-radius: 8px; padding: 6px 10px; }
+  .widget h3 { margin: 0; font-size: 15px; }
+  #log { font: 12px/1.5 monospace; height: 120px; overflow: auto; background: #f6f6f6; padding: 6px; white-space: pre-wrap; }
+  label { margin-inline-start: 8px; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <button data-w="clock" aria-pressed="false">الساعة</button>
+  <button data-w="weather" aria-pressed="false">الطقس</button>
+  <button data-w="typing" aria-pressed="false">عدّاد الكتابة</button>
+  <label><input type="checkbox" id="offline"> النت مقطوع (تجربة)</label>
+</div>
+<div id="host"></div>
+<div id="log" aria-label="اللوج"></div>
+<script type="module">
+  import { clockWidget, weatherWidget, typingWidget } from "./widgets.js";
+
+  const host = document.getElementById("host");
+  const logEl = document.getElementById("log");
+  const log = (msg) => { logEl.textContent = new Date().toLocaleTimeString("en-GB") + " " + msg + "\n" + logEl.textContent; };
+
+  // API وهمي للطقس: بيحترم الـ signal، وبيفشل لو «النت مقطوع»
+  let apiCalls = 0;
+  function fakeWeatherApi(city, { signal }) {
+    apiCalls++;
+    return new Promise((resolve, reject) => {
+      const t = setTimeout(() => {
+        if (document.getElementById("offline").checked) reject(new Error("Failed to fetch"));
+        else resolve({ temp: 20 + (apiCalls % 7) });
+      }, 200);
+      signal.addEventListener("abort", () => { clearTimeout(t); reject(signal.reason); }, { once: true });
+    });
+  }
+
+  const factories = {
+    clock: () => clockWidget(host, { log }),
+    weather: () => weatherWidget(host, fakeWeatherApi, { log }),
+    typing: () => typingWidget(host, { log }),
+  };
+  const open = new Map();
+
+  document.querySelector(".bar").addEventListener("click", (e) => {
+    const name = e.target.dataset?.w;
+    if (!name) return;
+    if (open.has(name)) {
+      open.get(name)();
+      open.delete(name);
+    } else {
+      open.set(name, factories[name]());
+    }
+    e.target.setAttribute("aria-pressed", open.has(name));
+  });
+
+  window.__dash = { open, factories, apiCalls: () => apiCalls };
+</script>
+</body>
+</html>
+~~~
+
+~~~js test.js
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { LRU } from "./lru.js";
+import { retry } from "./retry.js";
+import { mount } from "./lifecycle.js";
+
+test("LRU: الحد 20 مبيتعدّاش، والمستخدم حديثًا بيفضل", () => {
+  const c = new LRU(20);
+  for (let i = 0; i < 100; i++) c.set("k" + i, i);
+  assert.equal(c.size, 20);
+  c.get("k80");
+  c.set("new", 1);
+  assert.equal(c.get("k80"), 80);
+  assert.equal(c.get("k81"), undefined);
+});
+
+test("retry: بيستنى 300 ثم 600 وبعدين ينجح", async () => {
+  const waits = [];
+  let calls = 0;
+  const r = await retry(async () => { if (++calls < 3) throw new Error("Failed to fetch"); return "ok"; },
+    { tries: 3, base: 300, sleep: async (ms) => { waits.push(ms); } });
+  assert.equal(r, "ok");
+  assert.deepEqual(waits, [300, 600]);
+});
+
+test("retry: بعد آخر محاولة بيرمي الغلط، مش loop لا نهائي", async () => {
+  let calls = 0;
+  await assert.rejects(retry(async () => { calls++; throw new Error("Failed to fetch"); }, { tries: 3, sleep: async () => {} }), /Failed to fetch/);
+  assert.equal(calls, 3);
+});
+
+test("retry: AbortError مبيتعادش", async () => {
+  let calls = 0;
+  const abortErr = Object.assign(new Error("x"), { name: "AbortError" });
+  await assert.rejects(retry(async () => { calls++; throw abortErr; }, { sleep: async () => {} }), (e) => e.name === "AbortError");
+  assert.equal(calls, 1);
+});
+
+test("mount/unmount ٥٠ مرة: مفيش listener ولا interval فاضل", async () => {
+  const target = new EventTarget();
+  let heard = 0, ticks = 0;
+  const logs = [];
+  for (let i = 0; i < 50; i++) {
+    const unmount = mount((ctx) => {
+      ctx.on(target, "ping", () => heard++);
+      ctx.every(() => ticks++, 10);
+    }, { log: (m) => logs.push(m), name: "w" });
+    unmount();
+    unmount(); // مرتين ميعملش مشكلة
+  }
+  target.dispatchEvent(new Event("ping"));
+  await new Promise((r) => setTimeout(r, 50));
+  assert.equal(heard, 0);
+  assert.equal(ticks, 0);
+  assert.equal(logs.length, 100);
+});
+
+test("unmount بيلغي الطلب الشغال (AbortError)", async () => {
+  let seen;
+  const unmount = mount((ctx) => {
+    seen = retry(() => new Promise((_, reject) => ctx.signal.addEventListener("abort", () => reject(ctx.signal.reason))), { signal: ctx.signal });
+  });
+  unmount();
+  await assert.rejects(seen, (e) => e.name === "AbortError");
+});
+~~~
+
+## الاختبارات
+
+~~~text الناتج (npm test، Node 24)
+✔ LRU: الحد 20 مبيتعدّاش، والمستخدم حديثًا بيفضل (0.8487ms)
+✔ retry: بيستنى 300 ثم 600 وبعدين ينجح (0.7721ms)
+✔ retry: بعد آخر محاولة بيرمي الغلط، مش loop لا نهائي (0.4831ms)
+✔ retry: AbortError مبيتعادش (0.1956ms)
+✔ mount/unmount ٥٠ مرة: مفيش listener ولا interval فاضل (52.1833ms)
+✔ unmount بيلغي الطلب الشغال (AbortError) (0.5022ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 130.3513
+~~~
+
+## اتقاس في الصفحة (Chrome 158 بـ Playwright، الـ listeners و الـ heap بـ Chrome DevTools Protocol)
+
+~~~text الناتج
+كل widget اتفتح واتقفل ٥٠ مرة (١٥٠ mount و ١٥٠ unmount):
+index.html: heap قبل 1.10MB وبعد 1.16MB | keydown listeners قبل 0 وبعد 0 | طلبات الطقس بعد آخر unmount: 50 وبعد ٦ ثواني 50 | 0 widget | سطور اللوج: 300
+view.html:  heap قبل 1.09MB وبعد 1.14MB | keydown listeners قبل 0 وبعد 0 | طلبات الطقس بعد آخر unmount: 50 وبعد ٦ ثواني 50 | 0 widget | سطور اللوج: 300
+
+«النت مقطوع» وفتحنا الطقس:
+mount الطقس
+طقس: محاولة 1 فشلت، هيستنى 300ms
+طقس: محاولة 2 فشلت، هيستنى 600ms
+والـ widget كتب: مش قادر يجيب الطقس: Failed to fetch
+
+رجّعنا النت، وفتحنا الساعة وعدّاد الكتابة، وكتبنا حرفين، واستنينا ٥ ثواني ونص:
+الطقس: القاهرة: 24° | الساعة: ١٠:٤١:٤٧ ص | عدّاد الكتابة: اكتب أي حاجة في الصفحة: 2
+~~~
+
+- **١٥٠ mount و unmount:** keydown listeners على [[window]] رجعت 0، والـ heap بعد GC زاد 0.06MB بس (مش زيادة ثابتة مع كل فتح)، ومفيش widget فاضل.
+- **مفيش polling بعد unmount:** طلبات الطقس فضلت 50 بعد ٦ ثواني (أكتر من فترة الـ polling).
+- **النت مقطوع:** محاولة، واستنى 300، ومحاولة، واستنى 600، ومحاولة، وبعدين رسالة. مش loop لا نهائي.
+- في DevTools بنفسك: Memory ← Heap snapshot قبل وبعد الـ ٥٠ مرة ← Comparison، ودوّر على Detached: المفروض متلاقيش عناصر الـ widgets.
+
+## كل حتة مهمة بتعمل إيه
+
+- **[[mount(setup)]]:** بيعمل [[AbortController]] واحد و [[Set]] للـ intervals، ويدّي الـ widget [[ctx]]: [[ctx.on]] بيسجّل أي listener بالـ signal، و [[ctx.every]] بيسجّل الـ interval في الـ Set، و [[ctx.signal]] للطلبات. الـ widget مبيعرفش حاجة عن التنضيف.
+- **[[unmount]]:** [[abort()]] (بيشيل كل الـ listeners ويلغي كل الطلبات مرة واحدة)، و [[clearInterval]] لكل interval، وتنضيف الـ widget نفسه (شيل العنصر)، ولوج. و [[done]] بيخلي النداء التاني مبيعملش حاجة.
+- **[[retry]]:** بيجرّب لحد [[tries]]، والانتظار [[base * 2 ** (attempt - 1)]]: 300 ثم 600. **[[AbortError]] مبيتعادش**، والـ [[sleep]] نفسه بيتلغي لو الـ signal اتعمله abort. و [[sleep]] parameter عشان الاختبار يبعت sleep وهمي ميستناش.
+- **[[weatherCache]] = [[LRU(20)]]:** لكل مدينة آخر قراية ووقتها، ولو أحدث من ٤ ثواني تتعرض من غير طلب.
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+**لو شلت سطر [[if (err.name === "AbortError" || signal?.aborted) throw err;]] من [[retry.js]]** (جرّبناها على نسخة):
+
+- اختبار «AbortError مبيتعادش» وقع: الطلب الملغي اتعاد ٣ مرات.
+- واختبار «unmount بيلغي الطلب الشغال» **علّق ومخلصش** لحد ما وقفناه بعد دقيقتين: الـ retry فضل يستنى ويعيد على signal ملغي من الأول، والطلب الجديد بيستنى abort مش هيحصل تاني.
+
+يعني من غير السطر ده، قفل widget وهو بيحمّل بيسيب شغل معلّق في الخلفية للأبد. وده نفس نوع الـ leak اللي الوحدة بتتكلم عنه، بس في Promises بدل listeners.`  },
+        { lvl: 'فكرة', t: R`قيس وصلّح صفحة بطيئة`, what: R`خد صفحة من مشاريعك فيها input أو scroll أو resize، وقيس عدد مرات تنفيذ الـ handlers والذاكرة بعد استخدام طويل، وصلّح أكبر مشكلة بـ debounce أو throttle أو cleanup.`, done: R`عندك رقمين قبل وبعد (عدد التنفيذات في ١٠ ثواني، أو حجم الـ heap بعد ٢٠ مرة)، والتصليح مبيغيّرش شكل الصفحة ولا سلوكها.`, ext: R`اكتب الأرقام في README المشروع مع screenshots من DevTools، عشان تبقى قصة تحكيها في انترفيو.`, sol: R`## نسخة نموذجية: صفحة طلبات فيها مشكلتين
+
+الصفحة شبه صفحات لوحات التحكم: بحث في ٣٠٠٠ طلب، وزرار «تفاصيل» بيفتح مودال. فيها checkbox بيبدّل بين الكود قبل وبعد التصليح، عشان الرقمين يتقاسوا على نفس الصفحة.
+
+## الشكل النهائي
+
+~~~live 300 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>صفحة الطلبات</title>
+<style>
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
+  input { font: inherit; padding: 4px 8px; }
+  dialog { border: 1px solid #888; border-radius: 8px; }
+  #rows div { padding: 1px 6px; border-bottom: 1px solid #eee; }
+  label { margin-inline-start: 10px; }
+</style>
+</head>
+<body>
+<input id="q" placeholder="دوّر في الطلبات" aria-label="دوّر">
+<button id="open">تفاصيل</button>
+<label><input type="checkbox" id="fixed"> النسخة المصلّحة</label>
+<p>الفلترة اتنفّذت: <b id="runs">0</b></p>
+<div id="rows"></div>
+<dialog id="dlg"><p>تفاصيل الطلب</p><button id="close">اقفل</button></dialog>
+<script>
+  const orders = Array.from({ length: 3000 }, (_, i) => "طلب رقم " + i + " · " + ["القاهرة", "الجيزة", "طنطا"][i % 3]);
+  const rows = document.getElementById("rows");
+  let runs = 0;
+  const fixed = () => document.getElementById("fixed").checked;
+
+  function filter(q) {
+    document.getElementById("runs").textContent = ++runs;
+    const frag = document.createDocumentFragment();
+    for (const o of orders.filter(o => o.includes(q)).slice(0, 50)) {
+      frag.append(Object.assign(document.createElement("div"), { textContent: o }));
+    }
+    rows.replaceChildren(frag);
+  }
+
+  function debounce(fn, ms) {
+    let t;
+    return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+  }
+  const debounced = debounce(filter, 250);
+  document.getElementById("q").addEventListener("input", (e) => (fixed() ? debounced : filter)(e.target.value));
+
+  // المودال: البايظ بيسجّل listener على window كل مرة بيتفتح، وشايل داتا كبيرة في الـ closure
+  const dlg = document.getElementById("dlg");
+  let closeModal = null;
+  document.getElementById("open").addEventListener("click", () => {
+    const details = new Array(200000).fill("تفاصيل"); // داتا الطلب
+    const onKey = (e) => { if (e.key === "Escape") dlg.close(); details.length; };
+    if (fixed()) {
+      const controller = new AbortController();
+      addEventListener("keydown", onKey, { signal: controller.signal });
+      closeModal = () => { controller.abort(); dlg.close(); };
+    } else {
+      addEventListener("keydown", onKey);
+      closeModal = () => dlg.close();
+    }
+    dlg.showModal();
+  });
+  document.getElementById("close").addEventListener("click", () => closeModal());
+  filter("");
+</script>
+</body>
+</html>
+~~~
+
+## الرقمين قبل وبعد
+
+~~~text اتقاس في Chrome 158 بـ Playwright (الـ heap بعد GC، والـ listeners بـ DevTools Protocol)
+قبل التصليح: كتبنا 21 حرف ← الفلترة اتنفّذت 21 مرة | heap قبل المودال 2.0MB وبعد ٢٠ فتح وقفل 17.3MB | keydown listeners على window: 20
+بعد التصليح: كتبنا 20 حرف ← الفلترة اتنفّذت 1 مرة | heap قبل المودال 1.9MB وبعد ٢٠ فتح وقفل 2.7MB | keydown listeners على window: 0
+~~~
+
+| | قبل | بعد |
+|---|---|---|
+| مرات الفلترة لجملة واحدة | 21 | 1 |
+| الـ heap بعد ٢٠ فتح وقفل للمودال | 17.3MB | 2.7MB |
+| keydown listeners على [[window]] | 20 | 0 |
+
+(الجملة نفسها اتكتبت في المرتين؛ عدد الحروف في القراية الأولى طلع 21 والتانية 20، والمهم إن الفلترة كانت مرة لكل حرف قبل التصليح ومرة واحدة بعده.)
+
+## المشكلتين والتصليح
+
+1. **الفلترة مع كل حرف:** [[filter]] كانت بتتنادى على كل [[input]]. التصليح: [[debounce(filter, 250)]]. شكل الصفحة وسلوكها زي ما هم: نفس النتيجة، بعد ما تقف بربع ثانية.
+2. **المودال بيسرّب:** كل فتح كان بيسجّل [[keydown]] على [[window]] ومحدش بيشيله، والـ listener ده closure شايل [[details]] (array فيها ٢٠٠ ألف عنصر)، فكل فتح بيسيب حوالي 0.75MB عايشين. التصليح: [[AbortController]] لكل فتح و [[controller.abort()]] في القفل.
+
+## ليه التصميم ده للنسخة النموذجية
+
+- **قبل وبعد في نفس الصفحة بـ checkbox:** القياس عادل (نفس الداتا والمتصفح)، وسهل تعرضه في انترفيو: «دي الصفحة، ودوس هنا».
+- **القياس بأرقام مش إحساس:** عدد التنفيذ من عدّاد في الصفحة، والـ heap بعد [[collectGarbage]] (في DevTools: زرار الزبالة في Memory قبل الـ snapshot)، وعدد الـ listeners. والـ ext بيقول تكتبهم في README مع لقطات من DevTools.`  },
       ],
       items: [
         {
@@ -664,10 +3218,178 @@ const search = debounce((q) => console.log("ابحث عن", q), 300);
 input.addEventListener("input", (e) => search(e.target.value));
 window.addEventListener("scroll", throttle(() => console.log(scrollY), 200), { passive: true });`,
           try: R`حط counter بيعد مرات تنفيذ الـ callback الأصلي، واكتب كلمة ١٠ حروف بسرعة: من غير debounce ١٠ مرات، ومعاه مرة. وبعدين ضيف لـ debounce method اسمها [[cancel]] بتلغي الـ timer. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات مش بتستنى وقت حقيقي، بتبعت ساعة وهمية كـ argument تالت [[clock]] فيها [[setTimeout]] و [[clearTimeout]]، فاستخدم [[clock.setTimeout]] و [[clock.clearTimeout]]، وضيف [[cancel]].`,
+          ref: [
+            { t: "MDN: Debounce (glossary)", url: "https://developer.mozilla.org/en-US/docs/Glossary/Debounce" },
+            { t: "MDN: Throttle (glossary)", url: "https://developer.mozilla.org/en-US/docs/Glossary/Throttle" },
+            { t: "MDN: Window.clearTimeout()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/clearTimeout" },
+            { t: "MDN: EventTarget.addEventListener() (passive)", url: "https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener" },
+          ],
           practice: [
-            { lvl: 'سريع', t: R`اقرا وتوقّع: في Node انسخ [[debounce]] من الدرس، واعمل [[const s = debounce((q) => console.log("ابحث عن", q), 100)]]، ونادي [[s(1)]] لحد [[s(5)]] في loop ورا بعض. كام سطر هيطبع وفيه إيه؟`, done: R`سطر واحد بس بعد حوالي 100ms: [[ابحث عن 5]]، آخر قيمة، والأربعة اللي قبلها اتلغوا.` },
-            { lvl: 'تطبيق', t: R`ابني autosave: [[<textarea>]] بيبعت النص لـ [[saveDraft(text)]] وهمية (بتطبع وتزوّد عدّاد في الصفحة) بعد ثانية من آخر حرف بـ debounce، وجنبه «اتحفظ الساعة ...» بـ [[toLocaleTimeString]].`, done: R`وانت بتكتب مفيش ولا حفظ، وبعد ما تقف بثانية العدّاد بيزيد ١ والنص المحفوظ هو كل اللي كتبته لحد آخر حرف. ولو استخدمت arrow function كـ fn وجواها [[this]]، تعرف ليه الدرس كاتب [[fn.apply(this, args)]].` },
-            { lvl: 'تحدي', t: R`مسألة واكتب اختبار: الـ throttle اللي في الدرس leading بس، فآخر نداء في الفترة بيضيع (آخر مكان scroll مش بيتحسب). اكتب نسخة trailing: لو فيه نداء اتمنع، يتنفّذ في آخر الفترة بآخر arguments. واختبرها بنداءات في 0 و 50 و 100 و 150ms بـ throttle 200ms.`, done: R`النسخة القديمة بتنفّذ مرة واحدة بالـ argument الأول بس. الجديدة بتنفّذ مرتين: فورًا بالأول، وبعد حوالي 200ms بالرابع (الأخير)، ومفيش تنفيذ تالت.` },
+            { lvl: 'سريع', t: R`اقرا وتوقّع: في Node انسخ [[debounce]] من الدرس، واعمل [[const s = debounce((q) => console.log("ابحث عن", q), 100)]]، ونادي [[s(1)]] لحد [[s(5)]] في loop ورا بعض. كام سطر هيطبع وفيه إيه؟`, done: R`سطر واحد بس بعد حوالي 100ms: [[ابحث عن 5]]، آخر قيمة، والأربعة اللي قبلها اتلغوا.`, sol: R`**التوقع:** سطر واحد بعد حوالي 100ms فيه [[5]].
+
+~~~js debounce-loop.js
+function debounce(fn, ms) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), ms);
+  };
+}
+
+const t = Date.now();
+const s = debounce(q => console.log("ابحث عن", q, "بعد", Date.now() - t, "ms"), 100);
+for (let i = 1; i <= 5; i++) s(i);
+console.log("الـ loop خلص");
+~~~
+
+~~~text الناتج (node debounce-loop.js، Node 24)
+الـ loop خلص
+ابحث عن 5 بعد 113 ms
+~~~
+
+**ليه سطر واحد:**
+
+1. [[s(1)]]: [[clearTimeout(timer)]] (مفيش حاجة)، وبعدين timer جديد بعد 100ms بـ [[args = [1]]].
+2. [[s(2)]] على طول: بيلغي timer الـ 1، ويعمل واحد جديد بـ 2.
+3. نفس الكلام لـ 3 و 4 و 5. آخر timer بس هو اللي فاضل، بـ [[5]].
+4. الـ loop خلص (اتطبع الأول)، وبعد 100ms (113ms فعليًا) الـ timer الأخير اشتغل.
+
+الـ [[timer]] متغير **جوه closure**: الـ ٥ نداءات بيشوفوا نفس المتغير، وده اللي بيخلي كل نداء يقدر يلغي اللي قبله.
+
+**الغلطة الشائعة:** تعمل [[debounce(fn, 100)]] **جوه** الـ handler أو الـ loop: كل نداء بيعمل debounce جديد بـ timer جديد، فمفيش حاجة بتتلغي، والـ ٥ بيتطبعوا.`  },
+            { lvl: 'تطبيق', t: R`ابني autosave: [[<textarea>]] بيبعت النص لـ [[saveDraft(text)]] وهمية (بتطبع وتزوّد عدّاد في الصفحة) بعد ثانية من آخر حرف بـ debounce، وجنبه «اتحفظ الساعة ...» بـ [[toLocaleTimeString]].`, done: R`وانت بتكتب مفيش ولا حفظ، وبعد ما تقف بثانية العدّاد بيزيد ١ والنص المحفوظ هو كل اللي كتبته لحد آخر حرف. ولو استخدمت arrow function كـ fn وجواها [[this]]، تعرف ليه الدرس كاتب [[fn.apply(this, args)]].`, sol: R`~~~live 220 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>حفظ تلقائي</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
+  textarea { font: inherit; width: 100%; box-sizing: border-box; height: 90px; }
+  #status { color: #15803d; font-size: 14px; }
+</style>
+</head>
+<body>
+<textarea id="draft" aria-label="المسودة"></textarea>
+<p id="status">لسه متحفظش</p>
+<p>مرات الحفظ: <b id="saves">0</b></p>
+<script>
+  function debounce(fn, ms) {
+    let timer;
+    return function (...args) {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn.apply(this, args), ms);
+    };
+  }
+
+  let saves = 0;
+  let saved = "";
+  function saveDraft(text) {
+    saves++;
+    saved = text;
+    console.log("اتحفظ:", text);
+    document.getElementById("saves").textContent = saves;
+    document.getElementById("status").textContent = "اتحفظ الساعة " + new Date().toLocaleTimeString("ar-EG");
+  }
+
+  const autosave = debounce(saveDraft, 1000);
+  document.getElementById("draft").addEventListener("input", function () {
+    autosave(this.value);
+  });
+</script>
+</body>
+</html>
+~~~
+
+~~~text اللي اتقاس في Chrome 158 (Playwright)
+وانت بتكتب «مرحبا يا عالم» (حرف كل 60ms):  مرات الحفظ 0
+بعد ثانية من آخر حرف:  مرات الحفظ 1 | اتحفظ الساعة ١٠:٢٥:٠٥ ص | المحفوظ: مرحبا يا عالم
+~~~
+
+**كل حتة:**
+
+- [[debounce(saveDraft, 1000)]] **مرة واحدة** برّه الـ handler، والـ handler بينادي [[autosave(this.value)]] مع كل حرف. كل حرف بيلغي الـ timer اللي قبله، فالحفظ بيحصل بعد ثانية من **آخر** حرف بس.
+- [[saveDraft]]: بتزوّد العدّاد وتكتب الوقت بـ [[toLocaleTimeString("ar-EG")]]. ده حفظ وهمي، وفي الحقيقة بيبقى [[fetch]] أو [[localStorage]].
+- المحفوظ هو النص كله لحد آخر حرف لأن الـ handler بيبعت [[this.value]] (النص الكامل)، مش الحرف الجديد.
+
+**ليه [[fn.apply(this, args)]] في الـ debounce:** الـ handler هنا [[function]] عادية، فـ [[this]] جواه هو الـ textarea. الـ debounce بيرجّع [[function (...args)]] عادية، فـ [[this]] بيوصلها، و [[apply(this, args)]] بيعدّيه لـ [[fn]] مع الـ arguments. لو [[fn]] نفسها arrow function، الـ [[this]] اللي جواها بيبقى بتاع المكان اللي اتكتبت فيه، و [[apply]] مبيغيّروش. ولو الـ debounce كان بيعمل [[fn(...args)]] من غير apply، [[this]] جوه [[fn]] كان هيبقى [[undefined]] (في strict mode).
+
+**الغلطة الشائعة:** تعمل debounce بس تنسى «احفظ قبل ما اليوزر يقفل الصفحة»: لو كتب وقفل التاب قبل الثانية، آخر كلام بيضيع. التصليح الكامل بيزوّد [[pagehide]] أو [[visibilitychange]] يحفظ على طول.`  },
+            { lvl: 'تحدي', t: R`مسألة واكتب اختبار: الـ throttle اللي في الدرس leading بس، فآخر نداء في الفترة بيضيع (آخر مكان scroll مش بيتحسب). اكتب نسخة trailing: لو فيه نداء اتمنع، يتنفّذ في آخر الفترة بآخر arguments. واختبرها بنداءات في 0 و 50 و 100 و 150ms بـ throttle 200ms.`, done: R`النسخة القديمة بتنفّذ مرة واحدة بالـ argument الأول بس. الجديدة بتنفّذ مرتين: فورًا بالأول، وبعد حوالي 200ms بالرابع (الأخير)، ومفيش تنفيذ تالت.`, sol: R`~~~js throttle-trailing.js
+function throttle(fn, ms) {
+  let last = 0;
+  return function (...args) {
+    const now = Date.now();
+    if (now - last < ms) return;
+    last = now;
+    fn.apply(this, args);
+  };
+}
+
+function throttleTrailing(fn, ms) {
+  let last = 0;
+  let timer = null;
+  let pendingArgs = null;
+  return function (...args) {
+    const now = Date.now();
+    const wait = ms - (now - last);
+    if (wait <= 0) {
+      last = now;
+      fn.apply(this, args);
+    } else {
+      pendingArgs = args;
+      if (!timer) {
+        timer = setTimeout(() => {
+          timer = null;
+          last = Date.now();
+          fn.apply(this, pendingArgs);
+          pendingArgs = null;
+        }, wait);
+      }
+    }
+  };
+}
+
+function run(label, make) {
+  return new Promise(resolve => {
+    const t = Date.now();
+    const calls = [];
+    const f = make((x) => calls.push(x + " عند " + (Date.now() - t) + "ms"), 200);
+    for (const [at, x] of [[0, "أ"], [50, "ب"], [100, "ج"], [150, "د"]]) setTimeout(() => f(x), at);
+    setTimeout(() => {
+      console.log(label, "→", calls.length, "مرة:", calls.join("، "));
+      resolve(calls);
+    }, 600);
+  });
+}
+
+const oldCalls = await run("throttle القديم   ", throttle);
+const newCalls = await run("throttle trailing ", throttleTrailing);
+console.log("اختبار:", oldCalls.length === 1 && newCalls.length === 2 && newCalls[1].startsWith("د") ? "نجح" : "فشل");
+~~~
+
+(جنبه [[package.json]] فيه [[{"type":"module"}]] عشان [[await]] برّه الدوال.)
+
+~~~text الناتج (node throttle-trailing.js، Node 24)
+throttle القديم    → 1 مرة: أ عند 5ms
+throttle trailing  → 2 مرة: أ عند 38ms، د عند 266ms
+اختبار: نجح
+~~~
+
+**إزاي [[throttleTrailing]] بتشتغل:**
+
+- [[wait = ms - (now - last)]]: فاضل قد إيه على نهاية الفترة. لو صفر أو أقل، الفترة خلصت: نفّذ على طول وسجّل [[last]].
+- غير كده: احفظ آخر arguments في [[pendingArgs]] (كل نداء بيكتب فوق اللي قبله)، ولو مفيش timer، اعمل واحد بعد [[wait]] بالظبط.
+- لما الـ timer يشتغل: نفّذ بـ [[pendingArgs]] (آخر واحد، يعني «د»)، وسجّل [[last]] من جديد عشان الفترة الجاية تتحسب من هنا.
+
+**النتيجة:** النداءات في 0 و 50 و 100 و 150ms:
+
+- القديم: مرة واحدة بـ «أ»، والتلاتة الباقيين ضاعوا.
+- الجديد: «أ» فورًا، و «د» (الأخير) بعد ~200ms من الأولى، ومفيش تالت. الأرقام 38 و 266ms بدل 0 و 200 لأن [[setTimeout]] نفسه بيتأخر شوية على Windows، والمهم الفرق بينهم.
+
+**الاختبار:** آخر سطر بيتأكد من ٣ حاجات: القديم مرة، والجديد مرتين، والتانية بآخر argument.
+
+**الغلطة الشائعة:** تعمل الـ trailing بـ [[setTimeout(..., ms)]] بدل [[wait]]: الآخر بيتنفّذ بعد ms من **آخر نداء** مش من نهاية الفترة، وده بقى debounce مش throttle.`  },
           ],
           flag: "script",
           deep: {
@@ -942,10 +3664,186 @@ window.addEventListener("resize", () => console.log(innerWidth), { signal: contr
 document.addEventListener("keydown", (e) => console.log(e.key), { signal: controller.signal });
 controller.abort();`,
           try: R`في DevTools افتح Memory، وخد Heap snapshot، واعمل حاجة في الصفحة ١٠ مرات (افتح وقفل modal)، وخد snapshot تاني، واختار «Comparison». لو فيه objects بتزيد مع كل مرة ومبتقلش، عندك leak. دوّر على «Detached» عشان عناصر DOM اتشالت ولسه ممسوكة.`,
+          ref: [
+            { t: "MDN: Memory management", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Memory_management" },
+            { t: "MDN: WeakRef", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakRef" },
+            { t: "MDN: AbortController", url: "https://developer.mozilla.org/en-US/docs/Web/API/AbortController" },
+            { t: "Chrome DevTools: Fix memory problems", url: "https://developer.chrome.com/docs/devtools/memory-problems" },
+          ],
           practice: [
-            { lvl: 'سريع', t: R`قيس: شغّل [[node --expose-gc]] واطبع [[process.memoryUsage().heapUsed]] بالـ MB قبل ما تملا array بمليون object، وبعد، وبعد [[arr = null]] و [[gc()]]. وبعدين كرّر بس احفظ [[globalThis.keep = arr]] قبل الـ null.`, done: R`الرقم بيزيد عشرات الـ MB بعد الملا، ويرجع قريب من الأول بعد null و gc. ومع [[globalThis.keep]] مبينزلش: لسه فيه reference عايش، وده الـ leak بالظبط. اكتب الـ ٣ أرقام في كل مرة.` },
-            { lvl: 'تطبيق', t: R`محاكاة cache: [[class LRU]] بحد أقصى: [[get]] بترجّع القيمة وتخليها «الأحدث»، و [[set]] لو الحجم عدّى الحد تمسح الأقدم. استخدم إن [[Map]] بيحفظ ترتيب الإضافة: [[map.keys().next().value]] هو الأقدم.`, done: R`[[new LRU(2)]]، و [[set("a", 1)]] و [[set("b", 2)]] و [[get("a")]] و [[set("c", 3)]]: المفاتيح الباقية [[a]] و [[c]] (اتمسح b لأنه الأقدم استخدامًا)، و [[get("zz")]] بترجّع undefined من غير ما تضيف حاجة، والحجم عمره ما بيعدّي 2 حتى بعد ألف set.` },
-            { lvl: 'تحدي', t: R`صلّح الكود البايظ: widget فيه [[mount()]] بيعمل [[addEventListener("resize", ...)]] و [[addEventListener("keydown", ...)]] و [[setInterval]] كل ثانية، و [[unmount()]] بيشيل العنصر من الصفحة بس. اعمل mount و unmount ١٠٠ مرة، وبعدين صلّحه بـ [[AbortController]] و [[clearInterval]] واعمل نفس الحكاية.`, done: R`قبل التصليح [[getEventListeners(window).resize.length]] في Console بتاع Chrome بيدّي [[100]] و ١٠٠ interval شغالين. بعد التصليح ومعاهم mount أخيرة، بيدّي [[1]] وفيه interval واحد بس بيطبع. وفي Memory، snapshot قبل وبعد الـ ١٠٠ مرة مفيهوش زيادة ثابتة.` },
+            { lvl: 'سريع', t: R`قيس: شغّل [[node --expose-gc]] واطبع [[process.memoryUsage().heapUsed]] بالـ MB قبل ما تملا array بمليون object، وبعد، وبعد [[arr = null]] و [[gc()]]. وبعدين كرّر بس احفظ [[globalThis.keep = arr]] قبل الـ null.`, done: R`الرقم بيزيد عشرات الـ MB بعد الملا، ويرجع قريب من الأول بعد null و gc. ومع [[globalThis.keep]] مبينزلش: لسه فيه reference عايش، وده الـ leak بالظبط. اكتب الـ ٣ أرقام في كل مرة.`, sol: R`~~~js heap.js
+const mb = () => (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(1) + " MB";
+
+function round(keepIt) {
+  gc();
+  const before = mb();
+  let arr = Array.from({ length: 1_000_000 }, (_, i) => ({ id: i, name: "user" + i }));
+  const filled = mb();
+  if (keepIt) globalThis.keep = arr;
+  arr = null;
+  gc();
+  console.log(keepIt ? "مع globalThis.keep:" : "من غير reference:", "قبل", before, "| بعد الملا", filled, "| بعد null و gc", mb());
+}
+
+round(false);
+round(true);
+~~~
+
+~~~text الناتج (node --expose-gc heap.js، Node 24 على Windows)
+من غير reference: قبل 3.9 MB | بعد الملا 81.9 MB | بعد null و gc 3.9 MB
+مع globalThis.keep: قبل 4.3 MB | بعد الملا 95.9 MB | بعد null و gc 80.5 MB
+~~~
+
+**الأرقام:**
+
+- **من غير reference:** 3.9 ← 81.9 ← 3.9 MB. المليون object خدوا حوالي 78MB، وبعد [[arr = null]] و [[gc()]] رجعت زي الأول: مفيش حد شايل الـ array، فالـ GC مسحها.
+- **مع [[globalThis.keep]]:** 4.3 ← 95.9 ← **80.5** MB. [[arr = null]] شالت اسم واحد بس، و [[globalThis.keep]] لسه بيشاور على نفس الـ array، فالـ GC مقدرش يمسحها. ده الـ leak: reference عايش انت نسيته.
+
+**كل حتة:**
+
+- [[--expose-gc]]: flag بيدّيك [[gc()]] تشغّل الـ garbage collector بإيدك. في الكود العادي مفيش [[gc()]]، وده للقياس بس.
+- [[process.memoryUsage().heapUsed]]: الذاكرة المستخدمة فعلًا في الـ heap بالـ bytes، و [[/ 1024 / 1024]] بيحوّلها MB.
+- [[gc()]] قبل «قبل»: عشان نبدأ من نقطة نضيفة.
+
+**اللي بيتغيّر عندك:** الأرقام بالظبط بتختلف حسب نسخة Node والنظام، بس الشكل ثابت: بيرجع في الأولى ومبيرجعش في التانية.
+
+**الغلطة الشائعة:** تقيس من غير [[gc()]] فتشوف الرقم لسه عالي وتفتكر فيه leak، والـ GC بس لسه مجاش دوره.`  },
+            { lvl: 'تطبيق', t: R`محاكاة cache: [[class LRU]] بحد أقصى: [[get]] بترجّع القيمة وتخليها «الأحدث»، و [[set]] لو الحجم عدّى الحد تمسح الأقدم. استخدم إن [[Map]] بيحفظ ترتيب الإضافة: [[map.keys().next().value]] هو الأقدم.`, done: R`[[new LRU(2)]]، و [[set("a", 1)]] و [[set("b", 2)]] و [[get("a")]] و [[set("c", 3)]]: المفاتيح الباقية [[a]] و [[c]] (اتمسح b لأنه الأقدم استخدامًا)، و [[get("zz")]] بترجّع undefined من غير ما تضيف حاجة، والحجم عمره ما بيعدّي 2 حتى بعد ألف set.`, sol: R`~~~js lru.js
+class LRU {
+  #map = new Map();
+  constructor(max) {
+    this.max = max;
+  }
+  get(key) {
+    if (!this.#map.has(key)) return undefined;
+    const value = this.#map.get(key);
+    this.#map.delete(key);
+    this.#map.set(key, value);
+    return value;
+  }
+  set(key, value) {
+    this.#map.delete(key);
+    this.#map.set(key, value);
+    if (this.#map.size > this.max) {
+      const oldest = this.#map.keys().next().value;
+      this.#map.delete(oldest);
+    }
+    return this;
+  }
+  get size() {
+    return this.#map.size;
+  }
+  keys() {
+    return [...this.#map.keys()];
+  }
+}
+
+const c = new LRU(2);
+c.set("a", 1).set("b", 2);
+c.get("a");
+c.set("c", 3);
+console.log("المفاتيح:", c.keys());
+console.log("get(\"zz\"):", c.get("zz"), "| الحجم:", c.size);
+for (let i = 0; i < 1000; i++) c.set("k" + i, i);
+console.log("بعد ألف set:", c.size, c.keys());
+~~~
+
+~~~text الناتج (node lru.js، Node 24)
+المفاتيح: [ 'a', 'c' ]
+get("zz"): undefined | الحجم: 2
+بعد ألف set: 2 [ 'k998', 'k999' ]
+~~~
+
+**إزاي بيشتغل:**
+
+- **[[Map]] بيحفظ ترتيب الإضافة:** أول مفتاح في [[keys()]] هو أقدم واحد اتضاف. ده كل اللي الـ LRU محتاجه.
+- **[[get]]:** لو موجود، امسحه وضيفه تاني، فيروح آخر الترتيب («الأحدث استخدامًا»). لو مش موجود: [[undefined]] من غير ما يضيف حاجة.
+- **[[set]]:** امسح المفتاح الأول (لو موجود، عشان يتنقل للآخر)، وضيف، ولو الحجم عدّى [[max]] امسح [[keys().next().value]] (الأقدم).
+- **[[#map]]:** private field، محدش من برّه يقدر يلعب في الترتيب.
+
+**التتبع:** [[set a]] ثم [[set b]] ← [[a، b]]. [[get a]] ← [[b، a]]. [[set c]] ← [[b، a، c]] والحجم 3 > 2، فاتمسح [[b]] ← [[a، c]]. وبعد ألف set فاضل آخر اتنين بس.
+
+**الغلطة الشائعة:** [[get]] من غير ما ينقل المفتاح للآخر: ده يبقى FIFO (أول داخل أول خارج) مش LRU، والمفتاح اللي بيتقري كل ثانية بيتمسح.`  },
+            { lvl: 'تحدي', t: R`صلّح الكود البايظ: widget فيه [[mount()]] بيعمل [[addEventListener("resize", ...)]] و [[addEventListener("keydown", ...)]] و [[setInterval]] كل ثانية، و [[unmount()]] بيشيل العنصر من الصفحة بس. اعمل mount و unmount ١٠٠ مرة، وبعدين صلّحه بـ [[AbortController]] و [[clearInterval]] واعمل نفس الحكاية.`, done: R`قبل التصليح [[getEventListeners(window).resize.length]] في Console بتاع Chrome بيدّي [[100]] و ١٠٠ interval شغالين. بعد التصليح ومعاهم mount أخيرة، بيدّي [[1]] وفيه interval واحد بس بيطبع. وفي Memory، snapshot قبل وبعد الـ ١٠٠ مرة مفيهوش زيادة ثابتة.`, sol: R`~~~live 170 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>widget</title>
+<style>
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
+  button { font: inherit; padding: 4px 10px; margin: 2px; }
+  .widget { border: 1px solid #ccc; padding: 6px 10px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<button id="leaky">mount/unmount البايظ ×100</button>
+<button id="fixed">mount/unmount المصلّح ×100</button>
+<p>ticks في آخر ثانية: <b id="ticks">0</b></p>
+<div id="host"></div>
+<script>
+  const host = document.getElementById("host");
+  let ticks = 0;
+
+  // البايظ: unmount بيشيل العنصر بس
+  function mountLeaky() {
+    const el = document.createElement("div");
+    el.className = "widget";
+    host.append(el);
+    window.addEventListener("resize", () => { el.textContent = innerWidth; });
+    window.addEventListener("keydown", (e) => { el.textContent = e.key; });
+    setInterval(() => { ticks++; el.textContent = new Date().toLocaleTimeString(); }, 1000);
+    return () => el.remove();
+  }
+
+  // المصلّح: كل listener على نفس الـ signal، والـ interval محفوظ
+  function mountFixed() {
+    const el = document.createElement("div");
+    el.className = "widget";
+    host.append(el);
+    const controller = new AbortController();
+    const { signal } = controller;
+    window.addEventListener("resize", () => { el.textContent = innerWidth; }, { signal });
+    window.addEventListener("keydown", (e) => { el.textContent = e.key; }, { signal });
+    const id = setInterval(() => { ticks++; el.textContent = new Date().toLocaleTimeString(); }, 1000);
+    return () => {
+      controller.abort();
+      clearInterval(id);
+      el.remove();
+    };
+  }
+
+  function cycle(mount) {
+    for (let i = 0; i < 100; i++) mount()();
+    mount(); // واحدة أخيرة فاضلة شغالة
+  }
+  document.getElementById("leaky").addEventListener("click", () => cycle(mountLeaky));
+  document.getElementById("fixed").addEventListener("click", () => cycle(mountFixed));
+
+  setInterval(() => { document.getElementById("ticks").textContent = ticks; ticks = 0; }, 1000);
+</script>
+</body>
+</html>
+~~~
+
+~~~text اللي اتقاس في Chrome 158 (Playwright، الـ listeners بـ DOMDebugger.getEventListeners)
+قبل أي حاجة:                       resize: 0, keydown: 0
+بعد البايظ ×100 + mount أخيرة:     resize: 101, keydown: 101 | ticks في ثانية: 101 | widgets في الصفحة: 1
+بعد المصلّح ×100 + mount أخيرة:    resize: 1, keydown: 1     | ticks في ثانية: 1   | widgets في الصفحة: 1
+~~~
+
+(القياس اتعمل بـ Chrome DevTools Protocol، وهو نفس اللي [[getEventListeners(window)]] بيعمله في Console بتاع DevTools. الـ 101 = الـ ١٠٠ دورة + الـ mount الأخيرة اللي سايبينها شغالة.)
+
+**البايظ:** [[unmount]] شال العنصر من الصفحة بس. الـ ٢ listeners على [[window]] والـ interval لسه عايشين، وكل واحد فيهم شايل closure فيه [[el]]، فالعنصر المشال نفسه مبيتمسحش من الذاكرة (Detached element). بعد ١٠٠ دورة: 101 listener من كل نوع، و 101 interval بيشتغلوا كل ثانية على عناصر مش ظاهرة.
+
+**المصلّح:**
+
+- [[const controller = new AbortController()]]: و [[{ signal }]] في كل [[addEventListener]].
+- [[controller.abort()]]: بيشيل **كل** الـ listeners اللي اتسجّلت بالـ signal ده مرة واحدة، من غير ما تحتاج تحفظ كل دالة عشان [[removeEventListener]].
+- [[clearInterval(id)]]: الـ interval مالوش signal، فلازم الـ id يتحفظ ويتلغي.
+- النتيجة: listener واحد من كل نوع (بتاع الـ mount الأخيرة) و tick واحد في الثانية.
+
+**الغلطة الشائعة:** تفتكر إن [[el.remove()]] بيمسح كل حاجة متعلقة بالعنصر. الـ listeners اللي على [[window]] و [[document]] والـ timers ملهمش علاقة بالعنصر، وهما اللي شايلينه.`  },
           ],
           flag: "script",
           deep: {
