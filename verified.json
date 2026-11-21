@@ -10095,9 +10095,9 @@
   "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|breakpoints و node --inspect و source maps": {
-  "hash": "b0b32d28e63f",
+  "hash": "2f498c6693c8",
   "date": "2026-11-21",
-  "on": "Windows, Node 24.22 (multi-file sols run with their entry file), Chromium for the parseint-trap page"
+  "on": "Windows, Node 24.22 (node inspect --probe in Git Bash and PowerShell 7)"
  },
  "js|call و apply و bind": {
   "hash": "882f1bbffefe",

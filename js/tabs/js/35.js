@@ -2059,6 +2059,25 @@ npx esbuild src/cart.ts --bundle --minify --platform=node --sourcemap --outfile=
 **إمتى تستخدمه:** في الـ production على Node شغّل بـ [[--enable-source-maps]] (أو [[NODE_OPTIONS=--enable-source-maps]]) عشان اللوج يقولك الملف والسطر الحقيقي. في المتصفح DevTools بيقرا الـ map لوحده لو موجود جنب الملف.
 
 **الغلطة الشائعة:** تبني بـ [[--sourcemap]] وتفتكر خلاص، وتفضل تشوف [[cart.js:1:503]] في اللوج لأنك نسيت الـ flag. أو ترفع الـ [[.map]] على سيرفر عام وانت مش عايز الكود الأصلي يبان (الـ map فيه المصدر كامل).` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** على [[cart.js]] بتاع قسم «logpoint من الترمنال»، لاقي الصنف اللي بيبوّظ الإجمالي بأمر [[node inspect --probe]] **واحد** يطبع الصنف ده بس، من غير ما تعدّل الملف ومن غير ما تعدّ اللفات بعينك.`, done: R`الأمر بيطبع [[Hit 1]] واحدة بس، فيها [[item = {name: "مياه", price: 12, qty: 3}]]، وبعدها [[Completed]].`, sol: R`~~~bash
+node inspect --probe cart.js:11 --expr "item" --cond "Number.isNaN(line)" cart.js
+~~~
+
+~~~text الناتج (Node 24.22، المسار اتقصّر لـ …/)
+Hit 1 at …/cart.js:11:3
+  item = {name: "مياه", price: 12, qty: 3}
+Completed
+~~~
+
+**ليه كده:**
+
+- [[--probe cart.js:11]]: السطر [[total += line]]. وقتها [[line]] اتحسب خلاص (السطر اللي قبله اتنفّذ)، فنقدر نسأل عليه. لو حطيته على سطر ١٠ هتاخد [[ReferenceError]] أول مرة لأن [[line]] لسه في الـ TDZ.
+- [[--expr "item"]]: عايز الصنف نفسه مش الرقم، عشان تعرف تصلّح إيه.
+- [[--cond "Number.isNaN(line)"]]: الـ probe بيسجّل بس لما الشرط يبقى true، فبدل ٤ مرات بتاخد المرة اللي فيها المشكلة. و [[Number.isNaN]] مش [[line === NaN]]، لأن [[NaN]] مبيساويش نفسه (درس «number و NaN»)، فالتانية عمرها ما هتطلع true والأمر بيطبع [[Missed probes: cart.js:11]] (اتجرّب)، كأن السطر ماتنفّذش.
+
+**الغلطة الشائعة:** تكتب الشرط [[line === NaN]] فتطلعلك [[Missed probes]]، فتفتكر إن رقم السطر غلط والسطر سليم. أو تنسى إن البرنامج نفسه بيطبع [[الإجمالي: NaN]] في التشغيل العادي بس: في وضع الـ probe الـ output بتاعه مبيظهرش.
+
+والتصليح بعد ما عرفت السبب: [[(item.fee ?? 0)]] بدل [[item.fee]]، فالإجمالي يبقى ٢٣٩.` },
           ],
           flag: "script",
           deep: {
@@ -2152,6 +2171,67 @@ debug> c
 |---|---|
 | Chrome DevTools | كليك يمين على رقم السطر، و Add logpoint، واكتب تعبير زي [['it', it]] |
 | VS Code | Add Logpoint، والمتغيرات بين أقواس معقوفة زي [[it = {it.price}]] (من docs بتاعة VS Code) |
+| الترمنال (Node 24) | [[node inspect --probe]]، القسم اللي جاي |
+
+### logpoint من الترمنال: [[node inspect --probe]]
+
+من Node 24 فيه طريقة أسرع من الـ logpoint اليدوي: [[node inspect]] بيشغّل البرنامج، ويقيّم تعبير كل مرة التنفيذ يوصل لسطر معيّن، ويطبع النتايج، من غير ما توقّف البرنامج ولا تكتب حرف في الملف. ملف المعمل ([[cart.js]]): سلة فيها صنف ناقصه رسوم التوصيل، فالإجمالي بيطلع [[NaN]]:
+
+~~~js cart.js
+const items = [
+  { name: "قهوة", price: 45, qty: 2, fee: 5 },
+  { name: "كرواسون", price: 38, qty: 1, fee: 5 },
+  { name: "مياه", price: 12, qty: 3 },
+  { name: "كيكة", price: 60, qty: 1, fee: 5 },
+];
+
+let total = 0;
+for (const item of items) {
+  const line = item.price * item.qty + item.fee;
+  total += line;
+}
+console.log("الإجمالي:", total);
+~~~
+
+~~~bash
+node cart.js
+node inspect --probe cart.js:11 --expr "total" cart.js
+~~~
+
+~~~text الناتج (Node 24.22 على Windows، والمسار اتقصّر لـ …/)
+الإجمالي: NaN
+Hit 1 at …/cart.js:11:3
+  total = 0
+Hit 2 at …/cart.js:11:3
+  total = 95
+Hit 3 at …/cart.js:11:3
+  total = 138
+Hit 4 at …/cart.js:11:3
+  total = NaN
+Completed
+~~~
+
+- [[--probe cart.js:11]]: الملف ورقم السطر (من 1). اسم الملف بيتطابق مع آخر المسار، فـ [[cart.js]] كفاية حتى لو الملف جوه فولدرات. وتقدر تزوّد العمود بعد نقطتين تانيين.
+- [[--expr "total"]]: التعبير اللي يتقيّم عند السطر، وفي نفس الـ scope بتاعه. لازم ييجي على طول بعد [[--probe]] بتاعه.
+- وبعدهم اسم البرنامج نفسه ([[cart.js]]).
+- **القيمة اللي بتتطبع هي قبل ما السطر يتنفّذ:** أول مرة [[total = 0]] مع إن الصنف الأول اتحسب، لأن [[total += line]] لسه ماتنفّذتش. فالـ [[NaN]] ظهر في المرة الرابعة، يعني الصنف التالت هو اللي بوّظه.
+- **الـ output بتاع البرنامج نفسه بيختفي:** [[الإجمالي: NaN]] ظهرت في التشغيل العادي بس، ومش في stdout ولا stderr في وضع الـ probe. فشغّل البرنامج مرة عادي لو محتاج تشوف اللي بيطبعه.
+- [[Completed]] معناها البرنامج خلص، والـ exit code صفر.
+
+**الـ options اللي بتختصر الطريق (كلهم اتجرّبوا على نفس الملف):**
+
+| الأمر | اللي طلع |
+|---|---|
+| [[--expr "[item.name, typeof item.price, line]"]] | array كل مرة: [[["مياه", "number", NaN]]] في المرة التالتة |
+| [[--expr "item" --cond "Number.isNaN(line)"]] | مرة واحدة بس: [[item = {name: "مياه", price: 12, qty: 3}]]: الصنف اللي ناقصه [[fee]] على طول |
+| [[--max-hit 1]] | أول مرة بس وبعدين بيفصل، والبرنامج بيكمّل لوحده |
+| [[--probe cart.js:11 --expr "line" --probe cart.js:13 --expr "total"]] | أكتر من probe في أمر واحد: ٤ مرات لـ [[line]] ومرة لـ [[total = NaN]] |
+| [[--json]] | نفس النتايج JSON: [[{"probe":0,"event":"hit","hit":1,…,"result":{"type":"number","value":0}}]] |
+| [[--probe nope.js:3 …]] | [[Missed probes: nope.js:3]]: السطر عمره ما اتنفّذ أو الملف غلط |
+
+**فخ الـ [[let]] و [[const]]:** لو حطيت الـ probe على سطر التعريف نفسه ([[--probe cart.js:10 --expr "line"]])، أول مرة بيطلع [[ReferenceError: Cannot access 'line' from debugger]]، لأن [[line]] لسه في الـ TDZ (درس «hoisting و TDZ»): الـ probe بيشتغل قبل السطر. والمرات اللي بعدها بتطبع قيمة اللفة اللي فاتت. الحل: حط الـ probe على السطر اللي بعد التعريف، زي ما الـ help بتاع Node نفسه بيقول.
+
+وفي PowerShell نفس الأمر بالظبط، بس التعبير بين علامتين مفردين لو فيه علامات تنصيص مزدوجة: [[node inspect --probe cart.js:11 --expr 'item.name' cart.js]].
 
 ---
 
