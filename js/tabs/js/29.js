@@ -1,150 +1,219 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "Web Components",
+      t: "APIs المتصفح",
       l: 3,
-      n: "عناصر HTML بتعملها بنفسك (<user-card>) من غير framework: custom elements و shadow DOM و slots، وإزاي تستخدمها جوه React و Vue، وتدخل الفورم بـ ElementInternals، وتظهر من غير flash بـ Declarative Shadow DOM و :defined",
+      n: "IntersectionObserver و ResizeObserver و MutationObserver، ورفع الملفات بمعاينة و progress، ودورة حياة الصفحة و bfcache، و pushState، والإشعارات و Permissions API",
       projects: [
-        { lvl: 'صغير', t: R`[[<relative-time>]] زي GitHub`, what: R`[[<relative-time datetime="2026-10-29T10:00:00Z">]] بيكتب «قبل 3 دقائق» بـ [[Intl.RelativeTimeFormat("ar", { numeric: "auto" })]] (درس customElements.define)، وبيتحدّث كل دقيقة بـ [[setInterval]] بيتعمل في [[connectedCallback]] ويتمسح في [[disconnectedCallback]]، وبيسمع لتغيير [[datetime]].`, done: R`تاريخ من 3 دقايق بيطلع «قبل 3 دقائق» ومن يوم بيطلع «أمس»، وبعد دقيقة النص بيتغير لوحده، و [[setAttribute("datetime", ...)]] بيحدّثه على طول، و [[remove()]] بيوقّف الـ interval (عدّاد في الـ callback بيقف)، وتاريخ غلط بيكتب «تاريخ غلط» مش «Invalid Date».` },
-        { lvl: 'صغير', t: R`[[<toggle-switch>]] بالكيبورد`, what: R`مفتاح on/off بـ shadow DOM (درس ٢) و [[checked]] boolean بيعمل reflect (درس ٤): [[role="switch"]] و [[aria-checked]] و [[tabindex="0"]]، وبيتقلب بالضغط أو Space أو Enter، وبيبعت [[change]] event فيه [[detail.checked]].`, done: R`Tab بيوصله و Space بيقلبه، و [[el.checked = true]] بيحط attribute [[checked]] و [[removeAttribute("checked")]] بيرجّع [[el.checked]] بـ [[false]]، و [[aria-checked]] ماشي مع الحالة، والـ [[change]] بيتبعت مرة واحدة لكل تغيير من اليوزر ومبيتبعتش لما الكود يغيّر [[checked]].` },
-        { lvl: 'متوسط', t: R`[[<tab-group>]] بالـ slots`, what: R`[[<tab-group>]] جواه [[<button slot="tab">]] و [[<section slot="panel">]] بأي عدد (درس slots)، و [[slotchange]] بيربط كل تاب باللوحة بتاعته، والأسهم يمين وشمال بتتنقل بين التابات، والتاب النشط attribute [[selected]] (درس ٤)، و event [[tab-change]] بـ [[composed: true]].`, done: R`٣ تابات بيشتغلوا بالماوس والأسهم، وتزويد تاب رابع من Console بيشتغل من غير refresh، و [[selected="2"]] في الـ HTML بيفتح التالت، والـ CSS بتاع الصفحة مبيبوّظش شكل التابات، و listener على [[document]] بيستقبل [[tab-change]] بالـ index الصح.` },
-        { lvl: 'متوسط', t: R`design system صغير`, what: R`٣ components ([[<ui-button>]] و [[<ui-card>]] و [[<ui-badge>]]) بيشاركوا [[CSSStyleSheet]] واحد بـ [[adoptedStyleSheets]] (درس shadow DOM)، والألوان كلها CSS custom properties، و [[::part]] للأجزاء اللي مسموح تتغير، وصفحة demo فيها الـ light و dark بتغيير variables على [[:root]] بس.`, done: R`تغيير [[--ui-primary]] في [[:root]] بيغيّر الـ ٣ components مع بعض، و [[p { color: red }]] في الصفحة مبيأثرش جواهم، و [[ui-button::part(label)]] بيكبّر الخط، والـ dark mode بيتقلب بزرار واحد من غير ما يلمس أي component، والـ stylesheet اتعمل مرة واحدة بس (ابحث في الكود: [[new CSSStyleSheet]] مرة واحدة).` },
-        { lvl: 'كبير', t: R`[[<image-uploader>]] تستخدمه في أي framework`, what: R`component بيجمع الوحدة دي مع APIs المتصفح: input و drag and drop ومعاينة وفحص النوع بأول bytes والحجم، ورفع بـ progress وإلغاء. attributes [[accept]] و [[max-size]] و [[endpoint]] و [[multiple]]، و events [[upload-start]] و [[upload-done]] و [[upload-error]] بـ [[composed: true]]، و slots للنص والأيقونة، و [[revokeObjectURL]] و [[abort()]] لكل حاجة في [[disconnectedCallback]]. واستخدمه في صفحة HTML عادية، و React 19، و Vue.`, done: R`ملف أكبر من [[max-size]] أو نوعه غلط بيطلع [[upload-error]] فيه السبب ومبيتبعتش، والرفع على Slow 4G بيبين progress والإلغاء بيشتغل، وشيل العنصر من الصفحة في نص الرفع بيلغي الـ request (Network يأكد)، ونفس الـ component شغال في التلات أماكن والـ events بتوصل لـ state بتاع React و Vue، و تستات بـ [[node:test]] و jsdom بتتأكد من الـ attributes والـ events من غير متصفح.`, ext: R`خليه form-associated بـ [[attachInternals()]] عشان يتبعت مع الفورم، وزوّد crop للصورة، وانشره على npm بـ README وصفحة demo.` },
-        { lvl: 'فكرة', t: R`component تستخدمه في كل مشاريعك`, what: R`اختار حاجة بتعملها في كل مشروع (modal، أو toast، أو dropdown، أو date picker، أو rating) وابنيها Web Component واحد يشتغل مع أي framework: attributes للقيم البسيطة، و properties للمعقدة، و events للي بيحصل، و slots للمحتوى، و CSS variables للشكل.`, done: R`فيه صفحة demo فيها كل الحالات، وبيشتغل بالكيبورد بس، ومستخدم في مشروعين مختلفين على الأقل (واحد منهم React أو Vue)، و README بيشرح كل attribute و event بمثال.`, ext: R`اعمله بـ Lit وقارن حجم الكود والـ bundle بالنسخة اللي من غير مكتبة، وزوّد Declarative Shadow DOM عشان يترندر من السيرفر.` },
+        { lvl: 'صغير', t: R`زرار «ارجع لفوق» من غير scroll listener`, what: R`div صغير في أول الصفحة عليه [[IntersectionObserver]] (درس ١): لما يخرج من الشاشة يظهر زرار «لفوق» ثابت في الركن، ولما يرجع يختفي. والزرار بيعمل [[scrollTo({ top: 0, behavior: "smooth" })]].`, done: R`الزرار مش ظاهر وانت في أول الصفحة، بيظهر بعد ما تنزل شوية ويختفي لما ترجع، ومفيش ولا [[addEventListener("scroll")]] في الكود، و Performance في DevTools مفيهوش شغل JS مستمر وانت بتعمل scroll.` },
+        { lvl: 'صغير', t: R`اختيار صورة البروفايل`, what: R`[[<input type="file" accept="image/*">]] لصورة واحدة (درس ٣): معاينة في دايرة بـ [[URL.createObjectURL]]، ورفض أي ملف أكبر من 1MB أو مش صورة فعلًا (أول bytes بتوعه مش PNG ولا JPEG)، و [[revokeObjectURL]] للقديمة كل ما تختار جديدة.`, done: R`صورة PNG أو JPEG بتظهر في الدايرة، وملف [[.txt]] اتغيّر اسمه لـ [[.png]] بيترفض برسالة مع إن [[file.type]] بتاعه [[image/png]]، والملف الكبير بيترفض ومعاه حجمه بالـ MB، واختيار ٥ صور ورا بعض بيسيب blob URL واحد بس شغال.` },
+        { lvl: 'متوسط', t: R`رافع صور كامل`, what: R`منطقة سحب وإفلات (درس ٤) وجواها [[<label>]] و [[<input type="file" multiple>]] للي مش بيستخدم ماوس (درس ٣)، ومعاينة لكل صورة ومعاها حجمها ومقاسها، وفحص النوع والحجم قبل أي رفع، وشريط تقدم وزرار إلغاء لكل ملف لوحده بـ [[XMLHttpRequest]]، على سيرفر Express فيه multer على localhost.`, done: R`تسحب ٤ صور منهم واحدة كبيرة: ٣ بيترفعوا كل واحد بشريطه والكبيرة بتترفض قبل ما تتبعت (مفيش request ليها في Network)، والإلغاء بيوقّف ملف واحد بس والباقي يكمّل، و Tab ثم Enter بيفتح اختيار الملفات من غير ماوس، والشكل مبيرعشش وانت بتسحب فوق الصور اللي جوه المنطقة.` },
+        { lvl: 'متوسط', t: R`SPA صغير بيفتكر مكانك`, what: R`راوتر بـ [[pushState]] و [[popstate]] (درس ٦) لـ ٣ صفحات، وصفحة «اكتب رسالة» بتحفظ المسودة في [[localStorage]] على [[visibilitychange]] (درس ٥)، والأقسام بتظهر بـ reveal بـ IntersectionObserver (درس ١)، والبحث في [[?q=]] بـ [[replaceState]].`, done: R`back و forward بيرجّعوا الصفحة الصح من غير reload (Network مفيهوش طلب document جديد)، والمسودة بترجع بعد ما تقفل التاب وتفتحه، و refresh على [[/contact?q=x]] بيفتح نفس الصفحة ونفس البحث، و Ctrl+Click على أي لينك بيفتح تاب جديد زي أي موقع.` },
+        { lvl: 'كبير', t: R`feed لانهائي متين`, what: R`feed من [[jsonplaceholder.typicode.com]] أو API على localhost بـ IntersectionObserver (درس ١)، والكروت بتتقسم أعمدة حسب عرض الـ container بـ ResizeObserver (درس ٢)، ورقم الصفحة في الـ URL بـ [[replaceState]] (درس ٦)، و [[pageshow]] بيحدّث لو رجعت من bfcache (درس ٥). ومن الوحدات اللي فاتت: [[AbortController]] و timeout على كل fetch، و debounce على الـ resize، ورسالة خطأ فيها زرار «حاول تاني».`, done: R`مفيش صفحة بتتطلب مرتين حتى لو نزلت بسرعة جدًا (Network يأكد)، وفي آخر الداتا بتظهر «خلصت» والـ observer بيقف، ولو قطعت النت من DevTools بتظهر رسالة الخطأ والزرار بيكمّل من نفس الصفحة، و refresh بيرجّعك لنفس رقم الصفحة، وعدد الأعمدة بيتغير لما تصغّر الـ sidebar مش الشاشة بس، و Test back/forward cache بيقول الصفحة اترجعت من الـ cache.`, ext: R`زوّد virtual scrolling لما الكروت تعدّي ١٠٠٠ عشان الـ DOM ميتقلش، وبحث بـ [[?q=]]، وحوّله لـ component تستخدمه في مشروع حقيقي.` },
+        { lvl: 'فكرة', t: R`سلوك بتحبه في موقع تاني`, what: R`اختار حاجة بتعجبك في موقع بتستخدمه: الفيديو اللي بيقف لما تسيب التاب، أو الفهرس اللي بيعلّم القسم اللي انت فيه، أو الصورة اللي بتتحمّل وانت قربت منها، أو اللينك اللي بيتغيّر وانت بتفلتر. ابنيها بـ APIs الوحدة دي من غير مكتبات.`, done: R`السلوك شغال في صفحة لوحدها، ومكتوب جنبه الـ API اللي استخدمته، ومفيش listener بيفضل شغال بعد ما العنصر يتشال (اتأكد إن فيه [[disconnect]] أو [[unobserve]] أو [[removeEventListener]] في مكانه).`, ext: R`حوّله لدالة أو component بتاخد options، وحطه في مشروع بتاعك، وقيس الفرق بـ Lighthouse قبل وبعد.` },
       ],
       items: [
         {
-          cmd: "customElements.define",
-          title: "تعمل tag HTML جديد بـ customElements.define (custom elements)",
-          desc: R`[[customElements.define("user-card", UserCard)]] بيسجّل tag جديد، و [[UserCard]] class بيورث [[HTMLElement]]. من ساعتها أي [[<user-card>]] في الصفحة (حتى اللي كان موجود قبل التسجيل) بيبقى instance من الـ class ده.
+          cmd: "IntersectionObserver",
+          title: "تعرف إن عنصر ظهر على الشاشة إزاي؟ (infinite scroll و reveal)",
+          desc: R`[[IntersectionObserver]] بيقولك لما عنصر يدخل أو يخرج من الشاشة (أو من عنصر أب بيعمل scroll)، من غير ما تسمع لـ [[scroll]] وتحسب المقاسات بنفسك. بتعمله مرة بـ callback وخيارات، وبعدين [[observe(el)]] لأي عدد عناصر.
 
-الـ class ليه lifecycle callbacks: [[connectedCallback]] لما يدخل الصفحة، و [[disconnectedCallback]] لما يتشال، و [[attributeChangedCallback]] لما attribute من اللي في [[observedAttributes]] يتغير. والاسم **لازم** فيه [[-]].`,
-          example: R`class UserCard extends HTMLElement {
-  static observedAttributes = ["name", "role"];
-  constructor() {
-    super();
-    console.log("constructor");
+أشهر استخدامين: infinite scroll (عنصر فاضي في آخر الليستة اسمه sentinel، أول ما يقرّب من الشاشة حمّل الصفحة الجاية)، وأنيميشن عند الظهور (ضيف كلاس لما الكارت يظهر، وبطّل تراقبه). و [[rootMargin: "300px"]] بيوسّع منطقة الشاشة ٣٠٠ بكسل، فالتحميل يبدأ قبل ما اليوزر يوصل للآخر. و [[threshold: 0.2]] يعني «لما ٢٠٪ من العنصر يظهر».`,
+          example: R`const feed = document.querySelector("#feed");
+const sentinel = document.querySelector("#sentinel");
+let page = 1, loading = false, done = false;
+async function loadMore() {
+  if (loading || done) return;
+  loading = true;
+  try {
+    const res = await fetch($__bt/api/posts?page=$__{page}$__bt);
+    const posts = await res.json();
+    if (posts.length === 0) done = true;
+    for (const p of posts) {
+      const li = document.createElement("li");
+      li.textContent = p.title;
+      feed.append(li);
+    }
+    page++;
+  } finally {
+    loading = false;
   }
-  connectedCallback() {
-    console.log("connected");
-    this.render();
-  }
-  disconnectedCallback() {
-    console.log("disconnected");
-  }
-  attributeChangedCallback(name, oldValue, newValue) {
-    console.log($__btattribute $__{name}: $__{oldValue} -> $__{newValue}$__bt);
-    this.render();
-  }
-  render() {
-    const name = this.getAttribute("name") ?? "Guest";
-    const role = this.getAttribute("role") ?? "member";
-    this.textContent = $__bt$__{name} ($__{role})$__bt;
-  }
+  if (!done) { io.unobserve(sentinel); io.observe(sentinel); }
 }
-customElements.define("user-card", UserCard);`,
-          try: R`احفظ المثال [[user-card.js]]، واعمل صفحة فيها [[<user-card name="Sara" role="admin"></user-card>]] و [[<script type="module" src="user-card.js">]]. افتح Console: الترتيب إيه؟ وبعدين في الـ Console: [[document.querySelector("user-card").setAttribute("role", "owner")]]، وبعدين [[.remove()]]، وبعدين جرّب [[customElements.define("usercard", class extends HTMLElement {})]].`,
+const io = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) loadMore();
+}, { rootMargin: "300px" });
+io.observe(sentinel);
+const reveal = new IntersectionObserver((entries, obs) => {
+  for (const e of entries) {
+    if (!e.isIntersecting) continue;
+    e.target.classList.add("visible");
+    obs.unobserve(e.target);
+  }
+}, { threshold: 0.2 });
+document.querySelectorAll(".reveal").forEach((el) => reveal.observe(el));`,
+          try: R`اعمل صفحة فيها [[<ul id="feed">]] وبعدها [[<div id="sentinel">]]، واستبدل الـ fetch بـ [[https://jsonplaceholder.typicode.com/posts?_page=$__{page}&_limit=5]]. افتح Network وانزل: الطلبات بتحصل إمتى؟ وبعدين شيل سطر [[unobserve/observe]] وخلي الـ limit 2 على شاشة كبيرة: التحميل بيكمّل لوحده ولا بيقف؟`,
           practice: [
-            { lvl: 'سريع', t: R`اتوقع وبعدين شغّل جوه try/catch: [[customElements.define("usercard", class extends HTMLElement {})]]، وبعدها تعرّف [[user-x]] مرتين، وبعدها نفس الـ class بإسمين مختلفين.`, done: R`الأول بيرمي [[DOMException]] اسمها [[SyntaxError]] (الاسم لازم فيه [[-]])، والتاني والتالت بيرموا [[NotSupportedError]] (الاسم أو الـ class اتسجّلوا قبل كده)، وتقدر تقول إزاي تتجنب التاني في ملف ممكن يتحمّل مرتين ([[if (!customElements.get("user-x"))]]).` },
-            { lvl: 'تطبيق', t: R`ابني [[<copy-button text="npm i idb">]]: زرار بيكتب «انسخ»، والضغط بيعمل [[navigator.clipboard.writeText]] للـ [[text]]، ويكتب «اتنسخ ✓» لمدة ثانيتين ويرجع، ولو النسخ فشل يكتب «مقدرتش أنسخ».`, done: R`تضغط وتعمل paste في أي حتة فيطلع النص بالظبط، والزرار بيرجع «انسخ» بعد ثانيتين، والضغط مرتين بسرعة مبيخليش النص يرجع بدري (الـ timeout القديم اتلغى)، وتغيير [[text]] من Console بينسخ القيمة الجديدة.` },
-            { lvl: 'تحدي', t: R`صلّح باج الـ upgrade: الكود بيعمل [[el.name = "Sara"]] على [[<user-card>]] **قبل** [[customElements.define]] (السكربت اتحمّل متأخر)، والـ class فيه [[set name(v)]] بيرسم. الاسم مبيظهرش. صلّحها في [[connectedCallback]]، وخبّي العنصر لحد ما يتعرّف بـ [[user-card:not(:defined)]].`, done: R`قبل التصليح [[el.textContent]] فاضي و [[Object.hasOwn(el, "name")]] بـ [[true]] (الـ property العادية غطّت الـ setter)، وبعد التصليح (تقرا القيمة، و [[delete this.name]]، وتحطها تاني) بيرسم «Sara»، والصفحة مبيبانش فيها العنصر فاضي قبل التعريف، و [[customElements.whenDefined("user-card")]] بيتحل بعد [[define]].` },
+            { lvl: 'سريع', t: R`ابني سكشن «أرقامنا» فيه ٣ أرقام ([[data-to="1200"]] مثلًا) تحت أول شاشة: الأرقام بتعدّ من 0 لحد [[data-to]] في ثانية واحدة أول ما السكشن يظهر بـ [[threshold: 0.5]]، وبعدين [[unobserve]].`, done: R`الأرقام بتفضل 0 لحد ما تنزل للسكشن، وبتعدّ مرة واحدة بس وتقف على الرقم بالظبط (مش 1199 ولا 1201) مهما طلعت ونزلت، وفتح الصفحة على السكشن على طول بيعدّ برضه.` },
+            { lvl: 'تطبيق', t: R`refactor: صفحة منتجات فيها [[cards.forEach((el) => new IntersectionObserver(cb).observe(el))]] لـ ١٠٠ كارت وبتحمّل صورة كل كارت لما يظهر. خليها observer واحد لكل الكروت، مع [[unobserve]] بعد التحميل و [[rootMargin: "200px"]]، من غير ما السلوك يتغير.`, done: R`عدد الـ observers بقى 1 بدل 100 (عدّهم بمتغير)، وكل صورة لسه بتتطلب مرة واحدة لما تقرّب منها (Network يأكد)، والكارت اللي اتحمّل مبيتناداش تاني لو طلعت ونزلت، وتقدر تقول ليه observer واحد أرخص.` },
+            { lvl: 'تحدي', t: R`ابني فهرس جانبي (scroll spy) لمقالة: لينك لكل [[<section>]]، واللينك بتاع القسم اللي في نص الشاشة عليه [[class="active"]] بـ [[rootMargin: "-50% 0px -50% 0px"]]، والـ URL بيتحدّث بـ [[#id]] القسم بـ [[replaceState]] (درس pushState).`, done: R`اللينك النشط بيتغير لما القسم يعدّي نص الشاشة، وفي أي لحظة لينك واحد بس عليه [[active]] (حتى في آخر الصفحة)، و refresh على [[#section-3]] بيفتح عنده واللينك بتاعه نشط، ومفيش [[getBoundingClientRect]] ولا scroll listener في الكود.` },
           ],
           flag: "script",
           deep: {
-            why: R`عايز component (كارت، زرار، date picker) يشتغل في أي صفحة: React أو Vue أو HTML عادي أو CMS، من غير ما تعيد كتابته لكل framework. Web Components جزء من المتصفح نفسه، فمش محتاجة مكتبة ولا build. Design systems كبيرة (زي Shoelace/Web Awesome و Material Web) مبنية كده.`,
-            how: R`[[customElements]] هو الـ registry (السجل) بتاع الصفحة. [[define(name, Class)]] بيربط الاسم بالـ class، والمتصفح بيعمل «upgrade» لكل [[<user-card>]] موجود: يشغّل الـ [[constructor]]، وبعدين [[attributeChangedCallback]] لكل attribute متابَع موجود، وبعدين [[connectedCallback]].
+            why: "الطريقة القديمة: [[scroll]] listener بيشتغل عشرات المرات في الثانية، وجواه [[getBoundingClientRect()]] لكل عنصر، وده بيجبر المتصفح يحسب الـ layout كل مرة (layout thrashing، تاب HTML و CSS) فالـ scroll يقطّع على الموبايل. IntersectionObserver بيعمل الحساب ده جوه المتصفح بكفاءة ويناديك بس لما الحالة تتغير.",
+            how: R`الـ callback بيتنادى مرة أول ما تعمل observe (بالحالة الحالية)، وبعدين كل ما العنصر يعدّي threshold دخول أو خروج. كل entry فيه [[isIntersecting]] و [[intersectionRatio]] (نسبة الظاهر) و [[target]] و [[boundingClientRect]]. الـ callback بيشتغل async بعد الـ frame، مش أثناء الـ scroll.
 
-[[static observedAttributes]]: الـ attributes اللي عايز تتبلّغ بيها. أي attribute تاني (زي [[title]]) بيتغير من غير ما الـ callback يتنادى.
+الفخ الشهير: لو الصفحة الأولى قصيرة والـ sentinel لسه ظاهر بعد التحميل، مفيش «تغيير» في الحالة (كان ظاهر وفضل ظاهر)، فالـ callback مش هيتنادى تاني والتحميل يقف. [[unobserve]] ثم [[observe]] بيجبره يبعت entry جديد بالحالة الحالية، فلو لسه ظاهر يحمّل الصفحة اللي بعدها.
 
-[[super()]] لازم أول سطر في الـ constructor (عشان [[HTMLElement]] يتجهز). ومتقراش attributes ولا تضيف أولاد في الـ constructor: لو العنصر اتعمل بـ [[createElement]] لسه معندوش attributes. اعمل ده في [[connectedCallback]].
+و [[loading]] بيمنع طلبين مع بعض (الـ callback ممكن يتنادى تاني قبل ما الأول يخلص)، و [[done]] بيوقف لما السيرفر يرجّع ليستة فاضية. و [[finally]] بيضمن إن loading يرجع false حتى لو الطلب فشل.
 
-الاسم لازم فيه [[-]] وحروف صغيرة: ده اللي بيفرّق الـ custom elements عن الـ tags الحقيقية (HTML عمره ما هيضيف tag فيه [[-]]). وكل اسم بيتسجّل مرة واحدة في الصفحة.`,
-            when: R`components لازم تشتغل في أكتر من framework أو في صفحات مش بتاعتك (widgets، embeds)، و design systems، وصفحات من غير build. لتطبيق React كامل جوه React، الـ components العادية أسهل.`,
-            mistakes: R`اسم من غير [[-]]: [[SyntaxError: ... is not a valid custom element name]]. وتسجّل نفس الاسم مرتين (ملف اتحمّل مرتين): [[NotSupportedError: ... has already been used with this registry]]. وتقرا [[getAttribute]] في الـ constructor. وتنسى [[observedAttributes]] فالـ callback عمره ما يتنادى. والصفحة بتظهر العنصر فاضي قبل التسجيل (FOUC): [[user-card:not(:defined) { visibility: hidden; }]].`
+في الـ reveal: [[unobserve]] بعد أول ظهور عشان الأنيميشن يحصل مرة، ومنراقبش عناصر خلاص. وللصور مش محتاج JS أصلًا: [[<img loading="lazy">]] بيعمل lazy loading لوحده.`,
+            when: R`infinite scroll، و lazy loading لحاجات تقيلة (فيديو، خرايط، iframes، charts)، وأنيميشن عند الظهور، وتحديد القسم الحالي في جدول المحتويات، و analytics «الإعلان اتشاف». وفي React فيه hooks جاهزة زي [[react-intersection-observer]]، أو [[useEffect]] + ref (تاب React).`,
+            mistakes: R`تنسى الفخ ده فالتحميل يقف على الشاشات الكبيرة. ومفيش حماية من التحميل المزدوج. وتنسى [[disconnect()]] لما الـ component يتشال (memory leak، درس memory leaks). و [[threshold: 1]] على عنصر أطول من الشاشة: عمره ما هيبقى ظاهر ١٠٠٪. وفي infinite scroll: الفوتر بقى مستحيل توصله، وزرار back بيرجّعك لأول الليستة؛ فكّر في زرار «حمّل أكتر» أو احفظ الصفحة في الـ URL.`
           },
-          teach: R`## الصفحة اللي اتجرّبت
+          teach: R`## الفكرة في سطر
 
-اتجرّب في Chrome 156 headless (عن طريق playwright-core) وسيرفر static صغير على localhost.
+بدل ما تسأل المتصفح كل شوية «العنصر ده ظهر؟»، بتقوله مرة: «لما يظهر، ناديني». المثال فيه استخدامين: تحميل صفحة بوستات جديدة لما عنصر فاضي في آخر الليستة يقرّب، وإضافة كلاس لكروت أول ما تظهر.
 
-~~~text wc1.html
-<!doctype html>
-<style>user-card:not(:defined) { visibility: hidden; }</style>
-<user-card name="Sara" role="admin"></user-card>
-<script>console.log("before define:", document.querySelector("user-card").textContent === "" ? "empty" : "?", customElements.get("user-card"));</script>
-<script type="module" src="user-card.js"></script>
+جرّبت الكود ده في Chrome headless (عن طريق playwright-core) على صفحة فيها [[<ul id="feed">]] وبعدها [[<div id="sentinel">]]، وسيرفر Node صغير على localhost بيرد على [[/api/posts?page=N]] بـ 12 بوست متقسمين صفحات، والشاشة 1280×900. كل سطر [[li]] طوله 60px.
+
+---
+
+## ١. التجهيز
+
+~~~text app.js
+const feed = document.querySelector("#feed");
+const sentinel = document.querySelector("#sentinel");
+let page = 1, loading = false, done = false;
 ~~~
 
-- [[<user-card>]] قبل التسجيل: المتصفح بيعتبره عنصر مجهول وفاضي، مش error.
-- [[:not(:defined)]]: CSS selector بيمسك الـ custom elements اللي لسه ماتسجّلتش، فمنظهرهاش فاضية.
-- [[customElements.get("user-card")]]: الـ class المسجّل بالاسم ده، أو [[undefined]].
+- [[document.querySelector("#feed")]]: هات أول عنصر الـ id بتاعه feed ([[#]] في CSS معناها id).
+- [[sentinel]] يعني «الحارس»: div فاضي تحت الليستة. مش بيعرض حاجة، وظيفته الوحيدة إنه لما يقرّب من الشاشة يبقى اليوزر وصل للآخر.
+- ٣ متغيرات في سطر واحد: [[page]] رقم الصفحة الجاية، و [[loading]] «فيه طلب شغال دلوقتي؟»، و [[done]] «السيرفر خلّص البوستات؟».
 
 ---
 
-## ١. [[class UserCard extends HTMLElement]]
+## ٢. [[loadMore]]: حمّل صفحة
 
-- [[extends HTMLElement]]: الـ class بيورث كل حاجة في أي عنصر: [[getAttribute]] و [[textContent]] و [[addEventListener]] و [[remove()]].
-- [[static observedAttributes = ["name", "role"]]]: [[static]] يعني الخاصية على الـ class نفسه مش على كل instance. المتصفح بيقراها مرة وقت [[define]].
-
----
-
-## ٢. الـ callbacks
-
-| الـ callback | بيتنادى إمتى |
-|---|---|
-| [[constructor()]] | العنصر اتعمل أو اتعمله upgrade |
-| [[connectedCallback()]] | دخل الـ document |
-| [[disconnectedCallback()]] | اتشال من الـ document |
-| [[attributeChangedCallback(name, old, new)]] | attribute متابَع اتغير (أو اتحط أول مرة) |
-
-- [[render()]]: دالة بتاعتنا مش من المتصفح. [[?? "Guest"]]: لو [[getAttribute]] رجّع [[null]] خد [["Guest"]].
-- [[this.textContent = ...]]: [[this]] هو العنصر نفسه.
-
----
-
-## ٣. الترتيب الحقيقي
-
-~~~text Console
-before define: empty undefined
-constructor
-attribute name: null -> Sara
-attribute role: null -> admin
-connected
+~~~text app.js
+async function loadMore() {
+  if (loading || done) return;
+  loading = true;
+  try {
+    const res = await fetch($__bt/api/posts?page=$__{page}$__bt);
+    const posts = await res.json();
+    if (posts.length === 0) done = true;
+    for (const p of posts) {
+      const li = document.createElement("li");
+      li.textContent = p.title;
+      feed.append(li);
+    }
+    page++;
+  } finally {
+    loading = false;
+  }
+  if (!done) { io.unobserve(sentinel); io.observe(sentinel); }
+}
 ~~~
 
-قبل التسجيل: العنصر فاضي و [[get]] رجّع [[undefined]]. وبعد [[define]]: upgrade → [[constructor]] → [[attributeChangedCallback]] لكل attribute موجود (القيمة القديمة [[null]]) → [[connectedCallback]].
+1. [[if (loading || done) return]]: لو فيه طلب شغال **أو** خلصنا، اخرج. الـ [[||]] يعني «أو».
+2. [[loading = true]]: اقفل الباب قبل أي [[await]]، عشان أي نداء تاني ييجي وإحنا مستنيين يخرج من السطر اللي فوق.
+3. [[fetch($__bt/api/posts?page=$__{page}$__bt)]]: اطلب الصفحة. الـ template literal بيحط رقم الصفحة في الـ URL، و [[await]] بتستنى الرد.
+4. [[res.json()]]: حوّل الرد لـ array (وهي كمان بتتستنى).
+5. [[posts.length === 0]]: السيرفر رجّع ليستة فاضية، يبقى مفيش أكتر.
+6. الـ loop: لكل بوست اعمل [[<li>]] جديد بـ [[createElement]]، وحط العنوان بـ [[textContent]] (نص عادي، فلو العنوان فيه HTML مش هيتنفّذ)، وضيفه في آخر الليستة بـ [[append]].
+7. [[page++]]: المرة الجاية اطلب اللي بعدها.
+8. [[try { ... } finally { ... }]]: الـ [[finally]] بيتنفّذ **دايمًا**، سواء الطلب نجح أو رمى error. فـ [[loading]] بيرجع false حتى لو النت وقع، وإلا التحميل كان هيتقفل للأبد.
+9. آخر سطر هو أهم سطر، وهنشرحه بعد ما نفهم الـ observer.
 
 ---
 
-## ٤. اللي حصل بعدها (من الـ Console)
+## ٣. الـ observer نفسه
+
+~~~text app.js
+const io = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) loadMore();
+}, { rootMargin: "300px" });
+io.observe(sentinel);
+~~~
+
+- [[new IntersectionObserver(callback, options)]]: بتعمل مراقب. intersection يعني «تقاطع»: هل العنصر متقاطع مع منطقة الشاشة؟
+- [[entries]]: array، كل عنصر فيها (entry) بيوصف عنصر واحد اتغيرت حالته. إحنا بنراقب الـ sentinel بس، فـ [[entries[0]]] هو هو.
+- [[isIntersecting]]: [[true]] لو العنصر جوه المنطقة دلوقتي.
+- [[rootMargin: "300px"]]: كبّر المنطقة 300px من كل ناحية، فالـ sentinel يتحسب «ظاهر» وهو لسه تحت الشاشة بـ 300px. فالتحميل يبدأ قبل ما اليوزر يوصل.
+- [[io.observe(sentinel)]]: ابدأ راقب. وأول ما تعمل observe، الـ callback بيتنادى **مرة فورًا** بالحالة الحالية.
+
+### اللي حصل لما شغّلته (5 بوستات في الصفحة)
+
+حطيت [[console.log]] جوه الـ callback:
+
+~~~text الناتج (السيرفر والـ Console بالترتيب)
+GET /api/posts?page=1
+IO callback: isIntersecting = true
+GET /api/posts?page=2
+IO callback: isIntersecting = true
+GET /api/posts?page=3
+IO callback: isIntersecting = true
+IO callback: isIntersecting = true
+GET /api/posts?page=4
+li count after load: 12
+~~~
+
+- الصفحات 1 و 2 و 3 جابوا 5 و 5 و 2 (الـ 12 كلهم)، و 12 × 60px = 720px، يعني الليستة كلها لسه أقصر من الشاشة، والـ sentinel فضل ظاهر، فالتحميل كمّل لوحده.
+- الصفحة 4 رجعت [[[]]] فـ [[done = true]] ووقف.
+- فيه callback اتنادى من غير طلب: وصل والطلب اللي قبله لسه شغال، فـ [[loading]] خرّجه من أول سطر. ده بالظبط ليه الحماية دي موجودة.
+
+---
+
+## ٤. الفخ: [[unobserve]] ثم [[observe]]
+
+الـ observer بيناديك لما الحالة **تتغير**: من برّه لجوه أو العكس. لو الـ sentinel كان ظاهر، واتحمّلت صفحة، وفضل ظاهر، فمفيش تغيير، فمفيش نداء، والتحميل بيقف.
+
+السطر [[io.unobserve(sentinel); io.observe(sentinel);]] بيشيل المراقبة ويرجّعها، و [[observe]] جديدة بتبعت callback فورًا بالحالة الحالية، فلو لسه ظاهر يحمّل الصفحة اللي بعدها. والـ [[if (!done)]] عشان لو خلصنا منعملش كده على الفاضي.
+
+جرّبت الفرق بصفحات من بوستين بس (2 × 60 = 120px، يعني الشاشة فاضية تقريبًا):
+
+| | من غير السطر | مع السطر |
+|---|---|---|
+| الطلبات | صفحة 1 بس | من 1 لحد 7 (الـ 7 رجعت [[[]]]) |
+| عدد الـ [[li]] | 2 | 12 |
+| الشاشة | فاضية والتحميل واقف | اتملت لحد ما الداتا خلصت |
+
+من غير السطر، الـ callback اتنادى مرة واحدة بـ [[true]] ومرجعش تاني غير لما عملت scroll ونزل بـ [[false]] (الـ sentinel خرج). يعني على شاشة لابتوب ممكن متلاحظش، وعلى شاشة كبيرة الليستة بتقف.
+
+---
+
+## ٥. الـ reveal: أنيميشن عند الظهور
+
+~~~text app.js
+const reveal = new IntersectionObserver((entries, obs) => {
+  for (const e of entries) {
+    if (!e.isIntersecting) continue;
+    e.target.classList.add("visible");
+    obs.unobserve(e.target);
+  }
+}, { threshold: 0.2 });
+document.querySelectorAll(".reveal").forEach((el) => reveal.observe(el));
+~~~
+
+- observer واحد بيراقب **كل** العناصر اللي عليها كلاس [[reveal]]، فالـ entries ممكن يبقى فيها أكتر من واحد، عشان كده loop.
+- [[obs]]: التاني في الـ callback هو الـ observer نفسه.
+- [[continue]]: لو العنصر ده مش ظاهر، عدّي للي بعده.
+- [[e.target]]: العنصر نفسه. [[classList.add("visible")]] بتضيفله كلاس، والـ CSS بيعمل الأنيميشن.
+- [[obs.unobserve(e.target)]]: بطّل تراقبه، فالأنيميشن يحصل مرة واحدة.
+- [[threshold: 0.2]]: نادي لما 20٪ من العنصر يبقى ظاهر.
+
+جرّبته بكارتين: [[r1]] فوق الصفحة و [[r2]] تحت بـ 1500px:
 
 ~~~text الناتج
-text: Sara (admin)
-card.setAttribute("role", "owner")    → attribute role: admin -> owner     text: Sara (owner)
-card.setAttribute("title", "x")       → (ولا حاجة: مش في observedAttributes)
-card.remove()                          → disconnected
+reveal callback: entries = 2 r1:true r2:false
+r1: reveal visible | r2: reveal
+(scroll لتحت)
+reveal callback: entries = 1 r2:true
+r2: reveal visible
 ~~~
 
-### بـ [[createElement]]
-
-~~~text الناتج
-const c2 = document.createElement("user-card");   → constructor
-c2.setAttribute("name", "Ali");                    → attribute name: null -> Ali
-document.body.append(c2);                          → connected
-c2: Ali (member) | instanceof HTMLElement: true
-~~~
-
-لاحظ: الـ constructor اتنادى **قبل** أي attribute. لو كنت قريت [[getAttribute("name")]] في الـ constructor كان رجع [[null]].
-
----
-
-## ٥. الأخطاء
-
-~~~text الناتج
-SyntaxError: Failed to execute 'define' on 'CustomElementRegistry': "usercard" is not a valid custom element name
-NotSupportedError: Failed to execute 'define' on 'CustomElementRegistry': the name "user-card" has already been used with this registry
-~~~
-
-و [[await customElements.whenDefined("user-card")]] بيستنى لحد ما الاسم يتسجّل (لو الكود اللي بيستخدمه اشتغل قبل ملف الـ component).
+أول نداء جه فيه الاتنين مع بعض (الحالة الأولى)، [[r1]] ظاهر فاخد الكلاس، و [[r2]] لأ. وبعد الـ scroll جه [[r2]] لوحده. و [[r1]] مجاش تاني لأننا شلناه من المراقبة.
 
 ---
 
@@ -152,911 +221,1283 @@ NotSupportedError: Failed to execute 'define' on 'CustomElementRegistry': the na
 
 | الحاجة | معناها |
 |---|---|
-| [[customElements.define("x-y", Class)]] | سجّل tag، والاسم فيه [[-]] |
-| [[observedAttributes]] | الـ attributes اللي تتبلّغ بيها |
-| [[connectedCallback]] | المكان الصح للـ render والـ listeners |
-| [[disconnectedCallback]] | نضّف (timers، listeners على [[window]]) |
-| [[:not(:defined)]] | خبّي العنصر لحد ما يتسجّل |`,
+| [[new IntersectionObserver(cb, opts)]] | مراقب واحد لأي عدد عناصر |
+| [[observe(el)]] / [[unobserve(el)]] | ابدأ / وقّف مراقبة عنصر (و observe بتنادي فورًا) |
+| [[entry.isIntersecting]] | العنصر في المنطقة دلوقتي؟ |
+| [[entry.target]] | العنصر نفسه |
+| [[rootMargin]] | كبّر المنطقة (ابدأ بدري) |
+| [[threshold]] | نسبة الظهور المطلوبة (0 لـ 1) |
+
+- الـ callback بيتنادى عند **تغيّر** الحالة بس، فلازم الحركة بتاعة unobserve/observe في infinite scroll.
+- [[loading]] يمنع طلبين مع بعض، و [[finally]] يضمن إنه يرجع false.`,
           lines: [
-            R`بنعرّف class بيورث [[HTMLElement]]، فالعنصر بتاعنا يبقى عنصر HTML حقيقي بكل خصايصه ([[getAttribute]] و [[textContent]] والـ events). من غير الوراثة دي المتصفح مش هيقدر يعمل منه عنصر.`,
-            R`[[observedAttributes]]: الـ attributes اللي عايزين المتصفح يبلّغنا لما تتغير. [[static]] لأن المتصفح بيقراها من الـ class نفسه مرة وقت [[define]]. أي attribute مش في الليستة بيتغير من غير ما [[attributeChangedCallback]] تتنادى.`,
-            R`الـ [[constructor]] بيتنادى لما العنصر يتعمل (من الـ HTML أو [[createElement]])، قبل ما يدخل الصفحة. متقراش attributes هنا: مع [[createElement]] لسه متحطتش، فـ [[getAttribute]] هترجّع [[null]].`,
-            R`[[super()]] بينادي constructor بتاع [[HTMLElement]]. لازم يبقى أول سطر: قبله [[this]] مش موجود، وأي استخدام ليه يرمي [[ReferenceError]].`,
-            R`سطر للتجربة: نشوف في الـ console إمتى الـ constructor اتنادى بالنسبة للـ callbacks التانية.`,
-            R`نهاية الـ [[constructor]].`,
-            R`[[connectedCallback]]: بيتنادى كل ما العنصر يدخل الصفحة. ده المكان الصح ترسم فيه وتبدأ timers. ولو العنصر اتنقل من مكان لمكان بيتنادى تاني، فخليه ميعملش حاجة مرتين.`,
-            R`سطر للتجربة: يبيّن إن connected بيتنادى بعد الـ constructor والـ attributes.`,
-            R`ارسم المحتوى أول ما العنصر يدخل الصفحة. الرسم في دالة لوحده لأننا هنحتاجه تاني لما attribute يتغير.`,
-            R`نهاية [[connectedCallback]].`,
-            R`[[disconnectedCallback]]: بيتنادى لما العنصر يتشال من الصفحة. هنا تنضّف أي حاجة بدأتها في connected (timers أو listeners على [[window]])، وإلا تفضل شغالة بعد ما العنصر اختفى.`,
-            R`سطر للتجربة: نتأكد إن الشيلة اتلقطت.`,
-            R`نهاية [[disconnectedCallback]].`,
-            R`[[attributeChangedCallback]]: بيتنادى لما attribute من اللي في [[observedAttributes]] يتغير، ومعاه اسمه وقيمته القديمة والجديدة. وبيتنادى كمان لكل attribute موجود في الـ HTML من الأول، قبل [[connectedCallback]].`,
-            R`اطبع اسم الـ attribute والقيمة القديمة والجديدة. أول مرة القيمة القديمة بتبقى [[null]] لأن الـ attribute مكانش موجود قبلها.`,
-            R`ارسم تاني عشان النص يعكس القيمة الجديدة على طول، من غير ما اللي غيّر الـ attribute يعمل حاجة زيادة.`,
-            R`نهاية [[attributeChangedCallback]].`,
-            R`[[render]] دالة بتاعتنا (مش من المتصفح): بتكتب المحتوى من الـ attributes الحالية. الـ callbacks الاتنين بينادوها، فالرسم مكتوب في مكان واحد.`,
-            R`اقرا [[name]]. [[getAttribute]] بترجّع [[null]] لو الـ attribute مش موجود، و [[??]] بتحط [[Guest]] بدلها. ([[??]] مش [[||]]: لو كتبت [[name=""]] النص الفاضي يفضل فاضي.)`,
-            R`اقرا [[role]] بنفس الطريقة، والافتراضي [[member]].`,
-            R`اكتب الاسم والدور كنص جوه العنصر. [[textContent]] مش [[innerHTML]]، فلو الاسم فيه [[<script>]] هيتعرض كنص ومش هيتنفّذ.`,
-            R`نهاية [[render]].`,
-            R`نهاية الـ class.`,
-            R`سجّل الـ tag [[user-card]] واربطه بالـ class: من اللحظة دي أي [[<user-card>]] في الصفحة (موجود أو هيتضاف) يبقى instance منه. الاسم لازم فيه [[-]] عشان ميتلخبطش مع tags الـ HTML الحالية أو اللي هتتضاف بعدين.`,
+            R`بنمسك الليستة ([[#feed]]) اللي البوستات هتتضاف فيها. بنجيبها مرة واحدة برّه الدالة بدل ما ندوّر عليها في الـ DOM مع كل تحميل.`,
+            R`الـ sentinel: عنصر فاضي حاطينه بعد الليستة مباشرة. مش هنراقب الـ scroll نفسه (event بيتنادى مئات المرات)، هنراقب العنصر ده: لما يقرّب من الشاشة يبقى اليوزر قرّب من الآخر ونحمّل الجديد.`,
+            R`تلات متغيرات حالة: [[page]] رقم الصفحة الجاية، و [[loading]] بتمنع طلبين في نفس الوقت (من غيرها ممكن نفس الصفحة تتجاب مرتين وتتكرر البوستات)، و [[done]] بتوقف التحميل لما السيرفر يقول مفيش أكتر.`,
+            R`دالة التحميل. [[async]] عشان جواها [[await]] للـ [[fetch]]، والـ observer هو اللي بيناديها كل ما الـ sentinel يظهر.`,
+            R`الحارس: لو فيه تحميل شغّال أو الداتا خلصت، اخرج من غير ما تعمل حاجة. من غيره، scroll سريع ممكن يبعت كذا طلب لنفس الصفحة.`,
+            R`بنقفل الباب قبل أي [[await]]: من اللحظة دي أي نداء تاني لـ [[loadMore]] هيخرج من السطر اللي فوق لحد ما نفتحه تاني.`,
+            R`[[try]] معاها [[finally]] (من غير catch) عشان [[loading]] يرجع [[false]] مهما حصل. لو الطلب فشل ومرجّعناهاش، التحميل هيفضل مقفول للأبد والليستة تقف.`,
+            R`بنطلب الصفحة الحالية من الـ API، ورقمها داخل في الـ URL بالـ template literal. الـ [[await]] بيستنى الرد من غير ما يجمّد الصفحة.`,
+            R`[[res.json()]] بتقرا الـ body وتحوّله من JSON لـ array of objects، وهي كمان Promise فمحتاجة [[await]]. ملحوظة: [[fetch]] مبيرميش error على 404 أو 500، فلو عايز تتعامل معاهم افحص [[res.ok]] الأول.`,
+            R`لو السيرفر رجّع array فاضية يبقى خلصنا، فنعلّم [[done]] عشان منبعتش طلبات تانية على الفاضي.`,
+            R`بنلف على البوستات اللي جت عشان نضيف كل واحد في الليستة.`,
+            R`بنعمل [[<li>]] جديد لكل بوست. العنصر لسه في الذاكرة ومش ظاهر لحد ما نضيفه.`,
+            R`بنحط العنوان بـ [[textContent]] مش [[innerHTML]]: لو العنوان جواه HTML أو script كاتبه يوزر هيظهر كنص عادي ومش هيتنفذ، فمفيش XSS.`,
+            R`بنضيف الـ [[<li>]] في آخر الليستة فيظهر. ولأن الـ sentinel بعد الليستة، بيتزق لتحت مع كل بوست جديد.`,
+            R`نهاية الـ [[for]] اللي بتضيف البوستات.`,
+            R`نزوّد رقم الصفحة عشان المرة الجاية نطلب اللي بعدها. موجود جوه الـ [[try]] بعد النجاح، فلو الطلب فشل هنعيد نفس الصفحة المرة الجاية.`,
+            R`[[finally]] بيتنفذ في كل الحالات: نجح الطلب، أو رمى error، أو حتى عمل [[return]].`,
+            R`نفتح الباب تاني عشان التحميل الجاي يقدر يبدأ.`,
+            R`نهاية الـ [[finally]].`,
+            R`الفخ: الـ observer بيبلّغ لما الحالة **تتغير** بس (دخل أو خرج). لو البوستات الجديدة قليلة والـ sentinel لسه ظاهر، مفيش تغيير فمفيش نداء والتحميل يقف. [[unobserve]] وبعدها [[observe]] بيجبره يبلّغ بالحالة الحالية من جديد، فلو لسه ظاهر هيحمّل الصفحة اللي بعدها.`,
+            R`نهاية [[loadMore]].`,
+            R`بنعمل الـ observer وبنديله callback بيتنادى كل ما حالة عنصر متراقب تتغير. [[entries]] array فيها entry لكل عنصر اتغيّر، وهنا بنراقب عنصر واحد فبناخد الأول.`,
+            R`[[isIntersecting]] بـ [[true]] لما الـ sentinel يدخل المنطقة المراقبة، فنحمّل. ولازم نفحصها لأن الـ callback بيتنادى برضه لما العنصر **يخرج**، ومن غير الفحص هتحمّل وهو بيختفي.`,
+            R`[[rootMargin: "300px"]] بيكبّر منطقة المراقبة 300 بكسل حوالين الشاشة، فالتحميل يبدأ قبل ما اليوزر يوصل للآخر فعلًا ومش هيشوف فراغ وهو مستني. ونهاية الـ observer.`,
+            R`نبدأ نراقب الـ sentinel. الـ observer بينادي الـ callback مرة فورًا بالحالة الحالية، فلو الـ sentinel ظاهر من الأول، أول صفحة هتتحمّل لوحدها من غير ما نناديها بإيدنا.`,
+            R`observer تاني منفصل للأنيميشن: عناصر تظهر بحركة لما توصلها في الـ scroll. الـ callback بياخد [[obs]] كمان (الـ observer نفسه) عشان نقدر نوقف المراقبة من جوه.`,
+            R`بنلف على كل الـ entries، لأن لو اليوزر عمل scroll سريع ممكن كذا عنصر يدخلوا مع بعض ويتبلّغوا في نفس النداء.`,
+            R`العنصر ده خرج من الشاشة مش دخل، فـ [[continue]] تعدّيه للي بعده.`,
+            R`نضيف كلاس [[visible]]، والـ CSS هو اللي عامل الحركة: [[.reveal]] مستخبي و [[.reveal.visible]] ظاهر بـ transition. الـ JS بيقول «إمتى» بس، والـ CSS بيقول «إزاي».`,
+            R`بطّل تراقب العنصر ده بعد ما ظهر، فالأنيميشن يحصل مرة واحدة ومش بيتعاد كل ما تطلع وتنزل، وكمان بيوفّر شغل على المتصفح.`,
+            R`نهاية الـ [[for]].`,
+            R`[[threshold: 0.2]] معناها بلّغني لما 20٪ من العنصر يبقى ظاهر، مش أول بكسل. كده الحركة تبدأ والعنصر باين فعلًا. ونهاية الـ observer.`,
+            R`بنجيب كل العناصر اللي عليها كلاس [[reveal]] ونراقبهم كلهم بنفس الـ observer. observer واحد لعناصر كتير أوفر من observer لكل عنصر.`,
           ],
-          sol: R`الترتيب الحقيقي في Chrome 156:
-[[constructor]] ← [[attribute name: null -> Sara]] ← [[attribute role: null -> admin]] ← [[connected]].
-[[setAttribute("role", "owner")]] ← [[attribute role: admin -> owner]] والنص بقى [[Sara (owner)]].
-[[remove()]] ← [[disconnected]].
-[[define("usercard", ...)]] ← [[SyntaxError: ... "usercard" is not a valid custom element name]].`
+          sol: R`الطلبات بتحصل قبل ما توصل للآخر بشوية (الـ 300px)، وكل طلب بيضيف ٥ عناصر. ولما [[_page]] يعدّي 20 (١٠٠ بوست ÷ ٥) السيرفر بيرجّع [[[]]] فـ [[done = true]] والطلبات تقف.
+
+من غير سطر [[unobserve/observe]] وبـ limit 2 على شاشة كبيرة: بيحمّل الصفحة الأولى، والعنصرين مش مالين الشاشة، فالـ sentinel لسه ظاهر، وبيقف هنا. ولو عملت scroll بسيط لفوق ولتحت يحمّل تاني (لأن الحالة اتغيرت). ده بالظبط الـ bug اللي بيظهر على الشاشات الكبيرة بس ومحدش بيلاحظه على اللابتوب. مع السطر، بيحمّل لوحده لحد ما الشاشة تتملي.`
         },
         {
-          cmd: "shadow DOM",
-          title: "shadow DOM: CSS جوه الـ component ميهربش ومحدش يدخله",
-          desc: R`[[this.attachShadow({ mode: "open" })]] بيدّي العنصر DOM خاص بيه (shadow root): الـ CSS اللي جواه مبيأثرش على الصفحة، و CSS الصفحة مبيدخلوش. فـ [[p { color: red }]] في الصفحة مش هيلوّن الـ [[<p>]] اللي جوه الـ component.
+          cmd: "ResizeObserver",
+          title: "مكوّن يتصرف حسب مقاسه هو، مش مقاس الشاشة",
+          desc: R`[[ResizeObserver]] بيناديك لما عنصر يتغير مقاسه، مهما كان السبب: الشاشة اتغيرت، أو sidebar اتقفل، أو المحتوى زاد. [[window.resize]] بيعرف مقاس الشاشة بس، والكارت ممكن يكون في عمود ضيق على شاشة كبيرة.
 
-الطرق الرسمية للتخصيص من بره: CSS custom properties ([[--tag-bg]]) بتعدّي جوه، و [[::part(name)]] لعناصر الـ component علّم عليها بـ [[part]]، و [[:host]] جوه بيستايل العنصر نفسه.`,
-          example: R`const sheet = new CSSStyleSheet();
-sheet.replaceSync($__bt
-  :host { display: inline-block; padding: 4px 8px; border-radius: 6px; background: var(--tag-bg, #eee); }
-  :host([sale]) { background: #fde68a; }
-  p { margin: 0; color: green; font-weight: bold; }
-$__bt);
-class PriceTag extends HTMLElement {
-  constructor() {
-    super();
-    const root = this.attachShadow({ mode: "open" });
-    root.adoptedStyleSheets = [sheet];
-    root.innerHTML = $__bt<p part="amount"></p>$__bt;
+الـ entry فيه [[contentBoxSize[0].inlineSize]] (العرض) و [[blockSize]] (الطول)، وفيه [[contentRect]] الأقدم بـ [[width]] و [[height]].
+
+قبل ما تكتب JS: لو كل اللي عايزه تغيير شكل حسب عرض الأب، [[@container]] في CSS بيعمل ده من غير JS (درس «container queries» في تاب HTML و CSS). ResizeObserver للحاجات اللي CSS ميقدرش عليها: canvas، و charts، وحساب عدد عناصر، ومحرر نص.`,
+          example: R`const card = document.querySelector(".card");
+const ro = new ResizeObserver((entries) => {
+  for (const entry of entries) {
+    const width = entry.contentBoxSize[0].inlineSize;
+    entry.target.dataset.size = width < 400 ? "s" : width < 700 ? "m" : "l";
   }
-  connectedCallback() {
-    this.shadowRoot.querySelector("p").textContent = $__bt$__{this.getAttribute("amount") ?? 0} EGP$__bt;
-  }
-}
-customElements.define("price-tag", PriceTag);`,
-          try: R`احفظ المثال [[price-tag.js]]، واعمل صفحة فيها [[p { color: red; }]] و [[price-tag { --tag-bg: #dbeafe; }]] و [[price-tag::part(amount) { font-size: 20px; }]]، وفيها [[<p>]] عادي و [[<price-tag amount="250">]] و [[<price-tag amount="99" sale>]]. لون أنهي [[p]] أحمر؟ وجرّب [[document.querySelectorAll("p").length]] و [[getComputedStyle]] على الـ [[p]] اللي جوه.`,
+});
+ro.observe(card);
+// CSS لازم للـ canvas: canvas { display: block; width: 100%; height: 100%; } والأب ليه ارتفاع، وإلا هيكبر لوحده
+const canvas = document.querySelector("canvas");
+new ResizeObserver(([entry]) => {
+  const { width, height } = entry.contentRect;
+  canvas.width = Math.round(width * devicePixelRatio);
+  canvas.height = Math.round(height * devicePixelRatio);
+  draw();
+}).observe(canvas.parentElement);
+function draw() {
+  const ctx = canvas.getContext("2d");
+  ctx.fillRect(0, 0, canvas.width / 2, canvas.height / 2);
+}`,
+          try: R`حط الكارت جوه div عرضه [[resize: horizontal; overflow: auto]] عشان تقدر تسحبه بالماوس، واكتب CSS لـ [[.card[data-size="s"]]] يخلي الصورة فوق النص. اسحب وشوف الـ data-size بيتغير في Elements. وبعدين اعمل نفس الشكل بـ [[container-type: inline-size]] و [[@container (width < 400px)]] من غير JS. أنهي أسهل؟`,
           practice: [
-            { lvl: 'سريع', t: R`اتوقع وبعدين جرّب: نفس [[PriceTag]] مرة بـ [[mode: "open"]] ومرة بـ [[mode: "closed"]]. إيه ناتج [[el.shadowRoot]] و [[document.querySelector("price-tag p")]] في كل مرة؟`, done: R`في الـ open [[el.shadowRoot]] بيرجّع ShadowRoot وفي الـ closed بيرجّع [[null]]، و [[querySelector]] من الـ document بيرجّع [[null]] في الحالتين (مبيدخلش جوه الـ shadow)، و [[el.shadowRoot.querySelector("p")]] بيلاقيه في الـ open بس.` },
-            { lvl: 'تطبيق', t: R`ابني theming لـ [[price-tag]]: [[--tag-bg]] و [[--tag-color]] و [[--tag-radius]] بقيم default جوه الـ component، وصفحة فيها زرار dark mode بيغيّر الـ variables على [[:root]] بس، و [[::part(amount)]] للخط.`, done: R`زرار الـ dark بيغيّر شكل كل الـ tags مع بعض، والـ tag من غير أي variable متعرّف بياخد الـ default، و [[p { color: red }]] في الصفحة مبيأثرش جوه، لكن [[font-family]] على [[body]] بيوصل جوه (الخصائص اللي بتتورث بتعدّي الـ shadow boundary).` },
-            { lvl: 'تحدي', t: R`اتوقع وصلّح: listener على [[document]] لـ [[click]]، واضغط على الـ [[<p>]] اللي جوه الـ shadow. اطبع [[e.target.tagName]] و [[e.composedPath().at(0).tagName]]. وبعدين ابعت من جوه [[new CustomEvent("price-click", { bubbles: true })]] وشوف الـ document بيستقبله ولا لأ.`, done: R`[[e.target.tagName]] بيطلع [[PRICE-TAG]] (retargeting) و [[composedPath().at(0)]] بيطلع [[P]]، والـ [[price-click]] مبيوصلش الـ document لحد ما تزوّد [[composed: true]]، وبعدها بيوصل، وتقدر تقول ليه الـ [[click]] العادي وصل من غير ما تعمل حاجة (الأحداث المدمجة composed).` },
+            { lvl: 'سريع', t: R`ابني عنوان عمود في جدول بيكتب اسم اليوم كامل ([[Wednesday]]) لو عرضه 120px أو أكتر، ومختصر ([[Wed]]) لو أقل، بـ ResizeObserver على العنوان نفسه و [[Intl.DateTimeFormat]] بـ [[weekday: "long"]] و [["short"]].`, done: R`لما تضيّق العمود الأسماء بتتقلب مختصرة والعكس، ومفيش نص بيتقص بـ «...»، والتبديل بيحصل عند 120px من عرض العمود مش الشاشة (جرّب تضيّق العمود بس والشاشة كبيرة).` },
+            { lvl: 'تطبيق', t: R`مسألة: اكتب [[pickSize(width, breakpoints)]] من غير DOM: [[pickSize(399, { m: 400, l: 700 })]] بترجّع [["s"]]. وبعدين استخدمها جوه الـ callback بتاع الدرس بدل الـ ternary.`, done: R`400 بالظبط بترجّع [["m"]] و 700 بترجّع [["l"]]، والـ breakpoints لو اتبعتت بترتيب عكسي ([[{ l: 700, m: 400 }]]) بترجّع نفس النتيجة، و [[NaN]] أو رقم سالب بيرمي [[RangeError]]، و ٦ assertions بـ [[node:assert]] في Node بيعدّوا، والكارت في المتصفح لسه بيتصرف زي الأول.` },
+            { lvl: 'تحدي', t: R`ابني navbar «priority+»: لينكات كتير في سطر واحد، واللي مش لاقي مكان يتنقل لقايمة «المزيد». راقب الـ nav نفسه مش اللينكات اللي بتنقلها، واسمع لـ [[window.addEventListener("error", (e) => console.log(e.message))]] عشان لو وقعت في loop تعرف.`, done: R`وانت بتضيّق الشاشة اللينكات بتتنقل لـ «المزيد» من الآخر للأول، ولما توسّع بترجع بنفس الترتيب، ومفيش لينك بيلف لسطر تاني، وزرار «المزيد» بيختفي لما كل اللينكات تكفي، والـ listener مطبعش أي رسالة فيها «ResizeObserver loop» (نصها الكامل: «ResizeObserver loop completed with undelivered notifications.»).` },
           ],
           flag: "script",
           deep: {
-            why: R`أي component بيتحط في صفحة مش بتاعتك بيواجه مشكلتين: CSS الصفحة بيبوّظه ([[p { color: red }]] أو [[* { box-sizing }]] أو reset)، و CSS بتاعه بيبوّظ الصفحة. الـ shadow DOM بيحل الاتنين من غير BEM ولا CSS modules.`,
-            how: R`[[attachShadow]] بيعمل shadow root متعلّق بالعنصر (الـ host). اللي جوه shadow root ليه scope لوحده: الـ selectors اللي جوه مبتشوفش بره والعكس، و [[document.querySelector]] مبيدخلوش. [[mode: "open"]] معناها [[el.shadowRoot]] متاح من بره (للأدوات والاختبارات)، و [["closed"]] بيرجّع [[null]].
+            why: "الـ components بقت بتتحط في أماكن مختلفة: نفس الكارت في grid بـ ٤ أعمدة وفي sidebar ضيق. الـ media queries بتسأل عن الشاشة، والسؤال الصح «أنا عرضي كام». و canvas بالذات لازم تعرف مقاسه بالبكسل الحقيقي وإلا الرسمة تبقى مغبشة.",
+            how: R`المتصفح بيحسب المقاسات في الـ layout، وبعده (قبل الرسم) بيبعت للـ ResizeObservers التغييرات مرة في الـ frame. فمفيش حاجة زي resize event بيتنادى ١٠٠ مرة، ومش محتاج debounce غالبًا.
 
-اللي بيعدّي جوه: الخصائص اللي بتتورث (inherited) زي [[color]] و [[font-family]] بتتورث من الـ host عادي، والـ CSS custom properties ([[--x]]) كمان. فـ [[var(--tag-bg, #eee)]] بياخد القيمة من الصفحة أو [[#eee]].
+[[contentBoxSize]] array لأن عنصر ممكن يتقسم (multi-column)، وعادةً [[[0]]]. و [[inlineSize]] العرض في الكتابة الأفقية (عربي أو إنجليزي). و [[borderBoxSize]] لو عايز المقاس بالـ padding والـ border.
 
-[[:host]] = العنصر نفسه من جوه، و [[:host([sale])]] = لو عليه attribute [[sale]]. وقواعد الصفحة على الـ host نفسه ([[price-tag { background: pink }]]) **بتكسب** على [[:host]]: الـ component بيحط افتراضي والصفحة تقدر تغيّره.
+الـ canvas له مقاسين: الـ CSS (بيتحكم فيه الـ layout) والداخلي [[canvas.width]] (عدد البكسلات). لو الداخلي أقل، الرسمة بتتمط وتغبش. [[devicePixelRatio]] بـ 2 أو 3 على شاشات الموبايل، فبنضرب فيه. وتغيير [[canvas.width]] بيمسح الرسمة، فلازم [[draw()]] بعده.
 
-[[CSSStyleSheet]] + [[replaceSync]] + [[adoptedStyleSheets]] (Constructable Stylesheets): الـ CSS بيتعمل parse مرة واحدة ويتشارك بين كل الـ instances، بدل [[<style>]] في كل واحد.`,
-            when: R`أي component هيتحط في صفحات تانية، أو design system. ولو component داخلي في تطبيقك والـ CSS بتاعك متحكم فيه، ممكن متحتاجش shadow DOM (وتستخدم الـ light DOM عادي).`,
-            mistakes: R`تحط [[<link rel="stylesheet">]] بتاع الموقع وتستغرب إنه مش بيأثر جوه. وفورمات جوه shadow DOM: [[<input>]] جوه shadow root مش بيتبعت مع [[<form>]] بره (محتاج form-associated custom elements و [[ElementInternals]]). و [[document.querySelector]] في الاختبارات مش لاقي العنصر: ادخل بـ [[el.shadowRoot.querySelector]] (و Playwright بيدخل الـ open shadow لوحده). و [[mode: "closed"]] فاكره حماية: مش أمان، بس بيصعّب الاختبار.`
+لو غيّرت جوه الـ callback حاجة بتغيّر مقاس نفس العنصر، ممكن تدخل loop، والمتصفح بيوقفها ويطبع [[ResizeObserver loop completed with undelivered notifications]] في الـ console. غالبًا مش خطر بس معناه إن التصميم بيتذبذب.`,
+            when: R`charts و canvas و محررات، و virtualized lists (تحسب كام صف يظهر)، و «اعرض ٣ tags والباقي +2». ولتغيير الشكل بس: container queries أولًا.`,
+            mistakes: R`ResizeObserver لحاجة CSS يقدر عليها. وتنسى [[ro.disconnect()]] لما العنصر يتشال. وتغيّر مقاس العنصر المراقب جوه الـ callback (loop). و [[canvas.width = el.clientWidth]] من غير devicePixelRatio فالرسمة مغبشة على الموبايل. و canvas من غير [[width: 100%; height: 100%]] في الـ CSS: مقاسه على الشاشة بيبقى هو [[canvas.width]] نفسه، فالأب بيكبر، فالـ observer يكبّره تاني، وهكذا للأبد.`
           },
-          teach: R`## الصفحة
+          teach: R`## الفكرة في سطر
 
-اتجرّب في Chrome 156 headless، والقيم من [[getComputedStyle]] (القيمة النهائية بعد كل الـ CSS).
+بتقول للمتصفح «لما مقاس العنصر ده يتغير، ناديني بالمقاس الجديد». المثال فيه استخدامين: كارت بياخد [[data-size]] حسب عرضه هو، و canvas بيظبط عدد البكسلات بتاعته على مقاس أبوه.
 
-~~~text wc2.html
-<style>
-  p { color: red; }
-  price-tag { --tag-bg: #dbeafe; }
-  price-tag::part(amount) { font-size: 20px; }
-</style>
-<p id="page-p">paragraph in the page</p>
-<price-tag amount="250"></price-tag>
-<price-tag amount="99" sale></price-tag>
+جرّبت الكود في Chrome headless (عن طريق playwright-core) بشاشة [[deviceScaleFactor: 2]] (زي شاشات الموبايل والماك)، والكارت جوه [[.wrap]] غيّرت عرضه بالـ JS.
+
+---
+
+## ١. الكارت
+
+~~~text app.js
+const card = document.querySelector(".card");
+const ro = new ResizeObserver((entries) => {
+  for (const entry of entries) {
+    const width = entry.contentBoxSize[0].inlineSize;
+    entry.target.dataset.size = width < 400 ? "s" : width < 700 ? "m" : "l";
+  }
+});
+ro.observe(card);
 ~~~
 
----
+- [[new ResizeObserver(callback)]]: مراقب. مفيش options زي IntersectionObserver، بس callback.
+- [[entries]]: array، entry لكل عنصر اتغير مقاسه في الـ frame ده. observer واحد ينفع تراقب بيه كروت كتير، عشان كده loop.
+- [[entry.contentBoxSize]]: مقاس الـ **content** بس (من غير padding ولا border). وهي array لأن العنصر ممكن يتقسم على كذا عمود، وعادةً [[[0]]].
+- [[.inlineSize]]: المقاس في اتجاه السطر، يعني العرض في العربي والإنجليزي. والطول اسمه [[blockSize]].
+- [[entry.target]]: العنصر نفسه.
+- [[dataset.size = ...]]: [[dataset]] بيكتب attributes اسمها [[data-*]]، فده بيحط [[data-size="s"]] على العنصر، والـ CSS يستخدمه: [[.card[data-size="s"] { ... }]].
+- [[width < 400 ? "s" : width < 700 ? "m" : "l"]]: ternary جوه ternary: أقل من 400 ← s، غير كده أقل من 700 ← m، غير كده l.
+- [[ro.observe(card)]]: ابدأ راقب، وأول مرة بيتنادى على طول بالمقاس الحالي.
 
-## ١. الـ stylesheet المشترك
+### الناتج
 
-~~~text price-tag.js
-const sheet = new CSSStyleSheet();
-sheet.replaceSync($__bt ... $__bt);
-~~~
-
-- [[new CSSStyleSheet()]]: stylesheet فاضي من JavaScript.
-- [[replaceSync(css)]]: حط فيه الـ CSS ده. بيتعمل مرة واحدة بره الـ class، فكل الـ [[price-tag]] بيشاوروا على نفس الـ object.
-- جوه الـ CSS:
-  - [[:host { ... background: var(--tag-bg, #eee); }]]: العنصر نفسه. [[var(--tag-bg, #eee)]] = قيمة المتغير لو موجود، وإلا [[#eee]].
-  - [[:host([sale])]]: العنصر لو عليه [[sale]].
-  - [[p { color: green }]]: الـ [[p]] اللي **جوه** الـ shadow root بس.
-
----
-
-## ٢. الـ constructor
-
-- [[this.attachShadow({ mode: "open" })]]: اعمل shadow root ورجّعه. ومن ساعتها [[this.shadowRoot]] بيشاور عليه.
-- [[root.adoptedStyleSheets = [sheet]]]: استخدم الـ stylesheet المشترك جوه.
-- [[root.innerHTML = $__bt<p part="amount"></p>$__bt]]: محتوى الـ shadow. [[part="amount"]] بيعلّم العنصر ده إن الصفحة مسموحلها تستايله بـ [[::part(amount)]].
-
-و [[connectedCallback]] بيكتب [[250 EGP]] جوه الـ [[p]] اللي في الـ shadow.
-
----
-
-## ٣. النتيجة
+الكارت فيه [[padding: 10px]] و [[border: 1px]]، وغيّرت عرض الأب 800 ثم 500 ثم 300 ثم 799:
 
 ~~~text الناتج
-page p color: rgb(255, 0, 0)
-shadow p color: rgb(0, 128, 0) | font-size: 20px
-host bg: rgb(219, 234, 254) | sale bg: rgb(253, 230, 138)
-querySelectorAll('p') from document: 1
-a.textContent: '' | shadow text: '250 EGP'
-shadowRoot mode: open
+card 778 l
+card 478 m
+card 278 s
+card 777 l
+~~~
+
+ليه 778 مش 800؟ لأن [[contentBoxSize]] من غير الـ padding (10 من كل ناحية) والـ border (1 من كل ناحية): 800 − 22 = 778. لو عايز المقاس بالـ padding والـ border استخدم [[borderBoxSize[0].inlineSize]] (طلعت 799 لما الأب كان 799). وفيه [[entry.contentRect.width]] الأقدم وبيدّي نفس رقم الـ content.
+
+### مرة واحدة في الـ frame
+
+غيّرت عرض الأب 50 مرة ورا بعض في نفس الكود: الـ callback اتنادى **مرة واحدة** بالمقاس الأخير. المتصفح بيجمّع التغييرات ويناديك بعد ما يحسب الـ layout وقبل ما يرسم، فمش محتاج debounce زي [[window.resize]].
+
+---
+
+## ٢. الـ canvas
+
+~~~text app.js
+const canvas = document.querySelector("canvas");
+new ResizeObserver(([entry]) => {
+  const { width, height } = entry.contentRect;
+  canvas.width = Math.round(width * devicePixelRatio);
+  canvas.height = Math.round(height * devicePixelRatio);
+  draw();
+}).observe(canvas.parentElement);
+~~~
+
+- [[([entry]) => ...]]: array destructuring في الـ parameter: خد أول عنصر من [[entries]] في متغير اسمه entry (بنراقب عنصر واحد).
+- [[const { width, height } = entry.contentRect]]: object destructuring: خد الخاصيتين دول في متغيرين بنفس الاسم.
+- [[canvas.parentElement]]: بنراقب **الأب** مش الـ canvas، لأن الأب هو اللي الـ layout بيحدد مقاسه.
+- [[new ResizeObserver(...).observe(...)]]: عملنا المراقب ونادينا observe في نفس السطر من غير ما نحفظه في متغير (يعني مش هنقدر نعمله disconnect بعدين).
+
+### ليه [[devicePixelRatio]]؟
+
+الـ canvas ليه مقاسين:
+
+| المقاس | بيتحدد بـ | معناه |
+|---|---|---|
+| على الشاشة | الـ CSS | قد إيه بياخد مكان في الصفحة (CSS pixels) |
+| الداخلي | [[canvas.width]] و [[canvas.height]] | عدد البكسلات اللي بترسم فيها |
+
+[[devicePixelRatio]] عدد بكسلات الشاشة الحقيقية في كل CSS pixel: 1 على شاشة عادية، و 2 أو 3 على الموبايل. لو الداخلي = مقاس الـ CSS بس، المتصفح بيمط الرسمة فتغبش. فبنضرب في الـ ratio، و [[Math.round]] عشان عدد البكسلات لازم رقم صحيح.
+
+و [[draw()]] بعدها لأن أي تغيير في [[canvas.width]] بيمسح الرسمة كلها.
+
+### الفخ اللي ظهر لما شغّلته
+
+جرّبت الكود زي ما هو، والأب عرضه 300px ومن غير ارتفاع ثابت ومن غير أي CSS للـ canvas:
+
+~~~text الناتج
+canvas parent 300 x 154 → 600 x 308 css 600 x 308
+canvas parent 300 x 312 → 600 x 624 css 600 x 624
+canvas parent 300 x 628 → 600 x 1256 css 600 x 1256
+window error: ResizeObserver loop completed with undelivered notifications.
+...
+~~~
+
+canvas من غير CSS مقاسه على الشاشة **بيساوي** المقاس الداخلي. فلما خليناه 600×308، بقى 600×308 على الشاشة، فالأب طوله زاد، فالـ observer اتنادى تاني فضربنا في 2 تاني... والمتصفح بيوقف اللفة دي كل frame ويطبع [[ResizeObserver loop completed with undelivered notifications]]، بس الـ canvas بيفضل يكبر.
+
+الحل في الـ CSS (عشان كده ضفته كتعليق في المثال):
+
+~~~text style.css
+canvas { display: block; width: 100%; height: 100%; }
+.cw { width: 300px; height: 150px; }
+~~~
+
+وبعدها:
+
+~~~text الناتج
+canvas parent 300 x 150 → 600 x 300 css 300 x 150
+~~~
+
+على الشاشة 300×150، وجواه 600×300 بكسل: رسمة حادة، والـ callback اتنادى مرة واحدة بس. و [[display: block]] بتشيل المسافة الصغيرة اللي تحت أي عنصر inline.
+
+---
+
+## ٣. [[draw]]
+
+~~~text app.js
+function draw() {
+  const ctx = canvas.getContext("2d");
+  ctx.fillRect(0, 0, canvas.width / 2, canvas.height / 2);
+}
+~~~
+
+- [[getContext("2d")]]: هات أداة الرسم ثنائية الأبعاد.
+- [[fillRect(x, y, w, h)]]: ارسم مستطيل مليان يبدأ من الركن الشمال فوق [[(0, 0)]]، وعرضه وطوله نص الـ canvas، يعني ربعه.
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| [[new ResizeObserver(cb)]] و [[observe(el)]] | ناديني لما مقاس el يتغير |
+| [[contentBoxSize[0].inlineSize]] | العرض من غير padding و border |
+| [[borderBoxSize[0].inlineSize]] | العرض بالـ padding و border |
+| [[contentRect.width/height]] | الطريقة الأقدم لمقاس الـ content |
+| [[devicePixelRatio]] | بكسلات الشاشة لكل CSS pixel |
+| [[disconnect()]] | وقّف المراقبة كلها |
+
+- بيتنادى مرة في الـ frame، فمش محتاج debounce.
+- متغيّرش جوه الـ callback حاجة بتكبّر نفس العنصر اللي بتراقبه، والـ canvas لازم مقاسه على الشاشة يتحدد بالـ CSS.
+- لو المطلوب تغيير شكل بس، [[@container]] في CSS أسهل ومن غير JS.`,
+          lines: [
+            R`الكارت اللي عايزين شكله يتغير حسب **عرضه هو** مش عرض الشاشة. ده الفرق عن media query: نفس الكارت ممكن يبقى في sidebar ضيق أو واخد الصفحة كلها.`,
+            R`[[ResizeObserver]] بينادي الـ callback كل ما مقاس عنصر متراقب يتغير، مهما كان السبب (الشاشة اتصغرت، أو sidebar اتقفل، أو المحتوى زاد). و observer واحد ينفع تراقب بيه كذا عنصر.`,
+            R`[[entries]] فيها entry لكل عنصر مقاسه اتغير من آخر مرة، فبنلف عليهم.`,
+            R`العرض الجديد لمحتوى العنصر (من غير الـ padding والـ border). [[contentBoxSize]] array فبناخد أول عنصر فيها، و [[inlineSize]] هو العرض في الكتابة الأفقية. القيمة جاهزة في الـ entry، فمش محتاج تقيس بنفسك.`,
+            R`بنحوّل العرض لمقاس من تلاتة ([["s"]] أو [["m"]] أو [["l"]]) ونحطه في [[data-size]] على العنصر، والـ CSS بيختار الشكل بـ attribute selector على [[data-size]]. فالـ JS بيقيس بس والـ CSS بيرسم. وخلي بالك: لو غيّرت جوه الـ callback حاجة بتغيّر مقاس نفس العنصر، ممكن تعمل loop والمتصفح يكتب تحذير «ResizeObserver loop» في الـ console.`,
+            R`نهاية الـ [[for]].`,
+            R`نهاية الـ callback والـ [[ResizeObserver]].`,
+            R`نبدأ نراقب الكارت. أول ما تعمل [[observe]] الـ callback بيتنادى مرة بالمقاس الحالي (لو العنصر ظاهر)، فالـ [[data-size]] بيتحط من أول ما الصفحة تفتح.`,
+            R`مثال تاني: الـ [[<canvas>]] لازم نظبط مقاسه بإيدنا، لأن عدد البكسلات اللي بيرسم عليها منفصل عن مقاسه في الـ CSS.`,
+            R`بنعمل observer من غير ما نحفظه في متغير، والـ destructuring في الباراميتر بياخد أول entry بس لأننا بنراقب عنصر واحد.`,
+            R`[[contentRect]] فيه عرض وطول المحتوى بالـ CSS pixels، يعني المقاس اللي انت شايفه في DevTools.`,
+            R`بنظبط عدد بكسلات الرسم = المقاس في الـ CSS مضروب في [[devicePixelRatio]] (1 على شاشة عادية، و 2 أو 3 على الموبايل والشاشات الكثيفة). من غيرها الرسمة هتتمط وتطلع مغبّشة. و [[Math.round]] لأن [[canvas.width]] بياخد عدد صحيح من البكسلات.`,
+            R`نفس الكلام للطول، عشان النسبة بين العرض والطول تفضل مظبوطة.`,
+            R`تغيير [[canvas.width]] أو [[canvas.height]] بيمسح كل اللي اترسم ويرجّع الـ context لحالته الأولانية، فلازم نرسم تاني بعد كل تغيير مقاس، وإلا الـ canvas هيفضل فاضي.`,
+            R`بنراقب **أب** الـ canvas مش الـ canvas نفسه: الأب هو اللي مقاسه بيتغير مع الصفحة، واحنا بنغيّر مقاس الـ canvas جوه الـ callback، فلو راقبناه هو ممكن نعمل loop. ونهاية الـ observer.`,
+            R`دالة رسم بسيطة عشان نشوف النتيجة.`,
+            R`[[getContext("2d")]] بيرجّع الـ object اللي فيه أوامر الرسم الـ 2D (مستطيلات، خطوط، نصوص)، وبيرجّع نفس الـ context كل مرة لنفس الـ canvas.`,
+            R`بيرسم مستطيل مليان بيبدأ من الركن [[(0, 0)]]، عرضه نص عرض الـ canvas وطوله نص طوله، يعني ربع المساحة. ولأنه بيعتمد على [[canvas.width]] بيفضل ربع مهما المقاس اتغير.`,
+            R`نهاية [[draw]].`,
+          ],
+          sol: R`لما تسحب الـ div تحت 400px الـ [[data-size]] يبقى [["s"]] والـ CSS يقلب الترتيب، وبين 400 و 700 [["m"]]. التغيير بيحصل مع السحب نفسه من غير تأخير ومن غير debounce.
+
+نسخة CSS: [[.wrap { container-type: inline-size }]] على الأب، و [[@container (width < 400px) { .card { flex-direction: column } }]]. نفس النتيجة، ومفيش JS، وبتشتغل قبل ما الـ JS يتحمّل (من غير flash). عشان كده للشكل استخدم CSS، وخلي ResizeObserver للحاجات اللي محتاجة رقم في JS (الـ canvas مثلًا).`
+        },
+        {
+          cmd: "input type=file",
+          title: "تختار صور وتعاينها قبل الرفع إزاي؟",
+          desc: R`[[<input type="file">]] بيفتح اختيار الملفات. [[accept="image/png,image/jpeg,image/webp"]] أو [[accept="image/*"]] بيفلتر اللي يظهر (اقتراح بس، اليوزر يقدر يختار أي حاجة)، و [[multiple]] يسمح بأكتر من ملف، وعلى الموبايل [[capture="environment"]] بيفتح الكاميرا.
+
+[[input.files]] ليستة [[File]]: كل واحد فيه [[name]] و [[size]] (بالبايت) و [[type]] (MIME زي [["image/png"]]). و [[URL.createObjectURL(file)]] بيعمل URL مؤقت ([[blob:...]]) تحطه في [[img.src]] فتعرض الصورة من غير ما ترفعها، وبعد ما تخلص [[URL.revokeObjectURL(url)]] عشان الذاكرة.`,
+          example: R`// HTML: <input type="file" id="pics" accept="image/png,image/jpeg,image/webp" multiple> <div id="preview"></div>
+const input = document.querySelector("#pics");
+const preview = document.querySelector("#preview");
+const MAX = 2 * 1024 * 1024;
+let urls = [];
+input.addEventListener("change", () => {
+  urls.forEach((u) => URL.revokeObjectURL(u));
+  urls = [];
+  preview.replaceChildren();
+  for (const file of input.files) {
+    if (!file.type.startsWith("image/")) continue;
+    if (file.size > MAX) {
+      preview.append($__bt$__{file.name}: أكبر من 2MB. $__bt);
+      continue;
+    }
+    const url = URL.createObjectURL(file);
+    urls.push(url);
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = file.name;
+    img.width = 120;
+    preview.append(img);
+  }
+});`,
+          try: R`اختار ٣ صور منهم واحدة أكبر من 2MB وملف PDF (غيّر الـ accept لـ [[*/*]] عشان يظهر). إيه اللي اتعرض؟ وبعدين غيّر اسم ملف [[.txt]] لـ [[.png]] واختاره: [[file.type]] بيقول إيه؟ وآخر حاجة: اعرض تحت كل صورة حجمها بالـ KB ومقاسها بالبكسل ([[img.naturalWidth]] بعد [[img.onload]]).`,
+          practice: [
+            { lvl: 'سريع', t: R`ابني تحت [[<input type="file" multiple>]] جدول فيه لكل ملف: الاسم، والحجم بالـ KB بـ [[(file.size / 1024).toFixed(1)]]، والنوع، وزرار «شيل». الشيل بيبني [[input.files]] من جديد بـ [[new DataTransfer()]] و [[dt.items.add(file)]] و [[input.files = dt.files]].`, done: R`ملف 1536 بايت بيظهر 1.5 KB، والنوع الفاضي بيظهر «غير معروف»، و «شيل» بيمسح السطر و [[input.files.length]] بيقل واحد، والفورم لما تبعته مبيبعتش الملف اللي شلته.` },
+            { lvl: 'تطبيق', t: R`مسألة: اكتب [[async function sniffImage(file)]] بترجّع [["png"]] أو [["jpeg"]] أو [[null]] من أول bytes مش من الامتداد: [[new Uint8Array(await file.slice(0, 4).arrayBuffer())]]. PNG بيبدأ بـ [[89 50 4E 47]] و JPEG بـ [[FF D8 FF]]. جرّبها في Node بملفات بتعملها بـ [[new File([bytes], "a.png")]].`, done: R`ملف أوله bytes الـ PNG بيرجّع [["png"]]، وملف [[new File(["hello"], "fake.png", { type: "image/png" })]] بيرجّع [[null]] مع إن [[file.type]] بتاعه [[image/png]] (في المتصفح النوع بيتخمّن من الامتداد)، وملف فاضي أو أقل من 4 bytes بيرجّع [[null]] من غير error.` },
+            { lvl: 'تحدي', t: R`قارن وقيس: [[resizeImage(file, max = 1024)]] بـ [[createImageBitmap(file)]] و canvas أكبر ضلع فيه [[max]] بنفس النسبة، و [[canvas.toBlob(cb, "image/jpeg", 0.8)]] ملفوفة في Promise، وبترجّع [[File]] جديد. اعرض الحجم والمقاس قبل وبعد لـ ٣ صور.`, done: R`صورة 4000×3000 بتطلع 1024×768 بالظبط، وصورة طولية 3000×4000 بتطلع 768×1024، وصورة أصغر من 1024 أصلًا بترجع بمقاسها مبتكبرش، وجدول قبل وبعد فيه الحجم بالـ KB للتلات صور، وملف مش صورة بيرفض الـ Promise برسالة مفهومة.` },
+          ],
+          flag: "script",
+          deep: {
+            why: "صورة بروفايل، وصور منتجات، ومرفقات. المعاينة قبل الرفع بتوفر وقت اليوزر والباندويدث، والفحص في المتصفح بيقول «الملف كبير» فورًا بدل ما يستنى رفع ٢٠ ميجا يترفض في الآخر.",
+            how: R`[[File]] نوع من [[Blob]] (داتا binary) ومعاه اسم وتاريخ تعديل. المتصفح مبيقراش الملف لما تختاره، بيدّيك reference بس. [[createObjectURL]] بيربط الـ reference ده بـ URL جوه الصفحة، فالـ img بيقرا من الديسك مباشرة، وده أسرع وأخف من [[FileReader.readAsDataURL]] (اللي بيحوّل الملف كله نص base64 في الذاكرة، أكبر بحوالي الثلث).
+
+كل URL بيفضل شايل الملف في الذاكرة لحد ما تعمل revoke أو الصفحة تتقفل، فلو اليوزر اختار صور ١٠ مرات من غير revoke، الذاكرة بتتراكم.
+
+[[file.type]] المتصفح بيخمّنه من الامتداد (مش من محتوى الملف)، و [[accept]] اقتراح لنافذة الاختيار. يعني الاتنين للراحة (UX) مش للأمان. السيرفر لازم يفحص الحجم وأول bytes في الملف (magic bytes) ويعيد تسمية الملف (درس «multer» في تاب Backend بـ Node، و «presigned URL» في تاب Cloud و DevOps). ولو عايز تصغّر الصورة قبل الرفع: ارسمها على canvas بمقاس أصغر و [[canvas.toBlob(cb, "image/webp", 0.8)]].`,
+            when: R`أي رفع ملفات. و [[multiple]] للمعارض والمرفقات. والتصغير في المتصفح للصور الكبيرة من الموبايل (١٢ ميجا بكسل) قبل ما ترفعها.`,
+            mistakes: R`تعتمد على accept أو file.type كأمان. و createObjectURL من غير revoke. و FileReader base64 لملفات كبيرة. وتعرض [[file.name]] بـ innerHTML (اسم الملف input من اليوزر: [["<img onerror=...>.png"]] اسم ملف قانوني). وتنسى إن اختيار نفس الملف مرتين مش بيطلق [[change]] (اعمل [[input.value = ""]] بعد ما تخلص).`
+          },
+          teach: R`## الفكرة في سطر
+
+اليوزر يختار صور، فنعرضها على طول من الجهاز بتاعه من غير ما نرفع حاجة، ونتخطى أي ملف مش صورة أو أكبر من 2MB.
+
+جرّبته في Chrome headless (عن طريق playwright-core): اخترت للـ input بـ [[setInputFiles]] خمس ملفات عملتهم بنفسي: [[cat.png]] (صورة 1×1)، و [[big.png]] (3MB)، و [[doc.pdf]]، و [[notes.png]] (ملف نص اسمه png)، و [[dog.jpg]].
+
+---
+
+## ١. الـ HTML
+
+~~~text index.html
+<input type="file" id="pics" accept="image/png,image/jpeg,image/webp" multiple>
+<div id="preview"></div>
+~~~
+
+- [[type="file"]]: زرار «Choose Files» بيفتح نافذة اختيار الملفات.
+- [[accept="image/png,image/jpeg,image/webp"]]: أنواع (MIME types) مفصولة بـ [[,]]. نافذة الاختيار بتعرض دول بس. **اقتراح** مش منع: اليوزر يقدر يغيّر الفلتر لـ «All files».
+- [[multiple]]: يسمح باختيار أكتر من ملف.
+- [[#preview]]: المكان اللي هنحط فيه المعاينات.
+
+---
+
+## ٢. التجهيز
+
+~~~text app.js
+const input = document.querySelector("#pics");
+const preview = document.querySelector("#preview");
+const MAX = 2 * 1024 * 1024;
+let urls = [];
+~~~
+
+- [[MAX = 2 * 1024 * 1024]]: 2MB بالبايت = [[2097152]]. (1KB = 1024 byte، و 1MB = 1024KB.) كتبناها ضرب عشان تتقري «2 ميجا» بدل رقم مش مفهوم.
+- [[urls]]: هنحفظ فيها كل URL مؤقت بنعمله، عشان نمسحه بعدين. [[let]] مش [[const]] لأننا هنبدّلها بـ array فاضية.
+
+---
+
+## ٣. لما اليوزر يختار: [[change]]
+
+~~~text app.js
+input.addEventListener("change", () => {
+  urls.forEach((u) => URL.revokeObjectURL(u));
+  urls = [];
+  preview.replaceChildren();
+~~~
+
+- [[change]]: بيحصل لما اليوزر يقفل نافذة الاختيار وهو مختار حاجة **مختلفة** عن اللي كان مختارها.
+- أول ٣ سطور تنضيف للاختيار اللي فات: [[revokeObjectURL]] لكل URL قديم (هنفهمها تحت)، وفضّي الـ array، و [[replaceChildren()]] من غير arguments بتمسح كل اللي جوه [[preview]].
+
+### [[input.files]]
+
+~~~text app.js
+  for (const file of input.files) {
+~~~
+
+[[input.files]] ليستة (FileList) فيها object من نوع [[File]] لكل ملف. طبعت اللي فيها بعد ما اخترت الخمسة:
+
+~~~text الناتج
+change: files = 5 cat.png image/png 70 | big.png image/png 3145798 | doc.pdf application/pdf 9 | notes.png image/png 16 | dog.jpg image/jpeg 70
+~~~
+
+| الخاصية | معناها | مثال |
+|---|---|---|
+| [[name]] | اسم الملف من غير المسار | [[cat.png]] |
+| [[type]] | الـ MIME type | [[image/png]] |
+| [[size]] | الحجم بالبايت | [[3145798]] |
+
+لاحظ [[notes.png]]: ملف نص جواه [[hello, I am text]]، و [[type]] بتاعه [[image/png]]. المتصفح بيخمّن النوع من **الامتداد** مش من المحتوى.
+
+### الفلترة
+
+~~~text app.js
+    if (!file.type.startsWith("image/")) continue;
+    if (file.size > MAX) {
+      preview.append($__bt$__{file.name}: أكبر من 2MB. $__bt);
+      continue;
+    }
+~~~
+
+- [[startsWith("image/")]]: النص بيبدأ بـ [["image/"]]؟ الـ PDF نوعه [["application/pdf"]] فـ [[continue]] تعدّيه من غير ما تعرض حاجة.
+- [[file.size > MAX]]: [[big.png]] حجمه 3145798 أكبر من 2097152، فبنضيف رسالة. [[append]] بنص (string) بيضيفه كـ **نص** مش HTML، فلو اسم الملف فيه [[<img onerror=...>]] مش هيتنفّذ.
+
+---
+
+## ٤. المعاينة: [[URL.createObjectURL]]
+
+~~~text app.js
+    const url = URL.createObjectURL(file);
+    urls.push(url);
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = file.name;
+    img.width = 120;
+    preview.append(img);
+  }
+});
+~~~
+
+- [[URL.createObjectURL(file)]]: بيعمل URL مؤقت بيشاور على الملف اللي على جهاز اليوزر. شكله على صفحة شغالة من localhost:
+
+~~~text الناتج
+blob:http://localhost:PORT/b238a9a3-8884-45b4-8586-18d241d0729d
+~~~
+
+[[blob:]] + الـ origin بتاع الصفحة + ID عشوائي. الـ URL ده شغال **جوه الصفحة دي بس**، ومحدش غيرك يقدر يفتحه.
+- [[img.src = url]]: الصورة بتتقري من الجهاز مباشرة، من غير رفع ومن غير base64.
+- [[img.alt = file.name]]: نص بديل للي مش شايف الصورة. ولأنه property مش HTML فآمن.
+- [[img.width = 120]]: عرض المعاينة 120px.
+
+### النتيجة
+
+~~~text الناتج (محتوى #preview)
+<img src="blob:..." alt="cat.png" width="120">
+big.png: أكبر من 2MB.
+<img src="blob:..." alt="notes.png" width="120">
+<img src="blob:..." alt="dog.jpg" width="120">
+~~~
+
+| الملف | حصل إيه | ليه |
+|---|---|---|
+| [[cat.png]] | اتعرض | صورة وصغيرة |
+| [[big.png]] | رسالة | أكبر من MAX |
+| [[doc.pdf]] | ولا حاجة | type مش image |
+| [[notes.png]] | img مكسور (المقاس [[0x0]]) | type بتاعه image/png من الامتداد، بس المحتوى نص |
+| [[dog.jpg]] | اتعرض | |
+
+> [[file.type]] و [[accept]] للراحة بس. السيرفر لازم يفحص الملف بنفسه.
+
+### ليه [[revokeObjectURL]]؟
+
+كل blob URL بيفضل ماسك الملف في الذاكرة لحد ما الصفحة تتقفل. جرّبت: [[fetch(url)]] قبل الـ revoke رجّع الملف (70 byte)، وبعد [[URL.revokeObjectURL(url)]]:
+
+~~~text الناتج
+TypeError: Failed to fetch
+~~~
+
+يعني الـ URL اتقفل والذاكرة اتحررت. عشان كده بنعمل revoke للقديم في أول كل [[change]].
+
+### نفس الملف مرتين
+
+اخترت [[cat.png]] لوحده، وبعدين [[cat.png]] تاني: المرة التانية مطلعتش [[change]] خالص، لأن الاختيار متغيرش. لو محتاج تسمح بكده، اعمل [[input.value = ""]] بعد ما تخلص.
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| [[accept]] و [[multiple]] | فلتر لنافذة الاختيار، وأكتر من ملف |
+| [[input.files]] | ليستة [[File]]: name و type و size |
+| [[URL.createObjectURL(file)]] | URL مؤقت [[blob:...]] للملف |
+| [[URL.revokeObjectURL(url)]] | اقفله وحرّر الذاكرة |
+| [[replaceChildren()]] | فضّي العنصر |
+
+- النوع جاي من الامتداد، فمتعتمدش عليه للأمان.
+- الحجم بالبايت: 2MB = [[2 * 1024 * 1024]].`,
+          lines: [
+            R`بنمسك الـ [[<input type="file">]] اللي اليوزر بيختار منه الصور.`,
+            R`العنصر اللي هنحط فيه صور المعاينة ورسايل الأخطاء.`,
+            R`أقصى حجم مسموح: 2 ميجابايت بالبايت (2 × 1024 × 1024)، لأن [[file.size]] بيتقاس بالبايت. كتابتها كده أوضح من رقم كبير محدش فاهم جه منين. والفحص ده لراحة اليوزر بس، والسيرفر لازم يفحص تاني.`,
+            R`هنحفظ هنا كل blob URL بنعمله عشان نمسحهم بعدين. كل URL من دول ماسك الملف في الذاكرة لحد ما تعمله revoke أو الصفحة تتقفل.`,
+            R`[[change]] بيحصل لما اليوزر يخلص اختيار ويقفل نافذة الملفات، مش مع كل ضغطة. وكل اختيار جديد بيستبدل اللي قبله في [[input.files]].`,
+            R`قبل ما نعرض الاختيار الجديد، بنمسح الـ blob URLs بتاعة الاختيار اللي فات بـ [[revokeObjectURL]]. من غير ده، كل مرة اليوزر يختار صور، القديمة تفضل في الذاكرة (memory leak).`,
+            R`نرجّع الليستة فاضية، لأن الـ URLs اللي كانت فيها اتمسحت ومبقتش تشتغل.`,
+            R`[[replaceChildren()]] من غير arguments بتمسح كل اللي جوه المعاينة، فالصور القديمة متفضلش جنب الجديدة.`,
+            R`[[input.files]] هي [[FileList]] فيها object [[File]] لكل ملف اختاره، وفيه [[name]] و [[size]] و [[type]]. مش array حقيقية (مفيهاش [[map]])، بس [[for...of]] بتلف عليها عادي.`,
+            R`[[file.type]] هو الـ MIME type زي [["image/png"]]. بنفحص هنا لأن [[accept]] في الـ HTML مجرد اقتراح لنافذة الاختيار، واليوزر يقدر يختار «All files» ويجيب أي ملف. ولو مش صورة، [[continue]] تعدّيه.`,
+            R`[[file.size]] حجم الملف بالبايت. لو أكبر من الحد هنعرض رسالة بدل الصورة.`,
+            R`بنضيف رسالة فيها اسم الملف. [[append]] لما تديها string بتحطه كـ text node، يعني اسم ملف فيه [[<script>]] هيظهر كنص ومش هيتنفذ، زي [[textContent]] بالظبط.`,
+            R`نكمّل على الملف اللي بعده من غير ما نعمل blob URL للملف الكبير ده.`,
+            R`نهاية الـ [[if]] بتاع الحجم.`,
+            R`[[URL.createObjectURL]] بتعمل URL مؤقت شكله [[blob:...]] بيشاور على الملف اللي على جهاز اليوزر. كده المعاينة بتظهر فورًا من غير ما ترفع حاجة للسيرفر.`,
+            R`نحفظ الـ URL في الليستة عشان نعمله revoke في الاختيار الجاي.`,
+            R`نعمل عنصر [[<img>]] جديد لكل صورة، لسه في الذاكرة ومش ظاهر لحد ما نضيفه في المعاينة.`,
+            R`الـ [[src]] هو الـ blob URL، فالمتصفح بيعرض الصورة من الملف المحلي مباشرة.`,
+            R`[[alt]] باسم الملف، عشان قارئ الشاشة يقول الصورة دي إيه. وبنحطه كـ property مش بنركّب HTML، فلو اسم الملف فيه علامات HTML مش هتتنفذ.`,
+            R`عرض المعاينة 120 بكسل. بنحدد العرض بس، فالمتصفح بيحسب الطول بنفس نسبة الصورة.`,
+            R`نضيف الصورة جوه المعاينة، وهنا بتظهر لليوزر.`,
+            R`نهاية الـ [[for]] اللي على الملفات.`,
+            R`نهاية الـ listener بتاع [[change]].`,
+          ],
+          sol: R`الصورتين الصغيرين بيظهروا، والكبيرة بيظهر مكانها «اسمها: أكبر من 2MB.»، والـ PDF مش بيظهر خالص (اتنط بـ continue لأن type بتاعه [["application/pdf"]]).
+
+الـ [[.txt]] اللي اسمه [[.png]]: [[file.type]] بـ [["image/png"]]، والـ img بيظهر مكسور. ده الدليل إن النوع جاي من الامتداد، ودي بالظبط الحركة اللي حد هيعملها عشان يرفع حاجة مش صورة على السيرفر بتاعك.
+
+الحجم: [[(file.size / 1024).toFixed(0) + " KB"]]، والمقاس لازم يستنى التحميل: [[img.onload = () => caption.textContent += $__bt $__{img.naturalWidth}×$__{img.naturalHeight}$__bt]]. قبل الـ onload الـ naturalWidth بـ 0.`
+        },
+        {
+          cmd: "drag and drop و progress",
+          title: "تسحب ملف وترفعه بشريط تقدم إزاي؟",
+          desc: R`السحب والإفلات: على العنصر اللي هيستقبل اسمع لـ [[dragover]] واعمل [[preventDefault()]] (من غيرها المتصفح مش هيسمح بالإفلات هنا وهيفتح الملف في التاب)، و [[drop]] واعمل [[preventDefault()]] واقرا [[e.dataTransfer.files]] (نفس نوع [[input.files]]). و [[dragenter]] و [[dragleave]] عشان تغيّر الشكل.
+
+شريط التقدم: [[XMLHttpRequest]] عنده [[xhr.upload.onprogress]] بيقولك اترفع كام byte من كام. [[fetch]] مفيهوش حدث تقدم للرفع. فلحد النهارده لو عايز progress bar للرفع بتستخدم XHR (أو مكتبة زي axios، اللي هي XHR من تحت في المتصفح).`,
+          example: R`const zone = document.querySelector("#drop");
+const bar = document.querySelector("progress");
+zone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  zone.classList.add("over");
+});
+zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+zone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  zone.classList.remove("over");
+  for (const file of e.dataTransfer.files) upload(file);
+});
+function upload(file) {
+  const fd = new FormData();
+  fd.append("file", file);
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "/api/upload");
+  xhr.upload.onprogress = (e) => {
+    if (e.lengthComputable) bar.value = e.loaded / e.total;
+  };
+  xhr.onload = () => console.log(xhr.status, xhr.responseText);
+  xhr.onerror = () => console.log("النت وقع");
+  xhr.send(fd);
+}`,
+          try: R`اعمل سيرفر Express صغير فيه [[POST /api/upload]] بـ multer (تاب Backend بـ Node)، وافتح DevTools ← Network ← Throttling ← «Slow 4G»، واسحب صورة ٥ ميجا. الشريط بيتحرك؟ وبعدين زوّد زرار «إلغاء» بيعمل [[xhr.abort()]]، و keyboard fallback: الـ zone يبقى [[<label>]] فيه [[<input type="file">]] مخفي، عشان اللي مبيستخدمش ماوس.`,
+          practice: [
+            { lvl: 'سريع', t: R`ابني Kanban صغير: عمودين «لسه» و «خلص» وكروت عليها [[draggable="true"]]. في [[dragstart]] اعمل [[e.dataTransfer.setData("text/plain", card.id)]]، وفي [[dragover]] على العمود [[preventDefault()]]، وفي [[drop]] انقل الكارت بـ [[append]].`, done: R`الكارت بيتنقل للعمود اللي تفلته فيه، والإفلات برا العمودين مبيعملش حاجة، والكارت مبيتكررش، وعدد الكروت في عنوان كل عمود بيتحدّث بعد كل نقلة.` },
+            { lvl: 'تطبيق', t: R`صلّح الباج: حط جوه منطقة الإفلات بتاعة الدرس أيقونة ونص، واسحب ملف فوقهم: الـ class [[over]] بيرعش. صلّحها بعدّاد بيزيد في [[dragenter]] ويقل في [[dragleave]] ويتصفّر في [[drop]]، وارفض أي سحب مش ملفات ([[e.dataTransfer.types.includes("Files")]]).`, done: R`قبل التصليح الإطار بيختفي ويظهر كل ما تعدّي فوق الأيقونة أو النص (لأن [[dragleave]] بيحصل على الأب لما تدخل عنصر جواه)، وبعده بيفضل ثابت لحد ما تخرج من المنطقة كلها أو تفلت، وسحب نص متعلّم من الصفحة مبيفعّلش المنطقة.` },
+            { lvl: 'تحدي', t: R`محاكاة طابور رفع: اكتبه الأول في Node، كل «رفع» [[setTimeout]] وقته عشوائي ونسبة فشل ٢٠٪: ١٠ ملفات، ٢ بس في نفس الوقت، والفاشل يتعاد مرة واحدة. وبعدين بدّل الـ setTimeout بـ XHR بتاع الدرس ومعاه [[<progress>]] وزرار إلغاء ([[xhr.abort()]]) لكل ملف.`, done: R`الـ simulation بيطبع إن أكبر عدد شغال مع بعض 2، وكل ملف نهايته «تم» أو «فشل بعد محاولتين»، ومجموعهم 10. وفي المتصفح على Slow 4G مفيش أكتر من ٢ upload في Network في أي لحظة، والإلغاء بيكتب «اتلغى» وبيسيب مكانه للي بعده.` },
+          ],
+          flag: "script",
+          deep: {
+            why: "رفع ملف كبير على نت بطيء من غير أي مؤشر، اليوزر بيفتكر إن الموقع علّق فيعمل refresh ويضيّع الرفع. والسحب والإفلات متوقع في أي dashboard أو محرر.",
+            how: R`[[dragover]] بيتنادى كل كام ملّي ثانية وانت ساحب فوق العنصر، و [[preventDefault]] فيه هي اللي بتقول للمتصفح «العنصر ده بيقبل drop». [[dragleave]] بيحصل كمان لما تعدّي فوق عنصر ابن جوه الـ zone، فالشكل ممكن يرمش؛ الحل عداد بـ dragenter/dragleave أو [[pointer-events: none]] على الأبناء وقت السحب.
+
+XHR بيبعت الـ body وبيطلق [[upload.progress]] كل ما جزء يخرج من الجهاز. [[lengthComputable]] بتبقى true لما الحجم الكلي معروف (مع FormData و File دايمًا معروف). والتقدم ده «اتبعت من الجهاز»، مش «السيرفر حفظه»؛ بعد ١٠٠٪ لسه فيه وقت لحد [[onload]].
+
+ليه fetch لأ؟ [[fetch]] بيدّيك download progress عن طريق [[res.body.getReader()]] (تقرا الرد chunk chunk). بس الرفع: المواصفات فيها streaming request body ([[body: ReadableStream]] مع [[duplex: "half"]])، وده مدعوم في Chromium بس ومحتاج HTTP/2، وحتى معاه اللي بتعدّه هو اللي الـ stream بتاعك سلّمه للمتصفح مش اللي وصل للشبكة فعلًا. فمفيش طريقة بسيطة ومضمونة. عشان كده XHR لسه موجود ومش deprecated.
+
+للملفات الكبيرة (فيديو): ارفع مباشرة لـ S3/R2 بـ presigned URL من غير ما تعدّي على سيرفرك (بـ XHR PUT برضه عشان الـ progress)، أو multipart/resumable uploads (tus) عشان لو النت قطع تكمّل.`,
+            when: R`أي رفع أكبر من كام ميجا، أو على موبايل. والسحب للـ dashboards والمحررات، مع input عادي دايمًا.`,
+            mistakes: R`تنسى preventDefault في dragover فالمتصفح يفتح الصورة بدل ما يرفعها. و progress بـ fetch. وتحط [[Content-Type]] بإيدك مع FormData. وتعتبر ١٠٠٪ نجاح قبل ما [[onload]] يقول status 200. ومفيش بديل للكيبورد والموبايل (السحب مش شغال على iOS Safari من الملفات). وفي الانترفيو: «إزاي تعمل progress bar لرفع ملف؟» الإجابة XHR upload.onprogress، وليه fetch مبيعملهاش.`
+          },
+          teach: R`## الفكرة في سطر
+
+جزئين: منطقة تسحب عليها ملف من الجهاز وتسيبه (drag and drop)، ودالة بترفع الملف للسيرفر وبتحرّك شريط تقدم وهي بترفع.
+
+جرّبته في Chrome headless (عن طريق playwright-core): صفحة فيها [[<div id="drop">]] و [[<progress>]]، وسيرفر Node صغير على localhost بيستقبل [[POST /api/upload]] ويرد بعدد البايتات اللي وصلته. عملت في الصفحة [[File]] حجمه 5MB، وبعتّه للـ zone بأحداث [[dragover]] و [[dragleave]] و [[drop]] مصنوعة بـ [[new DragEvent(...)]] (headless مفيهوش ماوس يسحب من الديسك)، وبطّأت الشبكة بـ DevTools Protocol لـ 1MB في الثانية رفع و 100ms latency.
+
+---
+
+## ١. العناصر
+
+~~~text app.js
+const zone = document.querySelector("#drop");
+const bar = document.querySelector("progress");
+~~~
+
+[[<progress>]] عنصر HTML جاهز بيرسم شريط. [[value]] بتاعه من 0 لحد [[max]]، و [[max]] الافتراضي [[1]] (طبعته وطلع 1)، فلو حطيت [[bar.value = 0.5]] يبقى نص الشريط مليان.
+
+---
+
+## ٢. السحب فوق المنطقة: [[dragover]]
+
+~~~text app.js
+zone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  zone.classList.add("over");
+});
+~~~
+
+- [[dragover]]: بيتنادى كل شوية (كل كام ملّي ثانية) طول ما انت ساحب حاجة فوق العنصر.
+- [[e.preventDefault()]]: أهم سطر. الافتراضي في المتصفح إن العناصر **مبتقبلش** drop، ولو سبت الملف المتصفح بيفتحه في التاب (صورة أو PDF). [[preventDefault]] في dragover معناها «العنصر ده بيقبل». (ده من المواصفات ومن MDN، وتقدر تجرّبه بإيدك: شيل السطر واسحب صورة.)
+- [[classList.add("over")]]: كلاس الـ CSS بتاعه يغيّر الشكل («سيبه هنا»).
+
+~~~text app.js
+zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+~~~
+
+[[dragleave]]: الماوس خرج برّه المنطقة، فرجّع الشكل. بعد dragover الكلاس كان [["over"]]، وبعد dragleave بقى [[""]].
+
+---
+
+## ٣. الإفلات: [[drop]]
+
+~~~text app.js
+zone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  zone.classList.remove("over");
+  for (const file of e.dataTransfer.files) upload(file);
+});
+~~~
+
+- [[preventDefault()]] تاني: هنا بتمنع المتصفح يفتح الملف.
+- [[e.dataTransfer]]: الـ object اللي شايل الحاجة المسحوبة. و [[.files]] فيه نفس نوع [[input.files]] بالظبط (ليستة [[File]])، فكل اللي اتعلمته في درس «input type=file» شغال هنا.
+- لكل ملف نادي [[upload]].
+
+---
+
+## ٤. [[upload]]: الرفع بـ XHR
+
+### الـ body: [[FormData]]
+
+~~~text app.js
+  const fd = new FormData();
+  fd.append("file", file);
+~~~
+
+[[FormData]] بيبني body من نوع [[multipart/form-data]]، نفس اللي بيتبعت لو فورم HTML فيه input file. [[append("file", file)]] بيضيف الملف تحت اسم [["file"]] (السيرفر بيدوّر بالاسم ده، زي [[upload.single("file")]] في multer). السيرفر عندي طبع الـ header اللي وصله:
+
+~~~text الناتج
+multipart/form-data; boundary=----WebKit...
+~~~
+
+المتصفح حط الـ [[Content-Type]] **و** الـ boundary (الفاصل بين الأجزاء) لوحده، عشان كده متكتبش Content-Type بإيدك مع FormData.
+
+### الطلب
+
+~~~text app.js
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "/api/upload");
+~~~
+
+[[XMLHttpRequest]] (اختصاره XHR) الطريقة القديمة لعمل requests قبل [[fetch]]. الاسم فيه XML لأسباب تاريخية، وبيبعت أي حاجة. [[open(method, url)]] بتجهّز الطلب بس، ولسه مبعتش.
+
+### التقدم
+
+~~~text app.js
+  xhr.upload.onprogress = (e) => {
+    if (e.lengthComputable) bar.value = e.loaded / e.total;
+  };
+~~~
+
+- [[xhr.upload]]: object منفصل لأحداث **الرفع** (و [[xhr.onprogress]] من غير upload للتحميل).
+- [[e.loaded]]: اتبعت كام byte لحد دلوقتي. [[e.total]]: الحجم الكلي.
+- [[e.lengthComputable]]: الحجم الكلي معروف؟ مع FormData فيها File دايمًا [[true]].
+- [[e.loaded / e.total]]: نسبة من 0 لـ 1، بالظبط اللي [[<progress>]] عايزه.
+
+### الرد والأخطاء والإرسال
+
+~~~text app.js
+  xhr.onload = () => console.log(xhr.status, xhr.responseText);
+  xhr.onerror = () => console.log("النت وقع");
+  xhr.send(fd);
+~~~
+
+- [[onload]]: السيرفر رد، **أي** رد (200 أو 404 أو 500)، فلازم تبص على [[xhr.status]].
+- [[onerror]]: مفيش رد خالص: النت قطع أو السيرفر مش موجود.
+- [[send(fd)]]: دلوقتي بس الطلب بيتبعت.
+
+---
+
+## ٥. اللي حصل لما رفعت 5MB على 1MB/s
+
+حطيت [[console.log]] جوه onprogress بالوقت من لحظة الـ drop (مختصر):
+
+~~~text الناتج
+progress 106ms 98304 / 5243063 lengthComputable true bar 0.02
+progress 211ms 196608 / 5243063 lengthComputable true bar 0.04
+progress 325ms 311296 / 5243063 lengthComputable true bar 0.06
+...
+progress 2719ms 2670592 / 5243063 lengthComputable true bar 0.51
+...
+progress 5338ms 5243063 / 5243063 lengthComputable true bar 1.00
+5448ms 200 {"ok":true,"bytes":5243063,...}
+~~~
+
+- الحدث اتنادى تقريبًا كل 100ms، وكل مرة زيادة حوالي 100KB، وده منطقي مع 1MB في الثانية.
+- الـ [[total]] بـ 5243063 مش 5242880 (5 × 1024 × 1024): الفرق 183 byte هما الـ boundary والـ headers بتاعة الجزء جوه الـ multipart.
+- الشريط وصل 1.00 عند 5338ms، والـ [[onload]] جه بعدها بحوالي 110ms. الـ 100٪ معناها «اتبعت من الجهاز»، والنجاح الحقيقي هو [[200]] في onload.
+- السيرفر عدّ نفس الرقم [[bytes: 5243063]].
+
+### وليه مش [[fetch]]؟
+
+[[fetch]] مفيهوش حدث زي [[upload.onprogress]]. عشان كده لحد النهارده أي progress bar للرفع بيبقى XHR، ومكتبة axios في المتصفح XHR من تحت برضه.
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| [[dragover]] + [[preventDefault()]] | العنصر ده بيقبل drop |
+| [[drop]] + [[preventDefault()]] | متفتحش الملف، و [[e.dataTransfer.files]] فيها الملفات |
+| [[dragleave]] | خرج برّه، رجّع الشكل |
+| [[FormData]] + [[append]] | body من نوع multipart، والمتصفح بيحط الـ Content-Type |
+| [[xhr.upload.onprogress]] | [[e.loaded]] من [[e.total]] |
+| [[onload]] / [[onerror]] | رد (افحص status) / مفيش رد |
+
+- [[<progress>]] قيمته من 0 لـ 1 افتراضيًا.
+- ١٠٠٪ مش نجاح: استنى [[onload]] و [[status]].`,
+          lines: [
+            R`المنطقة اللي اليوزر هيسيب فيها الملفات ([[#drop]])، غالبًا [[<div>]] عليه كلام زي «اسحب الملفات هنا».`,
+            R`[[<progress>]] عنصر HTML جاهز بيرسم شريط تقدم. الـ [[max]] الافتراضي بتاعه 1، فبنحط [[value]] من 0 لـ 1 والشريط بيتملا لوحده.`,
+            R`[[dragover]] بيتكرر طول ما اليوزر ساحب حاجة فوق المنطقة، فبنعرف منه إنه فوقها.`,
+            R`افتراضيًا المتصفح مش بيسمح بالإفلات على أي عنصر، و [[preventDefault]] هنا معناها «اسمح بالإفلات هنا». من غيرها حدث [[drop]] مش هيحصل خالص، والمتصفح هيفتح الملف في التاب بدل صفحتك.`,
+            R`نضيف كلاس [[over]] عشان الـ CSS يغيّر شكل المنطقة (border أو لون) ويقول لليوزر «سيبه هنا». ولأن [[classList.add]] مبتكررش الكلاس، تكرار الحدث مش مشكلة.`,
+            R`نهاية الـ listener بتاع [[dragover]].`,
+            R`[[dragleave]] بيحصل لما الماوس يخرج برّه المنطقة، فبنشيل الكلاس ونرجّع الشكل. خلي بالك: بيحصل كمان لما تعدّي فوق عنصر جوه المنطقة، فالشكل ممكن يرمش، وحل شائع ليها [[pointer-events: none]] على العناصر اللي جوه.`,
+            R`[[drop]] بيحصل لما اليوزر يسيب الماوس فوق المنطقة، وده الحدث اللي فيه الملفات.`,
+            R`[[preventDefault]] تاني هنا عشان المتصفح ميعملش السلوك الافتراضي، وهو إنه يفتح الملف اللي اتسحب ويسيب صفحتك.`,
+            R`نرجّع شكل المنطقة، لأن [[dragleave]] مش بيحصل بعد الإفلات.`,
+            R`[[e.dataTransfer.files]] من نفس نوع [[input.files]] ([[FileList]])، فنفس الكود اللي بيتعامل مع ملفات الـ input ينفع هنا. وبنرفع كل ملف لوحده.`,
+            R`نهاية الـ listener بتاع [[drop]].`,
+            R`دالة بترفع ملف واحد وتحدّث الشريط.`,
+            R`[[FormData]] بيبني body بصيغة [[multipart/form-data]]، الصيغة اللي الفورمز بتبعت بيها ملفات.`,
+            R`نحط الملف تحت اسم [[file]]. الاسم ده لازم يطابق اللي السيرفر مستنيه (زي [[upload.single("file")]] في multer)، وإلا السيرفر مش هيلاقي الملف.`,
+            R`بنستخدم [[XMLHttpRequest]] القديم مش [[fetch]] لسبب واحد: XHR عنده [[upload.onprogress]] بيقولك اترفع كام، و [[fetch]] مالوش طريقة بسيطة لكده.`,
+            R`نجهّز طلب [[POST]] على الـ endpoint. [[open]] مش بيبعت حاجة لسه، بيجهّز بس.`,
+            R`[[xhr.upload.onprogress]] بيتنادى كذا مرة والملف بيترفع. لاحظ الـ [[upload]]: [[xhr.onprogress]] من غيرها بتاعة تحميل **الرد** مش الرفع.`,
+            R`[[lengthComputable]] بتقول إن الحجم الكلي معروف. لو معروف، [[e.loaded / e.total]] بتدّي نسبة من 0 لـ 1، وده بالظبط اللي الـ [[<progress>]] مستنيه.`,
+            R`نهاية الـ [[onprogress]].`,
+            R`[[onload]] بيتنادى لما السيرفر يرد بأي status، حتى 400 أو 500. فلازم تبص على [[xhr.status]] عشان تعرف الرفع نجح فعلًا ولا لأ.`,
+            R`[[onerror]] بيتنادى بس لو الطلب موصلش خالص (النت قطع أو السيرفر مش شغّال)، مش لما السيرفر يرد بخطأ.`,
+            R`نبعت الطلب بالـ [[FormData]]. متحطش [[Content-Type]] بإيدك: المتصفح بيحطه لوحده ومعاه الـ boundary اللي بيفصل الأجزاء، ولو كتبته من غيره السيرفر مش هيعرف يقرا الملف.`,
+            R`نهاية [[upload]].`,
+          ],
+          sol: R`مع Slow 4G والـ ٥ ميجا الشريط بيتحرك تدريجيًا على مدار ثواني، وبعد ما يوصل ١٠٠٪ فيه لحظة لحد ما [[onload]] يطبع [[200]] والرد (السيرفر لسه بيكتب الملف).
+
+الإلغاء: خزّن الـ xhr في متغير برّه، والزرار [[xhr.abort()]]، واسمع لـ [[xhr.onabort]] ورجّع الشريط 0. في Network الطلب هيظهر «(canceled)».
+
+الـ fallback: [[<label id="drop"><input type="file" hidden multiple> اسحب هنا أو اضغط للاختيار</label>]]، والضغط على الـ label بيفتح اختيار الملفات لوحده، و [[change]] على الـ input بتنادي نفس [[upload]]. كده الكيبورد (Tab ثم Enter) والموبايل شغالين.`
+        },
+        {
+          cmd: "visibilitychange و bfcache",
+          title: "تعرف إن اليوزر ساب الصفحة أو رجعلها إزاي؟",
+          desc: R`[[visibilitychange]]: الصفحة بقت مخفية (اليوزر غيّر التاب، أو صغّر، أو قفل الشاشة، أو ساب التطبيق على الموبايل) أو ظهرت تاني. ده آخر حدث مضمون تقريبًا على الموبايل، فأي حفظ مسودة أو إرسال analytics يبقى هنا، بـ [[navigator.sendBeacon]] اللي بيبعت حتى لو الصفحة بتتقفل.
+
+[[beforeunload]]: الحدث اللي يطلّع «متأكد إنك عايز تخرج؟». استخدمه بس لما فيه تغييرات مش محفوظة، وشيله أول ما تتحفظ.
+
+وbfcache (back/forward cache): لما اليوزر يضغط back، المتصفح بيرجّع الصفحة زي ما هي من الذاكرة (JS و state و scroll) من غير تحميل. [[pageshow]] بـ [[e.persisted === true]] بيقولك إنها رجعت من الـ bfcache، فحدّث الداتا اللي ممكن تكون قدمت.`,
+          example: R`const form = document.querySelector("#post-form");
+function warn(e) {
+  e.preventDefault();
+  e.returnValue = "";
+}
+form.addEventListener("input", () => window.addEventListener("beforeunload", warn));
+form.addEventListener("submit", () => window.removeEventListener("beforeunload", warn));
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState !== "hidden") return;
+  const draft = JSON.stringify(Object.fromEntries(new FormData(form)));
+  navigator.sendBeacon("/api/draft", draft);
+});
+window.addEventListener("pageshow", (e) => {
+  if (e.persisted) console.log("رجعت من الـ bfcache: حدّث السلة والإشعارات");
+});
+window.addEventListener("pagehide", (e) => console.log("pagehide، هتتحفظ في bfcache؟", e.persisted));`,
+          try: R`افتح الصفحة، واكتب في الفورم، وجرّب تقفل التاب: الرسالة ظهرت؟ اعمل submit وجرّب تاني. وبعدين روح لصفحة تانية وارجع بـ back وبص على Console (فعّل Preserve log). وآخر حاجة: DevTools ← Application ← Back/forward cache ← «Test back/forward cache»: الصفحة eligible؟ ولو لأ، إيه السبب اللي بيقوله؟`,
+          practice: [
+            { lvl: 'سريع', t: R`محاكاة شات: [[setInterval]] بيضيف رسالة وهمية كل ٣ ثواني. لما الصفحة تبقى [[hidden]] عدّ الرسايل اللي جت وخلّي [[document.title]] يبقى «(3) الشات»، ولما ترجع [[visible]] رجّع العنوان وصفّر العدّاد.`, done: R`تسيب التاب ١٠ ثواني: عنوان التاب بيبان فيه رقم بيزيد (حوالي 3)، وأول ما ترجع العنوان بيرجع «الشات» والعدّاد صفر، وانت جوه الصفحة العنوان مبيتغيرش خالص.` },
+            { lvl: 'تطبيق', t: R`ابني عدّاد «وقت المذاكرة الفعلي» لصفحة درس: بيعدّ الوقت اللي الصفحة كانت ظاهرة فيه بس، بـ [[performance.now()]] مش بعدّ ticks، وبيبعت المجموع بـ [[navigator.sendBeacon("/api/time", ...)]] كل ما الصفحة تتخبى.`, done: R`تسيب التاب ١٠ ثواني وترجع: العدّاد مزادش الـ ١٠ ثواني دول (بفرق ثانية بالكتير)، و Network فيه request لـ [[/api/time]] كل مرة الصفحة اتخبت، والرقم اللي اتبعت هو المجموع لحد اللحظة دي.` },
+            { lvl: 'تحدي', t: R`صلّح صفحة bfcache مبيرجّعهاش: صفحة فاتحة WebSocket لسيرفر [[ws]] على localhost. اقفل الـ socket في [[pagehide]]، وافتحه تاني في [[pageshow]] لما [[e.persisted]] يبقى [[true]]، وشغّل Test back/forward cache قبل وبعد.`, done: R`لو الاختبار قال الصفحة مش eligible قبل التصليح، بتكتب السبب اللي DevTools طلّعه. بعد التصليح: back بيرجّع الصفحة من bfcache، و [[pageshow]] بيطبع [[persisted: true]]، والـ socket اتفتح تاني والرسايل بتوصل، ولوج السيرفر فيه اتصال اتقفل واتصال جديد.` },
+          ],
+          flag: "script",
+          deep: {
+            why: "اليوزر كتب بوست طويل وقفل التاب بالغلط. أو فتح الموبايل بعد ساعة ولقى السلة قديمة. أو الـ analytics بتقول إن نص الزيارات «ملهاش نهاية». كل ده دورة حياة الصفحة، وأغلب المواقع بتتعامل معاها غلط بـ [[unload]].",
+            how: R`[[beforeunload]]: [[preventDefault()]] هي الطريقة الحديثة، و [[returnValue = ""]] للمتصفحات القديمة. والرسالة نفسها بتاعة المتصفح ومتقدرش تغيّرها. وبيطلع بس لو اليوزر اتفاعل مع الصفحة قبل كده. وإضافة الـ listener بس وقت الحاجة مهمة لأن وجود beforeunload طول الوقت بيمنع الـ bfcache في بعض المتصفحات (Firefox مثلًا).
+
+[[unload]] متستخدمهاش: مش بتتنادى بشكل موثوق على الموبايل (النظام بيقفل التطبيق من غير ما يسأل)، ووجودها بيمنع الـ bfcache، و Chrome بيلغيها تدريجيًا. البديل [[visibilitychange]] (hidden) للحفظ، و [[pagehide]] لو محتاج لحظة الخروج نفسها.
+
+[[sendBeacon(url, data)]] بيبعت POST صغير (حوالي 64KB كحد) والمتصفح بيكمّله حتى لو الصفحة اتقفلت، ومبيرجّعش رد. البديل الحديث [[fetch(url, { method: "POST", body, keepalive: true })]].
+
+الـ bfcache بيجمّد الصفحة كلها: الـ timers واقفة، والـ promises متعلقة، ولما ترجع بتكمّل. أسباب إن الصفحة متدخلوش: [[unload]] listener، أو WebSocket أو IndexedDB transaction مفتوحين، أو (تاريخيًا) [[Cache-Control: no-store]] على الـ HTML. والـ DevTools test بيقولك السبب بالظبط.`,
+            when: R`حفظ مسودات، و analytics نهاية الزيارة، و pause للفيديو والـ polling لما التاب مخفي (توفير بطارية وrequests)، وتحديث داتا حساسة للوقت لما الصفحة ترجع (سلة، رصيد، إشعارات).`,
+            mistakes: R`[[unload]] لأي حاجة. و beforeunload متسجل على طول. و [[fetch]] عادي في visibilitychange من غير keepalive فيتلغي. وتفترض إن الصفحة «فتحت من جديد» لما اليوزر يرجع بـ back فمتحدّثش الداتا. و polling شغال في تاب مخفي طول اليوم.`
+          },
+          teach: R`## الفكرة في سطر
+
+٣ حاجات بتحصل للصفحة واليوزر مش بيقولك: هيقفل وهو كاتب حاجة (نحذّره)، أو التاب اتخفى (نحفظ المسودة)، أو رجع للصفحة بزرار back (نحدّث الداتا). المثال بيسمع للتلاتة.
+
+جرّبته في Chrome headless (عن طريق playwright-core) على صفحة من سيرفر Node على localhost فيها فورم بـ [[<input name="title">]] و [[<textarea name="body">]]، والسيرفر بيطبع أي [[POST /api/draft]] يوصله. ولاحظ: Playwright بيقفل الـ bfcache افتراضيًا ([[--disable-back-forward-cache]])، فشغّلته بـ [[ignoreDefaultArgs]] عشان أجرّب الـ bfcache بجد.
+
+---
+
+## ١. التحذير قبل الخروج: [[beforeunload]]
+
+~~~text app.js
+const form = document.querySelector("#post-form");
+function warn(e) {
+  e.preventDefault();
+  e.returnValue = "";
+}
+form.addEventListener("input", () => window.addEventListener("beforeunload", warn));
+form.addEventListener("submit", () => window.removeEventListener("beforeunload", warn));
+~~~
+
+- [[beforeunload]]: حدث على [[window]] قبل ما الصفحة تتقفل أو تروح لصفحة تانية أو تعمل refresh.
+- [[warn]] دالة **ليها اسم** (مش arrow جوه addEventListener)، لأن [[removeEventListener]] محتاج نفس الدالة بالظبط عشان يشيلها.
+- [[e.preventDefault()]]: الطريقة الحديثة تقول «اسأل اليوزر». و [[e.returnValue = ""]] نفس الطلب للمتصفحات القديمة. النص اللي بتحطه مبيظهرش: المتصفح بيعرض رسالته هو.
+- [[input]] على الفورم: بيحصل مع أي حرف في أي خانة جواه (الـ event بيطلع من الخانة للفورم). أول ما يكتب نسجّل التحذير، وتسجيل نفس الدالة مرتين مبيعملش حاجة، فمش مشكلة إنه بيتنادى مع كل حرف.
+- [[submit]]: اتحفظ، فشيل التحذير.
+
+### اللي حصل
+
+| الحالة | قفلت التاب | النتيجة |
+|---|---|---|
+| مكتبتش حاجة | اتقفل على طول | مفيش listener أصلًا |
+| كتبت في الخانتين | ظهر dialog نوعه [[beforeunload]] ورسالته [[""]] | رفضته فالتاب فضل مفتوح ([[closed? false]]) |
+| كتبت وعملت submit | اتقفل على طول | الـ listener اتشال |
+
+الرسالة فاضية من ناحية الكود لأن المتصفح هو اللي بيكتب «Leave site? Changes you made may not be saved» (أو بلغة المتصفح).
+
+---
+
+## ٢. حفظ المسودة: [[visibilitychange]]
+
+~~~text app.js
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState !== "hidden") return;
+  const draft = JSON.stringify(Object.fromEntries(new FormData(form)));
+  navigator.sendBeacon("/api/draft", draft);
+});
+~~~
+
+- [[visibilitychange]] على [[document]]: الصفحة اتخفت أو ظهرت (تاب تاني، تصغير، قفل الشاشة، الخروج من التطبيق على الموبايل، أو قفل التاب نفسه).
+- [[document.visibilityState]]: [["visible"]] أو [["hidden"]]. بنكمّل لما تبقى hidden بس.
+- السطر التالت من جوه لبرّه:
+
+| الخطوة | الناتج |
+|---|---|
+| [[new FormData(form)]] | كل خانات الفورم بأساميها ([[name]]) |
+| [[Object.fromEntries(...)]] | بتحوّل الأزواج دي لـ object عادي: [[{ title: "...", body: "..." }]] |
+| [[JSON.stringify(...)]] | حوّله نص JSON |
+
+- [[navigator.sendBeacon(url, data)]]: بيبعت POST صغير، والمتصفح **بيكمّله حتى لو الصفحة اتقفلت**. بيرجّع [[true]] لو قبل يبعته (مش لو السيرفر رد)، ومفيش طريقة تقرا الرد.
+
+### اللي وصل السيرفر
+
+كل مرة الصفحة اتقفلت أو اتنقلت منها، السيرفر طبع:
+
+~~~text الناتج (السيرفر)
+SERVER got POST /api/draft content-type=text/plain;charset=UTF-8 body={"title":"","body":""}
+SERVER got POST /api/draft content-type=text/plain;charset=UTF-8 body={"title":"","body":"x"}
+SERVER got POST /api/draft content-type=text/plain;charset=UTF-8 body={"title":"draft1","body":""}
+~~~
+
+- الطلبات وصلت حتى من التابات اللي اتقفلت.
+- لاحظ [[content-type=text/plain]]: لما تبعت string لـ sendBeacon بيروح كنص. فالسيرفر لازم يقراه نص ويعمل [[JSON.parse]] (مثلًا [[express.text()]] مش [[express.json()]])، أو ابعت [[new Blob([draft], { type: "application/json" })]].
+
+---
+
+## ٣. الرجوع بـ back: [[pageshow]] و [[pagehide]]
+
+~~~text app.js
+window.addEventListener("pageshow", (e) => {
+  if (e.persisted) console.log("رجعت من الـ bfcache: حدّث السلة والإشعارات");
+});
+window.addEventListener("pagehide", (e) => console.log("pagehide، هتتحفظ في bfcache؟", e.persisted));
+~~~
+
+- [[pageshow]]: الصفحة اتعرضت، سواء تحميل جديد أو رجوع من الـ bfcache.
+- [[pagehide]]: الصفحة بتمشي. ده البديل الصح لـ [[unload]].
+- [[e.persisted]]: في pageshow معناها «رجعت من الـ bfcache»، وفي pagehide معناها «هتتحفظ في الـ bfcache».
+
+bfcache اختصار back/forward cache: المتصفح بيجمّد الصفحة كلها في الذاكرة (الـ JS والمتغيرات والخانات ومكان الـ scroll)، ولما ترجع بيصحّيها بدل ما يحمّلها من الأول.
+
+### اللي حصل
+
+كتبت [[draft1]] في الخانة، ورحت لصفحة تانية ([[/other]])، ورجعت بـ back (بالترتيب، بعد ما وافقت على dialog الـ beforeunload):
+
+~~~text الناتج (Console)
+pageshow persisted = false
+pagehide، هتتحفظ في bfcache؟ true
+visibilitychange: hidden
+sendBeacon returned true
+visibilitychange: visible
+pageshow persisted = true
+رجعت من الـ bfcache: حدّث السلة والإشعارات
 ~~~
 
 | السطر | معناه |
 |---|---|
-| [[page p]] أحمر | قاعدة الصفحة اشتغلت على [[p]] الصفحة |
-| [[shadow p]] أخضر | [[p { color: red }]] ماعدّاش جوه، و [[green]] بتاع الـ component هو اللي اشتغل |
-| [[font-size: 20px]] | [[::part(amount)]] من الصفحة عدّى، لأن الـ component سمح بـ [[part]] |
-| [[host bg]] أزرق فاتح | [[--tag-bg]] من الصفحة عدّى جوه [[var()]] |
-| [[sale bg]] أصفر | [[:host([sale])]] اشتغلت لأن العنصر عليه attribute اسمه [[sale]] |
-| [[querySelectorAll('p')]] = 1 | الـ document مش شايف الـ [[p]] اللي جوه الـ shadow |
-| [[textContent]] فاضي | النص في الـ shadow مش في العنصر نفسه |
+| [[pageshow persisted = false]] | أول تحميل عادي |
+| [[pagehide ... true]] | ماشي، والصفحة هتتجمّد في الـ bfcache |
+| [[visibilitychange: hidden]] + beacon | الصفحة اختفت، فالمسودة اتبعتت بـ [[sendBeacon]] قبل ما المتصفح يجمّدها |
+| [[visibilitychange: visible]] | الصفحة رجعت تظهر تاني لما دوست Back |
+| [[pageshow persisted = true]] | من الـ bfcache، مش تحميل جديد |
 
-[[rgb(219, 234, 254)]] هو [[#dbeafe]]: [[getComputedStyle]] بيرجّع الألوان دايمًا بصيغة [[rgb()]].
+وبعد الرجوع، الخانة لسه فيها [[draft1]]: الصفحة نفسها رجعت زي ما هي. يعني أي كود في أول الصفحة (زي «هات السلة من السيرفر») **مش هيتنفّذ تاني**، وعشان كده بنحدّث في [[pageshow]] لما [[persisted]] تبقى true.
 
-### مين يكسب؟
+ولما قفلت التاب (مش navigation) [[pagehide]] طلعت [[false]]: تاب اتقفل مفيش حاجة يرجعلها.
 
-ضفت للصفحة [[price-tag { background: pink; font-family: monospace; }]]:
-
-~~~text الناتج
-host bg with outer rule: rgb(255, 192, 203) | inner font-family (inherited): monospace
-~~~
-
-- قاعدة الصفحة على الـ host كسبت [[:host]]: الـ component بيدّي افتراضي، والصفحة تقدر تغيّره.
-- [[font-family]] بتتورث، فعدّت جوه الـ shadow عادي.
+> Chrome حط الصفحة في الـ bfcache هنا مع إن الـ beforeunload listener كان متسجّل. بس Firefox ممكن يرفض بسببه، وده سبب تاني إنك تسجّله وقت الحاجة بس.
 
 ---
 
 ## الخلاصة
 
-| من بره الـ component | بيعدّي جوه؟ |
-|---|---|
-| [[p { color: red }]] (selector عادي) | لأ، الـ selectors بتاعة الصفحة مبتوصلش للعناصر اللي جوه الـ shadow |
-| خصائص بتتورث ([[color]] و [[font-family]] على الـ host) | آه، بتنزل من الـ host لولاده زي أي عنصر |
-| [[--custom-property]] | آه، وده الطريق الرسمي عشان الصفحة تغيّر ألوان الـ component |
-| [[::part(name)]] | آه، للعناصر اللي عليها [[part]] |
-| [[document.querySelector]] | لأ، ادخل بـ [[el.shadowRoot]] |`,
-          lines: [
-            R`[[CSSStyleSheet]] جديد معمول بالـ JS (constructable stylesheet). بنعمله مرة واحدة برّه الـ class، فكل [[price-tag]] في الصفحة يستخدم نفس الـ object بدل ما كل واحد يعمل parse لنفس الـ CSS.`,
-            R`[[replaceSync]] بتحط الـ CSS ده جوه الـ stylesheet. السطر ده بيفتح template literal، فالـ CSS مكتوب على كذا سطر تحته.`,
-            R`[[:host]] = العنصر [[price-tag]] نفسه من جوه الـ shadow. الخلفية [[var(--tag-bg, #eee)]]: لو الصفحة عرّفت [[--tag-bg]] تاخده (الـ CSS variables بتعدّي جوه الـ shadow)، وإلا الرمادي الافتراضي. ده الطريق الرسمي للصفحة تغيّر اللون.`,
-            R`[[:host([sale])]]: لو العنصر نفسه عليه attribute [[sale]] (زي [[<price-tag sale>]]) الخلفية تبقى صفرا. كده الصفحة تغيّر الشكل بـ attribute من غير ما تلمس الـ CSS اللي جوه.`,
-            R`استايل للـ [[p]] اللي جوه الـ shadow بس. الـ [[p]] اللي في الصفحة مش هيتأثر، و CSS الصفحة (زي [[p { color: red; }]]) مش هيوصل للـ [[p]] ده. ده العزل اللي shadow DOM معمول عشانه.`,
-            R`نهاية الـ template literal بتاع الـ CSS وقفلة [[replaceSync]].`,
-            R`class العنصر، بيورث [[HTMLElement]] زي أي custom element.`,
-            R`الـ [[constructor]]: هنا بنعمل الـ shadow root مرة واحدة لكل عنصر.`,
-            R`[[super()]] لازم الأول قبل أي استخدام لـ [[this]].`,
-            R`[[attachShadow]] بتعمل شجرة DOM مستخبية جوه العنصر وبترجّعها. [[mode: "open"]] يعني الصفحة تقدر توصلها بـ [[el.shadowRoot]] (مفيد للتست والـ debugging)؛ مع [[closed]] بترجّع [[null]]. وبتتنادى مرة واحدة بس لكل عنصر، التانية بترمي error.`,
-            R`[[adoptedStyleSheets]]: ليستة الـ stylesheets اللي الـ shadow ده بيستخدمها. بنحط فيها الـ [[sheet]] المشترك، فالـ CSS يتطبّق جوه الـ shadow بس.`,
-            R`محتوى الـ shadow: [[p]] فاضي هنكتب فيه السعر. [[part="amount"]] بيفتح باب للصفحة تستايل العنصر ده بالذات بـ [[price-tag::part(amount)]]، وباقي الـ shadow يفضل مقفول.`,
-            R`نهاية الـ [[constructor]].`,
-            R`[[connectedCallback]]: لما العنصر يدخل الصفحة، ساعتها الـ attributes بتاعته موجودة ونقدر نقراها.`,
-            R`اكتب السعر جوه الـ [[p]] اللي في الـ shadow، من attribute [[amount]] أو 0. لازم [[this.shadowRoot.querySelector]] مش [[this.querySelector]]: التانية بتدوّر في أولاد العنصر العاديين (light DOM) ومش هتلاقي الـ [[p]].`,
-            R`نهاية [[connectedCallback]].`,
-            R`نهاية الـ class.`,
-            R`سجّل [[price-tag]] واربطه بالـ class، فأي [[<price-tag>]] في الصفحة يشتغل بالـ shadow والاستايل ده.`,
-          ],
-          sol: R`الناتج الحقيقي في Chrome 156:
-[[p]] الصفحة: [[rgb(255, 0, 0)]] (أحمر). [[p]] اللي جوه: [[rgb(0, 128, 0)]] (أخضر) و [[font-size: 20px]] من [[::part]].
-خلفية الأول [[rgb(219, 234, 254)]] (من [[--tag-bg]])، والتاني [[rgb(253, 230, 138)]] (من [[:host([sale])]]).
-[[document.querySelectorAll("p").length]] = [[1]]: الـ document مش شايف اللي جوه الـ shadow.`
-        },
-        {
-          cmd: "slots",
-          title: "slots: المحتوى اللي جوه الـ tag يظهر في مكان تحدده",
-          desc: R`[[<slot>]] جوه الـ shadow DOM مكان فاضي بيتملي بالأولاد اللي اليوزر كتبهم جوه الـ tag. [[<slot name="title">]] بيتملي بالعنصر اللي عليه [[slot="title"]]، و [[<slot>]] من غير اسم بياخد الباقي. والمحتوى اللي جوه [[<slot>]] نفسه بيظهر لو مفيش حاجة اتحطت (fallback).
-
-العناصر دي بتفضل في الـ light DOM (بتاعة الصفحة)، فـ CSS الصفحة بيأثر عليها، والـ component بيستايلها بـ [[::slotted()]].`,
-          example: R`class AppCard extends HTMLElement {
-  constructor() {
-    super();
-    this.attachShadow({ mode: "open" }).innerHTML = $__bt
-      <style>
-        article { border: 1px solid #ccc; border-radius: 8px; padding: 12px; }
-        ::slotted(h3) { margin: 0 0 8px; color: navy; }
-        footer { color: gray; font-size: 12px; }
-      </style>
-      <article>
-        <slot name="title"><h3>No title</h3></slot>
-        <slot></slot>
-        <footer><slot name="footer">default footer</slot></footer>
-      </article>$__bt;
-    this.shadowRoot.querySelector("slot:not([name])").addEventListener("slotchange", (e) => {
-      console.log("slotchange: body has", e.target.assignedElements().length, "element(s)");
-    });
-  }
-}
-customElements.define("app-card", AppCard);`,
-          try: R`احفظ المثال [[app-card.js]] واعمل كارتين: الأول فيه [[<h3 slot="title">Order #42</h3>]] و [[<p>]] و [[<button>]]، والتاني فيه [[<p>]] بس. إيه اللي ظهر في التاني مكان العنوان والفوتر؟ وبعدين ضيف للتاني [[<span slot="footer">paid</span>]] من الـ Console، وضيف [[<p>]] جديد للأول: إمتى [[slotchange]] بيتنادى؟`,
-          practice: [
-            { lvl: 'سريع', t: R`اتوقع: [[<app-card>]] جواه [[<h3 slot="title">]] و [[<p>]] كل واحد في سطر لوحده. الـ slot اللي من غير اسم: [[assignedNodes().length]] كام و [[assignedElements().length]] كام؟ وبعدين شغّل.`, done: R`[[assignedElements()]] بيرجّع 1 (الـ [[p]] بس)، و [[assignedNodes()]] بيرجّع أكتر (الـ text nodes بتاعة المسافات والسطور الجديدة بتتحسب، في الشكل ده 4)، والـ [[h3]] مش منهم لأنه راح للـ slot اللي اسمه [[title]].` },
-            { lvl: 'تطبيق', t: R`ابني [[<info-alert type="warning">]]: slot اسمه [[icon]] فيه fallback «⚠» (و «ℹ» لو [[type="info"]])، و slot عادي للرسالة، وزرار إغلاق جوه الـ shadow بيشيل العنصر ويبعت [[close]] event.`, done: R`alert من غير أيقونة بيظهر الـ fallback الصح حسب [[type]]، وأيقونة [[<span slot="icon">]] بتاعتك بتظهر مكانها، والإغلاق بيشيل العنصر والـ listener على العنصر بيستقبل [[close]]، والـ CSS بتاع الصفحة بيلوّن الرسالة (لأنها لسه في الـ light DOM).` },
-            { lvl: 'تحدي', t: R`ابني footer بيختفي لوحده: شيل الـ fallback من slot الـ [[footer]] في [[AppCard]]، وفي [[slotchange]] حط [[hidden]] على الـ [[<footer>]] لو [[assignedNodes({ flatten: true }).length]] بصفر. وجرّب تضيف وتشيل [[<span slot="footer">]] من Console.`, done: R`كارت من غير footer مفيهوش الخط الرمادي ولا المسافة بتاعته، وإضافة [[<span slot="footer">paid</span>]] بتظهره على طول، وشيلها بيخفيه تاني، و [[slotchange]] بيتنادى مع كل إضافة أو شيل للـ slot ده بس مش لما تغيّر نص جوه الـ span.` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`component زي كارت أو dialog أو layout محتاج ياخد محتوى من اللي بيستخدمه (عنوان، نص، أزرار) ويحطه في أماكن معينة جوه التصميم بتاعه. ده نفس فكرة [[children]] في React و [[<slot>]] في Vue (Vue أخدت الاسم والفكرة من هنا).`,
-            how: R`الأولاد اللي اليوزر كتبهم جوه [[<app-card>]] مش بيتنقلوا جوه الـ shadow: بيفضلوا أولاد العنصر في الـ light DOM، والمتصفح بس بيعرضهم (render) مكان الـ [[<slot>]] المناسب. عشان كده [[h3.parentNode === card]] و CSS الصفحة شغال عليهم.
-
-كل عنصر عليه [[slot="x"]] بيروح لـ [[<slot name="x">]]. الباقي (من غير [[slot]]) بيروح للـ slot اللي من غير اسم، ولو مفيش، مش بيظهر. لو slot ماجلوش حاجة، المحتوى اللي جواه هو اللي بيظهر (fallback).
-
-[[slot.assignedElements()]]: العناصر اللي اتحطت فيه. و [[slotchange]] event بيتنادى على الـ slot لما الليستة دي تتغير (وأول مرة كمان). و [[::slotted(h3)]]: من جوه الـ shadow، استايل للـ [[h3]] اللي اتحط في slot (العنصر نفسه بس، مش أولاده).`,
-            when: R`أي component بيغلّف محتوى: cards، و modals، و tabs، و layouts. ولو المحتوى داتا (array of items) مش HTML، مرّرها property (درس [[attributes و properties]]).`,
-            mistakes: R`تنسى [[slot="title"]] على العنصر فيروح للـ slot الافتراضي. وتحاول تستايل أولاد العنصر اللي في الـ slot بـ [[::slotted(div p)]]: مش شغال، [[::slotted]] بيمسك العنصر اللي في الـ slot مباشرة بس. وتدوّر على الـ [[h3]] في [[shadowRoot.querySelector]]: هو في الـ light DOM.`
-          },
-          teach: R`## الصفحة
-
-اتجرّب في Chrome 156 headless.
-
-~~~text wc3.html
-<app-card id="c1">
-  <h3 slot="title">Order #42</h3>
-  <p>3 items, 250 EGP</p>
-  <button>Pay</button>
-</app-card>
-<app-card id="c2"><p>no title, no footer</p></app-card>
-~~~
-
----
-
-## ١. الـ template جوه الـ shadow
-
-- [[this.attachShadow({ mode: "open" }).innerHTML = ...]]: [[attachShadow]] بيرجّع الـ shadow root، فبنكتب فيه على طول.
-- [[<slot name="title"><h3>No title</h3></slot>]]: مكان للعنوان، ولو مفيش: [[No title]].
-- [[<slot></slot>]]: الـ slot الافتراضي: أي ابن من غير [[slot=]].
-- [[<slot name="footer">default footer</slot>]]: مكان للفوتر، وافتراضيًا [[default footer]].
-- [[::slotted(h3)]]: استايل للـ [[h3]] اللي اتحط في أي slot.
-
----
-
-## ٢. مين راح فين
-
-~~~text الناتج
-c1 -> title: H3 | (default): P,BUTTON | footer: fallback
-c2 -> title: fallback | (default): P | footer: fallback
-h3 color: rgb(0, 0, 128) | still in light DOM: true
-~~~
-
-| | [[title]] | الافتراضي | [[footer]] |
-|---|---|---|---|
-| [[c1]] | الـ [[h3]] | [[p]] و [[button]] | [[default footer]] |
-| [[c2]] | [[No title]] | [[p]] | [[default footer]] |
-
-- [[assignedElements()]] رجّع العناصر اللي في كل slot، و [[fallback]] (كلمة من سكربت الاختبار) يعني ليستة فاضية فالمحتوى الافتراضي ظهر.
-- [[rgb(0, 0, 128)]] = [[navy]]: [[::slotted(h3)]] اشتغل.
-- [[still in light DOM: true]]: [[h3.parentNode]] لسه هو [[c1]] نفسه. اتعرض جوه، بس مكانه في الشجرة متغيرش.
-
----
-
-## ٣. [[slotchange]]
-
-~~~text الناتج (Console)
-slotchange: body has 2 element(s)
-slotchange: body has 1 element(s)
-slotchange: body has 3 element(s)
-~~~
-
-| السطر | ليه |
-|---|---|
-| 2 | أول ما [[c1]] اتعمل: [[p]] و [[button]] |
-| 1 | [[c2]]: [[p]] |
-| 3 | ضفت [[<p>more</p>]] لـ [[c1]] بـ [[append]] |
-
-ولما ضفت [[<span slot="footer">paid</span>]] لـ [[c2]]: الفوتر بقى [[SPAN]] (بدل [[default footer]])، بس مفيش سطر [[slotchange]]، لأن الـ listener على الـ slot الافتراضي بس:
-
-~~~text الناتج
-c2 after append -> title: fallback | (default): P | footer: SPAN
-~~~
-
-- [[querySelector("slot:not([name])")]]: الـ slot اللي ملوش [[name]].
-- [[e.target]]: الـ slot نفسه. [[assignedElements()]]: العناصر (مش النصوص) اللي فيه.
-
----
-
-## الخلاصة
-
-| الحاجة | معناها |
-|---|---|
-| [[<slot>]] | الأولاد اللي من غير [[slot=]] |
-| [[<slot name="x">]] + [[slot="x"]] | عنصر في مكان معين |
-| محتوى جوه [[<slot>]] | fallback لو مفيش حاجة |
-| [[::slotted(sel)]] | استايل للعنصر اللي في الـ slot (مش أولاده) |
-| [[slotchange]] و [[assignedElements()]] | اعرف إيه اللي اتحط |
-
-العناصر في الـ slots بتفضل في الـ light DOM: CSS الصفحة شغال عليها، و [[document.querySelector]] بيلاقيها.`,
-          lines: [
-            R`class الكارت، بيورث [[HTMLElement]]. فكرته: هيكل ثابت (إطار وعنوان وفوتر) والصفحة هي اللي تحط المحتوى جواه.`,
-            R`الـ [[constructor]]: هنعمل فيه الـ shadow والـ template مرة واحدة.`,
-            R`[[super()]] بينادي constructor بتاع [[HTMLElement]]، ولازم يبقى الأول قبل أي [[this]].`,
-            R`[[attachShadow]] بترجّع الـ shadow root، فبنكتب [[innerHTML]] عليه على طول في نفس السطر. والـ template literal بيبدأ هنا ويكمّل لحد [[</article>]].`,
-            R`[[<style>]] جوه الـ shadow: الاستايل ده بيطبّق على عناصر الـ shadow بس، ومش بيطلع للصفحة.`,
-            R`شكل الكارت: إطار رمادي وحواف مدوّرة ومسافة جوه. الـ [[article]] ده جوه الـ shadow، فأي [[article]] في الصفحة مش هيتأثر.`,
-            R`[[::slotted(h3)]]: استايل لأي [[h3]] الصفحة حطته في slot. العناصر دي فاضلة في الـ light DOM، فده الطريق من جوه الـ shadow تستايلها. بيمسك العنصر المحطوط نفسه بس، مش أولاده.`,
-            R`استايل الـ [[footer]] اللي جوه الـ shadow: رمادي وخط صغير.`,
-            R`نهاية الـ [[<style>]]، وبعده محتوى الكارت نفسه.`,
-            R`[[<article>]]: الإطار اللي فيه الأماكن التلاتة.`,
-            R`slot اسمه [[title]]: أي عنصر في الصفحة عليه [[slot="title"]] يتعرض هنا. والـ [[h3]] اللي جواه fallback بيظهر بس لو الصفحة محطتش عنوان.`,
-            R`الـ slot الافتراضي (من غير [[name]]): بياخد كل أولاد العنصر اللي مش عليهم [[slot]]، زي [[p]] و [[button]]. لو مفيش slot زي ده، الأولاد دول مش هيظهروا خالص.`,
-            R`slot اسمه [[footer]] جوه [[<footer>]]، فاللي الصفحة تحطه فيه ياخد استايل الفوتر. ولو محطتش حاجة، يظهر نص default footer.`,
-            R`نهاية [[<article>]] والـ template literal، فالـ [[innerHTML]] اتكتب.`,
-            R`هات الـ slot اللي ملوش [[name]] (الافتراضي) واسمع لـ [[slotchange]]: بيتنادى لما العناصر المتحطوطة فيه تتغير (ولد اتضاف أو اتشال)، وأول مرة يتحطوا كمان.`,
-            R`[[e.target]] هو الـ slot نفسه، و [[assignedElements()]] بترجّع العناصر اللي اتحطت فيه (من غير النصوص والمسافات). بنطبع عددهم عشان نشوف التغيير.`,
-            R`نهاية الـ [[slotchange]] listener.`,
-            R`نهاية الـ [[constructor]].`,
-            R`نهاية الـ class.`,
-            R`سجّل [[app-card]]، فأي [[<app-card>]] في الصفحة ياخد الهيكل ده وأولاده يتوزعوا على الـ slots.`,
-          ],
-          sol: R`في التاني ظهر [[No title]] و [[default footer]] (الـ fallback). وبعد ما ضفت [[<span slot="footer">paid</span>]] الفوتر بقى [[paid]].
-
-[[slotchange]] اتنادى ٣ مرات: [[2]] (أول [[c1]])، و [[1]] (أول [[c2]])، و [[3]] (لما ضفت [[p]] لـ [[c1]]). إضافة الـ [[span]] لـ [[c2]] ماطلّعتش سطر لأن الـ listener على الـ slot الافتراضي بس، مش [[footer]].`
-        },
-        {
-          cmd: "attributes و properties",
-          title: "attributes ولا properties، والـ events من الـ component",
-          desc: R`الـ attribute نص في الـ HTML ([[value="3"]])، والـ property قيمة JavaScript على العنصر ([[el.value = 3]]، أو array، أو object). الـ component الكويس بيعمل getter/setter يربط الاتنين للقيم البسيطة (reflect)، والـ boolean بيبقى «الـ attribute موجود ولا لأ» مش قيمته، والداتا المعقدة property بس.
-
-ولما حاجة تحصل جوه بيبعت [[CustomEvent]] بـ [[detail]]، و [[bubbles: true]] عشان يطلع لفوق، و [[composed: true]] عشان يعدّي حدود الـ shadow DOM.`,
-          example: R`class StarRating extends HTMLElement {
-  static observedAttributes = ["value", "disabled"];
-  #labels = ["bad", "ok", "good", "great", "perfect"];
-  constructor() {
-    super();
-    this.attachShadow({ mode: "open" });
-    this.shadowRoot.addEventListener("click", (e) => {
-      const btn = e.target.closest("button");
-      if (!btn || this.disabled) return;
-      this.value = Number(btn.dataset.v);
-      this.dispatchEvent(new CustomEvent("rating-change", {
-        detail: { value: this.value },
-        bubbles: true,
-        composed: true,
-      }));
-    });
-  }
-  get value() { return Number(this.getAttribute("value") ?? 0); }
-  set value(v) { this.setAttribute("value", String(v)); }
-  get disabled() { return this.hasAttribute("disabled"); }
-  set disabled(on) { this.toggleAttribute("disabled", Boolean(on)); }
-  get labels() { return this.#labels; }
-  set labels(list) { this.#labels = list; this.render(); }
-  attributeChangedCallback() { this.render(); }
-  connectedCallback() { this.render(); }
-  render() {
-    this.shadowRoot.innerHTML = this.#labels.map((label, i) =>
-      $__bt<button data-v="$__{i + 1}" title="$__{label}" $__{this.disabled ? "disabled" : ""}>$__{i < this.value ? "★" : "☆"}</button>$__bt
-    ).join("");
-  }
-}
-customElements.define("star-rating", StarRating);`,
-          try: R`احفظ المثال [[star-rating.js]] وحط [[<div id="box"><star-rating value="3"></star-rating></div>]]. من الـ Console: اقرا [[r.value]] ونوعه، واعمل [[r.value = 5]] وبص على الـ HTML، و [[r.disabled = true]]، و [[r.setAttribute("disabled", "false")]] واقرا [[r.disabled]]، و [[r.setAttribute("labels", "a,b,c")]] مقابل [[r.labels = ["no", "maybe", "yes"]]]. وحط listener على [[#box]] واضغط نجمة.`,
-          practice: [
-            { lvl: 'سريع', t: R`ابني property [[size]] على [[star-rating]] بتعمل reflect لـ attribute [[size]] ([["s"]] أو [["m"]] أو [["l"]]) والـ default [["m"]]، والـ CSS جوه بـ [[:host([size="l"])]].`, done: R`[[r.size = "l"]] بيحط [[size="l"]] في الـ HTML والنجوم بتكبر، و [[r.removeAttribute("size")]] بيخلّي [[r.size]] يرجّع [["m"]]، و [[r.size = "xl"]] بيتجاهل القيمة وبيكتب warning وبيفضل على القديمة.` },
-            { lvl: 'تطبيق', t: R`اكتب اختبار بـ [[node:test]] و jsdom (custom elements شغالة فيه) لـ [[value]]: لازم يبقى رقم صحيح من 0 لعدد الـ labels، وأي حاجة برا كده تتقص للحد، و [[NaN]] تتجاهل. التستات الأول وبعدين التصليح في الـ setter.`, done: R`التستات بتقع على كود الدرس الأصلي، وبعد التصليح [[r.value = 9]] بيبقى 5 و [[r.value = -1]] بيبقى 0 و [[r.value = 2.7]] بيبقى 3 و [[r.value = "abc"]] مبيغيّرش القيمة، و [[node --test]] بيعدّي، والـ attribute في الـ HTML بيطابق الـ property في كل حالة.` },
-            { lvl: 'تحدي', t: R`ابني star-rating يتبعت مع الفورم: [[static formAssociated = true]] و [[this.#internals = this.attachInternals()]] و [[setFormValue(String(value))]] مع كل تغيير، و [[required]] بيعمل [[setValidity({ valueMissing: true }, "اختار تقييم")]] لما القيمة صفر. (jsdom مبيدعمش [[setFormValue]]، فجرّبه في المتصفح).`, done: R`[[new FormData(form).get("rating")]] بيرجّع [["4"]] بعد ما تختار 4 نجوم، والفورم اللي فيه [[required]] من غير تقييم مبيتبعتش وبيظهر «اختار تقييم»، و [[form.reset()]] بيرجّع النجوم صفر لو عملت [[formResetCallback]]، والـ rating بيظهر في [[form.elements]].` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`الـ HTML مبيعرفش غير نصوص: [[<star-rating value="3">]] قيمته [["3"]] مش 3. والـ frameworks (React و Vue) بتمرّر arrays و objects. لو الـ component فاهم attributes بس، مستحيل تديله ليستة. ولو فاهم properties بس، مينفعش يتكتب في HTML عادي. والـ events هي الطريقة الوحيدة يقول بيها للصفحة «اليوزر عمل حاجة».`,
-            how: R`[[get value()]] / [[set value(v)]]: لما حد يكتب [[el.value = 5]] الـ setter بيكتبها attribute، و [[attributeChangedCallback]] بيعيد الرسم. فالمصدر واحد (الـ attribute) والاتنين متطابقين: ده اسمه reflect.
-
-Boolean attributes في HTML: الوجود هو المعنى. [[disabled="false"]] لسه **disabled**، لأن [[hasAttribute]] بيسأل «موجود؟» مش «قيمته إيه؟». و [[toggleAttribute(name, force)]] بيحطه أو يشيله.
-
-[[#labels]]: الـ [[#]] = private field، محدش يوصله من بره الـ class. و [[labels]] property بس من غير attribute: array مينفعش يبقى attribute من غير ما تعمل parse لنص.
-
-الـ events: [[dispatchEvent(new CustomEvent(name, { detail, bubbles, composed }))]]. [[bubbles]] = يطلع للأب وأبوه. [[composed]] = يعدّي من shadow root للـ document. لو بتعمل dispatch على [[this]] (الـ host) و الـ host نفسه في الـ document، [[bubbles]] كفاية. لكن لو الـ component نفسه جوه shadow root تاني (component جوه component)، من غير [[composed]] الـ event بيقف عند الـ shadow root ده. وعشان كده بنحطها دايمًا.`,
-            when: R`أي component هيتستخدم من framework أو بداتا مش نص. اعمل reflect للقيم البسيطة (string و number و boolean)، و property بس للـ arrays والـ objects، وevent لكل تغيير بيعمله اليوزر.`,
-            mistakes: R`[[disabled="false"]] وتستغرب إنه disabled. وتقرا [[getAttribute("value")]] وتقارنه برقم: نص. وتعمل reflect لـ object فيبقى [["[object Object]"]] في الـ HTML. وتنسى [[composed: true]] والـ component هيتحط جوه component تاني. واسم event بحروف كبيرة ([[ratingChange]]): بعض الـ frameworks بتحوّل الأسامي لحروف صغيرة، فخليه [[rating-change]].`
-          },
-          teach: R`## الصفحة
-
-اتجرّب في Chrome 156 headless، والكود في الـ Console بتاع الصفحة.
-
-~~~text wc4.html
-<div id="box"><star-rating value="3"></star-rating></div>
-<script type="module" src="star-rating.js"></script>
-~~~
-
----
-
-## ١. [[value]]: attribute ↔ property
-
-~~~text الناتج
-attr "3" -> property: 3 (number) | ★★★☆☆
-r.value = 5 -> attribute: "5" | ★★★★★
-~~~
-
-- [[get value()]]: [[getAttribute("value")]] نص أو [[null]]، و [[?? 0]] لو مش موجود، و [[Number()]] يحوّله. فـ [[r.value]] رقم.
-- [[set value(v)]]: [[setAttribute("value", String(v))]]: الـ property بتتكتب attribute.
-- الـ attribute اتغير ← [[attributeChangedCallback]] ← [[render()]]: النجوم اتحدّثت لوحدها.
-
----
-
-## ٢. [[disabled]]: boolean attribute
-
-~~~text الناتج
-r.disabled = true -> outerHTML: <star-rating value="5" disabled=""></star-rating>
-setAttribute("disabled","false") -> r.disabled = true
-~~~
-
-- [[toggleAttribute("disabled", true)]] حط [[disabled=""]]: القيمة فاضية، المهم إنه موجود.
-- [[setAttribute("disabled", "false")]] لسه **true**: [[hasAttribute]] بيسأل عن الوجود. زي [[<button disabled="false">]] في HTML: الزرار disabled. عشان تلغيه: [[removeAttribute("disabled")]] أو [[r.disabled = false]].
-
----
-
-## ٣. [[labels]]: property بس
-
-~~~text الناتج
-setAttribute("labels","a,b,c") -> buttons: 5
-r.labels = [3 items] -> buttons: 3 | attribute labels: a,b,c
-~~~
-
-- الـ attribute [[labels]] ملوش أي معنى عند الـ component (مش في [[observedAttributes]] ومحدش بيقراه)، فالأزرار فضلت 5.
-- [[r.labels = [...]]]: الـ setter حط الـ array في [[#labels]] وعمل render: 3 أزرار.
-- والـ attribute القديم [[a,b,c]] فضل في الـ HTML زي ما هو ملوش لازمة.
-
----
-
-## ٤. الضغطة والـ event
-
-~~~text الناتج
-box got rating-change: {"value":2} | target: STAR-RATING | composedPath[0]: STAR-RATING
-document click target: STAR-RATING
-after click: value=2 | ★★☆
-~~~
-
-خطوات الـ click handler:
-
-1. [[e.target.closest("button")]]: أقرب [[button]] للمكان اللي اتضغط (أو هو نفسه). لو الضغطة بره الأزرار: [[null]].
-2. [[if (!btn || this.disabled) return]]: مفيش زرار أو الـ component disabled: متعملش حاجة.
-3. [[this.value = Number(btn.dataset.v)]]: [[dataset.v]] = قيمة [[data-v]] (نص). وده بيعدّي على الـ setter فبيتعمل reflect و render.
-4. [[dispatchEvent(new CustomEvent("rating-change", {...}))]]: [[detail]] الداتا اللي عايز تبعتها.
-
-- [[#box]] (الأب) استلم الـ event لأن [[bubbles: true]].
-- [[document click target: STAR-RATING]]: الـ click الأصلي حصل على [[button]] **جوه** الـ shadow، بس من بره الـ target بقى الـ host. ده اسمه retargeting: الصفحة مش بتشوف تفاصيل جوه الـ component.
-- النجوم 3 بس دلوقتي ([[★★☆]]) لأن [[labels]] بقت 3.
-
-### ليه [[composed: true]]؟
-
-حطيت [[<star-rating>]] جوه shadow root بتاع [[div]] تاني (component جوه component)، وبعت اتنين events من الـ star-rating:
-
-~~~text الناتج
-document got composed event, target=DIV
-shadow root got plain event
-~~~
-
-- [[composed: true]]: عدّى لحد الـ document، والـ target بقى [[DIV]] (الـ host الخارجي، retargeting تاني).
-- من غير [[composed]]: وقف عند الـ shadow root اللي فيه، والـ document ماشافهوش.
-
----
-
-## الخلاصة
-
-| النوع | الطريقة | مثال |
+| الحدث | على | إمتى تستخدمه |
 |---|---|---|
-| نص أو رقم | attribute ↔ property (reflect) | [[value]] |
-| boolean | الوجود: [[hasAttribute]] و [[toggleAttribute]] | [[disabled]] |
-| array أو object | property بس | [[labels]] |
-| حاجة حصلت | [[CustomEvent]] + [[detail]] + [[bubbles]] + [[composed]] | [[rating-change]] |`,
+| [[beforeunload]] | [[window]] | تحذير لو فيه تغييرات مش محفوظة، وشيله بعد الحفظ |
+| [[visibilitychange]] (hidden) | [[document]] | احفظ واعمل analytics، مع [[sendBeacon]] |
+| [[pagehide]] | [[window]] | لحظة الخروج نفسها (بدل [[unload]]) |
+| [[pageshow]] + [[persisted]] | [[window]] | رجع من الـ bfcache: حدّث الداتا |
+
+- [[removeEventListener]] محتاج نفس الدالة، فاديها اسم.
+- [[sendBeacon]] مبيرجّعش رد، والـ string بيروح [[text/plain]].
+- متستخدمش [[unload]].`,
           lines: [
-            R`class عنصر التقييم بالنجوم، بيورث [[HTMLElement]]. هيبيّن الفرق بين attributes (نص في الـ HTML) و properties (أي قيمة JS على الـ object).`,
-            R`بنتابع [[value]] و [[disabled]] بس: لو أي واحد فيهم اتغير (من الـ HTML أو [[setAttribute]] أو الـ setters اللي تحت) [[attributeChangedCallback]] تتنادى فنرسم تاني.`,
-            R`private field ([[#]]): أسامي النجوم، ومحدش من برّه الـ class يوصله مباشرة. ده property بس من غير attribute، لأن array مينفعش يتحط في attribute من غير ما يتحوّل لنص. الافتراضي 5 أسامي، يعني 5 نجوم.`,
-            R`الـ [[constructor]]: shadow root ومستمع واحد للضغط.`,
-            R`[[super()]] لازم الأول قبل [[this]].`,
-            R`اعمل shadow root مفتوح؛ الأزرار هتترسم جواه في [[render]].`,
-            R`مستمع واحد على الـ shadow root كله بدل listener على كل زرار (event delegation). ليه؟ [[render]] بيعمل الأزرار من جديد كل مرة، فأي listener على زرار بعينه كان هيضيع مع كل رسم.`,
-            R`[[closest("button")]]: الضغطة ممكن تبقى على حاجة جوه الزرار، فبنطلع لأقرب [[button]]. ولو الضغطة بره أي زرار بترجّع [[null]].`,
-            R`مفيش زرار، أو العنصر [[disabled]]: اخرج ومتغيرش حاجة. ([[this.disabled]] هنا بينادي الـ getter اللي تحت.)`,
-            R`[[dataset.v]] رقم النجمة من [[data-v]] بس كنص، فـ [[Number]] بيحوّله. والكتابة في [[this.value]] بتعدّي على الـ setter اللي بيكتب الـ attribute، وده بيشغّل [[attributeChangedCallback]] فيرسم.`,
-            R`بلّغ الصفحة إن اليوزر غيّر التقييم بـ [[CustomEvent]] اسمه [[rating-change]]. الاسم حروف صغيرة وشرطة لأن بعض الـ frameworks بتحوّل أسامي الـ events لحروف صغيرة.`,
-            R`[[detail]]: الداتا اللي بتتبعت مع الـ event. اللي بيسمع بيقراها من [[e.detail.value]].`,
-            R`[[bubbles: true]]: الـ event يطلع من العنصر لأبوه وجدّه، فتقدر تسمعله على أي أب (زي [[document]]). من غيرها لازم الـ listener يبقى على العنصر نفسه.`,
-            R`[[composed: true]]: الـ event يعدّي حدود الـ shadow root. ضروري لو العنصر ده نفسه اتحط جوه shadow DOM بتاع component تاني، وإلا الـ event يقف عنده.`,
-            R`نهاية الـ options وقفلة [[CustomEvent]] و [[dispatchEvent]].`,
-            R`نهاية الـ click listener.`,
-            R`نهاية الـ [[constructor]].`,
-            R`getter لـ [[value]]: لما حد يقرا [[el.value]] بنرجّع الـ attribute كرقم. [[Number]] لأن [[getAttribute]] دايمًا بترجّع نص، و [[?? 0]] لو مفيش attribute.`,
-            R`setter لـ [[value]]: [[el.value = 3]] بتكتب [[value="3"]] على العنصر. ده اسمه reflect: الـ property والـ attribute دايمًا متطابقين، وتغيير الـ attribute بيشغّل الرسم.`,
-            R`getter لـ [[disabled]]: boolean attribute، المعنى في وجوده مش قيمته. [[hasAttribute]] بترجّع [[true]] حتى لو مكتوب [[disabled="false"]].`,
-            R`setter لـ [[disabled]]: [[toggleAttribute(name, force)]] بتحط الـ attribute لو [[force]] بـ [[true]] وتشيله لو [[false]]. و [[Boolean(on)]] بتحوّل أي قيمة ([[0]] أو نص فاضي مثلًا) لـ true أو false صريحة.`,
-            R`getter لـ [[labels]]: بيرجّع الـ array الخاص. مفيش attribute ليها، فالطريق الوحيد تقراها أو تغيّرها هو الـ property.`,
-            R`setter لـ [[labels]]: بيحفظ الـ array الجديد ويرسم على طول، لأن [[labels]] مش attribute ومش في [[observedAttributes]]، فمحدش هينادي [[attributeChangedCallback]] لوحده.`,
-            R`[[value]] أو [[disabled]] اتغيروا (بأي طريقة): ارسم من جديد. مش محتاجين الـ arguments لأن الرسم بيقرا كل حاجة من الأول.`,
-            R`أول ما العنصر يدخل الصفحة ارسم. من غيره، عنصر ملوش attributes متابَعة مش هيترسم خالص، لأن [[attributeChangedCallback]] مش هتتنادى.`,
-            R`[[render]]: بيبني الأزرار من الـ state الحالي.`,
-            R`استبدل محتوى الـ shadow كله بزرار لكل اسم في [[#labels]]. [[map]] بتدّي الاسم ورقمه [[i]] (بيبدأ من 0).`,
-            R`كل زرار: [[data-v]] رقم النجمة ([[i + 1]] عشان يبدأ من 1)، و [[title]] الاسم اللي يظهر لما تقف عليه، و [[disabled]] لو العنصر disabled، والنجمة مليانة ★ لو رقمها أقل من أو يساوي القيمة وإلا فاضية ☆.`,
-            R`[[map]] بترجّع array نصوص، و [[join("")]] بتلزقهم نص واحد. من غيرها [[innerHTML]] كان هيحوّل الـ array لنص بفواصل، فتظهر [[,]] بين النجوم.`,
+            R`الفورم اللي اليوزر بيكتب فيه البوست، وده اللي مش عايزين كلامه يضيع.`,
+            R`دالة التحذير متعرّفة باسم (مش arrow جوه [[addEventListener]]) عشان [[removeEventListener]] محتاج **نفس** الدالة بالظبط علشان يشيلها.`,
+            R`في [[beforeunload]]، [[preventDefault]] بيطلب من المتصفح يسأل اليوزر «عايز تمشي فعلًا؟». النص اللي بيظهر بتاع المتصفح ومتقدرش تغيّره.`,
+            R`متصفحات قديمة كانت بتبص على [[returnValue]] مش [[preventDefault]] عشان تظهر التحذير، فبنحطه برضه عشان يشتغل عندهم كمان.`,
+            R`نهاية [[warn]].`,
+            R`أول ما اليوزر يكتب أي حاجة نفعّل التحذير، فصفحة فاضية متسألوش على الفاضي. [[input]] بيحصل مع كل حرف، بس إضافة نفس الدالة لنفس الحدث أكتر من مرة بتتجاهل، فمفيش تكرار.`,
+            R`لما الفورم يتبعت الكلام اتحفظ، فبنشيل التحذير عشان الصفحة تمشي من غير سؤال.`,
+            R`[[visibilitychange]] بيحصل لما التاب يتخفى أو يرجع يظهر: اليوزر غيّر التاب، أو صغّر المتصفح، أو قفل الموبايل. ده أضمن وقت تحفظ فيه، لأن الموبايل ممكن يقفل الصفحة وهي في الخلفية من غير أي حدث تاني.`,
+            R`يهمنا لحظة الاختفاء بس، فلو التاب رجع ظاهر نخرج.`,
+            R`[[new FormData(form)]] بيقرا كل خانات الفورم، و [[Object.fromEntries]] بيحوّلها لـ object عادي، و [[JSON.stringify]] بيحوّله لنص نبعته.`,
+            R`[[sendBeacon]] بيبعت POST صغير والمتصفح بيكمّله حتى لو الصفحة اتقفلت. مالوش رد تقراه، وبيرجّع [[true]] لو الطلب اتحط في الطابور بس. ولأن الـ body string، السيرفر هيستقبله [[text/plain]] فلازم يعمل parse للـ JSON بنفسه.`,
+            R`نهاية الـ listener بتاع [[visibilitychange]].`,
+            R`[[pageshow]] بيحصل كل ما الصفحة تظهر: أول تحميل، أو رجوع ليها بزرار back.`,
+            R`[[e.persisted]] بـ [[true]] معناها الصفحة رجعت من الـ bfcache (المتصفح كان حافظها في الذاكرة زي ما هي)، فالكود مش بيشتغل من الأول والداتا اللي فيها ممكن تكون قديمة. ده المكان اللي تحدّث فيه السلة والإشعارات.`,
+            R`نهاية الـ listener بتاع [[pageshow]].`,
+            R`[[pagehide]] بيحصل لما اليوزر يسيب الصفحة، و [[e.persisted]] بتقول هتتحفظ في الـ bfcache ولا لأ. استخدمه بدل [[unload]]: وجود listener على [[unload]] بيمنع الصفحة من الـ bfcache في متصفحات كتير.`,
+          ],
+          sol: R`قبل الـ submit: قفل التاب بيطلّع رسالة المتصفح «Leave site?» (أو بالعربي حسب لغة المتصفح)، ونصها ثابت. بعد الـ submit مفيش رسالة لأن الـ listener اتشال. لو مطلعتش خالص، غالبًا مكتبتش حاجة بجد (المتصفح بيطلب تفاعل).
+
+الـ back: Console فيها [[pagehide، هتتحفظ في bfcache؟ true]] وبعد الرجوع [[رجعت من الـ bfcache...]]. ولاحظ إن الـ input لسه فيه اللي كتبته والـ scroll مكانه: ده الـ bfcache.
+
+لو الـ test قال «not eligible» الأسباب الشائعة: listener على [[unload]] (من مكتبة أو analytics)، أو الصفحة مفتوحة من DevTools بطريقة معيّنة، أو WebSocket مفتوح. وفي الحالة دي back بتعمل تحميل كامل و [[persisted]] بـ false.`
+        },
+        {
+          cmd: "pushState و popstate",
+          title: "تغيّر الـ URL من غير تحميل صفحة جديدة إزاي؟ (راوتر صغير)",
+          desc: R`[[history.pushState(state, "", "/about")]] بيغيّر الـ URL في الشريط ويضيف خطوة في الـ history من غير ما يطلب الصفحة من السيرفر. و [[replaceState]] نفس الكلام بس بيستبدل الخطوة الحالية (للفلاتر والبحث). ومفيش حاجة بتتعرض لوحدها: انت اللي بترسم المحتوى المناسب.
+
+و [[popstate]] بيتنادى لما اليوزر يضغط back أو forward، فتقرا [[location.pathname]] وترسم. ده كل الـ SPA router (React Router و Next.js client navigation) من تحت: اعترض ضغطة اللينك، و pushState، وارسم، واسمع لـ popstate.`,
+          example: R`const content = document.querySelector("#content");
+const pages = { "/": "الرئيسية", "/about": "عننا", "/contact": "كلمنا" };
+function render(path) {
+  content.textContent = pages[path] ?? "404: الصفحة مش موجودة";
+  document.title = pages[path] ?? "مش موجود";
+}
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("a[data-link]");
+  if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
+  e.preventDefault();
+  const path = new URL(a.href).pathname;
+  if (path === location.pathname) return;
+  history.pushState({ path }, "", path);
+  render(path);
+});
+window.addEventListener("popstate", () => render(location.pathname));
+render(location.pathname);`,
+          try: R`اعمل [[index.html]] فيه ٣ لينكات [[<a href="/about" data-link>]] و [[<main id="content">]]، وشغّله بـ [[npx serve -s]] (الـ [[-s]] بيرجّع index.html لأي path). اتنقل، واضغط back و forward، واعمل refresh على [[/about]]. وبعدين شغّله بـ [[npx serve]] من غير [[-s]] واعمل refresh على [[/about]]: إيه اللي حصل؟ وجرّب Ctrl+Click على لينك.`,
+          practice: [
+            { lvl: 'سريع', t: R`ابني tabs component (٣ تابات «الوصف» و «المواصفات» و «التقييمات»): الضغط على تاب بيعمل [[pushState]] لـ [[?tab=specs]]، و [[popstate]] بيرجّع التاب الصح، وفتح الصفحة بيقرا [[?tab=]] من [[location.search]].`, done: R`تضغط تابين ورا بعض وتعمل back مرتين: بترجع للتابين اللي قبل بالترتيب، و refresh على [[?tab=reviews]] بيفتح التقييمات، و [[?tab=xyz]] بيفتح التاب الأول من غير error.` },
+            { lvl: 'تطبيق', t: R`صلّح الباج: راوتر الدرس بيمسك كل [[a[data-link]]] حتى لو اللينك لموقع تاني، أو عليه [[target="_blank"]] أو [[download]]. حط ٣ لينكات زي دول جنب اللينكات العادية وصلّح الشرط عشان يسيبهم للمتصفح.`, done: R`لينك لـ [[https://example.com]] بيفتح الموقع ده فعلًا، و [[target="_blank"]] بيفتح تاب جديد، و [[download]] بينزّل الملف، واللينكات الداخلية لسه بتتنقل من غير reload، والشرط فيه مقارنة [[a.origin !== location.origin]].` },
+            { lvl: 'تحدي', t: R`مسألة: اكتب [[matchRoute(path, routes)]] بترجّع [[{ route, params }]] أو [[null]]، لـ routes زي [[/users/:id]] و [[/users/:id/posts]]، بـ [[URLPattern]] أو regex، واكتب لها تستات بـ [[node:test]]، وبعدين وصّلها بالراوتر.`, done: R`[[matchRoute("/users/42", routes).params.id]] بيرجّع [["42"]]، و [[/users/42/posts]] بيطابق الـ route التاني، و [[/users]] لوحدها و [[/users/42/x]] بيرجّعوا [[null]] (يعني 404)، و [[node --test]] بيعدّي، و back و forward و refresh (مع [[npx serve -s]]) بيفتحوا الصفحة الصح.` },
+          ],
+          flag: "script",
+          deep: {
+            why: "تحميل الصفحة كلها مع كل ضغطة بيضيّع الـ state (فيديو شغال، فورم نص مكتوب) وبيحمّل الـ JS والـ CSS تاني. الـ SPA بيغيّر الجزء اللي اتغير بس. بس اليوزر لسه متوقع إن back يشتغل، وإن اللينك يتنسخ ويتبعت، وإن refresh يرجّعه لنفس المكان، و pushState هو اللي بيحافظ على ده.",
+            how: R`[[pushState]] بيغيّر [[location]] ويضيف entry في الـ history stack ومبيطلقش أي event. [[popstate]] بيتنادى لما الـ entry الحالي يتغير بـ back/forward (أو [[history.back()]])، مش لما تعمل pushState بنفسك. عشان كده بتنادي [[render]] بإيدك بعد pushState.
+
+الـ [[state]] (أول argument) object بيتحفظ مع الـ entry وبيرجعلك في [[e.state]] وقت popstate، مفيد لحاجات زي مكان الـ scroll. لازم يبقى قابل للنسخ (structured clone): مفيش دوال ولا عناصر DOM.
+
+شرط اللينك: [[e.button !== 0]] (مش الزرار الشمال) وأزرار Ctrl/Cmd/Shift معناها «افتح في تاب جديد»، فسيبها للمتصفح. و [[data-link]] عشان اللينكات الخارجية أو التحميلات تفضل عادية.
+
+السيرفر: لما اليوزر يعمل refresh على [[/about]]، المتصفح بيطلب [[/about]] من السيرفر فعلًا. لو السيرفر مش عارفه هيرد 404. لازم أي path مش ملف يرجّع [[index.html]] (درس «SPA» في تاب Nginx: [[try_files $uri /index.html]]).
+
+وفيه Navigation API الأحدث ([[navigation.addEventListener("navigate", ...)]]) بيعترض كل التنقلات في مكان واحد بدل click و popstate. دعمه اتسع في 2025/2026، بس اتأكد من caniuse قبل ما تعتمد عليه من غير fallback.`,
+            when: R`لما تبني SPA صغير من غير framework، أو تحط الفلاتر والتابات في الـ URL ([[replaceState]]). وفي React/Next استخدم الراوتر بتاعهم، بس افهم إن ده اللي تحته.`,
+            mistakes: R`تستنى popstate بعد pushState. ومتعملش render في الأول ([[render(location.pathname)]]) فالـ refresh يعرض صفحة فاضية. والسيرفر مش راجع index.html. وتعترض Ctrl+Click. وتنسى [[document.title]] والـ focus (قارئات الشاشة مش هتعرف إن الصفحة اتغيرت: حرّك الـ focus للعنوان الجديد). و pushState لكل حرف في البحث فالـ back يبقى ١٠٠ خطوة (استخدم replaceState).`
+          },
+          teach: R`## الفكرة في سطر
+
+راوتر SPA كامل في 17 سطر: لما اليوزر يدوس لينك، بنمنع التحميل، ونغيّر الـ URL بإيدنا، ونرسم المحتوى المناسب. ولما يدوس back أو forward، نرسم حسب الـ URL الجديد.
+
+جرّبته في Chrome headless (عن طريق playwright-core) على [[index.html]] فيه ٤ لينكات عليها [[data-link]] ([[/]] و [[/about]] و [[/contact]] و [[/nope]]) و [[<main id="content">]]. بدل [[npx serve -s]] استخدمت سيرفر Node صغير على localhost بنفس السلوك: مرة بيرجّع [[index.html]] لأي path (زي [[-s]])، ومرة بيرجّعه لـ [[/]] بس و 404 لأي حاجة تانية (زي [[serve]] من غير [[-s]]).
+
+---
+
+## ١. الصفحات والرسم
+
+~~~text app.js
+const content = document.querySelector("#content");
+const pages = { "/": "الرئيسية", "/about": "عننا", "/contact": "كلمنا" };
+function render(path) {
+  content.textContent = pages[path] ?? "404: الصفحة مش موجودة";
+  document.title = pages[path] ?? "مش موجود";
+}
+~~~
+
+- [[pages]]: object كل key فيه path وكل value المحتوى بتاعه. في مشروع حقيقي الـ value بتبقى دالة بترسم component.
+- [[pages[path]]]: الأقواس المربعة بتجيب الخاصية اللي اسمها في متغير. [[pages["/about"]]] = [["عننا"]]، و [[pages["/nope"]]] = [[undefined]].
+- [[?? "404: ..."]]: لو [[undefined]] خد النص ده.
+- [[document.title]]: العنوان اللي في التاب. لازم نغيّره بإيدنا، المتصفح مش هيعمل كده لوحده.
+
+---
+
+## ٢. اعتراض الضغط على اللينكات
+
+~~~text app.js
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("a[data-link]");
+  if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
+  e.preventDefault();
+  const path = new URL(a.href).pathname;
+  if (path === location.pathname) return;
+  history.pushState({ path }, "", path);
+  render(path);
+});
+~~~
+
+### listener واحد على الـ document
+
+بدل listener على كل لينك، واحد على [[document]] بيمسك أي ضغطة في الصفحة (event delegation، درس في نفس التاب). كده لو ضفت لينكات بعدين هتشتغل لوحدها.
+
+### [[e.target.closest("a[data-link]")]]
+
+- [[e.target]]: العنصر اللي اتضغط عليه بالظبط (ممكن [[<span>]] أو أيقونة جوه اللينك).
+- [[closest(selector)]]: اطلع من العنصر ده لفوق (هو نفسه، وأبوه، وجدّه...) ورجّع أول واحد بيطابق الـ selector، أو [[null]].
+- [[a[data-link]]]: لينك [[<a>]] عليه attribute اسمه [[data-link]]. اللينكات من غيره (موقع خارجي، ملف للتحميل) بتفضل عادية.
+
+### الشرط الطويل
+
+[[return]] (سيب المتصفح يتصرف عادي) لو أي واحدة من دول صح، و [[||]] يعني «أو»:
+
+| الشرط | معناه |
+|---|---|
+| [[!a]] | مش لينك من بتوعنا |
+| [[e.button !== 0]] | مش الزرار الشمال (0 الشمال، 1 العجلة، 2 اليمين) |
+| [[e.metaKey]] | Cmd على الماك ماسك (تاب جديد) |
+| [[e.ctrlKey]] | Ctrl ماسك (تاب جديد) |
+| [[e.shiftKey]] | Shift ماسك (شباك جديد) |
+
+### الباقي
+
+1. [[e.preventDefault()]]: امنع المتصفح يحمّل الصفحة من السيرفر.
+2. [[new URL(a.href).pathname]]: [[a.href]] بيرجّع الـ URL **كامل** ([[http://localhost:PORT/about]]) حتى لو مكتوب في الـ HTML [[/about]]. [[new URL]] بيفكّه، و [[.pathname]] الجزء بتاع المسار بس: [["/about"]].
+3. [[path === location.pathname]]: [[location.pathname]] المسار الحالي. لو نفس الصفحة اخرج، عشان منضيفش خطوة في الـ history على الفاضي.
+4. [[history.pushState({ path }, "", path)]]: غيّر الـ URL وضيف خطوة في الـ history (تحت تفصيل الـ arguments).
+5. [[render(path)]]: [[pushState]] بيغيّر الـ URL **بس**، ومش بيطلق أي event ولا بيرسم حاجة، فبنرسم بإيدنا.
+
+| الـ argument | معناه |
+|---|---|
+| [[{ path }]] | الـ state: object بيتحفظ مع الخطوة دي ويرجعلك وقت back. وهو اختصار [[{ path: path }]] |
+| [[""]] | مكان قديم لعنوان، المتصفحات بتتجاهله |
+| [[path]] | الـ URL الجديد اللي هيظهر في الشريط |
+
+---
+
+## ٣. back و forward: [[popstate]]
+
+~~~text app.js
+window.addEventListener("popstate", () => render(location.pathname));
+render(location.pathname);
+~~~
+
+- [[popstate]]: بيتنادى لما اليوزر يتنقّل في الـ history بـ back أو forward. وقتها [[location.pathname]] بقى الـ path الجديد، فبنرسمه. (والـ state اللي حفظناه في [[e.state]].)
+- آخر سطر: ارسم أول مرة حسب الـ URL اللي الصفحة فتحت عليه. من غيره، refresh على [[/about]] يعرض [[<main>]] فاضي.
+
+---
+
+## ٤. اللي حصل لما شغّلته (السيرفر بيرجّع index.html لأي path)
+
+ضفت [[console.log]] في popstate يطبع الـ path والـ state:
+
+~~~text الناتج
+load /             → url=/        content=الرئيسية  history.length=2
+click about        → url=/about   content=عننا      history.length=3
+click about again  → url=/about   content=عننا      history.length=3
+click contact      → url=/contact content=كلمنا     history.length=4
+click nope         → url=/nope    content=404: الصفحة مش موجودة  history.length=5
+popstate /contact {"path":"/contact"}
+back               → url=/contact content=كلمنا
+popstate /about {"path":"/about"}
+back               → url=/about   content=عننا
+popstate /contact {"path":"/contact"}
+forward            → url=/contact content=كلمنا
+~~~
+
+- [[history.length]] (عدد الخطوات في الـ history) بدأ 2 لأن التاب كان فاتح [[about:blank]] الأول، وزاد واحد مع كل [[pushState]].
+- الضغط على about وانت في about: [[history.length]] فضل 3، بسبب سطر [[path === location.pathname]].
+- [[/nope]] مش في [[pages]] فاتعرض نص الـ 404 والعنوان [[مش موجود]].
+- back و forward بيطلقوا [[popstate]]، والـ state رجع زي ما حفظناه.
+- السيرفر مجالوش ولا طلب صفحة طول التنقل ده (غير [[favicon.ico]] اللي المتصفح بيطلبه لأيقونة التاب).
+
+### refresh على [[/about]] و Ctrl+Click
+
+| | السيرفر بيرجّع index.html لأي path | السيرفر بيرجّع 404 |
+|---|---|---|
+| refresh على [[/about]] | status 200، والمحتوى «عننا» | status 404، ولا [[#content]] ولا JS |
+| Ctrl+Click على about | تاب جديد اتفتح وطلب [[/about]] من السيرفر، والتاب الأصلي فضل مكانه | نفس الكلام، بس التاب الجديد 404 |
+
+ليه؟ في الـ refresh المتصفح بيطلب [[/about]] من السيرفر **فعلًا**. لو السيرفر مش عارف إن ده مسار في الـ SPA بيرد 404، والـ JS بتاعك مبيوصلش أصلًا. الحل في السيرفر (fallback لـ index.html)، مش في الـ JS. و Ctrl+Click اتساب للمتصفح بسبب [[e.ctrlKey]]، فاتفتح تاب جديد عادي.
+
+---
+
+## الخلاصة
+
+| الحاجة | بتعمل إيه | بتطلق event؟ |
+|---|---|---|
+| [[history.pushState(state, "", url)]] | تغيّر الـ URL وتضيف خطوة | لأ، ارسم بإيدك |
+| [[history.replaceState(state, "", url)]] | تغيّر الـ URL من غير خطوة جديدة | لأ |
+| back / forward | اليوزر اتنقل | [[popstate]] |
+| [[location.pathname]] | المسار الحالي | |
+
+- اعترض بس الضغطة الشمال من غير Ctrl/Cmd/Shift، على لينكات [[data-link]].
+- ارسم مرة في الأول بـ [[render(location.pathname)]].
+- السيرفر لازم يرجّع [[index.html]] لأي path من بتاع الـ SPA.`,
+          lines: [
+            R`العنصر اللي هنحط فيه محتوى كل «صفحة». الصفحة نفسها مش هتتحمّل تاني، احنا اللي هنغيّر اللي جوه العنصر ده.`,
+            R`object بيربط كل path بمحتواه. في تطبيق حقيقي القيمة هتبقى دالة بترسم الصفحة، بس الفكرة واحدة: الـ URL مفتاح بنختار بيه نرسم إيه.`,
+            R`دالة بترسم الصفحة المناسبة للـ path. هي المكان الوحيد اللي بيرسم، فكل الطرق (ضغطة لينك، back، أول تحميل) بتعدّي عليها.`,
+            R`بنحط المحتوى بـ [[textContent]]، ولو الـ path مش موجود في [[pages]] الـ [[??]] بتحط رسالة 404 بدل [[undefined]].`,
+            R`ونغيّر عنوان التاب كمان، لأن مفيش تحميل صفحة جديد هيغيّره لوحده، وده اللي بيظهر في الـ history والـ bookmarks.`,
             R`نهاية [[render]].`,
-            R`نهاية الـ class.`,
-            R`سجّل [[star-rating]]. الدرس الجاي بيستخدمه من React و Vue.`,
+            R`listener واحد على الـ [[document]] كله بدل listener على كل لينك (event delegation): الضغطة بتطلع لفوق (bubbling) لحد الـ document، فحتى اللينكات اللي هتتضاف بعدين هتشتغل من غير ما تسجّلها.`,
+            R`[[closest]] بيدوّر من العنصر اللي اتضغط ولفوق على أقرب [[<a>]] عليه [[data-link]]. محتاجينها لأن الضغطة ممكن تكون على أيقونة أو [[<span>]] جوه اللينك، و [[data-link]] بتفرّق اللينكات الداخلية عن اللي رايحة لموقع تاني.`,
+            R`نسيب المتصفح يتصرف عادي لو مش لينك داخلي، أو مش الزرار الشمال ([[e.button !== 0]])، أو اليوزر داس Ctrl أو Cmd أو Shift: دول معناهم «افتح في تاب أو نافذة جديدة»، ولو منعناهم هنكسر حاجة اليوزر متعوّد عليها.`,
+            R`نمنع المتصفح يروح للينك ويحمّل الصفحة من السيرفر، احنا اللي هنرسم.`,
+            R`[[a.href]] كـ property بيرجّع الـ URL كامل حتى لو الـ HTML فيه [[/about]] بس، فبنعدّيه على [[new URL]] وناخد [[pathname]] لوحده.`,
+            R`لو اليوزر داس على لينك الصفحة اللي هو فيها، منضيفش خطوة جديدة في الـ history، وإلا زرار back هيحتاج كذا ضغطة عشان يرجع.`,
+            R`[[pushState]] بيغيّر الـ URL في شريط العنوان ويضيف خطوة في الـ history من غير ما يحمّل حاجة. الأول (state) بيتحفظ مع الخطوة دي، والتاني مش مستخدم فبيتساب [[""]]، والتالت هو الـ URL الجديد.`,
+            R`[[pushState]] مش بيرسم ولا بيطلق أي حدث، فلازم ننادي [[render]] بنفسنا. لو نسيت السطر ده، الـ URL هيتغير والصفحة زي ما هي.`,
+            R`نهاية الـ click listener.`,
+            R`[[popstate]] بيحصل لما اليوزر يدوس back أو forward، والمتصفح بيكون غيّر الـ URL خلاص، فبنرسم حسب [[location.pathname]] الجديد. ومش بيحصل مع [[pushState]] نفسها.`,
+            R`أول ما الصفحة تفتح بنرسم الـ path الحالي، عشان لو اليوزر فتح [[/about]] مباشرة أو عمل refresh يشوف الصفحة الصح. وده محتاج السيرفر يرجّع نفس الـ [[index.html]] لأي path، وإلا الـ refresh هيدّي 404 من السيرفر.`,
           ],
-          sol: R`الناتج الحقيقي في Chrome 156:
-[[r.value]] ← [[3]] ونوعه [[number]]. [[r.value = 5]] ← الـ HTML بقى [[value="5"]].
-[[r.disabled = true]] ← [[<star-rating value="5" disabled="">]]. و [[setAttribute("disabled", "false")]] ← [[r.disabled]] لسه [[true]].
-[[setAttribute("labels", "a,b,c")]] ← لسه 5 أزرار. [[r.labels = ["no", "maybe", "yes"]]] ← 3 أزرار.
-ضغطة النجمة التانية ← [[#box]] استلم [[rating-change]] و [[detail]] = [[{"value":2}]] و [[target]] = [[STAR-RATING]].`
+          sol: R`مع [[serve -s]]: التنقل من غير تحميل (Network مفيهاش طلبات HTML جديدة)، و back/forward بيغيّروا المحتوى والعنوان، و refresh على [[/about]] بيرجّع «عننا» لأن السيرفر رجّع index.html والسطر الأخير رسم الـ path.
+
+من غير [[-s]]: refresh على [[/about]] بيطلع 404 من السيرفر نفسه، والـ JS بتاعك مشتغلش أصلًا. ده أشهر bug بعد نشر SPA، والحل في السيرفر مش في الـ JS.
+
+Ctrl+Click بيفتح تاب جديد عادي لأن الشرط سابه للمتصفح، والتاب الجديد بيطلب [[/about]] من السيرفر (فمحتاج [[-s]] برضه).`
         },
         {
-          cmd: "Web Components في React و Vue",
-          title: "تستخدم custom element جوه React 19 و Vue",
-          desc: R`React 19 بيدعم الـ custom elements كاملة: لو العنصر عنده property بنفس الاسم بيحطها property (فالـ arrays والـ objects بتوصل صح)، وإلا attribute، و [[onrating-change]] بيسمع لـ event اسمه [[rating-change]]. React 18 كان بيحوّل كل حاجة attribute نص، ومكانش بيسمع للـ custom events.
+          cmd: "MutationObserver",
+          title: "تعرف إن الـ DOM اتغيّر (عنصر اتضاف أو اتشال، أو attribute اتغيّر) إزاي؟",
+          desc: R`[[MutationObserver]] بيناديك لما حاجة تتغيّر في الـ DOM: عنصر اتضاف أو اتشال ([[childList]])، أو attribute اتغيّر ([[attributes]])، أو نص اتعدّل ([[characterData]]). بتديله callback، وبعدين [[observe(el, options)]] بتقوله يراقب إيه بالظبط.
 
-Vue بيدعمها من زمان: [[:labels="labels"]] و [[@rating-change="..."]] شغالين، بس لازم تقول للـ compiler إن الـ tag ده مش component بتاع Vue: [[compilerOptions.isCustomElement]].`,
-          example: R`import { useState } from "react";
-import { createRoot } from "react-dom/client";
-import "./star-rating.js";
-function App() {
-  const [rating, setRating] = useState(4);
-  return (
-    <>
-      <star-rating
-        value={rating}
-        labels={["bad", "ok", "great"]}
-        onrating-change={(e) => setRating(e.detail.value)}
-      />
-      <p id="react-out">rating in React: {rating}</p>
-    </>
-  );
-}
-createRoot(document.querySelector("#root")).render(<App />);`,
-          try: R`خد [[star-rating.js]] من الدرس اللي فات، واعمل المثال بـ React 19 (Vite أو esbuild). اضغط النجمة التانية: الرقم في الـ [[<p>]] اتغير؟ وكام زرار ظهر؟ وبعدين نفس الكود بـ React 18: إيه اللي اتغير في الـ HTML؟ وفي Vue اكتب [[<star-rating :value="rating" :labels="labels" @rating-change="rating = $event.detail.value" />]].`,
+التغييرات مش بتوصلك واحدة واحدة وقت ما تحصل: المتصفح بيجمّعها في array ويناديك مرة واحدة كـ **microtask** بعد ما الكود اللي شغّال يخلص. ده نفس عيلة [[IntersectionObserver]] و [[ResizeObserver]] (الدرسين الأولانيين في الوحدة دي)، بس بيراقب **شكل الشجرة** مش الشاشة ولا المقاس.
+
+بتستخدمه لما مش انت اللي بتغيّر الـ DOM: widget من بره بيحط عناصر، أو مكتبة قديمة، أو extension، أو محتوى بييجي من السيرفر وعايز تعمله حاجة أول ما يظهر. لو انت اللي بتضيف العنصر بإيدك، اعمل اللي عايزه في نفس السطر من غير observer.`,
+          example: R`const chat = document.querySelector("#chat");
+const mo = new MutationObserver((records) => {
+  console.log("records:", records.length);
+  for (const r of records) {
+    if (r.type === "childList") console.log("childList +" + r.addedNodes.length, "-" + r.removedNodes.length);
+    else console.log(r.attributeName, r.oldValue, "→", r.target.getAttribute(r.attributeName));
+  }
+});
+mo.observe(chat, { childList: true, subtree: true, attributeFilter: ["data-state"], attributeOldValue: true });
+const msg = document.createElement("li");
+msg.textContent = "أهلًا";
+chat.append(msg);
+chat.dataset.state = "busy";
+chat.dataset.state = "idle";
+chat.title = "مش متراقب";
+msg.remove();
+console.log("الكود خلص");
+// استخدام حقيقي: الشات ينزل لآخر رسالة لوحده
+new MutationObserver(() => { chat.scrollTop = chat.scrollHeight; }).observe(chat, { childList: true });`,
+          try: R`اعمل صفحة فيها [[<ul id="chat">]] و [[<script>]] بالمثال، وافتح الـ Console. اتوقع الأول: «الكود خلص» هتتطبع قبل ولا بعد [[records: 4]]؟ وبعدين ضيف [[mo.disconnect()]] كآخر سطر في الـ script وشوف الـ callback لسه بيتنادى ولا لأ، وصلّحها بـ [[mo.takeRecords()]] قبل الـ disconnect.`,
           practice: [
-            { lvl: 'سريع', t: R`اتوقع وبعدين جرّب في React 19: [[<star-rating onRatingChange={...} />]] مقابل [[onrating-change={...}]] لما العنصر بيبعت [[rating-change]].`, done: R`[[onrating-change]] بيشتغل و [[onRatingChange]] لأ: React 19 بيسمع لـ event اسمه بالظبط زي اللي بعد [[on]] ([[RatingChange]] بالحروف دي)، فلو عايز camelCase لازم العنصر يبعت event اسمه كده. ولو ابعت [[RatingChange]] من Console الـ handler التاني بيشتغل.` },
-            { lvl: 'تطبيق', t: R`صلّح التحذير في Vue: استخدم [[<star-rating>]] في Vite + Vue من غير config، وشوف Console، وبعدين زوّد [[compilerOptions.isCustomElement]] في [[vue()]] جوه [[vite.config]] بحيث أي tag فيه [[-]] ومش component بتاعك يتساب.`, done: R`قبل التصليح Console فيه [[Failed to resolve component: star-rating]]، وبعده التحذير بيختفي، و [[:labels]] بيوصل كـ array (٣ زراير مش ٥)، و [[@rating-change]] بيحدّث الـ ref، والـ components بتاعتك اللي فيها [[-]] (لو عندك) لسه شغالة.` },
-            { lvl: 'تحدي', t: R`صلّح باج ترتيب التحميل: في React 19 خلّي [[import "./star-rating.js"]] يحصل **بعد** [[createRoot().render()]] (مثلًا [[setTimeout(() => import("./star-rating.js"))]])، واعمل [[labels={["bad", "ok", "great"]}]]. عدّ الزراير وبص على الـ HTML، وبعدين صلّحها.`, done: R`قبل التصليح بيظهر ٥ زراير مش ٣، والـ HTML فيه [[labels="bad,ok,great"]] كنص (React لقى العنصر مش متعرّف فحطها attribute)، وبعد التصليح ([[import]] قبل الـ render، أو [[await customElements.whenDefined("star-rating")]] قبل [[createRoot]]) بيظهر ٣ ومفيش attribute اسمه [[labels]].` },
+            { lvl: 'سريع', t: R`اقرا وتوقّع: [[observe(el, { attributes: true })]] وبعدين [[el.className = "a"; el.className = "b"; el.className = "b";]] في نفس الكود. الـ callback هيتنادى كام مرة؟ وكام record؟ وإيه [[oldValue]] في كل واحد لو ضفت [[attributeOldValue: true]]؟ اكتب توقعك وبعدين شغّله.`, done: R`الـ callback اتنادى **مرة واحدة** بـ ٣ records (حتى التالت اللي مغيّرش القيمة اتسجّل)، و [[oldValue]] بالترتيب [[null]] و [["a"]] و [["b"]]، وتقدر تشرح ليه مرة واحدة: الـ records بتتجمّع وتتبعت كـ microtask بعد ما الكود يخلص.` },
+            { lvl: 'تطبيق', t: R`ابني «عدّاد غير مقروء»: [[<ul id="inbox">]] فيه رسايل [[<li data-read="false">]]، وزرار بيضيف رسالة جديدة، وضغطة على رسالة بتخلّي [[data-read="true"]]. العدّاد في العنوان ([[document.title = "(3) البريد"]]) بيتحسب من MutationObserver واحد بس، مش من كود الزرار ولا كود الضغطة.`, done: R`إضافة رسالة بتزوّد الرقم، وقراية رسالة بتنقّصه، و [[inbox.innerHTML = ""]] من الـ Console بيخلّي العنوان [[البريد]] من غير رقم، والـ observer عليه [[attributeFilter: ["data-read"]]] و [[subtree: true]]، والعدّ بيحصل مرة واحدة لكل دفعة تغييرات مش لكل record.` },
+            { lvl: 'تحدي', t: R`صلّح الكود البايظ: observer على [[document.body]] بـ [[{ childList: true, subtree: true }]] بيضيف [[<span class="badge">جديد</span>]] جوه أي [[li]] جديد. شغّله وشوف الصفحة بتعلّق، واعرف ليه، وصلّحه من غير ما تشيل الـ subtree.`, done: R`عرفت إن إضافة الـ badge نفسها mutation جديدة فالـ callback بينادي نفسه للأبد (ومن غير ما الصفحة ترسم، لأنه microtask)، وصلّحته بإنك تتجاهل العناصر اللي عليها الـ badge أو تعمل [[disconnect]] وتضيف وتعمل [[observe]] تاني، وإضافة ١٠٠ [[li]] بتطلّع ١٠٠ badge بالظبط والصفحة مبتعلّقش.` },
           ],
           flag: "script",
           deep: {
-            why: R`أغلب ما هتقابل Web Components هيبقى جوه تطبيق React أو Vue: design system الشركة، أو widget من طرف تالت (دفع، خرايط، chat). لازم تعرف تبعتلهم داتا وتسمع للـ events، والفروق بين النسخ بتعمل bugs غريبة (array بقى نص [["bad,ok,great"]]).`,
-            how: R`React 19: لما يرسم tag فيه [[-]]، لكل prop بيسأل «العنصر عنده property بالاسم ده؟» ([["labels" in el]]). لو آه بيعمل [[el.labels = value]]، وإلا [[setAttribute]]. والـ props اللي بتبدأ بـ [[on]] بتتحول [[addEventListener]] على اسم الـ event بعد [[on]] بالظبط ([[onrating-change]] ← [[rating-change]]). عشان كده الـ component لازم يتسجّل (يتعمل import) قبل الرسم.
+            why: R`قبل MutationObserver كان فيه Mutation Events ([[DOMNodeInserted]] وأخواتها) وكانت بتتنادى **جوه** كل تغيير، فالصفحة كانت بتبطأ جدًا، واتشالت من Chrome خالص (من الـ docs: اتشالت في Chrome 127 سنة 2024). الحل الجديد بيجمّع التغييرات ويبعتها مرة واحدة بعد ما الكود يخلص، فمش بيقاطع شغلك.`,
+            how: R`كل observer ليه طابور records. أي تغيير متراقب بيضيف record، وأول record بيحجز microtask واحدة. لما الكود الحالي يخلص (قبل أي [[setTimeout]] وقبل الرسم)، المتصفح بيدّي الـ callback كل الـ records مرة واحدة. عشان كده «الكود خلص» بتطلع الأول.
 
-React 18 وأقدم: كل prop على custom element بيبقى attribute نص (فالـ array بقى [["bad,ok,great"]])، والـ events لازم [[ref]] و [[addEventListener]] بإيدك.
+الـ options: [[childList]] للأولاد المباشرين، و [[subtree]] يمدّها لكل الأحفاد، و [[attributes]] أو [[attributeFilter: [...]]] (الفلتر لوحده بيشغّل الـ attributes)، و [[characterData]] لنص الـ text nodes، و [[attributeOldValue]] و [[characterDataOldValue]] عشان تاخد القيمة القديمة. لازم واحد على الأقل من التلاتة الأولانيين وإلا [[TypeError]].
 
-Vue: الـ compiler لازم يعرف إن [[star-rating]] مش component. في Vite: [[vue({ template: { compilerOptions: { isCustomElement: (tag) => tag.includes("-") } } })]]. من غيرها بيحاول يعمل [[resolveComponent]] ويطلّع warning. و [[:prop]] بيحطها property لو العنصر عنده property بالاسم ده (زي React 19). و Vue كمان بيعمل Web Components: [[defineCustomElement]] بيحوّل component بتاع Vue لـ custom element يشتغل في أي صفحة.`,
-            when: R`design system مبني Web Components بيتستخدم في تطبيق React أو Vue، أو العكس: component بتاع Vue عايز تديه لفريق React (بـ [[defineCustomElement]]).`,
-            mistakes: R`React 18: تبعت array وتلاقيه نص في الـ attribute، أو [[onRatingChange]] ومحدش بينادي. React 19: [[onRatingChange]] بحروف كبيرة بيسمع لـ [[RatingChange]] مش [[rating-change]]، فاكتب اسم الـ event زي ما هو. Vue: تنسى [[isCustomElement]] مع SFC في Vite فيطلع [[Failed to resolve component]]. وتعمل import للـ component بعد ما React رسم فيتعامل كعنصر مجهول وقتها.`
-          },
-          teach: R`## React 19
-
-الـ bundle اتعمل بـ esbuild 0.28 (React 19.3.1)، واتجرّب في Chrome 156 headless. [[star-rating.js]] هو بتاع درس [[attributes و properties]].
-
----
-
-## ١. الكود
-
-- [[import "./star-rating.js"]]: import من غير أسماء = شغّل الملف بس، فيسجّل [[<star-rating>]]. لازم قبل [[render]].
-- [[value={rating}]]: رقم. React شاف إن العنصر عنده property [[value]] (الـ getter/setter) فعمل [[el.value = 4]].
-- [[labels={["bad", "ok", "great"]}]]: array، و [[labels]] property، فوصل array.
-- [[onrating-change={(e) => setRating(e.detail.value)}]]: [[on]] + اسم الـ event بالظبط. [[e.detail.value]] الداتا اللي الـ component بعتها.
-- [[<>...</>]]: Fragment، أكتر من عنصر من غير div زيادة.
-
-## ٢. النتيجة
-
-~~~text الناتج (React 19.3.1)
-html: <star-rating value="4"></star-rating>
-buttons: 3 | value prop: 4
-rating in React: 2      (بعد الضغط على النجمة التانية)
-~~~
-
-- [[value="4"]] في الـ HTML: React حط الـ property، والـ setter عمل reflect.
-- 3 أزرار: الـ array وصل.
-- [[rating in React: 2]]: الـ event وصل و [[setRating]] اشتغل.
-
-## ٣. نفس الكود بـ React 18.3
-
-~~~text الناتج (React 18)
-html: <star-rating value="4" labels="bad,ok,great"></star-rating>
-buttons: 5 | value prop: 4
-rating in React: 4      (بعد نفس الضغطة)
-~~~
-
-- [[labels="bad,ok,great"]]: React 18 حوّل الـ array لنص وحطه attribute، والـ component مش بيقرا attribute اسمه [[labels]]، فـ 5 أزرار (الافتراضي).
-- [[rating in React: 4]]: [[onrating-change]] اتجاهل خالص.
-
-| | React 18 | React 19 |
-|---|---|---|
-| prop بسيط ([[value]]) | attribute نص | property لو موجودة |
-| array / object | attribute نص ([["bad,ok,great"]]) | property (الـ array نفسه) |
-| [[onxxx]] | متجاهل (محتاج ref و addEventListener) | [[addEventListener("xxx")]] |
-
----
-
-## Vue 3.5
-
-~~~text vue-app.js (المهم)
-const app = createApp({
-  setup() {
-    const rating = ref(4);
-    const labels = ["bad", "ok", "great"];
-    return { rating, labels };
-  },
-  template: $__bt
-    <star-rating :value="rating" :labels="labels" @rating-change="rating = $event.detail.value" />
-    <p id="vue-out">rating in Vue: {{ rating }}</p>$__bt,
-});
-app.config.compilerOptions.isCustomElement = (tag) => tag.includes("-");
-app.mount("#app");
-~~~
-
-- [[:labels="labels"]]: الـ [[:]] = قيمة JavaScript مش نص. Vue شاف إن [[labels]] property على العنصر فحطها property.
-- [[@rating-change="..."]]: [[addEventListener("rating-change")]]، و [[$event]] هو الـ event نفسه.
-- [[isCustomElement]]: «أي tag فيه [[-]] اعتبره عنصر HTML، متدوّرش عليه كـ component».
-
-~~~text الناتج (Vue 3.5.44)
-html: <star-rating value="4"></star-rating>
-buttons: 3
-rating in Vue: 2
-~~~
-
-### من غير [[isCustomElement]]
-
-الـ compiler بيطلّع كود مختلف. جرّبته بـ [[@vue/compiler-dom]] على نفس الـ template:
-
-~~~text الناتج
-without isCustomElement: const _component_star_rating = _resolveComponent("star-rating") | return (_openBlock(), _createBlock(_component_star_rating, {
-with isCustomElement:    return (_openBlock(), _createElementBlock("star-rating", {
-~~~
-
-من غيره بيدوّر على component اسمه [[star-rating]]، ومش هيلاقيه:
-
-~~~text Console
-[Vue warn]: Failed to resolve component: star-rating
-If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement.
-~~~
-
-(في الـ template اللي بيتعمله compile في المتصفح، Vue بيسأل [[customElements.get(tag)]] لوحده فاشتغل من غير الإعداد. بس مع SFC في Vite، الـ compile بيحصل وقت الـ build ومحدش يعرف إيه المسجّل، فالإعداد لازم في [[vite.config]].)
-
-### Vue بيعمل Web Component
-
-~~~text vue-app.js
-const HelloBadge = defineCustomElement({
-  props: { name: String },
-  styles: ["span { color: purple; }"],
-  setup(props) {
-    return () => h("span", $__btHi $__{props.name} from a Vue-made element$__bt);
-  },
-});
-customElements.define("hello-badge", HelloBadge);
-~~~
-
-~~~text الناتج: hello-badge.shadowRoot.innerHTML
-<style>span { color: purple; }</style><span>Hi Sara from a Vue-made element</span>
-~~~
-
-component بتاع Vue بقى [[<hello-badge name="Sara">]] يشتغل في أي صفحة، بـ shadow DOM والـ styles جواه.
-
----
-
-## الخلاصة
-
-| | React 19 | Vue 3 |
-|---|---|---|
-| تبعت array | [[labels={arr}]] | [[:labels="arr"]] |
-| تسمع لـ event | [[onrating-change={fn}]] | [[@rating-change="fn"]] |
-| إعداد | ولا حاجة | [[isCustomElement]] في الـ compiler |
-| تعمل Web Component | مكتبات بره React | [[defineCustomElement]] |
-
-وفي React 18 أو أقدم: [[ref]] و [[el.labels = ...]] و [[addEventListener]] بإيدك.`,
-          lines: [
-            R`[[useState]] من React عشان نحفظ التقييم في state، والـ component يترسم تاني لما يتغير.`,
-            R`[[createRoot]] من [[react-dom/client]]: بتربط React بعنصر في الصفحة وترسم فيه.`,
-            R`import من غير أسامي: بيشغّل الملف وبس، والملف بينادي [[customElements.define]]. لازم قبل الرسم، لأن React 19 بيسأل «العنصر عنده property بالاسم ده؟»، ولو العنصر لسه مش متسجّل مش هيلاقي [[labels]] فيبعتها attribute نص.`,
-            R`component اسمه [[App]]، فيه الـ custom element وسطر بيعرض القيمة.`,
-            R`state للتقييم بيبدأ بـ 4. و [[setRating]] هنستخدمها لما الـ component يبلّغنا بتغيير.`,
-            R`الـ JSX اللي [[App]] بيرسمه.`,
-            R`Fragment ([[<>]]): بيلم العنصرين من غير ما يضيف [[div]] زيادة في الصفحة، لأن الـ component لازم يرجّع حاجة واحدة.`,
-            R`الـ custom element نفسه. React بيعرف إنه custom element من الشرطة في الاسم، فبيتعامل مع الـ props بطريقة غير [[div]].`,
-            R`[[value]] رقم. React 19 لقى إن العنصر عنده property اسمها [[value]] (الـ getter/setter)، فعمل [[el.value = 4]] بدل [[setAttribute]]، والـ setter عمل reflect للـ attribute. React 18 كان بيحطه attribute نص على طول.`,
-            R`array: [[labels]] property على العنصر، فـ React 19 بيبعت الـ array نفسه وتظهر 3 نجوم. في React 18 كان بيبقى attribute نص [[bad,ok,great]] والعنصر مش بيقراه، فتفضل 5.`,
-            R`[[on]] + اسم الـ event بالظبط: React 19 بيسمع لـ event اسمه [[rating-change]]. لما اليوزر يضغط نجمة، [[e.detail.value]] فيها الرقم فنحدّث الـ state. لو كتبت [[onRatingChange]] هيسمع لـ [[RatingChange]] ومحدش بيبعته.`,
-            R`نهاية [[<star-rating>]] (self-closing: من غير أولاد).`,
-            R`سطر بيعرض القيمة اللي في state بتاع React، عشان نتأكد إن الـ event وصل وحدّثها.`,
-            R`نهاية الـ Fragment اللي لامم العنصرين.`,
-            R`نهاية الـ [[return]].`,
-            R`نهاية [[App]].`,
-            R`دوّر على [[#root]] في الصفحة، واعمل منه root لـ React، وارسم [[<App />]] جواه.`,
-          ],
-          sol: R`React 19.3.1: [[<star-rating value="4">]] و 3 أزرار، وبعد الضغطة [[rating in React: 2]].
-React 18.3: [[<star-rating value="4" labels="bad,ok,great">]] و 5 أزرار، والرقم فضل [[4]] (الـ event متجاهل).
-Vue 3.5.44 بالـ template ده و [[isCustomElement]]: 3 أزرار و [[rating in Vue: 2]].`
-        },
-        {
-          cmd: "form-associated و ElementInternals",
-          title: "component يدخل الفورم زي input حقيقي: قيمة، و required، و reset (ElementInternals)",
-          desc: R`الـ custom element العادي الفورم مش شايفه: [[new FormData(form)]] مبيلاقيش قيمته، و [[required]] عليه ملوش معنى، و [[form.reset()]] مبيرجّعوش. الحل سطرين: [[static formAssociated = true]] في الـ class، و [[this.attachInternals()]] اللي بيرجّع [[ElementInternals]]: object خاص بالـ component بيكلّم بيه الفورم.
-
-من [[ElementInternals]]: [[setFormValue(value)]] (القيمة اللي هتتبعت باسم الـ [[name]])، و [[setValidity(flags, message)]] (صالح ولا لأ، والرسالة)، و [[form]] و [[labels]]، و [[role]] و [[ariaValueNow]] لقارئ الشاشة من غير ما تحط attributes على العنصر، و [[states]] لـ [[:state()]] في CSS. ومعاهم callbacks: [[formResetCallback]] و [[formDisabledCallback]] و [[formAssociatedCallback]].
-
-ده اللي بيخلّي مكتبات زي Shoelace و Material Web تعمل [[<sl-input>]] يتبعت مع الفورم من غير [[<input type="hidden">]] مخبّي جنبه.`,
-          example: R`class StarRating extends HTMLElement {
-  static formAssociated = true;
-  #internals = this.attachInternals();
-  #value = 0;
-  connectedCallback() {
-    this.tabIndex = 0;
-    this.#internals.role = "slider";
-    this.#internals.ariaValueMax = "5";
-    this.addEventListener("click", () => (this.value = (this.#value % 5) + 1));
-    this.#sync();
-  }
-  get value() { return this.#value; }
-  set value(v) { this.#value = Number(v); this.#sync(); }
-  get form() { return this.#internals.form; }
-  get name() { return this.getAttribute("name"); }
-  formResetCallback() { this.value = 0; }
-  #sync() {
-    this.#internals.setFormValue(this.#value ? String(this.#value) : null);
-    if (this.hasAttribute("required") && !this.#value) this.#internals.setValidity({ valueMissing: true }, "اختار عدد النجوم");
-    else this.#internals.setValidity({});
-    this.#internals.ariaValueNow = String(this.#value);
-    this.textContent = "★".repeat(this.#value) + "☆".repeat(5 - this.#value);
-  }
-}
-customElements.define("star-rating", StarRating);
-const form = document.querySelector("form");
-const stars = form.querySelector("star-rating");
-console.log(form.checkValidity(), JSON.stringify([...new FormData(form)]));
-stars.click();
-stars.click();
-console.log(form.checkValidity(), JSON.stringify([...new FormData(form)]));
-form.reset();
-console.log(stars.value, JSON.stringify([...new FormData(form)]));`,
-          try: R`حط فوق الـ script ده الـ HTML: [[<form><label>تقييمك <star-rating name="rating" required></star-rating></label><input name="note" value="hi"><button>ابعت</button></form>]]، وفي الـ CSS [[star-rating:invalid { outline: 2px solid red; }]]. افتح الصفحة: الإطار الأحمر ظاهر؟ دوس «ابعت» من غير نجوم: الفورم اتبعت ولا لأ؟ وبعدين امسح سطر [[static formAssociated = true]] وشوف أول error في الـ Console.`,
-          practice: [
-            { lvl: 'سريع', t: R`صلّح الكود البايظ: component اسمه [[<color-pick>]] فيه [[static formAssociated = true]]، والـ constructor بيعمل [[this.attachInternals()]]، و [[connectedCallback]] بيعمل [[this.attachInternals()]] تاني عشان يحط القيمة. شغّله وانقل العنصر من مكان لمكان في الصفحة ([[append]] في div تاني)، واقرا الـ error وصلّحه.`, done: R`ظهر [[NotSupportedError]] برسالة فيها [[ElementInternals for the specified element was already attached.]] أول ما الـ [[connectedCallback]] اتنادى، وصلّحته بإن الـ internals تتعمل مرة واحدة في field ([[#internals = this.attachInternals()]]) وكل حتة تستخدمها، والنقل بين الأماكن بقى يشتغل من غير errors.` },
-            { lvl: 'تطبيق', t: R`ابني [[<tag-input name="tags">]]: بتكتب كلمة وتدوس Enter تبقى tag، وكل tag فيه ✕ يمسحه. القيمة اللي بتتبعت مع الفورم الـ tags كلها، كل واحد لوحده: اعمل [[FormData]] جوه الـ component وابعته لـ [[setFormValue]]، و [[min="1"]] بيخلّيه [[valueMissing]] لو فاضي، و [[formResetCallback]] بيفضّيه.`, done: R`بعد ٣ tags، [[new FormData(form).getAll("tags")]] بيرجّع الـ ٣ كلمات في array، و [[form.checkValidity()]] بـ [[false]] وهو فاضي و [[true]] بعد أول tag، و [[form.reset()]] بيفضّيه ويخلّي [[getAll]] array فاضية، والإيرور اللي بيظهر وانت بتبعت فاضي هو رسالتك انت.` },
-            { lvl: 'تحدي', t: R`اكتب اختبار: بـ playwright (أو في الـ Console لو مش متاح) اكتب ٦ تستات لـ [[star-rating]] بتاع الدرس: قيمة أول ما يفتح، وضغطة، و ٦ ضغطات بترجع لـ 1، و [[reset()]]، و [[required]] بيمنع [[submit]] (اسمع لـ [[invalid]] event)، و [[<fieldset disabled>]] حواليه بيخلّي [[formDisabledCallback]] يتنادى بـ [[true]]. وبعدين زوّد دعم الكيبورد (الأسهم) وخلّي التستات تمسكه.`, done: R`التستات الست بتعدّي، وتست الـ [[submit]] بيلاقي [[invalid]] event على [[STAR-RATING]] والفورم مااتبعتش، وبعد ضغطة واحدة [[submit]] اتبعت بـ [[rating=1]]، وتست الكيبورد بيفشل قبل ما تزوّد الأسهم وبيعدّي بعدها، و [[formDisabledCallback]] اتنادى بـ [[true]] ثم [[false]].` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`أي design system فيه inputs مخصوصة: تقييم بالنجوم، و date picker، و tags، و rich text. من غير form-associated، كل واحد محتاج [[<input type="hidden">]] بيتنسخ له القيمة بإيدك، والـ validation والـ reset والـ autofill كلهم بيتكتبوا من الأول وبيبوظوا. بالـ ElementInternals الـ component بيبقى input حقيقي: الفورم والـ CSS ([[:invalid]]) وقارئ الشاشة كلهم بيتعاملوا معاه زي [[<input>]].`,
-            how: R`[[static formAssociated = true]] بيقول للمتصفح «العنصر ده بيتبع الفورم اللي حواليه». و [[attachInternals()]] مسموحة مرة واحدة لكل عنصر، ولـ custom elements بس ([[NotSupportedError]] على [[div]]).
-
-[[setFormValue(v)]]: [[v]] نص أو [[File]] أو [[FormData]] (لأكتر من قيمة)، و [[null]] يعني «مفيش قيمة» فمش هيتبعت خالص (زي checkbox مش متعلّم). [[setValidity({ valueMissing: true }, msg)]] بيخلّيه invalid، و [[setValidity({})]] صالح. الـ flags نفس أسامي [[ValidityState]]: [[valueMissing]] و [[tooShort]] و [[patternMismatch]] و [[customError]]...
-
-الـ callbacks: [[formAssociatedCallback(form)]] لما يدخل فورم أو يخرج، و [[formDisabledCallback(disabled)]] لما [[<fieldset disabled>]] حواليه يتغير، و [[formResetCallback()]] مع [[form.reset()]]، و [[formStateRestoreCallback(state)]] لما المتصفح يرجّع القيمة (back أو autofill).
-
-[[internals.role]] و [[ariaValueNow]] (اسمها ARIA reflection) بيحطوا الدور والقيمة في شجرة الـ accessibility من غير attributes ظاهرة في الـ HTML يقدر حد من برّه يغيّرها. و [[internals.states.add("on")]] بيخلّي [[:state(on)]] في CSS تمسك.`,
-            when: R`أي component هيتحط جوه [[<form>]] وليه قيمة: تقييم، وتاريخ، وألوان، وtags، و rich text، و select مخصوص. ومش لزرار أو كارت أو حاجة عرض: دول مش محتاجين يتبعتوا مع الفورم.`,
-            mistakes: R`تنسى [[static formAssociated = true]] فـ [[setFormValue]] يرمي [[NotSupportedError: ... The target element is not a form-associated custom element.]] وتنادي [[attachInternals()]] في [[connectedCallback]] فتتنادى تاني لما العنصر يتنقل وترمي. وتعمل [[getter]] لـ [[value]] من غير ما تنادي [[setFormValue]] لما القيمة تتغير، فالفورم بيبعت القيمة القديمة. وتنسى [[formResetCallback]] فالـ [[reset]] بيرجّع كل الخانات إلا بتاعتك. وتنسى [[tabIndex]] فمحدش يقدر يوصله بالكيبورد. وتنسى إن [[name]] لازم attribute على العنصر عشان القيمة تتبعت باسم.`
+[[disconnect()]] بيوقّف كل حاجة **وبيرمي** الـ records اللي لسه موصلتش، و [[takeRecords()]] بيرجّعهم ليك ويفضّي الطابور.`,
+            when: R`widget من بره (chat أو إعلانات أو تعليقات) بيضيف عناصر وعايز تظبطها، و auto-scroll لشات، و تفعيل حاجة على أي عنصر جديد بـ class معين (زي tooltips)، و تستات بتستنى عنصر يظهر، و extensions. ومش لحاجة انت اللي بتعملها بإيدك: نادي الدالة في نفس المكان.`,
+            mistakes: R`تعدّل نفس الجزء المتراقب جوه الـ callback فيبقى loop بيعلّق الصفحة. و [[subtree: true]] على [[document.body]] في صفحة كبيرة من غير فلتر فالـ callback بيشتغل على كل حاجة. و [[disconnect()]] من غير [[takeRecords()]] فتضيع آخر التغييرات. وتفتكر إن [[r.target.getAttribute(...)]] هي القيمة وقت التغيير: هي القيمة **دلوقتي**، والقديمة في [[oldValue]] بس. وتنسى إن [[textContent = "..."]] بيبدّل الـ text node (childList) مش characterData.`
           },
           teach: R`## الفكرة في سطر
 
-[[<star-rating name="rating" required>]] لازم يتصرف زي [[<input name="rating" required>]]: قيمته تتبعت مع الفورم، والفورم ميتبعتش لو هو فاضي، و [[reset]] يرجّعه صفر. المثال بيعمل ده بـ [[ElementInternals]] من غير أي [[<input type="hidden">]].
+بتقول للمتصفح «لو حاجة اتغيرت جوه العنصر ده، ابعتلي لستة باللي حصل». المثال بيراقب شات: رسالة بتتضاف وتتشال، و [[data-state]] بيتغير مرتين، و [[title]] بيتغير بس مش متراقب.
 
-اتشغّل في Chrome 156 headless (عن طريق playwright-core) بالـ HTML اللي في «جرّب» (فورم فيه [[star-rating]] و [[input]] اسمه [[note]] قيمته [[hi]]).
+شغّلت المثال في Chrome 156 headless (عن طريق playwright-core) وفي jsdom 30، والناتج طلع واحد بالحرف.
 
 ---
 
-## ١. السطرين اللي بيدخّلوه الفورم
+## ١. الـ observer والـ callback
 
 ~~~text app.js
-class StarRating extends HTMLElement {
-  static formAssociated = true;
-  #internals = this.attachInternals();
-  #value = 0;
+const mo = new MutationObserver((records) => {
+  console.log("records:", records.length);
+  for (const r of records) { ... }
+});
 ~~~
 
-- [[static formAssociated = true]]: [[static]] يعني على الـ class نفسه مش على كل عنصر. المتصفح بيقرا الخاصية دي وقت [[customElements.define]] ويقول «ده عنصر فورم».
-- [[#internals = this.attachInternals()]]: field خاص (الـ [[#]] من درس «EventEmitter»). [[attachInternals()]] بترجّع [[ElementInternals]]: الـ object اللي الـ component بيكلّم بيه الفورم والـ accessibility. بنحطه في [[#]] عشان محدش برّه يقدر يغيّر قيمة الفورم من ورا الـ component.
-- [[#value = 0]]: القيمة الحقيقية: عدد النجوم.
+- [[new MutationObserver(callback)]]: بتعمل مراقب. لسه مبيراقبش حاجة لحد ما تنادي [[observe]].
+- [[records]]: array من [[MutationRecord]]، record لكل تغيير حصل من آخر مرة اتنادى فيها.
+- [[r.type]]: نوع التغيير، واحد من تلاتة: [["childList"]] (أولاد اتضافوا أو اتشالوا)، أو [["attributes"]]، أو [["characterData"]] (نص اتعدّل).
+- [[r.addedNodes]] و [[r.removedNodes]]: الـ nodes اللي اتضافت واللي اتشالت (NodeList، فبنستخدم [[.length]]).
+- [[r.attributeName]]: اسم الـ attribute اللي اتغير، و [[r.oldValue]] قيمته **قبل** التغيير، و [[r.target]] العنصر اللي اتغير.
 
-جرّبت [[attachInternals()]] مرتين على نفس العنصر، وعلى [[div]]، وجرّبت [[setFormValue]] على component من غير [[formAssociated]]:
+## ٢. [[observe]]: تراقب إيه بالظبط
+
+~~~text app.js
+mo.observe(chat, { childList: true, subtree: true, attributeFilter: ["data-state"], attributeOldValue: true });
+~~~
+
+| الـ option | معناه |
+|---|---|
+| [[childList: true]] | أولاد [[chat]] المباشرين لما يتضافوا أو يتشالوا |
+| [[subtree: true]] | نفس الكلام على كل الأحفاد كمان، مش الأولاد المباشرين بس |
+| [[attributeFilter: ["data-state"]]] | راقب الـ attributes دي بس، وأي attribute تاني (زي [[title]]) يتجاهل |
+| [[attributeOldValue: true]] | سجّل القيمة القديمة في [[r.oldValue]]، من غيرها بتبقى [[null]] |
+| [[characterData: true]] | تعديل نص جوه text node (مع [[subtree]] عشان توصل للنص اللي جوه العنصر) |
+
+جرّبت [[attributeFilter]] لوحده من غير [[attributes: true]]: شغّال، لأن الفلتر بيشغّل الـ attributes لوحده. وجرّبت [[observe(chat, {})]]:
 
 ~~~text الناتج (Chrome)
-NotSupportedError: Failed to execute 'attachInternals' on 'HTMLElement': ElementInternals for the specified element was already attached.
-NotSupportedError: Failed to execute 'attachInternals' on 'HTMLElement': Unable to attach ElementInternals to non-custom elements.
-NotSupportedError: Failed to execute 'setFormValue' on 'ElementInternals': The target element is not a form-associated custom element.
+TypeError: Failed to execute 'observe' on 'MutationObserver': The options object must set at least one of 'attributes', 'characterData', or 'childList' to true.
 ~~~
 
-## ٢. [[connectedCallback]]: الكيبورد وقارئ الشاشة
+ونفس الرسالة لو نسيت الـ options خالص. ولو العنصر مش موجود ([[querySelector]] رجّع [[null]]):
+
+~~~text الناتج (Chrome)
+TypeError: Failed to execute 'observe' on 'MutationObserver': parameter 1 is not of type 'Node'.
+~~~
+
+## ٣. التغييرات والناتج
 
 ~~~text app.js
-  connectedCallback() {
-    this.tabIndex = 0;
-    this.#internals.role = "slider";
-    this.#internals.ariaValueMax = "5";
-    this.addEventListener("click", () => (this.value = (this.#value % 5) + 1));
-    this.#sync();
-  }
+const msg = document.createElement("li");
+msg.textContent = "أهلًا";
+chat.append(msg);
+chat.dataset.state = "busy";
+chat.dataset.state = "idle";
+chat.title = "مش متراقب";
+msg.remove();
+console.log("الكود خلص");
 ~~~
 
-- [[tabIndex = 0]]: يخلّي العنصر يتوصله بـ Tab زي أي input.
-- [[#internals.role = "slider"]]: يقول لقارئ الشاشة «ده slider». ده اسمه ARIA reflection: نفس [[role="slider"]] بس من غير attribute ظاهر في الـ HTML يقدر حد يمسحه.
-- [[ariaValueMax = "5"]]: أقصى قيمة. من غيرها الـ slider كان بيتقري من 0 لـ 100 (شفت ده في شجرة الـ accessibility).
-- [[(this.#value % 5) + 1]]: [[%]] باقي القسمة: كل ضغطة بتزوّد نجمة، وبعد 5 بترجع 1 (0←1، 4←5، 5←1).
-- [[this.#sync()]]: يحدّث القيمة في الفورم والشكل أول مرة.
-
-دي شجرة الـ accessibility بعد ضغطة (من Chrome DevTools Protocol):
-
-~~~text الناتج
-slider "تقييمك" invalid="false" focusable=true valuemin=0 valuemax=5 value=1
+~~~text الناتج (Chrome 156 و jsdom)
+الكود خلص
+records: 4
+childList +1 -0
+data-state null → idle
+data-state busy → idle
+childList +0 -1
 ~~~
 
-الاسم [["تقييمك"]] جه من الـ [[<label>]] اللي حواليه لوحده: عناصر الفورم بس هي اللي الـ label بيتربط بيها، والـ [[formAssociated]] خلّاه منهم.
+خمس حاجات تتعلمها من الناتج ده:
 
-## ٣. الـ getters والـ setters
+1. **«الكود خلص» طلعت الأول.** الـ callback مش بيتنادى جوه [[append]]، بيتنادى بعد ما الـ script كله يخلص، كـ microtask (درس «microtasks و macrotasks»).
+2. **مرة واحدة بـ 4 records**، مش ٤ مرات. المتصفح جمّعهم.
+3. **[[msg.textContent = "أهلًا"]] مااتسجّلش**: ساعتها [[msg]] كان لسه برّه [[chat]]، والـ observer بيشوف اللي جوه بس.
+4. **[[title]] مااتسجّلش** بسبب [[attributeFilter]].
+5. **السطرين بتوع [[data-state]] بيقولوا [[→ idle]] الاتنين.** [[r.oldValue]] صح لكل record ([[null]] وبعدين [[busy]])، بس [[r.target.getAttribute(...)]] بيقرا القيمة **دلوقتي** وقت الـ callback، وهي [[idle]]. لو عايز القيمة الجديدة لكل خطوة، هي الـ [[oldValue]] بتاع الـ record اللي بعده.
+
+## ٤. الاستخدام الحقيقي: auto-scroll
 
 ~~~text app.js
-  get value() { return this.#value; }
-  set value(v) { this.#value = Number(v); this.#sync(); }
-  get form() { return this.#internals.form; }
-  get name() { return this.getAttribute("name"); }
+new MutationObserver(() => { chat.scrollTop = chat.scrollHeight; }).observe(chat, { childList: true });
 ~~~
 
-- [[value]]: بيقرا ويكتب [[#value]]، والكتابة بتنادي [[#sync]] عشان الفورم يعرف على طول. [[Number(v)]] عشان [[stars.value = "3"]] تشتغل.
-- [[form]]: الفورم اللي العنصر جواه. [[#internals.form]] بيعرفه لوحده (جرّبت: [[stars.form === form]] بـ [[true]]).
-- [[name]]: زي [[input.name]]. الـ [[name]] الحقيقي اللي بيتبعت هو الـ attribute، والـ getter ده للي بيكتب JS بس.
+- [[chat.scrollHeight]]: طول المحتوى كله جوه الـ [[ul]]، حتى الجزء المستخبي.
+- [[chat.scrollTop = ...]]: انزل لحد كده، يعني آخر رسالة.
+- مش فارق مين اللي ضاف الرسالة (WebSocket، أو مكتبة، أو انت): الشات بينزل لوحده. جرّبت ٥ رسايل ورا بعض في [[ul]] طوله 40px: الـ callback اتنادى مرة واحدة، و [[scrollTop]] بقى 104 وده بالظبط [[scrollHeight - clientHeight]] (يعني تحت خالص).
 
-## ٤. [[formResetCallback]]
+## ٥. [[disconnect]] و [[takeRecords]]
+
+جرّبت أضيف عنصر وبعدين [[mo.disconnect()]] على طول في نفس الكود: الـ callback **عمره ما اتنادى**. الـ disconnect بيرمي أي records لسه في الطابور. لو محتاجهم:
 
 ~~~text app.js
-  formResetCallback() { this.value = 0; }
+const pending = mo.takeRecords();
+mo.disconnect();
+console.log(pending.length, pending[0].type);
 ~~~
 
-المتصفح بيناديها لوحده لما [[form.reset()]] يحصل (أو زرار [[type="reset"]]). وفيه أخواتها:
-
-| الـ callback | بيتنادى إمتى |
-|---|---|
-| [[formResetCallback()]] | [[form.reset()]]: رجّع القيمة الأولانية |
-| [[formDisabledCallback(disabled)]] | [[<fieldset disabled>]] حواليه اتقفل أو اتفتح (جرّبتها: [[true]] ثم [[false]]) |
-| [[formAssociatedCallback(form)]] | العنصر دخل فورم أو خرج منه (جرّبتها: اتنادى بالـ [[FORM]]) |
-| [[formStateRestoreCallback(state)]] | المتصفح بيرجّع قيمة قديمة (Back، أو autofill)، من الـ docs |
-
-## ٥. [[#sync]]: القيمة والـ validation
-
-~~~text app.js
-  #sync() {
-    this.#internals.setFormValue(this.#value ? String(this.#value) : null);
-    if (this.hasAttribute("required") && !this.#value) this.#internals.setValidity({ valueMissing: true }, "اختار عدد النجوم");
-    else this.#internals.setValidity({});
-    this.#internals.ariaValueNow = String(this.#value);
-    this.textContent = "★".repeat(this.#value) + "☆".repeat(5 - this.#value);
-  }
+~~~text الناتج (Chrome، بعد إضافة عنصرين)
+2 childList
 ~~~
 
-- [[#sync()]]: method خاصة (نفس فكرة الـ [[#]]).
-- [[setFormValue(...)]]: دي القيمة اللي [[FormData]] هيشوفها باسم الـ [[name]]. لو صفر بنبعت [[null]] يعني «مفيش قيمة»، فمش هتتبعت خالص زي checkbox مش متعلّم.
-- [[setValidity({ valueMissing: true }, "اختار عدد النجوم")]]: «أنا invalid، والسبب إن القيمة ناقصة، والرسالة دي». الـ flags نفس أسامي [[input.validity]]: [[valueMissing]] و [[tooShort]] و [[rangeOverflow]] و [[customError]]...
-- [[setValidity({})]]: object فاضي يعني «مفيش مشاكل، أنا صالح».
-- [[ariaValueNow]]: القيمة الحالية لقارئ الشاشة.
-- [[textContent = "★".repeat(n) + "☆".repeat(5 - n)]]: [[repeat]] بتكرر النص n مرة: نجوم مليانة بالعدد، والباقي فاضية.
+## ٦. الفخ: الـ callback بيغيّر اللي بيراقبه
 
-## ٦. التشغيل
+لو الـ callback ضاف عنصر جوه نفس الـ [[chat]]، ده تغيير جديد، فيتنادى تاني، ويضيف تاني... جرّبتها بعدّاد بيقف عند 1000: الـ callback اتنادى 1000 مرة و [[setTimeout(..., 0)]] اللي كان مستني اتنفّذ **بعدهم كلهم**. يعني من غير العدّاد الصفحة كانت هتعلّق ومش هترسم أبدًا، لأن الـ microtasks بتخلص كلها قبل أي رسم.
 
-~~~text app.js
-customElements.define("star-rating", StarRating);
-const form = document.querySelector("form");
-const stars = form.querySelector("star-rating");
-console.log(form.checkValidity(), JSON.stringify([...new FormData(form)]));
-stars.click();
-stars.click();
-console.log(form.checkValidity(), JSON.stringify([...new FormData(form)]));
-form.reset();
-console.log(stars.value, JSON.stringify([...new FormData(form)]));
-~~~
-
-~~~text الناتج (Chrome 156)
-false [["note","hi"]]
-true [["rating","2"],["note","hi"]]
-0 [["note","hi"]]
-~~~
-
-- [[[...new FormData(form)]]]: [[FormData]] بيلم كل قيم الفورم، و [[...]] بيحوّلها array من أزواج [[[name, value]]] عشان نطبعها.
-- **السطر الأول**: [[checkValidity()]] بـ [[false]] لأن [[required]] والقيمة صفر، و [[rating]] مش في الـ FormData (القيمة [[null]]).
-- **التاني**: بعد ضغطتين القيمة 2، فبقى صالح و [[rating]] بقى [["2"]] **قبل** [[note]]، بترتيب العناصر في الـ HTML زي أي input.
-- **التالت**: [[form.reset()]] نادى [[formResetCallback]] فرجع صفر واختفى من الـ FormData.
-
-### وكمان جرّبت
-
-- [[star-rating:invalid]] في الـ CSS مسكت العنصر وهو فاضي: [[stars.matches(":invalid")]] بـ [[true]].
-- [[form.requestSubmit()]] وهو فاضي: [[submit]] مااتعملش، وبدله [[invalid]] event اتبعت على [[STAR-RATING]]. وبعد ضغطة واحدة [[submit]] اتعمل بـ [[[["rating","1"],["note","hi"]]]].
-- [[this.#internals.states.add("on")]] خلّى [[x-t:state(on) { color: red }]] تشتغل (لونه طلع [[rgb(255, 0, 0)]]): كده تعمل حالات CSS خاصة بالـ component.
+الحل: اتجاهل التغييرات اللي انت عملتها (فحص زي [[if (el.querySelector(".badge")) continue]])، أو [[disconnect]] وعدّل وبعدين [[observe]] تاني.
 
 ---
 
@@ -1064,307 +1505,233 @@ true [["rating","2"],["note","hi"]]
 
 | الحاجة | معناها |
 |---|---|
-| [[static formAssociated = true]] | العنصر ده بيتبع الفورم اللي حواليه زي input |
-| [[this.attachInternals()]] | مرة واحدة بس، وبترجّع [[ElementInternals]] |
-| [[setFormValue(v)]] | القيمة اللي هتتبعت، و [[null]] يعني متتبعتش |
-| [[setValidity(flags, msg)]] و [[setValidity({})]] | invalid بسبب ورسالة، أو صالح |
-| [[internals.role]] و [[ariaValueNow]] | الدور والقيمة لقارئ الشاشة من غير attributes |
-| [[formResetCallback]] و [[formDisabledCallback]] | الفورم اتعمله reset أو الـ fieldset اتقفل |
+| [[new MutationObserver(cb)]] و [[observe(el, opts)]] | ابعتلي لستة بالتغييرات اللي حصلت جوه el |
+| [[childList]] و [[subtree]] | عناصر اتضافت أو اتشالت، في الأولاد بس أو في الشجرة كلها |
+| [[attributeFilter]] و [[attributeOldValue]] | attributes معينة بس، ومعاها قيمتها القديمة |
+| [[characterData]] | نص اتعدّل جوه text node موجود |
+| [[takeRecords()]] | هات اللي في الطابور دلوقتي وفضّيه |
+| [[disconnect()]] | وقّف المراقبة وارمي اللي لسه موصلش |
 
-- لازم [[name]] attribute عشان القيمة تتبعت باسم.
-- كل ما القيمة تتغير نادي [[setFormValue]] و [[setValidity]] مع بعض.
-- [[tabIndex = 0]] ودعم الكيبورد عليك انت، الـ internals مبتعملهمش.`,
+- الـ callback microtask: بيتنادى مرة واحدة بعد ما الكود يخلص، وقبل الـ timers والرسم.
+- [[getAttribute]] جوه الـ callback = القيمة دلوقتي، والقديمة في [[oldValue]].
+- متغيّرش اللي بتراقبه جوه الـ callback من غير شرط يوقف.`,
           lines: [
-            R`component اسمه [[StarRating]] بيورث [[HTMLElement]] زي أي custom element (درس «customElements.define»).`,
-            R`[[static]] على الـ class نفسه: بيقول للمتصفح وقت الـ [[define]] إن العنصر ده بيتبع الفورم زي [[<input>]]. من غيره [[setFormValue]] بترمي [[NotSupportedError]].`,
-            R`[[attachInternals()]] بترجّع [[ElementInternals]]: الـ object اللي الـ component بيكلّم بيه الفورم وقارئ الشاشة. مسموحة مرة واحدة بس، عشان كده في field بيتعمل مع العنصر، و [[#]] بتخليه خاص فمحدش برّه يغيّر قيمة الفورم.`,
-            R`عدد النجوم الحالي، خاص برضه. القيمة اللي الفورم بيشوفها بتيجي من هنا عن طريق [[#sync]].`,
-            R`بيتنادى لما العنصر يدخل الصفحة، فبنجهّز فيه الكيبورد وقارئ الشاشة والضغط.`,
-            R`[[tabIndex = 0]] بيخلّي العنصر ياخد focus بـ Tab زي أي input، وإلا اللي بيستخدم الكيبورد مش هيوصله.`,
-            R`بيقول لقارئ الشاشة إن ده [[slider]]، من غير attribute [[role]] ظاهر في الـ HTML (اسمها ARIA reflection). والاسم بييجي من الـ [[<label>]] اللي حواليه لوحده.`,
-            R`أقصى قيمة 5. من غيرها قارئ الشاشة كان بيقول إن المدى من 0 لـ 100، لأن ده الافتراضي للـ slider.`,
-            R`كل ضغطة بتزوّد نجمة، و [[% 5]] (باقي القسمة على 5) بيخلّيها ترجع 1 بعد 5. وبنكتب في [[this.value]] (الـ setter) مش في [[#value]] مباشرة، عشان الـ setter هو اللي بيبلّغ الفورم.`,
-            R`بنحدّث القيمة في الفورم والشكل من أول ما العنصر يظهر، عشان [[required]] يتحسب صح قبل أي ضغطة.`,
-            R`نهاية [[connectedCallback]].`,
-            R`القراية: [[stars.value]] بيرجّع عدد النجوم كرقم.`,
-            R`الكتابة: [[Number(v)]] عشان [[stars.value = "3"]] نص يشتغل برضه، وبعدها [[#sync]] يبلّغ الفورم ويرسم. أي كتابة من برّه أو من الضغط بتعدّي من هنا.`,
-            R`الفورم اللي العنصر جواه، زي [[input.form]]. [[#internals.form]] بيعرفه لوحده من مكان العنصر في الصفحة.`,
-            R`الاسم زي [[input.name]]. القيمة بتتبعت باسم الـ attribute [[name]]، والـ getter ده بس عشان الكود اللي بيقرا [[el.name]] يلاقيه.`,
-            R`المتصفح بيناديها لوحده مع [[form.reset()]] أو زرار [[type="reset"]]: بنرجّع صفر، والـ setter بيبلّغ الفورم.`,
-            R`method خاصة بتعمل كل اللي لازم يحصل لما القيمة تتغير، في مكان واحد.`,
-            R`القيمة اللي [[FormData]] هيشوفها باسم الـ [[name]]. صفر يعني [[null]]: «مفيش قيمة» فمش هتتبعت خالص، زي checkbox مش متعلّم.`,
-            R`لو عليه [[required]] والقيمة صفر: invalid بسبب [[valueMissing]] (نفس اسم [[input.validity.valueMissing]])، والرسالة اللي المتصفح هيعرضها لما الفورم يتبعت.`,
-            R`غير كده [[setValidity({})]]: object فاضي يعني «مفيش مشاكل». لازم تناديها صراحةً، وإلا العنصر يفضل invalid من آخر مرة.`,
-            R`القيمة الحالية لقارئ الشاشة، فبيقول «1 من 5» مثلًا.`,
-            R`الشكل: [[repeat]] بتكرر النجمة المليانة بعدد القيمة، والفاضية للباقي لحد 5.`,
-            R`نهاية [[#sync]].`,
-            R`نهاية الـ class.`,
-            R`بنسجّل الـ tag. المتصفح هنا بيقرا [[formAssociated]] ويربط أي [[<star-rating>]] بالفورم اللي حواليه.`,
-            R`الفورم من الـ HTML اللي في «جرّب».`,
-            R`الـ component جوه الفورم.`,
-            R`[[checkValidity()]] بـ [[false]] لأنه [[required]] وفاضي. و [[[...new FormData(form)]]] بيحوّل قيم الفورم لـ array من أزواج عشان نطبعها، و [[rating]] مش فيها لأن القيمة [[null]].`,
-            R`ضغطة: القيمة بقت 1.`,
-            R`ضغطة تانية: القيمة بقت 2.`,
-            R`دلوقتي [[true]]، و [[rating]] بقى [["2"]] في الـ FormData قبل [[note]] بترتيب العناصر في الـ HTML.`,
-            R`[[reset()]] بيرجّع كل خانات الفورم، وبينادي [[formResetCallback]] بتاعنا.`,
-            R`القيمة رجعت 0، و [[rating]] اختفى من الـ FormData تاني.`,
+            R`العنصر اللي هنراقبه: لستة رسايل الشات. لازم يكون موجود في الصفحة قبل السطر ده، وإلا [[querySelector]] هيرجّع [[null]] و [[observe]] هيرمي TypeError.`,
+            R`بنعمل المراقب ونديله callback. الـ callback بياخد [[records]]: array فيها record لكل تغيير حصل من آخر مرة اتنادى، مش تغيير واحد.`,
+            R`بنطبع عدد التغييرات في الدفعة دي، عشان نشوف بعينينا إن المتصفح جمّعهم ونادانا مرة واحدة بس.`,
+            R`بنلف على كل record. كل واحد فيه [[type]] و [[target]] وحاجات تانية حسب النوع.`,
+            R`لو النوع [["childList"]] يبقى عناصر اتضافت أو اتشالت: [[addedNodes]] و [[removedNodes]] لستتين بالـ nodes، وبنطبع عددهم.`,
+            R`غير كده هنا يبقى [["attributes"]]: بنطبع اسم الـ attribute وقيمته القديمة ([[oldValue]]) والقيمة **الحالية** من [[getAttribute]]. والحالية دي وقت الـ callback مش وقت التغيير، عشان كده الاتنين هيطلعوا [[idle]].`,
+            R`نهاية الـ [[for]].`,
+            R`نهاية الـ callback والـ [[MutationObserver]].`,
+            R`نبدأ نراقب [[chat]]: الأولاد اللي بيتضافوا أو بيتشالوا ([[childList]]) في كل الشجرة ([[subtree]])، والـ attribute [[data-state]] بس ([[attributeFilter]])، ومعاه القيمة القديمة ([[attributeOldValue]]).`,
+            R`بنعمل [[li]] جديد. لسه في الذاكرة بس، مش في الصفحة.`,
+            R`بنحط فيه نص. التغيير ده مش هيتسجّل، لأن [[msg]] لسه برّه [[chat]] اللي بنراقبه.`,
+            R`بنضيفه في آخر [[chat]]: أول record من نوع [[childList]] فيه [[addedNodes]] بعنصر واحد.`,
+            R`[[dataset.state]] بيكتب الـ attribute [[data-state="busy"]]: record من نوع [[attributes]] و [[oldValue]] بتاعه [[null]] لأنه مكانش موجود.`,
+            R`تغيير تاني لنفس الـ attribute: record تالت، و [[oldValue]] بتاعه [[busy]].`,
+            R`تغيير [[title]]: مش هيتسجّل خالص، لأن [[attributeFilter]] فيه [[data-state]] بس.`,
+            R`بنشيل الرسالة: record رابع من نوع [[childList]] فيه [[removedNodes]] بعنصر واحد.`,
+            R`السطر ده بيطلع **قبل** [[records: 4]]، لأن الـ callback microtask بيستنى الكود اللي شغّال يخلص.`,
+            R`observer تاني صغير بيعمل حاجة حقيقية: كل ما رسالة تتضاف، بينزّل الشات لآخره بإنه يخلّي [[scrollTop]] قد [[scrollHeight]]. مش فارق مين ضاف الرسالة، ومش محتاج تفتكر تنادي دالة scroll في كل مكان بيضيف رسايل.`,
           ],
-          sol: R`الناتج في Chrome 156: [[false [["note","hi"]]]] ثم [[true [["rating","2"],["note","hi"]]]] ثم [[0 [["note","hi"]]]]. الإطار الأحمر ظاهر وهو فاضي ([[:invalid]] مسكت)، ودوسة «ابعت» من غير نجوم مبعتتش الفورم: بدلها [[invalid]] event اتبعت على العنصر والمتصفح عرض «اختار عدد النجوم» (شكل الفقاعة نفسها من الـ docs، لأن الـ headless مبيرسمهاش).
+          sol: R`«الكود خلص» بتطلع الأول، وبعدها [[records: 4]] والأربع سطور: [[childList +1 -0]]، و [[data-state null → idle]]، و [[data-state busy → idle]]، و [[childList +0 -1]] (اتجرّب في Chrome 156 و jsdom 30).
 
-لما تمسح [[static formAssociated = true]]، أول [[setFormValue]] جوه [[#sync]] بيرمي: [[NotSupportedError: Failed to execute 'setFormValue' on 'ElementInternals': The target element is not a form-associated custom element.]] ([[attachInternals()]] نفسها بتنجح، بس مش بتربطه بالفورم).
-
-الدعم من الـ docs (MDN: ElementInternals): Chrome و Edge و Firefox، و Safari من 16.4.`
+لما تضيف [[mo.disconnect()]] كآخر سطر، الـ callback مبيتناداش خالص: الـ disconnect رمى الأربع records اللي كانوا مستنيين الـ microtask. التصليح: [[const pending = mo.takeRecords(); mo.disconnect();]] وبعدين لف على [[pending]] بنفسك، وهتلاقي فيها نفس الأربعة.`
         },
         {
-          cmd: "Declarative Shadow DOM و :defined",
-          title: "الـ component يظهر صح من أول لحظة (من غير flash)، حتى قبل ما الـ JS يتحمّل",
-          desc: R`الـ custom element بيبقى عنصر فاضي مالوش شكل لحد ما الـ JS يتحمّل ويعمل [[customElements.define]]. على نت بطيء ده بيبان: الصفحة بتظهر بالنص الخام أو فاضية، وبعدين فجأة الـ component يترسم ويزق اللي تحته (flash وlayout shift).
+          cmd: "Notification و permissions",
+          title: "تبعت إشعار للنظام، وتسأل عن الإذن الأول من غير ما تزعج اليوزر",
+          desc: R`[[Notification]] بيطلّع إشعار من النظام نفسه (الركن بتاع ويندوز أو ماك أو أندرويد)، حتى لو التاب مش قدامك. بس لازم اليوزر يوافق الأول: [[Notification.requestPermission()]] بتطلّع سؤال المتصفح، وبترجّع [["granted"]] أو [["denied"]] أو [["default"]] (قفل السؤال من غير ما يختار).
 
-فيه حلّين بيكمّلوا بعض:
+و [[navigator.permissions.query({ name })]] (اسمها Permissions API) بتقولك حالة أي إذن **من غير ما تسأل**: [["granted"]] أو [["denied"]] أو [["prompt"]]، وبتدّيك [[onchange]] لو اتغيّرت. دي نفس الطريقة اللي بتسأل بيها عن الكاميرا والموقع والـ clipboard (الـ Clipboard والـ Share ليهم درس لوحدهم في التاب ده: «Clipboard و Geolocation و Share»).
 
-• **Declarative Shadow DOM**: [[<template shadowrootmode="open">]] جوه العنصر في الـ HTML نفسه. الـ parser بيعمل الـ shadow root منه على طول، فالشكل والـ CSS الداخلي يظهروا قبل أي JS (وده اللي بيخلّي SSR للـ Web Components ممكن).
-• **[[:defined]] و [[customElements.whenDefined]]**: [[:not(:defined)]] في CSS بتمسك العنصر لحد ما يتسجّل، فتحجز له مكان أو تخفيه، و [[whenDefined("x-y")]] Promise بتتحل لما يتسجّل عشان الكود اللي محتاجه يستنى.`,
-          example: R`<style>
-  user-badge:not(:defined) { opacity: 0.5; pointer-events: none; }
-</style>
-<user-badge>
-  <template shadowrootmode="open">
-    <style>b { color: teal; }</style>
-    <b>★</b> <slot></slot>
-  </template>
-  سارة
-</user-badge>
-<script type="module">
-  const first = document.querySelector("user-badge");
-  console.log("قبل:", first.matches(":defined"), !!first.shadowRoot, getComputedStyle(first).opacity);
-  class UserBadge extends HTMLElement {
-    constructor() {
-      super();
-      if (!this.shadowRoot) this.attachShadow({ mode: "open" }).innerHTML = "<style>b { color: teal; }</style><b>★</b> <slot></slot>";
-      this.shadowRoot.querySelector("b").addEventListener("click", () => this.toggleAttribute("starred"));
-    }
-  }
-  customElements.whenDefined("user-badge").then(() => console.log("whenDefined اتحلّت"));
-  customElements.define("user-badge", UserBadge);
-  console.log("بعد:", first.matches(":defined"), getComputedStyle(first).opacity);
-  const extra = document.createElement("user-badge");
-  extra.textContent = "علي";
-  document.body.append(extra);
-  console.log("من JS:", extra.shadowRoot.innerHTML.length > 0);
-</script>`,
-          try: R`احفظ المثال كـ [[index.html]] وشغّله بـ [[npx serve]]. وبعدين خلّي الـ [[define]] يتأخر: لفّه في [[setTimeout(() => { ... }, 2000)]] واعمل refresh: النجمة واللون ظاهرين من الأول؟ والعنصر باهت لمدة ثانيتين؟ وبعدين امسح الـ [[<template>]] من الـ HTML (يعني من غير Declarative Shadow DOM) وجرّب تاني: إيه اللي بيظهر في الثانيتين؟ وأخيرًا شيل [[if (!this.shadowRoot)]] وخلّي [[attachShadow]] دايمًا: إيه اللي اتكسر؟`,
+القاعدة الذهبية: متسألش أول ما الصفحة تفتح. اسأل بعد ضغطة على زرار اليوزر فاهم هو بيعمل إيه. و [["denied"]] مبيتغيّرش من الكود أبدًا: اليوزر بس يغيّره من إعدادات الموقع.`,
+          example: R`const btn = document.querySelector("#notify");
+const status = await navigator.permissions.query({ name: "notifications" });
+console.log("الحالة:", status.state, "| Notification.permission:", Notification.permission);
+status.onchange = () => console.log("اتغيرت لـ", status.state);
+btn.addEventListener("click", async () => {
+  if (!("Notification" in window)) return console.log("المتصفح مبيدعمش");
+  if (Notification.permission === "denied") return console.log("اترفض قبل كده: من إعدادات الموقع بس");
+  const result = await Notification.requestPermission();
+  console.log("الرد:", result);
+  if (result !== "granted") return;
+  const n = new Notification("طلب جديد", { body: "رقم 42", tag: "order-42", icon: "/icon-192.png" });
+  n.onshow = () => console.log("ظهر:", n.title, n.body, n.tag);
+  n.onclick = () => { window.focus(); n.close(); };
+});`,
+          try: R`حط المثال في [[<script type="module">]] (عشان الـ [[await]] اللي برّه أي دالة) مع [[<button id="notify">]]، وافتحه من [[http://localhost]] (بـ [[npx serve]] مثلًا)، لأن الـ service worker في درس الـ push مش هيشتغل غير كده. دوس الزرار ووافق، وبعدين من القفل اللي جنب العنوان ← Site settings ← Notifications خليها Block، وارجع الصفحة ودوس تاني. وجرّب كمان تبعت نفس الإشعار مرتين بنفس الـ [[tag]] وشوف بيظهروا كام واحد.`,
           practice: [
-            { lvl: 'سريع', t: R`اقرا وتوقّع: [[div.innerHTML = '<x-y><template shadowrootmode="open"><b>hi</b></template></x-y>']] وبعدين [[div.firstChild.shadowRoot]]: هيرجّع إيه؟ ونفس الكلام بـ [[div.setHTMLUnsafe(...)]] بدل [[innerHTML]]؟ اكتب توقعك وبعدين شغّله في Console بتاع Chrome.`, done: R`[[innerHTML]] رجّع [[null]] والـ [[<template>]] فضل template عادي جوه العنصر، والـ Console طلّع تحذير فيه [[Use setHTMLUnsafe() or parseHTMLUnsafe() instead.]]، و [[setHTMLUnsafe]] رجّع shadow root فعلًا، وتقدر تقول ليه [[innerHTML]] مبيعملهاش (عشان الكود القديم ميتفاجئش).` },
-            { lvl: 'تطبيق', t: R`ابني [[<product-card>]] بيظهر صح على 3G: خلّي السيرفر (Node صغير أو حتى ملف HTML) يرجّع ٣ كروت كل واحد فيه [[<template shadowrootmode="open">]] بالصورة والاسم والسعر والـ CSS، وزرار «أضف للسلة» مبيشتغلش غير بعد الـ [[define]]. والكروت اللي بتتضاف بعدين من JS ([[createElement]]) بتعمل نفس الـ shadow بنفسها.`, done: R`في DevTools ← Network ← Slow 3G مع تعطيل كاش، الكروت بتبان بشكلها الكامل قبل ما ملف الـ JS يخلص تحميل، والزرار باهت ومبيستجبش بـ [[:not(:defined)]]، وبعد الـ [[define]] بيشتغل، و Lighthouse بيقول CLS قريب من 0، وكارت جديد من JS شكله زي القديم بالظبط.` },
-            { lvl: 'تحدي', t: R`قارن وقيس: نفس صفحة الـ ٣ كروت بطريقتين: (١) من غير DSD و [[product-card:not(:defined) { visibility: hidden }]]، و (٢) بـ DSD. قيس في Chrome DevTools ← Performance (أو Lighthouse) بـ Slow 3G: إمتى الكروت تظهر (FCP و LCP)، وكام CLS، واكتب جدول بالأرقام.`, done: R`عندك جدول فيه FCP و LCP و CLS للطريقتين من ٣ تشغيلات لكل واحدة، والـ DSD بيظهر الكروت قبل ما الـ JS يخلص (LCP أقل بفرق واضح على Slow 3G)، وكتبت جملة بالعيب: الـ HTML بقى أكبر لأن الـ CSS بيتكرر في كل كارت.` },
+            { lvl: 'سريع', t: R`دوّر بنفسك: من MDN (صفحة [[Permissions.query()]] وصفحة [[Notification.requestPermission()]])، إيه الفرق بين [["prompt"]] و [["default"]]؟ وإيه اللي بيحصل لو ناديت [[requestPermission()]] من غير ضغطة من اليوزر في Firefox و Safari؟`, done: R`كتبت إن الاتنين معناهم «لسه مسألناش» بس [["prompt"]] اسمها في Permissions API و [["default"]] في [[Notification.permission]]، وإن Firefox و Safari بيطلبوا user gesture (ضغطة) وإلا السؤال مبيظهرش، ومعاك لينك الصفحتين.` },
+            { lvl: 'تطبيق', t: R`ابني زرار «فعّل الإشعارات» بـ ٣ أشكال حسب الحالة: [["prompt"]] زرار عادي، و [["granted"]] علامة ✓ «الإشعارات شغالة»، و [["denied"]] رسالة بتقول «اتقفلت من إعدادات الموقع» من غير زرار. والشكل بيتغير لوحده بـ [[status.onchange]] لو اليوزر غيّر الإعدادات والصفحة مفتوحة.`, done: R`كل حالة من التلاتة بتطلّع شكلها، وتغيير الإذن من القفل اللي جنب العنوان بيقلب الشكل من غير refresh، وفي حالة [["denied"]] مفيش أي نداء لـ [[requestPermission]] (اتأكد بـ [[console.log]] جواها).` },
+            { lvl: 'تحدي', t: R`محاكاة: «مؤقّت بومودورو» بيبعت إشعار بعد ٢٥ دقيقة (خليها ١٠ ثواني وانت بتجرّب)، بس **لو التاب مستخبي بس** ([[document.hidden]] من درس «visibilitychange و bfcache»)، ولو التاب قدامك يطلّع رسالة جوه الصفحة بدل الإشعار. والإشعار بـ [[tag: "pomodoro"]] عشان ميتكوّموش، والضغط عليه يرجّعك للتاب.`, done: R`وانت في التاب مفيش إشعار نظام وفيه رسالة في الصفحة، ولو بدّلت لتاب تاني بيظهر إشعار واحد، وتشغيل المؤقت مرتين ورا بعض بيسيب إشعار واحد بس في مركز الإشعارات (نفس الـ [[tag]] بيبدّل القديم)، والضغط عليه بيجيب التاب قدام.` },
           ],
           flag: "script",
           deep: {
-            why: R`الـ Web Components من غير DSD كانت محتاجة JS عشان تتعرض خالص، فمكانتش بتنفع مع SSR ولا مع SEO ولا على نت بطيء: الصفحة بتفضل فاضية أو بتنط. DSD خلّى السيرفر يبعت الـ shadow DOM جاهز في الـ HTML، و [[:defined]] بيخلّيك تتحكم في الشكل في الفترة اللي قبل ما الـ JS يوصل.`,
-            how: R`الـ parser لما يلاقي [[<template shadowrootmode="open">]] كأول ولد لعنصر، بيعمل [[attachShadow]] للعنصر ويحط محتوى الـ template جوه الـ shadow root، والـ template نفسه بيختفي من الـ DOM (جرّبت: [[document.querySelectorAll("template").length]] بـ 0). ده بيحصل وقت الـ parsing بس: [[innerHTML]] مبيعملهوش، لازم [[setHTMLUnsafe]] أو [[Document.parseHTMLUnsafe]].
+            why: R`الإشعار أقوى طريقة توصل بيها لليوزر وهو مش بيبص على موقعك، وعشان كده أكتر حاجة بتتساء استخدامها. المتصفحات بقت بتخبّي السؤال لو المواقع بتسأل كتير من غير سبب (Chrome بيعمله «quiet UI» جنب العنوان)، واليوزر اللي داس Block مش هيرجع. فالسؤال في الوقت الغلط ممكن يخسّرك الإذن للأبد.`,
+            how: R`[[Notification.permission]] قيمة متزامنة بتقرا الحالة دلوقتي. و [[requestPermission()]] بترجّع Promise: لو الحالة [["default"]] بتطلّع السؤال، ولو [["granted"]] أو [["denied"]] بترجّع على طول من غير سؤال (جرّبتها: في [["denied"]] الكود وقف عند الشرط قبل ما يسأل أصلًا).
 
-لما الـ [[define]] يحصل بعدين، الـ constructor بيلاقي [[this.shadowRoot]] موجود فعلًا. لو ناديت [[attachShadow]] على عنصر عنده declarative shadow root، المتصفح بيرجّع **نفس** الـ root بس **فاضي** (جرّبتها: [[r === el.shadowRoot]] بـ [[true]] و [[innerHTML]] بـ [[""]]). عشان كده [[if (!this.shadowRoot)]].
+[[new Notification(title, options)]] بيطلّع الإشعار على طول. أهم الـ options: [[body]] النص، و [[icon]]، و [[tag]] (إشعار جديد بنفس الـ tag بيبدّل القديم بدل ما يتكوّموا)، و [[data]] أي داتا تحتاجها في الضغطة.
 
-[[shadowrootmode="closed"]]: [[el.shadowRoot]] بـ [[null]] من برّه، والـ component يوصله من [[this.attachInternals().shadowRoot]] (جرّبت: رجّع المحتوى).
+[[navigator.permissions.query]] بتاخد [[{ name }]] من لستة أسامي ثابتة ([["notifications"]] و [["geolocation"]] و [["camera"]] و [["clipboard-read"]]...)، واسم غلط بيرمي [[TypeError]]، وبترجّع [[PermissionStatus]] فيه [[state]] و [[onchange]].
 
-[[:defined]] بتمسك أي عنصر HTML عادي، وأي custom element **بعد** ما اتسجّل. و [[customElements.whenDefined(name)]] بتتحل بالـ class لما الاسم يتسجّل، كـ microtask بعد الـ [[define]] (جرّبت: [[بعد:]] اتطبعت قبل [[whenDefined اتحلّت]]).`,
-            when: R`DSD: أي component بيترسم من السيرفر (Lit SSR، و Astro، و Enhance، أو HTML بتكتبه بإيدك) أو في صفحة السرعة فيها مهمة. و [[:not(:defined)]]: دايمًا تقريبًا، ولو بس عشان تحجز مكان ([[display: block; min-height]]) بدل ما الصفحة تنط. و [[whenDefined]]: لما كود محتاج methods العنصر (زي [[el.open()]]) وانت مش ضامن الـ script اتحمّل.`,
-            mistakes: R`[[attachShadow]] من غير ما تبص على [[this.shadowRoot]] فتمسح الـ DSD وتعمل flash بإيدك. وتحط الـ template بـ [[innerHTML]] وتستغرب إنه مااشتغلش. و [[:not(:defined) { display: none }]] على component عنده DSD: كده خبّيت الشكل اللي السيرفر تعب فيه. وتنادي methods على العنصر قبل الـ [[define]] (لسه [[HTMLElement]] عادي): [[el.open is not a function]]. وعنصر اتعمل بـ [[createElement]] قبل الـ [[define]] ومش في الصفحة مبيتعملوش upgrade لوحده (جرّبت: فضل [[HTMLElement]] لحد [[customElements.upgrade(el)]]).`
+الإشعار ده بيشتغل والصفحة مفتوحة بس. عشان يوصل والموقع مقفول محتاج Push API و service worker (درس «push و Background Sync» في وحدة PWA)، وهناك بيبقى [[registration.showNotification]] مش [[new Notification]].`,
+            when: R`حاجة اليوزر طلبها بنفسه ومهمة له وهو مش في التاب: رسالة جديدة في شات، أو طلب اتوصّل، أو مؤقت خلص، أو build خلص. ومش للإعلانات ولا «ارجعلنا وحشتنا». ولو اليوزر قدام الصفحة، رسالة جوه الصفحة أحسن من إشعار نظام.`,
+            mistakes: R`[[requestPermission()]] أول ما الصفحة تفتح، فاليوزر يرفض من غير ما يفهم. وتفتكر إنك تقدر تسأل تاني بعد [["denied"]]: مش هيظهر حاجة. وتجرّب من الموبايل على [[http://192.168.1.5:3000]] فالـ API مش موجود، لأنه محتاج secure context: HTTPS أو localhost (و Chrome بيعتبر [[file://]] secure كمان: جرّبتها و [[isSecureContext]] طلع [[true]]). و [[new Notification]] على Chrome أندرويد بيرمي [[TypeError: Illegal constructor]] (من الـ docs): هناك لازم [[registration.showNotification]] من service worker. ونسيان الـ [[tag]] فاليوزر يلاقي ٢٠ إشعار لنفس الحاجة.`
           },
           teach: R`## الفكرة في سطر
 
-[[<user-badge>]] جه من السيرفر جاهز بالـ shadow DOM بتاعه (النجمة واللون)، فبيظهر صح قبل الـ JS. لحد ما الـ JS يسجّله هو باهت ومبيستجبش ([[:not(:defined)]])، وبعد الـ [[define]] الـ class بيستخدم الـ shadow root الموجود بدل ما يعمل واحد جديد.
+قبل ما تبعت إشعار لازم تعرف الإذن حالته إيه، ولو لسه مسألتش، تسأل بعد ضغطة زرار. المثال بيعمل التلاتة: يقرا الحالة، ويسمع لو اتغيّرت، ويسأل ويبعت إشعار لما اليوزر يدوس.
 
-اتشغّل في Chrome 156 headless (عن طريق playwright-core) من [[http://127.0.0.1]].
+جرّبت المثال في Chrome 156 headless (عن طريق playwright-core، من [[http://127.0.0.1]]) في ٣ حالات: إذن لسه متسألش وبعدين اتوافق عليه والصفحة مفتوحة، وإذن مرفوض، وإذن موافق عليه من الأول. الـ playwright بيوافق أو بيرفض مكان اليوزر، فشكل نافذة السؤال نفسها والإشعار على الشاشة **من الـ docs** مش من التجربة.
 
 ---
 
-## ١. الـ CSS: قبل التسجيل
+## ١. الحالة من غير ما تسأل: [[navigator.permissions.query]]
 
-~~~text index.html
-<style>
-  user-badge:not(:defined) { opacity: 0.5; pointer-events: none; }
-</style>
+~~~text app.js
+const status = await navigator.permissions.query({ name: "notifications" });
+console.log("الحالة:", status.state, "| Notification.permission:", Notification.permission);
+status.onchange = () => console.log("اتغيرت لـ", status.state);
 ~~~
 
-- [[:defined]]: pseudo-class بتمسك أي عنصر «متعرّف»: كل عناصر HTML العادية، وأي custom element **بعد** [[customElements.define]].
-- [[:not(:defined)]]: العكس: الـ custom element اللي لسه متسجّلش.
-- [[opacity: 0.5]]: باهت، عشان اليوزر يحس إنه لسه مش جاهز.
-- [[pointer-events: none]]: الضغط عليه مبيعملش حاجة، لأن الـ listeners لسه مااتحطتش.
+- [[navigator.permissions]]: الـ Permissions API. فيها دالة واحدة مهمة: [[query]].
+- [[{ name: "notifications" }]]: اسم الإذن. الأسامي ثابتة، وأي اسم غلط بيرمي:
 
-لو الـ component **مفيهوش** DSD (هيترسم من الـ JS بس)، الأحسن تحجز مكانه بدل ما تخفيه، عشان الصفحة متنطش لما يظهر:
-
-~~~text style.css
-product-card:not(:defined) { display: block; min-height: 320px; }
+~~~text الناتج (Chrome، name: "banana")
+TypeError: Failed to execute 'query' on 'Permissions': Failed to read the 'name' property from 'PermissionDescriptor': The provided value 'banana' is not a valid enum value of type PermissionName.
 ~~~
 
-## ٢. الـ HTML: Declarative Shadow DOM
+- [[await]]: [[query]] بترجّع Promise. و [[await]] برّه أي دالة محتاج [[<script type="module">]].
+- [[status.state]]: [["granted"]] أو [["denied"]] أو [["prompt"]].
+- [[status.onchange]]: بيتنادى لو الحالة اتغيرت والصفحة مفتوحة (اليوزر غيّرها من الإعدادات، أو وافق على السؤال).
 
-~~~text index.html
-<user-badge>
-  <template shadowrootmode="open">
-    <style>b { color: teal; }</style>
-    <b>★</b> <slot></slot>
-  </template>
-  سارة
-</user-badge>
+جرّبت أسامي تانية في نفس الصفحة:
+
+~~~text الناتج (Chrome 156، إذن مااتسألش)
+notifications prompt
+geolocation prompt
+camera prompt
+clipboard-read prompt
+push NotSupportedError: Push Permission without userVisibleOnly:true isn't supported yet.
 ~~~
 
-- [[<template shadowrootmode="open">]]: لما الـ parser يقابل template بالـ attribute ده كأول ولد لعنصر، بيعمل shadow root للعنصر ويحط جواه محتوى الـ template. [[open]] زي [[attachShadow({ mode: "open" })]]: الـ JS من برّه يقدر يوصل بـ [[el.shadowRoot]].
-- [[<style>b { color: teal; }</style>]]: CSS جوه الـ shadow، مقفول عليه زي درس «shadow DOM».
-- [[<slot></slot>]]: هنا هيظهر اللي جوه العنصر من برّه (درس «slots»).
-- [[سارة]]: ده الـ light DOM: محتوى عادي جوه [[<user-badge>]]، والـ slot بيعرضه.
+الـ [["push"]] محتاج [[{ name: "push", userVisibleOnly: true }]]، ودي بتاعة درس الـ push في وحدة PWA.
 
-جرّبت وده قبل أي [[define]]:
+### [["prompt"]] و [["default"]]: نفس المعنى باسمين
 
 ~~~text الناتج
-قبل: false true 0.5
+الحالة: prompt | Notification.permission: default
 ~~~
 
-يعني: لسه مش [[:defined]]، بس الـ [[shadowRoot]] **موجود فعلًا**، والـ CSS بتاع [[:not(:defined)]] شغّال (0.5). ولون النجمة جوه الـ shadow طلع [[rgb(0, 128, 128)]] (teal) من غير أي JS. والـ [[<template>]] نفسه اختفى: [[document.querySelectorAll("template").length]] بقى 0.
+الاتنين معناهم «لسه مسألناش». الـ Permissions API بتسمّيها [["prompt"]]، و [[Notification.permission]] (الأقدم) بتسمّيها [["default"]]. والتانيين ([["granted"]] و [["denied"]]) نفس الاسم في الاتنين.
 
-### ليه مبيشتغلش مع [[innerHTML]]؟
+## ٢. الزرار: الفحص قبل السؤال
 
-~~~text الناتج (Chrome)
-Found declarative shadowrootmode attribute on a template, but declarative Shadow DOM is not being parsed. Use setHTMLUnsafe() or parseHTMLUnsafe() instead.
-innerHTML: false
-setHTMLUnsafe: true
+~~~text app.js
+btn.addEventListener("click", async () => {
+  if (!("Notification" in window)) return console.log("المتصفح مبيدعمش");
+  if (Notification.permission === "denied") return console.log("اترفض قبل كده: من إعدادات الموقع بس");
 ~~~
 
-الـ DSD بيتعمل وقت تحميل الصفحة بس. لو بتحط HTML من JS، [[innerHTML]] بيسيب الـ template عادي (عشان الكود القديم ميتغيّرش سلوكه فجأة)، و [[el.setHTMLUnsafe(html)]] هي اللي بتفهم DSD. («Unsafe» لأنها مش بتنضّف الـ HTML زي [[innerHTML]] بالظبط: متحطش فيها حاجة من اليوزر من غير تنضيف، درس XSS في وحدة الـ DOM.)
+- [[async]] على الـ listener عشان نقدر نستخدم [[await]] جواه.
+- [[("Notification" in window)]]: هل الـ API موجود أصلًا؟ مش موجود على Safari على iPhone غير لو الموقع متسطّب كـ PWA على الشاشة الرئيسية (من الـ docs)، ومش موجود لو الصفحة مش secure context.
+- [[return console.log(...)]]: اطبع واخرج من الدالة في سطر واحد.
+- [[=== "denied"]]: اليوزر رفض قبل كده. مفيش أي كود يقدر يسأله تاني، فبدل ما تنادي [[requestPermission]] على الفاضي، قوله يغيّرها من الإعدادات.
 
-## ٣. الـ class: استخدم الموجود
+## ٣. السؤال
 
-~~~text index.html
-  class UserBadge extends HTMLElement {
-    constructor() {
-      super();
-      if (!this.shadowRoot) this.attachShadow({ mode: "open" }).innerHTML = "<style>b { color: teal; }</style><b>★</b> <slot></slot>";
-      this.shadowRoot.querySelector("b").addEventListener("click", () => this.toggleAttribute("starred"));
-    }
-  }
+~~~text app.js
+  const result = await Notification.requestPermission();
+  console.log("الرد:", result);
+  if (result !== "granted") return;
 ~~~
 
-- [[if (!this.shadowRoot)]]: لو العنصر جه من السيرفر بـ DSD، الـ shadow root موجود: متعملش واحد جديد. لو اتعمل من JS ([[createElement]])، مفيش: اعمله بنفس المحتوى.
-- [[attachShadow(...).innerHTML = "..."]]: [[attachShadow]] بترجّع الـ shadow root، فبنحط جواه المحتوى في نفس السطر.
-- [[this.shadowRoot.querySelector("b")]]: في الحالتين دلوقتي فيه shadow root، فبنحط الـ listener: الضغط على النجمة بيعمل [[toggleAttribute("starred")]] (يحط الـ attribute لو مش موجود ويشيله لو موجود). جرّبت: بعد ضغطة [[hasAttribute("starred")]] بـ [[true]].
+- [[requestPermission()]]: لو الحالة [["default"]] بتطلّع نافذة المتصفح «Allow / Block». بترجّع Promise بالرد.
+- لو اليوزر قفل النافذة من غير ما يختار، الرد [["default"]] وتقدر تسأل تاني بعدين.
+- [[!== "granted"]]: أي حاجة غير الموافقة، خلاص.
 
-### ليه الـ [[if]] مهم؟
+ليه السؤال جوه الـ click؟ Firefox و Safari مبيطلّعوش السؤال أصلًا غير بعد ضغطة من اليوزر (user gesture)، و Chrome بيخبّي السؤال في أيقونة صغيرة جنب العنوان (اسمها quiet UI) للمواقع اللي الناس بترفضها كتير (من الـ docs). فالسؤال بعد ضغطة بيشتغل في كله وبيجيب موافقات أكتر.
 
-جرّبت [[attachShadow]] على عنصر عنده declarative shadow root:
+## ٤. الإشعار نفسه
 
-~~~text الناتج
-attachShadow on DSD: true ""
+~~~text app.js
+  const n = new Notification("طلب جديد", { body: "رقم 42", tag: "order-42", icon: "/icon-192.png" });
+  n.onshow = () => console.log("ظهر:", n.title, n.body, n.tag);
+  n.onclick = () => { window.focus(); n.close(); };
 ~~~
 
-رجّع **نفس** الـ root ([[true]])، بس **فاضي** ([[""]]): المتصفح مسح المحتوى اللي جه من السيرفر. يعني من غير الـ [[if]]، كل الشغل ده بيتمسح ويترسم تاني من JS: نفس الـ flash اللي كنا بنهرب منه.
+| الـ option | معناه |
+|---|---|
+| أول argument ([["طلب جديد"]]) | العنوان، بيظهر بخط تقيل |
+| [[body]] | السطر اللي تحت العنوان |
+| [[tag]] | إشعار جديد بنفس الـ tag بيبدّل القديم بدل ما يتكوّموا جنب بعض |
+| [[icon]] | صورة صغيرة جنب الكلام (لو مش موجودة الإشعار بيظهر من غيرها) |
 
-> لو الـ template [[shadowrootmode="closed"]]: [[el.shadowRoot]] بـ [[null]] حتى من جوه الـ class. الـ component يوصله بـ [[this.attachInternals().shadowRoot]] (جرّبتها: رجّع المحتوى).
+- [[onshow]]: الإشعار ظهر فعلًا.
+- [[onclick]]: اليوزر داس عليه. [[window.focus()]] بيجيب التاب قدام، و [[n.close()]] بيشيله من مركز الإشعارات.
 
-## ٤. [[whenDefined]] و [[define]]
+## ٥. اللي حصل لما شغّلته
 
-~~~text index.html
-  customElements.whenDefined("user-badge").then(() => console.log("whenDefined اتحلّت"));
-  customElements.define("user-badge", UserBadge);
-  console.log("بعد:", first.matches(":defined"), getComputedStyle(first).opacity);
+~~~text الناتج (إذن مااتسألش، وبعدين اتوافق عليه والصفحة مفتوحة، وبعدين ضغطة)
+الحالة: prompt | Notification.permission: default
+اتغيرت لـ granted
+الرد: granted
+ظهر: طلب جديد رقم 42 order-42
 ~~~
 
-- [[customElements.whenDefined(name)]]: Promise بتتحل لما الاسم ده يتسجّل (بالـ class نفسه). لو متسجّل خلاص، بتتحل على طول.
-- [[define]]: العنصر اللي في الصفحة بيتعمله **upgrade**: الـ constructor بيتنادى عليه، ويبقى [[:defined]].
-
-~~~text الناتج
-بعد: true 1
+~~~text الناتج (الإذن مرفوض قبل كده)
+الحالة: denied | Notification.permission: denied
+اترفض قبل كده: من إعدادات الموقع بس
 ~~~
 
-الـ CSS اتشال لوحده (opacity رجعت 1)، من غير ما نكتب أي سطر JS يشيل class.
-
-## ٥. عنصر جديد من JS
-
-~~~text index.html
-  const extra = document.createElement("user-badge");
-  extra.textContent = "علي";
-  document.body.append(extra);
-  console.log("من JS:", extra.shadowRoot.innerHTML.length > 0);
+~~~text الناتج (موافق عليه من الأول)
+الحالة: granted | Notification.permission: granted
+الرد: granted
+ظهر: طلب جديد رقم 42 order-42
 ~~~
 
-~~~text الناتج
-من JS: true
-~~~
+- في الأولى [[onchange]] اشتغل لوحده أول ما الإذن اتغير، قبل ما ندوس الزرار.
+- في التالتة [[requestPermission]] رجّعت [["granted"]] على طول من غير سؤال.
 
-هنا مفيش DSD، فالـ [[if]] عمل [[attachShadow]] والمحتوى اتحط، ولون النجمة برضه teal. نفس الـ component بيشتغل في الحالتين.
+## ٦. الإشعار والموقع مقفول؟
 
-### الترتيب الكامل
-
-~~~text الناتج (Chrome 156)
-قبل: false true 0.5
-بعد: true 1
-من JS: true
-whenDefined اتحلّت
-~~~
-
-[[whenDefined]] اتحلّت **آخر حاجة**، مع إن الـ [[define]] كان قبل «بعد»: الـ [[.then]] بيشتغل microtask بعد ما الكود اللي شغّال يخلص (درس «microtasks و macrotasks»).
-
-### عنصر اتعمل قبل الـ define
-
-~~~text الناتج
-before define: HTMLElement
-after define, not in doc: HTMLElement
-after upgrade: LateEl
-~~~
-
-[[createElement("late-el")]] قبل الـ [[define]]، ومش متحط في الصفحة: الـ define مبيعملوش upgrade لوحده لأنه مش في الـ document، لحد ما تحطه في الصفحة أو تنادي [[customElements.upgrade(el)]].
+[[new Notification]] بيشتغل بس والصفحة مفتوحة (في أي تاب). عشان إشعار يوصل والمتصفح مش فاتح موقعك، محتاج service worker و Push API، وهناك بتستخدم [[registration.showNotification(...)]] من جوه الـ service worker. ده درس «push و Background Sync» في وحدة PWA. وعلى Chrome أندرويد، [[new Notification]] من الصفحة نفسها بيرمي [[TypeError: Illegal constructor]] وبيقولك تستخدم [[showNotification]] (من الـ docs).
 
 ---
 
 ## الخلاصة
 
-| الحاجة | بتعمل إيه |
-|---|---|
-| [[<template shadowrootmode="open">]] | shadow root جاهز من الـ HTML وقت التحميل، من غير JS |
-| [[if (!this.shadowRoot)]] | استخدم الـ root اللي جه من السيرفر، و [[attachShadow]] عليه بيفضّيه |
-| [[setHTMLUnsafe(html)]] | DSD من JS، لأن [[innerHTML]] بيتجاهله |
-| [[:not(:defined)]] | شكل العنصر قبل الـ [[define]]: باهت، أو مكان محجوز |
-| [[customElements.whenDefined(name)]] | Promise بتتحل لما الاسم يتسجّل |
-| [[customElements.upgrade(el)]] | upgrade لعنصر اتعمل قبل الـ define ومش في الصفحة |
+| الحاجة | بترجّع | بتسأل اليوزر؟ |
+|---|---|---|
+| [[Notification.permission]] | [["default"]] أو [["granted"]] أو [["denied"]] على طول | لأ، بتقرا الحالة بس |
+| [[navigator.permissions.query({ name })]] | Promise بـ [[state]] و [[onchange]] | لأ، وبتشتغل لأي إذن |
+| [[Notification.requestPermission()]] | Promise بالرد | آه، لو الحالة لسه [["default"]] |
+| [[new Notification(title, opts)]] | الإشعار، ومعاه [[onclick]] و [[close()]] | لأ، ولازم الإذن [["granted"]] |
 
-- DSD للشكل قبل الـ JS، و [[:defined]] للحالة لحد ما يبقى تفاعلي: الاتنين مع بعض.
-- متخبّيش بـ [[display: none]] component عنده DSD.
-- الدعم (من الـ docs، MDN): Chrome و Edge من 111، و Safari من 16.4، و Firefox من 123.`,
+- اسأل بعد ضغطة، مش أول ما الصفحة تفتح.
+- [["denied"]] نهائي من ناحية الكود: وجّه اليوزر للإعدادات.
+- محتاج HTTPS أو localhost، و [[tag]] عشان الإشعارات متتكوّمش.`,
           lines: [
-            R`CSS عادي للصفحة. لازم يكون في الـ [[<head>]] أو قبل العنصر، عشان يشتغل من أول ما الصفحة ترسم.`,
-            R`[[:not(:defined)]] بتمسك [[<user-badge>]] بس لحد ما الـ JS يعمل [[define]]: باهت ومبيستقبلش ضغطات، عشان اليوزر ميدوسش على حاجة لسه مبتشتغلش. وبعد الـ define القاعدة بتتشال لوحدها.`,
-            R`نهاية الـ [[<style>]] بتاع الصفحة. القاعدة دي بتفضل موجودة على طول، بس [[:not(:defined)]] هي اللي بتقرر تمسك العنصر ولا لأ.`,
-            R`العنصر نفسه في الـ HTML. المتصفح مش عارفه لسه، فبيعامله كعنصر عادي لحد الـ [[define]].`,
-            R`Declarative Shadow DOM: template كأول ولد بـ [[shadowrootmode="open"]] بيخلّي الـ parser يعمل shadow root للعنصر ويحط المحتوى ده جواه، قبل أي JS.`,
-            R`CSS جوه الـ shadow: بيلوّن الـ [[<b>]] اللي جوه بس، ومبيأثرش على أي [[<b>]] في الصفحة.`,
-            R`النجمة، وبعدها [[<slot>]]: المكان اللي هيظهر فيه المحتوى العادي اللي جوه [[<user-badge>]] (هنا «سارة»).`,
-            R`نهاية الـ template. بعد الـ parsing الـ template نفسه بيختفي من الـ DOM ويبقى shadow root.`,
-            R`المحتوى العادي (light DOM): الاسم اللي بيتعرض في الـ slot. ده بيفضل نص عادي في الصفحة، فمحركات البحث وقارئ الشاشة شايفينه.`,
-            R`نهاية [[<user-badge>]]. لحد هنا كل حاجة HTML بس: لو الـ JS اتأخر أو فشل، العنصر لسه ظاهر بالنجمة والاسم.`,
-            R`[[type="module"]]: بيتنفّذ بعد ما الصفحة كلها تتعمل parse (زي [[defer]])، فالعنصر والـ shadow بتاعه موجودين ساعتها.`,
-            R`بنمسك أول [[<user-badge>]] (اللي جه من الـ HTML).`,
-            R`قبل الـ [[define]]: [[matches(":defined")]] بـ [[false]]، والـ [[shadowRoot]] **موجود** بفضل الـ DSD، والـ opacity 0.5 من قاعدة [[:not(:defined)]]. الناتج: [[قبل: false true 0.5]].`,
-            R`الـ class بتاع الـ component.`,
-            R`الـ constructor بيتنادى لما الـ [[define]] يحصل (للعناصر اللي في الصفحة) أو مع [[createElement]] بعدها.`,
-            R`[[super()]] لازم أول سطر في constructor أي class بيورث، عشان [[HTMLElement]] يجهّز العنصر.`,
-            R`لو مفيش shadow root (العنصر اتعمل من JS)، اعمل واحد وحط فيه نفس المحتوى اللي في الـ template. ولو موجود من الـ DSD، سيبه: [[attachShadow]] عليه كان هيرجّعه فاضي ويمسح اللي السيرفر بعته.`,
-            R`في الحالتين فيه shadow root دلوقتي، فبنحط الـ listener على النجمة: كل ضغطة بتقلب attribute [[starred]] (موجود ← مش موجود والعكس). الـ JS بيضيف التفاعل بس، الشكل كان جاهز.`,
-            R`نهاية الـ constructor.`,
-            R`نهاية الـ class.`,
-            R`[[whenDefined]] Promise بتتحل لما [[user-badge]] يتسجّل. الكود اللي محتاج العنصر جاهز يستنى هنا. والـ [[then]] بيشتغل كـ microtask، فالسطر ده هيطبع **آخر حاجة**.`,
-            R`التسجيل: العنصر اللي في الصفحة بيتعمله upgrade على طول (الـ constructor بيتنادى عليه) ويبقى [[:defined]].`,
-            R`بعد الـ [[define]]: [[true]] والـ opacity رجعت 1 لوحدها لأن [[:not(:defined)]] مبقتش ماسكة. الناتج: [[بعد: true 1]].`,
-            R`عنصر تاني من JS. هنا مفيش DSD، فالـ constructor هيعمل الـ shadow بنفسه.`,
-            R`المحتوى العادي بتاعه، اللي هيظهر في الـ slot.`,
-            R`بنحطه في آخر الـ [[body]]. الـ shadow اتعمل خلاص في الـ constructor (وقت [[createElement]] لأن الاسم متسجّل)، فبيظهر بشكله على طول.`,
-            R`الـ shadow root اتعمل وفيه محتوى: [[من JS: true]]. يعني نفس الـ class شغّال للعنصر اللي جه من السيرفر واللي اتعمل من JS.`,
-            R`نهاية الـ [[<script>]]. ولأنه module، أي متغير جواه ([[first]] و [[extra]]) مش global ومش هيتلخبط مع scripts تانية.`,
+            R`الزرار اللي اليوزر هيدوس عليه عشان يفعّل الإشعارات. السؤال لازم يطلع من ضغطة عليه، مش لوحده.`,
+            R`بنسأل الـ Permissions API عن حالة إذن الإشعارات **من غير** ما نطلّع أي سؤال لليوزر. [[await]] هنا برّه أي دالة، فالـ script لازم يكون [[type="module"]].`,
+            R`بنطبع الحالة بالطريقتين: [[status.state]] بتقول [["prompt"]] لو لسه مسألناش، و [[Notification.permission]] بتقول نفس المعنى بكلمة [["default"]].`,
+            R`[[onchange]] بيتنادى لو الإذن اتغيّر والصفحة مفتوحة، سواء اليوزر وافق على السؤال أو غيّرها من إعدادات الموقع. فتقدر تحدّث شكل الزرار لوحده.`,
+            R`بنسمع للضغطة، و [[async]] عشان هنستنى رد السؤال بـ [[await]] جوه.`,
+            R`لو المتصفح مفيهوش [[Notification]] أصلًا (Safari على iPhone من غير ما الموقع يتسطّب، أو صفحة مش HTTPS) بنطبع رسالة ونخرج بدل ما الكود يقع.`,
+            R`لو اليوزر رفض قبل كده، مفيش كود يقدر يسأله تاني: [[requestPermission]] هترجّع [["denied"]] من غير ما يظهر حاجة. فبنقوله يغيّرها من الإعدادات ونخرج.`,
+            R`بنطلّع سؤال المتصفح «Allow / Block» ونستنى الرد. لو الحالة كانت [["granted"]] خلاص بترجّع على طول من غير سؤال.`,
+            R`بنطبع الرد: [["granted"]] أو [["denied"]] أو [["default"]] لو اليوزر قفل النافذة من غير ما يختار.`,
+            R`أي رد غير الموافقة، بنخرج ومبنحاولش نبعت إشعار (كان هيترمي أو ميظهرش).`,
+            R`بنطلّع الإشعار: العنوان، و [[body]] السطر اللي تحته، و [[tag]] اللي بيخلّي إشعار تاني بنفس الاسم يبدّل ده بدل ما يتكوّموا، و [[icon]] صورة صغيرة.`,
+            R`[[onshow]] بيتنادى لما الإشعار يظهر فعلًا، وبنطبع العنوان والنص والـ tag عشان نتأكد إنهم وصلوا صح.`,
+            R`لما اليوزر يدوس على الإشعار: [[window.focus()]] بيجيب التاب بتاعنا قدام، و [[n.close()]] بيشيل الإشعار من مركز الإشعارات.`,
+            R`نهاية الـ click listener.`,
           ],
-          sol: R`الناتج في Chrome 156 بالترتيب: [[قبل: false true 0.5]] ثم [[بعد: true 1]] ثم [[من JS: true]] ثم [[whenDefined اتحلّت]]. ولون النجمة جوه الـ shadow [[rgb(0, 128, 128)]] قبل الـ define وبعده.
+          sol: R`اتجرّب في Chrome 156 headless من [[http://127.0.0.1]] (playwright بيوافق ويرفض مكانك): أول تحميل بيطبع [[الحالة: prompt | Notification.permission: default]]، ولما الإذن اتوافق عليه والصفحة مفتوحة [[onchange]] طبع [[اتغيرت لـ granted]]، والضغطة طبعت [[الرد: granted]] وبعدها [[ظهر: طلب جديد رقم 42 order-42]]. ولما الإذن مرفوض الضغطة طبعت [[اترفض قبل كده: من إعدادات الموقع بس]] ومسألتش.
 
-مع [[setTimeout]] ثانيتين: النجمة واللون والاسم ظاهرين من أول لحظة (الـ DSD)، والعنصر باهت لمدة ثانيتين وبعدين بيبقى عادي. من غير الـ [[<template>]]: في الثانيتين بيظهر «سارة» بس كنص عادي باهت من غير نجمة، وبعدين النجمة تظهر فجأة (ده الـ flash). ولو شلت [[if (!this.shadowRoot)]]: [[attachShadow]] على الـ DSD بيرجّع الـ root فاضي، فالمحتوى بيتمسح ويترسم من الـ string اللي في الـ JS، والنتيجة شكلها واحد بس الشغل اللي السيرفر بعته اترمى، ولو المحتوى في الـ string مختلف عن الـ template هتشوف نط.
-
-(الشكل البصري في الثانيتين اتأكد بـ [[getComputedStyle]]؛ الإحساس بالـ flash نفسه على نت بطيء جرّبه بإيدك في DevTools.)`
+شكل نافذة السؤال والإشعار على الشاشة، وإن إشعارين بنفس الـ [[tag]] بيبقوا واحد في مركز الإشعارات، من الـ docs (MDN: Notification و Notification.tag)، لأن الـ headless مبيرسمش إشعارات حقيقية. ولو فتحتها من الموبايل على IP الجهاز بـ [[http]]، [[Notification]] مش هيبقى موجود أصلًا لأن الصفحة مش secure context، فشرط [["Notification" in window]] هو اللي هيشتغل.`
         }
       ]
     }

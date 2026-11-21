@@ -1,1643 +1,2119 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "Patterns",
-      l: 3,
-      n: "module pattern و factory و singleton، و Observer بـ EventEmitter، و immutability، و iterators و generators، و Strategy pattern",
-      projects: [
-        { lvl: 'صغير', t: R`مولّد IDs محدش يلعب فيه`, what: R`دالة [[createIdGen(prefix)]] (درس الـ module pattern) العدّاد فيها جوه الـ closure، وبترجّع object فيه [[next()]] و [[peek()]] بس. اعملها مرة كـ factory ومرة كـ ES module فيه [[export]] للدالتين بس، وقارن مين فيهم بيدّيك أكتر من عدّاد.`, done: R`[[users.next()]] بيرجّع [[user-1]] وبعدها [[user-2]]، و [[orders.next()]] بيبدأ من [[order-1]] لوحده، و [[peek()]] مبيزوّدش العدّاد، و [[Object.keys(users)]] مفيهاش العدّاد، ومفيش أي طريقة ترجّعه لصفر من برا.` },
-        { lvl: 'صغير', t: R`range كامل بالـ generators`, what: R`[[function* range(start, end, step = 1)]] (درس iterators و generators) بتشتغل للخطوات السالبة كمان، وبترمي [[RangeError]] لو الـ step صفر أو عكس الاتجاه، و [[range(0, Infinity)]] مينفعش يقع في loop لما تاخد منه بـ [[take]].`, done: R`[[Array.from(range(5, 0, -1))]] بيرجّع 5 و 4 و 3 و 2 و 1، و [[range(0, 5, 0)]] و [[range(0, 5, -1)]] بيرموا [[RangeError]] أول ما تبدأ تلف عليهم، و [[range(0, Infinity).take(3).toArray()]] بيرجّع 0 و 1 و 2 على طول.` },
-        { lvl: 'متوسط', t: R`store صغير زي Zustand`, what: R`[[createStore(initial)]] بيجمع الوحدة كلها: الـ state مخفي جوه closure (module pattern)، و [[subscribe]] و [[emit]] من درس EventEmitter، و [[setState]] بتعمل state جديدة immutable وبتقبل object أو دالة [[(prev) => next]]، و [[Object.freeze]] على كل state جديدة. وجرّبه في ملف [[.mjs]] (strict تلقائي).`, done: R`كل subscriber بياخد [[(next, prev)]] و [[next !== prev]]، و [[setState((s) => ({ count: s.count + 1 }))]] تلات مرات بتوصّل العدد لـ 3، و [[getState().count = 99]] بيرمي [[TypeError]] (عشان الـ freeze والـ strict mode)، ودالة الإلغاء بتوقّف الإشعارات، و [[setState]] بنفس القيم بالظبط مبتبعتش إشعار.` },
-        { lvl: 'متوسط', t: R`undo و redo`, what: R`تاريخ للـ state: [[past]] و [[present]] و [[future]] كلهم immutable (درس immutability)، و [[undo()]] و [[redo()]]، وأي تغيير جديد بعد undo بيمسح الـ future. وزوّد [[*history()]] generator بيطلّع كل state من الأقدم للأحدث (درس generators)، و [[on("change")]] لأي حد عايز يعرف (درس EventEmitter).`, done: R`بعد ٣ تغييرات و ٢ undo الـ [[present]] بيبقى أول تغيير، و [[redo()]] بيرجّع التاني، وتغيير جديد بعدها بيخلّي [[redo()]] مبيعملش حاجة، و [[undo()]] على تاريخ فاضي مبيرميش error، و [[Array.from(h.history())]] طوله زي عدد الـ states بالظبط.` },
-        { lvl: 'كبير', t: R`قارئ صفحات API متين`, what: R`[[async function* paginate(fetchPage, { pageSize })]] بيلف على API بصفحات (اعمل سيرفر Node صغير على localhost بيرجّع [[{ items, next }]] ومرة من كل ٣ بيرجّع 500). فيه: فحص [[pageSize]] من 1 لـ 100، وretry ٣ مرات بـ backoff (وحدة async)، و [[try/finally]] جوه الـ generator بيطبع «خلصت» حتى لو اللي بيلف عمل [[break]]، و Emitter بيطلّع [[page]] و [[retry]] و [[error]] للّوج، وكل صفحة بتترجع immutable. من وحدة Patterns كلها ووحدة async والأخطاء.`, done: R`[[for await]] على ١٠ صفحات بيجيب كل العناصر من غير تكرار حتى مع الـ 500 العشوائي، واللوج فيه سطر [[retry]] لكل فشل، و [[pageSize: 0]] أو [[pageSize: 500]] بيرمي [[RangeError]] قبل أي request، و [[break]] بعد صفحتين بيطبع «خلصت» ومفيش request تالت في لوج السيرفر، ولو السيرفر مقفول خالص بيطلع error واضح بعد ٣ محاولات بس مش loop.`, ext: R`خليه يقبل [[AbortSignal]] عشان تلغيه من برا، وزوّد cache للصفحات اللي اتجابت، واستخدمه في أداة بتصدّر داتا API حقيقي لـ CSV.` },
-        { lvl: 'فكرة', t: R`مكتبتك الصغيرة`, what: R`اختار حاجة بتكرر كتابتها: state، أو events، أو معالجة داتا كتير lazy، أو cache، واعمل لها مكتبة صغيرة بالـ patterns دي: API عام صغير والباقي مخفي، وأحداث، وداتا متتعدّلش من برا، و iterators لو فيه لستة. انت اللي بتحدد الـ API.`, done: R`فيه README فيه مثال استخدام بيشتغل لو نسخته، وتستات بـ [[node --test]] بتعدّي، ومفيش طريقة تغيّر الـ state الداخلي غير من الـ API (جرّبها بنفسك وانت بتحاول تكسرها).`, ext: R`خليها تشتغل في المتصفح و Node، وزوّد types بـ JSDoc أو TypeScript، واستخدمها في مشروع حقيقي من بتوعك بدل الكود المكرر.` },
+      t: R`regex كامل: الـ flags و exec و الـ syntax الباقي`,
+      l: 2,
+      n: "الـ regex literal ضد new RegExp وجدول خصايص الـ RegExp كلها، و exec من جوه (indices و lastIndex و matches بطول صفر)، والـ flags s و m و y و v بحالات من الشغل، والنقطة والحروف الحرفية، و \\k<name> والـ modifiers، والـ buffer boundaries اللي لسه مش في JS، ومشاريع: inspector و مصلّح تكرار و tokenizer و highlighter و فاحص لوج بـ tests",
+      pre: [
+        { to: "js/regex: classes و quantifiers", why: R`الـ classes والـ quantifiers والـ anchors: الوحدة دي مبنية عليهم` },
+        { to: "js/groups و flags", why: R`الـ groups والـ named groups وأول تعارف بالـ flags وفخ [[lastIndex]] مع [[g]]` },
+        { to: "js/test و match و matchAll و replace", why: R`الـ string methods و [[RegExp.escape]]، وهنا بنشوف [[exec]] اللي تحتهم` },
+        { to: "js/إمتى regex غلط", why: R`ReDoS وإمتى تسيب الـ regex لـ parser` },
+        { to: "js/regex والعربي: Unicode properties", why: R`[[\p{...}]] والـ flag [[u]]، وهنا بنكمّل بالـ flag [[v]]` },
+        { to: "js/RegExp و Symbol.match و Symbol.replace: matcher بتاعك", why: R`الـ RegExp كـ object وإزاي الـ string methods بتسلّمه الشغل` },
       ],
-      items: [
-        {
-          cmd: "module pattern و IIFE",
-          title: "تعمل state خاص ومتاح بس من دوال معينة",
-          desc: R`الـ IIFE دالة بتتعرّف وتتنادي في نفس اللحظة: [[(() => { ... })()]]. قبل الـ ES modules كانت الطريقة الوحيدة تعمل scope خاص في ملف، عشان متغيراتك متتلخبطش مع باقي الـ scripts في الصفحة.
+      goal: [
+        R`تختار بين [[/.../]] و [[new RegExp]] صح، وتكتب الـ backslash في النص من غير ما يضيع، وتقرا أي regex من خصايصه ([[source]] و [[flags]] و [[global]]…).`,
+        R`تستخدم [[exec]] بنفسك: تفهم كل خانة في الناتج ([[index]] و [[input]] و [[groups]] و [[indices]])، وتلف بـ [[g]] و [[lastIndex]] من غير loop لانهائي.`,
+        R`تستخدم [[s]] و [[m]] و [[y]] و [[v]] في حالات حقيقية: ملف INI، وإيميل، و tokenizer، وحروف عربي بس من غير الأرقام.`,
+        R`تعرف النقطة بتطابق إيه بالظبط، وأنهي حرف لازم [[\]] قبله وإمتى [[\]] نفسها بترمي.`,
+        R`تكتب [[\k<name>]] و [[(?i:...)]]، وتعرف إن [[\A]] و [[\z]] لسه مش في JS والبديل الصح.`,
+      ],
+      use: {
+        prog: R`الـ linters (ESLint) و الـ formatters و syntax highlighters (Prism و highlight.js) والـ template engines كلهم بيقطّعوا النص بـ [[exec]] و [[y]] بالظبط زي الـ tokenizer هنا. ومكتبات الـ validation (Zod و Yup) بتاخد [[RegExp]] وبتقرا [[source]] و [[flags]] بتوعه عشان تعرضه في رسالة الغلط.`,
+        work: R`فحص لوجات وتحديد السطر البايظ بالعمود، وتظليل كلمات البحث في نتايج، وتنضيف رسايل العملا قبل ما تتخزن، وقراية ملفات config بسيطة، وأدوات CLI بتاخد pattern من اليوزر.`,
+        cs: R`الـ lexer (أول مرحلة في أي compiler)، والفرق بين البحث في أي مكان والمطابقة من مكان ثابت (sticky)، والـ backreferences اللي بتخلّي الـ regex أقوى من «regular language» في نظرية الحسابات.`,
+      },
+      projects: [
+        { lvl: 'صغير', t: R`regex inspector من الترمنال`, what: R`[[regex-info.mjs]] بياخد regex مكتوب بشكل [[/pattern/flags]] كـ argument، ويطبع جدول بكل خصايصه ([[source]] و [[flags]] و [[global]] و [[ignoreCase]] و [[multiline]] و [[dotAll]] و [[unicode]] و [[unicodeSets]] و [[hasIndices]] و [[sticky]] و [[lastIndex]] و [[toString]])، وبعدين يجرّبه على أي نصوص تانية تديهاله ويقول الـ match ومكانه. والـ regex البايظ بيطبع الـ SyntaxError بنصها ويخرج بـ exit code 1. من درسي «regex literal و new RegExp: خصايص الـ RegExp و toString» و «RegExp exec: الـ result array و indices و lastIndex».`, done: R`[[node regex-info.mjs '/(?<n>\d+) ?EGP/gi' "tea 15 egp"]] بيطبع الجدول ([[global]] و [[ignoreCase]] بـ true) وسطر [["15 egp" عند 4]]. و [['/(\d+/g']] بيطبع [[Unterminated group]] و [[exit=1]]، و [['/a/gg']] بيطبع [[Invalid flags]]، و [[abc]] من غير شرط بيطبع رسالة الشكل الصح.`, sol: R`**هتشوف إيه:** جدول بخصايص الـ regex، وتحته سطر لكل نص جرّبته:
 
-والـ module pattern: IIFE بترجّع object فيه الـ API العام بس، والمتغيرات الداخلية فاضلة في الـ closure، محدش يوصلها. النهاردة ES modules بتعمل ده لوحدها، بس هتشوف الـ pattern في كود قديم، وفي الـ bundles، وفي أسئلة الانترفيو.`,
-          example: R`const counter = (() => {
-  let count = 0;
-  const log = (msg) => console.log($__bt[counter] $__{msg}$__bt);
+~~~text الناتج (Node 24.22، PowerShell)
+┌─────────────┬───────────────────────┐
+│ (index)     │ Values                │
+├─────────────┼───────────────────────┤
+│ source      │ '(?<n>\\d+) ?EGP'     │
+│ flags       │ 'gi'                  │
+│ global      │ true                  │
+│ ignoreCase  │ true                  │
+│ multiline   │ false                 │
+│ dotAll      │ false                 │
+│ unicode     │ false                 │
+│ unicodeSets │ false                 │
+│ hasIndices  │ false                 │
+│ sticky      │ false                 │
+│ lastIndex   │ 0                     │
+│ toString    │ '/(?<n>\\d+) ?EGP/gi' │
+└─────────────┴───────────────────────┘
+"tea 15 egp" → "15 egp" عند 4
+"free" → مفيش match
+~~~
+
+(الـ [[\\d]] في الجدول backslash واحد بس: [[console.table]] بيعرض النصوص بـ escape زي الكود.)
+
+~~~js regex-info.mjs
+// regex-info.mjs: اكتب regex بشكل /.../flags وشوف كل خصايصه وجرّبه على نص
+const [, , literal, ...samples] = process.argv;
+
+export function parseLiteral(text) {
+  if (typeof text !== "string" || !text.startsWith("/")) {
+    throw new TypeError("اكتب الـ regex بالشكل ده: /pattern/flags");
+  }
+  const last = text.lastIndexOf("/");
+  if (last === 0) throw new TypeError("ناقص / الأخيرة");
+  return new RegExp(text.slice(1, last), text.slice(last + 1));
+}
+
+export function describe(re) {
   return {
-    inc() { count++; log(count); return count; },
-    reset() { count = 0; log("reset"); },
+    source: re.source,
+    flags: re.flags || "(مفيش)",
+    global: re.global,
+    ignoreCase: re.ignoreCase,
+    multiline: re.multiline,
+    dotAll: re.dotAll,
+    unicode: re.unicode,
+    unicodeSets: re.unicodeSets,
+    hasIndices: re.hasIndices,
+    sticky: re.sticky,
+    lastIndex: re.lastIndex,
+    toString: re.toString(),
   };
-})();
-counter.inc();          // [counter] 1
-counter.inc();          // [counter] 2
-counter.count;          // undefined: مخفي
-// نفس الفكرة بـ ES module: store.js
-let items = [];
-export const add = (x) => { items = [...items, x]; };
-export const getAll = () => items;`,
-          try: R`حوّل الـ counter لملف module: المتغير في أول الملف من غير export، والدوال بـ export. وبعدين اعمل import للملف من ملفين مختلفين واتأكد إنهم شايفين نفس الـ count (الـ module بيتنفّذ مرة واحدة).`,
-          practice: [
-            { lvl: 'سريع', t: R`صلّح الباج: [[const counter = (() => { let count = 0; return { count, inc() { count++; } }; })();]] وبعدين [[counter.inc(); counter.inc(); counter.count]]. اتوقع الناتج الأول، وبعدين صلّحه بـ [[get count() { return count; }]].`, done: R`قبل التصليح [[counter.count]] بيطبع 0 مش 2 (الـ object خد نسخة من الرقم ساعة الـ return)، وبعد الـ getter بيطبع 2، و [[counter.count = 99]] مبيغيّرش العدّاد الحقيقي (في [[.mjs]] بيرمي [[TypeError: Cannot set property count of #<Object> which has only a getter]]، وفي script عادي بيتجاهل ساكت)، وتقدر تقول الفرق ده في جملة لزميل.` },
-            { lvl: 'تطبيق', t: R`ابني [[settings]] بالـ module pattern: object داخلي فيه [[theme: "dark"]] و [[lang: "ar"]]، و [[get(key)]] و [[set(key, value)]]، و [[getAll()]] بترجّع نسخة مش الأصل، و [[set]] بترفض أي key مش موجود من الأول، و [[onChange(fn)]] بتتنادى بعد كل [[set]] ناجح.`, done: R`[[const all = settings.getAll(); all.theme = "light";]] وبعدها [[settings.get("theme")]] لسه [["dark"]]، و [[settings.set("color", 1)]] بترمي Error فيه كلمة [[color]]، و [[settings.set("theme", "light")]] بتغيّرها وبتنادي الـ [[onChange]] مرة واحدة بالـ key والقيمة الجديدة.` },
-            { lvl: 'تحدي', t: R`قارن واشرح: حوّل الـ counter لـ factory [[createCounter()]] واعمل منه اتنين. وبعدين [[store.mjs]] فيه [[let count = 0]] و [[export const inc = () => ++count]] و [[export const get = () => count]]، وملفين [[a.mjs]] و [[b.mjs]] كل واحد بيعمل import لـ [[inc]] وبيناديها مرة، و [[main.mjs]] بيعمل import للاتنين وبيطبع [[get()]].`, done: R`[[c1.inc(); c1.inc(); c2.inc();]] بيخلّي [[c1]] عند 2 و [[c2]] عند 1 (كل نداء closure جديد)، و [[node main.mjs]] بيطبع 2 مش 1 (الـ module اتنفّذ مرة واحدة والاتنين شايفين نفس [[count]])، وكتبت ٣ سطور لزميل: إمتى singleton وإمتى factory.` },
-          ],
-          flag: "script",
-          deep: {
-            why: "encapsulation: الـ state الداخلي متاح بس من دوال محددة، فمحدش يقدر يبوّظه من برّه. ودي فكرة أساسية في أي تصميم، وسؤال انترفيو شائع: «إزاي تعمل private variables في JS؟» (closures، أو #private في classes، أو module scope).",
-            how: R`الأقواس حوالين الدالة بتخليها expression، والأقواس اللي بعدها بتناديها. كل المتغيرات جوه بتعيش في الـ closure بتاع الـ methods اللي رجعت.
-
-الـ module pattern ليه عيوب: مينفعش تعمل منه أكتر من instance (لو محتاج كذا واحد، دالة factory زي [[createCounter]] من درس closure)، وصعب تختبره أو تعمل reset للـ state بتاعه.
-
-الـ ES module نفسه singleton بنفس الطريقة: الملف بيتنفّذ مرة واحدة، وأي حد بيعمل import بياخد نفس الـ state. ده اللي بيخلي [[export const prisma = new PrismaClient()]] يشتغل كـ instance واحد في المشروع كله.
-
-الـ bundlers زي Vite لسه بيطلّعوا ملفات فيها IIFEs ساعات، عشان يضمنوا scope منفصل لو الملف اتحمّل كـ script عادي.`,
-            when: "في كود جديد: ES module بمتغيرات مش exported. IIFE لو بتكتب script صغير هيتحط في صفحة مباشرة (widget أو bookmarklet) أو محتاج async في مكان مفيهوش top-level await.",
-            mistakes: R`تنسى الـ [[;]] قبل سطر بيبدأ بـ [[(]]: السطر اللي قبله هيتنادي كدالة. وتعمل singleton لحاجة محتاجة instances كتير. و state global في module على سيرفر: مشترك بين كل الـ requests وكل اليوزرز.`
-          },
-          teach: R`## الفكرة في سطر
-
-عايز متغير ([[count]]) محدش يقدر يلمسه غير دالتين بس ([[inc]] و [[reset]]). المثال بيعمل ده بطريقتين: الطريقة القديمة (IIFE بترجّع object)، والطريقة الحديثة (ملف ES module). كل الكود هنا اتشغّل على ويندوز 11 بـ Node 24.19.
-
----
-
-## ١. الـ IIFE: دالة بتتعرّف وتتنادي في نفس السطر
-
-IIFE اختصار Immediately Invoked Function Expression، يعني «دالة بتتنادي فورًا». شكلها من برّه:
-
-~~~text الهيكل
-(() => { ... })()
- ^^^^^^^^^^^^^   ^^
- الدالة نفسها    النداء
-~~~
-
-- [[() => { ... }]] دالة arrow عادية من غير اسم.
-- القوسين اللي **حواليها** بيخلّوها expression (قيمة)، زي ما [[(2 + 3)]] قيمة.
-- القوسين [[()]] اللي **بعدها** بينادوها على طول، زي [[f()]] بالظبط.
-
-ليه لازم القوسين اللي حواليها؟ لو كتبت [[function () { ... }()]] في أول السطر، JavaScript بيفهمها **تعريف** دالة (declaration) مش قيمة، والتعريف لازم له اسم:
-
-~~~text الناتج (Node 24)
-function () { return 1; }();
-^^^^^^^^
-
-SyntaxError: Function statements require a function name
-~~~
-
-### اللي جوه الـ IIFE
-
-~~~text app.js
-const counter = (() => {
-  let count = 0;
-  const log = (msg) => console.log($__bt[counter] $__{msg}$__bt);
-  return {
-    inc() { count++; log(count); return count; },
-    reset() { count = 0; log("reset"); },
-  };
-})();
-~~~
-
-خطوة خطوة:
-
-1. [[let count = 0]]: متغير **جوه** الدالة. أي متغير جوه دالة مش شايفه حد برّه الدالة دي.
-2. [[const log = (msg) => ...]]: دالة مساعدة صغيرة بتطبع أي رسالة وقبلها [[[counter]]]. الـ backticks مع [[$__{msg}]] اسمها template literal: بتحط قيمة [[msg]] جوه النص. وهي كمان خاصة، محدش برّه يقدر يناديها.
-3. [[return { inc() {...}, reset() {...} }]]: الدالة بترجّع object فيه دالتين. [[inc() { ... }]] اختصار لـ [[inc: function () { ... }]] (اسمه method shorthand).
-4. [[inc]]: بتزوّد [[count]] بواحد ([[count++]])، وتطبعه، وترجّعه.
-5. [[reset]]: بترجّع [[count]] صفر وتطبع [["reset"]].
-6. [[})()]]: قفلة الدالة، وقفلة القوسين اللي حواليها، والنداء. اللي اترجّع (الـ object) بيتحط في [[counter]].
-
-### إزاي [[inc]] لسه شايفة [[count]] والدالة خلصت؟
-
-الدالة الكبيرة اشتغلت مرة واحدة وخلصت. عادةً المتغيرات اللي جواها بتتمسح، بس هنا [[inc]] و [[reset]] لسه بيستخدموا [[count]]، فـ JavaScript بيسيبه عايش معاهم. ده اسمه **closure** (درس «closure» في نفس التاب): الدالة بتفتكر المتغيرات اللي كانت حواليها وقت ما اتعملت.
-
-### التشغيل
-
-ضيف تحت الكود:
-
-~~~text app.js
-counter.inc();
-counter.inc();
-console.log(counter.count);
-console.log(Object.keys(counter));
-console.log(typeof count);
-counter.reset();
-console.log(counter.inc());
-~~~
-
-~~~text الناتج
-[counter] 1
-[counter] 2
-undefined
-[ 'inc', 'reset' ]
-undefined
-[counter] reset
-[counter] 1
-1
-~~~
-
-| السطر | الناتج | ليه |
-|---|---|---|
-| [[counter.inc()]] مرتين | [[1]] ثم [[2]] | نفس الـ [[count]] بيزيد |
-| [[counter.count]] | [[undefined]] | الـ object مفيهوش خاصية اسمها count |
-| [[Object.keys(counter)]] | [['inc', 'reset']] | ده كل اللي ظاهر برّه: الـ API العام |
-| [[typeof count]] | [[undefined]] | برّه الـ IIFE مفيش متغير اسمه count أصلًا |
-| [[console.log(counter.inc())]] | [[[counter] 1]] وبعده [[1]] | السطر الأول من [[log]] جوه inc، والتاني القيمة اللي inc رجّعتها |
-
-يعني الطريقة الوحيدة تغيّر [[count]] هي [[inc]] و [[reset]]. ده اللي اسمه **encapsulation**.
-
-### الفخ المشهور: [[return { count, inc }]]
-
-عايز تقرا العداد من برّه، فتحط [[count]] في الـ object اللي راجع:
-
-~~~text trap.mjs
-const counter = (() => {
-  let count = 0;
-  return { count, inc() { count++; } };
-})();
-counter.inc(); counter.inc();
-console.log(counter.count);
-~~~
-
-~~~text الناتج (Node 24)
-0
-~~~
-
-مش 2. [[{ count }]] اختصار لـ [[{ count: count }]]: بياخد **نسخة** من الرقم ساعة الـ [[return]] (كان 0) ويحطها في خاصية جديدة. الأرقام بتتنسخ بالقيمة، فالخاصية دي ملهاش علاقة بالمتغير اللي جوه، و [[inc]] بتزوّد المتغير بس. التصليح: getter، يعني دالة بتتنادى كل ما حد يقرا الخاصية:
-
-~~~text fix.mjs
-return { get count() { return count; }, inc() { count++; } };
-~~~
-
-~~~text الناتج (Node 24)
-2
-TypeError: Cannot set property count of #<Object> which has only a getter
-~~~
-
-- [[get count() { ... }]]: [[counter.count]] بقت بتنادي الدالة دي، فبترجّع قيمة المتغير **دلوقتي** (2).
-- [[counter.count = 99]] في ملف [[.mjs]] (strict mode تلقائي) بيرمي الـ TypeError اللي فوق لأن مفيش setter، وفي script عادي من غير strict بيتجاهل ساكت والعداد يفضل 2. في الحالتين العداد الحقيقي محمي.
-
-### فخ الـ [[;]]
-
-لو السطر اللي قبل الـ IIFE مفيهوش [[;]]:
-
-~~~text app.js
-const a = 1
-(() => console.log("hi"))()
-~~~
-
-~~~text الناتج
-(() => console.log("hi"))()
-^
-
-TypeError: 1 is not a function
-~~~
-
-JavaScript قرا السطرين كأنهم [[const a = 1(() => ...)()]]: يعني بيحاول ينادي [[1]] كدالة. عشان كده كود قديم كتير بيكتب [[;(() => { ... })()]] بـ [[;]] في الأول.
-
----
-
-## ٢. نفس الفكرة بـ ES module
-
-النهاردة الملف نفسه بقى scope خاص. التلات سطور الأخيرة في المثال بيتحطوا في ملف لوحدهم:
-
-~~~text store.mjs
-let items = [];
-export const add = (x) => { items = [...items, x]; };
-export const getAll = () => items;
-~~~
-
-- [[let items = []]]: من غير [[export]]، فهو خاص بالملف زي [[count]] جوه الـ IIFE.
-- [[export]]: الكلمة دي بس اللي بتخلي الحاجة ظاهرة للملفات التانية.
-- [[add]]: بتعمل array جديدة فيها القديم ([[...items]] بيفرد العناصر) وبعده [[x]]. (ليه array جديدة مش [[push]]؟ درس «immutability».)
-- [[getAll]]: بترجّع الـ array.
-- الامتداد [[.mjs]] بيقول لـ Node «ده ES module». لو عايز [[.js]] عادي، حط [["type": "module"]] في [[package.json]].
-
-وملف تاني بيستخدمه:
-
-~~~text use.mjs
-import { add, getAll } from "./store.mjs";
-import * as store from "./store.mjs";
-add("mug"); add("cap");
-console.log(getAll());
-console.log(store.items);
-console.log(Object.keys(store));
-~~~
-
-~~~powershell
-node use.mjs
-~~~
-
-~~~text الناتج
-[ 'mug', 'cap' ]
-undefined
-[ 'add', 'getAll' ]
-~~~
-
-- [[import { add, getAll }]]: هات الحاجتين دول بالاسم.
-- [[import * as store]]: هات **كل** اللي متصدّر في object واحد اسمه store. ومع ذلك [[store.items]] بـ [[undefined]]، لأن items مش متصدّر. نفس نتيجة [[counter.count]] بالظبط.
-
----
-
-## ٣. الـ solCode: الـ module بيتنفّذ مرة واحدة
-
-الحل فيه ٣ ملفات. حطيت سطر [[console.log]] زيادة في أول counter عشان نشوف هو بيتنفّذ كام مرة:
-
-~~~text counter.mjs
-console.log("counter.mjs اتنفّذ");
-let count = 0;
-export function inc() { return ++count; }
-export const get = () => count;
-~~~
-
-~~~text a.mjs
-import { inc } from "./counter.mjs";
-export const fromA = () => inc();
-~~~
-
-~~~text main.mjs
-import { fromA } from "./a.mjs";
-import { inc, get } from "./counter.mjs";
-fromA(); fromA(); inc();
-console.log(get());
-~~~
-
-- [[++count]]: زوّد الأول وبعدين رجّع القيمة الجديدة ([[count++]] بترجّع القديمة).
-- [[a.mjs]] بيعمل import لـ counter، و [[main.mjs]] بيعمل import لـ counter **و** a.
-
-~~~text الناتج
-counter.mjs اتنفّذ
-3
-~~~
-
-السطر الأول اتطبع **مرة واحدة** مع إن ملفين عملوا import. Node بينفّذ الملف أول مرة بس، ويحفظ النتيجة، وأي import بعد كده بياخد نفس النسخة. فالـ [[fromA()]] مرتين و [[inc()]] مرة كلهم بيعدّوا على نفس [[count]] فطلع [[3]]. ده اللي اسمه **singleton**: نسخة واحدة في البرنامج كله.
-
-> لو سمّيت الملفات [[.js]] من غير [["type": "module"]]، Node 24 بيحاول يخمّن ويطبع تحذير [[MODULE_TYPELESS_PACKAGE_JSON]]، ولو [[package.json]] فيه [["type": "commonjs"]] صراحةً بيقع بـ [[SyntaxError: Cannot use import statement outside a module]]. جرّبت الاتنين.
-
-### تقدر تعدّل متغير مستورد؟
-
-لو صدّرت المتغير نفسه ([[export let count = 0]]) وحاولت تزوّده من ملف تاني:
-
-~~~text ro2.mjs
-import { count } from "./ro.mjs";
-count++;
-~~~
-
-~~~text الناتج
-count++;
-     ^
-
-TypeError: Assignment to constant variable.
-~~~
-
-الـ import **read-only** من ناحية اللي بيستورد. التعديل لازم يحصل من جوه الـ module نفسه بدالة زي [[inc]].
-
----
-
-## ٤. factory ولا singleton
-
-كل اللي فوق (الـ IIFE والـ ES module) بيدّيك **نسخة واحدة** في البرنامج كله: ده اسمه **singleton**. أوقات محتاج كذا نسخة مستقلة (عداد لكل زرار، cart لكل يوزر)، فبتعمل **factory**: دالة عادية بترجّع object جديد بـ closure جديد كل ما تناديها.
-
-~~~text factory.mjs
-function createCounter(start = 0) {
-  let count = start;
-  return { inc() { return ++count; }, get count() { return count; } };
 }
-const a = createCounter(), b = createCounter(10);
-a.inc(); a.inc(); b.inc();
-console.log(a.count, b.count);
-const { inc } = a; inc();
-console.log(a.count);
-~~~
 
-~~~text الناتج (Node 24)
-2 11
-3
-~~~
-
-- [[createCounter(start = 0)]]: دالة عادية مش IIFE، و [[= 0]] قيمة افتراضية لو محدش بعت [[start]].
-- كل نداء بيعمل [[count]] جديد، فـ [[a]] و [[b]] مستقلين: 2 و 11.
-- [[const { inc } = a]]: بنطلّع الدالة من الـ object ونناديها لوحدها، ولسه شغالة (بقى 3)، لأنها مش محتاجة [[this]]، شايفة [[count]] من الـ closure.
-
-### نفس الكلام بـ class: الفرق في [[this]]
-
-~~~text klass.mjs
-class Counter { #n = 0; inc() { return ++this.#n; } }
-const c = new Counter();
-const { inc } = c;
-inc();
-~~~
-
-~~~text الناتج (Node 24)
-TypeError: Cannot read properties of undefined (reading '#n')
-~~~
-
-الـ method جوه class بتعتمد على [[this]]، ولما بتتنادى لوحدها [[this]] بيبقى [[undefined]] (درس «this»). الـ factory بالـ closure مبيقعش في الفخ ده، فبتقدر تبعت [[a.inc]] كـ callback على طول ([[button.onclick = a.inc]]). والـ class أحسن لو هتعمل آلاف النسخ (الـ methods متشاركة على الـ prototype مش متنسخة لكل object) أو محتاج [[instanceof]].
-
-### singleton كسول (lazy)
-
-ساعات النسخة الواحدة غالية (اتصال بقاعدة بيانات)، فمش عايز تعملها غير أول ما حد يطلبها:
-
-~~~text db.mjs
-let instance;
-export function getDb() {
-  return (instance ??= createDb());
+if (import.meta.main) {
+  try {
+    const re = parseLiteral(literal);
+    console.table(describe(re));
+    for (const s of samples) {
+      const m = new RegExp(re.source, re.flags.replace(/[gy]/g, "")).exec(s);
+      console.log(JSON.stringify(s), m ? "→ " + JSON.stringify(m[0]) + " عند " + m.index : "→ مفيش match");
+    }
+  } catch (e) {
+    console.error(e.name + ": " + e.message);
+    process.exitCode = 1;
+  }
 }
 ~~~
 
-[[??=]] معناها «لو [[instance]] بـ null أو undefined، حط فيه الناتج ده». أول نداء بيعمل الـ db، والباقي بياخدوا نفس النسخة: جرّبتها بعداد جوه [[createDb]] و [[getDb() === getDb()]] طلعت [[true]] والعداد [[1]].
+**كل حتة بتعمل إيه:**
 
-| | singleton | factory |
-|---|---|---|
-| كام نسخة | واحدة في البرنامج كله، أي import بياخدها | نسخة جديدة مع كل نداء للدالة |
-| الشكل | ES module بمتغيرات، أو IIFE، أو [[getDb()]] كسول | [[createX(options)]] بترجّع object |
-| ينفع فين | config، و logger، و pool اتصالات DB واحد | state لكل يوزر أو كل request أو كل component |
-| الاختبار | صعب: الـ state فاضل من تست للتاني، محتاج [[reset]] | سهل: كل تست يعمل نسخة جديدة |
-| الخطر | على سيرفر: state مشترك بين كل اليوزرز | نسيان إن كل نسخة ليها state منفصل |
+- [[parseLiteral]]: الـ regex جاي من الترمنال **نص**، فبندوّر على **آخر** [[/]] بـ [[lastIndexOf]] (مش أول واحدة، عشان الـ pattern نفسه ممكن يبقى فيه [[\/]])، واللي قبلها pattern واللي بعدها flags، وبعدين [[new RegExp(pattern, flags)]]. أي pattern أو flags غلط بيرمي SyntaxError من الـ constructor نفسه، فمش محتاجين نفحص بإيدنا.
+- [[describe]]: كل خاصية getter على [[RegExp.prototype]] بتقرا من الـ regex، ما عدا [[lastIndex]] اللي خاصية عادية على الـ object نفسه.
+- التجربة على النصوص: بنعمل نسخة من غير [[g]] و [[y]] عشان [[exec]] يبدأ من الأول كل مرة ومايفتكرش [[lastIndex]] من النص اللي قبله.
+- [[import.meta.main]]: [[true]] لما الملف يتشغّل بـ node مباشرة (موجودة في Node 24)، فتقدر تستورد [[parseLiteral]] من ملف تاني من غير ما الجدول يتطبع.
 
-> اختيار الـ strategy (الطريقة) وقت التشغيل pattern تاني ليه درس لوحده: «Strategy pattern» في نفس الوحدة. ولو عايز تتحكّم في قراية وكتابة خصايص object كلها (مش خاصية واحدة بـ getter)، ده «Proxy و Reflect».
+**غلطة حصلت وإحنا بنبنيه:** في Git Bash، [[node regex-info.mjs '/(\d+/g']] طلّع [[TypeError: اكتب الـ regex بالشكل ده]] بدل الـ SyntaxError. طبعنا [[process.argv[2]]] لقيناه [[C:/Program Files/Git/(/d+/g]]: Git Bash (MSYS) بيحوّل أي argument بيبدأ بـ [[/]] لمسار ويندوز. الحل: [[MSYS_NO_PATHCONV=1]] قبل الأمر، أو شغّله من PowerShell. ده بيحصل في Git Bash بس، مش في لينكس ولا ماك:
 
----
+~~~text الناتج (Git Bash مع MSYS_NO_PATHCONV=1)
+SyntaxError: Invalid regular expression: /(\d+/g: Unterminated group
+TypeError: اكتب الـ regex بالشكل ده: /pattern/flags
+SyntaxError: Invalid flags supplied to RegExp constructor 'gg'
+TypeError: ناقص / الأخيرة
+~~~
 
-## الخلاصة
+السطور دي لـ [['/(\d+/g']] و [[abc]] و [['/a/gg']] و [['/x']] بالترتيب، وكلهم خرجوا بـ exit code 1.` },
+        { lvl: 'صغير', t: R`مصلّح الكلمات المتكررة`, what: R`[[dupes.mjs]] بيقرا ملف نص ويلاقي أي كلمة اتكتبت مرتين ورا بعض («ده ده» و «the The»)، ويطبع [[file:line:col]] لكل واحدة، ومع [[--fix]] بيصلّح الملف ويسيب أول نسخة. لازم يشتغل مع العربي (يعني من غير [[\b]] و [[\w]])، وميعتبرش [[then thenext]] تكرار، وميلزقش آخر سطر في أول اللي بعده. من دروس «named backreference و modifiers و buffer boundaries» و «RegExp exec: الـ result array و indices و lastIndex».`, done: R`على ملف فيه [[الطلب ده ده اتأخر]] و [[the The order]] و [[thenthen ok, then thenext]] وسطرين واحد آخره [[شاي]] واللي بعده أوله [[شاي]]: بيلاقي ٢ بس بأماكنهم، و [[--fix]] بيصلّحهم، وتشغيله تاني بيقول «مفيش تكرار».`, sol: R`**هتشوف إيه:** كل تكرار بمكانه، وبعد [[--fix]] الملف نضيف:
 
-| الطريقة | الخاص | العام | بتتنفّذ كام مرة |
-|---|---|---|---|
-| IIFE + return object | المتغيرات جوه الدالة (closure) | اللي في الـ object الراجع | مرة، وقت التعريف |
-| ES module | المتغيرات من غير [[export]] | اللي عليه [[export]] | مرة، أول import |
+~~~text الناتج (Node 24.22)
+notes.txt:1:7  «ده ده»
+notes.txt:2:1  «the The»
+لقيت 2
+اتصلّح الملف
+~~~
 
-- [[(() => {...})()]]: القوسين الأولانيين يخلّوها قيمة، والأخيرين ينادوها.
-- حط [[;]] قبل أي سطر بيبدأ بـ [[(]].
-- الاتنين singleton: لو محتاج أكتر من عداد، اعمل دالة factory بترجّع object جديد كل مرة.
-- [[return { count }]] بينسخ الرقم مرة واحدة: عشان تقرا القيمة الحالية استخدم [[get count()]].`,
-          lines: [
-            R`IIFE: arrow function بتتعرّف وتتنادى في نفس اللحظة، واللي بترجّعه بيتحط في [[counter]]. الفايدة إن جسمها scope خاص، فأي متغير جواه مش هيبان برّه. ده كان شكل الـ modules قبل [[import]] و [[export]].`,
-            R`state خاص: متعرّف جوه الـ IIFE، فمفيش كود برّه يقدر يقراه أو يغيّره مباشرة. الدوال اللي راجعة بس هي اللي شايفاه عن طريق الـ closure.`,
-            R`دالة مساعدة بتطبع الرسالة وقبلها اسم الـ module بين أقواس مربعة. هي كمان خاصة: مش راجعة في الـ object، فمحدش برّه يقدر يناديها، وتقدر تغيّرها أو تمسحها من غير ما تكسر حد.`,
-            R`الـ object ده هو الـ API العام: أي حاجة جواه هتبقى متاحة على [[counter]]، وأي حاجة مش فيه تفضل مخفية.`,
-            R`بتزوّد [[count]] الخاص، وتطبعه بـ [[log]]، وترجّع القيمة الجديدة. دي الطريقة الوحيدة اللي العداد يزيد بيها من برّه.`,
-            R`بترجّع [[count]] لـ 0 وتطبع [[reset]]. والدالتين بيعدّلوا **نفس** [[count]] لأنهم اتعملوا في نفس النداء للـ IIFE.`,
-            R`نهاية الـ object اللي راجع.`,
-            R`نهاية الـ arrow function. القوسين اللي حواليها بيخلّوها expression، و [[()]] الأخيرة هي اللي بتناديها فورًا. من غير [[()]] دي [[counter]] كان هيبقى الدالة نفسها مش الـ object.`,
-            R`[[count]] بقى 1، والـ [[log]] الخاصة طبعت السطر بالاسم والرقم.`,
-            R`بقى 2: الـ state محفوظ بين النداءات جوه الـ closure.`,
-            R`بترجّع [[undefined]]: [[count]] متغير جوه الـ IIFE مش خاصية على الـ object. فلو حد كتب [[counter.count = 100]] هيحط خاصية جديدة ملهاش علاقة بالعداد الحقيقي، ومش هيبوّظه.`,
-            R`في ES modules كل ملف ليه scope لوحده، فـ [[items]] من غير [[export]] خاص بالملف ده تلقائي: نفس فايدة الـ IIFE من غير اللفّة.`,
-            R`[[export]] بيخلي [[add]] متاحة لأي ملف يعمل [[import]]. بتضيف العنصر بإنها تعمل array جديدة ([[...items]] وبعدها [[x]]) بدل [[push]]، فاللي ماسك الـ array القديمة مش هيلاقيها اتغيرت من تحته.`,
-            R`بترجّع الـ array الحالية للقراية. [[items]] نفسه مش [[export]]، فمحدش برّه يقدر يعمله reassign، بس اللي أخد الـ array يقدر يعمل فيها [[push]]، فلو عايز حماية كاملة رجّع نسخة.`,
-          ],
-          sol: R`بـ module: [[let count = 0]] في أول الملف من غير export، والدوال بـ export. لو ملفين a و b عملوا import لـ inc وناديتها ٣ مرات من الاتنين، [[get()]] هترجّع 3، يعني الاتنين بيعدّوا على نفس العداد. ولو حطيت [[console.log]] في أول الملف هيطبع مرة واحدة بس مهما عملت import من كام ملف.
+~~~text notes.txt بعد --fix
+الطلب ده اتأخر
+the order is ready
+thenthen ok, then thenext
+آخر السطر شاي
+شاي أول السطر
+~~~
 
-و [[import * as c from "./counter.js"]] وبعدين [[c.count]] بـ undefined: المتغير مش متصدّر فمش موجود برّه، زي [[counter.count]] في نسخة الـ IIFE. الغلطة الشائعة إنك تعمل [[export let count]] وتحاول تعمل [[count++]] من ملف تاني: هيطلع TypeError لأن الـ imports read-only، والتعديل لازم يبقى من جوه الـ module.`,
-          solCode: R`// counter.js
-let count = 0;
-export function inc() { return ++count; }
-export const get = () => count;
-// a.js
-import { inc } from "./counter.js";
-export const fromA = () => inc();
-// main.js
-import { fromA } from "./a.js";
-import { inc, get } from "./counter.js";
-fromA(); fromA(); inc();
-console.log(get()); // 3: نفس النسخة`
-        },
-        {
-          cmd: "EventEmitter",
-          title: "تعمل pub/sub: حد بيعلن، وأي حد مهتم بيسمع",
-          desc: R`الـ Observer pattern: object بيعلن عن أحداث ([[emit]])، وأي كود تاني يشترك فيها ([[on]]) ويلغي اشتراكه ([[off]]) من غير ما الطرفين يعرفوا بعض. ده اللي ورا [[addEventListener]] في المتصفح، و [[EventEmitter]] في Node، والـ stores زي Zustand.
+~~~js dupes.mjs
+// dupes.mjs: يلاقي الكلمات المتكررة ورا بعض («ده ده» و «the The») ويصلّحها
+import { readFileSync, writeFileSync } from "node:fs";
 
-و «اكتب EventEmitter بإيدك» من أشهر أسئلة انترفيو JS العملية: بيختبر Map و Set و closures و this في سؤال واحد.`,
-          example: R`class Emitter {
-  #handlers = new Map();
-  on(event, fn) {
-    if (!this.#handlers.has(event)) this.#handlers.set(event, new Set());
-    this.#handlers.get(event).add(fn);
-    return () => this.off(event, fn);
-  }
-  off(event, fn) {
-    this.#handlers.get(event)?.delete(fn);
-  }
-  emit(event, ...args) {
-    const fns = [...(this.#handlers.get(event) ?? [])];
-    for (const fn of fns) fn(...args);
-  }
-  once(event, fn) {
-    const off = this.on(event, (...args) => { off(); fn(...args); });
-    return off;
-  }
+const DUP = /(?<!\p{L})(?<word>\p{L}+)[^\S\r\n]+\k<word>(?!\p{L})/giu;
+
+export function findDupes(text) {
+  const found = [];
+  text.split(/\r?\n/).forEach((line, i) => {
+    for (const m of line.matchAll(DUP)) {
+      found.push({ line: i + 1, col: m.index + 1, text: m[0] });
+    }
+  });
+  return found;
 }
-const cart = new Emitter();
-const unsubscribe = cart.on("add", (item) => console.log("اتضاف", item));
-cart.once("add", () => console.log("أول منتج!"));
-cart.emit("add", "mug");
-unsubscribe();
-cart.emit("add", "cap");`,
-          try: R`ضيف [[listenerCount(event)]]. وبعدين خلي handler يرمي error وشوف الـ handlers اللي بعده بتشتغل ولا لأ، وصلّحها بـ try/catch جوه emit. وقارن بـ [[EventTarget]] المدمج: [[class Cart extends EventTarget]] و [[dispatchEvent(new CustomEvent("add", { detail: "mug" }))]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الكلاس من المثال جاهز في المربع: ضيف [[listenerCount(event)]]، و [[waitFor(event)]] اللي بترجّع Promise بتتحل بالـ arguments بتاعة أول [[emit]] للـ event ده (كـ array)، ومتسيبش listener وراها.`,
-          practice: [
-            { lvl: 'سريع', t: R`محاكاة أوضة شات: [[room]] من الـ Emitter، و ٣ يوزرز كل واحد بيعمل [[room.on("message", ...)]] وبيطبع اسمه وبعده «وصلته:» والنص، ويوزر منهم بيخرج بدالة الإلغاء بعد أول رسالة.`, done: R`أول [[emit("message", "أهلًا")]] بيطبع ٣ سطور، والتانية سطرين بس، واللي خرج مبيوصلوش حاجة، وتقدر تخلّي اللي بيبعت ميشوفش رسالته (من غير ما الـ Emitter يتغير).` },
-            { lvl: 'تطبيق', t: R`ابني [[createStore(initial)]] فوق الـ Emitter: [[getState()]]، و [[setState(patch)]] بتعمل state جديدة بالـ spread وبتعمل [[emit("change", next, prev)]]، و [[subscribe(fn)]] بترجّع دالة الإلغاء. ده نفس شكل Zustand من جوه.`, done: R`بعد [[setState({ count: 1 })]] على [[{ count: 0 }]] الـ subscriber بياخد [[next.count]] بـ 1 و [[prev.count]] بـ 0، وبعد ما تنادي دالة الإلغاء [[setState]] تاني مبيطبعش حاجة، و [[getState()]] بيرجّع آخر قيمة.` },
-            { lvl: 'تحدي', t: R`اقرا وتوقّع، وبعدين قارن بـ Node: غيّر [[emit]] في نسخة من الـ Emitter بحيث تلف على الـ Set نفسه ([[for (const fn of this.#handlers.get(event) ?? [])]]) من غير النسخة. handler [[A]] بيطبع A وبيعمل [[on]] لنفس الحدث بـ handler جديد بيطبع B. اكتب توقعك لـ [[emit]] مرتين في النسختين وفي [[EventEmitter]] من [[node:events]]، وبعدين شغّل التلاتة.`, done: R`من غير النسخة الناتج [[A B | A B B]] (الجديد اتنادى في نفس اللفة)، وبالنسخة و Node الاتنين [[A | A B]]، وتقدر تقول في جملة ليه، وجرّبت كمان handler بيعمل [[off]] لـ handler بعده: بالنسخة وفي Node الاتنين بيطلّعوا [[A B]] في نفس الـ emit.` },
-          ],
-          flag: "script",
-          deep: {
-            why: "بيفصل اللي بيحصل عن اللي بيتفاعل معاه: السلة مش لازم تعرف إن فيه badge وإشعار و analytics مستنيين. وده أساس الـ events في المتصفح و Node و WebSockets والـ state management.",
-            how: R`Map من اسم الحدث لـ Set من الدوال: الـ Set بيمنع إن نفس الدالة تتسجّل مرتين، والمسح منه O(1).
 
-[[on]] بترجّع دالة unsubscribe (closure شايل event و fn)، ودي الطريقة المعتادة في المكتبات الحديثة، ومناسبة بالظبط للـ cleanup في useEffect.
+export function fixDupes(text) {
+  return text.replace(DUP, "$<word>");
+}
 
-[[once]] بتسجّل wrapper بيشيل نفسه قبل ما ينادي الأصلي.
-
-[[emit]] بيلف على نسخة ([[[...set]]]) مش الـ Set نفسه: من غيرها handler بيعمل [[on]] وهو شغّال كان الجديد هيتنادى في نفس اللفة (الـ Set بيلف على اللي بيتضاف أثناء اللفة)، و Node مش كده. بالنسخة اللي بيتضاف أو يتشال أثناء emit بيأثر من الـ emit الجاي بس.
-
-الـ emit متزامن: كل الـ handlers بتشتغل فورًا بالترتيب قبل ما emit ترجع، ولو واحد رمى error الباقي مش هيشتغل. Node EventEmitter نفس الكلام، وفيه حالة خاصة: [[emit("error")]] من غير listener بيرمي الـ error ويوقع البرنامج.
-
-في المتصفح [[EventTarget]] جاهز، وأي class يقدر يورث منه ويستخدم [[addEventListener]] و [[dispatchEvent]].`,
-            when: "مكونات مستقلة محتاجة تعرف إن حاجة حصلت: إشعارات، و plugins، و WebSocket messages، و state بسيط مشترك. ولو التدفق بقى معقد وصعب تتبّعه، state management واضح أحسن.",
-            mistakes: R`تنسى تلغي الاشتراك فيبقى memory leak (درس «memory leaks»). و handlers كتير بتعدّل نفس الـ state فالترتيب يفرق ومحدش فاهم. وتسمّي الأحداث strings عشوائية: خليها ثوابت. وفي الانترفيو افتكر: on و off و emit و once، وإن on بترجّع unsubscribe.`
-          },
-          teach: R`## الفكرة في سطر
-
-السلة ([[cart]]) بتعلن «اتضاف منتج» ([[emit]])، وأي حتة كود مهتمة تكون اشتركت قبلها ([[on]]) فتتنادى. الكلاس [[Emitter]] كله دفتر: لكل اسم حدث، ليستة الدوال اللي مستنياه. الكود اتشغّل على ويندوز 11 بـ Node 24.19.
-
----
-
-## ١. الدفتر: [[#handlers = new Map()]]
-
-~~~text app.js
-class Emitter {
-  #handlers = new Map();
-~~~
-
-- [[class Emitter]]: قالب بنعمل منه objects بـ [[new Emitter()]].
-- [[#handlers]]: الـ [[#]] في أول الاسم معناها **private field**: خاصية متاحة جوه الكلاس بس. لو حاولت توصلها من برّه:
-
-~~~text الناتج
-class A { #x = 1 } ; new A().#x
-                            ^
-
-SyntaxError: Private field '#x' must be declared in an enclosing class
-~~~
-
-ده حتى مش error وقت التشغيل: الملف كله مبيشتغلش. و [[cart.handlers]] من غير [[#]] بترجّع [[undefined]] لأنها خاصية تانية مش موجودة.
-
-- [[new Map()]]: الـ Map زي object بس مخصوص لـ key ← value. هنا الـ key اسم الحدث ([["add"]]) والـ value **Set** من الدوال:
-
-~~~text شكل الدفتر بعد سطرين on
-Map {
-  "add" => Set { handler1, handler2 }
+if (import.meta.main) {
+  const [, , file, flag] = process.argv;
+  if (!file) {
+    console.error("الاستخدام: node dupes.mjs <file> [--fix]");
+    process.exit(2);
+  }
+  const text = readFileSync(file, "utf8");
+  const found = findDupes(text);
+  for (const d of found) console.log($__bt$__{file}:$__{d.line}:$__{d.col}  «$__{d.text}»$__bt);
+  console.log(found.length ? $__btلقيت $__{found.length}$__bt : "مفيش تكرار");
+  if (flag === "--fix" && found.length) {
+    writeFileSync(file, fixDupes(text));
+    console.log("اتصلّح الملف");
+  }
 }
 ~~~
 
-ليه Set مش array؟ الـ Set مبيقبلش نفس القيمة مرتين، فلو سجّلت نفس الدالة مرتين هتتنادى مرة واحدة (جرّبتها: [[on("x", f)]] مرتين ثم [[emit]] طبع [[f 1]] مرة). وكمان [[delete]] منه مباشرة من غير ما تدوّر على index.
+**كل حتة بتعمل إيه:**
 
----
+- [[(?<!\p{L})]]: lookbehind «قبلي مش حرف». ده بديل [[\b]] اللي بيفهم إنجليزي بس: [[\b]] بيشوف الحرف العربي «مش حرف كلمة»، فـ [["ده ده"]] مكانتش هتتلاقي خالص.
+- [[(?<word>\p{L}+)]]: كلمة بأي لغة، والـ group اسمه [[word]].
+- [[[^\S\r\n]+]]: مسافة أفقية بس (أي whitespace ما عدا السطر الجديد).
+- [[\k<word>]]: **نفس النص** اللي [[word]] مسكه، ومع [[i]] الحروف الكبيرة زي الصغيرة، فـ [[the The]] تكرار.
+- [[(?!\p{L})]]: بعدها مش حرف، فـ [[then thenext]] مش تكرار.
+- [[fixDupes]]: [[replace]] بـ [[$<word>]] بيحط أول نسخة بس مكان الاتنين.
 
-## ٢. [[on]]: الاشتراك
+**غلطة حصلت وإحنا بنبنيه:** أول نسخة كان فيها [[\s+]] بين الكلمتين. [[findDupes]] كانت شغالة لأنها بتقسم سطر سطر، بس [[fixDupes]] بتشتغل على الملف كله، فـ [[شاي]] آخر سطر و [[شاي]] أول اللي بعده اتلزقوا في سطر واحد:
 
-~~~text app.js
-  on(event, fn) {
-    if (!this.#handlers.has(event)) this.#handlers.set(event, new Set());
-    this.#handlers.get(event).add(fn);
-    return () => this.off(event, fn);
+~~~text الناتج بـ \s+ (قبل التصليح) ثم بـ [^\S\r\n]+
+"آخر السطر شاي أول السطر" "آخر السطر شاي\nشاي أول السطر"
+~~~
+
+[[\s]] بتشمل [[\n]]. الحل [[[^\S\r\n]]]: «مش (مش مسافة) ومش سطر جديد»، يعني مسافة أو tab بس.` },
+        { lvl: 'متوسط', t: R`tokenizer لمعادلة حسابية`, what: R`[[tokenize(src)]] بتقطّع [["12 + 3.5*(4-1)"]] لـ tokens كل واحد [[{ type, text, pos }]] (رقم، أو operator، أو قوس) بـ regex واحد فيه flag [[y]] و [[exec]] في loop. أي حرف مش مفهوم (زي [[%]]) بيرمي [[TokenError]] (subclass من SyntaxError) رسالته فيها المعادلة وعلامة [[^]] تحت الحرف بالظبط. والـ CLI بيطبع الـ tokens لكل معادلة تديهاله. من دروس «الـ flags s و m و y و v بحالات حقيقية» و «RegExp exec: الـ result array و indices و lastIndex».`, done: R`[["12 + 3.5*(4-1)"]] بيطلع ٩ tokens منهم [[num:3.5]]، و [["2^10"]] ٣ tokens، و [["7 % 2"]] بيطبع الرسالة والـ [[^]] تحت [[%]] (عمود 2) والـ exit code 1، والمسافات لوحدها أو النص الفاضي بيطبعوا سطر فاضي من غير error.`, sol: R`**هتشوف إيه:**
+
+~~~text الناتج (Node 24.22)
+num:12  op:+  num:3.5  op:*  paren:(  num:4  op:-  num:1  paren:)
+num:2  op:^  num:10
+حرف مش مفهوم «%» عند 2
+7 % 2
+  ^
+
+
+exit=1
+~~~
+
+(السطرين الفاضيين قبل [[exit=1]] لـ [["  "]] و [[""]]: مفيش tokens.)
+
+~~~js tokenize.mjs
+// tokenize.mjs: يقطّع معادلة حسابية لـ tokens بـ flag y و exec، ويشاور على الحرف الغلط
+const TOKEN = /(?<space>\s+)|(?<num>\d+(?:\.\d+)?)|(?<op>[-+*\/^])|(?<paren>[()])/y;
+
+export class TokenError extends SyntaxError {
+  name = "TokenError";
+  constructor(src, pos) {
+    super($__btحرف مش مفهوم «$__{src[pos]}» عند $__{pos}\n$__{src}\n$__{" ".repeat(pos)}^$__bt);
+    this.pos = pos;
   }
-~~~
+}
 
-1. [[this.#handlers.has(event)]]: فيه Set للحدث ده؟ و [[!]] بتعكس: «لو **مفيش**».
-2. [[.set(event, new Set())]]: اعمل Set فاضي للحدث ده (أول مشترك).
-3. [[.get(event).add(fn)]]: هات الـ Set وضيف الدالة فيه.
-4. [[return () => this.off(event, fn)]]: رجّع دالة لو ناديتها تلغي الاشتراك. الدالة دي closure فاكرة [[event]] و [[fn]]، فاللي بيستخدمك مش محتاج يحتفظ بيهم. و [[this]] جوه arrow function بتفضل [[this]] بتاع [[on]] (درس «arrow و this»)، فـ [[this.off]] شغالة.
-
----
-
-## ٣. [[off]]: إلغاء الاشتراك
-
-~~~text app.js
-  off(event, fn) {
-    this.#handlers.get(event)?.delete(fn);
+export function tokenize(src) {
+  const tokens = [];
+  TOKEN.lastIndex = 0;
+  while (TOKEN.lastIndex < src.length) {
+    const start = TOKEN.lastIndex;
+    const m = TOKEN.exec(src);
+    if (!m) throw new TokenError(src, start);
+    const [type, text] = Object.entries(m.groups).find(([, v]) => v !== undefined);
+    if (type !== "space") tokens.push({ type, text, pos: start });
   }
-~~~
+  return tokens;
+}
 
-- [[get(event)]] ممكن يرجّع [[undefined]] لو محدش اشترك في الحدث ده خالص.
-- [[?.]] اسمها optional chaining: لو اللي قبلها [[undefined]] أو [[null]] وقّف ورجّع [[undefined]] بدل ما يرمي error. جرّبت [[new Map().get("x")?.delete(1)]] ورجّعت [[undefined]] من غير مشاكل.
-- [[delete(fn)]]: شيل الدالة من الـ Set (بترجّع [[true]] لو كانت موجودة و [[false]] لو لأ).
-
----
-
-## ٤. [[emit]]: الإعلان
-
-~~~text app.js
-  emit(event, ...args) {
-    const fns = [...(this.#handlers.get(event) ?? [])];
-    for (const fn of fns) fn(...args);
-  }
-~~~
-
-نفكّه من جوه لبرّه:
-
-1. [[...args]] في تعريف الدالة اسمها **rest**: بتلم كل الـ arguments اللي بعد [[event]] في array. فـ [[emit("add", "mug")]] تبقى [[args = ["mug"]]].
-2. [[this.#handlers.get(event)]]: الـ Set بتاع الحدث، أو [[undefined]].
-3. [[?? []]]: الـ [[??]] اسمها nullish coalescing: لو اللي على الشمال [[null]] أو [[undefined]] خد اللي على اليمين. فلو مفيش مشتركين بننسخ array فاضية ومحصلش حاجة. (جرّبت [[emit("nobody", 1)]] على emitter جديد: مفيش error.)
-4. [[[...( ... )]]]: الـ spread جوه [[[ ]]] بيعمل array جديدة فيها عناصر الـ Set وقت النداء ده. ليه نسخة؟ تحت في «handler بيشترك وهو شغّال».
-5. [[for (const fn of fns)]]: لف على كل دالة في النسخة.
-6. [[fn(...args)]]: هنا [[...]] اسمها **spread**: بتفرد الـ array كـ arguments منفصلة. فلو [[emit("sum", 2, 3)]] الدالة بتتنادى [[fn(2, 3)]] (جرّبتها بـ handler بيطبع [[a + b]] وطلع [[sum 5]]).
-
-> نفس الرمز [[...]]: في **تعريف** الدالة بيلم (rest)، وفي **النداء** أو جوه [[[ ]]] بيفرد (spread).
-
-### handler بيشترك وهو شغّال: ليه النسخة
-
-الـ [[for...of]] على [[Set]] بيلف على العناصر **الحالية** وأي عنصر يتضاف أثناء اللفة. يعني لو handler عمل [[on]] لنفس الحدث وهو شغّال، والـ emit بيلف على الـ Set نفسه، الـ handler الجديد هيتنادى في **نفس** الـ emit. جرّبت النسختين قدام [[EventEmitter]] من [[node:events]] بنفس الكود: handler [[A]] بيطبع A وبيشترك بـ handler جديد بيطبع B، و [[emit]] مرتين بينهم [[|]]:
-
-~~~text الناتج (Node 24)
-من غير نسخة (for of على الـ Set):  A B | A B B
-بالنسخة [...set]:                  A | A B
-node:events EventEmitter:          A | A B
-~~~
-
-من غير نسخة الـ B اتنادى في أول emit، وفي التاني A ضاف B تاني فاتنادوا الاتنين. بالنسخة، اللي اتضاف بيبدأ يسمع من الـ emit **الجاي**، وده نفس Node (اللي بيعمل نسخة من الـ listeners جوه [[emit]]). ونفس القاعدة في الإلغاء: لو A عمل [[off]] لـ B وهو شغّال، B لسه هيتنادى في الـ emit ده (Node طبع [[A B]] برضه)، ومن الـ emit الجاي لأ. لو عايز العكس (الإلغاء يأثر فورًا) ده قرار تصميم، بس اكتبه في التوثيق عشان محدش يتفاجئ.
-
-### لو handler رمى error
-
-الـ emit بينادي الدوال واحدة ورا التانية في نفس اللحظة. لو أول واحدة رمت error:
-
-~~~text الناتج (handler أول بيرمي، وتاني بيطبع)
-e.on("x", () => { throw new Error("boom"); });
-                  ^
-
-Error: boom
-    at Emitter.emit (...ee2.js:12:55)
-~~~
-
-الـ handler التاني عمره ما اتنادى، والسطر اللي بعد [[emit]] كمان مشتغلش، لأن الـ error طلع لحد اللي نادى emit. ده بالظبط اللي «جرّب» بيطلب منك تصلّحه.
-
----
-
-## ٥. [[once]]: اشتراك لمرة واحدة
-
-~~~text app.js
-  once(event, fn) {
-    const off = this.on(event, (...args) => { off(); fn(...args); });
-    return off;
-  }
-~~~
-
-بدل ما نسجّل [[fn]] نفسها، بنسجّل دالة تانية (wrapper) بتعمل حاجتين:
-
-1. [[off()]]: تلغي اشتراكها هي. [[off]] هنا الدالة اللي [[on]] رجّعتها.
-2. [[fn(...args)]]: تنادي الدالة الأصلية بنفس الـ arguments.
-
-إزاي الـ wrapper بيستخدم [[off]] وهي لسه بتتعرّف في نفس السطر؟ لأن الـ wrapper مش بيشتغل دلوقتي، بيشتغل بعدين وقت الـ emit، ووقتها [[off]] تكون اتحطلها قيمة.
-
----
-
-## ٦. الاستخدام والناتج
-
-~~~text app.js
-const cart = new Emitter();
-const unsubscribe = cart.on("add", (item) => console.log("اتضاف", item));
-cart.once("add", () => console.log("أول منتج!"));
-cart.emit("add", "mug");
-unsubscribe();
-cart.emit("add", "cap");
-~~~
-
-~~~text الناتج
-اتضاف mug
-أول منتج!
-~~~
-
-| الخطوة | الدفتر بعدها | اتطبع |
-|---|---|---|
-| [[on("add", ...)]] | [[add → { log }]] | |
-| [[once("add", ...)]] | [[add → { log, wrapper }]] | |
-| [[emit("add", "mug")]] | [[add → { log }]] (الـ wrapper شال نفسه) | [[اتضاف mug]] و [[أول منتج!]] |
-| [[unsubscribe()]] | [[add → { }]] | |
-| [[emit("add", "cap")]] | زي ما هو | ولا حاجة |
-
-الترتيب في الناتج هو ترتيب الاشتراك، لأن الـ Set بيحافظ على ترتيب الإضافة.
-
----
-
-## الخلاصة
-
-- Map من اسم الحدث لـ Set من الدوال: ده كل الـ EventEmitter.
-- [[on]] بترجّع دالة unsubscribe (closure)، و [[once]] wrapper بيشيل نفسه قبل ما ينادي الأصلي.
-- [[emit]] بينادي الكل فورًا وبالترتيب، و [[?? []]] بتحميه لو مفيش مشتركين، بس مفيش حماية لو handler رمى error.
-- [[?.]] وقّف لو undefined، و [[??]] بديل لو null/undefined، و [[...]] بيلم في التعريف ويفرد في النداء.`,
-          lines: [
-            R`بيعرّف قالب اسمه [[Emitter]]. كل [[new Emitter()]] هيبقى دفتر مستقل بالمشتركين بتوعه، فالسلة ليها دفتر والإشعارات ليها دفتر.`,
-            R`الدفتر نفسه: [[Map]] المفتاح فيه اسم الحدث ([["add"]]) والقيمة [[Set]] فيه الدوال المستنية. الـ [[#]] بتخليه private، فمحدش من برّه الكلاس يقدر يمسح أو يضيف من غير [[on]] و [[off]].`,
-            R`[[on]] = «اشترك»: بتاخد اسم الحدث والدالة اللي هتتنادى لما يحصل.`,
-            R`أول مرة حد يشترك في الحدث ده مفيش [[Set]] ليه، فبنعمله. من غير السطر ده، السطر اللي بعده هيعمل [[get(event).add]] على [[undefined]] ويرمي error.`,
-            R`بنضيف الدالة للـ [[Set]]. ولأنه [[Set]] مش array، لو نفس الدالة اتسجّلت مرتين هتتسجّل مرة واحدة بس، فمش هتتنادى مرتين بالغلط.`,
-            R`بترجّع دالة تلغي الاشتراك ده بالظبط (closure شايل [[event]] و [[fn]]). فاللي اشترك يقدر يلغي من غير ما يحتاج يفتكر هو اشترك في إيه وبأنهي دالة.`,
-            R`نهاية [[on]].`,
-            R`[[off]] = «الغي الاشتراك»: بتاخد نفس الاتنين اللي اتسجّلوا.`,
-            R`بتمسح الدالة من الـ [[Set]]. و [[?.]] بتمنع الـ error لو الحدث ده عمره ما كان ليه مشتركين: من غيرها [[get]] هترجّع [[undefined]] و [[.delete]] عليها هيرمي.`,
-            R`نهاية [[off]].`,
-            R`[[emit]] = «اعلن»: بتاخد اسم الحدث، وأي arguments بعده ([[...args]]) بتتجمّع في array عشان تتبعت للمشتركين زي ما هي.`,
-            R`بناخد **نسخة** من الـ [[Set]] في array ([[[...set]]]) قبل ما نلف. و [[?? []]] بتخلي النسخة array فاضية لو مفيش مشتركين، بدل ما [[...undefined]] يرمي error. النسخة دي بتخلي handler بيشترك أو بيلغي وهو شغّال ميغيّرش اللفة دي، زي [[EventEmitter]] بتاع Node بالظبط.`,
-            R`بتلف على النسخة وتنادي كل دالة بنفس الـ arguments بالترتيب اللي اشتركوا بيه.`,
-            R`نهاية [[emit]].`,
-            R`[[once]] = «اشترك لمرة واحدة»: الدالة تتنادى أول مرة الحدث يحصل وبعدها تتشال لوحدها.`,
-            R`بنسجّل دالة وسيطة (wrapper) بدل الدالة الأصلية. أول ما تتنادى بتلغي اشتراكها ([[off()]]) **الأول**، وبعدين تنادي الأصلية. لو الترتيب اتعكس والدالة الأصلية عملت [[emit]] لنفس الحدث، الـ wrapper هيتنادى تاني.`,
-            R`بنرجّع دالة الإلغاء برضه، عشان لو حبيت تلغي قبل ما الحدث يحصل أصلًا.`,
-            R`نهاية [[once]].`,
-            R`نهاية الكلاس.`,
-            R`سلة جديدة، ودفترها فاضي.`,
-            R`اشترك في [[add]] بدالة بتطبع، واحفظ دالة الإلغاء في [[unsubscribe]] عشان تستخدمها بعدين.`,
-            R`اشترك لمرة واحدة بس: الرسالة دي هتظهر مع أول منتج ومش هتتكرر.`,
-            R`أول إعلان: الاتنين بيتنادوا بالترتيب اللي اشتركوا بيه، فيطبع «اتضاف mug» وبعدها «أول منتج!». والـ [[once]] شال نفسه.`,
-            R`الغي الاشتراك الأول بالدالة اللي اتحفظت.`,
-            R`تاني إعلان: الأول اتلغى والـ [[once]] شال نفسه، فمحدش بيسمع ومفيش حاجة بتتطبع. ده بيثبت إن الإلغاء شغّال.`,
-          ],
-          sol: R`[[listenerCount]] بترجّع [[this.#handlers.get(event)?.size ?? 0]]. في المثال قبل الـ emit بترجّع 2، وبعده 1 (الـ once شالت نفسها)، وبعد unsubscribe بترجّع 0، وآخر [[emit("add", "cap")]] مبيطبعش حاجة.
-
-لو أول handler رمى error من غير try/catch: الـ loop بتقف، الـ handlers اللي بعده مبتشتغلش، والـ error بيطلع لحد اللي نادى emit. بعد ما تلف كل نداء بـ try/catch جوه emit، الباقي بيشتغل عادي والـ error بيتسجل بس. و [[EventTarget]] المدمج بيعمل كده لوحده: [[dispatchEvent]] بيكمّل على باقي الـ listeners وبيبلّغ الـ error كـ uncaught (في Console أحمر) من غير ما يوقف اللي بعده، والـ detail بيوصل في [[e.detail]].`,
-          solCode: R`emit(event, ...args) {
-  for (const fn of [...(this.#handlers.get(event) ?? [])]) {
+if (import.meta.main) {
+  for (const src of process.argv.slice(2)) {
     try {
-      fn(...args);
-    } catch (err) {
-      console.error($__bthandler لـ "$__{event}" وقع:$__bt, err);
+      console.log(tokenize(src).map((t) => $__bt$__{t.type}:$__{t.text}$__bt).join("  "));
+    } catch (e) {
+      if (!(e instanceof TokenError)) throw e;
+      console.error(e.message);
+      process.exitCode = 1;
     }
   }
 }
-listenerCount(event) {
-  return this.#handlers.get(event)?.size ?? 0;
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- [[TOKEN]]: ٤ بدايل بـ [[|]]، كل واحد named group: مسافات، ورقم (عشري اختياري بـ [[(?:\.\d+)?]])، و operator، وقوس. جوه [[[-+*\/^]]] الـ [[-]] في الأول عشان تبقى حرف مش range.
+- [[y]]: الـ match **لازم** يبدأ عند [[lastIndex]] بالظبط. فلو عند مكان معيّن مفيش token، [[exec]] بترجّع [[null]] بدل ما تدوّر لقدّام.
+- [[const start = TOKEN.lastIndex]] قبل [[exec]]: عشان لو فشل نعرف المكان (بعد الفشل [[lastIndex]] بيرجع 0).
+- [[Object.entries(m.groups).find(...)]]: الـ group اللي اتطابق هو الوحيد اللي قيمته مش [[undefined]]، واسمه هو نوع الـ token.
+- [[TOKEN.lastIndex = 0]] في أول الدالة: الـ regex متشارك بين النداءات، ولو نداء قبله وقع في النص ممكن يكون [[lastIndex]] مش صفر.
+- [[TokenError]]: [[name]] كـ class field عشان الرسالة تبدأ بـ [[TokenError]] مش [[SyntaxError]]، و [[pos]] للي عايز يعرض المكان بنفسه.
+
+**غلطة شفناها:** نسخة بـ [[g]] بدل [[y]] (عملناها بـ [[sed]] ونفس الكود):
+
+~~~text الناتج بـ g على "7 % 2"
+num:7  num:2
+~~~
+
+الـ [[%]] **اختفى من غير ولا error**: مع [[g]]، [[exec]] لما ملقاش token عند [[%]] دوّر لقدّام ولقى المسافة اللي بعدها، فاتنطّ. ده بالظبط ليه الـ tokenizers بتستخدم [[y]].` },
+        { lvl: 'متوسط', t: R`highlighter بيرسم تحت الـ matches`, what: R`[[highlight.mjs "<pattern>" <file> [flags]]] بيدوّر في الملف سطر سطر، ولكل match بيطبع سطر تحته فيه [[^]] تحت الـ match وأول حرف من اسم كل named group مكان بدايته، وفي الآخر عدد الـ matches والـ regex اللي اتستخدم. الـ flags [[g]] و [[d]] بيتضافوا لوحدهم من غير ما يتكرروا، والـ pattern البايظ بيطبع الـ SyntaxError ويخرج بـ 2. من دروس «RegExp exec: الـ result array و indices و lastIndex» و «regex literal و new RegExp: خصايص الـ RegExp و toString».`, done: R`على ملف ٣ سطور فيه [[A-17]] و [[b-3]] و [[C-120]]، الأمر [[node highlight.mjs '(?<letter>[A-Z])-(?<num>\d+)' orders.txt i]] بيرسم ٣ علامات تحت أماكنهم بالظبط، وبيقول [[3 match بـ /(?<letter>[A-Z])-(?<num>\d+)/dgi]]. و [['(']] بيطبع [[Unterminated group]] و [[exit=2]]، والـ flags [[gd]] مبتتكررش.`, sol: R`**هتشوف إيه:**
+
+~~~text الناتج (Node 24.22)
+  1 | order A-17 paid 250 EGP
+    |       l^n^
+  3 | order b-3 and order C-120
+    |       l^n
+    |                     l^n^^
+3 match بـ /(?<letter>[A-Z])-(?<num>\d+)/dgi
+Invalid regular expression: /(/dg: Unterminated group
+exit=2
+~~~
+
+السطر التاني ([[no code here]]) مش ظاهر لأنه مفيهوش match. و [[l]] تحت أول حرف في [[letter]]، و [[n]] تحت أول رقم في [[num]]، والـ [[^]] باقي الـ match.
+
+~~~js highlight.mjs
+// highlight.mjs: يدوّر بـ regex في ملف ويرسم تحت كل match وكل named group مكانهم بالظبط (flag d)
+import { readFileSync } from "node:fs";
+
+export function highlightLine(line, re) {
+  const out = [];
+  for (const m of line.matchAll(re)) {
+    const [start, end] = m.indices[0];
+    const marks = Array(line.length).fill(" ");
+    for (let i = start; i < end; i++) marks[i] = "^";
+    for (const [name, span] of Object.entries(m.indices.groups ?? {})) {
+      if (!span) continue;
+      marks[span[0]] = name[0];
+    }
+    out.push(marks.join("").trimEnd());
+  }
+  return out;
 }
-// والبديل المدمج
-class Cart extends EventTarget {}
-const cart = new Cart();
-cart.addEventListener("add", (e) => console.log("اتضاف", e.detail));
-cart.dispatchEvent(new CustomEvent("add", { detail: "mug" }));`,
+
+export function buildRegex(pattern, extra = "") {
+  const flags = new Set(["g", "d", ...extra]);
+  return new RegExp(pattern, [...flags].join(""));
+}
+
+if (import.meta.main) {
+  const [, , pattern, file, flags = ""] = process.argv;
+  if (!pattern || !file) {
+    console.error('الاستخدام: node highlight.mjs "<pattern>" <file> [flags]');
+    process.exit(2);
+  }
+  let re;
+  try { re = buildRegex(pattern, flags); }
+  catch (e) { console.error(e.message); process.exit(2); }
+  let total = 0;
+  readFileSync(file, "utf8").split(/\r?\n/).forEach((line, i) => {
+    const marks = highlightLine(line, re);
+    if (!marks.length) return;
+    total += marks.length;
+    console.log(String(i + 1).padStart(3) + " | " + line);
+    for (const mk of marks) console.log("    | " + mk);
+  });
+  console.log($__bt$__{total} match بـ $__{re}$__bt);
+}
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- [[buildRegex]]: [[new Set(["g", "d", ...extra])]] بيشيل التكرار، فلو اليوزر كتب [[gd]] الـ flags تفضل [[dg]] مش [[gddg]] (اللي كانت هترمي [[Invalid flags]]).
+- [[line.matchAll(re)]]: بيلف على كل الـ matches، وكل واحد معاه [[indices]] لأن فيه [[d]].
+- [[m.indices[0]]]: [[[start, end]]] بتاع الـ match كله، فبنحط [[^]] من [[start]] لـ [[end - 1]].
+- [[m.indices.groups]]: نفس الشكل لكل named group. لو group اختياري ومشاركش، مكانه [[undefined]]، عشان كده [[if (!span) continue]].
+- [[trimEnd()]]: يشيل المسافات اللي في آخر سطر العلامات.
+
+**حاجة اتعلمناها:** السطر العربي في الترمنال بيتعرض من اليمين للشمال، والـ [[^]] تحت مش هتيجي تحت الحرف الصح بالعين، مع إن الأرقام صح. لو هتستخدمه على نص عربي اطبع الأرقام ([[start]] و [[end]]) جنب العلامات، أو اعرض النتيجة في صفحة HTML بـ [[<mark>]].` },
+        { lvl: 'كبير', t: R`فاحص لوجات بيقولك فين السطر وقع`, what: R`أداة [[log-check]] بتقرا access log كل سطر فيه [[ts method path status ms ip]]، وتفك كل سطر سليم بـ regex واحد بـ named groups و flag [[d]]، والـ method بأي حالة حروف بـ modifier [[(?i:...)]] بس الباقي حساس. السطر البايظ بيتقال عليه **أنهي حقل** وقع **عند أنهي عمود** وعلامة [[^]] تحته (حقل حقل بـ [[y]]). وفي الآخر: عدد السليم والبايظ، وعدد كل status، والأبطأ. و [[--show]] بيرسم تحت كل سطر سليم مكان كل حقل. ومعاها ٦ اختبارات بـ [[node --test]] منها اختبار ReDoS. من الوحدة كلها.`, done: R`على لوج ٧ سطور (منهم سطر فاضي، و [[post]] صغيرة، و [[2O0]] بحرف O، وتاريخ من غير T، وكلمة زيادة في الآخر): ٣ سليم و ٣ بايظ، كل واحد بالحقل والعمود الصح، و [[{"200":1,"401":1,"500":1}]]، والأبطأ [[GET /api/orders 930ms]]، والـ exit code 1. و [[node --test]] بيقول [[pass 6]]، والملف المش موجود بيطبع [[ENOENT]] ويخرج بـ 2.`, ext: R`خلّي الحقول تتقري من ملف JSON بدل [[patterns.mjs]] عشان تدعم أكتر من شكل لوج، وزوّد [[--json]] يطبع التقرير JSON لأداة تانية، وخليها تقرا من [[stdin]] عشان تشتغل في pipe ([[tail -f access.log | log-check -]]).`, sol: R`**هتشوف إيه:** كل سطر سليم وتحته مكان حقوله، وكل سطر بايظ بالحقل والعمود، وملخص:
+
+~~~text الناتج (Node 24.22): node log-check.mjs access.log --show
+  2026-11-21T10:15:02Z GET /api/orders/17 200 35ms ip=10.0.0.7
+  t------------------- m-- p------------- s-- m-      i-------
+  2026-11-21T10:15:03Z post /api/login 401 120ms ip=10.0.0.9
+  t------------------- m--- p--------- s-- m--      i-------
+  2026-11-21T10:15:07Z GET /api/orders 500 930ms ip=10.0.0.3
+  t------------------- m-- p---------- s-- m--      i-------
+سطر 3: الحقل «status» بايظ عند العمود 44
+  2026-11-21T10:15:04Z GET /api/menu?lang=ar 2O0 8ms ip=10.0.0.7
+                                             ^
+سطر 4: الحقل «ts» بايظ عند العمود 1
+  2026-11-21 10:15:05 GET /api/orders 500 900ms ip=10.0.0.3
+  ^
+سطر 6: الحقل «end» بايظ عند العمود 64
+  2026-11-21T10:15:06Z DELETE /api/orders/17 204 15ms ip=10.0.0.7 extra
+                                                                 ^
+سليم: 3  بايظ: 3
+الـ status: {"200":1,"401":1,"500":1}
+الأبطأ: GET /api/orders 930ms
+exit=1
+~~~
+
+**الملفات:**
+
+~~~text شجرة الملفات
+log-check/
+  patterns.mjs      الحقول: اسم كل حقل والـ pattern بتاعه، والـ regex الكامل والخطوات
+  check.mjs         parseLine و locate و marks و analyze و formatBad
+  log-check.mjs     الـ CLI: يقرا الملف ويطبع التقرير والـ exit code
+  check.test.mjs    ٦ اختبارات بـ node:test
+  access.log        لوج تجربة
+~~~
+
+~~~text access.log
+2026-11-21T10:15:02Z GET /api/orders/17 200 35ms ip=10.0.0.7
+2026-11-21T10:15:03Z post /api/login 401 120ms ip=10.0.0.9
+2026-11-21T10:15:04Z GET /api/menu?lang=ar 2O0 8ms ip=10.0.0.7
+2026-11-21 10:15:05 GET /api/orders 500 900ms ip=10.0.0.3
+
+2026-11-21T10:15:06Z DELETE /api/orders/17 204 15ms ip=10.0.0.7 extra
+2026-11-21T10:15:07Z GET /api/orders 500 930ms ip=10.0.0.3
+~~~
+
+~~~js patterns.mjs
+// patterns.mjs: كل حقل في سطر اللوج: اسمه، والـ pattern بتاعه، والنص اللي بعده
+export const FIELDS = [
+  { name: "ts", src: String.raw$__bt\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$__bt, after: " " },
+  { name: "method", src: String.raw$__bt(?i:GET|POST|PUT|PATCH|DELETE)$__bt, after: " " },
+  { name: "path", src: String.raw$__bt\/[^\s?]*(?:\?\S*)?$__bt, after: " " },
+  { name: "status", src: String.raw$__bt[1-5]\d{2}$__bt, after: " " },
+  { name: "ms", src: String.raw$__bt\d+$__bt, after: "ms ip=" },
+  { name: "ip", src: String.raw$__bt(?:\d{1,3}\.){3}\d{1,3}$__bt, after: "" },
+];
+
+// السطر كله: كل حقل named group، والـ d عشان نعرف مكان كل حقل
+export const LINE = new RegExp(
+  "^" + FIELDS.map((f) => $__bt(?<$__{f.name}>$__{f.src})$__{RegExp.escape(f.after)}$__bt).join("") + "$",
+  "d",
+);
+
+// حقل حقل بـ y: عشان نعرف السطر البايظ وقع عند أنهي حقل وأنهي عمود
+export const STEPS = FIELDS.map((f) => ({
+  name: f.name,
+  re: new RegExp($__bt(?:$__{f.src})$__{RegExp.escape(f.after)}$__bt, "y"),
+}));
+~~~
+
+~~~js check.mjs
+// check.mjs: يفك سطور اللوج، ويقول البايظ وقع فين، ويلخّص
+import { LINE, STEPS } from "./patterns.mjs";
+
+export function parseLine(line) {
+  const m = LINE.exec(line);
+  if (!m) return null;
+  const g = m.groups;
+  return { ts: g.ts, method: g.method.toUpperCase(), path: g.path, status: Number(g.status), ms: Number(g.ms), ip: g.ip, indices: m.indices.groups };
+}
+
+export function locate(line) {
+  let pos = 0;
+  for (const { name, re } of STEPS) {
+    re.lastIndex = pos;
+    if (!re.exec(line)) return { field: name, col: pos };
+    pos = re.lastIndex;
+  }
+  return pos === line.length ? null : { field: "end", col: pos };
+}
+
+export function marks(line, indices) {
+  const row = Array(line.length).fill(" ");
+  for (const [name, [start, end]] of Object.entries(indices)) {
+    for (let i = start; i < end; i++) row[i] = i === start ? name[0] : "-";
+  }
+  return row.join("").trimEnd();
+}
+
+export function analyze(text) {
+  const report = { ok: [], bad: [], byStatus: {}, slowest: null };
+  text.split(/\r?\n/).forEach((line, i) => {
+    if (line.trim() === "") return;
+    const rec = parseLine(line);
+    if (!rec) {
+      report.bad.push({ no: i + 1, line, ...(locate(line) ?? { field: "?", col: 0 }) });
+      return;
+    }
+    report.ok.push({ no: i + 1, line, ...rec });
+    report.byStatus[rec.status] = (report.byStatus[rec.status] ?? 0) + 1;
+    if (!report.slowest || rec.ms > report.slowest.ms) report.slowest = rec;
+  });
+  return report;
+}
+
+export function formatBad(b) {
+  return $__btسطر $__{b.no}: الحقل «$__{b.field}» بايظ عند العمود $__{b.col + 1}\n  $__{b.line}\n  $__{" ".repeat(b.col)}^$__bt;
+}
+~~~
+
+~~~js log-check.mjs
+// log-check.mjs: node log-check.mjs <file> [--show]
+import { readFileSync } from "node:fs";
+import { analyze, formatBad, marks } from "./check.mjs";
+
+const [, , file, flag] = process.argv;
+if (!file) {
+  console.error("الاستخدام: node log-check.mjs <file> [--show]");
+  process.exit(2);
+}
+let text;
+try {
+  text = readFileSync(file, "utf8");
+} catch (e) {
+  console.error($__btمش قادر أقرا $__{file}: $__{e.code}$__bt);
+  process.exit(2);
+}
+const r = analyze(text);
+if (flag === "--show") {
+  for (const rec of r.ok) console.log("  " + rec.line + "\n  " + marks(rec.line, rec.indices));
+}
+for (const b of r.bad) console.log(formatBad(b));
+console.log($__btسليم: $__{r.ok.length}  بايظ: $__{r.bad.length}$__bt);
+console.log("الـ status:", JSON.stringify(r.byStatus));
+if (r.slowest) console.log($__btالأبطأ: $__{r.slowest.method} $__{r.slowest.path} $__{r.slowest.ms}ms$__bt);
+process.exitCode = r.bad.length ? 1 : 0;
+~~~
+
+~~~js check.test.mjs
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { parseLine, locate, analyze, marks } from "./check.mjs";
+
+const good = "2026-11-21T10:15:02Z GET /api/orders/17 200 35ms ip=10.0.0.7";
+
+test("سطر سليم بيتفك لحقوله", () => {
+  const r = parseLine(good);
+  assert.equal(r.method, "GET");
+  assert.equal(r.status, 200);
+  assert.equal(r.ms, 35);
+  assert.deepEqual(r.indices.path, [25, 39]);
+});
+
+test("الـ method بأي حالة حروف، والباقي حساس", () => {
+  assert.equal(parseLine(good.replace("GET", "get")).method, "GET");
+  assert.equal(parseLine(good.replace("ip=", "IP=")), null);
+});
+
+test("locate بيقول الحقل والعمود", () => {
+  assert.deepEqual(locate(good.replace("200", "2O0")), { field: "status", col: 40 });
+  assert.deepEqual(locate(good.replace("GET", "FETCH")), { field: "method", col: 21 });
+  assert.deepEqual(locate(good + " extra"), { field: "end", col: good.length });
+  assert.equal(locate(good), null);
+});
+
+test("analyze: العد والأبطأ والسطور الفاضية و CRLF", () => {
+  const text = [good, "", "2026-11-21T10:15:03Z POST /api/login 401 120ms ip=10.0.0.9", "garbage"].join("\r\n");
+  const r = analyze(text);
+  assert.equal(r.ok.length, 2);
+  assert.equal(r.bad.length, 1);
+  assert.equal(r.bad[0].no, 4);
+  assert.deepEqual(r.byStatus, { 200: 1, 401: 1 });
+  assert.equal(r.slowest.path, "/api/login");
+});
+
+test("marks بيرسم تحت كل حقل", () => {
+  const r = parseLine(good);
+  assert.equal(marks(good, r.indices).slice(0, 24), "t------------------- m--");
+});
+
+test("مفيش ReDoS: سطر طويل بايظ بيخلص بسرعة", () => {
+  const evil = "2026-11-21T10:15:02Z GET /" + "a".repeat(50000) + " 200 ";
+  const t0 = performance.now();
+  analyze(evil);
+  assert.ok(performance.now() - t0 < 200);
+});
+~~~
+
+~~~text الناتج: node --test (آخر السطور)
+✔ locate بيقول الحقل والعمود (0.4619ms)
+✔ analyze: العد والأبطأ والسطور الفاضية و CRLF (0.3344ms)
+✔ marks بيرسم تحت كل حقل (0.2384ms)
+✔ مفيش ReDoS: سطر طويل بايظ بيخلص بسرعة (1.0968ms)
+ℹ tests 6
+ℹ pass 6
+ℹ fail 0
+~~~
+
+**ترتيب البناء:**
+
+1. **[[patterns.mjs]] الأول:** كل حقل [[{ name, src, after }]]، و [[src]] مكتوب بـ [[String.raw]] عشان [[\d]] متضيعش (درس «regex literal و new RegExp»). [[after]] النص الثابت اللي بعد الحقل، وبيعدّي على [[RegExp.escape]] عشان [[ms ip=]] أو أي رمز فيه يفضل حرفي.
+2. **[[LINE]]:** الحقول كلها named groups جنب بعض، بين [[^]] و [[$]]، والـ flag [[d]] بس. و [[(?i:GET|POST|...)]] modifier: الـ method بس مش حساس للحروف، فـ [[post]] بيعدّي و [[IP=]] لأ.
+3. **[[STEPS]]:** نفس الحقول، كل واحد regex لوحده بـ [[y]]. [[locate]] بتحط [[lastIndex]] مكان ما اللي قبله خلص، وأول حقل [[exec]] بتاعه يرجّع [[null]] هو اللي وقع، و [[pos]] هو العمود.
+4. **[[check.mjs]]:** [[parseLine]] بترجّع الحقول كأرقام ([[Number]]) ومعاها [[indices]]، و [[analyze]] بتلف على السطور بـ [[split(/\r?\n/)]] عشان ملفات ويندوز، وبتتجاهل الفاضي.
+5. **[[log-check.mjs]]:** exit code 2 للاستخدام الغلط والملف المش موجود، و 1 لو فيه سطر بايظ، و 0 لو كله سليم: عشان يتحط في سكربت أو CI.
+6. **الاختبارات:** حالة سليمة، و modifier، و [[locate]] بـ ٣ أشكال غلط، و CRLF، والرسم، و ReDoS (سطر ٥٠ ألف حرف خلص في 1ms).
+
+**غلطة حقيقية وإحنا بنبنيه:** لو ضفت [[g]] لـ [[LINE]] (عادة من [[matchAll]])، النتيجة بتبوظ في صمت:
+
+~~~text الناتج بـ "dg" بدل "d"
+سليم: 2  بايظ: 4
+الـ status: {"200":1,"500":1}
+~~~
+
+سطر [[post]] السليم اتحسب بايظ: [[exec]] الأولى نجحت وخلّت [[lastIndex]] في آخر السطر، والتانية بدأت من هناك على السطر اللي بعده ففشلت. نفس فخ [[g]] مع [[test]] في درس «groups و flags»، وعشان كده [[LINE]] من غير [[g]]، و [[STEPS]] بـ [[y]] وبنحط [[lastIndex]] بإيدنا.` },
+        { lvl: 'فكرة', t: R`قواعد تنضيف نص بالـ regex`, what: R`اختار نوع نص بتتعامل معاه (رسايل عملا، أو أسامي منتجات، أو تعليقات) واكتب له ملف قواعد: كل قاعدة اسم و regex وبيتبدّل بإيه، والدالة [[clean(text)]] بتعدّي النص على القواعد بالترتيب. استخدم على الأقل: [[\k<name>]]، و modifier، و lookbehind، و [[\p{...}]] مع [[u]] أو [[v]].`, done: R`كل قاعدة ليها مثال قبل وبعد، والقواعد مبتبوظش نص سليم (رقم ١٢ رقم مبيتخفاش، وكلمة فيها حرفين متكررين زي «كوود» متتلمسش)، والترتيب مكتوب ليه.`, ext: R`اعمل صفحة فيها textarea تكتب فيها الرسالة وتشوف كل قاعدة غيّرت إيه (diff)، أو زوّد لكل قاعدة اختبار بـ [[node --test]].`, sol: R`**نسخة نموذجية:** تنضيف رسايل العملا قبل ما تتخزن في السيستم:
+
+~~~text الناتج (Node 24.22)
+عايز الطلب بكرة، رقمي 01X-XXXX-5678 و CODE:SAVE20
+~~~
+
+ده ناتج [[clean("عاااايز   الطلـــب بكرة، رقمي 01012345678 و Code: SAVE20")]].
+
+~~~js clean.mjs
+// clean.mjs: قواعد تنضيف رسايل العملا قبل ما تتخزن، كل قاعدة regex واسم ومثال
+export const RULES = [
+  { name: "مسافات زيادة", re: /[^\S\r\n]{2,}/g, to: " " },
+  { name: "تطويل", re: /(?<=\p{Script=Arabic})ـ+/gu, to: "" },
+  { name: "تكرار حروف", re: /(?<ch>\p{L})\k<ch>{2,}/gu, to: "$<ch>" },
+  { name: "إخفاء موبايل", re: /(?<!\d)01[0125](?<mid>\d{4})(?<end>\d{4})(?!\d)/g, to: "01X-XXXX-$<end>" },
+  { name: "كود خصم بأي حالة", re: /\b(?i:code)[:\s]*(?<c>[A-Z0-9]{4,8})\b/g, to: "CODE:$<c>" },
+];
+
+export function clean(text) {
+  return RULES.reduce((t, r) => t.replace(r.re, r.to), text);
+}
+
+if (import.meta.main) {
+  const msg = "عاااايز   الطلـــب بكرة، رقمي 01012345678 و Code: SAVE20";
+  console.log(clean(msg));
+}
+~~~
+
+**ليه التصميم ده:**
+
+- كل قاعدة object فيه [[name]]: لو حاجة اتغيّرت غلط تعرف أنهي قاعدة. والـ [[reduce]] بيعدّي النص عليهم بالترتيب.
+- **مسافات زيادة** الأول: [[[^\S\r\n]{2,}]] مسافتين أو أكتر من غير ما يلمس السطور.
+- **التطويل** ([[ـ]]): [[(?<=\p{Script=Arabic})ـ+]] بعد حرف عربي بس.
+- **تكرار حروف**: [[(?<ch>\p{L})\k<ch>{2,}]] حرف وبعده نفس الحرف مرتين أو أكتر، فـ «عاااايز» بقت «عايز» و «كوود» (حرفين بس) متتلمسش.
+- **إخفاء الموبايل**: [[(?<!\d)]] و [[(?!\d)]] عشان رقم ١٢ خانة ميتقطعش منه موبايل.
+- **كود الخصم**: [[(?i:code)]] modifier: كلمة code بأي حالة، بس الكود نفسه [[[A-Z0-9]]] حساس. جرّبنا [[clean("كوود code:ab12 و 010123456789 و  ok")]] وطلع [[كوود code:ab12 و 010123456789 و ok]]: الكود الصغير مش كود، والرقم الطويل مش موبايل.
+
+**غلطة حصلت:** أول نسخة من قاعدة التطويل كانت [[/\p{Script=Arabic}\K?ـ+/gu]] (عادة من PCRE في PHP و grep -P)، والملف مشتغلش خالص:
+
+~~~text الناتج
+SyntaxError: Invalid regular expression: /\p{Script=Arabic}\K?ـ+/gu: Invalid escape
+~~~
+
+[[\K]] («انسى اللي فات من الـ match») مش موجودة في JS، ومع [[u]] أي escape مش معروف بيرمي. البديل في JS هو الـ lookbehind [[(?<=...)]].` },
+      ],
+      items: [
+        {
+          cmd: "regex literal و new RegExp: خصايص الـ RegExp و toString",
+          title: "تكتب الـ regex بين / / ولا بـ new RegExp؟ وتقرا أي regex من خصايصه",
+          desc: R`فيه طريقتين تعمل بيهم regex: **regular expression literal** [[/(\d+) EGP/gi]] بيتعمل parse مع الملف كله، فلو غلط الملف مش بيشتغل خالص، وده الأحسن لما الـ pattern ثابت وانت بتكتب الكود. و [[new RegExp(pattern, flags)]] بيبني الـ regex من **نص** وقت التشغيل، فلو غلط بيرمي SyntaxError تقدر تمسكها، وده اللي بتستخدمه لما الـ pattern جاي من يوزر أو متركّب من حتت.
+
+الفخ في الطريقة التانية: الـ pattern جوه علامات تنصيص عادية، و [[\]] ليها معنى في النص نفسه قبل ما توصل للـ regex. فـ [["\d"]] بتبقى [["d"]]. الحل [[\\d]] أو [[String.raw]].
+
+وأي regex object فيه خصايص تقرا منها هو إيه: [[source]] (الـ pattern كنص) و [[flags]] (كل الـ flags) و boolean لكل flag ([[global]] و [[ignoreCase]] و [[multiline]] و [[dotAll]] و [[unicode]] و [[unicodeSets]] و [[hasIndices]] و [[sticky]])، و [[lastIndex]] (الخاصية الوحيدة اللي بتتغيّر)، و [[toString()]] اللي بترجّع [[/source/flags]].`,
+          example: R`// نفس الـ regex بـ ٣ طرق: literal، و new RegExp بنص عادي، و String.raw
+const lit = /(\d+)\s*EGP/gi;
+const built = new RegExp("(\\d+)\\s*EGP", "gi");
+const raw = new RegExp(String.raw$__bt(\d+)\s*EGP$__bt, "gi");
+console.log(lit.source, built.source === lit.source, raw.source === lit.source);
+const wrong = new RegExp("(\d+)\s*EGP", "gi");
+console.log(wrong.source, wrong.test("50 EGP"));
+// الـ properties: كلها getters على RegExp.prototype ما عدا lastIndex
+console.log(lit.flags, lit.global, lit.ignoreCase, lit.multiline, lit.dotAll, lit.sticky);
+console.log(lit.unicode, lit.unicodeSets, lit.hasIndices, lit.lastIndex, String(lit));
+const copy = new RegExp(lit, "dy");
+console.log(copy.flags, copy.source === lit.source, copy === lit);
+const word = "c++";
+console.log(new RegExp($__bt^$__{RegExp.escape(word)}$$__bt, "i").test("C++"));
+try { new RegExp("(\\d+"); } catch (e) { console.log(e.name + ": " + e.message); }`,
+          try: R`اكتب دالة [[flagNames(re)]] بترجّع array بأسامي الـ flags اللي شغالة في الـ regex بالترتيب ده: [[hasIndices]] و [[global]] و [[ignoreCase]] و [[multiline]] و [[dotAll]] و [[unicode]] و [[unicodeSets]] و [[sticky]]، من الخصايص مش من نص [[flags]]. يعني [[flagNames(/x/gi)]] بترجّع [[["global", "ignoreCase"]]]. حلها في المربع اللي تحت ودوس «شغّل واختبر».`,
+          sol: R`~~~js flag-names.mjs
+const NAMES = { d: "hasIndices", g: "global", i: "ignoreCase", m: "multiline", s: "dotAll", u: "unicode", v: "unicodeSets", y: "sticky" };
+function flagNames(re) {
+  return Object.values(NAMES).filter((name) => re[name]);
+}
+console.log(flagNames(/x/gi), flagNames(/x/dmsy), flagNames(/x/v), flagNames(/x/));
+~~~
+
+~~~text الناتج (Node 24.22)
+[ 'global', 'ignoreCase' ] [ 'hasIndices', 'multiline', 'dotAll', 'sticky' ] [ 'unicodeSets' ] []
+~~~
+
+- [[NAMES]] بيربط حرف كل flag باسم الخاصية بتاعته، ومترتّب بنفس ترتيب [[flags]] (d g i m s u v y).
+- [[re[name]]]: قراية خاصية باسم في متغير، زي [[re.global]] بالظبط.
+- [[filter]] بيسيب اللي قيمته [[true]] بس.`,
           check: {
             lang: "js",
-            starter: R`class Emitter {
-  #handlers = new Map();
-  on(event, fn) {
-    if (!this.#handlers.has(event)) this.#handlers.set(event, new Set());
-    this.#handlers.get(event).add(fn);
-    return () => this.off(event, fn);
-  }
-  off(event, fn) {
-    this.#handlers.get(event)?.delete(fn);
-  }
-  emit(event, ...args) {
-    const fns = [...(this.#handlers.get(event) ?? [])];
-    for (const fn of fns) fn(...args);
-  }
-  once(event, fn) {
-    const off = this.on(event, (...args) => { off(); fn(...args); });
-    return off;
-  }
-  listenerCount(event) {}
-  waitFor(event) {}
+            starter: R`function flagNames(re) {
+  // رجّع أسامي الخصايص اللي قيمتها true
 }`,
-            tests: R`test("listenerCount: 2 وبعد الـ once 1 وبعد unsubscribe 0", () => {
-  const cart = new Emitter(), counts = [];
-  const unsubscribe = cart.on("add", () => {});
-  cart.once("add", () => {});
-  counts.push(cart.listenerCount("add"));
-  cart.emit("add", "mug");
-  counts.push(cart.listenerCount("add"));
-  unsubscribe();
-  counts.push(cart.listenerCount("add"));
-  expect(counts).toEqual([2, 1, 0]);
-});
-test("event محدش سمعه ← 0 مش undefined", () => expect(new Emitter().listenerCount("nope")).toBe(0));
-test("waitFor بترجّع Promise", () => expect(new Emitter().waitFor("x") instanceof Promise).toBe(true));
-test("waitFor بتتحل بأول emit بس، والـ arguments كـ array", async () => {
-  const e = new Emitter();
-  const p = e.waitFor("ready");
-  e.emit("ready", 1, 2);
-  e.emit("ready", 3);
-  expect(await p).toEqual([1, 2]);
-});
-test("waitFor متسيبش listener وراها", async () => {
-  const e = new Emitter();
-  const p = e.waitFor("ready");
-  const before = e.listenerCount("ready");
-  e.emit("ready", "ok");
-  await p;
-  expect([before, e.listenerCount("ready")]).toEqual([1, 0]);
-});`,
-            solution: R`class Emitter {
-  #handlers = new Map();
-  on(event, fn) {
-    if (!this.#handlers.has(event)) this.#handlers.set(event, new Set());
-    this.#handlers.get(event).add(fn);
-    return () => this.off(event, fn);
-  }
-  off(event, fn) {
-    this.#handlers.get(event)?.delete(fn);
-  }
-  emit(event, ...args) {
-    const fns = [...(this.#handlers.get(event) ?? [])];
-    for (const fn of fns) fn(...args);
-  }
-  once(event, fn) {
-    const off = this.on(event, (...args) => { off(); fn(...args); });
-    return off;
-  }
-  listenerCount(event) {
-    return this.#handlers.get(event)?.size ?? 0;
-  }
-  waitFor(event) {
-    return new Promise((resolve) => this.once(event, (...args) => resolve(args)));
-  }
+            tests: R`test("/x/gi", () => expect(flagNames(/x/gi)).toEqual(["global", "ignoreCase"]));
+test("الترتيب ثابت: /x/ysmd", () => expect(flagNames(/x/ysmd)).toEqual(["hasIndices", "multiline", "dotAll", "sticky"]));
+test("v لوحدها", () => expect(flagNames(/x/v)).toEqual(["unicodeSets"]));
+test("u لوحدها", () => expect(flagNames(/x/u)).toEqual(["unicode"]));
+test("من غير flags", () => expect(flagNames(/x/)).toEqual([]));
+test("regex من new RegExp", () => expect(flagNames(new RegExp("a", "ig"))).toEqual(["global", "ignoreCase"]));`,
+            solution: R`function flagNames(re) {
+  const NAMES = ["hasIndices", "global", "ignoreCase", "multiline", "dotAll", "unicode", "unicodeSets", "sticky"];
+  return NAMES.filter((name) => re[name]);
 }`
-          }
-        },
-        {
-          cmd: "immutability",
-          title: "تعدّل داتا من غير ما تلمس الأصل",
-          desc: R`immutable update معناها: بدل ما تعدّل الـ object أو الـ array، تعمل نسخة جديدة فيها التعديل، والأجزاء اللي متغيرتش تفضل متشاركة. ده اللي React و Redux و Zustand بيطلبوه، لأنهم بيعرفوا إن حاجة اتغيرت بمقارنة الـ reference ([[prev !== next]]).
-
-الأدوات: spread للـ objects والـ arrays، و [[map]] للتعديل، و [[filter]] للمسح، و [[toSorted]] و [[with]] بدل sort و [[arr[i] = x]]. و [[Object.freeze]] بيمنع التعديل فعلًا، بس سطحي.`,
-          example: R`const state = { user: { name: "Sara" }, items: [{ id: 1, qty: 1 }, { id: 2, qty: 3 }] };
-const next = {
-  ...state,
-  items: state.items.map((it) => (it.id === 1 ? { ...it, qty: it.qty + 1 } : it)),
-};
-next.user === state.user;        // true: اللي متغيرش متشارك
-next.items === state.items;      // false: array جديدة
-next.items[1] === state.items[1]; // true: العنصر اللي متغيرش متشارك
-const removed = state.items.filter((it) => it.id !== 1);
-const added = [...state.items, { id: 3, qty: 1 }];
-const frozen = Object.freeze({ a: 1, nested: { b: 2 } });
-frozen.a = 99;                   // اتجاهل (TypeError في strict)
-frozen.nested.b = 99;            // اتغير: freeze سطحي`,
-          try: R`اكتب [[updateQty(state, id, qty)]] بترجّع state جديدة، واتأكد بـ === إن الأصل متغيرش وإن اللي متغيرش لسه متشارك. وبعدين اكتب [[deepFreeze(obj)]] بـ recursion. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[updateQty]] و [[deepFreeze]].`,
+          },
           practice: [
-            { lvl: 'سريع', t: R`اتوقع وبعدين شغّل: على [[const a = [3, 1, 2];]] إيه اللي بيتغير في [[a]] بعد [[a.toSorted()]] و [[a.toReversed()]] و [[a.with(0, 9)]] و [[a.toSpliced(0, 1)]]، وبعد [[a.sort()]]؟ وإيه ناتج [[a.sort() === a]]؟`, done: R`الأربعة الأولانيين بيرجّعوا arrays جديدة (1,2,3 و 2,1,3 و 9,1,2 و 1,2) و [[a]] بتفضل 3,1,2، وبعد [[sort()]] بتبقى 1,2,3، و [[a.sort() === a]] بيرجّع [[true]] لأن [[sort]] بيعدّل نفس الـ array ويرجّعها هي.` },
-            { lvl: 'تطبيق', t: R`اكتب اختبار يمسك الباج وبعدين صلّحه: [[const addItem = (state, item) => { state.items.push(item); return { ...state }; };]]. التست بـ [[node:test]] و [[assert]] بيتأكد إن الأصل متغيرش وإن [[next.items !== state.items]].`, done: R`التست بيقع على الكود ده (الأصل بقى فيه عنصرين و [[next.items === state.items]] بـ [[true]] مع إن [[next !== state]])، وبعد ما تكتبها [[items: [...state.items, item] ]] التست بيعدّي، وتقدر تقول ليه React كان ممكن ميعملش re-render لـ component بيقرا [[items]] بس.` },
-            { lvl: 'تحدي', t: R`مسألة: اكتب [[setIn(obj, path, value)]] بالـ recursion، بتنسخ الطريق اللي في الـ path بس: [[setIn(state, ["user", "address", "city"], "Giza")]]. ولو حتة في النص مش موجودة، تتعمل object فاضي.`, done: R`[[next.user.address.city]] بقت [["Giza"]] و [[state.user.address.city]] لسه القديمة، و [[next.items === state.items]] و [[next.user !== state.user]] الاتنين [[true]]، و [[setIn({}, ["a", "b"], 1)]] بترجّع [[{ a: { b: 1 } }]]، و path فاضي بيرمي [[TypeError]].` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const a = new RegExp("\d+\.\d+")]]. إيه اللي هيطبعه [[a.source]] و [[a.test("3.14")]] و [[a.test("dd.d")]]؟ وبعدين اكتبه صح بطريقتين.`, done: R`توقعت إن الـ source [[d+.d+]] وإن [["3.14"]] مش هيعدّي بس [["dd.d"]] هيعدّي، وكتبت النسختين [["\\d+\\.\\d+"]] و [[String.raw]] وطلعوا نفس الـ source.`, sol: R`~~~js p1.mjs
+const a = new RegExp("\d+\.\d+");
+console.log(a.source, a.test("3.14"), a.test("dd.d"));
+const b = new RegExp("\\d+\\.\\d+");
+const c = new RegExp(String.raw$__bt\d+\.\d+$__bt);
+console.log(b.source, b.test("3.14"), c.source === b.source);
+~~~
+
+~~~text الناتج (Node 24.22)
+d+.d+ false true
+\d+\.\d+ true true
+~~~
+
+- في نص عادي [["\d"]] escape مش معروف، فالـ JavaScript بيرمي الـ [[\]] ويسيب [[d]]. و [["\."]] بتبقى [["."]]. فالـ regex اللي اتبنى [[d+.d+]]: «حرف d مرة أو أكتر، أي حرف، d مرة أو أكتر»، فـ [["dd.d"]] عدّت و [["3.14"]] لأ.
+- مفيش ولا error: الغلطة دي بتعدّي في صمت. عشان كده أول حاجة تعملها لما regex مبني بـ [[new RegExp]] مش شغال: اطبع [[re.source]].
+- [["\\d"]] في النص = [[\d]] في الـ regex. و [[String.raw$__bt...$__bt]] بيسيب كل [[\]] زي ما هي، فتكتب الـ pattern بنفس شكل الـ literal.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[function wordFinder(word) { return new RegExp("\b" + word + "\b", "i"); }]]. جرّب [[wordFinder("tea").test("Tea time")]] واطبع [[JSON.stringify(wordFinder("tea").source)]]. وبعدين جرّب الكلمة [["1.5"]] على [["x 105 y"]].`, done: R`عرفت إن [["\b"]] في النص بقت حرف backspace مش word boundary (الـ test رجّعت [[false]])، وصلّحتها بـ [[String.raw]]، وزوّدت [[RegExp.escape]] فبقت [[wordFinder("1.5")]] متطابقش [["105"]].`, sol: R`~~~js p3.mjs
+function wordFinderBad(word) { return new RegExp("\b" + word + "\b", "i"); }
+function wordFinder(word) { return new RegExp(String.raw$__bt\b$__bt + RegExp.escape(word) + String.raw$__bt\b$__bt, "i"); }
+console.log(JSON.stringify(wordFinderBad("tea").source), wordFinderBad("tea").test("Tea time"));
+console.log(wordFinder("tea").source, wordFinder("tea").test("Tea time"), wordFinder("tea").test("steam"));
+console.log(wordFinder("1.5").test("x 105 y"), wordFinder("1.5").test("x 1.5 y"));
+~~~
+
+~~~text الناتج (Node 24.22)
+"\btea\b" false
+\b\x74ea\b true false
+false true
+~~~
+
+- [["\b"]] في نص JavaScript **escape معروف**: حرف backspace (كوده 8)، مش [[\]] و [[b]]. فالـ regex بقى «backspace ثم tea ثم backspace» ومفيش نص فيه كده. و [[JSON.stringify]] بيكتب حرف الـ backspace [[\b]]، فشكله زي الصح وهو غلط، وده اللي بيخلّي الباج ده صعب.
+- [[String.raw$__bt\b$__bt]] بيدّي حرفين حقيقيين: [[\]] و [[b]].
+- [[RegExp.escape(word)]]: الكلمة جاية من برّه، و [[.]] فيها كانت هتطابق أي حرف، فـ [["1.5"]] كانت هتلاقي [["105"]]. ([[\x74]] هو حرف t: [[RegExp.escape]] بتعمل كده لأول حرف، شرحناه في درس «test و match و matchAll و replace».)` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[withFlags(re, add, remove)]] بترجّع regex **جديد** بنفس الـ source والـ flags بعد ما تزوّد اللي في [[add]] وتشيل اللي في [[remove]]، ومتلمسش الأصلي ولا [[lastIndex]] بتاعه، وترمي TypeError مفهومة لو النتيجة فيها [[u]] و [[v]] مع بعض.`, done: R`[[withFlags(/(\d+) EGP/gi, "d", "g")]] بترجّع regex الـ flags بتاعه [[di]] و [[lastIndex]] صفر، والأصلي فضل [[gi]] و [[lastIndex]] بتاعه زي ما هو، و [[withFlags(/x/u, "v")]] بترمي رسالتك انت مش رسالة الـ engine.`, sol: R`~~~js p4.mjs
+function withFlags(re, add = "", remove = "") {
+  const flags = new Set(re.flags);
+  for (const f of remove) flags.delete(f);
+  for (const f of add) flags.add(f);
+  if (flags.has("u") && flags.has("v")) throw new TypeError("u و v مينفعوش مع بعض: اختار واحد");
+  return new RegExp(re.source, [...flags].join(""));
+}
+const base = /(\d+) EGP/gi;
+base.lastIndex = 7;
+const copy = withFlags(base, "d", "g");
+console.log(copy.flags, copy.lastIndex, base.lastIndex, copy.source === base.source);
+try { withFlags(/x/u, "v"); } catch (e) { console.log(e.name + ": " + e.message); }
+console.log(withFlags(/x/u, "v", "u").flags);
+~~~
+
+~~~text الناتج (Node 24.22)
+di 0 7 true
+TypeError: u و v مينفعوش مع بعض: اختار واحد
+v
+~~~
+
+- [[new Set(re.flags)]]: النص [["gi"]] بيتفك لحروفه، والـ Set بيمنع التكرار، فـ [[add]] لـ flag موجود مبيعملش [["gg"]] (اللي كانت هترمي [[Invalid flags]]).
+- [[new RegExp(re.source, ...)]] بيعمل object جديد [[lastIndex]] بتاعه 0، فالأصلي مبيتأثرش.
+- كان ممكن [[new RegExp(re, flags)]] على طول (الـ constructor بياخد regex وبيستخدم الـ source بتاعه)، بس بناء الـ flags بإيدك هو اللي بيخليك تشيل وتزوّد.
+- لاحظ إن الـ flags بتطلع مترتبة [[di]] مش [[id]]: الـ getter [[flags]] بيرتّبهم دايمًا.` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من غير ما تجرّب، [[new RegExp("a", "yusmigd").flags]] هتطبع إيه؟ دوّر في صفحة MDN بتاعة [[RegExp.prototype.flags]] على الترتيب، وبعدين جرّب و [[String(new RegExp("a", "yvsmigd"))]] كمان.`, done: R`لقيت إن الترتيب ثابت مهما كتبتهم، وتوقعت [[dgimsuy]] و [[/a/dgimsvy]] وطلعوا كده.`, sol: R`~~~js p5.mjs
+console.log(new RegExp("a", "yusmigd").flags, String(new RegExp("a", "yvsmigd")));
+~~~
+
+~~~text الناتج (Node 24.22)
+dgimsuy /a/dgimsvy
+~~~
+
+MDN بيقول إن [[flags]] بيتبني بقراية كل خاصية boolean بالترتيب: [[hasIndices]] (d) ثم [[global]] (g) ثم [[ignoreCase]] (i) ثم [[multiline]] (m) ثم [[dotAll]] (s) ثم [[unicode]] (u) ثم [[unicodeSets]] (v) ثم [[sticky]] (y)، يعني **أبجدي**. و [[toString()]] بيستخدم [[flags]]، فالترتيب في [[/a/dgimsvy]] نفسه. فايدتها: لو بتقارن regexين بالنص ([[String(a) === String(b)]]) الترتيب اللي اتكتبوا بيه مبيفرقش.` },
           ],
           flag: "script",
           deep: {
-            why: "الـ bugs اللي سببها «حد عدّل الداتا دي من ورايا» من أصعب الأنواع في التتبّع. والـ immutability بتخلّي التغيير واضح: الـ reference الجديد = فيه تغيير. وده اللي بيخلي React.memo و useMemo و undo/redo و time-travel debugging ممكنين.",
-            how: R`الفكرة اسمها structural sharing: لما تعدّل عنصر واحد في array فيها ألف، مش بتنسخ الألف object، بتعمل array جديدة (ألف reference) والـ objects نفسها متشاركة إلا اللي اتغير. فالتكلفة أقل بكتير من deep clone.
+            why: R`الـ regex في الشغل الحقيقي مش دايمًا ثابت: بحث بكلمة اليوزر، وقايمة كلمات ممنوعة من قاعدة بيانات، و pattern في ملف config، و Zod و ESLint بياخدوا regex ويعرضوه في رسالة. ولو مش فاهم إن [["\d"]] بتضيع في النص، أو إن [[lastIndex]] حالة متخزنة جوه الـ object، هتقضي ساعات على باج بيعدّي في صمت.`,
+            how: R`الـ **literal** [[/.../flags]] جزء من الـ grammar: الـ parser بيقراه مع الملف، فأي غلطة فيه SyntaxError **قبل ما أول سطر يشتغل**. وكل مرة الكود يعدّي على الـ literal بيتعمل object **جديد** ([[make() === make()]] بـ [[false]])، بس الـ pattern نفسه مبيتعملش له compile تاني.
 
-كل مستوى في الطريق للحاجة اللي اتغيرت لازم يبقى جديد: الـ state، والـ items، والعنصر نفسه. أي مستوى تعدّله في مكانه هيكسر مقارنة الـ reference.
+[[new RegExp(x, flags)]]: لو [[x]] نص، بيعمل parse وقت التشغيل. ولو [[x]] regex، بياخد [[source]] بتاعه، ولو بعت flags جديدة بتحل محل القديمة بالكامل (مش بتتضاف). و [[RegExp(x)]] من غير [[new]] بيرجّع نفس الـ object لو [[x]] regex ومفيش flags.
 
-[[Object.freeze]] بيخلي الخصايص read-only ويمنع الإضافة والمسح، في المستوى الأول بس. في strict mode أي محاولة تعديل بترمي TypeError، وده مفيد في التطوير عشان تمسك التعديلات الغلط.
+الخصايص كلها **getters على [[RegExp.prototype]]** (مش على الـ object)، فـ [[Object.getOwnPropertyNames(/a/)]] بيطلع [[[ 'lastIndex' ]]] بس، والكتابة فيهم بترمي في strict mode ([[TypeError: Cannot set property global of [object Object] which has only a getter]]). يعني الـ regex مبيتغيّرش بعد ما يتعمل، إلا [[lastIndex]].
 
-لما الـ state بتبقى متداخلة جدًا والـ spreads بتكتر، مكتبة Immer بتخليك تكتب كأنك بتعدّل ([[draft.items[0].qty++]]) وهي بتعمل النسخ الـ immutable. و Redux Toolkit بيستخدمها جوّاه (createSlice)، و Zustand عنده middleware اختياري ليها ([[zustand/middleware/immer]]) لازم تسطّب immer وتلف بيه الـ store، ومن غيره لازم تعمل النسخ الـ immutable بنفسك.`,
-            when: "أي state في React أو store، وأي داتا مشتركة بين أجزاء كتير من الكود، ودوال utility (خليها pure: متعدّلش مدخلاتها).",
-            mistakes: R`[[state.items.push(x); setItems(state.items)]]: نفس الـ reference فمفيش render. وتنسخ المستوى الأول بس وتعدّل جوه: [[{ ...state }.user.name = "x"]] عدّل الأصل. وتعمل deep clone للـ state كلها مع كل تعديل: بطيء وبيكسر المقارنات. وتفتكر إن freeze عميق.`
+و [[source]] للـ regex الفاضي [[(?:)]] (عشان [[//]] تعليق)، و [[/]] جوه الـ pattern بتطلع [[\/]]، والسطر الجديد [[\n]]: [[source]] دايمًا نص ينفع يتحط بين [[/ /]] ويشتغل.`,
+            when: R`literal في ٩٠٪ من الحالات: الـ pattern ثابت، والغلط يبان أول ما تشغّل، والـ editor بيلوّنه. و [[new RegExp]] لما الـ pattern متركّب: كلمة يوزر (دايمًا مع [[RegExp.escape]])، أو حتت من config، أو نسخة من regex موجود بـ flags مختلفة. واقرا الخصايص في أي كود بياخد regex من برّه: مثلًا ارفض أي regex مفيهوش [[g]] قبل [[matchAll]]، أو اعمل نسخة من غير [[g]] قبل [[test]].`,
+            mistakes: R`[["\d"]] و [["\b"]] و [["\s"]] في نص عادي (الأولى والتالتة بيضيعوا الـ [[\]]، والتانية بتبقى حرف backspace). ونص يوزر في [[new RegExp]] من غير escape. ومقارنة regexين بـ [[===]] (دايمًا [[false]]: objects مختلفة) بدل [[String(a) === String(b)]]. وتفتكر [[new RegExp(re, "y")]] بيزوّد [[y]] على الـ flags القديمة: لأ، بيبدّلها. وتعدّل [[re.global = true]] وتستغرب إنه مبيتغيّرش.`
           },
           teach: R`## الفكرة في سطر
 
-عايزين نزوّد الـ [[qty]] بتاع المنتج رقم 1 من غير ما نلمس الـ [[state]] القديمة: نعمل نسخة جديدة **للطريق بس** اللي بيوصل للحاجة اللي اتغيرت، والباقي يفضل نفس الـ objects القديمة. كل الكود اتشغّل على ويندوز 11 بـ Node 24.19.
+الـ regex ليه شكلين في الكود: **literal** بين [[/ /]]، أو **object** بتبنيه بـ [[new RegExp]]. الاتنين بيطلّعوا نفس النوع ([[RegExp]])، والفرق إمتى الـ pattern بيتقري، ومين بيتعامل مع الـ [[\]]. وبعد ما يتعمل، كل حاجة عنه مكتوبة في خصايصه. كل الناتج هنا اتشغّل فعلًا على Node 24.22 (ويندوز).
 
 ---
 
-## ١. الـ state
+## ١. regular expression literal: بيتقري مع الملف
 
-~~~text app.js
-const state = { user: { name: "Sara" }, items: [{ id: 1, qty: 1 }, { id: 2, qty: 3 }] };
+~~~js app.mjs
+const lit = /(\d+)\s*EGP/gi;
 ~~~
 
-object فيه حاجتين: [[user]] (object) و [[items]] (array فيها 2 objects). كل object أو array جوه المتغير ده هو **reference**: عنوان في الذاكرة، مش نسخة (درس «reference و copy»). و [[===]] على objects بتسأل «ده **نفس** الـ object؟» مش «شكلهم زي بعض؟».
+| الحتة | معناها |
+|---|---|
+| [[/]] الأولى والأخيرة | حدود الـ literal، زي علامات التنصيص حوالين النص. مش جزء من الـ pattern |
+| [[(\d+)\s*EGP]] | الـ pattern: رقم أو أكتر (محفوظ في group)، مسافات اختيارية، وكلمة EGP |
+| [[gi]] | الـ flags بعد الـ [[/]] الأخيرة: كل الـ matches، ومن غير حساسية للحروف |
 
----
+الـ literal بيتعمل له parse **مع الملف كله**. جرّبنا ملف فيه [[console.log]] وبعده regex غلط:
 
-## ٢. التعديل الـ immutable
-
-~~~text app.js
-const next = {
-  ...state,
-  items: state.items.map((it) => (it.id === 1 ? { ...it, qty: it.qty + 1 } : it)),
-};
-~~~
-
-### [[{ ...state, ... }]]
-
-الـ [[...]] جوه [[{ }]] اسمها **object spread**: انسخ كل خصايص [[state]] في object جديد. يعني [[next.user]] هيبقى **نفس** [[state.user]] (النسخ سطحي: الـ reference بيتنسخ مش الـ object اللي جواه). وبعد الـ spread بنكتب [[items: ...]] فبتغطي على [[items]] اللي اتنسخت.
-
-### [[state.items.map(...)]]
-
-[[map]] بتلف على كل عنصر وبترجّع **array جديدة** فيها اللي الدالة رجّعته لكل عنصر. والأصل مبيتلمسش.
-
-### [[it.id === 1 ? ... : it]]
-
-الـ [[? :]] اسمها ternary: «لو الشرط صح خد اللي بعد [[?]]، غير كده خد اللي بعد [[:]]».
-
-- العنصر اللي الـ id بتاعه 1: [[{ ...it, qty: it.qty + 1 }]]، object **جديد** فيه كل خصايص [[it]] والـ [[qty]] متغطية بقيمة جديدة.
-- أي عنصر تاني: [[it]] نفسه، من غير نسخ.
-
-القوسين حوالين الـ ternary كله بعد [[=>]] مش ضروريين، بس بيخلّوا الكود أوضح.
-
-### الناتج
-
-~~~text app.js
-console.log(next.user === state.user);
-console.log(next.items === state.items);
-console.log(next.items[1] === state.items[1]);
-console.log(next.items[0] === state.items[0]);
-console.log(state.items[0].qty, next.items[0].qty);
-console.log(JSON.stringify(next));
+~~~js bad.mjs
+console.log("السطر ده مش هيتطبع");
+const bad = /(\d+/;
 ~~~
 
 ~~~text الناتج
-true
-false
-true
-false
-1 2
-{"user":{"name":"Sara"},"items":[{"id":1,"qty":2},{"id":2,"qty":3}]}
+bad.mjs:2
+const bad = /(\d+/;
+            ^^^^^^
+
+SyntaxError: Invalid regular expression: /(\d+/: Unterminated group
 ~~~
 
-| المقارنة | الناتج | ليه |
+ولا سطر اشتغل، حتى الـ [[console.log]] اللي قبله. ده كويس: الغلطة بتبان أول ما تشغّل، مش بعد أسبوع في production.
+
+---
+
+## ٢. [[new RegExp]]: بيتقري وقت التشغيل، من نص
+
+~~~js app.mjs
+const built = new RegExp("(\\d+)\\s*EGP", "gi");
+const raw = new RegExp(String.raw$__bt(\d+)\s*EGP$__bt, "gi");
+console.log(lit.source, built.source === lit.source, raw.source === lit.source);
+~~~
+
+~~~text الناتج
+(\d+)\s*EGP true true
+~~~
+
+الـ pattern هنا **نص** (string) عادي، والنص في JavaScript عنده escapes بتاعته: [["\n"]] سطر جديد، و [["\\"]] backslash واحدة. فعشان الـ regex يستلم [[\d]] لازم تكتب في النص [[\\d]].
+
+و [[String.raw]] (tag قبل template literal) معناه «سيب كل [[\]] زي ما هي»، فتكتب الـ pattern بنفس شكل الـ literal بالظبط.
+
+### الغلطة اللي بتعدّي في صمت
+
+~~~js app.mjs
+const wrong = new RegExp("(\d+)\s*EGP", "gi");
+console.log(wrong.source, wrong.test("50 EGP"));
+~~~
+
+~~~text الناتج
+(d+)s*EGP false
+~~~
+
+[["\d"]] في نص عادي مش escape معروف، فالـ JavaScript بيرمي الـ [[\]] ويسيب [[d]]. الـ regex بقى «حرف d، وحرف s»، ومفيش ولا error. **أول حاجة تعملها لما regex مبني بـ [[new RegExp]] مش شغال: اطبع [[source]].**
+
+### والـ pattern الغلط هنا بيرمي وقت التشغيل
+
+~~~js app.mjs
+try { new RegExp("(\\d+"); } catch (e) { console.log(e.name + ": " + e.message); }
+~~~
+
+~~~text الناتج
+SyntaxError: Invalid regular expression: /(\d+/: Unterminated group
+~~~
+
+نفس الرسالة، بس المرة دي **جوه try**، فتقدر تمسكها وتقول لليوزر «الـ pattern بتاعك غلط» بدل ما البرنامج يقع.
+
+---
+
+## ٣. خصايص الـ RegExp: الجدول كامل
+
+~~~js app.mjs
+console.log(lit.flags, lit.global, lit.ignoreCase, lit.multiline, lit.dotAll, lit.sticky);
+console.log(lit.unicode, lit.unicodeSets, lit.hasIndices, lit.lastIndex, String(lit));
+~~~
+
+~~~text الناتج
+gi true true false false false
+false false false 0 /(\d+)\s*EGP/gi
+~~~
+
+| الخاصية | الـ flag | بترجّع إيه ومعناها |
 |---|---|---|
-| [[next.user === state.user]] | [[true]] | الـ spread نسخ الـ reference، ومحدش لمس user |
-| [[next.items === state.items]] | [[false]] | [[map]] عملت array جديدة |
-| [[next.items[1] === state.items[1]]] | [[true]] | الـ ternary رجّع [[it]] نفسه |
-| [[next.items[0] === state.items[0]]] | [[false]] | العنصر اللي اتغير بقى object جديد |
-| [[qty]] قديم وجديد | [[1 2]] | الأصل زي ما هو |
+| [[source]] | | الـ pattern كنص من غير [[/ /]] ومن غير flags. للـ regex الفاضي [[(?:)]] |
+| [[flags]] | | كل الـ flags كنص، مترتبين دايمًا [[dgimsuvy]] |
+| [[global]] | [[g]] | [[true]]: [[match]] و [[replace]] بيشتغلوا على كل الـ matches، و [[exec]] بيكمّل من [[lastIndex]] |
+| [[ignoreCase]] | [[i]] | [[true]]: الحروف الكبيرة زي الصغيرة |
+| [[multiline]] | [[m]] | [[true]]: [[^]] و [[$]] بيطابقوا أول وآخر **كل سطر** |
+| [[dotAll]] | [[s]] | [[true]]: النقطة بتطابق السطر الجديد كمان |
+| [[unicode]] | [[u]] | [[true]]: الـ emoji حرف واحد، و [[\p{...}]] شغالة، والـ escapes الغلط بترمي |
+| [[unicodeSets]] | [[v]] | [[true]]: زي [[u]] وزيادة طرح وتقاطع جوه [[[ ]]] (الدرس الجاي بعد الجاي) |
+| [[hasIndices]] | [[d]] | [[true]]: نتيجة [[exec]] فيها [[indices]] بأماكن كل group (الدرس الجاي) |
+| [[sticky]] | [[y]] | [[true]]: الـ match لازم يبدأ عند [[lastIndex]] بالظبط |
+| [[lastIndex]] | | رقم: هيدوّر منين المرة الجاية (مع [[g]] أو [[y]] بس). الوحيدة اللي بتتكتب |
+| [[toString()]] | | [["/" + source + "/" + flags]]: الشكل اللي تقدر تلزقه في كود |
 
-ده اسمه **structural sharing**: كل مستوى على الطريق للتغيير جديد (الـ state، والـ items، والعنصر)، وكل اللي جنب الطريق متشارك. فـ React مثلًا يقدر يعرف إن [[user]] متغيرش بمقارنة [[===]] واحدة.
+كلهم (ما عدا [[lastIndex]]) **getters** على [[RegExp.prototype]]: مش متخزنين على الـ object، وبيتحسبوا من الـ regex. عشان كده [[Object.getOwnPropertyNames(/a/g)]] بيطلّع [[[ 'lastIndex' ]]] بس، والكتابة فيهم ملهاش أثر:
 
-### الفخ: النسخ السطحي
-
-~~~text app.js
-const copy = { ...state };
-copy.user.name = "X";
-console.log(state.user.name);
+~~~text الناتج: re.global = false في .mjs (strict)
+TypeError: Cannot set property global of [object Object] which has only a getter
 ~~~
 
-~~~text الناتج
-X
-~~~
-
-[[copy]] object جديد، بس [[copy.user]] هو نفسه [[state.user]]، فالتعديل وصل للأصل.
+يعني الـ flags بتاعة regex **مبتتغيّرش بعد ما يتعمل**. عايز flags تانية؟ اعمل regex جديد.
 
 ---
 
-## ٣. مسح وإضافة من غير تعديل
+## ٤. نسخة بـ flags تانية
 
-~~~text app.js
-const removed = state.items.filter((it) => it.id !== 1);
-const added = [...state.items, { id: 3, qty: 1 }];
+~~~js app.mjs
+const copy = new RegExp(lit, "dy");
+console.log(copy.flags, copy.source === lit.source, copy === lit);
 ~~~
-
-- [[filter]]: array جديدة فيها العناصر اللي الشرط بتاعها [[true]] بس. هنا كل حاجة إلا id 1. والـ [[!==]] عكس [[===]].
-- [[[...state.items, x]]]: الـ spread جوه [[[ ]]] بيفرد العناصر القديمة في array جديدة وبعدها العنصر الجديد. ده البديل الـ immutable لـ [[push]].
 
 ~~~text الناتج
-[ { id: 2, qty: 3 } ] 2
-3 2
+dy true false
 ~~~
 
-[[removed]] فيها عنصر واحد، و [[added]] فيها 3، و [[state.items.length]] لسه 2 في الحالتين. وبنفس الفكرة [[toSorted()]] و [[with(i, x)]] بدل [[sort()]] و [[arr[i] = x]]: [[[3, 1, 2].toSorted()]] رجّعت [[[ 1, 2, 3 ]]] و [[with(0, 9)]] رجّعت [[[ 9, 1, 2 ]]] والأصل فضل [[[ 3, 1, 2 ]]].
+لما تدّي [[new RegExp]] regex بدل نص، بياخد الـ [[source]] بتاعه. والـ flags اللي بتبعتها **بتحل محل** القديمة بالكامل: [[gi]] راحت و [[dy]] جت (مش [[dgiy]]). والنتيجة object جديد، و [[lastIndex]] بتاعه 0.
 
 ---
 
-## ٤. [[Object.freeze]]: امنع التعديل فعلًا
+## ٥. pattern فيه كلام يوزر: [[RegExp.escape]]
 
-~~~text app.js
-const frozen = Object.freeze({ a: 1, nested: { b: 2 } });
-frozen.a = 99;
-frozen.nested.b = 99;
-console.log(frozen);
-console.log(Object.isFrozen(frozen), Object.isFrozen(frozen.nested));
+~~~js app.mjs
+const word = "c++";
+console.log(new RegExp($__bt^$__{RegExp.escape(word)}$$__bt, "i").test("C++"));
 ~~~
 
 ~~~text الناتج
-{ a: 1, nested: { b: 99 } }
+true
+~~~
+
+[[+]] في [["c++"]] ليها معنى في الـ regex. [[RegExp.escape]] (موجودة في Node 24 والمتصفحات الحديثة، وشرحها كامل في درس «test و match و matchAll و replace») بتحط [[\]] قبل أي حرف خاص، فالكلمة تتطابق حرفيًا. **أي نص جاي من برّه وداخل [[new RegExp]] لازم يعدّي عليها.**
+
+---
+
+## الخلاصة
+
+| عايز | استخدم |
+|---|---|
+| pattern ثابت | literal [[/.../flags]]: الغلط يبان أول ما تشغّل |
+| pattern متركّب أو من يوزر | [[new RegExp(String.raw$__bt...$__bt + RegExp.escape(x), flags)]] جوه try |
+| نفس الـ regex بـ flags تانية | [[new RegExp(re, "newflags")]]: الـ flags بتتبدّل مش بتتضاف |
+| تعرف regex فيه إيه | [[source]] و [[flags]] و [[global]] وأخواتهم، أو [[String(re)]] |
+| regex مش شغال من [[new RegExp]] | اطبع [[re.source]] الأول: غالبًا [[\]] ضاعت في النص |`,
+          lines: [
+            R`regex literal: الـ pattern بين [[/ /]] والـ flags [[gi]] بعدها. بيتعمل له parse مع الملف، فلو فيه غلطة الملف كله مش هيشتغل.`,
+            R`نفس الـ regex من **نص** بـ [[new RegExp]]: كل [[\]] في الـ regex بقت [[\\]] في النص، لأن النص نفسه بياكل واحدة.`,
+            R`نفس الـ regex بـ [[String.raw]]: الـ tag ده بيسيب كل [[\]] زي ما هي، فالـ pattern مكتوب بنفس شكل الـ literal.`,
+            R`[[source]] بيرجّع الـ pattern كنص، والتلاتة طلعوا نفس النص بالظبط: [[(\d+)\s*EGP true true]].`,
+            R`الغلطة الشايعة: [["\d"]] و [["\s"]] في نص عادي. الـ JavaScript بيرمي الـ [[\]] لأنه escape مش معروف في النصوص.`,
+            R`[[source]] طلع [[(d+)s*EGP]]، فالـ regex بيدوّر على حرف d وحرف s، و [[test]] رجّعت [[false]] من غير ولا error.`,
+            R`[[flags]] بيرجّع [["gi"]]، وكل flag ليه خاصية boolean: [[global]] و [[ignoreCase]] بـ [[true]]، و [[multiline]] و [[dotAll]] و [[sticky]] بـ [[false]].`,
+            R`باقي الخصايص: [[unicode]] و [[unicodeSets]] و [[hasIndices]] بـ [[false]]، و [[lastIndex]] صفر لأن مفيش بحث حصل، و [[String(lit)]] بيرجّع [[/(\d+)\s*EGP/gi]] زي ما اتكتب.`,
+            R`[[new RegExp(lit, "dy")]]: regex جديد بنفس الـ source، والـ flags الجديدة **بتحل محل** القديمة ([[gi]] راحت).`,
+            R`[[copy.flags]] بـ [[dy]]، والـ source زي الأصلي، و [[copy === lit]] بـ [[false]]: ده object تاني خالص.`,
+            R`كلمة جاية من يوزر وفيها [[+]]، وهو حرف ليه معنى في الـ regex («مرة أو أكتر»).`,
+            R`[[RegExp.escape]] بتحط [[\]] قبل كل حرف خاص، و [[^...$]] حوالين الكلمة، و [[i]] للحروف الكبيرة، فـ [["C++"]] اتطابقت: [[true]].`,
+            R`pattern ناقصه [[)]] من نص: [[new RegExp]] بيرمي SyntaxError **وقت التشغيل** جوه try، فاتمسكت واتطبعت بدل ما البرنامج يقع.`,
+          ],
+          ref: [
+            { t: "MDN: RegExp.prototype.source", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/source" },
+            { t: "MDN: RegExp.prototype.global", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/global" },
+            { t: "MDN: RegExp.prototype.ignoreCase", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/ignoreCase" },
+            { t: "MDN: RegExp.prototype.multiline", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/multiline" },
+            { t: "MDN: RegExp.prototype.dotAll", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/dotAll" },
+            { t: "MDN: RegExp.prototype.unicodeSets", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/unicodeSets" },
+            { t: "MDN: RegExp.prototype.hasIndices", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/hasIndices" },
+            { t: "MDN: RegExp.prototype.toString()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/toString" },
+            { t: "MDN: regular expression literals", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar#regular_expression_literals" },
+            { t: "MDN: RegExp() constructor", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/RegExp" },
+            { t: "MDN: RegExp.prototype.flags", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/flags" },
+          ],
+          pre: [{ to: "js/groups و flags", why: R`الـ flags نفسهم و [[lastIndex]]: هنا بنقراهم كخصايص` }, { to: "js/test و match و matchAll و replace", why: R`[[RegExp.escape]] وليه النص اللي جاي من برّه خطر` }],
+        },
+        {
+          cmd: "RegExp exec: الـ result array و indices و lastIndex",
+          title: "exec من جوه: كل خانة في الناتج، والـ flag d، والـ loop بـ lastIndex من غير ما يلف للأبد",
+          desc: R`[[re.exec(str)]] هي الـ method الأساسية في الـ RegExp: [[test]] و [[match]] و [[matchAll]] و [[replace]] كلهم مبنيين عليها. بترجّع [[null]] لو مفيش match، أو array أول خانة فيها النص اللي اتطابق وبعده كل group بالترتيب، ومعاها خصايص: [[index]] (مكان الـ match)، و [[input]] (النص كله)، و [[groups]] (الـ named groups)، و [[indices]] لو الـ regex فيه flag [[d]] (أماكن البداية والنهاية لكل group).
+
+من غير [[g]] أو [[y]]، [[exec]] بتدوّر من أول النص كل مرة. ومعاهم، بتبدأ من [[lastIndex]] وبتحركه لبعد الـ match، فتقدر تلف بيها على كل الـ matches. والفخ: match طوله صفر (زي [[\b]] أو [[x*]]) مبيحرّكش [[lastIndex]]، فالـ loop بيلف للأبد إلا لو زقيته بنفسك. [[matchAll]] بيعمل ده لوحده ومبيلمسش الـ regex بتاعك.`,
+          example: R`// exec من غير g: أول match بكل تفاصيله، ومع d أماكن كل group
+const line = "order #A-17 total 250 EGP";
+const re = /#(?<code>[A-Z])-(?<num>\d+)/d;
+const m = re.exec(line);
+console.log(m[0], m.index, m.groups.num, m.indices[0], m.indices.groups.num);
+console.log(re.exec("no order"), re.lastIndex, re.hasIndices);
+// exec مع g في loop: lastIndex بيتحرك لوحده
+const prices = /(\d+) EGP/g;
+const text = "tea 15 EGP, rice 40 EGP, oil 95 EGP";
+let hit;
+while ((hit = prices.exec(text)) !== null) {
+  console.log(hit[1], hit.index, prices.lastIndex);
+}
+console.log(prices.lastIndex);
+// matchAll: نفس النتيجة، ومن غير ما يلمس الـ regex بتاعك
+console.log([...text.matchAll(prices)].map((x) => x[1]), prices.lastIndex);
+// match بطول صفر: لازم تزق lastIndex بنفسك
+const edges = /\b/g;
+const spots = [];
+while ((hit = edges.exec("ab cd")) !== null) {
+  spots.push(hit.index);
+  if (hit[0] === "") edges.lastIndex++;
+}
+console.log(spots);`,
+          try: R`اكتب [[mark(str, re)]] بتحط [[[ ]]] حوالين كل match في النص باستخدام [[indices]] (flag [[d]])، من غير [[replace]]. جرّبها على [["tea 15 EGP, rice 40 egp"]] بـ [[/\d+ egp/i]]، وعلى نص مفيهوش أرقام.`,
+          sol: R`~~~js mark.mjs
+function mark(str, re) {
+  const hits = [...str.matchAll(new RegExp(re.source, "dg" + re.flags.replace(/[dg]/g, "")))];
+  let out = str;
+  for (const h of hits.reverse()) {
+    const [s, e] = h.indices[0];
+    out = out.slice(0, s) + "[" + out.slice(s, e) + "]" + out.slice(e);
+  }
+  return out;
+}
+console.log(mark("tea 15 EGP, rice 40 egp", /\d+ egp/i), mark("no prices", /\d+/));
+~~~
+
+~~~text الناتج (Node 24.22)
+tea [15 EGP], rice [40 egp] no prices
+~~~
+
+- نسخة من الـ regex فيها [[d]] و [[g]] أكيد (من غير ما نكررهم لو موجودين)، وباقي الـ flags زي ما هي ([[i]] هنا).
+- [[h.indices[0]]] بيدّي [[[start, end]]] بتاع الـ match كله.
+- بنلف **من الآخر للأول** ([[reverse]]): لو بدأنا من الأول، أول [[[]] هيزق كل الأماكن اللي بعده حرف لقدّام والـ indices تبقى غلط.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const re = /a/g]] وبعدها [[while ((m = re.exec("banana")) !== null) console.log(m.index, re.lastIndex)]]، وبعد الـ loop [[console.log(re.lastIndex)]]. اكتب الأرقام قبل ما تشغّل.`, done: R`كتبت ٣ سطور ([[1 2]] و [[3 4]] و [[5 6]]) وإن [[lastIndex]] بعد الـ loop صفر، وطلع كده.`, sol: R`~~~js p1.mjs
+const re = /a/g;
+let m;
+while ((m = re.exec("banana")) !== null) console.log(m.index, re.lastIndex);
+console.log("after:", re.lastIndex);
+~~~
+
+~~~text الناتج (Node 24.22)
+1 2
+3 4
+5 6
+after: 0
+~~~
+
+[[banana]]: الـ a في 1 و 3 و 5. كل match طوله 1، فـ [[lastIndex]] = [[index + 1]]. والنداء الرابع بدأ من 6 (آخر النص) ملقاش، فرجّع [[null]] و**رجّع [[lastIndex]] لصفر**. ده اللي بيخلّي نفس الـ regex ينفع تلف بيه تاني على نص جديد، وده نفسه اللي بيعمل فخ [[test]] مع [[g]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[countRuns(text)]] المفروض ترجّع طول كل سلسلة x ورا بعض، فـ [["xxaxbxxx"]] تبقى [[[2, 1, 3]]]. الكود: [[const runs = /x*/g; while ((hit = runs.exec(text)) !== null) out.push(hit[0].length);]]. شغّله (حط حد للفات عشان ميعلّقش الجهاز) وصلّحه بطريقتين.`, done: R`شفت إن الـ loop بيلف للأبد عند [[a]]، وصلّحته مرة بزق [[lastIndex]] لما الـ match فاضي، ومرة بـ [[matchAll(/x+/g)]]، والاتنين طلّعوا [[[ 2, 1, 3 ]]].`, sol: R`~~~js p2.mjs
+function countRuns(text) {
+  const runs = /x*/g;
+  const out = [];
+  let hit;
+  while ((hit = runs.exec(text)) !== null) {
+    if (hit[0] === "") { runs.lastIndex++; continue; }
+    out.push(hit[0].length);
+  }
+  return out;
+}
+console.log(countRuns("xxaxbxxx"), [..."xxaxbxxx".matchAll(/x+/g)].map((h) => h[0].length));
+~~~
+
+~~~text الناتج (Node 24.22)
+[ 2, 1, 3 ] [ 2, 1, 3 ]
+~~~
+
+- [[x*]] بتطابق **صفر** x كمان. عند [[a]] (مكان 2) الـ match فاضي [[""]] و [[lastIndex]] فضل 2، فالنداء الجاي بيلاقي نفس الـ match الفاضي في نفس المكان... للأبد.
+- التصليح الأول: لو [[hit[0] === ""]] زق [[lastIndex]] واحد وكمّل من غير ما تسجّل حاجة. (مع [[u]] أو [[v]] زق بحجم الحرف كله لو emoji، وده اللي [[matchAll]] بيعمله لوحده.)
+- التصليح التاني أحسن: [[x+]] مبيطابقش فاضي أصلًا، و [[matchAll]] بيتعامل مع أي match فاضي لوحده.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[allMatches(re, str)]] بترجّع array فيها [[{ text, index, groups }]] لكل match باستخدام [[exec]]، وتشتغل حتى لو الـ regex مفيهوش [[g]]، ومتغيّرش [[lastIndex]] بتاع الـ regex اللي اتبعت، ومتعلّقش مع [[/\b/]].`, done: R`[[allMatches(/(?<n>\d+) EGP/, "tea 15 EGP, rice 40 EGP")]] بترجّع اتنين بالـ groups بتاعتهم، والـ regex الأصلي [[lastIndex]] بتاعه 0 و [[global]] لسه [[false]]، و [[allMatches(/\b/, "ab cd")]] بترجّع الأماكن [[0, 2, 3, 5]].`, sol: R`~~~js p3.mjs
+function allMatches(re, str) {
+  const copy = new RegExp(re.source, re.flags.includes("g") ? re.flags : re.flags + "g");
+  const out = [];
+  let hit;
+  while ((hit = copy.exec(str)) !== null) {
+    out.push({ text: hit[0], index: hit.index, groups: hit.groups });
+    if (hit[0] === "") copy.lastIndex++;
+  }
+  return out;
+}
+const price = /(?<n>\d+) EGP/;
+console.log(allMatches(price, "tea 15 EGP, rice 40 EGP"), price.lastIndex, price.global);
+console.log(allMatches(/\b/, "ab cd").map((h) => h.index));
+~~~
+
+~~~text الناتج (Node 24.22)
+[
+  {
+    text: '15 EGP',
+    index: 4,
+    groups: [Object: null prototype] { n: '15' }
+  },
+  {
+    text: '40 EGP',
+    index: 17,
+    groups: [Object: null prototype] { n: '40' }
+  }
+] 0 false
+[ 0, 2, 3, 5 ]
+~~~
+
+- النسخة ([[copy]]): من غير [[g]]، [[exec]] كانت هترجّع أول match كل مرة والـ loop مش هيخلص. ونسخة جديدة معناها إن [[lastIndex]] بتاع الأصلي مبيتلمسش.
+- [[groups]] بيبقى [[undefined]] لو الـ regex مفيهوش named groups.
+- ده تقريبًا اللي [[matchAll]] بيعمله من جوه.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** نص فيه ١٠٠ ألف رقم ([["x 12 ".repeat(100000)]]). عدّ الأرقام بـ ٤ طرق: [[exec]] في loop، و [[matchAll]]، و [[match]] بـ [[g]]، و [[replace]] بدالة بتعدّ. قيس كل واحدة بـ [[performance.now()]] وشغّل مرتين.`, done: R`الأربعة طلّعوا 100000، والأرقام عندك في نفس الحدود (كام ms)، و [[replace]] الأبطأ لأنه بيبني نص جديد، وعرفت تختار على حسب المطلوب مش على السرعة.`, sol: R`~~~js p5.mjs
+const text = "x 12 ".repeat(100000);
+const t = (label, f) => { const s = performance.now(); const n = f(); console.log(label, n, (performance.now() - s).toFixed(1) + "ms"); };
+t("exec loop", () => { const r = /\d+/g; let n = 0; while (r.exec(text)) n++; return n; });
+t("matchAll ", () => { let n = 0; for (const _ of text.matchAll(/\d+/g)) n++; return n; });
+t("match g  ", () => text.match(/\d+/g).length);
+t("replace  ", () => { let n = 0; text.replace(/\d+/g, () => { n++; return ""; }); return n; });
+~~~
+
+~~~text الناتج (Node 24.22، تشغيلين ورا بعض)
+exec loop 100000 6.8ms
+matchAll  100000 6.4ms
+match g   100000 6.8ms
+replace   100000 12.8ms
+exec loop 100000 6.9ms
+matchAll  100000 5.7ms
+match g   100000 7.3ms
+replace   100000 9.9ms
+~~~
+
+- الـ ٣ الأوائل تقريبًا زي بعض (الفرق أقل من الفرق بين تشغيلين)، فاختار على حسب **اللي محتاجه**: [[match]] بـ [[g]] لو النصوص بس، و [[matchAll]] لو محتاج groups و [[index]]، و [[exec]] لو محتاج تتحكم في [[lastIndex]] (تقف، أو ترجع، أو [[y]]).
+- [[replace]] الأبطأ لأنه بيبني نص جديد بطول النص كله. متستخدمهوش للعد.` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`أي حاجة بتلف على matches مبنية على [[exec]]: [[matchAll]] و [[replace]] و [[split]]، والـ tokenizers والـ syntax highlighters والـ linters. ولما تفهم [[lastIndex]] و [[indices]] تقدر تعمل حاجات [[match]] مبيعرفش يعملها: تقف في النص وتكمّل بعدين، وتعرف مكان كل group عشان ترسم تحته أو تلوّنه، وتقطّع نص حتة ورا حتة.`,
+            how: R`[[exec]] بتقرا [[lastIndex]] لو فيه [[g]] أو [[y]] (غير كده بتبدأ من 0 وبتتجاهله)، وبتجرّب تطابق من هناك. لو لقت: بتحط [[lastIndex]] = نهاية الـ match (مع [[g]] أو [[y]] بس)، وترجّع الـ array. لو ملقتش: [[lastIndex]] = 0 وترجّع [[null]].
+
+الـ array: [[[0]]] الـ match كله، و [[[1]]] و [[[2]]]… الـ groups بترتيب الأقواس المفتوحة، والـ group اللي مشاركش قيمته [[undefined]]. و [[index]] و [[input]] و [[groups]] (object من غير prototype، أو [[undefined]] لو مفيش named groups).
+
+مع [[d]] بيتضاف [[indices]]: array بنفس الشكل، كل خانة [[[start, end]]] (البداية داخلة والنهاية لأ، زي [[slice]])، و [[indices.groups]] بالأسامي. الـ group اللي مشاركش مكانه [[undefined]]. و [[d]] بتبطّأ الـ regex شوية لأن الـ engine بيبني arrays زيادة، فحطها لما تحتاجها بس.
+
+[[matchAll]] بيعمل **نسخة** من الـ regex (بنفس [[lastIndex]] الحالي!) ويلف عليها، فالأصلي مبيتغيّرش. وبيزق [[lastIndex]] لوحده لو الـ match فاضي. ومن غير [[g]] بيرمي [[TypeError: String.prototype.matchAll called with a non-global RegExp argument]].`,
+            when: R`[[exec]] مع [[y]] في الـ tokenizers (تقرا حتة، تقرر، تكمّل)، ولما تحتاج تقف في نص الطريق. و [[matchAll]] في أي loop عادي على كل الـ matches (أوضح وأأمن). و [[d]] لما تحتاج **مكان** كل group: تظليل، أو علامة تحت حرف غلط، أو استبدال group واحد من غير ما تلمس الباقي.`,
+            mistakes: R`regex بـ [[g]] متشارك بين أكتر من مكان، فـ [[lastIndex]] من نداء بيأثر على التاني. و loop بـ [[exec]] على pattern ممكن يطابق فاضي ([[*]] أو [[?]] أو [[\b]] أو [[^]] مع [[m]]) من غير زق. و [[exec]] من غير [[g]] في [[while]] (نفس الـ match للأبد). وتفتكر [[matchAll]] بيبدأ من 0 دايمًا: بيبدأ من [[lastIndex]] الحالي للـ regex. وتقرا [[m.indices]] من غير [[d]] ([[undefined]]).`
+          },
+          teach: R`## الفكرة في سطر
+
+[[exec]] بتجاوب على سؤال واحد: «فيه match من المكان ده؟ لو أيوه، هو إيه بالظبط وفين؟». وكل الـ methods التانية بتنادي [[exec]] (أو حاجة زيها) من جوه. المثال ٤ حالات، وكل الناتج اتشغّل فعلًا على Node 24.22.
+
+---
+
+## ١. من غير [[g]]: أول match بكل تفاصيله
+
+~~~js app.mjs
+const line = "order #A-17 total 250 EGP";
+const re = /#(?<code>[A-Z])-(?<num>\d+)/d;
+const m = re.exec(line);
+~~~
+
+الـ regex: [[#]]، وحرف كابيتال اسمه [[code]]، وشرطة، ورقم اسمه [[num]]. والـ flag [[d]] (اسم خاصيته [[hasIndices]]) بيطلب أماكن كل group. لو طبعنا [[m]] كله:
+
+~~~text الناتج: console.log(m)
+[
+  '#A-17',
+  'A',
+  '17',
+  index: 6,
+  input: 'order #A-17 total 250 EGP',
+  groups: [Object: null prototype] { code: 'A', num: '17' },
+  indices: [
+    [ 6, 11 ],
+    [ 7, 8 ],
+    [ 9, 11 ],
+    groups: [Object: null prototype] { code: [Array], num: [Array] }
+  ]
+]
+~~~
+
+| الخانة | فيها إيه هنا | معناها |
+|---|---|---|
+| [[m[0]]] | [['#A-17']] | الـ match كله |
+| [[m[1]]] و [[m[2]]] | [['A']] و [['17']] | الـ groups بترتيب أقواسها، نصوص دايمًا |
+| [[index]] | [[6]] | أول حرف في الـ match فين في النص (من 0) |
+| [[input]] | النص كله | النص اللي اتدوّر فيه، زي ما هو |
+| [[groups]] | [[{ code, num }]] | الـ named groups بأساميها، و [[undefined]] لو مفيش أسامي |
+| [[indices[0]]] | [[[6, 11]]] | بداية ونهاية الـ match، والنهاية مش داخلة زي [[slice]] |
+| [[indices[2]]] | [[[9, 11]]] | مكان group رقم 2 ([[17]]) |
+| [[indices.groups.num]] | [[[9, 11]]] | نفس المكان بالاسم |
+
+~~~js app.mjs
+console.log(m[0], m.index, m.groups.num, m.indices[0], m.indices.groups.num);
+console.log(re.exec("no order"), re.lastIndex, re.hasIndices);
+~~~
+
+~~~text الناتج
+#A-17 6 17 [ 6, 11 ] [ 9, 11 ]
+null 0 true
+~~~
+
+لو مفيش match الناتج [[null]] (مش array فاضية)، فـ [[m[1]]] بعدها هترمي. و [[lastIndex]] فضل 0: من غير [[g]] أو [[y]] الـ [[exec]] مبتلمسوش. و [[hasIndices]] الخاصية اللي بتقول إن [[d]] موجود.
+
+> فايدة [[indices]]: [[line.slice(...m.indices.groups.num)]] بترجّع [['17']]. يعني تقدر تلوّن الـ group ده بالظبط في النص الأصلي، أو تحط علامة تحته، أو تبدّله لوحده.
+
+---
+
+## ٢. مع [[g]]: loop بـ [[lastIndex]]
+
+~~~js app.mjs
+const prices = /(\d+) EGP/g;
+const text = "tea 15 EGP, rice 40 EGP, oil 95 EGP";
+let hit;
+while ((hit = prices.exec(text)) !== null) {
+  console.log(hit[1], hit.index, prices.lastIndex);
+}
+console.log(prices.lastIndex);
+~~~
+
+- [[(hit = prices.exec(text)) !== null]]: بننادي ونحفظ الناتج ونفحصه في نفس الشرط. القوسين حوالين الـ [[=]] لازم.
+- مع [[g]]، كل نداء بيبدأ من [[lastIndex]] وبيحطه بعد الـ match.
+
+~~~text الناتج
+15 4 10
+40 17 23
+95 29 35
+0
+~~~
+
+| النداء | بدأ من | لقى عند [[index]] | [[lastIndex]] بعده |
+|---|---|---|---|
+| ١ | 0 | 4 ([[15 EGP]]) | 10 |
+| ٢ | 10 | 17 ([[40 EGP]]) | 23 |
+| ٣ | 23 | 29 ([[95 EGP]]) | 35 |
+| ٤ | 35 | مفيش: [[null]] | رجع **0** |
+
+---
+
+## ٣. [[matchAll]]: نفس الشغل ومن غير ما يلمس الـ regex
+
+~~~js app.mjs
+console.log([...text.matchAll(prices)].map((x) => x[1]), prices.lastIndex);
+~~~
+
+~~~text الناتج
+[ '15', '40', '95' ] 0
+~~~
+
+[[matchAll]] بيعمل **نسخة** من الـ regex ويلف عليها، فـ [[prices.lastIndex]] فضل 0. بس انتبه: النسخة بتبدأ من [[lastIndex]] **الحالي** للأصلي. جرّبنا [[g.lastIndex = 2]] قبل [[[..."1a2b3".matchAll(g)]]] بـ [[/\d/g]]:
+
+~~~text الناتج
+[ '2', '3' ] 2
+~~~
+
+الـ [[1]] اتنط عليه. فلو الـ regex اتستخدم قبل كده بـ [[exec]] أو [[test]]، رجّع [[lastIndex = 0]] الأول.
+
+ومن غير [[g]]:
+
+~~~text الناتج: "1a2".matchAll(/\d/)
+TypeError: String.prototype.matchAll called with a non-global RegExp argument
+~~~
+
+---
+
+## ٤. match بطول صفر: الـ loop اللي مبيخلصش
+
+~~~js app.mjs
+const edges = /\b/g;
+const spots = [];
+while ((hit = edges.exec("ab cd")) !== null) {
+  spots.push(hit.index);
+  if (hit[0] === "") edges.lastIndex++;
+}
+console.log(spots);
+~~~
+
+[[\b]] **مكان** مش حرف، فالـ match طوله صفر، و [[lastIndex]] بعده = [[index + 0]]: نفس المكان. من غير السطر [[edges.lastIndex++]] جرّبنا (بعد ما حطينا حد ٦ لفات):
+
+~~~text الناتج من غير الزق
+at 0 lastIndex 0
+at 0 lastIndex 0
+at 0 lastIndex 0
+at 0 lastIndex 0
+at 0 lastIndex 0
+at 0 lastIndex 0
+~~~
+
+نفس المكان كل مرة، والبرنامج كان هيعلّق. ومع الزق:
+
+~~~text الناتج
+[ 0, 2, 3, 5 ]
+~~~
+
+الأماكن: قبل [[a]]، وبعد [[b]]، وقبل [[c]]، وبعد [[d]]. وده نفس اللي [[[..."ab cd".matchAll(/\b/g)]]] بيطلّعه لوحده.
+
+---
+
+## الخلاصة
+
+| عايز | استخدم |
+|---|---|
+| أول match بتفاصيله | [[re.exec(str)]] من غير [[g]]: array أو [[null]] |
+| مكان كل group | flag [[d]] و [[m.indices]] و [[m.indices.groups]] |
+| كل الـ matches في loop عادي | [[for (const m of str.matchAll(re))]]، والـ regex لازم [[g]] |
+| تتحكم في المكان (تقف، تكمّل، [[y]]) | [[exec]] و [[lastIndex]] بإيدك |
+| pattern ممكن يطابق فاضي | زق [[lastIndex]] لما [[m[0] === ""]]، أو [[matchAll]] |`,
+          lines: [
+            R`النص اللي هندوّر فيه: طلب فيه كود [[#A-17]] ومبلغ.`,
+            R`[[#]] ثم حرف كابيتال في group اسمه [[code]] ثم شرطة ثم رقم في group اسمه [[num]]. الـ flag [[d]] بيخلّي [[exec]] ترجّع أماكن الـ groups كمان.`,
+            R`[[exec]] من غير [[g]]: بتدوّر من أول النص وترجّع أول match بكل تفاصيله في array، أو [[null]].`,
+            R`[[m[0]]] الـ match كله [[#A-17]]، و [[index]] بـ 6، و [[groups.num]] بـ [['17']] (نص)، و [[indices[0]]] بـ [[[6, 11]]] و [[indices.groups.num]] بـ [[[9, 11]]].`,
+            R`نص مفيهوش match: [[exec]] رجّعت [[null]]، و [[lastIndex]] فضل 0 لأن مفيش [[g]]، و [[hasIndices]] بـ [[true]] عشان الـ flag [[d]].`,
+            R`regex بـ [[g]]: كل [[exec]] بتكمّل من [[lastIndex]] اللي سابته اللي قبلها.`,
+            R`نص فيه ٣ أسعار هنلف عليهم.`,
+            R`متغير الـ match، متعرّف برّه الـ loop عشان الشرط يشوفه.`,
+            R`بننادي [[exec]] ونحفظ الناتج في [[hit]] ونقارنه بـ [[null]] في نفس الشرط: الـ loop بيقف أول ما مفيش match.`,
+            R`كل لفة بتطبع الرقم ([[hit[1]]]) ومكانه و [[lastIndex]] بعده: [[15 4 10]] ثم [[40 17 23]] ثم [[95 29 35]].`,
+            R`قفلة الـ loop.`,
+            R`بعد آخر نداء فاشل [[lastIndex]] رجع 0 لوحده، فالـ regex جاهز يلف من الأول.`,
+            R`[[matchAll]] بنفس الـ regex: نسخة بتلف لوحدها، والناتج [[[ '15', '40', '95' ]]]، و [[prices.lastIndex]] فضل 0.`,
+            R`[[\b]] مكان (حد كلمة) مش حرف، فكل match طوله صفر. ده النوع اللي بيعمل loop لانهائي.`,
+            R`array نجمع فيها الأماكن.`,
+            R`نفس شكل الـ loop اللي فوق بنفس المتغير [[hit]].`,
+            R`نحفظ مكان الـ match.`,
+            R`لو الـ match فاضي، [[lastIndex]] مش هيتحرك لوحده، فبنزقه خطوة. من غير السطر ده الـ loop بيلف في مكانه للأبد.`,
+            R`قفلة الـ loop.`,
+            R`الأماكن [[[ 0, 2, 3, 5 ]]]: أول وآخر كل كلمة من الكلمتين.`,
+          ],
+          ref: [
+            { t: "MDN: RegExp.prototype.exec()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec" },
+            { t: "MDN: RegExp.prototype.hasIndices", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/hasIndices" },
+            { t: "MDN: RegExp: lastIndex", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/lastIndex" },
+            { t: "MDN: String.prototype.matchAll()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/matchAll" },
+            { t: "ECMAScript: RegExpBuiltinExec", url: "https://tc39.es/ecma262/multipage/text-processing.html#sec-regexpbuiltinexec" },
+          ],
+          pre: ["js/groups و flags", { to: "js/test و match و matchAll و replace", why: R`[[matchAll]] و [[match]] من برّه، هنا بنشوف اللي تحتهم` }],
+        },
+        {
+          cmd: "الـ flags s و m و y و v بحالات حقيقية",
+          title: "إمتى تحتاج s و m و y و v في شغل حقيقي: ملف INI، وإيميل، و CSV، وحروف عربي بس",
+          desc: R`الـ flags الأربعة دول بيغيّروا **قواعد** الـ regex مش بس عدد الـ matches:
+• [[m]] (multiline): [[^]] و [[$]] بيطابقوا أول وآخر **كل سطر**. للملفات اللي كل سطر فيها record (INI و logs و .env).
+• [[s]] (dotAll): النقطة بتطابق السطر الجديد كمان. لما الحاجة اللي عايزها ممتدة على كذا سطر (جسم إيميل، block في ملف).
+• [[y]] (sticky): الـ match لازم يبدأ عند [[lastIndex]] بالظبط، من غير ما يدوّر لقدّام. أساس أي parser أو tokenizer: لو حاجة مش مفهومة تعرف مكانها بدل ما تتنط.
+• [[v]] (unicodeSets): كل اللي في [[u]] وزيادة: تقاطع [[&&]] وطرح [[--]] جوه [[[ ]]]، و classes جوه classes، و [[\q{...}]] لنصوص كاملة، و properties بتطابق نص كامل زي [[\p{RGI_Emoji}]]. وقواعده أشد: حروف زي [[(]] و [[-]] لازم [[\]] جوه الـ class.`,
+          example: R`// m: ^ و $ لكل سطر
+const ini = "[db]\nhost = localhost\nport = 5432\n[cache]\nttl = 60";
+console.log(ini.match(/^\w+(?= =)/gm), ini.match(/^\w+(?= =)/g));
+// s: النقطة بتعدّي السطر الجديد
+const mail = "Subject: hi\n\nline one\nline two\n-- \nSara";
+console.log(mail.match(/\n\n(.*)\n-- /)?.[1], JSON.stringify(mail.match(/\n\n(.*)\n-- /s)?.[1]));
+// y: كل match لازم يبدأ مكان ما اللي قبله خلص
+const cell = /\s*(?:"(?<q>[^"]*)"|(?<v>[^,]*))\s*(?:,|$)/y;
+const row = ' tea , "rice, white" ,40';
+const cells = [];
+let c;
+while (cell.lastIndex < row.length && (c = cell.exec(row))) cells.push(c.groups.q ?? c.groups.v.trim());
+console.log(cells);
+// v: تقاطع وطرح ونصوص جوه الـ class
+console.log(/[\p{Script=Arabic}&&\p{Nd}]/v.test("٣"), /[\p{Script=Arabic}&&\p{Nd}]/v.test("3"));
+console.log("سعر٣ و Price3".match(/[\p{L}--\p{ASCII}]+/gv));
+console.log("👍🏽 ok 🇪🇬".match(/\p{RGI_Emoji}/gv), /^[\q{EGP|USD|SAR}]$/v.test("USD"));
+console.log(/x/v.unicodeSets, /x/v.unicode, /x/s.dotAll, /x/m.multiline);`,
+          try: R`اكتب [[parseIni(text)]] بـ regex واحد فيه [[m]] و [[matchAll]]: سطر [[[section]]] بيفتح object جديد، وسطر [[key = value]] بيتحط في الـ section الحالي (أو في الأول لو قبل أي section)، والسطور التانية (تعليقات [[;]] أو فاضية) بتتجاهل، وملف بـ [[\r\n]] بيشتغل زي [[\n]].`,
+          sol: R`~~~js ini.mjs
+function parseIni(text) {
+  const out = {};
+  let section = out;
+  for (const m of text.matchAll(/^\s*(?:\[(?<sec>[^\]\r\n]+)\]|(?<key>[\w.-]+)\s*=\s*(?<val>.*?))\s*$/gm)) {
+    if (m.groups.sec) section = out[m.groups.sec.trim()] = {};
+    else section[m.groups.key] = m.groups.val;
+  }
+  return out;
+}
+console.log(parseIni("name = shop\n[db]\nhost = localhost\nport = 5432\n; comment\n[cache]\nttl = 60\r\n"));
+~~~
+
+~~~text الناتج (Node 24.22)
+{
+  name: 'shop',
+  db: { host: 'localhost', port: '5432' },
+  cache: { ttl: '60' }
+}
+~~~
+
+- [[m]]: [[^]] و [[$]] لكل سطر، فكل سطر match لوحده.
+- بديلين: [[\[(?<sec>...)\]]] أو [[key = val]]. و [[[^\]\r\n]+]] اسم الـ section من غير [[]]] ومن غير ما يعدّي السطر.
+- [[(?<val>.*?)\s*$]]: الـ [[?]] بتخلي القيمة lazy، فالمسافات في آخر السطر بتروح لـ [[\s*]] مش للقيمة. و [[\r]] بتاع ويندوز line terminator في JS: النقطة مبتاخدوش، و [[$]] مع [[m]] بتطابق قبله، فالقيمة بتطلع نضيفة من غير [[\r]].
+- [[; comment]] مبيطابقش ولا بديل فبيتجاهل لوحده.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب ناتج دول قبل التشغيل: [[/^\d+$/m.test("abc\n42")]] و [[/^\d+$/.test("abc\n42")]] و [[/a.c/s.test("a\nc")]] و [[/a.c/.test("a\nc")]] و [[/^c/m.test("a\r\nc")]].`, done: R`توقعت [[true false true false true]] وطلع كده، وتقدر تقول كل واحد بسبب أنهي flag.`, sol: R`~~~js p1.mjs
+console.log(/^\d+$/m.test("abc\n42"), /^\d+$/.test("abc\n42"), /a.c/s.test("a\nc"), /a.c/.test("a\nc"), /^c/m.test("a\r\nc"));
+~~~
+
+~~~text الناتج (Node 24.22)
+true false true false true
+~~~
+
+- الأول: مع [[m]] السطر التاني [[42]] لوحده بيطابق [[^\d+$]].
+- التاني: من غير [[m]] لازم النص **كله** أرقام، وهو فيه [[abc]].
+- التالت والرابع: [[s]] بس اللي بتخلي النقطة تاخد [[\n]].
+- الخامس: مع [[m]]، [[^]] بتطابق بعد أي line terminator، و [[\n]] واحد منهم، فـ [[c]] بعد [[\r\n]] أول سطر.` },
+            { lvl: 'تطبيق', t: R`**ابني:** regex بالـ flag [[v]] بيطابق **حروف عربي بس**: من غير الأرقام العربي (٣) ومن غير علامات الترقيم العربي (،). وبعدين regex تاني بيطابق حرف عربي واحد **ما عدا** [[ة]] و [[ى]] (عشان تعرف الكلمات اللي آخرها مش تاء مربوطة ولا ألف مقصورة).`, done: R`[["سعر ٣ قطع: ١٢٠ جنيه، ok".match(...)]] بيرجّع [[[ 'سعر', 'قطع', 'جنيه' ]]] من غير أرقام ولا فاصلة، والتاني بيقبل [[ب]] ويرفض [[ة]] و [[٣]].`, sol: R`~~~js p3.mjs
+const arabicLetter = /[\p{Script=Arabic}&&\p{L}]+/gv;
+console.log("سعر ٣ قطع: ١٢٠ جنيه، ok".match(arabicLetter));
+const noTaa = /[[\p{Script=Arabic}&&\p{L}]--[ةى]]/v;
+console.log(noTaa.test("ب"), noTaa.test("ة"), noTaa.test("٣"));
+~~~
+
+~~~text الناتج (Node 24.22)
+[ 'سعر', 'قطع', 'جنيه' ]
+true false false
+~~~
+
+- [[&&]] تقاطع: «حرف من الكتابة العربي **و** letter» = حروف بس. الأرقام العربي [[Script=Arabic]] بس مش [[L]]، والفاصلة [[،]] كمان.
+- [[--]] طرح، و [[[...]]] جوه [[[...]]] class متداخل (مسموح في [[v]] بس): «حروف عربي ناقص [[ة]] و [[ى]]».
+- من غير [[v]] الكلام ده كان محتاج lookahead أو قايمة حروف طويلة.` },
+            { lvl: 'تحدي', t: R`**ابني tokenizer:** [[parsePairs(src)]] بتقرا [['lang=ar; title="شاي بلبن"; qty=2']] لـ object، بـ regex واحد فيه [[y]]. القيمة يا بين علامات تنصيص (وفيها مسافات و [[;]])، يا كلمة. ولو حتة مش مفهومة ترمي SyntaxError فيها مكانها.`, done: R`المثال بيرجّع [[{ lang: 'ar', title: 'شاي بلبن', qty: '2' }]]، و [["lang=ar; ?? ; qty=2"]] بيرمي رسالة فيها [[عند 8]]، ومفيش حاجة بتتنط في صمت.`, sol: R`~~~js p4.mjs
+function parsePairs(src) {
+  const re = /\s*(?<key>\w+)\s*=\s*(?:"(?<q>[^"]*)"|(?<v>[^;\s]*))\s*(?:;|$)/y;
+  const out = {};
+  re.lastIndex = 0;
+  while (re.lastIndex < src.length) {
+    const at = re.lastIndex;
+    const m = re.exec(src);
+    if (!m) throw new SyntaxError($__btمش مفهوم عند $__{at}: «$__{src.slice(at, at + 10)}»$__bt);
+    out[m.groups.key] = m.groups.q ?? m.groups.v;
+  }
+  return out;
+}
+console.log(parsePairs('lang=ar; title="شاي بلبن"; qty=2'));
+try { parsePairs("lang=ar; ?? ; qty=2"); } catch (e) { console.log(e.name + ": " + e.message); }
+~~~
+
+~~~text الناتج (Node 24.22)
+{ lang: 'ar', title: 'شاي بلبن', qty: '2' }
+SyntaxError: مش مفهوم عند 8: « ?? ; qty=»
+~~~
+
+- كل لفة بتقرا زوج واحد كامل لحد [[;]] أو آخر النص، و [[y]] بتضمن إن الزوج الجاي بيبدأ بالظبط بعد اللي قبله.
+- [[(?:"(?<q>[^"]*)"|(?<v>[^;\s]*))]]: لو فيه تنصيص خد كل اللي جواه (حتى [[;]])، وإلا خد كلمة.
+- [[const at = re.lastIndex]] قبل [[exec]]: بعد الفشل [[lastIndex]] بيرجع 0، فلازم نحفظ المكان قبلها.
+- لو كان [[g]]: الـ [[??]] كان هيتنط عليه وتكمّل بـ [[qty]] من غير ما حد يعرف.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حد نقل regex الـ slug لـ [[v]] عشان «الأحدث»: [[new RegExp("^[a-z-]+$", "v")]]. شغّله واقرا الرسالة وصلّحه من غير ما ترجع لـ [[u]].`, done: R`شفت [[Invalid character class]]، وعرفت إن [[-]] في آخر الـ class لازمها [[\]] في [[v]]، والـ regex المصلّح بيقبل [["my-post"]] ويرفض [["My post"]].`, sol: R`~~~js p5.mjs
+try { new RegExp("^[a-z-]+$", "v"); } catch (e) { console.log(e.message); }
+const slug = /^[a-z0-9\-]+$/v;
+console.log(slug.test("my-post"), slug.test("My post"));
+~~~
+
+~~~text الناتج (Node 24.22)
+Invalid regular expression: /^[a-z-]+$/v: Invalid character class
 true false
 ~~~
 
-- [[Object.freeze(obj)]] بيجمّد الـ object ويرجّعه: مفيش تعديل ولا إضافة ولا مسح خصايص. جرّبت [[f.b = 2; delete f.a]] على object متجمّد وفضل [[{ a: 1 }]].
-- [[frozen.a = 99]] اتجاهل **بهدوء** من غير أي رسالة.
-- [[frozen.nested.b = 99]] **اتنفّذ**: الـ freeze على المستوى الأول بس، و [[nested]] object تاني محدش جمّده. و [[Object.isFrozen]] بتأكد ده: [[true]] للبرّاني و [[false]] للي جوه.
-
-### في strict mode
-
-لو الملف في أوله [["use strict";]] (أو ES module، لأنه strict لوحده):
-
-~~~text الناتج
-frozen.a = 99;
-         ^
-
-TypeError: Cannot assign to read only property 'a' of object '#<Object>'
-~~~
-
-نفس السطر بقى بيرمي error بدل ما يتجاهل، وده أحسن وانت بتطوّر: بتمسك أي حد بيحاول يعدّل.
-
----
-
-## الخلاصة
-
-| عايز | بدل | استخدم |
-|---|---|---|
-| تعدّل خاصية | [[obj.x = 1]] | [[{ ...obj, x: 1 }]] |
-| تعدّل عنصر في array | [[arr[i].qty++]] | [[map]] + ternary + spread |
-| تمسح | [[splice]] | [[filter]] |
-| تضيف | [[push]] | [[[...arr, x]]] |
-| ترتّب | [[sort()]] | [[toSorted()]] |
-
-- الـ spread سطحي: كل مستوى على طريق التغيير لازم يتنسخ بنفسه.
-- [[Object.freeze]] سطحي برضه، وبيتجاهل بهدوء إلا في strict mode.`,
-          lines: [
-            R`state متداخلة: object فيه [[user]] (object) و [[items]] (array من objects). عايزين نزوّد [[qty]] بتاع العنصر رقم 1 **من غير ما نلمس** [[state]] الأصلية.`,
-            R`بنبني object جديد بدل ما نعدّل القديم. ده اللي React و Redux محتاجينه عشان يعرفوا إن حاجة اتغيرت بمقارنة الـ reference بـ [[===]].`,
-            R`بينسخ خصايص المستوى الأول من [[state]] في الـ object الجديد. النسخ سطحي: [[next.user]] و [[state.user]] نفس الـ object مش نسخة منه.`,
-            R`[[items]] جديدة بتغطّي على اللي اتنسخت فوق. [[map]] بترجّع array جديدة: العنصر اللي [[id]] بتاعه 1 بيتعمله نسخة ([[...it]]) بـ [[qty]] زيادة واحد، والباقي بيرجع زي ما هو (نفس الـ object).`,
-            R`نهاية [[next]].`,
-            R`[[true]]: [[user]] متغيرش، فالاتنين بيشاوروا على نفس الـ object. ده مقصود: بننسخ اللي اتغيّر بس، فالنسخ رخيص و React يعرف إن الجزء ده متغيرش.`,
-            R`[[false]]: [[items]] array جديدة لأن جواها عنصر اتغيّر. أي كود بيقارن الـ reference هيعرف إن فيه تغيير.`,
-            R`[[true]]: العنصر التاني ([[id: 2]]) متغيرش، فـ [[map]] رجّعته هو نفسه، والعنصر الأول بس هو اللي اتعمله نسخة جديدة.`,
-            R`مسح immutable: [[filter]] بترجّع array جديدة من غير العنصر اللي [[id]] بتاعه 1، والأصلية لسه فيها العنصرين. بدل [[splice]] اللي بيعدّل الأصل.`,
-            R`إضافة immutable: array جديدة فيها كل العناصر القديمة وبعدها العنصر الجديد. [[push]] كانت هتعدّل [[state.items]] نفسها، فـ React مكانش هيلاحظ التغيير لأن الـ reference هو هو.`,
-            R`[[Object.freeze]] بيقفل الـ object: مينفعش تضيف أو تمسح أو تغيّر خصايصه. وبيرجّع نفس الـ object بعد ما يتقفل.`,
-            R`التعديل مبيحصلش و [[frozen.a]] تفضل 1. في الكود العادي بيتجاهل بالسكوت، وفي strict mode (والـ modules) بيرمي TypeError.`,
-            R`ده اتغيّر فعلًا: [[freeze]] سطحي، بيقفل المستوى الأول بس، و [[nested]] object منفصل مش متجمّد. لو عايز كل المستويات لازم تعمل freeze لكل object جوه (deep freeze).`,
-          ],
-          sol: R`[[updateQty(state, 1, 5)]]: [[state.items[0].qty]] لسه 1 و [[next.items[0].qty]] بـ 5. و [[next.user === state.user]] بـ true، و [[next.items === state.items]] بـ false، و [[next.items[1] === state.items[1]]] بـ true (اللي متغيرش متشارك)، و [[next.items[0] === state.items[0]]] بـ false (اتعمل object جديد).
-
-في [[deepFreeze]] جمّد الـ object الأول وبعدين ادخل جوه: كده لو فيه object بيشاور على نفسه، الـ [[Object.isFrozen]] هتوقف الـ recursion. لو جمّدت في الآخر بعد الـ recursion، object زي [[a.self = a]] هيعمل [[Maximum call stack size exceeded]]. وبعد deepFreeze [[f.nested.b = 99]] بتتجاهل بهدوء، وفي strict بتطلع [[TypeError: Cannot assign to read only property 'b']].`,
-          solCode: R`function updateQty(state, id, qty) {
-  return {
-    ...state,
-    items: state.items.map((it) => (it.id === id ? { ...it, qty } : it)),
-  };
-}
-function deepFreeze(obj) {
-  Object.freeze(obj);
-  for (const value of Object.values(obj)) {
-    if (typeof value === "object" && value !== null && !Object.isFrozen(value)) deepFreeze(value);
-  }
-  return obj;
-}
-const state = { user: { name: "Sara" }, items: [{ id: 1, qty: 1 }, { id: 2, qty: 3 }] };
-const next = updateQty(state, 1, 5);
-console.log(state.items[0].qty, next.items[0].qty, next.user === state.user, next.items[1] === state.items[1]);
-// 1 5 true true`,
-          check: {
-            lang: "js",
-            starter: R`function updateQty(state, id, qty) {
-  const item = state.items.find((it) => it.id === id);
-  item.qty = qty;
-  return state;
-}
-function deepFreeze(obj) {
-  return Object.freeze(obj);
-}`,
-            tests: R`const make = () => ({ user: { name: "Sara" }, items: [{ id: 1, qty: 1 }, { id: 2, qty: 3 }] });
-test("الأصل ميتغيرش والجديد فيه qty 5", () => {
-  const state = make(), next = updateQty(state, 1, 5);
-  expect([state.items[0].qty, next.items[0].qty]).toEqual([1, 5]);
-});
-test("اللي اتغير بقى object جديد: state و items والعنصر", () => {
-  const state = make(), next = updateQty(state, 1, 5);
-  expect([next === state, next.items === state.items, next.items[0] === state.items[0]]).toEqual([false, false, false]);
-});
-test("اللي متغيرش لسه متشارك: user والعنصر التاني", () => {
-  const state = make(), next = updateQty(state, 1, 5);
-  expect([next.user === state.user, next.items[1] === state.items[1]]).toEqual([true, true]);
-});
-test("deepFreeze بتجمّد اللي جوه كمان", () => {
-  const f = deepFreeze({ a: 1, nested: { b: 2, list: [1] } });
-  expect([Object.isFrozen(f), Object.isFrozen(f.nested), Object.isFrozen(f.nested.list)]).toEqual([true, true, true]);
-});
-test("deepFreeze على object بيشاور على نفسه ميقعش (جمّد الأول وبعدين ادخل)", () => {
-  const a = { x: 1 };
-  a.self = a;
-  expect(Object.isFrozen(deepFreeze(a))).toBe(true);
-});`,
-            solution: R`function updateQty(state, id, qty) {
-  return {
-    ...state,
-    items: state.items.map((it) => (it.id === id ? { ...it, qty } : it)),
-  };
-}
-function deepFreeze(obj) {
-  Object.freeze(obj);
-  for (const value of Object.values(obj)) {
-    if (typeof value === "object" && value !== null && !Object.isFrozen(value)) deepFreeze(value);
-  }
-  return obj;
-}`
-          }
-        },
-        {
-          cmd: "iterators و generators",
-          title: "إزاي for...of بيشتغل، وتعمل sequence بتتحسب واحدة واحدة",
-          desc: R`أي object عنده method اسمها [[Symbol.iterator]] بترجّع iterator (object فيه [[next()]] بترجّع [[{ value, done }]]) يبقى iterable، وده اللي بيخلي [[for...of]] و [[...spread]] و destructuring يشتغلوا على arrays و strings و Map و Set.
-
-الـ generator ([[function*]]) أسهل طريقة تعمل iterator: كل [[yield]] بيطلّع قيمة ويوقف الدالة لحد ما حد يطلب اللي بعدها. فتقدر تعمل sequence طويلة أو لانهائية من غير ما تحسبها كلها. و ES2025 ضاف iterator helpers: [[map]] و [[filter]] و [[take]] و [[toArray]] مباشرة على الـ iterators.`,
-          example: R`function* range(start, end, step = 1) {
-  for (let i = start; i < end; i += step) yield i;
-}
-[...range(0, 5)];                   // [0, 1, 2, 3, 4]
-const it = range(0, 2);
-it.next();                          // { value: 0, done: false }
-it.next();                          // { value: 1, done: false }
-it.next();                          // { value: undefined, done: true }
-const playlist = {
-  songs: ["a", "b"],
-  *[Symbol.iterator]() { yield* this.songs; },
-};
-for (const song of playlist) console.log(song);
-range(0, Infinity).filter((n) => n % 2).take(3).toArray(); // [1, 3, 5]
-async function* pages(url) {
-  for (let next = url; next; ) {
-    const data = await fetch(next).then((r) => r.json());
-    yield data.items;
-    next = data.nextUrl;
-  }
-}`,
-          try: R`اكتب [[function* fibonacci()]] لانهائية، وخد أول ١٠ أرقام بـ [[.take(10).toArray()]]. وبعدين استخدم [[pages]] مع [[for await (const items of pages(url))]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[function* fibonacci()]] بـ [[next()]] مباشرة.`,
-          practice: [
-            { lvl: 'سريع', t: R`**ابني:** iterator بإيدك من غير [[function*]]: object [[{ from: 1, to: 3 }]] فيه [[Symbol.iterator]] بترجّع object فيه [[next()]] بيرجّع [[{ value, done }]].`, done: R`[[Array.from(r)]] بيرجّع 1 و 2 و 3، ولو عملتها تاني بترجّع نفس الأرقام (كل لفة بتاخد iterator جديد)، و [[for (const n of r)]] بيطبع التلاتة، و [[{ from: 5, to: 1 }]] بيرجّع لستة فاضية.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[function* g() { console.log("start"); yield 1; console.log("mid"); yield 2; } const it = g(); console.log("before");]] وبعدها [[console.log(it.next())]] ٣ مرات. اكتب كل السطور بالترتيب.`, done: R`طلع: [[before]]، و [[start]]، و [[{ value: 1, done: false }]]، و [[mid]]، و [[{ value: 2, done: false }]]، و [[{ value: undefined, done: true }]]. يعني [[g()]] نفسها مبتشغّلش ولا سطر، وكل next بتكمّل لحد الـ yield اللي بعده.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** اعمل [[users.json]] فيه 1050 يوزر (بـ [[Array.from({ length: 1050 }, (_, i) => ({ id: i + 1 }))]])، واكتب [[function* chunk(arr, size)]] وابعتهم لـ «API» وهمي (دالة بتطبع عدد كل دفعة) على دفعات 100.`, done: R`بيطبع 11 دفعة: 10 فيهم 100 والأخيرة 50، ومجموعهم 1050، و [[size]] بصفر أو سالب بيرمي [[RangeError]] بدل ما يلف للأبد، و [[Array.from(chunk([], 3))]] بيرجّع لستة فاضية.` },
-            { lvl: 'تطبيق', t: R`**محاكاة:** إشارة مرور: [[function* light()]] بتلف للأبد على [["red"]] و [["green"]] و [["yellow"]]. خد أول ٧ حالات بـ [[light().take(7).toArray()]].`, done: R`بيطبع [[red green yellow red green yellow red]]، والبرنامج مبيعلّقش مع إن الـ generator لانهائي، لأن take وقفت بعد ٧.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** [[function* naturals()]] لانهائية من 1، و [[f]] بتربّع الرقم وبتزوّد عدّاد. شغّل [[naturals().map(f).filter((n) => n % 2).take(3).toArray()]] واطبع العدّاد، وبعدين نفس السلسلة بـ arrays عادية على 1 لـ 1000.`, done: R`الناتج 1 و 9 و 25 والعدّاد 5 بس (الأرقام من 1 لـ 5)، لكن مع الـ arrays [[f]] بتتنادى 1000 مرة قبل ما [[filter]] يبدأ، وتقدر تقول بصوتك ليه الـ generator وقف لوحده.` }
+في [[v]]، الـ [[-]] جوه الـ class ليها دور في [[--]] (طرح)، فالـ engine مبيخمنش: [[-]] لوحدها لازم [[\-]]. ونفس الحكاية لـ [[(]] و [[)]] و [[[]] و [[{]] و [[}]] و [[/]] و [[|]] جوه الـ class: في [[u]] مسموحين حرفيين، وفي [[v]] بيرموا [[Invalid character in character class]]. عشان كده [[v]] مش «u أحدث» تبدّله وخلاص: لازم تراجع كل class.` },
           ],
           flag: "script",
           deep: {
-            why: "بتفسّر إزاي for...of و spread بيشتغلوا على أي حاجة. والـ generators مفيدة للداتا الكبيرة أو اللانهائية (IDs، و pagination، و streams)، لأنك بتحسب اللي محتاجه بس. و async generators هي الطريقة النضيفة تلف على API بصفحات.",
-            how: R`iteration protocol: [[obj[Symbol.iterator]()]] بيرجّع iterator، و for...of بينادي [[next()]] لحد [[done: true]]. الـ arrays وغيرها عاملين كده جاهز.
+            why: R`أغلب الـ regex في الشغل بيتكتب لسطر واحد، والمشاكل بتبدأ لما النص يبقى ملف: [[^]] اللي مبتطابقش غير أول الملف، والنقطة اللي بتقف عند أول سطر، والـ parser اللي بيتنط على حاجات غلط في صمت. والـ [[v]] بتحل حاجة كانت مستحيلة تقريبًا قبلها: «حروف عربي بس» أو «كل الـ emoji» في class واحدة مقروءة.`,
+            how: R`[[m]] بتغيّر معنى [[^]] و [[$]] بس: بيطابقوا كمان بعد/قبل أي line terminator ([[\n]] و [[\r]] و [[\u2028]] و [[\u2029]]). مبتغيّرش النقطة ولا أي حاجة تانية.
 
-نداء [[range(0, 5)]] مبينفّذش أي حاجة: بيرجّع generator object. كل [[next()]] بيشغّل الدالة لحد أول [[yield]] ويوقف، والمتغيرات المحلية فاضلة. ده lazy evaluation. و [[yield*]] بيسلّم لـ iterable تاني.
+[[s]] بتغيّر النقطة بس. قبلها الناس كانت بتكتب [[[^]]] (class فاضية منفية = أي حرف) أو [[[\s\S]]]. الاتنين لسه شغالين.
 
-الـ iterator helpers (ES2025، موجودة في Node 22 والمتصفحات الحديثة) lazy كمان: [[filter]] و [[take]] مبيعملوش arrays وسطانية، فينفع تشتغل على [[range(0, Infinity)]] من غير ما البرنامج يقف. عكس Array methods اللي بتعمل array كاملة في كل خطوة.
+[[y]]: [[exec]] بتجرّب تطابق **عند** [[lastIndex]] وبس. مع [[g]] كمان: [[y]] هي اللي بتكسب في البحث، و [[g]] بتأثر على [[match]] و [[replace]] (كل الـ matches ورا بعض من غير فراغات). و [[^]] مع [[y]] بتطابق أول النص بس (أو أول سطر مع [[m]]).
 
-[[async function*]] بيعمل async iterator: next بترجّع Promise، وبتلف عليه بـ [[for await...of]]. Node streams و [[readline]] كمان async iterables، فتقدر تقرا ملف ضخم سطر سطر بـ for await. و [[Array.fromAsync]] بتجمّعه في array.
-
-والـ generators كانت أساس async/await قبل ما يبقى جزء من اللغة (مكتبة co).`,
-            when: "pagination من API، وقراية ملفات أو streams كبيرة، و sequences لانهائية، وتعريف iteration لـ data structure بتاعتك (tree أو linked list في تاب DSA).",
-            mistakes: R`تفتكر إن نداء الـ generator بيشغّله. وتلف على نفس الـ generator مرتين: التانية فاضية لأنه اتستهلك. وتعمل [[[...range(0, Infinity)]]]: البرنامج هيقف. و arrow function مينفعش تبقى generator.`
+[[v]]: الـ class بقت **set** من حروف **ونصوص**. [[&&]] تقاطع، و [[--]] طرح، ومينفعش تخلطهم في نفس المستوى من غير أقواس متداخلة. و [[\q{EGP|USD}]] نصوص كاملة جوه الـ class، ومع النفي [[[^...]]] مينفعش نص أطول من حرف: جرّبنا [[[^\q{ab}]]] ورمى [[Negated character class may contain strings]]، و [[[^\q{a|b}]]] (حروف لوحدها) اشتغل. و [[\p{RGI_Emoji}]] property بتطابق emoji كامل حتى لو مكوّن من كذا code point (زي [[👍🏽]] و [[🇪🇬]])، ومع [[u]] بترمي [[Invalid property name]]. [[v]] و [[u]] مع بعض SyntaxError.`,
+            when: R`[[m]]: ملفات كل سطر فيها record (logs و INI و .env و CSV بسيط) لما تعمل [[matchAll]] على الملف كله. [[s]]: blocks متعددة السطور (جسم رسالة، تعليق [[/* */]]، section). [[y]]: أي tokenizer أو parser صغير، وفي التحقق إن النص **كله** اتقري حتة ورا حتة. [[v]]: أي class فيها عربي أو emoji أو «كذا ناقص كذا»، وفي الكود الجديد بدل [[u]] (بعد ما تراجع الـ classes).`,
+            mistakes: R`تقسم ملف ويندوز بـ [[split("\n")]] وبعدين [[^\d+$]] من غير [[m]] على كل سطر: آخر كل سطر [[\r]] مستخبي، فجرّبنا [["12\r\n34\r\n".split("\n")]] وكلهم طلعوا [[false]]، و [[split(/\r?\n/)]] صلّحتها. (مع [[m]] على الملف كله مفيش مشكلة: [[\r]] line terminator في JS.) وتستخدم [[g]] في tokenizer فالحاجات الغلط تتنط. وتنسى [[lastIndex = 0]] قبل ما تبدأ نص جديد بـ regex [[y]] متشارك. وتنقل regex من [[u]] لـ [[v]] من غير ما تعمل escape لـ [[-]] و [[(]] جوه الـ classes. وتحط [[\p{RGI_Emoji}]] من غير [[v]].`
           },
           teach: R`## الفكرة في سطر
 
-[[for...of]] و [[...]] مش سحر: بيطلبوا من الحاجة «هات اللي بعده» ([[next()]]) لحد ما تقول «خلصت» ([[done: true]]). والـ generator دالة بتعرف ترد على الطلب ده قيمة قيمة. كل الكود اتشغّل على ويندوز 11 بـ Node 24.19 (ملف [[.mjs]]).
+كل flag من الأربعة بيحل مشكلة بتظهر لما النص يبقى **ملف** أو **لغة** مش كلمة. المثال ٤ حالات من الشغل. كل الناتج اتشغّل فعلًا على Node 24.22، والـ [[v]] اتجرّبت كمان على Chrome 157 وطلّعت نفس النتايج.
 
 ---
 
-## ١. الـ iterator من غير أي generator
+## ١. [[m]]: كل سطر لوحده
 
-قبل ما نكتب generator، نشوف إزاي array عادية بتتلف:
-
-~~~text app.js
-const arr = [10, 20];
-const ai = arr[Symbol.iterator]();
-console.log(ai.next(), ai.next(), ai.next());
+~~~js app.mjs
+const ini = "[db]\nhost = localhost\nport = 5432\n[cache]\nttl = 60";
+console.log(ini.match(/^\w+(?= =)/gm), ini.match(/^\w+(?= =)/g));
 ~~~
+
+الـ regex: من أول السطر ([[^]])، كلمة ([[\w+]])، وبعدها [[ =]] (lookahead: مش جزء من الـ match).
 
 ~~~text الناتج
-{ value: 10, done: false } { value: 20, done: false } { value: undefined, done: true }
+[ 'host', 'port', 'ttl' ] null
 ~~~
 
-- [[Symbol.iterator]]: اسم method خاص (مش string، اسمه Symbol عشان ميتلخبطش مع أي خاصية عادية). أي حاجة عندها الـ method دي اسمها **iterable**.
-- لما تناديها بترجّع **iterator**: object فيه [[next()]].
-- كل [[next()]] بترجّع [[{ value, done }]]: القيمة، وهل خلصنا.
+- مع [[m]]: [[^]] بتطابق بعد كل [[\n]]، فكل سطر فيه key اتلقط.
+- من غير [[m]]: [[^]] أول الملف بس، وأول الملف [[[db]]] مش كلمة، فـ [[null]].
 
-ده بالظبط اللي [[for...of]] بيعمله من جوه. ولو حاجة ملهاش [[Symbol.iterator]]، زي object عادي:
-
-~~~text الناتج
-[...{ a: 1 }]
-TypeError: {(intermediate value)} is not iterable
-~~~
+> [[m]] مبتغيّرش غير [[^]] و [[$]]. النقطة لسه مبتطابقش [[\n]].
 
 ---
 
-## ٢. [[function* range]]
+## ٢. [[s]]: النقطة بتعدّي السطور
 
-~~~text app.js
-function* range(start, end, step = 1) {
-  for (let i = start; i < end; i += step) yield i;
-}
+~~~js app.mjs
+const mail = "Subject: hi\n\nline one\nline two\n-- \nSara";
+console.log(mail.match(/\n\n(.*)\n-- /)?.[1], JSON.stringify(mail.match(/\n\n(.*)\n-- /s)?.[1]));
 ~~~
 
-- [[function*]]: النجمة بعد [[function]] بتخليها **generator function**. (مفيش arrow generator.)
-- [[step = 1]]: default parameter، لو مدّيتش step يبقى 1.
-- [[for (let i = start; i < end; i += step)]]: loop عادية من start لحد قبل end.
-- [[yield i]]: «طلّع [[i]] ووقّف هنا». الدالة بتتجمّد في السطر ده بكل متغيراتها لحد ما حد يطلب القيمة الجاية.
-
-### نداء الـ generator مبيشغّلوش
-
-ده أهم حاجة في الدرس. خليني أحط [[console.log]] جوه generator عشان نشوف إمتى بيشتغل:
-
-~~~text app.js
-function* demo() { console.log("  بدأ"); yield 1; console.log("  كمّل"); yield 2; console.log("  خلص"); }
-const d = demo();
-console.log("قبل أول next");
-console.log(d.next());
-console.log(d.next());
-console.log(d.next());
-~~~
+جسم الإيميل بين السطر الفاضي ([[\n\n]]) وخط التوقيع ([[\n-- ]]).
 
 ~~~text الناتج
-قبل أول next
-  بدأ
-{ value: 1, done: false }
-  كمّل
-{ value: 2, done: false }
-  خلص
-{ value: undefined, done: true }
+undefined "line one\nline two"
 ~~~
 
-1. [[demo()]] مطبعش «بدأ»: رجّع object من نوع [[[object Generator]]] بس.
-2. أول [[next()]]: شغّل من الأول لحد أول [[yield]] ووقف.
-3. تاني [[next()]]: كمّل من مكان ما وقف لحد [[yield]] اللي بعده.
-4. تالت [[next()]]: كمّل لآخر الدالة، ومفيش yield، فـ [[done: true]].
+- من غير [[s]]: [[(.*)]] وقفت عند أول [[\n]]، فمفيش match و [[?.[1]]] رجّعت [[undefined]].
+- مع [[s]]: النقطة خدت السطرين، و [[JSON.stringify]] بيورّينا الـ [[\n]] اللي جوه.
 
-ده اسمه **lazy evaluation**: مفيش قيمة بتتحسب غير لما حد يطلبها.
-
-### سطور المثال
-
-~~~text app.js
-[...range(0, 5)];
-const it = range(0, 2);
-it.next();
-it.next();
-it.next();
-~~~
-
-~~~text الناتج
-[ 0, 1, 2, 3, 4 ]
-{ value: 0, done: false }
-{ value: 1, done: false }
-{ value: undefined, done: true }
-~~~
-
-- [[[...range(0, 5)]]]: الـ spread بينادي [[next()]] لحد [[done]] ويحط كل القيم في array. و [[range(0, 10, 3)]] طلّعت [[[ 0, 3, 6, 9 ]]].
-- [[it]] فيه رقمين بس، فالتالتة [[done: true]] و [[value: undefined]].
-- الـ generator بيتستهلك مرة واحدة: [[next()]] تاني بعد كده بترجّع [[done: true]] على طول، و [[[...it]]] بترجّع [[[]]]. ولو عملت [[const r = range(0, 3)]] و [[[...r], [...r]]] طلع [[[ 0, 1, 2 ] []]]. عايز تلف تاني؟ نادي [[range()]] تاني.
+قبل [[s]] كانوا بيكتبوا [[([^]*)]] بدل [[(.*)]]، وجرّبناها وطلّعت نفس النتيجة. هتشوفها في كود قديم.
 
 ---
 
-## ٣. تخلي object بتاعك iterable
+## ٣. [[y]]: قراية CSV من غير ما حاجة تتنط
 
-~~~text app.js
-const playlist = {
-  songs: ["a", "b"],
-  *[Symbol.iterator]() { yield* this.songs; },
-};
-for (const song of playlist) console.log(song);
+~~~js app.mjs
+const cell = /\s*(?:"(?<q>[^"]*)"|(?<v>[^,]*))\s*(?:,|$)/y;
+const row = ' tea , "rice, white" ,40';
+const cells = [];
+let c;
+while (cell.lastIndex < row.length && (c = cell.exec(row))) cells.push(c.groups.q ?? c.groups.v.trim());
+console.log(cells);
 ~~~
 
-~~~text الناتج
-a
-b
-~~~
-
-- [[*[Symbol.iterator]() { ... }]]: method جوه object. الـ [[*]] في الأول تخليها generator، والأقواس المربعة [[[ ]]] معناها «اسم الـ method هو قيمة الـ expression ده» (computed key)، يعني [[Symbol.iterator]].
-- [[yield* this.songs]]: [[yield*]] بالنجمة معناها «طلّع كل قيم الـ iterable ده واحدة واحدة». يعني زي [[for (const s of this.songs) yield s]] في سطر.
-- وبكده [[for...of]] اشتغل، وكمان [[[...playlist]]] طلّعت [[[ 'a', 'b' ]]]، و [[const [first] = playlist]] خدت [['a']]: الـ destructuring بيستخدم نفس البروتوكول.
-
----
-
-## ٤. iterator helpers على تسلسل لانهائي
-
-~~~text app.js
-range(0, Infinity).filter((n) => n % 2).take(3).toArray();
-~~~
-
-~~~text الناتج
-[ 1, 3, 5 ]
-~~~
-
-نفكّها بالترتيب:
-
-| الخطوة | بتعمل إيه |
+| الحتة | معناها |
 |---|---|
-| [[range(0, Infinity)]] | generator لانهائي: 0، 1، 2، ... مفيش حاجة اتحسبت لسه |
-| [[.filter((n) => n % 2)]] | سيب الأرقام اللي [[n % 2]] بتاعها truthy. [[%]] باقي القسمة: [[0 % 2]] بـ 0 (falsy) و [[1 % 2]] بـ 1 (truthy)، فبيعدّي الفردي بس |
-| [[.take(3)]] | خد أول 3 وبعدها قول done |
-| [[.toArray()]] | اطلب القيم فعلًا وحطها في array |
+| [[\s*]] | مسافات قبل الخانة |
+| [["(?<q>[^"]*)"]] | خانة بين تنصيص: كل حاجة غير [["]]، حتى الفاصلة |
+| [[(?<v>[^,]*)]] | أو خانة عادية: كل حاجة لحد الفاصلة |
+| [[(?:,|$)]] | الخانة بتخلص بفاصلة أو آخر السطر |
+| [[y]] | الخانة الجاية لازم تبدأ **بالظبط** بعد اللي قبلها |
 
-ليه مقعدش للأبد؟ لأن الـ helpers دي (ES2025) **lazy**: [[toArray]] بتطلب من [[take]]، و [[take]] من [[filter]]، و [[filter]] من [[range]]، قيمة قيمة. بعد ما [[take]] ياخد 3 بيوقف الطلب كله، فـ [[range]] وصل لـ 5 بس. ولو كتبت [[[...range(0, Infinity)]]] الـ spread هيطلب لحد done اللي مش هييجي، والبرنامج هيعلّق.
+~~~text الناتج
+[ 'tea', 'rice, white', '40' ]
+~~~
+
+[[cell.lastIndex < row.length]] بيقف لما السطر يخلص، و [[c.groups.q ?? ...]] بياخد اللي اتطابق من البديلين. الفاصلة جوه [["rice, white"]] مقسمتش الخانة. ولو السطر فيه حاجة الـ regex مش فاهمها، [[exec]] بترجّع [[null]] والـ loop بيقف **عندها**، بدل ما يتنط عليها زي [[g]] (المشروع «tokenizer لمعادلة حسابية» بيورّي الفرق بالأرقام).
 
 ---
 
-## ٥. async generator: صفحات API
+## ٤. [[v]]: عمليات على الـ classes
 
-~~~text app.js
-async function* pages(url) {
-  for (let next = url; next; ) {
-    const data = await fetch(next).then((r) => r.json());
-    yield data.items;
-    next = data.nextUrl;
-  }
-}
-~~~
+### تقاطع [[&&]]
 
-- [[async function*]]: generator و async مع بعض، فتقدر تكتب [[await]] جواه. و [[next()]] بتاعه بترجّع **Promise** (جرّبت: [[p.next() instanceof Promise]] بـ [[true]]، ونوعه [[[object AsyncGenerator]]]).
-- [[for (let next = url; next; )]]: loop بـ ٣ أجزاء: البداية [[next = url]]، والشرط [[next]] (يكمّل طول ما فيه لينك)، والجزء التالت فاضي لأننا بنحدّث [[next]] جوه.
-- [[await fetch(next).then((r) => r.json())]]: هات الصفحة وحوّل الرد JSON.
-- [[yield data.items]]: طلّع عناصر الصفحة دي ووقّف.
-- [[next = data.nextUrl]]: لما حد يطلب اللي بعده، خد لينك الصفحة الجاية. لو [[null]] الشرط يبقى false والـ loop تخلص.
-
-### تشغيله
-
-جرّبته على سيرفر Node صغير على [[localhost]] بيرجّع صفحتين: الأولى [[{ items: ["a", "b"], nextUrl: ".../items?page=2" }]] والتانية [[{ items: ["c"], nextUrl: null }]]:
-
-~~~text app.js
-for await (const items of pages($__bt$__{base}/items?page=1$__bt)) console.log("صفحة:", items);
-console.log(await Array.fromAsync(pages($__bt$__{base}/items?page=1$__bt)));
+~~~js app.mjs
+console.log(/[\p{Script=Arabic}&&\p{Nd}]/v.test("٣"), /[\p{Script=Arabic}&&\p{Nd}]/v.test("3"));
 ~~~
 
 ~~~text الناتج
-  السيرفر: طلب /items?page=1
-صفحة: [ 'a', 'b' ]
-  السيرفر: طلب /items?page=2
-صفحة: [ 'c' ]
-  السيرفر: طلب /items?page=1
-  السيرفر: طلب /items?page=2
-[ [ 'a', 'b' ], [ 'c' ] ]
+true false
 ~~~
 
-- [[for await (... of ...)]]: زي [[for...of]] بس بيستنى الـ Promise بتاع كل [[next()]]. لازم يبقى جوه async function أو في ES module (top-level).
-- لاحظ الترتيب: صفحة 2 مطلبتش غير **بعد** ما الـ loop طبعت صفحة 1. الـ lazy شغال مع الشبكة كمان.
-- [[Array.fromAsync]]: بتلف على الـ async iterable كله وتجمّعه في array.
+«حرف من الكتابة العربي **و** رقم» = الأرقام العربي المشرقية بس. [[3]] رقم بس مش عربي.
+
+### طرح [[--]]
+
+~~~js app.mjs
+console.log("سعر٣ و Price3".match(/[\p{L}--\p{ASCII}]+/gv));
+~~~
+
+~~~text الناتج
+[ 'سعر', 'و' ]
+~~~
+
+«أي حرف ناقص حروف ASCII» ([[\p{ASCII}]] أول ١٢٨ حرف: الإنجليزي والأرقام والرموز). [[Price]] اتشالت كلها، و [[٣]] رقم مش حرف أصلًا.
+
+### class جوه class
+
+الحاجة اللي بتطرحها ممكن تبقى class كاملة بين قوسين، وده اسمه **nested class** (مسموح في [[v]] بس). جرّبنا نطرح [[a-z]] بس بدل ASCII كلها:
+
+~~~js nested.mjs
+console.log("سعر٣ و Price3".match(/[\p{L}--[a-z]]+/gv));
+~~~
+
+~~~text الناتج
+[ 'سعر', 'و', 'P' ]
+~~~
+
+الـ [[P]] الكابيتال فضلت لأنها مش من [[a-z]]. يعني الطرح دقيق بالظبط زي ما كتبته.
+
+### نصوص كاملة: [[\p{RGI_Emoji}]] و [[\q{...}]]
+
+~~~js app.mjs
+console.log("👍🏽 ok 🇪🇬".match(/\p{RGI_Emoji}/gv), /^[\q{EGP|USD|SAR}]$/v.test("USD"));
+~~~
+
+~~~text الناتج
+[ '👍🏽', '🇪🇬' ] true
+~~~
+
+- [[👍🏽]] (إيد + لون بشرة) و [[🇪🇬]] (حرفين علم) كل واحد **كذا code point**. [[\p{RGI_Emoji}]] بتطابق الـ emoji كامل. وجرّبنا [[\p{Extended_Pictographic}]] بـ [[u]] على نفس النص: طلّعت [[[ '👍' ]]] بس، من غير لون البشرة ومن غير العلم.
+- [[\q{EGP|USD|SAR}]]: نصوص كاملة جوه الـ class. [[^[\q{...}]$]] بتقبل [["USD"]] وجرّبنا [["US"]] رجّعت [[false]].
+- [[\p{RGI_Emoji}]] مع [[u]] بترمي: [[Invalid regular expression: /\p{RGI_Emoji}/u: Invalid property name]].
+
+### [[v]] أشد من [[u]]
+
+جرّبنا ٤ classes كانت شغالة في [[u]]:
+
+| الـ class بـ [[v]] | النتيجة | التصليح |
+|---|---|---|
+| [[[(]]] | [[Invalid character in character class]] | [[[\(]]] |
+| [[[a-z-]]] | [[Invalid character class]] | [[[a-z\-]]] |
+| [[[{]]] | [[Invalid character in character class]] | [[[\{]]] |
+| [[[|]]] | [[Invalid character in character class]] | [[[\|]]] |
+
+### الخصايص
+
+~~~js app.mjs
+console.log(/x/v.unicodeSets, /x/v.unicode, /x/s.dotAll, /x/m.multiline);
+~~~
+
+~~~text الناتج
+true false true true
+~~~
+
+[[unicodeSets]] هي خاصية [[v]]، و [[unicode]] بتفضل [[false]] مع [[v]] رغم إن كل حاجة في [[u]] شغالة: الاتنين flags منفصلين ومينفعوش مع بعض.
 
 ---
 
 ## الخلاصة
 
-| الحاجة | معناها |
-|---|---|
-| [[Symbol.iterator]] | الـ method اللي بتخلي أي حاجة iterable |
-| [[next()]] | بترجّع [[{ value, done }]] |
-| [[function*]] و [[yield]] | دالة بتطلّع قيمة وتوقف لحد الطلب الجاي |
-| [[yield*]] | طلّع كل قيم iterable تاني |
-| [[.filter().take().toArray()]] | helpers lazy على أي iterator |
-| [[async function*]] و [[for await]] | نفس الكلام بس كل قيمة جاية من Promise |
-
-- نداء الـ generator مبيشغّلوش، وبيتستهلك مرة واحدة.
-- مع حاجة لانهائية: [[take]] قبل أي حاجة بتطلب لحد done.`,
+| الـ flag | الخاصية | بيغيّر إيه | استخدمه في |
+|---|---|---|---|
+| [[m]] | [[multiline]] | [[^]] و [[$]] لكل سطر | logs و INI و .env |
+| [[s]] | [[dotAll]] | النقطة بتاخد [[\n]] | blocks متعددة السطور |
+| [[y]] | [[sticky]] | الـ match من [[lastIndex]] بالظبط | tokenizers و parsers |
+| [[v]] | [[unicodeSets]] | [[&&]] و [[--]] و [[\q{}]] و properties النصوص | عربي و emoji و «كذا ناقص كذا» |`,
           lines: [
-            R`النجمة بعد [[function]] بتخليها generator: لما تناديها مبتشتغلش، بترجّع object تقدر تطلب منه القيم واحدة واحدة.`,
-            R`loop عادية، بس [[yield i]] بيطلّع القيمة ويوقف الدالة مكانها لحد ما حد يطلب القيمة الجاية، وبعدها تكمّل من نفس النقطة. فالأرقام بتتحسب عند الطلب بس، ومفيش array بتتعمل في الذاكرة.`,
-            R`نهاية [[range]].`,
-            R`الـ spread بيطلب القيم كلها لحد ما الـ generator يخلص ويحطها في array: من [[0]] لـ [[4]]. والـ [[end]] نفسه مش داخل لأن الشرط [[i < end]].`,
-            R`بيعمل generator object بس، ولا سطر جوه [[range]] اشتغل لسه. الكود بيبدأ مع أول [[next()]].`,
-            R`أول [[next]] بيشغّل الدالة لحد أول [[yield]] ويرجّع [[value: 0]] و [[done: false]] (يعني لسه فيه).`,
-            R`بيكمّل من بعد الـ [[yield]] اللي فات، الـ loop تلف لفة، ويقف عند الـ [[yield]] الجاي: [[value: 1]].`,
-            R`[[i]] بقى 2 والشرط فشل، فالدالة خلصت: [[done: true]] و [[value: undefined]]. وأي [[next]] بعد كده هيرجّع نفس الحاجة.`,
-            R`object عادي مش array، هنخليه iterable عشان [[for...of]] والـ spread يشتغلوا عليه.`,
-            R`الداتا اللي الـ iteration هتطلّعها.`,
-            R`[[Symbol.iterator]] هو الاسم اللي [[for...of]] والـ spread بيدوّروا عليه في أي object. كتبناه generator (النجمة قبله)، و [[yield*]] بيطلّع عناصر [[this.songs]] واحد واحد كإنها [[yield]] منفصلة. من غيره [[for...of]] على الـ object ده كان هيرمي TypeError إنه مش iterable.`,
-            R`نهاية [[playlist]].`,
-            R`[[for...of]] لقى [[Symbol.iterator]] فنادى الـ generator وطبع [[a]] وبعدها [[b]].`,
-            R`[[range(0, Infinity)]] generator مبيخلصش أبدًا. الـ iterator helpers ([[filter]] و [[take]] على الـ iterator نفسه، في Node 22 وما بعده والمتصفحات الحديثة) lazy: بيطلبوا قيمة قيمة، و [[take(3)]] بيوقف بعد 3 أرقام فردية، فـ [[toArray()]] بترجّع [[1]] و [[3]] و [[5]]. لو حوّلته array الأول بالـ spread كان البرنامج هيفضل يلف للأبد.`,
-            R`async generator: بيجمع [[async]] (يقدر يعمل [[await]]) مع [[yield]] (يطلّع قيم واحدة واحدة). مناسب لـ API بيرجّع الداتا صفحات، وبيتلف عليه بـ [[for await...of]].`,
-            R`loop من غير خطوة في الآخر: بتبدأ بأول URL وتفضل طول ما [[next]] فيه قيمة. التحديث بيحصل جوه الـ loop في آخر سطر.`,
-            R`بتجيب الصفحة الحالية وتحوّل الرد لـ JSON، والـ [[await]] بيوقف الـ generator لحد ما الرد ييجي من غير ما يوقّف باقي البرنامج. في كود حقيقي افحص [[r.ok]] قبل [[json()]]، لأن [[fetch]] مبيرميش error على 404 أو 500.`,
-            R`بيطلّع عناصر الصفحة دي للي بيلف ويوقف. الصفحة الجاية مش هتتجاب غير لما اللي بيلف يطلب، فلو عمل [[break]] بعد أول صفحة مفيش requests زيادة.`,
-            R`لينك الصفحة الجاية من رد السيرفر. في آخر صفحة بيبقى [[null]] أو مش موجود، فشرط الـ loop يفشل والـ generator يخلص.`,
-            R`نهاية الـ loop.`,
-            R`نهاية [[pages]].`,
+            R`نص ملف INI: ٥ سطور منهم سطرين sections وتلاتة [[key = value]].`,
+            R`[[^\w+(?= =)]] كلمة في أول سطر بعدها [[ =]]. مع [[m]] كل سطر بيتشاف لوحده فطلع [[[ 'host', 'port', 'ttl' ]]]، ومن غيره [[^]] أول الملف بس فـ [[null]].`,
+            R`إيميل: عنوان، سطر فاضي، جسم من سطرين، وخط توقيع [[-- ]].`,
+            R`[[(.*)]] بين السطر الفاضي والتوقيع: من غير [[s]] النقطة وقفت عند أول [[\n]] فمفيش match ([[undefined]])، ومع [[s]] خدت السطرين.`,
+            R`regex خانة CSV واحدة بـ [[y]]: يا نص بين تنصيص (فيه فاصلة عادي) يا أي حاجة لحد الفاصلة، وبعدها فاصلة أو آخر السطر.`,
+            R`سطر فيه مسافات حوالين الخانات، وخانة بين تنصيص جواها فاصلة.`,
+            R`array فاضية هنجمع فيها الخانات واحدة واحدة.`,
+            R`متغير الـ match، متعرّف برّه الـ loop عشان الشرط يحط فيه.`,
+            R`بنقرا خانة ورا خانة لحد آخر السطر، و [[??]] بتاخد البديل اللي اتطابق، و [[trim]] بتشيل المسافات من الخانة العادية.`,
+            R`التلات خانات: [[tea]] و [[rice, white]] كاملة و [[40]].`,
+            R`[[&&]] مع [[v]]: تقاطع، «عربي **و** رقم». [[٣]] بـ [[true]] و [[3]] بـ [[false]].`,
+            R`[[--]] طرح مع [[v]]: كل الحروف ([[\p{L}]]) ناقص حروف ASCII، فـ [[Price3]] اتشالت وطلع [[سعر]] و [[و]] بس.`,
+            R`[[\p{RGI_Emoji}]] بتطابق الـ emoji كامل حتى لو كذا code point، و [[\q{EGP|USD|SAR}]] نصوص كاملة جوه class.`,
+            R`[[unicodeSets]] خاصية [[v]] بـ [[true]] و [[unicode]] بـ [[false]] (flags منفصلين)، و [[dotAll]] و [[multiline]] خصايص [[s]] و [[m]].`,
           ],
-          sol: R`[[fibonacci().take(10).toArray()]] بترجّع [[[0, 1, 1, 2, 3, 5, 8, 13, 21, 34]]]. الـ generator فيه [[while (true)]] بس مش بيعلّق، لأن كل [[yield]] بيوقف لحد ما حد يطلب القيمة الجاية، و take(10) بتطلب 10 بس. لو كتبت [[[...fibonacci()]]] البرنامج هيعلّق للأبد (أو يقع بـ out of memory) لأن spread بتطلب لحد done.
-
-مع [[for await (const items of pages(url))]]: كل لفة بتجيب صفحة، وبتقف لما [[nextUrl]] يبقى null. [[for await]] لازم تبقى جوه async function أو ESM (top-level). و [[take]] و [[toArray]] (iterator helpers) موجودين في Node 22 والمتصفحات الحديثة، فلو طلعلك [[take is not a function]] يبقى الـ runtime قديم.`,
-          solCode: R`function* fibonacci() {
-  let [a, b] = [0, 1];
-  while (true) {
-    yield a;
-    [a, b] = [b, a + b];
-  }
-}
-console.log(fibonacci().take(10).toArray()); // [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
-async function* pages(url) {
-  for (let next = url; next; ) {
-    const data = await fetch(next).then((r) => r.json());
-    yield data.items;
-    next = data.nextUrl;
-  }
-}
-for await (const items of pages("https://api.example.com/items?page=1")) {
-  console.log(items.length);
-}`,
-          check: {
-            lang: "js",
-            starter: R`function* fibonacci() {
-  // while (true) و yield
-}`,
-            tests: R`const first = (it, n) => { const out = []; for (const x of it) { if (out.length === n) break; out.push(x); } return out; };
-test("أول 10 ← 0 1 1 2 3 5 8 13 21 34", () => expect(first(fibonacci(), 10)).toEqual([0, 1, 1, 2, 3, 5, 8, 13, 21, 34]));
-test("next() بيرجّع { value, done: false }", () => {
-  const it = fibonacci();
-  it.next();
-  expect(it.next()).toEqual({ value: 1, done: false });
-});
-test("لانهائي: الـ 50 بيطلع 7778742049 من غير ما يخلص", () => {
-  const it = fibonacci();
-  let v;
-  for (let i = 0; i < 50; i++) v = it.next();
-  expect([v.value, v.done]).toEqual([7778742049, false]);
-});
-test("كل generator ليه حالته: اتنين مع بعض مستقلين", () => {
-  const a = fibonacci(), b = fibonacci();
-  a.next(); a.next(); a.next();
-  expect([a.next().value, b.next().value]).toEqual([2, 0]);
-});`,
-            solution: R`function* fibonacci() {
-  let [a, b] = [0, 1];
-  while (true) {
-    yield a;
-    [a, b] = [b, a + b];
-  }
-}`
-          }
+          ref: [
+            { t: "MDN: RegExp.prototype.multiline", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/multiline" },
+            { t: "MDN: RegExp.prototype.dotAll", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/dotAll" },
+            { t: "MDN: RegExp.prototype.sticky", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/sticky" },
+            { t: "MDN: RegExp.prototype.unicodeSets", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/unicodeSets" },
+            { t: "MDN: Character class (v-mode)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Character_class" },
+          ],
+          pre: [{ to: "js/groups و flags", why: R`أول تعارف بالـ flags دول بمثال واحد لكل واحد` }, { to: "js/regex والعربي: Unicode properties", why: R`[[\p{Script=Arabic}]] و [[\p{Nd}]] و [[u]]، و [[v]] مبنية عليهم` }],
         },
         {
-          cmd: "Strategy pattern",
-          title: "تختار طريقة الحساب وقت التشغيل من غير if/else طويلة",
-          desc: R`الـ Strategy pattern: بدل دالة فيها [[switch]] بيكبر مع كل طريقة جديدة (شحن عادي، وسريع، واستلام من الفرع)، بتحط كل طريقة في دالة لوحدها جوه object، والدالة الأساسية بتختار الطريقة بالاسم وتناديها. الطريقة الجديدة بقت سطر بيتضاف، مش تعديل في كود شغّال.
+          cmd: "الـ wildcard والـ literal characters: النقطة والحروف الحرفية",
+          title: "النقطة بتطابق إيه بالظبط؟ وأنهي حرف بيطابق نفسه وأنهي حرف لازم \\ قبله",
+          desc: R`**wildcard** هو اسم النقطة [[.]] في الـ regex: حرف واحد، أي حرف، **ما عدا** الـ line terminators الأربعة ([[\n]] و [[\r]] و [[\u2028]] و [[\u2029]]). مع [[s]] بتطابقهم كمان. ومن غير [[u]] بتطابق «نص emoji» (الـ emoji حرفين في UTF-16)، ومع [[u]] أو [[v]] الـ emoji كله.
 
-ده نفس اللي بتعمله وانت بتبعت comparator لـ [[sort]]، أو strategy لمكتبة login زي Passport، أو طريقة دفع في checkout. وبيتسأل في الانترفيو كـ «إزاي تشيل الـ switch ده؟».`,
-          example: R`const shipping = {
-  standard: (order) => (order.total >= 500 ? 0 : 40),
-  express: (order) => 80 + order.items * 5,
-  pickup: () => 0,
-};
-function shippingCost(order, method) {
-  if (!Object.hasOwn(shipping, method)) {
-    throw new RangeError($__btطريقة شحن مش معروفة: $__{method}$__bt);
-  }
-  return shipping[method](order);
-}
-const order = { total: 350, items: 3 };
-console.log(shippingCost(order, "standard"));                     // 40
-console.log(shippingCost(order, "express"));                      // 95
-console.log(shippingCost({ total: 600, items: 1 }, "standard")); // 0
-shipping.sameDay = () => 150;
-console.log(shippingCost(order, "sameDay"));                      // 150
-try { shippingCost(order, "toString"); } catch (e) { console.log(e.message); }`,
-          try: R`ضيف strategy اسمها [[weight]] بتحسب 10 جنيه لكل كيلو ([[order.kg]]) وأقل حاجة 30، من غير ما تلمس [[shippingCost]]. وبعدين شيل سطر [[Object.hasOwn]] وجرّب [[shippingCost(order, "toString")]] و [[shippingCost(order, "constructor")]] وشوف بيرجّعوا إيه. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[applyDiscount]] و [[registerDiscount]] بالـ strategies.`,
+**literal character** هو أي حرف مش ليه معنى خاص: بيطابق نفسه بالظبط ([[a]] و [[ب]] و المسافة). والحروف اللي ليها معنى (اسمهم syntax characters) هم [[^ $ \ . * + ? ( ) [ ] { } |]]، و [[/]] جوه الـ literal بس: عشان تطابق واحد منهم حرفيًا حط [[\]] قبله. ومن غير [[u]] الـ engine متساهل ([[]]] و [[{]] لوحدهم بيطابقوا نفسهم، و [[\-]] و [[\q]] escapes مقبولة)، ومع [[u]] أو [[v]] نفس الحاجات دي بترمي SyntaxError.`,
+          example: R`// wildcard: النقطة بتطابق إيه وإيه لأ
+const chars = ["a", "ب", " ", "\t", "\n", "\r", "\u2028", "\u2029"];
+console.log(chars.map((ch) => /^.$/.test(ch)).join(" "));
+console.log(chars.map((ch) => /^.$/s.test(ch)).join(" "));
+console.log(/^.$/.test("😀"), /^.$/u.test("😀"), /^[^]$/.test("\n"));
+console.log("v1.2".replace(/./g, "*"), "v1.2".replace(/\./g, "*"), "v1.2".replace(/[.]/g, "*"));
+// literal characters: الحرف العادي بيطابق نفسه
+console.log(/كتاب/.test("الكتاب ده"), /cat/.test("concatenate"), /a b/.test("a  b"));
+// الحروف الخاصة: من غير \ بتغيّر المعنى أو بترمي
+console.log(/^1+1$/.test("1+1"), /^1\+1$/.test("1+1"), /^a|b$/.test("a|b"), /^a\|b$/.test("a|b"));
+try { new RegExp("price (EGP"); } catch (e) { console.log(e.message); }
+console.log(/a]b/.test("a]b"), /a{b/.test("a{b"));
+try { new RegExp("a]b", "u"); } catch (e) { console.log(e.message); }
+try { new RegExp("\\-", "u"); } catch (e) { console.log(e.message); }`,
+          try: R`regex لرقم نسخة زي [["1.2.7"]]: [[/^1.2.\d+$/]]. جرّبه على [["1.2.7"]] و [["1x2y7"]] و [["1.20.7"]]. ليه [["1x2y7"]] عدّت؟ صلّحه.`,
+          sol: R`~~~js version.mjs
+const bad = /^1.2.\d+$/;
+const good = /^1\.2\.\d+$/;
+for (const v of ["1.2.7", "1x2y7", "1.20.7"]) console.log(v, bad.test(v), good.test(v));
+~~~
+
+~~~text الناتج (Node 24.22)
+1.2.7 true true
+1x2y7 true false
+1.20.7 false false
+~~~
+
+النقطة من غير [[\]] wildcard: [[1.2.]] معناها «1 وأي حرف و 2 وأي حرف»، فـ [[x]] و [[y]] عدّوا. [[\.]] نقطة حرفية بس. و [[[.]]] كمان نقطة حرفية (جوه الـ class النقطة ملهاش معنى خاص).`,
           practice: [
-            { lvl: 'سريع', t: R`refactor: الدالة دي شغالة بس كل نوع ملف جديد بيكبّرها: [[function exportData(rows, type) { if (type === "csv") return rows.map((r) => r.join(",")).join("\n"); else if (type === "json") return JSON.stringify(rows); else if (type === "tsv") return rows.map((r) => r.join("\t")).join("\n"); }]]. حوّلها لـ object [[exporters]] فيه دالة لكل نوع، و [[exportData]] بتختار منه، من غير ما الناتج يتغيّر.`, done: R`لنفس [[rows = [ ["a", 1], ["b", 2] ] ]] الناتج بالتلات أنواع زي النسخة القديمة حرف بحرف (قارنهم بـ [[===]] وطلع [[true]] للتلاتة)، و [[exportData(rows, "xml")]] بيرمي [[RangeError]] فيه كلمة [[xml]] بدل ما يرجّع [[undefined]] ساكت زي القديمة، وإضافة نوع [[md]] بقت سطر واحد في [[exporters]].` },
-            { lvl: 'تطبيق', t: R`ابني جدول منتجات في صفحة HTML: [[<select>]] فيه «الأرخص» و «الأغلى» و «بالاسم» و «الأحدث»، وكل اختيار اسمه key في object [[sorters]] قيمته comparator. لما الـ select يتغيّر، اعمل [[products.toSorted(sorters[select.value])]] وارسم الصفوف تاني بـ [[textContent]].`, done: R`كل اختيار بيرتّب صح (جرّب ٥ منتجات فيهم سعرين زي بعض واسم عربي)، و [[products]] الأصلية مبتتغيّرش (اطبعها بعد كل ترتيب)، وإضافة ترتيب جديد محتاجة سطر في [[sorters]] و [[<option>]] بس، ومفيش ولا [[if]] على قيمة الـ select.` },
-            { lvl: 'تحدي', t: R`اكتب اختبار: ملف [[shipping.test.mjs]] بـ [[node:test]] و [[node:assert]] لـ [[shippingCost]] بتاع الدرس: الحد بالظبط ([[total: 500]] و [[499]])، و [[items: 0]] في express، وطريقة مش موجودة، و [[toString]] و [[__proto__]]، وإن strategy جديدة بتشتغل. وبعدين بوّظ الكود عمدًا (غيّر [[>=]] لـ [[>]]، وشيل [[hasOwn]]) واتأكد إن فيه تست بيقع لكل بوظة.`, done: R`[[node --test]] بيعدّي ٦ تستات على الأقل على الكود السليم، و [[>]] بدل [[>=]] بيوقّع تست الـ 500 بالظبط، وشيل [[hasOwn]] بيوقّع تست [[toString]] (بيرجّع [["[object Object]"]] بدل ما يرمي)، وكل تست اسمه بيقول بيختبر إيه.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب ناتج دول قبل التشغيل: [["1.5".replace(/./g, "#")]] و [["1.5".replace(/\./g, "#")]] و [[JSON.stringify("a\nb".replace(/./g, "#"))]] و [[JSON.stringify("a\nb".replace(/./gs, "#"))]].`, done: R`كتبت [[###]] و [[1#5]] و [["#\n#"]] و [["###"]] وطلعوا كده.`, sol: R`~~~js p1.mjs
+console.log("1.5".replace(/./g, "#"), "1.5".replace(/\./g, "#"), JSON.stringify("a\nb".replace(/./g, "#")), JSON.stringify("a\nb".replace(/./gs, "#")));
+~~~
+
+~~~text الناتج (Node 24.22)
+### 1#5 "#\n#" "###"
+~~~
+
+- الأول: النقطة wildcard فكل حرف (حتى النقطة نفسها) بقى [[#]].
+- التاني: [[\.]] النقطة الحرفية بس.
+- التالت: [[\n]] اتساب لأن النقطة مبتطابقهوش.
+- الرابع: مع [[s]] السطر الجديد كمان بقى [[#]]، فـ ٣ حروف ٣ علامات.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[myEscape(s)]] بتحط [[\]] قبل كل syntax character ([[^ $ \ . * + ? ( ) [ ] { } | /]]) بـ loop على الحروف (من غير regex). وقارنها بـ [[RegExp.escape]] على [["1+1=2"]] و [["(a|b)"]] و [["c:/x"]] و [["سعر.قهوة"]]: كل نص لازم يطابق نفسه بالظبط بـ [[^...$]].`, done: R`الأربع نصوص بيطابقوا نفسهم بالنسختين، و [[myEscape("(a|b)")]] بترجّع [[\(a\|b\)]]، والعربي بيعدّي زي ما هو والنقطة بس اللي اتعمل لها escape.`, sol: R`~~~js p3.mjs
+const SYNTAX = new Set("^$\\.*+?()[]{}|/");
+const myEscape = (s) => [...s].map((ch) => (SYNTAX.has(ch) ? "\\" + ch : ch)).join("");
+for (const s of ["1+1=2", "(a|b)", "c:/x", "سعر.قهوة"]) {
+  const mine = new RegExp("^" + myEscape(s) + "$"), std = new RegExp("^" + RegExp.escape(s) + "$");
+  console.log(s, mine.source, mine.test(s), std.test(s));
+}
+~~~
+
+~~~text الناتج (Node 24.22)
+1+1=2 ^1\+1=2$ true true
+(a|b) ^\(a\|b\)$ true true
+c:/x ^c:\/x$ true true
+سعر.قهوة ^سعر\.قهوة$ true true
+~~~
+
+- [[new Set("^$\\.*+?()[]{}|/")]]: الـ Set من نص بياخد كل حرف لوحده. و [["\\"]] في النص backslash واحدة.
+- [[[...s]]]: بيقسم النص لحروف (code points)، فالعربي والـ emoji مبيتكسروش.
+- النسخة دي كفاية **برّه** الـ class. [[RegExp.escape]] بتعمل escape لحاجات زيادة ([[-]] والمسافة وأول حرف) عشان تبقى آمنة في أي مكان، حتى جوه [[[ ]]] ومع [[v]].` },
+            { lvl: 'تحدي', t: R`**قارن:** «أي حرف بما فيه السطر الجديد» ليها ٣ أشكال: [[.]] مع [[s]]، و [[[^]]]، و [[[\s\S]]]. جرّبهم مع وبدون [[u]] على [["😀\nب"]] بـ [[match(.../g)]]، وقول كام match في كل حالة وليه.`, done: R`عرفت إن من غير [[u]] الـ emoji بيطلع حتتين، وإن التلات أشكال مع [[u]] بيطلّعوا ٣ (emoji كامل، وسطر جديد، وب)، و [[.]] من غير [[s]] بتطلّع من غير [[\n]].`, sol: R`~~~js p4.mjs
+const s = "😀\nب";
+console.log(s.match(/./g), s.match(/./gs), s.match(/./gsu), s.match(/[^]/gu), s.match(/[\s\S]/gu).length);
+~~~
+
+~~~text الناتج (Node 24.22)
+[ '\ud83d', '\ude00', 'ب' ] [ '\ud83d', '\ude00', '\n', 'ب' ] [ '😀', '\n', 'ب' ] [ '😀', '\n', 'ب' ] 3
+~~~
+
+- [[/./g]]: من غير [[u]] الـ emoji اتقسم لـ surrogate pair (حتتين ملهمش معنى لوحدهم)، ومن غير [[s]] الـ [[\n]] اتساب.
+- [[/./gs]]: الـ [[\n]] دخل، والـ emoji لسه حتتين.
+- [[/./gsu]] و [[/[^]/gu]] و [[/[\s\S]/gu]]: ٣ matches صح. الـ ٣ أشكال زي بعض، و [[s]] أوضح في الكود الجديد.` },
           ],
           flag: "script",
           deep: {
-            why: R`عشان الكود اللي بيختار يفضل ثابت والطرق تتغيّر لوحدها. كل طريقة جديدة (شحن، خصم، تصدير، دفع) في الـ switch معناها تفتح دالة شغالة وتعدّل فيها وتخاطر تكسر الحالات القديمة. بالـ strategy الإضافة سطر جديد، وكل طريقة تتختبر لوحدها. ودي فكرة «مفتوح للإضافة، مقفول للتعديل» (Open/Closed) من غير كلام كبير.`,
-            how: R`في JavaScript الدوال قيم، فالـ strategy مش محتاجة interface ولا class زي Java: object (أو [[Map]]) من الاسم للدالة، وكل الدوال ليها نفس الشكل (نفس الـ arguments ونفس نوع الراجع). الدالة اللي بتختار بتعمل حاجتين: تتأكد إن الاسم موجود فعلًا ([[Object.hasOwn]]، عشان [[toString]] و [[constructor]] موجودين على أي object من الـ prototype)، وتنادي.
+            why: R`أشهر باج regex في الدنيا نقطة من غير [[\]]: فحص إصدار، أو IP، أو دومين، أو اسم ملف [[.js]]، بيعدّي نصوص غلط وكل الاختبارات اللي فيها نقطة حقيقية بتنجح. والعكس: [[\]] زيادة قبل حرف عادي، أو [[]]] لوحده، بيعدّي من غير [[u]] ويرمي أول ما حد يضيف [[u]] أو [[v]] عشان العربي.`,
+            how: R`النقطة في الـ spec اسمها **wildcard**، وبتطابق أي حرف ما عدا الـ LineTerminator: [[\n]] (LF) و [[\r]] (CR) و [[\u2028]] (Line Separator) و [[\u2029]] (Paragraph Separator). التاب والمسافة والحروف العربي كلهم بيتطابقوا.
 
-لو الـ strategy محتاجة إعدادات، اعملها بـ factory: [[const percent = (p) => (amount) => amount * (1 - p / 100)]]، فـ [[percent(20)]] strategy جاهزة شايلة الـ 20 في closure. ولو الطرق جاية من برّه (plugins) اعمل [[register(name, fn)]] بتفحص إن [[fn]] دالة قبل ما تحفظها.
+الحرف «حرفي» لو مش syntax character: [[^ $ \ . * + ? ( ) [ ] { } |]]. جوه الـ literal كمان [[/]] لازم [[\/]] (وإلا بتقفل الـ literal)، بس في [[new RegExp("a/b")]] مش محتاجة. جوه [[[ ]]] أغلبهم حرفيين ما عدا [[]]] و [[\]] و [[^]] في الأول و [[-]] بين حرفين (ومع [[v]] كمان [[( ) [ { } / - |]]).
 
-الـ [[sort(comparator)]] نفسها Strategy: الـ sort بتعرف ترتّب، وانت بتديها «إزاي تقارن».`,
-            when: R`لما يبقى عندك ٣ طرق أو أكتر لنفس الحاجة وبيزيدوا: حساب شحن أو خصم أو ضريبة، وتصدير لأكتر من صيغة، وطرق دفع أو login، وترتيب وفلترة في جدول، و validation rules. لو هما طريقتين ومش هيزيدوا، [[if]] واحدة أوضح ومش محتاج pattern.`,
-            mistakes: R`تختار بـ [[shipping[method]]] من غير [[Object.hasOwn]]: [[method = "toString"]] بيرجّع [["[object Object]"]] و [["constructor"]] بيرجّع الـ order نفسه بدل error. وتسيب الاسم الغلط يرجّع [[undefined]] ساكت بدل [[RangeError]] بالاسم. وتخلّي كل strategy ليها شكل arguments مختلف فالدالة اللي بتختار تبدأ يبقى فيها [[if]] تاني. وتعمل strategies لحاجة فيها حالتين بس.`
+من غير [[u]] الـ engine في **Annex B mode** (وضع التوافق مع الكود القديم): [[]]] و [[{]] و [[}]] لوحدهم حرفيين، و [[a{2]] (quantifier ناقص) حرفي، و [[\q]] أو [[\-]] (escape لحرف عادي) بيبقى الحرف نفسه. مع [[u]] أو [[v]] الحاجات دي SyntaxError: [[Lone quantifier brackets]] و [[Incomplete quantifier]] و [[Invalid escape]]. ده مقصود: عشان الغلط يبان بدل ما يتقري بمعنى تاني.`,
+            when: R`استخدم النقطة لما تقصد «أي حرف» فعلًا، وغالبًا في [[.*?]] بين حاجتين معروفين. لما تعرف الحروف المسموحة، class أدق وأسرع ([[[^"]*]] بدل [[.*?]] بين تنصيص). وأي نص ثابت فيه رمز (نسخة، IP، امتداد ملف، سعر بـ [[$]]) حط [[\]] قبل الرموز، وأي نص متغير عدّيه على [[RegExp.escape]].`,
+            mistakes: R`[[/\.js$/]] مكتوبة [[/.js$/]] فـ [["myjs"]] تعدّي. و [[^a|b$]] فاكرها «a أو b بالظبط» وهي «a في الأول **أو** b في الآخر» (جرّبناها على [["a|b"]] ورجّعت [[true]] للسبب الغلط)، والصح [[^(?:a|b)$]]. و [[.]] على نص فيه emoji من غير [[u]] بتقطع الـ emoji. و [[\-]] أو [[\_]] برّه الـ class مع [[u]]: [[Invalid escape]].`
           },
           teach: R`## الفكرة في سطر
 
-عندك أكتر من طريقة لحساب نفس الحاجة (مصاريف الشحن). بدل ما تحطهم كلهم في [[switch]] جوه دالة واحدة، كل طريقة دالة لوحدها في object، والدالة الأساسية بتختار بالاسم. اتشغّل كله على ويندوز 11 بـ Node 24.
+أي حرف في الـ pattern يا **بيطابق نفسه** (literal character)، يا **ليه معنى** (syntax character). والنقطة أشهر حرف ليه معنى: الـ **wildcard**. المثال بيقيس الاتنين حرف حرف. كل الناتج اتشغّل فعلًا على Node 24.22.
 
 ---
 
-## ١. المشكلة: الـ switch اللي بيكبر
+## ١. الـ wildcard: النقطة بتطابق إيه؟
 
-~~~text before.mjs
-function shippingCostOld(order, method) {
-  switch (method) {
-    case "standard": return order.total >= 500 ? 0 : 40;
-    case "express": return 80 + order.items * 5;
-    case "pickup": return 0;
-  }
-}
-console.log(shippingCostOld({ total: 350, items: 3 }, "expres"));
+~~~js app.mjs
+const chars = ["a", "ب", " ", "\t", "\n", "\r", "\u2028", "\u2029"];
+console.log(chars.map((ch) => /^.$/.test(ch)).join(" "));
+console.log(chars.map((ch) => /^.$/s.test(ch)).join(" "));
 ~~~
 
-~~~text الناتج (Node 24)
-undefined
+[[/^.$/]] معناها «النص كله حرف واحد». جرّبناها على ٨ حروف:
+
+~~~text الناتج
+true true true true false false false false
+true true true true true true true true
 ~~~
 
-مشكلتين:
+| الحرف | اسمه | [[.]] | [[.]] مع [[s]] |
+|---|---|---|---|
+| [[a]] و [[ب]] | حروف عادية بأي لغة | ✓ | ✓ |
+| المسافة و [[\t]] | مسافة و tab، مش سطر جديد | ✓ | ✓ |
+| [[\n]] | Line Feed: السطر الجديد العادي | ✗ | ✓ |
+| [[\r]] | Carriage Return: نص سطر ويندوز الجديد [[\r\n]] | ✗ | ✓ |
+| [[\u2028]] و [[\u2029]] | Line و Paragraph Separator من Unicode | ✗ | ✓ |
 
-1. كل طريقة جديدة معناها تفتح الدالة دي وتزوّد [[case]]، وكل مرة ممكن تكسر واحدة قديمة.
-2. غلطة إملائية ([["expres"]] من غير s) رجّعت [[undefined]] ساكت، وأي حساب بعدها هيبقى [[NaN]] من غير ما حد يعرف ليه.
+الأربعة اللي ✗ اسمهم **line terminators**، وهم نفسهم اللي [[^]] و [[$]] بيتعاملوا معاهم مع [[m]].
+
+### الـ emoji وعلامة [[u]]
+
+~~~js app.mjs
+console.log(/^.$/.test("😀"), /^.$/u.test("😀"), /^[^]$/.test("\n"));
+~~~
+
+~~~text الناتج
+false true true
+~~~
+
+- الـ emoji في UTF-16 حرفين (surrogate pair). من غير [[u]] النقطة بتاخد واحد بس فـ [[^.$]] فشلت. مع [[u]] الاتنين حرف واحد.
+- [[[^]]]: class فاضية منفية = «أي حرف» حتى [[\n]]. الشكل القديم قبل [[s]].
+
+### النقطة ضد النقطة الحرفية
+
+~~~js app.mjs
+console.log("v1.2".replace(/./g, "*"), "v1.2".replace(/\./g, "*"), "v1.2".replace(/[.]/g, "*"));
+~~~
+
+~~~text الناتج
+**** v1*2 v1*2
+~~~
+
+[[/./g]] بدّلت كل حرف. [[\.]] و [[[.]]] النقطة الحرفية بس: جوه [[[ ]]] النقطة ملهاش معنى خاص.
 
 ---
 
-## ٢. الـ strategies: object من الدوال
+## ٢. literal characters: الحرف اللي بيطابق نفسه
 
-~~~text app.mjs
-const shipping = {
-  standard: (order) => (order.total >= 500 ? 0 : 40),
-  express: (order) => 80 + order.items * 5,
-  pickup: () => 0,
-};
+~~~js app.mjs
+console.log(/كتاب/.test("الكتاب ده"), /cat/.test("concatenate"), /a b/.test("a  b"));
 ~~~
 
-- [[shipping]]: object عادي، كل key اسم طريقة، وكل value **دالة**. في JavaScript الدالة قيمة زي الرقم، فينفع تتحط في object.
-- [[(order) => (...)]]: arrow function بتاخد الطلب وترجّع رقم. الأقواس حوالين الـ ternary للوضوح بس.
-- [[order.total >= 500 ? 0 : 40]]: الـ ternary: لو الإجمالي 500 أو أكتر الشحن 0، غير كده 40.
-- [[80 + order.items * 5]]: 80 ثابت و 5 لكل قطعة. الـ [[*]] قبل الـ [[+]] زي الرياضة.
-- [[pickup: () => 0]]: مش محتاجة الطلب أصلًا، فمفيش arguments. ده عادي: اللي بينادي هيبعت [[order]] وهي هتتجاهله.
+~~~text الناتج
+true true false
+~~~
 
-القاعدة الوحيدة: **كل الدوال ليها نفس الشكل** (بتاخد order وبترجّع رقم)، فاللي بيختار مش محتاج يعرف هي بتحسب إزاي.
+- [[/كتاب/]]: ٤ حروف literal ورا بعض، بتطابق نفس الـ ٤ في أي مكان. «الكتاب» فيها «كتاب».
+- [[/cat/]] لقتها جوه «con**cat**enate»: الـ literal مبيعرفش حدود الكلمات (ده شغل [[\b]] أو lookaround).
+- [[/a b/]]: المسافة نفسها literal، **مسافة واحدة بالظبط**. [["a  b"]] فيها مسافتين ففشلت. (لو تقصد مسافة أو أكتر: [[a +b]] أو [[a\s+b]].)
 
 ---
 
-## ٣. اللي بيختار: [[shippingCost]]
+## ٣. الحروف الخاصة: من غير [[\]] بتغيّر المعنى أو بترمي
 
-~~~text app.mjs
-function shippingCost(order, method) {
-  if (!Object.hasOwn(shipping, method)) {
-    throw new RangeError($__btطريقة شحن مش معروفة: $__{method}$__bt);
-  }
-  return shipping[method](order);
-}
+~~~js app.mjs
+console.log(/^1+1$/.test("1+1"), /^1\+1$/.test("1+1"), /^a|b$/.test("a|b"), /^a\|b$/.test("a|b"));
 ~~~
 
-1. [[Object.hasOwn(shipping, method)]]: الـ object ده فيه key بالاسم ده **بتاعه هو**؟ و [[!]] بتعكس: «لو مفيش».
-2. [[throw new RangeError(...)]]: ارمي error بالاسم الغلط نفسه. [[RangeError]] معناها «القيمة برّه المسموح». الـ backticks مع [[$__{method}]] بتحط الاسم جوه الرسالة.
-3. [[shipping[method]]]: هات الدالة بالاسم (الأقواس المربعة عشان الاسم جوه متغير).
-4. [[(order)]] بعدها على طول: ناديها بالطلب، ورجّع اللي رجّعته.
-
-### ليه [[hasOwn]] مش [[shipping[method]]] وخلاص؟
-
-أي object عادي بيورث خصايص من [[Object.prototype]] زي [[toString]] و [[constructor]]. شيلت سطر الـ [[hasOwn]] وجرّبت:
-
-~~~text الناتج (Node 24، من غير hasOwn)
-shippingCost(order, "toString")     →  [object Object]
-shippingCost(order, "constructor")  →  { total: 350, items: 3 }
-shippingCost(order, "fast")         →  TypeError: shipping[method] is not a function
+~~~text الناتج
+false true true true
 ~~~
 
-- [[toString]] اتنادت كـ «طريقة شحن» ورجّعت نص بدل رقم.
-- [[constructor]] هو [[Object]] نفسه، و [[Object(order)]] بيرجّع الـ order زي ما هو.
-- الاسم اللي مش موجود خالص وقع بـ error مش واضح هو انهي اسم.
+- [[/^1+1$/]]: [[+]] هنا «1 مرة أو أكتر» مش حرف، فالـ regex بيطابق [["11"]] و [["111"]] مش [["1+1"]].
+- [[/^a|b$/]] رجّعت [[true]]، بس **للسبب الغلط**: [[|]] بتقسم الـ regex كله لـ «[[^a]]» **أو** «[[b$]]»، و [["a|b"]] بتبدأ بـ a. نفس الـ regex بيقبل [["abc"]] كمان.
+- [[\+]] و [[\|]]: الحرف نفسه.
 
-لو الاسم جاي من يوزر (query string أو فورم)، ده باب لنتايج غريبة. [[hasOwn]] بيقفل الحالات دي كلها برسالة واحدة واضحة. والبديل: [[new Map()]] بدل الـ object، لأن [[map.get("toString")]] بترجّع [[undefined]] (جرّبتها)، فتفحص بـ [[map.has(method)]].
+### الجدول: كل syntax character
+
+جرّبنا كل حرف لوحده في loop: حطيناه بين a و b في الـ regex مرة من غير [[\]] ومرة بيها (يعني [[^a?b$]] و [[^a\?b$]] للـ [[?]] مثلًا)، وجرّبنا الاتنين على النص اللي فيه الحرف نفسه حرفيًا ([["a?b"]]):
+
+| الحرف | من غير [[\]] | مع [[\]] | معناه لو من غير [[\]] |
+|---|---|---|---|
+| [[^]] و [[$]] | مبيطابقش | يطابق | أول وآخر النص (anchor) |
+| [[\]] | مبيطابقش | يطابق | بداية escape للحرف اللي بعده |
+| [[.]] | يطابق بالصدفة | يطابق | أي حرف، فبتطابق النقطة وأي حاجة تانية |
+| [[*]] و [[+]] و [[?]] | مبيطابقش | يطابق | quantifier على الحرف اللي قبله |
+| [[(]] و [[)]] | SyntaxError | يطابق | group: [[Unterminated group]] و [[Unmatched ')']] |
+| [[[]] | SyntaxError | يطابق | class: [[Unterminated character class]] |
+| [[]]] و [[{]] و [[}]] | يطابق (من غير [[u]] بس) | يطابق | حرفي في Annex B، و SyntaxError مع [[u]] |
+| [[|]] | يطابق بالصدفة | يطابق | «أو» بيقسم الـ regex كله |
+| [[/]] | يطابق في [[new RegExp]] | يطابق | بيقفل الـ literal لو كتبته بين [[/ /]] |
+
+**القاعدة العملية:** أي حرف من دول عايزه حرفي: [[\]] قبله. والحروف العادية (حروف وأرقام ومسافة) **متحطش** قبلها [[\]]: [[\d]] و [[\b]] و [[\s]] ليهم معنى، والباقي بيرمي مع [[u]].
+
+### الـ SyntaxError نفسها
+
+~~~js app.mjs
+try { new RegExp("price (EGP"); } catch (e) { console.log(e.message); }
+~~~
+
+~~~text الناتج
+Invalid regular expression: /price (EGP/: Unterminated group
+~~~
 
 ---
 
-## ٤. التشغيل
+## ٤. [[u]] بيقفل باب التساهل
 
-~~~text app.mjs
-const order = { total: 350, items: 3 };
-console.log(shippingCost(order, "standard"));
-console.log(shippingCost(order, "express"));
-console.log(shippingCost({ total: 600, items: 1 }, "standard"));
-shipping.sameDay = () => 150;
-console.log(shippingCost(order, "sameDay"));
-try { shippingCost(order, "toString"); } catch (e) { console.log(e.message); }
+~~~js app.mjs
+console.log(/a]b/.test("a]b"), /a{b/.test("a{b"));
+try { new RegExp("a]b", "u"); } catch (e) { console.log(e.message); }
+try { new RegExp("\\-", "u"); } catch (e) { console.log(e.message); }
 ~~~
 
-~~~text الناتج (Node 24)
-40
-95
-0
-150
-طريقة شحن مش معروفة: toString
+~~~text الناتج
+true true
+Invalid regular expression: /a]b/u: Lone quantifier brackets
+Invalid regular expression: /\-/u: Invalid escape
 ~~~
 
-| السطر | الناتج | ليه |
-|---|---|---|
-| [[standard]] على 350 | 40 | أقل من 500 فالشحن مش مجاني |
-| [[express]] على 3 قطع | 95 | 80 ثابت وبعدها 3 × 5 = 15 |
-| [[standard]] على 600 | 0 | عدّى الـ 500 فالشحن مجاني |
-| [[sameDay]] | 150 | strategy جديدة اتضافت سطر واحد ومحدش لمس [[shippingCost]] |
-| [[toString]] | الرسالة | [[hasOwn]] رفض الاسم الموروث ورمى RangeError بالاسم |
+من غير [[u]] الـ engine بيقرا [[]]] و [[{]] لوحدهم كحروف عادية، و [[\-]] كـ [[-]] (ده اسمه Annex B: قواعد متساهلة عشان كود قديم ميبوظش). مع [[u]] أو [[v]] كله ده SyntaxError. وجرّبنا كمان [[{]] لوحدها و [[}]] بنفس الرسالة، و [[a{2]] بـ [[Incomplete quantifier]]، و [[\q]] بـ [[Invalid escape]].
 
-السطر [[shipping.sameDay = ...]] هو كل الفكرة: طريقة جديدة من غير ما تفتح الدالة اللي شغالة.
-
----
-
-## ٥. Strategy حواليك من غير ما تاخد بالك
-
-الـ [[sort]] و [[toSorted]] بيعرفوا يرتّبوا، وانت بتديهم «إزاي تقارن اتنين» كدالة. يعني الـ comparator هو الـ strategy:
-
-~~~text sort.mjs
-const products = [{ name: "mug", price: 120 }, { name: "cap", price: 90 }, { name: "bag", price: 300 }];
-const sorters = {
-  cheap: (a, b) => a.price - b.price,
-  name: (a, b) => a.name.localeCompare(b.name),
-};
-console.log(products.toSorted(sorters.cheap).map((p) => p.name).join(" "));
-console.log(products.toSorted(sorters.name).map((p) => p.name).join(" "));
-~~~
-
-~~~text الناتج (Node 24)
-cap mug bag
-bag cap mug
-~~~
-
-- [[a.price - b.price]]: رقم سالب معناه «a الأول»، فالترتيب تصاعدي بالسعر.
-- [[localeCompare]]: بتقارن نصين حسب اللغة (وبتشتغل مع العربي).
-- [[toSorted]]: زي [[sort]] بس بترجّع array جديدة ومبتغيّرش الأصلية (درس «sort و toSorted»).
-
-ونفس الفكرة في Passport.js ([[passport.use(new GoogleStrategy(...))]])، وفي اختيار طريقة الدفع، وفي الـ validation rules.
-
----
-
-## ٦. strategy ليها إعدادات: factory
-
-لو عايز خصم 20٪ وخصم 35٪، متكتبش دالتين متكررين. اعمل دالة **بتعمل** strategy:
-
-~~~text percent.mjs
-const percent = (p) => (amount) => amount * (1 - p / 100);
-const discounts = { summer: percent(20), vip: percent(35) };
-console.log(discounts.summer(200), discounts.vip(200));
-~~~
-
-~~~text الناتج (Node 24)
-160 130
-~~~
-
-[[percent(20)]] بترجّع دالة جديدة فاكرة [[p = 20]] في الـ closure (درس «closure»)، وبعدين [[discounts.summer(200)]] بتحسب [[200 * 0.8]]. ده factory زي اللي في «module pattern و IIFE» بس بيطلّع دوال.
-
-> خلي بالك من الأرقام العشرية: [[19.99 * 0.9]] بتطلع [[17.991]]. في الفلوس قرّب بـ [[Math.round(x * 100) / 100]] أو احسب بالقروش (أرقام صحيحة).
+**النتيجة:** لو هتضيف [[u]] لـ regex قديم (عشان العربي أو الـ emoji)، شغّله الأول: أي escape زيادة أو قوس لوحده هيبان.
 
 ---
 
 ## الخلاصة
 
-| الحتة | دورها |
+| عايز تطابق | اكتب |
 |---|---|
-| object (أو [[Map]]) من الدوال | كل طريقة لوحدها، بنفس شكل الـ arguments والراجع |
-| [[Object.hasOwn]] أو [[map.has]] | يرفض الأسامي الغلط والموروثة زي [[toString]] برسالة واضحة |
-| الدالة اللي بتختار | تفحص وتنادي، ومبتتغيّرش لما طريقة تتضاف |
-| factory زي [[percent(20)]] | strategy ليها إعدادات من غير تكرار |
-
-- الـ switch اللي بيكبر مع كل حالة جديدة هو العلامة إنك محتاج Strategy.
-- طريقتين ومش هيزيدوا؟ [[if]] عادية أوضح.`,
+| أي حرف ما عدا السطر الجديد | [[.]] |
+| أي حرف بما فيه السطر الجديد | [[.]] مع [[s]] (أو [[[^]]] أو [[[\s\S]]]) |
+| emoji كحرف واحد | [[.]] مع [[u]] أو [[v]] |
+| نقطة حرفية | [[\.]] أو [[[.]]] |
+| واحد من [[^ $ \ . * + ? ( ) [ ] { } | /]] | [[\]] قبله |
+| نص متغير جاي من برّه | [[RegExp.escape(text)]] |`,
           lines: [
-            R`object الـ strategies: كل key اسم طريقة شحن، وكل قيمة دالة بتحسب المصاريف. الدوال قيم في JavaScript فينفع تتخزّن في object زي الأرقام.`,
-            R`الشحن العادي: لو [[order.total]] 500 أو أكتر يبقى 0، غير كده 40. الـ [[? :]] اسمها ternary: شرط وبعدين قيمة لو صح وقيمة لو غلط.`,
-            R`الشحن السريع: 80 ثابت و 5 لكل قطعة. نفس شكل اللي فوقه بالظبط: بياخد [[order]] ويرجّع رقم، ودي القاعدة اللي بتخلّي الطرق تتبدّل.`,
-            R`الاستلام من الفرع ببلاش. مش محتاجة الطلب فمفيش arguments، و JavaScript بيتجاهل الـ [[order]] اللي هيتبعتلها.`,
-            R`قفلة الـ object.`,
-            R`الدالة اللي بتختار: بتاخد الطلب واسم الطريقة. هي اللي باقي الكود بيناديها، ومش هتتغيّر لما طريقة جديدة تتضاف.`,
-            R`[[Object.hasOwn]] بتتأكد إن الاسم key **بتاع** [[shipping]] نفسه مش موروث. من غيرها [[toString]] و [[constructor]] كانوا هيتنادوا كطرق شحن ويرجّعوا حاجات غريبة.`,
-            R`بنرمي [[RangeError]] (قيمة برّه المسموح) والاسم الغلط جوه الرسالة، فاللي بيقرا اللوج يعرف على طول إيه اللي اتبعت بدل [[undefined]] ساكت.`,
-            R`قفلة الـ if.`,
-            R`[[shipping[method]]] بتجيب الدالة بالاسم اللي في المتغير، و [[(order)]] بعدها بتناديها بالطلب. اللي رجّعته الـ strategy هو اللي بيرجع.`,
-            R`قفلة [[shippingCost]].`,
-            R`طلب للتجربة: إجماليه 350 جنيه وفيه 3 قطع.`,
-            R`بيطبع 40: الإجمالي أقل من 500، فالشحن العادي مش مجاني.`,
-            R`بيطبع 95: الـ 80 الثابتين وبعدهم 3 قطع في 5 = 15.`,
-            R`بيطبع 0: طلب تاني إجماليه 600، عدّى الـ 500 فالشحن العادي مجاني. نفس الـ strategy بتدّي نتيجة مختلفة حسب الطلب.`,
-            R`بنضيف طريقة جديدة (توصيل في نفس اليوم بـ 150) سطر واحد، من غير ما نفتح [[shippingCost]] ولا نلمس الطرق القديمة. دي فايدة الـ pattern كلها.`,
-            R`بيطبع 150: الدالة اللي بتختار لقت الطريقة الجديدة لوحدها.`,
-            R`اسم موروث من [[Object.prototype]]: [[hasOwn]] بيرفضه فبيترمي الـ RangeError، والـ [[catch]] بيطبع «طريقة شحن مش معروفة: toString» بدل ما البرنامج يقع.`,
+            R`٨ حروف هنجرّبهم: حرفين عادي، ومسافة و tab، والأربع line terminators ([[\n]] و [[\r]] و [[\u2028]] و [[\u2029]]).`,
+            R`[[/^.$/]] «النص كله حرف واحد». أول ٤ [[true]] والأربعة الأخيرين [[false]]: النقطة مبتطابقش أي line terminator.`,
+            R`نفس الحروف مع [[s]] (dotAll): كلهم [[true]]، النقطة بقت تطابق السطر الجديد كمان.`,
+            R`الـ emoji حرفين في UTF-16: من غير [[u]] النقطة بتاخد نصه ([[false]])، ومع [[u]] بتاخده كله ([[true]]). و [[[^]]] أي حرف حتى [[\n]].`,
+            R`[[/./g]] بدّلت كل حرف بـ [[*]]، و [[\.]] و [[[.]]] النقطة الحرفية بس فطلع [[v1*2]] مرتين.`,
+            R`literal characters: [[كتاب]] اتلاقت جوه «الكتاب»، و [[cat]] جوه «concatenate»، و [[a b]] بمسافة واحدة فشلت على مسافتين.`,
+            R`[[1+1]] من غير [[\]] معناها «1 مرة أو أكتر ثم 1» ففشلت، و [[\+]] نجحت. و [[^a|b$]] نجحت بالصدفة لأن [[|]] قسمت الـ regex، و [[\|]] نجحت صح.`,
+            R`قوس مفتوح من غير قفلة في نص: [[new RegExp]] رمت [[Unterminated group]] واتمسكت.`,
+            R`من غير [[u]]: [[]]] و [[{]] لوحدهم بيطابقوا نفسهم (قواعد Annex B المتساهلة)، فالاتنين [[true]].`,
+            R`نفس [[a]b]] مع [[u]]: SyntaxError [[Lone quantifier brackets]]. التساهل اتقفل.`,
+            R`[[\-]] برّه الـ class مع [[u]]: [[Invalid escape]]. من غير [[u]] كانت هتبقى [[-]] عادي.`,
           ],
-          sol: R`[[weight]]: [[shipping.weight = (order) => Math.max(30, order.kg * 10)]]، فـ [[{ kg: 2 }]] بيطلع 30 (عشرين أقل من الحد) و [[{ kg: 7 }]] بيطلع 70، ومن غير ما تعدّل [[shippingCost]].
+          ref: [
+            { t: "MDN: Wildcard: .", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Wildcard" },
+            { t: "MDN: Literal character", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Literal_character" },
+            { t: "MDN: Character escape", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Character_escape" },
+            { t: "ECMAScript: SyntaxCharacter", url: "https://tc39.es/ecma262/multipage/text-processing.html#prod-SyntaxCharacter" },
+          ],
+          pre: [{ to: "js/regex: classes و quantifiers", why: R`النقطة والـ quantifiers والـ anchors في أبسط صورهم` }, { to: "js/regex والعربي: Unicode properties", why: R`الـ escapes جوه الـ regex وإزاي [[u]] بيرمي على الغلط` }],
+        },
+        {
+          cmd: "named backreference و modifiers و buffer boundaries",
+          title: "\\k<name> بيرجع لنفس النص، و (?i:...) بيشغّل flag لحتة بس، و \\A و \\z مش في JS لسه",
+          desc: R`ده آخر حتة في الـ syntax:
+• **named backreference** [[\k<name>]]: «نفس النص بالظبط اللي الـ group اللي اسمه [[name]] مسكه». زي [[\1]] بس بالاسم، فمش بيبوظ لو زوّدت أقواس. للحاجات اللي لازم تتقفل بنفس اللي فتحها: تنصيص [["]] أو [[']]، و tag بنفس الاسم، وكلمة متكررة.
+• **modifiers** [[(?i:...)]] و [[(?-i:...)]] و [[(?ims-ims:...)]]: تشغّل أو تطفي flag من [[i]] و [[m]] و [[s]] **لجزء من الـ regex بس**. مثلًا اسم الـ method بأي حالة حروف، والـ path حساس. جديدة (Baseline «newly available»، يعني في آخر نسخ المتصفحات الرئيسية بس): شغالة في Node 24 و Chrome، وجرّبناها على الاتنين.
+• **buffer boundary assertions** [[\A]] (أول النص) و [[\z]] (آخره) و [[\Z]] (آخره أو قبل سطر جديد أخير): موجودين في PCRE و Python، و MDN كاتب لهم صفحة، بس **مش متطبقين** في Node 24.22 ولا Chrome 157: مع [[u]] بيرموا [[Invalid escape]]، ومن غير [[u]] [[\A]] بتطابق حرف [[A]] عادي. البديل: [[^]] و [[$]] **من غير** [[m]] هما بالظبط [[\A]] و [[\z]]، و [[\n?$]] بدل [[\Z]].`,
+          example: R`// named backreference: \k<name> = نفس النص اللي الـ group ده مسكه
+const quoted = /(?<q>["'])(?<body>.*?)\k<q>/g;
+console.log([...$__btsay "it's ok" and 'hi'$__bt.matchAll(quoted)].map((m) => m.groups.body));
+const dup = /(?<!\p{L})(?<w>\p{L}+)\s+\k<w>(?!\p{L})/giu;
+console.log("ده ده كلام the The end".replace(dup, "$<w>"));
+console.log(/\b(?<w>\w+)\s+\k<w>\b/giu.test("ده ده"));
+// modifiers: flag لجزء من الـ regex بس
+const cmd = /^(?i:get|post) \/api\/[a-z]+$/;
+console.log(cmd.test("GET /api/users"), cmd.test("get /api/users"), cmd.test("GET /API/users"));
+const code = /^(?-i:EG)-\d+$/i;
+console.log(code.test("EG-12"), code.test("eg-12"));
+try { new RegExp("(?g:a)"); } catch (e) { console.log(e.message); }
+// buffer boundaries \A و \z و \Z: مش موجودين في JS لسه
+console.log(/\Afoo/.test("Afoo"));
+try { new RegExp(String.raw$__bt\Afoo\z$__bt, "u"); } catch (e) { console.log(e.message); }
+console.log(/^foo$/.test("foo"), /^foo$/.test("foo\n"), /^foo\n?$/.test("foo\n"), /^foo$/m.test("x\nfoo"));`,
+          try: R`اكتب regex بـ [[\k<tag>]] بيلاقي tags متقفلة صح زي [[<b>bold</b>]] و [[<h2>title</h2>]] في نص، ويرفض [[<i>x</b>]] (اتقفلت بـ tag تاني). وخلي اسم الـ tag مش حساس للحروف، فـ [[<B>up</b>]] تتقبل.`,
+          sol: R`~~~js tags.mjs
+const pair = /<(?<tag>[a-z][a-z0-9]*)>(?<body>[^<]*)<\/\k<tag>>/gi;
+console.log([..."<b>bold</b> <i>x</b> <h2>title</h2> <B>up</b>".matchAll(pair)].map((m) => m.groups.tag + "=" + m.groups.body));
+~~~
 
-من غير [[Object.hasOwn]] (جرّبتها على Node 24): [[shippingCost(order, "toString")]] بيرجّع [["[object Object]"]] (الـ [[toString]] الموروثة اتنادت كأنها طريقة شحن)، و [[shippingCost(order, "constructor")]] بيرجّع الـ order نفسه [[{ total: 350, items: 3 }]] (لأن [[constructor]] هو [[Object]] و [[Object(order)]] بيرجّعه زي ما هو)، و [[shippingCost(order, "fast")]] بيرمي [[TypeError: shipping[method] is not a function]] من غير ما يقول الاسم. بـ [[hasOwn]] التلاتة بيرموا [[RangeError]] برسالة فيها الاسم.
+~~~text الناتج (Node 24.22)
+[ 'b=bold', 'h2=title', 'B=up' ]
+~~~
 
-حل المربع تحت: object [[discounts]] فيه [[none]] و [[percent10]] و [[flat50]]، و [[applyDiscount]] بتفحص بـ [[hasOwn]] وتنادي، و [[registerDiscount]] بترفض اللي مش دالة بـ [[TypeError]] والكود الموجود قبل كده بـ [[Error]].`,
-          solCode: R`shipping.weight = (order) => Math.max(30, order.kg * 10);
-console.log(shippingCost({ kg: 2 }, "weight")); // 30
-console.log(shippingCost({ kg: 7 }, "weight")); // 70
-// حل المربع
-const discounts = {
-  none: (amount) => amount,
-  percent10: (amount) => amount * 0.9,
-  flat50: (amount) => Math.max(0, amount - 50),
-};
-function applyDiscount(amount, code) {
-  if (!Object.hasOwn(discounts, code)) throw new RangeError($__btكود خصم مش معروف: $__{code}$__bt);
-  return discounts[code](amount);
+- [[(?<tag>[a-z][a-z0-9]*)]]: اسم الـ tag، و [[\k<tag>]] في القفلة لازم يبقى **نفس** الاسم، فـ [[<i>x</b>]] اترفضت.
+- [[i]] بتأثر على الـ backreference كمان: [[B]] و [[b]] اتعتبروا نفس الاسم.
+- [[[^<]*]]: الجسم من غير tags جواه. ده تمرين على [[\k]]، مش parser HTML: لـ HTML حقيقي استخدم [[DOMParser]] (درس «إمتى regex غلط»).`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[/(?<a>x)\k<a>/.test("xx")]] و [[/(?<a>x)\k<a>/.test("xy")]] و [[/\k<a>/.test("k<a>")]]، وبعدين [[new RegExp("(?<a>x)\\k<a>|\\k<b>")]].`, done: R`توقعت [[true false true]] وإن الأخير SyntaxError، وعرفت ليه التالت [[true]].`, sol: R`~~~js p1.mjs
+console.log(/(?<a>x)\k<a>/.test("xx"), /(?<a>x)\k<a>/.test("xy"), /\k<a>/.test("k<a>"));
+try { new RegExp("(?<a>x)\\k<a>|\\k<b>"); } catch (e) { console.log(e.message); }
+~~~
+
+~~~text الناتج (Node 24.22)
+true false true
+Invalid regular expression: /(?<a>x)\k<a>|\k<b>/: Invalid named capture referenced
+~~~
+
+- التالت: regex **مفيهوش ولا named group** ومن غير [[u]]، فـ [[\k]] بتتقري حرف [[k]] عادي (Annex B)، و [[<a>]] حروف عادية. فبيطابق النص [["k<a>"]] حرفيًا!
+- الرابع: أول ما يبقى فيه named group واحد في الـ regex، أي [[\k<اسم>]] لازم يبقى اسم موجود، وإلا SyntaxError. ومع [[u]] لازم دايمًا.` },
+            { lvl: 'تطبيق', t: R`**ابني:** regex لـ header [[Content-Type]] بيقبل اسم الـ header بأي حالة حروف ([[Content-Type]] و [[CONTENT-TYPE]] و [[content-type]]) بس القيمة [[application/json]] لازم بالحروف الصغيرة، و [[; charset=utf-8]] اختياري. بـ modifier مش بـ [[i]] على الكل.`, done: R`السطرين الأولين بيعدّوا و [[content-type: Application/JSON]] بيترفض.`, sol: R`~~~js p3.mjs
+const header = /^(?i:content-type):\s*(?<type>application\/json)(?:;\s*charset=(?<cs>utf-8))?$/;
+for (const h of ["Content-Type: application/json", "CONTENT-TYPE: application/json; charset=utf-8", "content-type: Application/JSON"]) {
+  console.log(h, header.test(h));
 }
-function registerDiscount(code, fn) {
-  if (typeof fn !== "function") throw new TypeError("الخصم لازم يبقى function");
-  if (Object.hasOwn(discounts, code)) throw new Error($__btالكود $__{code} موجود قبل كده$__bt);
-  discounts[code] = fn;
-}`,
-          check: {
-            lang: "js",
-            starter: R`// كمّل الـ strategies: percent10 (خصم 10٪) و flat50 (50 جنيه، ومينزلش تحت الصفر)
-const discounts = {
-  none: (amount) => amount,
-};
-// اختار الـ strategy بالاسم، وارمي RangeError فيه الكود لو مش موجود (حتى لو toString)
-function applyDiscount(amount, code) {}
-// ضيف strategy جديدة: TypeError لو fn مش دالة، و Error لو الكود موجود قبل كده
-function registerDiscount(code, fn) {}`,
-            tests: R`test("none و percent10 و flat50", () => expect([applyDiscount(200, "none"), applyDiscount(200, "percent10"), applyDiscount(200, "flat50")]).toEqual([200, 180, 150]));
-test("flat50 مينزلش تحت الصفر", () => expect(applyDiscount(30, "flat50")).toBe(0));
-test("كود مش موجود ← RangeError فيه اسم الكود", () => expect(() => applyDiscount(100, "BLACKFRIDAY")).toThrow("BLACKFRIDAY"));
-test("اسم موروث زي toString مش strategy", () => expect(() => applyDiscount(100, "toString")).toThrow("toString"));
-test("registerDiscount بيضيف strategy بتشتغل على طول", () => {
-  registerDiscount("half", (amount) => amount / 2);
-  expect(applyDiscount(300, "half")).toBe(150);
-});
-test("fn مش دالة ← TypeError", () => expect(() => registerDiscount("bad", 50)).toThrow(/function/));
-test("كود موجود قبل كده ← Error", () => expect(() => registerDiscount("none", (a) => a)).toThrow("none"));`,
-            solution: R`const discounts = {
-  none: (amount) => amount,
-  percent10: (amount) => amount * 0.9,
-  flat50: (amount) => Math.max(0, amount - 50),
-};
-function applyDiscount(amount, code) {
-  if (!Object.hasOwn(discounts, code)) throw new RangeError($__btكود خصم مش معروف: $__{code}$__bt);
-  return discounts[code](amount);
-}
-function registerDiscount(code, fn) {
-  if (typeof fn !== "function") throw new TypeError("الخصم لازم يبقى function");
-  if (Object.hasOwn(discounts, code)) throw new Error($__btالكود $__{code} موجود قبل كده$__bt);
-  discounts[code] = fn;
-}`
-          }
-        }
-      ]
+~~~
+
+~~~text الناتج (Node 24.22)
+Content-Type: application/json true
+CONTENT-TYPE: application/json; charset=utf-8 true
+content-type: Application/JSON false
+~~~
+
+[[(?i:content-type)]] بيشغّل [[i]] جوه القوس بس. قبل الـ modifiers كنت هتكتب [[[Cc][Oo][Nn]...]] حرف حرف، أو [[i]] على الكل وتفحص القيمة لوحدها.` },
+            { lvl: 'تطبيق', t: R`**قارن:** في JS، [[$]] من غير [[m]] بتطابق قبل [[\n]] الأخير ولا لأ؟ جرّب [[/^total=\d+$/]] على [["total=40\n"]]، وبعدين [[/^total=\d+\n?$/]] على نفس النص وعلى [["total=40\n\n"]]، و [[/^total=\d+$/m]] على [["x\ntotal=40\ny"]].`, done: R`عرفت إن [[$]] في JS زي [[\z]] (آخر النص بالظبط)، مش زي [[$]] في Python و PCRE اللي بتسمح بسطر جديد أخير، وإن [[\n?$]] هو بديل [[\Z]].`, sol: R`~~~js p4.mjs
+const lines = "total=40\n";
+console.log(/^total=\d+$/.test(lines), /^total=\d+\n?$/.test(lines), /^total=\d+\n?$/.test("total=40\n\n"), /^total=\d+$/m.test("x\ntotal=40\ny"));
+~~~
+
+~~~text الناتج (Node 24.22)
+false true false true
+~~~
+
+| في JS | زي إيه في PCRE و Python |
+|---|---|
+| [[^]] من غير [[m]] | [[\A]]: أول النص بالظبط |
+| [[$]] من غير [[m]] | [[\z]]: آخر النص بالظبط، حتى لو فيه [[\n]] أخير |
+| [[\n?$]] من غير [[m]] | [[\Z]]: آخر النص أو قبل سطر جديد واحد أخير |
+| [[^]] و [[$]] مع [[m]] | [[^]] و [[$]] مع MULTILINE: أول وآخر كل سطر |
+
+فخ لو جاي من Python: [[re.match(r"^\d+$", "40\n")]] بتنجح هناك، و [[/^\d+$/.test("40\n")]] بتفشل هنا. اعمل [[trim()]] للـ input، أو [[\n?$]].` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** حد نقل regex من PHP: [[new RegExp(String.raw$__bt\Aabc\z$__bt, "u")]]. شغّله، وبعدين جرّبه من غير [[u]] على [["Aabcz"]] وعلى [["abc"]]، وصلّحه.`, done: R`شفت [[Invalid escape]] مع [[u]]، وإن من غير [[u]] الـ regex بقى يطابق [["Aabcz"]] (حروف A و z عادية!) ومش [["abc"]]، وصلّحته لـ [[/^abc$/u]].`, sol: R`~~~js p5.mjs
+try { new RegExp(String.raw$__bt\Aabc\z$__bt, "u"); } catch (e) { console.log(e.message); }
+console.log(new RegExp(String.raw$__bt\Aabc\z$__bt).test("Aabcz"), new RegExp(String.raw$__bt\Aabc\z$__bt).test("abc"));
+console.log(/^abc$/u.test("abc"), /^abc$/u.test("abc\n"), /^abc$/u.test("x\nabc"));
+~~~
+
+~~~text الناتج (Node 24.22)
+Invalid regular expression: /\Aabc\z/u: Invalid escape
+true false
+true false false
+~~~
+
+- مع [[u]]: SyntaxError واضحة، وده الأحسن: الغلط بان.
+- من غير [[u]]: الأخطر. [[\A]] و [[\z]] escapes مش معروفة، فـ Annex B بيقراهم حروف [[A]] و [[z]]، والـ regex بقى «A ثم abc ثم z» **من غير ولا error**.
+- [[/^abc$/u]] هو [[\Aabc\z]] بالظبط: [[^]] و [[$]] من غير [[m]].
+- وده سبب كفاية تحط [[u]] (أو [[v]]) في أي regex جديد.` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`[[\k<name>]] هو الطريقة الوحيدة في الـ regex تقول «نفس اللي فات» (مش «نفس الشكل»)، ومن غيرها [[["'].*?["']]] بتقفل [["...']] غلط. والـ modifiers بتحل مشكلة قديمة: جزء من النص مش حساس للحروف (اسم header، أمر، كلمة مفتاحية) والباقي حساس (قيمة، كود، ID). و [[\A]] و [[\z]] هتقابلهم في كود منقول من PHP أو Python أو Ruby، ولازم تعرف إنهم مش هيشتغلوا وإزاي يبوظوا في صمت.`,
+            how: R`[[\k<name>]] بيقارن بالنص اللي الـ group مسكه **في الـ match ده**، مش بالـ pattern. لو الـ group مشاركش (اختياري أو في بديل تاني)، الـ backreference بيطابق فاضي. ومع [[i]] المقارنة مش حساسة للحروف. ولو فيه named groups في الـ regex (أو فيه [[u]] أو [[v]])، [[\k<اسم>]] لاسم مش موجود SyntaxError. ومن ES2025 ينفع نفس الاسم في بديلين مختلفين ([[(?<y>\d{4})-\d\d|\d\d-(?<y>\d{4})]])، وجرّبناه على Node 24.22 و Chrome 157 وطلّع السنة من الشكلين.
+
+الـ modifier [[(?flags-flags:...)]] group من غير حفظ (زي [[(?:...)]]) بس بيغيّر flags جواه. المسموح [[i]] و [[m]] و [[s]] بس: [[(?g:a)]] بيرمي [[Invalid group]]، و [[(?u:a)]] كمان، و [[(?i-i:a)]] بيرمي [[Repeated flag in flag group]]. و [[(?m:^b)]] و [[(?s:.)]] اشتغلوا في تجربتنا.
+
+[[\A]] و [[\z]] و [[\Z]] في PCRE معناهم أول النص، وآخره، وآخره أو قبل [[\n]] أخير. في JS **مفيش** syntax ليهم (لسه اقتراح في TC39 ومش في الـ spec). من غير [[u]] أي escape لحرف عادي بيبقى الحرف نفسه، فـ [[\A]] = [[A]]. البديل: [[^]] و [[$]] من غير [[m]] (و [[$]] في JS عمرها ما بتسمح بـ [[\n]] أخير، يعني هي [[\z]] مش [[\Z]]).`,
+            when: R`[[\k<name>]]: تنصيص بيتقفل بنفسه، و tags، وكلمات متكررة، و delimiters زي [[--- ... ---]] أو heredoc. الـ modifiers: لما جزء صغير بس محتاج flag مختلف، خصوصًا [[(?i:...)]] لكلمات مفتاحية وسط قيم حساسة. و [[^]] و [[$]] من غير [[m]] في أي validation (ده [[\A]] و [[\z]] بتوعك).`,
+            mistakes: R`[[\b(?<w>\w+)\s+\k<w>\b]] على عربي: [[\b]] و [[\w]] إنجليزي بس فمبتلاقيش «ده ده» (جرّبناها: [[false]]). و [[\1]] بعد ما تزوّد group قبله فيتزحلق (استخدم الاسم). و [[\k<name>]] من غير named groups ومن غير [[u]] فبيطابق حرفيًا [[k<name>]]. ومودفاير بـ [[g]] أو [[u]] أو [[y]] (مش مسموحين). وكود فيه [[\A]] أو [[\z]] أو [[\K]] من PCRE من غير [[u]] فيبوظ في صمت.`
+          },
+          teach: R`## الفكرة في سطر
+
+٣ حاجات من الـ syntax لسه مشفناهاش: **رجوع لنفس النص** بالاسم، و**flag لحتة** من الـ regex، و anchors من لغات تانية **مش موجودة** عندنا. كل الناتج اتشغّل فعلًا على Node 24.22، والـ modifiers و [[\A]] اتجرّبوا كمان على Chrome 157 بنفس النتيجة.
+
+---
+
+## ١. named backreference: [[\k<name>]]
+
+### تنصيص بيتقفل بنفس اللي فتحه
+
+~~~js app.mjs
+const quoted = /(?<q>["'])(?<body>.*?)\k<q>/g;
+console.log([...$__btsay "it's ok" and 'hi'$__bt.matchAll(quoted)].map((m) => m.groups.body));
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[(?<q>["'])]] | علامة تنصيص (مزدوجة أو مفردة) في group اسمه [[q]] |
+| [[(?<body>.*?)]] | الكلام اللي جوه، lazy عشان يقف عند أول قفلة صح |
+| [[\k<q>]] | **نفس** العلامة اللي [[q]] مسكها، مش أي علامة |
+
+~~~text الناتج
+[ "it's ok", 'hi' ]
+~~~
+
+[["it's ok"]] اتفتحت بـ [["]] فالـ [[']] اللي جواها مقفلتهاش. لو كتبنا [[["'](.*?)["']]] بدل [[\k<q>]] كانت هتقف عند [[']] وتطلّع [["it"]].
+
+### كلمة متكررة بالعربي
+
+~~~js app.mjs
+const dup = /(?<!\p{L})(?<w>\p{L}+)\s+\k<w>(?!\p{L})/giu;
+console.log("ده ده كلام the The end".replace(dup, "$<w>"));
+console.log(/\b(?<w>\w+)\s+\k<w>\b/giu.test("ده ده"));
+~~~
+
+~~~text الناتج
+ده كلام the end
+false
+~~~
+
+- [[\k<w>]] مع [[i]]: [[The]] اتعتبرت زي [[the]].
+- [[$<w>]] في الاستبدال: أول نسخة بس.
+- السطر التاني: الشكل المشهور بـ [[\b]] و [[\w]] **فشل** على العربي، لأن الاتنين إنجليزي بس حتى مع [[u]]. عشان كده استخدمنا lookaround بـ [[\p{L}]] (المشروع «مصلّح الكلمات المتكررة» مبني على كده).
+
+---
+
+## ٢. modifiers: [[(?i:...)]] و [[(?-i:...)]]
+
+~~~js app.mjs
+const cmd = /^(?i:get|post) \/api\/[a-z]+$/;
+console.log(cmd.test("GET /api/users"), cmd.test("get /api/users"), cmd.test("GET /API/users"));
+~~~
+
+~~~text الناتج
+true true false
+~~~
+
+[[(?i:get|post)]]: group من غير حفظ، و [[i]] شغالة **جواه بس**. فالـ method بأي حالة، والـ path لازم صغير.
+
+~~~js app.mjs
+const code = /^(?-i:EG)-\d+$/i;
+console.log(code.test("EG-12"), code.test("eg-12"));
+~~~
+
+~~~text الناتج
+true false
+~~~
+
+العكس: [[i]] على الكل، و [[(?-i:EG)]] **بيطفيها** للـ [[EG]] بس. والشكل الكامل [[(?ims-ims:...)]]: اللي قبل [[-]] بيتشغّل واللي بعدها بيتطفي.
+
+### المسموح والممنوع
+
+~~~js app.mjs
+try { new RegExp("(?g:a)"); } catch (e) { console.log(e.message); }
+~~~
+
+~~~text الناتج
+Invalid regular expression: /(?g:a)/: Invalid group
+~~~
+
+| الـ modifier | النتيجة في Node 24.22 |
+|---|---|
+| [[(?i:a)]] و [[(?-i:a)]] | شغالين: بيشغّلوا أو يطفوا [[i]] جوه القوس |
+| [[(?m:^b)]] على [["a\nb"]] | [[true]]: [[^]] لكل سطر جوه الـ group بس |
+| [[(?s:.)]] بين a و b على [["a\nb"]] | [[true]]: النقطة خدت [[\n]] |
+| [[(?g:a)]] و [[(?u:a)]] | [[Invalid group]]: [[i]] و [[m]] و [[s]] بس المسموحين |
+| [[(?i-i:a)]] | [[Repeated flag in flag group]] |
+
+الـ modifiers Baseline «newly available»: موجودة في آخر نسخ المتصفحات الرئيسية، بس مش في القديمة. لو كودك لازم يشتغل على متصفحات قديمة، الـ regex هيرمي SyntaxError وقت التحميل.
+
+---
+
+## ٣. buffer boundary assertions: [[\A]] و [[\z]] و [[\Z]]
+
+دول في PCRE (PHP و grep -P) و Python و Ruby:
+
+| الـ assertion | معناه هناك |
+|---|---|
+| [[\A]] | أول النص بالظبط، حتى مع multiline |
+| [[\z]] | آخر النص بالظبط |
+| [[\Z]] | آخر النص، أو قبل سطر جديد أخير |
+
+MDN كاتب لهم صفحة، بس جرّبناهم:
+
+~~~js app.mjs
+console.log(/\Afoo/.test("Afoo"));
+try { new RegExp(String.raw$__bt\Afoo\z$__bt, "u"); } catch (e) { console.log(e.message); }
+~~~
+
+~~~text الناتج (Node 24.22، ونفس الرسالة في Chrome 157)
+true
+Invalid regular expression: /\Afoo\z/u: Invalid escape
+~~~
+
+- من غير [[u]]: [[\A]] بقت حرف [[A]] عادي، و [[/\Afoo/]] طابقت [["Afoo"]]. **أسوأ حالة**: مفيش error والمعنى اتغيّر.
+- مع [[u]]: SyntaxError. وجرّبنا [[\z]] و [[\Z]] لوحدهم ومع [[v]]: نفس الرسالة.
+
+### البديل اللي شغال النهارده
+
+~~~js app.mjs
+console.log(/^foo$/.test("foo"), /^foo$/.test("foo\n"), /^foo\n?$/.test("foo\n"), /^foo$/m.test("x\nfoo"));
+~~~
+
+~~~text الناتج
+true false true true
+~~~
+
+| عايز | في JS |
+|---|---|
+| [[\A]] | [[^]] من غير [[m]]: أول النص بس، مهما كان فيه سطور |
+| [[\z]] | [[$]] من غير [[m]]: في JS عمرها ما بتعدّي [[\n]] أخير ([["foo\n"]] فشلت) |
+| [[\Z]] | [[\n?$]] من غير [[m]]: سطر جديد واحد اختياري وبعده آخر النص |
+| أول وآخر كل سطر | [[^]] و [[$]] **مع** [[m]]، وده مش [[\A]] ولا [[\z]] |
+
+---
+
+## الخلاصة
+
+| الحاجة | اكتبها | خلي بالك |
+|---|---|---|
+| نفس النص اللي group مسكه | [[\k<name>]] | مع [[i]] مش حساس للحروف، والاسم لازم يبقى موجود |
+| flag لحتة | [[(?i:...)]] و [[(?-i:...)]] و [[(?ims-ims:...)]] | [[i]] و [[m]] و [[s]] بس، ومش في المتصفحات القديمة |
+| أول وآخر النص بالظبط | [[^...$]] من غير [[m]] | ده [[\A]] و [[\z]] بتوعنا |
+| [[\A]] و [[\z]] و [[\Z]] و [[\K]] من PCRE | مش موجودين | من غير [[u]] بيبقوا حروف عادية في صمت |`,
+          lines: [
+            R`[[(?<q>["'])]] بيمسك علامة التنصيص اللي فتحت، و [[\k<q>]] في الآخر لازم يبقى **نفس** العلامة، والكلام اللي بينهم في [[body]].`,
+            R`[[matchAll]] على جملة فيها تنصيصين: الأول [["..."]] وجواه [[']]، والتاني [['...']]. طلع [["it's ok"]] كاملة و [['hi']].`,
+            R`كلمة متكررة بأي لغة: [[\p{L}+]] كلمة، و [[\k<w>]] نفس الكلمة، والـ lookaround بدل [[\b]] عشان العربي، و [[i]] عشان [[The]] زي [[the]].`,
+            R`[[replace]] بـ [[$<w>]] بيسيب نسخة واحدة: [[ده كلام the end]].`,
+            R`الشكل المشهور بـ [[\b]] و [[\w]] على «ده ده» رجّع [[false]]: الاتنين بيفهموا إنجليزي بس حتى مع [[u]].`,
+            R`modifier [[(?i:get|post)]]: الـ method بأي حالة حروف، وباقي الـ regex (الـ path) حساس.`,
+            R`[[GET]] و [[get]] عدّوا، و [[/API/]] بالكابيتال فشلت لأن [[i]] جوه القوس بس: [[true true false]].`,
+            R`العكس: [[i]] على الـ regex كله، و [[(?-i:EG)]] بيطفيها للـ [[EG]] بس.`,
+            R`[[EG-12]] عدّت و [[eg-12]] فشلت: [[true false]].`,
+            R`[[g]] مش مسموحة في modifier ([[i]] و [[m]] و [[s]] بس)، فـ [[Invalid group]].`,
+            R`[[\A]] من غير [[u]]: escape مش معروف بيبقى الحرف نفسه، فـ [[/\Afoo/]] طابقت [["Afoo"]]. ده اللي بيحصل لكود منقول من PHP في صمت.`,
+            R`مع [[u]]: [[\A]] و [[\z]] SyntaxError [[Invalid escape]]: مش متطبقين في JS.`,
+            R`البديل: [[^foo$]] من غير [[m]] = [[\Afoo\z]]، فـ [["foo\n"]] فشلت. و [[\n?$]] = [[\Z]] فعدّت. ومع [[m]] لكل سطر.`,
+          ],
+          ref: [
+            { t: "MDN: Named backreference: \\k<name>", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Named_backreference" },
+            { t: "MDN: Modifier: (?ims-ims:...)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Modifier" },
+            { t: "MDN: Buffer boundary assertion", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Buffer_boundary_assertion" },
+            { t: "MDN: Input boundary assertion: ^, $", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Input_boundary_assertion" },
+          ],
+          pre: [{ to: "js/groups و flags", why: R`الـ named groups و [[\1]] اللي [[\k<name>]] بيكمّلها` }, { to: "js/test و match و matchAll و replace", why: R`[[$<name>]] في الاستبدال` }],
+        },
+      ],
     }
 ]);

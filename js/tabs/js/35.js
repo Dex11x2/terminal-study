@@ -1,1443 +1,1453 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "JS في المتصفح بعمق",
+      t: "مشروع: fetch محترم",
       l: 3,
-      time: R`حوالي ٤ ساعات، وكل درس فيه معمل صغير بيشتغل على جهازك`,
+      time: R`حوالي ساعتين`,
       goal: [
-        R`تحط «حارس» قدام أي object بـ [[Proxy]]: يتحقق من القيم، ويسجّل مين قرا إيه، ويدّي قيم افتراضية، وتفهم إن ده بالظبط اللي ورا [[reactive]] في Vue 3.`,
-        R`تختار صح بين polling و SSE و WebSocket لأي ميزة لحظية (إشعارات، شات، أسعار)، وتكتب العميل اللي بيرجع يتصل لوحده لما الشبكة تقع.`,
-        R`تستخدم الحافظة والمكان والمشاركة صح: صفحة آمنة (https أو localhost)، وضغطة من اليوزر، وصلاحيات، و feature detection، ورسالة مفهومة لكل خطأ.`,
-        R`تقرا أي رد [[fetch]] حتة حتة بـ Streams: نسبة تحميل حقيقية، وسطور بتتعالج أول ما توصل من غير ما الملف كله يقعد في الرام، ومن غير حروف عربي بايظة.`,
+        R`تفهم ليه [[fetch]] **مش بترمي** على 404، وتعمل أخطاء ليها نوع.`,
+        R`تحط مهلة لأي طلب بـ [[AbortSignal.timeout]]، وتسمح لليوزر يلغي.`,
+        R`تعيد المحاولة على الأخطاء المؤقتة بس، بمهلة أُسّية فيها عشوائية.`,
+        R`تختبر كل ده **من غير شبكة** خالص.`,
+        R`تفهم خطأ CORS من ناحية [[fetch]] وتبعت الكوكيز بـ [[credentials]] صح.`,
       ],
       use: {
-        prog: R`الأربع حاجات دول هما الفرق بين صفحة «بتشتغل» وتطبيق بيتحس إنه حي: الداتا بتتحدّث لوحدها، والفورم بيرفض الغلط قبل ما يوصل، وزرار «انسخ» و «شارك» شغالين على الموبايل، والملف الكبير بيبان بيتحمّل.`,
-        work: R`«الأسعار مبتتحدّثش غير لما أعمل refresh»، و «زرار النسخ مش شغّال على الموقع الحقيقي بس شغّال عندي»، و «الصفحة بتهنّج لما الملف كبير» — تلات شكاوى بتتكرر في أي شغل frontend، والوحدة دي بتقفلهم.`,
-        cs: R`الـ metaprogramming (كود بيغيّر سلوك كود تاني)، والفرق بين pull و push في الشبكات، ونموذج الصلاحيات في المتصفح (origin و secure context)، و backpressure اللي هو نفس فكرة الـ flow control في TCP.`,
-        net: R`SSE هو HTTP عادي بيفضل مفتوح، و WebSocket بيبدأ HTTP وبعدين يتحوّل ([[101 Switching Protocols]]) لقناة في الاتجاهين. وده بيأثر على الـ proxy والـ load balancer والـ timeouts.`,
+        prog: R`كل تطبيق فيه طلبات شبكة محتاج الأربع حاجات دي. والمكتبات الجاهزة بتعملهم — بس اللي بيفهمهم بيعرف يظبطهم ويشخّص لما يقعوا.`,
+        net: R`الشبكة بتفشل. و٥٠٣ مؤقتة غير ٤٠٤ دائمة، وإعادة المحاولة على التانية هدر وعلى الأولى إنقاذ. والتفرقة دي هي المشروع كله.`,
+        cs: R`الـ exponential backoff with jitter خوارزمية حقيقية: من غير العشوائية، كل العملاء بيعيدوا في نفس اللحظة وبيوقّعوا السيرفر تاني (thundering herd).`,
+        work: R`الطلب اللي بيعلّق للأبد بيخلي واجهتك تبان مكسورة. والمهلة سطر واحد.`,
       },
-      lab: R`mkdir -p ~/lab/deep && cd ~/lab/deep && npm init -y && npm pkg set type=module && npm i ws`,
+      lab: R`mkdir -p ~/lab/jslab && cd ~/lab/jslab && npm init -y && npm pkg set type=module`,
       projects: [
-        { lvl: 'صغير', t: R`فورم بيرفض الغلط بـ Proxy`, what: R`object إعدادات ([[port]] و [[host]] و [[debug]]) ملفوف في [[Proxy]] بـ [[set]] بيرفض أي نوع غلط وبرسالة فيها اسم الخاصية والقيمة اللي وصلت، و [[get]] بيرجّع قيمة افتراضية للي مش موجود. من درس «Proxy و Reflect».`, done: R`[[cfg.port = '80']] بيرمي [[TypeError]] فيه كلمة [[port]]، و [[cfg.port = 8080]] بيعدّي، و [[cfg.timeout]] بيرجّع القيمة الافتراضية مش [[undefined]]، و [[JSON.stringify(cfg)]] شغّال من غير error.` },
-        { lvl: 'صغير', t: R`زرار «انسخ» لكل صندوق كود`, what: R`صفحة فيها كذا [[pre]]، وجنب كل واحد زرار بينسخ نصه بـ [[navigator.clipboard.writeText]] ويكتب «اتنسخ ✓» لمدة ثانيتين. ولو الحافظة مش موجودة (الصفحة مش آمنة) الزرار بيختفي أو بيقول السبب. من درس «Clipboard و Geolocation و Share».`, done: R`على [[localhost]] الزرار بينسخ والنص بيتلصق صح في أي برنامج، وعلى [[http://]] من جهاز تاني في الشبكة الزرار مبيرميش error ساكت في الـ Console، وبيقول ليه مش شغّال.` },
-        { lvl: 'متوسط', t: R`لوحة أسعار لحظية بـ SSE`, what: R`سيرفر Node بـ [[http]] بس بيبعت [[event: price]] كل ثانية فيه [[id:]]، وصفحة بـ [[EventSource]] بتعرض الأسعار وبتلوّن اللي طلع أخضر واللي نزل أحمر، وبتعرض حالة الاتصال من [[readyState]]. من درس «WebSocket و SSE».`, done: R`لما تقفل السيرفر الحالة بتبقى «بيحاول يرجع»، ولما تشغّله تاني بيرجع لوحده من غير refresh، والسيرفر بيطبع [[Last-Event-ID]] اللي وصله، ومفيش سعر بيتكرر ولا بيضيع في العرض.` },
-        { lvl: 'متوسط', t: R`رافع ومنزّل بنسبة حقيقية`, what: R`صفحة بتنزّل ملف كبير بـ [[fetch]] وبتعرض شريط تقدّم من [[getReader()]] و [[content-length]]، وزرار «إلغاء» بـ [[AbortController]]، ولو السيرفر مبعتش الحجم بتعرض الميجات اللي وصلت بدل النسبة. من درس «Streams» ودرس «fetch و AbortController».`, done: R`الشريط بيتحرك مع التحميل ويوصل ١٠٠٪ بالظبط، والإلغاء بيوقّف التحميل (الـ Network tab بيقول canceled)، والملف المضغوط بـ gzip مبيطلّعش نسبة أكتر من ١٠٠٪.` },
-        { lvl: 'كبير', t: R`شات صغير بيستحمل الشبكة`, what: R`سيرفر بـ [[ws]] بيوزّع الرسايل على كل المتصلين، وعميل في المتصفح بيرجع يتصل لوحده بـ backoff (نص ثانية، ثانية، ٢، ٤... لحد ٣٠)، وبيحط الرسايل اللي اتكتبت وهو مقطوع في طابور ويبعتها أول ما يرجع، والحالة (متصل/بيحاول/مقطوع) ظاهرة. وكل رسالة شكلها [[{type, text, at}]] ومتحقق منه قبل الإرسال بـ [[Proxy]] أو دالة تحقق. من دروس الوحدة كلها ودرس «EventEmitter».`, done: R`تقفل السيرفر ٢٠ ثانية وتكتب ٣ رسايل: بتظهر «في الطابور»، ولما السيرفر يرجع بتتبعت بالترتيب ومرة واحدة بس. والسيرفر بيكتب لوج سطر لكل اتصال وقفلة بالـ code. ورسالة JSON بايظة من عميل تاني مبتوقّعش السيرفر (بيرد بـ error ويكمّل). ولو قفلت التاب وفتحتها تاني بيتصل عادي.`, ext: R`زوّد غرف (rooms)، و «فلان بيكتب...»، وتاريخ آخر ٥٠ رسالة بيتبعت للي لسه داخل، وزرار «شارك لينك الغرفة» بـ [[navigator.share]] مع بديل نسخ.` },
-        { lvl: 'كبير', t: R`عارض لوج حي`, what: R`سيرفر بيعمل [[tail]] على ملف لوج وبيبعت السطور الجديدة SSE، وصفحة بتعرضها بفلتر (error/warn/info) وزرار «وقّف التمرير». والتحميل الأول للملف القديم بيتقري بـ Streams سطر سطر (مش [[res.text()]]) عشان ملف ١٠٠ ميجا ميهنّجش الصفحة. من دروس «WebSocket و SSE» و «Streams».`, done: R`ملف ٥٠ ألف سطر بيبدأ يظهر في أقل من ثانية قبل ما يخلص تحميل، والرام في Task Manager بتاع المتصفح مبتطلعش مع حجم الملف، والسطور الجديدة بتظهر في أقل من ثانية من ما تتكتب، ولو السيرفر وقع ورجع العارض بيكمّل من آخر [[id]].`, ext: R`فلتر بـ regex، وتلوين الـ stack traces، وتحميل الجزء الظاهر بس (virtual list) لما السطور تعدّي ١٠٠ ألف.` },
-        { lvl: 'فكرة', t: R`ميزة لحظية لمشروعك`, what: R`خد مشروع عندك (متجر، مدونة، لوحة تحكم) وضيف له ميزة لحظية واحدة انت اللي تختارها: إشعار طلب جديد، أو عدّاد زوار، أو حالة شحنة، أو تعليقات بتظهر لوحدها. قرّر انت SSE ولا WebSocket ولا polling واكتب ليه في README.`, done: R`الـ README فيه جدول قرارك (اتجاه الداتا، كام مرة في الدقيقة، محتاج auth إزاي)، والميزة بترجع لوحدها بعد ما الشبكة تقع، وفيه اختبار يدوي مكتوب خطوة بخطوة حد تاني يقدر يكرره.`, ext: R`قيس الحمل: كام اتصال مفتوح السيرفر بيستحمله على جهازك، وحط الرقم في الـ README، وجرّبه ورا Nginx (درس «WebSockets» في تاب Nginx).` },
+        { lvl: 'صغير', t: R`حطّها في مشروع حقيقي`, what: R`بدّل [[fetch]] في مشروع عندك بـ [[request]]. وشوف كام مكان كنت ناسي فيه تفحص [[res.ok]]. من درس «مشروع — fetch مش بترمي على 404».`, done: R`البحث عن [[fetch(]] في المشروع مبيطلّعش غير ملف [[request.js]]، وكاتب عدد الأماكن اللي كانت ناسية [[res.ok]]، وكل [[catch]] بقى بيفرّق بـ [[instanceof]].` },
+        { lvl: 'صغير', t: R`فاحص روابط بمهلة`, what: R`[[check-links.mjs]] بياخد لستة روابط ويطلب كل واحد بـ [[request]] ومهلة ٣ ثواني و [[retries: 0]]، ويطبع لكل رابط الـ status أو نوع الخطأ. جرّبه على [[https://example.com]] وسيرفرات محلية. من الدرسين الأولانيين.`, done: R`رابط شغال بيطبع 200، وبورت مقفول بيطبع [[NetworkError]] و [[ECONNREFUSED]]، وسيرفر بطيء بيطبع [[TimeoutError]] بعد حوالي ٣ ثواني، ورابط 404 بيطبع [[HttpError 404]]، وولا رابط بيوقّف اللي بعده.` },
+        { lvl: 'متوسط', t: R`كاش للطلبات المتكررة`, what: R`[[Map]] من الـ URL للـ Promise. لو نفس الطلب اتطلب وهو لسه شغال، رجّع نفس الـ Promise بدل ما تعمل طلب تاني. اسمها request deduplication.`, done: R`٣ نداءات في نفس اللحظة لنفس الرابط: [[fakeFetch]] اتنادى مرة واحدة والتلاتة خدوا نفس الداتا. ولو الطلب فشل المدخل بيتشال من الـ [[Map]]، فالنداء اللي بعده بيعمل طلب جديد ([[calls.length]] بقت 2). ومكتوبين اختبارات بـ [[node --test]].` },
+        { lvl: 'متوسط', t: R`حدّ للتزامن`, what: R`لو بتعمل ٥٠ طلب، متعملهمش كلهم مرة واحدة. اكتب [[pool(items, limit, fn)]] بتشغّل [[limit]] بس في نفس الوقت. هتحتاج [[Promise.race]] ومصفوفة شغالة.`, done: R`مع ٢٠ عنصر و [[limit]] بـ 3، عدّاد «شغال دلوقتي» عمره ما عدّى 3، والنتايج بنفس ترتيب المدخل مهما مين خلص الأول، وعنصر بيرمي بيتسجّل كـ [[{ ok: false, error }]] ومبيوقّفش الباقي.` },
+        { lvl: 'كبير', t: R`قاطع الدايرة (circuit breaker)`, what: R`لو الخدمة فشلت ٥ مرات ورا بعض، بطّل تحاول لمدة دقيقة وارمي على طول. ده بيحمي السيرفر اللي واقع من إنك تزوّد عليه. الوقت بييجي من [[now]] بتمرره (عشان تختبر من غير ما تستنى)، وفيه [[onStateChange]] للوج. من درس «إعادة المحاولة الذكية» و «اختبرها من غير شبكة».`, done: R`اختبارات بـ [[node --test]] وساعة مزيّفة: بعد ٥ فشل النداء السادس بيرمي [[CircuitOpenError]] و [[calls.length]] فاضلة 5. بعد ٦٠ ثانية (مزيّفة) بيسمح بمحاولة واحدة: لو نجحت الدايرة بتتقفل، ولو فشلت بتفتح تاني. و 404 مبيتحسبش فشل للخدمة. وكل تغيير حالة بيطلع سطر لوج.`, ext: R`خلّي فيه دايرة لكل host لوحده، واعرض حالتهم في صفحة صغيرة بتتحدّث كل ثانية.` },
+        { lvl: 'كبير', t: R`عميل API كامل`, what: R`[[createClient({ baseUrl, timeout, retries, onRetry })]] بيرجّع [[get(path)]] و [[post(path, body, { idempotencyKey })]]: JSON رايح جاي، ومهلة وإلغاء، وإعادة على المؤقت بس، و [[POST]] مبيتعادش من غير مفتاح، وأخطاء ليها نوع. والوحدة كلها.`, done: R`ملف اختبارات بـ [[fakeFetch]] فيه ١٠ حالات على الأقل بيعدّوا من غير شبكة: 404 من غير إعادة، و 503 بتنجح في التالتة، و 429 بـ [[Retry-After]]، ومهلة، وإلغاء، و POST بيفشل من غير إعادة، و POST بمفتاح بيتعاد والهيدر وصل في كل محاولة، و [[baseUrl]] بـ [[/]] في الآخر ومن غيرها بيدّوا نفس الرابط. و [[onRetry]] بيطلع سطر لكل إعادة.`, ext: R`زوّد كاش للـ GET، وحدّ تزامن، وقاطع دايرة من المشاريع اللي فوق، وانشره كـ package بـ README.` },
+        { lvl: 'فكرة', t: R`غلّف API بتستخدمه`, what: R`اختار API حقيقي بتحتاجه (طقس، أسعار، GitHub...) واعمل له client صغير فوق [[request]] بأسماء دوال بتوصف الشغل ([[getWeather(city)]] مش [[get('/x')]]). انت اللي بتقرر الدوال.`, done: R`كل دالة فيها مهلة ورسالة خطأ مفهومة بالعربي، والاختبارات شغالة بـ [[fakeFetch]] من غير مفتاح API ولا شبكة، والمفتاح بييجي من متغير بيئة مش مكتوب في الكود.`, ext: R`اعمل صفحة أو أداة ترمنال بتستخدمه، وكاش على الديسك أو [[localStorage]] عشان متكررش نفس الطلب.` },
       ],
-      n: R`أربع حاجات بتفرق بين صفحة وتطبيق: [[Proxy]] اللي ورا Vue، والاتصال اللحظي بـ SSE و WebSocket، و APIs الجهاز (الحافظة والمكان والمشاركة) بصلاحياتها، و Streams. كل اللي في Node اتشغّل على Node 24.22 على ويندوز ١١، وكل اللي في المتصفح اتشغّل في Chromium 156 بـ Playwright على [[localhost]] و [[http://example.com]]، واللي مينفعش يتجرّب (شاشة المشاركة، وسؤال الصلاحية الحقيقي) مكتوب إنه من MDN`,
+      n: R`هنبني [[request()]]: غلاف حوالين [[fetch]] فيه مهلة، وإعادة محاولة ذكية، وأخطاء ليها نوع. أربع خطوات، وكل خطوة بتحل مشكلة بتحصل في الإنتاج`,
       items: [
         {
-          cmd: "Proxy و Reflect",
-          title: "حارس قدام أي object: get و set و has و deleteProperty",
-          learn: R`تلف object في [[Proxy]] بيعترض القراية والكتابة والـ [[in]] والمسح، وتستخدم [[Reflect]] عشان تكمّل السلوك الأصلي صح.`,
-          out: R`تحقق من القيم في مكان واحد، ولوج لكل وصول، وقيم افتراضية، وتفهم إزاي Vue 3 بيعرف إن الداتا اتغيّرت.`,
+          cmd: "مشروع — fetch مش بترمي على 404",
+          title: "ok و status، وأخطاء ليها نوع",
+          learn: R`تعرف إن [[fetch]] بتنجح على ٤٠٤ و٥٠٠، وتعمل كلاسات أخطاء تفرّق بينهم.`,
+          out: R`[[catch]] واحد بيفرّق بين فشل الشبكة وفشل الـ HTTP.`,
           use: {
-            prog: R`أي حاجة لازم تحصل «كل ما حد يقرا أو يكتب خاصية»: تحقق، أو لوج، أو تحديث شاشة، أو cache. من غير Proxy لازم تكتب getter و setter لكل خاصية بإيدك.`,
-            work: R`Vue 3 و MobX و Immer و Valtio كلهم مبنيين على Proxy. ولما حاجة في Vue «مبتتحدّثش»، السبب غالبًا إنك اشتغلت على الـ object الأصلي مش على الـ Proxy.`,
-            cs: R`ده metaprogramming: الكود بيغيّر **قواعد** اللغة نفسها لـ object معيّن. والـ traps هي «العمليات الداخلية» اللي المحرك بيعملها (Get و Set) متاحة ليك.`,
+            prog: R`الفرق بين «الطلب وصل والسيرفر رد بخطأ» و«الطلب موصلش» كبير: الأولى بيانات، والتانية شبكة. والمعالجة مختلفة.`,
+            net: R`[[TypeError: fetch failed]] مبتقولش حاجة. والسبب الحقيقي في [[e.cause]] — [[ECONNREFUSED]] أو [[ENOTFOUND]] أو [[CERT_HAS_EXPIRED]].`,
+            cs: R`تصنيف الأخطاء بأنواع بدل نصوص بيخلي [[catch]] يقرر، مش يخمّن. وده الفرق بين [[e.message.includes('404')]] و [[e instanceof HttpError]].`,
           },
-          desc: R`[[new Proxy(target, handler)]] بيعمل object «بديل» قدام [[target]]. أي عملية عليه (قراية، كتابة، [[in]]، [[delete]]) بتعدّي الأول على دالة في [[handler]] اسمها **trap**، وانت بتقرر: تكمّل، ولا ترفض، ولا ترجّع حاجة تانية.
+          desc: R`أول حاجة لازم تعرفها عن [[fetch]]، وأكتر حاجة بتوقّع الناس:
 
-و [[Reflect]] فيه دالة بنفس اسم كل trap ([[Reflect.get]] و [[Reflect.set]]...) بتعمل السلوك **الأصلي** بالظبط. فالقاعدة: اعمل شغلك، وبعدين [[return Reflect.xxx(...)]] بنفس الـ arguments.
+**[[fetch]] مبترميش على أخطاء HTTP.**
 
-**الـ traps الأربعة اللي هتستخدمها ٩٠٪ من الوقت:**
-• [[get(target, key, receiver)]]: لما حد يقرا [[obj.key]].
-• [[set(target, key, value, receiver)]]: لما حد يكتب [[obj.key = value]]، ولازم ترجّع [[true]].
-• [[has(target, key)]]: لما حد يسأل [[key in obj]].
-• [[deleteProperty(target, key)]]: لما حد يعمل [[delete obj.key]].
+طلب رجّع ٤٠٤؟ الـ Promise **بتنجح**. ٥٠٠؟ بتنجح. الـ [[await]] بيعدّي عادي، و [[catch]] مبيشتغلش.
 
-**ليه ترجّع [[Reflect.set]] مش تكتب [[target[key] = value]] وخلاص؟** جرّبتها: trap [[set]] نسي [[return]] في ملف [[.mjs]] (strict mode) رمى [[TypeError: 'set' on proxy: trap returned falsish for property 'y']]. و [[Reflect.set]] بيرجّع [[true]] أو [[false]] صح، وبيعدّي الـ [[receiver]] عشان الـ getters تشتغل على الـ Proxy مش الأصل.
+وبترمي في حالة واحدة: **الطلب نفسه موصلش** — شبكة مقطوعة، أو DNS فشل، أو شهادة غلط، أو اليوزر لغى.
 
-وده الأساس اللي Vue 3 مبني عليه: [[reactive(obj)]] بيرجّع Proxy، الـ [[get]] بيسجّل «مين قرا الخاصية دي»، والـ [[set]] بينادي اللي قرأها عشان يرسم تاني.`,
-          example: R`// شغّله كملف .mjs: الـ ESM دايمًا strict mode، وده بيفرق في رجوع الـ traps
-const user = { name: 'Sara', age: 25 };
-const audit = [];
-const safe = new Proxy(user, {
-  get(target, key, receiver) {
-    audit.push('get ' + String(key));
-    return key in target ? Reflect.get(target, key, receiver) : 'مش موجود';
-  },
-  set(target, key, value, receiver) {
-    if (key === 'age' && (!Number.isInteger(value) || value < 0)) {
-      throw new TypeError('age لازم رقم صحيح موجب، وصلني ' + value);
-    }
-    audit.push('set ' + String(key));
-    return Reflect.set(target, key, value, receiver);
-  },
-  has(target, key) {
-    return !String(key).startsWith('_') && Reflect.has(target, key);
-  },
-  deleteProperty(target, key) {
-    if (key === 'name') return false;
-    return Reflect.deleteProperty(target, key);
-  },
-});
-console.log(safe.name, safe.email);
-safe.age = 26;
-try { safe.age = -3; } catch (e) { console.log(e.message); }
-user._token = 'x';
-console.log('_token' in safe, 'name' in safe, Object.keys(safe));
-console.log(delete safe.age, user.age);
-try { delete safe.name; } catch (e) { console.log(e.message); }
-console.log(audit);`,
-          lines: [
-            R`الـ object الأصلي (الـ **target**). هو اللي الداتا فعلًا متخزنة فيه، والـ Proxy مش بيعمل نسخة منه، هو بس بيقف قدامه. أي تغيير بيعدّي من الـ Proxy بيوصل هنا.`,
-            R`لستة هنسجّل فيها كل عملية عدّت من الحارس، عشان نشوف في الآخر بالظبط مين اتنادى وبالترتيب. ده نفس فكرة الـ audit log في أي نظام.`,
-            R`[[new Proxy(user, handler)]] بيرجّع object جديد ([[safe]]) شكله زي [[user]] بالظبط، بس كل عملية عليه بتعدّي على الـ handler الأول. الـ handler object عادي، وكل method فيه اسمها trap.`,
-            R`trap القراية: بيتنادى مع أي [[safe.x]] أو [[ safe['x'] ]]. [[target]] هو [[user]]، و [[key]] اسم الخاصية (نص أو Symbol)، و [[receiver]] هو الـ Proxy نفسه (أو اللي ورث منه).`,
-            R`بنسجّل القراية. [[String(key)]] مش زيادة: لو الـ key كان Symbol (زي [[Symbol.iterator]] لما حد يعمل [[for...of]]) الجمع بالنص هيرمي [[TypeError: Cannot convert a Symbol value to a string]]، و [[String()]] بيحوّله صح.`,
-            R`القيمة الافتراضية: لو الخاصية موجودة رجّعها بالطريقة الأصلية ([[Reflect.get]] بالـ [[receiver]] عشان الـ getters)، ولو مش موجودة رجّع «مش موجود» بدل [[undefined]]. ده بالظبط اللي بيخلي [[safe.email]] تطبع كلمة مفهومة.`,
-            R`نهاية trap الـ [[get]]. الفاصلة بعده عشان إحنا جوه object literal فيه methods كتير.`,
-            R`trap الكتابة: بيتنادى مع أي [[safe.x = v]]. فيه argument زيادة [[value]] (القيمة الجديدة). أي تحقق بتحطه هنا بيشتغل على **كل** كتابة من أي مكان في الكود.`,
-            R`التحقق: لو الخاصية [[age]] والقيمة مش رقم صحيح ([[Number.isInteger]] بترجّع [[false]] مع [[2.5]] ومع [['26']] النص) أو سالبة، ارفض. أي خاصية تانية بتعدّي عادي.`,
-            R`بنرمي [[TypeError]] برسالة فيها القيمة اللي وصلت، عشان اللي غلط يعرف غلط في إيه. الرمي بيوقف الكتابة، فـ [[user.age]] بيفضل زي ما هو.`,
-            R`نهاية الـ [[if]].`,
-            R`لو التحقق عدّى بنسجّل الكتابة في اللوج قبل ما ننفّذها.`,
-            R`ننفّذ الكتابة الأصلية ونرجّع نتيجتها. [[Reflect.set]] بيرجّع [[true]] لو الكتابة نجحت، وده **لازم** يرجع من الـ trap: لو نسيت [[return]] الـ trap بيرجّع [[undefined]]، وفي strict mode ده [[TypeError: 'set' on proxy: trap returned falsish]] (جرّبتها).`,
-            R`نهاية trap الـ [[set]].`,
-            R`trap الـ [[in]]: بيتنادى مع [['x' in safe]] بس، ومش بيتنادى مع [[Object.keys]] ولا [[for...in]] (دول ليهم trap اسمه [[ownKeys]]).`,
-            R`أي خاصية اسمها بيبدأ بـ [[_]] نقول إنها مش موجودة، والباقي نسأل عنه الأصل بـ [[Reflect.has]]. ده بيخبّي الخصايص «الداخلية» من الفحص بـ [[in]] بس، والقراية المباشرة لسه شغالة (شوف «جرّب»).`,
-            R`نهاية trap الـ [[has]].`,
-            R`trap المسح: بيتنادى مع [[delete safe.x]].`,
-            R`[[name]] ممنوع يتمسح: نرجّع [[false]]. في sloppy mode الـ [[delete]] هيرجّع [[false]] ساكت، وفي strict mode (زي هنا) بيرمي [[TypeError]] فيه اسم الخاصية.`,
-            R`أي خاصية تانية تتمسح بالطريقة الأصلية، و [[Reflect.deleteProperty]] بيرجّع [[true]] لو المسح نجح.`,
-            R`نهاية trap الـ [[deleteProperty]].`,
-            R`نهاية الـ handler ونهاية [[new Proxy(...)]].`,
-            R`قرايتين: [[name]] موجودة فرجعت [[Sara]]، و [[email]] مش موجودة فرجعت «مش موجود» من الـ trap. الناتج: [[Sara مش موجود]]، والاتنين اتسجّلوا في اللوج.`,
-            R`كتابة سليمة: [[26]] رقم صحيح موجب، فالتحقق عدّى و [[user.age]] بقى ٢٦ واتسجّل [[set age]].`,
-            R`كتابة غلط: [[-3]] سالب، فالـ trap رمى والـ [[catch]] طبع «age لازم رقم صحيح موجب، وصلني -3». ومتسجّلش حاجة في اللوج لأن الرمي حصل قبل [[audit.push]].`,
-            R`بنكتب في [[user]] **الأصلي** مباشرة مش في [[safe]]، فالـ trap مش بيشوف الكتابة دي خالص ومتسجّلتش. ده الباب الخلفي اللي لازم تقفله: لو حد معاه الأصل، الحارس ملوش لازمة.`,
-            R`[['_token' in safe]] رجّعت [[false]] بسبب الـ [[has]]، و [['name' in safe]] [[true]]. بس [[Object.keys(safe)]] طلّعت [[ [ 'name', 'age', '_token' ] ]] لأن [[has]] مش بيأثر عليها. ده أشهر سوء فهم في Proxy.`,
-            R`[[delete safe.age]] عدّى ورجّع [[true]]، و [[user.age]] بقى [[undefined]]: المسح وصل للأصل.`,
-            R`[[delete safe.name]] الـ trap رجّع [[false]]، ولأننا في strict mode اترمى [[TypeError: 'deleteProperty' on proxy: trap returned falsish for property 'name']]، و [[name]] لسه موجود.`,
-            R`اللوج في الآخر: [[ [ 'get name', 'get email', 'set age' ] ]]. الكتابة الفاشلة متسجّلتش، والكتابة على الأصل متسجّلتش، و [[in]] و [[delete]] مش بيعدّوا على [[get]] أصلًا.`,
-          ],
-          try: R`خبّي [[_token]] من **كل** حاجة مش من [[in]] بس: زوّد trap اسمه [[ownKeys(target)]] بيرجّع [[Reflect.ownKeys(target)]] من غير اللي بيبدأ بـ [[_]]، وخلّي الـ [[get]] يرجّع [[undefined]] للي بيبدأ بـ [[_]]. وبعدين اطبع [[Object.keys(safe)]] و [[JSON.stringify(safe)]] و [[{ ...safe }]] و [[safe._token]].`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** Proxy بـ [[get]] و [[set]] بيسجّلوا في لستة. اكتب على ورقة اللستة هيبقى فيها إيه بعد [[p.n++]] و [[p.n += 10]] وكام عنصر، وبعدين شغّل الكود.`, done: R`توقّعك طابق اللي اتطبع: [[ [ 'get n', 'set n', 'get n', 'set n', 'get n' ] ]] و ٥ عناصر (آخر [[get]] من [[console.log(p.n)]])، وتقدر تقول ليه [[++]] قراية وكتابة مش كتابة بس.` },
-            { lvl: 'تطبيق', t: R`**ابني:** دالة [[withDefaults(obj, defaults)]] بترجّع Proxy بيرجّع القيمة من [[obj]] لو موجودة ومن [[defaults]] لو لأ، ودالة [[strict(obj)]] بترمي [[ReferenceError]] لما تقرا خاصية مش موجودة (عشان غلطة الإملا [[cfg.prot]] تتمسك).`, done: R`[[withDefaults({ port: 8080 }, { port: 3000, host: 'localhost' })]] بيدّي [[8080 localhost]]، و [[strict({port: 1}).prot]] بيرمي برسالة فيها [[prot]]، و [[JSON.stringify]] و [[await]] على الـ strict لسه شغالين (هتكتشف إنهم بيسألوا عن [[toJSON]] و [[then]]).` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** الـ reactive الصغير اللي في الشرح، لو عملت [[cart.items.push(x)]] الشاشة مبتترسمش، ولو عملت [[cart.qty = 3]] وهي أصلًا ٣ بيترسم برضه في نسخة زميلك. صلّح الاتنين: خلّي [[get]] يلف أي object راجع في [[reactive]] (بـ [[WeakMap]] كاش عشان نفس الـ object ميتلفّش مرتين)، وخلّي [[set]] مينادي [[trigger]] لو القيمة متغيّرتش.`, done: R`[[cart.items.push('mug')]] بيطبع الإجمالي الجديد مرة، و [[cart.items]] بيرجّع **نفس** الـ Proxy كل مرة ([[cart.items === cart.items]] بـ [[true]])، و [[cart.qty = 3]] مرتين ورا بعض بيطبع مرة واحدة.` },
-          ],
-          deep: {
-            why: R`من غير Proxy، عشان تتحقق من كل كتابة لازم كل اللي بيكتب ينادي دالة ([[setAge(26)]]) وتثق إن محدش هيكتب [[user.age = -3]] مباشرة. Proxy بيخلي الحماية جوه الـ object نفسه، فأي كود (حتى مكتبة مش بتاعتك) بيعدّي عليها. وده اللي خلّى Vue 3 يقدر يعرف بإضافة خاصية جديدة ([[obj.newKey = 1]]) وبتغيير [[ arr[0] ]] اللي Vue 2 (بـ [[Object.defineProperty]]) مكانش بيشوفهم.`,
-            how: R`المحرك بيعمل أي عملية على object بـ «عمليات داخلية» في المواصفات: Get و Set و HasProperty و Delete و OwnPropertyKeys وغيرهم (١٣ في المجموع). الـ Proxy object عادي بس العمليات الداخلية بتاعته بتنادي الـ trap بتاعك لو موجود، ولو مش موجود بتعمل العملية على الـ target.
+جرّبتها: طلب على [[/404]] رجّع [[ok: false]] و [[status: 404]]، والكود كمّل عادي. وطلب على بورت مقفول رمى [[TypeError: fetch failed]].
 
-و [[Reflect]] هو نفس العمليات الداخلية دي كدوال: [[Reflect.get(t, k, r)]] = Get بالظبط، ولذلك بيرجّع [[true]]/[[false]] بدل ما يرمي. ودا اللي بيخلي [[return Reflect.set(...)]] الطريقة الصح.
+والرسالة دي **مبتقولش حاجة**. السبب الحقيقي في [[e.cause]]: جرّبتها وطلعت [[ECONNREFUSED]].
 
-الـ [[receiver]]: لو [[user]] فيه [[get full() { return this.first + ' ' + this.last }]] والـ trap عمل [[ return target[key] ]]، الـ [[this]] جوه الـ getter هيبقى [[user]] الأصلي، فقراية [[first]] و [[last]] مش هتعدّي على الحارس. جرّبتها: من غير receiver اللوج سجّل [[ [ 'full' ] ]] بس، و بـ [[Reflect.get(t, k, r)]] سجّل [[ [ 'full', 'first', 'last' ] ]]. ده بالظبط اللي Vue محتاجه عشان يعرف إن [[full]] بيعتمد على [[first]].
+**فالغلاف بتاعنا بيعمل تلات حاجات:**
 
-وفيه قواعد اسمها invariants المحرك بيفرضها: لو خاصية في الأصل non-configurable و non-writable، الـ [[get]] لازم يرجّع قيمتها الحقيقية، وإلا [[TypeError]].`,
-            when: R`استخدمه لما تحتاج سلوك على **كل** الخصايص من غير ما تعرفها مقدمًا: تحقق من schema، لوج للـ debugging، قيم افتراضية لـ config، تتبّع تغييرات (reactivity أو «فيه حاجات متحفظتش»)، أو mock في الاختبارات بيرد على أي method. ومتستخدمهوش لخاصية أو اتنين معروفين: [[get]]/[[set]] عادي أو [[#private]] أوضح وأسرع. وفي كود بيلف ملايين المرات، كل وصول بقى نداء دالة زيادة، فقيس قبل ما تحطه في الحلقة السخنة.`,
-            mistakes: R`تنسى [[return]] في [[set]] أو [[deleteProperty]] فيترمي [[trap returned falsish]] في ESM. أو تكتب في الأصل ([[user.x = 1]]) وتستغرب إن الحارس مشافش حاجة. أو تفتكر [[has]] بيخبّي من [[Object.keys]] (عايز [[ownKeys]]). أو تعمل Proxy على [[Map]] أو [[Date]]: جرّبت [[new Proxy(new Map(), {}).set('k', 1)]] ورمت [[Method Map.prototype.set called on incompatible receiver]] لأن الداتا الداخلية مش على الـ Proxy. أو strict proxy بيرمي على أي خاصية مش موجودة فيكسر [[JSON.stringify]] (بيسأل عن [[toJSON]]) و [[await]] (بيسأل عن [[then]]) و [[console.log]]. أو تفتكره deep: [[deep.a.b = 2]] مبيعدّيش على [[set]] بتاع [[deep]] خالص.`,
-          },
-          teach: R`## الفكرة: حارس على الباب
+يفحص [[res.ok]] ويرمي [[HttpError]] فيها الـ status والـ body.
+يلفّ خطأ الشبكة في [[NetworkError]] فيها السبب الحقيقي من [[cause]].
+ويسيب أخطاء الإلغاء زي ما هي.
 
-[[Proxy]] مش نسخة ومش class جديد. هو object «فاضي» واقف قدام object تاني، وكل عملية عليه بتسأل الحارس الأول. كل اللي تحت اتشغّل على ويندوز ١١ بـ Node 24.22 كملفات [[.mjs]]، والناتج منسوخ زي ما طلع.
-
-~~~text الشكل
-  الكود بتاعك         الحارس (handler)          الأصل (target)
-  safe.age = 26  ──►  set(target,'age',26)  ──►  user.age = 26
-                      ↑ تحقق، لوج، رفض
-~~~
-
----
-
-## ١. أصغر Proxy: من غير ولا trap
-
-~~~js
-const p = new Proxy({ x: 1 }, {});
-p.y = 2;
-console.log(p.x, p.y);
-~~~
-
-الـ handler فاضي، فكل عملية بتعدّي للأصل زي ما هي. ده بيأكد إن Proxy من غير traps = الأصل بالظبط. كل trap بتزوّده بيغيّر عملية واحدة بس.
-
----
-
-## ٢. [[get]]: كل قراية
-
-~~~js
-get(target, key, receiver) {
-  audit.push('get ' + String(key));
-  return key in target ? Reflect.get(target, key, receiver) : 'مش موجود';
-}
-~~~
-
-| الـ argument | هو إيه | مثال من التشغيل |
-|---|---|---|
-| [[target]] | الـ object الأصلي اللي الداتا فيه | [[user]] نفسه |
-| [[key]] | اسم الخاصية: نص، أو Symbol لو المحرك بيسأل عن حاجة داخلية | [['email']] أو [[Symbol.iterator]] |
-| [[receiver]] | الـ Proxy نفسه، أو object وارث منه، وده اللي بيبقى [[this]] جوه الـ getters | [[safe]] |
-
-**ليه [[String(key)]]؟** لو حد عمل [[for...of]] على الـ Proxy، المحرك بيقرا [[Symbol.iterator]]، و [['get ' + symbol]] بيرمي. [[String(Symbol('s'))]] بيرجّع [['Symbol(s)']] عادي.
-
-**ليه [[receiver]]؟** اتجرّب على object فيه getter:
-
-~~~js
-const user = { first: 'Sara', last: 'Ali', get full() { return this.first + ' ' + this.last; } };
-const seen = [];
-const bad = new Proxy(user, { get(t, k) { seen.push(k); return t[k]; } });
-console.log(bad.full, seen);
-seen.length = 0;
-const good = new Proxy(user, { get(t, k, r) { seen.push(k); return Reflect.get(t, k, r); } });
-console.log(good.full, seen);
-~~~
-
-~~~text الناتج
-Sara Ali [ 'full' ]
-Sara Ali [ 'full', 'first', 'last' ]
-~~~
-
-الناتج واحد، بس في الأولى الحارس **مشافش** إن [[full]] قرا [[first]] و [[last]]، لأن [[ t[k] ]] شغّل الـ getter بـ [[this = user]]. في التانية [[Reflect.get(t, k, r)]] شغّله بـ [[this = safe]] فكل قراية جوه عدّت على الحارس. لو بتبني reactivity، الفرق ده هو الفرق بين شاشة بتتحدّث وشاشة مبتتحدّثش.
-
----
-
-## ٣. [[set]]: كل كتابة، ولازم ترجّع [[true]]
-
-~~~js
-set(target, key, value, receiver) {
-  if (key === 'age' && (!Number.isInteger(value) || value < 0)) {
-    throw new TypeError('age لازم رقم صحيح موجب، وصلني ' + value);
+وبكده، اللي بيستخدم الأداة بيكتب [[catch]] واحد بيفرّق بـ [[instanceof]] بدل ما يفحص نصوص.`,
+          example: R`export class HttpError extends Error {
+  constructor(response, body) {
+    super($__btHTTP $__{response.status} $__{response.statusText} على $__{response.url}$__bt);
+    this.name = 'HttpError';
+    this.status = response.status;
+    this.url = response.url;
+    this.body = body;
   }
-  audit.push('set ' + String(key));
-  return Reflect.set(target, key, value, receiver);
 }
-~~~
 
-عندك طريقتين ترفض بيهم:
-
-| الطريقة | اللي بيحصل | تستخدمها إمتى |
-|---|---|---|
-| [[throw new TypeError(...)]] | الكتابة بتقف برسالة انت كاتبها، في strict و sloppy | لما عايز اللي كتب يعرف غلط في إيه بالظبط |
-| [[return false]] | في strict mode: [[TypeError: 'set' on proxy: trap returned falsish]]، وفي sloppy: ولا حاجة | نادر، الرسالة مش بتقول السبب |
-
-**التجربة اللي بتوضّح ليه [[return]] مهم:**
-
-~~~js
-'use strict';
-const q = new Proxy({}, { set(t, k, v) { t[k] = v; } });
-try { q.y = 1; } catch (e) { console.log(e.constructor.name, e.message); }
-~~~
-
-~~~text الناتج
-TypeError 'set' on proxy: trap returned falsish for property 'y'
-~~~
-
-الكتابة **حصلت** فعلًا ([[t[k] = v]] اشتغلت)، بس الـ trap رجّع [[undefined]] (falsy) فالمحرك فهم إنها فشلت ورمى. ونفس الكود في ملف [[.cjs]] من غير [[use strict]] عدّى ساكت (جرّبتها: [[sloppy ok 1]]). يعني الكود ده ممكن يشتغل سنين في سكربت قديم ويقع أول ما يتنقل لـ ESM. الحل الوحيد: [[return Reflect.set(target, key, value, receiver)]].
-
----
-
-## ٤. [[has]] و [[deleteProperty]]
-
-~~~js
-has(target, key) {
-  return !String(key).startsWith('_') && Reflect.has(target, key);
-},
-deleteProperty(target, key) {
-  if (key === 'name') return false;
-  return Reflect.deleteProperty(target, key);
-},
-~~~
-
-~~~text الناتج من المثال
-false true [ 'name', 'age', '_token' ]
-true undefined
-'deleteProperty' on proxy: trap returned falsish for property 'name'
-~~~
-
-الفخ في السطر الأول: [[in]] قال [[false]] لـ [[_token]]، بس [[Object.keys]] طلّعه. كل عملية ليها trap بتاعها:
-
-| العملية | الـ trap اللي بيتنادى |
-|---|---|
-| [[obj.x]] و [[ obj['x'] ]] | [[get]]، وكمان مع أي method بتناديها لأنها قراية الأول |
-| [[obj.x = 1]] | [[set]]، وكمان مع [[++]] و [[+=]] بعد [[get]] |
-| [['x' in obj]] | [[has]]، وده بس اللي بيأثر عليه |
-| [[delete obj.x]] | [[deleteProperty]]، ولازم يرجّع [[true]] في strict mode |
-| [[Object.keys]] و [[for...in]] و [[JSON.stringify]] و [[{...obj}]] | [[ownKeys]] (ومعاه [[getOwnPropertyDescriptor]]) |
-| [[fn()]] لو الأصل دالة | [[apply]]، بيستخدم للوج النداءات أو الـ mocks |
-| [[new Fn()]] | [[construct]]، لو عايز تتحكم في إنشاء الـ objects |
-
----
-
-## ٥. قيم افتراضية، و strict object، والفخ اللي محدش بيتوقّعه
-
-~~~js
-const withDefaults = (obj, defaults) => new Proxy(obj, {
-  get: (t, k, r) => (k in t ? Reflect.get(t, k, r) : defaults[k]),
-});
-const config = withDefaults({ port: 8080 }, { port: 3000, host: 'localhost' });
-console.log(config.port, config.host, config.debug);
-~~~
-
-~~~text الناتج
-8080 localhost undefined
-~~~
-
-وعكسها: object بيرمي لو قريت خاصية مش موجودة، عشان [[cfg.prot]] (غلطة إملا) تتمسك بدل ما ترجّع [[undefined]] وتكمّل:
-
-~~~js
-const strict = obj => new Proxy(obj, {
-  get(t, k, r) {
-    if (typeof k === 'string' && !(k in t)) throw new ReferenceError('مفيش خاصية اسمها ' + k);
-    return Reflect.get(t, k, r);
-  },
-});
-const s = strict({ port: 1 });
-try { s.prot; } catch (e) { console.log(e.message); }
-console.log(JSON.stringify(s));
-~~~
-
-~~~text الناتج
-مفيش خاصية اسمها prot
-ReferenceError: مفيش خاصية اسمها toJSON
-    at Object.get (file:///.../defaults.mjs:8:51)
-    at JSON.stringify (<anonymous>)
-~~~
-
-**المفاجأة:** [[JSON.stringify]] بيسأل الأول «فيه [[toJSON]]؟» قبل ما يحوّل، فالـ strict proxy رمى. ونفس الكلام [[await s]] (بيسأل عن [[then]]). الحل: استثني الأسماء دي ([[k !== 'toJSON' && k !== 'then']])، وبعدها [[JSON.stringify(s)]] طلّع [[{"port":1}]] و [[await]] رجّع نفس الـ object.
-
----
-
-## ٦. Vue 3 بيعمل كده بالظبط: reactive في ٢٥ سطر
-
-~~~js
-let active = null;
-const deps = new WeakMap();
-function track(target, key) {
-  if (!active) return;
-  let byKey = deps.get(target);
-  if (!byKey) deps.set(target, (byKey = new Map()));
-  let fns = byKey.get(key);
-  if (!fns) byKey.set(key, (fns = new Set()));
-  fns.add(active);
-}
-function trigger(target, key) {
-  deps.get(target)?.get(key)?.forEach(fn => fn());
-}
-function reactive(obj) {
-  return new Proxy(obj, {
-    get(t, k, r) { track(t, k); return Reflect.get(t, k, r); },
-    set(t, k, v, r) {
-      const old = t[k];
-      const ok = Reflect.set(t, k, v, r);
-      if (old !== v) trigger(t, k);
-      return ok;
-    },
-  });
-}
-function effect(fn) { active = fn; fn(); active = null; }
-const cart = reactive({ qty: 1, price: 50 });
-effect(() => console.log('الإجمالي:', cart.qty * cart.price));
-cart.qty = 3;
-cart.price = 40;
-cart.qty = 3;
-~~~
-
-~~~text الناتج
-الإجمالي: 50
-الإجمالي: 150
-الإجمالي: 120
-~~~
-
-1. [[effect(fn)]] بيحط الدالة في [[active]] ويشغّلها مرة. وهي شغالة بتقرا [[cart.qty]] و [[cart.price]]، فالـ [[get]] بينادي [[track]] اللي بيسجّل «الدالة دي بتعتمد على [[qty]] و [[price]]».
-2. الدفتر: [[WeakMap]] من الـ object لـ [[Map]] من اسم الخاصية لـ [[Set]] من الدوال (نفس دفتر درس «EventEmitter»). [[WeakMap]] عشان لو الـ object اتشال من الذاكرة الدفتر بتاعه يتشال معاه (درس «Map و Set»).
-3. [[cart.qty = 3]]: الـ [[set]] كتب، ولقى القيمة اتغيّرت، فنادى [[trigger]] اللي شغّل الدالة تاني: [[150]].
-4. آخر [[cart.qty = 3]] متطبعش حاجة لأن [[old !== v]] [[false]].
-
-ونفس الفكرة في Vue الحقيقي (اتجرّب على Vue 3.5.44 من npm):
-
-~~~js
-import { reactive, effect, isProxy, toRaw } from '@vue/reactivity';
-import { types } from 'node:util';
-const raw = { qty: 1 };
-const cart = reactive(raw);
-console.log(types.isProxy(cart), isProxy(cart), toRaw(cart) === raw, cart === raw);
-effect(() => console.log('vue: qty =', cart.qty));
-cart.qty++;
-~~~
-
-~~~text الناتج
-true true true false
-vue: qty = 1
-vue: qty = 2
-~~~
-
-[[util.types.isProxy]] من Node نفسه قال [[true]]: الـ [[reactive]] Proxy حقيقي. و [[cart === raw]] [[false]]، وده سبب أشهر باج في Vue: لو عدّلت [[raw]] مباشرة الشاشة مش هتعرف. (التفاصيل في درس «ref و reactive» في تاب Vue.)
-
----
-
-## ٧. حاجات Proxy مبيعملهاش
-
-~~~js
-const deep = new Proxy({ a: { b: 1 } }, { set(t, k, v, r) { console.log('set', k); return Reflect.set(t, k, v, r); } });
-deep.a.b = 2;
-const arr = new Proxy([], { set(t, k, v, r) { console.log('set', k, v); return Reflect.set(t, k, v, r); } });
-arr.push('x');
-const m = new Proxy(new Map(), {});
-try { m.set('k', 1); } catch (e) { console.log(e.message); }
-const { proxy, revoke } = Proxy.revocable({ x: 1 }, {});
-revoke();
-try { proxy.x; } catch (e) { console.log(e.message); }
-~~~
-
-~~~text الناتج
-set 0 x
-set length 1
-Method Map.prototype.set called on incompatible receiver #<Map>
-Cannot perform 'get' on a proxy that has been revoked
-~~~
-
-- [[deep.a.b = 2]] **مطبعش حاجة**: [[deep.a]] قراية بترجّع الـ object الداخلي العادي، والكتابة حصلت عليه. عشان كده Vue بيلف أي object راجع من [[get]] في [[reactive]] كمان (ده تمرين «تحدي»).
-- [[push]] على array عمل كتابتين: العنصر و [[length]].
-- [[Map]] و [[Set]] و [[Date]] داتاهم في «خانات داخلية» على الأصل، فالـ methods بتاعتهم بترفض الـ Proxy. Vue بيحل ده بـ handler مخصوص للـ collections.
-- [[Proxy.revocable]] بيدّيك [[revoke()]] تقفل بيها الحارس نهائيًا: مفيد لو اديت object لكود تاني ومش عايزه يستخدمه بعد وقت معيّن.
-
----
-
-## الخلاصة
-
-- [[new Proxy(target, handler)]]: كل عملية بتسأل الـ trap الأول، ومن غير trap بتروح للأصل.
-- رجّع دايمًا [[Reflect.xxx(...)]] بنفس الـ arguments، وخصوصًا الـ [[receiver]]، و [[set]] و [[deleteProperty]] لازم يرجّعوا [[true]] وإلا [[TypeError]] في ESM.
-- [[has]] للـ [[in]] بس، و [[ownKeys]] للـ [[Object.keys]] و JSON و spread.
-- Proxy سطحي، ومبيحميش من حد معاه الأصل، وبيكسر [[Map]] و [[Date]].
-- Vue 3 = Proxy بـ [[get]] بيسجّل ([[track]]) و [[set]] بيبلّغ ([[trigger]]).`,
-          sol: R`اتجرّب على Node 24.22. الـ [[ownKeys]] بيخبّي من [[Object.keys]] و [[JSON.stringify]] والـ spread و [[for...in]]، و [[has]] من [[in]]، و [[get]] من القراية المباشرة:
-
-~~~text الناتج
-[ 'name', 'age' ] {"name":"Sara","age":25} false undefined
-{ name: 'Sara', age: 25 }
-for-in name
-for-in age
-~~~
-
-ولاحظ إن [[user._token]] لسه موجود في الأصل: الحارس بيخبّي عن اللي بيستخدم [[safe]] بس.`,
-          solCode: R`const hidden = (k) => typeof k === 'string' && k.startsWith('_');
-const user = { name: 'Sara', age: 25, _token: 'x' };
-const safe = new Proxy(user, {
-  has: (t, k) => !hidden(k) && Reflect.has(t, k),
-  ownKeys: (t) => Reflect.ownKeys(t).filter((k) => !hidden(k)),
-  get: (t, k, r) => (hidden(k) ? undefined : Reflect.get(t, k, r)),
-});
-console.log(Object.keys(safe), JSON.stringify(safe), '_token' in safe, safe._token);
-console.log({ ...safe });
-for (const k in safe) console.log('for-in', k);`,
-          check: {
-            lang: "js",
-            starter: R`// rules: { اسم الخاصية: دالة بترجّع true لو القيمة سليمة }
-function validated(target, rules) {
-  return new Proxy(target, {
-    // اكتب set هنا
-  });
+export class NetworkError extends Error {
+  constructor(cause) {
+    super($__btفشل الاتصال: $__{cause?.code ?? cause?.message ?? 'سبب مش معروف'}$__bt);
+    this.name = 'NetworkError';
+    this.cause = cause;
+  }
 }`,
-            tests: R`test("القيمة السليمة بتتكتب في الأصل", () => {
-  const raw = { age: 1 };
-  const p = validated(raw, { age: (v) => Number.isInteger(v) && v >= 0 });
-  p.age = 30;
-  expect(raw.age).toBe(30);
-});
-test("القيمة الغلط بترمي TypeError فيه اسم الخاصية", () => {
-  const p = validated({}, { age: (v) => Number.isInteger(v) && v >= 0 });
-  expect(() => { p.age = -1; }).toThrow(/age/);
-});
-test("القيمة الغلط مبتتكتبش", () => {
-  const raw = { age: 5 };
-  const p = validated(raw, { age: (v) => Number.isInteger(v) && v >= 0 });
-  try { p.age = 'x'; } catch (e) {}
-  expect(raw.age).toBe(5);
-});
-test("خاصية مالهاش قاعدة بتتكتب عادي", () => {
-  const p = validated({}, { age: () => false });
-  p.name = 'Sara';
-  expect(p.name).toBe('Sara');
-});
-test("الكتابة السليمة مبترميش في strict mode", () => {
-  const p = validated({}, { age: (v) => v > 0 });
-  expect((() => { 'use strict'; p.age = 3; return p.age; })()).toBe(3);
-});`,
-            solution: R`function validated(target, rules) {
-  return new Proxy(target, {
-    set(t, key, value, receiver) {
-      const rule = rules[key];
-      if (rule && !rule(value)) throw new TypeError('قيمة غلط لـ ' + String(key) + ': ' + value);
-      return Reflect.set(t, key, value, receiver);
-    },
-  });
-}`
-          }
-        },
-        {
-          cmd: "WebSocket و SSE",
-          title: "تحديثات لحظية: polling ولا SSE ولا WebSocket؟",
-          learn: R`تفرق بين الطرق التلاتة وتختار، وتكتب عميل [[EventSource]] بأحداث ليها أسماء ورجوع لوحده، وعميل [[WebSocket]] بيبعت ويستقبل ويرجع يتصل بـ backoff.`,
-          out: R`ميزة لحظية بتستحمل وقوع الشبكة، من غير ما تعمل طلب كل ثانية على الفاضي.`,
-          use: {
-            prog: R`أي داتا بتتغيّر عند السيرفر واليوزر لازم يشوفها من غير refresh: إشعارات، أسعار، حالة طلب، تقدّم شغلانة طويلة، رد AI بيتكتب حرف حرف (ده SSE في أغلب الـ APIs).`,
-            work: R`أول سؤال في أي ميزة «لحظية» في الشغل: الداتا رايحة في اتجاه واحد (سيرفر ← يوزر) ولا الاتنين؟ الإجابة دي لوحدها بتختار الأداة، والغلط فيها بيكلّف سيرفرات أو كود reconnect مكتوب بإيدك على الفاضي.`,
-            net: R`SSE طلب HTTP عادي ردّه مبيخلصش ([[Content-Type: text/event-stream]])، و WebSocket بيبدأ بطلب HTTP فيه [[Upgrade: websocket]] والسيرفر يرد [[101 Switching Protocols]] وبعدها الاتصال مبقاش HTTP. والـ proxies (زي Nginx) محتاجة إعداد للاتنين.`,
-            cs: R`pull (العميل يسأل) ضد push (السيرفر يبعت)، و full-duplex (الاتنين في نفس الوقت) ضد half، و exponential backoff عشان آلاف العملاء ميرجعوش يضربوا السيرفر في نفس الثانية.`,
-          },
-          desc: R`لما الداتا بتتغيّر عند السيرفر، عندك تلات طرق اليوزر يعرف: **polling** (العميل يسأل كل شوية)، و **SSE** (السيرفر يبعت على اتصال HTTP مفتوح، اتجاه واحد)، و **WebSocket** (قناة مفتوحة في الاتجاهين).
-
-| | polling | SSE ([[EventSource]]) | WebSocket |
-|---|---|---|---|
-| الاتجاه | العميل بيسأل، والسيرفر بيرد | السيرفر بيبعت بس | الاتنين بيبعتوا في أي وقت |
-| البروتوكول | HTTP عادي متكرر | HTTP واحد ردّه مبيخلصش | بيبدأ HTTP ويتحوّل لـ [[ws://]] |
-| الرجوع بعد ما الشبكة تقع | كل طلب لوحده أصلًا | **لوحده**، وبيبعت [[Last-Event-ID]] | **انت** اللي بتكتبه |
-| نوع الداتا | أي حاجة | نص بس (UTF-8) | نص أو binary |
-| إمتى | تحديث كل دقيقة أو أكتر، أو API مش بتاعك | إشعارات، أسعار، تقدّم، رد AI بيتكتب | شات، ألعاب، تعديل مشترك، أي حاجة العميل بيبعت فيها كتير |
-
-**الحسبة اللي بتحسم polling:** ١٠٠٠ يوزر بيسألوا كل ٥ ثواني = ١٢ ألف طلب في الدقيقة، وأغلبهم بيرجعوا «مفيش جديد». SSE أو WebSocket = ١٠٠٠ اتصال مفتوح وطلب واحد لما يحصل حاجة فعلًا.
-
-في Node 24 [[WebSocket]] global جاهز كعميل (زي المتصفح)، و [[EventSource]] محتاج [[--experimental-eventsource]] (جرّبتها: من غيره [[typeof EventSource]] = [[undefined]]). والسيرفر: SSE بـ [[node:http]] لوحده، و WebSocket بباكدج [[ws]].`,
-          example: R`// SSE: السيرفر بيكلّم، والعميل بيسمع (المتصفح، أو Node بـ --experimental-eventsource)
-const es = new EventSource('http://localhost:8301/events');
-console.log('SSE readyState', es.readyState);
-es.addEventListener('price', (e) => {
-  const d = JSON.parse(e.data);
-  console.log('price', d.price, 'id', e.lastEventId);
-  if (d.n === 5) es.close();
-});
-es.onerror = () => console.log('SSE error، readyState', es.readyState);
-// WebSocket: الاتنين بيتكلموا على نفس الاتصال
-const ws = new WebSocket('ws://localhost:8300');
-ws.addEventListener('open', () => ws.send(JSON.stringify({ name: 'sara', text: 'أهلا' })));
-ws.addEventListener('message', (e) => {
-  const msg = JSON.parse(e.data);
-  console.log('WS وصل:', msg.from, msg.text);
-  ws.close(1000, 'خلصت');
-});
-ws.addEventListener('close', (e) => console.log('WS close', e.code, e.reason, e.wasClean));
-setTimeout(() => {}, 3000);`,
           lines: [
-            R`[[new EventSource(url)]] بيفتح طلب [[GET]] عادي ويسيبه مفتوح يستنى أحداث. مفيش [[await]] ولا [[connect()]]: الاتصال بيبدأ لوحده أول ما تعمل الـ object. في المتصفح ممكن تكتب [['/events']] بس (نفس الدومين).`,
-            R`[[readyState]] على طول بعد الإنشاء = [[0]] ([[CONNECTING]]): الطلب لسه رايح. القيم التلاتة: [[0]] بيتصل أو بيرجع يتصل، و [[1]] مفتوح ([[OPEN]])، و [[2]] اتقفل نهائي ([[CLOSED]]).`,
-            R`[[addEventListener('price', ...)]] بيسمع لحدث **اسمه** [[price]]، يعني السيرفر بعت سطر [[event: price]]. لو السيرفر مبعتش [[event:]] الحدث اسمه [[message]] وبيوصل لـ [[onmessage]]. والأحداث اللي ليها اسم **مبتوصلش** لـ [[onmessage]] خالص.`,
-            R`[[e.data]] دايمًا نص (SSE مبيبعتش binary)، فبنعمل [[JSON.parse]] بنفسنا. لو السيرفر بعت JSON بايظ السطر ده هيرمي جوه الـ listener، فحطه في [[try]] في الكود الحقيقي.`,
-            R`[[e.lastEventId]] هو آخر [[id:]] السيرفر بعته. المتصفح بيفتكره لوحده، ولو الاتصال وقع بيبعته في هيدر [[Last-Event-ID]] وهو بيرجع، فالسيرفر يكمّل من بعده. في التشغيل وصل [[3]] للسيرفر بعد ما الاتصال الأول اتقفل.`,
-            R`[[es.close()]] بيقفل الاتصال **نهائيًا** و [[readyState]] بيبقى [[2]]، ومش هيرجع يتصل تاني. من غيرها الاتصال بيفضل مفتوح للأبد، وده مهم في SPA: لما اليوزر يسيب الصفحة اقفله.`,
-            R`نهاية الـ listener بتاع [[price]].`,
-            R`[[onerror]] بيتنادى في حالتين ولازم تفرّق بينهم بـ [[readyState]]: لو [[0]] يبقى الاتصال وقع والمتصفح **هيرجع لوحده** (ده اللي حصل لما السيرفر قفل بعد ٣ أحداث)، ولو [[2]] يبقى استسلم نهائيًا (السيرفر رد [[502]] مثلًا، اتجرّب) ولازم انت تعيد.`,
-            R`[[new WebSocket('ws://...')]] بيفتح اتصال WebSocket. [[ws://]] عادي و [[wss://]] مشفّر (لازم في أي صفحة https). في Node 24 الـ [[WebSocket]] global ومحتاجش [[import]]، وهو عميل بس، مش سيرفر.`,
-            R`أول ما الاتصال يتفتح ([[open]]) بنبعت رسالة. [[send]] بياخد نص أو binary، فبنحوّل الـ object لـ JSON. لو بعت قبل [[open]] هيرمي [[InvalidStateError]]، عشان كده [[send]] جوه الـ listener.`,
-            R`[[message]] بيتنادى مع كل رسالة من السيرفر. هنا مفيش أسماء أحداث زي SSE: كل الرسايل بتيجي هنا، وانت اللي بتحط [[type]] جوه الـ JSON لو عايز تفرّق.`,
-            R`[[e.data]] جه [[string]] لأن السيرفر بعت نص. لو بعت binary هيوصل [[Blob]] في المتصفح (أو [[ArrayBuffer]] لو غيّرت [[ws.binaryType]]).`,
-            R`طبع [[WS وصل: sara أهلا]]: السيرفر استلم رسالتنا وبعتها لكل المتصلين، وإحنا منهم.`,
-            R`[[close(code, reason)]] بيقفل بأدب: [[1000]] معناه «قفلة عادية» والسبب نص قصير. على طول بعدها [[readyState]] = [[2]] ([[CLOSING]]) لحد ما السيرفر يرد، وبعدها [[3]] ([[CLOSED]]). لاحظ إن أرقام WebSocket غير SSE: هنا ٤ حالات.`,
-            R`نهاية الـ listener بتاع [[message]].`,
-            R`[[close]] بيقولك اتقفل إزاي: [[e.code]] ([[1000]] عادي، [[1006]] اتقطع من غير قفلة، زي ما حصل لما السيرفر مكانش شغّال)، و [[e.reason]]، و [[wasClean]] ([[true]] لو الطرفين قفلوا بأدب). WebSocket **مبيرجعش يتصل لوحده**، والمكان ده هو اللي بتحط فيه الـ reconnect.`,
-            R`السطر ده لـ Node بس: [[EventSource]] بتاع Node مش بيخلي البرنامج عايش وهو مستني يرجع يتصل، فمن غيره البرنامج قفل بعد الـ error على طول (جرّبتها). المؤقت الفاضي بيخليه عايش ٣ ثواني. في المتصفح متحتاجهوش.`,
+            R`كلاس error خاص بأخطاء الـ HTTP (زي 404 و 500)، بيورث [[Error]] فبياخد [[message]] و stack trace ببلاش، و [[e instanceof HttpError]] بتشتغل عشان تفرّقه عن أي error تاني. و [[export]] عشان الملفات التانية والاختبارات تستورده.`,
+            R`الـ constructor بياخد الـ [[response]] نفسه (منه الـ status والرابط)، والـ [[body]] اللي قريناه منه قبل كده، لأن الـ body بيتقري مرة واحدة بس.`,
+            R`[[super]] بينادي constructor بتاع [[Error]] بالرسالة، ولازم يتنادى قبل أي [[this]]. الرسالة فيها الكود والنص والرابط، فلو شفتها في اللوج لوحدها تعرف إيه اللي فشل وفين.`,
+            R`[[name]] بتظهر في أول الـ stack وفي [[console.log]]. **لازم تحطها**: من غيرها هتفضل «Error» حتى لو الكلاس اسمه [[HttpError]]، فاللوج مش هيقولك نوع الغلط.`,
+            R`بنحفظ الـ status كرقم في خاصية لوحدها، عشان اللي يمسك الـ error يقرر بسهولة ([[e.status === 404]]) من غير ما يقرا الرسالة النصية ويحللها.`,
+            R`بنحفظ الرابط اللي فشل، مفيد في اللوج لما يبقى عندك طلبات كتير لأماكن مختلفة.`,
+            R`وبنحفظ الـ body: ساعات السيرفر بيحط فيه سبب الرفض (زي «الإيميل مستخدم قبل كده»)، وده اللي تعرضه لليوزر.`,
+            R`نهاية الـ constructor.`,
+            R`نهاية كلاس [[HttpError]].`,
+            R`كلاس تاني لنوع مختلف من الفشل: الاتصال نفسه مكملش (DNS، السيرفر مش شغال، النت قاطع)، يعني مفيش رد خالص. فصلهم بيخلي اللي فوق يقرر: ده يستاهل إعادة ولا لأ.`,
+            R`الـ constructor بياخد [[cause]]: الـ error الأصلي الواطي اللي جه من [[fetch]] (في Node غالبًا فيه [[code]] زي [[ECONNREFUSED]]).`,
+            R`الرسالة بتجرّب [[code]] الأول، ولو مش موجود الرسالة، ولو الاتنين مش موجودين نص ثابت. و [[?.]] عشان لو [[cause]] نفسها [[undefined]] ميرميش TypeError جوه الـ constructor.`,
+            R`نفس فكرة [[HttpError]]: الاسم بيظهر في اللوج وفي الـ stack، فتعرف من أول نظرة إن المشكلة في الاتصال مش في رد السيرفر.`,
+            R`**بنحتفظ بالسبب الأصلي** في [[cause]]، وده الاسم المتعارف عليه اللي [[console.log]] و Node بيعرضوه تحت الـ error. من غيره هتعرف إن الاتصال فشل بس مش هتعرف ليه.`,
+            R`نهاية الـ constructor.`,
+            R`نهاية كلاس [[NetworkError]].`
           ],
-          try: R`شغّل سيرفر الـ SSE اللي في الشرح، وافتح [[http://localhost:8301/events]] في المتصفح نفسه (هتشوف النص الخام بيوصل)، وبعدين بـ [[curl -N]]. وبعدها اقفل السيرفر وشغّله تاني والعميل شغّال، وقيس الوقت بين [[error]] و [[open]] التاني، وغيّر [[retry: 1000]] لـ [[retry: 3000]] وقيس تاني.`,
+          try: R`شغّل [[const r = await fetch('https://httpbin.org/status/404')]] وشوف هل الكود كمّل. واطبع [[r.ok]] و [[r.status]]. وبعدين جرّب [[fetch]] على بورت مقفول واطبع [[e.cause]].`,
           practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** سيرفر SSE بيبعت [[res.write('data: hi\n')]] كل ثانية، والعميل مبيطبعش ولا حدث، وكمان مبيطلعش error. لاقي الغلطة وصلّحها، وتأكد بـ [[curl -N]].`, done: R`عارف إن كل حدث لازم يخلص بسطر فاضي ([[\n\n]]) وإلا المتصفح بيفتكر الحدث لسه بيتكتب، والعميل بقى بيطبع [[hi]] كل ثانية.` },
-            { lvl: 'تطبيق', t: R`**ابني:** ساعة بـ SSE: سيرفر بـ [[node:http]] بس بيبعت [[event: tick]] كل ثانية فيه الوقت، و [[: ping]] كل ١٥ ثانية (سطر بيبدأ بـ [[:]] تعليق بيخلي الاتصال حي ورا الـ proxies)، وصفحة بتعرض الوقت وحالة الاتصال من [[readyState]] بالعربي.`, done: R`الصفحة بتعرض الوقت بيتغيّر كل ثانية، ولما تقفل السيرفر الحالة بتبقى «بيرجع يتصل»، ولما تشغّله تاني بيرجع لوحده من غير refresh، و [[curl -N]] بيوريك سطور [[: ping]].` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** نفس الميزة بطريقتين: polling بـ [[setInterval]] + [[fetch]] كل ثانيتين، و SSE. عدّ الطلبات اللي وصلت السيرفر في دقيقة لما الداتا بتتغيّر مرة كل ١٠ ثواني، واحسب التأخير المتوسط بين التغيير وظهوره عند العميل.`, done: R`عندك جدول برقمين لكل طريقة: polling حوالي ٣٠ طلب في الدقيقة وتأخير متوسط حوالي ثانية، و SSE طلب واحد وتأخير قريب من الصفر، ومكتوب جنبه إمتى polling يفضل أحسن (API مش بتاعك، أو تحديث كل كام دقيقة).` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سيرفر [[node:http]] على [[127.0.0.1:8111]] بيرجّع 404 على أي مسار. قبل ما تشغّل [[try { const r = await fetch(url); console.log('نجح', r.ok, r.status, r.statusText); } catch (e) { console.log('وقع', e.name); }]]، اكتب أنهي سطر هيطبع. وبعدين نفس الكود على بورت مفيش عليه سيرفر.`, done: R`على الـ 404 طبع [[نجح false 404 Not Found]]، وعلى البورت المقفول طبع [[وقع TypeError]] و [[e.cause.code]] بـ [[ECONNREFUSED]]. وكاتب توقعك جنب كل واحدة.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[try { data = await res.json(); } catch { data = await res.text(); }]] المفروض يرجّع النص لو الـ JSON بايظ، بس بيرمي error تاني. لاقي ليه، واكتب [[readBody(res)]] صح.`, done: R`عرفت إن الـ body بيتقرا مرة واحدة: بعد ما [[res.json()]] فشلت، [[res.text()]] رمت [[TypeError: Body is unusable: Body has already been read]]. والنسخة الصح بتقرا [[text()]] الأول وبعدين [[JSON.parse]] لو الـ [[content-type]] فيه json: JSON سليم يرجع object، و [[{bad]] يرجع النص، و [[text/plain]] يرجع نص.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[userMessage(err)]] بترجّع الرسالة اللي تتعرض لليوزر: [[HttpError]] 401 «سجّل دخول تاني»، و 404 «مش موجود»، و 5xx «السيرفر عنده مشكلة، جرّب كمان شوية»، و [[NetworkError]] «اتأكد من النت»، و [[TimeoutError]] «الرد اتأخر»، وإلغاء اليوزر من غير رسالة.`, done: R`٧ حالات (منهم 500 و 503 بنفس الرسالة) بترجّع الصح، والكود كله [[instanceof]] و [[status]] و [[name]] من غير ولا [[e.message.includes]]، ونوع مش معروف بيرجّع رسالة عامة ويعمل [[console.error]] للخطأ الأصلي.` },
           ],
           deep: {
-            why: R`HTTP العادي العميل بيسأل والسيرفر بيرد وخلاص، فالسيرفر مالوش طريقة «يبدأ» الكلام. polling بيحل ده بالقوة: طلبات كتير أغلبها فاضي، وتأخير لحد الطلب الجاي. SSE بيحلها بإن الرد نفسه ميخلصش، و WebSocket بيحوّل الاتصال لقناة حرة في الاتجاهين. والاختيار بيفرق في عدد السيرفرات وفي كمية الكود اللي هتكتبه.`,
-            how: R`**SSE على السلك:** السيرفر بيرد [[200]] بـ [[Content-Type: text/event-stream]] ومبيقفلش. كل حدث سطور [[field: value]]: [[event:]] الاسم، و [[data:]] المحتوى (كذا سطر [[data:]] بيتجمعوا بـ [[\n]])، و [[id:]] رقم الحدث، و [[retry:]] كام ms يستنى قبل ما يرجع. والحدث بيخلص بسطر فاضي. سطر بيبدأ بـ [[:]] تعليق بيتجاهل (بيستخدم كـ ping).
+            why: R`الكود اللي مبيفحصش [[res.ok]] بيكمّل على بيانات مش موجودة. وبعدين بتلاقي [[Cannot read properties of undefined]] في مكان تاني خالص — بعيد عن السبب.`,
+            how: R`**ليه [[fetch]] كده؟** لأن الرد **وصل**. السيرفر رد، والـ ٤٠٤ ده **رد صحيح** من ناحية الشبكة. الـ Promise بتوصف نجاح العملية (الطلب راح ورجع)، مش رضاك عن المحتوى.
 
-**الرجوع:** لو الاتصال وقع (والرد كان [[200]] و [[text/event-stream]])، العميل بيستنى [[retry]] ويبعت نفس الطلب ومعاه [[Last-Event-ID]]. اتقاس: [[error]] عند 1027ms و [[open]] تاني عند 2034ms مع [[retry: 1000]]. لو الرد [[502]] أو نوع تاني، بيقفل نهائي ([[readyState]] [[2]]، اتجرّب).
+ودي كانت قرار مقصود في المواصفة، والناس بتختلف عليه لحد دلوقتي. و [[axios]] بتعمل العكس (بترمي على ٤xx و٥xx) — وده الفرق الأساسي بينهم.
 
-**WebSocket:** العميل بيبعت [[GET]] فيه [[Upgrade: websocket]] و [[Sec-WebSocket-Key]]، والسيرفر بيرد [[101 Switching Protocols]] و [[Sec-WebSocket-Accept]] (hash من المفتاح عشان يثبت إنه فاهم البروتوكول). بعدها الكلام frames صغيرة، والعميل لازم يعمل mask لكل frame. وفيه ping/pong على مستوى البروتوكول السيرفر يستخدمه يعرف مين مات.`,
-            when: R`**polling** لو التحديث كل دقيقة أو أكتر، أو مش متحكم في السيرفر، أو عدد اليوزرز صغير جدًا. **SSE** لو الداتا من السيرفر لليوزر بس: إشعارات، dashboards، حالة شغلانة، ردود AI streaming. ببلاش reconnect و [[Last-Event-ID]]، وشغال مع HTTP/2 والـ cookies العادية. **WebSocket** لو العميل بيبعت كتير ولازم سريع: شات، ألعاب، تعديل مستند مع ناس، تداول. ولو محتاج fallback للمتصفحات القديمة أو rooms جاهزة، Socket.IO (مكتبة فوق WebSocket، بروتوكولها مختلف فمش بتكلّم [[ws]] عادي).`,
-            mistakes: R`تنسى السطر الفاضي بعد كل حدث SSE فمفيش حاجة توصل. أو تسمع بـ [[onmessage]] لأحداث ليها [[event:]] فمتوصلش. أو تحط Nginx قدام SSE من غير [[proxy_buffering off]] فالأحداث توصل كلها مرة واحدة متأخر (درس «SSE في Express» في تاب «APIs متقدمة»). أو تعمل WebSocket من غير reconnect فأول وقوع للنت الميزة تموت لحد الـ refresh. أو reconnect من غير backoff فلما السيرفر يقع آلاف العملاء يضربوه كل ثانية. أو تحط توكن في الـ URL ([[?token=...]]) فيتسجّل في لوجات السيرفر والـ proxy. أو تفتح أكتر من ٦ اتصالات SSE لنفس الدومين على HTTP/1.1 فالصفحة تهنّج (حد المتصفح، من MDN).`,
+**الحالات اللي [[fetch]] بترمي فيها:**
+
+| السبب | الشكل |
+|---|---|
+| شبكة / DNS / اتصال | [[TypeError: fetch failed]] و [[cause]] فيها الكود |
+| إلغاء | [[AbortError]] أو اللي مررته لـ [[abort()]] |
+| مهلة | [[TimeoutError]] |
+| CORS (في المتصفح) | [[TypeError: Failed to fetch]] |
+| URL غلط | [[TypeError: Failed to parse URL]] |
+
+**و [[e.cause]] في Node** فيها كائن فيه [[code]] زي [[ECONNREFUSED]] و [[ENOTFOUND]] و [[ETIMEDOUT]] و [[CERT_HAS_EXPIRED]]. وفي المتصفح، [[cause]] غالبًا فاضية والرسالة مبهمة عن قصد (أمان).
+
+**وقراية الـ body مرة واحدة بس**: [[res.json()]] أو [[res.text()]] بتستهلك الـ stream. فلو قريت [[text()]] عشان رسالة الخطأ، مش هتقدر تقرا [[json()]] بعدها. و [[res.clone()]] بتدّيك نسخة لو محتاج الاتنين.
+
+وعشان كده [[HttpError]] بتاخد الـ [[body]] اللي اتقرا، مش الـ [[Response]] عشان تقراه بعدين.
+
+**و [[this.name]]**: من غيرها، [[e.name]] بتفضل [[Error]] والـ stack بتبدأ بـ [[Error:]]. وكلاسك بيشتغل مع [[instanceof]] برضه، بس اللوج بيبقى أقل وضوحًا.`,
+            when: R`أي كود بيستخدم [[fetch]]. والفحص من أول سطر.`,
+            mistakes: R`تفترض إن [[await fetch]] اللي عدّى معناه نجاح. أو تقرا الـ body مرتين. أو تفحص [[e.message.includes('404')]] بدل [[e.status === 404]]. أو تنسى [[this.name]].`
           },
-          teach: R`## تلات طرق، وسؤال واحد بيختار
+          teach: R`## الحاجة اللي بتوقّع الكل
 
-**الداتا رايحة في أنهي اتجاه، وكام مرة؟** لو من السيرفر لليوزر بس: SSE. لو الاتنين بيتكلموا كتير: WebSocket. لو كل كام دقيقة ومش مهم يبقى لحظي: polling. كل اللي تحت اتشغّل على ويندوز ١١ بـ Node 24.22 و [[ws]] 8.22 من npm في فولدر تجربة، والناتج منسوخ زي ما طلع.
+~~~js
+const res = await fetch('/api/user/999');   // السيرفر رد 404
+console.log('وصلنا هنا');                    // ✅ بيطبع
+const user = await res.json();               // { error: '...' }
+console.log(user.name);                      // undefined
+~~~
+
+**[[fetch]] مبترميش على ٤٠٤.** ولا على ٥٠٠.
+
+~~~text اتشغّل فعلًا · Node 24
+=== fetch على 404 ===
+رمى؟ لأ — وصلنا هنا
+ok: false | status: 404 | statusText: "Not Found"
+body: {"error":"مش موجود"}
+~~~
+
+**ليه؟** لأن الرد **وصل**. السيرفر رد، والـ ٤٠٤ رد صحيح من ناحية الشبكة. الـ Promise بتوصف «الطلب راح ورجع»، مش رضاك عن المحتوى.
+
+> و [[axios]] بتعمل العكس (بترمي على 4xx و5xx). وده الفرق الأساسي بينهم.
 
 ---
 
-## ١. سيرفر SSE بـ [[node:http]] بس
+## ١. وبترمي إمتى؟
 
-~~~js sse-server.mjs
-import http from 'node:http';
-let n = 0;
-http.createServer((req, res) => {
-  if (req.url !== '/events') { res.writeHead(404).end(); return; }
-  console.log('اتصال جديد، Last-Event-ID =', req.headers['last-event-id'] ?? 'مفيش');
-  res.writeHead(200, {
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache',
-    Connection: 'keep-alive',
-  });
-  res.write('retry: 1000\n\n');
-  const timer = setInterval(() => {
-    n++;
-    res.write($__btid: $__{n}\nevent: price\ndata: $__{JSON.stringify({ n, price: 100 + n })}\n\n$__bt);
-    if (n % 3 === 0) { clearInterval(timer); res.end(); }
-  }, 300);
-  req.on('close', () => clearInterval(timer));
-}).listen(8301, () => console.log('SSE على http://localhost:8301/events'));
-~~~
-
-| السطر | ليه موجود |
+| السبب | الشكل |
 |---|---|
-| [[Content-Type: text/event-stream]] | ده اللي بيخلي [[EventSource]] يقبل الرد. أي نوع تاني = قفلة نهائية |
-| [[Cache-Control: no-cache]] | عشان أي proxy أو cache في السكة ميحتفظش بالرد ويعيده لحد تاني |
-| [[retry: 1000]] | بيقول للعميل: لو الاتصال وقع استنى ثانية وارجع |
-| [[id:]] و [[event:]] و [[data:]] | رقم الحدث واسمه ومحتواه، وكل حدث بيخلص بسطر فاضي |
-| [[req.on('close')]] | لو العميل قفل، وقّف المؤقت، وإلا هيفضل يكتب على اتصال ميت وتسرّب ذاكرة |
+| شبكة / DNS / اتصال | [[TypeError: fetch failed]] |
+| إلغاء | [[AbortError]] أو اللي مررته |
+| مهلة | [[TimeoutError]] |
+| CORS (في المتصفح) | [[TypeError: Failed to fetch]] |
+| URL غلط | [[TypeError: Failed to parse URL]] |
 
-السيرفر بيقفل الرد كل ٣ أحداث **عن قصد**، عشان نشوف الرجوع لوحده.
-
-### الشكل الخام على السلك: [[curl -N]]
-
-[[-N]] = متعملش buffer، اطبع كل حاجة أول ما توصل:
-
-~~~text الناتج: curl -sN http://localhost:8301/events
-retry: 1000
-
-id: 1
-event: price
-data: {"n":1,"price":101}
-
-id: 2
-event: price
-data: {"n":2,"price":102}
-
-id: 3
-event: price
-data: {"n":3,"price":103}
+~~~text اتشغّل فعلًا — بورت مقفول
+name: TypeError | message: fetch failed
+e.cause: ECONNREFUSED | connect ECONNREFUSED 127.0.0.1:8199
 ~~~
 
-ده كل البروتوكول: نص، سطور، وسطر فاضي بين كل حدث.
+**[[fetch failed]] مبتقولش حاجة. و [[e.cause]] بتقول كل حاجة.**
+
+وأكواد شائعة: [[ECONNREFUSED]] (مفيش حاجة بتسمع)، و [[ENOTFOUND]] (DNS)، و [[ETIMEDOUT]]، و [[CERT_HAS_EXPIRED]].
+
+> في المتصفح، [[cause]] غالبًا فاضية والرسالة مبهمة **عن قصد** (أمان: متقولش لصفحة ليه الطلب فشل).
 
 ---
 
-## ٢. العميل: [[EventSource]] وحالاته
+## ٢. أخطاء ليها نوع
 
-عميل بيطبع الوقت من البداية مع كل حاجة:
-
-~~~js sse-client.mjs
-const t0 = Date.now();
-const ms = () => String(Date.now() - t0).padStart(5) + 'ms';
-const es = new EventSource('http://localhost:8301/events');
-console.log(ms(), 'readyState', es.readyState);
-es.onopen = () => console.log(ms(), 'open، readyState', es.readyState);
-es.addEventListener('price', (e) => {
-  const d = JSON.parse(e.data);
-  console.log(ms(), 'price', d.price, 'lastEventId', e.lastEventId);
-  if (d.n === 5) { es.close(); console.log(ms(), 'قفلت، readyState', es.readyState); }
-});
-es.onerror = () => console.log(ms(), 'error، readyState', es.readyState);
-~~~
-
-~~~text الناتج: node --no-warnings --experimental-eventsource sse-client.mjs
-   78ms readyState 0
-   98ms open، readyState 1
-  405ms price 101 lastEventId 1
-  715ms price 102 lastEventId 2
- 1025ms price 103 lastEventId 3
- 1027ms error، readyState 0
- 2034ms open، readyState 1
- 2341ms price 104 lastEventId 4
- 2649ms price 105 lastEventId 5
- 2650ms قفلت، readyState 2
-~~~
-
-~~~text لوج السيرفر
-اتصال جديد، Last-Event-ID = مفيش
-اتصال جديد، Last-Event-ID = 3
-~~~
-
-اقرا الناتج كده:
-
-1. [[0]] بعد الإنشاء، [[1]] بعد [[open]].
-2. عند 1025ms السيرفر قفل الرد، فـ [[error]] اتنادى و [[readyState]] **[[0]] مش [[2]]**: يعني «بيرجع يتصل»، مش «مات».
-3. استنى ثانية (الـ [[retry: 1000]]) ورجع عند 2034ms، وبعت [[Last-Event-ID = 3]] لوحده. السيرفر الحقيقي يستخدمه يبعت اللي فات.
-4. [[close()]] = [[2]] ومفيش رجوع تاني.
-
-| [[readyState]] | الاسم | معناها |
-|---|---|---|
-| [[0]] | [[CONNECTING]] | بيتصل أول مرة، أو بيرجع بعد ما وقع |
-| [[1]] | [[OPEN]] | متصل والأحداث بتوصل |
-| [[2]] | [[CLOSED]] | اتقفل نهائي: بـ [[close()]] أو السيرفر رد بحاجة غلط |
-
-**مفاجأتين من التشغيل:**
-
-- **Node بيقفل البرنامج وهو مستني يرجع:** أول تشغيل وقف عند [[error، readyState 0]] والبرنامج خرج، لأن مؤقت الرجوع في Node مش بيخلي البرنامج عايش. حطيت [[setInterval]] فاضي فكمّل. في المتصفح مش موجودة المشكلة دي.
-- **[[502]] بيقتل الاتصال:** سيرفر بيرد [[res.writeHead(502)]] طلّع [[error، readyState 2]] وبعد ٣ ثواني لسه [[2]]. يعني لو الـ proxy رد بخطأ وقت ما السيرفر بيعيد تشغيل، [[EventSource]] **مش هيرجع**، ولازم تكتب انت: لو [[readyState === 2]] اعمل [[EventSource]] جديد بعد شوية.
-
----
-
-## ٣. سيرفر WebSocket بـ [[ws]]
-
-~~~js ws-server.mjs
-import { WebSocketServer, WebSocket } from 'ws';
-const wss = new WebSocketServer({ port: 8300 });
-wss.on('connection', (socket, req) => {
-  console.log('عميل جديد من', req.socket.remoteAddress, 'العدد:', wss.clients.size);
-  socket.on('message', (raw) => {
-    const msg = JSON.parse(raw);
-    for (const c of wss.clients) {
-      if (c.readyState === WebSocket.OPEN) c.send(JSON.stringify({ from: msg.name, text: msg.text }));
-    }
-  });
-  socket.on('close', (code, reason) => console.log('اتقفل', code, reason.toString()));
-});
-console.log('WS على ws://localhost:8300');
-~~~
-
-- [[new WebSocketServer({ port })]]: سيرفر على البورت ده. ممكن كمان تديله [[{ server }]] HTTP موجود فيشتغلوا على نفس البورت.
-- [[wss.clients]]: [[Set]] بكل المتصلين. اللفة عليه هي الـ broadcast.
-- [[c.readyState === WebSocket.OPEN]]: متبعتش لحد بيقفل.
-- [[raw]] بيوصل [[Buffer]]، و [[JSON.parse]] بيقبله لأنه بيحوّله نص الأول. وفي سيرفر حقيقي حط الـ parse في [[try]]: رسالة بايظة من عميل واحد هترمي وتوقّع السيرفر كله.
-
-### الـ handshake بعينك
-
-~~~text الناتج: curl -si -H "Connection: Upgrade" -H "Upgrade: websocket" -H "Sec-WebSocket-Version: 13" -H "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==" http://localhost:8300/
-HTTP/1.1 101 Switching Protocols
-Upgrade: websocket
-Connection: Upgrade
-Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
-~~~
-
-[[101]] معناها «تمام، الاتصال ده مبقاش HTTP». والـ [[Accept]] ده بالظبط القيمة اللي في مثال المواصفات (RFC 6455) للمفتاح ده، يعني [[ws]] حسبه صح.
-
----
-
-## ٤. تشغيل المثال كله
-
-~~~text الناتج: node --experimental-eventsource example.mjs
-SSE readyState 0
-(node:23072) [UNDICI-ES] Warning: EventSource is experimental, expect them to change at any time.
-WS وصل: sara أهلا
-WS close 1000 خلصت true
-price 101 id 1
-price 102 id 2
-price 103 id 3
-SSE error، readyState 0
-price 104 id 4
-price 105 id 5
-~~~
-
-~~~text لوج سيرفر WS
-عميل جديد من ::1 العدد: 1
-اتقفل 1000 خلصت
-~~~
-
-- الـ warning ده من Node بيقول إن [[EventSource]] لسه تجريبي، و [[--no-warnings]] بيخفيه.
-- [[::1]] هو localhost بـ IPv6: [[localhost]] على ويندوز اتحل لـ IPv6 الأول.
-- رسايل WS وصلت قبل SSE لأن SSE بيبعت كل 300ms.
-
-وعميل على بورت مقفول:
-
-~~~text الناتج
-error event ErrorEvent
-close 1006 false
-~~~
-
-[[1006]] = «الاتصال اتقطع من غير قفلة»، و [[wasClean]] [[false]]. ده الكود اللي هتشوفه كل ما النت يقع.
-
-| الكود | معناه |
-|---|---|
-| [[1000]] | قفلة عادية، الطرفين متفقين |
-| [[1001]] | الطرف التاني ماشي: الصفحة اتقفلت أو السيرفر بيقفل |
-| [[1006]] | اتقطع من غير ما حد يقفل: نت، أو السيرفر وقع (مبيتبعتش، المتصفح بيحطه) |
-| [[1008]] | السيرفر رفض لسبب سياسة: مثلًا توكن غلط |
-| [[1011]] | السيرفر وقع وهو بيعالج |
-| [[4000]] لحد [[4999]] | أكواد انت تعرّفها للتطبيق بتاعك |
-
----
-
-## ٥. WebSocket مبيرجعش لوحده: اكتب الـ reconnect
-
-~~~js reconnect.mjs
-let tries = 0, stop = false;
-function connect() {
-  const ws = new WebSocket('ws://localhost:8300');
-  ws.onopen = () => { tries = 0; console.log(ms(), 'متصل'); };
-  ws.onclose = (e) => {
-    if (stop) return;
-    const wait = Math.min(30000, 500 * 2 ** tries++);
-    console.log(ms(), 'اتقفل', e.code, '← هحاول تاني بعد', wait, 'ms');
-    setTimeout(connect, wait);
-  };
+~~~js
+export class HttpError extends Error {
+  constructor(response, body) {
+    super($__btHTTP $__{response.status} $__{response.statusText} على $__{response.url}$__bt);
+    this.name = 'HttpError';
+    this.status = response.status;
+    this.body = body;
+  }
 }
-connect();
 ~~~
 
-جرّبته كده: العميل اشتغل والسيرفر مقفول، وبعد ثانية شغّلت السيرفر، وبعد ٣ ثواني قفلته، وبعد ثانية ونص شغّلته تاني:
-
-~~~text الناتج
-   53ms اتقفل 1006 ← هحاول تاني بعد 500 ms
-  559ms اتقفل 1006 ← هحاول تاني بعد 1000 ms
- 1576ms متصل
- 4272ms اتقفل 1006 ← هحاول تاني بعد 500 ms
- 4784ms اتقفل 1006 ← هحاول تاني بعد 1000 ms
- 5799ms اتقفل 1006 ← هحاول تاني بعد 2000 ms
- 7821ms متصل
+~~~text والنتيجة (اتشغّل فعلًا)
+instanceof HttpError: true
+name: HttpError | status: 404
+message: HTTP 404 Not Found على http://127.0.0.1:8120/404
+body: {"error":"مش موجود"}
 ~~~
 
-- [[500 * 2 ** tries++]]: نص ثانية، ثانية، ٢، ٤، ٨... ده **exponential backoff**. [[**]] أُس، و [[tries++]] بيستخدم القيمة وبعدين يزوّدها.
-- [[Math.min(30000, ...)]]: أقصى انتظار ٣٠ ثانية، عشان ميستناش ساعة.
-- [[tries = 0]] في [[onopen]]: بعد ما ينجح العدّاد يرجع من الأول (شوف 4272ms بدأ من 500 تاني).
-- في الإنتاج زوّد شوية عشوائية ([[wait * (0.5 + Math.random())]]) عشان لو السيرفر وقع وآلاف العملاء اتقطعوا في نفس اللحظة ميرجعوش كلهم في نفس الثانية.
+**[[this.name]] مش زينة**: من غيرها [[e.name]] بتفضل [[Error]] واللوج بيبقى أقل وضوحًا.
 
 ---
 
-## ٦. الأمان والإنتاج (من MDN ومن [[ws]] docs)
+## ٣. والـ body بيتقرا **مرة واحدة**
 
-- **[[wss://]] و https:** صفحة https مش هتقبل [[ws://]] (mixed content).
-- **التوكن:** [[EventSource]] مبيقبلش headers، فالـ auth بالـ cookie ([[new EventSource(url, { withCredentials: true })]] لو دومين تاني). و WebSocket كمان مفيهوش headers من المتصفح: ابعت التوكن في أول رسالة بعد [[open]] أو cookie، مش في الـ URL.
-- **[[Origin]]:** السيرفر لازم يفحص هيدر [[Origin]] في الـ handshake، وإلا أي موقع تاني يقدر يفتح WebSocket لسيرفرك بكوكيز اليوزر.
-- **ورا Nginx:** WebSocket محتاج [[proxy_set_header Upgrade]] و [[Connection]] (درس «WebSockets» في تاب Nginx)، و SSE محتاج [[proxy_buffering off]] و timeout طويل.
-- **الحد:** المتصفح بيفتح ٦ اتصالات بس لكل دومين على HTTP/1.1، و SSE بياخد واحد منهم طول الوقت. على HTTP/2 الحد أكبر بكتير.
+~~~js ده هيفشل
+const text = await res.text();
+const data = await res.json();   // ❌ الـ stream اتستهلك
+~~~
+
+~~~js والحل لو محتاج الاتنين
+const data = await res.clone().json();
+const text = await res.text();
+~~~
+
+وعشان كده [[HttpError]] بتاخد الـ [[body]] **اللي اتقرا**، مش الـ [[Response]] عشان تقراه بعدين.
 
 ---
 
-## الخلاصة
+## ٤. والفايدة في الاستخدام
 
-- اتجاه واحد = SSE (رجوع و [[Last-Event-ID]] ببلاش). اتجاهين وكتير = WebSocket (والـ reconnect عليك). نادر = polling.
-- SSE: [[text/event-stream]]، وسطور [[event:]] و [[data:]] و [[id:]] و [[retry:]]، وسطر فاضي بعد كل حدث.
-- [[readyState]] في SSE: [[0]] بيتصل/بيرجع، [[1]] مفتوح، [[2]] مات. وفي WebSocket ٤ حالات لحد [[3]].
-- [[onerror]] مع [[readyState 0]] = هيرجع لوحده، ومع [[2]] = انت اللي تعيد.
-- [[close()]] لما اليوزر يسيب الصفحة، و backoff بسقف وعشوائية في أي reconnect.`,
-          sol: R`اتجرّب على Node 24.22. [[curl -N]] بيوريك الأحداث وهي بتوصل، ومن غير [[-N]] ممكن يستنى لحد ما الـ buffer يتملي. ولما قفلت السيرفر وشغّلته، [[EventSource]] رجع بعد مدة [[retry]] بالظبط تقريبًا: مع [[retry: 1000]] الفرق بين [[error]] و [[open]] كان حوالي ١٠٠٧ms (1027 → 2034)، ومع [[retry: 3000]] المفروض يبقى حوالي ٣ ثواني. والسيرفر طبع [[Last-Event-ID]] اللي العميل بعته وهو راجع.
+~~~js من غير أنواع
+catch (e) {
+  if (e.message.includes('404')) { ... }   // هشّ
+}
+~~~
 
-~~~text الناتج: curl -sN http://localhost:8301/events
-retry: 1000
+~~~js بأنواع
+catch (e) {
+  if (e instanceof HttpError && e.status === 404) { showNotFound(); }
+  else if (e instanceof NetworkError)             { showOffline(); }
+  else throw e;                                    // اللي متعرفوش، ارميه
+}
+~~~
 
-id: 1
-event: price
-data: {"n":1,"price":101}
-~~~`,
-          solCode: R`// افتح الصفحة دي من نفس السيرفر وشوف الحالة بتتغيّر
-const es = new EventSource('/events');
-const show = () => (document.title = ['بيتصل', 'متصل', 'مقفول'][es.readyState]);
-es.onopen = show;
-es.onerror = () => {
-  show();
-  if (es.readyState === EventSource.CLOSED) console.log('استسلم: لازم EventSource جديد');
-};
-es.addEventListener('price', (e) => console.log(JSON.parse(e.data).price, e.lastEventId));`,
-        },
-        {
-          cmd: "Clipboard و Geolocation و Share",
-          title: "الحافظة والمكان والمشاركة: صفحة آمنة، وضغطة، وصلاحية",
-          learn: R`تستخدم [[navigator.clipboard]] و [[navigator.geolocation]] و [[navigator.share]] بشروطهم (secure context، وضغطة من اليوزر، وصلاحية)، وتفحص قبل ما تستخدم، وتقرا كل خطأ.`,
-          out: R`أزرار «انسخ» و «مكاني» و «شارك» شغالة على الموبايل والكمبيوتر، وبتقول لليوزر بالظبط ليه لو مش شغالة.`,
-          use: {
-            prog: R`APIs الجهاز كلها ماشية على نفس القواعد التلاتة: الصفحة لازم آمنة، وبعضها لازم يتنادى من ضغطة، وبعضها بيسأل اليوزر. افهمهم مرة وهتفهم الكاميرا والإشعارات والـ Bluetooth بعدين.`,
-            work: R`«الزرار شغّال عندي ومش شغّال على السيرفر التجريبي» — غالبًا السيرفر التجريبي [[http://]] بـ IP، فـ [[navigator.clipboard]] = [[undefined]]. ده بيحصل في أي فريق مرة على الأقل.`,
-            cs: R`نموذج الأمان في المتصفح: الـ origin (بروتوكول + دومين + بورت)، والـ secure context، والـ user activation كإثبات إن اليوزر هو اللي طلب مش سكربت إعلانات.`,
-          },
-          desc: R`تلات APIs للجهاز، وكلهم ليهم نفس الشروط:
-
-1. **secure context:** الصفحة [[https://]] أو [[localhost]] أو [[127.0.0.1]]. على [[http://example.com]] جرّبتها: [[isSecureContext]] = [[false]]، و [[navigator.clipboard]] و [[navigator.share]] = [[undefined]] خالص، و [[getCurrentPosition]] رجع error كود [[1]] برسالة «Only secure origins are allowed».
-2. **user activation (ضغطة من اليوزر):** [[navigator.share]] من غير ضغطة رمى [[NotAllowedError: Must be handling a user gesture to perform a share request]] (اتجرّب). فاستدعيهم جوه [[click]] handler، مش في [[load]] ولا بعد [[setTimeout]] طويل.
-3. **صلاحية:** المتصفح بيسأل اليوزر للمكان، ولقراية الحافظة. والإجابة بتتحفظ للموقع، و [[navigator.permissions.query({ name })]] بيقولك الحالة: [[granted]] أو [[denied]] أو [[prompt]].
-
-والقاعدة الرابعة: **feature detection قبل الاستخدام** ([[if (!navigator.clipboard)]] و [[navigator.canShare?.(data)]])، عشان اليوزر يشوف رسالة مش زرار ميت.
-
-**أكواد الـ geolocation:** [[1]] [[PERMISSION_DENIED]] (رفض، أو الصفحة مش آمنة)، و [[2]] [[POSITION_UNAVAILABLE]] (الجهاز مش عارف)، و [[3]] [[TIMEOUT]] (المهلة خلصت). اتطبعت من [[GeolocationPositionError]] في Chromium.`,
-          example: R`// في صفحة فيها 3 أزرار: #copy و #where و #share
-console.log('آمنة؟', window.isSecureContext);
-document.querySelector('#copy').addEventListener('click', async () => {
-  if (!navigator.clipboard) return console.log('مفيش clipboard: الصفحة مش https ولا localhost');
-  try {
-    await navigator.clipboard.writeText('كود الخصم: SAVE10');
-    console.log('اتنسخ');
-  } catch (e) {
-    console.log('النسخ فشل:', e.name, e.message);
-  }
-});
-document.querySelector('#where').addEventListener('click', () => {
-  if (!('geolocation' in navigator)) return console.log('المتصفح مفيهوش geolocation');
-  navigator.geolocation.getCurrentPosition(
-    (pos) => console.log(pos.coords.latitude, pos.coords.longitude, '±' + pos.coords.accuracy + 'm'),
-    (err) => {
-      const why = { 1: 'اليوزر رفض أو الصفحة مش آمنة', 2: 'الجهاز مش عارف مكانه', 3: 'المهلة خلصت' };
-      console.log('geolocation فشل:', err.code, why[err.code], err.message);
-    },
-    { timeout: 10000, maximumAge: 60000, enableHighAccuracy: false },
-  );
-});
-document.querySelector('#share').addEventListener('click', async () => {
-  const data = { title: 'درس Streams', url: location.href };
-  if (!navigator.canShare?.(data)) return console.log('share مش متاح هنا، اعرض زرار «انسخ اللينك» بداله');
-  try {
-    await navigator.share(data);
-    console.log('اتشارك');
-  } catch (e) {
-    if (e.name !== 'AbortError') console.log('share فشل:', e.name, e.message);
-    else console.log('اليوزر قفل الشاشة أو مفيش مكان يشارك فيه (AbortError)');
-  }
-});`,
-          lines: [
-            R`[[isSecureContext]] بيقولك الصفحة آمنة ولا لأ قبل أي حاجة. على [[localhost]] طلع [[true]]، وعلى [[http://example.com]] طلع [[false]]. ده أول سطر تطبعه لما زرار «مش شغّال على السيرفر».`,
-            R`الحافظة لازم تتنادى من ضغطة، فبنحطها جوه [[click]]. والـ handler [[async]] لأن [[writeText]] بترجّع Promise (المتصفح ممكن يسأل اليوزر أو يكتب في حافظة النظام).`,
-            R`feature detection: في صفحة مش آمنة [[navigator.clipboard]] مش موجود أصلًا ([[undefined]])، فـ [[navigator.clipboard.writeText]] كانت هترمي [[TypeError: Cannot read properties of undefined]]. بدل كده بنقول السبب. و [[return console.log(...)]] اختصار لـ «اطبع واخرج».`,
-            R`[[try]] لأن [[writeText]] ممكن ترفض حتى في صفحة آمنة: الصفحة مش focused، أو اليوزر قافل الصلاحية.`,
-            R`[[writeText(text)]] بتكتب نص في حافظة النظام. اتجرّب: بعد الضغطة [[readText()]] رجّعت «كود الخصم: SAVE10» بالعربي زي ما هو. والكتابة مش محتاجة سؤال في Chromium ([[clipboard-write]] حالته [[granted]] على localhost).`,
-            R`بنأكد لليوزر إن النسخ حصل. في الواجهة الحقيقية غيّر نص الزرار لـ «اتنسخ ✓» ثانيتين بدل الـ log.`,
-            R`[[catch (e)]] بيمسك رفض الـ Promise.`,
-            R`[[e.name]] أهم من [[e.message]]: [[NotAllowedError]] معناها الصلاحية أو الضغطة، وده اللي تبني عليه رسالتك. الرسالة نفسها بتختلف من متصفح للتاني.`,
-            R`نهاية الـ [[catch]].`,
-            R`نهاية الـ handler بتاع [[#copy]].`,
-            R`زرار المكان. الـ handler مش [[async]] لأن [[getCurrentPosition]] قديمة وبتشتغل بـ callbacks مش Promise.`,
-            R`[[in]] بيفحص إن الخاصية موجودة من غير ما يقراها. في الصفحة المش آمنة جرّبتها: [[geolocation]] **موجود** (على عكس الحافظة)، بس بيرجّع error كود [[1]]. فالفحص ده للمتصفحات القديمة بس، والـ secure context بيتعرف من الـ error.`,
-            R`[[getCurrentPosition(success, error, options)]] بتطلب المكان مرة واحدة. أول مرة المتصفح بيسأل اليوزر «الموقع ده عايز يعرف مكانك». ولو عايز متابعة مستمرة (خريطة بتتحرك) فيه [[watchPosition]] بنفس الـ arguments وبترجّع رقم توقفه بيه [[clearWatch]].`,
-            R`الـ success: [[pos.coords]] فيه [[latitude]] و [[longitude]] و [[accuracy]] بالمتر (نص قطر الدايرة اللي المكان فيها). اتجرّب بمكان متحدد من Playwright: طبع [[30.0444 31.2357 ±20m]]. و [[accuracy]] الكبيرة (آلاف المترات) معناها المكان جاي من الـ IP أو الواي فاي مش GPS.`,
-            R`الـ error callback بياخد [[GeolocationPositionError]] فيه [[code]] و [[message]].`,
-            R`جدول بيحوّل الكود لرسالة لليوزر. الأرقام ثابتة في المواصفات ومتاحة كمان كثوابت: [[err.PERMISSION_DENIED]] = 1 و [[POSITION_UNAVAILABLE]] = 2 و [[TIMEOUT]] = 3 (اتطبعوا من المتصفح).`,
-            R`في التجارب: الصفحة المش آمنة طلّعت [[1]] و «Only secure origins are allowed»، ومن غير ما حد يرد على سؤال الصلاحية طلّعت [[3]] و «Timeout expired» بعد ١٠ ثواني بالظبط.`,
-            R`نهاية الـ error callback.`,
-            R`الخيارات: [[timeout]] أقصى انتظار بالـ ms (من غيره ممكن يستنى للأبد)، و [[maximumAge]] يقبل مكان محفوظ عمره لحد دقيقة بدل ما يقيس تاني (أسرع وأوفر للبطارية)، و [[enableHighAccuracy: false]] متشغّلش GPS لو الواي فاي كفاية.`,
-            R`نهاية [[getCurrentPosition(...)]].`,
-            R`نهاية الـ handler بتاع [[#where]].`,
-            R`زرار المشاركة: بيفتح شاشة المشاركة بتاعة النظام (واتساب، تليجرام، الإيميل...) على الموبايل، وعلى ويندوز وماك فيه شاشة مشابهة. ولازم ضغطة.`,
-            R`الداتا اللي هتتشارك: [[title]] و [[text]] و [[url]]، وممكن [[files]] (صور أو PDF). [[location.href]] لينك الصفحة الحالية.`,
-            R`[[navigator.canShare?.(data)]]: الـ [[?.]] بتنادي الدالة بس لو موجودة (في الصفحة المش آمنة [[undefined]] فبيرجّع [[undefined]] والشرط بيعدّي). و [[canShare]] بيقولك الداتا دي بالذات تتشارك ولا لأ: [[canShare({})]] رجّع [[false]]، و [[{ url }]] رجّع [[true]].`,
-            R`[[try]] لأن [[share]] بترفض في حالات كتير عادية جدًا.`,
-            R`[[navigator.share(data)]] بتفتح الشاشة وبترجّع Promise بتخلص لما اليوزر يختار. شاشة المشاركة نفسها مينفعش تتجرّب في متصفح أوتوماتيك (الـ Promise فضلت مستنية)، فاللي بعدها من MDN.`,
-            R`لو اليوزر اختار تطبيق وشارك فعلًا.`,
-            R`[[catch]] بيمسك رفض [[share]]. والرفض هنا مش دايمًا غلطة، فلازم نبص على نوعه قبل ما نعرض حاجة لليوزر.`,
-            R`[[AbortError]] معناها اليوزر قفل الشاشة من غير ما يختار، أو مفيش تطبيق يشارك فيه، ودي مش غلطة تعرض لها رسالة حمرا. أي حاجة تانية ([[NotAllowedError]] من غير ضغطة، أو [[DataError]]) سجّلها.`,
-            R`[[else]] بتاع الـ [[AbortError]]: هنا بنطبع عشان تشوفها وانت بتجرّب، وفي الواجهة الحقيقية متعملش حاجة.`,
-            R`نهاية الـ [[catch]].`,
-            R`نهاية الـ handler بتاع [[#share]].`,
-          ],
-          try: R`افتح الصفحة على [[http://localhost:8000]] واضغط التلات أزرار. وبعدين افتحها من الموبايل على نفس الواي فاي بـ IP الكمبيوتر ([[http://192.168.x.x:8000]]): اطبع [[isSecureContext]] وشوف كل زرار بيقول إيه. وفي DevTools افتح Sensors وغيّر Location، وجرّب «Location unavailable». وفي إعدادات الموقع (القفل جنب العنوان) اقفل صلاحية المكان وجرّب تاني.`,
-          practice: [
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من MDN (صفحة [[Permissions.query]] وصفحة [[Clipboard]])، طلّع: إيه أسماء الصلاحيات اللي [[navigator.permissions.query]] بيقبلها في Chrome للحافظة والمكان؟ وإيه اللي بيحصل لو سألت عن [[clipboard-read]] في Firefox؟ وبعدين جرّب في Console بتاع متصفحك.`, done: R`كاتب ٣ أسماء ([[geolocation]] و [[clipboard-read]] و [[clipboard-write]]) والحالة اللي طلعت عندك لكل واحد، وعارف إن الاسم اللي المتصفح مش بيعرفه بيرمي [[TypeError]] بدل ما يرجّع حالة، فلازم [[try]] حوالين [[query]].` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** كود بينسخ كود الخصم أوتوماتيك أول ما الصفحة تفتح: [[window.addEventListener('load', () => navigator.clipboard.writeText(code))]]، وكود تاني بيعمل [[share]] بعد ما [[fetch]] تخلص (٦ ثواني بعد الضغطة). الاتنين «مش شغالين أحيانًا». اشرح ليه وصلّحهم.`, done: R`النسخ بقى في زرار واضح، والـ share بيتنادى في نفس الضغطة (الداتا بتتجهز قبلها أو بتعرض زرار «شارك» تاني بعد ما الـ fetch تخلص)، وعندك جملة بتشرح إن الضغطة ليها عمر قصير (transient activation) وبتخلص.` },
-            { lvl: 'تحدي', t: R`**ابني:** دالة [[getLocation({ timeout })]] بترجّع Promise بدل الـ callbacks، وبترمي [[Error]] برسالة عربي حسب الكود فيه [[cause]] الأصلي، ولو الصفحة مش آمنة بترمي على طول من غير ما تستنى. واستخدمها بـ [[await]] في زرار، واعرض رسالة لكل حالة.`, done: R`في DevTools Sensors: مكان متحدد بيرجّع الإحداثيات، و «Location unavailable» بيرمي رسالة كود ٢، ورفض الصلاحية بيرمي رسالة كود ١، و [[timeout: 1]] بيرمي رسالة كود ٣، وكلهم فيهم [[e.cause.code]] الأصلي.` },
-          ],
-          deep: {
-            why: R`الحافظة فيها باسوردات وأكواد، والمكان بيقول اليوزر ساكن فين، والمشاركة بتفتح شاشة نظام. لو أي موقع يقدر يوصل لده من غير شروط، أي إعلان أو سكربت تتبّع هيقرا حافظتك ومكانك. فالمتصفح بيحط تلات أقفال: اتصال مشفّر (عشان محدش في النص يحقن كود)، وضغطة حقيقية (عشان سكربت مايعملهاش لوحده)، وموافقة اليوزر للحاجات الحساسة.`,
-            how: R`**secure context:** المتصفح بيحسبه للصفحة: [[https]] أو [[wss]] أو [[localhost]] أو [[127.0.0.1]] أو [[file://]] في أغلب المتصفحات. APIs كتير متعلّمة في المواصفات [[ [SecureContext] ]]، ودي **مبتتعرّفش** أصلًا في الصفحة المش آمنة (عشان كده [[navigator.clipboard]] كان [[undefined]] مش بيرمي). و geolocation أقدم فاتعمل استثناء: موجود بس بيرجّع error.
-
-**user activation:** كل ضغطة أو زرار كيبورد بيدّي الصفحة «تفعيل مؤقت» (transient activation) لثواني قليلة (حوالي ٥ في Chromium حسب MDN). [[navigator.userActivation.isActive]] بيقولك هو شغّال دلوقتي ولا لأ: في التجربة بعد ٦.٥ ثانية من غير ضغطة طلع [[false]] و [[share]] رفض. [[share]] و [[requestFullscreen]] و [[window.open]] **بيستهلكوا** التفعيل ده.
-
-**الصلاحيات:** بتتحفظ لكل origin. [[permissions.query]] بيقرا الحالة من غير ما يسأل اليوزر، فاستخدمه تعرض زرار «فعّل المكان» بدل ما تفاجئه بسؤال. ولما اليوزر يرفض مرة، الموقع **ميقدرش** يسأل تاني: اليوزر لازم يغيّرها بإيده من إعدادات الموقع.`,
-            when: R`**Clipboard:** زرار «انسخ» لكود أو لينك أو توكن، و [[readText]] نادر (لصق من زرار، والمتصفح بيسأل). **Geolocation:** «أقرب فرع»، والتوصيل، والخرايط، بس اسأل لما اليوزر يدوس زرار مش أول ما الصفحة تفتح (الناس بترفض الأسئلة المفاجئة). ولو محتاج المدينة بس، الـ IP عند السيرفر كفاية من غير سؤال. **Share:** على الموبايل أحسن من أزرار واتساب وفيسبوك المنفصلة، ومع بديل «انسخ اللينك» للكمبيوتر.`,
-            mistakes: R`تجرّب على [[localhost]] فكله يشتغل، وترفع على سيرفر تجريبي [[http://]] فيموت (secure context). أو تنادي [[share]] أو [[clipboard]] بعد [[await fetch]] طويل فالضغطة تخلص. أو تستنى [[writeText]] من غير [[timeout]]: في التجربة من غير ضغطة الـ Promise فضلت معلّقة أكتر من ٣ ثواني ومرجعتش ولا رفضت (Chromium 156 تحت Playwright، والمتصفح العادي ممكن يرفض بـ [[NotAllowedError]] حسب MDN). أو تنسى [[timeout]] في [[getCurrentPosition]] فالصفحة تستنى للأبد. أو تعرض رسالة خطأ حمرا لما اليوزر يقفل شاشة المشاركة ([[AbortError]] مش خطأ). أو [[document.execCommand('copy')]] القديم: MDN بيقول إنه deprecated، استخدمه بس كـ fallback لو لازم.`,
-          },
-          teach: R`## تلات أقفال، وكل API بيعدّي عليهم
-
-| | Clipboard | Geolocation | Share |
-|---|---|---|---|
-| صفحة آمنة | لازم. من غيرها [[navigator.clipboard]] مش موجود | لازم. من غيرها error كود [[1]] | لازم. من غيرها [[navigator.share]] مش موجود |
-| ضغطة من اليوزر | لازم عمليًا للكتابة، وأكيد للقراية | مش شرط، بس اسأل من زرار | لازم، وإلا [[NotAllowedError]] |
-| سؤال صلاحية | القراية بس | أيوه، أول مرة | لأ، شاشة المشاركة نفسها هي الموافقة |
-| نوعه | Promise | callbacks | Promise |
-
-اللي تحت اتشغّل في Chromium 156 (اللي بيجي مع Playwright) على ويندوز ١١، على صفحة [[http://localhost:8320]] (آمنة) وعلى [[http://example.com]] (مش آمنة). الضغطات كانت ضغطات حقيقية من Playwright ([[page.click]])، والصلاحيات اتدّت واتشالت بـ [[grantPermissions]] و [[clearPermissions]]. **اللي متجرّبش:** سؤال الصلاحية الحقيقي قدام يوزر، وشاشة المشاركة نفسها، والمتصفحات التانية: دول من MDN.
+**[[else throw e]] مهمة.** الـ [[catch]] اللي بيبلع كل حاجة بيخفي الباگات.
 
 ---
 
-## ١. feature detection في الصفحتين
+## ٥. تقدّم التحميل: الـ body كـ Streams
 
-نفس الفحص على الصفحتين:
-
-~~~js
-({ secure: isSecureContext, clipboard: typeof navigator.clipboard, share: typeof navigator.share,
-   canShare: typeof navigator.canShare, geo: typeof navigator.geolocation })
-~~~
-
-| الفحص | [[localhost]] | [[http://example.com]] |
-|---|---|---|
-| [[isSecureContext]] | [[true]] | [[false]] |
-| [[navigator.clipboard]] | object | [[undefined]] (مش موجود خالص) |
-| [[navigator.share]] و [[canShare]] | function | [[undefined]] |
-| [[navigator.geolocation]] | object | object (موجود، بس هيرفض) |
-
-ونفس الصفحة في Node 24: [[navigator.userAgent]] = [[Node.js/24]]، و clipboard و geolocation و share كلهم [[undefined]]، و [[isSecureContext]] مش متعرّف أصلًا. يعني الكود ده للمتصفح بس، وأي كود مشترك (SSR) لازم يفحص قبل ما يلمسهم.
-
----
-
-## ٢. تشغيل المثال على الصفحة المش آمنة
-
-~~~text الناتج: Console على http://example.com بعد ضغط التلات أزرار
-آمنة؟ false
-مفيش clipboard: الصفحة مش https ولا localhost
-geolocation فشل: 1 اليوزر رفض أو الصفحة مش آمنة Only secure origins are allowed (see: https://goo.gl/Y0ZkNV).
-share مش متاح هنا، اعرض زرار «انسخ اللينك» بداله
-~~~
-
-كل زرار قال السبب، ومفيش ولا error أحمر. من غير الفحص، أول زرار كان هيرمي [[TypeError: Cannot read properties of undefined (reading 'writeText')]].
-
-**لاحظ:** كود [[1]] في الـ geolocation معناه «رفض» سواء اليوزر اللي رفض أو الصفحة مش آمنة. الـ [[message]] هي اللي بتفرّق، بس متعتمدش على نصها (بيختلف من متصفح للتاني): افحص [[isSecureContext]] الأول.
-
----
-
-## ٣. على [[localhost]]: من غير صلاحيات، وبعدين بيها
-
-~~~text الناتج: من غير صلاحيات (clearPermissions)، ضغطة على «مكاني»
-آمنة؟ true
-geolocation فشل: 3 المهلة خلصت Timeout expired
-~~~
-
-سؤال الصلاحية ظهر ومحدش رد عليه، فبعد الـ [[timeout: 10000]] رجع كود [[3]]. من غير [[timeout]] كانت هتفضل مستنية.
-
-~~~text الناتج: بعد ما الصلاحيات اتدّت، ومكان متحدد (30.0444, 31.2357)
-آمنة؟ true
-اتنسخ
-clipboard فيه: كود الخصم: SAVE10
-30.0444 31.2357 ±20m
-~~~
-
-### القراية من الحافظة لوحدها
-
-نفس الضغطة، بس بعد [[writeText]] عملت [[readText()]] من غير صلاحية قراية:
-
-~~~text الناتج
-write ok
-copy err NotAllowedError Failed to execute 'readText' on 'Clipboard': Read permission denied.
-~~~
-
-الكتابة عدّت والقراية اترفضت. ده التصميم: إنك تحط في الحافظة أقل خطورة بكتير من إنك تقرا منها.
-
-### حالة الصلاحيات
-
-~~~text الناتج: navigator.permissions.query على localhost
-clipboard-read: prompt
-clipboard-write: granted
-geolocation: prompt
-~~~
-
-[[prompt]] = «لسه هنسأل». استخدمها: لو [[denied]] متعرضش زرار «مكاني» أصلًا، اعرض «فعّل المكان من إعدادات الموقع».
-
----
-
-## ٤. Share: [[canShare]] والضغطة
-
-~~~text الناتج: canShare على localhost
-canShare files (a.txt) true
-canShare png true
-canShare {} false
-canShare { url } true
-~~~
-
-و [[share]] من غير ضغطة (بعد ٦.٥ ثانية من فتح الصفحة، و [[navigator.userActivation.isActive]] = [[false]]):
-
-~~~text الناتج
-share err NotAllowedError: Failed to execute 'share' on 'Navigator': Must be handling a user gesture to perform a share request.
-~~~
-
-ومع ضغطة حقيقية، [[canShare]] رجّع [[true]] و [[share]] فتح الطلب والـ Promise فضلت مستنية (مفيش شاشة مشاركة في متصفح أوتوماتيك). الحالات دي من MDN:
-
-| [[e.name]] | معناها | تعمل إيه |
-|---|---|---|
-| [[AbortError]] | اليوزر قفل الشاشة، أو مفيش تطبيق يشارك فيه | ولا حاجة، مش خطأ |
-| [[NotAllowedError]] | من غير ضغطة، أو الصفحة مش مسموحلها (iframe من غير إذن) | نادي [[share]] من الـ click نفسه |
-| [[DataError]] | الداتا مش مقبولة (نوع ملف ممنوع، أو حجم كبير) | افحص بـ [[canShare]] قبلها |
-| [[InvalidStateError]] | فيه مشاركة لسه مفتوحة | متسمحش بضغطتين ورا بعض |
-
----
-
-## ٥. الضغطة ليها عمر
-
-اتجرّب: بعد ٦.٥ ثانية من فتح الصفحة [[userActivation.isActive]] = [[false]] و [[share]] رفض. الغلطة المشهورة:
-
-~~~js
-button.onclick = async () => {
-  const data = await fetch('/api/link').then((r) => r.json());
-  await navigator.share({ url: data.url });
-};
-~~~
-
-لو الـ [[fetch]] خدت كام ثانية التفعيل هيخلص و [[share]] يرفض. الحل: جهّز الداتا **قبل** الضغطة (أول ما الصفحة تفتح)، والضغطة تنادي [[share]] على طول.
-
-### [[writeText]] من غير ضغطة: مفاجأة
-
-في Chromium 156 تحت Playwright، [[writeText]] من غير ضغطة (والصلاحية [[granted]] والصفحة focused) **مخلصتش ولا رفضت**: بعد ٣ ثواني لسه pending. مش متأكد ده بيحصل في Chrome العادي قدام يوزر (MDN بيقول ممكن ترفض بـ [[NotAllowedError]] لو الصفحة مش focused). الدرس: اعمل النسخ من زرار، ولو عايز ضمان حط مهلة:
-
-~~~js
-const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('النسخ مخلصش')), ms))]);
-await withTimeout(navigator.clipboard.writeText('x'), 2000);
-~~~
-
----
-
-## ٦. بدائل ومكانهم
-
-| لو | البديل |
-|---|---|
-| [[navigator.clipboard]] مش موجود | [[document.execCommand('copy')]] على [[textarea]] مخفي: deprecated حسب MDN بس لسه شغّال، أو اعرض النص متحدد واكتب «Ctrl+C» |
-| [[navigator.share]] مش موجود (أغلب الكمبيوترات القديمة) | زرار «انسخ اللينك» بالحافظة، أو لينكات المشاركة العادية ([[https://wa.me/?text=]]) |
-| اليوزر رفض المكان | خلّيه يكتب المدينة، أو قدّر من الـ IP عند السيرفر |
-| محتاج المكان وهو بيتحرك | [[watchPosition]] و [[clearWatch]] لما الصفحة تتقفل (درس «visibilitychange و bfcache») |
-
----
-
-## الخلاصة
-
-- تلات شروط: صفحة آمنة، وضغطة، وصلاحية. افحص [[isSecureContext]] الأول لما حاجة «مش شغالة على السيرفر».
-- feature detection: [[if (!navigator.clipboard)]] و [[navigator.canShare?.(data)]]، ورسالة لليوزر بدل زرار ميت.
-- geolocation: [[1]] رفض أو مش آمنة، [[2]] مش عارف، [[3]] المهلة، وحط [[timeout]] دايمًا.
-- [[AbortError]] في share مش خطأ. و [[NotAllowedError]] = الضغطة أو الصلاحية.
-- اقرا [[e.name]] مش [[e.message]].`,
-          sol: R`اتجرّب في Chromium 156. على [[localhost]] التلات أزرار اشتغلوا (المشاركة فتحت الطلب). على [[http://example.com]] (نفس الكلام اللي هتشوفه على [[http://192.168.x.x]] من الموبايل لأنه مش localhost):
-
-~~~text الناتج
-آمنة؟ false
-مفيش clipboard: الصفحة مش https ولا localhost
-geolocation فشل: 1 اليوزر رفض أو الصفحة مش آمنة Only secure origins are allowed (see: https://goo.gl/Y0ZkNV).
-share مش متاح هنا، اعرض زرار «انسخ اللينك» بداله
-~~~
-
-ولو قفلت صلاحية المكان من إعدادات الموقع هتاخد كود [[1]] برسالة مختلفة ([[User denied Geolocation]] حسب MDN)، و «Location unavailable» في Sensors بيدّي كود [[2]]. شاشة المشاركة الحقيقية على الموبايل وسؤال الصلاحية متجرّبوش هنا، وسلوكهم من MDN. ولو عايز تجرّب من الموبايل والصفحة آمنة: [[ssh -R]] أو أي tunnel بيدّيك https، أو بورت forwarding من DevTools (chrome://inspect) فالموبايل يشوف [[localhost]].`,
-        },
-        {
-          cmd: "Streams",
-          title: "اقرا الرد حتة حتة: ReadableStream و TransformStream و WritableStream",
-          learn: R`تقرا [[res.body]] chunk بـ chunk بنسبة تحميل، وتفك العربي صح بـ [[TextDecoderStream]]، وتعمل خط معالجة بـ [[pipeThrough]] و [[pipeTo]]، وتفهم backpressure.`,
-          out: R`ملفات كبيرة بتتعالج وهي بتتحمّل من غير ما الرام تتملي، وشريط تقدّم حقيقي، ومفيش حروف عربي بايظة.`,
-          use: {
-            prog: R`أي داتا كبيرة أو بتيجي على مراحل: ملف CSV ١٠٠ ميجا، أو رد AI بيتكتب كلمة كلمة، أو لوج بيكبر. من غير streams لازم تستنى الحاجة كلها وتحطها في الرام مرة واحدة.`,
-            work: R`«الصفحة بتهنّج لما الملف كبير» و «عايزين progress bar للتحميل» و «الرد بتاع الـ AI بيظهر مرة واحدة في الآخر» — التلاتة حلّهم Streams.`,
-            cs: R`producer و consumer بسرعات مختلفة، وطابور بحجم محدد (highWaterMark)، و backpressure اللي هو نفس فكرة الـ flow control في TCP: اللي بيستقبل بيقول للي بيبعت «استنى».`,
-            net: R`[[fetch]] بيرجّع الـ headers أول ما توصل، والـ body بيفضل جاي على الشبكة. [[res.body]] بيدّيك الحتت دي بالترتيب وهي بتوصل، ومقاسها بيحدده TCP مش السيرفر (اتجرّب: 65368 مش 65536).`,
-          },
-          desc: R`الـ stream هو داتا بتوصل **حتة حتة** (chunks) بدل مرة واحدة. فيه تلات أنواع، وكلهم global في المتصفح وفي Node 24:
-
-| النوع | بيعمل إيه | مثال |
-|---|---|---|
-| [[ReadableStream]] | مصدر بتقرا منه | [[res.body]] بتاع [[fetch]]، و [[file.stream()]] |
-| [[WritableStream]] | مكان بتكتب فيه | ملف، أو عدّاد، أو الشاشة |
-| [[TransformStream]] | في النص: بياخد chunk ويطلّع chunk | فك نص، تقطيع سطور، ضغط |
-
-**بتوصلهم ببعض:** [[readable.pipeThrough(transform)]] بيرجّع readable جديد (فتقدر تكمّل)، و [[readable.pipeTo(writable)]] بيرجّع Promise بتخلص لما كل حاجة تتكتب.
-
-**ليه؟** [[await res.text()]] بتستنى الملف كله وتحطه في الرام. بـ streams بتعالج أول سطر وهو لسه بيتحمّل، وبتعرض نسبة: [[received / content-length]].
-
-**والعربي:** الحرف العربي ٢ بايت في UTF-8، والـ chunk ممكن يتقطع في نص الحرف. جرّبتها: فك كل chunk لوحده بـ [[new TextDecoder().decode(chunk)]] طلّع ٨ حروف بايظة ([[�]]) في ملف ٣٤٠ ألف بايت، و [[TextDecoderStream]] طلّع صفر.
-
-و **backpressure:** لو اللي بيكتب أبطأ من اللي بيقرا، الـ pipe بيوقّف القراية لوحده لحد ما الطابور يفضى، فالرام مبتتمليش.`,
-          example: R`// شغّله كملف .mjs (فيه await برا أي دالة) والسيرفر اللي في الشرح شغّال
-const res = await fetch('http://localhost:8310/big.txt');
-const total = Number(res.headers.get('content-length')) || 0;
-let received = 0;
-const progress = new TransformStream({
-  transform(chunk, controller) {
-    received += chunk.length;
-    if (total) console.log('اتحمّل', Math.round((received / total) * 100) + '%');
-    controller.enqueue(chunk);
-  },
-});
-let rest = '';
-const lines = new TransformStream({
-  transform(text, controller) {
-    const parts = (rest + text).split('\n');
-    rest = parts.pop();
-    for (const line of parts) controller.enqueue(line);
-  },
-  flush(controller) {
-    if (rest) controller.enqueue(rest);
-  },
-});
-let count = 0;
-const counter = new WritableStream({
-  write() { count++; },
-  close() { console.log('سطور:', count); },
-});
-await res.body
-  .pipeThrough(progress)
-  .pipeThrough(new TextDecoderStream())
-  .pipeThrough(lines)
-  .pipeTo(counter);
-console.log('خلص:', received, 'بايت');`,
-          lines: [
-            R`[[await fetch(...)]] بيرجع **أول ما الـ headers توصل**، مش لما الملف يخلص. الـ body لسه جاي على الشبكة، وموجود في [[res.body]] كـ [[ReadableStream]] من [[Uint8Array]] (بايتات).`,
-            R`الحجم الكلي من هيدر [[content-length]] (بالبايت). [[headers.get]] بيرجّع نص أو [[null]]، و [[Number(null)]] = [[0]]، و [[|| 0]] بتحمي من [[NaN]]. لو السيرفر مبعتهوش (chunked) بيبقى صفر، وجرّبتها: القسمة على صفر طلّعت [[Infinity%]]، عشان كده الشرط اللي تحت.`,
-            R`عدّاد البايتات اللي وصلت لحد دلوقتي. برا الـ transform عشان يفضل بين الـ chunks، ونطبعه في الآخر.`,
-            R`أول مرحلة في الخط: [[TransformStream]] بيعدّي كل chunk زي ما هو، بس بيعدّه في السكة. ده أبسط شكل للـ transform: «شوف وعدّي».`,
-            R`[[transform(chunk, controller)]] بتتنادى مرة مع كل chunk داخل. [[controller]] هو اللي بتطلّع بيه حاجات للمرحلة اللي بعدك.`,
-            R`[[chunk.length]] عدد البايتات في الحتة دي (لأنه [[Uint8Array]]). مش عدد الحروف: الحرف العربي بايتين.`,
-            R`النسبة = اللي وصل ÷ الكلي × ١٠٠، و [[Math.round]] للتقريب. و [[if (total)]] بيمنع الطباعة لو الحجم مش معروف. في المتصفح هنا بتحدّث [[progress.value]] بدل الـ log.`,
-            R`[[enqueue(chunk)]] بيطلّع الـ chunk للمرحلة الجاية. لو نسيته، كل حاجة بعد كده هتستلم ولا حاجة، والسطور هتطلع صفر من غير ولا error.`,
-            R`نهاية [[transform]].`,
-            R`نهاية الـ [[TransformStream]] الأول.`,
-            R`باقي السطر اللي اتقطع في آخر chunk ولسه مخلصش. لازم يفضل برا الـ transform عشان يتلزق في أول الـ chunk الجاي.`,
-            R`تاني transform: بياخد نص (بعد ما [[TextDecoderStream]] فكّه) ويطلّع سطر سطر. ده محتاج حالة ([[rest]]) لأن الـ chunk مش بيخلص عند [[\n]].`,
-            R`[[text]] هنا نص مش بايتات، لأن المرحلة اللي قبله [[TextDecoderStream]].`,
-            R`نلزق الباقي القديم في أول النص الجديد، ونقطّع على [[\n]]. لو الـ chunk خلص في نص سطر، آخر عنصر في [[parts]] هيبقى السطر الناقص.`,
-            R`[[pop()]] بيشيل آخر عنصر ويرجّعه: ده السطر اللي لسه مخلصش، نحفظه لحد الـ chunk الجاي. ولو الـ chunk خلص بـ [[\n]] بالظبط، آخر عنصر هيبقى نص فاضي.`,
-            R`كل سطر كامل بيطلع للمرحلة الجاية لوحده. يعني chunk واحد داخل ممكن يطلّع مئات السطور، والـ transform مش شرط واحد بواحد.`,
-            R`نهاية [[transform]].`,
-            R`[[flush]] بتتنادى مرة واحدة في الآخر بعد آخر chunk. ده مكان أي حاجة متخزنة لسه مطلعتش.`,
-            R`لو الملف مخلصش بـ [[\n]]، آخر سطر قاعد في [[rest]] ومحدش طلّعه. من غير [[flush]] آخر سطر في الملف **بيضيع** ساكت.`,
-            R`نهاية [[flush]].`,
-            R`نهاية الـ [[TransformStream]] التاني.`,
-            R`عدّاد السطور اللي هيوصل للآخر.`,
-            R`آخر مكان في الخط: [[WritableStream]]. هنا بنعدّ، وفي الحقيقة ممكن تكتب في IndexedDB أو تضيف صف في جدول.`,
-            R`[[write(chunk)]] بتتنادى مع كل سطر. هنا مش محتاجين السطر نفسه فمش واخدينه كـ argument. ولو [[write]] رجّعت Promise، الـ pipe بيستناها قبل ما يبعت اللي بعدها (ده الـ backpressure).`,
-            R`[[close()]] بتتنادى لما الـ stream كله يخلص من غير error: هنا الوقت الصح تطبع النتيجة النهائية.`,
-            R`نهاية الـ [[WritableStream]].`,
-            R`[[await]] على الخط كله: [[pipeTo]] بترجّع Promise بتخلص لما آخر سطر يتكتب، أو بترفض لو أي مرحلة رمت أو الشبكة وقعت. وبعد السطر ده [[res.body]] اتقرا ومينفعش يتقري تاني.`,
-            R`أول مرحلة: البايتات بتعدّي على العدّاد. [[pipeThrough]] بيرجّع الـ readable اللي طالع من الـ transform، فنقدر نكمّل بنقطة.`,
-            R`فك البايتات لنص UTF-8 **بشكل stream**: لو حرف عربي اتقطع بين chunkين، بيستنى التاني قبل ما يفكّه. ده مدمج، ومحتاجش تكتبه.`,
-            R`تقطيع النص لسطور بالـ transform بتاعنا.`,
-            R`[[pipeTo]] آخر خطوة: بيوصل لـ writable ومبيرجّعش stream. الخط بيبدأ يشتغل هنا مش قبل كده.`,
-            R`اتطبع [[خلص: 340000 بايت]] بعد [[سطور: 20000]]، ونسب التحميل طلعت 19% و 19% و 39% و 58% و 77% و 96% و 100%.`,
-          ],
-          try: R`شغّل السيرفر والمثال. وبعدين: (١) شيل [[controller.enqueue(chunk)]] من الـ progress وشوف عدد السطور. (٢) غيّر السيرفر يبعت الملف مضغوط بـ [[Content-Encoding: gzip]] وشوف النسبة. (٣) في المتصفح، اعمل [[progress]] element بيتحرك مع التحميل، وزرار «إلغاء» بـ [[AbortController]].`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** stream مصدره بيعمل [[pull]] بـ [[highWaterMark: 2]]، ورايح لـ writable بطيء (١٠٠ms لكل كتابة) بـ [[highWaterMark: 1]]. قبل ما تشغّل: كام [[pull]] هيحصل قبل أول «اتكتب»؟ وهل المصدر هيعمل الـ ٦ عناصر كلهم مرة واحدة؟`, done: R`توقّعت إن فيه ٣ [[pull]] قبل أول كتابة وبعدها [[pull]] واحد مع كل كتابة (زي الناتج اللي في الشرح)، وتقدر تشرح ليه [[desiredSize]] بقى ١ بعد أول اتنين.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** ملف CSV فيه ٢٠٠ ألف سطر طلبات ([[id,city,total]]) بتعمله بسكربت. اقراه بـ [[fetch]] من سيرفر محلي سطر سطر بنفس خط المثال، واحسب مجموع [[total]] لكل [[city]] من غير ما الملف كله يبقى في الذاكرة.`, done: R`الناتج جدول مدن ومجاميعها، وطابق نفس الحساب بـ [[await res.text()]] و [[split]]، وأول سطر صف header اتشال، وآخر سطر من غير [[\n]] اتحسب (اختبرته بملف آخره من غير سطر فاضي).` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** نفس الملف (اعمله ٢٠٠ ميجا) بطريقتين: [[await res.text()]] ثم [[split('\n').length]]، وخط Streams. قيس الوقت بـ [[performance.now()]] وأقصى رام بـ [[process.memoryUsage().rss]] (اطبعها كل ثانية).`, done: R`عندك جدول برقمين لكل طريقة (وقت وأقصى رام)، والـ Streams رامها ثابتة تقريبًا مهما كبر الملف، و [[text()]] رامها بتكبر مع الملف، ومكتوب إمتى [[text()]] لسه أبسط وكفاية (ملف صغير).` },
-          ],
-          deep: {
-            why: R`الشبكة والديسك بيدّوا الداتا على مراحل أصلًا. لما تكتب [[await res.text()]] انت بتقول «استنى الكل وحطه في الرام»: ملف ٥٠٠ ميجا = ٥٠٠ ميجا رام على الأقل (وضعفها كنص)، ومفيش حاجة تظهر لليوزر لحد الآخر. Streams بتخليك تشتغل بنفس إيقاع الداتا: أول سطر يتعالج وهو لسه واصل، والرام على قد chunk واحد بس، والنسبة تتحسب وهي بتتحمّل.`,
-            how: R`كل [[ReadableStream]] فيه **طابور داخلي** ليه حجم مقصود ([[highWaterMark]]، بعدد الـ chunks افتراضيًا). المصدر بيحط فيه بـ [[controller.enqueue]]، و [[controller.desiredSize]] = الحجم المقصود − اللي في الطابور. المحرك بينادي [[pull()]] بتاع المصدر **بس** لما [[desiredSize > 0]].
-
-**backpressure في فقرة:** [[pipeTo]] بيقرا chunk ويكتبه، ولو [[write()]] بتاعة الـ writable لسه مخلصتش (Promise مستنية) والطابور بتاعها مليان، [[pipeTo]] بيبطّل يقرا. المصدر طابوره بيتملي، [[desiredSize]] بيوصل صفر، فالمحرك بيبطّل ينادي [[pull]]. الضغط بيرجع لورا مرحلة مرحلة لحد المصدر، وفي [[fetch]] بيوصل لحد TCP فالسيرفر نفسه بيبطّأ. اتقاس: مصدر بـ [[highWaterMark: 2]] و writable بطيء، الـ [[pull]] اتنادى ٣ مرات بس قبل أول كتابة، وبعدها مرة مع كل كتابة. **بس** لو المصدر حط كل حاجة في [[start()]] مرة واحدة (مش [[pull]])، مفيش backpressure: كله في الرام.
-
-**القفل:** [[getReader()]] بيقفل الـ stream لقارئ واحد ([[locked]] = [[true]])، وتاني [[getReader()]] رمى [[TypeError: Invalid state: ReadableStream is locked]]. ونفس الكلام [[res.text()]] بعد ما قريت [[res.body]]: [[TypeError: Body is unusable: Body has already been read]]. لو محتاج تقراه مرتين: [[res.clone()]] قبلها أو [[stream.tee()]].`,
-            when: R`استخدمه لما الحجم كبير أو مش معروف، أو لما عايز تعرض حاجة قبل ما الكل يوصل: تحميل بنسبة، CSV أو JSON lines كبير، لوج، ردود AI (SSE فوق [[fetch]] بيتقري كده)، ضغط وفك ([[CompressionStream]])، رفع ملف كبير. ولـ JSON صغير أو صفحة عادية [[await res.json()]] أبسط وأوضح. وفي Node، الـ web streams دي غير [[node:stream]] القديم ([[pipeline]] و [[fs.createReadStream]]، درس «streams و pipeline» في تاب «Backend بـ Node»)، وفيه [[Readable.toWeb()]] و [[Readable.fromWeb()]] للتحويل.`,
-            mistakes: R`تفك كل chunk بـ [[new TextDecoder().decode(chunk)]] لوحده فالعربي يبوظ عند الحدود (اتقاس: ٨ حروف بايظة)، والحل [[TextDecoderStream]] أو [[decode(chunk, { stream: true })]] بنفس الـ decoder. أو تنسى [[flush]] فآخر سطر يضيع. أو تنسى [[enqueue]] في transform فالخط يطلّع صفر. أو تحسب النسبة من [[content-length]] والرد مضغوط: اتقاس [[content-length 879 وصل 340000 ← 38680%]] لأن الهيدر حجم المضغوط و [[fetch]] بيفك. أو مفيش [[content-length]] فالنسبة [[Infinity%]]. أو تقرا [[res.body]] وبعدين [[res.json()]]. أو تحط كل الداتا في [[start()]] وتفتكر عندك backpressure.`,
-          },
-          teach: R`## داتا بتوصل حتة حتة
-
-[[fetch]] بيرجّع أول ما الـ headers توصل، والـ body لسه جاي. [[res.body]] بيدّيك الحتت دي بالترتيب. كل اللي تحت اتشغّل على Node 24.22 على ويندوز ١١ (الـ web streams و [[fetch]] global هناك زي المتصفح)، والسيرفر على نفس الجهاز.
-
----
-
-## ١. السيرفر: ملف ٣٤٠ ألف بايت بيتبعت على مراحل
-
-~~~js server.mjs
-import http from 'node:http';
-const body = Buffer.from('سطر رقم ١\n'.repeat(20000));
-http.createServer(async (req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Content-Length': body.length });
-  for (let i = 0; i < body.length; i += 65536) {
-    res.write(body.subarray(i, i + 65536));
-    await new Promise(r => setTimeout(r, 50));
-  }
-  res.end();
-}).listen(8310, () => console.log('على 8310، الحجم', body.length));
-~~~
-
-~~~text الناتج
-على 8310، الحجم 340000
-~~~
-
-ليه ٣٤٠ ألف؟ «سطر رقم ١» + [[\n]]: ٧ حروف عربي × ٢ بايت + ٢ مسافة + [[\n]] = ١٧ بايت، × ٢٠ ألف = ٣٤٠٬٠٠٠. والسيرفر بيبعت ٦٤ كيلو كل ٥٠ms عشان نشوف التحميل بيتقدم.
-
----
-
-## ٢. أبسط قراية: [[getReader()]] ونسبة
+[[await res.json()]] بتستنى الـ body كله. ولو الملف ٥٠ ميجا، اليوزر بيبص على شاشة ساكتة. بس [[res.body]] نفسه **stream**، فتقدر تقراه حتة حتة وتحسب النسبة (التفاصيل في درس «Streams»).
 
 ~~~js progress.mjs
-const res = await fetch('http://localhost:8310/big.txt');
-const total = Number(res.headers.get('content-length'));
+const res = await fetch('http://127.0.0.1:8302/big');
+const total = Number(res.headers.get('content-length')) || 0;
 const reader = res.body.getReader();
-let received = 0, chunks = 0;
-while (true) {
+const chunks = [];
+let received = 0;
+for (;;) {
   const { done, value } = await reader.read();
   if (done) break;
+  chunks.push(value);
   received += value.length;
-  chunks++;
-  console.log($__bt$__{Math.round((received / total) * 100)}%$__bt.padStart(4), value.constructor.name, value.length);
+  const pct = total ? Math.floor(received / total * 100) : null;
+  process.stdout.write($__bt\r$__{pct ?? '?'}% ($__{received} من $__{total || 'مش معروف'})$__bt);
 }
-console.log('خلص:', received, 'بايت في', chunks, 'chunk من', total);
+const blob = new Blob(chunks);
+console.log('\nخلص:', blob.size, 'byte في', chunks.length, 'حتة');
 ~~~
 
-~~~text الناتج
- 19% Uint8Array 65368
- 19% Uint8Array 168
- 39% Uint8Array 65536
- 58% Uint8Array 65536
- 77% Uint8Array 65536
- 96% Uint8Array 65536
-100% Uint8Array 12320
-خلص: 340000 بايت في 7 chunk من 340000
+- [[res.body.getReader()]]: بيقفل الـ stream لصالحك وبيرجّع reader. بعدها [[res.json()]] مش هتشتغل (الـ body بيتقرا مرة واحدة، زي ما شفنا فوق).
+- [[reader.read()]]: بترجّع [[{ done, value }]]. و [[value]] حتة [[Uint8Array]] بحجم الشبكة قررته، مش انت.
+- [[content-length]]: الحجم الكلي **لو السيرفر بعته**. لو مبعتوش ([[chunked]]) النسبة مش معروفة، فاعرض الـ bytes بس أو progress bar مش محدد.
+- [[new Blob(chunks)]]: بتلم الحتت في الآخر. ولو JSON: [[JSON.parse(await blob.text())]].
+
+~~~text اتشغّل فعلًا · Node 24.22.1 · سيرفر بيبعت 5MB على حتت
+10% (500000 من 5000000)
+20% (1000000 من 5000000)
+...
+100% (5000000 من 5000000)
+خلص: 5000000 byte في 80 حتة
 ~~~
 
-- [[getReader()]]: بيدّيك قارئ ويقفل الـ stream ليك لوحدك.
-- [[reader.read()]]: Promise بترجّع [[{ done, value }]]. [[value]] [[Uint8Array]] (بايتات)، و [[done: true]] لما الملف يخلص.
-- **مفاجأة:** السيرفر كتب ٦٤ كيلو (65536) بالظبط، بس أول مرة وصل [[65368]] و [[168]]. مقاس الـ chunk بيحدده TCP والـ buffers في السكة، مش السيرفر. فمتعتمدش أبدًا على إن الـ chunk سطر أو record كامل.
+ونفس الكود (من غير [[process.stdout]]) في Chrome 156 قرا نفس الـ 5000000 byte في 58 حتة. **عدد الحتت بيختلف** من مكان للتاني، فمتعتمدش عليه.
 
-وفيه طريقة أقصر في Node وأغلب المتصفحات الحديثة: [[for await (const chunk of res.body)]] (الـ stream نفسه async iterable).
+### الفخ: [[content-length]] مع gzip
 
----
+لو السيرفر بعت الرد مضغوط ([[content-encoding: gzip]])، [[content-length]] بيبقى حجم **المضغوط**، و [[fetch]] بيفك الضغط قبل ما يدّيك الحتت:
 
-## ٣. العربي بيبوظ عند حدود الـ chunk
-
-~~~js decode.mjs
-let res = await fetch('http://localhost:8310/');
-let broken = 0;
-for await (const chunk of res.body) broken += (new TextDecoder().decode(chunk).match(/�/g) || []).length;
-console.log('حروف بايظة (�) من غير stream:', broken);
-res = await fetch('http://localhost:8310/');
-let text = '';
-for await (const s of res.body.pipeThrough(new TextDecoderStream())) text += s;
-console.log('بـ TextDecoderStream:', (text.match(/�/g) || []).length, 'بايظة، و', text.split('\n').length - 1, 'سطر');
+~~~text اتشغّل فعلًا · مليون حرف مضغوطين
+content-length: 1004 | اللي وصل فعلًا: 1000000 | النسبة: 99601%
 ~~~
 
-~~~text الناتج
-حروف بايظة (�) من غير stream: 8
-بـ TextDecoderStream: 0 بايظة، و 20000 سطر
-~~~
+فالنسبة بتعدّي ١٠٠٪ بكتير. الحل: السيرفر يبعت الحجم الأصلي في هيدر تاني (زي [[x-total-size]])، أو تحط [[Math.min(pct, 100)]] وتعرف إنها تقريبية.
 
-- [[�]] هو الحرف [[�]] (replacement character) اللي الـ decoder بيحطه لما يلاقي بايتات مش مكتملة.
-- **ليه بالظبط هنا؟** 65536 ÷ 17 = 3855 سطر وباقي 1، يعني أول chunk بيخلص بعد **أول بايت** من حرف [[س]] (حرف عربي = بايتين). الـ decoder اللي بيفك chunk لوحده شاف بايت يتيم فحط [[�]]، والـ chunk اللي بعده بدأ ببايت يتيم تاني.
-- [[TextDecoderStream]] (أو [[decoder.decode(chunk, { stream: true })]] بنفس الـ decoder كل مرة) بيحتفظ بالبايت الناقص لحد الـ chunk الجاي.
-
----
-
-## ٤. التلات أنواع من الصفر
-
-~~~js basics.mjs
-const numbers = new ReadableStream({
-  start(controller) {
-    for (const n of [1, 2, 3]) controller.enqueue(n);
-    controller.close();
-  },
-});
-const double = new TransformStream({ transform(n, c) { c.enqueue(n * 2); } });
-for await (const n of numbers.pipeThrough(double)) console.log(n);
-const r = new ReadableStream({ start(c) { c.enqueue('a'); c.close(); } });
-const reader = r.getReader();
-console.log(await reader.read(), await reader.read());
-try { r.getReader(); } catch (e) { console.log(e.name, e.message); }
-console.log(r.locked);
-~~~
-
-~~~text الناتج
-2
-4
-6
-{ done: false, value: 'a' } { value: undefined, done: true }
-TypeError Invalid state: ReadableStream is locked
-true
-~~~
-
-| الجزء | بيتنادى إمتى | بتعمل فيه إيه |
-|---|---|---|
-| [[start(controller)]] في Readable | مرة أول ما الـ stream يتعمل | تجهّز المصدر، أو تحط داتا صغيرة كلها |
-| [[pull(controller)]] في Readable | كل ما الطابور يبقى فيه مكان | تجيب chunk واحد وتعمله [[enqueue]] |
-| [[cancel(reason)]] في Readable | لو اللي بيقرا لغى | تقفل الملف أو الاتصال |
-| [[transform(chunk, controller)]] | مع كل chunk داخل | تطلّع صفر أو أكتر بـ [[enqueue]] |
-| [[flush(controller)]] في Transform | مرة بعد آخر chunk | تطلّع أي حاجة متخزنة |
-| [[write(chunk)]] في Writable | مع كل chunk | تكتب، ولو رجّعت Promise الباقي بيستنى |
-| [[close()]] في Writable | لما كل حاجة تخلص | تقفل وتطبع النتيجة |
-
-و [[controller.close()]] في المصدر معناها «مفيش تاني»، ومن غيرها اللي بيقرا هيستنى للأبد.
-
----
-
-## ٥. الخط الكامل: [[pipeThrough]] و [[pipeTo]]
-
-~~~text الشكل
-res.body ─► progress ─► TextDecoderStream ─► lines ─► counter
- بايتات     بيعدّ البايتات     بايتات ← نص        نص ← سطور    بيعدّ السطور
-~~~
-
-~~~text الناتج: node example.mjs
-اتحمّل 19%
-اتحمّل 19%
-اتحمّل 39%
-اتحمّل 58%
-اتحمّل 77%
-اتحمّل 96%
-اتحمّل 100%
-سطور: 20000
-خلص: 340000 بايت
-~~~
-
-[[pipeThrough]] بيرجّع readable فبتكمّل بنقطة، و [[pipeTo]] آخر حلقة وبيرجّع Promise. ولو أي مرحلة رمت، الـ Promise بترفض والمراحل التانية بتتلغي لوحدها. وللإلغاء من برا: [[pipeTo(dest, { signal })]] بـ [[AbortController]]، أو [[fetch(url, { signal })]] (درس «fetch و AbortController»).
-
----
-
-## ٦. backpressure: اللي بيكتب بطيء
-
-~~~js backpressure.mjs
-let made = 0;
-const source = new ReadableStream({
-  pull(controller) {
-    made++;
-    console.log('pull #' + made, 'desiredSize =', controller.desiredSize);
-    controller.enqueue('item ' + made);
-    if (made === 6) controller.close();
-  },
-}, { highWaterMark: 2 });
-const slow = new WritableStream({
-  async write(chunk) {
-    await new Promise(r => setTimeout(r, 100));
-    console.log('   اتكتب', chunk);
-  },
-}, { highWaterMark: 1 });
-await source.pipeTo(slow);
-~~~
-
-~~~text الناتج
-pull #1 desiredSize = 2
-pull #2 desiredSize = 2
-pull #3 desiredSize = 1
-   اتكتب item 1
-pull #4 desiredSize = 1
-   اتكتب item 2
-pull #5 desiredSize = 1
-   اتكتب item 3
-pull #6 desiredSize = 1
-   اتكتب item 4
-   اتكتب item 5
-   اتكتب item 6
-~~~
-
-**الفقرة:** المصدر مبيعملش الـ ٦ مرة واحدة. عمل ٣ (الطابور بتاعه ٢ وواحد في إيد الـ pipe) وبعدها **وقف** لحد ما الكاتب البطيء خلّص واحدة، وبعدها بقى بيعمل واحد مع كل كتابة. ده الـ backpressure: [[pipeTo]] بيستنى Promise الـ [[write]]، فالطابور ميفضاش، فـ [[desiredSize]] ميكبرش، فالمحرك مبينادي [[pull]]. مع [[fetch]] الضغط ده بيوصل لحد TCP فالسيرفر نفسه بيبطّأ. والشرط: المصدر يجيب الداتا في [[pull]] مش يحطها كلها في [[start]].
-
----
-
-## ٧. فخاخ اتقاست
-
-~~~text الناتج: سيرفر من غير content-length
-content-length: null transfer-encoding: chunked
-النسبة لو اعتمدت عليه: Infinity%
-TypeError: Body is unusable: Body has already been read
-~~~
-
-~~~text الناتج: سيرفر بيبعت gzip و Content-Length
-content-length 879 وصل 340000 ← 38680%
-~~~
-
-| الفخ | السبب | الحل |
-|---|---|---|
-| [[Infinity%]] | الرد chunked ومفيش [[content-length]] | اعرض الميجات اللي وصلت بدل النسبة |
-| [[38680%]] | [[content-length]] حجم المضغوط، و [[fetch]] بيدّيك بعد الفك | اعرض الميجات، أو خلّي السيرفر يبعت الحجم الأصلي في هيدر تاني |
-| [[Body is unusable]] | [[res.body]] اتقرا، ومفيش قراية تانية | [[res.clone()]] قبل القراية، أو [[stream.tee()]] |
-| [[ReadableStream is locked]] | [[getReader()]] مرتين | [[reader.releaseLock()]] أو قارئ واحد |
-| آخر سطر ضاع | مفيش [[flush]] | [[flush]] يطلّع [[rest]] |
+> والرفع (upload) progress مش بيتعمل بـ [[fetch]] النهارده في كل المتصفحات؛ [[XMLHttpRequest]] و [[upload.onprogress]] لسه الطريقة المضمونة (درس «drag and drop و progress»).
 
 ---
 
 ## الخلاصة
 
-- Readable مصدر، و Transform في النص، و Writable آخر الخط، و [[pipeThrough]] بيكمّل و [[pipeTo]] بيخلّص.
-- [[res.body]] بايتات بمقاسات عشوائية: متعتمدش على حدود الـ chunk.
-- العربي: [[TextDecoderStream]] مش [[decode]] لكل chunk لوحده.
-- النسبة = [[received / content-length]]، بس لو موجود ومش مضغوط.
-- backpressure بيجي ببلاش طالما المصدر بيستخدم [[pull]] والكاتب بيرجّع Promise.`,
-          sol: R`اتجرّب على Node 24.22:
+- [[fetch]] بتنجح على ٤٠٤ و٥٠٠ — **افحص [[res.ok]]**.
+- بترمي على الشبكة والإلغاء والمهلة بس.
+- [[e.cause]] فيها السبب الحقيقي في Node.
+- الـ body بيتقرا مرة — [[clone()]] لو محتاج الاتنين.
+- كلاسات أخطاء + [[this.name]] + [[instanceof]].
+- تقدّم التحميل: [[res.body.getReader()]] و [[content-length]]، وخلي بالك من gzip.`,
+          sol: R`الحقيقة الأساسية بناتجها: [[fetch]] عدّت على ٤٠٤، ورمت على بورت مقفول بسبب في [[cause]].`,
+          solCode: R`const r404 = await fetch('http://127.0.0.1:8111/404');
+console.log('رمى؟ لأ — وصلنا هنا');
+console.log('ok:', r404.ok, '| status:', r404.status);
+// رمى؟ لأ — وصلنا هنا
+// ok: false | status: 404 | statusText: "Not Found"
+// body: {"error":"مش موجود"}
 
-- **من غير [[enqueue]]** في الـ progress: الخط خلص من غير ولا error، بس طبع [[سطور: 0]]، لأن ولا chunk عدّى للمرحلة الجاية. ونسب التحميل لسه اتطبعت لأن الـ transform نفسه اتنادى.
-- **بـ gzip:** [[content-length]] بقى حجم المضغوط (879 بايت) و [[received]] بقى 340000 بعد الفك، فالنسبة طلعت 38680%. الحل: لو [[res.headers.get('content-encoding')]] موجود، اعرض الحجم اللي وصل بالميجا من غير نسبة.
-- **في المتصفح:** الكود تحت (من نفس الفكرة، والـ [[progress]] element و [[AbortController]] شغالين بنفس الطريقة في Chrome حسب MDN، والمنطق نفسه اتجرّب في Node).`,
-          solCode: R`const ac = new AbortController();
-document.querySelector('#cancel').onclick = () => ac.abort();
-const bar = document.querySelector('progress');
-const res = await fetch('/big.txt', { signal: ac.signal });
-const zipped = res.headers.get('content-encoding');
-const total = zipped ? 0 : Number(res.headers.get('content-length')) || 0;
-let received = 0;
-try {
-  for await (const chunk of res.body) {
-    received += chunk.length;
-    if (total) bar.value = received / total;
-    else bar.removeAttribute('value');
-  }
-} catch (e) {
-  if (e.name === 'AbortError') console.log('اتلغى بعد', received, 'بايت');
-  else throw e;
-}`,
+try { await fetch('http://127.0.0.1:8199/'); }
+catch (e) {
+  console.log('name:', e.name, '| message:', e.message);
+  console.log('e.cause:', e.cause?.code);
+}
+// name: TypeError | message: fetch failed
+// e.cause: ECONNREFUSED | connect ECONNREFUSED 127.0.0.1:8199
+
+// (اتشغّلوا فعلًا على Node 24.22.1)`
         },
-      ],
+
+        {
+          cmd: "مشروع — المهلة والإلغاء",
+          title: "AbortSignal.timeout و any، والفرق بينهم",
+          learn: R`تحط مهلة لأي طلب، وتسمح لليوزر يلغي، وتجمع الإشارتين.`,
+          out: R`مفيش طلب بيعلّق للأبد، واليوزر يقدر يوقف.`,
+          use: {
+            prog: R`[[AbortSignal]] معيار عام — مش لـ [[fetch]] بس. أي دالة بتاخد [[signal]] بتبقى قابلة للإلغاء، وده بيخلي الإلغاء يمشي في كل الطبقات.`,
+            net: R`الطلب اللي مالوش مهلة بيعلّق لحد ما نظام التشغيل يقرر. ودي دقايق أحيانًا، وفي الوقت ده الواجهة بتبان مكسورة.`,
+            cs: R`الإلغاء التعاوني: مفيش حاجة بتقتل العملية — الإشارة بتتبعت، والكود بيتصرّف. وده الشكل الوحيد الآمن للإلغاء.`,
+          },
+          desc: R`[[fetch]] من غير مهلة بيستنى لحد ما نظام التشغيل يستسلم. ودي ممكن تكون دقيقتين.
+
+**[[AbortSignal.timeout(ms)]]** بتعمل إشارة بتلغي نفسها بعد المدة دي:
+
+[[await fetch(url, { signal: AbortSignal.timeout(5000) })]]
+
+سطر واحد. وبترمي [[TimeoutError]] — جرّبتها على سيرفر بطيء وطلعت بعد ٥١١ms بـ [[name: 'TimeoutError']].
+
+**[[AbortController]]** للإلغاء اليدوي: بتعمل واحد، وبتدّي [[ac.signal]] للطلب، وبتنادي [[ac.abort()]] لما تحب.
+
+ولو مررت قيمة: [[ac.abort(new Error('اليوزر لغى'))]] — **القيمة دي هي اللي بتترمي**. جرّبتها وطلعت بنفس الرسالة بالظبط.
+
+**[[AbortSignal.any([a, b])]]** بتجمع إشارتين: أول واحدة تلغي، الكل بيتلغي. ودي اللي بتخليك تحط مهلة **وتسمح لليوزر يلغي** في نفس الوقت.
+
+**والفرق اللي الأداة محتاجة تعرفه:** المهلة سبب يستاهل إعادة محاولة (الشبكة كانت بطيئة لحظة). وإلغاء اليوزر **مش** سبب يستاهل إعادة — هو قال لأ.
+
+فالأداة بتفحص [[outer?.aborted]]: لو اليوزر هو اللي لغى، بترمي على طول من غير إعادة.`,
+          example: R`// مهلة: سطر واحد
+await fetch(url, { signal: AbortSignal.timeout(5000) });
+
+// إلغاء يدوي
+const ac = new AbortController();
+setTimeout(() => ac.abort(new Error('اليوزر ضغط إلغاء')), 300);
+await fetch(url, { signal: ac.signal });
+
+// والاتنين سوا
+const signal = AbortSignal.any([ac.signal, AbortSignal.timeout(5000)]);
+await fetch(url, { signal });
+
+// وفي الأداة: اليوزر لغى؟ متعيدش
+try {
+  res = await fetchImpl(url, { ...init, signal });
+} catch (e) {
+  if (outer?.aborted) throw outer.reason;
+  lastError = e.name === 'TimeoutError' ? e : new NetworkError(e.cause ?? e);
+}`,
+          lines: [
+            R`[[AbortSignal.timeout]] بتعمل signal بيلغي نفسه بعد ٥ ثواني. لو الطلب مخلصش في المدة دي، [[fetch]] بيترفض بـ error اسمه [[TimeoutError]]، فمفيش طلب يفضل معلّق للأبد.`,
+            R`[[AbortController]] هو المتحكّم اللي انت بتلغي بيه بإيدك (زرار «إلغاء» مثلًا). جواه [[signal]] بتبعته للطلب، و [[abort]] اللي بتنادي بيها.`,
+            R`بنقلّد يوزر ضغط إلغاء بعد ٣٠٠ms. **القيمة اللي بتمررها لـ [[abort]] هي اللي [[fetch]] بيترفض بيها**؛ من غيرها هيترفض بـ [[AbortError]] عام مالوش سياق.`,
+            R`بنمرر [[ac.signal]] للطلب، فأول ما [[ac.abort]] تتنادى الطلب بيتقطع و [[await]] ده يرمي الـ Error اللي بعتناه.`,
+            R`[[AbortSignal.any]] بتجمع أكتر من signal في واحد: أول واحد يلغي (اليوزر أو المهلة)، المجمّع بيتلغي، و [[signal.reason]] بيبقى سبب اللي لغى. موجودة من Node 20.`,
+            R`بنمرر الـ signal المجمّع، فالطلب بيتقطع لو اليوزر لغى أو لو الخمس ثواني خلصوا، أيهم يحصل الأول.`,
+            R`ده جزء من أداة [[request]]: [[try]] حوالين الطلب عشان نقرر بعد الفشل نعيد ولا لأ.`,
+            R`الطلب نفسه بـ [[fetchImpl]] (يا [[fetch]] الحقيقي يا واحد مزيّف في الاختبار)، و [[...init]] بيفرد إعدادات اليوزر، و [[signal]] المجمّع بيتحط آخر حاجة عشان يغطّي أي signal تاني.`,
+            R`أي فشل (مهلة، إلغاء، شبكة) بييجي هنا، وهنا بنفرّق بينهم.`,
+            R`[[outer]] هو الـ signal اللي اليوزر بعته. لو هو اللي اتلغى يبقى اليوزر قال «لأ»، فبنرمي سببه على طول. **الإعادة هنا هدر وإزعاج**: اليوزر مش عايز الطلب ده أصلًا.`,
+            R`غير كده نحتفظ بالخطأ عشان المحاولة الجاية: المهلة تفضل [[TimeoutError]] زي ما هي، وأي حاجة تانية تتلف في [[NetworkError]] ومعاها السبب الأصلي ([[e.cause]] لو موجود).`,
+            R`نهاية [[catch]].`
+          ],
+          try: R`شغّل سيرفر بيستنى ٣ ثواني، وجرّب [[AbortSignal.timeout(500)]] عليه واقرا [[e.name]]. وبعدين جرّب [[ac.abort(new Error('كذا'))]] وشوف الرسالة اللي بتوصل.`,
+          practice: [
+            { lvl: 'سريع', t: R`**قارن وقيس:** سيرفر [[/slow]] بيرد بعد ٣ ثواني. اطلبه مرة بـ [[AbortSignal.timeout(500)]] ومرة من غير، وقيس الوقت بـ [[performance.now()]].`, done: R`مع المهلة وقع بـ [[TimeoutError]] بعد حوالي 500ms، و [[e instanceof DOMException]] بـ [[true]]، ومن غيرها خلص بعد حوالي ٣ ثواني. والرقمين مكتوبين.` },
+            { lvl: 'تطبيق', t: R`**ابني حتة صفحة:** خانة بحث بتعمل [[fetch]] مع كل حرف، وكل طلب جديد بيلغي اللي قبله بـ [[AbortController]] خاص بيه، وفيه مهلة ٥ ثواني بـ [[AbortSignal.any]]، وزرار «إلغاء».`, done: R`لما تكتب ٥ حروف بسرعة، الـ Network في DevTools فيها ٤ طلبات canceled وواحد بس كمّل، والنتيجة المعروضة دايمًا بتاعة آخر كلمة، والإلغاء مبيظهرش رسالة خطأ، والمهلة بتظهر «الرد اتأخر».` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[const sleep = (ms) => new Promise(r => setTimeout(r, ms))]] واتلغت الإشارة بعد 100ms وانت نايم [[sleep(5000)]]. اكتب سكربت يطبع الوقت لحد ما البروسيس يخرج ([[process.on('exit')]])، وبعدين صلّح [[sleep]] تاخد [[signal]].`, done: R`بالنسخة الغلط البروسيس فضل حوالي ٥ ثواني قبل ما يخرج والـ Promise ما رميتش، وبالنسخة الصح رميت [[signal.reason]] وخرج بعد حوالي 100ms، و [[clearTimeout]] موجود في الكود.` },
+          ],
+          deep: {
+            why: R`الطلب اللي بيعلّق بيخلي الواجهة تبان مكسورة. واليوزر اللي ضغط إلغاء وبرضه بيستنى بيفقد الثقة في البرنامج.`,
+            how: R`**[[AbortSignal]] معيار عام**، مش لـ [[fetch]] بس. أي API بتاخد [[{ signal }]] بتبقى قابلة للإلغاء: [[fs.readFile]] في Node، و [[addEventListener]] (الـ listener بيتشال لما الإشارة تلغي)، وكود انت كاتبه.
+
+والـ API بتاعها:
+
+| | بتعمل إيه |
+|---|---|
+| [[signal.aborted]] | [[true]] لو الإشارة اتلغت خلاص، و [[false]] لو لسه |
+| [[signal.reason]] | **اللي مررته لـ [[abort()]]**، أو [[AbortError]] لو مامررتش حاجة |
+| [[signal.throwIfAborted()]] | بترمي [[reason]] لو اتلغت، ومبتعملش حاجة لو لأ |
+| [[signal.addEventListener('abort', fn)]] | بتنادي [[fn]] أول ما الإلغاء يحصل، مرة واحدة |
+
+**[[AbortSignal.timeout]]** (من Node 17.3 وكل المتصفحات الحديثة) بترمي [[TimeoutError]] — وده [[DOMException]] مش [[Error]] عادي. جرّبت: [[e instanceof DOMException]] بترجّع [[true]].
+
+**و [[AbortSignal.any]]** (من Node 20) بتجمع. ولو اتلغت، [[reason]] بتبقى بتاعة أول واحدة لغت.
+
+**وفي الأداة، الفرق بين الحالتين:**
+
+| الحالة | تعيد؟ | ليه |
+|---|---|---|
+| [[TimeoutError]] | **أيوه** | الشبكة كانت بطيئة لحظة |
+| اليوزر لغى | **لأ** | هو قال لأ |
+
+والفحص [[outer?.aborted]] بيفرّق: الإشارة الخارجية (بتاعة اليوزر) هي اللي بنبص عليها، مش إشارة المهلة اللي الأداة عملتها.
+
+**وتنضيف المؤقتات**: لو عملت [[setTimeout]] للانتظار بين المحاولات، لازم تلغيه لو الإشارة لغت — وإلا الـ Promise بتفضل معلقة. وعشان كده [[sleep]] في الأداة بتاخد [[signal]]:
+
+~~~text
+const sleep = (ms, signal) => new Promise((resolve, reject) => {
+  const t = setTimeout(resolve, ms);
+  signal?.addEventListener('abort', () => { clearTimeout(t); reject(signal.reason); }, { once: true });
+});
+~~~
+
+و [[{ once: true }]] عشان الـ listener يتشال بعد أول مرة.`,
+            when: R`كل طلب شبكة. والمهلة من أول سطر، مش بعدين.`,
+            mistakes: R`تنسى المهلة خالص. أو تعيد المحاولة بعد إلغاء اليوزر. أو تنسى [[clearTimeout]] في الـ sleep فتسيب Promise معلقة. أو تفترض إن [[TimeoutError]] نوع فرعي من [[Error]] العادي (هو [[DOMException]]).`
+          },
+          teach: R`## الطلب اللي مالوش مهلة
+
+~~~js
+await fetch(url);   // ممكن يستنى دقيقتين
+~~~
+
+~~~js والحل سطر واحد
+await fetch(url, { signal: AbortSignal.timeout(5000) });
+~~~
+
+~~~text اتشغّل فعلًا على سيرفر بيستنى 3 ثواني · Node 24
+رمى بعد 511 ms
+name: TimeoutError
+message: The operation was aborted due to timeout
+instanceof DOMException: true
+~~~
+
+> لاحظ: [[TimeoutError]] **[[DOMException]]** مش [[Error]] عادي. فافحصه بـ [[e.name]] مش بـ [[instanceof Error]].
+
+---
+
+## ١. الإلغاء اليدوي
+
+~~~js
+const ac = new AbortController();
+setTimeout(() => ac.abort(new Error('اليوزر ضغط إلغاء')), 300);
+await fetch(url, { signal: ac.signal });
+~~~
+
+~~~text اتشغّل فعلًا
+وقف بعد 203 ms | Error | اليوزر ضغط إلغاء
+~~~
+
+**القيمة اللي بتمررها لـ [[abort()]] هي اللي بتترمي.** من غيرها بترمي [[AbortError]] عام مالوش سياق.
+
+---
+
+## ٢. الاتنين سوا
+
+~~~js
+const signal = AbortSignal.any([ac.signal, AbortSignal.timeout(5000)]);
+await fetch(url, { signal });
+~~~
+
+أول واحدة تلغي، الكل بيتلغي. و [[signal.reason]] بتبقى بتاعة اللي لغت.
+
+---
+
+## ٣. والفرق اللي الأداة محتاجة تعرفه
+
+| الحالة | تعيد المحاولة؟ |
+|---|---|
+| [[TimeoutError]] | **أيوه** — الشبكة كانت بطيئة لحظة |
+| اليوزر لغى | **لأ** — هو قال لأ |
+
+~~~js في الأداة
+catch (e) {
+  if (outer?.aborted) throw outer.reason;     // اليوزر لغى: اخرج
+  lastError = e.name === 'TimeoutError' ? e : new NetworkError(e.cause ?? e);
+  ...
+}
+~~~
+
+~~~text والنتيجة (اتشغّلوا فعلًا)
+=== مهلة: بيعيد وبيفشل في الآخر ===
+  محاولة 0: TimeoutError
+  محاولة 1: TimeoutError
+في الآخر: TimeoutError | بعد 1555 ms
+
+=== اليوزر لغى: بيوقف فورًا، من غير إعادة ===
+وقف بعد 203 ms | Error | اليوزر ضغط إلغاء
+~~~
+
+في الحالة التانية، [[onRetry]] اتسجّل عشان يطبع لو اتنادى — **وماتناداش ولا مرة**.
+
+---
+
+## ٤. [[AbortSignal]] مش لـ fetch بس
+
+| الاستخدام | إزاي |
+|---|---|
+| [[fs.readFile]] في Node | تمرر [[{ signal }]] والقراية بتتلغي |
+| [[addEventListener]] | تمرر [[{ signal }]] والـ listener بيتشال لوحده |
+| كودك انت | تنادي [[signal.throwIfAborted()]] في أول كل خطوة |
+
+~~~js listener بيتنضّف لوحده
+el.addEventListener('click', fn, { signal: ac.signal });
+ac.abort();   // الـ listener اتشال
+~~~
+
+ودي حاجة نضيفة جدًا بدل ما تفتكر [[removeEventListener]].
+
+---
+
+## ٥. والفخ: المؤقت اللي بيفضل
+
+~~~js غلط
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+~~~
+
+لو الإشارة لغت وانت في النوم، الـ Promise بتفضل **معلقة** والمؤقت شغال.
+
+~~~js صح
+const sleep = (ms, signal) => new Promise((resolve, reject) => {
+  const t = setTimeout(resolve, ms);
+  signal?.addEventListener('abort', () => { clearTimeout(t); reject(signal.reason); }, { once: true });
+});
+~~~
+
+و [[{ once: true }]] عشان الـ listener يتشال بعد أول مرة.
+
+---
+
+## ٦. و API الإشارة
+
+| | بتعمل إيه |
+|---|---|
+| [[signal.aborted]] | [[true]] لو الإشارة اتلغت خلاص |
+| [[signal.reason]] | **اللي مررته لـ [[abort()]]**، وهو اللي بيترمي |
+| [[signal.throwIfAborted()]] | بترمي [[reason]] لو اتلغت، وغير كده بتعدّي |
+
+[[throwIfAborted()]] مفيدة في لوب طويلة: حطها في أول كل دورة.
+
+---
+
+## الخلاصة
+
+- [[AbortSignal.timeout(ms)]] — سطر واحد، وبيمنع التعليق.
+- [[ac.abort(new Error('...'))]] — السبب بيوصل.
+- [[AbortSignal.any]] للمهلة والإلغاء سوا.
+- المهلة تستاهل إعادة، وإلغاء اليوزر لأ.
+- [[sleep]] لازم تاخد [[signal]] وتعمل [[clearTimeout]].`,
+          sol: R`الحالتين بناتجهم: المهلة بتتعاد، وإلغاء اليوزر بيوقف فورًا من غير ولا إعادة.`,
+          solCode: R`// مهلة 300ms على سيرفر بيستنى 3 ثواني، و retries: 2
+//   محاولة 0: TimeoutError
+//   محاولة 1: TimeoutError
+// في الآخر: TimeoutError | بعد 1555 ms
+
+// واليوزر لغى بعد 200ms، و retries: 5
+const ac = new AbortController();
+setTimeout(() => ac.abort(new Error('اليوزر ضغط إلغاء')), 200);
+await request(url, { timeout: 5000, retries: 5, signal: ac.signal,
+                     onRetry: () => console.log('أعاد — مش المفروض!') });
+// وقف بعد 203 ms | Error | اليوزر ضغط إلغاء
+// (و onRetry ماتناداش ولا مرة)
+
+// (اتشغّلوا فعلًا على Node 24.22.1)`
+        },
+
+        {
+          cmd: "مشروع — إعادة المحاولة الذكية",
+          title: "أي أخطاء تتعاد، و backoff فيه عشوائية",
+          learn: R`تعيد المحاولة على المؤقت بس، بمهلة أُسّية فيها عشوائية، ومحترمة لـ [[Retry-After]].`,
+          out: R`٥٠٣ مؤقتة بتنجح من غير ما حد يحس، و٤٠٤ بتفشل على طول.`,
+          use: {
+            prog: R`إعادة المحاولة على خطأ دائم هدر: ٤٠٤ هتفضل ٤٠٤. والتفرقة بين المؤقت والدائم هي كل الذكاء في الموضوع.`,
+            net: R`من غير عشوائية، كل العملاء بيعيدوا في نفس اللحظة وبيوقّعوا السيرفر اللي لسه بيقوم. الظاهرة دي اسمها thundering herd، وبتحصل فعلًا.`,
+            cs: R`الـ exponential backoff with jitter خوارزمية موصوفة في أوراق هندسية، وبتتطبّق في AWS SDK وكل عميل جاد.`,
+          },
+          desc: R`إعادة المحاولة سهلة تكتبها غلط. وفيه تلات قرارات:
+
+**١. تعيد على إيه؟**
+
+| الحالة | تعيد؟ |
+|---|---|
+| ٤٠٠، ٤٠١، ٤٠٣، ٤٠٤ | **لأ** — هتفضل زي ما هي |
+| ٤٠٨، ٤٢٥، ٤٢٩ | أيوه — مؤقتة |
+| ٥٠٠، ٥٠٢، ٥٠٣، ٥٠٤ | أيوه |
+| فشل شبكة | أيوه |
+| مهلة | أيوه |
+| إلغاء اليوزر | **لأ** |
+
+**٢. تستنى قد إيه؟**
+
+مش مدة ثابتة. الأُسّي: [[300ms]] ثم [[600]] ثم [[1200]] — بيدي السيرفر وقت يقوم.
+
+**وفيه عشوائية (jitter) إجبارية.** لو ألف عميل فشلوا في نفس اللحظة وكلهم استنوا ٣٠٠ms بالظبط، هيرجعوا كلهم في نفس اللحظة. ودي بتوقّع السيرفر تاني.
+
+الحل: المدة بين نصف القيمة وكاملها:
+
+[[Math.round(exp / 2 + Math.random() * (exp / 2))]]
+
+**٣. تحترم السيرفر؟**
+
+لما السيرفر يرد [[429]] مع [[Retry-After: 1]]، هو بيقولك «استنى ثانية». واحترامها أحسن من حسابك — جرّبتها والأداة استنت ١٠٠٠ms بالظبط.
+
+و [[Retry-After]] ليها شكلين: عدد ثواني، أو تاريخ HTTP. والكود بيتعامل مع الاتنين، وأي قيمة تانية ([[-5]] أو [[1.5]] أو [[1e3]] أو كلام) بيعتبرها **مش موجودة** ويرجع للحساب العادي.
+
+**ولو السيرفر قال «استنى دقيقتين» والحد بتاعنا ١٠ ثواني؟** الحد ([[cap]]) بتاع الحساب **بتاعنا** بس. لو استنينا ١٠ ثواني بدل ١٢٠ هناخد ٤٢٩ تاني أكيد، ونحرق محاولة، وسيرفرات كتير بتطوّل الحظر لما تلاقيك بتخبط بدري. فالقرار: **نستنى اللي السيرفر قاله بالظبط لحد [[maxRetryAfter]] (دقيقة افتراضيًا)، ولو أكتر من كده متعيدش خالص**: نرمي الـ [[HttpError]] على طول ومعاه [[retryAfter]]، والواجهة تقول «جرّب بعد دقيقتين» بدل ما تعلّق.`,
+          example: R`const RETRY_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
+const SECONDS = /^\d+$/;
+const HTTP_DATE = /^[A-Z][a-z]{2}, \d{2} [A-Z][a-z]{2} \d{4} \d{2}:\d{2}:\d{2} GMT$/;
+
+export function backoff(attempt, { base = 300, cap = 10_000, retryAfter = null, maxRetryAfter = 60_000 } = {}) {
+  if (retryAfter != null) {
+    const ms = retryAfter * 1000;
+    return ms <= maxRetryAfter ? ms : null;
+  }
+  const exp = Math.min(base * 2 ** attempt, cap);
+  return Math.round(exp / 2 + Math.random() * (exp / 2));
+}
+
+function parseRetryAfter(res) {
+  const raw = res.headers.get('retry-after');
+  if (!raw) return null;
+  if (SECONDS.test(raw)) return Number(raw);
+  if (!HTTP_DATE.test(raw)) return null;
+  const when = Date.parse(raw);
+  return Number.isNaN(when) ? null : Math.max(0, (when - Date.now()) / 1000);
+}
+
+// وجوه لوب request، بعد رد فشل يستاهل إعادة:
+const retryAfter = res ? parseRetryAfter(res) : null;
+const wait = backoff(attempt, { base, retryAfter, maxRetryAfter });
+if (wait == null) { lastError.retryAfter = retryAfter; break; }`,
+          lines: [
+            R`الـ status codes اللي فشلها غالبًا مؤقت وتستاهل إعادة: 408 و 429 (استنى شوية) و 5xx (السيرفر واقع لحظة). 404 و 400 مش فيها، لأن الإعادة مش هتغيّر النتيجة. و [[Set]] عشان [[.has()]] تبقى سريعة وواضحة.`,
+            R`شكل «عدد الثواني» في RFC 9110 أرقام بس: [[^]] أول النص و [[\d+]] رقم واحد أو أكتر و [[$]] آخره. فـ [[-5]] و [[1.5]] و [[1e3]] مش هيعدّوا، مع إن [[Number]] كان بيقبلهم كلهم.`,
+            R`وشكل التاريخ الوحيد اللي السيرفرات بتبعته النهارده (IMF-fixdate): [[Wed, 21 Oct 2026 07:28:00 GMT]]. بنفحص الشكل قبل [[Date.parse]] لأن V8 متساهل: [[Date.parse('-5')]] بترجّع تاريخ سنة 2001 مش [[NaN]] (جرّبتها)، فكانت هتبقى «استنى صفر».`,
+            R`[[backoff]] بتحسب المدة اللي نستناها قبل المحاولة رقم [[attempt]]. الخيارات بقيم افتراضية: [[base]] أول مدة، و [[cap]] أقصى مدة لحسابنا (١٠ ثواني)، و [[retryAfter]] لو السيرفر قال يستنى قد إيه، و [[maxRetryAfter]] أطول مدة نقبل نستناها من السيرفر (دقيقة).`,
+            R`**السيرفر قال؟ اسمع.** [[!= null]] بتمسك [[null]] و [[undefined]] الاتنين، يعني الفرع ده بيشتغل بس لو [[parseRetryAfter]] لقت رقم سليم.`,
+            R`بنحوّل الثواني لـ ms عشان [[setTimeout]] بياخد ملي ثانية.`,
+            R`**القرار:** المدة اللي السيرفر قالها بالظبط من غير [[cap]]، لأن الاستعجال هنا معناه ٤٢٩ تاني أكيد. ولو أكتر من [[maxRetryAfter]] بنرجّع [[null]]، ومعناها «متعيدش، بلّغ اللي فوق».`,
+            R`نهاية فرع [[retryAfter]].`,
+            R`exponential backoff: المدة بتتضاعف كل محاولة: [[300]] ثم [[600]] ثم [[1200]]… و [[Math.min]] بتوقفها عند [[cap]]. الفكرة إن السيرفر لو تعبان نديله وقت أطول كل مرة بدل ما نضربه.`,
+            R`**الـ jitter (العشوائية)**: المدة النهائية رقم عشوائي بين نص القيمة وكاملها. من غيرها، ألف عميل فشلوا مع بعض هيرجعوا كلهم في نفس الملي ثانية ويوقّعوا السيرفر تاني.`,
+            R`نهاية [[backoff]].`,
+            R`[[parseRetryAfter]] بتقرا هيدر [[Retry-After]] من الرد وترجّع عدد الثواني (رقم مش سالب)، أو [[null]] لو مفيش أو لو القيمة مش سليمة. الهيدر ده بييجي غالبًا مع 429 و 503.`,
+            R`[[headers.get]] بترجّع قيمة الهيدر كنص، أو [[null]] لو مش موجود. واسم الهيدر مش بيفرق فيه الحروف الكبيرة والصغيرة، و [[Headers]] بتشيل المسافات من الأول والآخر لوحدها ([[' 7 ']] بتيجي [['7']]).`,
+            R`لو الهيدر مش موجود (أو فاضي) بنرجّع [[null]] على طول، و [[backoff]] هتستخدم الحساب العادي.`,
+            R`أرقام بس؟ يبقى عدد ثواني، و [[Number]] هنا آمنة لأن الـ regex ضمنت إن مفيش سالب ولا كسر ولا [[e]].`,
+            R`مش أرقام ومش بشكل التاريخ؟ قيمة بايظة، فبنعاملها كأنها **مش موجودة** ([[null]]) بدل ما نخمّن. كده [[-5]] بقت [[null]] بعد ما كانت بترجّع [[-5]] وبتخلي المهلة [[-5000]]ms.`,
+            R`[[Date.parse]] بتحوّل التاريخ لـ ms من ١٩٧٠. ممكن برضه ترجّع [[NaN]] لتاريخ شكله صح وقيمه غلط زي [[Mon, 99 Abc 2026 99:99:99 GMT]].`,
+            R`لو التاريخ بايظ نرجّع [[null]]، غير كده نحسب الفرق بينه وبين دلوقتي بالثواني. و [[Math.max]] مع صفر عشان لو التاريخ فات نرجّع صفر مش رقم سالب.`,
+            R`نهاية [[parseRetryAfter]].`,
+            R`جوه لوب [[request]]: لو فيه رد (مش فشل شبكة) بنقرا منه [[Retry-After]]، ولو مفيش رد خالص مفيش هيدر نقراه.`,
+            R`بنسأل [[backoff]] نستنى قد إيه، ومعاها [[maxRetryAfter]] اللي اليوزر ممكن يغيّره في الخيارات.`,
+            R`[[null]] معناها «السيرفر طلب أكتر من اللي نقدر نستناه»: بنعلّق [[retryAfter]] على الخطأ عشان الواجهة تقول «جرّب بعد كذا»، و [[break]] تخرج من اللوب فـ [[throw lastError]] اللي بعدها بترمي على طول.`,
+          ],
+          try: R`شغّل سيرفر بيرجّع ٥٠٣ أول مرتين وبعدين ٢٠٠، وشوف الأداة بتنجح بعد كام محاولة وبكام ms. وبعدين سيرفر بيرجّع ٤٢٩ مع [[Retry-After: 1]] وقارن المدة، ومرة مع [[Retry-After: 120]] وشوف إنه مبيعيدش خالص.`,
+          practice: [
+            { lvl: 'سريع', t: R`**محاكاة:** ١٠٠٠ عميل فشلوا في نفس اللحظة. احسب وقت رجوع كل واحد مرة بـ 300ms ثابتة ومرة بـ [[backoff(0)]]، وقسّم الأوقات لخانات كل 10ms ([[Math.floor(t / 10)]]) واطبع أكبر خانة.`, done: R`من غير عشوائية الـ 1000 كلهم في خانة واحدة، ومع [[backoff(0)]] أكبر خانة أقل من 150 في كل تشغيلة. وده الـ thundering herd بالأرقام.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** نسخة قديمة من [[parseRetryAfter]] كانت بتعمل [[const n = Number(raw); if (Number.isFinite(n)) return n;]] بدل الـ regex. اكتب جدول حالات يمسك غلطها، وبعدين قارنه بنسخة الدرس.`, done: R`الجدول بيطلّع الفرق بالظبط: القديمة رجّعت [[-5]] لـ [[Retry-After: -5]] (فـ [[backoff]] رجّعت [[-5000]]) و [[1000]] لـ [[1e3]] و [[1.5]] لـ [[1.5]]، ونسخة الدرس رجّعت [[null]] للتلاتة. والاتنين متفقين على [[120]] بـ 120، وتاريخ بعد ٣٠ ثانية بين 29 و 30، وتاريخ فات بـ 0، و [[bad]] بـ [[null]].` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[shouldRetry({ status, error, method, headers, userAborted })]] بترجّع [[true]] أو [[false]] حسب جدول الدرس، و [[POST]] مبيتعادش غير لو فيه [[Idempotency-Key]].`, done: R`جدول فيه ٩ حالات بـ [[assert.equal]] بيعدّي: 404 لأ، و 503 GET أيوه، و 503 POST من غير المفتاح لأ وبيه أيوه، و 429 أيوه، و [[TimeoutError]] أيوه، و [[NetworkError]] أيوه، وإلغاء اليوزر لأ حتى مع 503، و 400 لأ.` },
+          ],
+          deep: {
+            why: R`إعادة المحاولة من غير عشوائية بتحوّل عطل بسيط لعطل كبير. والإعادة على ٤٠٤ بتضيّع وقت المستخدم على حاجة مش هتتغيّر.`,
+            how: R`**ليه [[2 ** attempt]]؟** لأن السيرفر اللي بيقوم محتاج وقت متزايد. ولو كل العملاء بيعيدوا بنفس المعدل الثابت، الضغط بيفضل ثابت.
+
+**والعشوائية** ليها أشكال:
+
+| الشكل | الحساب |
+|---|---|
+| Full jitter | [[random() * exp]] |
+| **Equal jitter** | [[exp/2 + random() * exp/2]] |
+| Decorrelated | بيعتمد على القيمة اللي قبلها |
+
+إحنا استخدمنا الوسطانية: مش أقل من النص، ومش أكتر من الكامل. فيه ضمان حد أدنى وفيه تشتيت.
+
+**[[cap]]** مهمة: من غيرها، بعد ١٠ محاولات المهلة بتبقى [[300 * 1024]] = ٥ دقايق. بس [[cap]] بتتطبّق على **حسابنا** بس، مش على [[Retry-After]]: لو السيرفر قال ١٢٠ ثانية واحنا رجعنا بعد ١٠، هناخد ٤٢٩ تاني أكيد. فـ [[Retry-After]] بتتحترم بالظبط لحد [[maxRetryAfter]] (دقيقة)، وأكتر من كده [[backoff]] بترجّع [[null]] والأداة بترمي على طول ومعاها [[e.retryAfter]]. ولو السيرفر بعت قيمة بايظة ([[-5]] أو [[1.5]]) بنعتبرها مش موجودة.
+
+**و [[Retry-After]]** معرّفة في RFC 9110. وبتيجي مع ٤٢٩ و٥٠٣ عادة. وشكلين:
+
+~~~text
+Retry-After: 120              عدد ثواني
+Retry-After: Wed, 21 Oct 2026 07:28:00 GMT    تاريخ
+~~~
+
+و [[Number('120')]] بترجّع [[120]]، و [[Number('Wed, 21...')]] بترجّع [[NaN]] — فالفحص بـ [[Number.isFinite]] بيفرّق.
+
+**وحاجة مهمة في الأمان**: متعيدش على طلبات **مش idempotent** من غير ما تفكر. [[GET]] آمن، و [[POST]] اللي بيعمل دفعة ممكن يتعمل مرتين. والحل المعياري هو [[Idempotency-Key]] — رقم فريد بتبعته مع الطلب، والسيرفر بيتجاهل التكرار.
+
+والأداة بتاعتنا بتعيد على أي طريقة. ولو هتستخدمها مع [[POST]]، ضيف الهيدر ده أو اقفل الإعادة.
+
+**وعن [[onRetry]]**: الأداة بتاخد callback بدل ما تطبع. وده بيخلي اللي بيستخدمها يقرر — لوج، أو مقياس، أو سكوت.`,
+            when: R`أي طلب على شبكة مش بتاعتك. والـ jitter دايمًا.`,
+            mistakes: R`تعيد على ٤٠٤. أو مهلة ثابتة من غير عشوائية. أو تنسى الحد الأقصى. أو تعيد على [[POST]] من غير [[Idempotency-Key]]. أو تتجاهل [[Retry-After]] وتحسب بنفسك. أو تطبّق [[cap]] على [[Retry-After]] فترجع بدري وتاخد ٤٢٩ تاني. أو تقرا الهيدر بـ [[Number]] فتقبل [[-5]] وتستنى مدة سالبة.`
+          },
+          teach: R`## تلات قرارات
+
+---
+
+## ١. تعيد على إيه؟
+
+~~~js
+const RETRY_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
+~~~
+
+| الحالة | تعيد؟ | ليه |
+|---|---|---|
+| ٤٠٠، ٤٠١، ٤٠٣، ٤٠٤ | **لأ** | هتفضل زي ما هي |
+| ٤٢٩ | أيوه | تجاوزت الحد — استنى |
+| ٥٠٠، ٥٠٢، ٥٠٣، ٥٠٤ | أيوه | مشكلة مؤقتة في السيرفر |
+| شبكة / مهلة | أيوه | ممكن تعدّي |
+| إلغاء اليوزر | **لأ** | هو قال لأ |
+
+---
+
+## ٢. تستنى قد إيه؟
+
+~~~js
+const exp = Math.min(base * 2 ** attempt, cap);
+return Math.round(exp / 2 + Math.random() * (exp / 2));
+~~~
+
+~~~text مع base=300
+المحاولة 0:  300 -> بين 150 و 300
+المحاولة 1:  600 -> بين 300 و 600
+المحاولة 2: 1200 -> بين 600 و 1200
+~~~
+
+### والعشوائية مش رفاهية
+
+لو ألف عميل فشلوا في نفس اللحظة وكلهم استنوا **٣٠٠ms بالظبط**، هيرجعوا كلهم في نفس اللحظة — ويوقّعوا السيرفر اللي لسه بيقوم.
+
+الظاهرة دي اسمها **thundering herd**، وبتحصل فعلًا.
+
+| الشكل | الحساب |
+|---|---|
+| Full jitter | [[random() * exp]] |
+| **Equal jitter** (اللي استخدمناه) | [[exp/2 + random() * exp/2]] |
+
+الوسطانية فيها حد أدنى مضمون وفيها تشتيت.
+
+> و [[cap]] مهمة: من غيرها، بعد ١٠ محاولات المهلة بتبقى **٥ دقايق**.
+
+---
+
+## ٣. والسيرفر لو قال، اسمع
+
+~~~text
+Retry-After: 120                               عدد ثواني
+Retry-After: Wed, 21 Oct 2026 07:28:00 GMT     تاريخ
+~~~
+
+~~~js الشكلين سوا، وأي حاجة تانية null
+if (SECONDS.test(raw)) return Number(raw);     // /^\d+$/: أرقام بس
+if (!HTTP_DATE.test(raw)) return null;         // مش تاريخ بالشكل ده؟ اعتبره مش موجود
+const when = Date.parse(raw);
+return Number.isNaN(when) ? null : Math.max(0, (when - Date.now()) / 1000);
+~~~
+
+### ليه regex مش [[Number]]؟
+
+النسخة الأولى من الدرس كانت [[Number(raw)]] و [[Number.isFinite]]، وده كان باج حقيقي. جدول الحالات (اتشغّل فعلًا · Node 24.22.1):
+
+~~~text Retry-After: القيمة -> القديمة | الجديدة
+"120"     -> 120     | 120
+"-5"      -> -5      | null      <- القديمة خلّت backoff ترجّع -5000ms
+"1.5"     -> 1.5     | null
+"1e3"     -> 1000    | null
+"bad"     -> null    | null
+تاريخ بعد 30 ثانية -> 29.681 | 29.681
+تاريخ فات          -> 0      | 0
+~~~
+
+ولاحظ إن [[Date.parse('-5')]] لوحدها بترجّع **تاريخ سنة ٢٠٠١** في V8 مش [[NaN]]، فلو شلت فحص [[HTTP_DATE]] الـ [[-5]] كانت هتبقى «استنى صفر». عشان كده بنفحص **الشكل** الأول.
+
+> المعيار (RFC 9110) بيقول عدد الثواني [[1*DIGIT]]: أرقام بس. والسيرفر اللي بيبعت غير كده غلطان، والأمان إنك تتجاهله وترجع لحسابك.
+
+### ولو السيرفر قال «استنى دقيقتين»؟
+
+[[cap]] (١٠ ثواني) بتاعة الحساب **بتاعنا**. لو طبّقناها على [[Retry-After: 120]] هنرجع بعد ١٠ ثواني وناخد ٤٢٩ تاني أكيد، ونحرق المحاولة، وفيه سيرفرات بتطوّل الحظر للي بيخبط بدري.
+
+| السيرفر قال | الأداة بتعمل إيه | ليه كده |
+|---|---|---|
+| لحد [[maxRetryAfter]] (دقيقة) | تستنى المدة دي **بالظبط** | الاستعجال معناه ٤٢٩ تاني |
+| أكتر من دقيقة | **متعيدش**، ترمي [[HttpError]] ومعاه [[e.retryAfter]] | مش هنعلّق الواجهة دقايق |
+| قيمة بايظة | تتجاهلها وتحسب [[backoff]] عادي | الهيدر الغلط زي مفيش هيدر |
+
+~~~text سيرفر محلي بيرجّع 429 دايمًا، و retries: 2 — اتشغّل فعلًا
+  هستنى 1000 ms
+  هستنى 1000 ms
+Retry-After: 1   -> HttpError 429 | retryAfter: undefined | طلبات: 3 | 2032 ms
+Retry-After: 120 -> HttpError 429 | retryAfter: 120       | طلبات: 1 | 3 ms
+  هستنى 268 ms
+  هستنى 586 ms
+Retry-After: -5  -> HttpError 429 | retryAfter: undefined | طلبات: 3 | 874 ms
+~~~
+
+- **[[1]]**: استنى ثانية بالظبط مرتين، وفي الآخر استسلم بعد ٣ طلبات.
+- **[[120]]**: طلب واحد ورمى في ٣ms، ومعاه [[retryAfter: 120]] عشان الواجهة تقول «جرّب بعد دقيقتين».
+- **[[-5]]**: اتعامل كأن مفيش هيدر، فاستخدم الحساب العادي بالعشوائية (268 و 586).
+
+ولو تطبيقك (سكربت ليلي مثلًا) يقدر يستنى، مرّر [[maxRetryAfter: 300_000]]: [[backoff(0, { retryAfter: 120, maxRetryAfter: 300_000 })]] بترجّع [[120000]].
+
+---
+
+## ٤. والنتيجة الحقيقية
+
+~~~text ٥٠٣ مؤقتة (السيرفر بيرجّع 503 أول مرتين) — اتشغّل فعلًا
+  محاولة 0: 503، هستنى 159ms
+  محاولة 1: 503، هستنى 485ms
+النتيجة: { ok: true, 'بعد': '3 محاولات' } | الوقت الكلي: 670 ms
+~~~
+
+**١٥٩ و٤٨٥** — مش ٣٠٠ و٦٠٠. دي العشوائية شغالة.
+
+~~~text ٤٢٩ مع Retry-After: 1 — اتشغّل فعلًا
+  429: Retry-After قال استنى 1000ms
+وفي الآخر: HttpError 429
+~~~
+
+**١٠٠٠ms بالظبط** — الأداة احترمت السيرفر بدل ما تحسب.
+
+~~~text و٤٠٤ — اتشغّل فعلًا
+instanceof HttpError: true
+name: HttpError | status: 404
+~~~
+
+ولا إعادة واحدة.
+
+---
+
+## ٥. وتحذير: [[POST]] مش زي [[GET]]
+
+[[GET]] آمن تعيده. و [[POST]] اللي بيعمل دفعة ممكن **يتنفّذ مرتين** لو الرد ضاع في الطريق.
+
+~~~text الحل المعياري
+Idempotency-Key: 7f3a9c12-...
+~~~
+
+رقم فريد بتبعته مع الطلب، والسيرفر بيتجاهل التكرار بنفس المفتاح. وAPIs الدفع كلها بتدعمه.
+
+**الأداة بتاعتنا بتعيد على أي طريقة.** فلو هتستخدمها مع [[POST]]، ضيف الهيدر ده أو حط [[retries: 0]].
+
+---
+
+## ٦. و [[onRetry]] بدل الطباعة
+
+~~~js
+await json(url, {
+  onRetry: ({ attempt, status, wait }) => log.warn({ attempt, status, wait }, 'بعيد'),
+});
+~~~
+
+الأداة بتاخد callback بدل ما تطبع. فاللي بيستخدمها يقرر: لوج، أو مقياس، أو سكوت.
+
+---
+
+## الخلاصة
+
+- أعد على المؤقت بس: 408/425/429/5xx وشبكة ومهلة.
+- أُسّي **مع عشوائية** — من غيرها بتوقّع السيرفر.
+- [[cap]] عشان المهلة متوصلش لدقايق.
+- [[Retry-After]] بتكسب على حسابك، بالظبط ومن غير [[cap]]، لحد [[maxRetryAfter]]؛ وأكتر من كده متعيدش.
+- قيمة [[Retry-After]] بايظة ([[-5]] و [[1e3]]) = مفيش هيدر.
+- [[POST]] محتاج [[Idempotency-Key]].`,
+          sol: R`التلات حالات بناتجهم: المؤقتة بتنجح بمهلة عشوائية، و [[Retry-After]] بتتحترم، والدائمة بتفشل على طول.`,
+          solCode: R`// 503 مؤقتة، والسيرفر بينجح في التالتة:
+//   محاولة 0: 503، هستنى 159ms
+//   محاولة 1: 503، هستنى 485ms
+// النتيجة: { ok: true, 'بعد': '3 محاولات' } | الوقت الكلي: 670 ms
+//   (159 و485 — مش 300 و600. دي العشوائية)
+
+// 429 مع Retry-After: 1
+//   429: Retry-After قال استنى 1000ms
+//   (1000ms بالظبط — احترم السيرفر بدل ما يحسب)
+
+// 404
+// instanceof HttpError: true
+// name: HttpError | status: 404
+//   (ولا إعادة واحدة)
+
+// (اتشغّلوا فعلًا على Node 24.22.1)`
+        },
+
+        {
+          cmd: "مشروع — اختبرها من غير شبكة",
+          title: "fetch مزيّف، و node --test المدمج",
+          learn: R`تحقن [[fetch]] بديل فتختبر كل المسارات من غير إنترنت.`,
+          out: R`٨ اختبارات بتعدّي في أقل من ثانية ونص، من غير أي سيرفر.`,
+          use: {
+            prog: R`حقن الاعتمادية ([[fetchImpl = fetch]]) سطر واحد بيحوّل كود مستحيل يتختبر لكود بيتختبر في ملي ثانية.`,
+            work: R`الاختبار اللي محتاج شبكة بيفشل في الطيارة وفي CI وفي أي يوم الخدمة فيه بطيئة. واللي مش محتاجها بيعدّي دايمًا.`,
+            cs: R`الـ test double: بتبدّل التبعية بحاجة بتتحكم فيها. ومنها بتختبر الحالات اللي صعب توصلها في الواقع (٥٠٣ ثلاث مرات ورا بعض).`,
+          },
+          desc: R`الأداة بتعمل طلبات شبكة. فإزاي تختبرها من غير شبكة؟
+
+**الحل سطر واحد في التوقيع:**
+
+[[export async function request(url, { fetchImpl = fetch, ...init } = {})]]
+
+الافتراضي هو [[fetch]] الحقيقي. وفي الاختبار بتمرر واحد بتاعك.
+
+والمزيّف بسيط: بياخد قايمة ردود وبيرجّعها بالترتيب، وبيسجّل النداءات:
+
+~~~text
+function fakeFetch(responses) {
+  const calls = [];
+  const impl = async (url, init) => {
+    calls.push({ url, init });
+    const next = responses[Math.min(calls.length - 1, responses.length - 1)];
+    if (next instanceof Error) throw next;
+    return next.clone();
+  };
+  impl.calls = calls;
+  return impl;
+}
+~~~
+
+و [[Response]] موجود في Node من نسخة ١٨، فتقدر تعمل رد حقيقي: [[new Response('{"ok":true}', { status: 200 })]].
+
+**والـ [[calls]] هي اللي بتثبت السلوك**: اختبار «٤٠٤ مبتتعادش» بيتأكد إن [[calls.length === 1]]، مش بس إن الخطأ اتر مى.
+
+**والاختبارات نفسها بـ [[node --test]]** — مدمج من Node 18، مفيش تسطيب. و [[assert.rejects]] بتاخد دالة فحص بترجّع [[true]] لو الخطأ هو المتوقّع.`,
+          example: R`import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { request, HttpError, NetworkError, backoff } from './request.js';
+
+function fakeFetch(responses) {
+  const calls = [];
+  const impl = async (url, init) => {
+    calls.push({ url, init });
+    const next = responses[Math.min(calls.length - 1, responses.length - 1)];
+    if (next instanceof Error) throw next;
+    return next.clone();
+  };
+  impl.calls = calls;
+  return impl;
+}
+
+const res = (status, body = '') => new Response(body, { status });
+
+test('بترمي HttpError على 404 ومبتعيدش', async () => {
+  const f = fakeFetch([res(404, '{"e":1}')]);
+  await assert.rejects(
+    () => request('https://x.test/', { fetchImpl: f, retries: 3 }),
+    (e) => e instanceof HttpError && e.status === 404,
+  );
+  assert.equal(f.calls.length, 1, '404 مش المفروض يتعاد');
+});
+
+test('بتعيد على 503 وبتنجح', async () => {
+  const f = fakeFetch([res(503), res(503), res(200, '{"ok":true}')]);
+  const r = await request('https://x.test/', { fetchImpl: f, retries: 3 });
+  assert.equal(r.status, 200);
+  assert.equal(f.calls.length, 3);
+});`,
+          lines: [
+            R`[[test]] من مشغّل الاختبارات المدمج في Node، مش محتاج تسطّب Jest ولا Vitest. بتشغّل الملف بـ [[node --test]].`,
+            R`[[node:assert/strict]] نسخة الـ assert الصارمة: [[assert.equal]] فيها بتقارن بـ [[===]] (النوع والقيمة)، فـ [[1]] و [["1"]] مش هيبقوا متساويين.`,
+            R`بنستورد [[request]] اللي هنختبرها، وكلاسات الأخطاء عشان نتأكد إن الـ error اللي اترمى من النوع الصح، و [[backoff]] لاختبار المدد في اختبار تاني في نفس الملف (المثال ده مبيستخدمهاش).`,
+            R`[[fakeFetch]] بتعمل [[fetch]] مزيّف: بتاخد array ردود جاهزة يرجّعها بالترتيب، فنختبر 404 و 503 وفشل الشبكة من غير سيرفر ولا نت.`,
+            R`array بنسجّل فيها كل نداء حصل، عشان الاختبار يعرف بعدين [[request]] نادت كام مرة وبإيه.`,
+            R`[[impl]] هي الدالة اللي هتتبعت مكان [[fetch]]، بنفس شكله: بتاخد [[url]] و [[init]] وبترجّع Promise لأنها [[async]].`,
+            R`كل نداء بنسجّل الرابط والإعدادات. **التسجيل هو نص فايدة المزيّف**: كده تقدر تتأكد إن الإعادة حصلت (أو محصلتش) بعدد النداءات.`,
+            R`بنختار الرد اللي عليه الدور حسب عدد النداءات. و [[Math.min]] بتخلي آخر رد يتكرر لو [[request]] نادت أكتر من الردود اللي جهزناها، بدل ما ترجّع [[undefined]].`,
+            R`لو العنصر ده [[Error]] بنرميه، وكده بنقلّد فشل الشبكة بالظبط زي [[fetch]] الحقيقي لما الاتصال يقع.`,
+            R`غير كده بنرجّع **نسخة** من الـ [[Response]] اللي جهزناه بـ [[clone()]]، و [[request]] هتتعامل معاها كأنها رد حقيقي. النسخة مهمة: [[request]] بتقرا الـ body عشان تحطه في [[HttpError]]، والـ body بيتقري مرة واحدة، فلو رجّعنا نفس الـ object تاني المحاولة التانية هترمي [[TypeError: Body is unusable: Body has already been read]] (جرّبتها).`,
+            R`نهاية [[impl]].`,
+            R`الدوال في JS objects، فبنعلّق [[calls]] عليها كخاصية. كده الاختبار يقرا [[f.calls.length]] من نفس المتغير اللي بعته لـ [[request]].`,
+            R`بنرجّع الدالة المزيّفة (ومعاها [[calls]])، وهي اللي هتتبعت لـ [[request]] في [[fetchImpl]].`,
+            R`نهاية [[fakeFetch]].`,
+            R`[[res]] اختصار يعمل [[Response]] حقيقي بأي status و body. [[Response]] موجود في Node من ١٨، فـ [[ok]] و [[json()]] بيشتغلوا زي الحقيقي بالظبط.`,
+            R`أول اختبار: 404 لازم يترمي كـ [[HttpError]] ومن غير إعادة، لأن الصفحة مش موجودة والإعادة مش هتغيّر ده. الدالة [[async]] عشان جواها [[await]].`,
+            R`مزيّف بيرجّع رد واحد: 404 ومعاه body فيه JSON، زي سيرفر حقيقي بيقول «مش لاقي».`,
+            R`[[assert.rejects]] بتتأكد إن الـ Promise اترفضت فعلًا؛ لو نجحت الاختبار يفشل بـ «Missing expected rejection». ولازم [[await]] قبلها، وإلا الاختبار يخلص قبل ما الفحص يحصل.`,
+            R`بنبعت دالة بتنادي [[request]] بالمزيّف ومسموحلها ٣ إعادات. لو اتعادت على 404 هنعرف من عدد النداءات تحت.`,
+            R`**دالة الفحص**: بتستلم الـ error ولازم ترجّع [[true]] لو هو المتوقّع (من نوع [[HttpError]] و status بـ 404). لو رجّعت [[false]] الاختبار بيفشل.`,
+            R`نهاية [[assert.rejects]].`,
+            R`**وده السطر المهم**: المزيّف اتنادى مرة واحدة بس، يعني [[request]] معادتش رغم إن [[retries]] بـ ٣. الرسالة التالتة بتظهر لو الاختبار فشل.`,
+            R`نهاية أول اختبار.`,
+            R`تاني اختبار: 503 (السيرفر واقع لحظة) لازم يتعاد لحد ما ينجح.`,
+            R`المزيّف بيرجّع 503 مرتين وبعدين 200 ومعاه JSON، فالطلب هينجح بس في المحاولة التالتة.`,
+            R`بننادي [[request]] بنفس الإعدادات. المرة دي متوقعين إنها تنجح، فبنستنى النتيجة على طول من غير [[assert.rejects]].`,
+            R`الرد اللي رجع في الآخر هو الـ 200، يعني [[request]] مستسلمتش بعد أول 503.`,
+            R`والمزيّف اتنادى ٣ مرات بالظبط: مرتين فشل ومرة نجاح. لو [[request]] مبتعيدش كان الرقم هيبقى 1 والاختبار يفشل.`,
+            R`نهاية تاني اختبار.`
+          ],
+          try: R`اكتب الاختبارات وشغّل [[node --test]]. وبعدين غيّر [[retries: 3]] لـ [[retries: 0]] في اختبار الـ ٥٠٣ وشوف الفشل شكله إيه.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اكتب اختبار:** اختبر [[backoff]] لوحدها من غير انتظار: [[t.mock.method(Math, 'random', () => 0)]] جوه الاختبار.`, done: R`الاختبار بيعدّي: [[backoff(0)]] بـ 150، و [[backoff(2)]] بـ 600، و [[backoff(0, { retryAfter: 2 })]] بـ 2000، ومع [[() => 0.999999]] [[backoff(0)]] بـ 300. و [[Math.random]] رجعت طبيعية بعد الاختبار لوحدها.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[fakeFetch([res(503)])]] (رد واحد بس) مع [[retries: 2]]. قبل ما تشغّل، اكتب [[f.calls.length]] هيبقى كام، والخطأ اللي هيترمي نوعه إيه. وبعدين حوّله لاختبار.`, done: R`[[calls.length]] بـ 3 (المزيّف بيكرر آخر رد بسبب [[Math.min]])، والخطأ [[HttpError]] و [[status]] بـ 503، والاختبار مكتوب بـ [[assert.rejects]] وبيعدّي.` },
+            { lvl: 'تحدي', t: R`**محاكاة:** [[slowFetch()]] مزيّف مبيردش أبدًا، بس بيرمي [[signal.reason]] أول ما الإشارة تتلغي. اختبر بيه المهلة ([[timeout: 50]] و [[retries: 1]]) وإلغاء اليوزر بعد 20ms.`, done: R`اختبار المهلة: [[TimeoutError]] و [[calls.length]] بـ 2. واختبار الإلغاء: الخطأ هو اللي مررته لـ [[abort()]] و [[calls.length]] بـ 1 و [[onRetry]] ماتناداش. والملف كله بيخلص في أقل من ثانيتين من غير شبكة.` },
+          ],
+          deep: {
+            why: R`الاختبار اللي محتاج شبكة بيفشل في الطيارة، وفي CI من غير إنترنت، وفي أي يوم الخدمة بطيئة. واللي مش محتاجها بيعدّي دايمًا وفي ملي ثانية.`,
+            how: R`**حقن الاعتمادية** هنا في أبسط صورة: parameter بقيمة افتراضية. مفيش framework ومفيش container.
+
+~~~text
+{ fetchImpl = fetch }
+~~~
+
+الإنتاج بياخد الافتراضي، والاختبار بيمرر بديل.
+
+**البديل التاني** هو [[mock]] المدمج في Node: [[import { mock } from 'node:test']] و [[mock.method(globalThis, 'fetch', fn)]]. وده بيبدّل الـ global — أقوى، وأخطر: لو نسيت [[mock.restoreAll()]] الاختبارات اللي بعده بتتأثر.
+
+والحقن أوضح: اللي بيقرا التوقيع بيعرف إن الدالة دي بتاخد [[fetch]] من بره.
+
+**[[node --test]]** من Node 18 (ومستقر من 20). بيلاقي ملفات [[*.test.js]] و [[*.test.mjs]] و [[test/]] تلقائيًا. و [[--test-concurrency]] بتتحكم في التوازي، و [[--test-only]] بتشغّل اللي عليهم [[only: true]].
+
+**[[assert.rejects]]** بتاخد:
+
+| الشكل | المعنى |
+|---|---|
+| كلاس | الخطأ من النوع ده |
+| كائن | الصفات دي بتتطابق |
+| **دالة** | ترجّع [[true]] لو الخطأ صح |
+
+والدالة أمرن: [[(e) => e instanceof HttpError && e.status === 404]].
+
+**و [[assert/strict]]**: [[assert.equal]] فيها بتستخدم [[===]]. من غير [[/strict]] بتستخدم [[==]] — و [[assert.equal(1, '1')]] بتعدّي. استخدم [[/strict]] دايمًا.
+
+**ولاحظ إن الاختبارات اللي فيها إعادة بتاخد وقت حقيقي** (٥٨٥ms و٦٢٥ms في النتيجة) — لأن الـ [[sleep]] بتستنى فعلًا. ولو ده أزعجك، مرّر [[base]] صغيرة، أو استخدم [[mock.timers]] في Node 20+ اللي بتتحكم في الوقت.`,
+            when: R`أي كود بيتكلم مع الشبكة أو الملفات أو الوقت. والحقن من أول يوم.`,
+            mistakes: R`تختبر بشبكة حقيقية. أو تبدّل [[globalThis.fetch]] وتنسى ترجّعه. أو تستخدم [[assert]] من غير [[/strict]]. أو تختبر إن الخطأ اتر مى من غير ما تتأكد إن مفيش إعادة حصلت.`
+          },
+          teach: R`## السطر اللي بيخلي الاختبار ممكن
+
+~~~js
+export async function request(url, { fetchImpl = fetch, ...init } = {}) {
+  ...
+  res = await fetchImpl(url, { ...init, signal });
+}
+~~~
+
+الإنتاج بياخد [[fetch]] الحقيقي. والاختبار بيمرر بديل. **سطر واحد.**
+
+---
+
+## ١. المزيّف
+
+~~~js
+function fakeFetch(responses) {
+  const calls = [];
+  const impl = async (url, init) => {
+    calls.push({ url, init });
+    const next = responses[Math.min(calls.length - 1, responses.length - 1)];
+    if (next instanceof Error) throw next;
+    return next.clone();
+  };
+  impl.calls = calls;
+  return impl;
+}
+
+const res = (status, body = '') => new Response(body, { status });
+~~~
+
+حاجتين بيعملهم:
+
+- **بيرجّع ردود محضّرة** بالترتيب (وآخر واحد بيتكرر لو خلصت القايمة)، **نسخة** بـ [[clone()]] كل مرة.
+
+> ليه [[clone()]]؟ [[request]] بتقرا الـ body في كل رد فاشل عشان [[HttpError]]. ولو المزيّف رجّع نفس الـ [[Response]] مرتين، تاني مرة بترمي [[TypeError: Body is unusable: Body has already been read]] والاختبار بيفشل بسبب المزيّف نفسه مش الكود. اتشغّل فعلًا: اختبار «بتوقف بعد عدد المحاولات» بـ [[fakeFetch([res(503)])]] فشل كده من غير [[clone()]] وعدّى بيها.
+- **وبيسجّل كل نداء** في [[calls]].
+
+> [[Response]] موجود في Node من نسخة ١٨. فالرد **حقيقي** — بـ [[.status]] و [[.ok]] و [[.json()]] — مش كائن مزيّف ناقص.
+
+---
+
+## ٢. والتسجيل هو نص الفايدة
+
+~~~js
+test('بترمي HttpError على 404 ومبتعيدش', async () => {
+  const f = fakeFetch([res(404, '{"e":1}')]);
+  await assert.rejects(
+    () => request('https://x.test/', { fetchImpl: f, retries: 3 }),
+    (e) => e instanceof HttpError && e.status === 404,
+  );
+  assert.equal(f.calls.length, 1, '404 مش المفروض يتعاد');
+});
+~~~
+
+**السطر الأخير هو الاختبار الحقيقي.** إن الخطأ اتر مى حاجة، وإن الأداة **ماحاولتش تاني** حاجة تانية خالص. ومن غير التسجيل مكنتش هتقدر تتأكد.
+
+---
+
+## ٣. وحالات صعب توصلها في الواقع
+
+~~~js ٥٠٣ مرتين ورا بعض وبعدين ٢٠٠
+const f = fakeFetch([res(503), res(503), res(200, '{"ok":true}')]);
+~~~
+
+دي حالة بتاخد وقت وحظ عشان تحصل مع سيرفر حقيقي. ومع المزيّف، سطر.
+
+---
+
+## ٤. الناتج
+
+~~~bash
+node --test
+~~~
+
+~~~text اتشغّل فعلًا · Node 24
+✔ بترجّع الرد لو 200 (24.2328ms)
+✔ بترمي HttpError على 404 ومبتعيدش (1.7255ms)
+✔ بتعيد على 503 وبتنجح (585.5703ms)
+✔ بتوقف بعد عدد المحاولات (625.489ms)
+✔ خطأ الشبكة بيتلف في NetworkError (0.5392ms)
+✔ backoff بيزيد وبيقف عند الحد (0.127ms)
+✔ Retry-After بتكسب على الحساب (0.0909ms)
+✔ Retry-After أكبر من الحد: مبتعيدش وبترمي ومعاها المدة (0.6686ms)
+ℹ tests 8
+ℹ pass 8
+ℹ fail 0
+ℹ duration_ms 1369.2815
+~~~
+
+**مفيش سيرفر، ومفيش إنترنت.**
+
+> ولاحظ إن اختبارات الإعادة أخدت ٥٨٥ و٦٢٥ms — لأن الـ [[sleep]] بتستنى فعلًا. ولو ده أزعجك، [[mock.timers]] في Node 20+ بتتحكم في الوقت.
+
+---
+
+## ٥. [[assert.rejects]] بتاخد دالة
+
+| الشكل | المعنى |
+|---|---|
+| كلاس | الخطأ من النوع ده |
+| كائن | الصفات بتتطابق |
+| **دالة** | ترجّع [[true]] لو الخطأ صح |
+
+~~~js الأمرن
+(e) => e instanceof HttpError && e.status === 404
+~~~
+
+> و [[assert/strict]] بتخلي [[assert.equal]] تستخدم [[===]]. من غيرها [[assert.equal(1, '1')]] **بتعدّي**. استخدم [[/strict]] دايمًا.
+
+---
+
+## ٦. والبديل: [[mock]] المدمج
+
+~~~js
+import { mock } from 'node:test';
+mock.method(globalThis, 'fetch', fakeImpl);
+// ... وفي الآخر
+mock.restoreAll();
+~~~
+
+أقوى — بيشتغل حتى لو الكود مش بياخد [[fetchImpl]]. وأخطر: لو نسيت [[restoreAll]]، الاختبارات اللي بعده بتتأثر.
+
+**والحقن أوضح**: اللي بيقرا التوقيع بيعرف إن الدالة بتاخد [[fetch]] من بره.
+
+---
+
+## ٧. واختبر الحساب لوحده
+
+~~~js
+test('backoff بيزيد وبيقف عند الحد', () => {
+  const a = backoff(0, { base: 100, cap: 1000 });
+  const b = backoff(5, { base: 100, cap: 1000 });
+  assert.ok(a >= 50 && a <= 100);
+  assert.ok(b >= 500 && b <= 1000);
+});
+~~~
+
+[[backoff]] دالة نقية — مفيش فيها شبكة ولا وقت. فبتتختبر في **٠.١ms**.
+
+وده اللي بيخلي تصديرها قرار كويس: الحساب يتختبر لوحده.
+
+---
+
+## الخلاصة
+
+- [[fetchImpl = fetch]] — سطر واحد بيخلي الاختبار ممكن.
+- [[Response]] حقيقي في Node 18+.
+- سجّل النداءات: «مبتعيدش» بتتثبت بالعدد.
+- [[node --test]] مدمج، و [[assert/strict]] دايمًا.
+- الدوال النقية ([[backoff]]) بتتختبر في جزء من الملي ثانية.`,
+          sol: R`الاختبارات التمانية بناتجها — من غير شبكة ومن غير سيرفر. والتامن جديد: [[Retry-After: 120]] أكبر من [[maxRetryAfter]]، فالأداة رمت من أول طلب ومعاها [[e.retryAfter]] بـ 120.`,
+          solCode: R`node --test
+
+# الناتج (اتشغّل فعلًا على Node 24.22.1):
+# ✔ بترجّع الرد لو 200 (24.2328ms)
+# ✔ بترمي HttpError على 404 ومبتعيدش (1.7255ms)
+# ✔ بتعيد على 503 وبتنجح (585.5703ms)
+# ✔ بتوقف بعد عدد المحاولات (625.489ms)
+# ✔ خطأ الشبكة بيتلف في NetworkError (0.5392ms)
+# ✔ backoff بيزيد وبيقف عند الحد (0.127ms)
+# ✔ Retry-After بتكسب على الحساب (0.0909ms)
+# ✔ Retry-After أكبر من الحد: مبتعيدش وبترمي ومعاها المدة (0.6686ms)
+# ℹ tests 8
+# ℹ pass 8
+# ℹ fail 0
+#
+# الاختبار التامن (الجديد):
+#   assert.equal(backoff(0, { retryAfter: 120 }), null);
+#   const f = fakeFetch([new Response('', { status: 429, headers: { 'Retry-After': '120' } })]);
+#   await assert.rejects(() => request(url, { fetchImpl: f, retries: 3 }),
+#     (e) => e.status === 429 && e.retryAfter === 120);
+#   assert.equal(f.calls.length, 1);
+#
+# والسطر اللي بيثبت إن 404 مبتتعادش:
+#   assert.equal(f.calls.length, 1, '404 مش المفروض يتعاد');`
+        },
+
+        {
+          cmd: "مشروع — CORS والكوكيز",
+          title: "Failed to fetch من غير سبب، و credentials",
+          learn: R`تقرا خطأ CORS من ناحية اللي بيستخدم [[fetch]]، وتعرف ليه السيرفر هو اللي يصلّحه، وتبعت الكوكيز بـ [[credentials]] صح.`,
+          out: R`لما تشوف [[TypeError: Failed to fetch]] تعرف تفرّق بين CORS والشبكة في دقيقة، وتكتب للـ backend الهيدر الناقص بالاسم.`,
+          use: {
+            prog: R`CORS أكتر خطأ بيضيّع وقت المبتدئ في الفرونت، لأن رسالته في الكود فاضية ورسالته الحقيقية في الـ console بس.`,
+            net: R`الطلب **بيوصل** السيرفر وبيترد عليه، والمتصفح هو اللي بيمنع صفحتك تقرا الرد. يعني CORS مش firewall، ده إذن قراية.`,
+            work: R`كل فرونت على [[localhost:5173]] بيكلّم API على بورت تاني بيقابل ده من أول يوم. والحل الصح هيدر في السيرفر أو proxy في الـ dev server، مش إضافة في المتصفح.`,
+          },
+          desc: R`لو صفحتك على origin والـ API على origin تاني (بروتوكول أو دومين أو **بورت** مختلف)، المتصفح مش هيسيب الكود بتاعك يقرا الرد إلا لو السيرفر قال «مسموح للـ origin ده» بهيدر [[Access-Control-Allow-Origin]]. ولو مقالش، [[fetch]] بترمي [[TypeError: Failed to fetch]] من غير أي تفاصيل، والسبب الحقيقي بيتكتب في الـ console بس.
+
+**وده اتشغّل فعلًا في Chrome 156:** صفحة على [[http://127.0.0.1:8301]] بتطلب API على [[http://127.0.0.1:8302]] (نفس الجهاز، بورت تاني = origin تاني).
+
+| الطلب | اللي الكود شافه | اللي الـ console قاله |
+|---|---|---|
+| السيرفر مبعتش هيدر CORS | [[TypeError: Failed to fetch]] | No 'Access-Control-Allow-Origin' header is present |
+| [[credentials: 'include']] والسيرفر بعت [[*]] | [[TypeError: Failed to fetch]] | must not be the wildcard '*' when the request's credentials mode is 'include' |
+| [[include]] من غير [[Allow-Credentials]] | [[TypeError: Failed to fetch]] | must be 'true' when the request's credentials mode is 'include' |
+| [[PUT]] بـ JSON والـ preflight ناقص | [[TypeError: Failed to fetch]] | Method PUT is not allowed by Access-Control-Allow-Methods |
+
+**أربع أسباب مختلفة، ونفس الـ error بالظبط في الكود.** وده مقصود: المتصفح مش عايز صفحة غريبة تعرف تفاصيل عن سيرفر مش بتاعها.
+
+**والأهم: السيرفر هو اللي يصلّح، مش انت.** لوج السيرفر أثبت إن الطلب الأول **وصل واترد عليه** بـ 200. الكود بتاعك مالوش أي خيار يخلي المتصفح يقرا الرد ده.`,
+          example: R`// صفحة على http://127.0.0.1:8301 والـ API على http://127.0.0.1:8302
+const API = 'http://127.0.0.1:8302';
+
+try {
+  await fetch(API + '/nocors');
+} catch (e) {
+  console.log(e.name, e.message);
+}
+
+const opaque = await fetch(API + '/nocors', { mode: 'no-cors' });
+console.log(opaque.type, opaque.status);
+
+await fetch(API + '/login', { method: 'POST', credentials: 'include' });
+const me = await fetch(API + '/me', { credentials: 'include' });
+console.log(await me.json());`,
+          lines: [
+            R`عنوان الـ API في متغير. البورت 8302 غير بورت الصفحة 8301، فالمتصفح بيعتبرهم **origin مختلف** حتى لو نفس الجهاز ونفس [[127.0.0.1]]. الـ origin هو البروتوكول والدومين والبورت مع بعض.`,
+            R`[[try]] عشان نمسك الخطأ ونطبعه بدل ما الكود يقف.`,
+            R`طلب لـ endpoint مبيبعتش أي هيدر CORS. الطلب ده **بيروح فعلًا** والسيرفر بيرد 200 (لوج السيرفر سجّله)، بس المتصفح بيمنع الكود يشوف الرد ويرفض الـ Promise.`,
+            R`أي فشل في [[fetch]] بييجي هنا، سواء CORS أو شبكة واقعة. ومن الكود لوحده مش هتعرف الفرق.`,
+            R`بيطبع [[TypeError Failed to fetch]] بس في Chrome (و Firefox بيقول [[NetworkError when attempting to fetch resource.]] حسب MDN). السبب الحقيقي بيتكتب في الـ console بالأحمر، ومش متاح للكود بأي طريقة.`,
+            R`نهاية [[catch]].`,
+            R`[[mode: 'no-cors']] **مش حل**: بتخلي الـ Promise تنجح، بس بترجّع رد «opaque» (مقفول): مفيش status ولا headers ولا body تقدر تقراهم. بتنفع بس لحاجات زي إنك تحط الرد في cache أو تبعت ping مش مستني رده.`,
+            R`بيطبع [[opaque 0]]: النوع [[opaque]] و [[status]] صفر، و [[await opaque.text()]] رجّعت نص فاضي. يعني نجحت من غير ما تديك أي حاجة.`,
+            R`تسجيل دخول: السيرفر بيرد بـ [[Set-Cookie: sid=abc123; HttpOnly]]. ومن غير [[credentials: 'include']] المتصفح **مش هيحفظ** الكوكي اللي جاية من origin تاني أصلًا. و [[HttpOnly]] معناها إن [[document.cookie]] مش هيشوفها (طلع نص فاضي)، ودي حماية من XSS.`,
+            R`نفس الكلام في الطلب اللي بعده: [[include]] بتخلي المتصفح يبعت الكوكي مع الطلب. الافتراضي [[same-origin]] بيبعتها لنفس الـ origin بس، فمن غير [[include]] السيرفر استلم [[cookie=-]] (فاضي).`,
+            R`بيطبع [[{ cookie: 'sid=abc123' }]]، بس **بشرط** إن السيرفر رد بـ [[Access-Control-Allow-Origin: http://127.0.0.1:8301]] بالظبط (مش [[*]]) ومعاه [[Access-Control-Allow-Credentials: true]]. لو ناقص واحد منهم، [[TypeError: Failed to fetch]] تاني.`,
+          ],
+          try: R`شغّل سيرفرين بـ [[node:http]] على 8301 (بيرجّع صفحة فاضية) و 8302 (فيه [[/nocors]] من غير هيدرز و [[/ok]] بـ [[Access-Control-Allow-Origin]])، وافتح الصفحة واطلب الاتنين من الـ console. اقرا رسالة الـ console الحمرا، وبص في لوج السيرفر: الطلب الأولاني وصل؟`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** قبل ما تشغّل، اكتب لكل طلب: الكود هيشوف إيه، والسيرفر هيستلم إيه في لوجه. (١) [[fetch(API + '/nocors')]]، (٢) نفسه بـ [[mode: 'no-cors']]، (٣) [[PUT]] بـ [[content-type: application/json]] لسيرفر بيرد على [[OPTIONS]] من غير [[Allow-Methods]].`, done: R`(١) [[TypeError: Failed to fetch]] والسيرفر سجّل [[GET]] ورد 200. (٢) [[opaque 0]] والسيرفر سجّل [[GET]] من غير [[origin]]. (٣) [[TypeError]] والسيرفر سجّل [[OPTIONS]] بس، و [[PUT]] **ماوصلش خالص**. وكاتب جنب كل واحدة توقعك.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[cors(allowed)]] middleware صغير لسيرفر [[node:http]]: بيرد على [[OPTIONS]] بـ 204 ومعاه [[Allow-Methods]] و [[Allow-Headers]]، وبيحط [[Access-Control-Allow-Origin]] بالـ origin اللي جاي **لو هو في اللستة بس**، ومعاه [[Vary: Origin]] و [[Allow-Credentials: true]].`, done: R`صفحة من origin مسموح بتقرا [[/me]] بـ [[credentials: 'include']] وبتشوف الكوكي، وصفحة من بورت تالت مش في اللستة بتاخد [[Failed to fetch]] ورسالة «No 'Access-Control-Allow-Origin'»، و [[PUT]] بـ JSON بيعدّي، و [[curl -i -H 'Origin: http://evil.test']] مبيرجّعش الهيدر.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** زميلك ركّب إضافة «Allow CORS» في Chrome وقال «اتحلّت». اكتب له ٥ سطور: ليه ده مش حل، وإيه اللي هيحصل عند اليوزرز، وإيه الحل الصح في الـ dev (proxy في Vite) وفي الإنتاج (هيدر في السيرفر أو نفس الـ origin).`, done: R`الشرح فيه: الإضافة شغالة على متصفحك انت بس، واليوزرز هيشوفوا نفس [[Failed to fetch]]، وإن CORS حماية لليوزر مش للسيرفر (السيرفر استلم الطلب أصلًا)، وسطر [[server.proxy]] في [[vite.config.js]] بيخلي الطلب same-origin، وإن [[*]] مع الكوكيز مرفوضة.` },
+          ],
+          deep: {
+            why: R`من غير CORS، أي موقع بتفتحه كان هيقدر يعمل [[fetch]] لـ [[bank.example/api/balance]] بكوكيز البنك بتاعتك ويقرا رصيدك. الـ same-origin policy بتمنع القراية دي، و CORS هو الطريقة اللي السيرفر بيقول بيها «الموقع الفلاني مسموحله يقرا».`,
+            how: R`**المتصفح بيقسم الطلبات نوعين:**
+
+| النوع | شرطه | اللي بيحصل |
+|---|---|---|
+| simple | [[GET]] أو [[HEAD]] أو [[POST]]، و [[content-type]] من التلاتة بتوع الفورم، ومن غير هيدرز خاصة | الطلب بيتبعت على طول، والمتصفح بيفحص الرد قبل ما يدّيه لكودك |
+| preflighted | أي حاجة تانية: [[PUT]]، أو [[application/json]]، أو [[Authorization]] | المتصفح بيبعت [[OPTIONS]] الأول، ولو الرد مسمحش الطلب الحقيقي **مبيتبعتش** |
+
+وده اتشاف في اللوج: [[PUT]] بـ JSON لسيرفر مبيرجّعش [[Allow-Methods]] طلّع [[OPTIONS]] بس. بس الـ simple request بيوصل وبيتنفّذ حتى لو الرد اتمنع. فـ CORS **مش حماية للسيرفر من الطلبات**؛ الحماية من التنفيذ شغلة CSRF tokens و [[SameSite]].
+
+**[[credentials]] ليها تلات قيم:**
+
+| القيمة | بيبعت الكوكيز لمين | ملاحظة |
+|---|---|---|
+| [[omit]] | ولا حد | ومبيحفظش [[Set-Cookie]] كمان |
+| [[same-origin]] | نفس الـ origin بس | ده الافتراضي في [[fetch]] |
+| [[include]] | أي origin | السيرفر لازم يرد بـ origin بالظبط و [[Allow-Credentials: true]] |
+
+و [[XMLHttpRequest]] القديمة بتعمل نفس الحكاية بـ [[withCredentials = true]].
+
+**والكوكي نفسها ليها شروط** فوق CORS: [[SameSite=Lax]] (الافتراضي في Chrome) مبتتبعتش مع [[fetch]] لموقع **site** تاني خالص (دومين تاني)، فلو الـ API على دومين مختلف محتاج [[SameSite=None; Secure]] و HTTPS (من MDN). في التجربة الاتنين على [[127.0.0.1]] فهما نفس الـ site، فـ [[Lax]] كفاية.
+
+**والحل في الشغل:** في الـ dev، proxy في الـ dev server (Vite [[server.proxy]]) بيخلي الصفحة والـ API نفس الـ origin فمفيش CORS أصلًا. وفي الإنتاج، يا الـ API على نفس الدومين ورا reverse proxy، يا السيرفر يرد بـ origin من لستة مسموحة (تاب api).`,
+            when: R`أول ما الفرونت والـ API يبقوا على بورتين أو دومينين. ولما تشوف [[Failed to fetch]] والسيرفر شغال، افتح الـ console قبل أي حاجة.`,
+            mistakes: R`تحط [[mode: 'no-cors']] وتستغرب إن الـ body فاضي. أو تركّب إضافة CORS وتفتكر المشكلة اتحلت. أو تحط [[Access-Control-Allow-Origin]] في **الطلب** من الفرونت (هيدر رد، ملوش أي تأثير في الطلب). أو [[*]] مع [[credentials: 'include']]. أو تنسى [[credentials]] فالكوكي متتحفظش ومتتبعتش وتفضل «مش مسجّل دخول». أو تفتكر إن CORS بيحمي السيرفر.`
+          },
+          teach: R`## الصفحة والـ API على origin مختلف
+
+الـ origin = البروتوكول + الدومين + البورت. فـ [[http://127.0.0.1:8301]] و [[http://127.0.0.1:8302]] **اتنين مختلفين**، و [[http://localhost:5173]] و [[http://localhost:3000]] كمان.
+
+والتجربة كلها اتشغّلت فعلًا في Chrome 156: صفحة على 8301، و API بـ [[node:http]] على 8302 بيطبع كل طلب بيوصله.
+
+---
+
+## ١. خطأ CORS: اللي الكود بيشوفه، واللي الـ console بيشوفه
+
+~~~js
+try {
+  await fetch('http://127.0.0.1:8302/nocors');
+} catch (e) {
+  console.log(e.name, e.message);
+}
+~~~
+
+~~~text اللي الكود شافه
+TypeError Failed to fetch
+~~~
+
+~~~text اللي الـ console كتبه بالأحمر
+Access to fetch at 'http://127.0.0.1:8302/nocors' from origin 'http://127.0.0.1:8301'
+has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present
+on the requested resource.
+Failed to load resource: net::ERR_FAILED
+~~~
+
+~~~text ولوج السيرفر
+GET /nocors origin=http://127.0.0.1:8301
+~~~
+
+**تلات حاجات من دول:**
+
+- **الكود مبيعرفش السبب.** [[e.message]] هي هي لو السيرفر واقع أو CORS. ومفيش [[e.cause]] في المتصفح.
+- **الـ console بيعرف**، وفيه اسم الهيدر الناقص بالظبط. فأول خطوة دايمًا: افتح DevTools.
+- **الطلب وصل.** السيرفر استلمه ورد 200. المتصفح هو اللي خبّى الرد عن صفحتك.
+
+> وفي تاب Network هتلاقي الطلب مكتوب جنبه [[CORS error]]، ولو ضغطت عليه مش هتشوف الـ body.
+
+---
+
+## ٢. ليه السيرفر هو اللي يصلّح CORS
+
+الإذن بيتكتب في **الرد**. المتصفح بيسأل «السيرفر ده قال إن [[http://127.0.0.1:8301]] مسموحله يقرا؟». ومفيش أي حاجة في الطلب بتاعك تقدر تجاوب بالنيابة عن السيرفر.
+
+~~~js على السيرفر (node:http)
+res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:8301');
+res.setHeader('Vary', 'Origin');
+~~~
+
+| اللي ممكن تجرّبه | بيحل؟ | ليه |
+|---|---|---|
+| [[mode: 'no-cors']] | **لأ** | الرد بيرجع [[opaque]]: [[status]] صفر و body فاضي |
+| إضافة «Allow CORS» في المتصفح | **لأ** | بتشتغل عندك انت بس، واليوزرز بيشوفوا نفس الخطأ |
+| [[Access-Control-Allow-Origin]] في هيدرز الطلب | **لأ** | ده هيدر رد، والمتصفح بيتجاهله في الطلب |
+| proxy في الـ dev server | **أيوه** | الصفحة والـ API بقوا نفس الـ origin، فمفيش CORS |
+| السيرفر يبعت الهيدر | **أيوه** | ده الحل المقصود |
+
+~~~text no-cors — اتشغّل فعلًا
+type=opaque status=0 body=""
+~~~
+
+### الـ preflight: طلب قبل الطلب
+
+[[PUT]]، أو [[content-type: application/json]]، أو هيدر زي [[Authorization]]: المتصفح بيبعت [[OPTIONS]] الأول يسأل.
+
+~~~text لوج السيرفر لما الـ OPTIONS مرجّعش Allow-Methods
+OPTIONS /json origin=http://127.0.0.1:8301
+~~~
+
+~~~text والـ console
+Method PUT is not allowed by Access-Control-Allow-Methods in preflight response.
+~~~
+
+**الـ [[PUT]] نفسه مااتبعتش.** ولما السيرفر رد على [[OPTIONS]] بـ [[Access-Control-Allow-Methods: PUT]] و [[Access-Control-Allow-Headers: content-type]]، اللوج بقى [[OPTIONS]] وبعده [[PUT]]، والكود قرا [[{"put":true}]].
+
+---
+
+## ٣. [[credentials]] والكوكيز
+
+~~~js
+await fetch(API + '/login', { method: 'POST', credentials: 'include' });
+const me = await fetch(API + '/me', { credentials: 'include' });
+~~~
+
+| الطلب | السيرفر بعت | النتيجة (اتشغّلت فعلًا) |
+|---|---|---|
+| [[/me]] من غير [[credentials]] | origin بالظبط | الرد اتقرا، والسيرفر استلم [[cookie=-]] |
+| [[/me]] بـ [[include]] | origin من غير [[Allow-Credentials]] | [[Failed to fetch]]، والسيرفر **استلم الكوكي** |
+| [[/me]] بـ [[include]] | origin و [[Allow-Credentials: true]] | [[{"cookie":"sid=abc123"}]] |
+| [[/star]] بـ [[include]] | [[Access-Control-Allow-Origin: *]] | [[Failed to fetch]]: النجمة ممنوعة مع الكوكيز |
+
+~~~text رسايل الـ console بالنص
+The value of the 'Access-Control-Allow-Credentials' header in the response is ''
+which must be 'true' when the request's credentials mode is 'include'.
+
+The value of the 'Access-Control-Allow-Origin' header in the response must not be
+the wildcard '*' when the request's credentials mode is 'include'.
+~~~
+
+- **[[document.cookie]] طلع [[""]]** بعد الـ login، مع إن الكوكي اتحفظت واتبعتت. ده لأنها [[HttpOnly]]: الـ JavaScript مبيشوفهاش، فـ XSS مبيقدرش يسرقها. ودي حاجة كويسة.
+- **السطر التاني في الجدول مهم:** الطلب اتبعت بالكوكي والسيرفر اشتغل عليه، والقراية بس اللي اتمنعت. فـ CORS مش حماية من تنفيذ الطلب (دي شغلة CSRF و [[SameSite]]، تاب sec).
+
+> و [[SameSite=Lax]] (الافتراضي في Chrome) مبتتبعتش مع [[fetch]] لدومين **تاني خالص**. لو الـ API على [[api.other.com]] محتاج [[SameSite=None; Secure]] و HTTPS. ده من MDN، والتجربة هنا كانت على نفس الـ site ([[127.0.0.1]]).
+
+---
+
+## ٤. إزاي تفرّق CORS عن الشبكة الواقعة
+
+| العلامة | CORS | الشبكة أو السيرفر واقع |
+|---|---|---|
+| الـ console | «blocked by CORS policy» | [[net::ERR_CONNECTION_REFUSED]] |
+| تاب Network | [[CORS error]] | [[(failed)]] |
+| لوج السيرفر | الطلب **موجود** | مفيش حاجة |
+| [[curl -i]] لنفس الرابط | بيرد عادي (curl مبيعملش CORS) | بيفشل برضه |
+
+---
+
+## الخلاصة
+
+- origin = بروتوكول + دومين + بورت، وأي فرق = CORS.
+- [[TypeError: Failed to fetch]] مبتقولش السبب؛ الـ console بيقول.
+- الطلب بيوصل، والمتصفح بيخبّي الرد. **السيرفر يصلّح** بالهيدر، أو proxy يخليهم نفس الـ origin.
+- [[no-cors]] بيرجّع [[opaque]] فاضي، مش حل.
+- الكوكيز: [[credentials: 'include']] + origin بالظبط + [[Allow-Credentials: true]]، ومن غير [[*]].`,
+          sol: R`اتشغّل فعلًا في Chrome 156 بسيرفرين [[node:http]] على 8301 و 8302: [[/nocors]] رمى [[TypeError: Failed to fetch]] والـ console قال «No 'Access-Control-Allow-Origin' header is present»، ولوج السيرفر فيه [[GET /nocors]] يعني الطلب وصل. و [[no-cors]] رجّع [[opaque]] و [[status]] صفر. والكوكي وصلت بس مع [[credentials: 'include']] و [[Allow-Credentials: true]] و origin بالظبط. والـ simple requests بتوصل السيرفر حتى لو الرد اتمنع، و [[PUT]] بـ JSON مبيتبعتش غير لو الـ preflight سمح.`,
+          solCode: R`// server.mjs: الـ API على 8302 (الصفحة على 8301 من سيرفر تاني)
+import http from 'node:http';
+const PAGE = 'http://127.0.0.1:8301';
+http.createServer((req, res) => {
+  console.log(req.method, req.url, 'origin=' + req.headers.origin, 'cookie=' + (req.headers.cookie ?? '-'));
+  if (req.url === '/nocors') { res.end('{"secret":1}'); return; }
+  res.setHeader('Access-Control-Allow-Origin', PAGE);
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Vary', 'Origin');
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Methods', 'PUT');
+    res.setHeader('Access-Control-Allow-Headers', 'content-type');
+    res.writeHead(204); res.end(); return;
+  }
+  if (req.url === '/login') res.setHeader('Set-Cookie', 'sid=abc123; Path=/; HttpOnly; SameSite=Lax');
+  res.end(JSON.stringify({ cookie: req.headers.cookie ?? null }));
+}).listen(8302);
+
+// الناتج في الصفحة (Chrome 156):
+// nocors -> TypeError: Failed to fetch
+// nocors no-cors -> type=opaque status=0 body=""
+// login include -> 200 {"cookie":null}
+// document.cookie -> ""
+// me include -> {"cookie":"sid=abc123"}
+// put json -> {"cookie":null}          (يعني الـ preflight عدّى والـ PUT وصل)
+//
+// ولوج السيرفر (اتشغّل فعلًا · Node 24.22.1 و Chrome 156):
+// GET /nocors origin=http://127.0.0.1:8301 cookie=-
+// GET /nocors origin=undefined cookie=-      (ده طلب no-cors)
+// POST /login origin=http://127.0.0.1:8301 cookie=-
+// GET /me origin=http://127.0.0.1:8301 cookie=sid=abc123
+// OPTIONS /json origin=http://127.0.0.1:8301 cookie=-
+// PUT /json origin=http://127.0.0.1:8301 cookie=-`
+        }
+      ]
     }
 ]);

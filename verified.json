@@ -9589,6 +9589,16 @@
   "date": "2026-11-20",
   "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
  },
+ "js|ArrayBuffer: byteLength و slice و isView": {
+  "hash": "2f60387485b9",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
+ },
+ "js|ArrayBuffer: resize و transfer و detached": {
+  "hash": "2bc4b6028ae1",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
+ },
  "js|Array[Symbol.species] و Symbol.unscopables": {
   "hash": "c8f630a549b0",
   "date": "2026-11-20",
@@ -9609,6 +9619,11 @@
   "date": "2026-11-21",
   "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
  },
+ "js|Atomics: add و compareExchange و wait و notify": {
+  "hash": "3f5350117f43",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
+ },
  "js|BigInt بعمق": {
   "hash": "ffc148094d96",
   "date": "2026-11-20",
@@ -9623,6 +9638,11 @@
   "hash": "96bb885c82d6",
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+ },
+ "js|DataView: getUint16 و setFloat32 و endianness": {
+  "hash": "e14a73e0c365",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
  "js|Date ومطبّاته": {
   "hash": "420f7d0af15c",
@@ -9678,6 +9698,11 @@
   "hash": "f6ef3bbcbf1f",
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|Error من جوه: toString و cause و AggregateError و EvalError و captureStackTrace": {
+  "hash": "3519b2439bba",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
  "js|EventEmitter": {
   "hash": "edad18036e99",
@@ -9779,6 +9804,16 @@
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
+ "js|JSON.rawJSON و JSON.isRawJSON: أرقام أكبر من Number": {
+  "hash": "ac2380c93bef",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
+ },
+ "js|JavaScript technologies overview: ECMAScript و Web APIs و Node": {
+  "hash": "556d790a17ca",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
+ },
  "js|Map و Set": {
   "hash": "3c2e6854c218",
   "date": "2026-11-03",
@@ -9874,6 +9909,11 @@
   "date": "2026-11-20",
   "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
  },
+ "js|RegExp exec: الـ result array و indices و lastIndex": {
+  "hash": "d58e2feccfd7",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
+ },
  "js|RegExp و Symbol.match و Symbol.replace: matcher بتاعك": {
   "hash": "f7aa33cf21a1",
   "date": "2026-11-21",
@@ -9888,6 +9928,11 @@
   "hash": "ea673965cec1",
   "date": "2026-11-20",
   "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
+ "js|SharedArrayBuffer: growable و crossOriginIsolated": {
+  "hash": "338dceedfbc0",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
  "js|Strategy pattern": {
   "hash": "2dd6d97e7f11",
@@ -9904,10 +9949,25 @@
   "date": "2026-11-21",
   "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
  },
+ "js|TypedArray: set و subarray و slice و كل الـ methods": {
+  "hash": "0582617489a8",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
+ },
+ "js|TypedArray: العيلة و BYTES_PER_ELEMENT و overflow": {
+  "hash": "ae437fa4f73a",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
+ },
  "js|UTC و Intl.DateTimeFormat": {
   "hash": "7df9a6a6bdef",
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+ },
+ "js|Uint8Array: fromBase64 و toHex و TextEncoder": {
+  "hash": "19caf3bcb32b",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
  "js|WASI و node:wasi": {
   "hash": "692d69f476a1",
@@ -9918,6 +9978,11 @@
   "hash": "c55e67874813",
   "date": "2026-11-20",
   "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
+ },
+ "js|WeakRef و FinalizationRegistry و resource management": {
+  "hash": "f032787ed10d",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
  "js|Web Animations API: element.animate": {
   "hash": "72e704e0648b",
@@ -9933,6 +9998,11 @@
   "hash": "bc5a50ce259f",
   "date": "2026-11-21",
   "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
+ },
+ "js|Web Workers و worker_threads: postMessage و transfer": {
+  "hash": "290d245ac413",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
  "js|WebAssembly في المتصفح": {
   "hash": "da7d806fc3b2",
@@ -9993,6 +10063,11 @@
   "hash": "c6dbbb980cea",
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|boolean literals و null literal و trailing commas": {
+  "hash": "9b2a32988541",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
  "js|break و continue": {
   "hash": "a2927e21fdf5",
@@ -10104,6 +10179,11 @@
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
+ "js|encodeURI و encodeURIComponent و decodeURI و URIError": {
+  "hash": "0d70c014dbc4",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
+ },
  "js|enumerability و ownership": {
   "hash": "ae735f339500",
   "date": "2026-11-20",
@@ -10160,9 +10240,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|function expression و class expression و expression statement": {
-  "hash": "f6047bc07657",
+  "hash": "6c452415c6a3",
   "date": "2026-11-21",
-  "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
  "js|function و arrow": {
   "hash": "5956263bfe4f",
@@ -10173,6 +10253,11 @@
   "hash": "12a0c90edd14",
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+ },
+ "js|hashbang و import attributes: CLI بيقرا JSON": {
+  "hash": "37870e120ed3",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
  "js|higher-order functions": {
   "hash": "415fcc2a0926",
@@ -10264,6 +10349,11 @@
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
+ "js|named backreference و modifiers و buffer boundaries": {
+  "hash": "b07b7da96ede",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
+ },
  "js|normalize و التشكيل": {
   "hash": "eed49fa466fe",
   "date": "2026-11-20",
@@ -10329,6 +10419,11 @@
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
+ "js|public class fields و static initialization blocks": {
+  "hash": "7a627fb2656a",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
+ },
  "js|push و Background Sync": {
   "hash": "9df545afff2d",
   "date": "2026-10-29",
@@ -10348,6 +10443,11 @@
   "hash": "f7048d270ba8",
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+ },
+ "js|regex literal و new RegExp: خصايص الـ RegExp و toString": {
+  "hash": "f81e22051556",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
  "js|regex والعربي: Unicode properties": {
   "hash": "e7a905feeda6",
@@ -10539,6 +10639,11 @@
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
+ "js|البيانات الثنائية: bytes و typed arrays": {
+  "hash": "92665a11e151",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
+ },
  "js|التحقق قبل ما الحالة تتغيّر": {
   "hash": "78af57c9f9ee",
   "date": "2026-10-29",
@@ -10553,6 +10658,16 @@
   "hash": "7e5e3acd902d",
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|الـ flags s و m و y و v بحالات حقيقية": {
+  "hash": "20ab45a38f06",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
+ },
+ "js|الـ wildcard والـ literal characters: النقطة والحروف الحرفية": {
+  "hash": "8abc15798e9a",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
  "js|المتغيرات والأنواع والعمليات": {
   "hash": "b4b2bd2f14f8",
