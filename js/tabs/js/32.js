@@ -4,13 +4,1267 @@ MORE("js", [
       t: "أسئلة انترفيو",
       l: 3,
       n: "الأسئلة اللي بتتكرر في انترفيوهات JavaScript: إجابات تقولها بصوتك، وكود تكتبه على السبورة",
+      pre: [
+        { to: "js/closure", why: R`curry و debounce و memoize كلهم دوال بترجّع دوال فاكرة متغيرات، وده الـ closure` },
+        { to: "js/call و apply و bind", why: R`درس الـ polyfills بيكتب [[bind]] و [[call]] بإيده، فلازم تعرف بيعملوا إيه الأول` },
+        { to: "js/Promise.all و allSettled", why: R`قبل ما تكتب [[Promise.all]] بإيدك لازم تكون استخدمتها وعارف بترجّع إيه وإمتى بترفض` },
+        { to: "js/microtasks و macrotasks", why: R`نص أسئلة «إيه الناتج؟» عن ترتيب then و setTimeout و await` },
+        { to: "js/debounce و throttle", why: R`درس الانترفيو بيكمّل عليه: نسخة leading و cancel واختبارها من غير وقت حقيقي` },
+      ],
       projects: [
-        { lvl: 'صغير', t: R`بنك أسئلة «إيه الناتج؟» بيصحح نفسه`, what: R`ملف [[quiz.mjs]] فيه ١٥ سؤال من درس «اتوقع الناتج» ومن الوحدات اللي فاتت (coercion و this و hoisting و event loop)، كل سؤال [[{ code, expected, rule }]]. انت بتكتب [[expected]] قبل ما تشغّل، والسكربت بيشغّل كل [[code]] بـ [[new Function]] ويقارن، ولو غلط يطبع الـ [[rule]].`, done: R`[[node quiz.mjs]] بيطبع كل سؤال وجنبه صح ولا غلط وعدد الصح من ١٥، وكل سؤال غلطت فيه بيطبع القاعدة بكلامك، والسؤال اللي فيه [[setTimeout]] أو Promise بيتصحح صح (السكربت بيستنى الناتج)، ولما تعيد بعد يومين تجيب ١٥ من ١٥.` },
-        { lvl: 'صغير', t: R`includes بإيدك وفخ NaN`, what: R`[[Array.prototype.myIncludes(value, fromIndex = 0)]] بنفس شكل درس الـ polyfills، بس بالمقارنة اللي الأصلي بيستخدمها (SameValueZero): [[NaN]] بيساوي [[NaN]] و 0 بيساوي -0، و [[fromIndex]] السالب بيتحسب من الآخر، والـ holes بتتعامل كـ [[undefined]].`, done: R`[[[NaN].myIncludes(NaN)]] بيرجّع [[true]] مع إن [[[NaN].indexOf(NaN)]] بيرجّع -1، و [[[1, 2, 3].myIncludes(1, -2)]] بيرجّع [[false]] و [[[1, 2, 3].myIncludes(3, -1)]] بيرجّع [[true]]، و [[[1, , 3].myIncludes(undefined)]] بيرجّع [[true]]، وكل ده نفس اللي [[includes]] الأصلي بيرجّعه بالظبط (قارنهم في loop).` },
-        { lvl: 'متوسط', t: R`مكتبة utils بتستات`, what: R`ملف [[utils.mjs]] فيه [[promiseAll]] و [[myMap]] و [[myBind]] و [[curry]] و [[deepEqual]] من دروس الوحدة، وملف [[utils.test.mjs]] بـ [[node:test]] و [[node:assert]] فيه ٣ تستات على الأقل لكل دالة، منهم حالة طرفية واحدة على الأقل (array فاضية، أو hole، أو [[new]]، أو [[NaN]]).`, done: R`[[node --test]] بيعدّي كل التستات، وكل تست بيفشل فعلًا لو بوّظت الدالة (جرّب تشيل [[if (i in this)]] أو [[Object.is]] وشوف تست بيقع)، وكل دالة بترمي [[TypeError]] لو اتبعتلها حاجة غلط (callback مش function مثلًا).` },
-        { lvl: 'متوسط', t: R`انترفيو تجريبي متسجّل`, what: R`اختار ٣ أسئلة من الوحدة (واحد شرح زي null و undefined، وواحد كود زي curry، وواحد output)، وادّي نفسك ٢٠ دقيقة لكل سؤال، وسجّل صوتك وانت بتشرح وبتكتب على ورقة أو editor من غير تشغيل. بعدها شغّل الكود واسمع التسجيل.`, done: R`فيه ٣ تسجيلات، والكود اللي كتبته من غير تشغيل اشتغل من أول مرة أو مكتوب جنبه الغلطة بالظبط، وتقدر تشرح كل سؤال في دقيقتين من غير سكوت أطول من ١٠ ثواني، وكتبت لكل سؤال الحالات الطرفية اللي كان ممكن تتسأل عليها.` },
-        { lvl: 'كبير', t: R`lodash صغير بتاعك`, what: R`مكتبة فيها [[debounce]] و [[throttle]] (وحدة الأداء)، و [[deepClone]] بيدعم Date و Map و Set والـ objects اللي بتشاور على نفسها بـ WeakMap، و [[deepEqual]] بنفس الدعم (درس deep equal)، و [[get(obj, "a.b.0.c", fallback)]]، و [[mapLimit(items, limit, fn)]] (فكرة Promise.all بإيدك بحد للتوازي)، و [[curry]]. كل دالة بتفحص المدخلات وبترمي [[TypeError]] برسالة واضحة.`, done: R`[[node --test]] فيه تستات للحالات الطرفية وبتعدّي: object بيشاور على نفسه بيتنسخ ويتقارن من غير stack overflow، و [[deepEqual(new Date(1), new Date(2))]] بيرجّع [[false]]، و [[mapLimit]] على ٥ مهام كل واحدة 100ms بحد 2 بياخد حوالي 300ms والنتايج بترتيب المدخلات، و [[get]] على path مش موجود بيرجّع الـ fallback من غير error، و [[node --test --experimental-test-coverage]] بيقول فوق 90٪ سطور.`, ext: R`انشرها كـ package على npm (أو GitHub Packages) بـ README و types، وزوّد [[memoize]] و [[groupBy]] و [[retry]]، وقارن أداء [[deepClone]] بتاعك بـ [[structuredClone]] برقم.` },
-        { lvl: 'فكرة', t: R`اشرحها لحد تاني`, what: R`اختار سؤال من الوحدة دي حسيت إنه صعب عليك، واعمله شرح بتاعك: بوست أو فيديو قصير أو صفحة HTML تفاعلية، فيه الإجابة اللي تتقال في الانترفيو، والكود، والحالات اللي بتوقع الناس.`, done: R`الشرح فيه كود حد يقدر ينسخه ويشغّله ويطلعله نفس الناتج اللي انت كاتبه، وفيه غلطة شائعة واحدة على الأقل وإزاي تكتشفها، وحد تاني قراه وفهمه من غير ما تشرح له جنبه.`, ext: R`اعمل سلسلة لكل أسئلة الوحدة، أو حوّلها لـ quiz تفاعلي، أو سجّل نفسك بتجاوب بالإنجليزي عشان الانترفيوهات الأجنبي.` },
+        { lvl: 'صغير', t: R`بنك أسئلة «إيه الناتج؟» بيصحح نفسه`, what: R`ملف [[quiz.mjs]] فيه ١٥ سؤال من درس «اتوقع الناتج» ومن الوحدات اللي فاتت (coercion و this و hoisting و event loop)، كل سؤال [[{ code, expected, rule }]]. انت بتكتب [[expected]] قبل ما تشغّل، والسكربت بيشغّل كل [[code]] بـ [[new Function]] ويقارن، ولو غلط يطبع الـ [[rule]].`, done: R`[[node quiz.mjs]] بيطبع كل سؤال وجنبه صح ولا غلط وعدد الصح من ١٥، وكل سؤال غلطت فيه بيطبع القاعدة بكلامك، والسؤال اللي فيه [[setTimeout]] أو Promise بيتصحح صح (السكربت بيستنى الناتج)، ولما تعيد بعد يومين تجيب ١٥ من ١٥.`, sol: R`## الشكل النهائي
+
+~~~text الناتج (node quiz.mjs، Node 24)
+ 1. صح   log([] + [])
+ 2. صح   log(1 + "2" - 1)
+ 3. صح   log([] == false, null == 0, null >= 0)
+ 4. صح   log(typeof null, typeof NaN, typeof [])
+ 5. صح   log([10, 9, 1].sort())
+ 6. صح   log(0.1 + 0.2 === 0.3)
+ 7. صح   log(typeof f, typeof g); function f() {} var g = 1;
+ 8. صح   try { log(x); } catch (e) { log(e.name); } let x = 1;
+ 9. صح   const o = { n: 1, f() { return this.n; } }; const f = o.f; log(o.f(), f())
+10. صح   const o = { n: 1, f() { return () => this.n; } }; log(o.f()())
+11. صح   for (var i = 0; i < 3; i++) setTimeout(() => log(i));
+12. صح   log(1); setTimeout(() => log(2)); Promise.resolve().then(() => log(3)); log(4);
+13. صح   (async () => { log("a"); await null; log("b"); })(); log("c");
+14. صح   log(["1", "7", "11"].map(parseInt))
+15. صح   const a = [1, 2]; const b = a; b.push(3); log(a.length, [1] === [1])
+
+15 من 15
+~~~
+
+وده شكله لما تغلط (غيّرت توقع السؤال ٥ لـ [[[ 1, 9, 10 ]]] والسؤال ١٢ لـ [[1 4 2 3]] عن قصد):
+
+~~~text الناتج (السطور المهمة)
+ 5. غلط  log([10, 9, 1].sort())
+      توقعت: ["[ 1, 9, 10 ]"]
+      الحقيقي: ["[ 1, 10, 9 ]"]
+      القاعدة: sort من غير دالة بيرتب كنصوص
+12. غلط  log(1); setTimeout(() => log(2)); Promise.resolve().then(() => log(3)); log(4);
+      توقعت: ["1","4","2","3"]
+      الحقيقي: ["1","4","3","2"]
+      القاعدة: sync، بعدين microtasks، بعدين timers
+
+13 من 15
+~~~
+
+## هتشوف إيه
+
+سطر لكل سؤال فيه «صح» أو «غلط» والكود نفسه. السؤال الغلط تحته توقعك والحقيقي والقاعدة اللي كتبتها بكلامك. وفي الآخر العدد من ١٥، و exit code بـ 1 لو فيه غلط (فينفع تحطه في script أو CI).
+
+## الكود
+
+~~~js questions.mjs
+// كل سؤال: code بيطبع بـ log بدل console.log، و expected توقعك قبل ما تشغّل (سطر لكل log)
+export const questions = [
+  { code: $__btlog([] + [])$__bt, expected: [""], rule: "الـ array بتتحوّل لنص بـ join، والفاضية نص فاضي" },
+  { code: $__btlog(1 + "2" - 1)$__bt, expected: ["11"], rule: "+ مع نص بيلزق، و - دايمًا بيحوّل لأرقام" },
+  { code: $__btlog([] == false, null == 0, null >= 0)$__bt, expected: ["true false true"], rule: "== مع null بيساوي undefined بس، و >= بيحوّل لرقم" },
+  { code: $__btlog(typeof null, typeof NaN, typeof [])$__bt, expected: ["object number object"], rule: "typeof null غلطة تاريخية، و NaN رقم، والـ array object" },
+  { code: $__btlog([10, 9, 1].sort())$__bt, expected: ["[ 1, 10, 9 ]"], rule: "sort من غير دالة بيرتب كنصوص" },
+  { code: $__btlog(0.1 + 0.2 === 0.3)$__bt, expected: ["false"], rule: "الكسور العشرية مش بتتخزن بالظبط في binary" },
+  { code: $__btlog(typeof f, typeof g); function f() {} var g = 1;$__bt, expected: ["function undefined"], rule: "function declaration بتطلع كاملة، و var الاسم بس" },
+  { code: $__bttry { log(x); } catch (e) { log(e.name); } let x = 1;$__bt, expected: ["ReferenceError"], rule: "let في الـ TDZ لحد سطر التعريف" },
+  { code: $__btconst o = { n: 1, f() { return this.n; } }; const f = o.f; log(o.f(), f())$__bt, expected: ["1 undefined"], rule: "this بيتحدد وقت النداء: من غير object بقى globalThis" },
+  { code: $__btconst o = { n: 1, f() { return () => this.n; } }; log(o.f()())$__bt, expected: ["1"], rule: "الـ arrow بتاخد this من الدالة اللي حواليها" },
+  { code: $__btfor (var i = 0; i < 3; i++) setTimeout(() => log(i));$__bt, expected: ["3", "3", "3"], rule: "var متغير واحد للدالة كلها" },
+  { code: $__btlog(1); setTimeout(() => log(2)); Promise.resolve().then(() => log(3)); log(4);$__bt, expected: ["1", "4", "3", "2"], rule: "sync، بعدين microtasks، بعدين timers" },
+  { code: $__bt(async () => { log("a"); await null; log("b"); })(); log("c");$__bt, expected: ["a", "c", "b"], rule: "الـ async بتشتغل sync لحد أول await" },
+  { code: $__btlog(["1", "7", "11"].map(parseInt))$__bt, expected: ["[ 1, NaN, 3 ]"], rule: "map بيبعت الـ index، و parseInt بيفهمه radix" },
+  { code: $__btconst a = [1, 2]; const b = a; b.push(3); log(a.length, [1] === [1])$__bt, expected: ["3 false"], rule: "الـ objects بتتنسخ بالـ reference، و === بيقارن الـ reference" },
+];
+~~~
+
+~~~js quiz.mjs
+import { inspect } from "node:util";
+import { questions } from "./questions.mjs";
+
+const show = (v) => (typeof v === "string" ? v : inspect(v));
+
+// بيشغّل الكود بـ log خاص، ويستنى الـ timers والـ microtasks تخلص
+async function run(code) {
+  const out = [];
+  const log = (...args) => out.push(args.map(show).join(" "));
+  try {
+    new Function("log", code)(log);
+  } catch (e) {
+    out.push("رمى " + e.name + ": " + e.message);
+  }
+  await new Promise((r) => setTimeout(r, 20));   // بعد أي setTimeout(…, 0) اتسجل جوه الكود
+  return out;
+}
+
+let right = 0;
+for (const [i, q] of questions.entries()) {
+  const actual = await run(q.code);
+  const ok = actual.length === q.expected.length && actual.every((line, k) => line === q.expected[k]);
+  if (ok) right++;
+  console.log($__bt$__{String(i + 1).padStart(2)}. $__{ok ? "صح " : "غلط"}  $__{q.code}$__bt);
+  if (!ok) {
+    console.log("      توقعت:", JSON.stringify(q.expected));
+    console.log("      الحقيقي:", JSON.stringify(actual));
+    console.log("      القاعدة:", q.rule);
+  }
+}
+console.log($__bt\n$__{right} من $__{questions.length}$__bt);
+process.exitCode = right === questions.length ? 0 : 1;
+~~~
+
+## الكود بيعمل إيه
+
+- **الأسئلة في ملف لوحده:** [[questions.mjs]] هو اللي بتعدّل فيه (تكتب [[expected]] قبل ما تشغّل)، و [[quiz.mjs]] مبيتلمسش. كل [[expected]] array: عنصر لكل [[log]]، عشان أسئلة الترتيب (١١ و ١٢ و ١٣) تتقارن سطر بسطر.
+- **[[new Function("log", code)]]:** بيعمل دالة باراميترها [[log]] وجسمها الكود. فالكود بيكتب في [[log]] بتاعتنا (array) بدل الشاشة، ومش شايف المتغيرات اللي في [[quiz.mjs]]. ولو الكود رمى error مش متوقع بيتسجّل كسطر وبيكمّل باقي الأسئلة.
+- **[[show]]:** النصوص زي ما هي، وأي حاجة تانية بـ [[inspect]] (نفس تنسيق [[console.log]])، فالتوقع بتكتبه زي ما بتشوفه في الترمنال: [[[ 1, 10, 9 ]]] بالمسافات.
+- **[[await new Promise((r) => setTimeout(r, 20))]]:** ده اللي بيخلي أسئلة الـ setTimeout والـ Promise تتصحح صح. الـ timer بتاعنا اتسجّل **بعد** أي [[setTimeout]] جوه الكود، فلما يشتغل يبقى الكل خلص (والـ microtasks بتخلص قبل أي timer أصلًا).
+- **[[for ... of]] مع [[await]]:** الأسئلة بتتشغّل واحد ورا التاني، عشان timers سؤال متدخلش في ناتج اللي بعده.
+- **[[process.exitCode]]:** مش [[process.exit()]]، عشان البرنامج يقفل لوحده بعد ما الطباعة تخلص.
+
+## الغلطات اللي حصلت وأنا ببنيه
+
+**١. من غير انتظار حقيقي، أسئلة الـ timers بتطلع غلط.** أول نسخة كانت [[await null]] بدل الـ setTimeout (افتكرت إن ده كفاية عشان الـ Promise):
+
+~~~text الناتج (بـ await null)
+11. غلط  for (var i = 0; i < 3; i++) setTimeout(() => log(i));
+      توقعت: ["3","3","3"]
+      الحقيقي: []
+      القاعدة: var متغير واحد للدالة كلها
+12. غلط  log(1); setTimeout(() => log(2)); Promise.resolve().then(() => log(3)); log(4);
+      توقعت: ["1","4","3","2"]
+      الحقيقي: ["1","4","3"]
+~~~
+
+[[await null]] بيستنى microtask بس، فالـ [[3]] لحقت، لكن الـ timers مش. والأوحش: الـ timers دي بتشتغل بعدين وبتكتب في الـ array القديمة بتاعة سؤال خلص. التصليح: انتظار timer حقيقي.
+
+**٢. سؤال الـ this في ملف [[.mjs]].** كنت متوقع [[f()]] ترمي TypeError لأن الـ ES modules strict. بس الكود اللي جوه [[new Function]] بيتعمل **sloppy** دايمًا مهما كان الملف اللي ناداه، فـ [[this]] بقى [[globalThis]] و [[this.n]] بـ undefined. لو عايز تختبر strict حط [["use strict";]] في أول الـ code.
+
+**الغلطة الشائعة:** تكتب [[expected]] بعد ما تشغّل. الأداة دي قيمتها كلها إنك تكتب التوقع الأول، وتعيدها بعد يومين من غير ما تبص على الإجابات.` },
+        { lvl: 'صغير', t: R`includes بإيدك وفخ NaN`, what: R`[[Array.prototype.myIncludes(value, fromIndex = 0)]] بنفس شكل درس الـ polyfills، بس بالمقارنة اللي الأصلي بيستخدمها (SameValueZero): [[NaN]] بيساوي [[NaN]] و 0 بيساوي -0، و [[fromIndex]] السالب بيتحسب من الآخر، والـ holes بتتعامل كـ [[undefined]].`, done: R`[[[NaN].myIncludes(NaN)]] بيرجّع [[true]] مع إن [[[NaN].indexOf(NaN)]] بيرجّع -1، و [[[1, 2, 3].myIncludes(1, -2)]] بيرجّع [[false]] و [[[1, 2, 3].myIncludes(3, -1)]] بيرجّع [[true]]، و [[[1, , 3].myIncludes(undefined)]] بيرجّع [[true]]، وكل ده نفس اللي [[includes]] الأصلي بيرجّعه بالظبط (قارنهم في loop).`, sol: R`## الشكل النهائي
+
+~~~text الناتج (node my-includes.js، Node 24)
+true -1
+false true
+true -1
+true true
+اتقارن 720 حالة، والاختلافات: 0
+~~~
+
+## هتشوف إيه
+
+أول ٤ سطور هي الحالات اللي في المطلوب، وجنب كل واحدة اللي [[indexOf]] بيعمله عشان الفرق يبان: [[NaN]] اتلقى بـ [[myIncludes]] و [[indexOf]] قال -1، والـ [[fromIndex]] السالب اتحسب من الآخر، والـ hole اتعامل كـ [[undefined]]، و 0 و -0 متساويين. وآخر سطر: loop قارن [[myIncludes]] بـ [[includes]] الأصلي في ٧٢٠ حالة (arrays × قيم × fromIndex) ومفيش ولا اختلاف.
+
+## الكود
+
+~~~js my-includes.js
+// SameValueZero: زي === بس NaN بيساوي NaN (و 0 بيساوي -0 زي ===)
+const sameValueZero = (a, b) => a === b || (a !== a && b !== b);
+
+Array.prototype.myIncludes = function (value, fromIndex = 0) {
+  const len = this.length;
+  if (len === 0) return false;
+  let start = Math.trunc(Number(fromIndex)) || 0;      // "1" و 1.7 و NaN زي الأصلي
+  if (start < 0) start = Math.max(len + start, 0);     // السالب من الآخر، ولو أكبر من الطول من الأول
+  for (let i = start; i < len; i++) {
+    if (sameValueZero(this[i], value)) return true;    // this[i] على الـ hole بيرجّع undefined
+  }
+  return false;
+};
+
+console.log([NaN].myIncludes(NaN), [NaN].indexOf(NaN));
+console.log([1, 2, 3].myIncludes(1, -2), [1, 2, 3].myIncludes(3, -1));
+console.log([1, , 3].myIncludes(undefined), [1, , 3].indexOf(undefined));
+console.log([0].myIncludes(-0), [-0].myIncludes(0));
+
+// نفس الناتج زي includes الأصلي في كل الحالات دي
+const arrays = [[], [1, 2, 3], [NaN, 0], [-0], [1, , 3], ["1", 1], [undefined], [null]];
+const values = [1, 3, "1", NaN, 0, -0, undefined, null, 4];
+const froms = [undefined, 0, 1, -1, -2, -10, 10, 1.7, "1", NaN];
+let checked = 0, diffs = 0;
+for (const arr of arrays) for (const v of values) for (const f of froms) {
+  checked++;
+  if (arr.myIncludes(v, f) !== arr.includes(v, f)) {
+    diffs++;
+    console.log("اختلاف:", arr, v, f);
+  }
+}
+console.log($__btاتقارن $__{checked} حالة، والاختلافات: $__{diffs}$__bt);
+~~~
+
+## كل حتة بتعمل إيه
+
+- **[[sameValueZero]]:** فيه ٣ طرق مقارنة في JS. [[===]] (Strict Equality): [[NaN]] مش بيساوي نفسه، وده اللي [[indexOf]] بيستخدمه. [[Object.is]] (SameValue): [[NaN]] بيساوي [[NaN]] بس 0 مش بيساوي -0. و SameValueZero (اللي [[includes]] و [[Map]] و [[Set]] بيستخدموه): [[NaN]] بيساوي [[NaN]] **و** 0 بيساوي -0. [[a !== a]] بيبقى true لـ NaN بس، فـ [[(a !== a && b !== b)]] معناها «الاتنين NaN».
+- **[[Math.trunc(Number(fromIndex)) || 0]]:** الأصلي بيحوّل الـ fromIndex لرقم صحيح: [["1"]] بقى 1، و 1.7 بقى 1، و [[NaN]] بقى 0 (الـ [[|| 0]] بتمسك NaN).
+- **[[Math.max(len + start, 0)]]:** -1 في array طولها 3 = يبدأ من 2. ولو السالب أكبر من الطول (-10) يبدأ من 0 بدل index سالب.
+- **مفيش [[i in this]]:** عكس [[map]] بالظبط. [[includes]] بيقرا [[this[i]]] لكل index، والـ hole بيرجّع [[undefined]]، فـ [[[1, , 3].includes(undefined)]] بـ true. ([[indexOf]] بيتخطى الـ holes، وعشان كده -1.)
+- **الـ loop في الآخر** أهم من الـ ٤ سطور: بدل ما تختار حالات بإيدك وتنسى واحدة، بيجرّب كل التوافيق ويقارن بالأصلي.
+
+## الغلطات اللي حصلت وأنا ببنيه
+
+**١. استخدمت [[Object.is]] الأول** (افتكرته هو اللي بيخلي NaN بيساوي NaN، وده صح، بس نسيت -0). الـ loop مسكها على طول:
+
+~~~text الناتج (بـ Object.is، آخر السطور)
+اختلاف: [ -0 ] 0 -2
+اختلاف: [ -0 ] 0 -10
+اختلاف: [ -0 ] 0 NaN
+اتقارن 720 حالة، والاختلافات: 15
+~~~
+
+**٢. نسخت [[if (i in this)]] من [[myMap]]** عشان «الـ polyfills بتتخطى الـ holes». بس [[includes]] مبيتخطاش:
+
+~~~text الناتج (بـ i in this، آخر السطور)
+اختلاف: [ 1, <1 empty item>, 3 ] undefined 1
+اختلاف: [ 1, <1 empty item>, 3 ] undefined NaN
+اتقارن 720 حالة، والاختلافات: 8
+~~~
+
+الدرس: كل method ليها قواعدها في الـ spec ([[indexOf]] بيتخطى الـ holes و [[includes]] لأ)، فارجع لـ MDN أو للـ spec لكل method، ومتعممش.
+
+**في الانترفيو:** «[[includes]] بيستخدم SameValueZero فبيلاقي NaN، و [[indexOf]] بيستخدم === فمش بيلاقيه، وده السبب الأساسي إن [[includes]] اتضاف في ES2016».` },
+        { lvl: 'متوسط', t: R`مكتبة utils بتستات`, what: R`ملف [[utils.mjs]] فيه [[promiseAll]] و [[myMap]] و [[myBind]] و [[curry]] و [[deepEqual]] من دروس الوحدة، وملف [[utils.test.mjs]] بـ [[node:test]] و [[node:assert]] فيه ٣ تستات على الأقل لكل دالة، منهم حالة طرفية واحدة على الأقل (array فاضية، أو hole، أو [[new]]، أو [[NaN]]).`, done: R`[[node --test]] بيعدّي كل التستات، وكل تست بيفشل فعلًا لو بوّظت الدالة (جرّب تشيل [[if (i in this)]] أو [[Object.is]] وشوف تست بيقع)، وكل دالة بترمي [[TypeError]] لو اتبعتلها حاجة غلط (callback مش function مثلًا).`, sol: R`## الشكل النهائي
+
+~~~text الناتج (node --test، Node 24)
+▶ promiseAll
+  ✔ النتايج بترتيب المدخلات مش بترتيب الخلاص (39.8899ms)
+  ✔ array فاضية بتتحل على طول (0.3211ms)
+  ✔ أول رفض بيرفض الكل (0.6966ms)
+  ✔ مدخل مش iterable بيترفض بـ TypeError (0.1797ms)
+✔ promiseAll (42.1849ms)
+▶ myMap
+  ✔ بيطبّق الـ callback وبيبعت index والـ array (0.2575ms)
+  ✔ الـ hole بيفضل hole والـ callback مبيتنداش عليه (0.2308ms)
+  ✔ thisArg بيوصل لـ callback عادي (0.172ms)
+  ✔ callback مش function بيرمي TypeError حتى على array فاضية (0.1681ms)
+✔ myMap (1.8424ms)
+▶ myBind
+  ✔ بيثبّت this (0.2182ms)
+  ✔ بيثبّت arguments من الأول ويكمّل بالباقي (0.1448ms)
+  ✔ مع new بيتجاهل ctx والـ instanceof شغال (0.1903ms)
+  ✔ مش function بيرمي TypeError (0.089ms)
+✔ myBind (0.8384ms)
+▶ curry
+  ✔ كل طرق التقسيم بتدّي نفس الناتج (0.1546ms)
+  ✔ النسخ الجزئية مستقلة عن بعض (0.0833ms)
+  ✔ arity صريح للدوال اللي length بتاعها غلط (0.1016ms)
+  ✔ مش function بيرمي TypeError (0.0989ms)
+✔ curry (0.5631ms)
+▶ deepEqual
+  ✔ objects متداخلة والترتيب مش فارق (0.1571ms)
+  ✔ NaN بيساوي NaN، و 1 مش بيساوي '1' (0.0748ms)
+  ✔ undefined مقابل key مش موجود (0.0788ms)
+  ✔ array مقابل object بنفس المفاتيح (0.0728ms)
+✔ deepEqual (0.5125ms)
+ℹ tests 20
+ℹ suites 5
+ℹ pass 20
+ℹ fail 0
+~~~
+
+## هتشوف إيه
+
+[[node --test]] في الفولدر بيلاقي [[utils.test.mjs]] لوحده (أي ملف اسمه فيه [[.test.]]) ويطبع مجموعة لكل دالة (بـ [[describe]]) وتحتها ٤ تستات: حالة عادية، وحالات طرفية، و TypeError للمدخل الغلط. ٢٠ من ٢٠.
+
+## الملفات
+
+~~~text شجرة الملفات
+utils/
+├── utils.mjs        الدوال
+└── utils.test.mjs   التستات
+~~~
+
+~~~js utils.mjs
+// دوال الوحدة كـ functions عادية (مش على الـ prototype): أسهل في الاختبار ومبتلمسش الـ built-ins
+
+export function promiseAll(items) {
+  if (items == null || typeof items[Symbol.iterator] !== "function") {
+    return Promise.reject(new TypeError("promiseAll: المدخل لازم يبقى iterable"));
+  }
+  return new Promise((resolve, reject) => {
+    const list = Array.from(items);
+    const results = new Array(list.length);
+    let done = 0;
+    if (list.length === 0) return resolve(results);
+    list.forEach((item, i) => {
+      Promise.resolve(item).then((value) => {
+        results[i] = value;
+        if (++done === list.length) resolve(results);
+      }, reject);
+    });
+  });
+}
+
+export function myMap(array, callback, thisArg) {
+  if (array == null) throw new TypeError("myMap: مفيش array");
+  if (typeof callback !== "function") throw new TypeError("myMap: الـ callback لازم يبقى function");
+  const len = array.length;
+  const result = new Array(len);
+  for (let i = 0; i < len; i++) {
+    if (i in array) result[i] = callback.call(thisArg, array[i], i, array);
+  }
+  return result;
+}
+
+export function myBind(fn, ctx, ...preset) {
+  if (typeof fn !== "function") throw new TypeError("myBind: لازم function");
+  function bound(...args) {
+    if (new.target) return new fn(...preset, ...args);   // مع new: تجاهل ctx زي bind الأصلية
+    return fn.apply(ctx, [...preset, ...args]);
+  }
+  if (fn.prototype) bound.prototype = Object.create(fn.prototype);
+  return bound;
+}
+
+export function curry(fn, arity = fn.length) {
+  if (typeof fn !== "function") throw new TypeError("curry: لازم function");
+  return function curried(...args) {
+    if (args.length >= arity) return fn.apply(this, args);
+    return (...more) => curried.apply(this, [...args, ...more]);
+  };
+}
+
+export function deepEqual(a, b) {
+  if (Object.is(a, b)) return true;
+  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+  if (Array.isArray(a) !== Array.isArray(b)) return false;
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+  if (keysA.length !== keysB.length) return false;
+  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k]));
+}
+~~~
+
+~~~js utils.test.mjs
+import { describe, test } from "node:test";
+import assert from "node:assert/strict";
+import { promiseAll, myMap, myBind, curry, deepEqual } from "./utils.mjs";
+
+const later = (ms, v) => new Promise((r) => setTimeout(() => r(v), ms));
+
+describe("promiseAll", () => {
+  test("النتايج بترتيب المدخلات مش بترتيب الخلاص", async () => {
+    assert.deepEqual(await promiseAll([later(30, "slow"), 2, later(5, "fast")]), ["slow", 2, "fast"]);
+  });
+  test("array فاضية بتتحل على طول", async () => {
+    assert.deepEqual(await promiseAll([]), []);
+  });
+  test("أول رفض بيرفض الكل", async () => {
+    await assert.rejects(promiseAll([1, Promise.reject(new Error("x")), later(10, 3)]), { message: "x" });
+  });
+  test("مدخل مش iterable بيترفض بـ TypeError", async () => {
+    await assert.rejects(promiseAll(5), TypeError);
+  });
+});
+
+describe("myMap", () => {
+  test("بيطبّق الـ callback وبيبعت index والـ array", () => {
+    assert.deepEqual(myMap(["a", "b"], (x, i, arr) => x + i + arr.length), ["a02", "b12"]);
+  });
+  test("الـ hole بيفضل hole والـ callback مبيتنداش عليه", () => {
+    let calls = 0;
+    const out = myMap([1, , 3], (x) => { calls++; return x * 2; });
+    assert.equal(calls, 2);
+    assert.equal(1 in out, false);
+    assert.equal(out.length, 3);
+  });
+  test("thisArg بيوصل لـ callback عادي", () => {
+    assert.deepEqual(myMap([1, 2], function (x) { return x * this.k; }, { k: 10 }), [10, 20]);
+  });
+  test("callback مش function بيرمي TypeError حتى على array فاضية", () => {
+    assert.throws(() => myMap([], "x"), TypeError);
+  });
+});
+
+describe("myBind", () => {
+  function greet(word, mark) { return word + " " + this.name + mark; }
+  test("بيثبّت this", () => {
+    assert.equal(myBind(greet, { name: "Sara" })("Hi", "!"), "Hi Sara!");
+  });
+  test("بيثبّت arguments من الأول ويكمّل بالباقي", () => {
+    assert.equal(myBind(greet, { name: "Omar" }, "Yo")("?"), "Yo Omar?");
+  });
+  test("مع new بيتجاهل ctx والـ instanceof شغال", () => {
+    function Point(x, y) { this.x = x; this.y = y; }
+    const P = myBind(Point, { ignored: true }, 1);
+    const p = new P(2);
+    assert.deepEqual({ ...p }, { x: 1, y: 2 });
+    assert.ok(p instanceof Point);
+  });
+  test("مش function بيرمي TypeError", () => {
+    assert.throws(() => myBind({}, null), TypeError);
+  });
+});
+
+describe("curry", () => {
+  const add3 = (a, b, c) => a + b + c;
+  test("كل طرق التقسيم بتدّي نفس الناتج", () => {
+    const add = curry(add3);
+    assert.equal(add(1)(2)(3), 6);
+    assert.equal(add(1, 2)(3), 6);
+    assert.equal(add(1)(2, 3), 6);
+  });
+  test("النسخ الجزئية مستقلة عن بعض", () => {
+    const add = curry(add3);
+    const plus1 = add(1);
+    assert.equal(plus1(1)(1), 3);
+    assert.equal(plus1(10)(10), 21);
+  });
+  test("arity صريح للدوال اللي length بتاعها غلط", () => {
+    const sum = curry((...n) => n.reduce((a, b) => a + b, 0), 3);
+    assert.equal(sum(1)(2)(3), 6);
+  });
+  test("مش function بيرمي TypeError", () => {
+    assert.throws(() => curry(42), TypeError);
+  });
+});
+
+describe("deepEqual", () => {
+  test("objects متداخلة والترتيب مش فارق", () => {
+    assert.equal(deepEqual({ a: [1, { b: 2 }], c: 3 }, { c: 3, a: [1, { b: 2 }] }), true);
+  });
+  test("NaN بيساوي NaN، و 1 مش بيساوي '1'", () => {
+    assert.equal(deepEqual([NaN], [NaN]), true);
+    assert.equal(deepEqual({ a: 1 }, { a: "1" }), false);
+  });
+  test("undefined مقابل key مش موجود", () => {
+    assert.equal(deepEqual({ a: undefined }, { b: undefined }), false);
+  });
+  test("array مقابل object بنفس المفاتيح", () => {
+    assert.equal(deepEqual([1, 2], { 0: 1, 1: 2 }), false);
+  });
+});
+~~~
+
+## كل حتة مهمة
+
+- **functions مش prototype:** [[myMap(array, cb)]] بدل [[array.myMap(cb)]] و [[myBind(fn, ctx)]] بدل [[fn.myBind(ctx)]]. نفس المنطق بتاع الدروس، بس من غير ما نعدّل [[Array.prototype]] في كل ملف بيعمل import للمكتبة.
+- **الـ TypeError في الأول:** كل دالة بتفحص المدخل قبل أي شغل. [[promiseAll]] بترجّع [[Promise.reject]] مش [[throw]]، لأن اللي بيستخدمها مستني Promise ويعمل [[await]] أو [[catch]]، زي [[Promise.all]] الأصلية. و [[deepEqual]] هي الاستثناء: أي قيمتين مدخل صحيح، فمفيش حاجة «غلط» تترمي عليها.
+- **[[myMap]] بتقرا الطول مرة واحدة** ([[const len]]) زي [[map]] الأصلية، عشان لو الـ callback زوّد عناصر متتلفش عليها.
+- **[[myBind]] بتدعم [[new]]** بـ [[new.target]] (حل تمرين درس الـ polyfills)، و [[curry]] بتاخد [[arity]] اختياري للدوال اللي [[length]] بتاعها غلط (rest أو defaults، من تمرين درس curry).
+- **[[assert.rejects]]** للـ promises و **[[assert.throws]]** للـ sync. ومن غير [[await]] قبل [[assert.rejects]] التست هيعدّي قبل ما الـ Promise يخلص.
+- **[[assert/strict]]:** [[deepEqual]] و [[equal]] فيه strict (بـ [[Object.is]])، فـ [[1]] و [["1"]] مختلفين.
+
+## اتأكدت إن التستات بتمسك فعلًا
+
+شلت حاجة من الكود وشغّلت تاني، لكل غلطة:
+
+~~~text الناتج (شلت if (i in array) من myMap)
+  ✖ الـ hole بيفضل hole والـ callback مبيتنداش عليه (0.8126ms)
+ℹ pass 19
+ℹ fail 1
+~~~
+
+~~~text الناتج (بدّلت Object.is بـ === في deepEqual)
+  ✖ NaN بيساوي NaN، و 1 مش بيساوي '1' (0.8128ms)
+ℹ pass 19
+ℹ fail 1
+~~~
+
+## الغلطة اللي حصلت وأنا ببنيه
+
+أول نسخة من [[promiseAll]] كانت نسخة الدرس زي ما هي، وتست «مدخل مش iterable» وقع:
+
+~~~text الناتج (من غير فحص Symbol.iterator)
+  ✖ مدخل مش iterable بيترفض بـ TypeError (1.1288ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection (TypeError).
+~~~
+
+السبب: [[Array.from(5)]] مبيرميش، بيرجّع array فاضية (بيعامل أي حاجة ملهاش [[length]] كأن طولها صفر)، فـ [[promiseAll(5)]] اتحلت بـ [[[]]] والأصلية بترفض. التصليح هو أول ٣ سطور في [[promiseAll]]: لو المدخل null أو ملوش [[Symbol.iterator]] ارفض بـ TypeError. (واتضافت الملاحظة دي في درس «Promise.all بإيدك» نفسه.)
+
+**الغلطة الشائعة:** تستات بتعدّي على أي كود (زي [[assert.ok(myMap([1], x => x))]]). التست اللي ملوش لازمة هو اللي مبيقعش لما تبوّظ الكود، فجرّب تبوّظ وشوف.` },
+        { lvl: 'متوسط', t: R`انترفيو تجريبي متسجّل`, what: R`اختار ٣ أسئلة من الوحدة (واحد شرح زي null و undefined، وواحد كود زي curry، وواحد output)، وادّي نفسك ٢٠ دقيقة لكل سؤال، وسجّل صوتك وانت بتشرح وبتكتب على ورقة أو editor من غير تشغيل. بعدها شغّل الكود واسمع التسجيل.`, done: R`فيه ٣ تسجيلات، والكود اللي كتبته من غير تشغيل اشتغل من أول مرة أو مكتوب جنبه الغلطة بالظبط، وتقدر تشرح كل سؤال في دقيقتين من غير سكوت أطول من ١٠ ثواني، وكتبت لكل سؤال الحالات الطرفية اللي كان ممكن تتسأل عليها.`, sol: R`## الشكل النهائي: نسخة نموذجية من الجلسة
+
+~~~text شجرة الملفات
+mock-interview/
+├── notes.md              ورقة التقييم (تحت)
+├── q1-nil.js             الكود اللي اتكتب وأنا بشرح null و undefined
+├── q2-curry-paper.js     curry زي ما اتكتب على الورقة من غير تشغيل
+├── q2-curry-fixed.js     بعد ما شغّلته ولقيت الغلطتين
+├── q3-output.js          سؤال الـ output
+└── recordings/           q1.m4a و q2.m4a و q3.m4a (من مسجّل الموبايل)
+~~~
+
+~~~md notes.md
+| السؤال | الوقت | أطول سكوت | الكود اشتغل من أول مرة؟ | الحالات الطرفية اللي كان ممكن تتسأل |
+|---|---|---|---|---|
+| null و undefined | 4 دقايق | 6 ثواني | أيوه | typeof null، و JSON، و default params، و == null |
+| curry | 17 دقيقة | 25 ثانية (عند this) | لأ: غلطتين (تحت) | args أكتر من المطلوب، و this، و rest/default في fn.length |
+| الـ output | دقيقتين | 4 ثواني | التوقع صح | لو two فيها await، ولو then بدل await |
+~~~
+
+## هتعمل إيه بالترتيب
+
+1. **اختار ٣ أسئلة من أنواع مختلفة:** شرح (null و undefined)، وكود (curry)، و output (async). ٣ من نفس النوع مش بيختبروا غير مهارة واحدة.
+2. **شغّل مسجّل الصوت** على الموبايل، وتايمر ٢٠ دقيقة لكل سؤال، واقفل الـ terminal. اكتب في editor فاضي أو على ورقة.
+3. **اتكلم بصوت عالي طول الوقت:** في الانترفيو الحقيقي السكوت أوحش من الغلط، لأن الانترفيور مش عارف انت بتفكر في إيه.
+4. **بعد الـ ٣ أسئلة بس** شغّل الكود، واسمع التسجيلات، واملا [[notes.md]].
+
+## السؤال ١: null و undefined (شرح)
+
+**الإجابة اللي اتقالت (حوالي دقيقة ونص):** «الاتنين معناهم مفيش قيمة، والفرق مين اللي حطها. undefined بتحطها JS: متغير متعرّف من غير قيمة، أو property مش موجودة، أو argument متبعتش. null بحطها أنا بقصد عشان أقول فاضي. typeof null بيطلع object وده bug تاريخي. null == undefined صح بس === لأ. وفي JSON الـ undefined بتختفي والـ null بتفضل، والـ default parameters بتشتغل مع undefined بس».
+
+~~~js q1-nil.js
+// السؤال ١: إيه الفرق بين null و undefined؟ (الكود اللي بكتبه وأنا بشرح)
+let a;
+const user = { middleName: null };
+console.log(a, user.age, user.middleName);          // JS حطت undefined، وأنا حطيت null
+console.log(typeof a, typeof user.middleName);      // undefined object
+console.log(null == undefined, null === undefined); // true false
+console.log(JSON.stringify({ a: undefined, b: null }));
+const f = (x = "default") => x;
+console.log(f(undefined), f(null));                 // الـ default مع undefined بس
+~~~
+
+~~~text الناتج (node q1-nil.js)
+undefined undefined null
+undefined object
+true false
+{"b":null}
+default null
+~~~
+
+## السؤال ٢: curry (كود من غير تشغيل)
+
+ده اللي اتكتب على الورقة، زي ما هو:
+
+~~~js q2-curry-paper.js
+// السؤال ٢: اكتب curry. ده اللي اتكتب على الورقة في ٢٠ دقيقة من غير تشغيل
+function curry(fn) {
+  return function curried(...args) {
+    if (args.length === fn.length) return fn(...args);
+    return (...more) => curried(...args, ...more);
+  };
+}
+const add = curry((a, b, c) => a + b + c);
+console.log(add(1)(2)(3), add(1, 2)(3), add(1)(2, 3));
+console.log(add(1, 2, 3, 4));
+const obj = { base: 10, plus: curry(function (a, b) { return this.base + a + b; }) };
+try { console.log(obj.plus(1)(2)); } catch (e) { console.log(e.name + ": " + e.message); }
+~~~
+
+~~~text الناتج (node q2-curry-paper.js، أول تشغيل بعد الجلسة)
+6 6 6
+[Function (anonymous)]
+NaN
+~~~
+
+**الغلطتين، مكتوبين جنب الكود في [[notes.md]]:**
+
+1. **[[===]] بدل [[>=]]:** [[add(1, 2, 3, 4)]] رجّعت دالة بدل 6. ٤ arguments مش بيساووا ٣، فالـ curry فضل مستني للأبد. الـ [[>=]] بتقول «لو عندك كفاية، نادي».
+2. **[[fn(...args)]] بدل [[fn.apply(this, args)]]:** [[obj.plus(1)(2)]] طلعت NaN بدل 13. الـ [[this]] بتاع [[obj]] مبيوصلش للدالة الأصلية، فـ [[this.base]] بقت undefined. ده كان مكان الـ ٢٥ ثانية سكوت في التسجيل: كنت حاسس إن فيه حاجة في [[this]] ومقولتهاش.
+
+~~~js q2-curry-fixed.js
+function curry(fn) {
+  return function curried(...args) {
+    if (args.length >= fn.length) return fn.apply(this, args);       // >= ، و this بيتعدّى
+    return (...more) => curried.apply(this, [...args, ...more]);
+  };
+}
+const add = curry((a, b, c) => a + b + c);
+console.log(add(1)(2)(3), add(1, 2)(3), add(1)(2, 3));
+console.log(add(1, 2, 3, 4));
+const obj = { base: 10, plus: curry(function (a, b) { return this.base + a + b; }) };
+console.log(obj.plus(1)(2));
+~~~
+
+~~~text الناتج (node q2-curry-fixed.js)
+6 6 6
+6
+13
+~~~
+
+**اللي كان المفروض يتقال بدل السكوت:** «هنا الـ this ممكن يضيع لو حد استخدم curry على method، فهستخدم apply عشان أعدّيه». جملة زي دي بتاخد نص النقط حتى لو الكود ناقص.
+
+## السؤال ٣: الـ output
+
+~~~js q3-output.js
+// السؤال ٣: إيه الناتج؟ (توقعي على الورقة: start، 1a، 2، end، 1b، timeout)
+async function one() { console.log("1a"); await two(); console.log("1b"); }
+async function two() { console.log("2"); }
+setTimeout(() => console.log("timeout"), 0);
+console.log("start");
+one();
+console.log("end");
+~~~
+
+~~~text الناتج (node q3-output.js)
+start
+1a
+2
+end
+1b
+timeout
+~~~
+
+التوقع على الورقة كان صح. **الشرح اللي اتقال:** «الـ timeout بيتسجّل macrotask. start sync. one بتشتغل sync لحد الـ await: بتطبع 1a وبتنادي two اللي بتطبع 2 sync. الـ await بيحط باقي one في الـ microtasks، فـ end تتطبع، وبعدين 1b من الـ microtask، وفي الآخر timeout».
+
+## ليه الطريقة دي
+
+- **التسجيل** بيوريك حاجات مش هتحس بيها وانت بتتكلم: السكوت الطويل، و «يعني... يعني»، والجمل اللي مبتخلصش. ومن التسجيل اتعرف إن السكوت كان عند [[this]] بالظبط.
+- **من غير تشغيل** لأن الانترفيو غالبًا على سبورة أو editor مشترك من غير run. الغلطتين في curry عمرهم ما كانوا هيظهروا لو اشتغلت بالـ terminal مفتوح.
+- **عمود الحالات الطرفية:** الانترفيور غالبًا بيسأل «وإيه اللي يحصل لو...؟» بعد ما تخلص. لو كتبتهم قبلها هتلاقيهم جاهزين.
+
+**الغلطة الشائعة:** تعمل الجلسة وتشغّل الكود بعد كل سطر، أو تسجّل ومتسمعش. القيمة في المقارنة بين اللي افتكرته قلته واللي قلته فعلًا.` },
+        { lvl: 'كبير', t: R`lodash صغير بتاعك`, what: R`مكتبة فيها [[debounce]] و [[throttle]] (وحدة الأداء)، و [[deepClone]] بيدعم Date و Map و Set والـ objects اللي بتشاور على نفسها بـ WeakMap، و [[deepEqual]] بنفس الدعم (درس deep equal)، و [[get(obj, "a.b.0.c", fallback)]]، و [[mapLimit(items, limit, fn)]] (فكرة Promise.all بإيدك بحد للتوازي)، و [[curry]]. كل دالة بتفحص المدخلات وبترمي [[TypeError]] برسالة واضحة.`, done: R`[[node --test]] فيه تستات للحالات الطرفية وبتعدّي: object بيشاور على نفسه بيتنسخ ويتقارن من غير stack overflow، و [[deepEqual(new Date(1), new Date(2))]] بيرجّع [[false]]، و [[mapLimit]] على ٥ مهام كل واحدة 100ms بحد 2 بياخد حوالي 300ms والنتايج بترتيب المدخلات، و [[get]] على path مش موجود بيرجّع الـ fallback من غير error، و [[node --test --experimental-test-coverage]] بيقول فوق 90٪ سطور.`, ext: R`انشرها كـ package على npm (أو GitHub Packages) بـ README و types، وزوّد [[memoize]] و [[groupBy]] و [[retry]]، وقارن أداء [[deepClone]] بتاعك بـ [[structuredClone]] برقم.`, sol: R`## الشكل النهائي
+
+~~~text الناتج (npm test، يعني node --test، Node 24)
+▶ curry
+  ✔ كل التقسيمات، و args زيادة، و this (0.7777ms)
+  ✔ arity صريح مع rest (0.1557ms)
+  ✔ مدخلات غلط بترمي TypeError (0.8112ms)
+✔ curry (2.8931ms)
+▶ mapLimit
+  ✔ ٥ مهام × 100ms بحد ٢: حوالي 300ms، والترتيب صح، ومفيش أكتر من ٢ مع بعض (329.6684ms)
+  ✔ النتايج بترتيب المدخلات حتى لو خلصت بالعكس (30.8561ms)
+  ✔ فاضية، ومهمة بترمي sync أو async بترفض الكل (0.8826ms)
+  ✔ مدخلات غلط بترجّع promise مرفوض بـ TypeError (0.4725ms)
+✔ mapLimit (362.5769ms)
+▶ deepClone
+  ✔ Date و RegExp و Map و Set بيتنسخوا بنوعهم ومستقلين (2.264ms)
+  ✔ object بيشاور على نفسه بيتنسخ من غير stack overflow (0.3062ms)
+  ✔ الـ prototype بيفضل (class instance بالـ methods)، والـ holes بتفضل (0.3372ms)
+✔ deepClone (4.6665ms)
+▶ deepEqual
+  ✔ Date بالوقت مش بالـ keys (0.5249ms)
+  ✔ RegExp و Map و Set (0.4224ms)
+  ✔ circular في الاتنين بيتقارن من غير stack overflow (0.2353ms)
+  ✔ النوع والمفاتيح (0.3344ms)
+✔ deepEqual (2.1058ms)
+▶ get
+  ✔ path بنقط وبـ index (0.296ms)
+  ✔ path مش موجود بيرجّع الـ fallback من غير error (0.1499ms)
+  ✔ path مش string ولا array بيرمي TypeError (1.5601ms)
+✔ get (2.3285ms)
+✔ debounce: آخر نداء بس، بعد ms من آخر نداء، و this بيوصل (3.2184ms)
+✔ debounce leading: الأول فورًا ومفيش تنفيذ في الآخر (0.7999ms)
+✔ debounce cancel بيمنع التنفيذ (0.5247ms)
+✔ throttle: الأول فورًا والأخير بآخر args في آخر الفترة، و cancel (0.9448ms)
+✔ مدخلات غلط بترمي TypeError برسالة واضحة (1.183ms)
+ℹ tests 22
+ℹ suites 5
+ℹ pass 22
+ℹ fail 0
+ℹ duration_ms 475.0618
+~~~
+
+~~~text الناتج (npm run coverage، يعني node --test --experimental-test-coverage، آخره)
+ℹ start of coverage report
+ℹ --------------------------------------------------------------
+ℹ file          | line % | branch % | funcs % | uncovered lines
+ℹ --------------------------------------------------------------
+ℹ src           |        |          |         | 
+ℹ  check.js     | 100.00 |    90.00 |  100.00 | 
+ℹ  functions.js | 100.00 |   100.00 |  100.00 | 
+ℹ  index.js     | 100.00 |   100.00 |  100.00 | 
+ℹ  objects.js   | 100.00 |    97.06 |  100.00 | 
+ℹ  timing.js    | 100.00 |   100.00 |  100.00 | 
+ℹ --------------------------------------------------------------
+ℹ all files     | 100.00 |    97.52 |  100.00 | 
+ℹ --------------------------------------------------------------
+ℹ end of coverage report
+~~~
+
+## هتشوف إيه
+
+٢٢ تست في ٣ ملفات بيعدّوا في أقل من نص ثانية. تست الـ [[mapLimit]] هو الوحيد اللي بياخد وقت حقيقي (حوالي 330ms، ودي النقطة: إنه ٣ دفعات مش ١ ولا ٥)، وتستات الـ debounce والـ throttle بتستخدم ساعة وهمية فبتخلص في ms. والـ coverage بيقول 100٪ سطور (المطلوب فوق 90٪)، والـ coverage بيعد ملفات [[src]] بس لأن Node بيستبعد ملفات التست لوحده.
+
+## شجرة الملفات وترتيب البناء
+
+~~~text شجرة الملفات
+mini-lodash/
+├── package.json
+├── src/
+│   ├── check.js       فحص المدخلات ورسايل الـ TypeError (١)
+│   ├── functions.js   curry و mapLimit (٢)
+│   ├── objects.js     deepClone و deepEqual و get (٣)
+│   ├── timing.js      debounce و throttle (٤)
+│   └── index.js       نقطة الدخول: بيعمل export للكل (٥)
+└── test/
+    ├── functions.test.js
+    ├── objects.test.js
+    └── timing.test.js
+~~~
+
+اتبنى بالترتيب ده: [[check.js]] الأول عشان كل الدوال تستخدمه، وبعدين كل ملف ومعاه التست بتاعه في نفس الخطوة (تكتب الدالة، تكتب تستاتها، تشغّل [[node --test]]، وبعدين اللي بعدها). [[index.js]] في الآخر، والتستات بتعمل import منه هو بس عشان تختبر اللي اليوزر هيستخدمه فعلًا.
+
+## الكود
+
+~~~json package.json
+{
+  "name": "mini-lodash",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": "./src/index.js",
+  "scripts": {
+    "test": "node --test",
+    "coverage": "node --test --experimental-test-coverage"
+  }
+}
+~~~
+
+~~~js src/check.js
+// فحص المدخلات في مكان واحد، عشان كل الرسايل بنفس الشكل: "اسم الدالة: المشكلة (اللي وصل)"
+const describe = (v) => (v === null ? "null" : Array.isArray(v) ? "array" : typeof v);
+
+export function assertFunction(name, value, what = "الـ fn") {
+  if (typeof value !== "function") {
+    throw new TypeError($__bt$__{name}: $__{what} لازم يبقى function (وصل $__{describe(value)})$__bt);
+  }
+}
+
+export function assertNonNegativeNumber(name, value, what) {
+  if (typeof value !== "number" || !Number.isFinite(value) || value < 0) {
+    throw new TypeError($__bt$__{name}: $__{what} لازم يبقى رقم >= 0 (وصل $__{describe(value)} $__{String(value)})$__bt);
+  }
+}
+~~~
+
+~~~js src/functions.js
+import { assertFunction, assertNonNegativeNumber } from "./check.js";
+
+export function curry(fn, arity = fn?.length) {
+  assertFunction("curry", fn);
+  assertNonNegativeNumber("curry", arity, "الـ arity");
+  return function curried(...args) {
+    if (args.length >= arity) return fn.apply(this, args);
+    return (...more) => curried.apply(this, [...args, ...more]);
+  };
+}
+
+export function mapLimit(items, limit, fn) {
+  try {
+    if (items == null || typeof items[Symbol.iterator] !== "function") {
+      throw new TypeError("mapLimit: الـ items لازم تبقى iterable");
+    }
+    if (!Number.isInteger(limit) || limit < 1) {
+      throw new TypeError($__btmapLimit: الـ limit لازم يبقى رقم صحيح >= 1 (وصل $__{String(limit)})$__bt);
+    }
+    assertFunction("mapLimit", fn);
+  } catch (e) {
+    return Promise.reject(e);                         // دالة async: الغلط بيرجع promise مرفوض
+  }
+  return new Promise((resolve, reject) => {
+    const list = Array.from(items);
+    const results = new Array(list.length);
+    let next = 0, done = 0, failed = false;
+    if (list.length === 0) return resolve(results);
+    function startOne() {
+      if (failed || next >= list.length) return;
+      const i = next++;
+      Promise.resolve()
+        .then(() => fn(list[i], i))
+        .then((value) => {
+          results[i] = value;
+          if (++done === list.length) resolve(results);
+          else startOne();
+        }, (err) => { failed = true; reject(err); });
+    }
+    for (let k = 0; k < Math.min(limit, list.length); k++) startOne();
+  });
+}
+~~~
+
+~~~js src/objects.js
+const isObject = (v) => typeof v === "object" && v !== null;
+
+export function deepClone(value, seen = new WeakMap()) {
+  if (!isObject(value)) return value;                 // primitives والدوال بترجع زي ما هي
+  if (seen.has(value)) return seen.get(value);        // circular: رجّع النسخة اللي بتتعمل
+  if (value instanceof Date) return new Date(value.getTime());
+  if (value instanceof RegExp) return new RegExp(value.source, value.flags);
+  if (value instanceof Map) {
+    const out = new Map();
+    seen.set(value, out);
+    for (const [k, v] of value) out.set(deepClone(k, seen), deepClone(v, seen));
+    return out;
+  }
+  if (value instanceof Set) {
+    const out = new Set();
+    seen.set(value, out);
+    for (const v of value) out.add(deepClone(v, seen));
+    return out;
+  }
+  const out = Array.isArray(value) ? new Array(value.length) : Object.create(Object.getPrototypeOf(value));
+  seen.set(value, out);                               // قبل ما ننزل جوه
+  for (const key of Object.keys(value)) out[key] = deepClone(value[key], seen);
+  return out;
+}
+
+export function deepEqual(a, b, seen = new WeakMap()) {
+  if (Object.is(a, b)) return true;
+  if (!isObject(a) || !isObject(b)) return false;
+  if (Object.getPrototypeOf(a) !== Object.getPrototypeOf(b)) return false;   // array و object، و Date و {}
+  if (seen.get(a) === b) return true;                 // الزوج ده بيتقارن دلوقتي (circular)
+  seen.set(a, b);
+
+  if (a instanceof Date) return Object.is(a.getTime(), b.getTime());
+  if (a instanceof RegExp) return a.source === b.source && a.flags === b.flags;
+  if (a instanceof Map) {
+    if (a.size !== b.size) return false;
+    for (const [k, v] of a) if (!b.has(k) || !deepEqual(v, b.get(k), seen)) return false;
+    return true;
+  }
+  if (a instanceof Set) {
+    if (a.size !== b.size) return false;
+    const rest = [...b];
+    for (const v of a) {
+      if (b.has(v)) continue;                         // primitive أو نفس الـ reference
+      // seen جديد لكل محاولة: محاولة فاشلة متسيبش أزواج غلط في seen للي بعدها
+      if (!rest.some((w) => isObject(w) && deepEqual(v, w, new WeakMap()))) return false;
+    }
+    return true;
+  }
+  const keysA = Object.keys(a);
+  if (keysA.length !== Object.keys(b).length) return false;
+  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k], seen));
+}
+
+export function get(obj, path, fallback) {
+  if (typeof path !== "string" && !Array.isArray(path)) {
+    throw new TypeError($__btget: الـ path لازم يبقى string أو array (وصل $__{typeof path})$__bt);
+  }
+  const keys = Array.isArray(path) ? path : path.split(".").filter(Boolean);
+  let cur = obj;
+  for (const key of keys) {
+    if (cur == null) return fallback;                 // null أو undefined في النص
+    cur = cur[key];
+  }
+  return cur === undefined ? fallback : cur;
+}
+~~~
+
+~~~js src/timing.js
+import { assertFunction, assertNonNegativeNumber } from "./check.js";
+
+export function debounce(fn, ms, { leading = false } = {}) {
+  assertFunction("debounce", fn);
+  assertNonNegativeNumber("debounce", ms, "الـ ms");
+  let timer = null;
+  function debounced(...args) {
+    const callNow = leading && timer === null;
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      timer = null;
+      if (!leading) fn.apply(this, args);
+    }, ms);
+    if (callNow) fn.apply(this, args);
+  }
+  debounced.cancel = () => { clearTimeout(timer); timer = null; };
+  return debounced;
+}
+
+export function throttle(fn, ms) {
+  assertFunction("throttle", fn);
+  assertNonNegativeNumber("throttle", ms, "الـ ms");
+  let last = -Infinity, timer = null, lastArgs, lastThis;
+  function throttled(...args) {
+    lastArgs = args; lastThis = this;
+    const wait = ms - (Date.now() - last);
+    if (wait <= 0) { last = Date.now(); fn.apply(this, args); return; }
+    if (timer === null) timer = setTimeout(() => {
+      timer = null; last = Date.now(); fn.apply(lastThis, lastArgs);
+    }, wait);
+  }
+  throttled.cancel = () => { clearTimeout(timer); timer = null; };
+  return throttled;
+}
+~~~
+
+~~~js src/index.js
+export { debounce, throttle } from "./timing.js";
+export { deepClone, deepEqual, get } from "./objects.js";
+export { curry, mapLimit } from "./functions.js";
+~~~
+
+~~~js test/functions.test.js
+import { describe, test } from "node:test";
+import assert from "node:assert/strict";
+import { curry, mapLimit } from "../src/index.js";
+
+describe("curry", () => {
+  test("كل التقسيمات، و args زيادة، و this", () => {
+    const add = curry((a, b, c) => a + b + c);
+    assert.equal(add(1)(2)(3), 6);
+    assert.equal(add(1, 2)(3), 6);
+    assert.equal(add(1, 2, 3, 4), 6);
+    const o = { base: 10, plus: curry(function (a, b) { return this.base + a + b; }) };
+    assert.equal(o.plus(1)(2), 13);
+  });
+  test("arity صريح مع rest", () => {
+    assert.equal(curry((...n) => n.length, 2)(1)(2), 2);
+  });
+  test("مدخلات غلط بترمي TypeError", () => {
+    assert.throws(() => curry(null), { name: "TypeError", message: /curry: الـ fn لازم يبقى function \(وصل null\)/ });
+    assert.throws(() => curry(() => {}, -2), TypeError);
+  });
+});
+
+describe("mapLimit", () => {
+  test("٥ مهام × 100ms بحد ٢: حوالي 300ms، والترتيب صح، ومفيش أكتر من ٢ مع بعض", async () => {
+    let running = 0, max = 0;
+    const task = (x) => new Promise((r) => {
+      running++; max = Math.max(max, running);
+      setTimeout(() => { running--; r(x * 10); }, 100);
+    });
+    const t0 = performance.now();
+    const out = await mapLimit([1, 2, 3, 4, 5], 2, task);
+    const ms = performance.now() - t0;
+    assert.deepEqual(out, [10, 20, 30, 40, 50]);
+    assert.equal(max, 2);
+    assert.ok(ms >= 290 && ms < 450, $__btأخد $__{Math.round(ms)}ms$__bt);
+  });
+  test("النتايج بترتيب المدخلات حتى لو خلصت بالعكس", async () => {
+    const out = await mapLimit([30, 10, 20], 3, (ms) => new Promise((r) => setTimeout(() => r(ms), ms)));
+    assert.deepEqual(out, [30, 10, 20]);
+  });
+  test("فاضية، ومهمة بترمي sync أو async بترفض الكل", async () => {
+    assert.deepEqual(await mapLimit([], 2, () => 1), []);
+    await assert.rejects(mapLimit([1, 2], 1, (x) => { if (x === 2) throw new Error("sync boom"); return x; }), /sync boom/);
+    await assert.rejects(mapLimit([1, 2], 2, async () => { throw new Error("async boom"); }), /async boom/);
+  });
+  test("مدخلات غلط بترجّع promise مرفوض بـ TypeError", async () => {
+    await assert.rejects(mapLimit(5, 2, (x) => x), { name: "TypeError", message: /iterable/ });
+    await assert.rejects(mapLimit([1], 0, (x) => x), { name: "TypeError", message: /الـ limit/ });
+    await assert.rejects(mapLimit([1], 1.5, (x) => x), TypeError);
+    await assert.rejects(mapLimit([1], 1, "x"), { name: "TypeError", message: /mapLimit: الـ fn/ });
+  });
+});
+~~~
+
+~~~js test/objects.test.js
+import { describe, test } from "node:test";
+import assert from "node:assert/strict";
+import { deepClone, deepEqual, get } from "../src/index.js";
+
+describe("deepClone", () => {
+  test("Date و RegExp و Map و Set بيتنسخوا بنوعهم ومستقلين", () => {
+    const src = { d: new Date(5), r: /a+/gi, m: new Map([["k", { v: 1 }]]), s: new Set([1, [2]]) };
+    const c = deepClone(src);
+    assert.ok(c.d instanceof Date && c.d.getTime() === 5 && c.d !== src.d);
+    assert.equal(String(c.r), "/a+/gi");
+    assert.deepEqual(c.m.get("k"), { v: 1 });
+    assert.notEqual(c.m.get("k"), src.m.get("k"));
+    assert.ok(c.s.has(1) && c.s.size === 2);
+  });
+
+  test("object بيشاور على نفسه بيتنسخ من غير stack overflow", () => {
+    const o = { name: "root", list: [] };
+    o.self = o;
+    o.list.push(o);
+    const c = deepClone(o);
+    assert.equal(c.self, c);
+    assert.equal(c.list[0], c);
+    assert.notEqual(c, o);
+  });
+
+  test("الـ prototype بيفضل (class instance بالـ methods)، والـ holes بتفضل", () => {
+    class P { constructor(x) { this.x = x; } double() { return this.x * 2; } }
+    assert.equal(deepClone(new P(3)).double(), 6);
+    const holes = deepClone([1, , 3]);
+    assert.equal(holes.length, 3);
+    assert.equal(1 in holes, false);
+  });
+});
+
+describe("deepEqual", () => {
+  test("Date بالوقت مش بالـ keys", () => {
+    assert.equal(deepEqual(new Date(1), new Date(2)), false);
+    assert.equal(deepEqual(new Date(1), new Date(1)), true);
+    assert.equal(deepEqual(new Date(NaN), new Date(NaN)), true);
+  });
+
+  test("RegExp و Map و Set", () => {
+    assert.equal(deepEqual(/a/g, /a/g), true);
+    assert.equal(deepEqual(/a/g, /a/i), false);
+    assert.equal(deepEqual(new Map([[1, { a: 1 }]]), new Map([[1, { a: 1 }]])), true);
+    assert.equal(deepEqual(new Map([[1, 2]]), new Map([[1, 3]])), false);
+    assert.equal(deepEqual(new Map([[1, 2]]), new Map([[2, 2]])), false);
+    assert.equal(deepEqual(new Set([1, { a: 1 }]), new Set([{ a: 1 }, 1])), true);
+    assert.equal(deepEqual(new Set([1, 2]), new Set([1, 3])), false);
+    assert.equal(deepEqual(new Set([{ a: 1 }]), new Set([{ a: 2 }])), false);
+    assert.equal(deepEqual(new Set([1]), new Set([1, 2])), false);
+  });
+
+  test("circular في الاتنين بيتقارن من غير stack overflow", () => {
+    const a = { v: 1 }; a.self = a;
+    const b = { v: 1 }; b.self = b;
+    const c = { v: 2 }; c.self = c;
+    assert.equal(deepEqual(a, b), true);
+    assert.equal(deepEqual(a, c), false);
+    assert.equal(deepEqual(a, deepClone(a)), true);
+  });
+
+  test("النوع والمفاتيح", () => {
+    assert.equal(deepEqual([1, 2], { 0: 1, 1: 2 }), false);
+    assert.equal(deepEqual({ a: undefined }, { b: undefined }), false);
+    assert.equal(deepEqual({ a: 1 }, { a: 1, b: 2 }), false);
+    assert.equal(deepEqual(new Date(0), {}), false);
+    assert.equal(deepEqual(1, "1"), false);
+    assert.equal(deepEqual(NaN, NaN), true);
+  });
+});
+
+describe("get", () => {
+  const data = { a: { b: [{ c: 42 }, { c: 0 }] }, n: null };
+  test("path بنقط وبـ index", () => {
+    assert.equal(get(data, "a.b.0.c"), 42);
+    assert.equal(get(data, ["a", "b", 1, "c"]), 0);   // 0 مش بيتبدّل بالـ fallback
+  });
+  test("path مش موجود بيرجّع الـ fallback من غير error", () => {
+    assert.equal(get(data, "a.x.y.z", "مفيش"), "مفيش");
+    assert.equal(get(data, "n.deep", "مفيش"), "مفيش");
+    assert.equal(get(undefined, "a", 5), 5);
+    assert.equal(get(data, "n", "مفيش"), null);       // null قيمة موجودة
+  });
+  test("path مش string ولا array بيرمي TypeError", () => {
+    assert.throws(() => get(data, 42), { name: "TypeError", message: /get: الـ path/ });
+  });
+});
+~~~
+
+~~~js test/timing.test.js
+import { test, mock, beforeEach, afterEach } from "node:test";
+import assert from "node:assert/strict";
+import { debounce, throttle } from "../src/index.js";
+
+beforeEach(() => mock.timers.enable({ apis: ["setTimeout", "Date"] }));
+afterEach(() => mock.timers.reset());
+
+test("debounce: آخر نداء بس، بعد ms من آخر نداء، و this بيوصل", () => {
+  const seen = [];
+  const o = { n: 7, d: debounce(function (q) { seen.push([this.n, q]); }, 100) };
+  o.d("a"); mock.timers.tick(50);
+  o.d("ab"); mock.timers.tick(99);
+  assert.deepEqual(seen, []);
+  mock.timers.tick(1);
+  assert.deepEqual(seen, [[7, "ab"]]);
+});
+
+test("debounce leading: الأول فورًا ومفيش تنفيذ في الآخر", () => {
+  const fn = mock.fn();
+  const d = debounce(fn, 100, { leading: true });
+  d(1); d(2); d(3);
+  mock.timers.tick(200);
+  assert.deepEqual(fn.mock.calls.map((c) => c.arguments[0]), [1]);
+});
+
+test("debounce cancel بيمنع التنفيذ", () => {
+  const fn = mock.fn();
+  const d = debounce(fn, 100);
+  d(); d.cancel(); mock.timers.tick(500);
+  assert.equal(fn.mock.callCount(), 0);
+});
+
+test("throttle: الأول فورًا والأخير بآخر args في آخر الفترة، و cancel", () => {
+  const fn = mock.fn();
+  const t = throttle(fn, 100);
+  t(1); mock.timers.tick(30); t(2); mock.timers.tick(30); t(3);
+  mock.timers.tick(40);
+  assert.deepEqual(fn.mock.calls.map((c) => c.arguments[0]), [1, 3]);
+  mock.timers.tick(100);                         // آخر تنفيذ كان عند 100، فلازم فترة كاملة
+  t(4); mock.timers.tick(10); t(5); t.cancel(); mock.timers.tick(500);
+  assert.deepEqual(fn.mock.calls.map((c) => c.arguments[0]), [1, 3, 4]);
+});
+
+test("مدخلات غلط بترمي TypeError برسالة واضحة", () => {
+  assert.throws(() => debounce("x", 10), { name: "TypeError", message: /debounce: الـ fn لازم يبقى function \(وصل string\)/ });
+  assert.throws(() => throttle(() => {}, -1), { name: "TypeError", message: /throttle: الـ ms/ });
+  assert.throws(() => debounce(() => {}, NaN), TypeError);
+});
+~~~
+
+## كل حتة مهمة
+
+- **[[check.js]]:** كل الرسايل بنفس الشكل «الدالة: المشكلة (اللي وصل)»، فلما حد يغلط يعرف أنهي دالة وأنهي argument واتبعتله إيه. [[Number.isFinite]] بيرفض [[NaN]] و [[Infinity]] والنصوص مع بعض.
+- **[[mapLimit]] بيرجّع Promise مرفوض مش [[throw]]:** اللي بيستخدمها كاتب [[await]] جوه [[try]] أو [[.catch]]، فالغلط لازم يوصل من نفس الطريق. الـ [[try/catch]] اللي في الأول بيحوّل أي فحص فشل لـ [[Promise.reject]].
+- **[[deepClone]]:** [[seen]] بيتسجّل **قبل** ما ننزل جوه (تمرين درس deepClone)، والـ Map بتنسخ المفاتيح كمان (مفتاح object بيتنسخ هو كمان)، و [[new Array(value.length)]] بيحافظ على الـ holes.
+- **[[deepEqual]]:**
+  - [[Object.getPrototypeOf(a) !== Object.getPrototypeOf(b)]] سطر واحد بيفرّق array عن object و Date عن [[{}]] و class عن object عادي.
+  - الـ circular: [[seen]] بيحفظ «a بيتقارن مع b دلوقتي». لو رجعنا لنفس الزوج وإحنا لسه جوه المقارنة، نفترض إنهم متساويين ونكمّل الباقي؛ لو فيه فرق حقيقي هيطلع من مكان تاني.
+  - الـ Set: [[b.has(v)]] للـ primitives، ولو العنصر object بندوّر على واحد يساويه deep. وكل محاولة بـ [[WeakMap]] جديد، عشان محاولة فاشلة متسيبش أزواج غلط في [[seen]] للمحاولة اللي بعدها.
+  - الـ Map: المفاتيح بتتقارن بـ [[has]] (يعني بالـ reference لو object)، والقيم deep. ده نفس اختيار مكتبات كتير، ومكتوب هنا عشان ميتفهمش غلط.
+- **[[get]]:** [[cur == null]] بيوقف على null أو undefined في النص، و [[cur === undefined ? fallback : cur]] بيخلي [[0]] و [[null]] قيم حقيقية مش بتتبدّل بالـ fallback (التست بيتأكد من الاتنين).
+- **التستات:** الـ timing بـ [[mock.timers]] (من تمرين درس debounce و throttle)، و [[mapLimit]] بوقت حقيقي ومعاه حد أدنى وأقصى ([[ms >= 290 && ms < 450]]) لأن الـ timers على CI ممكن تتأخر.
+
+## الغلطات اللي حصلت وأنا ببنيه
+
+**١. [[arity = fn.length]] في الـ default.** الـ default parameter بيتحسب **قبل** أول سطر في الدالة، فـ [[curry(null)]] وقعت قبل ما توصل للفحص برسالة مش بتاعتنا:
+
+~~~text الناتج (بـ arity = fn.length)
+  ✖ مدخلات غلط بترمي TypeError (1.5586ms)
+  +   message: "Cannot read properties of null (reading 'length')",
+  -   message: /curry: الـ fn لازم يبقى function \(وصل null\)/,
+~~~
+
+التصليح: [[arity = fn?.length]]، فـ null بيدّي undefined والفحص بتاعنا هو اللي بيرمي.
+
+**٢. تست الـ throttle نفسه كان غلط.** كتبت [[t(4)]] على طول بعد ما [[3]] اتنفّذت وتوقعت إنها تتنفّذ فورًا:
+
+~~~text الناتج (أول نسخة من التست)
+✖ throttle: الأول فورًا والأخير بآخر args في آخر الفترة، و cancel (3.6844ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+    actual: [ 1, 3 ],
+    expected: [ 1, 3, 4 ],
+~~~
+
+الكود كان صح: [[3]] اتنفّذت عند 100ms، فـ [[last]] بقى 100، و [[t(4)]] عند 100 لسه جوه فترة جديدة فاتأجلت، وبعدين [[cancel]] لغاها. التصليح في التست: [[mock.timers.tick(100)]] قبل [[t(4)]]. الدرس: لما تست يقع، اتأكد الأول إن التوقع نفسه صح.
+
+**٣. اتأكدت إن تست الـ circular بيمسك فعلًا:** شلت سطر [[seen.get(a) === b]] من [[deepEqual]]:
+
+~~~text الناتج (من غير فحص seen)
+  ✖ circular في الاتنين بيتقارن من غير stack overflow (4.2444ms)
+  RangeError [Error]: Maximum call stack size exceeded
+~~~
+
+**استخدامها من مشروع تاني:** [[package.json]] فيه [[exports]]، فلو عملت [[npm link]] أو حطيت الفولدر في [[node_modules]]: [[import { deepClone, mapLimit } from "mini-lodash";]].` },
+        { lvl: 'فكرة', dir: "parseint-trap", t: R`اشرحها لحد تاني`, what: R`اختار سؤال من الوحدة دي حسيت إنه صعب عليك، واعمله شرح بتاعك: بوست أو فيديو قصير أو صفحة HTML تفاعلية، فيه الإجابة اللي تتقال في الانترفيو، والكود، والحالات اللي بتوقع الناس.`, done: R`الشرح فيه كود حد يقدر ينسخه ويشغّله ويطلعله نفس الناتج اللي انت كاتبه، وفيه غلطة شائعة واحدة على الأقل وإزاي تكتشفها، وحد تاني قراه وفهمه من غير ما تشرح له جنبه.`, ext: R`اعمل سلسلة لكل أسئلة الوحدة، أو حوّلها لـ quiz تفاعلي، أو سجّل نفسك بتجاوب بالإنجليزي عشان الانترفيوهات الأجنبي.`, sol: R`## نسخة نموذجية: صفحة بتشرح فخ [[map(parseInt)]]
+
+اخترت سؤال [[["1", "7", "11"].map(parseInt)]] من درس «اتوقع الناتج»، لأن الإجابة الصح بتحتاج تعرف حاجتين مع بعض ([[map]] بتبعت إيه، و [[parseInt]] بتاخد إيه)، ولأن الشرح بالكلام لوحده مش بيقنع: لازم تشوف النداءات بعينك. فالشكل صفحة HTML واحدة: الإجابة اللي تتقال، وجدول بيتحسب في المتصفح للنداءات الحقيقية، و input تجرّب فيه قيم تانية.
+
+## الشكل النهائي
+
+~~~live 560 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ليه map(parseInt) بيطلع NaN؟</title>
+<style>
+  body { font: 16px/1.7 system-ui, sans-serif; margin: 0 auto; padding: 16px; max-width: 680px; color: #1d1d1f; background: #fff; }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  h2 { font-size: 18px; margin: 24px 0 8px; }
+  code { font-family: ui-monospace, Consolas, monospace; background: #f1f1f4; padding: 1px 5px; border-radius: 4px; direction: ltr; unicode-bidi: isolate; }
+  .answer { background: #eef6ff; border-inline-start: 4px solid #2f6fdf; padding: 10px 14px; border-radius: 6px; }
+  table { border-collapse: collapse; width: 100%; direction: ltr; font-family: ui-monospace, Consolas, monospace; font-size: 14px; }
+  th, td { border: 1px solid #ccd; padding: 6px 8px; text-align: left; }
+  th { background: #f6f6f9; }
+  .bad { color: #b00020; font-weight: 700; }
+  label { display: block; margin-bottom: 4px; }
+  input { font: inherit; width: 100%; box-sizing: border-box; padding: 6px 8px; direction: ltr; }
+  #results p { margin: 6px 0; }
+</style>
+</head>
+<body>
+<h1>ليه <code>["1", "7", "11"].map(parseInt)</code> بيطلع <code>[1, NaN, 3]</code>؟</h1>
+
+<p class="answer"><strong>الإجابة في الانترفيو:</strong> <code>map</code> بتنادي الـ callback بـ ٣ arguments: العنصر والـ index والـ array. و <code>parseInt</code> بتاخد تاني argument كـ radix (أساس العد). فالـ index بقى radix: صفر يعني «خمّن» فطلع 1، و 1 مش أساس عد فطلع NaN، و 2 يعني ثنائي فـ "11" بقت 3.</p>
+
+<h2>النداءات اللي حصلت فعلًا</h2>
+<p>الجدول ده بيتحسب في المتصفح دلوقتي: بنلف <code>parseInt</code> بدالة بتسجّل الـ arguments اللي وصلتلها.</p>
+<table>
+  <thead><tr><th>call</th><th>radix</th><th>result</th></tr></thead>
+  <tbody id="calls"></tbody>
+</table>
+
+<h2>جرّب بنفسك</h2>
+<label for="input">اكتب نصوص بينها فاصلة:</label>
+<input id="input" value="1, 7, 11, 08, 12px">
+<div id="results"></div>
+
+<h2>الغلطة اللي بتوقّع الناس</h2>
+<p>إنهم يصلّحوها بـ <code>map(Number)</code> ويفتكروا إن ده نفس الكلام. <code>Number</code> بتاخد أول argument بس، بس بتحوّل النص كله: <code>Number("12px")</code> بـ NaN، و <code>parseInt("12px", 10)</code> بـ 12. اختار على حسب الداتا. وفي أي حال، اكتب الـ radix صريح: <code>map((s) => parseInt(s, 10))</code>.</p>
+
+<script>
+  const show = (v) => Array.isArray(v) ? "[" + v.map(show).join(", ") + "]" : typeof v === "string" ? JSON.stringify(v) : String(v);
+
+  // parseInt متغلفة: بتسجّل كل نداء قبل ما تنادي الأصلية
+  const calls = [];
+  const spyParseInt = (...args) => {
+    const result = parseInt(...args);
+    calls.push({ args, result });
+    return result;
+  };
+  ["1", "7", "11"].map(spyParseInt);
+
+  const tbody = document.getElementById("calls");
+  for (const { args, result } of calls) {
+    const tr = document.createElement("tr");
+    const cells = [
+      "parseInt(" + args.map(show).join(", ") + ")",
+      String(args[1]),
+      String(result),
+    ];
+    cells.forEach((text, i) => {
+      const td = document.createElement("td");
+      td.textContent = text;
+      if (i === 2 && Number.isNaN(result)) td.className = "bad";
+      tr.append(td);
+    });
+    tbody.append(tr);
+  }
+
+  const input = document.getElementById("input");
+  const results = document.getElementById("results");
+  function update() {
+    const list = input.value.split(",").map((s) => s.trim()).filter(Boolean);
+    const rows = [
+      ["map(parseInt)", list.map(parseInt)],
+      ["map(Number)", list.map(Number)],
+      ["map((s) => parseInt(s, 10))", list.map((s) => parseInt(s, 10))],
+    ];
+    results.replaceChildren(...rows.map(([label, out]) => {
+      const p = document.createElement("p");
+      const code = document.createElement("code");
+      code.textContent = label + " → " + show(out);
+      p.append(code);
+      return p;
+    }));
+  }
+  input.addEventListener("input", update);
+  update();
+</script>
+</body>
+</html>
+~~~
+
+## هتشوف إيه
+
+- **فوق:** الإجابة اللي تتقال في الانترفيو في ٣ سطور، في صندوق أزرق.
+- **الجدول:** ٣ نداءات، وكل واحد بالـ arguments اللي وصلت فعلًا، والـ NaN بالأحمر. لاحظ إن فيه argument تالت (الـ array نفسها): [[map]] بتبعتها برده و [[parseInt]] بتتجاهلها.
+- **جرّب بنفسك:** القيم الافتراضية [[1, 7, 11, 08, 12px]] بتطلّع ٣ سطور مختلفة، والكتابة بتحدّثهم على طول.
+- **الغلطة الشائعة:** إن [[map(Number)]] مش بديل مطابق.
+
+## اتقاس (Chrome بـ Playwright، عرض 400px)
+
+~~~text اللي اتقرا من الصفحة
+الجدول:
+parseInt("1", 0, ["1", "7", "11"])  | 0 | 1
+parseInt("7", 1, ["1", "7", "11"])  | 1 | NaN
+parseInt("11", 2, ["1", "7", "11"]) | 2 | 3
+
+جرّب بنفسك (القيمة الافتراضية 1, 7, 11, 08, 12px):
+map(parseInt) → [1, NaN, 3, 0, 6]
+map(Number) → [1, 7, 11, 8, NaN]
+map((s) => parseInt(s, 10)) → [1, 7, 11, 8, 12]
+
+بعد ما كتبت 10, 10, 10, 10:
+map(parseInt) → [10, NaN, 2, 3]
+map(Number) → [10, 10, 10, 10]
+map((s) => parseInt(s, 10)) → [10, 10, 10, 10]
+
+scroll أفقي: 0px
+~~~
+
+السطر [[[1, NaN, 3, 0, 6]]] نفسه مفاجأة تستاهل تتشرح: [["08"]] بـ radix 3 بقت 0 (الـ 8 مش رقم في نظام ٣، فـ parseInt وقفت عند الـ 0)، و [["12px"]] بـ radix 4 بقت 6 (الـ "12" في نظام ٤ = 4 + 2). و [[10, 10, 10, 10]] هي النسخة المشهورة من السؤال على النت.
+
+## كل حتة مهمة بتعمل إيه
+
+- **[[spyParseInt]]:** دالة بتاخد أي arguments ([[...args]])، وتنادي [[parseInt]] الحقيقية بيهم، وتسجّلهم مع النتيجة. لما نديها لـ [[map]] بدل [[parseInt]] بنشوف بالظبط اللي [[map]] بعته. دي نفس فكرة الـ spy في التستات ([[mock.fn()]] في node:test)، وطريقة كويسة تثبت بيها أي حاجة «بيتبعتلها إيه».
+- **الجدول بيتبني بـ [[textContent]]:** مش بـ [[innerHTML]]، فأي نص حتى لو فيه [[<]] بيتعرض زي ما هو.
+- **[[show]]:** النصوص بتتعرض بعلامات تنصيص ([[JSON.stringify]]) عشان تفرّق بين [["1"]] النص و [[1]] الرقم في الجدول، والـ NaN بيفضل NaN.
+- **الـ input:** [[split(",")]] و [[trim]] و [[filter(Boolean)]] (عشان فاصلة زيادة متعملش نص فاضي)، وبعدين الـ ٣ طرق على نفس اللستة. [[replaceChildren]] بيمسح القديم ويحط الجديد في سطر.
+- **[[direction: ltr]] على الكود والجدول:** الصفحة RTL، والكود لو اتعرض RTL الأقواس بتتقلب. [[unicode-bidi: isolate]] على [[code]] جوه الجمل العربي بيمنع الكود يلخبط ترتيب الكلام اللي حواليه.
+
+## ليه التصميم ده
+
+- **الجدول بيتحسب مش مكتوب بإيدي:** لو حد شك في الإجابة، الصفحة نفسها هي الدليل. وكده مستحيل أكتب ناتج غلط.
+- **الإجابة الأول:** القارئ اللي عنده انترفيو بكرة ياخد الـ ٣ سطور ويمشي، واللي عايز يفهم يكمّل.
+- **«جرّب بنفسك» بقيم مختارة:** [["08"]] و [["12px"]] اتحطوا عن قصد عشان يورّوا الفرق بين [[Number]] و [[parseInt]]، اللي هو الغلطة الشائعة في التصليح.
+
+## حتة سهل تتنسي
+
+الجدول بيعرض **كل** الـ args مش أول اتنين بس، فبتشوف [[parseInt("1", 0, ["1", "7", "11"])]]. لو عرضت [[args[0]]] و [[args[1]]] بس كان هيبان أنضف، بس هتخبّي جزء من الإجابة: [[map]] بتبعت ٣ arguments دايمًا، والدالة اللي بتديها لـ [[map]] هي اللي بتقرر تستخدم كام. وده نفس سبب إن [[map(Number)]] شغالة: [[Number]] بتبص على أول واحد بس.
+
+**إزاي تعرف إن الشرح نجح:** ابعته لحد معرفش السؤال، واطلب منه يتوقع [[["10", "10", "10"].map(parseInt)]] بعد ما يقرا. لو قال [[[10, NaN, 2]]] من غير ما تكلمه، الشرح وصل.` },
       ],
       items: [
         {
@@ -29,10 +1283,142 @@ null == undefined;                // true
 null === undefined;               // false
 JSON.stringify({ a: undefined, b: null }); // '{"b":null}'`,
           try: R`اكتب [[isNil(v)]] بترجّع true لـ null و undefined بس، بطريقتين: [[v == null]] و [[v === null || v === undefined]].`,
+          ref: [
+            { t: "MDN: null", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null" },
+            { t: "MDN: undefined", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined" },
+            { t: "MDN: Nullish coalescing operator (??)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing" },
+            { t: "MDN: typeof", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof" },
+          ],
           practice: [
-            { lvl: 'سريع', t: R`اتوقع على ورقة وبعدين شغّل: [[typeof undefined]] و [[typeof null]] و [[null + 1]] و [[undefined + 1]] و [[[null, undefined].join("-")]].`, done: R`الناتج بالترتيب: [["undefined"]] و [["object"]] و 1 و [[NaN]] و [["-"]]، وتقدر تقول ليه [[null]] بقى 0 و [[undefined]] بقى [[NaN]] في الجمع، وليه [[join]] حطّهم نص فاضي.` },
-            { lvl: 'تطبيق', t: R`refactor فيه باج: [[const opts = { port: config.port || 3000, retries: config.retries || 3, name: config.name || "app" };]]. اليوزر بعت [[{ retries: 0, name: "" }]] قاصد. صلّحه بـ [[??]] واكتب ٣ assertions تثبت التصليح.`, done: R`قبل التصليح [[opts.retries]] بيطلع 3 و [[opts.name]] بيطلع [["app"]] (الـ [[||]] بلع 0 و [[""]])، وبعده [[retries]] بـ 0 و [[name]] نص فاضي، و [[port]] لسه 3000 لما ميتبعتش، والـ assertions بتعدّي، وتقدر تقول إمتى [[||]] لسه هو الصح.` },
-            { lvl: 'تحدي', t: R`مسألة: اكتب [[pickDefined(obj)]] بتشيل كل key قيمته [[undefined]] وتسيب [[null]]، جوه الـ objects المتداخلة كمان، والـ arrays بتفضل بنفس طولها. وبعدين قارن ناتجها بـ [[JSON.parse(JSON.stringify(obj))]].`, done: R`[[pickDefined({ a: undefined, b: null, c: { d: undefined, e: 0 } })]] بيرجّع [[{ b: null, c: { e: 0 } }]]، والأصل متغيرش، و [[Date]] بيفضل [[Date]] عندك لكن الـ JSON حوّله string، وتقدر تشرح ليه [[JSON.stringify([undefined])]] بيطلع [['[null]']] مش [['[]']].` },
+            { lvl: 'سريع', t: R`اتوقع على ورقة وبعدين شغّل: [[typeof undefined]] و [[typeof null]] و [[null + 1]] و [[undefined + 1]] و [[[null, undefined].join("-")]].`, done: R`الناتج بالترتيب: [["undefined"]] و [["object"]] و 1 و [[NaN]] و [["-"]]، وتقدر تقول ليه [[null]] بقى 0 و [[undefined]] بقى [[NaN]] في الجمع، وليه [[join]] حطّهم نص فاضي.`, sol: R`~~~js nil-predict.js
+console.log(typeof undefined);
+console.log(typeof null);
+console.log(null + 1);
+console.log(undefined + 1);
+console.log([null, undefined].join("-"));
+console.log(Number(null), Number(undefined));
+~~~
+
+~~~text الناتج (node nil-predict.js، Node 24)
+undefined
+object
+1
+NaN
+-
+0 NaN
+~~~
+
+**ليه كل سطر طلع كده:**
+
+| السطر | الناتج | السبب |
+|---|---|---|
+| [[typeof undefined]] | [["undefined"]] | ليها نوع باسمها |
+| [[typeof null]] | [["object"]] | غلطة من أول نسخة في JS واتسابت عشان متكسرش مواقع قديمة |
+| [[null + 1]] | [[1]] | الجمع بيحوّل لـ number، و [[Number(null)]] بـ [[0]] |
+| [[undefined + 1]] | [[NaN]] | [[Number(undefined)]] بـ [[NaN]]، وأي حساب فيه NaN بيطلع NaN |
+| [[[null, undefined].join("-")]] | [["-"]] | [[join]] بيكتب الـ null والـ undefined نص فاضي، فمفيش غير الفاصل |
+
+السطر الأخير في الكود ([[Number(null), Number(undefined)]]) زوّدناه عشان يثبت سبب السطرين ٣ و ٤.
+
+**الانترفيور بيختبر إيه:** إنك عارف إن الاتنين بيتحوّلوا لأرقام مختلفة، مش بس «الاتنين فاضيين».
+
+**إجابة تتقال:** «null في الحساب بتبقى صفر، و undefined بتبقى NaN، و typeof null بيطلع object كغلطة تاريخية، و join بيكتبهم الاتنين نص فاضي».
+
+**الغلطة الشائعة:** تتوقع [[null + 1]] بـ [[NaN]] زي undefined، أو [[join]] يكتب [["null-undefined"]] (ده اللي [[String(null)]] بيعمله، مش [[join]]).` },
+            { lvl: 'تطبيق', t: R`refactor فيه باج: [[const opts = { port: config.port || 3000, retries: config.retries || 3, name: config.name || "app" };]]. اليوزر بعت [[{ retries: 0, name: "" }]] قاصد. صلّحه بـ [[??]] واكتب ٣ assertions تثبت التصليح.`, done: R`قبل التصليح [[opts.retries]] بيطلع 3 و [[opts.name]] بيطلع [["app"]] (الـ [[||]] بلع 0 و [[""]])، وبعده [[retries]] بـ 0 و [[name]] نص فاضي، و [[port]] لسه 3000 لما ميتبعتش، والـ assertions بتعدّي، وتقدر تقول إمتى [[||]] لسه هو الصح.`, sol: R`~~~js opts.js
+const assert = require("node:assert");
+
+function oldOpts(config) {
+  return { port: config.port || 3000, retries: config.retries || 3, name: config.name || "app" };
+}
+function newOpts(config) {
+  return { port: config.port ?? 3000, retries: config.retries ?? 3, name: config.name ?? "app" };
+}
+
+const input = { retries: 0, name: "" };
+console.log("قبل:", oldOpts(input));
+console.log("بعد:", newOpts(input));
+
+const o = newOpts(input);
+assert.strictEqual(o.retries, 0);      // 0 اتحفظ
+assert.strictEqual(o.name, "");        // النص الفاضي اتحفظ
+assert.strictEqual(o.port, 3000);      // اللي متبعتش خد الـ default
+assert.strictEqual(newOpts({ port: null }).port, 3000); // ?? بيعامل null زي undefined
+console.log("الـ assertions عدّت");
+~~~
+
+~~~text الناتج (node opts.js)
+قبل: { port: 3000, retries: 3, name: 'app' }
+بعد: { port: 3000, retries: 0, name: '' }
+الـ assertions عدّت
+~~~
+
+**ليه الباج حصل:** [[a || b]] بيرجّع [[b]] لو [[a]] **falsy**، والـ falsy فيها [[0]] و [[""]] و [[false]] و [[NaN]] مش بس null و undefined. فاليوزر اللي قال «متعيدش خالص» ([[retries: 0]]) اتقلب لـ ٣ محاولات من غير ما يعرف.
+
+**التصليح:** [[a ?? b]] بيرجّع [[b]] لو [[a]] **null أو undefined بس**. كل حاجة تانية (حتى 0 والنص الفاضي) بيعتبرها قيمة اليوزر قصدها.
+
+**الـ assertions:** [[strictEqual]] بيقارن بـ [[Object.is]]، فـ [[0]] لازم يطلع 0 مش [[false]]. الرابع بيثبت إن [[??]] بيعامل null زي undefined (default برده).
+
+**إمتى [[||]] لسه الصح:** لما القيمة الفاضية نفسها مش منطقية، زي [[const title = input.trim() || "من غير عنوان"]]: نص فاضي هنا معناه «مكتبش حاجة» فعلًا.
+
+**الانترفيور بيختبر إيه:** إنك عارف الفرق بين falsy و nullish. **إجابة تتقال:** «[[||]] بيبلع أي falsy زي 0 والنص الفاضي، و [[??]] بيبدّل null و undefined بس، فللـ defaults اللي ممكن تبقى صفر استخدم [[??]]».` },
+            { lvl: 'تحدي', t: R`مسألة: اكتب [[pickDefined(obj)]] بتشيل كل key قيمته [[undefined]] وتسيب [[null]]، جوه الـ objects المتداخلة كمان، والـ arrays بتفضل بنفس طولها. وبعدين قارن ناتجها بـ [[JSON.parse(JSON.stringify(obj))]].`, done: R`[[pickDefined({ a: undefined, b: null, c: { d: undefined, e: 0 } })]] بيرجّع [[{ b: null, c: { e: 0 } }]]، والأصل متغيرش، و [[Date]] بيفضل [[Date]] عندك لكن الـ JSON حوّله string، وتقدر تشرح ليه [[JSON.stringify([undefined])]] بيطلع [['[null]']] مش [['[]']].`, sol: R`~~~js pick-defined.js
+function pickDefined(value) {
+  if (Array.isArray(value)) return value.map(pickDefined);   // نفس الطول، العناصر بتتنضف من جوه
+  if (value === null || typeof value !== "object") return value;
+  if (Object.getPrototypeOf(value) !== Object.prototype && Object.getPrototypeOf(value) !== null) {
+    return value;                                            // Date و Map وغيرهم يفضلوا زي ما هم
+  }
+  const out = {};
+  for (const [k, v] of Object.entries(value)) {
+    if (v !== undefined) out[k] = pickDefined(v);
+  }
+  return out;
+}
+
+const obj = { a: undefined, b: null, c: { d: undefined, e: 0 }, list: [1, undefined, { x: undefined }], at: new Date(0) };
+const picked = pickDefined(obj);
+console.log(picked);
+console.log("الأصل:", obj);
+console.log("JSON :", JSON.parse(JSON.stringify(obj)));
+console.log(picked.at instanceof Date, typeof JSON.parse(JSON.stringify(obj)).at);
+console.log(JSON.stringify([undefined]), JSON.stringify({ k: undefined }));
+~~~
+
+~~~text الناتج (node pick-defined.js)
+{
+  b: null,
+  c: { e: 0 },
+  list: [ 1, undefined, {} ],
+  at: 1970-01-01T00:00:00.000Z
+}
+الأصل: {
+  a: undefined,
+  b: null,
+  c: { d: undefined, e: 0 },
+  list: [ 1, undefined, { x: undefined } ],
+  at: 1970-01-01T00:00:00.000Z
+}
+JSON : {
+  b: null,
+  c: { e: 0 },
+  list: [ 1, null, {} ],
+  at: '1970-01-01T00:00:00.000Z'
+}
+true string
+[null] {}
+~~~
+
+**الحل سطر سطر:**
+
+- **الـ array الأول:** [[map]] بيرجّع array جديدة بنفس الطول، فالـ [[undefined]] اللي جواها بيفضل مكانه (المطلوب إن الطول ميتغيرش)، والـ objects اللي جواها بتتنضف بالـ recursion.
+- **القيم البسيطة** (رقم، نص، null) بترجع زي ما هي. [[typeof null]] بـ "object" فلازم نفحص [[value === null]] الأول.
+- **object مش عادي** (Date و Map و class instance): لو الـ prototype مش [[Object.prototype]] بنرجّعه زي ما هو، وإلا [[Object.entries(new Date())]] هيرجّع array فاضية ويبقى [[{}]].
+- **الـ object العادي:** object جديد ([[out]])، فالأصل مبيتلمسش، وبنكتب كل key قيمته مش [[undefined]] بعد ما ننضّفها هي كمان.
+
+**الفرق عن JSON:** الـ JSON شال الـ undefined برده، بس حوّل الـ undefined اللي في الـ array لـ [[null]] (الـ array مينفعش يبقى فيها «مكان فاضي» في JSON، فلازم يكتب حاجة)، وحوّل الـ Date لـ string. وده سبب [[JSON.stringify([undefined])]] بـ [['[null]']]: لو شاله الطول هيتغير والـ indexes اللي بعده هتزحف.
+
+**الغلطة الشائعة:** تكتب [[if (v)]] بدل [[if (v !== undefined)]]، فتشيل [[0]] و [[null]] و [[""]] كمان. أو تعدّل الـ object الأصلي بـ [[delete]] وانت بتلف عليه.` },
           ],
           flag: "script",
           deep: {
@@ -253,15 +1639,169 @@ for (const v of [null, undefined, 0, "", false, NaN, []]) {
 const slow = new Promise((r) => setTimeout(() => r("slow"), 100));
 promiseAll([slow, 2, Promise.resolve(3)]).then(console.log); // ["slow", 2, 3]`,
           try: R`اكتب [[promiseAllSettled]] بنفس الطريقة، وبعدين [[promiseRace]] (أسهل بكتير: كل واحد بيعمل resolve أو reject مباشرة). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[promiseAllSettled]] و [[promiseRace]] (الاختبارات بـ promises جاهزة من غير timers).`,
+          ref: [
+            { t: "MDN: Promise.all()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all" },
+            { t: "MDN: Promise.any()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/any" },
+            { t: "MDN: AggregateError", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AggregateError" },
+          ],
           practice: [
-            { lvl: 'سريع', t: R`اتوقع بصوتك وبعدين شغّل: [[Promise.all([])]] و [[Promise.all([1, Promise.reject(new Error("x")), 3])]] و [[Promise.all(5)]].`, done: R`الأول بيتحل بـ array فاضية، والتاني بيترفض بالـ error اللي رسالته [["x"]]، والتالت بيترفض بـ [[TypeError]] لأن 5 مش iterable، وتقدر تقول إن الـ promises التانية في التاني بتكمّل شغلها عادي (مفيش إلغاء).` },
-            { lvl: 'تطبيق', t: R`مسألة: اكتب [[promiseAny(items)]]: أول واحد ينجح بيكسب، ولو كلهم فشلوا ترفض بـ [[new AggregateError(errors, "All promises were rejected")]] والأخطاء بترتيب المدخلات مش بترتيب الفشل.`, done: R`[[promiseAny([Promise.reject(1), Promise.resolve(2)])]] بيتحل بـ 2، ولو الاتنين مرفوضين بـ 1 و 2 الـ error [[instanceof AggregateError]] و [[errors]] فيها 1 و 2 بالترتيب ده، و [[promiseAny([])]] بيترفض بـ [[AggregateError]] على طول، وده نفس اللي [[Promise.any]] الأصلي بيعمله.` },
-            { lvl: 'تحدي', t: R`محاكاة pool: اكتب [[mapLimit(items, limit, fn)]]: زي Promise.all بس مفيش أكتر من [[limit]] شغالين في نفس الوقت، والنتايج بترتيب المدخلات. جرّبه على ٥ مهام كل واحدة [[setTimeout]] بـ 100ms و [[limit]] بـ 2، وعدّاد بيقيس أكبر عدد شغال مع بعض.`, done: R`النتايج بنفس ترتيب المدخلات، والعدّاد أكبر قيمة وصلها 2، والوقت الكلي حوالي 300ms (٣ دفعات) مش 100 ولا 500، و [[mapLimit([], 2, fn)]] بيرجّع array فاضية من غير ما يعلّق، ومهمة بترمي error بترفض الكل زي Promise.all.` },
+            { lvl: 'سريع', t: R`اتوقع بصوتك وبعدين شغّل: [[Promise.all([])]] و [[Promise.all([1, Promise.reject(new Error("x")), 3])]] و [[Promise.all(5)]].`, done: R`الأول بيتحل بـ array فاضية، والتاني بيترفض بالـ error اللي رسالته [["x"]]، والتالت بيترفض بـ [[TypeError]] لأن 5 مش iterable، وتقدر تقول إن الـ promises التانية في التاني بتكمّل شغلها عادي (مفيش إلغاء).`, sol: R`**التوقع:** الأول بيتحل بـ array فاضية، والتاني بيترفض بـ [[Error: x]]، والتالت بيترفض بـ [[TypeError]].
+
+~~~js all-edge.js
+const show = (label, p) =>
+  p.then((v) => console.log(label, "اتحل بـ", v), (e) => console.log(label, "اترفض بـ", e.constructor.name + ":", e.message));
+
+show("[] :", Promise.all([]));
+show("[1, reject, 3] :", Promise.all([1, Promise.reject(new Error("x")), 3]));
+show("5 :", Promise.all(5));
+
+// الـ promises التانية مبتتلغيش: دي بتكمّل وتطبع بعد الرفض
+const slow = new Promise((r) => setTimeout(() => { console.log("slow لسه اشتغلت وخلصت"); r("slow"); }, 50));
+show("[slow, reject] :", Promise.all([slow, Promise.reject(new Error("y"))]));
+~~~
+
+~~~text الناتج (node all-edge.js، Node 24)
+[] : اتحل بـ []
+5 : اترفض بـ TypeError: number 5 is not iterable (cannot read property Symbol(Symbol.iterator))
+[1, reject, 3] : اترفض بـ Error: x
+[slow, reject] : اترفض بـ Error: y
+slow لسه اشتغلت وخلصت
+~~~
+
+**ليه:**
+
+- **[[Promise.all([])]]:** مفيش حاجة يستناها، فبيتحل على طول بـ array فاضية. (ودي الحالة اللي لازم [[promiseAll]] بتاعك يعملها بـ [[if (list.length === 0)]]، وإلا هيفضل pending للأبد.)
+- **[[Promise.all(5)]]:** بيحاول يلف على المدخل بـ [[Symbol.iterator]]، والرقم مش iterable، فبيرجّع promise **مرفوض** (مش بيرمي error sync). لاحظ إنه طبع قبل التاني: الـ promise ده اترفض ساعة ما اتعمل، أما التاني محتاج لفة microtask زيادة عشان يشوف الـ reject اللي جواه.
+- **[[[1, reject, 3]]]:** أول رفض بيرفض الكل، والقيم التانية بتضيع.
+- **السطر الأخير:** [[slow]] كمّلت وطبعت بعد ما الـ all اترفض. [[Promise.all]] مبيلغيش حاجة: الـ promise مجرد نتيجة، مش زرار وقف. لو عايز إلغاء فعلًا محتاج [[AbortController]].
+
+**الانترفيور بيختبر إيه:** الحالات الطرفية اللي بتكسر الـ polyfill (الفاضية، والمدخل اللي مش iterable، والرفض)، وإنك مش فاكر إن الرفض بيوقّف الباقي.
+
+**إجابة تتقال:** «فاضية بتتحل على طول، وأول رفض بيرفض الكل بس الباقي بيكمّل في الخلفية، واللي مش iterable بيرجّع promise مرفوض بـ TypeError».` },
+            { lvl: 'تطبيق', t: R`مسألة: اكتب [[promiseAny(items)]]: أول واحد ينجح بيكسب، ولو كلهم فشلوا ترفض بـ [[new AggregateError(errors, "All promises were rejected")]] والأخطاء بترتيب المدخلات مش بترتيب الفشل.`, done: R`[[promiseAny([Promise.reject(1), Promise.resolve(2)])]] بيتحل بـ 2، ولو الاتنين مرفوضين بـ 1 و 2 الـ error [[instanceof AggregateError]] و [[errors]] فيها 1 و 2 بالترتيب ده، و [[promiseAny([])]] بيترفض بـ [[AggregateError]] على طول، وده نفس اللي [[Promise.any]] الأصلي بيعمله.`, sol: R`~~~js promise-any.js
+function promiseAny(items) {
+  return new Promise((resolve, reject) => {
+    const list = Array.from(items);
+    const errors = new Array(list.length);
+    let failed = 0;
+    if (list.length === 0) {
+      return reject(new AggregateError([], "All promises were rejected"));
+    }
+    list.forEach((item, i) => {
+      Promise.resolve(item).then(resolve, (err) => {
+        errors[i] = err;                 // بمكانه، مش بترتيب الفشل
+        failed++;
+        if (failed === list.length) reject(new AggregateError(errors, "All promises were rejected"));
+      });
+    });
+  });
+}
+
+const later = (ms, fn) => new Promise((res, rej) => setTimeout(() => fn(res, rej), ms));
+
+async function main() {
+  console.log("1:", await promiseAny([Promise.reject(1), Promise.resolve(2)]));
+
+  // الأول بيفشل متأخر والتاني بيفشل بدري: الترتيب لازم يفضل [1, 2]
+  const both = [later(50, (_, rej) => rej(1)), later(10, (_, rej) => rej(2))];
+  for (const [name, fn] of [["mine", promiseAny], ["native", (x) => Promise.any(x)]]) {
+    try { await fn(both); } catch (e) {
+      console.log(name, e instanceof AggregateError, e.errors, e.message);
+    }
+  }
+  for (const [name, fn] of [["mine []", promiseAny], ["native []", (x) => Promise.any(x)]]) {
+    try { await fn([]); } catch (e) { console.log(name, e instanceof AggregateError, e.errors); }
+  }
+}
+main();
+~~~
+
+~~~text الناتج (node promise-any.js)
+1: 2
+mine true [ 1, 2 ] All promises were rejected
+native true [ 1, 2 ] All promises were rejected
+mine [] true []
+native [] true []
+~~~
+
+**هي عكس [[promiseAll]] بالظبط:** هناك النجاح بيتجمع والفشل بيكسب على طول. هنا النجاح بيكسب على طول ([[then(resolve, ...)]])، والفشل هو اللي بيتجمع.
+
+- **[[errors[i] = err]]:** بنحط الخطأ في مكان الـ promise بتاعه، مش [[errors.push(err)]]. التجربة التانية معمولة مخصوص: الأول بيفشل بعد 50ms والتاني بعد 10ms، ولو كنت عملت [[push]] كانت هتطلع [[[2, 1]]].
+- **[[failed]] عدّاد مش [[errors.length]]:** [[new Array(n)]] طولها n من الأول، فمينفعش تعتمد على الطول.
+- **[[resolve]] أكتر من مرة:** لو اتنين نجحوا، [[resolve]] بتتنادى مرتين، بس الـ promise بيتحل مرة واحدة والتانية بتتجاهل، فمش محتاج flag.
+- **الفاضية:** مفيش حد ممكن ينجح، فالرفض فوري بـ [[AggregateError]] فيه [[errors]] فاضية، زي الأصلي.
+
+**الغلطة الشائعة:** ترفض أول ما واحد يفشل (عادة من [[promiseAll]])، أو تنسى حالة الفاضية فيفضل pending.
+
+**إجابة تتقال:** «any بيتحل بأول نجاح، ولو كله فشل بيرفض بـ AggregateError فيها الأخطاء بترتيب المدخلات، وعشان كده بخزّن كل خطأ بالـ index بتاعه وبعد الفشل بعدّاد».` },
+            { lvl: 'تحدي', t: R`محاكاة pool: اكتب [[mapLimit(items, limit, fn)]]: زي Promise.all بس مفيش أكتر من [[limit]] شغالين في نفس الوقت، والنتايج بترتيب المدخلات. جرّبه على ٥ مهام كل واحدة [[setTimeout]] بـ 100ms و [[limit]] بـ 2، وعدّاد بيقيس أكبر عدد شغال مع بعض.`, done: R`النتايج بنفس ترتيب المدخلات، والعدّاد أكبر قيمة وصلها 2، والوقت الكلي حوالي 300ms (٣ دفعات) مش 100 ولا 500، و [[mapLimit([], 2, fn)]] بيرجّع array فاضية من غير ما يعلّق، ومهمة بترمي error بترفض الكل زي Promise.all.`, sol: R`~~~js map-limit.js
+function mapLimit(items, limit, fn) {
+  return new Promise((resolve, reject) => {
+    const list = Array.from(items);
+    const results = new Array(list.length);
+    let next = 0, done = 0, failed = false;
+    if (list.length === 0) return resolve(results);
+
+    function startOne() {
+      if (failed || next >= list.length) return;
+      const i = next++;                         // احجز الـ index قبل أي await
+      Promise.resolve()
+        .then(() => fn(list[i], i))
+        .then((value) => {
+          results[i] = value;
+          done++;
+          if (done === list.length) resolve(results);
+          else startOne();                      // مكان فضي: ابدأ اللي بعده
+        }, (err) => { failed = true; reject(err); });
+    }
+    for (let k = 0; k < Math.min(limit, list.length); k++) startOne();
+  });
+}
+
+let running = 0, maxRunning = 0;
+const task = (x) => new Promise((r) => {
+  running++; maxRunning = Math.max(maxRunning, running);
+  setTimeout(() => { running--; r(x * 10); }, 100);
+});
+
+async function main() {
+  const t0 = performance.now();
+  const out = await mapLimit([1, 2, 3, 4, 5], 2, task);
+  console.log("النتايج:", out);
+  console.log("أكبر عدد شغال مع بعض:", maxRunning);
+  console.log("الوقت:", Math.round(performance.now() - t0), "ms");
+  console.log("فاضية:", await mapLimit([], 2, task));
+  try {
+    await mapLimit([1, 2, 3], 2, (x) => (x === 2 ? Promise.reject(new Error("مهمة 2 وقعت")) : task(x)));
+  } catch (e) { console.log("اترفض:", e.message); }
+}
+main();
+~~~
+
+~~~text الناتج (node map-limit.js على Windows)
+النتايج: [ 10, 20, 30, 40, 50 ]
+أكبر عدد شغال مع بعض: 2
+الوقت: 333 ms
+فاضية: []
+اترفض: مهمة 2 وقعت
+~~~
+
+**الفكرة:** بدل ما تبدأ الكل مرة واحدة، ابدأ [[limit]] بس، وكل واحد يخلص يبدأ اللي بعده. فيه دايمًا [[limit]] «عمّال» شغالين لحد ما المهام تخلص.
+
+- **[[const i = next++]]:** بياخد رقم المهمة ويزوّد العدّاد في نفس السطر sync. لو اتنين عمّال خلصوا في نفس اللفة، كل واحد بياخد رقم مختلف.
+- **[[results[i] = value]]:** النتيجة في مكان المدخل، فالترتيب صح حتى لو المهمة ٤ خلصت قبل ٣.
+- **[[Promise.resolve().then(() => fn(...))]]:** لو [[fn]] رمت error sync (مش promise مرفوض) بيتحوّل لرفض بدل ما يوقع البرنامج.
+- **[[failed]]:** بعد أول رفض محدش بيبدأ مهام جديدة (اللي شغالة بتكمّل، زي Promise.all).
+- **الوقت:** ٥ مهام على ٢ عمّال = ٣ دفعات (٢ و ٢ و ١) = حوالي 300ms. على Windows طلع 333 لأن كل [[setTimeout]] بيتأخر شوية (دقة الـ timer هناك حوالي 15ms)؛ المهم إنه مش 100 (يبقى الحد مش شغال) ولا 500 (يبقى بيشغّلهم واحد واحد).
+
+**الغلطة الشائعة:** تقسّم المهام لدفعات ثابتة ([[chunk]] ٢ و ٢ و ١) وتعمل [[await Promise.all]] لكل دفعة. ده بيشتغل بس أبطأ: الدفعة بتستنى أبطأ واحد فيها والعامل التاني قاعد فاضي. الـ pool بيبدأ المهمة الجديدة أول ما أي مكان يفضى.
+
+**إجابة تتقال:** «بشغّل limit عمّال، كل عامل بياخد الـ index اللي عليه الدور ويحط النتيجة في مكانها ويبدأ اللي بعده، وأول رفض بيرفض الكل».` },
           ],
           flag: "script",
           deep: {
             why: "بيختبر فهمك للـ Promises مش حفظ الـ API: الترتيب، والعدّاد، و fail-fast، والقيم اللي مش Promises، والحالة الفاضية.",
-            how: R`نقط تقولها: [[results.push]] غلط لأن الترتيب هيبقى حسب مين خلص الأول. و [[results.length]] مينفعش كعدّاد لأن [[results[2] = x]] بتخلي الطول 3 وأول عنصرين لسه فاضيين. والـ reject بعد أول مرة ملهوش تأثير لأن الـ Promise مبيتغيرش بعد ما يخلص. والباقي مبيتلغيش. ومع Array.from بيقبل أي iterable زي الأصلي.`,
+            how: R`نقط تقولها: [[results.push]] غلط لأن الترتيب هيبقى حسب مين خلص الأول. و [[results.length]] مينفعش كعدّاد لأن [[results[2] = x]] بتخلي الطول 3 وأول عنصرين لسه فاضيين. والـ reject بعد أول مرة ملهوش تأثير لأن الـ Promise مبيتغيرش بعد ما يخلص. والباقي مبيتلغيش. ومع Array.from بيقبل أي iterable زي الأصلي. بس خد بالك: [[Array.from]] بيقبل كمان اللي مش iterable ([[Array.from(5)]] بـ array فاضية)، فـ [[promiseAll(5)]] بيتحل بـ array فاضية والأصلي بيترفض بـ TypeError. لو عايز نفس السلوك افحص [[typeof items?.[Symbol.iterator] === "function"]] الأول وارجع [[Promise.reject(new TypeError(...))]].`,
             when: "«اكتب allSettled»، و «اعمل concurrency limit: شغّل n بس في نفس الوقت» (السؤال الأصعب والأشهر للـ senior)، و «retry مع exponential backoff».",
             mistakes: R`push بدل index. ونسيان الـ array الفاضية (هتفضل pending للأبد). ونسيان [[Promise.resolve]] للقيم العادية.`
           },
@@ -398,7 +1938,7 @@ Set: [ 1, 2 ]
 
 > في التمرين اللي تحت هتكتب [[promiseAllSettled]] و [[promiseRace]]. فكّر: إيه اللي لازم يتغير في الـ onSuccess والـ onFailure عشان الفشل ميوقفش كل حاجة؟ وفي race، محتاج عدّاد أصلًا؟`,
           lines: [
-            R`[[promiseAll]] بتاخد أي iterable (array أو Set أو generator) فيه Promises أو قيم عادية، زي [[Promise.all]] الأصلية بالظبط.`,
+            R`[[promiseAll]] بتاخد أي iterable (array أو Set أو generator) فيه Promises أو قيم عادية، زي [[Promise.all]] الأصلية (الفرق الوحيد في المدخل اللي مش iterable، وده في «نقط تقولها» تحت).`,
             R`بترجّع Promise جديد واحد بيمثّل «كلهم». الـ executor بياخد [[resolve]] و [[reject]]، واحنا اللي هنقرر إمتى نناديهم: [[resolve]] لما الكل يخلص، و [[reject]] مع أول فشل.`,
             R`[[Array.from]] بيحوّل الـ iterable لـ array عادية. محتاجينها عشان نعرف الطول من الأول، ولأن generator مثلًا ينفع يتلف عليه مرة واحدة بس.`,
             R`array فاضية بنفس عدد العناصر. هنحط كل نتيجة في الـ index بتاعها، فالترتيب يفضل زي المدخلات حتى لو التاني خلص قبل الأول.`,
@@ -521,10 +2061,185 @@ Function.prototype.myBind = function (ctx, ...preset) {
 const hi = function (greet) { return greet + " " + this.name; };
 hi.myBind({ name: "Sara" }, "Hi")();              // "Hi Sara"`,
           try: R`اكتب [[myFilter]] و [[myReduce]] (خد بالك من حالة من غير قيمة أولية على array فاضية: لازم TypeError). وبعدين خلي [[myBind]] تشتغل مع [[new]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[myFilter]] و [[myReduce]] و [[myBind]] اللي بتشتغل مع [[new]].`,
+          ref: [
+            { t: "MDN: Polyfill", url: "https://developer.mozilla.org/en-US/docs/Glossary/Polyfill" },
+            { t: "MDN: Array.prototype.map()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map" },
+            { t: "MDN: Function.prototype.bind()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind" },
+            { t: "MDN: Function.prototype.call()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/call" },
+          ],
+          pre: [
+            { to: "js/prototype chain", why: R`الـ polyfill بيتحط على [[Array.prototype]] و [[Function.prototype]]، فكل array وكل دالة بتلاقيه بالوراثة` },
+          ],
           practice: [
-            { lvl: 'سريع', t: R`اتوقع على ورقة: إيه اللي Node هيطبعه لـ [[[1, , 3].map((x) => x * 2)]]؟ والـ callback هيتنادى كام مرة؟ وبعدين شغّله بـ [[map]] وبـ [[myMap]] بتاع الدرس.`, done: R`Node بيطبع [[2, <1 empty item>, 6]] جوه أقواس، والاتنين نفس الناتج و [[length]] بتاعهم 3، والـ callback اتنادى مرتين بس (الـ hole بيتعدّى).` },
-            { lvl: 'تطبيق', t: R`مسألة: اكتب [[myCall(ctx, ...args)]] من غير [[call]] ولا [[apply]] ولا [[bind]]: حط الدالة على [[ctx]] تحت key من نوع [[Symbol()]]، وناديها، وامسحها في [[finally]].`, done: R`[[greet.myCall({ name: "Sara" }, "Hi")]] بيرجّع [["Hi Sara"]]، وبعدها [[Object.getOwnPropertySymbols(ctx).length]] بيرجّع 0 (مفيش أثر)، ولو الدالة رمت error الـ symbol برضه بيتمسح، و [[ctx]] اللي فيه key اسمه [[fn]] أصلًا مبيتبوّظش.` },
-            { lvl: 'تحدي', t: R`اكتب اختبار: زميلك كتب [[myMap]] من غير [[if (i in this)]] ومن غير [[thisArg]]. اكتب بـ [[node:test]] تستات تمسك الغلطتين دول وحاجة تالتة من عندك، من غير ما تقرا الكود بتاعه، وشغّلها على نسخته وعلى نسخة الدرس.`, done: R`على نسخة الدرس كل التستات بتعدّي، وعلى نسخة زميلك على الأقل تستين بيقعوا: واحد بيعدّ نداءات الـ callback على [[[1, , 3]]] (المفروض 2)، وواحد بيتأكد إن [[this]] جوه callback عادي ([[function]] مش arrow) هو الـ [[thisArg]].` },
+            { lvl: 'سريع', t: R`اتوقع على ورقة: إيه اللي Node هيطبعه لـ [[[1, , 3].map((x) => x * 2)]]؟ والـ callback هيتنادى كام مرة؟ وبعدين شغّله بـ [[map]] وبـ [[myMap]] بتاع الدرس.`, done: R`Node بيطبع [[2, <1 empty item>, 6]] جوه أقواس، والاتنين نفس الناتج و [[length]] بتاعهم 3، والـ callback اتنادى مرتين بس (الـ hole بيتعدّى).`, sol: R`**التوقع:** array طولها 3 فيها 2 وخانة فاضية و 6، والـ callback بيتنادى مرتين بس.
+
+~~~js holes.js
+Array.prototype.myMap = function (callback, thisArg) {
+  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
+  const result = new Array(this.length);
+  for (let i = 0; i < this.length; i++) {
+    if (i in this) result[i] = callback.call(thisArg, this[i], i, this);
+  }
+  return result;
+};
+
+let calls = 0;
+const a = [1, , 3].map((x) => { calls++; return x * 2; });
+console.log("map  :", a, "length", a.length, "calls", calls);
+
+calls = 0;
+const b = [1, , 3].myMap((x) => { calls++; return x * 2; });
+console.log("myMap:", b, "length", b.length, "calls", calls);
+console.log(1 in a, 1 in b);
+~~~
+
+~~~text الناتج (node holes.js)
+map  : [ 2, <1 empty item>, 6 ] length 3 calls 2
+myMap: [ 2, <1 empty item>, 6 ] length 3 calls 2
+false false
+~~~
+
+**ليه:** [[[1, , 3]]] فيها «hole»: الـ index 1 مش موجود أصلًا (مش موجود وقيمته undefined). [[map]] بتسأل [[i in arr]] قبل كل نداء، فبتعدّي الخانة دي ومبتكتبش حاجة مكانها في الناتج، فالناتج فيه hole برده في نفس المكان. [[<1 empty item>]] هي طريقة Node في عرض الـ hole، والسطر الأخير بيثبت إن الخانة مش موجودة في الاتنين ([[1 in a]] بـ false).
+
+**الانترفيور بيختبر إيه:** إنك عارف الفرق بين hole و [[undefined]]، وإن [[i in this]] في الـ polyfill مش زيادة.
+
+**الغلطة الشائعة:** تتوقع [[[2, NaN, 6]]] (يعني الـ callback اتنادى بـ undefined و [[undefined * 2]] بـ NaN). ده اللي هيحصل فعلًا لو اتكتبت [[[1, undefined, 3]]]، أو لو الـ polyfill نسي [[i in this]].` },
+            { lvl: 'تطبيق', t: R`مسألة: اكتب [[myCall(ctx, ...args)]] من غير [[call]] ولا [[apply]] ولا [[bind]]: حط الدالة على [[ctx]] تحت key من نوع [[Symbol()]]، وناديها، وامسحها في [[finally]].`, done: R`[[greet.myCall({ name: "Sara" }, "Hi")]] بيرجّع [["Hi Sara"]]، وبعدها [[Object.getOwnPropertySymbols(ctx).length]] بيرجّع 0 (مفيش أثر)، ولو الدالة رمت error الـ symbol برضه بيتمسح، و [[ctx]] اللي فيه key اسمه [[fn]] أصلًا مبيتبوّظش.`, sol: R`~~~js my-call.js
+Function.prototype.myCall = function (ctx, ...args) {
+  if (typeof this !== "function") throw new TypeError("myCall لازم تتنادى على function");
+  const target = ctx == null ? globalThis : Object(ctx);  // null/undefined → globalThis، و 5 → Number object
+  const key = Symbol("fn");                                // مستحيل يتصادم مع key موجود
+  target[key] = this;
+  try {
+    return target[key](...args);                          // نداء كـ method: this = target
+  } finally {
+    delete target[key];                                   // بيتنفّذ حتى لو الدالة رمت
+  }
+};
+
+function greet(word) { return word + " " + this.name; }
+const ctx = { name: "Sara", fn: "مهم متتمسحش" };
+
+console.log(greet.myCall(ctx, "Hi"));
+console.log("symbols باقية:", Object.getOwnPropertySymbols(ctx).length);
+console.log("fn لسه:", ctx.fn);
+
+function boom() { throw new Error("وقعت"); }
+try { boom.myCall(ctx); } catch (e) { console.log("الخطأ عدّى:", e.message); }
+console.log("symbols بعد الخطأ:", Object.getOwnPropertySymbols(ctx).length);
+console.log(function () { return typeof this; }.myCall(5));
+~~~
+
+~~~text الناتج (node my-call.js)
+Hi Sara
+symbols باقية: 0
+fn لسه: مهم متتمسحش
+الخطأ عدّى: وقعت
+symbols بعد الخطأ: 0
+object
+~~~
+
+**الفكرة كلها في قاعدة واحدة من درس this:** لما تنادي [[obj.method()]]، [[this]] جوه الدالة بيبقى [[obj]]. فلو حطينا الدالة مؤقتًا على [[ctx]] وناديناها من عليه، [[this]] هيبقى [[ctx]] من غير [[call]].
+
+- **[[Symbol("fn")]]:** كل Symbol جديد فريد، فمستحيل يمسح key موجود. لو استخدمت [[ctx.fn = this]] كانت القيمة [["مهم متتمسحش"]] هتضيع (وده اللي السطر التالت بيثبت إنه محصلش).
+- **[[try / finally]]:** الـ [[finally]] بيتنفّذ بعد [[return]] وبعد [[throw]]، فالـ key بيتمسح في الحالتين، والخطأ نفسه بيعدّي للي نادى (السطر الرابع).
+- **[[Object(ctx)]]:** مينفعش تحط property على primitive زي 5، فـ [[Object(5)]] بيعمل Number object. عشان كده آخر سطر طبع [["object"]]، وده نفس سلوك [[call]] الأصلية في non-strict.
+- **[[ctx == null]]:** null و undefined بيبقوا [[globalThis]]، زي [[call]] في non-strict.
+
+**الغلطة الشائعة:** تمسح الـ key بعد [[return]] من غير [[finally]] (السطر ده عمره ما هيتنفّذ)، أو تستخدم اسم string ثابت يكسر object فيه نفس الاسم.
+
+**إجابة تتقال:** «بحط الدالة على الـ context تحت Symbol، وبناديها كـ method عشان this يبقى الـ context، وبمسحها في finally عشان متسبش أثر حتى لو رمت».` },
+            { lvl: 'تحدي', t: R`اكتب اختبار: زميلك كتب [[myMap]] من غير [[if (i in this)]] ومن غير [[thisArg]]. اكتب بـ [[node:test]] تستات تمسك الغلطتين دول وحاجة تالتة من عندك، من غير ما تقرا الكود بتاعه، وشغّلها على نسخته وعلى نسخة الدرس.`, done: R`على نسخة الدرس كل التستات بتعدّي، وعلى نسخة زميلك على الأقل تستين بيقعوا: واحد بيعدّ نداءات الـ callback على [[[1, , 3]]] (المفروض 2)، وواحد بيتأكد إن [[this]] جوه callback عادي ([[function]] مش arrow) هو الـ [[thisArg]].`, sol: R`التستات بتختبر **السلوك** من برّه (المدخلات والناتج وعدد النداءات)، فمش محتاج تقرا كود زميلك. والنسختين في ملف واحد عشان تشغّل نفس التستات على الاتنين:
+
+~~~js impl.mjs
+// نسخة الدرس
+export function lessonMap(callback, thisArg) {
+  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
+  const result = new Array(this.length);
+  for (let i = 0; i < this.length; i++) {
+    if (i in this) result[i] = callback.call(thisArg, this[i], i, this);
+  }
+  return result;
+}
+// نسخة الزميل: من غير i in this ومن غير thisArg
+export function friendMap(callback) {
+  const result = [];
+  for (let i = 0; i < this.length; i++) result[i] = callback(this[i], i, this);
+  return result;
+}
+~~~
+
+~~~js mymap.test.mjs
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { lessonMap, friendMap } from "./impl.mjs";
+
+// IMPL=friend node --test  ← يشغّل نفس التستات على نسخة الزميل
+const myMap = process.env.IMPL === "friend" ? friendMap : lessonMap;
+
+test("بيتخطى الـ holes ومبيناديش الـ callback عليها", () => {
+  let calls = 0;
+  const out = myMap.call([1, , 3], (x) => { calls++; return x * 2; });
+  assert.equal(calls, 2);
+  assert.equal(out.length, 3);
+  assert.equal(1 in out, false);        // الـ hole فضل hole
+});
+
+test("this جوه callback عادي هو thisArg", () => {
+  const ctx = { factor: 10 };
+  const out = myMap.call([1, 2], function (x) { return x * this.factor; }, ctx);
+  assert.deepEqual(out, [10, 20]);
+});
+
+test("callback مش function بيرمي TypeError حتى على array فاضية", () => {
+  assert.throws(() => myMap.call([], "مش دالة"), TypeError);
+});
+
+test("الحالات العادية: index والـ array نفسها", () => {
+  const src = ["a", "b"];
+  assert.deepEqual(myMap.call(src, (x, i, arr) => x + i + arr.length), ["a02", "b12"]);
+});
+~~~
+
+~~~text الناتج (node --test على نسخة الدرس)
+✔ بيتخطى الـ holes ومبيناديش الـ callback عليها (0.8773ms)
+✔ this جوه callback عادي هو thisArg (0.7418ms)
+✔ callback مش function بيرمي TypeError حتى على array فاضية (0.5241ms)
+✔ الحالات العادية: index والـ array نفسها (0.1752ms)
+ℹ tests 4
+ℹ pass 4
+ℹ fail 0
+~~~
+
+~~~text الناتج (IMPL=friend node --test على نسخة الزميل، السطور المهمة)
+✖ بيتخطى الـ holes ومبيناديش الـ callback عليها (1.3762ms)
+✖ this جوه callback عادي هو thisArg (0.1673ms)
+✖ callback مش function بيرمي TypeError حتى على array فاضية (0.3584ms)
+✔ الحالات العادية: index والـ array نفسها (0.8226ms)
+ℹ tests 4
+ℹ pass 1
+ℹ fail 3
+~~~
+
+(في PowerShell: [[$env:IMPL="friend"; node --test]]، وبعدها [[Remove-Item Env:IMPL]].)
+
+**كل تست بيمسك إيه:**
+
+- **الأول** بيعد النداءات: نسخة الزميل نادت الـ callback ٣ مرات (واحدة على الـ hole بـ undefined)، وكتبت [[NaN]] مكان الـ hole. تست [[out]] لوحده مش كفاية، لازم العدّاد و [[1 in out]].
+- **التاني** بيستخدم [[function]] مش arrow عن قصد: الـ arrow بتاخد [[this]] من برّه وبتتجاهل [[thisArg]] في أي نسخة، فتست بـ arrow كان هيعدّي على الغلط.
+- **التالت** هو الحاجة التالتة من عندنا: على array **فاضية** عن قصد. الأصلية ونسخة الدرس بيفحصوا الـ callback قبل اللفة فبيرموا TypeError، ونسخة الزميل مبتفحصش ومفيش لفة تنادي الـ string، فبترجّع array فاضية في صمت. (على [[[1]]] كان التست هيعدّي على الاتنين، لأن نداء string كدالة بيرمي TypeError لوحده.)
+- **الرابع** بيتأكد من الـ arguments التلاتة.
+
+**حاجة كمان ممكن تتسأل عليها:** [[map]] الأصلية بتقرا الطول **مرة واحدة** في الأول، ونسخة الدرس بتقرا [[this.length]] كل لفة. لو الـ callback زوّد عناصر في الـ array:
+
+~~~text الناتج (callback بيعمل push لحد ما الطول 4)
+map  : [ 1, 2 ]
+myMap: [ 1, 2, 9, 9 ]
+~~~
+
+التصليح: [[const len = this.length]] قبل اللفة واستخدم [[len]]. ده تست رابع تقدر تزوّده، وهيقع على النسختين.
+
+**الغلطة الشائعة:** تكتب التستات وانت شايف الكود فتختبر اللي الكود بيعمله مش اللي المفروض يعمله. ابدأ من سلوك [[map]] الأصلية: اكتب التست وشغّله عليها الأول (لازم يعدّي)، وبعدين على النسخ.` },
           ],
           flag: "script",
           deep: {
@@ -801,10 +2516,143 @@ const withTax = curry((ratePct, price) => (price * (100 + ratePct)) / 100);
 const addVat = withTax(14);
 addVat(100);     // 114`,
           try: R`اكتب [[sum(1)(2)(3)()]] بيرجّع 6 بأي عدد نداءات، ويخلص لما تناديه من غير arguments. ده سؤال تاني مشهور بنفس الفكرة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[sum]].`,
+          ref: [
+            { t: "MDN: Function: length", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/length" },
+            { t: "MDN: Closures", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Closures" },
+          ],
+          pre: [
+            { to: "js/Function: length و name و toString و new.target", why: R`الـ curry بيقرر يستنى ولا ينادي بـ [[fn.length]]، وقواعده مع الـ rest والـ defaults هناك` },
+          ],
           practice: [
-            { lvl: 'سريع', t: R`اتوقع وبعدين شغّل بـ [[curry]] بتاع الدرس: [[curry((...a) => a.length)(1, 2)]] و [[curry((...a) => a.length)()]] و [[((a, b = 2) => {}).length]] و [[curry((a, b = 2) => a + b)(1)]].`, done: R`الناتج: 2 و 0 و 1 و 3، وتقدر تشرح إن [[fn.length]] مبيعدّش الـ rest parameter ولا أي باراميتر بعد أول default، فالـ curry بينادي الدالة على طول في الحالات دي.` },
-            { lvl: 'تطبيق', t: R`ابني على بيانات حقيقية الشكل: [[users.json]] فيه ٢٠ يوزر ([[{ name, role, city }]])، و [[const filterBy = curry((key, value, list) => list.filter((o) => o[key] === value))]]، واعمل منها [[admins]] و [[fromCairo]] جاهزين.`, done: R`[[admins(users)]] بيرجّع اليوزرز اللي [[role]] بتاعهم [["admin"]] بس، و [[fromCairo(admins(users))]] بيجمع الشرطين، و [[filterBy("role", "admin", users)]] مرة واحدة بيرجّع نفس نتيجة [[admins(users)]]، ولستة فاضية بترجّع لستة فاضية.` },
-            { lvl: 'تحدي', t: R`مسألة: اكتب [[pipe(...fns)]] و [[compose(...fns)]]، واستخدمهم مع [[curry]]: [[const split = curry((sep, s) => s.split(sep));]] و [[pipe((s) => s.trim(), (s) => s.toLowerCase(), split(" "))]].`, done: R`الـ pipe على [["  Hello World "]] بيرجّع [["hello", "world"]]، و [[compose]] بنفس الدوال بالعكس بيرجّع نفس الناتج، و [[pipe()]] من غير دوال بترجّع المدخل زي ما هو، وتقدر تقول الفرق بين currying و partial application في جملتين.` },
+            { lvl: 'سريع', t: R`اتوقع وبعدين شغّل بـ [[curry]] بتاع الدرس: [[curry((...a) => a.length)(1, 2)]] و [[curry((...a) => a.length)()]] و [[((a, b = 2) => {}).length]] و [[curry((a, b = 2) => a + b)(1)]].`, done: R`الناتج: 2 و 0 و 1 و 3، وتقدر تشرح إن [[fn.length]] مبيعدّش الـ rest parameter ولا أي باراميتر بعد أول default، فالـ curry بينادي الدالة على طول في الحالات دي.`, sol: R`**التوقع:** 2 و 0 و 1 و 3.
+
+~~~js curry.js
+function curry(fn) {
+  return function curried(...args) {
+    if (args.length >= fn.length) return fn.apply(this, args);
+    return (...more) => curried.apply(this, [...args, ...more]);
+  };
+}
+module.exports = { curry };
+~~~
+
+~~~js length.js
+const { curry } = require("./curry");
+console.log(curry((...a) => a.length)(1, 2));
+console.log(curry((...a) => a.length)());
+console.log(((a, b = 2) => {}).length);
+console.log(curry((a, b = 2) => a + b)(1));
+console.log("lengths:", ((...a) => {}).length, ((a, b = 2, c) => {}).length, ((a, b) => {}).length);
+~~~
+
+~~~text الناتج (node length.js)
+2
+0
+1
+3
+lengths: 0 1 2
+~~~
+
+**المفتاح كله في [[fn.length]]:** الـ curry بتاع الدرس بيقرر «أنادي الدالة ولا أستنى arguments تانية؟» بـ [[args.length >= fn.length]]. و [[fn.length]] بيعد الباراميترز **العادية اللي قبل أول default أو rest** بس (السطر الأخير بيوريها: rest بـ 0، و [[(a, b = 2, c)]] بـ 1 حتى إن [[c]] مالهاش default).
+
+| النداء | [[fn.length]] | اللي حصل |
+|---|---|---|
+| [[curry((...a) => a.length)(1, 2)]] | 0 | 2 أكبر من 0 فنادى على طول، والدالة رجّعت عدد الـ args: 2 |
+| [[curry((...a) => a.length)()]] | 0 | حتى صفر args أكبر من أو يساوي 0، فنادى: 0 |
+| [[((a, b = 2) => {}).length]] | 1 | [[b]] ليها default فمش محسوبة |
+| [[curry((a, b = 2) => a + b)(1)]] | 1 | arg واحد كفاية، فنادى و [[b]] خدت 2: النتيجة 3 |
+
+**الانترفيور بيختبر إيه:** إن الـ curry العام بيعتمد على [[fn.length]]، وإن ده بيبوظ مع الـ rest والـ defaults. **إجابة تتقال:** «length مبيعدّش الـ rest ولا اللي بعد أول default، فالـ curry بيشوف إن الدالة مش محتاجة arguments فبيناديها على طول؛ الحل إنك تبعت الـ arity بإيدك: [[curry(fn, n = fn.length)]]».
+
+**الغلطة الشائعة:** تتوقع إن [[curry((a, b = 2) => a + b)(1)]] يرجّع دالة مستنية [[b]].` },
+            { lvl: 'تطبيق', t: R`ابني على بيانات حقيقية الشكل: [[users.json]] فيه ٢٠ يوزر ([[{ name, role, city }]])، و [[const filterBy = curry((key, value, list) => list.filter((o) => o[key] === value))]]، واعمل منها [[admins]] و [[fromCairo]] جاهزين.`, done: R`[[admins(users)]] بيرجّع اليوزرز اللي [[role]] بتاعهم [["admin"]] بس، و [[fromCairo(admins(users))]] بيجمع الشرطين، و [[filterBy("role", "admin", users)]] مرة واحدة بيرجّع نفس نتيجة [[admins(users)]]، ولستة فاضية بترجّع لستة فاضية.`, sol: R`~~~json users.json
+[
+  {"name":"Sara","role":"admin","city":"Cairo"},
+  {"name":"Omar","role":"editor","city":"Cairo"},
+  {"name":"Mona","role":"viewer","city":"Alex"},
+  {"name":"Ali","role":"viewer","city":"Mansoura"},
+  {"name":"Nour","role":"admin","city":"Giza"},
+  {"name":"Hany","role":"editor","city":"Cairo"},
+  {"name":"Laila","role":"viewer","city":"Cairo"},
+  {"name":"Karim","role":"viewer","city":"Alex"},
+  {"name":"Dina","role":"admin","city":"Mansoura"},
+  {"name":"Tarek","role":"editor","city":"Giza"},
+  {"name":"Yara","role":"viewer","city":"Cairo"},
+  {"name":"Ziad","role":"viewer","city":"Cairo"},
+  {"name":"Reem","role":"admin","city":"Alex"},
+  {"name":"Adel","role":"editor","city":"Mansoura"},
+  {"name":"Heba","role":"viewer","city":"Giza"},
+  {"name":"Samy","role":"viewer","city":"Cairo"},
+  {"name":"Rana","role":"admin","city":"Cairo"},
+  {"name":"Fady","role":"editor","city":"Alex"},
+  {"name":"Mai","role":"viewer","city":"Mansoura"},
+  {"name":"Amr","role":"viewer","city":"Giza"}
+]
+~~~
+
+~~~js filter-users.js
+const { curry } = require("./curry");   // curry.js بتاع الدرس
+const users = require("./users.json");
+
+const filterBy = curry((key, value, list) => list.filter((o) => o[key] === value));
+const admins = filterBy("role", "admin");      // ناقصها list بس
+const fromCairo = filterBy("city", "Cairo");
+
+console.log("عدد اليوزرز:", users.length);
+console.log("admins:", admins(users).map((u) => u.name));
+console.log("admins من القاهرة:", fromCairo(admins(users)).map((u) => u.name));
+console.log("نفس النتيجة مرة واحدة:",
+  JSON.stringify(filterBy("role", "admin", users)) === JSON.stringify(admins(users)));
+console.log("لستة فاضية:", admins([]));
+~~~
+
+~~~text الناتج (node filter-users.js)
+عدد اليوزرز: 20
+admins: [ 'Sara', 'Nour', 'Dina', 'Reem', 'Rana' ]
+admins من القاهرة: [ 'Sara', 'Rana' ]
+نفس النتيجة مرة واحدة: true
+لستة فاضية: []
+~~~
+
+**ليه الترتيب [[(key, value, list)]]:** الـ curry بيملا الباراميترز من الشمال. فاللي بيتثبّت (الشرط) ييجي الأول، والداتا اللي بتتغير كل مرة تيجي **آخر حاجة**. لو كانت [[(list, key, value)]] مكنتش هتقدر تعمل [[admins]] جاهزة من غير list. دي قاعدة «data last» اللي مكتبات زي Ramda ماشية بيها.
+
+- **[[filterBy("role", "admin")]]:** اتنين من ٣، فالـ curry رجّع دالة مستنية الـ list.
+- **[[fromCairo(admins(users))]]:** الفلتر الأولاني بيرجّع array، والتاني بياخدها: الشرطين مع بعض من غير ما تكتب [[filter]] جديدة.
+- **المقارنة بـ [[JSON.stringify]]:** النتيجتين arrays مختلفة في الذاكرة، فـ [[===]] عليهم مباشرة هيطلع false؛ بنقارن المحتوى. (أو [[assert.deepStrictEqual]].)
+- **اللستة الفاضية:** [[filter]] على array فاضية بيرجّع array فاضية، فمحتاجناش حالة خاصة.
+
+**الغلطة الشائعة:** تكتب [[filterBy("role")("admin")]] وتنسى إن الناتج لسه دالة، فتطبع [[[Function (anonymous)]]] بدل اليوزرز.` },
+            { lvl: 'تحدي', t: R`مسألة: اكتب [[pipe(...fns)]] و [[compose(...fns)]]، واستخدمهم مع [[curry]]: [[const split = curry((sep, s) => s.split(sep));]] و [[pipe((s) => s.trim(), (s) => s.toLowerCase(), split(" "))]].`, done: R`الـ pipe على [["  Hello World "]] بيرجّع [["hello", "world"]]، و [[compose]] بنفس الدوال بالعكس بيرجّع نفس الناتج، و [[pipe()]] من غير دوال بترجّع المدخل زي ما هو، وتقدر تقول الفرق بين currying و partial application في جملتين.`, sol: R`~~~js pipe.js
+const { curry } = require("./curry");   // curry.js بتاع الدرس
+
+const pipe = (...fns) => (input) => fns.reduce((acc, fn) => fn(acc), input);
+const compose = (...fns) => (input) => fns.reduceRight((acc, fn) => fn(acc), input);
+
+const split = curry((sep, s) => s.split(sep));
+const trim = (s) => s.trim();
+const lower = (s) => s.toLowerCase();
+
+console.log(pipe(trim, lower, split(" "))("  Hello World "));
+console.log(compose(split(" "), lower, trim)("  Hello World "));
+console.log(pipe()("زي ما هو"));
+~~~
+
+~~~text الناتج (node pipe.js)
+[ 'hello', 'world' ]
+[ 'hello', 'world' ]
+زي ما هو
+~~~
+
+**الحل:**
+
+- **[[pipe]]:** [[reduce]] بيبدأ بالمدخل ([[input]] كقيمة أولية)، وكل دالة بتاخد ناتج اللي قبلها: [[split(" ")(lower(trim(input)))]]. الترتيب من الشمال لليمين، زي ما بتقراه.
+- **[[compose]]:** نفس الفكرة بـ [[reduceRight]]، فالترتيب من اليمين للشمال زي الرياضيات (f∘g). عشان كده كتبنا الدوال بالعكس وطلع نفس الناتج.
+- **[[pipe()]] فاضية:** [[reduce]] على array فاضية **ومعاه قيمة أولية** بيرجّع القيمة الأولية، فالمدخل بيرجع زي ما هو. (من غير قيمة أولية كان هيرمي TypeError.)
+- **[[split(" ")]]:** الـ curry خلاها دالة بتاخد arg واحد (النص)، فاتحطت في الـ pipe زي [[trim]] بالظبط. ده سبب إن الـ curry والـ pipe بيتسألوا مع بعض.
+
+**currying و partial application في جملتين:** الـ currying بيحوّل دالة بـ n باراميترز لسلسلة دوال كل واحدة بتاخد arg واحد ([[f(a)(b)(c)]]). الـ partial application بيثبّت شوية arguments ويرجّع دالة بالباقي مرة واحدة ([[f.bind(null, a)]] بترجّع دالة بتاخد [[b, c]] مع بعض)؛ والـ curry بتاع الدرس بيعمل الاتنين لأنه بيقبل أكتر من arg في النداء.
+
+**الغلطة الشائعة:** تنسى القيمة الأولية في [[reduce]]، فأول دالة مبتتنداش على المدخل وتستخدم الدالة الأولى نفسها كـ acc.` },
           ],
           flag: "script",
           deep: {
@@ -1010,10 +2858,148 @@ deepEqual(NaN, NaN);                                   // true
 deepEqual(new Date(1), new Date(2));                   // true! غلط: حدود النسخة دي
 deepEqual(/a/g, /b/i);                                 // true! غلط برضه`,
           try: R`ضيف دعم لـ Date (قارن [[getTime()]]) و RegExp (قارن [[source]] و [[flags]]) و Map و Set. وبعدين جرّب object بيشاور على نفسه ([[a.self = a]]) وشوف الـ stack overflow، وفكّر إزاي تحلها بـ WeakMap للأزواج اللي اتقارنت. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[deepEqual]] مع Date و RegExp و Map و Set، والـ object اللي بيشاور على نفسه.`,
+          ref: [
+            { t: "MDN: Equality comparisons and sameness", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Equality_comparisons_and_sameness" },
+            { t: "MDN: Object.is()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is" },
+            { t: "MDN: Object.keys()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys" },
+            { t: "MDN: Object.hasOwn()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwn" },
+          ],
+          pre: [
+            { to: "js/reference و copy", why: R`[[===]] على objects بيقارن الـ reference، وده سبب إننا محتاجين deep equal أصلًا` },
+          ],
           practice: [
-            { lvl: 'سريع', t: R`اتوقع بـ [[deepEqual]] بتاع الدرس: [[deepEqual([1, 2, 3], [1, 2, 3])]] و [[deepEqual({ a: 1, b: 2 }, { b: 2, a: 1 })]] و [[deepEqual({ a: undefined }, { b: undefined })]] و [[deepEqual(0, -0)]] و [[deepEqual(new Date(1), new Date(2))]].`, done: R`الناتج: [[true]] و [[true]] و [[false]] و [[false]] و [[true]]. الأخير مفاجأة: الـ Date ملوش keys خاصة بيه فالدالة بتشوف اتنين objects فاضيين، و 0 و -0 مختلفين عشان [[Object.is]]، وتقدر تقول إمتى ده يبقى bug.` },
-            { lvl: 'تطبيق', t: R`قارن: ليه [[JSON.stringify(a) === JSON.stringify(b)]] مش deep equal؟ جرّب [[{ a: 1, b: 2 }]] مقابل [[{ b: 2, a: 1 }]]، و [[{ a: undefined }]] مقابل [[{}]]، و [[NaN]] مقابل [[null]] جوه array، واكتب جدول صغير بالنتيجة بالطريقتين.`, done: R`الـ JSON بيقول [[false]] للأولى (ترتيب المفاتيح) و [[true]] للتانية و [[true]] للتالتة ([[NaN]] بيتحوّل [[null]])، و [[deepEqual]] بيقول [[true]] و [[false]] و [[false]]، والجدول فيه الست نتايج دول.` },
-            { lvl: 'تحدي', t: R`مسألة: اكتب [[diff(a, b)]] بترجّع لستة الـ paths اللي فيها اختلاف، بالـ recursion، و [[Object.is]] للقيم البسيطة.`, done: R`[[diff({ a: 1, b: { c: 2 } }, { a: 1, b: { c: 3 }, d: 4 })]] بيرجّع [["b.c", "d"]]، و [[diff(x, x)]] بيرجّع لستة فاضية، و key موجود في الأول بس بيظهر، والـ arrays بتطلع paths زي [["items.0"]].` },
+            { lvl: 'سريع', t: R`اتوقع بـ [[deepEqual]] بتاع الدرس: [[deepEqual([1, 2, 3], [1, 2, 3])]] و [[deepEqual({ a: 1, b: 2 }, { b: 2, a: 1 })]] و [[deepEqual({ a: undefined }, { b: undefined })]] و [[deepEqual(0, -0)]] و [[deepEqual(new Date(1), new Date(2))]].`, done: R`الناتج: [[true]] و [[true]] و [[false]] و [[false]] و [[true]]. الأخير مفاجأة: الـ Date ملوش keys خاصة بيه فالدالة بتشوف اتنين objects فاضيين، و 0 و -0 مختلفين عشان [[Object.is]]، وتقدر تقول إمتى ده يبقى bug.`, sol: R`**التوقع:** [[true]] و [[true]] و [[false]] و [[false]] و [[true]].
+
+~~~js deep-equal.js
+function deepEqual(a, b) {
+  if (Object.is(a, b)) return true;
+  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+  if (Array.isArray(a) !== Array.isArray(b)) return false;
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+  if (keysA.length !== keysB.length) return false;
+  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k]));
+}
+module.exports = { deepEqual };
+~~~
+
+~~~js predict.js
+const { deepEqual } = require("./deep-equal");
+console.log(deepEqual([1, 2, 3], [1, 2, 3]));
+console.log(deepEqual({ a: 1, b: 2 }, { b: 2, a: 1 }));
+console.log(deepEqual({ a: undefined }, { b: undefined }));
+console.log(deepEqual(0, -0));
+console.log(deepEqual(new Date(1), new Date(2)));
+console.log(Object.keys(new Date(1)));
+~~~
+
+~~~text الناتج (node predict.js)
+true
+true
+false
+false
+true
+[]
+~~~
+
+**كل سطر:**
+
+1. arrays نفس العناصر: [[Object.keys]] بيرجّع [[["0","1","2"]]] للاتنين، وكل عنصر [[Object.is]] بيقول true.
+2. الترتيب مش فارق: [[every]] بيلف على مفاتيح [[a]] ويدوّر على كل واحد في [[b]] بالاسم.
+3. [[{ a: undefined }]] و [[{ b: undefined }]]: عدد المفاتيح واحد، بس [[Object.hasOwn(b, "a")]] بـ false. من غير الفحص ده كان [[b.a]] هيطلع undefined ويساوي [[a.a]] ويقول true غلط.
+4. [[0]] و [[-0]]: [[Object.is(0, -0)]] بـ false (مع إن [[0 === -0]] بـ true)، وبعدها مش objects فبيرجع false.
+5. الـ Date: [[Object.keys(new Date(1))]] بـ array فاضية (السطر الأخير). الوقت جوه الـ Date في internal slot مش property، فالدالة شافت اتنين objects فاضيين وقالت true.
+
+**إمتى ده bug:** لو بتقارن state فيها تواريخ (مثلًا «الفورم اتغيّر؟» عشان تفعّل زرار الحفظ)، تغيير التاريخ لوحده مش هيتشاف. التصليح: [[if (a instanceof Date && b instanceof Date) return a.getTime() === b.getTime();]] قبل مقارنة المفاتيح، ونفس الفكرة لـ RegExp و Map و Set.
+
+**وإمتى 0 و -0 يبقوا مشكلة:** في الغالب عايزهم متساويين (زي [[===]])، فلو بتقارن داتا من فورم استخدم [[===]] للأرقام. [[Object.is]] اتاختار عشان [[NaN]] يساوي [[NaN]].
+
+**إجابة تتقال:** «deep equal بيقارن المفاتيح الخاصة بالـ recursion، فأي object حالته جوه internal slots زي Date و Map بيبان فاضي ولازم حالة خاصة ليه».` },
+            { lvl: 'تطبيق', t: R`قارن: ليه [[JSON.stringify(a) === JSON.stringify(b)]] مش deep equal؟ جرّب [[{ a: 1, b: 2 }]] مقابل [[{ b: 2, a: 1 }]]، و [[{ a: undefined }]] مقابل [[{}]]، و [[NaN]] مقابل [[null]] جوه array، واكتب جدول صغير بالنتيجة بالطريقتين.`, done: R`الـ JSON بيقول [[false]] للأولى (ترتيب المفاتيح) و [[true]] للتانية و [[true]] للتالتة ([[NaN]] بيتحوّل [[null]])، و [[deepEqual]] بيقول [[true]] و [[false]] و [[false]]، والجدول فيه الست نتايج دول.`, sol: R`~~~js json-vs-deep.js
+const { deepEqual } = require("./deep-equal");   // deep-equal.js بتاع الدرس
+const viaJSON = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+const cases = [
+  ["ترتيب المفاتيح", { a: 1, b: 2 }, { b: 2, a: 1 }],
+  ["undefined مقابل مفيش", { a: undefined }, {}],
+  ["NaN مقابل null", [NaN], [null]],
+];
+console.table(cases.map(([name, a, b]) => ({ الحالة: name, JSON: viaJSON(a, b), deepEqual: deepEqual(a, b) })));
+console.log(JSON.stringify({ a: 1, b: 2 }), JSON.stringify({ b: 2, a: 1 }));
+console.log(JSON.stringify({ a: undefined }), JSON.stringify([NaN]));
+~~~
+
+~~~text الناتج (node json-vs-deep.js)
+┌─────────┬────────────────────────┬───────┬───────────┐
+│ (index) │ الحالة                 │ JSON  │ deepEqual │
+├─────────┼────────────────────────┼───────┼───────────┤
+│ 0       │ 'ترتيب المفاتيح'       │ false │ true      │
+│ 1       │ 'undefined مقابل مفيش' │ true  │ false     │
+│ 2       │ 'NaN مقابل null'       │ true  │ false     │
+└─────────┴────────────────────────┴───────┴───────────┘
+{"a":1,"b":2} {"b":2,"a":1}
+{} [null]
+~~~
+
+**الجدول:**
+
+| الحالة | JSON | deepEqual | ليه الـ JSON غلط |
+|---|---|---|---|
+| [[{ a: 1, b: 2 }]] و [[{ b: 2, a: 1 }]] | false | true | النص بيتكتب بترتيب إضافة المفاتيح، فالنصين مختلفين مع إن الـ objects نفس المحتوى |
+| [[{ a: undefined }]] و [[{}]] | true | false | [[JSON.stringify]] بيشيل أي key قيمته undefined، فالاتنين بقوا [["{}"]] |
+| [[[NaN]]] و [[[null]]] | true | false | JSON مفيهوش NaN، فبيتكتب [[null]] |
+
+السطرين اللي تحت الجدول بيوروا النصوص نفسها، وده السبب بالظبط.
+
+**الـ JSON بيغلط في الاتجاهين:** بيقول «مختلفين» لحاجات متساوية (الترتيب)، وبيقول «متساويين» لحاجات مختلفة (undefined و NaN، وكمان Date بيبقى string، و Map و Set بيبقوا [["{}"]]، والدوال بتختفي). ولو فيه object بيشاور على نفسه بيرمي [[TypeError: Converting circular structure to JSON]].
+
+**إمتى الـ JSON مقبول:** لو الداتا أصلًا جاية من JSON (رد API) ومتولدة بنفس الكود، فالترتيب ثابت ومفيش undefined ولا NaN. بس مش في انترفيو، ومش كـ deep equal عام.
+
+**إجابة تتقال:** «stringify حساس لترتيب المفاتيح، وبيضيّع undefined وبيحوّل NaN لـ null، فبيدّي false غلط و true غلط».` },
+            { lvl: 'تحدي', t: R`مسألة: اكتب [[diff(a, b)]] بترجّع لستة الـ paths اللي فيها اختلاف، بالـ recursion، و [[Object.is]] للقيم البسيطة.`, done: R`[[diff({ a: 1, b: { c: 2 } }, { a: 1, b: { c: 3 }, d: 4 })]] بيرجّع [["b.c", "d"]]، و [[diff(x, x)]] بيرجّع لستة فاضية، و key موجود في الأول بس بيظهر، والـ arrays بتطلع paths زي [["items.0"]].`, sol: R`~~~js diff.js
+function diff(a, b, path = "") {
+  if (Object.is(a, b)) return [];
+  const bothObjects = a !== null && b !== null && typeof a === "object" && typeof b === "object"
+    && Array.isArray(a) === Array.isArray(b);
+  if (!bothObjects) return [path];                     // قيمة بسيطة مختلفة، أو نوع مختلف
+
+  const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
+  const out = [];
+  for (const k of keys) {
+    const p = path ? path + "." + k : k;
+    if (!Object.hasOwn(a, k) || !Object.hasOwn(b, k)) out.push(p);   // موجود في واحد بس
+    else out.push(...diff(a[k], b[k], p));
+  }
+  return out;
+}
+
+const x = { items: [1, 2], user: { name: "Sara" } };
+console.log(diff({ a: 1, b: { c: 2 } }, { a: 1, b: { c: 3 }, d: 4 }));
+console.log(diff(x, x));
+console.log(diff({ only: 1, same: 2 }, { same: 2 }));
+console.log(diff({ items: [1, 2, 3] }, { items: [1, 5] }));
+console.log(diff({ v: [1] }, { v: { 0: 1 } }));
+console.log(diff(1, 2));
+~~~
+
+~~~text الناتج (node diff.js)
+[ 'b.c', 'd' ]
+[]
+[ 'only' ]
+[ 'items.1', 'items.2' ]
+[ 'v' ]
+[ '' ]
+~~~
+
+**نفس هيكل [[deepEqual]] بس بيجمع بدل ما يقف:**
+
+- **[[Object.is(a, b)]] الأول:** لو نفس القيمة (أو نفس الـ object بالظبط) مفيش فرق، وده اللي خلّى [[diff(x, x)]] ترجع فاضية على طول من غير ما تلف.
+- **[[bothObjects]]:** لو واحد فيهم مش object، أو واحد array والتاني object، يبقى المكان ده كله مختلف ونرجّع الـ path بتاعه (حالة [[v]]: array مقابل object ليه نفس المفاتيح).
+- **[[new Set([...keys a, ...keys b])]]:** مفاتيح الاتنين من غير تكرار، عشان الـ key اللي في [[b]] بس ([[d]]) أو في [[a]] بس ([[only]]) يظهر.
+- **[[path ? path + "." + k : k]]:** أول مستوى من غير نقطة في الأول. والـ arrays مفاتيحها [["0"]] و [["1"]] فبتطلع [["items.1"]] لوحدها.
+- **السطر الأخير:** لو الجذر نفسه مختلف الـ path نص فاضي، يعني «القيمة كلها». لو عايزه أوضح رجّع [[["(root)"]]].
+
+**الغلطة الشائعة:** تلف على مفاتيح [[a]] بس (زي [[deepEqual]])، فالمفاتيح الجديدة في [[b]] متظهرش. أو تكتب [[a[k] === undefined]] بدل [[Object.hasOwn]]، فـ [[{ k: undefined }]] و [[{}]] يبانوا زي بعض.` },
           ],
           flag: "script",
           deep: {
@@ -1307,10 +3293,186 @@ save(1); save(2);                                   // فورًا: save 1
 const move = throttle((i) => console.log("move", i), 50);
 for (let i = 1; i <= 5; i++) move(i);               // فورًا move 1، وبعد 50ms move 5`,
           try: R`ضيف [[flush()]] للـ debounce: لو فيه نداء مستني، نفّذه دلوقتي حالًا وامسح الـ timer، ولو مفيش متعملش حاجة. وبعدين ضيف للـ throttle خيار [[{ trailing: false }]] بيلغي النداء الأخير. جرّب [[search("x"); search.flush();]] واتأكد إنه طبع فورًا ومطبعش تاني بعد 100ms.`,
+          ref: [
+            { t: "MDN: Debounce", url: "https://developer.mozilla.org/en-US/docs/Glossary/Debounce" },
+            { t: "MDN: Throttle", url: "https://developer.mozilla.org/en-US/docs/Glossary/Throttle" },
+            { t: "MDN: Window.setTimeout()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout" },
+            { t: "MDN: Window.clearTimeout()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/clearTimeout" },
+            { t: "Node.js: Class MockTimers (node:test)", url: "https://nodejs.org/api/test.html#class-mocktimers" },
+          ],
           practice: [
-            { lvl: 'سريع', t: R`اقرا وتوقّع: نفس الكتابة بتوصل للاتنين: [[const d = debounce((q) => console.log("debounce", q), 100)]] و [[const t = throttle((q) => console.log("throttle", q), 100)]]، والنداءات [[d(q); t(q);]] بتحصل عند 0 و 50 و 120 و 300ms بالنصوص [["a"]] و [["ab"]] و [["abc"]] و [["abcd"]] (اعملها بـ [[setTimeout]] لكل وقت). اكتب على ورقة اللي هيتطبع بالترتيب، وبعدين شغّل.`, done: R`الناتج في Node 24 (اتشغّل ٣ مرات وطلع نفس الترتيب): [[throttle a]] و [[throttle ab]] و [[throttle abc]] و [[debounce abc]] و [[throttle abcd]] و [[debounce abcd]]. وتقدر تقول ليه [["a"]] و [["ab"]] اختفوا من الـ debounce (كل نداء جديد بيلغي اللي قبله لحد ما ييجي سكوت 100ms)، وليه الـ throttle مضيّعش ولا كلمة.` },
-            { lvl: 'تطبيق', t: R`صلّح الكود البايظ: [[function debounceBad(fn, ms) { return (...a) => setTimeout(() => fn(...a), ms); }]] فيه غلطتين. جرّبه بـ [[const g = debounceBad(() => calls++, 10); g(); g(); g();]] وبعد 30ms اطبع [[calls]]، وبـ [[const o = { n: 7, f: debounceBad(function () { console.log(this?.n); }, 10) }; o.f();]].`, done: R`قبل التصليح [[calls]] بـ 3 (مفيش [[clearTimeout]] فكل نداء عمل timer لوحده) و [[this?.n]] بـ [[undefined]] (الـ arrow اللي راجعة مالهاش [[this]]، و [[fn(...a)]] بتنادي من غير object). بعد ما ترجّع [[function]] عادية وتحفظ الـ timer وتنادي [[fn.apply(this, a)]]: [[calls]] بـ 1 و [[this?.n]] بـ 7.` },
-            { lvl: 'تحدي', t: R`اكتب اختبار: ملف [[debounce.test.mjs]] بـ [[node:test]] بيختبر الاتنين من غير ما يستنى وقت حقيقي، بـ [[mock.timers.enable({ apis: ["setTimeout", "Date"] })]] و [[mock.timers.tick(ms)]]. على الأقل: debounce بينفّذ آخر نداء بس بعد [[ms]] من آخر نداء، و [[cancel()]] بيمنعه، و throttle بينفّذ الأول فورًا والأخير في آخر الفترة، و [[this]] بيوصل.`, done: R`[[node --test]] بيعدّي كل الاختبارات في أقل من ثانية (مش مستني 100ms بجد)، ولو شلت [[clearTimeout(timer)]] من الـ debounce اختبار واحد على الأقل بيقع، ولو شلت [[lastArgs]] من الـ throttle وخليته ينادي بالـ args الأولانية، اختبار «الأخير في آخر الفترة» بيقع.` },
+            { lvl: 'سريع', t: R`اقرا وتوقّع: نفس الكتابة بتوصل للاتنين: [[const d = debounce((q) => console.log("debounce", q), 100)]] و [[const t = throttle((q) => console.log("throttle", q), 100)]]، والنداءات [[d(q); t(q);]] بتحصل عند 0 و 50 و 120 و 300ms بالنصوص [["a"]] و [["ab"]] و [["abc"]] و [["abcd"]] (اعملها بـ [[setTimeout]] لكل وقت). اكتب على ورقة اللي هيتطبع بالترتيب، وبعدين شغّل.`, done: R`الناتج في Node 24 (اتشغّل ٣ مرات وطلع نفس الترتيب): [[throttle a]] و [[throttle ab]] و [[throttle abc]] و [[debounce abc]] و [[throttle abcd]] و [[debounce abcd]]. وتقدر تقول ليه [["a"]] و [["ab"]] اختفوا من الـ debounce (كل نداء جديد بيلغي اللي قبله لحد ما ييجي سكوت 100ms)، وليه الـ throttle مضيّعش ولا كلمة.`, sol: R`**التوقع على ورقة** (خط زمني، والـ debounce والـ throttle بتوع الدرس في [[timing.mjs]]):
+
+| الوقت | debounce (100ms) | throttle (100ms) |
+|---|---|---|
+| 0 | [["a"]]: timer لـ 100 | [["a"]]: فات أكتر من 100 من آخر تنفيذ ← **يطبع فورًا** |
+| 50 | [["ab"]]: يلغي timer الـ 100 ويعمل واحد لـ 150 | [["ab"]]: فاضل 50 ← timer لـ 100 |
+| 100 | | الـ timer ← **throttle ab** |
+| 120 | [["abc"]]: يلغي الـ 150 ويعمل واحد لـ 220 | [["abc"]]: آخر تنفيذ عند 100، فاضل 80 ← timer لـ 200 |
+| 200 | | **throttle abc** |
+| 220 | **debounce abc** (سكوت 100ms) | |
+| 300 | [["abcd"]]: timer لـ 400 | [["abcd"]]: فات 100 من 200 ← **يطبع فورًا** |
+| 400 | **debounce abcd** | |
+
+~~~js predict.mjs
+import { debounce, throttle } from "./timing.mjs";   // الدالتين من مثال الدرس مع export
+const t0 = Date.now();
+const at = () => String(Date.now() - t0).padStart(3) + "ms";
+const d = debounce((q) => console.log(at(), "debounce", q), 100);
+const t = throttle((q) => console.log(at(), "throttle", q), 100);
+for (const [ms, q] of [[0, "a"], [50, "ab"], [120, "abc"], [300, "abcd"]]) {
+  setTimeout(() => { d(q); t(q); }, ms);
+}
+~~~
+
+~~~text الناتج (node predict.mjs على Windows)
+  1ms throttle a
+111ms throttle ab
+219ms throttle abc
+235ms debounce abc
+328ms throttle abcd
+424ms debounce abcd
+~~~
+
+نفس الترتيب اللي على الورقة، والأوقات متأخرة شوية عن الجدول لأن كل [[setTimeout]] بيتأخر كام ms (على Windows دقة الـ timer حوالي 15ms).
+
+**ليه [["a"]] و [["ab"]] اختفوا من الـ debounce:** كل نداء بيعمل [[clearTimeout]] للي قبله. [["ab"]] جت بعد 50ms بس من [["a"]] فلغتها، و [["abc"]] جت بعد 70ms فلغت [["ab"]]. أول سكوت 100ms كان بعد [["abc"]]. الـ debounce = «استنى لما اليوزر يقف».
+
+**وليه الـ throttle مضيّعش ولا كلمة هنا:** النداءات كانت متباعدة كفاية إن كل واحد لقى فترة جديدة أو timer فاضي. لو كانوا جم ٣ في نفس الفترة كان هيطبع الأول والأخير بس (الـ throttle بتاع الدرس بيحفظ [[lastArgs]]). الـ throttle = «مرة كل 100ms بالكتير».
+
+**خلي بالك:** [[throttle abc]] (200) و [[debounce abc]] (220) بينهم 20ms بس على الورقة. شغّلت السكربت ١٢ مرة على Windows: ١١ مرة بالترتيب ده، ومرة اتبدّلوا الاتنين دول بسبب تأخير الـ timers. في الانترفيو قول الترتيب النظري ووضّح إن الفرق الصغير ده مش مضمون.
+
+**إجابة تتقال:** «debounce بينفّذ مرة بعد ما الأحداث تقف بآخر قيمة، وthrottle بينفّذ على فترات ثابتة وبيضمن أول وآخر قيمة؛ debounce للبحث والـ autosave، و throttle للـ scroll والـ resize».` },
+            { lvl: 'تطبيق', t: R`صلّح الكود البايظ: [[function debounceBad(fn, ms) { return (...a) => setTimeout(() => fn(...a), ms); }]] فيه غلطتين. جرّبه بـ [[const g = debounceBad(() => calls++, 10); g(); g(); g();]] وبعد 30ms اطبع [[calls]]، وبـ [[const o = { n: 7, f: debounceBad(function () { console.log(this?.n); }, 10) }; o.f();]].`, done: R`قبل التصليح [[calls]] بـ 3 (مفيش [[clearTimeout]] فكل نداء عمل timer لوحده) و [[this?.n]] بـ [[undefined]] (الـ arrow اللي راجعة مالهاش [[this]]، و [[fn(...a)]] بتنادي من غير object). بعد ما ترجّع [[function]] عادية وتحفظ الـ timer وتنادي [[fn.apply(this, a)]]: [[calls]] بـ 1 و [[this?.n]] بـ 7.`, sol: R`~~~js debounce-fix.js
+function debounceBad(fn, ms) { return (...a) => setTimeout(() => fn(...a), ms); }
+
+function debounceFixed(fn, ms) {
+  let timer = null;
+  return function (...a) {            // function عادية: this بييجي من اللي نادى
+    clearTimeout(timer);              // الغلطة الأولى: الغي الـ timer القديم
+    timer = setTimeout(() => fn.apply(this, a), ms);   // الغلطة التانية: وصّل this
+  };
+}
+
+for (const [name, make] of [["البايظ", debounceBad], ["المصلّح", debounceFixed]]) {
+  let calls = 0;
+  const g = make(() => calls++, 10);
+  g(); g(); g();
+  const o = { n: 7, f: make(function () { console.log(name, "this?.n =", this?.n); }, 10) };
+  o.f();
+  setTimeout(() => console.log(name, "calls =", calls), 30);
+}
+~~~
+
+~~~text الناتج (node debounce-fix.js)
+البايظ this?.n = undefined
+المصلّح this?.n = 7
+البايظ calls = 3
+المصلّح calls = 1
+~~~
+
+**الغلطة الأولى: مفيش [[clearTimeout]].** كل نداء بيعمل timer جديد ومحدش بيلغي القديم، فالـ ٣ نداءات = ٣ تنفيذات بعد 10ms. ده «delay» مش debounce. التصليح: متغير [[timer]] في الـ closure (بيتشارك بين كل النداءات) و [[clearTimeout(timer)]] قبل أي timer جديد. [[clearTimeout(null)]] أول مرة مبتعملش حاجة، فمش محتاج [[if]].
+
+**الغلطة التانية: [[this]] بيضيع في مكانين.**
+
+1. الدالة الراجعة arrow، والـ arrow مالهاش [[this]] بتاعها، فـ [[o.f()]] مبيوصّلش [[o]].
+2. [[fn(...a)]] بينادي [[fn]] من غير object، فحتى لو [[this]] وصل مش هيتبعت.
+
+التصليح: الدالة الراجعة [[function]] عادية (فـ [[o.f()]] تخلي [[this]] = [[o]])، وجوه الـ timer **arrow** (عشان تفضل شايفة [[this]] بتاع الدالة اللي برّه)، و [[fn.apply(this, a)]].
+
+**ليه [[this?.n]] مش [[this.n]]:** [[fn()]] من غير object في ملف CommonJS عادي (مش strict) بتخلي [[this]] = [[globalThis]]، ومفيهوش [[n]] فطلعت undefined. لكن في ES module أو strict mode [[this]] بيبقى undefined، و [[this.n]] كانت هترمي TypeError. الـ [[?.]] بتخلي الكود يطبع في الحالتين.
+
+**الانترفيور بيختبر إيه:** الـ closure (الـ timer المشترك) و [[this]] في الـ arrow مقابل function. **إجابة تتقال:** «لازم timer واحد في الـ closure بيتلغي كل نداء، والدالة الراجعة تبقى function عشان تاخد this وتعدّيه بـ apply».` },
+            { lvl: 'تحدي', t: R`اكتب اختبار: ملف [[debounce.test.mjs]] بـ [[node:test]] بيختبر الاتنين من غير ما يستنى وقت حقيقي، بـ [[mock.timers.enable({ apis: ["setTimeout", "Date"] })]] و [[mock.timers.tick(ms)]]. على الأقل: debounce بينفّذ آخر نداء بس بعد [[ms]] من آخر نداء، و [[cancel()]] بيمنعه، و throttle بينفّذ الأول فورًا والأخير في آخر الفترة، و [[this]] بيوصل.`, done: R`[[node --test]] بيعدّي كل الاختبارات في أقل من ثانية (مش مستني 100ms بجد)، ولو شلت [[clearTimeout(timer)]] من الـ debounce اختبار واحد على الأقل بيقع، ولو شلت [[lastArgs]] من الـ throttle وخليته ينادي بالـ args الأولانية، اختبار «الأخير في آخر الفترة» بيقع.`, sol: R`**[[timing.mjs]]:** الـ [[debounce]] والـ [[throttle]] من مثال الدرس زي ما هم، وقدام كل واحدة [[export]].
+
+~~~js debounce.test.mjs
+import { test, mock, beforeEach, afterEach } from "node:test";
+import assert from "node:assert/strict";
+import { debounce, throttle } from "./timing.mjs";
+
+beforeEach(() => mock.timers.enable({ apis: ["setTimeout", "Date"] }));
+afterEach(() => mock.timers.reset());
+
+test("debounce بينفّذ آخر نداء بس، بعد ms من آخر نداء", () => {
+  const fn = mock.fn();
+  const d = debounce(fn, 100);
+  d("a"); mock.timers.tick(50);
+  d("ab"); mock.timers.tick(99);
+  assert.equal(fn.mock.callCount(), 0);          // لسه 99ms من آخر نداء
+  mock.timers.tick(1);
+  assert.equal(fn.mock.callCount(), 1);
+  assert.deepEqual(fn.mock.calls[0].arguments, ["ab"]);
+});
+
+test("cancel بيمنع التنفيذ", () => {
+  const fn = mock.fn();
+  const d = debounce(fn, 100);
+  d(1); d.cancel();
+  mock.timers.tick(500);
+  assert.equal(fn.mock.callCount(), 0);
+});
+
+test("throttle: الأول فورًا والأخير في آخر الفترة", () => {
+  const fn = mock.fn();
+  const t = throttle(fn, 100);
+  t(1);
+  assert.deepEqual(fn.mock.calls.map((c) => c.arguments[0]), [1]);
+  mock.timers.tick(30); t(2);
+  mock.timers.tick(30); t(3);
+  mock.timers.tick(39);
+  assert.equal(fn.mock.callCount(), 1);          // لسه 99ms
+  mock.timers.tick(1);
+  assert.deepEqual(fn.mock.calls.map((c) => c.arguments[0]), [1, 3]);
+});
+
+test("this بيوصل في الاتنين", () => {
+  const seen = [];
+  const o = { n: 7 };
+  o.d = debounce(function () { seen.push(this.n); }, 10);
+  o.t = throttle(function () { seen.push(this.n); }, 10);
+  o.d(); o.t();
+  mock.timers.tick(10);
+  assert.deepEqual(seen, [7, 7]);
+});
+~~~
+
+~~~text الناتج (node --test)
+✔ debounce بينفّذ آخر نداء بس، بعد ms من آخر نداء (3.1017ms)
+✔ cancel بيمنع التنفيذ (0.3557ms)
+✔ throttle: الأول فورًا والأخير في آخر الفترة (0.4724ms)
+✔ this بيوصل في الاتنين (0.4465ms)
+ℹ tests 4
+ℹ pass 4
+ℹ fail 0
+ℹ duration_ms 86.4884
+~~~
+
+الأربع اختبارات خلصوا في أقل من 4ms مع إنهم «بيستنوا» أكتر من 700ms من الوقت الوهمي.
+
+**إزاي الـ mock بيشتغل:**
+
+- **[[mock.timers.enable({ apis: ["setTimeout", "Date"] })]]:** بيبدّل [[setTimeout]] و [[clearTimeout]] و [[Date.now()]] بنسخ وهمية الوقت فيها واقف لحد ما انت تحرّكه. لازم [[Date]] كمان لأن الـ throttle بيحسب [[Date.now() - last]]؛ من غيرها الـ throttle بيحسب الفترة بالساعة الحقيقية والـ timer بالساعة الوهمية، والاتنين مبيتفقوش (جرّبتها تحت: اختبار الـ throttle وقع).
+- **[[mock.timers.tick(ms)]]:** بيقدّم الساعة الوهمية ويشغّل كل timer وقته جه، sync.
+- **[[mock.fn()]]:** دالة بتسجّل كل نداء: [[callCount()]] و [[calls[i].arguments]].
+- **[[afterEach(() => mock.timers.reset())]]:** يرجّع الـ timers الحقيقية، عشان اختبار ميأثّرش على اللي بعده.
+
+**الحدود اللي بتمسك الأخطاء:** الاختبار بيقف عند 99ms ويتأكد إن مفيش تنفيذ، وبعدين 1ms ويتأكد إن فيه. اختبار بيستنى 500ms وخلاص كان هيعدّي على نسخ غلط كتير.
+
+**جرّبت أبوّظ الكود عشان أتأكد إن الاختبارات بتمسك:**
+
+~~~text الناتج (شلت clearTimeout(timer) من الـ debounce)
+✖ debounce بينفّذ آخر نداء بس، بعد ms من آخر نداء
+~~~
+
+~~~text الناتج (خليت الـ throttle ينادي بأول args بدل lastArgs)
+✖ throttle: الأول فورًا والأخير في آخر الفترة
+~~~
+
+~~~text الناتج (شلت "Date" من apis)
+✖ throttle: الأول فورًا والأخير في آخر الفترة
+~~~
+
+**الغلطة الشائعة:** تنسى [[Date]] في [[apis]] (التجربة اللي فوق)، أو تستخدم [[await new Promise(r => setTimeout(r, 100))]] في الاختبار (أبطأ، ومش ثابت على CI).` },
           ],
           flag: "script",
           deep: {
@@ -1564,10 +3726,169 @@ console.log(square(4), square(4), square(5), calls); // 16 16 25 2
 const fib = memoize((n) => (n < 2 ? n : fib(n - 1) + fib(n - 2)));
 console.log(fib(50));                                 // 12586269025`,
           try: R`ضيف خيار [[max]]: الـ cache ميشيلش أكتر من [[max]] نتيجة، ولما يتملي يمسح **أقدم واحدة اتستخدمت** (LRU). الـ [[Map]] بتحافظ على ترتيب الإضافة، فلما تقرا مفتاح امسحه وحطه تاني عشان يروح للآخر، والأقدم يبقى [[cache.keys().next().value]]. اكتب [[memoize]] الأساسية في المربع اللي تحت ودوس «شغّل واختبر».`,
+          ref: [
+            { t: "MDN: Memoization", url: "https://developer.mozilla.org/en-US/docs/Glossary/Memoization" },
+            { t: "MDN: Map", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map" },
+            { t: "MDN: Closures", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Closures" },
+          ],
+          pre: [
+            { to: "js/Map و Set", why: R`الـ cache [[Map]] و [[has]] بيفرّق بين «مش موجود» و «موجود وقيمته falsy»` },
+          ],
           practice: [
-            { lvl: 'سريع', t: R`قارن وقيس: [[function slowFib(n) { return n < 2 ? n : slowFib(n - 1) + slowFib(n - 2); }]]. قيس بـ [[performance.now()]] تلات حاجات: [[slowFib(32)]]، و [[const wrapped = memoize(slowFib)]] ونداء [[wrapped(32)]] مرتين، و [[fib(32)]] بتاع الدرس.`, done: R`على جهازي (Node 24): [[slowFib(32)]] حوالي 21ms، و [[wrapped(32)]] أول مرة حوالي 22ms (مفيش أي فرق!) وتاني مرة 0.008ms، و [[fib(32)]] بتاع الدرس 0.1ms. وتقدر تشرح ليه: [[slowFib]] بتنادي نفسها مش [[wrapped]]، فالـ recursion جوه مبيعدّيش على الـ cache خالص؛ الـ memo بيفيد الـ recursion بس لو الدالة بتنادي النسخة الـ memoized.` },
-            { lvl: 'تطبيق', t: R`صلّح الكود البايظ: [[const bad = (fn) => { const c = {}; return (x) => c[x] || (c[x] = fn(x)); };]] فيه باج لما الدالة ترجّع [[0]] أو [[""]] أو [[false]]. وكمان نسخة بتعمل المفتاح [[args.join()]]: جرّب [[m(1, 2)]] و [[m("1,2")]].`, done: R`مع [[bad(() => 0)]] ونداء [[z(1)]] ٣ مرات، الدالة الأصلية بتتنادى ٣ مرات مش مرة (الـ [[0]] falsy فالـ [[||]] بيحسب تاني)، وبعد ما تستخدم [[Map]] و [[has]] بتتنادى مرة. و [[[1, 2].join()]] و [[["1,2"].join()]] الاتنين [["1,2"]] فالنداءين بياخدوا نفس النتيجة غلط، و [[JSON.stringify]] بيفرّق بينهم: الأول بيبقى [[[1,2]]] والتاني فيه علامات التنصيص حوالين [["1,2"]].` },
-            { lvl: 'تحدي', t: R`محاكاة: [[memoizeAsync(fn)]] لدالة بتجيب يوزر من API (اعملها [[async (id) => { hits++; if (id < 0) throw new Error("bad id"); return { id }; }]]). المطلوب: نداءين في نفس اللحظة لنفس [[id]] يعملوا request واحد بس (احفظ الـ Promise نفسه مش النتيجة)، ولو الـ Promise اترفض يتشال من الـ cache عشان المحاولة الجاية تجرّب تاني.`, done: R`[[await Promise.all([getUser(1), getUser(1)])]] بيرجّع نفس الـ object مرتين ([[a === b]] بـ [[true]]) و [[hits]] بـ 1. وبـ [[memoize]] بتاع الدرس زي ما هو، [[getUser(-1)]] مرتين بيرمي [[bad id]] مرتين بس [[hits]] بيزيد مرة واحدة (الفشل اتحفظ!). بعد ما تضيف [[.catch((e) => { cache.delete(key); throw e; })]] المحاولة التانية بتنادي الدالة تاني فعلًا.` },
+            { lvl: 'سريع', t: R`قارن وقيس: [[function slowFib(n) { return n < 2 ? n : slowFib(n - 1) + slowFib(n - 2); }]]. قيس بـ [[performance.now()]] تلات حاجات: [[slowFib(32)]]، و [[const wrapped = memoize(slowFib)]] ونداء [[wrapped(32)]] مرتين، و [[fib(32)]] بتاع الدرس.`, done: R`على جهازي (Node 24): [[slowFib(32)]] حوالي 21ms، و [[wrapped(32)]] أول مرة حوالي 22ms (مفيش أي فرق!) وتاني مرة 0.008ms، و [[fib(32)]] بتاع الدرس 0.1ms. وتقدر تشرح ليه: [[slowFib]] بتنادي نفسها مش [[wrapped]]، فالـ recursion جوه مبيعدّيش على الـ cache خالص؛ الـ memo بيفيد الـ recursion بس لو الدالة بتنادي النسخة الـ memoized.`, sol: R`~~~js memo.js
+function memoize(fn, keyFn = (...args) => JSON.stringify(args)) {
+  const cache = new Map();
+  return function (...args) {
+    const key = keyFn(...args);
+    if (cache.has(key)) return cache.get(key);
+    const result = fn.apply(this, args);
+    cache.set(key, result);
+    return result;
+  };
+}
+module.exports = { memoize };
+~~~
+
+~~~js fib-bench.js
+const { memoize } = require("./memo");   // memoize بتاع الدرس
+
+function slowFib(n) { return n < 2 ? n : slowFib(n - 1) + slowFib(n - 2); }
+const wrapped = memoize(slowFib);
+const fib = memoize((n) => (n < 2 ? n : fib(n - 1) + fib(n - 2)));   // بتنادي النسخة الـ memoized
+
+function time(label, f) {
+  const t = performance.now();
+  const r = f();
+  console.log(label.padEnd(18), (performance.now() - t).toFixed(3).padStart(8), "ms", r);
+}
+time("slowFib(32)", () => slowFib(32));
+time("wrapped(32) أول", () => wrapped(32));
+time("wrapped(32) تاني", () => wrapped(32));
+time("fib(32) الدرس", () => fib(32));
+~~~
+
+~~~text الناتج (node fib-bench.js، Node 24 على Windows)
+slowFib(32)          20.360 ms 2178309
+wrapped(32) أول      20.480 ms 2178309
+wrapped(32) تاني      0.048 ms 2178309
+fib(32) الدرس         0.078 ms 2178309
+~~~
+
+(تشغيلة تانية: 18.8 و 19.9 و 0.041 و 0.073. الأرقام بتتغير شوية بين الأجهزة والتشغيلات، بس الشكل ثابت.)
+
+**ليه [[wrapped(32)]] أول مرة نفس وقت [[slowFib(32)]] بالظبط:** [[memoize(slowFib)]] حطت cache **حوالين النداء الأولاني بس**. جوه [[slowFib]] السطر [[slowFib(n - 1) + slowFib(n - 2)]] بينادي الاسم [[slowFib]]، يعني الدالة الأصلية، مش [[wrapped]]. فالـ ٧ مليون نداء اللي جوه (7049155 بالظبط، عدّيتهم بعدّاد) محدش فيهم شاف الـ cache. الـ cache اتملى بقيمة واحدة بس ([[32]])، وده سبب إن تاني مرة 0.05ms.
+
+**ليه [[fib]] بتاع الدرس سريعة من أول مرة:** الدالة بتنادي [[fib]]، والاسم ده هو النسخة الـ memoized نفسها. فكل [[fib(k)]] بيتحسب مرة واحدة: ٣٣ حساب بدل ٧ مليون.
+
+**الانترفيور بيختبر إيه:** إنك فاهم إن الـ memoize بيغلّف النداء من برّه ومش بيغيّر جسم الدالة. **إجابة تتقال:** «الـ memo بيفيد الـ recursion بس لو الـ recursion بيعدّي على النسخة الـ memoized، يعني الدالة تنادي الاسم اللي متخزّن فيه الغلاف».
+
+**الغلطة الشائعة:** تقيس النداء التاني بس وتقول «الـ memo خلّاها أسرع ٤٠٠ مرة» وانت أصلًا مستفدتش حاجة في أول نداء.` },
+            { lvl: 'تطبيق', t: R`صلّح الكود البايظ: [[const bad = (fn) => { const c = {}; return (x) => c[x] || (c[x] = fn(x)); };]] فيه باج لما الدالة ترجّع [[0]] أو [[""]] أو [[false]]. وكمان نسخة بتعمل المفتاح [[args.join()]]: جرّب [[m(1, 2)]] و [[m("1,2")]].`, done: R`مع [[bad(() => 0)]] ونداء [[z(1)]] ٣ مرات، الدالة الأصلية بتتنادى ٣ مرات مش مرة (الـ [[0]] falsy فالـ [[||]] بيحسب تاني)، وبعد ما تستخدم [[Map]] و [[has]] بتتنادى مرة. و [[[1, 2].join()]] و [[["1,2"].join()]] الاتنين [["1,2"]] فالنداءين بياخدوا نفس النتيجة غلط، و [[JSON.stringify]] بيفرّق بينهم: الأول بيبقى [[[1,2]]] والتاني فيه علامات التنصيص حوالين [["1,2"]].`, sol: R`~~~js memo-bugs.js
+const bad = (fn) => { const c = {}; return (x) => c[x] || (c[x] = fn(x)); };
+
+let calls = 0;
+const z = bad(() => { calls++; return 0; });
+z(1); z(1); z(1);
+console.log("bad مع 0: الدالة اتنادت", calls, "مرات");
+
+const good = (fn) => {
+  const c = new Map();
+  return (x) => {
+    if (c.has(x)) return c.get(x);   // has بيفرّق بين «مش موجود» و «موجود وقيمته falsy»
+    const r = fn(x);
+    c.set(x, r);
+    return r;
+  };
+};
+calls = 0;
+const z2 = good(() => { calls++; return 0; });
+z2(1); z2(1); z2(1);
+console.log("good مع 0: الدالة اتنادت", calls, "مرة");
+
+// مفتاح بـ join
+const memoJoin = (fn) => { const c = new Map(); return (...a) => { const k = a.join(); if (!c.has(k)) c.set(k, fn(...a)); return c.get(k); }; };
+const describe = (...a) => a.length + " args: " + a.map((v) => typeof v).join("+");
+const m = memoJoin(describe);
+console.log(m(1, 2), "|", m("1,2"));
+console.log(JSON.stringify([1, 2]), JSON.stringify(["1,2"]));
+~~~
+
+~~~text الناتج (node memo-bugs.js)
+bad مع 0: الدالة اتنادت 3 مرات
+good مع 0: الدالة اتنادت 1 مرة
+2 args: number+number | 2 args: number+number
+[1,2] ["1,2"]
+~~~
+
+**الباج الأول: [[c[x] || ...]].** الـ [[||]] بيسأل «القيمة truthy؟» مش «القيمة موجودة؟». الدالة رجّعت [[0]]، فـ [[c[1]]] بقت 0، وكل نداء بعد كده شاف 0 falsy وحسب تاني. نفس الكلام مع [[""]] و [[false]] و [[null]] و [[NaN]]. التصليح: [[Map]] و [[has]]، لأن [[has]] بيرد على سؤال الوجود بس.
+
+**وليه [[Map]] مش object:** مفاتيح الـ object بتتحوّل strings، فـ [[c[1]]] و [[c["1"]]] نفس المكان. والـ object فيه مفاتيح موروثة: [[c["toString"]]] موجودة من الأول وهترجّع دالة كأنها في الـ cache.
+
+**الباج التاني: [[a.join()]].** [[[1, 2].join()]] و [[["1,2"].join()]] الاتنين [["1,2"]]. السطر التالت بيثبت: [[m("1,2")]] رجّعت نتيجة [[m(1, 2)]] المتخزّنة ([["2 args: number+number"]]) مع إنها arg واحد string، والمفروض [["1 args: string"]]. [[JSON.stringify]] بيحافظ على النوع والحدود (السطر الأخير): الأرقام من غير تنصيص، والـ string بتنصيص، فالمفتاحين مختلفين.
+
+**الانترفيور بيختبر إيه:** إنك عارف إن الـ cache لازم يفرّق بين «مفيش» و «فيه قيمة falsy»، وإن المفتاح لازم يبقى فريد. **إجابة تتقال:** «بستخدم Map و has بدل ||، ومفتاح JSON.stringify بدل join عشان الأنواع والفواصل؛ ولو الـ arg object واحد بستخدم الـ object نفسه مفتاح في Map أو WeakMap».` },
+            { lvl: 'تحدي', t: R`محاكاة: [[memoizeAsync(fn)]] لدالة بتجيب يوزر من API (اعملها [[async (id) => { hits++; if (id < 0) throw new Error("bad id"); return { id }; }]]). المطلوب: نداءين في نفس اللحظة لنفس [[id]] يعملوا request واحد بس (احفظ الـ Promise نفسه مش النتيجة)، ولو الـ Promise اترفض يتشال من الـ cache عشان المحاولة الجاية تجرّب تاني.`, done: R`[[await Promise.all([getUser(1), getUser(1)])]] بيرجّع نفس الـ object مرتين ([[a === b]] بـ [[true]]) و [[hits]] بـ 1. وبـ [[memoize]] بتاع الدرس زي ما هو، [[getUser(-1)]] مرتين بيرمي [[bad id]] مرتين بس [[hits]] بيزيد مرة واحدة (الفشل اتحفظ!). بعد ما تضيف [[.catch((e) => { cache.delete(key); throw e; })]] المحاولة التانية بتنادي الدالة تاني فعلًا.`, sol: R`~~~js memo-async.js
+const { memoize } = require("./memo");   // memoize بتاع الدرس
+
+let hits = 0;
+const fetchUser = async (id) => {
+  hits++;
+  await new Promise((r) => setTimeout(r, 20));      // كأنه request
+  if (id < 0) throw new Error("bad id");
+  return { id };
+};
+
+function memoizeAsync(fn) {
+  const cache = new Map();
+  return function (key) {
+    if (cache.has(key)) return cache.get(key);
+    const p = Promise.resolve()
+      .then(() => fn.call(this, key))
+      .catch((e) => { cache.delete(key); throw e; });   // الفشل ميتحفظش
+    cache.set(key, p);                                   // الـ Promise نفسه، قبل ما يخلص
+    return p;
+  };
+}
+
+async function tryTwice(label, getUser) {
+  hits = 0;
+  for (let k = 0; k < 2; k++) {
+    try { await getUser(-1); } catch (e) { console.log(label, "رمى:", e.message); }
+  }
+  console.log(label, "hits =", hits);
+}
+
+async function main() {
+  const getUser = memoizeAsync(fetchUser);
+  const [a, b] = await Promise.all([getUser(1), getUser(1)]);
+  console.log("a === b:", a === b, "hits =", hits);
+
+  await tryTwice("memoize الدرس", memoize(fetchUser));
+  await tryTwice("memoizeAsync", memoizeAsync(fetchUser));
+}
+main();
+~~~
+
+~~~text الناتج (node memo-async.js)
+a === b: true hits = 1
+memoize الدرس رمى: bad id
+memoize الدرس رمى: bad id
+memoize الدرس hits = 1
+memoizeAsync رمى: bad id
+memoizeAsync رمى: bad id
+memoizeAsync hits = 2
+~~~
+
+**ليه نخزّن الـ Promise مش النتيجة:** النداء التاني لـ [[getUser(1)]] حصل في نفس اللحظة، والأول لسه مستني الـ request (20ms). لو بنخزّن النتيجة بعد ما ترجع، الـ cache كان هيبقى فاضي ساعة النداء التاني فيعمل request تاني. لما بنعمل [[cache.set(key, p)]] **sync** قبل أي await، النداء التاني بيلاقي نفس الـ Promise ويستناه. والنتيجة: [[hits = 1]] والاتنين نفس الـ object ([[a === b]]). الفكرة دي اسمها request deduplication.
+
+**مشكلة [[memoize]] بتاع الدرس مع async:** هو كمان بيخزّن اللي الدالة رجّعته، واللي رجع Promise، فالـ dedup شغال. بس لما الـ Promise يترفض بيفضل في الـ cache مرفوض: المحاولة التانية رمت [[bad id]] من غير ما تنادي الدالة ([[hits = 1]]). لو النت كان قاطع لحظة، اليوزر ده هيفضل فاشل لحد ما الصفحة تتعمل refresh.
+
+**التصليح:** [[.catch((e) => { cache.delete(key); throw e; })]]: لو فشل امسح المفتاح و**ارمي تاني** عشان اللي نادى يعرف إنه فشل. في [[memoizeAsync]] المحاولة التانية نادت الدالة فعلًا ([[hits = 2]]).
+
+- **[[Promise.resolve().then(() => fn(...))]]:** لو [[fn]] رمت sync قبل ما ترجّع Promise، بيبقى رفض عادي ويتمسح من الـ cache برده.
+- **[[throw e]] جوه الـ catch:** من غيرها الـ catch هيحوّل الرفض لنجاح بقيمة [[undefined]]، واللي نادى هيفتكر إنه جاب يوزر.
+
+**الغلطة الشائعة:** [[const v = await fn(key); cache.set(key, v)]]: الـ cache بيتملا بعد ما الـ request يرجع، فأي نداءات في نفس الوقت بتعمل requests مكررة.` },
           ],
           flag: "script",
           deep: {
@@ -1814,10 +4135,137 @@ console.log(a.born instanceof Date, a.tags.has("admin"), a.scores[1] !== user.sc
 class Point { constructor(x) { this.x = x; } double() { return this.x * 2; } }
 console.log(deepClone(new Point(3)).double(), structuredClone(new Point(3)) instanceof Point); // 6 false`,
           try: R`جرّب [[structuredClone({ save() {} })]] واقرا الـ error، وبعدين نفس الـ object بـ [[deepClone]] بتاعك. وبعدين اعمل object فيه حتتين بيشاوروا على نفس الـ array ([[const shared = [1]; const o = { x: shared, y: shared };]]) واتأكد إن في النسخة [[c.x === c.y]] لسه [[true]]. اكتب [[deepClone]] في المربع اللي تحت ودوس «شغّل واختبر».`,
+          ref: [
+            { t: "MDN: Window.structuredClone()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/structuredClone" },
+            { t: "MDN: The structured clone algorithm", url: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm" },
+            { t: "MDN: WeakMap", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap" },
+            { t: "MDN: JSON.stringify()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify" },
+          ],
+          pre: [
+            { to: "js/WeakMap و WeakSet", why: R`الـ [[seen]] اللي بيمنع اللف للأبد على الـ circular هو [[WeakMap]]` },
+            { to: "js/JSON", why: R`الدرس بيقارن بـ [[JSON.parse(JSON.stringify(x))]] وبيوري هو بيبوّظ إيه` },
+          ],
           practice: [
-            { lvl: 'سريع', t: R`اقرا وتوقّع: [[const o = { d: new Date(0), u: undefined, n: NaN, m: new Map([ [1, 2] ]) }; const o2 = JSON.parse(JSON.stringify(o)); console.log(o2, typeof o2.d);]]، وبعدين [[const c = {}; c.c = c; JSON.stringify(c);]]. اكتب الناتج على ورقة قبل ما تشغّل.`, done: R`الناتج في Node 24: [[{ d: '1970-01-01T00:00:00.000Z', n: null, m: {} } string]]: الـ Date بقت نص، و [[u]] اختفى خالص، و [[NaN]] بقى [[null]]، والـ Map بقت object فاضي. والتاني بيرمي [[TypeError]] رسالته بتبدأ بـ [[Converting circular structure to JSON]]. وتقدر تقول ٤ حاجات JSON بيبوّظها في النسخ.` },
-            { lvl: 'تطبيق', t: R`صلّح الكود البايظ: نسخة [[deepClone]] فيها [[seen.set(value, out)]] بعد اللفة على المفاتيح مش قبلها (يعني بعد ما ينسخ العيال). جرّبها على [[const o = { v: 1 }; o.self = o;]].`, done: R`قبل التصليح بترمي [[RangeError: Maximum call stack size exceeded]]: لما بتوصل لـ [[o.self]] الـ [[seen]] لسه فاضي، فبتبدأ تنسخ [[o]] من الأول للأبد. بعد ما تنقل [[seen.set]] قبل اللفة: [[c.self === c]] بـ [[true]]، وتقدر تشرح في سطر ليه لازم تسجّل النسخة **قبل** ما تنزل جوه.` },
-            { lvl: 'تحدي', t: R`قارن وقيس: array فيها ١٠٠ ألف object بالشكل [[{ id: i, name: "user" + i, tags: ["a", "b"], meta: { score: i % 7 } }]]. قيس بـ [[performance.now()]] الوقت بتاع [[deepClone]] و [[structuredClone]] و [[JSON.parse(JSON.stringify(x))]]، كل واحدة مرتين.`, done: R`عندي (Node 24، ويندوز 11) طلع [[deepClone]] حوالي 190–210ms، و [[structuredClone]] حوالي 205ms، و JSON حوالي 100–110ms. يعني JSON أسرع **للداتا البسيطة** دي، بس بيبوّظ Date و Map و undefined (التمرين الأول). كتبت الأرقام بتاعتك، وجملة إمتى تستخدم أنهي واحدة.` },
+            { lvl: 'سريع', t: R`اقرا وتوقّع: [[const o = { d: new Date(0), u: undefined, n: NaN, m: new Map([ [1, 2] ]) }; const o2 = JSON.parse(JSON.stringify(o)); console.log(o2, typeof o2.d);]]، وبعدين [[const c = {}; c.c = c; JSON.stringify(c);]]. اكتب الناتج على ورقة قبل ما تشغّل.`, done: R`الناتج في Node 24: [[{ d: '1970-01-01T00:00:00.000Z', n: null, m: {} } string]]: الـ Date بقت نص، و [[u]] اختفى خالص، و [[NaN]] بقى [[null]]، والـ Map بقت object فاضي. والتاني بيرمي [[TypeError]] رسالته بتبدأ بـ [[Converting circular structure to JSON]]. وتقدر تقول ٤ حاجات JSON بيبوّظها في النسخ.`, sol: R`**التوقع:** الـ Date تبقى نص، و [[u]] يختفي، و [[NaN]] يبقى [[null]]، والـ Map تبقى [[{}]]. والتاني TypeError.
+
+~~~js json-clone.js
+const o = { d: new Date(0), u: undefined, n: NaN, m: new Map([[1, 2]]) };
+const o2 = JSON.parse(JSON.stringify(o));
+console.log(o2, typeof o2.d);
+
+const c = {}; c.c = c;
+try { JSON.stringify(c); } catch (e) { console.log(e.name + ":", e.message); }
+~~~
+
+~~~text الناتج (node json-clone.js، Node 24)
+{ d: '1970-01-01T00:00:00.000Z', n: null, m: {} } string
+TypeError: Converting circular structure to JSON
+    --> starting at object with constructor 'Object'
+    --- property 'c' closes the circle
+~~~
+
+**الـ ٤ حاجات اللي JSON بوّظها، وليه:**
+
+| الحقل | بقى | السبب |
+|---|---|---|
+| [[d: new Date(0)]] | نص ISO | [[Date]] عنده [[toJSON()]] بيرجّع نص، و [[JSON.parse]] مبيعرفش إن النص ده كان تاريخ |
+| [[u: undefined]] | اختفى | JSON مفيهوش undefined، فـ stringify بيشيل الـ key كله |
+| [[n: NaN]] | [[null]] | JSON مفيهوش NaN ولا Infinity، فبيكتبهم null |
+| [[m: new Map(...)]] | [[{}]] | stringify بيكتب الـ own enumerable properties بس، والـ Map محتواها مش properties |
+
+وكمان (مش في التمرين): الدوال والـ Symbols بتختفي، والـ Set بتبقى [[{}]]، والـ class instance بيرجع object عادي من غير methods، و BigInt بيرمي TypeError.
+
+**الـ circular:** stringify بيمشي جوه الـ object، و [[c.c]] بيرجّعه لنفس الـ object، فبيكتشف الدايرة ويرمي بدل ما يلف للأبد. رسالة Node بتقولك الدايرة فين بالظبط ([[property 'c' closes the circle]])، ودي مفيدة لما تلاقيها في لوج حقيقي.
+
+**الانترفيور بيختبر إيه:** إنك مش هتقول «[[JSON.parse(JSON.stringify())]] بيعمل deep clone» وتسكت. **إجابة تتقال:** «بيشتغل للداتا البسيطة بس: بيحوّل Date لنص، ويشيل undefined والدوال، ويحوّل NaN لـ null و Map و Set لـ object فاضي، وبيقع على الـ circular؛ البديل الجاهز structuredClone».` },
+            { lvl: 'تطبيق', t: R`صلّح الكود البايظ: نسخة [[deepClone]] فيها [[seen.set(value, out)]] بعد اللفة على المفاتيح مش قبلها (يعني بعد ما ينسخ العيال). جرّبها على [[const o = { v: 1 }; o.self = o;]].`, done: R`قبل التصليح بترمي [[RangeError: Maximum call stack size exceeded]]: لما بتوصل لـ [[o.self]] الـ [[seen]] لسه فاضي، فبتبدأ تنسخ [[o]] من الأول للأبد. بعد ما تنقل [[seen.set]] قبل اللفة: [[c.self === c]] بـ [[true]]، وتقدر تشرح في سطر ليه لازم تسجّل النسخة **قبل** ما تنزل جوه.`, sol: R`~~~js seen-order.js
+function deepCloneBad(value, seen = new WeakMap()) {
+  if (typeof value !== "object" || value === null) return value;
+  if (seen.has(value)) return seen.get(value);
+  const out = Array.isArray(value) ? [] : {};
+  for (const key of Object.keys(value)) out[key] = deepCloneBad(value[key], seen);
+  seen.set(value, out);                       // متأخر: العيال اتنسخوا خلاص
+  return out;
+}
+function deepCloneFixed(value, seen = new WeakMap()) {
+  if (typeof value !== "object" || value === null) return value;
+  if (seen.has(value)) return seen.get(value);
+  const out = Array.isArray(value) ? [] : {};
+  seen.set(value, out);                       // سجّل النسخة الأول، وهي لسه فاضية
+  for (const key of Object.keys(value)) out[key] = deepCloneFixed(value[key], seen);
+  return out;
+}
+
+const o = { v: 1 }; o.self = o;
+try { deepCloneBad(o); } catch (e) { console.log("البايظ:", e.name + ":", e.message); }
+const c = deepCloneFixed(o);
+console.log("المصلّح:", c.self === c, c !== o, c.v);
+~~~
+
+~~~text الناتج (node seen-order.js)
+البايظ: RangeError: Maximum call stack size exceeded
+المصلّح: true true 1
+~~~
+
+(النسختين مختصرين للـ objects والـ arrays عشان الفرق يبان؛ في [[deepClone]] بتاع الدرس نفس القاعدة متطبقة في فرع الـ Map والـ Set والـ object.)
+
+**البايظ خطوة خطوة:** [[deepCloneBad(o)]] ← [[seen]] فاضي، فبيعمل [[out]] ويلف على المفاتيح ← يوصل لـ [[self]] وقيمته [[o]] نفسه ← بينادي [[deepCloneBad(o)]] تاني، و [[seen]] **لسه فاضي** لأن [[seen.set]] مستني اللفة تخلص ← نسخة جديدة ولفة جديدة ← ... لحد ما الـ call stack يتملي.
+
+**التصليح:** [[seen.set(value, out)]] قبل اللفة. لما نوصل لـ [[o.self]]، [[seen.has(o)]] بـ true، فبنرجّع [[out]] اللي لسه بنملاه، وده بالظبط اللي عايزينه: [[c.self]] بيشاور على [[c]] نفسه.
+
+**في سطر:** لازم تسجّل النسخة قبل ما تنزل جوه، لأن العيال ممكن يشاوروا على الأب، ولازم يلاقوا نسخته موجودة حتى لو لسه ناقصة.
+
+**ليه [[WeakMap]]:** مفاتيحه objects، ومبيمنعش الـ garbage collector إنه يمسحهم بعد ما النسخ يخلص.
+
+**الغلطة الشائعة:** تحط [[seen.set]] في الآخر «عشان النسخة تبقى كاملة». الكمال مش مهم هنا: الـ reference هو اللي بيتسجّل، وأي حاجة هتتضاف للـ object بعد كده هتبان من كل مكان بيشاور عليه.` },
+            { lvl: 'تحدي', t: R`قارن وقيس: array فيها ١٠٠ ألف object بالشكل [[{ id: i, name: "user" + i, tags: ["a", "b"], meta: { score: i % 7 } }]]. قيس بـ [[performance.now()]] الوقت بتاع [[deepClone]] و [[structuredClone]] و [[JSON.parse(JSON.stringify(x))]]، كل واحدة مرتين.`, done: R`عندي (Node 24، ويندوز 11) طلع [[deepClone]] حوالي 190–210ms، و [[structuredClone]] حوالي 205ms، و JSON حوالي 100–110ms. يعني JSON أسرع **للداتا البسيطة** دي، بس بيبوّظ Date و Map و undefined (التمرين الأول). كتبت الأرقام بتاعتك، وجملة إمتى تستخدم أنهي واحدة.`, sol: R`**[[clone.js]]:** [[deepClone]] من مثال الدرس زي ما هي، وفي آخره [[module.exports = { deepClone };]].
+
+~~~js bench.js
+const { deepClone } = require("./clone");
+const data = Array.from({ length: 100_000 }, (_, i) => ({ id: i, name: "user" + i, tags: ["a", "b"], meta: { score: i % 7 } }));
+
+const ways = {
+  deepClone: (x) => deepClone(x),
+  structuredClone: (x) => structuredClone(x),
+  JSON: (x) => JSON.parse(JSON.stringify(x)),
+};
+for (let round = 1; round <= 2; round++) {
+  for (const [name, f] of Object.entries(ways)) {
+    const t = performance.now();
+    const copy = f(data);
+    const ms = performance.now() - t;
+    console.log($__btمرة $__{round}  $__{name.padEnd(15)} $__{ms.toFixed(0).padStart(4)}ms  $__{copy[99_999].meta !== data[99_999].meta}$__bt);
+  }
+}
+~~~
+
+~~~text الناتج (node bench.js، Node 24 على Windows 11)
+مرة 1  deepClone        146ms  true
+مرة 1  structuredClone  158ms  true
+مرة 1  JSON              78ms  true
+مرة 2  deepClone        163ms  true
+مرة 2  structuredClone  149ms  true
+مرة 2  JSON             110ms  true
+~~~
+
+(تشغيلة تانية: 143 و 152 و 87، وبعدين 167 و 140 و 108. على جهاز تاني الأرقام هتختلف، بس الترتيب نفسه.)
+
+**القراية:**
+
+- **JSON الأسرع للداتا دي** (أرقام ونصوص و arrays و objects عادية بس). [[JSON.stringify]] و [[JSON.parse]] مكتوبين في C++ ومتظبطين جدًا للحالة دي بالذات.
+- **[[deepClone]] و [[structuredClone]] قريبين من بعض.** [[structuredClone]] بيعمل شغل أكتر: بيدعم Date و Map و Set و الـ circular و TypedArrays و Blob، وبيعمل serialize كامل (نفس اللي بيحصل في [[postMessage]] للـ Worker).
+- **العمود الأخير [[true]]:** اتأكدنا إن كل واحدة عملت نسخة عميقة فعلًا ([[meta]] مش نفس الـ object)، عشان المقارنة تبقى عادلة.
+- **ليه مرتين:** أول مرة فيها تسخين الـ JIT، والـ garbage collector ممكن يشتغل في أي مرة. الفرق بين المرتين نفسه (78 و 110 للـ JSON) بيوريك إن رقم واحد مش كفاية.
+
+**إمتى أنهي واحدة:**
+
+| الطريقة | استخدمها لما |
+|---|---|
+| [[structuredClone]] | الاختيار الافتراضي: فيه Date أو Map أو Set أو circular، أو مش متأكد من شكل الداتا |
+| JSON | الداتا JSON أصلًا (رد API) وعايز أسرع حاجة، أو هتبعتها على الشبكة على أي حال |
+| [[deepClone]] بإيدك | محتاج تحافظ على الـ prototype (class instance بالـ methods) أو تنسخ دوال، وده [[structuredClone]] مبيعملوش |
+
+**الغلطة الشائعة:** تقيس مرة واحدة على داتا صغيرة (١٠ objects) وتطلّع حكم. على الحجم ده كلهم تحت 1ms، والفرق بيبان بس في الداتا الكبيرة.` },
           ],
           flag: "script",
           deep: {
@@ -2071,10 +4519,164 @@ console.log(!!"false");            // true
 const obj = { name: "A", get() { return () => this.name; } };
 console.log(obj.get()());          // "A"`,
           try: R`غطّي التعليقات، واكتب إجابتك لكل سطر، وبعدين شغّل. وبعدين حل سؤالين الترتيب (event loop) وسؤال [[this]] في آخر الشرح قبل ما تبص على الإجابة. وضيف ٣ أسئلة من عندك من الدروس اللي فاتت (hoisting و closures في loop من المستوى ٢، و microtasks من المستوى ٣).`,
+          ref: [
+            { t: "MDN: Equality (==)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Equality" },
+            { t: "MDN: Array.prototype.sort()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort" },
+            { t: "MDN: parseInt()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt" },
+            { t: "MDN: JavaScript execution model", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Execution_model" },
+          ],
+          pre: [
+            { to: "js/hoisting و TDZ", why: R`أسئلة [[typeof]] قبل التعريف و [[let]] في الـ TDZ` },
+            { to: "js/closures في loop", why: R`سؤال [[var]] مع [[setTimeout]] في loop` },
+          ],
           practice: [
-            { lvl: 'سريع', t: R`اتوقع على ورقة وبعدين شغّل: [[console.log(typeof NaN, [] == false, null >= 0, null == 0)]]، وبعدها [[console.log(1); setTimeout(() => console.log(2)); Promise.resolve().then(() => console.log(3)); queueMicrotask(() => console.log(4)); console.log(5);]].`, done: R`الأول بيطبع [[number true true false]]، والتاني بيطبع 1 و 5 و 3 و 4 و 2 بالترتيب ده، وتقدر تقول القاعدة ورا كل واحدة (مثلًا [[>=]] بيحوّل لرقم لكن [[==]] مع [[null]] ليه قاعدة لوحده).` },
-            { lvl: 'تطبيق', t: R`صلّح الكود البايظ بطريقتين لكل واحد: [[for (var i = 0; i < 3; i++) setTimeout(() => console.log(i));]] (المفروض 0 1 2)، و [[["1", "7", "11"].map(parseInt)]] (المفروض 1 و 7 و 11).`, done: R`قبل التصليح الأول بيطبع 3 تلات مرات والتاني [[1, NaN, 3]]. بعده الأول بيطبع 0 و 1 و 2 (بـ [[let]] أو بـ IIFE)، والتاني 1 و 7 و 11 (بـ [[map(Number)]] أو [[map((s) => parseInt(s, 10))]])، وتقدر تشرح إن [[parseInt]] خد الـ index كـ radix.` },
-            { lvl: 'تحدي', t: R`اشرحها: اكتب ٥ أسئلة «إيه الناتج؟» من عندك، كل واحد بيختبر قاعدة مختلفة من الوحدات اللي فاتت (hoisting و this و closures و microtasks و sort)، وكل سؤال معاه الإجابة والشرح في سطرين لزميل. ادّيهم لحد يحلهم.`, done: R`كل سؤال اتشغّل والناتج المكتوب صح، ومفيش سؤالين بيختبروا نفس القاعدة، والزميل حلّهم ولو غلط في واحد الشرح بتاعك وصّله للإجابة من غير ما تكلمه.` },
+            { lvl: 'سريع', t: R`اتوقع على ورقة وبعدين شغّل: [[console.log(typeof NaN, [] == false, null >= 0, null == 0)]]، وبعدها [[console.log(1); setTimeout(() => console.log(2)); Promise.resolve().then(() => console.log(3)); queueMicrotask(() => console.log(4)); console.log(5);]].`, done: R`الأول بيطبع [[number true true false]]، والتاني بيطبع 1 و 5 و 3 و 4 و 2 بالترتيب ده، وتقدر تقول القاعدة ورا كل واحدة (مثلًا [[>=]] بيحوّل لرقم لكن [[==]] مع [[null]] ليه قاعدة لوحده).`, sol: R`**التوقع:** [[number true true false]]، وبعدين 1 و 5 و 3 و 4 و 2.
+
+~~~js predict.js
+console.log(typeof NaN, [] == false, null >= 0, null == 0);
+
+console.log(1);
+setTimeout(() => console.log(2));
+Promise.resolve().then(() => console.log(3));
+queueMicrotask(() => console.log(4));
+console.log(5);
+~~~
+
+~~~text الناتج (node predict.js)
+number true true false
+1
+5
+3
+4
+2
+~~~
+
+**السطر الأول، قاعدة لكل قيمة:**
+
+| التعبير | الناتج | القاعدة |
+|---|---|---|
+| [[typeof NaN]] | [["number"]] | NaN قيمة من نوع number معناها «حساب فشل» |
+| [[[] == false]] | [[true]] | [[==]] بين object و boolean: الـ boolean يبقى 0، والـ array تبقى primitive ([[""]]) وبعدين رقم 0، و 0 == 0 |
+| [[null >= 0]] | [[true]] | المقارنة [[>=]] بتحوّل لرقم، و [[Number(null)]] بـ 0، و 0 >= 0 |
+| [[null == 0]] | [[false]] | [[==]] مع null ليه قاعدة لوحده: null بيساوي null و undefined بس، ومبيتحوّلش لرقم |
+
+ده المثال الكلاسيكي إن [[null >= 0]] صح و [[null > 0]] غلط و [[null == 0]] غلط في نفس الوقت.
+
+**الجزء التاني (event loop):**
+
+1. الـ sync الأول بالترتيب: **1** و **5**.
+2. بعدين الـ microtasks كلها بترتيب تسجيلها: [[then]] اتسجّل قبل [[queueMicrotask]]، فـ **3** وبعدين **4**.
+3. وفي الآخر الـ macrotask: الـ [[setTimeout]] **2**، حتى إنه اتكتب الأول ومن غير وقت.
+
+**الانترفيور بيختبر إيه:** قاعدة [[==]] مع null، وإن [[then]] و [[queueMicrotask]] نفس الطابور. **إجابة تتقال:** «الـ relational operators بتحوّل لأرقام لكن == مع null مبيحوّلش؛ والـ sync الأول، وبعدين كل الـ microtasks بالترتيب، وبعدين الـ timers».` },
+            { lvl: 'تطبيق', t: R`صلّح الكود البايظ بطريقتين لكل واحد: [[for (var i = 0; i < 3; i++) setTimeout(() => console.log(i));]] (المفروض 0 1 2)، و [[["1", "7", "11"].map(parseInt)]] (المفروض 1 و 7 و 11).`, done: R`قبل التصليح الأول بيطبع 3 تلات مرات والتاني [[1, NaN, 3]]. بعده الأول بيطبع 0 و 1 و 2 (بـ [[let]] أو بـ IIFE)، والتاني 1 و 7 و 11 (بـ [[map(Number)]] أو [[map((s) => parseInt(s, 10))]])، وتقدر تشرح إن [[parseInt]] خد الـ index كـ radix.`, sol: R`~~~js fix.js
+// البايظ
+for (var i = 0; i < 3; i++) setTimeout(() => console.log("var:", i));
+console.log("parseInt:", ["1", "7", "11"].map(parseInt));
+
+// تصليح ١: let بيعمل i جديدة لكل لفة
+for (let j = 0; j < 3; j++) setTimeout(() => console.log("let:", j));
+// تصليح ٢: IIFE بتاخد نسخة من i في باراميتر
+for (var k = 0; k < 3; k++) ((n) => setTimeout(() => console.log("IIFE:", n)))(k);
+
+console.log("Number:", ["1", "7", "11"].map(Number));
+console.log("radix 10:", ["1", "7", "11"].map((s) => parseInt(s, 10)));
+console.log(parseInt("1", 0), parseInt("7", 1), parseInt("11", 2));
+~~~
+
+~~~text الناتج (node fix.js)
+parseInt: [ 1, NaN, 3 ]
+Number: [ 1, 7, 11 ]
+radix 10: [ 1, 7, 11 ]
+1 NaN 3
+var: 3
+var: 3
+var: 3
+let: 0
+let: 1
+let: 2
+IIFE: 0
+IIFE: 1
+IIFE: 2
+~~~
+
+(سطور الـ sync طبعت الأول، والـ timers في الآخر بترتيب تسجيلها.)
+
+**الأول: [[var]] في loop.** [[var]] ليها متغير **واحد** للدالة كلها. الـ ٣ arrows بيشاوروا على نفس [[i]]، ولما الـ timers اشتغلت كانت اللفة خلصت و [[i]] بقت 3.
+
+- **[[let]]:** الـ [[for]] مع [[let]] بيعمل binding جديد لكل لفة، فكل arrow شايفة [[j]] بتاعتها.
+- **IIFE:** دالة بتتنادى فورًا بـ [[k]]، والباراميتر [[n]] نسخة من القيمة ساعتها، والـ arrow اللي جوه بتقفل على [[n]]. ده الحل اللي كان قبل [[let]] (ES5).
+
+**التاني: [[map(parseInt)]].** [[map]] بتبعت **٣** arguments: (العنصر، الـ index، الـ array). و [[parseInt]] بتاخد (النص، الـ radix). فاللي حصل فعلًا هو السطر الأخير في الكود:
+
+| النداء | الناتج | ليه |
+|---|---|---|
+| [[parseInt("1", 0)]] | 1 | radix صفر معناه «خمّن»، فبقى 10 |
+| [[parseInt("7", 1)]] | NaN | مفيش نظام عد أساسه 1 (المسموح من 2 لـ 36) |
+| [[parseInt("11", 2)]] | 3 | "11" في الثنائي = 3 |
+
+- **[[map(Number)]]:** [[Number]] بتستخدم أول argument بس. (بس خد بالك: [[Number("12px")]] بـ NaN و [[parseInt("12px", 10)]] بـ 12.)
+- **[[map((s) => parseInt(s, 10))]]:** arrow بتبعت النص بس ومعاه radix صريح.
+
+**الانترفيور بيختبر إيه:** الـ closures مع [[var]] و [[let]]، وإنك عارف الـ callback بيتبعتله إيه بالظبط. **إجابة تتقال:** «var متغير واحد للدالة فالتلات callbacks شايفين آخر قيمة، و let بيعمل binding لكل لفة؛ و map بيبعت الـ index كـ argument تاني، و parseInt بيفهمه radix».` },
+            { lvl: 'تحدي', t: R`اشرحها: اكتب ٥ أسئلة «إيه الناتج؟» من عندك، كل واحد بيختبر قاعدة مختلفة من الوحدات اللي فاتت (hoisting و this و closures و microtasks و sort)، وكل سؤال معاه الإجابة والشرح في سطرين لزميل. ادّيهم لحد يحلهم.`, done: R`كل سؤال اتشغّل والناتج المكتوب صح، ومفيش سؤالين بيختبروا نفس القاعدة، والزميل حلّهم ولو غلط في واحد الشرح بتاعك وصّله للإجابة من غير ما تكلمه.`, sol: R`**نسخة نموذجية:** ٥ أسئلة، كل واحد قاعدة، كلهم في ملف واحد عشان تشغّلهم مرة واحدة (والرقم في أول كل سطر بيقولك السؤال).
+
+~~~js quiz5.js
+// ١. hoisting
+console.log("1:", typeof hoisted, typeof notYet);
+function hoisted() {}
+var notYet = () => {};
+
+// ٢. this
+const counter = { n: 1, inc() { return this.n + 1; } };
+const inc = counter.inc;
+try { console.log("2:", inc()); } catch (e) { console.log("2:", e.constructor.name); }
+
+// ٣. closures
+const fns = [];
+for (let i = 0; i < 3; i++) fns.push(() => i * 10);
+let x = 1;
+const getX = () => x;
+x = 2;
+console.log("3:", fns.map((f) => f()), getX());
+
+// ٤. microtasks
+setTimeout(() => console.log("4: timeout"));
+(async () => {
+  console.log("4: a");
+  await null;
+  console.log("4: b");
+})();
+Promise.resolve().then(() => console.log("4: c"));
+console.log("4: d");
+
+// ٥. sort
+console.log("5:", [10, 9, 1, 2].sort(), ["b", "a", "B"].sort());
+~~~
+
+~~~text الناتج (node quiz5.js)
+1: function undefined
+2: NaN
+3: [ 0, 10, 20 ] 2
+4: a
+4: d
+5: [ 1, 10, 2, 9 ] [ 'B', 'a', 'b' ]
+4: b
+4: c
+4: timeout
+~~~
+
+**الإجابات والشرح لزميلك (سطرين لكل سؤال):**
+
+1. **hoisting:** [[function]] declaration بتطلع لفوق كاملة فـ [[typeof hoisted]] بـ "function". [[var notYet]] الاسم بس اللي طلع وقيمته undefined لحد ما السطر يتنفّذ، فـ "undefined".
+2. **this:** [[inc]] اتنسخت من الـ object ونتنادت لوحدها، فـ [[this]] مبقاش [[counter]]. في ملف CommonJS عادي [[this]] بقى [[globalThis]] و [[this.n]] undefined، و [[undefined + 1]] بـ NaN. (في ES module أو [["use strict"]] كان هيبقى TypeError، وعشان كده الـ try.)
+3. **closures:** كل arrow في الـ loop قفلت على [[i]] بتاعة لفتها ([[let]])، فـ 0 و 10 و 20. و [[getX]] بتقرا [[x]] **وقت النداء** مش وقت التعريف، فطلعت 2.
+4. **microtasks:** الـ async function بتشتغل sync لحد أول [[await]] فـ [[a]] الأول، وبعدين [[d]]. بعد ما الـ sync كله يخلص (حتى سطر السؤال ٥)، الـ microtasks بترتيب تسجيلها: [[b]] (اتسجّلت ساعة الـ await) وبعدين [[c]]، وفي الآخر الـ timeout.
+5. **sort:** من غير دالة مقارنة، [[sort]] بيحوّل كل حاجة لنص ويرتّب بالحروف: "10" قبل "2" لأن "1" قبل "2". والحروف الكابيتال قبل الصغيرة في Unicode، فـ "B" الأول. التصليح [[sort((a, b) => a - b)]] و [[localeCompare]].
+
+**ليه السؤال ٥ طبع قبل [[4: b]]:** الملف كله sync واحد، والـ microtasks بتستنى لحد ما يخلص. ده نفسه سؤال سادس كويس.
+
+**قبل ما تدّيهم لحد:** شغّل كل سؤال وانسخ الناتج الحقيقي، متكتبش الإجابة من دماغك. وخلي كل سؤال يختبر قاعدة واحدة بس، عشان لو الزميل غلط تعرف هو مش فاهم إيه بالظبط.` },
           ],
           flag: "script",
           deep: {
