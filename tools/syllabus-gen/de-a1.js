@@ -1,18 +1,67 @@
-// German A1 syllabus, built from the official Goethe exam specification. Every item names its page.
+// German A1 syllabus. Goethe's exam specification says what is tested; the ÖSD and telc A1 exams, the BAMF
+// Rahmencurriculum and the CEFR Companion volume fill in the situations and skills Goethe leaves out.
+// Every item names its source and page.
 //   node tools/syllabus-gen/de-a1.js    -> syllabus/de-a1.json (the syllabus) and syllabus/de-a1.md (to read and review)
 // Needs (in .cache/de/, git-ignored; how to get them: tools/de/README.md):
 //   pz.txt       pdftotext -layout of «Goethe-Zertifikat A1: Start Deutsch 1, Prüfungsziele, Testbeschreibung»
 //                (Goethe-Institut, A1_SD1_Pruefziele_07, 19.04.2022), https://goethe.de/pro/relaunch/prf/et/Pruefungsziele_Testbeschreibung_A1_SD1.pdf
 //   wikt-a1.json made by tools/syllabus-gen/de-wikt.js from the kaikki.org Wiktionary dump (CC BY-SA 4.0)
+//   src/rc.txt   pdftotext -layout of the Rahmencurriculum (read by de-rc.js)
+//   src/cefr-desc.json  the CEFR descriptor spreadsheet as JSON (tools/de/xlsx-rows.py)
+// The ÖSD and telc exam parts are typed in from their model tests here; the words they add are in de-a1-extra.js.
+// The Rahmencurriculum and the CEFR are «all rights reserved»: the repo keeps their headings, levels, pages and
+// our Arabic summary of each goal (de-a1-ar.js), never their sentences.
 // The small inventories (exam parts, speech acts, strategies, notions, themes, grammar, word groups) are typed in
 // from the PDF here, with their page; the alphabetical word list (≈650 entries) is read by de-a1-words.js.
 // Only names and headwords are kept: Goethe's example sentences stay out of the repo (copyright).
 const fs = require('fs');
 const { parseWords } = require('./de-a1-words');
+const { parseRC, FIELDS } = require('./de-rc');
+const { EXTRA } = require('./de-a1-extra');
+const AR = require('./de-a1-ar');
 
 const PDF = { t: 'Goethe-Zertifikat A1: Start Deutsch 1, Prüfungsziele, Testbeschreibung (2022)', url: 'https://goethe.de/pro/relaunch/prf/et/Pruefungsziele_Testbeschreibung_A1_SD1.pdf' };
 const MODEL = { t: 'Goethe-Zertifikat A1: Übungssatz 01', url: 'https://www.goethe.de/pro/relaunch/prf/materialien/A1_sd1/sd_1_uebungssatz01.pdf' };
 const WIKT = { t: 'Wiktionary (kaikki.org extract, CC BY-SA 4.0)', url: 'https://kaikki.org/dictionary/German/' };
+const OSD = { t: 'ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)', url: 'https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf' };
+const TELC = { t: 'telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)', url: 'https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf' };
+const DTZ = { t: 'Deutsch-Test für Zuwanderer A2–B1: Prüfungsziele, Testbeschreibung', url: 'https://www.goethe.de/resources/files/pdf209/dtz_pruefungshandbuch.pdf' };
+const RCREF = { t: 'Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)', url: 'https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf' };
+const CEFRREF = { t: 'CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet', url: 'https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7', doc: 'https://rm.coe.int/16809ea0d4' };
+
+// ÖSD Zertifikat A1 (Modellsatzbroschüre, Kapitel 2 «Prüfungsaufgaben», S. 21–25; Bewertung S. 33)
+const EXAM_OSD = [
+  ['lesen-1', 'Lesen Aufgabe 1', '٥ مواقف و ٦ إعلانات: تختار الإعلان المناسب لكل موقف (واحد زيادة)', 21],
+  ['lesen-2', 'Lesen Aufgabe 2', '٣ نصوص قصيرة، وعلى كل واحد سؤالين: Ja ولا Nein', 21],
+  ['lesen-3', 'Lesen Aufgabe 3', '٥ نصوص و ٦ صور: توصّل كل نص بصورته', 21],
+  ['hoeren-1', 'Hören Aufgabe 1', '٥ نصوص مسموعة و ٦ صور، مرة واحدة: توصّل كل نص بصورته', 22],
+  ['hoeren-2', 'Hören Aufgabe 2', 'رسالة مسجّلة (أنسرماشين أو خدمة تليفون) بتتسمع مرتين: تكتب ٥ معلومات ناقصة وإنت بتسمع (أرقام، مواعيد، أسامي متهجّية)', 22],
+  ['hoeren-3', 'Hören Aufgabe 3', '٥ مقابلات قصيرة، مرة واحدة: تختار الإجابة الصح', 22],
+  ['schreiben-1', 'Schreiben Aufgabe 1', 'تملا استمارة من معلومات جاهزة (١٠ خانات: اختيار وكتابة)', 24],
+  ['schreiben-2', 'Schreiben Aufgabe 2', 'ترد على إيميل شخصي فيه ٣ أسئلة، حوالي ٣٠ كلمة', 24],
+  ['sprechen-1', 'Sprechen Aufgabe 1', 'تعرّف نفسك: تختار ٤ مواضيع من ٦ وتتكلم عنهم', 24],
+  ['sprechen-2', 'Sprechen Aufgabe 2', 'تختار صورة من ٣ (موقف يومي) وتوصفها بمساعدة ٤ أسئلة', 24],
+  ['sprechen-3', 'Sprechen Aufgabe 3', 'حوار مع الممتحن (رول بلاي) على نفس الصورة: تبادل الكلام، و Du ولا Sie', 24],
+  ['bestehen', 'Bestehen', 'جزئين: المكتوب (قراية وسمع وكتابة) ٧٥ نقطة والنجاح من ٣٨، بحد أدنى ٦ في القراية و ٦ في السمع و ٤ في الإيميل؛ والكلام ٢٥ نقطة والنجاح من ١٢، وقبله ١٠ دقايق تحضير', 33],
+  ['plurizentrik', 'Plurizentrik', 'النصوص والأصوات من النمسا وألمانيا وسويسرا: كلمات زي Jänner و Grüß Gott لازم تتعرف', 22],
+];
+// telc Deutsch A1 für Zuwanderer (Übungstest 1: Testformat S. 5, Mündliche Prüfung S. 25, Punkte S. 27)
+const EXAM_TELC = [
+  ['sprachbausteine', 'Sprachbausteine', '١٠ أسئلة اختيار على الكلمات والقواعد: تختار الكلمة المناسبة لكل فراغ في نصين', 5],
+  ['hoeren-a', 'Hören Teil A', '٤ أسئلة صح ولا غلط: تلقط معلومة محددة', 5],
+  ['hoeren-b', 'Hören Teil B', '٥ أسئلة اختيار على التفاصيل، خصوصًا الأرقام والحروف', 5],
+  ['hoeren-antworten-a', 'Hören und antworten Teil A', 'تسمع ٣ كلامات قصيرة وتختار الرد المناسب لكل واحد', 5],
+  ['hoeren-antworten-b', 'Hören und antworten Teil B', 'نفس الفكرة مع ٤ كلامات', 5],
+  ['lesen-a', 'Lesen Teil A', '٣ نصوص توصّلها بعناوينها (الفكرة العامة)', 5],
+  ['lesen-b', 'Lesen Teil B', 'نص و ٣ جمل صح ولا غلط (التفاصيل)', 5],
+  ['lesen-c', 'Lesen Teil C', '٣ أسئلة اختيار: تلاقي معلومة محددة (إعلانات جرنال)', 5],
+  ['schreiben-a', 'Schreiben Teil A', 'تملا استمارة لحد تاني من معلومات نص', 5],
+  ['schreiben-b', 'Schreiben Teil B', 'رسالة قصيرة (إيميل) فيها ٣ نقط، حوالي ٣٠ كلمة', 5],
+  ['sprechen-a', 'Sprechen Teil A', 'تعرّف نفسك من ورقة كلمات، وتتهجّى، وتقول أرقام (٣ دقايق)', 25],
+  ['sprechen-b', 'Sprechen Teil B', 'تسأل وتجاوب عن موضوعين يوميين بالكروت (٤ دقايق)', 25],
+  ['sprechen-c', 'Sprechen Teil C', 'تطلب وتقترح وتعرض وتنصح، وترد على ده (٤ دقايق)، ومفيش وقت تحضير', 25],
+  ['bestehen', 'Bestehen', 'الامتحان ١٠٠ نقطة والنجاح من ٦٠: كلمات وقواعد ١٥، وسمع ٣١، وقراية ٢٤، وكتابة ١٠، وكلام ٢٠', 27],
+];
 
 // ---------- the exam (Kapitel 4, S. 26–53; the table on S. 9) ----------
 const EXAM = [
@@ -100,7 +149,11 @@ const slug = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').repla
 const items = [];
 const add = (kind, group, t, page, extra = {}) => items.push({ id: kind + ':' + slug((group ? group + ' ' : '') + t), kind, group, t, ref: { ...PDF, page }, ...extra });
 
-for (const [id, t, ar, page] of EXAM) items.push({ id: 'exam:' + id, kind: 'exam', group: t.split(' ')[0], t, ar, ref: { ...PDF, page }, model: MODEL });
+for (const [id, t, ar, page] of EXAM) items.push({ id: 'exam:' + id, kind: 'exam', exam: 'goethe', group: t.split(' ')[0], t, ar, ref: { ...PDF, page }, model: MODEL });
+for (const [id, t, ar, page] of EXAM_OSD) items.push({ id: 'exam:osd-' + id, kind: 'exam', exam: 'osd', group: t.split(' ')[0], t, ar, ref: { ...OSD, page } });
+for (const [id, t, ar, page] of EXAM_TELC) items.push({ id: 'exam:telc-' + id, kind: 'exam', exam: 'telc', group: t.split(' ')[0], t, ar, ref: { ...TELC, page } });
+items.push({ id: 'exam:dtz', kind: 'exam', exam: 'dtz', group: 'DTZ', t: 'Deutsch-Test für Zuwanderer', ref: { ...DTZ, page: 1 },
+  skip: 'امتحان A2 و B1، مش A1: بيدخل في منهج A2.' });
 for (const [kind, inv] of [['act', SPRACHHANDLUNGEN], ['strategy', STRATEGIEN], ['notion', NOTIONEN], ['theme', THEMEN], ['grammar', GRAMMATIK], ['group', WORTGRUPPEN]])
   for (const [g, list] of Object.entries(inv.groups)) for (const t of list) add(kind, g, t, inv.page);
 
@@ -129,31 +182,99 @@ for (const w of words) {
   items.push(it);
 }
 
+// ---------- the Rahmencurriculum: every A1 goal, with our Arabic summary ----------
+const rcA1 = parseRC(fs.readFileSync('.cache/de/src/rc.txt', 'utf8')).filter(g => g.level === 'A1');
+const bySec = {}; for (const g of rcA1) (bySec[g.sec] = bySec[g.sec] || []).push(g);
+for (const [sec, gs] of Object.entries(bySec)) {
+  const ar = AR.RC[sec];
+  if (!ar || ar.length !== gs.length) throw new Error(`Rahmencurriculum ${sec}: ${gs.length} A1 goals in the PDF, ${ar ? ar.length : 0} summaries in de-a1-ar.js`);
+  gs.forEach((g, n) => items.push({ id: 'rc:' + slug(sec) + '-' + (n + 1), kind: 'situation', group: FIELDS[g.field], field: g.field, sec, secT: g.secT,
+    act: g.act || null, ar: ar[n], lk: !!g.lk, ref: { ...RCREF, page: g.page } }));
+}
+for (const sec of Object.keys(AR.RC)) if (!bySec[sec]) throw new Error(`de-a1-ar.js has ${sec}, the PDF has no A1 goal there`);
+
+// ---------- the CEFR: every A1 descriptor (sign-language scales left out, see the skip item) ----------
+const cefr = JSON.parse(fs.readFileSync('.cache/de/src/cefr-desc.json', 'utf8')).English.slice(1);
+const cefrA1 = cefr.filter(r => r[5] === 'A1' && !/^Signing/.test(r[1]) && !/^No descriptors/i.test(r[6]));
+for (const r of cefrA1) {
+  if (!AR.CEFR[r[0]]) throw new Error('CEFR row ' + r[0] + ' (' + r[4] + ') has no Arabic summary in de-a1-ar.js');
+  items.push({ id: 'cefr:' + r[0], kind: 'cefr', group: r[2] || r[1], sub: r[3] || null, t: r[4], ar: AR.CEFR[r[0]], ref: { ...CEFRREF, row: +r[0] } });
+}
+const extraRows = Object.keys(AR.CEFR).filter(k => !cefrA1.some(r => r[0] === k));
+if (extraRows.length) throw new Error('de-a1-ar.js has CEFR rows that are not A1 descriptors: ' + extraRows.join(', '));
+items.push({ id: 'cefr:signing', kind: 'cefr', group: 'Signing competences', t: 'Signing competences (14 scales)', ref: { ...CEFRREF },
+  skip: 'مقاييس لغة الإشارة: الكورس للغة المنطوقة والمكتوبة.' });
+
+// ---------- words the ÖSD and telc model tests add (de-a1-extra.js), article and plural from Wiktionary ----------
+for (const x of EXTRA) {
+  const ents = wikt[x.w] || [];
+  const e = ents.find(z => z.pos === 'noun') || ents.find(z => z.pos !== 'name') || null;
+  const it = { id: 'word:extra-' + slug(x.w), kind: 'word', w: x.w, extra: { src: x.src, kind: x.kind, goetheExample: x.ex },
+    ref: x.src === 'telc' ? { ...TELC } : { ...OSD } };
+  if (e && e.pos === 'noun') { it.art = e.gender[0]; it.plural = (e.plural || [])[0] || null; }
+  if (x.w === 'Medizin') { it.plural = null; it.manual = 'الجمع (Medizinen) نادر ومعناه أنواع أدوية: الكارت بيعلّمها من غير جمع'; }
+  if (x.w === 'Antwortbogen') { it.art = 'der'; it.plural = 'Antwortbögen'; it.manual = 'مش في Wiktionary: كلمة مركّبة من Antwort و Bogen (der Bogen, die Bögen)'; }
+  it.t = (it.art ? it.art + ' ' : '') + x.w + (it.plural ? ', die ' + it.plural : '');
+  it.wikt = e ? { pos: e.pos, ipa: e.ipa || undefined, audio: (e.audio || [])[0] || undefined } : null;
+  items.push(it);
+}
+
 const out = {
   course: 'de-a1',
   title: 'Deutsch A1 (Goethe-Zertifikat A1: Start Deutsch 1)',
   generated: 'tools/syllabus-gen/de-a1.js',
-  sources: [PDF, MODEL, WIKT],
-  note: 'Goethe defines what is tested. Still to merge before writing (ROADMAP 5.1): the Rahmencurriculum for integration courses, the ÖSD and telc A1 specifications, and the CEFR Companion Volume can-do statements.',
+  sources: [PDF, MODEL, OSD, TELC, RCREF, CEFRREF, DTZ, WIKT],
+  note: 'Goethe defines what is tested. Merged on 21 Nov 2026: the ÖSD ZA1 and telc «A1 für Zuwanderer» exam parts, the words their model tests add, every A1 goal of the BAMF Rahmencurriculum, and every A1 descriptor of the CEFR Companion volume. telc «Start Deutsch 1» is the same exam as Goethe A1 (made by both), so it adds nothing. Pre-A1 descriptors are not items: each one is an easier step of an A1 descriptor in the same scale.',
   items,
 };
 fs.writeFileSync('syllabus/de-a1.json', JSON.stringify(out, null, 1) + '\n');
 
 // ---------- the review page ----------
-const KIND = { exam: 'الامتحان', act: 'الأفعال الكلامية (Sprachhandlungen)', strategy: 'الاستراتيجيات', notion: 'المفاهيم العامة (Notionen)', theme: 'المواضيع (Themen)', grammar: 'القواعد', group: 'مجموعات الكلمات', word: 'الكلمات' };
-const count = k => items.filter(i => i.kind === k).length;
-const wordsMain = items.filter(i => i.kind === 'word' && !i.sub);
-let md = `# منهج الألماني A1\n\nاتولّد بـ \`node tools/syllabus-gen/de-a1.js\` من مواصفة امتحان Goethe A1 (نسخة ٢٠٢٢) و Wiktionary. كل بند تحته رقم صفحته في الـ PDF.\n\n`;
-md += `| الجزء | عدد البنود |\n|---|---|\n` + Object.keys(KIND).map(k => `| ${KIND[k]} | ${k === 'word' ? `${count(k)} (${wordsMain.length} أساسية و ${count(k) - wordsMain.length} مشتقة)` : count(k)} |`).join('\n') + '\n\n';
-const ws = items.filter(i => i.kind === 'word');
-md += `**فحص الكلمات على Wiktionary:** ${ws.filter(i => i.wikt).length} من ${ws.length} اتلاقوا، و ${ws.filter(i => i.wikt && i.wikt.ipa).length} ليهم IPA، و ${ws.filter(i => i.wikt && i.wikt.audio).length} ليهم تسجيل بصوت حقيقي على Wikimedia Commons. أداة وجمع كل الأسماء (${ws.filter(i => i.art).length}) متطابقين مع Wiktionary (\`node tools/syllabus-gen/de-wikt.js\`). اللي ملهوش مدخل (عبارات وجذور، بتتراجع بالإيد): ${ws.filter(i => !i.wikt).map(i => i.t).join('، ')}.\n\n`;
-md += `**لسه هيتضاف للمنهج قبل الكتابة (ROADMAP ٥.١):** منهج كورسات الاندماج (Rahmencurriculum)، ومواصفات ÖSD و telc لـ A1، وجمل CEFR.\n`;
+const KIND = { exam: 'الامتحانات', situation: 'المواقف: أهداف A1 في منهج كورسات الاندماج (Rahmencurriculum)', cefr: 'المهارات: جمل A1 في CEFR', act: 'الأفعال الكلامية (Sprachhandlungen)', strategy: 'الاستراتيجيات', notion: 'المفاهيم العامة (Notionen)', theme: 'المواضيع (Themen)', grammar: 'القواعد', group: 'مجموعات الكلمات', word: 'الكلمات' };
+const live = items.filter(i => !i.skip);
+const count = k => live.filter(i => i.kind === k).length;
+const ws = live.filter(i => i.kind === 'word'), goethe = ws.filter(i => !i.extra), wordsMain = goethe.filter(i => !i.sub), extra = ws.filter(i => i.extra);
+const EXAMS = { goethe: 'Goethe-Zertifikat A1', osd: 'ÖSD Zertifikat A1', telc: 'telc Deutsch A1 für Zuwanderer' };
+let md = `# منهج الألماني A1\n\nاتولّد بـ \`node tools/syllabus-gen/de-a1.js\`. **Goethe بيحدد اللي بيتمتحن** (الامتحان والكلمات والقواعد، نسخة ٢٠٢٢)، والباقي بيكمّل اللي Goethe مبيغطيهوش: امتحانين A1 التانيين (ÖSD و telc)، ومنهج كورسات الاندماج الرسمي في ألمانيا (Rahmencurriculum)، وجمل CEFR. كل بند تحته مرجعه ورقم صفحته.\n\n`;
+md += `| الجزء | عدد البنود | المرجع |\n|---|---|---|\n`;
+const SRC = { exam: 'Goethe و ÖSD و telc', situation: 'Rahmencurriculum (BAMF)', cefr: 'CEFR Companion volume 2020', word: 'Goethe، والزيادة من ÖSD و telc' };
+md += Object.keys(KIND).map(k => `| ${KIND[k]} | ${k === 'word' ? `${count(k)} (${wordsMain.length} أساسية و ${goethe.length - wordsMain.length} مشتقة من Goethe، و ${extra.length} زيادة من ÖSD و telc)` : count(k)} | ${SRC[k] || 'Goethe'} |`).join('\n') + `\n| **المجموع** | **${live.length}** | |\n\n`;
+md += `**فحص الكلمات على Wiktionary:** ${ws.filter(i => i.wikt).length} من ${ws.length} اتلاقوا، و ${ws.filter(i => i.wikt && i.wikt.ipa).length} ليهم IPA، و ${ws.filter(i => i.wikt && i.wikt.audio).length} ليهم تسجيل بصوت حقيقي على Wikimedia Commons. أداة وجمع كل أسماء Goethe (${goethe.filter(i => i.art).length}) متطابقين مع Wiktionary (\`node tools/syllabus-gen/de-wikt.js\`)، وأداة وجمع الأسماء الزيادة جايين منه. اللي ملهوش مدخل (بيتراجع بالإيد): ${ws.filter(i => !i.wikt).map(i => i.t).join('، ')}.\n\n`;
+md += `**مستبعد بسبب:**\n\n` + items.filter(i => i.skip).map(i => `- **${i.t}**: ${i.skip}`).join('\n') + `\n- **جمل Pre-A1 في CEFR:** مش بنود لوحدها، لأن كل واحدة خطوة أسهل من جملة A1 في نفس المقياس، فبتتغطى معاها.\n- **telc «Start Deutsch 1»:** نفس امتحان Goethe A1 (اتعمل من الجهتين سوا)، فبنوده هي بنود Goethe.\n\n`;
+md += `**المطلوب منك قبل أي كتابة:** تراجع القايمة دي. لو فيه موقف أو مهارة مش عايزها في الكورس، أو حاجة ناقصة، قول، وهتتعلّم «مستبعد» بالسبب أو تتضاف.\n`;
+
+const byGroup = (list, key) => { const g = {}; list.forEach(i => (g[key(i)] = g[key(i)] || []).push(i)); return g; };
 for (const k of Object.keys(KIND)) {
+  const list = live.filter(i => i.kind === k);
   md += `\n## ${KIND[k]}\n\n`;
-  if (k === 'word') { md += ws.map(i => (i.sub ? '' : '**') + i.t + (i.sub ? '' : '**')).join('، ') + '\n'; continue; }
-  if (k === 'exam') { md += items.filter(i => i.kind === k).map(i => `- **${i.t}** (ص ${i.ref.page}): ${i.ar}`).join('\n') + '\n'; continue; }
-  const groups = {}; items.filter(i => i.kind === k).forEach(i => (groups[i.group] = groups[i.group] || []).push(i.t));
-  md += Object.entries(groups).map(([g, l]) => `- **${g}:** ${l.join('، ')}`).join('\n') + '\n';
+  if (k === 'exam') {
+    for (const [ex, name] of Object.entries(EXAMS)) md += `### ${name}\n\n` + list.filter(i => i.exam === ex).map(i => `- **${i.t}** (ص ${i.ref.page}): ${i.ar}`).join('\n') + '\n\n';
+    continue;
+  }
+  if (k === 'situation') {
+    md += `${list.length} هدف A1 من ${parseRC(fs.readFileSync('.cache/de/src/rc.txt', 'utf8')).length} هدف في المنهج كله (A1 و A2 و B1). الأرقام دي متطابقة مع جدول الإحصائيات في آخر الـ PDF (ص ١٦٦–١٧١). مجال «Aus- und Weiterbildung» مفيهوش أهداف A1 (بيبدأ من A2). العلامة 🛈 معناها إن الهدف ليه ملاحظة «Fokus Landeskunde» (معلومة عن الحياة في ألمانيا) في المرجع.\n\n`;
+    for (const [g, l] of Object.entries(byGroup(list, i => i.field + ' ' + i.group))) {
+      md += `### ${g}\n\n` + l.map(i => `- ${i.ar}${i.lk ? ' 🛈' : ''} _(${i.sec}، ${i.act || '—'}، ص ${i.ref.page})_`).join('\n') + '\n\n';
+    }
+    continue;
+  }
+  if (k === 'cefr') {
+    md += `${list.length} جملة A1 في ${new Set(list.map(i => i.t)).size} مقياس (رقم كل جملة هو رقمها في ملف الـ Excel الرسمي). المقاييس اللي مفيهاش جملة A1 أصلًا (زي التقارير والمقالات والاجتماعات الرسمية) مش هنا.\n\n`;
+    for (const [g, l] of Object.entries(byGroup(list, i => i.group))) {
+      md += `### ${g}\n\n`;
+      for (const [sc, ll] of Object.entries(byGroup(l, i => i.t))) md += `- **${sc}:** ` + ll.map(i => `${i.ar} _(${i.ref.row})_`).join('؛ ') + '\n';
+      md += '\n';
+    }
+    continue;
+  }
+  if (k === 'word') {
+    md += `### قايمة Goethe\n\n` + goethe.map(i => (i.sub ? '' : '**') + i.t + (i.sub ? '' : '**')).join('، ') + '\n\n';
+    md += `### زيادة من ÖSD و telc\n\nنص الامتحانين التجريبيين (ومعاه نصوص السمع) اتحلّل بـ spaCy، والكلمات اللي مش في قايمة Goethe اتفرزت بالإيد (\`tools/syllabus-gen/de-a1-extra.js\` فيه الطريقة). * = Goethe بيستخدمها في أمثلته بس، مش كلمة في القايمة.\n\n`;
+    md += `- **لغة الأسئلة** (اللي ميعرفهاش يخسر نقط قبل ما يقرا النص): ` + extra.filter(i => i.extra.kind === 'instruction').map(i => i.t + (i.extra.goetheExample ? '*' : '') + ` _(${{ osd: 'ÖSD', telc: 'telc', both: 'الاتنين' }[i.extra.src]})_`).join('، ') + '\n';
+    md += `- **كلمات يومية:** ` + extra.filter(i => i.extra.kind === 'everyday').map(i => i.t + (i.extra.goetheExample ? '*' : '') + ` _(${{ osd: 'ÖSD', telc: 'telc', both: 'الاتنين' }[i.extra.src]})_`).join('، ') + '\n';
+    continue;
+  }
+  md += Object.entries(byGroup(list, i => i.group)).map(([g, l]) => `- **${g}:** ${l.map(i => i.t).join('، ')}`).join('\n') + '\n';
 }
 fs.writeFileSync('syllabus/de-a1.md', md);
-console.log(Object.keys(KIND).map(k => k + ' ' + count(k)).join(', '), '| total', items.length);
+console.log(Object.keys(KIND).map(k => k + ' ' + count(k)).join(', '), '| total', live.length, '| skipped', items.length - live.length);

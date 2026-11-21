@@ -5,12 +5,14 @@
 // Dump: https://kaikki.org/dictionary/German/kaikki.org-dictionary-German.jsonl.gz (≈99 MB, read as a stream)
 const fs = require('fs'), zlib = require('zlib'), readline = require('readline');
 const { parseWords } = require('./de-a1-words');
+const { EXTRA } = require('./de-a1-extra');
 
 const C = '.cache/de/';
 const words = parseWords(fs.readFileSync(C + 'pz.txt', 'utf8'));
 // the lookup keys: «Samstag/Sonnabend» -> both; «(Kredit)-Karte» -> Karte; «letzt-» -> letzt (adjectives come back as letzte)
 const keys = new Set();
 for (const w of words) for (const k of w.w.split('/')) { const c = k.replace(/\(.*?\)-?/g, '').replace(/-$/, '').trim(); if (c) keys.add(c); }
+for (const x of EXTRA) keys.add(x.w);         // the words the ÖSD and telc model tests add (de-a1-extra.js)
 
 const GENDER = { m: 'der', f: 'die', n: 'das' };
 async function extract() {

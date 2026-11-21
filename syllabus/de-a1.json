@@ -12,15 +12,37 @@
    "url": "https://www.goethe.de/pro/relaunch/prf/materialien/A1_sd1/sd_1_uebungssatz01.pdf"
   },
   {
+   "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+   "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+  },
+  {
+   "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+   "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+  },
+  {
+   "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+   "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf"
+  },
+  {
+   "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+   "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+   "doc": "https://rm.coe.int/16809ea0d4"
+  },
+  {
+   "t": "Deutsch-Test für Zuwanderer A2–B1: Prüfungsziele, Testbeschreibung",
+   "url": "https://www.goethe.de/resources/files/pdf209/dtz_pruefungshandbuch.pdf"
+  },
+  {
    "t": "Wiktionary (kaikki.org extract, CC BY-SA 4.0)",
    "url": "https://kaikki.org/dictionary/German/"
   }
  ],
- "note": "Goethe defines what is tested. Still to merge before writing (ROADMAP 5.1): the Rahmencurriculum for integration courses, the ÖSD and telc A1 specifications, and the CEFR Companion Volume can-do statements.",
+ "note": "Goethe defines what is tested. Merged on 21 Nov 2026: the ÖSD ZA1 and telc «A1 für Zuwanderer» exam parts, the words their model tests add, every A1 goal of the BAMF Rahmencurriculum, and every A1 descriptor of the CEFR Companion volume. telc «Start Deutsch 1» is the same exam as Goethe A1 (made by both), so it adds nothing. Pre-A1 descriptors are not items: each one is an easier step of an A1 descriptor in the same scale.",
  "items": [
   {
    "id": "exam:hoeren-1",
    "kind": "exam",
+   "exam": "goethe",
    "group": "Hören",
    "t": "Hören Teil 1",
    "ar": "كلام قصير بين اتنين في الحياة اليومية، بيتسمع مرتين، واختيار من ٣",
@@ -37,6 +59,7 @@
   {
    "id": "exam:hoeren-2",
    "kind": "exam",
+   "exam": "goethe",
    "group": "Hören",
    "t": "Hören Teil 2",
    "ar": "إعلانات في الأماكن العامة (محطة، مطار، سوبرماركت)، بتتسمع مرة واحدة، صح ولا غلط",
@@ -53,6 +76,7 @@
   {
    "id": "exam:hoeren-3",
    "kind": "exam",
+   "exam": "goethe",
    "group": "Hören",
    "t": "Hören Teil 3",
    "ar": "رسايل على الأنسرماشين، بتتسمع مرتين، واختيار من ٣",
@@ -69,6 +93,7 @@
   {
    "id": "exam:lesen-1",
    "kind": "exam",
+   "exam": "goethe",
    "group": "Lesen",
    "t": "Lesen Teil 1",
    "ar": "نصين قصيرين (ملاحظة، إيميل، رسالة)، صح ولا غلط",
@@ -85,6 +110,7 @@
   {
    "id": "exam:lesen-2",
    "kind": "exam",
+   "exam": "goethe",
    "group": "Lesen",
    "t": "Lesen Teil 2",
    "ar": "إعلانات صغيرة: ١٠ إعلانات و ٥ مواقف، تختار الإعلان المناسب",
@@ -101,6 +127,7 @@
   {
    "id": "exam:lesen-3",
    "kind": "exam",
+   "exam": "goethe",
    "group": "Lesen",
    "t": "Lesen Teil 3",
    "ar": "يافطات ولافتات قصيرة، صح ولا غلط",
@@ -117,6 +144,7 @@
   {
    "id": "exam:schreiben-1",
    "kind": "exam",
+   "exam": "goethe",
    "group": "Schreiben",
    "t": "Schreiben Teil 1",
    "ar": "تكمّل ٥ خانات ناقصة في استمارة (تسجيل، طلب…) من معلومات نص",
@@ -133,6 +161,7 @@
   {
    "id": "exam:schreiben-2",
    "kind": "exam",
+   "exam": "goethe",
    "group": "Schreiben",
    "t": "Schreiben Teil 2",
    "ar": "رسالة قصيرة (اعتذار، طلب معلومة، دعوة) فيها ٣ نقط مطلوبة، حوالي ٣٠ كلمة",
@@ -149,6 +178,7 @@
   {
    "id": "exam:sprechen-1",
    "kind": "exam",
+   "exam": "goethe",
    "group": "Sprechen",
    "t": "Sprechen Teil 1",
    "ar": "تعرّف نفسك، وتتهجّى كلمة، وتقول رقم",
@@ -165,6 +195,7 @@
   {
    "id": "exam:sprechen-2",
    "kind": "exam",
+   "exam": "goethe",
    "group": "Sprechen",
    "t": "Sprechen Teil 2",
    "ar": "تسأل وتجاوب عن موضوع من كروت كلمات",
@@ -181,6 +212,7 @@
   {
    "id": "exam:sprechen-3",
    "kind": "exam",
+   "exam": "goethe",
    "group": "Sprechen",
    "t": "Sprechen Teil 3",
    "ar": "تطلب حاجة وترد على طلب من كروت صور",
@@ -197,6 +229,7 @@
   {
    "id": "exam:bewertung-schreiben",
    "kind": "exam",
+   "exam": "goethe",
    "group": "Bewertung",
    "t": "Bewertung Schreiben",
    "ar": "معايير تصحيح الكتابة: النقط المطلوبة، ومناسبة النص لنوعه (التحية والختام)، وأمثلة إجابات بدرجاتها",
@@ -213,6 +246,7 @@
   {
    "id": "exam:bewertung-sprechen",
    "kind": "exam",
+   "exam": "goethe",
    "group": "Bewertung",
    "t": "Bewertung Sprechen",
    "ar": "معايير تصحيح الكلام في الأجزاء التلاتة (٣ و ٦ و ٦ نقط)",
@@ -229,6 +263,7 @@
   {
    "id": "exam:bestehen",
    "kind": "exam",
+   "exam": "goethe",
    "group": "Bestehen",
    "t": "Bestehen",
    "ar": "الامتحان ١٠٠ نقطة: سمع وقراية وكتابة وكلام ٢٥ لكل واحد. النجاح من ٦٠ نقطة",
@@ -241,6 +276,370 @@
     "t": "Goethe-Zertifikat A1: Übungssatz 01",
     "url": "https://www.goethe.de/pro/relaunch/prf/materialien/A1_sd1/sd_1_uebungssatz01.pdf"
    }
+  },
+  {
+   "id": "exam:osd-lesen-1",
+   "kind": "exam",
+   "exam": "osd",
+   "group": "Lesen",
+   "t": "Lesen Aufgabe 1",
+   "ar": "٥ مواقف و ٦ إعلانات: تختار الإعلان المناسب لكل موقف (واحد زيادة)",
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf",
+    "page": 21
+   }
+  },
+  {
+   "id": "exam:osd-lesen-2",
+   "kind": "exam",
+   "exam": "osd",
+   "group": "Lesen",
+   "t": "Lesen Aufgabe 2",
+   "ar": "٣ نصوص قصيرة، وعلى كل واحد سؤالين: Ja ولا Nein",
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf",
+    "page": 21
+   }
+  },
+  {
+   "id": "exam:osd-lesen-3",
+   "kind": "exam",
+   "exam": "osd",
+   "group": "Lesen",
+   "t": "Lesen Aufgabe 3",
+   "ar": "٥ نصوص و ٦ صور: توصّل كل نص بصورته",
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf",
+    "page": 21
+   }
+  },
+  {
+   "id": "exam:osd-hoeren-1",
+   "kind": "exam",
+   "exam": "osd",
+   "group": "Hören",
+   "t": "Hören Aufgabe 1",
+   "ar": "٥ نصوص مسموعة و ٦ صور، مرة واحدة: توصّل كل نص بصورته",
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf",
+    "page": 22
+   }
+  },
+  {
+   "id": "exam:osd-hoeren-2",
+   "kind": "exam",
+   "exam": "osd",
+   "group": "Hören",
+   "t": "Hören Aufgabe 2",
+   "ar": "رسالة مسجّلة (أنسرماشين أو خدمة تليفون) بتتسمع مرتين: تكتب ٥ معلومات ناقصة وإنت بتسمع (أرقام، مواعيد، أسامي متهجّية)",
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf",
+    "page": 22
+   }
+  },
+  {
+   "id": "exam:osd-hoeren-3",
+   "kind": "exam",
+   "exam": "osd",
+   "group": "Hören",
+   "t": "Hören Aufgabe 3",
+   "ar": "٥ مقابلات قصيرة، مرة واحدة: تختار الإجابة الصح",
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf",
+    "page": 22
+   }
+  },
+  {
+   "id": "exam:osd-schreiben-1",
+   "kind": "exam",
+   "exam": "osd",
+   "group": "Schreiben",
+   "t": "Schreiben Aufgabe 1",
+   "ar": "تملا استمارة من معلومات جاهزة (١٠ خانات: اختيار وكتابة)",
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf",
+    "page": 24
+   }
+  },
+  {
+   "id": "exam:osd-schreiben-2",
+   "kind": "exam",
+   "exam": "osd",
+   "group": "Schreiben",
+   "t": "Schreiben Aufgabe 2",
+   "ar": "ترد على إيميل شخصي فيه ٣ أسئلة، حوالي ٣٠ كلمة",
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf",
+    "page": 24
+   }
+  },
+  {
+   "id": "exam:osd-sprechen-1",
+   "kind": "exam",
+   "exam": "osd",
+   "group": "Sprechen",
+   "t": "Sprechen Aufgabe 1",
+   "ar": "تعرّف نفسك: تختار ٤ مواضيع من ٦ وتتكلم عنهم",
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf",
+    "page": 24
+   }
+  },
+  {
+   "id": "exam:osd-sprechen-2",
+   "kind": "exam",
+   "exam": "osd",
+   "group": "Sprechen",
+   "t": "Sprechen Aufgabe 2",
+   "ar": "تختار صورة من ٣ (موقف يومي) وتوصفها بمساعدة ٤ أسئلة",
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf",
+    "page": 24
+   }
+  },
+  {
+   "id": "exam:osd-sprechen-3",
+   "kind": "exam",
+   "exam": "osd",
+   "group": "Sprechen",
+   "t": "Sprechen Aufgabe 3",
+   "ar": "حوار مع الممتحن (رول بلاي) على نفس الصورة: تبادل الكلام، و Du ولا Sie",
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf",
+    "page": 24
+   }
+  },
+  {
+   "id": "exam:osd-bestehen",
+   "kind": "exam",
+   "exam": "osd",
+   "group": "Bestehen",
+   "t": "Bestehen",
+   "ar": "جزئين: المكتوب (قراية وسمع وكتابة) ٧٥ نقطة والنجاح من ٣٨، بحد أدنى ٦ في القراية و ٦ في السمع و ٤ في الإيميل؛ والكلام ٢٥ نقطة والنجاح من ١٢، وقبله ١٠ دقايق تحضير",
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf",
+    "page": 33
+   }
+  },
+  {
+   "id": "exam:osd-plurizentrik",
+   "kind": "exam",
+   "exam": "osd",
+   "group": "Plurizentrik",
+   "t": "Plurizentrik",
+   "ar": "النصوص والأصوات من النمسا وألمانيا وسويسرا: كلمات زي Jänner و Grüß Gott لازم تتعرف",
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf",
+    "page": 22
+   }
+  },
+  {
+   "id": "exam:telc-sprachbausteine",
+   "kind": "exam",
+   "exam": "telc",
+   "group": "Sprachbausteine",
+   "t": "Sprachbausteine",
+   "ar": "١٠ أسئلة اختيار على الكلمات والقواعد: تختار الكلمة المناسبة لكل فراغ في نصين",
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf",
+    "page": 5
+   }
+  },
+  {
+   "id": "exam:telc-hoeren-a",
+   "kind": "exam",
+   "exam": "telc",
+   "group": "Hören",
+   "t": "Hören Teil A",
+   "ar": "٤ أسئلة صح ولا غلط: تلقط معلومة محددة",
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf",
+    "page": 5
+   }
+  },
+  {
+   "id": "exam:telc-hoeren-b",
+   "kind": "exam",
+   "exam": "telc",
+   "group": "Hören",
+   "t": "Hören Teil B",
+   "ar": "٥ أسئلة اختيار على التفاصيل، خصوصًا الأرقام والحروف",
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf",
+    "page": 5
+   }
+  },
+  {
+   "id": "exam:telc-hoeren-antworten-a",
+   "kind": "exam",
+   "exam": "telc",
+   "group": "Hören",
+   "t": "Hören und antworten Teil A",
+   "ar": "تسمع ٣ كلامات قصيرة وتختار الرد المناسب لكل واحد",
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf",
+    "page": 5
+   }
+  },
+  {
+   "id": "exam:telc-hoeren-antworten-b",
+   "kind": "exam",
+   "exam": "telc",
+   "group": "Hören",
+   "t": "Hören und antworten Teil B",
+   "ar": "نفس الفكرة مع ٤ كلامات",
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf",
+    "page": 5
+   }
+  },
+  {
+   "id": "exam:telc-lesen-a",
+   "kind": "exam",
+   "exam": "telc",
+   "group": "Lesen",
+   "t": "Lesen Teil A",
+   "ar": "٣ نصوص توصّلها بعناوينها (الفكرة العامة)",
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf",
+    "page": 5
+   }
+  },
+  {
+   "id": "exam:telc-lesen-b",
+   "kind": "exam",
+   "exam": "telc",
+   "group": "Lesen",
+   "t": "Lesen Teil B",
+   "ar": "نص و ٣ جمل صح ولا غلط (التفاصيل)",
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf",
+    "page": 5
+   }
+  },
+  {
+   "id": "exam:telc-lesen-c",
+   "kind": "exam",
+   "exam": "telc",
+   "group": "Lesen",
+   "t": "Lesen Teil C",
+   "ar": "٣ أسئلة اختيار: تلاقي معلومة محددة (إعلانات جرنال)",
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf",
+    "page": 5
+   }
+  },
+  {
+   "id": "exam:telc-schreiben-a",
+   "kind": "exam",
+   "exam": "telc",
+   "group": "Schreiben",
+   "t": "Schreiben Teil A",
+   "ar": "تملا استمارة لحد تاني من معلومات نص",
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf",
+    "page": 5
+   }
+  },
+  {
+   "id": "exam:telc-schreiben-b",
+   "kind": "exam",
+   "exam": "telc",
+   "group": "Schreiben",
+   "t": "Schreiben Teil B",
+   "ar": "رسالة قصيرة (إيميل) فيها ٣ نقط، حوالي ٣٠ كلمة",
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf",
+    "page": 5
+   }
+  },
+  {
+   "id": "exam:telc-sprechen-a",
+   "kind": "exam",
+   "exam": "telc",
+   "group": "Sprechen",
+   "t": "Sprechen Teil A",
+   "ar": "تعرّف نفسك من ورقة كلمات، وتتهجّى، وتقول أرقام (٣ دقايق)",
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf",
+    "page": 25
+   }
+  },
+  {
+   "id": "exam:telc-sprechen-b",
+   "kind": "exam",
+   "exam": "telc",
+   "group": "Sprechen",
+   "t": "Sprechen Teil B",
+   "ar": "تسأل وتجاوب عن موضوعين يوميين بالكروت (٤ دقايق)",
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf",
+    "page": 25
+   }
+  },
+  {
+   "id": "exam:telc-sprechen-c",
+   "kind": "exam",
+   "exam": "telc",
+   "group": "Sprechen",
+   "t": "Sprechen Teil C",
+   "ar": "تطلب وتقترح وتعرض وتنصح، وترد على ده (٤ دقايق)، ومفيش وقت تحضير",
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf",
+    "page": 25
+   }
+  },
+  {
+   "id": "exam:telc-bestehen",
+   "kind": "exam",
+   "exam": "telc",
+   "group": "Bestehen",
+   "t": "Bestehen",
+   "ar": "الامتحان ١٠٠ نقطة والنجاح من ٦٠: كلمات وقواعد ١٥، وسمع ٣١، وقراية ٢٤، وكتابة ١٠، وكلام ٢٠",
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf",
+    "page": 27
+   }
+  },
+  {
+   "id": "exam:dtz",
+   "kind": "exam",
+   "exam": "dtz",
+   "group": "DTZ",
+   "t": "Deutsch-Test für Zuwanderer",
+   "ref": {
+    "t": "Deutsch-Test für Zuwanderer A2–B1: Prüfungsziele, Testbeschreibung",
+    "url": "https://www.goethe.de/resources/files/pdf209/dtz_pruefungshandbuch.pdf",
+    "page": 1
+   },
+   "skip": "امتحان A2 و B1، مش A1: بيدخل في منهج A2."
   },
   {
    "id": "act:informationsaustausch-benennen-definieren-identifizieren",
@@ -14840,6 +15239,5546 @@
     "pos": "prep",
     "ipa": "/ˈtsvɪʃən/",
     "audio": "https://upload.wikimedia.org/wikipedia/commons/a/a0/De-zwischen.ogg"
+   }
+  },
+  {
+   "id": "rc:a-1-1-1",
+   "kind": "situation",
+   "group": "Umgang mit der Migrationssituation",
+   "field": "A",
+   "sec": "A 1.1",
+   "secT": "AUSKUNFT GEBEN",
+   "act": "sprechen",
+   "ar": "يتكلم ببساطة عن نفسه وحياته في بلده (العيلة، الشغل اللي اتعلّمه)",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 31
+   }
+  },
+  {
+   "id": "rc:a-1-1-2",
+   "kind": "situation",
+   "group": "Umgang mit der Migrationssituation",
+   "field": "A",
+   "sec": "A 1.1",
+   "secT": "AUSKUNFT GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يرفض بأدب يتكلم عن حاجات حصلت له في بلده أو في الطريق",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 31
+   }
+  },
+  {
+   "id": "rc:a-2-1-1",
+   "kind": "situation",
+   "group": "Umgang mit der Migrationssituation",
+   "field": "A",
+   "sec": "A 2.1",
+   "secT": "UM AUSKUNFT BITTEN, AUSKUNFT GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل حد يعرفه أو مكتب استشارة: التصرف ده مناسب هنا؟ (المواعيد، Du ولا Sie)",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 32
+   }
+  },
+  {
+   "id": "rc:a-2-1-2",
+   "kind": "situation",
+   "group": "Umgang mit der Migrationssituation",
+   "field": "A",
+   "sec": "A 2.1",
+   "secT": "UM AUSKUNFT BITTEN, AUSKUNFT GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يجاوب ببساطة: الحاجة دي عادية في بلدي ولا لأ",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 32
+   }
+  },
+  {
+   "id": "rc:a-3-1-1",
+   "kind": "situation",
+   "group": "Umgang mit der Migrationssituation",
+   "field": "A",
+   "sec": "A 3.1",
+   "secT": "AUSKUNFT GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يجاوب على أسئلة بسيطة عن اللي يقدر يعمله",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 34
+   }
+  },
+  {
+   "id": "rc:a-4-1-1",
+   "kind": "situation",
+   "group": "Umgang mit der Migrationssituation",
+   "field": "A",
+   "sec": "A 4.1",
+   "secT": "UNWISSENHEIT ÄUSSERN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يقول إنه مش عارف الحاجة اسمها إيه بالألماني",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 35
+   }
+  },
+  {
+   "id": "rc:a-4-2-1",
+   "kind": "situation",
+   "group": "Umgang mit der Migrationssituation",
+   "field": "A",
+   "sec": "A 4.2",
+   "secT": "NACHFRAGEN, UM UNTERSTÜTZUNG BITTEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل تاني لما ميفهمش",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 36
+   }
+  },
+  {
+   "id": "rc:a-4-2-2",
+   "kind": "situation",
+   "group": "Umgang mit der Migrationssituation",
+   "field": "A",
+   "sec": "A 4.2",
+   "secT": "NACHFRAGEN, UM UNTERSTÜTZUNG BITTEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يطلب إن الكلام يتعاد",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 36
+   }
+  },
+  {
+   "id": "rc:a-4-2-3",
+   "kind": "situation",
+   "group": "Umgang mit der Migrationssituation",
+   "field": "A",
+   "sec": "A 4.2",
+   "secT": "NACHFRAGEN, UM UNTERSTÜTZUNG BITTEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يطلب من اللي بيكلمه (موظف، زميل، دكتور، حتى في التليفون) يقولها بكلام تاني",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 36
+   }
+  },
+  {
+   "id": "rc:a-4-2-4",
+   "kind": "situation",
+   "group": "Umgang mit der Migrationssituation",
+   "field": "A",
+   "sec": "A 4.2",
+   "secT": "NACHFRAGEN, UM UNTERSTÜTZUNG BITTEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يطلب من اللي بيكلمه يتكلم أبطأ",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 36
+   }
+  },
+  {
+   "id": "rc:a-4-2-5",
+   "kind": "situation",
+   "group": "Umgang mit der Migrationssituation",
+   "field": "A",
+   "sec": "A 4.2",
+   "secT": "NACHFRAGEN, UM UNTERSTÜTZUNG BITTEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يطلب مساعدة عشان يقول طلبه صح",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 36
+   }
+  },
+  {
+   "id": "rc:a-4-2-6",
+   "kind": "situation",
+   "group": "Umgang mit der Migrationssituation",
+   "field": "A",
+   "sec": "A 4.2",
+   "secT": "NACHFRAGEN, UM UNTERSTÜTZUNG BITTEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل لو الورق ده (جواب المدرسة، الطلبات) موجود بلغته أو بلغة يعرفها",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 36
+   }
+  },
+  {
+   "id": "rc:a-4-2-7",
+   "kind": "situation",
+   "group": "Umgang mit der Migrationssituation",
+   "field": "A",
+   "sec": "A 4.2",
+   "secT": "NACHFRAGEN, UM UNTERSTÜTZUNG BITTEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يطلب من الموظف يساعده يملا استمارة",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 36
+   }
+  },
+  {
+   "id": "rc:a-4-2-8",
+   "kind": "situation",
+   "group": "Umgang mit der Migrationssituation",
+   "field": "A",
+   "sec": "A 4.2",
+   "secT": "NACHFRAGEN, UM UNTERSTÜTZUNG BITTEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يقول للموظف إن فيه حد هيترجم له (حد من العيلة أو مترجم)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 36
+   }
+  },
+  {
+   "id": "rc:a-5-2-1",
+   "kind": "situation",
+   "group": "Umgang mit der Migrationssituation",
+   "field": "A",
+   "sec": "A 5.2",
+   "secT": "AUSKUNFT GEBEN",
+   "act": "sprechen",
+   "ar": "يقول بيتكلم لغات إيه",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 37
+   }
+  },
+  {
+   "id": "rc:b-1-5-1",
+   "kind": "situation",
+   "group": "Realisierung von Gefühlen, Haltungen und Meinungen",
+   "field": "B",
+   "sec": "B 1.5",
+   "secT": "GEFALLEN, MISSFALLEN AUSDRÜCKEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يقول الحاجة عجبته ولا لأ",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 42
+   }
+  },
+  {
+   "id": "rc:b-2-1-1",
+   "kind": "situation",
+   "group": "Realisierung von Gefühlen, Haltungen und Meinungen",
+   "field": "B",
+   "sec": "B 2.1",
+   "secT": "INTERESSE, DESINTERESSE AUSDRÜCKEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يقول إن السؤال يهمه أو مش فارق معاه",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 43
+   }
+  },
+  {
+   "id": "rc:b-2-2-1",
+   "kind": "situation",
+   "group": "Realisierung von Gefühlen, Haltungen und Meinungen",
+   "field": "B",
+   "sec": "B 2.2",
+   "secT": "ZUSTIMMUNG, ABLEHNUNG AUSDRÜCKEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يقول موافق أو مش موافق",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 43
+   }
+  },
+  {
+   "id": "rc:b-2-3-1",
+   "kind": "situation",
+   "group": "Realisierung von Gefühlen, Haltungen und Meinungen",
+   "field": "B",
+   "sec": "B 2.3",
+   "secT": "NEIGUNGEN, ABNEIGUNGEN, VORLIEBEN AUSDRÜCKEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يقول بيحب إيه ومبيحبش إيه",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 43
+   }
+  },
+  {
+   "id": "rc:c-1-1-1",
+   "kind": "situation",
+   "group": "Umgang mit Dissens und Konflikten",
+   "field": "C",
+   "sec": "C 1.1",
+   "secT": "DIE EIGENE MEINUNG AUSDRÜCKEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يقول إن رأيه مختلف",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 49
+   }
+  },
+  {
+   "id": "rc:c-1-2-1",
+   "kind": "situation",
+   "group": "Umgang mit Dissens und Konflikten",
+   "field": "C",
+   "sec": "C 1.2",
+   "secT": "NACHFRAGEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "وقت الخلاف (مع زميل أو مدرس) يسأل: أنا فهمت صح؟",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 49
+   }
+  },
+  {
+   "id": "rc:c-1-4-1",
+   "kind": "situation",
+   "group": "Umgang mit Dissens und Konflikten",
+   "field": "C",
+   "sec": "C 1.4",
+   "secT": "WIDERSPRECHEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يعترض بكلام بسيط ومناسب (على كرسي محجوز، أو اتهام، أو طلب)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 50
+   }
+  },
+  {
+   "id": "rc:c-2-4-1",
+   "kind": "situation",
+   "group": "Umgang mit Dissens und Konflikten",
+   "field": "C",
+   "sec": "C 2.4",
+   "secT": "LÖSUNGSVORSCHLÄGE MACHEN UND AUF LÖSUNGSVORSCHLÄGE REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "في مشكلة، يوافق أو يرفض حل اتعرض عليه",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 51
+   }
+  },
+  {
+   "id": "rc:d-1-1-1",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 1.1",
+   "secT": "JEMANDEN BEGRÜSSEN UND DARAUF REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسلّم بالطريقة المناسبة",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 55
+   }
+  },
+  {
+   "id": "rc:d-1-1-2",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 1.1",
+   "secT": "JEMANDEN BEGRÜSSEN UND DARAUF REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يرد السلام",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 55
+   }
+  },
+  {
+   "id": "rc:d-1-2-1",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 1.2",
+   "secT": "SICH UND ANDERE VORSTELLEN UND AUF VORSTELLUNGEN REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يعرّف نفسه",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 55
+   }
+  },
+  {
+   "id": "rc:d-1-2-2",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 1.2",
+   "secT": "SICH UND ANDERE VORSTELLEN UND AUF VORSTELLUNGEN REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يعرّف حد تاني",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 55
+   }
+  },
+  {
+   "id": "rc:d-1-2-3",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 1.2",
+   "secT": "SICH UND ANDERE VORSTELLEN UND AUF VORSTELLUNGEN REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يرد بأدب لما حد يتعرّف عليه",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 55
+   }
+  },
+  {
+   "id": "rc:d-1-2-4",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 1.2",
+   "secT": "SICH UND ANDERE VORSTELLEN UND AUF VORSTELLUNGEN REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يطلب من حد يعرّف نفسه",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 55
+   }
+  },
+  {
+   "id": "rc:d-1-3-1",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 1.3",
+   "secT": "JEMANDEN ANSPRECHEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يفتح كلام مع حد ويطلب أو يسأل عن حاجة يومية",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 56
+   }
+  },
+  {
+   "id": "rc:d-1-4-1",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 1.4",
+   "secT": "ANREDEFORMEN KLÄREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يعرض على زميل أو ضيف يقولوا لبعض Du",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 56
+   }
+  },
+  {
+   "id": "rc:d-1-4-2",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 1.4",
+   "secT": "ANREDEFORMEN KLÄREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يرد لما حد يعرض عليه Du",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 56
+   }
+  },
+  {
+   "id": "rc:d-1-4-3",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 1.4",
+   "secT": "ANREDEFORMEN KLÄREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يطلب من موظف حكومي يكلمه بالطريقة المناسبة",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 56
+   }
+  },
+  {
+   "id": "rc:d-1-5-1",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 1.5",
+   "secT": "GESPRÄCHE BEENDEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "ينهي الكلام ببساطة وبأدب",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 56
+   }
+  },
+  {
+   "id": "rc:d-1-6-1",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 1.6",
+   "secT": "SICH VERABSCHIEDEN UND AUF VERABSCHIEDUNGEN REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يفهم كلام الوداع",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 57
+   }
+  },
+  {
+   "id": "rc:d-1-6-2",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 1.6",
+   "secT": "SICH VERABSCHIEDEN UND AUF VERABSCHIEDUNGEN REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يودّع بالطريقة المناسبة",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 57
+   }
+  },
+  {
+   "id": "rc:d-2-1-1",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 2.1",
+   "secT": "NACH DEM BEFINDEN FRAGEN UND DARAUF REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل حد عامل إيه (معارف، مدرس ولاده)",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 57
+   }
+  },
+  {
+   "id": "rc:d-2-1-2",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 2.1",
+   "secT": "NACH DEM BEFINDEN FRAGEN UND DARAUF REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يرد على «عامل إيه؟»",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 57
+   }
+  },
+  {
+   "id": "rc:d-2-5-1",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 2.5",
+   "secT": "VERABREDUNGEN TREFFEN UND DARAUF REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل زميل أو صاحب: فاضي نعمل حاجة سوا؟",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 58
+   }
+  },
+  {
+   "id": "rc:d-2-5-2",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 2.5",
+   "secT": "VERABREDUNGEN TREFFEN UND DARAUF REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يقول فاضي في الميعاد ده ولا لأ",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 58
+   }
+  },
+  {
+   "id": "rc:d-2-6-1",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 2.6",
+   "secT": "VORSCHLÄGE ABLEHNEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يعتذر عن حاجة مشتركة لأنه مش فاضي",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 59
+   }
+  },
+  {
+   "id": "rc:d-2-7-1",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 2.7",
+   "secT": "KOMPLIMENTE UND LOB AUSSPRECHEN UND DARAUF REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يجامل أو يمدح بكلمتين",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 59
+   }
+  },
+  {
+   "id": "rc:d-2-7-2",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 2.7",
+   "secT": "KOMPLIMENTE UND LOB AUSSPRECHEN UND DARAUF REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يشكر على المجاملة",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 59
+   }
+  },
+  {
+   "id": "rc:d-2-8-1",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 2.8",
+   "secT": "SICH ENTSCHULDIGEN UND AUF ENTSCHULDIGUNGEN REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يعتذر بكلام بسيط",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 59
+   }
+  },
+  {
+   "id": "rc:d-2-8-2",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 2.8",
+   "secT": "SICH ENTSCHULDIGEN UND AUF ENTSCHULDIGUNGEN REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يقبل اعتذار حد",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 59
+   }
+  },
+  {
+   "id": "rc:d-2-11-1",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 2.11",
+   "secT": "ZU BESTIMMTEN ANLÄSSEN GRATULIEREN UND DARAUF REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يهنّي حد (عيد ميلاد، جواز…)",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 60
+   }
+  },
+  {
+   "id": "rc:d-2-11-2",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 2.11",
+   "secT": "ZU BESTIMMTEN ANLÄSSEN GRATULIEREN UND DARAUF REAGIEREN",
+   "act": "schreiben",
+   "ar": "يهنّي في إيميل أو كارت",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 60
+   }
+  },
+  {
+   "id": "rc:d-2-11-3",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 2.11",
+   "secT": "ZU BESTIMMTEN ANLÄSSEN GRATULIEREN UND DARAUF REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يشكر على التهنئة",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 60
+   }
+  },
+  {
+   "id": "rc:d-2-12-1",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 2.12",
+   "secT": "GUTE WÜNSCHE AUSSPRECHEN UND DARAUF REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يتمنى لحد حاجة حلوة (سلامتك، أجازة سعيدة)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 60
+   }
+  },
+  {
+   "id": "rc:d-2-12-2",
+   "kind": "situation",
+   "group": "Gestaltung sozialer Kontakte",
+   "field": "D",
+   "sec": "D 2.12",
+   "secT": "GUTE WÜNSCHE AUSSPRECHEN UND DARAUF REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يشكر على الأمنيات ويردها",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 60
+   }
+  },
+  {
+   "id": "rc:e-1-1-1",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 1.1",
+   "secT": "NACHFRAGEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل: الكلمة أو الجملة دي صح؟",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 63
+   }
+  },
+  {
+   "id": "rc:e-1-1-2",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 1.1",
+   "secT": "NACHFRAGEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يطلب من اللي بيكلمه يصحّح له",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 63
+   }
+  },
+  {
+   "id": "rc:e-1-1-3",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 1.1",
+   "secT": "NACHFRAGEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يطلب ترشيح مواد تعلّم زيادة",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 63
+   }
+  },
+  {
+   "id": "rc:e-1-1-4",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 1.1",
+   "secT": "NACHFRAGEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل فيه كورس ألماني قريب؟",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 63
+   }
+  },
+  {
+   "id": "rc:e-2-1-1",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.1",
+   "secT": "WORTSCHATZ LERNEN",
+   "act": "schreiben",
+   "ar": "يعمل قاموس شخصي (كروت)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 65
+   }
+  },
+  {
+   "id": "rc:e-2-1-2",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.1",
+   "secT": "WORTSCHATZ LERNEN",
+   "act": "schreiben",
+   "ar": "يقسّم الكلمات على مواضيع",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 65
+   }
+  },
+  {
+   "id": "rc:e-2-1-3",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.1",
+   "secT": "WORTSCHATZ LERNEN",
+   "act": "schreiben",
+   "ar": "يستخدم طرق للحفظ",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 65
+   }
+  },
+  {
+   "id": "rc:e-2-1-4",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.1",
+   "secT": "WORTSCHATZ LERNEN",
+   "act": "schreiben",
+   "ar": "يكتب الكلمات بإيده عشان تتحفظ",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 65
+   }
+  },
+  {
+   "id": "rc:e-2-1-5",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.1",
+   "secT": "WORTSCHATZ LERNEN",
+   "act": "schreiben",
+   "ar": "يطلّع من النصوص الكلمات المهمة له ويضيفها لقاموسه",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 65
+   }
+  },
+  {
+   "id": "rc:e-2-2-1",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.2",
+   "secT": "HÖRKOMPETENZ AUF- UND AUSBAUEN",
+   "act": "hören",
+   "ar": "يتمرّن على السمع لوحده بتسجيلات الكورس",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 66
+   }
+  },
+  {
+   "id": "rc:e-2-2-2",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.2",
+   "secT": "HÖRKOMPETENZ AUF- UND AUSBAUEN",
+   "act": "hören",
+   "ar": "يمسك في الكلمات الدولية والأرقام والأسامي كـ«جزر» يفهم منها",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 66
+   }
+  },
+  {
+   "id": "rc:e-2-2-3",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.2",
+   "secT": "HÖRKOMPETENZ AUF- UND AUSBAUEN",
+   "act": "hören",
+   "ar": "يتوقع الكلام هيبقى عن إيه قبل ما يسمع (من الوقت ومين بيتكلم) ويستخدم ده في الفهم",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 66
+   }
+  },
+  {
+   "id": "rc:e-2-3-1",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.3",
+   "secT": "HÖR-SEH-KOMPETENZ AUF- UND AUSBAUEN",
+   "act": "sehen und hören",
+   "ar": "يستخدم الترجمة اللي على الشاشة في الأفلام والفيديو للتمرين",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 67
+   }
+  },
+  {
+   "id": "rc:e-2-3-2",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.3",
+   "secT": "HÖR-SEH-KOMPETENZ AUF- UND AUSBAUEN",
+   "act": "sehen und hören",
+   "ar": "يستخدم الصورة في التلفزيون عشان يفهم",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 67
+   }
+  },
+  {
+   "id": "rc:e-2-3-3",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.3",
+   "secT": "HÖR-SEH-KOMPETENZ AUF- UND AUSBAUEN",
+   "act": "sehen und hören",
+   "ar": "يفهم الفكرة العامة من الفيديو ويعدّي الكلمات اللي مش فاهمها",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 67
+   }
+  },
+  {
+   "id": "rc:e-2-4-1",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.4",
+   "secT": "LESEKOMPETENZ AUF- UND AUSBAUEN",
+   "act": "lesen",
+   "ar": "يتمرّن على القراية بنصوص الحياة (إعلانات، جرايد، كتالوجات)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 68
+   }
+  },
+  {
+   "id": "rc:e-2-4-2",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.4",
+   "secT": "LESEKOMPETENZ AUF- UND AUSBAUEN",
+   "act": "lesen",
+   "ar": "يخمّن معنى الكلمة من الأسامي والتواريخ والكلمات الدولية والكلمات الشبه الإنجليزي وقواعد تكوين الكلمة",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 68
+   }
+  },
+  {
+   "id": "rc:e-2-4-3",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.4",
+   "secT": "LESEKOMPETENZ AUF- UND AUSBAUEN",
+   "act": "lesen",
+   "ar": "يستخدم شكل النص (نوعه، العناوين، التنسيق) عشان يفهم",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 68
+   }
+  },
+  {
+   "id": "rc:e-2-4-4",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.4",
+   "secT": "LESEKOMPETENZ AUF- UND AUSBAUEN",
+   "act": "lesen",
+   "ar": "يلاحظ الكلمات اللي بتربط النص (er، dort، dann) ويمشي وراها",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 68
+   }
+  },
+  {
+   "id": "rc:e-2-5-1",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.5",
+   "secT": "SPRECHFERTIGKEIT AUF- UND AUSBAUEN",
+   "act": "sprechen",
+   "ar": "يحفظ جمل وتعبيرات جاهزة عشان يتكلم أسلس",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 69
+   }
+  },
+  {
+   "id": "rc:e-2-5-2",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.5",
+   "secT": "SPRECHFERTIGKEIT AUF- UND AUSBAUEN",
+   "act": "sprechen",
+   "ar": "يعمل كروت تعبيرات (حتى ديجيتال)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 69
+   }
+  },
+  {
+   "id": "rc:e-2-5-3",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.5",
+   "secT": "SPRECHFERTIGKEIT AUF- UND AUSBAUEN",
+   "act": "sprechen",
+   "ar": "يعوّض الكلمة الناقصة (كلمة من لغة تانية، أو يوصفها)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 69
+   }
+  },
+  {
+   "id": "rc:e-2-5-4",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.5",
+   "secT": "SPRECHFERTIGKEIT AUF- UND AUSBAUEN",
+   "act": "sprechen",
+   "ar": "يعوّض من غير كلام (إشارة، رسم، يشاور)",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 69
+   }
+  },
+  {
+   "id": "rc:e-2-6-1",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.6",
+   "secT": "SCHREIBFERTIGKEIT AUF- UND AUSBAUEN",
+   "act": "schreiben",
+   "ar": "ينقل نصوص بإيده عشان كتابته تتحسن",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 70
+   }
+  },
+  {
+   "id": "rc:e-2-6-2",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.6",
+   "secT": "SCHREIBFERTIGKEIT AUF- UND AUSBAUEN",
+   "act": "schreiben",
+   "ar": "يستخدم المدقق الإملائي وهو بيكتب",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 70
+   }
+  },
+  {
+   "id": "rc:e-2-7-1",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.7",
+   "secT": "GRAMMATIK LERNEN",
+   "act": null,
+   "ar": "يربط مصطلحات القواعد بلغته أو بلغة تانية يعرفها",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 71
+   }
+  },
+  {
+   "id": "rc:e-2-7-2",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.7",
+   "secT": "GRAMMATIK LERNEN",
+   "act": null,
+   "ar": "يرسم القاعدة أو يفهمها من رسم",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 71
+   }
+  },
+  {
+   "id": "rc:e-2-7-3",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.7",
+   "secT": "GRAMMATIK LERNEN",
+   "act": null,
+   "ar": "يكتشف القاعدة بنفسه (يعلّم، يجمع، يرتّب) ويصيغها",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 71
+   }
+  },
+  {
+   "id": "rc:e-2-7-4",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.7",
+   "secT": "GRAMMATIK LERNEN",
+   "act": null,
+   "ar": "يستخدم جمل حفظ (Merkverse) للقواعد",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 71
+   }
+  },
+  {
+   "id": "rc:e-2-7-5",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.7",
+   "secT": "GRAMMATIK LERNEN",
+   "act": null,
+   "ar": "يستخدم الحركة واللمس عشان القاعدة تثبت",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 71
+   }
+  },
+  {
+   "id": "rc:e-2-7-6",
+   "kind": "situation",
+   "group": "Umgang mit dem eigenen Sprachenlernen",
+   "field": "E",
+   "sec": "E 2.7",
+   "secT": "GRAMMATIK LERNEN",
+   "act": null,
+   "ar": "يعمل تمارين قواعد لزمايله ويساعدهم يحلّوها",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 71
+   }
+  },
+  {
+   "id": "rc:1-1-1-1",
+   "kind": "situation",
+   "group": "Ämter und Behörden",
+   "field": "1",
+   "sec": "1.1.1",
+   "secT": "SICH INFORMIEREN",
+   "act": "lesen",
+   "ar": "يطلّع معلومات عن جهة حكومية من الإنترنت أو دليل التليفون",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 77
+   }
+  },
+  {
+   "id": "rc:1-2-2-1",
+   "kind": "situation",
+   "group": "Ämter und Behörden",
+   "field": "1",
+   "sec": "1.2.2",
+   "secT": "FORMULARE AUSFÜLLEN UND ANTRÄGE STELLEN",
+   "act": "schreiben",
+   "ar": "يملا بياناته في استمارة (زي استمارة تسجيل السكن)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 77
+   }
+  },
+  {
+   "id": "rc:1-3-1-1",
+   "kind": "situation",
+   "group": "Ämter und Behörden",
+   "field": "1",
+   "sec": "1.3.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "lesen",
+   "ar": "يفهم اليافطات اللي بتوجّهه جوه المبنى",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 78
+   }
+  },
+  {
+   "id": "rc:1-3-1-2",
+   "kind": "situation",
+   "group": "Ämter und Behörden",
+   "field": "1",
+   "sec": "1.3.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل في شباك الاستعلامات",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 78
+   }
+  },
+  {
+   "id": "rc:1-3-1-3",
+   "kind": "situation",
+   "group": "Ämter und Behörden",
+   "field": "1",
+   "sec": "1.3.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يجاوب على أسئلة الموظف البسيطة",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 78
+   }
+  },
+  {
+   "id": "rc:1-3-2-1",
+   "kind": "situation",
+   "group": "Ämter und Behörden",
+   "field": "1",
+   "sec": "1.3.2",
+   "secT": "UM HILFE BITTEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يطلب مساعدة من الموظف",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 78
+   }
+  },
+  {
+   "id": "rc:1-3-4-1",
+   "kind": "situation",
+   "group": "Ämter und Behörden",
+   "field": "1",
+   "sec": "1.3.4",
+   "secT": "AN BERATUNGSGESPRÄCHEN TEILNEHMEN",
+   "act": "sprechen",
+   "ar": "يعرّف بنفسه في مكتب استشارة",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 79
+   }
+  },
+  {
+   "id": "rc:2-1-1-1",
+   "kind": "situation",
+   "group": "Arbeit",
+   "field": "2",
+   "sec": "2.1.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل زمايله عن الإجازات وتوزيع الشغل ومين مسؤول عن إيه",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 83
+   }
+  },
+  {
+   "id": "rc:2-1-2-1",
+   "kind": "situation",
+   "group": "Arbeit",
+   "field": "2",
+   "sec": "2.1.2",
+   "secT": "AUFTRÄGE VERSTEHEN UND DARAUF REAGIEREN, AUFTRÄGE GEBEN",
+   "act": "hören",
+   "ar": "يفهم المطلوب في شغل بسيط متعود عليه",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 84
+   }
+  },
+  {
+   "id": "rc:2-1-2-2",
+   "kind": "situation",
+   "group": "Arbeit",
+   "field": "2",
+   "sec": "2.1.2",
+   "secT": "AUFTRÄGE VERSTEHEN UND DARAUF REAGIEREN, AUFTRÄGE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يقول إنه فهم المطلوب وهيعمله",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 84
+   }
+  },
+  {
+   "id": "rc:2-1-2-3",
+   "kind": "situation",
+   "group": "Arbeit",
+   "field": "2",
+   "sec": "2.1.2",
+   "secT": "AUFTRÄGE VERSTEHEN UND DARAUF REAGIEREN, AUFTRÄGE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل تاني ويطلب إعادة لما ميفهمش",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 84
+   }
+  },
+  {
+   "id": "rc:2-1-3-1",
+   "kind": "situation",
+   "group": "Arbeit",
+   "field": "2",
+   "sec": "2.1.3",
+   "secT": "MITTEILUNGEN VERSTEHEN UND DARAUF REAGIEREN, MITTEILUNGEN MACHEN",
+   "act": "sprechen",
+   "ar": "يبلّغ في التليفون إنه عيان",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 85
+   }
+  },
+  {
+   "id": "rc:2-1-3-2",
+   "kind": "situation",
+   "group": "Arbeit",
+   "field": "2",
+   "sec": "2.1.3",
+   "secT": "MITTEILUNGEN VERSTEHEN UND DARAUF REAGIEREN, MITTEILUNGEN MACHEN",
+   "act": "schreiben",
+   "ar": "يبلّغ كتابة إنه عيان",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 85
+   }
+  },
+  {
+   "id": "rc:2-1-3-3",
+   "kind": "situation",
+   "group": "Arbeit",
+   "field": "2",
+   "sec": "2.1.3",
+   "secT": "MITTEILUNGEN VERSTEHEN UND DARAUF REAGIEREN, MITTEILUNGEN MACHEN",
+   "act": "hören",
+   "ar": "يفهم تحذير بالكلام (كهربا، مكنة بايظة)",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 85
+   }
+  },
+  {
+   "id": "rc:2-1-3-4",
+   "kind": "situation",
+   "group": "Arbeit",
+   "field": "2",
+   "sec": "2.1.3",
+   "secT": "MITTEILUNGEN VERSTEHEN UND DARAUF REAGIEREN, MITTEILUNGEN MACHEN",
+   "act": "lesen",
+   "ar": "يفهم معلومة مكتوبة بسيطة (عِدّة، خامات، كميات)",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 85
+   }
+  },
+  {
+   "id": "rc:2-1-3-5",
+   "kind": "situation",
+   "group": "Arbeit",
+   "field": "2",
+   "sec": "2.1.3",
+   "secT": "MITTEILUNGEN VERSTEHEN UND DARAUF REAGIEREN, MITTEILUNGEN MACHEN",
+   "act": "sprechen",
+   "ar": "يحذّر زمايله من خطر بكلمتين",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 85
+   }
+  },
+  {
+   "id": "rc:2-1-4-1",
+   "kind": "situation",
+   "group": "Arbeit",
+   "field": "2",
+   "sec": "2.1.4",
+   "secT": "VORSCHRIFTEN UND ANLEITUNGEN VERSTEHEN UND DARAUF REAGIEREN, ANLEITUNGEN GEBEN",
+   "act": "lesen",
+   "ar": "يفهم أهم حاجة في تعليمات الأمان في الشغل لو فيها صور",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 86
+   }
+  },
+  {
+   "id": "rc:2-1-5-1",
+   "kind": "situation",
+   "group": "Arbeit",
+   "field": "2",
+   "sec": "2.1.5",
+   "secT": "ABSPRACHEN TREFFEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يتفق مع مديره على تفاصيل جدول الشغل",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 86
+   }
+  },
+  {
+   "id": "rc:2-1-5-2",
+   "kind": "situation",
+   "group": "Arbeit",
+   "field": "2",
+   "sec": "2.1.5",
+   "secT": "ABSPRACHEN TREFFEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يقترح ميعاد ويرد على ميعاد مقترح",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 86
+   }
+  },
+  {
+   "id": "rc:2-2-2-1",
+   "kind": "situation",
+   "group": "Arbeit",
+   "field": "2",
+   "sec": "2.2.2",
+   "secT": "DOKUMENTE VERSTEHEN, FORMULARE AUSFÜLLEN",
+   "act": "schreiben",
+   "ar": "يملا checklist أو استمارة متابعة بسيطة",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 89
+   }
+  },
+  {
+   "id": "rc:2-2-2-2",
+   "kind": "situation",
+   "group": "Arbeit",
+   "field": "2",
+   "sec": "2.2.2",
+   "secT": "DOKUMENTE VERSTEHEN, FORMULARE AUSFÜLLEN",
+   "act": "lesen",
+   "ar": "يفهم جداول الشغل (الأسبوع، الورديات)",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 89
+   }
+  },
+  {
+   "id": "rc:2-3-1-1",
+   "kind": "situation",
+   "group": "Arbeit",
+   "field": "2",
+   "sec": "2.3.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يجاوب، حتى في التليفون، عن مكان أو ميعاد أو مين المسؤول",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 90
+   }
+  },
+  {
+   "id": "rc:3-1-3-1",
+   "kind": "situation",
+   "group": "Arbeitssuche",
+   "field": "3",
+   "sec": "3.1.3",
+   "secT": "STÄRKEN UND FÄHIGKEITEN BENENNEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يقول إيه اللي بيعمله كويس أو بيحب يعمله",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 96
+   }
+  },
+  {
+   "id": "rc:3-2-1-1",
+   "kind": "situation",
+   "group": "Arbeitssuche",
+   "field": "3",
+   "sec": "3.2.1",
+   "secT": "SICH INFORMIEREN",
+   "act": "lesen",
+   "ar": "يدوّر، حتى على الإنترنت، على أماكن استشارة الشغل",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 97
+   }
+  },
+  {
+   "id": "rc:3-4-1-1",
+   "kind": "situation",
+   "group": "Arbeitssuche",
+   "field": "3",
+   "sec": "3.4.1",
+   "secT": "STELLENANGEBOTE VERSTEHEN UND DARAUF REAGIEREN, STELLENGESUCHE AUFGEBEN",
+   "act": "lesen",
+   "ar": "يفهم أهم حاجة في إعلان وظيفة (جرنال، إنترنت، لوحة إعلانات)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 99
+   }
+  },
+  {
+   "id": "rc:3-4-2-1",
+   "kind": "situation",
+   "group": "Arbeitssuche",
+   "field": "3",
+   "sec": "3.4.2",
+   "secT": "SICH BEWERBEN",
+   "act": "schreiben",
+   "ar": "يكتب رسالة بسيطة جدًا فيها معلومات مهمة عن نفسه",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 99
+   }
+  },
+  {
+   "id": "rc:5-1-1-1",
+   "kind": "situation",
+   "group": "Banken und Versicherungen",
+   "field": "5",
+   "sec": "5.1.1",
+   "secT": "SICH INFORMIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يطلب من معارفه ترشيح بنك أو تأمين",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 111
+   }
+  },
+  {
+   "id": "rc:5-1-1-2",
+   "kind": "situation",
+   "group": "Banken und Versicherungen",
+   "field": "5",
+   "sec": "5.1.1",
+   "secT": "SICH INFORMIEREN",
+   "act": "lesen",
+   "ar": "يطلّع معلومات عن البنوك والتأمين من الإنترنت أو دليل التليفون",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 111
+   }
+  },
+  {
+   "id": "rc:5-2-1-1",
+   "kind": "situation",
+   "group": "Banken und Versicherungen",
+   "field": "5",
+   "sec": "5.2.1",
+   "secT": "ANLEITUNGEN VERSTEHEN UND DARAUF REAGIEREN",
+   "act": "lesen",
+   "ar": "يفهم أهم حاجة في يافطات البنك",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 111
+   }
+  },
+  {
+   "id": "rc:5-2-1-2",
+   "kind": "situation",
+   "group": "Banken und Versicherungen",
+   "field": "5",
+   "sec": "5.2.1",
+   "secT": "ANLEITUNGEN VERSTEHEN UND DARAUF REAGIEREN",
+   "act": "lesen",
+   "ar": "يفهم خطوات مكنة الـ ATM أو جهاز الخدمة الذاتية",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 111
+   }
+  },
+  {
+   "id": "rc:5-2-1-3",
+   "kind": "situation",
+   "group": "Banken und Versicherungen",
+   "field": "5",
+   "sec": "5.2.1",
+   "secT": "ANLEITUNGEN VERSTEHEN UND DARAUF REAGIEREN",
+   "act": "schreiben",
+   "ar": "يدخّل البيانات المطلوبة في المكنة",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 111
+   }
+  },
+  {
+   "id": "rc:5-2-2-1",
+   "kind": "situation",
+   "group": "Banken und Versicherungen",
+   "field": "5",
+   "sec": "5.2.2",
+   "secT": "MITTEILUNGEN VERSTEHEN UND MITTEILUNGEN MACHEN",
+   "act": "lesen",
+   "ar": "يفهم أهم حاجة في كشف الحساب",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 112
+   }
+  },
+  {
+   "id": "rc:5-2-2-2",
+   "kind": "situation",
+   "group": "Banken und Versicherungen",
+   "field": "5",
+   "sec": "5.2.2",
+   "secT": "MITTEILUNGEN VERSTEHEN UND MITTEILUNGEN MACHEN",
+   "act": "schreiben",
+   "ar": "يبلّغ البنك كتابة بمعلومة مهمة (زي تغيير العنوان)",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 112
+   }
+  },
+  {
+   "id": "rc:5-2-3-1",
+   "kind": "situation",
+   "group": "Banken und Versicherungen",
+   "field": "5",
+   "sec": "5.2.3",
+   "secT": "FORMULARE AUSFÜLLEN",
+   "act": "schreiben",
+   "ar": "يملا استمارات الدفع المهمة (تحويل)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 112
+   }
+  },
+  {
+   "id": "rc:5-4-1-1",
+   "kind": "situation",
+   "group": "Banken und Versicherungen",
+   "field": "5",
+   "sec": "5.4.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يطلب من موظف البنك أو التأمين ورق معلومات",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 113
+   }
+  },
+  {
+   "id": "rc:5-4-2-1",
+   "kind": "situation",
+   "group": "Banken und Versicherungen",
+   "field": "5",
+   "sec": "5.4.2",
+   "secT": "BEDÜRFNISSE ÄUSSERN, AUFTRÄGE ERTEILEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يطلب خدمة في شباك البنك أو من مندوب التأمين",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 113
+   }
+  },
+  {
+   "id": "rc:6-1-1-1",
+   "kind": "situation",
+   "group": "Betreuung und Ausbildung der Kinder",
+   "field": "6",
+   "sec": "6.1.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل الأهالي أو المعارف عن حضانات وروضات",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 117
+   }
+  },
+  {
+   "id": "rc:6-1-1-2",
+   "kind": "situation",
+   "group": "Betreuung und Ausbildung der Kinder",
+   "field": "6",
+   "sec": "6.1.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "lesen",
+   "ar": "يطلّع عناوين وأرقام تليفونات من الدليل أو الإنترنت",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 117
+   }
+  },
+  {
+   "id": "rc:6-2-2-1",
+   "kind": "situation",
+   "group": "Betreuung und Ausbildung der Kinder",
+   "field": "6",
+   "sec": "6.2.2",
+   "secT": "MITTEILUNGEN VERSTEHEN UND DARAUF REAGIEREN, MITTEILUNGEN MACHEN",
+   "act": "schreiben",
+   "ar": "يملا الجزء اللي بيرجع من جوابات المدرسة",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 118
+   }
+  },
+  {
+   "id": "rc:6-2-2-2",
+   "kind": "situation",
+   "group": "Betreuung und Ausbildung der Kinder",
+   "field": "6",
+   "sec": "6.2.2",
+   "secT": "MITTEILUNGEN VERSTEHEN UND DARAUF REAGIEREN, MITTEILUNGEN MACHEN",
+   "act": "sprechen",
+   "ar": "يبلّغ بالكلام بحاجة بسيطة (زي إن ابنه عيان)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 118
+   }
+  },
+  {
+   "id": "rc:6-2-3-1",
+   "kind": "situation",
+   "group": "Betreuung und Ausbildung der Kinder",
+   "field": "6",
+   "sec": "6.2.3",
+   "secT": "ANTRÄGE STELLEN UND FORMULARE AUSFÜLLEN",
+   "act": "schreiben",
+   "ar": "يملا ورقة غياب أو مرض الطفل للمدرسة",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 118
+   }
+  },
+  {
+   "id": "rc:6-3-1-1",
+   "kind": "situation",
+   "group": "Betreuung und Ausbildung der Kinder",
+   "field": "6",
+   "sec": "6.3.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "sprechen",
+   "ar": "يحكي ببساطة عن دراسة ابنه في بلده",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 119
+   }
+  },
+  {
+   "id": "rc:6-3-4-1",
+   "kind": "situation",
+   "group": "Betreuung und Ausbildung der Kinder",
+   "field": "6",
+   "sec": "6.3.4",
+   "secT": "AN BERATUNGSGESPRÄCHEN TEILNEHMEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يجاوب على أسئلة بسيطة في مقابلة استشارة عن ابنه",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 120
+   }
+  },
+  {
+   "id": "rc:7-1-1-1",
+   "kind": "situation",
+   "group": "Einkaufen",
+   "field": "7",
+   "sec": "7.1.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل معارفه أو جيرانه عن منتج بيدوّر عليه (الماركة، المحل، السعر)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 125
+   }
+  },
+  {
+   "id": "rc:7-1-1-2",
+   "kind": "situation",
+   "group": "Einkaufen",
+   "field": "7",
+   "sec": "7.1.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "lesen",
+   "ar": "يطلّع معلومات من إعلانات الجرايد والكتالوجات واليافطات",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 125
+   }
+  },
+  {
+   "id": "rc:7-1-1-3",
+   "kind": "situation",
+   "group": "Einkaufen",
+   "field": "7",
+   "sec": "7.1.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "lesen",
+   "ar": "يفهم أهم حاجة على المنتج (تاريخ الصلاحية، الحفظ، المكونات)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 125
+   }
+  },
+  {
+   "id": "rc:7-2-1-1",
+   "kind": "situation",
+   "group": "Einkaufen",
+   "field": "7",
+   "sec": "7.2.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل ويجاوب عن منتج: السعر، المقاس، الرف، القسم",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 125
+   }
+  },
+  {
+   "id": "rc:7-2-1-2",
+   "kind": "situation",
+   "group": "Einkaufen",
+   "field": "7",
+   "sec": "7.2.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "sprechen",
+   "ar": "يقول الأرقام بوضوح (يكرر السعر، يقول مقاسه)",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 125
+   }
+  },
+  {
+   "id": "rc:7-2-1-3",
+   "kind": "situation",
+   "group": "Einkaufen",
+   "field": "7",
+   "sec": "7.2.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل لو فيه خصم (مثلًا على حاجة فيها عيب)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 125
+   }
+  },
+  {
+   "id": "rc:7-2-2-1",
+   "kind": "situation",
+   "group": "Einkaufen",
+   "field": "7",
+   "sec": "7.2.2",
+   "secT": "BESTELLUNGEN AUFGEBEN UND ENTGEGENNEHMEN, RESERVIERUNGEN TÄTIGEN UND ANNEHMEN",
+   "act": "schreiben",
+   "ar": "يطلب أوردر، حتى أونلاين، ويملا البيانات (المقاس، العدد، العنوان)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 126
+   }
+  },
+  {
+   "id": "rc:8-1-1-1",
+   "kind": "situation",
+   "group": "Gesundheit",
+   "field": "8",
+   "sec": "8.1.1",
+   "secT": "SICH INFORMIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل معارفه أو مكتب استشارة عن نظام العلاج (دكتور العيلة، التأمين)",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 131
+   }
+  },
+  {
+   "id": "rc:8-1-1-2",
+   "kind": "situation",
+   "group": "Gesundheit",
+   "field": "8",
+   "sec": "8.1.1",
+   "secT": "SICH INFORMIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل عن ترشيحات وعناوين دكاترة",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 131
+   }
+  },
+  {
+   "id": "rc:8-1-1-3",
+   "kind": "situation",
+   "group": "Gesundheit",
+   "field": "8",
+   "sec": "8.1.1",
+   "secT": "SICH INFORMIEREN",
+   "act": "lesen",
+   "ar": "يطلّع معلومات العلاج المهمة من الإنترنت أو الدليل",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 131
+   }
+  },
+  {
+   "id": "rc:8-2-2-1",
+   "kind": "situation",
+   "group": "Gesundheit",
+   "field": "8",
+   "sec": "8.2.2",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يدّي بياناته في استقبال الدكتور أو المستشفى",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 132
+   }
+  },
+  {
+   "id": "rc:8-2-2-2",
+   "kind": "situation",
+   "group": "Gesundheit",
+   "field": "8",
+   "sec": "8.2.2",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يقول حاسس بإيه وفين بيوجعه (حتى بالإشارة)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 132
+   }
+  },
+  {
+   "id": "rc:8-2-2-3",
+   "kind": "situation",
+   "group": "Gesundheit",
+   "field": "8",
+   "sec": "8.2.2",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "hören",
+   "ar": "يفهم المعلومات المهمة في كلام الدكتور أو الصيدلي",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 132
+   }
+  },
+  {
+   "id": "rc:8-2-2-4",
+   "kind": "situation",
+   "group": "Gesundheit",
+   "field": "8",
+   "sec": "8.2.2",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "sprechen",
+   "ar": "يسمّي أجزاء الجسم للدكتور",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 132
+   }
+  },
+  {
+   "id": "rc:8-2-4-1",
+   "kind": "situation",
+   "group": "Gesundheit",
+   "field": "8",
+   "sec": "8.2.4",
+   "secT": "ANWEISUNGEN VERSTEHEN, ANWEISUNGEN GEBEN UND DARAUF REAGIEREN",
+   "act": "lesen",
+   "ar": "يفهم أهم حاجة في النشرة اللي جوه علبة الدوا",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 132
+   }
+  },
+  {
+   "id": "rc:8-2-4-2",
+   "kind": "situation",
+   "group": "Gesundheit",
+   "field": "8",
+   "sec": "8.2.4",
+   "secT": "ANWEISUNGEN VERSTEHEN, ANWEISUNGEN GEBEN UND DARAUF REAGIEREN",
+   "act": "hören",
+   "ar": "يفهم تعليمات الدكتور أو الصيدلي البسيطة",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 132
+   }
+  },
+  {
+   "id": "rc:8-2-5-1",
+   "kind": "situation",
+   "group": "Gesundheit",
+   "field": "8",
+   "sec": "8.2.5",
+   "secT": "FORMULARE AUSFÜLLEN",
+   "act": "schreiben",
+   "ar": "يملا بياناته في استمارة عند الدكتور",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 133
+   }
+  },
+  {
+   "id": "rc:8-2-6-1",
+   "kind": "situation",
+   "group": "Gesundheit",
+   "field": "8",
+   "sec": "8.2.6",
+   "secT": "EINEN NOTRUF ABSETZEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يطلب الإسعاف في التليفون ويقول أهم المعلومات (فين، إيه اللي حصل)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 133
+   }
+  },
+  {
+   "id": "rc:8-3-1-1",
+   "kind": "situation",
+   "group": "Gesundheit",
+   "field": "8",
+   "sec": "8.3.1",
+   "secT": "NACH DEM BEFINDEN FRAGEN UND AUF DIE FRAGE NACH DEM BEFINDEN REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل معارف أو زمايل أو جيران عاملين إيه",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 133
+   }
+  },
+  {
+   "id": "rc:8-3-1-2",
+   "kind": "situation",
+   "group": "Gesundheit",
+   "field": "8",
+   "sec": "8.3.1",
+   "secT": "NACH DEM BEFINDEN FRAGEN UND AUF DIE FRAGE NACH DEM BEFINDEN REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يرد على «عامل إيه؟»",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 133
+   }
+  },
+  {
+   "id": "rc:9-1-1-1",
+   "kind": "situation",
+   "group": "Mediennutzung",
+   "field": "9",
+   "sec": "9.1.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "lesen",
+   "ar": "يطلّع المهم من جدول برامج التلفزيون",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 139
+   }
+  },
+  {
+   "id": "rc:9-1-1-2",
+   "kind": "situation",
+   "group": "Mediennutzung",
+   "field": "9",
+   "sec": "9.1.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل معارفه يلاقي معلومات فين",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 139
+   }
+  },
+  {
+   "id": "rc:9-1-1-3",
+   "kind": "situation",
+   "group": "Mediennutzung",
+   "field": "9",
+   "sec": "9.1.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "lesen",
+   "ar": "يفهم إعلانات الحفلات والفعاليات",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 139
+   }
+  },
+  {
+   "id": "rc:9-2-1-1",
+   "kind": "situation",
+   "group": "Mediennutzung",
+   "field": "9",
+   "sec": "9.2.1",
+   "secT": "SICH INFORMIEREN",
+   "act": "lesen",
+   "ar": "يطلّع معلومات من الإعلانات المطبوعة",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 139
+   }
+  },
+  {
+   "id": "rc:9-3-1-1",
+   "kind": "situation",
+   "group": "Mediennutzung",
+   "field": "9",
+   "sec": "9.3.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "schreiben",
+   "ar": "يكتب كلمات بحث على الإنترنت عن حاجات تهمه",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 140
+   }
+  },
+  {
+   "id": "rc:9-3-1-2",
+   "kind": "situation",
+   "group": "Mediennutzung",
+   "field": "9",
+   "sec": "9.3.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "lesen",
+   "ar": "يفهم تعليمات بسيطة على المواقع",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 140
+   }
+  },
+  {
+   "id": "rc:9-3-1-3",
+   "kind": "situation",
+   "group": "Mediennutzung",
+   "field": "9",
+   "sec": "9.3.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "lesen",
+   "ar": "يفهم قوايم الموبايل البسيطة ويستخدمها",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 140
+   }
+  },
+  {
+   "id": "rc:10-1-1-1",
+   "kind": "situation",
+   "group": "Mobilität",
+   "field": "10",
+   "sec": "10.1.1",
+   "secT": "SICH INFORMIEREN, INFORMATIONEN GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل معارفه عن طرق السفر",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 143
+   }
+  },
+  {
+   "id": "rc:10-1-1-2",
+   "kind": "situation",
+   "group": "Mobilität",
+   "field": "10",
+   "sec": "10.1.1",
+   "secT": "SICH INFORMIEREN, INFORMATIONEN GEBEN",
+   "act": "lesen",
+   "ar": "يفهم يافطات المحطة والمطار والشارع",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 143
+   }
+  },
+  {
+   "id": "rc:10-1-1-3",
+   "kind": "situation",
+   "group": "Mobilität",
+   "field": "10",
+   "sec": "10.1.1",
+   "secT": "SICH INFORMIEREN, INFORMATIONEN GEBEN",
+   "act": "lesen",
+   "ar": "يطلّع من جدول المواعيد اللي يهمه",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 143
+   }
+  },
+  {
+   "id": "rc:10-2-1-1",
+   "kind": "situation",
+   "group": "Mobilität",
+   "field": "10",
+   "sec": "10.2.1",
+   "secT": "SICH INFORMIEREN, INFORMATIONEN GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل أو يجاوب في الشباك أو التليفون عن معلومات معظمها أرقام (الميعاد، الرصيف، السعر)",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 144
+   }
+  },
+  {
+   "id": "rc:10-2-3-1",
+   "kind": "situation",
+   "group": "Mobilität",
+   "field": "10",
+   "sec": "10.2.3",
+   "secT": "MITTEILUNGEN VERSTEHEN UND DARAUF REAGIEREN, MITTEILUNGEN MACHEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يفهم توجيهات موظف الشباك لما يكون معاها إشارة",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 145
+   }
+  },
+  {
+   "id": "rc:10-2-4-1",
+   "kind": "situation",
+   "group": "Mobilität",
+   "field": "10",
+   "sec": "10.2.4",
+   "secT": "ANLEITUNGEN VERSTEHEN UND DARAUF REAGIEREN",
+   "act": "lesen",
+   "ar": "يفهم تعليمات مكنة التذاكر لو فيها صور",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 145
+   }
+  },
+  {
+   "id": "rc:10-3-1-1",
+   "kind": "situation",
+   "group": "Mobilität",
+   "field": "10",
+   "sec": "10.3.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل اللي جنبه: الكرسي ده فاضي؟ ويرد على نفس السؤال",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 146
+   }
+  },
+  {
+   "id": "rc:10-3-1-2",
+   "kind": "situation",
+   "group": "Mobilität",
+   "field": "10",
+   "sec": "10.3.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل عن الطريق ويفهم أهم حاجة في الوصف",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 146
+   }
+  },
+  {
+   "id": "rc:11-1-1-1",
+   "kind": "situation",
+   "group": "Unterricht",
+   "field": "11",
+   "sec": "11.1.1",
+   "secT": "SICH INFORMIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يفهم معلومات تنظيمية بسيطة عن الكورس (حتى في التليفون)",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 149
+   }
+  },
+  {
+   "id": "rc:11-1-1-2",
+   "kind": "situation",
+   "group": "Unterricht",
+   "field": "11",
+   "sec": "11.1.1",
+   "secT": "SICH INFORMIEREN",
+   "act": "lesen",
+   "ar": "يفهم إعلانات وورق الكورس والامتحانات",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 149
+   }
+  },
+  {
+   "id": "rc:11-1-2-1",
+   "kind": "situation",
+   "group": "Unterricht",
+   "field": "11",
+   "sec": "11.1.2",
+   "secT": "ARBEITSAUFTRÄGE VERSTEHEN",
+   "act": "hören",
+   "ar": "يفهم تعليمات المدرس الشفوية",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 149
+   }
+  },
+  {
+   "id": "rc:11-1-2-2",
+   "kind": "situation",
+   "group": "Unterricht",
+   "field": "11",
+   "sec": "11.1.2",
+   "secT": "ARBEITSAUFTRÄGE VERSTEHEN",
+   "act": "lesen",
+   "ar": "يفهم التعليمات المكتوبة في ورق التمارين والكتب والامتحان",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 149
+   }
+  },
+  {
+   "id": "rc:11-1-3-1",
+   "kind": "situation",
+   "group": "Unterricht",
+   "field": "11",
+   "sec": "11.1.3",
+   "secT": "ERKLÄRUNGEN VERSTEHEN UND UM ERKLÄRUNGEN BITTEN",
+   "act": "hören",
+   "ar": "يفهم شرح المدرس البسيط",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 149
+   }
+  },
+  {
+   "id": "rc:11-1-3-2",
+   "kind": "situation",
+   "group": "Unterricht",
+   "field": "11",
+   "sec": "11.1.3",
+   "secT": "ERKLÄRUNGEN VERSTEHEN UND UM ERKLÄRUNGEN BITTEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل لما ميفهمش حاجة في الحصة أو الواجب",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 149
+   }
+  },
+  {
+   "id": "rc:11-1-3-3",
+   "kind": "situation",
+   "group": "Unterricht",
+   "field": "11",
+   "sec": "11.1.3",
+   "secT": "ERKLÄRUNGEN VERSTEHEN UND UM ERKLÄRUNGEN BITTEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يطلب إن الكلام يتعاد",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 149
+   }
+  },
+  {
+   "id": "rc:11-1-4-1",
+   "kind": "situation",
+   "group": "Unterricht",
+   "field": "11",
+   "sec": "11.1.4",
+   "secT": "MITTEILUNGEN MACHEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يبلّغ إنه عيان (حتى في التليفون)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 150
+   }
+  },
+  {
+   "id": "rc:11-1-4-2",
+   "kind": "situation",
+   "group": "Unterricht",
+   "field": "11",
+   "sec": "11.1.4",
+   "secT": "MITTEILUNGEN MACHEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يعتذر عن التأخير أو المشي بدري ويقول السبب",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 150
+   }
+  },
+  {
+   "id": "rc:11-2-1-1",
+   "kind": "situation",
+   "group": "Unterricht",
+   "field": "11",
+   "sec": "11.2.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل بعد غيابه: أخدتوا إيه والواجب إيه",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 151
+   }
+  },
+  {
+   "id": "rc:11-2-1-2",
+   "kind": "situation",
+   "group": "Unterricht",
+   "field": "11",
+   "sec": "11.2.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يقول لزميل غاب أخدنا إيه والواجب إيه",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 151
+   }
+  },
+  {
+   "id": "rc:11-2-2-1",
+   "kind": "situation",
+   "group": "Unterricht",
+   "field": "11",
+   "sec": "11.2.2",
+   "secT": "ABSPRACHEN TREFFEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يتفق مع زمايله يذاكروا سوا",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 151
+   }
+  },
+  {
+   "id": "rc:11-3-1-1",
+   "kind": "situation",
+   "group": "Unterricht",
+   "field": "11",
+   "sec": "11.3.1",
+   "secT": "AN EINEM PRÜFUNGSGESPRÄCH TEILNEHMEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسلّم على الممتحن ويعرّف نفسه صح",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 151
+   }
+  },
+  {
+   "id": "rc:11-3-1-2",
+   "kind": "situation",
+   "group": "Unterricht",
+   "field": "11",
+   "sec": "11.3.1",
+   "secT": "AN EINEM PRÜFUNGSGESPRÄCH TEILNEHMEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يفهم تعليمات الممتحن ويتصرف",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 151
+   }
+  },
+  {
+   "id": "rc:11-3-1-3",
+   "kind": "situation",
+   "group": "Unterricht",
+   "field": "11",
+   "sec": "11.3.1",
+   "secT": "AN EINEM PRÜFUNGSGESPRÄCH TEILNEHMEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يطلب من الممتحن يعيد السؤال أو يشرحه",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 151
+   }
+  },
+  {
+   "id": "rc:12-1-1-1",
+   "kind": "situation",
+   "group": "Wohnen",
+   "field": "12",
+   "sec": "12.1.1",
+   "secT": "SICH INFORMIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل معارفه إزاي يدوّر على شقة",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 155
+   }
+  },
+  {
+   "id": "rc:12-1-1-2",
+   "kind": "situation",
+   "group": "Wohnen",
+   "field": "12",
+   "sec": "12.1.1",
+   "secT": "SICH INFORMIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل عن سكن رخيص أو مساعدة في الإيجار",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 155
+   }
+  },
+  {
+   "id": "rc:12-3-1-1",
+   "kind": "situation",
+   "group": "Wohnen",
+   "field": "12",
+   "sec": "12.3.1",
+   "secT": "MITTEILUNGEN VERSTEHEN UND DARAUF REAGIEREN, MITTEILUNGEN MACHEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يفهم رسايل بسيطة من إدارة العمارة أو صاحب الشقة (حتى في التليفون)",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 157
+   }
+  },
+  {
+   "id": "rc:12-3-1-2",
+   "kind": "situation",
+   "group": "Wohnen",
+   "field": "12",
+   "sec": "12.3.1",
+   "secT": "MITTEILUNGEN VERSTEHEN UND DARAUF REAGIEREN, MITTEILUNGEN MACHEN",
+   "act": "lesen",
+   "ar": "يفهم المبلغ المطلوب في فاتورة",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 157
+   }
+  },
+  {
+   "id": "rc:12-3-2-1",
+   "kind": "situation",
+   "group": "Wohnen",
+   "field": "12",
+   "sec": "12.3.2",
+   "secT": "VORSCHRIFTEN/REGELUNGEN VERSTEHEN",
+   "act": "lesen",
+   "ar": "يفهم أهم حاجة في قواعد العمارة (Hausordnung)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 157
+   }
+  },
+  {
+   "id": "rc:12-3-2-2",
+   "kind": "situation",
+   "group": "Wohnen",
+   "field": "12",
+   "sec": "12.3.2",
+   "secT": "VORSCHRIFTEN/REGELUNGEN VERSTEHEN",
+   "act": "lesen",
+   "ar": "يفهم التحذيرات واليافطات في العمارة",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 157
+   }
+  },
+  {
+   "id": "rc:12-3-2-3",
+   "kind": "situation",
+   "group": "Wohnen",
+   "field": "12",
+   "sec": "12.3.2",
+   "secT": "VORSCHRIFTEN/REGELUNGEN VERSTEHEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يسأل عن الاتفاقات اللي بين السكان (مين بيمسح السلم مثلًا)",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 157
+   }
+  },
+  {
+   "id": "rc:12-3-3-1",
+   "kind": "situation",
+   "group": "Wohnen",
+   "field": "12",
+   "sec": "12.3.3",
+   "secT": "FORMULARE AUSFÜLLEN",
+   "act": "schreiben",
+   "ar": "يملا أهم بياناته في استمارة",
+   "lk": true,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 158
+   }
+  },
+  {
+   "id": "rc:12-4-1-1",
+   "kind": "situation",
+   "group": "Wohnen",
+   "field": "12",
+   "sec": "12.4.1",
+   "secT": "SICH INFORMIEREN UND AUSKÜNFTE GEBEN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يعرّف نفسه لجيرانه كساكن جديد",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 158
+   }
+  },
+  {
+   "id": "rc:12-4-2-1",
+   "kind": "situation",
+   "group": "Wohnen",
+   "field": "12",
+   "sec": "12.4.2",
+   "secT": "MITTEILUNGEN VERSTEHEN UND DARAUF REAGIEREN, MITTEILUNGEN MACHEN",
+   "act": "lesen",
+   "ar": "يفهم رسالة جار على لوحة الإعلانات",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 158
+   }
+  },
+  {
+   "id": "rc:12-4-3-1",
+   "kind": "situation",
+   "group": "Wohnen",
+   "field": "12",
+   "sec": "12.4.3",
+   "secT": "UM HILFE BITTEN UND AUF BITTEN REAGIEREN",
+   "act": "am Gespräch teilnehmen",
+   "ar": "يطلب مساعدة من الجيران",
+   "lk": false,
+   "ref": {
+    "t": "Rahmencurriculum für Integrationskurse Deutsch als Zweitsprache (BAMF, Goethe-Institut, 2017)",
+    "url": "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf",
+    "page": 158
+   }
+  },
+  {
+   "id": "cefr:12",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Oral comprehension",
+   "t": "Overall oral comprehension",
+   "ar": "يتابع كلام بطيء جدًا ومنطوق بعناية، وفيه وقفات طويلة عشان يلحق يفهم",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 12
+   }
+  },
+  {
+   "id": "cefr:13",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Oral comprehension",
+   "t": "Overall oral comprehension",
+   "ar": "يلقط معلومة محددة (مكان، ميعاد) في موضوع يومي لو الكلام بطيء وواضح",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 13
+   }
+  },
+  {
+   "id": "cefr:29",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Oral comprehension",
+   "t": "Understanding conversation between other people",
+   "ar": "يفهم شوية تعبيرات لما ناس بيتكلموا عنه وعن عيلته وهواياته، لو الكلام بطيء",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 29
+   }
+  },
+  {
+   "id": "cefr:30",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Oral comprehension",
+   "t": "Understanding conversation between other people",
+   "ar": "يفهم كلمات وجمل قصيرة في حوار بسيط (زبون وبياع) لو الكلام بطيء جدًا",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 30
+   }
+  },
+  {
+   "id": "cefr:49",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Oral comprehension",
+   "t": "Understanding as a member of a live audience",
+   "ar": "يفهم معلومة بسيطة جدًا بتتشرح في موقف متوقع (جولة سياحية) لو الكلام بطيء وفيه وقفات",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 49
+   }
+  },
+  {
+   "id": "cefr:64",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Oral comprehension",
+   "t": "Understanding announcements and instructions",
+   "ar": "يفهم تعليمات موجهة له ببطء وينفّذ توجيهات قصيرة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 64
+   }
+  },
+  {
+   "id": "cefr:65",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Oral comprehension",
+   "t": "Understanding announcements and instructions",
+   "ar": "يفهم لما حد يقول له ببطء الحاجة فين، لو هي قريبة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 65
+   }
+  },
+  {
+   "id": "cefr:66",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Oral comprehension",
+   "t": "Understanding announcements and instructions",
+   "ar": "يفهم أرقام وأسعار ومواعيد في إعلان بالميكروفون (محطة، محل)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 66
+   }
+  },
+  {
+   "id": "cefr:80",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Oral comprehension",
+   "t": "Understanding audio (or signed) media and recordings",
+   "ar": "يلقط معلومة محددة (مكان، ميعاد) من تسجيل قصير بطيء",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 80
+   }
+  },
+  {
+   "id": "cefr:95",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Audio-visual comprehension",
+   "t": "Watching TV, film and video",
+   "ar": "يعرف كلمات مألوفة ويحدد موضوع عناوين الأخبار والمنتجات في الإعلانات بمساعدة الصورة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 95
+   }
+  },
+  {
+   "id": "cefr:105",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Reading comprehension",
+   "t": "Overall reading comprehension",
+   "ar": "يفهم نصوص قصيرة جدًا جملة جملة، ويرجع يقرا تاني لو احتاج",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 105
+   }
+  },
+  {
+   "id": "cefr:121",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Reading comprehension",
+   "t": "Reading correspondence",
+   "ar": "يفهم رسايل قصيرة بسيطة على كارت بوستال",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 121
+   }
+  },
+  {
+   "id": "cefr:122",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Reading comprehension",
+   "t": "Reading correspondence",
+   "ar": "يفهم رسايل قصيرة على السوشيال أو الإيميل (نعمل إيه، فين، إمتى)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 122
+   }
+  },
+  {
+   "id": "cefr:141",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Reading comprehension",
+   "t": "Reading for orientation",
+   "ar": "يعرف الأسامي والكلمات والجمل البسيطة على يافطات الحياة اليومية",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 141
+   }
+  },
+  {
+   "id": "cefr:142",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Reading comprehension",
+   "t": "Reading for orientation",
+   "ar": "يفهم دليل الأدوار في المول (القسم في أنهي دور) والاتجاهات (الأسانسير فين)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 142
+   }
+  },
+  {
+   "id": "cefr:143",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Reading comprehension",
+   "t": "Reading for orientation",
+   "ar": "يفهم معلومات الفندق الأساسية (مواعيد الأكل)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 143
+   }
+  },
+  {
+   "id": "cefr:144",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Reading comprehension",
+   "t": "Reading for orientation",
+   "ar": "يلاقي المعلومة المهمة في إعلان أو برنامج حفلة أو بروشور (إيه، بكام، إمتى، فين)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 144
+   }
+  },
+  {
+   "id": "cefr:170",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Reading comprehension",
+   "t": "Reading for information and argument",
+   "ar": "ياخد فكرة عن محتوى نص معلومات بسيط، خصوصًا لو فيه صور",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 170
+   }
+  },
+  {
+   "id": "cefr:171",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Reading comprehension",
+   "t": "Reading for information and argument",
+   "ar": "يفهم نصوص قصيرة عن حاجة تهمه (رياضة، مزيكا، سفر) بلغة بسيطة جدًا ومعاها صور",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 171
+   }
+  },
+  {
+   "id": "cefr:186",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Reading comprehension",
+   "t": "Reading instructions",
+   "ar": "يمشي ورا توجيهات مكتوبة قصيرة (من مكان لمكان)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 186
+   }
+  },
+  {
+   "id": "cefr:204",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Reading comprehension",
+   "t": "Reading as a leisure activity",
+   "ar": "يفهم قصص قصيرة مصوّرة عن أنشطة يومية",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 204
+   }
+  },
+  {
+   "id": "cefr:205",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": "Reading comprehension",
+   "t": "Reading as a leisure activity",
+   "ar": "يفهم الفكرة العامة لقصص مصوّرة لو الصور بتساعده يخمّن",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 205
+   }
+  },
+  {
+   "id": "cefr:223",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": null,
+   "t": "Identifying cues and inferring (spoken, signed and written)",
+   "ar": "يستنتج معنى كلمة جديدة (فعل أو حاجة) من نص بسيط جدًا في موضوع يومي",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 223
+   }
+  },
+  {
+   "id": "cefr:224",
+   "kind": "cefr",
+   "group": "Reception",
+   "sub": null,
+   "t": "Identifying cues and inferring (spoken, signed and written)",
+   "ar": "يخمّن معنى كلمة جديدة شبه كلمة في لغة يعرفها",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 224
+   }
+  },
+  {
+   "id": "cefr:232",
+   "kind": "cefr",
+   "group": "Production",
+   "sub": "Oral production",
+   "t": "Overall oral production",
+   "ar": "يقول جمل بسيطة متفرقة عن ناس وأماكن",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 232
+   }
+  },
+  {
+   "id": "cefr:258",
+   "kind": "cefr",
+   "group": "Production",
+   "sub": "Oral production",
+   "t": "Sustained monologue: describing experience",
+   "ar": "يوصف نفسه، وبيعمل إيه، وساكن فين",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 258
+   }
+  },
+  {
+   "id": "cefr:259",
+   "kind": "cefr",
+   "group": "Production",
+   "sub": "Oral production",
+   "t": "Sustained monologue: describing experience",
+   "ar": "يوصف حاجات بسيطة من يومه في جمل بسيطة ورا بعض، لو جهّز قبلها",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 259
+   }
+  },
+  {
+   "id": "cefr:272",
+   "kind": "cefr",
+   "group": "Production",
+   "sub": "Oral production",
+   "t": "Sustained monologue: giving information",
+   "ar": "يسمّي حاجة ويقول شكلها ولونها وهو بيوريها، لو جهّز قبلها",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 272
+   }
+  },
+  {
+   "id": "cefr:314",
+   "kind": "cefr",
+   "group": "Production",
+   "sub": "Oral production",
+   "t": "Addressing audiences",
+   "ar": "يقول كلمة قصيرة جاهزة ومتحضّرة (يقدّم حد، أو نخب)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 314
+   }
+  },
+  {
+   "id": "cefr:322",
+   "kind": "cefr",
+   "group": "Production",
+   "sub": "Written production",
+   "t": "Overall written production",
+   "ar": "يكتب معلومات عن حاجات تخصه (بيحب إيه، عيلته، حيوانه) بكلمات بسيطة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 322
+   }
+  },
+  {
+   "id": "cefr:323",
+   "kind": "cefr",
+   "group": "Production",
+   "sub": "Written production",
+   "t": "Overall written production",
+   "ar": "يكتب جمل بسيطة متفرقة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 323
+   }
+  },
+  {
+   "id": "cefr:346",
+   "kind": "cefr",
+   "group": "Production",
+   "sub": "Written production",
+   "t": "Creative writing",
+   "ar": "يكتب جمل بسيطة عن نفسه وعن ناس متخيّلين: ساكنين فين وبيعملوا إيه",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 346
+   }
+  },
+  {
+   "id": "cefr:347",
+   "kind": "cefr",
+   "group": "Production",
+   "sub": "Written production",
+   "t": "Creative writing",
+   "ar": "يوصف أوضة بلغة بسيطة جدًا",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 347
+   }
+  },
+  {
+   "id": "cefr:348",
+   "kind": "cefr",
+   "group": "Production",
+   "sub": "Written production",
+   "t": "Creative writing",
+   "ar": "يوصف حاجات يومية بكلمات بسيطة (لون العربية، كبيرة ولا صغيرة)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 348
+   }
+  },
+  {
+   "id": "cefr:389",
+   "kind": "cefr",
+   "group": "Production",
+   "sub": null,
+   "t": "Compensating",
+   "ar": "يستخدم الإشارة مع الكلمات البسيطة عشان يطلب حاجة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 389
+   }
+  },
+  {
+   "id": "cefr:411",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Overall oral interaction",
+   "ar": "يتعامل ببساطة لكن الكلام معتمد على الإعادة والبطء والإصلاح؛ يسأل ويجاوب أسئلة بسيطة عن احتياجاته المباشرة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 411
+   }
+  },
+  {
+   "id": "cefr:420",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Understanding an interlocutor",
+   "ar": "يفهم التعبيرات اليومية لاحتياجاته البسيطة لما حد متعاون يقولها له ببطء ويكررها",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 420
+   }
+  },
+  {
+   "id": "cefr:421",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Understanding an interlocutor",
+   "ar": "يفهم الأسئلة والتعليمات الموجهة له ببطء وينفّذ توجيهات قصيرة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 421
+   }
+  },
+  {
+   "id": "cefr:449",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Conversation",
+   "ar": "يفهم التعبيرات اليومية لاحتياجاته لما حد متعاون يكلمه ببطء ويكرر",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 449
+   }
+  },
+  {
+   "id": "cefr:450",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Conversation",
+   "ar": "يشارك في حوار بسيط عن موضوع متوقع (بلده، عيلته، مدرسته)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 450
+   }
+  },
+  {
+   "id": "cefr:451",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Conversation",
+   "ar": "يعرّف بنفسه ويستخدم كلام التحية والوداع",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 451
+   }
+  },
+  {
+   "id": "cefr:452",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Conversation",
+   "ar": "يسأل الناس عاملين إيه ويرد على الأخبار",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 452
+   }
+  },
+  {
+   "id": "cefr:480",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Informal discussion (with friends)",
+   "ar": "يتبادل بيحب إيه ومبيحبش إيه (رياضة، أكل) بتعبيرات قليلة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 480
+   }
+  },
+  {
+   "id": "cefr:520",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Goal-oriented co-operation (cooking together, discussing a document, organising an event, etc.)",
+   "ar": "يفهم الأسئلة والتعليمات الموجهة له ببطء وينفّذ توجيهات قصيرة (في شغل مشترك)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 520
+   }
+  },
+  {
+   "id": "cefr:521",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Goal-oriented co-operation (cooking together, discussing a document, organising an event, etc.)",
+   "ar": "ينفّذ تعليمات فيها مواعيد وأماكن وأرقام",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 521
+   }
+  },
+  {
+   "id": "cefr:522",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Goal-oriented co-operation (cooking together, discussing a document, organising an event, etc.)",
+   "ar": "يطلب حاجة من حد ويدّي حد حاجة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 522
+   }
+  },
+  {
+   "id": "cefr:546",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Obtaining goods and services",
+   "ar": "يطلب حاجة ويدّي حاجة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 546
+   }
+  },
+  {
+   "id": "cefr:547",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Obtaining goods and services",
+   "ar": "يطلب أكل وشرب بتعبيرات بسيطة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 547
+   }
+  },
+  {
+   "id": "cefr:548",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Obtaining goods and services",
+   "ar": "يتعامل مع الأرقام والكميات والأسعار والمواعيد",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 548
+   }
+  },
+  {
+   "id": "cefr:573",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Information exchange",
+   "ar": "يفهم الأسئلة والتعليمات الموجهة له ببطء وينفّذ توجيهات قصيرة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 573
+   }
+  },
+  {
+   "id": "cefr:574",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Information exchange",
+   "ar": "يسأل ويجاوب ويبدأ ويرد على جمل بسيطة في احتياجاته أو مواضيع مألوفة جدًا",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 574
+   }
+  },
+  {
+   "id": "cefr:575",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Information exchange",
+   "ar": "يسأل ويجاوب عن نفسه وعن غيره: ساكنين فين، يعرفوا مين، عندهم إيه",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 575
+   }
+  },
+  {
+   "id": "cefr:576",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Information exchange",
+   "ar": "يقول الوقت بتعبيرات ثابتة («الأسبوع الجاي»، «الجمعة اللي فاتت»، «في نوفمبر»، «الساعة تلاتة»)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 576
+   }
+  },
+  {
+   "id": "cefr:577",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Information exchange",
+   "ar": "يقول أرقام وكميات وأسعار بشكل محدود",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 577
+   }
+  },
+  {
+   "id": "cefr:578",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Information exchange",
+   "ar": "يقول لون الهدوم والحاجات ويسأل عن لونها",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 578
+   }
+  },
+  {
+   "id": "cefr:599",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Interviewing and being interviewed",
+   "ar": "يجاوب في مقابلة على أسئلة مباشرة بطيئة عن بياناته",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 599
+   }
+  },
+  {
+   "id": "cefr:600",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Oral interaction",
+   "t": "Interviewing and being interviewed",
+   "ar": "يقول للدكتور مشكلته ببساطة ويجاوب «بيوجعك هنا؟» حتى لو بالإشارة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 600
+   }
+  },
+  {
+   "id": "cefr:621",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Written interaction",
+   "t": "Overall written interaction",
+   "ar": "يطلب بيانات شخصية أو يديها كتابة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 621
+   }
+  },
+  {
+   "id": "cefr:647",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Written interaction",
+   "t": "Correspondence",
+   "ar": "يكتب رسايل وبوستات جمل قصيرة جدًا عن هواياته وبيحب إيه، بمساعدة قاموس",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 647
+   }
+  },
+  {
+   "id": "cefr:648",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Written interaction",
+   "t": "Correspondence",
+   "ar": "يكتب كارت بوستال قصير بسيط",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 648
+   }
+  },
+  {
+   "id": "cefr:649",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Written interaction",
+   "t": "Correspondence",
+   "ar": "يكتب رسالة قصيرة جدًا (SMS) لأصحابه فيها معلومة أو سؤال",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 649
+   }
+  },
+  {
+   "id": "cefr:661",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Written interaction",
+   "t": "Notes, messages and forms",
+   "ar": "يملا الأرقام والتواريخ واسمه وجنسيته وعنوانه وسنه وتاريخ ميلاده أو وصوله في استمارة (فندق)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 661
+   }
+  },
+  {
+   "id": "cefr:662",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Written interaction",
+   "t": "Notes, messages and forms",
+   "ar": "يسيب رسالة بسيطة: راح فين وراجع إمتى («في السوق، راجع ٥»)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 662
+   }
+  },
+  {
+   "id": "cefr:684",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Online interaction",
+   "t": "Online conversation and discussion",
+   "ar": "يكتب رسايل وبوستات بسيطة جدًا عن هواياته بمساعدة أداة ترجمة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 684
+   }
+  },
+  {
+   "id": "cefr:685",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Online interaction",
+   "t": "Online conversation and discussion",
+   "ar": "يرد على بوستات بسيطة بتعبيرات جاهزة (إعجاب أو اعتراض) ويرد على الأسئلة اللي بعدها",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 685
+   }
+  },
+  {
+   "id": "cefr:708",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": "Online interaction",
+   "t": "Goal-oriented online transactions and collaboration",
+   "ar": "يكمّل شرا أونلاين أو طلب بسيط جدًا بالبيانات الأساسية (اسم، إيميل، تليفون)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 708
+   }
+  },
+  {
+   "id": "cefr:747",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": null,
+   "t": "Asking for clarification",
+   "ar": "يوضّح بكلمة ونبرة وإشارة إنه مش فاهم",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 747
+   }
+  },
+  {
+   "id": "cefr:748",
+   "kind": "cefr",
+   "group": "Interaction",
+   "sub": null,
+   "t": "Asking for clarification",
+   "ar": "يقول ببساطة إنه مش فاهم",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 748
+   }
+  },
+  {
+   "id": "cefr:758",
+   "kind": "cefr",
+   "group": "Mediation",
+   "sub": null,
+   "t": "Overall mediation",
+   "ar": "يوصّل معلومة بسيطة متوقعة من يافطة أو بوستر أو برنامج قصير، ويظهر اهتمامه بفكرة بكلمات وإشارات",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 758
+   }
+  },
+  {
+   "id": "cefr:771",
+   "kind": "cefr",
+   "group": "Mediation",
+   "sub": "Mediating a text",
+   "t": "Relaying specific information in speech or sign",
+   "ar": "ينقل (بالعربي) مواعيد وأماكن بسيطة اتقالت بالألماني (أو العكس)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 771
+   }
+  },
+  {
+   "id": "cefr:787",
+   "kind": "cefr",
+   "group": "Mediation",
+   "sub": "Mediating a text",
+   "t": "Relaying specific information in writing",
+   "ar": "يكتب (بلغة تانية) أسامي وأرقام وأسعار ومعلومات بسيطة سمعها، لو الكلام بطيء ومتكرر",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 787
+   }
+  },
+  {
+   "id": "cefr:833",
+   "kind": "cefr",
+   "group": "Mediation",
+   "sub": "Mediating a text",
+   "t": "Processing text in speech or sign",
+   "ar": "يقول (بلغة تانية) معلومة بسيطة من يافطة أو بوستر أو برنامج",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 833
+   }
+  },
+  {
+   "id": "cefr:850",
+   "kind": "cefr",
+   "group": "Mediation",
+   "sub": "Mediating a text",
+   "t": "Processing text in writing",
+   "ar": "ينقل (بلغة تانية، بالقاموس) معنى جمل بسيطة في مواضيع يومية",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 850
+   }
+  },
+  {
+   "id": "cefr:851",
+   "kind": "cefr",
+   "group": "Mediation",
+   "sub": "Mediating a text",
+   "t": "Processing text in writing",
+   "ar": "ينقل كلمات ونصوص قصيرة مطبوعة بإيده",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 851
+   }
+  },
+  {
+   "id": "cefr:861",
+   "kind": "cefr",
+   "group": "Mediation",
+   "sub": "Mediating a text",
+   "t": "Translating a written text in speech or sign",
+   "ar": "يترجم شفوي ترجمة تقريبية لكلمات وجمل بسيطة على يافطات وبوسترات وبرامج",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 861
+   }
+  },
+  {
+   "id": "cefr:870",
+   "kind": "cefr",
+   "group": "Mediation",
+   "sub": "Mediating a text",
+   "t": "Translating a written text in writing",
+   "ar": "يترجم كتابة كلمات وجمل بسيطة بالقاموس، حتى لو مش دايمًا بيختار المعنى الصح",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 870
+   }
+  },
+  {
+   "id": "cefr:904",
+   "kind": "cefr",
+   "group": "Mediation",
+   "sub": "Mediating a text",
+   "t": "Expressing a personal response to creative texts (including literature)",
+   "ar": "يقول بكلمات بسيطة عمل فني خلّاه حاسس بإيه",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 904
+   }
+  },
+  {
+   "id": "cefr:936",
+   "kind": "cefr",
+   "group": "Mediation",
+   "sub": "Mediating concepts",
+   "t": "Facilitating collaborative interaction with peers",
+   "ar": "يطلب مشاركة الناس في مهمة بسيطة بجمل جاهزة، ويقول إنه فاهم ويسأل هم فاهمين",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 936
+   }
+  },
+  {
+   "id": "cefr:955",
+   "kind": "cefr",
+   "group": "Mediation",
+   "sub": "Mediating concepts",
+   "t": "Collaborating to construct meaning",
+   "ar": "يقول فكرة ويسأل الناس رأيهم بكلمات بسيطة، لو جهّز قبلها",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 955
+   }
+  },
+  {
+   "id": "cefr:984",
+   "kind": "cefr",
+   "group": "Mediation",
+   "sub": "Mediating concepts",
+   "t": "Encouraging conceptual talk",
+   "ar": "يستخدم كلمات متفرقة وإشارات عشان يبيّن إنه مهتم بفكرة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 984
+   }
+  },
+  {
+   "id": "cefr:1001",
+   "kind": "cefr",
+   "group": "Mediation",
+   "sub": "Mediating communication",
+   "t": "Facilitating pluricultural space",
+   "ar": "يسهّل التعارف بين ثقافتين بترحيب واهتمام وكلمات بسيطة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1001
+   }
+  },
+  {
+   "id": "cefr:1012",
+   "kind": "cefr",
+   "group": "Mediation",
+   "sub": "Mediating communication",
+   "t": "Acting as an intermediary in informal situations (with friends and colleagues)",
+   "ar": "ينقل (بلغة تانية) بيانات حد ومعلومات بسيطة متوقعة، لو حد ساعده في الصياغة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1012
+   }
+  },
+  {
+   "id": "cefr:1028",
+   "kind": "cefr",
+   "group": "Mediation",
+   "sub": "Mediating communication",
+   "t": "Facilitating communication in delicate situations and disagreements",
+   "ar": "يلاحظ إن فيه خلاف أو حد عنده مشكلة، ويقول جملة محفوظة («فاهمك»، «إنت كويس؟»)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1028
+   }
+  },
+  {
+   "id": "cefr:1103",
+   "kind": "cefr",
+   "group": "Plurilingual and pluricultural competence",
+   "sub": null,
+   "t": "Building on pluricultural repertoire",
+   "ar": "يلاحظ اختلاف طريقة العد والمسافات والساعة بين البلاد",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1103
+   }
+  },
+  {
+   "id": "cefr:1117",
+   "kind": "cefr",
+   "group": "Plurilingual and pluricultural competence",
+   "sub": null,
+   "t": "Plurilingual comprehension",
+   "ar": "يعرف الكلمات الدولية والمشتركة بين اللغات (Haus/house) ويستخدمها يفهم يافطات ورسايل بسيطة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1117
+   }
+  },
+  {
+   "id": "cefr:1136",
+   "kind": "cefr",
+   "group": "Plurilingual and pluricultural competence",
+   "sub": null,
+   "t": "Building on plurilingual repertoire",
+   "ar": "يستخدم كلمات من لغات مختلفة عشان يخلّص حاجة بسيطة جدًا مع حد متعاون",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1136
+   }
+  },
+  {
+   "id": "cefr:1149",
+   "kind": "cefr",
+   "group": "Communicative language competences",
+   "sub": "Linguistic competence",
+   "t": "General linguistic range",
+   "ar": "عنده تعبيرات بسيطة جدًا عن بياناته واحتياجاته",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1149
+   }
+  },
+  {
+   "id": "cefr:1150",
+   "kind": "cefr",
+   "group": "Communicative language competences",
+   "sub": "Linguistic competence",
+   "t": "General linguistic range",
+   "ar": "يستخدم تراكيب أساسية في جملة واحدة، حتى لو ناقص منها حاجة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1150
+   }
+  },
+  {
+   "id": "cefr:1167",
+   "kind": "cefr",
+   "group": "Communicative language competences",
+   "sub": "Linguistic competence",
+   "t": "Vocabulary range",
+   "ar": "عنده كلمات وتعبيرات أساسية عن مواقف محددة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1167
+   }
+  },
+  {
+   "id": "cefr:1177",
+   "kind": "cefr",
+   "group": "Communicative language competences",
+   "sub": "Linguistic competence",
+   "t": "Grammatical accuracy",
+   "ar": "متحكم بشكل محدود في تراكيب وقوالب جمل بسيطة محفوظة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1177
+   }
+  },
+  {
+   "id": "cefr:1193",
+   "kind": "cefr",
+   "group": "Communicative language competences",
+   "sub": "Linguistic competence",
+   "t": "Overall phonological control",
+   "ar": "نطقه لكلمات محفوظة قليلة مفهوم بمجهود لناس متعودين على متكلمين من بلده؛ يقلّد الأصوات صح لو حد وجّهه",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1193
+   }
+  },
+  {
+   "id": "cefr:1201",
+   "kind": "cefr",
+   "group": "Communicative language competences",
+   "sub": "Linguistic competence",
+   "t": "Sound articulation",
+   "ar": "يقلّد أصوات اللغة لو حد وجّهه بعناية",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1201
+   }
+  },
+  {
+   "id": "cefr:1202",
+   "kind": "cefr",
+   "group": "Communicative language competences",
+   "sub": "Linguistic competence",
+   "t": "Sound articulation",
+   "ar": "ينطق عدد محدود من الأصوات، والكلام مفهوم لو اللي قدامه بيساعده (يعيد صح ويخليه يكرر)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1202
+   }
+  },
+  {
+   "id": "cefr:1210",
+   "kind": "cefr",
+   "group": "Communicative language competences",
+   "sub": "Linguistic competence",
+   "t": "Prosodic features",
+   "ar": "النبرة والإيقاع في كلمات وجمل قليلة مفهومين، رغم تأثير لغته الأم",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1210
+   }
+  },
+  {
+   "id": "cefr:1220",
+   "kind": "cefr",
+   "group": "Communicative language competences",
+   "sub": "Linguistic competence",
+   "t": "Orthographic control",
+   "ar": "ينقل كلمات وجمل مألوفة (يافطات، تعليمات، أسامي حاجات ومحلات)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1220
+   }
+  },
+  {
+   "id": "cefr:1221",
+   "kind": "cefr",
+   "group": "Communicative language competences",
+   "sub": "Linguistic competence",
+   "t": "Orthographic control",
+   "ar": "يتهجّى عنوانه وجنسيته وبياناته",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1221
+   }
+  },
+  {
+   "id": "cefr:1222",
+   "kind": "cefr",
+   "group": "Communicative language competences",
+   "sub": "Linguistic competence",
+   "t": "Orthographic control",
+   "ar": "يستخدم علامات الترقيم الأساسية (النقطة، علامة الاستفهام)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1222
+   }
+  },
+  {
+   "id": "cefr:1247",
+   "kind": "cefr",
+   "group": "Communicative language competences",
+   "sub": "Sociolinguistic competence",
+   "t": "Sociolinguistic appropriateness",
+   "ar": "يعمل تواصل اجتماعي بأبسط صيغ الأدب: التحية والوداع والتعارف، و«من فضلك» و«شكرًا» و«آسف»",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1247
+   }
+  },
+  {
+   "id": "cefr:1309",
+   "kind": "cefr",
+   "group": "Communicative language competences",
+   "sub": "Pragmatic competence",
+   "t": "Coherence and cohesion",
+   "ar": "يربط الكلمات بروابط بسيطة («و»، «بعدين»)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1309
+   }
+  },
+  {
+   "id": "cefr:1321",
+   "kind": "cefr",
+   "group": "Communicative language competences",
+   "sub": "Pragmatic competence",
+   "t": "Propositional precision",
+   "ar": "يوصّل معلومات أساسية عن نفسه واحتياجاته ببساطة",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1321
+   }
+  },
+  {
+   "id": "cefr:1332",
+   "kind": "cefr",
+   "group": "Communicative language competences",
+   "sub": "Pragmatic competence",
+   "t": "Fluency",
+   "ar": "يقول جمل قصيرة جدًا جاهزة، بوقفات كتير يدوّر فيها على الكلام",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4",
+    "row": 1332
+   }
+  },
+  {
+   "id": "cefr:signing",
+   "kind": "cefr",
+   "group": "Signing competences",
+   "t": "Signing competences (14 scales)",
+   "ref": {
+    "t": "CEFR Companion volume (Council of Europe 2020): descriptor spreadsheet",
+    "url": "https://rm.coe.int/cefr-descriptors-2020-/16809ed2c7",
+    "doc": "https://rm.coe.int/16809ea0d4"
+   },
+   "skip": "مقاييس لغة الإشارة: الكورس للغة المنطوقة والمكتوبة."
+  },
+  {
+   "id": "word:extra-markieren",
+   "kind": "word",
+   "w": "markieren",
+   "extra": {
+    "src": "telc",
+    "kind": "instruction",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "t": "markieren",
+   "wikt": {
+    "pos": "verb",
+    "ipa": "/maʁˈkiːʁən/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/a/af/De-markieren.ogg"
+   }
+  },
+  {
+   "id": "word:extra-passend",
+   "kind": "word",
+   "w": "passend",
+   "extra": {
+    "src": "osd",
+    "kind": "instruction",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "t": "passend",
+   "wikt": {
+    "pos": "verb",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/5/54/De-passend.ogg"
+   }
+  },
+  {
+   "id": "word:extra-lucke",
+   "kind": "word",
+   "w": "Lücke",
+   "extra": {
+    "src": "telc",
+    "kind": "instruction",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "art": "die",
+   "plural": "Lücken",
+   "t": "die Lücke, die Lücken",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "[ˈlʏkə]",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/b/bb/De-L%C3%BCcke.ogg"
+   }
+  },
+  {
+   "id": "word:extra-uberschrift",
+   "kind": "word",
+   "w": "Überschrift",
+   "extra": {
+    "src": "telc",
+    "kind": "instruction",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "art": "die",
+   "plural": "Überschriften",
+   "t": "die Überschrift, die Überschriften",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/ˈyːbɐˌʃʁɪft/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/3/3d/De-%C3%9Cberschrift.ogg"
+   }
+  },
+  {
+   "id": "word:extra-situation",
+   "kind": "word",
+   "w": "Situation",
+   "extra": {
+    "src": "both",
+    "kind": "instruction",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "die",
+   "plural": "Situationen",
+   "t": "die Situation, die Situationen",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "[zitʊ̯aˈt͡si̯oːn]",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/2/2e/De-Situation.ogg"
+   }
+  },
+  {
+   "id": "word:extra-kreuz",
+   "kind": "word",
+   "w": "Kreuz",
+   "extra": {
+    "src": "osd",
+    "kind": "instruction",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "das",
+   "plural": "Kreuze",
+   "t": "das Kreuz, die Kreuze",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/ˈkʁɔʏ̯ts/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/3/37/De-Kreuz.ogg"
+   }
+  },
+  {
+   "id": "word:extra-antwortbogen",
+   "kind": "word",
+   "w": "Antwortbogen",
+   "extra": {
+    "src": "telc",
+    "kind": "instruction",
+    "goetheExample": true
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "art": "der",
+   "plural": "Antwortbögen",
+   "manual": "مش في Wiktionary: كلمة مركّبة من Antwort و Bogen (der Bogen, die Bögen)",
+   "t": "der Antwortbogen, die Antwortbögen",
+   "wikt": null
+  },
+  {
+   "id": "word:extra-blatt",
+   "kind": "word",
+   "w": "Blatt",
+   "extra": {
+    "src": "osd",
+    "kind": "instruction",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "das",
+   "plural": "Blätter",
+   "t": "das Blatt, die Blätter",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/blat/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/7/79/De-Blatt.ogg"
+   }
+  },
+  {
+   "id": "word:extra-zeile",
+   "kind": "word",
+   "w": "Zeile",
+   "extra": {
+    "src": "osd",
+    "kind": "instruction",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "die",
+   "plural": "Zeilen",
+   "t": "die Zeile, die Zeilen",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/ˈt͡saɪ̯lə/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/8/8b/De-Zeile.ogg"
+   }
+  },
+  {
+   "id": "word:extra-punkt",
+   "kind": "word",
+   "w": "Punkt",
+   "extra": {
+    "src": "both",
+    "kind": "instruction",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "der",
+   "plural": "Punkte",
+   "t": "der Punkt, die Punkte",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/pʊŋ(k)t/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/f/f2/De-Punkt.ogg"
+   }
+  },
+  {
+   "id": "word:extra-wahlen",
+   "kind": "word",
+   "w": "wählen",
+   "extra": {
+    "src": "telc",
+    "kind": "instruction",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "t": "wählen",
+   "wikt": {
+    "pos": "verb",
+    "ipa": "/ˈvɛːlən/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/c/c9/De-w%C3%A4hlen.ogg"
+   }
+  },
+  {
+   "id": "word:extra-beantworten",
+   "kind": "word",
+   "w": "beantworten",
+   "extra": {
+    "src": "both",
+    "kind": "instruction",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "t": "beantworten",
+   "wikt": {
+    "pos": "verb",
+    "ipa": "/bəˈʔantˌvɔɐ̯tn̩/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/0/0e/De-beantworten.ogg"
+   }
+  },
+  {
+   "id": "word:extra-zweimal",
+   "kind": "word",
+   "w": "zweimal",
+   "extra": {
+    "src": "telc",
+    "kind": "instruction",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "t": "zweimal",
+   "wikt": {
+    "pos": "adv",
+    "ipa": "/ˈt͡svaɪ̯maːl/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/e/e0/De-zweimal.ogg"
+   }
+  },
+  {
+   "id": "word:extra-nachricht",
+   "kind": "word",
+   "w": "Nachricht",
+   "extra": {
+    "src": "both",
+    "kind": "instruction",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "die",
+   "plural": "Nachrichten",
+   "t": "die Nachricht, die Nachrichten",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/ˈnaːxrɪçt/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/f/f7/De-at-Nachricht.ogg"
+   }
+  },
+  {
+   "id": "word:extra-supermarkt",
+   "kind": "word",
+   "w": "Supermarkt",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": true
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "art": "der",
+   "plural": "Supermärkte",
+   "t": "der Supermarkt, die Supermärkte",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/ˈzuːpɐˌmaʁkt/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/4/44/De-Supermarkt.ogg"
+   }
+  },
+  {
+   "id": "word:extra-fahrt",
+   "kind": "word",
+   "w": "Fahrt",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": true
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "art": "die",
+   "plural": "Fahrten",
+   "t": "die Fahrt, die Fahrten",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/faːrt/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/4/4e/De-Fahrt.ogg"
+   }
+  },
+  {
+   "id": "word:extra-buro",
+   "kind": "word",
+   "w": "Büro",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": true
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "das",
+   "plural": "Büros",
+   "t": "das Büro, die Büros",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/byˈroː/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/e/e2/De-B%C3%BCro2.ogg"
+   }
+  },
+  {
+   "id": "word:extra-kase",
+   "kind": "word",
+   "w": "Käse",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": true
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "der",
+   "plural": "Käse",
+   "t": "der Käse, die Käse",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/ˈkɛːzə/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/5/52/De-K%C3%A4se.ogg"
+   }
+  },
+  {
+   "id": "word:extra-suppe",
+   "kind": "word",
+   "w": "Suppe",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "die",
+   "plural": "Suppen",
+   "t": "die Suppe, die Suppen",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/ˈzʊpə/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/5/59/De-Suppe.ogg"
+   }
+  },
+  {
+   "id": "word:extra-tablette",
+   "kind": "word",
+   "w": "Tablette",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "die",
+   "plural": "Tabletten",
+   "t": "die Tablette, die Tabletten",
+   "wikt": {
+    "pos": "noun",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/1/1e/De-Tablette.ogg"
+   }
+  },
+  {
+   "id": "word:extra-medizin",
+   "kind": "word",
+   "w": "Medizin",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "art": "die",
+   "plural": null,
+   "manual": "الجمع (Medizinen) نادر ومعناه أنواع أدوية: الكارت بيعلّمها من غير جمع",
+   "t": "die Medizin",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/(ˌ)me.di.ˈtsiːn/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/d/da/De-Medizin.ogg"
+   }
+  },
+  {
+   "id": "word:extra-temperatur",
+   "kind": "word",
+   "w": "Temperatur",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "art": "die",
+   "plural": "Temperaturen",
+   "t": "die Temperatur, die Temperaturen",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/ˌtɛm.pə.ʁaˈtuːɐ̯/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/c/c3/De-Temperatur.ogg"
+   }
+  },
+  {
+   "id": "word:extra-kalt",
+   "kind": "word",
+   "w": "kalt",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": true
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "t": "kalt",
+   "wikt": {
+    "pos": "adj",
+    "ipa": "/kalt/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/0/0b/De-kalt.ogg"
+   }
+  },
+  {
+   "id": "word:extra-heiss",
+   "kind": "word",
+   "w": "heiß",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "t": "heiß",
+   "wikt": {
+    "pos": "adj",
+    "ipa": "/haɪ̯s/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/e/e1/De-hei%C3%9F.ogg"
+   }
+  },
+  {
+   "id": "word:extra-nett",
+   "kind": "word",
+   "w": "nett",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "t": "nett",
+   "wikt": {
+    "pos": "adj",
+    "ipa": "/nɛt/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/9/9e/De-nett.ogg"
+   }
+  },
+  {
+   "id": "word:extra-freundlich",
+   "kind": "word",
+   "w": "freundlich",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "t": "freundlich",
+   "wikt": {
+    "pos": "adj",
+    "ipa": "/ˈfʁɔɪ̯ntlɪç/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/8/87/De-at-freundlich.ogg"
+   }
+  },
+  {
+   "id": "word:extra-taglich",
+   "kind": "word",
+   "w": "täglich",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "t": "täglich",
+   "wikt": {
+    "pos": "adj",
+    "ipa": "/ˈtɛːklɪç/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/7/7d/De-t%C3%A4glich.ogg"
+   }
+  },
+  {
+   "id": "word:extra-kostenlos",
+   "kind": "word",
+   "w": "kostenlos",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "t": "kostenlos",
+   "wikt": {
+    "pos": "adj",
+    "ipa": "/ˈkɔstn̩loːs/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/5/58/De-kostenlos.ogg"
+   }
+  },
+  {
+   "id": "word:extra-besuch",
+   "kind": "word",
+   "w": "Besuch",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": true
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "der",
+   "plural": "Besuche",
+   "t": "der Besuch, die Besuche",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/bəˈzuːχ/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/b/b9/De-Besuch.ogg"
+   }
+  },
+  {
+   "id": "word:extra-besucher",
+   "kind": "word",
+   "w": "Besucher",
+   "extra": {
+    "src": "both",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "der",
+   "plural": "Besucher",
+   "t": "der Besucher, die Besucher",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/bəˈzuːxɐ/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/e/eb/De-Besucher.ogg"
+   }
+  },
+  {
+   "id": "word:extra-park",
+   "kind": "word",
+   "w": "Park",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": true
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "der",
+   "plural": "Parks",
+   "t": "der Park, die Parks",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/paʁk/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/0/02/De-Park.ogg"
+   }
+  },
+  {
+   "id": "word:extra-fest",
+   "kind": "word",
+   "w": "Fest",
+   "extra": {
+    "src": "both",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "das",
+   "plural": "Feste",
+   "t": "das Fest, die Feste",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/fɛst/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/f/fa/De-Fest.ogg"
+   }
+  },
+  {
+   "id": "word:extra-idee",
+   "kind": "word",
+   "w": "Idee",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "art": "die",
+   "plural": "Ideen",
+   "t": "die Idee, die Ideen",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/iˈdeː/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/7/75/De-at-Idee.ogg"
+   }
+  },
+  {
+   "id": "word:extra-spiel",
+   "kind": "word",
+   "w": "Spiel",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": true
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "art": "das",
+   "plural": "Spiele",
+   "t": "das Spiel, die Spiele",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/ʃpiːl/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/f/fa/De-Spiel.ogg"
+   }
+  },
+  {
+   "id": "word:extra-gemeinsam",
+   "kind": "word",
+   "w": "gemeinsam",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "t": "gemeinsam",
+   "wikt": {
+    "pos": "adj",
+    "ipa": "/ɡəˈmaɪnza(ː)m/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/6/64/De-gemeinsam.ogg"
+   }
+  },
+  {
+   "id": "word:extra-genau",
+   "kind": "word",
+   "w": "genau",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "t": "genau",
+   "wikt": {
+    "pos": "adj",
+    "ipa": "/ɡəˈnaʊ̯/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/e/e4/De-genau.ogg"
+   }
+  },
+  {
+   "id": "word:extra-wieder",
+   "kind": "word",
+   "w": "wieder",
+   "extra": {
+    "src": "both",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "t": "wieder",
+   "wikt": {
+    "pos": "adv",
+    "ipa": "/ˈviːdɐ/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/4/41/De-wieder2.ogg"
+   }
+  },
+  {
+   "id": "word:extra-doch",
+   "kind": "word",
+   "w": "doch",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": true
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "t": "doch",
+   "wikt": {
+    "pos": "particle",
+    "ipa": "/dɔx/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/a/ac/De-doch.ogg"
+   }
+  },
+  {
+   "id": "word:extra-jemand",
+   "kind": "word",
+   "w": "jemand",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "t": "jemand",
+   "wikt": {
+    "pos": "pron",
+    "ipa": "/ˈjeːmant/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/c/cb/De-jemand.ogg"
+   }
+  },
+  {
+   "id": "word:extra-sonst",
+   "kind": "word",
+   "w": "sonst",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "t": "sonst",
+   "wikt": {
+    "pos": "adv",
+    "ipa": "/zɔnst/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/0/02/De-sonst2.ogg"
+   }
+  },
+  {
+   "id": "word:extra-besonders",
+   "kind": "word",
+   "w": "besonders",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "t": "besonders",
+   "wikt": {
+    "pos": "adv",
+    "ipa": "[bəˈzɔndɐs]",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/f/ff/De-at-besonders.ogg"
+   }
+  },
+  {
+   "id": "word:extra-endlich",
+   "kind": "word",
+   "w": "endlich",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "t": "endlich",
+   "wikt": {
+    "pos": "adj",
+    "ipa": "/ˈɛntlɪç/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/1/14/De-endlich.ogg"
+   }
+  },
+  {
+   "id": "word:extra-fruh",
+   "kind": "word",
+   "w": "früh",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "t": "früh",
+   "wikt": {
+    "pos": "adj",
+    "ipa": "/fʁyː/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/1/13/De-fr%C3%BCh.ogg"
+   }
+  },
+  {
+   "id": "word:extra-zahl",
+   "kind": "word",
+   "w": "Zahl",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "art": "die",
+   "plural": "Zahlen",
+   "t": "die Zahl, die Zahlen",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/tsaːl/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/2/2b/De-Zahl.ogg"
+   }
+  },
+  {
+   "id": "word:extra-person",
+   "kind": "word",
+   "w": "Person",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": true
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "die",
+   "plural": "Personen",
+   "t": "die Person, die Personen",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/pɛrˈzoːn/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/d/d3/De-Person.ogg"
+   }
+  },
+  {
+   "id": "word:extra-interesse",
+   "kind": "word",
+   "w": "Interesse",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "das",
+   "plural": "Interessen",
+   "t": "das Interesse, die Interessen",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/ˌɪn.təˈrɛsə/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/9/91/De-at-Interesse.ogg"
+   }
+  },
+  {
+   "id": "word:extra-erdgeschoss",
+   "kind": "word",
+   "w": "Erdgeschoss",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "das",
+   "plural": "Erdgeschosse",
+   "t": "das Erdgeschoss, die Erdgeschosse",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/ˈeːɐ̯tɡəˌʃɔs/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/a/ab/De-Erdgeschoss.ogg"
+   }
+  },
+  {
+   "id": "word:extra-ruhetag",
+   "kind": "word",
+   "w": "Ruhetag",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "der",
+   "plural": "Ruhetage",
+   "t": "der Ruhetag, die Ruhetage",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/ˈʁuːətaːk/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/a/a8/De-Ruhetag.ogg"
+   }
+  },
+  {
+   "id": "word:extra-wasche",
+   "kind": "word",
+   "w": "Wäsche",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "art": "die",
+   "plural": "Wäschen",
+   "t": "die Wäsche, die Wäschen",
+   "wikt": {
+    "pos": "noun",
+    "ipa": "/ˈvɛʃə/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/4/4e/De-W%C3%A4sche.ogg"
+   }
+  },
+  {
+   "id": "word:extra-voll",
+   "kind": "word",
+   "w": "voll",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "t": "voll",
+   "wikt": {
+    "pos": "adj",
+    "ipa": "/fɔl/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/e/ef/De-at-voll.ogg"
+   }
+  },
+  {
+   "id": "word:extra-schauen",
+   "kind": "word",
+   "w": "schauen",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "t": "schauen",
+   "wikt": {
+    "pos": "verb",
+    "ipa": "/ˈʃaʊ̯ən/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/b/b1/De-at-schauen.ogg"
+   }
+  },
+  {
+   "id": "word:extra-zeigen",
+   "kind": "word",
+   "w": "zeigen",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": true
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "t": "zeigen",
+   "wikt": {
+    "pos": "verb",
+    "ipa": "/ˈt͡saɪ̯ɡən/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/8/89/De-zeigen2.ogg"
+   }
+  },
+  {
+   "id": "word:extra-denken",
+   "kind": "word",
+   "w": "denken",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "t": "denken",
+   "wikt": {
+    "pos": "verb",
+    "ipa": "/ˈdɛŋkən/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/a/af/De-denken.ogg"
+   }
+  },
+  {
+   "id": "word:extra-interessieren",
+   "kind": "word",
+   "w": "interessieren",
+   "extra": {
+    "src": "telc",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "telc Deutsch A1 für Zuwanderer: Übungstest 1 (5. Auflage 2021)",
+    "url": "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf"
+   },
+   "t": "interessieren",
+   "wikt": {
+    "pos": "verb",
+    "ipa": "/ˌɪn.tə.ʁɛˈsiː.ʁən/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/9/94/De-interessieren.ogg"
+   }
+  },
+  {
+   "id": "word:extra-verschieden",
+   "kind": "word",
+   "w": "verschieden",
+   "extra": {
+    "src": "osd",
+    "kind": "everyday",
+    "goetheExample": false
+   },
+   "ref": {
+    "t": "ÖSD Zertifikat A1: Modellsatzbroschüre mit Informationen (5. Auflage 2024)",
+    "url": "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf"
+   },
+   "t": "verschieden",
+   "wikt": {
+    "pos": "verb",
+    "ipa": "/fɛɐ̯ˈʃiːdn̩/",
+    "audio": "https://upload.wikimedia.org/wikipedia/commons/c/c3/De-verschieden2.ogg"
    }
   }
  ]
