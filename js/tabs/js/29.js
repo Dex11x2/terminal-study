@@ -1,5574 +1,4653 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "APIs المتصفح",
+      t: R`البيانات الثنائية والـ Workers: ArrayBuffer و TypedArrays و DataView و Atomics`,
       l: 3,
-      n: "IntersectionObserver و ResizeObserver و MutationObserver، ورفع الملفات بمعاينة و progress، ودورة حياة الصفحة و bfcache، و pushState، والإشعارات و Permissions API",
+      n: "الـ bytes والـ hex، و ArrayBuffer (slice و isView و resize و transfer والـ detached)، والـ ١٢ typed array والـ overflow والـ endianness، وكل methods الـ TypedArray، و DataView على ملفات WAV و PNG حقيقية، و base64 و hex و TextEncoder، و Web Workers و worker_threads بالـ transfer، و SharedArrayBuffer والـ COOP/COEP، و Atomics كلها بـ race حقيقي و lock، ومشاريع: hex dump، ومحوّل نص و bytes، وملف صوت، وفلتر صور في Worker، ومفتش ملفات binary، و format binary بتاعك",
       pre: [
-        { to: "js/window و navigator و document", why: R`كل API هنا معلّق على [[window]] أو [[navigator]] أو [[document]]` },
-        { to: "js/event delegation", why: R`listener واحد على الأب للكروت واللينكات، في أغلب التمارين` },
-        { to: "js/fetch و AbortController", why: R`الـ feed والرفع بيستخدموا timeout وإلغاء` },
-        { to: "js/Web Storage: localStorage و sessionStorage", why: R`المسودات والمكان اللي وقفت فيه، ومع try لأن التخزين ممكن يبقى ممنوع` },
-        { to: "js/microtasks و macrotasks", why: R`الـ MutationObserver بيسلّم التغييرات في microtask، وده سبب نصّ تمارينه` },
+        { to: "js/bitwise و shifts", why: R`الـ bits والـ hex و [[&]] و [[>>>]]: هتحتاجهم في كل سطر بيقرا bytes` },
+        { to: "js/BigInt بعمق", why: R`[[BigInt64Array]] و [[getBigUint64]] بيرجّعوا BigInt` },
+        { to: "js/Math.sumPrecise و fround و f16round", why: R`ليه [[0.1]] في [[Float32Array]] بيبقى [[0.10000000149011612]]` },
+        { to: "js/Array: at و slice و concat", why: R`الـ methods اللي الـ typed arrays بتشاركها مع [[Array]]، وهنا الفرق` },
+        { to: "js/blocking و الـ main thread", why: R`ليه الحساب التقيل بيجمّد الصفحة، والـ Worker هو الحل` },
+        { to: "js/memory leaks", why: R`الذاكرة اللي الـ buffers الكبيرة بتاخدها ومين بيفضّيها` },
+        { to: "js/deepClone و structuredClone", why: R`الـ structured clone هو نفسه اللي [[postMessage]] بيستخدمه` },
       ],
+      goal: [
+        R`تقرا أي bytes بالـ hex، وتعرف الفرق بين [[ArrayBuffer]] (الذاكرة) والـ view اللي بيقراها، وتحسب حجم نص بالـ bytes صح.`,
+        R`تعمل وتنسخ وتكبّر وتنقل [[ArrayBuffer]]، وتعرف إمتى يبقى detached وإيه اللي بيحصل للـ views بتاعته.`,
+        R`تختار الـ typed array الصح من الـ ١٢، وتتوقع الـ overflow والـ clamping، وتعرف الفرق بين [[subarray]] و [[slice]] وكل method تانية.`,
+        R`تقرا وتكتب ملفات binary حقيقية بـ [[DataView]] (header ملف WAV و PNG) وتختار little أو big endian صح.`,
+        R`تحوّل بين النص والـ bytes والـ base64 والـ hex من غير ما العربي يبوظ.`,
+        R`تشغّل حساب تقيل في Web Worker أو [[worker_threads]] وتنقل الـ buffers من غير نسخ، وتستخدم [[SharedArrayBuffer]] و [[Atomics]] من غير race conditions.`,
+      ],
+      use: {
+        prog: R`كل حاجة بتلمس ملفات أو شبكة أو صور بتعدّي من هنا: رفع ملفات وفحص نوعها، وضغط صور قبل الرفع، و audio في المتصفح، و WebSocket binary، والتشفير والـ hashing، و WebAssembly، و [[Buffer]] في Node في كل سطر بيقرا ملف. والـ Workers هي الطريقة الوحيدة في JavaScript تشغّل كود على أكتر من core.`,
+        work: R`محررات صور وفيديو في المتصفح، وتطبيقات خرايط وألعاب (WebGL)، وأدوات بتقرا ملفات Excel و PDF و zip في المتصفح من غير سيرفر، و parsers لبروتوكولات أجهزة (IoT)، وسيرفرات Node بتعالج صور أو ملفات كبيرة في [[worker_threads]] عشان متوقفش الـ requests.`,
+        cs: R`تمثيل الأرقام في الذاكرة (two's complement و IEEE 754)، و endianness، و file formats و magic numbers، والـ checksums (CRC32)، والـ concurrency: shared memory مقابل message passing، و race conditions، و atomic operations، و locks و futex (اللي [[Atomics.wait]] مبني عليها)، والـ memory model.`,
+      },
       projects: [
-        { lvl: 'صغير', dir: "back-to-top", t: R`زرار «ارجع لفوق» من غير scroll listener`, what: R`div صغير في أول الصفحة عليه [[IntersectionObserver]] (درس ١): لما يخرج من الشاشة يظهر زرار «لفوق» ثابت في الركن، ولما يرجع يختفي. والزرار بيعمل [[scrollTo({ top: 0, behavior: "smooth" })]].`, done: R`الزرار مش ظاهر وانت في أول الصفحة، بيظهر بعد ما تنزل شوية ويختفي لما ترجع، ومفيش ولا [[addEventListener("scroll")]] في الكود، و Performance في DevTools مفيهوش شغل JS مستمر وانت بتعمل scroll.`, sol: R`## الشكل النهائي
+        { lvl: 'صغير', t: R`hexdump: شوف أي ملف byte byte`, what: R`أداة سطر أوامر [[node hexdump.mjs <file> [--offset N] [--length N] ]] زي [[xxd]] و [[hexdump -C]] في لينكس: كل سطر ١٦ byte، فيه الـ offset بالـ hex (٨ أرقام)، وبعدين الـ bytes بالـ hex في مجموعتين ٨ و ٨، وبعدين عمود ASCII (الحرف لو قابل للطباعة و [[.]] لو لأ). الملف المش موجود والـ options الغلط والملف الفاضي بيطلّعوا رسالة واضحة و exit code 1 (أو رسالة «مفيش bytes»). من دروس «البيانات الثنائية: bytes و typed arrays» و «TypedArray: set و subarray».`, done: R`على ملف نص فيه عربي بتشوف [[d9 85]] مكان «م» و [[.]] في عمود ASCII، وعلى [[tiny.png]] بـ [[--length 40]] بتشوف [[.PNG........IHDR]]، و [[--offset 80]] بيبدأ العد من [[00000050]]، و [[nope.bin]] بيطبع «الملف مش موجود: nope.bin» و exit 1.`, sol: R`## الشكل النهائي
 
-~~~view 420
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مقالة طويلة</title>
-<style>
-  body { font: 16px/1.8 system-ui, sans-serif; margin: 0; }
-  main { max-width: 640px; margin: 0 auto; padding: 16px; }
-  #top-sentinel { position: absolute; top: 0; width: 1px; height: 400px; pointer-events: none; }   /* أول 400px من الصفحة */
-  #to-top {
-    position: fixed; inset-inline-end: 16px; bottom: 16px;
-    font: inherit; padding: 10px 14px; border: 0; border-radius: 999px;
-    background: #1d4ed8; color: #fff; box-shadow: 0 2px 8px #0003;
-    opacity: 0; transform: translateY(12px); pointer-events: none;
-    transition: opacity .2s, transform .2s;
-  }
-  #to-top.show { opacity: 1; transform: none; pointer-events: auto; }
-  @media (prefers-reduced-motion: reduce) { #to-top { transition: none; } }
-</style>
-</head>
-<body>
-<div id="top-sentinel"></div>
-<main>
-  <h1>إزاي تذاكر برمجة كل يوم</h1>
-  <p>اقرا الفقرة دي وانزل لتحت. الزرار هيظهر في الركن بعد ما تنزل حوالي 400px.</p>
-</main>
-<button id="to-top" aria-label="ارجع لأول الصفحة" tabindex="-1">↑ لفوق</button>
-<script>
-  // محتوى طويل للتجربة
-  const main = document.querySelector("main");
-  for (let i = 1; i <= 30; i++) main.insertAdjacentHTML("beforeend", $__bt<p>فقرة $__{i}: خصّص وقت ثابت، واكتب كود بإيدك، وراجع اللي فات قبل ما تبدأ الجديد.</p>$__bt);
-
-  const btn = document.querySelector("#to-top");
-  const sentinel = document.querySelector("#top-sentinel");
-
-  new IntersectionObserver(([entry]) => {
-    const show = !entry.isIntersecting;            // أول الصفحة خرج من الشاشة
-    btn.classList.toggle("show", show);
-    btn.tabIndex = show ? 0 : -1;                  // مخفي = مش في ترتيب Tab
-  }, { root: document }).observe(sentinel);
-
-  btn.addEventListener("click", () => {
-    const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches;
-    scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
-  });
-</script>
-</body>
-</html>
+~~~text الناتج (Node 24.22): node hexdump.mjs sample.txt
+00000000  48 69 21 20 d9 85 d8 b5  d8 b1 20 32 30 32 36 0a  |Hi! ...... 2026.|
+00000010  d8 b3 d8 b7 d8 b1 20 d8  aa d8 a7 d9 86 d9 8a 0a  |...... .........|
+— 32 من 32 byte
 ~~~
 
-**هتشوف إيه:** مقالة طويلة. انزل جوه الصفحة اللي فوق: بعد حوالي 400px زرار «↑ لفوق» بيظهر في الركن بحركة خفيفة، والضغط عليه بيطلعك لأول الصفحة بنعومة والزرار بيختفي.
+**هتشوف إيه:** كل سطر ١٦ byte. على الشمال مكان أول byte في السطر بالـ hex، وفي النص الـ bytes، وعلى اليمين نفس الـ bytes كحروف: الإنجليزي بيبان والعربي (bytes أكبر من ١٢٦) بيبقى نقط. ده بالظبط اللي بتعمله لما ملف «مش راضي يفتح» وعايز تعرف جواه إيه.
 
 ## الكود
 
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مقالة طويلة</title>
-<style>
-  body { font: 16px/1.8 system-ui, sans-serif; margin: 0; }
-  main { max-width: 640px; margin: 0 auto; padding: 16px; }
-  #top-sentinel { position: absolute; top: 0; width: 1px; height: 400px; pointer-events: none; }   /* أول 400px من الصفحة */
-  #to-top {
-    position: fixed; inset-inline-end: 16px; bottom: 16px;
-    font: inherit; padding: 10px 14px; border: 0; border-radius: 999px;
-    background: #1d4ed8; color: #fff; box-shadow: 0 2px 8px #0003;
-    opacity: 0; transform: translateY(12px); pointer-events: none;
-    transition: opacity .2s, transform .2s;
+~~~js hexdump.mjs
+// hexdump.mjs: node hexdump.mjs <file> [--offset N] [--length N]
+import { readFileSync } from 'node:fs';
+
+function hexdump(bytes, start = 0) {
+  const lines = [];
+  for (let at = 0; at < bytes.length; at += 16) {
+    const row = bytes.subarray(at, at + 16);
+    const hex = Array.from(row, (b) => b.toString(16).padStart(2, '0'));
+    const left = hex.slice(0, 8).join(' '), right = hex.slice(8).join(' ');
+    const ascii = Array.from(row, (b) => (b >= 0x20 && b < 0x7f ? String.fromCharCode(b) : '.')).join('');
+    lines.push((start + at).toString(16).padStart(8, '0') + '  ' + left.padEnd(23) + '  ' + right.padEnd(23) + '  |' + ascii + '|');
   }
-  #to-top.show { opacity: 1; transform: none; pointer-events: auto; }
-  @media (prefers-reduced-motion: reduce) { #to-top { transition: none; } }
-</style>
-</head>
-<body>
-<div id="top-sentinel"></div>
-<main>
-  <h1>إزاي تذاكر برمجة كل يوم</h1>
-  <p>اقرا الفقرة دي وانزل لتحت. الزرار هيظهر في الركن بعد ما تنزل حوالي 400px.</p>
-</main>
-<button id="to-top" aria-label="ارجع لأول الصفحة" tabindex="-1">↑ لفوق</button>
-<script>
-  // محتوى طويل للتجربة
-  const main = document.querySelector("main");
-  for (let i = 1; i <= 30; i++) main.insertAdjacentHTML("beforeend", $__bt<p>فقرة $__{i}: خصّص وقت ثابت، واكتب كود بإيدك، وراجع اللي فات قبل ما تبدأ الجديد.</p>$__bt);
+  return lines.join('\n');
+}
 
-  const btn = document.querySelector("#to-top");
-  const sentinel = document.querySelector("#top-sentinel");
+function parseArgs(argv) {
+  const opts = { file: null, offset: 0, length: Infinity };
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === '--offset' || a === '--length') {
+      const n = Number(argv[++i]);
+      if (!Number.isInteger(n) || n < 0) throw new Error(a + ' محتاج رقم صحيح موجب، اللي وصل: ' + argv[i]);
+      opts[a.slice(2)] = n;
+    } else if (!opts.file) opts.file = a;
+    else throw new Error('argument زيادة: ' + a);
+  }
+  if (!opts.file) throw new Error('الاستخدام: node hexdump.mjs <file> [--offset N] [--length N]');
+  return opts;
+}
 
-  new IntersectionObserver(([entry]) => {
-    const show = !entry.isIntersecting;            // أول الصفحة خرج من الشاشة
-    btn.classList.toggle("show", show);
-    btn.tabIndex = show ? 0 : -1;                  // مخفي = مش في ترتيب Tab
-  }, { root: document }).observe(sentinel);
-
-  btn.addEventListener("click", () => {
-    const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches;
-    scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
-  });
-</script>
-</body>
-</html>
+let file;
+try {
+  const opts = parseArgs(process.argv.slice(2));
+  file = opts.file;
+  const { offset, length } = opts;
+  const data = readFileSync(file);
+  const part = data.subarray(offset, offset + length);
+  if (part.length === 0) console.log('(مفيش bytes: الملف ' + data.length + ' byte والـ offset ' + offset + ')');
+  else console.log(hexdump(part, offset));
+  console.log('—', part.length, 'من', data.length, 'byte');
+} catch (e) {
+  console.error('hexdump:', e.code === 'ENOENT' ? 'الملف مش موجود: ' + file : e.message);
+  process.exitCode = 1;
+}
 ~~~
 
 ## الشرح
 
-- **[[#top-sentinel]]:** عنصر شفاف [[position: absolute]] في أول الصفحة طوله 400px. مش بيبان ومش بياخد مكان في المقالة. الـ observer بيسأل سؤال واحد: «العنصر ده لسه ظاهر؟».
-- **[[!entry.isIntersecting]]:** لما آخر جزء من الـ 400px يطلع من فوق الشاشة، الـ callback بيتنادى مرة وبيظهر الزرار. ولما ترجع، بيتنادى مرة تانية ويخفيه. مفيش حسابات مع كل scroll.
-- **[[root: document]]:** عشان يشتغل كمان وهو جوه iframe من origin تاني زي الـ preview (من غيره الـ observer بيحسب على شاشة الصفحة اللي برا). في صفحة عادية نفس النتيجة.
-- **[[tabIndex = show ? 0 : -1]] و [[pointer-events: none]]:** الزرار المخفي بالـ [[opacity]] لسه موجود، فلو مقفلناش الـ Tab عليه، اللي بيستخدم الكيبورد هيوصل لزرار مش شايفه.
-- **[[aria-label]]:** النص «↑ لفوق» فيه سهم، والـ label بيقول لقارئ الشاشة الزرار بيعمل إيه بالظبط.
-- **[[prefers-reduced-motion]]:** اللي مفعّل «قلّل الحركة» في النظام بيروح لفوق على طول ([[behavior: "auto"]]) ومن غير transition.
+- **[[bytes.subarray(at, at + 16)]]:** كل سطر view على ١٦ byte من غير نسخ، والسطر الأخير بيتقص لوحده.
+- **[[Array.from(row, fn)]] مش [[row.map]]:** [[map]] على [[Uint8Array]] كانت هترجّع [[Uint8Array]] والنصوص ([['0f']]) هتبقى أصفار (درس «TypedArray: set و subarray»).
+- **[[padEnd(23)]]:** ٨ bytes = ٨ × ٢ حروف + ٧ مسافات = ٢٣، فالسطر الناقص الأعمدة بتاعته بتفضل في مكانها.
+- **عمود ASCII:** من [[0x20]] (المسافة) لـ [[0x7e]] ([[~]]) حروف بتتطبع، وغير كده [[.]]: نفس قاعدة [[hexdump -C]].
+- **[[data.subarray(offset, offset + length)]]:** [[length]] الافتراضي [[Infinity]]، و [[subarray]] بيقص على الطول، فمش محتاجين حساب.
+- **الأخطاء:** [[parseArgs]] بترمي برسالة، و [[catch]] واحد بيطبعها على stderr ويحط [[process.exitCode = 1]] (من غير [[process.exit]]، عشان أي output يخلص يتكتب).
+
+## غلطات وقعت فيها وأنا ببنيها
+
+- أول نسخة كانت بتطبع [[e.path]] في رسالة الملف المش موجود، وطلع فيها **المسار الكامل** للفولدر على جهازي. اتغيرت للاسم اللي اليوزر كتبه ([[file]]): أوضح ومبتسربش أسامي فولدرات.
+- كنت عامل [[export function hexdump]] وشرط «لو الملف ده اللي اتشغّل» بمقارنة [[import.meta.url]] بـ [[process.argv[1] ]]، وده بيبوظ على ويندوز (الـ slashes والـ drive letter). الأداة صغيرة فشلت الـ export والشرط خالص. (لو محتاجه في Node 24: [[import.meta.main]] بيرجّع [[true]] لما الملف هو اللي اتشغّل، اتجرّب.)
 
 ## اتقاس
 
-~~~text الناتج (Chrome 158 headless، 400×700، مرة من http://localhost ومرة جوه iframe معزول زي الـ preview)
-scroll listeners في الكود: 0
-[localhost] أول الصفحة: show=false scrollY=0
-[localhost] نزلنا 300px: show=false scrollY=300
-[localhost] نزلنا 1500px: show=true scrollY=1500
-[localhost] بعد الضغط على الزرار: show=false scrollY=0
-[sandbox] أول الصفحة: show=false scrollY=0
-[sandbox] نزلنا 300px: show=false scrollY=300
-[sandbox] نزلنا 1500px: show=true scrollY=1500
-[sandbox] بعد الضغط على الزرار: show=false scrollY=0
-41 scroll من 0 لـ 4000: الزرار اتغيّر 1 مرة
-pageerrors: 0
+~~~text node hexdump.mjs tiny.png --length 40
+00000000  89 50 4e 47 0d 0a 1a 0a  00 00 00 0d 49 48 44 52  |.PNG........IHDR|
+00000010  00 00 00 03 00 00 00 02  08 02 00 00 00 12 16 f1  |................|
+00000020  4d 00 00 00 1c 49 44 41                           |M....IDA|
+— 40 من 85 byte
 ~~~
 
-السطر قبل الأخير هو البديل بتاعنا لـ Performance في DevTools: عملنا scroll ٤١ مرة (كل 100px وفريمين بين كل واحدة)، والـ [[class]] بتاع الزرار اتغيّر **مرة واحدة** بس (لما عدّى الـ 400px). الـ callback مبيشتغلش غير لما الحالة تتغيّر، فمفيش شغل JS مستمر وانت بتعمل scroll. افتح Performance وسجّل وانت بتعمل scroll وهتلاقي مفيش [[Function Call]] من الصفحة غير لحظة الظهور والاختفاء.
+~~~text node hexdump.mjs tiny.png --offset 80
+00000050  44 ae 42 60 82                                    |D.B$__bt.|
+— 5 من 85 byte
+~~~
 
-## اللي حصل وإحنا بنبنيه
+~~~text node hexdump.mjs sample.txt --offset 4 --length 6
+00000004  d9 85 d8 b5 d8 b1                                 |......|
+— 6 من 32 byte
+~~~
 
-أول نسخة كان الـ sentinel طوله 1px، فالزرار ظهر بعد أول 1px من الـ scroll (القياس قال [[show=true]] عند 50px). زرار بيظهر وانت لسه بتقرا أول سطر مزعج، فبقى طول الـ sentinel هو المسافة اللي عايزها (400px)، من غير أي رقم في الـ JS.
+~~~text الأخطاء (كل واحد exit code 1)
+hexdump: الملف مش موجود: nope.bin
+hexdump: --length محتاج رقم صحيح موجب، اللي وصل: -3
+hexdump: الاستخدام: node hexdump.mjs <file> [--offset N] [--length N]
+~~~
 
-**الغلطة الشائعة:** [[addEventListener("scroll", () => btn.hidden = scrollY < 400)]]. بيشتغل، بس بيتنادى عشرات المرات في الثانية على كل الأجهزة، وده اللي الـ observer معمول عشان تستغنى عنه.` },
-        { lvl: 'صغير', dir: "avatar-picker", t: R`اختيار صورة البروفايل`, what: R`[[<input type="file" accept="image/*">]] لصورة واحدة (درس ٣): معاينة في دايرة بـ [[URL.createObjectURL]]، ورفض أي ملف أكبر من 1MB أو مش صورة فعلًا (أول bytes بتوعه مش PNG ولا JPEG)، و [[revokeObjectURL]] للقديمة كل ما تختار جديدة.`, done: R`صورة PNG أو JPEG بتظهر في الدايرة، وملف [[.txt]] اتغيّر اسمه لـ [[.png]] بيترفض برسالة مع إن [[file.type]] بتاعه [[image/png]]، والملف الكبير بيترفض ومعاه حجمه بالـ MB، واختيار ٥ صور ورا بعض بيسيب blob URL واحد بس شغال.`, sol: R`## الشكل النهائي
+والملف الفاضي: [[(مفيش bytes: الملف 0 byte والـ offset 0)]]. في الـ PNG باين التوقيع ([[.PNG]] بعد [[89]])، و [[IHDR]] وبعده العرض ٣ والطول ٢ (big-endian)، وآخر ٤ bytes CRC الـ [[IEND]].` },
+        { lvl: 'صغير', dir: "text-bytes", t: R`محوّل النص ⇄ bytes ⇄ base64`, what: R`صفحة فيها مربع نص، وتحته جدول بيتحدث مع كل حرف: عدد وحدات UTF-16 ([[length]])، وعدد الـ code points، وعدد الـ bytes في UTF-8، والـ bytes بالـ hex، و base64، و base64url. وتحتها حقل تلزق فيه base64 فيرجّعه نص، ولو مش base64 سليم أو الـ bytes مش UTF-8 سليم يكتب رسالة حمرا. بيستخدم [[toBase64]] و [[fromBase64]] لو موجودين وإلا [[btoa]] و [[atob]]. من درس «Uint8Array: fromBase64 و toHex و TextEncoder».`, done: R`«شاي ☕ tea» بيطلع ٩ و ٩ و ١٤ byte والـ base64 [[2LTYp9mKIOKYlSB0ZWE=]]، و 😀 بيطلع ٢ و ١ و ٤، و [[2LTYp9mK]] بيرجع «شاي»، و [[2LTY!]] و [[/w==]] بيطلعوا رسالة غلط حمرا من غير ما الصفحة تقع.`, sol: R`## الشكل النهائي
 
-~~~view 200
+~~~live 520 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>صورة البروفايل</title>
+<title>نص و bytes</title>
 <style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
-  .picker { display: flex; align-items: center; gap: 16px; }
-  .avatar { width: 112px; height: 112px; border-radius: 50%; background: #e5e7eb center / cover no-repeat; display: grid; place-items: center; color: #6b7280; font-size: 40px; overflow: hidden; }
-  .avatar img { width: 100%; height: 100%; object-fit: cover; }
-  label.btn { display: inline-block; padding: 8px 14px; border-radius: 8px; background: #1d4ed8; color: #fff; cursor: pointer; }
-  label.btn:focus-within { outline: 3px solid #93c5fd; }
-  #file { position: absolute; opacity: 0; width: 1px; height: 1px; }
-  #msg { min-height: 1.6em; }
-  #msg.err { color: #b91c1c; }
-  #msg.ok { color: #065f46; }
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; max-width: 640px; }
+  textarea, input { width: 100%; box-sizing: border-box; font: inherit; padding: 6px; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+  th, td { border: 1px solid #ccc; padding: 4px 8px; text-align: start; vertical-align: top; }
+  td.code { direction: ltr; text-align: left; font-family: ui-monospace, monospace; word-break: break-all; }
+  .err { color: #b00020; }
+  .ok { color: #0b6e4f; }
 </style>
 </head>
 <body>
-<div class="picker">
-  <div class="avatar" id="avatar" aria-hidden="true">👤</div>
-  <div>
-    <label class="btn">اختار صورة <input type="file" id="file" accept="image/png,image/jpeg"></label>
-    <p id="msg" role="status">PNG أو JPEG، 1MB بالكتير.</p>
-  </div>
-</div>
+<h1>النص ⇄ bytes</h1>
+<label for="text">اكتب أي نص:</label>
+<textarea id="text" rows="2">شاي ☕ tea</textarea>
+<table>
+  <tr><th>وحدات UTF-16 (length)</th><td id="units"></td></tr>
+  <tr><th>code points</th><td id="points"></td></tr>
+  <tr><th>bytes في UTF-8</th><td id="count"></td></tr>
+  <tr><th>hex</th><td class="code" id="hex"></td></tr>
+  <tr><th>base64</th><td class="code" id="b64"></td></tr>
+  <tr><th>base64url</th><td class="code" id="b64url"></td></tr>
+</table>
+<label for="back">الصق base64 وارجعه نص:</label>
+<input id="back" value="2LTYp9mK">
+<p id="decoded"></p>
 <script>
-  const MAX = 1024 * 1024;
-  const input = document.querySelector("#file");
-  const avatar = document.querySelector("#avatar");
-  const msg = document.querySelector("#msg");
-  let currentUrl = null;                       // الـ blob URL الشغال دلوقتي
-
-  async function sniffImage(file) {
-    const b = new Uint8Array(await file.slice(0, 4).arrayBuffer());
-    if (b.length >= 4 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return "png";
-    if (b.length >= 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return "jpeg";
-    return null;
+const $ = (id) => document.getElementById(id);
+const native = typeof Uint8Array.prototype.toBase64 === 'function';
+function toBase64(bytes, url) {
+  if (native) return bytes.toBase64(url ? { alphabet: 'base64url', omitPadding: true } : {});
+  let bin = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  const b = btoa(bin);
+  return url ? b.replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '') : b;
+}
+function fromBase64(text) {
+  if (native) return Uint8Array.fromBase64(text.trim(), { alphabet: /[-_]/.test(text) ? 'base64url' : 'base64' });
+  return Uint8Array.from(atob(text.trim().replaceAll('-', '+').replaceAll('_', '/')), (c) => c.charCodeAt(0));
+}
+function render() {
+  const text = $('text').value;
+  const bytes = new TextEncoder().encode(text);
+  $('units').textContent = text.length;
+  $('points').textContent = [...text].length;
+  $('count').textContent = bytes.length;
+  $('hex').textContent = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join(' ');
+  $('b64').textContent = toBase64(bytes, false);
+  $('b64url').textContent = toBase64(bytes, true);
+}
+function decode() {
+  const out = $('decoded');
+  try {
+    const bytes = fromBase64($('back').value);
+    out.textContent = '«' + new TextDecoder('utf-8', { fatal: true }).decode(bytes) + '» (' + bytes.length + ' byte)';
+    out.className = 'ok';
+  } catch (e) {
+    out.textContent = 'مش base64 لنص UTF-8 سليم: ' + e.name;
+    out.className = 'err';
   }
-
-  function say(text, kind) {
-    msg.textContent = text;
-    msg.className = kind;
-  }
-
-  input.addEventListener("change", async () => {
-    const file = input.files[0];
-    if (!file) return;
-    if (file.size > MAX) {
-      say($__btالصورة $__{(file.size / 1024 / 1024).toFixed(1)}MB، والحد 1MB.$__bt, "err");
-      input.value = "";                        // عشان اختيار نفس الملف تاني يعمل change
-      return;
-    }
-    const kind = await sniffImage(file);
-    if (!kind) {
-      say($__bt«$__{file.name}» مش صورة PNG ولا JPEG (حتى لو امتداده بيقول كده).$__bt, "err");
-      input.value = "";
-      return;
-    }
-    if (currentUrl) URL.revokeObjectURL(currentUrl);   // القديمة مبقتش محتاجينها
-    currentUrl = URL.createObjectURL(file);
-    const img = new Image();
-    img.alt = "صورة البروفايل";
-    img.src = currentUrl;
-    avatar.replaceChildren(img);
-    say($__btتمام: $__{kind.toUpperCase()}، $__{(file.size / 1024).toFixed(0)}KB.$__bt, "ok");
-  });
+}
+$('text').addEventListener('input', render);
+$('back').addEventListener('input', decode);
+render();
+decode();
 </script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** دايرة فاضية فيها 👤 وزرار «اختار صورة». اختار PNG أو JPEG من جهازك (جوه الـ preview اللي فوق شغال) وهتظهر في الدايرة. ملف نصي اسمه [[.png]] بيترفض برسالة، وصورة أكبر من 1MB بتترفض ومعاها حجمها.
-
-## الكود
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>صورة البروفايل</title>
-<style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
-  .picker { display: flex; align-items: center; gap: 16px; }
-  .avatar { width: 112px; height: 112px; border-radius: 50%; background: #e5e7eb center / cover no-repeat; display: grid; place-items: center; color: #6b7280; font-size: 40px; overflow: hidden; }
-  .avatar img { width: 100%; height: 100%; object-fit: cover; }
-  label.btn { display: inline-block; padding: 8px 14px; border-radius: 8px; background: #1d4ed8; color: #fff; cursor: pointer; }
-  label.btn:focus-within { outline: 3px solid #93c5fd; }
-  #file { position: absolute; opacity: 0; width: 1px; height: 1px; }
-  #msg { min-height: 1.6em; }
-  #msg.err { color: #b91c1c; }
-  #msg.ok { color: #065f46; }
-</style>
-</head>
-<body>
-<div class="picker">
-  <div class="avatar" id="avatar" aria-hidden="true">👤</div>
-  <div>
-    <label class="btn">اختار صورة <input type="file" id="file" accept="image/png,image/jpeg"></label>
-    <p id="msg" role="status">PNG أو JPEG، 1MB بالكتير.</p>
-  </div>
-</div>
-<script>
-  const MAX = 1024 * 1024;
-  const input = document.querySelector("#file");
-  const avatar = document.querySelector("#avatar");
-  const msg = document.querySelector("#msg");
-  let currentUrl = null;                       // الـ blob URL الشغال دلوقتي
-
-  async function sniffImage(file) {
-    const b = new Uint8Array(await file.slice(0, 4).arrayBuffer());
-    if (b.length >= 4 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return "png";
-    if (b.length >= 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return "jpeg";
-    return null;
-  }
-
-  function say(text, kind) {
-    msg.textContent = text;
-    msg.className = kind;
-  }
-
-  input.addEventListener("change", async () => {
-    const file = input.files[0];
-    if (!file) return;
-    if (file.size > MAX) {
-      say($__btالصورة $__{(file.size / 1024 / 1024).toFixed(1)}MB، والحد 1MB.$__bt, "err");
-      input.value = "";                        // عشان اختيار نفس الملف تاني يعمل change
-      return;
-    }
-    const kind = await sniffImage(file);
-    if (!kind) {
-      say($__bt«$__{file.name}» مش صورة PNG ولا JPEG (حتى لو امتداده بيقول كده).$__bt, "err");
-      input.value = "";
-      return;
-    }
-    if (currentUrl) URL.revokeObjectURL(currentUrl);   // القديمة مبقتش محتاجينها
-    currentUrl = URL.createObjectURL(file);
-    const img = new Image();
-    img.alt = "صورة البروفايل";
-    img.src = currentUrl;
-    avatar.replaceChildren(img);
-    say($__btتمام: $__{kind.toUpperCase()}، $__{(file.size / 1024).toFixed(0)}KB.$__bt, "ok");
-  });
-</script>
-</body>
-</html>
-~~~
+**هتشوف إيه:** اكتب أي حاجة في المربع والجدول بيتغيّر مع كل حرف. جرّب «😀»: [[length]] ٢ بس code point واحد و ٤ bytes. والحقل اللي تحت بيفك أي base64 (عادي أو url) ويعرض النص وعدد الـ bytes.
 
 ## الشرح
 
-- **[[<label class="btn">]] حوالين الـ [[input]]:** الـ input نفسه مخفي بصريًا (مش [[display: none]]، عشان يفضل بيوصله الكيبورد وقارئ الشاشة)، والـ label هو اللي بيبان. الضغط على الـ label بيفتح اختيار الملفات، و [[:focus-within]] بيرسم إطار لما الـ input ياخد focus بالـ Tab.
-- **[[accept="image/png,image/jpeg"]]:** بيفلتر نافذة الاختيار بس، واليوزر يقدر يختار «All files». فالفحص الحقيقي بعده.
-- **الحجم الأول:** أرخص فحص (رقم موجود في [[file.size]] من غير قراية). [[(file.size / 1024 / 1024).toFixed(1)]] بيكتب الحجم بالـ MB.
-- **[[sniffImage]]:** أول ٤ bytes من الملف، نفس دالة تمرين «input type=file». ملف نصي اسمه [[notes.png]] نوعه [[image/png]] عند المتصفح (قسناها في التمرين ده: النوع بييجي من الامتداد)، بس الـ bytes بتقول الحقيقة.
-- **[[input.value = ""]] بعد الرفض:** من غيره، لو اليوزر اختار نفس الملف تاني بعد ما صغّره بنفس الاسم، الـ [[change]] مش هيحصل لأن القيمة متغيرتش.
-- **[[URL.revokeObjectURL(currentUrl)]] قبل الجديد:** كل [[createObjectURL]] بيخلّي المتصفح ماسك الملف في الميموري لحد ما الصفحة تتقفل أو تعمل [[revoke]]. اختيار ٥٠ صورة ورا بعض من غيره = ٥٠ ملف محجوزين.
-- **الصورة القديمة بتفضل لو الجديدة اترفضت:** الـ [[revoke]] والتبديل بيحصلوا بعد ما الفحص ينجح بس.
+- **[[new TextEncoder().encode(text)]]** هو قلب الصفحة: كل الأرقام بعده محسوبة على الـ bytes مش على النص.
+- **ثلاث أعداد مختلفة:** [[text.length]] وحدات UTF-16، و [[ [...text].length ]] code points (الـ spread بيمشي على الـ string بالـ code point)، و [[bytes.length]] الحجم الحقيقي في UTF-8. «شاي ☕ tea»: ٩ و ٩ و ١٤، لأن العربي ٢ bytes والـ ☕ ٣.
+- **[[native]]:** feature detection مرة واحدة. في Chrome 140+ و Firefox 133+ و Safari 18.2+ الصفحة بتستخدم [[toBase64]]، وفي أي متصفح أقدم الـ fallback بـ [[btoa]] على دفعات.
+- **base64url في الـ fallback:** [[btoa]] مبيعرفش الـ url alphabet، فبنبدّل [[+]] بـ [[-]] و [[/]] بـ [[_]] ونشيل الـ [[=]] بإيدنا، والعكس قبل [[atob]].
+- **[[fromBase64]] بيختار الـ alphabet لوحده:** لو النص فيه [[-]] أو [[_]] يبقى url.
+- **[[new TextDecoder('utf-8', { fatal: true })]]:** من غير [[fatal]]، الـ bytes اللي مش UTF-8 ([[/w==]] = byte واحد [[ff]]) كانت هتطلع [[�]] وتبان كأنها نجحت. بـ [[fatal]] بترمي، فبنقول لليوزر الحقيقة.
 
-## اتقاس
+## غلطات وقعت فيها
 
-٣ صور اتعملت بـ canvas واتحفظت على الديسك ([[me.png]] 7KB، و [[me.jpg]] 17KB، و [[big.png]] 2.5MB) وملف نصي اسمه [[notes.png]]، واتختاروا بالترتيب في الصفحة جوه iframe معزول زي الـ preview. ولفّينا [[createObjectURL]] و [[revokeObjectURL]] عشان نعدّ الـ URLs اللي لسه شغالة:
+- أول نسخة كانت عنوان الصف الأول [[حروف (length)]]، وده غلط: الـ [[length]] مش عدد الحروف (الإيموجي ٢). اتغيّر لـ «وحدات UTF-16».
+- الـ fallback اتجرّب لوحده في Node 24.22 من غير flag (اللي مفيهوش [[toBase64]]): «😀» طلع [[8J+YgA==]] و [[8J-YgA]] زي Chrome بالظبط، و [[2LTY!]] رمى [[InvalidCharacterError]] والصفحة بتمسكه.
 
-~~~text الناتج (Chrome 158 headless)
-me.png     | تمام: PNG، 7KB. | file.type: image/png | في الدايرة: صورة
-notes.png  | «notes.png» مش صورة PNG ولا JPEG (حتى لو امتداده بيقول كده). | file.type: (اتمسح) | في الدايرة: صورة
-big.png    | الصورة 2.5MB، والحد 1MB. | file.type: (اتمسح) | في الدايرة: صورة
-me.jpg     | تمام: JPEG، 17KB. | file.type: image/jpeg | في الدايرة: صورة
-بعد ٥ اختيارات ورا بعض: blob URLs شغالة = 1
-pageerrors: 0
+## اتقاس (Chrome 157، جوه iframe معزول زي اللي في الموقع)
+
+~~~text الجدول مع «شاي ☕ tea»
+وحدات UTF-16 (length)  9
+code points            9
+bytes في UTF-8         14
+hex                    d8 b4 d8 a7 d9 8a 20 e2 98 95 20 74 65 61
+base64                 2LTYp9mKIOKYlSB0ZWE=
+base64url              2LTYp9mKIOKYlSB0ZWE
+«شاي» (6 byte)
 ~~~
 
-[[(اتمسح)]] معناها إن [[input.value = ""]] اشتغل بعد الرفض، و «في الدايرة: صورة» بعد الرفض هي الصورة اللي قبلها لسه موجودة.
-
-**الغلطة الشائعة:** [[avatar.style.backgroundImage = $__bturl($__{URL.createObjectURL(file)})$__bt]] من غير ما تمسك الـ URL في متغير. بيشتغل، بس مفيش أي طريقة تعمل له [[revoke]] بعد كده.` },
-        { lvl: 'متوسط', dir: "image-uploader", t: R`رافع صور كامل`, what: R`منطقة سحب وإفلات (درس ٤) وجواها [[<label>]] و [[<input type="file" multiple>]] للي مش بيستخدم ماوس (درس ٣)، ومعاينة لكل صورة ومعاها حجمها ومقاسها، وفحص النوع والحجم قبل أي رفع، وشريط تقدم وزرار إلغاء لكل ملف لوحده بـ [[XMLHttpRequest]]، على سيرفر Express فيه multer على localhost.`, done: R`تسحب ٤ صور منهم واحدة كبيرة: ٣ بيترفعوا كل واحد بشريطه والكبيرة بتترفض قبل ما تتبعت (مفيش request ليها في Network)، والإلغاء بيوقّف ملف واحد بس والباقي يكمّل، و Tab ثم Enter بيفتح اختيار الملفات من غير ماوس، والشكل مبيرعشش وانت بتسحب فوق الصور اللي جوه المنطقة.`, sol: R`## الشكل النهائي
-
-~~~view 420
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ارفع صورك</title>
-<style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; max-width: 720px; }
-  #drop { border: 3px dashed #9ca3af; border-radius: 12px; padding: 28px; text-align: center; }
-  #drop.over { border-color: #2563eb; background: #eff6ff; }
-  #drop label { color: #1d4ed8; text-decoration: underline; cursor: pointer; }
-  #drop input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-  #drop:focus-within { outline: 3px solid #93c5fd; }
-  #list { list-style: none; padding: 0; display: grid; gap: 8px; margin-top: 16px; }
-  #list li { display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: center; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px; }
-  #list img { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; background: #f3f4f6; }
-  #list progress { width: 100%; }
-  .err { color: #b91c1c; }
-  .ok { color: #065f46; }
-  #note { font-size: 13px; color: #92400e; }
-</style>
-</head>
-<body>
-<h1>ارفع صورك</h1>
-<div id="drop">
-  <p>اسحب الصور هنا أو <label for="files">اختار من جهازك</label></p>
-  <input type="file" id="files" accept="image/png,image/jpeg,image/webp" multiple>
-  <p>PNG أو JPEG أو WebP، 2MB بالكتير للصورة.</p>
-</div>
-<p id="note"></p>
-<ul id="list"></ul>
-<script>
-  const MAX = 2 * 1024 * 1024;
-  const OFFLINE = location.origin === "null";      // الـ preview: مفيش سيرفر
-  if (OFFLINE) document.querySelector("#note").textContent = "مفيش سيرفر هنا (صفحة معزولة): الفحص والمعاينة شغالين، والرفع هيفشل. شغّل node server.js.";
-  const list = document.querySelector("#list");
-  const drop = document.querySelector("#drop");
-  const input = document.querySelector("#files");
-
-  async function sniff(file) {
-    const b = new Uint8Array(await file.slice(0, 12).arrayBuffer());
-    if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return "png";
-    if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return "jpeg";
-    if (String.fromCharCode(...b.slice(0, 4)) === "RIFF" && String.fromCharCode(...b.slice(8, 12)) === "WEBP") return "webp";
-    return null;
-  }
-
-  function row(file) {
-    const li = document.createElement("li");
-    li.innerHTML = '<img alt=""><div><strong></strong><div class="meta"></div><progress max="1" value="0" hidden></progress><div class="status" role="status"></div></div><button type="button" hidden>إلغاء</button>';
-    li.querySelector("strong").textContent = file.name;
-    list.append(li);
-    return {
-      li, img: li.querySelector("img"), meta: li.querySelector(".meta"), bar: li.querySelector("progress"),
-      status: li.querySelector(".status"), cancel: li.querySelector("button"),
-    };
-  }
-
-  function uploadFile(file, ui) {
-    const fd = new FormData();
-    fd.append("file", file);
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/upload");
-    ui.bar.hidden = false;
-    ui.cancel.hidden = false;
-    xhr.upload.onprogress = (e) => { if (e.lengthComputable) ui.bar.value = e.loaded / e.total; };
-    xhr.onload = () => {
-      ui.cancel.hidden = true;
-      if (xhr.status === 201) { ui.bar.value = 1; ui.status.textContent = "اترفعت"; ui.status.className = "status ok"; }
-      else { ui.status.textContent = "السيرفر رفضها (" + xhr.status + ")"; ui.status.className = "status err"; }
-    };
-    xhr.onerror = () => { ui.cancel.hidden = true; ui.status.textContent = "النت وقع، جرّب تاني"; ui.status.className = "status err"; };
-    xhr.onabort = () => { ui.cancel.hidden = true; ui.status.textContent = "اتلغت"; ui.status.className = "status err"; };
-    ui.cancel.addEventListener("click", () => xhr.abort(), { once: true });   // يلغي الملف ده بس
-    xhr.send(fd);
-  }
-
-  async function handle(files) {
-    for (const file of files) {
-      const ui = row(file);
-      const kind = await sniff(file);
-      if (!kind) { ui.status.textContent = "مش صورة PNG/JPEG/WebP، اترفضت"; ui.status.className = "status err"; continue; }
-      if (file.size > MAX) { ui.status.textContent = $__bt$__{(file.size / 1024 / 1024).toFixed(1)}MB أكبر من 2MB، اترفضت قبل الرفع$__bt; ui.status.className = "status err"; continue; }
-      const url = URL.createObjectURL(file);
-      ui.img.src = url;
-      try {
-        const bmp = await createImageBitmap(file);
-        ui.meta.textContent = $__bt$__{bmp.width}×$__{bmp.height} | $__{(file.size / 1024).toFixed(0)}KB | $__{kind}$__bt;
-        bmp.close();
-      } catch {
-        ui.meta.textContent = $__bt$__{(file.size / 1024).toFixed(0)}KB$__bt;
-      }
-      ui.img.onload = () => URL.revokeObjectURL(url);   // الصورة اترسمت: مش محتاجين الـ URL
-      uploadFile(file, ui);
-    }
-  }
-
-  input.addEventListener("change", () => { handle([...input.files]); input.value = ""; });
-
-  // سحب وإفلات من غير رعشة (درس drag and drop)
-  let depth = 0;
-  const isFiles = (e) => e.dataTransfer?.types.includes("Files");
-  drop.addEventListener("dragenter", (e) => { if (isFiles(e)) { depth++; drop.classList.add("over"); } });
-  drop.addEventListener("dragover", (e) => { if (isFiles(e)) e.preventDefault(); });
-  drop.addEventListener("dragleave", (e) => { if (isFiles(e) && --depth === 0) drop.classList.remove("over"); });
-  drop.addEventListener("drop", (e) => {
-    e.preventDefault();
-    depth = 0;
-    drop.classList.remove("over");
-    handle([...e.dataTransfer.files]);
-  });
-</script>
-</body>
-</html>
+~~~text بعد ما كتبت 😀 وجرّبت ٣ قيم في حقل الـ base64
+2 | 1 | 4 | f0 9f 98 80 | 8J+YgA== | 8J-YgA
+2LTY!   ← مش base64 لنص UTF-8 سليم: SyntaxError
+/w==    ← مش base64 لنص UTF-8 سليم: TypeError
+8J-YgA  ← «😀» (4 byte)
 ~~~
 
-**هتشوف إيه:** منطقة إفلات كبيرة فيها لينك «اختار من جهازك». اسحب صور أو اختارها: كل صورة بتظهر في سطر فيه معاينة ومقاسها وحجمها ونوعها، وشريط تقدم وزرار «إلغاء» لوحدها. الصورة الكبيرة أو الملف اللي مش صورة بيترفض في السطر بتاعه قبل ما يتبعت. (في الـ preview اللي فوق مفيش سيرفر، فالفحص والمعاينة شغالين والرفع نفسه هيقول «النت وقع». الصفحة بتكتب ده فوق.)
+الـ [[SyntaxError]] من [[fromBase64]] (حرف مش base64)، والـ [[TypeError]] من [[TextDecoder]] الـ fatal (byte مش UTF-8).` },
+        { lvl: 'متوسط', t: R`مولّد نغمات WAV من نوتة مكتوبة`, what: R`[[node melody.mjs "C4:0.25 E4:0.25 G4:0.5 -:0.25 C5:1" out.wav]] بيحوّل نوتة مكتوبة (اسم النوتة والأوكتاف ومدتها بالثواني، و [[-]] للسكوت) لملف WAV حقيقي (22050 Hz، ١٦ bit، mono) بتسمعه في أي مشغّل. كل نوتة موجة sine بتدخل وتخرج بالتدريج (fade) عشان ميبقاش فيه «طقة». وبعد ما يكتب، بيقرا الملف تاني بـ [[DataView]] ويلف على الـ chunks ويطبع الـ rate والمدة وأعلى عينة، عشان يتأكد إن اللي اتكتب سليم. النوتة الغلط والمدة الغلط بيطلّعوا رسالة و exit code 1. من دروس «DataView» و «TypedArray: العيلة».`, done: R`الملف ٩٩٢٧٢ byte ومدته [[2.25]] ثانية والـ peak ١٠٠٠٠، وبيشتغل في أي مشغّل، و Chrome فكّه بـ [[decodeAudioData]] بنفس المدة، و [[H4:1]] و [[C4:0]] ومن غير arguments بيطلّعوا رسايل و exit 1.`, sol: R`## الشكل النهائي
 
-## الملفات
-
-~~~text
-image-uploader/
-├── package.json
-├── server.js          # Express + multer على localhost
-├── public/
-│   └── index.html     # الصفحة: سحب وإفلات، ومعاينة، وفحص، ورفع بـ XHR
-└── uploads/           # multer بيحط الملفات هنا (بيتعمل لوحده)
-~~~
-
-التشغيل: [[npm install]] ثم [[npm start]]، وافتح [[http://localhost:3000]].
-
-~~~json package.json
+~~~text الناتج (Node 24.22)
+كتبت out.wav 99272 byte، 5 نوتة: 262Hz 330Hz 392Hz 0Hz 523Hz
 {
-  "name": "image-uploader",
-  "private": true,
-  "type": "commonjs",
-  "scripts": { "start": "node server.js" },
-  "dependencies": {
-    "express": "^5.3.0",
-    "multer": "^2.5.0"
-  }
+  chunks: [ 'fmt :16', 'data:99228' ],
+  rate: 22050,
+  channels: 1,
+  bits: 16,
+  seconds: 2.25,
+  peak: 10000
 }
 ~~~
 
-~~~js server.js
-const express = require("express");
-const multer = require("multer");
-const path = require("node:path");
+**هتسمع إيه:** دو ثم مي ثم صول (أطول شوية) ثم سكتة ثم دو العالية ثانية كاملة. الأرقام اللي تحت بتيجي من **قراية الملف تاني** مش من الذاكرة.
 
-const app = express();
-const upload = multer({
-  dest: path.join(__dirname, "uploads"),
-  limits: { fileSize: 2 * 1024 * 1024, files: 1 },          // نفس حد الصفحة: السيرفر مبيثقش في الصفحة
-  fileFilter: (req, file, cb) => cb(null, /^image\/(png|jpeg|webp)$/.test(file.mimetype)),
-});
+## الكود
 
-app.use((req, res, next) => {
-  if (req.path.startsWith("/api/")) console.log(new Date().toISOString().slice(11, 19), req.method, req.path);
-  next();
-});
-app.use(express.static(path.join(__dirname, "public")));
+~~~js melody.mjs
+// melody.mjs: node melody.mjs "C4:0.25 E4:0.25 G4:0.5 -:0.25 C5:1" out.wav
+import { writeFileSync, readFileSync } from 'node:fs';
+const RATE = 22050;
+const STEPS = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
 
-app.post("/api/upload", upload.single("file"), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: "مفيش صورة PNG أو JPEG أو WebP في الطلب" });
-  console.log("  اتحفظ:", req.file.originalname, req.file.size, "bytes");
-  res.status(201).json({ name: req.file.originalname, size: req.file.size });
-});
+function noteToHz(name) {
+  const m = /^([A-G])(#?)(\d)$/.exec(name);
+  if (!m) throw new Error('نوتة مش مفهومة: ' + name + ' (مثال: C4 أو F#3، و - للسكوت)');
+  const midi = 12 * (Number(m[3]) + 1) + STEPS[m[1]] + (m[2] ? 1 : 0);
+  return 440 * 2 ** ((midi - 69) / 12);
+}
 
-// أخطاء multer (زي الحجم) بترجع JSON واضح مش صفحة HTML
-app.use((err, req, res, next) => {
-  if (err instanceof multer.MulterError) return res.status(413).json({ error: err.code });
-  if (req.aborted || err.message === "Request aborted") {     // اليوزر داس إلغاء: multer مسح الجزء اللي وصل
-    console.log("  اتلغى من الصفحة:", req.path);
-    return;
+function parseScore(text) {
+  return text.trim().split(/\s+/).map((part) => {
+    const [name, len] = part.split(':');
+    const seconds = Number(len);
+    if (!(seconds > 0 && seconds <= 10)) throw new Error('مدة غلط في ' + part + ' (من 0 لـ 10 ثواني)');
+    return { hz: name === '-' ? 0 : noteToHz(name), seconds };
+  });
+}
+
+function render(notes) {
+  const total = notes.reduce((n, x) => n + Math.round(x.seconds * RATE), 0);
+  const samples = new Int16Array(total);
+  let at = 0;
+  for (const { hz, seconds } of notes) {
+    const count = Math.round(seconds * RATE), fade = Math.min(200, count / 4);
+    for (let i = 0; i < count && hz; i++) {
+      const env = Math.min(1, i / fade, (count - i) / fade);
+      samples[at + i] = Math.round(Math.sin((2 * Math.PI * hz * i) / RATE) * 10000 * env);
+    }
+    at += count;
   }
-  next(err);
-});
+  return samples;
+}
 
-const port = Number(process.env.PORT) || 3000;
-app.listen(port, () => console.log("الرافع على http://localhost:" + port));
+function toWav(samples) {
+  const view = new DataView(new ArrayBuffer(44 + samples.byteLength));
+  const tag = (o, s) => [...s].forEach((c, i) => view.setUint8(o + i, c.charCodeAt(0)));
+  tag(0, 'RIFF'); view.setUint32(4, 36 + samples.byteLength, true); tag(8, 'WAVE');
+  tag(12, 'fmt '); view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true);
+  view.setUint32(24, RATE, true); view.setUint32(28, RATE * 2, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true);
+  tag(36, 'data'); view.setUint32(40, samples.byteLength, true);
+  for (let i = 0; i < samples.length; i++) view.setInt16(44 + i * 2, samples[i], true);
+  return new Uint8Array(view.buffer);
+}
+
+function inspect(file) {
+  const bytes = readFileSync(file);
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const text = (o) => String.fromCharCode(...bytes.subarray(o, o + 4));
+  if (bytes.length < 12 || text(0) !== 'RIFF' || text(8) !== 'WAVE') throw new Error(file + ': مش ملف WAV');
+  const info = { chunks: [] };
+  for (let o = 12; o + 8 <= bytes.length; ) {
+    const id = text(o), size = view.getUint32(o + 4, true);
+    info.chunks.push(id + ':' + size);
+    if (id === 'fmt ') Object.assign(info, { rate: view.getUint32(o + 12, true), channels: view.getUint16(o + 10, true), bits: view.getUint16(o + 22, true) });
+    if (id === 'data') {
+      let peak = 0;
+      for (let p = o + 8; p + 1 < o + 8 + size; p += 2) peak = Math.max(peak, Math.abs(view.getInt16(p, true)));
+      Object.assign(info, { seconds: Number((size / 2 / info.rate).toFixed(3)), peak });
+    }
+    o += 8 + size + (size % 2);
+  }
+  return info;
+}
+
+try {
+  const [score, out = 'melody.wav'] = process.argv.slice(2);
+  if (!score) throw new Error('الاستخدام: node melody.mjs "C4:0.5 E4:0.5 -:0.25 G4:1" [out.wav]');
+  const notes = parseScore(score);
+  const wav = toWav(render(notes));
+  writeFileSync(out, wav);
+  console.log('كتبت', out, wav.length, 'byte،', notes.length, 'نوتة:', notes.map((n) => Math.round(n.hz) + 'Hz').join(' '));
+  console.log(inspect(out));
+} catch (e) {
+  console.error('melody:', e.message);
+  process.exitCode = 1;
+}
 ~~~
 
-~~~html index.html
+## الشرح
+
+- **[[noteToHz]]:** رقم MIDI للنوتة = ١٢ × (الأوكتاف + ١) + مكانها في السلم (+١ لو [[#]]). و [[A4]] (رقم ٦٩) = ٤٤٠ Hz، وكل نص تون = ضرب في جذر ١٢ لـ ٢. فـ [[C4]] = ٢٦٢ و [[C5]] = ٥٢٣ (الضعف بالظبط: أوكتاف).
+- **[[render]] بيرجّع [[Int16Array]]:** ده شكل العينات الطبيعي (PCM ١٦ bit). العينة = [[sin]] × ١٠٠٠٠ × [[env]]، و [[env]] بيطلع من ٠ لـ ١ في أول ٢٠٠ عينة وينزل في آخر ٢٠٠: من غيره كل نوتة بتبدأ بقفزة من صفر لقيمة كبيرة وبتسمع «طقة».
+- **السكتة:** [[hz]] صفر، فالـ loop مبيكتبش حاجة والعينات بتفضل أصفار (الـ typed array متصفّرة من الأول).
+- **[[toWav]]:** نفس header درس «DataView» بالظبط، والعينات بـ [[setInt16(..., true)]] (little-endian زي ما WAV عايز، ومن غير ما نفترض إن الجهاز little).
+- **[[inspect]] بيلف على الـ chunks** مش بيفترض إن [[data]] عند ٣٦: يقرا النوع والحجم، وينط [[8 + size]] (و byte زيادة لو الحجم فردي، من مواصفة RIFF). كده بيشتغل على ملفات WAV من برامج تانية فيها [[LIST]] وغيرها.
+
+## غلطات وقعت فيها
+
+- المدة طلعت في الأول [[2.2500680272108844]]: [[0.25 × 22050 = 5512.5]] عينة، و [[Math.round]] خلاها ٥٥١٣، فكل نوتة ربع زادت جزء صغير. ده طبيعي (العينة مبتتقسمش)، فالعرض بقى [[toFixed(3)]].
+- جرّبت من غير الـ fade الأول: النغمات كانت فيها طقطقة واضحة بين النوتات.
+
+## اتقاس
+
+~~~text الأخطاء (كل واحد exit code 1)
+melody: نوتة مش مفهومة: H4 (مثال: C4 أو F#3، و - للسكوت)
+melody: مدة غلط في C4:0 (من 0 لـ 10 ثواني)
+melody: الاستخدام: node melody.mjs "C4:0.5 E4:0.5 -:0.25 G4:1" [out.wav]
+~~~
+
+وفي Chrome 157 فتحت نفس الملف بـ [[new OfflineAudioContext(1, 1, 22050).decodeAudioData(buf)]]: المدة [[2.250]] ثانية و 22050 Hz وقناة واحدة، والقناة [[Float32Array]] أعلى قيمة فيها [[0.3052]] = ١٠٠٠٠ ÷ ٣٢٧٦٨ (المتصفح بيحوّل الـ ١٦ bit لأرقام من -١ لـ ١). يعني المتصفح قرا نفس الـ header اللي احنا كتبناه.` },
+        { lvl: 'متوسط', dir: "worker-image-filter", t: R`فلتر صور في Worker بالـ transfer`, what: R`صفحة فيها صورة مرسومة على [[canvas]] (تدرّج ودواير ونص)، وفلتر تختاره (رمادي، أو عكس الألوان، أو blur تقيل)، وزرارين: «طبّق في Worker» و «طبّق على الـ main thread». الـ pixels بتتبعت للـ worker **بالنقل** ([[postMessage(..., [buffer])]]) وبترجع بالنقل، ونقطة خضرا بتتحرك كل frame بـ [[requestAnimationFrame]] عشان تشوف بعينك إن الصفحة مش متجمدة. وتحت سطر بيكتب الوقت وعدد الـ frames اللي اترسمت وانت مستني، وحجم الـ buffer عندك بعد ما اتنقل. الـ worker معمول من [[Blob]] عشان الصفحة ملف واحد. من دروس «Web Workers و worker_threads» و «TypedArray: العيلة» ([[Uint8ClampedArray]]).`, done: R`الـ blur في الـ Worker بياخد حوالي نص ثانية والصفحة بترسم عشرات الـ frames وهي مستنية، وعلى الـ main thread نفس الوقت تقريبًا بس صفر frames، والنتيجة pixel بـ pixel واحدة في الطريقتين، والسطر بيقول إن الـ buffer عندك بقى ٠ byte.`, sol: R`## الشكل النهائي
+
+~~~live 640 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ارفع صورك</title>
+<title>فلتر صور في Worker</title>
 <style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; max-width: 720px; }
-  #drop { border: 3px dashed #9ca3af; border-radius: 12px; padding: 28px; text-align: center; }
-  #drop.over { border-color: #2563eb; background: #eff6ff; }
-  #drop label { color: #1d4ed8; text-decoration: underline; cursor: pointer; }
-  #drop input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-  #drop:focus-within { outline: 3px solid #93c5fd; }
-  #list { list-style: none; padding: 0; display: grid; gap: 8px; margin-top: 16px; }
-  #list li { display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: center; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px; }
-  #list img { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; background: #f3f4f6; }
-  #list progress { width: 100%; }
-  .err { color: #b91c1c; }
-  .ok { color: #065f46; }
-  #note { font-size: 13px; color: #92400e; }
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
+  canvas { width: 100%; max-width: 480px; display: block; border-radius: 8px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+  button, select { font: inherit; padding: 4px 10px; }
+  #dot { width: 14px; height: 14px; border-radius: 50%; background: #0b6e4f; display: inline-block; }
+  output { display: block; font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
-<h1>ارفع صورك</h1>
-<div id="drop">
-  <p>اسحب الصور هنا أو <label for="files">اختار من جهازك</label></p>
-  <input type="file" id="files" accept="image/png,image/jpeg,image/webp" multiple>
-  <p>PNG أو JPEG أو WebP، 2MB بالكتير للصورة.</p>
+<h1>فلتر صور في Worker</h1>
+<canvas id="cv" width="800" height="500"></canvas>
+<div class="bar">
+  <select id="kind" aria-label="الفلتر">
+    <option value="gray">رمادي</option>
+    <option value="invert">عكس الألوان</option>
+    <option value="blur">blur (تقيل)</option>
+  </select>
+  <button id="inWorker">طبّق في Worker</button>
+  <button id="inMain">طبّق على الـ main thread</button>
+  <button id="reset">رجّع الصورة</button>
+  <span id="dot" aria-hidden="true"></span>
 </div>
-<p id="note"></p>
-<ul id="list"></ul>
+<output id="log">اختار فلتر ودوس. النقطة الخضرا بتتحرك كل frame: لو وقفت يبقى الصفحة متجمدة.</output>
 <script>
-  const MAX = 2 * 1024 * 1024;
-  const OFFLINE = location.origin === "null";      // الـ preview: مفيش سيرفر
-  if (OFFLINE) document.querySelector("#note").textContent = "مفيش سيرفر هنا (صفحة معزولة): الفحص والمعاينة شغالين، والرفع هيفشل. شغّل node server.js.";
-  const list = document.querySelector("#list");
-  const drop = document.querySelector("#drop");
-  const input = document.querySelector("#files");
-
-  async function sniff(file) {
-    const b = new Uint8Array(await file.slice(0, 12).arrayBuffer());
-    if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return "png";
-    if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return "jpeg";
-    if (String.fromCharCode(...b.slice(0, 4)) === "RIFF" && String.fromCharCode(...b.slice(8, 12)) === "WEBP") return "webp";
-    return null;
-  }
-
-  function row(file) {
-    const li = document.createElement("li");
-    li.innerHTML = '<img alt=""><div><strong></strong><div class="meta"></div><progress max="1" value="0" hidden></progress><div class="status" role="status"></div></div><button type="button" hidden>إلغاء</button>';
-    li.querySelector("strong").textContent = file.name;
-    list.append(li);
-    return {
-      li, img: li.querySelector("img"), meta: li.querySelector(".meta"), bar: li.querySelector("progress"),
-      status: li.querySelector(".status"), cancel: li.querySelector("button"),
-    };
-  }
-
-  function uploadFile(file, ui) {
-    const fd = new FormData();
-    fd.append("file", file);
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/api/upload");
-    ui.bar.hidden = false;
-    ui.cancel.hidden = false;
-    xhr.upload.onprogress = (e) => { if (e.lengthComputable) ui.bar.value = e.loaded / e.total; };
-    xhr.onload = () => {
-      ui.cancel.hidden = true;
-      if (xhr.status === 201) { ui.bar.value = 1; ui.status.textContent = "اترفعت"; ui.status.className = "status ok"; }
-      else { ui.status.textContent = "السيرفر رفضها (" + xhr.status + ")"; ui.status.className = "status err"; }
-    };
-    xhr.onerror = () => { ui.cancel.hidden = true; ui.status.textContent = "النت وقع، جرّب تاني"; ui.status.className = "status err"; };
-    xhr.onabort = () => { ui.cancel.hidden = true; ui.status.textContent = "اتلغت"; ui.status.className = "status err"; };
-    ui.cancel.addEventListener("click", () => xhr.abort(), { once: true });   // يلغي الملف ده بس
-    xhr.send(fd);
-  }
-
-  async function handle(files) {
-    for (const file of files) {
-      const ui = row(file);
-      const kind = await sniff(file);
-      if (!kind) { ui.status.textContent = "مش صورة PNG/JPEG/WebP، اترفضت"; ui.status.className = "status err"; continue; }
-      if (file.size > MAX) { ui.status.textContent = $__bt$__{(file.size / 1024 / 1024).toFixed(1)}MB أكبر من 2MB، اترفضت قبل الرفع$__bt; ui.status.className = "status err"; continue; }
-      const url = URL.createObjectURL(file);
-      ui.img.src = url;
-      try {
-        const bmp = await createImageBitmap(file);
-        ui.meta.textContent = $__bt$__{bmp.width}×$__{bmp.height} | $__{(file.size / 1024).toFixed(0)}KB | $__{kind}$__bt;
-        bmp.close();
-      } catch {
-        ui.meta.textContent = $__bt$__{(file.size / 1024).toFixed(0)}KB$__bt;
+// الفلتر نفسه: بيعدّل الـ pixels في مكانها (Uint8ClampedArray بيقف عند 0 و 255)
+function apply(px, kind, w, h) {
+  if (kind === 'gray') {
+    for (let i = 0; i < px.length; i += 4) px[i] = px[i + 1] = px[i + 2] = 0.299 * px[i] + 0.587 * px[i + 1] + 0.114 * px[i + 2];
+  } else if (kind === 'invert') {
+    for (let i = 0; i < px.length; i += 4) { px[i] = 255 - px[i]; px[i + 1] = 255 - px[i + 1]; px[i + 2] = 255 - px[i + 2]; }
+  } else {
+    const src = px.slice(), r = 6;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      let R = 0, G = 0, B = 0, n = 0;
+      for (let dy = -r; dy <= r; dy++) {
+        const yy = y + dy;
+        if (yy < 0 || yy >= h) continue;
+        for (let dx = -r; dx <= r; dx++) {
+          const xx = x + dx;
+          if (xx < 0 || xx >= w) continue;
+          const j = (yy * w + xx) * 4;
+          R += src[j]; G += src[j + 1]; B += src[j + 2]; n++;
+        }
       }
-      ui.img.onload = () => URL.revokeObjectURL(url);   // الصورة اترسمت: مش محتاجين الـ URL
-      uploadFile(file, ui);
+      const i = (y * w + x) * 4;
+      px[i] = R / n; px[i + 1] = G / n; px[i + 2] = B / n;
     }
   }
-
-  input.addEventListener("change", () => { handle([...input.files]); input.value = ""; });
-
-  // سحب وإفلات من غير رعشة (درس drag and drop)
-  let depth = 0;
-  const isFiles = (e) => e.dataTransfer?.types.includes("Files");
-  drop.addEventListener("dragenter", (e) => { if (isFiles(e)) { depth++; drop.classList.add("over"); } });
-  drop.addEventListener("dragover", (e) => { if (isFiles(e)) e.preventDefault(); });
-  drop.addEventListener("dragleave", (e) => { if (isFiles(e) && --depth === 0) drop.classList.remove("over"); });
-  drop.addEventListener("drop", (e) => {
-    e.preventDefault();
-    depth = 0;
-    drop.classList.remove("over");
-    handle([...e.dataTransfer.files]);
-  });
+}
+// اللي بيشتغل جوه الـ worker: بياخد الـ buffer، يطبّق، ويرجّعه بالنقل
+function onWorkerMessage(e) {
+  const { buffer, kind, w, h } = e.data;
+  const t = performance.now();
+  apply(new Uint8ClampedArray(buffer), kind, w, h);
+  self.postMessage({ buffer, ms: performance.now() - t }, [buffer]);
+}
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d', { willReadFrequently: true });
+const log = document.getElementById('log'), dot = document.getElementById('dot');
+function draw() {
+  const g = ctx.createLinearGradient(0, 0, cv.width, cv.height);
+  g.addColorStop(0, '#f4a261'); g.addColorStop(0.5, '#2a9d8f'); g.addColorStop(1, '#264653');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, cv.width, cv.height);
+  for (let i = 0; i < 12; i++) {
+    ctx.beginPath(); ctx.arc(60 + i * 62, 250 + Math.sin(i) * 140, 40, 0, Math.PI * 2);
+    ctx.fillStyle = 'hsl(' + i * 30 + ' 80% 60%)'; ctx.fill();
+  }
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 64px system-ui'; ctx.textAlign = 'center'; ctx.fillText('شاي بالنعناع', cv.width / 2, 110);
+}
+draw();
+let frames = 0, x = 0;
+(function spin() { frames++; x = (x + 4) % 200; dot.style.transform = 'translateX(' + -x + 'px)'; requestAnimationFrame(spin); })();
+const workerCode = apply.toString() + '\nself.onmessage = ' + onWorkerMessage.toString() + ';';
+const worker = new Worker(URL.createObjectURL(new Blob([workerCode], { type: 'text/javascript' })));
+document.getElementById('inWorker').onclick = () => {
+  const img = ctx.getImageData(0, 0, cv.width, cv.height);
+  const buffer = img.data.buffer, size = buffer.byteLength, before = frames, t = performance.now();
+  worker.onmessage = (e) => {
+    ctx.putImageData(new ImageData(new Uint8ClampedArray(e.data.buffer), cv.width, cv.height), 0, 0);
+    log.textContent = 'Worker: ' + Math.round(performance.now() - t) + ' ms كلها (الحساب ' + Math.round(e.data.ms) + ' ms)، والصفحة رسمت ' + (frames - before) + ' frame في النص. بعتنا ' + (size / 1e6).toFixed(1) + ' MB بالنقل، والـ buffer عندنا بقى ' + buffer.byteLength + ' byte وهو هناك.';
+  };
+  worker.postMessage({ buffer, kind: document.getElementById('kind').value, w: cv.width, h: cv.height }, [buffer]);
+};
+document.getElementById('inMain').onclick = () => {
+  const img = ctx.getImageData(0, 0, cv.width, cv.height), before = frames, t = performance.now();
+  apply(img.data, document.getElementById('kind').value, cv.width, cv.height);
+  ctx.putImageData(img, 0, 0);
+  const ms = Math.round(performance.now() - t), during = frames - before;
+  log.textContent = 'main thread: ' + ms + ' ms، والصفحة رسمت ' + during + ' frame وهو شغال (متجمدة).';
+};
+document.getElementById('reset').onclick = () => { draw(); log.textContent = 'رجعت الصورة الأصلية.'; };
 </script>
 </body>
 </html>
+~~~
+
+**هتشوف إيه:** اختار «blur (تقيل)» ودوس «طبّق في Worker»: النقطة الخضرا بتفضل تتحرك والصورة بتتغبّش بعد شوية. وبعدين «رجّع الصورة» ثم «طبّق على الـ main thread»: النقطة **بتقف** لحد ما الحساب يخلص، والزراير مبتردش.
+
+## الشرح
+
+- **[[apply(px, kind, w, h)]]** بتعدّل الـ pixels في مكانها. [[px]] هو [[Uint8ClampedArray]]: ٤ bytes لكل pixel (أحمر وأخضر وأزرق وشفافية)، فالـ loop بيمشي [[i += 4]] وبيسيب الشفافية. والـ clamped بيقف عند 0 و 255 لوحده.
+- **الرمادي:** [[0.299 R + 0.587 G + 0.114 B]]: العين حساسة للأخضر أكتر، فده بيطلع رمادي «طبيعي» أحسن من المتوسط العادي.
+- **الـ blur:** متوسط مربع ١٣ × ١٣ حوالين كل pixel من نسخة [[px.slice()]] (لازم نسخة: لو قرينا من نفس الـ array اللي بنكتب فيه، الـ pixels اللي اتغبشت هتدخل في حساب جيرانها). حوالي ٤٠٠ ألف pixel × ١٦٩ جار = ٦٨ مليون قراية: كفاية يجمّد الصفحة نص ثانية.
+- **الـ worker من نفس الكود:** [[apply.toString()]] بيرجّع نص الدالة، فبنجمعه مع [[onWorkerMessage]] في نص واحد ونعمل منه [[Blob]] و [[URL.createObjectURL]] و [[new Worker]]. كده الدالة مكتوبة مرة واحدة وبتشتغل في المكانين. (في مشروع حقيقي: ملف [[worker.js]] و [[type: 'module']] و [[import]].)
+- **النقل رايح جاي:** [[postMessage({ buffer, ... }, [buffer])]]، والـ worker بيرد بـ [[postMessage({ buffer, ms }, [buffer])]]. ولا مرة اتنسخت الـ ١.٦ MB، وبعد الإرسال [[buffer.byteLength]] عندنا صفر (السطر بيطبعه).
+- **[[new ImageData(new Uint8ClampedArray(e.data.buffer), w, h)]]:** بنلف الـ buffer اللي رجع في [[ImageData]] ونرسمه بـ [[putImageData]].
+- **[[getContext('2d', { willReadFrequently: true })]]:** من غيرها Chrome طلّع warning في الـ console بيبدأ بـ «Canvas2D: Multiple readback operations» (اتشاف وأنا بجرّب [[getImageData]] في iframe)، لأن القراية الكتير من canvas على الـ GPU بطيئة، والـ option بيخليه يحتفظ بالـ pixels في الذاكرة العادية.
+- **عدّاد الـ frames:** [[spin]] بيتنادى كل frame ويزوّد [[frames]]. الفرق قبل وبعد = عدد الـ frames اللي الصفحة لحقت ترسمها.
+
+## غلطات وقعت فيها وأنا ببنيها
+
+- أول نسخة الفلتر كان رمادي وعكس و«تفتيح» بيتكرروا ٢٥ مرة عشان يبقوا تقال: طلعوا ٢٨ ms بس (مش كفاية تبان الفرق)، و«التفتيح» كان بيزوّد [[40 / 25 = 1.6]] كل مرة، و [[Uint8ClampedArray]] بيقرّب لأقرب صحيح فالتفتيح كان بيضيع جزء. استبدلته بـ blur: تقيل بطبيعته ومنطقي.
+- عدّاد الـ main thread كان بيقرا [[frames]] جوه [[requestAnimationFrame]] بعد الحساب، فكان بيطلع ١ مش صفر (الـ frame اللي بعد الحساب نفسه). اتصلّح: بنقرا الفرق **على طول** بعد [[apply]].
+- النص على الـ canvas كان مقصوص من الشمال: الصفحة [[dir="rtl"]] فالـ canvas بيرسم النص من اليمين للشمال من نقطة [[x]]. الحل [[ctx.textAlign = 'center']] في نص العرض.
+- كنت عامل الـ worker بـ [[new Function]] و regex بيقص الدالة من [[<script>]]: شغال بس هش ومش مقروء. [[apply.toString()]] أوضح.
+
+## اتقاس (Chrome 157)
+
+~~~text blur على 800 × 500
+Worker: 510 ms كلها (الحساب 508 ms)، والصفحة رسمت 31 frame في النص. بعتنا 1.6 MB بالنقل، والـ buffer عندنا بقى 0 byte وهو هناك.
+main thread: 487 ms، والصفحة رسمت 0 frame وهو شغال (متجمدة).
+نفس النتيجة في الطريقتين: pixel (400, 250) = 43,157,143,255
+~~~
+
+- الحساب نفسه نفس الوقت تقريبًا (الـ worker مش أسرع)، **الفرق إن الصفحة عايشة**: ٣١ frame مقابل صفر.
+- اتجرّب كمان جوه iframe معزول ([[sandbox="allow-scripts allow-forms"]]) زي بتاع الموقع: الـ worker من [[Blob]] اشتغل عادي، والرمادي طلّع «Worker: 10 ms كلها (الحساب 5 ms)». (والـ origin جوه iframe زي ده [[null]]، والـ [[blob:]] URL بيشتغل معاه.)` },
+        { lvl: 'كبير', t: R`binspect: مفتش ملفات binary (PNG و WAV و ZIP) باختبارات`, what: R`أداة سطر أوامر [[node cli.mjs <file...> [--json] ]] بتعرف نوع كل ملف من الـ magic bytes (مش الامتداد) وتقرا جواه بـ [[DataView]] من غير أي مكتبة:
+• **PNG:** العرض والطول وعمق اللون، وكل الـ chunks، و **CRC32** كل chunk محسوب بإيدك بـ [[Uint32Array]] ومقارن باللي في الملف (فبتمسك الصورة البايظة).
+• **WAV:** بتلف على الـ chunks (وتتخطى [[LIST]] وغيره)، وتطلّع الـ rate والـ bits والقنوات والمدة.
+• **ZIP:** بتدوّر على «End of Central Directory» من آخر الملف، وتقرا الـ central directory: اسم كل ملف (والعربي UTF-8) وحجمه وطريقة الضغط والـ CRC.
+• أي نوع تاني: الحجم وأول ١٦ byte.
+الملف المقطوع بيرمي [[BinError]] فيها مكان الـ byte اللي وقفت عنده، والأداة بتكمّل على باقي الملفات وتخرج بـ exit code 1 لو فيه واحد فشل. ومعاها [[fixtures.mjs]] بيعمل ملفات حقيقية في الذاكرة، و ١٠ اختبارات بـ [[node --test]]. من الوحدة كلها، ودرس «DataView» بالذات.`, done: R`[[node --test]] بيعدّي الـ ١٠، و [[node make-samples.mjs]] ثم [[node cli.mjs samples/*]] بيطلّع الـ ٧ ملفات: PNG سليم، و WAV بـ LIST، و ZIP فيه اسم عربي، و PNG فيه CRC غلط في IDAT، و WAV مقطوع بمكانه (byte 68)، ونوع مش معروف، وملف مش موجود، و exit 1. و zip معمول بـ [[tar.exe -a]] في ويندوز بيطلع بالأحجام الحقيقية وطريقة [[deflate]]، و [[--json]] بيطلّع JSON صالح.`, ext: R`زوّد GIF (العرض والطول little-endian في byte ٦ و ٨) و BMP، وخلّي ZIP يتأكد إن كل local header في المكان اللي الـ central directory بيقول عليه، وزوّد [[--extract name]] للملفات الـ stored (والـ deflate بـ [[zlib.inflateRawSync]])، واعمل نسخة صفحة بـ [[<input type=file>]] و [[file.bytes()]] بتعرض نفس التقرير في المتصفح بنفس [[lib.mjs]].`, sol: R`## الشكل النهائي
+
+~~~text الناتج (Node 24.22): node make-samples.mjs ثم node cli.mjs samples/pic.png samples/tone.wav samples/docs.zip samples/broken.png samples/cut.wav samples/notes.txt samples/nope.bin
+اتعملت 6 ملفات في samples/
+samples/pic.png: PNG 64×40 bit 8 color 2 | chunks: IHDR IDAT IEND | CRC سليم
+samples/tone.wav: WAV 8000Hz 16bit 1ch 0.5s | chunks: fmt:16 LIST:16 data:8000
+samples/docs.zip: ZIP 3 ملف
+  readme.txt          12 byte  stored  crc 9e67d7cc
+  data/menu.csv       17 byte  stored  crc 6edc96fc
+  ملاحظات.txt         23 byte  stored  crc f71cb11f
+samples/broken.png: PNG 8×8 bit 8 color 2 | chunks: IHDR IDAT(CRC غلط) IEND | فيه CRC غلط
+samples/cut.wav: ✗ الملف اتقطع وهو بيقرا chunk data (عند byte 68)
+samples/notes.txt: نوع مش معروف (9 byte) أوله: 6a 75 73 74 20 74 65 78 74
+samples/nope.bin: ✗ الملف مش موجود
+~~~
+
+**هتشوف إيه:** سطر لكل ملف بنوعه الحقيقي، وتفاصيل كل نوع، والملفات البايظة متعلّمة بـ ✗ ومكان المشكلة، والأداة مكمّلة لآخر ملف.
+
+## الملفات وترتيب البناء
+
+~~~text الشجرة
+binspect/
+├─ lib.mjs            ← القراية نفسها: sniff و crc32 و parsePng و parseWav و parseZip و inspect
+├─ fixtures.mjs       ← بيعمل PNG و WAV و ZIP حقيقيين في الذاكرة (للاختبارات والتجربة)
+├─ cli.mjs            ← سطر الأوامر: بيقرا الملفات ويطبع أو JSON
+├─ make-samples.mjs   ← بيكتب ٦ ملفات تجربة في samples/
+└─ test/
+   └─ binspect.test.mjs
+~~~
+
+اتبنت بالترتيب ده: [[crc32]] واختبارها قدام [[zlib.crc32]] الأول (لو غلط كل حاجة بعدها غلط)، وبعدين [[makePng]] و [[parsePng]] مع بعض، وبعدين WAV، وبعدين ZIP، وفي الآخر الـ CLI.
+
+## الكود
+
+~~~js lib.mjs
+// lib.mjs: بيقرا header ملفات PNG و WAV و ZIP بـ DataView، من غير أي مكتبة
+export class BinError extends Error {
+  constructor(message, offset) {
+    super(message + (offset === undefined ? '' : ' (عند byte ' + offset + ')'));
+    this.name = 'BinError';
+    this.offset = offset;
+  }
+}
+
+const CRC_TABLE = new Uint32Array(256).map((_, n) => {
+  let c = n;
+  for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+  return c;
+});
+export function crc32(bytes) {
+  let c = 0xffffffff;
+  for (const b of bytes) c = CRC_TABLE[(c ^ b) & 0xff] ^ (c >>> 8);
+  return (c ^ 0xffffffff) >>> 0;
+}
+
+const ascii = (bytes, at, n) => String.fromCharCode(...bytes.subarray(at, at + n));
+const need = (bytes, at, n, what) => {
+  if (at + n > bytes.length) throw new BinError('الملف اتقطع وهو بيقرا ' + what, at);
+};
+
+export function sniff(bytes) {
+  const starts = (sig) => sig.every((b, i) => bytes[i] === b);
+  if (starts([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) return 'png';
+  if (starts([0x52, 0x49, 0x46, 0x46]) && ascii(bytes, 8, 4) === 'WAVE') return 'wav';
+  if (starts([0x50, 0x4b, 0x03, 0x04]) || starts([0x50, 0x4b, 0x05, 0x06])) return 'zip';
+  return 'unknown';
+}
+
+export function parsePng(bytes) {
+  const v = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const chunks = [];
+  let info = null;
+  for (let at = 8; at < bytes.length; ) {
+    need(bytes, at, 8, 'طول ونوع chunk');
+    const length = v.getUint32(at), type = ascii(bytes, at + 4, 4);
+    need(bytes, at + 8, length + 4, 'chunk ' + type);
+    const crcOk = crc32(bytes.subarray(at + 4, at + 8 + length)) === v.getUint32(at + 8 + length);
+    chunks.push({ type, length, crcOk });
+    if (type === 'IHDR') info = { width: v.getUint32(at + 8), height: v.getUint32(at + 12), bitDepth: v.getUint8(at + 16), colorType: v.getUint8(at + 17) };
+    at += 12 + length;
+    if (type === 'IEND') break;
+  }
+  if (!info) throw new BinError('مفيش IHDR في الـ PNG', 8);
+  return { type: 'png', ...info, chunks, crcOk: chunks.every((c) => c.crcOk) };
+}
+
+export function parseWav(bytes) {
+  const v = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const out = { type: 'wav', chunks: [] };
+  for (let at = 12; at + 8 <= bytes.length; ) {
+    const id = ascii(bytes, at, 4), size = v.getUint32(at + 4, true);
+    need(bytes, at + 8, size, 'chunk ' + id.trim());
+    out.chunks.push(id.trim() + ':' + size);
+    if (id === 'fmt ') Object.assign(out, { format: v.getUint16(at + 8, true), channels: v.getUint16(at + 10, true), rate: v.getUint32(at + 12, true), bits: v.getUint16(at + 22, true) });
+    if (id === 'data') out.dataBytes = size;
+    at += 8 + size + (size % 2);
+  }
+  if (!out.rate || out.dataBytes === undefined) throw new BinError('WAV من غير fmt أو data', 12);
+  out.seconds = Number((out.dataBytes / (out.channels * out.bits / 8) / out.rate).toFixed(3));
+  return out;
+}
+
+export function parseZip(bytes) {
+  const v = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  let eocd = -1;
+  for (let at = bytes.length - 22; at >= Math.max(0, bytes.length - 22 - 0xffff); at--) {
+    if (v.getUint32(at, true) === 0x06054b50) { eocd = at; break; }
+  }
+  if (eocd < 0) throw new BinError('مفيش End of Central Directory: الملف مش zip كامل');
+  const count = v.getUint16(eocd + 10, true), dirOffset = v.getUint32(eocd + 16, true);
+  const entries = [];
+  const utf8 = new TextDecoder();
+  for (let i = 0, at = dirOffset; i < count; i++) {
+    need(bytes, at, 46, 'central directory');
+    if (v.getUint32(at, true) !== 0x02014b50) throw new BinError('توقيع central directory غلط', at);
+    const nameLen = v.getUint16(at + 28, true), extraLen = v.getUint16(at + 30, true), commentLen = v.getUint16(at + 32, true);
+    need(bytes, at + 46, nameLen, 'اسم ملف');
+    const method = v.getUint16(at + 10, true);
+    entries.push({
+      name: utf8.decode(bytes.subarray(at + 46, at + 46 + nameLen)),
+      method: method === 0 ? 'stored' : method === 8 ? 'deflate' : 'other',
+      size: v.getUint32(at + 24, true),
+      packed: v.getUint32(at + 20, true),
+      crc: v.getUint32(at + 16, true).toString(16).padStart(8, '0'),
+    });
+    at += 46 + nameLen + extraLen + commentLen;
+  }
+  return { type: 'zip', count, entries };
+}
+
+export function inspect(bytes) {
+  const kind = sniff(bytes);
+  if (kind === 'png') return parsePng(bytes);
+  if (kind === 'wav') return parseWav(bytes);
+  if (kind === 'zip') return parseZip(bytes);
+  return { type: 'unknown', size: bytes.length, head: Array.from(bytes.subarray(0, 16), (b) => b.toString(16).padStart(2, '0')).join(' ') };
+}
+~~~
+
+~~~js fixtures.mjs
+// fixtures.mjs: بيعمل ملفات PNG و WAV و ZIP صغيرة حقيقية في الذاكرة (للاختبارات والتجربة)
+import { deflateSync } from 'node:zlib';
+import { crc32 } from './lib.mjs';
+const enc = new TextEncoder();
+function join(parts) {
+  const out = new Uint8Array(parts.reduce((n, p) => n + p.length, 0));
+  let at = 0;
+  for (const p of parts) { out.set(p, at); at += p.length; }
+  return out;
+}
+function header(tag, size) {
+  const h = new Uint8Array(8);
+  enc.encodeInto(tag, h);
+  new DataView(h.buffer).setUint32(4, size, true);
+  return h;
+}
+
+export function makePng(width = 3, height = 2) {
+  const chunk = (type, data) => {
+    const out = new Uint8Array(12 + data.length), v = new DataView(out.buffer);
+    v.setUint32(0, data.length);
+    out.set(enc.encode(type), 4);
+    out.set(data, 8);
+    v.setUint32(8 + data.length, crc32(out.subarray(4, 8 + data.length)));
+    return out;
+  };
+  const ihdr = new Uint8Array(13), h = new DataView(ihdr.buffer);
+  h.setUint32(0, width); h.setUint32(4, height); h.setUint8(8, 8); h.setUint8(9, 2);
+  const raw = new Uint8Array(height * (1 + width * 3)).fill(120);
+  for (let y = 0; y < height; y++) raw[y * (1 + width * 3)] = 0;
+  const signature = Uint8Array.of(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a);
+  return join([signature, chunk('IHDR', ihdr), chunk('IDAT', deflateSync(raw)), chunk('IEND', new Uint8Array(0))]);
+}
+
+export function makeWav({ rate = 8000, seconds = 0.25, withList = true } = {}) {
+  const n = Math.round(rate * seconds);
+  const fmt = new DataView(new ArrayBuffer(16));
+  fmt.setUint16(0, 1, true); fmt.setUint16(2, 1, true); fmt.setUint32(4, rate, true);
+  fmt.setUint32(8, rate * 2, true); fmt.setUint16(12, 2, true); fmt.setUint16(14, 16, true);
+  const samples = new Int16Array(n).map((_, i) => Math.round(Math.sin(i / 3) * 8000));
+  const list = enc.encode('INFOINAM' + 'xxxx' + 'Tea!');
+  new DataView(list.buffer).setUint32(8, 4, true);
+  const parts = [enc.encode('RIFF'), new Uint8Array(4), enc.encode('WAVE'), header('fmt ', 16), new Uint8Array(fmt.buffer)];
+  if (withList) parts.push(header('LIST', list.length), list);
+  parts.push(header('data', samples.byteLength), new Uint8Array(samples.buffer));
+  const all = join(parts);
+  new DataView(all.buffer).setUint32(4, all.length - 8, true);
+  return all;
+}
+
+export function makeZip(files) {
+  const locals = [], central = [];
+  let offset = 0;
+  for (const [name, text] of Object.entries(files)) {
+    const nameBytes = enc.encode(name), data = enc.encode(text), crc = crc32(data);
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true);
+    lh.setUint32(14, crc, true); lh.setUint32(18, data.length, true); lh.setUint32(22, data.length, true);
+    lh.setUint16(26, nameBytes.length, true);
+    locals.push(new Uint8Array(lh.buffer), nameBytes, data);
+    const ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true);
+    ch.setUint32(16, crc, true); ch.setUint32(20, data.length, true); ch.setUint32(24, data.length, true);
+    ch.setUint16(28, nameBytes.length, true); ch.setUint32(42, offset, true);
+    central.push(new Uint8Array(ch.buffer), nameBytes);
+    offset += 30 + nameBytes.length + data.length;
+  }
+  const dir = join(central), count = Object.keys(files).length;
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, count, true); end.setUint16(10, count, true);
+  end.setUint32(12, dir.length, true); end.setUint32(16, offset, true);
+  return join([...locals, dir, new Uint8Array(end.buffer)]);
+}
+~~~
+
+~~~js cli.mjs
+// cli.mjs: node cli.mjs <file...> [--json]
+import { readFileSync } from 'node:fs';
+import { inspect } from './lib.mjs';
+
+const args = process.argv.slice(2);
+const json = args.includes('--json');
+const files = args.filter((a) => a !== '--json');
+if (!files.length) {
+  console.error('الاستخدام: node cli.mjs <file...> [--json]');
+  process.exit(1);
+}
+
+function show(file, r) {
+  if (r.type === 'png') {
+    const chunks = r.chunks.map((c) => c.type + (c.crcOk ? '' : '(CRC غلط)')).join(' ');
+    return file + ': PNG ' + r.width + '×' + r.height + ' bit ' + r.bitDepth + ' color ' + r.colorType + ' | chunks: ' + chunks + (r.crcOk ? ' | CRC سليم' : ' | فيه CRC غلط');
+  }
+  if (r.type === 'wav') return file + ': WAV ' + r.rate + 'Hz ' + r.bits + 'bit ' + r.channels + 'ch ' + r.seconds + 's | chunks: ' + r.chunks.join(' ');
+  if (r.type === 'zip') return file + ': ZIP ' + r.count + ' ملف\n' + r.entries.map((e) => '  ' + e.name.padEnd(16) + String(e.size).padStart(6) + ' byte  ' + e.method + '  crc ' + e.crc).join('\n');
+  return file + ': نوع مش معروف (' + r.size + ' byte) أوله: ' + r.head;
+}
+
+let failed = 0;
+const results = [];
+for (const file of files) {
+  try {
+    const r = inspect(readFileSync(file));
+    results.push({ file, ...r });
+    if (!json) console.log(show(file, r));
+  } catch (e) {
+    failed++;
+    const message = e.code === 'ENOENT' ? 'الملف مش موجود' : e.message;
+    results.push({ file, error: message });
+    if (!json) console.error(file + ': ✗ ' + message);
+  }
+}
+if (json) console.log(JSON.stringify(results, null, 2));
+process.exitCode = failed ? 1 : 0;
+~~~
+
+~~~js make-samples.mjs
+// make-samples.mjs: بيكتب ملفات تجربة في samples/
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { makePng, makeWav, makeZip } from './fixtures.mjs';
+mkdirSync('samples', { recursive: true });
+writeFileSync('samples/pic.png', makePng(64, 40));
+writeFileSync('samples/tone.wav', makeWav({ rate: 8000, seconds: 0.5 }));
+writeFileSync('samples/docs.zip', makeZip({ 'readme.txt': 'اقراني', 'data/menu.csv': 'tea,10\ncoffee,15\n', 'ملاحظات.txt': 'شاي بالنعناع' }));
+const broken = makePng(8, 8);
+broken[45] ^= 0xff;
+writeFileSync('samples/broken.png', broken);
+writeFileSync('samples/cut.wav', makeWav().subarray(0, 70));
+writeFileSync('samples/notes.txt', 'just text');
+console.log('اتعملت 6 ملفات في samples/');
+~~~
+
+~~~js test/binspect.test.mjs
+// binspect.test.mjs: node --test
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { crc32 as zlibCrc } from 'node:zlib';
+import { inspect, crc32, sniff, BinError } from '../lib.mjs';
+import { makePng, makeWav, makeZip } from '../fixtures.mjs';
+
+test('crc32 بتاعتنا = بتاعة zlib', () => {
+  const data = new TextEncoder().encode('شاي بالنعناع 123');
+  assert.equal(crc32(data), zlibCrc(data));
+  assert.equal(crc32(new Uint8Array(0)), 0);
+});
+
+test('PNG: المقاس والـ chunks والـ CRC', () => {
+  const r = inspect(makePng(64, 40));
+  assert.deepEqual([r.type, r.width, r.height, r.bitDepth, r.colorType, r.crcOk], ['png', 64, 40, 8, 2, true]);
+  assert.deepEqual(r.chunks.map((c) => c.type), ['IHDR', 'IDAT', 'IEND']);
+});
+
+test('PNG: byte متغيّر بيتمسك بالـ CRC', () => {
+  const bytes = makePng(8, 8);
+  bytes[45] ^= 0xff;
+  const r = inspect(bytes);
+  assert.equal(r.crcOk, false);
+  assert.equal(r.chunks.find((c) => !c.crcOk).type, 'IDAT');
+});
+
+test('PNG مقطوع بيرمي BinError فيها المكان', () => {
+  assert.throws(() => inspect(makePng().subarray(0, 30)), (e) => e instanceof BinError && e.offset === 16 && /chunk IHDR/.test(e.message));
+});
+
+test('WAV: بيتخطى LIST ويحسب المدة', () => {
+  const r = inspect(makeWav({ rate: 8000, seconds: 0.5 }));
+  assert.deepEqual([r.rate, r.bits, r.channels, r.seconds], [8000, 16, 1, 0.5]);
+  assert.deepEqual(r.chunks, ['fmt:16', 'LIST:16', 'data:8000']);
+  assert.deepEqual(inspect(makeWav({ withList: false })).chunks, ['fmt:16', 'data:4000']);
+});
+
+test('WAV مقطوع في نص الـ data', () => {
+  assert.throws(() => inspect(makeWav().subarray(0, 70)), /اتقطع وهو بيقرا chunk data \(عند byte 68\)/);
+});
+
+test('ZIP: الأسامي (والعربي) والأحجام', () => {
+  const r = inspect(makeZip({ 'a.txt': 'hi', 'ملاحظات.txt': 'شاي' }));
+  assert.equal(r.count, 2);
+  assert.deepEqual(r.entries.map((e) => [e.name, e.size, e.method]), [['a.txt', 2, 'stored'], ['ملاحظات.txt', 6, 'stored']]);
+});
+
+test('ZIP من غير نهاية بيرمي', () => {
+  const zip = makeZip({ 'a.txt': 'hi' });
+  assert.throws(() => inspect(zip.subarray(0, zip.length - 10)), /End of Central Directory/);
+});
+
+test('bytes جوه buffer أكبر (offset) بتتقري صح', () => {
+  const png = makePng(5, 7), big = new Uint8Array(png.length + 100);
+  big.set(png, 100);
+  const r = inspect(big.subarray(100));
+  assert.deepEqual([r.width, r.height, r.crcOk], [5, 7, true]);
+});
+
+test('نوع مش معروف وملف فاضي', () => {
+  assert.equal(sniff(new Uint8Array(0)), 'unknown');
+  assert.deepEqual(inspect(new TextEncoder().encode('hi')), { type: 'unknown', size: 2, head: '68 69' });
+});
 ~~~
 
 ## الشرح
 
-**الصفحة:**
+- **[[crc32]]:** الجدول [[CRC_TABLE]] [[Uint32Array]] فيه ٢٥٦ قيمة محسوبة مرة واحدة (polynomial [[0xedb88320]] بتاع PNG و ZIP)، وبعدين كل byte = lookup و XOR و shift. و [[>>> 0]] في الآخر بيخلّي الناتج unsigned (من غيره XOR بيرجّع رقم سالب لأن العمليات دي ٣٢ bit بإشارة، درس «bitwise و shifts»).
+- **[[need(bytes, at, n, what)]]:** قبل أي قراية بنتأكد إن الـ bytes موجودة، فالملف المقطوع بيطلّع [[BinError]] فيها **إيه** اللي كنا بنقراه و **فين**، بدل [[RangeError: Offset is outside the bounds of the DataView]] اللي مبيقولش حاجة.
+- **[[parsePng]]:** بيلف على الـ chunks: طول (big-endian) ونوع (٤ حروف) وداتا و CRC. الـ CRC محسوب على النوع + الداتا (مش الطول)، ده من المواصفة.
+- **[[parseWav]]:** نفس الـ loop بس little-endian، و [[size % 2]] لأن RIFF بيكمّل أي chunk فردي بـ byte. والـ [[fixtures]] فيها chunk [[LIST]] بين [[fmt]] و [[data]] بقصد: الأداة اللي بتفترض إن [[data]] عند ٣٦ بتقع هنا (زي [[wav-stats]] في درس «DataView»).
+- **[[parseZip]]:** الـ ZIP بيتقري **من الآخر**: آخر ٢٢ byte (أو أكتر لو فيه comment لحد ٦٥٥٣٥) فيهم «End of Central Directory» بتوقيع [[0x06054b50]]، وفيه عدد الملفات ومكان الـ central directory. كل entry هناك توقيعه [[0x02014b50]] وفيه الأحجام والـ CRC والاسم. والأسماء بـ [[TextDecoder]] لأن الـ fixture بيحط bit الـ UTF-8 ([[0x0800]]).
+- **[[DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)]] في كل parser:** الاختبار «bytes جوه buffer أكبر» بيحط الـ PNG عند offset ١٠٠ في buffer أكبر؛ من غير الـ offset كان الـ parser هيقرا من أول الـ buffer الغلط. وده نفس فخ الـ pool بتاع Node.
+- **الـ CLI:** [[try]] حوالين كل ملف لوحده، فملف بايظ مبيوقفش الباقي، و [[process.exitCode]] بيبقى ١ لو فيه فشل (عشان سكربت أو CI يعرف).
 
-- **[[<label for="files">]] جوه منطقة الإفلات والـ input مخفي بصريًا:** اللي مش بيستخدم ماوس بيوصل للـ input بـ Tab ويفتح اختيار الملفات بـ Enter، و [[:focus-within]] بيرسم إطار حوالين المنطقة كلها.
-- **[[handle(files)]] واحدة للطريقتين:** الـ [[change]] بتاع الـ input والـ [[drop]] الاتنين بيبعتوا array ملفات لنفس الدالة.
-- **الفحص قبل أي رفع:** النوع من أول bytes ([[sniff]]، وزوّدنا WebP: بيبدأ بـ [[RIFF]] وفيه [[WEBP]] من byte 8)، والحجم. اللي يفشل بيكتب السبب في السطر بتاعه و [[continue]]، فمفيش [[XMLHttpRequest]] بيتعمل له أصلًا.
-- **[[createImageBitmap(file)]]:** عشان المقاس ([[4000×3000]]) من غير ما نستنى [[<img>]] يتحمّل، وبعدين [[bmp.close()]].
-- **[[ui.img.onload = () => URL.revokeObjectURL(url)]]:** الصورة اترسمت، فالـ blob URL مش محتاجينه تاني.
-- **XHR لكل ملف لوحده:** [[xhr.upload.onprogress]] بيحرّك الشريط بتاعه، وزرار الإلغاء بينادي [[abort()]] على الـ XHR بتاعه بس ([[{ once: true }]] عشان الـ listener ميتسجّلش مرتين). [[fetch]] لسه مفيهوش upload progress في كل المتصفحات، عشان كده XHR هنا.
-- **[[depth]] في السحب:** نفس تصليح تمرين الرعشة: الإطار مبيختفيش وانت بتعدّي فوق النص واللينك اللي جوه المنطقة.
+## غلطات وقعت فيها وأنا ببنيها
 
-**السيرفر:**
-
-- **[[multer({ dest, limits, fileFilter })]]:** بيقرا الـ [[multipart/form-data]] ويكتب الملف في [[uploads/]]. [[limits.fileSize]] نفس حد الصفحة، لأن أي حد يقدر يبعت للـ API من غير الصفحة. [[fileFilter]] بيرفض أي [[mimetype]] مش صورة (ولو عايز فحص الـ bytes على السيرفر كمان، اقرا أول bytes من الملف اللي اتحفظ).
-- **[[upload.single("file")]]:** اسم الحقل لازم يبقى نفس [[fd.append("file", ...)]] في الصفحة.
-- **error handler بـ ٤ arguments:** أخطاء multer (زي [[LIMIT_FILE_SIZE]]) بترجع 413 و JSON بدل صفحة HTML.
-
-## اتقاس
-
-Chrome 158 headless على [[http://localhost:8832]]، و upload مخنوق لحوالي 150KB/s (DevTools Protocol). ضغطنا Tab لحد الـ input و Enter، وبعدين أفلتنا ٤ صور حقيقية مرة واحدة (منهم [[big.png]] 2.5MB)، وضغطنا «إلغاء» على [[landscape.jpg]] وهي بتترفع:
-
-~~~text الناتج (Chrome 158 headless)
-الـ focus على: files
-Enter → اختيار الملفات: اتفتح
-بعد 0.6s:
-me.png | 300×300 | 7KB | png | 1.00 | اترفعت
-big.png |  | - | 2.5MB أكبر من 2MB، اترفضت قبل الرفع
-landscape.jpg | 4000×3000 | 1192KB | jpeg | 0.05 | 
-me.jpg | 300×300 | 17KB | jpeg | 1.00 | اترفعت
-الآخر:
-me.png | 300×300 | 7KB | png | 1.00 | اترفعت
-big.png |  | - | 2.5MB أكبر من 2MB، اترفضت قبل الرفع
-landscape.jpg | 4000×3000 | 1192KB | jpeg | 0.05 | اتلغت
-me.jpg | 300×300 | 17KB | jpeg | 1.00 | اترفعت
-requests من الصفحة: ["POST /api/upload","POST /api/upload","POST /api/upload"]
-لوج السيرفر:
-الرافع على http://localhost:8832
-08:56:18 POST /api/upload
-08:56:18 POST /api/upload
-08:56:18 POST /api/upload
-اتحفظ: me.png 6981 bytes
-اتحفظ: me.jpg 16937 bytes
-اتلغى من الصفحة: /api/upload
-big.png بـ fetch مباشرة: 413 {"error":"LIMIT_FILE_SIZE"}
-a.txt بـ fetch مباشرة: 400 {"error":"مفيش صورة PNG أو JPEG أو WebP في الطلب"}
-pageerrors: 0
-~~~
-
-- ٣ requests بس من ٤ صور: [[big.png]] اترفضت في الصفحة ومتبعتتش.
-- الإلغاء وقّف [[landscape.jpg]] عند 5٪ والتانيين كمّلوا.
-- آخر سطرين: بعتنا للـ API مباشرة من غير الصفحة، والسيرفر رفض الكبير (413) والنص (400) لوحده.
-- الإفلات اتعمل بأحداث [[dragenter]] و [[dragover]] و [[drop]] بـ [[DataTransfer]] فيه الملفات الحقيقية، لأن headless مبيقدرش يسحب من الويندوز.
-
-## اللي حصل وإحنا بنبنيه
-
-- **الإلغاء طبع stack trace في السيرفر:** أول نسخة من الـ error handler كانت بتعدّي أي حاجة مش [[MulterError]] لـ [[next(err)]]، فإلغاء اليوزر طلّع [[Error: Request aborted]] بـ ١٠ سطور في الـ stderr كأنه عطل. الإلغاء حاجة طبيعية، فبقى سطر واحد «اتلغى من الصفحة». ونتأكد إن multer مسح الجزء اللي وصل: فولدر [[uploads/]] فيه الملفات اللي اترفعت بس.
-- **[[input.value = ""]] بعد [[handle]]:** من غيره، اختيار نفس الصور تاني مبيعملش [[change]].
-
-**الغلطة الشائعة:** تفحص الحجم على السيرفر بس. اليوزر بيستنى صورة 20MB تترفع على موبايل بطيء دقيقة كاملة عشان يعرف في الآخر إنها مرفوضة.` },
-        { lvl: 'متوسط', dir: "spa-draft", t: R`SPA صغير بيفتكر مكانك`, what: R`راوتر بـ [[pushState]] و [[popstate]] (درس ٦) لـ ٣ صفحات، وصفحة «اكتب رسالة» بتحفظ المسودة في [[localStorage]] على [[visibilitychange]] (درس ٥)، والأقسام بتظهر بـ reveal بـ IntersectionObserver (درس ١)، والبحث في [[?q=]] بـ [[replaceState]].`, done: R`back و forward بيرجّعوا الصفحة الصح من غير reload (Network مفيهوش طلب document جديد)، والمسودة بترجع بعد ما تقفل التاب وتفتحه، و refresh على [[/contact?q=x]] بيفتح نفس الصفحة ونفس البحث، و Ctrl+Click على أي لينك بيفتح تاب جديد زي أي موقع.`, sol: R`## الشكل النهائي
-
-~~~view 460
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الرئيسية</title>
-<style>
-  body { font: 15px/1.7 system-ui, sans-serif; margin: 0; }
-  header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 10px 16px; background: #111827; color: #fff; position: sticky; top: 0; }
-  header a { color: #fff; }
-  header a[aria-current="page"] { font-weight: 700; text-decoration: none; border-bottom: 2px solid #fbbf24; }
-  header input { font: inherit; padding: 4px 8px; border-radius: 6px; border: 0; margin-inline-start: auto; }
-  main { padding: 16px; max-width: 640px; margin: 0 auto; }
-  .card { padding: 12px; border-radius: 8px; background: #f3f4f6; margin: 12px 0; }
-  .reveal { opacity: 0; transform: translateY(16px); transition: opacity .4s, transform .4s; }
-  .reveal.visible { opacity: 1; transform: none; }
-  @media (prefers-reduced-motion: reduce) { .reveal { transition: none; } }
-  textarea { width: 100%; min-height: 120px; font: inherit; }
-  #note { font-size: 13px; color: #92400e; }
-  .spacer { height: 60vh; }
-</style>
-</head>
-<body>
-<header>
-  <a href="/" data-link>الرئيسية</a>
-  <a href="/about" data-link>عننا</a>
-  <a href="/contact" data-link>اكتب رسالة</a>
-  <input type="search" id="q" placeholder="دوّر في الصفحة..." aria-label="بحث">
-</header>
-<main id="view"></main>
-<p id="note"></p>
-<script>
-  // ---------- التخزين: ممكن يبقى ممنوع (preview معزول أو إعدادات المتصفح) ----------
-  let storageOk = true;
-  const store = (() => {
-    try { localStorage.setItem("__t", "1"); localStorage.removeItem("__t"); return localStorage; }
-    catch {
-      storageOk = false;                      // مجرد قراية localStorage بترمي SecurityError هنا
-      const m = new Map();
-      return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, v), removeItem: (k) => m.delete(k) };
-    }
-  })();
-  // ---------- الـ history: pushState بيرمي في صفحة معزولة ----------
-  let urlWorks = location.origin !== "null";   // صفحة معزولة: الـ URL مبيتغيّرش أصلًا
-  function go(url, replace = false) {
-    try { history[replace ? "replaceState" : "pushState"]({}, "", url); }
-    catch { urlWorks = false; current = new URL(url, current); }
-  }
-  // في صفحة معزولة location.href = "about:srcdoc"، فبنبدأ من عنوان وهمي ونمشي عليه
-  let current = new URL(location.origin === "null" ? "https://preview.invalid/" : location.href);
-  const here = () => (urlWorks ? new URL(location.href) : current);
-  const notes = [];
-  if (!storageOk) notes.push("التخزين مقفول هنا، المسودة هتتنسي مع الـ reload");
-
-  // ---------- الصفحات ----------
-  const pages = {
-    "/": { title: "الرئيسية", html: () => cards(["أهلًا بيك في الموقع", "بنعمل تطبيقات صغيرة بتشتغل", "انزل تحت تشوف الأقسام بتظهر", "آخر قسم"]) },
-    "/about": { title: "عننا", html: () => cards(["فريق صغير من القاهرة", "بنحب الكود البسيط", "بنكتب tests قبل ما ننشر"]) },
-    "/contact": {
-      title: "اكتب رسالة",
-      html: () => $__bt<h1>اكتب رسالة</h1><label for="draft">رسالتك (بتتحفظ لو سبت التاب):</label><textarea id="draft"></textarea>$__bt + cards(["سؤال: الرد بياخد قد إيه؟ يوم عمل", "سؤال: ينفع أبعت ملف؟ لأ، لينك بس"]),
-      mount() {
-        const ta = document.querySelector("#draft");
-        ta.value = store.getItem("draft") ?? "";
-      },
-    },
-  };
-  const cards = (items) => '<div class="spacer"></div>' + items.map((t) => $__bt<section class="card reveal">$__{t}</section>$__bt).join("");
-
-  const reveal = new IntersectionObserver((entries, obs) => {
-    for (const e of entries) if (e.isIntersecting) { e.target.classList.add("visible"); obs.unobserve(e.target); }
-  }, { root: document, threshold: 0.2 });
-
-  function render() {
-    const url = here();
-    const page = pages[url.pathname];
-    const view = document.querySelector("#view");
-    view.innerHTML = page ? page.html() : "<h1>404: الصفحة مش موجودة</h1>";
-    document.title = page?.title ?? "مش موجود";
-    page?.mount?.();
-    document.querySelectorAll("header a").forEach((a) => a.getAttribute("href") === url.pathname ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
-    const q = url.searchParams.get("q") ?? "";
-    document.querySelector("#q").value = q;
-    filter(q);
-    view.querySelectorAll(".reveal").forEach((el) => reveal.observe(el));
-    document.querySelector("#note").textContent = notes.concat(urlWorks ? [] : ["الصفحة معزولة: الـ URL مبيتغيّرش"]).join(" | ");
-  }
-
-  function filter(q) {
-    for (const card of document.querySelectorAll("#view .card")) card.hidden = q !== "" && !card.textContent.includes(q);
-  }
-
-  // ---------- اللينكات ----------
-  document.addEventListener("click", (e) => {
-    const a = e.target.closest("a[data-link]");
-    if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;   // Ctrl+Click = تاب جديد
-    const target = new URL(a.getAttribute("href"), here());
-    if (target.origin !== here().origin) return;                   // موقع تاني
-    e.preventDefault();
-    if (target.pathname === here().pathname) return;
-    saveDraft();
-    go(target.pathname);
-    render();
-  });
-  window.addEventListener("popstate", render);
-
-  // ---------- البحث في ?q= بـ replaceState: مش عايزين entry لكل حرف ----------
-  document.querySelector("#q").addEventListener("input", (e) => {
-    const url = here();
-    if (e.target.value) url.searchParams.set("q", e.target.value); else url.searchParams.delete("q");
-    go(url.pathname + url.search, true);
-    filter(e.target.value);
-  });
-
-  // ---------- المسودة: تتحفظ لما الصفحة تتخبى (آخر لحظة مضمونة) ----------
-  function saveDraft() {
-    const ta = document.querySelector("#draft");
-    if (ta) store.setItem("draft", ta.value);
-  }
-  document.addEventListener("visibilitychange", () => { if (document.hidden) saveDraft(); });
-
-  render();
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** موقع ٣ صفحات بشريط فوق فيه لينكات وبحث. التنقل من غير reload، والكروت بتظهر بحركة خفيفة وهي داخلة الشاشة، والبحث بيفلتر الكروت وبيتكتب في العنوان [[?q=]]، وصفحة «اكتب رسالة» بتفتكر المسودة لو قفلت التاب. في الـ preview اللي فوق التنقل والبحث والحركة شغالين، بس الصفحة معزولة: الـ URL مبيتغيّرش والتخزين مقفول، والصفحة بتقول كده تحت.
-
-## الملفات
-
-~~~text
-spa-draft/
-├── index.html       # الصفحة كلها (HTML و CSS و JS)
-└── spa-server.mjs   # أي مسار من غير امتداد بيرجّع index.html (زي npx serve -s)
-~~~
-
-التشغيل: [[node spa-server.mjs]] وافتح [[http://localhost:8831]].
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الرئيسية</title>
-<style>
-  body { font: 15px/1.7 system-ui, sans-serif; margin: 0; }
-  header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 10px 16px; background: #111827; color: #fff; position: sticky; top: 0; }
-  header a { color: #fff; }
-  header a[aria-current="page"] { font-weight: 700; text-decoration: none; border-bottom: 2px solid #fbbf24; }
-  header input { font: inherit; padding: 4px 8px; border-radius: 6px; border: 0; margin-inline-start: auto; }
-  main { padding: 16px; max-width: 640px; margin: 0 auto; }
-  .card { padding: 12px; border-radius: 8px; background: #f3f4f6; margin: 12px 0; }
-  .reveal { opacity: 0; transform: translateY(16px); transition: opacity .4s, transform .4s; }
-  .reveal.visible { opacity: 1; transform: none; }
-  @media (prefers-reduced-motion: reduce) { .reveal { transition: none; } }
-  textarea { width: 100%; min-height: 120px; font: inherit; }
-  #note { font-size: 13px; color: #92400e; }
-  .spacer { height: 60vh; }
-</style>
-</head>
-<body>
-<header>
-  <a href="/" data-link>الرئيسية</a>
-  <a href="/about" data-link>عننا</a>
-  <a href="/contact" data-link>اكتب رسالة</a>
-  <input type="search" id="q" placeholder="دوّر في الصفحة..." aria-label="بحث">
-</header>
-<main id="view"></main>
-<p id="note"></p>
-<script>
-  // ---------- التخزين: ممكن يبقى ممنوع (preview معزول أو إعدادات المتصفح) ----------
-  let storageOk = true;
-  const store = (() => {
-    try { localStorage.setItem("__t", "1"); localStorage.removeItem("__t"); return localStorage; }
-    catch {
-      storageOk = false;                      // مجرد قراية localStorage بترمي SecurityError هنا
-      const m = new Map();
-      return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, v), removeItem: (k) => m.delete(k) };
-    }
-  })();
-  // ---------- الـ history: pushState بيرمي في صفحة معزولة ----------
-  let urlWorks = location.origin !== "null";   // صفحة معزولة: الـ URL مبيتغيّرش أصلًا
-  function go(url, replace = false) {
-    try { history[replace ? "replaceState" : "pushState"]({}, "", url); }
-    catch { urlWorks = false; current = new URL(url, current); }
-  }
-  // في صفحة معزولة location.href = "about:srcdoc"، فبنبدأ من عنوان وهمي ونمشي عليه
-  let current = new URL(location.origin === "null" ? "https://preview.invalid/" : location.href);
-  const here = () => (urlWorks ? new URL(location.href) : current);
-  const notes = [];
-  if (!storageOk) notes.push("التخزين مقفول هنا، المسودة هتتنسي مع الـ reload");
-
-  // ---------- الصفحات ----------
-  const pages = {
-    "/": { title: "الرئيسية", html: () => cards(["أهلًا بيك في الموقع", "بنعمل تطبيقات صغيرة بتشتغل", "انزل تحت تشوف الأقسام بتظهر", "آخر قسم"]) },
-    "/about": { title: "عننا", html: () => cards(["فريق صغير من القاهرة", "بنحب الكود البسيط", "بنكتب tests قبل ما ننشر"]) },
-    "/contact": {
-      title: "اكتب رسالة",
-      html: () => $__bt<h1>اكتب رسالة</h1><label for="draft">رسالتك (بتتحفظ لو سبت التاب):</label><textarea id="draft"></textarea>$__bt + cards(["سؤال: الرد بياخد قد إيه؟ يوم عمل", "سؤال: ينفع أبعت ملف؟ لأ، لينك بس"]),
-      mount() {
-        const ta = document.querySelector("#draft");
-        ta.value = store.getItem("draft") ?? "";
-      },
-    },
-  };
-  const cards = (items) => '<div class="spacer"></div>' + items.map((t) => $__bt<section class="card reveal">$__{t}</section>$__bt).join("");
-
-  const reveal = new IntersectionObserver((entries, obs) => {
-    for (const e of entries) if (e.isIntersecting) { e.target.classList.add("visible"); obs.unobserve(e.target); }
-  }, { root: document, threshold: 0.2 });
-
-  function render() {
-    const url = here();
-    const page = pages[url.pathname];
-    const view = document.querySelector("#view");
-    view.innerHTML = page ? page.html() : "<h1>404: الصفحة مش موجودة</h1>";
-    document.title = page?.title ?? "مش موجود";
-    page?.mount?.();
-    document.querySelectorAll("header a").forEach((a) => a.getAttribute("href") === url.pathname ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
-    const q = url.searchParams.get("q") ?? "";
-    document.querySelector("#q").value = q;
-    filter(q);
-    view.querySelectorAll(".reveal").forEach((el) => reveal.observe(el));
-    document.querySelector("#note").textContent = notes.concat(urlWorks ? [] : ["الصفحة معزولة: الـ URL مبيتغيّرش"]).join(" | ");
-  }
-
-  function filter(q) {
-    for (const card of document.querySelectorAll("#view .card")) card.hidden = q !== "" && !card.textContent.includes(q);
-  }
-
-  // ---------- اللينكات ----------
-  document.addEventListener("click", (e) => {
-    const a = e.target.closest("a[data-link]");
-    if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;   // Ctrl+Click = تاب جديد
-    const target = new URL(a.getAttribute("href"), here());
-    if (target.origin !== here().origin) return;                   // موقع تاني
-    e.preventDefault();
-    if (target.pathname === here().pathname) return;
-    saveDraft();
-    go(target.pathname);
-    render();
-  });
-  window.addEventListener("popstate", render);
-
-  // ---------- البحث في ?q= بـ replaceState: مش عايزين entry لكل حرف ----------
-  document.querySelector("#q").addEventListener("input", (e) => {
-    const url = here();
-    if (e.target.value) url.searchParams.set("q", e.target.value); else url.searchParams.delete("q");
-    go(url.pathname + url.search, true);
-    filter(e.target.value);
-  });
-
-  // ---------- المسودة: تتحفظ لما الصفحة تتخبى (آخر لحظة مضمونة) ----------
-  function saveDraft() {
-    const ta = document.querySelector("#draft");
-    if (ta) store.setItem("draft", ta.value);
-  }
-  document.addEventListener("visibilitychange", () => { if (document.hidden) saveDraft(); });
-
-  render();
-</script>
-</body>
-</html>
-~~~
-
-~~~js spa-server.mjs
-// زي npx serve -s: أي مسار مش ملف بيرجّع index.html
-import { createServer } from "node:http";
-import { readFile } from "node:fs/promises";
-import { extname, join } from "node:path";
-
-const types = { ".html": "text/html; charset=utf-8", ".mjs": "text/javascript", ".js": "text/javascript" };
-createServer(async (req, res) => {
-  const path = new URL(req.url, "http://x").pathname;
-  const file = extname(path) ? join(".", path) : "index.html";
-  try {
-    const body = await readFile(file);
-    res.writeHead(200, { "content-type": types[extname(file)] ?? "application/octet-stream" }).end(body);
-  } catch {
-    res.writeHead(404).end("not found");
-  }
-}).listen(Number(process.env.PORT) || 8831, () => console.log("على http://localhost:" + (Number(process.env.PORT) || 8831)));
-~~~
-
-## الشرح: كل درس فين
-
-| الجزء | الدرس | بيعمل إيه |
-|---|---|---|
-| [[go()]] و [[popstate]] و [[render()]] | pushState و popstate | التنقل من غير reload، و back و forward |
-| [[saveDraft]] على [[visibilitychange]] | visibilitychange و bfcache | المسودة تتحفظ في آخر لحظة مضمونة |
-| [[reveal]] | IntersectionObserver | الكروت تظهر مرة واحدة وهي داخلة |
-| البحث و [[go(..., true)]] | pushState (replaceState) | [[?q=]] في العنوان من غير entry لكل حرف |
-
-- **[[render()]] بتقرا كل حاجة من الـ URL:** المسار بيختار الصفحة، و [[?q=]] بيملا البحث ويفلتر. عشان كده refresh على [[/contact?q=ملف]] بيفتح نفس الصفحة ونفس البحث، ومفيش حالة مخبّية في متغيرات.
-- **[[go(url, replace)]]:** [[pushState]] للتنقل (entry جديد، back يرجعله) و [[replaceState]] للبحث (بيبدّل العنوان الحالي). لو اتكتبت «ملف» بـ [[pushState]] كان back هيلف على «م» و «مل» و «ملف».
-- **[[e.ctrlKey]] وأخواتها:** الراوتر بيسيب الضغطة للمتصفح، فـ Ctrl+Click بيفتح تاب جديد زي أي موقع. والتاب الجديد بيطلب الـ URL من السيرفر و [[spa-server.mjs]] بيرجّع [[index.html]].
-- **[[visibilitychange]] و [[document.hidden]]:** بيحصل لما تبدّل التاب أو تقفله أو تصغّر الشباك أو الموبايل يقفل الشاشة. والتنقل لصفحة تانية جوه الموقع بيحفظ برضه ([[saveDraft()]] قبل [[go()]])، لأن الـ textarea هتتمسح.
-- **[[store]]:** [[localStorage]] لو متاح، وإلا [[Map]] في الذاكرة. مجرد قراية [[localStorage]] في صفحة معزولة بترمي [[SecurityError]]، فالفحص جوه [[try]] وبنحفظ النتيجة في [[storageOk]] بدل ما نلمس [[localStorage]] تاني.
-- **[[root: document]] في الـ reveal:** عشان يشتغل جوه iframe من origin تاني (الـ preview).
-- **[[a.getAttribute("href")]] مش [[a.pathname]]:** في الصفحة المعزولة العنوان [[about:srcdoc]]، و [[/about]] مبيتحسبش بالنسبة له. فبنحسب المسار بنفسنا على [[here()]].
+- **[[broken.png]] الأول:** قلبت byte رقم ٤٠ عشان أبوّظ الـ CRC، وطلع اسم الـ chunk [[IDA«]]: الـ byte ده كان آخر حرف من النوع [[IDAT]] مش الداتا. الـ IDAT بيبدأ عند ٣٣ (٨ توقيع + ٢٥ للـ IHDR)، فالداتا من ٤١. قلبت ٤٥ بدلها.
+- **[[cut.wav]] الأول** اتقص عند ٦٠، وطلع «WAV من غير fmt أو data» مش «اتقطع»: لأن ٦٠ وقعت بالظبط في آخر الـ [[LIST]] chunk، فالـ loop خلص من غير ما يشوف [[data]] خالص. قصّيته عند ٧٠ عشان يقع في نص [[data]] ويختبر رسالة القطع.
+- **اختبار الـ PNG المقطوع** كان مستني [[offset === 8]] ووقع: الأداة قالت [[16]]. هي صح: الطول والنوع (٨ bytes) اتقروا، والقطع حصل وهي بتقرا داتا الـ [[IHDR]] اللي بتبدأ عند ١٦. صلّحت الاختبار مش الكود.
+- **تأكدت من الـ ZIP بأداة تانية:** [[tar.exe]] بتاع ويندوز (bsdtar) قرا الـ zip اللي احنا عاملينه وطلّع الـ ٣ أسامي (والعربي) والأحجام، وطلّع محتوى [[data/menu.csv]] صح. و [[tar]] بتاع Git Bash (GNU) قال [[This does not look like a tar archive]]: مبيقراش zip أصلًا.
 
 ## اتقاس
 
-Chrome 158 headless على [[http://localhost:8833]]. عدّينا كل طلبات الـ document (يعني تحميل صفحة كامل):
-
-~~~text الناتج (Chrome 158 headless)
-فتح /                        / | الرئيسية | documents: 1
-ضغط عننا                     /about | عننا | documents: 1
-ضغط اكتب رسالة               /contact | اكتب رسالة | documents: 1
-back                         /about | عننا | documents: 1
-back                         / | الرئيسية | documents: 1
-forward                      /about | عننا | documents: 1
-forward                      /contact | اكتب رسالة | documents: 1
-بحث «ملف»                    /contact?q=ملف | اكتب رسالة | documents: 1
-  كروت ظاهرة: [ 'سؤال: ينفع أبعت ملف؟ لأ، لينك بس' ]
-  history.length: 4
-تاب جديد على /contact?q=ملف  /contact?q=ملف | اكتب رسالة | documents: 2
-  المسودة: مسودة مهمة: عايز أسأل عن الأسعار | البحث: ملف | كروت ظاهرة: 1
-Ctrl+Click «عننا»: تاب جديد على /about | التاب الأصلي لسه: /contact
-reveal قبل الـ scroll: 1110
-reveal بعد الـ scroll: 1111
-[sandbox] اكتب رسالة | اكتب رسالة | التخزين مقفول هنا، المسودة هتتنسي مع الـ reload | الصفحة معزولة: الـ URL مبيتغيّرش
-pageerrors: 0
-~~~
-
-- ٧ تنقلات و back و forward ولسه [[documents: 1]]: مفيش reload.
-- [[history.length]] فضل 4 بعد البحث: الـ [[replaceState]] مضافش entries.
-- كتبنا المسودة و **قفلنا التاب** ([[page.close()]]) من غير ما ندوس حاجة، وفتحنا تاب جديد على [[/contact?q=ملف]]: المسودة رجعت والبحث اتملا والفلتر اشتغل. يعني [[visibilitychange]] اتبعت وهو بيتقفل وحفظ.
-
-## اللي حصل وإحنا بنبنيه
-
-- **الـ preview كان بيطلّع 404:** أول نسخة كانت بتقرا [[new URL(location.href)]]، وفي الصفحة المعزولة ده [[about:srcdoc]] والـ pathname بتاعه [[srcdoc]]، فالصفحة الأولى طلعت «404». وبعدها أول ضغطة رمت [[Failed to construct 'URL': Invalid URL]] لأن [[about:srcdoc]] مينفعش يبقى base لـ URL نسبي. التصليح: في الصفحة المعزولة نبدأ من عنوان وهمي ([[https://preview.invalid/]]) ونمشي عليه في الذاكرة.
-- **[[store === localStorage]]:** كتبناها عشان نعرف التخزين شغال ولا لأ، فرمت [[SecurityError]] في الـ preview، لأن قراية الاسم [[localStorage]] نفسها هي اللي بترمي. بقت [[storageOk]].
-
-**الغلطة الشائعة:** تحفظ المسودة في [[beforeunload]]. على الموبايل الحدث ده غالبًا مبيحصلش (النظام بيقتل التاب في الخلفية)، و [[visibilitychange]] هو اللي بيحصل.` },
-        { lvl: 'كبير', dir: "infinite-feed", t: R`feed لانهائي متين`, what: R`feed من [[jsonplaceholder.typicode.com]] أو API على localhost بـ IntersectionObserver (درس ١)، والكروت بتتقسم أعمدة حسب عرض الـ container بـ ResizeObserver (درس ٢)، ورقم الصفحة في الـ URL بـ [[replaceState]] (درس ٦)، و [[pageshow]] بيحدّث لو رجعت من bfcache (درس ٥). ومن الوحدات اللي فاتت: [[AbortController]] و timeout على كل fetch، و debounce على الـ resize، ورسالة خطأ فيها زرار «حاول تاني».`, done: R`مفيش صفحة بتتطلب مرتين حتى لو نزلت بسرعة جدًا (Network يأكد)، وفي آخر الداتا بتظهر «خلصت» والـ observer بيقف، ولو قطعت النت من DevTools بتظهر رسالة الخطأ والزرار بيكمّل من نفس الصفحة، و refresh بيرجّعك لنفس رقم الصفحة، وعدد الأعمدة بيتغير لما تصغّر الـ sidebar مش الشاشة بس، و Test back/forward cache بيقول الصفحة اترجعت من الـ cache.`, ext: R`زوّد virtual scrolling لما الكروت تعدّي ١٠٠٠ عشان الـ DOM ميتقلش، وبحث بـ [[?q=]]، وحوّله لـ component تستخدمه في مشروع حقيقي.`, sol: R`## الشكل النهائي
-
-اللقطة دي من الصفحة الحقيقية شغالة على السيرفر (اتاخدت من Chrome بعد أول تحميل، والـ scripts اتشالت لأن الـ preview مفيهوش السيرفر بتاعها):
-
-~~~view 420
-<!DOCTYPE html><html lang="ar" dir="rtl"><head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الـ feed</title>
-<style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 0; }
-  .layout { display: flex; min-height: 100vh; }
-  aside { width: 320px; flex: none; background: #f3f4f6; padding: 16px; transition: width .2s; overflow: hidden; }
-  aside.closed { width: 48px; }
-  main { flex: 1; min-width: 0; padding: 16px; }
-  #grid { display: grid; grid-template-columns: repeat(var(--cols, 1), 1fr); gap: 12px; }
-  .post { border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; min-height: 90px; }
-  #status { text-align: center; padding: 16px; color: #374151; }
-  #status button { font: inherit; padding: 6px 14px; }
-  #sentinel { height: 1px; }
-  #new { position: sticky; top: 8px; z-index: 1; text-align: center; }
-  #new:empty { display: none; }
-  #new span { background: #1d4ed8; color: #fff; padding: 4px 12px; border-radius: 999px; }
-</style>
-</head>
-<body>
-<div class="layout">
-  <aside id="side"><button id="toggle" type="button" aria-expanded="true">☰</button><p>الأقسام</p></aside>
-  <main>
-    <p id="info">عرض الـ feed 616px ← 2 أعمدة</p>
-    <div id="new" role="status"></div>
-    <div id="grid" aria-live="polite" style="--cols: 2;"><article class="post" data-id="60"><h2 style="font-size: 16px;">بوست رقم 60</h2><p>❤ 0</p></article><article class="post" data-id="59"><h2 style="font-size: 16px;">بوست رقم 59</h2><p>❤ 37</p></article><article class="post" data-id="58"><h2 style="font-size: 16px;">بوست رقم 58</h2><p>❤ 74</p></article><article class="post" data-id="57"><h2 style="font-size: 16px;">بوست رقم 57</h2><p>❤ 111</p></article><article class="post" data-id="56"><h2 style="font-size: 16px;">بوست رقم 56</h2><p>❤ 148</p></article><article class="post" data-id="55"><h2 style="font-size: 16px;">بوست رقم 55</h2><p>❤ 185</p></article></div>
-    <div id="sentinel"></div>
-    <div id="status" role="status">بيحمّل...</div>
-  </main>
-</div>
-</body></html>
-~~~
-
-**هتشوف إيه:** sidebar على اليمين وفيه زرار ☰، وجنبه grid كروت بوستات. انزل والكروت بتتحمّل لوحدها ١٢ ورا ١٢، والعنوان بيتغيّر لـ [[?page=3]]. صغّر الـ sidebar والأعمدة بتزيد من غير ما الشاشة تتغيّر. اقطع النت وهتلاقي «حاول تاني» بتكمّل من نفس المكان. وفي الآخر «خلصت».
-
-## الملفات
-
-~~~text
-infinite-feed/
-├── server.mjs              # API بصفحات + الملفات الثابتة، node:http من غير مكتبات
-├── feed-core.test.mjs      # node --test للمنطق
-└── public/
-    ├── index.html
-    ├── feed.js             # الـ DOM والـ observers والأحداث
-    ├── feed-core.mjs       # المنطق من غير DOM: الأعمدة، رقم الصفحة، fetch بـ timeout، اللودر
-    └── other.html          # صفحة تروح لها وترجع (تجربة الـ bfcache)
-~~~
-
-التشغيل: [[node server.mjs]] وافتح [[http://localhost:3000]]. والتستات: [[node --test]].
-
-~~~js server.mjs
-import { createServer } from "node:http";
-import { readFile } from "node:fs/promises";
-import { extname, join } from "node:path";
-
-const LIMIT = 12;
-const posts = Array.from({ length: 60 }, (_, i) => ({ id: 60 - i, title: $__btبوست رقم $__{60 - i}$__bt, likes: (i * 37) % 200 }));
-const types = { ".html": "text/html; charset=utf-8", ".mjs": "text/javascript", ".js": "text/javascript", ".css": "text/css" };
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
-const server = createServer(async (req, res) => {
-  const url = new URL(req.url, "http://x");
-  if (url.pathname === "/api/posts") {
-    const since = Number(url.searchParams.get("since") || 0);
-    const page = Number(url.searchParams.get("page") || 1);
-    console.log("GET", url.pathname + url.search);
-    await sleep(300);                                                // شبكة حقيقية مش فورية
-    if (since) return json(res, { items: posts.filter((p) => p.id > since), hasMore: false });
-    const items = posts.slice((page - 1) * LIMIT, page * LIMIT);
-    return json(res, { items, page, hasMore: page * LIMIT < posts.length });
-  }
-  if (url.pathname === "/api/new" && req.method === "POST") {          // بوست جديد (للتجربة)
-    const id = posts[0].id + 1;
-    posts.unshift({ id, title: $__btبوست رقم $__{id} (جديد)$__bt, likes: 0 });
-    return json(res, { id });
-  }
-  const file = join("public", url.pathname === "/" ? "index.html" : url.pathname);
-  try {
-    const body = await readFile(file);
-    res.writeHead(200, { "content-type": types[extname(file)] ?? "application/octet-stream" }).end(body);
-  } catch {
-    res.writeHead(404).end("not found");
-  }
-});
-const json = (res, data) => res.writeHead(200, { "content-type": "application/json" }).end(JSON.stringify(data));
-const port = Number(process.env.PORT) || 3000;
-server.listen(port, () => console.log("الـ feed على http://localhost:" + port));
-~~~
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الـ feed</title>
-<style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 0; }
-  .layout { display: flex; min-height: 100vh; }
-  aside { width: 320px; flex: none; background: #f3f4f6; padding: 16px; transition: width .2s; overflow: hidden; }
-  aside.closed { width: 48px; }
-  main { flex: 1; min-width: 0; padding: 16px; }
-  #grid { display: grid; grid-template-columns: repeat(var(--cols, 1), 1fr); gap: 12px; }
-  .post { border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; min-height: 90px; }
-  #status { text-align: center; padding: 16px; color: #374151; }
-  #status button { font: inherit; padding: 6px 14px; }
-  #sentinel { height: 1px; }
-  #new { position: sticky; top: 8px; z-index: 1; text-align: center; }
-  #new:empty { display: none; }
-  #new span { background: #1d4ed8; color: #fff; padding: 4px 12px; border-radius: 999px; }
-</style>
-</head>
-<body>
-<div class="layout">
-  <aside id="side"><button id="toggle" type="button" aria-expanded="true">☰</button><p>الأقسام</p></aside>
-  <main>
-    <p id="info"></p>
-    <div id="new" role="status"></div>
-    <div id="grid" aria-live="polite"></div>
-    <div id="sentinel"></div>
-    <div id="status" role="status"></div>
-  </main>
-</div>
-<script type="module" src="/feed.js"></script>
-</body>
-</html>
-~~~
-
-~~~js feed-core.mjs
-// المنطق من غير DOM: بيتختبر في Node بـ node --test
-
-// عدد الأعمدة من عرض الـ container (مش الشاشة): عمود لكل 260px، من 1 لـ 4
-export function columnsFor(width, min = 260, max = 4) {
-  if (!Number.isFinite(width) || width < 0) throw new RangeError($__btwidth غلط: $__{width}$__bt);
-  return Math.max(1, Math.min(max, Math.floor(width / min)));
-}
-
-// رقم الصفحة من ?page=، وأي حاجة غلط = 1
-export function pageFromSearch(search) {
-  const n = Number(new URLSearchParams(search).get("page"));
-  return Number.isInteger(n) && n >= 1 && n <= 1000 ? n : 1;
-}
-
-// fetch بـ timeout و AbortController، وبيرمي لو الـ status مش ok
-export async function fetchJSON(url, { timeout = 5000, signal, fetchImpl = fetch } = {}) {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(new DOMException("الطلب أخد أكتر من " + timeout + "ms", "TimeoutError")), timeout);
-  const onAbort = () => ctrl.abort(signal.reason);
-  signal?.addEventListener("abort", onAbort, { once: true });
-  try {
-    const res = await fetchImpl(url, { signal: ctrl.signal });
-    if (!res.ok) throw new Error($__btالسيرفر رجّع $__{res.status}$__bt);
-    return await res.json();
-  } finally {
-    clearTimeout(timer);
-    signal?.removeEventListener("abort", onAbort);
-  }
-}
-
-// اللودر: صفحة واحدة في نفس الوقت، ومفيش صفحة بتتطلب مرتين، والفشل بيسيب نفس الصفحة للمحاولة الجاية
-export function createLoader(loadPage, { startPage = 1 } = {}) {
-  let next = startPage;        // الصفحة اللي عليها الدور
-  let busy = null;             // الـ Promise الشغال
-  let done = false;
-  return {
-    get next() { return next; },
-    get done() { return done; },
-    get busy() { return busy !== null; },
-    load() {
-      if (done) return Promise.resolve(null);
-      if (busy) return busy;                       // نداء تاني وهو شغال = نفس الـ Promise
-      const page = next;
-      busy = loadPage(page)
-        .then((data) => {
-          next = page + 1;
-          if (!data.hasMore) done = true;
-          return data;
-        })
-        .finally(() => { busy = null; });
-      return busy;
-    },
-  };
-}
-
-export function debounce(fn, ms) {
-  let t;
-  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
-}
-~~~
-
-~~~js feed.js
-import { columnsFor, pageFromSearch, fetchJSON, createLoader, debounce } from "./feed-core.mjs";
-
-const grid = document.querySelector("#grid");
-const status = document.querySelector("#status");
-const sentinel = document.querySelector("#sentinel");
-let pageCtrl = new AbortController();          // بيتلغي مع pagehide
-let newest = 0;
-
-// ---------- الكروت ----------
-function card(p) {
-  const el = document.createElement("article");
-  el.className = "post";
-  el.dataset.id = p.id;
-  const h = document.createElement("h2");
-  h.textContent = p.title;
-  h.style.fontSize = "16px";
-  const meta = document.createElement("p");
-  meta.textContent = $__bt❤ $__{p.likes}$__bt;
-  el.append(h, meta);
-  return el;
-}
-
-// ---------- تحميل الصفحات ----------
-const loader = createLoader(async (page) => {
-  const data = await fetchJSON($__bt/api/posts?page=$__{page}$__bt, { timeout: 5000, signal: pageCtrl.signal });
-  grid.append(...data.items.map(card));
-  newest = Math.max(newest, ...data.items.map((p) => p.id));
-  history.replaceState(null, "", page === 1 ? location.pathname : $__bt?page=$__{page}$__bt);   // مش pushState
-  return data;
-});
-
-async function loadMore() {
-  status.textContent = "بيحمّل...";
-  try {
-    await loader.load();
-    if (loader.done) {
-      status.textContent = "خلصت، مفيش بوستات تانية.";
-      io.disconnect();                          // مفيش داعي نراقب تاني
-    } else {
-      status.textContent = "";
-      recheck();
-    }
-  } catch (err) {
-    if (err.name === "AbortError") return;      // الصفحة بتتقفل
-    status.innerHTML = "";
-    const msg = document.createElement("span");
-    msg.textContent = (err.name === "TimeoutError" ? "الشبكة بطيئة جدًا." : "مقدرناش نجيب البوستات (النت؟).") + " ";
-    const retry = document.createElement("button");
-    retry.textContent = "حاول تاني";
-    retry.addEventListener("click", loadMore, { once: true });   // نفس الصفحة اللي فشلت
-    status.append(msg, retry);
-  }
-}
-
-// لو الـ sentinel لسه ظاهر بعد التحميل (شاشة طويلة)، الـ observer مش هينادي تاني لوحده
-function recheck() {
-  io.unobserve(sentinel);
-  io.observe(sentinel);
-}
-
-const io = new IntersectionObserver(([e]) => {
-  if (e.isIntersecting && !loader.busy) loadMore();
-}, { root: document, rootMargin: "400px" });
-
-// ---------- الأعمدة حسب عرض الـ container ----------
-const applyColumns = debounce((width) => {
-  grid.style.setProperty("--cols", columnsFor(width));
-  document.querySelector("#info").textContent = $__btعرض الـ feed $__{Math.round(width)}px ← $__{columnsFor(width)} أعمدة$__bt;
-}, 100);
-new ResizeObserver(([entry]) => applyColumns(entry.contentBoxSize[0].inlineSize)).observe(grid);
-
-document.querySelector("#toggle").addEventListener("click", (e) => {
-  const side = document.querySelector("#side");
-  side.classList.toggle("closed");
-  e.currentTarget.setAttribute("aria-expanded", String(!side.classList.contains("closed")));
-});
-
-// ---------- bfcache ----------
-window.addEventListener("pagehide", () => pageCtrl.abort());
-window.addEventListener("pageshow", async (e) => {
-  if (!e.persisted) return;
-  pageCtrl = new AbortController();
-  try {
-    const data = await fetchJSON($__bt/api/posts?since=$__{newest}$__bt, { signal: pageCtrl.signal });
-    if (data.items.length) {
-      grid.prepend(...data.items.map(card));
-      newest = Math.max(newest, ...data.items.map((p) => p.id));
-      document.querySelector("#new").innerHTML = $__bt<span>$__{data.items.length} بوست جديد</span>$__bt;
-    }
-  } catch {}
-  if (!loader.done) recheck();
-});
-
-// ---------- البداية: لو الـ URL فيه ?page=3 حمّل لحد 3 ----------
-const upTo = pageFromSearch(location.search);
-for (let p = 1; p <= upTo && !loader.done; p++) {
-  try { await loader.load(); } catch { break; }
-}
-if (loader.done) { status.textContent = "خلصت، مفيش بوستات تانية."; } else io.observe(sentinel);
-~~~
-
-~~~js feed-core.test.mjs
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { columnsFor, pageFromSearch, fetchJSON, createLoader, debounce } from "./public/feed-core.mjs";
-
-test("columnsFor: من عرض الـ container", () => {
-  assert.equal(columnsFor(200), 1);
-  assert.equal(columnsFor(520), 2);
-  assert.equal(columnsFor(800), 3);
-  assert.equal(columnsFor(5000), 4);
-  assert.throws(() => columnsFor(NaN), RangeError);
-});
-
-test("pageFromSearch: أي قيمة غلط = 1", () => {
-  assert.equal(pageFromSearch("?page=3"), 3);
-  for (const s of ["", "?page=0", "?page=-2", "?page=abc", "?page=2.5", "?page=99999"]) assert.equal(pageFromSearch(s), 1, s);
-});
-
-test("loader: نداءين مع بعض = request واحد", async () => {
-  const calls = [];
-  const loader = createLoader(async (p) => { calls.push(p); await new Promise((r) => setTimeout(r, 20)); return { items: [p], hasMore: true }; });
-  const [a, b] = await Promise.all([loader.load(), loader.load()]);
-  assert.equal(a, b);
-  assert.deepEqual(calls, [1]);
-  await loader.load();
-  assert.deepEqual(calls, [1, 2]);
-});
-
-test("loader: الفشل بيسيب نفس الصفحة للمحاولة الجاية", async () => {
-  let fail = true; const calls = [];
-  const loader = createLoader(async (p) => { calls.push(p); if (fail) throw new Error("offline"); return { items: [], hasMore: true }; });
-  await assert.rejects(loader.load(), /offline/);
-  fail = false;
-  await loader.load();
-  assert.deepEqual(calls, [1, 1]);
-  assert.equal(loader.next, 2);
-});
-
-test("loader: بعد آخر صفحة مفيش requests", async () => {
-  const calls = [];
-  const loader = createLoader(async (p) => { calls.push(p); return { items: [], hasMore: p < 2 }; });
-  await loader.load(); await loader.load(); await loader.load(); await loader.load();
-  assert.deepEqual(calls, [1, 2]);
-  assert.equal(loader.done, true);
-});
-
-test("fetchJSON: timeout بيرمي TimeoutError", async () => {
-  const never = (url, { signal }) => new Promise((_, rej) => signal.addEventListener("abort", () => rej(signal.reason)));
-  await assert.rejects(fetchJSON("/x", { timeout: 30, fetchImpl: never }), { name: "TimeoutError" });
-});
-
-test("fetchJSON: status مش ok بيرمي", async () => {
-  const bad = async () => new Response("no", { status: 503 });
-  await assert.rejects(fetchJSON("/x", { fetchImpl: bad }), /503/);
-});
-
-test("debounce: آخر نداء بس", async () => {
-  const got = [];
-  const d = debounce((x) => got.push(x), 20);
-  d(1); d(2); d(3);
-  await new Promise((r) => setTimeout(r, 50));
-  assert.deepEqual(got, [3]);
-});
-~~~
-
-~~~html other.html
-<!doctype html><meta charset="utf-8"><title>صفحة تانية</title><p>دوس back</p>
-~~~
-
-## ترتيب البناء
-
-1. **السيرفر:** ٦٠ بوست، ١٢ في الصفحة، و ٣٠٠ms تأخير عشان التحميل يبقى زي الحقيقة (من غيره كل حاجة بتحصل في نفس اللحظة ومش هتشوف باجات التكرار).
-2. **[[feed-core.mjs]] وتستاته الأول:** كل قرار ليه دالة من غير DOM (عدد الأعمدة، رقم الصفحة من الـ URL، اللودر اللي بيمنع التكرار، الـ timeout). ٨ تستات بتعدّي في أقل من ثانية.
-3. **[[feed.js]]:** بيوصّل الدوال دي بالـ observers والأحداث.
-4. **القياس في Chrome** لكل سطر في المطلوب.
-
-## الشرح
-
-- **[[createLoader]] هو اللي بيمنع التكرار:** طول ما فيه طلب شغال، أي [[load()]] تاني بيرجّع **نفس** الـ Promise (التست «نداءين مع بعض = request واحد»). و [[next]] مبيزيدش غير لما الطلب ينجح، فالفشل بيسيب نفس الصفحة لـ «حاول تاني». وبعد [[hasMore: false]] مفيش طلبات خالص.
-- **[[recheck()]]:** الـ IntersectionObserver بينادي لما الحالة **تتغيّر**. لو بعد التحميل الـ sentinel لسه ظاهر (شاشة طويلة)، مفيش تغيير فمفيش نداء والتحميل بيقف. [[unobserve]] ثم [[observe]] بيجبره يبعت الحالة الحالية من جديد. ده نفس اللي في كود الدرس.
-- **[[io.disconnect()]] بعد «خلصت»:** مفيش داعي يفضل يراقب.
-- **[[history.replaceState]] بـ [[?page=N]]:** مش [[pushState]]، وإلا كل ١٢ بوست يبقوا entry وزرار back هيلف على الصفحات. وفي الفتح، [[pageFromSearch]] بتقرا الرقم (وأي قيمة غلط = 1) والصفحة بتحمّل لحد الرقم ده.
-- **[[fetchJSON]] بـ [[AbortController]] و timeout:** أي طلب بياخد أكتر من ٥ ثواني بيتلغي برسالة «الشبكة بطيئة جدًا». والـ [[signal]] بتاع الصفحة كلها بيتلغي في [[pagehide]]، فمفيش طلب بيكمّل والصفحة في الـ bfcache.
-- **[[ResizeObserver]] على الـ grid نفسه و [[debounce]] 100ms:** العرض بييجي من الـ grid مش الشاشة، فقفل الـ sidebar بيزوّد الأعمدة. والـ debounce عشان الـ transition بتاع الـ sidebar بيغيّر العرض كل فريم لمدة 200ms.
-- **[[pageshow]] و [[e.persisted]]:** لما ترجع من الـ bfcache الصفحة بنفس الكروت والـ scroll، فبنطلب [[?since=أحدث id]] بس ونضيف الجديد فوق مع «١ بوست جديد».
-
-## اتقاس
-
-Chrome 158 headless على [[http://localhost:8834]]، 1100×700. (Playwright بيقفل الـ bfcache افتراضيًا بـ [[--disable-back-forward-cache]]، فشلنا الـ flag ده في التجربة دي.)
-
-~~~text الناتج (Chrome 158 headless)
-فتح الصفحة                     | كروت: 24 | URL: ?page=2 | status: ""
-عرض الـ feed 716px ← 2 أعمدة
-بعد 30 scroll سريع             | كروت: 60 | URL: ?page=5 | status: "خلصت، مفيش بوستات تانية."
-requests لكل صفحة: {"?page=1":1,"?page=2":1,"?page=3":1,"?page=4":1,"?page=5":1}
-في الآخر                       | كروت: 60 | URL: ?page=5 | status: "خلصت، مفيش بوستات تانية."
-requests بعد «خلصت» وكمان 5 scroll: 0
-offline + scroll               | كروت: 24 | URL: ?page=2 | status: "مقدرناش نجيب البوستات (النت؟). حاول تاني"
-رجع النت + حاول تاني           | كروت: 36 | URL: ?page=3 | status: ""
-قبل الـ refresh                | كروت: 48 | URL: ?page=4 | status: ""
-بعد الـ refresh                | كروت: 48 | URL: ?page=4 | status: ""
-الـ sidebar مفتوح: 2 | عرض الـ feed 716px ← 2 أعمدة
-الـ sidebar مقفول: 3 | عرض الـ feed 988px ← 3 أعمدة
-شاشة 600px: 1 | عرض الـ feed 488px ← 1 أعمدة
-رجعنا: pageshow persisted = true | marker = 1 | 1 بوست جديد | أول كارت: بوست رقم 61 (جديد)
-لوج السيرفر (آخر 4): GET /api/posts?page=2 , GET /api/posts?page=3 , GET /api/posts?page=4 , GET /api/posts?since=60
-pageerrors: 0
-~~~
-
-~~~text الناتج (node --test، Node 24)
-✔ columnsFor: من عرض الـ container (1.7207ms)
-✔ pageFromSearch: أي قيمة غلط = 1 (0.2325ms)
-✔ loader: نداءين مع بعض = request واحد (56.5984ms)
-✔ loader: الفشل بيسيب نفس الصفحة للمحاولة الجاية (0.6027ms)
-✔ loader: بعد آخر صفحة مفيش requests (0.2189ms)
-✔ fetchJSON: timeout بيرمي TimeoutError (46.0281ms)
-✔ fetchJSON: status مش ok بيرمي (20.3281ms)
-✔ debounce: آخر نداء بس (57.6578ms)
-ℹ tests 8
-ℹ pass 8
+~~~text node --test (Node 24.22)
+✔ crc32 بتاعتنا = بتاعة zlib (1.939ms)
+✔ PNG: المقاس والـ chunks والـ CRC (2.3931ms)
+✔ PNG: byte متغيّر بيتمسك بالـ CRC (0.6276ms)
+✔ PNG مقطوع بيرمي BinError فيها المكان (0.9233ms)
+✔ WAV: بيتخطى LIST ويحسب المدة (3.2946ms)
+✔ WAV مقطوع في نص الـ data (0.5696ms)
+✔ ZIP: الأسامي (والعربي) والأحجام (0.8193ms)
+✔ ZIP من غير نهاية بيرمي (0.3799ms)
+✔ bytes جوه buffer أكبر (offset) بتتقري صح (1.0797ms)
+✔ نوع مش معروف وملف فاضي (0.8897ms)
+ℹ tests 10
+ℹ pass 10
 ℹ fail 0
 ~~~
 
-- **٣٠ scroll لآخر الصفحة ورا بعض كل 30ms:** كل صفحة اتطلبت **مرة واحدة** بالظبط.
-- **«خلصت» و [[disconnect]]:** ٥ scroll زيادة = صفر requests.
-- **Offline:** [[context.setOffline(true)]] (زي Offline في DevTools) طلّع الرسالة والزرار، ورجوع النت و «حاول تاني» جاب صفحة ٣ (اللي فشلت) مش ٤.
-- **refresh على [[?page=4]]:** رجع ٤٨ كارت.
-- **الأعمدة:** نفس الشاشة (1100px)، الـ sidebar لوحده غيّر العدد من ٢ لـ ٣.
-- **bfcache:** [[Page.backForwardCacheNotUsed]] متبعتش، و [[window.__marker]] اللي حطيناه قبل ما نمشي لسه موجود (نفس الصفحة في الميموري)، و [[persisted = true]]، والبوست اللي اتضاف وإحنا برا ظهر فوق. ده نفس اللي زرار Test back/forward cache في DevTools بيقيسه.
-
-## اللي حصل وإحنا بنبنيه
-
-- **الـ feed كان بيقف على الشاشات الطويلة:** جرّبنا نسخة من غير [[recheck()]] على شاشة طولها 2200px: بعد ٣ ثواني ٢٤ كارت بس والـ sentinel لسه ظاهر ومفيش طلبات تانية. الـ observer بلّغ مرة إن الـ sentinel دخل، ومن ساعتها هو جوه، فمفيش «تغيير» يبعت له نداء. مع [[recheck()]] نفس الشاشة حمّلت ٤٨ لحد ما الـ sentinel نزل تحت.
-- **الـ bfcache مكانش بيشتغل في التجربة الأولى:** Playwright بيشغّل Chrome بـ [[--disable-back-forward-cache]]، والسبب اللي طلع في [[Page.backForwardCacheNotUsed]] كان [[BackForwardCacheDisabledByCommandLine]]. شيلنا الـ flag بـ [[ignoreDefaultArgs]] والصفحة رجعت من الـ cache.
-
-**الغلطة الشائعة:** متغير [[loading]] بـ [[true]] و [[false]] من غير ما تحمي [[page++]]. لو [[page++]] قبل الـ fetch والـ fetch فشل، الصفحة دي بتضيع، ولو بعده من غير حماية، اتنين scroll ورا بعض بيطلبوا نفس الصفحة.` },
-        { lvl: 'فكرة', dir: "reading-resume", t: R`سلوك بتحبه في موقع تاني`, what: R`اختار حاجة بتعجبك في موقع بتستخدمه: الفيديو اللي بيقف لما تسيب التاب، أو الفهرس اللي بيعلّم القسم اللي انت فيه، أو الصورة اللي بتتحمّل وانت قربت منها، أو اللينك اللي بيتغيّر وانت بتفلتر. ابنيها بـ APIs الوحدة دي من غير مكتبات.`, done: R`السلوك شغال في صفحة لوحدها، ومكتوب جنبه الـ API اللي استخدمته، ومفيش listener بيفضل شغال بعد ما العنصر يتشال (اتأكد إن فيه [[disconnect]] أو [[unobserve]] أو [[removeEventListener]] في مكانه).`, ext: R`حوّله لدالة أو component بتاخد options، وحطه في مشروع بتاعك، وقيس الفرق بـ Lighthouse قبل وبعد.`, sol: R`## النسخة النموذجية: المقالة اللي بتفتكر وقفت فين
-
-اخترنا سلوك موجود في مواقع القراية الكبيرة: شريط رفيع فوق بيقول قريت قد إيه، والفقرة اللي بتقراها متعلّمة، والعنوان بيتغيّر لـ [[#p12]] (تقدر تبعت اللينك لحد فيفتح عندها)، ولو قفلت التاب ورجعت يظهر زرار «كمّل من…». ليه ده: بيستخدم ٣ APIs من الوحدة مع بعض في حاجة صغيرة كل قارئ بيحس بيها.
-
-~~~live 420 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مقالة بتفتكر وقفت فين</title>
-<style>
-  body { font: 17px/1.9 system-ui, sans-serif; margin: 0; }
-  #bar { position: fixed; top: 0; inset-inline: 0; height: 4px; background: #e5e7eb; }
-  #bar span { display: block; height: 100%; width: 0; background: #1d4ed8; transition: width .2s; }
-  article { max-width: 640px; margin: 0 auto; padding: 24px 16px 60vh; }
-  article p.current { background: #fef9c3; }
-  #resume { position: fixed; bottom: 16px; inset-inline-start: 16px; font: inherit; padding: 8px 14px; border-radius: 8px; border: 0; background: #111827; color: #fff; }
-  #resume[hidden] { display: none; }
-  #info { font-size: 13px; color: #555; }
-</style>
-</head>
-<body>
-<div id="bar" role="progressbar" aria-label="قريت قد إيه" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
-<article id="post">
-  <h1>ليه الكود البسيط بيكسب</h1>
-  <p id="info"></p>
-</article>
-<button id="resume" hidden></button>
-<script>
-  // ---------- التخزين ممكن يكون مقفول (الـ preview) ----------
-  const store = (() => {
-    try { localStorage.setItem("__t", "1"); localStorage.removeItem("__t"); return localStorage; }
-    catch { const m = new Map(); return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) }; }
-  })();
-
-  const post = document.querySelector("#post");
-  for (let i = 1; i <= 25; i++) post.insertAdjacentHTML("beforeend", $__bt<p id="p$__{i}">فقرة $__{i}: الكود اللي تقدر تقراه بعد شهر أهم من الكود اللي بيوفّر سطرين. اكتب أسامي واضحة، وقسّم الدوال، واحذف اللي مش مستخدم.</p>$__bt);
-
-  function readingTracker(article, key) {
-    const paras = [...article.querySelectorAll("p[id^='p']")];
-    let furthest = 0;                     // أبعد فقرة وصلها (رقمها من 1)
-    let current = null;
-
-    const show = () => {
-      const pct = Math.round((furthest / paras.length) * 100);
-      document.querySelector("#bar span").style.width = pct + "%";
-      document.querySelector("#bar").setAttribute("aria-valuenow", pct);
-    };
-
-    // فقرة «اتقرت» لما تعدّي نص الشاشة، والحالية هي اللي على الخط ده
-    const io = new IntersectionObserver((entries) => {
-      for (const e of entries) {
-        if (!e.isIntersecting) continue;
-        furthest = Math.max(furthest, paras.indexOf(e.target) + 1);
-        current?.classList.remove("current");
-        current = e.target;
-        current.classList.add("current");
-        try { history.replaceState(null, "", "#" + current.id); } catch {}   // ممنوعة في صفحة معزولة
-      }
-      show();
-      if (furthest === paras.length) io.disconnect();            // وصل لآخر فقرة
-    }, { root: document, rootMargin: "-50% 0px -50% 0px" });
-    paras.forEach((p) => io.observe(p));
-
-    const save = () => { if (current) store.setItem(key, current.id); };
-    const onVisibility = () => { if (document.hidden) save(); };
-    document.addEventListener("visibilitychange", onVisibility);
-    window.addEventListener("pagehide", save);
-
-    // تنضيف: لو المقالة اتشالت من الصفحة (SPA مثلًا)
-    return function destroy() {
-      save();
-      io.disconnect();
-      document.removeEventListener("visibilitychange", onVisibility);
-      window.removeEventListener("pagehide", save);
-    };
-  }
-
-  const KEY = "resume:" + location.pathname;
-  const saved = store.getItem(KEY);
-  const destroy = readingTracker(post, KEY);
-  window.__destroy = destroy;
-
-  if (saved && saved !== "p1" && !location.hash) {
-    const btn = document.querySelector("#resume");
-    btn.textContent = $__btكمّل من «$__{document.getElementById(saved)?.textContent.slice(0, 8)}…»$__bt;
-    btn.hidden = false;
-    btn.addEventListener("click", () => {
-      document.getElementById(saved)?.scrollIntoView({ block: "center" });
-      btn.hidden = true;
-    }, { once: true });
-  }
-  document.querySelector("#info").textContent = "انزل واقرا، واقفل التاب في النص وافتحه تاني.";
-</script>
-</body>
-</html>
+~~~text zip حقيقي من ويندوز: tar.exe -a -c -f samples/real.zip lib.mjs cli.mjs fixtures.mjs ثم node cli.mjs samples/real.zip
+samples/real.zip: ZIP 3 ملف
+  lib.mjs           4700 byte  deflate  crc b56347c5
+  cli.mjs           1646 byte  deflate  crc 9d4e10a1
+  fixtures.mjs      3742 byte  deflate  crc fc1e52d0
 ~~~
 
-في الـ preview الشريط والتعليم شغالين، بس التخزين والـ URL مقفولين (صفحة معزولة)، فـ «كمّل من» مش هيظهر بعد reload. شغّلها من سيرفر محلي.
+الأحجام طابقت [[ls -la]] بالظبط (٤٧٠٠ و ١٦٤٦ و ٣٧٤٢)، يعني الأداة بتقرا zip عمله برنامج تاني (بضغط [[deflate]]) مش بس اللي احنا عاملينه.
 
-## الـ APIs اللي استخدمناها
+~~~text node cli.mjs samples/pic.png samples/cut.wav --json (أوله)
+[
+  {
+    "file": "samples/pic.png",
+    "type": "png",
+    "width": 64,
+    "height": 40,
+    "bitDepth": 8,
+    "colorType": 2,
+~~~
 
-| السلوك | الـ API |
+وآخره [[{ "file": "samples/cut.wav", "error": "الملف اتقطع وهو بيقرا chunk data (عند byte 68)" }]].` },
+        { lvl: 'فكرة', t: R`صمّم format binary بتاعك`, what: R`اختار داتا بتتخزن أو بتتبعت كتير في مشروع بتحبه (منيو كافيه، أو قراءات حساسات، أو حفظ لعبة، أو جهات اتصال)، وصمّم لها صيغة binary: توقيع (magic) يعرّف الملف، ورقم نسخة، وعدد السجلات، وكل سجل بأنواع أرقام محددة وترتيب bytes محدد، والنصوص UTF-8 بطولها قبلها. اكتب [[encode]] و [[decode]] بـ [[DataView]]، والـ decode بيرفض التوقيع الغلط والنسخة اللي مش مدعومة والملف المقطوع برسايل واضحة. وقارن الحجم بـ JSON لنفس الداتا. من الوحدة كلها.`, done: R`عندك وصف الـ format في تعليق فوق الملف (كل حقل وحجمه ونوعه والترتيب)، و [[decode(encode(x))]] بيرجّع نفس الداتا بالظبط، والحجم مقارن بـ JSON برقم، و ٣ أنواع ملفات غلط بتترفض برسالة.`, ext: R`زوّد ضغط ([[CompressionStream('gzip')]] في المتصفح أو [[zlib]]) وقارن الأربعة (JSON و JSON مضغوط و binary و binary مضغوط)، وغيّر النسخة لـ ٢ بحقل جديد وخلّي الـ decoder يقرا النسختين، وزوّد CRC32 في الآخر يمسك الملف البايظ، واقرا الملف في صفحة بـ [[<input type=file>]].`, sol: R`**نسخة نموذجية:** منيو كافيه بألف صنف. اخترت المنيو لأنه داتا حقيقية بتتبعت لكل زبون يفتح التطبيق، فالحجم بيفرق على نت ضعيف، وفيه أرقام (سعر ومخزون) ونصوص عربي (أسامي)، فبيجرّب كل حاجة في الوحدة.
+
+## الشكل النهائي
+
+~~~text الناتج (Node 24.22): node menubin.mjs
+binary: 30401 byte | JSON: 65164 byte | النسبة: 47%
+رجعت زي ما هي: true { id: 1001, price: 1750, stock: 7, name: 'قهوة تركي 2' }
+TypeError: مش ملف منيو (التوقيع MNU مش موجود)
+TypeError: نسخة 9 مش مدعومة، المدعوم 1
+RangeError: الملف اتقطع عند الصنف رقم 2
+~~~
+
+## الكود
+
+~~~js menubin.mjs
+// menubin.mjs: صيغة binary بتاعتنا لمنيو كافيه، وقارنها بـ JSON
+// الشكل (little-endian):
+//   header: 'MNU' + version(u8) | count(u32)
+//   كل صنف: id(u32) | price بالقرش(u32) | stock(u16) | nameLength(u16) | name (UTF-8)
+const MAGIC = [0x4d, 0x4e, 0x55], VERSION = 1;
+const enc = new TextEncoder(), dec = new TextDecoder('utf-8', { fatal: true });
+
+export function encodeMenu(items) {
+  const names = items.map((it) => enc.encode(it.name));
+  const size = 8 + names.reduce((n, b) => n + 12 + b.length, 0);
+  const out = new Uint8Array(size), v = new DataView(out.buffer);
+  out.set(MAGIC, 0); v.setUint8(3, VERSION); v.setUint32(4, items.length, true);
+  let at = 8;
+  items.forEach((it, i) => {
+    if (!Number.isInteger(it.price) || it.price < 0) throw new RangeError('السعر بالقرش رقم صحيح موجب: ' + it.name);
+    if (names[i].length > 0xffff) throw new RangeError('الاسم أطول من 65535 byte');
+    v.setUint32(at, it.id, true); v.setUint32(at + 4, it.price, true);
+    v.setUint16(at + 8, it.stock, true); v.setUint16(at + 10, names[i].length, true);
+    out.set(names[i], at + 12);
+    at += 12 + names[i].length;
+  });
+  return out;
+}
+
+export function decodeMenu(bytes) {
+  const v = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  if (bytes.length < 8 || MAGIC.some((b, i) => bytes[i] !== b)) throw new TypeError('مش ملف منيو (التوقيع MNU مش موجود)');
+  if (bytes[3] !== VERSION) throw new TypeError('نسخة ' + bytes[3] + ' مش مدعومة، المدعوم ' + VERSION);
+  const count = v.getUint32(4, true), items = [];
+  let at = 8;
+  for (let i = 0; i < count; i++) {
+    if (at + 12 > bytes.length) throw new RangeError('الملف اتقطع عند الصنف رقم ' + (i + 1));
+    const len = v.getUint16(at + 10, true);
+    if (at + 12 + len > bytes.length) throw new RangeError('اسم الصنف رقم ' + (i + 1) + ' مقطوع');
+    items.push({ id: v.getUint32(at, true), price: v.getUint32(at + 4, true), stock: v.getUint16(at + 8, true), name: dec.decode(bytes.subarray(at + 12, at + 12 + len)) });
+    at += 12 + len;
+  }
+  return items;
+}
+
+const menu = Array.from({ length: 1000 }, (_, i) => ({ id: 1000 + i, price: 1500 + (i % 40) * 250, stock: (i * 7) % 300, name: ['شاي', 'قهوة تركي', 'كابتشينو', 'عصير مانجا'][i % 4] + ' ' + (i + 1) }));
+const bin = encodeMenu(menu), json = enc.encode(JSON.stringify(menu));
+const back = decodeMenu(bin);
+console.log('binary:', bin.length, 'byte | JSON:', json.length, 'byte | النسبة:', (bin.length / json.length * 100).toFixed(0) + '%');
+console.log('رجعت زي ما هي:', JSON.stringify(back) === JSON.stringify(menu), back[1]);
+for (const bad of [enc.encode('{"x":1}'), Uint8Array.of(0x4d, 0x4e, 0x55, 9, 0, 0, 0, 0), bin.subarray(0, 30)]) {
+  try { decodeMenu(bad); } catch (e) { console.log(e.name + ': ' + e.message); }
+}
+~~~
+
+## ليه التصميم ده
+
+| القرار | ليه |
 |---|---|
-| الفقرة الحالية والشريط | IntersectionObserver بخط في نص الشاشة ([[rootMargin: "-50% 0px -50% 0px"]]) |
-| [[#p12]] في العنوان | [[history.replaceState]] (مش [[pushState]]: مش عايزين entry لكل فقرة) |
-| حفظ المكان | [[visibilitychange]] لـ [[hidden]] و [[pagehide]]، في [[localStorage]] |
-| التنضيف | [[io.disconnect()]] و [[removeEventListener]] في [[destroy()]] |
+| توقيع [[MNU]] + نسخة في أول ٤ bytes | أي برنامج يعرف الملف من أوله زي PNG، والنسخة بتسمح تغيّر الشكل بعدين من غير ما الملفات القديمة تبوظ |
+| العدد [[u32]] في الـ header | الـ decoder يعرف هيقرا كام سجل ويكتشف الملف المقطوع |
+| السعر بالقرش [[u32]] مش [[Float32]] | الفلوس مبتتخزنش عشري: [[Float32Array.of(17.15)[0] ]] بيطلع [[17.149999618530273]] (اتجرّب، درس «TypedArray: العيلة») |
+| المخزون [[u16]] | لحد ٦٥٥٣٥، كفاية لكافيه، وبيوفّر byteين عن [[u32]] في كل صنف |
+| طول الاسم [[u16]] قبله | النص طوله متغيّر، فلازم تعرف تقرا كام byte. والطول بالـ bytes مش بالحروف (العربي ٢ byte للحرف) |
+| little-endian | نفس ترتيب أجهزة x86 و ARM، فالقراية من غير قلب (اختيار، مش إجبار) |
+| [[TextDecoder]] بـ [[fatal: true]] | اسم بايظ يرمي بدل ما يطلع [[�]] ساكت |
 
-## الشرح
+- **الحجم:** ٤٧٪ من JSON. الـ JSON بيكرر أسامي المفاتيح ([["price":]]) في كل صنف وبيكتب الأرقام حروف، والـ binary مكان ثابت ورقم في ٢ أو ٤ bytes.
+- **التمن:** الملف مبيتقريش بالعين، ولازم الـ encoder والـ decoder يتفقوا على الشكل بالحرف، وأي تغيير محتاج نسخة جديدة. عشان كده الـ binary للداتا الكبيرة أو اللي بتتبعت كتير، و JSON لأي حاجة تانية. وفيه formats جاهزة بنفس الفكرة لو مش عايز تصمم بنفسك: MessagePack و Protocol Buffers و CBOR.
 
-- **[[readingTracker(article, key)]] بترجّع [[destroy]]:** كل حاجة اتسجّلت جوه الدالة بتتشال من مكان واحد. في SPA، لما المقالة تتشال من الصفحة، تنادي [[destroy()]] فمفيش observer ولا listener بيفضل ماسك عناصر مش موجودة.
-- **[[io.disconnect()]] لما توصل لآخر فقرة:** المقالة خلصت، والشريط 100٪، فمفيش داعي يفضل يراقب.
-- **[[furthest]]:** الشريط بيقيس أبعد فقرة وصلتلها مش عدد الفقرات اللي عدّت على الخط، عشان لو نطّيت لفقرة 12 بـ «كمّل» يبان 48٪ مش 8٪ (دي كانت أول نسخة).
-- **[[store]] بـ [[try]]:** في الـ preview أو لو اليوزر قافل التخزين، الصفحة بتشتغل من الذاكرة.
-- **[[key = "resume:" + location.pathname]]:** كل مقالة ليها مكانها.
+## غلطة وقعت فيها
 
-## اتقاس
-
-~~~text الناتج (Chrome 158 headless، 700×700، http://localhost:8835)
-أول ما تفتح                bar=0% | current=undefined | hash= | resume=مخفي
-نزلنا لفقرة 12             bar=48% | current=p12 | hash=#p12 | resume=مخفي
-تاب جديد                   bar=12% | current=p3 | hash=#p3 | resume=كمّل من «فقرة 12:…»
-ضغطنا «كمّل»               bar=48% | current=p12 | hash=#p12 | resume=مخفي
-بعد destroy ونزلنا لـ 20   bar=48% | current=p12 | hash=#p12 | resume=مخفي
-صفحة جديدة لحد آخر فقرة    bar=100% | current=p25 | hash=#p25 | resume=مخفي
-[sandbox] bar=20% current=p5
-pageerrors: 0
-~~~
-
-- قفلنا التاب على فقرة 12 من غير ما ندوس حاجة، والتاب الجديد عرض «كمّل من «فقرة 12:…»»: الحفظ حصل في [[visibilitychange]] أو [[pagehide]] وهو بيتقفل.
-- بعد [[destroy()]] نزلنا لفقرة 20 والحالة مغيّرتش خالص: الـ observer اتفصل فعلًا.
-
-**ليه مش scroll listener:** الشريط في المواقع دي غالبًا بيتحسب من [[scrollY]] في كل scroll. هنا بيتحدّث بس لما فقرة جديدة تعدّي نص الشاشة، وده كفاية لشريط بيقول «فاضلك قد إيه».
-
-**وسّعها (ext):** حوّلها لـ [[readingTracker(article, { key, onProgress })]] بترجّع [[{ destroy, progress }]]، وقيس بـ Lighthouse قبل وبعد ما تضيفها لصفحة حقيقية (المفروض مفيش فرق في Total Blocking Time).` },
+- جرّبت أحسب الحجم بـ [[it.name.length]] (عدد الحروف) بدل bytes الاسم: الـ buffer طلع أصغر من اللازم و [[out.set]] رمى [[RangeError: offset is out of bounds]] (اتجرّب)، لأن كل حرف عربي ٢ bytes. الحل: [[TextEncoder]] لكل الأسامي **قبل** ما تحسب الحجم ([[names]] في الكود)، وبعدين نفس الـ bytes تتكتب.` },
       ],
       items: [
         {
-          cmd: "IntersectionObserver",
-          title: "تعرف إن عنصر ظهر على الشاشة إزاي؟ (infinite scroll و reveal)",
-          desc: R`[[IntersectionObserver]] بيقولك لما عنصر يدخل أو يخرج من الشاشة (أو من عنصر أب بيعمل scroll)، من غير ما تسمع لـ [[scroll]] وتحسب المقاسات بنفسك. بتعمله مرة بـ callback وخيارات، وبعدين [[observe(el)]] لأي عدد عناصر.
+          cmd: "البيانات الثنائية: bytes و typed arrays",
+          title: "يعني إيه binary data، وليه JavaScript محتاجة ArrayBuffer و typed arrays؟",
+          desc: R`أي حاجة في الكمبيوتر (نص، صورة، صوت، ملف zip، رد من الشبكة، ذاكرة wasm) هي في الآخر **bytes**: أرقام من 0 لـ 255 ورا بعض. والـ Array العادية في JavaScript مش معمولة لكده، فاللغة فيها طريقة مخصوص: [[ArrayBuffer]] (حتة ذاكرة خام بطول ثابت) و **typed arrays** (عينين بتقرا الذاكرة دي كأرقام من نوع واحد، زي [[Uint8Array]] و [[Float64Array]]).
 
-أشهر استخدامين: infinite scroll (عنصر فاضي في آخر الليستة اسمه sentinel، أول ما يقرّب من الشاشة حمّل الصفحة الجاية)، وأنيميشن عند الظهور (ضيف كلاس لما الكارت يظهر، وبطّل تراقبه). و [[rootMargin: "300px"]] بيوسّع منطقة الشاشة ٣٠٠ بكسل، فالتحميل يبدأ قبل ما اليوزر يوصل للآخر. و [[threshold: 0.2]] يعني «لما ٢٠٪ من العنصر يظهر».`,
-          example: R`const feed = document.querySelector("#feed");
-const sentinel = document.querySelector("#sentinel");
-let page = 1, loading = false, done = false;
-async function loadMore() {
-  if (loading || done) return;
-  loading = true;
-  try {
-    const res = await fetch($__bt/api/posts?page=$__{page}$__bt);
-    const posts = await res.json();
-    if (posts.length === 0) done = true;
-    for (const p of posts) {
-      const li = document.createElement("li");
-      li.textContent = p.title;
-      feed.append(li);
-    }
-    page++;
-  } finally {
-    loading = false;
-  }
-  if (!done) { io.unobserve(sentinel); io.observe(sentinel); }
-}
-const io = new IntersectionObserver((entries) => {
-  if (entries[0].isIntersecting) loadMore();
-}, { rootMargin: "300px" });
-io.observe(sentinel);
-const reveal = new IntersectionObserver((entries, obs) => {
-  for (const e of entries) {
-    if (!e.isIntersecting) continue;
-    e.target.classList.add("visible");
-    obs.unobserve(e.target);
-  }
-}, { threshold: 0.2 });
-document.querySelectorAll(".reveal").forEach((el) => reveal.observe(el));`,
-          try: R`اعمل صفحة فيها [[<ul id="feed">]] وبعدها [[<div id="sentinel">]]، واستبدل الـ fetch بـ [[https://jsonplaceholder.typicode.com/posts?_page=$__{page}&_limit=5]]. افتح Network وانزل: الطلبات بتحصل إمتى؟ وبعدين شيل سطر [[unobserve/observe]] وخلي الـ limit 2 على شاشة كبيرة: التحميل بيكمّل لوحده ولا بيقف؟`,
+• [[readFileSync]] في Node بيرجّع [[Buffer]]، وده [[Uint8Array]] متزوّد.
+• في المتصفح: [[await res.arrayBuffer()]] و [[await file.bytes()]] و [[ctx.getImageData().data]] كلهم bytes.
+• نفس الـ bytes ممكن تتقري بأكتر من شكل: ٨ bytes = رقم [[Float64]] واحد، أو ٨ أرقام [[Uint8]].
+
+الدرس ده الخريطة: إيه هي الـ bytes، وإزاي تشوفها بالـ hex، والفرق بين الـ buffer والـ view، وتقابلها فين. والدروس اللي بعده بتشرح كل حتة بالتفصيل.`,
+          example: R`// bytes.mjs: النص والرقم كلهم في الآخر bytes
+import { writeFileSync, readFileSync } from 'node:fs';
+writeFileSync('hello.txt', 'Hi مصر');
+const bytes = readFileSync('hello.txt');
+console.log(bytes.length, 'Hi مصر'.length, bytes instanceof Uint8Array);
+console.log([...bytes].map((b) => b.toString(16).padStart(2, '0')).join(' '));
+const buf = new ArrayBuffer(8);
+const asBytes = new Uint8Array(buf);
+const asNumber = new Float64Array(buf);
+asNumber[0] = 1.5;
+console.log(asBytes, asNumber);
+console.log(new TextDecoder().decode(bytes.subarray(3)));`,
+          try: R`اعمل ملف فيه [[Hi مصر]] وشغّل المثال. وبعدين غيّر النص لـ [[😀]] بس، واتوقّع قبل ما تشغّل: [[bytes.length]] كام، و [['😀'.length]] كام؟ وبعدين اكتب [[asNumber[0] = -1.5]] وشوف أنهي byte بس اللي اتغيّر.`,
+          sol: R`~~~text الناتج (Node 24.22، ملف فيه 😀 بس)
+4 2 true
+f0 9f 98 80
+~~~
+
+~~~text الناتج بعد asNumber[0] = -1.5
+Uint8Array(8) [
+    0, 0,   0,   0,
+    0, 0, 248, 191
+] Float64Array(1) [ -1.5 ]
+~~~
+
+- الإيموجي ٤ bytes في UTF-8، و [[length]] بتاعه ٢ لأن JavaScript بتعد بوحدات UTF-16 (درس «string و UTF-16»). يعني [[length]] بتاع النص **عمره ما** يقولك حجمه على الديسك أو في الشبكة.
+- [[1.5]] و [[-1.5]] بيفرقوا في byte واحد بس: الأخير [[63]] بقى [[191]]. الفرق ١٢٨ = أعلى bit في الـ byte، وده bit الإشارة في الـ [[Float64]] (أول bit في الرقم كله، ومتخزن في آخر byte لأن الجهاز little-endian، وده متشرح في درس «TypedArray: العيلة»).`,
           practice: [
-            { lvl: 'سريع', t: R`ابني سكشن «أرقامنا» فيه ٣ أرقام ([[data-to="1200"]] مثلًا) تحت أول شاشة: الأرقام بتعدّ من 0 لحد [[data-to]] في ثانية واحدة أول ما السكشن يظهر بـ [[threshold: 0.5]]، وبعدين [[unobserve]].`, done: R`الأرقام بتفضل 0 لحد ما تنزل للسكشن، وبتعدّ مرة واحدة بس وتقف على الرقم بالظبط (مش 1199 ولا 1201) مهما طلعت ونزلت، وفتح الصفحة على السكشن على طول بيعدّ برضه.`, sol: R`~~~live 420 count-up.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أرقامنا</title>
-<style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 0; }
-  .hero { min-height: 110vh; display: grid; place-items: center; background: #eef2ff; }
-  #stats { display: flex; gap: 24px; justify-content: center; padding: 48px 16px; flex-wrap: wrap; }
-  .stat { text-align: center; }
-  .num { font-size: 40px; font-weight: 700; color: #1d4ed8; font-variant-numeric: tabular-nums; }
-  footer { min-height: 60vh; }
-</style>
-</head>
-<body>
-<section class="hero"><p>انزل لتحت ↓</p></section>
-<section id="stats" aria-label="أرقامنا">
-  <div class="stat"><div class="num" data-to="1200">0</div>طالب</div>
-  <div class="stat"><div class="num" data-to="85">0</div>درس</div>
-  <div class="stat"><div class="num" data-to="37">0</div>مشروع</div>
-</section>
-<footer></footer>
-<script>
-  function countUp(el, ms = 1000) {
-    const to = Number(el.dataset.to);
-    const start = performance.now();
-    function frame(now) {
-      const t = Math.min((now - start) / ms, 1);      // من 0 لـ 1
-      el.textContent = Math.round(to * t).toLocaleString("ar-EG");
-      if (t < 1) requestAnimationFrame(frame);
-    }
-    requestAnimationFrame(frame);
-  }
-
-  const io = new IntersectionObserver((entries, obs) => {
-    for (const e of entries) {
-      if (!e.isIntersecting) continue;
-      e.target.querySelectorAll(".num").forEach((el) => countUp(el));
-      obs.unobserve(e.target);                    // مرة واحدة بس
-    }
-  }, { threshold: 0.5 });
-  io.observe(document.querySelector("#stats"));
-</script>
-</body>
-</html>
-~~~
-
-انزل جوه الـ preview لحد «أرقامنا»: الأرقام بتعدّ مرة واحدة وتقف.
-
-~~~text الناتج (Chrome 158 headless، نفس الملف جوه iframe معزول زي الـ preview، عرض 400px)
-أول ما الصفحة تفتح: 0 / 0 / 0
-بعد 300ms: ٣٣٢ / ٢٣ / ١٠
-بعد ثانية ونص: ١٬٢٠٠ / ٨٥ / ٣٧
-طلعنا ونزلنا تاني: ١٬٢٠٠ / ٨٥ / ٣٧
-السكشن ظاهر من الأول: ١٬٢٠٠ / ٨٥ / ٣٧
-pageerrors: 0
-~~~
-
-**ليه كده:**
-
-- **observer على السكشن مش على كل رقم:** التلات أرقام بيبدأوا مع بعض، فعنصر واحد يكفي. [[threshold: 0.5]] معناها «لما نص السكشن يبقى جوه الشاشة».
-- **[[if (!e.isIntersecting) continue]]:** الـ callback بيتنادى **مرة أول ما تعمل [[observe]]** حتى لو العنصر برا الشاشة، ومرة لما يخرج. من غير الشرط ده العدّ كان هيبدأ على طول.
-- **[[obs.unobserve(e.target)]]:** بعد أول مرة مبقاش فيه داعي نراقب، فالطلوع والنزول مبيعيدش العدّ (السطر الرابع).
-- **[[Math.min((now - start) / ms, 1)]] و [[Math.round(to * t)]]:** العدّ بالوقت مش بعدد الفريمات، فبيخلص في ثانية على أي شاشة (60Hz أو 120Hz). وآخر فريم [[t = 1]] بالظبط، فالرقم بيقف على [[1200]] مش 1199.
-- **[[toLocaleString("ar-EG")]]:** بيكتب الأرقام عربي وبفاصل الآلاف ([[١٬٢٠٠]]). امسحها لو عايز [[1200]].
-- **فتح الصفحة على السكشن:** أول نداء للـ callback بيلاقي [[isIntersecting: true]] فبيعدّ على طول، من غير أي كود زيادة.
-
-**الغلطة الشائعة:** تعدّ بـ [[setInterval]] وتزوّد رقم ثابت كل مرة ([[n += 12]]). لو الرقم مش بيقبل القسمة بالظبط هيعدّي ([[1204]]) أو يقف قبله، ولو التاب اتخبى الـ interval بيبطّأ والعدّ ياخد أكتر من ثانية.` },
-            { lvl: 'تطبيق', t: R`refactor: صفحة منتجات فيها [[cards.forEach((el) => new IntersectionObserver(cb).observe(el))]] لـ ١٠٠ كارت وبتحمّل صورة كل كارت لما يظهر. خليها observer واحد لكل الكروت، مع [[unobserve]] بعد التحميل و [[rootMargin: "200px"]]، من غير ما السلوك يتغير.`, done: R`عدد الـ observers بقى 1 بدل 100 (عدّهم بمتغير)، وكل صورة لسه بتتطلب مرة واحدة لما تقرّب منها (Network يأكد)، والكارت اللي اتحمّل مبيتناداش تاني لو طلعت ونزلت، وتقدر تقول ليه observer واحد أرخص.`, sol: R`**قبل** (الجزء اللي هيتغيّر بس):
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** لكل نص، اكتب [[length]] وعدد الـ bytes بتاعه في UTF-8 قبل ما تشغّل:
 
 ~~~js
-const cb = (entries) => {
-  for (const e of entries) {
-    if (!e.isIntersecting) continue;
-    const img = e.target.querySelector("img");
-    img.src = imageUrl(img.dataset.n);
-  }
-};
-cards.forEach((el) => new IntersectionObserver(cb).observe(el));
+const enc = new TextEncoder();
+for (const s of ['abc', 'مصر', '😀', 'é']) console.log(JSON.stringify(s), s.length, enc.encode(s).length);
+~~~`, done: R`كتبت الأربع سطور وطلعوا زي ما كتبت، وتقدر تقول القاعدة: الحرف الإنجليزي byte، والعربي ٢، والإيموجي ٤.`, sol: R`~~~text الناتج (Node 24.22)
+"abc" 3 3
+"مصر" 3 6
+"😀" 2 4
+"é" 1 2
 ~~~
 
-**بعد:** الصفحة كاملة. الصور SVG بتتعمل في الصفحة نفسها عشان تشتغل من غير سيرفر، والشريط اللي فوق بيعدّ الـ observers والتحميلات.
-
-~~~live 420 lazy-cards.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>منتجات بتتحمّل لما تقرب</title>
-<style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 0; }
-  #bar { position: sticky; top: 0; background: #111827; color: #fff; padding: 8px 12px; font-size: 14px; }
-  #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; padding: 12px; }
-  .card { border: 1px solid #ddd; border-radius: 8px; padding: 8px; }
-  .card img { display: block; width: 100%; aspect-ratio: 4 / 3; background: #e5e7eb; border-radius: 4px; }
-</style>
-</head>
-<body>
-<div id="bar">observers: <b id="obs">0</b> | صور اتحمّلت: <b id="loaded">0</b> من 100</div>
-<div id="grid"></div>
-<script>
-  // صورة وهمية لكل منتج (SVG) عشان الصفحة تشتغل من غير سيرفر
-  const imageUrl = (n) =>
-    "data:image/svg+xml," + encodeURIComponent(
-      $__bt<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 30"><rect width="40" height="30" fill="hsl($__{n * 37 % 360} 70% 70%)"/><text x="20" y="19" font-size="10" text-anchor="middle">$__{n}</text></svg>$__bt,
-    );
-
-  const grid = document.querySelector("#grid");
-  for (let i = 1; i <= 100; i++) {
-    grid.insertAdjacentHTML("beforeend",
-      $__bt<div class="card"><img alt="منتج $__{i}" data-n="$__{i}" width="160" height="120">منتج $__{i}</div>$__bt);
-  }
-
-  let observers = 0;
-  let loaded = 0;
-  const loads = {};              // كام مرة كل صورة اتحمّلت
-
-  // observer واحد لكل الكروت
-  const io = new IntersectionObserver((entries, obs) => {
-    for (const e of entries) {
-      if (!e.isIntersecting) continue;
-      const img = e.target.querySelector("img");
-      img.src = imageUrl(img.dataset.n);
-      loads[img.dataset.n] = (loads[img.dataset.n] ?? 0) + 1;
-      document.querySelector("#loaded").textContent = ++loaded;
-      obs.unobserve(e.target);   // اتحمّل خلاص
-    }
-  }, { root: document, rootMargin: "200px" });
-  observers++;
-  document.querySelector("#obs").textContent = observers;
-
-  document.querySelectorAll(".card").forEach((card) => io.observe(card));
-</script>
-</body>
-</html>
+- [[new TextEncoder().encode(s)]] بيحوّل النص لـ bytes بـ UTF-8 ويرجّع [[Uint8Array]]، و [[.length]] بتاعها = عدد الـ bytes (لأن كل عنصر byte).
+- UTF-8 بيستخدم ١ byte للحروف الإنجليزي والأرقام (ASCII)، و ٢ للعربي والحروف اللاتيني اللي عليها علامات زي [[é]]، و ٣ لحروف تانية كتير (صيني مثلًا)، و ٤ للإيموجي.
+- [[s.length]] حاجة تانية خالص: عدد وحدات UTF-16. الإيموجي وحدتين (surrogate pair)، والعربي وحدة لكل حرف.
+- **الغلطة:** تحسب حجم رسالة أو حد أقصى لعمود في قاعدة بيانات بـ [[length]]. «مصر» ٣ حروف بس ٦ bytes.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[toHex(bytes)]] بتاخد [[Uint8Array]] وترجّع نص hex، كل byte رقمين وبينهم مسافة. جرّبها على [[Uint8Array.of(0, 15, 255)]] وعلى bytes النص [[%PDF-1.7]].`, done: R`[[toHex(Uint8Array.of(0, 15, 255))]] بترجّع [['00 0f ff']] بالظبط (الصفر من قدام موجود)، و [[%PDF-1.7]] بيطلع [[25 50 44 46 2d 31 2e 37]].`, sol: R`~~~js hex.mjs
+const toHex = (bytes) => Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join(' ');
+console.log(toHex(Uint8Array.of(0, 15, 255)));
+console.log(toHex(new TextEncoder().encode('%PDF-1.7')));
 ~~~
 
-~~~text الناتج (Chrome 158 headless، نفس الملف جوه iframe معزول عرضه 400px، و scroll للأماكن دي بالترتيب)
-                   بعد                       قبل
-أول ما تفتح:       observers: 1 | 10 من 100   observers: 100 | 8 من 100
-scroll 1500:       observers: 1 | 24 من 100   observers: 100 | 16 من 100
-scroll 4000:       observers: 1 | 38 من 100   observers: 100 | 26 من 100
-scroll 0:          observers: 1 | 38 من 100   observers: 100 | 34 من 100
-scroll 4000:       observers: 1 | 38 من 100   observers: 100 | 44 من 100
-scroll 99999:      observers: 1 | 48 من 100   observers: 100 | 52 من 100
-صورة اتحمّلت أكتر من مرة؟   false             true
-pageerrors: 0
+~~~text الناتج (Node 24.22)
+00 0f ff
+25 50 44 46 2d 31 2e 37
 ~~~
 
-**ليه كده:**
-
-- **observer واحد و [[observe]] لكل كارت:** الـ observer الواحد بيراقب أي عدد من العناصر، والـ callback بياخد [[entries]] فيها كل اللي حالته اتغيّرت مع بعض في نفس الفريم، و [[e.target]] بيقولك أنهي كارت.
-- **[[obs.unobserve(e.target)]]:** بعد ما الصورة اتحمّلت مفيش سبب نفضل نسأل عن الكارت. في النسخة القديمة الرجوع لفوق ونزول تاني حمّل نفس الصور تاني (٣٤ بعد ما رجعنا لـ 0، و ٥٢ في الآخر).
-- **[[rootMargin: "200px"]]:** بيكبّر منطقة الشاشة ٢٠٠px من كل ناحية، فالصورة بتبدأ تتحمّل قبل ما توصلها بشوية واليوزر ميشوفش مربع فاضي (عشان كده «بعد» حمّلت ١٠ في الأول مش ٨: الصفين اللي تحت الشاشة على طول).
-- **[[root: document]]:** من غيره، الـ observer في صفحة جوه iframe من origin تاني (زي الـ preview هنا، أو widget متركّب في موقع حد) بيحسب التقاطع مع شاشة الصفحة **الكبيرة** وبيتجاهل الـ [[rootMargin]] خالص. قسناها: نفس الصفحة من غير [[root: document]] حمّلت ٨ في الأول زي النسخة اللي مفيهاش margin أصلًا. [[root: document]] بيقول «احسب على شاشة الصفحة دي نفسها»، وفي صفحة عادية مش في iframe بيدّي نفس النتيجة.
-- **ليه observer واحد أرخص:** كل observer ليه حسابات خاصة بيه في كل فريم والمتصفح بيحسب التقاطع لكل واحد لوحده، وكل واحد بينادي callback لوحده. واحد بـ ١٠٠ target بيعمل الحسبة مرة وبينادي callback واحد بكل التغييرات.
-- **الـ scroll بنطّة كبيرة (من 1500 لـ 4000) مبيحمّلش الكروت اللي في النص:** هي معدّتش على الشاشة أصلًا، وده المطلوب.
-
-على سيرفر حقيقي حط الـ URL في [[data-src]] و [[img.src = img.dataset.src]]، وهتشوف كل صورة مرة واحدة في Network. وأسهل من ده كله لصور بسيطة: [[<img loading="lazy">]]، المتصفح بيعمل نفس الحكاية لوحده. الـ observer لما تحتاج تعمل حاجة زيادة (animation، أو fetch لداتا الكارت).
-
-**الغلطة الشائعة:** تنسى [[unobserve]] وتحط شرط [[if (img.src) return]]. بيشتغل، بس الـ observer لسه بيراقب ١٠٠ كارت للأبد وبينادي الـ callback على الفاضي مع كل scroll.` },
-            { lvl: 'تحدي', t: R`ابني فهرس جانبي (scroll spy) لمقالة: لينك لكل [[<section>]]، واللينك بتاع القسم اللي في نص الشاشة عليه [[class="active"]] بـ [[rootMargin: "-50% 0px -50% 0px"]]، والـ URL بيتحدّث بـ [[#id]] القسم بـ [[replaceState]] (درس pushState).`, done: R`اللينك النشط بيتغير لما القسم يعدّي نص الشاشة، وفي أي لحظة لينك واحد بس عليه [[active]] (حتى في آخر الصفحة)، و refresh على [[#section-3]] بيفتح عنده واللينك بتاعه نشط، ومفيش [[getBoundingClientRect]] ولا scroll listener في الكود.`, sol: R`~~~live 420 scroll-spy.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>فهرس بيتابعك</title>
-<style>
-  body { font: 15px/1.7 system-ui, sans-serif; margin: 0; display: grid; grid-template-columns: 120px 1fr; }
-  nav { position: sticky; top: 0; align-self: start; padding: 12px; }
-  nav a { display: block; padding: 4px 8px; border-radius: 4px; color: #374151; text-decoration: none; }
-  nav a.active { background: #1d4ed8; color: #fff; }
-  main { padding: 12px 16px; }
-  section { min-height: 70vh; border-bottom: 1px solid #ddd; }
-  section:last-of-type { min-height: 30vh; }
-  #note { font-size: 12px; color: #92400e; }
-</style>
-</head>
-<body>
-<nav aria-label="الفهرس">
-  <a href="#section-1">المقدمة</a>
-  <a href="#section-2">التركيب</a>
-  <a href="#section-3">الاستخدام</a>
-  <a href="#section-4">الأخطاء</a>
-  <a href="#section-5">الخلاصة</a>
-  <p id="note"></p>
-</nav>
-<main>
-  <section id="section-1"><h2>المقدمة</h2><p>نص المقدمة...</p></section>
-  <section id="section-2"><h2>التركيب</h2><p>نص التركيب...</p></section>
-  <section id="section-3"><h2>الاستخدام</h2><p>نص الاستخدام...</p></section>
-  <section id="section-4"><h2>الأخطاء</h2><p>نص الأخطاء...</p></section>
-  <section id="section-5"><h2>الخلاصة</h2><p>نص الخلاصة...</p></section>
-  <div id="end" style="height:1px"></div>
-</main>
-<script>
-  const links = new Map(
-    [...document.querySelectorAll("nav a")].map((a) => [a.hash.slice(1), a]),
-  );
-  let current = null;
-
-  function activate(id) {
-    if (id === current) return;
-    current = id;
-    for (const [key, a] of links) a.classList.toggle("active", key === id);
-    try {
-      history.replaceState(null, "", "#" + id);   // مش pushState: مش عايزين back يلف على الأقسام
-    } catch {
-      // الصفحة معزولة (زي الـ preview): الـ URL مينفعش يتغيّر، والفهرس شغال عادي
-      document.querySelector("#note").textContent = "الـ URL مبيتغيّرش هنا (صفحة معزولة)";
-    }
-  }
-
-  // خط واحد في نص الشاشة بالظبط: القسم اللي بيعدّي عليه هو النشط
-  const spy = new IntersectionObserver((entries) => {
-    for (const e of entries) if (e.isIntersecting) activate(e.target.id);
-  }, { root: document, rootMargin: "-50% 0px -50% 0px" });
-  document.querySelectorAll("main section").forEach((s) => spy.observe(s));
-
-  // آخر قسم قصير وممكن ميوصلش لنص الشاشة: لما آخر الصفحة يبان، فعّله
-  new IntersectionObserver(([e]) => {
-    if (e.isIntersecting) activate("section-5");
-  }).observe(document.querySelector("#end"));
-
-  activate(location.hash.slice(1) && links.has(location.hash.slice(1)) ? location.hash.slice(1) : "section-1");
-</script>
-</body>
-</html>
+- [[Array.from(bytes, fn)]] بيعمل Array عادية من الـ typed array وبيطبّق [[fn]] على كل عنصر في نفس الخطوة. ليه مش [[bytes.map]]؟ لأن [[map]] على [[Uint8Array]] بترجّع [[Uint8Array]] تاني، والنصوص اللي بترجّعها بتتحوّل أرقام: اتجرّب [[Uint8Array.of(1, 2).map((x) => 'a' + x)]] طلّع [[Uint8Array(2) [ 0, 0 ] ]]. الفخ ده متشرح في درس «TypedArray: set و subarray».
+- [[b.toString(16)]] بيكتب الرقم بالـ hex (أساس ١٦: من 0 لـ 9 وبعدين a لـ f). و [[padStart(2, '0')]] بيزوّد صفر لو الرقم أقل من ١٦، فـ ١٥ بتبقى [[0f]] مش [[f]]. من غيرها الأعمدة بتبوظ ومتعرفش فين byte بيخلص.
+- في Chrome (وفي Node بـ flag) فيه [[bytes.toHex()]] جاهزة بس من غير مسافات: درس «Uint8Array: fromBase64 و toHex».` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[sniff(bytes)]] بتعرف نوع الملف من أول bytes فيه (الـ «magic number»)، مش من الامتداد: PNG بيبدأ بـ [[89 50 4E 47 0D 0A 1A 0A]]، و PDF بـ [[25 50 44 46]] ([[%PDF]])، و ZIP بـ [[50 4B 03 04]] ([[PK]])، و GIF بـ [[47 49 46 38]]، و JPEG بـ [[FF D8 FF]]. ترجّع [['png']] أو [['pdf']] أو [['zip']] أو [['gif']] أو [['jpeg']] أو [['unknown']]. لازم تشتغل على ملف أقصر من التوقيع ومتقعش.`, done: R`الـ ٤ حالات بتاعة الحل بيطلعوا [[pdf zip unknown unknown]]، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js sniff.mjs
+function sniff(bytes) {
+  const starts = (sig) => sig.every((b, i) => bytes[i] === b);
+  if (starts([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) return 'png';
+  if (starts([0x25, 0x50, 0x44, 0x46])) return 'pdf';
+  if (starts([0x50, 0x4b, 0x03, 0x04])) return 'zip';
+  if (starts([0x47, 0x49, 0x46, 0x38])) return 'gif';
+  if (starts([0xff, 0xd8, 0xff])) return 'jpeg';
+  return 'unknown';
+}
+console.log(sniff(new TextEncoder().encode('%PDF-1.7')), sniff(Uint8Array.of(0x50, 0x4b, 3, 4, 20)), sniff(Uint8Array.of(0x89, 0x50)), sniff(new Uint8Array(0)));
 ~~~
 
-اعمل scroll جوه الـ preview: اللينك النشط بيتغيّر مع كل قسم يعدّي نص الشاشة. وتحت الفهرس هتلاقي «الـ URL مبيتغيّرش هنا»: الـ preview صفحة معزولة و [[replaceState]] بيرمي فيها [[SecurityError]]، فالصفحة بتكمّل من غيره. انسخها وشغّلها من سيرفر محلي والـ [[#id]] هيبان في العنوان.
-
-~~~text الناتج (Chrome 158 headless، 500×600، نفس الملف مرة جوه iframe معزول ومرة من http://localhost)
-[sandbox]   scroll 0     active=المقدمة   hash=""
-[sandbox]   scroll 500   active=التركيب   hash=""
-[sandbox]   scroll 1300  active=الأخطاء   hash=""
-[sandbox]   scroll 99999 active=الخلاصة   hash=""
-[localhost] scroll 0     active=المقدمة   hash=#section-1
-[localhost] scroll 500   active=التركيب   hash=#section-2
-[localhost] scroll 1300  active=الأخطاء   hash=#section-4
-[localhost] scroll 99999 active=الخلاصة   hash=#section-5
-[localhost] فتح على #section-3: active=الاستخدام  scrollY=910
-[localhost] refresh:            active=الاستخدام  hash=#section-3
-pageerrors: 0
+~~~text الناتج (Node 24.22)
+pdf zip unknown unknown
 ~~~
 
-**ليه كده:**
+- [[0x89]] رقم مكتوب بالـ hex في الكود (= ١٣٧)، فالتوقيع بيتكتب زي ما هو في المواصفة من غير تحويل.
+- [[starts(sig)]] بتقارن كل byte في التوقيع باللي في نفس المكان في الملف. لو الملف أقصر، [[ bytes[i] ]] برّه الطول بترجّع [[undefined]] (مفيش error في الـ typed arrays)، و [[undefined === 0x47]] بـ [[false]]، فبترجّع [['unknown']] من غير ما تقع.
+- **ليه مش الامتداد؟** حد ممكن يسمّي ملف [[virus.exe]] باسم [[photo.png]]. السيرفرات اللي بتستقبل رفع ملفات بتعمل الفحص ده بالظبط قبل ما تصدّق الامتداد.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكود ده بيبعت bytes لسيرفر في JSON، والسيرفر بيقول إن اللي وصله مش array. شغّله وشوف بيطلع إيه، وصلّح الإرسال والاستقبال:
 
-- **[[rootMargin: "-50% 0px -50% 0px"]]:** بيقص نص الشاشة من فوق ونصها من تحت، فمنطقة الـ root بقت **خط** في النص. القسم «intersecting» بس وهو معدّي على الخط ده، وفي أي لحظة قسم واحد بس بيعدّي عليه.
-- **[[root: document]]:** هنا اكتشاف حقيقي من القياس. أول نسخة كانت من غيره، وفي الـ iframe المعزول طلّعت «التركيب» وانت في أول الصفحة. السبب: في iframe من origin تاني، الـ observer الافتراضي بيحسب على شاشة الصفحة **اللي برا** وبيتجاهل الـ [[rootMargin]]، فكل قسم ظاهر كان بيتحسب intersecting وآخر واحد بيكسب. [[root: document]] خلّاه يحسب على شاشة الصفحة دي، وعلى localhost النتيجة هي هي.
-- **[[activate]] بتشيل وتحط في نفس اللفة:** [[classList.toggle("active", key === id)]] على كل اللينكات، فمستحيل يبقى فيه اتنين نشطين.
-- **[[#end]] في الآخر:** آخر قسم قصير ([[30vh]]) ومش هيوصل لنص الشاشة أبدًا. عنصر بطول 1px في آخر الصفحة، أول ما يظهر بنفعّل «الخلاصة».
-- **[[replaceState]] مش [[pushState]]:** كل قسم بيعدّي لو عمل entry في الـ history، زرار back هيلف على الأقسام واحد واحد بدل ما يرجّعك للصفحة اللي قبل.
-- **[[location.hash]] في الآخر:** فتح الصفحة على [[#section-3]] بينزل عنده (المتصفح بيعمل ده لوحده) واللينك بتاعه بيتفعّل من أول لحظة.
-- **[[try/catch]] حوالين [[replaceState]]:** في الـ preview بيرمي [[SecurityError]]، ومن غير الـ catch كان [[activate]] الأول هيوقّف السكربت كله.
+~~~js
+const bytes = new Uint8Array([1, 2]);
+const body = JSON.stringify({ bytes });
+console.log(body);
+const back = new Uint8Array(JSON.parse(body).bytes);
+console.log(back);
+~~~`, done: R`الـ JSON بقى [[{"bytes":[1,2]}]]، والاستقبال بيرجّع [[Uint8Array(2) [ 1, 2 ] ]] مش array فاضية.`, sol: R`~~~text الناتج قبل التصليح (Node 24.22)
+{"bytes":{"0":1,"1":2}}
+Uint8Array(0) []
+~~~
 
-**الغلطة الشائعة:** تحسب بـ [[getBoundingClientRect]] جوه scroll listener. بيشتغل، بس بيتنادى عشرات المرات في الثانية وكل مرة بيجبر المتصفح يحسب الـ layout. الـ observer بيتنادى بس لما الحالة تتغيّر.` },
+~~~js fixed.mjs
+const bytes = new Uint8Array([1, 2]);
+const body = JSON.stringify({ bytes: Array.from(bytes) });
+console.log(body);
+const back = Uint8Array.from(JSON.parse(body).bytes);
+console.log(back);
+~~~
+
+~~~text الناتج (Node 24.22)
+{"bytes":[1,2]}
+Uint8Array(2) [ 1, 2 ]
+~~~
+
+- [[JSON.stringify]] مبيعرفش الـ typed arrays: بيعاملها كـ object عادي ليه مفاتيح [["0"]] و [["1"]]. والاستقبال بقى [[new Uint8Array({ "0": 1, "1": 2 })]]، و object من غير [[length]] بيدّي typed array طولها صفر، **من غير أي error**. ده أوحش نوع باج: الداتا بتضيع ساكتة.
+- الحل: [[Array.from(bytes)]] قبل الـ JSON، و [[Uint8Array.from(array)]] بعده.
+- ولو الـ bytes كتير (صورة مثلًا)، الأرقام في JSON بتاخد لحد ٤ حروف للـ byte. base64 بياخد ١.٣٣ حرف بس: درس «Uint8Array: fromBase64 و toHex». أو ابعت الـ bytes نفسها من غير JSON ([[fetch(url, { method: 'POST', body: bytes })]]).` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** مليون رقم عشري في [[Array]] عادية (بـ [[push]]) وفي [[Float64Array(1_000_000)]]. قيس الذاكرة بـ [[process.memoryUsage()]] قبل وبعد: [[heapUsed]] و [[arrayBuffers]]. شغّل كل حالة في process لوحدها.`, done: R`عندك رقمين حقيقيين من جهازك، وتقدر تقول ليه الـ typed array ذاكرتها مش في [[heapUsed]]، وليه الـ Array أكبر من ٨ MB.`, sol: R`~~~js memory.mjs
+// node memory.mjs array  ثم  node memory.mjs typed
+const before = process.memoryUsage();
+const N = 1_000_000;
+const label = process.argv[2];
+let data;
+if (label === 'array') { data = []; for (let i = 0; i < N; i++) data.push(i * 0.5); }
+else { data = new Float64Array(N); for (let i = 0; i < N; i++) data[i] = i * 0.5; }
+const after = process.memoryUsage();
+const mb = (n) => (n / 1024 / 1024).toFixed(1) + ' MB';
+console.log(label, 'heap:', mb(after.heapUsed - before.heapUsed), 'arrayBuffers:', mb(after.arrayBuffers - before.arrayBuffers), data.length);
+~~~
+
+~~~text الناتج (Node 24.22، ويندوز 11)
+array heap: 29.0 MB arrayBuffers: 0.0 MB 1000000
+typed heap: 0.2 MB arrayBuffers: 7.6 MB 1000000
+~~~
+
+- **الـ Float64Array:** مليون × ٨ bytes = ٨٬٠٠٠٬٠٠٠ byte = 7.6 MB بالظبط (١ MB = ١٠٤٨٥٧٦ byte). مفيش ولا byte زيادة، لأن كل عنصر ٨ bytes ثابتة ومفيش أي معلومات عن نوعه. والذاكرة دي برّه الـ JS heap (في [[arrayBuffers]])، فالـ garbage collector مش بيلف عليها عنصر عنصر.
+- **الـ Array:** 29 MB. V8 بيخزّن الأرقام العشرية في array «doubles» برضه ٨ bytes للعنصر، بس [[push]] بيكبّر المخزن على مراحل (كل مرة أكبر بحوالي النص) والقديم بيفضل garbage لحد ما الـ GC يعدّي، وكمان أي عنصر مش رقم كان هيحوّل الـ array كلها لشكل أبطأ وأكبر.
+- **إمتى ده يفرق؟** لما الأرقام بالملايين (صوت، صورة، بيانات حساسات، ذاكرة لعبة). لقايمة ١٠٠ منتج: Array عادية ومتفكرش.` },
           ],
-          ref: [
-            { t: "MDN: Intersection Observer API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API" },
-            { t: "MDN: IntersectionObserver() constructor", url: "https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/IntersectionObserver" },
-            { t: "MDN: IntersectionObserver.rootMargin", url: "https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/rootMargin" },
-          ],
+          check: { lang: "js", starter: R`function sniff(bytes) {
+  // 'png' أو 'pdf' أو 'zip' أو 'gif' أو 'jpeg' أو 'unknown'
+}`, tests: R`test("PNG", () => expect(sniff(Uint8Array.of(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0))).toBe('png'));
+test("PDF", () => expect(sniff(Uint8Array.of(0x25, 0x50, 0x44, 0x46, 0x2d, 0x31))).toBe('pdf'));
+test("ZIP", () => expect(sniff(Uint8Array.of(0x50, 0x4b, 3, 4, 20))).toBe('zip'));
+test("GIF", () => expect(sniff(Uint8Array.of(0x47, 0x49, 0x46, 0x38, 0x39, 0x61))).toBe('gif'));
+test("JPEG", () => expect(sniff(Uint8Array.of(0xff, 0xd8, 0xff, 0xe0))).toBe('jpeg'));
+test("ملف أقصر من التوقيع", () => expect(sniff(Uint8Array.of(0x89, 0x50))).toBe('unknown'));
+test("ملف فاضي", () => expect(sniff(new Uint8Array(0))).toBe('unknown'));`, solution: R`function sniff(bytes) {
+  const starts = (sig) => sig.every((b, i) => bytes[i] === b);
+  if (starts([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) return 'png';
+  if (starts([0x25, 0x50, 0x44, 0x46])) return 'pdf';
+  if (starts([0x50, 0x4b, 0x03, 0x04])) return 'zip';
+  if (starts([0x47, 0x49, 0x46, 0x38])) return 'gif';
+  if (starts([0xff, 0xd8, 0xff])) return 'jpeg';
+  return 'unknown';
+}` },
           flag: "script",
           deep: {
-            why: "الطريقة القديمة: [[scroll]] listener بيشتغل عشرات المرات في الثانية، وجواه [[getBoundingClientRect()]] لكل عنصر، وده بيجبر المتصفح يحسب الـ layout كل مرة (layout thrashing، تاب HTML و CSS) فالـ scroll يقطّع على الموبايل. IntersectionObserver بيعمل الحساب ده جوه المتصفح بكفاءة ويناديك بس لما الحالة تتغير.",
-            how: R`الـ callback بيتنادى مرة أول ما تعمل observe (بالحالة الحالية)، وبعدين كل ما العنصر يعدّي threshold دخول أو خروج. كل entry فيه [[isIntersecting]] و [[intersectionRatio]] (نسبة الظاهر) و [[target]] و [[boundingClientRect]]. الـ callback بيشتغل async بعد الـ frame، مش أثناء الـ scroll.
+            why: R`JavaScript اتعملت للنصوص والـ DOM، والـ Array فيها بتشيل أي حاجة (رقم ونص و object في نفس الوقت) وطولها بيتغيّر. ده ممتاز للبيانات العادية بس وحش للـ bytes: مليون pixel في صورة، أو ملف صوت، أو packet من الشبكة لها شكل ثابت. فالمتصفحات (عشان WebGL في ٢٠١١) ضافت [[ArrayBuffer]] و typed arrays، وبقوا جزء من اللغة في ES2015. ومن غيرهم مكانش هيبقى فيه WebAssembly ولا [[fetch]] لملف binary ولا تعديل صور في المتصفح ولا [[Buffer]] في Node بشكله الحالي.`,
+            how: R`[[new ArrayBuffer(n)]] بيحجز [[n]] byte متصفّرين في حتة واحدة متصلة في الذاكرة، برّه الـ JS heap العادي. الـ buffer نفسه مبيتقريش ولا يتكتب: لازم **view**. الـ typed array ([[Uint8Array]] و [[Int16Array]] و [[Float64Array]]...) view بيقول «اعتبر الـ bytes دي أرقام من النوع ده»: [[Uint8Array]] كل byte رقم من 0 لـ 255، و [[Float64Array]] كل ٨ bytes رقم عشري واحد بمواصفة IEEE 754. ولما تكتب [[ asNumber[0] = 1.5 ]]، الـ engine بيحوّل [[1.5]] للـ ٨ bytes بتوعه ويكتبهم في الـ buffer، فأي view تاني على نفس الـ buffer بيشوف التغيير فورًا. والـ [[DataView]] view تالت بيقرا أي نوع من أي مكان (درس «DataView»).
 
-الفخ الشهير: لو الصفحة الأولى قصيرة والـ sentinel لسه ظاهر بعد التحميل، مفيش «تغيير» في الحالة (كان ظاهر وفضل ظاهر)، فالـ callback مش هيتنادى تاني والتحميل يقف. [[unobserve]] ثم [[observe]] بيجبره يبعت entry جديد بالحالة الحالية، فلو لسه ظاهر يحمّل الصفحة اللي بعدها.
-
-و [[loading]] بيمنع طلبين مع بعض (الـ callback ممكن يتنادى تاني قبل ما الأول يخلص)، و [[done]] بيوقف لما السيرفر يرجّع ليستة فاضية. و [[finally]] بيضمن إن loading يرجع false حتى لو الطلب فشل.
-
-في الـ reveal: [[unobserve]] بعد أول ظهور عشان الأنيميشن يحصل مرة، ومنراقبش عناصر خلاص. وللصور مش محتاج JS أصلًا: [[<img loading="lazy">]] بيعمل lazy loading لوحده.`,
-            when: R`infinite scroll، و lazy loading لحاجات تقيلة (فيديو، خرايط، iframes، charts)، وأنيميشن عند الظهور، وتحديد القسم الحالي في جدول المحتويات، و analytics «الإعلان اتشاف». وفي React فيه hooks جاهزة زي [[react-intersection-observer]]، أو [[useEffect]] + ref (تاب React).`,
-            mistakes: R`تنسى الفخ ده فالتحميل يقف على الشاشات الكبيرة. ومفيش حماية من التحميل المزدوج. وتنسى [[disconnect()]] لما الـ component يتشال (memory leak، درس memory leaks). و [[threshold: 1]] على عنصر أطول من الشاشة: عمره ما هيبقى ظاهر ١٠٠٪. وفي infinite scroll: الفوتر بقى مستحيل توصله، وزرار back بيرجّعك لأول الليستة؛ فكّر في زرار «حمّل أكتر» أو احفظ الصفحة في الـ URL. وفخ أخير: لو صفحتك جوه iframe من origin تاني (زي الـ preview الحي في الموقع ده، أو widget متركّب في موقع حد تاني)، [[rootMargin]] بيتجاهل لما الـ root هو الـ viewport الافتراضي، فالتحميل المبكر ميشتغلش. الحل [[{ root: document, rootMargin: "300px" }]]: كده الـ root هو document الصفحة نفسها، والـ margin بيتطبّق (عشان كده حلول التمارين تحت كلها كاتباه).`
+وفي Node، [[Buffer]] هو [[class Buffer extends Uint8Array]] (اتجرّب: [[Object.getPrototypeOf(Buffer.prototype) === Uint8Array.prototype]] بـ [[true]])، فأي حاجة بتتعلمها هنا شغالة على [[Buffer]] كمان، وهو بيزوّد عليها [[toString('base64')]] و [[readUInt32LE]] وغيرهم.`,
+            when: R`استخدمها لما الداتا bytes بطبيعتها: ملف بتقراه أو بتولّده (صورة، صوت، PDF، zip)، و [[fetch]] لحاجة مش JSON، و pixels الـ canvas، و WebSocket binary، والتشفير والـ hashing ([[crypto.subtle.digest]] بيرجّع [[ArrayBuffer]])، والكلام مع WebAssembly، و GPU (WebGL و WebGPU)، وبروتوكولات binary (MQTT، و MessagePack، و protobuf). وكمان لما عندك ملايين أرقام من نفس النوع ومحتاج ذاكرة أقل وسرعة ثابتة. **متستخدمهاش** لقايمة منتجات أو داتا فيها أنواع مختلفة: Array و objects عادية.`,
+            mistakes: R`- تحسب حجم نص بـ [[str.length]]: ده عدد وحدات UTF-16 مش bytes. «مصر» ٣ و ٦ bytes.
+- [[JSON.stringify(uint8)]] بيطلّع [[{"0":1,"1":2}]] مش array، والرجوع بيدّي typed array فاضية من غير error.
+- تكتب [[ buf[0] = 255 ]] على الـ [[ArrayBuffer]] نفسه: بيعمل خاصية عادية على الـ object ومبيلمسش الـ bytes خالص (درس «ArrayBuffer»).
+- [[Array.isArray(uint8)]] بـ [[false]]، فكود بيفحص بيها هيرفض الـ typed arrays. استخدم [[ArrayBuffer.isView]].
+- تفتكر الـ typed array بتكبر: [[ a[5] = 9 ]] على array طولها ٣ مبيعملش حاجة، و [[push]] مش موجودة.
+- تحط رقم أكبر من النوع: [[Uint8Array.of(256)]] بيبقى [[0]] من غير error (درس «TypedArray: العيلة»).`,
           },
           teach: R`## الفكرة في سطر
 
-بدل ما تسأل المتصفح كل شوية «العنصر ده ظهر؟»، بتقوله مرة: «لما يظهر، ناديني». المثال فيه استخدامين: تحميل صفحة بوستات جديدة لما عنصر فاضي في آخر الليستة يقرّب، وإضافة كلاس لكروت أول ما تظهر.
-
-جرّبت الكود ده في Chrome headless (عن طريق playwright-core) على صفحة فيها [[<ul id="feed">]] وبعدها [[<div id="sentinel">]]، وسيرفر Node صغير على localhost بيرد على [[/api/posts?page=N]] بـ 12 بوست متقسمين صفحات، والشاشة 1280×900. كل سطر [[li]] طوله 60px.
+الـ bytes أرقام من 0 لـ 255، و JavaScript بتشيلها في [[ArrayBuffer]] وبتقراها بـ typed arrays. كل الناتج من Node 24.22 على ويندوز 11 (ملف [[.mjs]]) إلا لو مكتوب المتصفح.
 
 ---
 
-## ١. التجهيز
+## ١. كل حاجة bytes
 
-~~~text app.js
-const feed = document.querySelector("#feed");
-const sentinel = document.querySelector("#sentinel");
-let page = 1, loading = false, done = false;
+الـ **bit** صفر أو واحد. والـ **byte** ٨ bits، فبيشيل رقم من 0 لـ 255 (٢ أس ٨ = ٢٥٦ احتمال). أي ملف على الديسك، وأي رد من الشبكة، صف من الـ bytes دي. اللي بيفرق ملف نص عن صورة هو **إزاي بنفسّر** الأرقام، مش الأرقام نفسها.
+
+~~~js
+import { writeFileSync, readFileSync } from 'node:fs';
+writeFileSync('hello.txt', 'Hi مصر');
+const bytes = readFileSync('hello.txt');
+console.log(bytes.length, 'Hi مصر'.length, bytes instanceof Uint8Array);
+console.log([...bytes].map((b) => b.toString(16).padStart(2, '0')).join(' '));
 ~~~
-
-- [[document.querySelector("#feed")]]: هات أول عنصر الـ id بتاعه feed ([[#]] في CSS معناها id).
-- [[sentinel]] يعني «الحارس»: div فاضي تحت الليستة. مش بيعرض حاجة، وظيفته الوحيدة إنه لما يقرّب من الشاشة يبقى اليوزر وصل للآخر.
-- ٣ متغيرات في سطر واحد: [[page]] رقم الصفحة الجاية، و [[loading]] «فيه طلب شغال دلوقتي؟»، و [[done]] «السيرفر خلّص البوستات؟».
-
----
-
-## ٢. [[loadMore]]: حمّل صفحة
-
-~~~text app.js
-async function loadMore() {
-  if (loading || done) return;
-  loading = true;
-  try {
-    const res = await fetch($__bt/api/posts?page=$__{page}$__bt);
-    const posts = await res.json();
-    if (posts.length === 0) done = true;
-    for (const p of posts) {
-      const li = document.createElement("li");
-      li.textContent = p.title;
-      feed.append(li);
-    }
-    page++;
-  } finally {
-    loading = false;
-  }
-  if (!done) { io.unobserve(sentinel); io.observe(sentinel); }
-}
-~~~
-
-1. [[if (loading || done) return]]: لو فيه طلب شغال **أو** خلصنا، اخرج. الـ [[||]] يعني «أو».
-2. [[loading = true]]: اقفل الباب قبل أي [[await]]، عشان أي نداء تاني ييجي وإحنا مستنيين يخرج من السطر اللي فوق.
-3. [[fetch($__bt/api/posts?page=$__{page}$__bt)]]: اطلب الصفحة. الـ template literal بيحط رقم الصفحة في الـ URL، و [[await]] بتستنى الرد.
-4. [[res.json()]]: حوّل الرد لـ array (وهي كمان بتتستنى).
-5. [[posts.length === 0]]: السيرفر رجّع ليستة فاضية، يبقى مفيش أكتر.
-6. الـ loop: لكل بوست اعمل [[<li>]] جديد بـ [[createElement]]، وحط العنوان بـ [[textContent]] (نص عادي، فلو العنوان فيه HTML مش هيتنفّذ)، وضيفه في آخر الليستة بـ [[append]].
-7. [[page++]]: المرة الجاية اطلب اللي بعدها.
-8. [[try { ... } finally { ... }]]: الـ [[finally]] بيتنفّذ **دايمًا**، سواء الطلب نجح أو رمى error. فـ [[loading]] بيرجع false حتى لو النت وقع، وإلا التحميل كان هيتقفل للأبد.
-9. آخر سطر هو أهم سطر، وهنشرحه بعد ما نفهم الـ observer.
-
----
-
-## ٣. الـ observer نفسه
-
-~~~text app.js
-const io = new IntersectionObserver((entries) => {
-  if (entries[0].isIntersecting) loadMore();
-}, { rootMargin: "300px" });
-io.observe(sentinel);
-~~~
-
-- [[new IntersectionObserver(callback, options)]]: بتعمل مراقب. intersection يعني «تقاطع»: هل العنصر متقاطع مع منطقة الشاشة؟
-- [[entries]]: array، كل عنصر فيها (entry) بيوصف عنصر واحد اتغيرت حالته. إحنا بنراقب الـ sentinel بس، فـ [[entries[0]]] هو هو.
-- [[isIntersecting]]: [[true]] لو العنصر جوه المنطقة دلوقتي.
-- [[rootMargin: "300px"]]: كبّر المنطقة 300px من كل ناحية، فالـ sentinel يتحسب «ظاهر» وهو لسه تحت الشاشة بـ 300px. فالتحميل يبدأ قبل ما اليوزر يوصل.
-- [[io.observe(sentinel)]]: ابدأ راقب. وأول ما تعمل observe، الـ callback بيتنادى **مرة فورًا** بالحالة الحالية.
-
-### اللي حصل لما شغّلته (5 بوستات في الصفحة)
-
-حطيت [[console.log]] جوه الـ callback:
-
-~~~text الناتج (السيرفر والـ Console بالترتيب)
-GET /api/posts?page=1
-IO callback: isIntersecting = true
-GET /api/posts?page=2
-IO callback: isIntersecting = true
-GET /api/posts?page=3
-IO callback: isIntersecting = true
-IO callback: isIntersecting = true
-GET /api/posts?page=4
-li count after load: 12
-~~~
-
-- الصفحات 1 و 2 و 3 جابوا 5 و 5 و 2 (الـ 12 كلهم)، و 12 × 60px = 720px، يعني الليستة كلها لسه أقصر من الشاشة، والـ sentinel فضل ظاهر، فالتحميل كمّل لوحده.
-- الصفحة 4 رجعت [[[]]] فـ [[done = true]] ووقف.
-- فيه callback اتنادى من غير طلب: وصل والطلب اللي قبله لسه شغال، فـ [[loading]] خرّجه من أول سطر. ده بالظبط ليه الحماية دي موجودة.
-
----
-
-## ٤. الفخ: [[unobserve]] ثم [[observe]]
-
-الـ observer بيناديك لما الحالة **تتغير**: من برّه لجوه أو العكس. لو الـ sentinel كان ظاهر، واتحمّلت صفحة، وفضل ظاهر، فمفيش تغيير، فمفيش نداء، والتحميل بيقف.
-
-السطر [[io.unobserve(sentinel); io.observe(sentinel);]] بيشيل المراقبة ويرجّعها، و [[observe]] جديدة بتبعت callback فورًا بالحالة الحالية، فلو لسه ظاهر يحمّل الصفحة اللي بعدها. والـ [[if (!done)]] عشان لو خلصنا منعملش كده على الفاضي.
-
-جرّبت الفرق بصفحات من بوستين بس (2 × 60 = 120px، يعني الشاشة فاضية تقريبًا):
-
-| | من غير السطر | مع السطر |
-|---|---|---|
-| الطلبات | صفحة 1 بس | من 1 لحد 7 (الـ 7 رجعت [[[]]]) |
-| عدد الـ [[li]] | 2 | 12 |
-| الشاشة | فاضية والتحميل واقف | اتملت لحد ما الداتا خلصت |
-
-من غير السطر، الـ callback اتنادى مرة واحدة بـ [[true]] ومرجعش تاني غير لما عملت scroll ونزل بـ [[false]] (الـ sentinel خرج). يعني على شاشة لابتوب ممكن متلاحظش، وعلى شاشة كبيرة الليستة بتقف.
-
----
-
-## ٥. الـ reveal: أنيميشن عند الظهور
-
-~~~text app.js
-const reveal = new IntersectionObserver((entries, obs) => {
-  for (const e of entries) {
-    if (!e.isIntersecting) continue;
-    e.target.classList.add("visible");
-    obs.unobserve(e.target);
-  }
-}, { threshold: 0.2 });
-document.querySelectorAll(".reveal").forEach((el) => reveal.observe(el));
-~~~
-
-- observer واحد بيراقب **كل** العناصر اللي عليها كلاس [[reveal]]، فالـ entries ممكن يبقى فيها أكتر من واحد، عشان كده loop.
-- [[obs]]: التاني في الـ callback هو الـ observer نفسه.
-- [[continue]]: لو العنصر ده مش ظاهر، عدّي للي بعده.
-- [[e.target]]: العنصر نفسه. [[classList.add("visible")]] بتضيفله كلاس، والـ CSS بيعمل الأنيميشن.
-- [[obs.unobserve(e.target)]]: بطّل تراقبه، فالأنيميشن يحصل مرة واحدة.
-- [[threshold: 0.2]]: نادي لما 20٪ من العنصر يبقى ظاهر.
-
-جرّبته بكارتين: [[r1]] فوق الصفحة و [[r2]] تحت بـ 1500px:
 
 ~~~text الناتج
-reveal callback: entries = 2 r1:true r2:false
-r1: reveal visible | r2: reveal
-(scroll لتحت)
-reveal callback: entries = 1 r2:true
-r2: reveal visible
+9 6 true
+48 69 20 d9 85 d8 b5 d8 b1
 ~~~
 
-أول نداء جه فيه الاتنين مع بعض (الحالة الأولى)، [[r1]] ظاهر فاخد الكلاس، و [[r2]] لأ. وبعد الـ scroll جه [[r2]] لوحده. و [[r1]] مجاش تاني لأننا شلناه من المراقبة.
+- [[readFileSync]] من غير encoding بيرجّع الـ bytes نفسها في [[Buffer]]، و [[instanceof Uint8Array]] بـ [[true]] لأن [[Buffer]] نوع من [[Uint8Array]].
+- النص ٦ حروف بس ٩ bytes: [[H]] و [[i]] والمسافة byte لكل واحد، والـ ٣ حروف العربي ٢ bytes لكل حرف في UTF-8.
+- السطر التاني **hex dump**: كل byte مكتوب بالـ hex (أساس ١٦). ليه hex؟ لأن كل byte رقمين بالظبط ([[00]] لـ [[ff]])، فالأعمدة بتفضل منظمة، وكل رقم hex = ٤ bits.
+
+| الـ bytes | يعني |
+|---|---|
+| [[48 69]] | [[H]] و [[i]]: نفس أرقام ASCII (٧٢ و ١٠٥) |
+| [[20]] | المسافة (٣٢ بالعشري) |
+| [[d9 85]] | حرف [[م]] في UTF-8: byteين بيبدأ أولهم بـ [[d9]] |
+| [[d8 b5]] و [[d8 b1]] | حرفين [[ص]] و [[ر]]، كل واحد byteين |
+
+---
+
+## ٢. typed array يعني إيه: buffer و view
+
+JavaScript بتفصل بين حاجتين:
+
+~~~text الشكل
+ArrayBuffer(8)      [ 00 | 00 | 00 | 00 | 00 | 00 | f8 | 3f ]   ← الذاكرة نفسها، مبتتقريش مباشرة
+Uint8Array(8)        0    0    0    0    0    0   248   63     ← نفس الذاكرة: كل byte رقم
+Float64Array(1)      1.5                                         ← نفس الذاكرة: الـ 8 bytes رقم واحد
+~~~
+
+| الحاجة | دورها |
+|---|---|
+| [[ArrayBuffer]] | حتة ذاكرة خام بعدد bytes ثابت ومتصفّرة في الأول، ومفيهاش أي طريقة تقرا أو تكتب رقم |
+| typed array ([[Uint8Array]] وأخواتها) | «عدسة» على الـ buffer: بتقول الـ bytes دي أرقام من نوع واحد وحجم واحد، وبتتقري بـ [[ a[i] ]] زي الـ Array |
+| [[DataView]] | عدسة مرنة: تقرا أي نوع من أي مكان، وتختار ترتيب الـ bytes |
+
+~~~js
+const buf = new ArrayBuffer(8);
+const asBytes = new Uint8Array(buf);
+const asNumber = new Float64Array(buf);
+asNumber[0] = 1.5;
+console.log(asBytes, asNumber);
+~~~
+
+~~~text الناتج
+Uint8Array(8) [
+  0, 0,   0,  0,
+  0, 0, 248, 63
+] Float64Array(1) [ 1.5 ]
+~~~
+
+كتبنا في [[asNumber]] بس، و [[asBytes]] شاف التغيير لأن الاتنين عدسات على **نفس** الـ ٨ bytes. الرقم [[1.5]] بصيغة IEEE 754 (الصيغة اللي كل أرقام JavaScript متخزنة بيها) هو الـ bytes [[3f f8 00 00 00 00 00 00]]، وظهروا بالعكس ([[248]] = [[f8]] و [[63]] = [[3f]] في الآخر) لأن الجهاز **little-endian**: بيحط الـ byte الصغير الأول. ده متشرح بالتفصيل في درس «TypedArray: العيلة» ودرس «DataView».
+
+---
+
+## ٣. من bytes لنص تاني
+
+~~~js
+console.log(new TextDecoder().decode(bytes.subarray(3)));
+~~~
+
+~~~text الناتج
+مصر
+~~~
+
+- [[bytes.subarray(3)]]: view جديد على نفس الذاكرة من byte رقم ٣ للآخر، من غير نسخ (درس «TypedArray: set و subarray»).
+- [[new TextDecoder().decode(...)]]: بيفسّر الـ bytes كـ UTF-8 ويرجّع نص. والعكس [[new TextEncoder().encode(text)]] (درس «Uint8Array: fromBase64 و toHex»).
+- لو قصيت في نص حرف هيطلع [[�]] مكان الحرف المقطوع: [[subarray(4)]] طلّع [[�صر]]، لأن الـ byte [[85]] لوحده مش حرف UTF-8 كامل.
+
+---
+
+## ٤. هتقابل الـ bytes فين
+
+| المكان | بيرجّع إيه |
+|---|---|
+| [[fs.readFileSync(path)]] في Node | [[Buffer]] (نوع من [[Uint8Array]]) |
+| [[await res.arrayBuffer()]] و [[await res.bytes()]] بعد [[fetch]] | [[ArrayBuffer]] و [[Uint8Array]] (الاتنين موجودين في Chrome 157 و Node 24.22) |
+| [[await file.arrayBuffer()]] و [[await file.bytes()]] لملف من [[input type=file]] | نفس الكلام، [[File]] نوع من [[Blob]] |
+| [[ctx.getImageData(0, 0, w, h).data]] في canvas | [[Uint8ClampedArray]]: ٤ bytes لكل pixel (أحمر وأخضر وأزرق وشفافية) |
+| [[ws.binaryType = 'arraybuffer']] في WebSocket | كل رسالة binary بتوصل [[ArrayBuffer]] |
+| [[crypto.getRandomValues(new Uint8Array(16))]] | بيملا الـ typed array بأرقام عشوائية آمنة |
+| [[await crypto.subtle.digest('SHA-256', bytes)]] | [[ArrayBuffer]] فيه ٣٢ byte (الـ hash) |
+| [[memory.buffer]] في WebAssembly | [[ArrayBuffer]] هو ذاكرة الـ wasm كلها (درس «WebAssembly في المتصفح») |
+| [[res.body]] في Streams | دفعات [[Uint8Array]] (درس «Streams») |
+
+---
+
+## ٥. typed array مش Array
+
+~~~js
+const a = new Uint8Array(3);
+a[5] = 9;
+console.log(a, a[5], a.length, Array.isArray(a), typeof a.push);
+~~~
+
+~~~text الناتج
+Uint8Array(3) [ 0, 0, 0 ] undefined 3 false undefined
+~~~
+
+- الطول **ثابت** من ساعة ما اتعملت: [[ a[5] = 9 ]] برّه الطول بيتجاهَل من غير error، ومفيش [[push]] ولا [[pop]] ولا [[splice]].
+- مفيش «فراغات» (holes): كل خانة فيها رقم، متصفّرة في الأول.
+- كل العناصر نفس النوع: [[Uint8Array]] بتشيل أرقام صحيحة من 0 لـ 255 بس، وأي حاجة تانية بتتحوّل (درس «TypedArray: العيلة»).
+- [[Array.isArray]] بـ [[false]]، و [[JSON.stringify]] بيطلّعها object، بس [[for...of]] و spread و [[map]] و [[filter]] و [[at]] كلهم شغالين (درس «TypedArray: set و subarray»).
+
+---
+
+## ٦. خريطة الوحدة
+
+| الدرس | هتتعلم فيه |
+|---|---|
+| «ArrayBuffer: byteLength و slice و isView» | الـ buffer نفسه: إزاي يتعمل ويتنسخ وتعرف إن حاجة view |
+| «ArrayBuffer: resize و transfer و detached» | buffer بيكبر، وبينتقل لمكان تاني ويبقى فاضي |
+| «TypedArray: العيلة و BYTES_PER_ELEMENT و overflow» | الـ ١٢ نوع، والأرقام اللي مبتكفيش، و endianness |
+| «TypedArray: set و subarray و slice و كل الـ methods» | كل method، والفرق عن Array |
+| «DataView: getUint16 و setFloat32 و endianness» | قراية ملفات binary حقيقية (WAV و PNG) |
+| «Uint8Array: fromBase64 و toHex و TextEncoder» | النص ⇄ bytes ⇄ base64 و hex |
+| «Web Workers و worker_threads: postMessage و transfer» | الشغل التقيل في thread تاني، ونقل الـ buffers |
+| «SharedArrayBuffer: growable و crossOriginIsolated» | ذاكرة مشتركة بين threads، والـ headers اللي محتاجاها |
+| «Atomics: add و compareExchange و wait و notify» | إزاي threads تشتغل على نفس الذاكرة من غير ما تبوّظها |
 
 ---
 
 ## الخلاصة
 
-| الحاجة | معناها |
-|---|---|
-| [[new IntersectionObserver(cb, opts)]] | مراقب واحد لأي عدد عناصر |
-| [[observe(el)]] / [[unobserve(el)]] | ابدأ / وقّف مراقبة عنصر (و observe بتنادي فورًا) |
-| [[entry.isIntersecting]] | العنصر في المنطقة دلوقتي؟ |
-| [[entry.target]] | العنصر نفسه |
-| [[rootMargin]] | كبّر المنطقة (ابدأ بدري) |
-| [[threshold]] | نسبة الظهور المطلوبة (0 لـ 1) |
-
-- الـ callback بيتنادى عند **تغيّر** الحالة بس، فلازم الحركة بتاعة unobserve/observe في infinite scroll.
-- [[loading]] يمنع طلبين مع بعض، و [[finally]] يضمن إنه يرجع false.`,
+- كل حاجة bytes، والـ hex طريقة نكتبها بيها: رقمين لكل byte.
+- [[ArrayBuffer]] = الذاكرة، والـ typed array أو [[DataView]] = العدسة اللي بتقرا بيها. أكتر من عدسة على نفس الذاكرة بيشوفوا نفس الـ bytes.
+- [[str.length]] مش حجم النص: [[new TextEncoder().encode(str).length]] هو الحجم في UTF-8.
+- الـ typed array طولها ثابت ونوعها واحد ومش [[Array]]، و [[JSON.stringify]] مبيفهمهاش.`,
           lines: [
-            R`بنمسك الليستة ([[#feed]]) اللي البوستات هتتضاف فيها. بنجيبها مرة واحدة برّه الدالة بدل ما ندوّر عليها في الـ DOM مع كل تحميل.`,
-            R`الـ sentinel: عنصر فاضي حاطينه بعد الليستة مباشرة. مش هنراقب الـ scroll نفسه (event بيتنادى مئات المرات)، هنراقب العنصر ده: لما يقرّب من الشاشة يبقى اليوزر قرّب من الآخر ونحمّل الجديد.`,
-            R`تلات متغيرات حالة: [[page]] رقم الصفحة الجاية، و [[loading]] بتمنع طلبين في نفس الوقت (من غيرها ممكن نفس الصفحة تتجاب مرتين وتتكرر البوستات)، و [[done]] بتوقف التحميل لما السيرفر يقول مفيش أكتر.`,
-            R`دالة التحميل. [[async]] عشان جواها [[await]] للـ [[fetch]]، والـ observer هو اللي بيناديها كل ما الـ sentinel يظهر.`,
-            R`الحارس: لو فيه تحميل شغّال أو الداتا خلصت، اخرج من غير ما تعمل حاجة. من غيره، scroll سريع ممكن يبعت كذا طلب لنفس الصفحة.`,
-            R`بنقفل الباب قبل أي [[await]]: من اللحظة دي أي نداء تاني لـ [[loadMore]] هيخرج من السطر اللي فوق لحد ما نفتحه تاني.`,
-            R`[[try]] معاها [[finally]] (من غير catch) عشان [[loading]] يرجع [[false]] مهما حصل. لو الطلب فشل ومرجّعناهاش، التحميل هيفضل مقفول للأبد والليستة تقف.`,
-            R`بنطلب الصفحة الحالية من الـ API، ورقمها داخل في الـ URL بالـ template literal. الـ [[await]] بيستنى الرد من غير ما يجمّد الصفحة.`,
-            R`[[res.json()]] بتقرا الـ body وتحوّله من JSON لـ array of objects، وهي كمان Promise فمحتاجة [[await]]. ملحوظة: [[fetch]] مبيرميش error على 404 أو 500، فلو عايز تتعامل معاهم افحص [[res.ok]] الأول.`,
-            R`لو السيرفر رجّع array فاضية يبقى خلصنا، فنعلّم [[done]] عشان منبعتش طلبات تانية على الفاضي.`,
-            R`بنلف على البوستات اللي جت عشان نضيف كل واحد في الليستة.`,
-            R`بنعمل [[<li>]] جديد لكل بوست. العنصر لسه في الذاكرة ومش ظاهر لحد ما نضيفه.`,
-            R`بنحط العنوان بـ [[textContent]] مش [[innerHTML]]: لو العنوان جواه HTML أو script كاتبه يوزر هيظهر كنص عادي ومش هيتنفذ، فمفيش XSS.`,
-            R`بنضيف الـ [[<li>]] في آخر الليستة فيظهر. ولأن الـ sentinel بعد الليستة، بيتزق لتحت مع كل بوست جديد.`,
-            R`نهاية الـ [[for]] اللي بتضيف البوستات.`,
-            R`نزوّد رقم الصفحة عشان المرة الجاية نطلب اللي بعدها. موجود جوه الـ [[try]] بعد النجاح، فلو الطلب فشل هنعيد نفس الصفحة المرة الجاية.`,
-            R`[[finally]] بيتنفذ في كل الحالات: نجح الطلب، أو رمى error، أو حتى عمل [[return]].`,
-            R`نفتح الباب تاني عشان التحميل الجاي يقدر يبدأ.`,
-            R`نهاية الـ [[finally]].`,
-            R`الفخ: الـ observer بيبلّغ لما الحالة **تتغير** بس (دخل أو خرج). لو البوستات الجديدة قليلة والـ sentinel لسه ظاهر، مفيش تغيير فمفيش نداء والتحميل يقف. [[unobserve]] وبعدها [[observe]] بيجبره يبلّغ بالحالة الحالية من جديد، فلو لسه ظاهر هيحمّل الصفحة اللي بعدها.`,
-            R`نهاية [[loadMore]].`,
-            R`بنعمل الـ observer وبنديله callback بيتنادى كل ما حالة عنصر متراقب تتغير. [[entries]] array فيها entry لكل عنصر اتغيّر، وهنا بنراقب عنصر واحد فبناخد الأول.`,
-            R`[[isIntersecting]] بـ [[true]] لما الـ sentinel يدخل المنطقة المراقبة، فنحمّل. ولازم نفحصها لأن الـ callback بيتنادى برضه لما العنصر **يخرج**، ومن غير الفحص هتحمّل وهو بيختفي.`,
-            R`[[rootMargin: "300px"]] بيكبّر منطقة المراقبة 300 بكسل حوالين الشاشة، فالتحميل يبدأ قبل ما اليوزر يوصل للآخر فعلًا ومش هيشوف فراغ وهو مستني. ونهاية الـ observer.`,
-            R`نبدأ نراقب الـ sentinel. الـ observer بينادي الـ callback مرة فورًا بالحالة الحالية، فلو الـ sentinel ظاهر من الأول، أول صفحة هتتحمّل لوحدها من غير ما نناديها بإيدنا.`,
-            R`observer تاني منفصل للأنيميشن: عناصر تظهر بحركة لما توصلها في الـ scroll. الـ callback بياخد [[obs]] كمان (الـ observer نفسه) عشان نقدر نوقف المراقبة من جوه.`,
-            R`بنلف على كل الـ entries، لأن لو اليوزر عمل scroll سريع ممكن كذا عنصر يدخلوا مع بعض ويتبلّغوا في نفس النداء.`,
-            R`العنصر ده خرج من الشاشة مش دخل، فـ [[continue]] تعدّيه للي بعده.`,
-            R`نضيف كلاس [[visible]]، والـ CSS هو اللي عامل الحركة: [[.reveal]] مستخبي و [[.reveal.visible]] ظاهر بـ transition. الـ JS بيقول «إمتى» بس، والـ CSS بيقول «إزاي».`,
-            R`بطّل تراقب العنصر ده بعد ما ظهر، فالأنيميشن يحصل مرة واحدة ومش بيتعاد كل ما تطلع وتنزل، وكمان بيوفّر شغل على المتصفح.`,
-            R`نهاية الـ [[for]].`,
-            R`[[threshold: 0.2]] معناها بلّغني لما 20٪ من العنصر يبقى ظاهر، مش أول بكسل. كده الحركة تبدأ والعنصر باين فعلًا. ونهاية الـ observer.`,
-            R`بنجيب كل العناصر اللي عليها كلاس [[reveal]] ونراقبهم كلهم بنفس الـ observer. observer واحد لعناصر كتير أوفر من observer لكل عنصر.`,
+            R`بنستورد دالتين من [[node:fs]]: واحدة تكتب ملف وواحدة تقراه كله مرة واحدة.`,
+            R`بنكتب النص [[Hi مصر]] في ملف، و Node بيحوّله لـ bytes بـ UTF-8 لوحده وهو بيكتب.`,
+            R`من غير encoding، [[readFileSync]] بيرجّع الـ bytes نفسها في [[Buffer]] مش نص.`,
+            R`بيطبع ٩ (عدد الـ bytes) و ٦ (عدد الحروف) و [[true]]: الـ [[Buffer]] نوع من [[Uint8Array]].`,
+            R`بنحوّل كل byte لرقمين hex بـ [[toString(16)]] و [[padStart]] ونحط مسافة بينهم: ده الـ hex dump.`,
+            R`بنحجز ٨ bytes متصفّرين. الـ [[ArrayBuffer]] نفسه مبيتقريش، محتاج view.`,
+            R`view أول: كل byte من الـ ٨ عنصر لوحده رقم من 0 لـ 255.`,
+            R`view تاني على **نفس** الـ buffer: الـ ٨ bytes كلهم رقم عشري واحد [[Float64]].`,
+            R`بنكتب [[1.5]] من خلال الـ view التاني، فالـ engine بيكتب الـ ٨ bytes بتوعه في الذاكرة المشتركة.`,
+            R`الـ view الأول شاف الـ bytes [[0 0 0 0 0 0 248 63]]، والتاني شاف [[1.5]]: نفس الذاكرة بعينين.`,
+            R`[[subarray(3)]] بياخد الـ bytes من مكان ٣ (بعد [[Hi]] والمسافة)، و [[TextDecoder]] بيرجّعهم نص: [[مصر]].`,
           ],
-          sol: R`الطلبات بتحصل قبل ما توصل للآخر بشوية (الـ 300px)، وكل طلب بيضيف ٥ عناصر. ولما [[_page]] يعدّي 20 (١٠٠ بوست ÷ ٥) السيرفر بيرجّع [[[]]] فـ [[done = true]] والطلبات تقف.
-
-من غير سطر [[unobserve/observe]] وبـ limit 2 على شاشة كبيرة: بيحمّل الصفحة الأولى، والعنصرين مش مالين الشاشة، فالـ sentinel لسه ظاهر، وبيقف هنا. ولو عملت scroll بسيط لفوق ولتحت يحمّل تاني (لأن الحالة اتغيرت). ده بالظبط الـ bug اللي بيظهر على الشاشات الكبيرة بس ومحدش بيلاحظه على اللابتوب. مع السطر، بيحمّل لوحده لحد ما الشاشة تتملي.`
+          ref: [
+            { t: "MDN Guide: JavaScript typed arrays", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Typed_arrays" },
+            { t: "MDN: ArrayBuffer", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer" },
+            { t: "MDN: TypedArray", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray" },
+            { t: "Node.js: Buffer", url: "https://nodejs.org/api/buffer.html" },
+          ],
+          pre: [{ to: "js/string و UTF-16: length و codePointAt", why: R`ليه [[length]] بيعد وحدات UTF-16 مش حروف ولا bytes` }, { to: "js/bitwise و shifts", why: R`الـ bits والـ hex و [[0xff]]: لغة الـ bytes` }],
         },
         {
-          cmd: "ResizeObserver",
-          title: "مكوّن يتصرف حسب مقاسه هو، مش مقاس الشاشة",
-          desc: R`[[ResizeObserver]] بيناديك لما عنصر يتغير مقاسه، مهما كان السبب: الشاشة اتغيرت، أو sidebar اتقفل، أو المحتوى زاد. [[window.resize]] بيعرف مقاس الشاشة بس، والكارت ممكن يكون في عمود ضيق على شاشة كبيرة.
+          cmd: "ArrayBuffer: byteLength و slice و isView",
+          title: "إزاي تعمل ArrayBuffer وتنسخ حتة منه، وتعرف إن الحاجة اللي معاك view على buffer؟",
+          desc: R`[[new ArrayBuffer(n)]] بيحجز [[n]] byte متصفّرين، و [[buf.byteLength]] بيقولك العدد. الـ buffer **مبيتقريش ولا يتكتب بنفسه**: لازم view ([[new Uint8Array(buf)]] أو [[new DataView(buf)]]).
 
-الـ entry فيه [[contentBoxSize[0].inlineSize]] (العرض) و [[blockSize]] (الطول)، وفيه [[contentRect]] الأقدم بـ [[width]] و [[height]].
+• [[buf.slice(start, end)]]: buffer **جديد** فيه نسخة من الـ bytes دي. التعديل في النسخة مبيلمسش الأصل.
+• [[ArrayBuffer.isView(x)]]: [[true]] لو [[x]] typed array أو [[DataView]]، و [[false]] للـ buffer نفسه ولأي Array.
+• [[ ArrayBuffer[Symbol.species] ]]: الـ class اللي [[slice]] بيعمل منها النسخة، وبتفرق لو عملت subclass.
 
-قبل ما تكتب JS: لو كل اللي عايزه تغيير شكل حسب عرض الأب، [[@container]] في CSS بيعمل ده من غير JS (درس «container queries» في تاب HTML و CSS). ResizeObserver للحاجات اللي CSS ميقدرش عليها: canvas، و charts، وحساب عدد عناصر، ومحرر نص.`,
-          example: R`const card = document.querySelector(".card");
-const ro = new ResizeObserver((entries) => {
-  for (const entry of entries) {
-    const width = entry.contentBoxSize[0].inlineSize;
-    entry.target.dataset.size = width < 400 ? "s" : width < 700 ? "m" : "l";
-  }
-});
-ro.observe(card);
-// CSS لازم للـ canvas: canvas { display: block; width: 100%; height: 100%; } والأب ليه ارتفاع، وإلا هيكبر لوحده
-const canvas = document.querySelector("canvas");
-new ResizeObserver(([entry]) => {
-  const { width, height } = entry.contentRect;
-  canvas.width = Math.round(width * devicePixelRatio);
-  canvas.height = Math.round(height * devicePixelRatio);
-  draw();
-}).observe(canvas.parentElement);
-function draw() {
-  const ctx = canvas.getContext("2d");
-  ctx.fillRect(0, 0, canvas.width / 2, canvas.height / 2);
-}`,
-          try: R`حط الكارت جوه div عرضه [[resize: horizontal; overflow: auto]] عشان تقدر تسحبه بالماوس، واكتب CSS لـ [[.card[data-size="s"]]] يخلي الصورة فوق النص. اسحب وشوف الـ data-size بيتغير في Elements. وبعدين اعمل نفس الشكل بـ [[container-type: inline-size]] و [[@container (width < 400px)]] من غير JS. أنهي أسهل؟`,
+وفخ Node المشهور: [[Buffer]] الصغير متخزن جوه buffer كبير مشترك (٦٤ KB في Node 24.22)، فـ [[new Uint8Array(file.buffer)]] بيديك ٦٥٥٣٦ byte مش حجم الملف. لازم [[byteOffset]] و [[byteLength]].`,
+          example: R`// buffer.mjs: ArrayBuffer هو الذاكرة، والـ views هي اللي بتقرا وتكتب
+const buf = new ArrayBuffer(8);
+console.log(buf.byteLength, buf[0], (buf[0] = 255), new Uint8Array(buf)[0]);
+const bytes = new Uint8Array(buf);
+bytes.set([1, 2, 3, 4, 5, 6, 7, 8]);
+const part = buf.slice(2, 5);
+new Uint8Array(part)[0] = 99;
+console.log(part.byteLength, new Uint8Array(part), bytes[2]);
+console.log(new Uint8Array(buf.slice(-3)), buf.slice(6, 2).byteLength);
+console.log(ArrayBuffer.isView(bytes), ArrayBuffer.isView(new DataView(buf)), ArrayBuffer.isView(buf), ArrayBuffer.isView([1, 2]));
+const fromNode = Buffer.from('abc');
+console.log(fromNode.byteOffset, fromNode.buffer.byteLength, new Uint8Array(fromNode.buffer, fromNode.byteOffset, fromNode.length));`,
+          try: R`اعمل ملف فيه ٣ bytes بس ([[writeFileSync('small.bin', Uint8Array.of(1, 2, 3))]])، واقراه بـ [[readFileSync]]، واطبع [[file.length]] و [[new Uint8Array(file.buffer).length]]. اتوقّع الرقمين الأول. وبعدين صلّحها بحيث الـ view يبقى ٣ bytes بالظبط.`,
+          sol: R`~~~js pool.mjs
+import { readFileSync, writeFileSync } from 'node:fs';
+writeFileSync('small.bin', Uint8Array.of(1, 2, 3));
+const file = readFileSync('small.bin');
+const wrong = new Uint8Array(file.buffer);
+console.log(file.length, wrong.length);
+~~~
+
+~~~text الناتج (Node 24.22)
+3 65536
+~~~
+
+~~~js pool-fixed.mjs
+import { readFileSync } from 'node:fs';
+const file = readFileSync('small.bin');
+const view = new Uint8Array(file.buffer, file.byteOffset, file.byteLength);
+const copy = file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength);
+console.log(view.length, view, copy.byteLength);
+~~~
+
+~~~text الناتج (Node 24.22)
+3 Uint8Array(3) [ 1, 2, 3 ] 3
+~~~
+
+- Node بيحجز buffer كبير واحد ([[Buffer.poolSize]] = ٦٥٥٣٦ في Node 24.22) ويقسّمه على الـ Buffers الصغيرة، عشان يحجز ذاكرة مرة واحدة بدل ألف مرة. فـ [[file.buffer]] هو الـ buffer الكبير كله، والملف بتاعك ٣ bytes في مكان ما جواه.
+- [[new Uint8Array(buffer, byteOffset, length)]]: view على حتة من الـ buffer بس، من غير نسخ. وده الحل لو هتقرا بس.
+- [[buffer.slice(start, end)]]: نسخة لوحدها بالمقاس. وده الحل لو هتبعت الـ [[ArrayBuffer]] لحتة تانية (worker أو مكتبة بتاخد [[ArrayBuffer]])، عشان متبعتش ٦٤ KB فيهم داتا ملفات تانية.`,
           practice: [
-            { lvl: 'سريع', t: R`ابني عنوان عمود في جدول بيكتب اسم اليوم كامل ([[Wednesday]]) لو عرضه 120px أو أكتر، ومختصر ([[Wed]]) لو أقل، بـ ResizeObserver على العنوان نفسه و [[Intl.DateTimeFormat]] بـ [[weekday: "long"]] و [["short"]].`, done: R`لما تضيّق العمود الأسماء بتتقلب مختصرة والعكس، ومفيش نص بيتقص بـ «...»، والتبديل بيحصل عند 120px من عرض العمود مش الشاشة (جرّب تضيّق العمود بس والشاشة كبيرة).`, sol: R`السلايدر بيغيّر عرض الأعمدة بس، عشان تجرّب «العمود ضاق والشاشة لسه كبيرة».
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الـ buffer طوله ٤. اكتب [[byteLength]] كل نسخة:
 
-~~~live 200 day-headers.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أسماء الأيام حسب عرض العمود</title>
-<style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
-  table { border-collapse: collapse; table-layout: fixed; }
-  th, td { box-sizing: border-box; border: 1px solid #ccc; padding: 6px; white-space: nowrap; overflow: hidden; }
-  th { background: #f3f4f6; }
-  label { display: block; margin-bottom: 12px; }
-</style>
-</head>
-<body>
-<label>عرض كل عمود: <input type="range" id="w" min="50" max="180" value="150"> <output id="wv">150</output>px</label>
-<table>
-  <thead><tr id="days"></tr></thead>
-  <tbody><tr id="cells"></tr></tbody>
-</table>
-<script>
-  const long = new Intl.DateTimeFormat("en", { weekday: "long" });
-  const short = new Intl.DateTimeFormat("en", { weekday: "short" });
-  const row = document.querySelector("#days");
-  const cells = document.querySelector("#cells");
-
-  // 2026-11-16 يوم اتنين، وبعده ٦ أيام
-  for (let i = 0; i < 7; i++) {
-    const day = new Date(2026, 10, 16 + i);
-    const th = document.createElement("th");
-    th.dataset.long = long.format(day);
-    th.dataset.short = short.format(day);
-    th.textContent = th.dataset.long;
-    row.append(th);
-    cells.insertAdjacentHTML("beforeend", "<td>—</td>");
-  }
-
-  // بنراقب عرض العنوان نفسه، مش الشاشة
-  const ro = new ResizeObserver((entries) => {
-    for (const e of entries) {
-      const width = e.borderBoxSize[0].inlineSize;
-      const th = e.target;
-      const text = width >= 120 ? th.dataset.long : th.dataset.short;
-      if (th.textContent !== text) th.textContent = text;
-    }
-  });
-  row.querySelectorAll("th").forEach((th) => ro.observe(th));
-
-  const w = document.querySelector("#w");
-  const setWidth = () => {
-    row.querySelectorAll("th").forEach((th) => (th.style.width = w.value + "px"));
-    document.querySelector("#wv").textContent = w.value;
-  };
-  w.addEventListener("input", setWidth);
-  setWidth();
-</script>
-</body>
-</html>
+~~~js
+const b = new ArrayBuffer(4);
+console.log(b.slice(1).byteLength, b.slice(1, 100).byteLength, b.slice(-1).byteLength, b.slice(3, 1).byteLength, b.slice().byteLength);
+~~~`, done: R`كتبت الخمس أرقام صح، وتقدر تقول [[slice]] بتعمل إيه لما [[end]] أكبر من الطول أو أصغر من [[start]].`, sol: R`~~~text الناتج (Node 24.22)
+3 3 1 0 4
 ~~~
 
-~~~text الناتج (Chrome 158 headless، الشاشة 1400px طول الوقت، والسلايدر على القيم دي)
-عرض 150px: Monday Tuesday Wednesday Thursday Friday Saturday Sunday | فيه نص مقصوص؟ false
-عرض 121px: Monday Tuesday Wednesday Thursday Friday Saturday Sunday | فيه نص مقصوص؟ false
-عرض 119px: Mon Tue Wed Thu Fri Sat Sun | فيه نص مقصوص؟ false
-عرض 100px: Mon Tue Wed Thu Fri Sat Sun | فيه نص مقصوص؟ false
-عرض 60px: Mon Tue Wed Thu Fri Sat Sun | فيه نص مقصوص؟ false
-عرض 170px: Monday Tuesday Wednesday Thursday Friday Saturday Sunday | فيه نص مقصوص؟ false
-pageerrors: 0
+- [[slice(1)]]: من ١ للآخر = ٣ bytes.
+- [[slice(1, 100)]]: الـ [[end]] بيتقص على الطول (٤)، فـ ٣ برضه ومفيش error.
+- [[slice(-1)]]: السالب بيتعد من الآخر، فـ [[-1]] = آخر byte.
+- [[slice(3, 1)]]: [[end]] قبل [[start]]: buffer طوله **صفر**، مش error ومش بالعكس.
+- [[slice()]]: نسخة كاملة. ودي أسهل طريقة تنسخ buffer: [[const copy = buf.slice()]].
+- نفس قواعد [[Array.prototype.slice]] بالظبط (درس «Array: at و slice و concat»)، بس النتيجة bytes.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[concatBuffers(...parts)]] بتاخد أي عدد من [[ArrayBuffer]] أو views (typed arrays أو [[Buffer]]) وترجّع [[ArrayBuffer]] واحد فيهم كلهم ورا بعض. لازم تحترم [[byteOffset]] بتاع الـ views.`, done: R`[[concatBuffers(Uint8Array.of(1, 2).buffer, Uint16Array.of(0x0403), new ArrayBuffer(0), Buffer.from('A'))]] بيرجّع buffer طوله ٥ فيه [[1, 2, 3, 4, 65]].`, sol: R`~~~js concat.mjs
+function concatBuffers(...parts) {
+  const total = parts.reduce((n, p) => n + p.byteLength, 0);
+  const out = new Uint8Array(total);
+  let at = 0;
+  for (const p of parts) {
+    const bytes = ArrayBuffer.isView(p) ? new Uint8Array(p.buffer, p.byteOffset, p.byteLength) : new Uint8Array(p);
+    out.set(bytes, at);
+    at += p.byteLength;
+  }
+  return out.buffer;
+}
+const r = concatBuffers(Uint8Array.of(1, 2).buffer, Uint16Array.of(0x0403), new ArrayBuffer(0), Buffer.from('A'));
+console.log(r.byteLength, new Uint8Array(r));
 ~~~
 
-**ليه كده:**
+~~~text الناتج (Node 24.22)
+5 Uint8Array(5) [ 1, 2, 3, 4, 65 ]
+~~~
 
-- **[[ro.observe(th)]] لكل عنوان:** الـ ResizeObserver بيتنادى لما **العنصر** يتغيّر مقاسه لأي سبب (العمود ضاق، الـ sidebar اتفتح، الخط كبر)، مش لما الشاشة تتغيّر. عشان كده الشاشة فضلت 1400px والأسماء اتقلبت.
-- **[[e.borderBoxSize[0].inlineSize]]:** العرض شامل الـ padding والـ border، وهو اللي بتشوفه. [[inlineSize]] هو العرض في اتجاه الكتابة (أفقي في العربي والإنجليزي).
-- **[[box-sizing: border-box]]:** أول نسخة كانت من غيره، فالعرض الحقيقي طلع 163 لما السلايدر 150 (الـ padding 12 والـ border اتزادوا عليه)، والتبديل حصل عند سلايدر 107 مش 120. مع [[border-box]] السلايدر = العرض بالظبط.
-- **[[Intl.DateTimeFormat("en", { weekday: "long" })]] و [["short"]]:** الأسماء من المتصفح نفسه، فلو غيّرت [["en"]] لـ [["ar"]] هتطلع «الاثنين» و «الاثنين» برضه (العربي مفيهوش اختصار)، وده سبب إننا بنخزّن الاتنين في [[data-*]] ونختار.
-- **[[if (th.textContent !== text)]]:** متغيّرش النص لو هو هو. تغيير النص ممكن يغيّر مقاس العنصر، وده ممكن يدخّل الـ observer في لف (التمرين التالت بيوريه).
+- الطول الكلي بـ [[byteLength]] (مش [[length]]): [[Uint16Array]] طولها ١ بس ٢ bytes.
+- [[ArrayBuffer.isView(p)]] بتفرّق بين الحالتين: الـ view بنعمل عليه [[Uint8Array]] بنفس [[byteOffset]] و [[byteLength]]، فالـ [[Buffer]] اللي جوه الـ pool بيتاخد منه حرف [[A]] بس (٦٥) مش الـ ٦٤ KB.
+- [[0x0403]] في [[Uint16Array]] اتكتب [[3, 4]] مش [[4, 3]]: الجهاز little-endian (درس «TypedArray: العيلة»).
+- [[out.set(bytes, at)]] بينسخ دفعة واحدة في المكان [[at]] (أسرع بكتير من loop). وفي Node فيه [[Buffer.concat]] جاهزة، بس دي بتشتغل في المتصفح كمان.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[equalBytes(a, b)]] بترجّع [[true]] لو الاتنين فيهم نفس الـ bytes بالظبط. كل واحد ممكن يبقى [[ArrayBuffer]] أو أي view. ([[a === b]] بتقارن الهوية مش المحتوى.)`, done: R`[[Uint8Array.of(1, 2)]] و [[Uint8Array.of(1, 2).buffer]] بـ [[true]]، و [[Uint16Array.of(1)]] و [[Uint8Array.of(1, 0)]] بـ [[true]] (نفس الـ bytes)، وطولين مختلفين بـ [[false]]، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js equal.mjs
+const asBytes = (x) => (ArrayBuffer.isView(x) ? new Uint8Array(x.buffer, x.byteOffset, x.byteLength) : new Uint8Array(x));
+function equalBytes(a, b) {
+  const x = asBytes(a), y = asBytes(b);
+  if (x.length !== y.length) return false;
+  for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return false;
+  return true;
+}
+console.log(equalBytes(Uint8Array.of(1, 2), Uint8Array.of(1, 2).buffer), equalBytes(Buffer.from('ab'), Uint8Array.of(97, 98)), equalBytes(Uint16Array.of(1), Uint8Array.of(1, 0)), equalBytes(new ArrayBuffer(2), new ArrayBuffer(3)));
+~~~
 
-**الغلطة الشائعة:** تستخدم [[window.addEventListener("resize")]] وتقارن بـ [[innerWidth]]. ده بيتنادى بس لما الشاشة تتغيّر، فتضييق العمود نفسه (من السلايدر أو من sidebar) مبيعملش حاجة، والأسماء الطويلة بتتقص بـ «...».` },
-            { lvl: 'تطبيق', t: R`مسألة: اكتب [[pickSize(width, breakpoints)]] من غير DOM: [[pickSize(399, { m: 400, l: 700 })]] بترجّع [["s"]]. وبعدين استخدمها جوه الـ callback بتاع الدرس بدل الـ ternary.`, done: R`400 بالظبط بترجّع [["m"]] و 700 بترجّع [["l"]]، والـ breakpoints لو اتبعتت بترتيب عكسي ([[{ l: 700, m: 400 }]]) بترجّع نفس النتيجة، و [[NaN]] أو رقم سالب بيرمي [[RangeError]]، و ٦ assertions بـ [[node:assert]] في Node بيعدّوا، والكارت في المتصفح لسه بيتصرف زي الأول.`, sol: R`**الدالة لوحدها (من غير DOM) وتستها في Node:**
+~~~text الناتج (Node 24.22)
+true true true false
+~~~
 
-~~~js pick-size.mjs
-export function pickSize(width, breakpoints) {
-  if (typeof width !== "number" || Number.isNaN(width) || width < 0) {
-    throw new RangeError($__btwidth لازم رقم >= 0، جالي $__{width}$__bt);
-  }
-  // من الأكبر للأصغر، مهما كان ترتيب المفاتيح في الـ object
-  const sorted = Object.entries(breakpoints).sort((a, b) => b[1] - a[1]);
-  for (const [name, min] of sorted) {
-    if (width >= min) return name;
-  }
-  return "s";
+- [[new ArrayBuffer(2) === new ArrayBuffer(2)]] بـ [[false]]: objects مختلفة. مفيش مقارنة محتوى جاهزة في اللغة.
+- بنحوّل الاتنين لـ [[Uint8Array]] على نفس الـ bytes بالظبط (بالـ offset)، وبعدين نقارن الطول الأول (أسرع رفض) وبعدين byte byte.
+- [[Uint16Array.of(1)]] و [[Uint8Array.of(1, 0)]] متساويين لأننا بنقارن **bytes** مش أرقام: الـ [[1]] في ٢ bytes little-endian هو [[01 00]].
+- **ليه loop مش [[every]]؟** الـ loop بيقف عند أول فرق ومش بيعمل function call لكل byte. لو بتقارن أسرار (tokens أو HMAC) استخدم [[crypto.timingSafeEqual]] في Node بدلها: المقارنة اللي بتقف بدري بتسرّب معلومة بالوقت.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكود ده بيحاول يكتب [[255]] في أول byte ويقراه، وبيطبع [[0]]. ليه؟ وصلّحه:
+
+~~~js
+const buf = new ArrayBuffer(4);
+buf[0] = 255;
+console.log(buf[0], new Uint8Array(buf)[0], Object.keys(buf));
+~~~`, done: R`النسخة المصلّحة بتطبع [[255]] من الـ view، و [[Object.keys(buf)]] بقت [[ [] ]]، وتقدر تقول [[buf[0] = 255]] كانت بتعمل إيه.`, sol: R`~~~text الناتج قبل التصليح (Node 24.22)
+255 0 [ '0' ]
+~~~
+
+~~~js fixed.mjs
+const buf = new ArrayBuffer(4);
+const bytes = new Uint8Array(buf);
+bytes[0] = 255;
+console.log(bytes[0], new Uint8Array(buf)[0], Object.keys(buf));
+~~~
+
+~~~text الناتج (Node 24.22)
+255 255 []
+~~~
+
+- الـ [[ArrayBuffer]] object عادي مفيهوش indexes. [[ buf[0] = 255 ]] عملت **خاصية** اسمها [['0']] على الـ object (باينة في [[Object.keys]])، والـ bytes نفسها فضلت أصفار. ومفيش أي error، فالباج ده بيعيش كتير.
+- الحل: أي قراية أو كتابة تعدّي من view. والـ views الاتنين ([[bytes]] واللي اتعمل جوه [[console.log]]) بيشوفوا نفس الـ byte.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من MDN صفحة [[ ArrayBuffer[Symbol.species] ]]: اعمل [[class Chunk extends ArrayBuffer]] فيها خاصية [[label]]. هل [[chunk.slice(0, 4)]] بيرجّع [[Chunk]] ولا [[ArrayBuffer]]؟ وبعدين اعمل class تانية بـ [[static get [Symbol.species] ]] بيرجّع [[ArrayBuffer]] وجاوب نفس السؤال.`, done: R`عندك الناتج للحالتين، وتقدر تقول بجملة [[Symbol.species]] بيتحكم في إيه.`, sol: R`~~~js species.mjs
+class Chunk extends ArrayBuffer {
+  label = 'chunk';
+}
+const c = new Chunk(8);
+console.log(c.slice(0, 4) instanceof Chunk, c.slice(0, 4).label);
+class PlainSlices extends ArrayBuffer {
+  static get [Symbol.species]() { return ArrayBuffer; }
+}
+const p = new PlainSlices(8);
+console.log(p.slice(0, 4) instanceof PlainSlices, p.slice(0, 4).constructor.name, ArrayBuffer[Symbol.species] === ArrayBuffer);
+~~~
+
+~~~text الناتج (Node 24.22)
+true chunk
+false ArrayBuffer true
+~~~
+
+**الإجابة:** [[slice]] مش بيعمل [[new ArrayBuffer]] على طول: بيسأل [[this.constructor[Symbol.species] ]] «أعمل النسخة من أنهي class؟». الـ getter الافتراضي بيرجّع [[this]]، فالـ subclass بتاخد نسخ من نوعها ([[Chunk]] وفيها [[label]]). ولو الـ subclass عملت override ورجّعت [[ArrayBuffer]]، النسخ بتبقى buffers عادية. ده نفس الـ pattern بتاع [[Array[Symbol.species] ]] (درس «Array[Symbol.species] و Symbol.unscopables»). عمليًا: نادر جدًا تحتاجه، بس لازم تعرفه لو مكتبة عاملة subclass وبتستغرب النوع اللي راجع.` },
+          ],
+          check: { lang: "js", starter: R`function equalBytes(a, b) {
+  // a و b: ArrayBuffer أو أي view. true لو نفس الـ bytes بالظبط
+}`, tests: R`test("view و الـ buffer بتاعه", () => expect(equalBytes(Uint8Array.of(1, 2), Uint8Array.of(1, 2).buffer)).toBe(true));
+test("نفس الـ bytes بأنواع مختلفة", () => expect(equalBytes(Uint16Array.of(1), Uint8Array.of(1, 0))).toBe(true));
+test("طول مختلف", () => expect(equalBytes(new ArrayBuffer(2), new ArrayBuffer(3))).toBe(false));
+test("byte مختلف", () => expect(equalBytes(Uint8Array.of(1, 2, 3), Uint8Array.of(1, 2, 4))).toBe(false));
+test("view بـ offset", () => expect(equalBytes(Uint8Array.of(9, 1, 2).subarray(1), Uint8Array.of(1, 2))).toBe(true));
+test("فاضيين", () => expect(equalBytes(new ArrayBuffer(0), new Uint8Array(0))).toBe(true));`, solution: R`const asBytes = (x) => (ArrayBuffer.isView(x) ? new Uint8Array(x.buffer, x.byteOffset, x.byteLength) : new Uint8Array(x));
+function equalBytes(a, b) {
+  const x = asBytes(a), y = asBytes(b);
+  if (x.length !== y.length) return false;
+  for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return false;
+  return true;
+}` },
+          flag: "script",
+          deep: {
+            why: R`الـ bytes لازم تعيش في حتة ذاكرة واحدة متصلة بطول معروف عشان أي حد (الـ engine، والـ GPU، و wasm، ونظام التشغيل وهو بيكتب ملف أو يبعت على الشبكة) يقدر يقراها مرة واحدة من غير ما يلف على objects. ده الـ [[ArrayBuffer]]. وفصله عن الـ views سببه إن نفس الـ bytes بتتقري بأكتر من شكل: header ملف بأرقام ٣٢ bit، وبعده pixels بـ ٨ bit، كله في نفس الـ buffer.`,
+            how: R`[[new ArrayBuffer(n)]] بيحوّل [[n]] لرقم صحيح (بيقص الكسر: [[2.9]] بتبقى ٢، و [['4']] بيبقى ٤) وبيحجز الذاكرة متصفّرة. لو [[n]] سالب أو أكبر من الحد: [[RangeError: Invalid array buffer length]]، ولو الذاكرة مكفتش (اتجرّب بـ [[2 ** 40]]، يعني ١ تيرا): [[RangeError: Array buffer allocation failed]]. ومن غير [[new]]: [[TypeError: Constructor ArrayBuffer requires 'new']].
+
+[[slice(start, end)]] بيحسب الحدود زي [[Array.prototype.slice]] (السالب من الآخر، والكبير بيتقص)، وبعدين بيسأل [[this.constructor[Symbol.species] ]] عن الـ class، ويعمل buffer جديد بالطول ده وينسخ فيه الـ bytes. و [[ArrayBuffer.isView(x)]] بيبص على slot داخلي اسمه ViewedArrayBuffer: موجود في كل typed array وكل [[DataView]] بس. و [[byteLength]] getter على الـ prototype مش خاصية عادية، فمينفعش تغيّره بـ [[=]] (التغيير بيتجاهَل)، والطريقة الوحيدة تغيّر الطول هي [[resize]] (الدرس الجاي).
+
+و [[structuredClone(buf)]] بينسخ الـ bytes (اتجرّب: بيرجّع [[ArrayBuffer]] فيه نفس المحتوى)، أما [[JSON.stringify]] فبيطلّعه [[{}]] فاضي.`,
+            when: R`[[ArrayBuffer]] بنفسك: لما تبني ملف أو رسالة binary من الصفر (تحجز الحجم وتكتب فيه بـ [[DataView]])، أو مكتبة بتطلب [[ArrayBuffer]] بالاسم ([[WebAssembly.instantiate]]، و [[AudioContext.decodeAudioData]]، و [[postMessage]] مع transfer). [[slice]]: لما محتاج نسخة مستقلة (هتبعتها أو هتعدّل فيها والأصل لازم يفضل زي ما هو). ولو هتقرا بس: view بـ offset أرخص لأنه من غير نسخ. [[ArrayBuffer.isView]]: في أي دالة بتقبل «bytes بأي شكل».`,
+            mistakes: R`- [[ buf[0] = 255 ]] على الـ buffer نفسه: بيعمل خاصية عادية والـ bytes مبتتغيرش، من غير error.
+- [[new Uint8Array(nodeBuffer.buffer)]]: بتاخد الـ pool كله (٦٥٥٣٦ byte في Node 24.22) مش الملف. استخدم [[byteOffset]] و [[byteLength]].
+- تفتكر [[slice]] على الـ buffer بيشارك الذاكرة: بينسخ. (العكس بتاع [[subarray]] في الـ typed arrays، درس «TypedArray: set و subarray».)
+- تقارن buffers بـ [[===]]: بتقارن الهوية. قارن الـ bytes (تمرين [[equalBytes]]).
+- تحسب الحجم بـ [[length]]: الـ [[ArrayBuffer]] معندوش [[length]] أصلًا ([[undefined]])، عنده [[byteLength]] بس.
+- [[Array.isArray]] أو [[instanceof Uint8Array]] عشان تعرف إن حاجة bytes: [[DataView]] و [[Int16Array]] هيتّرفضوا. [[ArrayBuffer.isView]] هو الصح.`,
+          },
+          teach: R`## الفكرة في سطر
+
+[[ArrayBuffer]] حتة ذاكرة بعدد bytes ثابت، بتتعمل وتتنسخ، بس مبتتقريش غير من خلال view. الناتج من Node 24.22 على ويندوز 11.
+
+---
+
+## ١. [[new ArrayBuffer(n)]] و [[ArrayBuffer.prototype.byteLength]]
+
+~~~js
+const buf = new ArrayBuffer(8);
+console.log(buf.byteLength, buf);
+~~~
+
+~~~text الناتج
+8 ArrayBuffer {
+  [Uint8Contents]: <00 00 00 00 00 00 00 00>,
+  [byteLength]: 8
 }
 ~~~
 
-~~~js pick-size.test.mjs
-import assert from "node:assert/strict";
-import { pickSize } from "./pick-size.mjs";
+- [[new ArrayBuffer(8)]]: احجز ٨ bytes، كلهم صفر.
+- [[buf.byteLength]]: عدد الـ bytes. ده getter: بيتقري بس، و [[buf.byteLength = 100]] بيتجاهَل.
+- [[ [Uint8Contents] ]] اللي في الطباعة ده Node بيوريك المحتوى للـ debugging بس، مش خاصية تقدر تقراها.
 
-const bp = { m: 400, l: 700 };
-assert.equal(pickSize(399, bp), "s");
-assert.equal(pickSize(400, bp), "m");
-assert.equal(pickSize(699, bp), "m");
-assert.equal(pickSize(700, bp), "l");
-assert.equal(pickSize(700, { l: 700, m: 400 }), "l");
-assert.equal(pickSize(500, { l: 700, m: 400 }), "m");
-assert.throws(() => pickSize(NaN, bp), RangeError);
-assert.throws(() => pickSize(-1, bp), RangeError);
-console.log("كل الـ assertions عدّت (8)");
+| اللي بتكتبه | اللي بيحصل (اتجرّب) |
+|---|---|
+| [[new ArrayBuffer()]] | buffer طوله صفر، مفيش error |
+| [[new ArrayBuffer('4')]] و [[new ArrayBuffer(2.9)]] | بيتحوّلوا رقم صحيح: ٤ و ٢ |
+| [[new ArrayBuffer(-1)]] | [[RangeError: Invalid array buffer length]]: الطول السالب ممنوع |
+| [[new ArrayBuffer(2 ** 40)]] | [[RangeError: Array buffer allocation failed]]: الذاكرة مكفتش |
+| [[ArrayBuffer(8)]] من غير [[new]] | [[TypeError: Constructor ArrayBuffer requires 'new']]: لازم تكتب [[new]] قبله |
+
+---
+
+## ٢. الـ buffer مبيتقريش بنفسه
+
+~~~js
+console.log(buf[0], (buf[0] = 255), new Uint8Array(buf)[0]);
 ~~~
 
-~~~text الناتج (node pick-size.test.mjs، Node 24)
-كل الـ assertions عدّت (8)
+~~~text الناتج
+undefined 255 0
 ~~~
 
-**وفي الصفحة:** نفس الدالة جوه الـ callback بدل الـ ternary. السلايدر بيغيّر عرض الحاوية بس.
+- [[ buf[0] ]] بـ [[undefined]]: الـ buffer object عادي مفيهوش indexes.
+- [[(buf[0] = 255)]] الـ assignment نفسه قيمته [[255]]، بس اللي حصل إنه عمل **خاصية** اسمها [['0']] على الـ object. الـ bytes ما اتلمستش.
+- [[new Uint8Array(buf)[0] ]] بيقرا الـ byte الحقيقي: لسه [[0]].
 
-~~~live 260 card-size.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>كارت بيعرف مقاسه</title>
-<style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
-  #wrap { border: 2px dashed #9ca3af; padding: 8px; }
-  .card { display: grid; gap: 8px; padding: 12px; border-radius: 8px; background: #eff6ff; }
-  .card[data-size="m"] { grid-template-columns: 120px 1fr; }
-  .card[data-size="l"] { grid-template-columns: 160px 1fr 1fr; }
-  .pic { background: #93c5fd; min-height: 60px; border-radius: 6px; }
-</style>
-</head>
-<body>
-<label>عرض الحاوية: <input type="range" id="w" min="200" max="900" value="600"></label>
-<p id="info"></p>
-<div id="wrap">
-  <article class="card">
-    <div class="pic"></div>
-    <div>اسم المنتج والوصف</div>
-    <div>السعر وزرار الشرا</div>
-  </article>
-</div>
-<script>
-  // نفس الدالة اللي في pick-size.mjs (هنا inline عشان الصفحة ملف واحد)
-  function pickSize(width, breakpoints) {
-    if (typeof width !== "number" || Number.isNaN(width) || width < 0) {
-      throw new RangeError($__btwidth لازم رقم >= 0، جالي $__{width}$__bt);
-    }
-    const sorted = Object.entries(breakpoints).sort((a, b) => b[1] - a[1]);
-    for (const [name, min] of sorted) if (width >= min) return name;
-    return "s";
+القاعدة: الـ buffer = ذاكرة، والـ view = إيديك. أي قراية أو كتابة من خلال view.
+
+---
+
+## ٣. [[ArrayBuffer.prototype.slice]]: نسخة جديدة
+
+~~~js
+const bytes = new Uint8Array(buf);
+bytes.set([1, 2, 3, 4, 5, 6, 7, 8]);
+const part = buf.slice(2, 5);
+new Uint8Array(part)[0] = 99;
+console.log(part.byteLength, new Uint8Array(part), bytes[2]);
+console.log(new Uint8Array(buf.slice(-3)), buf.slice(6, 2).byteLength);
+~~~
+
+~~~text الناتج
+3 Uint8Array(3) [ 99, 4, 5 ] 3
+Uint8Array(3) [ 6, 7, 8 ] 0
+~~~
+
+- [[bytes.set([...])]]: بيكتب الـ ٨ أرقام في الـ buffer دفعة واحدة.
+- [[buf.slice(2, 5)]]: buffer **جديد** فيه الـ bytes من مكان ٢ لحد قبل ٥ (يعني ٢ و ٣ و ٤) = ٣ bytes.
+- كتبنا [[99]] في النسخة، والأصل [[ bytes[2] ]] لسه [[3]]: **نسخ** مش مشاركة.
+- [[slice(-3)]]: آخر ٣. و [[slice(6, 2)]]: النهاية قبل البداية = طول صفر.
+
+| الشكل | النتيجة على buffer طوله ٤ |
+|---|---|
+| [[slice()]] | نسخة كاملة (٤): أسهل طريقة تنسخ buffer |
+| [[slice(1)]] | من ١ للآخر (٣) |
+| [[slice(1, 100)]] | النهاية بتتقص على الطول، فـ ٣ من غير error |
+| [[slice(-1)]] | آخر byte (١)، السالب بيتعد من الآخر |
+| [[slice(3, 1)]] | طول صفر، مش بالعكس ومش error |
+
+---
+
+## ٤. [[ArrayBuffer.isView]]: ده view ولا لأ؟
+
+~~~js
+console.log(ArrayBuffer.isView(bytes), ArrayBuffer.isView(new DataView(buf)), ArrayBuffer.isView(buf), ArrayBuffer.isView([1, 2]));
+~~~
+
+~~~text الناتج
+true true false false
+~~~
+
+| القيمة | [[isView]] | ليه |
+|---|---|---|
+| أي typed array ([[Uint8Array]] و [[Float32Array]]...) و [[Buffer]] | [[true]] | view على buffer |
+| [[DataView]] | [[true]] | view برضه |
+| الـ [[ArrayBuffer]] نفسه | [[false]] | ده الذاكرة مش view |
+| [[Array]] عادية | [[false]] | مفيهاش buffer خالص |
+
+الاستخدام الطبيعي: دالة بتقبل «bytes بأي شكل» وبتوحّدهم:
+
+~~~js
+const asBytes = (x) => (ArrayBuffer.isView(x) ? new Uint8Array(x.buffer, x.byteOffset, x.byteLength) : new Uint8Array(x));
+~~~
+
+ليه مش [[x instanceof Uint8Array]]؟ لأن [[DataView]] و [[Int16Array]] هيتّرفضوا، وكمان typed array جاية من iframe تاني [[instanceof]] بتاعها [[false]] (كل iframe ليه [[Uint8Array]] بتاعه).
+
+---
+
+## ٥. [[ ArrayBuffer[Symbol.species] ]]: [[slice]] بيعمل النسخة من أنهي class؟
+
+~~~js
+class Chunk extends ArrayBuffer {
+  label = 'chunk';
+}
+const c = new Chunk(8);
+console.log(c.slice(0, 4) instanceof Chunk, c.slice(0, 4).label);
+class PlainSlices extends ArrayBuffer {
+  static get [Symbol.species]() { return ArrayBuffer; }
+}
+const p = new PlainSlices(8);
+console.log(p.slice(0, 4) instanceof PlainSlices, p.slice(0, 4).constructor.name, ArrayBuffer[Symbol.species] === ArrayBuffer);
+~~~
+
+~~~text الناتج
+true chunk
+false ArrayBuffer true
+~~~
+
+- [[slice]] بيسأل [[this.constructor[Symbol.species] ]]. الافتراضي getter بيرجّع [[this]]، فالـ subclass [[Chunk]] نسخها [[Chunk]].
+- [[PlainSlices]] عملت override ورجّعت [[ArrayBuffer]]، فنسخها buffers عادية.
+- نفس الفكرة بتاعة [[Array[Symbol.species] ]] (درس «Array[Symbol.species] و Symbol.unscopables»). نادر تحتاجها، بس كده تعرف ليه نوع النسخة ممكن يختلف.
+
+---
+
+## ٦. فخ Node: الـ [[Buffer]] الصغير جوه buffer كبير
+
+~~~js
+const fromNode = Buffer.from('abc');
+console.log(fromNode.byteOffset, fromNode.buffer.byteLength, new Uint8Array(fromNode.buffer, fromNode.byteOffset, fromNode.length));
+~~~
+
+~~~text الناتج
+896 65536 Uint8Array(3) [ 97, 98, 99 ]
+~~~
+
+- Node بيحجز «pool» واحد [[Buffer.poolSize]] (٦٥٥٣٦ byte في Node 24.22) ويدّي منه حتت للـ Buffers الصغيرة. فـ [[fromNode.buffer]] هو الـ pool كله، و [[byteOffset]] (٨٩٦ هنا، وبيتغيّر حسب اللي اتحجز قبله) مكان النص جواه.
+- [[readFileSync]] لملف صغير بيعمل نفس الحاجة: ملف ٣ bytes و [[file.buffer.byteLength]] بـ ٦٥٥٣٦ (التجربة في الحل فوق).
+- القاعدة: أي view على [[x.buffer]] لازم ياخد [[x.byteOffset]] و [[x.byteLength]]. ولو هتبعت الـ [[ArrayBuffer]] لحد: [[x.buffer.slice(x.byteOffset, x.byteOffset + x.byteLength)]].
+
+---
+
+## ٧. كل members الـ [[ArrayBuffer]]
+
+| الـ member | بيعمل إيه | فين |
+|---|---|---|
+| [[new ArrayBuffer(n, { maxByteLength })]] | بيحجز [[n]] byte، والـ option بتخليه قابل للتكبير | هنا، والدرس الجاي |
+| [[byteLength]] | عدد الـ bytes دلوقتي | هنا |
+| [[slice(start, end)]] | نسخة جديدة من حتة | هنا |
+| [[ArrayBuffer.isView(x)]] | هل [[x]] typed array أو [[DataView]] | هنا |
+| [[ ArrayBuffer[Symbol.species] ]] | الـ class اللي [[slice]] بيعمل منها | هنا |
+| [[resizable]] و [[maxByteLength]] و [[resize(n)]] | buffer بيكبر ويصغر في مكانه | «ArrayBuffer: resize و transfer و detached» |
+| [[transfer()]] و [[transferToFixedLength()]] و [[detached]] | تنقل الـ bytes لـ buffer جديد والقديم يفضى | نفس الدرس |
+
+---
+
+## الخلاصة
+
+- [[new ArrayBuffer(n)]] = [[n]] byte أصفار، و [[byteLength]] حجمه، ومن غير view مفيش قراية ولا كتابة.
+- [[slice]] **بينسخ**، و [[slice()]] من غير arguments = نسخة كاملة.
+- [[ArrayBuffer.isView]] أحسن من [[instanceof]] لما تقبل bytes بأي شكل.
+- مع [[Buffer]] في Node: دايمًا [[byteOffset]] و [[byteLength]].`,
+          lines: [
+            R`بنحجز ٨ bytes متصفّرين في [[ArrayBuffer]] جديد.`,
+            R`بيطبع ٨، و [[undefined]] (مفيش indexes)، و [[255]] قيمة الـ assignment اللي عملت خاصية عادية، و [[0]] لأن الـ byte الحقيقي متلمسش.`,
+            R`view بـ [[Uint8Array]] على نفس الـ buffer: دلوقتي نقدر نقرا ونكتب bytes.`,
+            R`[[set]] بيكتب الأرقام من ١ لـ ٨ في الـ ٨ bytes دفعة واحدة.`,
+            R`[[slice(2, 5)]] بيعمل buffer جديد فيه نسخة من الـ bytes اللي في الأماكن ٢ و ٣ و ٤.`,
+            R`بنكتب ٩٩ في أول byte من النسخة من خلال view مؤقت، عشان نشوف هل الأصل هيتأثر.`,
+            R`بيطبع ٣ (حجم النسخة) والنسخة [[99, 4, 5]]، و [[ bytes[2] ]] لسه ٣: النسخة مستقلة.`,
+            R`[[slice(-3)]] آخر ٣ bytes ([[6, 7, 8]])، و [[slice(6, 2)]] النهاية قبل البداية فالطول صفر.`,
+            R`[[isView]] بـ [[true]] للـ typed array وللـ [[DataView]]، و [[false]] للـ buffer نفسه وللـ Array.`,
+            R`[[Buffer.from('abc')]] في Node: ٣ bytes متخزنين جوه pool كبير مشترك.`,
+            R`[[byteOffset]] مكان النص جوه الـ pool، و ٦٥٥٣٦ حجم الـ pool كله، والـ view بالـ offset والطول بيجيب الـ ٣ bytes بس.`,
+          ],
+          ref: [
+            { t: "MDN: ArrayBuffer", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer" },
+            { t: "MDN: ArrayBuffer.prototype.byteLength", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/byteLength" },
+            { t: "MDN: ArrayBuffer.prototype.slice()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/slice" },
+            { t: "MDN: ArrayBuffer.isView()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/isView" },
+            { t: "MDN: ArrayBuffer[Symbol.species]", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/Symbol.species" },
+            { t: "Node.js: Buffer.poolSize", url: "https://nodejs.org/api/buffer.html#class-property-bufferpoolsize" },
+          ],
+          pre: [{ to: "js/Array: at و slice و concat", why: R`نفس قواعد [[start]] و [[end]] والسالب في [[slice]]` }, { to: "js/Array[Symbol.species] و Symbol.unscopables", why: R`[[Symbol.species]] في [[Array]] قبل الـ buffer` }],
+        },
+        {
+          cmd: "ArrayBuffer: resize و transfer و detached",
+          title: "إزاي buffer يكبر في مكانه، أو يتنقل لصاحب تاني ويفضى؟",
+          desc: R`الـ [[ArrayBuffer]] العادي طوله ثابت للأبد. من ES2024 فيه نوعين زيادة:
+
+• **resizable:** [[new ArrayBuffer(4, { maxByteLength: 16 })]] بيبدأ ٤ وتقدر تعمل [[buf.resize(n)]] لأي طول لحد ١٦، والـ views اللي من غير طول ثابت بتكبر وتصغر معاه. [[buf.resizable]] و [[buf.maxByteLength]] بيقولولك ده.
+• **transfer:** [[buf.transfer()]] بيرجّع buffer جديد فيه نفس الـ bytes **من غير نسخ** (غالبًا)، والقديم بيبقى **detached**: طوله صفر، و [[buf.detached]] بـ [[true]]، وكل view عليه طوله صفر، وأي method عليه بترمي [[TypeError]].
+• [[transferToFixedLength(n)]]: نفس الكلام بس النتيجة buffer عادي ثابت الطول.
+
+ده نفس اللي بيحصل لما تبعت buffer لـ Worker بالـ transfer، ولما ذاكرة الـ wasm تكبر.`,
+          example: R`// buffer بيكبر، وبينتقل، وبيتفصل
+const buf = new ArrayBuffer(4, { maxByteLength: 16 });
+console.log(buf.resizable, buf.byteLength, buf.maxByteLength);
+const all = new Uint8Array(buf);
+const firstTwo = new Uint8Array(buf, 0, 2);
+all.set([1, 2, 3, 4]);
+buf.resize(8);
+console.log(all.length, firstTwo.length, all);
+buf.resize(1);
+console.log(all.length, firstTwo.length, firstTwo[1]);
+try { buf.resize(32); } catch (e) { console.log(e.name + ': ' + e.message); }
+const moved = buf.transfer();
+console.log(buf.detached, buf.byteLength, moved.byteLength, moved.resizable, all.length);
+try { all[0] = 5; console.log('كتابة على view مفصول:', all[0]); buf.slice(0); } catch (e) { console.log(e.name + ': ' + e.message); }
+const fixed = moved.transferToFixedLength(6);
+console.log(fixed.resizable, fixed.byteLength, new Uint8Array(fixed));`,
+          try: R`اعمل buffer قابل للتكبير بـ [[maxByteLength: 8]] وطوله ٢، وعليه ٣ views: [[new Uint8Array(buf)]] و [[new Uint8Array(buf, 0, 2)]] و [[new Uint8Array(buf, 1)]]. اتوقّع أطوالهم بعد [[resize(6)]] وبعد [[resize(3)]].`,
+          sol: R`~~~js views.mjs
+const buf = new ArrayBuffer(2, { maxByteLength: 8 });
+const tracking = new Uint8Array(buf);
+const fixed = new Uint8Array(buf, 0, 2);
+const tail = new Uint8Array(buf, 1);
+console.log(tracking.length, fixed.length, tail.length);
+buf.resize(6);
+console.log(tracking.length, fixed.length, tail.length);
+buf.resize(3);
+console.log(tracking.length, fixed.length, tail.length);
+~~~
+
+~~~text الناتج (Node 24.22)
+2 2 1
+6 2 5
+3 2 2
+~~~
+
+- [[tracking]] من غير طول: **length-tracking**، طوله دايمًا = طول الـ buffer.
+- [[fixed]] اتعمل بطول ٢: فضل ٢ طول ما الـ buffer فيه ٢ bytes على الأقل.
+- [[tail]] من غير طول بس بـ offset ١: طوله = طول الـ buffer ناقص ١ (١ ثم ٥ ثم ٢).
+- لو صغّرت الـ buffer لأقل من اللي الـ view محتاجه (زي [[firstTwo]] في المثال بعد [[resize(1)]])، الـ view بيبقى «out of bounds» وطوله صفر، ولو كبّرته تاني بيرجع.
+- **تنبيه:** [[new Uint8Array(buf, 4)]] على buffer طوله ٢ وقت الإنشاء بيرمي [[RangeError: Start offset 4 is outside the bounds of the buffer]] حتى لو [[maxByteLength]] ٨: الـ offset لازم يبقى جوه الطول **الحالي**.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه اللي هيتطبع؟
+
+~~~js
+function archive(buf) { return buf.transfer(); }
+const data = new Uint8Array([1, 2, 3]);
+const saved = archive(data.buffer);
+console.log(data.length, data[0], new Uint8Array(saved));
+~~~`, done: R`كتبت السطر صح، وتقدر تقول ليه [[data]] بقت فاضية مع إن الدالة مرجعتش حاجة تخصها.`, sol: R`~~~text الناتج (Node 24.22)
+0 undefined Uint8Array(3) [ 1, 2, 3 ]
+~~~
+
+- [[archive]] عملت [[transfer]] على الـ buffer اللي تحت [[data]]، فالـ bytes راحت لـ [[saved]]، والـ buffer القديم بقى detached.
+- [[data]] view على الـ buffer القديم: طوله بقى صفر، و [[ data[0] ]] بـ [[undefined]]. **ومفيش error**: القراية من view مفصول بترجّع [[undefined]] بهدوء.
+- ده معنى «ownership»: بعد [[transfer]] الكود اللي كان ماسك الـ buffer مبقاش صاحبه. فلو دالة هتعمل [[transfer]] لحاجة جاية من برّه، لازم توثّق ده، أو تشتغل على نسخة ([[buf.slice()]]).` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[class ByteWriter]] بتجمّع bytes على دفعات: [[write(uint8)]] بيضيف في الآخر (وبيرجّع [[this]] عشان تكمّل)، و [[length]]، و [[finish()]] بترجّع [[ArrayBuffer]] ثابت فيه كل اللي اتكتب. جواها buffer resizable حده ١ MB بيكبر بـ [[resize]] بدل ما تعمل buffer جديد كل مرة. وبعد [[finish]] أي [[write]] ترمي error واضح.`, done: R`[[write(Uint8Array.of(1, 2)).write(encode('Hi'))]] بيدّي [[length]] ٤، و [[finish()]] بيرجّع buffer مش resizable فيه [[1, 2, 72, 105]]، والكتابة بعد [[finish]] بترمي [[TypeError]] برسالتك، وكتابة أكبر من ١ MB بترمي [[RangeError]].`, sol: R`~~~js byte-writer.mjs
+// byte-writer.mjs: بنكتب bytes على دفعات في buffer بيكبر في مكانه
+class ByteWriter {
+  #buf = new ArrayBuffer(0, { maxByteLength: 1 << 20 });
+  #bytes = new Uint8Array(this.#buf);
+  get length() { return this.#buf.byteLength; }
+  write(chunk) {
+    if (this.#buf.detached) throw new TypeError('الـ writer اتقفل بعد finish');
+    const at = this.#buf.byteLength;
+    if (at + chunk.length > this.#buf.maxByteLength) throw new RangeError('الحد الأقصى ' + this.#buf.maxByteLength + ' byte');
+    this.#buf.resize(at + chunk.length);
+    this.#bytes.set(chunk, at);
+    return this;
   }
-
-  const card = document.querySelector(".card");
-  new ResizeObserver(([entry]) => {
-    const width = entry.contentBoxSize[0].inlineSize;
-    entry.target.dataset.size = pickSize(width, { m: 400, l: 700 });
-    document.querySelector("#info").textContent =
-      $__btعرض الكارت $__{Math.round(width)}px ← data-size="$__{entry.target.dataset.size}"$__bt;
-  }).observe(card);
-
-  const w = document.querySelector("#w");
-  const wrap = document.querySelector("#wrap");
-  const apply = () => (wrap.style.width = w.value + "px");
-  w.addEventListener("input", apply);
-  apply();
-</script>
-</body>
-</html>
+  finish() { return this.#buf.transferToFixedLength(); }
+}
+const w = new ByteWriter();
+w.write(Uint8Array.of(1, 2)).write(new TextEncoder().encode('Hi'));
+console.log(w.length);
+const done = w.finish();
+console.log(done.resizable, new Uint8Array(done));
+try { w.write(Uint8Array.of(3)); } catch (e) { console.log(e.name + ': ' + e.message); }
+try { new ByteWriter().write(new Uint8Array((1 << 20) + 1)); } catch (e) { console.log(e.name + ': ' + e.message); }
 ~~~
 
-~~~text الناتج (Chrome 158 headless، جوه iframe معزول، الشاشة ثابتة 1000px)
-الحاوية 300px → عرض الكارت 276px ← data-size="s"
-الحاوية 423px → عرض الكارت 399px ← data-size="s"
-الحاوية 424px → عرض الكارت 400px ← data-size="m"
-الحاوية 723px → عرض الكارت 699px ← data-size="m"
-الحاوية 724px → عرض الكارت 700px ← data-size="l"
-pageerrors: 0
+~~~text الناتج (Node 24.22)
+4
+false Uint8Array(4) [ 1, 2, 72, 105 ]
+TypeError: الـ writer اتقفل بعد finish
+RangeError: الحد الأقصى 1048576 byte
 ~~~
 
-**ليه كده:**
-
-- **[[Object.entries(breakpoints).sort((a, b) => b[1] - a[1])]]:** بنرتّب من الأكبر للأصغر **بالقيمة**، فترتيب المفاتيح في الـ object مبيفرقش ([[{ l: 700, m: 400 }]] و [[{ m: 400, l: 700 }]] نفس النتيجة). وأول breakpoint العرض أكبر منه أو قده هو المقاس.
-- **[[width >= min]]:** الحد نفسه تبع المقاس الأكبر: 400 بالظبط = [["m"]]، وده نفس سلوك [[min-width]] في الـ CSS media queries.
-- **[[return "s"]]:** أي حاجة أقل من أصغر breakpoint.
-- **الفحص الأول:** [[NaN >= 400]] بـ [[false]] و [[-1 >= 400]] بـ [[false]]، فمن غيره كانوا هيرجّعوا [["s"]] ساكتين. الـ [[RangeError]] بيقول إن فيه حاجة غلط في اللي نادى.
-- **فايدة إنها من غير DOM:** اتختبرت في Node في أقل من ثانية، من غير متصفح ولا ResizeObserver. الـ callback بقى سطر واحد بيوصّل الدالة بالـ DOM.
-- **[[contentBoxSize]] في الصفحة:** عرض المحتوى من غير الـ padding (12 من كل ناحية)، عشان كده الحاوية 424 = كارت 400.
-
-**الغلطة الشائعة:** تلف على الـ object من غير ترتيب وترجع أول واحد ينفع: [[for (const [k, v] of Object.entries(bp)) if (width >= v) return k]]. مع [[{ m: 400, l: 700 }]] العرض 800 هيرجّع [["m"]] لأن [[m]] جت الأول.` },
-            { lvl: 'تحدي', t: R`ابني navbar «priority+»: لينكات كتير في سطر واحد، واللي مش لاقي مكان يتنقل لقايمة «المزيد». راقب الـ nav نفسه مش اللينكات اللي بتنقلها، واسمع لـ [[window.addEventListener("error", (e) => console.log(e.message))]] عشان لو وقعت في loop تعرف.`, done: R`وانت بتضيّق الشاشة اللينكات بتتنقل لـ «المزيد» من الآخر للأول، ولما توسّع بترجع بنفس الترتيب، ومفيش لينك بيلف لسطر تاني، وزرار «المزيد» بيختفي لما كل اللينكات تكفي، والـ listener مطبعش أي رسالة فيها «ResizeObserver loop» (نصها الكامل: «ResizeObserver loop completed with undelivered notifications.»).`, sol: R`~~~live 200 priority-nav.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>navbar priority+</title>
-<style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 0; }
-  nav { display: flex; align-items: center; gap: 4px; background: #111827; padding: 6px 8px; position: relative; }
-  #links { display: flex; gap: 4px; flex: 1; min-width: 0; margin: 0; padding: 0; list-style: none; overflow: hidden; white-space: nowrap; }
-  nav a { color: #fff; text-decoration: none; padding: 6px 10px; border-radius: 4px; display: block; }
-  nav a:hover { background: #374151; }
-  #more { font: inherit; background: #374151; color: #fff; border: 0; border-radius: 4px; padding: 6px 10px; }
-  #more[hidden] { display: none; }
-  #menu { position: absolute; top: 100%; inset-inline-end: 8px; background: #1f2937; list-style: none; margin: 0; padding: 4px; border-radius: 6px; }
-  #log { font-size: 13px; color: #555; padding: 8px; }
-</style>
-</head>
-<body>
-<nav aria-label="الرئيسية">
-  <ul id="links">
-    <li><a href="#">الرئيسية</a></li>
-    <li><a href="#">المنتجات</a></li>
-    <li><a href="#">العروض</a></li>
-    <li><a href="#">المدونة</a></li>
-    <li><a href="#">من إحنا</a></li>
-    <li><a href="#">الوظائف</a></li>
-    <li><a href="#">المساعدة</a></li>
-    <li><a href="#">كلمنا</a></li>
-  </ul>
-  <button id="more" aria-expanded="false" aria-controls="menu" hidden>المزيد ▾</button>
-  <ul id="menu" hidden></ul>
-</nav>
-<p id="log"></p>
-<script>
-  window.addEventListener("error", (e) => console.log("error event:", e.message));
-
-  const nav = document.querySelector("nav");
-  const links = document.querySelector("#links");
-  const menu = document.querySelector("#menu");
-  const more = document.querySelector("#more");
-  const all = [...links.children];               // الترتيب الأصلي
-
-  function layout() {
-    links.append(...all);                         // رجّع الكل للسطر
-    more.hidden = true;
-    if (links.scrollWidth <= links.clientWidth) { menu.replaceChildren(); menu.hidden = true; return; }
-    more.hidden = false;                          // الزرار ليه مكان، فاحسب بعد ما يظهر
-    const moved = [];
-    while (links.children.length && links.scrollWidth > links.clientWidth) {
-      moved.unshift(links.lastElementChild);      // من الآخر للأول
-      links.lastElementChild.remove();
-    }
-    menu.replaceChildren(...moved);
-    if (more.getAttribute("aria-expanded") !== "true") menu.hidden = true;
-    document.querySelector("#log").textContent =
-      $__btفي السطر $__{links.children.length}، في «المزيد» $__{moved.length}$__bt;
-  }
-
-  // بنراقب الـ nav نفسه: مقاسه بييجي من الأب، فنقل اللينكات مبيغيّروش
-  new ResizeObserver(layout).observe(nav);
-
-  more.addEventListener("click", () => {
-    const open = more.getAttribute("aria-expanded") !== "true";
-    more.setAttribute("aria-expanded", String(open));
-    menu.hidden = !open;
-  });
-</script>
-</body>
-</html>
+- [[1 << 20]] = ١٠٤٨٥٧٦ (١ MB) بالـ shift (درس «bitwise و shifts»).
+- [[#bytes]] view **length-tracking** (من غير طول)، فبعد كل [[resize]] بيشوف الطول الجديد لوحده ومش محتاجين نعمله تاني.
+- [[set(chunk, at)]] بيكتب الدفعة في الآخر.
+- [[finish]] بيعمل [[transferToFixedLength()]]: الـ bytes بتروح لـ buffer عادي بنفس الطول من غير نسخ، والـ writer بيبقى detached فمحدش يكتب في الذاكرة اللي سلّمناها.
+- **غلطة وقعت فيها وأنا بكتبه:** من غير سطر الـ [[detached]]، الكتابة بعد [[finish]] كانت بترمي [[RangeError: الحد الأقصى 0 byte]]: لأن الـ buffer المفصول [[maxByteLength]] بتاعه بيبقى صفر. رسالة مضللة، فالفحص الصريح أحسن.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[ensureCapacity(buf, n)]] بترجّع buffer فيه [[n]] byte على الأقل وفيه الـ bytes القديمة: لو كفاية رجّعه زي ما هو، ولو resizable و [[n]] جوه الحد كبّره في مكانه ورجّعه هو نفسه، وغير كده انقله لـ buffer أكبر.`, done: R`buffer resizable بيتكبّر وبيرجع هو نفسه، والعادي بيتنقل (القديم detached والبيانات موجودة)، والـ resizable اللي [[n]] أكبر من حده بيتنقل برضه من غير error، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js ensure.mjs
+function ensureCapacity(buf, n) {
+  if (buf.byteLength >= n) return buf;
+  if (buf.resizable && n <= buf.maxByteLength) { buf.resize(n); return buf; }
+  return buf.transferToFixedLength(n);
+}
+const r = new ArrayBuffer(2, { maxByteLength: 8 });
+console.log(ensureCapacity(r, 6) === r, r.byteLength);
+const f = new ArrayBuffer(2); new Uint8Array(f)[0] = 7;
+const g = ensureCapacity(f, 5);
+console.log(g === f, f.detached, g.byteLength, new Uint8Array(g)[0], g.resizable);
+const r2 = new ArrayBuffer(2, { maxByteLength: 4 }); new Uint8Array(r2)[1] = 9;
+const g2 = ensureCapacity(r2, 10);
+console.log(g2 === r2, g2.byteLength, g2.resizable, r2.detached, new Uint8Array(g2)[1]);
 ~~~
 
-جرّب الـ preview على «موبايل» و «تابلت» و «كامل»: اللينكات اللي مش لاقية مكان بتروح لـ «المزيد».
-
-~~~text الناتج (Chrome 158 headless، غيّرنا عرض الـ iframe المعزول بالترتيب ده)
-900px | السطر: الرئيسية، المنتجات، العروض، المدونة، من إحنا، الوظائف، المساعدة، كلمنا | المزيد(مخفي): - | عدد السطور: 1
-600px | السطر: الرئيسية، المنتجات، العروض، المدونة، من إحنا، الوظائف، المساعدة، كلمنا | المزيد(مخفي): - | عدد السطور: 1
-420px | السطر: الرئيسية، المنتجات، العروض، المدونة | المزيد(ظاهر): من إحنا، الوظائف، المساعدة، كلمنا | عدد السطور: 1
-300px | السطر: الرئيسية، المنتجات | المزيد(ظاهر): العروض، المدونة، من إحنا، الوظائف، المساعدة، كلمنا | عدد السطور: 1
-600px | السطر: الرئيسية، المنتجات، العروض، المدونة، من إحنا، الوظائف، المساعدة، كلمنا | المزيد(مخفي): - | عدد السطور: 1
-900px | السطر: الرئيسية، المنتجات، العروض، المدونة، من إحنا، الوظائف، المساعدة، كلمنا | المزيد(مخفي): - | عدد السطور: 1
-رسايل error: 0 | pageerrors: 0
+~~~text الناتج (Node 24.22)
+true 6
+false true 5 7 false
+false 10 false true 9
 ~~~
 
-**ليه كده:**
+- **الفخ اللي لقيته:** أول نسخة كانت بتعمل [[buf.transfer(n)]] في الآخر، ووقعت في الحالة التالتة بـ [[RangeError: Invalid array buffer length]]. السبب: [[transfer]] على buffer resizable بيرجّع buffer **resizable بنفس الحد** ([[maxByteLength]] ٤)، فـ ١٠ ممنوعة. [[transferToFixedLength(n)]] بيرجّع buffer عادي بأي طول.
+- لما الطول الجديد أكبر، الـ bytes الزيادة أصفار، والقديمة موجودة ([[7]] و [[9]]).
+- اللي بينادي الدالة **لازم** يستخدم الـ buffer اللي راجع مش القديم، لأن القديم ممكن يبقى detached. نفس عقد [[realloc]] في C.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** ضيف 4 MB على دفعات ١ KB بطريقتين: (أ) كل مرة [[Uint8Array]] جديدة أكبر وتنسخ القديم فيها، (ب) buffer resizable و [[resize]]. قيس الوقت بـ [[performance.now()]] وشغّل مرتين.`, done: R`عندك رقمين حقيقيين من جهازك لكل طريقة، وتقدر تشرح ليه الفرق بالحجم ده.`, sol: R`~~~js grow-bench.mjs
+// grow-bench.mjs: نضيف 4 MB على دفعات 1 KB بطريقتين
+const CHUNK = new Uint8Array(1024).fill(7), TIMES = 4096;
+let t = performance.now();
+let copy = new Uint8Array(0);
+for (let i = 0; i < TIMES; i++) {
+  const next = new Uint8Array(copy.length + CHUNK.length);
+  next.set(copy);
+  next.set(CHUNK, copy.length);
+  copy = next;
+}
+console.log('نسخ كل مرة:', Math.round(performance.now() - t), 'ms', copy.length);
+t = performance.now();
+const buf = new ArrayBuffer(0, { maxByteLength: CHUNK.length * TIMES });
+const view = new Uint8Array(buf);
+for (let i = 0; i < TIMES; i++) {
+  const at = buf.byteLength;
+  buf.resize(at + CHUNK.length);
+  view.set(CHUNK, at);
+}
+console.log('resize في مكانه:', Math.round(performance.now() - t), 'ms', view.length);
+~~~
 
-- **[[layout()]] بتبدأ من الصفر كل مرة:** بترجّع كل اللينكات للسطر بالترتيب الأصلي ([[all]])، وبعدين تشيل من الآخر لحد ما السطر يكفي. كده الرجوع لما توسّع بيحصل لوحده وبنفس الترتيب، من غير ما تحسب «أنهي واحد يرجع».
-- **[[links.scrollWidth > links.clientWidth]]:** السطر عليه [[overflow: hidden]] و [[white-space: nowrap]]، فمستحيل يلف لسطر تاني، و [[scrollWidth]] بيقول المحتوى عايز قد إيه. لو أكبر من المساحة، فيه لينك زيادة.
-- **[[more.hidden = false]] قبل اللفة:** الزرار نفسه بياخد مكان، فلازم يظهر **قبل** ما نحسب، وإلا آخر لينك هيتقص بالزرار.
-- **[[moved.unshift(...)]]:** بنشيل من الآخر ونحط في أول القايمة، فـ «المزيد» بيفضل بنفس ترتيب الموقع.
-- **[[observe(nav)]] مش [[observe(links)]]:** الـ nav عرضه جاي من الشاشة، ونقل اللينكات جواه مبيغيّرش مقاسه، فالـ observer مبيتناداش تاني بسبب شغلنا إحنا.
+~~~text الناتج (Node 24.22، ويندوز 11، مرتين)
+نسخ كل مرة: 5146 ms 4194304
+resize في مكانه: 69 ms 4194304
+نسخ كل مرة: 5125 ms 4194304
+resize في مكانه: 56 ms 4194304
+~~~
 
-**جرّبنا الغلط:** نسخة بتراقب [[#links]] نفسه، وعرضه على قد محتواه ([[flex: 0 1 auto]]):
+- **(أ)** في كل خطوة بتنسخ كل اللي فات: ١ KB ثم ٢ ثم ٣... لحد ٤ MB. المجموع حوالي ٤٠٩٦ × ٢ MB = ٨ GB نسخ، وده O(n²). و ٨ GB ذاكرة اتحجزت ورميت للـ garbage collector.
+- **(ب)** [[maxByteLength]] بيخلي الـ engine يحجز مساحة العناوين (virtual memory) من الأول، و [[resize]] بيفعّل الـ pages اللي محتاجها بس، من غير ما ينسخ ولا byte. فالتكلفة بتاعة الـ ١ KB الجديد بس: O(n).
+- الطريقة القديمة الكويسة قبل [[resize]]: تضاعف الحجم كل ما يتملى (زي الـ Array جوه V8)، وده O(n) برضه بس بيحجز لحد الضعف. و [[resize]] أوضح وبيحجز اللي محتاجه بالظبط.` },
+          ],
+          check: { lang: "js", starter: R`function ensureCapacity(buf, n) {
+  // رجّع buffer فيه n byte على الأقل وفيه الـ bytes القديمة
+}`, tests: R`test("كفاية: نفس الـ buffer", () => { const b = new ArrayBuffer(8); expect(ensureCapacity(b, 4) === b).toBe(true); });
+test("resizable جوه الحد: نفس الـ buffer أكبر", () => { const b = new ArrayBuffer(2, { maxByteLength: 8 }); const r = ensureCapacity(b, 6); expect(r === b).toBe(true); expect(b.byteLength).toBe(6); });
+test("عادي: بيتنقل والقديم detached", () => { const b = new ArrayBuffer(2); new Uint8Array(b)[0] = 7; const r = ensureCapacity(b, 5); expect(r.byteLength).toBe(5); expect(b.detached).toBe(true); expect(new Uint8Array(r)[0]).toBe(7); });
+test("resizable أكبر من حده: بيتنقل من غير error", () => { const b = new ArrayBuffer(2, { maxByteLength: 4 }); new Uint8Array(b)[1] = 9; const r = ensureCapacity(b, 10); expect(r.byteLength).toBe(10); expect(new Uint8Array(r)[1]).toBe(9); });`, solution: R`function ensureCapacity(buf, n) {
+  if (buf.byteLength >= n) return buf;
+  if (buf.resizable && n <= buf.maxByteLength) { buf.resize(n); return buf; }
+  return buf.transferToFixedLength(n);
+}` },
+          flag: "script",
+          deep: {
+            why: R`قبل ES2024 الـ buffer طوله ثابت للأبد، فأي حاجة بتكبر (ملف بيتبني، رسالة بتتجمع من الشبكة، ذاكرة wasm) كانت بتعمل buffer أكبر وتنسخ كل حاجة، وكل view قديم لازم يتعمل تاني. و [[resize]] بيحل ده في مكانه. والـ [[transfer]] بيحل مشكلة تانية: «مين صاحب الـ bytes دي دلوقتي؟». لما تسلّم buffer لـ Worker أو لمكتبة، الـ detach بيضمن إن محدش في الكود القديم هيكتب فيه بالغلط وهو في إيد حد تاني. وده كان موجود من زمان في [[postMessage]]، و [[transfer()]] جابه لكود JavaScript العادي.`,
+            how: R`[[new ArrayBuffer(len, { maxByteLength })]] بيحجز مساحة عناوين [[maxByteLength]] من نظام التشغيل (virtual memory)، بس بيفعّل [[len]] بس. [[resize(n)]] بيفعّل أو يرجّع pages من غير ما يغيّر عنوان الذاكرة، فالـ views مش محتاجة تتعمل تاني: الـ length-tracking (من غير طول) بتحسب طولها كل مرة من [[byteLength]]، واللي ليها طول ثابت بتبقى «out of bounds» (طولها صفر) لو الـ buffer صغر عن نهايتها. الـ bytes الجديدة دايمًا أصفار، حتى لو كانت فيها حاجة قبل ما تصغّره. [[n]] أكبر من [[maxByteLength]] أو سالب: [[RangeError: ArrayBuffer.prototype.resize: Invalid length parameter]]، و [[maxByteLength]] أصغر من الطول وقت الإنشاء: [[RangeError: Invalid array buffer max length]].
 
-~~~text الناتج (النسخة البايظة، نفس الخطوات)
-420px | السطر: الرئيسية، المنتجات، العروض، المدونة | المزيد(ظاهر): من إحنا، الوظائف، المساعدة، كلمنا
-300px | السطر: الرئيسية، المنتجات | المزيد(ظاهر): العروض، المدونة، من إحنا، الوظائف، المساعدة، كلمنا
-600px | السطر: الرئيسية، المنتجات | المزيد(ظاهر): العروض، المدونة، من إحنا، الوظائف، المساعدة، كلمنا
-900px | السطر: الرئيسية، المنتجات | المزيد(ظاهر): العروض، المدونة، من إحنا، الوظائف، المساعدة، كلمنا
-[
-  'error event: ResizeObserver loop completed with undelivered notifications.',
-  'error event: ResizeObserver loop completed with undelivered notifications.'
+[[transfer(n)]] بيعمل buffer جديد بنفس النوع (resizable يفضل resizable بنفس الحد، والعادي عادي)، ويحرّك الذاكرة نفسها لو يقدر (من غير نسخ)، أو ينسخ لو الطول اتغيّر، وبعدين يفصل القديم: [[byteLength]] صفر، و [[detached]] بـ [[true]]، و [[maxByteLength]] بيبقى صفر (و [[resizable]] بيفضل زي ما هو، اتجرّب: [[true]])، وأي method ([[slice]] و [[resize]] و [[transfer]]) بترمي [[TypeError: Cannot perform ... on a detached ArrayBuffer]]. والـ typed arrays عليه: القراية بـ index بترجّع [[undefined]] والكتابة بتتجاهَل **من غير error**، بس methods زي [[fill]] بترمي. [[transferToFixedLength(n)]] نفس الشيء والنتيجة دايمًا ثابتة الطول.`,
+            when: R`[[resize]]: buffer بيتبني على دفعات وتعرف حد أقصى معقول (ملف بتجمعه من chunks، أو writer لـ format binary، أو ring buffer بيكبر). [[transfer]]: لما تسلّم الـ bytes لحد تاني وعايز تضمن إنك مش هتلمسها (API بيقبل buffer ويحتفظ بيه)، أو تحوّل buffer resizable لعادي بالطول اللي اتملى ([[transferToFixedLength]]) قبل ما تسلّمه، أو تكبّر buffer عادي (([[transfer(newLength)]] بدل [[new]] + [[set]]). [[detached]]: افحصه قبل ما تستخدم buffer ممكن يكون اتبعت لـ Worker أو اتنقل (مثلًا في cache).`,
+            mistakes: R`- تعمل [[resize]] على buffer عادي: [[TypeError: Method ArrayBuffer.prototype.resize called on incompatible receiver #<ArrayBuffer>]]. لازم [[maxByteLength]] وقت الإنشاء.
+- [[transfer(n)]] على resizable بطول أكبر من حده: [[RangeError: Invalid array buffer length]]. استخدم [[transferToFixedLength(n)]].
+- تكمّل تستخدم view على buffer اتعمله [[transfer]]: القراية [[undefined]] والكتابة بتضيع ساكتة.
+- تعمل view بـ offset أكبر من الطول **الحالي** حتى لو جوه [[maxByteLength]]: [[RangeError: Start offset 4 is outside the bounds of the buffer]].
+- تفتكر الـ bytes بترجع لما تكبّر تاني بعد ما صغّرت: الجزء اللي اتشال بيرجع أصفار.
+- تحط [[maxByteLength]] كبير جدًا «احتياطي» على أجهزة ٣٢ bit أو موبايل: مساحة العناوين محدودة والحجز ممكن يفشل. حط الحد اللي محتاجه فعلًا.`,
+          },
+          teach: R`## الفكرة في سطر
+
+[[resize]] بيغيّر طول الـ buffer في مكانه، و [[transfer]] بينقل الـ bytes لـ buffer جديد ويسيب القديم فاضي (detached). الناتج من Node 24.22 (والمتصفحات: Chrome 111 و Firefox 128 و Safari 16.4 فيهم resizable، و [[transfer]] Baseline من ٢٠٢٤).
+
+---
+
+## ١. [[ArrayBuffer.prototype.resizable]] و [[ArrayBuffer.prototype.maxByteLength]]
+
+~~~js
+const buf = new ArrayBuffer(4, { maxByteLength: 16 });
+console.log(buf.resizable, buf.byteLength, buf.maxByteLength);
+~~~
+
+~~~text الناتج
+true 4 16
+~~~
+
+- التاني argument object options فيه [[maxByteLength]]: أقصى طول ممكن يوصله. وجوده هو اللي بيخلي الـ buffer resizable.
+- [[resizable]]: [[true]] هنا، و [[false]] لأي [[new ArrayBuffer(n)]] عادي.
+- [[maxByteLength]]: ١٦. وفي الـ buffer العادي بيساوي [[byteLength]] (اتجرّب: [[new ArrayBuffer(4).maxByteLength]] بـ ٤).
+- [[maxByteLength]] أصغر من الطول: [[RangeError: Invalid array buffer max length]].
+
+---
+
+## ٢. [[ArrayBuffer.prototype.resize]]: والـ views بتتصرف إزاي
+
+~~~js
+const all = new Uint8Array(buf);
+const firstTwo = new Uint8Array(buf, 0, 2);
+all.set([1, 2, 3, 4]);
+buf.resize(8);
+console.log(all.length, firstTwo.length, all);
+buf.resize(1);
+console.log(all.length, firstTwo.length, firstTwo[1]);
+try { buf.resize(32); } catch (e) { console.log(e.name + ': ' + e.message); }
+~~~
+
+~~~text الناتج
+8 2 Uint8Array(8) [
+  1, 2, 3, 4,
+  0, 0, 0, 0
 ]
+1 0 undefined
+RangeError: ArrayBuffer.prototype.resize: Invalid length parameter
 ~~~
 
-مشكلتين: الـ callback بيغيّر مقاس العنصر اللي بيراقبه، فالمتصفح بيلاقي تغيير جديد في نفس الفريم ويوقّفه برسالة [[ResizeObserver loop completed with undelivered notifications.]]. ولما وسّعنا، السطر عرضه على قد اللينكين اللي فيه، فمقاسه متغيّرش والـ observer متناداش أصلًا، واللينكات فضلت محبوسة في «المزيد».
-
-**الغلطة الشائعة:** تفتكر إن رسالة الـ loop مش مهمة لأنها مش [[pageerror]]. هي بتطلع كـ [[error]] event على [[window]]، يعني أي أداة مراقبة أخطاء (Sentry مثلًا) هتسجّلها عند كل يوزر، ومعناها إن فيه إشعارات اتأجلت للفريم اللي بعده والشكل اترسم مرة غلط.` },
-          ],
-          ref: [
-            { t: "MDN: Resize Observer API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Resize_Observer_API" },
-            { t: "MDN: ResizeObserver", url: "https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver" },
-            { t: "MDN: ResizeObserverEntry.borderBoxSize", url: "https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserverEntry/borderBoxSize" },
-          ],
-          flag: "script",
-          deep: {
-            why: "الـ components بقت بتتحط في أماكن مختلفة: نفس الكارت في grid بـ ٤ أعمدة وفي sidebar ضيق. الـ media queries بتسأل عن الشاشة، والسؤال الصح «أنا عرضي كام». و canvas بالذات لازم تعرف مقاسه بالبكسل الحقيقي وإلا الرسمة تبقى مغبشة.",
-            how: R`المتصفح بيحسب المقاسات في الـ layout، وبعده (قبل الرسم) بيبعت للـ ResizeObservers التغييرات مرة في الـ frame. فمفيش حاجة زي resize event بيتنادى ١٠٠ مرة، ومش محتاج debounce غالبًا.
-
-[[contentBoxSize]] array لأن عنصر ممكن يتقسم (multi-column)، وعادةً [[[0]]]. و [[inlineSize]] العرض في الكتابة الأفقية (عربي أو إنجليزي). و [[borderBoxSize]] لو عايز المقاس بالـ padding والـ border.
-
-الـ canvas له مقاسين: الـ CSS (بيتحكم فيه الـ layout) والداخلي [[canvas.width]] (عدد البكسلات). لو الداخلي أقل، الرسمة بتتمط وتغبش. [[devicePixelRatio]] بـ 2 أو 3 على شاشات الموبايل، فبنضرب فيه. وتغيير [[canvas.width]] بيمسح الرسمة، فلازم [[draw()]] بعده.
-
-لو غيّرت جوه الـ callback حاجة بتغيّر مقاس نفس العنصر، ممكن تدخل loop، والمتصفح بيوقفها ويطبع [[ResizeObserver loop completed with undelivered notifications]] في الـ console. غالبًا مش خطر بس معناه إن التصميم بيتذبذب.`,
-            when: R`charts و canvas و محررات، و virtualized lists (تحسب كام صف يظهر)، و «اعرض ٣ tags والباقي +2». ولتغيير الشكل بس: container queries أولًا.`,
-            mistakes: R`ResizeObserver لحاجة CSS يقدر عليها. وتنسى [[ro.disconnect()]] لما العنصر يتشال. وتغيّر مقاس العنصر المراقب جوه الـ callback (loop). و [[canvas.width = el.clientWidth]] من غير devicePixelRatio فالرسمة مغبشة على الموبايل. و canvas من غير [[width: 100%; height: 100%]] في الـ CSS: مقاسه على الشاشة بيبقى هو [[canvas.width]] نفسه، فالأب بيكبر، فالـ observer يكبّره تاني، وهكذا للأبد.`
-          },
-          teach: R`## الفكرة في سطر
-
-بتقول للمتصفح «لما مقاس العنصر ده يتغير، ناديني بالمقاس الجديد». المثال فيه استخدامين: كارت بياخد [[data-size]] حسب عرضه هو، و canvas بيظبط عدد البكسلات بتاعته على مقاس أبوه.
-
-جرّبت الكود في Chrome headless (عن طريق playwright-core) بشاشة [[deviceScaleFactor: 2]] (زي شاشات الموبايل والماك)، والكارت جوه [[.wrap]] غيّرت عرضه بالـ JS.
-
----
-
-## ١. الكارت
-
-~~~text app.js
-const card = document.querySelector(".card");
-const ro = new ResizeObserver((entries) => {
-  for (const entry of entries) {
-    const width = entry.contentBoxSize[0].inlineSize;
-    entry.target.dataset.size = width < 400 ? "s" : width < 700 ? "m" : "l";
-  }
-});
-ro.observe(card);
-~~~
-
-- [[new ResizeObserver(callback)]]: مراقب. مفيش options زي IntersectionObserver، بس callback.
-- [[entries]]: array، entry لكل عنصر اتغير مقاسه في الـ frame ده. observer واحد ينفع تراقب بيه كروت كتير، عشان كده loop.
-- [[entry.contentBoxSize]]: مقاس الـ **content** بس (من غير padding ولا border). وهي array لأن العنصر ممكن يتقسم على كذا عمود، وعادةً [[[0]]].
-- [[.inlineSize]]: المقاس في اتجاه السطر، يعني العرض في العربي والإنجليزي. والطول اسمه [[blockSize]].
-- [[entry.target]]: العنصر نفسه.
-- [[dataset.size = ...]]: [[dataset]] بيكتب attributes اسمها [[data-*]]، فده بيحط [[data-size="s"]] على العنصر، والـ CSS يستخدمه: [[.card[data-size="s"] { ... }]].
-- [[width < 400 ? "s" : width < 700 ? "m" : "l"]]: ternary جوه ternary: أقل من 400 ← s، غير كده أقل من 700 ← m، غير كده l.
-- [[ro.observe(card)]]: ابدأ راقب، وأول مرة بيتنادى على طول بالمقاس الحالي.
-
-### الناتج
-
-الكارت فيه [[padding: 10px]] و [[border: 1px]]، وغيّرت عرض الأب 800 ثم 500 ثم 300 ثم 799:
-
-~~~text الناتج
-card 778 l
-card 478 m
-card 278 s
-card 777 l
-~~~
-
-ليه 778 مش 800؟ لأن [[contentBoxSize]] من غير الـ padding (10 من كل ناحية) والـ border (1 من كل ناحية): 800 − 22 = 778. لو عايز المقاس بالـ padding والـ border استخدم [[borderBoxSize[0].inlineSize]] (طلعت 799 لما الأب كان 799). وفيه [[entry.contentRect.width]] الأقدم وبيدّي نفس رقم الـ content.
-
-### مرة واحدة في الـ frame
-
-غيّرت عرض الأب 50 مرة ورا بعض في نفس الكود: الـ callback اتنادى **مرة واحدة** بالمقاس الأخير. المتصفح بيجمّع التغييرات ويناديك بعد ما يحسب الـ layout وقبل ما يرسم، فمش محتاج debounce زي [[window.resize]].
-
----
-
-## ٢. الـ canvas
-
-~~~text app.js
-const canvas = document.querySelector("canvas");
-new ResizeObserver(([entry]) => {
-  const { width, height } = entry.contentRect;
-  canvas.width = Math.round(width * devicePixelRatio);
-  canvas.height = Math.round(height * devicePixelRatio);
-  draw();
-}).observe(canvas.parentElement);
-~~~
-
-- [[([entry]) => ...]]: array destructuring في الـ parameter: خد أول عنصر من [[entries]] في متغير اسمه entry (بنراقب عنصر واحد).
-- [[const { width, height } = entry.contentRect]]: object destructuring: خد الخاصيتين دول في متغيرين بنفس الاسم.
-- [[canvas.parentElement]]: بنراقب **الأب** مش الـ canvas، لأن الأب هو اللي الـ layout بيحدد مقاسه.
-- [[new ResizeObserver(...).observe(...)]]: عملنا المراقب ونادينا observe في نفس السطر من غير ما نحفظه في متغير (يعني مش هنقدر نعمله disconnect بعدين).
-
-### ليه [[devicePixelRatio]]؟
-
-الـ canvas ليه مقاسين:
-
-| المقاس | بيتحدد بـ | معناه |
+| الـ view | بعد [[resize(8)]] | بعد [[resize(1)]] |
 |---|---|---|
-| على الشاشة | الـ CSS | قد إيه بياخد مكان في الصفحة (CSS pixels) |
-| الداخلي | [[canvas.width]] و [[canvas.height]] | عدد البكسلات اللي بترسم فيها |
+| [[all]] من غير طول (length-tracking) | ٨: بيكبر مع الـ buffer، والجديد أصفار | ١: بيصغر معاه |
+| [[firstTwo]] بطول ثابت ٢ | ٢: مبيتغيرش | صفر: الـ buffer بقى أقصر من نهايته فبقى «out of bounds» |
 
-[[devicePixelRatio]] عدد بكسلات الشاشة الحقيقية في كل CSS pixel: 1 على شاشة عادية، و 2 أو 3 على الموبايل. لو الداخلي = مقاس الـ CSS بس، المتصفح بيمط الرسمة فتغبش. فبنضرب في الـ ratio، و [[Math.round]] عشان عدد البكسلات لازم رقم صحيح.
-
-و [[draw()]] بعدها لأن أي تغيير في [[canvas.width]] بيمسح الرسمة كلها.
-
-### الفخ اللي ظهر لما شغّلته
-
-جرّبت الكود زي ما هو، والأب عرضه 300px ومن غير ارتفاع ثابت ومن غير أي CSS للـ canvas:
-
-~~~text الناتج
-canvas parent 300 x 154 → 600 x 308 css 600 x 308
-canvas parent 300 x 312 → 600 x 624 css 600 x 624
-canvas parent 300 x 628 → 600 x 1256 css 600 x 1256
-window error: ResizeObserver loop completed with undelivered notifications.
-...
-~~~
-
-canvas من غير CSS مقاسه على الشاشة **بيساوي** المقاس الداخلي. فلما خليناه 600×308، بقى 600×308 على الشاشة، فالأب طوله زاد، فالـ observer اتنادى تاني فضربنا في 2 تاني... والمتصفح بيوقف اللفة دي كل frame ويطبع [[ResizeObserver loop completed with undelivered notifications]]، بس الـ canvas بيفضل يكبر.
-
-الحل في الـ CSS (عشان كده ضفته كتعليق في المثال):
-
-~~~text style.css
-canvas { display: block; width: 100%; height: 100%; }
-.cw { width: 300px; height: 150px; }
-~~~
-
-وبعدها:
-
-~~~text الناتج
-canvas parent 300 x 150 → 600 x 300 css 300 x 150
-~~~
-
-على الشاشة 300×150، وجواه 600×300 بكسل: رسمة حادة، والـ callback اتنادى مرة واحدة بس. و [[display: block]] بتشيل المسافة الصغيرة اللي تحت أي عنصر inline.
+- [[resize(32)]] أكبر من [[maxByteLength]]: [[RangeError]].
+- لو رجّعت كبّرته لـ ٢ أو أكتر، [[firstTwo]] بيرجع طوله ٢، بس الـ bytes اللي اتشالت بترجع **أصفار**.
+- الذاكرة ما اتنقلتش: نفس الـ views شغالة من غير ما تعملها تاني. ده الفرق الكبير عن «اعمل buffer أكبر وانسخ».
 
 ---
 
-## ٣. [[draw]]
+## ٣. [[ArrayBuffer.prototype.transfer]] و [[ArrayBuffer.prototype.detached]]
 
-~~~text app.js
-function draw() {
-  const ctx = canvas.getContext("2d");
-  ctx.fillRect(0, 0, canvas.width / 2, canvas.height / 2);
-}
+~~~js
+const moved = buf.transfer();
+console.log(buf.detached, buf.byteLength, moved.byteLength, moved.resizable, all.length);
+try { all[0] = 5; console.log('كتابة على view مفصول:', all[0]); buf.slice(0); } catch (e) { console.log(e.name + ': ' + e.message); }
 ~~~
 
-- [[getContext("2d")]]: هات أداة الرسم ثنائية الأبعاد.
-- [[fillRect(x, y, w, h)]]: ارسم مستطيل مليان يبدأ من الركن الشمال فوق [[(0, 0)]]، وعرضه وطوله نص الـ canvas، يعني ربعه.
+~~~text الناتج
+true 0 1 true 0
+كتابة على view مفصول: undefined
+TypeError: Cannot perform ArrayBuffer.prototype.slice on a detached ArrayBuffer
+~~~
+
+- [[buf.transfer()]]: buffer جديد [[moved]] فيه الـ byte الوحيد اللي كان في [[buf]]، ونفس النوع (resizable بنفس الحد ١٦).
+- [[buf]] بقى **detached**: [[detached]] بـ [[true]] و [[byteLength]] صفر. والـ view [[all]] طوله صفر.
+- الكتابة [[ all[0] = 5 ]] اتجاهلت والقراية [[undefined]]، **من غير error**. لكن [[buf.slice]] رمى [[TypeError]].
+
+| على buffer detached | النتيجة (اتجرّب) |
+|---|---|
+| [[ view[i] ]] قراية | بترجّع [[undefined]] من غير أي error |
+| [[ view[i] = x ]] كتابة | بتتجاهَل ساكتة، والقيمة مبتتكتبش في أي حتة |
+| [[view.fill(1)]] وأي method على الـ view | [[TypeError: Cannot perform %TypedArray%.prototype.fill on a detached ArrayBuffer]]: الـ methods بتفحص وبترمي |
+| [[new Uint8Array(buf)]] | [[TypeError: Cannot perform Construct on a detached ArrayBuffer]]: مينفعش view جديد |
+| [[buf.transfer()]] تاني | [[TypeError: Cannot perform ArrayBuffer.prototype.transfer on a detached ArrayBuffer]]: اتنقل خلاص |
+| [[dataView.getUint8(0)]] و [[dataView.byteLength]] | [[TypeError]] برضه، الـ [[DataView]] أشد من الـ typed array |
+
+---
+
+## ٤. [[ArrayBuffer.prototype.transferToFixedLength]]: والطول الجديد
+
+~~~js
+const fixed = moved.transferToFixedLength(6);
+console.log(fixed.resizable, fixed.byteLength, new Uint8Array(fixed));
+~~~
+
+~~~text الناتج
+false 6 Uint8Array(6) [ 1, 0, 0, 0, 0, 0 ]
+~~~
+
+- [[transferToFixedLength(6)]]: انقل وخلّي النتيجة buffer **عادي** بطول ٦: الـ byte القديم [[1]] والباقي أصفار.
+- الاتنين بياخدوا طول اختياري: أقل = بيقص، وأكبر = بيكمّل أصفار، ومن غيره = نفس الطول.
+
+| | [[transfer(n)]] | [[transferToFixedLength(n)]] |
+|---|---|---|
+| النتيجة من resizable | resizable بنفس [[maxByteLength]] | عادي ثابت |
+| [[n]] أكبر من حد الـ resizable | [[RangeError: Invalid array buffer length]] | شغال عادي |
+| القديم | detached | detached |
+
+---
+
+## ٥. فين بيحصل الـ detach من غير ما تنادي [[transfer]]
+
+| الموقف | اللي بيتفصل |
+|---|---|
+| [[worker.postMessage(buf, [buf])]] | الـ buffer عندك بيتفصل، والـ bytes بتوصل للـ Worker (درس «Web Workers و worker_threads») |
+| [[structuredClone(buf, { transfer: [buf] })]] | الأصل بيتفصل، والنسخة الراجعة هي صاحبة الـ bytes |
+| [[memory.grow(n)]] في WebAssembly | [[memory.buffer]] القديم بيتفصل ويتعمل واحد أكبر (درس «WebAssembly في المتصفح») |
+| [[reader.read(view)]] في BYOB streams | الـ view اللي اديته، وبيرجعلك واحد جديد |
+
+فالقاعدة: لو buffer ممكن يكون اتبعت أو اتنقل، افحص [[buf.detached]] قبل ما تعتمد عليه، أو خد الـ buffer اللي راجع.
 
 ---
 
 ## الخلاصة
 
-| الحاجة | معناها |
-|---|---|
-| [[new ResizeObserver(cb)]] و [[observe(el)]] | ناديني لما مقاس el يتغير |
-| [[contentBoxSize[0].inlineSize]] | العرض من غير padding و border |
-| [[borderBoxSize[0].inlineSize]] | العرض بالـ padding و border |
-| [[contentRect.width/height]] | الطريقة الأقدم لمقاس الـ content |
-| [[devicePixelRatio]] | بكسلات الشاشة لكل CSS pixel |
-| [[disconnect()]] | وقّف المراقبة كلها |
-
-- بيتنادى مرة في الـ frame، فمش محتاج debounce.
-- متغيّرش جوه الـ callback حاجة بتكبّر نفس العنصر اللي بتراقبه، والـ canvas لازم مقاسه على الشاشة يتحدد بالـ CSS.
-- لو المطلوب تغيير شكل بس، [[@container]] في CSS أسهل ومن غير JS.`,
+- [[maxByteLength]] وقت الإنشاء = buffer resizable، و [[resize]] بيكبّره أو يصغّره في مكانه، والـ views من غير طول بتمشي معاه.
+- [[transfer]] و [[transferToFixedLength]] بينقلوا الـ bytes لـ buffer جديد، والقديم detached: طوله صفر والقراية منه [[undefined]] من غير error.
+- النتيجة من [[transfer]] على resizable resizable برضه، فلو عايز طول أكبر من الحد أو buffer ثابت: [[transferToFixedLength]].`,
           lines: [
-            R`الكارت اللي عايزين شكله يتغير حسب **عرضه هو** مش عرض الشاشة. ده الفرق عن media query: نفس الكارت ممكن يبقى في sidebar ضيق أو واخد الصفحة كلها.`,
-            R`[[ResizeObserver]] بينادي الـ callback كل ما مقاس عنصر متراقب يتغير، مهما كان السبب (الشاشة اتصغرت، أو sidebar اتقفل، أو المحتوى زاد). و observer واحد ينفع تراقب بيه كذا عنصر.`,
-            R`[[entries]] فيها entry لكل عنصر مقاسه اتغير من آخر مرة، فبنلف عليهم.`,
-            R`العرض الجديد لمحتوى العنصر (من غير الـ padding والـ border). [[contentBoxSize]] array فبناخد أول عنصر فيها، و [[inlineSize]] هو العرض في الكتابة الأفقية. القيمة جاهزة في الـ entry، فمش محتاج تقيس بنفسك.`,
-            R`بنحوّل العرض لمقاس من تلاتة ([["s"]] أو [["m"]] أو [["l"]]) ونحطه في [[data-size]] على العنصر، والـ CSS بيختار الشكل بـ attribute selector على [[data-size]]. فالـ JS بيقيس بس والـ CSS بيرسم. وخلي بالك: لو غيّرت جوه الـ callback حاجة بتغيّر مقاس نفس العنصر، ممكن تعمل loop والمتصفح يكتب تحذير «ResizeObserver loop» في الـ console.`,
-            R`نهاية الـ [[for]].`,
-            R`نهاية الـ callback والـ [[ResizeObserver]].`,
-            R`نبدأ نراقب الكارت. أول ما تعمل [[observe]] الـ callback بيتنادى مرة بالمقاس الحالي (لو العنصر ظاهر)، فالـ [[data-size]] بيتحط من أول ما الصفحة تفتح.`,
-            R`مثال تاني: الـ [[<canvas>]] لازم نظبط مقاسه بإيدنا، لأن عدد البكسلات اللي بيرسم عليها منفصل عن مقاسه في الـ CSS.`,
-            R`بنعمل observer من غير ما نحفظه في متغير، والـ destructuring في الباراميتر بياخد أول entry بس لأننا بنراقب عنصر واحد.`,
-            R`[[contentRect]] فيه عرض وطول المحتوى بالـ CSS pixels، يعني المقاس اللي انت شايفه في DevTools.`,
-            R`بنظبط عدد بكسلات الرسم = المقاس في الـ CSS مضروب في [[devicePixelRatio]] (1 على شاشة عادية، و 2 أو 3 على الموبايل والشاشات الكثيفة). من غيرها الرسمة هتتمط وتطلع مغبّشة. و [[Math.round]] لأن [[canvas.width]] بياخد عدد صحيح من البكسلات.`,
-            R`نفس الكلام للطول، عشان النسبة بين العرض والطول تفضل مظبوطة.`,
-            R`تغيير [[canvas.width]] أو [[canvas.height]] بيمسح كل اللي اترسم ويرجّع الـ context لحالته الأولانية، فلازم نرسم تاني بعد كل تغيير مقاس، وإلا الـ canvas هيفضل فاضي.`,
-            R`بنراقب **أب** الـ canvas مش الـ canvas نفسه: الأب هو اللي مقاسه بيتغير مع الصفحة، واحنا بنغيّر مقاس الـ canvas جوه الـ callback، فلو راقبناه هو ممكن نعمل loop. ونهاية الـ observer.`,
-            R`دالة رسم بسيطة عشان نشوف النتيجة.`,
-            R`[[getContext("2d")]] بيرجّع الـ object اللي فيه أوامر الرسم الـ 2D (مستطيلات، خطوط، نصوص)، وبيرجّع نفس الـ context كل مرة لنفس الـ canvas.`,
-            R`بيرسم مستطيل مليان بيبدأ من الركن [[(0, 0)]]، عرضه نص عرض الـ canvas وطوله نص طوله، يعني ربع المساحة. ولأنه بيعتمد على [[canvas.width]] بيفضل ربع مهما المقاس اتغير.`,
-            R`نهاية [[draw]].`,
-          ],
-          sol: R`لما تسحب الـ div تحت 400px الـ [[data-size]] يبقى [["s"]] والـ CSS يقلب الترتيب، وبين 400 و 700 [["m"]]. التغيير بيحصل مع السحب نفسه من غير تأخير ومن غير debounce.
-
-نسخة CSS: [[.wrap { container-type: inline-size }]] على الأب، و [[@container (width < 400px) { .card { flex-direction: column } }]]. نفس النتيجة، ومفيش JS، وبتشتغل قبل ما الـ JS يتحمّل (من غير flash). عشان كده للشكل استخدم CSS، وخلي ResizeObserver للحاجات اللي محتاجة رقم في JS (الـ canvas مثلًا).`
-        },
-        {
-          cmd: "input type=file",
-          title: "تختار صور وتعاينها قبل الرفع إزاي؟",
-          desc: R`[[<input type="file">]] بيفتح اختيار الملفات. [[accept="image/png,image/jpeg,image/webp"]] أو [[accept="image/*"]] بيفلتر اللي يظهر (اقتراح بس، اليوزر يقدر يختار أي حاجة)، و [[multiple]] يسمح بأكتر من ملف، وعلى الموبايل [[capture="environment"]] بيفتح الكاميرا.
-
-[[input.files]] ليستة [[File]]: كل واحد فيه [[name]] و [[size]] (بالبايت) و [[type]] (MIME زي [["image/png"]]). و [[URL.createObjectURL(file)]] بيعمل URL مؤقت ([[blob:...]]) تحطه في [[img.src]] فتعرض الصورة من غير ما ترفعها، وبعد ما تخلص [[URL.revokeObjectURL(url)]] عشان الذاكرة.`,
-          example: R`// HTML: <input type="file" id="pics" accept="image/png,image/jpeg,image/webp" multiple> <div id="preview"></div>
-const input = document.querySelector("#pics");
-const preview = document.querySelector("#preview");
-const MAX = 2 * 1024 * 1024;
-let urls = [];
-input.addEventListener("change", () => {
-  urls.forEach((u) => URL.revokeObjectURL(u));
-  urls = [];
-  preview.replaceChildren();
-  for (const file of input.files) {
-    if (!file.type.startsWith("image/")) continue;
-    if (file.size > MAX) {
-      preview.append($__bt$__{file.name}: أكبر من 2MB. $__bt);
-      continue;
-    }
-    const url = URL.createObjectURL(file);
-    urls.push(url);
-    const img = document.createElement("img");
-    img.src = url;
-    img.alt = file.name;
-    img.width = 120;
-    preview.append(img);
-  }
-});`,
-          try: R`اختار ٣ صور منهم واحدة أكبر من 2MB وملف PDF (غيّر الـ accept لـ [[*/*]] عشان يظهر). إيه اللي اتعرض؟ وبعدين غيّر اسم ملف [[.txt]] لـ [[.png]] واختاره: [[file.type]] بيقول إيه؟ وآخر حاجة: اعرض تحت كل صورة حجمها بالـ KB ومقاسها بالبكسل ([[img.naturalWidth]] بعد [[img.onload]]).`,
-          practice: [
-            { lvl: 'سريع', t: R`ابني تحت [[<input type="file" multiple>]] جدول فيه لكل ملف: الاسم، والحجم بالـ KB بـ [[(file.size / 1024).toFixed(1)]]، والنوع، وزرار «شيل». الشيل بيبني [[input.files]] من جديد بـ [[new DataTransfer()]] و [[dt.items.add(file)]] و [[input.files = dt.files]].`, done: R`ملف 1536 بايت بيظهر 1.5 KB، والنوع الفاضي بيظهر «غير معروف»، و «شيل» بيمسح السطر و [[input.files.length]] بيقل واحد، والفورم لما تبعته مبيبعتش الملف اللي شلته.`, sol: R`~~~live 300 file-table.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الملفات اللي اخترتها</title>
-<style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
-  table { border-collapse: collapse; margin: 12px 0; }
-  th, td { border-bottom: 1px solid #ddd; padding: 4px 8px; text-align: start; }
-  td:nth-child(2) { direction: ltr; text-align: end; }
-  button { font: inherit; }
-  #sent { color: #065f46; }
-</style>
-</head>
-<body>
-<form id="form">
-  <label>اختار ملفات: <input type="file" name="files" id="files" multiple></label>
-  <table>
-    <thead><tr><th>الاسم</th><th>الحجم</th><th>النوع</th><th></th></tr></thead>
-    <tbody id="rows"></tbody>
-  </table>
-  <button>ابعت</button>
-</form>
-<p id="sent"></p>
-<script>
-  const input = document.querySelector("#files");
-  const rows = document.querySelector("#rows");
-
-  function render() {
-    rows.replaceChildren(...[...input.files].map((file, i) => {
-      const tr = document.createElement("tr");
-      for (const text of [file.name, (file.size / 1024).toFixed(1) + " KB", file.type || "غير معروف"]) {
-        const td = document.createElement("td");
-        td.textContent = text;
-        tr.append(td);
-      }
-      const td = document.createElement("td");
-      const btn = document.createElement("button");
-      btn.type = "button";                     // مش submit
-      btn.textContent = "شيل";
-      btn.addEventListener("click", () => removeAt(i));
-      td.append(btn);
-      tr.append(td);
-      return tr;
-    }));
-  }
-
-  // input.files للقراية بس: بنبني FileList جديدة من DataTransfer
-  function removeAt(index) {
-    const dt = new DataTransfer();
-    [...input.files].forEach((file, i) => { if (i !== index) dt.items.add(file); });
-    input.files = dt.files;
-    render();
-  }
-
-  input.addEventListener("change", render);
-
-  // بدل ما نبعت لسيرفر: نعرض اللي الفورم كانت هتبعته
-  document.querySelector("#form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const names = new FormData(e.target).getAll("files").map((f) => f.name);
-    document.querySelector("#sent").textContent = "الفورم هتبعت: " + (names.join("، ") || "ولا ملف");
-  });
-</script>
-</body>
-</html>
-~~~
-
-اختار كذا ملف من جهازك في الـ preview، ودوس «شيل» على واحد وبعدين «ابعت». (الـ preview مش هيبعت لسيرفر: الصفحة بتعرض اللي الفورم كانت هتبعته.)
-
-~~~text الناتج (Chrome 158 headless، اخترنا ٣ ملفات حقيقية من الديسك بـ setInputFiles)
-notes.txt | 1.5 KB | text/plain
-photo.png | 200.0 KB | image/png
-data.xyz | 0.0 KB | غير معروف
-input.files.length: 3
---- بعد «شيل» على photo.png
-notes.txt | 1.5 KB | text/plain
-data.xyz | 0.0 KB | غير معروف
-input.files.length: 2
-الفورم هتبعت: notes.txt، data.xyz
-pageerrors: 0
-~~~
-
-**ليه كده:**
-
-- **[[(file.size / 1024).toFixed(1)]]:** [[file.size]] بالبايت. 1536 ÷ 1024 = 1.5، و [[toFixed(1)]] بيسيب رقم عشري واحد كنص ([["1.5"]]).
-- **[[file.type || "غير معروف"]]:** المتصفح بيخمّن النوع **من الامتداد**. امتداد ميعرفوش ([[.xyz]]) = نص فاضي. ولاحظ إن [[photo.png]] هنا كلها أصفار ومع ذلك نوعها [[image/png]]: النوع مش فحص للمحتوى (التمرين اللي جاي بيعمل الفحص ده).
-- **[[input.files]] مبتتعدّلش:** دي [[FileList]] للقراية بس، مفيهاش [[remove]] ولا [[splice]]. الطريقة الوحيدة: [[new DataTransfer()]]، تضيف فيه الملفات اللي عايزها بـ [[dt.items.add(file)]]، وبعدين [[input.files = dt.files]].
-- **[[btn.type = "button"]]:** أي [[<button>]] جوه [[<form>]] نوعه [[submit]] افتراضيًا، فـ «شيل» كانت هتبعت الفورم.
-- **[[new FormData(form).getAll("files")]]:** ده بالظبط اللي الفورم هتبعته، وبيقرا من [[input.files]] الجديدة، فالملف اللي اتشال مش موجود.
-- **[[removeAt(i)]] بعدها [[render()]]:** الأرقام [[i]] اتغيّرت بعد الشيل، فبنرسم الجدول من جديد بدل ما نشيل الصف بس، وإلا «شيل» التانية هتشيل ملف غلط.
-
-**الغلطة الشائعة:** تخزّن الملفات في array بتاعتك وتشيل منها، وتنسى الـ input. الجدول هيبان صح، بس الفورم هتبعت كل الملفات القديمة لأنها بتقرا من [[input.files]] مش من الـ array.` },
-            { lvl: 'تطبيق', t: R`مسألة: اكتب [[async function sniffImage(file)]] بترجّع [["png"]] أو [["jpeg"]] أو [[null]] من أول bytes مش من الامتداد: [[new Uint8Array(await file.slice(0, 4).arrayBuffer())]]. PNG بيبدأ بـ [[89 50 4E 47]] و JPEG بـ [[FF D8 FF]]. جرّبها في Node بملفات بتعملها بـ [[new File([bytes], "a.png")]].`, done: R`ملف أوله bytes الـ PNG بيرجّع [["png"]]، وملف [[new File(["hello"], "fake.png", { type: "image/png" })]] بيرجّع [[null]] مع إن [[file.type]] بتاعه [[image/png]] (في المتصفح النوع بيتخمّن من الامتداد)، وملف فاضي أو أقل من 4 bytes بيرجّع [[null]] من غير error.`, sol: R`~~~js sniff.mjs
-export async function sniffImage(file) {
-  const bytes = new Uint8Array(await file.slice(0, 4).arrayBuffer());
-  if (bytes.length >= 4 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
-  if (bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
-  return null;
-}
-~~~
-
-~~~js sniff-demo.mjs
-import { sniffImage } from "./sniff.mjs";
-
-const png = new File([new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])], "a.png");
-const jpeg = new File([new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0x00])], "b.jpg");
-const fake = new File(["hello"], "fake.png", { type: "image/png" });
-const empty = new File([], "empty.png");
-const tiny = new File([new Uint8Array([0x89, 0x50])], "tiny.png");
-
-for (const f of [png, jpeg, fake, empty, tiny]) {
-  console.log(f.name.padEnd(10), "type:", (f.type || '""').padEnd(10), "size:", String(f.size).padEnd(2), "→", await sniffImage(f));
-}
-~~~
-
-~~~text الناتج (node sniff-demo.mjs، Node 24)
-a.png      type: ""         size: 8  → png
-b.jpg      type: ""         size: 5  → jpeg
-fake.png   type: image/png  size: 5  → null
-empty.png  type: ""         size: 0  → null
-tiny.png   type: ""         size: 2  → null
-~~~
-
-وفي المتصفح: ملف نصي فيه [[hello]] اسمه [[fake.png]] اتختار من [[<input type="file">]]:
-
-~~~text الناتج (Chrome 158 headless)
-المتصفح: fake.png type=image/png → null
-~~~
-
-**ليه كده:**
-
-- **[[file.slice(0, 4)]]:** بيرجّع [[Blob]] لأول ٤ bytes بس، من غير ما يقرا الملف كله. صورة 20MB هتتقري منها ٤ bytes.
-- **[[await ... .arrayBuffer()]] و [[new Uint8Array(...)]]:** الـ ArrayBuffer هو الـ bytes الخام، و [[Uint8Array]] بيخلّيك تقرا كل byte كرقم من 0 لـ 255.
-- **الـ magic numbers:** كل صيغة ملفات بتبدأ بتوقيع ثابت. PNG: [[89 50 4E 47]] (والـ 50 4E 47 هما حروف [[PNG]] بالـ ASCII). JPEG: [[FF D8 FF]]. بنقارن بـ [[0x89]] وكده عشان نكتبهم زي ما هما في المواصفات.
-- **[[bytes.length >= 4]]:** الملف الفاضي أو الصغير بيرجّع array أقصر، و [[bytes[3]]] هيبقى [[undefined]] فالمقارنة غلط والنتيجة [[null]] من غير error. الشرط مكتوب عشان القارئ يفهم ليه.
-- **[[File]] موجود في Node 20 وما بعده كـ global:** فالدالة نفسها اتختبرت في Node والمتصفح من غير تعديل.
-- **[[fake.png]]:** نوعه [[image/png]] في الاتنين لأن النوع بييجي من الامتداد (أو من اللي انت كتبته في [[new File]])، والفحص بالـ bytes كشف إنه مش صورة.
-
-**الغلطة الشائعة:** تعتمد على [[file.type]] أو [[accept="image/*"]] وتفتكر ده أمان. الاتنين بيتغيّروا باسم الملف بس. والفحص ده في المتصفح لتجربة اليوزر بس: السيرفر لازم يفحص تاني، لأن أي حد يقدر يبعت request من غير صفحتك خالص.` },
-            { lvl: 'تحدي', t: R`قارن وقيس: [[resizeImage(file, max = 1024)]] بـ [[createImageBitmap(file)]] و canvas أكبر ضلع فيه [[max]] بنفس النسبة، و [[canvas.toBlob(cb, "image/jpeg", 0.8)]] ملفوفة في Promise، وبترجّع [[File]] جديد. اعرض الحجم والمقاس قبل وبعد لـ ٣ صور.`, done: R`صورة 4000×3000 بتطلع 1024×768 بالظبط، وصورة طولية 3000×4000 بتطلع 768×1024، وصورة أصغر من 1024 أصلًا بترجع بمقاسها مبتكبرش، وجدول قبل وبعد فيه الحجم بالـ KB للتلات صور، وملف مش صورة بيرفض الـ Promise برسالة مفهومة.`, sol: R`~~~live 260 resize.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>صغّر الصور قبل الرفع</title>
-<style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
-  table { border-collapse: collapse; margin-top: 12px; }
-  th, td { border-bottom: 1px solid #ddd; padding: 4px 8px; text-align: start; }
-  .err { color: #b91c1c; }
-</style>
-</head>
-<body>
-<label>اختار صور: <input type="file" id="pics" accept="image/*" multiple></label>
-<table>
-  <thead><tr><th>الملف</th><th>قبل</th><th>بعد</th></tr></thead>
-  <tbody id="rows"></tbody>
-</table>
-<script>
-  async function resizeImage(file, max = 1024) {
-    let bitmap;
-    try {
-      bitmap = await createImageBitmap(file);
-    } catch {
-      throw new Error($__bt«$__{file.name}» مش صورة المتصفح يقدر يفتحها$__bt);
-    }
-    const scale = Math.min(1, max / Math.max(bitmap.width, bitmap.height));   // مبنكبّرش
-    const w = Math.round(bitmap.width * scale);
-    const h = Math.round(bitmap.height * scale);
-    const canvas = document.createElement("canvas");
-    canvas.width = w;
-    canvas.height = h;
-    canvas.getContext("2d").drawImage(bitmap, 0, 0, w, h);
-    const before = [bitmap.width, bitmap.height];
-    bitmap.close();                       // بعد close الـ width و height بيبقوا 0
-    const blob = await new Promise((resolve, reject) =>
-      canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("toBlob رجّع null"))), "image/jpeg", 0.8),
-    );
-    const name = file.name.replace(/\.\w+$/, "") + ".jpg";
-    return { file: new File([blob], name, { type: "image/jpeg" }), before, after: [w, h] };
-  }
-
-  const kb = (n) => (n / 1024).toFixed(0) + " KB";
-  document.querySelector("#pics").addEventListener("change", async (e) => {
-    const rows = document.querySelector("#rows");
-    rows.replaceChildren();
-    for (const file of e.target.files) {
-      const tr = rows.insertRow();
-      tr.insertCell().textContent = file.name;
-      try {
-        const r = await resizeImage(file);
-        tr.insertCell().textContent = $__bt$__{r.before.join("×")} | $__{kb(file.size)}$__bt;
-        tr.insertCell().textContent = $__bt$__{r.after.join("×")} | $__{kb(r.file.size)}$__bt;
-      } catch (err) {
-        const td = tr.insertCell();
-        td.colSpan = 2;
-        td.className = "err";
-        td.textContent = err.message;
-      }
-    }
-  });
-</script>
-</body>
-</html>
-~~~
-
-اختار صور من جهازك في الـ preview (صورة موبايل كبيرة تبقى أوضح).
-
-~~~text الناتج (Chrome 158 headless، جوه iframe معزول، ٣ صور اتعملت بـ canvas واتحفظت على الديسك + ملف نصي)
-landscape.jpg | 4000×3000 | 1192 KB | 1024×768 | 172 KB
-portrait.png | 3000×4000 | 6756 KB | 768×1024 | 173 KB
-small.jpg | 800×600 | 118 KB | 800×600 | 75 KB
-notes.txt | «notes.txt» مش صورة المتصفح يقدر يفتحها
-pageerrors: 0
-~~~
-
-**ليه كده:**
-
-- **[[createImageBitmap(file)]]:** بيفك الصورة (JPEG أو PNG أو WebP...) لـ bitmap جاهز للرسم، من غير [[<img>]] ولا [[onload]]. لو الملف مش صورة الـ Promise بيترفض، فبنمسكه ونرمي رسالة بالعربي فيها اسم الملف.
-- **[[Math.min(1, max / Math.max(w, h))]]:** النسبة على أكبر ضلع، فالطولية والعرضية الاتنين بيوصلوا 1024 في الضلع الكبير والتاني بنفس النسبة (4000×3000 × 0.256 = 1024×768). والـ [[Math.min(1, ...)]] بتمنع التكبير: 800×600 فضلت زي ما هي.
-- **[[canvas.toBlob(cb, "image/jpeg", 0.8)]]:** الـ API قديمة وبـ callback، فبنلفّها في Promise. والـ callback ممكن ياخد [[null]] (canvas كبير زيادة مثلًا)، فبنرفض الـ Promise بدل ما نكمّل بـ [[null]].
-- **[[new File([blob], name, { type })]]:** بيرجّع ملف حقيقي باسم [[.jpg]] تقدر تحطه في [[FormData]] زي أي ملف اختاره اليوزر.
-- **الأرقام:** صورة الـ PNG نزلت من 6.7MB لـ 173KB (PNG مش مضغوط بخسارة، والصورة كبيرة). وحتى 800×600 نزلت لـ 75KB لأن جودة 0.8 أقل من 0.92 اللي اتعملت بيها.
-
-**اللي حصل وإحنا بنكتبه:** أول نسخة كانت بتقرا [[bitmap.width]] **بعد** [[bitmap.close()]]، فعمود «قبل» طلع [[0×0]] للصورتين. [[close()]] بيرمي الصورة من الميموري وبيخلّي المقاسات صفر، فاتنقلت القراية قبله. والـ [[close()]] نفسه مهم: bitmap بـ 4000×3000 بياخد حوالي 48MB في الميموري لحد ما يتقفل أو الـ garbage collector يشيله.
-
-**الغلطة الشائعة:** تحسب المقاس الجديد بـ [[max / bitmap.width]] بس. الصورة الطولية 3000×4000 هتطلع 1024×1365، أطول من الحد.` },
+            R`buffer طوله ٤ دلوقتي، و [[maxByteLength: 16]] معناها يقدر يكبر لحد ١٦ في مكانه.`,
+            R`بيطبع [[true]] (resizable) و ٤ (الطول الحالي) و ١٦ (الحد).`,
+            R`view من غير طول: «length-tracking»، طوله دايمًا طول الـ buffer.`,
+            R`view بطول ثابت ٢ من أول الـ buffer، عشان نقارن تصرفه بالأول.`,
+            R`بنكتب ٤ أرقام في الـ ٤ bytes الموجودين.`,
+            R`بنكبّر الـ buffer لـ ٨ في مكانه، من غير نسخ ومن غير ما نعمل views جديدة.`,
+            R`[[all]] بقى ٨ والجديد أصفار، و [[firstTwo]] فضل ٢ لأن طوله ثابت.`,
+            R`بنصغّر لـ byte واحد: البيانات اللي بعده بتتشال.`,
+            R`[[all]] بقى ١، و [[firstTwo]] صفر لأنه محتاج ٢ bytes ومش موجودين، فالقراية [[undefined]].`,
+            R`[[resize(32)]] أكبر من الحد ١٦، فبيرمي [[RangeError]] والـ [[catch]] بيطبع اسمه ورسالته.`,
+            R`[[transfer()]] بينقل الـ bytes لـ buffer جديد [[moved]]، والقديم بيتفصل.`,
+            R`القديم [[detached]] وطوله صفر، والجديد طوله ١ و resizable زي الأصل، و [[all]] بقى طوله صفر.`,
+            R`الكتابة على الـ view المفصول بتتجاهَل والقراية [[undefined]]، بس [[slice]] على الـ buffer المفصول بيرمي [[TypeError]].`,
+            R`[[transferToFixedLength(6)]] بينقل تاني لـ buffer عادي طوله ٦، والزيادة أصفار.`,
+            R`بيطبع [[false]] (مش resizable) و ٦ والـ bytes: [[1]] وبعده ٥ أصفار.`,
           ],
           ref: [
-            { t: "MDN: <input type=\"file\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/file" },
-            { t: "MDN: Using files from web applications", url: "https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications" },
-            { t: "MDN: URL.createObjectURL()", url: "https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL_static" },
-            { t: "MDN: DataTransfer", url: "https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer" },
-            { t: "MDN: createImageBitmap()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/createImageBitmap" },
+            { t: "MDN: ArrayBuffer.prototype.resizable", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/resizable" },
+            { t: "MDN: ArrayBuffer.prototype.maxByteLength", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/maxByteLength" },
+            { t: "MDN: ArrayBuffer.prototype.resize()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/resize" },
+            { t: "MDN: ArrayBuffer.prototype.transfer()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/transfer" },
+            { t: "MDN: ArrayBuffer.prototype.transferToFixedLength()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/transferToFixedLength" },
+            { t: "MDN: ArrayBuffer.prototype.detached", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/detached" },
           ],
+          pre: [{ to: "js/ArrayBuffer: byteLength و slice و isView", why: R`الـ buffer العادي الثابت قبل اللي بيكبر` }, { to: "js/WebAssembly في المتصفح", why: R`[[memory.grow]] بيفصل الـ buffer القديم: نفس الفكرة من ناحية wasm` }],
+        },
+        {
+          cmd: "TypedArray: العيلة و BYTES_PER_ELEMENT و overflow",
+          title: "أنهي typed array تختار من الـ ١٢، وإيه اللي بيحصل لرقم مبيكفيش فيها؟",
+          desc: R`فيه ١٢ typed array، كلهم بيفرقوا في حاجتين: **كام byte** للعنصر ([[TypedArray.BYTES_PER_ELEMENT]]) و**نوع الرقم** (صحيح بإشارة، صحيح من غير إشارة، عشري، BigInt).
+
+• [[Uint8Array]] (0 لـ 255) و [[Int8Array]] (-128 لـ 127) و [[Uint8ClampedArray]] (0 لـ 255 بس بيقف عند الحدود).
+• [[Int16Array]] و [[Uint16Array]] (٢ bytes)، و [[Int32Array]] و [[Uint32Array]] (٤).
+• [[Float16Array]] و [[Float32Array]] و [[Float64Array]] للعشري (٢ و ٤ و ٨ bytes).
+• [[BigInt64Array]] و [[BigUint64Array]] (٨ bytes، والقيم [[BigInt]] لازم).
+
+الرقم اللي مبيكفيش **مبيرميش error**: بيلف (wrap): [[Uint8Array.of(256)]] بيبقى [[0]]، و [[Int16Array.of(40000)]] بيبقى [[-25536]]، إلا [[Uint8ClampedArray]] اللي بيقف عند 0 و 255. وكلهم أولاد class مخفية اسمها [[TypedArray]] فيها كل الـ methods.`,
+          example: R`// نفس الـ 4 bytes بعيون مختلفة، والأرقام اللي مبتكفيش
+const buf = new ArrayBuffer(4);
+const u8 = new Uint8Array(buf);
+const i8 = new Int8Array(buf);
+const u16 = new Uint16Array(buf);
+const u32 = new Uint32Array(buf);
+u8.set([0x01, 0x02, 0xff, 0x80]);
+console.log(u8, i8, u16, u32);
+console.log(u32[0].toString(16), new Uint8Array(new Uint16Array([1]).buffer)[0] === 1 ? 'little-endian' : 'big-endian');
+console.log(Uint8Array.of(256, 257, -1, 3.9), Int8Array.of(127 + 1, -129), Uint8ClampedArray.of(300, -5, 1.5, 2.5));
+console.log(Float32Array.of(0.1)[0], Float16Array.of(0.1)[0], BigInt64Array.of(2n ** 63n)[0]);
+console.log(Int16Array.BYTES_PER_ELEMENT, new Float64Array(3).byteLength, u16.length, u16.byteLength);`,
+          try: R`اتوقّع قبل ما تشغّل: [[Int8Array.of(200)]] و [[Uint8Array.of(-1)]] و [[Uint8ClampedArray.of(-1, 300, 2.5, 3.5)]] و [[Int16Array.of(40000)]] و [[Uint32Array.of(-1)]]. وبعدين جرّب [[new Uint16Array('5')]]: إيه اللي حصل؟`,
+          sol: R`~~~text الناتج (Node 24.22)
+Int8Array(1) [ -56 ] Uint8Array(1) [ 255 ] Uint8ClampedArray(4) [ 0, 255, 2, 4 ] Int16Array(1) [ -25536 ] Uint32Array(1) [ 4294967295 ]
+Uint16Array(5) [ 0, 0, 0, 0, 0 ]
+~~~
+
+- [[Int8Array.of(200)]]: ٢٠٠ أكبر من ١٢٧، فبيلف: ٢٠٠ - ٢٥٦ = -٥٦. القاعدة: خد الرقم «modulo ٢٥٦» وبعدين لو أكبر من ١٢٧ اطرح ٢٥٦.
+- [[Uint8Array.of(-1)]]: -١ + ٢٥٦ = ٢٥٥. نفس الـ ٨ bits ([[ff]]) بس متقرية من غير إشارة.
+- [[Uint8ClampedArray]]: -١ بقت 0 و ٣٠٠ بقت 255 (بيقف عند الحد)، و [[2.5]] بقت 2 و [[3.5]] بقت 4: التقريب لـ «أقرب زوجي» لما الكسر نص بالظبط (round half to even)، مش [[Math.round]].
+- [[Int16Array.of(40000)]]: ٤٠٠٠٠ - ٦٥٥٣٦ = -٢٥٥٣٦. و [[Uint32Array.of(-1)]] = ٢ أس ٣٢ ناقص ١.
+- [[new Uint16Array('5')]]: الـ argument الواحد اللي مش object بيتفهم **طول**، والنص [['5']] اتحوّل للرقم ٥، فعملت ٥ أصفار مش array فيها ٥. لو عايز القيمة: [[Uint16Array.of(5)]] أو [[Uint16Array.from(['5'])]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** typed array اتعملت من typed array تانية. اكتب السطرين:
+
+~~~js
+const f = new Float32Array([1.7, -1, 300]);
+const c = new Uint8Array(f);
+const s = new Uint8Array(f.buffer);
+console.log(c, c.buffer === f.buffer);
+console.log(s.length, s.buffer === f.buffer);
+~~~`, done: R`كتبت الرقمين التلاتة في [[c]] صح، وعرفت إن [[s]] طولها ١٢ مش ٣، وتقدر تقول الفرق بين تمرير الـ typed array وتمرير الـ [[buffer]] بتاعها.`, sol: R`~~~text الناتج (Node 24.22)
+Uint8Array(3) [ 1, 255, 44 ] false
+12 true
+~~~
+
+- [[new Uint8Array(f)]] (typed array جوه typed array): **نسخ مع تحويل كل قيمة**: [[1.7]] بيتقص لـ 1 (مش تقريب)، و [[-1]] بيلف لـ 255، و [[300]] بيلف لـ 44 (٣٠٠ - ٢٥٦). و buffer جديد.
+- [[new Uint8Array(f.buffer)]] ([[ArrayBuffer]]): **مشاركة** نفس الـ bytes من غير تحويل: الـ ٣ أرقام [[Float32]] = ١٢ byte، فبقى ١٢ عنصر بيقروا bytes الأرقام العشرية الخام.
+- القاعدة: لو عايز «نفس الأرقام بنوع تاني» مرّر الـ typed array، ولو عايز «نفس الذاكرة بعين تانية» مرّر [[.buffer]] (ومعاه [[byteOffset]] و [[byteLength]] لو view جزئي).` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فلتر بيفتّح صورة بيزوّد ٣٠ على كل byte في pixels الصورة. الـ pixel الأبيض تقريبًا ([[250]]) بقى غامق جدًا. شغّله وشوف ليه، وصلّحه بطريقتين:
+
+~~~js
+const px = Uint8Array.of(250, 100, 10);
+console.log(px.map((v) => v + 30));
+~~~`, done: R`الناتج بقى [[255, 130, 40]] بالطريقتين، وتقدر تقول ليه ٢٥٠ + ٣٠ بقت ٢٤.`, sol: R`~~~text الناتج قبل التصليح (Node 24.22)
+Uint8Array(3) [ 24, 130, 40 ]
+~~~
+
+~~~js fixed.mjs
+const px = Uint8Array.of(250, 100, 10);
+const clamped = Uint8ClampedArray.from(px, (v) => v + 30);
+const manual = px.map((v) => Math.min(255, v + 30));
+console.log(clamped, manual);
+~~~
+
+~~~text الناتج (Node 24.22)
+Uint8ClampedArray(3) [ 255, 130, 40 ] Uint8Array(3) [ 255, 130, 40 ]
+~~~
+
+- [[map]] على [[Uint8Array]] بترجّع [[Uint8Array]]، فـ ٢٨٠ اتكتبت فيها ولفّت: ٢٨٠ - ٢٥٦ = ٢٤. الأبيض بقى شبه أسود، ومفيش error.
+- **الحل ١:** [[Uint8ClampedArray]]: أي قيمة أكبر من ٢٥٥ بتبقى ٢٥٥. ودي بالظبط سبب وجودها: هي نوع [[ctx.getImageData().data]] في الـ canvas.
+- **الحل ٢:** [[Math.min(255, ...)]] بإيدك (ومعاها [[Math.max(0, ...)]] لو بتطرح). أوضح لما الـ array جاية من حتة تانية ومش في إيدك تغيّر نوعها.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[pickType(values)]] بترجّع اسم أصغر typed array يشيل كل الأرقام الصحيحة دي من غير ما حاجة تلف: [['Uint8Array']] أو [['Int8Array']] أو [['Uint16Array']] أو [['Int16Array']] أو [['Uint32Array']] أو [['Int32Array']]. ولو فيه كسر أو رقم أكبر من ٣٢ bit: [['Float64Array']]. والـ array الفاضية: [['Uint8Array']].`, done: R`[[0, 255]] = Uint8، و [[-1, 100]] = Int8، و [[70000]] = Uint32، و [[-40000]] = Int32، و [[1.5]] = Float64، و [[2 ** 40]] = Float64، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js pick.mjs
+const TYPES = [
+  ['Uint8Array', 0, 255], ['Int8Array', -128, 127], ['Uint16Array', 0, 65535], ['Int16Array', -32768, 32767],
+  ['Uint32Array', 0, 4294967295], ['Int32Array', -2147483648, 2147483647],
+];
+function pickType(values) {
+  if (!values.every(Number.isInteger)) return 'Float64Array';
+  const min = Math.min(...values, 0), max = Math.max(...values, 0);
+  const hit = TYPES.find(([, lo, hi]) => min >= lo && max <= hi);
+  return hit ? hit[0] : 'Float64Array';
+}
+console.log(pickType([0, 255]), pickType([-1, 100]), pickType([70000]), pickType([-40000]), pickType([1.5]), pickType([]), pickType([2 ** 40]));
+~~~
+
+~~~text الناتج (Node 24.22)
+Uint8Array Int8Array Uint32Array Int32Array Float64Array Uint8Array Float64Array
+~~~
+
+- الحدود: من غير إشارة n bits = من 0 لـ 2 أس n ناقص 1، وبإشارة (two's complement) = من سالب 2 أس (n-1) لـ 2 أس (n-1) ناقص 1.
+- الترتيب في [[TYPES]] بالحجم، وفي كل حجم من غير إشارة الأول، فـ [[find]] بيرجّع أصغر واحد ينفع.
+- [[Math.min(...values, 0)]]: الصفر عشان الـ array الفاضية تدّي 0 مش [[Infinity]].
+- [[Number.isInteger]] بيرفض [[1.5]] و [[NaN]]، فبيروحوا [[Float64Array]] (اللي بتشيل أي رقم JavaScript بالظبط لأن كل أرقام اللغة Float64 أصلًا).
+- **ليه مش [[Float32Array]] للكسور؟** لأن [[0.1]] فيها بيبقى [[0.10000000149011612]]: مش «من غير ما حاجة تتغير».` },
+            { lvl: 'تطبيق', t: R`**اشرحها:** الـ bytes [[0x12]] و [[0x34]] ورا بعض في buffer. [[new Uint16Array(buf)[0].toString(16)]] بيطبع [[3412]] مش [[1234]]. اكتب ٣ سطور لزميل: ليه؟ وإزاي تعرف الجهاز اللي شغال عليه؟ وإمتى ده يفرق معاك؟`, done: R`كتبت الشرح في ٣ سطور، وشغّلت [[isLittleEndian()]] على جهازك، وعرفت إن الحل لقراية ملف بترتيب معين هو [[DataView]].`, sol: R`~~~js endian.mjs
+import { endianness } from 'node:os';
+const v = new Uint16Array(Uint8Array.of(0x12, 0x34).buffer);
+console.log(v[0].toString(16));
+const isLittleEndian = () => new Uint8Array(new Uint16Array([1]).buffer)[0] === 1;
+console.log(isLittleEndian(), endianness());
+~~~
+
+~~~text الناتج (Node 24.22، ويندوز 11 على x64)
+3412
+true LE
+~~~
+
+**الشرح لزميل:**
+1. الرقم اللي أكبر من byte لازم يتقسم على كذا byte، والسؤال «مين الأول». الجهاز ده **little-endian**: الـ byte الصغير (اللي فيه الآحاد) الأول. فـ [[12 34]] في الذاكرة = [[0x3412]].
+2. تعرف بتجربة: اكتب الرقم ١ في [[Uint16Array]] واقرا أول byte: لو [[1]] يبقى little. أو في Node: [[os.endianness()]] بيرجّع [['LE']] أو [['BE']]. كل أجهزة x86 و ARM اللي هتقابلها تقريبًا little.
+3. بيفرق لما الـ bytes **جاية من برّه**: ملف أو شبكة أو جهاز ليه ترتيب متحدد (PNG والشبكة big-endian، و WAV و ZIP little). الـ typed arrays بتقرا بترتيب جهازك أيًا كان، فاستخدم [[DataView]] اللي بتختار فيه الترتيب بنفسك (الدرس بعد الجاي).` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** اجمع ١٠ مليون رقم صحيح في [[Array]] و [[Float64Array]] و [[Int32Array]]. مرة بدالة [[sum]] واحدة بتتنادى على التلاتة في نفس البرنامج، ومرة كل نوع في process لوحده. قيس الوقت والذاكرة.`, done: R`عندك أرقام الطريقتين، ولقيت إن الترتيب بيتقلب، وتقدر تقول الـ typed array بتكسب في إيه فعلًا.`, sol: R`~~~js sum-bench.mjs
+// sum-bench.mjs: دالة واحدة على التلات أنواع في نفس البرنامج
+const N = 10_000_000;
+const plain = Array.from({ length: N }, (_, i) => i % 100);
+const f64 = Float64Array.from(plain);
+const i32 = Int32Array.from(plain);
+function sum(xs) { let s = 0; for (let i = 0; i < xs.length; i++) s += xs[i]; return s; }
+for (const [name, xs] of [['Array', plain], ['Float64Array', f64], ['Int32Array', i32]]) {
+  sum(xs);
+  const t = performance.now();
+  const s = sum(xs);
+  console.log(name.padEnd(12), s, (performance.now() - t).toFixed(1), 'ms');
+}
+~~~
+
+~~~text الناتج (Node 24.22، ويندوز 11)
+Array        495000000 6.2 ms
+Float64Array 495000000 17.6 ms
+Int32Array   495000000 22.0 ms
+~~~
+
+~~~js sum-one.mjs
+// sum-one.mjs: node sum-one.mjs Array | Float64Array | Int32Array  (كل نوع في process لوحده)
+const N = 10_000_000, kind = process.argv[2];
+const plain = Array.from({ length: N }, (_, i) => i % 100);
+const xs = kind === 'Array' ? plain : globalThis[kind].from(plain);
+function sum(xs) { let s = 0; for (let i = 0; i < xs.length; i++) s += xs[i]; return s; }
+sum(xs);
+const t = performance.now();
+const s = sum(xs);
+console.log(kind.padEnd(12), s, (performance.now() - t).toFixed(1), 'ms', 'الذاكرة:', (process.memoryUsage().arrayBuffers / 1048576).toFixed(0), 'MB في buffers');
+~~~
+
+~~~text الناتج (Node 24.22، كل سطر process لوحده)
+Array        495000000 6.2 ms الذاكرة: 0 MB في buffers
+Float64Array 495000000 7.8 ms الذاكرة: 76 MB في buffers
+Int32Array   495000000 5.7 ms الذاكرة: 38 MB في buffers
+~~~
+
+**اللي طلع:**
+- في البرنامج الأول الـ typed arrays **أبطأ ٣ مرات**. مش لأنها بطيئة: الدالة [[sum]] اتنادت على ٣ أنواع مختلفة، فـ V8 بطّل يعملها optimize لنوع واحد (بقت «polymorphic») والأنواع اللي جت بعد الأول دفعت التمن.
+- لما كل نوع لوحده، السرعة تقريبًا واحدة (٦ لـ ٨ ms): V8 بيعمل optimize ممتاز لـ Array أرقام صحيحة صغيرة كمان.
+- **المكسب الحقيقي الذاكرة والشكل الثابت:** [[Int32Array]] نص [[Float64Array]] (٤ bytes مقابل ٨)، وكله في buffer واحد تقدر تبعته لـ Worker أو wasm أو GPU أو ملف من غير تحويل. متختارش typed array «عشان السرعة» من غير ما تقيس.` },
+          ],
+          check: { lang: "js", starter: R`function pickType(values) {
+  // اسم أصغر typed array يشيل الأرقام دي، أو 'Float64Array'
+}`, tests: R`test("0 و 255", () => expect(pickType([0, 255])).toBe('Uint8Array'));
+test("سالب صغير", () => expect(pickType([-1, 100])).toBe('Int8Array'));
+test("256", () => expect(pickType([256])).toBe('Uint16Array'));
+test("-200", () => expect(pickType([-200, 5])).toBe('Int16Array'));
+test("70000", () => expect(pickType([70000])).toBe('Uint32Array'));
+test("-40000", () => expect(pickType([-40000])).toBe('Int32Array'));
+test("كسر", () => expect(pickType([1, 1.5])).toBe('Float64Array'));
+test("أكبر من 32 bit", () => expect(pickType([2 ** 40])).toBe('Float64Array'));
+test("فاضية", () => expect(pickType([])).toBe('Uint8Array'));`, solution: R`const TYPES = [
+  ['Uint8Array', 0, 255], ['Int8Array', -128, 127], ['Uint16Array', 0, 65535], ['Int16Array', -32768, 32767],
+  ['Uint32Array', 0, 4294967295], ['Int32Array', -2147483648, 2147483647],
+];
+function pickType(values) {
+  if (!values.every(Number.isInteger)) return 'Float64Array';
+  const min = Math.min(...values, 0), max = Math.max(...values, 0);
+  const hit = TYPES.find(([, lo, hi]) => min >= lo && max <= hi);
+  return hit ? hit[0] : 'Float64Array';
+}` },
           flag: "script",
           deep: {
-            why: "صورة بروفايل، وصور منتجات، ومرفقات. المعاينة قبل الرفع بتوفر وقت اليوزر والباندويدث، والفحص في المتصفح بيقول «الملف كبير» فورًا بدل ما يستنى رفع ٢٠ ميجا يترفض في الآخر.",
-            how: R`[[File]] نوع من [[Blob]] (داتا binary) ومعاه اسم وتاريخ تعديل. المتصفح مبيقراش الملف لما تختاره، بيدّيك reference بس. [[createObjectURL]] بيربط الـ reference ده بـ URL جوه الصفحة، فالـ img بيقرا من الديسك مباشرة، وده أسرع وأخف من [[FileReader.readAsDataURL]] (اللي بيحوّل الملف كله نص base64 في الذاكرة، أكبر بحوالي الثلث).
+            why: R`كل format binary بيحدد حجم ونوع كل رقم: الـ pixel ٤ أرقام [[Uint8]]، وعينة الصوت [[Int16]] أو [[Float32]]، وإحداثيات الـ 3D [[Float32]]، و IDs قواعد البيانات [[BigInt64]]. فاللغة محتاجة نوع لكل شكل من دول عشان تقرا الذاكرة زي ما هي من غير تحويل. واللف بدل الـ error مش «باج في JavaScript»: ده نفس سلوك الـ integers في C والـ CPU نفسه، وده اللي بيخلي الأرقام دي تتعامل مع الـ hardware والـ GPU والـ wasm مباشرة.`,
+            how: R`لما تكتب [[ ta[i] = x ]]، الـ engine بيحوّل [[x]] لرقم ([[Number(x)]]: [['5']] بيبقى ٥ و [[null]] صفر و [[undefined]] و [[NaN]] صفر في الصحيح) وبعدين:
+- **الأنواع الصحيحة:** بيشيل الكسر (truncate ناحية الصفر)، و [[Infinity]] و [[NaN]] بيبقوا صفر، وبعدين «modulo» ٢ أس عدد الـ bits، ولو النوع بإشارة والنتيجة فوق النص بيطرح ٢ أس عدد الـ bits (two's complement). يعني بياخد آخر n bits من الرقم.
+- **[[Uint8ClampedArray]]:** بيقرّب لأقرب صحيح (ولو نص بالظبط لأقرب زوجي) وبيقف عند 0 و 255، و [[NaN]] صفر.
+- **العشري:** بيقرّب لأقرب قيمة ممكنة في الحجم ده بمواصفة IEEE 754: [[Float32]] فيها حوالي ٧ أرقام دقة، و [[Float16]] حوالي ٣ وأقصاها ٦٥٥٠٤ (اتجرّب: [[Float16Array.of(70000)]] بـ [[Infinity]]).
+- **BigInt:** لازم القيمة [[BigInt]]، ورقم عادي بيرمي [[TypeError: Cannot convert 1 to a BigInt]]، وبرضه بيلف على ٦٤ bit.
 
-كل URL بيفضل شايل الملف في الذاكرة لحد ما تعمل revoke أو الصفحة تتقفل، فلو اليوزر اختار صور ١٠ مرات من غير revoke، الذاكرة بتتراكم.
-
-[[file.type]] المتصفح بيخمّنه من الامتداد (مش من محتوى الملف)، و [[accept]] اقتراح لنافذة الاختيار. يعني الاتنين للراحة (UX) مش للأمان. السيرفر لازم يفحص الحجم وأول bytes في الملف (magic bytes) ويعيد تسمية الملف (درس «multer» في تاب Backend بـ Node، و «presigned URL» في تاب Cloud و DevOps). ولو عايز تصغّر الصورة قبل الرفع: ارسمها على canvas بمقاس أصغر و [[canvas.toBlob(cb, "image/webp", 0.8)]].`,
-            when: R`أي رفع ملفات. و [[multiple]] للمعارض والمرفقات. والتصغير في المتصفح للصور الكبيرة من الموبايل (١٢ ميجا بكسل) قبل ما ترفعها.`,
-            mistakes: R`تعتمد على accept أو file.type كأمان. و createObjectURL من غير revoke. و FileReader base64 لملفات كبيرة. وتعرض [[file.name]] بـ innerHTML (اسم الملف input من اليوزر: [["<img onerror=...>.png"]] اسم ملف قانوني). وتنسى إن اختيار نفس الملف مرتين مش بيطلق [[change]] (اعمل [[input.value = ""]] بعد ما تخلص).`
+وكل الـ ١٢ constructor أولاد class واحدة مخفية (الـ spec بيسميها [[%TypedArray%]]، وبتجيبها بـ [[Object.getPrototypeOf(Int8Array)]]) فيها كل الـ methods والـ getters ([[buffer]] و [[length]]...). كل constructor بيزوّد [[BYTES_PER_ELEMENT]] بس. والـ constructor بيقبل ٤ أشكال: طول، أو array أو iterable (نسخ وتحويل)، أو typed array (نسخ وتحويل)، أو [[ArrayBuffer]] مع offset وطول (مشاركة، والـ offset لازم من مضاعفات حجم العنصر).`,
+            when: R`[[Uint8Array]]: أي bytes خام (ملفات، شبكة، تشفير، نصوص UTF-8)، وده ٨٠٪ من الاستخدام. [[Uint8ClampedArray]]: pixels بتتعدّل بحساب. [[Int16Array]]: صوت PCM. [[Float32Array]]: WebGL و WebGPU و Web Audio وأرقام كتير الدقة بتاعتها مش مهمة (حساسات، ML). [[Float64Array]]: أرقام عشري لازم دقتها كاملة. [[Int32Array]] و [[Uint32Array]]: counters و indexes و hashes (وهما الوحيدين مع BigInt64 اللي [[Atomics.wait]] بيشتغل عليهم). [[BigInt64Array]]: timestamps بالنانو ثانية و IDs ٦٤ bit. [[Float16Array]] (Baseline من ٢٠٢٥: Chrome 135 و Firefox 129 و Safari 18.2، وموجودة في Node 24): أوزان نماذج ML وصور HDR لما الذاكرة أهم من الدقة.`,
+            mistakes: R`- تستنى error لما الرقم يعدّي الحد: بيلف ساكت. [[Uint8Array.of(256)]] = 0.
+- [[map]] على [[Uint8Array]] وانت بتزوّد: النتيجة بتلف (فلتر الصورة اللي بقى أسود). استخدم [[Uint8ClampedArray]] أو [[Math.min]].
+- [[new Uint16Array('5')]] مستنيها array فيها ٥: دي ٥ أصفار. استخدم [[of]].
+- [[new Int32Array(buffer, 2)]]: [[RangeError: start offset of Int32Array should be a multiple of 4]]. و buffer طوله ٧: [[RangeError: byte length of Int32Array should be a multiple of 4]].
+- [[BigInt64Array.of(1)]]: [[TypeError: Cannot convert 1 to a BigInt]]. اكتب [[1n]].
+- تحط [[0.1]] في [[Float32Array]] وتقارنه بـ [[0.1]]: [[0.10000000149011612]]. قارن بـ [[Math.fround(0.1)]] (درس «Math.sumPrecise و fround و f16round»).
+- تقرا bytes ملف بـ [[Uint16Array]] على طول: بتقرا بترتيب جهازك مش ترتيب الملف. [[DataView]].
+- [[new TypedArray()]] أو [[Uint8Array(2)]] من غير [[new]]: [[TypeError: Abstract class TypedArray not directly constructable]] و [[TypeError: Constructor Uint8Array requires 'new']].`,
           },
           teach: R`## الفكرة في سطر
 
-اليوزر يختار صور، فنعرضها على طول من الجهاز بتاعه من غير ما نرفع حاجة، ونتخطى أي ملف مش صورة أو أكبر من 2MB.
-
-جرّبته في Chrome headless (عن طريق playwright-core): اخترت للـ input بـ [[setInputFiles]] خمس ملفات عملتهم بنفسي: [[cat.png]] (صورة 1×1)، و [[big.png]] (3MB)، و [[doc.pdf]]، و [[notes.png]] (ملف نص اسمه png)، و [[dog.jpg]].
+كل typed array = حجم عنصر + نوع رقم، والرقم اللي مبيكفيش بيلف ساكت (إلا الـ clamped). الناتج من Node 24.22 على ويندوز 11 (x64، little-endian).
 
 ---
 
-## ١. الـ HTML
+## ١. العيلة كلها: ١٢ نوع
 
-~~~text index.html
-<input type="file" id="pics" accept="image/png,image/jpeg,image/webp" multiple>
-<div id="preview"></div>
-~~~
-
-- [[type="file"]]: زرار «Choose Files» بيفتح نافذة اختيار الملفات.
-- [[accept="image/png,image/jpeg,image/webp"]]: أنواع (MIME types) مفصولة بـ [[,]]. نافذة الاختيار بتعرض دول بس. **اقتراح** مش منع: اليوزر يقدر يغيّر الفلتر لـ «All files».
-- [[multiple]]: يسمح باختيار أكتر من ملف.
-- [[#preview]]: المكان اللي هنحط فيه المعاينات.
-
----
-
-## ٢. التجهيز
-
-~~~text app.js
-const input = document.querySelector("#pics");
-const preview = document.querySelector("#preview");
-const MAX = 2 * 1024 * 1024;
-let urls = [];
-~~~
-
-- [[MAX = 2 * 1024 * 1024]]: 2MB بالبايت = [[2097152]]. (1KB = 1024 byte، و 1MB = 1024KB.) كتبناها ضرب عشان تتقري «2 ميجا» بدل رقم مش مفهوم.
-- [[urls]]: هنحفظ فيها كل URL مؤقت بنعمله، عشان نمسحه بعدين. [[let]] مش [[const]] لأننا هنبدّلها بـ array فاضية.
+| النوع | bytes | المدى | بيتستخدم في |
+|---|---|---|---|
+| [[Int8Array]] | ١ | -128 لـ 127 | عينات صوت ٨ bit بإشارة، فروق صغيرة |
+| [[Uint8Array]] | ١ | 0 لـ 255 | أي bytes خام: ملفات وشبكة وتشفير و UTF-8 |
+| [[Uint8ClampedArray]] | ١ | 0 لـ 255 وبيقف عند الحدود | pixels الـ canvas ([[getImageData().data]]) |
+| [[Int16Array]] | ٢ | -32768 لـ 32767 | صوت PCM ١٦ bit (ملفات WAV) |
+| [[Uint16Array]] | ٢ | 0 لـ 65535 | indexes في WebGL، و UTF-16 |
+| [[Int32Array]] | ٤ | حوالي ±٢ مليار | counters مشتركة مع [[Atomics]] |
+| [[Uint32Array]] | ٤ | 0 لـ 4294967295 | hashes و CRC32 والألوان كرقم واحد |
+| [[Float16Array]] | ٢ | لحد 65504، حوالي ٣ أرقام دقة | أوزان ML و HDR (Baseline ٢٠٢٥) |
+| [[Float32Array]] | ٤ | حوالي ٧ أرقام دقة | WebGL و WebGPU و Web Audio |
+| [[Float64Array]] | ٨ | نفس رقم JavaScript العادي بالظبط | حسابات عشري بدقة كاملة |
+| [[BigInt64Array]] | ٨ | ±٩.٢ × ١٠ أس ١٨، كـ [[BigInt]] | timestamps بالنانو، IDs ٦٤ bit |
+| [[BigUint64Array]] | ٨ | 0 لـ ١.٨ × ١٠ أس ١٩، كـ [[BigInt]] | hashes ٦٤ bit |
 
 ---
 
-## ٣. لما اليوزر يختار: [[change]]
+## ٢. [[TypedArray.BYTES_PER_ELEMENT]]: حجم العنصر
 
-~~~text app.js
-input.addEventListener("change", () => {
-  urls.forEach((u) => URL.revokeObjectURL(u));
-  urls = [];
-  preview.replaceChildren();
+~~~js
+for (const C of [Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float16Array, Float32Array, Float64Array, BigInt64Array, BigUint64Array]) console.log(C.name.padEnd(18), C.BYTES_PER_ELEMENT, new C(1).BYTES_PER_ELEMENT);
 ~~~
-
-- [[change]]: بيحصل لما اليوزر يقفل نافذة الاختيار وهو مختار حاجة **مختلفة** عن اللي كان مختارها.
-- أول ٣ سطور تنضيف للاختيار اللي فات: [[revokeObjectURL]] لكل URL قديم (هنفهمها تحت)، وفضّي الـ array، و [[replaceChildren()]] من غير arguments بتمسح كل اللي جوه [[preview]].
-
-### [[input.files]]
-
-~~~text app.js
-  for (const file of input.files) {
-~~~
-
-[[input.files]] ليستة (FileList) فيها object من نوع [[File]] لكل ملف. طبعت اللي فيها بعد ما اخترت الخمسة:
 
 ~~~text الناتج
-change: files = 5 cat.png image/png 70 | big.png image/png 3145798 | doc.pdf application/pdf 9 | notes.png image/png 16 | dog.jpg image/jpeg 70
+Int8Array          1 1
+Uint8Array         1 1
+Uint8ClampedArray  1 1
+Int16Array         2 2
+Uint16Array        2 2
+Int32Array         4 4
+Uint32Array        4 4
+Float16Array       2 2
+Float32Array       4 4
+Float64Array       8 8
+BigInt64Array      8 8
+BigUint64Array     8 8
 ~~~
 
-| الخاصية | معناها | مثال |
+[[BYTES_PER_ELEMENT]] موجود على الـ constructor ([[Int16Array.BYTES_PER_ELEMENT]]) وعلى أي نسخة منه، وبيستخدم في الحساب: عدد العناصر اللي في buffer = [[buf.byteLength / C.BYTES_PER_ELEMENT]].
+
+---
+
+## ٣. نفس الـ bytes بعيون مختلفة، و endianness
+
+~~~js
+const buf = new ArrayBuffer(4);
+const u8 = new Uint8Array(buf);
+const i8 = new Int8Array(buf);
+const u16 = new Uint16Array(buf);
+const u32 = new Uint32Array(buf);
+u8.set([0x01, 0x02, 0xff, 0x80]);
+console.log(u8, i8, u16, u32);
+console.log(u32[0].toString(16), new Uint8Array(new Uint16Array([1]).buffer)[0] === 1 ? 'little-endian' : 'big-endian');
+~~~
+
+~~~text الناتج
+Uint8Array(4) [ 1, 2, 255, 128 ] Int8Array(4) [ 1, 2, -1, -128 ] Uint16Array(2) [ 513, 33023 ] Uint32Array(1) [ 2164195841 ]
+80ff0201 little-endian
+~~~
+
+- [[Int8Array]] قرا نفس الـ bytes بإشارة: [[ff]] = -1 و [[80]] = -128 (أعلى bit = إشارة، two's complement).
+- [[Uint16Array]] أول عنصر = الـ bytes [[01 02]]، بس الرقم ٥١٣ = [[0x0201]]: الـ byte التاني هو الكبير. ده **little-endian**: الصغير الأول.
+- [[Uint32Array]] الـ ٤ bytes بالعكس: [[0x80ff0201]].
+- السطر التاني بيكشف الجهاز: اكتب ١ في ٢ bytes، لو أول byte = ١ يبقى little.
+
+الـ typed arrays دايمًا بتقرا **بترتيب جهازك**. معظم الأجهزة little، بس ملفات PNG والشبكة big. لو هتقرا format من برّه: [[DataView]] (الدرس الجاي بعد الجاي).
+
+---
+
+## ٤. الرقم اللي مبيكفيش: wrap و clamp و تقريب
+
+~~~js
+console.log(Uint8Array.of(256, 257, -1, 3.9), Int8Array.of(127 + 1, -129), Uint8ClampedArray.of(300, -5, 1.5, 2.5));
+console.log(Float32Array.of(0.1)[0], Float16Array.of(0.1)[0], BigInt64Array.of(2n ** 63n)[0]);
+~~~
+
+~~~text الناتج
+Uint8Array(4) [ 0, 1, 255, 3 ] Int8Array(2) [ -128, 127 ] Uint8ClampedArray(4) [ 255, 0, 2, 2 ]
+0.10000000149011612 0.0999755859375 -9223372036854775808n
+~~~
+
+| القيمة | في | بتبقى | القاعدة |
+|---|---|---|---|
+| 256 و 257 | [[Uint8Array]] | 0 و 1 | بتلف: آخر ٨ bits بس (modulo ٢٥٦) |
+| -1 | [[Uint8Array]] | 255 | نفس الـ bits [[ff]] متقرية من غير إشارة |
+| 3.9 | [[Uint8Array]] | 3 | الكسر بيتشال (truncate) مش تقريب |
+| 128 و -129 | [[Int8Array]] | -128 و 127 | بتلف من الناحية التانية |
+| 300 و -5 | [[Uint8ClampedArray]] | 255 و 0 | بيقف عند الحد |
+| 1.5 و 2.5 | [[Uint8ClampedArray]] | 2 و 2 | تقريب لأقرب **زوجي** لما الكسر نص |
+| 0.1 | [[Float32Array]] و [[Float16Array]] | 0.10000000149011612 و 0.0999755859375 | أقرب قيمة ممكنة في ٤ و ٢ bytes |
+| 2 أس 63 | [[BigInt64Array]] | -9223372036854775808n | BigInt بيلف على ٦٤ bit برضه |
+
+وكمان: [[NaN]] و [[Infinity]] في الأنواع الصحيحة صفر، و [[Float16Array.of(70000)]] بـ [[Infinity]] (أكبر من أقصاها)، و [[Float32Array.of(16777217)]] بـ 16777216 (أكبر من دقتها). **مفيش ولا error** في كل ده.
+
+---
+
+## ٥. [[TypedArray.prototype.buffer]] و [[TypedArray.prototype.byteOffset]] و [[TypedArray.prototype.byteLength]] و [[TypedArray.prototype.length]]
+
+~~~js
+const buf = new ArrayBuffer(16);
+const mid = new Int16Array(buf, 4, 3);
+console.log(mid.buffer === buf, mid.byteOffset, mid.length, mid.byteLength, mid.BYTES_PER_ELEMENT);
+const copy = new Int16Array(mid);
+console.log(copy.buffer === buf, copy.byteOffset, copy.byteLength, copy.buffer.byteLength);
+~~~
+
+~~~text الناتج
+true 4 3 6 2
+false 0 6 6
+~~~
+
+| الـ getter | قيمته هنا | معناه |
 |---|---|---|
-| [[name]] | اسم الملف من غير المسار | [[cat.png]] |
-| [[type]] | الـ MIME type | [[image/png]] |
-| [[size]] | الحجم بالبايت | [[3145798]] |
+| [[buffer]] | [[buf]] نفسه | الـ [[ArrayBuffer]] اللي تحت الـ view |
+| [[byteOffset]] | ٤ | الـ view بيبدأ من byte رقم ٤ في الـ buffer |
+| [[length]] | ٣ | عدد **العناصر** |
+| [[byteLength]] | ٦ | عدد الـ **bytes** = [[length]] × [[BYTES_PER_ELEMENT]] |
 
-لاحظ [[notes.png]]: ملف نص جواه [[hello, I am text]]، و [[type]] بتاعه [[image/png]]. المتصفح بيخمّن النوع من **الامتداد** مش من المحتوى.
-
-### الفلترة
-
-~~~text app.js
-    if (!file.type.startsWith("image/")) continue;
-    if (file.size > MAX) {
-      preview.append($__bt$__{file.name}: أكبر من 2MB. $__bt);
-      continue;
-    }
-~~~
-
-- [[startsWith("image/")]]: النص بيبدأ بـ [["image/"]]؟ الـ PDF نوعه [["application/pdf"]] فـ [[continue]] تعدّيه من غير ما تعرض حاجة.
-- [[file.size > MAX]]: [[big.png]] حجمه 3145798 أكبر من 2097152، فبنضيف رسالة. [[append]] بنص (string) بيضيفه كـ **نص** مش HTML، فلو اسم الملف فيه [[<img onerror=...>]] مش هيتنفّذ.
+و [[new Int16Array(mid)]] (typed array جوه constructor) **نسخ**: buffer جديد بالمقاس، و [[byteOffset]] صفر.
 
 ---
 
-## ٤. المعاينة: [[URL.createObjectURL]]
+## ٦. الـ constructor بـ ٤ أشكال
 
-~~~text app.js
-    const url = URL.createObjectURL(file);
-    urls.push(url);
-    const img = document.createElement("img");
-    img.src = url;
-    img.alt = file.name;
-    img.width = 120;
-    preview.append(img);
-  }
-});
+| الشكل | بيعمل إيه (اتجرّب) |
+|---|---|
+| [[new Uint8Array(4)]] | ٤ عناصر أصفار، و buffer جديد |
+| [[new Uint8Array([1, 2, 3])]] أو [[new Uint8Array(new Set([1, 2, 3]))]] | نسخ من array أو أي iterable، وكل قيمة بتتحوّل |
+| [[new Uint8Array(new Float32Array([1.7, -1, 300]))]] | نسخ وتحويل كل قيمة للنوع الجديد: [[1, 255, 44]] |
+| [[new Uint8Array(buffer, byteOffset, length)]] | view **مشترك** على buffer موجود، من غير نسخ |
+| [[Uint8Array.of(5)]] و [[Uint8Array.from(x, fn)]] | زي [[Array.of]] و [[Array.from]] (درس «TypedArray: set و subarray») |
+
+والأخطاء اللي هتقابلها:
+
+| الكود | الخطأ |
+|---|---|
+| [[new Int32Array(new ArrayBuffer(8), 2)]] | [[RangeError: start offset of Int32Array should be a multiple of 4]]: الـ offset لازم من مضاعفات ٤ |
+| [[new Int32Array(new ArrayBuffer(7))]] | [[RangeError: byte length of Int32Array should be a multiple of 4]]: الطول كمان |
+| [[new Int32Array(new ArrayBuffer(8), 0, 3)]] | [[RangeError: Invalid typed array length: 3]]: ٣ × ٤ = ١٢ أكبر من الـ ٨ |
+| [[Uint8Array(2)]] | [[TypeError: Constructor Uint8Array requires 'new']]: الـ constructors كلها محتاجة [[new]] |
+| [[new Uint16Array('5')]] | مش error: ٥ أصفار، لأن الـ argument اتفهم طول |
+
+---
+
+## ٧. [[TypedArray]]: الأب المخفي
+
+~~~js
+const TA = Object.getPrototypeOf(Int8Array);
+console.log(TA.name, TA === Object.getPrototypeOf(Float64Array));
+try { new TA(); } catch (e) { console.log(e.name + ': ' + e.message); }
 ~~~
-
-- [[URL.createObjectURL(file)]]: بيعمل URL مؤقت بيشاور على الملف اللي على جهاز اليوزر. شكله على صفحة شغالة من localhost:
 
 ~~~text الناتج
-blob:http://localhost:PORT/b238a9a3-8884-45b4-8586-18d241d0729d
+TypedArray true
+TypeError: Abstract class TypedArray not directly constructable
 ~~~
 
-[[blob:]] + الـ origin بتاع الصفحة + ID عشوائي. الـ URL ده شغال **جوه الصفحة دي بس**، ومحدش غيرك يقدر يفتحه.
-- [[img.src = url]]: الصورة بتتقري من الجهاز مباشرة، من غير رفع ومن غير base64.
-- [[img.alt = file.name]]: نص بديل للي مش شايف الصورة. ولأنه property مش HTML فآمن.
-- [[img.width = 120]]: عرض المعاينة 120px.
-
-### النتيجة
-
-~~~text الناتج (محتوى #preview)
-<img src="blob:..." alt="cat.png" width="120">
-big.png: أكبر من 2MB.
-<img src="blob:..." alt="notes.png" width="120">
-<img src="blob:..." alt="dog.jpg" width="120">
-~~~
-
-| الملف | حصل إيه | ليه |
-|---|---|---|
-| [[cat.png]] | اتعرض | صورة وصغيرة |
-| [[big.png]] | رسالة | أكبر من MAX |
-| [[doc.pdf]] | ولا حاجة | type مش image |
-| [[notes.png]] | img مكسور (المقاس [[0x0]]) | type بتاعه image/png من الامتداد، بس المحتوى نص |
-| [[dog.jpg]] | اتعرض | |
-
-> [[file.type]] و [[accept]] للراحة بس. السيرفر لازم يفحص الملف بنفسه.
-
-### ليه [[revokeObjectURL]]؟
-
-كل blob URL بيفضل ماسك الملف في الذاكرة لحد ما الصفحة تتقفل. جرّبت: [[fetch(url)]] قبل الـ revoke رجّع الملف (70 byte)، وبعد [[URL.revokeObjectURL(url)]]:
-
-~~~text الناتج
-TypeError: Failed to fetch
-~~~
-
-يعني الـ URL اتقفل والذاكرة اتحررت. عشان كده بنعمل revoke للقديم في أول كل [[change]].
-
-### نفس الملف مرتين
-
-اخترت [[cat.png]] لوحده، وبعدين [[cat.png]] تاني: المرة التانية مطلعتش [[change]] خالص، لأن الاختيار متغيرش. لو محتاج تسمح بكده، اعمل [[input.value = ""]] بعد ما تخلص.
+- مفيش global اسمه [[TypedArray]]، بس هو موجود: أبو الـ ١٢ كلهم، وعليه كل الـ methods ([[map]] و [[set]] و [[subarray]]...) والـ getters ([[buffer]] و [[length]]...). فلما MDN يكتب [[TypedArray.prototype.map]] يقصد [[map]] بتاعة أي واحد فيهم.
+- «abstract»: مينفعش تعمل منه نسخة مباشرة. وده بيخليك تفحص أي typed array بـ [[x instanceof TA]] (أو [[ArrayBuffer.isView(x) && !(x instanceof DataView)]]).
 
 ---
 
 ## الخلاصة
 
-| الحاجة | معناها |
-|---|---|
-| [[accept]] و [[multiple]] | فلتر لنافذة الاختيار، وأكتر من ملف |
-| [[input.files]] | ليستة [[File]]: name و type و size |
-| [[URL.createObjectURL(file)]] | URL مؤقت [[blob:...]] للملف |
-| [[URL.revokeObjectURL(url)]] | اقفله وحرّر الذاكرة |
-| [[replaceChildren()]] | فضّي العنصر |
-
-- النوع جاي من الامتداد، فمتعتمدش عليه للأمان.
-- الحجم بالبايت: 2MB = [[2 * 1024 * 1024]].`,
+- اختار بالحجم والنوع: bytes خام [[Uint8Array]]، و pixels [[Uint8ClampedArray]]، وصوت [[Int16Array]] أو [[Float32Array]]، و ٦٤ bit [[BigInt64Array]].
+- الرقم اللي مبيكفيش بيلف ساكت، والكسر بيتشال في الصحيح، والـ clamped بيقف ويقرّب لأقرب زوجي.
+- الـ typed arrays بتقرا بترتيب جهازك (little-endian غالبًا)؛ للملفات والشبكة [[DataView]].
+- [[byteLength]] = [[length]] × [[BYTES_PER_ELEMENT]]، و [[byteOffset]] مكان البداية في الـ [[buffer]].`,
           lines: [
-            R`بنمسك الـ [[<input type="file">]] اللي اليوزر بيختار منه الصور.`,
-            R`العنصر اللي هنحط فيه صور المعاينة ورسايل الأخطاء.`,
-            R`أقصى حجم مسموح: 2 ميجابايت بالبايت (2 × 1024 × 1024)، لأن [[file.size]] بيتقاس بالبايت. كتابتها كده أوضح من رقم كبير محدش فاهم جه منين. والفحص ده لراحة اليوزر بس، والسيرفر لازم يفحص تاني.`,
-            R`هنحفظ هنا كل blob URL بنعمله عشان نمسحهم بعدين. كل URL من دول ماسك الملف في الذاكرة لحد ما تعمله revoke أو الصفحة تتقفل.`,
-            R`[[change]] بيحصل لما اليوزر يخلص اختيار ويقفل نافذة الملفات، مش مع كل ضغطة. وكل اختيار جديد بيستبدل اللي قبله في [[input.files]].`,
-            R`قبل ما نعرض الاختيار الجديد، بنمسح الـ blob URLs بتاعة الاختيار اللي فات بـ [[revokeObjectURL]]. من غير ده، كل مرة اليوزر يختار صور، القديمة تفضل في الذاكرة (memory leak).`,
-            R`نرجّع الليستة فاضية، لأن الـ URLs اللي كانت فيها اتمسحت ومبقتش تشتغل.`,
-            R`[[replaceChildren()]] من غير arguments بتمسح كل اللي جوه المعاينة، فالصور القديمة متفضلش جنب الجديدة.`,
-            R`[[input.files]] هي [[FileList]] فيها object [[File]] لكل ملف اختاره، وفيه [[name]] و [[size]] و [[type]]. مش array حقيقية (مفيهاش [[map]])، بس [[for...of]] بتلف عليها عادي.`,
-            R`[[file.type]] هو الـ MIME type زي [["image/png"]]. بنفحص هنا لأن [[accept]] في الـ HTML مجرد اقتراح لنافذة الاختيار، واليوزر يقدر يختار «All files» ويجيب أي ملف. ولو مش صورة، [[continue]] تعدّيه.`,
-            R`[[file.size]] حجم الملف بالبايت. لو أكبر من الحد هنعرض رسالة بدل الصورة.`,
-            R`بنضيف رسالة فيها اسم الملف. [[append]] لما تديها string بتحطه كـ text node، يعني اسم ملف فيه [[<script>]] هيظهر كنص ومش هيتنفذ، زي [[textContent]] بالظبط.`,
-            R`نكمّل على الملف اللي بعده من غير ما نعمل blob URL للملف الكبير ده.`,
-            R`نهاية الـ [[if]] بتاع الحجم.`,
-            R`[[URL.createObjectURL]] بتعمل URL مؤقت شكله [[blob:...]] بيشاور على الملف اللي على جهاز اليوزر. كده المعاينة بتظهر فورًا من غير ما ترفع حاجة للسيرفر.`,
-            R`نحفظ الـ URL في الليستة عشان نعمله revoke في الاختيار الجاي.`,
-            R`نعمل عنصر [[<img>]] جديد لكل صورة، لسه في الذاكرة ومش ظاهر لحد ما نضيفه في المعاينة.`,
-            R`الـ [[src]] هو الـ blob URL، فالمتصفح بيعرض الصورة من الملف المحلي مباشرة.`,
-            R`[[alt]] باسم الملف، عشان قارئ الشاشة يقول الصورة دي إيه. وبنحطه كـ property مش بنركّب HTML، فلو اسم الملف فيه علامات HTML مش هتتنفذ.`,
-            R`عرض المعاينة 120 بكسل. بنحدد العرض بس، فالمتصفح بيحسب الطول بنفس نسبة الصورة.`,
-            R`نضيف الصورة جوه المعاينة، وهنا بتظهر لليوزر.`,
-            R`نهاية الـ [[for]] اللي على الملفات.`,
-            R`نهاية الـ listener بتاع [[change]].`,
-          ],
-          sol: R`الصورتين الصغيرين بيظهروا، والكبيرة بيظهر مكانها «اسمها: أكبر من 2MB.»، والـ PDF مش بيظهر خالص (اتنط بـ continue لأن type بتاعه [["application/pdf"]]).
-
-الـ [[.txt]] اللي اسمه [[.png]]: [[file.type]] بـ [["image/png"]]، والـ img بيظهر مكسور. ده الدليل إن النوع جاي من الامتداد، ودي بالظبط الحركة اللي حد هيعملها عشان يرفع حاجة مش صورة على السيرفر بتاعك.
-
-الحجم: [[(file.size / 1024).toFixed(0) + " KB"]]، والمقاس لازم يستنى التحميل: [[img.onload = () => caption.textContent += $__bt $__{img.naturalWidth}×$__{img.naturalHeight}$__bt]]. قبل الـ onload الـ naturalWidth بـ 0.`
-        },
-        {
-          cmd: "drag and drop و progress",
-          title: "تسحب ملف وترفعه بشريط تقدم إزاي؟",
-          desc: R`السحب والإفلات: على العنصر اللي هيستقبل اسمع لـ [[dragover]] واعمل [[preventDefault()]] (من غيرها المتصفح مش هيسمح بالإفلات هنا وهيفتح الملف في التاب)، و [[drop]] واعمل [[preventDefault()]] واقرا [[e.dataTransfer.files]] (نفس نوع [[input.files]]). و [[dragenter]] و [[dragleave]] عشان تغيّر الشكل.
-
-شريط التقدم: [[XMLHttpRequest]] عنده [[xhr.upload.onprogress]] بيقولك اترفع كام byte من كام. [[fetch]] مفيهوش حدث تقدم للرفع. فلحد النهارده لو عايز progress bar للرفع بتستخدم XHR (أو مكتبة زي axios، اللي هي XHR من تحت في المتصفح).`,
-          example: R`const zone = document.querySelector("#drop");
-const bar = document.querySelector("progress");
-zone.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  zone.classList.add("over");
-});
-zone.addEventListener("dragleave", () => zone.classList.remove("over"));
-zone.addEventListener("drop", (e) => {
-  e.preventDefault();
-  zone.classList.remove("over");
-  for (const file of e.dataTransfer.files) upload(file);
-});
-function upload(file) {
-  const fd = new FormData();
-  fd.append("file", file);
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", "/api/upload");
-  xhr.upload.onprogress = (e) => {
-    if (e.lengthComputable) bar.value = e.loaded / e.total;
-  };
-  xhr.onload = () => console.log(xhr.status, xhr.responseText);
-  xhr.onerror = () => console.log("النت وقع");
-  xhr.send(fd);
-}`,
-          try: R`اعمل سيرفر Express صغير فيه [[POST /api/upload]] بـ multer (تاب Backend بـ Node)، وافتح DevTools ← Network ← Throttling ← «Slow 4G»، واسحب صورة ٥ ميجا. الشريط بيتحرك؟ وبعدين زوّد زرار «إلغاء» بيعمل [[xhr.abort()]]، و keyboard fallback: الـ zone يبقى [[<label>]] فيه [[<input type="file">]] مخفي، عشان اللي مبيستخدمش ماوس.`,
-          practice: [
-            { lvl: 'سريع', t: R`ابني Kanban صغير: عمودين «لسه» و «خلص» وكروت عليها [[draggable="true"]]. في [[dragstart]] اعمل [[e.dataTransfer.setData("text/plain", card.id)]]، وفي [[dragover]] على العمود [[preventDefault()]]، وفي [[drop]] انقل الكارت بـ [[append]].`, done: R`الكارت بيتنقل للعمود اللي تفلته فيه، والإفلات برا العمودين مبيعملش حاجة، والكارت مبيتكررش، وعدد الكروت في عنوان كل عمود بيتحدّث بعد كل نقلة.`, sol: R`~~~live 320 kanban.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kanban صغير</title>
-<style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
-  .board { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .col { background: #f3f4f6; border-radius: 8px; padding: 8px; min-height: 180px; }
-  .col.over { outline: 2px dashed #2563eb; }
-  .col h2 { font-size: 16px; margin: 0 0 8px; }
-  .card { background: #fff; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px; margin-bottom: 6px; cursor: grab; }
-  .card.dragging { opacity: 0.4; }
-</style>
-</head>
-<body>
-<div class="board">
-  <section class="col" id="todo"><h2>لسه (<span>0</span>)</h2>
-    <div class="card" draggable="true" id="c1">صمّم الصفحة</div>
-    <div class="card" draggable="true" id="c2">اكتب الـ API</div>
-    <div class="card" draggable="true" id="c3">اختبر الفورم</div>
-  </section>
-  <section class="col" id="done"><h2>خلص (<span>0</span>)</h2></section>
-</div>
-<p id="outside">برا العمودين</p>
-<script>
-  const cols = document.querySelectorAll(".col");
-
-  function updateCounts() {
-    for (const col of cols) col.querySelector("h2 span").textContent = col.querySelectorAll(".card").length;
-  }
-
-  document.addEventListener("dragstart", (e) => {
-    const card = e.target.closest(".card");
-    if (!card) return;
-    e.dataTransfer.setData("text/plain", card.id);
-    e.dataTransfer.effectAllowed = "move";
-    card.classList.add("dragging");
-  });
-  document.addEventListener("dragend", (e) => e.target.closest(".card")?.classList.remove("dragging"));
-
-  for (const col of cols) {
-    col.addEventListener("dragover", (e) => {
-      e.preventDefault();                  // من غيره المتصفح بيرفض الـ drop
-      e.dataTransfer.dropEffect = "move";
-      col.classList.add("over");
-    });
-    col.addEventListener("dragleave", (e) => {
-      if (!col.contains(e.relatedTarget)) col.classList.remove("over");
-    });
-    col.addEventListener("drop", (e) => {
-      e.preventDefault();
-      col.classList.remove("over");
-      const card = document.getElementById(e.dataTransfer.getData("text/plain"));
-      if (!card?.classList.contains("card")) return;   // سحب حاجة تانية (نص من برا مثلًا)
-      col.append(card);                     // append بينقل، مش بينسخ
-      updateCounts();
-    });
-  }
-  updateCounts();
-</script>
-</body>
-</html>
-~~~
-
-اسحب الكروت بين العمودين في الـ preview (بالماوس: الـ HTML drag and drop مبيشتغلش باللمس على أغلب الموبايلات).
-
-~~~text الناتج (Chrome 158 headless، جوه iframe معزول، السحب بـ dragAndDrop بتاع Playwright)
-البداية: لسه (3): صمّم الصفحة، اكتب الـ API، اختبر الفورم || خلص (0):  | كروت في الصفحة: 3
-c2 ← خلص: لسه (2): صمّم الصفحة، اختبر الفورم || خلص (1): اكتب الـ API | كروت في الصفحة: 3
-c1 ← خلص: لسه (1): اختبر الفورم || خلص (2): اكتب الـ API، صمّم الصفحة | كروت في الصفحة: 3
-c3 ← برا: لسه (1): اختبر الفورم || خلص (2): اكتب الـ API، صمّم الصفحة | كروت في الصفحة: 3
-c2 ← لسه: لسه (2): اختبر الفورم، اكتب الـ API || خلص (1): صمّم الصفحة | كروت في الصفحة: 3
-pageerrors: 0
-~~~
-
-**ليه كده:**
-
-- **[[draggable="true"]]:** الـ div مش بيتسحب لوحده (الصور واللينكات والنص المتعلّم بس اللي بيتسحبوا افتراضيًا).
-- **[[dragstart]] على [[document]]:** listener واحد لكل الكروت (event delegation)، و [[e.dataTransfer.setData("text/plain", card.id)]] بيشيل الـ id مع السحبة. الـ [[dataTransfer]] هو الطريقة الوحيدة اللي الـ [[drop]] يعرف بيها إيه اللي اتسحب.
-- **[[e.preventDefault()]] في [[dragover]]:** ده اللي بيقول للمتصفح «العنصر ده بيقبل الإفلات». من غيره الـ [[drop]] مبيحصلش خالص. ده أشهر سبب إن drag and drop «مش شغال».
-- **[[getData]] في [[drop]] وبعدين [[col.append(card)]]:** [[append]] لعنصر موجود في الصفحة **بينقله** مش بينسخه، فعدد الكروت فضل ٣.
-- **[[if (!card?.classList.contains("card")) return]]:** لو حد سحب نص من مكان تاني، [[getData]] هيرجّع النص ده، و [[getElementById]] هيرجّع [[null]] أو عنصر مش كارت. فبنتجاهل.
-- **الإفلات برا العمودين:** مفيش [[dragover]] بـ [[preventDefault]] هناك، فالمتصفح رفض الإفلات والكارت رجع مكانه.
-- **[[updateCounts()]] بعد كل نقلة:** العدد بيتحسب من الـ DOM نفسه، فمستحيل يختلف عن اللي ظاهر.
-
-**الغلطة الشائعة:** تعمل [[col.append(card.cloneNode(true))]] أو [[innerHTML += ...]] عشان «تحط الكارت في العمود». ده بيعمل نسخة والكارت الأصلي بيفضل مكانه، والنسخة مفيهاش أي listener متربط بيها مباشرة.` },
-            { lvl: 'تطبيق', t: R`صلّح الباج: حط جوه منطقة الإفلات بتاعة الدرس أيقونة ونص، واسحب ملف فوقهم: الـ class [[over]] بيرعش. صلّحها بعدّاد بيزيد في [[dragenter]] ويقل في [[dragleave]] ويتصفّر في [[drop]]، وارفض أي سحب مش ملفات ([[e.dataTransfer.types.includes("Files")]]).`, done: R`قبل التصليح الإطار بيختفي ويظهر كل ما تعدّي فوق الأيقونة أو النص (لأن [[dragleave]] بيحصل على الأب لما تدخل عنصر جواه)، وبعده بيفضل ثابت لحد ما تخرج من المنطقة كلها أو تفلت، وسحب نص متعلّم من الصفحة مبيفعّلش المنطقة.`, sol: R`~~~live 300 dropzone.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>منطقة إفلات مبترعشش</title>
-<style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
-  #drop { border: 3px dashed #9ca3af; border-radius: 12px; padding: 32px; text-align: center; }
-  #drop.over { border-color: #2563eb; background: #eff6ff; }
-  #drop .icon { font-size: 40px; display: block; }
-  #log { font-size: 13px; color: #374151; }
-</style>
-</head>
-<body>
-<div id="drop">
-  <span class="icon" aria-hidden="true">📁</span>
-  <p>اسحب <strong>الملفات</strong> هنا</p>
-</div>
-<p>نص تقدر تعلّمه وتسحبه: <em>جرّبني</em></p>
-<p id="log"></p>
-<script>
-  const zone = document.querySelector("#drop");
-  const log = document.querySelector("#log");
-  let depth = 0;                                   // جوه كام عنصر في المنطقة دلوقتي
-
-  const isFiles = (e) => e.dataTransfer?.types.includes("Files");
-
-  zone.addEventListener("dragenter", (e) => {
-    if (!isFiles(e)) return;
-    depth++;
-    zone.classList.add("over");
-  });
-  zone.addEventListener("dragover", (e) => {
-    if (!isFiles(e)) return;                       // من غير preventDefault = مرفوض
-    e.preventDefault();
-  });
-  zone.addEventListener("dragleave", (e) => {
-    if (!isFiles(e)) return;
-    depth--;
-    if (depth === 0) zone.classList.remove("over");
-  });
-  zone.addEventListener("drop", (e) => {
-    e.preventDefault();
-    depth = 0;
-    zone.classList.remove("over");
-    log.textContent = "وصل: " + [...e.dataTransfer.files].map((f) => f.name).join("، ");
-  });
-</script>
-</body>
-</html>
-~~~
-
-اسحب ملف من جهازك فوق الأيقونة والنص في الـ preview: الإطار الأزرق بيفضل ثابت. وعلّم كلمة «جرّبني» واسحبها فوق المنطقة: مفيش إطار.
-
-**القياس:** headless Chrome مبيقدرش يسحب ملف حقيقي من الويندوز، فبعتنا نفس الأحداث اللي المتصفح بيبعتها وانت بتعدّي من المنطقة للأيقونة للنص، بنفس الترتيب ([[dragenter]] على الجديد الأول وبعدين [[dragleave]] على القديم)، وقرينا الإطار بعد كل حدث. [[dropzone-bad.html]] هو كود الدرس زي ما هو:
-
-~~~text الناتج (Chrome 158 headless، جوه iframe معزول)
-== dropzone-bad.html
-dragenter على المنطقة: مخفي
-dragover على المنطقة: ظاهر
-dragenter على الأيقونة: ظاهر
-dragleave من المنطقة: مخفي
-dragover على الأيقونة: ظاهر
-dragenter على النص: ظاهر
-dragleave من الأيقونة: مخفي
-dragover على النص: ظاهر
-dragleave من النص لبرا الصفحة: مخفي
-سحب نص متعلّم: الإطار ظاهر | قبل الإفلات؟ true
-== dropzone.html
-dragenter على المنطقة: ظاهر
-dragover على المنطقة: ظاهر
-dragenter على الأيقونة: ظاهر
-dragleave من المنطقة: ظاهر
-dragover على الأيقونة: ظاهر
-dragenter على النص: ظاهر
-dragleave من الأيقونة: ظاهر
-dragover على النص: ظاهر
-dragleave من النص لبرا الصفحة: مخفي
-سحب نص متعلّم: الإطار مخفي | قبل الإفلات؟ false
-pageerrors: 0
-~~~
-
-**ليه بيرعش في كود الدرس:** لما الماوس يدخل الأيقونة، المتصفح بيبعت [[dragenter]] للأيقونة و [[dragleave]] للمنطقة (هي «اتسابت» لصالح عنصر جواها). كود الدرس بيشيل [[over]] على أي [[dragleave]]، فالإطار بيختفي لحد [[dragover]] اللي جاي (بيتبعت كل ~50ms) فيرجع. ده الرعشة: «مخفي» ثم «ظاهر» مع كل عنصر جوه المنطقة.
-
-**التصليح:**
-
-- **[[depth]]:** كل [[dragenter]] (على المنطقة أو أي عنصر جواها، لأنه بيعمل bubble) بيزوّد واحد، وكل [[dragleave]] بينقّص واحد. الدخول لعنصر جوه بيحصل **قبل** الخروج من اللي قبله، فالعدّاد مبيوصلش صفر غير لما تخرج من المنطقة كلها.
-- **[[depth = 0]] في [[drop]]:** بعد الإفلات مفيش [[dragleave]] بيتبعت، فلو مصفّرناش هيفضل 1 والإطار هيظهر غلط في السحبة الجاية.
-- **[[e.dataTransfer.types.includes("Files")]]:** وقت السحب مينفعش تقرا الملفات نفسها (للأمان)، بس [[types]] متاحة. سحب نص بيبقى [[types]] فيه [["text/plain"]] بس، فبنتجاهله ومش بنعمل [[preventDefault]] فالمتصفح بيرفض الإفلات (السطر الأخير: [[قبل الإفلات؟ false]]). كود الدرس كان بيقبل أي حاجة.
-
-**الغلطة الشائعة:** تصلّحها بـ [[pointer-events: none]] على كل اللي جوه المنطقة. بتشتغل للرعشة، بس اللينكات والزراير اللي جوه (زي «اختار ملف») هتبطّل تتداس.` },
-            { lvl: 'تحدي', t: R`محاكاة طابور رفع: اكتبه الأول في Node، كل «رفع» [[setTimeout]] وقته عشوائي ونسبة فشل ٢٠٪: ١٠ ملفات، ٢ بس في نفس الوقت، والفاشل يتعاد مرة واحدة. وبعدين بدّل الـ setTimeout بـ XHR بتاع الدرس ومعاه [[<progress>]] وزرار إلغاء ([[xhr.abort()]]) لكل ملف.`, done: R`الـ simulation بيطبع إن أكبر عدد شغال مع بعض 2، وكل ملف نهايته «تم» أو «فشل بعد محاولتين»، ومجموعهم 10. وفي المتصفح على Slow 4G مفيش أكتر من ٢ upload في Network في أي لحظة، والإلغاء بيكتب «اتلغى» وبيسيب مكانه للي بعده.`, sol: R`**الجزء الأول: المحاكاة في Node.** الـ random بـ seed ثابت عشان تطلع نفس النتيجة عندك.
-
-~~~js queue-sim.mjs
-// random ثابت (seed) عشان التشغيل يطلع نفس الناتج عندك
-function mulberry32(seed) {
-  return () => {
-    seed |= 0; seed = (seed + 0x6d2b79f5) | 0;
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-const random = mulberry32(2);
-
-let running = 0, maxRunning = 0;
-function fakeUpload(name) {
-  running++;
-  maxRunning = Math.max(maxRunning, running);
-  const ms = 100 + Math.floor(random() * 400);
-  const fails = random() < 0.2;
-  return new Promise((resolve, reject) =>
-    setTimeout(() => {
-      running--;
-      fails ? reject(new Error("الشبكة")) : resolve(ms);
-    }, ms),
-  );
-}
-
-async function uploadWithRetry(name) {
-  try {
-    await fakeUpload(name);
-    return $__bt$__{name}: تم$__bt;
-  } catch {
-    try {
-      await fakeUpload(name);
-      return $__bt$__{name}: تم (من المحاولة التانية)$__bt;
-    } catch {
-      return $__bt$__{name}: فشل بعد محاولتين$__bt;
-    }
-  }
-}
-
-// طابور: limit شغالين بالكتير، وكل واحد يخلص ياخد اللي بعده
-async function runQueue(items, limit, worker) {
-  const results = [];
-  let next = 0;
-  async function lane() {
-    while (next < items.length) {
-      const i = next++;
-      results[i] = await worker(items[i]);
-      console.log(results[i]);
-    }
-  }
-  await Promise.all(Array.from({ length: limit }, lane));
-  return results;
-}
-
-const files = Array.from({ length: 10 }, (_, i) => $__btfile-$__{i + 1}.jpg$__bt);
-const results = await runQueue(files, 2, uploadWithRetry);
-console.log("---");
-console.log("أكبر عدد شغال مع بعض:", maxRunning);
-console.log("تم:", results.filter((r) => r.includes("تم")).length, "| فشل:", results.filter((r) => r.includes("فشل")).length, "| المجموع:", results.length);
-~~~
-
-~~~text الناتج (node queue-sim.mjs، Node 24)
-file-2.jpg: تم
-file-1.jpg: تم
-file-3.jpg: تم
-file-4.jpg: تم
-file-6.jpg: تم
-file-5.jpg: تم (من المحاولة التانية)
-file-8.jpg: تم
-file-7.jpg: فشل بعد محاولتين
-file-10.jpg: تم (من المحاولة التانية)
-file-9.jpg: تم (من المحاولة التانية)
----
-أكبر عدد شغال مع بعض: 2
-تم: 9 | فشل: 1 | المجموع: 10
-~~~
-
-- **[[runQueue(items, limit, worker)]]:** بتشغّل [[limit]] «حارات» ([[lane]]) مع بعض بـ [[Promise.all]]. كل حارة بتاخد الملف اللي عليه الدور ([[next++]]) وتستناه يخلص وتاخد اللي بعده. فمستحيل يبقى شغال أكتر من ٢، وأول ما واحد يخلص اللي بعده بيبدأ على طول.
-- **[[next++]] آمن هنا:** JS بيشغّل كود واحد في المرة، فحارتين مستحيل ياخدوا نفس الرقم.
-- **الترتيب في الناتج مش ١، ٢، ٣:** كل ملف بياخد وقت مختلف، فاللي يخلص الأول يطبع الأول. [[results[i]]] بيحفظ كل نتيجة في مكانها الأصلي.
-
-**الجزء التاني: في المتصفح بـ XHR.** الصفحة بتبعت كل ملف لـ [[/api/upload]] بشريط تقدم وزرار إلغاء. ولو مفيش سيرفر (الـ preview، اللي الـ origin بتاعه [["null"]]) بترفع «وهمي» بتايمر وبتقول كده.
-
-~~~live 300 upload-queue.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>طابور رفع</title>
-<style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
-  ul { list-style: none; padding: 0; }
-  li { display: grid; grid-template-columns: 1fr 120px 90px 60px; gap: 8px; align-items: center; padding: 4px 0; border-bottom: 1px solid #eee; }
-  progress { width: 100%; }
-  #mode { font-size: 13px; color: #92400e; }
-  button { font: inherit; }
-</style>
-</head>
-<body>
-<label>اختار ملفات: <input type="file" id="files" multiple></label>
-<p id="mode"></p>
-<ul id="list"></ul>
-<p id="summary"></p>
-<script>
-  const LIMIT = 2;
-  // الـ preview صفحة معزولة من غير سيرفر: نرفع «وهمي» بتايمر عشان تشوف الطابور شغال
-  const FAKE = location.origin === "null";
-  if (FAKE) document.querySelector("#mode").textContent = "مفيش سيرفر هنا (صفحة معزولة): الرفع وهمي بتايمر. شغّلها من سيرفر محلي للرفع الحقيقي.";
-
-  let running = 0, maxRunning = 0;
-
-  // بترجّع { promise, abort } زي XHR
-  function send(file, onProgress) {
-    if (FAKE) {
-      let timer, done = 0;
-      const promise = new Promise((resolve, reject) => {
-        timer = setInterval(() => {
-          done = Math.min(file.size, done + Math.max(1, file.size / 10));
-          onProgress(done / file.size);
-          if (done >= file.size) { clearInterval(timer); resolve(); }
-        }, 150);
-        send.abortFake = () => { clearInterval(timer); reject(new DOMException("اتلغى", "AbortError")); };
-      });
-      const abort = send.abortFake;
-      return { promise, abort };
-    }
-    const xhr = new XMLHttpRequest();
-    const promise = new Promise((resolve, reject) => {
-      xhr.open("POST", "/api/upload?name=" + encodeURIComponent(file.name));
-      xhr.upload.onprogress = (e) => e.lengthComputable && onProgress(e.loaded / e.total);
-      xhr.onload = () => (xhr.status < 300 ? resolve() : reject(new Error("HTTP " + xhr.status)));
-      xhr.onerror = () => reject(new Error("الشبكة"));
-      xhr.onabort = () => reject(new DOMException("اتلغى", "AbortError"));
-      xhr.send(file);
-    });
-    return { promise, abort: () => xhr.abort() };
-  }
-
-  async function uploadOne(item) {
-    for (let attempt = 1; attempt <= 2; attempt++) {
-      if (item.cancelled) throw new DOMException("اتلغى", "AbortError");
-      running++;
-      maxRunning = Math.max(maxRunning, running);
-      const job = send(item.file, (p) => (item.bar.value = p));
-      item.abort = job.abort;
-      try {
-        await job.promise;
-        return attempt === 1 ? "تم" : "تم (محاولة ٢)";
-      } catch (err) {
-        if (err.name === "AbortError" || attempt === 2) throw err;
-      } finally {
-        running--;
-      }
-    }
-  }
-
-  async function runQueue(items) {
-    let next = 0;
-    async function lane() {
-      while (next < items.length) {
-        const item = items[next++];
-        if (item.cancelled) continue;
-        item.status.textContent = "بيترفع...";
-        try {
-          item.status.textContent = await uploadOne(item);
-        } catch (err) {
-          item.status.textContent = err.name === "AbortError" ? "اتلغى" : "فشل بعد محاولتين";
-        }
-        item.btn.disabled = true;
-      }
-    }
-    await Promise.all(Array.from({ length: LIMIT }, lane));
-    document.querySelector("#summary").textContent = $__btخلص. أكبر عدد شغال مع بعض: $__{maxRunning}$__bt;
-  }
-
-  document.querySelector("#files").addEventListener("change", (e) => {
-    const list = document.querySelector("#list");
-    list.replaceChildren();
-    const items = [...e.target.files].map((file) => {
-      const li = document.createElement("li");
-      const name = document.createElement("span");
-      name.textContent = file.name;
-      const bar = document.createElement("progress");
-      bar.max = 1;
-      bar.value = 0;
-      const status = document.createElement("span");
-      status.textContent = "مستني";
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.textContent = "إلغاء";
-      li.append(name, bar, status, btn);
-      list.append(li);
-      const item = { file, bar, status, btn, cancelled: false, abort: null };
-      btn.addEventListener("click", () => {
-        item.cancelled = true;
-        item.abort?.();                        // لو شغال: وقّفه، ولو مستني: مش هيبدأ
-        status.textContent = "اتلغى";
-        btn.disabled = true;
-      });
-      return item;
-    });
-    runQueue(items);
-  });
-</script>
-</body>
-</html>
-~~~
-
-اتقاس على [[http://localhost:8831]] بسيرفر [[node:http]] صغير بيعدّ الـ uploads الشغالة، و upload مخنوق لحوالي 200KB/s (من DevTools Protocol، زي Slow 4G)، و ٥ ملفات كل واحد 300KB، وضغطنا «إلغاء» على التاني وهو شغال:
-
-~~~text الناتج (Chrome 158 headless)
-بعد 0.7s: photo-1.jpg 0.27 بيترفع... | photo-2.jpg 0.21 بيترفع... | photo-3.jpg 0.00 مستني | photo-4.jpg 0.00 مستني | photo-5.jpg 0.00 مستني
-الآخر: photo-1.jpg 1.00 تم | photo-2.jpg 0.21 اتلغى | photo-3.jpg 1.00 تم | photo-4.jpg 1.00 تم | photo-5.jpg 1.00 تم
-خلص. أكبر عدد شغال مع بعض: 2
-السيرفر: أكبر عدد uploads في نفس الوقت = 3
-بدأ photo-1.jpg (شغال 1)
-بدأ photo-2.jpg (شغال 2)
-بدأ photo-3.jpg (شغال 3)
-اتقطع photo-2.jpg 65536 bytes
-وصل photo-1.jpg 307200 bytes
-بدأ photo-4.jpg (شغال 2)
-وصل photo-3.jpg 307200 bytes
-بدأ photo-5.jpg (شغال 2)
-وصل photo-4.jpg 307200 bytes
-وصل photo-5.jpg 307200 bytes
-pageerrors: 0
-[sandbox] photo-1.jpg تم | photo-2.jpg تم | photo-3.jpg تم | خلص. أكبر عدد شغال مع بعض: 2
-~~~
-
-- **[[send(file, onProgress)]] بترجّع [[{ promise, abort }]]:** الـ Promise عشان الطابور يستنى بـ [[await]]، و [[abort]] عشان زرار الإلغاء يوقّف الـ XHR. [[xhr.upload.onprogress]] (مش [[xhr.onprogress]]) هو تقدم **الرفع**.
-- **[[xhr.send(file)]]:** بيبعت الملف نفسه كـ body. في المشروع المتوسط بنبعته في [[FormData]] لـ multer.
-- **[[onabort]] بيرفض بـ [[AbortError]]:** والطابور بيفرّق: الإلغاء بيكتب «اتلغى» ومبيعيدش المحاولة، وأي error تاني بيتعاد مرة واحدة.
-- **الإلغاء بيسيب مكانه:** [[uploadOne]] بترمي، والحارة بتكمّل بالملف اللي بعده على طول ([[بدأ photo-3.jpg]] بعد الإلغاء).
-
-**اكتشاف من القياس:** الصفحة عدّت ٢ بالكتير، بس السيرفر شاف ٣ في لحظة. الإلغاء بيقفل الاتصال من ناحية المتصفح على طول وبيبدأ التالت، بس السيرفر بيعرف إن الاتصال اتقفل ([[aborted]]) بعد ما التالت يوصله بشوية. يعني «الحد ٢» حد في المتصفح، ولو السيرفر عنده حد حقيقي لازم يسيب هامش.
-
-**الغلطة الشائعة:** [[Promise.all(files.map(upload))]]. ده بيبدأ الـ ١٠ مع بعض، والمتصفح نفسه بيحدد ٦ اتصالات لكل سيرفر في HTTP/1.1 والباقي بيستنى من غير ما الشريط يتحرك، وأي ملف كبير بياكل كل الـ upload.` },
+            R`buffer فيه ٤ bytes، هنقراهم بأربع عيون مختلفة.`,
+            R`[[Uint8Array]]: كل byte رقم من 0 لـ 255.`,
+            R`[[Int8Array]] على نفس الـ bytes: كل byte رقم بإشارة من -128 لـ 127.`,
+            R`[[Uint16Array]]: كل ٢ bytes رقم واحد، فطولها ٢.`,
+            R`[[Uint32Array]]: الـ ٤ bytes كلهم رقم واحد.`,
+            R`بنكتب ٤ bytes بالـ hex من خلال الـ [[Uint8Array]]: ١ و ٢ و ٢٥٥ و ١٢٨.`,
+            R`بيطبع نفس الـ bytes بالأربع أشكال: [[ff]] بقت -1 في [[Int8Array]]، و ٥١٣ = [[0x0201]] لأن الـ byte الصغير الأول.`,
+            R`الـ [[Uint32]] بالـ hex [[80ff0201]] (الـ bytes بالعكس)، وبعدين بنكتب ١ في ٢ bytes ونشوف أول byte عشان نعرف الجهاز little-endian.`,
+            R`أرقام برّه المدى: ٢٥٦ لفّت لـ 0 و -1 لـ 255 و [[3.9]] اتقصت لـ 3، و [[Int8]] لفّت من الناحيتين، والـ clamped وقف عند 255 و 0 وقرّب [[2.5]] لـ 2.`,
+            R`[[0.1]] في ٤ bytes وفي ٢ bytes بتبقى أقرب قيمة ممكنة مش [[0.1]] بالظبط، و ٢ أس ٦٣ في [[BigInt64]] لفّت لأصغر رقم سالب.`,
+            R`[[BYTES_PER_ELEMENT]] بتاع [[Int16Array]] = ٢، و ٣ عناصر [[Float64]] = ٢٤ byte، و [[u16]] فيها عنصرين في ٤ bytes.`,
           ],
           ref: [
-            { t: "MDN: HTML Drag and Drop API", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API" },
-            { t: "MDN: File drag and drop", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop" },
-            { t: "MDN: XMLHttpRequest.upload", url: "https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/upload" },
-            { t: "MDN: <progress>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/progress" },
+            { t: "MDN: TypedArray", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray" },
+            { t: "MDN: TypedArray.BYTES_PER_ELEMENT", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/BYTES_PER_ELEMENT" },
+            { t: "MDN: Uint8ClampedArray", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray" },
+            { t: "MDN: Int16Array", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array" },
+            { t: "MDN: Float16Array", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float16Array" },
+            { t: "MDN: BigInt64Array", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt64Array" },
+            { t: "MDN: TypedArray.prototype.byteOffset", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/byteOffset" },
+            { t: "MDN: Endianness", url: "https://developer.mozilla.org/en-US/docs/Glossary/Endianness" },
           ],
+          pre: [{ to: "js/bitwise و shifts", why: R`two's complement والـ bits: ليه -1 = [[ff]]` }, { to: "js/BigInt بعمق", why: R`قيم [[BigInt64Array]] لازم BigInt` }, { to: "js/Math.sumPrecise و fround و f16round", why: R`الدقة في [[Float32]] و [[Float16]]` }],
+        },
+        {
+          cmd: "TypedArray: set و subarray و slice و كل الـ methods",
+          title: "إيه الـ methods اللي في الـ typed arrays، وأنهي واحدة بتنسخ وأنهي بتشارك الذاكرة؟",
+          desc: R`الـ typed arrays فيها تقريبًا كل methods الـ [[Array]] ([[map]] و [[filter]] و [[find]] و [[at]] و [[toSorted]]...) وزيادة اتنين مهمين جدًا:
+
+• [[ta.subarray(start, end)]]: view **جديد على نفس الذاكرة** من غير نسخ. التعديل فيه بيظهر في الأصل.
+• [[ta.set(source, offset)]]: بيكتب array أو typed array جوه [[ta]] من مكان [[offset]] دفعة واحدة.
+• و [[ta.slice(start, end)]] (زي الـ Array): **نسخة** مستقلة.
+
+والفروق عن الـ Array: مفيش [[push]] ولا [[pop]] ولا [[splice]] ولا [[concat]] ولا [[flat]] (الطول ثابت)، و [[sort()]] من غير دالة بيرتب **بالأرقام** مش كنصوص، و [[map]] و [[filter]] بيرجّعوا نفس النوع (فالنتيجة بتلف لو مبتكفيش).`,
+          example: R`// subarray بيشارك نفس الذاكرة، و slice بينسخ، و set بيكتب دفعة واحدة
+const packet = Uint8Array.from([0xca, 0xfe, 3, 10, 20, 30, 0, 0]);
+const header = packet.subarray(0, 2);
+const body = packet.slice(3, 6);
+header[0] = 0;
+body[0] = 99;
+console.log(packet, header, body);
+console.log(header.buffer === packet.buffer, body.buffer === packet.buffer, packet.subarray(3).byteOffset);
+packet.set([7, 8], 6);
+console.log(packet.at(-1), packet.indexOf(30), packet.includes(99));
+const temps = Int16Array.of(30, -5, 12, 100, 7);
+console.log(temps.toSorted(), [30, -5, 12, 100, 7].toSorted());
+console.log(temps.map((t) => t * 1000), temps.filter((t) => t > 10), temps.join(' | '));
+try { temps.push(1); } catch (e) { console.log(e.name + ': ' + e.message); }`,
+          try: R`اعمل [[Uint8Array]] فيها الأرقام من 0 لـ 9، وقسّمها لحتت كل واحدة ٤ بـ [[subarray]]. اكتب [[99]] في أول عنصر في الحتة التالتة، واطبع الأصل. وبعدين كرّر بـ [[slice]] بدل [[subarray]]: إيه اللي اختلف؟`,
+          sol: R`~~~js parts.mjs
+const data = Uint8Array.from({ length: 10 }, (_, i) => i);
+const views = [data.subarray(0, 4), data.subarray(4, 8), data.subarray(8)];
+views[2][0] = 99;
+console.log(data[8], views.map((v) => v.byteOffset));
+const copies = [data.slice(0, 4), data.slice(4, 8), data.slice(8)];
+copies[2][0] = 55;
+console.log(data[8], copies.map((c) => c.byteOffset));
+~~~
+
+~~~text الناتج (Node 24.22)
+99 [ 0, 4, 8 ]
+99 [ 0, 0, 0 ]
+~~~
+
+- [[subarray]]: الـ ٣ حتت views على نفس الـ buffer بـ offsets [[0, 4, 8]]، فالكتابة في التالتة كتبت في [[ data[8] ]].
+- [[slice]]: ٣ نسخ، كل واحدة buffer لوحدها بـ offset صفر، فـ [[55]] مظهرتش في الأصل (لسه [[99]] من الخطوة اللي فاتت).
+- [[Uint8Array.from({ length: 10 }, fn)]]: object فيه [[length]] بيتعامل زي array طولها ١٠، و [[fn]] بتطلّع كل قيمة من الـ index.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه اللي هيتطبع؟ ركّز في التاني:
+
+~~~js
+const bytes = Uint8Array.of(0, 15, 255);
+console.log(bytes.map((b) => b.toString(16).padStart(2, '0')).join(' '));
+console.log(Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join(' '));
+~~~`, done: R`كتبت السطرين صح، وتقدر تقول ليه الأول [[0 0 0]].`, sol: R`~~~text الناتج (Node 24.22)
+0 0 0
+00 0f ff
+~~~
+
+- [[bytes.map]] بترجّع **[[Uint8Array]]**، فكل نص بترجّعه الدالة بيتحوّل رقم عشان يتخزن: [['00']] بقى ٠، و [['0f']] و [['ff']] [[NaN]] ومنها ٠. وبعدين [[join]] بيكتب الأصفار.
+- [[Array.from(bytes, fn)]] بيعمل [[Array]] عادية، فالنصوص بتفضل نصوص.
+- القاعدة: لو النتيجة مش أرقام من نفس النوع (نصوص، objects، أرقام أكبر)، اطلع لـ [[Array]] الأول: [[Array.from(ta, fn)]] أو [[ [...ta].map(fn) ]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[chunks(bytes, size)]] بتقسّم [[Uint8Array]] لحتت طول كل واحدة [[size]] (والأخيرة ممكن أقصر) **من غير نسخ ولا byte**. ولو [[size]] مش رقم صحيح أكبر من صفر ترمي [[RangeError]]. ده اللي بتعمله لما تبعت ملف كبير على دفعات.`, done: R`١٠ bytes بـ size ٤ بتطلع أطوال [[4, 4, 2]] و offsets [[0, 4, 8]] وكلهم نفس الـ buffer، والـ array الفاضية بتطلع صفر حتت، و size صفر بيرمي، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js chunks.mjs
+function chunks(bytes, size) {
+  if (!Number.isInteger(size) || size < 1) throw new RangeError('size لازم رقم صحيح أكبر من صفر: ' + size);
+  const out = [];
+  for (let at = 0; at < bytes.length; at += size) out.push(bytes.subarray(at, at + size));
+  return out;
+}
+const data = Uint8Array.from({ length: 10 }, (_, i) => i);
+const parts = chunks(data, 4);
+console.log(parts.map((p) => p.length), parts.map((p) => p.byteOffset), parts.every((p) => p.buffer === data.buffer));
+parts[2][0] = 99;
+console.log(data[8], chunks(new Uint8Array(0), 3).length);
+try { chunks(data, 0); } catch (e) { console.log(e.name + ': ' + e.message); }
+~~~
+
+~~~text الناتج (Node 24.22)
+[ 4, 4, 2 ] [ 0, 4, 8 ] true
+99 0
+RangeError: size لازم رقم صحيح أكبر من صفر: 0
+~~~
+
+- [[subarray(at, at + size)]]: لو [[at + size]] أكبر من الطول بيتقص لوحده، فالحتة الأخيرة طولها ٢ من غير حساب.
+- **ليه الفحص؟** من غيره [[size]] صفر = loop لانهائي ([[at]] مبيزيدش)، و [[size]] سالب نفس الكلام.
+- كل الحتت views، فالذاكرة الإضافية objects صغيرة بس. لكن خلي بالك: لو الأصل اتعمله [[transfer]] أو اتبعت لـ Worker، كل الحتت بتبقى فاضية معاه.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** نافذة آخر ٤ قراءات حساس في [[Float32Array(4)]]: كل قراية جديدة بتزق القديمة شمال بـ [[copyWithin]] وتتكتب في الآخر، والمتوسط بـ [[reduce]]. ابعت القراءات [[1, 2, 3, 4, 5, 6]] واطبع النافذة والمتوسط.`, done: R`النافذة في الآخر [[3, 4, 5, 6]] والمتوسط [[4.5]]، ومفيش أي array جديدة اتعملت في كل قراية.`, sol: R`~~~js window.mjs
+const win = new Float32Array(4);
+function push(w, value) {
+  w.copyWithin(0, 1);
+  w[w.length - 1] = value;
+  return w;
+}
+for (const v of [1, 2, 3, 4, 5, 6]) push(win, v);
+console.log(win, win.reduce((s, x) => s + x) / win.length);
+~~~
+
+~~~text الناتج (Node 24.22)
+Float32Array(4) [ 3, 4, 5, 6 ] 4.5
+~~~
+
+- [[copyWithin(0, 1)]]: انسخ من مكان ١ للآخر وحطه من مكان ٠، يعني زق كل حاجة خطوة شمال جوه نفس الـ buffer (والأقدم بيتمسح). ده بديل [[shift]] + [[push]] اللي مش موجودين.
+- أول ٣ قراءات النافذة فيها أصفار من الأول ([[0, 0, 0, 1]])، فالمتوسط غلط في الأول. لو ده مهم، احسب عدد القراءات الحقيقي.
+- لنافذة كبيرة (ألف قراية) الزق كل مرة بيبقى مكلف: الأحسن ring buffer بـ index بيلف (فكرة مشروع «ring buffer» في درس «Atomics»).` },
+            { lvl: 'تطبيق', t: R`**قارن:** رتّب [[10, 9, 100, -2.5]] بـ [[toSorted()]] كـ [[Float32Array]] وكـ [[Array]]، وبعدين رتّب الـ [[Float32Array]] من الكبير للصغير.`, done: R`عرفت إن الـ Array رتبت [[-2.5, 10, 100, 9]] والـ typed array [[-2.5, 9, 10, 100]]، والتنازلي بدالة مقارنة.`, sol: R`~~~js sort.mjs
+const t = Float32Array.of(10, 9, 100, -2.5);
+console.log(t.toSorted(), [10, 9, 100, -2.5].toSorted(), t.toSorted((a, b) => b - a));
+~~~
+
+~~~text الناتج (Node 24.22)
+Float32Array(4) [ -2.5, 9, 10, 100 ] [ -2.5, 10, 100, 9 ] Float32Array(4) [ 100, 10, 9, -2.5 ]
+~~~
+
+- [[Array.prototype.sort]] من غير دالة بيحوّل كل حاجة نص ويرتب حرف حرف: [['10']] قبل [['100']] قبل [['9']] (درس «sort و toSorted»).
+- الـ typed array كل عناصرها أرقام، فالترتيب الافتراضي **رقمي** (وبيحط [[NaN]] في الآخر و [[-0]] قبل [[0]]).
+- [[toSorted]] بترجّع نسخة والأصل زي ما هو، و [[sort]] بترتب في مكانها. والدالة [[(a, b) => b - a]] تنازلي.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** اعمل [[class Pixels extends Uint8ClampedArray {}]]. أنهي methods بترجّع [[Pixels]] وأنهي بترجّع [[Uint8ClampedArray]]: [[map]] و [[subarray]] و [[slice]] و [[filter]] و [[toSorted]] و [[toReversed]]؟ وإيه اللي بيتغيّر لو عملت [[static get [Symbol.species] ]] بيرجّع [[Uint8Array]]؟ جاوب من MDN صفحة [[TypedArray[Symbol.species] ]] وأكّد بالتشغيل.`, done: R`عندك جدول الـ ٦ methods بالنوع اللي راجع، ولقيت إن [[toSorted]] و [[toReversed]] مختلفين عن الباقي.`, sol: R`~~~js species.mjs
+class Pixels extends Uint8ClampedArray {}
+const p = Pixels.of(1, 2, 3);
+console.log(p.map((x) => x * 2) instanceof Pixels, p.subarray(1) instanceof Pixels, p.slice(1) instanceof Pixels, p.filter((x) => x > 1).constructor.name, p.toSorted() instanceof Pixels, p.toReversed().constructor.name);
+class Plain extends Uint8Array {
+  static get [Symbol.species]() { return Uint8Array; }
+}
+const q = Plain.of(1, 2);
+console.log(q.map((x) => x).constructor.name, q.subarray(0).constructor.name, q.toReversed().constructor.name);
+~~~
+
+~~~text الناتج (Node 24.22)
+true true true Pixels false Uint8ClampedArray
+Uint8Array Uint8Array Uint8Array
+~~~
+
+**الإجابة:**
+- [[map]] و [[subarray]] و [[slice]] و [[filter]] بيسألوا [[this.constructor[Symbol.species] ]] (الافتراضي = نفس الـ class)، فبيرجّعوا [[Pixels]].
+- [[toSorted]] و [[toReversed]] (وكمان [[with]]) **مبيسألوش** الـ species: بيرجّعوا دايمًا النوع الأساسي ([[Uint8ClampedArray]]). ده قرار في المواصفة لما ضافوا الـ methods الجديدة دي (ES2023): الـ species بيعقّد الـ engines ونادرًا حد بيحتاجه.
+- لما [[Plain]] رجّع [[Uint8Array]] من الـ species، كل اللي بيسأل بقى بيرجّع [[Uint8Array]] (حتى [[subarray]]).` },
+          ],
+          check: { lang: "js", starter: R`function chunks(bytes, size) {
+  // حتت طولها size من غير نسخ (subarray)، و RangeError لو size مش صحيح أكبر من صفر
+}`, tests: R`const data = Uint8Array.from({ length: 10 }, (_, i) => i);
+test("الأطوال", () => expect(chunks(data, 4).map((p) => p.length)).toEqual([4, 4, 2]));
+test("الـ offsets", () => expect(chunks(data, 4).map((p) => p.byteOffset)).toEqual([0, 4, 8]));
+test("من غير نسخ", () => expect(chunks(data, 3).every((p) => p.buffer === data.buffer)).toBe(true));
+test("size أكبر من الطول", () => expect(chunks(data, 50).length).toBe(1));
+test("فاضية", () => expect(chunks(new Uint8Array(0), 3).length).toBe(0));
+test("size صفر", () => expect(() => chunks(data, 0)).toThrow("size لازم"));
+test("size كسر", () => expect(() => chunks(data, 1.5)).toThrow("size لازم"));`, solution: R`function chunks(bytes, size) {
+  if (!Number.isInteger(size) || size < 1) throw new RangeError('size لازم رقم صحيح أكبر من صفر: ' + size);
+  const out = [];
+  for (let at = 0; at < bytes.length; at += size) out.push(bytes.subarray(at, at + size));
+  return out;
+}` },
           flag: "script",
           deep: {
-            why: "رفع ملف كبير على نت بطيء من غير أي مؤشر، اليوزر بيفتكر إن الموقع علّق فيعمل refresh ويضيّع الرفع. والسحب والإفلات متوقع في أي dashboard أو محرر.",
-            how: R`[[dragover]] بيتنادى كل كام ملّي ثانية وانت ساحب فوق العنصر، و [[preventDefault]] فيه هي اللي بتقول للمتصفح «العنصر ده بيقبل drop». [[dragleave]] بيحصل كمان لما تعدّي فوق عنصر ابن جوه الـ zone، فالشكل ممكن يرمش؛ الحل عداد بـ dragenter/dragleave أو [[pointer-events: none]] على الأبناء وقت السحب.
+            why: R`الـ typed arrays أخدت methods الـ Array عشان تتعامل معاها زي أي قايمة أرقام، بس الطول الثابت والنوع الواحد خلّوا شوية methods مش منطقية ([[push]] و [[splice]] و [[concat]] و [[flat]]). وفي المقابل الشغل مع الـ bytes محتاج حاجتين الـ Array معندهاش: تشاور على حتة من الذاكرة من غير نسخ ([[subarray]]: header ملف، أو chunk هيتبعت)، وتكتب bytes جاهزة في مكان معين دفعة واحدة ([[set]]: تجميع رسالة من أجزاء). الاتنين دول بيشتغلوا بسرعة نسخ الذاكرة نفسها (memcpy) مش عنصر عنصر.`,
+            how: R`[[subarray(start, end)]] بيعمل object جديد من نفس النوع على **نفس** [[buffer]] بـ [[byteOffset]] جديد (= القديم + [[start]] × حجم العنصر). [[slice]] بيحجز buffer جديد وينسخ. [[set(source, offset)]]: لو [[source]] typed array من نفس النوع بينسخ الـ bytes مرة واحدة (وبيتعامل صح حتى لو الاتنين على نفس الـ buffer ومتداخلين)، ولو نوع تاني أو Array بيحوّل كل قيمة. و [[offset + source.length]] أكبر من الطول: [[RangeError: offset is out of bounds]].
 
-XHR بيبعت الـ body وبيطلق [[upload.progress]] كل ما جزء يخرج من الجهاز. [[lengthComputable]] بتبقى true لما الحجم الكلي معروف (مع FormData و File دايمًا معروف). والتقدم ده «اتبعت من الجهاز»، مش «السيرفر حفظه»؛ بعد ١٠٠٪ لسه فيه وقت لحد [[onload]].
-
-ليه fetch لأ؟ [[fetch]] بيدّيك download progress عن طريق [[res.body.getReader()]] (تقرا الرد chunk chunk). بس الرفع: المواصفات فيها streaming request body ([[body: ReadableStream]] مع [[duplex: "half"]])، وده مدعوم في Chromium بس ومحتاج HTTP/2، وحتى معاه اللي بتعدّه هو اللي الـ stream بتاعك سلّمه للمتصفح مش اللي وصل للشبكة فعلًا. فمفيش طريقة بسيطة ومضمونة. عشان كده XHR لسه موجود ومش deprecated.
-
-للملفات الكبيرة (فيديو): ارفع مباشرة لـ S3/R2 بـ presigned URL من غير ما تعدّي على سيرفرك (بـ XHR PUT برضه عشان الـ progress)، أو multipart/resumable uploads (tus) عشان لو النت قطع تكمّل.`,
-            when: R`أي رفع أكبر من كام ميجا، أو على موبايل. والسحب للـ dashboards والمحررات، مع input عادي دايمًا.`,
-            mistakes: R`تنسى preventDefault في dragover فالمتصفح يفتح الصورة بدل ما يرفعها. و progress بـ fetch. وتحط [[Content-Type]] بإيدك مع FormData. وتعتبر ١٠٠٪ نجاح قبل ما [[onload]] يقول status 200. ومفيش بديل للكيبورد والموبايل (السحب مش شغال على iOS Safari من الملفات). وفي الانترفيو: «إزاي تعمل progress bar لرفع ملف؟» الإجابة XHR upload.onprogress، وليه fetch مبيعملهاش.`
+[[map]] و [[filter]] و [[slice]] و [[subarray]] بيعملوا النتيجة من [[this.constructor[Symbol.species] ]]، فالنتيجة من نفس النوع وأي قيمة بتتحوّل (وتلف). و [[toSorted]] و [[toReversed]] و [[with]] (ES2023) بيرجّعوا النوع الأساسي من غير species. و [[sort()]] من غير دالة بيقارن **أرقام** (مش نصوص زي الـ Array)، و [[NaN]] في الآخر. و [[includes(NaN)]] بـ [[true]] و [[indexOf(NaN)]] بـ [[-1]] زي الـ Array. و [[ [Symbol.iterator] ]] هو نفسه [[values]]، و [[toString]] هو نفس دالة [[Array.prototype.toString]] بالظبط. وكل الـ methods بتفحص إن [[this]] typed array: [[Uint8Array.prototype.map.call([1, 2], fn)]] بيرمي [[TypeError: this is not a typed array.]]، أما العكس ([[Array.prototype.map.call(ta, fn)]]) شغال وبيرجّع [[Array]].`,
+            when: R`[[subarray]]: كل ما تقرا جزء من bytes (header، أو حقل، أو chunk تبعته) ومش هتحتفظ بيه لوقت طويل. [[slice]]: لما الجزء هيعيش بعد الأصل أو هيتعدّل لوحده، أو الأصل كبير جدًا وانت محتاج حتة صغيرة منه (الـ [[subarray]] بيمسك الـ buffer الكبير كله في الذاكرة). [[set]]: تجميع رسالة أو ملف من أجزاء، أو نسخ pixels لـ canvas تاني. [[copyWithin]]: تحريك جوه نفس الـ array (نوافذ وصفوف). [[map]] و [[filter]] لما النتيجة أرقام من نفس النوع؛ غير كده [[Array.from(ta, fn)]].`,
+            mistakes: R`- تفتكر [[subarray]] نسخة وتعدّل فيه: الأصل بيتغيّر.
+- تحتفظ بـ [[subarray]] صغير من buffer ضخم (ملف ١٠٠ MB): الـ ١٠٠ MB كلها فاضلة في الذاكرة. [[slice]] الحتة الصغيرة.
+- [[map]] بترجّع نص أو رقم كبير: بيتحوّل ويلف ساكت ([[0 0 0]] بدل الـ hex).
+- [[set]] بـ offset يخلّي الكتابة تعدّي الطول: [[RangeError: offset is out of bounds]].
+- [[with]] بـ index برّه الطول: [[RangeError: Invalid typed array index]] (مش بيكبّر الـ array)، وقيمة أكبر من النوع بتلف ([[with(-1, 300)]] في [[Uint8Array]] = ٤٤).
+- تدوّر على [[push]] و [[concat]] و [[splice]] و [[flat]] و [[toSpliced]]: مش موجودين. [[set]] في buffer أكبر، أو اطلع لـ [[Array]].
+- [[Array.isArray(ta)]] في كود بيفحص input: [[false]].`,
           },
           teach: R`## الفكرة في سطر
 
-جزئين: منطقة تسحب عليها ملف من الجهاز وتسيبه (drag and drop)، ودالة بترفع الملف للسيرفر وبتحرّك شريط تقدم وهي بترفع.
-
-جرّبته في Chrome headless (عن طريق playwright-core): صفحة فيها [[<div id="drop">]] و [[<progress>]]، وسيرفر Node صغير على localhost بيستقبل [[POST /api/upload]] ويرد بعدد البايتات اللي وصلته. عملت في الصفحة [[File]] حجمه 5MB، وبعتّه للـ zone بأحداث [[dragover]] و [[dragleave]] و [[drop]] مصنوعة بـ [[new DragEvent(...)]] (headless مفيهوش ماوس يسحب من الديسك)، وبطّأت الشبكة بـ DevTools Protocol لـ 1MB في الثانية رفع و 100ms latency.
+[[subarray]] بيشارك و [[slice]] بينسخ و [[set]] بيكتب دفعة واحدة، وباقي الـ methods زي الـ Array بس النتيجة من نفس النوع. الناتج من Node 24.22.
 
 ---
 
-## ١. العناصر
+## ١. [[TypedArray.prototype.subarray]] مقابل [[TypedArray.prototype.slice]]
 
-~~~text app.js
-const zone = document.querySelector("#drop");
-const bar = document.querySelector("progress");
+~~~js
+const packet = Uint8Array.from([0xca, 0xfe, 3, 10, 20, 30, 0, 0]);
+const header = packet.subarray(0, 2);
+const body = packet.slice(3, 6);
+header[0] = 0;
+body[0] = 99;
+console.log(packet, header, body);
+console.log(header.buffer === packet.buffer, body.buffer === packet.buffer, packet.subarray(3).byteOffset);
 ~~~
-
-[[<progress>]] عنصر HTML جاهز بيرسم شريط. [[value]] بتاعه من 0 لحد [[max]]، و [[max]] الافتراضي [[1]] (طبعته وطلع 1)، فلو حطيت [[bar.value = 0.5]] يبقى نص الشريط مليان.
-
----
-
-## ٢. السحب فوق المنطقة: [[dragover]]
-
-~~~text app.js
-zone.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  zone.classList.add("over");
-});
-~~~
-
-- [[dragover]]: بيتنادى كل شوية (كل كام ملّي ثانية) طول ما انت ساحب حاجة فوق العنصر.
-- [[e.preventDefault()]]: أهم سطر. الافتراضي في المتصفح إن العناصر **مبتقبلش** drop، ولو سبت الملف المتصفح بيفتحه في التاب (صورة أو PDF). [[preventDefault]] في dragover معناها «العنصر ده بيقبل». (ده من المواصفات ومن MDN، وتقدر تجرّبه بإيدك: شيل السطر واسحب صورة.)
-- [[classList.add("over")]]: كلاس الـ CSS بتاعه يغيّر الشكل («سيبه هنا»).
-
-~~~text app.js
-zone.addEventListener("dragleave", () => zone.classList.remove("over"));
-~~~
-
-[[dragleave]]: الماوس خرج برّه المنطقة، فرجّع الشكل. بعد dragover الكلاس كان [["over"]]، وبعد dragleave بقى [[""]].
-
----
-
-## ٣. الإفلات: [[drop]]
-
-~~~text app.js
-zone.addEventListener("drop", (e) => {
-  e.preventDefault();
-  zone.classList.remove("over");
-  for (const file of e.dataTransfer.files) upload(file);
-});
-~~~
-
-- [[preventDefault()]] تاني: هنا بتمنع المتصفح يفتح الملف.
-- [[e.dataTransfer]]: الـ object اللي شايل الحاجة المسحوبة. و [[.files]] فيه نفس نوع [[input.files]] بالظبط (ليستة [[File]])، فكل اللي اتعلمته في درس «input type=file» شغال هنا.
-- لكل ملف نادي [[upload]].
-
----
-
-## ٤. [[upload]]: الرفع بـ XHR
-
-### الـ body: [[FormData]]
-
-~~~text app.js
-  const fd = new FormData();
-  fd.append("file", file);
-~~~
-
-[[FormData]] بيبني body من نوع [[multipart/form-data]]، نفس اللي بيتبعت لو فورم HTML فيه input file. [[append("file", file)]] بيضيف الملف تحت اسم [["file"]] (السيرفر بيدوّر بالاسم ده، زي [[upload.single("file")]] في multer). السيرفر عندي طبع الـ header اللي وصله:
 
 ~~~text الناتج
-multipart/form-data; boundary=----WebKit...
+Uint8Array(8) [
+   0, 254, 3, 10,
+  20,  30, 0,  0
+] Uint8Array(2) [ 0, 254 ] Uint8Array(3) [ 99, 20, 30 ]
+true false 3
 ~~~
 
-المتصفح حط الـ [[Content-Type]] **و** الـ boundary (الفاصل بين الأجزاء) لوحده، عشان كده متكتبش Content-Type بإيدك مع FormData.
-
-### الطلب
-
-~~~text app.js
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", "/api/upload");
-~~~
-
-[[XMLHttpRequest]] (اختصاره XHR) الطريقة القديمة لعمل requests قبل [[fetch]]. الاسم فيه XML لأسباب تاريخية، وبيبعت أي حاجة. [[open(method, url)]] بتجهّز الطلب بس، ولسه مبعتش.
-
-### التقدم
-
-~~~text app.js
-  xhr.upload.onprogress = (e) => {
-    if (e.lengthComputable) bar.value = e.loaded / e.total;
-  };
-~~~
-
-- [[xhr.upload]]: object منفصل لأحداث **الرفع** (و [[xhr.onprogress]] من غير upload للتحميل).
-- [[e.loaded]]: اتبعت كام byte لحد دلوقتي. [[e.total]]: الحجم الكلي.
-- [[e.lengthComputable]]: الحجم الكلي معروف؟ مع FormData فيها File دايمًا [[true]].
-- [[e.loaded / e.total]]: نسبة من 0 لـ 1، بالظبط اللي [[<progress>]] عايزه.
-
-### الرد والأخطاء والإرسال
-
-~~~text app.js
-  xhr.onload = () => console.log(xhr.status, xhr.responseText);
-  xhr.onerror = () => console.log("النت وقع");
-  xhr.send(fd);
-~~~
-
-- [[onload]]: السيرفر رد، **أي** رد (200 أو 404 أو 500)، فلازم تبص على [[xhr.status]].
-- [[onerror]]: مفيش رد خالص: النت قطع أو السيرفر مش موجود.
-- [[send(fd)]]: دلوقتي بس الطلب بيتبعت.
+| | [[subarray(0, 2)]] | [[slice(3, 6)]] |
+|---|---|---|
+| الذاكرة | **نفس** buffer الأصل | buffer جديد |
+| التعديل فيه | بيظهر في الأصل ([[0xca]] بقت [[0]]) | مبيظهرش ([[99]] في النسخة بس) |
+| [[byteOffset]] | مكانه في الأصل | صفر |
+| التكلفة | object صغير بس | حجز ونسخ |
 
 ---
 
-## ٥. اللي حصل لما رفعت 5MB على 1MB/s
+## ٢. [[TypedArray.prototype.set]]: اكتب دفعة واحدة
 
-حطيت [[console.log]] جوه onprogress بالوقت من لحظة الـ drop (مختصر):
-
-~~~text الناتج
-progress 106ms 98304 / 5243063 lengthComputable true bar 0.02
-progress 211ms 196608 / 5243063 lengthComputable true bar 0.04
-progress 325ms 311296 / 5243063 lengthComputable true bar 0.06
-...
-progress 2719ms 2670592 / 5243063 lengthComputable true bar 0.51
-...
-progress 5338ms 5243063 / 5243063 lengthComputable true bar 1.00
-5448ms 200 {"ok":true,"bytes":5243063,...}
+~~~js
+packet.set([7, 8], 6);
+console.log(packet.at(-1), packet.indexOf(30), packet.includes(99));
 ~~~
 
-- الحدث اتنادى تقريبًا كل 100ms، وكل مرة زيادة حوالي 100KB، وده منطقي مع 1MB في الثانية.
-- الـ [[total]] بـ 5243063 مش 5242880 (5 × 1024 × 1024): الفرق 183 byte هما الـ boundary والـ headers بتاعة الجزء جوه الـ multipart.
-- الشريط وصل 1.00 عند 5338ms، والـ [[onload]] جه بعدها بحوالي 110ms. الـ 100٪ معناها «اتبعت من الجهاز»، والنجاح الحقيقي هو [[200]] في onload.
-- السيرفر عدّ نفس الرقم [[bytes: 5243063]].
+~~~text الناتج
+8 5 false
+~~~
 
-### وليه مش [[fetch]]؟
+- [[set([7, 8], 6)]]: اكتب العنصرين من مكان ٦. الـ [[source]] ممكن Array أو typed array من أي نوع (وبيتحوّل).
+- [[at(-1)]] آخر عنصر، و [[indexOf(30)]] مكانه ٥، و [[includes(99)]] [[false]] لأن ٩٩ اتكتبت في النسخة بس.
 
-[[fetch]] مفيهوش حدث زي [[upload.onprogress]]. عشان كده لحد النهارده أي progress bar للرفع بيبقى XHR، ومكتبة axios في المتصفح XHR من تحت برضه.
+| الكود (اتجرّب) | النتيجة |
+|---|---|
+| [[new Uint8Array(4).set([1, 2, 3], 2)]] | [[RangeError: offset is out of bounds]]: ٢ + ٣ أكبر من ٤ |
+| [[b.set(b.subarray(0, 3), 2)]] على [[1..5]] | [[1, 2, 1, 2, 3]]: متداخلين على نفس الـ buffer وبيتنسخ صح |
+| [[d.set(Float32Array.of(1.9, -1, 300))]] في [[Uint8Array]] | [[1, 255, 44]]: كل قيمة بتتحوّل وتلف |
+
+---
+
+## ٣. الترتيب: [[TypedArray.prototype.sort]] و [[TypedArray.prototype.toSorted]] بالأرقام
+
+~~~js
+const temps = Int16Array.of(30, -5, 12, 100, 7);
+console.log(temps.toSorted(), [30, -5, 12, 100, 7].toSorted());
+~~~
+
+~~~text الناتج
+Int16Array(5) [ -5, 7, 12, 30, 100 ] [ -5, 100, 12, 30, 7 ]
+~~~
+
+الـ Array من غير دالة بترتب كنصوص ([['100']] قبل [['12']])، والـ typed array **بالأرقام**. ودي من الحاجات القليلة اللي الـ typed array أحسن فيها من غير ما تعمل حاجة.
+
+---
+
+## ٤. [[TypedArray.prototype.map]] و [[TypedArray.prototype.filter]]: نفس النوع
+
+~~~js
+console.log(temps.map((t) => t * 1000), temps.filter((t) => t > 10), temps.join(' | '));
+try { temps.push(1); } catch (e) { console.log(e.name + ': ' + e.message); }
+~~~
+
+~~~text الناتج
+Int16Array(5) [ 30000, -5000, 12000, -31072, 7000 ] Int16Array(3) [ 30, 12, 100 ] 30 | -5 | 12 | 100 | 7
+TypeError: temps.push is not a function
+~~~
+
+- [[map]] رجّعت [[Int16Array]]: ١٠٠ × ١٠٠٠ = ١٠٠٠٠٠ مبتكفيش في ١٦ bit، فلفّت لـ [[-31072]]. **من غير error**.
+- [[filter]] رجّعت [[Int16Array]] جديدة (buffer جديد) فيها اللي عدّى بس.
+- [[push]] مش موجودة أصلًا: الطول ثابت.
+
+---
+
+## ٥. كل الـ methods والـ properties في جدول
+
+**الـ static (على الـ constructor):**
+
+| الـ member | بيعمل إيه | مثال اتجرّب |
+|---|---|---|
+| [[TypedArray.from(src, fn)]] | typed array من iterable أو array-like، و [[fn]] بتحوّل كل عنصر | [[Uint8Array.from({ length: 3 }, (_, i) => i * 100)]] = [[0, 100, 200]] |
+| [[TypedArray.of(...items)]] | typed array من القيم نفسها | [[Uint16Array.of(1, 70000)]] = [[1, 4464]] (لفّت) |
+| [[TypedArray.BYTES_PER_ELEMENT]] | حجم العنصر بالـ bytes | [[Float64Array.BYTES_PER_ELEMENT]] = ٨ |
+| [[ TypedArray[Symbol.species] ]] | الـ class اللي [[map]] و [[filter]] و [[slice]] و [[subarray]] بيعملوا منها | تمرين «دوّر بنفسك» تحت |
+
+**على الـ instance** (المثال على [[a = Uint8Array.of(5, 1, 4, 1, 3)]] كل سطر لوحده):
+
+| الـ method | بتعمل إيه | النتيجة |
+|---|---|---|
+| [[buffer]] و [[byteOffset]] و [[byteLength]] و [[length]] | الـ buffer ومكان البداية والحجم بالـ bytes وعدد العناصر | درس «TypedArray: العيلة» |
+| [[at(i)]] | العنصر، والسالب من الآخر | [[at(-1)]] = ٣ |
+| [[set(src, offset)]] | كتابة دفعة واحدة من مكان | فوق في قسم ٢ |
+| [[subarray(s, e)]] | view على نفس الذاكرة | [[1, 4]] بيشارك [[a]] |
+| [[slice(s, e)]] | نسخة | [[1, 4]] مستقلة |
+| [[fill(v, s, e)]] | تملا بقيمة، في مكانها | [[fill(9, 1, 3)]] = [[5, 9, 9, 1, 3]] |
+| [[copyWithin(t, s, e)]] | تنسخ جزء لمكان تاني جوه نفسها | [[copyWithin(0, 3)]] = [[1, 3, 4, 1, 3]] |
+| [[map(fn)]] | نسخة بنفس النوع بعد [[fn]] (وبتلف) | [[x * 100]] = [[244, 100, 144, 100, 44]] |
+| [[filter(fn)]] | نسخة باللي عدّى | [[x > 2]] = [[5, 4, 3]] |
+| [[forEach(fn)]] | تلف وبترجّع [[undefined]] | للـ side effects بس |
+| [[reduce(fn, init)]] | تجمع من الشمال | مجموعهم = ١٤ |
+| [[reduceRight(fn, init)]] | تجمع من اليمين | [[(s, x) => s + ',' + x]] من [['']] = [[,3,1,4,1,5]] |
+| [[every(fn)]] و [[some(fn)]] | كلهم؟ ولا واحد على الأقل؟ | [[every(x => x > 0)]] و [[some(x => x > 4)]] الاتنين [[true]] |
+| [[find(fn)]] و [[findIndex(fn)]] | أول عنصر بيعدّي وأول مكان | [[x < 2]]: العنصر ١ في المكان ١ |
+| [[findLast(fn)]] و [[findLastIndex(fn)]] | آخر عنصر بيعدّي ومكانه | [[x > 3]]: العنصر ٤ في المكان ٢ |
+| [[indexOf(v)]] و [[lastIndexOf(v)]] | أول وآخر مكان لقيمة | [[1]]: المكان ١ والمكان ٣ |
+| [[includes(v)]] | موجودة ولا لأ (وبتلاقي [[NaN]]) | [[includes(4)]] = [[true]] |
+| [[join(sep)]] | نص، والفاصل الافتراضي [[,]] | [[join('-')]] = [[5-1-4-1-3]] |
+| [[toString()]] | نفس [[join()]]، وهي نفس دالة الـ Array بالظبط | [[5,1,4,1,3]] |
+| [[toLocaleString(locale)]] | كل رقم بتنسيق اللغة | [[Float32Array.of(1234.5, 2)]] بـ [['ar-EG']] = [[١٬٢٣٤٫٥,٢]] |
+| [[reverse()]] | تعكس **في مكانها** | [[3, 1, 4, 1, 5]] |
+| [[toReversed()]] | نسخة معكوسة، والأصل زي ما هو | [[3, 1, 4, 1, 5]] |
+| [[sort(fn)]] | ترتب في مكانها، بالأرقام من غير دالة | [[1, 1, 3, 4, 5]] |
+| [[toSorted(fn)]] | نسخة مترتبة | [[(x, y) => y - x]] = [[5, 4, 3, 1, 1]] |
+| [[with(i, v)]] | نسخة متغيّر فيها عنصر واحد | [[with(0, 200)]] = [[200, 1, 4, 1, 3]] |
+| [[keys()]] و [[values()]] و [[entries()]] | iterators على الأماكن والقيم والأزواج | [[entries()]] أول حاجة [[ [0, 5] ]] |
+| [[ [Symbol.iterator] ]] | اللي [[for...of]] و spread بيستخدموه، وهو نفسه [[values]] | [[ [...a] ]] = [[ [5, 1, 4, 1, 3] ]] كـ Array |
+
+---
+
+## ٦. الفرق عن [[Array]] في جدول
+
+| | [[Array]] | typed array |
+|---|---|---|
+| الطول | بيتغيّر ([[push]] و [[splice]]) | ثابت من الإنشاء |
+| مش موجود | | [[push]] و [[pop]] و [[shift]] و [[unshift]] و [[splice]] و [[concat]] و [[flat]] و [[flatMap]] و [[toSpliced]] (اتجرّب: كلهم [[false]] بـ [[in]]) |
+| الـ holes | ممكن ([[ [1, , 3] ]]) | مستحيل، كل خانة فيها رقم |
+| [[sort()]] من غير دالة | كنصوص | بالأرقام |
+| [[map]] و [[filter]] | Array أي قيم | نفس النوع، والقيم بتتحوّل وتلف |
+| نسخ جزء من غير ما تنسخ | مفيش | [[subarray]] |
+| [[Array.isArray]] و [[JSON.stringify]] | [[true]] وبيتكتب array | [[false]] وبيتكتب object |
 
 ---
 
 ## الخلاصة
 
-| الحاجة | معناها |
-|---|---|
-| [[dragover]] + [[preventDefault()]] | العنصر ده بيقبل drop |
-| [[drop]] + [[preventDefault()]] | متفتحش الملف، و [[e.dataTransfer.files]] فيها الملفات |
-| [[dragleave]] | خرج برّه، رجّع الشكل |
-| [[FormData]] + [[append]] | body من نوع multipart، والمتصفح بيحط الـ Content-Type |
-| [[xhr.upload.onprogress]] | [[e.loaded]] من [[e.total]] |
-| [[onload]] / [[onerror]] | رد (افحص status) / مفيش رد |
-
-- [[<progress>]] قيمته من 0 لـ 1 افتراضيًا.
-- ١٠٠٪ مش نجاح: استنى [[onload]] و [[status]].`,
+- [[subarray]] = نفس الذاكرة (رخيص، والتعديل بيبان في الأصل)، و [[slice]] = نسخة.
+- [[set]] لتجميع bytes، و [[copyWithin]] للتحريك جوه نفس الـ array.
+- [[map]] و [[filter]] بيرجّعوا نفس النوع: لو النتيجة مش أرقام من النوع ده، [[Array.from(ta, fn)]].
+- [[sort]] بالأرقام من غير دالة، و [[toSorted]] و [[toReversed]] و [[with]] نسخ بالنوع الأساسي.`,
           lines: [
-            R`المنطقة اللي اليوزر هيسيب فيها الملفات ([[#drop]])، غالبًا [[<div>]] عليه كلام زي «اسحب الملفات هنا».`,
-            R`[[<progress>]] عنصر HTML جاهز بيرسم شريط تقدم. الـ [[max]] الافتراضي بتاعه 1، فبنحط [[value]] من 0 لـ 1 والشريط بيتملا لوحده.`,
-            R`[[dragover]] بيتكرر طول ما اليوزر ساحب حاجة فوق المنطقة، فبنعرف منه إنه فوقها.`,
-            R`افتراضيًا المتصفح مش بيسمح بالإفلات على أي عنصر، و [[preventDefault]] هنا معناها «اسمح بالإفلات هنا». من غيرها حدث [[drop]] مش هيحصل خالص، والمتصفح هيفتح الملف في التاب بدل صفحتك.`,
-            R`نضيف كلاس [[over]] عشان الـ CSS يغيّر شكل المنطقة (border أو لون) ويقول لليوزر «سيبه هنا». ولأن [[classList.add]] مبتكررش الكلاس، تكرار الحدث مش مشكلة.`,
-            R`نهاية الـ listener بتاع [[dragover]].`,
-            R`[[dragleave]] بيحصل لما الماوس يخرج برّه المنطقة، فبنشيل الكلاس ونرجّع الشكل. خلي بالك: بيحصل كمان لما تعدّي فوق عنصر جوه المنطقة، فالشكل ممكن يرمش، وحل شائع ليها [[pointer-events: none]] على العناصر اللي جوه.`,
-            R`[[drop]] بيحصل لما اليوزر يسيب الماوس فوق المنطقة، وده الحدث اللي فيه الملفات.`,
-            R`[[preventDefault]] تاني هنا عشان المتصفح ميعملش السلوك الافتراضي، وهو إنه يفتح الملف اللي اتسحب ويسيب صفحتك.`,
-            R`نرجّع شكل المنطقة، لأن [[dragleave]] مش بيحصل بعد الإفلات.`,
-            R`[[e.dataTransfer.files]] من نفس نوع [[input.files]] ([[FileList]])، فنفس الكود اللي بيتعامل مع ملفات الـ input ينفع هنا. وبنرفع كل ملف لوحده.`,
-            R`نهاية الـ listener بتاع [[drop]].`,
-            R`دالة بترفع ملف واحد وتحدّث الشريط.`,
-            R`[[FormData]] بيبني body بصيغة [[multipart/form-data]]، الصيغة اللي الفورمز بتبعت بيها ملفات.`,
-            R`نحط الملف تحت اسم [[file]]. الاسم ده لازم يطابق اللي السيرفر مستنيه (زي [[upload.single("file")]] في multer)، وإلا السيرفر مش هيلاقي الملف.`,
-            R`بنستخدم [[XMLHttpRequest]] القديم مش [[fetch]] لسبب واحد: XHR عنده [[upload.onprogress]] بيقولك اترفع كام، و [[fetch]] مالوش طريقة بسيطة لكده.`,
-            R`نجهّز طلب [[POST]] على الـ endpoint. [[open]] مش بيبعت حاجة لسه، بيجهّز بس.`,
-            R`[[xhr.upload.onprogress]] بيتنادى كذا مرة والملف بيترفع. لاحظ الـ [[upload]]: [[xhr.onprogress]] من غيرها بتاعة تحميل **الرد** مش الرفع.`,
-            R`[[lengthComputable]] بتقول إن الحجم الكلي معروف. لو معروف، [[e.loaded / e.total]] بتدّي نسبة من 0 لـ 1، وده بالظبط اللي الـ [[<progress>]] مستنيه.`,
-            R`نهاية الـ [[onprogress]].`,
-            R`[[onload]] بيتنادى لما السيرفر يرد بأي status، حتى 400 أو 500. فلازم تبص على [[xhr.status]] عشان تعرف الرفع نجح فعلًا ولا لأ.`,
-            R`[[onerror]] بيتنادى بس لو الطلب موصلش خالص (النت قطع أو السيرفر مش شغّال)، مش لما السيرفر يرد بخطأ.`,
-            R`نبعت الطلب بالـ [[FormData]]. متحطش [[Content-Type]] بإيدك: المتصفح بيحطه لوحده ومعاه الـ boundary اللي بيفصل الأجزاء، ولو كتبته من غيره السيرفر مش هيعرف يقرا الملف.`,
-            R`نهاية [[upload]].`,
-          ],
-          sol: R`مع Slow 4G والـ ٥ ميجا الشريط بيتحرك تدريجيًا على مدار ثواني، وبعد ما يوصل ١٠٠٪ فيه لحظة لحد ما [[onload]] يطبع [[200]] والرد (السيرفر لسه بيكتب الملف).
-
-الإلغاء: خزّن الـ xhr في متغير برّه، والزرار [[xhr.abort()]]، واسمع لـ [[xhr.onabort]] ورجّع الشريط 0. في Network الطلب هيظهر «(canceled)».
-
-الـ fallback: [[<label id="drop"><input type="file" hidden multiple> اسحب هنا أو اضغط للاختيار</label>]]، والضغط على الـ label بيفتح اختيار الملفات لوحده، و [[change]] على الـ input بتنادي نفس [[upload]]. كده الكيبورد (Tab ثم Enter) والموبايل شغالين.`
-        },
-        {
-          cmd: "visibilitychange و bfcache",
-          title: "تعرف إن اليوزر ساب الصفحة أو رجعلها إزاي؟",
-          desc: R`[[visibilitychange]]: الصفحة بقت مخفية (اليوزر غيّر التاب، أو صغّر، أو قفل الشاشة، أو ساب التطبيق على الموبايل) أو ظهرت تاني. ده آخر حدث مضمون تقريبًا على الموبايل، فأي حفظ مسودة أو إرسال analytics يبقى هنا، بـ [[navigator.sendBeacon]] اللي بيبعت حتى لو الصفحة بتتقفل.
-
-[[beforeunload]]: الحدث اللي يطلّع «متأكد إنك عايز تخرج؟». استخدمه بس لما فيه تغييرات مش محفوظة، وشيله أول ما تتحفظ.
-
-وbfcache (back/forward cache): لما اليوزر يضغط back، المتصفح بيرجّع الصفحة زي ما هي من الذاكرة (JS و state و scroll) من غير تحميل. [[pageshow]] بـ [[e.persisted === true]] بيقولك إنها رجعت من الـ bfcache، فحدّث الداتا اللي ممكن تكون قدمت.`,
-          example: R`const form = document.querySelector("#post-form");
-function warn(e) {
-  e.preventDefault();
-  e.returnValue = "";
-}
-form.addEventListener("input", () => window.addEventListener("beforeunload", warn));
-form.addEventListener("submit", () => window.removeEventListener("beforeunload", warn));
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState !== "hidden") return;
-  const draft = JSON.stringify(Object.fromEntries(new FormData(form)));
-  navigator.sendBeacon("/api/draft", draft);
-});
-window.addEventListener("pageshow", (e) => {
-  if (e.persisted) console.log("رجعت من الـ bfcache: حدّث السلة والإشعارات");
-});
-window.addEventListener("pagehide", (e) => console.log("pagehide، هتتحفظ في bfcache؟", e.persisted));`,
-          try: R`افتح الصفحة، واكتب في الفورم، وجرّب تقفل التاب: الرسالة ظهرت؟ اعمل submit وجرّب تاني. وبعدين روح لصفحة تانية وارجع بـ back وبص على Console (فعّل Preserve log). وآخر حاجة: DevTools ← Application ← Back/forward cache ← «Test back/forward cache»: الصفحة eligible؟ ولو لأ، إيه السبب اللي بيقوله؟`,
-          practice: [
-            { lvl: 'سريع', t: R`محاكاة شات: [[setInterval]] بيضيف رسالة وهمية كل ٣ ثواني. لما الصفحة تبقى [[hidden]] عدّ الرسايل اللي جت وخلّي [[document.title]] يبقى «(3) الشات»، ولما ترجع [[visible]] رجّع العنوان وصفّر العدّاد.`, done: R`تسيب التاب ١٠ ثواني: عنوان التاب بيبان فيه رقم بيزيد (حوالي 3)، وأول ما ترجع العنوان بيرجع «الشات» والعدّاد صفر، وانت جوه الصفحة العنوان مبيتغيرش خالص.`, sol: R`~~~live 280 chat-title.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الشات</title>
-<style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
-  #msgs { list-style: none; padding: 0; max-height: 200px; overflow: auto; }
-  #msgs li { background: #f3f4f6; border-radius: 8px; padding: 4px 10px; margin: 4px 0; width: fit-content; }
-  #title { font-size: 13px; color: #555; }
-</style>
-</head>
-<body>
-<p id="title"></p>
-<ul id="msgs"></ul>
-<script>
-  const BASE = "الشات";
-  const msgs = document.querySelector("#msgs");
-  let unread = 0, n = 0;
-
-  function showTitle() {
-    document.title = unread ? $__bt($__{unread}) $__{BASE}$__bt : BASE;
-    // جوه الـ preview عنوان التاب مش بتاع الصفحة دي، فبنعرضه هنا كمان
-    document.querySelector("#title").textContent = "عنوان التاب: " + document.title;
-  }
-
-  setInterval(() => {
-    const li = document.createElement("li");
-    li.textContent = $__btرسالة $__{++n}$__bt;
-    msgs.append(li);
-    msgs.scrollTop = msgs.scrollHeight;
-    if (document.hidden) {             // اليوزر مش شايف: عدّ
-      unread++;
-      showTitle();
-    }
-  }, 3000);
-
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") {
-      unread = 0;                      // رجع وشاف
-      showTitle();
-    }
-  });
-  showTitle();
-</script>
-</body>
-</html>
-~~~
-
-في الـ preview عنوان التاب بتاع الموقع مش بتاع الصفحة دي، فالصفحة بتكتب العنوان فوق كمان. روح لتاب تاني ١٠ ثواني وارجع.
-
-~~~text الناتج (Chrome 158 headless من غير Playwright، تاب جديد اتفتح واتفعّل وبعدين رجعنا للأول)
-4.1s جوه الصفحة: الشات
-6.6s في تاب تاني: الشات | hidden = true
-9.1s في تاب تاني: (1) الشات | hidden = true
-11.6s في تاب تاني: (2) الشات | hidden = true
-14.1s في تاب تاني: (3) الشات | hidden = true
-14.4s رجعنا: الشات | رسايل في الصفحة: 4
-17.9s جوه الصفحة تاني: الشات
-~~~
-
-**ليه كده:**
-
-- **[[document.hidden]] جوه الـ [[setInterval]]:** كل رسالة جديدة بتسأل «اليوزر شايفني؟». لو لأ، بنزوّد العدّاد ونكتب العنوان. وانت جوه الصفحة العنوان مبيتلمسش (أول وآخر سطر).
-- **[[visibilitychange]] و [[visibilityState === "visible"]]:** الحدث بيحصل في الاتجاهين، فبنصفّر بس لما يرجع. ده بيحصل لما تبدّل التاب، أو تصغّر الشباك، أو تقفل شاشة الموبايل.
-- **الأرقام:** بعد ١٠ ثواني برا جالنا ٣ رسايل والعنوان «(3) الشات»، وأول ما رجعنا اتصفّر. الصفحة فيها ٤ رسايل لأن واحدة جت وإحنا جوه.
-
-**إزاي اتقاس:** Playwright بيثبّت الصفحات «visible» حتى لو فتحت تاب تاني أو صغّرت الشباك (جرّبنا الاتنين و [[document.hidden]] فضل [[false]]). فشغّلنا Chrome لوحده وكلّمناه بـ DevTools Protocol مباشرة ([[Target.createTarget]] لتاب جديد و [[Target.activateTarget]] للرجوع)، وده بيتصرف زي يوزر بيبدّل تابات بالظبط.
-
-**الغلطة الشائعة:** تستخدم [[window.onblur]] و [[onfocus]]. دول بيحصلوا كمان لما تدوس على الـ DevTools أو على iframe جوه الصفحة أو شريط العنوان، والصفحة لسه قدامك، فالعدّاد هيشتغل غلط. [[visibilitychange]] بيقول «الصفحة مش ظاهرة» بس.` },
-            { lvl: 'تطبيق', t: R`ابني عدّاد «وقت المذاكرة الفعلي» لصفحة درس: بيعدّ الوقت اللي الصفحة كانت ظاهرة فيه بس، بـ [[performance.now()]] مش بعدّ ticks، وبيبعت المجموع بـ [[navigator.sendBeacon("/api/time", ...)]] كل ما الصفحة تتخبى.`, done: R`تسيب التاب ١٠ ثواني وترجع: العدّاد مزادش الـ ١٠ ثواني دول (بفرق ثانية بالكتير)، و Network فيه request لـ [[/api/time]] كل مرة الصفحة اتخبت، والرقم اللي اتبعت هو المجموع لحد اللحظة دي.`, sol: R`~~~live 220 study-time.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>وقت المذاكرة</title>
-<style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
-  #time { font-size: 36px; font-variant-numeric: tabular-nums; }
-  #log { font-size: 13px; color: #555; }
-</style>
-</head>
-<body>
-<h1>درس: الـ closures</h1>
-<p>وقت المذاكرة الفعلي: <span id="time">0:00</span></p>
-<p id="log"></p>
-<script>
-  let total = 0;                               // ms اتجمعت قبل كده
-  let since = document.hidden ? null : performance.now();   // من إمتى ظاهرة
-
-  const visibleMs = () => total + (since === null ? 0 : performance.now() - since);
-
-  function show() {
-    const s = Math.floor(visibleMs() / 1000);
-    document.querySelector("#time").textContent = $__bt$__{Math.floor(s / 60)}:$__{String(s % 60).padStart(2, "0")}$__bt;
-  }
-  setInterval(show, 500);
-
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-      total = visibleMs();                     // اقفل الفترة اللي فاتت
-      since = null;
-      const body = JSON.stringify({ lesson: "closures", seconds: Math.round(total / 1000) });
-      let sent = false;
-      try {
-        sent = navigator.sendBeacon("/api/time", new Blob([body], { type: "application/json" }));
-      } catch {}
-      document.querySelector("#log").textContent = sent ? "اتبعت: " + body : "مفيش سيرفر هنا، كان هيتبعت: " + body;
-    } else {
-      since = performance.now();               // فترة جديدة
-    }
-  });
-  show();
-</script>
-</body>
-</html>
-~~~
-
-في الـ preview مفيش سيرفر، فلما تبدّل التاب وترجع هتلاقي «مفيش سيرفر هنا، كان هيتبعت: ...» بالرقم اللي كان هيتبعت.
-
-~~~text الناتج (Chrome 158 headless من غير Playwright، http://localhost:8831 وسيرفر node:http بيطبع اللي بيوصله)
-3.4s ظاهرة: 0:02
-3.4s السيرفر استلم: POST /api/time application/json {"lesson":"closures","seconds":3}
-14.0s رجعنا بعد ١٠ ثواني برا: 0:03
-16.0s السيرفر استلم: POST /api/time application/json {"lesson":"closures","seconds":6}
-17.4s في الآخر: 0:06
-~~~
-
-قعدنا ٣ ثواني، وبرا ١٠، وجوه ٢ تاني، وبرا تاني. الـ ١٠ ثواني متحسبتش (العدّاد 0:03 لما رجعنا)، وكل مرة الصفحة اتخبت وصل request فيه المجموع لحد اللحظة دي (3 ثم 6).
-
-**ليه كده:**
-
-- **[[total]] و [[since]]:** بدل عدّاد بيزيد كل ثانية، بنسجّل **إمتى** الفترة الظاهرة بدأت. لما الصفحة تتخبى بنضيف طول الفترة لـ [[total]] ونقفلها ([[since = null]])، ولما ترجع نبدأ فترة جديدة.
-- **[[performance.now()]] مش [[Date.now()]]:** ساعة بتزيد بس ومبتتأثرش لو اليوزر غيّر ساعة الجهاز أو الجهاز ظبطها من النت.
-- **ليه مش ticks:** المتصفح بيبطّأ الـ [[setInterval]] في التابات المستخبية (لحد مرة في الدقيقة في Chrome بعد شوية)، فالعدّ بالـ ticks بيطلع أرقام غلط. هنا الـ interval للعرض بس، والحساب من الساعة.
-- **[[navigator.sendBeacon(url, blob)]]:** بيبعت [[POST]] صغير من غير ما يستنى رد، والمتصفح بيكمّله حتى لو الصفحة اتقفلت بعدها على طول. [[visibilitychange]] لـ [[hidden]] هو آخر لحظة مضمونة قبل ما اليوزر يقفل التاب أو الموبايل يقتل الصفحة.
-- **[[new Blob([body], { type: "application/json" })]]:** عشان السيرفر ياخد [[content-type: application/json]]. لو بعتّ النص نفسه هيوصل [[text/plain]].
-- **[[try]] حوالين [[sendBeacon]]:** في الصفحة المعزولة الـ URL النسبي ممكن يبقى مش صالح فيرمي [[TypeError]]، و [[sendBeacon]] بترجّع [[false]] لو المتصفح رفض يحطه في الطابور.
-
-**الغلطة الشائعة:** تبعت في [[beforeunload]] أو [[unload]]. على الموبايل الصفحة بتتقفل غالبًا من غير ما الحدثين دول يحصلوا (اليوزر بيروح للهوم والنظام بيقتل التاب)، و [[unload]] كمان بيمنع الـ bfcache.` },
-            { lvl: 'تحدي', t: R`صلّح صفحة bfcache مبيرجّعهاش: صفحة فاتحة WebSocket لسيرفر [[ws]] على localhost. اقفل الـ socket في [[pagehide]]، وافتحه تاني في [[pageshow]] لما [[e.persisted]] يبقى [[true]]، وشغّل Test back/forward cache قبل وبعد.`, done: R`لو الاختبار قال الصفحة مش eligible قبل التصليح، بتكتب السبب اللي DevTools طلّعه. بعد التصليح: back بيرجّع الصفحة من bfcache، و [[pageshow]] بيطبع [[persisted: true]]، والـ socket اتفتح تاني والرسايل بتوصل، ولوج السيرفر فيه اتصال اتقفل واتصال جديد.`, sol: R`٣ ملفات وصفحة: سيرفر WebSocket صغير بـ [[node:http]] بس (من غير ما تسطّب [[ws]])، والصفحة اللي فيها التصليح، وصفحة تانية تروح لها وترجع.
-
-~~~js ws-server.mjs
-// سيرفر WebSocket صغير جدًا بـ node:http بس (عشان منسطّبش ws): بيبعت «tick» كل ثانية
-import { createHash } from "node:crypto";
-
-export function attachWs(server, log = console.log) {
-  let nextId = 1;
-  server.on("upgrade", (req, socket) => {
-    const key = req.headers["sec-websocket-key"];
-    const accept = createHash("sha1").update(key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").digest("base64");
-    socket.write("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: " + accept + "\r\n\r\n");
-    const id = nextId++;
-    log($__btws #$__{id} اتفتح$__bt);
-    let n = 0;
-    const timer = setInterval(() => {
-      const text = Buffer.from($__bttick $__{++n} من #$__{id}$__bt);
-      socket.write(Buffer.concat([Buffer.from([0x81, text.length]), text]));   // frame نص صغير (< 126 byte)
-    }, 1000);
-    const close = () => { if (!timer._destroyed) { clearInterval(timer); log($__btws #$__{id} اتقفل$__bt); } };
-    socket.on("data", (buf) => { if ((buf[0] & 0x0f) === 0x8) { socket.end(); close(); } });   // frame قفل من المتصفح
-    socket.on("close", close);
-    socket.on("error", close);
-  });
-}
-~~~
-
-~~~js live-server.mjs
-import { createServer } from "node:http";
-import { readFile } from "node:fs/promises";
-import { attachWs } from "./ws-server.mjs";
-
-const server = createServer(async (req, res) => {
-  const file = req.url === "/" ? "live.html" : req.url.slice(1).split("?")[0];
-  try {
-    const body = await readFile(file);       // اقرا الأول: لو الملف مش موجود نوصل للـ catch قبل أي header
-    res.writeHead(200, { "content-type": "text/html; charset=utf-8" }).end(body);
-  } catch {
-    res.writeHead(404).end();
-  }
-});
-attachWs(server);
-server.listen(Number(process.env.PORT) || 8831, () => console.log("على http://localhost:" + server.address().port + "/live.html"));
-~~~
-
-~~~live 260 live.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تحديثات مباشرة</title>
-<style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
-  #events { font: 13px/1.6 ui-monospace, monospace; background: #f3f4f6; padding: 8px; border-radius: 6px; }
-</style>
-</head>
-<body>
-<p><a href="other.html">روح لصفحة تانية</a> وبعدين ارجع بـ back.</p>
-<p>آخر رسالة: <b id="last">-</b></p>
-<pre id="events"></pre>
-<script>
-  const out = document.querySelector("#events");
-  const log = (s) => { out.textContent += s + "\n"; (window.__log ||= []).push(s); };
-  let socket = null;
-
-  function connect() {
-    if (location.origin === "null") { log("مفيش سيرفر هنا (صفحة معزولة): شغّلها من node live-server.mjs"); return; }
-    socket = new WebSocket($__btws://$__{location.host}/live$__bt);
-    socket.onopen = () => log("الـ socket اتفتح");
-    socket.onmessage = (e) => (document.querySelector("#last").textContent = e.data);
-    socket.onclose = (e) => log("الـ socket اتقفل (" + e.code + ")");
-  }
-
-  // قبل ما الصفحة تتحط في الـ bfcache: اقفل أي اتصال مفتوح
-  window.addEventListener("pagehide", (e) => {
-    log("pagehide persisted=" + e.persisted);
-    socket?.close();
-    socket = null;
-  });
-  // لما ترجع من الـ bfcache: الصفحة بنفس حالتها بس من غير الاتصال، افتحه تاني
-  window.addEventListener("pageshow", (e) => {
-    log("pageshow persisted=" + e.persisted);
-    if (e.persisted) connect();
-  });
-
-  connect();
-</script>
-</body>
-</html>
-~~~
-
-~~~html other.html
-<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><title>صفحة تانية</title><p>دوس back.</p></html>
-~~~
-
-في الـ preview مفيش سيرفر، فالصفحة بتقول كده وبس. التشغيل الحقيقي: [[node live-server.mjs]] وافتح [[http://localhost:8831/live.html]].
-
-**القياس:** Playwright بيقفل الـ bfcache بـ flag ([[--disable-back-forward-cache]]، وطلّعها DevTools Protocol في سبب الرفض: [[BackForwardCacheDisabledByCommandLine]])، فشغّلنا Chrome لوحده وكلّمناه بـ DevTools Protocol: فتحنا الصفحة، ودوسنا اللينك، ورجعنا بـ [[Page.navigateToHistoryEntry]]، وسمعنا لـ [[Page.backForwardCacheNotUsed]] (ده نفس اللي زرار Test back/forward cache بيعرضه في DevTools). [[live-bad.html]] نفس الصفحة من غير [[pagehide]] وإعادة الاتصال:
-
-~~~text الناتج (Chrome 158 headless، http://localhost:8831)
-== live-bad.html
-  [server] ws #1 اتفتح
-  قبل: tick 2 من #1
-  [server] ws #1 اتقفل
-  بعد back: tick 2 من #1
-  لوج الصفحة: ["pageshow persisted=false","الـ socket اتفتح","pageshow persisted=true","الـ socket اتقفل (1006)"]
-== live.html
-  [server] ws #2 اتفتح
-  قبل: tick 2 من #2
-  [server] ws #2 اتقفل
-  [server] ws #3 اتفتح
-  بعد back: tick 2 من #3
-  لوج الصفحة: ["pageshow persisted=false","الـ socket اتفتح","pagehide persisted=true","الـ socket اتقفل (1006)","pageshow persisted=true","الـ socket اتفتح"]
-  [server] ws #3 اتقفل
-~~~
-
-**اللي طلع في Chrome 158 (مختلف عن اللي بتقراه في مقالات قديمة):** [[Page.backForwardCacheNotUsed]] متبعتش ولا مرة، يعني الصفحتين اترجعوا من الـ bfcache ([[persisted=true]]) **حتى** النسخة اللي فاتحة WebSocket. Chrome الجديد مبقاش يرفض الصفحة عشان الـ socket، لكنه **بيقفله** وهي داخلة الـ cache. ففي النسخة البايظة الصفحة رجعت بشكلها، بس الـ socket ميت: «آخر رسالة» واقفة على [[tick 2 من #1]] للأبد ومفيش اتصال جديد في لوج السيرفر. Chrome أقدم (وأي متصفح تاني بقواعد مختلفة) ممكن يرفض الصفحة خالص، فالتصليح لازم في الحالتين.
-
-**ليه التصليح شغال:**
-
-- **[[pagehide]]:** آخر حدث قبل ما الصفحة تتحط في الـ cache ([[persisted=true]]) أو تتقفل. بنقفل الـ socket بإيدينا، فالسيرفر بيعرف على طول ([[ws #2 اتقفل]]) بدل ما يفضل باعت لصفحة مش ظاهرة.
-- **[[pageshow]] و [[e.persisted]]:** [[true]] معناها «رجعت من الـ bfcache»: الـ JS والـ DOM زي ما سبتهم بالظبط، بس من غير اتصالات. فبنعمل [[connect()]] تاني، والسيرفر شاف [[ws #3 اتفتح]] والرسايل رجعت ([[tick 2 من #3]]). وأول تحميل [[persisted=false]] فمش بنفتح مرتين.
-- **[[socket?.close()]]:** الـ [[?.]] عشان لو الصفحة اتفتحت معزولة ومفيش socket أصلًا.
-
-**غلطة حصلت وإحنا بنبني السيرفر:** أول نسخة من [[live-server.mjs]] كانت [[res.writeHead(200, ...).end(await readFile(file))]]. أول request لملف مش موجود ([[/favicon.ico]]) وقّع السيرفر كله بـ [[ERR_HTTP_HEADERS_SENT: Cannot write headers after they are sent to the client]]، والصفحة شافت الـ socket بيتقفل بـ 1006 ومفيش رسايل. السبب: [[res.writeHead(200)]] بيتنفّذ **قبل** الـ [[await]] اللي في الـ argument، فلما [[readFile]] رمى، الـ catch حاول يكتب 404 بعد ما الـ 200 اتبعت. التصليح: اقرا الملف في سطر لوحده الأول.
-
-**الغلطة الشائعة:** تسمع لـ [[unload]] أو [[beforeunload]] عشان تقفل الاتصال. [[unload]] نفسه بيخلّي Chrome و Firefox يرفضوا الصفحة من الـ bfcache، فبتصلّح حاجة وتبوّظ التانية.` },
+            R`[[Uint8Array.from]] من array: ٨ bytes، أولهم [[0xca 0xfe]] كأنه «توقيع» الرسالة.`,
+            R`[[subarray(0, 2)]]: view على أول ٢ bytes في **نفس** الذاكرة.`,
+            R`[[slice(3, 6)]]: **نسخة** من الـ bytes اللي في الأماكن ٣ و ٤ و ٥.`,
+            R`بنكتب صفر في أول الـ view، فالأصل بيتغيّر معاه.`,
+            R`بنكتب ٩٩ في أول النسخة، والأصل مش هيحس.`,
+            R`الأصل أوله صفر (من الـ [[subarray]]) ومفيهوش ٩٩، والنسخة فيها ٩٩.`,
+            R`الـ [[subarray]] على نفس الـ buffer والـ [[slice]] لأ، و [[subarray(3)]] بيبدأ من byte رقم ٣.`,
+            R`[[set([7, 8], 6)]] بيكتب العنصرين في آخر مكانين.`,
+            R`[[at(-1)]] آخر عنصر (٨)، و [[indexOf(30)]] مكانه ٥، و ٩٩ مش في الأصل.`,
+            R`[[Int16Array]] فيها درجات حرارة بإشارة.`,
+            R`الـ typed array اترتبت بالأرقام، والـ Array كنصوص فـ ١٠٠ جت قبل ١٢.`,
+            R`[[map]] رجّعت [[Int16Array]] فالـ ١٠٠٠٠٠ لفّت لـ [[-31072]]، و [[filter]] رجّعت اللي أكبر من ١٠، و [[join]] بفاصل.`,
+            R`[[push]] مش موجودة، فندهها بيرمي [[TypeError]] والـ [[catch]] بيطبعه.`,
           ],
           ref: [
-            { t: "MDN: Page Visibility API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API" },
-            { t: "MDN: Navigator.sendBeacon()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon" },
-            { t: "MDN: pageshow event", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/pageshow_event" },
-            { t: "web.dev: Back/forward cache", url: "https://web.dev/articles/bfcache" },
+            { t: "MDN: TypedArray.prototype.subarray()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/subarray" },
+            { t: "MDN: TypedArray.prototype.set()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/set" },
+            { t: "MDN: TypedArray.prototype.slice()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/slice" },
+            { t: "MDN: TypedArray.from()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/from" },
+            { t: "MDN: TypedArray.prototype.sort()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/sort" },
+            { t: "MDN: TypedArray[Symbol.species]", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/Symbol.species" },
+            { t: "MDN: TypedArray.prototype[Symbol.iterator]()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray/Symbol.iterator" },
           ],
+          pre: [{ to: "js/TypedArray: العيلة و BYTES_PER_ELEMENT و overflow", why: R`الأنواع واللف قبل الـ methods` }, { to: "js/sort و toSorted", why: R`ليه الـ Array بترتب كنصوص` }, { to: "js/Array: splice و toSpliced و toReversed و with", why: R`نفس الـ methods في الـ Array` }],
+        },
+        {
+          cmd: "DataView: getUint16 و setFloat32 و endianness",
+          title: "إزاي تقرا وتكتب ملف binary حقيقي (WAV أو PNG) بأرقام مختلفة الأنواع وبترتيب bytes تختاره؟",
+          desc: R`الـ typed array كل عناصرها نفس النوع ومترصوصة ورا بعض وبترتيب جهازك. الملفات الحقيقية مش كده: header ملف WAV فيه رقم ٤ bytes وبعده رقم ٢ وبعده نص، وأرقامه little-endian، وملف PNG أرقامه big-endian. [[DataView]] بيحل ده: view بتقرا **أي نوع من أي byte**، وانت بتختار الترتيب.
+
+• [[new DataView(buffer, byteOffset, byteLength)]]، و [[view.buffer]] و [[view.byteOffset]] و [[view.byteLength]].
+• ١١ زوج [[get]] و [[set]]: [[getInt8]] و [[getUint8]] و [[getInt16]] و [[getUint16]] و [[getInt32]] و [[getUint32]] و [[getFloat16]] و [[getFloat32]] و [[getFloat64]] و [[getBigInt64]] و [[getBigUint64]] (ونفسهم [[set]]).
+• آخر argument [[littleEndian]]: [[true]] = الصغير الأول، ومن غيره = **big-endian** (الافتراضي، عكس الـ typed arrays).`,
+          example: R`// wav.mjs: نكتب header ملف WAV بـ DataView ونقراه تاني
+import { writeFileSync, readFileSync } from 'node:fs';
+const rate = 8000, seconds = 0.5, samples = rate * seconds;
+const view = new DataView(new ArrayBuffer(44 + samples * 2));
+const tag = (at, text) => [...text].forEach((ch, i) => view.setUint8(at + i, ch.charCodeAt(0)));
+tag(0, 'RIFF'); view.setUint32(4, 36 + samples * 2, true); tag(8, 'WAVE');
+tag(12, 'fmt '); view.setUint32(16, 16, true); view.setUint16(20, 1, true); view.setUint16(22, 1, true);
+view.setUint32(24, rate, true); view.setUint32(28, rate * 2, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true);
+tag(36, 'data'); view.setUint32(40, samples * 2, true);
+for (let i = 0; i < samples; i++) view.setInt16(44 + i * 2, Math.round(Math.sin((2 * Math.PI * 440 * i) / rate) * 12000), true);
+writeFileSync('tone.wav', view);
+const file = readFileSync('tone.wav');
+const dv = new DataView(file.buffer, file.byteOffset, file.byteLength);
+console.log(dv.getUint32(0, false).toString(16), dv.getUint32(0, true).toString(16));
+console.log({ rate: dv.getUint32(24, true), bits: dv.getUint16(34, true), bytes: dv.getUint32(40, true), size: file.byteLength });
+console.log(dv.getInt16(44 + 2, true), dv.getInt16(44 + 2, false), dv.getUint8(46), dv.getUint8(47));`,
+          try: R`شغّل المثال وافتح [[tone.wav]] بأي مشغّل: هتسمع نص ثانية نغمة «لا» (٤٤٠ Hz). وبعدين غيّر [[440]] لـ [[880]] و [[12000]] لـ [[3000]]: النغمة أعلى وأوطى صوتًا. وجرّب تشيل [[true]] من سطر الـ [[setInt16]]: الملف هيطلع إيه؟`,
+          sol: R`- بـ ٨٨٠ النغمة أعلى أوكتاف بالظبط (الضعف)، وبـ ٣٠٠٠ الصوت أوطى (أعلى عينة ربع الأول).
+- من غير [[true]] في [[setInt16]]: الـ header لسه صح فالمشغل بيفتحه، بس كل عينة اتكتبت big-endian والملف بيقول little، فالـ bytes بتتقري بالعكس: العينة [[4065]] بتتقري [[-7921]] (ده بالظبط السطر الأخير في الناتج). النتيجة **وشّ** عالي مكان النغمة. ده الفرق اللي الـ endianness بيعمله: نفس الـ bytes، رقم تاني خالص.
+- كل حجم في الـ header لازم يبقى صح: لو [[setUint32(40, ...)]] قال حجم أكبر من الحقيقي، مشغلات كتير بترفض الملف أو بتطلّع وشّ في الآخر.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب الـ ٤ سطور قبل ما تشغّل:
+
+~~~js
+const v = new DataView(new ArrayBuffer(8));
+v.setUint16(0, 0x0102);
+console.log(new Uint8Array(v.buffer).subarray(0, 2), v.getUint16(0), v.getUint16(0, true));
+v.setInt16(0, -2);
+console.log(v.getUint16(0), v.getInt16(0));
+v.setUint8(0, 300);
+console.log(v.getUint8(0));
+console.log(v.getUint8());
+~~~`, done: R`كتبتهم صح، وعرفت إن [[DataView]] من غير [[true]] بيكتب big-endian، وإن [[getUint8()]] من غير offset مش error.`, sol: R`~~~text الناتج (Node 24.22)
+Uint8Array(2) [ 1, 2 ] 258 513
+65534 -2
+44
+44
+~~~
+
+- [[setUint16(0, 0x0102)]] من غير [[true]]: **big-endian**، فالـ bytes [[01 02]] زي ما بتقرا الرقم. [[getUint16(0)]] = ٢٥٨ = [[0x0102]]، و [[getUint16(0, true)]] قراه بالعكس = ٥١٣ = [[0x0201]].
+- [[-2]] في ١٦ bit = [[ff fe]]: كـ unsigned = ٦٥٥٣٤ وكـ signed = -٢. نفس الـ bytes.
+- [[setUint8(0, 300)]] بيلف زي الـ typed arrays: ٣٠٠ - ٢٥٦ = ٤٤.
+- [[getUint8()]] من غير offset = offset صفر ([[undefined]] بيتحوّل ٠)، فمش error. عشان كده بق الـ offset الغلط ممكن يعيش.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** شغّل [[make-png.mjs]] (تحت في الحل) يعمل صورة PNG حقيقية ٣ × ٢. واكتب [[png-size.mjs]] يقرا من الـ header: هل هو PNG (أول ٨ bytes)، واسم أول chunk وطوله، وبعدين العرض والطول وعمق اللون ونوعه من الـ IHDR. أرقام PNG كلها **big-endian**. جرّبه على أي صورة PNG عندك.`, done: R`على [[tiny.png]] بيطبع [[isPng: true]] و [[IHDR]] بطول ١٣ والعرض ٣ والطول ٢، والقراية little بتطلّع رقم غلط ضخم، وعلى صورة حقيقية عندك المقاس طلع زي اللي في خصائص الملف.`, sol: R`~~~js make-png.mjs
+// make-png.mjs: بنعمل صورة PNG حقيقية 3×2 من الصفر (عشان نقراها بعدين)
+import { writeFileSync } from 'node:fs';
+import { deflateSync, crc32 } from 'node:zlib';
+const width = 3, height = 2;
+function chunk(type, data) {
+  const out = new Uint8Array(12 + data.length);
+  const view = new DataView(out.buffer);
+  view.setUint32(0, data.length);
+  out.set(new TextEncoder().encode(type), 4);
+  out.set(data, 8);
+  view.setUint32(8 + data.length, crc32(out.subarray(4, 8 + data.length)));
+  return out;
+}
+const ihdr = new Uint8Array(13);
+const h = new DataView(ihdr.buffer);
+h.setUint32(0, width); h.setUint32(4, height);
+h.setUint8(8, 8); h.setUint8(9, 2);
+const raw = new Uint8Array(height * (1 + width * 3));
+for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) raw.set([x * 120, y * 200, 90], y * (1 + width * 3) + 1 + x * 3);
+const signature = Uint8Array.of(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a);
+const parts = [signature, chunk('IHDR', ihdr), chunk('IDAT', deflateSync(raw)), chunk('IEND', new Uint8Array(0))];
+writeFileSync('tiny.png', Buffer.concat(parts));
+console.log('tiny.png', parts.reduce((n, p) => n + p.length, 0), 'bytes');
+~~~
+
+~~~js png-size.mjs
+// png-size.mjs: نقرا العرض والطول من header الـ PNG بـ DataView
+import { readFileSync } from 'node:fs';
+const file = readFileSync(process.argv[2] ?? 'tiny.png');
+const view = new DataView(file.buffer, file.byteOffset, file.byteLength);
+const isPng = view.getUint32(0) === 0x89504e47 && view.getUint32(4) === 0x0d0a1a0a;
+const type = String.fromCharCode(...file.subarray(12, 16));
+console.log({ isPng, firstChunk: type, length: view.getUint32(8) });
+console.log({ width: view.getUint32(16), height: view.getUint32(20), bitDepth: view.getUint8(24), colorType: view.getUint8(25) });
+console.log('بالترتيب الغلط (little):', view.getUint32(16, true));
+~~~
+
+~~~text الناتج (Node 24.22)
+tiny.png 85 bytes
+{ isPng: true, firstChunk: 'IHDR', length: 13 }
+{ width: 3, height: 2, bitDepth: 8, colorType: 2 }
+بالترتيب الغلط (little): 50331648
+~~~
+
+**شكل الملف** (من مواصفة PNG): ٨ bytes توقيع، وبعدين chunks. كل chunk = طول (٤ bytes) + نوع (٤ حروف) + الداتا + CRC32 (٤ bytes). أول chunk لازم [[IHDR]] وطوله ١٣: العرض (٤) والطول (٤) وعمق اللون (١) ونوعه (١) وتلات bytes تانيين.
+
+| الـ offset | الحقل | بنقراه بـ |
+|---|---|---|
+| ٠ لـ ٧ | التوقيع [[89 50 4E 47 0D 0A 1A 0A]] | [[getUint32(0)]] و [[getUint32(4)]] |
+| ٨ | طول أول chunk (١٣) | [[getUint32(8)]] |
+| ١٢ | النوع [[IHDR]] | ٤ bytes كحروف |
+| ١٦ و ٢٠ | العرض والطول | [[getUint32]] big-endian |
+| ٢٤ و ٢٥ | عمق اللون (٨ bit) ونوعه (٢ = RGB) | [[getUint8]] |
+
+- [[getUint32(0)]] من غير [[true]] = big-endian، وده المطلوب لـ PNG. القراية little طلّعت ٥٠٣٣١٦٤٨ = [[0x03000000]]: نفس الـ bytes [[00 00 00 03]] بالعكس.
+- في [[make-png.mjs]]: [[crc32]] من [[node:zlib]] (موجودة من Node 22.2) بتحسب الـ checksum على النوع والداتا، والمتصفح بيرفض الصورة لو غلط. و [[deflateSync]] بيضغط الـ pixels. وكل سطر pixels بيبدأ بـ byte صفر (نوع الـ filter).
+- اتأكدت إن الصورة سليمة: فتحتها في Chrome بـ [[createImageBitmap]] وطلع مقاسها ٣ × ٢.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكود ده عايز يقرا أول chunk بعد [[RIFF....WAVE]] في [[tone.wav]] (من المثال): المفروض [[fmt ]] و [[8000]]. بيطبع حاجة تانية خالص. ليه؟ وصلّحه.
+
+~~~js
+import { readFileSync } from 'node:fs';
+const file = readFileSync('tone.wav');
+const fmt = file.subarray(12);
+const view = new DataView(fmt.buffer);
+console.log(String.fromCharCode(view.getUint8(0), view.getUint8(1), view.getUint8(2), view.getUint8(3)), view.getUint32(12, true));
+~~~`, done: R`النسخة المصلّحة بتطبع [[fmt  8000]]، وتقدر تقول [[fmt.buffer]] كان بيشاور على إيه.`, sol: R`~~~text الناتج قبل التصليح (Node 24.22)
+impo 1818838628
+~~~
+
+~~~js fixed.mjs
+import { readFileSync } from 'node:fs';
+const file = readFileSync('tone.wav');
+const fmt = file.subarray(12);
+const view = new DataView(fmt.buffer, fmt.byteOffset, fmt.byteLength);
+console.log(String.fromCharCode(view.getUint8(0), view.getUint8(1), view.getUint8(2), view.getUint8(3)), view.getUint32(12, true));
+~~~
+
+~~~text الناتج (Node 24.22)
+fmt  8000
+~~~
+
+- [[fmt.buffer]] مش «الـ bytes من ١٢»: ده الـ [[ArrayBuffer]] اللي تحت **كله**، وهنا الـ pool بتاع Node (٦٥٥٣٦ byte). في الـ module ده [[file.byteOffset]] طلع ١٦٨ و [[fmt.byteOffset]] ١٨٠، فـ [[new DataView(fmt.buffer)]] بدأ من أول الـ pool وقرا bytes حاجة تانية خالص ([[impo]]: شكلها أول كلمة [[import]] من كود اتقرا في نفس الـ pool قبل الملف).
+- مفيش error ولا warning: الأرقام بتطلع «عادي» وغلط. ده أخطر باج في الشغل بالـ bytes.
+- الحل: [[new DataView(x.buffer, x.byteOffset, x.byteLength)]] **دايمًا** لما [[x]] view (حتى لو جربت ونفع مرة: نفس الكود من [[node -e]] طلع [[byteOffset]] صفر بالصدفة).` },
+            { lvl: 'تطبيق', t: R`**ابني:** format قراية حساس ثابت ١٦ byte little-endian: [[id]] كـ [[Uint32]] (offset ٠)، و [[temp]] كـ [[Float32]] (offset ٤)، و [[at]] (timestamp بالمللي ثانية) كـ [[BigUint64]] (offset ٨). اكتب [[encodeReading(obj)]] ترجّع [[Uint8Array]]، و [[decodeReading(bytes)]] ترجّع الـ object وترمي [[RangeError]] لو أقل من ١٦ byte.`, done: R`[[encodeReading({ id: 7, temp: 21.5, at: 1763683200000n })]] طولها ١٦ وأول ٨ bytes [[07 00 00 00 00 00 ac 41]]، والـ decode بيرجّع نفس الـ object، و [[0.1]] بترجع [[0.10000000149011612]]، و ١٠ bytes بترمي، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js reading.mjs
+// reading.mjs: قراية حساس = 16 byte ثابتين، little-endian
+function encodeReading({ id, temp, at }) {
+  const view = new DataView(new ArrayBuffer(16));
+  view.setUint32(0, id, true);
+  view.setFloat32(4, temp, true);
+  view.setBigUint64(8, at, true);
+  return new Uint8Array(view.buffer);
+}
+function decodeReading(bytes) {
+  if (bytes.byteLength < 16) throw new RangeError('القراية 16 byte، اللي وصل ' + bytes.byteLength);
+  const view = new DataView(bytes.buffer, bytes.byteOffset, 16);
+  return { id: view.getUint32(0, true), temp: view.getFloat32(4, true), at: view.getBigUint64(8, true) };
+}
+const bytes = encodeReading({ id: 7, temp: 21.5, at: 1763683200000n });
+console.log(bytes.length, Array.from(bytes.subarray(0, 8), (b) => b.toString(16).padStart(2, '0')).join(' '));
+console.log(decodeReading(bytes), decodeReading(encodeReading({ id: 1, temp: 0.1, at: 0n })).temp);
+try { decodeReading(bytes.subarray(0, 10)); } catch (e) { console.log(e.name + ': ' + e.message); }
+~~~
+
+~~~text الناتج (Node 24.22)
+16 07 00 00 00 00 00 ac 41
+{ id: 7, temp: 21.5, at: 1763683200000n } 0.10000000149011612
+RangeError: القراية 16 byte، اللي وصل 10
+~~~
+
+- [[07 00 00 00]]: الـ id ٧ little-endian (الصغير الأول). و [[00 00 ac 41]]: [[21.5]] بصيغة [[Float32]] ([[0x41ac0000]] بالعكس).
+- [[at]] لازم [[BigInt]] ([[1763683200000n]]): [[setBigUint64]] بيرمي [[TypeError: Cannot convert 1763683200000 to a BigInt]] لو اديته رقم عادي. وليه ٦٤ bit؟ الـ timestamp بالمللي أكبر من ٣٢ bit (٤ مليار مللي = ٤٩ يوم بس).
+- [[21.5]] رجعت زي ما هي لأنها بتتكتب بالظبط في [[Float32]]، و [[0.1]] لأ. لو الدقة مهمة: [[Float64]] و ٤ bytes زيادة.
+- [[decodeReading]] بتاخد [[bytes.byteOffset]]، فبتشتغل على قراية في نص buffer كبير (رسالة فيها ١٠٠ قراية ورا بعض: [[bytes.subarray(i * 16)]]).` },
+            { lvl: 'تحدي', t: R`**أداة صغيرة:** [[wav-stats.mjs]] بتقرا أي ملف WAV (PCM ١٦ bit) وتطبع: الـ sample rate، وعدد القنوات، والمدة بالثواني، وأعلى عينة (peak)، و RMS (جذر متوسط المربعات = «متوسط علو الصوت»). لو الملف مش WAV أو مش ١٦ bit ترمي error واضح. جرّبها على [[tone.wav]] وعلى [[tiny.png]].`, done: R`على [[tone.wav]]: ٨٠٠٠ Hz وقناة واحدة و [[0.5]] ثانية و peak ١٢٠٠٠ و RMS ٨٤٨٥، وعلى [[tiny.png]]: [[Error: مش ملف WAV]].`, sol: R`~~~js wav-stats.mjs
+// wav-stats.mjs: المدة وأعلى صوت و RMS من ملف WAV (PCM 16 bit)
+import { readFileSync } from 'node:fs';
+const file = readFileSync(process.argv[2] ?? 'tone.wav');
+const view = new DataView(file.buffer, file.byteOffset, file.byteLength);
+const text = (at) => String.fromCharCode(...file.subarray(at, at + 4));
+if (text(0) !== 'RIFF' || text(8) !== 'WAVE') throw new Error('مش ملف WAV');
+const rate = view.getUint32(24, true), channels = view.getUint16(22, true), bits = view.getUint16(34, true);
+if (bits !== 16) throw new Error('الملف ' + bits + ' bit، الأداة دي لـ 16 بس');
+const dataBytes = view.getUint32(40, true), count = dataBytes / 2;
+let peak = 0, sumSq = 0;
+for (let i = 0; i < count; i++) {
+  const s = view.getInt16(44 + i * 2, true);
+  peak = Math.max(peak, Math.abs(s));
+  sumSq += s * s;
+}
+console.log({ rate, channels, bits, seconds: count / channels / rate, peak, rms: Math.round(Math.sqrt(sumSq / count)) });
+~~~
+
+~~~text الناتج (Node 24.22): node wav-stats.mjs
+{
+  rate: 8000,
+  channels: 1,
+  bits: 16,
+  seconds: 0.5,
+  peak: 12000,
+  rms: 8485
+}
+~~~
+
+~~~text الناتج: node wav-stats.mjs tiny.png
+Error: مش ملف WAV
+~~~
+
+- [[getInt16]] (بإشارة) مش [[getUint16]]: عينات الصوت سالبة وموجبة حوالين الصفر.
+- الـ RMS لموجة sine = الـ peak ÷ جذر ٢ = ١٢٠٠٠ ÷ ١.٤١٤ = ٨٤٨٥. الحساب طابق النظرية، فالقراية صح.
+- **حدود الأداة:** بتفترض إن الـ [[data]] chunk في offset ٣٦ (زي الملف بتاعنا). ملفات WAV حقيقية كتير فيها chunks زيادة ([[LIST]] فيه اسم الفنان) قبل [[data]]. النسخة الصح بتلف على الـ chunks: تقرا النوع والطول وتنط، وده اللي المشروع الكبير في الوحدة بيعمله.` },
+          ],
+          check: { lang: "js", starter: R`function encodeReading({ id, temp, at }) {
+  // 16 byte little-endian: id Uint32 @0، temp Float32 @4، at BigUint64 @8 ← Uint8Array
+}
+function decodeReading(bytes) {
+  // العكس، و RangeError لو أقل من 16 byte
+}`, tests: R`const b = encodeReading({ id: 7, temp: 21.5, at: 1763683200000n });
+test("الطول 16", () => expect(b.length).toBe(16));
+test("الـ id little-endian", () => expect(Array.from(b.subarray(0, 4))).toEqual([7, 0, 0, 0]));
+test("رجوع كامل", () => { const r = decodeReading(b); expect(r.id).toBe(7); expect(r.temp).toBe(21.5); expect(r.at === 1763683200000n).toBe(true); });
+test("قراية في نص buffer", () => { const big = new Uint8Array(32); big.set(b, 16); expect(decodeReading(big.subarray(16)).id).toBe(7); });
+test("أقل من 16", () => expect(() => decodeReading(b.subarray(0, 10))).toThrow("16"));`, solution: R`function encodeReading({ id, temp, at }) {
+  const view = new DataView(new ArrayBuffer(16));
+  view.setUint32(0, id, true);
+  view.setFloat32(4, temp, true);
+  view.setBigUint64(8, at, true);
+  return new Uint8Array(view.buffer);
+}
+function decodeReading(bytes) {
+  if (bytes.byteLength < 16) throw new RangeError('القراية 16 byte، اللي وصل ' + bytes.byteLength);
+  const view = new DataView(bytes.buffer, bytes.byteOffset, 16);
+  return { id: view.getUint32(0, true), temp: view.getFloat32(4, true), at: view.getBigUint64(8, true) };
+}` },
           flag: "script",
           deep: {
-            why: "اليوزر كتب بوست طويل وقفل التاب بالغلط. أو فتح الموبايل بعد ساعة ولقى السلة قديمة. أو الـ analytics بتقول إن نص الزيارات «ملهاش نهاية». كل ده دورة حياة الصفحة، وأغلب المواقع بتتعامل معاها غلط بـ [[unload]].",
-            how: R`[[beforeunload]]: [[preventDefault()]] هي الطريقة الحديثة، و [[returnValue = ""]] للمتصفحات القديمة. والرسالة نفسها بتاعة المتصفح ومتقدرش تغيّرها. وبيطلع بس لو اليوزر اتفاعل مع الصفحة قبل كده. وإضافة الـ listener بس وقت الحاجة مهمة لأن وجود beforeunload طول الوقت بيمنع الـ bfcache في بعض المتصفحات (Firefox مثلًا).
-
-[[unload]] متستخدمهاش: مش بتتنادى بشكل موثوق على الموبايل (النظام بيقفل التطبيق من غير ما يسأل)، ووجودها بيمنع الـ bfcache، و Chrome بيلغيها تدريجيًا. البديل [[visibilitychange]] (hidden) للحفظ، و [[pagehide]] لو محتاج لحظة الخروج نفسها.
-
-[[sendBeacon(url, data)]] بيبعت POST صغير (حوالي 64KB كحد) والمتصفح بيكمّله حتى لو الصفحة اتقفلت، ومبيرجّعش رد. البديل الحديث [[fetch(url, { method: "POST", body, keepalive: true })]].
-
-الـ bfcache بيجمّد الصفحة كلها: الـ timers واقفة، والـ promises متعلقة، ولما ترجع بتكمّل. أسباب إن الصفحة متدخلوش: [[unload]] listener، أو WebSocket أو IndexedDB transaction مفتوحين، أو (تاريخيًا) [[Cache-Control: no-store]] على الـ HTML. والـ DevTools test بيقولك السبب بالظبط.`,
-            when: R`حفظ مسودات، و analytics نهاية الزيارة، و pause للفيديو والـ polling لما التاب مخفي (توفير بطارية وrequests)، وتحديث داتا حساسة للوقت لما الصفحة ترجع (سلة، رصيد، إشعارات).`,
-            mistakes: R`[[unload]] لأي حاجة. و beforeunload متسجل على طول. و [[fetch]] عادي في visibilitychange من غير keepalive فيتلغي. وتفترض إن الصفحة «فتحت من جديد» لما اليوزر يرجع بـ back فمتحدّثش الداتا. و polling شغال في تاب مخفي طول اليوم.`
+            why: R`أي format binary في الدنيا (صور، صوت، zip، PDF، بروتوكولات الشبكة، رسايل أجهزة IoT، ملفات الألعاب) عبارة عن header فيه أرقام بأحجام مختلفة في أماكن محددة، وكل format اختار ترتيب bytes. الـ typed arrays مش نافعة هنا: لازم كل الأرقام نفس النوع ومحاذية (offset من مضاعفات حجمها)، وبتقرا بترتيب جهازك. [[DataView]] اتعمل للحالة دي بالظبط: «اقرا [[Uint32]] big-endian من byte رقم ١٧» من غير أي شرط.`,
+            how: R`[[new DataView(buffer, byteOffset, byteLength)]] بيعمل view على الـ buffer (أو حتة منه)، و [[view.getX(offset, littleEndian)]] بيقرا الـ bytes من [[byteOffset + offset]] ويجمّعهم رقم بالترتيب المطلوب. الـ [[offset]] نسبي لأول الـ view مش أول الـ buffer، ومش لازم يبقى محاذي (تقدر تقرا [[Float64]] من byte ٣). أي قراية بتعدّي آخر الـ view بترمي [[RangeError: Offset is outside the bounds of the DataView]] (أحسن من الـ typed array اللي بيرجّع [[undefined]]). [[setX(offset, value, littleEndian)]] بيحوّل القيمة زي الـ typed arrays بالظبط (لف للصحيح، وأقرب قيمة للعشري، و BigInt للـ ٦٤). والـ [[littleEndian]] لو مش موجود أو [[false]] = big-endian، لأن ده «network byte order» القياسي في البروتوكولات. و [[getInt8]] و [[getUint8]] مالهمش ترتيب (byte واحد). و [[Float16]] (Baseline ٢٠٢٥، وموجود في Node 24 و Chrome 157): [[getFloat16]] و [[setFloat16]] بيقروا ويكتبوا الرقم في ٢ bytes. والـ [[DataView]] على buffer resizable من غير طول بيكبر معاه زي الـ typed arrays.`,
+            when: R`[[DataView]]: أي header ملف أو رسالة binary فيها أنواع مختلفة، وأي حاجة ليها ترتيب bytes متحدد (شبكة، ملفات، أجهزة). Typed array: لما الداتا كتلة من نفس النوع ومش مهم ترتيبها أو جاية من جهازك أصلًا (pixels، عينات صوت بعد ما عرفت إن الملف little والجهاز little، buffers بتتبعت لـ WebGL). وكتير بتستخدم الاتنين: [[DataView]] للـ header، و typed array على الجزء الكبير اللي بعده (أسرع في اللف على مليون عنصر). وفي Node، [[Buffer]] فيه [[readUInt32BE]] و [[writeInt16LE]] بنفس الفكرة، بس [[DataView]] شغال في كل مكان.`,
+            mistakes: R`- تنسى [[true]] في ملف little-endian (WAV و ZIP و BMP): الأرقام بتطلع ضخمة أو غلط من غير error.
+- تحط [[true]] في format big-endian (PNG و JPEG والشبكة).
+- [[new DataView(view.buffer)]] من غير [[byteOffset]] و [[byteLength]]: بتقرا من أول الـ pool أو الـ buffer الكبير (التمرين اللي طلّع [[impo]]).
+- تعتبر الـ offset من أول الـ buffer وانت عامل الـ view بـ offset: الـ offset نسبي للـ view.
+- [[setBigUint64(0, 5)]]: [[TypeError: Cannot convert 5 to a BigInt]]. اكتب [[5n]].
+- تقرا عينات صوت بـ [[getUint16]]: السالب بيطلع ٦٥٥٣٤. [[getInt16]].
+- [[DataView(buf)]] من غير [[new]]: [[TypeError: Constructor DataView requires 'new']]. و [[new DataView([1, 2])]]: [[TypeError: First argument to DataView constructor must be an ArrayBuffer]].
+- تفترض إن الـ chunks في مكان ثابت: الـ formats الحقيقية بتتقري بالـ loop على الـ chunks (طول ونوع وتنط).`,
           },
           teach: R`## الفكرة في سطر
 
-٣ حاجات بتحصل للصفحة واليوزر مش بيقولك: هيقفل وهو كاتب حاجة (نحذّره)، أو التاب اتخفى (نحفظ المسودة)، أو رجع للصفحة بزرار back (نحدّث الداتا). المثال بيسمع للتلاتة.
-
-جرّبته في Chrome headless (عن طريق playwright-core) على صفحة من سيرفر Node على localhost فيها فورم بـ [[<input name="title">]] و [[<textarea name="body">]]، والسيرفر بيطبع أي [[POST /api/draft]] يوصله. ولاحظ: Playwright بيقفل الـ bfcache افتراضيًا ([[--disable-back-forward-cache]])، فشغّلته بـ [[ignoreDefaultArgs]] عشان أجرّب الـ bfcache بجد.
+[[DataView]] بيقرا ويكتب أي نوع رقم من أي byte، وانت بتختار big أو little endian. الناتج من Node 24.22 على ويندوز 11.
 
 ---
 
-## ١. التحذير قبل الخروج: [[beforeunload]]
+## ١. [[new DataView]] و [[DataView.prototype.buffer]] و [[DataView.prototype.byteOffset]] و [[DataView.prototype.byteLength]]
 
-~~~text app.js
-const form = document.querySelector("#post-form");
-function warn(e) {
-  e.preventDefault();
-  e.returnValue = "";
-}
-form.addEventListener("input", () => window.addEventListener("beforeunload", warn));
-form.addEventListener("submit", () => window.removeEventListener("beforeunload", warn));
+~~~js
+const dv = new DataView(new ArrayBuffer(16), 4, 8);
+console.log(dv.byteOffset, dv.byteLength, dv.buffer.byteLength);
+try { dv.getUint32(6); } catch (e) { console.log(e.name + ': ' + e.message); }
 ~~~
 
-- [[beforeunload]]: حدث على [[window]] قبل ما الصفحة تتقفل أو تروح لصفحة تانية أو تعمل refresh.
-- [[warn]] دالة **ليها اسم** (مش arrow جوه addEventListener)، لأن [[removeEventListener]] محتاج نفس الدالة بالظبط عشان يشيلها.
-- [[e.preventDefault()]]: الطريقة الحديثة تقول «اسأل اليوزر». و [[e.returnValue = ""]] نفس الطلب للمتصفحات القديمة. النص اللي بتحطه مبيظهرش: المتصفح بيعرض رسالته هو.
-- [[input]] على الفورم: بيحصل مع أي حرف في أي خانة جواه (الـ event بيطلع من الخانة للفورم). أول ما يكتب نسجّل التحذير، وتسجيل نفس الدالة مرتين مبيعملش حاجة، فمش مشكلة إنه بيتنادى مع كل حرف.
-- [[submit]]: اتحفظ، فشيل التحذير.
+~~~text الناتج
+4 8 16
+RangeError: Offset is outside the bounds of the DataView
+~~~
 
-### اللي حصل
+- [[new DataView(buffer, 4, 8)]]: view على ٨ bytes بتبدأ من byte ٤ في الـ buffer. من غير الرقمين: الـ buffer كله.
+- [[buffer]] و [[byteOffset]] و [[byteLength]]: نفس معناهم في الـ typed arrays، بس مفيش [[length]] (مفيش «عناصر»).
+- [[getUint32(6)]]: من byte ٦ في الـ view، ومحتاج ٤ لحد ٩، والـ view ٨ بس: [[RangeError]]. الـ [[DataView]] **بيرمي** لما تقرا برّه، عكس الـ typed array اللي بيرجّع [[undefined]].
 
-| الحالة | قفلت التاب | النتيجة |
+---
+
+## ٢. كل الـ get و set: ٢٢ method
+
+| الـ methods | bytes | القيمة |
 |---|---|---|
-| مكتبتش حاجة | اتقفل على طول | مفيش listener أصلًا |
-| كتبت في الخانتين | ظهر dialog نوعه [[beforeunload]] ورسالته [[""]] | رفضته فالتاب فضل مفتوح ([[closed? false]]) |
-| كتبت وعملت submit | اتقفل على طول | الـ listener اتشال |
+| [[getInt8]] و [[setInt8]] | ١ | -128 لـ 127، ومالهمش ترتيب |
+| [[getUint8]] و [[setUint8]] | ١ | 0 لـ 255، ومالهمش ترتيب |
+| [[getInt16]] و [[setInt16]] | ٢ | رقم بإشارة ١٦ bit (عينات الصوت) |
+| [[getUint16]] و [[setUint16]] | ٢ | من غير إشارة ١٦ bit (عدد القنوات، bits per sample) |
+| [[getInt32]] و [[setInt32]] | ٤ | بإشارة ٣٢ bit (إحداثيات وفروق) |
+| [[getUint32]] و [[setUint32]] | ٤ | من غير إشارة ٣٢ bit (أحجام وأطوال و CRC) |
+| [[getFloat16]] و [[setFloat16]] | ٢ | عشري نص دقة (ES2025) |
+| [[getFloat32]] و [[setFloat32]] | ٤ | عشري ٣٢ bit (إحداثيات 3D، قراءات حساسات) |
+| [[getFloat64]] و [[setFloat64]] | ٨ | رقم JavaScript العادي بالظبط |
+| [[getBigInt64]] و [[setBigInt64]] | ٨ | [[BigInt]] بإشارة |
+| [[getBigUint64]] و [[setBigUint64]] | ٨ | [[BigInt]] من غير إشارة |
 
-الرسالة فاضية من ناحية الكود لأن المتصفح هو اللي بيكتب «Leave site? Changes you made may not be saved» (أو بلغة المتصفح).
-
----
-
-## ٢. حفظ المسودة: [[visibilitychange]]
-
-~~~text app.js
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState !== "hidden") return;
-  const draft = JSON.stringify(Object.fromEntries(new FormData(form)));
-  navigator.sendBeacon("/api/draft", draft);
-});
-~~~
-
-- [[visibilitychange]] على [[document]]: الصفحة اتخفت أو ظهرت (تاب تاني، تصغير، قفل الشاشة، الخروج من التطبيق على الموبايل، أو قفل التاب نفسه).
-- [[document.visibilityState]]: [["visible"]] أو [["hidden"]]. بنكمّل لما تبقى hidden بس.
-- السطر التالت من جوه لبرّه:
-
-| الخطوة | الناتج |
-|---|---|
-| [[new FormData(form)]] | كل خانات الفورم بأساميها ([[name]]) |
-| [[Object.fromEntries(...)]] | بتحوّل الأزواج دي لـ object عادي: [[{ title: "...", body: "..." }]] |
-| [[JSON.stringify(...)]] | حوّله نص JSON |
-
-- [[navigator.sendBeacon(url, data)]]: بيبعت POST صغير، والمتصفح **بيكمّله حتى لو الصفحة اتقفلت**. بيرجّع [[true]] لو قبل يبعته (مش لو السيرفر رد)، ومفيش طريقة تقرا الرد.
-
-### اللي وصل السيرفر
-
-كل مرة الصفحة اتقفلت أو اتنقلت منها، السيرفر طبع:
-
-~~~text الناتج (السيرفر)
-SERVER got POST /api/draft content-type=text/plain;charset=UTF-8 body={"title":"","body":""}
-SERVER got POST /api/draft content-type=text/plain;charset=UTF-8 body={"title":"","body":"x"}
-SERVER got POST /api/draft content-type=text/plain;charset=UTF-8 body={"title":"draft1","body":""}
-~~~
-
-- الطلبات وصلت حتى من التابات اللي اتقفلت.
-- لاحظ [[content-type=text/plain]]: لما تبعت string لـ sendBeacon بيروح كنص. فالسيرفر لازم يقراه نص ويعمل [[JSON.parse]] (مثلًا [[express.text()]] مش [[express.json()]])، أو ابعت [[new Blob([draft], { type: "application/json" })]].
+الشكل واحد: [[getX(byteOffset, littleEndian)]] و [[setX(byteOffset, value, littleEndian)]]. والـ set بيحوّل زي الـ typed arrays: [[setUint8(0, 300)]] بيكتب ٤٤، و [[setFloat16(0, 100000)]] بيكتب [[Infinity]]، و [[setBigUint64(0, 2n ** 64n - 1n)]] وبعدين [[getBigInt64(0)]] بيرجّع [[-1n]] (نفس الـ bits).
 
 ---
 
-## ٣. الرجوع بـ back: [[pageshow]] و [[pagehide]]
+## ٣. little ولا big؟
 
-~~~text app.js
-window.addEventListener("pageshow", (e) => {
-  if (e.persisted) console.log("رجعت من الـ bfcache: حدّث السلة والإشعارات");
-});
-window.addEventListener("pagehide", (e) => console.log("pagehide، هتتحفظ في bfcache؟", e.persisted));
+~~~js
+const v = new DataView(new ArrayBuffer(8));
+v.setUint16(0, 0x0102);
+console.log(new Uint8Array(v.buffer).subarray(0, 2), v.getUint16(0), v.getUint16(0, true));
 ~~~
 
-- [[pageshow]]: الصفحة اتعرضت، سواء تحميل جديد أو رجوع من الـ bfcache.
-- [[pagehide]]: الصفحة بتمشي. ده البديل الصح لـ [[unload]].
-- [[e.persisted]]: في pageshow معناها «رجعت من الـ bfcache»، وفي pagehide معناها «هتتحفظ في الـ bfcache».
-
-bfcache اختصار back/forward cache: المتصفح بيجمّد الصفحة كلها في الذاكرة (الـ JS والمتغيرات والخانات ومكان الـ scroll)، ولما ترجع بيصحّيها بدل ما يحمّلها من الأول.
-
-### اللي حصل
-
-كتبت [[draft1]] في الخانة، ورحت لصفحة تانية ([[/other]])، ورجعت بـ back (بالترتيب، بعد ما وافقت على dialog الـ beforeunload):
-
-~~~text الناتج (Console)
-pageshow persisted = false
-pagehide، هتتحفظ في bfcache؟ true
-visibilitychange: hidden
-sendBeacon returned true
-visibilitychange: visible
-pageshow persisted = true
-رجعت من الـ bfcache: حدّث السلة والإشعارات
+~~~text الناتج
+Uint8Array(2) [ 1, 2 ] 258 513
 ~~~
 
-| السطر | معناه |
+- من غير التالت argument = **big-endian**: الـ byte الكبير الأول، زي ما بتكتب الرقم ([[01 02]]).
+- [[getUint16(0, true)]] قرا نفس الـ bytes little: [[0x0201]] = ٥١٣.
+
+| الـ format | الترتيب |
 |---|---|
-| [[pageshow persisted = false]] | أول تحميل عادي |
-| [[pagehide ... true]] | ماشي، والصفحة هتتجمّد في الـ bfcache |
-| [[visibilitychange: hidden]] + beacon | الصفحة اختفت، فالمسودة اتبعتت بـ [[sendBeacon]] قبل ما المتصفح يجمّدها |
-| [[visibilitychange: visible]] | الصفحة رجعت تظهر تاني لما دوست Back |
-| [[pageshow persisted = true]] | من الـ bfcache، مش تحميل جديد |
+| PNG و JPEG و TCP/IP headers و Java class files | big-endian: بتسيب الـ argument |
+| WAV و BMP و ZIP و GIF و wasm و الـ typed arrays على جهازك | little-endian: بتكتب [[true]] |
 
-وبعد الرجوع، الخانة لسه فيها [[draft1]]: الصفحة نفسها رجعت زي ما هي. يعني أي كود في أول الصفحة (زي «هات السلة من السيرفر») **مش هيتنفّذ تاني**، وعشان كده بنحدّث في [[pageshow]] لما [[persisted]] تبقى true.
+---
 
-ولما قفلت التاب (مش navigation) [[pagehide]] طلعت [[false]]: تاب اتقفل مفيش حاجة يرجعلها.
+## ٤. نكتب ملف WAV كامل (المثال خطوة خطوة)
 
-> Chrome حط الصفحة في الـ bfcache هنا مع إن الـ beforeunload listener كان متسجّل. بس Firefox ممكن يرفض بسببه، وده سبب تاني إنك تسجّله وقت الحاجة بس.
+ملف WAV = header ٤٤ byte + العينات. كل حقل في مكان ثابت، والأرقام **little-endian**:
+
+| offset | الحجم | الحقل | في المثال |
+|---|---|---|---|
+| ٠ | ٤ | [[RIFF]] كحروف | [[tag(0, 'RIFF')]] |
+| ٤ | ٤ | حجم الملف ناقص ٨ | [[setUint32(4, 36 + samples * 2, true)]] |
+| ٨ | ٤ | [[WAVE]] | [[tag(8, 'WAVE')]] |
+| ١٢ | ٤ | [[fmt ]] (بمسافة) | [[tag(12, 'fmt ')]] |
+| ١٦ | ٤ | طول الـ fmt = ١٦ | [[setUint32(16, 16, true)]] |
+| ٢٠ | ٢ | نوع الصوت: ١ = PCM خام | [[setUint16(20, 1, true)]] |
+| ٢٢ | ٢ | عدد القنوات: ١ = mono | [[setUint16(22, 1, true)]] |
+| ٢٤ | ٤ | sample rate: ٨٠٠٠ عينة في الثانية | [[setUint32(24, rate, true)]] |
+| ٢٨ | ٤ | bytes في الثانية = rate × ٢ | [[setUint32(28, rate * 2, true)]] |
+| ٣٢ | ٢ | bytes في العينة = ٢ | [[setUint16(32, 2, true)]] |
+| ٣٤ | ٢ | bits في العينة = ١٦ | [[setUint16(34, 16, true)]] |
+| ٣٦ | ٤ | [[data]] | [[tag(36, 'data')]] |
+| ٤٠ | ٤ | حجم العينات بالـ bytes | [[setUint32(40, samples * 2, true)]] |
+| ٤٤ | ... | العينات [[Int16]] | الـ loop بـ [[setInt16]] |
+
+- [[tag(at, text)]] بتكتب كل حرف كـ byte بـ [[charCodeAt]] (الحروف الإنجليزي بس).
+- العينة: [[Math.sin(2π × 440 × i / rate)]] موجة نغمتها ٤٤٠ Hz، مضروبة في ١٢٠٠٠ عشان تبقى رقم ١٦ bit (أقصاه ٣٢٧٦٧)، و [[Math.round]] لأن العينة صحيحة.
+- [[writeFileSync('tone.wav', view)]]: Node بيقبل أي view ويكتب الـ bytes بتاعته.
+
+~~~text الناتج (بعد ما نقرا الملف تاني)
+52494646 46464952
+{ rate: 8000, bits: 16, bytes: 8000, size: 8044 }
+4065 -7921 225 15
+~~~
+
+- [[getUint32(0, false)]] بالـ hex [[52494646]] = الحروف [[RIFF]] بالترتيب. نفس الـ bytes little: [[46464952]] (بالعكس). فلو بتقارن توقيع بالأرقام، اقراه big.
+- الحجم ٨٠٤٤ = ٤٤ + ٤٠٠٠ عينة × ٢.
+- العينة التانية [[4065]] = الـ bytes [[e1 0f]] (٢٢٥ و ١٥): الصغير الأول. ولو قريتها big: [[-7921]]. ده الوشّ اللي هتسمعه لو غلطت في الترتيب.
+
+---
+
+## ٥. نقرا ملف حقيقي: من Node [[Buffer]]
+
+~~~js
+const file = readFileSync('tone.wav');
+const dv = new DataView(file.buffer, file.byteOffset, file.byteLength);
+~~~
+
+السطر ده لازم يبقى كده بالحرف. [[file.buffer]] ممكن يبقى الـ pool بتاع Node كله (٦٥٥٣٦ byte) والملف في حتة منه (درس «ArrayBuffer: byteLength و slice و isView»)، فمن غير [[byteOffset]] و [[byteLength]] بتقرا bytes حاجة تانية. والتمرين التالت تحت فيه الباج ده بناتجه الحقيقي.
+
+---
+
+## ٦. [[DataView]] ولا typed array؟
+
+| | [[DataView]] | typed array |
+|---|---|---|
+| الأنواع | أي نوع من أي byte | نوع واحد للكل |
+| المحاذاة | مش لازم | الـ offset من مضاعفات حجم العنصر |
+| الترتيب | انت بتختار، والافتراضي big | ترتيب جهازك دايمًا |
+| القراية برّه الحدود | [[RangeError]] | [[undefined]] ساكت |
+| السرعة على مليون عنصر | method call لكل عنصر | أسرع: index مباشر |
+| الاستخدام | headers وحقول وبروتوكولات | كتل داتا من نفس النوع |
 
 ---
 
 ## الخلاصة
 
-| الحدث | على | إمتى تستخدمه |
-|---|---|---|
-| [[beforeunload]] | [[window]] | تحذير لو فيه تغييرات مش محفوظة، وشيله بعد الحفظ |
-| [[visibilitychange]] (hidden) | [[document]] | احفظ واعمل analytics، مع [[sendBeacon]] |
-| [[pagehide]] | [[window]] | لحظة الخروج نفسها (بدل [[unload]]) |
-| [[pageshow]] + [[persisted]] | [[window]] | رجع من الـ bfcache: حدّث الداتا |
-
-- [[removeEventListener]] محتاج نفس الدالة، فاديها اسم.
-- [[sendBeacon]] مبيرجّعش رد، والـ string بيروح [[text/plain]].
-- متستخدمش [[unload]].`,
+- [[DataView]] = اقرا أو اكتب نوع معين من byte معين بترتيب تختاره. ٢٢ method بشكل واحد.
+- من غير [[true]] = big-endian. WAV و ZIP و BMP little، و PNG والشبكة big.
+- على Node [[Buffer]] أو أي view: [[new DataView(x.buffer, x.byteOffset, x.byteLength)]].
+- القراية برّه الحدود بترمي [[RangeError]]، والكتابة بتحوّل وتلف ساكتة.`,
           lines: [
-            R`الفورم اللي اليوزر بيكتب فيه البوست، وده اللي مش عايزين كلامه يضيع.`,
-            R`دالة التحذير متعرّفة باسم (مش arrow جوه [[addEventListener]]) عشان [[removeEventListener]] محتاج **نفس** الدالة بالظبط علشان يشيلها.`,
-            R`في [[beforeunload]]، [[preventDefault]] بيطلب من المتصفح يسأل اليوزر «عايز تمشي فعلًا؟». النص اللي بيظهر بتاع المتصفح ومتقدرش تغيّره.`,
-            R`متصفحات قديمة كانت بتبص على [[returnValue]] مش [[preventDefault]] عشان تظهر التحذير، فبنحطه برضه عشان يشتغل عندهم كمان.`,
-            R`نهاية [[warn]].`,
-            R`أول ما اليوزر يكتب أي حاجة نفعّل التحذير، فصفحة فاضية متسألوش على الفاضي. [[input]] بيحصل مع كل حرف، بس إضافة نفس الدالة لنفس الحدث أكتر من مرة بتتجاهل، فمفيش تكرار.`,
-            R`لما الفورم يتبعت الكلام اتحفظ، فبنشيل التحذير عشان الصفحة تمشي من غير سؤال.`,
-            R`[[visibilitychange]] بيحصل لما التاب يتخفى أو يرجع يظهر: اليوزر غيّر التاب، أو صغّر المتصفح، أو قفل الموبايل. ده أضمن وقت تحفظ فيه، لأن الموبايل ممكن يقفل الصفحة وهي في الخلفية من غير أي حدث تاني.`,
-            R`يهمنا لحظة الاختفاء بس، فلو التاب رجع ظاهر نخرج.`,
-            R`[[new FormData(form)]] بيقرا كل خانات الفورم، و [[Object.fromEntries]] بيحوّلها لـ object عادي، و [[JSON.stringify]] بيحوّله لنص نبعته.`,
-            R`[[sendBeacon]] بيبعت POST صغير والمتصفح بيكمّله حتى لو الصفحة اتقفلت. مالوش رد تقراه، وبيرجّع [[true]] لو الطلب اتحط في الطابور بس. ولأن الـ body string، السيرفر هيستقبله [[text/plain]] فلازم يعمل parse للـ JSON بنفسه.`,
-            R`نهاية الـ listener بتاع [[visibilitychange]].`,
-            R`[[pageshow]] بيحصل كل ما الصفحة تظهر: أول تحميل، أو رجوع ليها بزرار back.`,
-            R`[[e.persisted]] بـ [[true]] معناها الصفحة رجعت من الـ bfcache (المتصفح كان حافظها في الذاكرة زي ما هي)، فالكود مش بيشتغل من الأول والداتا اللي فيها ممكن تكون قديمة. ده المكان اللي تحدّث فيه السلة والإشعارات.`,
-            R`نهاية الـ listener بتاع [[pageshow]].`,
-            R`[[pagehide]] بيحصل لما اليوزر يسيب الصفحة، و [[e.persisted]] بتقول هتتحفظ في الـ bfcache ولا لأ. استخدمه بدل [[unload]]: وجود listener على [[unload]] بيمنع الصفحة من الـ bfcache في متصفحات كتير.`,
+            R`بنستورد دالة كتابة ودالة قراية ملف من [[node:fs]].`,
+            R`٨٠٠٠ عينة في الثانية لمدة نص ثانية = ٤٠٠٠ عينة.`,
+            R`buffer = ٤٤ byte للـ header + ٢ bytes لكل عينة، و [[DataView]] عليه كله.`,
+            R`[[tag]] بتكتب نص قصير (إنجليزي) كـ bytes ورا بعض من مكان [[at]] بـ [[setUint8]].`,
+            R`أول ١٢ byte: [[RIFF]] وبعدها حجم الملف ناقص ٨ كـ [[Uint32]] little-endian، وبعدها [[WAVE]].`,
+            R`chunk الـ [[fmt ]] بطوله ١٦، ونوع الصوت ١ (PCM)، وقناة واحدة، كلهم little-endian.`,
+            R`الـ sample rate، و bytes في الثانية، و bytes في العينة (٢)، و bits في العينة (١٦).`,
+            R`chunk الـ [[data]] وحجم العينات بالـ bytes.`,
+            R`كل عينة موجة sine بتردد ٤٤٠ مضروبة في ١٢٠٠٠ ومقرّبة، ومكتوبة [[Int16]] little-endian بعد الـ header.`,
+            R`بنكتب الـ bytes بتاعة الـ view في ملف [[tone.wav]] تقدر تسمعه.`,
+            R`بنقرا الملف تاني كـ [[Buffer]] من الديسك.`,
+            R`[[DataView]] على نفس الـ bytes بالظبط بالـ [[byteOffset]] و [[byteLength]] عشان pool بتاع Node.`,
+            R`أول ٤ bytes كرقم big ثم little: [[52494646]] هي حروف [[RIFF]] بالترتيب، والتاني بالعكس.`,
+            R`بنقرا الـ rate والـ bits والحجم من أماكنهم في الـ header، والحجم الكلي ٨٠٤٤.`,
+            R`العينة التانية little = [[4065]] (صح)، و big = [[-7921]] (غلط)، والـ byteين نفسهم ٢٢٥ و ١٥.`,
           ],
-          sol: R`قبل الـ submit: قفل التاب بيطلّع رسالة المتصفح «Leave site?» (أو بالعربي حسب لغة المتصفح)، ونصها ثابت. بعد الـ submit مفيش رسالة لأن الـ listener اتشال. لو مطلعتش خالص، غالبًا مكتبتش حاجة بجد (المتصفح بيطلب تفاعل).
-
-الـ back: Console فيها [[pagehide، هتتحفظ في bfcache؟ true]] وبعد الرجوع [[رجعت من الـ bfcache...]]. ولاحظ إن الـ input لسه فيه اللي كتبته والـ scroll مكانه: ده الـ bfcache.
-
-لو الـ test قال «not eligible» الأسباب الشائعة: listener على [[unload]] (من مكتبة أو analytics)، أو الصفحة مفتوحة من DevTools بطريقة معيّنة، أو WebSocket مفتوح. وفي الحالة دي back بتعمل تحميل كامل و [[persisted]] بـ false.`
+          ref: [
+            { t: "MDN: DataView", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView" },
+            { t: "MDN: DataView.prototype.getUint16()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView/getUint16" },
+            { t: "MDN: DataView.prototype.setFloat16()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView/setFloat16" },
+            { t: "MDN: DataView.prototype.getBigUint64()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView/getBigUint64" },
+            { t: "W3C: PNG Specification (Third Edition)", url: "https://www.w3.org/TR/png-3/" },
+            { t: "Node.js: zlib.crc32()", url: "https://nodejs.org/api/zlib.html#zlibcrc32data-value" },
+          ],
+          pre: [{ to: "js/TypedArray: العيلة و BYTES_PER_ELEMENT و overflow", why: R`الأنواع و endianness في الـ typed arrays قبل ما تختار الترتيب بنفسك` }, { to: "js/BigInt بعمق", why: R`[[getBigUint64]] بيرجّع BigInt` }],
         },
         {
-          cmd: "pushState و popstate",
-          title: "تغيّر الـ URL من غير تحميل صفحة جديدة إزاي؟ (راوتر صغير)",
-          desc: R`[[history.pushState(state, "", "/about")]] بيغيّر الـ URL في الشريط ويضيف خطوة في الـ history من غير ما يطلب الصفحة من السيرفر. و [[replaceState]] نفس الكلام بس بيستبدل الخطوة الحالية (للفلاتر والبحث). ومفيش حاجة بتتعرض لوحدها: انت اللي بترسم المحتوى المناسب.
+          cmd: "Uint8Array: fromBase64 و toHex و TextEncoder",
+          title: "إزاي تحوّل بين النص والـ bytes والـ base64 والـ hex من غير ما العربي يبوظ؟",
+          desc: R`الـ bytes مش بتتحط في JSON ولا URL ولا HTML على طول، فبنكتبها **نص**: hex (رقمين لكل byte، سهل تقراه) أو base64 (٤ حروف لكل ٣ bytes، أصغر). ومن ES2026 فيه methods جاهزة على [[Uint8Array]]:
 
-و [[popstate]] بيتنادى لما اليوزر يضغط back أو forward، فتقرا [[location.pathname]] وترسم. ده كل الـ SPA router (React Router و Next.js client navigation) من تحت: اعترض ضغطة اللينك، و pushState، وارسم، واسمع لـ popstate.`,
-          example: R`const content = document.querySelector("#content");
-const pages = { "/": "الرئيسية", "/about": "عننا", "/contact": "كلمنا" };
-function render(path) {
-  content.textContent = pages[path] ?? "404: الصفحة مش موجودة";
-  document.title = pages[path] ?? "مش موجود";
-}
-document.addEventListener("click", (e) => {
-  const a = e.target.closest("a[data-link]");
-  if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
-  e.preventDefault();
-  const path = new URL(a.href).pathname;
-  if (path === location.pathname) return;
-  history.pushState({ path }, "", path);
-  render(path);
-});
-window.addEventListener("popstate", () => render(location.pathname));
-render(location.pathname);`,
-          try: R`اعمل [[index.html]] فيه ٣ لينكات [[<a href="/about" data-link>]] و [[<main id="content">]]، وشغّله بـ [[npx serve -s]] (الـ [[-s]] بيرجّع index.html لأي path). اتنقل، واضغط back و forward، واعمل refresh على [[/about]]. وبعدين شغّله بـ [[npx serve]] من غير [[-s]] واعمل refresh على [[/about]]: إيه اللي حصل؟ وجرّب Ctrl+Click على لينك.`,
+• [[bytes.toHex()]] و [[Uint8Array.fromHex(text)]] و [[bytes.setFromHex(text)]].
+• [[bytes.toBase64(options)]] و [[Uint8Array.fromBase64(text, options)]] و [[bytes.setFromBase64(text)]]، و [[alphabet: 'base64url']] للـ URLs.
+
+ولتحويل **النص نفسه** لـ bytes: [[new TextEncoder().encode(text)]] (UTF-8) و [[new TextDecoder().decode(bytes)]]. القديم [[btoa]] و [[atob]] بيشتغلوا على حروف Latin1 بس، فـ [[btoa('شاي')]] بيرمي. **الدعم (اتجرّب):** Chrome 157 فيه الست methods. Node 24.22 مفيهوش ولا واحدة إلا بـ [[node --js-base-64]]، وحتى بيه [[setFromBase64]] و [[setFromHex]] مش موجودين. في Node: [[Buffer]].`,
+          example: R`// base64.js: النص ← bytes ← hex و base64، ورجوع (في Console بتاع Chrome)
+const bytes = new TextEncoder().encode('شاي');
+console.log(bytes, bytes.toHex(), bytes.toBase64());
+console.log(new TextDecoder().decode(Uint8Array.fromBase64('2LTYp9mK')));
+console.log(Uint8Array.fromHex('cafe01'), Uint8Array.fromBase64('-_8', { alphabet: 'base64url' }));
+console.log(Uint8Array.of(255, 254).toBase64({ alphabet: 'base64url', omitPadding: true }));
+const target = new Uint8Array(4);
+console.log(target.setFromHex('aabbccddee'), target);
+try { btoa('شاي'); } catch (e) { console.log(e.name + ': ' + e.message); }
+console.log(btoa('tea'), atob('dGVh'));`,
+          try: R`شغّل المثال في Console بتاع Chrome (F12 ثم Console). وبعدين شغّله في Node كملف [[.mjs]] مرة عادي ومرة بـ [[node --js-base-64]]: إيه اللي اشتغل وإيه اللي وقع؟ وجرّب نفس التحويل بـ [[Buffer]].`,
+          sol: R`~~~text node base64.mjs (Node 24.22)
+TypeError: bytes.toHex is not a function
+~~~
+
+~~~text node --js-base-64 base64.mjs (Node 24.22)
+Uint8Array(6) [ 216, 180, 216, 167, 217, 138 ] d8b4d8a7d98a 2LTYp9mK
+شاي
+Uint8Array(3) [ 202, 254, 1 ] Uint8Array(2) [ 251, 255 ]
+__4
+TypeError: target.setFromHex is not a function
+~~~
+
+~~~js buffer.mjs
+const b = Buffer.from('شاي');
+console.log(b.toString('base64'), b.toString('hex'), b.toString('base64url'), Buffer.from('2LTYp9mK', 'base64').toString(), Buffer.from('cafe01', 'hex'));
+console.log(Buffer.from('zz', 'hex'), Buffer.from('ab$c', 'base64'));
+~~~
+
+~~~text الناتج (Node 24.22)
+2LTYp9mK d8b4d8a7d98a 2LTYp9mK شاي <Buffer ca fe 01>
+<Buffer > <Buffer 69 b7>
+~~~
+
+- Node 24.22 (V8 13.6) فيه الـ methods دي ورا flag تجريبي، والـ [[set]] منهم مش موجودين خالص. فلو كودك هيشتغل في Node، استخدم [[Buffer]] أو اعمل fallback (التمرين التالت).
+- [[Buffer]] **متساهل**: [[Buffer.from('zz', 'hex')]] بيرجّع buffer فاضي، و [[Buffer.from('ab$c', 'base64')]] بيتخطى الـ [[$]] ويكمّل، **من غير error**. أما [[Uint8Array.fromHex('zz')]] بيرمي [[SyntaxError]]. للداتا اللي جاية من برّه (input مستخدم)، الـ strict أأمن: الداتا البايظة لازم تقف.`,
           practice: [
-            { lvl: 'سريع', t: R`ابني tabs component (٣ تابات «الوصف» و «المواصفات» و «التقييمات»): الضغط على تاب بيعمل [[pushState]] لـ [[?tab=specs]]، و [[popstate]] بيرجّع التاب الصح، وفتح الصفحة بيقرا [[?tab=]] من [[location.search]].`, done: R`تضغط تابين ورا بعض وتعمل back مرتين: بترجع للتابين اللي قبل بالترتيب، و refresh على [[?tab=reviews]] بيفتح التقييمات، و [[?tab=xyz]] بيفتح التاب الأول من غير error.`, sol: R`~~~live 220 tabs-url.html
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** طول الـ base64 لكل نص، وإزاي شكله في الآخر:
+
+~~~js
+for (const s of ['a', 'ab', 'abc', 'abcd', '']) console.log(JSON.stringify(s), btoa(s), btoa(s).length);
+~~~`, done: R`كتبت الخمس سطور، وتقدر تقول القاعدة: الطول = ٤ × (عدد الـ bytes ÷ ٣ مقرّب لفوق)، وليه فيه [[=]].`, sol: R`~~~text الناتج (Node 24.22)
+"a" YQ== 4
+"ab" YWI= 4
+"abc" YWJj 4
+"abcd" YWJjZA== 8
+""  0
+~~~
+
+- base64 بياخد كل ٣ bytes (= ٢٤ bit) ويقسمهم ٤ حتت ٦ bit، وكل ٦ bit حرف من ٦٤ حرف ([[A-Z]] و [[a-z]] و [[0-9]] و [[+]] و [[/]]).
+- لو الـ bytes مش مضاعفات ٣، آخر مجموعة بتتكمّل بـ [[=]] (padding): byte واحد زيادة = [[==]]، و ٢ = [[=]].
+- الحجم بيزيد الثلث: صورة ٣ MB = ٤ MB نص. عشان كده base64 للحاجات الصغيرة (أيقونة، توقيع، token)، مش لملفات كبيرة.
+- [[btoa]] شغال هنا لأن الحروف كلها إنجليزي (Latin1). مع العربي: التمرين الجاي.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** عايز تحط اسم المستخدم في token كـ base64. الكود بيقع:
+
+~~~js
+const name = 'سارة';
+const token = btoa(JSON.stringify({ name }));
+console.log(token);
+~~~
+
+صلّحه بحيث يشتغل في المتصفح، ورجّع الاسم من الـ token تاني.`, done: R`الـ token اتعمل من غير error، وفكّه رجّع [[{ name: 'سارة' }]] بالظبط.`, sol: R`~~~text الناتج قبل التصليح (Chrome 157)
+InvalidCharacterError: Failed to execute 'btoa' on 'Window': The string to be encoded contains characters outside of the Latin1 range.
+~~~
+
+~~~js fixed.js
+const name = 'سارة';
+const token = new TextEncoder().encode(JSON.stringify({ name })).toBase64();
+console.log(token);
+const back = JSON.parse(new TextDecoder().decode(Uint8Array.fromBase64(token)));
+console.log(back);
+~~~
+
+~~~text الناتج (Chrome 157)
+eyJuYW1lIjoi2LPYp9ix2KkifQ==
+{name: 'سارة'}
+~~~
+
+- [[btoa]] اتعمل قبل UTF-8: بيعتبر كل حرف في النص byte واحد، وأي حرف كوده أكبر من ٢٥٥ (العربي كله) بيرمي. في Node الرسالة: [[InvalidCharacterError: Invalid character]].
+- الترتيب الصح: **نص ← bytes بـ UTF-8 ([[TextEncoder]]) ← base64**، والرجوع بالعكس. [[TextEncoder]] دايمًا UTF-8، والعربي بيبقى ٢ bytes للحرف.
+- لو محتاج تحطه في URL: [[toBase64({ alphabet: 'base64url', omitPadding: true })]]، لأن [[+]] و [[/]] و [[=]] ليهم معنى في الـ URL.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[toBase64Safe(bytes)]] و [[fromBase64Safe(text)]] بيستخدموا الـ methods الجديدة لو موجودة، وإلا [[btoa]] و [[atob]]. لازم يشتغلوا على عربي (bytes UTF-8) وعلى مليون byte من غير ما يقعوا.`, done: R`نفس الكود اشتغل في Node من غير flag (بالـ fallback) ومع [[--js-base-64]] (بالجديد) بنفس الناتج، ومليون byte عدّت، `, sol: R`~~~js b64.mjs
+// b64.mjs: base64 بيشتغل في أي مكان: الجديد لو موجود، وإلا btoa على دفعات
+function toBase64Safe(bytes) {
+  if (typeof bytes.toBase64 === 'function') return bytes.toBase64();
+  let bin = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+function fromBase64Safe(text) {
+  if (typeof Uint8Array.fromBase64 === 'function') return Uint8Array.fromBase64(text);
+  return Uint8Array.from(atob(text), (ch) => ch.charCodeAt(0));
+}
+const bytes = new TextEncoder().encode('شاي بالنعناع');
+const text = toBase64Safe(bytes);
+console.log(text, new TextDecoder().decode(fromBase64Safe(text)));
+const big = new Uint8Array(1_000_000).fill(65);
+console.log(toBase64Safe(big).length, fromBase64Safe(toBase64Safe(big)).length);
+console.log(typeof Uint8Array.prototype.toBase64);
+~~~
+
+~~~text node b64.mjs (Node 24.22)
+2LTYp9mKINio2KfZhNmG2LnZhtin2Lk= شاي بالنعناع
+1333336 1000000
+undefined
+~~~
+
+~~~text node --js-base-64 b64.mjs (Node 24.22)
+2LTYp9mKINio2KfZhNmG2LnZhtin2Lk= شاي بالنعناع
+1333336 1000000
+function
+~~~
+
+- **الـ fallback:** [[String.fromCharCode(...bytes)]] بيعمل نص كل حرف فيه = byte (من 0 لـ 255، يعني Latin1)، وده اللي [[btoa]] بيقبله. والرجوع: [[atob]] بيرجّع نص زي ده، و [[charCodeAt(0)]] لكل حرف = الـ byte.
+- **ليه دفعات [[0x8000]] (٣٢٧٦٨)؟** الـ spread [[...bytes]] بيحوّل كل byte لـ argument في نداء الدالة، ومليون argument بيوقّع البرنامج: [[RangeError: Maximum call stack size exceeded]] (اتجرّب في Node و Chrome). التمرين الجاي بالظبط.
+- [[typeof x === 'function']] = «feature detection»: بتسأل المتصفح نفسه بدل ما تخمّن من اسمه أو نسخته.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** Node 24 من غير flag مفيهوش [[Uint8Array.fromHex]]. اكتب [[parseHex(text)]] بتاعتك: بتقبل حروف كبيرة وصغيرة ومسافات بين الـ bytes (عشان تلزق hex dump زي [['ca fe 01']])، وترمي [[SyntaxError]] برسالة واضحة لو فيه حرف مش hex (حتى [['0x12']]) أو عدد الحروف فردي.`, done: R`[['ca fe 01']] و [['CAFE']] بيطلعوا الـ bytes الصح، والنص الفاضي array فاضية، و [['abc']] و [['zz']] و [['0x12']] بيرموا برسالتين مختلفتين، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js parse-hex.mjs
+function parseHex(text) {
+  const clean = text.replace(/\s+/g, '');
+  if (!/^[0-9a-fA-F]*$/.test(clean)) throw new SyntaxError('حرف مش hex في: ' + JSON.stringify(text));
+  if (clean.length % 2) throw new SyntaxError('عدد حروف الـ hex لازم زوجي، اللي وصل ' + clean.length);
+  const out = new Uint8Array(clean.length / 2);
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(clean.slice(i * 2, i * 2 + 2), 16);
+  return out;
+}
+console.log(parseHex('ca fe 01'), parseHex('CAFE'), parseHex(''));
+for (const bad of ['abc', 'zz', '0x12']) try { parseHex(bad); } catch (e) { console.log(e.name + ': ' + e.message); }
+~~~
+
+~~~text الناتج (Node 24.22)
+Uint8Array(3) [ 202, 254, 1 ] Uint8Array(2) [ 202, 254 ] Uint8Array(0) []
+SyntaxError: عدد حروف الـ hex لازم زوجي، اللي وصل 3
+SyntaxError: حرف مش hex في: "zz"
+SyntaxError: حرف مش hex في: "0x12"
+~~~
+
+- [[text.replace(/\s+/g, '')]]: يشيل أي مسافة أو سطر جديد، فالـ dump بيتلزق زي ما هو.
+- الفحص بالـ regex الأول: [[^[0-9a-fA-F]*$]] = «من الأول للآخر مفيش غير حروف hex». ليه مش نعتمد على [[parseInt]]؟ لأن [[parseInt('zz', 16)]] بـ [[NaN]] وكان هيتكتب صفر في الـ [[Uint8Array]] ساكت، و [[parseInt('1z', 16)]] بـ ١ (بيقف عند أول حرف غلط). الفحص الصريح هو اللي بيخلّيها strict زي [[fromHex]] مش متساهلة زي [[Buffer]].
+- رسالتين مختلفتين للغلطتين (أحسن من V8 اللي بيقول «even length» للاتنين)، فاللي بيستخدمها يعرف يصلّح إيه.
+- [[parseInt(pair, 16)]]: النص كرقم بالأساس ١٦.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** في Chrome، حوّل ١ MB bytes لـ base64 ورجّعها بطريقتين: [[toBase64]] و [[fromBase64]]، والقديم [[btoa]] على دفعات و [[atob]] + [[Uint8Array.from]]. قيس الوقت، واتأكد إن الناتج واحد. وجرّب مرة [[btoa(String.fromCharCode(...big))]] من غير دفعات.`, done: R`عندك ٤ أرقام من متصفحك، والنتيجتين متطابقين، وشفت الـ stack overflow.`, sol: R`~~~js bench.js
+const big = Uint8Array.from({ length: 1 << 20 }, (_, i) => (i * 7919) % 256);
+try { btoa(String.fromCharCode(...big)); } catch (e) { console.log(e.name + ': ' + e.message); }
+let t = performance.now(); const b64 = big.toBase64(); const t1 = performance.now() - t;
+t = performance.now(); let s = ''; for (let i = 0; i < big.length; i += 0x8000) s += String.fromCharCode(...big.subarray(i, i + 0x8000)); const b64old = btoa(s); const t2 = performance.now() - t;
+t = performance.now(); const back = Uint8Array.fromBase64(b64); const t3 = performance.now() - t;
+t = performance.now(); const back2 = Uint8Array.from(atob(b64old), (c) => c.charCodeAt(0)); const t4 = performance.now() - t;
+console.log('same=' + (b64 === b64old), 'len=' + b64.length, 'toBase64=' + t1.toFixed(1) + 'ms', 'btoaChunks=' + t2.toFixed(1) + 'ms', 'fromBase64=' + t3.toFixed(1) + 'ms', 'atob+from=' + t4.toFixed(1) + 'ms', 'equal=' + back.every((v, i) => v === back2[i]));
+~~~
+
+~~~text الناتج (Chrome 157، ويندوز 11)
+RangeError: Maximum call stack size exceeded
+same=true len=1398104 toBase64=0.2ms btoaChunks=43.2ms fromBase64=0.9ms atob+from=89.2ms equal=true
+~~~
+
+- الـ methods الجديدة أسرع **حوالي ١٠٠ مرة** هنا: بتشتغل مباشرة على الـ bytes من غير ما تعمل نص وسيط حرف حرف.
+- [[(i * 7919) % 256]] بيملا الـ bytes بأرقام متلخبطة بشكل ثابت. [[crypto.getRandomValues]] مكانش ينفع: حده ٦٥٥٣٦ byte في المرة (اتجرّب: [[QuotaExceededError: ... exceeds the number of bytes of entropy available via this API (65536)]]).
+- الطول ١٣٩٨١٠٤ = ٤ × (١٠٤٨٥٧٦ ÷ ٣ مقرّبة لفوق).` },
+            { lvl: 'تطبيق', t: R`**ابني صفحة:** صورة PNG صغيرة جاية كنص base64 (من [[tiny.png]] بتاع درس «DataView»). فكّها لـ bytes، واعرضها في [[<img>]] بـ [[Blob]] و [[URL.createObjectURL]]، واكتب تحتها عدد الحروف وعدد الـ bytes والمقاس من الـ header بـ [[DataView]]، وأول ٢٤ byte بالـ hex.`, done: R`الصورة باينة متكبّرة (٣ pixels × ٢)، والسطر بيقول ١١٦ حرف = ٨٥ byte والمقاس ٣ × ٢، والـ hex بيبدأ بـ [[89 50 4e 47]].`, sol: R`~~~live 330 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>صفحة المنتج</title>
-<style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
-  [role="tablist"] { display: flex; gap: 4px; border-bottom: 2px solid #e5e7eb; }
-  [role="tab"] { font: inherit; border: 0; background: none; padding: 8px 12px; cursor: pointer; }
-  [role="tab"][aria-selected="true"] { border-bottom: 3px solid #1d4ed8; font-weight: 700; }
-  [role="tabpanel"] { padding: 12px 0; }
-  #note { font-size: 12px; color: #92400e; }
-</style>
-</head>
-<body>
-<div role="tablist" aria-label="تفاصيل المنتج">
-  <button role="tab" id="t-desc" aria-controls="desc" data-tab="desc">الوصف</button>
-  <button role="tab" id="t-specs" aria-controls="specs" data-tab="specs">المواصفات</button>
-  <button role="tab" id="t-reviews" aria-controls="reviews" data-tab="reviews">التقييمات</button>
-</div>
-<section role="tabpanel" id="desc" aria-labelledby="t-desc">مج سيراميك ٣٥٠ مل.</section>
-<section role="tabpanel" id="specs" aria-labelledby="t-specs">الارتفاع ٩ سم، ينفع في الميكروويف.</section>
-<section role="tabpanel" id="reviews" aria-labelledby="t-reviews">٤٫٥ من ٥ (١٢ تقييم).</section>
-<p id="note"></p>
-<script>
-  const TABS = ["desc", "specs", "reviews"];
-
-  function show(tab) {
-    if (!TABS.includes(tab)) tab = TABS[0];        // ?tab=xyz أو مفيش = الأول
-    for (const t of TABS) {
-      document.querySelector($__bt[data-tab="$__{t}"]$__bt).setAttribute("aria-selected", String(t === tab));
-      document.getElementById(t).hidden = t !== tab;
-    }
-  }
-  const tabFromUrl = () => new URLSearchParams(location.search).get("tab");
-
-  document.querySelector('[role="tablist"]').addEventListener("click", (e) => {
-    const tab = e.target.closest("[data-tab]")?.dataset.tab;
-    if (!tab || tab === tabFromUrl()) return;      // نفس التاب: متعملش entry زيادة
-    const url = new URL(location.href);
-    url.searchParams.set("tab", tab);
-    try {
-      history.pushState({ tab }, "", url);
-    } catch {
-      document.querySelector("#note").textContent = "الصفحة معزولة: الـ URL مبيتغيّرش، والتابات شغالة عادي";
-    }
-    show(tab);
-  });
-
-  window.addEventListener("popstate", () => show(tabFromUrl()));
-  show(tabFromUrl());
-</script>
-</body>
-</html>
-~~~
-
-في الـ preview التابات شغالة بس الـ URL مبيتغيّرش: الصفحة معزولة و [[pushState]] بيرمي فيها [[SecurityError]]، فالـ catch بيكتب ملاحظة ويكمّل. انسخها وشغّلها من سيرفر محلي.
-
-~~~text الناتج (Chrome 158 headless، http://localhost:8831/tabs-url.html)
-فتح الصفحة             الوصف      (مفيش) | history.length=2
-ضغط المواصفات          المواصفات  ?tab=specs | history.length=3
-ضغط التقييمات          التقييمات  ?tab=reviews | history.length=4
-نفس التاب تاني         التقييمات  ?tab=reviews | history.length=4
-back                   المواصفات  ?tab=specs | history.length=4
-back تاني              الوصف      (مفيش) | history.length=4
-forward                المواصفات  ?tab=specs | history.length=4
-refresh على ?tab=reviews التقييمات  ?tab=reviews | history.length=4
-?tab=xyz               الوصف      ?tab=xyz | history.length=5
-pageerrors: 0
-~~~
-
-(الـ [[history.length]] بيبدأ 2 لأن التاب كان فيه [[about:blank]] قبل الصفحة.)
-
-**ليه كده:**
-
-- **[[show(tab)]] هي المكان الوحيد اللي بيرسم:** الضغطة والـ [[popstate]] وفتح الصفحة التلاتة بينادوها بالتاب من الـ URL. فالشكل دايمًا = الـ URL.
-- **[[new URL(location.href)]] و [[searchParams.set("tab", tab)]]:** بيغيّر [[?tab=]] بس ويسيب أي parameter تاني في العنوان ([[?ref=ads]] مثلًا) زي ما هو.
-- **[[history.pushState({ tab }, "", url)]]:** entry جديد في الـ history من غير ما الصفحة تتحمّل، فـ back بيرجّع للتاب اللي قبل. الـ [[pushState]] نفسه **مبيعملش** [[popstate]]، فلازم [[show(tab)]] بعده.
-- **[[popstate]]:** بيحصل مع back و forward، والـ [[location]] ساعتها اتغيّر خلاص، فبنقرا منه.
-- **[[if (... tab === tabFromUrl()) return]]:** ضغطة على نفس التاب مبتعملش entry (الـ [[history.length]] فضل 4). من غيرها، اليوزر هيدوس back كذا مرة ومفيش حاجة بتتغيّر.
-- **[[if (!TABS.includes(tab)) tab = TABS[0]]]:** [[?tab=xyz]] أو مفيش [[tab]] خالص بيفتح الأول من غير error.
-- **[[role="tab"]] و [[aria-selected]]:** قارئ الشاشة بيقول إن ده تاب ومتحدد ولا لأ. (التنقل بالأسهم بين التابات خطوة زيادة مش في الحل ده.)
-
-**الغلطة الشائعة:** تعمل [[pushState]] في الـ [[popstate]] كمان (عشان «تحدّث الـ URL»). كل back بيعمل entry جديد، فاليوزر بيلف في نفس المكان ومبيعرفش يطلع من الصفحة.` },
-            { lvl: 'تطبيق', t: R`صلّح الباج: راوتر الدرس بيمسك كل [[a[data-link]]] حتى لو اللينك لموقع تاني، أو عليه [[target="_blank"]] أو [[download]]. حط ٣ لينكات زي دول جنب اللينكات العادية وصلّح الشرط عشان يسيبهم للمتصفح.`, done: R`لينك لـ [[https://example.com]] بيفتح الموقع ده فعلًا، و [[target="_blank"]] بيفتح تاب جديد، و [[download]] بينزّل الملف، واللينكات الداخلية لسه بتتنقل من غير reload، والشرط فيه مقارنة [[a.origin !== location.origin]].`, sol: R`**قبل التصليح:** راوتر الدرس زي ما هو، ومعاه التلات لينكات، على سيرفر محلي بيرجّع [[index.html]] لأي مسار:
-
-~~~text الناتج (Chrome 158 headless، النسخة القديمة)
-خارجي: http://localhost:8831/ | المحتوى: الرئيسية
-target=_blank: تابات جديدة = 0 | http://localhost:8831/about
-download: تنزيلات = 0 | http://localhost:8831/menu.txt | 404: الصفحة مش موجودة
-~~~
-
-لينك [[https://example.com]] فتح «الرئيسية» عندنا (الراوتر خد [[pathname]] بتاعه، [["/"]]، ورماه على موقعنا)، و [[target="_blank"]] فتح في نفس التاب، و [[download]] غيّر الـ URL لـ [[/menu.txt]] وعرض 404 بدل ما ينزّل الملف.
-
-**بعد التصليح:**
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الرئيسية</title>
+<title>صورة من base64</title>
 <style>
   body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
-  nav a { margin-inline-end: 12px; }
-  #content { padding: 16px; background: #f3f4f6; border-radius: 8px; margin-top: 12px; }
+  img { width: 150px; image-rendering: pixelated; border: 1px solid #999; }
+  pre { direction: ltr; text-align: left; background: #f3f4f6; padding: 8px; border-radius: 6px; white-space: pre-wrap; }
 </style>
 </head>
 <body>
-<nav>
-  <a href="/" data-link>الرئيسية</a>
-  <a href="/about" data-link>عننا</a>
-  <a href="/contact" data-link>كلمنا</a>
-  <a href="https://example.com" data-link>موقع تاني</a>
-  <a href="/about" data-link target="_blank">عننا في تاب جديد</a>
-  <a href="/menu.txt" data-link download>نزّل المنيو</a>
-</nav>
-<div id="content"></div>
+<h1>صورة جاية كنص base64</h1>
+<img id="img" alt="صورة 3 في 2 pixels متكبّرة">
+<p id="info"></p>
+<pre id="hex"></pre>
 <script>
-  const content = document.querySelector("#content");
-  const pages = { "/": "الرئيسية", "/about": "عننا", "/contact": "كلمنا" };
-  function render(path) {
-    content.textContent = pages[path] ?? "404: الصفحة مش موجودة";
-    document.title = pages[path] ?? "مش موجود";
-  }
-
-  document.addEventListener("click", (e) => {
-    const a = e.target.closest("a[data-link]");
-    if (!a || e.defaultPrevented) return;
-    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;  // تاب جديد/شباك
-    if (a.origin !== location.origin) return;           // موقع تاني: سيبه للمتصفح
-    if (a.target && a.target !== "_self") return;       // target="_blank" وغيره
-    if (a.hasAttribute("download")) return;             // تنزيل ملف
-    e.preventDefault();
-    if (a.pathname === location.pathname) return;
-    history.pushState({}, "", a.pathname);
-    render(a.pathname);
-  });
-  window.addEventListener("popstate", () => render(location.pathname));
-  render(location.pathname);
+const b64 = 'iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAIAAAASFvFNAAAAHElEQVR4nGNgYIiqYIj6wBDFwHAiquJE1IcTUQA4GAdF/8wPIAAAAABJRU5ErkJggg==';
+const bytes = typeof Uint8Array.fromBase64 === 'function' ? Uint8Array.fromBase64(b64) : Uint8Array.from(atob(b64), (ch) => ch.charCodeAt(0));
+const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+const img = document.querySelector('#img');
+img.onload = () => img.after(' ← اتعرضت: ' + img.naturalWidth + ' × ' + img.naturalHeight);
+img.src = URL.createObjectURL(new Blob([bytes], { type: 'image/png' }));
+document.querySelector('#info').textContent = 'النص ' + b64.length + ' حرف = ' + bytes.length + ' byte. المقاس من الـ header: ' + view.getUint32(16) + ' × ' + view.getUint32(20) + (typeof Uint8Array.fromBase64 === 'function' ? ' (فكّيناه بـ Uint8Array.fromBase64)' : ' (فكّيناه بـ atob)');
+document.querySelector('#hex').textContent = Array.from(bytes.subarray(0, 24), (b) => b.toString(16).padStart(2, '0')).join(' ');
 </script>
 </body>
 </html>
 ~~~
 
-~~~text menu.txt
-قهوة 30 / شاي 15
-~~~
+**اللي اتقاس (Chrome 157، جوه iframe معزول زي اللي في الموقع):** «← اتعرضت: 3 × 2»، و «النص 116 حرف = 85 byte. المقاس من الـ header: 3 × 2 (فكّيناه بـ Uint8Array.fromBase64)»، والـ hex [[89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52 00 00 00 03 00 00 00 02]].
 
-الصفحة دي محتاجة سيرفر بيرجّع [[index.html]] لأي مسار (refresh على [[/about]])، فمش هتشتغل في الـ preview. اتقاست على [[http://localhost:8831]] بسيرفر [[node:http]] بالشكل ده، و [[example.com]] اتردّ عليه من Playwright نفسه عشان التجربة متطلعش برا الجهاز:
-
-~~~text الناتج (Chrome 158 headless، بعد التصليح)
-داخلي «عننا»: http://localhost:8831/about | نفس الصفحة من غير reload: true | requests للـ document: 1
-target=_blank: تاب جديد على http://localhost:8831/about | العنوان: عننا
-download: اسم الملف menu.txt | الصفحة لسه: http://localhost:8831/about
-خارجي: https://example.com/ | Example Domain
-لوج السيرفر: GET / , GET /about , GET /menu.txt
-pageerrors: 0
-~~~
-
-**ليه كده:**
-
-- **[[a.origin !== location.origin]]:** أي لينك لـ origin تاني (دومين أو بورت أو بروتوكول مختلف) مش بتاعنا، فبنرجع من غير [[preventDefault]] والمتصفح بيفتحه عادي. الـ [[<a>]] نفسه فيه [[origin]] و [[pathname]] زي [[URL]] بالظبط.
-- **[[a.target && a.target !== "_self"]]:** [[_blank]] أو اسم شباك = اليوزر عايزه في مكان تاني. لوج السيرفر فيه [[GET /about]] من التاب الجديد (تحميل كامل، وده صح هناك).
-- **[[a.hasAttribute("download")]]:** المتصفح لازم يعمل التنزيل بنفسه ([[GET /menu.txt]] في اللوج والملف اتنزّل بالاسم).
-- **[[e.altKey]] و [[e.defaultPrevented]]:** Alt+Click بينزّل اللينك في Chrome، ولو كود تاني عمل [[preventDefault]] قبلنا منلمسش الضغطة.
-- **[[window.__same]]:** متغير حطيناه قبل الضغط. لو الصفحة اتحمّلت تاني كان هيختفي، ولقيناه [[true]]: التنقل الداخلي من غير reload.
-
-**الغلطة الشائعة:** تصلّح الخارجي بـ [[a.href.startsWith("http")]]. كل [[a.href]] بيرجع URL كامل بيبدأ بـ [[http]] حتى اللينكات الداخلية ([[/about]] بتبقى [[http://localhost:8831/about]])، فكل اللينكات هتتساب للمتصفح والـ SPA هيعمل reload في كل ضغطة.` },
-            { lvl: 'تحدي', t: R`مسألة: اكتب [[matchRoute(path, routes)]] بترجّع [[{ route, params }]] أو [[null]]، لـ routes زي [[/users/:id]] و [[/users/:id/posts]]، بـ [[URLPattern]] أو regex، واكتب لها تستات بـ [[node:test]]، وبعدين وصّلها بالراوتر.`, done: R`[[matchRoute("/users/42", routes).params.id]] بيرجّع [["42"]]، و [[/users/42/posts]] بيطابق الـ route التاني، و [[/users]] لوحدها و [[/users/42/x]] بيرجّعوا [[null]] (يعني 404)، و [[node --test]] بيعدّي، و back و forward و refresh (مع [[npx serve -s]]) بيفتحوا الصفحة الصح.`, sol: R`**الدالة وتستاتها** (Node 24 فيه [[URLPattern]] كـ global، وكل المتصفحات الحديثة كمان):
-
-~~~js match-route.mjs
-// كل route: pattern زي "/users/:id"، و URLPattern بيحوّله لمطابقة كاملة للمسار
-export function compileRoutes(routes) {
-  return routes.map((route) => ({ route, pattern: new URLPattern({ pathname: route.path }) }));
+- [[new Blob([bytes], { type: 'image/png' })]]: «ملف» في الذاكرة من الـ bytes، و [[URL.createObjectURL]] بيدّيله عنوان [[blob:]] تحطه في [[src]]. (البديل: [[img.src = 'data:image/png;base64,' + b64]] على طول من غير فك، بس كده مش هتقدر تقرا الـ header.)
+- [[image-rendering: pixelated]] عشان الـ ٦ pixels يبانوا مربعات مش ضباب لما تكبر لـ ١٥٠ px.
+- لو الصفحة هتعيش كتير وبتعمل صور كتير، نادي [[URL.revokeObjectURL(img.src)]] بعد ما تتحمل، عشان الـ Blob ميفضلش في الذاكرة (درس «memory leaks»).` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من MDN صفحة [[Uint8Array.prototype.setFromHex()]]: بترجّع إيه؟ واستخدمها تقرا «stream» hex طويل ([['aabbccdd11223344ee']]) على packets ثابتة ٤ bytes في نفس الـ [[Uint8Array(4)]] من غير ما تعمل arrays جديدة، وتقف لما الباقي يبقى أقل من packet. (Chrome بس.)`, done: R`طبعت packetين [[aabbccdd]] و [[11223344]] و «باقي ناقص: ee»، وتقدر تقول [[read]] و [[written]] معناهم إيه.`, sol: R`~~~js packets.js
+const stream = 'aabbccdd11223344ee';
+const packet = new Uint8Array(4);
+let rest = stream;
+while (rest.length) {
+  const { read, written } = packet.setFromHex(rest);
+  if (written < packet.length) { console.log('باقي ناقص:', rest); break; }
+  console.log(packet.toHex(), 'read', read);
+  rest = rest.slice(read);
 }
+~~~
 
-export function matchRoute(path, compiled) {
-  for (const { route, pattern } of compiled) {
-    const m = pattern.exec({ pathname: path });
-    if (m) return { route, params: { ...m.pathname.groups } };
+~~~text الناتج (Chrome 157)
+aabbccdd read 8
+11223344 read 8
+باقي ناقص: ee
+~~~
+
+**الإجابة:** [[setFromHex]] بتكتب في الـ array **الموجودة** لحد ما تتملى أو النص يخلص، وبترجّع [[{ read, written }]]: [[read]] عدد **الحروف** اللي استهلكتها من النص (٨ = ٤ bytes)، و [[written]] عدد الـ **bytes** اللي كتبتها. فبنقص النص بـ [[read]] ونكمّل. ولما [[written]] أقل من ٤ يبقى آخر packet ناقص. ده بالظبط اللي بتعمله لما الداتا جاية حتت (stream) ومش عايز تعمل array لكل حتة. ونفس الفكرة [[setFromBase64]] (اتجرّب: [[new Uint8Array(3).setFromBase64('AQID BAUG')]] = [[{read: 4, written: 3}]]، كتبت أول ٣ bytes بس لأن مفيش مكان).` },
+          ],
+          check: { lang: "js", starter: R`function parseHex(text) {
+  // hex ← Uint8Array: مسافات مسموحة، و SyntaxError لو حرف مش hex أو عدد فردي
+}`, tests: R`test("بمسافات", () => expect(Array.from(parseHex('ca fe 01'))).toEqual([202, 254, 1]));
+test("حروف كبيرة", () => expect(Array.from(parseHex('CAFE'))).toEqual([202, 254]));
+test("فاضي", () => expect(parseHex('').length).toBe(0));
+test("فردي", () => expect(() => parseHex('abc')).toThrow("زوجي"));
+test("حرف مش hex", () => expect(() => parseHex('zz')).toThrow("مش hex"));
+test("0x", () => expect(() => parseHex('0x12')).toThrow("مش hex"));
+test("بيرجّع Uint8Array", () => expect(parseHex('ff') instanceof Uint8Array).toBe(true));`, solution: R`function parseHex(text) {
+  const clean = text.replace(/\s+/g, '');
+  if (!/^[0-9a-fA-F]*$/.test(clean)) throw new SyntaxError('حرف مش hex في: ' + JSON.stringify(text));
+  if (clean.length % 2) throw new SyntaxError('عدد حروف الـ hex لازم زوجي، اللي وصل ' + clean.length);
+  const out = new Uint8Array(clean.length / 2);
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(clean.slice(i * 2, i * 2 + 2), 16);
+  return out;
+}` },
+          flag: "script",
+          deep: {
+            why: R`أماكن كتير بتقبل نص بس: JSON، و URLs، و HTML attributes، والـ headers، والإيميل، و localStorage. فأي bytes (صورة صغيرة، مفتاح تشفير، hash، توقيع، token) لازم تتكتب نص من غير ما يضيع منها حاجة. hex للبشر (الـ hashes والـ dumps والألوان)، و base64 للحجم (٣٣٪ زيادة بس بدل ١٠٠٪). وقبل ES2026 كان الطريق الوحيد في المتصفح [[btoa]] و [[atob]]، اللي اتعملوا للـ Latin1 وبيقعوا مع العربي وبيبطّئوا مع الحجم، فكل مشروع كان بيكتب helper بإيده أو يجيب مكتبة.`,
+            how: R`[[TextEncoder]] بيحوّل النص (UTF-16 جوه JavaScript) لـ bytes UTF-8 دايمًا (مفيش encoding تاني)، و [[encodeInto(text, target)]] بيكتب في array موجودة ويرجّع [[{ read, written }]] (درس «WebAssembly في المتصفح»). [[TextDecoder(label, { fatal, ignoreBOM })]] بيفك أي encoding معروف ([['utf-8']] و [['utf-16le']] و [['windows-1256']] للعربي القديم، اتجرّب بيطلّع [[السلام]])؛ والـ byte البايظ بيبقى [[�]] إلا لو [[fatal: true]] فبيرمي ([[TypeError: The encoded data was not valid for encoding utf-8]] في Node، و [[TypeError: Failed to execute 'decode' on 'TextDecoder': The encoded data was not valid.]] في Chrome)، و [[{ stream: true }]] للـ chunks (درس «Streams»).
+
+[[toBase64({ alphabet, omitPadding })]]: الـ alphabet [['base64']] (الافتراضي، فيه [[+]] و [[/]]) أو [['base64url']] (فيه [[-]] و [[_]])، و [[omitPadding: true]] بيشيل الـ [[=]]. [[Uint8Array.fromBase64(text, { alphabet, lastChunkHandling })]] بيتجاهل المسافات والأسطر، وبيرمي [[SyntaxError]] على أي حرف مش من الـ alphabet؛ و [[lastChunkHandling]]: [['loose']] (الافتراضي، بيقبل آخر مجموعة من غير [[=]])، و [['strict']] (لازم padding صح؛ اتجرّب [['YWJjZA']] بيرمي برسالة [[The base64 input terminates with a single character, excluding padding (=).]] اللي مش دقيقة)، و [['stop-before-partial']] (بيقف قبل المجموعة الناقصة، للـ streams). [[fromHex]] بيقبل حروف كبيرة وصغيرة، وطول فردي أو حرف مش hex بيرمي (والاتنين بنفس الرسالة في V8: [[Input string must contain hex characters in even length]]). و [[setFromBase64]] و [[setFromHex]] بيكتبوا في array موجودة لحد ما تتملى.`,
+            when: R`[[TextEncoder]] و [[TextDecoder]]: أي نص هيبقى bytes (تشفير، hashing، ملف، شبكة، wasm) أو العكس. hex: hashes وبصمات وألوان و debugging. base64: صور صغيرة في JSON أو CSS، والمفاتيح والتوقيعات، والـ JWT (base64url من غير padding)، وأي binary في نظام بيقبل نص بس. الـ methods الجديدة: في المتصفح (Baseline من سبتمبر ٢٠٢٥: Chrome 140 و Firefox 133 و Safari 18.2). في Node لحد ما تبقى من غير flag: [[Buffer.from(x, 'base64')]] و [[buf.toString('base64url')]]، مع العلم إن [[Buffer]] متساهل مع الحروف الغلط. [[btoa]] و [[atob]]: بس لو متأكد إن النص Latin1 أو الكود قديم.`,
+            mistakes: R`- [[btoa('شاي')]]: [[InvalidCharacterError]]. لازم [[TextEncoder]] الأول.
+- [[btoa(String.fromCharCode(...bigBytes))]]: [[RangeError: Maximum call stack size exceeded]] لملف كبير. دفعات أو [[toBase64]].
+- تحط base64 العادي في URL: [[+]] بتتقري مسافة و [[/]] بتقسم الـ path. [[base64url]].
+- [[atob]] بيرجّع **نص** كل حرف فيه byte، مش الـ bytes ولا النص الأصلي: محتاج [[Uint8Array.from(..., c => c.charCodeAt(0))]] وبعدين [[TextDecoder]].
+- تفك chunks بـ [[TextDecoder]] من غير [[stream: true]]: الحرف العربي المقسوم بيبقى [[�]].
+- تعتمد على [[Buffer]] في كود هيتعمله bundle للمتصفح: مش موجود هناك.
+- تفترض إن [[toHex]] موجود في Node 24: [[TypeError: bytes.toHex is not a function]] من غير flag.
+- تستخدم base64 «للتشفير»: ده **ترميز** أي حد يفكه في ثانية، مش حماية.`,
+          },
+          teach: R`## الفكرة في سطر
+
+النص ⇄ bytes بـ [[TextEncoder]] و [[TextDecoder]]، والـ bytes ⇄ نص قابل للنقل بـ hex أو base64. الناتج من Chrome 157 (Console) إلا لو مكتوب Node 24.22.
+
+---
+
+## ١. [[TextEncoder]] و [[TextDecoder]]: النص والـ bytes
+
+~~~js
+const bytes = new TextEncoder().encode('شاي');
+console.log(bytes);
+console.log(new TextDecoder().decode(bytes));
+~~~
+
+~~~text الناتج
+Uint8Array(6) [216, 180, 216, 167, 217, 138]
+شاي
+~~~
+
+- [[new TextEncoder().encode(text)]]: النص لـ bytes بـ UTF-8، والعربي ٢ bytes للحرف.
+- [[new TextDecoder().decode(bytes)]]: العكس، والافتراضي UTF-8.
+
+| الـ option | بيعمل إيه (اتجرّب في Node 24.22) |
+|---|---|
+| [[new TextDecoder('windows-1256')]] | يفك ملفات عربي قديمة: [[c7 e1 d3 e1 c7 e3]] = [[السلام]] |
+| [[{ fatal: true }]] | يرمي [[TypeError]] بدل ما يحط [[�]] مكان الـ byte البايظ |
+| [[{ ignoreBOM: true }]] | يسيب الـ BOM ([[ef bb bf]]) في أول النص بدل ما يشيله: الطول ٢ بدل ١ |
+| [[decode(chunk, { stream: true })]] | للـ chunks: الحرف المقسوم بين chunkين بيتجمع صح (درس «Streams») |
+| [[encoder.encodeInto(text, target)]] | يكتب في array موجودة: [[{ read: 2, written: 4 }]] لما المكان ٥ bytes والنص «شاي» |
+
+---
+
+## ٢. [[Uint8Array.prototype.toHex]] و [[Uint8Array.fromHex]]
+
+~~~js
+console.log(bytes.toHex());
+console.log(Uint8Array.fromHex('cafe01'), Uint8Array.fromHex('CAFE').toHex());
+~~~
+
+~~~text الناتج
+d8b4d8a7d98a
+Uint8Array(3) [202, 254, 1] cafe
+~~~
+
+- [[toHex()]]: كل byte رقمين hex صغيرين، من غير مسافات.
+- [[Uint8Array.fromHex(text)]]: العكس، وبيقبل الحروف الكبيرة.
+- طول فردي ([['abc']]) أو حرف مش hex ([['zz']]): [[SyntaxError: Input string must contain hex characters in even length]] (نفس الرسالة للاتنين في V8، فمتعتمدش عليها في التشخيص).
+
+---
+
+## ٣. [[Uint8Array.prototype.toBase64]] و [[Uint8Array.fromBase64]]
+
+~~~js
+console.log(bytes.toBase64(), new TextDecoder().decode(Uint8Array.fromBase64('2LTYp9mK')));
+console.log(Uint8Array.fromBase64('-_8', { alphabet: 'base64url' }));
+console.log(Uint8Array.of(255, 254).toBase64({ alphabet: 'base64url', omitPadding: true }));
+~~~
+
+~~~text الناتج
+2LTYp9mK شاي
+Uint8Array(2) [251, 255]
+__4
+~~~
+
+| الـ option | القيم |
+|---|---|
+| [[alphabet]] | [['base64']] الافتراضي ([[+]] و [[/]])، أو [['base64url']] ([[-]] و [[_]]) للـ URLs والـ JWT |
+| [[omitPadding]] في [[toBase64]] | [[true]] يشيل الـ [[=]] من الآخر |
+| [[lastChunkHandling]] في [[fromBase64]] | [['loose']] الافتراضي يقبل آخر مجموعة ناقصة، و [['strict']] يرمي لو الـ padding مش صح، و [['stop-before-partial']] يقف قبلها |
+
+- [[fromBase64]] بيتجاهل المسافات والأسطر ([['2LTY\np9mK']] = ٦ bytes)، وبيرمي على أي حرف تاني: [[SyntaxError: Found a character that cannot be part of a valid base64 string.]] (زي [['-_8']] من غير [[base64url]]).
+
+---
+
+## ٤. [[Uint8Array.prototype.setFromHex]] و [[Uint8Array.prototype.setFromBase64]]: اكتب في array موجودة
+
+~~~js
+const target = new Uint8Array(4);
+console.log(target.setFromHex('aabbccddee'), target);
+~~~
+
+~~~text الناتج
+{read: 8, written: 4} Uint8Array(4) [170, 187, 204, 221]
+~~~
+
+- النص فيه ٥ bytes والـ array ٤: كتب ٤ ووقف. [[read]] = ٨ حروف استهلكها، و [[written]] = ٤ bytes كتبها.
+- [[setFromBase64]] بيكتب **مجموعات كاملة** بس: [[new Uint8Array(2).setFromBase64('YWJjZA==')]] = [[{read: 0, written: 0}]]، لأن أول مجموعة ٣ bytes ومش هتكفي في ٢. اتجرّب، وده بيفاجئ.
+
+---
+
+## ٥. [[btoa]] و [[atob]] و [[Buffer]]: القديم
+
+~~~js
+try { btoa('شاي'); } catch (e) { console.log(e.name + ': ' + e.message); }
+console.log(btoa('tea'), atob('dGVh'));
+~~~
+
+~~~text الناتج
+InvalidCharacterError: Failed to execute 'btoa' on 'Window': The string to be encoded contains characters outside of the Latin1 range.
+dGVh tea
+~~~
+
+| | [[toBase64]] و [[fromBase64]] | [[btoa]] و [[atob]] | [[Buffer]] (Node) |
+|---|---|---|---|
+| بيشتغل على | bytes | نص Latin1 (كل حرف byte) | bytes |
+| العربي | عن طريق [[TextEncoder]] | بيرمي | عن طريق [[Buffer.from(text)]] |
+| ١ MB | ٠.٢ ms (اتقاس) | لازم دفعات، ٤٣ ms | سريع |
+| حرف غلط | [[SyntaxError]] | [[InvalidCharacterError]] | بيتجاهله ساكت |
+| base64url | [[alphabet: 'base64url']] | لأ، بإيدك | [[toString('base64url')]] |
+| فين | المتصفحات من ٢٠٢٥، و Node بـ flag | كل مكان | Node بس |
+
+---
+
+## الخلاصة
+
+- النص ← bytes: [[TextEncoder]] (UTF-8). والعكس [[TextDecoder]]، و [[fatal: true]] لو عايز ترفض الداتا البايظة.
+- bytes ← نص: [[toHex]] للقراية، و [[toBase64]] للحجم، و [[base64url]] للـ URLs. والعكس [[fromHex]] و [[fromBase64]] (strict).
+- [[btoa]] مع العربي بيرمي، ومع ملف كبير لازم دفعات.
+- Node 24.22: الجديد ورا [[--js-base-64]] ومن غير [[set]]، فـ [[Buffer]] أو fallback.`,
+          lines: [
+            R`[[TextEncoder]] بيحوّل «شاي» لـ ٦ bytes UTF-8 في [[Uint8Array]].`,
+            R`بيطبع الـ bytes، وبعدين [[toHex()]] (رقمين لكل byte) و [[toBase64()]] (٨ حروف لـ ٦ bytes).`,
+            R`[[Uint8Array.fromBase64]] بيرجّع الـ bytes من النص، و [[TextDecoder]] بيرجّعهم «شاي».`,
+            R`[[fromHex]] بيقرا كل حرفين byte، و [[base64url]] بيفهم [[-]] و [[_]] بدل [[+]] و [[/]].`,
+            R`[[base64url]] من غير padding: الـ ٢ bytes بقوا ٣ حروف [[__4]] من غير [[=]].`,
+            R`array فاضية ٤ bytes هنكتب فيها من نص hex.`,
+            R`[[setFromHex]] كتب ٤ bytes ووقف لأن الـ array اتملت، ورجّع [[read]] ٨ حروف و [[written]] ٤.`,
+            R`[[btoa]] مع حروف عربي بيرمي [[InvalidCharacterError]] لأنه بيقبل Latin1 بس.`,
+            R`مع حروف إنجليزي [[btoa]] و [[atob]] شغالين: [[dGVh]] و [[tea]].`,
+          ],
+          ref: [
+            { t: "MDN: Uint8Array.fromBase64()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array/fromBase64" },
+            { t: "MDN: Uint8Array.fromHex()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array/fromHex" },
+            { t: "MDN: Uint8Array.prototype.toBase64()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array/toBase64" },
+            { t: "MDN: Uint8Array.prototype.toHex()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array/toHex" },
+            { t: "MDN: Uint8Array.prototype.setFromBase64()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array/setFromBase64" },
+            { t: "MDN: Uint8Array.prototype.setFromHex()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array/setFromHex" },
+            { t: "MDN: TextEncoder", url: "https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder" },
+            { t: "MDN: TextDecoder", url: "https://developer.mozilla.org/en-US/docs/Web/API/TextDecoder" },
+            { t: "MDN: Window.btoa()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/btoa" },
+          ],
+          pre: [{ to: "js/string و UTF-16: length و codePointAt", why: R`ليه العربي ٢ bytes في UTF-8 وحرف واحد في [[length]]` }, { to: "js/Streams", why: R`[[TextDecoderStream]] و [[stream: true]] للـ chunks` }],
+        },
+        {
+          cmd: "Web Workers و worker_threads: postMessage و transfer",
+          title: "إزاي تشغّل حساب تقيل في thread تاني من غير ما الصفحة تقف، وتبعتله bytes من غير نسخ؟",
+          desc: R`JavaScript بتشغّل كودك على thread واحد (الـ main thread)، فأي loop تقيل بيجمّد الصفحة كلها (درس «blocking و الـ main thread»). الـ **Worker** ملف JavaScript بيشتغل في thread لوحده، بـ global لوحده ومن غير DOM، والكلام بينكم **رسايل بس**:
+
+• [[const worker = new Worker('worker.js', { type: 'module' })]] في الصفحة.
+• [[worker.postMessage(data, [transfer])]] و [[worker.onmessage = (e) => e.data]]، وجوه الـ worker [[self.onmessage]] و [[self.postMessage]].
+• الداتا بتتنسخ بـ **structured clone** (زي [[structuredClone]])، إلا اللي تحطه في قايمة الـ transfer: ده بيتنقل من غير نسخ، وعندك بيبقى **detached** (طوله صفر).
+• [[worker.onerror]] للأخطاء، و [[worker.terminate()]] يقفله فورًا.
+
+وفي Node نفس الفكرة من [[node:worker_threads]]: [[new Worker(file)]] و [[parentPort]] و [[worker.on('message')]].`,
+          example: R`// main.js (في الصفحة): الحساب التقيل في Worker، والصفحة فاضية ترد على اليوزر
+const worker = new Worker('worker.js', { type: 'module', name: 'invert' });
+worker.onmessage = (e) => console.log('رد:', e.data.id, e.data.first, e.data.bytes.length, e.data.ms + 'ms');
+worker.onerror = (e) => { e.preventDefault(); console.log('error في الـ worker:', e.message); };
+const bytes = new Uint8Array(8_000_000).fill(10);
+worker.postMessage({ id: 1, bytes }, [bytes.buffer]);
+console.log('بعد الإرسال:', bytes.byteLength, bytes.buffer.detached);
+const tick = setInterval(() => console.log('الصفحة لسه بترد'), 40);
+setTimeout(() => worker.postMessage({ id: 2, bytes: 'مش bytes' }), 60);
+setTimeout(() => { clearInterval(tick); worker.terminate(); console.log('اتقفل'); }, 400);`,
+          try: R`اعمل الـ ٣ ملفات اللي في أول الشرح ([[index.html]] و [[main.js]] و [[worker.js]]) في فولدر، وشغّل سيرفر صغير ([[npx serve]] أو [[python -m http.server]])، وافتح الصفحة والـ Console. وبعدين انقل الـ loop التقيل من الـ worker للـ [[main.js]] نفسه: كام مرة «الصفحة لسه بترد» اتطبعت وهو شغال؟`,
+          sol: R`~~~js main-blocking.js
+let ticks = 0;
+const iv = setInterval(() => ticks++, 40);
+const bytes = new Uint8Array(8_000_000).fill(10);
+const t = performance.now();
+for (let round = 0; round < 21; round++) for (let i = 0; i < bytes.length; i++) bytes[i] = 255 - bytes[i];
+const ms = Math.round(performance.now() - t);
+setTimeout(() => { console.log('main thread:', ms + 'ms', 'ticks وهو شغال:', ticks); clearInterval(iv); }, 0);
+~~~
+
+~~~text الناتج (Chrome 157)
+main thread: 238ms ticks وهو شغال: 0
+~~~
+
+- نفس الحساب (١٦٨ مليون عملية) في الـ worker خد ١٢١ ms والـ timer اشتغل ٣ مرات في نفس الوقت. على الـ main thread خد ٢٣٨ ms والـ timer **صفر**: مفيش ضغطة زرار ولا scroll ولا animation اتعملت طول الوقت ده، لأن الـ event loop مش فاضي (درس «event loop»).
+- الأرقام بتختلف من جهاز للتاني، بس الصفر ده ثابت: طول ما كودك شغال على الـ main thread، مفيش حاجة تانية بتحصل.
+- ليه سيرفر؟ Chrome مبيحمّلش worker من صفحة مفتوحة كملف ([[file://]])، لازم [[http://]]. ده نفس سبب إن تمارين SQL في الموقع محتاجة النسخة الأونلاين.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الـ structured clone (اللي [[postMessage]] بيستخدمه) بيعمل إيه في كل قيمة؟ اتوقّع وبعدين شغّل في Node:
+
+~~~js
+class Point { constructor(x) { this.x = x; } len() { return 1; } }
+const c = structuredClone({ p: new Point(3), m: new Map([[1, 'a']]), d: new Date(0), r: /x/g, e: new RangeError('bad'), u: Uint8Array.of(1), big: 10n });
+console.log(c.p instanceof Point, c.p, c.m, c.d instanceof Date, c.r, c.e instanceof RangeError, c.e.message, c.u, c.big);
+const o = {}; o.me = o;
+const oc = structuredClone(o);
+console.log(oc.me === oc);
+try { structuredClone({ f: () => 1 }); } catch (e) { console.log(e.name + ': ' + e.message); }
+~~~`, done: R`كتبت التلات سطور، وعرفت إن الـ class بيوصل object عادي من غير methods، والدالة بترمي.`, sol: R`~~~text الناتج (Node 24.22)
+false { x: 3 } Map(1) { 1 => 'a' } true /x/g true bad Uint8Array(1) [ 1 ] 10n
+true
+DataCloneError: () => 1 could not be cloned.
+~~~
+
+- [[Map]] و [[Date]] و [[RegExp]] و الـ errors والـ typed arrays و [[BigInt]] بيتنسخوا صح بنوعهم.
+- **الـ class بيضيع:** [[c.p]] object عادي فيه [[x]] بس، و [[instanceof Point]] بـ [[false]]، والـ method [[len]] مش موجودة. الـ worker مبيعرفش الـ class بتاعتك، فلو محتاجها ابعت داتا خام واعمل [[new Point(data.x)]] هناك.
+- الـ object اللي بيشاور على نفسه بيتنسخ صح (الـ JSON كان هيرمي).
+- الدوال بترمي [[DataCloneError]]. وفي Chrome مع [[postMessage]] الرسالة: [[DataCloneError: Failed to execute 'postMessage' on 'Worker': () => 1 could not be cloned.]] (اتجرّب)، ونفس الكلام للـ Symbol وعناصر الـ DOM.` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** ابعت [[ArrayBuffer]] حجمه 64 MB لـ worker بيرجّعه، مرة نسخ ([[postMessage(buf)]]) ومرة نقل ([[postMessage(buf, [buf])]]). قيس وقت الرحلة رايح جاي، واطبع [[buf.detached]] بعد كل مرة. كرّر مرتين.`, done: R`عندك ٤ أرقام من متصفحك، والنقل أسرع بكتير، والأصل detached بعد النقل بس.`, sol: R`~~~js echo.js
+// echo.js: بيرجّع اللي وصله زي ما هو، ولو buffer بيرجّعه بالنقل
+self.onmessage = (e) => self.postMessage(e.data, e.data instanceof ArrayBuffer ? [e.data] : []);
+~~~
+
+~~~js bench.js
+const worker = new Worker('echo.js');
+const roundTrip = (buf, transfer) => new Promise((resolve) => {
+  const t = performance.now();
+  worker.onmessage = (e) => resolve({ ms: performance.now() - t, back: e.data });
+  worker.postMessage(buf, transfer ? [buf] : []);
+});
+for (const transfer of [false, true, false, true]) {
+  const buf = new ArrayBuffer(64 * 1024 * 1024);
+  const { ms, back } = await roundTrip(buf, transfer);
+  console.log((transfer ? 'transfer' : 'copy    ') + ' ' + ms.toFixed(1) + ' ms, الأصل detached=' + buf.detached + ', رجع ' + back.byteLength);
+}
+worker.terminate();
+~~~
+
+~~~text الناتج (Chrome 157، ويندوز 11)
+copy     105.5 ms, الأصل detached=false, رجع 67108864
+transfer 7.2 ms, الأصل detached=true, رجع 67108864
+copy     93.5 ms, الأصل detached=false, رجع 67108864
+transfer 15.1 ms, الأصل detached=true, رجع 67108864
+~~~
+
+- **النسخ:** ٦٤ MB اتنسخت رايح (والرجوع نقل في الحالتين لأن [[echo.js]] بيرجّع بالنقل)، فحوالي ١٠٠ ms، والذاكرة اتضاعفت لحظيًا (نسخة عندك ونسخة هناك).
+- **النقل:** الـ bytes نفسها اتنقلت من غير ما تتنسخ، فالوقت تقريبًا ثابت مهما كبر الـ buffer، بس الأصل عندك بقى طوله صفر.
+- القاعدة: لو مش محتاج الـ buffer بعد ما تبعته، انقله. ولو محتاجه، يا تنسخ يا تستنى يرجعلك (زي فلتر الصور في مشروع الوحدة).
+- [[await]] برّه أي دالة شغال هنا لأني شغّلته في Console بتاع Chrome، وفي ملف لازم [[<script type="module">]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الـ worker ده بيقع أول ما يبدأ. الصفحة بتعمله بـ [[new Worker('mod.js', { type: 'module' })]]. اقرا الرسالة وصلّح:
+
+~~~js
+// mod.js
+importScripts('helpers.js');
+self.onmessage = (e) => self.postMessage(double(e.data));
+~~~`, done: R`الـ worker بيرد بـ [[42]] على [[21]]، وتقدر تقول الفرق بين classic و module worker.`, sol: R`~~~text الرسالة (Chrome 157)
+TypeError: Failed to execute 'importScripts' on 'WorkerGlobalScope': Module scripts don't support importScripts().
+~~~
+
+~~~js helpers.js
+export const double = (n) => n * 2;
+~~~
+
+~~~js mod.js
+import { double } from './helpers.js';
+self.onmessage = (e) => self.postMessage(double(e.data));
+~~~
+
+- **classic worker** (من غير [[type]]): بيحمّل ملفات تانية بـ [[importScripts('a.js', 'b.js')]] (بتشغّلهم كأنهم جزء من الملف، و global). ولو الملف مش موجود: [[NetworkError: Failed to execute 'importScripts' on 'WorkerGlobalScope': The script at '.../x.js' failed to load.]] (اتجرّب).
+- **module worker** ([[type: 'module']]): بيستخدم [[import]] و [[export]] زي أي module (درس «import و export»)، و [[importScripts]] ممنوعة فيه. وده الأحسن في الكود الجديد: نفس الملفات تشتغل في الصفحة والـ worker، والـ bundlers (Vite) بتفهمه.
+- لو الـ worker نفسه ملفه مش موجود (404)، [[onerror]] بيجيلك [[Event]] عادي من غير [[message]] (اتجرّب: [[message]] بـ [[undefined]])، فاطبع الـ URL بنفسك في الـ handler.` },
+            { lvl: 'تحدي', t: R`**ابني (Node):** [[createClient(file)]] بتحوّل الكلام مع [[worker_threads]] لـ Promises: [[client.sum(float64Array, { transfer })]] بترجّع Promise بالمجموع. كل طلب ليه [[id]]، والـ worker بيرد بنفس الـ [[id]]، فكذا طلب في نفس الوقت مبيتلخبطوش. لو الـ worker رد بـ [[error]] الـ Promise ترفض، ولو الـ worker وقع كل الطلبات المستنية ترفض.`, done: R`٣ طلبات في [[Promise.all]] بيرجعوا [[499500]] و [[0.75]] ورفض برسالة الـ worker، والـ array اللي اتبعتت بـ transfer طولها بقى صفر والتانية لأ.`, sol: R`~~~js sum-worker.mjs
+// sum-worker.mjs: كل طلب فيه id، والرد بنفس الـ id
+import { parentPort } from 'node:worker_threads';
+parentPort.on('message', ({ id, numbers }) => {
+  if (!(numbers instanceof Float64Array)) return parentPort.postMessage({ id, error: 'numbers لازم Float64Array' });
+  let total = 0;
+  for (const n of numbers) total += n;
+  parentPort.postMessage({ id, total });
+});
+~~~
+
+~~~js rpc.mjs
+// rpc.mjs: نحوّل postMessage لـ Promise: كل طلب ليه id، والرد بيتوصّل للـ Promise بتاعته
+import { Worker } from 'node:worker_threads';
+export function createClient(file) {
+  const worker = new Worker(file);
+  const pending = new Map();
+  let nextId = 1;
+  worker.on('message', ({ id, total, error }) => {
+    const p = pending.get(id);
+    pending.delete(id);
+    if (error) p.reject(new Error(error)); else p.resolve(total);
+  });
+  worker.on('error', (err) => { for (const p of pending.values()) p.reject(err); pending.clear(); });
+  return {
+    sum(numbers, { transfer = false } = {}) {
+      const id = nextId++;
+      return new Promise((resolve, reject) => {
+        pending.set(id, { resolve, reject });
+        worker.postMessage({ id, numbers }, transfer ? [numbers.buffer] : []);
+      });
+    },
+    close: () => worker.terminate(),
+  };
+}
+const client = createClient(new URL('./sum-worker.mjs', import.meta.url));
+const a = Float64Array.from({ length: 1000 }, (_, i) => i);
+const b = Float64Array.of(0.5, 0.25);
+const results = await Promise.all([client.sum(a, { transfer: true }), client.sum(b), client.sum([1, 2]).catch((e) => 'رفض: ' + e.message)]);
+console.log(results, a.length, b.length);
+await client.close();
+~~~
+
+~~~text الناتج (Node 24.22)
+[ 499500, 0.75, 'رفض: numbers لازم Float64Array' ] 0 2
+~~~
+
+- [[pending]] = [[Map]] من [[id]] للـ [[resolve]] و [[reject]] بتوع كل Promise. الرد لما يوصل بيدوّر بالـ [[id]] ويكمّل الـ Promise الصح، حتى لو الردود وصلت بترتيب مختلف.
+- [[worker.on('error')]]: لو الـ worker رمى error ومسكهوش، الـ thread بيموت وكل اللي مستني لازم يترفض، وإلا الـ Promises هتفضل معلّقة للأبد.
+- [[new URL('./sum-worker.mjs', import.meta.url)]]: المسار نسبةً للملف نفسه مش للفولدر اللي شغّلت منه.
+- ده نفس اللي مكتبات زي Comlink بتعمله في المتصفح، ونفس فكرة «JSON-RPC». في الشغل ممكن تبني عليه pool من كذا worker (عدد الـ cores = [[os.availableParallelism()]] في Node، أو [[navigator.hardwareConcurrency]] في المتصفح: ١٦ على الجهاز ده).` },
+            { lvl: 'سريع', t: R`**اشرحها:** لكل حالة من دول، يستاهل Worker ولا لأ؟ وليه في سطر: (أ) [[fetch]] لـ ٢٠ API في نفس الوقت، (ب) ضغط صورة ١٢ ميجا قبل الرفع، (ج) فلترة لستة ٢٠٠ منتج وانت بتكتب في البحث، (د) قراية ملف CSV ٨٠ ميجا وحساب إحصائيات، (هـ) [[setTimeout]] كل ثانية يحدّث ساعة.`, done: R`كتبت إجابة لكل حالة بسبب، وطلعوا ٢ بس محتاجين Worker.`, sol: R`**إجابة نموذجية:**
+
+| الحالة | Worker؟ | ليه |
+|---|---|---|
+| (أ) ٢٠ [[fetch]] | لأ | الشبكة async أصلًا: الـ main thread مش بيستنى، بيبعت ويكمّل. [[Promise.all]] كفاية (درس «Promise.all و allSettled») |
+| (ب) ضغط صورة ١٢ MB | آه | حساب على ملايين pixels بياخد مئات الـ ms: نفس فلتر الـ blur في مشروع الوحدة (٥٠٠ ms وصفر frames على الـ main thread) |
+| (ج) فلترة ٢٠٠ منتج | لأ | أقل من ملّي ثانية. تكلفة إنشاء الـ worker ونسخ الداتا أكبر من الشغل نفسه. لو حاسس ببطء: debounce (درس «debounce و throttle») |
+| (د) CSV ٨٠ MB | آه | الـ parsing والحساب ثواني. والأحسن كمان تقراه stream جوه الـ worker (درس «Streams») |
+| (هـ) ساعة كل ثانية | لأ | شغل صغير جدًا كل ثانية، ومحتاج الـ DOM أصلًا (والـ worker مفيهوش DOM) |
+
+**القاعدة:** Worker للحساب التقيل (CPU) اللي بياخد أكتر من حوالي ٥٠ ms، مش للانتظار (I/O)، ومش للشغل الصغير.` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`الـ event loop بيشغّل حاجة واحدة في المرة على thread واحد، وده مريح (مفيش اتنين بيعدّلوا نفس المتغير في نفس اللحظة) بس معناه إن أي حساب بياخد ١٠٠ ms بيجمّد الصفحة ١٠٠ ms. والأجهزة فيها ٨ و ١٦ core. الـ Workers بتديك threads حقيقية، والتصميم بتاعها **من غير ذاكرة مشتركة** (كل worker heap لوحده، والكلام رسايل بس) عشان تاخد التوازي من غير race conditions. ولما الرسالة كبيرة، الـ transfer بيشيل تكلفة النسخ. والذاكرة المشتركة موجودة برضه لما تحتاجها فعلًا ([[SharedArrayBuffer]]، الدرس الجاي).`,
+            how: R`[[new Worker(url, { type, name })]] بيحمّل الملف (نفس الـ origin، و [[http]] مش [[file]]) ويشغّله في thread جديد بـ global اسمه [[self]] (نوعه [[DedicatedWorkerGlobalScope]]): فيه [[fetch]] و [[setTimeout]] و [[IndexedDB]] و [[crypto]] و [[WebSocket]] و [[OffscreenCanvas]]، ومفيهوش [[document]] ولا [[window]] (اتجرّب: [[typeof document]] جوه الـ worker = [[undefined]]). [[name]] بيظهر في DevTools وفي [[self.name]].
+
+[[postMessage(data, transfer)]] بيعمل structured clone للـ [[data]] (بيلف عليها كلها، بيدعم الدوائر و [[Map]] و [[Set]] و [[Date]] و [[Blob]] والـ typed arrays، ومبيدعمش الدوال والـ Symbols والـ DOM والـ prototypes) في الوقت اللي بتنادي فيه، وأي [[ArrayBuffer]] في قايمة [[transfer]] بيتفصل عندك ويتنقل (قايمة فيها نفس الـ buffer مرتين: [[DataCloneError: ... ArrayBuffer at index 1 is a duplicate of an earlier ArrayBuffer.]]، و buffer مفصول قبل كده: [[DataCloneError: ... ArrayBuffer at index 0 is already detached.]]، اتجرّبوا). الرسالة بتتحط في طابور الطرف التاني وبتتشغل كـ task في الـ event loop بتاعه. [[terminate()]] بيقتل الـ thread فورًا حتى لو في نص loop، وأي رسالة بعدها بتتجاهَل من غير error. error مش ممسوك جوه الـ worker بيوصل [[ErrorEvent]] في [[worker.onerror]] (فيه [[message]] و [[filename]] و [[lineno]])، و [[e.preventDefault()]] بيمنعه يتطبع في الـ Console كـ uncaught.
+
+في Node: [[worker_threads]] نفس الفكرة بأسماء تانية: [[new Worker(file, { workerData })]]، وجوه الـ worker [[parentPort.on('message')]] و [[parentPort.postMessage]] و [[workerData]] و [[isMainThread]]، وبرّه [[worker.on('message' | 'error' | 'exit')]]. والـ error المش ممسوك بيقفل الـ worker بـ exit code 1.`,
+            when: R`استخدم Worker لما فيه حساب بياخد أكتر من حوالي ٥٠ ms (ميزانية الـ frame اللي اليوزر يحس بيها): معالجة صور وصوت، و parsing لملفات كبيرة (CSV و JSON ضخم و zip)، وتشفير وضغط، و search على داتا محلية كبيرة، و wasm تقيل، و syntax highlighting لملف ضخم. في Node: معالجة صور أو PDFs أو hashing جوه سيرفر عشان الـ requests التانية متستناش. **مش محتاجه** للـ I/O ([[fetch]] وقراية الملفات): دي async أصلًا ومش بتبلّك. وإنشاء worker بياخد وقت وذاكرة (عشرات الـ ms)، فاعمله مرة وابعتله شغل كتير، أو pool.`,
+            mistakes: R`- تفتح الصفحة من [[file://]]: الـ worker مبيتحمّلش. شغّل سيرفر.
+- تستخدم [[document]] أو [[window]] جوه الـ worker: [[ReferenceError]]. ابعت الداتا وارسم في الصفحة، أو [[OffscreenCanvas]].
+- تبعت دالة أو class instance: [[DataCloneError]] أو الـ methods بتضيع.
+- تبعت buffer ضخم من غير transfer: نسخة كاملة كل مرة (١٠٠ ms لـ ٦٤ MB).
+- تستخدم الـ typed array بعد ما نقلت الـ buffer بتاعها: طولها صفر والقراية [[undefined]] ساكتة.
+- [[importScripts]] في module worker: [[TypeError: ... Module scripts don't support importScripts().]]
+- متحطش [[onerror]]: الـ worker بيموت بصمت والـ Promise بتاعك مستنية للأبد.
+- تعمل worker جديد لكل طلب صغير: تكلفة الإنشاء أكبر من الشغل نفسه.
+- متعملش [[terminate()]] للـ worker اللي خلص شغله في صفحة بتعيش كتير (SPA): thread وذاكرة على الفاضي (درس «memory leaks»).`,
+          },
+          teach: R`## الفكرة في سطر
+
+الـ Worker = كود في thread تاني، والكلام معاه رسايل بتتنسخ، والـ buffers الكبيرة تتنقل من غير نسخ. الناتج من Chrome 157 على سيرفر [[node:http]] محلي، و Node 24.22 للـ [[worker_threads]].
+
+---
+
+## ١. التلات ملفات
+
+~~~html index.html
+<!doctype html><meta charset="utf-8"><title>worker lab</title><p>افتح الـ Console</p><script type="module" src="main.js"></script>
+~~~
+
+~~~js worker.js
+// worker.js: بيقلب كل byte (تقيل) ويرجّع نفس الـ buffer بالنقل
+self.onmessage = ({ data: { id, bytes } }) => {
+  if (!(bytes instanceof Uint8Array)) throw new TypeError('مستني Uint8Array في الطلب ' + id);
+  const t = performance.now();
+  for (let round = 0; round < 21; round++) for (let i = 0; i < bytes.length; i++) bytes[i] = 255 - bytes[i];
+  self.postMessage({ id, first: bytes[0], ms: Math.round(performance.now() - t), bytes }, [bytes.buffer]);
+};
+~~~
+
+و [[main.js]] هو المثال فوق. الناتج في Console:
+
+~~~text الناتج (Chrome 157)
+بعد الإرسال: 0 true
+الصفحة لسه بترد
+الصفحة لسه بترد
+الصفحة لسه بترد
+رد: 1 245 8000000 121ms
+error في الـ worker: Uncaught TypeError: مستني Uint8Array في الطلب 2
+الصفحة لسه بترد
+الصفحة لسه بترد
+الصفحة لسه بترد
+الصفحة لسه بترد
+الصفحة لسه بترد
+الصفحة لسه بترد
+الصفحة لسه بترد
+اتقفل
+~~~
+
+---
+
+## ٢. [[new Worker(url, options)]]
+
+| الـ option | معناه |
+|---|---|
+| [[type: 'module']] | الملف module: [[import]] و [[export]] شغالين، و [[importScripts]] ممنوعة |
+| من غير [[type]] (classic) | سكربت عادي، وبيحمّل ملفات تانية بـ [[importScripts('a.js')]] |
+| [[name: 'invert']] | اسم بيظهر في DevTools (Sources ثم Threads) وفي [[self.name]] |
+
+والملف لازم من نفس الـ origin وعلى [[http]] أو [[https]]: صفحة مفتوحة كـ [[file://]] مبتحمّلش workers في Chrome. وفي مشروع Vite: [[new Worker(new URL('./worker.js', import.meta.url), { type: 'module' })]] عشان الـ bundler يلاقي الملف.
+
+---
+
+## ٣. [[postMessage]] والـ structured clone والـ transfer
+
+~~~js
+worker.postMessage({ id: 1, bytes }, [bytes.buffer]);
+console.log('بعد الإرسال:', bytes.byteLength, bytes.buffer.detached);
+~~~
+
+- أول argument الرسالة: أي حاجة الـ structured clone يقدر ينسخها.
+- التاني **قايمة transfer**: الـ buffers اللي هتتنقل بدل ما تتنسخ. [[bytes.buffer]] اتنقل، فعندك [[byteLength]] صفر و [[detached]] [[true]] (درس «ArrayBuffer: resize و transfer و detached»).
+- الـ worker عمل نفس الحاجة وهو بيرد ([[ [bytes.buffer] ]])، فالـ bytes رجعتلك من غير نسخ ولا مرة.
+
+| بيتنسخ صح | مش بيتنسخ |
+|---|---|
+| أرقام ونصوص و [[BigInt]] و objects و arrays (حتى لو فيها دوائر) | الدوال: بترمي [[DataCloneError]] وقت الإرسال |
+| [[Map]] و [[Set]] و [[Date]] و [[RegExp]] و الـ errors | الـ Symbols: بترمي [[DataCloneError]] برضه |
+| الـ typed arrays و [[ArrayBuffer]] و [[DataView]] و [[Blob]] و [[File]] | عناصر الـ DOM |
+| [[ImageData]] و [[ImageBitmap]] | الـ prototype: class instance بيوصل object عادي |
+
+اللي بيتنقل (transferable): [[ArrayBuffer]] و [[MessagePort]] و [[ImageBitmap]] و [[OffscreenCanvas]] و [[ReadableStream]] وغيرهم.
+
+---
+
+## ٤. [[onmessage]] و [[onerror]] و [[terminate]]
+
+- [[worker.onmessage = (e) => ...]]: [[e.data]] الرسالة. (وبديله [[worker.addEventListener('message', ...)]].)
+- الطلب التاني بعت نص بدل bytes، فالـ worker رمى [[TypeError]] ومحدش مسكه، فوصل [[worker.onerror]] كـ [[ErrorEvent]]: [[e.message]] = [[Uncaught TypeError: ...]]، وفيه [[filename]] و [[lineno]]. و [[e.preventDefault()]] بيمنع Chrome يطبعه كـ error أحمر. **والـ worker مماتش:** الـ error جوه handler رسالة واحدة، والـ worker لسه بيستقبل.
+- [[worker.terminate()]]: بيقتل الـ thread فورًا. أي [[postMessage]] بعدها بتتجاهَل من غير error. وجوه الـ worker نفسه: [[self.close()]].
+- لو ملف الـ worker مش موجود (404): [[onerror]] بيجيلك [[Event]] عادي من غير [[message]].
+
+---
+
+## ٥. نفس الكلام في Node: [[worker_threads]]
+
+~~~js hash-worker.mjs
+// hash-worker.mjs: شغل تقيل بيتعمل في thread تاني
+import { parentPort } from 'node:worker_threads';
+parentPort.on('message', ({ id, bytes }) => {
+  if (bytes.length === 0) throw new Error('مفيش bytes في الطلب ' + id);
+  let sum = 0;
+  for (let round = 0; round < 200; round++) for (const b of bytes) sum = (sum * 31 + b) >>> 0;
+  parentPort.postMessage({ id, sum, size: bytes.byteLength });
+});
+~~~
+
+~~~js main.mjs
+// main.mjs: نبعت bytes للـ worker بالنقل (transfer) مش بالنسخ
+import { Worker } from 'node:worker_threads';
+const worker = new Worker(new URL('./hash-worker.mjs', import.meta.url));
+worker.on('message', (msg) => console.log('رد:', msg));
+worker.on('error', (err) => { console.log('error من الـ worker:', err.message); worker.terminate(); });
+worker.on('exit', (code) => console.log('الـ worker خلص، exit code', code));
+const bytes = new Uint8Array(1_000_000).fill(7);
+worker.postMessage({ id: 1, bytes }, [bytes.buffer]);
+console.log('بعد الإرسال:', bytes.byteLength, bytes.buffer.detached);
+const ticks = setInterval(() => console.log('الـ main thread لسه فاضي'), 50);
+setTimeout(() => { clearInterval(ticks); worker.postMessage({ id: 2, bytes: new Uint8Array(0) }); }, 120);
+~~~
+
+~~~text الناتج (Node 24.22)
+بعد الإرسال: 0 true
+الـ main thread لسه فاضي
+الـ main thread لسه فاضي
+رد: { id: 1, sum: 805363712, size: 1000000 }
+error من الـ worker: مفيش bytes في الطلب 2
+الـ worker خلص، exit code 1
+~~~
+
+| المتصفح | Node ([[node:worker_threads]]) |
+|---|---|
+| [[new Worker('w.js', { type: 'module' })]] | [[new Worker(new URL('./w.mjs', import.meta.url), { workerData })]]: المسار من الملف نفسه |
+| جوه: [[self.onmessage]] و [[self.postMessage]] | جوه: [[parentPort.on('message')]] و [[parentPort.postMessage]] من [[node:worker_threads]] |
+| [[worker.onmessage]] و [[e.data]] | [[worker.on('message', (msg) => ...)]]: الرسالة على طول |
+| [[worker.onerror]] والـ worker بيكمّل | [[worker.on('error')]] والـ worker **بيموت** (exit code 1) |
+| [[worker.terminate()]] | [[await worker.terminate()]]: بترجّع Promise بالـ exit code |
+| داتا أولية: رسالة أولى | [[workerData]] من غير رسالة |
+| مفيش ذاكرة مشتركة إلا [[SharedArrayBuffer]] بـ headers | [[SharedArrayBuffer]] متاح على طول |
+
+الفرق المهم: في Node الـ error المش ممسوك **بيقفل** الـ worker (exit code 1)، وفي المتصفح بيبلّغ ويكمّل. فـ Node لازم [[try/catch]] جوه الـ handler لو عايزه يعيش.
+
+---
+
+## الخلاصة
+
+- Worker = thread تاني من غير DOM، والكلام [[postMessage]] و [[onmessage]].
+- الرسالة بتتنسخ (structured clone): الدوال بترمي والـ classes بتبقى objects عادية.
+- [[postMessage(data, [buffer])]] بينقل من غير نسخ، والـ buffer عندك بيبقى detached.
+- [[onerror]] دايمًا، و [[terminate()]] لما تخلص، و module workers للكود الجديد.
+- Node: [[worker_threads]] بنفس الفكرة، والـ error بيقفل الـ worker.`,
+          lines: [
+            R`بنعمل worker من [[worker.js]] كـ module، واسمه [[invert]] عشان يبان في DevTools.`,
+            R`كل رد من الـ worker بيوصل هنا: الـ id وأول byte وعدد الـ bytes والوقت اللي خده هناك.`,
+            R`أي error مش ممسوك جوه الـ worker بيوصل هنا، و [[preventDefault]] بيمنع Chrome يطبعه كـ uncaught.`,
+            R`٨ مليون byte قيمتهم ١٠: الداتا اللي هنبعتها.`,
+            R`بنبعت الرسالة وبنقول إن [[bytes.buffer]] يتنقل مش يتنسخ (التاني argument).`,
+            R`بعد الإرسال الـ buffer عندنا اتفصل: [[byteLength]] صفر و [[detached]] [[true]].`,
+            R`timer كل ٤٠ ms بيطبع سطر، عشان نثبت إن الصفحة فاضية وهي مستنية الـ worker.`,
+            R`بعد ٦٠ ms بنبعت طلب غلط (نص بدل bytes) عشان نشوف الـ error بيوصل إزاي.`,
+            R`بعد ٤٠٠ ms بنوقف الـ timer ونقفل الـ worker بـ [[terminate]].`,
+          ],
+          ref: [
+            { t: "MDN: Using Web Workers", url: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers" },
+            { t: "MDN: Worker", url: "https://developer.mozilla.org/en-US/docs/Web/API/Worker" },
+            { t: "MDN: Worker.postMessage()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage" },
+            { t: "MDN: Transferable objects", url: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Transferable_objects" },
+            { t: "MDN: The structured clone algorithm", url: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm" },
+            { t: "Node.js: Worker threads", url: "https://nodejs.org/api/worker_threads.html" },
+          ],
+          pre: [{ to: "js/blocking و الـ main thread", why: R`ليه الحساب التقيل بيجمّد الصفحة أصلًا` }, { to: "js/deepClone و structuredClone", why: R`الـ structured clone اللي [[postMessage]] بيستخدمه` }, { to: "js/ArrayBuffer: resize و transfer و detached", why: R`إيه اللي بيحصل للـ buffer بعد ما يتنقل` }, { to: "js/import و export", why: R`الـ module workers` }],
+        },
+        {
+          cmd: "SharedArrayBuffer: growable و crossOriginIsolated",
+          title: "إزاي اتنين threads يشوفوا نفس الذاكرة بالظبط، وليه المتصفح مخبّي SharedArrayBuffer لحد ما تبعت headers معينة؟",
+          desc: R`[[postMessage]] بينسخ أو بينقل: في الحالتين الذاكرة في إيد واحد بس. [[SharedArrayBuffer]] buffer **مشترك**: لما تبعته لـ worker، الاتنين بيبصوا على نفس الـ bytes، واللي واحد يكتبه التاني يشوفه من غير رسايل.
+
+• [[new SharedArrayBuffer(n, { maxByteLength })]]، و [[sab.byteLength]] و [[sab.slice()]] (نسخة **مش** مشتركة)، و [[sab.growable]] و [[sab.maxByteLength]] و [[sab.grow(n)]] (بيكبر بس، مبيصغرش).
+• الـ typed arrays و [[DataView]] شغالين عليه زي الـ [[ArrayBuffer]] بالظبط.
+• **في المتصفح** مش موجود أصلًا ([[ReferenceError: SharedArrayBuffer is not defined]]) إلا لو الصفحة **cross-origin isolated**: السيرفر بيبعت [[Cross-Origin-Opener-Policy: same-origin]] و [[Cross-Origin-Embedder-Policy: require-corp]] (أو [[credentialless]])، و [[self.crossOriginIsolated]] بيبقى [[true]]. في Node موجود على طول.
+
+والكتابة من اتنين في نفس الوقت محتاجة [[Atomics]] (الدرس الجاي)، وإلا الأرقام بتضيع.`,
+          example: R`// shared.mjs: ذاكرة واحدة بيشوفها الـ main thread والـ worker في نفس الوقت
+import { Worker } from 'node:worker_threads';
+const sab = new SharedArrayBuffer(8, { maxByteLength: 64 });
+const shared = new Int32Array(sab);
+console.log(sab.byteLength, sab.growable, sab.maxByteLength, shared.length);
+const code = "const { workerData } = require('node:worker_threads'); const a = new Int32Array(workerData); a[0] = 42; Atomics.store(a, 1, 7);";
+const worker = new Worker(code, { eval: true, workerData: sab });
+worker.on('exit', () => {
+  console.log('الـ worker كتب:', shared[0], Atomics.load(shared, 1));
+  sab.grow(16);
+  const copy = sab.slice(0, 4);
+  console.log(sab.byteLength, shared.length, copy instanceof SharedArrayBuffer, new Int32Array(copy));
+  try { sab.grow(4); } catch (e) { console.log(e.name + ': ' + e.message); }
+});`,
+          try: R`اعمل الفولدر اللي في قسم ٤ في الشرح ([[server.mjs]] و [[index.html]])، وشغّل [[node server.mjs]]، وافتح [[http://127.0.0.1:8080/]] ثم [[http://127.0.0.1:8080/iso/]]. إيه الفرق في السطر اللي بيتطبع؟ وبعدين افتح DevTools ثم Network واتأكد من الـ headers في الحالتين.`,
+          sol: R`~~~text http://127.0.0.1:8080/ (Chrome 157)
+crossOriginIsolated: false | typeof SharedArrayBuffer: undefined
+ReferenceError: SharedArrayBuffer is not defined
+~~~
+
+~~~text http://127.0.0.1:8080/iso/ (Chrome 157)
+crossOriginIsolated: true | typeof SharedArrayBuffer: function
+الـ worker شاف 15 والصفحة شايفة 15 (نفس الذاكرة)
+~~~
+
+- نفس الـ HTML بالحرف. الفرق الوحيد الـ headers: [[/iso/]] رجع [[cross-origin-opener-policy: same-origin]] و [[cross-origin-embedder-policy: require-corp]] (شوفهم في Network ثم الطلب ثم Headers، أو [[curl -I http://127.0.0.1:8080/iso/]]).
+- من غيرهم Chrome **بيشيل** [[SharedArrayBuffer]] من الـ global خالص، فأول سطر بيستخدمه بيرمي [[ReferenceError]].
+- مع الـ headers: الصفحة كتبت ١٠، والـ worker زوّد ٥ بـ [[Atomics.add]]، والصفحة قرت ١٥ من نفس الذاكرة من غير ما الـ worker يبعت الرقم تاني (هو بعته في الرسالة بس عشان نطبعه جنب بعض).`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع (Node):** إيه اللي هيتطبع؟
+
+~~~js
+const s = new SharedArrayBuffer(4);
+const c = structuredClone(s);
+new Uint8Array(c)[0] = 9;
+console.log(c === s, new Uint8Array(s)[0], s instanceof ArrayBuffer);
+const part = s.slice(0, 2);
+new Uint8Array(part)[1] = 5;
+console.log(part instanceof SharedArrayBuffer, new Uint8Array(s)[1]);
+try { structuredClone(s, { transfer: [s] }); } catch (e) { console.log(e.name + ': ' + e.message); }
+~~~`, done: R`كتبت السطور التلاتة، وتقدر تقول ليه النسخة بالـ clone مشتركة والنسخة بالـ [[slice]] لأ.`, sol: R`~~~text الناتج (Node 24.22)
+false 9 false
+true 0
+DataCloneError: Found invalid value in transferList.
+~~~
+
+- [[structuredClone(sab)]] (ونفسه [[postMessage(sab)]]) بيعمل **object جديد** ([[c === s]] بـ [[false]]) بس على **نفس الذاكرة**: كتبنا في [[c]] والأصل شاف ٩. ده بالظبط اللي بيحصل لما تبعته لـ worker.
+- [[SharedArrayBuffer]] مش نوع من [[ArrayBuffer]] ([[instanceof]] بـ [[false]])، فكود بيفحص [[instanceof ArrayBuffer]] هيرفضه. لكن [[ArrayBuffer.isView(new Uint8Array(sab))]] بـ [[true]].
+- [[slice]] بيرجّع [[SharedArrayBuffer]] جديد بـ **نسخة** من الـ bytes، مش مشترك مع الأصل.
+- مينفعش تحطه في قايمة transfer: هو مشترك أصلًا، مفيش «صاحب» ينقله. ومعندوش [[transfer]] ولا [[resize]] ولا [[detached]].` },
+            { lvl: 'تطبيق', t: R`**صلّح:** بعد ما فعّلت COOP و COEP عشان [[SharedArrayBuffer]]، صورة المنتج اللي جاية من سيرفر الصور (origin تاني) اختفت، وفي الـ Console: [[net::ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoep]]. إيه السبب، وإيه الـ ٣ حلول؟ جرّب حل منهم.`, done: R`الصورة رجعت والصفحة لسه [[crossOriginIsolated: true]]، وتقدر تقول إمتى تختار كل حل.`, sol: R`~~~js server2.mjs
+// server2.mjs: COEP بـ credentialless بدل require-corp
+import { createServer } from 'node:http';
+import { readFile } from 'node:fs/promises';
+createServer(async (req, res) => {
+  res.writeHead(200, {
+    'content-type': 'text/html; charset=utf-8',
+    'cross-origin-opener-policy': 'same-origin',
+    'cross-origin-embedder-policy': 'credentialless',
+  });
+  res.end(await readFile(new URL('./index.html', import.meta.url)));
+}).listen(8081, '127.0.0.1', () => console.log('http://127.0.0.1:8081/'));
+~~~
+
+~~~text الناتج (Chrome 157، صورة من http://127.0.0.1:8765 = origin تاني)
+require-corp:   الصورة error، و crossOriginIsolated true
+credentialless: الصورة loaded (3 px)، و crossOriginIsolated true
+~~~
+
+**السبب:** [[require-corp]] معناها «الصفحة دي مش هتحمّل أي حاجة من origin تاني إلا لو هو وافق صراحةً». السيرفر التاني مبعتش موافقة، فـ Chrome منع الصورة. ده جزء من الحماية مش باج.
+
+| الحل | بيتعمل فين | إمتى |
+|---|---|---|
+| سيرفر الصور يبعت [[Cross-Origin-Resource-Policy: cross-origin]] | على السيرفر التاني | لو السيرفر بتاعك أو بتقدر تغيّر headers بتاعته (CDN بتاعك) |
+| [[<img crossorigin src="...">]] والسيرفر التاني بيدعم CORS | الاتنين | لو محتاج تقرا الصورة كمان (canvas و [[getImageData]]) |
+| [[Cross-Origin-Embedder-Policy: credentialless]] | على صفحتك بس | لو الموارد من برّه مش في إيدك: بيحمّلها **من غير cookies**، فمفيش داتا خاصة ممكن تتسرب |
+
+- اتجرّب: نفس الصفحة بـ [[credentialless]] حمّلت الصورة و [[crossOriginIsolated]] فضل [[true]] و [[SharedArrayBuffer]] اشتغل. ([[credentialless]] مش مدعوم في كل المتصفحات: بص على جدول التوافق في MDN قبل ما تعتمد عليه، والحلين الأولانيين شغالين في كل حتة.)
+- والـ iframes و الـ popups من origins تانية بتتأثر برضه ([[COOP: same-origin]] بيقطع العلاقة مع النوافذ اللي فتحتها، فـ login بـ popup زي Google ممكن يبوظ). عشان كده فعّلها في الصفحات اللي محتاجاها بس.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** إزاي تفعّل الـ headers دي في (أ) Vite dev server، (ب) Nginx، (ج) GitHub Pages؟ دوّر في الوثائق الرسمية لكل واحد.`, done: R`عندك الإعداد لـ Vite و Nginx، وعرفت إن GitHub Pages مبيسمحش بـ headers custom وإيه الحل.`, sol: R`~~~js vite.config.js
+// من وثائق Vite: server.headers
+export default {
+  server: {
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+    },
+  },
+  preview: {
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+    },
+  },
+};
+~~~
+
+~~~nginx nginx.conf
+# من وثائق Nginx: add_header جوه الـ location
+location / {
+    add_header Cross-Origin-Opener-Policy "same-origin" always;
+    add_header Cross-Origin-Embedder-Policy "require-corp" always;
+}
+~~~
+
+- **Vite:** [[server.headers]] للـ [[npm run dev]] و [[preview.headers]] للـ [[npm run preview]]. وده بيأثر على الـ dev بس؛ الـ production هيبقى السيرفر اللي بتنشر عليه.
+- **Nginx:** [[add_header]]، و [[always]] عشان يتبعت حتى مع ردود الأخطاء. خلي بالك: [[add_header]] جوه [[location]] بيلغي اللي في [[server]] (درس Nginx في تاب Nginx).
+- **GitHub Pages:** مبيسمحش بـ headers custom خالص (من وثائقه). الحل اللي الناس بتستخدمه: service worker بيزوّد الـ headers على الردود (زي مكتبة [[coi-serviceworker]])، أو تنشر على حاجة بتسمح (Netlify و Cloudflare Pages بملف [[_headers]]).
+- الإعدادات دي من الوثائق، مش متجرّبة هنا على Nginx ولا GitHub Pages. اللي اتجرّب السيرفر بـ [[node:http]] في الشرح.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ليه المتصفحات شالت [[SharedArrayBuffer]] سنة ٢٠١٨ وبعدين رجّعته بشرط الـ headers؟ اكتب ٣ سطور لزميل، فيهم كلمة «timer».`, done: R`كتبت ٣ سطور فيهم Spectre، وإن الذاكرة المشتركة بتعمل timer دقيق جدًا، وإن الـ isolation بيضمن إن مفيش داتا من origin تاني في نفس الـ process.`, sol: R`**إجابة نموذجية:**
+1. في يناير ٢٠١٨ اتكشفت ثغرة **Spectre** في الـ CPUs: كود JavaScript يقدر يقرا ذاكرة مش بتاعته في نفس الـ process (زي داتا موقع تاني مفتوح في iframe) بقياس **الوقت** اللي الـ CPU بياخده يوصل للذاكرة، والهجوم ده محتاج **timer دقيق جدًا**.
+2. [[SharedArrayBuffer]] بيعمل timer زي ده بسهولة: worker بيزوّد عداد في loop، والصفحة بتقرا العداد كساعة بدقة نانو ثواني. فكل المتصفحات قفلته فورًا (وقلّلت دقة [[performance.now()]] كمان).
+3. رجع بشرط **cross-origin isolation**: [[COOP: same-origin]] بيفصل الصفحة عن أي نافذة من origin تاني، و [[COEP]] بيمنع تحميل أي مورد من برّه من غير موافقته (أو من غير cookies في [[credentialless]]). فالـ process مفيهوش غير داتا صفحتك والموارد اللي وافقت، ومفيش حاجة سرية تتسرق حتى لو الـ timer دقيق. و [[self.crossOriginIsolated]] هو اللي بيقولك الشرط اتحقق.
+
+المرجع: MDN صفحة [[SharedArrayBuffer]] قسم «Security requirements»، و [[Window.crossOriginIsolated]].` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`الـ workers بالرسايل آمنة بس فيها تكلفة: كل رسالة نسخ أو نقل، وكل تحديث محتاج رسالة. فيه شغل محتاج اتنين يشتغلوا على **نفس** الداتا في نفس الوقت من غير رسايل: wasm بـ threads (برامج C++ و Rust زي ffmpeg و Photoshop على الويب)، و ring buffer لصوت live بين الـ audio thread والصفحة، و counters مشتركة لتقدم شغل متقسم على ٨ workers. ده [[SharedArrayBuffer]]. وتمنه: race conditions (حاجتين بيكتبوا في نفس اللحظة)، وده اللي [[Atomics]] بيحله.`,
+            how: R`[[new SharedArrayBuffer(n, { maxByteLength })]] بيحجز ذاكرة تقدر تتشاف من أكتر من thread (الـ spec بيسميهم «agents»). [[postMessage(sab)]] أو [[workerData: sab]] أو [[structuredClone(sab)]] بيعملوا object جديد في الطرف التاني بيشاور على نفس الذاكرة، والذاكرة بتفضل عايشة طول ما فيه object واحد عليها. [[sab.slice(a, b)]] بيعمل [[SharedArrayBuffer]] جديد بنسخة (عن طريق [[SharedArrayBuffer[Symbol.species] ]] زي الـ [[ArrayBuffer]]). [[grow(n)]] بيكبّر بس (عشان thread تاني ممكن يكون بيقرا آخر الذاكرة دلوقتي، فالتصغير خطر)، وأي طول أصغر أو أكبر من [[maxByteLength]]: [[RangeError: SharedArrayBuffer.prototype.grow: Invalid length parameter]]، و [[grow]] على واحد مش growable: [[TypeError: Method SharedArrayBuffer.prototype.grow called on incompatible receiver]]. والـ views اللي من غير طول بتكبر معاه في كل الـ threads. والكتابة العادية ([[ a[0] = 1 ]]) مش مضمون إمتى الـ thread التاني يشوفها ولا بأنهي ترتيب؛ [[Atomics]] هو اللي بيضمن ده.
+
+في المتصفح: الـ constructor مش موجود في الـ global إلا لو [[self.crossOriginIsolated]] بـ [[true]]، وده بيحصل لما الـ document يتبعت بـ [[Cross-Origin-Opener-Policy: same-origin]] و [[Cross-Origin-Embedder-Policy: require-corp]] أو [[credentialless]] (والـ workers بتورثه من الصفحة). حتى لو جبت [[SharedArrayBuffer]] من طريق تاني (ذاكرة wasm مشتركة)، [[postMessage]] بيرفضه: [[DataCloneError: Failed to execute 'postMessage' on 'Worker': SharedArrayBuffer transfer requires self.crossOriginIsolated.]] (اتجرّب في Chrome 157).`,
+            when: R`استخدمه لما الـ threads لازم يشتغلوا على نفس الداتا باستمرار: wasm threads (Emscripten بـ [[-pthread]])، و ring buffers للصوت والفيديو، و counters وأعلام «اتلغى» بين workers، وجداول كبيرة بيقراها كذا worker في نفس الوقت (read-only بعد ما تتملى). **متستخدموش** لو رسالة كل شوية كفاية: [[postMessage]] بالـ transfer أبسط ومفيهوش race conditions. وفي المتصفح فكّر في تكلفة الـ isolation: كل مورد من برّه محتاج CORP أو CORS، والـ popups (login بـ OAuth) والـ iframes من برّه ممكن يبوظوا.`,
+            mistakes: R`- تستخدمه في صفحة من غير COOP و COEP: [[ReferenceError: SharedArrayBuffer is not defined]]. افحص [[self.crossOriginIsolated]] قبلها واعمل fallback.
+- تفعّل [[require-corp]] والصور والسكربتات من CDN تختفي: [[net::ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoep]]. CORP على المورد، أو [[crossorigin]]، أو [[credentialless]].
+- تحطه في قايمة الـ transfer: [[DataCloneError: Found invalid value in transferList.]]
+- تفتكر [[slice]] بيرجّع حتة مشتركة: نسخة. للمشاركة: view بـ offset على نفس الـ [[SharedArrayBuffer]].
+- [[sab instanceof ArrayBuffer]] في كود بيقبل buffers: [[false]]. افحص الاتنين.
+- تكتب وتقرا من اتنين بـ [[ a[0]++ ]] العادي: أرقام بتضيع (الدرس الجاي فيه الرقم الحقيقي: ٤ مليون بقوا مليون).
+- [[grow]] بطول أصغر: بيرمي، مفيش تصغير.`,
+          },
+          teach: R`## الفكرة في سطر
+
+[[SharedArrayBuffer]] ذاكرة واحدة بيشوفها كذا thread، وفي المتصفح لازم الصفحة تبقى cross-origin isolated بالـ headers. الناتج من Node 24.22، والمتصفح Chrome 157 على سيرفر [[node:http]] محلي.
+
+---
+
+## ١. [[SharedArrayBuffer]] بين الـ main thread و worker
+
+~~~js
+const sab = new SharedArrayBuffer(8, { maxByteLength: 64 });
+const shared = new Int32Array(sab);
+console.log(sab.byteLength, sab.growable, sab.maxByteLength, shared.length);
+const code = "const { workerData } = require('node:worker_threads'); const a = new Int32Array(workerData); a[0] = 42; Atomics.store(a, 1, 7);";
+const worker = new Worker(code, { eval: true, workerData: sab });
+~~~
+
+~~~text الناتج
+8 true 64 2
+~~~
+
+- [[{ eval: true }]] في Node: أول argument كود مش اسم ملف (للأمثلة الصغيرة بس). والكود ده CommonJS، عشان كده [[require]].
+- [[workerData: sab]]: الـ worker بياخد [[SharedArrayBuffer]] على **نفس** الذاكرة. ومع [[ArrayBuffer]] عادي كان هياخد نسخة.
+- الـ worker كتب ٤٢ في أول خانة بالطريقة العادية، و ٧ في التانية بـ [[Atomics.store]].
+
+~~~text الناتج بعد ما الـ worker يخلص
+الـ worker كتب: 42 7
+~~~
+
+الـ main thread قرا اللي الـ worker كتبه **من غير ولا رسالة**.
+
+---
+
+## ٢. [[SharedArrayBuffer.prototype.byteLength]] و [[SharedArrayBuffer.prototype.growable]] و [[SharedArrayBuffer.prototype.maxByteLength]] و [[SharedArrayBuffer.prototype.grow]]
+
+~~~js
+sab.grow(16);
+console.log(sab.byteLength, shared.length);
+try { sab.grow(4); } catch (e) { console.log(e.name + ': ' + e.message); }
+~~~
+
+~~~text الناتج
+16 4
+RangeError: SharedArrayBuffer.prototype.grow: Invalid length parameter
+~~~
+
+| الـ member | بيعمل إيه |
+|---|---|
+| [[new SharedArrayBuffer(n, { maxByteLength })]] | يحجز [[n]] byte مشتركين، والـ option بيخليه growable لحد [[maxByteLength]] |
+| [[byteLength]] | الحجم دلوقتي (ممكن يكبر من thread تاني وانت مش واخد بالك) |
+| [[growable]] | [[true]] لو اتعمل بـ [[maxByteLength]] |
+| [[maxByteLength]] | الحد الأقصى، وبيساوي [[byteLength]] لو مش growable |
+| [[grow(n)]] | يكبّر بس: أصغر أو أكبر من الحد [[RangeError]]، وعلى واحد مش growable [[TypeError]] |
+| [[slice(a, b)]] | [[SharedArrayBuffer]] **جديد بنسخة** من الـ bytes، مش مشترك مع الأصل |
+| [[ SharedArrayBuffer[Symbol.species] ]] | الـ class اللي [[slice]] بيعمل منها، زي [[ArrayBuffer]] بالظبط |
+
+ليه [[grow]] مش [[resize]]؟ لأن thread تاني ممكن يكون بيقرا آخر الذاكرة في نفس اللحظة، فالتصغير ممكن يشيل الأرض من تحته. والـ view [[shared]] من غير طول كبر لـ ٤ عناصر لوحده.
+
+---
+
+## ٣. [[SharedArrayBuffer.prototype.slice]] ومقارنة بالـ [[ArrayBuffer]]
+
+~~~js
+const copy = sab.slice(0, 4);
+console.log(copy instanceof SharedArrayBuffer, new Int32Array(copy));
+~~~
+
+~~~text الناتج
+true Int32Array(1) [ 42 ]
+~~~
+
+| | [[ArrayBuffer]] | [[SharedArrayBuffer]] |
+|---|---|---|
+| [[postMessage]] من غير transfer | نسخة | نفس الذاكرة |
+| في قايمة transfer | بيتنقل والأصل detached | [[DataCloneError: Found invalid value in transferList.]] |
+| تغيير الحجم | [[resize]] كبير وصغير | [[grow]] كبير بس |
+| [[transfer]] و [[detached]] | موجودين | مش موجودين |
+| [[instanceof ArrayBuffer]] | [[true]] | [[false]] |
+| في المتصفح | دايمًا | بس لو [[crossOriginIsolated]] |
+
+---
+
+## ٤. في المتصفح: COOP و COEP و [[crossOriginIsolated]]
+
+~~~js server.mjs
+// server.mjs: نفس الصفحة مرتين: / من غير headers، و /iso/ بـ COOP و COEP
+import { createServer } from 'node:http';
+import { readFile } from 'node:fs/promises';
+createServer(async (req, res) => {
+  const headers = { 'content-type': 'text/html; charset=utf-8' };
+  if (req.url.startsWith('/iso/')) {
+    headers['cross-origin-opener-policy'] = 'same-origin';
+    headers['cross-origin-embedder-policy'] = 'require-corp';
   }
-  return null;    // 404
-}
+  res.writeHead(200, headers);
+  res.end(await readFile(new URL('./index.html', import.meta.url)));
+}).listen(8080, '127.0.0.1', () => console.log('http://127.0.0.1:8080/  و  http://127.0.0.1:8080/iso/'));
 ~~~
-
-~~~js match-route.test.mjs
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { compileRoutes, matchRoute } from "./match-route.mjs";
-
-const routes = compileRoutes([
-  { path: "/", name: "home" },
-  { path: "/users/:id", name: "user" },
-  { path: "/users/:id/posts", name: "posts" },
-]);
-
-test("/users/42 بيطابق user و id = 42", () => {
-  const m = matchRoute("/users/42", routes);
-  assert.equal(m.route.name, "user");
-  assert.equal(m.params.id, "42");
-});
-
-test("/users/42/posts بيطابق التاني", () => {
-  assert.equal(matchRoute("/users/42/posts", routes).route.name, "posts");
-});
-
-test("/users لوحدها و /users/42/x = null (404)", () => {
-  assert.equal(matchRoute("/users", routes), null);
-  assert.equal(matchRoute("/users/42/x", routes), null);
-});
-
-test("الرئيسية بالظبط بس", () => {
-  assert.equal(matchRoute("/", routes).route.name, "home");
-  assert.equal(matchRoute("/about", routes), null);
-});
-
-test("حروف مش إنجليزي في الـ param", () => {
-  assert.equal(matchRoute("/users/%D8%B3%D8%A7%D8%B1%D8%A9", routes).params.id, "%D8%B3%D8%A7%D8%B1%D8%A9");
-});
-~~~
-
-~~~text الناتج (node --test، Node 24)
-✔ /users/42 بيطابق user و id = 42 (0.8201ms)
-✔ /users/42/posts بيطابق التاني (0.7359ms)
-✔ /users لوحدها و /users/42/x = null (404) (0.1662ms)
-✔ الرئيسية بالظبط بس (0.1621ms)
-✔ حروف مش إنجليزي في الـ param (0.1525ms)
-ℹ tests 5
-ℹ pass 5
-ℹ fail 0
-~~~
-
-**موصّلة بالراوتر** (٣ ملفات في فولدر واحد مع [[match-route.mjs]]):
 
 ~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>يوزرز</title>
-<script type="module" src="/app.mjs"></script>
-</head>
+<head><meta charset="utf-8"><title>SharedArrayBuffer</title></head>
 <body>
-<nav>
-  <a href="/" data-link>الرئيسية</a> |
-  <a href="/users/42" data-link>يوزر 42</a> |
-  <a href="/users/42/posts" data-link>بوستات 42</a> |
-  <a href="/users/42/x" data-link>لينك بايظ</a>
-</nav>
-<main id="content"></main>
-</body>
-</html>
-~~~
-
-~~~js app.mjs
-import { compileRoutes, matchRoute } from "./match-route.mjs";
-
-const routes = compileRoutes([
-  { path: "/", view: () => "الرئيسية" },
-  { path: "/users/:id", view: (p) => $__btبروفايل اليوزر $__{p.id}$__bt },
-  { path: "/users/:id/posts", view: (p) => $__btبوستات اليوزر $__{p.id}$__bt },
-]);
-
-const content = document.querySelector("#content");
-function render(path) {
-  const m = matchRoute(path, routes);
-  content.textContent = m ? m.route.view(m.params) : "404: الصفحة مش موجودة";
-  document.title = content.textContent;
-}
-
-document.addEventListener("click", (e) => {
-  const a = e.target.closest("a[data-link]");
-  if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-  if (a.origin !== location.origin || (a.target && a.target !== "_self") || a.hasAttribute("download")) return;
-  e.preventDefault();
-  if (a.pathname === location.pathname) return;
-  history.pushState({}, "", a.pathname);
-  render(a.pathname);
-});
-window.addEventListener("popstate", () => render(location.pathname));
-render(location.pathname);
-~~~
-
-~~~js spa-server.mjs
-// زي npx serve -s: أي مسار مش ملف بيرجّع index.html
-import { createServer } from "node:http";
-import { readFile } from "node:fs/promises";
-import { extname, join } from "node:path";
-
-const types = { ".html": "text/html; charset=utf-8", ".mjs": "text/javascript", ".js": "text/javascript" };
-createServer(async (req, res) => {
-  const path = new URL(req.url, "http://x").pathname;
-  const file = extname(path) ? join(".", path) : "index.html";
-  try {
-    const body = await readFile(file);
-    res.writeHead(200, { "content-type": types[extname(file)] ?? "application/octet-stream" }).end(body);
-  } catch {
-    res.writeHead(404).end("not found");
-  }
-}).listen(Number(process.env.PORT) || 8831, () => console.log("على http://localhost:" + (Number(process.env.PORT) || 8831)));
-~~~
-
-[[spa-server.mjs]] بيعمل اللي [[npx serve -s]] بيعمله (أي مسار من غير امتداد بيرجّع [[index.html]])، عشان متسطّبش حاجة. شغّله بـ [[node spa-server.mjs]].
-
-~~~text الناتج (Chrome 158 headless، http://localhost:8831)
-فتح /                      /                الرئيسية
-ضغط يوزر 42                /users/42        بروفايل اليوزر 42
-ضغط بوستات 42              /users/42/posts  بوستات اليوزر 42
-ضغط لينك بايظ              /users/42/x      404: الصفحة مش موجودة
-back                       /users/42/posts  بوستات اليوزر 42
-back                       /users/42        بروفايل اليوزر 42
-forward                    /users/42/posts  بوستات اليوزر 42
-refresh                    /users/42/posts  بوستات اليوزر 42
-فتح /users مباشرة          /users           404: الصفحة مش موجودة
-pageerrors: 0
-~~~
-
-**ليه كده:**
-
-- **[[new URLPattern({ pathname: "/users/:id" })]]:** [[:id]] جزء اسمه [[id]] بيطابق أي حاجة لحد الـ [[/]] اللي بعدها. والمطابقة **كاملة**: [[/users/42/x]] مش بيطابق [[/users/:id]] لأن فيه حاجة زيادة، و [[/users]] مش بيطابق لأن الجزء ناقص.
-- **[[compileRoutes]] مرة واحدة:** بنعمل الـ patterns أول ما الصفحة تفتح مش مع كل تنقل.
-- **[[m.pathname.groups]]:** فيها الأجزاء بأساميها ([[{ id: "42" }]]). القيم نصوص دايمًا، وزي ما هي في الـ URL (التست الأخير: الاسم العربي فاضل encoded، فك بـ [[decodeURIComponent]] لو محتاج).
-- **[[null]] = 404:** الراوتر بيعرض «مش موجودة» بدل ما يقع.
-- **[[src="/app.mjs"]] بـ [[/]] في الأول:** جرّبناها من غير الـ [[/]] و refresh على [[/users/42/posts]] جاب صفحة فاضية و [[Failed to load resource: the server responded with a status of 404]] مرتين. المتصفح حسب [[app.mjs]] بالنسبة للمسار الحالي، فطلب [[/users/42/app.mjs]]. في أي SPA بـ pushState، كل الملفات بمسار من الـ root.
-
-**الغلطة الشائعة:** تكتب الـ regex بإيدك [[/^\/users\/(.+)$/]]. الـ [[.+]] بيبلع الـ [[/]] كمان، فـ [[/users/42/posts]] هيطابق الأول و [[id]] يبقى [["42/posts"]]. [[[^/]+]] هو الصح، و [[URLPattern]] بيعمل ده لوحده.` },
-          ],
-          ref: [
-            { t: "MDN: History API", url: "https://developer.mozilla.org/en-US/docs/Web/API/History_API" },
-            { t: "MDN: History.pushState()", url: "https://developer.mozilla.org/en-US/docs/Web/API/History/pushState" },
-            { t: "MDN: popstate event", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event" },
-            { t: "MDN: URL Pattern API", url: "https://developer.mozilla.org/en-US/docs/Web/API/URL_Pattern_API" },
-          ],
-          flag: "script",
-          deep: {
-            why: "تحميل الصفحة كلها مع كل ضغطة بيضيّع الـ state (فيديو شغال، فورم نص مكتوب) وبيحمّل الـ JS والـ CSS تاني. الـ SPA بيغيّر الجزء اللي اتغير بس. بس اليوزر لسه متوقع إن back يشتغل، وإن اللينك يتنسخ ويتبعت، وإن refresh يرجّعه لنفس المكان، و pushState هو اللي بيحافظ على ده.",
-            how: R`[[pushState]] بيغيّر [[location]] ويضيف entry في الـ history stack ومبيطلقش أي event. [[popstate]] بيتنادى لما الـ entry الحالي يتغير بـ back/forward (أو [[history.back()]])، مش لما تعمل pushState بنفسك. عشان كده بتنادي [[render]] بإيدك بعد pushState.
-
-الـ [[state]] (أول argument) object بيتحفظ مع الـ entry وبيرجعلك في [[e.state]] وقت popstate، مفيد لحاجات زي مكان الـ scroll. لازم يبقى قابل للنسخ (structured clone): مفيش دوال ولا عناصر DOM.
-
-شرط اللينك: [[e.button !== 0]] (مش الزرار الشمال) وأزرار Ctrl/Cmd/Shift معناها «افتح في تاب جديد»، فسيبها للمتصفح. و [[data-link]] عشان اللينكات الخارجية أو التحميلات تفضل عادية.
-
-السيرفر: لما اليوزر يعمل refresh على [[/about]]، المتصفح بيطلب [[/about]] من السيرفر فعلًا. لو السيرفر مش عارفه هيرد 404. لازم أي path مش ملف يرجّع [[index.html]] (درس «SPA» في تاب Nginx: [[try_files $uri /index.html]]).
-
-وفيه Navigation API الأحدث ([[navigation.addEventListener("navigate", ...)]]) بيعترض كل التنقلات في مكان واحد بدل click و popstate. دعمه اتسع في 2025/2026، بس اتأكد من caniuse قبل ما تعتمد عليه من غير fallback.`,
-            when: R`لما تبني SPA صغير من غير framework، أو تحط الفلاتر والتابات في الـ URL ([[replaceState]]). وفي React/Next استخدم الراوتر بتاعهم، بس افهم إن ده اللي تحته.`,
-            mistakes: R`تستنى popstate بعد pushState. ومتعملش render في الأول ([[render(location.pathname)]]) فالـ refresh يعرض صفحة فاضية. والسيرفر مش راجع index.html. وتعترض Ctrl+Click. وتنسى [[document.title]] والـ focus (قارئات الشاشة مش هتعرف إن الصفحة اتغيرت: حرّك الـ focus للعنوان الجديد). و pushState لكل حرف في البحث فالـ back يبقى ١٠٠ خطوة (استخدم replaceState).`
-          },
-          teach: R`## الفكرة في سطر
-
-راوتر SPA كامل في 17 سطر: لما اليوزر يدوس لينك، بنمنع التحميل، ونغيّر الـ URL بإيدنا، ونرسم المحتوى المناسب. ولما يدوس back أو forward، نرسم حسب الـ URL الجديد.
-
-جرّبته في Chrome headless (عن طريق playwright-core) على [[index.html]] فيه ٤ لينكات عليها [[data-link]] ([[/]] و [[/about]] و [[/contact]] و [[/nope]]) و [[<main id="content">]]. بدل [[npx serve -s]] استخدمت سيرفر Node صغير على localhost بنفس السلوك: مرة بيرجّع [[index.html]] لأي path (زي [[-s]])، ومرة بيرجّعه لـ [[/]] بس و 404 لأي حاجة تانية (زي [[serve]] من غير [[-s]]).
-
----
-
-## ١. الصفحات والرسم
-
-~~~text app.js
-const content = document.querySelector("#content");
-const pages = { "/": "الرئيسية", "/about": "عننا", "/contact": "كلمنا" };
-function render(path) {
-  content.textContent = pages[path] ?? "404: الصفحة مش موجودة";
-  document.title = pages[path] ?? "مش موجود";
-}
-~~~
-
-- [[pages]]: object كل key فيه path وكل value المحتوى بتاعه. في مشروع حقيقي الـ value بتبقى دالة بترسم component.
-- [[pages[path]]]: الأقواس المربعة بتجيب الخاصية اللي اسمها في متغير. [[pages["/about"]]] = [["عننا"]]، و [[pages["/nope"]]] = [[undefined]].
-- [[?? "404: ..."]]: لو [[undefined]] خد النص ده.
-- [[document.title]]: العنوان اللي في التاب. لازم نغيّره بإيدنا، المتصفح مش هيعمل كده لوحده.
-
----
-
-## ٢. اعتراض الضغط على اللينكات
-
-~~~text app.js
-document.addEventListener("click", (e) => {
-  const a = e.target.closest("a[data-link]");
-  if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
-  e.preventDefault();
-  const path = new URL(a.href).pathname;
-  if (path === location.pathname) return;
-  history.pushState({ path }, "", path);
-  render(path);
-});
-~~~
-
-### listener واحد على الـ document
-
-بدل listener على كل لينك، واحد على [[document]] بيمسك أي ضغطة في الصفحة (event delegation، درس في نفس التاب). كده لو ضفت لينكات بعدين هتشتغل لوحدها.
-
-### [[e.target.closest("a[data-link]")]]
-
-- [[e.target]]: العنصر اللي اتضغط عليه بالظبط (ممكن [[<span>]] أو أيقونة جوه اللينك).
-- [[closest(selector)]]: اطلع من العنصر ده لفوق (هو نفسه، وأبوه، وجدّه...) ورجّع أول واحد بيطابق الـ selector، أو [[null]].
-- [[a[data-link]]]: لينك [[<a>]] عليه attribute اسمه [[data-link]]. اللينكات من غيره (موقع خارجي، ملف للتحميل) بتفضل عادية.
-
-### الشرط الطويل
-
-[[return]] (سيب المتصفح يتصرف عادي) لو أي واحدة من دول صح، و [[||]] يعني «أو»:
-
-| الشرط | معناه |
-|---|---|
-| [[!a]] | مش لينك من بتوعنا |
-| [[e.button !== 0]] | مش الزرار الشمال (0 الشمال، 1 العجلة، 2 اليمين) |
-| [[e.metaKey]] | Cmd على الماك ماسك (تاب جديد) |
-| [[e.ctrlKey]] | Ctrl ماسك (تاب جديد) |
-| [[e.shiftKey]] | Shift ماسك (شباك جديد) |
-
-### الباقي
-
-1. [[e.preventDefault()]]: امنع المتصفح يحمّل الصفحة من السيرفر.
-2. [[new URL(a.href).pathname]]: [[a.href]] بيرجّع الـ URL **كامل** ([[http://localhost:PORT/about]]) حتى لو مكتوب في الـ HTML [[/about]]. [[new URL]] بيفكّه، و [[.pathname]] الجزء بتاع المسار بس: [["/about"]].
-3. [[path === location.pathname]]: [[location.pathname]] المسار الحالي. لو نفس الصفحة اخرج، عشان منضيفش خطوة في الـ history على الفاضي.
-4. [[history.pushState({ path }, "", path)]]: غيّر الـ URL وضيف خطوة في الـ history (تحت تفصيل الـ arguments).
-5. [[render(path)]]: [[pushState]] بيغيّر الـ URL **بس**، ومش بيطلق أي event ولا بيرسم حاجة، فبنرسم بإيدنا.
-
-| الـ argument | معناه |
-|---|---|
-| [[{ path }]] | الـ state: object بيتحفظ مع الخطوة دي ويرجعلك وقت back. وهو اختصار [[{ path: path }]] |
-| [[""]] | مكان قديم لعنوان، المتصفحات بتتجاهله |
-| [[path]] | الـ URL الجديد اللي هيظهر في الشريط |
-
----
-
-## ٣. back و forward: [[popstate]]
-
-~~~text app.js
-window.addEventListener("popstate", () => render(location.pathname));
-render(location.pathname);
-~~~
-
-- [[popstate]]: بيتنادى لما اليوزر يتنقّل في الـ history بـ back أو forward. وقتها [[location.pathname]] بقى الـ path الجديد، فبنرسمه. (والـ state اللي حفظناه في [[e.state]].)
-- آخر سطر: ارسم أول مرة حسب الـ URL اللي الصفحة فتحت عليه. من غيره، refresh على [[/about]] يعرض [[<main>]] فاضي.
-
----
-
-## ٤. اللي حصل لما شغّلته (السيرفر بيرجّع index.html لأي path)
-
-ضفت [[console.log]] في popstate يطبع الـ path والـ state:
-
-~~~text الناتج
-load /             → url=/        content=الرئيسية  history.length=2
-click about        → url=/about   content=عننا      history.length=3
-click about again  → url=/about   content=عننا      history.length=3
-click contact      → url=/contact content=كلمنا     history.length=4
-click nope         → url=/nope    content=404: الصفحة مش موجودة  history.length=5
-popstate /contact {"path":"/contact"}
-back               → url=/contact content=كلمنا
-popstate /about {"path":"/about"}
-back               → url=/about   content=عننا
-popstate /contact {"path":"/contact"}
-forward            → url=/contact content=كلمنا
-~~~
-
-- [[history.length]] (عدد الخطوات في الـ history) بدأ 2 لأن التاب كان فاتح [[about:blank]] الأول، وزاد واحد مع كل [[pushState]].
-- الضغط على about وانت في about: [[history.length]] فضل 3، بسبب سطر [[path === location.pathname]].
-- [[/nope]] مش في [[pages]] فاتعرض نص الـ 404 والعنوان [[مش موجود]].
-- back و forward بيطلقوا [[popstate]]، والـ state رجع زي ما حفظناه.
-- السيرفر مجالوش ولا طلب صفحة طول التنقل ده (غير [[favicon.ico]] اللي المتصفح بيطلبه لأيقونة التاب).
-
-### refresh على [[/about]] و Ctrl+Click
-
-| | السيرفر بيرجّع index.html لأي path | السيرفر بيرجّع 404 |
-|---|---|---|
-| refresh على [[/about]] | status 200، والمحتوى «عننا» | status 404، ولا [[#content]] ولا JS |
-| Ctrl+Click على about | تاب جديد اتفتح وطلب [[/about]] من السيرفر، والتاب الأصلي فضل مكانه | نفس الكلام، بس التاب الجديد 404 |
-
-ليه؟ في الـ refresh المتصفح بيطلب [[/about]] من السيرفر **فعلًا**. لو السيرفر مش عارف إن ده مسار في الـ SPA بيرد 404، والـ JS بتاعك مبيوصلش أصلًا. الحل في السيرفر (fallback لـ index.html)، مش في الـ JS. و Ctrl+Click اتساب للمتصفح بسبب [[e.ctrlKey]]، فاتفتح تاب جديد عادي.
-
----
-
-## الخلاصة
-
-| الحاجة | بتعمل إيه | بتطلق event؟ |
-|---|---|---|
-| [[history.pushState(state, "", url)]] | تغيّر الـ URL وتضيف خطوة | لأ، ارسم بإيدك |
-| [[history.replaceState(state, "", url)]] | تغيّر الـ URL من غير خطوة جديدة | لأ |
-| back / forward | اليوزر اتنقل | [[popstate]] |
-| [[location.pathname]] | المسار الحالي | |
-
-- اعترض بس الضغطة الشمال من غير Ctrl/Cmd/Shift، على لينكات [[data-link]].
-- ارسم مرة في الأول بـ [[render(location.pathname)]].
-- السيرفر لازم يرجّع [[index.html]] لأي path من بتاع الـ SPA.`,
-          lines: [
-            R`العنصر اللي هنحط فيه محتوى كل «صفحة». الصفحة نفسها مش هتتحمّل تاني، احنا اللي هنغيّر اللي جوه العنصر ده.`,
-            R`object بيربط كل path بمحتواه. في تطبيق حقيقي القيمة هتبقى دالة بترسم الصفحة، بس الفكرة واحدة: الـ URL مفتاح بنختار بيه نرسم إيه.`,
-            R`دالة بترسم الصفحة المناسبة للـ path. هي المكان الوحيد اللي بيرسم، فكل الطرق (ضغطة لينك، back، أول تحميل) بتعدّي عليها.`,
-            R`بنحط المحتوى بـ [[textContent]]، ولو الـ path مش موجود في [[pages]] الـ [[??]] بتحط رسالة 404 بدل [[undefined]].`,
-            R`ونغيّر عنوان التاب كمان، لأن مفيش تحميل صفحة جديد هيغيّره لوحده، وده اللي بيظهر في الـ history والـ bookmarks.`,
-            R`نهاية [[render]].`,
-            R`listener واحد على الـ [[document]] كله بدل listener على كل لينك (event delegation): الضغطة بتطلع لفوق (bubbling) لحد الـ document، فحتى اللينكات اللي هتتضاف بعدين هتشتغل من غير ما تسجّلها.`,
-            R`[[closest]] بيدوّر من العنصر اللي اتضغط ولفوق على أقرب [[<a>]] عليه [[data-link]]. محتاجينها لأن الضغطة ممكن تكون على أيقونة أو [[<span>]] جوه اللينك، و [[data-link]] بتفرّق اللينكات الداخلية عن اللي رايحة لموقع تاني.`,
-            R`نسيب المتصفح يتصرف عادي لو مش لينك داخلي، أو مش الزرار الشمال ([[e.button !== 0]])، أو اليوزر داس Ctrl أو Cmd أو Shift: دول معناهم «افتح في تاب أو نافذة جديدة»، ولو منعناهم هنكسر حاجة اليوزر متعوّد عليها.`,
-            R`نمنع المتصفح يروح للينك ويحمّل الصفحة من السيرفر، احنا اللي هنرسم.`,
-            R`[[a.href]] كـ property بيرجّع الـ URL كامل حتى لو الـ HTML فيه [[/about]] بس، فبنعدّيه على [[new URL]] وناخد [[pathname]] لوحده.`,
-            R`لو اليوزر داس على لينك الصفحة اللي هو فيها، منضيفش خطوة جديدة في الـ history، وإلا زرار back هيحتاج كذا ضغطة عشان يرجع.`,
-            R`[[pushState]] بيغيّر الـ URL في شريط العنوان ويضيف خطوة في الـ history من غير ما يحمّل حاجة. الأول (state) بيتحفظ مع الخطوة دي، والتاني مش مستخدم فبيتساب [[""]]، والتالت هو الـ URL الجديد.`,
-            R`[[pushState]] مش بيرسم ولا بيطلق أي حدث، فلازم ننادي [[render]] بنفسنا. لو نسيت السطر ده، الـ URL هيتغير والصفحة زي ما هي.`,
-            R`نهاية الـ click listener.`,
-            R`[[popstate]] بيحصل لما اليوزر يدوس back أو forward، والمتصفح بيكون غيّر الـ URL خلاص، فبنرسم حسب [[location.pathname]] الجديد. ومش بيحصل مع [[pushState]] نفسها.`,
-            R`أول ما الصفحة تفتح بنرسم الـ path الحالي، عشان لو اليوزر فتح [[/about]] مباشرة أو عمل refresh يشوف الصفحة الصح. وده محتاج السيرفر يرجّع نفس الـ [[index.html]] لأي path، وإلا الـ refresh هيدّي 404 من السيرفر.`,
-          ],
-          sol: R`مع [[serve -s]]: التنقل من غير تحميل (Network مفيهاش طلبات HTML جديدة)، و back/forward بيغيّروا المحتوى والعنوان، و refresh على [[/about]] بيرجّع «عننا» لأن السيرفر رجّع index.html والسطر الأخير رسم الـ path.
-
-من غير [[-s]]: refresh على [[/about]] بيطلع 404 من السيرفر نفسه، والـ JS بتاعك مشتغلش أصلًا. ده أشهر bug بعد نشر SPA، والحل في السيرفر مش في الـ JS.
-
-Ctrl+Click بيفتح تاب جديد عادي لأن الشرط سابه للمتصفح، والتاب الجديد بيطلب [[/about]] من السيرفر (فمحتاج [[-s]] برضه).`
-        },
-        {
-          cmd: "MutationObserver",
-          title: "تعرف إن الـ DOM اتغيّر (عنصر اتضاف أو اتشال، أو attribute اتغيّر) إزاي؟",
-          desc: R`[[MutationObserver]] بيناديك لما حاجة تتغيّر في الـ DOM: عنصر اتضاف أو اتشال ([[childList]])، أو attribute اتغيّر ([[attributes]])، أو نص اتعدّل ([[characterData]]). بتديله callback، وبعدين [[observe(el, options)]] بتقوله يراقب إيه بالظبط.
-
-التغييرات مش بتوصلك واحدة واحدة وقت ما تحصل: المتصفح بيجمّعها في array ويناديك مرة واحدة كـ **microtask** بعد ما الكود اللي شغّال يخلص. ده نفس عيلة [[IntersectionObserver]] و [[ResizeObserver]] (الدرسين الأولانيين في الوحدة دي)، بس بيراقب **شكل الشجرة** مش الشاشة ولا المقاس.
-
-بتستخدمه لما مش انت اللي بتغيّر الـ DOM: widget من بره بيحط عناصر، أو مكتبة قديمة، أو extension، أو محتوى بييجي من السيرفر وعايز تعمله حاجة أول ما يظهر. لو انت اللي بتضيف العنصر بإيدك، اعمل اللي عايزه في نفس السطر من غير observer.`,
-          example: R`const chat = document.querySelector("#chat");
-const mo = new MutationObserver((records) => {
-  console.log("records:", records.length);
-  for (const r of records) {
-    if (r.type === "childList") console.log("childList +" + r.addedNodes.length, "-" + r.removedNodes.length);
-    else console.log(r.attributeName, r.oldValue, "→", r.target.getAttribute(r.attributeName));
-  }
-});
-mo.observe(chat, { childList: true, subtree: true, attributeFilter: ["data-state"], attributeOldValue: true });
-const msg = document.createElement("li");
-msg.textContent = "أهلًا";
-chat.append(msg);
-chat.dataset.state = "busy";
-chat.dataset.state = "idle";
-chat.title = "مش متراقب";
-msg.remove();
-console.log("الكود خلص");
-// استخدام حقيقي: الشات ينزل لآخر رسالة لوحده
-new MutationObserver(() => { chat.scrollTop = chat.scrollHeight; }).observe(chat, { childList: true });`,
-          try: R`اعمل صفحة فيها [[<ul id="chat">]] و [[<script>]] بالمثال، وافتح الـ Console. اتوقع الأول: «الكود خلص» هتتطبع قبل ولا بعد [[records: 4]]؟ وبعدين ضيف [[mo.disconnect()]] كآخر سطر في الـ script وشوف الـ callback لسه بيتنادى ولا لأ، وصلّحها بـ [[mo.takeRecords()]] قبل الـ disconnect.`,
-          practice: [
-            { lvl: 'سريع', t: R`اقرا وتوقّع: [[observe(el, { attributes: true })]] وبعدين [[el.className = "a"; el.className = "b"; el.className = "b";]] في نفس الكود. الـ callback هيتنادى كام مرة؟ وكام record؟ وإيه [[oldValue]] في كل واحد لو ضفت [[attributeOldValue: true]]؟ اكتب توقعك وبعدين شغّله.`, done: R`الـ callback اتنادى **مرة واحدة** بـ ٣ records (حتى التالت اللي مغيّرش القيمة اتسجّل)، و [[oldValue]] بالترتيب [[null]] و [["a"]] و [["b"]]، وتقدر تشرح ليه مرة واحدة: الـ records بتتجمّع وتتبعت كـ microtask بعد ما الكود يخلص.`, sol: R`**التوقع:** الـ callback **مرة واحدة** بعد ما الكود يخلص، فيها ٣ records (حتى التالت اللي كتب نفس القيمة)، و [[oldValue]] بالترتيب [[null]] ثم [["a"]] ثم [["b"]].
-
-~~~live 220 mo-predict.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<meta charset="utf-8">
-<title>MutationObserver: كام مرة؟</title>
-<style>body { font: 14px/1.6 system-ui, sans-serif; margin: 16px; } pre { background: #f3f4f6; padding: 8px; direction: ltr; text-align: left; }</style>
-<div id="el"></div>
 <pre id="out"></pre>
 <script>
-  const out = document.querySelector("#out");
-  const log = (s) => (out.textContent += s + "\n");
-  const el = document.querySelector("#el");
-  let calls = 0;
-
-  new MutationObserver((records) => {
-    calls++;
-    log($__btcallback رقم $__{calls}: $__{records.length} records$__bt);
-    records.forEach((r, i) => log($__bt  $__{i + 1}) $__{r.attributeName} oldValue=$__{JSON.stringify(r.oldValue)}$__bt));
-  }).observe(el, { attributes: true, attributeOldValue: true });
-
-  el.className = "a";
-  el.className = "b";
-  el.className = "b";
-  log("الكود خلص");
-  queueMicrotask(() => log("microtask اتسجّل بعد التغييرات"));
-  setTimeout(() => log("setTimeout: calls = " + calls), 0);
-</script>
-</html>
-~~~
-
-~~~text الناتج (Chrome 158 headless، جوه iframe معزول)
-الكود خلص
-callback رقم 1: 3 records
-  1) class oldValue=null
-  2) class oldValue="a"
-  3) class oldValue="b"
-microtask اتسجّل بعد التغييرات
-setTimeout: calls = 1
-~~~
-
-**ليه كده:**
-
-- **مرة واحدة:** المتصفح مبينادي الـ callback مع كل تغيير. بيحط الـ records في طابور، وأول تغيير بيجدول **microtask** واحد يسلّم الطابور كله. الـ microtask بيشتغل بعد ما الكود اللي شغال يخلص، فـ «الكود خلص» طلع الأول.
-- **التالت اتسجّل:** [[el.className = "b"]] وهي [["b"]] أصلًا لسه «كتابة» على الـ attribute، والـ observer بيسجّل الكتابة مش التغيير. لو عايز التغييرات الحقيقية بس، قارن [[r.oldValue]] بالقيمة الحالية.
-- **[[oldValue]]:** القيمة **قبل** كل كتابة. أول مرة الـ [[class]] مكانش موجود أصلًا فـ [[null]]. ومن غير [[attributeOldValue: true]] كانت هتبقى [[null]] في التلاتة.
-- **ترتيب الـ microtasks:** الـ [[queueMicrotask]] اتسجّل **بعد** التغييرات، فاشتغل بعد الـ callback (الطابور بالترتيب). والـ [[setTimeout]] task كاملة بعد كل الـ microtasks، وشاف [[calls = 1]].
-
-**الغلطة الشائعة:** تفتكر إنه زي الـ events وتكتب كود بيفترض record واحد ([[records[0]]]). لما الكود بيغيّر حاجات كتير مرة واحدة (زي [[innerHTML]] أو loop)، هتعالج أول تغيير بس وتفوّت الباقي. لف على [[records]] دايمًا.` },
-            { lvl: 'تطبيق', t: R`ابني «عدّاد غير مقروء»: [[<ul id="inbox">]] فيه رسايل [[<li data-read="false">]]، وزرار بيضيف رسالة جديدة، وضغطة على رسالة بتخلّي [[data-read="true"]]. العدّاد في العنوان ([[document.title = "(3) البريد"]]) بيتحسب من MutationObserver واحد بس، مش من كود الزرار ولا كود الضغطة.`, done: R`إضافة رسالة بتزوّد الرقم، وقراية رسالة بتنقّصه، و [[inbox.innerHTML = ""]] من الـ Console بيخلّي العنوان [[البريد]] من غير رقم، والـ observer عليه [[attributeFilter: ["data-read"]]] و [[subtree: true]]، والعدّ بيحصل مرة واحدة لكل دفعة تغييرات مش لكل record.`, sol: R`~~~live 320 inbox.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>البريد</title>
-<style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
-  #inbox { list-style: none; padding: 0; }
-  #inbox li { padding: 8px; border-bottom: 1px solid #e5e7eb; cursor: pointer; }
-  #inbox li[data-read="false"] { font-weight: 700; background: #eff6ff; }
-  #title { font-size: 13px; color: #555; }
-  button { font: inherit; }
-</style>
-</head>
-<body>
-<p id="title"></p>
-<button id="add">رسالة جديدة</button>
-<button id="clear">امسح الكل (innerHTML = "")</button>
-<ul id="inbox">
-  <li data-read="false">فاتورة نوفمبر</li>
-  <li data-read="false">دعوة اجتماع</li>
-  <li data-read="true">أهلًا بيك</li>
-</ul>
-<script>
-  const inbox = document.querySelector("#inbox");
-  let n = 0, counts = 0;
-
-  // الزرار والضغطة بيعدّلوا الـ DOM بس، ومحدش فيهم يعرف حاجة عن العنوان
-  document.querySelector("#add").addEventListener("click", () => {
-    inbox.insertAdjacentHTML("afterbegin", $__bt<li data-read="false">رسالة جديدة $__{++n}</li>$__bt);
-  });
-  inbox.addEventListener("click", (e) => {
-    const li = e.target.closest("li");
-    if (li) li.dataset.read = "true";
-  });
-  document.querySelector("#clear").addEventListener("click", () => (inbox.innerHTML = ""));
-
-  // العدّاد: مكان واحد بس
-  function updateTitle() {
-    counts++;
-    const unread = inbox.querySelectorAll('li[data-read="false"]').length;
-    document.title = unread ? $__bt($__{unread}) البريد$__bt : "البريد";
-    document.querySelector("#title").textContent = $__btعنوان التاب: $__{document.title} (اتحسب $__{counts} مرة)$__bt;
-  }
-
-  new MutationObserver(updateTitle).observe(inbox, {
-    childList: true,                 // رسايل اتضافت أو اتشالت
-    subtree: true,                   // الـ li جوه الـ ul
-    attributes: true,
-    attributeFilter: ["data-read"],  // بس ده، مش أي attribute
-  });
-  updateTitle();
+const out = document.querySelector('#out');
+const log = (...parts) => { out.textContent += parts.join(' ') + '\n'; };
+log('crossOriginIsolated:', self.crossOriginIsolated, '| typeof SharedArrayBuffer:', typeof SharedArrayBuffer);
+try {
+  const sab = new SharedArrayBuffer(4);
+  const worker = new Worker(URL.createObjectURL(new Blob(['onmessage = (e) => { const a = new Int32Array(e.data); Atomics.add(a, 0, 5); postMessage(a[0]); };'], { type: 'text/javascript' })));
+  const counter = new Int32Array(sab);
+  counter[0] = 10;
+  worker.onmessage = (e) => log('الـ worker شاف', e.data, 'والصفحة شايفة', counter[0], '(نفس الذاكرة)');
+  worker.postMessage(sab);
+} catch (e) {
+  log(e.name + ':', e.message);
+}
 </script>
 </body>
 </html>
 ~~~
 
-~~~text الناتج (Chrome 158 headless، جوه iframe معزول)
-البداية                          عنوان التاب: (2) البريد (اتحسب 1 مرة)
-رسالة جديدة                      عنوان التاب: (3) البريد (اتحسب 2 مرة)
-قرينا «فاتورة نوفمبر»            عنوان التاب: (2) البريد (اتحسب 3 مرة)
-٥ رسايل في نفس الكود             عنوان التاب: (7) البريد (اتحسب 4 مرة)
-attribute تاني (title)           عنوان التاب: (7) البريد (اتحسب 4 مرة)
-innerHTML = ""                   عنوان التاب: البريد (اتحسب 5 مرة)
-pageerrors: 0
-~~~
+| الـ header | معناه |
+|---|---|
+| [[Cross-Origin-Opener-Policy: same-origin]] | الصفحة متشاركش «browsing context group» مع نوافذ من origins تانية: [[window.opener]] بيبقى [[null]] للي فتحتها من برّه والعكس |
+| [[Cross-Origin-Embedder-Policy: require-corp]] | أي مورد من origin تاني (صورة، سكربت، iframe) لازم يوافق بـ [[Cross-Origin-Resource-Policy]] أو CORS، وإلا بيتمنع |
+| [[Cross-Origin-Embedder-Policy: credentialless]] | بديل أسهل: الموارد من برّه بتتحمّل من غير cookies، فمش محتاجة توافق (دعمه أقل، شوف MDN) |
+| [[self.crossOriginIsolated]] | [[true]] لما الاتنين اتحققوا: ساعتها [[SharedArrayBuffer]] و [[performance.now()]] الدقيق متاحين |
 
-**ليه كده:**
-
-- **العدّاد في مكان واحد:** كود الزرار بيضيف [[li]] وبس، وكود الضغطة بيغيّر [[data-read]] وبس. أي حاجة تغيّر الـ DOM (حتى [[innerHTML = ""]] من الـ Console، أو سكربت تاني، أو extension) العنوان بيتحدّث لوحده، لأن الـ observer بيراقب النتيجة مش الكود.
-- **[[childList: true]] و [[subtree: true]]:** [[childList]] على الـ [[ul]] بيمسك الرسايل اللي بتتضاف وتتشال. و [[subtree]] لازم عشان الـ [[data-read]] على الـ [[li]] اللي جوه، مش على الـ [[ul]] نفسه.
-- **[[attributeFilter: ["data-read"]]]:** بيراقب الـ attribute ده بس. تغيير [[title]] متحسبش (العدّاد فضل 4)، فالـ callback مبيشتغلش على تغييرات ملهاش علاقة.
-- **[[updateTitle]] بتعدّ من الـ DOM:** مش بتحسب من الـ records (+1 و -1)، بتسأل [[querySelectorAll('li[data-read="false"]').length]]. كده مستحيل الرقم يبعد عن الحقيقة حتى لو فاتك record.
-- **«٥ رسايل في نفس الكود» = حسبة واحدة:** الـ ٥ إضافات عملوا ٥ records، بس الـ callback اتنادى مرة واحدة بيهم كلهم (microtask بعد الكود). عشان كده بنتجاهل الـ records ونعدّ مرة.
-
-**الغلطة الشائعة:** [[attributes: true]] من غير [[attributeFilter]] و [[subtree]] على [[document.body]]. أي animation أو class بيتغيّر في الصفحة هينادي الـ callback ويعمل [[querySelectorAll]] على الفاضي عشرات المرات في الثانية.` },
-            { lvl: 'تحدي', t: R`صلّح الكود البايظ: observer على [[document.body]] بـ [[{ childList: true, subtree: true }]] بيضيف [[<span class="badge">جديد</span>]] جوه أي [[li]] جديد. شغّله وشوف الصفحة بتعلّق، واعرف ليه، وصلّحه من غير ما تشيل الـ subtree.`, done: R`عرفت إن إضافة الـ badge نفسها mutation جديدة فالـ callback بينادي نفسه للأبد (ومن غير ما الصفحة ترسم، لأنه microtask)، وصلّحته بإنك تتجاهل العناصر اللي عليها الـ badge أو تعمل [[disconnect]] وتضيف وتعمل [[observe]] تاني، وإضافة ١٠٠ [[li]] بتطلّع ١٠٠ badge بالظبط والصفحة مبتعلّقش.`, sol: R`**الكود البايظ** (زي التمرين، ومعاه عدّاد بيوقفه بعد ٢٠٠٠ نداء عشان التجربة متعلّقش المتصفح):
-
-~~~js
-new MutationObserver(() => {
-  calls++;
-  if (calls > 2000) throw new Error("وقفنا بعد 2000 نداء");
-  for (const li of document.querySelectorAll("li")) {
-    li.insertAdjacentHTML("beforeend", '<span class="badge">جديد</span>');
-  }
-}).observe(document.body, { childList: true, subtree: true });
-~~~
-
-~~~text الناتج (Chrome 158 headless، ضغطة واحدة على «ضيف عنصر»)
-[البايظة] بعد عنصر واحد: li: 1 | badge: 1999 | calls: 2001 | pageerror: وقفنا بعد 2000 نداء | 478ms
-~~~
-
-**ليه علّق:** إضافة الـ badge نفسها [[childList]] mutation جوه [[body]]، والـ observer عليه [[subtree]]، فالـ callback بيتجدول تاني. والـ callback الجديد بيضيف badge تاني لنفس الـ [[li]]... وهكذا. ولأن الـ callbacks دي microtasks، المتصفح مبيرسمش ولا بيرد على الضغط بينهم، فالصفحة بتتجمّد (من غير العدّاد كانت هتفضل كده).
-
-**المصلّحة:**
-
-~~~live 300 badges.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>badge لكل عنصر جديد</title>
-<style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
-  .badge { background: #dc2626; color: #fff; border-radius: 999px; padding: 0 8px; font-size: 12px; margin-inline-start: 6px; }
-  button { font: inherit; }
-</style>
-</head>
-<body>
-<button id="one">ضيف عنصر</button>
-<button id="many">ضيف ١٠٠</button>
-<p id="info"></p>
-<ul id="list"></ul>
-<script>
-  const list = document.querySelector("#list");
-  let calls = 0;
-
-  function addBadge(li) {
-    if (li.querySelector(".badge")) return;          // عليه badge خلاص: متضيفش تاني
-    li.insertAdjacentHTML("beforeend", '<span class="badge">جديد</span>');
-  }
-
-  new MutationObserver((records) => {
-    calls++;
-    for (const r of records) {
-      for (const node of r.addedNodes) {
-        if (node.nodeType !== Node.ELEMENT_NODE) continue;
-        if (node.matches("li")) addBadge(node);       // الـ span اللي بنضيفه مش li فبيتساب
-        node.querySelectorAll?.("li").forEach(addBadge);
-      }
-    }
-    // #info نفسه جوه body: كتابة نص فيه = mutation جديدة. نكتب بس لو النص اتغيّر، وإلا الـ callback هينادي نفسه للأبد
-    const text = $__btli: $__{list.querySelectorAll("li").length} | badge: $__{list.querySelectorAll(".badge").length}$__bt;
-    const info = document.querySelector("#info");
-    if (info.textContent !== text) info.textContent = text;
-  }).observe(document.body, { childList: true, subtree: true });
-
-  let n = 0;
-  const add = () => list.insertAdjacentHTML("beforeend", $__bt<li>عنصر $__{++n}</li>$__bt);
-  document.querySelector("#one").addEventListener("click", add);
-  document.querySelector("#many").addEventListener("click", () => { for (let i = 0; i < 100; i++) add(); });
-</script>
-</body>
-</html>
-~~~
-
-~~~text الناتج (Chrome 158 headless، جوه iframe معزول)
-[المصلّحة] عنصر: li: 1 | badge: 1 | calls: 4
-[المصلّحة] +١٠٠: li: 101 | badge: 101 | calls: 6 | 137ms
-pageerrors: 0
-~~~
-
-**ليه شغالة (والـ subtree لسه موجود):**
-
-- **[[r.addedNodes]] بدل كل الـ [[li]] في الصفحة:** بنبص على العناصر الجديدة بس. الـ [[span]] اللي إحنا ضفناه بيظهر في [[addedNodes]] في النداء اللي بعده، بس هو مش [[li]] فبيتساب، والـ loop بيقف.
-- **[[if (li.querySelector(".badge")) return]]:** حماية تانية: [[li]] عليه badge مبياخدش تاني، حتى لو اتشال واتحط في مكان تاني.
-- **[[node.querySelectorAll?.("li")]]:** لو حد ضاف [[ul]] كامل فيه [[li]] كتير مرة واحدة، الـ [[li]] اللي جواه مش هيبقوا في [[addedNodes]] لوحدهم، فبندوّر جوه العنصر الجديد.
-- **١٠٠ عنصر = ١٠١ badge بالظبط (مع الأولاني)** في نداءين بس للـ ١٠٠، لأن الـ records بتتجمّع.
-
-**الحل التاني اللي في التمرين:** [[mo.disconnect()]] في أول الـ callback، وبعدين تضيف الـ badges، وبعدين [[mo.observe(document.body, options)]] تاني. التغييرات اللي حصلت والـ observer مفصول مبتتسجّلش. بيشتغل، بس لو كود تاني ضاف [[li]] في نفس اللحظة دي هيفوتك.
-
-**وقعنا في نفس الفخ وإحنا بنكتب الحل:** أول نسخة كانت بتكتب في [[#info]] سطر فيه عدد مرات النداء. [[#info]] جوه [[body]]، فكتابة النص mutation، والعدد بيتغيّر كل مرة، فالنص دايمًا جديد، فالصفحة علّقت من غير ولا [[li]] زيادة (التجربة وقفت بعد ١٢٠ ثانية). التصليح: [[if (info.textContent !== text)]] والعدد اتشال من النص، فالنداء التاني بيلاقي نفس النص ومبيكتبش. أي observer على [[body]] لازم ميتأثرش بحاجة هو بيكتبها.
-
-**الغلطة الشائعة:** تحل المشكلة بإنك تشيل [[subtree]] وتراقب [[#list]] بس. بيشتغل هنا، بس أي [[li]] بيتضاف في مكان تاني في الصفحة (أو جوه [[ul]] متداخل) مش هيوصلك.` },
-          ],
-          ref: [
-            { t: "MDN: MutationObserver", url: "https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver" },
-            { t: "MDN: MutationObserver.observe()", url: "https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver/observe" },
-            { t: "MDN: MutationRecord", url: "https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord" },
-          ],
-          pre: [{ to: "js/microtasks و macrotasks", why: R`الـ records بتتسلّم في microtask بعد ما الكود يخلص، وده اللي بيفسّر «مرة واحدة» والـ loop اللانهائي` }],
-          flag: "script",
-          deep: {
-            why: R`قبل MutationObserver كان فيه Mutation Events ([[DOMNodeInserted]] وأخواتها) وكانت بتتنادى **جوه** كل تغيير، فالصفحة كانت بتبطأ جدًا، واتشالت من Chrome خالص (من الـ docs: اتشالت في Chrome 127 سنة 2024). الحل الجديد بيجمّع التغييرات ويبعتها مرة واحدة بعد ما الكود يخلص، فمش بيقاطع شغلك.`,
-            how: R`كل observer ليه طابور records. أي تغيير متراقب بيضيف record، وأول record بيحجز microtask واحدة. لما الكود الحالي يخلص (قبل أي [[setTimeout]] وقبل الرسم)، المتصفح بيدّي الـ callback كل الـ records مرة واحدة. عشان كده «الكود خلص» بتطلع الأول.
-
-الـ options: [[childList]] للأولاد المباشرين، و [[subtree]] يمدّها لكل الأحفاد، و [[attributes]] أو [[attributeFilter: [...]]] (الفلتر لوحده بيشغّل الـ attributes)، و [[characterData]] لنص الـ text nodes، و [[attributeOldValue]] و [[characterDataOldValue]] عشان تاخد القيمة القديمة. لازم واحد على الأقل من التلاتة الأولانيين وإلا [[TypeError]].
-
-[[disconnect()]] بيوقّف كل حاجة **وبيرمي** الـ records اللي لسه موصلتش، و [[takeRecords()]] بيرجّعهم ليك ويفضّي الطابور.`,
-            when: R`widget من بره (chat أو إعلانات أو تعليقات) بيضيف عناصر وعايز تظبطها، و auto-scroll لشات، و تفعيل حاجة على أي عنصر جديد بـ class معين (زي tooltips)، و تستات بتستنى عنصر يظهر، و extensions. ومش لحاجة انت اللي بتعملها بإيدك: نادي الدالة في نفس المكان.`,
-            mistakes: R`تعدّل نفس الجزء المتراقب جوه الـ callback فيبقى loop بيعلّق الصفحة. و [[subtree: true]] على [[document.body]] في صفحة كبيرة من غير فلتر فالـ callback بيشتغل على كل حاجة. و [[disconnect()]] من غير [[takeRecords()]] فتضيع آخر التغييرات. وتفتكر إن [[r.target.getAttribute(...)]] هي القيمة وقت التغيير: هي القيمة **دلوقتي**، والقديمة في [[oldValue]] بس. وتنسى إن [[textContent = "..."]] بيبدّل الـ text node (childList) مش characterData.`
-          },
-          teach: R`## الفكرة في سطر
-
-بتقول للمتصفح «لو حاجة اتغيرت جوه العنصر ده، ابعتلي لستة باللي حصل». المثال بيراقب شات: رسالة بتتضاف وتتشال، و [[data-state]] بيتغير مرتين، و [[title]] بيتغير بس مش متراقب.
-
-شغّلت المثال في Chrome 156 headless (عن طريق playwright-core) وفي jsdom 30، والناتج طلع واحد بالحرف.
+والـ Worker اتعمل من [[Blob]] عشان المثال يبقى ملف واحد؛ الـ workers بتورث الـ isolation من الصفحة.
 
 ---
 
-## ١. الـ observer والـ callback
+## ٥. ليه كل ده؟ (Spectre)
 
-~~~text app.js
-const mo = new MutationObserver((records) => {
-  console.log("records:", records.length);
-  for (const r of records) { ... }
-});
-~~~
-
-- [[new MutationObserver(callback)]]: بتعمل مراقب. لسه مبيراقبش حاجة لحد ما تنادي [[observe]].
-- [[records]]: array من [[MutationRecord]]، record لكل تغيير حصل من آخر مرة اتنادى فيها.
-- [[r.type]]: نوع التغيير، واحد من تلاتة: [["childList"]] (أولاد اتضافوا أو اتشالوا)، أو [["attributes"]]، أو [["characterData"]] (نص اتعدّل).
-- [[r.addedNodes]] و [[r.removedNodes]]: الـ nodes اللي اتضافت واللي اتشالت (NodeList، فبنستخدم [[.length]]).
-- [[r.attributeName]]: اسم الـ attribute اللي اتغير، و [[r.oldValue]] قيمته **قبل** التغيير، و [[r.target]] العنصر اللي اتغير.
-
-## ٢. [[observe]]: تراقب إيه بالظبط
-
-~~~text app.js
-mo.observe(chat, { childList: true, subtree: true, attributeFilter: ["data-state"], attributeOldValue: true });
-~~~
-
-| الـ option | معناه |
-|---|---|
-| [[childList: true]] | أولاد [[chat]] المباشرين لما يتضافوا أو يتشالوا |
-| [[subtree: true]] | نفس الكلام على كل الأحفاد كمان، مش الأولاد المباشرين بس |
-| [[attributeFilter: ["data-state"]]] | راقب الـ attributes دي بس، وأي attribute تاني (زي [[title]]) يتجاهل |
-| [[attributeOldValue: true]] | سجّل القيمة القديمة في [[r.oldValue]]، من غيرها بتبقى [[null]] |
-| [[characterData: true]] | تعديل نص جوه text node (مع [[subtree]] عشان توصل للنص اللي جوه العنصر) |
-
-جرّبت [[attributeFilter]] لوحده من غير [[attributes: true]]: شغّال، لأن الفلتر بيشغّل الـ attributes لوحده. وجرّبت [[observe(chat, {})]]:
-
-~~~text الناتج (Chrome)
-TypeError: Failed to execute 'observe' on 'MutationObserver': The options object must set at least one of 'attributes', 'characterData', or 'childList' to true.
-~~~
-
-ونفس الرسالة لو نسيت الـ options خالص. ولو العنصر مش موجود ([[querySelector]] رجّع [[null]]):
-
-~~~text الناتج (Chrome)
-TypeError: Failed to execute 'observe' on 'MutationObserver': parameter 1 is not of type 'Node'.
-~~~
-
-## ٣. التغييرات والناتج
-
-~~~text app.js
-const msg = document.createElement("li");
-msg.textContent = "أهلًا";
-chat.append(msg);
-chat.dataset.state = "busy";
-chat.dataset.state = "idle";
-chat.title = "مش متراقب";
-msg.remove();
-console.log("الكود خلص");
-~~~
-
-~~~text الناتج (Chrome 156 و jsdom)
-الكود خلص
-records: 4
-childList +1 -0
-data-state null → idle
-data-state busy → idle
-childList +0 -1
-~~~
-
-خمس حاجات تتعلمها من الناتج ده:
-
-1. **«الكود خلص» طلعت الأول.** الـ callback مش بيتنادى جوه [[append]]، بيتنادى بعد ما الـ script كله يخلص، كـ microtask (درس «microtasks و macrotasks»).
-2. **مرة واحدة بـ 4 records**، مش ٤ مرات. المتصفح جمّعهم.
-3. **[[msg.textContent = "أهلًا"]] مااتسجّلش**: ساعتها [[msg]] كان لسه برّه [[chat]]، والـ observer بيشوف اللي جوه بس.
-4. **[[title]] مااتسجّلش** بسبب [[attributeFilter]].
-5. **السطرين بتوع [[data-state]] بيقولوا [[→ idle]] الاتنين.** [[r.oldValue]] صح لكل record ([[null]] وبعدين [[busy]])، بس [[r.target.getAttribute(...)]] بيقرا القيمة **دلوقتي** وقت الـ callback، وهي [[idle]]. لو عايز القيمة الجديدة لكل خطوة، هي الـ [[oldValue]] بتاع الـ record اللي بعده.
-
-## ٤. الاستخدام الحقيقي: auto-scroll
-
-~~~text app.js
-new MutationObserver(() => { chat.scrollTop = chat.scrollHeight; }).observe(chat, { childList: true });
-~~~
-
-- [[chat.scrollHeight]]: طول المحتوى كله جوه الـ [[ul]]، حتى الجزء المستخبي.
-- [[chat.scrollTop = ...]]: انزل لحد كده، يعني آخر رسالة.
-- مش فارق مين اللي ضاف الرسالة (WebSocket، أو مكتبة، أو انت): الشات بينزل لوحده. جرّبت ٥ رسايل ورا بعض في [[ul]] طوله 40px: الـ callback اتنادى مرة واحدة، و [[scrollTop]] بقى 104 وده بالظبط [[scrollHeight - clientHeight]] (يعني تحت خالص).
-
-## ٥. [[disconnect]] و [[takeRecords]]
-
-جرّبت أضيف عنصر وبعدين [[mo.disconnect()]] على طول في نفس الكود: الـ callback **عمره ما اتنادى**. الـ disconnect بيرمي أي records لسه في الطابور. لو محتاجهم:
-
-~~~text app.js
-const pending = mo.takeRecords();
-mo.disconnect();
-console.log(pending.length, pending[0].type);
-~~~
-
-~~~text الناتج (Chrome، بعد إضافة عنصرين)
-2 childList
-~~~
-
-## ٦. الفخ: الـ callback بيغيّر اللي بيراقبه
-
-لو الـ callback ضاف عنصر جوه نفس الـ [[chat]]، ده تغيير جديد، فيتنادى تاني، ويضيف تاني... جرّبتها بعدّاد بيقف عند 1000: الـ callback اتنادى 1000 مرة و [[setTimeout(..., 0)]] اللي كان مستني اتنفّذ **بعدهم كلهم**. يعني من غير العدّاد الصفحة كانت هتعلّق ومش هترسم أبدًا، لأن الـ microtasks بتخلص كلها قبل أي رسم.
-
-الحل: اتجاهل التغييرات اللي انت عملتها (فحص زي [[if (el.querySelector(".badge")) continue]])، أو [[disconnect]] وعدّل وبعدين [[observe]] تاني.
+في ٢٠١٨ ثغرة Spectre خلت كود JavaScript يقدر يقرا ذاكرة مش بتاعته في نفس الـ process بقياس الوقت، و [[SharedArrayBuffer]] بيعمل timer دقيق جدًا (worker بيعد، والصفحة بتقرا العداد). فالمتصفحات قفلته، ورجّعته بس للصفحات المعزولة اللي مفيش في الـ process بتاعها داتا من origin تاني مستعدة تتسرق. التفاصيل في تمرين «اشرحها».
 
 ---
 
 ## الخلاصة
 
-| الحاجة | معناها |
-|---|---|
-| [[new MutationObserver(cb)]] و [[observe(el, opts)]] | ابعتلي لستة بالتغييرات اللي حصلت جوه el |
-| [[childList]] و [[subtree]] | عناصر اتضافت أو اتشالت، في الأولاد بس أو في الشجرة كلها |
-| [[attributeFilter]] و [[attributeOldValue]] | attributes معينة بس، ومعاها قيمتها القديمة |
-| [[characterData]] | نص اتعدّل جوه text node موجود |
-| [[takeRecords()]] | هات اللي في الطابور دلوقتي وفضّيه |
-| [[disconnect()]] | وقّف المراقبة وارمي اللي لسه موصلش |
-
-- الـ callback microtask: بيتنادى مرة واحدة بعد ما الكود يخلص، وقبل الـ timers والرسم.
-- [[getAttribute]] جوه الـ callback = القيمة دلوقتي، والقديمة في [[oldValue]].
-- متغيّرش اللي بتراقبه جوه الـ callback من غير شرط يوقف.`,
+- [[SharedArrayBuffer]] = نفس الـ bytes في كل الـ threads، و [[postMessage]] بيشاركه مش بينسخه.
+- [[grow]] بيكبّر بس، و [[slice]] نسخة مش مشتركة، ومينفعش transfer.
+- في المتصفح: COOP [[same-origin]] و COEP [[require-corp]] (أو [[credentialless]])، وافحص [[self.crossOriginIsolated]].
+- الكتابة من كذا thread في نفس المكان: [[Atomics]] (الدرس الجاي).`,
           lines: [
-            R`العنصر اللي هنراقبه: لستة رسايل الشات. لازم يكون موجود في الصفحة قبل السطر ده، وإلا [[querySelector]] هيرجّع [[null]] و [[observe]] هيرمي TypeError.`,
-            R`بنعمل المراقب ونديله callback. الـ callback بياخد [[records]]: array فيها record لكل تغيير حصل من آخر مرة اتنادى، مش تغيير واحد.`,
-            R`بنطبع عدد التغييرات في الدفعة دي، عشان نشوف بعينينا إن المتصفح جمّعهم ونادانا مرة واحدة بس.`,
-            R`بنلف على كل record. كل واحد فيه [[type]] و [[target]] وحاجات تانية حسب النوع.`,
-            R`لو النوع [["childList"]] يبقى عناصر اتضافت أو اتشالت: [[addedNodes]] و [[removedNodes]] لستتين بالـ nodes، وبنطبع عددهم.`,
-            R`غير كده هنا يبقى [["attributes"]]: بنطبع اسم الـ attribute وقيمته القديمة ([[oldValue]]) والقيمة **الحالية** من [[getAttribute]]. والحالية دي وقت الـ callback مش وقت التغيير، عشان كده الاتنين هيطلعوا [[idle]].`,
-            R`نهاية الـ [[for]].`,
-            R`نهاية الـ callback والـ [[MutationObserver]].`,
-            R`نبدأ نراقب [[chat]]: الأولاد اللي بيتضافوا أو بيتشالوا ([[childList]]) في كل الشجرة ([[subtree]])، والـ attribute [[data-state]] بس ([[attributeFilter]])، ومعاه القيمة القديمة ([[attributeOldValue]]).`,
-            R`بنعمل [[li]] جديد. لسه في الذاكرة بس، مش في الصفحة.`,
-            R`بنحط فيه نص. التغيير ده مش هيتسجّل، لأن [[msg]] لسه برّه [[chat]] اللي بنراقبه.`,
-            R`بنضيفه في آخر [[chat]]: أول record من نوع [[childList]] فيه [[addedNodes]] بعنصر واحد.`,
-            R`[[dataset.state]] بيكتب الـ attribute [[data-state="busy"]]: record من نوع [[attributes]] و [[oldValue]] بتاعه [[null]] لأنه مكانش موجود.`,
-            R`تغيير تاني لنفس الـ attribute: record تالت، و [[oldValue]] بتاعه [[busy]].`,
-            R`تغيير [[title]]: مش هيتسجّل خالص، لأن [[attributeFilter]] فيه [[data-state]] بس.`,
-            R`بنشيل الرسالة: record رابع من نوع [[childList]] فيه [[removedNodes]] بعنصر واحد.`,
-            R`السطر ده بيطلع **قبل** [[records: 4]]، لأن الـ callback microtask بيستنى الكود اللي شغّال يخلص.`,
-            R`observer تاني صغير بيعمل حاجة حقيقية: كل ما رسالة تتضاف، بينزّل الشات لآخره بإنه يخلّي [[scrollTop]] قد [[scrollHeight]]. مش فارق مين ضاف الرسالة، ومش محتاج تفتكر تنادي دالة scroll في كل مكان بيضيف رسايل.`,
+            R`بنستورد class الـ [[Worker]] من [[node:worker_threads]] عشان نشغّل thread تاني.`,
+            R`[[SharedArrayBuffer]] بـ ٨ bytes ويقدر يكبر لحد ٦٤.`,
+            R`[[Int32Array]] عليه: عنصرين كل واحد ٤ bytes.`,
+            R`بيطبع ٨ و [[true]] (growable) و ٦٤ و ٢ عناصر.`,
+            R`كود الـ worker كنص: بياخد الـ [[SharedArrayBuffer]] من [[workerData]] ويكتب ٤٢ في الأول و ٧ بـ [[Atomics.store]] في التاني.`,
+            R`بنشغّل الكود كـ worker بـ [[eval: true]]، وبنديله الـ [[SharedArrayBuffer]]: هيشوف نفس الذاكرة مش نسخة.`,
+            R`لما الـ worker يخلص (يوصل [[exit]])، نبص على الذاكرة من عندنا.`,
+            R`بنقرا ٤٢ و ٧ اللي الـ worker كتبهم من غير ما يبعت أي رسالة.`,
+            R`بنكبّر الـ buffer لـ ١٦ byte بـ [[grow]].`,
+            R`[[slice(0, 4)]] بيرجّع [[SharedArrayBuffer]] جديد فيه نسخة من أول ٤ bytes.`,
+            R`بيطبع ١٦، والـ view كبر لـ ٤ عناصر لوحده، والنسخة [[SharedArrayBuffer]] فيها ٤٢.`,
+            R`[[grow(4)]] أصغر من الحجم الحالي: التصغير ممنوع فبيرمي [[RangeError]].`,
+            R`نهاية الـ handler بتاع [[exit]].`,
           ],
-          sol: R`«الكود خلص» بتطلع الأول، وبعدها [[records: 4]] والأربع سطور: [[childList +1 -0]]، و [[data-state null → idle]]، و [[data-state busy → idle]]، و [[childList +0 -1]] (اتجرّب في Chrome 156 و jsdom 30).
-
-لما تضيف [[mo.disconnect()]] كآخر سطر، الـ callback مبيتناداش خالص: الـ disconnect رمى الأربع records اللي كانوا مستنيين الـ microtask. التصليح: [[const pending = mo.takeRecords(); mo.disconnect();]] وبعدين لف على [[pending]] بنفسك، وهتلاقي فيها نفس الأربعة.`
+          ref: [
+            { t: "MDN: SharedArrayBuffer", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer" },
+            { t: "MDN: SharedArrayBuffer.prototype.grow()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer/grow" },
+            { t: "MDN: SharedArrayBuffer.prototype.slice()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer/slice" },
+            { t: "MDN: Window.crossOriginIsolated", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/crossOriginIsolated" },
+            { t: "MDN: Cross-Origin-Embedder-Policy", url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cross-Origin-Embedder-Policy" },
+            { t: "MDN: Cross-Origin-Opener-Policy", url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cross-Origin-Opener-Policy" },
+            { t: "Vite: server.headers", url: "https://vite.dev/config/server-options#server-headers" },
+          ],
+          pre: [{ to: "js/Web Workers و worker_threads: postMessage و transfer", why: R`الـ workers والرسايل قبل الذاكرة المشتركة` }, { to: "js/ArrayBuffer: resize و transfer و detached", why: R`[[grow]] هنا مقابل [[resize]] و [[transfer]] هناك` }],
         },
         {
-          cmd: "Notification و permissions",
-          title: "تبعت إشعار للنظام، وتسأل عن الإذن الأول من غير ما تزعج اليوزر",
-          desc: R`[[Notification]] بيطلّع إشعار من النظام نفسه (الركن بتاع ويندوز أو ماك أو أندرويد)، حتى لو التاب مش قدامك. بس لازم اليوزر يوافق الأول: [[Notification.requestPermission()]] بتطلّع سؤال المتصفح، وبترجّع [["granted"]] أو [["denied"]] أو [["default"]] (قفل السؤال من غير ما يختار).
+          cmd: "Atomics: add و compareExchange و wait و notify",
+          title: "ليه ٤ threads بيزوّدوا نفس العداد ٤ مليون مرة والنتيجة مليون بس، وإزاي Atomics بيصلّحها؟",
+          desc: R`لما اتنين threads يكتبوا في نفس المكان في [[SharedArrayBuffer]] بالطريقة العادية ([[ a[0]++ ]])، العملية بتتقسم «اقرا ثم زوّد ثم اكتب»، والاتنين ممكن يقروا نفس القيمة ويكتبوا فوق بعض: **race condition**. [[Atomics]] object فيه functions بتعمل العملية **مرة واحدة من غير ما حد يدخل في النص** (atomic):
 
-و [[navigator.permissions.query({ name })]] (اسمها Permissions API) بتقولك حالة أي إذن **من غير ما تسأل**: [["granted"]] أو [["denied"]] أو [["prompt"]]، وبتدّيك [[onchange]] لو اتغيّرت. دي نفس الطريقة اللي بتسأل بيها عن الكاميرا والموقع والـ clipboard (الـ Clipboard والـ Share ليهم درس لوحدهم في التاب ده: «Clipboard و Geolocation و Share»).
+• حساب: [[Atomics.add]] و [[Atomics.sub]] و [[Atomics.and]] و [[Atomics.or]] و [[Atomics.xor]]، وكلهم بيرجّعوا القيمة **القديمة**.
+• قراية وكتابة: [[Atomics.load]] و [[Atomics.store]] و [[Atomics.exchange]] و [[Atomics.compareExchange]] (اكتب بس لو القيمة لسه زي ما شفتها: أساس أي lock).
+• انتظار: [[Atomics.wait]] (نام لحد ما القيمة تتغير)، و [[Atomics.waitAsync]] (نفسها بـ Promise)، و [[Atomics.notify]] (صحّي اللي نايم)، و [[Atomics.pause]] (استنى ثانية صغيرة وانت بتلف).
+• [[Atomics.isLockFree(n)]]: هل العمليات على [[n]] bytes بتتعمل في الـ hardware مباشرة.
 
-القاعدة الذهبية: متسألش أول ما الصفحة تفتح. اسأل بعد ضغطة على زرار اليوزر فاهم هو بيعمل إيه. و [["denied"]] مبيتغيّرش من الكود أبدًا: اليوزر بس يغيّره من إعدادات الموقع.`,
-          example: R`const btn = document.querySelector("#notify");
-const status = await navigator.permissions.query({ name: "notifications" });
-console.log("الحالة:", status.state, "| Notification.permission:", Notification.permission);
-status.onchange = () => console.log("اتغيرت لـ", status.state);
-btn.addEventListener("click", async () => {
-  if (!("Notification" in window)) return console.log("المتصفح مبيدعمش");
-  if (Notification.permission === "denied") return console.log("اترفض قبل كده: من إعدادات الموقع بس");
-  const result = await Notification.requestPermission();
-  console.log("الرد:", result);
-  if (result !== "granted") return;
-  const n = new Notification("طلب جديد", { body: "رقم 42", tag: "order-42", icon: "/icon-192.png" });
-  n.onshow = () => console.log("ظهر:", n.title, n.body, n.tag);
-  n.onclick = () => { window.focus(); n.close(); };
-});`,
-          try: R`حط المثال في [[<script type="module">]] (عشان الـ [[await]] اللي برّه أي دالة) مع [[<button id="notify">]]، وافتحه من [[http://localhost]] (بـ [[npx serve]] مثلًا)، لأن الـ service worker في درس الـ push مش هيشتغل غير كده. دوس الزرار ووافق، وبعدين من القفل اللي جنب العنوان ← Site settings ← Notifications خليها Block، وارجع الصفحة ودوس تاني. وجرّب كمان تبعت نفس الإشعار مرتين بنفس الـ [[tag]] وشوف بيظهروا كام واحد.`,
+بيشتغلوا على typed arrays صحيحة بس ([[Int32Array]] و [[BigInt64Array]] وأخواتهم)، و [[wait]] على [[Int32Array]] و [[BigInt64Array]] مشتركة بس.`,
+          example: R`// race.mjs: ٤ workers بيزوّدوا نفس العدّاد مليون مرة كل واحد
+import { Worker, isMainThread, workerData } from 'node:worker_threads';
+const TIMES = 1_000_000;
+if (isMainThread) {
+  for (const mode of ['plain', 'atomic']) {
+    const counter = new Int32Array(new SharedArrayBuffer(4));
+    const workers = Array.from({ length: 4 }, () => new Worker(new URL(import.meta.url), { workerData: { counter, mode } }));
+    await Promise.all(workers.map((w) => new Promise((resolve) => w.on('exit', resolve))));
+    console.log(mode.padEnd(6), Atomics.load(counter, 0), 'المفروض', 4 * TIMES);
+  }
+} else {
+  const { counter, mode } = workerData;
+  if (mode === 'plain') for (let i = 0; i < TIMES; i++) counter[0]++;
+  else for (let i = 0; i < TIMES; i++) Atomics.add(counter, 0, 1);
+}`,
+          try: R`شغّل [[race.mjs]] ٣ مرات واكتب رقم [[plain]] كل مرة: بيتغيّر؟ وبعدين خلّي عدد الـ workers واحد بس: [[plain]] بقى صح ليه؟ وآخر حاجة: غيّر [[ counter[0]++ ]] لـ [[ Atomics.store(counter, 0, Atomics.load(counter, 0) + 1) ]]: اتصلّح؟`,
+          sol: R`~~~text الناتج (Node 24.22، ويندوز 11، تشغيلتين)
+plain  1170714 المفروض 4000000
+atomic 4000000 المفروض 4000000
+plain  1165208 المفروض 4000000
+atomic 4000000 المفروض 4000000
+~~~
+
+- **[[plain]] بيتغيّر كل مرة** وبعيد جدًا عن الصح (حوالي ٧٠٪ من الزيادات ضاعت). ده شكل الـ race condition: نتيجة غلط ومش ثابتة، ومفيش error. وعشان كده بيعدّي الاختبارات أحيانًا ويقع في production.
+- **بـ worker واحد** [[plain]] صح، لأن مفيش حد تاني بيكتب في نفس الوقت. الـ race محتاجة اتنين على الأقل.
+- **[[store(load + 1)]] مش هيصلّحها:** كل واحدة لوحدها atomic، بس بينهم فجوة: thread تاني ممكن يكتب بعد الـ [[load]] وقبل الـ [[store]]. اللي بيصلّح هو [[Atomics.add]] لأن القراية والزيادة والكتابة عملية **واحدة**، أو [[compareExchange]] في loop (تمرين [[atomicMax]] تحت).`,
           practice: [
-            { lvl: 'سريع', t: R`دوّر بنفسك: من MDN (صفحة [[Permissions.query()]] وصفحة [[Notification.requestPermission()]])، إيه الفرق بين [["prompt"]] و [["default"]]؟ وإيه اللي بيحصل لو ناديت [[requestPermission()]] من غير ضغطة من اليوزر في Firefox و Safari؟`, done: R`كتبت إن الاتنين معناهم «لسه مسألناش» بس [["prompt"]] اسمها في Permissions API و [["default"]] في [[Notification.permission]]، وإن Firefox و Safari بيطلبوا user gesture (ضغطة) وإلا السؤال مبيظهرش، ومعاك لينك الصفحتين.`, sol: R`**الإجابة النموذجية:**
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** كل سطر بيطبع القيمة اللي الدالة رجّعتها، وبعدين القيمة في المكان. اكتبهم قبل ما تشغّل:
 
-1. **[["prompt"]] و [["default"]] نفس المعنى:** «اليوزر لسه مقررش». الفرق في الاسم بس، لأنهم من API-ين مختلفين:
-   - [[navigator.permissions.query({ name: "notifications" })]] بترجّع [[PermissionStatus]] و [[state]] بتاعه واحد من [["granted"]] أو [["denied"]] أو [["prompt"]] (صفحة [[PermissionStatus.state]] على MDN).
-   - [[Notification.permission]] (و [[Notification.requestPermission()]]) بترجّع [["granted"]] أو [["denied"]] أو [["default"]]، و MDN بيقول عن [["default"]]: «The user decision is unknown; in this case the application will act as if permission was denied». يعني تعامل معاها زي الرفض لحد ما تسأل.
-2. **من غير ضغطة من اليوزر في Firefox و Safari:** السؤال مش هيظهر. صفحة «Using the Notifications API» على MDN: «you should only request consent to display notifications in response to a user gesture (e.g., clicking a button)… Firefox is already doing this from version 72, for example, and Safari has done it for some time». وفي Chrome و Firefox كمان لازم secure context (HTTPS أو localhost)، ومينفعش تطلب الإذن من iframe من origin تاني.
-
-**اتأكدنا بنفسنا من الأسامي في Chrome** على صفحة على [[http://localhost:8831]] بـ ٣ حالات للإذن:
-
-~~~text الناتج (Chrome 158 headless)
-لسه مسألناش  permissions.query: "prompt" | Notification.permission: "default"
-granted      permissions.query: "granted" | Notification.permission: "granted"
+~~~js
+const a = new Int32Array(new SharedArrayBuffer(16));
+console.log('store', Atomics.store(a, 0, 5), 'load', Atomics.load(a, 0));
+console.log('add', Atomics.add(a, 0, 3), a[0]);
+console.log('sub', Atomics.sub(a, 0, 2), a[0]);
+console.log('and', Atomics.and(a, 0, 0b0100), a[0]);
+console.log('or', Atomics.or(a, 0, 0b0011), a[0]);
+console.log('xor', Atomics.xor(a, 0, 0b0001), a[0]);
+console.log('exchange', Atomics.exchange(a, 0, 100), a[0]);
+console.log('cmpxchg ok', Atomics.compareExchange(a, 0, 100, 1), a[0]);
+console.log('cmpxchg fail', Atomics.compareExchange(a, 0, 100, 2), a[0]);
+~~~`, done: R`كتبت الـ ٩ سطور صح، وتقدر تقول القاعدة: كل العمليات بترجّع القيمة **قبل** التغيير، إلا [[store]].`, sol: R`~~~text الناتج (Node 24.22)
+store 5 load 5
+add 5 8
+sub 8 6
+and 6 4
+or 4 7
+xor 7 6
+exchange 6 100
+cmpxchg ok 100 1
+cmpxchg fail 1 1
 ~~~
 
-نفس الحالة، اسمين: [["prompt"]] من ناحية و [["default"]] من الناحية التانية. وفي الـ iframe المعزول بتاع الـ preview في الموقع ده، [[Notification.permission]] رجّعت [["denied"]] على طول.
-
-**اللينكات:**
-
-- MDN: [[Notification.permission]]: https://developer.mozilla.org/en-US/docs/Web/API/Notification/permission_static
-- MDN: [[Notification.requestPermission()]]: https://developer.mozilla.org/en-US/docs/Web/API/Notification/requestPermission_static
-- MDN: [[Permissions.query()]]: https://developer.mozilla.org/en-US/docs/Web/API/Permissions/query
-- MDN: Using the Notifications API: https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API/Using_the_Notifications_API
-
-**الغلطة الشائعة:** تكتب [[if (Notification.permission === "prompt")]]. القيمة دي مش موجودة في [[Notification.permission]] أصلًا، فالشرط عمره ما هيبقى [[true]] والزرار مش هيظهر لحد أبدًا.` },
-            { lvl: 'تطبيق', t: R`ابني زرار «فعّل الإشعارات» بـ ٣ أشكال حسب الحالة: [["prompt"]] زرار عادي، و [["granted"]] علامة ✓ «الإشعارات شغالة»، و [["denied"]] رسالة بتقول «اتقفلت من إعدادات الموقع» من غير زرار. والشكل بيتغير لوحده بـ [[status.onchange]] لو اليوزر غيّر الإعدادات والصفحة مفتوحة.`, done: R`كل حالة من التلاتة بتطلّع شكلها، وتغيير الإذن من القفل اللي جنب العنوان بيقلب الشكل من غير refresh، وفي حالة [["denied"]] مفيش أي نداء لـ [[requestPermission]] (اتأكد بـ [[console.log]] جواها).`, sol: R`~~~live 160 notify-button.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>فعّل الإشعارات</title>
-<style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
-  #box { padding: 12px; border-radius: 8px; background: #f3f4f6; }
-  .ok { color: #065f46; font-weight: 700; }
-  .no { color: #92400e; }
-  button { font: inherit; padding: 6px 16px; }
-</style>
-</head>
-<body>
-<div id="box"></div>
-<script>
-  const box = document.querySelector("#box");
-  let calls = 0;                                   // كام مرة نادينا requestPermission
-
-  function render(state) {
-    box.dataset.state = state;
-    if (state === "granted") {
-      box.innerHTML = '<span class="ok">✓ الإشعارات شغالة</span>';
-    } else if (state === "denied") {
-      box.innerHTML = '<span class="no">الإشعارات اتقفلت من إعدادات الموقع (القفل اللي جنب العنوان ← الإشعارات ← سماح).</span>';
-    } else if (state === "unsupported") {
-      box.textContent = "المتصفح ده (أو الصفحة دي) مبيدعمش الإشعارات.";
-    } else {
-      box.innerHTML = '<button id="ask">فعّل الإشعارات</button>';
-      box.querySelector("#ask").addEventListener("click", ask);
-    }
+- [[store]] بيرجّع القيمة اللي كتبها (٥). كل الباقيين بيرجّعوا **القديمة**: [[add]] رجّع ٥ والمكان بقى ٨.
+- [[and]] و [[or]] و [[xor]] نفس [[&]] و [[|]] و [[^]] على الـ bits (درس «bitwise و shifts»): ٦ = [[0110]] و [[0100]] = ٤، و ٤ [[|]] [[0011]] = ٧، و ٧ [[^]] [[0001]] = ٦.
+- [[compareExchange(a, 0, 100, 1)]]: «لو القيمة ١٠٠ اكتب ١». كانت ١٠٠ فكتب، ورجّع ١٠٠. المرة التانية القيمة ١ مش ١٠٠، فمكتبش، ورجّع ١. **تعرف إنها نجحت لما اللي رجع = اللي كنت مستنيه.**` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[atomicMax(arr, i, value)]] بتخلّي [[ arr[i] ]] = الأكبر بين القيمة الحالية و [[value]] بأمان حتى لو threads تانية بتكتب في نفس اللحظة، وترجّع القيمة الكبيرة اللي في المكان بعد العملية. مفيش [[Atomics.max]]، فاستخدم [[compareExchange]] في loop.`, done: R`[[atomicMax]] على ٥ بـ ٩ ترجّع ٩، وبعدها بـ ٣ ترجّع ٩ ومتغيّرش، والسالب شغال، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js atomic-max.mjs
+function atomicMax(arr, i, value) {
+  let old = Atomics.load(arr, i);
+  while (value > old) {
+    const seen = Atomics.compareExchange(arr, i, old, value);
+    if (seen === old) return value;
+    old = seen;
   }
+  return old;
+}
+const a = new Int32Array(new SharedArrayBuffer(8));
+a[0] = 5;
+console.log(atomicMax(a, 0, 9), atomicMax(a, 0, 3), a[0], atomicMax(new Int32Array(2), 1, -4), atomicMax(Int32Array.of(-10), 0, -4));
+~~~
 
-  async function ask() {
-    calls++;
-    console.log("requestPermission اتنادت، مرة رقم", calls);
-    const result = await Notification.requestPermission();
-    render(result === "default" ? "prompt" : result);    // default = قفل السؤال من غير ما يختار
+~~~text الناتج (Node 24.22)
+9 9 9 0 -4
+~~~
+
+- ده الـ pattern اسمه **CAS loop** (compare-and-swap): اقرا القيمة، احسب الجديدة، واكتبها **بشرط** إن محدش غيّرها من ساعة ما قريتها. لو حد غيّرها، [[compareExchange]] بيرجّع القيمة الجديدة اللي هو كتبها، فبنعيد بيها.
+- لو [[value]] مش أكبر من الموجود، بنرجّع من غير ما نكتب خالص.
+- بيشتغل على [[Int32Array]] عادية (مش مشتركة) برضه: [[Atomics.add]] و [[compareExchange]] مش شرط [[SharedArrayBuffer]] (اتجرّب)، بس من غير مشاركة مفيش لازمة. [[wait]] بس اللي بيرفض.
+- كل عملية تانية مش موجودة في [[Atomics]] (min، ضرب، «زوّد بس لو أقل من حد») بتتعمل بنفس الـ loop.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** بنك فيه حسابين بـ ٥٠٠ و ٥٠٠، و ٤ workers كل واحد بيعمل ٢٠٠ ألف تحويل جنيه من حساب للتاني. المجموع لازم يفضل ١٠٠٠. هنا [[Atomics.add]] مش كفاية: التحويل **عمليتين** (اطرح من واحد وزوّد على التاني) لازم يبانوا كأنهم واحدة. اعمل [[class Mutex]] بـ [[lock()]] و [[unlock()]] فوق [[compareExchange]] و [[wait]] و [[notify]]، وقارن من غير قفل وبقفل.`, done: R`من غير قفل المجموع بيطلع رقم غلط مختلف كل مرة، وبالقفل ١٠٠٠ بالظبط، و [[unlock]] على قفل مفتوح بيرمي.`, sol: R`~~~js mutex.mjs
+// mutex.mjs: قفل بسيط فوق Int32Array مشتركة: 0 = مفتوح، 1 = مقفول
+export class Mutex {
+  constructor(int32, index = 0) { this.a = int32; this.i = index; }
+  lock() {
+    while (Atomics.compareExchange(this.a, this.i, 0, 1) !== 0) Atomics.wait(this.a, this.i, 1);
   }
-
-  async function start() {
-    // صفحة معزولة (زي الـ preview): الإشعارات ممنوعة فيها خالص
-    if (!("Notification" in window) || location.origin === "null") return render("unsupported");
-    const status = await navigator.permissions.query({ name: "notifications" });
-    render(status.state);
-    status.onchange = () => render(status.state);         // اليوزر غيّر الإذن والصفحة مفتوحة
+  unlock() {
+    if (Atomics.compareExchange(this.a, this.i, 1, 0) !== 1) throw new Error('unlock على قفل مش مقفول');
+    Atomics.notify(this.a, this.i, 1);
   }
-  start();
-</script>
-</body>
-</html>
+}
 ~~~
 
-في الـ preview هتشوف «المتصفح ده (أو الصفحة دي) مبيدعمش الإشعارات»: الصفحة معزولة ([[origin]] بتاعها [["null"]])، والإشعارات ممنوعة من iframe من origin تاني أصلًا (MDN بيقول كده في «Using the Notifications API»)، وقسناها: [[Notification.permission]] جوه الـ preview بيرجّع [["denied"]] على طول. انسخها وشغّلها من [[http://localhost]].
-
-**القياس:** شغّلنا Chrome لوحده (من غير Playwright، لأنه بيفرض حالة الإذن بتاعته) وغيّرنا الإذن من برا بـ DevTools Protocol ([[Browser.setPermission]])، وده نفس اللي بيحصل لما اليوزر يغيّره من القفل اللي جنب العنوان والصفحة مفتوحة:
-
-~~~text الناتج (Chrome 158 headless، http://localhost:8831)
-أول ما تفتح                    prompt | فعّل الإشعارات
-السماح من الإعدادات (من غير refresh) granted | ✓ الإشعارات شغالة
-المنع من الإعدادات             denied | الإشعارات اتقفلت من إعدادات الموقع (القفل اللي جنب العنوان ← الإشعارات ← سماح).
-  في حالة denied: مفيش زرار
-رجّعناه «اسأل»                 prompt | فعّل الإشعارات
-requestPermission اتنادت: 0 مرة
-~~~
-
-وضغطة على الزرار في headless Chrome (بـ [[userGesture: true]]): [[requestPermission]] رجّعت [["denied"]] على طول وبقى [[Notification.permission]] = [["denied"]]، لأن headless مفيهوش شاشة للسؤال فبيرفض لوحده. في Chrome عادي السؤال بيظهر ويستنى اليوزر.
-
-**ليه كده:**
-
-- **[[navigator.permissions.query({ name: "notifications" })]]:** بترجّع [[PermissionStatus]] فيه [[state]] ([["prompt"]] أو [["granted"]] أو [["denied"]]). ده من غير ما تسأل اليوزر حاجة، فينفع أول ما الصفحة تفتح.
-- **[[status.onchange]]:** بيتنادى لما الإذن يتغيّر والصفحة مفتوحة، فالشكل اتقلب ٣ مرات من غير refresh.
-- **[[render]] بتبني الشكل كله من الحالة:** في [["denied"]] مفيش زرار أصلًا، فمستحيل [[requestPermission]] تتنادى (العدّاد فضل 0). نداها هناك مالوش فايدة: المتصفح بيرجّع [["denied"]] على طول من غير سؤال، والطريق الوحيد إن اليوزر يغيّرها بنفسه.
-- **[[result === "default" ? "prompt" : result]]:** [[requestPermission]] بترجّع [["default"]] لو اليوزر قفل السؤال من غير ما يختار. ده نفس [["prompt"]] بأسامي الـ Permissions API، فبنرجّع الزرار.
-- **[[requestPermission]] جوه [[click]] بس:** Firefox (من 72) و Safari مبيظهروش السؤال من غير ضغطة من اليوزر.
-
-**الغلطة الشائعة:** تنادي [[requestPermission()]] أول ما الصفحة تفتح. اليوزر بيشوف سؤال من موقع لسه ميعرفوش فبيدوس «منع»، وده قرار مبيتغيّرش غير من الإعدادات. اسأل بعد ما اليوزر يعمل حاجة الإشعار يفيده فيها (زي «تابع الطلب»).` },
-            { lvl: 'تحدي', t: R`محاكاة: «مؤقّت بومودورو» بيبعت إشعار بعد ٢٥ دقيقة (خليها ١٠ ثواني وانت بتجرّب)، بس **لو التاب مستخبي بس** ([[document.hidden]] من درس «visibilitychange و bfcache»)، ولو التاب قدامك يطلّع رسالة جوه الصفحة بدل الإشعار. والإشعار بـ [[tag: "pomodoro"]] عشان ميتكوّموش، والضغط عليه يرجّعك للتاب.`, done: R`وانت في التاب مفيش إشعار نظام وفيه رسالة في الصفحة، ولو بدّلت لتاب تاني بيظهر إشعار واحد، وتشغيل المؤقت مرتين ورا بعض بيسيب إشعار واحد بس في مركز الإشعارات (نفس الـ [[tag]] بيبدّل القديم)، والضغط عليه بيجيب التاب قدام.`, sol: R`~~~live 220 pomodoro.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>بومودورو</title>
-<style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
-  #left { font-size: 40px; font-variant-numeric: tabular-nums; }
-  #inpage { background: #fef3c7; padding: 8px 12px; border-radius: 8px; }
-  #inpage:empty { display: none; }
-  button { font: inherit; padding: 6px 14px; }
-</style>
-</head>
-<body>
-<p id="left">0:10</p>
-<button id="start">ابدأ (١٠ ثواني للتجربة)</button>
-<p id="inpage" role="status"></p>
-<script>
-  const SECONDS = 10;                      // في الحقيقي: 25 * 60
-  let timer = null;
-
-  async function finish() {
-    const text = "خلصت الجلسة، خد راحة ٥ دقايق";
-    const canNotify = "Notification" in window && location.origin !== "null" && Notification.permission === "granted";
-    if (document.hidden && canNotify) {
-      const n = new Notification("بومودورو", { body: text, tag: "pomodoro" });   // نفس الـ tag = يبدّل القديم
-      n.onclick = () => { window.focus(); n.close(); };
-    } else {
-      document.querySelector("#inpage").textContent = text;     // اليوزر قدام الصفحة (أو مفيش إذن)
-    }
+~~~js bank.mjs
+// bank.mjs: ٤ workers بيحوّلوا فلوس بين حسابين. المجموع لازم يفضل 1000
+import { Worker, isMainThread, workerData } from 'node:worker_threads';
+import { Mutex } from './mutex.mjs';
+const MOVES = 200_000;
+if (isMainThread) {
+  for (const useLock of [false, true]) {
+    const mem = new Int32Array(new SharedArrayBuffer(12));
+    mem[1] = 500; mem[2] = 500;
+    const workers = Array.from({ length: 4 }, (_, n) => new Worker(new URL(import.meta.url), { workerData: { mem, useLock, n } }));
+    await Promise.all(workers.map((w) => new Promise((resolve) => w.on('exit', resolve))));
+    console.log(useLock ? 'بقفل:   ' : 'من غير:', mem[1], '+', mem[2], '=', mem[1] + mem[2]);
   }
-
-  document.querySelector("#start").addEventListener("click", async () => {
-    // الإذن من ضغطة اليوزر نفسها، قبل ما المؤقت يبدأ
-    if ("Notification" in window && location.origin !== "null" && Notification.permission === "default") {
-      await Notification.requestPermission();
-    }
-    clearInterval(timer);
-    document.querySelector("#inpage").textContent = "";
-    const end = Date.now() + SECONDS * 1000;
-    const tick = () => {
-      const left = Math.max(0, Math.ceil((end - Date.now()) / 1000));
-      document.querySelector("#left").textContent = $__bt0:$__{String(left).padStart(2, "0")}$__bt;
-      if (left === 0) { clearInterval(timer); finish(); }
-    };
-    timer = setInterval(tick, 250);
-    tick();
-  });
-</script>
-</body>
-</html>
+} else {
+  const { mem, useLock, n } = workerData;
+  const mutex = new Mutex(mem, 0);
+  for (let k = 0; k < MOVES; k++) {
+    const [from, to] = (k + n) % 2 ? [1, 2] : [2, 1];
+    if (useLock) mutex.lock();
+    const amount = mem[from] > 0 ? 1 : 0;
+    mem[from] = mem[from] - amount;
+    mem[to] = mem[to] + amount;
+    if (useLock) mutex.unlock();
+  }
+}
 ~~~
 
-في الـ preview الإشعارات ممنوعة (صفحة معزولة)، فالرسالة بتظهر جوه الصفحة دايمًا. التجربة الحقيقية من [[http://localhost]].
-
-**القياس:** Chrome لوحده بـ DevTools Protocol: الإذن [["granted"]] بـ [[Browser.setPermission]]، و [[Notification]] ملفوفة بحيث تسجّل كل إشعار اتعمل بالـ [[tag]] بتاعه وكل [[show]]، والضغط على «ابدأ» بـ [[userGesture: true]]، و «التاب التاني» تاب حقيقي اتفتح واتفعّل:
-
-~~~text الناتج (Chrome 158 headless، http://localhost:8831)
-== التجربة ١: التاب قدامك
-  إشعارات: [] | جوه الصفحة: خلصت الجلسة، خد راحة ٥ دقايق
-== التجربة ٢: بدّلنا لتاب تاني
-  hidden: true | إشعارات: ["pomodoro","show"] | جوه الصفحة: ""
-== التجربة ٣: مرتين ورا بعض وهو مستخبي
-  إشعارات: ["pomodoro","show","pomodoro","show","pomodoro","show"]
+~~~text الناتج (Node 24.22، تشغيلتين)
+من غير: 3304 + 2723 = 6027
+بقفل:    500 + 500 = 1000
+من غير: 4195 + 3543 = 7738
+بقفل:    500 + 500 = 1000
 ~~~
 
-**ليه كده:**
+- **من غير قفل** البنك «طبع فلوس»: ٦٠٢٧ بدل ١٠٠٠، ورقم تاني كل مرة. لأن اتنين workers قروا نفس الرصيد، وكل واحد كتب نتيجته فوق التاني، فطرح ضاع وزيادة لأ (أو العكس).
+- **[[lock()]]:** [[compareExchange(a, i, 0, 1)]] = «لو مفتوح (٠) اقفله (١)». لو رجع ٠ يبقى احنا اللي قفلنا وندخل. لو رجع ١ يبقى حد تاني جوه، فـ [[Atomics.wait(a, i, 1)]] = «نام طول ما القيمة لسه ١» (من غير ما تحرق CPU)، ولما نصحى نحاول تاني.
+- **[[unlock()]]:** نرجّع ٠ بـ [[compareExchange]] (عشان نمسك الغلطة لو حد فتح قفل مش مقفول: اتجرّب بيرمي [[Error: unlock على قفل مش مقفول]])، وبعدين [[Atomics.notify(a, i, 1)]] نصحّي **واحد** من اللي نايمين.
+- الـ ٣ خانات في نفس الـ [[Int32Array]]: خانة ٠ القفل، و ١ و ٢ الحسابين. الحسابين بيتكتبوا بالطريقة العادية جوه القفل، لأن القفل بيضمن إن مفيش حد تاني جوه.
+- القفل ده بسيط (مش «fair»: مفيش ضمان إن اللي مستني من بدري يدخل الأول). كفاية للتعلّم ولحالات كتير، والإنتاج الجد بيستخدم مكتبة أو تصميم من غير أقفال (رسايل).` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الصفحة (cross-origin isolated) عايزة تستنى لحد ما الـ worker يكتب ١ في [[ flag[0] ]]. الكود بيرمي على طول. ليه؟ وصلّحه من غير ما تجمّد الصفحة:
 
-- **[[document.hidden]] ساعة الخلصان:** القرار بيتاخد لحظة ما المؤقت يخلص مش لما يبدأ، لأن اليوزر ممكن يروح ويرجع في النص. قدامك = رسالة في الصفحة (التجربة ١، صفر إشعارات). مستخبي = إشعار نظام (التجربة ٢).
-- **[[tag: "pomodoro"]]:** كل إشعار بنفس الـ tag **بيبدّل** اللي قبله بدل ما يتحط جنبه (ده سلوك الـ [[tag]] في مواصفات Notifications API و MDN). في التجربة ٣ اتعمل إشعارين جداد، بس في مركز الإشعارات بيفضل واحد. headless مفيهوش مركز إشعارات نشوفه، فالجزء ده من الوثائق مش من القياس.
-- **[[n.onclick = () => { window.focus(); n.close(); }]]:** الضغط على الإشعار بيجيب التاب قدام ويقفل الإشعار. ده كمان محتاج شاشة حقيقية تضغط فيها، فجرّبه في Chrome عادي.
-- **[[requestPermission]] جوه ضغطة «ابدأ» وقبل المؤقت:** بعد ١٠ ثواني (أو ٢٥ دقيقة) مفيش ضغطة من اليوزر، و Firefox و Safari مش هيظهروا السؤال. فبنسأل في اللحظة الوحيدة اللي فيها ضغطة.
-- **[[Date.now() + SECONDS * 1000]] والعدّ من الوقت:** التاب المستخبي بيبطّأ الـ [[setInterval]]، فالعدّ بالـ ticks كان هيتأخر. هنا كل tick بيحسب الباقي من الساعة، والإشعار طلع في ميعاده وهو مستخبي.
+~~~js
+const flag = new Int32Array(new SharedArrayBuffer(4));
+worker.postMessage(flag);
+Atomics.wait(flag, 0, 0);
+console.log('الـ worker خلص');
+~~~`, done: R`الصفحة بتطبع «الـ worker خلص» من غير error ومن غير ما تتجمد، وتقدر تقول ليه [[wait]] ممنوعة هنا ومسموحة في Node.`, sol: R`~~~text الرسالة (Chrome 157، صفحة cross-origin isolated)
+TypeError: Atomics.wait cannot be called in this context
+~~~
 
-**الغلطة الشائعة:** تبعت الإشعار في كل الحالات. اليوزر قاعد قدام الصفحة وشايف المؤقت، فإشعار نظام فوقها مزعج، وده أسرع طريق إنه يقفل الإشعارات للموقع كله.` },
+~~~js fixed.js
+const flag = new Int32Array(new SharedArrayBuffer(4));
+worker.postMessage(flag);
+const result = Atomics.waitAsync(flag, 0, 0, 5000);
+const status = result.async ? await result.value : result.value;
+console.log('الـ worker خلص', status);
+~~~
+
+وجوه الـ worker بعد ما يخلص: [[Atomics.store(flag, 0, 1); Atomics.notify(flag, 0);]].
+
+- [[Atomics.wait]] **بيوقّف الـ thread كله** لحد ما يتصحى. على الـ main thread في المتصفح ده معناه صفحة متجمدة، فالمتصفح بيمنعه خالص. جوه worker مسموح، وفي Node مسموح حتى على الـ main thread (اتجرّب: [[Atomics.wait(a, 1, 0, 50)]] رجّع [[timed-out]]).
+- [[Atomics.waitAsync(arr, i, value, timeout)]] بترجّع [[{ async, value }]]: لو القيمة مش [[value]] أصلًا، [[async: false]] و [[value: 'not-equal']] على طول. غير كده [[async: true]] و [[value]] Promise بتخلص بـ [[ok]] (حد عمل notify) أو [[timed-out]]. اتجرّب في Chrome: [[waitAsync]] بمهلة ٥٠ ms رجّعت [[timed-out]]، وفي Node بعد [[notify]] رجّعت [[ok]].
+- الـ timeout مهم: من غيره لو الـ worker وقع، الصفحة هتستنى للأبد.` },
+            { lvl: 'تحدي', t: R`**ابني:** طابور ثابت الحجم (ring buffer) بـ ٨ خانات [[Float64]] فوق [[SharedArrayBuffer]] بين worker بيكتب ١٠٠٠ رقم (من ٠ لـ ٩٩٩) والـ main بيقراهم، **من غير ولا [[postMessage]]** للداتا. خانتين [[Int32]] للتحكم: [[head]] (اللي اتقرا) و [[tail]] (اللي اتكتب). الكاتب يستنى لو الطابور مليان، والقارئ يستنى لو فاضي، بـ [[wait]] و [[notify]].`, done: R`القارئ استلم ١٠٠٠ رقم مجموعهم ٤٩٩٥٠٠ بالظبط، والطابور اتملى واتفضى كذا مرة (حصل انتظار)، والبرنامج بيخلص لوحده.`, sol: R`~~~js ring.mjs
+// ring.mjs: طابور ثابت الحجم فوق SharedArrayBuffer: worker بيكتب والـ main بيقرا، من غير postMessage
+import { Worker, isMainThread, workerData } from 'node:worker_threads';
+const SIZE = 8, HEAD = 0, TAIL = 1;
+if (isMainThread) {
+  const ctrl = new Int32Array(new SharedArrayBuffer(8));
+  const slots = new Float64Array(new SharedArrayBuffer(SIZE * 8));
+  new Worker(new URL(import.meta.url), { workerData: { ctrl, slots, count: 1000 } });
+  let got = 0, sum = 0, waits = 0;
+  while (got < 1000) {
+    const head = Atomics.load(ctrl, HEAD), tail = Atomics.load(ctrl, TAIL);
+    if (head === tail) { waits++; Atomics.wait(ctrl, TAIL, tail, 1000); continue; }
+    sum += slots[head % SIZE];
+    Atomics.store(ctrl, HEAD, head + 1);
+    Atomics.notify(ctrl, HEAD);
+    got++;
+  }
+  console.log('استلمت', got, 'المجموع', sum, 'المفروض', (999 * 1000) / 2, '| مرات الانتظار:', waits > 0);
+} else {
+  const { ctrl, slots, count } = workerData;
+  for (let n = 0; n < count; n++) {
+    let head = Atomics.load(ctrl, HEAD);
+    const tail = Atomics.load(ctrl, TAIL);
+    while (tail - head === SIZE) { Atomics.wait(ctrl, HEAD, head, 1000); head = Atomics.load(ctrl, HEAD); }
+    slots[tail % SIZE] = n;
+    Atomics.store(ctrl, TAIL, tail + 1);
+    Atomics.notify(ctrl, TAIL);
+  }
+}
+~~~
+
+~~~text الناتج (Node 24.22، تشغيلتين بنفس الناتج)
+استلمت 1000 المجموع 499500 المفروض 499500 | مرات الانتظار: true
+~~~
+
+- **العدادات بتزيد على طول:** [[head]] و [[tail]] مبيرجعوش صفر، والخانة = [[% SIZE]]. فاضي لما [[head === tail]]، ومليان لما [[tail - head === SIZE]]. ده أبسط من إنك تحسب «لفّة».
+- **الترتيب مهم:** الكاتب بيكتب الرقم في الخانة **الأول**، وبعدين [[Atomics.store]] للـ [[tail]]. والـ [[store]] الـ atomic بيضمن إن اللي يشوف الـ [[tail]] الجديد بـ [[Atomics.load]] هيشوف الرقم اللي اتكتب قبله. لو عكست الترتيب، القارئ ممكن يقرا خانة لسه فاضية.
+- [[Atomics.wait(ctrl, TAIL, tail, 1000)]]: «نام طول ما الـ [[tail]] لسه زي ما شفته، أقصى حاجة ثانية». ولو الكاتب زوّده بين ما قريت وما نمت، [[wait]] بترجع [[not-equal]] على طول فمفيش نومة ضايعة.
+- ده **single-producer single-consumer**: كاتب واحد وقارئ واحد. لو اتنين كتّاب، الـ [[tail]] محتاج [[compareExchange]] أو قفل.
+- ده نفس الشكل اللي Web Audio (AudioWorklet) والـ wasm threads بيستخدموه عشان ينقلوا صوت وداتا بسرعة من غير رسايل.` },
           ],
-          ref: [
-            { t: "MDN: Using the Notifications API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API/Using_the_Notifications_API" },
-            { t: "MDN: Notification.requestPermission()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Notification/requestPermission_static" },
-            { t: "MDN: Permissions.query()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Permissions/query" },
-            { t: "MDN: PermissionStatus change event", url: "https://developer.mozilla.org/en-US/docs/Web/API/PermissionStatus/change_event" },
-          ],
+          check: { lang: "js", starter: R`function atomicMax(arr, i, value) {
+  // arr[i] = max(arr[i], value) بأمان بـ compareExchange، ورجّع القيمة الكبيرة
+}`, tests: R`test("أكبر: بيكتب", () => { const a = Int32Array.of(5); expect(atomicMax(a, 0, 9)).toBe(9); expect(a[0]).toBe(9); });
+test("أصغر: مبيغيّرش", () => { const a = Int32Array.of(9); expect(atomicMax(a, 0, 3)).toBe(9); expect(a[0]).toBe(9); });
+test("سالب", () => expect(atomicMax(Int32Array.of(-10), 0, -4)).toBe(-4));
+test("index تاني", () => { const a = Int32Array.of(1, 2, 3); atomicMax(a, 2, 30); expect(Array.from(a)).toEqual([1, 2, 30]); });
+test("متساوي", () => expect(atomicMax(Int32Array.of(7), 0, 7)).toBe(7));`, solution: R`function atomicMax(arr, i, value) {
+  let old = Atomics.load(arr, i);
+  while (value > old) {
+    const seen = Atomics.compareExchange(arr, i, old, value);
+    if (seen === old) return value;
+    old = seen;
+  }
+  return old;
+}` },
           flag: "script",
           deep: {
-            why: R`الإشعار أقوى طريقة توصل بيها لليوزر وهو مش بيبص على موقعك، وعشان كده أكتر حاجة بتتساء استخدامها. المتصفحات بقت بتخبّي السؤال لو المواقع بتسأل كتير من غير سبب (Chrome بيعمله «quiet UI» جنب العنوان)، واليوزر اللي داس Block مش هيرجع. فالسؤال في الوقت الغلط ممكن يخسّرك الإذن للأبد.`,
-            how: R`[[Notification.permission]] قيمة متزامنة بتقرا الحالة دلوقتي. و [[requestPermission()]] بترجّع Promise: لو الحالة [["default"]] بتطلّع السؤال، ولو [["granted"]] أو [["denied"]] بترجّع على طول من غير سؤال (جرّبتها: في [["denied"]] الكود وقف عند الشرط قبل ما يسأل أصلًا).
+            why: R`الذاكرة المشتركة سريعة بس خطيرة: الـ CPU بيقسم [[ a[0]++ ]] لـ ٣ خطوات (load و add و store)، والـ cores التانية ممكن تدخل بينهم. وكمان الـ CPU والـ compiler بيعيدوا ترتيب القراية والكتابة عشان السرعة، فـ thread تاني ممكن يشوف كتابتك بترتيب غير اللي كتبته. [[Atomics]] بيحل الاتنين: العملية بتتعمل كوحدة واحدة، والعمليات الـ atomic بتتشاف بنفس الترتيب في كل الـ threads (sequentially consistent). ومعاها [[wait]] و [[notify]] عشان الـ threads تستنى بعض من غير ما تلف وتحرق CPU. وده الأساس اللي wasm threads و Emscripten pthreads مبنيين عليه.`,
+            how: R`[[Atomics]] object عادي (مش constructor: [[new Atomics()]] بيرمي [[TypeError: Atomics is not a constructor]]) زي [[Math]]. كل دالة بتاخد [[(typedArray, index, ...)]]: الـ array لازم integer typed array ([[Int8]] لحد [[BigUint64]])، و [[Float32Array]] بيرمي [[TypeError: [object Float32Array] is not an integer typed array.]]، والـ index برّه الطول: [[RangeError: Invalid atomic access index]]. العمليات بتترجم لتعليمات CPU atomic (زي [[lock xadd]] و [[cmpxchg]] على x86)، و [[Atomics.isLockFree(n)]] بيقولك لو الحجم [[n]] (١ و ٢ و ٤ و ٨) بيتعمل كده من غير lock داخلي: على الجهاز ده [[true]] للأربعة و [[false]] لـ ٣.
 
-[[new Notification(title, options)]] بيطلّع الإشعار على طول. أهم الـ options: [[body]] النص، و [[icon]]، و [[tag]] (إشعار جديد بنفس الـ tag بيبدّل القديم بدل ما يتكوّموا)، و [[data]] أي داتا تحتاجها في الضغطة.
+[[Atomics.wait(int32, i, expected, timeout)]] بيقارن [[ int32[i] ]] بـ [[expected]] **atomically**: لو مختلفين بيرجّع [[not-equal]] على طول، ولو متساويين بينيّم الـ thread لحد [[notify]] على نفس المكان ([[ok]]) أو الـ timeout بالمللي ([[timed-out]]). شغال على [[Int32Array]] و [[BigInt64Array]] **مشتركين** بس ([[TypeError: [object Int32Array] is not a shared typed array.]] للعادية، و [[TypeError: [object Uint8Array] is not an int32 or BigInt64 typed array.]] للنوع الغلط)، وممنوع على الـ main thread في المتصفح. [[Atomics.notify(int32, i, count)]] بيصحّي لحد [[count]] (الافتراضي الكل) ويرجّع عدد اللي صحيوا فعلًا (صفر لو محدش نايم). [[Atomics.waitAsync]] نفس [[wait]] بس بيرجّع [[{ async, value }]] و [[value]] Promise. و [[Atomics.pause(n)]] (ES2025) تلميح للـ CPU إنك في spin loop (تعليمة [[pause]] على x86)، بيرجّع [[undefined]] ومبيناّمش الـ thread، و [[n]] لازم integer ([[TypeError: Atomics.pause argument must be undefined or an integer]]).
 
-[[navigator.permissions.query]] بتاخد [[{ name }]] من لستة أسامي ثابتة ([["notifications"]] و [["geolocation"]] و [["camera"]] و [["clipboard-read"]]...)، واسم غلط بيرمي [[TypeError]]، وبترجّع [[PermissionStatus]] فيه [[state]] و [[onchange]].
-
-الإشعار ده بيشتغل والصفحة مفتوحة بس. عشان يوصل والموقع مقفول محتاج Push API و service worker (درس «push و Background Sync» في وحدة PWA)، وهناك بيبقى [[registration.showNotification]] مش [[new Notification]].`,
-            when: R`حاجة اليوزر طلبها بنفسه ومهمة له وهو مش في التاب: رسالة جديدة في شات، أو طلب اتوصّل، أو مؤقت خلص، أو build خلص. ومش للإعلانات ولا «ارجعلنا وحشتنا». ولو اليوزر قدام الصفحة، رسالة جوه الصفحة أحسن من إشعار نظام.`,
-            mistakes: R`[[requestPermission()]] أول ما الصفحة تفتح، فاليوزر يرفض من غير ما يفهم. وتفتكر إنك تقدر تسأل تاني بعد [["denied"]]: مش هيظهر حاجة. وتجرّب من الموبايل على [[http://192.168.1.5:3000]] فالـ API مش موجود، لأنه محتاج secure context: HTTPS أو localhost (و Chrome بيعتبر [[file://]] secure كمان: جرّبتها و [[isSecureContext]] طلع [[true]]). و [[new Notification]] على Chrome أندرويد بيرمي [[TypeError: Illegal constructor]] (من الـ docs): هناك لازم [[registration.showNotification]] من service worker. ونسيان الـ [[tag]] فاليوزر يلاقي ٢٠ إشعار لنفس الحاجة.`
+الفكرة كلها اسمها في MDN «Agent communication and coordination»: كل thread (worker أو الصفحة) «agent»، والـ agents بتتكلم يا برسايل ([[postMessage]]) يا بذاكرة مشتركة + [[Atomics]].`,
+            when: R`[[Atomics.add]] و [[sub]]: عدادات مشتركة (تقدم، إحصائيات، IDs). [[load]] و [[store]]: أي قراية أو كتابة لخانة thread تاني بيلمسها (أعلام «اتلغى» و «خلص»، والـ [[head]] و [[tail]] في الطابور). [[compareExchange]]: أقفال وأي عملية مركبة (max، «زوّد لو أقل من حد»). [[exchange]]: خد القيمة وحط مكانها في خطوة (spinlock بسيط). [[and]] و [[or]] و [[xor]]: أعلام bits مشتركة. [[wait]] و [[notify]]: طوابير وأقفال من غير ما تحرق CPU (في الـ workers و Node). [[waitAsync]]: الانتظار من الـ main thread في المتصفح. [[pause]]: جوه loop بيستنى فترة قصيرة جدًا قبل ما تلجأ لـ [[wait]]. **وأول سؤال قبل أي حاجة:** ينفع رسايل بدل الذاكرة المشتركة؟ لو آه، الرسايل أبسط وأأمن.`,
+            mistakes: R`- [[ a[0]++ ]] على ذاكرة مشتركة: زيادات بتضيع (١.١٧ مليون من ٤ مليون).
+- [[Atomics.store(a, 0, Atomics.load(a, 0) + 1)]]: كل خطوة atomic بس بينهم فجوة. [[Atomics.add]] أو CAS loop.
+- [[Atomics.add]] على كل خانة لوحدها في عملية محتاجة خانتين متسقين (تحويل بنك): محتاج قفل.
+- [[Atomics.wait]] على الـ main thread في المتصفح: [[TypeError: Atomics.wait cannot be called in this context]]. [[waitAsync]].
+- [[wait]] على [[Uint8Array]] أو array مش مشتركة: [[TypeError]]. لازم [[Int32Array]] أو [[BigInt64Array]] على [[SharedArrayBuffer]].
+- [[wait]] من غير timeout: لو اللي هيصحّيك وقع، هتنام للأبد.
+- تكتب القيمة **بعد** ما تعلن عنها ([[store]] للـ [[tail]] قبل الداتا): القارئ بيقرا زبالة.
+- تنسى [[notify]] بعد التغيير: اللي نايم مش هيصحى (إلا بالـ timeout).
+- [[Atomics]] على [[Float32Array]] أو [[Float64Array]]: [[TypeError: ... is not an integer typed array.]] خزّن الأرقام العشرية كـ integers (مضروبة في ١٠٠٠ مثلًا) لو محتاج atomics عليها.`,
           },
           teach: R`## الفكرة في سطر
 
-قبل ما تبعت إشعار لازم تعرف الإذن حالته إيه، ولو لسه مسألتش، تسأل بعد ضغطة زرار. المثال بيعمل التلاتة: يقرا الحالة، ويسمع لو اتغيّرت، ويسأل ويبعت إشعار لما اليوزر يدوس.
-
-جرّبت المثال في Chrome 156 headless (عن طريق playwright-core، من [[http://127.0.0.1]]) في ٣ حالات: إذن لسه متسألش وبعدين اتوافق عليه والصفحة مفتوحة، وإذن مرفوض، وإذن موافق عليه من الأول. الـ playwright بيوافق أو بيرفض مكان اليوزر، فشكل نافذة السؤال نفسها والإشعار على الشاشة **من الـ docs** مش من التجربة.
+الكتابة العادية من كذا thread في نفس المكان بتضيّع تغييرات؛ [[Atomics]] بيعمل كل عملية كوحدة واحدة، و [[wait]] و [[notify]] بيخلّوا الـ threads تستنى بعض. الناتج من Node 24.22 على ويندوز 11، و Chrome 157 للمتصفح.
 
 ---
 
-## ١. الحالة من غير ما تسأل: [[navigator.permissions.query]]
+## ١. الـ race condition بالأرقام
 
-~~~text app.js
-const status = await navigator.permissions.query({ name: "notifications" });
-console.log("الحالة:", status.state, "| Notification.permission:", Notification.permission);
-status.onchange = () => console.log("اتغيرت لـ", status.state);
+المثال فوق: ٤ workers، وكل واحد بيزوّد نفس الـ [[Int32]] مليون مرة.
+
+~~~text الناتج (تشغيلتين)
+plain  1170714 المفروض 4000000
+atomic 4000000 المفروض 4000000
+plain  1165208 المفروض 4000000
+atomic 4000000 المفروض 4000000
 ~~~
 
-- [[navigator.permissions]]: الـ Permissions API. فيها دالة واحدة مهمة: [[query]].
-- [[{ name: "notifications" }]]: اسم الإذن. الأسامي ثابتة، وأي اسم غلط بيرمي:
+ليه [[ counter[0]++ ]] بيضيّع؟ لأنه ٣ خطوات، واتنين workers ممكن يتداخلوا كده:
 
-~~~text الناتج (Chrome، name: "banana")
-TypeError: Failed to execute 'query' on 'Permissions': Failed to read the 'name' property from 'PermissionDescriptor': The provided value 'banana' is not a valid enum value of type PermissionName.
+| الخطوة | worker أ | worker ب | القيمة في الذاكرة |
+|---|---|---|---|
+| ١ | يقرا ٧ | | ٧ |
+| ٢ | | يقرا ٧ | ٧ |
+| ٣ | يكتب ٨ | | ٨ |
+| ٤ | | يكتب ٨ | ٨: زيادة ضاعت |
+
+[[Atomics.add(counter, 0, 1)]] بيعمل الـ ٣ خطوات كتعليمة CPU واحدة، فمفيش حد يقدر يقرا في النص.
+
+---
+
+## ٢. كل functions الـ [[Atomics]]
+
+المثال على [[a = new Int32Array(new SharedArrayBuffer(16))]]، كل سطر بعد اللي قبله (اتجرّبوا كلهم):
+
+| الدالة | بتعمل إيه | مثال ← بيرجّع، والقيمة بعدها |
+|---|---|---|
+| [[Atomics.store(a, i, v)]] | تكتب [[v]] | [[store(a, 0, 5)]] ← ٥ |
+| [[Atomics.load(a, i)]] | تقرا القيمة بأمان | ← ٥ |
+| [[Atomics.add(a, i, v)]] | تزوّد | [[add(a, 0, 3)]] ← ٥ (القديمة)، وبقت ٨ |
+| [[Atomics.sub(a, i, v)]] | تطرح | [[sub(a, 0, 2)]] ← ٨، وبقت ٦ |
+| [[Atomics.and(a, i, v)]] | [[&]] على الـ bits | [[and(a, 0, 0b0100)]] ← ٦، وبقت ٤ |
+| [[Atomics.or(a, i, v)]] | [[OR]] على الـ bits | [[or(a, 0, 0b0011)]] ← ٤، وبقت ٧ |
+| [[Atomics.xor(a, i, v)]] | [[^]] على الـ bits | [[xor(a, 0, 0b0001)]] ← ٧، وبقت ٦ |
+| [[Atomics.exchange(a, i, v)]] | تكتب [[v]] وترجّع اللي كان | [[exchange(a, 0, 100)]] ← ٦، وبقت ١٠٠ |
+| [[Atomics.compareExchange(a, i, expected, v)]] | تكتب [[v]] **بس لو** القيمة = [[expected]] | [[(a, 0, 100, 1)]] ← ١٠٠ ونجحت؛ تاني مرة ← ١ وفشلت |
+| [[Atomics.wait(a, i, expected, ms)]] | تنام لو القيمة = [[expected]] | قيمة مختلفة ← [[not-equal]]، ومهلة ٥٠ ← [[timed-out]] |
+| [[Atomics.waitAsync(a, i, expected, ms)]] | نفس [[wait]] بـ Promise | [[{ async: true, value: Promise }]]، وبعد notify ← [[ok]] |
+| [[Atomics.notify(a, i, count)]] | تصحّي لحد [[count]] نايمين | محدش نايم ← ٠، وواحد نايم ← ١ |
+| [[Atomics.isLockFree(n)]] | العمليات على [[n]] bytes في الـ hardware مباشرة؟ | [[1, 2, 3, 4, 8]] ← [[true, true, false, true, true]] |
+| [[Atomics.pause(n)]] | تلميح للـ CPU إنك بتلف مستني (ES2025) | ← [[undefined]] |
+
+وكلهم شغالين على [[BigInt64Array]] بـ BigInt ([[Atomics.add(b, 0, 5n)]] ← [[0n]]).
+
+---
+
+## ٣. [[Atomics.compareExchange]]: أساس أي lock
+
+~~~js
+lock() {
+  while (Atomics.compareExchange(this.a, this.i, 0, 1) !== 0) Atomics.wait(this.a, this.i, 1);
+}
+unlock() {
+  Atomics.compareExchange(this.a, this.i, 1, 0);
+  Atomics.notify(this.a, this.i, 1);
+}
 ~~~
 
-- [[await]]: [[query]] بترجّع Promise. و [[await]] برّه أي دالة محتاج [[<script type="module">]].
-- [[status.state]]: [["granted"]] أو [["denied"]] أو [["prompt"]].
-- [[status.onchange]]: بيتنادى لو الحالة اتغيرت والصفحة مفتوحة (اليوزر غيّرها من الإعدادات، أو وافق على السؤال).
+- خانة واحدة: ٠ مفتوح و ١ مقفول.
+- [[lock]]: «لو ٠ خليه ١». لو رجع ٠ يبقى احنا اللي قفلنا. غير كده نام بـ [[wait]] طول ما القيمة ١، ولما نصحى نحاول تاني.
+- [[unlock]]: رجّعه ٠ وصحّي واحد.
+- النسخة الكاملة في تمرين «البنك»: من غير القفل المجموع طلع ٦٠٢٧ بدل ١٠٠٠، وبيه ١٠٠٠ بالظبط.
 
-جرّبت أسامي تانية في نفس الصفحة:
+---
 
-~~~text الناتج (Chrome 156، إذن مااتسألش)
-notifications prompt
-geolocation prompt
-camera prompt
-clipboard-read prompt
-push NotSupportedError: Push Permission without userVisibleOnly:true isn't supported yet.
+## ٤. [[Atomics.wait]] و [[Atomics.notify]] و [[Atomics.waitAsync]]
+
+~~~js
+const a = new Int32Array(new SharedArrayBuffer(16));
+console.log('wait not-equal', Atomics.wait(a, 1, 7, 100));
+console.log('wait timeout', Atomics.wait(a, 1, 0, 50));
+console.log('notify none', Atomics.notify(a, 1, 1));
+const r = Atomics.waitAsync(a, 2, 0, 1000);
+setTimeout(() => console.log('notify woke', Atomics.notify(a, 2)), 20);
+r.value.then((v) => console.log('waitAsync result', v));
 ~~~
 
-الـ [["push"]] محتاج [[{ name: "push", userVisibleOnly: true }]]، ودي بتاعة درس الـ push في وحدة PWA.
-
-### [["prompt"]] و [["default"]]: نفس المعنى باسمين
-
-~~~text الناتج
-الحالة: prompt | Notification.permission: default
+~~~text الناتج (Node 24.22)
+wait not-equal not-equal
+wait timeout timed-out
+notify none 0
+notify woke 1
+waitAsync result ok
 ~~~
 
-الاتنين معناهم «لسه مسألناش». الـ Permissions API بتسمّيها [["prompt"]]، و [[Notification.permission]] (الأقدم) بتسمّيها [["default"]]. والتانيين ([["granted"]] و [["denied"]]) نفس الاسم في الاتنين.
+- [[wait(a, 1, 7, 100)]]: القيمة صفر مش ٧، فمستناش أصلًا: [[not-equal]]. ده مهم: لو حد غيّر القيمة قبل ما تنام، مش هتنام على الفاضي.
+- [[wait(a, 1, 0, 50)]]: القيمة صفر، فنام ٥٠ ms ومحدش صحّاه: [[timed-out]].
+- [[notify]] ومفيش حد نايم: ٠.
+- [[waitAsync]]: مبيوقّفش حاجة، وبيرجّع Promise. و [[notify]] بعد ٢٠ ms صحّى واحد، والـ Promise خلصت بـ [[ok]].
 
-## ٢. الزرار: الفحص قبل السؤال
+| | [[Atomics.wait]] | [[Atomics.waitAsync]] |
+|---|---|---|
+| بيوقّف الـ thread | آه | لأ، Promise |
+| الـ main thread في المتصفح | ممنوع: [[TypeError: Atomics.wait cannot be called in this context]] | مسموح (اتجرّب في Chrome 157) |
+| workers و Node | مسموح | مسموح |
 
-~~~text app.js
-btn.addEventListener("click", async () => {
-  if (!("Notification" in window)) return console.log("المتصفح مبيدعمش");
-  if (Notification.permission === "denied") return console.log("اترفض قبل كده: من إعدادات الموقع بس");
-~~~
+---
 
-- [[async]] على الـ listener عشان نقدر نستخدم [[await]] جواه.
-- [[("Notification" in window)]]: هل الـ API موجود أصلًا؟ مش موجود على Safari على iPhone غير لو الموقع متسطّب كـ PWA على الشاشة الرئيسية (من الـ docs)، ومش موجود لو الصفحة مش secure context.
-- [[return console.log(...)]]: اطبع واخرج من الدالة في سطر واحد.
-- [[=== "denied"]]: اليوزر رفض قبل كده. مفيش أي كود يقدر يسأله تاني، فبدل ما تنادي [[requestPermission]] على الفاضي، قوله يغيّرها من الإعدادات.
+## ٥. [[Atomics.pause]] و [[Atomics.isLockFree]]
 
-## ٣. السؤال
+- لو متوقع القفل يتفتح خلال نانو ثواني، النوم بـ [[wait]] أغلى من الانتظار نفسه. فالأقفال الحقيقية بتلف شوية الأول ([[spin]]) وجوه الـ loop [[Atomics.pause()]]: بيقول للـ CPU «أنا بلف مستني»، فبيوفّر طاقة ويسيب الـ core التاني (hyper-threading) يشتغل. وبعد شوية لفات من غير نتيجة: [[wait]].
+- [[Atomics.isLockFree(n)]]: نادر تحتاجه. لو [[false]] لحجم معين، العمليات عليه شغالة صح برضه بس بـ lock داخلي في الـ engine (أبطأ). الـ ٤ bytes ([[Int32]]) مضمونة [[true]] حسب المواصفة، وده سبب إن [[wait]] شغالة عليها.
 
-~~~text app.js
-  const result = await Notification.requestPermission();
-  console.log("الرد:", result);
-  if (result !== "granted") return;
-~~~
+---
 
-- [[requestPermission()]]: لو الحالة [["default"]] بتطلّع نافذة المتصفح «Allow / Block». بترجّع Promise بالرد.
-- لو اليوزر قفل النافذة من غير ما يختار، الرد [["default"]] وتقدر تسأل تاني بعدين.
-- [[!== "granted"]]: أي حاجة غير الموافقة، خلاص.
+## ٦. Agent communication and coordination: الصورة الكاملة (Atomics و SharedArrayBuffer)
 
-ليه السؤال جوه الـ click؟ Firefox و Safari مبيطلّعوش السؤال أصلًا غير بعد ضغطة من اليوزر (user gesture)، و Chrome بيخبّي السؤال في أيقونة صغيرة جنب العنوان (اسمها quiet UI) للمواقع اللي الناس بترفضها كتير (من الـ docs). فالسؤال بعد ضغطة بيشتغل في كله وبيجيب موافقات أكتر.
+| الطريقة | ازاي | المكسب | التمن |
+|---|---|---|---|
+| رسايل [[postMessage]] | نسخ أو نقل | مفيش race conditions خالص | كل تحديث رسالة، ونسخ للداتا الكبيرة من غير transfer |
+| ذاكرة مشتركة + [[Atomics]] | [[SharedArrayBuffer]] و [[load]] و [[store]] و [[add]] | من غير رسايل، والكل بيشوف فورًا | race conditions، وأقفال، و headers في المتصفح |
 
-## ٤. الإشعار نفسه
-
-~~~text app.js
-  const n = new Notification("طلب جديد", { body: "رقم 42", tag: "order-42", icon: "/icon-192.png" });
-  n.onshow = () => console.log("ظهر:", n.title, n.body, n.tag);
-  n.onclick = () => { window.focus(); n.close(); };
-~~~
-
-| الـ option | معناه |
-|---|---|
-| أول argument ([["طلب جديد"]]) | العنوان، بيظهر بخط تقيل |
-| [[body]] | السطر اللي تحت العنوان |
-| [[tag]] | إشعار جديد بنفس الـ tag بيبدّل القديم بدل ما يتكوّموا جنب بعض |
-| [[icon]] | صورة صغيرة جنب الكلام (لو مش موجودة الإشعار بيظهر من غيرها) |
-
-- [[onshow]]: الإشعار ظهر فعلًا.
-- [[onclick]]: اليوزر داس عليه. [[window.focus()]] بيجيب التاب قدام، و [[n.close()]] بيشيله من مركز الإشعارات.
-
-## ٥. اللي حصل لما شغّلته
-
-~~~text الناتج (إذن مااتسألش، وبعدين اتوافق عليه والصفحة مفتوحة، وبعدين ضغطة)
-الحالة: prompt | Notification.permission: default
-اتغيرت لـ granted
-الرد: granted
-ظهر: طلب جديد رقم 42 order-42
-~~~
-
-~~~text الناتج (الإذن مرفوض قبل كده)
-الحالة: denied | Notification.permission: denied
-اترفض قبل كده: من إعدادات الموقع بس
-~~~
-
-~~~text الناتج (موافق عليه من الأول)
-الحالة: granted | Notification.permission: granted
-الرد: granted
-ظهر: طلب جديد رقم 42 order-42
-~~~
-
-- في الأولى [[onchange]] اشتغل لوحده أول ما الإذن اتغير، قبل ما ندوس الزرار.
-- في التالتة [[requestPermission]] رجّعت [["granted"]] على طول من غير سؤال.
-
-## ٦. الإشعار والموقع مقفول؟
-
-[[new Notification]] بيشتغل بس والصفحة مفتوحة (في أي تاب). عشان إشعار يوصل والمتصفح مش فاتح موقعك، محتاج service worker و Push API، وهناك بتستخدم [[registration.showNotification(...)]] من جوه الـ service worker. ده درس «push و Background Sync» في وحدة PWA. وعلى Chrome أندرويد، [[new Notification]] من الصفحة نفسها بيرمي [[TypeError: Illegal constructor]] وبيقولك تستخدم [[showNotification]] (من الـ docs).
+ابدأ بالرسايل. انقل للذاكرة المشتركة لما تقيس إن الرسايل هي المشكلة.
 
 ---
 
 ## الخلاصة
 
-| الحاجة | بترجّع | بتسأل اليوزر؟ |
-|---|---|---|
-| [[Notification.permission]] | [["default"]] أو [["granted"]] أو [["denied"]] على طول | لأ، بتقرا الحالة بس |
-| [[navigator.permissions.query({ name })]] | Promise بـ [[state]] و [[onchange]] | لأ، وبتشتغل لأي إذن |
-| [[Notification.requestPermission()]] | Promise بالرد | آه، لو الحالة لسه [["default"]] |
-| [[new Notification(title, opts)]] | الإشعار، ومعاه [[onclick]] و [[close()]] | لأ، ولازم الإذن [["granted"]] |
-
-- اسأل بعد ضغطة، مش أول ما الصفحة تفتح.
-- [["denied"]] نهائي من ناحية الكود: وجّه اليوزر للإعدادات.
-- محتاج HTTPS أو localhost، و [[tag]] عشان الإشعارات متتكوّمش.`,
+- [[ a[i]++ ]] من كذا thread = أرقام بتضيع. [[Atomics.add]] أو CAS loop بـ [[compareExchange]].
+- كل العمليات بترجّع القيمة **القديمة** (إلا [[store]]).
+- عملية على أكتر من خانة = قفل ([[compareExchange]] + [[wait]] + [[notify]]).
+- [[wait]] على [[Int32Array]] أو [[BigInt64Array]] مشتركة، ومش على الـ main thread في المتصفح: هناك [[waitAsync]].`,
           lines: [
-            R`الزرار اللي اليوزر هيدوس عليه عشان يفعّل الإشعارات. السؤال لازم يطلع من ضغطة عليه، مش لوحده.`,
-            R`بنسأل الـ Permissions API عن حالة إذن الإشعارات **من غير** ما نطلّع أي سؤال لليوزر. [[await]] هنا برّه أي دالة، فالـ script لازم يكون [[type="module"]].`,
-            R`بنطبع الحالة بالطريقتين: [[status.state]] بتقول [["prompt"]] لو لسه مسألناش، و [[Notification.permission]] بتقول نفس المعنى بكلمة [["default"]].`,
-            R`[[onchange]] بيتنادى لو الإذن اتغيّر والصفحة مفتوحة، سواء اليوزر وافق على السؤال أو غيّرها من إعدادات الموقع. فتقدر تحدّث شكل الزرار لوحده.`,
-            R`بنسمع للضغطة، و [[async]] عشان هنستنى رد السؤال بـ [[await]] جوه.`,
-            R`لو المتصفح مفيهوش [[Notification]] أصلًا (Safari على iPhone من غير ما الموقع يتسطّب، أو صفحة مش HTTPS) بنطبع رسالة ونخرج بدل ما الكود يقع.`,
-            R`لو اليوزر رفض قبل كده، مفيش كود يقدر يسأله تاني: [[requestPermission]] هترجّع [["denied"]] من غير ما يظهر حاجة. فبنقوله يغيّرها من الإعدادات ونخرج.`,
-            R`بنطلّع سؤال المتصفح «Allow / Block» ونستنى الرد. لو الحالة كانت [["granted"]] خلاص بترجّع على طول من غير سؤال.`,
-            R`بنطبع الرد: [["granted"]] أو [["denied"]] أو [["default"]] لو اليوزر قفل النافذة من غير ما يختار.`,
-            R`أي رد غير الموافقة، بنخرج ومبنحاولش نبعت إشعار (كان هيترمي أو ميظهرش).`,
-            R`بنطلّع الإشعار: العنوان، و [[body]] السطر اللي تحته، و [[tag]] اللي بيخلّي إشعار تاني بنفس الاسم يبدّل ده بدل ما يتكوّموا، و [[icon]] صورة صغيرة.`,
-            R`[[onshow]] بيتنادى لما الإشعار يظهر فعلًا، وبنطبع العنوان والنص والـ tag عشان نتأكد إنهم وصلوا صح.`,
-            R`لما اليوزر يدوس على الإشعار: [[window.focus()]] بيجيب التاب بتاعنا قدام، و [[n.close()]] بيشيل الإشعار من مركز الإشعارات.`,
-            R`نهاية الـ click listener.`,
+            R`بنستورد [[Worker]] و [[isMainThread]] (عشان نعرف احنا فين) و [[workerData]] (الداتا اللي الـ worker بياخدها).`,
+            R`كل worker هيزوّد مليون مرة.`,
+            R`نفس الملف بيشتغل مرتين: كـ main thread وكـ worker. الجزء ده للـ main.`,
+            R`بنجرّب مرتين: زيادة عادية، وزيادة بـ [[Atomics.add]].`,
+            R`عداد واحد [[Int32]] على [[SharedArrayBuffer]] فيه ٤ bytes، كل الـ workers هيشوفوه.`,
+            R`٤ workers من نفس الملف ([[import.meta.url]])، وكل واحد بياخد العداد المشترك والطريقة.`,
+            R`بنستنى الـ ٤ يخلصوا (حدث [[exit]]) قبل ما نقرا النتيجة.`,
+            R`بنقرا العداد بـ [[Atomics.load]] ونطبعه جنب الرقم الصح (٤ مليون).`,
+            R`نهاية الـ loop على الطريقتين.`,
+            R`[[else]]: الكود اللي بعد كده بيشتغل لما الملف يتحمّل كـ worker مش main.`,
+            R`الجزء ده بيشتغل جوه كل worker: بياخد العداد والطريقة من [[workerData]].`,
+            R`الطريقة العادية: [[ counter[0]++ ]] (قراية ثم زيادة ثم كتابة) مليون مرة.`,
+            R`الطريقة الـ atomic: [[Atomics.add]] بتعمل الـ ٣ خطوات كعملية واحدة.`,
+            R`نهاية جزء الـ worker، ولما الـ loop يخلص الـ worker بيخرج لوحده.`,
           ],
-          sol: R`اتجرّب في Chrome 156 headless من [[http://127.0.0.1]] (playwright بيوافق ويرفض مكانك): أول تحميل بيطبع [[الحالة: prompt | Notification.permission: default]]، ولما الإذن اتوافق عليه والصفحة مفتوحة [[onchange]] طبع [[اتغيرت لـ granted]]، والضغطة طبعت [[الرد: granted]] وبعدها [[ظهر: طلب جديد رقم 42 order-42]]. ولما الإذن مرفوض الضغطة طبعت [[اترفض قبل كده: من إعدادات الموقع بس]] ومسألتش.
-
-شكل نافذة السؤال والإشعار على الشاشة، وإن إشعارين بنفس الـ [[tag]] بيبقوا واحد في مركز الإشعارات، من الـ docs (MDN: Notification و Notification.tag)، لأن الـ headless مبيرسمش إشعارات حقيقية. ولو فتحتها من الموبايل على IP الجهاز بـ [[http]]، [[Notification]] مش هيبقى موجود أصلًا لأن الصفحة مش secure context، فشرط [["Notification" in window]] هو اللي هيشتغل.`
-        }
-      ]
+          ref: [
+            { t: "MDN Guide: Agent communication and coordination", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Agent_communication_and_coordination" },
+            { t: "MDN: Atomics", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics" },
+            { t: "MDN: Atomics.compareExchange()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/compareExchange" },
+            { t: "MDN: Atomics.wait()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/wait" },
+            { t: "MDN: Atomics.waitAsync()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/waitAsync" },
+            { t: "MDN: Atomics.notify()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/notify" },
+            { t: "MDN: Atomics.pause()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/pause" },
+            { t: "MDN: Atomics.isLockFree()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/isLockFree" },
+          ],
+          pre: [{ to: "js/SharedArrayBuffer: growable و crossOriginIsolated", why: R`الذاكرة المشتركة اللي [[Atomics]] بيشتغل عليها` }, { to: "js/bitwise و shifts", why: R`[[and]] و [[or]] و [[xor]] على الـ bits` }],
+        },
+      ],
     }
 ]);

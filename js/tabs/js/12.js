@@ -1,224 +1,60 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "this",
+      t: "scope و closures",
       l: 2,
-      n: "this بتتحدد وقت النداء مش وقت الكتابة، والـ arrow بتاخدها من برّه، و call و bind بيحددوها بإيدك",
+      n: "المتغير شايفه مين، والـ hoisting، وليه الدالة بتفتكر متغيرات اتعملت برّاها",
       pre: [
-        { to: "js/object literal", why: R`this بتظهر جوه الـ methods اللي على الـ object، فلازم تكون كاتب objects بـ methods`},
-        { to: "js/closure", why: R`الـ arrow بتاخد this من برّه زي ما الـ closure بياخد أي متغير، و [[const self = this]] closure عادي`},
-        { to: "js/addEventListener", why: R`نص التمارين والمشاريع handlers، و this جوه الـ handler ليها قاعدة خاصة`},
+        { to: "js/let و const و var", why: R`الوحدة كلها مبنية على الفرق بين الـ block scope بتاع [[let]] و [[const]] والـ function scope بتاع [[var]]`},
+        { to: "js/function و arrow", why: R`الـ closure دالة جوه دالة، والتمارين بتكتب الاتنين: declaration و arrow`},
+        { to: "js/higher-order functions", why: R`دالة بترجّع دالة، أو بتاخد دالة زي [[filter]] و [[setTimeout]]: ده شكل كل تمرين هنا`},
       ],
       projects: [
-        { lvl: 'صغير', dir: "stopwatch", t: R`ساعة إيقاف`, what: R`object فيه [[start]] و [[stop]] و [[reset]] بيعرض الوقت في الصفحة، والـ interval جواه arrow عشان تشوف this بتاعة الـ object. من درس arrow و this.`, done: R`start و stop و reset شغالين بأي ترتيب، و start مرتين مبتعدّش الضعف، والأزرار متربوطة صح ([[btn.addEventListener("click", () => sw.start())]] مش [[sw.start]] لوحدها).`, sol: R`~~~live 230 index.html
+        { lvl: 'صغير', dir: "counter-buttons", t: R`عدّاد لكل زرار`, what: R`٣ أزرار في صفحة، وكل واحد معاه counter من [[createCounter()]] بتاعة درس closure، وبيكتب عدد ضغطاته جنبه. ومفيش ولا متغير global للأعداد.`, done: R`كل زرار بيعد لوحده، وفي Console مش لاقي أي متغير اسمه count أو clicks على [[window]]، وزرار رابع بيتضاف بسطر واحد.`, sol: R`~~~live 260 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ساعة إيقاف</title>
-<style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 0; padding: 16px; background: #0f172a; color: #f8fafc; text-align: center; }
-  #time { font: 700 56px/1.2 ui-monospace, monospace; direction: ltr; margin: 12px 0; }
-  button { font: inherit; padding: 6px 18px; margin: 4px; border: 1px solid #94a3b8; border-radius: 8px; background: #1e293b; color: inherit; cursor: pointer; }
-</style>
-</head>
-<body>
-<div id="time">00:00.0</div>
-<button type="button" id="start">ابدأ</button>
-<button type="button" id="stop">وقّف</button>
-<button type="button" id="reset">صفّر</button>
-<script>
-  const display = document.querySelector("#time");
-
-  const sw = {
-    elapsed: 0,          // الملّي ثانية اللي اتجمعت قبل آخر start
-    startedAt: null,     // Date.now() وقت آخر start، أو null وهي واقفة
-    id: null,            // رقم الـ interval اللي بيرسم
-    now() {
-      return this.elapsed + (this.startedAt === null ? 0 : Date.now() - this.startedAt);
-    },
-    start() {
-      if (this.id !== null) return;                    // شغالة أصلًا
-      this.startedAt = Date.now();
-      this.id = setInterval(() => this.render(), 100); // arrow: this = sw
-      this.render();
-    },
-    stop() {
-      if (this.id === null) return;
-      clearInterval(this.id);
-      this.id = null;
-      this.elapsed += Date.now() - this.startedAt;
-      this.startedAt = null;
-      this.render();
-    },
-    reset() {
-      this.stop();
-      this.elapsed = 0;
-      this.render();
-    },
-    format(ms) {
-      const tenths = Math.floor(ms / 100);
-      const m = Math.floor(tenths / 600);
-      const s = Math.floor(tenths / 10) % 60;
-      return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0") + "." + (tenths % 10);
-    },
-    render() {
-      display.textContent = this.format(this.now());
-    },
-  };
-
-  document.querySelector("#start").addEventListener("click", () => sw.start());
-  document.querySelector("#stop").addEventListener("click", () => sw.stop());
-  document.querySelector("#reset").addEventListener("click", () => sw.reset());
-</script>
-</body>
-</html>
-~~~
-
-## هتشوف إيه
-
-رقم كبير [[00:00.0]] وتحته ٣ أزرار. «ابدأ» بيشغّل العدّ بعُشر الثانية، و «وقّف» بيثبّت الرقم، و «ابدأ» تاني بيكمّل من مكانه، و «صفّر» بيرجّعه صفر حتى لو شغالة.
-
-~~~text الناتج (Chrome 157، Playwright)
-ابدأ، 1.25 ثانية، وقّف            → 00:01.2
-ابدأ مرتين ورا بعض، 1 ثانية، وقّف → 00:02.2   (كمّلت من 1.2، ومعدّتش الضعف)
-الـ intervals الشغالة بعد الضغطتين → 1
-صفّر وهي شغالة                    → 00:00.0، والـ interval اتقفل
-~~~
-
-## كل حتة بتعمل إيه
-
-- **الوقت من [[Date.now()]] مش من عدّ الـ ticks:** [[setInterval]] مش مضمون يشتغل كل 100ms بالظبط (التاب في الخلفية بيتبطّأ لحد ثانية). فالـ interval بيرسم بس، والوقت الحقيقي بيتحسب من الفرق بين دلوقتي و [[startedAt]].
-- **[[elapsed]]:** اللي اتجمع قبل كده. [[stop]] بتضيف عليه المدة الأخيرة، فـ [[start]] تاني بتكمّل من مكانها.
-- **[[setInterval(() => this.render(), 100)]]:** الـ arrow جوه start، فـ this هي sw. لو function عادية this كانت هتبقى window و [[this.render]] مش موجودة.
-- **[[if (this.id !== null) return]]:** بيمنع interval تاني. و [[stop]] بتحط [[id = null]] عشان start تقدر تشتغل تاني.
-- **الأزرار بـ [[() => sw.start()]]:** لو [[addEventListener("click", sw.start)]] this جوه start هتبقى الزرار، و [[this.startedAt]] هيتكتب على الزرار والساعة مش هتتحرك.
-- **[[direction: ltr]]** على الرقم: عشان الصفحة RTL، والأرقام والنقطتين لازم يفضلوا بالترتيب ده.
-
-## الغلطات اللي حصلت وإزاي اتصلحت
-
-- **أول نسخة كانت [[this.tenths++]] كل 100ms:** بعد دقيقة في تاب في الخلفية الساعة كانت متأخرة ثواني. الحل الحساب من [[Date.now()]].
-- **[[stop()]] كانت بتعمل [[elapsed = this.now()]] بعد ما [[startedAt = null]]:** الحساب ضاع وكل وقفة بترجع لآخر قيمة قبلها. الترتيب: اجمع الأول وبعدين صفّر [[startedAt]].` },
-        { lvl: 'صغير', t: R`loggers بأسامي`, what: R`[[makeLogger(name)]] بترجّع [[{ info, warn, error }]] كل واحدة [[console.x.bind(console, "[" + name + "]")]]، واستخدمها في جزئين من الكود. من درس call و apply و bind.`, done: R`[[db.info("connected")]] بيطبع [[[db] connected]] و [[ui.warn("slow")]] بيطلع تحذير أصفر فيه [[[ui] slow]]، ورقم السطر في Console بيشاور على مكان النداء مش على ملف الـ logger.`, sol: R`~~~js logger.js
-function makeLogger(name) {
-  const tag = "[" + name + "]";
-  return {
-    info: console.info.bind(console, tag),
-    warn: console.warn.bind(console, tag),
-    error: console.error.bind(console, tag),
-  };
-}
-
-if (typeof module !== "undefined") module.exports = makeLogger;
-~~~
-
-~~~js app.js
-// في Node بـ require، وفي المتصفح makeLogger جاية من logger.js اللي اتحمّل قبله
-const createLogger = typeof require === "function" ? require("./logger.js") : makeLogger;
-
-const db = createLogger("db");
-const ui = createLogger("ui");
-
-db.info("connected");
-ui.warn("slow");
-db.error("timeout after", 3000, "ms");
-ui.info("render", { items: 3 });
-~~~
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>loggers</title></head>
-<body>
-<p>افتح Console (F12).</p>
-<script src="logger.js"></script>
-<script src="app.js"></script>
-</body>
-</html>
-~~~
-
-## هتشوف إيه
-
-~~~text الناتج (node app.js، Node 24)
-[db] connected
-[ui] slow
-[db] timeout after 3000 ms
-[ui] render { items: 3 }
-~~~
-
-وفي Chrome (الصفحة من سيرفر محلي، اتقري بـ Playwright من [[msg.location()]]):
-
-~~~text Console بتاع Chrome 157
-info     [db] connected                 app.js:7
-warning  [ui] slow                      app.js:8    ← أصفر
-error    [db] timeout after 3000 ms     app.js:9    ← أحمر
-info     [ui] render {items: 3}         app.js:10
-~~~
-
-## كل حتة بتعمل إيه
-
-- **[[console.info.bind(console, tag)]]:** دالة جديدة this فيها console، وأول argument متثبت بالـ tag. فـ [[db.info("connected")]] = [[console.info("[db]", "connected")]]. وأي arguments زيادة (رقم أو object) بتتطبع بشكلها، مش متحوّلة لنص.
-- **رقم السطر:** ده المكسب الحقيقي من bind. الدالة المربوطة هي console.info نفسها، فـ DevTools بيكتب جنب الرسالة مكان **النداء** ([[app.js:8]]) مش [[logger.js]]. لو كتبت wrapper عادي [[info: (...a) => console.info(tag, ...a)]] كل الرسايل هتشاور على سطر جوه logger.js.
-- **[[warn]] و [[error]]:** في المتصفح أصفر وأحمر وبيتفلتروا من قايمة المستويات. وفي Node بيروحوا لـ stderr (عشان كده تقدر تفصلهم بـ [[node app.js 2> errors.log]]).
-- **سطر [[createLogger]]:** نفس الملف شغال في Node والمتصفح. في Node [[require]] موجودة، وفي المتصفح الدالة [[makeLogger]] جاية من الـ script اللي قبله. (اسم مختلف عشان [[const makeLogger]] كانت هتتعارض مع الـ function declaration اللي بنفس الاسم وترمي [[SyntaxError: Identifier 'makeLogger' has already been declared]].)
-
-## الغلطات اللي حصلت وإزاي اتصلحت
-
-- **أول نسخة كانت wrapper بـ arrow:** كل الرسايل في Chrome كانت بتقول [[logger.js:4]]، فمش عارف مين اللي كتب. الـ bind حلّها.
-- **[[const makeLogger = require(...)]] في app.js:** في المتصفح السطر ده وقع بالـ SyntaxError اللي فوق، والصفحة مطبعتش حاجة. الحل اسم تاني.` },
-        { lvl: 'متوسط', dir: "mini-jquery", t: R`jQuery صغير بتاعك`, what: R`[[$(selector)]] بترجّع object فيه [[els]] (array العناصر) و methods بترجّع [[this]] عشان تتسلسل: [[addClass]] و [[text]] و [[on(event, fn)]]، و [[on]] بتنادي fn بـ [[fn.call(el, e)]] عشان this جوه الـ handler يبقى العنصر. من دروس this و call و apply و bind، والـ DOM.`, done: R`[[$("li").addClass("x").text("hi")]] بتشتغل في سطر واحد على كل العناصر، وجوه [[on("click", function () { ... })]] الـ [[this]] هو العنصر اللي اتضغط، و [[$("#nope")]] مبيقعش وبيعمل ولا حاجة.`, sol: R`~~~live 330 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>jQuery صغير</title>
+<title>عدّاد لكل زرار</title>
 <style>
   body { font: 16px/1.6 system-ui, sans-serif; margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; }
-  li { padding: 4px 8px; margin: 4px 0; border-radius: 6px; cursor: pointer; list-style: none; }
-  .item { background: #e2e8f0; }
-  .picked { background: #bbf7d0; font-weight: 700; }
-  #log { color: #475569; }
+  .row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  button { font: inherit; min-width: 110px; padding: 6px 14px; border: 1px solid #94a3b8; border-radius: 8px; background: #fff; cursor: pointer; }
+  output { color: #334155; }
 </style>
 </head>
 <body>
-<h1 id="title">...</h1>
-<ul>
-  <li>قهوة</li>
-  <li>شاي</li>
-  <li>كاكاو</li>
-</ul>
-<p id="log"></p>
+<h1>عدّادات</h1>
+<div id="counters"></div>
 <script>
-  function $(target) {
-    const els =
-      typeof target === "string" ? [...document.querySelectorAll(target)] :
-      target instanceof Element ? [target] : [];
+  function createCounter(start = 0) {
+    let count = start;
     return {
-      els,
-      addClass(name) {
-        els.forEach((el) => el.classList.add(name));
-        return this;                                   // عشان تتسلسل
-      },
-      text(value) {
-        if (value === undefined) return els[0]?.textContent ?? "";
-        els.forEach((el) => { el.textContent = value; });
-        return this;
-      },
-      on(type, fn) {
-        els.forEach((el) => el.addEventListener(type, (e) => fn.call(el, e)));
-        return this;
-      },
+      increment() { return ++count; },
+      get() { return count; },
     };
   }
 
-  $("#title").text("المشروبات").addClass("title");
-  $("li").addClass("item").on("click", function () {
-    $(this).addClass("picked");                        // this = العنصر اللي اتضغط
-    $("#log").text("اخترت: " + $(this).text());
-  });
-  $("#nope").addClass("x").text("مش هيحصل حاجة").on("click", () => {});
+  function addCounterButton(root, label) {
+    const counter = createCounter();              // عدّاد جديد لكل زرار
+    const row = document.createElement("div");
+    row.className = "row";
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = label;
+    const out = document.createElement("output");
+    out.textContent = "0 ضغطة";
+    btn.addEventListener("click", () => {
+      out.textContent = counter.increment() + " ضغطة";
+    });
+    row.append(btn, out);
+    root.append(row);
+  }
+
+  const root = document.querySelector("#counters");
+  ["لايك", "حفظ", "مشاركة"].forEach((label) => addCounterButton(root, label));
+  addCounterButton(root, "تعليق");                // الزرار الرابع: سطر واحد
 </script>
 </body>
 </html>
@@ -226,276 +62,394 @@ info     [ui] render {items: 3}         app.js:10
 
 ## هتشوف إيه
 
-عنوان «المشروبات» وتحته ٣ عناصر رمادي. أي عنصر تضغطه بيخضرّ وبيتقِل، والسطر اللي تحت بيقول «اخترت: ...». وسطر [[$("#nope")]] اللي بيدوّر على عنصر مش موجود بيعدّي من غير ولا error.
+٤ أزرار تحت بعض، وجنب كل واحد «0 ضغطة». كل ضغطة بتزوّد رقم الزرار ده بس. الزرار الرابع «تعليق» اتضاف بسطر واحد في الآخر من غير ما نلمس أي حاجة تانية.
 
-~~~text الناتج (Chrome 157، Playwright)
-#title بعد التشغيل       → «المشروبات»، class="title"
-li                       → ٣ عناصر كلهم class="item"
-ضغطة على «شاي»           → class="item picked"، و #log: «اخترت: شاي»
-$("#nope").els.length    → 0، ومفيش error في Console
+~~~text الناتج (Chrome 157، Playwright: لايك ٣ مرات، حفظ مرة، تعليق مرتين)
+لايك    3 ضغطة
+حفظ     1 ضغطة
+مشاركة  0 ضغطة
+تعليق   2 ضغطة
+"count" in window → false    "clicks" in window → false    "counter" in window → false
 ~~~
 
 ## كل حتة بتعمل إيه
 
-- **[[$(target)]]:** بتقبل selector (نص) أو عنصر جاهز. [[[...document.querySelectorAll(target)]]] بتحوّل الـ NodeList لـ array. ولو مفيش ولا عنصر، [[els]] فاضية وكل الـ methods بتلف على فاضي، فمفيش crash.
-- **[[return this]] في كل method:** this هنا الـ object اللي [[$()]] رجّعته (لأن النداء [[obj.addClass(...)]] فيه نقطة)، فالنداء اللي بعده بيتعمل على نفس الـ object: [[$("li").addClass("item").on(...)]].
-- **[[fn.call(el, e)]]:** بننادي دالة اليوزر بـ this = العنصر، زي jQuery الحقيقية. عشان كده جوه [[function () { ... }]] بتقدر تكتب [[$(this)]]. لاحظ إن الـ wrapper نفسه arrow، عادي، لأن this اللي بتوصل لدالة اليوزر بتتحدد بالـ call مش بالـ wrapper.
-- **[[text()]] من غير argument:** بتقرا نص أول عنصر (getter)، ومع argument بتكتب في الكل (setter وبترجّع this).
+- **[[createCounter()]]:** نفس دالة درس closure. الـ [[count]] جواها، ومفيش طريقة توصله غير [[increment]] و [[get]].
+- **[[addCounterButton(root, label)]]:** كل نداء ليها بيعمل [[counter]] جديد، وزرار، و [[output]]. الـ arrow بتاعة الـ click ماسكة الـ counter والـ out بتوع النداء ده بس (closure)، فكل زرار بيعد لوحده.
+- **مفيش ولا متغير للأعداد على [[window]]:** الأرقام جوه الـ closures. و [[const root]] على مستوى الـ script بيروح لقسم Script مش [[window]]. اللي على [[window]] بس الدالتين نفسهم (function declarations).
+- **[[forEach]] على array أسامي:** عشان التلات أزرار يتعملوا بسطر واحد، والرابع سطر لوحده يثبت إن الإضافة سهلة.
+- **[[<output>]]:** عنصر HTML معمول لعرض ناتج، وأحسن من [[span]] للقارئ الصوتي.
 
 ## الغلطات اللي حصلت وإزاي اتصلحت
 
-- **[[addClass]] كانت arrow:** [[addClass: (name) => { ...; return this; }]]. الـ this طلع [[window]] فالتسلسل وقع: [[TypeError: $(...).addClass(...).on is not a function]]. الـ methods لازم شكلها العادي.
-- **[[on]] كانت [[el.addEventListener(type, fn)]] على طول:** شغالة وthis = العنصر، بس لو اليوزر بعت arrow بتاعته الـ this بتضيع. الـ [[call]] بتخلّي السلوك واحد ومكتوب صريح.` },
-        { lvl: 'متوسط', dir: "tabs-widget", t: R`widget tabs بيتشال نضيف`, what: R`object [[tabs]] فيه [[init(root)]] بيضيف listeners و [[destroy()]] بيشيلهم. الـ handlers methods على الـ object، فبتربطها بـ bind مرة واحدة في init وتخزّنها. من دروس this و call و apply و bind، و event delegation.`, done: R`بعد [[destroy()]] الضغط على أي tab مبيعملش حاجة، و [[init]] تاني بيرجّعه شغال، و [[init]] على اتنين root مختلفين كل واحد بيشتغل لوحده (اعمل نسخة object لكل واحد).`, sol: R`~~~live 380 index.html
+- **أول نسخة كانت [[let clicks = 0]] برّه وكل الأزرار بتزوّده:** التلاتة بيعدّوا مع بعض. الحل إن العدّاد يتعمل **جوه** [[addCounterButton]].
+- **[[btn.addEventListener("click", counter.increment)]]:** شغالة هنا لأن increment مبتستخدمش [[this]]، بس الرقم مبيتكتبش. الـ arrow بتعمل الاتنين: تزوّد وتكتب.` },
+        { lvl: 'صغير', dir: "pay-once", t: R`زرار الدفع مرة واحدة`, what: R`زرار «ادفع» الـ handler بتاعه ملفوف في [[once(fn)]] اللي كتبتها في درس closure، فالضغط المكرر مبيدفعش تاني. من درس closure.`, done: R`٥ ضغطات ورا بعض بيطبعوا «اتدفع» مرة واحدة بس، والضغطات اللي بعدها بترجّع نفس الناتج الأول من غير ما الدالة تشتغل.`, sol: R`~~~live 300 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>tabs بتتشال نضيف</title>
+<title>ادفع مرة واحدة</title>
 <style>
   body { font: 16px/1.6 system-ui, sans-serif; margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; }
-  .tabs { border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px; margin-bottom: 12px; background: #fff; }
-  [role="tab"] { font: inherit; padding: 4px 12px; border: 0; border-bottom: 3px solid transparent; background: none; cursor: pointer; }
-  [role="tab"][aria-selected="true"] { border-color: #2563eb; font-weight: 700; }
-  [role="tabpanel"] { padding: 8px 4px 0; }
-  .controls button { font: inherit; margin-inline-end: 6px; }
+  #pay { font: inherit; padding: 8px 20px; border: 0; border-radius: 8px; background: #15803d; color: #fff; cursor: pointer; }
+  #log { padding-inline-start: 20px; color: #334155; }
 </style>
 </head>
 <body>
-<div class="tabs" id="product">
-  <div role="tablist">
-    <button type="button" role="tab" data-tab="desc" aria-selected="true">الوصف</button>
-    <button type="button" role="tab" data-tab="specs" aria-selected="false">المواصفات</button>
-  </div>
-  <div role="tabpanel" data-tab="desc">مج سيراميك 350 مل.</div>
-  <div role="tabpanel" data-tab="specs" hidden>الوزن 300 جرام.</div>
-</div>
-<div class="tabs" id="faq">
-  <div role="tablist">
-    <button type="button" role="tab" data-tab="ship" aria-selected="true">الشحن</button>
-    <button type="button" role="tab" data-tab="return" aria-selected="false">الإرجاع</button>
-  </div>
-  <div role="tabpanel" data-tab="ship">من ٢ لـ ٤ أيام.</div>
-  <div role="tabpanel" data-tab="return" hidden>خلال ١٤ يوم.</div>
-</div>
-<p class="controls">
-  <button type="button" id="destroy">destroy للأول</button>
-  <button type="button" id="init">init للأول تاني</button>
-</p>
+<h1>سلة: 250 جنيه</h1>
+<button type="button" id="pay">ادفع</button>
+<ol id="log"></ol>
 <script>
-  const tabs = {
-    root: null,
-    boundClick: null,
-    init(root) {
-      if (this.root) return this;                       // متعملش listener تاني
-      this.root = root;
-      this.boundClick = this.onClick.bind(this);        // نسخة مربوطة مرة واحدة ومتخزّنة
-      root.addEventListener("click", this.boundClick);
-      return this;
-    },
-    destroy() {
-      if (!this.root) return;
-      this.root.removeEventListener("click", this.boundClick);   // نفس الـ reference
-      this.root = null;
-      this.boundClick = null;
-    },
-    onClick(e) {
-      const tab = e.target.closest('[role="tab"]');
-      if (tab) this.select(tab.dataset.tab);
-    },
-    select(name) {
-      this.root.querySelectorAll('[role="tab"]').forEach((t) => t.setAttribute("aria-selected", String(t.dataset.tab === name)));
-      this.root.querySelectorAll('[role="tabpanel"]').forEach((p) => { p.hidden = p.dataset.tab !== name; });
-    },
-  };
-
-  const productTabs = { ...tabs }.init(document.querySelector("#product"));
-  const faqTabs = { ...tabs }.init(document.querySelector("#faq"));
-
-  document.querySelector("#destroy").addEventListener("click", () => productTabs.destroy());
-  document.querySelector("#init").addEventListener("click", () => productTabs.init(document.querySelector("#product")));
-</script>
-</body>
-</html>
-~~~
-
-## هتشوف إيه
-
-صندوقين tabs: «الوصف / المواصفات» و «الشحن / الإرجاع». كل صندوق بيقلّب لوحده. «destroy للأول» بيخلّي الأول ميستجبش (التاني شغال عادي)، و «init للأول تاني» بيرجّعه.
-
-~~~text الناتج (Chrome 157، Playwright)
-ضغطة «المواصفات»                   → الأول بيعرض «الوزن 300 جرام»، التاني زي ما هو
-ضغطة «الإرجاع»                     → التاني بيعرض «خلال ١٤ يوم»، الأول زي ما هو
-destroy للأول، ضغطة «الوصف»        → الأول لسه على «المواصفات» (مفيش استجابة)
-destroy مرتين                      → مفيش error
-init للأول، ضغطة «الوصف»           → رجع «مج سيراميك 350 مل.»
-init مرتين، وبعدين destroy، وضغطة  → مفيش استجابة (مفيش listener زيادة اتساب)
-~~~
-
-## كل حتة بتعمل إيه
-
-- **[[this.onClick.bind(this)]] في init وتخزينها في [[boundClick]]:** الـ handler method بتستخدم this، والمتصفح بيناديها بـ this = الـ root، فلازم bind. ولأن كل bind دالة جديدة، بنعملها **مرة واحدة** ونخزّنها، فـ [[removeEventListener]] في destroy بيلاقي نفس الـ reference ويشيله فعلًا.
-- **[[if (this.root) return this]]:** init مرتين متعملش listener تاني. ومن غير السطر ده، init التانية كانت هتكتب فوق [[boundClick]] والأولى تفضل متعلّقة للأبد ومحدش يقدر يشيلها.
-- **[[{ ...tabs }]]:** نسخة object لكل صندوق، فيها نفس الـ methods بس [[root]] و [[boundClick]] بتوعها. الـ methods بتستخدم this، فكل نسخة شغالة على بياناتها. (في الوحدة الجاية ده هيبقى [[class Tabs]] و [[new]].)
-- **event delegation:** listener واحد على الـ root بدل واحد لكل tab، و [[closest('[role="tab"]')]] بيعرّفنا اللي اتضغط.
-- **[[aria-selected]] و [[hidden]]:** القارئ الصوتي بيعرف أنهي tab مختار، والـ panels التانية مخفية فعلًا.
-
-## الغلطات اللي حصلت وإزاي اتصلحت
-
-- **[[root.removeEventListener("click", this.onClick.bind(this))]] في destroy:** الضغط فضل شغال بعد destroy. نفس فخ تمرين bind: دالة جديدة مش هي اللي اتضافت.
-- **object واحد [[tabs]] للصندوقين:** init الأول اشتغلت، والتانية رجعت على طول لأن [[this.root]] مش null. الحل نسخة لكل صندوق.` },
-        { lvl: 'كبير', dir: "modal-factory", t: R`modal بيتعمل لأي حاجة`, what: R`[[createModal({ title, body, onConfirm })]] بترجّع object فيه [[open]] و [[close]] و [[destroy]]. وهو مفتوح: Esc والضغط على الخلفية بيقفلوه، والـ listeners دول بيتضافوا في [[open]] ويتشالوا في [[close]] (بنسخ مربوطة متخزنة)، والفوكس بيرجع للزرار اللي فتحه. التحقق: [[title]] لازم string مش فاضية وإلا [[TypeError]] برسالة واضحة، والنصوص بـ [[textContent]]، و [[onConfirm]] لو رمت error المودال ميتقفلش وبيعرض الرسالة. وكل open و close بيتكتبوا بـ [[console.debug]]. من الوحدة دي و scope و closures والـ DOM.`, done: R`مودالين في نفس الصفحة كل واحد بيقفل لوحده، و ١٠ مرات فتح وقفل وبعدهم Esc بيشغّل handler واحد بس (حط log واتأكد)، وبعد [[destroy()]] مفيش عنصر باقي في الـ DOM، و [[createModal({})]] بيرمي TypeError، و title فيه [[<b>]] بيظهر كنص.`, ext: R`زوّد trap للفوكس جوه المودال بـ Tab، وأنيميشن فتح وقفل، وحوّله لـ [[<dialog>]] الحقيقي وقارن الكود.`, sol: R`## الشكل النهائي
-
-~~~view 420 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مودال لأي حاجة</title>
-<style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; }
-  button { font: inherit; padding: 6px 14px; margin: 4px; border: 1px solid #94a3b8; border-radius: 8px; background: #fff; cursor: pointer; }
-  .modal-backdrop { position: fixed; inset: 0; background: rgb(15 23 42 / 0.55); display: grid; place-items: center; padding: 16px; }
-  .modal-backdrop[hidden] { display: none; }
-  .modal { background: #fff; border-radius: 12px; padding: 16px; width: min(360px, 100%); box-shadow: 0 10px 30px rgb(0 0 0 / 0.3); }
-  .modal h2 { margin: 0 0 8px; font-size: 20px; }
-  .modal-error { color: #b91c1c; min-height: 1.6em; margin: 4px 0; }
-</style>
-</head>
-<body>
-<h1>الإعدادات</h1>
-<button type="button" id="open-delete">احذف الحساب</button>
-<button type="button" id="open-news">اشترك في النشرة</button>
-<button type="button" id="destroy-news">امسح مودال النشرة نهائيًا</button>
-<p id="status"></p>
-<script>
-// كل نداء بيعمل مودال جديد. الـ listeners بتاعة Esc والخلفية بتتضاف في open وتتشال في close بنفس النسخ المربوطة.
-function createModal(options, doc = globalThis.document) {
-  const { title, body = "", onConfirm = () => {}, log = console.debug } = options ?? {};
-  if (typeof title !== "string" || title.trim() === "") {
-    throw new TypeError("createModal: title لازم يبقى نص مش فاضي");
-  }
-  if (typeof onConfirm !== "function") {
-    throw new TypeError("createModal: onConfirm لازم يبقى function");
-  }
-
-  const backdrop = doc.createElement("div");
-  backdrop.className = "modal-backdrop";
-  backdrop.hidden = true;
-  const box = doc.createElement("div");
-  box.className = "modal";
-  box.setAttribute("role", "dialog");
-  box.setAttribute("aria-modal", "true");
-  box.setAttribute("aria-label", title);
-  const heading = doc.createElement("h2");
-  heading.textContent = title;                       // نص، مش HTML
-  const text = doc.createElement("p");
-  text.textContent = body;
-  const error = doc.createElement("p");
-  error.className = "modal-error";
-  error.setAttribute("role", "alert");
-  const confirmBtn = doc.createElement("button");
-  confirmBtn.type = "button";
-  confirmBtn.textContent = "تأكيد";
-  const cancelBtn = doc.createElement("button");
-  cancelBtn.type = "button";
-  cancelBtn.textContent = "إلغاء";
-  box.append(heading, text, error, confirmBtn, cancelBtn);
-  backdrop.append(box);
-  doc.body.append(backdrop);
-
-  const modal = {
-    isOpen: false,
-    destroyed: false,
-    opener: null,
-    open() {
-      if (this.isOpen || this.destroyed) return this;
-      this.isOpen = true;
-      this.opener = doc.activeElement;              // نرجّعله الفوكس بعدين
-      backdrop.hidden = false;
-      doc.addEventListener("keydown", this.onKeydown);
-      backdrop.addEventListener("click", this.onBackdrop);
-      confirmBtn.focus();
-      log("[modal] open:", title);
-      return this;
-    },
-    close() {
-      if (!this.isOpen) return this;
-      this.isOpen = false;
-      backdrop.hidden = true;
-      error.textContent = "";
-      doc.removeEventListener("keydown", this.onKeydown);
-      backdrop.removeEventListener("click", this.onBackdrop);
-      this.opener?.focus?.();
-      log("[modal] close:", title);
-      return this;
-    },
-    confirm() {
-      try {
-        onConfirm();
-        this.close();
-      } catch (e) {
-        error.textContent = e.message;               // المودال فاضل مفتوح
-        log("[modal] confirm failed:", e.message);
+  function once(fn) {
+    let called = false;
+    let result;
+    return function (...args) {
+      if (!called) {
+        called = true;
+        result = fn.apply(this, args);
       }
+      return result;
+    };
+  }
+
+  const payment = (() => {
+    let charged = 0;                         // كام مرة الدفع الحقيقي اتعمل
+    return {
+      charge(amount) {
+        charged++;
+        return { receipt: "R-" + (1000 + charged), amount };
+      },
+      times: () => charged,
+    };
+  })();
+
+  const payOnce = once(payment.charge);
+  const log = document.querySelector("#log");
+  let clicks = 0;
+
+  document.querySelector("#pay").addEventListener("click", () => {
+    clicks++;
+    const r = payOnce(250);
+    const li = document.createElement("li");
+    li.textContent = (clicks === 1 ? "اتدفع " : "نفس الإيصال ") + r.receipt + " (" + r.amount + " جنيه)، الدفع اتعمل " + payment.times() + " مرة";
+    log.append(li);
+  });
+</script>
+</body>
+</html>
+~~~
+
+## هتشوف إيه
+
+زرار «ادفع». أول ضغطة بتكتب «اتدفع R-1001». أي ضغطة بعدها بتكتب «نفس الإيصال R-1001» والعداد اللي بيقول الدفع اتعمل كام مرة فاضل 1.
+
+~~~text الناتج (Chrome 157، Playwright: ٥ ضغطات ورا بعض)
+1. اتدفع R-1001 (250 جنيه)، الدفع اتعمل 1 مرة
+2. نفس الإيصال R-1001 (250 جنيه)، الدفع اتعمل 1 مرة
+3. نفس الإيصال R-1001 (250 جنيه)، الدفع اتعمل 1 مرة
+4. نفس الإيصال R-1001 (250 جنيه)، الدفع اتعمل 1 مرة
+5. نفس الإيصال R-1001 (250 جنيه)، الدفع اتعمل 1 مرة
+~~~
+
+## كل حتة بتعمل إيه
+
+- **[[once(fn)]]:** نفس حل تمرين درس closure: [[called]] و [[result]] في الـ closure. أول نداء بيشغّل fn ويحفظ الناتج، والباقي بيرجّع المحفوظ من غير ما ينادي fn.
+- **[[fn.apply(this, args)]]:** بتبعت نفس الـ this ونفس الـ arguments للدالة الأصلية، فـ once شغالة حتى لو لفّيت بيها method.
+- **[[payment]] (IIFE):** الـ [[(() => { ... })()]] دالة بتتنده على طول وبترجّع object. الـ [[charged]] جواها، فمحدش يقدر يصفّره من برّه. ده بيمثّل «السيرفر» اللي بيسحب الفلوس.
+- **[[payOnce(250)]]:** الـ handler بينادي النسخة الملفوفة، ومهما اتضغط الزرار [[charge]] اتندهت مرة واحدة، والدليل [[payment.times()]] = 1 في الخمس سطور.
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **[[btn.addEventListener("click", once(handler))]] جوه دالة بتتنده مع كل render:** كل مرة بيتعمل [[once]] جديدة بـ [[called]] جديدة، فالحماية بتروح. الـ [[payOnce]] لازم تتعمل **مرة واحدة** برّه أي حاجة بتتكرر.
+- **[[btn.disabled = true]] لوحده مش كفاية:** بيمنع الضغط من الصفحة، لكن أي كود تاني بينادي الدالة (زرار تاني، أو Enter في فورم) بيدفع تاني. [[once]] بتحمي الدالة نفسها، والـ disabled زيادة للشكل.` },
+        { lvl: 'متوسط', t: R`store صغير بـ subscribe`, what: R`[[createStore(initial)]] فيها state خاصة، وبترجّع [[getState()]] و [[setState(changes)]] (بتعمل object جديد بـ spread) و [[subscribe(fn)]] اللي بترجّع دالة [[unsubscribe]]. ده نفس شكل الـ stores في React و Vue. من دروس closure و scope ودرس destructuring و spread.`, done: R`بعد [[subscribe]] كل [[setState]] بيندهلك بالـ state الجديدة، وبعد [[unsubscribe()]] مبيندهلكش، و [[getState()]] قبل وبعد مش نفس الـ object، واتنين stores مش شايفين بعض.`, sol: R`~~~js store.js
+function createStore(initial) {
+  let state = Object.freeze({ ...initial });   // الحالة الخاصة
+  const listeners = new Set();
+
+  return {
+    getState() {
+      return state;
     },
-    destroy() {
-      this.close();
-      backdrop.remove();
-      this.destroyed = true;
+    setState(changes) {
+      const prev = state;
+      state = Object.freeze({ ...state, ...changes });   // object جديد كل مرة
+      for (const fn of listeners) fn(state, prev);
     },
-    handleKeydown(e) {
-      if (e.key === "Escape") this.close();
-    },
-    handleBackdrop(e) {
-      if (e.target === backdrop) this.close();       // الضغط جوه الصندوق مبيقفلش
+    subscribe(fn) {
+      listeners.add(fn);
+      return () => listeners.delete(fn);                 // unsubscribe
     },
   };
-
-  // نسخ مربوطة مرة واحدة: نفس الـ reference في addEventListener و removeEventListener
-  modal.onKeydown = modal.handleKeydown.bind(modal);
-  modal.onBackdrop = modal.handleBackdrop.bind(modal);
-  confirmBtn.addEventListener("click", () => modal.confirm());
-  cancelBtn.addEventListener("click", () => modal.close());
-  return modal;
 }
 
-if (typeof module !== "undefined") module.exports = { createModal };
+const cart = createStore({ items: 0, total: 0 });
+const user = createStore({ name: "ضيف" });
+
+const unsubscribe = cart.subscribe((state, prev) => {
+  console.log("اتغيّرت:", prev, "←", state);
+});
+
+const before = cart.getState();
+cart.setState({ items: 1, total: 120 });
+cart.setState({ items: 2, total: 210 });
+console.log("نفس الـ object؟", before === cart.getState());
+
+console.log("unsubscribe:", unsubscribe());
+cart.setState({ items: 0, total: 0 });                   // مفيش طباعة
+console.log("بعد الإلغاء:", cart.getState());
+
+user.setState({ name: "Sara" });
+console.log("user:", user.getState(), "cart.name:", cart.getState().name);
+
+cart.getState().total = 999;                             // متجاهَل: الـ object متجمّد
+console.log("بعد محاولة التعديل من برّه:", cart.getState().total);
+~~~
+
+## هتشوف إيه
+
+~~~text الناتج (node store.js، Node 24)
+اتغيّرت: { items: 0, total: 0 } ← { items: 1, total: 120 }
+اتغيّرت: { items: 1, total: 120 } ← { items: 2, total: 210 }
+نفس الـ object؟ false
+unsubscribe: true
+بعد الإلغاء: { items: 0, total: 0 }
+user: { name: 'Sara' } cart.name: undefined
+بعد محاولة التعديل من برّه: 0
+~~~
+
+## كل حتة بتعمل إيه
+
+- **[[let state]] و [[const listeners]] جوه createStore:** دول الـ closure. كل store ليه نسخته، عشان كده [[user]] اتغيّر و [[cart]] معندوش [[name]].
+- **[[{ ...state, ...changes }]]:** object جديد فيه القديم وفوقه التغييرات (درس spread). عشان كده [[before === cart.getState()]] بـ [[false]]، وده اللي بيخلي React يعرف إن فيه تغيير بمقارنة بسيطة.
+- **[[Object.freeze]]:** بيمنع التعديل في الـ object نفسه من برّه. في ملف [[.js]] عادي (sloppy) التعديل بيتجاهل من غير error زي ما شفت (999 ما اتكتبتش)، وفي strict mode بيرمي TypeError. الطريقة الوحيدة للتغيير [[setState]].
+- **[[listeners]] كـ Set:** [[subscribe]] بيضيف، والـ unsubscribe اللي بترجع [[listeners.delete(fn)]] بترجّع [[true]] لو كانت موجودة. والـ Set كمان بتمنع إن نفس الدالة تتسجّل مرتين.
+- **[[fn(state, prev)]]:** الـ listener بياخد الجديدة والقديمة، فيقدر يقارن.
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **أول نسخة [[Object.assign(state, changes)]]:** عدّلت نفس الـ object، فـ [[before === getState()]] طلعت [[true]] وأي حد ماسك الحالة القديمة شافها اتغيّرت. الحل spread لـ object جديد.
+- **[[getState()]] كانت بترجّع الـ object من غير freeze:** [[getState().total = 999]] غيّرت الحالة من غير ما حد من الـ listeners يعرف. الـ freeze قفلت الباب ده.` },
+        { lvl: 'متوسط', t: R`كاش بعمر`, what: R`[[cached(fn, ms)]] بترجّع دالة بتفتكر الناتج لكل argument في Map جوه الـ closure لمدة [[ms]] بس، وبعدها بتنادي fn تاني. استخدم [[Date.now()]]. من دروس closure و Map و Set.`, done: R`نداء مرتين في نفس الثانية بيشغّل fn مرة واحدة، وبعد المدة بيشغّلها تاني (العدّاد بيزيد)، و [[arguments]] مختلفة ليها كاش مختلف.`, sol: R`~~~js cached.js
+function cached(fn, ms, now = Date.now) {
+  const cache = new Map();                 // arg ← { value, at }
+  return function (arg) {
+    const hit = cache.get(arg);
+    const t = now();
+    if (hit && t - hit.at < ms) return hit.value;
+    const value = fn(arg);
+    cache.set(arg, { value, at: t });
+    return value;
+  };
+}
+
+// ١) بالساعة الحقيقية
+let runs = 0;
+const price = cached((code) => { runs++; return code.length * 10; }, 200);
+
+console.log(price("EGP"), price("EGP"), price("USDT"), "runs =", runs);
+setTimeout(() => {
+  console.log("بعد 250ms:", price("EGP"), "runs =", runs);
+}, 250);
+
+// ٢) بساعة مزيّفة: نتحكم في الوقت بإيدنا عشان الاختبار ميستناش
+let fake = 0;
+let calls = 0;
+const square = cached((n) => { calls++; return n * n; }, 1000, () => fake);
+square(4); square(4);
+fake = 999;  square(4);
+console.log("قبل المدة:", calls);
+fake = 1000; square(4);
+console.log("عند 1000ms بالظبط:", calls);
+~~~
+
+## هتشوف إيه
+
+~~~text الناتج (node cached.js، Node 24)
+30 30 40 runs = 2
+قبل المدة: 1
+عند 1000ms بالظبط: 2
+بعد 250ms: 30 runs = 3
+~~~
+
+## كل حتة بتعمل إيه
+
+- **[[const cache = new Map()]] في الـ closure:** لكل [[cached(...)]] Map بتاعتها، والمفتاح الـ argument نفسه. Map أحسن من object هنا لأن المفتاح ممكن يبقى رقم أو object من غير ما يتحوّل لنص.
+- **[[{ value, at }]]:** بنخزّن الناتج ووقت حسابه، و [[t - hit.at < ms]] بتسأل «لسه طازة؟». لو لأ بننادي fn ونكتب فوق القديم.
+- **[[now = Date.now]] parameter:** الافتراضي الساعة الحقيقية، لكن تقدر تبعت ساعة مزيّفة. الجزء التاني من الناتج اتجرّب في ميلّي ثانية من غير ما يستنى ثانية كاملة، وبيثبت الحد بالظبط: عند 999 لسه من الكاش، وعند 1000 اتحسب تاني.
+- **الجزء الأول** (وسطر الـ 250ms بييجي آخر الناتج لأنه جوه [[setTimeout]]، والجزء التاني بيتنفذ قبله على طول): EGP مرتين = نداء واحد، و USDT argument تاني = نداء تاني (runs = 2)، وبعد 250ms (أكتر من 200) EGP اتحسبت تاني (runs = 3).
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **[[if (cache.has(arg))]] بس:** رجّعت القيمة القديمة للأبد. لازم الوقت يدخل في الشرط.
+- **[[Date.now()]] اتكتبت مرة واحدة برّه الدالة اللي بترجع:** كل الحسابات بقت بوقت إنشاء الكاش مش وقت النداء. الوقت بيتقري **جوه** كل نداء.
+- **حدود معروفة:** المفاتيح القديمة بتفضل في الـ Map لحد ما حد يطلبها تاني، فلو المفاتيح كتير جدًا ضيف تنضيف دوري أو حد أقصى للحجم. ولو fn رمت error مفيش حاجة بتتخزن، وده المطلوب.` },
+        { lvl: 'كبير', dir: "todo-factory", t: R`todo app كـ factory`, what: R`[[createTodoApp(root, storageKey)]] بتبني todo list كاملة جوه العنصر اللي اتبعتلها: الحالة كلها في الـ closure (مش global)، وevent delegation على الـ root، والحفظ في localStorage تحت [[storageKey]] بـ [[safeParse]]. اعمل نسختين في نفس الصفحة («البيت» و «الشغل»). التحقق: نص فاضي أو أطول من ١٠٠ حرف بيترفض برسالة جنب الفورم. وفي [[tests.js]] شوية [[console.assert]] على الدوال اللي مش DOM (add و toggle و remove). من الوحدة دي ووحدة الـ DOM والـ objects.`, done: R`النسختين مستقلين: مهمة في واحدة مبتظهرش في التانية، و refresh بيرجّع كل واحدة ببياناتها، و [[window]] مفيهوش أي متغير للحالة، والـ asserts كلها بتعدّي، و JSON بايظ في مفتاح واحد بيفتح النسخة دي فاضية والتانية سليمة.`, ext: R`زوّد [[destroy()]] بتشيل الـ listeners وتفضّي الـ root، و undo لآخر عملية، وسحب وإفلات للترتيب بعد درس drag and drop.`, sol: R`## الشكل النهائي
+
+~~~view 520 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مهامي</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 0; padding: 16px; background: #f1f5f9; color: #0f172a; }
+  main { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; max-width: 820px; margin: auto; }
+  .app { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; }
+  .app h2 { margin: 0 0 8px; font-size: 20px; }
+  form { display: flex; gap: 6px; }
+  input { flex: 1; min-width: 0; font: inherit; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px; }
+  button { font: inherit; padding: 4px 10px; border: 1px solid #94a3b8; border-radius: 6px; background: #fff; cursor: pointer; }
+  .error { color: #b91c1c; min-height: 1.6em; margin: 4px 0; font-size: 14px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { display: flex; align-items: center; gap: 6px; padding: 6px 0; border-bottom: 1px solid #f1f5f9; }
+  li span { flex: 1; overflow-wrap: anywhere; }
+  li.done span { text-decoration: line-through; color: #64748b; }
+  .meta, .note { color: #475569; font-size: 14px; margin: 6px 0 0; }
+</style>
+</head>
+<body>
+<main>
+  <section class="app" id="home"></section>
+  <section class="app" id="work"></section>
+</main>
+<script>
+// المنطق من غير DOM: بيشتغل في المتصفح كـ script عادي، وفي Node بـ require
+const TodoCore = (() => {
+  const MAX = 100;
+
+  function validate(text) {
+    const t = String(text ?? "").trim();
+    if (t === "") return { ok: false, error: "اكتب المهمة الأول" };
+    if (t.length > MAX) return { ok: false, error: "المهمة أطول من " + MAX + " حرف" };
+    return { ok: true, text: t };
+  }
+
+  function add(todos, text) {
+    const v = validate(text);
+    if (!v.ok) throw new RangeError(v.error);
+    const id = todos.reduce((max, t) => Math.max(max, t.id), 0) + 1;
+    return [...todos, { id, text: v.text, done: false }];
+  }
+
+  function toggle(todos, id) {
+    return todos.map((t) => (t.id === id ? { ...t, done: !t.done } : t));
+  }
+
+  function remove(todos, id) {
+    return todos.filter((t) => t.id !== id);
+  }
+
+  function safeParse(json) {
+    try {
+      const data = JSON.parse(json);
+      if (!Array.isArray(data)) return [];
+      return data
+        .filter((t) => t && typeof t.id === "number" && typeof t.text === "string")
+        .map((t) => ({ id: t.id, text: t.text, done: Boolean(t.done) }));
+    } catch {
+      return [];
+    }
+  }
+
+  return { MAX, validate, add, toggle, remove, safeParse };
+})();
+
+if (typeof module !== "undefined") module.exports = TodoCore;
 </script>
 <script>
-  const statusEl = document.querySelector("#status");
-  let attempts = 0;
-
-  const deleteModal = createModal({
-    title: "تحذف الحساب؟",
-    body: "الحذف مبيترجعش.",
-    onConfirm() {
-      attempts++;
-      if (attempts === 1) throw new Error("السيرفر مش متاح، جرّب تاني");
-      statusEl.textContent = "اتحذف (محاولة " + attempts + ")";
-    },
-  });
-
-  const newsModal = createModal({
-    title: "<b>النشرة</b> الأسبوعية",
-    body: "رسالة واحدة كل أسبوع.",
-    onConfirm() { statusEl.textContent = "اشتركت"; },
-  });
-
-  document.querySelector("#open-delete").addEventListener("click", () => deleteModal.open());
-  document.querySelector("#open-news").addEventListener("click", () => newsModal.open());
-  document.querySelector("#destroy-news").addEventListener("click", () => {
-    newsModal.destroy();
-    statusEl.textContent = "مودال النشرة اتمسح";
-  });
-
+// التخزين ممكن يبقى ممنوع (preview معزول أو site data مقفولة): نجرّبه مرة، ولو وقع نشتغل من الذاكرة
+function safeStorage() {
   try {
-    createModal({});
-  } catch (e) {
-    console.warn(e.name + ": " + e.message);
+    localStorage.setItem("__probe", "1");
+    localStorage.removeItem("__probe");
+    return { get: (k) => localStorage.getItem(k), set: (k, v) => localStorage.setItem(k, v), memory: false };
+  } catch {
+    const mem = new Map();
+    return { get: (k) => mem.get(k) ?? null, set: (k, v) => mem.set(k, v), memory: true };
   }
+}
+
+function createTodoApp(root, storageKey, title) {
+  const storage = safeStorage();
+  let todos = TodoCore.safeParse(storage.get(storageKey));   // الحالة: في الـ closure بس
+
+  root.innerHTML =
+    '<h2></h2>' +
+    '<form><input name="text" autocomplete="off" placeholder="مهمة جديدة" aria-label="مهمة جديدة"><button>ضيف</button></form>' +
+    '<p class="error" role="alert"></p><ul></ul><p class="meta"></p><p class="note"></p>';
+  const heading = root.querySelector("h2");
+  const form = root.querySelector("form");
+  const error = root.querySelector(".error");
+  const list = root.querySelector("ul");
+  const meta = root.querySelector(".meta");
+  heading.textContent = title;
+  if (storage.memory) root.querySelector(".note").textContent = "التخزين مقفول هنا: المهام هتروح مع الـ refresh";
+
+  function save() {
+    storage.set(storageKey, JSON.stringify(todos));
+  }
+
+  function render() {
+    list.replaceChildren(...todos.map((t) => {
+      const li = document.createElement("li");
+      li.dataset.id = t.id;
+      li.classList.toggle("done", t.done);
+      const span = document.createElement("span");
+      span.textContent = t.text;                     // نص اليوزر بـ textContent دايمًا
+      const toggleBtn = document.createElement("button");
+      toggleBtn.type = "button";
+      toggleBtn.dataset.action = "toggle";
+      toggleBtn.textContent = t.done ? "رجّع" : "تم";
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.dataset.action = "remove";
+      removeBtn.textContent = "امسح";
+      removeBtn.setAttribute("aria-label", "امسح " + t.text);
+      li.append(span, toggleBtn, removeBtn);
+      return li;
+    }));
+    const left = todos.filter((t) => !t.done).length;
+    meta.textContent = todos.length === 0 ? "مفيش مهام" : left + " فاضلين من " + todos.length;
+  }
+
+  function update(next) {
+    todos = next;
+    save();
+    render();
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const v = TodoCore.validate(form.elements.text.value);
+    if (!v.ok) {
+      error.textContent = v.error;
+      return;
+    }
+    error.textContent = "";
+    update(TodoCore.add(todos, v.text));
+    form.reset();
+    form.elements.text.focus();
+  });
+
+  root.addEventListener("click", (e) => {            // delegation: listener واحد للـ root كله
+    const btn = e.target.closest("button[data-action]");
+    if (!btn) return;
+    const id = Number(btn.closest("li").dataset.id);
+    if (btn.dataset.action === "toggle") update(TodoCore.toggle(todos, id));
+    if (btn.dataset.action === "remove") update(TodoCore.remove(todos, id));
+  });
+
+  render();
+  return { count: () => todos.length };
+}
+</script>
+<script>
+  createTodoApp(document.querySelector("#home"), "todos:home", "البيت");
+  createTodoApp(document.querySelector("#work"), "todos:work", "الشغل");
 </script>
 </body>
 </html>
@@ -503,32 +457,36 @@ if (typeof module !== "undefined") module.exports = { createModal };
 
 ## هتشوف إيه
 
-٣ أزرار. «احذف الحساب» بيفتح مودال: أول «تأكيد» بيطلع رسالة حمرا «السيرفر مش متاح، جرّب تاني» والمودال فاضل مفتوح، والتاني بيقفله ويكتب «اتحذف». «اشترك في النشرة» بيفتح مودال تاني عنوانه فيه [[<b>]] بيظهر كنص زي ما هو. Esc أو الضغط على الخلفية الغامقة بيقفل، والفوكس بيرجع للزرار اللي فتح. «امسح مودال النشرة نهائيًا» بيشيله من الصفحة.
+قايمتين جنب بعض (وتحت بعض على الموبايل): «البيت» و «الشغل». كل واحدة ليها فورم ولستة وعدّاد «فاضلين». المهمة اللي بتضيفها في واحدة مبتظهرش في التانية. نص فاضي أو أطول من 100 حرف بيطلع رسالة حمرا جنب الفورم ومبيضيفش. وبعد refresh كل قايمة بترجع ببياناتها.
+
+**ملحوظة عن الصندوق اللي فوق:** الـ preview معزول ومبيسمحش بـ [[localStorage]]، فالكود بيكتشف ده ويشتغل من الذاكرة ويكتب تحت «التخزين مقفول هنا». لما تفتح الملفات من سيرفر محلي الحفظ بيشتغل عادي.
 
 ~~~text الناتج (Chrome 157، Playwright، الملفات من سيرفر محلي)
-فتح «احذف» وتأكيد                → «السيرفر مش متاح، جرّب تاني»، لسه مفتوح
-تأكيد تاني                       → اتقفل، و #status: «اتحذف (محاولة 2)»
-فتح «النشرة»                     → العنوان النصي «<b>النشرة</b> الأسبوعية»، ومفيش <b> في الـ DOM
-Esc                              → اتقفل، و document.activeElement = زرار «اشترك في النشرة»
-ضغطة على الخلفية / جوه الصندوق   → بيقفل / مبيقفلش
-١٠ مرات فتح وقفل ثم فتح و Esc    → [modal] close اتكتبت مرة واحدة بعد الـ Esc
-destroy                          → .modal-backdrop في الصفحة: 1 بدل 2، وفتح بعدها مبيعملش حاجة
-createModal({})                  → TypeError: createModal: title لازم يبقى نص مش فاضي
+ضيف «اشتري لبن» و «جيب عيش» في البيت، و «ابعت التقرير» في الشغل
+البيت: 2 فاضلين من 2      الشغل: 1 فاضلين من 1
+تم على «اشتري لبن»       → البيت: 1 فاضلين من 2، والسطر عليه شطب
+نص فاضي                  → «اكتب المهمة الأول»، اللستة زي ما هي
+101 حرف                  → «المهمة أطول من 100 حرف»
+refresh                  → البيت 2 مهام (واحدة متشطبة)، الشغل 1
+localStorage["todos:work"] = "{bad" ثم refresh → الشغل «مفيش مهام»، البيت سليم
+Object.keys(window) فيه todos أو storage؟ → لأ
+جوه الـ preview المعزول: «التخزين مقفول هنا»، والإضافة والشطب شغالين
 ~~~
 
 ## شجرة الملفات وترتيب البناء
 
 ~~~text الملفات
-modal-factory/
-├── index.html       ← الصفحة والـ CSS، ومودالين متجرّبين
-├── modal.js         ← createModal: بيشتغل في المتصفح، وبيتصدّر لـ Node
-└── modal.test.js    ← اختبارات بـ node --test على DOM مزيّف صغير
+todo-factory/
+├── index.html          ← الصفحة: مكانين فاضيين وتشغيل نسختين
+├── todo-core.js        ← المنطق من غير DOM: validate و add و toggle و remove و safeParse
+├── app.js              ← createTodoApp: الـ DOM والحفظ، والحالة في الـ closure
+└── todo-core.test.js   ← اختبارات المنطق بـ node --test
 ~~~
 
-1. [[createModal]] بالتحقق والعناصر بس، وافتحه بإيدك.
-2. [[open]] و [[close]] بالـ [[hidden]]، وبعدين Esc والخلفية بالنسخ المربوطة.
-3. الفوكس، و [[onConfirm]] اللي بترمي، و [[destroy]].
-4. الاختبارات: كل سلوك من اللي فوق اختبار.
+1. [[todo-core.js]] واختباراته مع بعض: كل دالة وبعدها [[node --test]].
+2. [[index.html]] بالشكل الثابت.
+3. [[app.js]]: الرسم الأول، وبعدين الإضافة، وبعدين الشطب والمسح بالـ delegation، وبعدين الحفظ.
+4. الحالات البايظة بإيدك من DevTools ← Application ← Local Storage.
 
 ## الكود
 
@@ -538,1682 +496,1933 @@ modal-factory/
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مودال لأي حاجة</title>
+<title>مهامي</title>
 <style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; }
-  button { font: inherit; padding: 6px 14px; margin: 4px; border: 1px solid #94a3b8; border-radius: 8px; background: #fff; cursor: pointer; }
-  .modal-backdrop { position: fixed; inset: 0; background: rgb(15 23 42 / 0.55); display: grid; place-items: center; padding: 16px; }
-  .modal-backdrop[hidden] { display: none; }
-  .modal { background: #fff; border-radius: 12px; padding: 16px; width: min(360px, 100%); box-shadow: 0 10px 30px rgb(0 0 0 / 0.3); }
-  .modal h2 { margin: 0 0 8px; font-size: 20px; }
-  .modal-error { color: #b91c1c; min-height: 1.6em; margin: 4px 0; }
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 0; padding: 16px; background: #f1f5f9; color: #0f172a; }
+  main { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; max-width: 820px; margin: auto; }
+  .app { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; }
+  .app h2 { margin: 0 0 8px; font-size: 20px; }
+  form { display: flex; gap: 6px; }
+  input { flex: 1; min-width: 0; font: inherit; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px; }
+  button { font: inherit; padding: 4px 10px; border: 1px solid #94a3b8; border-radius: 6px; background: #fff; cursor: pointer; }
+  .error { color: #b91c1c; min-height: 1.6em; margin: 4px 0; font-size: 14px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { display: flex; align-items: center; gap: 6px; padding: 6px 0; border-bottom: 1px solid #f1f5f9; }
+  li span { flex: 1; overflow-wrap: anywhere; }
+  li.done span { text-decoration: line-through; color: #64748b; }
+  .meta, .note { color: #475569; font-size: 14px; margin: 6px 0 0; }
 </style>
 </head>
 <body>
-<h1>الإعدادات</h1>
-<button type="button" id="open-delete">احذف الحساب</button>
-<button type="button" id="open-news">اشترك في النشرة</button>
-<button type="button" id="destroy-news">امسح مودال النشرة نهائيًا</button>
-<p id="status"></p>
-<script src="modal.js"></script>
+<main>
+  <section class="app" id="home"></section>
+  <section class="app" id="work"></section>
+</main>
+<script src="todo-core.js"></script>
+<script src="app.js"></script>
 <script>
-  const statusEl = document.querySelector("#status");
-  let attempts = 0;
-
-  const deleteModal = createModal({
-    title: "تحذف الحساب؟",
-    body: "الحذف مبيترجعش.",
-    onConfirm() {
-      attempts++;
-      if (attempts === 1) throw new Error("السيرفر مش متاح، جرّب تاني");
-      statusEl.textContent = "اتحذف (محاولة " + attempts + ")";
-    },
-  });
-
-  const newsModal = createModal({
-    title: "<b>النشرة</b> الأسبوعية",
-    body: "رسالة واحدة كل أسبوع.",
-    onConfirm() { statusEl.textContent = "اشتركت"; },
-  });
-
-  document.querySelector("#open-delete").addEventListener("click", () => deleteModal.open());
-  document.querySelector("#open-news").addEventListener("click", () => newsModal.open());
-  document.querySelector("#destroy-news").addEventListener("click", () => {
-    newsModal.destroy();
-    statusEl.textContent = "مودال النشرة اتمسح";
-  });
-
-  try {
-    createModal({});
-  } catch (e) {
-    console.warn(e.name + ": " + e.message);
-  }
+  createTodoApp(document.querySelector("#home"), "todos:home", "البيت");
+  createTodoApp(document.querySelector("#work"), "todos:work", "الشغل");
 </script>
 </body>
 </html>
 ~~~
 
-~~~js modal.js
-// كل نداء بيعمل مودال جديد. الـ listeners بتاعة Esc والخلفية بتتضاف في open وتتشال في close بنفس النسخ المربوطة.
-function createModal(options, doc = globalThis.document) {
-  const { title, body = "", onConfirm = () => {}, log = console.debug } = options ?? {};
-  if (typeof title !== "string" || title.trim() === "") {
-    throw new TypeError("createModal: title لازم يبقى نص مش فاضي");
+~~~js todo-core.js
+// المنطق من غير DOM: بيشتغل في المتصفح كـ script عادي، وفي Node بـ require
+const TodoCore = (() => {
+  const MAX = 100;
+
+  function validate(text) {
+    const t = String(text ?? "").trim();
+    if (t === "") return { ok: false, error: "اكتب المهمة الأول" };
+    if (t.length > MAX) return { ok: false, error: "المهمة أطول من " + MAX + " حرف" };
+    return { ok: true, text: t };
   }
-  if (typeof onConfirm !== "function") {
-    throw new TypeError("createModal: onConfirm لازم يبقى function");
+
+  function add(todos, text) {
+    const v = validate(text);
+    if (!v.ok) throw new RangeError(v.error);
+    const id = todos.reduce((max, t) => Math.max(max, t.id), 0) + 1;
+    return [...todos, { id, text: v.text, done: false }];
   }
 
-  const backdrop = doc.createElement("div");
-  backdrop.className = "modal-backdrop";
-  backdrop.hidden = true;
-  const box = doc.createElement("div");
-  box.className = "modal";
-  box.setAttribute("role", "dialog");
-  box.setAttribute("aria-modal", "true");
-  box.setAttribute("aria-label", title);
-  const heading = doc.createElement("h2");
-  heading.textContent = title;                       // نص، مش HTML
-  const text = doc.createElement("p");
-  text.textContent = body;
-  const error = doc.createElement("p");
-  error.className = "modal-error";
-  error.setAttribute("role", "alert");
-  const confirmBtn = doc.createElement("button");
-  confirmBtn.type = "button";
-  confirmBtn.textContent = "تأكيد";
-  const cancelBtn = doc.createElement("button");
-  cancelBtn.type = "button";
-  cancelBtn.textContent = "إلغاء";
-  box.append(heading, text, error, confirmBtn, cancelBtn);
-  backdrop.append(box);
-  doc.body.append(backdrop);
+  function toggle(todos, id) {
+    return todos.map((t) => (t.id === id ? { ...t, done: !t.done } : t));
+  }
 
-  const modal = {
-    isOpen: false,
-    destroyed: false,
-    opener: null,
-    open() {
-      if (this.isOpen || this.destroyed) return this;
-      this.isOpen = true;
-      this.opener = doc.activeElement;              // نرجّعله الفوكس بعدين
-      backdrop.hidden = false;
-      doc.addEventListener("keydown", this.onKeydown);
-      backdrop.addEventListener("click", this.onBackdrop);
-      confirmBtn.focus();
-      log("[modal] open:", title);
-      return this;
-    },
-    close() {
-      if (!this.isOpen) return this;
-      this.isOpen = false;
-      backdrop.hidden = true;
-      error.textContent = "";
-      doc.removeEventListener("keydown", this.onKeydown);
-      backdrop.removeEventListener("click", this.onBackdrop);
-      this.opener?.focus?.();
-      log("[modal] close:", title);
-      return this;
-    },
-    confirm() {
-      try {
-        onConfirm();
-        this.close();
-      } catch (e) {
-        error.textContent = e.message;               // المودال فاضل مفتوح
-        log("[modal] confirm failed:", e.message);
-      }
-    },
-    destroy() {
-      this.close();
-      backdrop.remove();
-      this.destroyed = true;
-    },
-    handleKeydown(e) {
-      if (e.key === "Escape") this.close();
-    },
-    handleBackdrop(e) {
-      if (e.target === backdrop) this.close();       // الضغط جوه الصندوق مبيقفلش
-    },
-  };
+  function remove(todos, id) {
+    return todos.filter((t) => t.id !== id);
+  }
 
-  // نسخ مربوطة مرة واحدة: نفس الـ reference في addEventListener و removeEventListener
-  modal.onKeydown = modal.handleKeydown.bind(modal);
-  modal.onBackdrop = modal.handleBackdrop.bind(modal);
-  confirmBtn.addEventListener("click", () => modal.confirm());
-  cancelBtn.addEventListener("click", () => modal.close());
-  return modal;
-}
+  function safeParse(json) {
+    try {
+      const data = JSON.parse(json);
+      if (!Array.isArray(data)) return [];
+      return data
+        .filter((t) => t && typeof t.id === "number" && typeof t.text === "string")
+        .map((t) => ({ id: t.id, text: t.text, done: Boolean(t.done) }));
+    } catch {
+      return [];
+    }
+  }
 
-if (typeof module !== "undefined") module.exports = { createModal };
+  return { MAX, validate, add, toggle, remove, safeParse };
+})();
+
+if (typeof module !== "undefined") module.exports = TodoCore;
 ~~~
 
-~~~js modal.test.js
+~~~js app.js
+// التخزين ممكن يبقى ممنوع (preview معزول أو site data مقفولة): نجرّبه مرة، ولو وقع نشتغل من الذاكرة
+function safeStorage() {
+  try {
+    localStorage.setItem("__probe", "1");
+    localStorage.removeItem("__probe");
+    return { get: (k) => localStorage.getItem(k), set: (k, v) => localStorage.setItem(k, v), memory: false };
+  } catch {
+    const mem = new Map();
+    return { get: (k) => mem.get(k) ?? null, set: (k, v) => mem.set(k, v), memory: true };
+  }
+}
+
+function createTodoApp(root, storageKey, title) {
+  const storage = safeStorage();
+  let todos = TodoCore.safeParse(storage.get(storageKey));   // الحالة: في الـ closure بس
+
+  root.innerHTML =
+    '<h2></h2>' +
+    '<form><input name="text" autocomplete="off" placeholder="مهمة جديدة" aria-label="مهمة جديدة"><button>ضيف</button></form>' +
+    '<p class="error" role="alert"></p><ul></ul><p class="meta"></p><p class="note"></p>';
+  const heading = root.querySelector("h2");
+  const form = root.querySelector("form");
+  const error = root.querySelector(".error");
+  const list = root.querySelector("ul");
+  const meta = root.querySelector(".meta");
+  heading.textContent = title;
+  if (storage.memory) root.querySelector(".note").textContent = "التخزين مقفول هنا: المهام هتروح مع الـ refresh";
+
+  function save() {
+    storage.set(storageKey, JSON.stringify(todos));
+  }
+
+  function render() {
+    list.replaceChildren(...todos.map((t) => {
+      const li = document.createElement("li");
+      li.dataset.id = t.id;
+      li.classList.toggle("done", t.done);
+      const span = document.createElement("span");
+      span.textContent = t.text;                     // نص اليوزر بـ textContent دايمًا
+      const toggleBtn = document.createElement("button");
+      toggleBtn.type = "button";
+      toggleBtn.dataset.action = "toggle";
+      toggleBtn.textContent = t.done ? "رجّع" : "تم";
+      const removeBtn = document.createElement("button");
+      removeBtn.type = "button";
+      removeBtn.dataset.action = "remove";
+      removeBtn.textContent = "امسح";
+      removeBtn.setAttribute("aria-label", "امسح " + t.text);
+      li.append(span, toggleBtn, removeBtn);
+      return li;
+    }));
+    const left = todos.filter((t) => !t.done).length;
+    meta.textContent = todos.length === 0 ? "مفيش مهام" : left + " فاضلين من " + todos.length;
+  }
+
+  function update(next) {
+    todos = next;
+    save();
+    render();
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const v = TodoCore.validate(form.elements.text.value);
+    if (!v.ok) {
+      error.textContent = v.error;
+      return;
+    }
+    error.textContent = "";
+    update(TodoCore.add(todos, v.text));
+    form.reset();
+    form.elements.text.focus();
+  });
+
+  root.addEventListener("click", (e) => {            // delegation: listener واحد للـ root كله
+    const btn = e.target.closest("button[data-action]");
+    if (!btn) return;
+    const id = Number(btn.closest("li").dataset.id);
+    if (btn.dataset.action === "toggle") update(TodoCore.toggle(todos, id));
+    if (btn.dataset.action === "remove") update(TodoCore.remove(todos, id));
+  });
+
+  render();
+  return { count: () => todos.length };
+}
+~~~
+
+~~~js todo-core.test.js
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { createModal } = require("./modal.js");
+const T = require("./todo-core.js");
 
-// DOM مزيّف صغير: كفاية للحاجات اللي createModal بتستخدمها بس
-class FakeEl {
-  constructor(tag, doc) {
-    this.tagName = tag.toUpperCase();
-    this.doc = doc;
-    this.children = [];
-    this.parent = null;
-    this.attrs = {};
-    this.listeners = {};
-    this.hidden = false;
-    this.textContent = "";
-  }
-  setAttribute(k, v) { this.attrs[k] = String(v); }
-  append(...els) { for (const el of els) { el.parent = this; this.children.push(el); } }
-  remove() { if (this.parent) this.parent.children = this.parent.children.filter((c) => c !== this); this.parent = null; }
-  addEventListener(type, fn) { (this.listeners[type] ??= new Set()).add(fn); }
-  removeEventListener(type, fn) { this.listeners[type]?.delete(fn); }
-  count(type) { return this.listeners[type]?.size ?? 0; }
-  fire(type, extra = {}) { for (const fn of [...(this.listeners[type] ?? [])]) fn({ target: this, ...extra }); }
-  focus() { this.doc.activeElement = this; }
-}
-class FakeDoc extends FakeEl {
-  constructor() {
-    super("#document", null);
-    this.doc = this;
-    this.body = new FakeEl("body", this);
-    this.activeElement = this.body;
-  }
-  createElement(tag) { return new FakeEl(tag, this); }
-}
-function setup(extra = {}) {
-  const doc = new FakeDoc();
-  const logs = [];
-  const modal = createModal({ title: "عنوان", log: (...a) => logs.push(a.join(" ")), ...extra }, doc);
-  const backdrop = doc.body.children.at(-1);
-  const box = backdrop.children[0];
-  return { doc, logs, modal, backdrop, box, confirmBtn: box.children[3] };
-}
-
-test("التحقق: title فاضي أو مش نص أو onConfirm مش دالة بيرمي TypeError", () => {
-  const doc = new FakeDoc();
-  assert.throws(() => createModal({}, doc), { name: "TypeError", message: "createModal: title لازم يبقى نص مش فاضي" });
-  assert.throws(() => createModal(undefined, doc), TypeError);
-  assert.throws(() => createModal({ title: "   " }, doc), TypeError);
-  assert.throws(() => createModal({ title: "x", onConfirm: "yes" }, doc), /onConfirm/);
-  assert.equal(doc.body.children.length, 0);
+test("add بتضيف وبتشيل المسافات ومبتغيرش الأصل", () => {
+  const empty = [];
+  const one = T.add(empty, "  اشتري لبن  ");
+  assert.deepEqual(one, [{ id: 1, text: "اشتري لبن", done: false }]);
+  assert.equal(empty.length, 0);
 });
 
-test("١٠ مرات فتح وقفل: مفيش listener زيادة، و Esc بيشغّل handler واحد", () => {
-  const { doc, logs, modal } = setup();
-  for (let i = 0; i < 10; i++) { modal.open(); modal.close(); }
-  assert.equal(doc.count("keydown"), 0);
-  modal.open();
-  modal.open();                                      // فتح مرتين مبيضيفش
-  assert.equal(doc.count("keydown"), 1);
-  logs.length = 0;
-  doc.fire("keydown", { key: "Escape" });
-  assert.deepEqual(logs, ["[modal] close: عنوان"]);
-  assert.equal(modal.isOpen, false);
+test("الـ id بيكمّل بعد أكبر id حتى بعد المسح", () => {
+  let list = T.add(T.add([], "a"), "b");
+  list = T.remove(list, 1);
+  list = T.add(list, "c");
+  assert.deepEqual(list.map((t) => t.id), [2, 3]);
 });
 
-test("الخلفية بتقفل، والضغط جوه الصندوق لأ، وزرار غير Esc لأ", () => {
-  const { doc, modal, backdrop, box } = setup();
-  modal.open();
-  doc.fire("keydown", { key: "Enter" });
-  backdrop.fire("click", { target: box });
-  assert.equal(modal.isOpen, true);
-  backdrop.fire("click");
-  assert.equal(modal.isOpen, false);
+test("نص فاضي أو أطول من 100 حرف بيترفض", () => {
+  assert.throws(() => T.add([], "   "), { name: "RangeError", message: "اكتب المهمة الأول" });
+  assert.throws(() => T.add([], "x".repeat(101)), /أطول من 100/);
+  assert.equal(T.add([], "x".repeat(100))[0].text.length, 100);
 });
 
-test("الفوكس بيروح لزرار التأكيد وبيرجع للي فتح", () => {
-  const { doc, modal, confirmBtn } = setup();
-  const opener = doc.createElement("button");
-  opener.focus();
-  modal.open();
-  assert.equal(doc.activeElement, confirmBtn);
-  modal.close();
-  assert.equal(doc.activeElement, opener);
+test("toggle مرتين بترجع زي الأول، و id مش موجود ميغيرش حاجة", () => {
+  const list = T.add([], "a");
+  assert.equal(T.toggle(list, 1)[0].done, true);
+  assert.equal(T.toggle(T.toggle(list, 1), 1)[0].done, false);
+  assert.deepEqual(T.toggle(list, 99), list);
 });
 
-test("onConfirm لو رمت: المودال فاضل مفتوح والرسالة ظاهرة، والمرة اللي بعدها بيقفل", () => {
-  let n = 0;
-  const { modal, box } = setup({ onConfirm() { if (++n === 1) throw new Error("فشل"); } });
-  modal.open();
-  modal.confirm();
-  assert.equal(modal.isOpen, true);
-  assert.equal(box.children[2].textContent, "فشل");
-  modal.confirm();
-  assert.equal(modal.isOpen, false);
-  assert.equal(box.children[2].textContent, "");
-});
-
-test("destroy بيشيل العنصر، والفتح بعده مبيعملش حاجة، ومودالين مستقلين", () => {
-  const doc = new FakeDoc();
-  const a = createModal({ title: "A", log() {} }, doc);
-  const b = createModal({ title: "B", log() {} }, doc);
-  a.open();
-  b.open();
-  b.close();
-  assert.equal(a.isOpen, true);
-  a.destroy();
-  assert.equal(doc.body.children.length, 1);
-  a.open();
-  assert.equal(a.isOpen, false);
-  assert.equal(doc.count("keydown"), 0);
+test("safeParse: بايظ أو مش array أو null بيرجع فاضي، والعناصر الغلط بتتشال", () => {
+  assert.deepEqual(T.safeParse("{bad"), []);
+  assert.deepEqual(T.safeParse('{"a":1}'), []);
+  assert.deepEqual(T.safeParse(null), []);
+  assert.deepEqual(T.safeParse('[{"id":1,"text":"ok","done":1},{"id":"2"},null]'), [{ id: 1, text: "ok", done: true }]);
 });
 ~~~
 
-~~~text الناتج (node --test modal.test.js، Node 24)
-✔ التحقق: title فاضي أو مش نص أو onConfirm مش دالة بيرمي TypeError (1.405ms)
-✔ ١٠ مرات فتح وقفل: مفيش listener زيادة، و Esc بيشغّل handler واحد (0.7731ms)
-✔ الخلفية بتقفل، والضغط جوه الصندوق لأ، وزرار غير Esc لأ (0.7237ms)
-✔ الفوكس بيروح لزرار التأكيد وبيرجع للي فتح (0.1555ms)
-✔ onConfirm لو رمت: المودال فاضل مفتوح والرسالة ظاهرة، والمرة اللي بعدها بيقفل (0.2189ms)
-✔ destroy بيشيل العنصر، والفتح بعده مبيعملش حاجة، ومودالين مستقلين (0.1992ms)
-ℹ tests 6
+~~~text الناتج (node --test todo-core.test.js، Node 24)
+✔ add بتضيف وبتشيل المسافات ومبتغيرش الأصل (1.2167ms)
+✔ الـ id بيكمّل بعد أكبر id حتى بعد المسح (0.1728ms)
+✔ نص فاضي أو أطول من 100 حرف بيترفض (0.4132ms)
+✔ toggle مرتين بترجع زي الأول، و id مش موجود ميغيرش حاجة (0.1583ms)
+✔ safeParse: بايظ أو مش array أو null بيرجع فاضي، والعناصر الغلط بتتشال (0.3324ms)
+ℹ tests 5
 ℹ suites 0
-ℹ pass 6
+ℹ pass 5
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 79.9282
+ℹ duration_ms 75.9813
 ~~~
 
 ## كل حتة مهمة بتعمل إيه
 
-- **[[modal.handleKeydown.bind(modal)]] متخزّنة في [[modal.onKeydown]]:** دي قلب الوحدة. الـ handler method بتستخدم [[this.close()]]، والمتصفح بيناديها بـ this = الـ document، فلازم bind. ولأن كل bind دالة جديدة، بنعملها مرة واحدة، فـ [[open]] بتضيف نفس الـ reference و [[close]] بتشيله فعلًا. والاختبار التاني بيثبت إن بعد ١٠ مرات مفيش ولا listener متساب.
-- **[[if (this.isOpen || this.destroyed) return this]]:** فتح مرتين مبيضيفش listener تاني، والفتح بعد destroy مبيعملش حاجة.
-- **[[this.opener = doc.activeElement]]:** قبل ما نحرّك الفوكس بنفتكر مين كان عليه، و [[close]] بترجّعه. ده مهم لليوزر اللي بيستخدم الكيبورد: من غيره الفوكس بيتوه في أول الصفحة.
-- **[[confirm()]] جوه [[try]]:** لو [[onConfirm]] رمت (السيرفر وقع مثلًا) الرسالة بتظهر في [[role="alert"]] والمودال مبيتقفلش، فاليوزر يقدر يجرّب تاني.
-- **[[textContent]] للعنوان والنص:** [[<b>]] في العنوان بيظهر حروف زي ما هو، ومفيش HTML بيتنفذ. لو [[innerHTML]] كان أي نص جاي من يوزر يقدر يحقن script.
-- **[[doc = globalThis.document]] parameter:** في المتصفح الافتراضي هو الـ document الحقيقي، وفي الاختبار بنبعت [[FakeDoc]]. ده اللي خلّى الاختبار يشتغل في Node من غير متصفح.
-- **[[log = console.debug]]:** كل open و close بيتكتبوا. في Chrome بيظهروا لما تفعّل مستوى Verbose، وفي الاختبار بنبعت دالة بتجمعهم في array ونتأكد منهم.
+- **[[let todos]] جوه [[createTodoApp]]:** ده قلب المشروع. كل نداء بيعمل todos جديدة، والـ listeners اللي اتعملت في نفس النداء هما بس اللي شايفينها. فالنسختين مستقلين من غير ولا متغير global.
+- **[[TodoCore]] كـ IIFE:** الدوال اللي جواها مش بتلمس DOM ولا تخزين: بتاخد list وترجّع list جديدة. ده اللي خلّى اختبارها في Node سهل. وسطر [[if (typeof module !== "undefined")]] بيصدّرها في Node بس، وفي المتصفح [[module]] مش موجود فالسطر بيتجاهل.
+- **[[safeParse]]:** [[JSON.parse]] جوه [[try]]، وبعدين بتتأكد إن الناتج array وإن كل عنصر شكله صح. فـ [["{bad"]] في مفتاح «الشغل» بيفتحه فاضي، و «البيت» مفتاحه لوحده فسليم.
+- **[[safeStorage]]:** بتجرّب تكتب وتمسح مفتاح تجربة. لو وقعت (زي الـ preview المعزول اللي بيرمي [[SecurityError]]) بترجّع object بنفس الشكل بس على Map في الذاكرة، والباقي ميعرفش الفرق.
+- **event delegation:** listener [[click]] واحد على الـ root بدل listener لكل زرار. [[closest("button[data-action]")]] بيلاقي الزرار حتى لو الضغطة على حاجة جواه، و [[dataset.id]] بيعرّفنا أنهي مهمة. والـ listener ده مش محتاج يتضاف تاني لما اللستة تترسم من جديد.
+- **[[update(next)]]:** المكان الوحيد اللي الحالة بتتغيّر فيه، وبعده حفظ ورسم. فمستحيل تنسى تحفظ بعد تعديل.
+- **[[textContent]] للنصوص و [[innerHTML]] للهيكل الثابت بس:** مهمة اسمها [[<img src=x onerror=alert(1)>]] بتظهر كنص.
 
 ## الغلطات اللي حصلت وإزاي اتصلحت
 
-- **المودال مكانش بيستخبى خالص:** [[.modal-backdrop { display: grid }]] كسبت على الـ [[hidden]] (اللي هو أصلًا [[display: none]] من الـ browser styles وأضعف من أي CSS بتكتبه). الحل سطر [[.modal-backdrop[hidden] { display: none; }]].
-- **Esc كان بيقفل وبعدها بيكتب «close» مرتين:** أول نسخة كانت بتعمل [[addEventListener("keydown", this.handleKeydown.bind(this))]] جوه open، وبعد كام فتحة بقى فيه كذا listener. اتصلحت بالنسخ المتخزّنة، والاختبار التاني اتكتب عشان ميرجعش.
-- **الضغط على زرار «تأكيد» كان بيقفل المودال من غير ما يسأل:** الضغطة كانت بتطلع (bubbling) للخلفية و [[handleBackdrop]] كان بيقفل على أي ضغطة. الحل [[e.target === backdrop]]: الخلفية نفسها بس.` },
-        { lvl: 'فكرة', dir: "xo-game", t: R`لعبة صغيرة بـ objects`, what: R`لعبة بسيطة (XO، أو اضرب الخلد، أو memory cards) فيها object للعبة نفسها بـ methods ([[start]] و [[move]] و [[reset]])، و timers و listeners كتير بيستخدموا this. انت اللي بتختار اللعبة وقواعدها.`, done: R`بتتلعب من الأول للآخر وبتعرف مين كسب، و reset بيرجّعها من غير ما تعمل refresh ومن غير timers زيادة شغالة، ومفيش ولا [[TypeError]] بتاع this في Console.`, ext: R`زوّد أعلى سكور في localStorage، ومستويات صعوبة، وصوت، وحوّلها لـ classes بعد الوحدة الجاية.`, sol: R`النسخة النموذجية: XO لاعبين على نفس الجهاز، وكل دور ليه ١٠ ثواني، ولو خلصت الدور بيروح للتاني.
+- **الـ id كان [[todos.length + 1]]:** بعد مسح أول مهمة وإضافة واحدة جديدة طلع id متكرر، وزرار «تم» شطب الاتنين. الحل: أكبر id + 1 (الاختبار التاني).
+- **الـ preview كان فاضي تمامًا:** [[localStorage.getItem]] رمت [[SecurityError]] في أول سطر فالسكربت وقف. الحل [[safeStorage]].
+- **[[root.children]] بالترتيب بدل [[querySelector]]:** أي عنصر يتزوّد في الـ HTML كان بيبوّظ الترتيب. [[querySelector]] جوه الـ root أوضح وبيدوّر جوه النسخة دي بس.` },
+        { lvl: 'فكرة', t: R`مكتبة utilities بتاعتك`, what: R`لم كل الدوال اللي فيها closure واللي محتاجها في مشاريعك ([[once]] و [[memoize]] و [[createCounter]] و [[cached]]، أو حاجات جديدة زي [[after(n, fn)]] أو [[limit(fn, max)]]) في ملف واحد، وكل دالة معاها مثال تشغيل. انت اللي بتختار الدوال.`, done: R`كل دالة ليها ٣ أمثلة على الأقل بـ [[console.assert]]، والملف بيشتغل بـ [[node utils.js]] من غير ولا assertion فاشلة.`, ext: R`حوّله لـ module بـ export بعد قسم modules، وانشره كـ package صغير، وزوّد debounce و throttle بعد درسهم.`, sol: R`النسخة النموذجية: ٦ دوال، كل واحدة فيها closure، ولكل واحدة ٣ asserts.
 
-~~~live 430 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>XO بالوقت</title>
-<style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; text-align: center; }
-  .board { display: grid; grid-template-columns: repeat(3, 72px); gap: 6px; justify-content: center; margin: 12px 0; direction: ltr; }
-  .board button { height: 72px; font: 700 32px/1 system-ui, sans-serif; border: 2px solid #94a3b8; border-radius: 10px; background: #fff; cursor: pointer; }
-  .board button:disabled { cursor: default; color: #0f172a; }
-  .status { font-weight: 700; min-height: 1.6em; }
-  .reset { font: inherit; padding: 6px 16px; border-radius: 8px; border: 1px solid #94a3b8; background: #fff; cursor: pointer; }
-</style>
-</head>
-<body>
-<div id="game">
-  <p class="status" aria-live="polite"></p>
-  <div class="board"></div>
-  <button type="button" class="reset">لعبة جديدة</button>
-</div>
-<script>
-  const game = {
-    lines: [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]],
-    board: [],
-    turn: "X",
-    winner: null,
-    timeLeft: 0,
-    timerId: null,
-    cells: [],
-    statusEl: null,
+~~~js utils.js
+let passed = 0;
+function check(cond, msg) {
+  console.assert(cond, msg);          // بيطبع بس لو فشل
+  if (cond) passed++;
+}
 
-    init(root) {
-      this.statusEl = root.querySelector(".status");
-      const boardEl = root.querySelector(".board");
-      for (let i = 0; i < 9; i++) {
-        const cell = document.createElement("button");
-        cell.type = "button";
-        cell.dataset.i = i;
-        cell.setAttribute("aria-label", "خانة " + (i + 1));
-        boardEl.append(cell);
-        this.cells.push(cell);
-      }
-      boardEl.addEventListener("click", (e) => {        // arrow: this = game
-        const cell = e.target.closest("button");
-        if (cell) this.move(Number(cell.dataset.i));
-      });
-      root.querySelector(".reset").addEventListener("click", () => this.reset());
-      this.start();
-    },
-    start() {
-      this.board = Array(9).fill("");
-      this.turn = "X";
-      this.winner = null;
-      this.startTimer();
-      this.render();
-    },
-    startTimer() {
-      clearInterval(this.timerId);                     // أي timer قديم يتقفل الأول
-      this.timeLeft = 10;
-      this.timerId = setInterval(() => this.tick(), 1000);
-    },
-    stopTimer() {
-      clearInterval(this.timerId);
-      this.timerId = null;
-    },
-    tick() {
-      this.timeLeft--;
-      if (this.timeLeft <= 0) this.switchTurn();
-      this.render();
-    },
-    move(i) {
-      if (this.winner || this.board[i] !== "") return false;
-      this.board[i] = this.turn;
-      this.winner = this.findWinner();
-      if (this.winner) this.stopTimer();
-      else this.switchTurn();
-      this.render();
-      return true;
-    },
-    switchTurn() {
-      this.turn = this.turn === "X" ? "O" : "X";
-      this.startTimer();
-    },
-    findWinner() {
-      for (const [a, b, c] of this.lines) {
-        if (this.board[a] && this.board[a] === this.board[b] && this.board[a] === this.board[c]) return this.board[a];
-      }
-      return this.board.every((v) => v !== "") ? "تعادل" : null;
-    },
-    reset() {
-      this.start();
-    },
-    render() {
-      this.cells.forEach((cell, i) => {
-        cell.textContent = this.board[i];
-        cell.disabled = this.board[i] !== "" || this.winner !== null;
-      });
-      this.statusEl.textContent =
-        this.winner === "تعادل" ? "تعادل!" :
-        this.winner ? "كسب " + this.winner :
-        "الدور على " + this.turn + " (فاضل " + this.timeLeft + " ث)";
-    },
+// ١) once: تشتغل أول مرة بس
+function once(fn) {
+  let called = false, result;
+  return function (...args) {
+    if (!called) { called = true; result = fn.apply(this, args); }
+    return result;
   };
+}
 
-  game.init(document.querySelector("#game"));
-</script>
-</body>
-</html>
+// ٢) memoize: كاش لكل argument
+function memoize(fn) {
+  const cache = new Map();
+  return (arg) => {
+    if (!cache.has(arg)) cache.set(arg, fn(arg));
+    return cache.get(arg);
+  };
+}
+
+// ٣) createCounter: عدّاد خاص
+function createCounter(start = 0) {
+  let count = start;
+  return { increment: () => ++count, get: () => count };
+}
+
+// ٤) cached: كاش بعمر (والساعة ممكن تتبدّل في الاختبار)
+function cached(fn, ms, now = Date.now) {
+  const cache = new Map();
+  return (arg) => {
+    const hit = cache.get(arg), t = now();
+    if (hit && t - hit.at < ms) return hit.value;
+    const value = fn(arg);
+    cache.set(arg, { value, at: t });
+    return value;
+  };
+}
+
+// ٥) after: متشتغلش غير من النداء رقم n
+function after(n, fn) {
+  let calls = 0;
+  return (...args) => (++calls >= n ? fn(...args) : undefined);
+}
+
+// ٦) limit: أقصى عدد مرات، وبعدها آخر ناتج
+function limit(fn, max) {
+  let calls = 0, last;
+  return (...args) => {
+    if (calls < max) { calls++; last = fn(...args); }
+    return last;
+  };
+}
+
+// الاختبارات
+let runs = 0;
+const init = once((x) => { runs++; return x * 2; });
+check(init(5) === 10, "once: أول نداء");
+check(init(100) === 10, "once: نفس الناتج");
+check(runs === 1, "once: اتندهت مرة");
+
+let sq = 0;
+const msq = memoize((n) => { sq++; return n * n; });
+check(msq(4) === 16 && msq(4) === 16, "memoize: الناتج");
+check(sq === 1, "memoize: من الكاش");
+msq(5);
+check(sq === 2, "memoize: argument جديد");
+
+const a = createCounter(), b = createCounter(10);
+a.increment(); a.increment();
+check(a.get() === 2, "counter: a");
+check(b.increment() === 11, "counter: b لوحده");
+check(a.count === undefined, "counter: مخفي");
+
+let clock = 0, c = 0;
+const cf = cached((x) => { c++; return x; }, 100, () => clock);
+cf(1); cf(1);
+check(c === 1, "cached: من الكاش");
+clock = 100; cf(1);
+check(c === 2, "cached: بعد المدة");
+cf(2);
+check(c === 3, "cached: argument تاني");
+
+const third = after(3, () => "go");
+check(third() === undefined, "after: 1");
+check(third() === undefined, "after: 2");
+check(third() === "go", "after: 3");
+
+let l = 0;
+const twice = limit(() => ++l, 2);
+twice(); twice();
+check(twice() === 2, "limit: آخر ناتج");
+check(l === 2, "limit: اتندهت مرتين بس");
+check(limit(() => 1, 0)() === undefined, "limit: صفر مرات");
+
+console.log(passed + " assert عدّوا من 18");
 ~~~
 
-## هتشوف إيه
-
-جملة «الدور على X (فاضل 10 ث)» والرقم بينزل كل ثانية، وتحتها ٩ خانات. كل ضغطة بتكتب X أو O وتقلب الدور وتبدأ الـ ١٠ ثواني من الأول. لو الوقت خلص الدور بيروح للتاني. لما حد يكمّل صف أو عمود أو قطر: «كسب X» والخانات بتتقفل. «لعبة جديدة» بترجّع كل حاجة.
-
-~~~text الناتج (Chrome 157، Playwright، والـ ١٠ ثواني بساعة متحكَّم فيها page.clock)
-X: 0، O: 1، X: 4، O: 2، X: 8      → «كسب X»، والـ 9 خانات disabled، والـ timer واقف
-لعبة جديدة ٥ مرات ورا بعض         → intervals شغالة: 1
-١٠ ثواني من غير لعب               → «الدور على O (فاضل 10 ث)»
-X O X / X O O / O X X              → «تعادل!»
-Console                             → مفيش ولا error
+~~~text الناتج (node utils.js، Node 24)
+18 assert عدّوا من 18
 ~~~
 
 ## ليه التصميم ده
 
-- **object واحد [[game]] فيه الحالة والـ methods:** كل حاجة بتتقري وتتكتب بـ [[this]]، وده تمرين الوحدة كله في مكان واحد.
-- **كل الـ callbacks arrows:** الـ click على اللوحة، وزرار reset، و [[setInterval(() => this.tick(), 1000)]]. الـ arrow اتكتبت جوه method اتندهت كـ [[game.init()]] أو [[game.startTimer()]]، فـ this جواها game. ولو أي واحد فيهم بقى function عادية، this هتبقى الزرار أو window، و [[this.move]] هترمي TypeError.
-- **[[clearInterval]] في أول [[startTimer]]:** ده اللي بيضمن «من غير timers زيادة». كل دور جديد، وكل reset، بيقفل القديم قبل ما يعمل جديد، فمهما ضغطت «لعبة جديدة» فيه interval واحد بس (اتقاس: 1 بعد ٥ مرات).
-- **[[stopTimer]] لما حد يكسب:** عشان الـ tick ميقلبش الدور بعد ما اللعبة خلصت.
-- **event delegation على اللوحة:** listener واحد للتسع خانات، و [[dataset.i]] بيقول أنهي خانة.
-- **[[direction: ltr]]** على اللوحة: عشان ترتيب الخانات (0 فوق شمال) يطابق أرقام الـ [[lines]] حتى والصفحة RTL.
+- **ملف واحد من غير مكتبات:** كل دالة قصيرة وفيها نفس الفكرة: متغيرات في الدالة البرّانية بتفضل عايشة مع الدالة اللي بترجع. لما تقراهم ورا بعض الفكرة بتثبت.
+- **[[check]] حوالين [[console.assert]]:** الـ assert لوحده ساكت لو عدّى، فمش هتعرف إنه اشتغل أصلًا. العدّاد بيقولك «18 من 18»، ولو واحد فشل هتشوف [[Assertion failed: ...]] باسمه والرقم يقل.
+- **[[now]] parameter في [[cached]]:** عشان الاختبار ميستناش وقت حقيقي ويبقى نفس الناتج كل مرة.
+- **الحالات الطرفية مقصودة:** [[limit]] بصفر، و [[after]] قبل وبعد الحد، و [[memoize]] بـ argument جديد.
 
-**إزاي تعرف إن نسختك صح:** العب لحد ما حد يكسب ولحد التعادل، واضغط «لعبة جديدة» كذا مرة وراقب إن العدّ التنازلي بينزل ثانية بثانية مش أسرع (لو بينزل أسرع يبقى فيه interval زيادة). وافتح Console واتأكد إن مفيش ولا [[TypeError]].` },
+**إزاي تعرف إن نسختك صح:** شغّلها بـ [[node utils.js]]، والمفروض الرقم يساوي عدد الـ asserts ومفيش ولا سطر [[Assertion failed]]. جرّب تبوّظ دالة عمدًا (مثلًا [[calls > n]] بدل [[>=]] في after) واتأكد إن الـ assert بتاعها بيمسكها، وده بيثبت إن اختباراتك بتختبر فعلًا.` },
       ],
       items: [
         {
-          cmd: "this",
-          title: "this بتشاور على إيه؟",
-          desc: R`[[this]] في دالة عادية بتتحدد لحظة النداء، حسب طريقة النداء مش مكان الكتابة. ٤ قواعد بالترتيب:
+          cmd: "scope",
+          title: "المتغير ده شايفه مين؟ (lexical scope)",
+          desc: R`الـ scope هو المكان اللي المتغير عايش فيه. فيه ٣ مستويات: global (الملف أو الصفحة كلها)، و function (جوه الدالة)، و block (بين [[{ }]] مع let و const).
 
-١. [[new Fn()]]: this هو الـ object الجديد.
-٢. [[fn.call(obj)]] أو [[apply]] أو [[bind]]: this هو obj.
-٣. [[obj.fn()]]: this هو اللي قبل النقطة.
-٤. [[fn()]] لوحدها: undefined في strict mode (والـ modules والـ classes)، أو الـ global object في الكود القديم.
-
-والـ arrow function مالهاش this خالص، بتاخدها من الـ scope اللي اتكتبت فيه (الدرس الجاي).`,
-          example: R`"use strict";
-const user = {
-  name: "Sara",
-  hi() { return this?.name; },
-};
-user.hi();                       // "Sara": اللي قبل النقطة
-const fn = user.hi;
-fn();                            // undefined: من غير نقطة this = undefined
-user.hi.call({ name: "Ali" });   // "Ali": انت اللي حددت
-function Person(name) { this.name = name; }
-const p = new Person("Omar");    // this = الـ object الجديد
-const btn = { label: "Save", click() { console.log(this?.label); } };
-setTimeout(btn.click, 0);        // undefined: اتبعتت من غير btn`,
-          try: R`شيل [[?.]] من [[hi]] وشغّل تاني واقرا الـ TypeError. وبعدين صلّح سطر setTimeout بطريقتين: [[() => btn.click()]] و [[btn.click.bind(btn)]].`,
+الـ scope في JS «lexical»: بيتحدد من مكان الكود وانت بتكتبه، مش من مكان النداء. الدالة الداخلية شايفة متغيرات الدوال اللي حواليها، والعكس لأ. ولما تقرا متغير، JS بيدوّر في الـ scope الحالي، ولو ملقاهوش يطلع للي فوقه، لحد الـ global (scope chain).`,
+          example: R`const app = "shop";                 // global scope
+function checkout() {
+  const total = 100;                // function scope
+  if (total > 50) {
+    const discount = 10;            // block scope
+    console.log(app, total, discount);
+  }
+  console.log(typeof discount);     // "undefined": برا الـ block
+}
+function outer() {
+  const secret = "x";
+  function inner() {
+    return secret;                  // مش لاقيه هنا، فطلع لـ outer
+  }
+  return inner();
+}
+checkout();
+outer(); // "x"`,
+          try: R`عرّف [[const app = "admin"]] جوه [[checkout]] قبل الـ if، وشوف الـ console.log بيطبع أنهي app (الأقرب بيكسب، ودي اسمها shadowing). وبعدين نادي [[inner()]] من برا outer واقرا الـ error.`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const counter = { n: 0, inc() { this.n++; return this.n; } }]]: نادي [[counter.inc()]] مرتين، وبعدين [[const inc = counter.inc; inc();]] في ملف [[.mjs]] (strict).`, done: R`النداء التاني بيرجّع [[2]]، و [[inc()]] بتطلع [[TypeError: Cannot read properties of undefined (reading 'n')]]. ولو شغّلته في ملف [[.js]] عادي في Node من غير strict بيرجّع [[NaN]] بهدوء (this بقت الـ global object)، ودي أوحش.`, sol: R`~~~js inc-strict.mjs
-const counter = { n: 0, inc() { this.n++; return this.n; } };
-console.log(counter.inc(), counter.inc());
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** قبل ما تشغّل خمّن: [[let x = 1; { let x = 2; console.log(x); } console.log(x);]]`, done: R`بيطبع [[2]] وبعدين [[1]]: الـ x اللي جوه الـ block متغير تاني خالص (shadowing) والبرّاني متلمسش.`, sol: R`~~~js shadow.js
+let x = 1;
+{
+  let x = 2;       // متغير جديد جوه الـ block، بيغطي البرّاني
+  console.log(x);
+}
+console.log(x);    // البرّاني متلمسش
+~~~
 
-const inc = counter.inc;
+~~~text الناتج (node shadow.js، Node 24)
+2
+1
+~~~
+
+**ليه كده:**
+
+- **الأقواس [[{ }]] لوحدها block،** و [[let]] جواها بتعمل متغير عمره من أول الـ block لآخره بس.
+- **[[let x = 2]] مش تعديل لـ x البرّاني،** دي x تانية خالص بنفس الاسم. ده اسمه **shadowing**: الاسم الأقرب بيغطي الأبعد طول ما انت جوه الـ block.
+- **أول [[console.log(x)]]** بيدوّر على x من جوه لبرّه، فبيلاقي الجوّانية الأول (2). **التاني** برّه الـ block، فالجوّانية خلاص مش موجودة، ويلاقي البرّانية (1).
+
+**الغلطة الشائعة:** تكتب [[let]] جوه الـ block وانت قصدك تعدّل البرّاني. لو عايز تعدّله اكتب [[x = 2]] من غير [[let]]، وساعتها السطر الأخير هيطبع 2.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الدالة دي فيها bug: [[function sum(prices) { let total = 0; for (const p of prices) { let total = total + p; } return total; }]]. شغّلها على [[[10, 20] ]] واقرا الـ error، وصلّحها.`, done: R`قبل التصليح بتطلع [[ReferenceError: Cannot access 'total' before initialization]] (الـ total الجديد جوه الـ block بيغطي البرّاني وهو لسه في الـ TDZ). وبعد ما تشيل [[let]] اللي جوه بترجّع [[30]].`, sol: R`~~~js sum-fix.js
+function sumBroken(prices) {
+  let total = 0;
+  for (const p of prices) {
+    let total = total + p;   // total دي جديدة، وبتتقري قبل ما تاخد قيمة
+  }
+  return total;
+}
+
+function sum(prices) {
+  let total = 0;
+  for (const p of prices) {
+    total = total + p;       // من غير let: بنعدّل الـ total اللي فوق
+  }
+  return total;
+}
+
 try {
-  console.log(inc());
+  sumBroken([10, 20]);
+} catch (e) {
+  console.log(e.name + ": " + e.message);
+}
+console.log(sum([10, 20]));
+console.log(sum([]));
+~~~
+
+~~~text الناتج (node sum-fix.js، Node 24)
+ReferenceError: Cannot access 'total' before initialization
+30
+0
+~~~
+
+**ليه الـ error ده بالظبط:**
+
+- **[[let total = total + p]] جوه الـ loop** عملت [[total]] جديدة جوه الـ block بتاع الـ for، فاسم [[total]] جوه الـ block بقى يشاور عليها هي مش على اللي برّه (shadowing).
+- **الجانب اليمين [[total + p]] بيتحسب قبل ما الـ total الجديدة تاخد قيمة،** يعني وهي لسه في الـ TDZ (المنطقة من أول الـ block لحد سطر الـ [[let]]). عشان كده الرسالة [[Cannot access 'total' before initialization]] مش «undefined».
+- **التصليح:** شيل [[let]] اللي جوه، فالسطر يبقى تعديل للـ total البرّانية. و [[sum([])]] بترجّع 0 لأن الـ loop مبيلفش ولا مرة.
+
+**الغلطة الشائعة:** تفتكر إن JS هتاخد قيمة الـ total البرّانية في الجانب اليمين وتعمل الجديدة منها. لأ: من أول ما الـ block بيبدأ، الاسم ده بقى بتاع المتغير الجديد، حتى قبل سطره.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** دالة [[inner]] جوه [[outer]]، وفي الملف [[const APP = "shop"]]. حط breakpoint جوه inner (في DevTools أو VS Code) وافتح لوحة Scope، واكتب كل متغير ظاهر تحت أنهي قسم.`, done: R`لقيت أقسام Local (متغيرات inner) و Closure (متغيرات outer اللي inner بتستخدمها) و Script (الـ [[const APP]]) و Global (window أو globalThis)، وكل متغير في القسم اللي توقعته من الـ scope chain.`, sol: R`~~~js scope-panel.js
+const APP = "shop";
+
+function outer() {
+  const user = "Sara";
+  const unused = "مش بيتقري";
+  function inner() {
+    const item = "mug";
+    debugger;                 // هنا الـ breakpoint
+    return APP + " " + user + " " + item;
+  }
+  return inner();
+}
+
+console.log(outer());
+~~~
+
+حطّيت الكود ده في [[<script>]] عادي في صفحة، وفتحت DevTools، والـ [[debugger;]] وقّف التنفيذ جوه inner. ده اللي ظهر في لوحة **Scope** (اتقري من Chrome 157 نفسه بـ Playwright و [[Debugger.paused]] من الـ DevTools Protocol، وهو نفس اللي اللوحة بتعرضه):
+
+~~~text لوحة Scope جوه inner (Chrome 157، script عادي)
+Local     item: "mug", this: Window
+Closure (outer)   user: "Sara", unused: <value unavailable>, inner: <value unavailable>
+Script    APP: "shop"
+Global    Window (فيه outer و alert و document و ...)
+~~~
+
+**الإجابة النموذجية:**
+
+- **Local:** متغيرات inner نفسها: [[item]]، و [[this]] (في script عادي من غير strict بيبقى [[window]]).
+- **Closure (outer):** [[user]] بقيمته. لكن [[unused]] و [[inner]] ظاهرين من غير قيمة ([[<value unavailable>]]): الـ engine عارف إنهم متغيرات في outer، بس inner مش بتستخدمهم، فمحفظش قيمتهم في الـ closure. اللي بيتحفظ فعلًا هو اللي الدالة الجوّانية بتقراه.
+- **Script:** [[APP]]. أي [[const]] أو [[let]] أو [[class]] على مستوى الملف في script عادي بيروح هنا، **مش** على [[window]] ([[window.APP]] بـ [[undefined]]).
+- **Global:** [[window]]، وفيه [[outer]] لأن الـ function declaration على مستوى الملف بتتعلّق على [[window]] (وكذلك [[var]]).
+
+**لو جرّبتها في Node** (ملف [[.js]] عادي) هتلاقي [[APP]] تحت Closure مش Script، لأن Node بيلف كل ملف CommonJS في دالة. وفي [[<script type="module">]] هتلاقيه تحت **Module**. فاسم القسم بيتغير، لكن الترتيب واحد: الأقرب فوق والأبعد تحت، وده نفس ترتيب الدوّارة اللي الـ engine بيعملها.
+
+**الغلطة الشائعة:** تشوف [[<value unavailable>]] وتفتكر إن الكود بايظ. ده معناه إن القيمة متحفظتش لأن الدالة اللي واقف فيها مبتستخدمهاش. لو عايز تشوفها في الـ breakpoint، استخدمها جوه الدالة.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[countInRange(nums, min, max)]] جواها دالة صغيرة [[inRange(n)]] بتقرا min و max من الـ scope اللي برّاها من غير ما تاخدهم parameters، والـ count بيتحسب بـ filter.`, done: R`[[countInRange([1, 5, 10, 15], 5, 10)]] بترجّع 2، و [[countInRange([], 0, 9)]] بترجّع 0. ولو ناديت [[inRange(3)]] برّه countInRange بيطلع [[ReferenceError: inRange is not defined]].`, sol: R`~~~js count-range.js
+function countInRange(nums, min, max) {
+  function inRange(n) {
+    return n >= min && n <= max;   // min و max من الـ scope اللي برّاها
+  }
+  return nums.filter(inRange).length;
+}
+
+console.log(countInRange([1, 5, 10, 15], 5, 10));
+console.log(countInRange([], 0, 9));
+console.log(countInRange([3, 3, 7], 3, 3));
+
+try {
+  inRange(3);
 } catch (e) {
   console.log(e.name + ": " + e.message);
 }
 ~~~
 
-~~~js inc-sloppy.cjs
-const counter = { n: 0, inc() { this.n++; return this.n; } };
-console.log(counter.inc(), counter.inc());
-
-const inc = counter.inc;
-console.log(inc());
-console.log("globalThis.n =", globalThis.n);   // اتعملت global من غير ما نقصد
-~~~
-
-~~~text الناتج (node inc-strict.mjs ثم node inc-sloppy.cjs، Node 24)
-1 2
-TypeError: Cannot read properties of undefined (reading 'n')
----
-1 2
-NaN
-globalThis.n = NaN
+~~~text الناتج (node count-range.js، Node 24)
+2
+0
+2
+ReferenceError: inRange is not defined
 ~~~
 
 **ليه كده:**
 
-- **[[counter.inc()]]:** فيه [[counter.]] قبل النداء، فـ this هي counter، والعدّاد 1 ثم 2.
-- **[[const inc = counter.inc]]:** ده نسخ للدالة نفسها بس، من غير الـ object. والـ this بتتحدد **وقت النداء** مش وقت التعريف، و [[inc()]] مفيش حاجة قبل النقطة.
-- **في [[.mjs]] (module = strict لوحده):** this بقت [[undefined]]، و [[undefined.n]] بترمي TypeError على طول. الغلطة بانت.
-- **في [[.cjs]] (sloppy):** this بقت الـ global object، و [[globalThis.n]] مش موجودة فـ [[undefined + 1]] = [[NaN]]. والأوحش إن السطر الأخير بيثبت إن الكود عمل متغير global اسمه n بـ NaN من غير أي رسالة.
+- **[[inRange]] معرّفة جوه [[countInRange]]،** فهي شايفة كل اللي في scope الدالة دي: الـ parameters [[min]] و [[max]]. مش محتاج تبعتهم لها.
+- **[[nums.filter(inRange)]]** بتبعت الدالة نفسها (من غير أقواس) لـ filter، وهي بتناديها على كل رقم. الأرقام اللي بين 5 و 10 (الحدين جوه) هما 5 و 10، فالعدد 2.
+- **الـ array الفاضية** بترجّع 0 من غير أي حالة خاصة، لأن filter على فاضي بترجّع فاضي.
+- **برّه الدالة [[inRange]] مش موجودة:** الـ scope بيتحدد من مكان الكتابة، وهي مكتوبة جوه، فـ [[ReferenceError]].
 
-**الغلطة الشائعة:** تفتكر إن الدالة «بتاعة» الـ object وفاكرة إنها جواه. الدالة مستقلة، والـ object بيتحدد من شكل النداء بس. ولو محتاج تبعتها لوحدها: [[counter.inc.bind(counter)]] أو [[() => counter.inc()]].` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const user = { name: "Sara", greet() { console.log("Hi " + this.name); } }; setTimeout(user.greet, 0);]]. شغّله في Node.`, done: R`بيطبع [[Hi undefined]] لأن setTimeout نادت الدالة لوحدها من غير [[user.]]. بعد [[setTimeout(() => user.greet(), 0)]] أو [[user.greet.bind(user)]] بيطبع [[Hi Sara]].`, sol: R`~~~js greet-timeout.js
-const user = {
-  name: "Sara",
-  greet() {
-    console.log("Hi " + this.name);
-  },
-};
-
-setTimeout(user.greet, 0);                    // الدالة لوحدها
-setTimeout(function () {
-  console.log("this جوه callback الـ setTimeout في Node:", this.constructor.name);
-}, 0);
-setTimeout(() => user.greet(), 0);            // تصليح ١
-setTimeout(user.greet.bind(user), 0);         // تصليح ٢
-~~~
-
-~~~text الناتج (node greet-timeout.js، Node 24)
-Hi undefined
-this جوه callback الـ setTimeout في Node: Timeout
-Hi Sara
-Hi Sara
-~~~
-
-ونفس السطر الأول جوه [[<script>]] عادي في صفحة (Chrome 157، Playwright):
-
-~~~text الناتج في Console بتاع Chrome
-Hi
-~~~
-
-**ليه كده:**
-
-- **[[setTimeout(user.greet, 0)]]** بتبعت الدالة من غير [[user.]]، و setTimeout هي اللي بتناديها بعدين بطريقتها. فـ this مش user.
-- **في Node** setTimeout بتنادي الـ callback و this هي الـ [[Timeout]] object نفسه (السطر التاني بيثبت ده)، ومفيهوش [[name]]، فـ [[Hi undefined]].
-- **في المتصفح** this بتبقى [[window]]، و [[window.name]] خاصية حقيقية قيمتها نص فاضي، فبيطبع [["Hi "]] من غير undefined خالص. يعني نفس الباج بيظهر بشكلين مختلفين، والتاني أصعب تلاحظه.
-- **التصليحين:** الـ arrow بتنادي [[user.greet()]] بنفسها وقت التشغيل (فيه نقطة)، و [[bind(user)]] بترجّع دالة جديدة الـ this بتاعها متثبّت على user مهما اتندهت إزاي.
-
-**الغلطة الشائعة:** [[setTimeout(user.greet(), 0)]] بالأقواس: ده بينادي greet **دلوقتي** وبيبعت ناتجها ([[undefined]]) لـ setTimeout. الطباعة بتطلع صح بالصدفة بس مش متأخرة.` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** في صفحة: زرار عليه [[addEventListener("click", function () { this.textContent = "اتضغط"; })]]. وبعدين نفس الحاجة بـ arrow جوه [[<script type="module">]].`, done: R`مع function نص الزرار بيتغير (this هي الزرار، زي [[e.currentTarget]])، ومع الـ arrow بيطلع TypeError في Console فيه [[setting 'textContent']] والزرار زي ما هو، لأن this في الـ module بـ [[undefined]].`, sol: R`~~~live 210 function ولا arrow في handler
-<button type="button" id="fn">function عادية</button>
-<button type="button" id="arrow">arrow في module</button>
-<p id="err"></p>
-<script>
-  // script عادي: function عادية، this = العنصر اللي عليه الـ listener
-  document.querySelector("#fn").addEventListener("click", function (e) {
-    this.textContent = "اتضغط";
-    console.log(this === e.currentTarget);   // true
-  });
-  window.addEventListener("error", (e) => {
-    document.querySelector("#err").textContent = "Console: " + e.message;
-  });
-</script>
-<script type="module">
-  // module: الـ arrow بتاخد this من برّه، و this على مستوى الـ module بـ undefined
-  document.querySelector("#arrow").addEventListener("click", () => {
-    this.textContent = "اتضغط";
-  });
-</script>
-~~~
-
-اضغط الزرارين. ده اللي اتقاس بـ Playwright في Chrome 157 جوه نفس الـ preview:
-
-~~~text الناتج (Chrome 157)
-ضغطة على «function عادية»  → النص بقى «اتضغط»، و Console: true
-ضغطة على «arrow في module» → الزرار زي ما هو
-                             Console: Uncaught TypeError: Cannot set properties of undefined (setting 'textContent')
-~~~
-
-**ليه كده:**
-
-- **الـ function العادية كـ listener:** المتصفح بيناديها و this = العنصر اللي عليه الـ listener، وهو نفس [[e.currentTarget]].
-- **الـ arrow مالهاش this بتاعتها:** بتاخد this من المكان اللي اتكتبت فيه. وفي [[<script type="module">]] الـ this على مستوى الملف [[undefined]] (الـ modules strict)، فـ [[undefined.textContent = ...]] بترمي TypeError.
-- **لو نفس الـ arrow في script عادي** كانت this هتبقى [[window]]، والسطر كان هيكتب [[window.textContent]] بهدوء من غير error، والزرار مش هيتغير. أسوأ.
-
-**الغلطة الشائعة:** تحوّل كل الدوال لـ arrow «عشان أقصر». في الـ handler اللي محتاج العنصر استخدم function عادية، أو الأوضح: arrow بـ [[(e) => e.currentTarget.textContent = "اتضغط"]]، وده بيشتغل في الحالتين.` },
-            { lvl: 'تطبيق', t: R`**ابني:** object [[cart]] فيه [[items]] و [[add(name, price)]] بترجّع [[this]] (عشان تقدر تسلسل) و [[total()]] بتجمع بـ this.items.`, done: R`[[cart.add("mug", 120).add("cap", 90).total()]] بترجّع 210. ولو add مبترجّعش this، النداء التاني بيوقع بـ TypeError إن add مش موجودة على undefined.`, sol: R`~~~js cart-chain.js
-const cart = {
-  items: [],
-  add(name, price) {
-    this.items.push({ name, price });
-    return this;                     // عشان النداء اللي بعده يلاقي cart
-  },
-  total() {
-    return this.items.reduce((sum, item) => sum + item.price, 0);
-  },
-};
-
-console.log(cart.add("mug", 120).add("cap", 90).total());
-
-const broken = {
-  items: [],
-  add(name, price) { this.items.push({ name, price }); },   // من غير return
-};
-try {
-  broken.add("mug", 120).add("cap", 90);
-} catch (e) {
-  console.log(e.name + ": " + e.message);
+**الغلطة الشائعة:** تكتب [[inRange(n, min, max)]] وتبعت التلاتة، وبعدين تحاول تبعتها لـ filter فتلاقي filter بتبعت [[(n, index, array)]]، فـ min بقى الـ index. الـ closure هنا هو اللي بيخلي الدالة الصغيرة تاخد argument واحد بس.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** اكتب [[function leak() { count = 5; }]] من غير [[let]]، ونادي [[leak()]] واطبع [[count]] برّه. وبعدين حط [["use strict";]] في أول الملف وجرّب تاني. وبعدها ارسم الـ scope chain لدالة جوه دالة جوه دالة، وكل واحدة بتقرا متغير من مستوى مختلف.`, done: R`من غير strict mode [[count]] بيطبع [[5]] (اتعمل global من غير ما تقصد)، ومع strict بيطلع [[ReferenceError: count is not defined]]. والرسمة بتقول كل متغير اتلقى في أنهي مستوى، والكود بيطبع اللي الرسمة قالته.`, sol: R`~~~js leak.js
+function leak() {
+  count = 5;          // من غير let/const/var
 }
+leak();
+console.log(count);
+console.log(globalThis.count);
 ~~~
 
-~~~text الناتج (node cart-chain.js، Node 24)
-210
-TypeError: Cannot read properties of undefined (reading 'add')
-~~~
-
-**ليه كده:**
-
-- **[[return this]]:** [[cart.add(...)]] بترجّع cart نفسه، فـ [[.add("cap", 90)]] اللي بعدها بتتنده على cart تاني (و this جواها cart برضه لأن فيه نقطة). وآخر حاجة [[total()]].
-- **[[this.items.reduce(...)]]:** بتجمع الأسعار من 0: 120 + 90 = 210.
-- **من غير return:** الدالة بترجّع [[undefined]]، فالنداء التاني بقى [[undefined.add(...)]]، والرسالة بتقول بالظبط «بتقرا add من undefined».
-
-**الغلطة الشائعة:** تكتب [[add]] كـ arrow: [[add: (name, price) => { this.items.push(...) }]]. الـ arrow مالهاش this، فبتاخد this اللي برّه الـ object ([[{}]] في ملف CommonJS) وبتوقع بـ [[Cannot read properties of undefined (reading 'push')]].` },
-            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** دالة واحدة [[function who() { return this?.tag; }]] ونادِها بست طرق: [[obj.who()]]، و متخزّنة في متغير، و [[who.call({ tag: "C" })]]، و [[new]] (اطبع الـ object نفسه)، وجوه [[setTimeout(obj.who)]]، و [[[1].forEach(function () {...}, { tag: "F" })]] بالـ thisArg. اكتب توقعك الأول.`, done: R`عندك جدول ٦ سطور فيه توقعك والناتج الحقيقي جنب بعض، وكل سطر مختلف مكتوب جنبه أنهي قاعدة من الأربعة اتطبّقت. مثلًا الـ forEach بيرجّع [["F"]] لأن التاني بتاعها هو this.`, sol: R`~~~js who.mjs
-function who() {
-  seen.push(this?.tag);
-  return this?.tag;
-}
-const seen = [];
-const obj = { tag: "A", who };
-
-const rows = [];
-rows.push(["1) obj.who()", obj.who()]);
-const stored = obj.who;
-rows.push(["2) متخزّنة في متغير", stored()]);
-rows.push(["3) who.call({ tag: 'C' })", who.call({ tag: "C" })]);
-rows.push(["4) new who()", new who()]);
-[1].forEach(who, { tag: "F" });
-rows.push(["6) forEach بالـ thisArg", seen.at(-1)]);
-setTimeout(obj.who, 0);
-setTimeout(() => {
-  rows.splice(4, 0, ["5) setTimeout(obj.who)", seen.at(-1)]);
-  for (const [label, value] of rows) console.log(label.padEnd(28), value);
-}, 10);
-~~~
-
-~~~text الناتج (node who.mjs، Node 24، strict لأنه module)
-1) obj.who()                 A
-2) متخزّنة في متغير          undefined
-3) who.call({ tag: 'C' })    C
-4) new who()                 who {}
-5) setTimeout(obj.who)       undefined
-6) forEach بالـ thisArg      F
-~~~
-
-**الجدول (التوقع والحقيقي والقاعدة):**
-
-| النداء | الناتج | القاعدة |
-|---|---|---|
-| [[obj.who()]] | [["A"]] | ضمني: اللي قبل النقطة |
-| متخزّنة في متغير | [[undefined]] | من غير نقطة: [[undefined]] في strict (والـ [[?.]] منعت الـ TypeError) |
-| [[who.call({ tag: "C" })]] | [["C"]] | صريح: call بتحدد this |
-| [[new who()]] | [[who {}]] | new: this = object جديد، والـ [[return]] لقيمة مش object بيتجاهل |
-| [[setTimeout(obj.who)]] | [[undefined]] | الدالة اتبعتت من غير obj، و Node بيناديها بـ this = الـ Timeout |
-| [[forEach(who, { tag: "F" })]] | [["F"]] | التاني بتاع forEach هو this (صريح من جوه) |
-
-**ليه السطر الرابع [[who {}]]:** مع [[new]] الدالة بتشتغل على object جديد فاضي، و [[this?.tag]] بـ undefined. والـ [[return undefined]] مش object، فـ new بتتجاهله وبترجّع الـ object الجديد، و Node بيطبعه باسم الدالة اللي عملته.
-
-**ليه الترتيب في الكود كده:** setTimeout بيشتغل بعد كل السطور المتزامنة، فحطّيت الطباعة كلها في timeout تاني بعده بـ 10ms، وحطّيت سطر الـ setTimeout في مكانه رقم 5.
-
-**الغلطة الشائعة:** تطبّق قاعدة «اللي قبل النقطة» على السطر التاني لأن الدالة «جاية من obj». المهم شكل النداء اللحظة دي: [[stored()]] مفيش قبلها حاجة.` }
-          ],
-          ref: [
-            { t: "MDN: this", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this" },
-            { t: "MDN: Strict mode", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode" },
-            { t: "MDN: new", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new" },
-            { t: "MDN: Event.currentTarget", url: "https://developer.mozilla.org/en-US/docs/Web/API/Event/currentTarget" },
-            { t: "MDN: setTimeout() (the «this» problem)", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout" },
-          ],
-          flag: "script",
-          deep: {
-            why: R`[[this]] أكتر حاجة بتلخبط اللي جايين من Java أو Python، وسبب bugs زي «Cannot read properties of undefined (reading 'name')» لما تبعت method كـ callback. وسؤال انترفيو مضمون تقريبًا.`,
-            how: R`فكّر فيها كـ باراميتر مخفي بيتبعت مع كل نداء. [[user.hi()]] معناها «نادي hi وابعت user كـ this». لما تعمل [[const fn = user.hi]]، انت خدت الدالة لوحدها، والعلاقة بـ user اتقطعت، لأن الدالة نفسها مش «ملك» الـ object، هي بس متحطوطة فيه.
-
-نفس الحاجة لما تبعت method كـ callback: [[setTimeout(btn.click)]] و [[addEventListener("click", obj.method)]] و [[promise.then(obj.method)]] كلهم بيبعتوا الدالة من غير الـ object.
-
-في الـ event listeners العادية (function مش arrow) الـ this هو العنصر اللي عليه الـ listener ([[currentTarget]]).
-
-و [[new]] بيعمل ٤ حاجات: object جديد، ويربط الـ prototype بتاعه بـ [[Fn.prototype]]، وينادي Fn بـ this = الـ object ده، ويرجّعه (درس prototypes).
-
-في الـ top level بتاع ES module الـ this بـ undefined، وفي CommonJS بـ [[module.exports]].`,
-            when: "مع الـ methods في الـ objects والـ classes. ولما تبعت method كـ callback، لفّها في arrow أو bind.",
-            mistakes: R`تبعت method كـ callback من غير bind. وتستخدم arrow كـ method وتستنى this تبقى الـ object. وتستخدم this جوه function عادية جوه method (callback في forEach مثلًا) وتستنى نفس this. وفي الانترفيو: «إيه الناتج؟» على كود فيه [[const f = obj.method; f()]]، واذكر القواعد الأربعة بالترتيب.`
-          },
-          teach: R`## الكود ده بيعمل إيه؟
-
-بيجيب **نفس الدالة** وينادِيها بـ ٥ طرق مختلفة، وكل مرة [[this]] جواها بتطلع حاجة مختلفة. الفكرة اللي هتطلع بيها: [[this]] مش مكتوبة جوه الدالة، دي بتتحدد **لحظة النداء** من شكل سطر النداء نفسه. الكود اتشغّل كملف في Node 24، وجزء الـ setTimeout اتجرّب كمان في Chrome.
-
----
-
-## ١. [["use strict";]]
-
-~~~text app.js
+~~~js leak-strict.js
 "use strict";
-~~~
-
-ده نص لوحده في أول الملف، و JS فاهمه كأمر اسمه **directive**: «شغّل الملف ده في **strict mode**». الـ strict mode نسخة أصرم من JS بتقفل شوية تصرفات قديمة غلط، واللي يهمنا منها هنا واحدة بس:
-
-> الدالة اللي تتنادي من غير حاجة قبلها، [[this]] جواها بتبقى [[undefined]].
-
-ومن غير strict، [[this]] في الحالة دي بتبقى الـ **global object** (في المتصفح [[window]]، وفي Node [[globalThis]]). جرّبناها في ملف من غير "use strict":
-
-~~~text app.js
-function show() { return this === globalThis; }
-console.log(show());
-~~~
-
-~~~text الناتج
-true
-~~~
-
-وفي أي ES module أو جوه أي [[class]]، الـ strict mode شغال لوحده من غير ما تكتب السطر ده.
-
----
-
-## ٢. الـ object والـ method
-
-~~~text app.js
-const user = {
-  name: "Sara",
-  hi() { return this?.name; },
-};
-~~~
-
-- [[const user = { ... }]]: **object literal**، يعني object مكتوب بإيدك بين [[{ }]].
-- [[name: "Sara"]]: خاصية (property) اسمها name وقيمتها النص Sara.
-- [[hi() { ... }]]: **method**، يعني دالة متحطوطة جوه object. الشكل ده اختصار لـ [[hi: function () { ... }]].
-- [[this?.name]]: اقرا name من [[this]]. والـ [[?.]] اسمها **optional chaining**: لو اللي قبلها [[undefined]] أو [[null]]، رجّع [[undefined]] بدل ما البرنامج يقع. حطّيناها عشان المثال يكمّل للآخر.
-
----
-
-## ٣. قاعدة النقطة: [[user.hi()]]
-
-~~~text app.js
-user.hi();   // "Sara"
-~~~
-
-~~~text الناتج
-Sara
-~~~
-
-لما الدالة تتنادي بعد نقطة، [[this]] بيبقى **اللي قبل النقطة**. هنا قبل النقطة [[user]]، فـ [[this.name]] هي [["Sara"]].
-
----
-
-## ٤. الدالة لوحدها: [[fn()]]
-
-~~~text app.js
-const fn = user.hi;
-fn();        // undefined
-~~~
-
-- [[user.hi]] من غير [[()]] معناها «هات الدالة نفسها، متنادِيهاش». فـ [[fn]] بقى بيشاور على **نفس** الدالة.
-- [[fn()]]: نداء من غير نقطة. مفيش حاجة قبل النقطة، فـ [[this]] بـ [[undefined]] (strict mode)، و [[?.]] رجّعت undefined.
-
-~~~text الناتج
-undefined
-~~~
-
-ولو شلت [[?.]] وكتبت [[this.name]]، Node بيقول:
-
-~~~text الناتج
-TypeError: Cannot read properties of undefined (reading 'name')
-~~~
-
-يعني «بتحاول تقرا name من حاجة undefined». ده أشهر error ليه علاقة بـ this. الدرس هنا: الدالة **مش ملك** الـ object، هي بس متخزنة فيه. أول ما تاخدها لوحدها، العلاقة بـ user بتتقطع.
-
----
-
-## ٥. انت اللي بتحدد: [[call]]
-
-~~~text app.js
-user.hi.call({ name: "Ali" });   // "Ali"
-~~~
-
-[[call]] method موجودة على كل دالة: بتنادي الدالة **دلوقتي**، وأول argument ليها بيبقى [[this]]. هنا بعتنا object جديد فيه name = Ali:
-
-~~~text الناتج
-Ali
-~~~
-
-تفاصيل [[call]] و [[apply]] و [[bind]] في درس «call و apply و bind».
-
----
-
-## ٦. [[new]]: object جديد
-
-~~~text app.js
-function Person(name) { this.name = name; }
-const p = new Person("Omar");
-~~~
-
-- [[function Person(name)]]: دالة عادية، بس اسمها بحرف كبير كعُرف إنها **constructor function** (الشكل القديم للـ class).
-- [[new Person("Omar")]]: [[new]] بيعمل object فاضي جديد، وينادي Person و [[this]] = الـ object ده، وفي الآخر يرجّعه.
-
-~~~text الناتج: console.log(p)
-Person { name: 'Omar' }
-~~~
-
-ولو نسيت [[new]] ([[Person("x")]]) في strict mode، this بـ undefined، و [[this.name = ...]] بتقع:
-
-~~~text الناتج
-TypeError: Cannot set properties of undefined (setting 'name')
-~~~
-
----
-
-## ٧. الفخ: method كـ callback
-
-~~~text app.js
-const btn = { label: "Save", click() { console.log(this?.label); } };
-setTimeout(btn.click, 0);   // undefined
-~~~
-
-- [[setTimeout(fn, 0)]]: نادي fn بعد ٠ ملي ثانية، يعني «أول ما الكود الحالي يخلص».
-- [[btn.click]] من غير [[()]]: احنا بعتنا **الدالة لوحدها**، زي خطوة ٤ بالظبط. و setTimeout هي اللي هتناديها بعدين، ومش عارفة حاجة عن btn.
-
-~~~text الناتج
-undefined
-~~~
-
-وطب this كانت إيه ساعتها؟ جرّبنا نطبعها: في Node طلعت object اسمه [[Timeout]] (Node بينادي الـ callback و this = الـ timer نفسه)، وفي Chrome طلعت [[window]]. في الحالتين **مش btn**، وده المهم.
-
-والتصليح بطريقتين (اتجرّبوا والاتنين طبعوا [[Save]]):
-
-~~~text app.js
-setTimeout(() => btn.click(), 0);     // نادي بنقطة جوه arrow
-setTimeout(btn.click.bind(btn), 0);   // ثبّت this بـ bind
-~~~
-
----
-
-## القواعد الأربعة بالترتيب
-
-| شكل النداء | [[this]] | في المثال |
-|---|---|---|
-| [[new Fn()]] | الـ object الجديد | [[new Person("Omar")]] |
-| [[fn.call(obj)]] أو [[apply]] أو [[bind]] | obj | [[{ name: "Ali" }]] |
-| [[obj.fn()]] | اللي قبل النقطة | [[user]] |
-| [[fn()]] لوحدها | undefined (strict) أو global (من غير strict) | [[fn()]] |
-
-## الخلاصة
-
-- [[this]] بتتحدد وقت النداء، مش وقت الكتابة. بص على **سطر النداء**: فيه new؟ فيه call أو bind؟ فيه نقطة؟ ولا لوحدها؟
-- [[obj.method]] من غير أقواس بتاخد الدالة لوحدها، فـ this بتضيع. ده اللي بيحصل في setTimeout و addEventListener و then.
-- الـ arrow function مالهاش this خالص، وده موضوع الدرس الجاي.`,
-          lines: [
-            R`بيشغّل strict mode للملف كله. الفرق اللي يهمنا: دالة متنادية لوحدها [[this]] جواها بتبقى [[undefined]] بدل الـ global object، فالغلطة تبان بدل ما الكود يقرا من [[window]] بالسكوت. والـ modules والـ classes strict لوحدهم.`,
-            R`object هنستخدمه نشوف [[this]] بتتحدد إزاي من شكل سطر النداء.`,
-            R`الخاصية اللي الـ method هتحاول تقراها عن طريق [[this]].`,
-            R`method بترجّع [[this.name]]. [[this]] مش متثبتة هنا وقت الكتابة، بتتحدد كل مرة الدالة تتنادى. والـ [[?.]] عشان لما [[this]] تبقى [[undefined]] نرجّع [[undefined]] بدل ما المثال يقع بـ TypeError.`,
-            R`نهاية الـ object.`,
-            R`قاعدة ٣: نادينا بنقطة، فـ [[this]] هو اللي قبل النقطة ([[user]]) ورجّعت [["Sara"]].`,
-            R`بناخد الدالة نفسها من غير ما نناديها (مفيش [[()]]). [[fn]] دلوقتي نفس الدالة بالظبط، بس مبقاش فيه حاجة بتربطها بـ [[user]].`,
-            R`قاعدة ٤: نداء من غير نقطة، فـ [[this]] بقت [[undefined]] (strict mode) ورجّعت [[undefined]]. نفس الدالة، نداء مختلف، نتيجة مختلفة: ده أهم حاجة في [[this]].`,
-            R`قاعدة ٢: [[call]] بتنادي الدالة وانت بتحدد [[this]] بإيدك كأول argument، فرجّعت [["Ali"]] مع إن الدالة متعرّفة جوه [[user]].`,
-            R`constructor function: الشكل القديم قبل [[class]]. لما تتنادى بـ [[new]]، [[this.name = name]] بتحط الخاصية على الـ object الجديد.`,
-            R`قاعدة ١: [[new]] بيعمل object فاضي جديد، ويخليه [[this]] جوه [[Person]]، ويرجّعه، فـ [[p.name]] بقت [["Omar"]]. ومن غير [[new]] في strict mode، [[this]] هتبقى [[undefined]] و [[this.name = name]] هترمي TypeError.`,
-            R`object تاني فيه method بتطبع [[this.label]]، عشان نشوف أشهر مكان [[this]] بتضيع فيه.`,
-            R`بعتنا الدالة لوحدها من غير [[()]]، و [[setTimeout]] هي اللي هتناديها بعدين من غير [[btn.]] قبلها. فـ [[this]] مبقتش [[btn]] (في Node بتبقى object الـ [[Timeout]] وفي Chrome [[window]]) ويطبع [[undefined]]. الحل [[btn.click.bind(btn)]] أو [[() => btn.click()]].`,
-          ],
-          sol: R`من غير [[?.]]، سطر [[fn()]] بيطلع [[TypeError: Cannot read properties of undefined (reading 'name')]]: في strict mode الدالة لما تتنادي من غير نقطة قبلها this بتبقى undefined، ومفيش name جوه undefined.
-
-سطر setTimeout بعد التصليح بيطبع [["Save"]] في الطريقتين. [[() => btn.click()]] بتنادي click والنقطة موجودة، فـ this بقت btn. و [[btn.click.bind(btn)]] بتعمل دالة جديدة this فيها متثبتة على btn. الغلطة الشائعة إنك تكتب [[setTimeout(btn.click(), 0)]]: كده انت بتنادي الدالة فورًا وبتبعت ناتجها (undefined) لـ setTimeout.`
-        },
-        {
-          cmd: "arrow و this",
-          title: "ليه الـ arrow function بتحل مشكلة this جوه callback؟",
-          desc: R`الـ arrow function مالهاش [[this]] بتاعتها. لما تقرا this جواها، بتاخدها من الـ scope اللي اتكتبت فيه، زي أي متغير عادي (lexical this).
-
-ده بيخليها مثالية للـ callbacks جوه methods: [[setInterval(() => this.tick(), 1000)]] بتشوف this بتاعة الـ method. وبيخليها غلط كـ method في object، لأنها هتاخد this من برّه الـ object.`,
-          example: R`const timer = {
-  seconds: 0,
-  startBroken() {
-    setTimeout(function () {
-      console.log(this?.seconds); // undefined: this مش timer
-    }, 0);
-  },
-  start() {
-    setTimeout(() => {
-      this.seconds++;             // this = timer، أخدها من start
-      console.log(this.seconds);  // 1
-    }, 0);
-  },
-  bad: () => typeof this,         // arrow كـ method: this من برّه الـ object
-};
-timer.startBroken();
-timer.start();`,
-          try: R`قبل الـ arrows كان الحل [[const self = this;]] قبل الـ callback. صلّح [[startBroken]] بالطريقة دي، وبعدين بـ [[.bind(this)]] بعد الـ function.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const o = { a: () => this, b() { return this; } }]] واطبع [[o.b() === o]] و [[o.a() === o]].`, done: R`الأول [[true]] والتاني [[false]]: الـ arrow كـ method أخدت this من برّه الـ object.`, sol: R`~~~js arrow-method.cjs
-const o = { a: () => this, b() { return this; } };
-console.log(o.b() === o, o.a() === o);
-console.log("o.a() في CommonJS:", o.a(), "و module.exports:", o.a() === module.exports);
-~~~
-
-~~~js arrow-method.mjs
-const o = { a: () => this, b() { return this; } };
-console.log(o.b() === o, o.a() === o);
-console.log("o.a() في module:", o.a());
-~~~
-
-~~~text الناتج (node arrow-method.cjs ثم node arrow-method.mjs، Node 24)
-true false
-o.a() في CommonJS: {} و module.exports: true
----
-true false
-o.a() في module: undefined
-~~~
-
-**ليه كده:**
-
-- **[[b() { return this; }]]** method عادية، فـ [[o.b()]] this = o: [[true]].
-- **[[a: () => this]]** arrow: مالهاش this، فبتاخد this اللي في المكان اللي الـ object نفسه مكتوب فيه، مش الـ object. والأقواس [[{ }]] بتاعة الـ object مش scope.
-- **this البرّاني ده إيه؟** في ملف CommonJS ([[.cjs]] أو [[.js]] عادي) هو [[module.exports]] (object فاضي [[{}]])، وفي الـ module ([[.mjs]]) هو [[undefined]]، وفي script عادي في المتصفح [[window]]. في الحالات كلها مش o.
-
-**الغلطة الشائعة:** تكتب methods كـ arrow عشان شكلها أحدث. للـ methods استخدم الشكل المختصر [[b() {}]]، والـ arrow للـ callbacks اللي جوه الـ method.` },
-            { lvl: 'تطبيق', t: R`**ابني:** stopwatch object: [[seconds]] و [[start()]] بـ [[this.id = setInterval(() => this.seconds++, 1000)]] و [[stop()]] بـ [[clearInterval(this.id)]] و [[reset()]]. اعرض الثواني في صفحة.`, done: R`بعد [[start()]] بحوالي ٣ ثواني [[seconds]] بقت [[3]]، و [[stop()]] بيوقفها فعلًا، و [[start()]] مرتين ورا بعض مبيعدّش أسرع (اتأكد إن مفيش interval شغال قبل ما تعمل واحد جديد).`, sol: R`~~~live 200 stopwatch بالـ arrow
-<p><b id="sec">0</b> ثانية</p>
-<button type="button" id="start">ابدأ</button>
-<button type="button" id="stop">وقّف</button>
-<button type="button" id="reset">صفّر</button>
-<script>
-  const out = document.querySelector("#sec");
-  const stopwatch = {
-    seconds: 0,
-    id: null,
-    start() {
-      if (this.id !== null) return;                 // شغال أصلًا: متعملش interval تاني
-      this.id = setInterval(() => {
-        this.seconds++;                             // arrow: this = stopwatch
-        this.render();
-      }, 1000);
-    },
-    stop() {
-      clearInterval(this.id);
-      this.id = null;
-    },
-    reset() {
-      this.stop();
-      this.seconds = 0;
-      this.render();
-    },
-    render() {
-      out.textContent = this.seconds;
-    },
-  };
-  document.querySelector("#start").addEventListener("click", () => stopwatch.start());
-  document.querySelector("#stop").addEventListener("click", () => stopwatch.stop());
-  document.querySelector("#reset").addEventListener("click", () => stopwatch.reset());
-</script>
-~~~
-
-~~~text الناتج (Chrome 157، Playwright)
-ابدأ، واستنى 3.2 ثانية         → 3
-ابدأ مرتين ورا بعض، 3.2 ثانية → 3 (مش 6)
-وقّف، واستنى 2 ثانية           → لسه 3
-صفّر                           → 0
-~~~
-
-**ليه كده:**
-
-- **[[setInterval(() => { this.seconds++ })]]:** الـ arrow اتكتبت جوه [[start]]، فـ this جواها هي this بتاعة start، وهي stopwatch لأن start اتندهت كـ [[stopwatch.start()]].
-- **لو كانت [[function () { this.seconds++ }]]:** setInterval بتنادي الدالة بـ this = [[window]]، فـ [[window.seconds]] بقت NaN والرقم مبيتحركش.
-- **[[if (this.id !== null) return]]:** من غيره الضغطة التانية بتعمل interval تاني، والأولى لسه شغالة ومحدش ماسك رقمها، فبيعد مرتين في الثانية ومبيقفش بـ stop.
-- **الأزرار بـ [[() => stopwatch.start()]]:** لو كتبت [[addEventListener("click", stopwatch.start)]] this جوه start هتبقى الزرار نفسه، و [[this.id]] هيتكتب على الزرار.
-
-**الغلطة الشائعة:** [[stop()]] من غير [[this.id = null]]: بعد ما توقف مش هتعرف تبدأ تاني لأن الشرط شايف إن فيه id.` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** [[class A { f = () => 1; g() { return 1; } }]]. اعمل instanceين واطبع [[a1.f === a2.f]] و [[a1.g === a2.g]].`, done: R`طلع [[false]] و [[true]]: الـ arrow كـ class field بتتعمل نسخة جديدة مع كل instance (this مربوطة لوحدها بس بتاخد ذاكرة)، والـ method العادية واحدة على الـ prototype. فلو عندك آلاف instances ومش محتاج تبعت الدالة كـ callback، الـ method أوفر.`, sol: R`~~~js fields.js
-class A {
-  f = () => 1;          // class field: نسخة لكل instance
-  g() { return 1; }     // method: واحدة على A.prototype
+function leak() {
+  count = 5;
 }
-const a1 = new A(), a2 = new A();
-console.log(a1.f === a2.f, a1.g === a2.g);
-console.log(Object.hasOwn(a1, "f"), Object.hasOwn(a1, "g"));
-
-function measure(Cls) {
-  globalThis.gc();
-  const before = process.memoryUsage().heapUsed;
-  const list = Array.from({ length: 100000 }, () => new Cls());
-  globalThis.gc();
-  const mb = (process.memoryUsage().heapUsed - before) / 1024 / 1024;
-  return mb.toFixed(1) + " MB لـ " + list.length + " instance";
-}
-class WithArrow { f = () => 1; }
-class WithMethod { f() { return 1; } }
-console.log("arrow field:", measure(WithArrow));
-console.log("method:     ", measure(WithMethod));
-~~~
-
-~~~text الناتج (node --expose-gc fields.js، Node 24)
-false true
-true false
-arrow field: 9.2 MB لـ 100000 instance
-method:      3.1 MB لـ 100000 instance
-~~~
-
-**ليه كده:**
-
-- **[[f = () => 1]]** class field: الـ constructor بيعمل arrow **جديدة** ويحطها على كل instance كخاصية خاصة بيه ([[Object.hasOwn(a1, "f")]] بـ [[true]]). عشان كده [[a1.f === a2.f]] [[false]].
-- **[[g() {}]]** method: بتتعمل مرة واحدة على [[A.prototype]]، والـ instances بيلاقوها في السلسلة ([[hasOwn]] بـ [[false]])، فـ [[a1.g === a2.g]] [[true]].
-- **القياس:** 100 ألف instance بالـ arrow field أخدوا حوالي ٤ أضعاف الذاكرة اللي أخدوها بالـ method (9.2 MB قصاد 2.4 MB هنا، والرقم بيختلف شوية من تشغيل للتاني). الفرق ده الـ 100 ألف دالة الزيادة.
-- **[[--expose-gc]] و [[globalThis.gc()]]:** بيشغّل جامع الزبالة قبل وبعد القياس عشان الرقم يبقى للـ objects اللي لسه عايشة بس.
-
-**إمتى تختار إيه:** الـ arrow field لما الـ method هتتبعت callback كتير ([[onClick = () => ...]] في component) لأن this متثبتة لوحدها. والـ method العادية في كل حاجة تانية، خصوصًا لو هتعمل instances كتير.` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[const scaler = { factor: 2, scale(arr) { return arr.map(function (x) { return x * this.factor; }); } }]]. شغّل [[scaler.scale([1, 2, 3])]] في ملف [[.mjs]] وبعدين في [[.js]] عادي، وصلّحها بتلات طرق: arrow، و thisArg التاني بتاع [[map]]، و [[const self = this]].`, done: R`في [[.mjs]] بتطلع [[TypeError: Cannot read properties of undefined (reading 'factor')]]، وفي [[.js]] من غير strict بترجّع [[[ NaN, NaN, NaN ] ]]. والتلات تصليحات بيرجّعوا [[[ 2, 4, 6 ] ]].`, sol: R`~~~js scaler.mjs
-const scaler = {
-  factor: 2,
-  scale(arr) {
-    return arr.map(function (x) { return x * this.factor; });
-  },
-  scaleArrow(arr) {
-    return arr.map((x) => x * this.factor);                  // ١) arrow
-  },
-  scaleThisArg(arr) {
-    return arr.map(function (x) { return x * this.factor; }, this);   // ٢) thisArg
-  },
-  scaleSelf(arr) {
-    const self = this;                                       // ٣) self
-    return arr.map(function (x) { return x * self.factor; });
-  },
-};
-
 try {
-  console.log(scaler.scale([1, 2, 3]));
+  leak();
 } catch (e) {
   console.log(e.name + ": " + e.message);
 }
-console.log(scaler.scaleArrow([1, 2, 3]), scaler.scaleThisArg([1, 2, 3]), scaler.scaleSelf([1, 2, 3]));
 ~~~
 
-~~~js scaler-sloppy.cjs
-const scaler = {
-  factor: 2,
-  scale(arr) {
-    return arr.map(function (x) { return x * this.factor; });
-  },
-};
-console.log(scaler.scale([1, 2, 3]));
-~~~
-
-~~~text الناتج (node scaler.mjs ثم node scaler-sloppy.cjs، Node 24)
-TypeError: Cannot read properties of undefined (reading 'factor')
-[ 2, 4, 6 ] [ 2, 4, 6 ] [ 2, 4, 6 ]
+~~~text الناتج (node leak.js ثم node leak-strict.js، Node 24)
+5
+5
 ---
-[ NaN, NaN, NaN ]
+ReferenceError: count is not defined
+~~~
+
+والجزء التاني: دالة جوه دالة جوه دالة، كل واحدة بتقرا من مستوى:
+
+~~~js chain.js
+const level0 = "global";
+function a() {
+  const level1 = "a";
+  function b() {
+    const level2 = "b";
+    function c() {
+      const level3 = "c";
+      return [level3, level2, level1, level0].join(" ← ");
+    }
+    return c();
+  }
+  return b();
+}
+console.log(a());
+~~~
+
+~~~text الرسمة (الدوّارة من جوه لبرّه)
+c:      level3   ← لقاه هنا
+  b:    level2   ← مش في c، طلع لـ b
+    a:  level1   ← مش في c ولا b، طلع لـ a
+      global: level0   ← آخر محطة
+~~~
+
+~~~text الناتج (node chain.js، Node 24)
+c ← b ← a ← global
 ~~~
 
 **ليه كده:**
 
-- **الـ function اللي جوه map** بتتنده من map نفسها من غير نقطة، فـ this جواها مش scaler: [[undefined]] في strict (TypeError)، والـ global object في sloppy ([[globalThis.factor]] مش موجودة، فـ [[x * undefined]] = NaN).
-- **١) arrow:** مالهاش this، فبتاخد this بتاعة [[scaleArrow]] وهي scaler.
-- **٢) thisArg:** الـ argument التاني لـ [[map]] (و forEach و filter و some...) بيتبعت كـ this للـ callback. شغال مع function عادية بس، الـ arrow بتتجاهله.
-- **٣) [[const self = this]]:** بتحفظ this في متغير عادي، والـ function الجوّانية بتقراه بالـ closure. ده الشكل القديم قبل الـ arrow، وهتشوفه في كود قديم كتير.
+- **من غير strict mode،** التعيين لاسم مش متعرّف في أي scope بيعمل خاصية جديدة على الـ global object. عشان كده [[count]] و [[globalThis.count]] الاتنين 5. ده باج مستخبي: أي ملف تاني فيه [[count]] هيتلخبط.
+- **[["use strict";]] في أول الملف** بيقفل الباب ده: التعيين لاسم مش موجود بيرمي [[ReferenceError]] على طول، فالغلطة بتبان وقت ما تحصل.
+- **في الـ modules ([[.mjs]] أو [[type="module"]]) والـ classes** strict mode شغال لوحده من غير ما تكتبه.
+- **الرسمة:** [[c]] بتدوّر على كل اسم عندها الأول، ولو ملقتهوش بتطلع للدالة اللي مكتوبة جواها، لحد الـ global. والناتج طلع بنفس ترتيب الرسمة.
 
-**الغلطة الشائعة:** تحط thisArg مع arrow: [[arr.map((x) => x * this.factor, scaler)]]. الـ arrow مش بتاخد this من أي حد، فالتاني ملوش أي تأثير.` },
-            { lvl: 'تحدي', t: R`**اشرحها:** اكتب قاعدة من سطرين لزميلك: إمتى تكتب method عادية وإمتى arrow، وطبّقها على ٣ أماكن: method في object، و callback جوه method، و event handler محتاج العنصر نفسه.`, done: R`القاعدة: method عادية للدوال اللي على الـ object، و arrow للـ callbacks جواها عشان تاخد this بتاعة الـ method. والتلات أماكن: method عادية، و arrow، و function عادية (أو [[e.currentTarget]]) للـ handler.`, sol: R`**القاعدة (سطرين):**
+**الغلطة الشائعة:** تنسى [[let]] في loop زي [[for (i = 0; ...)]]: من غير strict الـ i بقت global، ولو دالتين بيستخدموا نفس الـ i بيبوظوا بعض.` },
+            { lvl: 'تحدي', t: R`**refactor:** كود فيه [[let items = []; let total = 0;]] برّه، ودالتين [[addItem(price)]] و [[reset()]] بيعدّلوا فيهم مباشرة. خليه بدوال بتاخد الحالة كـ parameter وترجّع حالة جديدة: [[addItem(state, price)]] و [[reset()]]، من غير ولا متغير global بيتغيّر.`, done: R`[[let s = reset(); s = addItem(s, 100); s = addItem(s, 50);]] بيدّي [[s.total]] بـ 150 و [[s.items.length]] بـ 2 زي الكود القديم. ومفيش ولا دالة بتلمس متغير برّاها، فتقدر تختبر كل واحدة لوحدها.`, sol: R`~~~js cart-pure.js
+// القديم: متغيرين برّه، والدوال بتعدّل فيهم
+let items = [];
+let total = 0;
+function addItemOld(price) { items.push(price); total += price; }
+function resetOld() { items = []; total = 0; }
 
-1. الدالة اللي **على** الـ object (method) اكتبها method عادية [[name() {}]]، عشان this تبقى الـ object.
-2. الدالة اللي **جوه** method وبتتبعت لحد تاني (callback لـ map أو setTimeout أو then) اكتبها arrow، عشان تاخد this بتاعة الـ method. والـ handler اللي محتاج العنصر: function عادية، أو أحسن [[e.currentTarget]].
+resetOld(); addItemOld(100); addItemOld(50);
+console.log("قديم:", total, items.length);
 
-والتلات أماكن متطبّقة ومتجرّبة:
+// الجديد: الحالة بتدخل parameter وبتطلع قيمة جديدة
+function reset() {
+  return { items: [], total: 0 };
+}
+function addItem(state, price) {
+  return { items: [...state.items, price], total: state.total + price };
+}
 
-~~~js rule.js
-const saveBtn = new EventTarget();      // EventTarget في Node بيتصرف زي الزرار
-saveBtn.label = "Save";
-const sendBtn = new EventTarget();
-sendBtn.label = "Send";
+let s = reset();
+s = addItem(s, 100);
+s = addItem(s, 50);
+console.log("جديد:", s.total, s.items.length);
 
-const form = {
-  name: "signup",
-  fields: ["email", "password"],
-  describe() {                          // ١) method عادية: this = form
-    return this.fields.map((f) => this.name + "." + f);   // ٢) arrow: this من describe
-  },
-};
-console.log(form.describe());
-
-saveBtn.addEventListener("click", function (e) {          // ٣) handler محتاج العنصر
-  console.log(this.label, this === e.currentTarget);
-});
-sendBtn.addEventListener("click", (e) => console.log(e.currentTarget.label));   // نفس الحاجة بالـ arrow
-saveBtn.dispatchEvent(new Event("click"));
-sendBtn.dispatchEvent(new Event("click"));
+const before = reset();
+const after = addItem(before, 10);
+console.log(before, after);
 ~~~
 
-~~~text الناتج (node rule.js، Node 24)
-[ 'signup.email', 'signup.password' ]
-Save true
-Send
+~~~text الناتج (node cart-pure.js، Node 24)
+قديم: 150 2
+جديد: 150 2
+{ items: [], total: 0 } { items: [ 10 ], total: 10 }
 ~~~
 
-**ملحوظة اتلقت وقت التجربة:** في Node 24 لما حطّيت listenerين على نفس الـ EventTarget، [[e.currentTarget]] طلع [[null]] جوه التاني (في Chrome بيبقى العنصر في الاتنين). عشان كده كل handler هنا على عنصر لوحده.
+**ليه كده:**
 
-**ليه القاعدة دي:** الـ method عايزة this ديناميكية (أي object بيناديها)، والـ callback عايز this ثابتة (بتاعة الـ method اللي هو جواها). والـ arrow هي اللي بتثبّت. والـ handler بيتنده من المتصفح بـ this = العنصر، وده بيضيع مع الـ arrow، فإما function عادية أو [[e.currentTarget]] اللي بيشتغل مع الاتنين.
+- **[[reset()]]** بترجّع حالة جديدة فاضية بدل ما تمسح متغيرات برّاها.
+- **[[addItem(state, price)]]** بتاخد الحالة كـ parameter، وبترجّع object **جديد**: [[[...state.items, price]]] array جديدة فيها القديم والسعر، و [[state.total + price]] رقم جديد. الـ state القديمة متلمستش، وده اللي بيثبته آخر سطر: [[before]] لسه فاضية.
+- **الناتج زي القديم بالظبط** (150 و 2)، بس دلوقتي كل دالة ممكن تتختبر لوحدها: تديها حالة وتشوف الراجع، من غير ما تجهّز متغيرات global قبلها.
+- **[[s]] بقت [[let]]** لأننا بنحط فيها الحالة الجديدة كل مرة. ده المكان الوحيد اللي فيه تغيير، وهو باين.
 
-**الغلطة الشائعة:** القاعدة العكسية «arrow في كل حتة». بتوقع في أول method على object.` }
+**الغلطة الشائعة:** تكتب [[state.items.push(price); return state;]]. الناتج هيطلع صح، لكنك عدّلت الـ object اللي اتبعت، فأي حد ماسك الحالة القديمة (زي [[before]]) هيلاقيها اتغيّرت. ده نفس فخ «reference و copy».` }
           ],
           ref: [
-            { t: "MDN: Arrow function expressions", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions" },
-            { t: "MDN: Public class fields", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Public_class_fields" },
-            { t: "MDN: setInterval()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/setInterval" },
+            { t: "MDN: Scope (glossary)", url: "https://developer.mozilla.org/en-US/docs/Glossary/Scope" },
+            { t: "MDN: block statement", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block" },
+            { t: "MDN: let", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let" },
+            { t: "MDN: var", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/var" },
+            { t: "MDN: Strict mode", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode" },
+            { t: "MDN: ReferenceError: assignment to undeclared variable", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Undeclared_var" },
           ],
-          pre: [{ to: "js/this", why: R`لازم تعرف القواعد الأربعة الأول عشان تفهم ليه الـ arrow مالهاش this بتاعتها`}, { to: "js/function و arrow", why: R`الفرق في الشكل اتشرح هناك، وهنا الفرق في السلوك`}],
           flag: "script",
           deep: {
-            why: "مشكلة this جوه callbacks كانت أشهر مشكلة في JS قبل ES2015، وكان الحل [[var self = this]] في كل حتة. الـ arrows حلّتها، بس لو مش فاهم ليه، هتستخدمها في المكان الغلط.",
-            how: R`الـ arrow بتعامل this زي أي متغير من برّه: بتدوّر عليها في الـ scope chain. عشان كده [[call]] و [[bind]] و [[apply]] مبيغيّروش this بتاعة arrow خالص، ومينفعش تتعمل بـ [[new]].
+            why: "أي bug من نوع «المتغير ده undefined ليه؟» أو «مين اللي غيّر القيمة دي؟» بيرجع للـ scope. وهو الأساس اللي الـ closures مبنية عليه، ودي أشهر سؤال انترفيو JS.",
+            how: R`كل دالة وكل block بيعملوا environment جديد فيه متغيراتهم، ومعاه reference للـ environment اللي اتكتبوا جواه. البحث عن متغير بيمشي في السلسلة دي لفوق. وعشان السلسلة بتتحدد وقت الكتابة (lexical)، الدالة لو اتنادت من مكان تاني خالص، لسه شايفة المتغيرات بتاعة مكان تعريفها. ده عكس dynamic scope اللي في bash مثلًا.
 
-جوه [[start]]، الـ this هو timer (قاعدة النقطة). الـ arrow اتكتبت جوه start فبتشوف نفس الـ this.
+الـ modules (ESM) ليها scope خاص بيها: الـ const في أول ملف module مش global، ومش بيظهر في ملف تاني غير لو عملته export. أما الـ script العادي في المتصفح، فالـ var والدوال في أوله بيبقوا على [[window]].
 
-أما [[bad]] فاتكتبت في الـ object literal، والـ object literal مش scope. فالـ this بتاعتها هي بتاعة المكان اللي فيه الـ object كله: undefined في ES module، أو [[module.exports]] في CommonJS.
-
-وفي الـ classes، فيه شكل شائع: [[handleClick = () => { ... }]] كـ class field. هنا الـ arrow بتاخد this = الـ instance، لأن الـ fields بتتعمل جوه الـ constructor. ده كان منتشر في React class components.`,
-            when: "arrow لأي callback جوه method محتاج this. method عادية (مش arrow) لأي دالة في object أو class هتتنادي بـ obj.method().",
-            mistakes: R`arrow كـ method في object. و arrow كـ event listener وانت محتاج [[this]] = العنصر (استخدم [[e.currentTarget]] بدالها). وتحاول تغيّر this بتاعة arrow بـ bind. وفي الانترفيو: «ليه arrow function مالهاش this؟» و «ينفع تعمل new لـ arrow؟» (لأ، TypeError).`
+و [[globalThis]] هو الـ global object في أي بيئة ([[window]] في المتصفح و [[global]] في Node).`,
+            when: "خلّي كل متغير في أضيق scope ممكن. الـ global للحاجات اللي فعلًا مشتركة، ويستحسن تبقى في module وتتعمل import.",
+            mistakes: R`نفس اسم المتغير جوه وبرا (shadowing) فتفتكر انك بتعدّل اللي برا. وتعتمد على متغيرات global بين ملفات. وتنسى let/const فتعمل global بالغلط. وفي الانترفيو: «يعني إيه lexical scope؟» و «scope chain».`
           },
-          teach: R`## الكود ده بيعمل إيه؟
+          teach: R`## الفكرة في سطرين
 
-object اسمه [[timer]] فيه ٣ methods، وكل واحدة بتجرّب [[this]] في مكان مختلف: callback بـ [[function]] عادية (بايظة)، و callback بـ arrow (شغالة)، و arrow مستخدمة كـ method (غلط). اتشغّل في Node 24 كملف [[.cjs]] وكملف [[.mjs]]، وجزء منه في Chrome.
-
----
-
-## ١. الـ object والعداد
-
-~~~text app.js
-const timer = {
-  seconds: 0,
-~~~
-
-[[seconds]] خاصية رقم بتبدأ من 0، وهي اللي عايزين نزوّدها من جوه callback.
+كل متغير ليه «حدود» عايش جواها، ودي اسمها **scope**. المثال فيه ٣ مستويات: global، وجوه دالة، وجوه block. وبعدين دالة جوه دالة عشان تشوف إن الداخلية بتشوف اللي حواليها. النواتج من تشغيله في [[app.js]] بـ Node 24.
 
 ---
 
-## ٢. [[startBroken]]: callback بـ function عادية
+## ١. global scope
 
 ~~~text app.js
-  startBroken() {
-    setTimeout(function () {
-      console.log(this?.seconds);
-    }, 0);
-  },
+const app = "shop";                 // global scope
 ~~~
 
-- [[startBroken() { ... }]]: method. لما نناديها [[timer.startBroken()]]، الـ this **جواها هي** = timer (قاعدة النقطة).
-- [[setTimeout(function () { ... }, 0)]]: بنبعت لـ setTimeout دالة جديدة مكتوبة بـ [[function]]. الدالة دي ليها **this بتاعتها**، بتتحدد لما setTimeout تناديها، ومش هي اللي بتاخدها من startBroken.
-- setTimeout بتناديها من غير [[timer.]] قبلها، فـ this جواها مش timer.
+متغير متعرّف برّه أي دالة أو block، فكل الكود في الملف شايفه.
+
+---
+
+## ٢. function scope و block scope
+
+~~~text app.js
+function checkout() {
+  const total = 100;                // function scope
+  if (total > 50) {
+    const discount = 10;            // block scope
+    console.log(app, total, discount);
+  }
+  console.log(typeof discount);     // "undefined": برا الـ block
+}
+~~~
+
+- [[total]] اتعرّف جوه الدالة، فعايش جواها بس.
+- [[{ }]] بتاعة الـ if اسمها **block**، و [[const]] و [[let]] جوه block عايشين جواه بس. فـ discount موجود بين القوسين دول وبس.
+- السطر اللي جوه الـ if شايف التلاتة: discount من الـ block نفسه، و total من الدالة اللي حواليه، و app من الـ global.
+
+### إزاي JS لقى app؟
+
+لما بتكتب اسم متغير، JS بيدوّر عليه في الـ scope الحالي. لو ملقاهوش يطلع للي فوقه، وهكذا لحد الـ global. السلسلة دي اسمها **scope chain**:
+
+~~~text البحث عن app
+block بتاع الـ if   →  مش موجود
+دالة checkout      →  مش موجود
+global             →  "shop"  لقيته
+~~~
+
+### [[typeof discount]] برّه الـ block
+
+[[typeof]] بيرجّع نوع القيمة كـ string. ولو المتغير مش موجود خالص مبيرميش error، بيرجّع [["undefined"]]. لو كتبت [[console.log(discount)]] بدلها:
 
 ~~~text الناتج
+ReferenceError: discount is not defined
+~~~
+
+---
+
+## ٣. دالة جوه دالة
+
+~~~text app.js
+function outer() {
+  const secret = "x";
+  function inner() {
+    return secret;                  // مش لاقيه هنا، فطلع لـ outer
+  }
+  return inner();
+}
+~~~
+
+inner مكتوبة **جوه** outer، فالـ scope اللي فوقها هو outer. لما تدوّر على secret ومتلاقيهوش جواها، تطلع لـ outer وتلاقيه. والعكس مش شغال: outer مش شايفة أي متغير جوه inner.
+
+ودي معنى **lexical**: السلسلة بتتحدد من مكان كتابة الدالة في الكود، مش من المكان اللي اتنادت منه.
+
+---
+
+## ٤. التشغيل
+
+~~~text app.js
+checkout();
+outer(); // "x"
+~~~
+
+~~~text الناتج
+shop 100 10
 undefined
+x
 ~~~
 
-وطبعنا this نفسها جوه الـ callback: في Node طلعت object من نوع [[Timeout]]، وفي Chrome طلعت [[window]]. الاتنين مفيهمش seconds، فالنتيجة undefined.
+(السطر الأخير طبعته بـ [[console.log(outer())]].)
 
 ---
 
-## ٣. [[start]]: callback بـ arrow
+## ٥. «جرّب»: shadowing و inner من برّه
 
-~~~text app.js
-  start() {
-    setTimeout(() => {
-      this.seconds++;
-      console.log(this.seconds);
-    }, 0);
-  },
-~~~
-
-- [[() => { ... }]]: **arrow function**. الفرق المهم: **مالهاش this بتاعتها**. لما تكتب this جواها، JS بيدوّر عليها برّه، في المكان اللي الـ arrow **اتكتبت** فيه، بالظبط زي ما بيدوّر على أي متغير. ده اسمه **lexical this**.
-- الـ arrow اتكتبت جوه [[start]]، و this بتاعة start = timer، فـ this جوه الـ arrow = timer.
-- [[this.seconds++]]: زوّد seconds واحد ([[++]] = زوّد 1).
+لو ضفت [[const app = "admin";]] جوه checkout قبل الـ if:
 
 ~~~text الناتج
-1
+admin 100 10
 ~~~
 
----
+وبعد الدالة [[console.log(app)]] لسه [[shop]]. ده **shadowing**: المتغير الداخلي «بيغطّي» على اللي برّه بنفس الاسم، لأن البحث بيقف عند أول واحد يلاقيه. الـ global متغيرتش.
 
-## ٤. [[bad]]: arrow كـ method
-
-~~~text app.js
-  bad: () => typeof this,
-};
-~~~
-
-- [[bad: () => ...]]: خاصية قيمتها arrow function.
-- [[typeof this]]: [[typeof]] بيرجّع نوع القيمة كنص ([["object"]] أو [["undefined"]] ...).
-
-هنا الـ arrow اتكتبت **جوه الـ object literal**، والـ [[{ }]] بتاعة الـ object **مش scope**، مش زي جسم الدالة. فالـ arrow بتطلع تدوّر على this برّه الـ object خالص، في الملف نفسه:
-
-| مكان التشغيل | [[timer.bad()]] | ليه |
-|---|---|---|
-| ملف [[.cjs]] (CommonJS) | [["object"]] | this في أول الملف = [[module.exports]] |
-| ملف [[.mjs]] (ES module) | [["undefined"]] | this في أول الـ module = undefined |
-| Chrome (script عادي) | [["object"]] | this في أول الصفحة = [[window]] |
-
-كلهم اتجرّبوا. وفي ولا واحدة this = timer. ولما جرّبنا [[timer.bad.call(timer)]] الناتج فضل نفسه: [[call]] مبتقدرش تغيّر this بتاعة arrow. وكمان [[new]] على arrow بيقع:
-
-~~~text الناتج: const A = () => 1; new A();
-TypeError: A is not a constructor
-~~~
-
----
-
-## ٥. التشغيل
-
-~~~text app.js
-timer.startBroken();
-timer.start();
-~~~
-
-~~~text الناتج (Node)
-undefined
-1
-~~~
-
-الاتنين بيرجعوا فورًا، والـ callbacks بتشتغل بعد ما الكود المتزامن يخلص، بنفس الترتيب اللي اتسجّلت بيه.
-
----
-
-## ٦. الحل القديم (الـ solCode)
-
-قبل الـ arrows (ES2015)، كان فيه طريقتين:
-
-~~~text app.js
-  withSelf() {
-    const self = this;
-    setTimeout(function () {
-      self.seconds++;
-      console.log("self", self.seconds);
-    }, 0);
-  },
-~~~
-
-- [[const self = this;]]: احفظ this بتاعة الـ method في متغير عادي **قبل** الـ callback. والـ callback بيشوف [[self]] بالـ closure (أي دالة بتشوف المتغيرات اللي حواليها).
-
-~~~text app.js
-  withBind() {
-    setTimeout(function () {
-      this.seconds++;
-      console.log("bind", this.seconds);
-    }.bind(this), 0);
-  },
-~~~
-
-- [[function () { ... }.bind(this)]]: [[bind]] بترجّع **نسخة** من الدالة this فيها متثبتة على القيمة اللي بعتها. والـ [[this]] اللي جوه أقواس bind اتقرت وقت تنفيذ withBind، يعني = timer.
+ولو حطيت نفس السطر **بعد** الـ if بدل قبلها:
 
 ~~~text الناتج
-self 1
-bind 2
+ReferenceError: Cannot access 'app' before initialization
 ~~~
 
-الاتنين زوّدوا نفس الـ seconds (1 وبعدين 2)، يعني الاتنين شافوا timer فعلًا.
+مش [["shop"]]! الاسم app بقى محجوز في الدالة من أولها، والسطر بتاعه لسه موصلش (ده TDZ، الدرس الجاي).
+
+و [[inner()]] من برّه outer:
+
+~~~text الناتج
+ReferenceError: inner is not defined
+~~~
 
 ---
 
 ## الخلاصة
 
-| | function عادية | arrow |
+| المستوى | بيتعمل بـ | عايش فين |
 |---|---|---|
-| ليها this بتاعتها؟ | أيوه، بتتحدد وقت النداء | لأ، بتاخدها من المكان اللي اتكتبت فيه |
-| call و bind بيغيّروها؟ | أيوه | لأ |
-| ينفع new؟ | أيوه | لأ (TypeError) |
-| تنفع كـ method في object؟ | أيوه | لأ: this هتيجي من برّه الـ object |
-| تنفع كـ callback جوه method؟ | محتاجة bind أو self | أيوه، وده استخدامها الأساسي |
+| global | تعريف برّه أي حاجة | الملف كله |
+| function | تعريف جوه دالة | الدالة دي وأي حاجة جواها |
+| block | [[let]] / [[const]] جوه [[{ }]] | الـ block ده بس |
 
-القاعدة: **method = function عادية، callback جوه method = arrow**.`,
+> البحث بيطلع لفوق بس، من مكان الكتابة. وفي script عادي في المتصفح، [[var]] في الأول بيبقى خاصية على [[window]] و [[let]] لأ (جرّبتها في Chrome: [[window.gv]] طلعت 1 و [[window.gl]] طلعت undefined).`,
           lines: [
-            R`object فيه عداد وتلات methods، هنقارن فيهم [[function]] و arrow جوه callback.`,
-            R`العداد اللي الـ callbacks هتحاول توصله عن طريق [[this.seconds]].`,
-            R`method عادية: لما تتنادى [[timer.startBroken()]] بتبقى [[this]] جواها [[timer]]. المشكلة هتبقى في الدالة اللي جواها.`,
-            R`بنبعت لـ [[setTimeout]] دالة مكتوبة بـ [[function]]. الدالة دي ليها [[this]] خاصة بيها بتتحدد لما [[setTimeout]] تناديها، ومش بتورث [[this]] بتاعة [[startBroken]].`,
-            R`[[setTimeout]] نادتها من غير [[timer.]]، فـ [[this]] هنا مش [[timer]] (في Node object الـ [[Timeout]] وفي Chrome [[window]]) ومفيهاش [[seconds]]، فبيطبع [[undefined]]. والـ [[?.]] بس عشان المثال ميقعش لو [[this]] طلعت [[undefined]].`,
-            R`نهاية الـ callback، والـ [[0]] هو التأخير بالملي ثانية: «أول ما الكود الحالي يخلص».`,
-            R`نهاية [[startBroken]].`,
-            R`method تانية بنفس الفكرة بس بالطريقة الصح. لما تتنادى [[timer.start()]]، [[this]] جواها [[timer]].`,
-            R`الـ callback المرة دي arrow function، والـ arrow مالهاش [[this]] بتاعتها خالص: بتستخدم [[this]] بتاعة المكان اللي اتكتبت فيه، يعني [[start]].`,
-            R`[[this]] هنا هي [[this]] بتاعة [[start]]، يعني [[timer]]، فـ [[seconds]] بتزيد من 0 لـ 1 فعلًا. ده السبب إن الـ arrow هي الاختيار المعتاد للـ callbacks جوه methods.`,
-            R`بيطبع [[1]]: الزيادة حصلت على [[timer]] نفسه.`,
-            R`نهاية الـ arrow callback.`,
-            R`نهاية [[start]].`,
-            R`العكس: arrow مستخدمة كـ method. الـ object literal مش scope، فـ [[this]] جواها جاية من المكان اللي الـ object كله متكتب فيه (مش [[timer]])، فـ [[this.seconds]] جواها مكانتش هتشتغل. القاعدة: الـ methods بـ [[function]] أو الشكل المختصر، والـ arrow للـ callbacks اللي جواها.`,
-            R`نهاية الـ object [[timer]].`,
-            R`بيشغّل النسخة الغلط: بعد ما الكود الحالي يخلص بيطبع [[undefined]].`,
-            R`بيشغّل النسخة الصح: بيطبع [[1]] بعد الـ [[undefined]] بتاعة اللي قبله، لأن الـ timers اللي ليها نفس التأخير بتشتغل بترتيب تسجيلها.`,
+            R`متغير متعرّف برّه أي دالة أو block، فده global scope: أي كود في الملف يقدر يقراه، وعشان كده [[checkout]] تحت شايفاه. ولأن الكل شايفه، خلّي الـ globals قليلة: أي حتة ممكن تعتمد عليها أو تغيّرها.`,
+            R`كل دالة بتعمل scope جديد: المتغيرات اللي هتتعرّف جواها مش هتبان برّه.`,
+            R`[[total]] في الـ function scope بتاع [[checkout]]: موجود طول ما الدالة شغالة، ومحدش برّه الدالة يقدر يوصله.`,
+            R`الـ [[{ }]] بتاعة [[if]] بتعمل block scope: أي [[let]] أو [[const]] جواها بيعيش جواها بس.`,
+            R`[[discount]] في block scope: موجود لحد القوس اللي بيقفل الـ [[if]]. ولو كان [[var]] كان هيهرب للدالة كلها، لأن [[var]] مبيعترفش بالـ blocks.`,
+            R`الـ block بيشوف نفسه وكل اللي برّاه: [[discount]] من الـ block، و [[total]] من الدالة، و [[app]] من الـ global، فبيطبع [[shop 100 10]].`,
+            R`نهاية الـ block بتاع [[if]]، ومعاها [[discount]] بيختفي.`,
+            R`برّه الـ block [[discount]] مش موجود. استخدمنا [[typeof]] لأنها بترجّع [["undefined"]] لمتغير مش متعرّف بدل ما ترمي error، أما [[console.log(discount)]] لوحدها كانت هترمي ReferenceError.`,
+            R`نهاية [[checkout]].`,
+            R`دالة جواها دالة، عشان نشوف الـ scope chain: الدالة الداخلية تقدر تشوف متغيرات الدوال اللي حواليها.`,
+            R`متغير في scope [[outer]]: [[inner]] هتقدر تشوفه، لكن الكود برّه [[outer]] لأ.`,
+            R`دالة متعرّفة جوه [[outer]]، فالـ scope بتاعها متوصّل بـ scope [[outer]] من مكان ما اتكتبت (lexical scope)، مش من المكان اللي هتتنادى منه.`,
+            R`[[secret]] مش متعرّف جوه [[inner]]، فـ JS بيدوّر في الـ scope اللي فوقها ([[outer]]) ويلاقيه. لو ملقاهوش كان هيكمّل للـ global، ولو مش موجود خالص ReferenceError.`,
+            R`نهاية [[inner]].`,
+            R`بننادي [[inner]] جوه [[outer]] ونرجّع ناتجها، فـ [[outer()]] كلها بترجّع [["x"]].`,
+            R`نهاية [[outer]].`,
+            R`بتشغّل [[checkout]]: بتطبع [[shop 100 10]] من جوه الـ block، وبعدها [[undefined]] من [[typeof]] برّه الـ block.`,
+            R`بترجّع [["x"]]: [[inner]] وصلت لـ [[secret]] عن طريق الـ scope chain. لكن [[console.log(secret)]] هنا برّه [[outer]] كانت هترمي ReferenceError.`,
           ],
-          sol: R`بـ self: جوه الـ function العادية اكتب [[self.seconds++]] بدل this. وبـ bind: [[setTimeout(function () { ... }.bind(this), 0)]]. في الاتنين الـ callback بقى شايف timer، ولو ناديت الطريقتين ورا بعض هتلاقي seconds بتزيد (1 وبعدين 2).
+          sol: R`بعد ما تضيف [[const app = "admin"]] جوه checkout، الـ console.log بيطبع [[admin 100 10]]: JS بيدوّر على الاسم من الـ scope الأقرب ويطلع لبرّه، فلقى app بتاعة checkout قبل ما يوصل للـ global. الـ global نفسها متغيرتش، ولو طبعت app برّه الدالة هتلاقيها [["shop"]].
 
-[[timer.bad()]] في ملف Node بترجّع [["object"]] (this بتاع الملف CommonJS هو module.exports)، وفي ES module بترجّع [["undefined"]]، وفي Console المتصفح [["object"]] (window). المهم إنها أبدًا مش timer. والغلطة إنك تكتب [[const self = this]] جوه الـ callback نفسه: ساعتها بتاخد this الغلط. لازم تتكتب في startBroken قبل setTimeout.`,
-          solCode: R`const timer = {
-  seconds: 0,
-  withSelf() {
-    const self = this;
-    setTimeout(function () {
-      self.seconds++;
-      console.log("self", self.seconds);
-    }, 0);
-  },
-  withBind() {
-    setTimeout(function () {
-      this.seconds++;
-      console.log("bind", this.seconds);
-    }.bind(this), 0);
-  },
-};
-timer.withSelf(); // self 1
-timer.withBind(); // bind 2`
+[[inner()]] من برّه outer بتطلع [[ReferenceError: inner is not defined]]: inner متعرّفة جوه outer، فمش موجودة في الـ global scope. الـ scope بيتحدد بمكان كتابة الكود (lexical)، مش بمكان النداء. ولو حطيت [[const app]] بعد الـ if بدل قبلها، هيطلع ReferenceError (TDZ) مش «shop»، لأن الاسم محجوز في الـ scope من أوله (الدرس الجاي).`
         },
         {
-          cmd: "call و apply و bind",
-          title: "تحدد this بإيدك",
-          desc: R`التلاتة بيخلوك تقرر this هتبقى إيه:
+          cmd: "hoisting و TDZ",
+          title: "ليه تقدر تنادي دالة قبل ما تكتبها؟",
+          desc: R`قبل ما الكود يشتغل، JS بيعدّي على الـ scope ويسجّل كل التعريفات. ده اسمه hoisting: كأن التعريفات اتشالت لأول الـ scope.
 
-[[fn.call(obj, a, b)]]: نادي دلوقتي و this = obj، والـ arguments ورا بعض.
-[[fn.apply(obj, [a, b])]]: نفس الكلام بس الـ arguments في array.
-[[fn.bind(obj, a)]]: متناديش، رجّع دالة جديدة this بتاعتها متثبتة دايمًا على obj، وممكن تثبّت أول arguments كمان (partial application).`,
-          example: R`function intro(greeting, punct) {
-  return $__bt$__{greeting}, I'm $__{this.name}$__{punct}$__bt;
-}
-const sara = { name: "Sara" };
-intro.call(sara, "Hi", "!");          // "Hi, I'm Sara!"
-intro.apply(sara, ["Hey", "."]);      // "Hey, I'm Sara."
-const saraIntro = intro.bind(sara, "Hello");
-saraIntro("?");                       // "Hello, I'm Sara?"
-saraIntro.call({ name: "Ali" }, "!"); // "Hello, I'm Sara!": bind مبيتغيرش
-const btn = { label: "Save", click() { console.log(this.label); } };
-setTimeout(btn.click.bind(btn), 0);   // "Save"`,
-          try: R`اكتب [[myBind(fn, ctx, ...args)]] بإيدك: بترجّع دالة بتنادي [[fn.apply(ctx, [...args, ...newArgs])]]. ده سؤال انترفيو مشهور (المستوى ٣ فيه نسخة كاملة). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+بس كل نوع بيتسجّل بشكل مختلف: الـ function declaration بتتسجّل كاملة (تقدر تناديها قبل سطرها). و [[var]] بيتسجّل بقيمة undefined. و [[let]] و [[const]] و [[class]] بيتسجّلوا من غير قيمة، ولو لمستهم قبل سطرهم يطلع ReferenceError. الفترة دي اسمها TDZ (temporal dead zone).`,
+          example: R`sayHi();                        // شغال: الدالة متسجّلة كاملة
+function sayHi() { console.log("hi"); }
+console.log(a);                 // undefined: var من غير قيمة
+var a = 1;
+greet();                        // TypeError: greet is not a function
+var greet = () => console.log("hey");
+console.log(b);                 // ReferenceError: Cannot access 'b' before initialization
+let b = 2;`,
+          try: R`شغّل الكود في ملف بـ Node، هتلاقيه وقف عند [[greet()]]. علّق السطر ده وشغّل تاني عشان توصل للـ ReferenceError. وبعدين غيّر [[var greet]] لـ [[const greet]] وشوف الرسالة اتغيرت لإيه.`,
           practice: [
-            { lvl: 'سريع', t: R`**قارن وقيس:** [[Math.max.apply(null, [3, 9, 2])]] وقارنها بـ [[Math.max(...[3, 9, 2])]]. وجرّب الاتنين على array فاضية.`, done: R`الاتنين بيرجّعوا [[9]]، ومع array فاضية الاتنين بيرجّعوا [[-Infinity]] (فاتأكد إن الـ array مش فاضية قبلها).`, sol: R`~~~js max-apply.js
-const nums = [3, 9, 2];
-console.log(Math.max.apply(null, nums), Math.max(...nums));
-console.log(Math.max.apply(null, []), Math.max(...[]));
-
-const big = new Array(200000).fill(1);
+            { lvl: 'سريع', t: R`**قارن وقيس:** قارن [[console.log(typeof x); let x;]] بـ [[console.log(typeof y);]] (y مش متعرّف خالص).`, done: R`الأول بيطلع [[ReferenceError: Cannot access 'x' before initialization]]، والتاني بيطبع [["undefined"]] عادي: الـ TDZ أشد من متغير مش موجود أصلًا.`, sol: R`~~~js tdz-typeof.js
 try {
-  Math.max(...big);
+  console.log(typeof x);   // x متعرّفة تحت بـ let
+  let x;
 } catch (e) {
-  console.log("200 ألف عنصر:", e.name + ": " + e.message);
-}
-console.log("بالـ reduce:", big.reduce((m, x) => (x > m ? x : m), -Infinity));
-~~~
-
-~~~text الناتج (node max-apply.js، Node 24)
-9 9
--Infinity -Infinity
-200 ألف عنصر: RangeError: Maximum call stack size exceeded
-بالـ reduce: 1
-~~~
-
-**ليه كده:**
-
-- **[[apply(null, nums)]]:** الـ argument الأول this (Math.max مبتستخدمهاش، فـ null)، والتاني array بتتفك arguments: [[Math.max(3, 9, 2)]]. والـ spread [[...nums]] بيعمل نفس الفك بشكل أحدث.
-- **array فاضية:** [[Math.max()]] من غير arguments بترجّع [[-Infinity]] (أصغر حاجة، عشان أي رقم يكسبها). فلو الـ array ممكن تبقى فاضية اتأكد قبلها.
-- **الحد:** الاتنين بيحطوا كل عنصر argument على الـ stack، فـ 200 ألف عنصر بيرموا [[RangeError]] (جرّبت في Node 24: 120 ألف عدّوا و 150 ألف وقعوا، والرقم بيختلف حسب الـ engine). للـ arrays الكبيرة [[reduce]].
-
-**الغلطة الشائعة:** [[Math.max(nums)]] من غير فك: بتبعت الـ array نفسها argument واحد، فبترجّع [[NaN]].` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[function show(a, b) { return this.x + a + b; }]]. اكتب ناتج [[show.call({ x: 1 }, 2, 3)]] و [[show.apply({ x: 1 }, [2, 3])]] و [[show.bind({ x: 10 }, 1)(2)]] و [[show.bind({ x: 1 }).bind({ x: 100 })(0, 0)]].`, done: R`توقعت وطلع 6 و 6 و 13 و 1. والأخيرة لأن الـ bind التاني مبيقدرش يغيّر this بعد أول bind.`, sol: R`~~~js show-bind.js
-function show(a, b) {
-  return this.x + a + b;
-}
-console.log(show.call({ x: 1 }, 2, 3));
-console.log(show.apply({ x: 1 }, [2, 3]));
-console.log(show.bind({ x: 10 }, 1)(2));
-console.log(show.bind({ x: 1 }).bind({ x: 100 })(0, 0));
-~~~
-
-~~~text الناتج (node show-bind.js، Node 24)
-6
-6
-13
-1
-~~~
-
-**ليه كده:**
-
-- **[[call({ x: 1 }, 2, 3)]]:** this = [[{ x: 1 }]] والباقي arguments واحد واحد: 1 + 2 + 3 = 6.
-- **[[apply({ x: 1 }, [2, 3])]]:** نفس الحاجة بس الـ arguments في array: 6.
-- **[[bind({ x: 10 }, 1)]]:** بترجّع دالة جديدة this فيها 10 و a متثبت بـ 1. نداها بـ [[(2)]] فـ b = 2: 10 + 1 + 2 = 13.
-- **[[bind(...).bind(...)]]:** أول bind عملت دالة this جواها متثبتة للأبد. التاني بيحاول يغيّر this بتاعة الدالة الجديدة دي، بس هي أصلًا مبتستخدمش this بتاعتها، بتنادي الأصلية بـ [[{ x: 1 }]]. فـ 1 + 0 + 0 = 1.
-
-**الغلطة الشائعة:** تفتكر إن bind التانية «بتكتب فوق» الأولى. الـ bind التانية بتقدر تثبّت arguments زيادة بس، الـ this خلاص اتحدد.` },
-            { lvl: 'تطبيق', t: R`**ابني:** اعمل logger بـ prefix: [[const log = console.log.bind(console, "[app]")]]، و [[const add5 = add.bind(null, 5)]] لـ [[add = (a, b) => a + b]].`, done: R`[[log("started")]] بيطبع [[[app] started]]، و [[add5(3)]] بترجّع [[8]]: الـ bind ثبّت أول argument، و [[null]] مكان this عشان add مش بتستخدمها.`, sol: R`~~~js prefix-logger.js
-const log = console.log.bind(console, "[app]");
-log("started");
-log("users:", 3);
-
-const add = (a, b) => a + b;
-const add5 = add.bind(null, 5);
-console.log(add5(3), add5(-5));
-~~~
-
-~~~text الناتج (node prefix-logger.js، Node 24)
-[app] started
-[app] users: 3
-8 0
-~~~
-
-**ليه كده:**
-
-- **[[console.log.bind(console, "[app]")]]:** دالة جديدة this فيها console (عشان log محتاجاها في بعض البيئات)، وأول argument متثبت بـ [["[app]"]]. أي حاجة تبعتها بتتحط بعده، فـ [[log("users:", 3)]] = [[console.log("[app]", "users:", 3)]].
-- **[[add.bind(null, 5)]]:** ده اسمه partial application: ثبّتنا [[a]] بـ 5، والدالة الجديدة بتاخد [[b]] بس. و [[null]] مكان this لأن add arrow أصلًا مبتستخدمش this (والـ arrow بتتجاهل this اللي بتتبعت).
-
-**الغلطة الشائعة:** [[const log = console.log]] من غير bind. في Node وفي Chrome الحديث شغالة، لكن في بيئات قديمة كانت بترمي [[Illegal invocation]] لأن log محتاجة this = console. الـ bind بيضمن الاتنين.` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** widget فيه [[onClick() { console.log(this.name); }]]. ضيفه على زرار بـ [[btn.addEventListener("click", widget.onClick.bind(widget))]] وحاول تشيله بـ [[removeEventListener]] بنفس الكتابة. وبعدين صلّحه.`, done: R`الشيل مبيشتغلش والضغط لسه بيطبع، لأن [[widget.onClick.bind(widget) === widget.onClick.bind(widget)]] بترجّع [[false]] (كل bind دالة جديدة). وبعد ما تخزّن النسخة المربوطة في متغير وتبعته للاتنين، الضغط بعد الشيل مبيطبعش حاجة.`, sol: R`~~~live 300 removeEventListener و bind
-<p><button type="button" id="a">زرار A</button> <button type="button" id="remove-a">شيل listener A (غلط)</button></p>
-<p><button type="button" id="b">زرار B</button> <button type="button" id="remove-b">شيل listener B (صح)</button></p>
-<ol id="log"></ol>
-<script>
-  const log = (t) => {
-    const li = document.createElement("li");
-    li.textContent = t;
-    document.querySelector("#log").append(li);
-  };
-  const widgetA = { name: "A", onClick() { log("ضغطة على " + this.name); } };
-  const widgetB = { name: "B", onClick() { log("ضغطة على " + this.name); } };
-
-  // الغلط: كل bind بيعمل دالة جديدة
-  const a = document.querySelector("#a");
-  a.addEventListener("click", widgetA.onClick.bind(widgetA));
-  document.querySelector("#remove-a").addEventListener("click", () => {
-    a.removeEventListener("click", widgetA.onClick.bind(widgetA));
-    log("شلت A؟ bind === bind: " + (widgetA.onClick.bind(widgetA) === widgetA.onClick.bind(widgetA)));
-  });
-
-  // الصح: النسخة المربوطة في متغير، ونفس الـ reference للاتنين
-  const b = document.querySelector("#b");
-  const boundB = widgetB.onClick.bind(widgetB);
-  b.addEventListener("click", boundB);
-  document.querySelector("#remove-b").addEventListener("click", () => {
-    b.removeEventListener("click", boundB);
-    log("شلت B");
-  });
-</script>
-~~~
-
-~~~text الناتج (Chrome 157، Playwright: A ثم «شيل A» ثم A، و B ثم «شيل B» ثم B)
-1. ضغطة على A
-2. شلت A؟ bind === bind: false
-3. ضغطة على A          ← لسه شغال
-4. ضغطة على B
-5. شلت B
-                        ← الضغطة على B بعد الشيل مطبعتش حاجة
-~~~
-
-**ليه كده:**
-
-- **[[removeEventListener]]** بيدوّر على **نفس الدالة بالظبط** (نفس الـ reference) اللي اتضافت. و [[bind]] كل مرة بترجّع دالة جديدة، فالدالة اللي بتحاول تشيلها عمرها ما اتضافت، والشيل بيعدّي من غير أي error ومن غير ما يعمل حاجة.
-- **التصليح:** [[const boundB = widgetB.onClick.bind(widgetB)]] مرة واحدة، وتبعت **نفس المتغير** للـ add والـ remove.
-
-**الغلطة الشائعة:** نفس الفخ مع الـ arrow: [[addEventListener("click", () => w.onClick())]] وبعدين [[removeEventListener("click", () => w.onClick())]]. اتنين arrows شكلهم واحد بس دالتين مختلفين. أي دالة هتشيلها لازم تتخزّن في متغير. (والحل الأحدث: [[AbortController]] و [[{ signal }]] بيشيل كل الـ listeners مرة واحدة.)` },
-            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[myBind(fn, thisArg, ...preset)]] من غير [[bind]]: بترجّع دالة بتنادي fn بـ apply أو call بالـ this والـ arguments المثبتة وبعدها الجديدة.`, done: R`[[myBind(show, { x: 1 }, 2)(3)]] بترجّع 6 زي [[show.bind({ x: 1 }, 2)(3)]]، و [[myBind(Math.max, null)(4, 9)]] بترجّع 9.`, sol: R`~~~js my-bind.js
-function myBind(fn, thisArg, ...preset) {
-  return function (...args) {
-    return fn.apply(thisArg, [...preset, ...args]);
-  };
+  console.log(e.name + ": " + e.message);
 }
 
-function show(a, b) {
-  return this.x + a + b;
-}
-console.log(myBind(show, { x: 1 }, 2)(3), show.bind({ x: 1 }, 2)(3));
-console.log(myBind(Math.max, null)(4, 9));
-console.log(myBind(show, { x: 10 })(1, 2), myBind(show, { x: 0 }, 1, 2)());
-
-const user = { name: "Sara", hi(greet) { return greet + " " + this.name; } };
-const hi = myBind(user.hi, user);
-setTimeout(() => console.log(hi("أهلا")), 0);
+console.log(typeof y);     // y مش متعرّفة في أي حتة
 ~~~
 
-~~~text الناتج (node my-bind.js، Node 24)
-6 6
-9
-13 3
-أهلا Sara
+~~~text الناتج (node tdz-typeof.js، Node 24)
+ReferenceError: Cannot access 'x' before initialization
+undefined
 ~~~
 
 **ليه كده:**
 
-- **[[...preset]]** في الـ parameters بيلم كل اللي بعد thisArg في array (rest)، و [[...args]] بيلم arguments النداء الجديد.
-- **[[fn.apply(thisArg, [...preset, ...args])]]:** بننادي الأصلية بالـ this اللي اتحفظ، والـ arguments المثبتة الأول وبعدها الجديدة. ودي بالظبط اللي [[bind]] بتعمله.
-- **[[thisArg]] و [[preset]] في الـ closure:** الدالة اللي رجعت فاكراهم، فحتى لما اتبعتت لـ setTimeout، this فضلت user.
+- **[[typeof]] على اسم مش موجود خالص** بيرجّع [["undefined"]] من غير error. دي حالة خاصة اتعملت زمان عشان تقدر تسأل «الحاجة دي موجودة؟» زي [[typeof window]].
+- **لكن x موجودة** (الـ engine شافها وهو بيقرا الـ block قبل التنفيذ)، بس لسه في الـ TDZ لحد سطر [[let x]]. وأي وصول ليها في الفترة دي، حتى بـ [[typeof]]، بيرمي [[ReferenceError]].
+- يعني الـ TDZ «أشد» من متغير مش موجود: الأول بيوقع، والتاني بيعدّي.
 
-**الفرق عن bind الحقيقية** (للمعرفة): الحقيقية بتشتغل مع [[new]] (بتتجاهل thisArg)، وبتحط [[name]] بـ [["bound show"]] و [[length]] صح. للاستخدام العادي الشكل ده كفاية.
+**الغلطة الشائعة:** تستخدم [[typeof x === "undefined"]] عشان تعرف إذا x اتعرّفت ولا لأ. ده بينفع مع [[var]] والأسامي اللي مش موجودة، لكن مع [[let]] و [[const]] قبل سطرهم بيوقع.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[function show() { return LIMIT; }]] وبعدها [[show();]] وبعدها [[const LIMIT = 5;]]. شغّل، وبعدين انقل سطر [[show()]] تحت الـ const.`, done: R`الترتيب الأول بيطلع [[ReferenceError: Cannot access 'LIMIT' before initialization]]، والتاني بيرجّع [[5]] مع إن الدالة مكتوبة فوق الـ const: الـ TDZ بتتحسب بوقت التنفيذ مش بمكان السطر.`, sol: R`~~~js limit-before.js
+function show() {
+  return LIMIT;
+}
+try {
+  console.log(show());     // قبل سطر الـ const
+} catch (e) {
+  console.log(e.name + ": " + e.message);
+}
+const LIMIT = 5;
+~~~
 
-**الغلطة الشائعة:** [[return fn.apply(thisArg, preset.concat(arguments))]] جوه arrow: الـ arrow مالهاش [[arguments]] بتاعتها، فبتاخد arguments بتاعة myBind نفسها. الـ rest [[...args]] أوضح وأسلم.` }
+~~~js limit-after.js
+function show() {
+  return LIMIT;
+}
+const LIMIT = 5;
+console.log(show());       // بعد سطر الـ const
+~~~
+
+~~~text الناتج (node limit-before.js ثم node limit-after.js، Node 24)
+ReferenceError: Cannot access 'LIMIT' before initialization
+---
+5
+~~~
+
+**ليه كده:**
+
+- **الدالة نفسها مكتوبة فوق الـ const في الحالتين.** الكتابة مش مشكلة: جسم الدالة مش بيتنفذ غير لما تتنده.
+- **المهم إمتى النداء:** في الأول [[show()]] اتندهت والتنفيذ لسه موصلش لسطر [[const LIMIT = 5]]، فـ LIMIT في الـ TDZ. في التاني النداء بعد السطر، فـ LIMIT اتعملها initialization وقيمتها 5.
+- يعني الـ TDZ **بالوقت** (التنفيذ وصل للسطر ولا لسه)، مش بالمكان (الدالة مكتوبة فوق ولا تحت).
+
+**الغلطة الشائعة:** تنقل الدالة تحت الـ const وتفتكر إن ده الحل. اللي بيحل هو إن **النداء** يبقى بعد الـ const، وده غالبًا معناه إن سطر التشغيل ([[main()]] أو [[show()]]) يبقى في آخر الملف.` },
+            { lvl: 'تطبيق', t: R`**ابني:** ملف [[report.js]] مترتّب «الصورة الكبيرة الأول»: [[const CURRENCY = "ج.م";]] فوق، وتحته [[function main()]] بتنادي [[total(prices)]] و [[format(n)]] المكتوبين تحتها كـ function declarations، وسطر [[main();]] في آخر الملف.`, done: R`[[main()]] بتطبع [[300 ج.م]] لـ [[[100, 200]]]. ولما نقلت سطر [[main();]] لأول الملف قبل الـ const طلع [[ReferenceError: Cannot access 'CURRENCY' before initialization]]، فعرفت ليه الـ declarations تقدر تيجي تحت بس النداء لازم يبقى بعد الـ const.`, sol: R`~~~js report.js
+const CURRENCY = "ج.م";
+
+function main() {
+  const prices = [100, 200];
+  console.log(format(total(prices)));
+}
+
+function total(prices) {
+  return prices.reduce((sum, p) => sum + p, 0);
+}
+
+function format(n) {
+  return n + " " + CURRENCY;
+}
+
+main();
+~~~
+
+~~~text الناتج (node report.js، Node 24)
+300 ج.م
+~~~
+
+وده نفس الملف لما سطر [[main();]] اتنقل لأوله:
+
+~~~js report-broken.js
+try {
+  main();                  // قبل سطر الـ const
+} catch (e) {
+  console.log(e.name + ": " + e.message);
+}
+
+const CURRENCY = "ج.م";
+
+function main() {
+  console.log(format(total([100, 200])));
+}
+function total(prices) {
+  return prices.reduce((sum, p) => sum + p, 0);
+}
+function format(n) {
+  return n + " " + CURRENCY;
+}
+~~~
+
+~~~text الناتج (node report-broken.js، Node 24)
+ReferenceError: Cannot access 'CURRENCY' before initialization
+~~~
+
+**ليه كده:**
+
+- **الـ function declarations ([[main]] و [[total]] و [[format]]) بتتسجّل كاملة قبل أول سطر،** فـ main تقدر تنادي total و format مع إنهم مكتوبين تحتها. عشان كده الترتيب «الصورة الكبيرة الأول» (main فوق والتفاصيل تحت) شغال.
+- **في النسخة البايظة** main نفسها اشتغلت عادي (اتسجّلت كاملة)، و total اشتغلت، لكن format وصلت لـ [[CURRENCY]] والتنفيذ لسه موصلش لسطر الـ const، فالـ error طلع من جوه format.
+- **القاعدة اللي طلعت بيها:** الـ declarations مكانها مش مهم، لكن سطر التشغيل لازم يبقى بعد كل الـ [[const]] و [[let]] اللي الدوال بتقراها. وأسهل طريقة: [[main();]] آخر سطر في الملف.
+
+**الغلطة الشائعة:** تكتب الدوال كـ [[const format = (n) => ...]] وتسيب [[main();]] في الآخر، وده شغال. لكن لو نقلت main لفوق هتوقع حتى قبل CURRENCY، لأن الـ arrow في [[const]] ليها نفس الـ TDZ. الـ declarations بس هي اللي بتتسجّل كاملة.` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** خمّن الناتج قبل ما تشغّل: [[console.log(typeof foo); var foo = 1; function foo() {} console.log(typeof foo);]]. وبعدين جرّب [[new A(); class A {}]].`, done: R`الأول بيطبع [["function"]] وبعدين [["number"]] (الـ function declaration متسجّلة كاملة، وسطر [[var foo = 1]] هو اللي غيّرها وقت التنفيذ)، و [[new A()]] بتطلع [[ReferenceError: Cannot access 'A' before initialization]]، وتقدر تشرح الاتنين في سطرين.`, sol: R`~~~js hoist-predict.js
+console.log(typeof foo);
+var foo = 1;
+function foo() {}
+console.log(typeof foo);
+
+try {
+  new A();
+} catch (e) {
+  console.log(e.name + ": " + e.message);
+}
+class A {}
+~~~
+
+~~~text الناتج (node hoist-predict.js، Node 24)
+function
+number
+ReferenceError: Cannot access 'A' before initialization
+~~~
+
+**ليه كده (الشرح في سطرين):**
+
+1. **قبل التنفيذ** الـ engine سجّل [[foo]]: الـ function declaration متسجّلة بقيمتها كاملة، و [[var foo]] لنفس الاسم مبتمسحهاش (الـ var من غير قيمة بيتجاهل لو الاسم موجود). فأول [[typeof]] بيلاقي دالة. وبعدين سطر [[foo = 1]] بيتنفذ فعلًا، فالتاني [[number]]. وسطر [[function foo() {}]] مالوش أي تأثير وقت التنفيذ.
+2. **الـ class بتتسجّل زي [[let]]:** الاسم معروف بس في الـ TDZ لحد سطرها، فـ [[new A()]] قبلها بيرمي نفس رسالة الـ TDZ.
+
+**الغلطة الشائعة:** تتوقع إن [[var foo = 1]] اللي مكتوب «فوق» الدالة هي اللي بتتسجّل الأول، فتقول [["undefined"]] ثم [["function"]]. الحقيقة: التسجيل كله قبل أي سطر، والـ function بتكسب، والتنفيذ بعدها بيمشي بالترتيب.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** اكتب لزميلك ٣ سطور: function declaration، و [[var]]، و [[let/const/class]]، كل واحد بيحصل له إيه لو استخدمته قبل سطره، بمثال سطر واحد لكل واحد.`, done: R`الـ ٣ سطور صح: الـ function بتشتغل كاملة، و var بترجّع undefined، و let/const/class بيرموا [[ReferenceError: Cannot access '...' before initialization]]. وزميلك قدر يتوقع ناتج تمرين «اقرا وتوقّع» اللي فوق من شرحك.`, sol: R`**الإجابة النموذجية (٣ سطور لزميلك):**
+
+1. **function declaration:** بتتسجّل كاملة قبل أي سطر، فتقدر تناديها قبل ما تكتبها: [[hi(); function hi() {}]] شغال.
+2. **[[var]]:** الاسم بيتسجّل وقيمته [[undefined]] لحد سطره: [[console.log(a); var a = 1;]] بيطبع [[undefined]] من غير error.
+3. **[[let]] و [[const]] و [[class]]:** الاسم معروف بس ممنوع تلمسه لحد سطره (TDZ): [[console.log(b); let b = 1;]] بيرمي [[ReferenceError: Cannot access 'b' before initialization]].
+
+والسطور التلاتة دي اتجرّبت فعلًا:
+
+~~~js explain-hoisting.js
+hi();
+function hi() { console.log("1) function: شغالة قبل سطرها"); }
+
+console.log("2) var:", a);
+var a = 1;
+
+for (const code of ["b; let b = 1;", "c; const c = 1;", "new D(); class D {}"]) {
+  try {
+    eval("{" + code + "}");
+  } catch (e) {
+    console.log("3) " + code + " ← " + e.name + ": " + e.message);
+  }
+}
+~~~
+
+~~~text الناتج (node explain-hoisting.js، Node 24)
+1) function: شغالة قبل سطرها
+2) var: undefined
+3) b; let b = 1; ← ReferenceError: Cannot access 'b' before initialization
+3) c; const c = 1; ← ReferenceError: Cannot access 'c' before initialization
+3) new D(); class D {} ← ReferenceError: Cannot access 'D' before initialization
+~~~
+
+**ليه [[eval]] هنا:** عشان أجرّب التلات حالات في ملف واحد من غير ما الأولى توقف الملف. كل واحدة جوه [[{ }]] لوحدها. في كودك العادي متستخدمش [[eval]].
+
+**إزاي زميلك يحل «اقرا وتوقّع» من الشرح ده:** [[typeof foo]] الأولى: السطر ١ (الدالة متسجّلة) يكسب على السطر ٢ (var من غير قيمة)، فـ [["function"]]. وبعد [[foo = 1]] بقت رقم. و [[new A()]] قبل [[class A]]: السطر ٣.
+
+**الغلطة الشائعة:** تقول «let و const مش بيتعملهم hoisting». هما بيتعملهم، والدليل إن الـ error بيقول «before initialization» مش «is not defined»: الـ engine عارف الاسم، بس مانعك.` }
           ],
           ref: [
-            { t: "MDN: Function.prototype.call()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/call" },
-            { t: "MDN: Function.prototype.apply()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply" },
-            { t: "MDN: Function.prototype.bind()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind" },
-            { t: "MDN: EventTarget.removeEventListener()", url: "https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener" },
+            { t: "MDN: Hoisting (glossary)", url: "https://developer.mozilla.org/en-US/docs/Glossary/Hoisting" },
+            { t: "MDN: let (Temporal dead zone)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let" },
+            { t: "MDN: ReferenceError: can't access lexical declaration before initialization", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_lexical_declaration_before_init" },
+            { t: "MDN: function declaration", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function" },
+            { t: "MDN: class declaration", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/class" },
           ],
-          pre: [{ to: "js/this", why: R`call و apply و bind هما القاعدة الصريحة من قواعد this`}, { to: "js/default و rest و spread", why: R`الـ spread هو البديل الحديث لـ apply، و [[...args]] بيلم الـ arguments في [[myBind]]`}],
+          pre: [{ to: "js/scope", why: R`الـ TDZ بتبدأ من أول الـ block، فلازم تعرف الـ block scope الأول`}],
           flag: "script",
           deep: {
-            why: "بتحتاجهم لما تبعت method كـ callback (bind)، أو تستعير method من object لـ object تاني (call). و bind بالذات بيحل مشكلة this الضايعة في setTimeout و addEventListener.",
-            how: R`[[call]] و [[apply]] بينادوا فورًا، والفرق بس في شكل الـ arguments. قبل الـ spread كان [[Math.max.apply(null, arr)]] الطريقة الوحيدة تبعت array كـ arguments، ودلوقتي [[Math.max(...arr)]] أوضح.
+            why: "بيفسّر رسايل errors غريبة زي «Cannot access before initialization» و «is not a function» على حاجة انت شايفها متعرّفة. ومن أشهر أسئلة «اتوقع الناتج».",
+            how: R`الـ engine بيشتغل على مرحلتين: الأولى بيعمل الـ environment ويسجّل فيه كل الأسماء، والتانية بينفّذ سطر سطر.
 
-[[bind]] بترجّع «bound function»، والـ this فيها متثبت للأبد: call و apply و bind تاني مش بيغيّروه. الاستثناء الوحيد [[new]]، اللي بيتجاهل الـ this المتثبت.
+في المرحلة الأولى: [[function f() {}]] بتتسجّل ومعاها جسمها. [[var x]] بيتسجّل ويتحط فيه undefined. [[let]] و [[const]] و [[class]] بيتسجّلوا «uninitialized»، وأي قراية ليهم قبل ما التنفيذ يوصل لسطرهم بترمي ReferenceError.
 
-كل [[bind]] بيعمل دالة جديدة. فلو عملت [[addEventListener("click", this.fn.bind(this))]] مش هتعرف تشيله بـ removeEventListener، لأن الـ bind التاني هيعمل دالة مختلفة. احفظ الـ bound function في متغير الأول.
+عشان كده [[var greet = () => ...]] بتدي TypeError مش ReferenceError: المتغير موجود وقيمته undefined، وانت بتحاول تنادي undefined.
 
-واستعارة methods: [[Array.prototype.slice.call(arguments)]] كانت الطريقة القديمة لتحويل array-like لـ array، ودلوقتي [[Array.from]].`,
-            when: R`[[bind]] لما تبعت method كـ callback وعايز this تفضل. [[call]] لما تستعير method أو تنادي بـ this معيّن. [[apply]] نادرًا دلوقتي.`,
-            mistakes: R`[[bind]] وتفتكرها نادت الدالة. و bind جوه render أو loop فتعمل دوال جديدة كل مرة. وتحاول تعمل bind لـ arrow. وفي الانترفيو: «الفرق بين call و apply و bind؟» و «اكتب bind بإيدك».`
+الـ TDZ حاجة كويسة: بتمسك الغلط بدل ما تديك undefined بهدوء. وهي زمنية مش مكانية: دالة مكتوبة فوق [[let x]] تقدر تقرا x عادي لو اتنادت بعد السطر ده.`,
+            when: R`استفيد من hoisting الدوال لو عايز تكتب الـ main فوق والتفاصيل تحت. غير كده، عرّف قبل ما تستخدم.`,
+            mistakes: R`تفتكر إن let و const مبيتعملهمش hoisting خالص: بيتعمل، بس في TDZ. وتنادي arrow function متعرّفة تحت. وفي الانترفيو: «إيه الناتج؟» على كود زي اللي فوق، و «إيه هو TDZ؟».`
           },
-          teach: R`## الكود ده بيعمل إيه؟
+          teach: R`## الفكرة في سطرين
 
-دالة واحدة [[intro]] بتستخدم [[this]]، وبنناديها ٣ مرات بـ this مختلفة بإيدنا: بـ [[call]]، وبـ [[apply]]، وبنسخة متثبتة بـ [[bind]]. وفي الآخر بنستخدم bind عشان نصلّح مشكلة setTimeout من درس this. اتشغّل في Node 24.
-
----
-
-## ١. الدالة
-
-~~~text app.js
-function intro(greeting, punct) {
-  return $__bt$__{greeting}, I'm $__{this.name}$__{punct}$__bt;
-}
-~~~
-
-- [[greeting]] و [[punct]] (اختصار punctuation، علامة الترقيم): باراميترين عاديين.
-- النص اللي بين علامتين [[$__bt]] اسمه **template literal**: نص تقدر تحط جواه قيم بـ [[$__{...}]]. فـ [[$__{greeting}]] بتتبدل بقيمة greeting، و [[$__{this.name}]] بقيمة name من this.
-- الدالة نفسها مش عارفة this هتبقى إيه. ده هيتحدد **وقت النداء**.
+JS مبيقراش الكود ويشغّله سطر سطر من غير تحضير. قبل التنفيذ بيعدّي على الـ scope ويسجّل كل الأسامي المتعرّفة فيه. فلما تستخدم اسم قبل سطره، النتيجة بتعتمد على **نوع التعريف**. المثال فيه ٤ أنواع، وكل واحد بيدّي نتيجة مختلفة. شغّلته في [[app.js]] بـ Node 24.
 
 ---
 
-## ٢. [[call]]: نادي دلوقتي و this = اللي تقوله
+## ١. التسجيل قبل التنفيذ
+
+لو تخيلنا المرحلة الأولى للملف ده، JS بيكتب لنفسه ورقة كده:
+
+| الاسم | اتعرّف بـ | قيمته قبل التنفيذ |
+|---|---|---|
+| sayHi | [[function sayHi() {}]] | الدالة كاملة |
+| a | [[var]] | [[undefined]] |
+| greet | [[var]] | [[undefined]] |
+| b | [[let]] | ممنوع اللمس (TDZ) |
+
+وبعدين يبدأ ينفّذ من أول سطر. التسجيل ده اسمه **hoisting** (رفع)، كأن التعريفات اتشالت لفوق.
+
+---
+
+## ٢. function declaration
 
 ~~~text app.js
-const sara = { name: "Sara" };
-intro.call(sara, "Hi", "!");
+sayHi();                        // شغال: الدالة متسجّلة كاملة
+function sayHi() { console.log("hi"); }
 ~~~
 
-- [[intro.call(...)]]: كل دالة في JS هي object، وعليها methods جاهزة منها [[call]].
-- أول argument ([[sara]]) بيبقى **this**، والباقي ([["Hi"]] و [["!"]]) بيتبعتوا للدالة ورا بعض.
+[[function اسم() {}]] مكتوبة لوحدها كجملة اسمها **function declaration**، وبتتسجّل بجسمها. فالنداء قبلها شغال: [[hi]].
+
+---
+
+## ٣. [[var]]
+
+~~~text app.js
+console.log(a);                 // undefined: var من غير قيمة
+var a = 1;
+~~~
+
+[[var a = 1]] فيها حاجتين: تعريف (اتسجّل في المرحلة الأولى بـ undefined)، وإسناد [[= 1]] (بيحصل لما التنفيذ يوصل للسطر). فالقراية قبله بتدّي [[undefined]] من غير error.
+
+---
+
+## ٤. [[var]] فيها arrow function
+
+~~~text app.js
+greet();                        // TypeError: greet is not a function
+var greet = () => console.log("hey");
+~~~
+
+greet زي a بالظبط: متغير var قيمته undefined لحد سطره. والـ arrow function قيمة بتتحط في المتغير، مش declaration. فـ [[greet()]] معناها «نادي undefined»:
+
+~~~text الناتج: Node 24 (البرنامج وقف هنا)
+hi
+undefined
+.../app.js:5
+greet();                        // TypeError: greet is not a function
+^
+
+TypeError: greet is not a function
+    at Object.<anonymous> (.../app.js:5:1)
+~~~
+
+اقرا الـ error: [[app.js:5]] رقم السطر، والـ [[^]] تحت مكان المشكلة، و [[5:1]] سطر 5 عمود 1. النوع **TypeError**: الاسم موجود، بس قيمته من النوع الغلط (undefined مش function).
+
+---
+
+## ٥. [[let]] و TDZ
+
+علّقت سطر [[greet()]] بـ [[//]] في أوله وشغّلت تاني:
+
+~~~text app.js
+console.log(b);                 // ReferenceError: Cannot access 'b' before initialization
+let b = 2;
+~~~
+
+~~~text الناتج: Node 24
+hi
+undefined
+ReferenceError: Cannot access 'b' before initialization
+~~~
+
+b **متسجّلة** (عشان كده الرسالة مش «b is not defined»)، بس [[let]] و [[const]] و [[class]] بيفضلوا «مش جاهزين» لحد سطرهم. الفترة من أول الـ scope لحد سطر التعريف اسمها **TDZ** (temporal dead zone = المنطقة الميتة الزمنية). و initialization = أول قيمة.
+
+---
+
+## ٦. «جرّب»: [[const greet]]
+
+لما غيّرت [[var greet]] لـ [[const greet]] ورجّعت النداء:
 
 ~~~text الناتج
-Hi, I'm Sara!
+ReferenceError: Cannot access 'greet' before initialization
 ~~~
+
+نفس الغلطة، بس الرسالة بقت بتقولك المشكلة بالظبط: استخدمت greet قبل سطرها. و [[class]] نفس الحكاية: [[new C()]] قبل [[class C {}]] طلعت [[ReferenceError: Cannot access 'C' before initialization]].
 
 ---
 
-## ٣. [[apply]]: نفس الكلام بس الـ arguments في array
+## ٧. ليه «زمنية»؟
 
 ~~~text app.js
-intro.apply(sara, ["Hey", "."]);
+function f() { return x; }
+f();          // ReferenceError: Cannot access 'x' before initialization
+let x = 5;
+f();          // 5
 ~~~
 
-الفرق الوحيد إن الـ arguments جوه array واحدة: [[apply(sara, ["Hey", "."])]]. وسهل تفتكرها: **a**pply = **a**rray.
-
-~~~text الناتج
-Hey, I'm Sara.
-~~~
-
-apply كانت مهمة زمان لما تكون الـ arguments عندك في array، زي [[Math.max.apply(null, [3, 9, 2])]]. دلوقتي الـ spread [[...]] بيعمل نفس الشغل: [[Math.max(...[3, 9, 2])]]، والاتنين طلّعوا [[9]].
-
----
-
-## ٤. [[bind]]: متناديش، رجّع دالة جديدة
-
-~~~text app.js
-const saraIntro = intro.bind(sara, "Hello");
-saraIntro("?");
-~~~
-
-- [[intro.bind(sara, "Hello")]]: **مبتنفّذش** intro. بترجّع دالة **جديدة**: this فيها متثبتة على sara، وأول argument متثبت على [["Hello"]] (ده اسمه **partial application**: تثبّت جزء من الـ arguments).
-- [[saraIntro("?")]]: لما تنادي النسخة الجديدة، اللي بتبعته بييجي **بعد** المتثبت، فـ [["?"]] بقت punct.
-
-~~~text الناتج
-Hello, I'm Sara?
-~~~
-
-وطبعنا شوية معلومات عن الدالة الجديدة:
-
-~~~text الناتج: typeof saraIntro, saraIntro.name, saraIntro.length, intro.length
-function bound intro 1 2
-~~~
-
-يعني: هي function، واسمها [["bound intro"]] (Node بيعلّم إنها نسخة bind)، و [[length]] (عدد الباراميترات المتوقعة) بقى 1 بدل 2، لأن واحد اتثبت.
-
----
-
-## ٥. bind مبتتغيرش
-
-~~~text app.js
-saraIntro.call({ name: "Ali" }, "!");
-~~~
-
-جرّبنا نغيّر this بـ call على النسخة المتثبتة:
-
-~~~text الناتج
-Hello, I'm Sara!
-~~~
-
-الـ [["!"]] وصلت (arguments عادية)، بس this فضلت Sara. الـ bound function this فيها متثبتة **للأبد**: لا call ولا apply ولا bind تاني يغيّروها. (الاستثناء الوحيد [[new]]، وده نادر.)
-
-وحاجة مهمة: كل [[bind]] بيعمل دالة جديدة:
-
-~~~text الناتج: intro.bind(sara) === intro.bind(sara)
-false
-~~~
-
-عشان كده لو عملت [[addEventListener("click", obj.fn.bind(obj))]]، مش هتعرف تشيله بـ [[removeEventListener]] بـ bind تاني. احفظ النسخة في متغير الأول.
-
----
-
-## ٦. الاستخدام الأشهر: callback
-
-~~~text app.js
-const btn = { label: "Save", click() { console.log(this.label); } };
-setTimeout(btn.click.bind(btn), 0);
-~~~
-
-من غير bind، setTimeout كانت هتنادي click لوحدها و this تضيع (درس this). [[btn.click.bind(btn)]] بتعمل نسخة this فيها btn، و setTimeout تنادي النسخة دي:
-
-~~~text الناتج
-Save
-~~~
+جرّبتها: نفس الدالة طلّعت error الأول و [[5]] بعد سطر let. اللي بيفرق **وقت** النداء، مش مكان الدالة في الملف.
 
 ---
 
 ## الخلاصة
 
-| | بينادي دلوقتي؟ | الـ arguments | بيرجّع |
-|---|---|---|---|
-| [[fn.call(obj, a, b)]] | أيوه | ورا بعض | ناتج fn |
-| [[fn.apply(obj, [a, b])]] | أيوه | في array | ناتج fn |
-| [[fn.bind(obj, a)]] | لأ | تثبّت أولهم (اختياري) | دالة جديدة this فيها obj للأبد |
-
-- call و apply للنداء مرة واحدة بـ this معيّنة. bind لما هتبعت الدالة لحد تاني يناديها بعدين.
-- التمرين تحت بيطلب منك تكتب [[myBind]] بنفسك. فكّر في اللي شفته في خطوة ٤ و ٥: bind بترجّع **دالة**، والدالة دي لما تتنادي لازم تستخدم الـ this المحفوظ والـ arguments القديمة والجديدة بالترتيب.`,
+| التعريف | قبل سطره | الرسالة |
+|---|---|---|
+| [[function f() {}]] | شغال كامل | |
+| [[var x]] | [[undefined]] | |
+| [[var f = () => {}]] ونادتها | TypeError | [[f is not a function]] |
+| [[let]] / [[const]] / [[class]] | ReferenceError | [[Cannot access 'x' before initialization]] |
+| اسم مش موجود خالص | ReferenceError | [[x is not defined]] |`,
           lines: [
-            R`دالة عادية بتستخدم [[this]] مع إنها مش جوه object. [[this]] هتتحدد وقت النداء، و [[greeting]] و [[punct]] باراميترات عادية.`,
-            R`بترجّع جملة متركّبة بـ template literal: التحية، وبعدين [[this.name]] من الـ object اللي هيتحدد، وبعدين علامة الترقيم. لو اتنادت [[intro()]] كده من غير [[this]] في strict mode هترمي TypeError لأن [[this]] بـ [[undefined]].`,
-            R`نهاية [[intro]].`,
-            R`object عادي فيه [[name]] بس، ومفيهوش [[intro]] كـ method. هنستعير الدالة ونشغّلها عليه.`,
-            R`[[call]] بتنادي الدالة **فورًا**: أول argument بيبقى [[this]] ([[sara]])، والباقي arguments الدالة ورا بعض. النتيجة [["Hi, I'm Sara!"]].`,
-            R`نفس [[call]] بالظبط، الفرق الوحيد إن arguments الدالة بتتبعت في array واحدة. مفيدة لما الـ arguments تكون جاهزة في array، والنهارده [[intro.call(sara, ...args)]] بتعمل نفس الحاجة.`,
-            R`[[bind]] **مبتنادِيش** الدالة: بترجّع دالة جديدة [[this]] فيها متثبتة على [[sara]] على طول، وكمان أول argument ([["Hello"]]) متثبت (partial application).`,
-            R`بننادي الدالة الجديدة بالـ argument الباقي بس، فـ [["Hello"]] المتثبت يبقى [[greeting]] و [["?"]] يبقى [[punct]]: [["Hello, I'm Sara?"]].`,
-            R`حتى [[call]] مقدرتش تغيّر [[this]] بتاعة دالة اتعملها [[bind]]: لسه [[Sara]]، و [["!"]] بس اتبعت كـ argument. فلو عايز [[this]] تانية، اعمل [[bind]] من الدالة الأصلية [[intro]] مش من [[saraIntro]].`,
-            R`object فيه method بتعتمد على [[this.label]]، وهنبعتها لـ [[setTimeout]] زي ما بيحصل مع الـ event handlers.`,
-            R`[[bind(btn)]] بتعمل نسخة [[this]] فيها متثبتة على [[btn]] **قبل** ما نبعتها، فلما [[setTimeout]] تناديها لوحدها تفضل [[this]] هي [[btn]] ويطبع [[Save]]. من غير [[bind]] كانت هتطبع [[undefined]].`,
+            R`بننادي [[sayHi]] قبل سطر تعريفها، وبتشتغل وتطبع [[hi]]. السبب إن JS قبل ما ينفّذ أي سطر بيسجّل كل function declaration بجسمها كامل (hoisting).`,
+            R`التعريف نفسه. ولأنه declaration ([[function]] في أول السطر) اتسجّل كامل قبل التنفيذ، فمكانه في الملف مش بيفرق.`,
+            R`[[var a]] اتعملها hoisting بس **من غير قيمتها**: المتغير بيتسجّل بـ [[undefined]] لحد ما التنفيذ يوصل لسطر التعيين. فبيطبع [[undefined]] بدل error، ودي مشكلة لأنها بتخبّي الغلطة.`,
+            R`هنا بس القيمة [[1]] بتتحط. التعيين نفسه مبيترفعش، اللي بيترفع الإعلان بس.`,
+            R`[[greet]] متعرّف بـ [[var]]، فاتسجّل بـ [[undefined]] زي [[a]]. ونداء [[undefined]] كدالة بيرمي [[TypeError: greet is not a function]]، مع إن الاسم موجود.`,
+            R`الدالة بتتحط في [[greet]] هنا بس. فالـ arrow والـ function expression مش بيتعملهم hoisting زي الـ declaration: بيمشوا بقواعد المتغير اللي شايلهم.`,
+            R`[[let]] و [[const]] بيترفعوا برضه، بس من غير أي قيمة: من أول الـ scope لحد سطر التعريف هما في TDZ (Temporal Dead Zone)، وأي محاولة توصلهم بترمي ReferenceError. ده أحسن من [[var]] لأن الغلطة بتبان فورًا بدل [[undefined]] ساكتة.`,
+            R`هنا [[b]] بيخرج من الـ TDZ وياخد [[2]]، ومن بعد السطر ده تقدر تستخدمه عادي.`,
           ],
-          sol: R`[[myBind(intro, sara, "Hi")("!")]] لازم ترجّع [["Hi, I'm Sara!"]]، زي bind المدمجة. والـ args اللي اتحددت وقت الـ bind بتيجي الأول، وبعدها اللي بتتبعت وقت النداء.
+          sol: R`أول تشغيل بيطبع [[hi]] وبعدين [[undefined]]، وبيقف عند [[TypeError: greet is not a function]]: [[var greet]] اتعمله hoisting بقيمة undefined، والنداء على undefined كـ function بيطلع TypeError مش ReferenceError.
 
-ولو ناديت الناتج بـ [[.call({ name: "Ali" }, "!")]] هيفضل Sara، لأن جوه الدالة اللي رجّعتها انت بتنادي [[fn.apply(ctx, ...)]] بالـ ctx المحفوظ في الـ closure وبتتجاهل this الجديدة. الغلطة الشائعة إنك ترجّع [[fn.apply(ctx, args)]] على طول بدل ما ترجّع دالة، فالدالة تتنفّذ وقت الـ bind نفسه. والنسخة دي مبتدعمش [[new]]، والمستوى ٣ بيكمّلها.`,
-          solCode: R`function myBind(fn, ctx, ...args) {
-  return function (...newArgs) {
-    return fn.apply(ctx, [...args, ...newArgs]);
+بعد ما تعلّق سطر [[greet()]]: بيطبع hi و undefined وبعدين [[ReferenceError: Cannot access 'b' before initialization]]. الـ let اتعمله hoisting برضه، بس في الـ TDZ لحد سطر التعريف.
+
+ولو خليت [[const greet]] (ورجّعت سطر النداء): الرسالة بتبقى [[ReferenceError: Cannot access 'greet' before initialization]]. يعني نفس الغلطة بقت error أوضح بيقولك المشكلة فين بالظبط، وده سبب إن const أحسن من var حتى في الدوال.`
+        },
+        {
+          cmd: "closure",
+          title: "يعني إيه closure؟",
+          desc: R`الـ closure دالة فاكرة المتغيرات اللي كانت حواليها وقت ما اتعملت، حتى بعد ما الدالة اللي حواليها خلصت ورجعت.
+
+ده بيحصل تلقائي مع كل دالة في JS، وبيستخدم في: متغيرات private محدش يوصلها غير من دوال معينة، ودوال «متظبطة» (factory)، والـ callbacks والـ event handlers اللي بتقرا متغيرات، و hooks في React.`,
+          example: R`function createCounter(start = 0) {
+  let count = start;
+  return {
+    increment() { return ++count; },
+    get() { return count; },
   };
 }
-function intro(greeting, punct) {
-  return $__bt$__{greeting}, I'm $__{this.name}$__{punct}$__bt;
+const c1 = createCounter();
+const c2 = createCounter(10);
+c1.increment();          // 1
+c1.increment();          // 2
+c2.increment();          // 11: كل counter ليه count بتاعه
+console.log(c1.count);   // undefined: مفيش طريقة توصله غير من الدوال
+console.log(c1.get());   // 2`,
+          try: R`اكتب [[once(fn)]] بترجّع دالة بتنادي fn أول مرة بس، وبعد كده بترجّع نفس الناتج الأول. هتحتاج متغيرين في الـ closure: [[called]] و [[result]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+          practice: [
+            { lvl: 'سريع', t: R`**ابني:** اكتب [[makeGreeter(greeting)]] بترجّع دالة بتاخد [[name]] وترجّع التحية والاسم.`, done: R`[[const hi = makeGreeter("أهلا"); hi("Sara")]] بترجّع [["أهلا Sara"]]، و [[makeGreeter("صباح الخير")("Omar")]] بترجّع جملتها هي، والاتنين مش بيأثروا على بعض.`, sol: R`~~~js greeter.js
+function makeGreeter(greeting) {
+  return function (name) {
+    return greeting + " " + name;   // greeting من الـ closure
+  };
 }
-const saraIntro = myBind(intro, { name: "Sara" }, "Hi");
-console.log(saraIntro("!"));                    // "Hi, I'm Sara!"
-console.log(saraIntro.call({ name: "Ali" }, "?")); // "Hi, I'm Sara?"`,
+
+const hi = makeGreeter("أهلا");
+const morning = makeGreeter("صباح الخير");
+
+console.log(hi("Sara"));
+console.log(morning("Omar"));
+console.log(makeGreeter("صباح الخير")("Omar"));
+console.log(hi("Ali"));
+~~~
+
+~~~text الناتج (node greeter.js، Node 24)
+أهلا Sara
+صباح الخير Omar
+صباح الخير Omar
+أهلا Ali
+~~~
+
+**ليه كده:**
+
+- **[[makeGreeter("أهلا")]]** بتشتغل وتخلص، بس الدالة اللي رجعت فاكرة [[greeting]] بتاعة النداء ده. ده الـ closure: الدالة + المتغيرات اللي كانت شايفاها وقت ما اتعملت.
+- **كل نداء لـ makeGreeter بيعمل [[greeting]] جديدة،** فـ [[hi]] و [[morning]] كل واحدة ليها تحيتها، ونداء [[hi("Ali")]] بعد morning لسه بيقول «أهلا».
+- **[[makeGreeter("صباح الخير")("Omar")]]:** القوسين ورا بعض: الأول بينادي makeGreeter ويرجّع دالة، والتاني بينادي الدالة دي على طول.
+
+**الغلطة الشائعة:** تكتب [[return greeting + name]] جوه makeGreeter نفسها (من غير دالة جوّانية)، فترجع نص مش دالة، و [[hi("Sara")]] تقع بـ [[TypeError: hi is not a function]].` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[function counter() { let n = 0; return () => ++n; } const a = counter(), b = counter(); a(); a(); b(); console.log(a(), b());]]`, done: R`توقعت وطلع [[3 2]]: كل نداء لـ [[counter()]] عمل [[n]] جديدة، فـ a و b مش بيشتركوا في حاجة.`, sol: R`~~~js two-counters.js
+function counter() {
+  let n = 0;
+  return () => ++n;
+}
+const a = counter(), b = counter();
+a();
+a();
+b();
+console.log(a(), b());
+~~~
+
+~~~text الناتج (node two-counters.js، Node 24)
+3 2
+~~~
+
+**ليه كده:**
+
+- **كل نداء لـ [[counter()]] بيعمل [[n]] جديدة** بـ 0، والـ arrow اللي رجعت ماسكة الـ n بتاعتها هي. فـ a ليها n، و b ليها n تانية.
+- **[[++n]]** بتزوّد الأول وبعدين ترجّع القيمة الجديدة. a اتندهت مرتين (n بقت 2)، وجوه الـ console.log مرة تالتة فرجّعت 3. و b اتندهت مرة (1)، وجوه الـ console.log مرة كمان فرجّعت 2.
+
+**الغلطة الشائعة:** تقول [[4]] لأنك عدّيت كل النداءات على عدّاد واحد. مفيش عدّاد مشترك: كل closure صندوق لوحده. ولو كتبت [[n++]] بدل [[++n]] الناتج كان هيبقى [[2 1]] (بترجّع القيمة قبل الزيادة).` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[function makeCounter() { return () => { let count = 0; count++; return count; }; }]]. نادي العدّاد ٣ مرات.`, done: R`قبل التصليح كل نداء بيرجّع 1 لأن [[count]] بتتعمل من جديد جوه الدالة اللي بترجع. بعد ما تنقل [[let count = 0]] لـ makeCounter (برّه الدالة اللي بترجع) النداءات بترجّع 1 و 2 و 3.`, sol: R`~~~js make-counter-fix.js
+function makeCounterBroken() {
+  return () => {
+    let count = 0;        // بتتعمل من جديد مع كل نداء
+    count++;
+    return count;
+  };
+}
+
+function makeCounter() {
+  let count = 0;          // مرة واحدة، والدالة اللي راجعة فاكراها
+  return () => {
+    count++;
+    return count;
+  };
+}
+
+const broken = makeCounterBroken();
+console.log("قبل:", broken(), broken(), broken());
+
+const fixed = makeCounter();
+console.log("بعد:", fixed(), fixed(), fixed());
+~~~
+
+~~~text الناتج (node make-counter-fix.js، Node 24)
+قبل: 1 1 1
+بعد: 1 2 3
+~~~
+
+**ليه كده:**
+
+- **في البايظة [[let count = 0]] جوه الدالة اللي بترجع،** فكل نداء بيبدأ بـ count جديدة بـ 0، يزوّدها لـ 1، ويرجّعها، وبعدين بتترمي. مفيش حاجة بتفضل بين النداءات.
+- **في المصلّحة [[count]] في makeCounter،** وده بيتنفذ مرة واحدة لما عملت [[fixed]]. الدالة اللي رجعت ماسكة نفس الـ count في كل نداء، فبتزيد 1 و 2 و 3.
+
+**القاعدة:** اللي عايزه يفضل فاكر بين النداءات، حطه في الدالة **البرّانية**. واللي عايزه جديد مع كل نداء، حطه في الـ **جوّانية**.` },
+            { lvl: 'تطبيق', t: R`**ابني:** اكتب [[createTodoStore()]] فيها array خاصة في الـ closure، وبترجّع [[add(text)]] و [[remove(index)]] و [[list()]]. و [[list()]] بترجّع نسخة مش الـ array نفسها (درس reference و copy).`, done: R`[[store.list().push("hack")]] مبيغيرش اللي جوه ([[store.list().length]] زي ما هو)، ومفيش طريقة توصل للـ array من برّه، واتنين store منفصلين كل واحد ليه مهامه.`, sol: R`~~~js todo-store.js
+function createTodoStore() {
+  const todos = [];                    // خاصة: مفيش حد يوصلها غير الدوال دي
+  return {
+    add(text) {
+      todos.push(text);
+      return todos.length;
+    },
+    remove(index) {
+      if (index < 0 || index >= todos.length) return false;
+      todos.splice(index, 1);
+      return true;
+    },
+    list() {
+      return [...todos];               // نسخة، مش الـ array نفسها
+    },
+  };
+}
+
+const store = createTodoStore();
+store.add("اشتري لبن");
+store.add("ذاكر closure");
+store.list().push("hack");             // بيعدّل في النسخة بس
+console.log(store.list(), store.list().length);
+console.log(store.todos);
+
+const work = createTodoStore();
+work.add("ابعت التقرير");
+console.log(store.remove(0), store.remove(9), store.list());
+console.log(work.list());
+~~~
+
+~~~text الناتج (node todo-store.js، Node 24)
+[ 'اشتري لبن', 'ذاكر closure' ] 2
+undefined
+true false [ 'ذاكر closure' ]
+[ 'ابعت التقرير' ]
+~~~
+
+**ليه كده:**
+
+- **[[const todos = []]] جوه createTodoStore:** متغير محلي، فمفيش اسم من برّه يوصله. الـ 3 methods بس شايفينه لأنهم اتعملوا في نفس الـ scope.
+- **[[list()]] بترجّع [[[...todos]]]:** array جديدة فيها نفس العناصر. فـ [[push("hack")]] راحت على النسخة اللي اترمت، واللي جوه فضل 2.
+- **[[store.todos]] بـ [[undefined]]:** الـ object اللي رجع فيه add و remove و list بس.
+- **[[remove]]** بتتأكد من الـ index الأول وترجّع [[false]] لو بره المدى، بدل ما [[splice(9, 1)]] متعملش حاجة وانت فاكر إنها مسحت.
+- **[[work]]** store تاني بـ todos تانية خالص.
+
+**الغلطة الشائعة:** [[list() { return todos; }]]. شكلها شغالة، لكنها بتدّي الـ reference بتاع الـ array الخاصة، فأي حد يقدر يعمل [[push]] أو يمسح منها من برّه، وكأن مفيش closure.` },
+            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[memoize(fn)]]: Map في الـ closure بتخزّن الناتج لكل argument، فلو اتندهت بنفس القيمة تاني ترجّع المتخزّن من غير ما تنادي fn. جرّبها على دالة بطيئة بتزوّد عدّاد كل ما تشتغل.`, done: R`[[memo(5)]] مرتين و [[memo(6)]] مرة: العدّاد بيبقى [[2]] مش [[3]]، والنتيجة صح في المرات التلاتة، و memoize على دالتين مختلفتين كل واحدة ليها Map لوحدها.`, sol: R`~~~js memoize.js
+function memoize(fn) {
+  const cache = new Map();              // في الـ closure: لكل دالة Map بتاعتها
+  return function (arg) {
+    if (cache.has(arg)) return cache.get(arg);
+    const result = fn(arg);
+    cache.set(arg, result);
+    return result;
+  };
+}
+
+let runs = 0;
+function slowSquare(n) {
+  runs++;
+  for (let i = 0; i < 1e7; i++);       // تقيلة عمدًا
+  return n * n;
+}
+
+const memo = memoize(slowSquare);
+console.log(memo(5), memo(5), memo(6), "runs =", runs);
+
+let cubeRuns = 0;
+const memoCube = memoize((n) => { cubeRuns++; return n ** 3; });
+console.log(memoCube(5), memoCube(5), "cubeRuns =", cubeRuns, "runs =", runs);
+
+let undefRuns = 0;
+const memoNothing = memoize(() => { undefRuns++; return undefined; });
+memoNothing(1); memoNothing(1);
+console.log("undefRuns =", undefRuns);
+
+console.time("أول مرة");
+memoize(slowSquare)(7);
+console.timeEnd("أول مرة");
+console.time("من الكاش");
+memo(5);
+console.timeEnd("من الكاش");
+~~~
+
+~~~text الناتج (node memoize.js، Node 24)
+25 25 36 runs = 2
+125 125 cubeRuns = 1 runs = 2
+undefRuns = 1
+أول مرة: 2.618ms
+من الكاش: 0.003ms
+~~~
+
+**ليه كده:**
+
+- **[[const cache = new Map()]]** في memoize نفسها، فكل [[memoize(...)]] بتعمل Map جديدة. عشان كده [[memoCube]] كاشها لوحده ومأثرش على [[runs]].
+- **[[cache.has(arg)]] مش [[cache.get(arg)]]:** لو الدالة بترجّع [[undefined]] أو [[0]]، فحص [[if (cache.get(arg))]] كان هيقول «مش موجود» ويشغّلها تاني. الـ [[has]] بتسأل عن المفتاح نفسه، والدليل [[undefRuns = 1]].
+- **[[runs = 2]] مش 3:** [[memo(5)]] التانية رجعت من الـ Map.
+- **الوقت:** أول نداء بياخد وقت الـ loop كله، والنداء من الكاش أجزاء من الملّي ثانية (الأرقام بتختلف من جهاز للتاني ومن تشغيل للتاني).
+
+**الغلطة الشائعة:** memoize لدالة مش pure (بتقرا الوقت أو random أو بتعدّل حاجة برّه). الكاش هيرجّع أول ناتج للأبد. memoize للدوال اللي نفس الـ input بيدّي نفس الـ output بس. وفيه حدود: النسخة دي argument واحد بس، والكاش بيكبر من غير حد (مشروع «كاش بعمر» بيحل ده بمدة).` },
+            { lvl: 'تحدي', t: R`**محاكاة:** [[createAccount(initial)]] بترجّع [[deposit]] و [[withdraw]] و [[balance]]، والرصيد متغير في الـ closure. السحب أكبر من الرصيد بيرجّع «الرصيد مش كفاية» من غير ما يغيّره.`, done: R`من 1000: [[deposit(500)]] بترجّع 1500، و [[withdraw(2000)]] الرسالة، و [[withdraw(300)]] بترجّع 1200، و [[balance()]] 1200، و [[acc.bal]] بترجّع undefined (مفيش طريقة توصل للرصيد من برّه).`, sol: R`~~~js account.js
+function createAccount(initial) {
+  let balance = initial;                 // مفيش طريقة توصله غير الدوال اللي تحت
+  return {
+    deposit(amount) {
+      balance += amount;
+      return balance;
+    },
+    withdraw(amount) {
+      if (amount > balance) return "الرصيد مش كفاية";
+      balance -= amount;
+      return balance;
+    },
+    balance() {
+      return balance;
+    },
+  };
+}
+
+const acc = createAccount(1000);
+console.log(acc.deposit(500));
+console.log(acc.withdraw(2000));
+console.log(acc.withdraw(300));
+console.log(acc.balance());
+console.log(acc.bal);
+acc.balance = () => 1e9;                 // حد غيّر الـ method من برّه
+console.log(acc.withdraw(5000));
+~~~
+
+~~~text الناتج (node account.js، Node 24)
+1500
+الرصيد مش كفاية
+1200
+1200
+undefined
+الرصيد مش كفاية
+~~~
+
+**ليه كده:**
+
+- **[[balance]] متغير في الـ closure،** والتلات methods بيقروه ويعدّلوه. [[acc.bal]] (أو حتى [[acc.balance]] كقيمة) مش هو، فـ [[undefined]].
+- **[[withdraw(2000)]]** رجّعت الرسالة من غير ما تلمس الرصيد، والسحب اللي بعدها اتحسب من 1500.
+- **آخر سطرين مهمين:** حد استبدل [[acc.balance]] بدالة بترجّع مليار. ده غيّر الـ method على الـ object بس، لكن [[withdraw]] بتقرا المتغير [[balance]] اللي في الـ closure، فالسحب الكبير اترفض برضه. الـ closure حمى الرقم الحقيقي.
+
+**الغلطة الشائعة:** تخزّن الرصيد كـ [[this.balance]] على الـ object. ساعتها [[acc.balance = 1e9]] من برّه بيغيّره فعلًا. لو عايز حاجة متتغيرش غير من الـ methods: closure، أو private field [[#balance]] في الكلاسات (وحدة الـ classes).` }
+          ],
+          ref: [
+            { t: "MDN: Closures", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Closures" },
+            { t: "MDN: Map", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map" },
+            { t: "MDN: IIFE (glossary)", url: "https://developer.mozilla.org/en-US/docs/Glossary/IIFE" },
+          ],
+          pre: [{ to: "js/scope", why: R`الـ closure هو الـ lexical scope وهو بيفضل عايش بعد ما الدالة البرّانية تخلص`}, { to: "js/reference و copy", why: R`تمرين [[list()]] بيرجّع نسخة عشان الـ array الخاصة متتسربش بالـ reference`}, { to: "js/Map و Set", why: R`[[memoize]] بتخزّن النواتج في Map جوه الـ closure`}],
+          flag: "script",
+          deep: {
+            why: "ده السؤال رقم واحد في انترفيوهات JS. وهو اللي بيفسّر ليه الـ callbacks بتشتغل، وليه React hooks بتقرا قيم «قديمة» ساعات (stale closure)، وإزاي تعمل private state من غير classes.",
+            how: R`لما دالة بتتعمل، بتاخد معاها reference للـ environment اللي اتعملت فيه (الـ scope chain من درس scope). لما [[createCounter]] بتخلص، الـ environment بتاعها كان المفروض يتمسح، بس الـ methods اللي رجعت لسه شايلة reference ليه، فالـ garbage collector مبيمسحوش.
+
+كل نداء لـ createCounter بيعمل environment جديد، عشان كده c1 و c2 منفصلين.
+
+الـ closure بيشيل reference للمتغير نفسه مش نسخة من قيمته. فلو المتغير اتغير بعد كده، الدالة هتشوف القيمة الجديدة. والعكس في React: كل render بيعمل دوال جديدة شايلة قيم الـ render ده، فـ [[setInterval]] اتعمل في أول render هيفضل شايف الـ state القديمة (stale closure)، والحل dependency array أو [[setCount((c) => c + 1)]] (تاب React).
+
+وتكلفتها: أي متغير في closure عايش طول ما الدالة عايشة. لو الـ closure شايل object ضخم وأنت ناسيه في listener، ده memory leak (المستوى ٣).`,
+            when: "private state، و factories، و memoize، و debounce، و once، وأي callback محتاج داتا من السياق اللي حواليه.",
+            mistakes: R`تفتكر إن الـ closure بياخد نسخة من القيمة. وتنسى إن كل نداء بيعمل state جديدة، فتنادي [[createCounter()]] في كل مرة بدل ما تحفظ الناتج. وفي الانترفيو: متعرّفش closure بـ «دالة جوه دالة» بس؛ قول «دالة فاكرة الـ lexical environment بتاعها حتى بعد ما الدالة الخارجية خلصت» واديهم مثال counter.`
+          },
+          teach: R`## الفكرة في سطرين
+
+في الطبيعي، متغيرات الدالة بتختفي لما الدالة تخلص. بس لو الدالة رجّعت دالة تانية بتستخدم المتغيرات دي، المتغيرات بتفضل عايشة عشانها. الدالة اللي «شايلة» متغيرات مكان ولادتها معاها اسمها **closure**. المثال بيعمل counter بالطريقة دي، والنواتج من Node 24.
+
+---
+
+## ١. الـ factory
+
+~~~text app.js
+function createCounter(start = 0) {
+  let count = start;
+  return {
+    increment() { return ++count; },
+    get() { return count; },
+  };
+}
+~~~
+
+- [[createCounter]] دالة بتعمل counter وترجّعه، فبنسميها **factory** (مصنع).
+- [[start = 0]]: باراميتر بـ default.
+- [[let count = start]]: متغير **محلي** جوه الدالة. [[let]] مش const لأننا هنغيّره.
+- الدالة بترجّع object فيه method اتنين، والاتنين مكتوبين **جوه** createCounter، فالـ scope اللي فوقهم فيه count (درس scope).
+
+### [[++count]]
+
+[[++]] قبل المتغير معناها: زوّده واحد ورجّع القيمة **الجديدة**. ولو بعده ([[count++]]) بيرجّع القديمة. جرّبت: [[let n = 5; n++]] رجّعت 5 و n بقت 6، وبعدها [[++n]] رجّعت 7.
+
+---
+
+## ٢. اتنين counters
+
+~~~text app.js
+const c1 = createCounter();
+const c2 = createCounter(10);
+~~~
+
+كل نداء لـ createCounter بيعمل **count جديد** خاص بيه. c1 شايل count بدأ من 0، و c2 شايل count تاني بدأ من 10. الـ closure هنا هو إن increment و get فاكرين count بتاع النداء اللي اتولدوا فيه.
+
+---
+
+## ٣. التشغيل
+
+~~~text app.js
+c1.increment();          // 1
+c1.increment();          // 2
+c2.increment();          // 11
+~~~
+
+~~~text الناتج
+1
+2
+11
+~~~
+
+- createCounter **خلصت** من زمان، ومع ذلك count لسه موجود وبيزيد: 1 ثم 2. ده الـ closure.
+- c2 مأثرش على c1 ولا العكس: 11 جاية من count بتاع c2.
+
+ولو ناديت [[createCounter().increment()]] مرتين ورا بعض، الناتج [[1 1]]: كل مرة counter جديد بـ count جديد. الصح تحفظ الناتج في متغير زي c1.
+
+---
+
+## ٤. محدش يوصل لـ count
+
+~~~text app.js
+console.log(c1.count);   // undefined
+console.log(c1.get());   // 2
+~~~
+
+count **مش خاصية** على الـ object، ده متغير في الـ closure. فـ [[c1.count]] بتدوّر على خاصية مش موجودة: [[undefined]]. ولو طبعت c1 كله:
+
+~~~text الناتج: console.log(c1)
+{ increment: [Function: increment], get: [Function: get] }
+~~~
+
+مفيش count خالص. ولو حاولت تكتب [[c1.count = 999]]، ده بيعمل خاصية جديدة اسمها count على الـ object، وملهاش علاقة بالمتغير: [[c1.get()]] فضلت [[2]]. ده **private state**: الطريقة الوحيدة توصل للقيمة هي الدوال اللي انت سمحت بيها.
+
+---
+
+## ٥. قبل التمرين
+
+تمرين [[once]] تحت بيستخدم نفس الفكرة بالظبط: دالة بترجّع دالة، ومتغيرات في الـ scope **برّه** الدالة اللي بترجّعها عشان تفضل فاكرة بين النداءات. اسأل نفسك وانت بتحل: لو حطيت المتغير **جوه** الدالة اللي بترجّعها، هيتعمل جديد كل نداء ولا هيفضل واحد؟ (فكّر في [[createCounter().increment()]] اللي طلعت 1 كل مرة.)
+
+---
+
+## الخلاصة
+
+| الحتة | دورها |
+|---|---|
+| [[let count]] جوه createCounter | الحالة اللي هتتفتكر |
+| الدوال اللي بترجع | شايلة reference لـ count (closure) |
+| كل نداء لـ createCounter | environment جديد و count جديد |
+| [[c1.count]] | undefined: count مش خاصية |
+
+> الـ closure بيشيل **المتغير نفسه** مش نسخة من قيمته، فلو اتغير الدالة بتشوف القيمة الجديدة.`,
+          lines: [
+            R`دالة بتصنع counter. كل نداء ليها بيعمل [[count]] جديد ودوال جديدة شايلاه، و [[start = 0]] قيمة البداية لو متبعتتش.`,
+            R`[[count]] متغير محلي في الدالة. العادي إنه يختفي أول ما [[createCounter]] ترجع، بس هنا هيفضل عايش لأن فيه دوال لسه محتاجاه.`,
+            R`بترجّع object فيه دالتين. الـ object ده الطريقة الوحيدة اللي الكود برّه هيوصل بيها لـ [[count]].`,
+            R`[[++count]] بتزوّد [[count]] بواحد وترجّع القيمة الجديدة. الدالة دي اتعرّفت جوه [[createCounter]]، فهي closure: شايلة إشارة لنفس [[count]] حتى بعد ما [[createCounter]] تخلص.`,
+            R`بترجّع قيمة [[count]] الحالية من غير ما تغيّرها. وهي شايفة **نفس** المتغير اللي [[increment]] بتزوّده، مش نسخة منه.`,
+            R`نهاية الـ object اللي راجع.`,
+            R`نهاية [[createCounter]].`,
+            R`أول counter بيبدأ من 0 (الـ default). النداء ده عمل [[count]] خاص بيه.`,
+            R`نداء تاني: [[count]] جديد بيبدأ من 10، ملوش دعوة بتاع [[c1]] خالص.`,
+            R`[[count]] بتاع [[c1]] بقى 1، والدالة رجّعته.`,
+            R`بقى 2: القيمة اتفتكرت بين النداءين، لأن الـ closure ماسك المتغير نفسه ومش بيعمله من أول كل مرة.`,
+            R`[[c2]] بدأ من 10 فبقى 11، و [[c1]] لسه 2. كل نداء لـ [[createCounter]] عمل «صندوق» منفصل.`,
+            R`بيطبع [[undefined]] لأن [[count]] متغير جوه الـ closure مش خاصية على الـ object. فمحدش يقدر يقراه أو يغيّره من برّه غير عن طريق [[increment]] و [[get]]: private state من غير class.`,
+            R`الطريقة الوحيدة للقراية: [[get]] شايفة [[count]] ورجّعت [[2]].`,
+          ],
+          sol: R`[[once]] بتحتفظ بـ [[called]] و [[result]] في الـ closure. لو [[init = once((x) => x * 2)]]، يبقى [[init(5)]] بـ 10، و [[init(100)]] بـ 10 برضه، والدالة الأصلية اتنادت مرة واحدة بس.
+
+الغلطة الشائعة إنك تحط [[let called = false]] جوه الدالة اللي بترجّعها بدل ما تحطه برّاها: ساعتها كل نداء بيعمل متغير جديد بـ false وكأن مفيش once. والغلطة التانية إنك تفحص [[if (!result)]] بدل called، فلو fn رجّعت 0 أو undefined هتتنادي تاني. ده pattern حقيقي بيستخدم في init لمرة واحدة، وبيتسأل في الانترفيو.`,
+          solCode: R`function once(fn) {
+  let called = false;
+  let result;
+  return function (...args) {
+    if (!called) {
+      called = true;
+      result = fn.apply(this, args);
+    }
+    return result;
+  };
+}
+let runs = 0;
+const init = once((x) => { runs++; return x * 2; });
+console.log(init(5), init(100), runs); // 10 10 1`,
           check: {
             lang: "js",
-            starter: R`function myBind(fn, ctx, ...args) {
-  // رجّع دالة، متنفّذش fn دلوقتي
+            starter: R`function once(fn) {
+  // called و result هنا، برّا الدالة اللي هترجّعها
+  return fn;
 }`,
-            tests: R`function intro(greeting, punct) { return greeting + ", I'm " + this.name + punct; }
-test("myBind(intro, sara, 'Hi')('!') ← \"Hi, I'm Sara!\"", () => expect(myBind(intro, { name: "Sara" }, "Hi")("!")).toBe("Hi, I'm Sara!"));
-test("بترجّع دالة ومش بتنادي fn وقت الـ bind", () => {
-  let calls = 0;
-  const b = myBind(() => calls++, null);
-  expect([typeof b, calls]).toEqual(["function", 0]);
+            tests: R`test("init(5) ← 10 وبعدين init(100) ← 10 برضه", () => {
+  const init = once((x) => x * 2);
+  expect([init(5), init(100)]).toEqual([10, 10]);
 });
-test("الـ args بتاعة الـ bind الأول وبعدها بتاعة النداء", () => expect(myBind((...a) => a.join(""), null, "a", "b")("c", "d")).toBe("abcd"));
-test("this متتغيرش بـ call بعد الـ bind", () => expect(myBind(intro, { name: "Sara" }, "Hi").call({ name: "Ali" }, "?")).toBe("Hi, I'm Sara?"));
-test("بترجّع ناتج fn", () => expect(myBind(function () { return this.x * 2; }, { x: 21 })()).toBe(42));`,
-            solution: R`function myBind(fn, ctx, ...args) {
-  return function (...newArgs) {
-    return fn.apply(ctx, [...args, ...newArgs]);
+test("الدالة الأصلية بتتنادي مرة واحدة بس", () => {
+  let runs = 0;
+  const f = once(() => runs++);
+  f(); f(); f();
+  expect(runs).toBe(1);
+});
+test("لو fn رجّعت 0 أو undefined متتناديش تاني (افحص called مش result)", () => {
+  let runs = 0;
+  const f = once(() => { runs++; return 0; });
+  f(); f();
+  expect([runs, f()]).toEqual([1, 0]);
+});
+test("كل once ليها closure لوحدها", () => {
+  const a = once(() => "a"), b = once(() => "b");
+  expect([a(), b()]).toEqual(["a", "b"]);
+});
+test("بتعدّي الـ arguments و this", () => {
+  const obj = { n: 3, get: once(function (x) { return this.n + x; }) };
+  expect(obj.get(4)).toBe(7);
+});`,
+            solution: R`function once(fn) {
+  let called = false;
+  let result;
+  return function (...args) {
+    if (!called) {
+      called = true;
+      result = fn.apply(this, args);
+    }
+    return result;
   };
 }`
           }
+        },
+        {
+          cmd: "closures في loop",
+          title: "ليه اللوب ده بيطبع 3 3 3 مش 0 1 2؟",
+          desc: R`أشهر سؤال «اتوقع الناتج» في JS: loop بـ [[var]] جواها [[setTimeout]]. الإجابة 3 3 3، لأن كل الـ callbacks شايلة نفس المتغير [[i]]، ولما اشتغلوا (بعد ما اللوب خلص) كان بقى 3.
+
+الحل: [[let]] بدل [[var]]. الـ let في for بيعمل متغير جديد لكل لفة، فكل callback شايل الـ i بتاعته. والحل القديم قبل let كان IIFE.`,
+          example: R`for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log("var", i), 0);
+}
+for (let j = 0; j < 3; j++) {
+  setTimeout(() => console.log("let", j), 0);
+}
+for (var k = 0; k < 3; k++) {
+  ((n) => setTimeout(() => console.log("iife", n), 0))(k);
+}`,
+          try: R`قبل ما تشغّل، اكتب الناتج اللي متوقعه على ورقة (٩ سطور). شغّل وقارن. وبعدين غيّر الـ [[0]] في أول setTimeout لـ [[1000]]: سطور var اتأخرت للآخر، بس قيمتها لسه 3 3 3؟ ليه؟`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const fns = []; for (var i = 0; i < 3; i++) fns.push(() => i);]] واطبع [[fns.map((f) => f())]]. وبعدين غيّر var لـ let.`, done: R`مع var بيطبع [[[ 3, 3, 3 ] ]] ومع let بيطبع [[[ 0, 1, 2 ] ]].`, sol: R`~~~js loop-var-let.js
+const fnsVar = [];
+for (var i = 0; i < 3; i++) fnsVar.push(() => i);
+console.log(fnsVar.map((f) => f()));
+
+const fnsLet = [];
+for (let j = 0; j < 3; j++) fnsLet.push(() => j);
+console.log(fnsLet.map((f) => f()));
+
+console.log("i بعد الـ loop:", i);
+~~~
+
+~~~text الناتج (node loop-var-let.js، Node 24)
+[ 3, 3, 3 ]
+[ 0, 1, 2 ]
+i بعد الـ loop: 3
+~~~
+
+**ليه كده:**
+
+- **[[var i]]** متغير واحد للـ function (أو الملف) كله. التلات arrows ماسكين **نفس** الـ i، وبينادوا بعد ما الـ loop خلص، والـ i ساعتها 3 (القيمة اللي خلّت الشرط [[i < 3]] يبقى false). والدليل إن [[i]] لسه موجودة برّه الـ loop بـ 3.
+- **[[let j]] في راس الـ for** بيعمل j جديدة لكل لفة، منسوخ فيها قيمة اللفة اللي فاتت. كل arrow مسكت j بتاعة لفتها: 0 و 1 و 2.
+
+**الغلطة الشائعة:** تفتكر إن الـ arrow «بتصوّر» قيمة i وقت ما اتعملت. لأ: الـ closure بيمسك **المتغير** نفسه مش قيمته، فاللي بيفرق هو كام متغير اتعمل.` },
+            { lvl: 'تطبيق', t: R`**ابني:** في صفحة: loop بيعمل ٣ أزرار بـ [[createElement]]، وكل زرار listener بيكتب رقمه في [[<p>]]. اكتبه بـ [[var i]] الأول، وبعدين صلّحه.`, done: R`مع [[var]] أي زرار بيكتب [[3]]، وبعد التصليح (let، أو [[forEach]] على array أرقام) كل زرار بيكتب رقمه هو: ٠ و ١ و ٢.`, sol: R`~~~live 230 أزرار من loop
+<p>بـ var:</p>
+<div id="row-var"></div>
+<p>بـ let:</p>
+<div id="row-let"></div>
+<p id="out">اضغط أي زرار</p>
+<script>
+  const out = document.querySelector("#out");
+
+  // النسخة البايظة: var
+  for (var i = 0; i < 3; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = "زرار " + i;
+    btn.addEventListener("click", () => {
+      out.textContent = "var: الزرار كتب " + i;
+    });
+    document.querySelector("#row-var").append(btn);
+  }
+
+  // التصليح: let
+  for (let k = 0; k < 3; k++) {
+    const btn = document.createElement("button");
+    btn.textContent = "زرار " + k;
+    btn.addEventListener("click", () => {
+      out.textContent = "let: الزرار كتب " + k;
+    });
+    document.querySelector("#row-let").append(btn);
+  }
+</script>
+~~~
+
+اضغط الزراير اللي فوق. ده اللي اتقاس بـ Playwright في Chrome 157 جوه نفس الـ preview:
+
+~~~text الناتج (Chrome 157، ضغطة على كل زرار بالترتيب)
+var: الزرار كتب 3   ← زرار 0
+var: الزرار كتب 3   ← زرار 1
+var: الزرار كتب 3   ← زرار 2
+let: الزرار كتب 0
+let: الزرار كتب 1
+let: الزرار كتب 2
+~~~
+
+**ليه كده:**
+
+- **النص اللي على الزرار صح في الحالتين** ([[btn.textContent = "زرار " + i]])، لأنه بيتحسب **جوه** اللفة نفسها. المشكلة في الـ listener بس، لأنه بيقرا i **بعدين** لما تضغط.
+- **مع [[var]]** فيه i واحدة، وبعد الـ loop قيمتها 3، فالتلات listeners بيقروا 3.
+- **مع [[let]]** كل لفة ليها k بتاعتها، وكل listener ماسك k لفته.
+- **تصليح تاني من غير let:** [[[0, 1, 2].forEach((n) => { ... })]]: كل نداء لدالة الـ forEach فيه [[n]] جديدة، فنفس النتيجة.
+
+**الغلطة الشائعة:** تصلّح بـ [[btn.dataset.n = i]] وتقرا [[e.target.dataset.n]]. ده شغال ومفيد في event delegation، لكنه بيلف حوالين المشكلة: لو فهمت الـ let، هتكتب الأبسط.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[makeMultipliers(n)]] بترجّع array فيها n دالة، والدالة رقم k بتضرب في k. اكتبها بـ [[Array.from]] أو loop بـ let.`, done: R`[[makeMultipliers(4)[3](5)]] بترجّع 15، و [[makeMultipliers(4)[0](5)]] بترجّع 0. ولو كتبتها بـ [[var]] في for عادية كل الدوال كانت هتضرب في 4.`, sol: R`~~~js multipliers.js
+function makeMultipliers(n) {
+  return Array.from({ length: n }, (_, k) => (x) => x * k);
+}
+
+function makeMultipliersVar(n) {
+  const fns = [];
+  for (var k = 0; k < n; k++) fns.push((x) => x * k);
+  return fns;
+}
+
+const m = makeMultipliers(4);
+console.log(m[3](5), m[0](5), m.map((f) => f(2)));
+
+const bad = makeMultipliersVar(4);
+console.log(bad[3](5), bad[0](5), bad.map((f) => f(2)));
+console.log(makeMultipliers(0));
+~~~
+
+~~~text الناتج (node multipliers.js، Node 24)
+15 0 [ 0, 2, 4, 6 ]
+20 20 [ 8, 8, 8, 8 ]
+[]
+~~~
+
+**ليه كده:**
+
+- **[[Array.from({ length: n }, fn)]]** بتعمل array طولها n وبتنادي fn لكل خانة بـ [[(value, index)]]. القيمة [[undefined]] (عشان كده اسمها [[_]] يعني «مش مستخدم»)، والـ index هو [[k]].
+- **[[(_, k) => (x) => x * k]]:** دالة بترجّع دالة. كل نداء ليها فيه k جديدة، فالدالة رقم 3 بتضرب في 3.
+- **نسخة الـ var:** k واحدة، وبعد الـ loop قيمتها 4، فكل الدوال بتضرب في 4: [[bad[0](5)]] بقت 20 مش 0.
+- **[[makeMultipliers(0)]]** بترجّع array فاضية من غير error.
+
+**الغلطة الشائعة:** [[Array(n).map((_, k) => ...)]]: الـ array دي «فاضية بخانات مش موجودة» و [[map]] بيعدّي عليها من غير ما ينادي، فبترجع [[[ <4 empty items> ]]]. [[Array.from]] بيملاها فعلًا.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** عدّ تنازلي: [[for (var i = 3; i >= 1; i--) setTimeout(() => console.log(i), (4 - i) * 1000);]]. خمّن، شغّل، وبعدين صلّحه من غير ما تغيّر var: ابعت [[i]] كـ argument تالت لـ [[setTimeout]].`, done: R`قبل التصليح بيطبع [[0]] تلات مرات (ثانية بين كل واحدة)، وبعد [[setTimeout(console.log, (4 - i) * 1000, i)]] بيطبع [[3]] ثم [[2]] ثم [[1]]، وتقدر تقول ليه ده شغال (القيمة اتنسخت وقت النداء).`, sol: R`~~~js countdown.js
+const start = Date.now();
+const at = () => Math.round((Date.now() - start) / 1000) + "s";
+
+// البايظ
+for (var i = 3; i >= 1; i--) {
+  setTimeout(() => console.log("قبل", at(), i), (4 - i) * 1000);
+}
+
+// التصليح من غير ما نغيّر var: القيمة بتتبعت كـ argument تالت
+for (var j = 3; j >= 1; j--) {
+  setTimeout((n) => console.log("بعد", at(), n), (4 - j) * 1000 + 100, j);
+}
+~~~
+
+~~~text الناتج (node countdown.js، Node 24، بياخد ٣ ثواني)
+قبل 1s 0
+بعد 1s 3
+قبل 2s 0
+بعد 2s 2
+قبل 3s 0
+بعد 3s 1
+~~~
+
+**ليه كده:**
+
+- **قبل التصليح:** الـ loop بيخلص في أقل من ملّي ثانية ويسجّل ٣ timers. وقت ما أول timer يشتغل (بعد ثانية) الـ i اللي الكل ماسكه بقت [[0]] (آخر قيمة خلّت [[i >= 1]] يبقى false). فبيطبع 0 تلات مرات، ثانية بين كل واحدة.
+- **[[setTimeout(fn, delay, j)]]:** أي argument بعد الـ delay بيتبعت للدالة لما تشتغل. والمهم إنه **بيتقري دلوقتي** وقت نداء setTimeout جوه اللفة، فكل timer اتسجّل معاه نسخة من القيمة (3 ثم 2 ثم 1). ده نفس فكرة الـ IIFE في مثال الدرس: القيمة بتتنسخ في parameter.
+- **الـ +100** في التصليح بس عشان سطوره تيجي بعد سطور البايظ في نفس الثانية ويبقى الناتج سهل يتقري.
+- **وفي حالتك العادية** اكتب الدالة نفسها: [[setTimeout(console.log, (4 - i) * 1000, i)]] زي ما التمرين قال، وبيطبع 3 و 2 و 1.
+
+**الغلطة الشائعة:** [[setTimeout(console.log(i), 1000)]]. ده بينادي console.log **دلوقتي** وبيبعت الناتج ([[undefined]]) لـ setTimeout، فالأرقام بتطلع كلها في نفس اللحظة.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** ارسم صناديق للـ loop [[for (var i = 0; i < 3; i++) fns.push(() => i)]] ولنفسه بـ let: كام صندوق اسمه i في كل حالة، وكل دالة سهمها بيشاور على أنهي صندوق.`, done: R`الرسمة: مع var صندوق واحد قيمته في الآخر 3 والتلات دوال بيشاوروا عليه، ومع let ٣ صناديق (0 و 1 و 2) وكل دالة على صندوقها. وتقدر من الرسمة تقول ناتج التمرين الأول من غير تشغيل.`, sol: R`~~~text الرسمة: var (صندوق واحد)
+           ┌─────────┐
+fns[0] ──► │         │
+fns[1] ──► │  i = 3  │   ← اتعمل مرة واحدة، والـ loop عدّل قيمته 0 ثم 1 ثم 2 ثم 3
+fns[2] ──► │         │
+           └─────────┘
+~~~
+
+~~~text الرسمة: let (صندوق لكل لفة)
+fns[0] ──► [ i = 0 ]
+fns[1] ──► [ i = 1 ]     ← كل لفة عملت i جديدة ونسخت فيها القيمة
+fns[2] ──► [ i = 2 ]
+           [ i = 3 ]     ← اللفة الأخيرة اللي الشرط فيها false، محدش ماسكه
+~~~
+
+**الإجابة من الرسمة من غير تشغيل:** مع var كل الأسهم على صندوق فيه 3، فـ [[[ 3, 3, 3 ] ]]. ومع let كل سهم على صندوقه، فـ [[[ 0, 1, 2 ] ]].
+
+والكود ده بيثبت عدد الصناديق: كل دالة بترجّع كمان دالة بتعدّل «صندوقها»، فنشوف مين بيتأثر:
+
+~~~js boxes.js
+function build(useLet) {
+  const reads = [], writes = [];
+  if (useLet) {
+    for (let i = 0; i < 3; i++) { reads.push(() => i); writes.push((v) => (i = v)); }
+  } else {
+    for (var i = 0; i < 3; i++) { reads.push(() => i); writes.push((v) => (i = v)); }
+  }
+  writes[0](99);                         // عدّل الصندوق اللي fns[0] شايفاه
+  return reads.map((f) => f());
+}
+console.log("var:", build(false));
+console.log("let:", build(true));
+~~~
+
+~~~text الناتج (node boxes.js، Node 24)
+var: [ 99, 99, 99 ]
+let: [ 99, 1, 2 ]
+~~~
+
+**ليه ده بيثبت الرسمة:** مع var لما غيّرنا الصندوق من خلال الدالة الأولى، التلاتة شافوا 99، يعني صندوق واحد. ومع let اتغيّرت الأولى بس، يعني كل واحدة صندوق لوحدها.
+
+**الغلطة الشائعة في الرسمة:** ترسم مع var تلات صناديق فيهم 0 و 1 و 2 بس «الأسهم بتتأخر». مفيش غير صندوق واحد، والـ closure بيشاور على الصندوق مش على القيمة.` }
+          ],
+          ref: [
+            { t: "MDN: Closures (creating closures in loops: a common mistake)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Closures" },
+            { t: "MDN: for", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for" },
+            { t: "MDN: setTimeout()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout" },
+            { t: "MDN: Array.from()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from" },
+          ],
+          pre: [{ to: "js/closure", why: R`الدرس ده الفخ الأشهر في الـ closures: الدالة ماسكة المتغير مش قيمته`}, { to: "js/addEventListener", why: R`تمرين الأزرار بيضيف listener جوه loop`}],
+          flag: "script",
+          deep: {
+            why: "السؤال ده بيختبر ٣ حاجات مع بعض: الـ scope بتاع var و let، والـ closures، وإن setTimeout بيشتغل بعد الكود المتزامن (event loop، المستوى ٣). ونفس المشكلة بتحصل في الحقيقة مع event listeners جوه loops.",
+            how: R`مع [[var]]: فيه متغير [[i]] واحد للدالة كلها. اللوب بيلف ٣ مرات ويسجّل ٣ callbacks، وكلهم شايلين نفس المتغير. اللوب بيخلص و i بقى 3 (الشرط وقف عنده). وبعدين الـ callbacks بتشتغل وكلها تقرا 3.
+
+مع [[let]] في رأس الـ for: الـ spec بيقول اعمل binding جديد لكل لفة وانسخ فيه القيمة، فكل callback شايل متغير مختلف.
+
+الـ IIFE (Immediately Invoked Function Expression) بتعمل scope جديد يدويًا: [[n]] باراميتر بياخد نسخة من k كل لفة.
+
+والـ setTimeout بـ 0 مش معناه «دلوقتي»: معناه «بعد ما الكود الحالي يخلص وأقرب فرصة». عشان كده اللوب كله بيخلص الأول.`,
+            when: R`دايمًا [[let]] أو [[const]] في الـ loops ([[for (const x of arr)]]). و forEach كمان حل، لأن كل نداء للـ callback ليه scope بتاعه.`,
+            mistakes: R`تفتكر إن setTimeout بـ 0 بيشتغل فورًا. وتحل المشكلة بـ let من غير ما تعرف تشرح ليه. وفي الانترفيو: اشرح الـ 3 حاجات (var واحد مشترك، الـ callbacks بتشتغل بعد اللوب، let بيعمل binding لكل لفة) واذكر حل IIFE كحل قديم.`
+          },
+          teach: R`## الفكرة في سطرين
+
+٣ loops شبه بعض، كل واحدة بتسجّل ٣ دوال تشتغل «بعدين» بـ [[setTimeout]]. الفرق الوحيد: المتغير اتعرّف بـ var ولا let ولا اتنسخ في IIFE. ونتيجة الأولى مختلفة تمامًا عن الاتنين التانيين. النواتج من Node 24.
+
+---
+
+## ١. [[setTimeout]] بسرعة
+
+~~~text app.js
+setTimeout(() => console.log("hi"), 0);
+~~~
+
+بتاخد دالة (callback) ووقت بالملّي ثانية، ومعناها «نادي الدالة دي بعد الوقت ده **على الأقل**». و [[0]] مش معناها دلوقتي: معناها «أول ما الكود اللي شغال حاليًا يخلص». فكل الـ loops هتخلص الأول، وبعدين الدوال تشتغل (التفاصيل في درس event loop).
+
+---
+
+## ٢. اللوب الأولى: [[var]]
+
+~~~text app.js
+for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log("var", i), 0);
+}
+~~~
+
+- [[for (بداية; شرط; خطوة)]]: ابدأ i من 0، ولف طول ما i أقل من 3، وبعد كل لفة زوّد واحد.
+- [[var i]]: var مالهاش block scope، فـ i **متغير واحد** للملف (أو الدالة) كله.
+- كل لفة بتسجّل arrow function بتقرا i. التلاتة شايلين **نفس** المتغير، مش قيمته وقت التسجيل.
+- اللوب بتلف: 0 ثم 1 ثم 2، وبعدين i بقت 3 والشرط [[3 < 3]] false فوقفت.
+
+وبعد اللوبات i لسه موجودة برّه:
+
+~~~text الناتج: console.log بعد اللوبات
+بعد اللوبات: i = 3 k = 3 undefined
+~~~
+
+(i و k بـ 3 لأنهم var، و [[typeof j]] بـ undefined لأن let مش موجودة برّه اللوب.) فلما الدوال تشتغل، التلاتة يقروا i دلوقتي: 3.
+
+---
+
+## ٣. اللوب التانية: [[let]]
+
+~~~text app.js
+for (let j = 0; j < 3; j++) {
+  setTimeout(() => console.log("let", j), 0);
+}
+~~~
+
+[[let]] في رأس الـ for ليها قاعدة خاصة: كل لفة بتاخد **j جديدة** وفيها قيمة اللفة دي. فأول دالة شايلة j قيمتها 0، والتانية j تانية قيمتها 1، والتالتة 2. كل closure ماسك متغير مختلف.
+
+---
+
+## ٤. اللوب التالتة: IIFE
+
+~~~text app.js
+for (var k = 0; k < 3; k++) {
+  ((n) => setTimeout(() => console.log("iife", n), 0))(k);
+}
+~~~
+
+IIFE = Immediately Invoked Function Expression، يعني دالة بتتعمل وتتنادى في نفس اللحظة. نفكها:
+
+1. [[(n) => setTimeout(...)]]: arrow بتاخد باراميتر n.
+2. القوسين حواليها [[( ... )]]: عشان نقدر نناديها على طول.
+3. [[(k)]] في الآخر: نادها دلوقتي وابعت قيمة k.
+
+كل نداء بيعمل **n جديد** (الباراميترات بتتعمل جديدة مع كل نداء) وفيه نسخة من k وقتها. فالـ callback شايل n مش k. ده كان الحل قبل ما let تيجي في ES2015.
+
+---
+
+## ٥. الناتج
+
+~~~text الناتج: Node 24
+var 3
+var 3
+var 3
+let 0
+let 1
+let 2
+iife 0
+iife 1
+iife 2
+~~~
+
+الترتيب بين المجموعات هو ترتيب التسجيل، لأن كلهم بـ 0.
+
+---
+
+## ٦. «جرّب»: أول setTimeout بـ 1000
+
+~~~text الناتج: Node 24
+let 0
+let 1
+let 2
+iife 0
+iife 1
+iife 2
+var 3
+var 3
+var 3
+~~~
+
+سطور var اتأخرت ثانية وبقت في الآخر، بس لسه **3**. لأن القيمة بتتقري لما الـ callback يشتغل، مش لما اتسجّل، و i كانت 3 من بدري.
+
+---
+
+## الخلاصة
+
+| اللوب | كام متغير؟ | الـ callback شايل | الناتج |
+|---|---|---|---|
+| [[var i]] | واحد للكل | نفس i | 3 3 3 |
+| [[let j]] | واحد لكل لفة | j بتاعة لفته | 0 1 2 |
+| [[var k]] + IIFE | n جديد لكل نداء | n | 0 1 2 |
+
+> الإجابة في الانترفيو في ٣ جمل: var متغير واحد مشترك، والـ callbacks بتشتغل بعد ما اللوب تخلص، و let بتعمل متغير جديد لكل لفة.`,
+          lines: [
+            R`[[var]] مالوش block scope، فـ [[i]] متغير **واحد** للـ loop كلها، قيمته بتتغيّر من 0 لحد 3.`,
+            R`كل لفة بتسجّل callback يتنفّذ بعدين (حتى بـ 0ms بيستنى لحد الكود الحالي ما يخلص). التلاتة ماسكين نفس [[i]]، ولما يشتغلوا تكون الـ loop خلصت و [[i]] بقى 3، فيطبع [[var 3]] تلات مرات.`,
+            R`نهاية الـ loop الأولى.`,
+            R`[[let]] في [[for]] بيعمل [[j]] **جديد لكل لفة**، بقيمة اللفة دي.`,
+            R`كل callback ماسك الـ [[j]] بتاع لفته، فيطبع [[let 0]] و [[let 1]] و [[let 2]]. ده الحل المعتاد النهارده: استخدم [[let]] في الـ loops.`,
+            R`نهاية الـ loop التانية.`,
+            R`[[var]] تاني، عشان نشوف إزاي كانوا بيحلّوها قبل [[let]] ما تيجي.`,
+            R`IIFE: arrow function بتتنادى فورًا بـ [[(k)]]. الباراميتر [[n]] بياخد **نسخة** من قيمة [[k]] في اللفة دي، والـ callback جواها ماسك [[n]] مش [[k]]، فيطبع [[iife 0]] و [[iife 1]] و [[iife 2]].`,
+            R`نهاية الـ loop التالتة.`,
+          ],
+          sol: R`الناتج بـ 0 في كل حتة: [[var 3]] ٣ مرات، و [[let 0]] و [[let 1]] و [[let 2]]، و [[iife 0]] و [[iife 1]] و [[iife 2]]. var فيها متغير i واحد للـ loop كلها، ولما الـ callbacks اشتغلت كانت الـ loop خلصت و i بقى 3. let بتعمل j جديد لكل لفة، والـ IIFE بتعمل n جديد بنسخة من k.
+
+بعد ما تخلي أول timeout بـ 1000: الناتج [[let 0 let 1 let 2 iife 0 iife 1 iife 2]] وبعد ثانية [[var 3 var 3 var 3]]. التأخير غيّر الترتيب بس مش القيمة، لأن القيمة مش بتتاخد وقت ما الـ setTimeout اتكتب، بتتقري وقت ما الـ callback يشتغل، و i ساعتها 3 سواء استنيت 0 ولا 1000. لو كنت متوقع 0 1 2 مع var فده بالظبط الغلط اللي السؤال بيختبره.`
         }
       ]
     }

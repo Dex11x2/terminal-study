@@ -1,3494 +1,5745 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: R`المكتبات والفريموركات: تستخدم كود غيرك إمتى وإزاي`,
-      l: 3,
-      time: R`حوالي ٧ ساعات`,
-      n: R`انت كتبت كل حاجة بإيدك لحد دلوقتي. الوحدة دي عن الناحية التانية: كود غيرك. تجيبه إزاي (npm و CDN بـ URL متثبت و SRI ونسخ ملف)، وتقيس هو بيوفّر قد إيه وبيكلّف قد إيه بالبايت، والفرق الحقيقي بين library و framework (مين بينادي مين)، وليه الفريموركات بتوفّر وقت وليه السوق بيطلبها (بأرقام من مصادرها)، وإمتى تبقى اختيار غلط: الحجم والتحديثات والـ accessibility في الـ SPA. وبعدين تفحص أي dependency قبل ما تدخل مشروعك بأوامر npm حقيقية، وتكتب مكتبتك الصغيرة صح وتعملها [[npm pack]]. الوحدة مش بتعلّم framework: React و Vue و Angular ليهم كورسات، وهنا بتتعلم تختار وتقرر.`,
-      pre: [
-        { to: "start/المكتبة والفريمورك", why: R`أول تعريف لـ library و package و framework، و [[npm init]] و [[npm install]]. هنا بنروح أبعد بكتير` },
-        { to: "js/import و export", why: R`كل مكتبة هنا بتتجاب بـ [[import]]، ومكتبتك بتطلّع API بـ [[export]]` },
-        { to: "node/package-lock و npm ci", why: R`الـ lockfile و [[npm ci]] اللي بيخلّوا التسطيب يتكرر بالظبط` },
-        { to: "js/customElements.define", why: R`components من غير framework: الحل اللي جوه المتصفح نفسه` },
-        { to: "js/شاشات من غير إعادة تحميل", why: R`الـ routing اللي عملته بإيدك، وهنا مشاكله اللي الفريموركات بتحلها (والـ accessibility)` },
-        { to: "js/قسّمه لملفات", why: R`تقسيم الكود لـ modules، أول خطوة قبل ما تحوّل جزء منه لمكتبة` },
-      ],
+      t: "ابني تطبيق بإيدك",
+      l: 2,
+      time: R`حوالي ٣ ساعات، والتطبيق بيطلع شغّال`,
       goal: [
-        R`تجيب مكتبة بـ ٣ طرق (npm و CDN بنسخة متثبتة و SRI ونسخ ملف) وتعرف إمتى كل واحدة، وتقيس الفرق بينها وبين الحل بإيدك بالسطور والبايت.`,
-        R`تفرّق بين library و framework بسؤال واحد (مين بينادي مين)، وتعرف opinionated من unopinionated، وتختار بينهم لمشروع حقيقي.`,
-        R`تعرف ليه الفريموركات بتوفّر وقت (الحالة والشاشات والـ components) وتقرا أرقام السوق من مصدرها بدل الكلام المرسل، وتعرف إمتى تبقى غلط بالأرقام: الحجم، والتحديثات الكبيرة، والـ accessibility.`,
-        R`تفحص أي dependency بـ [[npm view]] و [[npm ls]] و [[npm audit]] و [[npm install-scripts]] والـ lockfile، وتكشف typosquatting والـ packages المهجورة.`,
-        R`تكتب مكتبة صغيرة بـ API واضح من غير globals، وبـ JSDoc و tests و [[exports]] و [[files]]، وتعملها [[npm pack]] وتستخدمها من مشروع تاني.`,
+        R`تخلي **الحالة** مصدر الحقيقة، والشاشة انعكاس ليها — ده الفرق بين كود بيكبر وكود بيتلخبط.`,
+        R`ترسم كلام المستخدم من غير ما تفتح باب XSS في صفحتك.`,
+        R`تخلي التطبيق يفتكر، ويفضل شغّال حتى لو اللي محفوظ بايظ.`,
+        R`تقسّمه لملفات لكل واحد شغلة واحدة، وتعمل شاشات من غير إعادة تحميل.`,
       ],
       use: {
-        prog: R`كل مشروع حقيقي فيه dependencies. القرارات اليومية: أسطّب المكتبة دي ولا أكتب ٢٠ سطر؟ النسخة دي آمنة؟ الـ CDN ده ممكن يتغير من تحتي؟ الصفحة دي محتاجة React أصلًا؟ والباجات المشهورة: [[npm audit]] بيقولك high، و [[npm ci]] بيرفض، واسم package مكتوب غلط، ومكتبتك بتنشر ملفات الاختبار.`,
-        work: R`مراجعة PR بيزوّد dependency، واختيار stack لمشروع جديد، وكتابة decision record، وتحديث major version في مشروع قديم، والرد على تقرير أمني. وفي الانترفيو: «الفرق بين library و framework؟» و «إزاي بتختار package؟».`,
-        cs: R`inversion of control (الـ framework هو اللي بينادي كودك)، و semantic versioning، و supply-chain security (typosquatting و install scripts و SRI)، و API design (سطح صغير، من غير side effects)، و trade-offs بالأرقام.`,
+        prog: R`دي بنية أي تطبيق واجهة — React و Vue و Svelte كلهم بيعملوا **نفس** الحلقة دي (حالة ← رسم ← حدث ← حالة) بس أسرع وبحاجات جاهزة. لما تبنيها بإيدك، الفريمورك بيبقى اختصار مش سحر.`,
+        work: R`أول تطبيق بتبنيه من غير فريمورك هو اللي بيخليك تفهم الفريمورك. واللي بيبدأ من React على طول بيفضل مش عارف ليه الحاجات بتتعمل كده.`,
+        cs: R`فصل الحالة عن العرض (separation of concerns)، والحالة المشتقّة بدل المكرّرة — الفكرتين دول أقدم من الويب كله.`,
       },
-      items: [
-        {
-          cmd: "كود غيرك: npm و CDN ونسخ ملف",
-          title: "تجيب كود غيرك إزاي، وبيوفّر إيه وبيكلّف إيه: نفس المهمة بمكتبة وبإيدك، بالسطور والبايت",
-          desc: R`كود غيرك (third-party code) هو أي كود مكتوب برّه مشروعك وانت بتستخدمه: package من npm، أو ملف من CDN، أو ملف ناسخه في الفولدر. الدرس بيعمل نفس المهمة مرتين (مكتبة [[dayjs]] و Intl بإيدك) ويقيس الفرق.
+      lab: R`mkdir -p ~/lab/app && cd ~/lab/app && python3 -m http.server 8000  # أو: npx serve`,
+      pre: [
+        { to: "js/textContent و classList", why: R`الرسم كله مبني على [[createElement]] و [[textContent]] و [[append]]، والوحدة بتستخدمهم من أول سطر` },
+        { to: "js/event delegation", why: R`زرار المسح وكل زرار بيتولد مع الرسم بيشتغل بمستمع واحد على الأب` },
+        { to: "js/FormData و URLSearchParams", why: R`الفورم بيتقري بـ [[FormData]]، والفلتر والترتيب في الرابط بـ [[URLSearchParams]]` },
+        { to: "js/JSON", why: R`الحفظ [[JSON.stringify]] والقراية [[JSON.parse]]، وأخطاء الـ parse هي أول حاجة بتتمسك` },
+        { to: "js/Web Storage: localStorage و sessionStorage", why: R`التطبيق بيفتكر بـ [[localStorage]]، والوحدة بتبني عليه الدفاع عن الداتا البايظة` },
+        { to: "js/try و catch و finally", why: R`[[load]] و [[save]] مبيرموش أبدًا، وده كله [[try]] في المكان الصح` },
+        { to: "js/immutability", why: R`كل تغيير بيعمل حالة جديدة ([[{ ...state }]]) مش بيعدّل القديمة، وعليها الـ undo والمقارنة` },
+        { to: "js/import و export", why: R`آخر درس بيقسّم التطبيق لخمس ملفات بـ [[import]] و [[export]]` },
+      ],
+      projects: [
+        { lvl: 'صغير', t: R`اكسره عن قصد`, what: R`افتح DevTools وحط داتا بايظة في [[localStorage]] بإيدك، وشوف التطبيق بيعمل إيه. لو وقع، إصلاحه في درس «خلّي التطبيق يفتكر».`, done: R`جرّبت ٥ أشكال بايظة على الأقل (قوس ناقص، و [[amount]] نص، و [[version]] غلط، و [[items]] مش مصفوفة، و [[null]]) والتطبيق فتح في كل مرة، والبنود السليمة فضلت، وكاتب جدول بكل حالة وحصل فيها إيه.`, sol: R`**النتيجة النهائية: جدول الكسر.** ٨ أشكال بايظة اتحطت بإيد في [[localStorage]] تحت المفتاح [[masareef]]، وبعد كل واحد reload، وبعدين إضافة «شاي 5» عشان نتأكد إن التطبيق لسه بيحفظ:
 
-٣ طرق تجيب بيها كود غيرك:
-• **npm:** [[npm install dayjs]] بينزّلها في [[node_modules]] ويسجّلها في [[package.json]]، وبعدين [[import]] وأداة build.
-• **CDN:** [[<script type="module">]] بيعمل [[import]] من URL زي [[https://cdn.jsdelivr.net/npm/dayjs@1.11.23/+esm]]، من غير تسطيب. لازم **النسخة في الـ URL**، ومع [[<script src>]] كمان [[integrity]] (SRI).
-• **نسخ الملف:** تحط [[dayjs.min.js]] جوه مشروعك ([[vendor/]]) وتكتب نسخته في الاسم.
-
-وليه الناس بتستخدمه أصلًا؟ **الكفاءة** (وقت أقل)، و **التوافق** (المكتبة بتحل اختلافات المتصفحات والحالات الطرفية)، و **الـ ecosystem والدعم** (plugins ولغات وناس بتصلّح الباجات). وكل ده بيتدفع تمنه بايتات وصيانة.`,
-          example: R`import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime.js";
-import customParseFormat from "dayjs/plugin/customParseFormat.js";
-import "dayjs/locale/ar.js";
-dayjs.extend(relativeTime);
-dayjs.extend(customParseFormat);
-dayjs.locale("ar");
-const now = dayjs("2026-11-21T12:00:00");
-console.log(dayjs("2026-11-21T09:00:00").from(now));
-console.log(dayjs("2026-11-14T12:00:00").from(now));
-const due = dayjs("05/12/2026", "DD/MM/YYYY", true);
-console.log(due.isValid(), due.format("YYYY-MM-DD"));
-console.log(dayjs("31/02/2026", "DD/MM/YYYY", true).isValid());`,
-          try: R`في فولدر جديد: [[npm init -y]] و [[npm pkg set type=module]] و [[npm install dayjs]]، واحفظ المثال كـ [[with-lib.mjs]] وشغّله. وبعدين جرّب [[node -e "console.log(String(new Date('05/12/2026')))"]] وشوف [[Date]] فهم التاريخ إزاي، وقارنه بسطر [[due]] في المثال.`,
-          sol: R`~~~text الناتج (Node 24.22، dayjs 1.11.23): node with-lib.mjs
-منذ 3 ساعات
-منذ 7 أيام
-true 2026-12-05
-false
+~~~text الناتج (Chrome 158 بـ Playwright على localhost، التطبيق الكامل من حل تمرين «اكسرها عن قصد»)
+الحالة                    الصفوف بعد reload                    الإجمالي   الـ console                           المحفوظ بعد «شاي»
+قوس ناقص                  (ولا صف)                              0          المحفوظ مش JSON                      1
+amount نص "45"            مترو — 10 ج · تاني                    10         —                                    2
+version "1" (نص)          (ولا صف)                              0          نسخة محفوظة قديمة (1)                1
+items object مش مصفوفة    (ولا صف)                              0          —                                    1
+null                      (ولا صف)                              0          نسخة محفوظة قديمة (undefined)        1
+نص فاضي ""                (ولا صف)                              0          —                                    1
+صف null بين صفين سليمين   قهوة — 45 ج · تاني، مترو — 10 ج · تاني  55         —                                    3
+amount سالب -45           قهوة — -45 ج · تاني                   -45        —                                    2   <-- مشكلة
 ~~~
 
-~~~text الناتج (Node 24.22 على Windows، توقيت الجهاز صيفي)
-Tue May 12 2026 00:00:00 GMT+0300 (Eastern European Summer Time)
+**هتشوف إيه:** التطبيق **فتح في التمانية** ومفيش ولا [[pageerror]]، والصفوف السليمة فضلت. بس الحالة الأخيرة عدّت داتا **غلط**: إجمالي بالسالب.
+
+## إزاي تعمل كل حالة بإيدك
+
+افتح التطبيق، و DevTools ← Console، والصق السطر وبعدين F5:
+
+~~~js
+localStorage.setItem('masareef', '{"version":1,"items":[{"id":"a","label":"قهوة","amount":45}');            // قوس ناقص
+localStorage.setItem('masareef', '{"version":1,"items":[{"id":"a","label":"قهوة","amount":"45"},{"id":"b","label":"مترو","amount":10}]}');
+localStorage.setItem('masareef', '{"version":"1","items":[{"id":"a","label":"قهوة","amount":45}]}');           // version نص
+localStorage.setItem('masareef', '{"version":1,"items":{"0":{"id":"a","label":"قهوة","amount":45}}}');         // items object
+localStorage.setItem('masareef', 'null');
+localStorage.setItem('masareef', '');
+localStorage.setItem('masareef', '{"version":1,"items":[{"id":"a","label":"قهوة","amount":45},null,{"id":"b","label":"مترو","amount":10}]}');
+localStorage.setItem('masareef', '{"version":1,"items":[{"id":"a","label":"قهوة","amount":-45}]}');           // سالب
 ~~~
 
-[[new Date("05/12/2026")]] فهمها **١٢ مايو** (الشكل الأمريكي شهر/يوم)، مش ٥ ديسمبر. ومفيش أي error. و [[dayjs("05/12/2026", "DD/MM/YYYY", true)]] فهمها صح لأنك قلتلها الشكل. ده مثال حقيقي على «المكتبة بتحل الحالات الطرفية».`,
-          practice: [
-            { lvl: 'سريع', t: R`**اختار الطريقة:** لكل موقف، npm ولا CDN ولا نسخ ملف؟ وليه؟ (١) صفحة HTML واحدة على GitHub Pages من غير أي build. (٢) تطبيق React بـ Vite. (٣) نظام داخلي في شركة على جهاز مفيهوش إنترنت. (٤) سكربت Node بيشتغل كل يوم على السيرفر.`, done: R`كل موقف ليه طريقة وسبب، وعارف إن الـ CDN لازم نسخة متثبتة في الـ URL.`, sol: R`| الموقف | الطريقة | ليه |
+(أو من Application ← Local Storage عدّل القيمة بإيدك؛ نفس النتيجة.)
+
+## اقرا الجدول
+
+- **[["45"]] نص:** [[Number.isFinite("45")]] = [[false]] (مش بتحوّل زي [[isFinite]] القديمة)، فالصف اتشال والتاني فضل. ده المقصود: صف بايظ ميضيّعش الباقي.
+- **[["1"]] نص:** [[!==]] مقارنة صارمة، فـ [["1"]] مش [[1]]، والرسالة طلعت بالنسخة اللي لقاها.
+- **[[null]]:** [[JSON.parse('null')]] بيرجّع [[null]] من غير ما يرمي، و [[?.]] في [[data?.version]] هي اللي منعت [[TypeError]].
+- **النص الفاضي:** [[!raw]] بتمسكه زي «مفيش حاجة محفوظة» قبل [[JSON.parse('')]] اللي كانت هترمي.
+- **«المحفوظ بعد شاي»:** في الحالات اللي اتمسحت، أول [[save]] كتب فوق الداتا البايظة. ده مقبول هنا لأنها مكانتش هتتقري أصلًا، بس في تطبيق بيانات مهمة احفظ نسخة من النص البايظ تحت مفتاح تاني ([[masareef:broken]]) قبل الكتابة عشان تقدر ترجّعها.
+
+## الثغرة اللي الكسر طلّعها، والإصلاح
+
+[[load()]] بتفحص **النوع** ([[Number.isFinite]]) ومش بتفحص **القواعد** ([[amount > 0]] واسم مش فاضي). فاللي يعدّل المحفوظ بإيده يقدر يدخّل داتا [[validate.js]] عمرها ما كانت هتقبلها. الإصلاح في [[storage.js]] بس:
+
+~~~js storage.js (السطرين الأخيرين في load)
+  return { items: data.items.filter(it =>
+    it && typeof it.id === 'string' && typeof it.label === 'string' && it.label.trim() !== ''
+       && Number.isFinite(it.amount) && it.amount > 0) };   // نفس قواعد validate.js الأساسية
+~~~
+
+~~~text الناتج بعد الإصلاح (Chrome 158): سالب، واسم كله مسافات، وصف سليم
+الصفوف: مترو — 10 ج · تاني    الإجمالي: 10
+~~~
+
+**ليه مش [[validateItem]] نفسها جوه [[load]]؟** كان ممكن، بس [[storage.js]] هيبقى بيستورد [[validate.js]]، والاتنين لحد دلوقتي مستقلين وبيتنقلوا لأي تطبيق. فكرّرنا القاعدتين الأساسيتين بس. (في مشروع «طبّق على تطبيق تاني» هتشوف حل أنضف: الفحص بيتبعت لـ [[load]] من برّه.)
+
+**ملاحظة:** «تاني» ظاهرة جنب البنود القديمة لأنها مفيهاش [[cat]]، و [[render.js]] بيستخدم [[CAT[it.cat] ?? CAT.other]]. ده سلوك مقصود مش باج.` },
+        { lvl: 'صغير', t: R`صياد innerHTML`, what: R`في أي مشروع واجهة عندك، دوّر على [[innerHTML]] و [[insertAdjacentHTML]] و [[outerHTML]] و [[document.write]]، وجرّب [[<img src=x onerror=alert(1)>]] في أي مكان بياخد نص من يوزر أو API. من درس «innerHTML هي الباب».`, done: R`كل مكان لقيته متسجّل (الملف والسطر)، والأماكن الخطر بقت [[textContent]] أو [[createElement]]، ونفس الـ payload بقى بيظهر كنص ومحدش [[alert]] طلع.`, sol: R`**النتيجة النهائية:** سكربت Node صغير بيلف على أي فولدر ويطبع كل سطر فيه [[innerHTML]] أو [[outerHTML]] أو [[insertAdjacentHTML]] أو [[document.write]] بالملف ورقم السطر، وبيطلع بـ exit code 1 لو لقى حاجة (فينفع يتحط في CI). اتجرّب على مشروع صغير فيه ٣ ملفات:
+
+~~~text الناتج: node hunt.mjs src (Node 24.22، قبل الإصلاح)
+src\footer.js:3  el.innerHTML = '<small>© مصاريفي</small>';
+src\list.js:3  el.innerHTML = items.map((it) => '<li>' + it.label + ' — ' + it.amount + ' ج</li>').join('');
+src\notice.js:3  el.insertAdjacentHTML('beforeend', '<p class="notice">' + msg + '</p>');
+3 مكان
+~~~
+
+~~~text الناتج بعد الإصلاح
+0 مكان
+~~~
+
+## الصياد
+
+~~~js hunt.mjs
+// hunt.mjs: بيدوّر على الأماكن اللي بتفسّر HTML في أي فولدر
+// node hunt.mjs src
+import { readdir, readFile } from 'node:fs/promises';
+import { join, extname } from 'node:path';
+
+const SINKS = /\b(innerHTML|outerHTML|insertAdjacentHTML|document\.write(ln)?)\b/;
+const dir = process.argv[2] ?? '.';
+let found = 0;
+
+for (const entry of await readdir(dir, { recursive: true, withFileTypes: true })) {
+  if (!entry.isFile() || !['.js', '.mjs', '.html'].includes(extname(entry.name))) continue;
+  const file = join(entry.parentPath, entry.name);
+  const lines = (await readFile(file, 'utf8')).split('\n');
+  lines.forEach((line, i) => {
+    if (line.trim().startsWith('//') || !SINKS.test(line)) return;
+    found++;
+    console.log(file + ':' + (i + 1) + '  ' + line.trim());
+  });
+}
+console.log(found + ' مكان');
+process.exitCode = found ? 1 : 0;
+~~~
+
+- **[[readdir(dir, { recursive: true, withFileTypes: true })]]:** بيرجّع كل الملفات في الفولدر وفولدراته (Node 20+)، و [[entry.parentPath]] الفولدر اللي الملف فيه.
+- **[[SINKS]]:** الـ regex بـ [[\b]] عشان [[myinnerHTMLx]] متتحسبش. و [[(ln)?]] بيمسك [[document.writeln]] كمان.
+- **السطور اللي بتبدأ بـ [[//]]** بتتساب عشان التعليق اللي بيشرح الخطر ميتحسبش.
+- **[[process.exitCode]]** بدل [[process.exit()]]: بيسيب البرنامج يخلص الطباعة وبعدين يطلع بالكود.
+
+## الملفات قبل، وتصنيف كل مكان
+
+~~~js src/list.js (قبل)
+// list.js: بيرسم البنود
+export function renderList(el, items) {
+  el.innerHTML = items.map((it) => '<li>' + it.label + ' — ' + it.amount + ' ج</li>').join('');
+}
+~~~
+
+~~~js src/notice.js (قبل)
+// notice.js: رسالة جاية من الـ API
+export function showNotice(el, msg) {
+  el.insertAdjacentHTML('beforeend', '<p class="notice">' + msg + '</p>');
+}
+~~~
+
+~~~js src/footer.js (قبل)
+// footer.js: نص ثابت احنا كاتبينه
+export function footer(el) {
+  el.innerHTML = '<small>© مصاريفي</small>';
+}
+~~~
+
+| المكان | النص جاي منين | الحكم |
 |---|---|---|
-| صفحة HTML من غير build | CDN بنسخة متثبتة ([[dayjs@1.11.23]]) و SRI | مفيش [[node_modules]] ولا bundler. الـ URL المتثبت jsDelivr بيرجّعه بـ [[max-age=31536000, immutable]] (سنة)، ومن غير نسخة بيرجّع [[max-age=604800]] (أسبوع) والمحتوى ممكن يتغير |
-| تطبيق React بـ Vite | npm | الـ bundler بيشيل اللي مش مستخدم ويدمج كله في ملف، والـ lockfile بيثبّت النسخة لكل الفريق |
-| نظام داخلي من غير إنترنت | نسخ الملف ([[vendor/dayjs-1.11.23.min.js]]) | مفيش CDN يوصله، والنسخة مكتوبة في الاسم عشان تعرف تحدّث إمتى. جرّبنا: الملف من [[node_modules]] (7161 بايت) هو نفسه بالبايت اللي على الـ CDN ([[cmp]] قال متطابقين) |
-| سكربت Node على السيرفر | npm و [[npm ci]] | نفس النسخ بالظبط كل مرة من الـ lockfile، و [[npm audit]] بيفحصها |
+| [[list.js:3]] | [[it.label]] من اليوزر | **خطر** |
+| [[notice.js:3]] | [[msg]] من الـ API (اللي جاي أصلًا من يوزر) | **خطر** |
+| [[footer.js:3]] | نص ثابت احنا كاتبينه | آمن، بس هنغيّره برضه عشان الصياد يفضل صفر ويبقى بوابة في CI |
 
-**الغلطة الشائعة:** [[https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js]] من غير نسخة. شغّال النهارده (جرّبناه: 200 و 7161 بايت)، بس بكرة ممكن يجيب 2.0 بـ breaking changes من غير ما تغيّر ولا حرف في صفحتك.` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** اكتب التاريخ [[2026-11-21]] بالعربي بالشكل الطويل (اسم اليوم والشهر) مرة بـ [[dayjs]] و locale [[ar]]، ومرة بـ [[Intl.DateTimeFormat]] من غير مكتبة. وقيس حجم كل واحدة في bundle مصغّر.`, done: R`الاتنين بيطبعوا «السبت ٢١ نوفمبر ٢٠٢٦» بشكل قريب، ورقمين الحجم قدامك، وعارف ليه الفرق كبير كده.`, sol: R`~~~js fmt-lib.mjs
-import dayjs from "dayjs";
-import "dayjs/locale/ar.js";
-console.log(dayjs("2026-11-21").locale("ar").format("dddd D MMMM YYYY"));
+## بعد الإصلاح
+
+~~~js src/list.js
+// list.js: بيرسم البنود، والكلام كله textContent
+export function renderList(el, items) {
+  el.replaceChildren(...items.map((it) => {
+    const li = document.createElement('li');
+    li.textContent = it.label + ' — ' + it.amount + ' ج';
+    return li;
+  }));
+}
 ~~~
 
-~~~js fmt-intl.mjs
-const fmt = new Intl.DateTimeFormat("ar-EG", { dateStyle: "full" });
-console.log(fmt.format(new Date("2026-11-21T12:00:00")));
+~~~js src/notice.js
+// notice.js: رسالة جاية من الـ API، بتتعرض كنص
+export function showNotice(el, msg) {
+  const p = document.createElement('p');
+  p.className = 'notice';
+  p.textContent = msg;
+  el.append(p);
+}
 ~~~
 
-~~~text الناتج (Node 24.22)
-السبت 21 نوفمبر 2026
-السبت، ٢١ نوفمبر ٢٠٢٦
+~~~js src/footer.js
+// footer.js: نص ثابت، بس من غير HTML عشان الصياد يفضل صفر
+export function footer(el) {
+  const small = document.createElement('small');
+  small.textContent = '© مصاريفي';
+  el.replaceChildren(small);
+}
 ~~~
 
-القياس بسكربت [[measure.mjs]] من درس «إمتى framework غلط» (esbuild 0.28.2 بيعمل bundle مصغّر ويقيسه خام وبعد gzip):
+## الإثبات في المتصفح
 
-~~~text الناتج: node measure.mjs src/fmt-lib.mjs src/fmt-intl.mjs
-src/fmt-lib.mjs    10523 B    4234 B gzip
-src/fmt-intl.mjs     114 B     126 B gzip
-~~~
+صفحة بتحمّل نسخة «قبل» أو «بعد» وبتديها نفس الـ payload في البند وفي الرسالة:
 
-- [[Intl.DateTimeFormat]] جوه المتصفح و Node أصلًا، فالـ bundle فيه سطرينك بس (١١٤ بايت). و dayjs بيضيف المكتبة نفسها و ملف اللغة العربي (حوالي ١٠ KB خام).
-- Intl بيكتب الأرقام عربي ([[٢١]]) وبيحط فاصلة بعد اليوم، و dayjs بيكتبها إنجليزي. لو عايز أرقام عربي في dayjs محتاج تحويل زيادة.
-- **الدرس:** قبل ما تسطّب مكتبة لحاجة، شوف المنصة فيها إيه. التنسيق بقى في Intl، والحسابات المعقدة (zones، و «أول الشهر الجاي») لسه المكتبة أو Temporal أسهل فيها (درس «date-fns و dayjs و Temporal»).` },
-            { lvl: 'تطبيق', t: R`**صلّح:** الصفحة دي بتحمّل dayjs كده: [[<script src="https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js"></script>]]. فيها مشكلتين. صلّحهم، واحسب الـ SRI hash بنفسك بـ Node، وجرّب تغيّر حرف في الـ hash وشوف المتصفح بيعمل إيه.`, done: R`الـ URL فيه [[@1.11.23]]، والـ tag فيه [[integrity="sha384-..."]] و [[crossorigin="anonymous"]]، والصفحة شغالة، ولما غيّرت الـ hash المتصفح رفض الملف ورسالته في الـ Console.`, sol: R`~~~bash
-curl -s https://cdn.jsdelivr.net/npm/dayjs@1.11.23/dayjs.min.js -o dayjs.min.js
-node -e 'const c=require("node:crypto");const b=require("node:fs").readFileSync("dayjs.min.js");console.log("sha384-"+c.createHash("sha384").update(b).digest("base64"))'
-~~~
-
-~~~text الناتج
-sha384-1Ft4/JTNbt7S/44V0himpcjx+YfQ1a6W6SYBJMr94ba6jwZhWoWoLaZsMmtJILgq
-~~~
-
-~~~html ok.html
-<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><title>cdn</title>
-<p id="classic">…</p><p id="mod">…</p>
-<script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.23/dayjs.min.js" integrity="sha384-1Ft4/JTNbt7S/44V0himpcjx+YfQ1a6W6SYBJMr94ba6jwZhWoWoLaZsMmtJILgq" crossorigin="anonymous"></script>
-<script>document.querySelector("#classic").textContent = typeof dayjs === "function" ? dayjs("2026-11-21").add(1, "month").format("YYYY-MM-DD") : "مفيش dayjs";</script>
+~~~html test.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>اختبار الصياد</title></head>
+<body>
+<ul id="list"></ul><div id="notes"></div><footer id="foot"></footer>
 <script type="module">
-  import dayjs from "https://cdn.jsdelivr.net/npm/dayjs@1.11.23/+esm";
-  document.querySelector("#mod").textContent = dayjs("2026-01-31").add(1, "month").format("YYYY-MM-DD");
-</script>
-</html>
-~~~
-
-~~~text اللي ظهر في الصفحة (Chrome 157)
-2026-12-21
-2026-02-28
-~~~
-
-ولما غيّرنا أول ٤ حروف في الـ hash، السطر الأول بقى «مفيش dayjs» والـ Console كتب:
-
-~~~text Console
-Failed to find a valid digest in the 'integrity' attribute for resource 'https://cdn.jsdelivr.net/npm/dayjs@1.11.23/dayjs.min.js' with computed SHA-384 integrity '1Ft4/JTNbt7S/44V0himpcjx+YfQ1a6W6SYBJMr94ba6jwZhWoWoLaZsMmtJILgq'. The resource has been blocked.
-~~~
-
-- **المشكلة ١: مفيش نسخة.** [[dayjs/dayjs.min.js]] = «آخر نسخة»، وبيتكاش أسبوع بس. [[dayjs@1.11.23]] متثبت ومتكاش سنة.
-- **المشكلة ٢: مفيش SRI.** لو حد اخترق الـ CDN وغيّر الملف، صفحتك هتشغّل كوده. [[integrity]] = بصمة (hash) الملف، والمتصفح بيحسبها ويرفض أي ملف بصمته مختلفة. و [[crossorigin="anonymous"]] لازم معاه عشان المتصفح يقدر يقرا الملف من دومين تاني ويحسب بصمته.
-- **الـ module من [[+esm]]:** الـ [[import]] من URL مبيقبلش [[integrity]] جوه الكود نفسه. لو عايز SRI مع modules: [[<script type="importmap">]] فيه [[integrity]]، أو انسخ الملف عندك.` },
-            { lvl: 'تحدي', t: R`**ابني بالطريقتين:** [[daysUntil("25/12/2026")]] بترجّع عدد الأيام من النهارده ([[2026-11-21]]) للتاريخ ده، وبترجّع [[null]] للتواريخ الغلط ([[31/02/2026]]) والشكل الغلط ([[2026-12-25]] و [[5/12/2026]]). اكتبها مرة بـ dayjs و [[customParseFormat]] ومرة من غير مكتبة، وقارن النتايج على ٦ حالات.`, done: R`الدالتين بيطلّعوا نفس الأرقام في الـ ٦ حالات ([[34]] و [[0]] و [[41]] و ٣ [[null]])، وعارف أنهي حتة في نسختك كانت سهل تغلط فيها.`, sol: R`~~~js days-until.mjs
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat.js";
-dayjs.extend(customParseFormat);
-
-export function daysUntilLib(text, today = "2026-11-21") {
-  const due = dayjs(text, "DD/MM/YYYY", true);
-  if (!due.isValid()) return null;
-  return due.diff(dayjs(today), "day");
-}
-
-export function daysUntilHand(text, today = "2026-11-21") {
-  const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(text);
-  if (!m) return null;
-  const [d, mo, y] = [Number(m[1]), Number(m[2]), Number(m[3])];
-  const due = Date.UTC(y, mo - 1, d);
-  const check = new Date(due);
-  if (check.getUTCMonth() !== mo - 1 || check.getUTCDate() !== d) return null;
-  const [ty, tm, td] = today.split("-").map(Number);
-  return Math.round((due - Date.UTC(ty, tm - 1, td)) / 86400000);
-}
-
-for (const t of ["25/12/2026", "21/11/2026", "01/01/2027", "31/02/2026", "2026-12-25", "5/12/2026"]) {
-  console.log(t.padEnd(11), daysUntilLib(t), daysUntilHand(t));
-}
-~~~
-
-~~~text الناتج (Node 24.22): node days-until.mjs
-25/12/2026  34 34
-21/11/2026  0 0
-01/01/2027  41 41
-31/02/2026  null null
-2026-12-25  null null
-5/12/2026   null null
-~~~
-
-- **نسخة المكتبة:** [[dayjs(text, "DD/MM/YYYY", true)]]. الـ [[true]] الأخيرة = strict: الشكل لازم يطابق بالظبط، و [[31/02]] مش صالح. و [[diff(..., "day")]] بيعدّ الأيام.
-- **نسختك:** ٣ فخاخ كان لازم تفتكرها: الشهر في [[Date.UTC]] من 0 ([[mo - 1]])، و [[Date]] بيقبل ٣١ فبراير ويحوّله لـ ٣ مارس من غير ما يقول (عشان كده بنرجع نتأكد إن الشهر واليوم زي ما هما)، والتوقيت الصيفي بيخلي يوم ٢٣ أو ٢٥ ساعة لو استخدمت التوقيت المحلي (عشان كده [[Date.UTC]] والـ [[Math.round]]).
-- **الحساب:** نسختك ١٥ سطر وصفر بايت مكتبة، والمكتبة ٦ سطور. الفرق مش في السطور: في الفخاخ اللي المكتبة شالتها عنك ومختبرة على ملايين المستخدمين (dayjs اتحمّلت 116,841,075 مرة في الأسبوع من 13 لـ 19 نوفمبر 2026، من [[api.npmjs.org]]).` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`محدش بيكتب كل حاجة. حتى المشاريع الصغيرة فيها أدوات build و tests ومكتبات. والسؤال مش «أستخدم كود غيري ولا لأ» لكن «لأنهي حاجة، وبأنهي طريقة، وبتكلّفني إيه». والطريقة اللي بتجيب بيها الكود بتفرق في الأمان (CDN من غير نسخة ولا SRI = كود حد تاني بيتغير في صفحتك) وفي الصيانة (ملف منسوخ من غير نسخته = محدش يعرف يحدّثه).`,
-            how: R`**npm:** [[npm install]] بيسأل الـ registry ([[registry.npmjs.org]]) عن آخر نسخة بتطابق الـ range، وبينزّل الـ tarball في [[node_modules]]، ويكتب الـ range في [[package.json]] ([[^1.11.23]]) والنسخة بالظبط في [[package-lock.json]]. وأداة الـ build (Vite أو esbuild) بتدمج اللي عملتله [[import]] في ملف واحد للمتصفح.
-
-**CDN:** jsDelivr و unpkg بيخدموا أي ملف من أي package على npm بـ URL. [[+esm]] بيحوّل الـ package لـ ES module يتعمله [[import]] في المتصفح على طول (جرّبنا: 7448 بايت). والنسخة الكاملة في الـ URL بتخلي الملف مبيتغيرش أبدًا، فبيتكاش سنة.
-
-**SRI:** [[integrity="sha384-<base64>"]] هو SHA-384 لمحتوى الملف. المتصفح بيحمّل الملف ويحسب الـ hash، ولو مختلف بيرفضه بالرسالة اللي في التمرين.`,
-            when: R`npm لأي مشروع فيه build أو Node. CDN بنسخة متثبتة و SRI لصفحة static أو تجربة سريعة. نسخ الملف لما مفيش إنترنت أو مفيش npm، أو لملف صغير مش هيتغير. والأهم: قبل أي واحدة من التلاتة، شوف المنصة فيها الحاجة دي ولا لأ (Intl و [[fetch]] و [[structuredClone]] و [[URL]] و [[crypto.randomUUID]]).`,
-            mistakes: R`CDN من غير نسخة في الـ URL. و [[integrity]] من غير [[crossorigin]]. ومكتبة كاملة لحاجة واحدة صغيرة (١٠ KB عشان تكتب تاريخ). وملف منسوخ اسمه [[lib.js]] من غير نسخته ولا مصدره. والاعتماد على [[new Date("05/12/2026")]] لتواريخ مكتوبة يوم/شهر. ورفع [[node_modules]] على Git بدل [[package-lock.json]].`
-          },
-          teach: R`## الفكرة
-
-مهمتين حقيقيتين في أي تطبيق مواعيد: «من قد إيه» (منذ ٣ ساعات) و «اقرا تاريخ مكتوب [[05/12/2026]]». المثال بيعملهم بمكتبة [[dayjs]]، وبعدين بنعملهم بإيدك ونقيس الفرق بالسطور والبايت. الكل اتشغّل بـ Node 24.22 و npm 11.19 على Windows يوم ٢١ نوفمبر 2026، و dayjs 1.11.23.
-
----
-
-## ١. التسطيب من npm
-
-~~~powershell
-mkdir due-dates
-cd due-dates
-npm init -y
-npm pkg set type=module
-npm install dayjs
-~~~
-
-| الأمر | بيعمل إيه |
-|---|---|
-| [[npm init -y]] | بيعمل [[package.json]] بالإجابات الافتراضية |
-| [[npm pkg set type=module]] | بيكتب [[ "type": "module" ]] في [[package.json]] عشان [[import]] يشتغل في ملفات [[.js]] |
-| [[npm install dayjs]] | بينزّل آخر نسخة في [[node_modules/dayjs]] ويسجّلها في [[dependencies]] |
-
-~~~text الناتج
-added 1 package, and audited 2 packages in 2s
-
-found 0 vulnerabilities
-~~~
-
-و [[package.json]] بقى فيه [[ "dayjs": "^1.11.23" ]]. الـ package كلها ١.٨ MB على الديسك: فيها ١٤٣ ملف لغة و ٣٧ plugin. ده الـ **ecosystem**: لغات و plugins جاهزة، وانت بتاخد منهم اللي محتاجه بس.
-
----
-
-## ٢. المثال سطر سطر
-
-~~~text with-lib.mjs
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime.js";
-import customParseFormat from "dayjs/plugin/customParseFormat.js";
-import "dayjs/locale/ar.js";
-~~~
-
-- [[import dayjs from "dayjs"]]: هات الدالة الأساسية. [[from "dayjs"]] من غير [[./]] معناها «من [[node_modules]]».
-- السطرين التانيين: plugins. dayjs الأساسية صغيرة، وأي ميزة زيادة plugin لوحده عشان متدفعش تمن حاجة مش محتاجها.
-- [[import "dayjs/locale/ar.js"]] من غير اسم: بيشغّل الملف وبس، والملف بيسجّل اللغة العربي جوه dayjs.
-
-~~~text with-lib.mjs
-dayjs.extend(relativeTime);
-dayjs.extend(customParseFormat);
-dayjs.locale("ar");
-~~~
-
-[[extend]] بيركّب الـ plugin، و [[locale("ar")]] بيخلي العربي اللغة الافتراضية.
-
-~~~text with-lib.mjs
-const now = dayjs("2026-11-21T12:00:00");
-console.log(dayjs("2026-11-21T09:00:00").from(now));
-console.log(dayjs("2026-11-14T12:00:00").from(now));
-~~~
-
-[[from(now)]] (من الـ plugin) بيكتب المسافة بين التاريخين بالكلام. ثبّتنا [[now]] عشان الناتج يتكرر.
-
-~~~text الناتج
-منذ 3 ساعات
-منذ 7 أيام
-~~~
-
-~~~text with-lib.mjs
-const due = dayjs("05/12/2026", "DD/MM/YYYY", true);
-console.log(due.isValid(), due.format("YYYY-MM-DD"));
-console.log(dayjs("31/02/2026", "DD/MM/YYYY", true).isValid());
-~~~
-
-- [["DD/MM/YYYY"]]: قول للمكتبة الشكل: يوم/شهر/سنة.
-- [[true]]: strict، الشكل لازم يطابق بالظبط والتاريخ يبقى موجود فعلًا.
-
-~~~text الناتج
-true 2026-12-05
-false
-~~~
-
----
-
-## ٣. نفس الشغل بإيدك
-
-~~~js by-hand.mjs
-const rtf = new Intl.RelativeTimeFormat("ar", { numeric: "auto" });
-const UNITS = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60], ["second", 1]];
-function timeAgo(date, now = new Date()) {
-  const diff = (date - now) / 1000;
-  for (const [unit, sec] of UNITS) {
-    if (Math.abs(diff) >= sec || unit === "second") return rtf.format(Math.round(diff / sec), unit);
-  }
-}
-function parseDMY(text) {
-  const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(text);
-  if (!m) return null;
-  const [, d, mo, y] = m.map(Number);
-  const date = new Date(y, mo - 1, d);
-  return date.getMonth() === mo - 1 && date.getDate() === d ? date : null;
-}
-const now = new Date("2026-11-21T12:00:00");
-console.log(timeAgo(new Date("2026-11-21T09:00:00"), now));
-console.log(timeAgo(new Date("2026-11-14T12:00:00"), now));
-const due = parseDMY("05/12/2026");
-console.log(due !== null, due.toLocaleDateString("en-CA"));
-console.log(parseDMY("31/02/2026") !== null);
-~~~
-
-~~~text الناتج (Node 24.22): node by-hand.mjs
-قبل 3 ساعات
-الأسبوع الماضي
-true 2026-12-05
-false
-~~~
-
-- [[Intl.RelativeTimeFormat("ar", { numeric: "auto" })]]: جاهزة في اللغة (ECMA-402). [[numeric: "auto"]] بيخليها تقول «الأسبوع الماضي» بدل «قبل أسبوع واحد».
-- [[UNITS]]: كل وحدة وعدد ثوانيها، من الأكبر للأصغر. الـ loop بتاخد أول وحدة الفرق أكبر منها. والشهر هنا ٣٠ يوم تقريبًا: ده تبسيط **انت** اللي قررته، والمكتبة كانت هتقرره عنك.
-- [[parseDMY]]: regex للشكل، وبعدين [[new Date(y, mo - 1, d)]] (الشهر من 0)، وبعدين نتأكد إن [[Date]] مغيّرش اليوم: [[new Date(2026, 1, 31)]] بيبقى ٣ مارس من غير ما يقول.
-
-لاحظ الناتج: «قبل» بدل «منذ»، و «الأسبوع الماضي» بدل «منذ 7 أيام». الاتنين صح، بس **مختلفين**. لو المنتج عايز شكل معين بالظبط، ده قرار لازم يتاخد.
-
----
-
-## ٤. القياس: سطور وبايتات
-
-بنبني كل ملف بـ esbuild 0.28.2 في bundle واحد مصغّر للمتصفح، ونقيسه خام وبعد gzip (اللي بيتنقل فعلًا على الشبكة). السكربت نفسه في درس «إمتى framework غلط».
-
-~~~text الناتج: node measure.mjs src/with-lib.mjs src/by-hand.mjs
-src/with-lib.mjs   16172 B    6521 B gzip
-src/by-hand.mjs      712 B     438 B gzip
-~~~
-
-| | بالمكتبة | بإيدك |
-|---|---|---|
-| سطور كودك | ١٣ | ٢١ |
-| حجم الـ bundle بعد gzip | ٦٥٢١ بايت | ٤٣٨ بايت |
-| الحالات اللي اتغطت | كل اللي المكتبة مختبراه (لغات، و zones بـ plugin، وأشكال تواريخ) | اللي انت فكرت فيه بس |
-| لو باج | تحدّث النسخة | تصلّحه انت |
-
-**القرار مش واحد للكل:** صفحة فيها «منذ ٣ ساعات» بس؟ Intl كفاية وأخف ١٥ مرة. تطبيق مواعيد فيه أشكال تواريخ كتير و zones؟ المكتبة (أو Temporal) بتوفّر عليك باجات.
-
----
-
-## ٥. من CDN من غير تسطيب
-
-~~~html index.html
-<script type="module">
-  import dayjs from "https://cdn.jsdelivr.net/npm/dayjs@1.11.23/+esm";
-  console.log(dayjs("2026-01-31").add(1, "month").format("YYYY-MM-DD"));
-</script>
-~~~
-
-اتجرّب في Chrome 157: طبع [[2026-02-28]]. وقيسنا الـ headers بـ [[curl]]:
-
-| الـ URL | الـ Cache-Control اللي رجع |
-|---|---|
-| [[dayjs@1.11.23/dayjs.min.js]] | [[max-age=31536000, immutable]]: سنة كاملة، والملف عمره ما هيتغير |
-| [[dayjs@1/dayjs.min.js]] | [[max-age=604800]]: أسبوع، لأن [[@1]] ممكن تشاور على نسخة أحدث بكرة |
-| [[dayjs/dayjs.min.js]] | [[max-age=604800]]: أسبوع، و «آخر نسخة» ممكن تبقى 2.0 |
-
-ومع [[<script src>]] العادي ضيف [[integrity]] (التمرين التالت). والـ CDN معناه إن موقعك بيعتمد على سيرفر حد تاني: لو وقع أو اتحجب، الصفحة بتقع.
-
----
-
-## ٦. نسخ الملف
-
-~~~powershell
-mkdir vendor
-copy node_modules\dayjs\dayjs.min.js vendor\dayjs-1.11.23.min.js
-~~~
-
-ملف واحد (7161 بايت)، وهو نفسه بالبايت اللي على الـ CDN. النسخة في الاسم هي الحاجة الوحيدة اللي بتقولك بعد سنة «ده قديم». ومن غير npm مفيش [[npm audit]] يقولك إن فيه ثغرة: انت المسؤول تتابع.
-
----
-
-## ٧. ليه المطورين بيستخدموا كود غيرهم (وبيدفعوا إيه)
-
-| السبب | معناه في المثال | التمن |
-|---|---|---|
-| **الكفاءة** | ٦ سطور بدل ١٥ في [[daysUntil]]، ومن غير ما تفتكر إن الشهر من 0 | بايتات زيادة، ووقت تتعلم الـ API |
-| **التوافق (cross-browser)** | المكتبة بتتعامل مع اختلافات البيئات والحالات الطرفية ([[05/12/2026]] اللي [[Date]] فهمها مايو). وقبل ما Intl.RelativeTimeFormat يبقى Baseline (MDN: متاح في كل المتصفحات من سبتمبر 2020) كانت المكتبة هي الطريقة الوحيدة | لما المنصة تلحق، المكتبة بتبقى وزن زيادة |
-| **الـ ecosystem والدعم** | ١٤٣ لغة و ٣٧ plugin، وناس بتبلّغ عن الباجات وبتصلّحها، وأسئلة متجاوبة | لو المكتبة اتهجرت، انت شايل الكود |
-
----
-
-## الخلاصة
-
-| السؤال | الإجابة |
-|---|---|
-| أجيب المكتبة إزاي؟ | npm لأي مشروع فيه build، و CDN بنسخة متثبتة و SRI لصفحة static، ونسخ الملف لما مفيش نت |
-| أستخدم مكتبة أصلًا؟ | شوف المنصة الأول (Intl و fetch و URL)، وقيس: سطور، وبايت، وحالات طرفية |
-| CDN من غير نسخة؟ | لأ: الملف ممكن يتغير من تحتك، والكاش أسبوع بدل سنة |
-| SRI بيحمي من إيه؟ | من ملف اتغير على الـ CDN: المتصفح بيرفضه لو البصمة مش مطابقة |`,
-          lines: [
-            R`[[import dayjs from "dayjs"]] بيجيب الدالة الأساسية من [[node_modules/dayjs]]، لأن الاسم مفيهوش [[./]].`,
-            R`plugin [[relativeTime]] بيضيف [[from]] و [[fromNow]] اللي بيكتبوا المسافة بين تاريخين بالكلام.`,
-            R`plugin [[customParseFormat]] بيخلي dayjs تقرا تاريخ بشكل انت بتحدده ([["DD/MM/YYYY"]]).`,
-            R`[[import]] من غير اسم: بيشغّل ملف اللغة العربي وبس، والملف بيسجّل نفسه جوه dayjs.`,
-            R`[[dayjs.extend]] بيركّب الـ plugin الأول على الدالة الأساسية، ومن غيره [[from]] مش موجودة.`,
-            R`نفس الحاجة لـ plugin قراية الأشكال، عشان سطر [[due]] تحت يشتغل بالشكل اللي بنحدده.`,
-            R`[[dayjs.locale("ar")]] بيخلي العربي هو اللغة الافتراضية لكل الكلام اللي جاي.`,
-            R`[[now]] ثابت (الساعة ١٢ الضهر يوم ٢١ نوفمبر) عشان الناتج يطلع هو هو كل مرة.`,
-            R`[[from(now)]] بتقارن ٩ الصبح بـ ١٢ الضهر وبتكتب [[منذ 3 ساعات]] بالعربي.`,
-            R`تاريخ قبلها بأسبوع بالظبط بيطلع [[منذ 7 أيام]]: المكتبة قررت «أيام» مش «أسبوع».`,
-            R`بنقرا [["05/12/2026"]] على إنه يوم/شهر/سنة، و [[true]] معناها strict: الشكل يطابق بالظبط.`,
-            R`[[isValid()]] بـ [[true]]، و [[format]] بيكتبه [[2026-12-05]]: ٥ ديسمبر زي ما قصدنا.`,
-            R`٣١ فبراير مش موجود، فـ strict بيرجّع [[false]] بدل ما يحوّله لـ ٣ مارس ساكت.`,
-          ],
-          ref: [
-            { t: "MDN Curriculum: JavaScript fundamentals (6.14 Libraries and frameworks)", url: "https://developer.mozilla.org/en-US/curriculum/core/javascript-fundamentals/" },
-            { t: "MDN: Introduction to client-side frameworks", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Frameworks_libraries/Introduction" },
-            { t: "MDN: Subresource Integrity", url: "https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Subresource_Integrity" },
-            { t: "jsDelivr documentation", url: "https://www.jsdelivr.com/documentation" },
-            { t: "Day.js: CustomParseFormat plugin", url: "https://day.js.org/docs/en/plugin/custom-parse-format" },
-            { t: "MDN: Intl.RelativeTimeFormat", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/RelativeTimeFormat" },
-          ],
-          pre: [{ to: "js/date-fns و dayjs و Temporal", why: R`مقارنة مكتبات التواريخ بالتفصيل، و Temporal البديل اللي جوه اللغة` }, { to: "node/npm install", why: R`[[npm install]] وأنواع الـ dependencies بالتفصيل` }],
-        },
-        {
-          cmd: "library ولا framework: مين بينادي مين",
-          title: "الفرق الحقيقي بين library و framework: inversion of control، ونفس العدّاد بـ ٤ طرق",
-          desc: R`الفرق في سؤال واحد: **مين بينادي مين؟** الـ library انت اللي بتناديها وقت ما تحب ([[dayjs(date).format()]] و [[new Chart(canvas, config)]]). الـ framework هو اللي بينادي كودك: انت بتكتب أجزاء بشكل هو محدده، وهو بيقرر إمتى تشتغل. ده اسمه **inversion of control** (عكس التحكم).
-
-أمثلة:
-• **libraries:** Chart.js (رسوم)، و three.js (3D)، و dayjs، و lodash، و lit-html (بيرسم template لما تقوله).
-• **frameworks:** Angular و Vue و Svelte (و SvelteKit)، و Next.js. و React بتسمّي نفسها library، بس هي اللي بتنادي الـ components بتاعتك وتقرر إمتى ترسمها، فشغلك معاها شبه الـ framework.
-
-والفريموركات نفسها نوعين: **opinionated** (Angular: فيها router و forms و HTTP و DI وطريقة واحدة لكل حاجة) و **unopinionated** (React: الـ UI بس، وانت بتختار الباقي). الدرس بيعمل نفس العدّاد ٤ مرات عشان تشوف الفرق بعينك.`,
-          example: R`// «فريمورك» من ١٠ سطور: هو اللي بينادي كودك
-function mount(el, { state, view, actions }) {
-  function draw() {
-    el.innerHTML = view(state);
-  }
-  el.addEventListener("click", (e) => {
-    const name = e.target.closest("[data-on]")?.dataset.on;
-    if (name) { actions[name](state); draw(); }
-  });
-  draw();
-}
-mount(document.querySelector("#app"), {
-  state: { count: 0 },
-  view: (s) => $__bt<button type="button" data-on="add">دوسات: <output>$__{s.count}</output></button>$__bt,
-  actions: { add: (s) => { s.count += 1; } },
-});`,
-          try: R`اعمل صفحة فيها [[<div id="app"></div>]] وحط المثال في [[<script>]] تحتها، ودوس على الزرار. وبعدين دوس [[Tab]] لحد ما الزرار ياخد الـ focus، ودوس [[Enter]] مرتين: الـ focus راح فين بعد أول مرة؟ وفين في الكود **انت** ناديت [[draw]]؟`,
-          sol: R`اتجرّب في Chrome 157: العدّاد بيزيد مع كل ضغطة. بس بعد أول [[Enter]] الـ focus بيروح من الزرار لـ [[<body>]]، فـ [[Enter]] التانية مبتعملش حاجة. قسناها بـ [[document.activeElement.tagName]]: [[BODY]].
-
-**ليه؟** [[draw()]] بيعمل [[el.innerHTML = ...]]، فالزرار القديم (اللي عليه الـ focus) بيتمسح ويتعمل زرار جديد مكانه. واللي بيستخدم الكيبورد أو screen reader بيتوه بعد كل ضغطة.
-
-وانت **مكتبتش** [[draw()]] ولا [[actions.add(...)]] في أي حتة: الـ «framework» هو اللي بينادي [[view]] و [[actions]]. ده الـ inversion of control. وحل مشكلة الـ focus في التمرين التالت، وده بالظبط اللي React و Vue و Svelte و lit-html بيعملوه: بيغيّروا الجزء اللي اتغير بس (قسناها: في الأربعة الـ focus فضل على [[BUTTON]]).`,
-          practice: [
-            { lvl: 'سريع', t: R`**صنّف:** library ولا framework؟ ومين بينادي مين؟ Chart.js و three.js و lodash و dayjs و lit-html و React و Angular و Vue و Svelte و Express و Next.js و [[node:test]].`, done: R`كل واحد في خانته، ومع كل واحد جملة «أنا بناديه» أو «هو بيناديني»، وعارف ليه React حالة خاصة.`, sol: R`| الأداة | النوع | مين بينادي مين |
-|---|---|---|
-| Chart.js و three.js | library | انت: [[new Chart(canvas, config)]] و [[renderer.render(scene, camera)]] |
-| lodash و dayjs | library | انت: [[_.groupBy(list, "city")]] و [[dayjs().add(1, "day")]] |
-| lit-html | library | انت: [[render(template, el)]] كل ما تحب ترسم |
-| React | بتسمّي نفسها library | هي بتنادي الـ component بتاعك ([[Counter()]]) وتقرر إمتى ترسمه تاني. الـ routing والـ data برّه، فهي unopinionated |
-| Angular | framework (opinionated) | هو بينادي الـ components والـ services، وفيه router و forms و HTTP و DI جوّه |
-| Vue و Svelte | framework | هما بينادوا الـ component لما الـ state يتغير. ليهم router رسمي (Vue Router و SvelteKit) |
-| Express | framework للسيرفر | هو بينادي الـ handler بتاعك لما طلب ييجي: [[app.get("/", (req, res) => ...)]] |
-| Next.js | framework فوق React | هو بيقرر الصفحات من أسماء الفولدرات، وبينادي الـ components على السيرفر والمتصفح |
-| [[node:test]] | framework صغير للاختبارات | انت بتسجّل [[test("...", fn)]] وهو اللي بيشغّلها ويقولك نجح ولا وقع (التمرين التاني) |
-
-**القاعدة:** لو بتكتب دالة وبتديها لحاجة **هي** تناديها في الوقت اللي **هي** تحدده، دي framework. لو انت اللي بتنادي وتاخد ناتج، دي library.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ده «framework» اختبارات صغير. إيه ترتيب السطور اللي هتتطبع؟ وأنهي سطر هو الـ inversion of control؟
-~~~js tiny-test.mjs
-const tests = [];
-function test(name, fn) {
-  tests.push({ name, fn });
-}
-function run() {
-  for (const t of tests) {
-    try {
-      t.fn();
-      console.log("نجح:", t.name);
-    } catch (error) {
-      console.log("وقع:", t.name, "-", error.message);
-    }
-  }
-}
-console.log("١ بنسجّل");
-test("الجمع", () => {
-  if (1 + 1 !== 2) throw new Error("1 + 1 مش 2");
-});
-test("القسمة على صفر", () => {
-  if (1 / 0 !== 0) throw new Error($__bt1 / 0 = $__{1 / 0}$__bt);
-});
-console.log("٢ لسه محدش اتشغّل");
-run();
-~~~`, done: R`توقعت إن السطرين «١» و «٢» بيتطبعوا الأول، وبعدين نتيجة الاختبارين، وعارف إن الدوال اللي جوه [[test]] مااتنادتش وقت ما كتبتها.`, sol: R`~~~text الناتج (Node 24.22): node tiny-test.mjs
-١ بنسجّل
-٢ لسه محدش اتشغّل
-نجح: الجمع
-وقع: القسمة على صفر - 1 / 0 = Infinity
-~~~
-
-- [[test("الجمع", () => ...)]] **مبيشغّلش** الدالة: بيحطها في [[tests]] وبس. عشان كده «٢» اتطبعت قبل أي نتيجة.
-- [[run()]] هو اللي بينادي [[t.fn()]] لكل اختبار، وبيمسك الـ error ويكتب «وقع». ده الـ inversion of control: انت كتبت الدوال، والـ framework قرر إمتى تشتغل وعمل إيه لما وقعت.
-- [[node:test]] و Vitest و Jest بيشتغلوا بنفس الفكرة بالظبط، بس بيلاقوا ملفات الاختبار لوحدهم وبيشغّلوا [[run]] من غير ما تكتبها.
-- و [[1 / 0]] في JavaScript بيطلع [[Infinity]] مش error، فالاختبار وقع بالرسالة اللي احنا كتبناها.` },
-            { lvl: 'تطبيق', t: R`**صلّح الـ framework:** في الـ «framework» بتاع المثال، الـ focus بيضيع بعد كل ضغطة. صلّحه من غير ما تغيّر طريقة الرسم ([[innerHTML]]): افتكر مين كان عليه الـ focus قبل الرسم ورجّعه بعده. وزوّد زرار «صفّر» عشان تتأكد إنه شغال مع أكتر من زرار.`, done: R`بـ [[Tab]] و [[Enter]] تقدر تدوس «زوّد» كذا مرة ورا بعض، والسطر تحت بيقول «الـ focus على: add»، ولما تروح لـ «صفّر» بيقول «reset».`, sol: R`~~~live 160 focus-fix.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>فريمورك صغير بيحافظ على الـ focus</title>
-<style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
-  button { font: inherit; padding: 6px 14px; margin-inline-end: 8px; }
-  button:focus-visible { outline: 3px solid #2563eb; }
-</style>
-</head>
-<body>
-<div id="app"></div>
-<p id="where"></p>
-<script>
-  function mount(el, { state, view, actions }) {
-    function draw() {
-      const focused = document.activeElement?.dataset?.on;
-      el.innerHTML = view(state);
-      if (focused) el.querySelector($__bt[data-on="$__{focused}"]$__bt)?.focus();
-      document.querySelector("#where").textContent = $__btالـ focus على: $__{document.activeElement.dataset.on ?? document.activeElement.tagName}$__bt;
-    }
-    el.addEventListener("click", (e) => {
-      const name = e.target.closest("[data-on]")?.dataset.on;
-      if (name) { actions[name](state); draw(); }
-    });
-    draw();
-  }
-  mount(document.querySelector("#app"), {
-    state: { count: 0 },
-    view: (s) => $__bt<button type="button" data-on="add">زوّد ($__{s.count})</button><button type="button" data-on="reset">صفّر</button>$__bt,
-    actions: {
-      add: (s) => { s.count += 1; },
-      reset: (s) => { s.count = 0; },
-    },
-  });
+const dir = new URLSearchParams(location.search).get('dir') ?? 'src';
+const { renderList } = await import('./' + dir + '/list.js');
+const { showNotice } = await import('./' + dir + '/notice.js');
+const { footer } = await import('./' + dir + '/footer.js');
+const payload = '<img src=x onerror="document.title=\'اتسرقت\'">';
+renderList(document.querySelector('#list'), [{ label: payload, amount: 5 }]);
+showNotice(document.querySelector('#notes'), payload);
+footer(document.querySelector('#foot'));
 </script>
 </body>
 </html>
 ~~~
 
-اتجرّب في Chrome 157: focus على «زوّد» وضغطتين ورا بعض بـ [[click()]] على [[document.activeElement]]: العدّاد [[2]] والسطر «الـ focus على: add». وبعدها «صفّر»: العدّاد [[0]] والسطر «الـ focus على: reset».
-
-- قبل [[innerHTML]]: [[document.activeElement?.dataset?.on]] بيقول اسم الزرار اللي عليه الـ focus (أو [[undefined]] لو مفيش).
-- بعد الرسم: [[el.querySelector(...)?.focus()]] بيلاقي الزرار الجديد بنفس الاسم ويرجّعله الـ focus.
-- **ليه ده مش كفاية في الحقيقة؟** لو فيه [[<input>]] الكيبورد هيقفز لأول النص (الـ cursor ضاع)، والـ scroll ممكن يتحرك، وأي listener على عنصر جوه اتمسح. الفريموركات والـ libraries زي lit-html بتحل ده بإنها **متمسحش** العناصر: بتغيّر النص اللي اتغير بس. وده سبب من أسباب استخدامها.` },
-            { lvl: 'تطبيق', t: R`**ابني component من غير framework:** [[createCounter(el, { label, start, max })]] بترسم عدّاد فيه [[−]] و [[+]] جوه أي عنصر، وبتمنع النزول تحت 0 والطلوع فوق [[max]] (الزرار بيتقفل)، وبترجّع object فيه [[value]] و [[set]]. استخدمها ٣ مرات في نفس الصفحة (شاي، وقهوة تبدأ من 2، وعصير max 3).`, done: R`٣ عدّادات مستقلين في الصفحة، وكل واحد ليه state لوحده، والـ [[+]] بتاع العصير بيتقفل عند ٣، و [[−]] بيتقفل عند 0.`, sol: R`~~~live 200 counters.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>٣ عدّادات من دالة واحدة</title>
-<style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
-  .counter { display: flex; gap: 8px; align-items: center; margin-block: 8px; }
-  button { font: inherit; min-width: 40px; padding: 4px 10px; }
-  output { min-width: 2ch; text-align: center; font-weight: 700; }
-</style>
-</head>
-<body>
-<div id="tea"></div>
-<div id="coffee"></div>
-<div id="juice"></div>
-<script>
-  function createCounter(el, { label, start = 0, max = 10 }) {
-    let count = start;
-    el.className = "counter";
-    el.innerHTML = $__bt<span>$__{label}</span><button type="button" aria-label="قلّل $__{label}">−</button><output>$__{count}</output><button type="button" aria-label="زوّد $__{label}">+</button>$__bt;
-    const [minus, plus] = el.querySelectorAll("button");
-    const out = el.querySelector("output");
-    function set(next) {
-      count = Math.min(max, Math.max(0, next));
-      out.textContent = count;
-      minus.disabled = count === 0;
-      plus.disabled = count === max;
-    }
-    minus.addEventListener("click", () => set(count - 1));
-    plus.addEventListener("click", () => set(count + 1));
-    set(count);
-    return { get value() { return count; }, set };
-  }
-  const tea = createCounter(document.querySelector("#tea"), { label: "شاي" });
-  const coffee = createCounter(document.querySelector("#coffee"), { label: "قهوة", start: 2 });
-  const juice = createCounter(document.querySelector("#juice"), { label: "عصير", max: 3 });
-</script>
-</body>
-</html>
+~~~text الناتج (Chrome 158 بـ Playwright، test.html?dir=before ثم ?dir=src)
+before:  title = اتسرقت          صور <img> = 2   الصف = « — 5 ج»          الرسالة = «»
+after:   title = اختبار الصياد   صور <img> = 0   الصف = «<img src=x onerror="document.title='اتسرقت'"> — 5 ج»   الرسالة = نفس النص
 ~~~
 
-اتجرّب في Chrome 157: ٥ ضغطات على [[+]] العصير، وضغطة على [[+]] الشاي، و ٣ على [[−]] القهوة، والنتيجة [[شاي=1 | قهوة=0 (− مقفول) | عصير=3 (+ مقفول)]].
+في «قبل» اتعملت صورتين حقيقيتين (واحدة في الصف وواحدة في الرسالة) والعنوان اتغيّر، وفي الـ Network ظهر طلب واحد لـ [[/hunt/x]] رجع 404 (الصورتين نفس العنوان): ده المتصفح بيحاول يحمّل الصورة الوهمية، والفشل ده هو اللي شغّل [[onerror]]. في «بعد» الـ payload ظاهر كنص، وصفر صور.
 
-- كل نداء لـ [[createCounter]] بيعمل [[count]] جديد جوه closure، فالعدّادات مش بتشارك state (درس «closure»).
-- [[set(next)]] هي المكان الوحيد اللي بيغيّر الـ state ويحدّث الشاشة والزراير. أي تغيير بيعدّي عليها، فمستحيل الرقم يبان حاجة والزرار حاجة.
-- [[aria-label]] بيدّي كل زرار اسم مفهوم لقارئ الشاشة («زوّد شاي») بدل «+».
-- ده **component**: دالة بتاخد مكان وإعدادات وبترسم حاجة مستقلة. الفريموركات بتدّيك ده بشكل جاهز (و Web Components كمان، جوه المتصفح نفسه)، ومعاه تحديث الشاشة لوحده لما الـ state يتغير.` },
-            { lvl: 'تحدي', t: R`**اشرحها:** صاحبك بيقول «React مش framework، دي library، الموقع بتاعها كاتب كده». اكتبله رد في ٤ سطور: هو صح في إيه، وغلطان في إيه، وده بيفرق معاه في إيه عمليًا.`, done: R`الرد فيه: React فعلًا UI بس (مفيهاش router ولا data fetching رسمي)، بس هي اللي بتنادي الـ components (inversion of control)، والفرق العملي إنك محتاج تختار باقي الأدوات بنفسك أو تستخدم framework فوقها.`, sol: R`**الرد النموذجي:**
-1. صح: React بتعرّف نفسها «The library for web and native user interfaces»، ومسؤوليتها الـ UI بس. مفيهاش router ولا طريقة رسمية تجيب بيها داتا ولا forms زي Angular.
-2. بس بمقياس «مين بينادي مين»: انت مبتناديش [[Counter()]] بنفسك. React هي اللي بتناديه وقت أول رسم وكل ما الـ state يتغير، وبتقرر الترتيب. ده inversion of control، وده تعريف الـ framework.
-3. فالأدق: React = **unopinionated UI framework** (أو library بتشتغل زي framework في الجزء بتاعها). و Next.js أو React Router في framework mode فوقها = framework كامل opinionated.
-4. عمليًا: مع React لوحدها انت اللي هتختار الـ router والـ state والـ data fetching (قرارات أكتر، وكل مشروع شكل). ومع Angular أو Next.js القرارات دي متاخدة (أسرع في الفريق، بس أقل حرية).
+**الغلطة الشائعة:** تصلّح [[list.js]] وتسيب [[notice.js]] لأن «الرسالة جاية من السيرفر بتاعنا». السيرفر بيرجّع اللي اتخزن، واللي اتخزن كتبه يوزر. وتاني غلطة: تحط [[esc()]] بإيدك بدل [[textContent]]؛ شغّالة لحد ما حد ينساها في مكان جديد.
 
-مصدر الجملة: الصفحة الرئيسية لـ [[react.dev]]، وتفاصيل الـ frameworks اللي فوقها في react.dev/learn (قسم بدء مشروع جديد).` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`السؤال ده بيتسأل في كل انترفيو frontend تقريبًا، والإجابة «الـ framework أكبر» غلط. والفرق بيأثر على شغلك: مع library انت صاحب الهيكل وتقدر تشيلها وتحط غيرها، ومع framework الهيكل بتاعه والخروج منه غالي (إعادة كتابة). فلما تختار framework انت بتختار طريقة الشغل كلها لسنين.`,
-            how: R`**library:** دوال أو classes بتناديها وترجعلك ناتج. الكنترول عندك: [[main]] بتاعك بيقرر إمتى ينادي [[render(template, el)]] أو [[chart.update()]].
+**ولو لازم HTML فعلًا** (محتوى منسّق من محرر): مكتبة تنظيف مجرّبة زي DOMPurify، وسجّل السطر ده في الصياد كاستثناء معروف بتعليق جنبه.` },
+        { lvl: 'متوسط', dir: "todo-app", t: R`طبّقها على تطبيق تاني`, what: R`قايمة مهام، أو مذاكرة بالـ flashcards، أو متابعة تمارين. نفس الستة خطوات: حالة ← رسم ← أحداث ← حفظ ← تحقق ← شاشات، في خمس ملفات زي درس «قسّمه لملفات».`, done: R`[[storage.js]] اتنقل من غير ولا تعديل غير [[KEY]]، و [[state.js]] مفيهوش [[document]]، والتطبيق بيفتكر بعد reload، والفلتر في الرابط، والمدخل الفاضي بيطلّع رسالة ومبيغيّرش الحالة.`, sol: R`**الشكل النهائي** (المعاينة دي نفس الخمس ملفات متجمّعين في سكربت واحد، لأن المعاينة مبتحمّلش ملفات تانية. والحفظ ممنوع جوه المعاينة، فـ [[load]] و [[save]] بيمسكوا [[SecurityError]] والتطبيق بيشتغل من غير حفظ، وده نفسه إثبات إن الدفاع شغّال):
 
-**framework:** فيه حلقة بتاعته هو (event loop للـ UI، أو router للسيرفر). انت بتسجّل أجزاء: components أو handlers أو اختبارات، وهو بيناديها لما حدث يحصل (ضغطة، أو state اتغير، أو طلب HTTP جه). ده بيتسمى أحيانًا «Hollywood principle»: «متكلمناش، احنا هنكلمك».
-
-**opinionated ولا لأ:** Angular بيقرر الهيكل والـ router والـ forms والـ DI والـ testing. Vue وسط: الـ core صغير، والـ router و Pinia رسميين بس اختياريين. React الـ UI بس، والباقي من الـ ecosystem.`,
-            when: R`library لما المشكلة محددة (رسم chart، تواريخ، 3D) وانت عايز تفضل صاحب الهيكل. framework لما التطبيق نفسه كبير: شاشات كتير، و state بيتشارك، وفريق محتاج طريقة واحدة. ولو الصفحة بسيطة: ولا ده ولا ده (درس «إمتى framework غلط»).`,
-            mistakes: R`«الـ framework = library كبيرة»: الحجم مش هو الفرق (Preact صغير جدًا وبينادي كودك). وتحط library لكل حاجة لحد ما مشروعك يبقى framework من غير تصميم. وتستخدم framework وتحارب طريقته (تعدّل الـ DOM بإيدك جوه React فيتلخبط). وترسم كل حاجة بـ [[innerHTML]] من جديد وتفتكر ده «زي React» (الـ focus بيضيع، وده اللي React بيتجنبه).`
-          },
-          teach: R`## الفكرة
-
-عدّاد بسيط: زرار، ورقم بيزيد مع كل ضغطة. هنكتبه ٤ مرات: vanilla (من غير أي حاجة)، و library (lit-html)، و «framework» من ١٠ سطور كتبناه بنفسنا عشان نشوف inversion of control من جوه، و Preact (framework صغير بنفس طريقة React). الكل اتبنى بـ esbuild 0.28.2 واتجرّب في Chrome 157 (٣ ضغطات، والرقم بقى [[3]] في الأربعة).
-
----
-
-## ١. vanilla: انت بتعمل كل حاجة
-
-~~~js vanilla.js
-const app = document.querySelector("#app");
-let count = 0;
-app.innerHTML = $__bt<button type="button">دوسات: <output>0</output></button>$__bt;
-const out = app.querySelector("output");
-app.querySelector("button").addEventListener("click", () => {
-  count += 1;
-  out.textContent = count;
-});
-~~~
-
-- [[let count = 0]]: الـ state (الحالة) في متغير.
-- [[innerHTML]] مرة واحدة في الأول، وبعدها مع كل ضغطة انت بتحدّث [[out.textContent]] بإيدك.
-- **مين بينادي مين:** انت كاتب كل نداء. المتصفح بينادي الـ listener، وده كل اللي برّه إيدك.
-
----
-
-## ٢. library: lit-html بيرسم لما **انت** تقوله
-
-~~~js lit.js
-import { html, render } from "lit-html";
-const app = document.querySelector("#app");
-let count = 0;
-function update() {
-  render(html$__bt<button type="button" @click=$__{() => { count += 1; update(); }}>دوسات: <output>$__{count}</output></button>$__bt, app);
-}
-update();
-~~~
-
-- [[html$__bt...$__bt]]: tagged template (درس «template literals»). lit-html بيفتكر الأماكن اللي فيها [[$__{...}]] بس.
-- [[render(template, app)]]: **انت** اللي بتناديها. أول مرة بترسم كله، وبعد كده بتغيّر النص اللي اتغير بس (الرقم)، والزرار نفسه بيفضل هو هو.
-- [[@click=$__{...}]]: lit-html بيعمل [[addEventListener]] عنك.
-- انت لسه صاحب الحلقة: انت اللي بتقرر تنادي [[update()]] بعد ما [[count]] يتغير.
-
----
-
-## ٣. «framework» من ١٠ سطور: هو اللي بينادي كودك
-
-ده المثال. اقراه كأنه فريقين: [[mount]] هو الـ framework، والـ object اللي في الآخر هو كودك.
-
-~~~text minifw.js
-function mount(el, { state, view, actions }) {
-  function draw() {
-    el.innerHTML = view(state);
-  }
-~~~
-
-- [[mount]] بياخد مكان في الصفحة وتلات حاجات منك: [[state]] (البيانات)، و [[view]] (دالة بتحوّل الـ state لـ HTML)، و [[actions]] (دوال بتغيّر الـ state).
-- [[draw]] بينادي **دالتك** [[view(state)]] ويحط الناتج في الصفحة.
-
-~~~text minifw.js
-  el.addEventListener("click", (e) => {
-    const name = e.target.closest("[data-on]")?.dataset.on;
-    if (name) { actions[name](state); draw(); }
-  });
-  draw();
-}
-~~~
-
-- listener واحد على المكان كله (event delegation). لما تدوس على حاجة عليها [[data-on="add"]]، بينادي **دالتك** [[actions.add(state)]]، وبعدين بيرسم تاني لوحده.
-- [[?.]]: لو الضغطة مش على عنصر عليه [[data-on]]، [[closest]] بيرجّع [[null]] والسطر ميقعش.
-
-~~~text minifw.js
-mount(document.querySelector("#app"), {
-  state: { count: 0 },
-  view: (s) => $__bt<button type="button" data-on="add">دوسات: <output>$__{s.count}</output></button>$__bt,
-  actions: { add: (s) => { s.count += 1; } },
-});
-~~~
-
-كودك كله **وصف**: الحالة شكلها إيه، والشاشة شكلها إيه، والزرار بيعمل إيه. مفيش ولا [[addEventListener]] ولا [[textContent]] ولا [[draw()]] في كودك. ده **inversion of control**.
-
-**المشكلة اللي اتقاست:** [[innerHTML]] بيمسح الزرار ويعمل واحد جديد مع كل ضغطة. focus على الزرار + [[click()]] = [[document.activeElement]] بقى [[BODY]]. في التلات تانيين (vanilla و lit و Preact) فضل [[BUTTON]].
-
----
-
-## ٤. Preact: framework حقيقي بنفس طريقة React
-
-~~~jsx preact.jsx
-import { render } from "preact";
-import { useState } from "preact/hooks";
-function Counter() {
-  const [count, setCount] = useState(0);
-  return <button type="button" onClick={() => setCount(count + 1)}>دوسات: <output>{count}</output></button>;
-}
-render(<Counter />, document.querySelector("#app"));
-~~~
-
-- [[function Counter()]]: component. دالة بترجّع شكل الشاشة بـ JSX.
-- [[useState(0)]]: الـ state جوه Preact نفسه. [[setCount]] بيغيّره **ويطلب** رسم جديد.
-- [[render(<Counter />, ...)]]: بتسلّم الـ component لـ Preact مرة واحدة. بعد كده **Preact هو اللي بينادي [[Counter()]]** كل ما الـ state يتغير، ويقارن الناتج بالقديم ويغيّر الرقم بس.
-
-ونفس الكود تقريبًا في React: [[import { useState } from "react"]] و [[createRoot(el).render(<Counter />)]]. التفاصيل في كورس React.
-
----
-
-## ٥. الأربعة جنب بعض
-
-| | vanilla | lit-html | الـ mini framework | Preact |
-|---|---|---|---|---|
-| مين بيحدّث الشاشة | انت ([[textContent]]) | انت بتنادي [[render]] | هو ([[draw]] بعد كل action) | هو (بعد [[setCount]]) |
-| مين بينادي كودك | المتصفح بس | المتصفح بس | الـ framework بينادي [[view]] و [[actions]] | Preact بينادي [[Counter]] |
-| الـ focus بعد الضغط | بيفضل | بيفضل | **بيضيع** | بيفضل |
-| الحجم بعد gzip (esbuild، production) | ٢٧١ بايت | ٣٤٧٧ بايت | ٣٥٧ بايت | ٥٨٤٣ بايت |
-
-الأحجام مشروحة في درس «إمتى framework غلط» ومعاها Vue و Svelte و React.
-
----
-
-## ٦. opinionated و unopinionated
-
-| | بيقرر عنك | انت بتختار |
-|---|---|---|
-| Angular | الهيكل والـ router والـ forms والـ HTTP والـ DI والاختبارات و TypeScript | قليل جدًا |
-| Vue | الـ components والـ reactivity، و router و Pinia رسميين | تستخدمهم ولا لأ |
-| Svelte و SvelteKit | الـ compiler والـ components، و SvelteKit للشاشات والسيرفر | الباقي |
-| React | الـ components والـ state بس | الـ router والـ data والـ forms والـ styling (أو Next.js يقرر) |
-
-opinionated = أسرع في الفريق وكل المشاريع شكل واحد، بس لو طريقته مش مناسبة هتحاربه. unopinionated = حرية، بس كل فريق بيعمل نسخته وبتاخد قرارات أكتر.
-
----
-
-## الخلاصة
-
-| السؤال | الإجابة |
-|---|---|
-| library ولا framework؟ | لو انت بتناديه وبياخد ويرجّع: library. لو انت بتديله دوالك وهو بيناديها: framework |
-| inversion of control؟ | الـ framework صاحب الحلقة، وكودك أجزاء بتتنادي (components و handlers و tests) |
-| React إيه؟ | بتسمّي نفسها library، وبتشتغل زي framework في الـ UI، وهي unopinionated |
-| أبني «framework» بنفسي؟ | للتعلم آه، للشغل لأ: الحاجات الصعبة (الـ focus والـ diff والـ accessibility) هي اللي الفريموركات بتحلها |`,
-          lines: [
-            R`[[mount]] بياخد مكان في الصفحة و object منك فيه [[state]] و [[view]] و [[actions]].`,
-            R`[[draw]] دالة داخلية في الـ framework مسؤولة عن الرسم، وكودك عمره ما بيناديها.`,
-            R`بينادي دالتك [[view(state)]] ويحط الـ HTML اللي رجع في الصفحة كله من جديد.`,
-            R`قفلة [[draw]]. لحد هنا مفيش حاجة اتشغّلت، ده تعريف بس جوه [[mount]].`,
-            R`listener واحد على المكان كله: أي ضغطة جوه [[el]] بتوصل هنا (event delegation).`,
-            R`[[closest("[data-on]")]] بيدوّر على أقرب عنصر عليه [[data-on]]، و [[?.]] بتمنع الوقوع لو مفيش.`,
-            R`لو لقى اسم، بينادي دالتك من [[actions]] بالاسم ده، وبعدين بيرسم تاني لوحده.`,
-            R`قفلة الـ listener. الـ framework بيسمع على الضغطات بداله، وكودك مكتبش ولا listener.`,
-            R`أول رسم أول ما [[mount]] يتنادي، عشان الزرار يظهر من غير ما حد يدوس.`,
-            R`قفلة [[mount]]. من هنا ورايح ده كودك انت، والـ framework فوق خلص.`,
-            R`بتنادي [[mount]] مرة واحدة بالمكان ووصف التطبيق، وبعدها الكنترول كله معاه.`,
-            R`[[state]]: البيانات بتاعة التطبيق، رقم الدوسات بيبدأ من صفر.`,
-            R`[[view]]: دالة بتحوّل الـ state لـ HTML، والزرار عليه [[data-on="add"]] عشان الـ framework يعرف يربطه.`,
-            R`[[actions.add]]: الدالة اللي بتغيّر الـ state، والـ framework هو اللي بيناديها لما الزرار يتداس.`,
-            R`قفلة الـ object والنداء. مفيش [[addEventListener]] ولا [[draw()]] في كودك: ده inversion of control.`,
-          ],
-          ref: [
-            { t: "MDN Curriculum: JavaScript fundamentals (6.14 Libraries and frameworks)", url: "https://developer.mozilla.org/en-US/curriculum/core/javascript-fundamentals/" },
-            { t: "MDN: Framework main features", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Frameworks_libraries/Main_features" },
-            { t: "Martin Fowler: InversionOfControl", url: "https://martinfowler.com/bliki/InversionOfControl.html" },
-            { t: "Lit: Standalone lit-html templates", url: "https://lit.dev/docs/libraries/standalone-templates/" },
-            { t: "React: Learn", url: "https://react.dev/learn" },
-            { t: "Angular: Overview", url: "https://angular.dev/overview" },
-            { t: "Vue: Introduction", url: "https://vuejs.org/guide/introduction.html" },
-          ],
-          pre: [{ to: "js/event delegation", why: R`الـ listener الواحد على المكان كله اللي الـ mini framework مبني عليه` }, { to: "react/مقدمة React والـ Components", why: R`الـ components و JSX في React نفسها، بعد ما تشوف الفكرة هنا` }],
-        },
-        {
-          cmd: "ليه frameworks: الحالة والشاشات والشغل",
-          title: "ليه الفريموركات موجودة: الحالة اللي بتتعرض في كذا مكان، والشاشات، والـ components، والسوق بأرقام من مصدرها",
-          desc: R`الفريمورك بيوفّر وقت في ٣ حاجات بتتكرر في أي تطبيق:
-• **الحالة والشاشة (state → UI):** نفس البيانات بتتعرض في كذا مكان. بإيدك لازم تفتكر تحدّث كل مكان، ولو نسيت واحد الشاشة بتكذب. الفريمورك بيخليك تكتب الشاشة كدالة من الحالة، وهو بيحدّثها لوحده.
-• **الشاشات (routing):** أكتر من صفحة من غير reload، والـ back button، والـ focus، والعنوان.
-• **الـ components والـ ecosystem:** أجزاء بتتكرر، وأدوات جاهزة (forms، اختبارات، devtools)، وطريقة واحدة الفريق كله يفهمها.
-
-والسبب التاني إن **الشغل بيطلبها**. بس متصدقش رقم من غير مصدر: الدرس بيوريك تقرا الأرقام من مصادرها (استبيان Stack Overflow 2026، وتحميلات npm) وتعرف كل رقم بيقيس إيه ومبيقيسش إيه، وتعدّ إعلانات الشغل في مدينتك بنفسك.`,
-          example: R`const state = { items: [] };
-function render() {
-  const { items } = state;
-  document.querySelector("#badge").textContent = items.length;
-  document.querySelector("#list").innerHTML = items.length
-    ? items.map((it, i) => $__bt<li>$__{it.name} $__{it.price} <button type="button" data-remove="$__{i}">شيل</button></li>$__bt).join("")
-    : $__bt<li class="empty">السلة فاضية</li>$__bt;
-  document.querySelector("#total").textContent = items.reduce((sum, it) => sum + it.price, 0);
-  document.querySelector("#pay").disabled = items.length === 0;
-}
-function setState(change) {
-  change(state);
-  render();
-}
-document.addEventListener("click", (e) => {
-  const add = e.target.closest("[data-add]");
-  if (add) setState((s) => s.items.push({ name: add.dataset.add, price: Number(add.dataset.price) }));
-  const remove = e.target.closest("[data-remove]");
-  if (remove) setState((s) => s.items.splice(Number(remove.dataset.remove), 1));
-});
-render();`,
-          try: R`حط المثال في صفحة فيها [[#badge]] و [[#list]] و [[#total]] و [[#pay]] وزرارين عليهم [[data-add]] و [[data-price]] (الصفحة كاملة في الشرح تحت). زوّد صنفين وشيل واحد، وبص على الـ ٤ أماكن. وبعدين حاول توصل لحالة الرقم فوق فيها مختلف عن عدد السطور. هتلاقي إنك مش قادر، وفكّر ليه.`,
-          sol: R`اتجرّب في Chrome 157: كشري وفول وبعدين «شيل» على الكشري، والنتيجة [[badge=1]] والسطر الوحيد [[فول 20]] و [[total=20]] و «ادفع» شغال. وبعد ما شلنا الفول: «السلة فاضية» و «ادفع» اتقفل.
-
-مش هتقدر تخلي الرقم مختلف عن السطور، لأن **مفيش** سطر بيحدّث [[#badge]] لوحده: [[render()]] بتحسب الأربعة من [[state.items]] كل مرة، و [[setState]] هي الطريق الوحيد لتغيير الحالة، وبتنادي [[render()]] بعدها على طول. ده نفس اللي React و Vue و Svelte بيعملوه، بس هما بيغيّروا الأجزاء اللي اتغيرت بس بدل [[innerHTML]] للّستة كلها.`,
-          practice: [
-            { lvl: 'سريع', t: R`**لاقي الباج:** في السلة دي دوس «+ كشري» مرتين وبعدين «شيل» على واحد. الرقم فوق بيقول إيه؟ والإجمالي؟ وفين السطر الناقص؟
-~~~html cart-buggy.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>السلة البايظة</title></head>
-<body>
-<header>السلة: <b id="badge">0</b></header>
-<button type="button" id="add">+ كشري ٤٥</button>
-<ul id="list"></ul>
-<p>الإجمالي: <b id="total">0</b></p>
-<script>
-  let total = 0;
-  let count = 0;
-  document.querySelector("#add").addEventListener("click", () => {
-    count += 1;
-    total += 45;
-    document.querySelector("#badge").textContent = count;
-    document.querySelector("#total").textContent = total;
-    const li = document.createElement("li");
-    li.innerHTML = $__btكشري 45 <button type="button">شيل</button>$__bt;
-    li.querySelector("button").addEventListener("click", () => {
-      li.remove();
-      total -= 45;
-      document.querySelector("#total").textContent = total;
-    });
-    document.querySelector("#list").append(li);
-  });
-</script>
-</body>
-</html>
-~~~`, done: R`لقيت إن «شيل» بيحدّث الإجمالي وبيشيل السطر بس مبيحدّثش [[count]] ولا [[#badge]]، وعارف ليه التصليح «زوّد سطر» مش الحل الحقيقي.`, sol: R`اتجرّب في Chrome 157 (ضغطتين على الزرار وبعدين «شيل» على أول سطر):
-
-~~~text اللي اتقاس
-badge=2 items=1 total=45
-~~~
-
-الرقم فوق بيقول ٢ والسلة فيها صنف واحد. السبب: الـ listener بتاع «شيل» بيعمل [[li.remove()]] و [[total -= 45]] ونسي [[count -= 1]] وتحديث [[#badge]].
-
-**التصليح السريع:** زوّد في listener الشيل:
-
-~~~js cart-buggy.html
-count -= 1;
-document.querySelector("#badge").textContent = count;
-~~~
-
-**ليه ده مش كفاية؟** فيه ٣ أماكن بتعرض نفس الحالة، والحالة متقسمة على ٣ حاجات ([[count]] و [[total]] والـ [[li]] اللي في الصفحة). أي ميزة جديدة (زرار «فضّي السلة»، أو خصم) لازم تفتكر فيها الـ ٣. **التصليح الحقيقي** هو مثال الدرس: الحالة في مكان واحد ([[state.items]])، وكل اللي على الشاشة محسوب منها في [[render()]]. ده بالظبط المشكلة اللي الفريموركات اتعملت عشانها.` },
-            { lvl: 'تطبيق', t: R`**زوّد ميزتين في نسخة الـ render:** زرار «فضّي السلة» (مقفول لما السلة فاضية)، وعنوان التاب يبقى [[(3) السلة]] لما فيه ٣ أصناف و [[السلة]] لما فاضية. المطلوب تعرف كام سطر اتغيّر وفين.`, done: R`الميزتين شغالين، والتغيير ٣ سطور في [[render]] وسطر في الـ listener، ومفيش ولا مكان تاني اتلمس.`, sol: R`~~~live 300 cart2.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>السلة</title>
-<style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
-  header { display: flex; justify-content: space-between; background: #f3f4f6; padding: 8px 12px; border-radius: 8px; }
-  li { display: flex; gap: 8px; align-items: center; margin-block: 4px; }
-  button { font: inherit; }
-  .empty { color: #777; }
-</style>
-</head>
-<body>
-<header><strong>مطعم سُفرة</strong><span>السلة: <b id="badge">0</b></span></header>
-<p><button type="button" data-add="كشري" data-price="45">+ كشري ٤٥</button> <button type="button" data-add="فول" data-price="20">+ فول ٢٠</button></p>
-<ul id="list"></ul>
-<p>الإجمالي: <b id="total">0</b> جنيه</p>
-<button type="button" id="pay">ادفع</button>
-<button type="button" id="clear">فضّي السلة</button>
-<script>
-  const state = { items: [] };
-  function render() {
-    const { items } = state;
-    document.querySelector("#badge").textContent = items.length;
-    document.querySelector("#list").innerHTML = items.length
-      ? items.map((it, i) => $__bt<li>$__{it.name} $__{it.price} <button type="button" data-remove="$__{i}">شيل</button></li>$__bt).join("")
-      : $__bt<li class="empty">السلة فاضية</li>$__bt;
-    document.querySelector("#total").textContent = items.reduce((sum, it) => sum + it.price, 0);
-    document.querySelector("#pay").disabled = items.length === 0;
-    document.querySelector("#clear").disabled = items.length === 0;
-    document.title = items.length ? $__bt($__{items.length}) السلة$__bt : "السلة";
-  }
-  function setState(change) {
-    change(state);
-    render();
-  }
-  document.addEventListener("click", (e) => {
-    const add = e.target.closest("[data-add]");
-    if (add) setState((s) => s.items.push({ name: add.dataset.add, price: Number(add.dataset.price) }));
-    const remove = e.target.closest("[data-remove]");
-    if (remove) setState((s) => s.items.splice(Number(remove.dataset.remove), 1));
-    if (e.target.closest("#clear")) setState((s) => { s.items = []; });
-  });
-  render();
-</script>
-</body>
-</html>
-~~~
-
-اتجرّب في Chrome 157:
-
-~~~text اللي اتقاس
-السلة | clear.disabled=true
-(3) السلة | badge=3 total=85
-السلة | badge=0 total=0 list=السلة فاضية clear.disabled=true pay.disabled=true
-~~~
-
-- في [[render]]: سطر بيقفل «فضّي» لما مفيش أصناف، وسطر بيكتب [[document.title]] من نفس [[items.length]].
-- في الـ listener: [[if (e.target.closest("#clear")) setState((s) => { s.items = []; })]]. الحالة بس اتغيرت، و [[render]] حدّث الـ ٦ أماكن (الرقم، واللستة، والإجمالي، و «ادفع»، و «فضّي»، والعنوان).
-- **قارن بالنسخة البايظة:** «فضّي السلة» هناك كان محتاج تصفّر [[count]] و [[total]] وتمسح كل [[li]] وتحدّث [[#badge]] و [[#total]]، وأي واحدة تنساها = باج. ده «الوقت اللي الفريمورك بيوفّره» بشكل ملموس.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** اكتب سكربت Node بيجيب تحميلات الأسبوع اللي فات لـ [[react]] و [[vue]] و [[@angular/core]] و [[svelte]] و [[preact]] من [[https://api.npmjs.org/downloads/point/last-week/<name>]] ويطبعهم مترتبين. وبعدين اكتب سطرين: الرقم ده بيقيس إيه، ومبيقيسش إيه.`, done: R`السكربت بيطبع ٥ سطور مترتبين بالأسبوع اللي اتقاس، وكتبت ليه preact أعلى من vue رغم إن عدد اللي بيكتبوا بيه أقل.`, sol: R`~~~js downloads.mjs
-const names = ["react", "vue", "@angular/core", "svelte", "preact"];
-const rows = [];
-for (const name of names) {
-  const res = await fetch($__bthttps://api.npmjs.org/downloads/point/last-week/$__{name}$__bt);
-  if (!res.ok) throw new Error($__bt$__{name}: HTTP $__{res.status}$__bt);
-  const data = await res.json();
-  rows.push({ name, downloads: data.downloads, week: $__bt$__{data.start} → $__{data.end}$__bt });
-}
-rows.sort((a, b) => b.downloads - a.downloads);
-for (const r of rows) {
-  console.log(r.name.padEnd(14), r.downloads.toLocaleString("en").padStart(12), r.week);
-}
-~~~
-
-~~~text الناتج (Node 24.22، اتشغّل يوم 21 نوفمبر 2026)
-react           275,243,399 2026-11-13 → 2026-11-19
-preact           63,268,171 2026-11-13 → 2026-11-19
-vue              26,626,896 2026-11-13 → 2026-11-19
-svelte           10,423,528 2026-11-13 → 2026-11-19
-@angular/core     8,492,071 2026-11-13 → 2026-11-19
-~~~
-
-- الـ downloads API بيقبل [[@angular/core]] بالـ [[/]] زي ما هو، عكس الـ registry نفسه (التمرين التاني في الدرس الجاي).
-- [[toLocaleString("en")]] بيحط الفواصل كل ٣ أرقام، و [[padStart]] بيرصّ الأرقام يمين.
-
-**بيقيس إيه:** عدد مرات تنزيل الـ tarball من الـ registry. **مبيقيسش:** عدد الناس ولا المشاريع. كل [[npm ci]] في CI بيتعد، وكل package تانية معتمدة عليه بتتعد (preact بيتنزّل كـ dependency جوه أدوات كتير، عشان كده أعلى من vue بكتير). والـ mirrors والكاش مبيتعدّوش. فالرقم بيقولك «مستخدم جدًا ومش هيختفي بكرة»، ومبيقولكش «الشركات بتطلبه قد إيه».` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** اعرف السوق في مدينتك بدل ما تصدق حد. خد ٢٠ إعلان شغل junior frontend من مواقع الشغل في مدينتك، واكتبهم في CSV ([[title,city,stack]]، والـ stack مفصول بـ [[;]])، واكتب سكربت بيعدّ كل تقنية اتطلبت في كام إعلان وبالنسبة. جرّبه على عيّنة الـ ٨ سطور دي الأول (بيانات متألّفة للتجربة بس، مش سوق حقيقي).`, done: R`السكربت بيطبع كل تقنية وعددها ونسبتها مترتبين، والتقنية اللي اتكررت في نفس الإعلان بتتعد مرة واحدة، وعندك ملف بإعلاناتك الحقيقية وناتجه.`, sol: R`~~~text jobs.csv
-title,city,stack
-Junior Frontend Developer,القاهرة,React;TypeScript;Tailwind
-Frontend Developer,الجيزة,Angular;RxJS;TypeScript
-Junior Web Developer,الإسكندرية,JavaScript;jQuery;PHP
-Frontend Engineer,القاهرة,React;Next.js
-Junior Frontend,المنصورة,Vue;Nuxt
-Web Developer,القاهرة,JavaScript;HTML;CSS
-Junior Angular Developer,القاهرة,Angular;TypeScript
-Frontend Intern,الجيزة,React;JavaScript
-~~~
-
-~~~js tally.mjs
-import { readFileSync } from "node:fs";
-const [header, ...lines] = readFileSync(process.argv[2], "utf8").trim().split(/\r?\n/);
-const stackCol = header.split(",").indexOf("stack");
-const counts = new Map();
-for (const line of lines) {
-  const stack = line.split(",")[stackCol].split(";");
-  for (const tech of new Set(stack)) counts.set(tech, (counts.get(tech) ?? 0) + 1);
-}
-const sorted = [...counts].sort((a, b) => b[1] - a[1]);
-console.log($__btإعلانات: $__{lines.length}$__bt);
-for (const [tech, n] of sorted) {
-  console.log(tech.padEnd(12), String(n).padStart(2), $__bt$__{Math.round((n / lines.length) * 100)}%$__bt);
-}
-~~~
-
-~~~text الناتج على العيّنة المتألّفة (Node 24.22): node tally.mjs jobs.csv
-إعلانات: 8
-React         3 38%
-TypeScript    3 38%
-JavaScript    3 38%
-Angular       2 25%
-Tailwind      1 13%
-RxJS          1 13%
-jQuery        1 13%
-PHP           1 13%
-Next.js       1 13%
-Vue           1 13%
-Nuxt          1 13%
-HTML          1 13%
-CSS           1 13%
-~~~
-
-- [[split(/\r?\n/)]]: بيقسم السطور سواء الملف اتحفظ على Windows ([[\r\n]]) أو لينكس.
-- [[header.split(",").indexOf("stack")]]: بيلاقي عمود الـ stack بالاسم مش بالرقم، فلو زوّدت عمود مش هيبوظ.
-- [[new Set(stack)]]: لو الإعلان كاتب React مرتين بيتعد مرة.
-- **حدود الطريقة:** ٢٠ إعلان عيّنة صغيرة، وإعلانات الموقع الواحد مش كل السوق، والإعلان مش بيقول الشركة هتعيّن كام. بس ده رقم **انت** عارف جه منين، أحسن من «٩٠٪ من الشغل React» من غير مصدر.
-- والأرقام دي متألّفة للتجربة، فمتستنتجش منها أي حاجة عن السوق الحقيقي.` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`لما تعرف بالظبط الفريمورك بيحل إيه، بتعرف تتعلمه أسرع (كل ميزة فيه رد على مشكلة شفتها بإيدك) وتعرف إمتى متستخدموش. وفي الانترفيو «ليه React؟» الإجابة الكويسة مش «لأنه مشهور»، لكن «الشاشة بقت دالة من الحالة، فباجات النسيان دي بتختفي، والـ components بتتكرر، والفريق بيشتغل بطريقة واحدة».`,
-            how: R`**state → UI:** الفكرة اللي React سمّاها UI = f(state): انت بتكتب دالة بتحوّل البيانات لشكل الشاشة، والفريمورك بيناديها كل ما البيانات تتغير. الفرق بينه وبين [[render()]] بتاعنا: بدل ما يمسح ويرسم بـ [[innerHTML]]، بيقارن الشكل الجديد بالقديم (virtual DOM في React و Preact) أو بيعرف من وقت الـ compile أنهي حتة بتعتمد على أنهي متغير (Svelte، و signals في Vue و Angular)، ويغيّر اللي اتغير بس. فالـ focus والـ cursor في الـ inputs والـ scroll بيفضلوا مكانهم.
-
-**routing:** بيربط الـ URL بالشاشة، ويسمع على [[popstate]]، ويحمّل كود الشاشة لما تحتاجها (code splitting).
-
-**components:** كل جزء ليه state وشكل لوحده، وبيتكرر بـ props مختلفة.`,
-            when: R`فكّر في framework لما: شاشات كتير بتتنقل بينها، أو حالة بتتعرض في كذا مكان وبتتغير كتير (سلة، dashboard، chat)، أو فريق أكتر من شخص محتاج طريقة واحدة، أو الشغل اللي بتقدّم عليه بيطلب واحد معين. ولما تختار تتعلم أنهي: عدّ الإعلانات في مدينتك (التمرين الأخير)، مش الترند.`,
-            mistakes: R`تتعلم framework قبل ما تعرف DOM و events و async: كل حاجة هتبان سحر. وتصدّق رقم «الأكتر طلبًا» من غير مصدر ولا تاريخ. وتقرا تحميلات npm على إنها عدد مطورين. وتستخدم framework وتعدّل الـ DOM بإيدك من وراه، فالشاشة والحالة يختلفوا تاني. وتفتكر إن الفريمورك بيحل الـ accessibility لوحده (درس «إمتى framework غلط»).`
-          },
-          teach: R`## الفكرة
-
-سلة مطعم فيها نفس المعلومة في ٣ أماكن: رقم فوق، ولستة، وإجمالي. هنكتبها مرة بالطريقة «العادية» ونقيس الباج، ومرة بطريقة الفريموركات (الشاشة دالة من الحالة) من غير أي مكتبة. وبعدين نشوف الفريمورك بيزوّد إيه فوق ده، ونقرا أرقام السوق من مصادرها. الصفحات اتجرّبت في Chrome 157.
-
----
-
-## ١. الطريقة العادية: كل حدث بيحدّث الأماكن بإيده
-
-النسخة اللي في التمرين الأول: [[count]] و [[total]] متغيرين، وكل زرار بيحدّث [[#badge]] و [[#total]] ويزوّد أو يشيل [[li]]. ضغطتين على «+ كشري» وبعدين «شيل»:
-
-~~~text اللي اتقاس
-badge=2 items=1 total=45
-~~~
-
-الشاشة بتكذب: الرقم ٢ والسلة فيها واحد. مش باج «صعب»، باج **نسيان**: listener الشيل نسي يحدّث [[count]]. وكل ميزة جديدة = أماكن أكتر تنساها.
-
----
-
-## ٢. الشاشة دالة من الحالة
-
-~~~live 300 cart.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>السلة: نفس الحالة في ٣ أماكن</title>
-<style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
-  header { display: flex; justify-content: space-between; background: #f3f4f6; padding: 8px 12px; border-radius: 8px; }
-  li { display: flex; gap: 8px; align-items: center; margin-block: 4px; }
-  button { font: inherit; }
-  .empty { color: #777; }
-</style>
-</head>
-<body>
-<header><strong>مطعم سُفرة</strong><span>السلة: <b id="badge">0</b></span></header>
-<p><button type="button" data-add="كشري" data-price="45">+ كشري ٤٥</button> <button type="button" data-add="فول" data-price="20">+ فول ٢٠</button></p>
-<ul id="list"></ul>
-<p>الإجمالي: <b id="total">0</b> جنيه</p>
-<button type="button" id="pay">ادفع</button>
-<script>
-  const state = { items: [] };
-  function render() {
-    const { items } = state;
-    document.querySelector("#badge").textContent = items.length;
-    document.querySelector("#list").innerHTML = items.length
-      ? items.map((it, i) => $__bt<li>$__{it.name} $__{it.price} <button type="button" data-remove="$__{i}">شيل</button></li>$__bt).join("")
-      : $__bt<li class="empty">السلة فاضية</li>$__bt;
-    document.querySelector("#total").textContent = items.reduce((sum, it) => sum + it.price, 0);
-    document.querySelector("#pay").disabled = items.length === 0;
-  }
-  function setState(change) {
-    change(state);
-    render();
-  }
-  document.addEventListener("click", (e) => {
-    const add = e.target.closest("[data-add]");
-    if (add) setState((s) => s.items.push({ name: add.dataset.add, price: Number(add.dataset.price) }));
-    const remove = e.target.closest("[data-remove]");
-    if (remove) setState((s) => s.items.splice(Number(remove.dataset.remove), 1));
-  });
-  render();
-</script>
-</body>
-</html>
-~~~
-
-نفكه:
-
-~~~text cart.html
-const state = { items: [] };
-~~~
-
-**الحالة في مكان واحد بس.** مفيش [[count]] ولا [[total]]: الاتنين محسوبين من [[items]] وقت الرسم.
-
-~~~text cart.html
-function render() {
-  const { items } = state;
-  document.querySelector("#badge").textContent = items.length;
-~~~
-
-[[render]] بتكتب **كل** حاجة على الشاشة من [[state]]: الرقم من [[items.length]]، واللستة من [[items.map]]، والإجمالي من [[items.reduce]]، و «ادفع» مقفول لو [[items.length === 0]]. مفيش «زوّد واحد» و «انقص واحد».
-
-~~~text cart.html
-function setState(change) {
-  change(state);
-  render();
-}
-~~~
-
-الطريق **الوحيد** لتغيير الحالة: [[setState]] بتاخد دالة بتعدّل، وبعدها بترسم على طول. فمستحيل تغيّر الحالة وتنسى الشاشة.
-
-~~~text اللي اتقاس (كشري وفول وبعدين «شيل» على الكشري)
-render: badge=1 items=فول 20 شيل total=20 pay.disabled=false
-empty: السلة فاضية pay.disabled=true
-~~~
-
-> الأسماء والأسعار هنا جاية من [[data-add]] احنا كاتبينه، فـ [[innerHTML]] أمان. لو الاسم جاي من اليوزر لازم تهرّبه الأول (درس «innerHTML هي الباب»). والفريموركات بتهرّب لوحدها.
-
----
-
-## ٣. الفريمورك بيزوّد إيه فوق [[render]] بتاعنا
-
-| المشكلة | [[render]] بتاعنا | الفريمورك |
-|---|---|---|
-| تحديث الشاشة من الحالة | بنرسم اللستة كلها بـ [[innerHTML]] | بيغيّر اللي اتغير بس (virtual DOM أو signals أو compiler)، فالـ focus والكتابة في الـ inputs مبيضيعوش |
-| الأمان | لازم تهرّب بإيدك | [[{name}]] في JSX أو [[{{ name }}]] في Vue بيتهرّب لوحده |
-| الأجزاء اللي بتتكرر | دوال زي [[createCounter]] بإيدك | components بـ props و state و lifecycle |
-| الشاشات | [[hashchange]] و [[pushState]] بإيدك | router بـ links و params وتحميل كود الشاشة لما تحتاجها |
-| الأدوات | Console | devtools بتوريك الحالة والـ components، وأدوات اختبار، و SSR |
-| الفريق | كل واحد بطريقته | طريقة واحدة ووثائق واحدة، وأي حد جديد بيفهم المشروع |
-
-كل سطر في الجدول ده ممكن تكتبه بنفسك، وده بالظبط «الوقت اللي بيتوفّر»: الفريمورك هو الكود ده مكتوب ومختبر ومتوثّق.
-
----
-
-## ٤. السوق: الأرقام من مصادرها
-
-**استبيان Stack Overflow 2026** (قسم Technology، سؤال الـ web frameworks اللي اشتغلت بيها بجد السنة اللي فاتت). قريناه يوم ٢١ نوفمبر 2026 من [[survey.stackoverflow.co/2026/technology]]، وجاوب على السؤال 10,281 شخص:
-
-| التقنية | عدد اللي اختاروها | النسبة |
-|---|---|---|
-| Node.js | 4,769 | 46.4٪ |
-| React | 4,265 | 41.5٪ |
-| Next.js | 2,117 | 20.6٪ |
-| jQuery | 2,028 | 19.7٪ |
-| Vue.js | 1,773 | 17.2٪ |
-| Angular | 1,642 | 16.0٪ |
-| Svelte | 802 | 7.8٪ |
-
-بيقيس إيه: ناس **اختاروا يجاوبوا** على استبيان (مش كل المطورين)، وكل واحد بيختار أكتر من حاجة. مبيقيسش: الوظايف المتاحة ولا المرتبات في مدينتك. والسؤال بيخلط runtimes (Node) مع frameworks.
-
-**تحميلات npm** (التمرين التالت): React 275 مليون في أسبوع ١٣–١٩ نوفمبر 2026. بتقيس تنزيلات مش مطورين.
-
-**إعلانات الشغل في مدينتك** (التمرين الرابع): أقرب حاجة لسؤالك الحقيقي «أتعلم إيه عشان أشتغل». عدّها بنفسك.
-
-> متصدقش أي «X٪ من الوظايف بتطلب Y» من غير ما تعرف: مين قاس، وإمتى، وعلى كام عيّنة، وبيقيس إيه بالظبط.
-
----
-
-## الخلاصة
-
-| السؤال | الإجابة |
-|---|---|
-| الفريمورك بيوفّر إيه؟ | باجات النسيان (الشاشة دالة من الحالة)، والشاشات، والـ components، وطريقة واحدة للفريق |
-| أعمل ده من غير framework؟ | آه: حالة في مكان واحد + [[render]] + [[setState]]. كويس للصفحات الصغيرة |
-| أي framework السوق عايزه؟ | عدّ إعلانات مدينتك، واقرا الاستبيانات بمصدرها وتاريخها وعيّنتها |
-| تحميلات npm = عدد المطورين؟ | لأ: CI والـ dependencies بيتعدّوا، فهي مقياس انتشار مش طلب |`,
-          lines: [
-            R`الحالة كلها في object واحد: لستة الأصناف. مفيش متغير تاني لعدد أو لإجمالي.`,
-            R`[[render]] الدالة الوحيدة اللي بتكتب على الشاشة، وكل حاجة فيها محسوبة من [[state]].`,
-            R`destructuring بيطلّع [[items]] من [[state]] عشان السطور اللي تحت تبقى أقصر.`,
-            R`الرقم فوق محسوب من [[items.length]]، فمستحيل يختلف عن عدد الأصناف.`,
-            R`اللستة: لو فيه أصناف بنرسمها، وإلا سطر «السلة فاضية». والـ [[?]] ده الـ ternary operator.`,
-            R`كل صنف بيبقى [[li]] فيه زرار عليه [[data-remove]] برقم مكانه في الـ array عشان نعرف نشيله.`,
-            R`لو اللستة فاضية بنرسم سطر واحد بـ class [[empty]] بدل لستة فاضية مش مفهومة.`,
-            R`الإجمالي بـ [[reduce]]: بيبدأ من 0 ويجمع سعر كل صنف، ومحسوب كل مرة مش متخزّن.`,
-            R`زرار الدفع بيتقفل لوحده لما السلة فاضية، من نفس الحالة.`,
-            R`قفلة [[render]]. أي حاجة جديدة تتعرض على الشاشة مكانها هنا بس.`,
-            R`[[setState]] الطريق الوحيد لتغيير الحالة: بتاخد دالة بتعدّل [[state]].`,
-            R`بتنادي الدالة اللي اتبعتت وبتديها الحالة تعدّل فيها.`,
-            R`وبعدين بترسم على طول، فمفيش تغيير في الحالة من غير ما الشاشة تتحدّث.`,
-            R`قفلة [[setState]]. كده الحالة والشاشة مربوطين في مكانين بس.`,
-            R`listener واحد على الصفحة كلها بيمسك أي ضغطة (event delegation).`,
-            R`[[closest("[data-add]")]] بيشوف الضغطة كانت على زرار إضافة ولا لأ.`,
-            R`لو آه: صنف جديد بالاسم والسعر من الـ [[data-*]]، و [[Number]] بيحوّل السعر من نص لرقم.`,
-            R`نفس الفكرة لزرار «شيل»: بيدوّر على أقرب عنصر عليه [[data-remove]].`,
-            R`[[splice(index, 1)]] بيشيل صنف واحد من مكانه، و [[setState]] بيرسم الباقي.`,
-            R`قفلة الـ listener. الأحداث بتغيّر الحالة بس، ومبتلمسش الشاشة خالص.`,
-            R`أول رسم وقت فتح الصفحة، عشان «السلة فاضية» و «ادفع» المقفول يبانوا من الأول.`,
-          ],
-          ref: [
-            { t: "MDN Curriculum: JavaScript fundamentals (6.14 Libraries and frameworks)", url: "https://developer.mozilla.org/en-US/curriculum/core/javascript-fundamentals/" },
-            { t: "MDN: Introduction to client-side frameworks", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Frameworks_libraries/Introduction" },
-            { t: "MDN: Framework main features", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Frameworks_libraries/Main_features" },
-            { t: "Stack Overflow Developer Survey 2026: Technology", url: "https://survey.stackoverflow.co/2026/technology" },
-            { t: "npm registry: download counts API", url: "https://github.com/npm/registry/blob/main/docs/download-counts.md" },
-          ],
-          pre: [{ to: "js/الـ DOM مش مكان الحالة", why: R`نفس فكرة «الحالة في مكان واحد» من أول مرة` }, { to: "react/UI = f(state)", why: R`نفس الفكرة جوه React بالتفصيل` }, { to: "js/innerHTML هي الباب", why: R`ليه [[innerHTML]] بأسماء جاية من اليوزر خطر` }],
-        },
-        {
-          cmd: "إمتى framework غلط: الحجم والصيانة والـ accessibility",
-          title: "إمتى الفريمورك اختيار غلط: نفس العدّاد بـ ٧ طرق متقاس بالبايت، والتحديثات الكبيرة، والـ SPA اللي بيتوّه قارئ الشاشة",
-          desc: R`الفريمورك مش ببلاش. ٦ أسباب ممكن تخليه اختيار غلط:
-• **overkill:** صفحة فيها فورم وعدّاد مش محتاجة نظام كامل.
-• **حجم الـ JavaScript:** كل زائر بينزّل الفريمورك ويشغّله قبل ما الصفحة تشتغل. قسناها: نفس العدّاد ٢٧١ بايت vanilla و ٦٩ KB بـ React (بعد gzip).
-• **وقت التعلم:** كل فريمورك ليه مفاهيمه وأدواته فوق JavaScript.
-• **كود موجود مش متوافق:** موقع قديم بـ jQuery أو plugins بتعدّل الـ DOM بنفسها، والفريمورك عايز يبقى هو المسيطر على الـ DOM.
-• **التحديثات:** كل major version فيها breaking changes ووقت migration. Angular بينزّل major كل ٦ شهور تقريبًا.
-• **الـ accessibility في الـ SPA:** لما الشاشة تتغير من غير reload، المتصفح مبيعملش اللي بيعمله لوحده في الصفحات العادية: الـ focus بيفضل مكانه، وقارئ الشاشة مبيقولش حاجة، والعنوان مبيتغيرش، إلا لو انت (أو الـ router) عملتهم.`,
-          example: R`// يبني كل ملف في bundle واحد مصغّر (production) ويقيس حجمه خام وبعد gzip
-import { build } from "esbuild";
-import { gzipSync } from "node:zlib";
-for (const file of process.argv.slice(2)) {
-  const out = await build({
-    entryPoints: [file], bundle: true, minify: true, write: false,
-    format: "esm", platform: "browser", logLevel: "silent",
-    conditions: ["production"], jsx: "automatic",
-    jsxImportSource: file.includes("preact") ? "preact" : "react",
-    define: {
-      "process.env.NODE_ENV": '"production"',
-      __VUE_OPTIONS_API__: "false",
-      __VUE_PROD_DEVTOOLS__: "false",
-      __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: "false",
-    },
-  });
-  const code = out.outputFiles[0].contents;
-  const gz = gzipSync(code, { level: 9 }).length;
-  console.log(file.padEnd(16), String(code.length).padStart(7), "B", String(gz).padStart(7), "B gzip");
-}`,
-          try: R`في فولدر تجربة: [[npm init -y]] و [[npm install esbuild preact]]، واحفظ السكربت كـ [[measure.mjs]] (الامتداد [[.mjs]] بيخلي [[import]] يشتغل من غير [["type": "module"]]). اكتب عدّاد vanilla في [[vanilla.js]] وعدّاد Preact في [[preact.jsx]] (الاتنين في الشرح)، وشغّل [[node measure.mjs vanilla.js preact.jsx]].`,
-          sol: R`~~~text الناتج (Node 24.22، esbuild 0.28.2، preact 11.2.0)
-vanilla.js           378 B     271 B gzip
-preact.jsx         13716 B    5843 B gzip
-~~~
-
-Preact من أصغر الفريموركات، ومع ذلك الصفحة بقت أكبر ٢١ مرة بعد gzip. ده مش غلط في Preact: ده تمن الـ diffing والـ hooks والـ components اللي العدّاد ده مش محتاجهم. باقي الأرقام (Vue و Svelte و React) في الشرح.`,
-          practice: [
-            { lvl: 'سريع', t: R`**احسب:** لو الزائر على اتصال 1.6 ميجابت في الثانية، كل نسخة من العدّاد محتاجة قد إيه عشان تتنزّل بس (من غير parse ولا تشغيل)؟ استخدم أرقام الـ gzip اللي في الشرح، واكتب الحساب بـ Node.`, done: R`عندك جدول بـ ٦ أرقام بالملي ثانية، وعارف إن ده حساب للتنزيل بس، والـ parse والتشغيل وقت زيادة فوقه.`, sol: R`~~~bash
-node -e 'const kb={vanilla:271,lit:3477,preact:5843,svelte:22671,vue:23064,react:69209};for(const [k,b] of Object.entries(kb))console.log(k.padEnd(8),(b*8/1.6e6*1000).toFixed(1)+" ms")'
-~~~
-
-~~~text الناتج
-vanilla  1.4 ms
-lit      17.4 ms
-preact   29.2 ms
-svelte   113.4 ms
-vue      115.3 ms
-react    346.0 ms
-~~~
-
-- [[b * 8]]: البايت = ٨ bits، والسرعة بالـ bits. و [[/ 1.6e6]]: 1.6 مليون bit في الثانية. و [[* 1000]]: من ثانية لملي ثانية.
-- ده **حساب**، مش قياس على موبايل حقيقي. وفوقه: الـ latency (كل طلب بياخد رحلة للسيرفر ويرجع)، ووقت الـ parse والـ compile والتشغيل على موبايل ضعيف، وده بيبان في Performance tab في DevTools.
-- و 69 KB مش نهاية الدنيا لتطبيق كبير بيتفتح كل يوم. المشكلة لما يبقى ده تمن **عدّاد** أو صفحة هبوط محتاج تفتح بسرعة على 3G.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** اكتب سكربت بيجيب من الـ registry تاريخ أول نسخة من كل major ([[16.0.0]] و [[17.0.0]]…) لأي package، وشغّله على [[react]] و [[@angular/core]] و [[vue]]. وبعدين احسب: لو بنيت مشروع على Angular 18 في مايو 2024، كام major نزل لحد النهارده؟`, done: R`السكربت بيطبع آخر ٥ majors بتواريخهم لكل package، وعرفت إن Angular نزل ٤ majors بعد 18 لحد نوفمبر 2026.`, sol: R`~~~js majors.mjs
-const name = process.argv[2] ?? "react";
-const res = await fetch($__bthttps://registry.npmjs.org/$__{name.replace("/", "%2F")}$__bt);
-if (!res.ok) throw new Error($__bt$__{name}: HTTP $__{res.status}$__bt);
-const { time } = await res.json();
-const firsts = [];
-for (const [version, date] of Object.entries(time)) {
-  const m = /^([1-9]\d*)\.0\.0$/.exec(version);
-  if (m) firsts.push([Number(m[1]), date.slice(0, 10)]);
-}
-firsts.sort((a, b) => a[0] - b[0]);
-console.log($__bt$__{name}: آخر $__{Math.min(5, firsts.length)} نسخ major$__bt);
-for (const [major, date] of firsts.slice(-5)) console.log($__bt  $__{String(major).padStart(3)}.0.0  $__{date}$__bt);
-~~~
-
-~~~text الناتج (Node 24.22، يوم 21 نوفمبر 2026)
-react: آخر 5 نسخ major
-   15.0.0  2016-04-07
-   16.0.0  2017-09-26
-   17.0.0  2020-10-20
-   18.0.0  2022-03-29
-   19.0.0  2024-12-05
-@angular/core: آخر 5 نسخ major
-   18.0.0  2024-05-22
-   19.0.0  2024-11-19
-   20.0.0  2025-05-28
-   21.0.0  2025-11-19
-   22.0.0  2026-06-03
-vue: آخر 3 نسخ major
-    1.0.0  2015-10-27
-    2.0.0  2016-09-30
-    3.0.0  2020-09-18
-~~~
-
-- [[name.replace("/", "%2F")]]: الـ scoped packages ([[@angular/core]]) لازم الـ [[/]] يتكتب [[%2F]] في URL الـ registry.
-- [[doc.time]]: object فيه تاريخ نشر كل نسخة. والـ regex [[/^([1-9]\d*)\.0\.0$/]] بياخد النسخ اللي على شكل [[X.0.0]] بس ومن غير [[0.0.0]].
-- **Angular 18 (مايو 2024) → 22 (يونيو 2026):** ٤ majors في سنتين، كل ٦ شهور تقريبًا، وكل واحدة ليها migration guide و [[ng update]]. **React:** ٥ majors في ٨ سنين ونص، بس 18 → 19 غيّر حاجات كتير. **Vue 2 → 3:** أربع سنين، وكانت إعادة كتابة كبيرة لكتير من المشاريع.
-- **أول نسخة مختلفتش:** جرّبنا الأول بـ [[child_process]] و [[npm view]]، وطلع تحذير [[DEP0190]] من Node 24 عن [[shell: true]] مع arguments. الـ [[fetch]] للـ registry على طول أبسط ومن غير shell.` },
-            { lvl: 'تطبيق', t: R`**صلّح الـ SPA:** الصفحة دي بتغيّر الشاشة بـ [[hashchange]] وبس. افتحها، دوس [[Tab]] لحد «المنيو» ودوس [[Enter]]. الـ focus فين؟ العنوان اتغير؟ قارئ الشاشة هيقول إيه؟ صلّح التلاتة.`, done: R`بعد الضغط الـ focus على عنوان الشاشة الجديدة ([[H1]])، وعنوان التاب «المنيو | مطعم سُفرة»، وفيه [[aria-live]] بيقول «اتفتحت صفحة المنيو»، والـ back button بيرجّع للرئيسية وعنوانها.`, sol: R`**قبل التصليح** (نفس الصفحة من غير سطور العنوان والـ focus والإعلان)، اتجرّب في Chrome 157:
-
-~~~text اللي اتقاس
-broken: title=الرئيسية | مطعم سُفرة | focus=A:المنيو | h1=المنيو | live=""
-~~~
-
-الشاشة بقت «المنيو» بس العنوان لسه «الرئيسية»، والـ focus لسه على اللينك فوق، وقارئ الشاشة مقالش أي حاجة. اللي بيستخدم الكيبورد لازم يدوس [[Tab]] من الأول لحد المحتوى الجديد، واللي مبيشوفش ميعرفش إن حاجة اتغيرت أصلًا.
-
-**بعد التصليح:**
-
-~~~live 260 index.html
+~~~view 330 مهامي
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>الرئيسية | مطعم سُفرة</title>
+<title>مهامي</title>
 <style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
-  nav a { margin-inline-end: 12px; }
-  h1:focus { outline: 3px solid #2563eb; outline-offset: 4px; }
-  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  #log { font-size: 13px; color: #555; }
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; max-width: 480px; }
+  nav a { margin-inline-end: 8px; }
+  nav a[aria-current="page"] { font-weight: 700; text-decoration: none; }
+  form { display: flex; gap: 6px; margin-block: 12px; }
+  input, button { font: inherit; padding: 4px 8px; }
+  [aria-invalid="true"] { border: 2px solid #b91c1c; }
+  .err { color: #b91c1c; font-size: 14px; display: block; min-height: 1.4em; }
+  ul { list-style: none; padding: 0; }
+  li { display: flex; gap: 8px; align-items: center; padding: 4px 0; }
+  li span { flex: 1; }
+  .done { text-decoration: line-through; color: #6b7280; }
 </style>
 </head>
 <body>
-<nav aria-label="الصفحات">
-  <a href="#/">الرئيسية</a>
-  <a href="#/menu">المنيو</a>
-  <a href="#/contact">اتصل بينا</a>
+<h1>مهامي</h1>
+<form id="f" novalidate>
+  <input name="title" placeholder="مهمة جديدة" aria-label="مهمة جديدة" aria-describedby="err-title">
+  <button>ضيف</button>
+</form>
+<span class="err" id="err-title"></span>
+<nav aria-label="الفلتر">
+  <a href="#all" data-filter="all">الكل</a>
+  <a href="#active" data-filter="active">لسه</a>
+  <a href="#done" data-filter="done">خلصت</a>
 </nav>
-<main id="view"></main>
-<p id="announcer" class="sr-only" aria-live="polite"></p>
-<p id="log"></p>
-<script>
-  const pages = {
-    "/": { title: "الرئيسية", body: "أهلا بيك في سُفرة." },
-    "/menu": { title: "المنيو", body: "كشري ٤٥، فول ٢٠، شاي ١٠." },
-    "/contact": { title: "اتصل بينا", body: "كلمنا من ١٢ الضهر لـ ١٢ بالليل." },
-  };
-  const view = document.querySelector("#view");
-  const announcer = document.querySelector("#announcer");
-  function show(first) {
-    const path = location.hash.slice(1) || "/";
-    const page = pages[path] ?? { title: "مش موجودة", body: "الصفحة دي مش موجودة." };
-    view.innerHTML = $__bt<h1 tabindex="-1">$__{page.title}</h1><p>$__{page.body}</p>$__bt;
-    document.title = $__bt$__{page.title} | مطعم سُفرة$__bt;
-    if (!first) {
-      view.querySelector("h1").focus();
-      announcer.textContent = $__btاتفتحت صفحة $__{page.title}$__bt;
-    }
-    document.querySelector("#log").textContent = $__btfocus على: $__{document.activeElement.tagName}$__bt;
-  }
-  addEventListener("hashchange", () => show(false));
-  show(true);
+<ul id="list"></ul>
+<p id="empty">مفيش مهام هنا.</p>
+<p><span id="left"></span> <button id="clear" type="button">امسح اللي خلص</button></p>
+<script type="module">
+// storage.js: نفس ملف المصاريف بالظبط، غير إن فحص الصف بقى جاي من برّه
+const VERSION = 1;
+
+function load(key, isItem) {
+  let raw;
+  try { raw = localStorage.getItem(key); }
+  catch { return { items: [] }; }                  // بيانات المواقع مقفولة
+  if (!raw) return { items: [] };                  // أول زيارة
+
+  let data;
+  try { data = JSON.parse(raw); }
+  catch { console.warn('المحفوظ مش JSON'); return { items: [] }; }
+
+  if (data?.version !== VERSION) { console.warn('نسخة محفوظة قديمة (' + data?.version + ')'); return { items: [] }; }
+  if (!Array.isArray(data.items)) return { items: [] };
+
+  return { items: data.items.filter((it) => it && typeof it.id === 'string' && isItem(it)) };
+}
+
+function save(key, state) {
+  try { localStorage.setItem(key, JSON.stringify({ version: VERSION, items: state.items })); }
+  catch (e) { console.warn('مقدرناش نحفظ:', e.name); }   // QuotaExceededError
+}
+
+// validate.js: قواعد المهمة. بيرجّع أخطاء، مش بيرمي
+function validateTodo({ title }) {
+  const errors = {};
+  const t = (title ?? '').trim();
+  if (!t) errors.title = 'اكتب المهمة';
+  else if (t.length > 80) errors.title = 'المهمة طويلة أوي (٨٠ حرف بحد أقصى)';
+  return { ok: Object.keys(errors).length === 0, errors, value: { title: t } };
+}
+
+// شكل الصف المحفوظ: storage.js بيستخدمها من غير ما يعرف تفاصيلها
+const isTodo = (it) => typeof it.title === 'string' && it.title.trim() !== '' && typeof it.done === 'boolean';
+
+// state.js: مصدر الحقيقة، ومفيهوش ولا سطر عن الصفحة
+
+const KEY = 'todos';
+const listeners = new Set();
+let state = { ...load(KEY, isTodo), filter: 'all' };
+
+const get = () => state;
+const subscribe = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
+
+function set(next) {
+  state = next;
+  save(KEY, state);
+  listeners.forEach((fn) => fn(state));
+}
+
+// المشتق
+const visible = (s) =>
+  s.filter === 'active' ? s.items.filter((t) => !t.done)
+  : s.filter === 'done' ? s.items.filter((t) => t.done)
+  : s.items;
+const left = (s) => s.items.filter((t) => !t.done).length;
+
+function addTodo(input) {
+  const { ok, errors, value } = validateTodo(input);
+  if (!ok) return { ok, errors };
+  set({ ...state, items: [...state.items, { id: crypto.randomUUID(), title: value.title, done: false }] });
+  return { ok: true, errors: {} };
+}
+const toggle = (id) => set({ ...state, items: state.items.map((t) => (t.id === id ? { ...t, done: !t.done } : t)) });
+const remove = (id) => set({ ...state, items: state.items.filter((t) => t.id !== id) });
+const clearDone = () => set({ ...state, items: state.items.filter((t) => !t.done) });
+const setFilter = (filter) => set({ ...state, filter });
+
+// render.js: بيقرا الحالة وبيكتب الصفحة
+
+const $ = (sel) => document.querySelector(sel);
+
+function row(t) {
+  const li = document.createElement('li');
+  const box = document.createElement('input');
+  box.type = 'checkbox';
+  box.checked = t.done;
+  box.dataset.toggle = t.id;
+  box.setAttribute('aria-label', 'خلصت: ' + t.title);
+  const span = document.createElement('span');
+  span.textContent = t.title;
+  if (t.done) span.className = 'done';
+  const del = document.createElement('button');
+  del.textContent = '×';
+  del.dataset.del = t.id;
+  del.setAttribute('aria-label', 'امسح ' + t.title);
+  li.append(box, span, del);
+  return li;
+}
+
+function render(s, errors = {}) {
+  const shown = visible(s);
+  $('#list').replaceChildren(...shown.map(row));
+  $('#left').textContent = 'فاضل ' + left(s) + ' من ' + s.items.length;
+  $('#empty').hidden = shown.length > 0;
+  $('#clear').hidden = s.items.every((t) => !t.done);
+  document.querySelectorAll('[data-filter]').forEach((a) =>
+    a.setAttribute('aria-current', a.dataset.filter === s.filter ? 'page' : 'false'));
+  $('#err-title').textContent = errors.title ?? '';
+  if (errors.title) $('[name="title"]').setAttribute('aria-invalid', 'true');
+  else $('[name="title"]').removeAttribute('aria-invalid');
+}
+
+// app.js: التوصيل
+
+const FILTERS = new Set(['all', 'active', 'done']);
+const fromHash = () => (FILTERS.has(location.hash.slice(1)) ? location.hash.slice(1) : 'all');
+
+subscribe((s) => render(s));
+
+document.querySelector('#f').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const res = addTodo({ title: new FormData(e.target).get('title') });
+  if (res.ok) e.target.reset();
+  else render(get(), res.errors);
+});
+
+document.querySelector('#list').addEventListener('click', (e) => {
+  if (e.target.dataset.toggle) toggle(e.target.dataset.toggle);
+  if (e.target.dataset.del) remove(e.target.dataset.del);
+});
+document.querySelector('#clear').addEventListener('click', () => clearDone());
+
+document.querySelector('nav').addEventListener('click', (e) => {
+  const a = e.target.closest('a[data-filter]');
+  if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+  e.preventDefault();
+  location.hash = a.dataset.filter;
+});
+
+addEventListener('hashchange', () => setFilter(fromHash()));
+setFilter(fromHash());
 </script>
 </body>
 </html>
 ~~~
 
-~~~text اللي اتقاس (Chrome 157)
-بعد «المنيو»: title=المنيو | مطعم سُفرة، focus=H1:المنيو، announcer=اتفتحت صفحة المنيو
-بعد history.back(): hash=""، title=الرئيسية | مطعم سُفرة، focus على h1 «الرئيسية»
-بعد #/nope: title=مش موجودة | مطعم سُفرة
+**تشغيله على جهازك:** الملفات بتستورد بعض بـ [[type="module"]]، والمتصفح بيمنع ده من [[file://]] (هتلاقي في الـ Console خطأ CORS والصفحة فاضية). فبدل ما تفتح [[index.html]] بدبل كليك، شغّل سيرفر جوه الفولدر: [[npx serve]] أو [[python -m http.server 8000]]، وافتح الرابط اللي بيطبعه.
+
+**هتشوف إيه:** خانة مهمة وزرار «ضيف»، وكل مهمة بـ checkbox وزرار مسح، وفلتر «الكل / لسه / خلصت» في الرابط ([[#active]])، و «فاضل 2 من 3» محسوبة، وزرار «امسح اللي خلص» بيظهر بس لما فيه مهمة خلصت.
+
+~~~text الملفات
+todo-app/
+├── index.html
+├── app.js        الأحداث والرابط
+├── render.js     الشاشة
+├── state.js      المهام والعمليات (ولا سطر document)
+├── storage.js    نفس ملف المصاريف، والفحص جاي من برّه
+└── validate.js   قواعد المهمة + شكل الصف المحفوظ
 ~~~
 
-- [[document.title = ...]]: قارئ الشاشة والتاب والـ history كلهم بيقروا العنوان.
-- [[<h1 tabindex="-1">]] و [[.focus()]]: [[tabindex="-1"]] بيخلي العنوان يقبل focus من الكود من غير ما يدخل في ترتيب الـ [[Tab]]. والـ focus عليه = قارئ الشاشة بيقرا العنوان، والـ [[Tab]] الجاية تبدأ من المحتوى الجديد.
-- [[aria-live="polite"]]: أي نص يتكتب في العنصر ده بيتقري لما قارئ الشاشة يفضى. والـ class [[sr-only]] بيخفيه من الشاشة بس من غير ما يخفيه عن قارئ الشاشة (مش [[display: none]]).
-- [[if (!first)]]: أول تحميل المتصفح بيعمل الصح لوحده، فمنحركش الـ focus.
-- الـ back button شغال لوحده لأننا بنستخدم [[#]] و [[hashchange]]. مع [[pushState]] لازم تسمع على [[popstate]] (درس «pushState و popstate»).
-- **الفريمورك بيحل ده؟** بعض الـ routers بيعمله (Angular Router و SvelteKit و Next.js بيعلنوا تغيير الصفحة)، وبعضها لأ. اتأكد بنفس الاختبار: [[Tab]] و [[Enter]] وبص على [[document.activeElement]] والعنوان.` },
-            { lvl: 'تحدي', t: R`**قرر واكتب ليه:** لكل مشروع اختار vanilla ولا library ولا framework، وفي ٣ سطور ليه، بأرقام من الدرس: (١) صفحة هبوط لعيادة أسنان فيها فورم حجز. (٢) لوحة تحكم لمطعم فيها طلبات بتتحدّث كل دقيقة و ١٢ شاشة و ٣ مطورين. (٣) widget «احسب القسط» هيتحط في مواقع ناس تانية مبنية بأي حاجة.`, done: R`كل قرار فيه رقم (حجم أو عدد شاشات أو فريق) وسبب واحد على الأقل من الـ ٦ أسباب، ومفيش «لأنه مشهور».`, sol: R`| المشروع | القرار | ليه |
-|---|---|---|
-| صفحة هبوط لعيادة | vanilla (و HTML و CSS) | محتوى ثابت وفورم واحد. الـ JS اللي محتاجه (validation و [[fetch]]) أقل من ١ KB، والصفحة لازم تفتح بسرعة على موبايل من إعلان. React هنا ٦٩ KB عشان فورم = overkill. الـ accessibility بتاعة الفورم من HTML نفسه |
-| لوحة تحكم المطعم | framework (React أو Vue أو Angular حسب الفريق) | حالة بتتعرض في كذا مكان وبتتغير كل دقيقة (درس «ليه frameworks»)، و ١٢ شاشة محتاجة router، و ٣ مطورين محتاجين طريقة واحدة. الـ ٦٩ KB بتتنزّل مرة وتتكاش، والناس بتفتحها كل يوم. واختار الفريمورك اللي الفريق يعرفه |
-| widget في مواقع تانية | Web Component vanilla أو library صغيرة | الموقع اللي هيتحط فيه ممكن يكون فيه React بنسخة تانية أو Angular أو jQuery: framework جوه framework = تعارض ونسختين. Custom element شغال في أي مكان، وصغير (اتعامل معاه زي التوولتيب: أقل من ١ KB بإيدك) |
+## أول حاجة حصلت: [[storage.js]] منقلش «زي ما هو»
 
-**الغلطة الشائعة:** تختار نفس الأداة لكل حاجة لأنها اللي بتعرفها. السؤال الصح: الصفحة دي بتعمل إيه، ومين بيفتحها وعلى إيه، ومين هيصونها بعد سنة.` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`أغلب الكلام عن الفريموركات مدح. بس كل dependency ليها تمن بيدفعه كل زائر (بايتات ووقت تشغيل) وكل مطور بعدك (تحديثات ومفاهيم). المحترف بيعرف يقول «مش محتاجين framework هنا» ويثبت ده برقم، أو يقول «محتاجينه» وهو عارف هيدفع إيه.`,
-            how: R`**الحجم:** الـ bundler بيضم كود الفريمورك اللي استخدمته (أو اللي مقدرش يثبت إنه مش مستخدم). React بتجيب [[react-dom]] كله تقريبًا مهما كان التطبيق صغير، و Svelte بيحوّل الـ component لكود عادي بس فيه runtime برضه، و Preact معمول صغير من الأساس. والمتصفح لازم ينزّل الـ JS ويعمله parse و compile وينفّذه قبل ما الزرار يشتغل.
+نقلت [[storage.js]] بتاع المصاريف وغيّرت [[KEY]] بس لـ [[todos]]. والمهام **اختفت بعد كل reload**:
 
-**التحديثات:** semver: الـ major معناها «فيه حاجات اتكسرت». الفريموركات بتدعم كل major فترة محددة (Angular بينشر جدول دعم لكل نسخة)، وبعدها مفيش security fixes. فالمشروع لازم يتحدّث، وكل تحديث شغل.
-
-**الـ SPA:** في صفحة عادية، كل لينك = صفحة جديدة: المتصفح بيصفّر الـ focus، وقارئ الشاشة بيقرا العنوان الجديد. في SPA الـ JS بيبدّل المحتوى، فالمتصفح مش عارف إن «صفحة» اتغيرت. لازم الكود (أو الـ router) يعمل ٣ حاجات: العنوان، والـ focus، والإعلان.`,
-            when: R`اسأل قبل ما تبدأ: (١) فيه حالة بتتغير وبتتعرض في كذا مكان؟ (٢) فيه شاشات كتير؟ (٣) الفريق كام واحد وبيعرف إيه؟ (٤) الصفحة لازم تفتح بسرعة على موبايل ضعيف أو من محرك بحث؟ (٥) هيتحط جوه موقع تاني؟ (٦) مين هيحدّثه بعد سنتين؟ لو (١) و (٢) لأ: غالبًا vanilla أو HTML بس. ولو (٤) آه مع framework: SSR أو static generation (Next.js و Astro و SvelteKit).`,
-            mistakes: R`تقيس الحجم من [[npm view dist.unpackedSize]] (ده حجم الـ package على الديسك، مش اللي بيتنزّل للزائر): قيس الـ bundle. وتقيس بنسخة development (React dev أكبر بكتير). وتفتكر إن الـ router بيعمل الـ accessibility لوحده من غير ما تختبر بالكيبورد. وتسيب مشروع على major قديم لحد ما الدعم يخلص. وتحط framework جوه widget بيتحط في مواقع غيرك.`
-          },
-          teach: R`## الفكرة
-
-نفس العدّاد بالظبط (زرار ورقم) اتكتب ٧ مرات، واتبنى بنفس الأداة ونفس الإعدادات، واتقاس بالبايت. وبعدين بنشوف التحديثات الكبيرة بتواريخها من الـ registry، والـ accessibility في الـ SPA متقاسة في المتصفح. الكل اتعمل يوم ٢١ نوفمبر 2026 بـ Node 24.22 و esbuild 0.28.2، والصفحات في Chrome 157.
-
----
-
-## ١. سكربت القياس
-
-ده المثال. بيبني كل ملف بـ esbuild في bundle واحد للمتصفح ويقيسه:
-
-~~~text measure.mjs
-const out = await build({
-  entryPoints: [file], bundle: true, minify: true, write: false,
-  format: "esm", platform: "browser", logLevel: "silent",
+~~~text الناتج (Node 24.22، storage.js بتاع المصاريف و KEY = 'todos')
+المحفوظ: 2 مهمة
+بعد load: 0 مهمة
 ~~~
 
-- [[bundle: true]]: يضم الملف وكل اللي عمله [[import]] (من [[node_modules]] كمان) في ملف واحد، زي ما Vite بيعمل في الـ build.
-- [[minify: true]]: يشيل المسافات ويقصّر الأسماء: ده اللي بيتنزّل في production.
-- [[write: false]]: ميكتبش ملف، يرجّع الناتج في الذاكرة ([[out.outputFiles]]).
+السبب في آخر سطر في [[load]]: [[Number.isFinite(it.amount)]]. المهمة مفيهاش [[amount]]، فكل صف اتشال كأنه بايظ، **من غير ولا تحذير**. يعني [[storage.js]] كان فاكر إنه «عام» وهو في الحقيقة عارف شكل بند المصاريف.
 
-~~~text measure.mjs
-  conditions: ["production"], jsx: "automatic",
-  jsxImportSource: file.includes("preact") ? "preact" : "react",
-  define: {
-    "process.env.NODE_ENV": '"production"',
-    __VUE_OPTIONS_API__: "false",
-~~~
+**الإصلاح:** الفحص يتبعت لـ [[load]] من برّه. [[storage.js]] يفحص الحاجات العامة (JSON، النسخة، مصفوفة، [[id]] نص)، وكل تطبيق يدّيله [[isItem]] بتاعه. ودلوقتي الملف ده **نفسه** ينفع للمصاريف ([[load('masareef', isExpense)]]) وللمهام من غير ولا تعديل:
 
-- [[conditions: ["production"]]] و [[process.env.NODE_ENV]]: الـ packages بتختار نسخة production (من غير رسايل التطوير). من غيرهم React بتطلع أكبر بكتير، والمقارنة تبقى ظالمة.
-- [[jsx: "automatic"]]: يحوّل JSX لنداءات [[jsx()]] من [[preact]] أو [[react]] حسب اسم الملف.
-- أعلام Vue ([[__VUE_OPTIONS_API__]] وغيره): نفس اللي Vite بيحطه لما تقول إنك مش محتاج Options API والـ devtools.
+~~~js storage.js
+// storage.js: نفس ملف المصاريف بالظبط، غير إن فحص الصف بقى جاي من برّه
+const VERSION = 1;
 
-~~~text measure.mjs
-  const code = out.outputFiles[0].contents;
-  const gz = gzipSync(code, { level: 9 }).length;
-~~~
+export function load(key, isItem) {
+  let raw;
+  try { raw = localStorage.getItem(key); }
+  catch { return { items: [] }; }                  // بيانات المواقع مقفولة
+  if (!raw) return { items: [] };                  // أول زيارة
 
-[[contents]] بايتات الملف، و [[gzipSync]] (من [[node:zlib]]) بيضغطها زي ما السيرفر بيعمل قبل ما يبعت. **الـ gzip هو اللي بيعدّي على الشبكة فعلًا.**
+  let data;
+  try { data = JSON.parse(raw); }
+  catch { console.warn('المحفوظ مش JSON'); return { items: [] }; }
 
----
+  if (data?.version !== VERSION) { console.warn('نسخة محفوظة قديمة (' + data?.version + ')'); return { items: [] }; }
+  if (!Array.isArray(data.items)) return { items: [] };
 
-## ٢. النتيجة: ٧ عدّادات
-
-كل نسخة اتجرّبت في Chrome (٣ ضغطات = [[3]]). الكود: vanilla و lit-html والـ mini framework و Preact في درس «library ولا framework»، والباقي هنا:
-
-~~~jsx react.jsx
-import { useState } from "react";
-import { createRoot } from "react-dom/client";
-function Counter() {
-  const [count, setCount] = useState(0);
-  return <button type="button" onClick={() => setCount(count + 1)}>دوسات: <output>{count}</output></button>;
+  return { items: data.items.filter((it) => it && typeof it.id === 'string' && isItem(it)) };
 }
-createRoot(document.querySelector("#app")).render(<Counter />);
-~~~
 
-~~~js vue.js
-import { createApp, ref, h } from "vue";
-createApp({
-  setup() {
-    const count = ref(0);
-    return () => h("button", { type: "button", onClick: () => count.value++ }, ["دوسات: ", h("output", count.value)]);
-  },
-}).mount("#app");
-~~~
-
-~~~text Counter.svelte
-<script>
-  let count = $state(0);
-</script>
-<button type="button" onclick={() => count++}>دوسات: <output>{count}</output></button>
-~~~
-
-~~~text الناتج: node measure.mjs vanilla.js minifw.js lit.js preact.jsx svelte-main.js vue.js react.jsx
-vanilla.js           378 B     271 B gzip
-minifw.js            500 B     357 B gzip
-lit.js              7595 B    3477 B gzip
-preact.jsx         13716 B    5843 B gzip
-svelte-main.js     60322 B   22671 B gzip
-vue.js             57382 B   23064 B gzip
-react.jsx         223683 B   69209 B gzip
-~~~
-
-| النسخة (النسخة بتاعتها) | بعد gzip | قد vanilla كام مرة |
-|---|---|---|
-| vanilla | ٢٧١ بايت | ١ |
-| lit-html 3.3.3 | ٣٫٤ KB | ١٣ |
-| Preact 11.2.0 | ٥٫٧ KB | ٢٢ |
-| Svelte 5.59.1 | ٢٢٫١ KB | ٨٤ |
-| Vue 3.5.46 | ٢٢٫٥ KB | ٨٥ |
-| React 19.3.1 (react-dom) | ٦٧٫٦ KB | ٢٥٥ |
-
-**اقرا الأرقام صح:**
-- ده **أقل** حجم لكل فريمورك (التمن الثابت). التطبيق لما يكبر، كودك بيزيد بس الفريمورك مبيزيدش، فالفرق بالنسبة بيقل.
-- Svelte اتعمله compile بـ [[svelte/compiler]] وبعدين bundle بـ esbuild. بـ Vite والـ plugin الرسمي ممكن الرقم يختلف شوية، احنا قسنا بـ esbuild بس.
-- ده تنزيل بس. الـ parse والتشغيل على موبايل ضعيف بيزوّدوا (Performance tab في DevTools، درس «Performance و Coverage»).
-
----
-
-## ٣. باقي الأسباب
-
-**overkill:** لو الصفحة فيها فورم وعدّاد، كل اللي الفريمورك بيقدّمه (diffing و router و components) مش هيتستخدم، والزائر بيدفع تمنه.
-
-**وقت التعلم:** فوق JavaScript، كل فريمورك ليه مفاهيمه: JSX و hooks وقواعدها في React، والـ templates والـ directives والـ reactivity في Vue، والـ DI والـ decorators والـ signals و RxJS في Angular، والـ runes ([[$state]]) في Svelte 5. والفريق كله لازم يتعلمها.
-
-**كود موجود مش متوافق:** React بتفترض إنها لوحدها اللي بتغيّر الـ DOM جوه الـ root بتاعها. لو plugin قديم (jQuery مثلًا) غيّر نفس العناصر، React مش هتعرف والشاشة تتلخبط. الحل غالبًا Web Components في النص (درس «Web Components في React و Vue») أو تحويل تدريجي جزء جزء.
-
-**التحديثات:** من الـ registry (التمرين التاني):
-
-| الفريمورك | آخر majors |
-|---|---|
-| React | 16 (سبتمبر 2017)، 17 (أكتوبر 2020)، 18 (مارس 2022)، 19 (ديسمبر 2024) |
-| Angular | 18 (مايو 2024)، 19 (نوفمبر 2024)، 20 (مايو 2025)، 21 (نوفمبر 2025)، 22 (يونيو 2026) |
-| Vue | 2 (سبتمبر 2016)، 3 (سبتمبر 2020) |
-
-كل major = اقرا الـ migration guide، وحدّث المكتبات اللي حواليها، واختبر. ومكتبة صغيرة زي dayjs لسه على 1.x من 2018.
-
----
-
-## ٤. الـ accessibility في الـ SPA
-
-صفحة بـ ٣ «شاشات» بتتبدّل بـ [[hashchange]] و [[innerHTML]]، من غير أي حاجة زيادة. focus على لينك «المنيو» و [[Enter]]:
-
-~~~text اللي اتقاس (Chrome 157)
-broken: title=الرئيسية | مطعم سُفرة | focus=A:المنيو | h1=المنيو | live=""
-~~~
-
-| المشكلة | في صفحة عادية | في الـ SPA دي |
-|---|---|---|
-| العنوان | بيتغير مع كل صفحة | فضل «الرئيسية» والمحتوى «المنيو» |
-| الـ focus | بيرجع لأول الصفحة الجديدة | فضل على اللينك فوق |
-| قارئ الشاشة | بيقرا عنوان الصفحة الجديدة | ساكت |
-| الـ back button | شغال | شغال هنا عشان [[#]]، ومع [[pushState]] محتاج [[popstate]] |
-
-التصليح ٣ سطور (العنوان، و [[focus()]] على الـ [[h1]]، و [[aria-live]])، والصفحة كاملة في التمرين التالت.
-
----
-
-## الخلاصة
-
-| السبب | تعرفه إزاي |
-|---|---|
-| overkill | الصفحة فيها حالة بتتغير وشاشات كتير؟ لو لأ، مش محتاج |
-| الحجم | قيس الـ bundle بعد gzip في production، مش [[unpackedSize]] |
-| وقت التعلم | الفريق يعرف إيه، وهيتعلم إيه، وفي قد إيه |
-| كود موجود | فيه حاجة تانية بتعدّل نفس الـ DOM؟ |
-| التحديثات | تواريخ الـ majors وجدول الدعم الرسمي |
-| الـ SPA | [[Tab]] و [[Enter]] وبص على [[document.activeElement]] والعنوان |`,
-          lines: [
-            R`[[import { build }]] بيجيب دالة البناء من esbuild اللي متسطب في المشروع بـ [[npm install esbuild]].`,
-            R`[[gzipSync]] من [[node:zlib]] الجاهز في Node، بيضغط البايتات زي السيرفر بالظبط.`,
-            R`بنلف على كل اسم ملف اتكتب بعد اسم السكربت في الترمنال ([[process.argv.slice(2)]]).`,
-            R`[[await build(...)]] بيبني الملف ويستنى لحد ما يخلص، والناتج في [[out]].`,
-            R`[[bundle]] يضم كل الـ imports، و [[minify]] يصغّر، و [[write: false]] يخلي الناتج في الذاكرة.`,
-            R`[[format: "esm"]] و [[platform: "browser"]]: ملف module للمتصفح، و [[logLevel: "silent"]] من غير رسايل.`,
-            R`[[conditions: ["production"]]] بيختار نسخ production من الـ packages، و [[jsx: "automatic"]] بيحوّل JSX.`,
-            R`لو اسم الملف فيه [[preact]] الـ JSX يتحوّل لنداءات Preact، وإلا React.`,
-            R`[[define]] بيبدّل أسماء في الكود بقيم ثابتة وقت البناء، والكود اللي مش هيتنفّذ بيتشال.`,
-            R`[[process.env.NODE_ENV]] بـ [["production"]]: React وغيرها بيشيلوا رسايل وفحوصات التطوير.`,
-            R`[[__VUE_OPTIONS_API__]] بـ false: Vue يشيل الـ Options API اللي العدّاد مش بيستخدمها.`,
-            R`[[__VUE_PROD_DEVTOOLS__]] بـ false: من غير دعم الـ devtools في production، زي الافتراضي في Vite.`,
-            R`نفس الحاجة لرسايل تفاصيل الـ hydration، عشان نقيس النسخة اللي فعلًا بتروح للزائر.`,
-            R`قفلة الـ [[define]]. كده الإعدادات زي build حقيقي لـ production.`,
-            R`قفلة إعدادات [[build]] والنداء نفسه، و [[await]] استنى لحد ما البناء خلص.`,
-            R`[[outputFiles[0].contents]] بايتات الملف المبني (Uint8Array) من غير ما يتكتب على الديسك.`,
-            R`[[gzipSync(code, { level: 9 })]] أقوى ضغط، و [[.length]] حجمه بالبايت: ده اللي بيعدّي على الشبكة.`,
-            R`بنطبع اسم الملف وحجمه خام وبعد gzip، و [[padStart]] بيرصّ الأرقام يمين في عمود.`,
-            R`قفلة الـ loop. كل ملف اتبعت بيطلع في سطر لوحده.`,
-          ],
-          ref: [
-            { t: "MDN Curriculum: JavaScript fundamentals (6.14 Libraries and frameworks)", url: "https://developer.mozilla.org/en-US/curriculum/core/javascript-fundamentals/" },
-            { t: "MDN: Introduction to client-side frameworks", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Frameworks_libraries/Introduction" },
-            { t: "esbuild: API", url: "https://esbuild.github.io/api/" },
-            { t: "web.dev: Rendering on the Web", url: "https://web.dev/articles/rendering-on-the-web" },
-            { t: "MDN: aria-live", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-live" },
-            { t: "MDN: SPA (Single-page application)", url: "https://developer.mozilla.org/en-US/docs/Glossary/SPA" },
-          ],
-          pre: [{ to: "js/pushState و popstate", why: R`الـ routing بالـ History API و [[popstate]] للـ back button` }, { to: "web/Performance و Coverage", why: R`تقيس وقت تحميل وتشغيل الـ JS نفسه، مش حجمه بس` }, { to: "js/Web Components في React و Vue", why: R`إزاي component يشتغل جوه أي framework أو من غيره` }],
-        },
-        {
-          cmd: "تختار dependency وتفحصها: npm view و audit",
-          title: "تختار مكتبة وتفحصها قبل ما تدخل مشروعك: بتحل مشكلتك؟ متصانة؟ رخصتها؟ حجمها؟ آمنة؟ بأوامر npm حقيقية",
-          desc: R`أي dependency بتدخل مشروعك بقت كودك انت: باجاتها باجاتك، وثغراتها ثغراتك. فقبل [[npm install]] اسأل ٥ أسئلة، وكل سؤال ليه أمر:
-• **بتحل مشكلتك، والمكسب أكبر من التمن؟** قيس الحجم في الـ bundle وقارنه بالحل بإيدك (درس «كود غيرك»).
-• **ليها مجتمع ودعم؟** التحميلات، والـ issues، والوثائق.
-• **متصانة؟** آخر نسخة نزلت إمتى: [[npm view <pkg> "time[<version>]"]]، مش [[time.modified]]. و [[deprecated]].
-• **رخصتها تسمح؟** [[npm view <pkg> license]]: MIT و ISC و Apache-2.0 و BSD سهلين، و GPL ليها شروط، ومن غير رخصة = مش من حقك.
-• **آمنة؟** [[npm audit]] للثغرات المعروفة، و [[npm audit signatures]] للتوقيعات، و [[npm install-scripts ls]] للسكربتات اللي بتشتغل وقت التسطيب، والاسم مكتوب صح (typosquatting)، والـ lockfile و [[npm ci]] عشان كل الأجهزة تاخد نفس النسخ.`,
-          example: R`npm view dayjs version license time.modified
-npm view dayjs "time[1.11.23]" dist.unpackedSize
-npm view left-pad deprecated
-npm view "lodash@~4.17.20" version
-npm ls
-npm audit
-npm audit signatures
-npm install-scripts ls
-npm ci --strict-allow-scripts`,
-          try: R`اعمل فولدر [[shop-api]] و [[npm init -y]]، وشغّل الـ ٤ سطور الأولانيين (مش محتاجين تسطيب). وبعدين [[npm install lodash@4.17.20 dayjs --save-exact]] و [[npm install esbuild --save-dev]] وكمّل باقي الأوامر بالترتيب. لما [[npm audit]] يقولك high: صلّحها، وشغّله تاني لحد ما يقول [[found 0 vulnerabilities]].`,
-          sol: R`الناتج الكامل لكل أمر في الشرح خطوة بخطوة تحت (npm 11.19.1، يوم ٢١ نوفمبر 2026). الخلاصة:
-
-| الأمر | قال إيه |
-|---|---|
-| [[npm view dayjs version license time.modified]] | [[1.11.23]] و [[MIT]] و [[2026-08-17]] |
-| [[npm view left-pad deprecated]] | [[use String.prototype.padStart()]] |
-| [[npm audit]] (مع lodash 4.17.20) | [[1 high severity vulnerability]]، ٤ advisories، و exit code [[1]] |
-| [[npm install lodash@4.18.1 --save-exact]] ثم [[npm audit]] | [[found 0 vulnerabilities]] و exit code [[0]] |
-| [[npm install-scripts ls]] | [[esbuild@0.28.2 (postinstall: node install.js)]] |
-| [[npm ci --strict-allow-scripts]] بعد [[approve]] | [[added 4 packages]] و [[found 0 vulnerabilities]] |`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا البطاقة:** شغّل [[npm view chart.js version license time.modified dist.unpackedSize dependencies repository.url]] و [[npm view chart.js "time[4.6.1]"]]، وجاوب: آخر نسخة نزلت إمتى؟ معتمدة على كام package؟ و [[unpackedSize]] ده هو اللي هيتنزّل للزائر؟`, done: R`جاوبت التلاتة من الناتج، وعارف إن ٦ ميجا دي حجم الـ package على الديسك مش حجم الـ bundle.`, sol: R`~~~text الناتج (npm 11.19.1، يوم 21 نوفمبر 2026)
-version = '4.6.1'
-license = 'MIT'
-time.modified = '2026-10-22T17:23:25.099Z'
-dist.unpackedSize = 6227928
-dependencies = { '@kurkle/color': '^0.3.0' }
-repository.url = 'git+https://github.com/chartjs/Chart.js.git'
-~~~
-
-~~~text npm view chart.js "time[4.6.1]"
-2026-10-22T17:23:24.755Z
-~~~
-
-- **آخر نسخة:** 4.6.1 يوم ٢٢ أكتوبر 2026، يعني متصانة. وهنا [[time.modified]] قريب من تاريخ النسخة، بس ده مش دايمًا (الشرح تحت: left-pad و lodash).
-- **الـ dependencies:** واحدة بس ([[@kurkle/color]])، وكل واحدة زيادة = كود تاني لازم تثق فيه.
-- **[[unpackedSize]] = ٦٫٢ MB:** ده كل الملفات اللي جوه الـ package (نسخ ESM و UMD و types و source maps). اللي بيتنزّل للزائر هو اللي الـ bundler بياخده بس، ولازم يتقاس بـ [[measure.mjs]] زي درس «إمتى framework غلط».
-- **المجتمع:** من [[api.npmjs.org]] نفس اليوم: 17,832,083 تحميلة في أسبوع ١٣–١٩ نوفمبر.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في [[package.json]] لو كاتب [["lodash": "^4.17.20"]] أو [["~4.17.20"]] أو [["4.17.20"]]، [[npm install]] على جهاز جديد (من غير lockfile) ممكن ينزّل أنهي نسخ؟ توقّع، وبعدين اسأل npm نفسه بـ [[npm view "lodash@<range>" version]].`, done: R`عارف إن [[^]] بيقبل 4.18.x و [[~]] بيقف عند 4.17.x والنسخة المتثبتة نسخة واحدة، وشفت ده من npm نفسه.`, sol: R`~~~text npm view "lodash@^4.17.20" version
-lodash@4.17.20 '4.17.20'
-lodash@4.17.21 '4.17.21'
-lodash@4.17.23 '4.17.23'
-lodash@4.18.0 '4.18.0'
-lodash@4.18.1 '4.18.1'
-~~~
-
-~~~text npm view "lodash@~4.17.20" version
-lodash@4.17.20 '4.17.20'
-lodash@4.17.21 '4.17.21'
-lodash@4.17.23 '4.17.23'
-~~~
-
-| الـ range | معناه | هينزّل (يوم ٢١ نوفمبر 2026) |
-|---|---|---|
-| [[^4.17.20]] | أي نسخة 4.x من 4.17.20 وطالع (minor و patch) | 4.18.1 |
-| [[~4.17.20]] | 4.17.x بس (patch بس) | 4.17.23 |
-| [[4.17.20]] | النسخة دي بالظبط | 4.17.20 |
-
-- [[npm install]] بيختار **أعلى** نسخة بتطابق. فـ [[^]] (الافتراضي) بيجيب تحديثات تلقائي، وده كويس للأمان وخطر لو المكتبة كسرت حاجة في minor.
-- **الـ lockfile هو اللي بيثبّت فعلًا:** لو [[package-lock.json]] موجود، [[npm ci]] بينزّل النسخة المكتوبة فيه بالظبط مهما كان الـ range. فالـ range بيأثر لما تعمل [[npm install]] أو [[npm update]].
-- لاحظ إن lodash 4.17.22 مش في اللستة: النسخة دي مش موجودة في الـ registry، والـ ranges بتتحسب على النسخ الموجودة بس.` },
-            { lvl: 'تطبيق', t: R`**لاب الثغرات:** في [[shop-api]] سطّب [[lodash@4.17.20]] بالظبط، وشغّل [[npm audit]] واقرا التقرير: كام ثغرة؟ وأخطرها إيه؟ والحل اللي مقترح ليه بيقول [[--force]]؟ صلّحها من غير [[--force]]، وتأكد بـ [[npm audit]] و [[echo $?]].`, done: R`التقرير قبل فيه ٤ advisories على lodash بـ high و exit code 1، وبعد التحديث [[found 0 vulnerabilities]] و exit code 0، وعارف ليه npm مرضيش يحدّث لوحده.`, sol: R`~~~text npm audit (lodash 4.17.20)
-# npm audit report
-
-lodash  <=4.17.23
-Severity: high
-Command Injection in lodash - https://github.com/advisories/GHSA-35jh-r3h4-6jhm
-Regular Expression Denial of Service (ReDoS) in lodash - https://github.com/advisories/GHSA-29mw-wpgm-hmr9
-lodash vulnerable to Code Injection via $__bt_.template$__bt imports key names - https://github.com/advisories/GHSA-r5fr-rjxr-66jc
-Lodash has Prototype Pollution Vulnerability in $__bt_.unset$__bt, $__bt_.omit$__bt, and $__bt_.pullAt$__bt functions - https://github.com/advisories/GHSA-xxjr-mmjv-4gpg
-fix available via $__btnpm audit fix --force$__bt
-Will install lodash@4.18.1, which is outside the stated dependency range
-node_modules/lodash
-
-1 high severity vulnerability
-
-To address all issues, run:
-  npm audit fix --force
-~~~
-
-- [[lodash  <=4.17.23]]: كل النسخ لحد 4.17.23 متأثرة. و [[Severity: high]] أعلى درجة في التقرير ده.
-- كل سطر advisory ليه لينك GHSA (GitHub Security Advisory) فيه التفاصيل وأنهي دوال متأثرة. **اقرا اللينك:** لو مشروعك مش بيستخدم [[_.template]] ولا [[_.unset]]، الخطر الفعلي أقل، بس التحديث برضه الصح.
-- **ليه [[--force]]؟** احنا كاتبين [["lodash": "4.17.20"]] بالظبط ([[--save-exact]])، والتصليح في 4.18.1 «برّه الـ range». npm مش هيغيّر قرارك من غير ما تقوله. [[--force]] بيغيّر أي حاجة لأي نسخة، حتى لو major، فمتستخدموش وانت مش شايف هيغيّر إيه.
-- **التصليح الصح:** حدّث المكتبة دي بالاسم، واختبر:
-
-~~~bash
-npm install lodash@4.18.1 --save-exact
-npm audit
-echo $?
-~~~
-
-~~~text الناتج
-changed 1 package, and audited 5 packages in 2s
-
-found 0 vulnerabilities
-found 0 vulnerabilities
-0
-~~~
-
-- [[echo $?]] (في bash، و [[$LASTEXITCODE]] في PowerShell): [[npm audit]] بيرجّع [[1]] لو فيه ثغرات و [[0]] لو مفيش، فتقدر تحطه في CI يوقف الـ build. و [[npm audit --audit-level=critical]] بيرجّع 0 هنا (جرّبناها) لأن الثغرة high مش critical: اختار المستوى اللي يوقف الـ CI بوعي.` },
-            { lvl: 'تطبيق', t: R`**لاب الـ install scripts:** اعمل package صغيرة فيها [[postinstall]] بيكتب ملف [[POSTINSTALL-RAN.txt]]، واعملها [[npm pack]]، وسطّبها في فولدر تاني ٣ مرات: عادي، و [[--ignore-scripts]]، و [[--strict-allow-scripts]]. الملف بيتعمل في أنهي مرة؟`, done: R`الملف اتعمل في التسطيب العادي (و npm طبّع تحذير بس)، ومتعملش مع [[--ignore-scripts]]، و [[--strict-allow-scripts]] وقف التسطيب كله بـ [[ESTRICTALLOWSCRIPTS]].`, sol: R`~~~json scripty/package.json
-{ "name": "scripty-demo", "version": "1.0.0", "scripts": { "postinstall": "node -e \"require('fs').writeFileSync(require('path').join(process.env.INIT_CWD,'POSTINSTALL-RAN.txt'),'yes')\"" } }
-~~~
-
-~~~bash
-cd scripty
-npm pack
-cd ../consumer
-npm init -y
-npm install ../scripty/scripty-demo-1.0.0.tgz
-ls
-~~~
-
-~~~text الناتج (npm 11.19.1)
-added 1 package, and audited 2 packages in 1s
-
-found 0 vulnerabilities
-npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
-npm warn install-scripts   scripty-demo@1.0.0 (postinstall: node -e "require('fs').writeFileSync(require('path').join(process.env.INIT_CWD,'POSTINSTALL-RAN.txt'),'yes')")
-POSTINSTALL-RAN.txt
-node_modules
-package-lock.json
-package.json
-~~~
-
-**السكربت اشتغل.** npm 11.19 بيحذّر بس، لكن الكود اتنفّذ على جهازك بصلاحياتك. أي package (أو أي package جواها) تقدر تعمل كده: تقرا ملفاتك أو [[.env]] أو تبعتهم.
-
-~~~text npm install ../scripty/scripty-demo-1.0.0.tgz --ignore-scripts  ثم ls
-node_modules
-package-lock.json
-package.json
-~~~
-
-~~~text npm install ../scripty/scripty-demo-1.0.0.tgz --strict-allow-scripts
-npm error code ESTRICTALLOWSCRIPTS
-npm error --strict-allow-scripts: 1 package(s) have install scripts not covered by allowScripts:
-npm error   scripty-demo@1.0.0 (postinstall: node -e "require('fs').writeFileSync(require('path').join(process.env.INIT_CWD,'POSTINSTALL-RAN.txt'),'yes')")
-npm error Approve them with $__btnpm install-scripts approve$__bt, deny them with $__btnpm install-scripts deny$__bt, or bypass this check with $__bt--dangerously-allow-all-scripts$__bt.
-~~~
-
-| الطريقة | السكربت بيشتغل؟ | إمتى |
-|---|---|---|
-| عادي | آه، مع تحذير | لما تكون قريت السكربتات ([[npm install-scripts ls]]) |
-| [[--ignore-scripts]] | لأ، لأي package | تسطيب أول مرة لحاجة مش واثق فيها. بس packages زي esbuild ممكن تحتاج السكربت عشان تشتغل صح |
-| [[--strict-allow-scripts]] | بيوقف لو فيه سكربت مش موافق عليه | في CI: أي package جديدة بسكربت توقف الـ build لحد ما حد يراجعها |
-
-والموافقة: [[npm install-scripts approve esbuild]] بتكتب [[ "allowScripts": { "esbuild@0.28.2": true } ]] في [[package.json]]، **بالنسخة**. لو esbuild اتحدّث، لازم توافق تاني (ده [[allow-scripts-pin = true]] في الإعدادات الافتراضية). وفي pnpm نفس الفكرة اسمها [[pnpm approve-builds]].` },
-            { lvl: 'تحدي', t: R`**typosquatting:** حد كتب [[npm install loadsh]] بدل [[lodash]]. من غير ما تسطّب حاجة، قارن الاتنين بـ [[npm view <pkg> version time.created repository.url homepage]] وبالتحميلات من [[api.npmjs.org]]. إيه اللي يكشف إن [[loadsh]] مش هي؟ وإيه اللي **ميكشفش**؟`, done: R`عندك جدول مقارنة بالأرقام، وعارف إن [[repository.url]] و [[homepage]] ممكن يتكتبوا أي حاجة ومش دليل، وإن الدليل هو التحميلات وتاريخ الإنشاء والنسخ.`, sol: R`~~~bash
-npm view lodash version time.created repository.url
-npm view loadsh name version description time.created repository.url homepage
-curl -s https://api.npmjs.org/downloads/point/last-week/lodash
-curl -s https://api.npmjs.org/downloads/point/last-week/loadsh
-npm view dayjss
-~~~
-
-~~~text الناتج (يوم 21 نوفمبر 2026)
-version = '4.18.1'
-time.created = '2012-04-23T16:37:11.912Z'
-repository.url = 'git+https://github.com/lodash/lodash.git'
-
-name = 'loadsh'
-version = '0.0.4'
-description = 'Lodash modular utilities.'
-time.created = '2018-09-13T06:41:39.649Z'
-repository.url = 'git+https://github.com/lodash/lodash.git'
-homepage = 'https://lodash.com/'
-
-{"downloads":211691463,"start":"2026-11-13","end":"2026-11-19","package":"lodash"}
-{"downloads":14147,"start":"2026-11-13","end":"2026-11-19","package":"loadsh"}
-
-npm error code E404
-npm error 404 Not Found - GET https://registry.npmjs.org/dayjss - Not found
-~~~
-
-| | lodash | loadsh |
-|---|---|---|
-| اتعملت | ٢٠١٢ | ٢٠١٨ (بعد ٦ سنين) |
-| آخر نسخة | 4.18.1 | 0.0.4 |
-| تحميلات الأسبوع | 211,691,463 | 14,147 |
-| repository و homepage | lodash | **نفس لينكات lodash بالظبط** |
-
-- **اللي ميكشفش:** الوصف والـ [[repository.url]] والـ [[homepage]] نص بيكتبه صاحب الـ package، ومحدش بيتأكد منه. [[loadsh]] كاتبة لينكات lodash.
-- **اللي بيكشف:** الفرق في التحميلات (١٥٠٠٠ مرة تقريبًا)، وتاريخ الإنشاء، ورقم النسخة. واحنا مش بنقول إن [[loadsh]] فيها كود ضار (مش فحصناها ومش هنسطّبها)، بس هي **مش** lodash، وده كفاية.
-- **[[dayjss]]:** [[E404]]، مفيش package بالاسم ده دلوقتي. بس أي حد يقدر ينشرها بكرة. الأسماء القريبة من المشهورة هي بالظبط اللي الناس بتسجّلها عشان تصطاد غلطات الكتابة.
-- **الحماية:** انسخ اسم الـ package من الوثائق الرسمية بتاعتها مش من الذاكرة، وبص على [[package.json]] في الـ diff قبل الـ merge، و [[npm ci]] من lockfile في CI عشان محدش يسطّب حاجة جديدة من غير مراجعة.` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`في npm، المشروع الصغير بيسحب عشرات أو مئات packages (كل dependency ليها dependencies). أي واحدة فيهم ممكن تبقى مهجورة، أو فيها ثغرة، أو اتسرقت (حد خد حساب صاحبها ونشر نسخة ضارة)، أو اسمها شبه حاجة مشهورة. والأوامر دي كلها مجانية وبتاخد دقيقة، وبتوفّر عليك تقرير أمني أو مشروع واقف على مكتبة محدش بيصلّحها.`,
-            how: R`[[npm view]] بيقرا الـ packument (الملف اللي فيه كل حاجة عن الـ package) من [[registry.npmjs.org]]: النسخ وتواريخها ([[time]])، والـ dist-tags، ولكل نسخة الـ [[license]] و [[scripts]] و [[dist.unpackedSize]] و [[deprecated]]. **[[time.modified]] = آخر تعديل في الـ packument نفسه** (تغيير maintainers أو dist-tag أو deprecate)، مش آخر نسخة: left-pad آخر نسخة 2018 و [[time.modified]] بتاعها نوفمبر 2026.
-
-[[npm audit]] بيبعت شجرة الـ dependencies من الـ lockfile لقاعدة GitHub Advisory Database ويرجّع الثغرات المعروفة. [[npm audit signatures]] بيتأكد إن كل tarball متوقّع من الـ registry، وإن فيه provenance attestations (إثبات إن النسخة اتبنت من repo معين في CI).
-
-الـ lockfile فيه لكل package [[version]] و [[resolved]] (من فين) و [[integrity]] (sha512 للـ tarball)، فـ [[npm ci]] بينزّل نفس البايتات بالظبط وبيرفض لو [[package.json]] مختلف عنه.`,
-            when: R`قبل أي dependency جديدة: [[npm view]] (النسخة والتاريخ والرخصة و [[deprecated]] و [[scripts]])، والتحميلات، وصفحة الـ repo (آخر commit، والـ issues المفتوحة، وفيه حد بيرد؟). وبعد التسطيب: [[npm audit]] و [[npm install-scripts ls]]. وفي CI: [[npm ci]] و [[npm audit --audit-level=high]] و [[--strict-allow-scripts]]. وكل شهر: [[npm outdated]].`,
-            mistakes: R`تقرا [[time.modified]] على إنه آخر نسخة. و [[npm audit fix --force]] من غير ما تقرا هيغيّر إيه (ممكن يرفع major). وتتجاهل [[npm audit]] عشان «كله high». وتكتب اسم الـ package من الذاكرة. وتمسح [[package-lock.json]] لما يعمل conflict بدل ما تحلّه. وتقيس الحجم بـ [[unpackedSize]]. وتعتمد على package آخر نسخة ليها من ٥ سنين لحاجة أمنية (تشفير، أو auth، أو parsing).`
-          },
-          teach: R`## الفكرة
-
-مشروع API صغير اسمه [[shop-api]] محتاج مكتبتين. هنمشي على أسئلة الاختيار واحد واحد، ولكل سؤال أمر وناتجه الحقيقي. الكل اتشغّل بـ npm 11.19.1 و Node 24.22 على Windows يوم ٢١ نوفمبر 2026 (الأرقام والتواريخ بتتغير مع الوقت، فشغّلها انت وقارن).
-
----
-
-## ١. البطاقة: نسخة ورخصة وتاريخ
-
-~~~bash
-npm view dayjs version license time.modified
-~~~
-
-~~~text الناتج
-version = '1.11.23'
-license = 'MIT'
-time.modified = '2026-08-17T11:52:35.546Z'
-~~~
-
-- [[npm view <pkg> <field>...]]: بيقرا من الـ registry من غير تسطيب. أي حقل في الـ packument تقدر تسأل عنه.
-- [[license = 'MIT']]: تقدر تستخدمها في أي مشروع، تجاري أو لأ، بشرط تسيب نص الرخصة.
-
-**فخ [[time.modified]]:**
-
-~~~bash
-npm view dayjs "time[1.11.23]" dist.unpackedSize
-npm view left-pad deprecated
-~~~
-
-~~~text الناتج
-time[1.11.23] = '2026-08-17T11:52:35.217Z'
-dist.unpackedSize = 681693
-use String.prototype.padStart()
-~~~
-
-- [["time[1.11.23]"]]: تاريخ نشر النسخة دي بالظبط. ده اللي بيقولك «متصانة ولا لأ». في dayjs التاريخين قريبين.
-- بس [[left-pad]]: آخر نسخة 1.3.0 يوم ٩ أبريل 2018، و [[time.modified]] بتاعها ١٨ نوفمبر 2026. و [[lodash]]: آخر نسخة 4.18.1 يوم ١ أبريل 2026، و [[time.modified]] ٢١ نوفمبر 2026. يعني [[modified]] بيتغير مع أي تعديل في البيانات، مش مع نسخة جديدة.
-- [[deprecated]]: صاحب الـ package بنفسه بيقولك «متستخدمهاش»، وغالبًا بيقولك البديل: [[String.prototype.padStart()]] جوه اللغة.
-
----
-
-## ٢. الـ ranges: إيه اللي هيتسطب فعلًا
-
-~~~bash
-npm view "lodash@~4.17.20" version
-~~~
-
-~~~text الناتج
-lodash@4.17.20 '4.17.20'
-lodash@4.17.21 '4.17.21'
-lodash@4.17.23 '4.17.23'
-~~~
-
-[[npm view "<pkg>@<range>" version]] بيوريك كل النسخ اللي الـ range ده يقبلها. [[~]] = patch بس، و [[^]] (الافتراضي في [[npm install]]) = minor و patch. التفاصيل في التمرين التاني.
-
----
-
-## ٣. التسطيب والشجرة
-
-~~~bash
-npm install lodash@4.17.20 dayjs --save-exact
-npm install esbuild --save-dev
-npm ls
-~~~
-
-~~~text الناتج
-added 2 packages, and audited 3 packages in 2s
-
-1 high severity vulnerability
-...
-shop-api@1.0.0
-+-- dayjs@1.11.23
-+-- esbuild@0.28.2
-$__bt-- lodash@4.17.20
-~~~
-
-- [[--save-exact]]: بيكتب [["4.17.20"]] من غير [[^]] في [[package.json]]. اخترناه عشان نجبر النسخة القديمة في اللاب.
-- [[--save-dev]]: esbuild أداة build، مش محتاجينها في production، فبتروح [[devDependencies]].
-- npm قالك على الثغرة **وقت التسطيب** نفسه. متتجاهلهاش.
-- [[npm ls]]: الشجرة. [[npm ls --all]] بيوريك dependencies الـ dependencies، و [[npm explain lodash]] بيقولك مين جاب package معينة.
-
----
-
-## ٤. الأمان: الثغرات والتوقيعات
-
-~~~bash
-npm audit
-~~~
-
-~~~text الناتج (أوله)
-lodash  <=4.17.23
-Severity: high
-...
-fix available via $__btnpm audit fix --force$__bt
-Will install lodash@4.18.1, which is outside the stated dependency range
-~~~
-
-التقرير كامل وطريقة التصليح في التمرين التالت. وبعد [[npm install lodash@4.18.1 --save-exact]]: [[found 0 vulnerabilities]].
-
-~~~bash
-npm audit signatures
-~~~
-
-~~~text الناتج
-audited 4 packages in 1s
-
-4 packages have verified registry signatures
-
-3 packages have verified attestations
-~~~
-
-- **registry signatures:** الـ tarball اللي نزل هو اللي الـ registry وقّعه، محدش غيّره في السكة.
-- **attestations (provenance):** ٣ من الـ ٤ ليهم إثبات إنهم اتبنوا من repo معين في CI. ده بيصعّب إن حد يسرق حساب صاحب الـ package وينشر نسخة من جهازه.
-
----
-
-## ٥. الأمان: السكربتات اللي بتشتغل وقت التسطيب
-
-~~~bash
-npm install-scripts ls
-~~~
-
-~~~text الناتج
-1 package has install scripts not yet covered by allowScripts:
-  esbuild@0.28.2 (postinstall: node install.js)
-
-Run $__btnpm install-scripts approve <pkg>$__bt to allow, or $__btnpm install-scripts deny <pkg>$__bt to deny.
-~~~
-
-[[postinstall]] = أمر بيشتغل على جهازك بعد التسطيب على طول. esbuild بيستخدمه يتأكد إن الـ binary بتاع نظامك موجود. في npm 11.19 السكربتات **لسه بتشتغل** (مع تحذير)، وده اتقاس في التمرين الرابع. فاقراها، ووافق على اللي فاهمه:
-
-~~~bash
-npm install-scripts approve esbuild
-npm ci --strict-allow-scripts
-~~~
-
-~~~text الناتج
-Approved esbuild:
-  added esbuild@0.28.2
-
-added 4 packages, and audited 5 packages in 2s
-
-found 0 vulnerabilities
-~~~
-
----
-
-## ٦. الـ lockfile و [[npm ci]]
-
-[[package-lock.json]] فيه لكل package النسخة والمصدر والبصمة:
-
-~~~text package-lock.json
-"node_modules/lodash": {
-  "version": "4.18.1",
-  "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.18.1.tgz",
-  "integrity": "sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==",
-  "license": "MIT"
+export function save(key, state) {
+  try { localStorage.setItem(key, JSON.stringify({ version: VERSION, items: state.items })); }
+  catch (e) { console.warn('مقدرناش نحفظ:', e.name); }   // QuotaExceededError
 }
 ~~~
 
-[[npm ci]] بيمسح [[node_modules]] ويسطّب من الـ lockfile بالظبط، وبيرفض لو [[package.json]] مختلف عنه. جرّبنا نغيّر dayjs في [[package.json]] لـ [[1.11.22]] من غير ما نحدّث الـ lockfile:
-
-~~~text الناتج
-npm error code EUSAGE
-npm error
-npm error $__btnpm ci$__bt can only install packages when your package.json and package-lock.json or npm-shrinkwrap.json are in sync. Please update your lock file with $__btnpm install$__bt before continuing.
-npm error
-npm error Invalid: lock file's dayjs@1.11.23 does not satisfy dayjs@1.11.22
-~~~
-
----
-
-## ٧. الأسئلة الخمسة في جدول
-
-| السؤال | الأمر | الإشارة الحمرا |
-|---|---|---|
-| بتحل مشكلتي، والمكسب أكبر؟ | [[measure.mjs]] على الـ bundle، وقارن بالحل بإيدك | ١٠ KB عشان حاجة في المنصة أصلًا |
-| ليها مجتمع ودعم؟ | [[api.npmjs.org/downloads]]، وصفحة الـ issues في الـ repo | تحميلات قليلة جدًا، و issues محدش بيرد عليها |
-| متصانة؟ | [[npm view <pkg> "time[<version>]" deprecated]] | آخر نسخة من سنين، أو [[deprecated]] |
-| رخصتها؟ | [[npm view <pkg> license]] | مفيش رخصة، أو GPL في مشروع مقفول من غير مراجعة |
-| آمنة؟ | [[npm audit]] و [[npm audit signatures]] و [[npm install-scripts ls]] | ثغرات high، أو سكربت تثبيت مش فاهمه، أو اسم شبه مكتبة مشهورة |
-
----
-
-## الخلاصة
-
-- آخر نسخة نزلت إمتى = [[time[<latest>]]]، مش [[time.modified]].
-- [[npm audit fix --force]] ممكن يغيّر major: حدّث بالاسم واختبر.
-- npm 11.19 بيشغّل install scripts مع تحذير: [[npm install-scripts ls]] و [[--strict-allow-scripts]] في CI.
-- الـ lockfile في Git، و [[npm ci]] في CI والسيرفر.`,
-          lines: [
-            R`[[npm view]] بيقرا من الـ registry من غير تسطيب: آخر نسخة، والرخصة، وآخر تعديل في بيانات الـ package.`,
-            R`[["time[1.11.23]"]] تاريخ نشر النسخة دي بالظبط، و [[dist.unpackedSize]] حجمها على الديسك (مش في الـ bundle).`,
-            R`[[deprecated]] بيطبع رسالة صاحب الـ package لو قال «متستخدمهاش»، وغالبًا فيها البديل.`,
-            R`[[npm view "<pkg>@<range>"]] بيوريك كل النسخ اللي الـ range ده بيقبلها، قبل ما تكتبه في [[package.json]].`,
-            R`[[npm ls]] بيرسم شجرة الـ dependencies المتسطبة فعلًا بنسخها، و [[--all]] بيوريك اللي جواهم كمان.`,
-            R`[[npm audit]] بيقارن الشجرة بقاعدة الثغرات المعروفة، وبيرجّع exit code [[1]] لو لقى حاجة.`,
-            R`[[npm audit signatures]] بيتأكد إن الـ tarballs متوقّعة من الـ registry، وبيعدّ اللي ليها provenance.`,
-            R`[[npm install-scripts ls]] بيوريك أي package فيها [[preinstall]] أو [[postinstall]] ولسه محدش وافق عليها.`,
-            R`[[npm ci]] بيسطّب من الـ lockfile بالظبط، و [[--strict-allow-scripts]] بيوقف لو فيه سكربت مش موافق عليه.`,
-          ],
-          ref: [
-            { t: "MDN Curriculum: JavaScript fundamentals (6.14 Libraries and frameworks)", url: "https://developer.mozilla.org/en-US/curriculum/core/javascript-fundamentals/" },
-            { t: "npm Docs: npm view", url: "https://docs.npmjs.com/cli/v11/commands/npm-view/" },
-            { t: "npm Docs: npm audit", url: "https://docs.npmjs.com/cli/v11/commands/npm-audit/" },
-            { t: "npm Docs: npm install-scripts", url: "https://docs.npmjs.com/cli/v11/commands/npm-install-scripts/" },
-            { t: "npm Docs: npm ci", url: "https://docs.npmjs.com/cli/v11/commands/npm-ci/" },
-            { t: "npm Docs: About semantic versioning", url: "https://docs.npmjs.com/about-semantic-versioning/" },
-            { t: "npm Docs: Threats and mitigations", url: "https://docs.npmjs.com/threats-and-mitigations/" },
-            { t: "choosealicense.com: Licenses", url: "https://choosealicense.com/licenses/" },
-          ],
-          pre: [{ to: "node/outdated / update / audit", why: R`[[npm outdated]] و [[npm update]] و [[npm audit]] بالتفصيل في تاب Node` }, { to: "node/pnpm approve-builds", why: R`نفس فكرة الموافقة على install scripts في pnpm` }, { to: "node/package-lock و npm ci", why: R`الـ lockfile من جوه` }],
-        },
-        {
-          cmd: "مكتبتك الصغيرة: API و exports و tests",
-          title: "الناحية التانية: تكتب مكتبة صغيرة صح، بـ API واضح ومن غير globals، و JSDoc و tests، وتعملها npm pack",
-          desc: R`أي كود بتستخدمه في أكتر من مكان (أو أكتر من مشروع) يستاهل يبقى مكتبة صغيرة. والمكتبة الكويسة هي اللي انت كنت عايزها وانت بتختار في الدرس اللي فات:
-• **API صغير وواضح:** دوال قليلة بأسماء بتقول بتعمل إيه، و inputs و outputs محددة.
-• **من غير globals ولا side effects:** [[import]] مبيغيّرش أي حاجة برّه المكتبة (لا [[window]] ولا [[Array.prototype]]).
-• **أخطاء واضحة:** input غلط = error باسم ورسالة مفهومة، مش [[NaN]] ساكت.
-• **وثائق:** JSDoc فوق كل دالة (الـ editor بيعرضها وانت بتكتب)، و README فيه مثال.
-• **tests:** [[node --test]] بيغطي الحالات الطرفية.
-• **package.json صح:** [[exports]] (إيه اللي يتعمله import)، و [[files]] (إيه اللي يتنشر)، و [[version]] بـ semver.
-
-المثال مكتبة [[qersh]] (اسم متألّف): فلوس بالقروش كأعداد صحيحة، عشان [[0.1 + 0.2]] مبيطلعش [[0.3]].`,
-          example: R`// qersh: فلوس بالقروش من غير كسور عشرية
-const PATTERN = /^\d+(\.\d{1,2})?$/;
-
-/**
- * يحوّل مبلغ بالجنيه (نص زي "12.5") لقروش (عدد صحيح).
- * @param {string} text
- * @returns {number}
- */
-export function toPiasters(text) {
-  const clean = String(text).trim();
-  if (!PATTERN.test(clean)) throw new TypeError($__btمبلغ مش مفهوم: "$__{text}"$__bt);
-  const [pounds, frac = ""] = clean.split(".");
-  return Number(pounds) * 100 + Number(frac.padEnd(2, "0"));
+~~~js validate.js
+// validate.js: قواعد المهمة. بيرجّع أخطاء، مش بيرمي
+export function validateTodo({ title }) {
+  const errors = {};
+  const t = (title ?? '').trim();
+  if (!t) errors.title = 'اكتب المهمة';
+  else if (t.length > 80) errors.title = 'المهمة طويلة أوي (٨٠ حرف بحد أقصى)';
+  return { ok: Object.keys(errors).length === 0, errors, value: { title: t } };
 }
 
-/**
- * يكتب القروش كمبلغ مقروء.
- * @param {number} piasters
- * @param {{ locale?: string }} [options]
- */
-export function format(piasters, { locale = "ar-EG" } = {}) {
-  return new Intl.NumberFormat(locale, { style: "currency", currency: "EGP" }).format(piasters / 100);
+// شكل الصف المحفوظ: storage.js بيستخدمها من غير ما يعرف تفاصيلها
+export const isTodo = (it) => typeof it.title === 'string' && it.title.trim() !== '' && typeof it.done === 'boolean';
+~~~
+
+- [[validateTodo]] للمدخل الجديد (بيرجّع رسالة)، و [[isTodo]] لشكل الصف المحفوظ (نعم أو لأ). الاتنين في ملف القواعد، فأي قاعدة جديدة مكانها واحد.
+
+~~~js state.js
+// state.js: مصدر الحقيقة، ومفيهوش ولا سطر عن الصفحة
+import { load, save } from './storage.js';
+import { validateTodo, isTodo } from './validate.js';
+
+const KEY = 'todos';
+const listeners = new Set();
+let state = { ...load(KEY, isTodo), filter: 'all' };
+
+export const get = () => state;
+export const subscribe = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
+
+function set(next) {
+  state = next;
+  save(KEY, state);
+  listeners.forEach((fn) => fn(state));
 }
 
-/**
- * يقسم مبلغ على عدد ناس، والقروش الزيادة بتروح للأوائل.
- * @param {number} piasters
- * @param {number} parts
- * @returns {number[]}
- */
-export function split(piasters, parts) {
-  if (!Number.isInteger(parts) || parts < 1) throw new RangeError("parts لازم عدد صحيح أكبر من 0");
-  const base = Math.floor(piasters / parts);
-  const extra = piasters % parts;
-  return Array.from({ length: parts }, (_, i) => base + (i < extra ? 1 : 0));
-}`,
-          try: R`اعمل فولدر [[qersh]] فيه [[index.js]] (المثال) و [[package.json]] و [[index.test.js]] (الاتنين في الشرح)، وشغّل [[npm test]] و [[npm pack --dry-run]]. وبعدين اعمل فولدر جنبه، و [[npm install ../qersh/qersh-0.1.0.tgz]] بعد [[npm pack]]، واستخدمها من هناك.`,
-          sol: R`~~~text npm test (Node 24.22)
-✔ toPiasters: جنيه وقروش (0.9964ms)
-✔ toPiasters: يرفض الكلام الغلط (0.9884ms)
-✔ split: مفيش قرش بيضيع (0.78ms)
-✔ format: عربي وإنجليزي (13.3948ms)
-ℹ tests 4
-ℹ pass 4
-ℹ fail 0
-~~~
+// المشتق
+export const visible = (s) =>
+  s.filter === 'active' ? s.items.filter((t) => !t.done)
+  : s.filter === 'done' ? s.items.filter((t) => t.done)
+  : s.items;
+export const left = (s) => s.items.filter((t) => !t.done).length;
 
-~~~text من فولدر receipt-app: node app.js
-الإجمالي: ٣٣٧٫٥٠ ج.م.
-على ٣: ١١٢٫٥٠ ج.م. | ١١٢٫٥٠ ج.م. | ١١٢٫٥٠ ج.م.
-~~~
-
-(Intl بيحط علامة اتجاه مخفية U+200F قبل وبعد المبلغ العربي، شلناها من العرض هنا.) الخطوات كاملة في الشرح.`,
-          practice: [
-            { lvl: 'سريع', t: R`**صلّح المكتبة البايظة:** المكتبة دي بتشتغل، بس فيها غلطتين بيبوظوا كود اللي بيستخدمها. شغّل [[app.mjs]] ولاقيهم، واكتبها من جديد صح.
-~~~js bad-lib.js
-Array.prototype.total = function () {
-  return this.reduce((a, b) => a + b, 0);
-};
-globalThis.money = { rate: 50 };
-~~~
-
-~~~js app.mjs
-import "./bad-lib.js";
-const prices = [45, 20, 10];
-console.log(prices.total());
-for (const i in prices) console.log("index:", i);
-console.log(typeof money, Object.keys(globalThis).includes("money"));
-~~~`, done: R`شفت [[index: total]] طالعة في الـ [[for...in]] و [[money]] على [[globalThis]]، وكتبت نسخة بـ [[export function total(list)]] من غير ما تلمس أي حاجة برّه.`, sol: R`~~~text الناتج (Node 24.22): node app.mjs
-75
-index: 0
-index: 1
-index: 2
-index: total
-object true
-~~~
-
-- **الغلطة ١:** [[Array.prototype.total = ...]] بيضيف خاصية لـ **كل** array في البرنامج كله، حتى اللي في مكتبات تانية. وعشان اتضافت بـ [[=]] فهي enumerable، فـ [[for...in]] بقى بيلف عليها ([[index: total]]). ولو مكتبتين عملوا [[total]] بمعنى مختلف، اللي اتحمّلت آخر بتكسب ساكت.
-- **الغلطة ٢:** [[globalThis.money]] متغير global: أي كود تاني ممكن يغيّره أو يتعارض معاه، ومحدش عارف جه منين.
-- و [[import "./bad-lib.js"]] من غير ما ناخد منها حاجة غيّر البرنامج كله: ده **side effect**.
-
-~~~js good-lib.js
-export const RATE = 50;
-export function total(list) {
-  return list.reduce((a, b) => a + b, 0);
+export function addTodo(input) {
+  const { ok, errors, value } = validateTodo(input);
+  if (!ok) return { ok, errors };
+  set({ ...state, items: [...state.items, { id: crypto.randomUUID(), title: value.title, done: false }] });
+  return { ok: true, errors: {} };
 }
+export const toggle = (id) => set({ ...state, items: state.items.map((t) => (t.id === id ? { ...t, done: !t.done } : t)) });
+export const remove = (id) => set({ ...state, items: state.items.filter((t) => t.id !== id) });
+export const clearDone = () => set({ ...state, items: state.items.filter((t) => !t.done) });
+export const setFilter = (filter) => set({ ...state, filter });
 ~~~
 
-~~~js app.mjs
-import { total } from "./good-lib.js";
-console.log(total([45, 20, 10]));
-~~~
+- **[[KEY]] بقى هنا:** الحالة هي اللي تعرف اسم التطبيق، والتخزين مبيعرفش.
+- **[[left]] و [[visible]] مشتقين:** «فاضل 2 من 3» عمرها ما بتتخزن.
+- **[[toggle]]** بيعمل مهمة جديدة ([[{ ...t, done: !t.done }]]) مش [[t.done = !t.done]].
 
-اللي عايز [[total]] بيعملها [[import]] بالاسم، ومفيش حاجة برّه المكتبة بتتغير. و [[ "sideEffects": false ]] في [[package.json]] بيقول للـ bundlers إن الـ import ده مبيعملش حاجة لوحده، فلو مش مستخدم يتشال.` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** اكتب [[edge.test.js]] لـ [[split]] من المثال بالحالات دي: [[split(0, 3)]]، و ناس أكتر من القروش [[split(5, 7)]]، و عدد ناس مش صحيح ([[2.5]] و [["3"]])، و **مبلغ مش صحيح** [[split(10.5, 2)]] لازم يرمي [[RangeError]]. شغّله. لو حاجة وقعت: الغلط في الاختبار ولا في المكتبة؟`, done: R`٣ اختبارات بتعدّي والرابع بيقع، وعرفت إن [[split(10.5, 2)]] بيرجّع [[[6, 5]]] (١١ قرش من ١٠٫٥!)، وصلّحت المكتبة بسطر والـ ٨ اختبارات عدّوا.`, sol: R`~~~js edge.test.js
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { split } from "./index.js";
+~~~js render.js
+// render.js: بيقرا الحالة وبيكتب الصفحة
+import { visible, left } from './state.js';
 
-test("split: صفر قرش", () => {
-  assert.deepEqual(split(0, 3), [0, 0, 0]);
-});
-test("split: ناس أكتر من القروش", () => {
-  assert.deepEqual(split(5, 7), [1, 1, 1, 1, 1, 0, 0]);
-});
-test("split: عدد ناس مش صحيح", () => {
-  assert.throws(() => split(100, 2.5), RangeError);
-  assert.throws(() => split(100, "3"), RangeError);
-});
-test("split: مبلغ مش صحيح", () => {
-  assert.throws(() => split(10.5, 2), RangeError);
-});
-~~~
+const $ = (sel) => document.querySelector(sel);
 
-~~~text الناتج قبل التصليح (Node 24.22): node --test edge.test.js
-✔ split: صفر قرش (1.2114ms)
-✔ split: ناس أكتر من القروش (0.6523ms)
-✔ split: عدد ناس مش صحيح (0.3773ms)
-✖ split: مبلغ مش صحيح (0.5008ms)
-ℹ pass 3
-ℹ fail 1
-~~~
-
-**الاختبار صح والمكتبة غلط.** جرّبنا:
-
-~~~text node --input-type=module -e "import { split } from './index.js'; console.log(split(10.5, 2), split(-9, 2))"
-[ 6, 5 ] [ -5, -5 ]
-~~~
-
-[[split(10.5, 2)]] بيرجّع ١١ قرش (فلوس اتخلقت من مفيش)، و [[split(-9, 2)]] بيرجّع [[-10]]. المكتبة كانت بتتأكد من [[parts]] ونسيت [[piasters]]. التصليح سطر في أول [[split]]:
-
-~~~js index.js
-  if (!Number.isInteger(piasters) || piasters < 0) throw new RangeError("piasters لازم عدد صحيح مش سالب");
-~~~
-
-~~~text الناتج بعد التصليح: node --test
-ℹ tests 8
-ℹ pass 8
-ℹ fail 0
-~~~
-
-ده سبب كتابة الاختبارات للحالات الطرفية **قبل** ما تنشر: الباج ده كان هيوصل لكل مشروع بيستخدم المكتبة.` },
-            { lvl: 'تطبيق', t: R`**زوّد feature وطلّع نسخة:** زوّد [[sum(...amounts)]] بترجّع مجموع مبالغ بالقروش وبترمي [[TypeError]] لو فيه رقم مش صحيح، بـ JSDoc واختبار بيثبت إن [[0.1 + 0.2]] بالقروش بيطلع [[30]] بالظبط. وبعدين ارفع النسخة صح بـ [[npm version]].`, done: R`الـ ٩ اختبارات بتعدّي، والنسخة بقت [[0.2.0]] (minor، لأنها ميزة جديدة من غير ما تكسر حاجة).`, sol: R`~~~js index.js
-/**
- * يجمع أي عدد مبالغ بالقروش.
- * @param {...number} amounts
- * @returns {number}
- */
-export function sum(...amounts) {
-  for (const a of amounts) {
-    if (!Number.isInteger(a)) throw new TypeError($__btمش قروش صحيحة: $__{a}$__bt);
-  }
-  return amounts.reduce((total, a) => total + a, 0);
+function row(t) {
+  const li = document.createElement('li');
+  const box = document.createElement('input');
+  box.type = 'checkbox';
+  box.checked = t.done;
+  box.dataset.toggle = t.id;
+  box.setAttribute('aria-label', 'خلصت: ' + t.title);
+  const span = document.createElement('span');
+  span.textContent = t.title;
+  if (t.done) span.className = 'done';
+  const del = document.createElement('button');
+  del.textContent = '×';
+  del.dataset.del = t.id;
+  del.setAttribute('aria-label', 'امسح ' + t.title);
+  li.append(box, span, del);
+  return li;
 }
-~~~
 
-~~~js sum.test.js
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { sum, toPiasters } from "./index.js";
-
-test("sum: من غير 0.30000000000000004", () => {
-  assert.equal(sum(toPiasters("0.1"), toPiasters("0.2")), 30);
-  assert.equal(sum(), 0);
-  assert.throws(() => sum(10, 0.5), TypeError);
-});
-~~~
-
-~~~bash
-node --test
-npm version minor --no-git-tag-version
-~~~
-
-~~~text الناتج
-ℹ tests 9
-ℹ pass 9
-ℹ fail 0
-v0.2.0
-~~~
-
-- [[...amounts]] (rest parameter): أي عدد arguments في array واحدة، و [[sum()]] من غير حاجة بترجّع [[0]].
-- **semver لمكتبتك:** patch ([[0.1.1]]) لتصليح باج من غير تغيير الـ API، و minor ([[0.2.0]]) لدالة جديدة الكود القديم مش هيحس بيها، و major ([[1.0.0]] ← [[2.0.0]]) لو غيّرت أو شلت حاجة كانت موجودة. وقبل 1.0.0 الـ API لسه بيتغير، والناس بتتعامل مع minor كأنه ممكن يكسر.
-- [[npm version minor]] بيعدّل [[version]] في [[package.json]] والـ lockfile. و [[--no-git-tag-version]] عشان ميعملش commit و tag (الفولدر ده مش git repo).` },
-            { lvl: 'تحدي', t: R`**قيس:** امسح [[files]] من [[package.json]] وشغّل [[npm pack --dry-run]]، ورجّعه وشغّله تاني. كام ملف وكام بايت في الحالتين؟ وإيه الملفات اللي كانت هتتنشر من غير قصد؟`, done: R`من غير [[files]]: ٦ ملفات و 2.9 kB، ومعاهم الاختبارات و tarball قديم. ومعاه: ملفين و 1.2 kB.`, sol: R`~~~text npm pack --dry-run (من غير files)
-npm notice 574B edge.test.js
-npm notice 1.8kB index.js
-npm notice 950B index.test.js
-npm notice 334B package.json
-npm notice 1.0kB qersh-0.1.0.tgz
-npm notice 316B sum.test.js
-npm notice package size: 2.9 kB
-npm notice unpacked size: 4.9 kB
-npm notice total files: 6
-~~~
-
-~~~text npm pack --dry-run (مع "files": ["index.js"])
-npm notice 1.8kB index.js
-npm notice 367B package.json
-npm notice package size: 1.2 kB
-npm notice unpacked size: 2.1 kB
-npm notice total files: 2
-~~~
-
-- من غير [[files]]، npm بينشر **كل** اللي في الفولدر (غير [[node_modules]] و [[.git]] واللي في [[.npmignore]] أو [[.gitignore]]). هنا كان هينشر الاختبارات و **الـ tarball القديم نفسه** ([[qersh-0.1.0.tgz]]) جوه الجديد.
-- وفي مشروع حقيقي ده بيبقى [[.env]] أو ملف بيانات أو مفاتيح. [[files]] قايمة بيضا (allowlist): اللي مكتوب بس هو اللي بيتنشر، فمفيش حاجة بتتسرب بالغلط.
-- [[package.json]] و README و LICENSE بيتنشروا دايمًا حتى لو مش مكتوبين في [[files]].
-- **عادة:** [[npm pack --dry-run]] قبل أي نشر، واقرا اللستة.` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`كل مطور بيبقى في وقت ما صاحب كود بيستخدمه غيره: utils مشتركة بين مشروعين، أو package داخلية في الشركة، أو مكتبة open source. واللي بيفرق المكتبة اللي الناس بتحبها عن اللي بيهربوا منها مش الذكاء، لكن الحاجات اللي في الدرس: API صغير ميتغيرش كل شوية، ومفيش مفاجآت وقت الـ import، وأخطاء مفهومة، واختبارات، ونسخ بتحترم semver.`,
-            how: R`**[[exports]]** في [[package.json]] بيحدد الـ entry points: [["exports": "./index.js"]] = [[import ... from "qersh"]] بيفتح [[index.js]] وبس، وأي مسار تاني ([[qersh/index.js]] أو ملف داخلي) بيترفض بـ [[ERR_PACKAGE_PATH_NOT_EXPORTED]]. ده بيخليك تغيّر الملفات الداخلية من غير ما تكسر حد. ولو عايز أكتر من entry: [["exports": { ".": "./index.js", "./format": "./format.js" }]].
-
-**[[type: "module"]]:** ملفات [[.js]] تبقى ES modules. **[[sideEffects: false]]:** إشارة للـ bundlers إن مفيش ملف بيعمل حاجة وقت الـ import، فيقدروا يشيلوا اللي مش مستخدم (tree shaking). **[[engines]]:** أقل نسخة Node بتشتغل عليها. **[[files]]:** إيه اللي يدخل الـ tarball.
-
-**[[npm pack]]** بيعمل نفس الـ tarball اللي [[npm publish]] كان هيرفعه، فتقدر تسطّبه في مشروع تاني ([[npm install ../qersh/qersh-0.1.0.tgz]]) وتجرّب قبل النشر.`,
-            when: R`حوّل كود لمكتبة لما بتنسخه بين مشروعين، أو لما فريقين محتاجينه. وقبل ما تنشر على npm للعالم: دوّر الأول (يمكن موجودة)، واتأكد إن الاسم فاضي ([[npm view <name>]] يرجّع [[E404]])، واكتب README فيه مثال، وفكّر هتصونها إزاي. وللكود الداخلي: [[npm pack]] أو workspaces أو registry خاص بالشركة.`,
-            mistakes: R`تعدّل built-ins ([[Array.prototype]] و [[String.prototype]]). وتحط حاجات على [[window]] أو [[globalThis]]. وترجّع [[NaN]] أو [[undefined]] بدل error للـ input الغلط. وتنسى [[files]] فتنشر اختباراتك أو أسرارك. وتغيّر سلوك دالة في patch أو minor. وتنشر من غير ما تشغّل الاختبارات (حطها في [[prepack]] زي المشروع المتوسط التاني). وتسمّي المكتبة اسم موجود على npm.`
-          },
-          teach: R`## الفكرة
-
-مكتبة صغيرة اسمها [[qersh]] (اسم متألّف، اتأكدنا إن [[npm view qersh]] بيرجّع [[E404]]): بتحوّل المبالغ لقروش (أعداد صحيحة) عشان الحساب يبقى مظبوط، وبتكتبها، وبتقسمها على ناس من غير ما قرش يضيع. هنبنيها بنفس الأسئلة اللي سألناها لما كنا بنختار مكتبة غيرنا. Node 24.22 و npm 11.19.1 على Windows.
-
----
-
-## ١. ليه قروش؟
-
-~~~bash
-node -e "console.log(0.1 + 0.2, 1.15 * 100)"
-~~~
-
-~~~text الناتج
-0.30000000000000004 114.99999999999999
-~~~
-
-الأرقام العشرية في JavaScript (IEEE 754) مش دقيقة. لو خزّنت المبلغ بالقروش كعدد صحيح ([[1250]] بدل [[12.5]]) الجمع والطرح بيبقوا مظبوطين، وبتقسم على ١٠٠ بس وقت العرض.
-
----
-
-## ٢. الـ API: ٣ دوال
-
-| الدالة | بتاخد | بترجّع | لو الـ input غلط |
-|---|---|---|---|
-| [[toPiasters(text)]] | نص زي [["12.5"]] | [[1250]] | [[TypeError]] برسالة فيها النص |
-| [[format(piasters, { locale })]] | عدد صحيح، ولغة اختياري | نص زي [["١٢٫٥٠ ج.م."]] | (الإصدار ده مش بيفحص، التمرين التاني) |
-| [[split(piasters, parts)]] | مبلغ وعدد ناس | array مجموعها = المبلغ | [[RangeError]] |
-
-اسم كل دالة فعل بيقول بتعمل إيه، وكل واحدة بتعمل حاجة واحدة. والخيارات اللي مش أساسية في object في الآخر ([[{ locale }]]) عشان تقدر تزوّد خيارات بعدين من غير ما تكسر حد.
-
----
-
-## ٣. المثال: أهم الحتت
-
-~~~text index.js
-const PATTERN = /^\d+(\.\d{1,2})?$/;
-~~~
-
-regex بيقبل أرقام، واختياري نقطة ورقم أو رقمين بعدها. [[-5]] و [["12.345"]] و [["12,5"]] و [[""]] كلهم مرفوضين. متعرّف برّه الدوال من غير [[export]]: داخلي للمكتبة.
-
-~~~text index.js
-  if (!PATTERN.test(clean)) throw new TypeError($__btمبلغ مش مفهوم: "$__{text}"$__bt);
-  const [pounds, frac = ""] = clean.split(".");
-  return Number(pounds) * 100 + Number(frac.padEnd(2, "0"));
-~~~
-
-- input غلط = error باسم مناسب ([[TypeError]]: النوع أو الشكل غلط) ورسالة فيها القيمة نفسها. جرّبنا [[toPiasters("12,5")]]: [[TypeError: مبلغ مش مفهوم: "12,5"]].
-- [[frac = ""]]: default لو مفيش نقطة. و [[padEnd(2, "0")]] بيخلي [["5"]] تبقى [["50"]]، فـ [["12.5"]] = [[1200 + 50]]. من غير ضرب أي رقم عشري في ١٠٠.
-
-~~~text index.js
-  const base = Math.floor(piasters / parts);
-  const extra = piasters % parts;
-  return Array.from({ length: parts }, (_, i) => base + (i < extra ? 1 : 0));
-~~~
-
-١٠٠٠ قرش على ٣: [[base]] = ٣٣٣ والباقي ([[%]]) = ١، فأول واحد ياخد ٣٣٤. النتيجة [[[334, 333, 333]]] ومجموعها ١٠٠٠ بالظبط.
-
----
-
-## ٤. من غير globals ولا side effects
-
-~~~bash
-node --input-type=module -e "import * as q from './index.js'; console.log(Object.keys(q)); console.log(typeof globalThis.toPiasters)"
-~~~
-
-~~~text الناتج
-[ 'format', 'split', 'toPiasters' ]
-undefined
-~~~
-
-المكتبة كلها ٣ أسماء بتتعمل [[export]]، ومفيش حاجة اتحطت على [[globalThis]]، و [[import]] نفسه مبيعملش أي حاجة غير إنه يعرّف دوال (مفيش [[console.log]] ولا تعديل في built-ins). التمرين الأول بيوريك العكس.
-
----
-
-## ٥. JSDoc
-
-~~~text index.js
-/**
- * يحوّل مبلغ بالجنيه (نص زي "12.5") لقروش (عدد صحيح).
- * @param {string} text
- * @returns {number}
- */
-~~~
-
-تعليق بيبدأ بـ [[/**]] فوق الدالة. VS Code بيعرضه لما تكتب [[toPiasters(]] في أي مشروع بيستخدم المكتبة، و [[@param {string} text]] بيخليه يحذّرك لو بعت رقم (مع [[// @ts-check]] في أول الملف). وثائق جنب الكود، فبتتحدّث معاه.
-
----
-
-## ٦. الاختبارات (وغلطة حصلت فعلًا)
-
-~~~js index.test.js
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { toPiasters, format, split } from "./index.js";
-
-test("toPiasters: جنيه وقروش", () => {
-  assert.equal(toPiasters("12.5"), 1250);
-  assert.equal(toPiasters("0.07"), 7);
-  assert.equal(toPiasters(" 3 "), 300);
-});
-
-test("toPiasters: يرفض الكلام الغلط", () => {
-  assert.throws(() => toPiasters("12.345"), TypeError);
-  assert.throws(() => toPiasters("-5"), TypeError);
-  assert.throws(() => toPiasters(""), TypeError);
-});
-
-test("split: مفيش قرش بيضيع", () => {
-  const parts = split(1000, 3);
-  assert.deepEqual(parts, [334, 333, 333]);
-  assert.equal(parts.reduce((a, b) => a + b, 0), 1000);
-  assert.throws(() => split(1000, 0), RangeError);
-});
-
-test("format: عربي وإنجليزي", () => {
-  assert.equal(format(1250, { locale: "en-US" }).replace(/\s/g, " "), "EGP 12.50");
-  assert.match(format(1250), /١٢٫٥٠/);
-});
-~~~
-
-**أول مرة السطر ده كان:** [[assert.equal(format(1250, { locale: "en-US" }), "EGP 12.50")]] ووقع:
-
-~~~text الناتج
-actual: 'EGP 12.50',
-expected: 'EGP 12.50',
-~~~
-
-النصين **شكلهم واحد** ومش متساويين! طبعنا أكواد الحروف:
-
-~~~text node -e ... [...format(1250, { locale: "en-US" })].map(c => c.codePointAt(0).toString(16))
-45 47 50 a0 31 32 2e 35 30
-~~~
-
-[[a0]] = U+00A0، مسافة مبتتقطعش (non-breaking space). Intl بيحطها بين العملة والرقم عشان ميتقسموش على سطرين. التصليح: [[.replace(/\s/g, " ")]] (الـ [[\s]] في regex بيشمل U+00A0) قبل المقارنة. وفي العربي كمان فيه U+200F (علامة اتجاه) قبل وبعد المبلغ، عشان كده الاختبار العربي بـ [[assert.match]] على الأرقام بس.
-
-~~~text الناتج: npm test
-✔ toPiasters: جنيه وقروش (0.9964ms)
-✔ toPiasters: يرفض الكلام الغلط (0.9884ms)
-✔ split: مفيش قرش بيضيع (0.78ms)
-✔ format: عربي وإنجليزي (13.3948ms)
-ℹ tests 4
-ℹ pass 4
-ℹ fail 0
-~~~
-
----
-
-## ٧. [[package.json]]
-
-~~~json package.json
-{
-  "name": "qersh",
-  "version": "0.1.0",
-  "description": "فلوس بالقروش: تحويل وتنسيق وتقسيم من غير كسور عشرية",
-  "type": "module",
-  "exports": "./index.js",
-  "files": ["index.js"],
-  "sideEffects": false,
-  "engines": { "node": ">=18" },
-  "scripts": { "test": "node --test" },
-  "license": "MIT"
+export function render(s, errors = {}) {
+  const shown = visible(s);
+  $('#list').replaceChildren(...shown.map(row));
+  $('#left').textContent = 'فاضل ' + left(s) + ' من ' + s.items.length;
+  $('#empty').hidden = shown.length > 0;
+  $('#clear').hidden = s.items.every((t) => !t.done);
+  document.querySelectorAll('[data-filter]').forEach((a) =>
+    a.setAttribute('aria-current', a.dataset.filter === s.filter ? 'page' : 'false'));
+  $('#err-title').textContent = errors.title ?? '';
+  if (errors.title) $('[name="title"]').setAttribute('aria-invalid', 'true');
+  else $('[name="title"]').removeAttribute('aria-invalid');
 }
-~~~
-
-| الحقل | بيعمل إيه |
-|---|---|
-| [[name]] و [[version]] | الاسم والنسخة بـ semver. 0.x = الـ API لسه بيتغير |
-| [[type: "module"]] | ملفات [[.js]] تبقى ES modules ([[import]] و [[export]]) |
-| [[exports]] | المدخل الوحيد: [[import ... from "qersh"]] بيفتح [[index.js]]، وأي مسار تاني ممنوع |
-| [[files]] | اللي يدخل الـ tarball بس (التمرين الرابع بيقيس الفرق) |
-| [[sideEffects: false]] | بيقول للـ bundlers إن الـ import مبيعملش حاجة لوحده، فيشيلوا الدوال اللي مش مستخدمة |
-| [[engines]] | أقل نسخة Node بتشتغل عليها |
-| [[scripts.test]] | [[npm test]] بيشغّل [[node --test]] اللي بيلاقي ملفات [[*.test.js]] لوحده |
-| [[license]] | من غيرها محدش من حقه يستخدمها |
-
----
-
-## ٨. [[npm pack]] والاستخدام من مشروع تاني
-
-~~~bash
-npm pack --dry-run
-~~~
-
-~~~text الناتج
-npm notice package: qersh@0.1.0
-npm notice Tarball Contents
-npm notice 1.3kB index.js
-npm notice 347B package.json
-npm notice Tarball Details
-npm notice filename: qersh-0.1.0.tgz
-npm notice package size: 1.0 kB
-npm notice unpacked size: 1.7 kB
-npm notice total files: 2
-~~~
-
-[[--dry-run]] بيوريك اللي **هيتنشر** من غير ما يعمل حاجة. ملفين بس: الاختبارات مش فيهم بسبب [[files]].
-
-~~~bash
-npm pack
-cd ..
-mkdir receipt-app
-cd receipt-app
-npm init -y
-npm pkg set type=module
-npm install ../qersh/qersh-0.1.0.tgz
-node app.js
 ~~~
 
 ~~~js app.js
-import { toPiasters, format, split } from "qersh";
-const total = toPiasters("250") + toPiasters("87.5");
-console.log("الإجمالي:", format(total));
-console.log("على ٣:", split(total, 3).map((p) => format(p)).join(" | "));
+// app.js: التوصيل
+import * as store from './state.js';
+import { render } from './render.js';
+
+const FILTERS = new Set(['all', 'active', 'done']);
+const fromHash = () => (FILTERS.has(location.hash.slice(1)) ? location.hash.slice(1) : 'all');
+
+store.subscribe((s) => render(s));
+
+document.querySelector('#f').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const res = store.addTodo({ title: new FormData(e.target).get('title') });
+  if (res.ok) e.target.reset();
+  else render(store.get(), res.errors);
+});
+
+document.querySelector('#list').addEventListener('click', (e) => {
+  if (e.target.dataset.toggle) store.toggle(e.target.dataset.toggle);
+  if (e.target.dataset.del) store.remove(e.target.dataset.del);
+});
+document.querySelector('#clear').addEventListener('click', () => store.clearDone());
+
+document.querySelector('nav').addEventListener('click', (e) => {
+  const a = e.target.closest('a[data-filter]');
+  if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+  e.preventDefault();
+  location.hash = a.dataset.filter;
+});
+
+addEventListener('hashchange', () => store.setFilter(fromHash()));
+store.setFilter(fromHash());
 ~~~
 
-~~~text الناتج (من غير علامات الاتجاه المخفية)
-الإجمالي: ٣٣٧٫٥٠ ج.م.
-على ٣: ١١٢٫٥٠ ج.م. | ١١٢٫٥٠ ج.م. | ١١٢٫٥٠ ج.م.
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مهامي</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; max-width: 480px; }
+  nav a { margin-inline-end: 8px; }
+  nav a[aria-current="page"] { font-weight: 700; text-decoration: none; }
+  form { display: flex; gap: 6px; margin-block: 12px; }
+  input, button { font: inherit; padding: 4px 8px; }
+  [aria-invalid="true"] { border: 2px solid #b91c1c; }
+  .err { color: #b91c1c; font-size: 14px; display: block; min-height: 1.4em; }
+  ul { list-style: none; padding: 0; }
+  li { display: flex; gap: 8px; align-items: center; padding: 4px 0; }
+  li span { flex: 1; }
+  .done { text-decoration: line-through; color: #6b7280; }
+</style>
+</head>
+<body>
+<h1>مهامي</h1>
+<form id="f" novalidate>
+  <input name="title" placeholder="مهمة جديدة" aria-label="مهمة جديدة" aria-describedby="err-title">
+  <button>ضيف</button>
+</form>
+<span class="err" id="err-title"></span>
+<nav aria-label="الفلتر">
+  <a href="#all" data-filter="all">الكل</a>
+  <a href="#active" data-filter="active">لسه</a>
+  <a href="#done" data-filter="done">خلصت</a>
+</nav>
+<ul id="list"></ul>
+<p id="empty">مفيش مهام هنا.</p>
+<p><span id="left"></span> <button id="clear" type="button">امسح اللي خلص</button></p>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
 ~~~
 
-و [[package.json]] بتاع receipt-app بقى فيه [[ "qersh": "file:../qersh/qersh-0.1.0.tgz" ]]. وجرّبنا نعدّي الـ [[exports]]:
+## اتقاس إيه (Chrome 158 بـ Playwright على localhost)
 
-~~~text node --input-type=module -e "import 'qersh/index.js'"
-Error [ERR_PACKAGE_PATH_NOT_EXPORTED]: Package subpath './index.js' is not defined by "exports" in ...\receipt-app\node_modules\qersh\package.json
+~~~text الناتج
+٣ مهام وعلّمت التانية:   □ اشتري عيش، ✓ ذاكر درس الـ Proxy، □ اتصل بماما    فاضل 2 من 3
+مهمة كلها مسافات:        «اكتب المهمة» و aria-invalid="true"، والمحفوظ لسه 3 مهام
+ضغطة «لسه»:              #active   □ اشتري عيش، □ اتصل بماما
+reload:                  #active   نفس المهمتين (الحالة اتقرت من المحفوظ والفلتر من الرابط)
+back:                    الكل تاني
+«امسح اللي خلص»:         فاضل 2 من 2، والمحفوظ فيه المهمتين بس
+جوه المعاينة المعزولة:   ضفت مهمتين وعلّمت الأولى وضغطت «خلصت»: #done و ✓ مهمة في المعاينة، فاضل 1 من 2
 ~~~
+
+## غلطة تانية اتمسكت في القياس
+
+أول نسخة من [[render.js]] كانت بتعمل [[input.toggleAttribute('aria-invalid', Boolean(err))]]. القياس طلّع [[aria-invalid=""]] مش [[aria-invalid="true"]]: [[toggleAttribute]] بيحط الـ attribute **فاضي**، والفاضي في ARIA معناه [[false]]، والـ CSS [[ [aria-invalid="true"] ]] مبيمسكوش. الإصلاح [[setAttribute('aria-invalid', 'true')]] و [[removeAttribute]] زي اللي فوق. (نفس الغلطة كانت في نسخة المصاريف، واتصلحت هناك كمان.)
+
+**المستفاد:** «الملف اتنقل من غير تعديل» اختبار حقيقي للتقسيم. لو احتجت تعدّل حاجة غير اسم، يبقى فيه معرفة عن التطبيق مستخبية في ملف المفروض إنه عام، وده بالظبط اللي حصل مع [[amount]].` },
+        { lvl: 'متوسط', dir: "expenses-search", t: R`بحث وفلتر وترتيب في الرابط`, what: R`زوّد على تطبيق المصاريف خانة بحث بالاسم، والبحث والفلتر والترتيب كلهم في الـ hash بـ [[URLSearchParams]]، والقايمة والإجمالي مشتقين من [[items]] والـ hash بس. من درسي «شاشات من غير إعادة تحميل» و «الـ DOM مش مكان الحالة».`, done: R`رابط زي [[#filter=food&q=قهوة]] بيفتح نفس الشاشة في تبويب جديد، والعربي في البحث شغال، وقيمة غلط في الرابط بترجع للافتراضي، ومفيش في الحالة أي مصفوفة متخزنة غير [[items]]، والبحث الفاضي بيعرض الكل.`, sol: R`**الشكل النهائي** (الخمس ملفات متجمّعين في سكربت واحد للمعاينة؛ الحفظ ممنوع جوه المعاينة فبيبدأ فاضي كل مرة. ضيف بندين وجرّب البحث والفلتر والترتيب):
+
+~~~view 420 مصاريف: بحث وفلتر
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مصاريف: بحث وفلتر</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; max-width: 520px; }
+  nav a { margin-inline-end: 8px; }
+  nav a[aria-current="page"], nav a[aria-current="true"] { font-weight: 700; text-decoration: none; }
+  form { display: grid; gap: 6px; margin-block: 12px; }
+  input, select, button { font: inherit; padding: 4px 8px; }
+  [aria-invalid="true"] { border: 2px solid #b91c1c; }
+  .err { color: #b91c1c; font-size: 14px; min-height: 1em; }
+  li button { margin-inline-start: 8px; }
+</style>
+</head>
+<body>
+<h1 id="h" tabindex="-1">مصاريفي</h1>
+<div id="views">
+<input id="q" type="search" placeholder="دوّر بالاسم" aria-label="دوّر بالاسم">
+<nav aria-label="التصنيفات">
+  <a href="#filter=all" data-filter="all">الكل</a>
+  <a href="#filter=food" data-filter="food">أكل</a>
+  <a href="#filter=transport" data-filter="transport">مواصلات</a>
+  <a href="#filter=other" data-filter="other">تاني</a>
+</nav>
+<nav aria-label="الترتيب">رتّب:
+  <a href="#sort=new" data-sort="new">الأحدث</a>
+  <a href="#sort=amount" data-sort="amount">المبلغ</a>
+  <a href="#sort=name" data-sort="name">الاسم</a>
+</nav>
+</div>
+<form id="f" novalidate>
+  <label>على إيه؟ <input name="label" aria-describedby="err-label"></label>
+  <span class="err" id="err-label"></span>
+  <label>المبلغ <input name="amount" inputmode="decimal" aria-describedby="err-amount"></label>
+  <span class="err" id="err-amount"></span>
+  <label>التصنيف
+    <select name="cat"><option value="food">أكل</option><option value="transport">مواصلات</option><option value="other">تاني</option></select>
+  </label>
+  <button>ضيف</button>
+</form>
+<ul id="list"></ul>
+<p id="empty">مفيش مصاريف هنا لسه.</p>
+<p>الإجمالي: <strong id="total" aria-live="polite">0</strong> ج في <span id="count">0</span> بند</p>
+<script type="module">
+// storage.js: الحفظ والقراية، ومعاهم رقم نسخة ودفاع عن داتا بايظة
+const KEY = 'masareef';
+const VERSION = 1;
+
+function load() {
+  let raw;
+  try { raw = localStorage.getItem(KEY); }
+  catch { return { items: [] }; }                  // بيانات المواقع مقفولة
+  if (!raw) return { items: [] };                  // أول زيارة
+
+  let data;
+  try { data = JSON.parse(raw); }
+  catch { console.warn('المحفوظ مش JSON'); return { items: [] }; }
+
+  if (data?.version !== VERSION) { console.warn('نسخة محفوظة قديمة (' + data?.version + ')'); return { items: [] }; }
+  if (!Array.isArray(data.items)) return { items: [] };
+
+  return { items: data.items.filter(it =>
+    it && typeof it.id === 'string' && typeof it.label === 'string' && Number.isFinite(it.amount)) };
+}
+
+function save(state) {
+  try { localStorage.setItem(KEY, JSON.stringify({ version: VERSION, items: state.items })); }
+  catch (e) { console.warn('مقدرناش نحفظ:', e.name); }   // QuotaExceededError
+}
+
+// validate.js: بيرجّع أخطاء، مش بيرمي
+const AMOUNT = /^-?\d+(\.\d+)?$/;
+const CATS = new Set(['food', 'transport', 'other']);
+
+function validateItem({ label, amount, cat }) {
+  const errors = {};
+  const trimmed = (label ?? '').trim();
+  if (!trimmed) errors.label = 'اكتب على إيه صرفت';
+  else if (trimmed.length > 60) errors.label = 'الوصف طويل أوي (٦٠ حرف بحد أقصى)';
+
+  const raw = String(amount ?? '').trim()
+    .replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - 0x0660)
+    .replace('٫', '.');
+  const n = Number(raw);
+  if (raw === '') errors.amount = 'اكتب المبلغ';
+  else if (!AMOUNT.test(raw)) errors.amount = 'المبلغ لازم يكون رقم';
+  else if (n <= 0) errors.amount = 'المبلغ لازم يكون أكبر من صفر';
+  else if (n > 1000000) errors.amount = 'الرقم ده كبير أوي، اتأكد';
+
+  return { ok: Object.keys(errors).length === 0, errors,
+           value: { label: trimmed, amount: n, cat: CATS.has(cat) ? cat : 'other' } };
+}
+
+// state.js: items بس متخزنة، والفلتر والترتيب والبحث اختيارات شاشة جاية من الرابط
+
+const listeners = new Set();
+let state = { ...load(), filter: 'all', sort: 'new', q: '' };
+
+const get = () => state;
+const subscribe = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
+
+function set(next) {
+  state = next;
+  save(state);
+  listeners.forEach(fn => fn(state));
+}
+
+const SORTERS = {
+  new: null,
+  amount: (a, b) => b.amount - a.amount,
+  name: (a, b) => a.label.localeCompare(b.label, 'ar'),
+};
+
+// نفس الحرف بأشكاله: أ إ آ -> ا، ة -> ه، ى -> ي، ومن غير تشكيل
+const fold = (s) => s.normalize('NFKD').replace(/[\u064B-\u065F]/g, '')
+  .replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').toLowerCase();
+
+const visible = (s) => {
+  const q = fold(s.q);
+  let list = s.filter === 'all' ? s.items : s.items.filter(it => it.cat === s.filter);
+  if (q) list = list.filter(it => fold(it.label).includes(q));
+  return SORTERS[s.sort] ? list.toSorted(SORTERS[s.sort]) : list;
+};
+const total = (s) => visible(s).reduce((sum, it) => sum + it.amount, 0);
+
+function addItem(input) {
+  const { ok, errors, value } = validateItem(input);
+  if (!ok) return { ok, errors };
+  set({ ...state, items: [...state.items, { id: crypto.randomUUID(), ...value }] });
+  return { ok: true, errors: {} };
+}
+
+const removeItem = (id) => set({ ...state, items: state.items.filter(it => it.id !== id) });
+const setView = ({ filter, sort, q }) => set({ ...state, filter, sort, q });
+
+// render.js: بيرسم القايمة، وبيكتب في كل لينك الرابط الكامل (ومعاه البحث)
+
+const CAT = { food: 'أكل', transport: 'مواصلات', other: 'تاني' };
+const $ = (sel) => document.querySelector(sel);
+const hashOf = ({ q, ...view }) => '#' + new URLSearchParams(q ? { ...view, q } : view);
+
+function row(it) {
+  const li = document.createElement('li');
+  li.textContent = it.label + ' — ' + it.amount + ' ج · ' + (CAT[it.cat] ?? CAT.other);
+  const del = document.createElement('button');
+  del.textContent = '×';
+  del.dataset.del = it.id;
+  del.setAttribute('aria-label', 'امسح ' + it.label);
+  li.append(del);
+  return li;
+}
+
+function render(s, errors = {}) {
+  const shown = visible(s);
+  $('#list').replaceChildren(...shown.map(row));
+  $('#total').textContent = total(s);
+  $('#count').textContent = shown.length;
+  $('#empty').hidden = shown.length > 0;
+  $('#empty').textContent = s.q ? 'مفيش بنود فيها «' + s.q + '».' : 'مفيش مصاريف هنا لسه.';
+  if (document.activeElement !== $('#q')) $('#q').value = s.q;   // الرابط اتغيّر من برّه (back أو لينك)
+  const view = { filter: s.filter, sort: s.sort, q: s.q };
+  document.querySelectorAll('[data-filter]').forEach(a => {
+    a.href = hashOf({ ...view, filter: a.dataset.filter });   // بيحافظ على الترتيب الحالي
+    a.setAttribute('aria-current', a.dataset.filter === s.filter ? 'page' : 'false');
+  });
+  document.querySelectorAll('[data-sort]').forEach(a => {
+    a.href = hashOf({ ...view, sort: a.dataset.sort });       // بيحافظ على الفلتر الحالي
+    a.setAttribute('aria-current', a.dataset.sort === s.sort ? 'true' : 'false');
+  });
+  for (const name of ['label', 'amount']) {
+    $('#err-' + name).textContent = errors[name] ?? '';
+    const input = $('[name="' + name + '"]');
+    if (errors[name]) input.setAttribute('aria-invalid', 'true');   // toggleAttribute كان بيكتب "" مش "true"
+    else input.removeAttribute('aria-invalid');
+  }
+}
+
+// app.js: البحث والفلتر والترتيب كلهم في الرابط (#filter=food&sort=amount&q=قهوة)
+
+const FILTERS = new Set(['all', 'food', 'transport', 'other']);
+const SORTS = new Set(['new', 'amount', 'name']);
+
+function fromHash() {
+  const p = new URLSearchParams(location.hash.slice(1));
+  const filter = p.get('filter');
+  const sort = p.get('sort');
+  return {
+    filter: FILTERS.has(filter) ? filter : 'all',
+    sort: SORTS.has(sort) ? sort : 'new',
+    q: (p.get('q') ?? '').trim().slice(0, 60),        // نص حر: بنقصّه بس، مفيش قايمة
+  };
+}
+
+subscribe((s) => render(s));
+
+document.querySelector('#f').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const res = addItem({ label: f.get('label'), amount: f.get('amount'), cat: f.get('cat') });
+  if (res.ok) e.target.reset();
+  else render(get(), res.errors);
+});
+
+document.querySelector('#list').addEventListener('click', (e) => {
+  if (e.target.dataset.del) removeItem(e.target.dataset.del);
+});
+
+document.querySelector('#views').addEventListener('click', (e) => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+  e.preventDefault();
+  location.hash = a.getAttribute('href').slice(1);
+});
+
+// البحث: بعد ما اليوزر يبطّل كتابة 300ms، والحرف مش بيعمل مدخل في التاريخ
+let timer;
+document.querySelector('#q').addEventListener('input', (e) => {
+  clearTimeout(timer);
+  timer = setTimeout(() => {
+    const { filter, sort } = get();
+    const p = new URLSearchParams({ filter, sort });
+    const q = e.target.value.trim();
+    if (q) p.set('q', q);
+    location.replace(location.href.split('#')[0] + '#' + p);   // replace: back مش هيمشي حرف حرف
+  }, 300);
+});
+
+addEventListener('hashchange', () => setView(fromHash()));
+setView(fromHash());
+</script>
+</body>
+</html>
+~~~
+
+**تشغيله على جهازك:** الملفات بتستورد بعض بـ [[type="module"]]، والمتصفح بيمنع ده من [[file://]] (هتلاقي في الـ Console خطأ CORS والصفحة فاضية). فبدل ما تفتح [[index.html]] بدبل كليك، شغّل سيرفر جوه الفولدر: [[npx serve]] أو [[python -m http.server 8000]]، وافتح الرابط اللي بيطبعه.
+
+**هتشوف إيه:** خانة بحث فوق الفلاتر، وكل اللي تختاره (تصنيف، ترتيب، كلمة بحث) بيبان في الرابط زي [[#filter=food&sort=amount&q=قهوه]]. انسخ الرابط في تبويب جديد يفتح نفس الشاشة. والقايمة والإجمالي مشتقين من [[items]] والرابط بس.
+
+**بيبني على التطبيق اللي في حل تمرين «اكسرها عن قصد»، ومعاه ترتيب تمرين «الفلتر والترتيب في الرابط».** [[storage.js]] و [[validate.js]] زي ما هما:
+
+~~~js storage.js
+// storage.js: الحفظ والقراية، ومعاهم رقم نسخة ودفاع عن داتا بايظة
+const KEY = 'masareef';
+const VERSION = 1;
+
+export function load() {
+  let raw;
+  try { raw = localStorage.getItem(KEY); }
+  catch { return { items: [] }; }                  // بيانات المواقع مقفولة
+  if (!raw) return { items: [] };                  // أول زيارة
+
+  let data;
+  try { data = JSON.parse(raw); }
+  catch { console.warn('المحفوظ مش JSON'); return { items: [] }; }
+
+  if (data?.version !== VERSION) { console.warn('نسخة محفوظة قديمة (' + data?.version + ')'); return { items: [] }; }
+  if (!Array.isArray(data.items)) return { items: [] };
+
+  return { items: data.items.filter(it =>
+    it && typeof it.id === 'string' && typeof it.label === 'string' && Number.isFinite(it.amount)) };
+}
+
+export function save(state) {
+  try { localStorage.setItem(KEY, JSON.stringify({ version: VERSION, items: state.items })); }
+  catch (e) { console.warn('مقدرناش نحفظ:', e.name); }   // QuotaExceededError
+}
+~~~
+
+~~~js validate.js
+// validate.js: بيرجّع أخطاء، مش بيرمي
+const AMOUNT = /^-?\d+(\.\d+)?$/;
+const CATS = new Set(['food', 'transport', 'other']);
+
+export function validateItem({ label, amount, cat }) {
+  const errors = {};
+  const trimmed = (label ?? '').trim();
+  if (!trimmed) errors.label = 'اكتب على إيه صرفت';
+  else if (trimmed.length > 60) errors.label = 'الوصف طويل أوي (٦٠ حرف بحد أقصى)';
+
+  const raw = String(amount ?? '').trim()
+    .replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - 0x0660)
+    .replace('٫', '.');
+  const n = Number(raw);
+  if (raw === '') errors.amount = 'اكتب المبلغ';
+  else if (!AMOUNT.test(raw)) errors.amount = 'المبلغ لازم يكون رقم';
+  else if (n <= 0) errors.amount = 'المبلغ لازم يكون أكبر من صفر';
+  else if (n > 1000000) errors.amount = 'الرقم ده كبير أوي، اتأكد';
+
+  return { ok: Object.keys(errors).length === 0, errors,
+           value: { label: trimmed, amount: n, cat: CATS.has(cat) ? cat : 'other' } };
+}
+~~~
+
+~~~js state.js
+// state.js: items بس متخزنة، والفلتر والترتيب والبحث اختيارات شاشة جاية من الرابط
+import { load, save } from './storage.js';
+import { validateItem } from './validate.js';
+
+const listeners = new Set();
+let state = { ...load(), filter: 'all', sort: 'new', q: '' };
+
+export const get = () => state;
+export const subscribe = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
+
+function set(next) {
+  state = next;
+  save(state);
+  listeners.forEach(fn => fn(state));
+}
+
+const SORTERS = {
+  new: null,
+  amount: (a, b) => b.amount - a.amount,
+  name: (a, b) => a.label.localeCompare(b.label, 'ar'),
+};
+
+// نفس الحرف بأشكاله: أ إ آ -> ا، ة -> ه، ى -> ي، ومن غير تشكيل
+export const fold = (s) => s.normalize('NFKD').replace(/[\u064B-\u065F]/g, '')
+  .replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').toLowerCase();
+
+export const visible = (s) => {
+  const q = fold(s.q);
+  let list = s.filter === 'all' ? s.items : s.items.filter(it => it.cat === s.filter);
+  if (q) list = list.filter(it => fold(it.label).includes(q));
+  return SORTERS[s.sort] ? list.toSorted(SORTERS[s.sort]) : list;
+};
+export const total = (s) => visible(s).reduce((sum, it) => sum + it.amount, 0);
+
+export function addItem(input) {
+  const { ok, errors, value } = validateItem(input);
+  if (!ok) return { ok, errors };
+  set({ ...state, items: [...state.items, { id: crypto.randomUUID(), ...value }] });
+  return { ok: true, errors: {} };
+}
+
+export const removeItem = (id) => set({ ...state, items: state.items.filter(it => it.id !== id) });
+export const setView = ({ filter, sort, q }) => set({ ...state, filter, sort, q });
+~~~
+
+- **[[fold]]:** بتخلّي البحث يتجاهل الفروق اللي اليوزر مش قاصدها في العربي. [[normalize('NFKD')]] بتفصل الهمزة والمدة عن الحرف (أ تبقى ا + علامة)، والـ regex بيشيل العلامات والتشكيل ([[\u064B-\u065F]])، وبعدين ة ← ه و ى ← ي. فـ «قهوه» بتلاقي «قهوة»، و «ايجار» بتلاقي «إيجار».
+- **[[q]] جوه الحالة زي [[filter]] و [[sort]]:** اختيار شاشة جاي من الرابط، مش داتا. و [[save]] بتحفظ [[items]] بس، فالبحث مبيتحفظش في [[localStorage]].
+
+~~~js render.js
+// render.js: بيرسم القايمة، وبيكتب في كل لينك الرابط الكامل (ومعاه البحث)
+import { visible, total } from './state.js';
+
+const CAT = { food: 'أكل', transport: 'مواصلات', other: 'تاني' };
+const $ = (sel) => document.querySelector(sel);
+const hashOf = ({ q, ...view }) => '#' + new URLSearchParams(q ? { ...view, q } : view);
+
+function row(it) {
+  const li = document.createElement('li');
+  li.textContent = it.label + ' — ' + it.amount + ' ج · ' + (CAT[it.cat] ?? CAT.other);
+  const del = document.createElement('button');
+  del.textContent = '×';
+  del.dataset.del = it.id;
+  del.setAttribute('aria-label', 'امسح ' + it.label);
+  li.append(del);
+  return li;
+}
+
+export function render(s, errors = {}) {
+  const shown = visible(s);
+  $('#list').replaceChildren(...shown.map(row));
+  $('#total').textContent = total(s);
+  $('#count').textContent = shown.length;
+  $('#empty').hidden = shown.length > 0;
+  $('#empty').textContent = s.q ? 'مفيش بنود فيها «' + s.q + '».' : 'مفيش مصاريف هنا لسه.';
+  if (document.activeElement !== $('#q')) $('#q').value = s.q;   // الرابط اتغيّر من برّه (back أو لينك)
+  const view = { filter: s.filter, sort: s.sort, q: s.q };
+  document.querySelectorAll('[data-filter]').forEach(a => {
+    a.href = hashOf({ ...view, filter: a.dataset.filter });   // بيحافظ على الترتيب الحالي
+    a.setAttribute('aria-current', a.dataset.filter === s.filter ? 'page' : 'false');
+  });
+  document.querySelectorAll('[data-sort]').forEach(a => {
+    a.href = hashOf({ ...view, sort: a.dataset.sort });       // بيحافظ على الفلتر الحالي
+    a.setAttribute('aria-current', a.dataset.sort === s.sort ? 'true' : 'false');
+  });
+  for (const name of ['label', 'amount']) {
+    $('#err-' + name).textContent = errors[name] ?? '';
+    const input = $('[name="' + name + '"]');
+    if (errors[name]) input.setAttribute('aria-invalid', 'true');   // toggleAttribute كان بيكتب "" مش "true"
+    else input.removeAttribute('aria-invalid');
+  }
+}
+~~~
+
+~~~js app.js
+// app.js: البحث والفلتر والترتيب كلهم في الرابط (#filter=food&sort=amount&q=قهوة)
+import * as store from './state.js';
+import { render } from './render.js';
+
+const FILTERS = new Set(['all', 'food', 'transport', 'other']);
+const SORTS = new Set(['new', 'amount', 'name']);
+
+function fromHash() {
+  const p = new URLSearchParams(location.hash.slice(1));
+  const filter = p.get('filter');
+  const sort = p.get('sort');
+  return {
+    filter: FILTERS.has(filter) ? filter : 'all',
+    sort: SORTS.has(sort) ? sort : 'new',
+    q: (p.get('q') ?? '').trim().slice(0, 60),        // نص حر: بنقصّه بس، مفيش قايمة
+  };
+}
+
+store.subscribe((s) => render(s));
+
+document.querySelector('#f').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const res = store.addItem({ label: f.get('label'), amount: f.get('amount'), cat: f.get('cat') });
+  if (res.ok) e.target.reset();
+  else render(store.get(), res.errors);
+});
+
+document.querySelector('#list').addEventListener('click', (e) => {
+  if (e.target.dataset.del) store.removeItem(e.target.dataset.del);
+});
+
+document.querySelector('#views').addEventListener('click', (e) => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+  e.preventDefault();
+  location.hash = a.getAttribute('href').slice(1);
+});
+
+// البحث: بعد ما اليوزر يبطّل كتابة 300ms، والحرف مش بيعمل مدخل في التاريخ
+let timer;
+document.querySelector('#q').addEventListener('input', (e) => {
+  clearTimeout(timer);
+  timer = setTimeout(() => {
+    const { filter, sort } = store.get();
+    const p = new URLSearchParams({ filter, sort });
+    const q = e.target.value.trim();
+    if (q) p.set('q', q);
+    location.replace(location.href.split('#')[0] + '#' + p);   // replace: back مش هيمشي حرف حرف
+  }, 300);
+});
+
+addEventListener('hashchange', () => store.setView(fromHash()));
+store.setView(fromHash());
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مصاريف: بحث وفلتر</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; max-width: 520px; }
+  nav a { margin-inline-end: 8px; }
+  nav a[aria-current="page"], nav a[aria-current="true"] { font-weight: 700; text-decoration: none; }
+  form { display: grid; gap: 6px; margin-block: 12px; }
+  input, select, button { font: inherit; padding: 4px 8px; }
+  [aria-invalid="true"] { border: 2px solid #b91c1c; }
+  .err { color: #b91c1c; font-size: 14px; min-height: 1em; }
+  li button { margin-inline-start: 8px; }
+</style>
+</head>
+<body>
+<h1 id="h" tabindex="-1">مصاريفي</h1>
+<div id="views">
+<input id="q" type="search" placeholder="دوّر بالاسم" aria-label="دوّر بالاسم">
+<nav aria-label="التصنيفات">
+  <a href="#filter=all" data-filter="all">الكل</a>
+  <a href="#filter=food" data-filter="food">أكل</a>
+  <a href="#filter=transport" data-filter="transport">مواصلات</a>
+  <a href="#filter=other" data-filter="other">تاني</a>
+</nav>
+<nav aria-label="الترتيب">رتّب:
+  <a href="#sort=new" data-sort="new">الأحدث</a>
+  <a href="#sort=amount" data-sort="amount">المبلغ</a>
+  <a href="#sort=name" data-sort="name">الاسم</a>
+</nav>
+</div>
+<form id="f" novalidate>
+  <label>على إيه؟ <input name="label" aria-describedby="err-label"></label>
+  <span class="err" id="err-label"></span>
+  <label>المبلغ <input name="amount" inputmode="decimal" aria-describedby="err-amount"></label>
+  <span class="err" id="err-amount"></span>
+  <label>التصنيف
+    <select name="cat"><option value="food">أكل</option><option value="transport">مواصلات</option><option value="other">تاني</option></select>
+  </label>
+  <button>ضيف</button>
+</form>
+<ul id="list"></ul>
+<p id="empty">مفيش مصاريف هنا لسه.</p>
+<p>الإجمالي: <strong id="total" aria-live="polite">0</strong> ج في <span id="count">0</span> بند</p>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
+~~~
+
+## أهم القرارات
+
+- **[[location.replace]] للبحث، و [[location.hash =]] للفلتر والترتيب:** الضغطة على فلتر «خطوة» اليوزر عايز يرجع منها بـ back. أما كل حرف في البحث لو عمل مدخل في التاريخ، back هيمشي حرف حرف. [[replace]] بيغيّر الرابط من غير مدخل جديد.
+- **الـ debounce (300ms):** الرابط والرسم بيتحدّثوا لما اليوزر يبطّل كتابة، مش مع كل حرف.
+- **[[q]] ملوش قايمة مسموحة** لأنه نص حر، بس بيتقص لـ 60 حرف ويتعمل [[trim]]. وبيتعرض بـ [[textContent]] بس (في رسالة «مفيش بنود فيها...»)، فرابط فيه HTML مش هيعمل حاجة.
+
+## اتقاس إيه (Chrome 158 بـ Playwright على localhost، والبنود: قهوة الصبح 45، مترو 10، قهوه بالليل 30، إيجار 3000، عشا 120)
+
+~~~text الناتج
+تبويب جديد #filter=food&q=قهوة:     قهوة الصبح 45، قهوه بالليل 30     الإجمالي 75   خانة البحث فيها «قهوة»
+#filter=hack&sort=zzz&q=:           الخمسة بترتيب الإضافة             الإجمالي 3205  خانة البحث فاضية
+#q=ايجار (من غير همزة):              إيجار 3000
+#q=بيتزا:                           مفيش صفوف، «مفيش بنود فيها «بيتزا».»
+كتبت «قهوه» حرف حرف على #filter=food:  #filter=food&sort=new&q=قهوه   صفين   الإجمالي 75   history.length زاد 0
+ضغطة «المبلغ»:                      #filter=food&sort=amount&q=قهوه  قهوة الصبح 45، قهوه بالليل 30
+back:                               #filter=food&sort=new&q=قهوه
+مفاتيح الحالة:                       items:array, filter:string, sort:string, q:string
+جوه المعاينة المعزولة:              #filter=food&sort=new&q=قهوه   قهوة 45
+~~~
+
+## الغلطات اللي حصلت وأنا ببنيه
+
+1. **خانة البحث مكانتش بتتحدّث مع الرابط.** أول نسخة كانت بتملا [[#q]] مرة واحدة وقت التحميل. لما الرابط اتغيّر بعدها (لينك تاني أو back)، القايمة اتفلترت بالكلمة الجديدة والخانة فضلت بالقديمة. القياس: فتحت [[#q=ايجار]] بعد [[#q=قهوة]] فالقايمة بقت إيجار والخانة لسه «قهوة». الإصلاح في [[render]]: الخانة بتاخد [[s.q]] **إلا لو اليوزر واقف فيها وبيكتب** ([[document.activeElement]])، عشان ميتمسحش منه حرف وهو بيكتب.
+2. **[[location.replace('#' + p)]] كسر المعاينة.** في صفحة عادية شغّال، بس جوه iframe بـ [[srcdoc]] الرابط النسبي [['#...']] بيتحسب من رابط **الصفحة الأم**، فالـ iframe راح على صفحة تانية خالص. [[location.hash = ...]] مكانش فيه المشكلة دي لأنه بيغيّر الجزء بعد [[#]] بس. الإصلاح: رابط كامل [[location.href.split('#')[0] + '#' + p]]، وده نفس النتيجة في أي صفحة.
+
+**ليه مفيش [[visibleItems]] ولا [[results]] في الحالة؟** لأن البحث مجرد شرط زيادة في [[visible]]. لو خزّنت النتيجة، أي إضافة أو مسح والبحث شغّال هيرجّع باج الدرس الأول.` },
+        { lvl: 'كبير', dir: "masareef", t: R`كمّل تطبيق المصاريف`, what: R`التطبيق اللي في الدروس ١٧٢ سطر وشغّال. ضيف عليه: تعديل بند موجود، وترتيب بالمبلغ، وتصدير CSV، ومجموع لكل تصنيف. كله من غير ما تلمس بنية الحالة. والوحدة كلها.`, done: R`التعديل بيعدّي على [[validateItem]] زي الإضافة، والتصدير بيطلّع CSV بيفتح في Excel صح بالعربي واسم فيه فاصلة أو علامة تنصيص مبيبوّظش الأعمدة، والمجاميع مشتقة مش متخزنة. وفيه اختبارات Node لـ [[validate.js]] و [[storage.js]] و [[state.js]] بتعدّي، والتطبيق بيفتح بعد داتا بايظة، ومفيش [[innerHTML]] بنص من اليوزر.`, ext: R`زوّد ميزانية شهرية بتحذّر لما تعدّيها، واستيراد CSV بتحقق لكل صف، وخليه PWA يشتغل من غير نت (تاب PWA).`, sol: R`**الشكل النهائي** (الست موديولات متجمّعين في سكربت واحد للمعاينة. الحفظ والتنزيل ممنوعين جوه المعاينة، فالتطبيق بيبدأ فاضي، وزرار CSV بيعرض الملف تحت بدل ما ينزّله):
+
+~~~view 560 مصاريف كاملة
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مصاريف</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; max-width: 520px; }
+  nav a { margin-inline-end: 8px; }
+  nav a[aria-current="page"] { font-weight: 700; text-decoration: none; }
+  form { display: grid; gap: 6px; margin-block: 12px; }
+  input, select, button { font: inherit; padding: 4px 8px; }
+  [aria-invalid="true"] { border: 2px solid #b91c1c; }
+  .err { color: #b91c1c; font-size: 14px; min-height: 1em; }
+  li { margin-block: 4px; }
+  li button { margin-inline-start: 8px; }
+  .edit { display: flex; flex-wrap: wrap; gap: 4px; }
+  .edit input { width: 8em; }
+  table { border-collapse: collapse; }
+  td { border: 1px solid #ccc; padding: 2px 10px; }
+  pre { background: #f3f4f6; padding: 8px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1 id="h" tabindex="-1">مصاريفي</h1>
+<nav aria-label="التصنيفات">
+  <a href="#all" data-filter="all">الكل</a>
+  <a href="#food" data-filter="food">أكل</a>
+  <a href="#transport" data-filter="transport">مواصلات</a>
+  <a href="#other" data-filter="other">تاني</a>
+</nav>
+<form id="f" novalidate>
+  <label>على إيه؟ <input name="label" aria-describedby="err-label"></label>
+  <span class="err" id="err-label"></span>
+  <label>المبلغ <input name="amount" inputmode="decimal" aria-describedby="err-amount"></label>
+  <span class="err" id="err-amount"></span>
+  <label>التصنيف
+    <select name="cat"><option value="food">أكل</option><option value="transport">مواصلات</option><option value="other">تاني</option></select>
+  </label>
+  <button>ضيف</button>
+</form>
+<ul id="list"></ul>
+<p id="empty">مفيش مصاريف هنا لسه.</p>
+<p>الإجمالي: <strong id="total" aria-live="polite">0</strong> ج في <span id="count">0</span> بند</p>
+<p><button id="sort" type="button">رتّب بالمبلغ</button> <button id="csv" type="button">نزّل CSV</button></p>
+<table><caption>المجموع لكل تصنيف</caption><tbody id="bycat"></tbody></table>
+<pre id="csv-preview" aria-label="آخر تصدير"></pre>
+<script type="module">
+// storage.js: الحفظ والقراية، ومعاهم رقم نسخة ودفاع عن داتا بايظة
+const KEY = 'masareef';
+const VERSION = 1;
+
+function load() {
+  let raw;
+  try { raw = localStorage.getItem(KEY); }
+  catch { return { items: [] }; }                  // بيانات المواقع مقفولة
+  if (!raw) return { items: [] };                  // أول زيارة
+
+  let data;
+  try { data = JSON.parse(raw); }
+  catch { console.warn('المحفوظ مش JSON'); return { items: [] }; }
+
+  if (data?.version !== VERSION) { console.warn('نسخة محفوظة قديمة (' + data?.version + ')'); return { items: [] }; }
+  if (!Array.isArray(data.items)) return { items: [] };
+
+  return { items: data.items.filter(it =>
+    it && typeof it.id === 'string' && typeof it.label === 'string' && it.label.trim() !== ''
+       && Number.isFinite(it.amount) && it.amount > 0) };   // نفس قواعد validate.js الأساسية
+}
+
+function save(state) {
+  try { localStorage.setItem(KEY, JSON.stringify({ version: VERSION, items: state.items })); }
+  catch (e) { console.warn('مقدرناش نحفظ:', e.name); }   // QuotaExceededError
+}
+
+// validate.js: بيرجّع أخطاء، مش بيرمي
+const AMOUNT = /^-?\d+(\.\d+)?$/;
+const CATS = new Set(['food', 'transport', 'other']);
+
+function validateItem({ label, amount, cat }) {
+  const errors = {};
+  const trimmed = (label ?? '').trim();
+  if (!trimmed) errors.label = 'اكتب على إيه صرفت';
+  else if (trimmed.length > 60) errors.label = 'الوصف طويل أوي (٦٠ حرف بحد أقصى)';
+
+  const raw = String(amount ?? '').trim()
+    .replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - 0x0660)
+    .replace('٫', '.');
+  const n = Number(raw);
+  if (raw === '') errors.amount = 'اكتب المبلغ';
+  else if (!AMOUNT.test(raw)) errors.amount = 'المبلغ لازم يكون رقم';
+  else if (n <= 0) errors.amount = 'المبلغ لازم يكون أكبر من صفر';
+  else if (n > 1000000) errors.amount = 'الرقم ده كبير أوي، اتأكد';
+
+  return { ok: Object.keys(errors).length === 0, errors,
+           value: { label: trimmed, amount: n, cat: CATS.has(cat) ? cat : 'other' } };
+}
+
+// csv.js: من البنود لنص CSV يفتح صح في Excel بالعربي
+const NAMES = { food: 'أكل', transport: 'مواصلات', other: 'تاني' };
+
+// خانة فيها فاصلة أو علامة تنصيص أو سطر جديد بتتحط بين "" والـ " جواها بتتكرر
+function cell(v) {
+  const s = String(v);
+  return /[",\r\n]/.test(s) ? '"' + s.replaceAll('"', '""') + '"' : s;
+}
+
+function toCSV(items) {
+  const rows = [['الوصف', 'المبلغ', 'التصنيف'], ...items.map((it) => [it.label, it.amount, NAMES[it.cat] ?? NAMES.other])];
+  return '\uFEFF' + rows.map((r) => r.map(cell).join(',')).join('\r\n') + '\r\n';
+}
+
+// state.js: مصدر الحقيقة. البنود بنفس شكلها، والباقي اختيارات شاشة
+
+const listeners = new Set();
+let state = { ...load(), filter: 'all', sort: 'new', editing: null };
+
+const get = () => state;
+const subscribe = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
+
+function set(next) {
+  state = next;
+  save(state);                                   // بيحفظ items بس
+  listeners.forEach((fn) => fn(state));
+}
+
+// المشتق: بيتحسب في كل رسمة ومبيتخزنش
+const visible = (s) => {
+  const list = s.filter === 'all' ? s.items : s.items.filter((it) => it.cat === s.filter);
+  return s.sort === 'amount' ? list.toSorted((a, b) => b.amount - a.amount) : list;
+};
+const total = (s) => visible(s).reduce((sum, it) => sum + it.amount, 0);
+const byCat = (s) => {
+  const sums = {};
+  for (const it of s.items) sums[it.cat] = (sums[it.cat] ?? 0) + it.amount;
+  return sums;
+};
+
+function addItem(input) {
+  const { ok, errors, value } = validateItem(input);
+  if (!ok) return { ok, errors };
+  set({ ...state, items: [...state.items, { id: crypto.randomUUID(), ...value }] });
+  return { ok: true, errors: {} };
+}
+
+function updateItem(id, input) {
+  const { ok, errors, value } = validateItem(input);   // نفس التحقق بتاع الإضافة
+  if (!ok) return { ok, errors };
+  set({ ...state, editing: null, items: state.items.map((it) => (it.id === id ? { ...it, ...value } : it)) });
+  return { ok: true, errors: {} };
+}
+
+const removeItem = (id) => set({ ...state, items: state.items.filter((it) => it.id !== id) });
+const setFilter = (filter) => set({ ...state, filter });
+const setSort = (sort) => set({ ...state, sort });
+const startEdit = (id) => set({ ...state, editing: id });
+const cancelEdit = () => set({ ...state, editing: null });
+const reload = () => set({ ...state, ...load(), editing: null });
+
+// render.js: بيقرا الحالة وبيكتب الصفحة، ومش بيغيّر حاجة
+
+const CAT = { food: 'أكل', transport: 'مواصلات', other: 'تاني' };
+const $ = (sel) => document.querySelector(sel);
+
+function button(text, data, label) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.textContent = text;
+  Object.assign(b.dataset, data);
+  if (label) b.setAttribute('aria-label', label);
+  return b;
+}
+
+function editRow(it, { errors = {}, draft = it } = {}) {
+  const form = document.createElement('form');
+  form.className = 'edit';
+  form.dataset.edit = it.id;
+  for (const [name, value, label] of [['label', draft.label, 'الوصف'], ['amount', draft.amount, 'المبلغ']]) {
+    const input = document.createElement('input');
+    input.name = name;
+    input.value = value;
+    input.setAttribute('aria-label', label);
+    if (errors[name]) input.setAttribute('aria-invalid', 'true');
+    form.append(input);
+  }
+  const select = document.createElement('select');
+  select.name = 'cat';
+  select.setAttribute('aria-label', 'التصنيف');
+  for (const [value, text] of Object.entries(CAT)) select.append(new Option(text, value, false, value === draft.cat));
+  const err = document.createElement('span');
+  err.className = 'err';
+  err.textContent = errors.label ?? errors.amount ?? '';
+  const save = document.createElement('button');
+  save.textContent = 'احفظ';
+  form.append(select, save, button('إلغاء', { cancel: '1' }), err);
+  return form;
+}
+
+function row(it, s, edit) {
+  const li = document.createElement('li');
+  if (s.editing === it.id) { li.append(editRow(it, edit)); return li; }
+  const text = document.createElement('span');
+  text.textContent = it.label + ' — ' + it.amount + ' ج · ' + (CAT[it.cat] ?? CAT.other);
+  li.append(text, button('عدّل', { start: it.id }, 'عدّل ' + it.label), button('×', { del: it.id }, 'امسح ' + it.label));
+  return li;
+}
+
+function render(s, errors = {}, edit) {   // edit = { errors, draft } لو التعديل معدّاش
+  const shown = visible(s);
+  $('#list').replaceChildren(...shown.map((it) => row(it, s, edit)));
+  $('#total').textContent = total(s);
+  $('#count').textContent = shown.length;
+  $('#empty').hidden = shown.length > 0;
+  $('#sort').textContent = s.sort === 'amount' ? 'رتّب بالأحدث' : 'رتّب بالمبلغ';
+  const sums = byCat(s);
+  $('#bycat').replaceChildren(...Object.entries(CAT).map(([key, name]) => {
+    const tr = document.createElement('tr');
+    for (const text of [name, sums[key] ?? 0]) tr.insertCell().textContent = text;
+    return tr;
+  }));
+  document.querySelectorAll('[data-filter]').forEach((a) =>
+    a.setAttribute('aria-current', a.dataset.filter === s.filter ? 'page' : 'false'));
+  for (const name of ['label', 'amount']) {
+    $('#err-' + name).textContent = errors[name] ?? '';
+    const input = $('#f [name="' + name + '"]');
+    if (errors[name]) input.setAttribute('aria-invalid', 'true');
+    else input.removeAttribute('aria-invalid');
+  }
+  ($('.edit [aria-invalid="true"]') ?? $('.edit [name="label"]'))?.focus();
+}
+
+// app.js: التوصيل. الأحداث والرابط والتصدير
+
+const FILTERS = new Set(['all', 'food', 'transport', 'other']);
+const fromHash = () => {
+  const h = location.hash.slice(1);
+  return FILTERS.has(h) ? h : 'all';
+};
+
+subscribe((s) => render(s));
+
+document.querySelector('#f').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const res = addItem({ label: f.get('label'), amount: f.get('amount'), cat: f.get('cat') });
+  if (res.ok) e.target.reset();
+  else render(get(), res.errors);
+});
+
+const list = document.querySelector('#list');
+list.addEventListener('click', (e) => {
+  const d = e.target.dataset;
+  if (d.del) removeItem(d.del);
+  if (d.start) startEdit(d.start);
+  if (d.cancel) cancelEdit();
+});
+list.addEventListener('submit', (e) => {          // فورم التعديل اللي جوه الصف
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const draft = { label: f.get('label'), amount: f.get('amount'), cat: f.get('cat') };
+  const res = updateItem(e.target.dataset.edit, draft);
+  if (!res.ok) render(get(), {}, { errors: res.errors, draft });   // اللي اليوزر كتبه يفضل
+});
+list.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && e.target.closest('.edit')) cancelEdit();
+});
+
+document.querySelector('#sort').addEventListener('click', () =>
+  setSort(get().sort === 'amount' ? 'new' : 'amount'));
+
+document.querySelector('#csv').addEventListener('click', () => {
+  const text = toCSV(get().items);
+  document.querySelector('#csv-preview').textContent = text.slice(1);   // من غير الـ BOM
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type: 'text/csv;charset=utf-8' }));
+  a.download = 'masareef.csv';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+
+document.querySelector('nav').addEventListener('click', (e) => {
+  const a = e.target.closest('a[data-filter]');
+  if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+  e.preventDefault();
+  location.hash = a.dataset.filter;
+});
+
+addEventListener('hashchange', () => setFilter(fromHash()));
+addEventListener('storage', (e) => { if (e.key === 'masareef' || e.key === null) reload(); });
+setFilter(fromHash());
+</script>
+</body>
+</html>
+~~~
+
+**تشغيله على جهازك:** الملفات بتستورد بعض بـ [[type="module"]]، والمتصفح بيمنع ده من [[file://]]. شغّل سيرفر جوه الفولدر ([[npx serve]] أو [[python -m http.server 8000]]) وافتح الرابط. والاختبارات: [[node --test]] من نفس الفولدر.
+
+**هتشوف إيه:** نفس تطبيق الوحدة، وزيادة: زرار «عدّل» جنب كل بند بيحوّل الصف لفورم صغير (Enter يحفظ، و Escape أو «إلغاء» يلغي)، وزرار «رتّب بالمبلغ»، وزرار «نزّل CSV» بينزّل [[masareef.csv]] ويعرض محتواه، وجدول «المجموع لكل تصنيف». وبنية البند زي ما هي: [[{ id, label, amount, cat }]].
+
+~~~text الملفات
+masareef/
+├── index.html
+├── app.js            التوصيل: الأحداث والرابط والتنزيل
+├── render.js         الشاشة (والصف في وضع التعديل)
+├── state.js          الحالة والعمليات والمشتقات
+├── storage.js        الحفظ والقراية (والفحص بقى بقواعد التحقق الأساسية)
+├── validate.js       قواعد المدخلات
+├── csv.js            من البنود لنص CSV
+└── tests/
+    ├── fake-storage.mjs
+    ├── validate.test.mjs
+    ├── storage.test.mjs
+    ├── state.test.mjs
+    └── csv.test.mjs
+~~~
+
+## ترتيب البناء
+
+1. **[[csv.js]] واختباره الأول:** دالة نقية، فبتتكتب وتتختبر في Node قبل ما تلمس الصفحة.
+2. **[[state.js]]:** [[updateItem]] و [[setSort]] و [[byCat]]، واختبارها بالـ localStorage المزيّف.
+3. **[[render.js]]:** الصف في وضع التعديل، وجدول المجاميع.
+4. **[[app.js]]:** توصيل الأزرار و submit التعديل و Escape.
+5. **القياس في Chrome**، وبعدين إصلاح اللي طلع.
+
+## الكود
+
+~~~js validate.js
+// validate.js: بيرجّع أخطاء، مش بيرمي
+const AMOUNT = /^-?\d+(\.\d+)?$/;
+const CATS = new Set(['food', 'transport', 'other']);
+
+export function validateItem({ label, amount, cat }) {
+  const errors = {};
+  const trimmed = (label ?? '').trim();
+  if (!trimmed) errors.label = 'اكتب على إيه صرفت';
+  else if (trimmed.length > 60) errors.label = 'الوصف طويل أوي (٦٠ حرف بحد أقصى)';
+
+  const raw = String(amount ?? '').trim()
+    .replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - 0x0660)
+    .replace('٫', '.');
+  const n = Number(raw);
+  if (raw === '') errors.amount = 'اكتب المبلغ';
+  else if (!AMOUNT.test(raw)) errors.amount = 'المبلغ لازم يكون رقم';
+  else if (n <= 0) errors.amount = 'المبلغ لازم يكون أكبر من صفر';
+  else if (n > 1000000) errors.amount = 'الرقم ده كبير أوي، اتأكد';
+
+  return { ok: Object.keys(errors).length === 0, errors,
+           value: { label: trimmed, amount: n, cat: CATS.has(cat) ? cat : 'other' } };
+}
+~~~
+
+~~~js storage.js
+// storage.js: الحفظ والقراية، ومعاهم رقم نسخة ودفاع عن داتا بايظة
+const KEY = 'masareef';
+const VERSION = 1;
+
+export function load() {
+  let raw;
+  try { raw = localStorage.getItem(KEY); }
+  catch { return { items: [] }; }                  // بيانات المواقع مقفولة
+  if (!raw) return { items: [] };                  // أول زيارة
+
+  let data;
+  try { data = JSON.parse(raw); }
+  catch { console.warn('المحفوظ مش JSON'); return { items: [] }; }
+
+  if (data?.version !== VERSION) { console.warn('نسخة محفوظة قديمة (' + data?.version + ')'); return { items: [] }; }
+  if (!Array.isArray(data.items)) return { items: [] };
+
+  return { items: data.items.filter(it =>
+    it && typeof it.id === 'string' && typeof it.label === 'string' && it.label.trim() !== ''
+       && Number.isFinite(it.amount) && it.amount > 0) };   // نفس قواعد validate.js الأساسية
+}
+
+export function save(state) {
+  try { localStorage.setItem(KEY, JSON.stringify({ version: VERSION, items: state.items })); }
+  catch (e) { console.warn('مقدرناش نحفظ:', e.name); }   // QuotaExceededError
+}
+~~~
+
+- الشرط الأخير زيادة عن الدرس: مشروع «اكسره عن قصد» طلّع إن بند محفوظ بمبلغ سالب كان بيفتح وبيدّي إجمالي سالب، لأن [[load]] كانت بتفحص النوع بس.
+
+~~~js csv.js
+// csv.js: من البنود لنص CSV يفتح صح في Excel بالعربي
+const NAMES = { food: 'أكل', transport: 'مواصلات', other: 'تاني' };
+
+// خانة فيها فاصلة أو علامة تنصيص أو سطر جديد بتتحط بين "" والـ " جواها بتتكرر
+export function cell(v) {
+  const s = String(v);
+  return /[",\r\n]/.test(s) ? '"' + s.replaceAll('"', '""') + '"' : s;
+}
+
+export function toCSV(items) {
+  const rows = [['الوصف', 'المبلغ', 'التصنيف'], ...items.map((it) => [it.label, it.amount, NAMES[it.cat] ?? NAMES.other])];
+  return '\uFEFF' + rows.map((r) => r.map(cell).join(',')).join('\r\n') + '\r\n';
+}
+~~~
+
+- **[[cell]]:** القاعدة بتاعة CSV (RFC 4180): أي خانة فيها [[,]] أو [["]] أو سطر جديد تتحط بين علامتين، و [["]] اللي جواها تبقى [[""]]. فاسم زي «عيش، فول, وطعمية» (فيه فاصلة إنجليزي) ميبقاش عمودين.
+- **[[\uFEFF]] في أول الملف (BOM):** علامة بتقول إن الملف UTF-8. من غيرها Excel على ويندوز بيقرا الملف بترميز تاني والعربي بيطلع رموز (ده من وثائق Microsoft و RFC؛ Excel نفسه متجرّبش هنا، اللي اتقاس هو البايتات والنص).
+- **[[\r\n]]:** نهاية السطر اللي الـ RFC بيطلبها.
+
+~~~js state.js
+// state.js: مصدر الحقيقة. البنود بنفس شكلها، والباقي اختيارات شاشة
+import { load, save } from './storage.js';
+import { validateItem } from './validate.js';
+
+const listeners = new Set();
+let state = { ...load(), filter: 'all', sort: 'new', editing: null };
+
+export const get = () => state;
+export const subscribe = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
+
+function set(next) {
+  state = next;
+  save(state);                                   // بيحفظ items بس
+  listeners.forEach((fn) => fn(state));
+}
+
+// المشتق: بيتحسب في كل رسمة ومبيتخزنش
+export const visible = (s) => {
+  const list = s.filter === 'all' ? s.items : s.items.filter((it) => it.cat === s.filter);
+  return s.sort === 'amount' ? list.toSorted((a, b) => b.amount - a.amount) : list;
+};
+export const total = (s) => visible(s).reduce((sum, it) => sum + it.amount, 0);
+export const byCat = (s) => {
+  const sums = {};
+  for (const it of s.items) sums[it.cat] = (sums[it.cat] ?? 0) + it.amount;
+  return sums;
+};
+
+export function addItem(input) {
+  const { ok, errors, value } = validateItem(input);
+  if (!ok) return { ok, errors };
+  set({ ...state, items: [...state.items, { id: crypto.randomUUID(), ...value }] });
+  return { ok: true, errors: {} };
+}
+
+export function updateItem(id, input) {
+  const { ok, errors, value } = validateItem(input);   // نفس التحقق بتاع الإضافة
+  if (!ok) return { ok, errors };
+  set({ ...state, editing: null, items: state.items.map((it) => (it.id === id ? { ...it, ...value } : it)) });
+  return { ok: true, errors: {} };
+}
+
+export const removeItem = (id) => set({ ...state, items: state.items.filter((it) => it.id !== id) });
+export const setFilter = (filter) => set({ ...state, filter });
+export const setSort = (sort) => set({ ...state, sort });
+export const startEdit = (id) => set({ ...state, editing: id });
+export const cancelEdit = () => set({ ...state, editing: null });
+export const reload = () => set({ ...state, ...load(), editing: null });
+~~~
+
+- **[[updateItem]] بتعدّي على [[validateItem]]** زي [[addItem]] بالظبط، فمستحيل التعديل يدخّل مبلغ سالب أو اسم فاضي.
+- **[[sort]] و [[editing]] و [[filter]] حالة شاشة:** [[save]] بتحفظ [[items]] بس، فبنية المحفوظ ما اتغيّرتش و [[VERSION]] لسه 1.
+- **[[toSorted]]** في [[visible]]: الترتيب مشتق، و [[items]] نفسها فاضلة بترتيب الإضافة (فيه اختبار بيتأكد).
+- **[[byCat]]** مشتقة برضه: بتلف على [[items]] كلها (مش المعروض بس) وبتجمع لكل [[cat]].
+
+~~~js render.js
+// render.js: بيقرا الحالة وبيكتب الصفحة، ومش بيغيّر حاجة
+import { visible, total, byCat } from './state.js';
+
+const CAT = { food: 'أكل', transport: 'مواصلات', other: 'تاني' };
+const $ = (sel) => document.querySelector(sel);
+
+function button(text, data, label) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.textContent = text;
+  Object.assign(b.dataset, data);
+  if (label) b.setAttribute('aria-label', label);
+  return b;
+}
+
+function editRow(it, { errors = {}, draft = it } = {}) {
+  const form = document.createElement('form');
+  form.className = 'edit';
+  form.dataset.edit = it.id;
+  for (const [name, value, label] of [['label', draft.label, 'الوصف'], ['amount', draft.amount, 'المبلغ']]) {
+    const input = document.createElement('input');
+    input.name = name;
+    input.value = value;
+    input.setAttribute('aria-label', label);
+    if (errors[name]) input.setAttribute('aria-invalid', 'true');
+    form.append(input);
+  }
+  const select = document.createElement('select');
+  select.name = 'cat';
+  select.setAttribute('aria-label', 'التصنيف');
+  for (const [value, text] of Object.entries(CAT)) select.append(new Option(text, value, false, value === draft.cat));
+  const err = document.createElement('span');
+  err.className = 'err';
+  err.textContent = errors.label ?? errors.amount ?? '';
+  const save = document.createElement('button');
+  save.textContent = 'احفظ';
+  form.append(select, save, button('إلغاء', { cancel: '1' }), err);
+  return form;
+}
+
+function row(it, s, edit) {
+  const li = document.createElement('li');
+  if (s.editing === it.id) { li.append(editRow(it, edit)); return li; }
+  const text = document.createElement('span');
+  text.textContent = it.label + ' — ' + it.amount + ' ج · ' + (CAT[it.cat] ?? CAT.other);
+  li.append(text, button('عدّل', { start: it.id }, 'عدّل ' + it.label), button('×', { del: it.id }, 'امسح ' + it.label));
+  return li;
+}
+
+export function render(s, errors = {}, edit) {   // edit = { errors, draft } لو التعديل معدّاش
+  const shown = visible(s);
+  $('#list').replaceChildren(...shown.map((it) => row(it, s, edit)));
+  $('#total').textContent = total(s);
+  $('#count').textContent = shown.length;
+  $('#empty').hidden = shown.length > 0;
+  $('#sort').textContent = s.sort === 'amount' ? 'رتّب بالأحدث' : 'رتّب بالمبلغ';
+  const sums = byCat(s);
+  $('#bycat').replaceChildren(...Object.entries(CAT).map(([key, name]) => {
+    const tr = document.createElement('tr');
+    for (const text of [name, sums[key] ?? 0]) tr.insertCell().textContent = text;
+    return tr;
+  }));
+  document.querySelectorAll('[data-filter]').forEach((a) =>
+    a.setAttribute('aria-current', a.dataset.filter === s.filter ? 'page' : 'false'));
+  for (const name of ['label', 'amount']) {
+    $('#err-' + name).textContent = errors[name] ?? '';
+    const input = $('#f [name="' + name + '"]');
+    if (errors[name]) input.setAttribute('aria-invalid', 'true');
+    else input.removeAttribute('aria-invalid');
+  }
+  ($('.edit [aria-invalid="true"]') ?? $('.edit [name="label"]'))?.focus();
+}
+~~~
+
+~~~js app.js
+// app.js: التوصيل. الأحداث والرابط والتصدير
+import * as store from './state.js';
+import { render } from './render.js';
+import { toCSV } from './csv.js';
+
+const FILTERS = new Set(['all', 'food', 'transport', 'other']);
+const fromHash = () => {
+  const h = location.hash.slice(1);
+  return FILTERS.has(h) ? h : 'all';
+};
+
+store.subscribe((s) => render(s));
+
+document.querySelector('#f').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const res = store.addItem({ label: f.get('label'), amount: f.get('amount'), cat: f.get('cat') });
+  if (res.ok) e.target.reset();
+  else render(store.get(), res.errors);
+});
+
+const list = document.querySelector('#list');
+list.addEventListener('click', (e) => {
+  const d = e.target.dataset;
+  if (d.del) store.removeItem(d.del);
+  if (d.start) store.startEdit(d.start);
+  if (d.cancel) store.cancelEdit();
+});
+list.addEventListener('submit', (e) => {          // فورم التعديل اللي جوه الصف
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const draft = { label: f.get('label'), amount: f.get('amount'), cat: f.get('cat') };
+  const res = store.updateItem(e.target.dataset.edit, draft);
+  if (!res.ok) render(store.get(), {}, { errors: res.errors, draft });   // اللي اليوزر كتبه يفضل
+});
+list.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && e.target.closest('.edit')) store.cancelEdit();
+});
+
+document.querySelector('#sort').addEventListener('click', () =>
+  store.setSort(store.get().sort === 'amount' ? 'new' : 'amount'));
+
+document.querySelector('#csv').addEventListener('click', () => {
+  const text = toCSV(store.get().items);
+  document.querySelector('#csv-preview').textContent = text.slice(1);   // من غير الـ BOM
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type: 'text/csv;charset=utf-8' }));
+  a.download = 'masareef.csv';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+
+document.querySelector('nav').addEventListener('click', (e) => {
+  const a = e.target.closest('a[data-filter]');
+  if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+  e.preventDefault();
+  location.hash = a.dataset.filter;
+});
+
+addEventListener('hashchange', () => store.setFilter(fromHash()));
+addEventListener('storage', (e) => { if (e.key === 'masareef' || e.key === null) store.reload(); });
+store.setFilter(fromHash());
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مصاريف</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; max-width: 520px; }
+  nav a { margin-inline-end: 8px; }
+  nav a[aria-current="page"] { font-weight: 700; text-decoration: none; }
+  form { display: grid; gap: 6px; margin-block: 12px; }
+  input, select, button { font: inherit; padding: 4px 8px; }
+  [aria-invalid="true"] { border: 2px solid #b91c1c; }
+  .err { color: #b91c1c; font-size: 14px; min-height: 1em; }
+  li { margin-block: 4px; }
+  li button { margin-inline-start: 8px; }
+  .edit { display: flex; flex-wrap: wrap; gap: 4px; }
+  .edit input { width: 8em; }
+  table { border-collapse: collapse; }
+  td { border: 1px solid #ccc; padding: 2px 10px; }
+  pre { background: #f3f4f6; padding: 8px; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1 id="h" tabindex="-1">مصاريفي</h1>
+<nav aria-label="التصنيفات">
+  <a href="#all" data-filter="all">الكل</a>
+  <a href="#food" data-filter="food">أكل</a>
+  <a href="#transport" data-filter="transport">مواصلات</a>
+  <a href="#other" data-filter="other">تاني</a>
+</nav>
+<form id="f" novalidate>
+  <label>على إيه؟ <input name="label" aria-describedby="err-label"></label>
+  <span class="err" id="err-label"></span>
+  <label>المبلغ <input name="amount" inputmode="decimal" aria-describedby="err-amount"></label>
+  <span class="err" id="err-amount"></span>
+  <label>التصنيف
+    <select name="cat"><option value="food">أكل</option><option value="transport">مواصلات</option><option value="other">تاني</option></select>
+  </label>
+  <button>ضيف</button>
+</form>
+<ul id="list"></ul>
+<p id="empty">مفيش مصاريف هنا لسه.</p>
+<p>الإجمالي: <strong id="total" aria-live="polite">0</strong> ج في <span id="count">0</span> بند</p>
+<p><button id="sort" type="button">رتّب بالمبلغ</button> <button id="csv" type="button">نزّل CSV</button></p>
+<table><caption>المجموع لكل تصنيف</caption><tbody id="bycat"></tbody></table>
+<pre id="csv-preview" aria-label="آخر تصدير"></pre>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
+~~~
+
+## الاختبارات
+
+~~~js tests/fake-storage.mjs
+// fake-storage.mjs: localStorage مزيّف لـ Node، لازم يتحمّل قبل state.js
+export const mem = new Map();
+globalThis.localStorage = {
+  getItem: (k) => (mem.has(k) ? mem.get(k) : null),
+  setItem: (k, v) => mem.set(k, String(v)),
+  removeItem: (k) => mem.delete(k),
+};
+~~~
+
+~~~js tests/validate.test.mjs
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { validateItem } from '../validate.js';
+
+test('الحدود: 60 حرف و مليون', () => {
+  assert.equal(validateItem({ label: 'ا'.repeat(60), amount: '1000000' }).ok, true);
+  assert.ok(validateItem({ label: 'ا'.repeat(61), amount: '5' }).errors.label);
+  assert.ok(validateItem({ label: 'x', amount: '1000001' }).errors.amount);
+});
+
+test('أرقام عربية ومسافات وصيغ مرفوضة', () => {
+  assert.equal(validateItem({ label: ' شاي ', amount: '١٢٫٥' }).value.amount, 12.5);
+  for (const amount of ['1e3', '0x10', '5,5', 'خمسين']) {
+    assert.equal(validateItem({ label: 'x', amount }).errors.amount, 'المبلغ لازم يكون رقم', amount);
+  }
+  assert.equal(validateItem({ label: 'x', amount: '  ' }).errors.amount, 'اكتب المبلغ');
+});
+
+test('تصنيف مش معروف بيبقى other', () => {
+  assert.equal(validateItem({ label: 'x', amount: '1', cat: 'hack' }).value.cat, 'other');
+});
+~~~
+
+~~~js tests/storage.test.mjs
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { mem } from './fake-storage.mjs';
+const { load, save } = await import('../storage.js');
+
+const put = (v) => mem.set('masareef', typeof v === 'string' ? v : JSON.stringify(v));
+
+test('كل الأشكال البايظة بترجّع حالة فاضية ومبترميش', () => {
+  for (const raw of ['{bad', 'null', '""', '[]', JSON.stringify({ version: 2, items: [] }), JSON.stringify({ version: 1, items: {} })]) {
+    put(raw);
+    assert.deepEqual(load(), { items: [] }, raw);
+  }
+  mem.delete('masareef');
+  assert.deepEqual(load(), { items: [] });
+});
+
+test('الصف البايظ بيتشال والسليم بيفضل', () => {
+  put({ version: 1, items: [
+    { id: 'a', label: 'قهوة', amount: 45, cat: 'food' },
+    null, 'نص', { id: 5, label: 'x', amount: 1 },
+    { id: 'b', label: 'سالب', amount: -45 }, { id: 'c', label: '   ', amount: 5 },
+  ] });
+  assert.deepEqual(load().items.map((it) => it.id), ['a']);
+});
+
+test('save بتكتب items بس ومعاها version', () => {
+  save({ items: [{ id: 'a', label: 'x', amount: 1, cat: 'food' }], filter: 'food', editing: 'a' });
+  assert.deepEqual(Object.keys(JSON.parse(mem.get('masareef'))), ['version', 'items']);
+});
+~~~
+
+~~~js tests/state.test.mjs
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { mem } from './fake-storage.mjs';
+mem.clear();
+const store = await import('../state.js');
+
+test('إضافة وتعديل بنفس التحقق', () => {
+  store.addItem({ label: 'قهوة', amount: '45', cat: 'food' });
+  store.addItem({ label: 'مترو', amount: '10', cat: 'transport' });
+  const id = store.get().items[0].id;
+  const bad = store.updateItem(id, { label: '', amount: '-1', cat: 'food' });
+  assert.equal(bad.ok, false);
+  assert.equal(store.get().items[0].amount, 45);           // الحالة ما اتلمستش
+  assert.equal(store.updateItem(id, { label: 'قهوة كبيرة', amount: '٦٠', cat: 'food' }).ok, true);
+  assert.deepEqual(store.get().items[0], { id, label: 'قهوة كبيرة', amount: 60, cat: 'food' });
+  assert.equal(JSON.parse(mem.get('masareef')).items[0].amount, 60);
+});
+
+test('الترتيب والمجاميع مشتقة', () => {
+  store.addItem({ label: 'عشا', amount: '120', cat: 'food' });
+  store.setSort('amount');
+  assert.deepEqual(store.visible(store.get()).map((it) => it.amount), [120, 60, 10]);
+  assert.deepEqual(store.get().items.map((it) => it.amount), [60, 10, 120]);   // الأصل بترتيبه
+  assert.deepEqual(store.byCat(store.get()), { food: 180, transport: 10 });
+  store.setFilter('food');
+  assert.equal(store.total(store.get()), 180);
+  assert.deepEqual(Object.keys(JSON.parse(mem.get('masareef'))), ['version', 'items']);
+});
+~~~
+
+~~~js tests/csv.test.mjs
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { toCSV, cell } from '../csv.js';
+
+test('خانة فيها فاصلة أو علامة تنصيص أو سطر', () => {
+  assert.equal(cell('شاي'), 'شاي');
+  assert.equal(cell('عيش، فول, وطعمية'), '"عيش، فول, وطعمية"');
+  assert.equal(cell('كتاب "JS"'), '"كتاب ""JS"""');
+  assert.equal(cell('سطر\nتاني'), '"سطر\nتاني"');
+});
+
+test('الملف: BOM و header و CRLF', () => {
+  const csv = toCSV([{ id: 'a', label: 'فول, وطعمية', amount: 15, cat: 'food' }]);
+  assert.equal(csv.charCodeAt(0), 0xfeff);
+  assert.equal(csv.slice(1), 'الوصف,المبلغ,التصنيف\r\n"فول, وطعمية",15,أكل\r\n');
+});
+~~~
+
+~~~text الناتج: node --test (Node 24.22، من فولدر المشروع)
+✔ خانة فيها فاصلة أو علامة تنصيص أو سطر
+✔ الملف: BOM و header و CRLF
+✔ إضافة وتعديل بنفس التحقق
+✔ الترتيب والمجاميع مشتقة
+✔ كل الأشكال البايظة بترجّع حالة فاضية ومبترميش
+✔ الصف البايظ بيتشال والسليم بيفضل
+✔ save بتكتب items بس ومعاها version
+✔ الحدود: 60 حرف و مليون
+✔ أرقام عربية ومسافات وصيغ مرفوضة
+✔ تصنيف مش معروف بيبقى other
+ℹ tests 10
+ℹ pass 10
+ℹ fail 0
+~~~
+
+- [[node --test]] من غير اسم ملف بيدوّر لوحده على [[*.test.mjs]] في الفولدرات، وبيشغّل كل ملف في process لوحده، فالـ localStorage المزيّف مبيتشاركش بين الملفات.
+- [[fake-storage.mjs]] بيتحمّل بـ [[import]] عادي **قبل** [[await import('../state.js')]]، لأن الـ static imports بتتنفّذ بالترتيب قبل باقي الملف.
+
+## اتقاس إيه في Chrome (158 بـ Playwright على localhost)
+
+~~~text الناتج
+٤ بنود: قهوة 45، مترو 10، «عيش، فول, وطعمية» 15، <img src=x onerror="document.title=1"> 5
+  الإجمالي 75   المجاميع: أكل 60 / مواصلات 10 / تاني 5   عنوان الصفحة لسه «مصاريف» (الـ payload نص)
+«عدّل» على قهوة:          الصف بقى فورم والـ focus على الوصف
+مبلغ «خمسين» و Enter:     الفورم فضل مفتوح فيه «قهوة كبيرة» و «خمسين»، و aria-invalid على المبلغ، والرسالة «المبلغ لازم يكون رقم»، والمحفوظ لسه 45
+Escape:                   رجع صف عادي، والإجمالي 75
+تعديل لـ «قهوة كبيرة» ٦٠:  الإجمالي 90   أكل 75
+«رتّب بالمبلغ»:           60، 15، 10، 5   الإجمالي 90 زي ما هو
+«نزّل CSV»:               اتنزّل masareef.csv، ومحتواه:
+  الوصف,المبلغ,التصنيف
+  قهوة كبيرة,60,أكل
+  مترو,10,مواصلات
+  "عيش، فول, وطعمية",15,أكل
+  "<img src=x onerror=""document.title=1"">",5,تاني
+reload:                   نفس البنود بترتيب الإضافة (الترتيب حالة شاشة مش محفوظة)
+محفوظ بايظ (سالب، null، سليم):  فتح بـ «مترو» بس، والإجمالي 10
+grep innerHTML في الملفات: 0
+~~~
+
+## الغلطات اللي حصلت وأنا ببنيه
+
+1. **[[toggleAttribute('aria-invalid', ...)]] كتب [[aria-invalid=""]]** مش [[aria-invalid="true"]]. الفاضي في ARIA = [[false]]، والـ CSS اللي بيلوّن [[ [aria-invalid="true"] ]] مكانش بيمسك. الإصلاح [[setAttribute('aria-invalid', 'true')]] و [[removeAttribute]].
+2. **التعديل الغلط كان بيمسح اللي اليوزر كتبه.** أول نسخة كانت بتعمل [[render(store.get(), {}, res.errors)]]، والصف بيترسم من البند المحفوظ، فـ «خمسين» رجعت 45 والرسالة بتقول «لازم يكون رقم» على رقم سليم. الإصلاح: [[app.js]] بيبعت [[{ errors, draft }]]، و [[editRow]] بيرسم القيم من [[draft]] لو موجودة.
+3. **اسمين [[CAT]] في ملفين.** [[render.js]] و [[csv.js]] الاتنين كان فيهم [[const CAT]]. كموديولات مفيش مشكلة (كل ملف scope لوحده)، بس لما جمّعتهم في سكربت واحد للمعاينة طلع [[SyntaxError]] تكرار تعريف. سمّيت اللي في [[csv.js]] [[NAMES]]. والدرس: الموديولات بتحميك من تصادم الأسماء، ودي واحدة من فوايدها اللي بتختفي لو رجعت لملف واحد.
+
+**ليه البنية ما اتغيّرتش:** كل الميزات الأربعة يا إما **عملية** جديدة على [[items]] ([[updateItem]])، يا إما **مشتق** ([[visible]] بالترتيب، و [[byCat]]، و [[toCSV]])، يا إما **حالة شاشة** ([[sort]] و [[editing]]). ولا واحدة احتاجت حقل جديد في البند، فـ [[storage.js]] مفيهوش migration.` },
+        { lvl: 'فكرة', t: R`حوّله لـ React بعد كده`, what: R`نفس التطبيق بالظبط. [[useState]] مكان [[state]]، و JSX مكان [[render]]. هتلاقي إن ٩٠٪ من اللي تعلمته هنا اتنقل زي ما هو — والباقي اختصارات. راجع تاب react.`, done: R`نفس المميزات شغالة، و [[storage.js]] و [[validate.js]] اتنقلوا من غير تعديل، وكاتب جدول: كل حتة في النسخة اليدوية بقت إيه في React.`, ext: R`اعمله في Vue أو Svelte كمان وقارن عدد السطور والحاجات اللي الفريمورك عملها لوحده.`, sol: R`**النسخة النموذجية: نفس التطبيق بـ React 18، والناتج بعد البناء** (لقطة متقاسة، لأن React محتاج خطوة build ومينفعش يتعرض في المعاينة من غير ما نحط مكتبة الـ 144 كيلو جوه الدرس):
+
+~~~text الناتج (Chrome 158 بـ Playwright على localhost، بعد npm run build)
+قهوة 45 أكل، مترو 10 مواصلات، عيش ٨ أكل:  الصفوف «قهوة — 45 ج · أكل×» ...   الإجمالي 63
+اسم فاضي ومبلغ -5:      «اكتب على إيه صرفت» و «المبلغ لازم يكون أكبر من صفر»، و aria-invalid="true" على الخانتين، والإجمالي 63
+ضغطة «أكل»:             #food   قهوة، عيش   الإجمالي 53
+reload:                 #food   نفس الصفين (load من localStorage، والفلتر من الرابط)
+× على قهوة:             عيش بس   الإجمالي 8، والمحفوظ فيه مترو وعيش
+pageerror:              ولا واحد
+~~~
+
+**هتشوف إيه:** نفس الشاشة بالظبط ونفس السلوك. الفرق كله في الكود.
+
+~~~text الملفات
+masareef-react/
+├── package.json
+├── index.html
+└── src/
+    ├── main.jsx       بيركّب App في الصفحة
+    ├── App.jsx        الحالة والشاشة والأحداث
+    ├── storage.js     منسوخ حرفيًا من حل «كمّل تطبيق المصاريف»
+    └── validate.js    منسوخ حرفيًا برضه
+~~~
+
+[[storage.js]] و [[validate.js]] هما نفس الملفين اللي في حل مشروع «كمّل تطبيق المصاريف» **بايت ببايت** ([[diff]] بينهم طلّع ولا فرق)، فمش هكررهم هنا. ودي أهم نتيجة في المشروع: الحفظ والتحقق مكانوش بيعرفوا حاجة عن الشاشة، فانتقلوا لفريمورك تاني من غير ما يحسّوا.
+
+~~~json package.json
+{
+  "name": "masareef-react",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/main.jsx --bundle --format=esm --jsx=automatic --minify --define:process.env.NODE_ENV=\\\"production\\\" --outfile=bundle.js"
+  },
+  "dependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "esbuild": "0.24.0"
+  }
+}
+~~~
+
+~~~js src/main.jsx
+// main.jsx: بيركّب App جوه #root
+import { createRoot } from 'react-dom/client';
+import App from './App.jsx';
+
+createRoot(document.getElementById('root')).render(<App />);
+~~~
+
+~~~js src/App.jsx
+// App.jsx: نفس تطبيق المصاريف. storage.js و validate.js جايين زي ما هما
+import { useState, useEffect } from 'react';
+import { load, save } from './storage.js';
+import { validateItem } from './validate.js';
+
+const CAT = { food: 'أكل', transport: 'مواصلات', other: 'تاني' };
+const FILTERS = new Set(['all', 'food', 'transport', 'other']);
+const fromHash = () => (FILTERS.has(location.hash.slice(1)) ? location.hash.slice(1) : 'all');
+
+export default function App() {
+  const [items, setItems] = useState(() => load().items);   // state = useState
+  const [filter, setFilter] = useState(fromHash);
+  const [errors, setErrors] = useState({});
+
+  useEffect(() => save({ items }), [items]);                // set() بتاعتنا كانت بتحفظ؛ هنا effect
+  useEffect(() => {
+    const onHash = () => setFilter(fromHash());
+    addEventListener('hashchange', onHash);
+    return () => removeEventListener('hashchange', onHash);  // نفس فكرة off() بتاعة subscribe
+  }, []);
+
+  const shown = filter === 'all' ? items : items.filter((it) => it.cat === filter);   // مشتق
+  const total = shown.reduce((sum, it) => sum + it.amount, 0);
+
+  function onSubmit(e) {
+    e.preventDefault();
+    const f = new FormData(e.target);
+    const res = validateItem({ label: f.get('label'), amount: f.get('amount'), cat: f.get('cat') });
+    setErrors(res.errors);
+    if (!res.ok) return;                                       // الحالة ما اتلمستش
+    setItems([...items, { id: crypto.randomUUID(), ...res.value }]);
+    e.target.reset();
+  }
+
+  return (
+    <>
+      <h1>مصاريفي</h1>
+      <nav aria-label="التصنيفات">
+        {['all', ...Object.keys(CAT)].map((key) => (
+          <a key={key} href={'#' + key} aria-current={key === filter ? 'page' : 'false'}>
+            {key === 'all' ? 'الكل' : CAT[key]}
+          </a>
+        ))}
+      </nav>
+      <form onSubmit={onSubmit} noValidate>
+        <label>على إيه؟ <input name="label" aria-invalid={errors.label ? 'true' : undefined} /></label>
+        <span className="err">{errors.label}</span>
+        <label>المبلغ <input name="amount" inputMode="decimal" aria-invalid={errors.amount ? 'true' : undefined} /></label>
+        <span className="err">{errors.amount}</span>
+        <select name="cat">{Object.entries(CAT).map(([v, t]) => <option key={v} value={v}>{t}</option>)}</select>
+        <button>ضيف</button>
+      </form>
+      <ul>
+        {shown.map((it) => (
+          <li key={it.id}>
+            {it.label} — {it.amount} ج · {CAT[it.cat] ?? CAT.other}
+            <button aria-label={'امسح ' + it.label} onClick={() => setItems(items.filter((x) => x.id !== it.id))}>×</button>
+          </li>
+        ))}
+      </ul>
+      {shown.length === 0 && <p>مفيش مصاريف هنا لسه.</p>}
+      <p>الإجمالي: <strong aria-live="polite">{total}</strong> ج في {shown.length} بند</p>
+    </>
+  );
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مصاريف (React)</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; max-width: 520px; }
+  nav a { margin-inline-end: 8px; }
+  nav a[aria-current="page"] { font-weight: 700; text-decoration: none; }
+  form { display: grid; gap: 6px; margin-block: 12px; }
+  input, select, button { font: inherit; padding: 4px 8px; }
+  [aria-invalid="true"] { border: 2px solid #b91c1c; }
+  .err { color: #b91c1c; font-size: 14px; min-height: 1em; }
+  li button { margin-inline-start: 8px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="module" src="./bundle.js"></script>
+</body>
+</html>
+~~~
+
+~~~bash
+npm install
+npm run build        # بيعمل bundle.js
+npx serve            # وافتح الرابط
+~~~
+
+## كل حتة بقت إيه
+
+| النسخة اليدوية | في React | الفرق |
+|---|---|---|
+| [[let state]] في [[state.js]] | [[useState]] لكل جزء ([[items]] و [[filter]] و [[errors]]) | React هو اللي ماسك القيمة وبيعرف إمتى تتغيّر |
+| [[set(next)]] | [[setItems(...)]] | نفس الفكرة: object جديد مش تعديل |
+| [[subscribe(render)]] | مفيش: أي [[setX]] بيعيد رسم [[App]] لوحده | ده أكبر اختصار |
+| [[render(s)]] و [[createElement]] و [[replaceChildren]] | الـ JSX اللي بيرجع من [[App]] | React بيحسب الفرق ويغيّر اللي اتغيّر بس |
+| [[textContent]] للأمان | [[{it.label}]] في JSX | React بيعمل escape لوحده؛ الخطر بيرجع بس مع [[dangerouslySetInnerHTML]] |
+| [[save]] جوه [[set]] | [[useEffect(() => save(...), [items])]] | الحفظ بقى «أثر جانبي» بيحصل بعد الرسم |
+| [[addEventListener('hashchange')]] و [[off()]] | [[useEffect]] وبترجّع دالة بتشيل المستمع | نفس دالة الإلغاء بالظبط |
+| [[visible(s)]] و [[total(s)]] | متغيرات عادية جوه [[App]] بتتحسب كل رسمة | المشتق لسه مشتق |
+| event delegation على [[#list]] | [[onClick]] على كل زرار | React نفسه بيحط المستمعين على الـ root (من وثائق React 17+) |
+| [[validateItem]] قبل التغيير | هي هي | ولا حرف اتغيّر |
+
+## ليه النسخة دي بالذات
+
+- **[[useState(() => load().items)]] بدالة:** [[load]] بتتنادى أول رسمة بس. لو كتبت [[useState(load().items)]]، [[load]] (وقراية [[localStorage]] و [[JSON.parse]]) هتتنادى مع **كل** رسمة والنتيجة تترمي.
+- **[[errors]] حالة منفصلة** بدل ما ترجع من [[render]] زي النسخة اليدوية، لأن الرسم في React بيحصل من الحالة بس.
+- **مكتبة بناء صغيرة (esbuild):** JSX مش JavaScript، فلازم حاجة تحوّله. ودي أقل خطوة ممكنة؛ في مشروع حقيقي Vite بيعمل ده ومعاه سيرفر تطوير (تاب react).
+- **اللينكات [[<a href="#food">]] عادية:** في صفحة عادية بتغيّر الـ hash، و [[hashchange]] بيحدّث [[filter]].
+
+## الحساب
+
+| | يدوي | React |
+|---|---|---|
+| كود التطبيق اللي كتبته | ٥ ملفات JS (6,359 بايت) | [[App.jsx]] و [[main.jsx]] (70 سطر) + نفس [[storage.js]] و [[validate.js]] |
+| اللي بيتحمّل في المتصفح | الـ 6 كيلو دول | [[bundle.js]] 144 كيلو (React و ReactDOM جواه، minified) |
+| خطوة build | مفيش | [[npm run build]] |
+
+يعني في تطبيق بالحجم ده React بيوفّر سطور التوصيل والرسم، وبياخد مقابلها ١٤٠ كيلو وخطوة بناء. والمكسب بيبان لما الشاشات تكتر والحالة تتشعّب، مش هنا. (ده بالظبط سؤال درس «إمتى framework غلط» في الوحدة اللي جاية.)
+
+**الغلطة الشائعة لما تنقل:** تحط [[save(items)]] جوه [[onSubmit]] بعد [[setItems]]. [[items]] جوه الدالة لسه القيمة **القديمة** (الـ state بيتحدّث في الرسمة الجاية، ده من وثائق React: «State as a Snapshot»)، فهتحفظ القايمة من غير البند الجديد. [[useEffect]] على [[items]] بيحل ده لأنه بيشتغل بعد ما القيمة الجديدة توصل.` },
+      ],
+      n: R`هنبني تطبيق مصاريف حقيقي من الصفر — ١٧٢ سطر في ٥ ملفات، كل سطر فيه اتشغّل في متصفح حقيقي. من غير فريمورك ومن غير مكتبة، عشان تشوف الميكانيكا بنفسك قبل ما حد يخبّيها عنك`,
+      items: [
+        {
+          cmd: "الـ DOM مش مكان الحالة",
+          title: "الشاشة بتقول ٧٥ والحقيقة ٣٠",
+          ref: [
+            { t: "MDN: Manipulating documents", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/DOM_scripting" },
+            { t: "MDN: Event bubbling and delegation", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/Event_bubbling" },
+            { t: "MDN: Element.replaceChildren()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren" },
+            { t: "MDN: HTMLElement.focus()", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus" },
+            { t: "MDN: aria-live", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-live" },
+          ],
+          pre: [
+            { to: "js/map و filter و reduce", why: R`[[render]] بتعمل الصفوف بـ [[map]]، والإجمالي [[reduce]]، والمسح [[filter]]` },
+          ],
+          learn: R`تخلي الداتا في مصفوفة، والشاشة بتترسم منها.`,
+          out: R`أي تغيير في الداتا بيظهر في كل مكان لوحده.`,
+          use: {
+            prog: R`الباج ده بيحصل في كل تطبيق مكتوب بالطريقة الأولى، ودايمًا متأخر — لما تضيف خاصية جديدة وتنسى تحدّث مكان من الخمسة.`,
+            work: R`«الرقم اللي فوق مش مطابق للي تحت» — أشهر شكوى في أي داشبورد، وده سببها.`,
+            cs: R`مصدر حقيقة واحد (single source of truth). وأي قيمة ممكن **تُشتق** من غيرها متتخزنش جنبها.`,
+          },
+          desc: R`أول تطبيق بيكتبه أي حد بيبقى كده: حدث يحصل، فأغيّر الـ DOM على طول.
+
+وده بيشتغل. **لحد أول ما تضيف زرار مسح.**
+
+**جرّبها بنفسك:** ضيف «قهوة ٤٥» و«مواصلات ٣٠». الإجمالي ٧٥، تمام. دلوقتي امسح «قهوة».
+
+| | |
+|---|---|
+| اللي على الشاشة | مواصلات — ٣٠ ج |
+| اللي في الإجمالي | **٧٥** |
+| الحقيقة | ٣٠ |
+
+**ليه؟** لأن الإجمالي مش مشتق من حاجة — هو رقم محفوظ في [[textContent]] وبيتزوّد يدوي. والصف اتشال من مكان، والرقم فضل في مكان تاني.
+
+**والسبب الأعمق:** الـ DOM بقى هو مكان الداتا. فعشان تمسح بند لازم تعدّل **كل** مكان بيعكسه: الصف، والإجمالي، والعدّاد، والرسالة اللي بتقول «مفيش حاجة». ونسيان واحد منهم مسألة وقت.
+
+**الحل في جملة:** الداتا في مصفوفة، والشاشة بتترسم من المصفوفة. ولما الداتا تتغيّر، ارسم تاني. الإجمالي ميتخزنش — **يتحسب** من المصفوفة في كل رسمة.`,
+          example: R`// v1 — الطريقة اللي بيبدأ بيها الناس: الـ DOM هو الحالة
+const list  = document.querySelector('#list');
+const total = document.querySelector('#total');
+
+document.querySelector('#f').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const li = document.createElement('li');
+  li.textContent = f.get('label') + ' — ' + f.get('amount') + ' ج';
+  list.append(li);
+  total.textContent = Number(total.textContent) + Number(f.get('amount'));
+  e.target.reset();
+});
+
+// ضيف «قهوة ٤٥» و«مواصلات ٣٠»، وبعدين امسح الأول:
+//   على الشاشة: مواصلات — 30 ج
+//   الإجمالي:   75        <-- غلط`,
+          lines: [
+            R`بنمسك الليستة اللي الصفوف هتتضاف فيها، مرة واحدة برّه الـ listener بدل ما ندوّر عليها مع كل ضغطة.`,
+            R`وعنصر الإجمالي. ولاحظ إنه **عنصر** على الشاشة مش رقم في متغير، وده أصل المشكلة اللي الدرس بيكشفها: مفيش مكان في الكود فيه الإجمالي الحقيقي غير النص المرسوم.`,
+            R`بنسمع لـ [[submit]] على الفورم مش [[click]] على الزرار، عشان Enter في أي خانة يضيف برضه.`,
+            R`[[preventDefault]] بيمنع السلوك الافتراضي للفورم، وهو إنه يبعت ويعمل reload للصفحة. من غيره الصفحة هتتحمّل من الأول وكل اللي أضفته يضيع.`,
+            R`[[FormData]] بتقرا كل خانات الفورم مرة واحدة، و [[f.get('label')]] بيرجّع قيمة الخانة اللي [[name]] بتاعها [[label]]. القيم بترجع strings حتى لو الخانة [[type="number"]].`,
+            R`بنعمل [[<li>]] جديد للصف ده، لسه في الذاكرة ومش ظاهر.`,
+            R`نكتب نص الصف من الاسم والمبلغ بـ [[textContent]] (كنص آمن). والمعلومة دي اتكتبت على الشاشة **بس**، مش محفوظة في أي متغير نقدر نرجعله بعدين.`,
+            R`نضيف الصف في آخر الليستة فيظهر.`,
+            R`**وهنا الباج**: الإجمالي بيتقرا من النص اللي على الشاشة، يتحوّل لرقم، ويتزوّد عليه. الشاشة بقت هي «الذاكرة». فلما تمسح صف بعدين، مفيش حاجة تقولك المبلغ كان كام عشان تطرحه، والرقم يفضل غلط. و [[Number]] ضروري هنا، من غيره [[+]] هتلزق النصين جنب بعض.`,
+            R`[[reset()]] بيفضّي كل خانات الفورم عشان اليوزر يكتب البند اللي بعده.`,
+            R`نهاية الـ [[submit]] listener. والتطبيق ده شغّال تمامًا، لحد ما تضيف مسح أو تعديل.`,
+          ],
+          try: R`افتح التطبيق، ضيف بندين، وبعدين افتح الـ console واكتب [[document.querySelector('#list li').remove()]]. الصف هيختفي والإجمالي هيفضل مكانه. **ده مش باج في الكود — ده باج في الفكرة.**`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في v1 (الـ DOM هو الحالة) ضيف «قهوة ٤٥» و«مواصلات ٣٠». قبل ما تكتب [[document.querySelector('#list li').remove()]] في الـ console، اكتب الإجمالي هيبقى كام وليه.`, done: R`توقعك مكتوب، والإجمالي فضل [[75]] والصف الباقي «مواصلات — 30 ج». وكاتب في سطر إن الرقم محفوظ في [[textContent]] ومش محسوب من حاجة. ونفس الحركة في v2 بتدّي 30.`, sol: R`**التوقع الصح:** الإجمالي هيفضل **75**. الصف بيتشال من الـ DOM، بس مفيش ولا سطر بيطرح مبلغه، لأن الرقم مكتوب في [[textContent]] بتاع [[#total]] ومش محسوب من أي حاجة.
+
+الصفحة دي هي v1 بالظبط، وزرار «امسح أول صف» بينفّذ **نفس** السطر اللي هتكتبه في الـ console ([[document.querySelector('#list li').remove()]])، عشان تجرّب في المعاينة من غير ما تدوّر على الـ iframe في DevTools:
+
+~~~live 260 v1.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>مصاريف v1</title>
+<style>body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; } input, button { font: inherit; }</style>
+</head>
+<body>
+<form id="f">
+  <input name="label" placeholder="على إيه؟" required>
+  <input name="amount" type="number" placeholder="المبلغ" required>
+  <button>ضيف</button>
+</form>
+<ul id="list"></ul>
+<p>الإجمالي: <strong id="total">0</strong></p>
+<button id="rm" type="button">امسح أول صف (نفس سطر الـ console)</button>
+<script>
+const list  = document.querySelector('#list');
+const total = document.querySelector('#total');
+document.querySelector('#f').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const li = document.createElement('li');
+  li.textContent = f.get('label') + ' — ' + f.get('amount') + ' ج';
+  list.append(li);
+  total.textContent = Number(total.textContent) + Number(f.get('amount'));
+  e.target.reset();
+});
+document.querySelector('#rm').addEventListener('click', () => {
+  document.querySelector('#list li')?.remove();
+});
+</script>
+</body>
+</html>
+~~~
+
+~~~text الناتج (Chrome 158 بـ Playwright، جوه iframe معزول زي المعاينة)
+بعد قهوة 45 ومواصلات 30:  الصفوف [قهوة — 45 ج، مواصلات — 30 ج]   الإجمالي 75
+بعد «امسح أول صف»:          الصفوف [مواصلات — 30 ج]                الإجمالي 75
+~~~
+
+**ليه 75؟** السطر الوحيد اللي بيلمس الإجمالي هو [[total.textContent = Number(total.textContent) + ...]] جوه الـ [[submit]]. يعني الرقم بيتزوّد مع كل إضافة، ومفيش مكان في الكود يعرف «قهوة كانت بكام» عشان يطرحها. الـ [[remove()]] شالت عنصر [[<li>]] وبس.
+
+**ونفس الحركة في v2** (الكود الكامل بتاعها في حل التمرين اللي بعده، و [[render]] بتحسب الإجمالي بـ [[reduce]]): بعد بندين 75، وبعد مسح قهوة **30**، لأن المسح بيغيّر [[state.items]] والإجمالي بيتحسب منها من جديد.
+
+**الغلطة الشائعة:** تفتكر إن «الإجمالي هيتحدّث لما الصف يتشال». الـ DOM مبيعرفش إن الرقم ده «مجموع» الصفوف؛ هو نص عادي.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حط مستمع المسح على كل زرار [[×]] وقت ما بتضيف البند (برا [[render]])، وضيف بندين. أول زرار مبقاش بيمسح. لاقي ليه، وصلّحها بمستمع واحد على [[#list]].`, done: R`عرفت إن [[render]] بتبني الأزرار من جديد فالمستمع القديم راح مع الزرار القديم، وبعد التصليح (event delegation بـ [[e.target.dataset.del]]) كل الأزرار بتمسح، حتى البنود اللي اتضافت بعد ما المستمع اتحط.`, sol: R`**الكود البايظ** (اتشغّل فعلًا): المستمع بيتحط على زرار البند الجديد وقت الإضافة، برا [[render]]:
+
+~~~js البايظ
+document.querySelector('#f').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const id = crypto.randomUUID();
+  state.items.push({ id, label: f.get('label'), amount: Number(f.get('amount')) });
+  render();
+  document.querySelector('[data-del="' + id + '"]').addEventListener('click', () => removeItem(id));
+  e.target.reset();
+});
+~~~
+
+~~~text الناتج (Chrome 158 بـ Playwright)
+بعد قهوة 45 ومواصلات 30:  الصفوف [قهوة، مواصلات]   الإجمالي 75
+ضغطة على × بتاع قهوة:       الصفوف [قهوة، مواصلات]   الإجمالي 75    <- مفيش حاجة حصلت
+ضغطة على × بتاع مواصلات:    الصفوف [قهوة]            الإجمالي 45
+~~~
+
+**ليه أول زرار مات؟** [[render]] بتعمل **أزرار جديدة** كل مرة ([[replaceChildren]] بيشيل القديمة). المستمع اللي اتحط على زرار قهوة كان على العنصر القديم، والعنصر ده اتشال من الصفحة لما إضافة «مواصلات» نادت [[render]] تاني. فالزرار اللي على الشاشة دلوقتي جديد ومفيش عليه مستمع. وزرار مواصلات اشتغل بس لأنه آخر واحد اتضاف وماحصلش [[render]] بعده.
+
+**الإصلاح:** مستمع **واحد** على [[#list]]، وده عنصر مبيتشالش أبدًا، فالضغطة على أي زرار جواه بتطلع له (bubbling) وهو يقرا [[data-del]]:
+
+~~~live 240 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>مصاريف v2</title>
+<style>body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; } input, button { font: inherit; }</style>
+</head>
+<body>
+<form id="f">
+  <input name="label" placeholder="على إيه؟" required>
+  <input name="amount" type="number" placeholder="المبلغ" required>
+  <button>ضيف</button>
+</form>
+<ul id="list"></ul>
+<p>الإجمالي: <strong id="total">0</strong></p>
+<script>
+const state = { items: [] };
+function render() {
+  const rows = state.items.map((it) => {
+    const li = document.createElement('li');
+    li.textContent = it.label + ' — ' + it.amount + ' ج ';
+    const del = document.createElement('button');
+    del.textContent = '×';
+    del.dataset.del = it.id;
+    li.append(del);
+    return li;
+  });
+  document.querySelector('#list').replaceChildren(...rows);
+  document.querySelector('#total').textContent = state.items.reduce((s, it) => s + it.amount, 0);
+}
+document.querySelector('#f').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  state.items.push({ id: crypto.randomUUID(), label: f.get('label'), amount: Number(f.get('amount')) });
+  render();
+  e.target.reset();
+});
+document.querySelector('#list').addEventListener('click', (e) => {
+  if (!e.target.dataset.del) return;
+  state.items = state.items.filter((it) => it.id !== e.target.dataset.del);
+  render();
+});
+</script>
+</body>
+</html>
+~~~
+
+~~~text الناتج بعد الإصلاح (Chrome 158، جوه iframe معزول)
+بعد قهوة 45 ومواصلات 30:  الإجمالي 75
+ضغطة على × بتاع قهوة:       الصفوف [مواصلات — 30 ج]   الإجمالي 30
+~~~
+
+- [[e.target.dataset.del]]: الضغطة لو على الزرار، [[e.target]] هو الزرار و [[dataset.del]] فيه الـ id. ولو على نص الصف نفسه، [[dataset.del]] بيبقى [[undefined]] فبنخرج بـ [[return]].
+- المستمع ده بيخدم البنود اللي هتتضاف **بعدين** كمان، لأنه مش مربوط بأي زرار.
+
+**الغلطة الشائعة:** تحاول تصلّحها بإنك تحط المستمعين تاني جوه [[render]] على كل زرار. بتشتغل، بس كل رسمة بتعمل N مستمع جديد، وأي حد ينسى يعمل نفس الحركة في مكان تاني يرجع للباج.` },
+            { lvl: 'تحدي', t: R`**ابني feature:** تعديل المبلغ في مكانه: دبل كليك على المبلغ يحوّله [[<input>]]، و Enter يحفظ، و Escape يلغي. التعديل بيغيّر [[state.items]] بس وبعدين [[render()]].`, done: R`تعديل قهوة من 45 لـ 50 بيخلّي الإجمالي 80، ومفيش ولا سطر برا [[render]] بيلمس [[#total]]. و Escape بيرجّع 45، ومبلغ مش رقم مبيتحفظش والخانة بتفضل مفتوحة، وبعد الحفظ المسح لسه شغال.`, sol: R`**الفكرة:** «مين بيتعدّل دلوقتي» نفسها **حالة**. فبنزوّد [[state.editing]] (الـ id أو [[null]])، و [[render]] هي اللي بتقرر ترسم [[<span>]] ولا [[<input>]]. الدبل كليك و Enter و Escape بيغيّروا الحالة بس، ومفيش ولا سطر برا [[render]] بيلمس [[#total]].
+
+~~~live 220 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>تعديل في مكانه</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
+  input, button { font: inherit; }
+  .amount { cursor: text; border-bottom: 1px dashed #888; }
+  .amount input { width: 6em; }
+  .bad { outline: 2px solid #b91c1c; }
+</style>
+</head>
+<body>
+<p>دبل كليك على أي مبلغ: Enter يحفظ، و Escape يلغي.</p>
+<ul id="list"></ul>
+<p>الإجمالي: <strong id="total">0</strong></p>
+<script>
+const state = {
+  items: [
+    { id: 'a', label: 'قهوة', amount: 45 },
+    { id: 'b', label: 'مواصلات', amount: 30 },
+  ],
+  editing: null,                       // id البند اللي بيتعدّل، أو null
+};
+
+function row(it) {
+  const li = document.createElement('li');
+  li.append(it.label + ' — ');
+  if (state.editing === it.id) {
+    const input = document.createElement('input');
+    input.value = it.amount;
+    input.dataset.edit = it.id;
+    input.setAttribute('aria-label', 'مبلغ ' + it.label);
+    li.append(input);
+  } else {
+    const span = document.createElement('span');
+    span.className = 'amount';
+    span.textContent = it.amount;
+    span.dataset.amount = it.id;
+    li.append(span);
+  }
+  const del = document.createElement('button');
+  del.textContent = '×';
+  del.dataset.del = it.id;
+  li.append(' ج ', del);
+  return li;
+}
+
+function render() {
+  document.querySelector('#list').replaceChildren(...state.items.map(row));
+  document.querySelector('#total').textContent = state.items.reduce((s, it) => s + it.amount, 0);
+  document.querySelector('[data-edit]')?.focus();
+}
+
+const list = document.querySelector('#list');
+list.addEventListener('dblclick', (e) => {
+  const id = e.target.dataset.amount;
+  if (id) { state.editing = id; render(); }
+});
+list.addEventListener('keydown', (e) => {
+  const id = e.target.dataset.edit;
+  if (!id) return;
+  if (e.key === 'Escape') { state.editing = null; render(); return; }
+  if (e.key !== 'Enter') return;
+  const n = Number(e.target.value.trim());
+  if (e.target.value.trim() === '' || !Number.isFinite(n) || n <= 0) {
+    e.target.classList.add('bad');     // الخانة تفضل مفتوحة والحالة ما اتغيّرتش
+    return;
+  }
+  state.items = state.items.map((it) => (it.id === id ? { ...it, amount: n } : it));
+  state.editing = null;
+  render();
+});
+list.addEventListener('click', (e) => {
+  if (!e.target.dataset.del) return;
+  state.items = state.items.filter((it) => it.id !== e.target.dataset.del);
+  render();
+});
+render();
+</script>
+</body>
+</html>
+~~~
+
+~~~text الناتج (Chrome 158 بـ Playwright، جوه iframe معزول)
+البداية:                       قهوة 45، مواصلات 30      الإجمالي 75
+دبل كليك على 45:                الـ focus راح للخانة (data-edit = a)
+كتب 50 و Enter:                 قهوة 50                  الإجمالي 80
+دبل كليك، كتب 99 و Escape:       قهوة 50                  الإجمالي 80
+دبل كليك، كتب «خمسين» و Enter:    الخانة لسه مفتوحة وعليها .bad   الإجمالي 80
+Escape وبعدين × على مواصلات:     قهوة 50                  الإجمالي 50
+~~~
+
+**أهم الحتت:**
+
+- **[[state.editing]]:** من غيرها كنت هتغيّر الـ DOM بإيدك (تبدّل الـ span بـ input)، ولو حصل [[render]] في النص (مسح بند تاني مثلًا) الخانة المفتوحة هتختفي. هنا أي [[render]] بترسم الخانة تاني لأنها جزء من الحالة.
+- **[[focus()]] في آخر [[render]]:** الخانة عنصر جديد كل رسمة، فلازم نحط الـ focus عليها بإيدنا (نفس فكرة قسم الـ focus في الشرح).
+- **مستمع واحد لكل نوع حدث على [[#list]]:** [[dblclick]] و [[keydown]] و [[click]]، بنفس الـ event delegation، فبيشتغلوا على العناصر اللي اتعملت جديدة.
+- **[[map]] بترجّع مصفوفة جديدة** والبند المتعدّل object جديد ([[{ ...it, amount: n }]])، من غير ما نعدّل القديم في مكانه.
+- **الرفض قبل التغيير:** النص الفاضي، و «خمسين» ([[Number]] بيدّي [[NaN]])، والصفر أو السالب بيلوّنوا الخانة ويرجعوا من غير ما يلمسوا [[state.items]].
+
+**الغلطة الشائعة:** تكتب [[span.textContent = n]] و [[total.textContent = ...]] جوه مستمع الـ Enter. هتشتغل أول مرة، وأول مسح بعدها هيرجّع الرقم القديم لأن الحالة نفسها ماتغيّرتش.` },
+          ],
+          deep: {
+            why: R`لو الداتا متخزنة في الشاشة، فكل عرض جديد ليها هو نسخة تانية ممكن تختلف. ومصدر الحقيقة الواحد بيلغي الاحتمال ده من أصله.`,
+            how: R`**الحلقة الصح، وهي نفسها في كل فريمورك:**
+
+~~~text
+حدث  →  غيّر الحالة  →  ارسم من الحالة
+ ↑                              |
+ └──────────────────────────────┘
+~~~
+
+والقواعد التلاتة اللي بتخليها تشتغل:
+
+**١. الحالة مكان واحد.** object أو مصفوفة في أعلى الملف.
+
+**٢. الرسم دالة من الحالة للشاشة.** [[render()]] بتقرا الحالة وبتكتب الـ DOM. مش بتقرا الـ DOM أبدًا.
+
+**٣. الأحداث بتغيّر الحالة بس.** المستمع مبيلمسش الـ DOM — بيعدّل الحالة وبينادي [[render]].
+
+**والقيم المشتقّة متتخزنش.** الإجمالي، والعدّاد، و«فاضي ولا لأ» — دول كلهم بيتحسبوا من [[state.items]] في كل رسمة. لو خزّنتهم، رجعت لنفس المشكلة بشكل تاني.
+
+**«مش هيبقى بطيء إني أعيد رسم كل حاجة؟»** في تطبيق بحجم ده، لأ — قِسته: **٠.٣٨ ميلي ثانية** للرسمة الكاملة بـ ٥١ بند. ولما يكبر فعلًا، الحل مش إنك ترجع تعدّل الـ DOM يدوي، الحل إنك ترسم **الجزء** اللي اتغيّر بس، أو تستخدم فريمورك بيعمل ده لوحده. بس **البنية تفضل هي هي**.
+
+**ومصيدة في الرسم:** لو رسمت القايمة من جديد، الأزرار القديمة اتشالت ومعاها مستمعيها. فحط المستمع على **الأب** اللي مبيتشالش (event delegation):
+
+~~~js
+document.querySelector('#list').addEventListener('click', (e) => {
+  if (e.target.dataset.del) removeItem(e.target.dataset.del);
+});
+~~~
+
+ده مستمع واحد بيخدم كل الصفوف، الموجودة والجاية.`,
+            when: R`من أول سطر في أي تطبيق واجهة، حتى لو شكله صغير. التحويل بعدين أصعب من البداية صح.`,
+            mistakes: R`تخزّن الإجمالي بدل ما تحسبه. أو تقرا قيمة من الـ DOM عشان تحسب بيها. أو تحط المستمع على الزرار بدل الأب فيروح مع أول رسمة.`
+          },
+          teach: R`## جرّبها قبل ما تقرا
+
+ضيف «قهوة ٤٥» و«مواصلات ٣٠». الإجمالي ٧٥.
+دلوقتي **امسح «قهوة»**.
+
+~~~text اتشغّل فعلًا · Chrome
+الصفوف:            مواصلات — 30 ج
+الإجمالي المعروض:  75
+الحقيقة:           30
+~~~
+
+---
+
+## ١. ليه؟
+
+~~~js السطر اللي سبّبها
+total.textContent = Number(total.textContent) + Number(f.get('amount'));
+~~~
+
+الإجمالي **مش مشتق** من حاجة. هو رقم محفوظ جوه الصفحة وبيتزوّد يدوي.
+
+الصف اتشال من مكان. والرقم فضل في مكان تاني. وخلاص.
+
+---
+
+## ٢. والسبب الأعمق
+
+**الـ DOM بقى هو مكان الداتا.**
+
+فعشان تمسح بند واحد، لازم تعدّل كل مكان بيعكسه:
+
+| المكان | اتنسي؟ |
+|---|---|
+| الصف نفسه | ✓ اتشال |
+| الإجمالي | ✗ |
+| العدّاد | ✗ |
+| رسالة «مفيش حاجة» | ✗ |
+
+ونسيان واحد منهم **مسألة وقت**، مش احتمال.
+
+---
+
+## ٣. الحل في جملة
+
+> الداتا في مصفوفة. والشاشة بتترسم من المصفوفة.
+
+~~~js v2 — الحالة واحدة
+const state = { items: [] };
+
+function render() {
+  const rows = state.items.map(it =>
+    $__bt<li>$__{it.label} — $__{it.amount} ج <button data-del="$__{it.id}">×</button></li>$__bt);
+  document.querySelector('#list').innerHTML = rows.join('');
+  document.querySelector('#total').textContent =
+    state.items.reduce((s, it) => s + it.amount, 0);     // <-- بيتحسب، مش بيتخزن
+}
+
+function addItem(label, amount) {
+  state.items.push({ id: crypto.randomUUID(), label, amount });
+  render();
+}
+
+function removeItem(id) {
+  state.items = state.items.filter(it => it.id !== id);
+  render();
+}
+~~~
+
+~~~text نفس الخطوات، اتشغّلت فعلًا
+بعد بندين:  75
+بعد المسح:  30   ✓
+الصفوف:     مواصلات — 30 ج
+~~~
+
+نفس الحركة اللي كسرت v1، دلوقتي شغالة. **ومن غير ما نكتب كود للمسح** — [[render]] بتعمله.
+
+---
+
+## ٤. والحلقة اللي بتكرر نفسها
+
+~~~text
+حدث  →  غيّر الحالة  →  ارسم من الحالة
+ ↑                              |
+ └──────────────────────────────┘
+~~~
+
+### القواعد التلاتة
+
+**١. الحالة مكان واحد** — object في أعلى الملف.
+**٢. [[render]] بتقرا الحالة وبتكتب الـ DOM** — ومبتقراش الـ DOM أبدًا.
+**٣. الأحداث بتغيّر الحالة بس** — ومبتلمسش الـ DOM.
+
+---
+
+## ٥. والقيم المشتقّة **متتخزنش**
+
+| القيمة | تتخزن؟ |
+|---|---|
+| البنود | **أيوه** — دي الحقيقة |
+| الإجمالي | لأ — [[reduce]] |
+| العدّاد | لأ — [[.length]] |
+| «فاضي ولا لأ» | لأ — [[.length === 0]] |
+
+لو خزّنت أي واحدة من التلاتة دول، رجعت لنفس المشكلة بشكل تاني.
+
+---
+
+## ٦. مصيدة: الأزرار بتروح مع الرسم
+
+لو رسمت القايمة من جديد، الأزرار القديمة اتشالت **ومعاها مستمعيها**.
+
+~~~js الحل: المستمع على الأب اللي مبيتشالش
+document.querySelector('#list').addEventListener('click', (e) => {
+  if (e.target.dataset.del) removeItem(e.target.dataset.del);
+});
+~~~
+
+مستمع **واحد** بيخدم كل الصفوف — الموجودة والجاية.
+
+---
+
+## ٧. «مش هيبقى بطيء؟»
+
+قِسته: **٠.٣٨ ميلي ثانية** للرسمة الكاملة بـ ٥١ بند (متوسط ١٠٠ رسمة في Chrome).
+
+ولما يكبر فعلًا، الحل مش إنك ترجع تعدّل الـ DOM يدوي — الحل إنك ترسم الجزء اللي اتغيّر بس، أو تستخدم فريمورك بيعمل ده لوحده.
+
+**والبنية تفضل هي هي.** ودي النقطة.
+
+---
+
+## ٨. الـ focus والـ accessibility بعد إعادة الرسم
+
+[[innerHTML]] بيشيل العناصر القديمة ويعمل جديدة. فلو اليوزر كان واقف بالكيبورد (Tab) على زرار «×»، الزرار ده **اتمسح**، والـ focus بيقع على [[body]]. اللي بيستخدم الكيبورد أو قارئ الشاشة بيلاقي نفسه رجع لأول الصفحة بعد كل مسح.
+
+~~~text اتشغّل فعلًا · jsdom 30 · Node 24
+قبل المسح: BUTTON[b]
+بعد المسح من غير حاجة: BODY
+~~~
+
+**الحل: قرر الـ focus يروح فين، وحطه هناك بعد [[render]].**
+
+~~~js
+function removeItem(id) {
+  const i = state.items.findIndex(it => it.id === id);
+  state.items = state.items.filter(it => it.id !== id);
+  render();
+  const next = state.items[i] ?? state.items[i - 1];
+  const target = next ? document.querySelector($__bt[data-del="$__{next.id}"]$__bt)
+                      : document.querySelector('#h');
+  target.focus();
+}
+~~~
+
+- [[findIndex]] قبل المسح: مكان البند عشان نعرف مين «اللي بعده».
+- البند رقم [[i]] بعد المسح هو اللي كان تحته، ولو مسحنا الأخير [[i - 1]] هو اللي فوقه.
+- لو القايمة فضيت، الـ focus بيروح للعنوان [[#h]]. العنوان محتاج [[tabindex="-1"]] عشان [[focus()]] تشتغل عليه من غير ما يدخل في ترتيب الـ Tab.
+
+~~~text اتشغّل فعلًا
+بعد removeItem: BUTTON[c] | الإجمالي 55
+بعد مسح الأخير: BUTTON[a]
+بعد مسح كله: H2#h
+~~~
+
+### وتلات حاجات تانية بتضيع مع الرسم
+
+| اللي بيضيع | الحل |
+|---|---|
+| الكتابة جوه [[input]] بيترسم من جديد | متحطش الـ input جوه الجزء اللي بيترسم، أو احفظ [[selectionStart]] ورجّعه |
+| قارئ الشاشة مش عارف إن الإجمالي اتغيّر | [[aria-live="polite"]] على عنصر الإجمالي، فبيقرا القيمة الجديدة لوحده |
+| زرار «×» من غير اسم | [[aria-label="امسح قهوة"]]، لأن قارئ الشاشة هيقرا اسم الرمز «×» بس مش «امسح» |
+
+> [[aria-live]] بيتقري لما **محتوى** العنصر يتغيّر، والعنصر نفسه لازم يكون موجود من الأول (مش بيتعمل مع الرسم). ده من MDN، و jsdom مبيقراش حاجة بصوت.
 
 ---
 
 ## الخلاصة
 
-| من ناحية اللي بيختار | اللي انت بتعمله في مكتبتك |
-|---|---|
-| «بتحل مشكلتي؟» | API صغير بأسماء واضحة، و README فيه مثال |
-| «مش هتبوّظ حاجة؟» | من غير globals ولا تعديل built-ins، و [[sideEffects: false]] |
-| «هعرف الغلط فين؟» | errors بأسماء ورسايل فيها القيمة |
-| «متصانة؟» | tests للحالات الطرفية، و semver، و [[prepack]] بيشغّل الاختبارات |
-| «حجمها؟ وإيه اللي جواها؟» | [[files]] و [[npm pack --dry-run]] |`,
-          lines: [
-            R`regex بيحدد شكل المبلغ المقبول: أرقام واختياري نقطة ورقم أو رقمين. داخلي من غير [[export]].`,
-            R`[[/**]] بداية تعليق JSDoc: الـ editor بيعرضه لأي حد بيستخدم الدالة وهو بيكتب.`,
-            R`وصف الدالة بالعربي: بتاخد مبلغ بالجنيه كنص وترجّعه قروش كعدد صحيح.`,
-            R`[[@param {string} text]]: نوع الـ input واسمه، والـ editor بيحذّر لو بعت نوع تاني.`,
-            R`[[@returns {number}]]: نوع اللي بيرجع، عشان اللي بيستخدمها يعرف من غير ما يقرا الكود.`,
-            R`قفلة تعليق الـ JSDoc. كل اللي فوق ده وثائق، مش كود بيتنفّذ.`,
-            R`[[export function]]: دالة عامة من الـ API، تقدر تعملها [[import { toPiasters }]] من برّه.`,
-            R`[[String(text).trim()]] بيقبل رقم أو نص ويشيل المسافات من الأول والآخر.`,
-            R`لو الشكل مش مطابق: [[TypeError]] برسالة فيها القيمة نفسها، بدل ما يرجّع [[NaN]] ساكت.`,
-            R`[[split(".")]] بيقسم الجنيهات عن القروش، و [[frac = ""]] قيمة افتراضية لو مفيش نقطة.`,
-            R`الجنيه × ١٠٠ + القروش بعد ما [[padEnd]] يكمّلها لرقمين، من غير أي رقم عشري.`,
-            R`قفلة [[toPiasters]]. أول دالة من التلاتة اللي بيتكوّن منهم الـ API.`,
-            R`JSDoc للدالة التانية: بداية الوثائق فوق [[format]].`,
-            R`الوصف: بتحوّل القروش لمبلغ مكتوب بالشكل اللي الناس بتقراه.`,
-            R`[[@param {number} piasters]]: المبلغ بالقروش كعدد صحيح.`,
-            R`[[{ locale?: string }]]: object اختياري فيه لغة، والـ [[?]] معناها الحقل نفسه اختياري.`,
-            R`قفلة الـ JSDoc بتاع [[format]]. مفيش [[@returns]] هنا، والتمرين ممكن يزوّده.`,
-            R`[[format]] بتاخد الخيارات في object في الآخر بقيمة افتراضية [["ar-EG"]] و [[= {}]] لو متبعتش.`,
-            R`[[Intl.NumberFormat]] بعملة [[EGP]] بيكتب المبلغ، والقسمة على ١٠٠ وقت العرض بس.`,
-            R`قفلة [[format]]. الدالة مش بتغيّر أي حاجة، بترجّع نص جديد وبس.`,
-            R`JSDoc للدالة التالتة: بداية وثائق [[split]].`,
-            R`الوصف بيقول القاعدة: القروش الزيادة بتروح لأول الناس، عشان مفيش قرش يضيع.`,
-            R`[[@param {number} piasters]]: المبلغ الكلي بالقروش اللي هيتقسم.`,
-            R`[[@param {number} parts]]: عدد الناس اللي هيتقسم عليهم المبلغ.`,
-            R`[[@returns {number[]}]]: array أرقام، واحد لكل شخص.`,
-            R`قفلة الـ JSDoc بتاع [[split]]. التلات دوال كلهم متوثّقين بنفس الشكل.`,
-            R`[[split]] بتاخد المبلغ وعدد الناس، وهي آخر دالة في الـ API.`,
-            R`لو [[parts]] مش عدد صحيح أكبر من صفر: [[RangeError]]. (ونسينا نفحص [[piasters]]، والتمرين التاني بيلاقيها.)`,
-            R`[[Math.floor]] بيدّي كل واحد نصيبه الصحيح من غير كسور.`,
-            R`[[%]] باقي القسمة: عدد القروش اللي فضلت وهتتوزع واحد واحد.`,
-            R`[[Array.from({ length })]] بيعمل array بعدد الناس، وأول [[extra]] واحد بياخدوا قرش زيادة.`,
-            R`قفلة [[split]] وآخر سطر في المكتبة. مفيش أي كود بيشتغل وقت الـ import.`,
-          ],
-          ref: [
-            { t: "MDN Curriculum: JavaScript fundamentals (6.14 Libraries and frameworks)", url: "https://developer.mozilla.org/en-US/curriculum/core/javascript-fundamentals/" },
-            { t: "Node.js: Packages (exports و type)", url: "https://nodejs.org/api/packages.html" },
-            { t: "Node.js: Test runner", url: "https://nodejs.org/api/test.html" },
-            { t: "npm Docs: package.json", url: "https://docs.npmjs.com/cli/v11/configuring-npm/package-json/" },
-            { t: "npm Docs: npm pack", url: "https://docs.npmjs.com/cli/v11/commands/npm-pack/" },
-            { t: "npm Docs: npm version", url: "https://docs.npmjs.com/cli/v11/commands/npm-version/" },
-            { t: "Semantic Versioning", url: "https://semver.org/" },
-          ],
-          pre: [{ to: "js/import و export", why: R`[[export]] اللي بيكوّن الـ API، و [[import * as]]` }, { to: "node/npm publish", why: R`الخطوة اللي بعد [[npm pack]]: النشر على npm بجد` }, { to: "js/اختبار JS بـ Vitest", why: R`نفس فكرة الاختبارات بأداة تانية، لو مشروعك بيستخدم Vite` }],
+- الـ DOM عرض، مش تخزين.
+- الإجمالي **يتحسب** مش يتخزن.
+- حدث ← حالة ← رسم. وبس.
+- المستمع على الأب، مش على اللي بيتولد.
+- بعد الرسم حط الـ focus بإيدك في مكان منطقي، و [[aria-live]] على اللي بيتغيّر.`,
+          sol: R`الباج الحقيقي من v1، والإصلاح في v2 — الاتنين اتشغّلوا في Chrome.`,
+          solCode: R`// v1 — الـ DOM هو الحالة
+total.textContent = Number(total.textContent) + Number(f.get('amount'));
+// بعد «قهوة 45» + «مواصلات 30» ومسح الأول:
+//   الصفوف: مواصلات — 30 ج   |   الإجمالي: 75   <-- غلط
+
+// v2 — الحالة واحدة
+const state = { items: [] };
+function render() {
+  document.querySelector('#total').textContent =
+    state.items.reduce((s, it) => s + it.amount, 0);     // بيتحسب
+}
+function removeItem(id) {
+  state.items = state.items.filter(it => it.id !== id);
+  render();
+}
+// نفس الخطوات:  بعد بندين 75  ->  بعد المسح 30   ✓`
         },
-      ],
-      projects: [
-        { lvl: 'صغير', dir: "dep-scorecard", t: R`صفحة «أستخدم المكتبة دي؟»`, what: R`صفحة فيها فورم: اسم الـ package، والمكتبة المشهورة اللي انت قاصدها (اختياري)، وتاريخ آخر نسخة، والتحميلات في الأسبوع، والرخصة، والحجم بعد gzip، و checkbox لـ install scripts، و checkbox «المنصة فيها نفس الحاجة». الضغط على «قيّم» بيطلّع درجة من ١٠٠ ولون (أخضر أو أصفر أو أحمر) وكل سبب في سطر. ولو الاسم قريب من المشهورة بحرف أو اتنين ومش هو: تحذير typosquatting. من درسي «تختار dependency وتفحصها» و «كود غيرك».`, done: R`بيانات dayjs الحقيقية (٢١ نوفمبر 2026) بتطلع [[100/100]] أخضر، و [[loadsh]] مع «قاصد lodash» بتطلع أحمر وأول سبب «شبه lodash بس مش هو»، و package من غير رخصة وفيها بديل في المنصة بتطلع [[0/100]]. والنتيجة بتتقري لقارئ الشاشة ([[role="status"]]).`, sol: R`## الشكل النهائي
 
-~~~live 620 index.html
+        {
+          cmd: "innerHTML هي الباب",
+          title: "المستخدم كتب اسم بند، والصفحة نفّذت كوده",
+          ref: [
+            { t: "MDN: Element.innerHTML (Security considerations)", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML" },
+            { t: "MDN: Node.textContent", url: "https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent" },
+            { t: "MDN: Element.setAttribute()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute" },
+            { t: "MDN: Cross-site scripting (XSS)", url: "https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/XSS" },
+            { t: "MDN: Content Security Policy (CSP)", url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP" },
+          ],
+          learn: R`ترسم كلام المستخدم من غير ما تديله صلاحية تنفيذ.`,
+          out: R`تطبيقك مش بيفتح XSS في أول خانة إدخال.`,
+          use: {
+            prog: R`[[innerHTML]] مع أي نص جاي من بره = ثغرة. وده مش «موضوع أمان متقدم» — ده أول سطر غلط في أول تطبيق.`,
+            work: R`أي حقل بيكتبه مستخدم وبيتعرض لمستخدم تاني هو الباب ده بالظبط: التعليقات، الأسماء، أسماء الملفات، رسايل الخطأ.`,
+            cs: R`الخلط بين البيانات والتعليمات — نفس جذر SQL injection وحقن الأوامر. والعلاج واحد: المكان اللي بيستقبل بيانات ميستقبلش كود.`,
+          },
+          desc: R`v2 اللي بنيناه في الدرس اللي فات فيها ثغرة. والسطر ده هو هي:
+
+[[list.innerHTML = rows.join('')]]
+
+لأن [[rows]] فيها كلام المستخدم، و [[innerHTML]] **بتفسّر** اللي يتحط فيها كـ HTML.
+
+**جرّب:** في خانة «على إيه؟» اكتب:
+
+[[<img src=x onerror="document.title='اتسرقت'">]]
+
+واضغط ضيف. **عنوان الصفحة بيتغيّر.**
+
+يعني إيه؟ يعني كود كتبه مستخدم **جري في صفحتك**، بكل صلاحياتها: الكوكيز، والتوكن، و [[localStorage]]، وأي طلب للسيرفر باسم اللي فاتح الصفحة.
+
+**وده مش بيحصل بس لما حد يقصد.** أي اسم فيه [[<]] هيبوّظ الشكل. والقصد هو الحالة الأسوأ بس.
+
+**الحل مش «نظّف النص».** قوايم الممنوعات في الحتة دي بتتكسر دايمًا. الحل إنك تستخدم المكان اللي **مبيفسّرش**:
+
+| بتحط | بيتعامل كـ |
+|---|---|
+| [[el.innerHTML = x]] | **HTML** — خطر |
+| [[el.textContent = x]] | **نص** — آمن |
+| [[el.setAttribute('data-x', v)]] | قيمة — آمن |
+
+ولما تبني صف من عناصر، [[createElement]] + [[textContent]] + [[append]] بتعمل نفس اللي عملته الـ template، ومن غير الباب ده.
+
+**و [[replaceChildren]]** بتستبدل محتوى العنصر كله بعناصر جاهزة في خطوة واحدة — بديلة [[innerHTML = '']] وبعدها [[append]].`,
+          example: R`// ١) الباج: السطر ده في v2 بياخد كلام المستخدم ويحطه كـ HTML
+element.innerHTML = '<li>' + it.label + '</li>';
+
+// ٢) اكتب ده في خانة «على إيه؟» واضغط ضيف:
+//      <img src=x onerror="document.title='اتسرقت'">
+//    عنوان الصفحة بيتغيّر — يعني كوده جري في صفحتك.
+
+// ٣) الإصلاح: النص بيتحط كنص
+function row(it) {
+  const li   = document.createElement('li');
+  const name = document.createElement('span');
+  name.textContent = it.label;              // <-- هنا الأمان
+  const meta = document.createElement('span');
+  meta.textContent = ' — ' + it.amount + ' ج ';
+  const del  = document.createElement('button');
+  del.textContent = '×';
+  del.dataset.del = it.id;
+  li.append(name, meta, del);
+  return li;
+}
+
+function render() {
+  document.querySelector('#list').replaceChildren(...state.items.map(row));
+}`,
+          lines: [
+            R`**الباج.** [[innerHTML]] بتفسّر النص كـ HTML، و [[it.label]] جاي من اللي المستخدم كتبه. فلو كتب [[<img src=x onerror="...">]] هيتعمل عنصر حقيقي والـ JavaScript اللي جواه يشتغل (XSS)، وده ممكن يسرق بيانات أي حد يفتح الصفحة.`,
+            R`الإصلاح بيبدأ: دالة بتاخد بند واحد وترجّع عنصر الـ [[<li>]] بتاعه جاهز. بنبني العناصر بإيدنا بدل ما نركّب نص HTML.`,
+            R`الـ [[<li>]] اللي هيشيل الصف كله: الاسم والمبلغ وزرار المسح هيتحطوا جواه.`,
+            R`[[<span>]] للاسم لوحده، عشان نحط فيه كلام المستخدم بطريقة آمنة.`,
+            R`**وهنا الأمان**: [[textContent]] بتحط الكلام كنص بس ومبتفسرهوش. أي [[<]] أو [[>]] جواه بيظهر كحرف على الشاشة، فالـ [[<img onerror>]] بتاعة الهجوم هتظهر كلام عادي ومش هتشتغل.`,
+            R`[[<span>]] تاني للمبلغ، منفصل عن الاسم عشان نقدر ننسّقه لوحده في الـ CSS.`,
+            R`نحط المبلغ بـ [[textContent]] برضه. حتى لو الرقم مش جاي من المستخدم مباشرة، الأمان كقاعدة ثابتة أسهل من إنك تقرر كل مرة.`,
+            R`زرار المسح للصف ده.`,
+            R`نص الزرار علامة [[×]]، حرف عادي فبنحطه بـ [[textContent]] من غير HTML entity.`,
+            R`[[dataset.del]] بيكتب attribute اسمه [[data-del]] فيه id البند. لما حد يدوس الزرار، listener واحد على الليستة هيقرا الـ id ده ويعرف يمسح أنهي بند. وده آمن كمان، لأن قيمة الـ attribute مش بتتفسّر كـ HTML.`,
+            R`[[append]] بتضيف كذا عنصر مرة واحدة وبالترتيب: الاسم وبعده المبلغ وبعده الزرار.`,
+            R`نرجّع الصف جاهز، واللي نادى الدالة هو اللي يقرر يحطه فين.`,
+            R`نهاية [[row]].`,
+            R`دالة الرسم: بترسم الليستة كلها من الحالة ([[state]]) كل مرة، بدل ما نضيف ونشيل صفوف بإيدنا.`,
+            R`[[state.items.map(row)]] بتحوّل كل بند لعنصر، والـ [[...]] بتفرد الـ array كـ arguments، و [[replaceChildren]] بتشيل كل الصفوف القديمة وتحط الجديدة في خطوة واحدة. كده الشاشة دايمًا انعكاس الحالة بالظبط، من غير ما نفضّي بـ [[innerHTML = ""]].`,
+            R`نهاية [[render]].`,
+          ],
+          try: R`في أي تطبيق كتبته قبل كده، دوّر على [[innerHTML]] و [[insertAdjacentHTML]] و [[outerHTML]] و [[document.write]]. لو واحدة فيهم بتاخد نص جاي من مستخدم أو من API، دي ثغرة. وجرّب نفس الـ [[<img src=x onerror=…>]] فيها.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اسم البند [[<b>تقيل</b>]]. قبل ما تضيفه، اكتب هيظهر إزاي مع [[innerHTML]] ومع [[textContent]]، وبعدين جرّب الاتنين.`, done: R`مع [[innerHTML]] كلمة «تقيل» ظهرت bold من غير الأقواس، ومع [[textContent]] ظهر النص كامل بالأقواس، و [[document.querySelector('#list b')]] بترجّع [[null]].`, sol: R`**التوقع الصح:** مع [[innerHTML]] هتشوف كلمة **تقيل** بالخط العريض ومن غير أقواس، لأن المتصفح فسّر [[<b>]] كعنصر. ومع [[textContent]] هتشوف النص زي ما اتكتب بالظبط: [[<b>تقيل</b>]].
+
+~~~live 220 index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أستخدم المكتبة دي؟</title>
-<style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; max-width: 560px; }
-  fieldset { border: 1px solid #ccc; border-radius: 8px; display: grid; gap: 8px; }
-  label { display: grid; gap: 2px; }
-  label.row { display: flex; gap: 6px; align-items: center; }
-  input, select, button { font: inherit; padding: 4px 6px; }
-  #verdict { margin-block-start: 12px; padding: 10px; border-radius: 8px; background: #f3f4f6; }
-  #verdict.good { background: #dcfce7; }
-  #verdict.warn { background: #fef9c3; }
-  #verdict.bad { background: #fee2e2; }
-  #verdict ul { margin: 6px 0 0; padding-inline-start: 20px; }
-</style>
+<title>innerHTML ولا textContent</title>
+<style>body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; } button { font: inherit; }</style>
 </head>
 <body>
-<h1>أستخدم المكتبة دي؟</h1>
-<form id="form">
-  <fieldset>
-    <legend>اللي لقيته عن الـ package</legend>
-    <label>اسمها <input name="name" required value="dayjs"></label>
-    <label>المكتبة المشهورة اللي انت قاصدها (اختياري) <input name="meant" placeholder="lodash"></label>
-    <label>تاريخ آخر نسخة <input name="published" type="date" required value="2026-08-17"></label>
-    <label>التحميلات في الأسبوع <input name="downloads" type="number" min="0" required value="116841075"></label>
-    <label>الرخصة
-      <select name="license">
-        <option>MIT</option><option>Apache-2.0</option><option>BSD-3-Clause</option><option>ISC</option>
-        <option>GPL-3.0</option><option value="">مفيش رخصة</option>
-      </select>
-    </label>
-    <label>الحجم في الـ bundle بعد gzip (KB) <input name="kb" type="number" min="0" step="0.1" required value="6.5"></label>
-    <label class="row"><input name="scripts" type="checkbox"> فيها install scripts (preinstall أو postinstall)</label>
-    <label class="row"><input name="native" type="checkbox"> المتصفح أو اللغة فيهم نفس الحاجة (Intl، fetch…)</label>
-    <button>قيّم</button>
-  </fieldset>
-</form>
-<div id="verdict" role="status" aria-live="polite"></div>
+<p>اسم البند: <code>&lt;b&gt;تقيل&lt;/b&gt;</code></p>
+<button id="html">ضيف بـ innerHTML</button>
+<button id="text">ضيف بـ textContent</button>
+<ul id="list"></ul>
+<pre id="out"></pre>
 <script>
-  const TODAY = new Date("2026-11-21");
-  const PERMISSIVE = ["MIT", "Apache-2.0", "BSD-3-Clause", "ISC"];
-  function distance(a, b) {
-    const row = Array.from({ length: b.length + 1 }, (_, j) => j);
-    for (let i = 1; i <= a.length; i++) {
-      let prev = row[0];
-      row[0] = i;
-      for (let j = 1; j <= b.length; j++) {
-        const keep = row[j];
-        row[j] = Math.min(row[j] + 1, row[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1));
-        prev = keep;
-      }
-    }
-    return row[b.length];
-  }
-  function assess(p) {
-    const notes = [];
-    let score = 100;
-    if (p.meant && p.meant !== p.name && distance(p.name, p.meant) <= 2) {
-      score -= 60;
-      notes.push($__btالاسم «$__{p.name}» شبه «$__{p.meant}» بس مش هو: غالبًا غلطة كتابة أو typosquatting$__bt);
-    }
-    const days = Math.round((TODAY - new Date(p.published)) / 86400000);
-    if (days > 730) { score -= 30; notes.push($__btآخر نسخة من $__{days} يوم: غالبًا مش متصانة$__bt); }
-    else notes.push($__btآخر نسخة من $__{days} يوم$__bt);
-    if (p.downloads < 1000) { score -= 25; notes.push("تحميلات قليلة جدًا: اتأكد إن الاسم مش غلط (typosquatting)"); }
-    if (!p.license) { score -= 40; notes.push("مفيش رخصة: قانونيًا مش من حقك تستخدمها"); }
-    else if (!PERMISSIVE.includes(p.license)) { score -= 15; notes.push($__bt$__{p.license} بتفرض شروط على كودك: اسأل قبل ما تستخدمها في مشروع مقفول$__bt); }
-    if (p.kb > 50) { score -= 20; notes.push($__bt$__{p.kb} KB كتير على صفحة: قيس البديل$__bt); }
-    if (p.scripts) { score -= 15; notes.push("install scripts بتشتغل على جهازك وقت التسطيب: اقراها الأول"); }
-    if (p.native) { score -= 30; notes.push("فيه بديل جاهز في المنصة: جرّبه قبل ما تزوّد dependency"); }
-    const level = score >= 70 ? "good" : score >= 40 ? "warn" : "bad";
-    return { score: Math.max(0, score), level, notes };
-  }
-  const form = document.querySelector("#form");
-  const box = document.querySelector("#verdict");
-  const words = { good: "تمام، استخدمها", warn: "فكّر تاني", bad: "لأ" };
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const data = new FormData(form);
-    const result = assess({
-      name: data.get("name").trim(),
-      meant: data.get("meant").trim(),
-      published: data.get("published"),
-      downloads: Number(data.get("downloads")),
-      license: data.get("license"),
-      kb: Number(data.get("kb")),
-      scripts: data.has("scripts"),
-      native: data.has("native"),
-    });
-    box.className = result.level;
-    box.innerHTML = $__bt<strong></strong><ul>$__{result.notes.map(() => "<li></li>").join("")}</ul>$__bt;
-    box.querySelector("strong").textContent = $__bt$__{data.get("name")}: $__{result.score}/100، $__{words[result.level]}$__bt;
-    box.querySelectorAll("li").forEach((li, i) => { li.textContent = result.notes[i]; });
-  });
-</script>
-</body>
-</html>
-~~~
-
-## هتشوف إيه
-
-فورم مالي ببيانات dayjs الحقيقية. «قيّم» بيكتب تحت [[dayjs: 100/100، تمام، استخدمها]] على خلفية خضرا وسبب واحد «آخر نسخة من 96 يوم». غيّر الاسم لـ [[loadsh]] واكتب [[lodash]] في «قاصدها»: النتيجة بتبقى حمرا.
-
-## الكود حتة حتة
-
-- **[[assess(p)]]** دالة نقية: بتاخد object وترجّع [[{ score, level, notes }]] ومبتلمسش الصفحة. عشان كده سهل تختبرها لوحدها، والـ submit handler بس هو اللي بيقرا الفورم ويكتب النتيجة.
-- **كل قاعدة بتخصم وبتكتب سبب:** مفيش درجة من غير شرح. الأرقام (٣٠ للقديمة، و ٤٠ لمفيش رخصة…) قرار، غيّرها حسب فريقك، بس خليها مكتوبة في مكان واحد.
-- **[[distance(a, b)]]:** Levenshtein distance، أقل عدد حروف تتغير أو تتزاد أو تتشال عشان كلمة تبقى التانية. [[loadsh]] و [[lodash]] مسافتهم ٢ (حرفين اتبدلوا مكانهم). الـ [[row]] array واحدة بتتحدّث صف صف بدل جدول كامل.
-- **[[TODAY]] ثابت:** عشان النتيجة تتكرر وانت بتختبر. في الاستخدام الحقيقي [[new Date()]].
-- **[[textContent]] مش [[innerHTML]] للأسماء:** اسم الـ package جاي من اليوزر، فبنبني الهيكل بـ [[innerHTML]] فاضي وبعدين نحط النص بـ [[textContent]] (درس «innerHTML هي الباب»).
-- **[[role="status"]] و [[aria-live="polite"]]:** النتيجة بتتقري لوحدها لقارئ الشاشة بعد الضغط.
-- **[[FormData]] و [[data.has("scripts")]]:** الـ checkbox المش متعلّم مبيتبعتش أصلًا، فـ [[has]] = متعلّم ولا لأ.
-
-## اتجرّب إزاي (Chrome 157، [[requestSubmit()]] من الـ Console)
-
-~~~text اللي اتقاس
-dayjs: 100/100، تمام، استخدمها | آخر نسخة من 96 يوم
-loadsh (قاصد lodash، آخر نسخة 2019-03-12، 14147 تحميلة): 10/100، لأ | الاسم «loadsh» شبه «lodash» بس مش هو: غالبًا غلطة كتابة أو typosquatting | آخر نسخة من 2811 يوم: غالبًا مش متصانة | class=bad
-package متألّفة من غير رخصة (2018-04-09، 900 تحميلة، والمنصة فيها البديل): 0/100، لأ
-~~~
-
-البيانات الحقيقية لـ dayjs و loadsh من [[npm view]] و [[api.npmjs.org]] يوم ٢١ نوفمبر 2026. والصفحة عرضها 360px من غير scroll أفقي.
-
-## الغلطة اللي حصلت وانت بتبنيها
-
-النسخة الأولى كانت من غير خانة «قاصدها» ومن غير [[distance]]. [[loadsh]] بتاريخها وتحميلاتها الحقيقية طلعت **[[70/100]]، تمام، استخدمها**: آخر نسخة قديمة (−٣٠) والتحميلات ١٤ ألف (مش أقل من ١٠٠٠ فمخصمش). يعني الأداة كانت هتوافق على typosquat. الأرقام لوحدها مبتكشفش إن الاسم غلط، لازم تقارنه بالاسم اللي انت قاصده. ضفنا الخانة والقاعدة (−٦٠)، فبقت [[10/100]].` },
-        { lvl: 'صغير', t: R`npm-age: كل package آخر نسخة ليها نزلت إمتى`, what: R`سكربت Node واحد [[npm-age.mjs]] بياخد أسامي packages من الترمنال، ولكل واحدة بيسأل الـ registry بـ [[fetch]] ويطبع سطر: آخر نسخة، وتاريخ نشرها (من [[time[latest]]] مش [[time.modified]])، وعمرها بالأيام، والرخصة، و «قديمة» لو أكتر من سنتين، والـ [[deprecated]] لو فيه. الاسم اللي مش موجود يطبع رسالة واضحة. exit code: 0 كله تمام، و 1 لو فيه اسم مش موجود، و 2 لو متكتبش ولا اسم. من درس «تختار dependency وتفحصها».`, done: R`[[node npm-age.mjs dayjs moment left-pad chart.js @floating-ui/dom]] بيطبع ٥ سطور، و left-pad عليها «قديمة» ورسالة الـ deprecation، و [[node npm-age.mjs dayjss]] بيقول «مش موجودة» و exit code 1.`, sol: R`## الناتج النهائي
-
-~~~text node npm-age.mjs dayjs moment left-pad chart.js @floating-ui/dom (يوم 21 نوفمبر 2026)
-dayjs            1.11.23   2026-08-17     95 يوم  MIT
-moment           2.31.0    2026-09-15     67 يوم  MIT
-left-pad         1.3.0     2018-04-09   3148 يوم  WTFPL  <- قديمة  <- deprecated: use String.prototype.padStart()
-chart.js         4.6.1     2026-10-22     29 يوم  MIT
-@floating-ui/dom 1.8.0     2026-07-11    132 يوم  MIT
-exit=0
-~~~
-
-~~~text node npm-age.mjs dayjss  ثم  node npm-age.mjs
-dayjss           مش موجودة في الـ registry (الاسم مكتوب صح؟)
-exit=1
-استخدام: node npm-age.mjs <package> [package...]
-exit=2
-~~~
-
-## هتشوف إيه
-
-سطر لكل package في أعمدة مرصوصة. أي حاجة تستاهل انتباه ليها سهم [[<-]] في آخر السطر.
-
-## الكود
-
-~~~js npm-age.mjs
-// npm-age: كل package آخر نسخة نزلت إمتى ورخصتها إيه
-const DAY = 86400000;
-const names = process.argv.slice(2);
-if (names.length === 0) {
-  console.error("استخدام: node npm-age.mjs <package> [package...]");
-  process.exit(2);
+const label = '<b>تقيل</b>';
+const list = document.querySelector('#list');
+function report(how) {
+  const li = list.lastElementChild;
+  document.querySelector('#out').textContent +=
+    how + ': ظاهر «' + li.textContent + '» | عناصر b جوه الصف: ' + li.querySelectorAll('b').length + '\n';
 }
-let failed = false;
-for (const name of names) {
-  const url = $__bthttps://registry.npmjs.org/$__{name.replace("/", "%2F")}$__bt;
-  const res = await fetch(url);
-  if (res.status === 404) {
-    console.log($__bt$__{name.padEnd(16)} مش موجودة في الـ registry (الاسم مكتوب صح؟)$__bt);
-    failed = true;
-    continue;
-  }
-  if (!res.ok) throw new Error($__bt$__{name}: HTTP $__{res.status}$__bt);
-  const doc = await res.json();
-  const latest = doc["dist-tags"].latest;
-  const published = new Date(doc.time[latest]);
-  const days = Math.floor((Date.now() - published) / DAY);
-  const license = doc.versions[latest].license ?? "مفيش";
-  const old = days > 730 ? "  <- قديمة" : "";
-  const dep = doc.versions[latest].deprecated ? $__bt  <- deprecated: $__{doc.versions[latest].deprecated}$__bt : "";
-  console.log($__bt$__{name.padEnd(16)} $__{latest.padEnd(9)} $__{published.toISOString().slice(0, 10)}  $__{String(days).padStart(5)} يوم  $__{license}$__{old}$__{dep}$__bt);
-}
-process.exit(failed ? 1 : 0);
-~~~
-
-## الكود حتة حتة
-
-- **[[process.argv.slice(2)]]:** أول عنصرين مسار [[node]] ومسار السكربت، والباقي أسامي الـ packages.
-- **[[process.exit(2)]] من غير أسامي:** 2 = «استخدمت الأداة غلط»، غير 1 = «الأداة اشتغلت ولقت مشكلة». أي سكربت أو CI بيستخدمها يقدر يفرّق.
-- **[[name.replace("/", "%2F")]]:** الـ scoped packages ([[@floating-ui/dom]]) الـ [[/]] اللي في اسمها لازم يتكتب [[%2F]] في الـ URL، وإلا الـ registry يفتكرها مسار.
-- **[[res.status === 404]] قبل [[res.ok]]:** الـ 404 هنا معلومة (الاسم غلط) مش عطل، فبنكمّل باقي الأسامي ونعلّم [[failed]]. أي status تاني غلط = [[throw]].
-- **[[doc["dist-tags"].latest]]** ثم **[[doc.time[latest]]]:** النسخة اللي [[npm install]] بيجيبها، وتاريخ نشرها هي بالظبط.
-- **[[doc.versions[latest].license]] و [[.deprecated]]:** من بيانات النسخة الأخيرة نفسها، لأن الرخصة ممكن تتغير بين النسخ.
-
-## الغلطات اللي حصلت وانت بتبنيها
-
-- **النسخة الأولى كانت بتقرا [[time.modified]]:** left-pad طلعت «من ٣ أيام»! [[time.modified]] بيتغير مع أي تعديل في بيانات الـ package (هنا نوفمبر 2026)، وآخر نسخة فعلًا من 2018. التصليح: [[time[latest]]].
-- **موضوع moment:** آخر نسخة من ٦٧ يوم، فالسكربت مش هيقول عليها حاجة. بس الـ project نفسه معلن إنه في maintenance mode وبينصح ببدايل. أداة الأرقام مبتعرفش ده: لازم تقرا صفحة المشروع.
-
-## اتقاس
-
-- الـ registry بيرجّع الـ packument كامل (كل النسخ): react ٧٫١ MB، و dayjs ٤٩٧ KB، و lodash ٢٤٨ KB (قسناها بـ [[curl]]). لو هتسأل عن مئات packages، [[https://registry.npmjs.org/<name>/latest]] بيرجّع النسخة الأخيرة بس (react ٢١٥٠ بايت) بس من غير التواريخ.` },
-        { lvl: 'متوسط', dir: "tooltip-two-ways", t: R`نفس التوولتيب بإيدك وبمكتبة، وقرار مكتوب`, what: R`توولتيب لـ ٣ زراير (اتنين لازقين في أعلى الشاشة يمين وشمال، وواحد في النص) بيظهر مع الماوس والكيبورد ([[focusin]]) وبيستخبى بـ [[Escape]]، وبيقلب تحت لو مفيش مكان فوق، ومبيخرجش برّه الشاشة يمين أو شمال. اعمله مرة بإيدك ([[getBoundingClientRect]]) ومرة بمكتبة Floating UI ([[computePosition]] و [[flip]] و [[shift]])، واختبر الاتنين على عرض 360px، وقيس حجمهم بعد gzip، واكتب قرار من ٥ سطور: أنهي واحدة للمشروع ده وليه. من دروس «كود غيرك» و «إمتى framework غلط».`, done: R`الاتنين بيحطوا التوولتيب في نفس المكان بالبكسل في الـ ٣ زراير على 360px (اتنين تحت وواحد فوق، وكله جوه الشاشة)، و [[Escape]] بيخفيه، والقياس: بإيدك ٤٥٤ بايت و Floating UI ٦٠٨٤ بايت بعد gzip، والقرار مكتوب بالأرقام.`, sol: R`## الشكل النهائي (النسخة اللي بإيدك)
-
-~~~live 260 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>tooltip بإيدك</title>
-<style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 0; padding: 0 16px 16px; }
-  .bar { display: flex; justify-content: space-between; }
-  button { font: inherit; padding: 6px 12px; }
-  .tip { position: fixed; top: 0; left: 0; max-width: 220px; background: #111827; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 13px; pointer-events: none; }
-  .tip[hidden] { display: none; }
-  p { margin-block: 60px; }
-</style>
-</head>
-<body>
-<div class="bar">
-  <button type="button" data-tip="بيحفظ المسودة في الجهاز ده بس" aria-describedby="tip">احفظ</button>
-  <button type="button" data-tip="بيمسح كل اللي في السلة ومفيش رجوع" aria-describedby="tip">فضّي السلة</button>
-</div>
-<p><button type="button" data-tip="الطلب بيوصل في ٤٥ دقيقة تقريبًا" aria-describedby="tip">اطلب</button></p>
-<div class="tip" id="tip" role="tooltip" hidden></div>
-<script>
-  const tip = document.querySelector("#tip");
-  const GAP = 8;
-  const PAD = 8;
-  function place(target) {
-    const r = target.getBoundingClientRect();
-    const t = tip.getBoundingClientRect();
-    let top = r.top - t.height - GAP;
-    let side = "top";
-    if (top < PAD) {
-      top = r.bottom + GAP;
-      side = "bottom";
-    }
-    let left = r.left + r.width / 2 - t.width / 2;
-    left = Math.min(Math.max(left, PAD), innerWidth - t.width - PAD);
-    tip.style.translate = $__bt$__{Math.round(left)}px $__{Math.round(top)}px$__bt;
-    tip.dataset.side = side;
-  }
-  function show(e) {
-    const target = e.target.closest("[data-tip]");
-    if (!target) return;
-    tip.textContent = target.dataset.tip;
-    tip.hidden = false;
-    place(target);
-  }
-  function hide() {
-    tip.hidden = true;
-  }
-  document.addEventListener("pointerover", show);
-  document.addEventListener("focusin", show);
-  document.addEventListener("pointerout", hide);
-  document.addEventListener("focusout", hide);
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") hide();
-  });
-</script>
-</body>
-</html>
-~~~
-
-## هتشوف إيه
-
-٣ زراير. حط الماوس أو دوس [[Tab]] على «احفظ» أو «فضّي السلة»: التوولتيب بيظهر **تحتهم** لأنهم لازقين في أعلى الشاشة. «اطلب» في النص: التوولتيب فوقه. وعلى موبايل التوولتيب مبيخرجش برّه الشاشة يمين ولا شمال.
-
-## النسخة بالمكتبة
-
-~~~bash
-npm install @floating-ui/dom esbuild
-npx esbuild tooltip-floating.js --bundle --minify --format=esm --outfile=floating.bundle.js
-~~~
-
-~~~js tooltip-floating.js
-import { computePosition, offset, flip, shift } from "@floating-ui/dom";
-const tip = document.querySelector("#tip");
-async function show(e) {
-  const target = e.target.closest("[data-tip]");
-  if (!target) return;
-  tip.textContent = target.dataset.tip;
-  tip.hidden = false;
-  const { x, y, placement } = await computePosition(target, tip, {
-    placement: "top",
-    strategy: "fixed",
-    middleware: [offset(8), flip(), shift({ padding: 8 })],
-  });
-  tip.style.translate = $__bt$__{Math.round(x)}px $__{Math.round(y)}px$__bt;
-  tip.dataset.side = placement;
-}
-function hide() {
-  tip.hidden = true;
-}
-document.addEventListener("pointerover", show);
-document.addEventListener("focusin", show);
-document.addEventListener("pointerout", hide);
-document.addEventListener("focusout", hide);
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") hide();
+document.querySelector('#html').addEventListener('click', () => {
+  const li = document.createElement('li');
+  li.innerHTML = label;          // بتفسّر النص كـ HTML
+  list.append(li);
+  report('innerHTML');
 });
-~~~
-
-~~~html floating.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>tooltip بـ Floating UI</title>
-<style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 0; padding: 0 16px 16px; }
-  .bar { display: flex; justify-content: space-between; }
-  button { font: inherit; padding: 6px 12px; }
-  .tip { position: fixed; top: 0; left: 0; max-width: 220px; background: #111827; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 13px; pointer-events: none; }
-  .tip[hidden] { display: none; }
-  p { margin-block: 60px; }
-</style>
-</head>
-<body>
-<div class="bar">
-  <button type="button" data-tip="بيحفظ المسودة في الجهاز ده بس" aria-describedby="tip">احفظ</button>
-  <button type="button" data-tip="بيمسح كل اللي في السلة ومفيش رجوع" aria-describedby="tip">فضّي السلة</button>
-</div>
-<p><button type="button" data-tip="الطلب بيوصل في ٤٥ دقيقة تقريبًا" aria-describedby="tip">اطلب</button></p>
-<div class="tip" id="tip" role="tooltip" hidden></div>
-<script type="module" src="floating.bundle.js"></script>
+document.querySelector('#text').addEventListener('click', () => {
+  const li = document.createElement('li');
+  li.textContent = label;        // بتحط النص زي ما هو
+  list.append(li);
+  report('textContent');
+});
+</script>
 </body>
 </html>
 ~~~
 
-(نفس الـ HTML والـ CSS، والفرق سطر الـ script بس.)
-
-## الكود حتة حتة
-
-- **[[getBoundingClientRect()]]:** مكان الزرار والتوولتيب بالنسبة للشاشة. لازم [[tip.hidden = false]] **قبل** القياس، لأن العنصر المخفي مقاسه صفر.
-- **القلب:** لو [[r.top - t.height - GAP]] أقل من [[PAD]] (مفيش مكان فوق) → تحت الزرار.
-- **الحبس جوه الشاشة:** [[Math.min(Math.max(left, PAD), innerWidth - t.width - PAD)]]: مش أقل من ٨ ومش أكتر من آخر الشاشة ناقص عرض التوولتيب.
-- **[[position: fixed]] و [[translate]]:** الإحداثيات من [[getBoundingClientRect]] بالنسبة للشاشة، و [[fixed]] بنفس النظام، فمفيش حساب scroll. و [[translate]] أسرع من [[top]] و [[left]] لأنه مبيعملش layout.
-- **[[focusin]] و [[focusout]]:** بيحصلوا للأب كمان (عكس [[focus]])، فـ listener واحد على [[document]] بيكفي، والكيبورد بيشتغل زي الماوس.
-- **[[role="tooltip"]] و [[aria-describedby="tip"]]:** قارئ الشاشة بيقرا نص التوولتيب كوصف للزرار. و [[Escape]] بيخفيه (مطلوب في نمط الـ tooltip في WAI-ARIA APG).
-- **Floating UI:** [[offset(8)]] المسافة، و [[flip()]] يقلب لو مفيش مكان، و [[shift({ padding: 8 })]] يزق جوه الشاشة. نفس الـ ٣ قرارات بس مكتوبين كـ middleware، و [[computePosition]] بترجّع Promise.
-
-## اتقاس
-
-على عرض 360px في Chrome 157 (focus على كل زرار وقراية [[getBoundingClientRect]] بتاع التوولتيب):
-
-~~~text اللي اتقاس
-بإيدك:
-احفظ: bottom tip[155..352, 47..80] btn top=0 inside=true
-فضّي السلة: bottom tip[8..236, 47..80] btn top=0 inside=true
-اطلب: top tip[154..352, 58..91] btn top=99 inside=true
-Floating UI:
-احفظ: bottom tip[155..352, 47..80] btn top=0 inside=true
-فضّي السلة: bottom tip[8..236, 47..80] btn top=0 inside=true
-اطلب: top tip[154..352, 58..91] btn top=99 inside=true
-esc يخفي: true
+~~~text الناتج (Chrome 158، ضغطة على الزرارين بالترتيب)
+innerHTML: ظاهر «تقيل» | عناصر b جوه الصف: 1
+textContent: ظاهر «<b>تقيل</b>» | عناصر b جوه الصف: 0
 ~~~
 
-~~~text node measure.mjs tooltip.js tooltip-floating.js (esbuild 0.28.2، @floating-ui/dom 1.8.0)
-tooltip-two-ways/tooltip.js     816 B     454 B gzip
-tooltip-two-ways/tooltip-floating.js   14927 B    6084 B gzip
+- [[li.querySelectorAll('b').length]] هو الإثبات: [[innerHTML]] **عملت عنصر حقيقي** في الصفحة. ولو في صفحة فيها صف [[textContent]] بس، [[document.querySelector('#list b')]] بترجّع [[null]].
+- [[li.textContent]] بيرجّع النص اللي **ظاهر**، فمع [[innerHTML]] الأقواس اختفت لأنها بقت tag.
+- [[&lt;b&gt;]] في سطر «اسم البند» هو نفس الفكرة في HTML المكتوب بإيدك: عشان تعرض [[<]] كحرف لازم تكتبه entity.
+
+**ليه ده مهم:** [[<b>]] بريئة، بس نفس الباب اللي دخلها بيدخل [[<img onerror>]]. لو شفت تنسيق ظهر من كلام يوزر، يبقى فيه [[innerHTML]] في السكة.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الصف بيتبني كده: [[li.innerHTML = '<span title="' + it.label + '">' + it.label + '</span>']]. جرّب اسم بند فيه [[" onmouseover="alert(1)]] وشوف العنصر اتعمل فيه إيه، وبعدين صلّحه بـ [[createElement]] و [[setAttribute]] و [[textContent]].`, done: R`قبل التصليح العنصر طلع فيه attribute اسمه [[onmouseover]]. بعده [[span.getAttribute('title')]] بيساوي اسم البند بالظبط بعلامات التنصيص، و [[span.hasAttribute('onmouseover')]] بترجّع [[false]].`, sol: R`الصفحة دي بتبني نفس الصف مرتين بنفس الاسم الخبيث: مرة بالطريقة البايظة ومرة بالمصلّحة، وبتطبع الـ attributes اللي اتعملت فعلًا:
+
+~~~live 220 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>attribute من كلام اليوزر</title>
+<style>body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }</style>
+</head>
+<body>
+<ul id="list"></ul>
+<pre id="out" dir="ltr"></pre>
+<script>
+const it = { label: 'شاي" onmouseover="alert(1)' };
+const list = document.querySelector('#list');
+const out = document.querySelector('#out');
+
+// قبل: الصف بيتبني من نص HTML
+const bad = document.createElement('li');
+bad.innerHTML = '<span title="' + it.label + '">' + it.label + '</span>';
+list.append(bad);
+const s1 = bad.querySelector('span');
+out.textContent += 'before: attributes = ' + [...s1.attributes].map(a => a.name).join(', ') + '\n';
+out.textContent += 'before: title = ' + s1.getAttribute('title') + '\n';
+
+// بعد: كل حاجة كقيمة، مفيش HTML بيتفسّر
+const good = document.createElement('li');
+const span = document.createElement('span');
+span.setAttribute('title', it.label);
+span.textContent = it.label;
+good.append(span);
+list.append(good);
+out.textContent += 'after:  attributes = ' + [...span.attributes].map(a => a.name).join(', ') + '\n';
+out.textContent += 'after:  title === label ? ' + (span.getAttribute('title') === it.label) + '\n';
+out.textContent += 'after:  has onmouseover ? ' + span.hasAttribute('onmouseover') + '\n';
+</script>
+</body>
+</html>
 ~~~
 
-| | بإيدك | Floating UI |
+~~~text الناتج (Chrome 158، جوه iframe معزول)
+before: attributes = title, onmouseover
+before: title = شاي
+after:  attributes = title
+after:  title === label ? true
+after:  has onmouseover ? false
+~~~
+
+**اللي حصل في البايظ:** النص اللي اتبنى بقى [[<span title="شاي" onmouseover="alert(1)">]]. علامة التنصيص اللي في الاسم **قفلت** قيمة [[title]] بدري، والباقي بقى attribute جديد. فالـ [[title]] بقى «شاي» بس، واتولد [[onmouseover]] بيشغّل كود أول ما الماوس يعدّي على الصف. (في المعاينة [[alert]] ممنوع جوه الـ iframe المعزول، بس في صفحة عادية بيطلع.)
+
+**الإصلاح:**
+- [[createElement('span')]]: العنصر بيتعمل من JavaScript، مفيش نص HTML بيتقري.
+- [[setAttribute('title', it.label)]]: القيمة كلها، بعلامات التنصيص، بتروح للـ [[title]] كقيمة واحدة. المتصفح مبيدوّرش فيها على [["]] يقفل بيه.
+- [[textContent]]: الاسم بيظهر نص.
+
+**الغلطة الشائعة:** إنك تفتكر الخطر في [[<]] و [[>]] بس، فتعمل escape ليهم وتسيب [["]]. جوه attribute، علامة التنصيص لوحدها كفاية تفتح الباب (شوف التمرين اللي بعده).` },
+            { lvl: 'تحدي', t: R`**صلّح واكتب اختبار:** زميلك كتب [[esc = s => s.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;')]]. اكتب اختبار بـ [[node:assert]] يمسك الغلطة، وصلّحها في [[replace]] واحدة بتغطي [[& < > " ']].`, done: R`الاختبار مسك إن [[esc('<b>')]] كانت بترجّع [[&amp;lt;b&amp;gt;]] (الـ [[&]] اتعمله escape مرتين)، وبعد التصليح [[esc('<b>"x"</b>')]] بترجّع [[&lt;b&gt;&quot;x&quot;&lt;/b&gt;]]. وفي المتصفح [[el.innerHTML = esc(x)]] و [[el.textContent = x]] بيدّوا نفس [[textContent]] ومفيش أي عنصر جواهم، وكاتب ليه [[textContent]] لسه الأحسن.`, sol: R`ملف واحد فيه النسختين، ونفس الاختبارات بتتشغّل على الاتنين عشان تشوف الاختبار **بيمسك** الغلطة قبل ما تصلّحها:
+
+~~~js esc.test.mjs
+// esc.test.mjs: اختبار بيمسك الغلطة، وبعدين الإصلاح
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+
+const escOld = (s) => s.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;');
+
+const MAP = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => MAP[c]);
+
+for (const [name, fn] of [['escOld', escOld], ['esc', esc]]) {
+  test(name + ': <b> بيبقى نص', () => {
+    assert.equal(fn('<b>'), '&lt;b&gt;');
+  });
+  test(name + ': & لوحدها مرة واحدة', () => {
+    assert.equal(fn('A & B'), 'A &amp; B');
+  });
+  test(name + ': علامات التنصيص', () => {
+    assert.equal(fn('<b>"x"</b>'), '&lt;b&gt;&quot;x&quot;&lt;/b&gt;');
+    assert.equal(fn("it's"), 'it&#39;s');
+  });
+}
+~~~
+
+~~~text الناتج: node --test esc.test.mjs (Node 24.22، مختصر)
+✖ escOld: <b> بيبقى نص
+✔ escOld: & لوحدها مرة واحدة
+✖ escOld: علامات التنصيص
+✔ esc: <b> بيبقى نص
+✔ esc: & لوحدها مرة واحدة
+✔ esc: علامات التنصيص
+ℹ tests 6
+ℹ pass 4
+ℹ fail 2
+
+  + '&amp;lt;b&amp;gt;'
+  - '&lt;b&gt;'
+~~~
+
+**الغلطة في [[escOld]]: الترتيب.** [[<]] بقت [[&lt;]] الأول، وبعدين [[replace(/&/g, ...)]] لقت الـ [[&]] اللي **هي نفسها حطّته** فعملته [[&amp;]] تاني. النتيجة [[&amp;lt;b&amp;gt;]]، والصفحة هتعرض «&lt;b&gt;» حرفيًا بدل [[<b>]]. ولاحظ إن اختبار «A & B» عدّى في النسختين؛ الغلطة مبتبانش غير لما [[&]] تيجي **بعد** escape تاني. ومفيش escape لـ [["]] و [[']] خالص، فالاسم اللي في التمرين اللي فات كان هيكسر الـ attribute.
+
+**الإصلاح: [[replace]] واحدة بتشوف النص الأصلي بس.** الـ regex [[/[&<>"']/g]] بيلاقي كل حرف من الخمسة، والدالة بترجّع بديله من [[MAP]]. كل حرف بيتعالج مرة واحدة، فمفيش escape مزدوج مهما كان الترتيب. و [[String(s)]] عشان رقم أو [[null]] ميرميش.
+
+**في المتصفح** (Chrome 158، نفس [[esc]]):
+
+~~~js
+const x = '<img src=x onerror="document.title=1"> & \'it\'';
+const a = document.createElement('div'); a.innerHTML = esc(x);
+const b = document.createElement('div'); b.textContent = x;
+console.log(a.textContent === b.textContent, a.children.length, b.children.length);
+~~~
+
+~~~text الناتج
+true 0 0
+~~~
+
+الاتنين طلّعوا نفس النص وصفر عناصر. **وليه [[textContent]] لسه الأحسن؟** لأنه مبيعتمدش على إنك تفتكر تنادي [[esc]] في كل مكان، ولا على إن [[esc]] نفسها صح (شفت دلوقتي نسخة غلط كانت شكلها سليم). و [[esc]] بتنفع جوه نص أو قيمة attribute بين علامتين بس، مش جوه [[href]] ولا [[<script>]] ولا CSS. فاستخدمها بس لو مضطر تبني نص HTML (قالب على السيرفر مثلًا).` },
+          ],
+          deep: {
+            why: R`المتصفح مش بيفرّق بين HTML كتبته انت و HTML كتبه المستخدم. والفرق الوحيد اللي بيفرق إنك تحط كلامه في مكان مش بيتفسّر أصلًا.`,
+            how: R`**ليه «نظّف النص» مش حل؟** لأن اللي بتمنعه قايمة، واللي بيهاجم عنده إبداع. [[<script>]] ممنوع؟ طب [[<img onerror>]]. طب [[<svg onload>]]. طب [[javascript:]] في [[href]]. طب حروف Unicode شبه الأقواس. القايمة مبتخلصش.
+
+والمكان اللي **مبيفسّرش** بيحل المشكلة من أصلها، مش بيحاول يسبق الهجوم.
+
+**الأماكن اللي بتفسّر HTML:**
+
+| الخاصية | خطر مع نص من بره؟ |
+|---|---|
+| [[innerHTML]] | **أيوه** — بتفسّر النص كـ HTML وتعمل عناصر |
+| [[outerHTML]] | **أيوه** — نفس الكلام وبتبدّل العنصر نفسه كمان |
+| [[insertAdjacentHTML]] | **أيوه** — بتفسّر وتضيف جنب العنصر |
+| [[document.write]] | **أيوه** — بتكتب HTML في الصفحة وهي بتتحمّل |
+| [[el.textContent]] | لأ — بتحط النص زي ما هو |
+| [[el.innerText]] | لأ — نص برضه، بس بتعمل layout فأبطأ |
+| [[new Text(s)]] | لأ — عقدة نص بتتضاف بـ [[append]] |
+
+**وخط دفاع تاني: CSP.** هيدر [[Content-Security-Policy]] بيقول للمتصفح «متشغّلش JavaScript غير من الملفات دي». فحتى لو [[innerHTML]] فلتت في مكان، الـ [[onerror]] مبيشتغلش (تفاصيل وتجربة في الشرح خطوة بخطوة، قسم CSP). ده مش بديل عن [[textContent]]: الـ HTML نفسه بيتحط برضه.
+
+**وفي أماكن تانية بتنفّذ من غير ما تكون HTML:**
+
+~~~js
+a.href = userInput;              // لو كتب javascript:alert(1) -> بينفّذ على الضغط
+el.setAttribute('onclick', x);   // بينفّذ
+el.style = userInput;            // ممكن يحمّل حاجات من بره
+eval(userInput);                 // بديهي
+~~~
+
+فالقاعدة: **أي نص من بره بيروح textContent، أو بيتفحص قبل ما يروح مكان تاني.** و [[href]] بتتفحص إنها [[https:]] أو [[/]] قبل ما تتحط.
+
+**«بس الداتا دي من الـ API بتاعي أنا»** — والـ API دي بتاخد منين؟ من مستخدمين. التخزين مش تنظيف.
+
+**ولو محتاج HTML فعلًا** (محرر نصوص مثلًا)، استخدم مكتبة تنظيف مجرّبة زي **DOMPurify**، متكتبهاش بإيدك. أو [[Sanitizer API]] الجديدة لما تبقى متاحة في كل المتصفحات.
+
+**ولاحظة من التجربة:** لما جرّبت الهجوم ده، قريت [[document.title]] بعد السطر على طول فلقيته **لسه القديم** — لأن [[onerror]] بتجري بعدين مش في نفس اللحظة. الثغرة اشتغلت، بس بعد جزء من الثانية. فلو بتختبر حاجة زي دي، اقرا النتيجة بعد ما الصفحة تهدا.`,
+            when: R`كل مرة بتحط نص مش انت كاتبه في الصفحة. وده أكتر مما تفتكر: الأسماء، والتعليقات، ورسايل الخطأ من السيرفر، وأسماء الملفات المرفوعة.`,
+            mistakes: R`تفتكر إن [[innerHTML]] أسرع فتستخدمها «مؤقتًا». أو تنضّف بـ [[replace('<script>', '')]]. أو تأمّن النص وتسيب [[href]] مفتوحة. أو تفترض إن داتا الـ API نضيفة.`
+          },
+          teach: R`## التطبيق اللي بنيناه فيه ثغرة
+
+~~~js السطر ده
+list.innerHTML = rows.join('');
+~~~
+
+[[rows]] فيها كلام المستخدم. و [[innerHTML]] **بتفسّر** اللي يتحط فيها كـ HTML.
+
+---
+
+## ١. جرّبها
+
+في خانة «على إيه؟» اكتب:
+
+~~~text
+<img src=x onerror="document.title='اتسرقت'">
+~~~
+
+~~~text اتشغّل فعلًا · Chrome
+عنوان الصفحة قبل:  مصاريف v2
+عنوان الصفحة بعد:  اتسرقت
+~~~
+
+**كود كتبه مستخدم جري في صفحتك.** بكل صلاحياتها: الكوكيز، والتوكن، و [[localStorage]]، وأي طلب للسيرفر باسم اللي فاتح.
+
+> ملاحظة من التجربة: لما قريت [[document.title]] في نفس اللحظة لقيته **لسه القديم**، لأن [[onerror]] بتجري بعدين. الثغرة اشتغلت، بس بعد جزء من الثانية.
+
+---
+
+## ٢. وده مش بيحصل لما حد يقصد بس
+
+أي اسم فيه [[<]] هيبوّظ الشكل. **القصد هو الحالة الأسوأ، مش الوحيدة.**
+
+---
+
+## ٣. الحل مش «نظّف النص»
+
+[[<script>]] ممنوع؟ طب [[<img onerror>]].
+طب [[<svg onload>]]. طب [[javascript:]] في [[href]].
+
+**القايمة مبتخلصش.** واللي بيهاجم عنده وقت أكتر منك.
+
+### الحل: استخدم المكان اللي **مبيفسّرش**
+
+| الخاصية | بيتعامل كـ |
+|---|---|
+| [[innerHTML]] | **HTML** — خطر |
+| [[outerHTML]] | **HTML** — خطر |
+| [[insertAdjacentHTML]] | **HTML** — خطر |
+| [[document.write]] | **HTML** — خطر |
+| [[textContent]] | نص — آمن |
+| [[innerText]] | نص — آمن |
+
+---
+
+## ٤. الإصلاح
+
+~~~js
+function row(it) {
+  const li   = document.createElement('li');
+  const name = document.createElement('span');
+  name.textContent = it.label;              // <-- هنا الأمان
+  const del  = document.createElement('button');
+  del.textContent = '×';
+  del.dataset.del = it.id;
+  li.append(name, del);
+  return li;
+}
+
+function render() {
+  document.querySelector('#list').replaceChildren(...state.items.map(row));
+}
+~~~
+
+~~~text نفس الهجوم بعد الإصلاح · اتشغّل فعلًا
+العنوان:        مصاريف v3        (ما اتغيّرش)
+صور في القايمة: 0
+الصف المعروض:   <img src=x onerror="document.title='اتسرقت'"> — 5 ج
+~~~
+
+الـ payload اتعرض **كنص**. وده بالظبط اللي المفروض يحصل.
+
+---
+
+## ٥. وفيه أماكن تانية بتنفّذ من غير ما تكون HTML
+
+~~~js
+a.href = userInput;              // javascript:alert(1) بينفّذ على الضغط
+el.setAttribute('onclick', x);   // بينفّذ
+el.style = userInput;            // ممكن يحمّل حاجات من بره
+eval(userInput);                 // بديهي
+~~~
+
+**القاعدة:** أي نص من بره بيروح [[textContent]]، أو بيتفحص قبل ما يروح مكان تاني. و [[href]] بتتأكد إنها [[https:]] أو [[/]].
+
+---
+
+## ٦. «بس الداتا دي من الـ API بتاعي»
+
+والـ API دي بتاخد منين؟ **من مستخدمين.**
+
+التخزين مش تنظيف. الداتا بتخرج زي ما دخلت.
+
+---
+
+## ٧. ولو محتاج HTML فعلًا؟
+
+محرر نصوص، أو محتوى من Markdown؟ استخدم **DOMPurify** — مكتبة مجرّبة، متكتبهاش بإيدك.
+
+---
+
+## ٨. CSP: خط الدفاع التاني ضد XSS
+
+[[textContent]] بيقفل الباب. و **CSP** (Content Security Policy) هو القفل التاني لو حد نسي ونزّل [[innerHTML]] في مكان: هيدر بيبعته السيرفر مع الصفحة، بيقول للمتصفح JavaScript مسموح ييجي منين.
+
+~~~text الهيدر اللي اتجرّب
+Content-Security-Policy: default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'
+~~~
+
+- [[default-src 'self']]: أي حاجة (صور، خطوط، [[fetch]]) من نفس الـ origin بس، إلا لو فيه قاعدة أدق.
+- [[script-src 'self']]: سكربتات من ملفات على نفس الـ origin بس. **ومن غير [['unsafe-inline']]** يعني مفيش [[<script>]] جوه الصفحة، ولا [[onerror="..."]]، ولا [[onclick="..."]] في الـ HTML.
+- [[object-src 'none']] و [[base-uri 'none']]: بيقفلوا طريقين قدام (plugins و [[<base>]] بيغيّر مكان السكربتات).
+
+نفس صفحة v2 (اللي فيها [[innerHTML]] بالباج) ونفس الـ payload، مرة من غير الهيدر ومرة بيه:
+
+~~~text اتشغّل فعلًا · Chrome 156 · سيرفر node:http
+من غير CSP:  العنوان = اتسرقت   | <img> في القايمة: 1
+بـ CSP:      العنوان = مصاريف v2 | <img> في القايمة: 1
+~~~
+
+~~~text والـ console في التانية
+Executing inline event handler violates the following Content Security Policy
+directive 'script-src 'self''. ... The action has been blocked.
+~~~
+
+**لاحظ إن الـ [[<img>]] اتحطت في الحالتين.** CSP منع الكود يشتغل، بس الـ HTML نفسه دخل الصفحة. يعني اللي بيهاجم لسه يقدر يحط فورم «سجّل دخول تاني» مزيّف أو لينك. فـ CSP خط تاني، **مش** بديل عن [[textContent]].
+
+| الموقف | تعمل إيه |
+|---|---|
+| سيرفر بتتحكم فيه | الهيدر من السيرفر (Express و nginx وغيرهم) |
+| استضافة static من غير هيدرز | [[<meta http-equiv="Content-Security-Policy" content="...">]] في الـ [[<head>]] |
+| عندك سكربت inline لازم يفضل | انقله لملف، أو [[nonce]] عشوائي جديد مع كل طلب (من MDN) |
+| عايز تجرّب من غير ما تكسر الموقع | [[Content-Security-Policy-Report-Only]] بيطبع المخالفات بس |
+
+> و [[<meta>]] مبتدعمش كل حاجة (زي [[frame-ancestors]]). ده من MDN. ولو التطبيق بيستخدم [[onclick="..."]] في الـ HTML هيبطل يشتغل مع CSP، وده سبب تاني تستخدم [[addEventListener]].
+
+---
+
+## الخلاصة
+
+- [[innerHTML]] + نص من بره = ثغرة.
+- [[textContent]] بتحل المشكلة من أصلها، مش بتسابق الهجوم.
+- [[createElement]] + [[append]] + [[replaceChildren]] بيعملوا نفس الشغل.
+- [[href]] و [[style]] و [[setAttribute]] محتاجين فحص كمان.
+- محتاج HTML؟ DOMPurify.
+- CSP بـ [[script-src 'self']] بيمنع الـ inline handlers لو حاجة فلتت، بس الـ HTML بيدخل برضه.`,
+          sol: R`الهجوم والإصلاح، الاتنين اتشغّلوا في Chrome على نفس التطبيق.`,
+          solCode: R`// قبل: v2
+list.innerHTML = rows.join('');
+// الإدخال:  <img src=x onerror="document.title='اتسرقت'">
+// النتيجة:  عنوان الصفحة بقى «اتسرقت»   <-- كوده جري
+
+// بعد: v3
+function row(it) {
+  const li = document.createElement('li');
+  const name = document.createElement('span');
+  name.textContent = it.label;              // النص نص
+  li.append(name);
+  return li;
+}
+document.querySelector('#list').replaceChildren(...state.items.map(row));
+// نفس الإدخال:
+//   العنوان: مصاريف v3   (ما اتغيّرش)
+//   صور في القايمة: 0
+//   الصف: <img src=x onerror="document.title='اتسرقت'"> — 5 ج   (نص)`
+        },
+
+        {
+          cmd: "خلّي التطبيق يفتكر",
+          title: "والمحفوظ ممكن يكون بايظ — ومش عيب إنه يكون",
+          ref: [
+            { t: "MDN: Window.localStorage", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage" },
+            { t: "MDN: Web Storage API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API" },
+            { t: "MDN: Window: storage event", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/storage_event" },
+            { t: "MDN: Storage quotas and eviction criteria", url: "https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria" },
+          ],
+          pre: [
+            { to: "js/تختار تخزين إيه: cookies و Storage و Cache و IndexedDB", why: R`عشان تعرف ليه [[localStorage]] هنا، وإمتى تنقل لـ IndexedDB` },
+          ],
+          learn: R`تحفظ الحالة وتقراها، وتتعامل مع المحفوظ كأنه جاي من غريب.`,
+          out: R`تطبيقك مبيوقعش بسبب داتا قديمة أو ناقصة.`,
+          use: {
+            prog: R`اللي محفوظ في المتصفح كتبته نسخة **قديمة** من كودك، أو عدّله اليوزر بإيده في DevTools. الاتنين بيحصلوا.`,
+            work: R`«التطبيق مش بيفتح عندي» وبيفتح عند الكل — ده ده. والحل إن القراية تنضّف بدل ما توقع.`,
+            cs: R`عدم الثقة في المدخلات الخارجية، ورقم النسخة في الـ schema — نفس فكرة الـ migrations في قواعد البيانات.`,
+          },
+          desc: R`التطبيق شغّال، بس أول ما تعمل reload كل حاجة بتروح.
+
+[[localStorage.setItem]] و [[getItem]] بيحلوها في سطرين. **بس السطرين دول بيوقّعوا التطبيق** لو مكتوبين ساذج:
+
+[[const state = JSON.parse(localStorage.getItem('app'))]]
+
+ده بيقع في **أربع** حالات، وكلهم بيحصلوا:
+
+| الحالة | بيحصل إمتى | النتيجة |
 |---|---|---|
-| سطور كودك | ٣٤ | ٢٥ |
-| بعد gzip | ٤٥٤ بايت | ٦٠٨٤ بايت |
-| النتيجة على 360px | نفس البكسل | نفس البكسل |
+| مفيش حاجة محفوظة | أول زيارة | [[JSON.parse(null)]] → [[null]] |
+| JSON بايظ | الحفظ اتقطع، أو حد عدّل | **بترمي** |
+| شكل قديم | نشرت نسخة جديدة | الكود بيدوّر على حقول مش موجودة |
+| [[localStorage]] نفسها ممنوعة | وضع خاص، أو إعدادات | **بترمي** حتى على [[getItem]] |
 
-## القرار (decision record)
+**والقاعدة:** اللي محفوظ في المتصفح **مدخل خارجي**، زي أي رد من API بالظبط. كتبته نسخة قديمة من كودك، أو اليوزر عدّله بإيده في DevTools، أو إضافة في المتصفح لعبت فيه.
 
-~~~text DECISION.md
-القرار: التوولتيب بإيدك (tooltip.js) للصفحة دي.
-السياق: ٣ زراير في صفحة ثابتة، مفيش scroll جوه containers، ومفيش أسهم ولا dropdowns.
-الأرقام: نفس المكان بالبكسل على 360px، و ٤٥٤ بايت مقابل ٦٠٨٤ بايت بعد gzip (١٣ مرة).
-نرجع لـ Floating UI لو: التوولتيب جوه عنصر بيعمل scroll، أو محتاج يتحرك مع الـ scroll (autoUpdate)، أو سهم، أو dropdowns و popovers في أماكن كتير.
-اتراجع: ٢١ نوفمبر 2026.
-~~~
+**فالقراية بتعمل أربع حاجات:**
 
-## الغلطات اللي حصلت وانت بتبنيها
+**١.** [[try]] حوالين [[getItem]] نفسها (مش بس [[parse]]).
+**٢.** [[try]] حوالين [[JSON.parse]].
+**٣.** **رقم نسخة** — لو مختلف، ابدأ من جديد أو حوّل.
+**٤.** **فحص كل صف** — واللي مش سليم يتشال، مش يوقّع التطبيق.
 
-- **أول قياس طلع التوولتيب في مكان غلط:** كنا بنقيس [[tip.getBoundingClientRect()]] وهو لسه [[hidden]]، فالعرض والطول صفر والتوولتيب بيتحط فوق الزرار على طول. التصليح: نعرض الأول ونكتب النص، وبعدين نقيس.
-- **النسخة اللي بإيدك ناقصها حاجة Floating UI بتعملها:** لو الصفحة عملت scroll والتوولتيب ظاهر، مكانه مبيتحدّثش (Floating UI عندها [[autoUpdate]] لده). مقبول هنا لأن التوولتيب بيستخبى مع [[pointerout]] و [[focusout]]، وده مكتوب في القرار.` },
-        { lvl: 'متوسط', t: R`arqamy: مكتبة أرقام عربي من فولدر لفولدر بـ npm pack`, what: R`مكتبة صغيرة فيها [[toLatin]] (٠١٢٣ والفارسي ۱۲۳ لـ 0123) و [[toArabic]] (وخيار [[decimal]] يحوّل النقطة لـ «٫») و [[parseNumber]] (بتقرا [["١٢٫٥"]] و [["١٬٢٥٠"]] وترجّع [[NaN]] للكلام الغلط)، بـ JSDoc و README و [[node --test]]. اعملها [[npm pack]] وسطّبها في فولدر تاني [[invoice-cli]] فيه سكربت فاتورة بياخد [["صنف=سعر"]] من الترمنال. وبعدين طلّع نسخة جديدة بـ [[npm version]] وحدّث الفولدر التاني. اتأكد الأول إن الاسم مش محجوز على npm. من درس «مكتبتك الصغيرة».`, done: R`[[node invoice.js "كشري=٤٥" "شاي=10" "عصير=١٢٫٥"]] بيطبع الأسعار بأرقام عربي و «٫» والإجمالي [[٦٧٫٥٠]]، و [[npm ls]] في invoice-cli بيقول [[arqamy@1.1.1]]، و [[npm pack]] بيرفض يعمل tarball لو اختبار واقع.`, sol: R`## الناتج النهائي
+والنقطة الرابعة دي أهم واحدة: **صف واحد بايظ ميضيّعش الباقي.**`,
+          example: R`// storage.js — الحفظ والقراية، ومعاهم رقم نسخة ودفاع عن داتا بايظة
+const KEY = 'masareef';
+const VERSION = 1;
 
-~~~text invoice-cli: node invoice.js "كشري=٤٥" "شاي=10" "عصير=١٢٫٥"
-كشري     ٤٥٫٠٠
-شاي      ١٠٫٠٠
-عصير     ١٢٫٥٠
-الإجمالي ٦٧٫٥٠
-~~~
+export function load() {
+  let raw;
+  try { raw = localStorage.getItem(KEY); }
+  catch { return { items: [] }; }                  // بيانات المواقع مقفولة
+  if (!raw) return { items: [] };                  // أول زيارة
 
-~~~text node invoice.js "كشري=خمسة"  ثم  npm ls
-سعر مش مفهوم في «كشري=خمسة»
-exit=1
-invoice-cli@1.0.0
-$__bt-- arqamy@1.1.1
-~~~
+  let data;
+  try { data = JSON.parse(raw); }
+  catch { console.warn('المحفوظ مش JSON'); return { items: [] }; }
 
-## هتشوف إيه
+  if (data?.version !== VERSION) { console.warn('نسخة محفوظة قديمة (' + data?.version + ')'); return { items: [] }; }
+  if (!Array.isArray(data.items)) return { items: [] };
 
-فولدرين جنب بعض: [[arqamy/]] (المكتبة) و [[invoice-cli/]] (اللي بيستخدمها). المكتبة بتوصل للتاني كـ tarball، زي ما كانت هتوصل من npm بالظبط.
-
-~~~text شجرة الملفات
-proj/
-  arqamy/
-    index.js
-    index.test.js
-    package.json
-    README.md
-  invoice-cli/
-    invoice.js
-    package.json
-~~~
-
-## المكتبة
-
-~~~js arqamy/index.js
-// arqamy: تحويل الأرقام بين ٠١٢٣ و 0123
-const ARABIC = "٠١٢٣٤٥٦٧٨٩";
-const PERSIAN = "۰۱۲۳۴۵۶۷۸۹";
-
-/**
- * يحوّل أي أرقام عربي أو فارسي في النص لأرقام إنجليزي.
- * @param {string} text
- * @returns {string}
- */
-export function toLatin(text) {
-  return String(text).replace(/[٠-٩۰-۹]/g, (d) => {
-    const i = ARABIC.indexOf(d);
-    return String(i === -1 ? PERSIAN.indexOf(d) : i);
-  });
+  return { items: data.items.filter(it =>
+    it && typeof it.id === 'string' && typeof it.label === 'string' && Number.isFinite(it.amount)) };
 }
 
-/**
- * يحوّل الأرقام الإنجليزي في النص لأرقام عربي.
- * @param {string} text
- * @param {{ decimal?: boolean }} [options] decimal: النقطة بين رقمين تبقى «٫»
- * @returns {string}
- */
-export function toArabic(text, { decimal = false } = {}) {
-  let out = String(text);
-  if (decimal) out = out.replace(/(\d)\.(\d)/g, "$1٫$2");
-  return out.replace(/[0-9]/g, (d) => ARABIC[d]);
+export function save(state) {
+  try { localStorage.setItem(KEY, JSON.stringify({ version: VERSION, items: state.items })); }
+  catch (e) { console.warn('مقدرناش نحفظ:', e.name); }   // QuotaExceededError
+}`,
+          lines: [
+            R`اسم المفتاح اللي التطبيق كله بيتحفظ تحته. خليه مميز لأن [[localStorage]] مشتركة بين كل الصفحات على نفس الـ origin، فاسم عام زي [[data]] ممكن يتصادم مع صفحة تانية.`,
+            R`**رقم النسخة** بتاع شكل الداتا المحفوظة. زوّده كل ما تغيّر شكلها (مثلًا [[amount]] بقى بالقروش)، عشان الكود الجديد يعرف إن المحفوظ اتكتب بالشكل القديم وميقراهوش غلط.`,
+            R`[[load]] بتقرا الحالة المحفوظة، ومعمولة إنها **عمرها ما ترمي**: أسوأ حالة بترجّع حالة فاضية.`,
+            R`بنعرّف [[raw]] برّه الـ [[try]] لأن [[let]] جوه بلوك مش بيبان برّاه، واحنا محتاجين القيمة في السطور اللي بعده.`,
+            R`[[getItem]] بترجّع النص المحفوظ أو [[null]] لو مفيش. والـ [[try]] حواليها هي **نفسها** لأنها ممكن ترمي [[SecurityError]] لما بيانات المواقع مقفولة في إعدادات المتصفح (ده من وثائق MDN، مش من تجربة).`,
+            R`لو القراية نفسها فشلت نرجّع حالة فاضية، والتطبيق يشتغل عادي من غير حفظ بدل ما الصفحة كلها تقع.`,
+            R`أول زيارة: [[getItem]] رجّعت [[null]] لأن مفيش حاجة اتحفظت لسه، فنبدأ بحالة فاضية.`,
+            R`متغير تاني للداتا بعد التحويل، ومتعرّف برّه الـ [[try]] لنفس السبب.`,
+            R`[[JSON.parse]] بتحوّل النص لـ object. في [[try]] لوحدها لأنها بترمي [[SyntaxError]] لو النص مش JSON سليم، زي لو حد عدّله بإيده في DevTools.`,
+            R`لو الـ JSON بايظ بنكتب تحذير في الـ console (عشان لو بتدوّر على مشكلة بعدين تلاقيه) ونرجّع حالة فاضية بدل crash.`,
+            R`**رقم النسخة**: لو المحفوظ مالوش نسخة أو نسخته مختلفة، يبقى اتكتب بكود تاني وشكله مش اللي احنا مستنيينه، فنكتب تحذير فيه النسخة اللي لقيناها (ده اللي بيطلع «نسخة محفوظة قديمة (0)» في جدول الحالات) ونتجاهله. و [[?.]] عشان لو [[data]] طلع [[null]] (لو المحفوظ كان النص [["null"]]) ميرميش error.`,
+            R`[[items]] لازم تكون array فعلًا. من غير الفحص ده، لو كانت object أو string، [[filter]] اللي تحت هترمي TypeError وتوقّع التطبيق.`,
+            R`**أهم سطر**: بدل ما نرفض الداتا كلها عشان صف واحد بايظ، بنفحص كل صف لوحده بـ [[filter]] ونحتفظ بالسليم بس.`,
+            R`شروط الصف السليم: موجود (مش [[null]])، و [[id]] و [[label]] نصوص، و [[amount]] رقم حقيقي ([[Number.isFinite]] بترفض [[NaN]] والنصوص). اللي مش سليم بيتشال **ومش بيوقّع التطبيق**، فاليوزر يخسر صف بايظ بس مش كل مصاريفه.`,
+            R`نهاية [[load]].`,
+            R`[[save]] بتكتب الحالة في [[localStorage]]، وبتتنادى بعد كل تغيير.`,
+            R`[[localStorage]] بتخزن نصوص بس، فبنحوّل بـ [[JSON.stringify]]. وبنحفظ [[version]] مع الداتا عشان [[load]] تفحصه، وبنحفظ [[items]] بس من غير الفلتر، لأن الفلتر حالة شاشة مؤقتة مش داتا.`,
+            R`الحفظ ممكن يفشل كمان: [[QuotaExceededError]] لما المساحة المسموحة للموقع تخلص. بنكتب تحذير بدل ما نوقّع التطبيق، والحالة اللي في الذاكرة فاضلة سليمة.`,
+            R`نهاية [[save]].`,
+          ],
+          try: R`افتح DevTools ← Application ← Local Storage، وغيّر القيمة المحفوظة بإيدك: امسح قوس، أو خلي [[amount]] نص، أو غيّر [[version]]. اعمل reload بعد كل واحدة. **التطبيق لازم يفتح في كل مرة.**`,
+          practice: [
+            { lvl: 'سريع', t: R`**محاكاة:** شغّل [[load()]] في Node: حط [[globalThis.localStorage]] مزيّف بـ [[getItem]] و [[setItem]] فوق [[Map]] قبل [[await import('./storage.js')]]، وجرّب الخمس حالات اللي في الشرح واحدة واحدة.`, done: R`ولا حالة رمت: مفيش حاجة، و [[{bad]]، و [[version]] بـ 2، و [[items]] نص، كلهم رجّعوا [[{ items: [] }]]، والحالة اللي فيها صف سليم وصفوف بايظة رجّعت «صف سليم» بس.`, sol: R`ملفين في نفس الفولدر: [[storage.js]] (نفس ملف الدرس بالظبط) و [[sim.mjs]] اللي بيحط [[localStorage]] مزيّف **قبل** ما يستورد:
+
+~~~js storage.js
+// storage.js: الحفظ والقراية، ومعاهم رقم نسخة ودفاع عن داتا بايظة
+const KEY = 'masareef';
+const VERSION = 1;
+
+export function load() {
+  let raw;
+  try { raw = localStorage.getItem(KEY); }
+  catch { return { items: [] }; }                  // بيانات المواقع مقفولة
+  if (!raw) return { items: [] };                  // أول زيارة
+
+  let data;
+  try { data = JSON.parse(raw); }
+  catch { console.warn('المحفوظ مش JSON'); return { items: [] }; }
+
+  if (data?.version !== VERSION) { console.warn('نسخة محفوظة قديمة (' + data?.version + ')'); return { items: [] }; }
+  if (!Array.isArray(data.items)) return { items: [] };
+
+  return { items: data.items.filter(it =>
+    it && typeof it.id === 'string' && typeof it.label === 'string' && Number.isFinite(it.amount)) };
 }
 
-/**
- * يقرا رقم مكتوب بأي شكل ("١٢٫٥" أو "12.5") ويرجّع Number، أو NaN.
- * @param {string} text
- * @returns {number}
- */
-export function parseNumber(text) {
-  const latin = toLatin(text).trim().replace("٫", ".").replace(/[٬,]/g, "");
-  return /^-?\d+(\.\d+)?$/.test(latin) ? Number(latin) : NaN;
-}
-~~~
-
-~~~js arqamy/index.test.js
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { toLatin, toArabic, parseNumber } from "./index.js";
-
-test("toLatin: عربي وفارسي ومخلوط", () => {
-  assert.equal(toLatin("٠١٠١٢٣٤٥٦٧٨"), "01012345678");
-  assert.equal(toLatin("۱۲۳"), "123");
-  assert.equal(toLatin("شقة ٣ دور 2"), "شقة 3 دور 2");
-});
-
-test("toArabic", () => {
-  assert.equal(toArabic("الطلب 45 جنيه"), "الطلب ٤٥ جنيه");
-  assert.equal(toArabic("12.50"), "١٢.٥٠");
-  assert.equal(toArabic("12.50", { decimal: true }), "١٢٫٥٠");
-  assert.equal(toArabic("آخر جملة.", { decimal: true }), "آخر جملة.");
-});
-
-test("parseNumber: الفاصلة العشرية العربي وفاصل الآلاف", () => {
-  assert.equal(parseNumber("١٢٫٥"), 12.5);
-  assert.equal(parseNumber("١٬٢٥٠"), 1250);
-  assert.equal(parseNumber(" 99 "), 99);
-  assert.ok(Number.isNaN(parseNumber("١٢ جنيه")));
-  assert.ok(Number.isNaN(parseNumber("")));
-});
-~~~
-
-~~~json arqamy/package.json
-{
-  "name": "arqamy",
-  "version": "1.1.1",
-  "description": "تحويل الأرقام بين العربي والإنجليزي وقراية الأرقام المكتوبة بالعربي",
-  "type": "module",
-  "exports": "./index.js",
-  "files": [
-    "index.js",
-    "README.md"
-  ],
-  "sideEffects": false,
-  "scripts": {
-    "test": "node --test",
-    "prepack": "npm test"
-  },
-  "license": "MIT"
+export function save(state) {
+  try { localStorage.setItem(KEY, JSON.stringify({ version: VERSION, items: state.items })); }
+  catch (e) { console.warn('مقدرناش نحفظ:', e.name); }   // QuotaExceededError
 }
 ~~~
 
-~~~text arqamy/README.md
-# arqamy
+~~~js sim.mjs
+// sim.mjs: localStorage مزيّف فوق Map، وبعدين load() على كل حالة
+const mem = new Map();
+globalThis.localStorage = {
+  getItem: (k) => (mem.has(k) ? mem.get(k) : null),
+  setItem: (k, v) => mem.set(k, String(v)),
+  removeItem: (k) => mem.delete(k),
+};
+const { load, save } = await import('./storage.js');
 
-تحويل الأرقام بين ٠١٢٣ و 0123.
+const cases = {
+  'مفيش حاجة': null,
+  'JSON بايظ': '{bad',
+  'version 2': JSON.stringify({ version: 2, items: [] }),
+  'items نص': JSON.stringify({ version: 1, items: 'قهوة' }),
+  'صف سليم وصفوف بايظة': JSON.stringify({ version: 1, items: [
+    { id: 'ok', label: 'صف سليم', amount: 20, cat: 'food' },
+    { id: 'bad', label: 'من غير مبلغ' },
+    null,
+    'نص جوه المصفوفة',
+    { id: 5, label: 'id رقم', amount: 10 },
+  ] }),
+};
 
-$__bt$__bt$__btjs
-import { toLatin, toArabic, parseNumber } from "arqamy";
-toLatin("٠١٠١٢٣٤٥٦٧٨"); // "01012345678"
-toArabic("45");         // "٤٥"
-parseNumber("١٢٫٥");    // 12.5
-$__bt$__bt$__bt
-~~~
-
-## اللي بيستخدمها
-
-~~~js invoice-cli/invoice.js
-import { parseNumber, toArabic } from "arqamy";
-const lines = process.argv.slice(2);
-if (lines.length === 0) {
-  console.error('استخدام: node invoice.js "كشري=٤٥" "شاي=10"');
-  process.exit(2);
-}
-let total = 0;
-for (const line of lines) {
-  const [item, price] = line.split("=");
-  const n = parseNumber(price ?? "");
-  if (Number.isNaN(n)) {
-    console.error($__btسعر مش مفهوم في «$__{line}»$__bt);
-    process.exit(1);
+for (const [name, raw] of Object.entries(cases)) {
+  if (raw === null) mem.delete('masareef'); else mem.set('masareef', raw);
+  try {
+    console.log(name.padEnd(22), '->', JSON.stringify(load()));
+  } catch (e) {
+    console.log(name.padEnd(22), '-> رمت!', e.message);
   }
-  total += n;
-  console.log($__bt$__{item.padEnd(8)} $__{toArabic(n.toFixed(2), { decimal: true })}$__bt);
 }
-console.log($__btالإجمالي $__{toArabic(total.toFixed(2), { decimal: true })}$__bt);
+save({ items: [{ id: 'x', label: 'شاي', amount: 10 }], filter: 'food' });
+console.log('المحفوظ بعد save:', mem.get('masareef'));
 ~~~
 
-## ترتيب البناء
-
-~~~bash
-npm view arqam name version
-npm view arqamy name
-cd arqamy
-npm test
-npm pack
-cd ../invoice-cli
-npm init -y
-npm pkg set type=module
-npm install ../arqamy/arqamy-1.0.0.tgz
-node invoice.js "كشري=٤٥" "شاي=10" "عصير=١٢٫٥"
+~~~text الناتج: node sim.mjs (Node 24.22)
+مفيش حاجة              -> {"items":[]}
+المحفوظ مش JSON
+JSON بايظ              -> {"items":[]}
+نسخة محفوظة قديمة (2)
+version 2              -> {"items":[]}
+items نص               -> {"items":[]}
+صف سليم وصفوف بايظة    -> {"items":[{"id":"ok","label":"صف سليم","amount":20,"cat":"food"}]}
+المحفوظ بعد save: {"version":1,"items":[{"id":"x","label":"شاي","amount":10}]}
 ~~~
 
-## الكود حتة حتة
+**ليه [[await import]] مش [[import]] فوق؟** الـ [[import]] العادي بيتنفّذ **قبل** أي سطر في الملف، فـ [[storage.js]] كان هيتحمّل والـ [[localStorage]] المزيّف لسه متعملش. [[await import()]] بيحمّله في اللحظة اللي انت عايزها. (هنا مش فارقة لأن [[load]] مش بتتنادى وقت التحميل، بس في [[state.js]] بتتنادى، وهناك هتفرق.)
 
-- **[[/[٠-٩۰-۹]/g]] و [[indexOf]]:** أي رقم عربي (U+0660 لـ U+0669) أو فارسي (U+06F0 لـ U+06F9) بيتبدّل بمكانه في السلسلة، ومكانه هو الرقم نفسه.
-- **[[ARABIC[d]]]:** [[d]] نص زي [["4"]]، والـ index بيقبل نص رقم، فـ [[ARABIC["4"]]] = [["٤"]].
-- **[[parseNumber]]:** بيحوّل للإنجليزي، ويبدّل «٫» (U+066B، الفاصلة العشرية العربي) بنقطة، ويشيل فاصل الآلاف («٬» U+066C و [[,]])، وبعدين regex صارم. [["١٢ جنيه"]] = [[NaN]] مش [[12]] زي [[parseFloat]].
-- **[[{ decimal = false } = {}]]:** الخيار الجديد اختياري وقيمته الافتراضية السلوك القديم، فاللي بيستخدم 1.0.0 مش هيحس بحاجة: ده minor.
-- **[[/(\d)\.(\d)/g]]:** النقطة بس لو بين رقمين، فـ «آخر جملة.» متتغيرش (فيه اختبار ليها).
-- **[[prepack]]:** [[npm pack]] (و [[npm publish]]) بيشغّل [[npm test]] الأول، ولو وقع مفيش tarball.
+**المزيّف قد إيه؟** تلات دوال بس، لأن [[storage.js]] مبيستخدمش غيرهم. [[Map]] بترجّع [[undefined]] للمفتاح المش موجود، و [[localStorage]] الحقيقي بيرجّع [[null]]، فـ [[has]] بتحافظ على نفس السلوك. و [[String(v)]] لأن الحقيقي بيخزن نصوص بس.
 
-## الغلطات اللي حصلت وانت بتبنيها
+**اللي الناتج بيقوله:** ولا سطر «رمت!». السطور «المحفوظ مش JSON» و «نسخة محفوظة قديمة (2)» هي الـ [[console.warn]] اللي جوه [[load]] (بتطلع قبل السطر بتاعها لأنها بتتطبع وقت النداء). و [[save]] حفظت [[items]] بس من غير [[filter]].
 
-- **الاسم كان محجوز:** أول اسم كان [[arqam]]، و [[npm view arqam name version]] رجّع [[arqam]] و [[1.1.2]]: package موجودة بالاسم ده. لو كنا نشرنا كانت هتترفض، ولو حد سطّب [[arqam]] كان هيجيب حاجة تانية خالص. غيّرناه لـ [[arqamy]] بعد ما [[npm view arqamy name]] رجّع [[E404]].
-- **نشرنا 1.1.0 بايظة:** زوّدنا [[decimal]] وعملنا [[npm version minor]] و [[npm pack]] من غير ما نشغّل الاختبارات. الـ regex كان اتكتب غلط ([[/(d).(d)/g]] من غير الـ backslashes) والـ tarball طلع. الاختبار كان هيمسكها: [[ℹ pass 2]] و [[ℹ fail 1]]. التصليح: 1.1.1 بالـ regex الصح، و [[npm pkg set scripts.prepack="npm test"]]. وجرّبنا نبوّظ الكود تاني: [[npm pack]] وقف بـ [[npm error code 1]] و exit code 1 ومفيش tarball اتعمل.
-- **الفولدر التاني مبيشوفش التعديل:** عدّلنا [[arqamy/index.js]] وجرّبنا من invoice-cli على طول: لسه القديم ([[١٢.٥٠]] بالنقطة). [[npm install]] من tarball بينسخ الملفات في [[node_modules]]، مش لينك. لازم [[npm pack]] تاني و [[npm install ../arqamy/arqamy-1.1.1.tgz]]. (لو عايز لينك وانت بتطوّر: [[npm link]] أو workspaces.)
+**الغلطة الشائعة:** تعمل المزيّف بـ [[getItem: (k) => mem.get(k)]] فيرجّع [[undefined]] مش [[null]]. هنا هيعدّي بالصدفة لأن [[!raw]] بتمسك الاتنين، بس أي كود بيقارن بـ [[=== null]] هيتصرف غير المتصفح.` },
+            { lvl: 'تطبيق', t: R`**ابني migration:** النسخة 2 بتزوّد [[cat]] لكل بند. خلّي [[load()]] تقبل النسخة 1 وتحوّلها بـ [[cat: 'other']]، و [[save()]] تكتب [[version: 2]].`, done: R`داتا نسخة 1 محفوظة بتفتح بكل البنود وكل بند فيه [[cat]] بـ [[other]]، وبعد أول تغيير المحفوظ فيه [[version: 2]]، ونسخة 3 (من المستقبل) مبتوقّعش التطبيق.`, sol: R`**[[storage.js]] النسخة 2:** دالة [[migrate]] صغيرة بتشتغل **بين** [[JSON.parse]] وفحص النسخة، وبتحوّل الشكل القديم للجديد:
 
-## اتقاس
+~~~js storage.js
+// storage.js (النسخة 2): كل بند ليه cat، والنسخة 1 بتتحوّل مش بتتمسح
+const KEY = 'masareef';
+const VERSION = 2;
 
-- [[npm test]]: ٣ اختبارات (فيهم ٩ assertions) عدّوا في 1.1.1.
-- الـ tarball: ٣ ملفات و 941 بايت (1.0.0)، لأن [[files]] فيها [[index.js]] و [[README.md]] بس.` },
-        { lvl: 'كبير', t: R`deps-report: تقرير عن كل dependency في أي مشروع`, what: R`أداة CLI بتقرا [[package.json]] أي مشروع (dependencies و devDependencies)، وبتسأل الـ registry عن كل package (٤ في المرة)، وبتطلّع جدول: المستوى (OK أو WARN أو HIGH)، وآخر نسخة وتاريخها، والرخصة، والأسباب. القواعد: مش موجودة أو deprecated أو من غير رخصة أو نسختها [[*]] = HIGH، وقديمة أكتر من سنتين أو فيها install scripts أو رخصة مش في القايمة أو أكبر من 5 MB أو متثبتة على نسخة أقدم من الأخيرة أو من مصدر برّه الـ registry = WARN. [[--json]] للـ CI، و exit code 1 لو فيه HIGH و 2 لو الملف مش موجود. والـ [[fetch]] بيتبعت من برّه عشان كل الاختبارات تشتغل من غير شبكة. من وحدة «المكتبات والفريموركات» كلها، و «try و catch و finally»، و «Promise.all و allSettled».`, done: R`على [[package.json]] تجربة فيه ٩ dependencies، الأداة بتطلّع ٣ HIGH (left-pad و dayjss و react-dom بـ [[*]]) و ٤ WARN و ٢ OK و exit code 1، و [[node --test]] بيعدّي ٩ اختبارات من غير إنترنت، وملف مش موجود بيطلّع [[ENOENT]] و exit code 2.`, ext: R`كاش للردود في ملف ليوم واحد، وقراية [[package-lock.json]] عشان تفحص النسخة المتسطبة فعلًا مش الأخيرة، وربطه بـ [[npm audit --json]]، وقايمة رخص مسموحة من ملف config، وتشغيله في GitHub Actions على كل PR بيغيّر [[package.json]].`, sol: R`## الناتج النهائي
+function migrate(data) {
+  if (data.version === 1 && Array.isArray(data.items)) {
+    return { version: 2, items: data.items.map((it) => (it && typeof it === 'object' ? { ...it, cat: 'other' } : it)) };
+  }
+  return data;
+}
 
-~~~text node bin/deps-report.js ../clinic-booking/package.json (يوم 21 نوفمبر 2026)
-OK    dayjs      1.11.23   2026-08-17 MIT
-WARN  chart.js   4.6.1     2026-10-22 MIT          حجمها 5.9 MB
-OK    moment     2.31.0    2026-09-15 MIT
-HIGH  left-pad   1.3.0     2018-04-09 WTFPL        deprecated: use String.prototype.padStart()؛ رخصة WTFPL محتاجة مراجعة؛ آخر نسخة من 3148 يوم
-WARN  lodash     4.18.1    2026-04-01 MIT          متثبتة على 4.17.20 والأحدث 4.18.1: شغّل npm audit
-HIGH  dayjss     -         -          -            مش موجودة في الـ registry (اسم غلط؟)
-WARN  arqamy     -         -          -            مصدر مش من الـ registry: file:../arqamy/arqamy-1.1.1.tgz
-WARN  esbuild    0.28.2    2026-08-08 MIT          install scripts: postinstall
-HIGH  react-dom  19.3.1    2026-10-14 MIT          النسخة «*» مش متثبتة؛ حجمها 7.7 MB
+export function load() {
+  let raw;
+  try { raw = localStorage.getItem(KEY); }
+  catch { return { items: [] }; }
+  if (!raw) return { items: [] };
 
-9 dependency: 3 HIGH، 4 WARN، 2 OK
-exit=1
+  let data;
+  try { data = JSON.parse(raw); }
+  catch { console.warn('المحفوظ مش JSON'); return { items: [] }; }
+
+  data = migrate(data);
+  if (data?.version !== VERSION) { console.warn('نسخة محفوظة مش معروفة (' + data?.version + ')'); return { items: [] }; }
+  if (!Array.isArray(data.items)) return { items: [] };
+
+  return { items: data.items.filter(it =>
+    it && typeof it.id === 'string' && typeof it.label === 'string'
+       && Number.isFinite(it.amount) && typeof it.cat === 'string') };
+}
+
+export function save(state) {
+  try { localStorage.setItem(KEY, JSON.stringify({ version: VERSION, items: state.items })); }
+  catch (e) { console.warn('مقدرناش نحفظ:', e.name); }
+}
 ~~~
 
-~~~text node --test (من غير إنترنت)
-✔ getPackageInfo: بيقرا آخر نسخة وتاريخها والـ install scripts
-✔ getPackageInfo: الشبكة واقعة بترجع error مش exception
-✔ main: exit 1 لو فيه HIGH، والتقرير فيه كل dependency
-✔ main: كله سليم يبقى exit 0، و --json بيطلع JSON
-✔ main: ملف مش موجود يبقى exit 2
-✔ package سليمة: ok من غير أسباب
-✔ مش موجودة أو deprecated أو من غير رخصة: high
-✔ قديمة أو فيها scripts أو رخصة غريبة أو متثبتة على قديم: warn
-✔ warn بعدها high: المستوى بيفضل high
-ℹ tests 9
-ℹ pass 9
+~~~js migrate.mjs
+// migrate.mjs: نسخة 1 محفوظة، ونشوف load و save بيعملوا إيه
+const mem = new Map();
+globalThis.localStorage = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, String(v)) };
+const { load, save } = await import('./storage.js');
+
+mem.set('masareef', JSON.stringify({ version: 1, items: [
+  { id: 'a', label: 'قهوة', amount: 45 },
+  { id: 'b', label: 'مواصلات', amount: 30 },
+] }));
+const state = load();
+console.log('بعد load:', JSON.stringify(state.items));
+console.log('المحفوظ لسه:', JSON.parse(mem.get('masareef')).version);
+
+save({ items: [...state.items, { id: 'c', label: 'عيش', amount: 10, cat: 'food' }] });
+console.log('بعد أول save:', mem.get('masareef'));
+
+mem.set('masareef', JSON.stringify({ version: 3, items: [{ id: 'z', label: 'من المستقبل', amount: 1, cat: 'x', tags: [] }] }));
+console.log('نسخة 3:', JSON.stringify(load()));
+~~~
+
+~~~text الناتج: node migrate.mjs (Node 24.22)
+بعد load: [{"id":"a","label":"قهوة","amount":45,"cat":"other"},{"id":"b","label":"مواصلات","amount":30,"cat":"other"}]
+المحفوظ لسه: 1
+بعد أول save: {"version":2,"items":[{"id":"a","label":"قهوة","amount":45,"cat":"other"},{"id":"b","label":"مواصلات","amount":30,"cat":"other"},{"id":"c","label":"عيش","amount":10,"cat":"food"}]}
+نسخة محفوظة مش معروفة (3)
+نسخة 3: {"items":[]}
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- **[[migrate]] بترجّع object جديد** ومبتعدّلش [[data]]. والفحص [[it && typeof it === 'object']] جوه الـ [[map]] عشان [[null]] أو نص في المصفوفة ميرميش على [[...it]]؛ الصفوف دي بتعدّي زي ما هي، والفلتر اللي تحت هو اللي بيشيلها.
+- **مكانها قبل فحص النسخة:** كده الكود اللي بعدها بيشوف شكل واحد بس (نسخة 2). ولما تيجي نسخة 3، بتزوّد [[if (data.version === 2)]] تحت الأولى، فالنسخة 1 بتعدّي على الاتنين بالترتيب.
+- **الفلتر بقى يطلب [[cat]]:** بعد التحويل كل بند سليم فيه [[cat]]، فاللي مفيهوش يبقى بايظ فعلًا.
+- **«المحفوظ لسه: 1»:** [[load]] مبتكتبش. المحفوظ بيتحوّل فعليًا في أول [[save]]، لأن [[save]] بتكتب [[version: VERSION]] اللي بقت 2. ده كويس: لو اليوزر فتح ومعملش حاجة، مفيش كتابة على الفاضي.
+- **نسخة 3:** فاضي وتحذير، من غير ما يرمي. وده قرار: النسخة الأقدم من الكود مش فاهمة الجديدة، فأأمن حاجة إنها **متكتبش فوقها**. بس خد بالك: لو اليوزر ضاف بند والكود القديم عمل [[save]]، الداتا الجديدة هتضيع. عشان كده في تطبيق حقيقي متحفظش لحد ما اليوزر يأكد، أو احفظ تحت مفتاح تاني.
+
+**الغلطة الشائعة:** تعمل الـ migration بعد [[filter]]. الصفوف القديمة مفيهاش [[cat]]، فالفلتر الجديد هيشيلها كلها، واليوزر يلاقي تطبيقه فاضي بعد التحديث.` },
+            { lvl: 'تحدي', t: R`**اكسرها عن قصد:** املا مساحة [[localStorage]] لآخر حرف من الـ console: نص واحد اسمه [[big]] بأكبر طول المتصفح يقبله (دوّر عليه بالتجربة، مش رقم ثابت)، وبعدين حاول تحفظ بند من التطبيق. وجرّب الأول [[localStorage.setItem('big', 'x'.repeat(10_000_000))]] وشوف ليه مش كفاية.`, done: R`[[setItem]] بعشرة مليون حرف رمى [[QuotaExceededError]] ومحفظش حاجة، فالتطبيق فضل بيحفظ عادي (لازم تملا لحد آخر حرف). وبعد ما اتملت، [[save()]] طبعت «مقدرناش نحفظ: QuotaExceededError» ومرميتش، والبند ظهر على الشاشة (الحالة في الذاكرة سليمة) ومش في المحفوظ. وبعد [[localStorage.removeItem('big')]] الحفظ رجع يشتغل.`, sol: R`**التطبيق كامل** (الخمس ملفات زي ما هيبقوا في آخر الوحدة، بالتحقق والفلتر من الرابط). هنحتاجه في التمرين ده وفي تمارين دروس «التحقق» و «شاشات من غير إعادة تحميل» و «قسّمه لملفات». حط الست ملفات في فولدر وشغّل سيرفر جوّاه ([[npx serve]] أو [[python -m http.server 8000]])، لأن [[type="module"]] مبيشتغلش من [[file://]].
+
+~~~text الملفات
+masareef/
+├── index.html
+├── app.js        التوصيل: الأحداث والرابط
+├── render.js     الشاشة
+├── state.js      الحالة والعمليات
+├── storage.js    الحفظ والقراية
+└── validate.js   قواعد المدخلات
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مصاريف</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; max-width: 520px; }
+  nav a { margin-inline-end: 8px; }
+  nav a[aria-current="page"] { font-weight: 700; text-decoration: none; }
+  form { display: grid; gap: 6px; margin-block: 12px; }
+  input, select, button { font: inherit; padding: 4px 8px; }
+  [aria-invalid="true"] { border: 2px solid #b91c1c; }
+  .err { color: #b91c1c; font-size: 14px; min-height: 1em; }
+  li button { margin-inline-start: 8px; }
+</style>
+</head>
+<body>
+<h1 id="h" tabindex="-1">مصاريفي</h1>
+<nav aria-label="التصنيفات">
+  <a href="#all" data-filter="all">الكل</a>
+  <a href="#food" data-filter="food">أكل</a>
+  <a href="#transport" data-filter="transport">مواصلات</a>
+  <a href="#other" data-filter="other">تاني</a>
+</nav>
+<form id="f" novalidate>
+  <label>على إيه؟ <input name="label" aria-describedby="err-label"></label>
+  <span class="err" id="err-label"></span>
+  <label>المبلغ <input name="amount" inputmode="decimal" aria-describedby="err-amount"></label>
+  <span class="err" id="err-amount"></span>
+  <label>التصنيف
+    <select name="cat"><option value="food">أكل</option><option value="transport">مواصلات</option><option value="other">تاني</option></select>
+  </label>
+  <button>ضيف</button>
+</form>
+<ul id="list"></ul>
+<p id="empty">مفيش مصاريف هنا لسه.</p>
+<p>الإجمالي: <strong id="total" aria-live="polite">0</strong> ج في <span id="count">0</span> بند</p>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
+~~~
+
+~~~js storage.js
+// storage.js: الحفظ والقراية، ومعاهم رقم نسخة ودفاع عن داتا بايظة
+const KEY = 'masareef';
+const VERSION = 1;
+
+export function load() {
+  let raw;
+  try { raw = localStorage.getItem(KEY); }
+  catch { return { items: [] }; }                  // بيانات المواقع مقفولة
+  if (!raw) return { items: [] };                  // أول زيارة
+
+  let data;
+  try { data = JSON.parse(raw); }
+  catch { console.warn('المحفوظ مش JSON'); return { items: [] }; }
+
+  if (data?.version !== VERSION) { console.warn('نسخة محفوظة قديمة (' + data?.version + ')'); return { items: [] }; }
+  if (!Array.isArray(data.items)) return { items: [] };
+
+  return { items: data.items.filter(it =>
+    it && typeof it.id === 'string' && typeof it.label === 'string' && Number.isFinite(it.amount)) };
+}
+
+export function save(state) {
+  try { localStorage.setItem(KEY, JSON.stringify({ version: VERSION, items: state.items })); }
+  catch (e) { console.warn('مقدرناش نحفظ:', e.name); }   // QuotaExceededError
+}
+~~~
+
+~~~js validate.js
+// validate.js: بيرجّع أخطاء، مش بيرمي
+const AMOUNT = /^-?\d+(\.\d+)?$/;
+const CATS = new Set(['food', 'transport', 'other']);
+
+export function validateItem({ label, amount, cat }) {
+  const errors = {};
+  const trimmed = (label ?? '').trim();
+  if (!trimmed) errors.label = 'اكتب على إيه صرفت';
+  else if (trimmed.length > 60) errors.label = 'الوصف طويل أوي (٦٠ حرف بحد أقصى)';
+
+  const raw = String(amount ?? '').trim()
+    .replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - 0x0660)
+    .replace('٫', '.');
+  const n = Number(raw);
+  if (raw === '') errors.amount = 'اكتب المبلغ';
+  else if (!AMOUNT.test(raw)) errors.amount = 'المبلغ لازم يكون رقم';
+  else if (n <= 0) errors.amount = 'المبلغ لازم يكون أكبر من صفر';
+  else if (n > 1000000) errors.amount = 'الرقم ده كبير أوي، اتأكد';
+
+  return { ok: Object.keys(errors).length === 0, errors,
+           value: { label: trimmed, amount: n, cat: CATS.has(cat) ? cat : 'other' } };
+}
+~~~
+
+~~~js state.js
+// state.js: مصدر الحقيقة. مش بيعرف الـ DOM خالص.
+import { load, save } from './storage.js';
+import { validateItem } from './validate.js';
+
+const listeners = new Set();
+let state = { ...load(), filter: 'all' };
+
+export const get = () => state;
+export const subscribe = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
+
+function set(next) {
+  state = next;
+  save(state);
+  listeners.forEach(fn => fn(state));        // «أنا اتغيّرت» ومش عارف مين سامع
+}
+
+// المشتق بيتحسب، مش بيتخزن
+export const visible = (s) =>
+  s.filter === 'all' ? s.items : s.items.filter(it => it.cat === s.filter);
+export const total = (s) => visible(s).reduce((sum, it) => sum + it.amount, 0);
+
+export function addItem(input) {
+  const { ok, errors, value } = validateItem(input);
+  if (!ok) return { ok, errors };                     // الحالة ما اتلمستش
+  set({ ...state, items: [...state.items, { id: crypto.randomUUID(), ...value }] });
+  return { ok: true, errors: {} };
+}
+
+export const removeItem = (id) => set({ ...state, items: state.items.filter(it => it.id !== id) });
+export const setFilter = (filter) => set({ ...state, filter });
+export const reload = () => set({ ...state, ...load() });   // تبويب تاني غيّر المحفوظ
+~~~
+
+~~~js render.js
+// render.js: بيقرا الحالة وبيكتب الصفحة، ومش بيغيّر حاجة
+import { visible, total } from './state.js';
+
+const CAT = { food: 'أكل', transport: 'مواصلات', other: 'تاني' };
+const $ = (sel) => document.querySelector(sel);
+
+function row(it) {
+  const li = document.createElement('li');
+  li.textContent = it.label + ' — ' + it.amount + ' ج · ' + (CAT[it.cat] ?? CAT.other);
+  const del = document.createElement('button');
+  del.textContent = '×';
+  del.dataset.del = it.id;
+  del.setAttribute('aria-label', 'امسح ' + it.label);
+  li.append(del);
+  return li;
+}
+
+export function render(s, errors = {}) {
+  const shown = visible(s);
+  $('#list').replaceChildren(...shown.map(row));
+  $('#total').textContent = total(s);
+  $('#count').textContent = shown.length;
+  $('#empty').hidden = shown.length > 0;
+  document.querySelectorAll('[data-filter]').forEach(a =>
+    a.setAttribute('aria-current', a.dataset.filter === s.filter ? 'page' : 'false'));
+  for (const name of ['label', 'amount']) {
+    $('#err-' + name).textContent = errors[name] ?? '';
+    const input = $('[name="' + name + '"]');
+    if (errors[name]) input.setAttribute('aria-invalid', 'true');   // مش toggleAttribute: دي بتكتب "" مش "true"
+    else input.removeAttribute('aria-invalid');
+  }
+}
+~~~
+
+~~~js app.js
+// app.js: التوصيل. وهو الوحيد اللي بيعرف الكل.
+import * as store from './state.js';
+import { render } from './render.js';
+
+const FILTERS = new Set(['all', 'food', 'transport', 'other']);
+const fromHash = () => {
+  const h = location.hash.slice(1);
+  return FILTERS.has(h) ? h : 'all';                 // اللي مش في القايمة -> all
+};
+
+store.subscribe((s) => render(s));
+
+document.querySelector('#f').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const res = store.addItem({ label: f.get('label'), amount: f.get('amount'), cat: f.get('cat') });
+  if (res.ok) e.target.reset();
+  else render(store.get(), res.errors);              // الحالة ما اتغيّرتش، بس الأخطاء بتتعرض
+});
+
+document.querySelector('#list').addEventListener('click', (e) => {
+  if (e.target.dataset.del) store.removeItem(e.target.dataset.del);
+});
+
+document.querySelector('nav').addEventListener('click', (e) => {
+  const a = e.target.closest('a[data-filter]');
+  if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+  e.preventDefault();
+  location.hash = a.dataset.filter;                  // نفس اللي اللينك بيعمله، وبيشتغل جوه iframe كمان
+});
+
+addEventListener('hashchange', () => store.setFilter(fromHash()));
+addEventListener('storage', (e) => { if (e.key === 'masareef' || e.key === null) store.reload(); });
+store.setFilter(fromHash());                         // أول رسمة: hashchange مبيجريش لوحده
+~~~
+
+**التجربة الأولى (اللي في التمرين):** الـ console بتاع صفحة التطبيق:
+
+~~~js
+localStorage.setItem('big', 'x'.repeat(10_000_000));
+~~~
+
+~~~text الناتج (Chrome 158)
+QuotaExceededError: Failed to execute 'setItem' on 'Storage': Setting the value of 'big' exceeded the quota.
+~~~
+
+وبعدها ضفت «شاي 10» من التطبيق: **اتحفظ عادي**. ليه؟ لأن [[setItem]] اللي فشلت **محفظتش ولا حرف**؛ المساحة لسه فاضية. فعشان تكسر [[save()]] لازم تملا لحد آخر حرف بالظبط.
+
+**التجربة التانية: املاها بالـ binary search** (في نفس الـ console):
+
+~~~js
+localStorage.removeItem('big');
+let lo = 0, hi = 12_000_000;
+while (hi - lo > 1) {
+  const mid = (lo + hi) >> 1;
+  try { localStorage.setItem('big', 'x'.repeat(mid)); lo = mid; } catch { hi = mid; }
+}
+localStorage.setItem('big', 'x'.repeat(lo));
+console.log('اتملت بـ', lo, 'حرف');
+~~~
+
+- كل لفة بتجرّب النص اللي في النص ما بين [[lo]] (أكبر طول نجح) و [[hi]] (أصغر طول فشل)، فبعد حوالي ٢٤ لفة بيوصل لأكبر طول بالظبط.
+- [[>> 1]] قسمة على ٢ وتقريب لتحت.
+- في الآخر بنحفظ [[lo]] نفسه، لأن آخر محاولة ممكن تكون فشلت.
+
+~~~text الناتج (Chrome 158 بـ Playwright، والتطبيق فيه 6 بنود محفوظة)
+اتملت بـ 5242298 حرف
+ضيف «بند والمساحة مليانة» 15:
+  console:  مقدرناش نحفظ: QuotaExceededError      (warning من storage.js)
+  الشاشة:   7 صفوف      المحفوظ: 6 بنود
+localStorage.removeItem('big') وبعدين ضيف «بعد ما فضّيت» 5:
+  الشاشة:   8 صفوف      المحفوظ: 8 بنود
+~~~
+
+**اقرا الأرقام:** 5,242,298 حرف + البنود المحفوظة + أسماء المفاتيح ≈ 5 ميجا (5,242,880). يعني الحد هنا بعدد **الحروف** تقريبًا لكل origin. والبند الجديد ظهر (7 صفوف) لأن [[set()]] غيّرت الحالة في الذاكرة ورسمت، وبعدين [[save]] فشلت **جوه [[try]]** فمرميتش. وبعد التفضية، أول [[save]] كتبت الحالة **كلها** (8)، فالبند اللي اتعمل والمساحة مليانة رجع اتحفظ هو كمان، لأننا بنحفظ الحالة كاملة مش آخر تغيير بس.
+
+**الغلطة الشائعة:** تفتكر التحذير في الـ console كفاية. اليوزر مبيشوفش الـ console، وهيقفل الصفحة فاكر إن البند اتحفظ. في تطبيق حقيقي خلّي [[save]] ترجّع [[false]]، واعرض «المساحة خلصت، البند ده مش محفوظ».` },
+          ],
+          deep: {
+            why: R`اللي محفوظ عند اليوزر مش تحت سيطرتك. كتبته نسخة قديمة من كودك، أو إيده. والكود اللي بيثق فيه بيقع عند ناس من غير ما تعرف ليه.`,
+            how: R`**الاختبار الحقيقي اللي عملته:** حطيت خمس صفوف محفوظة، أربعة منهم بايظين:
+
+~~~text
+{"version":1,"items":[
+  {"id":"ok","label":"صف سليم","amount":20,"cat":"food"},
+  {"id":"bad","label":"من غير مبلغ"},
+  null,
+  "نص جوه المصفوفة",
+  {"id":5,"label":"id رقم","amount":10}
+]}
+~~~
+
+والنتيجة بعد reload: **صف واحد، إجمالي ٢٠، التطبيق فتح عادي.**
+
+وده اللي الفلتر عمله. من غيره، [[it.amount]] على [[null]] كانت هترمي والتطبيق كله ميفتحش.
+
+**وجرّبت الخمس حالات واحدة واحدة:**
+
+| المحفوظ | عدد الصفوف | في الـ console |
+|---|---|---|
+| [[{items: [}]] | ٠ | «المحفوظ مش JSON» |
+| [[version: 0]] | ٠ | «نسخة محفوظة قديمة (0)» |
+| من غير [[version]] | ٠ | «نسخة محفوظة قديمة (undefined)» |
+| [[items]] object | ٠ | — |
+| سليم | ١ | — |
+
+**رقم النسخة: تتجاهل ولا تحوّل؟**
+
+التجاهل أسهل وبيضيّع داتا اليوزر. والتحويل أصعب وبيحافظ عليها:
+
+~~~js
+if (data.version === 1) {
+  data.items = data.items.map(it => ({ ...it, cat: 'other' }));   // الحقل الجديد
+  data.version = 2;
+}
+~~~
+
+ولو التطبيق فيه حاجة اليوزر تعب فيها، **حوّل**. ولو إعدادات بسيطة، التجاهل مقبول — بس قوله.
+
+**وإمتى تحفظ؟** الأسهل: في كل تغيير، جوه دالة [[set]] الوحيدة. ولو بتحفظ كل keystroke في مربع نص، لفّها بـ [[debounce]] (تاب js ← الأداء).
+
+**وحدود [[localStorage]]:**
+
+| | |
+|---|---|
+| الحجم | ~٥ ميجا لكل دومين |
+| النوع | **نصوص بس** — فأي object بيعدّي على [[JSON.stringify]] |
+| التواريخ | بترجع **نصوص** مش [[Date]] — محتاجة [[reviver]] |
+| متزامنة | بتوقف الـ main thread. داتا كبيرة؟ [[IndexedDB]] |
+| مشتركة | بين كل تبويبات نفس الدومين — وحدث [[storage]] بيقولك لما تبويب تاني يغيّر |
+
+**ومصيدة التواريخ دي بتوقّع كتير:**
+
+~~~js
+JSON.parse(JSON.stringify({ d: new Date() })).d   // "2026-10-29T..." نص
+~~~
+
+فلو بتحفظ تواريخ، حوّلها لـ [[Date]] وانت بتقرا، أو خزّنها [[Date.now()]] كأرقام من الأول.`,
+            when: R`أي تطبيق المستخدم هيزعل لو فقد اللي عمله. وأي داتا بتتخزن عند المستخدم، مهما كانت بسيطة.`,
+            mistakes: R`[[JSON.parse(localStorage.getItem(k))]] من غير [[try]]. أو تنسى رقم النسخة وتكتشف بعد النشر. أو تفحص الشكل العام وتسيب الصفوف. أو تفتكر التواريخ بترجع [[Date]].`
+          },
+          teach: R`## أول ما تعمل reload، كل حاجة بتروح
+
+~~~js الحل الساذج
+const state = JSON.parse(localStorage.getItem('app'));
+~~~
+
+**والسطر ده بيقع في أربع حالات، وكلهم بيحصلوا:**
+
+| الحالة | إمتى | النتيجة |
+|---|---|---|
+| مفيش محفوظ | أول زيارة | [[JSON.parse(null)]] → [[null]] |
+| JSON بايظ | الحفظ اتقطع، أو حد عدّل | **بترمي** |
+| شكل قديم | نشرت نسخة جديدة | بيدوّر على حقول مش موجودة |
+| [[localStorage]] ممنوعة | وضع خاص، إعدادات | **بترمي** حتى على [[getItem]] |
+
+---
+
+## ١. القاعدة
+
+> اللي محفوظ في المتصفح **مدخل خارجي**، زي أي رد من API بالظبط.
+
+كتبته نسخة قديمة من كودك. أو اليوزر عدّله بإيده في DevTools. أو إضافة في المتصفح لعبت فيه.
+
+---
+
+## ٢. القراية بتعمل أربع حاجات
+
+~~~js storage.js
+const KEY = 'masareef';
+const VERSION = 1;
+
+export function load() {
+  let raw;
+  try { raw = localStorage.getItem(KEY); }      // ١) الوصول نفسه
+  catch { return { items: [] }; }
+  if (!raw) return { items: [] };
+
+  let data;
+  try { data = JSON.parse(raw); }               // ٢) التحويل
+  catch { console.warn('المحفوظ مش JSON'); return { items: [] }; }
+
+  if (data?.version !== VERSION) {                        // ٣) النسخة
+    console.warn('نسخة محفوظة قديمة (' + data?.version + ')');
+    return { items: [] };
+  }
+  if (!Array.isArray(data.items)) return { items: [] };
+
+  return { items: data.items.filter(it =>       // ٤) كل صف لوحده
+    it && typeof it.id === 'string'
+      && typeof it.label === 'string'
+      && Number.isFinite(it.amount)) };
+}
+~~~
+
+---
+
+## ٣. والنقطة الرابعة هي الأهم
+
+**حطّيت خمس صفوف محفوظة، أربعة بايظين:**
+
+~~~text المحفوظ
+{"version":1,"items":[
+  {"id":"ok","label":"صف سليم","amount":20,"cat":"food"},
+  {"id":"bad","label":"من غير مبلغ"},
+  null,
+  "نص جوه المصفوفة",
+  {"id":5,"label":"id رقم","amount":10}
+]}
+~~~
+
+~~~text بعد reload · اتشغّل فعلًا
+الصفوف:    صف سليم — 20 ج · أكل
+العدد:     1
+الإجمالي:  20
+التطبيق:   فتح عادي
+~~~
+
+**صف واحد بايظ ميضيّعش الباقي.** ومن غير الفلتر، [[it.amount]] على [[null]] كانت هترمي والتطبيق كله ميفتحش.
+
+---
+
+## ٤. والخمس حالات، كل واحدة لوحدها
+
+~~~text اتشغّلوا فعلًا · Chrome
+{items: [}                    ->  0 صف   |  «المحفوظ مش JSON»
+{"version":0, ...}            ->  0 صف   |  «نسخة محفوظة قديمة (0)»
+من غير version                 ->  0 صف   |  «نسخة محفوظة قديمة (undefined)»
+{"version":1,"items":{...}}   ->  0 صف   |  —
+سليم                           ->  1 صف   |  —
+~~~
+
+---
+
+## ٥. النسخة: تتجاهل ولا تحوّل؟
+
+~~~js التحويل — بيحافظ على داتا اليوزر
+if (data.version === 1) {
+  data.items = data.items.map(it => ({ ...it, cat: 'other' }));
+  data.version = 2;
+}
+~~~
+
+| | التجاهل | التحويل |
+|---|---|---|
+| الكود | سطر | شوية |
+| داتا اليوزر | **بتضيع** | بتفضل |
+| إمتى | إعدادات بسيطة | أي حاجة اليوزر تعب فيها |
+
+ولو هتتجاهل، **قوله**.
+
+---
+
+## ٦. حدود [[localStorage]]
+
+| | |
+|---|---|
+| الحجم | ~٥ ميجا لكل دومين |
+| النوع | **نصوص بس** |
+| التواريخ | بترجع **نص** مش [[Date]] |
+| متزامنة | بتوقف الـ main thread — داتا كبيرة؟ [[IndexedDB]] |
+| مشتركة | بين كل تبويبات الدومين (حدث [[storage]]) |
+
+### ومصيدة التواريخ بتوقّع كتير
+
+~~~js
+JSON.parse(JSON.stringify({ d: new Date() })).d
+// "2026-10-29T18:00:00.000Z"   <-- نص، مش Date
+~~~
+
+خزّن [[Date.now()]] كرقم، أو حوّل وانت بتقرا.
+
+---
+
+## ٧. حدث [[storage]]: مزامنة التبويبات
+
+اليوزر فاتح التطبيق في تبويبين. ضاف بند في الأول، والتاني لسه بيعرض القديم. ولو التاني حفظ بعد كده، **هيكتب فوق** البند اللي اتضاف.
+
+المتصفح بيبعت حدث [[storage]] لكل التبويبات **التانية** على نفس الـ origin لما [[localStorage]] يتغيّر:
+
+~~~js
+window.addEventListener('storage', (e) => {
+  if (e.key !== KEY && e.key !== null) return;   // مفتاح تاني مش بتاعنا
+  state = load();                                // نفس دالة القراية النضيفة
+  render();
+});
+~~~
+
+- [[e.key]]: اسم المفتاح اللي اتغيّر. وبيبقى [[null]] لما حد ينادي [[localStorage.clear()]]، فبنعيد القراية في الحالة دي كمان.
+- [[load()]]: نفس الدالة اللي فوق اللي بتفحص وتنضّف. اللي جاي من التبويب التاني مدخل خارجي برضه (ممكن يكون نسخة أقدم من الكود لسه مفتوحة).
+- [[render()]]: الحالة اتغيّرت، فالشاشة تترسم. ودي فايدة إن الشاشة **بتترسم من الحالة**: المزامنة سطرين.
+
+~~~text اتشغّل فعلًا · Chrome 156 · صفحة و iframe من نفس الـ origin
+التبويب التاني: key=app old=null new={"version":1,"items":[1]}
+التبويب التاني: key=app old={"version":1,"items":[1]} new={"version":1,"items":[1,2]}
+التبويب التاني: key=app old={"version":1,"items":[1,2]} new=null
+التبويب التاني: key=x old=null new=1
+التبويب التاني: key=null old=null new=null
+~~~
+
+| اللي اتشاف في التجربة | معناه |
+|---|---|
+| مفيش ولا سطر «نفس التبويب» | التبويب اللي كتب **مبياخدش** الحدث؛ هو أصلًا عارف إنه كتب |
+| [[setItem]] بنفس القيمة مرتين طلّعت حدث واحد | لو القيمة ما اتغيّرتش مفيش حدث |
+| [[removeItem]] بيدّي [[newValue]] بـ [[null]] | المفتاح اتمسح، فـ [[load]] هترجع للحالة الفاضية |
+| [[clear()]] بيدّي [[key]] بـ [[null]] | عشان كده الفحص فوق بيقبل [[null]] |
+
+> [[sessionStorage]] مبيعملش ده بين التبويبات، لأن كل تبويب ليه نسخته. وللرسايل بين التبويبات من غير تخزين فيه [[BroadcastChannel]] (درس «IndexedDB و BroadcastChannel» في وحدة PWA).
+
+---
+
+## ٨. IndexedDB للداتا الأكبر
+
+[[localStorage]] ليه حد. جرّبت أحفظ نص كبير لحد ما وقع:
+
+~~~text اتشغّل فعلًا · Chrome 156
+QuotaExceededError | Failed to execute 'setItem' on 'Storage': Setting the value of 'big' exceeded the quota.
+instanceof DOMException: true
+أكبر نص اتحفظ: 4.5 مليون حرف
+~~~
+
+وعشان كده [[save()]] اللي في المثال جواها [[try]] بتمسك الخطأ ده. وفي تطبيق حقيقي قول لليوزر «المساحة خلصت» بدل [[console.warn]] بس، عشان ميفتكرش إن الداتا اتحفظت.
+
+ولما الداتا تكبر (آلاف البنود، صور، ملفات)، المكان الصح **IndexedDB**: قاعدة بيانات جوه المتصفح.
+
+~~~js أصغر استخدام من غير مكتبة
+const req = indexedDB.open('expenses', 1);
+req.onupgradeneeded = () => req.result.createObjectStore('items', { keyPath: 'id' });
+req.onsuccess = () => {
+  const db = req.result;
+  const tx = db.transaction('items', 'readwrite');
+  for (const it of state.items) tx.objectStore('items').put(it);
+  tx.oncomplete = () => console.log('اتحفظ');
+};
+~~~
+
+- [[open('expenses', 1)]]: بيفتح القاعدة، والرقم نسخة الـ schema (نفس فكرة [[version]] اللي فوق).
+- [[onupgradeneeded]]: بيتنادى أول مرة أو لما الرقم يزيد. هنا بنعمل «جدول» اسمه [[items]] والمفتاح بتاعه [[id]].
+- [[transaction(..., 'readwrite')]]: كل كتابة جوه transaction، يا تحصل كلها يا ولا حاجة.
+- [[put(it)]]: بيحفظ الـ object **زي ما هو**، من غير [[JSON.stringify]].
+
+~~~text ٢٠ ألف بند · اتشغّل فعلًا · Chrome 156
+IndexedDB:     كتابة 819ms (async)   قراية getAll 67ms   at رجعت [object Date]
+localStorage:  كتابة 35ms (بتوقف الصفحة)  حجم الـ JSON 1613381 حرف
+~~~
+
+**الأرقام دي بتقول إن IndexedDB مش أسرع في الكتابة.** المكسب في حاجات تانية:
+
+| | [[localStorage]] | IndexedDB |
+|---|---|---|
+| الحجم | حوالي ٥ مليون حرف لكل origin | نسبة من مساحة الديسك (من MDN) |
+| الأنواع | نص بس، والتاريخ بيرجع نص | [[Date]] و [[Blob]] و [[Map]] بيرجعوا زي ما هما |
+| بيوقف الصفحة؟ | أيوه، كل نداء متزامن | لأ، كله async |
+| تدوّر جوه الداتا | تقرا الكل وتعمل [[filter]] | indexes بتجيب جزء بس |
+
+القاعدة: **[[localStorage]] لحالة صغيرة** (إعدادات، فلتر، شوية بنود)، و **IndexedDB لما الداتا تكبر أو فيها ملفات**. والـ API بتاعه بالـ callbacks تقيل، فالشغل الحقيقي غالبًا بمكتبة صغيرة زي [[idb]] بتلفه في Promises. وتفاصيله في درس «IndexedDB و BroadcastChannel».
+
+---
+
+## الخلاصة
+
+- المحفوظ مدخل خارجي. عامله كده.
+- [[try]] على [[getItem]] نفسها، مش بس [[parse]].
+- رقم نسخة من أول يوم.
+- **كل صف يتفحص لوحده** — البايظ يتشال، والباقي يعيش.
+- التواريخ بترجع نصوص.
+- حدث [[storage]] بيوصل التبويبات التانية: اعمل [[load]] و [[render]].
+- داتا كبيرة أو ملفات؟ IndexedDB، و [[QuotaExceededError]] متوقعة في [[localStorage]].`,
+          sol: R`الاختبار الحقيقي: خمس صفوف محفوظة، أربعة بايظين، والتطبيق فتح.`,
+          solCode: R`// المحفوظ (حطّيته بإيدي في DevTools):
+// {"version":1,"items":[
+//   {"id":"ok","label":"صف سليم","amount":20,"cat":"food"},
+//   {"id":"bad","label":"من غير مبلغ"},
+//   null,
+//   "نص جوه المصفوفة",
+//   {"id":5,"label":"id رقم","amount":10}
+// ]}
+
+return { items: data.items.filter(it =>
+  it && typeof it.id === 'string'
+    && typeof it.label === 'string'
+    && Number.isFinite(it.amount)) };
+
+// بعد reload (اتشغّل فعلًا في Chrome):
+//   الصفوف: صف سليم — 20 ج · أكل
+//   العدد: 1  |  الإجمالي: 20  |  التطبيق فتح عادي
+
+// والخمس حالات:
+//   {items: [}            -> 0  «المحفوظ مش JSON»
+//   version: 0            -> 0  «نسخة محفوظة قديمة (0)»
+//   من غير version         -> 0  «نسخة محفوظة قديمة (undefined)»
+//   items مش مصفوفة        -> 0
+//   سليم                   -> 1`
+        },
+
+        {
+          cmd: "التحقق قبل ما الحالة تتغيّر",
+          title: "الدالة بترجّع أخطاء، مش بترمي",
+          ref: [
+            { t: "MDN: Client-side form validation", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Form_validation" },
+            { t: "MDN: Constraint validation", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Constraint_validation" },
+            { t: "MDN: aria-invalid", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-invalid" },
+          ],
+          pre: [
+            { to: "js/Number: الثوابت والفحص والتحويل", why: R`مصايد [[Number('')]] و [[Number('1e3')]] اللي الدرس بيتجنّبها اتشرحت هناك` },
+            { to: "js/regex: classes و quantifiers", why: R`شكل المبلغ المسموح regex: [[^]] و [[\d+]] و [[?]]` },
+          ],
+          learn: R`تفحص المدخلات في مكان واحد، وترجّع الأخطاء بدل ما ترميها.`,
+          out: R`المستخدم بيشوف الغلط جنب الخانة، والحالة بتفضل نضيفة.`,
+          use: {
+            prog: R`التحقق اللي متفرّق في المستمعين بيتنسي. واللي في دالة واحدة بيتختبر لوحده من غير متصفح.`,
+            work: R`«ليه البند ده مبلغه ناقص؟» — لأن مفيش حد منع الفورم إنه يبعته. والمنع أرخص من التنضيف بعدين.`,
+            cs: R`التحقق على الحدود (validate at the boundary): الداتا بتتفحص مرة واحدة وهي داخلة، وبعدها الكود كله بيفترض إنها سليمة.`,
+          },
+          desc: R`التطبيق دلوقتي بيقبل أي حاجة. اسم فاضي، مبلغ سالب، كلمة «خمسين» مكان رقم.
+
+**وأول رد فعل غلط**: تحط [[if]] جوه المستمع. وبعد أسبوع يبقى فيه تلات أماكن بتضيف بنود، واتنين منهم ناسيين الفحص.
+
+**التحقق بيبقى دالة واحدة، وبترجّع ثلاثة:**
+
+[[{ ok, errors, value }]]
+
+- [[ok]]: عدّى ولا لأ.
+- [[errors]]: object، المفتاح اسم الخانة والقيمة رسالة بالعربي.
+- [[value]]: المدخل **بعد التنضيف** — [[trim]] و [[Number]].
+
+**وليه بترجّع مش بترمي؟** لأن مدخل غلط من المستخدم **مش استثناء** — ده الوضع الطبيعي. [[throw]] للحاجات اللي مش متوقعة. والفورم الفاضي متوقع تمامًا.
+
+**والترتيب المهم:**
+
+~~~text
+المستخدم بيبعت  →  تحقق  →  عدّى؟  →  غيّر الحالة  →  ارسم
+                           ↓ لأ
+                        اعرض الأخطاء — والحالة ما اتغيّرتش
+~~~
+
+**القاعدة:** الحالة ما بتتغيّرش غير بداتا عدّت. فأي حاجة في [[state]] سليمة بحكم البناء، والكود اللي بيستخدمها مش محتاج يفحص تاني.
+
+**وجرّبتها:** تلات بنود سليمة دخلوا (١٥٧ ج في ٣ بنود)، وبعدين تلات محاولات غلط:
+
+| المحاولة | الرسالة | عدد البنود بعدها |
+|---|---|---|
+| اسم فاضي | «اكتب على إيه صرفت» | **٣** |
+| مبلغ [[-5]] | «المبلغ لازم يكون أكبر من صفر» | **٣** |
+| مبلغ «خمسين» | «المبلغ لازم يكون رقم» | **٣** |
+
+الحالة ما اتلمستش في التلاتة.`,
+          example: R`// validate.js — بيرجّع أخطاء، مش بيرمي
+const AMOUNT = /^-?\d+(\.\d+)?$/;
+
+export function validateItem({ label, amount }) {
+  const errors = {};
+  const trimmed = (label ?? '').trim();
+
+  if (!trimmed) errors.label = 'اكتب على إيه صرفت';
+  else if (trimmed.length > 60) errors.label = 'الوصف طويل أوي (٦٠ حرف بحد أقصى)';
+
+  const raw = String(amount ?? '').trim()
+    .replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - 0x0660)
+    .replace('٫', '.');
+  const n = Number(raw);
+  if (raw === '') errors.amount = 'اكتب المبلغ';
+  else if (!AMOUNT.test(raw)) errors.amount = 'المبلغ لازم يكون رقم';
+  else if (n <= 0) errors.amount = 'المبلغ لازم يكون أكبر من صفر';
+  else if (n > 1000000) errors.amount = 'الرقم ده كبير أوي، اتأكد';
+
+  return { ok: Object.keys(errors).length === 0, errors, value: { label: trimmed, amount: n } };
+}
+
+// وفي الـ store: الفحص قبل أي تغيير
+export function addItem(input) {
+  const { ok, errors, value } = validateItem(input);
+  if (!ok) return { ok, errors };                     // الحالة ما اتلمستش
+  set({ ...state, items: [...state.items, { id: crypto.randomUUID(), ...value }] });
+  return { ok: true, errors: {} };
+}`,
+          lines: [
+            R`شكل المبلغ المسموح: [[^]] و [[$]] = النص كله لازم يطابق، و [[-?]] سالب اختياري (عشان ياخد رسالة «أكبر من صفر» مش «لازم يكون رقم»)، و [[\d+]] أرقام، و [[(\.\d+)?]] كسر اختياري بعد نقطة. فـ [[1e3]] و [[0x10]] و [[5,5]] و [[Infinity]] و [[+5]] كلهم بيترفضوا، مع إن [[Number]] كان بيقبل أول اتنين.`,
+            R`دالة واحدة بتاخد المدخل الخام زي ما جه من الفورم وتقرر هو سليم ولا لأ. الـ destructuring بياخد [[label]] و [[amount]] بس، فأي خانات تانية مش بتأثر هنا.`,
+            R`الأخطاء بتتجمّع في object، مفتاح لكل خانة. فاليوزر يشوف كل أخطائه مرة واحدة بدل ما يصلّح واحد ويكتشف التاني بعد ما يدوس تاني.`,
+            R`[[?? '']] بتحوّل [[null]] أو [[undefined]] لنص فاضي (زي [[FormData.get]] لما الخانة مش موجودة) عشان [[trim]] متترميش على [[null]]. و [[trim]] بتشيل المسافات من الأول والآخر، فاسم كله مسافات يتحسب فاضي.`,
+            R`لو الاسم فاضي بعد التنضيف، نسجّل رسالة خطأ للخانة دي بالكلام اللي هيظهر لليوزر تحتها.`,
+            R`لو مش فاضي بس أطول من 60 حرف، خطأ تاني. الحد ده بيمنع صف طويل يكسر التصميم، والـ [[else if]] عشان الخانة متاخدش رسالتين.`,
+            R`ننضّف المبلغ **كنص** الأول: [[?? '']] بتحوّل [[null]] و [[undefined]] لنص فاضي، و [[String]] عشان لو جه رقم (من اختبار مثلًا) [[trim]] تشتغل، و [[trim]] بتشيل المسافات. كده [[' ']] بقت [['']] وهتاخد «اكتب المبلغ».`,
+            R`الأرقام العربية: [[٠]] كوده [[0x0660]] و [[٩]] كوده [[0x0669]]، فطرح [[0x0660]] من كود الحرف بيدّي الرقم نفسه. فـ [[٤٥]] بتبقى [[45]]. اليوزر اللي كيبورده عربي هيكتب كده، و [[Number('٤٥')]] لوحدها بترجّع [[NaN]].`,
+            R`والفاصلة العشرية العربية [[٫]] (مش الفاصلة العادية) بتتحول نقطة، فـ [[١٢٫٥]] بتبقى [[12.5]].`,
+            R`نحوّل لرقم مرة واحدة بعد التنضيف ونستخدم [[n]] في الفحوصات اللي جاية.`,
+            R`أول فحص: فاضي بعد التنضيف. لازم يبقى قبل أي فحص تاني، لأن [[Number('')]] و [[Number(' ')]] بيرجّعوا [[0]] مش [[NaN]]، فالنسخة القديمة كانت بتدّي [[' ']] رسالة «أكبر من صفر» وهي في الحقيقة فاضية.`,
+            R`مش بالشكل اللي فوق؟ «لازم يكون رقم». ده بيمسك الحروف و [[1e3]] و [[0x10]] و [[Infinity]] مرة واحدة، من غير ما نعتمد على [[Number.isFinite]] اللي كانت بتعدّي [[1e3]] كـ 1000 و [[0x10]] كـ 16.`,
+            R`رقم سليم بس صفر أو سالب، ومصروف لازم يكون أكبر من صفر.`,
+            R`حد أعلى معقول: مليون. رقم أكبر من كده في تطبيق مصاريف يومية غالبًا صفر زيادة اتكتب بالغلط، فبنطلب من اليوزر يتأكد.`,
+            R`بترجّع تلات حاجات: [[ok]] ([[true]] لو مفيش أخطاء)، و [[errors]] عشان الرسم يعرضها، و [[value]] القيمة **بعد التنضيف** (الاسم من غير مسافات والمبلغ كرقم). واللي بينادي ياخد [[value]] ده مش المدخل الخام.`,
+            R`نهاية [[validateItem]].`,
+            R`[[addItem]] في الـ store: الدالة اللي بتضيف بند للحالة.`,
+            R`أول حاجة بتعملها إنها تفحص، **قبل** أي تعديل على الحالة.`,
+            R`**وهنا النقطة**: لو المدخل معدّاش، نرجع بالأخطاء على طول من غير ما نلمس الحالة. فمستحيل بند بايظ يدخل الحالة ويتحفظ في [[localStorage]] ويبوّظ الـ [[load]] الجاية.`,
+            R`عدّى؟ بنعمل حالة جديدة فيها كل البنود القديمة والبند الجديد في الآخر، من غير ما نعدّل الـ array القديمة. البند بياخد [[id]] فريد من [[crypto.randomUUID()]] (بتشتغل على https أو localhost بس)، وقيمته هي [[value]] المنضّفة مش المدخل الخام.`,
+            R`نرجّع نجاح بـ errors فاضية، عشان اللي بينادي يتعامل مع النتيجتين بنفس الشكل.`,
+            R`نهاية [[addItem]].`,
+          ],
+          try: R`جرّب تبعت الفورم فاضي، وبمبلغ [[-5]]، وبكلمة «خمسين». لازم تشوف تلات رسايل مختلفة، وعدد البنود يفضل زي ما هو في التلاتة.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** قبل ما تشغّل [[validateItem({ label: 'x', amount })]]، اكتب [[ok]] والرسالة لكل قيمة: [['1e3']] و [[' 50 ']] و [['0x10']] و [[' ']] و [['5,5']].`, done: R`الناتج (اتشغّل فعلًا · Node 24): [['1e3']] «المبلغ لازم يكون رقم»، و [[' 50 ']] عدّت بـ 50، و [['0x10']] «لازم يكون رقم»، و [[' ']] «اكتب المبلغ»، و [['5,5']] «لازم يكون رقم». وبعدين جرّب نفس القيم على نسخة فيها [[Number(amount)]] و [[Number.isFinite]] بدل الـ regex، وشوف [['1e3']] عدّت بـ 1000 و [['0x10']] بـ 16 و [[' ']] قالت «أكبر من صفر».`, sol: R`**الإجابة قبل التشغيل، وليه:**
+
+| القيمة | النتيجة | ليه |
+|---|---|---|
+| [['1e3']] | «المبلغ لازم يكون رقم» | الـ regex [[^-?\d+(\.\d+)?$]] مفيهوش مكان لـ [[e]] |
+| [[' 50 ']] | عدّت بـ 50 | [[trim]] بيشيل المسافات قبل أي فحص |
+| [['0x10']] | «المبلغ لازم يكون رقم» | [[x]] مش رقم، والـ regex بيرفضه |
+| [[' ']] | «اكتب المبلغ» | بعد [[trim]] بقت [['']]، والفحص الأول هو الفاضي |
+| [['5,5']] | «المبلغ لازم يكون رقم» | الفاصلة العادية مش في الـ regex (الفاصلة العشرية العربية [[٫]] بس اللي بتتحول) |
+
+**التشغيل:** [[validate.js]] هو ملف الدرس (أو نسخته الكاملة في حل تمرين «اكسرها عن قصد»)، وجنبه الملف ده فيه كمان النسخة القديمة اللي بتعتمد على [[Number]]:
+
+~~~js predict.mjs
+// predict.mjs: نفس القيم على النسخة اللي في الدرس، وعلى نسخة بـ Number و Number.isFinite
+import { validateItem } from './validate.js';
+
+function validateOld({ label, amount }) {
+  const errors = {};
+  if (!(label ?? '').trim()) errors.label = 'اكتب على إيه صرفت';
+  const n = Number(amount);
+  if (amount === '') errors.amount = 'اكتب المبلغ';
+  else if (!Number.isFinite(n)) errors.amount = 'المبلغ لازم يكون رقم';
+  else if (n <= 0) errors.amount = 'المبلغ لازم يكون أكبر من صفر';
+  return { ok: Object.keys(errors).length === 0, errors, value: { amount: n } };
+}
+
+const show = (r) => (r.ok ? 'عدّت بـ ' + r.value.amount : r.errors.amount);
+for (const amount of ['1e3', ' 50 ', '0x10', ' ', '5,5']) {
+  console.log(JSON.stringify(amount).padEnd(7), '| الدرس:', show(validateItem({ label: 'x', amount })).padEnd(22), '| Number:', show(validateOld({ label: 'x', amount })));
+}
+~~~
+
+~~~text الناتج: node predict.mjs (Node 24.22)
+"1e3"   | الدرس: المبلغ لازم يكون رقم   | Number: عدّت بـ 1000
+" 50 "  | الدرس: عدّت بـ 50             | Number: عدّت بـ 50
+"0x10"  | الدرس: المبلغ لازم يكون رقم   | Number: عدّت بـ 16
+" "     | الدرس: اكتب المبلغ            | Number: المبلغ لازم يكون أكبر من صفر
+"5,5"   | الدرس: المبلغ لازم يكون رقم   | Number: المبلغ لازم يكون رقم
+~~~
+
+**الفرق كله في عمود [[Number]]:** [[Number('1e3')]] بيفهم الصيغة العلمية فيدّي 1000، و [[Number('0x10')]] بيفهم الـ hex فيدّي 16، و [[Number(' ')]] بيدّي **0** مش [[NaN]] فالمسافة عدّت فحص [[amount === '']] (لأنه اتعمل **قبل** [[trim]]) ووقعت في «أكبر من صفر». و [[5,5]] الوحيدة اللي الاتنين اتفقوا عليها، لأن [[Number('5,5')]] = [[NaN]].
+
+**الغلطة الشائعة:** تسأل [[Number]] «ده رقم؟». [[Number]] بيجاوب عن صيغ JavaScript، مش عن اللي يوزر يقصده في خانة مبلغ.` },
+            { lvl: 'تطبيق', t: R`**ابني حتة فورم:** اعرض كل رسالة في [[errors]] تحت الخانة بتاعتها، وحط [[aria-invalid="true"]] على الخانة الغلط، وخلّي القيم اللي اليوزر كتبها موجودة لما يكون فيه خطأ.`, done: R`إرسال الفورم فاضي بيطلّع رسالتين تحت الخانتين والاتنين عليهم [[aria-invalid="true"]]، والقيم ما اتمسحتش، وبعد التصليح والإرسال الرسايل والـ attribute اختفوا والبند اتضاف.`, sol: R`صفحة واحدة فيها [[validateItem]] بتاعة الدرس، وفورم كل خانة تحتها [[<span>]] للرسالة. [[render(errors)]] هي اللي بتكتب الرسايل وبتحط أو بتشيل [[aria-invalid]]، زي ما بترسم القايمة:
+
+~~~live 330 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>أخطاء تحت الخانات</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
+  form { display: grid; gap: 4px; max-width: 320px; }
+  input, button { font: inherit; padding: 4px 8px; }
+  [aria-invalid="true"] { border: 2px solid #b91c1c; }
+  .err { color: #b91c1c; font-size: 14px; min-height: 1.4em; }
+</style>
+</head>
+<body>
+<form id="f" novalidate>
+  <label for="label">على إيه؟</label>
+  <input id="label" name="label" aria-describedby="err-label">
+  <span class="err" id="err-label"></span>
+  <label for="amount">المبلغ</label>
+  <input id="amount" name="amount" inputmode="decimal" aria-describedby="err-amount">
+  <span class="err" id="err-amount"></span>
+  <button>ضيف</button>
+</form>
+<ul id="list"></ul>
+<script>
+const AMOUNT = /^-?\d+(\.\d+)?$/;
+function validateItem({ label, amount }) {
+  const errors = {};
+  const trimmed = (label ?? '').trim();
+  if (!trimmed) errors.label = 'اكتب على إيه صرفت';
+  else if (trimmed.length > 60) errors.label = 'الوصف طويل أوي (٦٠ حرف بحد أقصى)';
+  const raw = String(amount ?? '').trim()
+    .replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - 0x0660)
+    .replace('٫', '.');
+  const n = Number(raw);
+  if (raw === '') errors.amount = 'اكتب المبلغ';
+  else if (!AMOUNT.test(raw)) errors.amount = 'المبلغ لازم يكون رقم';
+  else if (n <= 0) errors.amount = 'المبلغ لازم يكون أكبر من صفر';
+  return { ok: Object.keys(errors).length === 0, errors, value: { label: trimmed, amount: n } };
+}
+
+const state = { items: [] };
+function render(errors = {}) {
+  document.querySelector('#list').replaceChildren(...state.items.map((it) => {
+    const li = document.createElement('li');
+    li.textContent = it.label + ' — ' + it.amount + ' ج';
+    return li;
+  }));
+  for (const name of ['label', 'amount']) {
+    const input = document.querySelector('#' + name);
+    document.querySelector('#err-' + name).textContent = errors[name] ?? '';
+    if (errors[name]) input.setAttribute('aria-invalid', 'true');
+    else input.removeAttribute('aria-invalid');
+  }
+}
+
+const form = document.querySelector('#f');
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const f = new FormData(form);
+  const { ok, errors, value } = validateItem({ label: f.get('label'), amount: f.get('amount') });
+  if (!ok) {
+    render(errors);                                    // الخانات ما اتمسحتش
+    form.querySelector('[aria-invalid="true"]').focus();
+    return;
+  }
+  state.items.push(value);
+  form.reset();
+  render();
+});
+render();
+</script>
+</body>
+</html>
+~~~
+
+~~~text الناتج (Chrome 158 بـ Playwright، جوه iframe معزول)
+إرسال فاضي:              الرسايل [اكتب على إيه صرفت | اكتب المبلغ]   aria-invalid على label و amount   الـ focus: label
+قهوة + «خمسين»:          الرسايل [ — | المبلغ لازم يكون رقم]         aria-invalid على amount بس         القيم لسه: قهوة، خمسين   الـ focus: amount
+قهوة + ٤٥:               مفيش رسايل ولا aria-invalid، والفورم فضي، والقايمة: قهوة — 45 ج
+~~~
+
+**الحتت المهمة:**
+
+- **[[novalidate]]** على الفورم: بيوقف فقاعات المتصفح بتاعة [[required]] عشان رسايلنا بالعربي هي اللي تظهر. من غيره، المتصفح كان هيمنع الإرسال قبل ما الكود يشتغل.
+- **[[aria-describedby="err-label"]]:** بيربط الخانة بالـ span بتاع رسالتها، فقارئ الشاشة لما يدخل الخانة يقرا اسمها وبعدين الخطأ. و [[aria-invalid="true"]] بيقول «القيمة دي غلط». والـ CSS بيلوّن بنفس الـ attribute ([[ [aria-invalid="true"] ]])، فمفيش class زيادة يتنسي.
+- **القيم ما اتمسحتش** لأن [[form.reset()]] جوه فرع النجاح بس. الفورم مبيتلمسش في فرع الغلط غير برسايله.
+- **[[removeAttribute]] مش [[setAttribute('aria-invalid', 'false')]]:** الاتنين صح في ARIA، بس الشيل بيخلّي الـ selector بتاع الـ CSS بسيط والخانة السليمة مفيهاش حاجة.
+- **الـ focus على أول خانة غلط:** اليوزر اللي بالكيبورد يصلّح على طول من غير ما يدوّر.
+
+**الغلطة الشائعة:** تنسى تشيل الرسالة والـ attribute لما الخانة تتصلّح، فالأحمر يفضل بعد إضافة سليمة. [[render]] بتلف على **كل** الخانات كل مرة وبتحط أو بتشيل، فمفيش حالة قديمة بتفضل.` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** [[validate.test.mjs]] بـ [[node:test]] على [[validate.js]] (من غير متصفح)، فيه الحدود بالظبط، وزوّد قاعدة [[cat]] من [[Set]] مسموح بيه.`, done: R`الاختبارات بتعدّي: 60 حرف عدّى و 61 لأ، و [[1000000]] عدّى و [[1000001]] لأ، و [[0]] لأ، و [[label]] كله مسافات بيدّي «اكتب على إيه صرفت»، و [[cat: 'hack']] بيرجّع [[errors.cat]]. ولو غيّرت [[> 60]] لـ [[>= 60]] اختبار واحد بيفشل.`, sol: R`**[[validate.js]] بقاعدة التصنيف:** [[CATS]] بقت [[export]] عشان الفورم والاختبار يستخدموا نفس القايمة، و [[cat]] ليها قيمة افتراضية [[other]] لو مجتش أصلًا:
+
+~~~js validate.js
+// validate.js: بيرجّع أخطاء، مش بيرمي (ومعاه قاعدة التصنيف)
+const AMOUNT = /^-?\d+(\.\d+)?$/;
+export const CATS = new Set(['food', 'transport', 'other']);
+
+export function validateItem({ label, amount, cat = 'other' }) {
+  const errors = {};
+  const trimmed = (label ?? '').trim();
+  if (!trimmed) errors.label = 'اكتب على إيه صرفت';
+  else if (trimmed.length > 60) errors.label = 'الوصف طويل أوي (٦٠ حرف بحد أقصى)';
+
+  const raw = String(amount ?? '').trim()
+    .replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - 0x0660)
+    .replace('٫', '.');
+  const n = Number(raw);
+  if (raw === '') errors.amount = 'اكتب المبلغ';
+  else if (!AMOUNT.test(raw)) errors.amount = 'المبلغ لازم يكون رقم';
+  else if (n <= 0) errors.amount = 'المبلغ لازم يكون أكبر من صفر';
+  else if (n > 1000000) errors.amount = 'الرقم ده كبير أوي، اتأكد';
+
+  if (!CATS.has(cat)) errors.cat = 'اختار تصنيف من القايمة';
+
+  return { ok: Object.keys(errors).length === 0, errors, value: { label: trimmed, amount: n, cat } };
+}
+~~~
+
+~~~js validate.test.mjs
+// validate.test.mjs: الحدود بالظبط، من غير متصفح
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { validateItem } from './validate.js';
+
+const ok = { label: 'قهوة', amount: '45', cat: 'food' };
+const check = (patch) => validateItem({ ...ok, ...patch });
+
+test('مدخل سليم بيرجّع value متنضّفة', () => {
+  const r = check({ label: '  قهوة ', amount: '٤٥' });
+  assert.equal(r.ok, true);
+  assert.deepEqual(r.value, { label: 'قهوة', amount: 45, cat: 'food' });
+});
+
+test('الاسم: 60 حرف بيعدّي و 61 لأ', () => {
+  assert.equal(check({ label: 'ا'.repeat(60) }).ok, true);
+  assert.equal(check({ label: 'ا'.repeat(61) }).errors.label, 'الوصف طويل أوي (٦٠ حرف بحد أقصى)');
+});
+
+test('الاسم كله مسافات = فاضي', () => {
+  assert.equal(check({ label: '    ' }).errors.label, 'اكتب على إيه صرفت');
+});
+
+test('المبلغ: مليون بيعدّي، ومليون وواحد لأ، وصفر لأ', () => {
+  assert.equal(check({ amount: '1000000' }).ok, true);
+  assert.equal(check({ amount: '1000001' }).errors.amount, 'الرقم ده كبير أوي، اتأكد');
+  assert.equal(check({ amount: '0' }).errors.amount, 'المبلغ لازم يكون أكبر من صفر');
+});
+
+test('التصنيف لازم من القايمة', () => {
+  assert.equal(check({ cat: 'hack' }).errors.cat, 'اختار تصنيف من القايمة');
+  assert.equal(check({ cat: undefined }).value.cat, 'other');
+});
+
+test('كل الأخطاء مرة واحدة', () => {
+  assert.deepEqual(Object.keys(validateItem({ label: '', amount: '', cat: 'x' }).errors), ['label', 'amount', 'cat']);
+});
+~~~
+
+~~~text الناتج: node --test validate.test.mjs (Node 24.22)
+✔ مدخل سليم بيرجّع value متنضّفة
+✔ الاسم: 60 حرف بيعدّي و 61 لأ
+✔ الاسم كله مسافات = فاضي
+✔ المبلغ: مليون بيعدّي، ومليون وواحد لأ، وصفر لأ
+✔ التصنيف لازم من القايمة
+✔ كل الأخطاء مرة واحدة
+ℹ tests 6
+ℹ pass 6
 ℹ fail 0
 ~~~
 
-## هتشوف إيه
+**هل الاختبارات بتمسك حاجة فعلًا؟** غيّرت [[trimmed.length > 60]] لـ [[>= 60]] في نسخة من الملف وشغّلت نفس الاختبارات:
 
-جدول سطر لكل dependency، الخطير فوق عينك بكلمة HIGH، وكل سبب مكتوب. وفي الآخر العدد. والـ exit code بيخلي CI يوقف لو فيه HIGH.
-
-## الصورة الكبيرة
-
-~~~text شجرة الملفات
-deps-report/
-  package.json
-  bin/deps-report.js      المدخل: بياخد الـ args ويرجّع الـ exit code
-  src/main.js             بيقرا package.json، وبيلف بـ 4 في المرة، وبيجمّع
-  src/registry.js         بيسأل الـ registry (الـ fetch جاي من برّه)
-  src/rules.js            القواعد: info → { level, flags }، من غير I/O
-  src/report.js           بيرسم الجدول نص
-  fixtures/fake-fetch.js  fetch مزيف للاختبارات
-  test/rules.test.js
-  test/main.test.js
+~~~text الناتج
+✖ الاسم: 60 حرف بيعدّي و 61 لأ
+ℹ pass 5
+ℹ fail 1
+    actual: false,
+    expected: true,
 ~~~
 
-| القرار | البديل | ليه ده |
+اختبار واحد بس وقع، وده المطلوب: كل اختبار بيحرس حد واحد، فلما يقع بتعرف الغلطة فين من اسمه.
+
+**ليه الحدود بالظبط؟** الباجات بتعيش عند الحد: [[>]] ولا [[>=]]. اختبار بـ 10 حروف و 100 حرف كان هيعدّي مع الغلطة دي. عشان كده كل حد ليه قيمتين: آخر واحدة مقبولة وأول واحدة مرفوضة (60 و 61، مليون ومليون وواحد).
+
+**تفاصيل:**
+- [[check(patch)]] بيبدأ من مدخل سليم ويغيّر خانة واحدة، فكل اختبار بيقيس قاعدة واحدة من غير ما أخطاء تانية تلخبطه.
+- [[deepEqual]] على [[Object.keys(errors)]] بيثبت إن الأخطاء التلاتة بتيجي مع بعض **وبالترتيب ده**.
+- [[cat = 'other']] في الـ destructuring بتشتغل لما [[cat]] تبقى [[undefined]] بس، مش [[null]] ولا [['']]؛ الاتنين دول هيترفضوا من [[CATS.has]]، وده اللي عايزينه.
+- [['ا'.repeat(60)]]: حرف عربي واحد = 1 في [[length]]. (حروف زي الـ emoji بتتحسب 2، ودي حالة تانية تتقرر لو التطبيق محتاجها.)
+
+**الغلطة الشائعة:** تكتب الاختبار بعد الكود وتختار قيم «هتعدّي». جرّب دايمًا تكسر الكود عن قصد وتشوف الاختبار وقع؛ لو موقعش، الاختبار مش بيختبر حاجة.` },
+          ],
+          deep: {
+            why: R`لو الحالة ممكن تتلوث بداتا غلط، كل كود بيقراها بيضطر يفحص. ولو مستحيل تتلوث، الفحص بيحصل مرة واحدة على الحدود.`,
+            how: R`**ليه [[return]] مش [[throw]]؟**
+
+| | [[throw]] | [[return { ok, errors }]] |
 |---|---|---|
-| [[fetch]] اللي جوه Node | axios أو got | Node 18+ فيه [[fetch]]، ومفيش ولا dependency (أداة بتفحص الـ dependencies من غير dependencies) |
-| [[node:test]] | Vitest أو Jest | جاهز في Node، والأداة صغيرة |
-| الـ fetch باراميتر | mock للـ global أو nock | أبسط حاجة: الاختبار بيبعت دالة مزيفة، ومفيش حاجة global بتتغير |
-| packument كامل | [[/latest]] بس | محتاجين [[time[latest]]]، و [[/latest]] مفيهوش تواريخ |
-| ٤ في المرة | الكل مع بعض أو واحد واحد | الكل = مئات طلبات في نفس اللحظة على مشروع كبير، وواحد واحد أبطأ |
+| فورم فاضي | استثناء — وده مش استثنائي | قيمة عادية |
+| أكتر من خطأ | واحد بس | **كلهم مرة واحدة** |
+| مكان العرض | محتاج [[try/catch]] فوق | مباشر |
+| الاختبار | [[assert.throws]] | مقارنة object |
 
-## الكود
+[[throw]] للحاجات اللي **مش متوقعة** — الشبكة قطعت، الملف مش موجود. والفورم الفاضي متوقع تمامًا.
 
-~~~json package.json
-{
-  "name": "deps-report",
-  "version": "1.0.0",
-  "description": "تقرير عن كل dependency في package.json: آخر نسخة، والرخصة، والحجم، والمخاطر",
-  "type": "module",
-  "bin": { "deps-report": "./bin/deps-report.js" },
-  "scripts": { "test": "node --test" },
-  "engines": { "node": ">=20" },
-  "license": "MIT",
-  "private": true
-}
-~~~
+**وكل الأخطاء مرة واحدة** فرق كبير في التجربة: المستخدم يصلّح الاتنين ويبعت، بدل ما يصلّح واحد ويكتشف التاني.
 
-~~~js bin/deps-report.js
-#!/usr/bin/env node
-import { main } from "../src/main.js";
-process.exitCode = await main(process.argv.slice(2));
-~~~
+**و [[Number]] ليها مصايد** (اتشغّلت فعلًا · Node 24):
 
-~~~js src/registry.js
-// بيجيب بيانات package من الـ npm registry. الـ fetch بيتبعت من برّه عشان الاختبارات
-const REGISTRY = "https://registry.npmjs.org";
-
-export async function getPackageInfo(name, { fetch = globalThis.fetch, timeoutMs = 10000 } = {}) {
-  const url = $__bt$__{REGISTRY}/$__{name.replace("/", "%2F")}$__bt;
-  let res;
-  try {
-    res = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
-  } catch (error) {
-    return { name, error: $__btمقدرتش أوصل للـ registry ($__{error.name})$__bt };
-  }
-  if (res.status === 404) return { name, missing: true };
-  if (!res.ok) return { name, error: $__btHTTP $__{res.status}$__bt };
-  const doc = await res.json();
-  const latest = doc["dist-tags"]?.latest;
-  const manifest = doc.versions?.[latest] ?? {};
-  const scripts = manifest.scripts ?? {};
-  return {
-    name,
-    latest,
-    published: doc.time?.[latest] ?? null,
-    license: typeof manifest.license === "string" ? manifest.license : null,
-    deprecated: manifest.deprecated ?? null,
-    unpackedSize: manifest.dist?.unpackedSize ?? null,
-    installScripts: ["preinstall", "install", "postinstall"].filter((s) => s in scripts),
-  };
-}
-~~~
-
-~~~js src/rules.js
-// القواعد: كل dependency بتاخد مستوى (ok أو warn أو high) وأسباب
-const DAY = 86400000;
-export const ALLOWED = ["MIT", "ISC", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "0BSD"];
-const BIG = 5 * 1024 * 1024;
-
-export function assess(spec, info, now = new Date()) {
-  const flags = [];
-  let level = "ok";
-  const raise = (to, text) => {
-    flags.push(text);
-    if (to === "high" || level === "ok") level = to;
-  };
-  if (spec === "*" || spec === "latest" || spec === "") raise("high", $__btالنسخة «$__{spec || "فاضية"}» مش متثبتة$__bt);
-  if (info.error) {
-    raise("warn", info.error);
-    return { level, flags };
-  }
-  if (info.missing) {
-    raise("high", "مش موجودة في الـ registry (اسم غلط؟)");
-    return { level, flags };
-  }
-  if (/^\d+\.\d+\.\d+$/.test(spec) && info.latest && spec !== info.latest) {
-    raise("warn", $__btمتثبتة على $__{spec} والأحدث $__{info.latest}: شغّل npm audit$__bt);
-  }
-  if (info.deprecated) raise("high", $__btdeprecated: $__{info.deprecated}$__bt);
-  if (!info.license) raise("high", "مفيش رخصة");
-  else if (!ALLOWED.includes(info.license)) raise("warn", $__btرخصة $__{info.license} محتاجة مراجعة$__bt);
-  if (info.published) {
-    const days = Math.floor((now - new Date(info.published)) / DAY);
-    if (days > 730) raise("warn", $__btآخر نسخة من $__{days} يوم$__bt);
-  }
-  if (info.installScripts.length) raise("warn", $__btinstall scripts: $__{info.installScripts.join(", ")}$__bt);
-  if (info.unpackedSize > BIG) raise("warn", $__btحجمها $__{(info.unpackedSize / 1048576).toFixed(1)} MB$__bt);
-  return { level, flags };
-}
-~~~
-
-~~~js src/report.js
-// بيرسم النتايج جدول نص
-const MARK = { ok: "OK  ", warn: "WARN", high: "HIGH" };
-
-export function formatTable(rows) {
-  const width = Math.max(4, ...rows.map((r) => r.name.length));
-  const lines = rows.map((r) => {
-    const version = (r.info.latest ?? "-").padEnd(9);
-    const date = (r.info.published ?? "-").slice(0, 10).padEnd(10);
-    const license = (r.info.license ?? "-").padEnd(12);
-    return $__bt$__{MARK[r.result.level]}  $__{r.name.padEnd(width)}  $__{version} $__{date} $__{license} $__{r.result.flags.join("؛ ")}$__bt;
-  });
-  const count = (lvl) => rows.filter((r) => r.result.level === lvl).length;
-  lines.push("", $__bt$__{rows.length} dependency: $__{count("high")} HIGH، $__{count("warn")} WARN، $__{count("ok")} OK$__bt);
-  return lines.join("\n");
-}
-~~~
-
-~~~js src/main.js
-// بيقرا package.json، ويسأل الـ registry عن كل dependency (٤ في المرة)، ويرجّع التقرير
-import { readFile } from "node:fs/promises";
-import { getPackageInfo } from "./registry.js";
-import { assess } from "./rules.js";
-import { formatTable } from "./report.js";
-
-async function mapLimit(items, limit, fn) {
-  const results = new Array(items.length);
-  let next = 0;
-  async function worker() {
-    while (next < items.length) {
-      const i = next++;
-      results[i] = await fn(items[i]);
-    }
-  }
-  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
-  return results;
-}
-
-export async function main(args, { fetch = globalThis.fetch, now = new Date(), log = console.log } = {}) {
-  const json = args.includes("--json");
-  const file = args.find((a) => !a.startsWith("--")) ?? "package.json";
-  let pkg;
-  try {
-    pkg = JSON.parse(await readFile(file, "utf8"));
-  } catch (error) {
-    log($__btمقدرتش أقرا $__{file}: $__{error.code ?? error.message}$__bt);
-    return 2;
-  }
-  const deps = Object.entries({ ...pkg.dependencies, ...pkg.devDependencies });
-  if (deps.length === 0) {
-    log("مفيش dependencies");
-    return 0;
-  }
-  const rows = await mapLimit(deps, 4, async ([name, spec]) => {
-    if (/^(file:|git|https?:|workspace:)/.test(spec)) {
-      return { name, info: {}, result: { level: "warn", flags: [$__btمصدر مش من الـ registry: $__{spec}$__bt] } };
-    }
-    const info = await getPackageInfo(name, { fetch });
-    return { name, info, result: assess(spec, info, now) };
-  });
-  log(json ? JSON.stringify(rows, null, 2) : formatTable(rows));
-  return rows.some((r) => r.result.level === "high") ? 1 : 0;
-}
-~~~
-
-~~~js fixtures/fake-fetch.js
-// fetch مزيف: بيرجّع ردود متجهزة من غير شبكة، وبيسجّل الـ URLs اللي اتطلبت
-export function fakeFetch(table) {
-  const calls = [];
-  async function fetch(url) {
-    calls.push(url);
-    const name = decodeURIComponent(url.split("/").pop());
-    const entry = table[name];
-    if (entry instanceof Error) throw entry;
-    if (!entry) return { ok: false, status: 404, json: async () => ({}) };
-    return { ok: true, status: 200, json: async () => entry };
-  }
-  fetch.calls = calls;
-  return fetch;
-}
-
-export function doc({ version = "1.0.0", published = "2026-10-01T00:00:00Z", license = "MIT", deprecated, scripts, unpackedSize = 1000 } = {}) {
-  return {
-    "dist-tags": { latest: version },
-    time: { [version]: published },
-    versions: { [version]: { license, deprecated, scripts, dist: { unpackedSize } } },
-  };
-}
-~~~
-
-~~~js test/rules.test.js
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { assess } from "../src/rules.js";
-
-const NOW = new Date("2026-11-21T00:00:00Z");
-const base = { latest: "2.0.0", published: "2026-10-01T00:00:00Z", license: "MIT", deprecated: null, unpackedSize: 1000, installScripts: [] };
-
-test("package سليمة: ok من غير أسباب", () => {
-  assert.deepEqual(assess("^2.0.0", base, NOW), { level: "ok", flags: [] });
-});
-
-test("مش موجودة أو deprecated أو من غير رخصة: high", () => {
-  assert.equal(assess("^1.0.0", { missing: true }, NOW).level, "high");
-  assert.equal(assess("^2.0.0", { ...base, deprecated: "استخدم غيرها" }, NOW).level, "high");
-  assert.equal(assess("^2.0.0", { ...base, license: null }, NOW).level, "high");
-  assert.equal(assess("*", base, NOW).level, "high");
-});
-
-test("قديمة أو فيها scripts أو رخصة غريبة أو متثبتة على قديم: warn", () => {
-  const old = assess("^2.0.0", { ...base, published: "2023-01-01T00:00:00Z" }, NOW);
-  assert.equal(old.level, "warn");
-  assert.match(old.flags[0], /1420 يوم/);
-  assert.equal(assess("^2.0.0", { ...base, installScripts: ["postinstall"] }, NOW).level, "warn");
-  assert.equal(assess("^2.0.0", { ...base, license: "GPL-3.0" }, NOW).level, "warn");
-  assert.equal(assess("1.9.0", base, NOW).level, "warn");
-});
-
-test("warn بعدها high: المستوى بيفضل high", () => {
-  const r = assess("*", { ...base, license: "GPL-3.0", deprecated: "x" }, NOW);
-  assert.equal(r.level, "high");
-  assert.equal(r.flags.length, 3);
-});
-~~~
-
-~~~js test/main.test.js
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { mkdtemp, writeFile, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { main } from "../src/main.js";
-import { getPackageInfo } from "../src/registry.js";
-import { fakeFetch, doc } from "../fixtures/fake-fetch.js";
-
-const NOW = new Date("2026-11-21T00:00:00Z");
-
-async function withPackage(pkg, fn) {
-  const dir = await mkdtemp(join(tmpdir(), "deps-report-"));
-  try {
-    const file = join(dir, "package.json");
-    await writeFile(file, JSON.stringify(pkg));
-    return await fn(file);
-  } finally {
-    await rm(dir, { recursive: true, force: true });
-  }
-}
-
-test("getPackageInfo: بيقرا آخر نسخة وتاريخها والـ install scripts", async () => {
-  const fetch = fakeFetch({ "@scope/ui": doc({ version: "3.1.0", scripts: { postinstall: "node x.js", test: "t" } }) });
-  const info = await getPackageInfo("@scope/ui", { fetch });
-  assert.equal(fetch.calls[0], "https://registry.npmjs.org/@scope%2Fui");
-  assert.equal(info.latest, "3.1.0");
-  assert.deepEqual(info.installScripts, ["postinstall"]);
-});
-
-test("getPackageInfo: الشبكة واقعة بترجع error مش exception", async () => {
-  const fetch = fakeFetch({ dayjs: new TypeError("fetch failed") });
-  const info = await getPackageInfo("dayjs", { fetch });
-  assert.match(info.error, /TypeError/);
-});
-
-test("main: exit 1 لو فيه HIGH، والتقرير فيه كل dependency", async () => {
-  const lines = [];
-  const fetch = fakeFetch({ good: doc(), old: doc({ deprecated: "خلاص" }) });
-  const pkg = { dependencies: { good: "^1.0.0", old: "^1.0.0", typo: "^1.0.0" }, devDependencies: { local: "file:../x.tgz" } };
-  const code = await withPackage(pkg, (file) => main([file], { fetch, now: NOW, log: (l) => lines.push(l) }));
-  assert.equal(code, 1);
-  const out = lines.join("\n");
-  assert.match(out, /OK {4}good/);
-  assert.match(out, /HIGH {2}old/);
-  assert.match(out, /HIGH {2}typo .*مش موجودة/);
-  assert.match(out, /WARN {2}local .*file:/);
-  assert.equal(fetch.calls.length, 3);
-});
-
-test("main: كله سليم يبقى exit 0، و --json بيطلع JSON", async () => {
-  const lines = [];
-  const fetch = fakeFetch({ good: doc() });
-  const code = await withPackage({ dependencies: { good: "^1.0.0" } }, (file) => main([file, "--json"], { fetch, now: NOW, log: (l) => lines.push(l) }));
-  assert.equal(code, 0);
-  assert.equal(JSON.parse(lines[0])[0].result.level, "ok");
-});
-
-test("main: ملف مش موجود يبقى exit 2", async () => {
-  const lines = [];
-  const code = await main(["nope/package.json"], { fetch: fakeFetch({}), log: (l) => lines.push(l) });
-  assert.equal(code, 2);
-  assert.match(lines[0], /ENOENT/);
-});
-~~~
-
-~~~json clinic-booking/package.json (مشروع التجربة)
-{
-  "name": "clinic-booking",
-  "version": "0.3.0",
-  "private": true,
-  "dependencies": {
-    "dayjs": "^1.11.23",
-    "chart.js": "^4.6.1",
-    "moment": "^2.30.1",
-    "left-pad": "1.3.0",
-    "lodash": "4.17.20",
-    "dayjss": "^1.0.0",
-    "arqamy": "file:../arqamy/arqamy-1.1.1.tgz"
-  },
-  "devDependencies": {
-    "esbuild": "^0.28.2",
-    "react-dom": "*"
-  }
-}
-~~~
-
-## ترتيب البناء
-
-1. **[[rules.js]] واختباراته الأول:** القواعد دالة نقية ([[assess(spec, info, now)]])، فبتتختبر من غير شبكة ولا ملفات. و [[now]] باراميتر عشان «من كام يوم» يتكرر في الاختبار.
-2. **[[registry.js]] و [[fake-fetch.js]]:** الدالة بتاخد [[{ fetch }]] وقيمتها الافتراضية [[globalThis.fetch]]. الاختبار بيبعت fetch مزيف بيرجّع ردود جاهزة وبيسجّل الـ URLs ([[fetch.calls]]).
-3. **[[report.js]]:** نص بس، من غير ألوان (عشان يتقري في CI ويتعمله [[grep]]).
-4. **[[main.js]]:** بيربطهم. [[log]] كمان باراميتر، فالاختبار بيجمع السطور في array.
-5. **[[bin/deps-report.js]]:** ٣ سطور. [[process.exitCode = ...]] بدل [[process.exit()]] عشان أي output لسه بيتكتب يخلص.
-
-## الحتت المهمة
-
-- **[[mapLimit(items, 4, fn)]]:** ٤ «عمال» كل واحد بياخد العنصر الجاي ([[next++]]) لحد ما يخلصوا، والنتايج في نفس ترتيب الـ input. قسناها على الـ ٩ packages: ٤ في المرة 1976–2756 ms، وواحد واحد 3395–3540 ms.
-- **[[AbortSignal.timeout(10000)]]:** لو الـ registry معلّق، الطلب بيتلغي بعد ١٠ ثواني بدل ما الأداة تستنى للأبد.
-- **الأخطاء بترجع بيانات مش exceptions:** [[{ name, error }]] و [[{ name, missing: true }]]. package واحدة الشبكة وقعت عندها متوقّفش التقرير كله.
-- **[[raise(to, text)]]:** بيزوّد السبب وبيرفع المستوى بس (ok ← warn ← high)، فـ warn بعد high مبتنزّلوش (اختبار «warn بعدها high»).
-- **مصادر برّه الـ registry** ([[file:]] و [[git]] و [[https:]] و [[workspace:]]): مبنسألش عنها الـ registry (هيرجّع 404 غلط)، وبنعلّمها WARN عشان حد يراجعها.
-- **[[mkdtemp]] في الاختبار:** كل اختبار بيكتب [[package.json]] في فولدر مؤقت جديد ويمسحه في [[finally]]، فالاختبارات مبتأثرش على بعض ولا على المشروع.
-
-## الغلطات اللي حصلت وانت بتبنيها
-
-- **[[node --test]] شغّل ملف الـ fake كأنه اختبار:** كان في [[test/fake.js]]، و [[node --test]] بيشغّل **أي** ملف جوه فولدر [[test]]، فطلع سطر [[✔ test\fake.js]] زيادة. نقلناه لـ [[fixtures/fake-fetch.js]].
-- **lodash 4.17.20 طلعت OK:** القواعد كانت بتبص على آخر نسخة بس (4.18.1، سليمة). بس المشروع متثبت على 4.17.20 اللي فيها ثغرات (درس «تختار dependency»). زوّدنا قاعدة: نسخة متثبتة بالظبط وأقدم من الأخيرة = WARN «شغّل npm audit». ولسه الأداة مبتعرفش الثغرات نفسها: ده شغل [[npm audit]] (في الـ ext).
-- **الـ regex اتكتب من غير backslashes:** عدّلنا [[rules.js]] بسكربت، والـ [[\d]] بقت [[d]]، فاختبار «متثبتة على قديم» وقع. الاختبار مسكها قبل ما نجرّب على مشروع حقيقي.
-- **moment طلعت OK:** آخر نسخة من شهرين. بس المشروع نفسه في maintenance mode. القواعد بالأرقام مبتعرفش ده، فالتقرير **بداية** المراجعة مش نهايتها.
-
-## اتقاس
-
-- ٩ اختبارات بتعدّي من غير إنترنت في حوالي ١٣٠ ms.
-- التشغيل الحقيقي على ٩ packages: من ٢ لـ ٣ ثواني (أغلبها تنزيل الـ packuments: react-dom وحدها ملف كبير).` },
-        { lvl: 'فكرة', t: R`قرار مكتوب: framework ولا لأ لمشروع حقيقي`, what: R`اختار مشروع حقيقي عايز تعمله (أو المثال: widget حجز مواعيد هيتحط في موقع عيادة متألّف اسمه «عيادة نور»، الموقع معمول بـ WordPress)، واكتب Architecture Decision Record (ADR): السياق، والاختيارات (vanilla و Web Component و Preact و React)، والأرقام اللي قستها بنفسك (حجم bundle، وعدد الشاشات، ومين هيصونه)، والقرار، والتمن اللي هتدفعه، وإمتى ترجع فيه. من وحدة «المكتبات والفريموركات» كلها.`, done: R`ملف [[docs/adr/0001-ui-approach.md]] فيه الأقسام كلها، وكل اختيار جنبه رقم اتقاس (مش «أخف» و «أحسن»)، وقسم «نرجع في القرار لو».`, ext: R`اعمل الـ widget بالاختيار اللي اخترته، وقيس الـ bundle الحقيقي وقارنه بتقديرك، وحدّث الـ ADR بالفرق. وبعد ٣ شهور اقراه تاني: القرار لسه صح؟`, sol: R`## الشكل النهائي: ADR نموذجي
-
-~~~text docs/adr/0001-ui-approach.md
-# 0001: widget الحجز بـ Web Component من غير framework
-
-الحالة: متوافق عليه (21 نوفمبر 2026)
-
-## السياق
-- widget حجز مواعيد هيتحط في موقع «عيادة نور» (WordPress، فيه jQuery من الثيم).
-- شاشتين: اختيار اليوم والساعة، وبعدين الاسم والموبايل والتأكيد.
-- الحالة: يوم وساعة مختارين، ومواعيد فاضية جاية من API، وحالة إرسال.
-- هيصونه مطور واحد بيعرف JavaScript، مش بيعرف React.
-- أغلب الزوار موبايل جايين من إعلانات، فأول تحميل مهم.
-
-## الاختيارات (اتقاست بـ esbuild 0.28.2، production، gzip، لنفس العدّاد البسيط)
-| الاختيار | أقل حجم | ملاحظات |
+| المدخل | [[Number(x)]] | ليه ده مشكلة في فورم |
 |---|---|---|
-| vanilla داخل custom element | 271 بايت + كودنا | Shadow DOM بيعزله عن CSS الثيم و jQuery |
-| lit-html | 3.4 KB | templates بتحدّث اللي اتغير بس |
-| Preact | 5.7 KB | components و hooks، بس محتاج build |
-| React 19 | 67.6 KB | الفريق مش بيعرفه، و framework جوه صفحة مش بتاعتنا |
+| [[""]] و [[" "]] | **[[0]]** | الفاضي بيبقى صفر وياخد رسالة غلط |
+| [[null]] | **[[0]]** | خانة مش موجودة بتعدّي كصفر |
+| [[undefined]] | [[NaN]] | دي بس اللي بتبان غلط |
+| [["5e3"]] | **[[5000]]** | اليوزر مكتبش خمس آلاف |
+| [["0x10"]] | **[[16]]** | hex محدش يقصده في مبلغ |
+| [["Infinity"]] | [[Infinity]] | [[isNaN]] لوحدها بتعدّيه |
+| [["٤٥"]] | [[NaN]] | أرقام عربية سليمة بتترفض |
 
-## القرار
-custom element (<clinic-booking>) بـ vanilla JS، وحالة في object واحد و render() زي درس «ليه frameworks».
+عشان كده الدالة مبتسألش [[Number]] «ده رقم؟». بتنضّف النص (مسافات وأرقام عربية)، وبتفحص الفاضي، وبتفحص **الشكل** بـ regex، وبعدين بس بتحوّل. القاعدة: **قرر الشكل اللي انت عايزه وارفض الباقي**، متقبلش كل اللي [[Number]] بيقبله.
 
-## ليه
-- شاشتين وحالة صغيرة: مفيش حاجة الفريمورك هيوفّرها تستاهل 5–67 KB على موبايل جاي من إعلان.
-- هيتحط في صفحة فيها jQuery وثيم مش بتاعنا: custom element + Shadow DOM شغال في أي صفحة ومعزول.
-- المطور اللي هيصونه بيعرف JavaScript: مفيش وقت تعلم.
+ولو عايز تقبل الفاصلة العادية كمان ([[5,5]] = خمسة ونص في أوروبا)، ده قرار منتج، مش حاجة تتعمل لوحدها: [[1,000]] عند حد تانى معناها ألف.
 
-## التمن اللي هندفعه
-- إعادة الرسم و الـ focus بإيدنا (درس «library ولا framework»): render بيحافظ على الـ focus، واختبار بالكيبورد قبل كل نشر.
-- مفيش devtools للحالة: console.table(state) وقت التطوير.
-- الـ escaping بإيدنا: textContent لأي حاجة جاية من الـ API.
+**والتحقق في المتصفح مش أمان.** [[required]] و [[type=number]] و الدالة دي كلهم بيساعدوا المستخدم. واللي بيهاجم بيبعت للـ API مباشرة. **فالسيرفر بيفحص تاني، دايمًا** (تاب api).
 
-## نرجع في القرار لو
-- الشاشات بقت أكتر من 4، أو بقى فيه حساب مستخدم وتاريخ حجوزات.
-- فريق من 3 أو أكتر، أو حد بيعرف framework معين انضم.
-- الـ widget بقى تطبيق لوحده مش جوه موقع حد.
+**وفحص HTML المدمج يستاهل:**
+
+~~~html
+<input name="amount" type="number" min="1" step="0.01" required>
 ~~~
 
-## ليه الشكل ده
+ده بيدّي لوحة مفاتيح أرقام على الموبايل، ورسايل بلغة النظام. بس شكله صعب يتحكم فيه، والرسايل مش بلغتك. فالشائع: تستخدم الاتنين — HTML للمساعدة، والدالة للحقيقة.
 
-- **الأرقام من القياس، مش من الذاكرة:** نفس جدول درس «إمتى framework غلط»، ومكتوب الأداة والنسخة والتاريخ. لو حد قاس تاني ولقى رقم مختلف، يعرف ليه.
-- **«التمن» و «نرجع لو» أهم من «القرار»:** أي قرار تقني ليه تمن. لو مكتبتهوش، أول باج focus هيبان «غلطة» بدل «تمن متوقع عارفين حله». و «نرجع لو» بيخلي القرار يتراجع لما الظروف تتغير بدل ما يفضل «احنا كده».
-- **مرقّم ومتأرّخ في [[docs/adr/]]:** القرار التاني [[0002]]، ولو اتلغى قرار بتكتب واحد جديد بيقول «بيلغي 0001» من غير ما تمسح القديم، فالتاريخ بيفضل.
-- **الغلطة الشائعة:** ADR فيه «اخترنا React لأنه الأشهر والأفضل». مفيش سياق، ولا أرقام، ولا تمن، ولا شرط رجوع: يعني مش قرار، رأي.
+**وإمتى تفحص؟** على [[submit]] للأخطاء كلها. وعلى [[blur]] (الخروج من الخانة) لو عايز رد فعل أسرع. **ومتفحصش على كل حرف** — المستخدم لسه بيكتب، والأحمر وهو بيكتب مزعج.
 
-الشكل مأخوذ من قالب ADR المشهور (Michael Nygard) اللي موصوف في [[adr.github.io]].` },
-      ],
+**وفي مشروع أكبر**، مكتبة زي **Zod** بتعرّف الشكل مرة وبتستخدمه في التحقق وفي الأنواع سوا (تاب ts).`,
+            when: R`أي مدخل من مستخدم، وأي رد من API. والاتنين على الحدود مش في العمق.`,
+            mistakes: R`[[if]] متفرقة في المستمعين. أو [[throw]] على مدخل متوقع. أو [[Number]] قبل ما تفحص الفاضي. أو تثق في [[Number]] فتقبل [[1e3]] و [[0x10]]. أو تنسى إن اليوزر ممكن يكتب [[٤٥]] بالأرقام العربية. أو تعتمد على تحقق المتصفح وتسيب السيرفر مفتوح. أو تفحص على كل حرف.`
+          },
+          teach: R`## التطبيق بيقبل أي حاجة
+
+اسم فاضي. مبلغ سالب. كلمة «خمسين» مكان رقم.
+
+**وأول رد فعل غلط:** [[if]] جوه المستمع. وبعد أسبوع يبقى فيه تلات أماكن بتضيف بنود، واتنين ناسيين الفحص.
+
+---
+
+## ١. التحقق دالة واحدة، بترجّع تلاتة
+
+~~~js
+{ ok, errors, value }
+~~~
+
+| الحقل | فيه إيه |
+|---|---|
+| [[ok]] | [[true]] لو مفيش ولا خطأ، و [[false]] لو فيه واحد على الأقل |
+| [[errors]] | object: المفتاح اسم الخانة، والقيمة رسالة بالعربي |
+| [[value]] | المدخل **بعد التنضيف** ([[trim]] والأرقام العربية و [[Number]]) |
+
+---
+
+## ٢. ليه [[return]] مش [[throw]]؟
+
+| | [[throw]] | [[return]] |
+|---|---|---|
+| فورم فاضي | استثناء — وده مش استثنائي | قيمة عادية |
+| أكتر من خطأ | واحد بس | **كلهم مرة واحدة** |
+| العرض | محتاج [[try/catch]] فوق | مباشر |
+| الاختبار | [[assert.throws]] لكل حالة | مقارنة object عادية |
+
+[[throw]] للحاجات **المش متوقعة**. والفورم الفاضي متوقع تمامًا.
+
+---
+
+## ٣. الدالة
+
+~~~js validate.js
+export function validateItem({ label, amount }) {
+  const errors = {};
+  const trimmed = (label ?? '').trim();
+
+  if (!trimmed) errors.label = 'اكتب على إيه صرفت';
+  else if (trimmed.length > 60) errors.label = 'الوصف طويل أوي';
+
+  const raw = String(amount ?? '').trim()
+    .replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - 0x0660)   // ٤٥ -> 45
+    .replace('٫', '.');                                   // ١٢٫٥ -> 12.5
+  const n = Number(raw);
+  if (raw === '') errors.amount = 'اكتب المبلغ';
+  else if (!AMOUNT.test(raw)) errors.amount = 'المبلغ لازم يكون رقم';
+  else if (n <= 0) errors.amount = 'المبلغ لازم يكون أكبر من صفر';
+
+  return { ok: Object.keys(errors).length === 0, errors,
+           value: { label: trimmed, amount: n } };
+}
+~~~
+
+و [[AMOUNT]] فوق الدالة: [[/^-?\d+(\.\d+)?$/]]. أرقام، وكسر اختياري، وسالب اختياري عشان [[-5]] ياخد رسالته الصح.
+
+### ليه مش [[Number]] و [[Number.isFinite]] بس؟
+
+دي كانت النسخة الأولى من الدرس، وكان فيها باجين اتلاقوا بالتشغيل:
+
+~~~text المدخل -> النسخة القديمة | النسخة دي (اتشغّل فعلًا · Node 24)
+"1e3"    -> عدّى بـ 1000              | المبلغ لازم يكون رقم
+"0x10"   -> عدّى بـ 16                | المبلغ لازم يكون رقم
+" "      -> المبلغ لازم يكون أكبر من صفر | اكتب المبلغ
+"٤٥"     -> المبلغ لازم يكون رقم       | عدّى بـ 45
+"١٢٫٥"   -> المبلغ لازم يكون رقم       | عدّى بـ 12.5
+" 50 "   -> عدّى بـ 50                | عدّى بـ 50
+"-5"     -> المبلغ لازم يكون أكبر من صفر | المبلغ لازم يكون أكبر من صفر
+"5,5"    -> المبلغ لازم يكون رقم       | المبلغ لازم يكون رقم
+~~~
+
+- [[Number]] بيفهم صيغ كتير (علمي و hex وأكتر)، واليوزر مبيقصدهاش في مبلغ.
+- [[amount === '']] كانت بتفحص النص **قبل** [[trim]]، فالمسافة لوحدها كانت بتعدّي الفحص ده وتبقى صفر.
+
+---
+
+## ٤. والترتيب هو النقطة
+
+~~~text
+المستخدم بيبعت  →  تحقق  →  عدّى؟  →  غيّر الحالة  →  ارسم
+                           ↓ لأ
+                        اعرض الأخطاء — والحالة ما اتغيّرتش
+~~~
+
+~~~js في الـ store
+export function addItem(input) {
+  const { ok, errors, value } = validateItem(input);
+  if (!ok) return { ok, errors };          // <-- الحالة ما اتلمستش
+  set({ ...state, items: [...state.items, { id: crypto.randomUUID(), ...value }] });
+  return { ok: true, errors: {} };
+}
+~~~
+
+> **القاعدة:** الحالة ما بتتغيّرش غير بداتا عدّت. فأي حاجة في [[state]] سليمة **بحكم البناء**، والكود اللي بيقراها مش محتاج يفحص تاني.
+
+---
+
+## ٥. الاختبار الحقيقي
+
+~~~text اتشغّل فعلًا · Chrome
+تلات بنود سليمة:        157 ج في 3 بند
+
+اسم فاضي     ->  «اكتب على إيه صرفت»              |  البنود: 3
+مبلغ -5      ->  «المبلغ لازم يكون أكبر من صفر»   |  البنود: 3
+مبلغ «خمسين» ->  «المبلغ لازم يكون رقم»           |  البنود: 3
+~~~
+
+**الحالة ما اتلمستش في التلاتة.**
+
+---
+
+## ٦. و [[Number]] ليها مصايد
+
+| المدخل | [[Number(x)]] | المشكلة |
+|---|---|---|
+| [[""]] و [[" "]] | **[[0]]** | الفاضي بيتحسب صفر |
+| [[null]] و [[[]]] | **[[0]]** | حاجة مش رقم خالص بقت صفر |
+| [["1e3"]] و [["0x10"]] | **[[1000]]** و **[[16]]** | صيغ اليوزر مقصدهاش |
+| [["٤٥"]] | [[NaN]] | رقم سليم بالعربي اترفض |
+| [["خمسين"]] | [[NaN]] | دي الحالة الوحيدة اللي [[Number]] بيجيبها صح |
+
+عشان كده بننضّف الأول، ونفحص الفاضي، ونفحص **الشكل** بـ regex، وبعدين نحوّل.
+
+---
+
+## ٧. والتحقق في المتصفح **مش أمان**
+
+[[required]] و [[type=number]] والدالة دي كلهم بيساعدوا **المستخدم**.
+
+واللي بيهاجم بيبعت للـ API مباشرة. **فالسيرفر بيفحص تاني، دايمًا.**
+
+---
+
+## ٨. إمتى تفحص
+
+| الحدث | تفحص؟ |
+|---|---|
+| [[submit]] | **أيوه** — اعرض كل الأخطاء مرة واحدة |
+| [[blur]] | أيوه لو عايز رد أسرع، للخانة اللي خرج منها بس |
+| كل حرف | **لأ** — المستخدم لسه بيكتب، والأحمر بدري مزعج |
+
+---
+
+## الخلاصة
+
+- دالة واحدة، [[{ ok, errors, value }]].
+- بترجّع مش بترمي — المدخل الغلط متوقع.
+- كل الأخطاء مرة واحدة.
+- الحالة ما بتتغيّرش غير بداتا عدّت.
+- [[Number('')]] بصفر و [[Number('1e3')]] بألف — نضّف وافحص الشكل بـ regex قبل ما تحوّل.
+- الأرقام العربية ([[٤٥]]) بتتحول قبل الفحص.
+- والسيرفر بيفحص تاني.`,
+          sol: R`الدالة، والترتيب، والتلات محاولات الغلط — كلهم اتشغّلوا.`,
+          solCode: R`const AMOUNT = /^-?\d+(\.\d+)?$/;
+
+export function validateItem({ label, amount }) {
+  const errors = {};
+  const trimmed = (label ?? '').trim();
+  if (!trimmed) errors.label = 'اكتب على إيه صرفت';
+  const raw = String(amount ?? '').trim()
+    .replace(/[٠-٩]/g, (d) => d.charCodeAt(0) - 0x0660)
+    .replace('٫', '.');
+  const n = Number(raw);
+  if (raw === '') errors.amount = 'اكتب المبلغ';
+  else if (!AMOUNT.test(raw)) errors.amount = 'المبلغ لازم يكون رقم';
+  else if (n <= 0) errors.amount = 'المبلغ لازم يكون أكبر من صفر';
+  return { ok: Object.keys(errors).length === 0, errors,
+           value: { label: trimmed, amount: n } };
+}
+
+export function addItem(input) {
+  const { ok, errors, value } = validateItem(input);
+  if (!ok) return { ok, errors };          // الحالة ما اتلمستش
+  set({ ...state, items: [...state.items, { id: crypto.randomUUID(), ...value }] });
+  return { ok: true, errors: {} };
+}
+
+// اتشغّل فعلًا في Chrome:
+//   تلات بنود سليمة: 157 ج في 3 بند
+//   اسم فاضي      -> «اكتب على إيه صرفت»             | البنود: 3
+//   مبلغ -5       -> «المبلغ لازم يكون أكبر من صفر»  | البنود: 3
+//   مبلغ «خمسين»  -> «المبلغ لازم يكون رقم»          | البنود: 3
+//
+// وفي Node (validate.js لوحده): '1e3' و '0x10' -> «لازم يكون رقم»،
+//   ' ' -> «اكتب المبلغ»، '٤٥' -> 45، '١٢٫٥' -> 12.5`
+        },
+
+        {
+          cmd: "شاشات من غير إعادة تحميل",
+          title: "الفلتر في الرابط، والمشتق مش متخزن",
+          ref: [
+            { t: "MDN: Window: hashchange event", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/hashchange_event" },
+            { t: "MDN: Location.hash", url: "https://developer.mozilla.org/en-US/docs/Web/API/Location/hash" },
+            { t: "MDN: History API", url: "https://developer.mozilla.org/en-US/docs/Web/API/History_API" },
+            { t: "MDN: History.pushState()", url: "https://developer.mozilla.org/en-US/docs/Web/API/History/pushState" },
+            { t: "MDN: Window: popstate event", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event" },
+            { t: "MDN: URLSearchParams", url: "https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams" },
+            { t: "MDN Curriculum: JavaScript fundamentals (SPAs)", url: "https://developer.mozilla.org/en-US/curriculum/core/javascript-fundamentals/" },
+          ],
+          pre: [
+            { to: "js/pushState و popstate", why: R`القسم الأخير بيعمل نفس الفلتر بـ [[pushState]]، وتفاصيل الـ API هناك` },
+          ],
+          learn: R`تعمل شاشات وفلاتر بالـ hash، وتشتق المعروض من الحالة.`,
+          out: R`الرابط بيوصف الشاشة، والمستخدم يقدر يشاركه ويرجع له.`,
+          use: {
+            prog: R`أي تطبيق صفحة واحدة بيعمل ده. والـ hash أبسط شكل، ومحتاجش إعدادات على السيرفر.`,
+            work: R`«ابعتلي اللينك» — لو الفلتر مش في الرابط، مفيش لينك تبعته.`,
+            cs: R`الحالة المشتقّة (derived state): القيمة اللي تقدر تتحسب متتخزنش، عشان يستحيل تختلف عن مصدرها.`,
+          },
+          desc: R`التطبيق فيه تصنيفات، وعايزين نعرض واحد بس. وفيه طريقتين:
+
+**الغلط:** تخزّن [[state.visibleItems]] جنب [[state.items]]، وتحدّثها مع كل تغيير. ودي نفس غلطة الدرس الأول بالظبط — **قيمة مكررة لازم تفضل متزامنة يدوي**.
+
+**الصح:** [[visible]] دالة بتحسب من الحالة:
+
+[[const visible = (s) => s.filter === 'all' ? s.items : s.items.filter(it => it.cat === s.filter)]]
+
+مستحيل تختلف عن [[items]]، لأنها **هي** [[items]].
+
+**والفلتر نفسه يتخزن فين؟** في الرابط. [[location.hash]]:
+
+| اللي بيكسبه | ليه |
+|---|---|
+| الرابط بيوصف الشاشة | تبعته لحد يشوف نفس الحاجة |
+| زرار الرجوع بيشتغل | كل فلتر مدخل في تاريخ المتصفح |
+| الـ reload بيحافظ | الشاشة بترجع زي ما كانت |
+| مفيش إعدادات سيرفر | الـ hash المتصفح بس اللي بيشوفه |
+
+**والتوصيلة كلها خمس سطور:**
+
+~~~js
+const FILTERS = new Set(['all', 'food', 'transport', 'other']);
+const fromHash = () => FILTERS.has(location.hash.slice(1)) ? location.hash.slice(1) : 'all';
+
+addEventListener('hashchange', () => store.setFilter(fromHash()));
+store.setFilter(fromHash());        // أول رسمة
+~~~
+
+**ولاحظ [[FILTERS]]:** الـ hash جاي من الرابط، يعني من بره. فاللي مش في القايمة بيبقى [[all]] — مش بيتحط في الحالة زي ما هو.
+
+**وحاجة اتعلمتها وأنا بختبر:** لما غيّرت الـ hash من [[#food]] لـ [[#all]]، الصفحة **ما عملتش reload** — نفس المستند، الـ hash بس اللي اتغيّر. وده المقصود، بس كنت مستني تحميل جديد. ولو عايز تختبر القراية من [[localStorage]]، لازم [[location.reload()]] صريحة.`,
+          example: R`// state.js — المشتق بيتحسب، مش بيتخزن
+export const visible = (s) =>
+  s.filter === 'all' ? s.items : s.items.filter(it => it.cat === s.filter);
+export const total = (s) => visible(s).reduce((sum, it) => sum + it.amount, 0);
+
+// app.js — الفلتر جاي من الرابط
+const FILTERS = new Set(['all', 'food', 'transport', 'other']);
+const fromHash = () => {
+  const h = location.hash.slice(1);
+  return FILTERS.has(h) ? h : 'all';              // اللي مش في القايمة -> all
+};
+
+addEventListener('hashchange', () => store.setFilter(fromHash()));
+store.setFilter(fromHash());                      // أول رسمة بتيجي من هنا
+
+// وفي render: الحالة النشطة في الروابط
+document.querySelectorAll('[data-filter]').forEach(a => {
+  a.setAttribute('aria-current', a.dataset.filter === state.filter ? 'page' : 'false');
+});`,
+          lines: [
+            R`**المشتق**: [[visible]] (البنود المعروضة حسب الفلتر) دالة بتتحسب من الحالة، مش حقل متخزن فيها. لو خزّنتها هيبقى عندك نسختين من نفس الحقيقة، وأي مرة تنسى تحدّث واحدة الشاشة تكذب.`,
+            R`لو الفلتر [[all]] رجّع كل البنود، وإلا رجّع البنود اللي فئتها ([[cat]]) هي الفلتر. والدالة بتاخد الحالة كـ parameter ومبتلمسش الـ DOM، فتقدر تختبرها في Node من غير متصفح.`,
+            R`الإجمالي بيتحسب من **المعروض** ([[visible(s)]]) مش من كل البنود، فلما تفلتر الرقم يتفلتر معاه. و [[reduce]] بتبدأ من [[0]] وتجمع [[amount]] كل بند.`,
+            R`الفلاتر المسموحة في [[Set]]، وده الـ whitelist اللي هنقارن بيه أي قيمة جاية من الرابط.`,
+            R`دالة بتقرا الفلتر من الـ hash في الرابط (الجزء اللي بعد [[#]])، زي [[#food]].`,
+            R`[[location.hash]] بيرجّع [["#food"]] بالعلامة، و [[slice(1)]] بتشيلها فيفضل [["food"]]. ولو مفيش hash بيرجّع نص فاضي.`,
+            R`**الدفاع**: الرابط مدخل خارجي، أي حد يقدر يكتب فيه أي حاجة أو يبعتلك لينك متعدّل. فلو القيمة مش في القايمة نرجع [[all]] بدل ما نحط قيمة غريبة في الحالة.`,
+            R`نهاية [[fromHash]].`,
+            R`[[hashchange]] بيحصل كل ما الـ hash يتغير: اليوزر داس لينك زي [[href="#food"]]، أو داس back أو forward. بنقرا الفلتر الجديد ونديه للـ store، والـ store هو اللي بيرسم.`,
+            R`**وأول رسمة بتيجي من هنا**: لما الصفحة تفتح مفيش [[hashchange]]، فبنقرا الرابط بإيدنا. كده لو حد فتح لينك فيه [[#food]] الصفحة تفتح على الفلتر ده على طول.`,
+            R`جوه [[render]]: بنلف على كل اللينكات اللي عليها [[data-filter]] عشان نعلّم النشط فيهم.`,
+            R`اللينك اللي فلتره هو الفلتر الحالي بياخد [[aria-current="page"]] والباقي [["false"]]. قارئ الشاشة بيقول «الصفحة الحالية» على النشط، وفي الـ CSS تنسّقه بـ attribute selector على [[aria-current]] بدل ما تعمل كلاس [[active]] منفصل.`,
+            R`نهاية الـ [[forEach]].`,
+          ],
+          try: R`افتح التطبيق، دوس على «أكل»، انسخ الرابط، افتحه في تبويب جديد. لازم يفتح على نفس الفلتر. وبعدين دوس زرار الرجوع — لازم يرجع للفلتر اللي قبله.`,
+          practice: [
+            { lvl: 'سريع', t: R`**ابني feature:** زوّد تصنيف [[bills]] (فواتير): في [[FILTERS]]، وفي لينكات الفلتر، وفي [[<select>]] الفورم.`, done: R`[[#bills]] بيعرض الفواتير بس والإجمالي بتاعهم بس، و [[#xyz]] بيعرض الكل (لأن [[fromHash]] بترجّع [[all]])، واللينك النشط عليه [[aria-current="page"]].`, sol: R`**بيكمّل على ملفات التطبيق الكاملة اللي في حل تمرين «اكسرها عن قصد» (درس «خلّي التطبيق يفتكر»).** التصنيف الجديد بيلمس **خمس أماكن في أربع ملفات**، وكل مكان ليه سبب:
+
+~~~js app.js: الفلاتر المسموحة في الرابط
+const FILTERS = new Set(['all', 'food', 'transport', 'bills', 'other']);
+~~~
+
+~~~js validate.js: التصنيفات المسموحة في البند
+const CATS = new Set(['food', 'transport', 'bills', 'other']);
+~~~
+
+~~~js render.js: الاسم اللي بيظهر في الصف
+const CAT = { food: 'أكل', transport: 'مواصلات', bills: 'فواتير', other: 'تاني' };
+~~~
+
+~~~html index.html: لينك الفلتر، واختيار في الفورم
+  <a href="#bills" data-filter="bills">فواتير</a>
+  <a href="#other" data-filter="other">تاني</a>
+...
+<select name="cat"><option value="food">أكل</option><option value="transport">مواصلات</option><option value="bills">فواتير</option><option value="other">تاني</option></select>
+~~~
+
+~~~text الناتج (Chrome 158 بـ Playwright على localhost، بعد قهوة 45 أكل، وكهربا 320 ونت 250 فواتير، ومترو 10 مواصلات)
+ضغطة «فواتير»:          #bills   الصفوف [كهربا — 320 ج · فواتير، نت — 250 ج · فواتير]   الإجمالي 570   aria-current="page" على bills
+فتح index.html#xyz:     الصفوف الأربعة   الإجمالي 625   aria-current="page" على all
+فتح index.html#bills:   نفس الفواتير بس   الإجمالي 570
+~~~
+
+**الغلطة اللي هتقع فيها:** تزوّد الفلتر واللينك والاختيار وتنسى [[CATS]] في [[validate.js]]. الفورم هيبعت [[cat: 'bills']]، والتحقق هيحوّلها [[other]] لأنها مش في القايمة:
+
+~~~text الناتج: validateItem({ label: 'كهربا', amount: '320', cat: 'bills' }) بالملف القديم (Node 24.22)
+{ label: 'كهربا', amount: 320, cat: 'other' }
+~~~
+
+فالفاتورة هتظهر تحت «تاني» وفلتر «فواتير» هيفضل فاضي، **من غير أي error**. وده سبب إن القايمة المسموحة موجودة في التحقق أصلًا: أي قيمة مش معروفة بتتحوّل لحاجة معروفة بدل ما تدخل الحالة.
+
+**وليه [[#xyz]] بيعرض الكل؟** [[fromHash]] بتشوف إن [[xyz]] مش في [[FILTERS]] فبترجّع [[all]]، والحالة عمرها ما بتشوف القيمة الغريبة.
+
+**تحسين يستاهل:** خمس أماكن لتصنيف واحد كتير. اعمل ملف [[cats.js]] فيه [[export const CATS = { food: 'أكل', ... }]]، و [[validate.js]] و [[render.js]] و [[app.js]] يستوردوه، والفورم واللينكات تترسم منه. كده التصنيف الجاي سطر واحد.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** زميلك خزّن [[state.visibleItems]] وبيحدّثها في [[setFilter]] بس. وانت على [[#food]] امسح بند أكل: الصف لسه ظاهر. صلّحها بـ [[visible(s)]] المشتقّة.`, done: R`عرفت إن [[removeItem]] غيّرت [[items]] ونسيت [[visibleItems]]، وبعد التصليح مفيش [[visibleItems]] في الحالة خالص، والمسح والإضافة وانت على أي فلتر بيظهروا على طول.`, sol: R`**النسخة البايظة** (بتستخدم [[storage.js]] و [[validate.js]] من حل تمرين «اكسرها عن قصد»):
+
+~~~js state-broken.js
+// state-broken.js: نسخة الزميل. visibleItems متخزنة جنب items
+import { load, save } from './storage.js';
+import { validateItem } from './validate.js';
+
+let state = { ...load(), filter: 'all' };
+state.visibleItems = state.items;
+export const get = () => state;
+function set(next) { state = next; save(state); }
+
+export function setFilter(filter) {
+  const visibleItems = filter === 'all' ? state.items : state.items.filter(it => it.cat === filter);
+  set({ ...state, filter, visibleItems });
+}
+export function addItem(input) {
+  const { ok, errors, value } = validateItem(input);
+  if (!ok) return { ok, errors };
+  set({ ...state, items: [...state.items, { id: crypto.randomUUID(), ...value }] });
+  return { ok: true, errors: {} };
+}
+export const removeItem = (id) => set({ ...state, items: state.items.filter(it => it.id !== id) });
+~~~
+
+**الإصلاح** هو [[state.js]] بتاع التطبيق نفسه: مفيش [[visibleItems]] خالص، و [[visible(s)]] دالة. وعشان نشوف الفرق من غير متصفح، نفس الخطوات على النسختين في Node:
+
+~~~js compare.mjs
+// compare.mjs: نفس الخطوات على النسختين
+const mem = new Map();
+globalThis.localStorage = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, v) };
+const names = (arr) => arr.map((it) => it.label).join('، ') || '(فاضي)';
+
+const bad = await import('./state-broken.js');
+bad.addItem({ label: 'قهوة', amount: '45', cat: 'food' });
+bad.addItem({ label: 'مترو', amount: '10', cat: 'transport' });
+bad.setFilter('food');
+console.log('البايظ  | على #food:          ', names(bad.get().visibleItems));
+bad.removeItem(bad.get().items[0].id);
+console.log('البايظ  | بعد مسح قهوة:       ', names(bad.get().visibleItems), '| items:', names(bad.get().items));
+bad.addItem({ label: 'عيش', amount: '8', cat: 'food' });
+console.log('البايظ  | بعد إضافة عيش:      ', names(bad.get().visibleItems));
+
+mem.clear();
+const good = await import('./state.js');
+good.addItem({ label: 'قهوة', amount: '45', cat: 'food' });
+good.addItem({ label: 'مترو', amount: '10', cat: 'transport' });
+good.setFilter('food');
+console.log('المصلّح | على #food:          ', names(good.visible(good.get())));
+good.removeItem(good.get().items[0].id);
+console.log('المصلّح | بعد مسح قهوة:       ', names(good.visible(good.get())));
+good.addItem({ label: 'عيش', amount: '8', cat: 'food' });
+console.log('المصلّح | بعد إضافة عيش:      ', names(good.visible(good.get())), '| total:', good.total(good.get()));
+console.log('المصلّح | مفاتيح الحالة:', Object.keys(good.get()).join(', '));
+~~~
+
+~~~text الناتج: node compare.mjs (Node 24.22)
+البايظ  | على #food:           قهوة
+البايظ  | بعد مسح قهوة:        قهوة | items: مترو
+البايظ  | بعد إضافة عيش:       قهوة
+المصلّح | على #food:           قهوة
+المصلّح | بعد مسح قهوة:        (فاضي)
+المصلّح | بعد إضافة عيش:       عيش | total: 8
+المصلّح | مفاتيح الحالة: items, filter
+~~~
+
+**اقرا السطر التاني:** [[items]] فيها «مترو» بس، و [[visibleItems]] لسه فيها «قهوة» اللي اتمسحت. ده الصف اللي فضل ظاهر على الشاشة. والتالت أسوأ: «عيش» اتضاف لـ [[items]] ومظهرش، لأن [[addItem]] كمان مبتحدّثش [[visibleItems]]. أي عملية جديدة هتنساها برضه، لأن المعلومة متكررة في مكانين.
+
+**ليه الإصلاح بيقفل الباب:** [[visible(s)]] بتتحسب من [[s.items]] و [[s.filter]] في كل رسمة، فمفيش نسخة تانية تتأخر. والمفاتيح [[items, filter]] بس: الحالة فيها **الحقيقة** و **اختيار اليوزر**، والباقي مشتق.
+
+**الغلطة الشائعة في الإصلاح:** تحدّث [[visibleItems]] في [[removeItem]] و [[addItem]] كمان. هتشتغل النهارده، والعملية الجاية (تعديل، استيراد) هترجّع الباج.` },
+            { lvl: 'تحدي', t: R`**ابني:** الفلتر والترتيب الاتنين في الرابط: [[#filter=food&sort=amount]]، بتقراهم بـ [[new URLSearchParams(location.hash.slice(1))]]، وكل قيمة ليها [[Set]] مسموح.`, done: R`الرابط ده في تبويب جديد بيفتح على الأكل مترتب بالمبلغ، و [[sort=hack]] بيرجع للترتيب الافتراضي، وزرار الرجوع بيمشي على كل تغيير لوحده، والإجمالي مبيتغيّرش مع الترتيب.`, sol: R`**بيكمّل على التطبيق اللي في حل تمرين «اكسرها عن قصد».** [[storage.js]] و [[validate.js]] زي ما هما، والتلات ملفات دول اتكتبوا من جديد، وفي [[index.html]] الـ [[<nav>]] بقى اتنين جوه [[<div id="views">]]:
+
+~~~html index.html (الجزء اللي اتغيّر، والباقي زي ما هو)
+<div id="views">
+<nav aria-label="التصنيفات">
+  <a href="#filter=all" data-filter="all">الكل</a>
+  <a href="#filter=food" data-filter="food">أكل</a>
+  <a href="#filter=transport" data-filter="transport">مواصلات</a>
+  <a href="#filter=other" data-filter="other">تاني</a>
+</nav>
+<nav aria-label="الترتيب">رتّب:
+  <a href="#sort=new" data-sort="new">الأحدث</a>
+  <a href="#sort=amount" data-sort="amount">المبلغ</a>
+  <a href="#sort=name" data-sort="name">الاسم</a>
+</nav>
+</div>
+~~~
+
+وفي الـ CSS: [[nav a[aria-current="page"], nav a[aria-current="true"] { font-weight: 700; }]].
+
+~~~js app.js
+// app.js: الفلتر والترتيب الاتنين في الرابط (#filter=food&sort=amount)
+import * as store from './state.js';
+import { render } from './render.js';
+
+const FILTERS = new Set(['all', 'food', 'transport', 'other']);
+const SORTS = new Set(['new', 'amount', 'name']);
+
+export function fromHash(hash) {
+  const p = new URLSearchParams(hash.slice(1));
+  const filter = p.get('filter');
+  const sort = p.get('sort');
+  return {
+    filter: FILTERS.has(filter) ? filter : 'all',      // قيمة مش في القايمة -> الافتراضي
+    sort: SORTS.has(sort) ? sort : 'new',
+  };
+}
+
+store.subscribe((s) => render(s));
+
+document.querySelector('#f').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const res = store.addItem({ label: f.get('label'), amount: f.get('amount'), cat: f.get('cat') });
+  if (res.ok) e.target.reset();
+  else render(store.get(), res.errors);
+});
+
+document.querySelector('#list').addEventListener('click', (e) => {
+  if (e.target.dataset.del) store.removeItem(e.target.dataset.del);
+});
+
+document.querySelector('#views').addEventListener('click', (e) => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+  e.preventDefault();
+  location.hash = a.getAttribute('href').slice(1);   // render حطّت الرابط الكامل في href
+});
+
+addEventListener('hashchange', () => store.setView(fromHash(location.hash)));
+store.setView(fromHash(location.hash));
+~~~
+
+~~~js state.js
+// state.js: الفلتر والترتيب حالة شاشة، والمعروض بيتحسب منهم
+import { load, save } from './storage.js';
+import { validateItem } from './validate.js';
+
+const listeners = new Set();
+let state = { ...load(), filter: 'all', sort: 'new' };
+
+export const get = () => state;
+export const subscribe = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
+
+function set(next) {
+  state = next;
+  save(state);
+  listeners.forEach(fn => fn(state));
+}
+
+const SORTERS = {
+  new: null,                                               // ترتيب الإضافة زي ما هو
+  amount: (a, b) => b.amount - a.amount,                   // الأكبر الأول
+  name: (a, b) => a.label.localeCompare(b.label, 'ar'),    // أبجدي عربي
+};
+
+export const visible = (s) => {
+  const list = s.filter === 'all' ? s.items : s.items.filter(it => it.cat === s.filter);
+  return SORTERS[s.sort] ? list.toSorted(SORTERS[s.sort]) : list;
+};
+export const total = (s) => visible(s).reduce((sum, it) => sum + it.amount, 0);
+
+export function addItem(input) {
+  const { ok, errors, value } = validateItem(input);
+  if (!ok) return { ok, errors };
+  set({ ...state, items: [...state.items, { id: crypto.randomUUID(), ...value }] });
+  return { ok: true, errors: {} };
+}
+
+export const removeItem = (id) => set({ ...state, items: state.items.filter(it => it.id !== id) });
+export const setView = ({ filter, sort }) => set({ ...state, filter, sort });
+~~~
+
+~~~js render.js
+// render.js: بيرسم القايمة، وبيكتب في كل لينك الرابط الكامل اللي هيوديك له
+import { visible, total } from './state.js';
+
+const CAT = { food: 'أكل', transport: 'مواصلات', other: 'تاني' };
+const $ = (sel) => document.querySelector(sel);
+const hashOf = (view) => '#' + new URLSearchParams(view).toString();
+
+function row(it) {
+  const li = document.createElement('li');
+  li.textContent = it.label + ' — ' + it.amount + ' ج · ' + (CAT[it.cat] ?? CAT.other);
+  const del = document.createElement('button');
+  del.textContent = '×';
+  del.dataset.del = it.id;
+  del.setAttribute('aria-label', 'امسح ' + it.label);
+  li.append(del);
+  return li;
+}
+
+export function render(s, errors = {}) {
+  const shown = visible(s);
+  $('#list').replaceChildren(...shown.map(row));
+  $('#total').textContent = total(s);
+  $('#count').textContent = shown.length;
+  $('#empty').hidden = shown.length > 0;
+  const view = { filter: s.filter, sort: s.sort };
+  document.querySelectorAll('[data-filter]').forEach(a => {
+    a.href = hashOf({ ...view, filter: a.dataset.filter });   // بيحافظ على الترتيب الحالي
+    a.setAttribute('aria-current', a.dataset.filter === s.filter ? 'page' : 'false');
+  });
+  document.querySelectorAll('[data-sort]').forEach(a => {
+    a.href = hashOf({ ...view, sort: a.dataset.sort });       // بيحافظ على الفلتر الحالي
+    a.setAttribute('aria-current', a.dataset.sort === s.sort ? 'true' : 'false');
+  });
+  for (const name of ['label', 'amount']) {
+    $('#err-' + name).textContent = errors[name] ?? '';
+    const input = $('[name="' + name + '"]');
+    if (errors[name]) input.setAttribute('aria-invalid', 'true');   // مش toggleAttribute: دي بتكتب "" مش "true"
+    else input.removeAttribute('aria-invalid');
+  }
+}
+~~~
+
+~~~text الناتج (Chrome 158 بـ Playwright على localhost؛ البنود: قهوة 45 أكل، مترو 10 مواصلات، عشا 120 أكل، بسكوت 15 أكل)
+تبويب جديد على #filter=food&sort=amount:   عشا 120، قهوة 45، بسكوت 15          الإجمالي 180
+تبويب جديد على #filter=food&sort=hack:     قهوة، عشا، بسكوت (ترتيب الإضافة)   الترتيب النشط: new
+
+من index.html من غير hash:                 الأربعة   الإجمالي 190   href لينك «مواصلات» = #filter=transport&sort=new
+ضغطة «أكل»:     #filter=food&sort=new      قهوة، عشا، بسكوت      180
+ضغطة «المبلغ»:  #filter=food&sort=amount   عشا، قهوة، بسكوت      180   href «مواصلات» بقى #filter=transport&sort=amount
+ضغطة «الاسم»:   #filter=food&sort=name     بسكوت، عشا، قهوة      180
+back:           #filter=food&sort=amount   عشا، قهوة، بسكوت      180
+back:           #filter=food&sort=new      قهوة، عشا، بسكوت      180
+~~~
+
+**أهم الحتت:**
+
+- **[[new URLSearchParams(hash.slice(1))]]:** بيقرا [[filter=food&sort=amount]] زي الـ query string بالظبط، و [[p.get('sort')]] بترجّع النص أو [[null]] لو مش موجود. [[null]] مش في [[SORTS]] فبيرجع للافتراضي، زي [[hack]].
+- **كل قيمة ليها [[Set]] مسموح لوحدها:** الفلتر الغلط ميبوّظش الترتيب، والعكس.
+- **[[render]] بتكتب [[href]] كامل لكل لينك:** لينك «مواصلات» وانت مرتب بالمبلغ بقى [[#filter=transport&sort=amount]]، فالضغطة بتغيّر حاجة واحدة وتحافظ على التانية. ومن غير كده، الضغط على فلتر كان هيرجّع الترتيب للأحدث. وفايدة زيادة: Ctrl+click بيفتح تبويب جديد على الحالة الصح لأن الـ [[href]] نفسه صح.
+- **[[toSorted]]** بترجّع مصفوفة جديدة وتسيب [[items]] بترتيب الإضافة. لو استخدمت [[sort]]، الترتيب هيتخزن في الحالة نفسها ويتحفظ في [[localStorage]]، و «الأحدث» مش هيرجع أبدًا.
+- **[[localeCompare(b.label, 'ar')]]:** ترتيب أبجدي عربي صح (بسكوت قبل عشا قبل قهوة)، مش ترتيب أكواد الحروف.
+- **الإجمالي 180 في كل ترتيب:** [[total]] بيجمع [[visible(s)]]، والترتيب مبيغيّرش المجموع.
+- **زرار الرجوع:** كل [[location.hash = ...]] بيعمل مدخل في التاريخ، فكل ضغطة ليها back لوحدها.
+
+**الغلطة الشائعة:** تسيب اللينكات [[href="#sort=amount"]] ثابتة في الـ HTML. الضغط على «المبلغ» وانت على «أكل» هيرجّعك للكل، لأن الـ hash الجديد مفيهوش [[filter]] (جرّبتها: فتح [[#sort=amount]] بعد [[#filter=food]] عرض الأربعة والفلتر النشط [[all]]). الحل إن [[render]] تكتب الرابط الكامل.` },
+          ],
+          deep: {
+            why: R`الرابط هو حالة التطبيق اللي المستخدم يقدر يشاركها ويرجع لها. وأي شاشة مش في الرابط هي شاشة مش موجودة بالنسبة له.`,
+            how: R`**الاختبار الحقيقي:** فتحت [[index.html#food]] مباشرة بعد ما كان فيه تلات بنود محفوظة:
+
+~~~text
+الصفوف:   قهوة — 45 ج · أكل
+العدد:    1
+الإجمالي: 45
+~~~
+
+التطبيق قرا المحفوظ، وقرا الفلتر من الرابط، ورسم الاتنين سوا. **من غير أي كود بيربطهم** — الفلتر دخل الحالة، والرسم بيقرا الحالة.
+
+**hash ولا History API؟**
+
+| | [[#food]] | [[/food]] ([[pushState]]) |
+|---|---|---|
+| إعدادات سيرفر | **مش محتاج** | لازم يرجّع [[index.html]] لكل مسار |
+| الشكل | فيه [[#]] | نضيف |
+| GitHub Pages | شغال | محتاج حيلة [[404.html]] |
+| SEO | أضعف | أحسن |
+
+فالـ hash للتطبيقات الداخلية والمشاريع الصغيرة والاستضافة الثابتة. و [[pushState]] للمواقع العامة (تاب js ← APIs المتصفح).
+
+**ومصيدة [[hashchange]]:** الحدث ده **مبيجريش** لما الصفحة تفتح أول مرة. فلازم تنادي نفس الدالة يدوي بعد التسجيل — السطر الأخير في المثال. ونسيانه بيعمل باج غريب: الفلتر بيشتغل لما تدوس، ومبيشتغلش لما تفتح الرابط مباشرة.
+
+**وحاجة اكتشفتها أثناء الاختبار:** لما بدّلت من [[#food]] لـ [[#all]]، الصفحة ما اتحمّلتش من جديد — نفس المستند. وده المقصود (ده هو الفرق بين SPA وموقع عادي)، بس لو بتختبر القراية من [[localStorage]] لازم [[location.reload()]] صريحة، وإلا هتختبر الحالة اللي في الذاكرة.
+
+**والحالة المشتقّة الغالية:** لو الاشتقاق تقيل (ترتيب ١٠ آلاف صف)، احفظ النتيجة بشرط إنها **تتلغي** لما المصدر يتغيّر:
+
+~~~js
+let cache = null, cacheKey = null;
+export function visible(s) {
+  const key = s.filter + ':' + s.items.length;
+  if (key !== cacheKey) { cache = compute(s); cacheKey = key; }
+  return cache;
+}
+~~~
+
+ودي بالظبط فكرة [[useMemo]] في React. **بس متعملهاش قبل ما تقيس** — الاشتقاق في تطبيق عادي أرخص بكتير من الباج اللي بيجي من التخزين.`,
+            when: R`أي تطبيق فيه أكتر من شاشة أو فلتر. وأي قيمة تقدر تتحسب من قيمة تانية.`,
+            mistakes: R`تخزّن المعروض جنب الكل. أو تاخد الـ hash زي ما هو من غير قايمة مسموحة. أو تنسى النداء الأول فالفلتر مبيشتغلش مع الروابط المباشرة. أو تستخدم [[pushState]] على استضافة ثابتة من غير إعداد.`
+          },
+          teach: R`## عايزين نعرض تصنيف واحد. وفيه طريقتين.
+
+### الغلط
+
+~~~js
+state.visibleItems = state.items.filter(...);    // مخزّنة جنب items
+~~~
+
+**نفس غلطة الدرس الأول بالظبط** — قيمة مكررة لازم تفضل متزامنة يدوي.
+
+### الصح
+
+~~~js
+export const visible = (s) =>
+  s.filter === 'all' ? s.items : s.items.filter(it => it.cat === s.filter);
+
+export const total = (s) => visible(s).reduce((sum, it) => sum + it.amount, 0);
+~~~
+
+**مستحيل تختلف عن [[items]]، لأنها هي [[items]].**
+
+> ولاحظ: [[total]] بيتحسب من **المعروض** مش من الكل. فلما تفلتر، الرقم بيتفلتر معاه. من غير سطر زيادة.
+
+---
+
+## ١. والفلتر يتخزن فين؟ في الرابط.
+
+| اللي بيكسبه | ليه |
+|---|---|
+| الرابط بيوصف الشاشة | تبعته لحد يشوف نفس الحاجة |
+| زرار الرجوع بيشتغل | كل فلتر مدخل في التاريخ |
+| الـ reload بيحافظ | الشاشة بترجع زي ما كانت |
+| مفيش إعدادات سيرفر | الـ hash المتصفح بس اللي بيشوفه |
+
+---
+
+## ٢. والتوصيلة كلها خمس سطور
+
+~~~js app.js
+const FILTERS = new Set(['all', 'food', 'transport', 'other']);
+const fromHash = () => {
+  const h = location.hash.slice(1);
+  return FILTERS.has(h) ? h : 'all';      // اللي مش في القايمة -> all
+};
+
+addEventListener('hashchange', () => store.setFilter(fromHash()));
+store.setFilter(fromHash());              // <-- أول رسمة
+~~~
+
+> **[[FILTERS]] مش زيادة.** الـ hash جاي من الرابط، يعني من بره. فاللي مش في القايمة ميدخلش الحالة زي ما هو.
+
+---
+
+## ٣. ومصيدة بتوقّع كتير
+
+**[[hashchange]] مبيجريش لما الصفحة تفتح أول مرة.**
+
+فلازم تنادي نفس الدالة يدوي — السطر الأخير فوق.
+
+ونسيانه بيعمل باج غريب: الفلتر بيشتغل لما **تدوس**، ومبيشتغلش لما **تفتح الرابط مباشرة**.
+
+---
+
+## ٤. الاختبار الحقيقي
+
+فتحت [[index.html#food]] مباشرة، والمحفوظ فيه تلات بنود:
+
+~~~text اتشغّل فعلًا · Chrome
+الصفوف:   قهوة — 45 ج · أكل
+العدد:    1
+الإجمالي: 45
+~~~
+
+التطبيق قرا المحفوظ، وقرا الفلتر من الرابط، ورسم الاتنين سوا — **من غير أي كود بيربطهم**. الفلتر دخل الحالة، والرسم بيقرا الحالة.
+
+---
+
+## ٥. وحاجة اتعلمتها وأنا بختبر
+
+لما بدّلت من [[#food]] لـ [[#all]]، **الصفحة ما اتحمّلتش من جديد**. نفس المستند، الـ hash بس اللي اتغيّر.
+
+وده المقصود — ده الفرق بين SPA وموقع عادي. **بس** لو بتختبر القراية من [[localStorage]]، لازم [[location.reload()]] صريحة، وإلا بتختبر الحالة اللي في الذاكرة.
+
+---
+
+## ٦. hash ولا History API؟
+
+| | [[#food]] | [[/food]] ([[pushState]]) |
+|---|---|---|
+| إعدادات سيرفر | **مش محتاج** | لازم يرجّع [[index.html]] لكل مسار |
+| الشكل | فيه [[#]] | نضيف |
+| GitHub Pages | شغال | حيلة [[404.html]] |
+| SEO | أضعف | أحسن |
+
+الـ hash للمشاريع الصغيرة والاستضافة الثابتة. و [[pushState]] للمواقع العامة.
+
+---
+
+## ٧. والاشتقاق الغالي (لو قِست وطلع غالي)
+
+~~~js
+let cache = null, cacheKey = null;
+export function visible(s) {
+  const key = s.filter + ':' + s.items.length;
+  if (key !== cacheKey) { cache = compute(s); cacheKey = key; }
+  return cache;
+}
+~~~
+
+دي بالظبط فكرة [[useMemo]] في React.
+
+**بس متعملهاش قبل ما تقيس.** الاشتقاق في تطبيق عادي أرخص بكتير من الباج اللي بيجي من التخزين.
+
+---
+
+## ٨. نفس الفلتر بـ pushState: روابط من غير [[#]]
+
+لو عايز الرابط [[/food]] بدل [[#food]]، المتصفح محتاج تقوله «غيّر الرابط **من غير** ما تروح للسيرفر». ده [[history.pushState]]. والفرق عن الـ hash إن اللينك العادي [[<a href="/food">]] بيعمل تحميل صفحة كاملة، فلازم **تمسك الضغطة بنفسك**.
+
+~~~js app.js — routing بـ History API
+const fromPath = () => {
+  const p = location.pathname.slice(1);
+  return FILTERS.has(p) ? p : 'all';
+};
+
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a[data-filter]');
+  if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+  e.preventDefault();
+  if (a.pathname !== location.pathname) history.pushState(null, '', a.href);
+  store.setFilter(fromPath());
+});
+
+addEventListener('popstate', () => store.setFilter(fromPath()));
+store.setFilter(fromPath());
+~~~
+
+- [[location.pathname]]: الجزء بعد الدومين ([[/food]])، و [[slice(1)]] بتشيل الـ [[/]]. والـ whitelist هي هي لأن المسار برضه جاي من بره.
+- مستمع **واحد** على [[document]] (event delegation، درس «event delegation»)، و [[closest]] بتلاقي اللينك حتى لو الضغطة على حاجة جواه.
+- **الشرط الطويل مهم:** Ctrl+click أو الزرار الأوسط معناهم «افتح في تبويب جديد». لو منعتهم، كسرت حاجة اليوزر متعوّد عليها. فبنسيبهم للمتصفح.
+- [[preventDefault()]]: يمنع التحميل الكامل.
+- [[pushState(null, '', a.href)]]: بيغيّر الرابط في الشريط ويضيف مدخل في التاريخ، **من غير** طلب للسيرفر. والفحص قبله عشان الضغط على نفس اللينك مرتين ميملاش التاريخ بنسخ.
+- [[popstate]]: بيحصل لما اليوزر يدوس back أو forward. **و [[pushState]] نفسها مبتطلّعوش**، عشان كده بننادي [[setFilter]] بإيدنا بعدها.
+- السطر الأخير: زي [[hashchange]] بالظبط، [[popstate]] مبيجريش أول ما الصفحة تفتح.
+
+~~~text اتشغّل فعلًا · Chrome 156 · سيرفر node:http
+بعد أكل:       path=/food      filter=food       history +1   aria-current=food
+أكل تاني:      path=/food      filter=food       history +0
+بعد مواصلات:  path=/transport filter=transport  history +1
+بعد back:      path=/food      filter=food       (popstate)
+نفس المستند؟ true       <- متغيّر حطيته في window فضل موجود
+~~~
+
+ولوج السيرفر أثبت إن الضغطات دي **مطلبتش أي حاجة**: الطلبات كانت [[GET /]] و [[GET /route.js]] بس.
+
+### والسيرفر لازم يعرف
+
+اليوزر بيعمل reload على [[/food]]، أو بيبعت اللينك لحد. دلوقتي المتصفح **بيطلب [[/food]] من السيرفر فعلًا**:
+
+~~~text اتشغّل فعلًا
+python -m http.server  ->  GET /food  ->  404
+سيرفر بيرجّع index.html لأي مسار  ->  الصفحة فتحت والفلتر food
+~~~
+
+| الاستضافة | تعمل إيه عشان [[/food]] يفتح |
+|---|---|
+| سيرفر بتاعك (Node و nginx) | أي مسار مش ملف يرجّع [[index.html]] (fallback) |
+| [[npx serve]] | [[npx serve -s]]: الـ [[-s]] معناها single-page app (من وثائق serve) |
+| GitHub Pages | مفيش fallback؛ الحل الشائع نسخة من [[index.html]] اسمها [[404.html]] (بترجع بـ status 404) أو تفضل على الـ hash (من وثائق GitHub Pages) |
+| التطبيق في فولدر فرعي ([[/app/]]) | المسارات لازم تبدأ بالفولدر، و [[fromPath]] تشيله قبل ما تقارن |
+
+> **والقاعدة:** مشروع صغير أو استضافة ثابتة؟ الـ hash أبسط ومبيحتاجش سيرفر. موقع عام عايز روابط نضيفة؟ [[pushState]] ومعاه fallback. وتفاصيل الـ API ([[replaceState]] و [[state]] و [[scrollRestoration]]) في درس «pushState و popstate» في وحدة APIs المتصفح.
+
+---
+
+## الخلاصة
+
+- المشتق **دالة**، مش حقل.
+- الإجمالي بيتحسب من المعروض — فالفلترة بتشتغل لوحدها.
+- الفلتر في الرابط: مشاركة، ورجوع، و reload.
+- [[hashchange]] مبيجريش أول مرة — نادي يدوي.
+- الـ hash مدخل خارجي: قايمة مسموحة.
+- [[pushState]] = روابط نضيفة، بس امسك الضغطة بنفسك، واسمع [[popstate]]، والسيرفر يرجّع [[index.html]] لكل مسار.`,
+          sol: R`المشتق، والفلتر من الرابط، والاختبار اللي فتح على [[#food]] مباشرة.`,
+          solCode: R`// state.js — المشتق بيتحسب
+export const visible = (s) =>
+  s.filter === 'all' ? s.items : s.items.filter(it => it.cat === s.filter);
+export const total = (s) => visible(s).reduce((sum, it) => sum + it.amount, 0);
+
+// app.js — الفلتر من الرابط
+const FILTERS = new Set(['all', 'food', 'transport', 'other']);
+const fromHash = () => {
+  const h = location.hash.slice(1);
+  return FILTERS.has(h) ? h : 'all';
+};
+addEventListener('hashchange', () => store.setFilter(fromHash()));
+store.setFilter(fromHash());        // hashchange مبيجريش أول مرة
+
+// اتشغّل فعلًا: فتحت index.html#food والمحفوظ فيه 3 بنود
+//   الصفوف: قهوة — 45 ج · أكل
+//   العدد: 1  |  الإجمالي: 45`
+        },
+
+        {
+          cmd: "قسّمه لملفات",
+          title: "خمس ملفات، ١٧٢ سطر، واتجاه واحد",
+          ref: [
+            { t: "MDN: JavaScript modules", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules" },
+            { t: "MDN: Understanding the module graph", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules/Module_graph" },
+            { t: "MDN: import", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import" },
+            { t: "MDN: export", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export" },
+          ],
+          pre: [
+            { to: "js/defer و async و module", why: R`[[<script type="module">]] وليه بيحتاج سيرفر مش [[file://]]` },
+            { to: "js/EventEmitter", why: R`[[subscribe]] في [[state.js]] هي نفس فكرة الـ EventEmitter بشكل أصغر` },
+          ],
+          learn: R`تقسّم تطبيق لوحدات لكل واحدة شغلة، وتعرف مين بيستورد مين.`,
+          out: R`تقدر تغيّر الشكل من غير ما تلمس المنطق، والعكس.`,
+          use: {
+            prog: R`التقسيم الغلط أسوأ من مفيش تقسيم. والمعيار مش «كام سطر» — المعيار **اتجاه الاعتماد**.`,
+            work: R`أول سؤال في أي كود جديد: «أغيّر ده منين؟». والتقسيم الكويس بيجاوب في ثانية.`,
+            cs: R`اتجاه الاعتماد (dependency direction) ومنع الدورات. والطبقة اللي تحت مبتعرفش اللي فوقها.`,
+          },
+          desc: R`التطبيق خلص: ١٧٢ سطر، شغّال، بيحفظ، بيتحقق، وفيه شاشات. وكله في ملف واحد.
+
+**والتقسيم مش عشان الملف طويل.** عشان كل حتة ليها سبب تغيير مختلف:
+
+| الملف | شغلته | بيتغيّر لما |
+|---|---|---|
+| [[storage.js]] | القراية والحفظ | تغيّر شكل المحفوظ |
+| [[validate.js]] | قواعد المدخلات | تضيف قاعدة |
+| [[state.js]] | الحالة والتغييرات | تضيف عملية |
+| [[render.js]] | الشاشة | تغيّر الشكل |
+| [[app.js]] | التوصيل | تضيف حدث |
+
+**والقاعدة الحقيقية هي اتجاه الاعتماد:**
+
+~~~text
+app.js  ──→  state.js  ──→  storage.js
+   │            │       ──→  validate.js
+   └────────→ render.js
+~~~
+
+[[storage]] و [[validate]] **مبيعرفوش حاجة** — لا عن الحالة ولا عن الصفحة. وعشان كده تقدر تختبرهم في Node من غير متصفح.
+
+[[state]] بيعرف الاتنين دول، ومش بيعرف الـ DOM خالص. **ولا سطر [[document]] فيه.**
+
+[[render]] بيقرا الحالة وبيكتب الصفحة، ومش بيغيّر حاجة.
+
+[[app]] هو الوحيد اللي بيعرف الكل — وهو أصغرهم، ٢٧ سطر.
+
+**والعلامة إن التقسيم غلط:** لما تلاقي ملفين بيستوردوا بعض. [[state]] يستورد [[render]]؟ يبقى الحالة بقت بتعرف الشكل، والتقسيم بقى شكلي.
+
+**وإزاي [[state]] بيعرف [[render]] يرسم؟** مبيعرفش. بينادي **مشتركين**:
+
+[[listeners.forEach(fn => fn(state))]]
+
+و [[app.js]] هو اللي بيوصّل: [[store.subscribe(s => render(s))]]. فالحالة بتقول «أنا اتغيّرت» ومش عارفة مين سامع. وده اللي بيخلي تغيير العرض مش بيلمس المنطق.`,
+          example: R`// state.js — مصدر الحقيقة. مش بيعرف الـ DOM خالص.
+import { load, save } from './storage.js';
+import { validateItem } from './validate.js';
+
+const listeners = new Set();
+let state = { ...load(), filter: 'all' };
+
+export const get = () => state;
+export const subscribe = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
+
+function set(next) {
+  state = next;
+  save(state);
+  listeners.forEach(fn => fn(state));        // «أنا اتغيّرت» — ومش عارف مين سامع
+}
+
+// app.js — التوصيل. وهو الوحيد اللي بيعرف الكل.
+import * as store from './state.js';
+import { render } from './render.js';
+
+store.subscribe((s) => render(s));
+
+document.querySelector('#f').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const res = store.addItem({ label: f.get('label'), amount: f.get('amount'), cat: f.get('cat') });
+  if (res.ok) e.target.reset();
+  else render(store.get(), res.errors);      // الحالة ما اتغيّرتش، بس الأخطاء بتتعرض
+});`,
+          lines: [
+            R`أول ملف: [[state.js]]. بيستورد [[load]] و [[save]] من [[storage.js]]، يعني بيعتمد على الملفات اللي تحته بس ومش بيعرف حاجة عن الـ DOM.`,
+            R`وبيستورد [[validateItem]] من [[validate.js]] عشان [[addItem]] تفحص قبل ما تضيف.`,
+            R`ليستة المشتركين: الدوال اللي عايزة تعرف لما الحالة تتغير. [[Set]] عشان نفس الدالة متتسجّلش مرتين، والإضافة والشيل بـ O(1).`,
+            R`الحالة الابتدائية: اللي [[load]] رجّعته (البنود المحفوظة) ومعاه [[filter]] بـ [[all]]. والمتغير مش متصدّر، فمحدش من برّه الملف يقدر يغيّره مباشرة.`,
+            R`[[get]] بترجّع الحالة الحالية للي عايز يقراها. قراية بس، والتغيير لازم يعدّي من [[set]].`,
+            R`[[subscribe]] بتضيف دالة للمشتركين وترجّع دالة **بتلغي** الاشتراك. مهمة عشان لو جزء من الشاشة اتشال ومألغاش اشتراكه، هيفضل يتنادى ويحجز ذاكرة (memory leak).`,
+            R`[[set]] هي المكان **الوحيد** اللي بيغيّر الحالة، ومش متصدّرة: الملفات التانية بتغيّر عن طريق دوال زي [[addItem]] اللي بتنادي [[set]].`,
+            R`بنستبدل الحالة بـ object جديد بدل ما نعدّل القديم. كده أي حد ماسك الحالة القديمة يقدر يقارن بـ [[===]] ويعرف إنها اتغيرت.`,
+            R`الحفظ في [[localStorage]] بيحصل هنا تلقائي مع كل تغيير، فمستحيل تضيف عملية جديدة وتنسى تحفظ.`,
+            R`وبعدين بنبلّغ كل المشتركين بالحالة الجديدة. [[state.js]] مش عارف مين سامع ولا بيعملوا إيه، وده اللي بيخليه مستقل عن الرسم.`,
+            R`نهاية [[set]].`,
+            R`تاني ملف: [[app.js]]. [[import * as store]] بيجيب كل اللي [[state.js]] مصدّره في object واحد اسمه [[store]]، فتكتب [[store.get()]] و [[store.addItem()]].`,
+            R`وبيستورد [[render]] من [[render.js]]. [[app.js]] هو الملف الوحيد اللي بيعرف الحالة والرسم الاتنين، وبيوصّلهم ببعض.`,
+            R`**وهنا التوصيلة**: بنشترك في الحالة بـ [[render]]، فكل تغيير بيرسم الشاشة من جديد لوحده. محدش محتاج يفتكر ينادي [[render]] بعد كل عملية.`,
+            R`بنسمع لـ [[submit]] على الفورم، وده بيشمل Enter في أي خانة.`,
+            R`نمنع الفورم يبعت ويعمل reload للصفحة.`,
+            R`[[FormData]] بتقرا كل خانات الفورم، وبنجيب كل قيمة بـ [[f.get]] واسم الخانة.`,
+            R`بنبعت القيم الخام لـ [[addItem]]، وهي بتفحص وترجّع [[{ ok, errors }]]. [[app.js]] مش بيفحص بنفسه، ولا بيلمس الحالة مباشرة.`,
+            R`عدّى؟ فضّي الفورم بس. الرسم حصل لوحده لأن [[addItem]] نادت [[set]] و [[set]] بلّغت المشتركين.`,
+            R`معدّاش؟ ارسم الحالة زي ما هي ومعاها الأخطاء عشان تظهر تحت الخانات. **والحالة ما اتغيّرتش** فمفيش إعلان، فلازم ننادي [[render]] بإيدنا هنا.`,
+            R`نهاية الـ [[submit]] listener.`,
+          ],
+          try: R`خد الخمس ملفات واعمل تطبيق تاني بيهم: قايمة مهام. هتلاقي إن [[storage.js]] بيتنقل **زي ما هو**، و [[state.js]] بيتغيّر فيه أسماء العمليات بس، و [[render.js]] هو اللي بيتكتب من جديد. ودي علامة إن التقسيم صح.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const off = store.subscribe(() => n++)]]، وبعدين ٣ إضافات سليمة، وإضافة فاضية، و [[off()]]، وإضافة كمان. قبل ما تشغّل، [[n]] هيبقى كام و [[items.length]] كام؟`, done: R`[[n]] بـ 3 (الإضافة الفاضية ما غيّرتش الحالة فمفيش إشعار، واللي بعد [[off()]] ماتسمعتش)، و [[items.length]] بـ 4. وكاتب السبب لكل رقم.`, sol: R`**التوقع:** [[n = 3]] و [[items.length = 4]].
+
+| الخطوة | [[set]] اتنادت؟ | [[n]] | البنود |
+|---|---|---|---|
+| ٣ إضافات سليمة | أيوه ٣ مرات | 3 | 3 |
+| إضافة فاضية | **لأ**: [[addItem]] رجعت بالأخطاء قبل [[set]] | 3 | 3 |
+| [[off()]] | المشترك اتشال من الـ [[Set]] | 3 | 3 |
+| إضافة كمان | أيوه، بس مفيش حد سامع | 3 | 4 |
+
+**التشغيل:** [[state.js]] و [[storage.js]] و [[validate.js]] من حل تمرين «اكسرها عن قصد»، وجنبهم:
+
+~~~js predict.mjs
+// predict.mjs: كام إشعار، وكام بند؟
+const mem = new Map();
+globalThis.localStorage = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, v) };
+const store = await import('./state.js');
+
+let n = 0;
+const off = store.subscribe(() => n++);
+store.addItem({ label: 'قهوة', amount: '45', cat: 'food' });
+store.addItem({ label: 'مترو', amount: '10', cat: 'transport' });
+store.addItem({ label: 'عيش', amount: '8', cat: 'food' });
+console.log('الإضافة الفاضية:', JSON.stringify(store.addItem({ label: '', amount: '' })));
+off();
+store.addItem({ label: 'شاي', amount: '5', cat: 'food' });
+console.log('n =', n, '| items.length =', store.get().items.length);
+~~~
+
+~~~text الناتج: node predict.mjs (Node 24.22)
+الإضافة الفاضية: {"ok":false,"errors":{"label":"اكتب على إيه صرفت","amount":"اكتب المبلغ"}}
+n = 3 | items.length = 4
+~~~
+
+- **ليه الفاضية مبلّغتش؟** الإشعار جوه [[set]]، و [[addItem]] بترجع بدري لما [[ok]] تبقى [[false]]. ده نفس السبب اللي خلّى [[app.js]] ينادي [[render(store.get(), res.errors)]] بإيده في فرع الغلط: مفيش تغيير، فمفيش إشعار، والأخطاء لازم تترسم برضه.
+- **ليه الأخيرة اتضافت من غير إشعار؟** [[off()]] شالت الدالة من المشتركين بس؛ الحالة نفسها اتغيّرت واتحفظت عادي. [[subscribe]] بترجّع دالة الإلغاء لأن [[listeners.delete(fn)]] محتاج **نفس** الدالة، ومن برّه مفيش طريقة توصلها غير كده.
+- **[[await import]]** بعد المزيّف لأن [[state.js]] بينادي [[load()]] أول ما يتحمّل، و [[localStorage]] لازم يكون موجود ساعتها.
+
+**الغلطة الشائعة:** تتوقع [[n = 4]] لأن «فيه ٤ محاولات إضافة قبل [[off]]». الإشعار على **التغيير**، مش على المحاولة.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** اختبر [[state.js]] في Node من غير متصفح: [[localStorage]] مزيّف الأول، وبعدين [[await import('./state.js')]]، وتأكد إن الحالة ما بتتغيّرش بداتا غلط.`, done: R`٣ إضافات سليمة وواحدة فاضية: [[get().items.length]] بـ 3 والمزيّف فيه 3 بنود محفوظة، والإضافة الفاضية رجّعت [[ok: false]]. والبحث عن [[document]] في [[state.js]] مبيلاقيش حاجة.`, sol: R`**بيستخدم [[state.js]] و [[storage.js]] و [[validate.js]] من حل تمرين «اكسرها عن قصد» زي ما هما.** ملف الاختبار جنبهم:
+
+~~~js state.test.mjs
+// state.test.mjs: state.js في Node، من غير متصفح
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+
+const mem = new Map();
+globalThis.localStorage = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, v) };
+const store = await import('./state.js');            // بعد المزيّف، مش قبله
+const saved = () => JSON.parse(mem.get('masareef')).items;
+
+test('٣ إضافات سليمة بتتحفظ', () => {
+  for (const [label, amount] of [['قهوة', '45'], ['مترو', '10'], ['عيش', '٨']]) {
+    assert.equal(store.addItem({ label, amount, cat: 'food' }).ok, true);
+  }
+  assert.equal(store.get().items.length, 3);
+  assert.equal(saved().length, 3);
+  assert.equal(store.total(store.get()), 63);
+});
+
+test('الإضافة الغلط مبتغيّرش الحالة ولا المحفوظ ولا بتبلّغ حد', () => {
+  const before = store.get();
+  let calls = 0;
+  const off = store.subscribe(() => calls++);
+  const res = store.addItem({ label: '', amount: '-5' });
+  off();
+  assert.equal(res.ok, false);
+  assert.deepEqual(Object.keys(res.errors), ['label', 'amount']);
+  assert.equal(store.get(), before);                 // نفس الـ object بالظبط
+  assert.equal(saved().length, 3);
+  assert.equal(calls, 0);
+});
+
+test('المسح بيرجّع object جديد', () => {
+  const before = store.get();
+  store.removeItem(before.items[0].id);
+  assert.notEqual(store.get(), before);
+  assert.equal(before.items.length, 3);              // القديم ما اتلمسش
+  assert.equal(store.get().items.length, 2);
+});
+
+test('state.js مفيهوش document', async () => {
+  const src = await readFile(new URL('./state.js', import.meta.url), 'utf8');
+  assert.equal(/\bdocument\b/.test(src), false);
+});
+~~~
+
+~~~text الناتج: node --test state.test.mjs (Node 24.22)
+✔ ٣ إضافات سليمة بتتحفظ
+✔ الإضافة الغلط مبتغيّرش الحالة ولا المحفوظ ولا بتبلّغ حد
+✔ المسح بيرجّع object جديد
+✔ state.js مفيهوش document
+ℹ tests 4
+ℹ pass 4
+ℹ fail 0
+~~~
+
+**كل اختبار بيثبت إيه:**
+
+- **الأول:** الحالة والمحفوظ الاتنين فيهم ٣، والإجمالي 63 (45 + 10 + 8، والـ [[٨]] العربي اتحوّل). يعني [[set]] بتحفظ لوحدها.
+- **التاني أهمهم:** [[assert.equal(store.get(), before)]] بيقارن **الـ reference** مش المحتوى. لو أي حاجة عملت حالة جديدة، حتى بنفس البنود، الاختبار هيقع. ومعاه: المحفوظ لسه ٣، وصفر إشعارات.
+- **التالت:** [[before.items.length]] لسه 3 بعد المسح: [[removeItem]] عملت مصفوفة جديدة ومعدّلتش القديمة (لو كانت [[splice]]، [[before]] كان هيتغيّر معاها).
+- **الرابع:** [[\bdocument\b]] بيدوّر على الكلمة كاملة في كود [[state.js]]. ده اختبار «معماري»: لو حد زوّد [[document.querySelector]] في الحالة، الاختبار يقع قبل ما التقسيم يبوظ. و [[new URL('./state.js', import.meta.url)]] بيجيب مسار الملف جنب الاختبار مهما كان الفولدر اللي شغّلت منه.
+
+**ملاحظة:** الاختبارات هنا بتشارك نفس الـ store (الموديول بيتحمّل مرة واحدة)، فالترتيب مهم: التاني والتالت بيعتمدوا على الـ ٣ بنود. ده مقبول في ملف صغير؛ ولو كبر، اعمل [[reset()]] للتجارب أو حمّل الموديول من جديد لكل اختبار ([[import('./state.js?' + n)]]).
+
+**الغلطة الشائعة:** [[import * as store from './state.js']] فوق الملف. جرّبتها، والمفاجأة إن الأربع اختبارات **عدّوا برضه**: الـ static import اتنفّذ قبل سطر المزيّف، فـ [[load()]] لقت [[localStorage]] مش موجود في Node ([[ReferenceError]]) والـ [[try]] رجّعها فاضية، ودي بالصدفة نفس البداية اللي الاختبارات مستنياها. بس جرّب تحط بند محفوظ في المزيّف قبل الاستيراد:
+
+~~~text الناتج (Node 24.22): بند واحد محفوظ في المزيّف
+static import: 0
+await import: 1
+~~~
+
+مع الـ static import البند المحفوظ اتجاهل ساكت. فأي اختبار لـ «التطبيق بيفتح بالمحفوظ» هيقع، وانت مش هتفهم ليه. القاعدة: المزيّف الأول، وبعدين [[await import]].` },
+            { lvl: 'تحدي', t: R`**ابني feature:** undo. خزّن الحالات القديمة في مصفوفة جوه [[state.js]] قبل كل [[set]]، و [[undo()]] بترجّع آخر واحدة. استغل إن كل تغيير بيعمل object جديد.`, done: R`ضيف ٣ بنود و [[undo()]] مرتين: فاضل بند واحد، والإجمالي صح، والمحفوظ في [[localStorage]] فيه بند واحد. و [[undo()]] من غير تاريخ مبتعملش حاجة ومبترميش، و [[render.js]] و [[storage.js]] ما اتغيّروش.`, sol: R`**[[state.js]] بالـ undo** (الملف بتاع حل تمرين «اكسرها عن قصد» ومعاه [[past]] و [[undo]]؛ [[storage.js]] و [[validate.js]] و [[render.js]] زي ما هما):
+
+~~~js state.js
+// state.js: نفس الملف، ومعاه undo. render.js و storage.js ما اتغيّروش.
+import { load, save } from './storage.js';
+import { validateItem } from './validate.js';
+
+const listeners = new Set();
+let state = { ...load(), filter: 'all' };
+const past = [];                                   // الحالات القديمة، الأحدث في الآخر
+const LIMIT = 50;
+
+export const get = () => state;
+export const subscribe = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
+export const canUndo = () => past.length > 0;
+
+function set(next, { record = true } = {}) {
+  if (record) {
+    past.push(state);                              // object قديم كامل، محدش هيعدّله
+    if (past.length > LIMIT) past.shift();
+  }
+  state = next;
+  save(state);
+  listeners.forEach(fn => fn(state));
+}
+
+export function undo() {
+  if (!past.length) return false;
+  const prev = past.pop();
+  set({ ...prev, filter: state.filter }, { record: false });   // الفلتر اختيار شاشة، مش بيرجع
+  return true;
+}
+
+export const visible = (s) =>
+  s.filter === 'all' ? s.items : s.items.filter(it => it.cat === s.filter);
+export const total = (s) => visible(s).reduce((sum, it) => sum + it.amount, 0);
+
+export function addItem(input) {
+  const { ok, errors, value } = validateItem(input);
+  if (!ok) return { ok, errors };
+  set({ ...state, items: [...state.items, { id: crypto.randomUUID(), ...value }] });
+  return { ok: true, errors: {} };
+}
+
+export const removeItem = (id) => set({ ...state, items: state.items.filter(it => it.id !== id) });
+export const setFilter = (filter) => set({ ...state, filter }, { record: false });
+export const reload = () => set({ ...state, ...load() }, { record: false });
+~~~
+
+~~~js undo.mjs
+// undo.mjs: ٣ بنود، و undo مرتين، و undo من غير تاريخ
+const mem = new Map();
+globalThis.localStorage = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, v) };
+const store = await import('./state.js');
+const show = (tag) => console.log(tag.padEnd(16), '| items:', store.get().items.map((i) => i.label).join('، ') || '-',
+  '| total:', store.total(store.get()), '| saved:', JSON.parse(mem.get('masareef') ?? '{"items":[]}').items.length);
+
+store.addItem({ label: 'قهوة', amount: '45', cat: 'food' });
+store.addItem({ label: 'مترو', amount: '10', cat: 'transport' });
+store.setFilter('food');
+store.addItem({ label: 'عيش', amount: '8', cat: 'food' });
+show('بعد ٣ إضافات');
+store.undo(); show('undo');
+store.undo(); show('undo تاني');
+console.log('الفلتر لسه:', store.get().filter);
+store.undo(); show('undo تالت');
+console.log('undo من غير تاريخ:', store.undo(), '| canUndo:', store.canUndo());
+show('بعدها');
+~~~
+
+~~~text الناتج: node undo.mjs (Node 24.22)
+بعد ٣ إضافات     | items: قهوة، مترو، عيش | total: 53 | saved: 3
+undo             | items: قهوة، مترو | total: 45 | saved: 2
+undo تاني        | items: قهوة | total: 45 | saved: 1
+الفلتر لسه: food
+undo تالت        | items: - | total: 0 | saved: 0
+undo من غير تاريخ: false | canUndo: false
+بعدها            | items: - | total: 0 | saved: 0
+~~~
+
+**اقرا الأرقام:** الفلتر [[food]]، فالإجمالي بيجمع الأكل بس: بعد ٣ إضافات 45 + 8 = 53، وبعد أول undo «عيش» راح فبقى 45، وبعد التاني «مترو» راح وهو مش أكل فالإجمالي فضل 45. و [[saved]] بيتبع الحالة في كل خطوة لأن [[undo]] بتعدّي على [[set]] اللي بتحفظ.
+
+**ليه ده سهل هنا؟** لأن كل تغيير بيعمل object جديد ([[{ ...state, items: [...] }]])، فـ [[past.push(state)]] بيخزّن صورة مبتتغيّرش. لو الكود كان بيعمل [[state.items.push(...)]]، كل الحالات اللي في [[past]] كانت هتبقى **نفس** المصفوفة وتتغيّر معاها، والـ undo مش هيرجّع حاجة.
+
+**قرارات في الكود:**
+- **[[record]]:** الفلتر و [[reload]] مش «أفعال» اليوزر عايز يرجع فيها، فمبيتسجّلوش. ولو اتسجّلوا، undo بعد ضغطة فلتر كان هيرجّع الفلتر بدل البند.
+- **[[{ ...prev, filter: state.filter }]]:** الحالة القديمة بس بالفلتر الحالي، عشان undo ميرجّعكش لشاشة تانية فجأة.
+- **[[LIMIT]]:** من غيره [[past]] بيكبر مع كل تغيير طول ما الصفحة مفتوحة.
+- **[[undo()]] بترجّع [[false]]** لما مفيش تاريخ، فزرار «تراجع» يتعطل بـ [[canUndo()]].
+
+**ولربطه بالشاشة** (في [[app.js]] بس): زرار [[<button id="undo">]] مستمعه [[store.undo()]]، و [[addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'z') store.undo(); })]]. و [[render.js]] و [[storage.js]] مفيهمش ولا تغيير، وده الإثبات إن الحالة متعزولة.
+
+**الغلطة الشائعة:** تعمل undo بإنك تحفظ «العملية العكسية» (اتضاف بند؟ امسحه). بتشتغل لحد ما تيجي عملية ملهاش عكس واضح (استيراد، تعديل مجموعة). تخزين الحالات الكاملة أبسط وأضمن، والتكلفة صغيرة لأن البنود اللي متغيّرتش مشتركة بين النسخ.` },
+          ],
+          deep: {
+            why: R`الكود بيتقري أكتر ما بيتكتب. والسؤال «أغيّر ده منين؟» بيتجاوب من أسماء الملفات لو التقسيم صح، وبيحتاج قراية الكل لو غلط.`,
+            how: R`**ليه [[Set]] للمشتركين؟** عشان الإضافة والشيل بـ O(1)، ومفيش تكرار لو نفس الدالة اتسجّلت مرتين. و [[subscribe]] بترجّع دالة إلغاء — ودي مهمة في تطبيق فيه أجزاء بتظهر وتختفي، وإلا بتتراكم مستمعين على حاجات مش موجودة (تسريب ذاكرة).
+
+**والاستبدال مش التعديل:**
+
+~~~js
+set({ ...state, items: [...state.items, newItem] });    // ✓
+state.items.push(newItem);                               // ✗
+~~~
+
+الأول بيدّي object جديد، فتقدر تقارن [[prev !== next]] وتعرف إن فيه تغيير. والتاني بيعدّل في مكانه، فالمقارنة بتقول «نفس الحاجة» وانت مش هتعرف ترسم. ودي نفس فكرة **immutability** في Redux و React.
+
+**وفايدة تانية:** لو خزّنت الحالات القديمة، بقى عندك **undo** ببلاش.
+
+**والدورات (circular imports):** لو [[a.js]] بيستورد [[b.js]] و [[b.js]] بيستورد [[a.js]]، الكود ممكن يشتغل وممكن يقع حسب الترتيب — وده من أوحش الباجات. والحل إنك تطلّع المشترك لملف تالت، أو تعكس الاتجاه بالـ callback زي ما عملنا هنا.
+
+**وليه [[type="module"]]؟**
+
+~~~html
+<script type="module" src="./app.js"></script>
+~~~
+
+بيدّيك [[import]]/[[export]]، و scope لكل ملف (مفيش متغيرات عامة بتتصادم)، و [[defer]] تلقائي (بيستنى الـ DOM)، و strict mode تلقائي. **بس** بيحتاج سيرفر — [[file://]] مش هتشتغل معاه بسبب CORS. وأبسط سيرفر: [[python3 -m http.server]] أو [[npx serve]].
+
+**وهل أقسّم أكتر؟** الملفات هنا بين ١٦ و٣٥ سطر. والزيادة بتبقى مفيدة لما:
+
+| العلامة | القسمة المقترحة |
+|---|---|
+| [[render.js]] بقى فيه خمس شاشات | ملف لكل شاشة في فولدر [[views/]] |
+| [[state.js]] فيه حاجتين مش مترابطين | store لكل واحد، وكل واحد ليه [[subscribe]] |
+| نفس الكود في تلات أماكن | [[utils.js]] |
+
+**ومعيار بسيط:** لو عشان تضيف خاصية لازم تفتح أربع ملفات، التقسيم زيادة. ولو لازم تقرا ملف واحد كبير من أوله، التقسيم ناقص.
+
+**وبعد كده؟** التطبيق ده جاهز لـ:
+- **اختبارات** — [[validate.js]] و [[storage.js]] بيتختبروا في Node مباشرة (تاب node ← [[node --test]]).
+- **TypeScript** — الحالة ليها شكل واضح، فإضافة الأنواع مباشرة (تاب ts).
+- **فريمورك** — [[state.js]] بيتحول لـ store، و [[render.js]] لمكوّنات. و٩٠٪ من المنطق بينتقل زي ما هو.`,
+            when: R`من أول ما التطبيق يبقى أكتر من شاشة أو حاجة محفوظة. والتقسيم المبكر أرخص من التفكيك المتأخر.`,
+            mistakes: R`تقسّم بالنوع (كل الدوال في ملف، كل الثوابت في ملف) بدل الشغلة. أو تخلي [[state]] يعرف الـ DOM. أو تنسى [[type="module"]]. أو تعمل دورة استيراد. أو تقسّم تطبيق من ٥٠ سطر لثمن ملفات.`
+          },
+          teach: R`## التطبيق خلص: ١٧٢ سطر، خمس ملفات
+
+~~~text
+app.js        27 سطر   التوصيل
+render.js     33 سطر   الشاشة
+state.js      35 سطر   الحالة
+storage.js    34 سطر   الحفظ
+validate.js   16 سطر   القواعد
+index.html    27 سطر
+~~~
+
+---
+
+## ١. والتقسيم مش عشان الملف طويل
+
+**عشان كل حتة ليها سبب تغيير مختلف.**
+
+| الملف | بيتغيّر لما |
+|---|---|
+| [[storage.js]] | تغيّر شكل المحفوظ أو مكانه (مثلًا IndexedDB) |
+| [[validate.js]] | تضيف قاعدة على المدخلات |
+| [[state.js]] | تضيف عملية على الحالة زي «عدّل بند» |
+| [[render.js]] | تغيّر شكل الصفحة أو ترتيب العناصر |
+| [[app.js]] | تضيف حدث أو توصّل حاجة جديدة ببعض |
+
+---
+
+## ٢. والقاعدة الحقيقية: **اتجاه الاعتماد**
+
+~~~text
+app.js  ──→  state.js  ──→  storage.js
+   │            │       ──→  validate.js
+   └────────→ render.js
+~~~
+
+| الملف | بيعرف |
+|---|---|
+| [[storage]] · [[validate]] | **مفيش** — لا حالة ولا DOM |
+| [[state]] | الاتنين دول. **ولا سطر [[document]]** |
+| [[render]] | بيقرا الحالة وبيكتب الصفحة |
+| [[app]] | الكل — وهو **أصغرهم** |
+
+> لأن [[storage]] و [[validate]] مش عارفين حاجة، تقدر تختبرهم في **Node من غير متصفح**.
+
+---
+
+## ٣. وإزاي [[state]] بيعرف [[render]] يرسم؟ مبيعرفش.
+
+~~~js state.js
+const listeners = new Set();
+
+export const subscribe = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
+
+function set(next) {
+  state = next;
+  save(state);                            // الحفظ تلقائي — مستحيل تنساه
+  listeners.forEach(fn => fn(state));     // «أنا اتغيّرت» — ومش عارف مين سامع
+}
+~~~
+
+~~~js app.js — هو اللي بيوصّل
+store.subscribe((s) => render(s));
+~~~
+
+**وعشان كده تغيير العرض مش بيلمس المنطق.**
+
+---
+
+## ٤. والاستبدال مش التعديل
+
+~~~js
+set({ ...state, items: [...state.items, newItem] });    // ✓ object جديد
+state.items.push(newItem);                               // ✗ تعديل في مكانه
+~~~
+
+الأول بيخليك تقارن [[prev !== next]] وتعرف إن فيه تغيير. والتاني المقارنة بتقول «نفس الحاجة».
+
+ودي نفس فكرة **immutability** في React و Redux. **وفايدة ببلاش:** خزّن الحالات القديمة، بقى عندك **undo**.
+
+---
+
+## ٥. العلامة إن التقسيم غلط
+
+**ملفين بيستوردوا بعض.**
+
+[[state]] يستورد [[render]]؟ يبقى الحالة بقت بتعرف الشكل، والتقسيم بقى شكلي.
+
+والدورة (circular import) ممكن تشتغل وممكن تقع حسب الترتيب — ومن أوحش الباجات. الحل: طلّع المشترك لملف تالت، أو اعكس الاتجاه بالـ callback زي فوق.
+
+---
+
+## ٦. [[type="module"]]
+
+~~~html
+<script type="module" src="./app.js"></script>
+~~~
+
+| بيدّيك | |
+|---|---|
+| [[import]]/[[export]] | كل ملف بيقول بيحتاج إيه وبيدّي إيه |
+| scope لكل ملف | مفيش متغيرات عامة بتتصادم |
+| [[defer]] تلقائي | بيستنى الـ DOM يخلص قبل ما يشتغل |
+| strict mode | تلقائي |
+
+**بس بيحتاج سيرفر.** [[file://]] مش هتشتغل (CORS).
+
+~~~bash
+python3 -m http.server 8000     # أو
+npx serve
+~~~
+
+---
+
+## ٧. أقسّم أكتر؟
+
+| العلامة | القسمة |
+|---|---|
+| [[render.js]] فيه خمس شاشات | ملف لكل شاشة |
+| [[state.js]] فيه حاجتين مش مترابطين | store لكل واحد |
+| نفس الكود في تلات أماكن | [[utils.js]] |
+
+**معيار بسيط:** لازم تفتح أربع ملفات عشان تضيف خاصية؟ التقسيم **زيادة**. لازم تقرا ملف كبير من أوله؟ **ناقص**.
+
+---
+
+## ٨. وبعد كده؟
+
+| الخطوة | ليه جاهز |
+|---|---|
+| **اختبارات** | [[validate.js]] و [[storage.js]] بيتختبروا في Node مباشرة |
+| **TypeScript** | الحالة ليها شكل واضح |
+| **فريمورك** | [[state]] يبقى store، و [[render]] مكوّنات — و٩٠٪ من المنطق بينتقل |
+
+---
+
+## الخلاصة
+
+- قسّم بالشغلة، مش بالنوع.
+- اتجاه واحد: [[app]] ← [[state]] ← [[storage]]/[[validate]].
+- [[state]] مبيعرفش الـ DOM.
+- الاشتراك بدل ما الحالة تعرف الشكل.
+- استبدل، متعدّلش.
+- ملفين بيستوردوا بعض = التقسيم غلط.`,
+          sol: R`الخمس ملفات واتجاه الاعتماد، والتطبيق كله اشتغل في Chrome.`,
+          solCode: R`// الاتجاه:
+//   app.js  ──→  state.js  ──→  storage.js
+//      │            │       ──→  validate.js
+//      └────────→ render.js
+
+// state.js — ولا سطر document فيه
+const listeners = new Set();
+export const subscribe = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
+function set(next) {
+  state = next;
+  save(state);                             // الحفظ تلقائي
+  listeners.forEach(fn => fn(state));      // مش عارف مين سامع
+}
+
+// app.js — هو اللي بيوصّل
+store.subscribe((s) => render(s));
+
+// الأحجام الحقيقية:
+//   app.js 27 | render.js 33 | state.js 35 | storage.js 34 | validate.js 16 | index.html 27
+//   = 172 سطر، تطبيق شغّال بيحفظ ويتحقق وفيه شاشات، من غير أي مكتبة`
+        }
+      ]
     }
 ]);

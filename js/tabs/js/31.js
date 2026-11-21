@@ -1,250 +1,122 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "PWA و service worker",
+      t: "APIs المتصفح",
       l: 3,
-      n: "الموقع يتسطّب ويشتغل من غير نت: manifest، ودورة حياة الـ SW، واستراتيجيات الكاش، وزرار «نسخة جديدة»، و IndexedDB ومساحة التخزين، والـ push و Background Sync",
+      n: "IntersectionObserver و ResizeObserver و MutationObserver، ورفع الملفات بمعاينة و progress، ودورة حياة الصفحة و bfcache، و pushState، والإشعارات و Permissions API",
       pre: [
-        { to: "js/تختار تخزين إيه: cookies و Storage و Cache و IndexedDB", why: R`الوحدة دي كلها Cache API و IndexedDB، والدرس ده بيقارنهم بالأرقام` },
-        { to: "js/fetch و AbortController", why: R`الـ service worker بيعترض طلبات [[fetch]] ويرد عليها، والـ timeout والإلغاء في الاستراتيجيات` },
-        { to: "js/async و await", why: R`كل حاجة في الـ SW و IndexedDB بترجّع Promise، و [[waitUntil]] بياخد Promise` },
-        { to: "js/visibilitychange و bfcache", why: R`حفظ الحالة قبل ما الصفحة تتخبى، ومعنى إن التطبيق «رجع» للمستخدم` },
-        { to: "js/Notification و permissions", why: R`الإذن والإشعار من الصفحة قبل ما تعمله من الـ SW في درس push` },
+        { to: "js/window و navigator و document", why: R`كل API هنا معلّق على [[window]] أو [[navigator]] أو [[document]]` },
+        { to: "js/event delegation", why: R`listener واحد على الأب للكروت واللينكات، في أغلب التمارين` },
+        { to: "js/fetch و AbortController", why: R`الـ feed والرفع بيستخدموا timeout وإلغاء` },
+        { to: "js/Web Storage: localStorage و sessionStorage", why: R`المسودات والمكان اللي وقفت فيه، ومع try لأن التخزين ممكن يبقى ممنوع` },
+        { to: "js/microtasks و macrotasks", why: R`الـ MutationObserver بيسلّم التغييرات في microtask، وده سبب نصّ تمارينه` },
       ],
       projects: [
-        { lvl: 'صغير', dir: "installable-site", t: R`مشروع قديم يتسطّب`, what: R`خد أي موقع عملته قبل كده وزوّد له [[manifest.webmanifest]] كامل (درس ١): [[name]] و [[short_name]] و [[start_url]] و [[display]] وأيقونة 192 و 512 وأيقونة maskable، واربطه من كل صفحة.`, done: R`Application ← Manifest مفيهوش ولا warning، وأيقونة التسطيب بتظهر في شريط العنوان في Chrome (ده محتاج كمان service worker بسيط لو المتصفح طالبه)، والتطبيق بعد التسطيب بيفتح في شباك لوحده بالاسم والأيقونة بتوعك، والأيقونة الـ maskable جوه دايرة الأمان في معاينة DevTools.`, sol: R`## الشكل النهائي
+        { lvl: 'صغير', dir: "back-to-top", t: R`زرار «ارجع لفوق» من غير scroll listener`, what: R`div صغير في أول الصفحة عليه [[IntersectionObserver]] (درس ١): لما يخرج من الشاشة يظهر زرار «لفوق» ثابت في الركن، ولما يرجع يختفي. والزرار بيعمل [[scrollTo({ top: 0, behavior: "smooth" })]].`, done: R`الزرار مش ظاهر وانت في أول الصفحة، بيظهر بعد ما تنزل شوية ويختفي لما ترجع، ومفيش ولا [[addEventListener("scroll")]] في الكود، و Performance في DevTools مفيهوش شغل JS مستمر وانت بتعمل scroll.`, sol: R`## الشكل النهائي
 
-~~~view 300
+~~~view 420
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مذاكرتي</title>
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#1f2430">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>مقالة طويلة</title>
 <style>
-  body { font: 16px/1.7 system-ui, sans-serif; margin: 0; background: #f8fafc; }
-  header { background: #1f2430; color: #fff; padding: 16px; display: flex; gap: 12px; align-items: center; }
-  header img { width: 40px; height: 40px; }
-  main { padding: 16px; max-width: 640px; margin: auto; }
-  .card { background: #fff; border-radius: 10px; padding: 12px 16px; margin-bottom: 12px; box-shadow: 0 1px 3px #0001; }
-  @media (display-mode: standalone) { .browser-only { display: none; } }   /* بعد التسطيب */
+  body { font: 16px/1.8 system-ui, sans-serif; margin: 0; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; }
+  #top-sentinel { position: absolute; top: 0; width: 1px; height: 400px; pointer-events: none; }   /* أول 400px من الصفحة */
+  #to-top {
+    position: fixed; inset-inline-end: 16px; bottom: 16px;
+    font: inherit; padding: 10px 14px; border: 0; border-radius: 999px;
+    background: #1d4ed8; color: #fff; box-shadow: 0 2px 8px #0003;
+    opacity: 0; transform: translateY(12px); pointer-events: none;
+    transition: opacity .2s, transform .2s;
+  }
+  #to-top.show { opacity: 1; transform: none; pointer-events: auto; }
+  @media (prefers-reduced-motion: reduce) { #to-top { transition: none; } }
 </style>
 </head>
 <body>
-<header><img src="icons/icon-192.png" alt=""><h1 style="margin:0;font-size:20px">مذاكرتي</h1></header>
+<div id="top-sentinel"></div>
 <main>
-  <div class="card">جدول المذاكرة النهارده: الـ closures، وبعدين تمرينين.</div>
-  <div class="card browser-only">ثبّت الموقع كتطبيق من أيقونة التسطيب في شريط العنوان.</div>
+  <h1>إزاي تذاكر برمجة كل يوم</h1>
+  <p>اقرا الفقرة دي وانزل لتحت. الزرار هيظهر في الركن بعد ما تنزل حوالي 400px.</p>
 </main>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** الموقع زي ما هو (هنا صفحة «مذاكرتي» بسيطة مكان موقعك القديم)، بس Chrome بقى بيعرض أيقونة التسطيب في شريط العنوان، والتطبيق بعد التسطيب بيفتح في شباك لوحده باسمه وأيقونته. وكارت «ثبّت الموقع» بيختفي جوه التطبيق المتسطّب ([[display-mode: standalone]]).
-
-## الملفات
-
-~~~text
-installable-site/
-├── index.html               # أي صفحة في موقعك: سطر <link rel="manifest"> في الـ head
-├── manifest.webmanifest
-└── icons/
-    ├── icon-192.png
-    ├── icon-512.png
-    └── maskable-512.png     # اللوجو جوه دايرة 80٪ والخلفية مليانة
-~~~
-
-الأيقونات اتعملت بـ canvas بنفس كود تمرين «الأيقونة الـ maskable» (افتح الصفحة دي ونزّل الـ PNG، وعدّل الحجم لـ 192 للصغيرة).
-
-~~~json manifest.webmanifest
-{
-  "name": "مذاكرتي",
-  "short_name": "مذاكرتي",
-  "lang": "ar",
-  "dir": "rtl",
-  "start_url": "./",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#1f2430",
-  "theme_color": "#1f2430",
-  "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
-  ]
-}
-~~~
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مذاكرتي</title>
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#1f2430">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<style>
-  body { font: 16px/1.7 system-ui, sans-serif; margin: 0; background: #f8fafc; }
-  header { background: #1f2430; color: #fff; padding: 16px; display: flex; gap: 12px; align-items: center; }
-  header img { width: 40px; height: 40px; }
-  main { padding: 16px; max-width: 640px; margin: auto; }
-  .card { background: #fff; border-radius: 10px; padding: 12px 16px; margin-bottom: 12px; box-shadow: 0 1px 3px #0001; }
-  @media (display-mode: standalone) { .browser-only { display: none; } }   /* بعد التسطيب */
-</style>
-</head>
-<body>
-<header><img src="icons/icon-192.png" alt=""><h1 style="margin:0;font-size:20px">مذاكرتي</h1></header>
-<main>
-  <div class="card">جدول المذاكرة النهارده: الـ closures، وبعدين تمرينين.</div>
-  <div class="card browser-only">ثبّت الموقع كتطبيق من أيقونة التسطيب في شريط العنوان.</div>
-</main>
-</body>
-</html>
-~~~
-
-## الشرح
-
-- **[[<link rel="manifest">]] في كل صفحة:** المتصفح بيقرا الـ manifest من الصفحة اللي انت فيها. لو حطيته في الرئيسية بس، اللي داخل من صفحة مقالة مش هيشوف أيقونة التسطيب.
-- **[[name]] و [[short_name]]:** الطويل في شاشة التسطيب، والقصير تحت الأيقونة على الموبايل.
-- **[[start_url: "./"]] و [[scope: "./"]]:** نسبيين للـ manifest، فالموقع يشتغل لو اتنقل لفولدر تاني. التطبيق المتسطّب بيفتح على [[start_url]]، وأي لينك برا الـ [[scope]] بيفتح في المتصفح العادي.
-- **[[display: "standalone"]]:** شباك لوحده من غير شريط عنوان. و [[@media (display-mode: standalone)]] في الـ CSS بيخلّيك تخفي حاجات مالهاش لازمة جوه التطبيق.
-- **[[theme_color]] و [[<meta name="theme-color">]]:** لون شريط العنوان والشباك. الاتنين نفس اللون، عشان الصفحة قبل التسطيب وبعده نفس الشكل.
-- **[[apple-touch-icon]]:** Safari على iPhone بياخد أيقونة الشاشة الرئيسية من السطر ده مش من الـ manifest.
-
-## اتقاس
-
-Chrome 158 headless على [[http://localhost:8831]] بـ profile عادي (مش incognito)، والـ manifest اتقرا من DevTools Protocol ([[Page.getAppManifest]] و [[Page.getInstallabilityErrors]]، نفس اللي Application ← Manifest بيعرضه)، وأداة تمرين «check-manifest»:
-
-~~~text الناتج (Chrome 158 headless + node check-manifest.mjs)
-manifest errors: []
-display: kStandalone | name: مذاكرتي | icons: 3 | start_url: http://localhost:8831/
-installability errors: []
-service workers: 0
-check-manifest exit=0
-~~~
-
-**اكتشاف:** [[installability errors: []]] **من غير أي service worker** ([[service workers: 0]]). Chrome الحالي مبقاش بيطلب SW عشان يعرض التسطيب، الـ manifest الكامل كفاية. (المطلوب في المشروع قال «محتاج كمان service worker بسيط لو المتصفح طالبه»، و Chrome 158 مطلبهوش.) الـ SW لسه لازم عشان التطبيق يفتح من غير نت، وده المشروع اللي جاي.
-
-- وفي أول تجربة، من profile مؤقت زي اللي Playwright بيستخدمه افتراضيًا، السبب الوحيد اللي ظهر كان [[in-incognito]]: Chrome مبيسطّبش من incognito. عشان كده القياس ده بـ [[launchPersistentContext]].
-- معاينة الـ maskable اتقاست بالبكسل في تمرين الأيقونة: صفر بكسلات برا دايرة الأمان.
-
-**الغلطة الشائعة:** تحط الأيقونة 512 بس. Android بيدوّر على 192 للشاشة الرئيسية، ولو مش موجودة بيصغّر الكبيرة وبتطلع مموّهة أو بيرفض التسطيب في متصفحات تانية.` },
-        { lvl: 'صغير', dir: "offline-page", t: R`صفحة «انت offline» محترمة`, what: R`service worker صغير (درس ٢) بيعمل precache لـ [[offline.html]] وملف CSS بتاعها بس، وفي الـ fetch لأي [[navigate]] بيجرّب الشبكة ولو فشلت يرجّع [[offline.html]] (درس ٣).`, done: R`Network ← Offline وتفتح أي صفحة حتى لو مزرتهاش: [[offline.html]] بتظهر بالـ CSS بتاعها مش ديناصور Chrome، ولما ترجع Online الصفحات بترجع عادي، والصور والـ API مش بيتكيّشوا (Cache storage فيه ملفين بس).`, sol: R`## الشكل النهائي
-
-دي الصفحة اللي بتظهر لأي صفحة في الموقع وانت Offline:
-
-~~~view 320
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>انت offline</title>
-<link rel="stylesheet" href="/offline.css">
-</head>
-<body>
-<main class="box">
-  <div class="icon" aria-hidden="true">📡</div>
-  <h1>النت فاصل</h1>
-  <p>الصفحة دي محتاجة نت. أول ما يرجع، جرّب تاني.</p>
-  <button type="button" id="retry">جرّب تاني</button>
-</main>
-<script>document.querySelector("#retry").addEventListener("click", () => location.reload());</script>
-</body>
-</html>
-~~~
-
-(في المعاينة دي الـ CSS مش ظاهر لأن [[/offline.css]] ملف لوحده على السيرفر. على الموقع الحقيقي الخلفية كحلي والزرار أصفر، والقياس تحت بيأكد إن الـ CSS اتحمّل من الكاش Offline.)
-
-**هتشوف إيه:** Offline، أي صفحة (حتى لو عمرك ما زرتها) بتطلّع «النت فاصل» بتصميم الموقع وزرار «جرّب تاني» بدل ديناصور Chrome. Online كل حاجة عادي.
-
-## الملفات
-
-~~~text
-offline-page/
-├── index.html      # موقعك، وسطر تسجيل الـ SW
-├── offline.html
-├── offline.css
-└── sw.js
-~~~
-
-~~~js sw.js
-const CACHE = "offline-v1";
-const OFFLINE = ["/offline.html", "/offline.css"];
-
-self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(OFFLINE)));
-  self.skipWaiting();
-});
-
-self.addEventListener("activate", (e) => {
-  e.waitUntil((async () => {
-    for (const k of await caches.keys()) if (k !== CACHE) await caches.delete(k);
-    await self.clients.claim();
-  })());
-});
-
-self.addEventListener("fetch", (e) => {
-  const req = e.request;
-  if (req.mode === "navigate") {
-    // صفحة: جرّب الشبكة، ولو فشلت رجّع offline.html (ومفيش تكييش لأي صفحة)
-    e.respondWith(fetch(req).catch(() => caches.match("/offline.html")));
-    return;
-  }
-  if (new URL(req.url).pathname === "/offline.css") {
-    e.respondWith(caches.match("/offline.css").then((hit) => hit ?? fetch(req)));
-  }
-  // أي حاجة تانية (صور، API): الـ SW مبيلمسهاش، بتروح للشبكة عادي
-});
-~~~
-
-~~~html offline.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>انت offline</title>
-<link rel="stylesheet" href="/offline.css">
-</head>
-<body>
-<main class="box">
-  <div class="icon" aria-hidden="true">📡</div>
-  <h1>النت فاصل</h1>
-  <p>الصفحة دي محتاجة نت. أول ما يرجع، جرّب تاني.</p>
-  <button type="button" id="retry">جرّب تاني</button>
-</main>
-<script>document.querySelector("#retry").addEventListener("click", () => location.reload());</script>
-</body>
-</html>
-~~~
-
-~~~css offline.css
-body { margin: 0; min-height: 100vh; display: grid; place-items: center; font: 16px/1.7 system-ui, sans-serif; background: #1f2430; color: #f8fafc; }
-.box { text-align: center; padding: 24px; max-width: 360px; }
-.icon { font-size: 56px; }
-h1 { margin: 8px 0; }
-button { font: inherit; padding: 8px 20px; border: 0; border-radius: 999px; background: #fbbf24; color: #1f2430; cursor: pointer; }
-~~~
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>الرئيسية</title></head>
-<body>
-<h1>الموقع</h1>
-<p><a href="/about.html">عننا</a> | <a href="/blog/post-1.html">مقالة</a></p>
-<img src="/logo.svg" alt="" width="80">
+<button id="to-top" aria-label="ارجع لأول الصفحة" tabindex="-1">↑ لفوق</button>
 <script>
-  if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
-  fetch("/api/stats.json").then((r) => r.json()).then((d) => console.log("api", d.visits));
+  // محتوى طويل للتجربة
+  const main = document.querySelector("main");
+  for (let i = 1; i <= 30; i++) main.insertAdjacentHTML("beforeend", $__bt<p>فقرة $__{i}: خصّص وقت ثابت، واكتب كود بإيدك، وراجع اللي فات قبل ما تبدأ الجديد.</p>$__bt);
+
+  const btn = document.querySelector("#to-top");
+  const sentinel = document.querySelector("#top-sentinel");
+
+  new IntersectionObserver(([entry]) => {
+    const show = !entry.isIntersecting;            // أول الصفحة خرج من الشاشة
+    btn.classList.toggle("show", show);
+    btn.tabIndex = show ? 0 : -1;                  // مخفي = مش في ترتيب Tab
+  }, { root: document }).observe(sentinel);
+
+  btn.addEventListener("click", () => {
+    const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
+  });
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** مقالة طويلة. انزل جوه الصفحة اللي فوق: بعد حوالي 400px زرار «↑ لفوق» بيظهر في الركن بحركة خفيفة، والضغط عليه بيطلعك لأول الصفحة بنعومة والزرار بيختفي.
+
+## الكود
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مقالة طويلة</title>
+<style>
+  body { font: 16px/1.8 system-ui, sans-serif; margin: 0; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; }
+  #top-sentinel { position: absolute; top: 0; width: 1px; height: 400px; pointer-events: none; }   /* أول 400px من الصفحة */
+  #to-top {
+    position: fixed; inset-inline-end: 16px; bottom: 16px;
+    font: inherit; padding: 10px 14px; border: 0; border-radius: 999px;
+    background: #1d4ed8; color: #fff; box-shadow: 0 2px 8px #0003;
+    opacity: 0; transform: translateY(12px); pointer-events: none;
+    transition: opacity .2s, transform .2s;
+  }
+  #to-top.show { opacity: 1; transform: none; pointer-events: auto; }
+  @media (prefers-reduced-motion: reduce) { #to-top { transition: none; } }
+</style>
+</head>
+<body>
+<div id="top-sentinel"></div>
+<main>
+  <h1>إزاي تذاكر برمجة كل يوم</h1>
+  <p>اقرا الفقرة دي وانزل لتحت. الزرار هيظهر في الركن بعد ما تنزل حوالي 400px.</p>
+</main>
+<button id="to-top" aria-label="ارجع لأول الصفحة" tabindex="-1">↑ لفوق</button>
+<script>
+  // محتوى طويل للتجربة
+  const main = document.querySelector("main");
+  for (let i = 1; i <= 30; i++) main.insertAdjacentHTML("beforeend", $__bt<p>فقرة $__{i}: خصّص وقت ثابت، واكتب كود بإيدك، وراجع اللي فات قبل ما تبدأ الجديد.</p>$__bt);
+
+  const btn = document.querySelector("#to-top");
+  const sentinel = document.querySelector("#top-sentinel");
+
+  new IntersectionObserver(([entry]) => {
+    const show = !entry.isIntersecting;            // أول الصفحة خرج من الشاشة
+    btn.classList.toggle("show", show);
+    btn.tabIndex = show ? 0 : -1;                  // مخفي = مش في ترتيب Tab
+  }, { root: document }).observe(sentinel);
+
+  btn.addEventListener("click", () => {
+    const smooth = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
+  });
 </script>
 </body>
 </html>
@@ -252,335 +124,115 @@ button { font: inherit; padding: 8px 20px; border: 0; border-radius: 999px; back
 
 ## الشرح
 
-- **[[install]]:** بيكيّش الملفين دول بس ([[cache.addAll]]). لو واحد فيهم مش موجود على السيرفر، الـ [[addAll]] كله بيفشل والـ SW مبيتسطّبش، فتعرف على طول.
-- **[[req.mode === "navigate"]]:** ده طلب صفحة (لينك أو refresh أو كتابة URL)، مش صورة ولا fetch. [[fetch(req)]] الأول، ولو رمى (مفيش نت) [[caches.match("/offline.html")]]. الصفحات نفسها **مبتتكيّشش**، فـ Online بتاخد آخر نسخة دايمًا.
-- **[[/offline.css]] من الكاش:** [[offline.html]] بتطلبه وهي Offline، فلازم الـ SW يرد عليه من الكاش. أي طلب تاني (الصورة والـ API) الـ SW مبيعملش له [[respondWith]]، فبيروح للشبكة عادي ومبيتكيّشش.
-- **[[activate]]:** بيمسح أي كاش اسمه مش [[offline-v1]]، فلما تغيّر الاسم لـ [[v2]] القديم بيتشال.
-- **[[skipWaiting()]] و [[clients.claim()]]:** الـ SW بيشتغل من أول زيارة من غير refresh. مقبول هنا لأن الـ SW مش بيغيّر شكل الصفحات المفتوحة، بس بيحميها لو النت قطع.
-- **الزرار بـ [[addEventListener]] مش [[onclick=""]]:** لو الموقع عليه CSP، الـ inline handler هيتمنع (درس «event handlers»).
+- **[[#top-sentinel]]:** عنصر شفاف [[position: absolute]] في أول الصفحة طوله 400px. مش بيبان ومش بياخد مكان في المقالة. الـ observer بيسأل سؤال واحد: «العنصر ده لسه ظاهر؟».
+- **[[!entry.isIntersecting]]:** لما آخر جزء من الـ 400px يطلع من فوق الشاشة، الـ callback بيتنادى مرة وبيظهر الزرار. ولما ترجع، بيتنادى مرة تانية ويخفيه. مفيش حسابات مع كل scroll.
+- **[[root: document]]:** عشان يشتغل كمان وهو جوه iframe من origin تاني زي الـ preview (من غيره الـ observer بيحسب على شاشة الصفحة اللي برا). في صفحة عادية نفس النتيجة.
+- **[[tabIndex = show ? 0 : -1]] و [[pointer-events: none]]:** الزرار المخفي بالـ [[opacity]] لسه موجود، فلو مقفلناش الـ Tab عليه، اللي بيستخدم الكيبورد هيوصل لزرار مش شايفه.
+- **[[aria-label]]:** النص «↑ لفوق» فيه سهم، والـ label بيقول لقارئ الشاشة الزرار بيعمل إيه بالظبط.
+- **[[prefers-reduced-motion]]:** اللي مفعّل «قلّل الحركة» في النظام بيروح لفوق على طول ([[behavior: "auto"]]) ومن غير transition.
 
 ## اتقاس
 
-Chrome 158 headless على [[http://localhost:8832]]. زرنا الرئيسية بس، وبعدين قطعنا النت ([[context.setOffline(true)]]، زي Network ← Offline) وفتحنا صفحات عمرنا ما زرناها:
-
-~~~text الناتج (Chrome 158 headless)
-Offline /about.html        → انت offline | النت فاصل | background rgb(31, 36, 48)
-Offline /blog/post-1.html  → انت offline | النت فاصل | background rgb(31, 36, 48)
-Offline /                  → انت offline | النت فاصل | background rgb(31, 36, 48)
-Online /about.html →  عننا
-Cache storage: {"offline-v1":["/offline.html","/offline.css"]}
+~~~text الناتج (Chrome 158 headless، 400×700، مرة من http://localhost ومرة جوه iframe معزول زي الـ preview)
+scroll listeners في الكود: 0
+[localhost] أول الصفحة: show=false scrollY=0
+[localhost] نزلنا 300px: show=false scrollY=300
+[localhost] نزلنا 1500px: show=true scrollY=1500
+[localhost] بعد الضغط على الزرار: show=false scrollY=0
+[sandbox] أول الصفحة: show=false scrollY=0
+[sandbox] نزلنا 300px: show=false scrollY=300
+[sandbox] نزلنا 1500px: show=true scrollY=1500
+[sandbox] بعد الضغط على الزرار: show=false scrollY=0
+41 scroll من 0 لـ 4000: الزرار اتغيّر 1 مرة
 pageerrors: 0
 ~~~
 
-- [[background rgb(31, 36, 48)]] = [[#1f2430]] من [[offline.css]]: الـ CSS اتحمّل من الكاش.
-- الكاش فيه ملفين بس، مع إن الصفحة طلبت [[/logo.svg]] و [[/api/stats.json]].
-- حتى [[/]] نفسها طلعت offline.html، لأنها مش متكيّشة. ده اللي المشروع طالبه، والمشروع اللي جاي بيكيّش الصفحات اللي زرتها.
+السطر قبل الأخير هو البديل بتاعنا لـ Performance في DevTools: عملنا scroll ٤١ مرة (كل 100px وفريمين بين كل واحدة)، والـ [[class]] بتاع الزرار اتغيّر **مرة واحدة** بس (لما عدّى الـ 400px). الـ callback مبيشتغلش غير لما الحالة تتغيّر، فمفيش شغل JS مستمر وانت بتعمل scroll. افتح Performance وسجّل وانت بتعمل scroll وهتلاقي مفيش [[Function Call]] من الصفحة غير لحظة الظهور والاختفاء.
 
-**الغلطة الشائعة:** [[offline.html]] بتطلب [[/offline.css]] بس الـ SW مبيرجّعوش من الكاش. Offline الصفحة بتظهر من غير تنسيق خالص، وده شكله أوحش من الديناصور.` },
-        { lvl: 'متوسط', dir: "offline-docs", t: R`موقع شرح بيشتغل من غير نت`, what: R`موقع ٥ صفحات: precache للـ shell في الـ install، و network-first للصفحات، و cache-first للـ assets، و stale-while-revalidate للـ JSON (درس ٣)، ومسح الكاش القديم في activate (درس ٢)، وشريط «فيه نسخة جديدة» (درس ٤).`, done: R`بعد ما تزور الصفحات مرة، Offline بيفتحها كلها، وعمود Size في Network فيه [[(ServiceWorker)]] للملفات، وتغيير [[CACHE]] بيظهر الشريط، و «حدّث» بيعمل reload مرة واحدة، و Cache storage بعدها فيه الكاش الجديد بس.`, sol: R`## الشكل النهائي
+## اللي حصل وإحنا بنبنيه
 
-اللقطة دي من الصفحة الحقيقية بعد ما اتحمّلت من السيرفر (الفهرس والقاموس بيتملوا من [[app.js]] و [[glossary.json]]، فهنا مكتوبين في الـ HTML عشان تشوف الشكل في المعاينة):
+أول نسخة كان الـ sentinel طوله 1px، فالزرار ظهر بعد أول 1px من الـ scroll (القياس قال [[show=true]] عند 50px). زرار بيظهر وانت لسه بتقرا أول سطر مزعج، فبقى طول الـ sentinel هو المسافة اللي عايزها (400px)، من غير أي رقم في الـ JS.
 
-~~~view 360
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><title>git</title>
-<style>
-body { font: 16px/1.8 system-ui, sans-serif; margin: 0; display: grid; grid-template-columns: 200px 1fr; min-height: 100vh; }
-nav { background: #1f2430; padding: 16px; }
-nav a { display: block; color: #e5e7eb; padding: 4px 0; text-decoration: none; }
-nav a[aria-current] { color: #fbbf24; font-weight: 700; }
-main { padding: 16px 24px; max-width: 680px; }
-#update-bar { position: fixed; bottom: 16px; inset-inline: 16px; max-width: 420px; margin: auto; display: flex; gap: 8px; align-items: center; padding: 10px 14px; border-radius: 10px; background: #111827; color: #fff; }
-#update-bar span { flex: 1; }
-.term { background: #f3f4f6; border-radius: 6px; padding: 2px 8px; }
-@media (max-width: 600px) { body { grid-template-columns: 1fr; } }
-</style></head>
-<body>
-<nav aria-label="الدروس"><a href="#">البداية</a><a href="#">الترمنال</a><a href="#" aria-current="page">git</a><a href="#">Node</a><a href="#">النشر</a></nav>
-<main><h1>git</h1><p>git status و git add و git commit.</p><p class="term">5 مصطلح في القاموس (آخر تحديث 2026-11-20)</p></main>
-<div id="update-bar" role="status"><span>فيه نسخة جديدة من الموقع.</span><button type="button">حدّث</button></div>
-</body></html>
-~~~
+**الغلطة الشائعة:** [[addEventListener("scroll", () => btn.hidden = scrollY < 400)]]. بيشتغل، بس بيتنادى عشرات المرات في الثانية على كل الأجهزة، وده اللي الـ observer معمول عشان تستغنى عنه.` },
+        { lvl: 'صغير', dir: "avatar-picker", t: R`اختيار صورة البروفايل`, what: R`[[<input type="file" accept="image/*">]] لصورة واحدة (درس ٣): معاينة في دايرة بـ [[URL.createObjectURL]]، ورفض أي ملف أكبر من 1MB أو مش صورة فعلًا (أول bytes بتوعه مش PNG ولا JPEG)، و [[revokeObjectURL]] للقديمة كل ما تختار جديدة.`, done: R`صورة PNG أو JPEG بتظهر في الدايرة، وملف [[.txt]] اتغيّر اسمه لـ [[.png]] بيترفض برسالة مع إن [[file.type]] بتاعه [[image/png]]، والملف الكبير بيترفض ومعاه حجمه بالـ MB، واختيار ٥ صور ورا بعض بيسيب blob URL واحد بس شغال.`, sol: R`## الشكل النهائي
 
-**هتشوف إيه:** موقع شرح ٥ صفحات بفهرس جانبي. بعد ما تزور الصفحات مرة، كلها بتفتح من غير نت ومعاها القاموس. ولما تنزل نسخة جديدة من الموقع يظهر شريط «فيه نسخة جديدة» (ظاهر في اللقطة)، و «حدّث» بيعمل reload مرة واحدة.
-
-## الملفات
-
-~~~text
-offline-docs/
-├── index.html  terminal.html  git.html  node.html  deploy.html   # نفس القالب، المحتوى بس بيختلف
-├── offline.html            # لصفحة عمرك ما زرتها وانت Offline
-├── sw.js
-├── assets/
-│   ├── style.css
-│   └── app.js              # الفهرس، والقاموس، وشريط التحديث
-└── data/
-    └── glossary.json
-~~~
-
-~~~js sw.js
-const CACHE = "docs-v1";
-const SHELL = ["/", "/offline.html", "/assets/style.css", "/assets/app.js"];
-
-self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)));   // من غير skipWaiting: اليوزر يقرر
-});
-
-self.addEventListener("activate", (e) => {
-  e.waitUntil((async () => {
-    for (const k of await caches.keys()) if (k !== CACHE) await caches.delete(k);   // امسح القديم
-    await self.clients.claim();
-  })());
-});
-
-self.addEventListener("message", (e) => {
-  if (e.data === "SKIP_WAITING") self.skipWaiting();
-});
-
-self.addEventListener("fetch", (e) => {
-  const req = e.request;
-  const url = new URL(req.url);
-  if (req.method !== "GET" || url.origin !== location.origin) return;
-  if (req.mode === "navigate") return e.respondWith(networkFirst(req));
-  if (url.pathname.startsWith("/assets/")) return e.respondWith(cacheFirst(req));
-  if (url.pathname.endsWith(".json")) return e.respondWith(staleWhileRevalidate(req, e));
-});
-
-async function networkFirst(req) {
-  const cache = await caches.open(CACHE);
-  try {
-    const res = await fetch(req);
-    if (res.ok) await cache.put(req, res.clone());
-    return res;
-  } catch {
-    return (await cache.match(req)) ?? (await cache.match("/offline.html"));
-  }
-}
-
-async function cacheFirst(req) {
-  const cache = await caches.open(CACHE);
-  const hit = await cache.match(req);
-  if (hit) return hit;
-  const res = await fetch(req);
-  if (res.ok) await cache.put(req, res.clone());
-  return res;
-}
-
-async function staleWhileRevalidate(req, e) {
-  const cache = await caches.open(CACHE);
-  const hit = await cache.match(req);
-  const fresh = fetch(req).then(async (res) => {
-    if (res.ok) await cache.put(req, res.clone());
-    return res;
-  });
-  e.waitUntil(fresh.catch(() => {}));
-  return hit ?? fresh;
-}
-~~~
-
-~~~js assets/app.js
-// الفهرس والمصطلحات وشريط التحديث: نفس الملف في كل الصفحات
-const pages = [["/", "البداية"], ["/terminal.html", "الترمنال"], ["/git.html", "git"], ["/node.html", "Node"], ["/deploy.html", "النشر"]];
-document.querySelector("nav").innerHTML = pages.map(([href, t]) => $__bt<a href="$__{href}"$__{href === location.pathname ? ' aria-current="page"' : ""}>$__{t}</a>$__bt).join("");
-
-fetch("/data/glossary.json").then((r) => r.json()).then((g) => {
-  const el = document.querySelector("#glossary");
-  if (el) el.textContent = $__bt$__{g.terms.length} مصطلح في القاموس (آخر تحديث $__{g.updated})$__bt;
-}).catch(() => {});
-
-if ("serviceWorker" in navigator) {
-  const bar = document.querySelector("#update-bar");
-  const btn = bar.querySelector("button");
-  const show = (w) => { bar.hidden = false; btn.onclick = () => { btn.disabled = true; w.postMessage("SKIP_WAITING"); }; };
-  navigator.serviceWorker.register("/sw.js").then((reg) => {
-    if (reg.waiting && navigator.serviceWorker.controller) show(reg.waiting);
-    reg.addEventListener("updatefound", () => {
-      const next = reg.installing;
-      next.addEventListener("statechange", () => { if (next.state === "installed" && navigator.serviceWorker.controller) show(next); });
-    });
-  });
-  let reloading = false;
-  navigator.serviceWorker.addEventListener("controllerchange", () => { if (!reloading) { reloading = true; location.reload(); } });
-}
-~~~
-
-~~~css assets/style.css
-body { font: 16px/1.8 system-ui, sans-serif; margin: 0; display: grid; grid-template-columns: 200px 1fr; min-height: 100vh; }
-nav { background: #1f2430; padding: 16px; }
-nav a { display: block; color: #e5e7eb; padding: 4px 0; text-decoration: none; }
-nav a[aria-current] { color: #fbbf24; font-weight: 700; }
-main { padding: 16px 24px; max-width: 680px; }
-#update-bar { position: fixed; bottom: 16px; inset-inline: 16px; max-width: 420px; margin: auto; display: flex; gap: 8px; align-items: center; padding: 10px 14px; border-radius: 10px; background: #111827; color: #fff; }
-#update-bar[hidden] { display: none; }
-#update-bar span { flex: 1; }
-.term { background: #f3f4f6; border-radius: 6px; padding: 2px 8px; }
-@media (max-width: 600px) { body { grid-template-columns: 1fr; } }
-~~~
-
-~~~html git.html
+~~~view 200
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>git</title>
-<link rel="stylesheet" href="/assets/style.css">
+<title>صورة البروفايل</title>
+<style>
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
+  .picker { display: flex; align-items: center; gap: 16px; }
+  .avatar { width: 112px; height: 112px; border-radius: 50%; background: #e5e7eb center / cover no-repeat; display: grid; place-items: center; color: #6b7280; font-size: 40px; overflow: hidden; }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  label.btn { display: inline-block; padding: 8px 14px; border-radius: 8px; background: #1d4ed8; color: #fff; cursor: pointer; }
+  label.btn:focus-within { outline: 3px solid #93c5fd; }
+  #file { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  #msg { min-height: 1.6em; }
+  #msg.err { color: #b91c1c; }
+  #msg.ok { color: #065f46; }
+</style>
 </head>
 <body>
-<nav aria-label="الدروس"></nav>
-<main>
-  <h1>git</h1>
-  <p>git status و git add و git commit.</p>
-  <p id="glossary" class="term"></p>
-</main>
-<div id="update-bar" role="status" hidden><span>فيه نسخة جديدة من الموقع.</span><button type="button">حدّث</button></div>
-<script src="/assets/app.js" defer></script>
+<div class="picker">
+  <div class="avatar" id="avatar" aria-hidden="true">👤</div>
+  <div>
+    <label class="btn">اختار صورة <input type="file" id="file" accept="image/png,image/jpeg"></label>
+    <p id="msg" role="status">PNG أو JPEG، 1MB بالكتير.</p>
+  </div>
+</div>
+<script>
+  const MAX = 1024 * 1024;
+  const input = document.querySelector("#file");
+  const avatar = document.querySelector("#avatar");
+  const msg = document.querySelector("#msg");
+  let currentUrl = null;                       // الـ blob URL الشغال دلوقتي
+
+  async function sniffImage(file) {
+    const b = new Uint8Array(await file.slice(0, 4).arrayBuffer());
+    if (b.length >= 4 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return "png";
+    if (b.length >= 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return "jpeg";
+    return null;
+  }
+
+  function say(text, kind) {
+    msg.textContent = text;
+    msg.className = kind;
+  }
+
+  input.addEventListener("change", async () => {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > MAX) {
+      say($__btالصورة $__{(file.size / 1024 / 1024).toFixed(1)}MB، والحد 1MB.$__bt, "err");
+      input.value = "";                        // عشان اختيار نفس الملف تاني يعمل change
+      return;
+    }
+    const kind = await sniffImage(file);
+    if (!kind) {
+      say($__bt«$__{file.name}» مش صورة PNG ولا JPEG (حتى لو امتداده بيقول كده).$__bt, "err");
+      input.value = "";
+      return;
+    }
+    if (currentUrl) URL.revokeObjectURL(currentUrl);   // القديمة مبقتش محتاجينها
+    currentUrl = URL.createObjectURL(file);
+    const img = new Image();
+    img.alt = "صورة البروفايل";
+    img.src = currentUrl;
+    avatar.replaceChildren(img);
+    say($__btتمام: $__{kind.toUpperCase()}، $__{(file.size / 1024).toFixed(0)}KB.$__bt, "ok");
+  });
+</script>
 </body>
 </html>
 ~~~
 
-الصفحات الأربعة التانية نفس [[git.html]] بالظبط، والمختلف [[<title>]] و [[<h1>]] والفقرة.
+**هتشوف إيه:** دايرة فاضية فيها 👤 وزرار «اختار صورة». اختار PNG أو JPEG من جهازك (جوه الـ preview اللي فوق شغال) وهتظهر في الدايرة. ملف نصي اسمه [[.png]] بيترفض برسالة، وصورة أكبر من 1MB بتترفض ومعاها حجمها.
 
-~~~html offline.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>من غير نت</title><link rel="stylesheet" href="/assets/style.css"></head>
-<body><nav aria-label="الدروس"></nav><main><h1>الصفحة دي مش محفوظة</h1><p>افتحها مرة وانت Online وهتشتغل بعد كده من غير نت.</p></main>
-<div id="update-bar" role="status" hidden><span>فيه نسخة جديدة.</span><button type="button">حدّث</button></div>
-<script src="/assets/app.js" defer></script></body></html>
-~~~
-
-~~~json data/glossary.json
-{"updated":"2026-11-20","terms":["shell","commit","branch","npm","build"]}
-~~~
-
-## الشرح: كل نوع طلب بأنهي استراتيجية وليه
-
-| الطلب | الاستراتيجية | ليه |
-|---|---|---|
-| الصفحات ([[navigate]]) | network-first | المحتوى بيتعدّل، فالأحدث Online، والمحفوظ Offline، و [[offline.html]] لو عمرها ما اتزارت |
-| [[/assets/]] | cache-first | ملفات الـ CSS والـ JS متغيّرش غير مع نسخة جديدة من الموقع، والنسخة الجديدة اسم كاش جديد |
-| [[.json]] | stale-while-revalidate | القاموس يظهر على طول من الكاش، ويتحدّث في الخلفية للمرة الجاية |
-
-- **[[install]] بيكيّش الـ shell:** [[/]] و [[offline.html]] والـ CSS والـ JS، فأول ما الـ SW يتسطّب الموقع يقدر يفتح من غير نت حتى لو اليوزر مزارش غير الرئيسية.
-- **من غير [[skipWaiting()]] في [[install]]:** النسخة الجديدة بتستنى، والشريط بيسأل اليوزر (درس «نسخة جديدة، حدّث»). لو كانت بتتفعّل لوحدها، صفحة مفتوحة بـ [[app.js]] قديم ممكن تاخد [[style.css]] جديد من الكاش الجديد.
-- **[[activate]] بيمسح أي كاش تاني:** بعد التحديث الكاش القديم اتشال ([[["docs-v2"]]] بس).
-- **[[await cache.put(...)]]:** عشان طلبين ورا بعض ميروحوش للشبكة مرتين (اكتشاف تمرين cache-first).
-
-## اتقاس
-
-Chrome 158 headless على [[http://localhost:8833]]. زرنا الـ ٥ صفحات مرة، وقطعنا النت، وفتحناهم تاني. وبعدين غيّرنا [[CACHE]] لـ [["docs-v2"]] في [[sw.js]]:
-
-~~~text الناتج (Chrome 158 headless)
-Offline /               → البداية | 5 مصطلح في القاموس (آخر تحديث 2026-11-20)
-Offline /terminal.html  → الترمنال | 5 مصطلح في القاموس (آخر تحديث 2026-11-20)
-Offline /git.html       → git | 5 مصطلح في القاموس (آخر تحديث 2026-11-20)
-Offline /node.html      → Node | 5 مصطلح في القاموس (آخر تحديث 2026-11-20)
-Offline /deploy.html    → النشر | 5 مصطلح في القاموس (آخر تحديث 2026-11-20)
-مصدر الردود: / (ServiceWorker), /assets/style.css (ServiceWorker), /assets/app.js (ServiceWorker), /data/glossary.json (ServiceWorker), /terminal.html (ServiceWorker), /git.html (ServiceWorker), /node.html (ServiceWorker), /deploy.html (ServiceWorker)
-بعد ما غيّرنا CACHE: الشريط ظاهر
-«حدّث»: reloads = 1 | Cache storage: ["docs-v2"]
-pageerrors: 0
-~~~
-
-[[(ServiceWorker)]] هو اللي عمود Size في Network بيكتبه، و Playwright بيقراه من [[response.fromServiceWorker()]].
-
-**والـ stale-while-revalidate:** غيّرنا [[glossary.json]] على السيرفر (مصطلح زيادة وتاريخ جديد) وعملنا refresh مرتين:
-
-~~~text الناتج (Chrome 158 headless)
-البداية: 5 مصطلح في القاموس (آخر تحديث 2026-11-20)
-الـ JSON اتغيّر على السيرفر، أول refresh: 5 مصطلح في القاموس (آخر تحديث 2026-11-20)
-تاني refresh: 6 مصطلح في القاموس (آخر تحديث 2026-11-21)
-~~~
-
-أول refresh عرض القديم على طول (من الكاش) وجاب الجديد في الخلفية، والتاني عرض الجديد. ده بالظبط معنى الاستراتيجية: سرعة دلوقتي، وتحديث بخطوة تأخير.
-
-**الغلطة الشائعة:** cache-first للصفحات نفسها. الموقع هيفتح بسرعة، بس أي تعديل في المحتوى مش هيوصل لحد زار الصفحة قبل كده، لحد ما تغيّر اسم الكاش.` },
-        { lvl: 'متوسط', dir: "offline-notes", t: R`ملاحظات offline في كل التابات`, what: R`صفحة ملاحظات بـ IndexedDB و [[idb]] (درس ٦): إضافة وتعديل ومسح وترتيب بـ index على [[updatedAt]]، و BroadcastChannel بيحدّث التابات التانية، و [[navigator.storage.persist()]]، وكل ده جوه PWA بـ vite-plugin-pwa (درس ٥).`, done: R`ملاحظة تضيفها في تاب بتظهر في التاب التاني من غير refresh، والداتا بتفضل بعد ما تقفل المتصفح وتفتحه وانت Offline، ومسح ملاحظة بيختفي من التابين، و Application ← IndexedDB فيه نفس عدد الملاحظات اللي في الصفحة.`, sol: R`## الشكل النهائي
-
-الشكل وفيه ملاحظتين والتطبيق Offline (الـ HTML والـ CSS بتوع التطبيق، والملاحظات مكتوبة مكان اللي بييجي من IndexedDB):
-
-~~~view 300
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>ملاحظاتي</title><style>
-body { font: 15px/1.6 system-ui, sans-serif; margin: 0; background: #f8fafc; }
-header { display: flex; justify-content: space-between; align-items: center; background: #1f2430; color: #fff; padding: 8px 16px; }
-header h1 { font-size: 18px; margin: 0; }
-main { max-width: 560px; margin: auto; padding: 16px; }
-form { display: flex; gap: 8px; }
-input { flex: 1; font: inherit; padding: 6px 8px; }
-#list { list-style: none; padding: 0; }
-#list li { display: flex; gap: 8px; align-items: center; background: #fff; border-radius: 8px; padding: 8px 12px; margin: 8px 0; box-shadow: 0 1px 2px #0001; }
-#list li span { flex: 1; }
-#info { font-size: 13px; color: #555; }
-</style></head><body>
-<header><h1>ملاحظاتي</h1><span>Offline</span></header>
-<main>
-  <form><input placeholder="ملاحظة جديدة" aria-label="ملاحظة جديدة"><button type="button">ضيف</button></form>
-  <ul id="list"><li><span>اشتري لبن وعيش</span><button type="button">عدّل</button><button type="button">امسح</button></li><li><span>كلّم سارة</span><button type="button">عدّل</button><button type="button">امسح</button></li></ul>
-  <p id="info">التخزين محمي من المسح التلقائي</p>
-</main></body></html>
-~~~
-
-**هتشوف إيه:** صفحة ملاحظات بتتسطّب كتطبيق. تضيف وتعدّل وتمسح، والأحدث فوق. افتحها في تابين: أي تغيير في تاب بيظهر في التاني على طول. اقفل المتصفح وافتحه من غير نت: التطبيق بيفتح والملاحظات موجودة.
-
-## الملفات
-
-~~~text
-offline-notes/
-├── package.json
-├── vite.config.js
-├── index.html
-├── public/pwa-192x192.png و pwa-512x512.png
-└── src/
-    ├── db.js        # IndexedDB بـ idb: store واحد و index على updatedAt
-    ├── main.js      # الشاشة، و BroadcastChannel، و persist
-    └── style.css
-~~~
-
-التشغيل: [[npm install]] ثم [[npm run build]] و [[npm run preview]].
-
-~~~json package.json
-{
-  "name": "offline-notes",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "idb": "^8.0.4"
-  },
-  "devDependencies": {
-    "vite": "^6.4.6",
-    "vite-plugin-pwa": "^1.3.0"
-  }
-}
-~~~
-
-~~~js vite.config.js
-import { defineConfig } from "vite";
-import { VitePWA } from "vite-plugin-pwa";
-
-export default defineConfig({
-  plugins: [
-    VitePWA({
-      registerType: "autoUpdate",              // تطبيق ملاحظات صغير: النسخة الجديدة تتفعّل لوحدها
-      manifest: {
-        name: "ملاحظاتي", short_name: "ملاحظاتي", lang: "ar", dir: "rtl",
-        start_url: "/", display: "standalone", theme_color: "#1f2430", background_color: "#1f2430",
-        icons: [
-          { src: "pwa-192x192.png", sizes: "192x192", type: "image/png" },
-          { src: "pwa-512x512.png", sizes: "512x512", type: "image/png" },
-        ],
-      },
-      workbox: { globPatterns: ["**/*.{js,css,html,png}"] },
-    }),
-  ],
-});
-~~~
+## الكود
 
 ~~~html index.html
 <!doctype html>
@@ -588,283 +240,283 @@ export default defineConfig({
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#1f2430">
-<title>ملاحظاتي</title>
-<link rel="stylesheet" href="/src/style.css">
+<title>صورة البروفايل</title>
+<style>
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
+  .picker { display: flex; align-items: center; gap: 16px; }
+  .avatar { width: 112px; height: 112px; border-radius: 50%; background: #e5e7eb center / cover no-repeat; display: grid; place-items: center; color: #6b7280; font-size: 40px; overflow: hidden; }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  label.btn { display: inline-block; padding: 8px 14px; border-radius: 8px; background: #1d4ed8; color: #fff; cursor: pointer; }
+  label.btn:focus-within { outline: 3px solid #93c5fd; }
+  #file { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  #msg { min-height: 1.6em; }
+  #msg.err { color: #b91c1c; }
+  #msg.ok { color: #065f46; }
+</style>
 </head>
 <body>
-<header><h1>ملاحظاتي</h1><span id="net"></span></header>
-<main>
-  <form id="add"><input name="text" required maxlength="500" placeholder="ملاحظة جديدة" aria-label="ملاحظة جديدة"><button>ضيف</button></form>
-  <ul id="list"></ul>
-  <p id="info"></p>
-</main>
-<script type="module" src="/src/main.js"></script>
+<div class="picker">
+  <div class="avatar" id="avatar" aria-hidden="true">👤</div>
+  <div>
+    <label class="btn">اختار صورة <input type="file" id="file" accept="image/png,image/jpeg"></label>
+    <p id="msg" role="status">PNG أو JPEG، 1MB بالكتير.</p>
+  </div>
+</div>
+<script>
+  const MAX = 1024 * 1024;
+  const input = document.querySelector("#file");
+  const avatar = document.querySelector("#avatar");
+  const msg = document.querySelector("#msg");
+  let currentUrl = null;                       // الـ blob URL الشغال دلوقتي
+
+  async function sniffImage(file) {
+    const b = new Uint8Array(await file.slice(0, 4).arrayBuffer());
+    if (b.length >= 4 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return "png";
+    if (b.length >= 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return "jpeg";
+    return null;
+  }
+
+  function say(text, kind) {
+    msg.textContent = text;
+    msg.className = kind;
+  }
+
+  input.addEventListener("change", async () => {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > MAX) {
+      say($__btالصورة $__{(file.size / 1024 / 1024).toFixed(1)}MB، والحد 1MB.$__bt, "err");
+      input.value = "";                        // عشان اختيار نفس الملف تاني يعمل change
+      return;
+    }
+    const kind = await sniffImage(file);
+    if (!kind) {
+      say($__bt«$__{file.name}» مش صورة PNG ولا JPEG (حتى لو امتداده بيقول كده).$__bt, "err");
+      input.value = "";
+      return;
+    }
+    if (currentUrl) URL.revokeObjectURL(currentUrl);   // القديمة مبقتش محتاجينها
+    currentUrl = URL.createObjectURL(file);
+    const img = new Image();
+    img.alt = "صورة البروفايل";
+    img.src = currentUrl;
+    avatar.replaceChildren(img);
+    say($__btتمام: $__{kind.toUpperCase()}، $__{(file.size / 1024).toFixed(0)}KB.$__bt, "ok");
+  });
+</script>
 </body>
 </html>
-~~~
-
-~~~js src/db.js
-import { openDB } from "idb";
-
-export const dbp = openDB("offline-notes", 1, {
-  upgrade(db) {
-    const store = db.createObjectStore("notes", { keyPath: "id" });
-    store.createIndex("byUpdated", "updatedAt");
-  },
-});
-
-export async function allNotes() {
-  return (await (await dbp).getAllFromIndex("notes", "byUpdated")).reverse();   // الأحدث فوق
-}
-export async function saveNote(note) {
-  await (await dbp).put("notes", { ...note, updatedAt: Date.now() });
-}
-export async function deleteNote(id) {
-  await (await dbp).delete("notes", id);
-}
-~~~
-
-~~~js src/main.js
-import { registerSW } from "virtual:pwa-register";
-import { allNotes, saveNote, deleteNote } from "./db.js";
-
-registerSW({ immediate: true });
-
-const list = document.querySelector("#list");
-const channel = new BroadcastChannel("offline-notes");
-
-async function render() {
-  const notes = await allNotes();
-  list.replaceChildren(...notes.map((n) => {
-    const li = document.createElement("li");
-    li.dataset.id = n.id;
-    const span = document.createElement("span");
-    span.textContent = n.text;
-    const edit = Object.assign(document.createElement("button"), { type: "button", textContent: "عدّل" });
-    edit.dataset.action = "edit";
-    const del = Object.assign(document.createElement("button"), { type: "button", textContent: "امسح" });
-    del.dataset.action = "delete";
-    li.append(span, edit, del);
-    return li;
-  }));
-  document.querySelector("#net").textContent = navigator.onLine ? "Online" : "Offline";
-}
-
-async function changed() {
-  channel.postMessage("changed");          // التابات التانية (مش التاب ده)
-  await render();
-}
-
-document.querySelector("#add").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const text = e.target.text.value.trim();
-  if (!text) return;
-  await saveNote({ id: crypto.randomUUID(), text });
-  e.target.reset();
-  await changed();
-});
-
-list.addEventListener("click", async (e) => {
-  const btn = e.target.closest("button[data-action]");
-  if (!btn) return;
-  const li = btn.closest("li");
-  if (btn.dataset.action === "delete") {
-    await deleteNote(li.dataset.id);
-  } else {
-    const text = prompt("عدّل الملاحظة", li.querySelector("span").textContent);
-    if (text === null || !text.trim()) return;
-    await saveNote({ id: li.dataset.id, text: text.trim() });
-  }
-  await changed();
-});
-
-channel.onmessage = render;
-addEventListener("online", render);
-addEventListener("offline", render);
-
-// اطلب من المتصفح ميمسحش الداتا دي لما المساحة تقل
-if (navigator.storage?.persist) {
-  navigator.storage.persist().then((ok) => {
-    document.querySelector("#info").textContent = ok ? "التخزين محمي من المسح التلقائي" : "التخزين ممكن يتمسح لو المساحة قلّت (صدّر نسخة احتياطي)";
-  });
-}
-render();
-~~~
-
-~~~css src/style.css
-body { font: 15px/1.6 system-ui, sans-serif; margin: 0; background: #f8fafc; }
-header { display: flex; justify-content: space-between; align-items: center; background: #1f2430; color: #fff; padding: 8px 16px; }
-header h1 { font-size: 18px; margin: 0; }
-main { max-width: 560px; margin: auto; padding: 16px; }
-form { display: flex; gap: 8px; }
-input { flex: 1; font: inherit; padding: 6px 8px; }
-#list { list-style: none; padding: 0; }
-#list li { display: flex; gap: 8px; align-items: center; background: #fff; border-radius: 8px; padding: 8px 12px; margin: 8px 0; box-shadow: 0 1px 2px #0001; }
-#list li span { flex: 1; }
-#info { font-size: 13px; color: #555; }
 ~~~
 
 ## الشرح
 
-- **[[createIndex("byUpdated", "updatedAt")]] و [[getAllFromIndex]]:** IndexedDB بيرجّع السجلات مترتبة بالـ index، و [[.reverse()]] بيخلّي الأحدث فوق. والتعديل بـ [[put]] بنفس الـ [[id]] و [[updatedAt]] جديد، فالملاحظة المعدّلة طلعت أول واحدة.
-- **[[dbp]] Promise واحد:** القاعدة بتتفتح مرة واحدة للتاب، وكل دالة بتستنى نفس الـ Promise.
-- **[[BroadcastChannel("offline-notes")]]:** بعد أي تغيير، التاب بيرسم نفسه ويبعت [["changed"]] للتابات التانية، وهي بترسم من IndexedDB. الرسالة فيها «حاجة اتغيّرت» بس مش الداتا، فمستحيل التابات تختلف عن القاعدة.
-- **[[navigator.storage.persist()]]:** بيطلب من المتصفح ميمسحش تخزين الموقع لما الديسك يتملى. المتصفح بيقرر لوحده (Chrome بيوافق للمواقع اللي اليوزر بيستخدمها كتير أو متسطّبة)، فالصفحة بتقول النتيجة بصراحة.
-- **[[registerType: "autoUpdate"]] و [[registerSW({ immediate: true })]]:** تطبيق صغير من غير داتا بتضيع مع التحديث، فالنسخة الجديدة بتتفعّل لوحدها. الـ precache فيه الـ HTML والـ JS والـ CSS والأيقونات (٩ ملفات)، فالتطبيق بيفتح Offline من أول زيارة.
-- **[[event delegation]] على الـ [[ul]]:** listener واحد لأزرار «عدّل» و «امسح» في كل الملاحظات، حتى اللي هتتضاف بعدين.
+- **[[<label class="btn">]] حوالين الـ [[input]]:** الـ input نفسه مخفي بصريًا (مش [[display: none]]، عشان يفضل بيوصله الكيبورد وقارئ الشاشة)، والـ label هو اللي بيبان. الضغط على الـ label بيفتح اختيار الملفات، و [[:focus-within]] بيرسم إطار لما الـ input ياخد focus بالـ Tab.
+- **[[accept="image/png,image/jpeg"]]:** بيفلتر نافذة الاختيار بس، واليوزر يقدر يختار «All files». فالفحص الحقيقي بعده.
+- **الحجم الأول:** أرخص فحص (رقم موجود في [[file.size]] من غير قراية). [[(file.size / 1024 / 1024).toFixed(1)]] بيكتب الحجم بالـ MB.
+- **[[sniffImage]]:** أول ٤ bytes من الملف، نفس دالة تمرين «input type=file». ملف نصي اسمه [[notes.png]] نوعه [[image/png]] عند المتصفح (قسناها في التمرين ده: النوع بييجي من الامتداد)، بس الـ bytes بتقول الحقيقة.
+- **[[input.value = ""]] بعد الرفض:** من غيره، لو اليوزر اختار نفس الملف تاني بعد ما صغّره بنفس الاسم، الـ [[change]] مش هيحصل لأن القيمة متغيرتش.
+- **[[URL.revokeObjectURL(currentUrl)]] قبل الجديد:** كل [[createObjectURL]] بيخلّي المتصفح ماسك الملف في الميموري لحد ما الصفحة تتقفل أو تعمل [[revoke]]. اختيار ٥٠ صورة ورا بعض من غيره = ٥٠ ملف محجوزين.
+- **الصورة القديمة بتفضل لو الجديدة اترفضت:** الـ [[revoke]] والتبديل بيحصلوا بعد ما الفحص ينجح بس.
 
 ## اتقاس
 
-[[vite build]] (precache 9 entries) و [[vite preview]] على [[http://localhost:8834]]، و Chrome 158 headless بـ profile حقيقي على الديسك ([[launchPersistentContext]]) عشان نقفل المتصفح ونفتحه:
+٣ صور اتعملت بـ canvas واتحفظت على الديسك ([[me.png]] 7KB، و [[me.jpg]] 17KB، و [[big.png]] 2.5MB) وملف نصي اسمه [[notes.png]]، واتختاروا بالترتيب في الصفحة جوه iframe معزول زي الـ preview. ولفّينا [[createObjectURL]] و [[revokeObjectURL]] عشان نعدّ الـ URLs اللي لسه شغالة:
 
 ~~~text الناتج (Chrome 158 headless)
-تاب ١: ["كلّم سارة","راجع الدرس","اشتري لبن"]
-تاب ٢ (من غير refresh): ["كلّم سارة","راجع الدرس","اشتري لبن"]
-بعد «عدّل» في تاب ١ → تاب ٢: ["اشتري لبن وعيش","كلّم سارة","راجع الدرس"]
-بعد «امسح» في تاب ٢ → تاب ١: ["اشتري لبن وعيش","كلّم سارة"] | IndexedDB: 2 | الصفحة: 2
-persist: التخزين ممكن يتمسح لو المساحة قلّت (صدّر نسخة احتياطي)
-فتحنا المتصفح تاني وهو Offline: Offline | ["اشتري لبن وعيش","كلّم سارة"]
+me.png     | تمام: PNG، 7KB. | file.type: image/png | في الدايرة: صورة
+notes.png  | «notes.png» مش صورة PNG ولا JPEG (حتى لو امتداده بيقول كده). | file.type: (اتمسح) | في الدايرة: صورة
+big.png    | الصورة 2.5MB، والحد 1MB. | file.type: (اتمسح) | في الدايرة: صورة
+me.jpg     | تمام: JPEG، 17KB. | file.type: image/jpeg | في الدايرة: صورة
+بعد ٥ اختيارات ورا بعض: blob URLs شغالة = 1
 pageerrors: 0
 ~~~
 
-- [[IndexedDB: 2 | الصفحة: 2]]: عدد السجلات في القاعدة (زي Application ← IndexedDB) = اللي على الشاشة.
-- [[persist()]] رجّع [[false]] في المعمل: profile جديد ومحدش استخدم الموقع قبل كده ومش متسطّب، فـ Chrome رفض. وده سبب إن الرسالة بتقول لليوزر يصدّر نسخة احتياطي.
-- السطر الأخير: قفلنا المتصفح كله، وفتحناه **Offline** من الأول ([[offline: true]])، والتطبيق فتح من الـ precache والملاحظات من IndexedDB.
+[[(اتمسح)]] معناها إن [[input.value = ""]] اشتغل بعد الرفض، و «في الدايرة: صورة» بعد الرفض هي الصورة اللي قبلها لسه موجودة.
 
-**الغلطة الشائعة:** تبعت الملاحظة نفسها في الـ BroadcastChannel والتاب التاني يضيفها لـ array عنده. أول ما رسالة تفوت (التاب كان نايم)، التابين بيختلفوا للأبد. ابعت «اتغيّر» وخلّي كل تاب يقرا من القاعدة.` },
-        { lvl: 'كبير', dir: "tasks-pwa", t: R`تطبيق مهام PWA بيزامن لما النت يرجع`, what: R`تطبيق مهام بـ Vite و vite-plugin-pwa بـ [[registerType: "prompt"]] (درس ٥): المهام في IndexedDB (درس ٦)، وأي تغيير وانت offline بيتحط في store اسمه [[outbox]] وبيتبعت لـ API بـ Express على localhost لما [[online]] يحصل أو الصفحة تفتح. فيه: فحص المدخلات (عنوان فاضي أو أطول من 200 حرف بيترفض)، و upgrade لـ version 2 بيزوّد index من غير ما يمسح الداتا، و [[QuotaExceededError]] متمسوك برسالة، وزرار «نسخة جديدة» (درس ٤)، و BroadcastChannel بين التابات.`, done: R`Offline: تضيف ٣ مهام وتعدّل واحدة، و [[outbox]] فيه ٤ عمليات. Online: لوج السيرفر فيه ٤ requests بنفس الترتيب، و [[outbox]] بيفضى، ولو السيرفر رجّع 500 العمليات بتفضل مستنية ومبتتمسحش. version 2 فتح على داتا version 1 والمهام كلها موجودة. التطبيق بيتسطّب وبيفتح Offline من أول مرة بعد التسطيب، وتشغيله مرتين في تابين مبيبعتش نفس العملية مرتين.`, ext: R`زوّد login وكل يوزر ليه مهامه، وحل التعارض لو نفس المهمة اتعدّلت من جهازين، و push notifications للتذكير، وانشره على HTTPS وسطّبه على موبايلك.`, sol: R`## الشكل النهائي
+**الغلطة الشائعة:** [[avatar.style.backgroundImage = $__bturl($__{URL.createObjectURL(file)})$__bt]] من غير ما تمسك الـ URL في متغير. بيشتغل، بس مفيش أي طريقة تعمل له [[revoke]] بعد كده.` },
+        { lvl: 'متوسط', dir: "image-uploader", t: R`رافع صور كامل`, what: R`منطقة سحب وإفلات (درس ٤) وجواها [[<label>]] و [[<input type="file" multiple>]] للي مش بيستخدم ماوس (درس ٣)، ومعاينة لكل صورة ومعاها حجمها ومقاسها، وفحص النوع والحجم قبل أي رفع، وشريط تقدم وزرار إلغاء لكل ملف لوحده بـ [[XMLHttpRequest]]، على سيرفر Express فيه multer على localhost.`, done: R`تسحب ٤ صور منهم واحدة كبيرة: ٣ بيترفعوا كل واحد بشريطه والكبيرة بتترفض قبل ما تتبعت (مفيش request ليها في Network)، والإلغاء بيوقّف ملف واحد بس والباقي يكمّل، و Tab ثم Enter بيفتح اختيار الملفات من غير ماوس، والشكل مبيرعشش وانت بتسحب فوق الصور اللي جوه المنطقة.`, sol: R`## الشكل النهائي
 
-التطبيق وهو Offline وفيه ٤ تغييرات مستنية، وشريط «فيه نسخة جديدة» تحت (نفس الـ HTML والـ CSS، والمهام مكتوبة مكان اللي بييجي من IndexedDB):
+~~~view 420
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ارفع صورك</title>
+<style>
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; max-width: 720px; }
+  #drop { border: 3px dashed #9ca3af; border-radius: 12px; padding: 28px; text-align: center; }
+  #drop.over { border-color: #2563eb; background: #eff6ff; }
+  #drop label { color: #1d4ed8; text-decoration: underline; cursor: pointer; }
+  #drop input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  #drop:focus-within { outline: 3px solid #93c5fd; }
+  #list { list-style: none; padding: 0; display: grid; gap: 8px; margin-top: 16px; }
+  #list li { display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: center; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px; }
+  #list img { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; background: #f3f4f6; }
+  #list progress { width: 100%; }
+  .err { color: #b91c1c; }
+  .ok { color: #065f46; }
+  #note { font-size: 13px; color: #92400e; }
+</style>
+</head>
+<body>
+<h1>ارفع صورك</h1>
+<div id="drop">
+  <p>اسحب الصور هنا أو <label for="files">اختار من جهازك</label></p>
+  <input type="file" id="files" accept="image/png,image/jpeg,image/webp" multiple>
+  <p>PNG أو JPEG أو WebP، 2MB بالكتير للصورة.</p>
+</div>
+<p id="note"></p>
+<ul id="list"></ul>
+<script>
+  const MAX = 2 * 1024 * 1024;
+  const OFFLINE = location.origin === "null";      // الـ preview: مفيش سيرفر
+  if (OFFLINE) document.querySelector("#note").textContent = "مفيش سيرفر هنا (صفحة معزولة): الفحص والمعاينة شغالين، والرفع هيفشل. شغّل node server.js.";
+  const list = document.querySelector("#list");
+  const drop = document.querySelector("#drop");
+  const input = document.querySelector("#files");
 
-~~~view 340
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>مهامي</title><style>
-body { font: 15px/1.6 system-ui, sans-serif; margin: 0; background: #f8fafc; }
-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; background: #1f2430; color: #fff; padding: 8px 16px; }
-header h1 { font-size: 18px; margin: 0; }
-#status { font-size: 13px; }
-main { max-width: 560px; margin: auto; padding: 16px; }
-form { display: flex; gap: 8px; }
-input[name="title"] { flex: 1; font: inherit; padding: 6px 8px; }
-#msg { min-height: 1.6em; color: #b91c1c; }
-#list { list-style: none; padding: 0; }
-#list li { display: flex; justify-content: space-between; align-items: center; background: #fff; border-radius: 8px; padding: 8px 12px; margin: 8px 0; box-shadow: 0 1px 2px #0001; }
-#list li:has(input:checked) span { text-decoration: line-through; color: #6b7280; }
-#update { position: fixed; bottom: 16px; inset-inline: 16px; max-width: 420px; margin: auto; display: flex; gap: 8px; align-items: center; padding: 10px 14px; border-radius: 10px; background: #111827; color: #fff; }
-#update[hidden] { display: none; }
-#update span { flex: 1; }
-</style></head><body>
-<header><h1>مهامي</h1><span id="status">Offline | 4 تغيير مستني يتبعت</span></header>
-<main>
-  <form><input name="title" placeholder="مهمة جديدة" aria-label="مهمة جديدة"><button type="button">ضيف</button></form>
-  <p id="msg" role="status"></p>
-  <ul id="list">
-    <li><label><input type="checkbox"><span> اشتري لبن</span></label><button type="button" aria-label="امسح">✕</button></li>
-    <li><label><input type="checkbox" checked><span> راجع الدرس</span></label><button type="button" aria-label="امسح">✕</button></li>
-    <li><label><input type="checkbox"><span> ادفع الفاتورة</span></label><button type="button" aria-label="امسح">✕</button></li>
-  </ul>
-</main>
-<div id="update" role="status"><span>فيه نسخة جديدة.</span><button type="button">حدّث</button></div>
-</body></html>
+  async function sniff(file) {
+    const b = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+    if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return "png";
+    if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return "jpeg";
+    if (String.fromCharCode(...b.slice(0, 4)) === "RIFF" && String.fromCharCode(...b.slice(8, 12)) === "WEBP") return "webp";
+    return null;
+  }
+
+  function row(file) {
+    const li = document.createElement("li");
+    li.innerHTML = '<img alt=""><div><strong></strong><div class="meta"></div><progress max="1" value="0" hidden></progress><div class="status" role="status"></div></div><button type="button" hidden>إلغاء</button>';
+    li.querySelector("strong").textContent = file.name;
+    list.append(li);
+    return {
+      li, img: li.querySelector("img"), meta: li.querySelector(".meta"), bar: li.querySelector("progress"),
+      status: li.querySelector(".status"), cancel: li.querySelector("button"),
+    };
+  }
+
+  function uploadFile(file, ui) {
+    const fd = new FormData();
+    fd.append("file", file);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/upload");
+    ui.bar.hidden = false;
+    ui.cancel.hidden = false;
+    xhr.upload.onprogress = (e) => { if (e.lengthComputable) ui.bar.value = e.loaded / e.total; };
+    xhr.onload = () => {
+      ui.cancel.hidden = true;
+      if (xhr.status === 201) { ui.bar.value = 1; ui.status.textContent = "اترفعت"; ui.status.className = "status ok"; }
+      else { ui.status.textContent = "السيرفر رفضها (" + xhr.status + ")"; ui.status.className = "status err"; }
+    };
+    xhr.onerror = () => { ui.cancel.hidden = true; ui.status.textContent = "النت وقع، جرّب تاني"; ui.status.className = "status err"; };
+    xhr.onabort = () => { ui.cancel.hidden = true; ui.status.textContent = "اتلغت"; ui.status.className = "status err"; };
+    ui.cancel.addEventListener("click", () => xhr.abort(), { once: true });   // يلغي الملف ده بس
+    xhr.send(fd);
+  }
+
+  async function handle(files) {
+    for (const file of files) {
+      const ui = row(file);
+      const kind = await sniff(file);
+      if (!kind) { ui.status.textContent = "مش صورة PNG/JPEG/WebP، اترفضت"; ui.status.className = "status err"; continue; }
+      if (file.size > MAX) { ui.status.textContent = $__bt$__{(file.size / 1024 / 1024).toFixed(1)}MB أكبر من 2MB، اترفضت قبل الرفع$__bt; ui.status.className = "status err"; continue; }
+      const url = URL.createObjectURL(file);
+      ui.img.src = url;
+      try {
+        const bmp = await createImageBitmap(file);
+        ui.meta.textContent = $__bt$__{bmp.width}×$__{bmp.height} | $__{(file.size / 1024).toFixed(0)}KB | $__{kind}$__bt;
+        bmp.close();
+      } catch {
+        ui.meta.textContent = $__bt$__{(file.size / 1024).toFixed(0)}KB$__bt;
+      }
+      ui.img.onload = () => URL.revokeObjectURL(url);   // الصورة اترسمت: مش محتاجين الـ URL
+      uploadFile(file, ui);
+    }
+  }
+
+  input.addEventListener("change", () => { handle([...input.files]); input.value = ""; });
+
+  // سحب وإفلات من غير رعشة (درس drag and drop)
+  let depth = 0;
+  const isFiles = (e) => e.dataTransfer?.types.includes("Files");
+  drop.addEventListener("dragenter", (e) => { if (isFiles(e)) { depth++; drop.classList.add("over"); } });
+  drop.addEventListener("dragover", (e) => { if (isFiles(e)) e.preventDefault(); });
+  drop.addEventListener("dragleave", (e) => { if (isFiles(e) && --depth === 0) drop.classList.remove("over"); });
+  drop.addEventListener("drop", (e) => {
+    e.preventDefault();
+    depth = 0;
+    drop.classList.remove("over");
+    handle([...e.dataTransfer.files]);
+  });
+</script>
+</body>
+</html>
 ~~~
 
-**هتشوف إيه:** تطبيق مهام بيتسطّب. تضيف وتعلّم «خلصت» وتمسح من غير نت، وفوق مكتوب كام تغيير مستني. أول ما النت يرجع، التغييرات بتتبعت للسيرفر بنفس ترتيبها والعدّاد بيرجع «كله متزامن». ولو نزلت نسخة جديدة يظهر «حدّث».
-
-## الصورة الكبيرة
-
-~~~text
-[الصفحة main.js] ── applyChange ──► [IndexedDB: tasks + outbox]   (transaction واحدة)
-       │                                     │
-       │ online / فتح الصفحة / بعد كل تغيير    │ getAll("outbox") بالترتيب
-       ▼                                     ▼
- syncNow ── Web Lock «tasks-outbox» ──► flushOutbox ── POST /api/ops ──► [Express] (opId: مفيش تطبيق مرتين)
-       │
- BroadcastChannel «tasks-pwa» ──► التابات التانية ترسم من IndexedDB
- [vite-plugin-pwa] precache + registerType: "prompt" ──► زرار «حدّث»
-~~~
-
-## ليه الأدوات دي
-
-| الأداة | البديل | ليه هنا |
-|---|---|---|
-| vite-plugin-pwa (generateSW) | SW بإيدك (المشاريع اللي فاتت) أو Serwist | الـ precache بأسماء الملفات اللي فيها hash بيتعمل لوحده مع كل build، وده اللي بيبوظ لما تكتبه بإيدك |
-| IndexedDB بـ [[idb]] | [[localStorage]] | المهام والـ outbox لازم transaction واحدة، والـ SW والتابات يشوفوها، و [[localStorage]] مفيهوش ده |
-| outbox في الصفحة | Background Sync | Background Sync في Chrome و Edge بس (تمرين «صندوق صادر»)، والـ outbox بيشتغل في كل المتصفحات؛ وتقدر تزوّد [[sync]] فوقه |
-| Web Locks | flag في متغير | الـ flag في كل تاب لوحده، والقفل للـ origin كله (اتعلّمنا ده من باج تمرين IndexedDB) |
-| [[opId]] على السيرفر | الثقة في العميل | لو الرد ضاع بعد ما السيرفر طبّق العملية، العميل هيبعتها تاني، والسيرفر يتجاهلها |
+**هتشوف إيه:** منطقة إفلات كبيرة فيها لينك «اختار من جهازك». اسحب صور أو اختارها: كل صورة بتظهر في سطر فيه معاينة ومقاسها وحجمها ونوعها، وشريط تقدم وزرار «إلغاء» لوحدها. الصورة الكبيرة أو الملف اللي مش صورة بيترفض في السطر بتاعه قبل ما يتبعت. (في الـ preview اللي فوق مفيش سيرفر، فالفحص والمعاينة شغالين والرفع نفسه هيقول «النت وقع». الصفحة بتكتب ده فوق.)
 
 ## الملفات
 
 ~~~text
-tasks-pwa/
+image-uploader/
 ├── package.json
-├── vite.config.js
-├── index.html
-├── server.js              # Express: POST /api/ops و GET /api/tasks و /api/fail للتجربة
-├── public/pwa-192x192.png و pwa-512x512.png
-├── src/
-│   ├── core.js            # validateTitle و openTasksDB (v1 ← v2) و applyChange و flushOutbox
-│   ├── sync.js            # syncNow: fetch + Web Lock
-│   ├── main.js            # الشاشة والأحداث و BroadcastChannel وزرار التحديث
-│   └── style.css
-└── test/
-    └── core.test.js       # node --test بـ fake-indexeddb
+├── server.js          # Express + multer على localhost
+├── public/
+│   └── index.html     # الصفحة: سحب وإفلات، ومعاينة، وفحص، ورفع بـ XHR
+└── uploads/           # multer بيحط الملفات هنا (بيتعمل لوحده)
 ~~~
 
-التشغيل: [[npm install]]، وفي ترمنال [[npm run api]] (البورت 3001)، وفي التاني [[npm run build]] ثم [[npm run preview]] (الـ preview بيحوّل [[/api]] للـ Express). والتستات: [[npm test]].
+التشغيل: [[npm install]] ثم [[npm start]]، وافتح [[http://localhost:3000]].
 
 ~~~json package.json
 {
-  "name": "tasks-pwa",
+  "name": "image-uploader",
   "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "api": "node server.js",
-    "test": "node --test"
-  },
+  "type": "commonjs",
+  "scripts": { "start": "node server.js" },
   "dependencies": {
     "express": "^5.3.0",
-    "idb": "^8.0.4"
-  },
-  "devDependencies": {
-    "fake-indexeddb": "^6.2.8",
-    "vite": "^6.4.6",
-    "vite-plugin-pwa": "^1.3.0"
+    "multer": "^2.5.0"
   }
 }
 ~~~
 
-~~~js vite.config.js
-import { defineConfig } from "vite";
-import { VitePWA } from "vite-plugin-pwa";
+~~~js server.js
+const express = require("express");
+const multer = require("multer");
+const path = require("node:path");
 
-const API = process.env.API ?? "http://localhost:3001";
-
-export default defineConfig({
-  build: { target: "es2022" },                         // top-level await في main.js
-  preview: { proxy: { "/api": API } },                 // الـ API على Express
-  server: { proxy: { "/api": API } },
-  plugins: [
-    VitePWA({
-      registerType: "prompt",
-      manifest: {
-        name: "مهامي", short_name: "مهامي", lang: "ar", dir: "rtl",
-        start_url: "/", display: "standalone", theme_color: "#1f2430", background_color: "#1f2430",
-        icons: [
-          { src: "pwa-192x192.png", sizes: "192x192", type: "image/png" },
-          { src: "pwa-512x512.png", sizes: "512x512", type: "image/png" },
-        ],
-      },
-      workbox: {
-        globPatterns: ["**/*.{js,css,html,png}"],
-        navigateFallbackDenylist: [/^\/api\//],      // الـ API ميرجّعش index.html أبدًا
-      },
-    }),
-  ],
+const app = express();
+const upload = multer({
+  dest: path.join(__dirname, "uploads"),
+  limits: { fileSize: 2 * 1024 * 1024, files: 1 },          // نفس حد الصفحة: السيرفر مبيثقش في الصفحة
+  fileFilter: (req, file, cb) => cb(null, /^image\/(png|jpeg|webp)$/.test(file.mimetype)),
 });
+
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api/")) console.log(new Date().toISOString().slice(11, 19), req.method, req.path);
+  next();
+});
+app.use(express.static(path.join(__dirname, "public")));
+
+app.post("/api/upload", upload.single("file"), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: "مفيش صورة PNG أو JPEG أو WebP في الطلب" });
+  console.log("  اتحفظ:", req.file.originalname, req.file.size, "bytes");
+  res.status(201).json({ name: req.file.originalname, size: req.file.size });
+});
+
+// أخطاء multer (زي الحجم) بترجع JSON واضح مش صفحة HTML
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) return res.status(413).json({ error: err.code });
+  if (req.aborted || err.message === "Request aborted") {     // اليوزر داس إلغاء: multer مسح الجزء اللي وصل
+    console.log("  اتلغى من الصفحة:", req.path);
+    return;
+  }
+  next(err);
+});
+
+const port = Number(process.env.PORT) || 3000;
+app.listen(port, () => console.log("الرافع على http://localhost:" + port));
 ~~~
 
 ~~~html index.html
@@ -873,365 +525,954 @@ export default defineConfig({
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#1f2430">
-<title>مهامي</title>
-<link rel="stylesheet" href="/src/style.css">
+<title>ارفع صورك</title>
+<style>
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; max-width: 720px; }
+  #drop { border: 3px dashed #9ca3af; border-radius: 12px; padding: 28px; text-align: center; }
+  #drop.over { border-color: #2563eb; background: #eff6ff; }
+  #drop label { color: #1d4ed8; text-decoration: underline; cursor: pointer; }
+  #drop input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  #drop:focus-within { outline: 3px solid #93c5fd; }
+  #list { list-style: none; padding: 0; display: grid; gap: 8px; margin-top: 16px; }
+  #list li { display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: center; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px; }
+  #list img { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; background: #f3f4f6; }
+  #list progress { width: 100%; }
+  .err { color: #b91c1c; }
+  .ok { color: #065f46; }
+  #note { font-size: 13px; color: #92400e; }
+</style>
 </head>
 <body>
-<header><h1>مهامي</h1><span id="status"></span></header>
-<main>
-  <form id="add"><input name="title" placeholder="مهمة جديدة" aria-label="مهمة جديدة"><button>ضيف</button></form>
-  <p id="msg" role="status"></p>
-  <ul id="list"></ul>
-</main>
-<div id="update" role="status" hidden><span>فيه نسخة جديدة.</span><button type="button">حدّث</button></div>
-<script type="module" src="/src/main.js"></script>
+<h1>ارفع صورك</h1>
+<div id="drop">
+  <p>اسحب الصور هنا أو <label for="files">اختار من جهازك</label></p>
+  <input type="file" id="files" accept="image/png,image/jpeg,image/webp" multiple>
+  <p>PNG أو JPEG أو WebP، 2MB بالكتير للصورة.</p>
+</div>
+<p id="note"></p>
+<ul id="list"></ul>
+<script>
+  const MAX = 2 * 1024 * 1024;
+  const OFFLINE = location.origin === "null";      // الـ preview: مفيش سيرفر
+  if (OFFLINE) document.querySelector("#note").textContent = "مفيش سيرفر هنا (صفحة معزولة): الفحص والمعاينة شغالين، والرفع هيفشل. شغّل node server.js.";
+  const list = document.querySelector("#list");
+  const drop = document.querySelector("#drop");
+  const input = document.querySelector("#files");
+
+  async function sniff(file) {
+    const b = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+    if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return "png";
+    if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return "jpeg";
+    if (String.fromCharCode(...b.slice(0, 4)) === "RIFF" && String.fromCharCode(...b.slice(8, 12)) === "WEBP") return "webp";
+    return null;
+  }
+
+  function row(file) {
+    const li = document.createElement("li");
+    li.innerHTML = '<img alt=""><div><strong></strong><div class="meta"></div><progress max="1" value="0" hidden></progress><div class="status" role="status"></div></div><button type="button" hidden>إلغاء</button>';
+    li.querySelector("strong").textContent = file.name;
+    list.append(li);
+    return {
+      li, img: li.querySelector("img"), meta: li.querySelector(".meta"), bar: li.querySelector("progress"),
+      status: li.querySelector(".status"), cancel: li.querySelector("button"),
+    };
+  }
+
+  function uploadFile(file, ui) {
+    const fd = new FormData();
+    fd.append("file", file);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/upload");
+    ui.bar.hidden = false;
+    ui.cancel.hidden = false;
+    xhr.upload.onprogress = (e) => { if (e.lengthComputable) ui.bar.value = e.loaded / e.total; };
+    xhr.onload = () => {
+      ui.cancel.hidden = true;
+      if (xhr.status === 201) { ui.bar.value = 1; ui.status.textContent = "اترفعت"; ui.status.className = "status ok"; }
+      else { ui.status.textContent = "السيرفر رفضها (" + xhr.status + ")"; ui.status.className = "status err"; }
+    };
+    xhr.onerror = () => { ui.cancel.hidden = true; ui.status.textContent = "النت وقع، جرّب تاني"; ui.status.className = "status err"; };
+    xhr.onabort = () => { ui.cancel.hidden = true; ui.status.textContent = "اتلغت"; ui.status.className = "status err"; };
+    ui.cancel.addEventListener("click", () => xhr.abort(), { once: true });   // يلغي الملف ده بس
+    xhr.send(fd);
+  }
+
+  async function handle(files) {
+    for (const file of files) {
+      const ui = row(file);
+      const kind = await sniff(file);
+      if (!kind) { ui.status.textContent = "مش صورة PNG/JPEG/WebP، اترفضت"; ui.status.className = "status err"; continue; }
+      if (file.size > MAX) { ui.status.textContent = $__bt$__{(file.size / 1024 / 1024).toFixed(1)}MB أكبر من 2MB، اترفضت قبل الرفع$__bt; ui.status.className = "status err"; continue; }
+      const url = URL.createObjectURL(file);
+      ui.img.src = url;
+      try {
+        const bmp = await createImageBitmap(file);
+        ui.meta.textContent = $__bt$__{bmp.width}×$__{bmp.height} | $__{(file.size / 1024).toFixed(0)}KB | $__{kind}$__bt;
+        bmp.close();
+      } catch {
+        ui.meta.textContent = $__bt$__{(file.size / 1024).toFixed(0)}KB$__bt;
+      }
+      ui.img.onload = () => URL.revokeObjectURL(url);   // الصورة اترسمت: مش محتاجين الـ URL
+      uploadFile(file, ui);
+    }
+  }
+
+  input.addEventListener("change", () => { handle([...input.files]); input.value = ""; });
+
+  // سحب وإفلات من غير رعشة (درس drag and drop)
+  let depth = 0;
+  const isFiles = (e) => e.dataTransfer?.types.includes("Files");
+  drop.addEventListener("dragenter", (e) => { if (isFiles(e)) { depth++; drop.classList.add("over"); } });
+  drop.addEventListener("dragover", (e) => { if (isFiles(e)) e.preventDefault(); });
+  drop.addEventListener("dragleave", (e) => { if (isFiles(e) && --depth === 0) drop.classList.remove("over"); });
+  drop.addEventListener("drop", (e) => {
+    e.preventDefault();
+    depth = 0;
+    drop.classList.remove("over");
+    handle([...e.dataTransfer.files]);
+  });
+</script>
 </body>
 </html>
 ~~~
 
-~~~js src/core.js
-// منطق من غير DOM ولا شبكة: بيتختبر في Node بـ fake-indexeddb
-import { openDB } from "idb";
+## الشرح
 
-export const MAX_TITLE = 200;
+**الصفحة:**
 
-export function validateTitle(raw) {
-  const title = String(raw ?? "").trim();
-  if (!title) return { ok: false, error: "العنوان فاضي" };
-  if (title.length > MAX_TITLE) return { ok: false, error: $__btالعنوان أطول من $__{MAX_TITLE} حرف ($__{title.length})$__bt };
-  return { ok: true, title };
-}
+- **[[<label for="files">]] جوه منطقة الإفلات والـ input مخفي بصريًا:** اللي مش بيستخدم ماوس بيوصل للـ input بـ Tab ويفتح اختيار الملفات بـ Enter، و [[:focus-within]] بيرسم إطار حوالين المنطقة كلها.
+- **[[handle(files)]] واحدة للطريقتين:** الـ [[change]] بتاع الـ input والـ [[drop]] الاتنين بيبعتوا array ملفات لنفس الدالة.
+- **الفحص قبل أي رفع:** النوع من أول bytes ([[sniff]]، وزوّدنا WebP: بيبدأ بـ [[RIFF]] وفيه [[WEBP]] من byte 8)، والحجم. اللي يفشل بيكتب السبب في السطر بتاعه و [[continue]]، فمفيش [[XMLHttpRequest]] بيتعمل له أصلًا.
+- **[[createImageBitmap(file)]]:** عشان المقاس ([[4000×3000]]) من غير ما نستنى [[<img>]] يتحمّل، وبعدين [[bmp.close()]].
+- **[[ui.img.onload = () => URL.revokeObjectURL(url)]]:** الصورة اترسمت، فالـ blob URL مش محتاجينه تاني.
+- **XHR لكل ملف لوحده:** [[xhr.upload.onprogress]] بيحرّك الشريط بتاعه، وزرار الإلغاء بينادي [[abort()]] على الـ XHR بتاعه بس ([[{ once: true }]] عشان الـ listener ميتسجّلش مرتين). [[fetch]] لسه مفيهوش upload progress في كل المتصفحات، عشان كده XHR هنا.
+- **[[depth]] في السحب:** نفس تصليح تمرين الرعشة: الإطار مبيختفيش وانت بتعدّي فوق النص واللينك اللي جوه المنطقة.
 
-// version 1: tasks و outbox. version 2: index على done من غير ما نلمس الداتا
-export function openTasksDB(name = "tasks-pwa", version = 2) {
-  return openDB(name, version, {
-    upgrade(db, oldVersion, newVersion, tx) {
-      if (oldVersion < 1) {
-        db.createObjectStore("tasks", { keyPath: "id" });
-        db.createObjectStore("outbox", { keyPath: "seq", autoIncrement: true });
-      }
-      if (oldVersion < 2 && newVersion >= 2) {
-        tx.objectStore("tasks").createIndex("byDone", "done");
-      }
-    },
-  });
-}
+**السيرفر:**
 
-// كل تغيير = سطر في tasks + عملية في outbox، في transaction واحدة
-export async function applyChange(db, op) {
-  const tx = db.transaction(["tasks", "outbox"], "readwrite");
-  if (op.type === "delete") tx.objectStore("tasks").delete(op.task.id);
-  else tx.objectStore("tasks").put(op.task);
-  tx.objectStore("outbox").add({ ...op, opId: crypto.randomUUID(), at: Date.now() });
-  await tx.done;
-}
+- **[[multer({ dest, limits, fileFilter })]]:** بيقرا الـ [[multipart/form-data]] ويكتب الملف في [[uploads/]]. [[limits.fileSize]] نفس حد الصفحة، لأن أي حد يقدر يبعت للـ API من غير الصفحة. [[fileFilter]] بيرفض أي [[mimetype]] مش صورة (ولو عايز فحص الـ bytes على السيرفر كمان، اقرا أول bytes من الملف اللي اتحفظ).
+- **[[upload.single("file")]]:** اسم الحقل لازم يبقى نفس [[fd.append("file", ...)]] في الصفحة.
+- **error handler بـ ٤ arguments:** أخطاء multer (زي [[LIMIT_FILE_SIZE]]) بترجع 413 و JSON بدل صفحة HTML.
 
-// بيبعت العمليات بالترتيب، ويمسح اللي السيرفر قال عليه ok بس، ويقف عند أول فشل
-export async function flushOutbox(db, send) {
-  let sent = 0;
-  for (const op of await db.getAll("outbox")) {
-    const ok = await send(op).catch(() => false);
-    if (!ok) return { sent, stopped: true };
-    await db.delete("outbox", op.seq);
-    sent++;
-  }
-  return { sent, stopped: false };
-}
+## اتقاس
+
+Chrome 158 headless على [[http://localhost:8832]]، و upload مخنوق لحوالي 150KB/s (DevTools Protocol). ضغطنا Tab لحد الـ input و Enter، وبعدين أفلتنا ٤ صور حقيقية مرة واحدة (منهم [[big.png]] 2.5MB)، وضغطنا «إلغاء» على [[landscape.jpg]] وهي بتترفع:
+
+~~~text الناتج (Chrome 158 headless)
+الـ focus على: files
+Enter → اختيار الملفات: اتفتح
+بعد 0.6s:
+me.png | 300×300 | 7KB | png | 1.00 | اترفعت
+big.png |  | - | 2.5MB أكبر من 2MB، اترفضت قبل الرفع
+landscape.jpg | 4000×3000 | 1192KB | jpeg | 0.05 | 
+me.jpg | 300×300 | 17KB | jpeg | 1.00 | اترفعت
+الآخر:
+me.png | 300×300 | 7KB | png | 1.00 | اترفعت
+big.png |  | - | 2.5MB أكبر من 2MB، اترفضت قبل الرفع
+landscape.jpg | 4000×3000 | 1192KB | jpeg | 0.05 | اتلغت
+me.jpg | 300×300 | 17KB | jpeg | 1.00 | اترفعت
+requests من الصفحة: ["POST /api/upload","POST /api/upload","POST /api/upload"]
+لوج السيرفر:
+الرافع على http://localhost:8832
+08:56:18 POST /api/upload
+08:56:18 POST /api/upload
+08:56:18 POST /api/upload
+اتحفظ: me.png 6981 bytes
+اتحفظ: me.jpg 16937 bytes
+اتلغى من الصفحة: /api/upload
+big.png بـ fetch مباشرة: 413 {"error":"LIMIT_FILE_SIZE"}
+a.txt بـ fetch مباشرة: 400 {"error":"مفيش صورة PNG أو JPEG أو WebP في الطلب"}
+pageerrors: 0
 ~~~
 
-~~~js src/sync.js
-import { flushOutbox } from "./core.js";
+- ٣ requests بس من ٤ صور: [[big.png]] اترفضت في الصفحة ومتبعتتش.
+- الإلغاء وقّف [[landscape.jpg]] عند 5٪ والتانيين كمّلوا.
+- آخر سطرين: بعتنا للـ API مباشرة من غير الصفحة، والسيرفر رفض الكبير (413) والنص (400) لوحده.
+- الإفلات اتعمل بأحداث [[dragenter]] و [[dragover]] و [[drop]] بـ [[DataTransfer]] فيه الملفات الحقيقية، لأن headless مبيقدرش يسحب من الويندوز.
 
-async function sendOp(op) {
-  const res = await fetch("/api/ops", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(op),
-  });
-  return res.ok;
-}
+## اللي حصل وإحنا بنبنيه
 
-// Web Locks: تابين مفتوحين مبيبعتوش نفس العملية مرتين
-export function syncNow(db) {
-  if (!navigator.onLine) return Promise.resolve({ sent: 0, stopped: true });
-  return navigator.locks.request("tasks-outbox", () => flushOutbox(db, sendOp));
-}
-~~~
+- **الإلغاء طبع stack trace في السيرفر:** أول نسخة من الـ error handler كانت بتعدّي أي حاجة مش [[MulterError]] لـ [[next(err)]]، فإلغاء اليوزر طلّع [[Error: Request aborted]] بـ ١٠ سطور في الـ stderr كأنه عطل. الإلغاء حاجة طبيعية، فبقى سطر واحد «اتلغى من الصفحة». ونتأكد إن multer مسح الجزء اللي وصل: فولدر [[uploads/]] فيه الملفات اللي اترفعت بس.
+- **[[input.value = ""]] بعد [[handle]]:** من غيره، اختيار نفس الصور تاني مبيعملش [[change]].
 
-~~~js src/main.js
-import { registerSW } from "virtual:pwa-register";
-import { openTasksDB, validateTitle, applyChange } from "./core.js";
-import { syncNow } from "./sync.js";
+**الغلطة الشائعة:** تفحص الحجم على السيرفر بس. اليوزر بيستنى صورة 20MB تترفع على موبايل بطيء دقيقة كاملة عشان يعرف في الآخر إنها مرفوضة.` },
+        { lvl: 'متوسط', dir: "spa-draft", t: R`SPA صغير بيفتكر مكانك`, what: R`راوتر بـ [[pushState]] و [[popstate]] (درس ٦) لـ ٣ صفحات، وصفحة «اكتب رسالة» بتحفظ المسودة في [[localStorage]] على [[visibilitychange]] (درس ٥)، والأقسام بتظهر بـ reveal بـ IntersectionObserver (درس ١)، والبحث في [[?q=]] بـ [[replaceState]].`, done: R`back و forward بيرجّعوا الصفحة الصح من غير reload (Network مفيهوش طلب document جديد)، والمسودة بترجع بعد ما تقفل التاب وتفتحه، و refresh على [[/contact?q=x]] بيفتح نفس الصفحة ونفس البحث، و Ctrl+Click على أي لينك بيفتح تاب جديد زي أي موقع.`, sol: R`## الشكل النهائي
 
-const $ = (s) => document.querySelector(s);
-const channel = new BroadcastChannel("tasks-pwa");
-let db;
-try {
-  db = await openTasksDB();
-} catch (err) {
-  // VersionError: تاب قديم بكود قديم بعد ما تاب تاني عمل upgrade
-  $("#msg").textContent = err.name === "VersionError" ? "فيه نسخة أحدث مفتوحة في تاب تاني، اعمل refresh." : "مقدرناش نفتح التخزين: " + err.message;
-  throw err;
-}
-
-async function render() {
-  const tasks = (await db.getAll("tasks")).sort((a, b) => a.createdAt - b.createdAt);
-  const pending = await db.count("outbox");
-  $("#list").replaceChildren(...tasks.map((t) => {
-    const li = document.createElement("li");
-    li.dataset.id = t.id;
-    const label = document.createElement("label");
-    const box = Object.assign(document.createElement("input"), { type: "checkbox", checked: t.done });
-    const span = Object.assign(document.createElement("span"), { textContent: " " + t.title });
-    label.append(box, span);
-    const del = Object.assign(document.createElement("button"), { type: "button", textContent: "✕" });
-    del.dataset.action = "delete";
-    del.setAttribute("aria-label", "امسح " + t.title);
-    li.append(label, del);
-    return li;
-  }));
-  $("#status").textContent = (navigator.onLine ? "Online" : "Offline") + (pending ? $__bt | $__{pending} تغيير مستني يتبعت$__bt : " | كله متزامن");
-}
-
-async function change(op) {
-  try {
-    await applyChange(db, op);
-  } catch (err) {
-    if (err.name === "QuotaExceededError") {
-      $("#msg").textContent = "المساحة المتاحة للموقع خلصت. امسح مهام قديمة وجرّب تاني.";
-      return;
+~~~view 460
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الرئيسية</title>
+<style>
+  body { font: 15px/1.7 system-ui, sans-serif; margin: 0; }
+  header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 10px 16px; background: #111827; color: #fff; position: sticky; top: 0; }
+  header a { color: #fff; }
+  header a[aria-current="page"] { font-weight: 700; text-decoration: none; border-bottom: 2px solid #fbbf24; }
+  header input { font: inherit; padding: 4px 8px; border-radius: 6px; border: 0; margin-inline-start: auto; }
+  main { padding: 16px; max-width: 640px; margin: 0 auto; }
+  .card { padding: 12px; border-radius: 8px; background: #f3f4f6; margin: 12px 0; }
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity .4s, transform .4s; }
+  .reveal.visible { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .reveal { transition: none; } }
+  textarea { width: 100%; min-height: 120px; font: inherit; }
+  #note { font-size: 13px; color: #92400e; }
+  .spacer { height: 60vh; }
+</style>
+</head>
+<body>
+<header>
+  <a href="/" data-link>الرئيسية</a>
+  <a href="/about" data-link>عننا</a>
+  <a href="/contact" data-link>اكتب رسالة</a>
+  <input type="search" id="q" placeholder="دوّر في الصفحة..." aria-label="بحث">
+</header>
+<main id="view"></main>
+<p id="note"></p>
+<script>
+  // ---------- التخزين: ممكن يبقى ممنوع (preview معزول أو إعدادات المتصفح) ----------
+  let storageOk = true;
+  const store = (() => {
+    try { localStorage.setItem("__t", "1"); localStorage.removeItem("__t"); return localStorage; }
+    catch {
+      storageOk = false;                      // مجرد قراية localStorage بترمي SecurityError هنا
+      const m = new Map();
+      return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, v), removeItem: (k) => m.delete(k) };
     }
-    throw err;
+  })();
+  // ---------- الـ history: pushState بيرمي في صفحة معزولة ----------
+  let urlWorks = location.origin !== "null";   // صفحة معزولة: الـ URL مبيتغيّرش أصلًا
+  function go(url, replace = false) {
+    try { history[replace ? "replaceState" : "pushState"]({}, "", url); }
+    catch { urlWorks = false; current = new URL(url, current); }
   }
-  $("#msg").textContent = "";
-  channel.postMessage("changed");
-  await render();
-  sync();
+  // في صفحة معزولة location.href = "about:srcdoc"، فبنبدأ من عنوان وهمي ونمشي عليه
+  let current = new URL(location.origin === "null" ? "https://preview.invalid/" : location.href);
+  const here = () => (urlWorks ? new URL(location.href) : current);
+  const notes = [];
+  if (!storageOk) notes.push("التخزين مقفول هنا، المسودة هتتنسي مع الـ reload");
+
+  // ---------- الصفحات ----------
+  const pages = {
+    "/": { title: "الرئيسية", html: () => cards(["أهلًا بيك في الموقع", "بنعمل تطبيقات صغيرة بتشتغل", "انزل تحت تشوف الأقسام بتظهر", "آخر قسم"]) },
+    "/about": { title: "عننا", html: () => cards(["فريق صغير من القاهرة", "بنحب الكود البسيط", "بنكتب tests قبل ما ننشر"]) },
+    "/contact": {
+      title: "اكتب رسالة",
+      html: () => $__bt<h1>اكتب رسالة</h1><label for="draft">رسالتك (بتتحفظ لو سبت التاب):</label><textarea id="draft"></textarea>$__bt + cards(["سؤال: الرد بياخد قد إيه؟ يوم عمل", "سؤال: ينفع أبعت ملف؟ لأ، لينك بس"]),
+      mount() {
+        const ta = document.querySelector("#draft");
+        ta.value = store.getItem("draft") ?? "";
+      },
+    },
+  };
+  const cards = (items) => '<div class="spacer"></div>' + items.map((t) => $__bt<section class="card reveal">$__{t}</section>$__bt).join("");
+
+  const reveal = new IntersectionObserver((entries, obs) => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add("visible"); obs.unobserve(e.target); }
+  }, { root: document, threshold: 0.2 });
+
+  function render() {
+    const url = here();
+    const page = pages[url.pathname];
+    const view = document.querySelector("#view");
+    view.innerHTML = page ? page.html() : "<h1>404: الصفحة مش موجودة</h1>";
+    document.title = page?.title ?? "مش موجود";
+    page?.mount?.();
+    document.querySelectorAll("header a").forEach((a) => a.getAttribute("href") === url.pathname ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+    const q = url.searchParams.get("q") ?? "";
+    document.querySelector("#q").value = q;
+    filter(q);
+    view.querySelectorAll(".reveal").forEach((el) => reveal.observe(el));
+    document.querySelector("#note").textContent = notes.concat(urlWorks ? [] : ["الصفحة معزولة: الـ URL مبيتغيّرش"]).join(" | ");
+  }
+
+  function filter(q) {
+    for (const card of document.querySelectorAll("#view .card")) card.hidden = q !== "" && !card.textContent.includes(q);
+  }
+
+  // ---------- اللينكات ----------
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("a[data-link]");
+    if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;   // Ctrl+Click = تاب جديد
+    const target = new URL(a.getAttribute("href"), here());
+    if (target.origin !== here().origin) return;                   // موقع تاني
+    e.preventDefault();
+    if (target.pathname === here().pathname) return;
+    saveDraft();
+    go(target.pathname);
+    render();
+  });
+  window.addEventListener("popstate", render);
+
+  // ---------- البحث في ?q= بـ replaceState: مش عايزين entry لكل حرف ----------
+  document.querySelector("#q").addEventListener("input", (e) => {
+    const url = here();
+    if (e.target.value) url.searchParams.set("q", e.target.value); else url.searchParams.delete("q");
+    go(url.pathname + url.search, true);
+    filter(e.target.value);
+  });
+
+  // ---------- المسودة: تتحفظ لما الصفحة تتخبى (آخر لحظة مضمونة) ----------
+  function saveDraft() {
+    const ta = document.querySelector("#draft");
+    if (ta) store.setItem("draft", ta.value);
+  }
+  document.addEventListener("visibilitychange", () => { if (document.hidden) saveDraft(); });
+
+  render();
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** موقع ٣ صفحات بشريط فوق فيه لينكات وبحث. التنقل من غير reload، والكروت بتظهر بحركة خفيفة وهي داخلة الشاشة، والبحث بيفلتر الكروت وبيتكتب في العنوان [[?q=]]، وصفحة «اكتب رسالة» بتفتكر المسودة لو قفلت التاب. في الـ preview اللي فوق التنقل والبحث والحركة شغالين، بس الصفحة معزولة: الـ URL مبيتغيّرش والتخزين مقفول، والصفحة بتقول كده تحت.
+
+## الملفات
+
+~~~text
+spa-draft/
+├── index.html       # الصفحة كلها (HTML و CSS و JS)
+└── spa-server.mjs   # أي مسار من غير امتداد بيرجّع index.html (زي npx serve -s)
+~~~
+
+التشغيل: [[node spa-server.mjs]] وافتح [[http://localhost:8831]].
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الرئيسية</title>
+<style>
+  body { font: 15px/1.7 system-ui, sans-serif; margin: 0; }
+  header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 10px 16px; background: #111827; color: #fff; position: sticky; top: 0; }
+  header a { color: #fff; }
+  header a[aria-current="page"] { font-weight: 700; text-decoration: none; border-bottom: 2px solid #fbbf24; }
+  header input { font: inherit; padding: 4px 8px; border-radius: 6px; border: 0; margin-inline-start: auto; }
+  main { padding: 16px; max-width: 640px; margin: 0 auto; }
+  .card { padding: 12px; border-radius: 8px; background: #f3f4f6; margin: 12px 0; }
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity .4s, transform .4s; }
+  .reveal.visible { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .reveal { transition: none; } }
+  textarea { width: 100%; min-height: 120px; font: inherit; }
+  #note { font-size: 13px; color: #92400e; }
+  .spacer { height: 60vh; }
+</style>
+</head>
+<body>
+<header>
+  <a href="/" data-link>الرئيسية</a>
+  <a href="/about" data-link>عننا</a>
+  <a href="/contact" data-link>اكتب رسالة</a>
+  <input type="search" id="q" placeholder="دوّر في الصفحة..." aria-label="بحث">
+</header>
+<main id="view"></main>
+<p id="note"></p>
+<script>
+  // ---------- التخزين: ممكن يبقى ممنوع (preview معزول أو إعدادات المتصفح) ----------
+  let storageOk = true;
+  const store = (() => {
+    try { localStorage.setItem("__t", "1"); localStorage.removeItem("__t"); return localStorage; }
+    catch {
+      storageOk = false;                      // مجرد قراية localStorage بترمي SecurityError هنا
+      const m = new Map();
+      return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, v), removeItem: (k) => m.delete(k) };
+    }
+  })();
+  // ---------- الـ history: pushState بيرمي في صفحة معزولة ----------
+  let urlWorks = location.origin !== "null";   // صفحة معزولة: الـ URL مبيتغيّرش أصلًا
+  function go(url, replace = false) {
+    try { history[replace ? "replaceState" : "pushState"]({}, "", url); }
+    catch { urlWorks = false; current = new URL(url, current); }
+  }
+  // في صفحة معزولة location.href = "about:srcdoc"، فبنبدأ من عنوان وهمي ونمشي عليه
+  let current = new URL(location.origin === "null" ? "https://preview.invalid/" : location.href);
+  const here = () => (urlWorks ? new URL(location.href) : current);
+  const notes = [];
+  if (!storageOk) notes.push("التخزين مقفول هنا، المسودة هتتنسي مع الـ reload");
+
+  // ---------- الصفحات ----------
+  const pages = {
+    "/": { title: "الرئيسية", html: () => cards(["أهلًا بيك في الموقع", "بنعمل تطبيقات صغيرة بتشتغل", "انزل تحت تشوف الأقسام بتظهر", "آخر قسم"]) },
+    "/about": { title: "عننا", html: () => cards(["فريق صغير من القاهرة", "بنحب الكود البسيط", "بنكتب tests قبل ما ننشر"]) },
+    "/contact": {
+      title: "اكتب رسالة",
+      html: () => $__bt<h1>اكتب رسالة</h1><label for="draft">رسالتك (بتتحفظ لو سبت التاب):</label><textarea id="draft"></textarea>$__bt + cards(["سؤال: الرد بياخد قد إيه؟ يوم عمل", "سؤال: ينفع أبعت ملف؟ لأ، لينك بس"]),
+      mount() {
+        const ta = document.querySelector("#draft");
+        ta.value = store.getItem("draft") ?? "";
+      },
+    },
+  };
+  const cards = (items) => '<div class="spacer"></div>' + items.map((t) => $__bt<section class="card reveal">$__{t}</section>$__bt).join("");
+
+  const reveal = new IntersectionObserver((entries, obs) => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add("visible"); obs.unobserve(e.target); }
+  }, { root: document, threshold: 0.2 });
+
+  function render() {
+    const url = here();
+    const page = pages[url.pathname];
+    const view = document.querySelector("#view");
+    view.innerHTML = page ? page.html() : "<h1>404: الصفحة مش موجودة</h1>";
+    document.title = page?.title ?? "مش موجود";
+    page?.mount?.();
+    document.querySelectorAll("header a").forEach((a) => a.getAttribute("href") === url.pathname ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+    const q = url.searchParams.get("q") ?? "";
+    document.querySelector("#q").value = q;
+    filter(q);
+    view.querySelectorAll(".reveal").forEach((el) => reveal.observe(el));
+    document.querySelector("#note").textContent = notes.concat(urlWorks ? [] : ["الصفحة معزولة: الـ URL مبيتغيّرش"]).join(" | ");
+  }
+
+  function filter(q) {
+    for (const card of document.querySelectorAll("#view .card")) card.hidden = q !== "" && !card.textContent.includes(q);
+  }
+
+  // ---------- اللينكات ----------
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("a[data-link]");
+    if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;   // Ctrl+Click = تاب جديد
+    const target = new URL(a.getAttribute("href"), here());
+    if (target.origin !== here().origin) return;                   // موقع تاني
+    e.preventDefault();
+    if (target.pathname === here().pathname) return;
+    saveDraft();
+    go(target.pathname);
+    render();
+  });
+  window.addEventListener("popstate", render);
+
+  // ---------- البحث في ?q= بـ replaceState: مش عايزين entry لكل حرف ----------
+  document.querySelector("#q").addEventListener("input", (e) => {
+    const url = here();
+    if (e.target.value) url.searchParams.set("q", e.target.value); else url.searchParams.delete("q");
+    go(url.pathname + url.search, true);
+    filter(e.target.value);
+  });
+
+  // ---------- المسودة: تتحفظ لما الصفحة تتخبى (آخر لحظة مضمونة) ----------
+  function saveDraft() {
+    const ta = document.querySelector("#draft");
+    if (ta) store.setItem("draft", ta.value);
+  }
+  document.addEventListener("visibilitychange", () => { if (document.hidden) saveDraft(); });
+
+  render();
+</script>
+</body>
+</html>
+~~~
+
+~~~js spa-server.mjs
+// زي npx serve -s: أي مسار مش ملف بيرجّع index.html
+import { createServer } from "node:http";
+import { readFile } from "node:fs/promises";
+import { extname, join } from "node:path";
+
+const types = { ".html": "text/html; charset=utf-8", ".mjs": "text/javascript", ".js": "text/javascript" };
+createServer(async (req, res) => {
+  const path = new URL(req.url, "http://x").pathname;
+  const file = extname(path) ? join(".", path) : "index.html";
+  try {
+    const body = await readFile(file);
+    res.writeHead(200, { "content-type": types[extname(file)] ?? "application/octet-stream" }).end(body);
+  } catch {
+    res.writeHead(404).end("not found");
+  }
+}).listen(Number(process.env.PORT) || 8831, () => console.log("على http://localhost:" + (Number(process.env.PORT) || 8831)));
+~~~
+
+## الشرح: كل درس فين
+
+| الجزء | الدرس | بيعمل إيه |
+|---|---|---|
+| [[go()]] و [[popstate]] و [[render()]] | pushState و popstate | التنقل من غير reload، و back و forward |
+| [[saveDraft]] على [[visibilitychange]] | visibilitychange و bfcache | المسودة تتحفظ في آخر لحظة مضمونة |
+| [[reveal]] | IntersectionObserver | الكروت تظهر مرة واحدة وهي داخلة |
+| البحث و [[go(..., true)]] | pushState (replaceState) | [[?q=]] في العنوان من غير entry لكل حرف |
+
+- **[[render()]] بتقرا كل حاجة من الـ URL:** المسار بيختار الصفحة، و [[?q=]] بيملا البحث ويفلتر. عشان كده refresh على [[/contact?q=ملف]] بيفتح نفس الصفحة ونفس البحث، ومفيش حالة مخبّية في متغيرات.
+- **[[go(url, replace)]]:** [[pushState]] للتنقل (entry جديد، back يرجعله) و [[replaceState]] للبحث (بيبدّل العنوان الحالي). لو اتكتبت «ملف» بـ [[pushState]] كان back هيلف على «م» و «مل» و «ملف».
+- **[[e.ctrlKey]] وأخواتها:** الراوتر بيسيب الضغطة للمتصفح، فـ Ctrl+Click بيفتح تاب جديد زي أي موقع. والتاب الجديد بيطلب الـ URL من السيرفر و [[spa-server.mjs]] بيرجّع [[index.html]].
+- **[[visibilitychange]] و [[document.hidden]]:** بيحصل لما تبدّل التاب أو تقفله أو تصغّر الشباك أو الموبايل يقفل الشاشة. والتنقل لصفحة تانية جوه الموقع بيحفظ برضه ([[saveDraft()]] قبل [[go()]])، لأن الـ textarea هتتمسح.
+- **[[store]]:** [[localStorage]] لو متاح، وإلا [[Map]] في الذاكرة. مجرد قراية [[localStorage]] في صفحة معزولة بترمي [[SecurityError]]، فالفحص جوه [[try]] وبنحفظ النتيجة في [[storageOk]] بدل ما نلمس [[localStorage]] تاني.
+- **[[root: document]] في الـ reveal:** عشان يشتغل جوه iframe من origin تاني (الـ preview).
+- **[[a.getAttribute("href")]] مش [[a.pathname]]:** في الصفحة المعزولة العنوان [[about:srcdoc]]، و [[/about]] مبيتحسبش بالنسبة له. فبنحسب المسار بنفسنا على [[here()]].
+
+## اتقاس
+
+Chrome 158 headless على [[http://localhost:8833]]. عدّينا كل طلبات الـ document (يعني تحميل صفحة كامل):
+
+~~~text الناتج (Chrome 158 headless)
+فتح /                        / | الرئيسية | documents: 1
+ضغط عننا                     /about | عننا | documents: 1
+ضغط اكتب رسالة               /contact | اكتب رسالة | documents: 1
+back                         /about | عننا | documents: 1
+back                         / | الرئيسية | documents: 1
+forward                      /about | عننا | documents: 1
+forward                      /contact | اكتب رسالة | documents: 1
+بحث «ملف»                    /contact?q=ملف | اكتب رسالة | documents: 1
+  كروت ظاهرة: [ 'سؤال: ينفع أبعت ملف؟ لأ، لينك بس' ]
+  history.length: 4
+تاب جديد على /contact?q=ملف  /contact?q=ملف | اكتب رسالة | documents: 2
+  المسودة: مسودة مهمة: عايز أسأل عن الأسعار | البحث: ملف | كروت ظاهرة: 1
+Ctrl+Click «عننا»: تاب جديد على /about | التاب الأصلي لسه: /contact
+reveal قبل الـ scroll: 1110
+reveal بعد الـ scroll: 1111
+[sandbox] اكتب رسالة | اكتب رسالة | التخزين مقفول هنا، المسودة هتتنسي مع الـ reload | الصفحة معزولة: الـ URL مبيتغيّرش
+pageerrors: 0
+~~~
+
+- ٧ تنقلات و back و forward ولسه [[documents: 1]]: مفيش reload.
+- [[history.length]] فضل 4 بعد البحث: الـ [[replaceState]] مضافش entries.
+- كتبنا المسودة و **قفلنا التاب** ([[page.close()]]) من غير ما ندوس حاجة، وفتحنا تاب جديد على [[/contact?q=ملف]]: المسودة رجعت والبحث اتملا والفلتر اشتغل. يعني [[visibilitychange]] اتبعت وهو بيتقفل وحفظ.
+
+## اللي حصل وإحنا بنبنيه
+
+- **الـ preview كان بيطلّع 404:** أول نسخة كانت بتقرا [[new URL(location.href)]]، وفي الصفحة المعزولة ده [[about:srcdoc]] والـ pathname بتاعه [[srcdoc]]، فالصفحة الأولى طلعت «404». وبعدها أول ضغطة رمت [[Failed to construct 'URL': Invalid URL]] لأن [[about:srcdoc]] مينفعش يبقى base لـ URL نسبي. التصليح: في الصفحة المعزولة نبدأ من عنوان وهمي ([[https://preview.invalid/]]) ونمشي عليه في الذاكرة.
+- **[[store === localStorage]]:** كتبناها عشان نعرف التخزين شغال ولا لأ، فرمت [[SecurityError]] في الـ preview، لأن قراية الاسم [[localStorage]] نفسها هي اللي بترمي. بقت [[storageOk]].
+
+**الغلطة الشائعة:** تحفظ المسودة في [[beforeunload]]. على الموبايل الحدث ده غالبًا مبيحصلش (النظام بيقتل التاب في الخلفية)، و [[visibilitychange]] هو اللي بيحصل.` },
+        { lvl: 'كبير', dir: "infinite-feed", t: R`feed لانهائي متين`, what: R`feed من [[jsonplaceholder.typicode.com]] أو API على localhost بـ IntersectionObserver (درس ١)، والكروت بتتقسم أعمدة حسب عرض الـ container بـ ResizeObserver (درس ٢)، ورقم الصفحة في الـ URL بـ [[replaceState]] (درس ٦)، و [[pageshow]] بيحدّث لو رجعت من bfcache (درس ٥). ومن الوحدات اللي فاتت: [[AbortController]] و timeout على كل fetch، و debounce على الـ resize، ورسالة خطأ فيها زرار «حاول تاني».`, done: R`مفيش صفحة بتتطلب مرتين حتى لو نزلت بسرعة جدًا (Network يأكد)، وفي آخر الداتا بتظهر «خلصت» والـ observer بيقف، ولو قطعت النت من DevTools بتظهر رسالة الخطأ والزرار بيكمّل من نفس الصفحة، و refresh بيرجّعك لنفس رقم الصفحة، وعدد الأعمدة بيتغير لما تصغّر الـ sidebar مش الشاشة بس، و Test back/forward cache بيقول الصفحة اترجعت من الـ cache.`, ext: R`زوّد virtual scrolling لما الكروت تعدّي ١٠٠٠ عشان الـ DOM ميتقلش، وبحث بـ [[?q=]]، وحوّله لـ component تستخدمه في مشروع حقيقي.`, sol: R`## الشكل النهائي
+
+اللقطة دي من الصفحة الحقيقية شغالة على السيرفر (اتاخدت من Chrome بعد أول تحميل، والـ scripts اتشالت لأن الـ preview مفيهوش السيرفر بتاعها):
+
+~~~view 420
+<!DOCTYPE html><html lang="ar" dir="rtl"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الـ feed</title>
+<style>
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 0; }
+  .layout { display: flex; min-height: 100vh; }
+  aside { width: 320px; flex: none; background: #f3f4f6; padding: 16px; transition: width .2s; overflow: hidden; }
+  aside.closed { width: 48px; }
+  main { flex: 1; min-width: 0; padding: 16px; }
+  #grid { display: grid; grid-template-columns: repeat(var(--cols, 1), 1fr); gap: 12px; }
+  .post { border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; min-height: 90px; }
+  #status { text-align: center; padding: 16px; color: #374151; }
+  #status button { font: inherit; padding: 6px 14px; }
+  #sentinel { height: 1px; }
+  #new { position: sticky; top: 8px; z-index: 1; text-align: center; }
+  #new:empty { display: none; }
+  #new span { background: #1d4ed8; color: #fff; padding: 4px 12px; border-radius: 999px; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside id="side"><button id="toggle" type="button" aria-expanded="true">☰</button><p>الأقسام</p></aside>
+  <main>
+    <p id="info">عرض الـ feed 616px ← 2 أعمدة</p>
+    <div id="new" role="status"></div>
+    <div id="grid" aria-live="polite" style="--cols: 2;"><article class="post" data-id="60"><h2 style="font-size: 16px;">بوست رقم 60</h2><p>❤ 0</p></article><article class="post" data-id="59"><h2 style="font-size: 16px;">بوست رقم 59</h2><p>❤ 37</p></article><article class="post" data-id="58"><h2 style="font-size: 16px;">بوست رقم 58</h2><p>❤ 74</p></article><article class="post" data-id="57"><h2 style="font-size: 16px;">بوست رقم 57</h2><p>❤ 111</p></article><article class="post" data-id="56"><h2 style="font-size: 16px;">بوست رقم 56</h2><p>❤ 148</p></article><article class="post" data-id="55"><h2 style="font-size: 16px;">بوست رقم 55</h2><p>❤ 185</p></article></div>
+    <div id="sentinel"></div>
+    <div id="status" role="status">بيحمّل...</div>
+  </main>
+</div>
+</body></html>
+~~~
+
+**هتشوف إيه:** sidebar على اليمين وفيه زرار ☰، وجنبه grid كروت بوستات. انزل والكروت بتتحمّل لوحدها ١٢ ورا ١٢، والعنوان بيتغيّر لـ [[?page=3]]. صغّر الـ sidebar والأعمدة بتزيد من غير ما الشاشة تتغيّر. اقطع النت وهتلاقي «حاول تاني» بتكمّل من نفس المكان. وفي الآخر «خلصت».
+
+## الملفات
+
+~~~text
+infinite-feed/
+├── server.mjs              # API بصفحات + الملفات الثابتة، node:http من غير مكتبات
+├── feed-core.test.mjs      # node --test للمنطق
+└── public/
+    ├── index.html
+    ├── feed.js             # الـ DOM والـ observers والأحداث
+    ├── feed-core.mjs       # المنطق من غير DOM: الأعمدة، رقم الصفحة، fetch بـ timeout، اللودر
+    └── other.html          # صفحة تروح لها وترجع (تجربة الـ bfcache)
+~~~
+
+التشغيل: [[node server.mjs]] وافتح [[http://localhost:3000]]. والتستات: [[node --test]].
+
+~~~js server.mjs
+import { createServer } from "node:http";
+import { readFile } from "node:fs/promises";
+import { extname, join } from "node:path";
+
+const LIMIT = 12;
+const posts = Array.from({ length: 60 }, (_, i) => ({ id: 60 - i, title: $__btبوست رقم $__{60 - i}$__bt, likes: (i * 37) % 200 }));
+const types = { ".html": "text/html; charset=utf-8", ".mjs": "text/javascript", ".js": "text/javascript", ".css": "text/css" };
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+const server = createServer(async (req, res) => {
+  const url = new URL(req.url, "http://x");
+  if (url.pathname === "/api/posts") {
+    const since = Number(url.searchParams.get("since") || 0);
+    const page = Number(url.searchParams.get("page") || 1);
+    console.log("GET", url.pathname + url.search);
+    await sleep(300);                                                // شبكة حقيقية مش فورية
+    if (since) return json(res, { items: posts.filter((p) => p.id > since), hasMore: false });
+    const items = posts.slice((page - 1) * LIMIT, page * LIMIT);
+    return json(res, { items, page, hasMore: page * LIMIT < posts.length });
+  }
+  if (url.pathname === "/api/new" && req.method === "POST") {          // بوست جديد (للتجربة)
+    const id = posts[0].id + 1;
+    posts.unshift({ id, title: $__btبوست رقم $__{id} (جديد)$__bt, likes: 0 });
+    return json(res, { id });
+  }
+  const file = join("public", url.pathname === "/" ? "index.html" : url.pathname);
+  try {
+    const body = await readFile(file);
+    res.writeHead(200, { "content-type": types[extname(file)] ?? "application/octet-stream" }).end(body);
+  } catch {
+    res.writeHead(404).end("not found");
+  }
+});
+const json = (res, data) => res.writeHead(200, { "content-type": "application/json" }).end(JSON.stringify(data));
+const port = Number(process.env.PORT) || 3000;
+server.listen(port, () => console.log("الـ feed على http://localhost:" + port));
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الـ feed</title>
+<style>
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 0; }
+  .layout { display: flex; min-height: 100vh; }
+  aside { width: 320px; flex: none; background: #f3f4f6; padding: 16px; transition: width .2s; overflow: hidden; }
+  aside.closed { width: 48px; }
+  main { flex: 1; min-width: 0; padding: 16px; }
+  #grid { display: grid; grid-template-columns: repeat(var(--cols, 1), 1fr); gap: 12px; }
+  .post { border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; min-height: 90px; }
+  #status { text-align: center; padding: 16px; color: #374151; }
+  #status button { font: inherit; padding: 6px 14px; }
+  #sentinel { height: 1px; }
+  #new { position: sticky; top: 8px; z-index: 1; text-align: center; }
+  #new:empty { display: none; }
+  #new span { background: #1d4ed8; color: #fff; padding: 4px 12px; border-radius: 999px; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside id="side"><button id="toggle" type="button" aria-expanded="true">☰</button><p>الأقسام</p></aside>
+  <main>
+    <p id="info"></p>
+    <div id="new" role="status"></div>
+    <div id="grid" aria-live="polite"></div>
+    <div id="sentinel"></div>
+    <div id="status" role="status"></div>
+  </main>
+</div>
+<script type="module" src="/feed.js"></script>
+</body>
+</html>
+~~~
+
+~~~js feed-core.mjs
+// المنطق من غير DOM: بيتختبر في Node بـ node --test
+
+// عدد الأعمدة من عرض الـ container (مش الشاشة): عمود لكل 260px، من 1 لـ 4
+export function columnsFor(width, min = 260, max = 4) {
+  if (!Number.isFinite(width) || width < 0) throw new RangeError($__btwidth غلط: $__{width}$__bt);
+  return Math.max(1, Math.min(max, Math.floor(width / min)));
 }
 
-async function sync() {
-  const r = await syncNow(db);
-  if (r.sent) channel.postMessage("changed");
-  await render();
+// رقم الصفحة من ?page=، وأي حاجة غلط = 1
+export function pageFromSearch(search) {
+  const n = Number(new URLSearchParams(search).get("page"));
+  return Number.isInteger(n) && n >= 1 && n <= 1000 ? n : 1;
 }
 
-$("#add").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const v = validateTitle(e.target.title.value);
-  if (!v.ok) { $("#msg").textContent = v.error; return; }
-  e.target.reset();
-  change({ type: "upsert", task: { id: crypto.randomUUID(), title: v.title, done: false, createdAt: Date.now() } });
-});
-
-$("#list").addEventListener("change", async (e) => {
-  const task = await db.get("tasks", e.target.closest("li").dataset.id);
-  change({ type: "upsert", task: { ...task, done: e.target.checked } });
-});
-$("#list").addEventListener("click", async (e) => {
-  if (e.target.dataset.action !== "delete") return;
-  const task = await db.get("tasks", e.target.closest("li").dataset.id);
-  change({ type: "delete", task });
-});
-
-channel.onmessage = render;
-addEventListener("online", sync);
-addEventListener("offline", render);
-
-// نسخة جديدة: زرار، مش reload لوحده (registerType: "prompt")
-const updateSW = registerSW({
-  onNeedRefresh() { $("#update").hidden = false; },
-  onOfflineReady() { $("#msg").textContent = "التطبيق جاهز يشتغل من غير نت"; },
-});
-$("#update button").addEventListener("click", (e) => { e.target.disabled = true; updateSW(true); });
-
-await render();
-sync();
-~~~
-
-~~~css src/style.css
-body { font: 15px/1.6 system-ui, sans-serif; margin: 0; background: #f8fafc; }
-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; background: #1f2430; color: #fff; padding: 8px 16px; }
-header h1 { font-size: 18px; margin: 0; }
-#status { font-size: 13px; }
-main { max-width: 560px; margin: auto; padding: 16px; }
-form { display: flex; gap: 8px; }
-input[name="title"] { flex: 1; font: inherit; padding: 6px 8px; }
-#msg { min-height: 1.6em; color: #b91c1c; }
-#list { list-style: none; padding: 0; }
-#list li { display: flex; justify-content: space-between; align-items: center; background: #fff; border-radius: 8px; padding: 8px 12px; margin: 8px 0; box-shadow: 0 1px 2px #0001; }
-#list li:has(input:checked) span { text-decoration: line-through; color: #6b7280; }
-#update { position: fixed; bottom: 16px; inset-inline: 16px; max-width: 420px; margin: auto; display: flex; gap: 8px; align-items: center; padding: 10px 14px; border-radius: 10px; background: #111827; color: #fff; }
-#update[hidden] { display: none; }
-#update span { flex: 1; }
-~~~
-
-~~~js server.js
-import express from "express";
-
-const app = express();
-app.use(express.json());
-const tasks = new Map();
-const seen = new Set();                                   // opId اتطبّق قبل كده = متطبّقوش تاني
-let failNext = 0;
-
-app.post("/api/ops", (req, res) => {
-  const op = req.body;
-  if (failNext > 0) {
-    failNext--;
-    console.log("500", op.type, op.task?.title);
-    return res.status(500).json({ ok: false });
+// fetch بـ timeout و AbortController، وبيرمي لو الـ status مش ok
+export async function fetchJSON(url, { timeout = 5000, signal, fetchImpl = fetch } = {}) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(new DOMException("الطلب أخد أكتر من " + timeout + "ms", "TimeoutError")), timeout);
+  const onAbort = () => ctrl.abort(signal.reason);
+  signal?.addEventListener("abort", onAbort, { once: true });
+  try {
+    const res = await fetchImpl(url, { signal: ctrl.signal });
+    if (!res.ok) throw new Error($__btالسيرفر رجّع $__{res.status}$__bt);
+    return await res.json();
+  } finally {
+    clearTimeout(timer);
+    signal?.removeEventListener("abort", onAbort);
   }
-  if (seen.has(op.opId)) {
-    console.log("مكرر (اتجاهل)", op.task?.title);
-    return res.json({ ok: true, duplicate: true });
-  }
-  seen.add(op.opId);
-  if (op.type === "delete") tasks.delete(op.task.id);
-  else tasks.set(op.task.id, op.task);
-  console.log("ok", op.type, op.task.title, op.task.done ? "✓" : "");
-  res.json({ ok: true });
-});
-app.get("/api/tasks", (req, res) => res.json([...tasks.values()]));
-app.post("/api/fail", (req, res) => {                     // للتجربة: الـ n طلب الجايين يرجعوا 500
-  failNext = Number(req.query.n ?? 1);
-  res.json({ failNext });
-});
+}
 
-const port = Number(process.env.PORT) || 3001;
-app.listen(port, () => console.log("API على http://localhost:" + port));
+// اللودر: صفحة واحدة في نفس الوقت، ومفيش صفحة بتتطلب مرتين، والفشل بيسيب نفس الصفحة للمحاولة الجاية
+export function createLoader(loadPage, { startPage = 1 } = {}) {
+  let next = startPage;        // الصفحة اللي عليها الدور
+  let busy = null;             // الـ Promise الشغال
+  let done = false;
+  return {
+    get next() { return next; },
+    get done() { return done; },
+    get busy() { return busy !== null; },
+    load() {
+      if (done) return Promise.resolve(null);
+      if (busy) return busy;                       // نداء تاني وهو شغال = نفس الـ Promise
+      const page = next;
+      busy = loadPage(page)
+        .then((data) => {
+          next = page + 1;
+          if (!data.hasMore) done = true;
+          return data;
+        })
+        .finally(() => { busy = null; });
+      return busy;
+    },
+  };
+}
+
+export function debounce(fn, ms) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
 ~~~
 
-~~~js test/core.test.js
-import "fake-indexeddb/auto";
+~~~js feed.js
+import { columnsFor, pageFromSearch, fetchJSON, createLoader, debounce } from "./feed-core.mjs";
+
+const grid = document.querySelector("#grid");
+const status = document.querySelector("#status");
+const sentinel = document.querySelector("#sentinel");
+let pageCtrl = new AbortController();          // بيتلغي مع pagehide
+let newest = 0;
+
+// ---------- الكروت ----------
+function card(p) {
+  const el = document.createElement("article");
+  el.className = "post";
+  el.dataset.id = p.id;
+  const h = document.createElement("h2");
+  h.textContent = p.title;
+  h.style.fontSize = "16px";
+  const meta = document.createElement("p");
+  meta.textContent = $__bt❤ $__{p.likes}$__bt;
+  el.append(h, meta);
+  return el;
+}
+
+// ---------- تحميل الصفحات ----------
+const loader = createLoader(async (page) => {
+  const data = await fetchJSON($__bt/api/posts?page=$__{page}$__bt, { timeout: 5000, signal: pageCtrl.signal });
+  grid.append(...data.items.map(card));
+  newest = Math.max(newest, ...data.items.map((p) => p.id));
+  history.replaceState(null, "", page === 1 ? location.pathname : $__bt?page=$__{page}$__bt);   // مش pushState
+  return data;
+});
+
+async function loadMore() {
+  status.textContent = "بيحمّل...";
+  try {
+    await loader.load();
+    if (loader.done) {
+      status.textContent = "خلصت، مفيش بوستات تانية.";
+      io.disconnect();                          // مفيش داعي نراقب تاني
+    } else {
+      status.textContent = "";
+      recheck();
+    }
+  } catch (err) {
+    if (err.name === "AbortError") return;      // الصفحة بتتقفل
+    status.innerHTML = "";
+    const msg = document.createElement("span");
+    msg.textContent = (err.name === "TimeoutError" ? "الشبكة بطيئة جدًا." : "مقدرناش نجيب البوستات (النت؟).") + " ";
+    const retry = document.createElement("button");
+    retry.textContent = "حاول تاني";
+    retry.addEventListener("click", loadMore, { once: true });   // نفس الصفحة اللي فشلت
+    status.append(msg, retry);
+  }
+}
+
+// لو الـ sentinel لسه ظاهر بعد التحميل (شاشة طويلة)، الـ observer مش هينادي تاني لوحده
+function recheck() {
+  io.unobserve(sentinel);
+  io.observe(sentinel);
+}
+
+const io = new IntersectionObserver(([e]) => {
+  if (e.isIntersecting && !loader.busy) loadMore();
+}, { root: document, rootMargin: "400px" });
+
+// ---------- الأعمدة حسب عرض الـ container ----------
+const applyColumns = debounce((width) => {
+  grid.style.setProperty("--cols", columnsFor(width));
+  document.querySelector("#info").textContent = $__btعرض الـ feed $__{Math.round(width)}px ← $__{columnsFor(width)} أعمدة$__bt;
+}, 100);
+new ResizeObserver(([entry]) => applyColumns(entry.contentBoxSize[0].inlineSize)).observe(grid);
+
+document.querySelector("#toggle").addEventListener("click", (e) => {
+  const side = document.querySelector("#side");
+  side.classList.toggle("closed");
+  e.currentTarget.setAttribute("aria-expanded", String(!side.classList.contains("closed")));
+});
+
+// ---------- bfcache ----------
+window.addEventListener("pagehide", () => pageCtrl.abort());
+window.addEventListener("pageshow", async (e) => {
+  if (!e.persisted) return;
+  pageCtrl = new AbortController();
+  try {
+    const data = await fetchJSON($__bt/api/posts?since=$__{newest}$__bt, { signal: pageCtrl.signal });
+    if (data.items.length) {
+      grid.prepend(...data.items.map(card));
+      newest = Math.max(newest, ...data.items.map((p) => p.id));
+      document.querySelector("#new").innerHTML = $__bt<span>$__{data.items.length} بوست جديد</span>$__bt;
+    }
+  } catch {}
+  if (!loader.done) recheck();
+});
+
+// ---------- البداية: لو الـ URL فيه ?page=3 حمّل لحد 3 ----------
+const upTo = pageFromSearch(location.search);
+for (let p = 1; p <= upTo && !loader.done; p++) {
+  try { await loader.load(); } catch { break; }
+}
+if (loader.done) { status.textContent = "خلصت، مفيش بوستات تانية."; } else io.observe(sentinel);
+~~~
+
+~~~js feed-core.test.mjs
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { validateTitle, openTasksDB, applyChange, flushOutbox, MAX_TITLE } from "../src/core.js";
+import { columnsFor, pageFromSearch, fetchJSON, createLoader, debounce } from "./public/feed-core.mjs";
 
-let n = 0;
-const freshDB = (version) => openTasksDB("t" + ++n, version);
-const task = (title) => ({ id: crypto.randomUUID(), title, done: false, createdAt: Date.now() });
-
-test("validateTitle: فاضي وطويل بيترفضوا", () => {
-  assert.equal(validateTitle("   ").ok, false);
-  assert.equal(validateTitle("x".repeat(MAX_TITLE + 1)).ok, false);
-  assert.deepEqual(validateTitle("  اشتري لبن "), { ok: true, title: "اشتري لبن" });
-  assert.equal(validateTitle("x".repeat(MAX_TITLE)).ok, true);
+test("columnsFor: من عرض الـ container", () => {
+  assert.equal(columnsFor(200), 1);
+  assert.equal(columnsFor(520), 2);
+  assert.equal(columnsFor(800), 3);
+  assert.equal(columnsFor(5000), 4);
+  assert.throws(() => columnsFor(NaN), RangeError);
 });
 
-test("كل تغيير بيتحط في tasks و outbox مع بعض وبالترتيب", async () => {
-  const db = await freshDB();
-  const a = task("أ"), b = task("ب");
-  await applyChange(db, { type: "upsert", task: a });
-  await applyChange(db, { type: "upsert", task: b });
-  await applyChange(db, { type: "upsert", task: { ...a, done: true } });
-  assert.equal(await db.count("tasks"), 2);
-  assert.deepEqual((await db.getAll("outbox")).map((o) => o.task.title + (o.task.done ? "✓" : "")), ["أ", "ب", "أ✓"]);
+test("pageFromSearch: أي قيمة غلط = 1", () => {
+  assert.equal(pageFromSearch("?page=3"), 3);
+  for (const s of ["", "?page=0", "?page=-2", "?page=abc", "?page=2.5", "?page=99999"]) assert.equal(pageFromSearch(s), 1, s);
 });
 
-test("flush: بيبعت بالترتيب ويمسح اللي اتبعت بس، وبيقف عند أول فشل", async () => {
-  const db = await freshDB();
-  for (const t of ["١", "٢", "٣"]) await applyChange(db, { type: "upsert", task: task(t) });
+test("loader: نداءين مع بعض = request واحد", async () => {
+  const calls = [];
+  const loader = createLoader(async (p) => { calls.push(p); await new Promise((r) => setTimeout(r, 20)); return { items: [p], hasMore: true }; });
+  const [a, b] = await Promise.all([loader.load(), loader.load()]);
+  assert.equal(a, b);
+  assert.deepEqual(calls, [1]);
+  await loader.load();
+  assert.deepEqual(calls, [1, 2]);
+});
+
+test("loader: الفشل بيسيب نفس الصفحة للمحاولة الجاية", async () => {
+  let fail = true; const calls = [];
+  const loader = createLoader(async (p) => { calls.push(p); if (fail) throw new Error("offline"); return { items: [], hasMore: true }; });
+  await assert.rejects(loader.load(), /offline/);
+  fail = false;
+  await loader.load();
+  assert.deepEqual(calls, [1, 1]);
+  assert.equal(loader.next, 2);
+});
+
+test("loader: بعد آخر صفحة مفيش requests", async () => {
+  const calls = [];
+  const loader = createLoader(async (p) => { calls.push(p); return { items: [], hasMore: p < 2 }; });
+  await loader.load(); await loader.load(); await loader.load(); await loader.load();
+  assert.deepEqual(calls, [1, 2]);
+  assert.equal(loader.done, true);
+});
+
+test("fetchJSON: timeout بيرمي TimeoutError", async () => {
+  const never = (url, { signal }) => new Promise((_, rej) => signal.addEventListener("abort", () => rej(signal.reason)));
+  await assert.rejects(fetchJSON("/x", { timeout: 30, fetchImpl: never }), { name: "TimeoutError" });
+});
+
+test("fetchJSON: status مش ok بيرمي", async () => {
+  const bad = async () => new Response("no", { status: 503 });
+  await assert.rejects(fetchJSON("/x", { fetchImpl: bad }), /503/);
+});
+
+test("debounce: آخر نداء بس", async () => {
   const got = [];
-  let r = await flushOutbox(db, async (op) => { if (op.task.title === "٢") return false; got.push(op.task.title); return true; });
-  assert.deepEqual(r, { sent: 1, stopped: true });
-  assert.equal(await db.count("outbox"), 2);
-  r = await flushOutbox(db, async (op) => (got.push(op.task.title), true));
-  assert.deepEqual(got, ["١", "٢", "٣"]);
-  assert.equal(await db.count("outbox"), 0);
+  const d = debounce((x) => got.push(x), 20);
+  d(1); d(2); d(3);
+  await new Promise((r) => setTimeout(r, 50));
+  assert.deepEqual(got, [3]);
 });
+~~~
 
-test("send اللي بيرمي (النت وقع) = فشل مش crash", async () => {
-  const db = await freshDB();
-  await applyChange(db, { type: "upsert", task: task("x") });
-  const r = await flushOutbox(db, async () => { throw new TypeError("Failed to fetch"); });
-  assert.deepEqual(r, { sent: 0, stopped: true });
-  assert.equal(await db.count("outbox"), 1);
-});
-
-test("upgrade من version 1 لـ 2 بيزوّد byDone ومبيمسحش المهام", async () => {
-  const name = "upgrade-test";
-  const v1 = await openTasksDB(name, 1);
-  await v1.put("tasks", task("قديمة"));
-  v1.close();
-  const v2 = await openTasksDB(name, 2);
-  assert.equal(await v2.count("tasks"), 1);
-  assert.deepEqual([...v2.transaction("tasks").store.indexNames], ["byDone"]);
-});
+~~~html other.html
+<!doctype html><meta charset="utf-8"><title>صفحة تانية</title><p>دوس back</p>
 ~~~
 
 ## ترتيب البناء
 
-1. **[[core.js]] وتستاته الأول:** الفحص، والقاعدة بالـ versions، و [[applyChange]] و [[flushOutbox]]. كلهم بياخدوا [[db]] و [[send]] من برا، فبيتختبروا في Node من غير متصفح ولا شبكة.
-2. **[[server.js]]:** endpoint واحد للعمليات، و [[opId]] بيمنع التطبيق مرتين.
-3. **[[sync.js]] و [[main.js]]:** الشاشة بتعمل [[applyChange]] وبعدين [[sync()]]، و [[online]] وفتح الصفحة بيعملوا [[sync()]].
-4. **vite-plugin-pwa:** الـ manifest والـ precache و [[navigateFallbackDenylist]] للـ [[/api/]] (درس الباج بتاع الـ CSV)، و [[registerType: "prompt"]].
-5. **القياس في Chrome** لكل سطر في المطلوب.
+1. **السيرفر:** ٦٠ بوست، ١٢ في الصفحة، و ٣٠٠ms تأخير عشان التحميل يبقى زي الحقيقة (من غيره كل حاجة بتحصل في نفس اللحظة ومش هتشوف باجات التكرار).
+2. **[[feed-core.mjs]] وتستاته الأول:** كل قرار ليه دالة من غير DOM (عدد الأعمدة، رقم الصفحة من الـ URL، اللودر اللي بيمنع التكرار، الـ timeout). ٨ تستات بتعدّي في أقل من ثانية.
+3. **[[feed.js]]:** بيوصّل الدوال دي بالـ observers والأحداث.
+4. **القياس في Chrome** لكل سطر في المطلوب.
 
 ## الشرح
 
-- **[[applyChange]]: transaction واحدة لـ [[tasks]] و [[outbox]]:** التغيير بيظهر على الشاشة وعمليته بتتسجّل مع بعض أو ولا واحد، فمستحيل مهمة تتعدّل عندك ومتتبعتش.
-- **[[outbox]] بـ [[autoIncrement]]:** رقم [[seq]] بيحفظ الترتيب، والسيرفر بياخد الـ ٤ عمليات بنفس الترتيب (إضافة «راجع الدرس» قبل تعليمها «✓»).
-- **[[flushOutbox]] بيقف عند أول فشل:** 500 أو النت وقع = العملية بتفضل، واللي بعدها مبيتبعتش قبلها.
-- **upgrade لـ version 2:** [[if (oldVersion < 1)]] بيعمل الـ stores، و [[if (oldVersion < 2)]] بيزوّد [[byDone]] على الـ store الموجود. يوزر جاي من 1 بياخد الـ index بس، وداتاه زي ما هي.
-- **[[QuotaExceededError]]:** المتصفح بيرميه لما مساحة الموقع تخلص. متمسوك في [[change]] برسالة، والتطبيق بيكمّل.
-- **[[VersionError]]:** تاب قديم مفتوح بكود version 1 بعد ما تاب جديد عمل upgrade. الرسالة بتقول اعمل refresh.
-- **[[build.target: "es2022"]]:** [[main.js]] فيه top-level await، والـ target الافتراضي في Vite 6 أقدم (الـ build وقع بالسبب ده في تمرين runtimeCaching).
+- **[[createLoader]] هو اللي بيمنع التكرار:** طول ما فيه طلب شغال، أي [[load()]] تاني بيرجّع **نفس** الـ Promise (التست «نداءين مع بعض = request واحد»). و [[next]] مبيزيدش غير لما الطلب ينجح، فالفشل بيسيب نفس الصفحة لـ «حاول تاني». وبعد [[hasMore: false]] مفيش طلبات خالص.
+- **[[recheck()]]:** الـ IntersectionObserver بينادي لما الحالة **تتغيّر**. لو بعد التحميل الـ sentinel لسه ظاهر (شاشة طويلة)، مفيش تغيير فمفيش نداء والتحميل بيقف. [[unobserve]] ثم [[observe]] بيجبره يبعت الحالة الحالية من جديد. ده نفس اللي في كود الدرس.
+- **[[io.disconnect()]] بعد «خلصت»:** مفيش داعي يفضل يراقب.
+- **[[history.replaceState]] بـ [[?page=N]]:** مش [[pushState]]، وإلا كل ١٢ بوست يبقوا entry وزرار back هيلف على الصفحات. وفي الفتح، [[pageFromSearch]] بتقرا الرقم (وأي قيمة غلط = 1) والصفحة بتحمّل لحد الرقم ده.
+- **[[fetchJSON]] بـ [[AbortController]] و timeout:** أي طلب بياخد أكتر من ٥ ثواني بيتلغي برسالة «الشبكة بطيئة جدًا». والـ [[signal]] بتاع الصفحة كلها بيتلغي في [[pagehide]]، فمفيش طلب بيكمّل والصفحة في الـ bfcache.
+- **[[ResizeObserver]] على الـ grid نفسه و [[debounce]] 100ms:** العرض بييجي من الـ grid مش الشاشة، فقفل الـ sidebar بيزوّد الأعمدة. والـ debounce عشان الـ transition بتاع الـ sidebar بيغيّر العرض كل فريم لمدة 200ms.
+- **[[pageshow]] و [[e.persisted]]:** لما ترجع من الـ bfcache الصفحة بنفس الكروت والـ scroll، فبنطلب [[?since=أحدث id]] بس ونضيف الجديد فوق مع «١ بوست جديد».
 
 ## اتقاس
 
-Express على 8832، و [[vite preview]] على 8835 بيحوّل [[/api]] له، و Chrome 158 headless بتابين. قبل ما التطبيق يفتح، عملنا قاعدة version 1 فيها مهمة قديمة بنفس شكل v1:
+Chrome 158 headless على [[http://localhost:8834]]، 1100×700. (Playwright بيقفل الـ bfcache افتراضيًا بـ [[--disable-back-forward-cache]]، فشلنا الـ flag ده في التجربة دي.)
 
 ~~~text الناتج (Chrome 158 headless)
-version 2 فتح على داتا version 1: ["مهمة من version 1"] | indexes: byDone v2
-Offline: outbox = 4 | Offline | 4 تغيير مستني يتبعت
-  تاب ٢: ["مهمة من version 1","اشتري لبن","✓راجع الدرس","ادفع الفاتورة"]
-Online: outbox = 0 | لوج السيرفر:
-  ok upsert اشتري لبن
-  ok upsert راجع الدرس
-  ok upsert ادفع الفاتورة
-  ok upsert راجع الدرس ✓
-عنوان فاضي: العنوان فاضي
-201 حرف: العنوان أطول من 200 حرف (201)
-السيرفر رجّع 500: outbox = 1 | Online | 1 تغيير مستني يتبعت | لوج: 500 upsert مهمة والسيرفر واقع
-بعد ما السيرفر رجع + فتح الصفحة: outbox = 0 | لوج: ok upsert مهمة والسيرفر واقع
-QuotaExceededError: المساحة المتاحة للموقع خلصت. امسح مهام قديمة وجرّب تاني. | المهام: 5
-تاب جديد Offline: Offline | كله متزامن | مهام: 5
-السيرفر عنده: اشتري لبن، ✓راجع الدرس، ادفع الفاتورة، مهمة والسيرفر واقع
+فتح الصفحة                     | كروت: 24 | URL: ?page=2 | status: ""
+عرض الـ feed 716px ← 2 أعمدة
+بعد 30 scroll سريع             | كروت: 60 | URL: ?page=5 | status: "خلصت، مفيش بوستات تانية."
+requests لكل صفحة: {"?page=1":1,"?page=2":1,"?page=3":1,"?page=4":1,"?page=5":1}
+في الآخر                       | كروت: 60 | URL: ?page=5 | status: "خلصت، مفيش بوستات تانية."
+requests بعد «خلصت» وكمان 5 scroll: 0
+offline + scroll               | كروت: 24 | URL: ?page=2 | status: "مقدرناش نجيب البوستات (النت؟). حاول تاني"
+رجع النت + حاول تاني           | كروت: 36 | URL: ?page=3 | status: ""
+قبل الـ refresh                | كروت: 48 | URL: ?page=4 | status: ""
+بعد الـ refresh                | كروت: 48 | URL: ?page=4 | status: ""
+الـ sidebar مفتوح: 2 | عرض الـ feed 716px ← 2 أعمدة
+الـ sidebar مقفول: 3 | عرض الـ feed 988px ← 3 أعمدة
+شاشة 600px: 1 | عرض الـ feed 488px ← 1 أعمدة
+رجعنا: pageshow persisted = true | marker = 1 | 1 بوست جديد | أول كارت: بوست رقم 61 (جديد)
+لوج السيرفر (آخر 4): GET /api/posts?page=2 , GET /api/posts?page=3 , GET /api/posts?page=4 , GET /api/posts?since=60
 pageerrors: 0
 ~~~
 
-~~~text الناتج (زرار التحديث: build تاني بعنوان مختلف)
-أول زيارة: التطبيق جاهز يشتغل من غير نت
-build جديد + refresh: زرار التحديث ظاهر | العنوان: مهامي
-بعد «حدّث»: العنوان: مهامي ٢
-~~~
-
-~~~text الناتج (npm test)
-✔ validateTitle: فاضي وطويل بيترفضوا (1.2451ms)
-✔ كل تغيير بيتحط في tasks و outbox مع بعض وبالترتيب (10.8538ms)
-✔ flush: بيبعت بالترتيب ويمسح اللي اتبعت بس، وبيقف عند أول فشل (3.2816ms)
-✔ send اللي بيرمي (النت وقع) = فشل مش crash (1.0332ms)
-✔ upgrade من version 1 لـ 2 بيزوّد byDone ومبيمسحش المهام (0.9623ms)
-ℹ tests 5
-ℹ pass 5
+~~~text الناتج (node --test، Node 24)
+✔ columnsFor: من عرض الـ container (1.7207ms)
+✔ pageFromSearch: أي قيمة غلط = 1 (0.2325ms)
+✔ loader: نداءين مع بعض = request واحد (56.5984ms)
+✔ loader: الفشل بيسيب نفس الصفحة للمحاولة الجاية (0.6027ms)
+✔ loader: بعد آخر صفحة مفيش requests (0.2189ms)
+✔ fetchJSON: timeout بيرمي TimeoutError (46.0281ms)
+✔ fetchJSON: status مش ok بيرمي (20.3281ms)
+✔ debounce: آخر نداء بس (57.6578ms)
+ℹ tests 8
+ℹ pass 8
 ℹ fail 0
 ~~~
 
-- **٤ عمليات Offline = ٤ requests بنفس الترتيب**، مع إن التابين أخدوا [[online]] مع بعض: Web Lock خلّى واحد بس يبعت، والسيرفر مطبعش «مكرر» ولا مرة.
-- **الـ 500:** العملية فضلت في الـ outbox، وأول ما الصفحة اتفتحت والسيرفر شغال اتبعتت.
-- **[[QuotaExceededError]] اتعمل بمحاكاة:** مينفعش نملا مساحة المتصفح في المعمل، فخلّينا [[IDBObjectStore.put]] يرمي الـ error ده مرة واحدة. الرسالة ظهرت، والمهام فضلت ٥ (المهمة الجديدة متضافتش ومفيش crash).
-- **تاب جديد Offline** فتح من الـ precache والمهام من IndexedDB.
+- **٣٠ scroll لآخر الصفحة ورا بعض كل 30ms:** كل صفحة اتطلبت **مرة واحدة** بالظبط.
+- **«خلصت» و [[disconnect]]:** ٥ scroll زيادة = صفر requests.
+- **Offline:** [[context.setOffline(true)]] (زي Offline في DevTools) طلّع الرسالة والزرار، ورجوع النت و «حاول تاني» جاب صفحة ٣ (اللي فشلت) مش ٤.
+- **refresh على [[?page=4]]:** رجع ٤٨ كارت.
+- **الأعمدة:** نفس الشاشة (1100px)، الـ sidebar لوحده غيّر العدد من ٢ لـ ٣.
+- **bfcache:** [[Page.backForwardCacheNotUsed]] متبعتش، و [[window.__marker]] اللي حطيناه قبل ما نمشي لسه موجود (نفس الصفحة في الميموري)، و [[persisted = true]]، والبوست اللي اتضاف وإحنا برا ظهر فوق. ده نفس اللي زرار Test back/forward cache في DevTools بيقيسه.
 
 ## اللي حصل وإحنا بنبنيه
 
-- الـ bash heredoc اللي كان بيكتب الملفات كلها مرة واحدة وقع بـ [[unexpected EOF while looking for matching]] وماكتبش ولا ملف، فاتكتبوا ملف ملف. (مش مشكلة في الكود، بس لو سكربت إعداد مشروع وقع في النص، اتأكد إيه اللي اتكتب فعلًا قبل ما تكمّل.)
-- أول تشغيلة للـ 500 كانت بتطلب من السيرفر يفشل مرتين، فالعملية فشلت في المحاولة والـ reload الاتنين، وده أكّد إنها مبتتمسحش. التشغيلة النهائية فشل واحد، فالـ reload بعتها.
+- **الـ feed كان بيقف على الشاشات الطويلة:** جرّبنا نسخة من غير [[recheck()]] على شاشة طولها 2200px: بعد ٣ ثواني ٢٤ كارت بس والـ sentinel لسه ظاهر ومفيش طلبات تانية. الـ observer بلّغ مرة إن الـ sentinel دخل، ومن ساعتها هو جوه، فمفيش «تغيير» يبعت له نداء. مع [[recheck()]] نفس الشاشة حمّلت ٤٨ لحد ما الـ sentinel نزل تحت.
+- **الـ bfcache مكانش بيشتغل في التجربة الأولى:** Playwright بيشغّل Chrome بـ [[--disable-back-forward-cache]]، والسبب اللي طلع في [[Page.backForwardCacheNotUsed]] كان [[BackForwardCacheDisabledByCommandLine]]. شيلنا الـ flag بـ [[ignoreDefaultArgs]] والصفحة رجعت من الـ cache.
 
-**الغلطة الشائعة:** تبعت للسيرفر مباشرة لو [[navigator.onLine]] بـ [[true]] ومتعدّيش على الـ outbox. [[onLine]] بيقول إن فيه شبكة مش إن السيرفر شغال، فأي 500 أو timeout هيضيّع التغيير.` },
-        { lvl: 'فكرة', dir: "shopping-list", t: R`حوّل حاجة بتستخدمها لـ PWA`, what: R`فكّر في أداة صغيرة بتفتحها كل يوم ومحتاجها حتى من غير نت (قايمة مشتريات، مصاريف، مذاكرة بالكروت، تايمر تمارين) وابنيها PWA من الأول: انت اللي بتقرر إيه يتكيّش، وإيه يتحفظ في IndexedDB، وإيه محتاج نت.`, done: R`فيه README بيقول كل نوع request بيستخدم أنهي استراتيجية وليه، والتطبيق بيتسطّب على موبايلك، وبيشتغل في وضع الطيارة، وفيه طريقة تصدّر الداتا كـ JSON عشان متضيعش لو المتصفح مسحها.`, ext: R`زوّد sync مع سيرفر بتاعك، و shortcuts في الـ manifest، و share target لو بتستقبل لينكات، وجرّبه على iOS واكتب الفروق اللي لقيتها.`, sol: R`## النسخة النموذجية: قايمة مشتريات
+**الغلطة الشائعة:** متغير [[loading]] بـ [[true]] و [[false]] من غير ما تحمي [[page++]]. لو [[page++]] قبل الـ fetch والـ fetch فشل، الصفحة دي بتضيع، ولو بعده من غير حماية، اتنين scroll ورا بعض بيطلبوا نفس الصفحة.` },
+        { lvl: 'فكرة', dir: "reading-resume", t: R`سلوك بتحبه في موقع تاني`, what: R`اختار حاجة بتعجبك في موقع بتستخدمه: الفيديو اللي بيقف لما تسيب التاب، أو الفهرس اللي بيعلّم القسم اللي انت فيه، أو الصورة اللي بتتحمّل وانت قربت منها، أو اللينك اللي بيتغيّر وانت بتفلتر. ابنيها بـ APIs الوحدة دي من غير مكتبات.`, done: R`السلوك شغال في صفحة لوحدها، ومكتوب جنبه الـ API اللي استخدمته، ومفيش listener بيفضل شغال بعد ما العنصر يتشال (اتأكد إن فيه [[disconnect]] أو [[unobserve]] أو [[removeEventListener]] في مكانه).`, ext: R`حوّله لدالة أو component بتاخد options، وحطه في مشروع بتاعك، وقيس الفرق بـ Lighthouse قبل وبعد.`, sol: R`## النسخة النموذجية: المقالة اللي بتفتكر وقفت فين
 
-اخترنا **قايمة المشتريات** لأنها بتتفتح في السوبر ماركت، وده بالظبط المكان اللي النت فيه ضعيف. والقرارات فيها واضحة: كل حاجة على الجهاز، ومفيش سيرفر خالص.
+اخترنا سلوك موجود في مواقع القراية الكبيرة: شريط رفيع فوق بيقول قريت قد إيه، والفقرة اللي بتقراها متعلّمة، والعنوان بيتغيّر لـ [[#p12]] (تقدر تبعت اللينك لحد فيفتح عندها)، ولو قفلت التاب ورجعت يظهر زرار «كمّل من…». ليه ده: بيستخدم ٣ APIs من الوحدة مع بعض في حاجة صغيرة كل قارئ بيحس بيها.
 
 ~~~live 420 index.html
 <!doctype html>
@@ -1239,3888 +1480,4094 @@ build جديد + refresh: زرار التحديث ظاهر | العنوان: م�
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#14532d">
-<title>قايمة المشتريات</title>
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png">
+<title>مقالة بتفتكر وقفت فين</title>
 <style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 0; background: #f0fdf4; }
-  header { background: #14532d; color: #fff; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; }
-  header h1 { font-size: 18px; margin: 0; }
-  main { max-width: 520px; margin: auto; padding: 16px; }
-  form { display: flex; gap: 8px; }
-  input[type="text"] { flex: 1; font: inherit; padding: 8px; }
-  button { font: inherit; }
-  ul { list-style: none; padding: 0; }
-  li { background: #fff; border-radius: 8px; padding: 8px 12px; margin: 6px 0; display: flex; gap: 8px; align-items: center; }
-  li.got span { text-decoration: line-through; color: #6b7280; }
-  li span { flex: 1; }
-  .tools { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
-  #msg { font-size: 13px; color: #92400e; }
+  body { font: 17px/1.9 system-ui, sans-serif; margin: 0; }
+  #bar { position: fixed; top: 0; inset-inline: 0; height: 4px; background: #e5e7eb; }
+  #bar span { display: block; height: 100%; width: 0; background: #1d4ed8; transition: width .2s; }
+  article { max-width: 640px; margin: 0 auto; padding: 24px 16px 60vh; }
+  article p.current { background: #fef9c3; }
+  #resume { position: fixed; bottom: 16px; inset-inline-start: 16px; font: inherit; padding: 8px 14px; border-radius: 8px; border: 0; background: #111827; color: #fff; }
+  #resume[hidden] { display: none; }
+  #info { font-size: 13px; color: #555; }
 </style>
 </head>
 <body>
-<header><h1>قايمة المشتريات</h1><span id="net"></span></header>
-<main>
-  <form id="add"><input type="text" name="item" required maxlength="100" placeholder="لبن، عيش..." aria-label="حاجة تشتريها"><button>ضيف</button></form>
-  <ul id="list"></ul>
-  <div class="tools">
-    <button type="button" id="export">صدّر JSON</button>
-    <label>استورد: <input type="file" id="import" accept="application/json"></label>
-    <button type="button" id="clear-got">امسح اللي اتشترى</button>
-  </div>
-  <p id="msg" role="status"></p>
-</main>
-<script src="app.js"></script>
+<div id="bar" role="progressbar" aria-label="قريت قد إيه" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
+<article id="post">
+  <h1>ليه الكود البسيط بيكسب</h1>
+  <p id="info"></p>
+</article>
+<button id="resume" hidden></button>
+<script>
+  // ---------- التخزين ممكن يكون مقفول (الـ preview) ----------
+  const store = (() => {
+    try { localStorage.setItem("__t", "1"); localStorage.removeItem("__t"); return localStorage; }
+    catch { const m = new Map(); return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) }; }
+  })();
+
+  const post = document.querySelector("#post");
+  for (let i = 1; i <= 25; i++) post.insertAdjacentHTML("beforeend", $__bt<p id="p$__{i}">فقرة $__{i}: الكود اللي تقدر تقراه بعد شهر أهم من الكود اللي بيوفّر سطرين. اكتب أسامي واضحة، وقسّم الدوال، واحذف اللي مش مستخدم.</p>$__bt);
+
+  function readingTracker(article, key) {
+    const paras = [...article.querySelectorAll("p[id^='p']")];
+    let furthest = 0;                     // أبعد فقرة وصلها (رقمها من 1)
+    let current = null;
+
+    const show = () => {
+      const pct = Math.round((furthest / paras.length) * 100);
+      document.querySelector("#bar span").style.width = pct + "%";
+      document.querySelector("#bar").setAttribute("aria-valuenow", pct);
+    };
+
+    // فقرة «اتقرت» لما تعدّي نص الشاشة، والحالية هي اللي على الخط ده
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        furthest = Math.max(furthest, paras.indexOf(e.target) + 1);
+        current?.classList.remove("current");
+        current = e.target;
+        current.classList.add("current");
+        try { history.replaceState(null, "", "#" + current.id); } catch {}   // ممنوعة في صفحة معزولة
+      }
+      show();
+      if (furthest === paras.length) io.disconnect();            // وصل لآخر فقرة
+    }, { root: document, rootMargin: "-50% 0px -50% 0px" });
+    paras.forEach((p) => io.observe(p));
+
+    const save = () => { if (current) store.setItem(key, current.id); };
+    const onVisibility = () => { if (document.hidden) save(); };
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pagehide", save);
+
+    // تنضيف: لو المقالة اتشالت من الصفحة (SPA مثلًا)
+    return function destroy() {
+      save();
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pagehide", save);
+    };
+  }
+
+  const KEY = "resume:" + location.pathname;
+  const saved = store.getItem(KEY);
+  const destroy = readingTracker(post, KEY);
+  window.__destroy = destroy;
+
+  if (saved && saved !== "p1" && !location.hash) {
+    const btn = document.querySelector("#resume");
+    btn.textContent = $__btكمّل من «$__{document.getElementById(saved)?.textContent.slice(0, 8)}…»$__bt;
+    btn.hidden = false;
+    btn.addEventListener("click", () => {
+      document.getElementById(saved)?.scrollIntoView({ block: "center" });
+      btn.hidden = true;
+    }, { once: true });
+  }
+  document.querySelector("#info").textContent = "انزل واقرا، واقفل التاب في النص وافتحه تاني.";
+</script>
 </body>
 </html>
 ~~~
 
-في الـ preview الصفحة بتترسم، بس IndexedDB والـ service worker ممنوعين في الصفحة المعزولة، فالإضافة مش هتشتغل هنا. شغّلها من سيرفر محلي (أو انشرها على HTTPS) وسطّبها.
+في الـ preview الشريط والتعليم شغالين، بس التخزين والـ URL مقفولين (صفحة معزولة)، فـ «كمّل من» مش هيظهر بعد reload. شغّلها من سيرفر محلي.
 
-## الملفات
+## الـ APIs اللي استخدمناها
 
-~~~text
-shopping-list/
-├── README.md               # كل نوع طلب بيروح فين وليه
-├── index.html
-├── app.js                  # IndexedDB خام، وتصدير واستيراد JSON
-├── sw.js                   # precache + stale-while-revalidate
-├── manifest.webmanifest
-└── icons/                  # نفس أيقونات مشروع «مشروع قديم يتسطّب»
-~~~
+| السلوك | الـ API |
+|---|---|
+| الفقرة الحالية والشريط | IntersectionObserver بخط في نص الشاشة ([[rootMargin: "-50% 0px -50% 0px"]]) |
+| [[#p12]] في العنوان | [[history.replaceState]] (مش [[pushState]]: مش عايزين entry لكل فقرة) |
+| حفظ المكان | [[visibilitychange]] لـ [[hidden]] و [[pagehide]]، في [[localStorage]] |
+| التنضيف | [[io.disconnect()]] و [[removeEventListener]] في [[destroy()]] |
 
-~~~text README.md
-# قايمة المشتريات (PWA)
+## الشرح
 
-قايمة بتفتح في وضع الطيارة، والداتا على جهازك بس.
-
-## كل نوع طلب بيروح فين
-
-| الحاجة | فين | ليه |
-|---|---|---|
-| ملفات التطبيق (HTML و JS والأيقونات) | Cache API، stale-while-revalidate | بتفتح على طول حتى من غير نت، والتحديث بيوصل في الفتحة اللي بعدها |
-| العناصر نفسها | IndexedDB | داتا اليوزر، بتتعدّل كتير، ومحتاجة تفضل بعد قفل المتصفح |
-| أي حاجة محتاجة نت | مفيش | التطبيق مفيهوش سيرفر خالص |
-
-## النسخة الاحتياطي
-
-المتصفح ممكن يمسح تخزين الموقع لو المساحة قلّت (أو اليوزر مسح بيانات المواقع). «صدّر JSON» بينزّل ملف فيه كل العناصر، و «استورد» بيرجّعها.
-~~~
-
-~~~js app.js
-// القايمة صغيرة (عشرات العناصر) فـ IndexedDB خام بـ store واحد كفاية، من غير مكتبات
-const DB = "shopping", STORE = "items";
-const $ = (s) => document.querySelector(s);
-
-function openDb() {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB, 1);
-    req.onupgradeneeded = () => req.result.createObjectStore(STORE, { keyPath: "id" });
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
-}
-const dbp = openDb();
-
-async function run(mode, fn) {
-  const db = await dbp;
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE, mode);
-    const out = fn(tx.objectStore(STORE));
-    tx.oncomplete = () => resolve(out?.result ?? out);
-    tx.onerror = () => reject(tx.error);
-  });
-}
-const getAll = () => run("readonly", (s) => s.getAll());
-const put = (item) => run("readwrite", (s) => s.put(item));
-const remove = (id) => run("readwrite", (s) => s.delete(id));
-
-async function render() {
-  const items = (await getAll()).sort((a, b) => a.got - b.got || a.at - b.at);   // اللي لسه فوق
-  $("#list").replaceChildren(...items.map((it) => {
-    const li = document.createElement("li");
-    li.dataset.id = it.id;
-    li.className = it.got ? "got" : "";
-    const box = Object.assign(document.createElement("input"), { type: "checkbox", checked: it.got });
-    box.setAttribute("aria-label", "اتشترى: " + it.name);
-    const span = Object.assign(document.createElement("span"), { textContent: it.name });
-    li.append(box, span);
-    return li;
-  }));
-  $("#net").textContent = navigator.onLine ? "" : "من غير نت";
-}
-
-$("#add").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const name = e.target.item.value.trim();
-  if (!name) return;
-  await put({ id: crypto.randomUUID(), name, got: false, at: Date.now() });
-  e.target.reset();
-  render();
-});
-$("#list").addEventListener("change", async (e) => {
-  const id = e.target.closest("li").dataset.id;
-  const item = (await getAll()).find((x) => x.id === id);
-  await put({ ...item, got: e.target.checked });
-  render();
-});
-$("#clear-got").addEventListener("click", async () => {
-  for (const it of await getAll()) if (it.got) await remove(it.id);
-  render();
-});
-
-// النسخة الاحتياطي: الداتا بتاعة اليوزر، مش بتاعة المتصفح
-$("#export").addEventListener("click", async () => {
-  const data = { app: "shopping", version: 1, exportedAt: new Date().toISOString(), items: await getAll() };
-  const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
-  const a = Object.assign(document.createElement("a"), { href: url, download: $__btshopping-$__{data.exportedAt.slice(0, 10)}.json$__bt });
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-});
-$("#import").addEventListener("change", async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  try {
-    const data = JSON.parse(await file.text());
-    if (data.app !== "shopping" || !Array.isArray(data.items)) throw new Error("الملف مش نسخة من القايمة دي");
-    for (const it of data.items) if (typeof it.id === "string" && typeof it.name === "string") await put(it);
-    $("#msg").textContent = $__btاتستورد $__{data.items.length} عنصر$__bt;
-  } catch (err) {
-    $("#msg").textContent = "مقدرناش نستورد: " + err.message;
-  }
-  e.target.value = "";
-  render();
-});
-
-addEventListener("online", render);
-addEventListener("offline", render);
-if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
-render();
-~~~
-
-~~~js sw.js
-// التطبيق كله ٥ ملفات: نكيّشهم في التسطيب، ونرد منهم الأول، ونحدّث في الخلفية
-const CACHE = "shopping-v1";
-const FILES = ["./", "index.html", "app.js", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png"];
-
-self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)));
-  self.skipWaiting();
-});
-
-self.addEventListener("activate", (e) => {
-  e.waitUntil((async () => {
-    for (const k of await caches.keys()) if (k !== CACHE) await caches.delete(k);
-    await self.clients.claim();
-  })());
-});
-
-// stale-while-revalidate لملفات التطبيق: بيفتح في وضع الطيارة على طول، والتعديل بيوصل في الفتحة اللي بعدها
-self.addEventListener("fetch", (e) => {
-  if (e.request.method !== "GET" || new URL(e.request.url).origin !== location.origin) return;
-  e.respondWith((async () => {
-    const cache = await caches.open(CACHE);
-    const hit = await cache.match(e.request, { ignoreSearch: true });
-    const fresh = fetch(e.request).then(async (res) => {
-      if (res.ok) await cache.put(e.request, res.clone());
-      return res;
-    });
-    e.waitUntil(fresh.catch(() => {}));
-    return hit ?? fresh;
-  })());
-});
-~~~
-
-~~~json manifest.webmanifest
-{
-  "name": "قايمة المشتريات",
-  "short_name": "مشترياتي",
-  "lang": "ar",
-  "dir": "rtl",
-  "start_url": "./",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#14532d",
-  "theme_color": "#14532d",
-  "icons": [
-    {
-      "src": "icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    },
-    {
-      "src": "icons/maskable-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
-  ]
-}
-~~~
-
-## ليه التصميم ده
-
-- **IndexedDB خام من غير [[idb]]:** القايمة عشرات العناصر وstore واحد، فـ ٣ دوال صغيرة ([[getAll]] و [[put]] و [[remove]] فوق [[run]]) كفاية، والتطبيق مفيهوش build ولا dependencies.
-- **stale-while-revalidate لملفات التطبيق:** بيفتح على طول من الكاش حتى في وضع الطيارة، والنسخة الجديدة بتتحط في الكاش في الخلفية وتظهر الفتحة اللي بعدها. لتطبيق شخصي ده أبسط من شريط «حدّث».
-- **[[ignoreSearch: true]]:** لو حد فتح [[index.html?from=home]] (زي [[start_url]] فيه parameter) يلاقيها في الكاش برضه.
-- **التصدير بـ [[Blob]] و [[a.download]]:** الملف بيتعمل في المتصفح ويتنزّل من غير سيرفر، واسمه فيه التاريخ. والاستيراد بيفحص [[app]] و [[items]] قبل ما يكتب أي حاجة، وبيستخدم [[put]] فالعناصر الموجودة بتتبدّل مش بتتكرر.
-- **ترتيب القايمة:** اللي لسه متشتراش فوق، فاللي واقف في السوبر ماركت بيشوف الباقي على طول.
+- **[[readingTracker(article, key)]] بترجّع [[destroy]]:** كل حاجة اتسجّلت جوه الدالة بتتشال من مكان واحد. في SPA، لما المقالة تتشال من الصفحة، تنادي [[destroy()]] فمفيش observer ولا listener بيفضل ماسك عناصر مش موجودة.
+- **[[io.disconnect()]] لما توصل لآخر فقرة:** المقالة خلصت، والشريط 100٪، فمفيش داعي يفضل يراقب.
+- **[[furthest]]:** الشريط بيقيس أبعد فقرة وصلتلها مش عدد الفقرات اللي عدّت على الخط، عشان لو نطّيت لفقرة 12 بـ «كمّل» يبان 48٪ مش 8٪ (دي كانت أول نسخة).
+- **[[store]] بـ [[try]]:** في الـ preview أو لو اليوزر قافل التخزين، الصفحة بتشتغل من الذاكرة.
+- **[[key = "resume:" + location.pathname]]:** كل مقالة ليها مكانها.
 
 ## اتقاس
 
-Chrome 158 headless بـ profile حقيقي على الديسك، على [[http://localhost:8831]]:
-
-~~~text الناتج (Chrome 158 headless)
-installability: [] | manifest errors: []
-القايمة: ["لبن","طماطم","✓عيش"]
-التصدير: shopping-2026-11-21.json | 3 عناصر | app: shopping
-فتحناه تاني في وضع الطيارة: من غير نت | ["لبن","طماطم","✓عيش"]
-بعد ما المتصفح «مسح» الداتا: []
-بعد الاستيراد: اتستورد 3 عنصر | ["لبن","طماطم","✓عيش"]
+~~~text الناتج (Chrome 158 headless، 700×700، http://localhost:8835)
+أول ما تفتح                bar=0% | current=undefined | hash= | resume=مخفي
+نزلنا لفقرة 12             bar=48% | current=p12 | hash=#p12 | resume=مخفي
+تاب جديد                   bar=12% | current=p3 | hash=#p3 | resume=كمّل من «فقرة 12:…»
+ضغطنا «كمّل»               bar=48% | current=p12 | hash=#p12 | resume=مخفي
+بعد destroy ونزلنا لـ 20   bar=48% | current=p12 | hash=#p12 | resume=مخفي
+صفحة جديدة لحد آخر فقرة    bar=100% | current=p25 | hash=#p25 | resume=مخفي
+[sandbox] bar=20% current=p5
 pageerrors: 0
 ~~~
 
-- [[installability: []]]: Chrome شايفه قابل للتسطيب.
-- قفلنا المتصفح وفتحناه **Offline** من الأول ([[offline: true]]، زي وضع الطيارة): التطبيق والقايمة رجعوا.
-- مسحنا الـ store بإيدينا (زي ما المتصفح بيعمل لما المساحة تقل)، واستوردنا الملف اللي اتصدّر: القايمة رجعت زي ما كانت.
-- التسطيب على موبايل حقيقي محتاج HTTPS (انشره على GitHub Pages مثلًا)، وده مش جوه المعمل.
+- قفلنا التاب على فقرة 12 من غير ما ندوس حاجة، والتاب الجديد عرض «كمّل من «فقرة 12:…»»: الحفظ حصل في [[visibilitychange]] أو [[pagehide]] وهو بيتقفل.
+- بعد [[destroy()]] نزلنا لفقرة 20 والحالة مغيّرتش خالص: الـ observer اتفصل فعلًا.
 
-**ليه مش localStorage:** كان هيشتغل لقايمة صغيرة، بس الـ SW مبيوصلوش لو حبيت تزوّد sync بعدين، وبيتمسح مع نفس قواعد التخزين. IndexedDB هو اللي بيكبر مع التطبيق.` },
+**ليه مش scroll listener:** الشريط في المواقع دي غالبًا بيتحسب من [[scrollY]] في كل scroll. هنا بيتحدّث بس لما فقرة جديدة تعدّي نص الشاشة، وده كفاية لشريط بيقول «فاضلك قد إيه».
+
+**وسّعها (ext):** حوّلها لـ [[readingTracker(article, { key, onProgress })]] بترجّع [[{ destroy, progress }]]، وقيس بـ Lighthouse قبل وبعد ما تضيفها لصفحة حقيقية (المفروض مفيش فرق في Total Blocking Time).` },
       ],
       items: [
         {
-          cmd: "manifest.webmanifest",
-          title: "تخلي الموقع يتسطّب كتطبيق إزاي؟",
-          desc: R`الـ PWA (Progressive Web App) موقع عادي بيتسطّب على الموبايل والكمبيوتر كأنه تطبيق: أيقونة على الشاشة، ويفتح في شباك لوحده من غير شريط العنوان، وممكن يشتغل من غير نت. أول حتة هي الـ manifest: ملف JSON بيوصف التطبيق، وبتربطه من الـ HTML بـ [[<link rel="manifest" href="manifest.webmanifest">]].
+          cmd: "IntersectionObserver",
+          title: "تعرف إن عنصر ظهر على الشاشة إزاي؟ (infinite scroll و reveal)",
+          desc: R`[[IntersectionObserver]] بيقولك لما عنصر يدخل أو يخرج من الشاشة (أو من عنصر أب بيعمل scroll)، من غير ما تسمع لـ [[scroll]] وتحسب المقاسات بنفسك. بتعمله مرة بـ callback وخيارات، وبعدين [[observe(el)]] لأي عدد عناصر.
 
-الموقع اللي انت بتذاكر فيه ده نفسه PWA: ده الـ manifest بتاعه تقريبًا زي ما هو. أهم الحقول: [[name]] و [[short_name]] (تحت الأيقونة)، و [[start_url]] (يفتح على فين)، و [[display: "standalone"]] (من غير شريط المتصفح)، و [[icons]] (192 و 512 على الأقل، وواحدة [[maskable]] عشان Android يقصّها دايرة أو مربع من غير ما تتقطع)، و [[theme_color]] و [[background_color]] (لون الشريط وشاشة البداية)، و [[lang]] و [[dir]] للعربي.`,
-          example: R`// manifest.webmanifest (بتاع الموقع ده، مختصر)
-{
-  "name": "الترمنال بإيدك",
-  "short_name": "الترمنال",
-  "lang": "ar",
-  "dir": "rtl",
-  "start_url": "./",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#1f2430",
-  "theme_color": "#1f2430",
-  "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
-  ]
-}`,
-          try: R`افتح الموقع ده في Chrome، و DevTools ← Application ← Manifest: شوف الحقول والأيقونات وأي warnings. وبعدين في مشروع عندك: اعمل manifest بنفس الشكل وأيقونات (ممكن تولّدها بـ [[npx @vite-pwa/assets-generator]] أو أي أداة)، واربطه، وشوف أيقونة التسطيب ظهرت في شريط العنوان ولا لأ. ولو مظهرتش، Application ← Manifest هيقولك الناقص.`,
+أشهر استخدامين: infinite scroll (عنصر فاضي في آخر الليستة اسمه sentinel، أول ما يقرّب من الشاشة حمّل الصفحة الجاية)، وأنيميشن عند الظهور (ضيف كلاس لما الكارت يظهر، وبطّل تراقبه). و [[rootMargin: "300px"]] بيوسّع منطقة الشاشة ٣٠٠ بكسل، فالتحميل يبدأ قبل ما اليوزر يوصل للآخر. و [[threshold: 0.2]] يعني «لما ٢٠٪ من العنصر يظهر».`,
+          example: R`const feed = document.querySelector("#feed");
+const sentinel = document.querySelector("#sentinel");
+let page = 1, loading = false, done = false;
+async function loadMore() {
+  if (loading || done) return;
+  loading = true;
+  try {
+    const res = await fetch($__bt/api/posts?page=$__{page}$__bt);
+    const posts = await res.json();
+    if (posts.length === 0) done = true;
+    for (const p of posts) {
+      const li = document.createElement("li");
+      li.textContent = p.title;
+      feed.append(li);
+    }
+    page++;
+  } finally {
+    loading = false;
+  }
+  if (!done) { io.unobserve(sentinel); io.observe(sentinel); }
+}
+const io = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) loadMore();
+}, { rootMargin: "300px" });
+io.observe(sentinel);
+const reveal = new IntersectionObserver((entries, obs) => {
+  for (const e of entries) {
+    if (!e.isIntersecting) continue;
+    e.target.classList.add("visible");
+    obs.unobserve(e.target);
+  }
+}, { threshold: 0.2 });
+document.querySelectorAll(".reveal").forEach((el) => reveal.observe(el));`,
+          try: R`اعمل صفحة فيها [[<ul id="feed">]] وبعدها [[<div id="sentinel">]]، واستبدل الـ fetch بـ [[https://jsonplaceholder.typicode.com/posts?_page=$__{page}&_limit=5]]. افتح Network وانزل: الطلبات بتحصل إمتى؟ وبعدين شيل سطر [[unobserve/observe]] وخلي الـ limit 2 على شاشة كبيرة: التحميل بيكمّل لوحده ولا بيقف؟`,
           practice: [
-            { lvl: 'سريع', t: R`صلّح الـ manifest البايظ: حط comma زيادة بعد آخر حقل، واكتب [["display": "standlone"]] بغلطة إملائية، وافحصه بـ [[node -e "JSON.parse(require('fs').readFileSync('manifest.webmanifest', 'utf8'))"]] وبـ Application ← Manifest.`, done: R`Node بيطلّع [[SyntaxError]] للـ comma، وبعد ما تشيلها الأمر بيخلص من غير ولا سطر، بس الـ [[display]] لسه غلط و JSON.parse مبيشتكيش (JSON صالح ومعناه غلط)، والمتصفح بيتجاهل القيمة اللي ميعرفهاش ويرجع للـ default ([[browser]]) فالتطبيق بعد التسطيب مبيفتحش في شباك لوحده، ولما تصلّحها لـ [[standalone]] بيفتح.`, sol: R`**الـ manifest البايظ** (comma بعد آخر أيقونة، و [[standlone]]):
-
-~~~json manifest.webmanifest (البايظ)
-{
-  "name": "مذاكرتي",
-  "short_name": "مذاكرتي",
-  "lang": "ar",
-  "dir": "rtl",
-  "start_url": "./",
-  "scope": "./",
-  "display": "standlone",
-  "background_color": "#1f2430",
-  "theme_color": "#1f2430",
-  "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
-  ]
-}
-~~~
-
-**الفحص بـ Node:**
-
-~~~text الناتج (node -e "JSON.parse(...)"، Node 24)
-SyntaxError: Unexpected token ']', ..."ble" },
-  ]
-}
-" is not valid JSON
-exit=1
-~~~
-
-شيلنا الـ comma وشغّلنا نفس الأمر تاني: مطلعش ولا سطر و [[exit=0]]. بس [[standlone]] لسه موجودة، و JSON مبيعرفش حاجة عن معنى القيم.
-
-**الفحص بالمتصفح:** صفحة على [[http://localhost:8831]] فيها [[<link rel="manifest">]]، وطلبنا من Chrome الـ manifest بعد ما فهمه بـ DevTools Protocol ([[Page.getAppManifest]]، وده نفس اللي Application ← Manifest بيعرضه):
-
-~~~text الناتج (Chrome 158 headless)
-== comma زيادة
-  errors: ["Line: 15, column: 3, Unexpected token."]
-  display بعد الـ parse: kUndefined
-== display: standlone
-  errors: ["unknown 'display' value ignored."]
-  display بعد الـ parse: kUndefined
-== مصلّح
-  errors: []
-  display بعد الـ parse: kStandalone
-~~~
-
-**الـ manifest المصلّح:**
-
-~~~json manifest.webmanifest
-{
-  "name": "مذاكرتي",
-  "short_name": "مذاكرتي",
-  "lang": "ar",
-  "dir": "rtl",
-  "start_url": "./",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#1f2430",
-  "theme_color": "#1f2430",
-  "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
-  ]
-}
-~~~
-
-**ليه كده:**
-
-- **الـ comma:** JSON مش JavaScript: مفيش trailing comma. Node و Chrome الاتنين رفضوا الملف كله، و Chrome اعتبر إن مفيش manifest أصلًا.
-- **[[standlone]]:** الملف JSON سليم، فـ [[JSON.parse]] عدّاه. لكن Chrome قال [[unknown 'display' value ignored.]] ورجع للقيمة الافتراضية ([[browser]]، يعني «اتفتح زي أي تاب»)، فالتطبيق بعد التسطيب مش هيفتح في شباك لوحده. القيم المسموحة: [[fullscreen]] و [[standalone]] و [[minimal-ui]] و [[browser]].
-- **يعني فيه مستويين فحص:** «الملف صالح» (Node أو أي JSON linter) و «المتصفح فهم القيم» (Application ← Manifest، أو [[Page.getAppManifest]]). التمرين اللي جاي بيعمل أداة للمستوى التاني.
-
-**الغلطة الشائعة:** تفتح Application ← Manifest وتلاقي الاسم والأيقونات ظاهرين فتفتكر كله تمام. الأخطاء بتطلع في قسم «Errors and warnings» فوق، ولازم يبقى فاضي.` },
-            { lvl: 'تطبيق', t: R`ابني أداة: [[check-manifest.mjs]] بتقرا الـ manifest وبتتأكد إن فيه [[name]] و [[start_url]] و [[display]] من القيم المسموحة، وأيقونة [[192x192]] وأيقونة [[512x512]]، وإن ملفات الأيقونات موجودة على الديسك. بتطبع كل مشكلة في سطر وتخرج بـ [[process.exitCode = 1]].`, done: R`manifest الدرس بيعدّي من غير ناتج وكود 0، وشيل أيقونة الـ 512 بيطبع سطر بيقول إنها ناقصة، ومسار أيقونة غلط بيطبع اسم الملف، و [[display: "standlone"]] بيترفض، و [[echo $?]] (أو [[$LASTEXITCODE]]) بيرجّع 1 في كل الحالات دي.`, sol: R`~~~js check-manifest.mjs
-import { readFileSync, existsSync } from "node:fs";
-import { dirname, join } from "node:path";
-
-const file = process.argv[2] ?? "manifest.webmanifest";
-const problems = [];
-let m;
-try {
-  m = JSON.parse(readFileSync(file, "utf8"));
-} catch (err) {
-  console.log($__bt$__{file}: $__{err.message}$__bt);
-  process.exit(1);
-}
-
-for (const key of ["name", "start_url", "display"]) {
-  if (typeof m[key] !== "string" || m[key].trim() === "") problems.push($__btناقص "$__{key}"$__bt);
-}
-const DISPLAY = ["fullscreen", "standalone", "minimal-ui", "browser"];
-if (m.display && !DISPLAY.includes(m.display)) problems.push($__bt"display": "$__{m.display}" مش من $__{DISPLAY.join(" / ")}$__bt);
-
-const icons = Array.isArray(m.icons) ? m.icons : [];
-for (const size of ["192x192", "512x512"]) {
-  const ok = icons.some((i) => (i.sizes ?? "").split(/\s+/).includes(size) && !(i.purpose ?? "any").split(/\s+/).every((p) => p === "maskable"));
-  if (!ok) problems.push($__btمفيش أيقونة $__{size} عادية (purpose any)$__bt);
-}
-for (const icon of icons) {
-  const path = join(dirname(file), icon.src ?? "");
-  if (!icon.src || !existsSync(path)) problems.push($__btملف الأيقونة مش موجود: $__{icon.src}$__bt);
-}
-
-for (const p of problems) console.log(p);
-process.exitCode = problems.length ? 1 : 0;
-~~~
-
-جرّبناها على الـ manifest السليم بتاع التمرين اللي فات و ٤ نسخ بايظة (كل نسخة فيها مشكلة واحدة):
-
-~~~text الناتج (Git Bash، node check-manifest.mjs <الملف>؛ echo $?)
-== manifest سليم
-  → exit 0
-== من غير أيقونة 512 العادية
-مفيش أيقونة 512x512 عادية (purpose any)
-  → exit 1
-== مسار أيقونة غلط
-ملف الأيقونة مش موجود: icons/icon-129.png
-  → exit 1
-== display: standlone
-"display": "standlone" مش من fullscreen / standalone / minimal-ui / browser
-  → exit 1
-== الـ comma الزيادة
-manifest.broken.webmanifest: Unexpected token ']', ..."ble" },
-  ]
-}
-" is not valid JSON
-  → exit 1
-~~~
-
-~~~text الناتج (PowerShell 7)
-PS> node check-manifest.mjs t-no512.webmanifest; "LASTEXITCODE=$LASTEXITCODE"
-مفيش أيقونة 512x512 عادية (purpose any)
-LASTEXITCODE=1
-PS> node check-manifest.mjs manifest.good.webmanifest; "LASTEXITCODE=$LASTEXITCODE"
-LASTEXITCODE=0
-~~~
-
-**ليه كده:**
-
-- **[[process.argv[2] ?? "manifest.webmanifest"]]:** الملف من الترمنال، أو الاسم الافتراضي.
-- **[[JSON.parse]] في [[try]]:** لو الملف مش JSON صالح، مفيش فايدة نكمّل، فبنطبع الرسالة ونخرج بـ [[process.exit(1)]] على طول.
-- **الحقول المطلوبة:** نص مش فاضي. و [[display]] لازم من الـ ٤ قيم اللي المتصفح بيعرفها (Chrome بيتجاهل غيرهم من غير ما يقول، زي ما شفنا في التمرين اللي فات).
-- **الأيقونات:** [[sizes]] ممكن تبقى [["192x192 512x512"]] في أيقونة واحدة، فبنقسم بالمسافات. والأيقونة اللي [[purpose]] بتاعها [[maskable]] بس متتحسبش «عادية»، لأن المتصفح مش هيستخدمها في الأماكن اللي مبتقصّش.
-- **[[join(dirname(file), icon.src)]]:** المسار في الـ manifest نسبي للـ manifest نفسه مش للمكان اللي انت واقف فيه، فبنحسبه من فولدر الملف.
-- **[[process.exitCode = 1]] مش [[process.exit(1)]]:** بيسيب Node يخلّص طباعة كل السطور الأول وبعدين يخرج بالكود ده. أي CI أو [[&&]] بعدها هيقف لو فيه مشكلة.
-
-**الغلطة الشائعة:** تطبع المشاكل وتنسى كود الخروج. الأداة هتبان شغالة وانت بتشوفها بعينك، بس في CI هتعدّي دايمًا لأن الكود 0.` },
-            { lvl: 'تحدي', t: R`ابني أيقونة maskable صح: اللوجو جوه دايرة قطرها 80٪ من الأيقونة، والخلفية مليانة لحد الأطراف. افحصها بـ «Show only the minimum safe area for maskable icons» في Application ← Manifest.`, done: R`مفيش أي جزء من اللوجو بيتقص في المعاينة، ومفيش حواف شفافة، والأيقونة العادية (من غير [[purpose: "maskable"]]) لسه موجودة جنبها للأماكن اللي مبتقصّش.`, sol: R`الأيقونة اتعملت بـ canvas عشان تشوف الأرقام بنفسك. الصفحة بترسمها مرة زي ما هي، ومرة مقصوصة دايرة (زي Android)، ومرة شكل تاني، ومرة عليها دايرة الأمان (زي «Show only the minimum safe area for maskable icons» في DevTools)، وبتفحصها بالبكسل، وفيها لينك تنزّل منه الـ PNG.
-
-~~~live 300 maskable.html
+            { lvl: 'سريع', t: R`ابني سكشن «أرقامنا» فيه ٣ أرقام ([[data-to="1200"]] مثلًا) تحت أول شاشة: الأرقام بتعدّ من 0 لحد [[data-to]] في ثانية واحدة أول ما السكشن يظهر بـ [[threshold: 0.5]]، وبعدين [[unobserve]].`, done: R`الأرقام بتفضل 0 لحد ما تنزل للسكشن، وبتعدّ مرة واحدة بس وتقف على الرقم بالظبط (مش 1199 ولا 1201) مهما طلعت ونزلت، وفتح الصفحة على السكشن على طول بيعدّ برضه.`, sol: R`~~~live 420 count-up.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>أيقونة maskable</title>
+<title>أرقامنا</title>
 <style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
-  .row { display: flex; gap: 16px; flex-wrap: wrap; align-items: end; }
-  figure { margin: 0; text-align: center; }
-  canvas { width: 140px; height: 140px; }
-  .circle { clip-path: circle(50%); }
-  .squircle { clip-path: inset(0 round 28%); }
-  .safe { background: repeating-conic-gradient(#ddd 0 25%, #fff 0 50%) 0 0 / 16px 16px; }
-  a { display: inline-block; margin-top: 8px; }
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 0; }
+  .hero { min-height: 110vh; display: grid; place-items: center; background: #eef2ff; }
+  #stats { display: flex; gap: 24px; justify-content: center; padding: 48px 16px; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .num { font-size: 40px; font-weight: 700; color: #1d4ed8; font-variant-numeric: tabular-nums; }
+  footer { min-height: 60vh; }
 </style>
 </head>
 <body>
-<div class="row">
-  <figure><canvas id="raw" width="512" height="512"></canvas><figcaption>الملف نفسه</figcaption></figure>
-  <figure><canvas id="c1" width="512" height="512" class="circle"></canvas><figcaption>Android (دايرة)</figcaption></figure>
-  <figure><canvas id="c2" width="512" height="512" class="squircle"></canvas><figcaption>شكل تاني</figcaption></figure>
-  <figure><canvas id="c3" width="512" height="512"></canvas><figcaption>دايرة الأمان 80٪</figcaption></figure>
-</div>
-<p id="check"></p>
-<a id="dl" download="maskable-512.png">نزّل الـ PNG</a>
+<section class="hero"><p>انزل لتحت ↓</p></section>
+<section id="stats" aria-label="أرقامنا">
+  <div class="stat"><div class="num" data-to="1200">0</div>طالب</div>
+  <div class="stat"><div class="num" data-to="85">0</div>درس</div>
+  <div class="stat"><div class="num" data-to="37">0</div>مشروع</div>
+</section>
+<footer></footer>
 <script>
-  function drawMaskable(ctx, size) {
-    ctx.fillStyle = "#1f2430";
-    ctx.fillRect(0, 0, size, size);                         // الخلفية مليانة لحد الأطراف
-    const r = size * 0.4 * 0.75;                            // اللوجو جوه دايرة نص قطرها 40٪ (قطرها 80٪)، بهامش
-    ctx.fillStyle = "#fbbf24";
-    ctx.beginPath(); ctx.arc(size / 2, size / 2, r, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#1f2430";
-    ctx.font = $__btbold $__{r}px sans-serif$__bt;
-    ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.fillText(">_", size / 2, size / 2);
+  function countUp(el, ms = 1000) {
+    const to = Number(el.dataset.to);
+    const start = performance.now();
+    function frame(now) {
+      const t = Math.min((now - start) / ms, 1);      // من 0 لـ 1
+      el.textContent = Math.round(to * t).toLocaleString("ar-EG");
+      if (t < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
   }
-  for (const id of ["raw", "c1", "c2", "c3"]) drawMaskable(document.getElementById(id).getContext("2d"), 512);
 
-  // دايرة الأمان: زي «Show only the minimum safe area» في DevTools
-  const c3 = document.getElementById("c3").getContext("2d");
-  c3.strokeStyle = "#ef4444"; c3.lineWidth = 6; c3.setLineDash([16, 10]);
-  c3.beginPath(); c3.arc(256, 256, 512 * 0.4, 0, Math.PI * 2); c3.stroke();
-
-  // فحص بالبكسل: كل بكسل مش لون الخلفية لازم يبقى جوه الدايرة، والأركان مش شفافة
-  const data = document.getElementById("raw").getContext("2d").getImageData(0, 0, 512, 512).data;
-  let outside = 0, transparent = 0;
-  for (let y = 0; y < 512; y++) for (let x = 0; x < 512; x++) {
-    const i = (y * 512 + x) * 4;
-    if (data[i + 3] < 255) transparent++;
-    const isBg = data[i] === 0x1f && data[i + 1] === 0x24 && data[i + 2] === 0x30;
-    if (!isBg && Math.hypot(x + 0.5 - 256, y + 0.5 - 256) > 512 * 0.4) outside++;
-  }
-  document.querySelector("#check").textContent = $__btبكسلات لوجو برا دايرة الأمان: $__{outside} | بكسلات شفافة: $__{transparent}$__bt;
-  document.getElementById("raw").toBlob((b) => (document.querySelector("#dl").href = URL.createObjectURL(b)));
+  const io = new IntersectionObserver((entries, obs) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      e.target.querySelectorAll(".num").forEach((el) => countUp(el));
+      obs.unobserve(e.target);                    // مرة واحدة بس
+    }
+  }, { threshold: 0.5 });
+  io.observe(document.querySelector("#stats"));
 </script>
 </body>
 </html>
 ~~~
 
-**والـ manifest** فيه الأيقونة العادية جنب الـ maskable (نفس manifest التمرين الأول):
+انزل جوه الـ preview لحد «أرقامنا»: الأرقام بتعدّ مرة واحدة وتقف.
 
-~~~json manifest.webmanifest (الجزء ده بس)
-"icons": [
-  { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-  { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-  { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+~~~text الناتج (Chrome 158 headless، نفس الملف جوه iframe معزول زي الـ preview، عرض 400px)
+أول ما الصفحة تفتح: 0 / 0 / 0
+بعد 300ms: ٣٣٢ / ٢٣ / ١٠
+بعد ثانية ونص: ١٬٢٠٠ / ٨٥ / ٣٧
+طلعنا ونزلنا تاني: ١٬٢٠٠ / ٨٥ / ٣٧
+السكشن ظاهر من الأول: ١٬٢٠٠ / ٨٥ / ٣٧
+pageerrors: 0
+~~~
+
+**ليه كده:**
+
+- **observer على السكشن مش على كل رقم:** التلات أرقام بيبدأوا مع بعض، فعنصر واحد يكفي. [[threshold: 0.5]] معناها «لما نص السكشن يبقى جوه الشاشة».
+- **[[if (!e.isIntersecting) continue]]:** الـ callback بيتنادى **مرة أول ما تعمل [[observe]]** حتى لو العنصر برا الشاشة، ومرة لما يخرج. من غير الشرط ده العدّ كان هيبدأ على طول.
+- **[[obs.unobserve(e.target)]]:** بعد أول مرة مبقاش فيه داعي نراقب، فالطلوع والنزول مبيعيدش العدّ (السطر الرابع).
+- **[[Math.min((now - start) / ms, 1)]] و [[Math.round(to * t)]]:** العدّ بالوقت مش بعدد الفريمات، فبيخلص في ثانية على أي شاشة (60Hz أو 120Hz). وآخر فريم [[t = 1]] بالظبط، فالرقم بيقف على [[1200]] مش 1199.
+- **[[toLocaleString("ar-EG")]]:** بيكتب الأرقام عربي وبفاصل الآلاف ([[١٬٢٠٠]]). امسحها لو عايز [[1200]].
+- **فتح الصفحة على السكشن:** أول نداء للـ callback بيلاقي [[isIntersecting: true]] فبيعدّ على طول، من غير أي كود زيادة.
+
+**الغلطة الشائعة:** تعدّ بـ [[setInterval]] وتزوّد رقم ثابت كل مرة ([[n += 12]]). لو الرقم مش بيقبل القسمة بالظبط هيعدّي ([[1204]]) أو يقف قبله، ولو التاب اتخبى الـ interval بيبطّأ والعدّ ياخد أكتر من ثانية.` },
+            { lvl: 'تطبيق', t: R`refactor: صفحة منتجات فيها [[cards.forEach((el) => new IntersectionObserver(cb).observe(el))]] لـ ١٠٠ كارت وبتحمّل صورة كل كارت لما يظهر. خليها observer واحد لكل الكروت، مع [[unobserve]] بعد التحميل و [[rootMargin: "200px"]]، من غير ما السلوك يتغير.`, done: R`عدد الـ observers بقى 1 بدل 100 (عدّهم بمتغير)، وكل صورة لسه بتتطلب مرة واحدة لما تقرّب منها (Network يأكد)، والكارت اللي اتحمّل مبيتناداش تاني لو طلعت ونزلت، وتقدر تقول ليه observer واحد أرخص.`, sol: R`**قبل** (الجزء اللي هيتغيّر بس):
+
+~~~js
+const cb = (entries) => {
+  for (const e of entries) {
+    if (!e.isIntersecting) continue;
+    const img = e.target.querySelector("img");
+    img.src = imageUrl(img.dataset.n);
+  }
+};
+cards.forEach((el) => new IntersectionObserver(cb).observe(el));
+~~~
+
+**بعد:** الصفحة كاملة. الصور SVG بتتعمل في الصفحة نفسها عشان تشتغل من غير سيرفر، والشريط اللي فوق بيعدّ الـ observers والتحميلات.
+
+~~~live 420 lazy-cards.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>منتجات بتتحمّل لما تقرب</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 0; }
+  #bar { position: sticky; top: 0; background: #111827; color: #fff; padding: 8px 12px; font-size: 14px; }
+  #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; padding: 12px; }
+  .card { border: 1px solid #ddd; border-radius: 8px; padding: 8px; }
+  .card img { display: block; width: 100%; aspect-ratio: 4 / 3; background: #e5e7eb; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div id="bar">observers: <b id="obs">0</b> | صور اتحمّلت: <b id="loaded">0</b> من 100</div>
+<div id="grid"></div>
+<script>
+  // صورة وهمية لكل منتج (SVG) عشان الصفحة تشتغل من غير سيرفر
+  const imageUrl = (n) =>
+    "data:image/svg+xml," + encodeURIComponent(
+      $__bt<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 30"><rect width="40" height="30" fill="hsl($__{n * 37 % 360} 70% 70%)"/><text x="20" y="19" font-size="10" text-anchor="middle">$__{n}</text></svg>$__bt,
+    );
+
+  const grid = document.querySelector("#grid");
+  for (let i = 1; i <= 100; i++) {
+    grid.insertAdjacentHTML("beforeend",
+      $__bt<div class="card"><img alt="منتج $__{i}" data-n="$__{i}" width="160" height="120">منتج $__{i}</div>$__bt);
+  }
+
+  let observers = 0;
+  let loaded = 0;
+  const loads = {};              // كام مرة كل صورة اتحمّلت
+
+  // observer واحد لكل الكروت
+  const io = new IntersectionObserver((entries, obs) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      const img = e.target.querySelector("img");
+      img.src = imageUrl(img.dataset.n);
+      loads[img.dataset.n] = (loads[img.dataset.n] ?? 0) + 1;
+      document.querySelector("#loaded").textContent = ++loaded;
+      obs.unobserve(e.target);   // اتحمّل خلاص
+    }
+  }, { root: document, rootMargin: "200px" });
+  observers++;
+  document.querySelector("#obs").textContent = observers;
+
+  document.querySelectorAll(".card").forEach((card) => io.observe(card));
+</script>
+</body>
+</html>
+~~~
+
+~~~text الناتج (Chrome 158 headless، نفس الملف جوه iframe معزول عرضه 400px، و scroll للأماكن دي بالترتيب)
+                   بعد                       قبل
+أول ما تفتح:       observers: 1 | 10 من 100   observers: 100 | 8 من 100
+scroll 1500:       observers: 1 | 24 من 100   observers: 100 | 16 من 100
+scroll 4000:       observers: 1 | 38 من 100   observers: 100 | 26 من 100
+scroll 0:          observers: 1 | 38 من 100   observers: 100 | 34 من 100
+scroll 4000:       observers: 1 | 38 من 100   observers: 100 | 44 من 100
+scroll 99999:      observers: 1 | 48 من 100   observers: 100 | 52 من 100
+صورة اتحمّلت أكتر من مرة؟   false             true
+pageerrors: 0
+~~~
+
+**ليه كده:**
+
+- **observer واحد و [[observe]] لكل كارت:** الـ observer الواحد بيراقب أي عدد من العناصر، والـ callback بياخد [[entries]] فيها كل اللي حالته اتغيّرت مع بعض في نفس الفريم، و [[e.target]] بيقولك أنهي كارت.
+- **[[obs.unobserve(e.target)]]:** بعد ما الصورة اتحمّلت مفيش سبب نفضل نسأل عن الكارت. في النسخة القديمة الرجوع لفوق ونزول تاني حمّل نفس الصور تاني (٣٤ بعد ما رجعنا لـ 0، و ٥٢ في الآخر).
+- **[[rootMargin: "200px"]]:** بيكبّر منطقة الشاشة ٢٠٠px من كل ناحية، فالصورة بتبدأ تتحمّل قبل ما توصلها بشوية واليوزر ميشوفش مربع فاضي (عشان كده «بعد» حمّلت ١٠ في الأول مش ٨: الصفين اللي تحت الشاشة على طول).
+- **[[root: document]]:** من غيره، الـ observer في صفحة جوه iframe من origin تاني (زي الـ preview هنا، أو widget متركّب في موقع حد) بيحسب التقاطع مع شاشة الصفحة **الكبيرة** وبيتجاهل الـ [[rootMargin]] خالص. قسناها: نفس الصفحة من غير [[root: document]] حمّلت ٨ في الأول زي النسخة اللي مفيهاش margin أصلًا. [[root: document]] بيقول «احسب على شاشة الصفحة دي نفسها»، وفي صفحة عادية مش في iframe بيدّي نفس النتيجة.
+- **ليه observer واحد أرخص:** كل observer ليه حسابات خاصة بيه في كل فريم والمتصفح بيحسب التقاطع لكل واحد لوحده، وكل واحد بينادي callback لوحده. واحد بـ ١٠٠ target بيعمل الحسبة مرة وبينادي callback واحد بكل التغييرات.
+- **الـ scroll بنطّة كبيرة (من 1500 لـ 4000) مبيحمّلش الكروت اللي في النص:** هي معدّتش على الشاشة أصلًا، وده المطلوب.
+
+على سيرفر حقيقي حط الـ URL في [[data-src]] و [[img.src = img.dataset.src]]، وهتشوف كل صورة مرة واحدة في Network. وأسهل من ده كله لصور بسيطة: [[<img loading="lazy">]]، المتصفح بيعمل نفس الحكاية لوحده. الـ observer لما تحتاج تعمل حاجة زيادة (animation، أو fetch لداتا الكارت).
+
+**الغلطة الشائعة:** تنسى [[unobserve]] وتحط شرط [[if (img.src) return]]. بيشتغل، بس الـ observer لسه بيراقب ١٠٠ كارت للأبد وبينادي الـ callback على الفاضي مع كل scroll.` },
+            { lvl: 'تحدي', t: R`ابني فهرس جانبي (scroll spy) لمقالة: لينك لكل [[<section>]]، واللينك بتاع القسم اللي في نص الشاشة عليه [[class="active"]] بـ [[rootMargin: "-50% 0px -50% 0px"]]، والـ URL بيتحدّث بـ [[#id]] القسم بـ [[replaceState]] (درس pushState).`, done: R`اللينك النشط بيتغير لما القسم يعدّي نص الشاشة، وفي أي لحظة لينك واحد بس عليه [[active]] (حتى في آخر الصفحة)، و refresh على [[#section-3]] بيفتح عنده واللينك بتاعه نشط، ومفيش [[getBoundingClientRect]] ولا scroll listener في الكود.`, sol: R`~~~live 420 scroll-spy.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فهرس بيتابعك</title>
+<style>
+  body { font: 15px/1.7 system-ui, sans-serif; margin: 0; display: grid; grid-template-columns: 120px 1fr; }
+  nav { position: sticky; top: 0; align-self: start; padding: 12px; }
+  nav a { display: block; padding: 4px 8px; border-radius: 4px; color: #374151; text-decoration: none; }
+  nav a.active { background: #1d4ed8; color: #fff; }
+  main { padding: 12px 16px; }
+  section { min-height: 70vh; border-bottom: 1px solid #ddd; }
+  section:last-of-type { min-height: 30vh; }
+  #note { font-size: 12px; color: #92400e; }
+</style>
+</head>
+<body>
+<nav aria-label="الفهرس">
+  <a href="#section-1">المقدمة</a>
+  <a href="#section-2">التركيب</a>
+  <a href="#section-3">الاستخدام</a>
+  <a href="#section-4">الأخطاء</a>
+  <a href="#section-5">الخلاصة</a>
+  <p id="note"></p>
+</nav>
+<main>
+  <section id="section-1"><h2>المقدمة</h2><p>نص المقدمة...</p></section>
+  <section id="section-2"><h2>التركيب</h2><p>نص التركيب...</p></section>
+  <section id="section-3"><h2>الاستخدام</h2><p>نص الاستخدام...</p></section>
+  <section id="section-4"><h2>الأخطاء</h2><p>نص الأخطاء...</p></section>
+  <section id="section-5"><h2>الخلاصة</h2><p>نص الخلاصة...</p></section>
+  <div id="end" style="height:1px"></div>
+</main>
+<script>
+  const links = new Map(
+    [...document.querySelectorAll("nav a")].map((a) => [a.hash.slice(1), a]),
+  );
+  let current = null;
+
+  function activate(id) {
+    if (id === current) return;
+    current = id;
+    for (const [key, a] of links) a.classList.toggle("active", key === id);
+    try {
+      history.replaceState(null, "", "#" + id);   // مش pushState: مش عايزين back يلف على الأقسام
+    } catch {
+      // الصفحة معزولة (زي الـ preview): الـ URL مينفعش يتغيّر، والفهرس شغال عادي
+      document.querySelector("#note").textContent = "الـ URL مبيتغيّرش هنا (صفحة معزولة)";
+    }
+  }
+
+  // خط واحد في نص الشاشة بالظبط: القسم اللي بيعدّي عليه هو النشط
+  const spy = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) activate(e.target.id);
+  }, { root: document, rootMargin: "-50% 0px -50% 0px" });
+  document.querySelectorAll("main section").forEach((s) => spy.observe(s));
+
+  // آخر قسم قصير وممكن ميوصلش لنص الشاشة: لما آخر الصفحة يبان، فعّله
+  new IntersectionObserver(([e]) => {
+    if (e.isIntersecting) activate("section-5");
+  }).observe(document.querySelector("#end"));
+
+  activate(location.hash.slice(1) && links.has(location.hash.slice(1)) ? location.hash.slice(1) : "section-1");
+</script>
+</body>
+</html>
+~~~
+
+اعمل scroll جوه الـ preview: اللينك النشط بيتغيّر مع كل قسم يعدّي نص الشاشة. وتحت الفهرس هتلاقي «الـ URL مبيتغيّرش هنا»: الـ preview صفحة معزولة و [[replaceState]] بيرمي فيها [[SecurityError]]، فالصفحة بتكمّل من غيره. انسخها وشغّلها من سيرفر محلي والـ [[#id]] هيبان في العنوان.
+
+~~~text الناتج (Chrome 158 headless، 500×600، نفس الملف مرة جوه iframe معزول ومرة من http://localhost)
+[sandbox]   scroll 0     active=المقدمة   hash=""
+[sandbox]   scroll 500   active=التركيب   hash=""
+[sandbox]   scroll 1300  active=الأخطاء   hash=""
+[sandbox]   scroll 99999 active=الخلاصة   hash=""
+[localhost] scroll 0     active=المقدمة   hash=#section-1
+[localhost] scroll 500   active=التركيب   hash=#section-2
+[localhost] scroll 1300  active=الأخطاء   hash=#section-4
+[localhost] scroll 99999 active=الخلاصة   hash=#section-5
+[localhost] فتح على #section-3: active=الاستخدام  scrollY=910
+[localhost] refresh:            active=الاستخدام  hash=#section-3
+pageerrors: 0
+~~~
+
+**ليه كده:**
+
+- **[[rootMargin: "-50% 0px -50% 0px"]]:** بيقص نص الشاشة من فوق ونصها من تحت، فمنطقة الـ root بقت **خط** في النص. القسم «intersecting» بس وهو معدّي على الخط ده، وفي أي لحظة قسم واحد بس بيعدّي عليه.
+- **[[root: document]]:** هنا اكتشاف حقيقي من القياس. أول نسخة كانت من غيره، وفي الـ iframe المعزول طلّعت «التركيب» وانت في أول الصفحة. السبب: في iframe من origin تاني، الـ observer الافتراضي بيحسب على شاشة الصفحة **اللي برا** وبيتجاهل الـ [[rootMargin]]، فكل قسم ظاهر كان بيتحسب intersecting وآخر واحد بيكسب. [[root: document]] خلّاه يحسب على شاشة الصفحة دي، وعلى localhost النتيجة هي هي.
+- **[[activate]] بتشيل وتحط في نفس اللفة:** [[classList.toggle("active", key === id)]] على كل اللينكات، فمستحيل يبقى فيه اتنين نشطين.
+- **[[#end]] في الآخر:** آخر قسم قصير ([[30vh]]) ومش هيوصل لنص الشاشة أبدًا. عنصر بطول 1px في آخر الصفحة، أول ما يظهر بنفعّل «الخلاصة».
+- **[[replaceState]] مش [[pushState]]:** كل قسم بيعدّي لو عمل entry في الـ history، زرار back هيلف على الأقسام واحد واحد بدل ما يرجّعك للصفحة اللي قبل.
+- **[[location.hash]] في الآخر:** فتح الصفحة على [[#section-3]] بينزل عنده (المتصفح بيعمل ده لوحده) واللينك بتاعه بيتفعّل من أول لحظة.
+- **[[try/catch]] حوالين [[replaceState]]:** في الـ preview بيرمي [[SecurityError]]، ومن غير الـ catch كان [[activate]] الأول هيوقّف السكربت كله.
+
+**الغلطة الشائعة:** تحسب بـ [[getBoundingClientRect]] جوه scroll listener. بيشتغل، بس بيتنادى عشرات المرات في الثانية وكل مرة بيجبر المتصفح يحسب الـ layout. الـ observer بيتنادى بس لما الحالة تتغيّر.` },
+          ],
+          ref: [
+            { t: "MDN: Intersection Observer API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API" },
+            { t: "MDN: IntersectionObserver() constructor", url: "https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/IntersectionObserver" },
+            { t: "MDN: IntersectionObserver.rootMargin", url: "https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/rootMargin" },
+          ],
+          flag: "script",
+          deep: {
+            why: "الطريقة القديمة: [[scroll]] listener بيشتغل عشرات المرات في الثانية، وجواه [[getBoundingClientRect()]] لكل عنصر، وده بيجبر المتصفح يحسب الـ layout كل مرة (layout thrashing، تاب HTML و CSS) فالـ scroll يقطّع على الموبايل. IntersectionObserver بيعمل الحساب ده جوه المتصفح بكفاءة ويناديك بس لما الحالة تتغير.",
+            how: R`الـ callback بيتنادى مرة أول ما تعمل observe (بالحالة الحالية)، وبعدين كل ما العنصر يعدّي threshold دخول أو خروج. كل entry فيه [[isIntersecting]] و [[intersectionRatio]] (نسبة الظاهر) و [[target]] و [[boundingClientRect]]. الـ callback بيشتغل async بعد الـ frame، مش أثناء الـ scroll.
+
+الفخ الشهير: لو الصفحة الأولى قصيرة والـ sentinel لسه ظاهر بعد التحميل، مفيش «تغيير» في الحالة (كان ظاهر وفضل ظاهر)، فالـ callback مش هيتنادى تاني والتحميل يقف. [[unobserve]] ثم [[observe]] بيجبره يبعت entry جديد بالحالة الحالية، فلو لسه ظاهر يحمّل الصفحة اللي بعدها.
+
+و [[loading]] بيمنع طلبين مع بعض (الـ callback ممكن يتنادى تاني قبل ما الأول يخلص)، و [[done]] بيوقف لما السيرفر يرجّع ليستة فاضية. و [[finally]] بيضمن إن loading يرجع false حتى لو الطلب فشل.
+
+في الـ reveal: [[unobserve]] بعد أول ظهور عشان الأنيميشن يحصل مرة، ومنراقبش عناصر خلاص. وللصور مش محتاج JS أصلًا: [[<img loading="lazy">]] بيعمل lazy loading لوحده.`,
+            when: R`infinite scroll، و lazy loading لحاجات تقيلة (فيديو، خرايط، iframes، charts)، وأنيميشن عند الظهور، وتحديد القسم الحالي في جدول المحتويات، و analytics «الإعلان اتشاف». وفي React فيه hooks جاهزة زي [[react-intersection-observer]]، أو [[useEffect]] + ref (تاب React).`,
+            mistakes: R`تنسى الفخ ده فالتحميل يقف على الشاشات الكبيرة. ومفيش حماية من التحميل المزدوج. وتنسى [[disconnect()]] لما الـ component يتشال (memory leak، درس memory leaks). و [[threshold: 1]] على عنصر أطول من الشاشة: عمره ما هيبقى ظاهر ١٠٠٪. وفي infinite scroll: الفوتر بقى مستحيل توصله، وزرار back بيرجّعك لأول الليستة؛ فكّر في زرار «حمّل أكتر» أو احفظ الصفحة في الـ URL. وفخ أخير: لو صفحتك جوه iframe من origin تاني (زي الـ preview الحي في الموقع ده، أو widget متركّب في موقع حد تاني)، [[rootMargin]] بيتجاهل لما الـ root هو الـ viewport الافتراضي، فالتحميل المبكر ميشتغلش. الحل [[{ root: document, rootMargin: "300px" }]]: كده الـ root هو document الصفحة نفسها، والـ margin بيتطبّق (عشان كده حلول التمارين تحت كلها كاتباه).`
+          },
+          teach: R`## الفكرة في سطر
+
+بدل ما تسأل المتصفح كل شوية «العنصر ده ظهر؟»، بتقوله مرة: «لما يظهر، ناديني». المثال فيه استخدامين: تحميل صفحة بوستات جديدة لما عنصر فاضي في آخر الليستة يقرّب، وإضافة كلاس لكروت أول ما تظهر.
+
+جرّبت الكود ده في Chrome headless (عن طريق playwright-core) على صفحة فيها [[<ul id="feed">]] وبعدها [[<div id="sentinel">]]، وسيرفر Node صغير على localhost بيرد على [[/api/posts?page=N]] بـ 12 بوست متقسمين صفحات، والشاشة 1280×900. كل سطر [[li]] طوله 60px.
+
+---
+
+## ١. التجهيز
+
+~~~text app.js
+const feed = document.querySelector("#feed");
+const sentinel = document.querySelector("#sentinel");
+let page = 1, loading = false, done = false;
+~~~
+
+- [[document.querySelector("#feed")]]: هات أول عنصر الـ id بتاعه feed ([[#]] في CSS معناها id).
+- [[sentinel]] يعني «الحارس»: div فاضي تحت الليستة. مش بيعرض حاجة، وظيفته الوحيدة إنه لما يقرّب من الشاشة يبقى اليوزر وصل للآخر.
+- ٣ متغيرات في سطر واحد: [[page]] رقم الصفحة الجاية، و [[loading]] «فيه طلب شغال دلوقتي؟»، و [[done]] «السيرفر خلّص البوستات؟».
+
+---
+
+## ٢. [[loadMore]]: حمّل صفحة
+
+~~~text app.js
+async function loadMore() {
+  if (loading || done) return;
+  loading = true;
+  try {
+    const res = await fetch($__bt/api/posts?page=$__{page}$__bt);
+    const posts = await res.json();
+    if (posts.length === 0) done = true;
+    for (const p of posts) {
+      const li = document.createElement("li");
+      li.textContent = p.title;
+      feed.append(li);
+    }
+    page++;
+  } finally {
+    loading = false;
+  }
+  if (!done) { io.unobserve(sentinel); io.observe(sentinel); }
+}
+~~~
+
+1. [[if (loading || done) return]]: لو فيه طلب شغال **أو** خلصنا، اخرج. الـ [[||]] يعني «أو».
+2. [[loading = true]]: اقفل الباب قبل أي [[await]]، عشان أي نداء تاني ييجي وإحنا مستنيين يخرج من السطر اللي فوق.
+3. [[fetch($__bt/api/posts?page=$__{page}$__bt)]]: اطلب الصفحة. الـ template literal بيحط رقم الصفحة في الـ URL، و [[await]] بتستنى الرد.
+4. [[res.json()]]: حوّل الرد لـ array (وهي كمان بتتستنى).
+5. [[posts.length === 0]]: السيرفر رجّع ليستة فاضية، يبقى مفيش أكتر.
+6. الـ loop: لكل بوست اعمل [[<li>]] جديد بـ [[createElement]]، وحط العنوان بـ [[textContent]] (نص عادي، فلو العنوان فيه HTML مش هيتنفّذ)، وضيفه في آخر الليستة بـ [[append]].
+7. [[page++]]: المرة الجاية اطلب اللي بعدها.
+8. [[try { ... } finally { ... }]]: الـ [[finally]] بيتنفّذ **دايمًا**، سواء الطلب نجح أو رمى error. فـ [[loading]] بيرجع false حتى لو النت وقع، وإلا التحميل كان هيتقفل للأبد.
+9. آخر سطر هو أهم سطر، وهنشرحه بعد ما نفهم الـ observer.
+
+---
+
+## ٣. الـ observer نفسه
+
+~~~text app.js
+const io = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) loadMore();
+}, { rootMargin: "300px" });
+io.observe(sentinel);
+~~~
+
+- [[new IntersectionObserver(callback, options)]]: بتعمل مراقب. intersection يعني «تقاطع»: هل العنصر متقاطع مع منطقة الشاشة؟
+- [[entries]]: array، كل عنصر فيها (entry) بيوصف عنصر واحد اتغيرت حالته. إحنا بنراقب الـ sentinel بس، فـ [[entries[0]]] هو هو.
+- [[isIntersecting]]: [[true]] لو العنصر جوه المنطقة دلوقتي.
+- [[rootMargin: "300px"]]: كبّر المنطقة 300px من كل ناحية، فالـ sentinel يتحسب «ظاهر» وهو لسه تحت الشاشة بـ 300px. فالتحميل يبدأ قبل ما اليوزر يوصل.
+- [[io.observe(sentinel)]]: ابدأ راقب. وأول ما تعمل observe، الـ callback بيتنادى **مرة فورًا** بالحالة الحالية.
+
+### اللي حصل لما شغّلته (5 بوستات في الصفحة)
+
+حطيت [[console.log]] جوه الـ callback:
+
+~~~text الناتج (السيرفر والـ Console بالترتيب)
+GET /api/posts?page=1
+IO callback: isIntersecting = true
+GET /api/posts?page=2
+IO callback: isIntersecting = true
+GET /api/posts?page=3
+IO callback: isIntersecting = true
+IO callback: isIntersecting = true
+GET /api/posts?page=4
+li count after load: 12
+~~~
+
+- الصفحات 1 و 2 و 3 جابوا 5 و 5 و 2 (الـ 12 كلهم)، و 12 × 60px = 720px، يعني الليستة كلها لسه أقصر من الشاشة، والـ sentinel فضل ظاهر، فالتحميل كمّل لوحده.
+- الصفحة 4 رجعت [[[]]] فـ [[done = true]] ووقف.
+- فيه callback اتنادى من غير طلب: وصل والطلب اللي قبله لسه شغال، فـ [[loading]] خرّجه من أول سطر. ده بالظبط ليه الحماية دي موجودة.
+
+---
+
+## ٤. الفخ: [[unobserve]] ثم [[observe]]
+
+الـ observer بيناديك لما الحالة **تتغير**: من برّه لجوه أو العكس. لو الـ sentinel كان ظاهر، واتحمّلت صفحة، وفضل ظاهر، فمفيش تغيير، فمفيش نداء، والتحميل بيقف.
+
+السطر [[io.unobserve(sentinel); io.observe(sentinel);]] بيشيل المراقبة ويرجّعها، و [[observe]] جديدة بتبعت callback فورًا بالحالة الحالية، فلو لسه ظاهر يحمّل الصفحة اللي بعدها. والـ [[if (!done)]] عشان لو خلصنا منعملش كده على الفاضي.
+
+جرّبت الفرق بصفحات من بوستين بس (2 × 60 = 120px، يعني الشاشة فاضية تقريبًا):
+
+| | من غير السطر | مع السطر |
+|---|---|---|
+| الطلبات | صفحة 1 بس | من 1 لحد 7 (الـ 7 رجعت [[[]]]) |
+| عدد الـ [[li]] | 2 | 12 |
+| الشاشة | فاضية والتحميل واقف | اتملت لحد ما الداتا خلصت |
+
+من غير السطر، الـ callback اتنادى مرة واحدة بـ [[true]] ومرجعش تاني غير لما عملت scroll ونزل بـ [[false]] (الـ sentinel خرج). يعني على شاشة لابتوب ممكن متلاحظش، وعلى شاشة كبيرة الليستة بتقف.
+
+---
+
+## ٥. الـ reveal: أنيميشن عند الظهور
+
+~~~text app.js
+const reveal = new IntersectionObserver((entries, obs) => {
+  for (const e of entries) {
+    if (!e.isIntersecting) continue;
+    e.target.classList.add("visible");
+    obs.unobserve(e.target);
+  }
+}, { threshold: 0.2 });
+document.querySelectorAll(".reveal").forEach((el) => reveal.observe(el));
+~~~
+
+- observer واحد بيراقب **كل** العناصر اللي عليها كلاس [[reveal]]، فالـ entries ممكن يبقى فيها أكتر من واحد، عشان كده loop.
+- [[obs]]: التاني في الـ callback هو الـ observer نفسه.
+- [[continue]]: لو العنصر ده مش ظاهر، عدّي للي بعده.
+- [[e.target]]: العنصر نفسه. [[classList.add("visible")]] بتضيفله كلاس، والـ CSS بيعمل الأنيميشن.
+- [[obs.unobserve(e.target)]]: بطّل تراقبه، فالأنيميشن يحصل مرة واحدة.
+- [[threshold: 0.2]]: نادي لما 20٪ من العنصر يبقى ظاهر.
+
+جرّبته بكارتين: [[r1]] فوق الصفحة و [[r2]] تحت بـ 1500px:
+
+~~~text الناتج
+reveal callback: entries = 2 r1:true r2:false
+r1: reveal visible | r2: reveal
+(scroll لتحت)
+reveal callback: entries = 1 r2:true
+r2: reveal visible
+~~~
+
+أول نداء جه فيه الاتنين مع بعض (الحالة الأولى)، [[r1]] ظاهر فاخد الكلاس، و [[r2]] لأ. وبعد الـ scroll جه [[r2]] لوحده. و [[r1]] مجاش تاني لأننا شلناه من المراقبة.
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| [[new IntersectionObserver(cb, opts)]] | مراقب واحد لأي عدد عناصر |
+| [[observe(el)]] / [[unobserve(el)]] | ابدأ / وقّف مراقبة عنصر (و observe بتنادي فورًا) |
+| [[entry.isIntersecting]] | العنصر في المنطقة دلوقتي؟ |
+| [[entry.target]] | العنصر نفسه |
+| [[rootMargin]] | كبّر المنطقة (ابدأ بدري) |
+| [[threshold]] | نسبة الظهور المطلوبة (0 لـ 1) |
+
+- الـ callback بيتنادى عند **تغيّر** الحالة بس، فلازم الحركة بتاعة unobserve/observe في infinite scroll.
+- [[loading]] يمنع طلبين مع بعض، و [[finally]] يضمن إنه يرجع false.`,
+          lines: [
+            R`بنمسك الليستة ([[#feed]]) اللي البوستات هتتضاف فيها. بنجيبها مرة واحدة برّه الدالة بدل ما ندوّر عليها في الـ DOM مع كل تحميل.`,
+            R`الـ sentinel: عنصر فاضي حاطينه بعد الليستة مباشرة. مش هنراقب الـ scroll نفسه (event بيتنادى مئات المرات)، هنراقب العنصر ده: لما يقرّب من الشاشة يبقى اليوزر قرّب من الآخر ونحمّل الجديد.`,
+            R`تلات متغيرات حالة: [[page]] رقم الصفحة الجاية، و [[loading]] بتمنع طلبين في نفس الوقت (من غيرها ممكن نفس الصفحة تتجاب مرتين وتتكرر البوستات)، و [[done]] بتوقف التحميل لما السيرفر يقول مفيش أكتر.`,
+            R`دالة التحميل. [[async]] عشان جواها [[await]] للـ [[fetch]]، والـ observer هو اللي بيناديها كل ما الـ sentinel يظهر.`,
+            R`الحارس: لو فيه تحميل شغّال أو الداتا خلصت، اخرج من غير ما تعمل حاجة. من غيره، scroll سريع ممكن يبعت كذا طلب لنفس الصفحة.`,
+            R`بنقفل الباب قبل أي [[await]]: من اللحظة دي أي نداء تاني لـ [[loadMore]] هيخرج من السطر اللي فوق لحد ما نفتحه تاني.`,
+            R`[[try]] معاها [[finally]] (من غير catch) عشان [[loading]] يرجع [[false]] مهما حصل. لو الطلب فشل ومرجّعناهاش، التحميل هيفضل مقفول للأبد والليستة تقف.`,
+            R`بنطلب الصفحة الحالية من الـ API، ورقمها داخل في الـ URL بالـ template literal. الـ [[await]] بيستنى الرد من غير ما يجمّد الصفحة.`,
+            R`[[res.json()]] بتقرا الـ body وتحوّله من JSON لـ array of objects، وهي كمان Promise فمحتاجة [[await]]. ملحوظة: [[fetch]] مبيرميش error على 404 أو 500، فلو عايز تتعامل معاهم افحص [[res.ok]] الأول.`,
+            R`لو السيرفر رجّع array فاضية يبقى خلصنا، فنعلّم [[done]] عشان منبعتش طلبات تانية على الفاضي.`,
+            R`بنلف على البوستات اللي جت عشان نضيف كل واحد في الليستة.`,
+            R`بنعمل [[<li>]] جديد لكل بوست. العنصر لسه في الذاكرة ومش ظاهر لحد ما نضيفه.`,
+            R`بنحط العنوان بـ [[textContent]] مش [[innerHTML]]: لو العنوان جواه HTML أو script كاتبه يوزر هيظهر كنص عادي ومش هيتنفذ، فمفيش XSS.`,
+            R`بنضيف الـ [[<li>]] في آخر الليستة فيظهر. ولأن الـ sentinel بعد الليستة، بيتزق لتحت مع كل بوست جديد.`,
+            R`نهاية الـ [[for]] اللي بتضيف البوستات.`,
+            R`نزوّد رقم الصفحة عشان المرة الجاية نطلب اللي بعدها. موجود جوه الـ [[try]] بعد النجاح، فلو الطلب فشل هنعيد نفس الصفحة المرة الجاية.`,
+            R`[[finally]] بيتنفذ في كل الحالات: نجح الطلب، أو رمى error، أو حتى عمل [[return]].`,
+            R`نفتح الباب تاني عشان التحميل الجاي يقدر يبدأ.`,
+            R`نهاية الـ [[finally]].`,
+            R`الفخ: الـ observer بيبلّغ لما الحالة **تتغير** بس (دخل أو خرج). لو البوستات الجديدة قليلة والـ sentinel لسه ظاهر، مفيش تغيير فمفيش نداء والتحميل يقف. [[unobserve]] وبعدها [[observe]] بيجبره يبلّغ بالحالة الحالية من جديد، فلو لسه ظاهر هيحمّل الصفحة اللي بعدها.`,
+            R`نهاية [[loadMore]].`,
+            R`بنعمل الـ observer وبنديله callback بيتنادى كل ما حالة عنصر متراقب تتغير. [[entries]] array فيها entry لكل عنصر اتغيّر، وهنا بنراقب عنصر واحد فبناخد الأول.`,
+            R`[[isIntersecting]] بـ [[true]] لما الـ sentinel يدخل المنطقة المراقبة، فنحمّل. ولازم نفحصها لأن الـ callback بيتنادى برضه لما العنصر **يخرج**، ومن غير الفحص هتحمّل وهو بيختفي.`,
+            R`[[rootMargin: "300px"]] بيكبّر منطقة المراقبة 300 بكسل حوالين الشاشة، فالتحميل يبدأ قبل ما اليوزر يوصل للآخر فعلًا ومش هيشوف فراغ وهو مستني. ونهاية الـ observer.`,
+            R`نبدأ نراقب الـ sentinel. الـ observer بينادي الـ callback مرة فورًا بالحالة الحالية، فلو الـ sentinel ظاهر من الأول، أول صفحة هتتحمّل لوحدها من غير ما نناديها بإيدنا.`,
+            R`observer تاني منفصل للأنيميشن: عناصر تظهر بحركة لما توصلها في الـ scroll. الـ callback بياخد [[obs]] كمان (الـ observer نفسه) عشان نقدر نوقف المراقبة من جوه.`,
+            R`بنلف على كل الـ entries، لأن لو اليوزر عمل scroll سريع ممكن كذا عنصر يدخلوا مع بعض ويتبلّغوا في نفس النداء.`,
+            R`العنصر ده خرج من الشاشة مش دخل، فـ [[continue]] تعدّيه للي بعده.`,
+            R`نضيف كلاس [[visible]]، والـ CSS هو اللي عامل الحركة: [[.reveal]] مستخبي و [[.reveal.visible]] ظاهر بـ transition. الـ JS بيقول «إمتى» بس، والـ CSS بيقول «إزاي».`,
+            R`بطّل تراقب العنصر ده بعد ما ظهر، فالأنيميشن يحصل مرة واحدة ومش بيتعاد كل ما تطلع وتنزل، وكمان بيوفّر شغل على المتصفح.`,
+            R`نهاية الـ [[for]].`,
+            R`[[threshold: 0.2]] معناها بلّغني لما 20٪ من العنصر يبقى ظاهر، مش أول بكسل. كده الحركة تبدأ والعنصر باين فعلًا. ونهاية الـ observer.`,
+            R`بنجيب كل العناصر اللي عليها كلاس [[reveal]] ونراقبهم كلهم بنفس الـ observer. observer واحد لعناصر كتير أوفر من observer لكل عنصر.`,
+          ],
+          sol: R`الطلبات بتحصل قبل ما توصل للآخر بشوية (الـ 300px)، وكل طلب بيضيف ٥ عناصر. ولما [[_page]] يعدّي 20 (١٠٠ بوست ÷ ٥) السيرفر بيرجّع [[[]]] فـ [[done = true]] والطلبات تقف.
+
+من غير سطر [[unobserve/observe]] وبـ limit 2 على شاشة كبيرة: بيحمّل الصفحة الأولى، والعنصرين مش مالين الشاشة، فالـ sentinel لسه ظاهر، وبيقف هنا. ولو عملت scroll بسيط لفوق ولتحت يحمّل تاني (لأن الحالة اتغيرت). ده بالظبط الـ bug اللي بيظهر على الشاشات الكبيرة بس ومحدش بيلاحظه على اللابتوب. مع السطر، بيحمّل لوحده لحد ما الشاشة تتملي.`
+        },
+        {
+          cmd: "ResizeObserver",
+          title: "مكوّن يتصرف حسب مقاسه هو، مش مقاس الشاشة",
+          desc: R`[[ResizeObserver]] بيناديك لما عنصر يتغير مقاسه، مهما كان السبب: الشاشة اتغيرت، أو sidebar اتقفل، أو المحتوى زاد. [[window.resize]] بيعرف مقاس الشاشة بس، والكارت ممكن يكون في عمود ضيق على شاشة كبيرة.
+
+الـ entry فيه [[contentBoxSize[0].inlineSize]] (العرض) و [[blockSize]] (الطول)، وفيه [[contentRect]] الأقدم بـ [[width]] و [[height]].
+
+قبل ما تكتب JS: لو كل اللي عايزه تغيير شكل حسب عرض الأب، [[@container]] في CSS بيعمل ده من غير JS (درس «container queries» في تاب HTML و CSS). ResizeObserver للحاجات اللي CSS ميقدرش عليها: canvas، و charts، وحساب عدد عناصر، ومحرر نص.`,
+          example: R`const card = document.querySelector(".card");
+const ro = new ResizeObserver((entries) => {
+  for (const entry of entries) {
+    const width = entry.contentBoxSize[0].inlineSize;
+    entry.target.dataset.size = width < 400 ? "s" : width < 700 ? "m" : "l";
+  }
+});
+ro.observe(card);
+// CSS لازم للـ canvas: canvas { display: block; width: 100%; height: 100%; } والأب ليه ارتفاع، وإلا هيكبر لوحده
+const canvas = document.querySelector("canvas");
+new ResizeObserver(([entry]) => {
+  const { width, height } = entry.contentRect;
+  canvas.width = Math.round(width * devicePixelRatio);
+  canvas.height = Math.round(height * devicePixelRatio);
+  draw();
+}).observe(canvas.parentElement);
+function draw() {
+  const ctx = canvas.getContext("2d");
+  ctx.fillRect(0, 0, canvas.width / 2, canvas.height / 2);
+}`,
+          try: R`حط الكارت جوه div عرضه [[resize: horizontal; overflow: auto]] عشان تقدر تسحبه بالماوس، واكتب CSS لـ [[.card[data-size="s"]]] يخلي الصورة فوق النص. اسحب وشوف الـ data-size بيتغير في Elements. وبعدين اعمل نفس الشكل بـ [[container-type: inline-size]] و [[@container (width < 400px)]] من غير JS. أنهي أسهل؟`,
+          practice: [
+            { lvl: 'سريع', t: R`ابني عنوان عمود في جدول بيكتب اسم اليوم كامل ([[Wednesday]]) لو عرضه 120px أو أكتر، ومختصر ([[Wed]]) لو أقل، بـ ResizeObserver على العنوان نفسه و [[Intl.DateTimeFormat]] بـ [[weekday: "long"]] و [["short"]].`, done: R`لما تضيّق العمود الأسماء بتتقلب مختصرة والعكس، ومفيش نص بيتقص بـ «...»، والتبديل بيحصل عند 120px من عرض العمود مش الشاشة (جرّب تضيّق العمود بس والشاشة كبيرة).`, sol: R`السلايدر بيغيّر عرض الأعمدة بس، عشان تجرّب «العمود ضاق والشاشة لسه كبيرة».
+
+~~~live 200 day-headers.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أسماء الأيام حسب عرض العمود</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
+  table { border-collapse: collapse; table-layout: fixed; }
+  th, td { box-sizing: border-box; border: 1px solid #ccc; padding: 6px; white-space: nowrap; overflow: hidden; }
+  th { background: #f3f4f6; }
+  label { display: block; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<label>عرض كل عمود: <input type="range" id="w" min="50" max="180" value="150"> <output id="wv">150</output>px</label>
+<table>
+  <thead><tr id="days"></tr></thead>
+  <tbody><tr id="cells"></tr></tbody>
+</table>
+<script>
+  const long = new Intl.DateTimeFormat("en", { weekday: "long" });
+  const short = new Intl.DateTimeFormat("en", { weekday: "short" });
+  const row = document.querySelector("#days");
+  const cells = document.querySelector("#cells");
+
+  // 2026-11-16 يوم اتنين، وبعده ٦ أيام
+  for (let i = 0; i < 7; i++) {
+    const day = new Date(2026, 10, 16 + i);
+    const th = document.createElement("th");
+    th.dataset.long = long.format(day);
+    th.dataset.short = short.format(day);
+    th.textContent = th.dataset.long;
+    row.append(th);
+    cells.insertAdjacentHTML("beforeend", "<td>—</td>");
+  }
+
+  // بنراقب عرض العنوان نفسه، مش الشاشة
+  const ro = new ResizeObserver((entries) => {
+    for (const e of entries) {
+      const width = e.borderBoxSize[0].inlineSize;
+      const th = e.target;
+      const text = width >= 120 ? th.dataset.long : th.dataset.short;
+      if (th.textContent !== text) th.textContent = text;
+    }
+  });
+  row.querySelectorAll("th").forEach((th) => ro.observe(th));
+
+  const w = document.querySelector("#w");
+  const setWidth = () => {
+    row.querySelectorAll("th").forEach((th) => (th.style.width = w.value + "px"));
+    document.querySelector("#wv").textContent = w.value;
+  };
+  w.addEventListener("input", setWidth);
+  setWidth();
+</script>
+</body>
+</html>
+~~~
+
+~~~text الناتج (Chrome 158 headless، الشاشة 1400px طول الوقت، والسلايدر على القيم دي)
+عرض 150px: Monday Tuesday Wednesday Thursday Friday Saturday Sunday | فيه نص مقصوص؟ false
+عرض 121px: Monday Tuesday Wednesday Thursday Friday Saturday Sunday | فيه نص مقصوص؟ false
+عرض 119px: Mon Tue Wed Thu Fri Sat Sun | فيه نص مقصوص؟ false
+عرض 100px: Mon Tue Wed Thu Fri Sat Sun | فيه نص مقصوص؟ false
+عرض 60px: Mon Tue Wed Thu Fri Sat Sun | فيه نص مقصوص؟ false
+عرض 170px: Monday Tuesday Wednesday Thursday Friday Saturday Sunday | فيه نص مقصوص؟ false
+pageerrors: 0
+~~~
+
+**ليه كده:**
+
+- **[[ro.observe(th)]] لكل عنوان:** الـ ResizeObserver بيتنادى لما **العنصر** يتغيّر مقاسه لأي سبب (العمود ضاق، الـ sidebar اتفتح، الخط كبر)، مش لما الشاشة تتغيّر. عشان كده الشاشة فضلت 1400px والأسماء اتقلبت.
+- **[[e.borderBoxSize[0].inlineSize]]:** العرض شامل الـ padding والـ border، وهو اللي بتشوفه. [[inlineSize]] هو العرض في اتجاه الكتابة (أفقي في العربي والإنجليزي).
+- **[[box-sizing: border-box]]:** أول نسخة كانت من غيره، فالعرض الحقيقي طلع 163 لما السلايدر 150 (الـ padding 12 والـ border اتزادوا عليه)، والتبديل حصل عند سلايدر 107 مش 120. مع [[border-box]] السلايدر = العرض بالظبط.
+- **[[Intl.DateTimeFormat("en", { weekday: "long" })]] و [["short"]]:** الأسماء من المتصفح نفسه، فلو غيّرت [["en"]] لـ [["ar"]] هتطلع «الاثنين» و «الاثنين» برضه (العربي مفيهوش اختصار)، وده سبب إننا بنخزّن الاتنين في [[data-*]] ونختار.
+- **[[if (th.textContent !== text)]]:** متغيّرش النص لو هو هو. تغيير النص ممكن يغيّر مقاس العنصر، وده ممكن يدخّل الـ observer في لف (التمرين التالت بيوريه).
+
+**الغلطة الشائعة:** تستخدم [[window.addEventListener("resize")]] وتقارن بـ [[innerWidth]]. ده بيتنادى بس لما الشاشة تتغيّر، فتضييق العمود نفسه (من السلايدر أو من sidebar) مبيعملش حاجة، والأسماء الطويلة بتتقص بـ «...».` },
+            { lvl: 'تطبيق', t: R`مسألة: اكتب [[pickSize(width, breakpoints)]] من غير DOM: [[pickSize(399, { m: 400, l: 700 })]] بترجّع [["s"]]. وبعدين استخدمها جوه الـ callback بتاع الدرس بدل الـ ternary.`, done: R`400 بالظبط بترجّع [["m"]] و 700 بترجّع [["l"]]، والـ breakpoints لو اتبعتت بترتيب عكسي ([[{ l: 700, m: 400 }]]) بترجّع نفس النتيجة، و [[NaN]] أو رقم سالب بيرمي [[RangeError]]، و ٦ assertions بـ [[node:assert]] في Node بيعدّوا، والكارت في المتصفح لسه بيتصرف زي الأول.`, sol: R`**الدالة لوحدها (من غير DOM) وتستها في Node:**
+
+~~~js pick-size.mjs
+export function pickSize(width, breakpoints) {
+  if (typeof width !== "number" || Number.isNaN(width) || width < 0) {
+    throw new RangeError($__btwidth لازم رقم >= 0، جالي $__{width}$__bt);
+  }
+  // من الأكبر للأصغر، مهما كان ترتيب المفاتيح في الـ object
+  const sorted = Object.entries(breakpoints).sort((a, b) => b[1] - a[1]);
+  for (const [name, min] of sorted) {
+    if (width >= min) return name;
+  }
+  return "s";
+}
+~~~
+
+~~~js pick-size.test.mjs
+import assert from "node:assert/strict";
+import { pickSize } from "./pick-size.mjs";
+
+const bp = { m: 400, l: 700 };
+assert.equal(pickSize(399, bp), "s");
+assert.equal(pickSize(400, bp), "m");
+assert.equal(pickSize(699, bp), "m");
+assert.equal(pickSize(700, bp), "l");
+assert.equal(pickSize(700, { l: 700, m: 400 }), "l");
+assert.equal(pickSize(500, { l: 700, m: 400 }), "m");
+assert.throws(() => pickSize(NaN, bp), RangeError);
+assert.throws(() => pickSize(-1, bp), RangeError);
+console.log("كل الـ assertions عدّت (8)");
+~~~
+
+~~~text الناتج (node pick-size.test.mjs، Node 24)
+كل الـ assertions عدّت (8)
+~~~
+
+**وفي الصفحة:** نفس الدالة جوه الـ callback بدل الـ ternary. السلايدر بيغيّر عرض الحاوية بس.
+
+~~~live 260 card-size.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كارت بيعرف مقاسه</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
+  #wrap { border: 2px dashed #9ca3af; padding: 8px; }
+  .card { display: grid; gap: 8px; padding: 12px; border-radius: 8px; background: #eff6ff; }
+  .card[data-size="m"] { grid-template-columns: 120px 1fr; }
+  .card[data-size="l"] { grid-template-columns: 160px 1fr 1fr; }
+  .pic { background: #93c5fd; min-height: 60px; border-radius: 6px; }
+</style>
+</head>
+<body>
+<label>عرض الحاوية: <input type="range" id="w" min="200" max="900" value="600"></label>
+<p id="info"></p>
+<div id="wrap">
+  <article class="card">
+    <div class="pic"></div>
+    <div>اسم المنتج والوصف</div>
+    <div>السعر وزرار الشرا</div>
+  </article>
+</div>
+<script>
+  // نفس الدالة اللي في pick-size.mjs (هنا inline عشان الصفحة ملف واحد)
+  function pickSize(width, breakpoints) {
+    if (typeof width !== "number" || Number.isNaN(width) || width < 0) {
+      throw new RangeError($__btwidth لازم رقم >= 0، جالي $__{width}$__bt);
+    }
+    const sorted = Object.entries(breakpoints).sort((a, b) => b[1] - a[1]);
+    for (const [name, min] of sorted) if (width >= min) return name;
+    return "s";
+  }
+
+  const card = document.querySelector(".card");
+  new ResizeObserver(([entry]) => {
+    const width = entry.contentBoxSize[0].inlineSize;
+    entry.target.dataset.size = pickSize(width, { m: 400, l: 700 });
+    document.querySelector("#info").textContent =
+      $__btعرض الكارت $__{Math.round(width)}px ← data-size="$__{entry.target.dataset.size}"$__bt;
+  }).observe(card);
+
+  const w = document.querySelector("#w");
+  const wrap = document.querySelector("#wrap");
+  const apply = () => (wrap.style.width = w.value + "px");
+  w.addEventListener("input", apply);
+  apply();
+</script>
+</body>
+</html>
+~~~
+
+~~~text الناتج (Chrome 158 headless، جوه iframe معزول، الشاشة ثابتة 1000px)
+الحاوية 300px → عرض الكارت 276px ← data-size="s"
+الحاوية 423px → عرض الكارت 399px ← data-size="s"
+الحاوية 424px → عرض الكارت 400px ← data-size="m"
+الحاوية 723px → عرض الكارت 699px ← data-size="m"
+الحاوية 724px → عرض الكارت 700px ← data-size="l"
+pageerrors: 0
+~~~
+
+**ليه كده:**
+
+- **[[Object.entries(breakpoints).sort((a, b) => b[1] - a[1])]]:** بنرتّب من الأكبر للأصغر **بالقيمة**، فترتيب المفاتيح في الـ object مبيفرقش ([[{ l: 700, m: 400 }]] و [[{ m: 400, l: 700 }]] نفس النتيجة). وأول breakpoint العرض أكبر منه أو قده هو المقاس.
+- **[[width >= min]]:** الحد نفسه تبع المقاس الأكبر: 400 بالظبط = [["m"]]، وده نفس سلوك [[min-width]] في الـ CSS media queries.
+- **[[return "s"]]:** أي حاجة أقل من أصغر breakpoint.
+- **الفحص الأول:** [[NaN >= 400]] بـ [[false]] و [[-1 >= 400]] بـ [[false]]، فمن غيره كانوا هيرجّعوا [["s"]] ساكتين. الـ [[RangeError]] بيقول إن فيه حاجة غلط في اللي نادى.
+- **فايدة إنها من غير DOM:** اتختبرت في Node في أقل من ثانية، من غير متصفح ولا ResizeObserver. الـ callback بقى سطر واحد بيوصّل الدالة بالـ DOM.
+- **[[contentBoxSize]] في الصفحة:** عرض المحتوى من غير الـ padding (12 من كل ناحية)، عشان كده الحاوية 424 = كارت 400.
+
+**الغلطة الشائعة:** تلف على الـ object من غير ترتيب وترجع أول واحد ينفع: [[for (const [k, v] of Object.entries(bp)) if (width >= v) return k]]. مع [[{ m: 400, l: 700 }]] العرض 800 هيرجّع [["m"]] لأن [[m]] جت الأول.` },
+            { lvl: 'تحدي', t: R`ابني navbar «priority+»: لينكات كتير في سطر واحد، واللي مش لاقي مكان يتنقل لقايمة «المزيد». راقب الـ nav نفسه مش اللينكات اللي بتنقلها، واسمع لـ [[window.addEventListener("error", (e) => console.log(e.message))]] عشان لو وقعت في loop تعرف.`, done: R`وانت بتضيّق الشاشة اللينكات بتتنقل لـ «المزيد» من الآخر للأول، ولما توسّع بترجع بنفس الترتيب، ومفيش لينك بيلف لسطر تاني، وزرار «المزيد» بيختفي لما كل اللينكات تكفي، والـ listener مطبعش أي رسالة فيها «ResizeObserver loop» (نصها الكامل: «ResizeObserver loop completed with undelivered notifications.»).`, sol: R`~~~live 200 priority-nav.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>navbar priority+</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 0; }
+  nav { display: flex; align-items: center; gap: 4px; background: #111827; padding: 6px 8px; position: relative; }
+  #links { display: flex; gap: 4px; flex: 1; min-width: 0; margin: 0; padding: 0; list-style: none; overflow: hidden; white-space: nowrap; }
+  nav a { color: #fff; text-decoration: none; padding: 6px 10px; border-radius: 4px; display: block; }
+  nav a:hover { background: #374151; }
+  #more { font: inherit; background: #374151; color: #fff; border: 0; border-radius: 4px; padding: 6px 10px; }
+  #more[hidden] { display: none; }
+  #menu { position: absolute; top: 100%; inset-inline-end: 8px; background: #1f2937; list-style: none; margin: 0; padding: 4px; border-radius: 6px; }
+  #log { font-size: 13px; color: #555; padding: 8px; }
+</style>
+</head>
+<body>
+<nav aria-label="الرئيسية">
+  <ul id="links">
+    <li><a href="#">الرئيسية</a></li>
+    <li><a href="#">المنتجات</a></li>
+    <li><a href="#">العروض</a></li>
+    <li><a href="#">المدونة</a></li>
+    <li><a href="#">من إحنا</a></li>
+    <li><a href="#">الوظائف</a></li>
+    <li><a href="#">المساعدة</a></li>
+    <li><a href="#">كلمنا</a></li>
+  </ul>
+  <button id="more" aria-expanded="false" aria-controls="menu" hidden>المزيد ▾</button>
+  <ul id="menu" hidden></ul>
+</nav>
+<p id="log"></p>
+<script>
+  window.addEventListener("error", (e) => console.log("error event:", e.message));
+
+  const nav = document.querySelector("nav");
+  const links = document.querySelector("#links");
+  const menu = document.querySelector("#menu");
+  const more = document.querySelector("#more");
+  const all = [...links.children];               // الترتيب الأصلي
+
+  function layout() {
+    links.append(...all);                         // رجّع الكل للسطر
+    more.hidden = true;
+    if (links.scrollWidth <= links.clientWidth) { menu.replaceChildren(); menu.hidden = true; return; }
+    more.hidden = false;                          // الزرار ليه مكان، فاحسب بعد ما يظهر
+    const moved = [];
+    while (links.children.length && links.scrollWidth > links.clientWidth) {
+      moved.unshift(links.lastElementChild);      // من الآخر للأول
+      links.lastElementChild.remove();
+    }
+    menu.replaceChildren(...moved);
+    if (more.getAttribute("aria-expanded") !== "true") menu.hidden = true;
+    document.querySelector("#log").textContent =
+      $__btفي السطر $__{links.children.length}، في «المزيد» $__{moved.length}$__bt;
+  }
+
+  // بنراقب الـ nav نفسه: مقاسه بييجي من الأب، فنقل اللينكات مبيغيّروش
+  new ResizeObserver(layout).observe(nav);
+
+  more.addEventListener("click", () => {
+    const open = more.getAttribute("aria-expanded") !== "true";
+    more.setAttribute("aria-expanded", String(open));
+    menu.hidden = !open;
+  });
+</script>
+</body>
+</html>
+~~~
+
+جرّب الـ preview على «موبايل» و «تابلت» و «كامل»: اللينكات اللي مش لاقية مكان بتروح لـ «المزيد».
+
+~~~text الناتج (Chrome 158 headless، غيّرنا عرض الـ iframe المعزول بالترتيب ده)
+900px | السطر: الرئيسية، المنتجات، العروض، المدونة، من إحنا، الوظائف، المساعدة، كلمنا | المزيد(مخفي): - | عدد السطور: 1
+600px | السطر: الرئيسية، المنتجات، العروض، المدونة، من إحنا، الوظائف، المساعدة، كلمنا | المزيد(مخفي): - | عدد السطور: 1
+420px | السطر: الرئيسية، المنتجات، العروض، المدونة | المزيد(ظاهر): من إحنا، الوظائف، المساعدة، كلمنا | عدد السطور: 1
+300px | السطر: الرئيسية، المنتجات | المزيد(ظاهر): العروض، المدونة، من إحنا، الوظائف، المساعدة، كلمنا | عدد السطور: 1
+600px | السطر: الرئيسية، المنتجات، العروض، المدونة، من إحنا، الوظائف، المساعدة، كلمنا | المزيد(مخفي): - | عدد السطور: 1
+900px | السطر: الرئيسية، المنتجات، العروض، المدونة، من إحنا، الوظائف، المساعدة، كلمنا | المزيد(مخفي): - | عدد السطور: 1
+رسايل error: 0 | pageerrors: 0
+~~~
+
+**ليه كده:**
+
+- **[[layout()]] بتبدأ من الصفر كل مرة:** بترجّع كل اللينكات للسطر بالترتيب الأصلي ([[all]])، وبعدين تشيل من الآخر لحد ما السطر يكفي. كده الرجوع لما توسّع بيحصل لوحده وبنفس الترتيب، من غير ما تحسب «أنهي واحد يرجع».
+- **[[links.scrollWidth > links.clientWidth]]:** السطر عليه [[overflow: hidden]] و [[white-space: nowrap]]، فمستحيل يلف لسطر تاني، و [[scrollWidth]] بيقول المحتوى عايز قد إيه. لو أكبر من المساحة، فيه لينك زيادة.
+- **[[more.hidden = false]] قبل اللفة:** الزرار نفسه بياخد مكان، فلازم يظهر **قبل** ما نحسب، وإلا آخر لينك هيتقص بالزرار.
+- **[[moved.unshift(...)]]:** بنشيل من الآخر ونحط في أول القايمة، فـ «المزيد» بيفضل بنفس ترتيب الموقع.
+- **[[observe(nav)]] مش [[observe(links)]]:** الـ nav عرضه جاي من الشاشة، ونقل اللينكات جواه مبيغيّرش مقاسه، فالـ observer مبيتناداش تاني بسبب شغلنا إحنا.
+
+**جرّبنا الغلط:** نسخة بتراقب [[#links]] نفسه، وعرضه على قد محتواه ([[flex: 0 1 auto]]):
+
+~~~text الناتج (النسخة البايظة، نفس الخطوات)
+420px | السطر: الرئيسية، المنتجات، العروض، المدونة | المزيد(ظاهر): من إحنا، الوظائف، المساعدة، كلمنا
+300px | السطر: الرئيسية، المنتجات | المزيد(ظاهر): العروض، المدونة، من إحنا، الوظائف، المساعدة، كلمنا
+600px | السطر: الرئيسية، المنتجات | المزيد(ظاهر): العروض، المدونة، من إحنا، الوظائف، المساعدة، كلمنا
+900px | السطر: الرئيسية، المنتجات | المزيد(ظاهر): العروض، المدونة، من إحنا، الوظائف، المساعدة، كلمنا
+[
+  'error event: ResizeObserver loop completed with undelivered notifications.',
+  'error event: ResizeObserver loop completed with undelivered notifications.'
 ]
 ~~~
 
-~~~text الناتج (Chrome 158 headless: الصفحة جوه iframe معزول، والـ manifest من http://localhost:8831 بـ Page.getAppManifest)
-[sandbox] بكسلات لوجو برا دايرة الأمان: 0 | بكسلات شفافة: 0
-errors: [] | icons: [{"url":"http://localhost:8831/icons/icon-192.png","sizes":"192x192","type":"image/png"},{"url":"http://localhost:8831/icons/icon-512.png","sizes":"512x512","type":"image/png"},{"url":"http://localhost:8831/icons/maskable-512.png","sizes":"512x512","type":"image/png"}]
-installability: ["in-incognito"]
-pageerrors: 0
-~~~
+مشكلتين: الـ callback بيغيّر مقاس العنصر اللي بيراقبه، فالمتصفح بيلاقي تغيير جديد في نفس الفريم ويوقّفه برسالة [[ResizeObserver loop completed with undelivered notifications.]]. ولما وسّعنا، السطر عرضه على قد اللينكين اللي فيه، فمقاسه متغيّرش والـ observer متناداش أصلًا، واللينكات فضلت محبوسة في «المزيد».
 
-**ليه كده:**
-
-- **دايرة الأمان:** المتصفح أو النظام بيقص الأيقونة الـ maskable بأي شكل (دايرة، مربع بحواف، squircle). المضمون إن اللي جوه دايرة قطرها **80٪** من الأيقونة (نص قطر 40٪ من المنتصف) هيفضل ظاهر. فاللوجو هنا نص قطره [[size * 0.4 * 0.75]]، يعني جوه الدايرة وبهامش.
-- **[[fillRect(0, 0, size, size)]] الأول:** الخلفية لازم تملا الأيقونة كلها لحد الأطراف. لو فيه شفافية، المتصفح هيحط تحتها لون من عنده وهيبان شكل غريب. الفحص قال صفر بكسلات شفافة.
-- **فحص البكسل:** أي بكسل مش لون الخلفية ([[#1f2430]]) بنحسب بُعده عن المنتصف بـ [[Math.hypot]]. صفر برا الدايرة = مفيش حاجة من اللوجو هتتقص في أي شكل.
-- **الأيقونة العادية لسه موجودة:** أماكن زي التابات والـ bookmarks بتعرض الأيقونة من غير قص، والـ maskable فيها هامش كبير هتبان صغيرة هناك. فالاتنين جنب بعض، والمتصفح بيختار.
-- **[[installability: ["in-incognito"]]]:** ده السبب الوحيد اللي Chrome قاله إن الصفحة مش قابلة للتسطيب، ومعناه إن التجربة كانت في profile مؤقت (Playwright بيشتغل كده). يعني الـ manifest والأيقونات مقبولين.
-
-**الغلطة الشائعة:** تحط [[purpose: "any maskable"]] على أيقونة واحدة عادية. في الأماكن اللي بتقص هيتقص طرف اللوجو، وفي الأماكن اللي مبتقصّش هيبان بهامش كبير. أيقونتين منفصلتين أحسن.` },
+**الغلطة الشائعة:** تفتكر إن رسالة الـ loop مش مهمة لأنها مش [[pageerror]]. هي بتطلع كـ [[error]] event على [[window]]، يعني أي أداة مراقبة أخطاء (Sentry مثلًا) هتسجّلها عند كل يوزر، ومعناها إن فيه إشعارات اتأجلت للفريم اللي بعده والشكل اترسم مرة غلط.` },
           ],
           ref: [
-            { t: "MDN: Web application manifest", url: "https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest" },
-            { t: "MDN: manifest display", url: "https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/display" },
-            { t: "MDN: manifest icons", url: "https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/icons" },
-            { t: "web.dev: Adaptive icon support with maskable icons", url: "https://web.dev/articles/maskable-icon" },
+            { t: "MDN: Resize Observer API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Resize_Observer_API" },
+            { t: "MDN: ResizeObserver", url: "https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver" },
+            { t: "MDN: ResizeObserverEntry.borderBoxSize", url: "https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserverEntry/borderBoxSize" },
           ],
           flag: "script",
           deep: {
-            why: "تطبيق موبايل كامل (Flutter أو React Native) معناه store ومراجعة وتحديثات بتستنى اليوزر. الـ PWA موقعك نفسه، بيتحدّث أول ما تنشر، واليوزر يسطّبه بضغطة. لأدوات داخلية، و dashboards، ومواقع مذاكرة زي دي، وأي حاجة اليوزر بيفتحها كل يوم، ده غالبًا كفاية (تاب Desktop و Mobile بيقارن).",
-            how: R`المتصفح بيقرا الـ manifest ويقرر إن الموقع «installable». في Chromium الشروط: HTTPS (أو localhost)، و manifest فيه [[name]] أو [[short_name]] وأيقونة 144 pixel على الأقل بتتحمّل فعلًا (والمستحسن 192 و 512) و [[start_url]] و [[display]] مش [["browser"]]. (زمان كان لازم كمان service worker بـ fetch handler، و Chrome شال الشرط ده في نسخه الحديثة، بس من غير SW مفيش offline.)
+            why: "الـ components بقت بتتحط في أماكن مختلفة: نفس الكارت في grid بـ ٤ أعمدة وفي sidebar ضيق. الـ media queries بتسأل عن الشاشة، والسؤال الصح «أنا عرضي كام». و canvas بالذات لازم تعرف مقاسه بالبكسل الحقيقي وإلا الرسمة تبقى مغبشة.",
+            how: R`المتصفح بيحسب المقاسات في الـ layout، وبعده (قبل الرسم) بيبعت للـ ResizeObservers التغييرات مرة في الـ frame. فمفيش حاجة زي resize event بيتنادى ١٠٠ مرة، ومش محتاج debounce غالبًا.
 
-في Chrome و Edge بيظهر زرار تسطيب في شريط العنوان، وتقدر تعمل زرار بنفسك بـ [[beforeinstallprompt]] (Chromium بس). في Safari على iOS مفيش prompt: اليوزر لازم يضغط Share ← «Add to Home Screen» بنفسه، فلازم تشرحله. وفي Safari على الماك «Add to Dock».
+[[contentBoxSize]] array لأن عنصر ممكن يتقسم (multi-column)، وعادةً [[[0]]]. و [[inlineSize]] العرض في الكتابة الأفقية (عربي أو إنجليزي). و [[borderBoxSize]] لو عايز المقاس بالـ padding والـ border.
 
-[[scope]] بيحدد الـ URLs اللي تفضل جوه التطبيق؛ أي لينك برّاه بيفتح في المتصفح. و [[id]] (اختياري) هوية التطبيق لو [[start_url]] اتغير بعدين. والـ manifest نفسه بيتكاش عادي، فالتغييرات فيه (أيقونة جديدة) بتاخد وقت عشان تظهر للي مسطّبين.`,
-            when: R`أي موقع اليوزر بيرجعله كتير. والـ manifest لوحده (من غير SW) لسه مفيد: أيقونة ولون وشاشة بداية لما حد يضيفه للشاشة.`,
-            mistakes: R`أيقونة maskable محتواها لحد الحواف فبيتقص (خلي المحتوى في الـ 80% اللي في النص). و [[start_url]] مطلق ([["/"]]) والموقع في فولدر فرعي على GitHub Pages. ومفيش [[dir: "rtl"]] لموقع عربي. وتتوقع prompt تلقائي على iPhone.`
+الـ canvas له مقاسين: الـ CSS (بيتحكم فيه الـ layout) والداخلي [[canvas.width]] (عدد البكسلات). لو الداخلي أقل، الرسمة بتتمط وتغبش. [[devicePixelRatio]] بـ 2 أو 3 على شاشات الموبايل، فبنضرب فيه. وتغيير [[canvas.width]] بيمسح الرسمة، فلازم [[draw()]] بعده.
+
+لو غيّرت جوه الـ callback حاجة بتغيّر مقاس نفس العنصر، ممكن تدخل loop، والمتصفح بيوقفها ويطبع [[ResizeObserver loop completed with undelivered notifications]] في الـ console. غالبًا مش خطر بس معناه إن التصميم بيتذبذب.`,
+            when: R`charts و canvas و محررات، و virtualized lists (تحسب كام صف يظهر)، و «اعرض ٣ tags والباقي +2». ولتغيير الشكل بس: container queries أولًا.`,
+            mistakes: R`ResizeObserver لحاجة CSS يقدر عليها. وتنسى [[ro.disconnect()]] لما العنصر يتشال. وتغيّر مقاس العنصر المراقب جوه الـ callback (loop). و [[canvas.width = el.clientWidth]] من غير devicePixelRatio فالرسمة مغبشة على الموبايل. و canvas من غير [[width: 100%; height: 100%]] في الـ CSS: مقاسه على الشاشة بيبقى هو [[canvas.width]] نفسه، فالأب بيكبر، فالـ observer يكبّره تاني، وهكذا للأبد.`
           },
           teach: R`## الفكرة في سطر
 
-الـ manifest ملف JSON بيقول للمتصفح «الموقع ده اسمه كذا، وأيقونته دي، ولما يتسطّب يفتح كده». مفيهوش كود بيتنفذ: المتصفح بيقراه ويقرر الموقع ينفع يتسطّب ولا لأ.
+بتقول للمتصفح «لما مقاس العنصر ده يتغير، ناديني بالمقاس الجديد». المثال فيه استخدامين: كارت بياخد [[data-size]] حسب عرضه هو، و canvas بيظبط عدد البكسلات بتاعته على مقاس أبوه.
 
-جرّبته في Chrome headless (عن طريق playwright-core) على سيرفر Node صغير على localhost: [[index.html]] فيه [[<link rel="manifest">]]، والـ manifest ده بالظبط، و ٣ أيقونات PNG بالمقاسات المكتوبة. وسألت Chrome نفسه عن رأيه بأمر من DevTools Protocol اسمه [[Page.getInstallabilityErrors]] (نفس اللي بيعرضه DevTools ← Application ← Manifest ← Installability).
-
----
-
-## ١. الربط من الـ HTML
-
-~~~text index.html
-<link rel="manifest" href="manifest.webmanifest">
-~~~
-
-- [[rel="manifest"]]: نوع العلاقة. المتصفح بيدوّر على [[link]] بالـ rel ده بالظبط.
-- [[href]]: مسار الملف، نسبي للصفحة. الامتداد [[.webmanifest]] هو الرسمي، و [[manifest.json]] بيشتغل برضه.
-
-لما فتحت الصفحة، السيرفر استلم بالترتيب ده:
-
-~~~text طلبات السيرفر
-GET /
-GET /manifest.webmanifest
-GET /icons/icon-192.png
-~~~
-
-يعني المتصفح بيطلب الـ manifest لوحده بعد الـ HTML، وبيحمّل الأيقونة اللي محتاجها.
+جرّبت الكود في Chrome headless (عن طريق playwright-core) بشاشة [[deviceScaleFactor: 2]] (زي شاشات الموبايل والماك)، والكارت جوه [[.wrap]] غيّرت عرضه بالـ JS.
 
 ---
 
-## ٢. أول سطر: التعليق
+## ١. الكارت
 
-~~~text manifest.webmanifest
-// manifest.webmanifest (بتاع الموقع ده، مختصر)
+~~~text app.js
+const card = document.querySelector(".card");
+const ro = new ResizeObserver((entries) => {
+  for (const entry of entries) {
+    const width = entry.contentBoxSize[0].inlineSize;
+    entry.target.dataset.size = width < 400 ? "s" : width < 700 ? "m" : "l";
+  }
+});
+ro.observe(card);
 ~~~
 
-ده عنوان للدرس بس، **مش جزء من الملف**. JSON مفيهوش تعليقات، و [[JSON.parse]] بيرفضه:
+- [[new ResizeObserver(callback)]]: مراقب. مفيش options زي IntersectionObserver، بس callback.
+- [[entries]]: array، entry لكل عنصر اتغير مقاسه في الـ frame ده. observer واحد ينفع تراقب بيه كروت كتير، عشان كده loop.
+- [[entry.contentBoxSize]]: مقاس الـ **content** بس (من غير padding ولا border). وهي array لأن العنصر ممكن يتقسم على كذا عمود، وعادةً [[[0]]].
+- [[.inlineSize]]: المقاس في اتجاه السطر، يعني العرض في العربي والإنجليزي. والطول اسمه [[blockSize]].
+- [[entry.target]]: العنصر نفسه.
+- [[dataset.size = ...]]: [[dataset]] بيكتب attributes اسمها [[data-*]]، فده بيحط [[data-size="s"]] على العنصر، والـ CSS يستخدمه: [[.card[data-size="s"] { ... }]].
+- [[width < 400 ? "s" : width < 700 ? "m" : "l"]]: ternary جوه ternary: أقل من 400 ← s، غير كده أقل من 700 ← m، غير كده l.
+- [[ro.observe(card)]]: ابدأ راقب، وأول مرة بيتنادى على طول بالمقاس الحالي.
 
-~~~text الناتج (Node 24)
-JSON.parse: Unexpected token '/', "// c
-{}" is not valid JSON
+### الناتج
+
+الكارت فيه [[padding: 10px]] و [[border: 1px]]، وغيّرت عرض الأب 800 ثم 500 ثم 300 ثم 799:
+
+~~~text الناتج
+card 778 l
+card 478 m
+card 278 s
+card 777 l
 ~~~
 
-في تجربتي Chrome عدّى السطر ده وقرا الباقي عادي، بس متعتمدش على كده: أدوات تانية (ومتصفحات تانية) ممكن ترفض الملف كله. احذفه في الملف الحقيقي.
+ليه 778 مش 800؟ لأن [[contentBoxSize]] من غير الـ padding (10 من كل ناحية) والـ border (1 من كل ناحية): 800 − 22 = 778. لو عايز المقاس بالـ padding والـ border استخدم [[borderBoxSize[0].inlineSize]] (طلعت 799 لما الأب كان 799). وفيه [[entry.contentRect.width]] الأقدم وبيدّي نفس رقم الـ content.
+
+### مرة واحدة في الـ frame
+
+غيّرت عرض الأب 50 مرة ورا بعض في نفس الكود: الـ callback اتنادى **مرة واحدة** بالمقاس الأخير. المتصفح بيجمّع التغييرات ويناديك بعد ما يحسب الـ layout وقبل ما يرسم، فمش محتاج debounce زي [[window.resize]].
 
 ---
 
-## ٣. الحقول واحد واحد
+## ٢. الـ canvas
 
-~~~text manifest.webmanifest
-{
-  "name": "الترمنال بإيدك",
-  "short_name": "الترمنال",
-  "lang": "ar",
-  "dir": "rtl",
-  "start_url": "./",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#1f2430",
-  "theme_color": "#1f2430",
+~~~text app.js
+const canvas = document.querySelector("canvas");
+new ResizeObserver(([entry]) => {
+  const { width, height } = entry.contentRect;
+  canvas.width = Math.round(width * devicePixelRatio);
+  canvas.height = Math.round(height * devicePixelRatio);
+  draw();
+}).observe(canvas.parentElement);
 ~~~
 
-| الحقل | معناه | ليه بالقيمة دي |
+- [[([entry]) => ...]]: array destructuring في الـ parameter: خد أول عنصر من [[entries]] في متغير اسمه entry (بنراقب عنصر واحد).
+- [[const { width, height } = entry.contentRect]]: object destructuring: خد الخاصيتين دول في متغيرين بنفس الاسم.
+- [[canvas.parentElement]]: بنراقب **الأب** مش الـ canvas، لأن الأب هو اللي الـ layout بيحدد مقاسه.
+- [[new ResizeObserver(...).observe(...)]]: عملنا المراقب ونادينا observe في نفس السطر من غير ما نحفظه في متغير (يعني مش هنقدر نعمله disconnect بعدين).
+
+### ليه [[devicePixelRatio]]؟
+
+الـ canvas ليه مقاسين:
+
+| المقاس | بيتحدد بـ | معناه |
 |---|---|---|
-| [[name]] | الاسم الكامل | بيظهر في شاشة التسطيب وقايمة البرامج |
-| [[short_name]] | الاسم القصير | تحت الأيقونة على الموبايل، المكان ضيق |
-| [[lang]] | لغة النصوص | [[ar]] = عربي |
-| [[dir]] | اتجاه الكتابة | [[rtl]] = Right To Left، من اليمين للشمال |
-| [[start_url]] | الصفحة اللي التطبيق يفتح عليها | [["./"]] نسبي لمكان الـ manifest |
-| [[scope]] | الـ URLs اللي تعتبر «جوه التطبيق» | أي لينك برّاها يفتح في المتصفح العادي |
-| [[display]] | شكل الشباك | [[standalone]] = من غير شريط عنوان |
-| [[background_color]] | لون شاشة البداية (splash) | قبل ما الصفحة ترسم |
-| [[theme_color]] | لون شريط العنوان أو النظام | |
+| على الشاشة | الـ CSS | قد إيه بياخد مكان في الصفحة (CSS pixels) |
+| الداخلي | [[canvas.width]] و [[canvas.height]] | عدد البكسلات اللي بترسم فيها |
 
-الألوان مكتوبة hex: [[#1f2430]] يعني أحمر [[1f]] وأخضر [[24]] وأزرق [[30]] بالـ base 16. Chrome بيحوّلها لصيغته الداخلية، ولما سألته رجّع:
+[[devicePixelRatio]] عدد بكسلات الشاشة الحقيقية في كل CSS pixel: 1 على شاشة عادية، و 2 أو 3 على الموبايل. لو الداخلي = مقاس الـ CSS بس، المتصفح بيمط الرسمة فتغبش. فبنضرب في الـ ratio، و [[Math.round]] عشان عدد البكسلات لازم رقم صحيح.
 
-~~~text الناتج (Chrome، مختصر)
-"name":"الترمنال بإيدك"
-"display":"kStandalone"
-"startUrl":"http://localhost:PORT/"
-"scope":"http://localhost:PORT/"
-"id":"http://localhost:PORT/"
-"themeColor":"rgba(31,36,48,1)"
-"backgroundColor":"rgba(31,36,48,1)"
+و [[draw()]] بعدها لأن أي تغيير في [[canvas.width]] بيمسح الرسمة كلها.
+
+### الفخ اللي ظهر لما شغّلته
+
+جرّبت الكود زي ما هو، والأب عرضه 300px ومن غير ارتفاع ثابت ومن غير أي CSS للـ canvas:
+
+~~~text الناتج
+canvas parent 300 x 154 → 600 x 308 css 600 x 308
+canvas parent 300 x 312 → 600 x 624 css 600 x 624
+canvas parent 300 x 628 → 600 x 1256 css 600 x 1256
+window error: ResizeObserver loop completed with undelivered notifications.
+...
 ~~~
 
-- [[./]] اتحوّل لـ URL كامل حسب مكان الـ manifest. ده بالظبط ليه بنكتبه نسبي: الموقع ده على GitHub Pages في فولدر فرعي، فـ [["/"]] كانت هتودّي لبرّه.
-- [[31,36,48]] هي نفس [[1f]] و [[24]] و [[30]] بالعشري.
-- [[id]] مكتبناهوش، فـ Chrome خده من [[start_url]]. ده هوية التطبيق المتسطّب.
+canvas من غير CSS مقاسه على الشاشة **بيساوي** المقاس الداخلي. فلما خليناه 600×308، بقى 600×308 على الشاشة، فالأب طوله زاد، فالـ observer اتنادى تاني فضربنا في 2 تاني... والمتصفح بيوقف اللفة دي كل frame ويطبع [[ResizeObserver loop completed with undelivered notifications]]، بس الـ canvas بيفضل يكبر.
 
-### الأيقونات
+الحل في الـ CSS (عشان كده ضفته كتعليق في المثال):
 
-~~~text manifest.webmanifest
-  "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
-  ]
+~~~text style.css
+canvas { display: block; width: 100%; height: 100%; }
+.cw { width: 300px; height: 150px; }
+~~~
+
+وبعدها:
+
+~~~text الناتج
+canvas parent 300 x 150 → 600 x 300 css 300 x 150
+~~~
+
+على الشاشة 300×150، وجواه 600×300 بكسل: رسمة حادة، والـ callback اتنادى مرة واحدة بس. و [[display: block]] بتشيل المسافة الصغيرة اللي تحت أي عنصر inline.
+
+---
+
+## ٣. [[draw]]
+
+~~~text app.js
+function draw() {
+  const ctx = canvas.getContext("2d");
+  ctx.fillRect(0, 0, canvas.width / 2, canvas.height / 2);
 }
 ~~~
 
-- [[src]]: مسار الصورة، نسبي للـ manifest.
-- [[sizes]]: العرض × الطول بالـ pixel. المتصفح بيختار المقاس الأقرب للي محتاجه.
-- [[type]]: نوع الملف (MIME type).
-- [[purpose: "maskable"]]: الأيقونة دي مسموح تتقص بأي شكل (دايرة، مربع بحواف مدورة). المحتوى المهم لازم يبقى في النص.
-
----
-
-## ٤. Chrome بيقول إيه لو حاجة ناقصة؟
-
-غيّرت الـ manifest كل مرة حاجة وسألت [[getInstallabilityErrors]]:
-
-| التغيير | رد Chrome |
-|---|---|
-| الملف زي ما هو | [[[]]] (مفيش أخطاء، ينفع يتسطّب) |
-| [[display: "browser"]] | [[manifest-display-not-supported]]: الـ browser معناه تاب عادي، فمفيش حاجة تتسطّب |
-| [[minimal-ui]] | مفيش أخطاء، لأنه شباك لوحده بزراير رجوع صغيرة |
-| من غير [[name]] و [[short_name]] | [[manifest-missing-name-or-short-name]]: مفيش اسم يتكتب تحت الأيقونة |
-| من غير [[start_url]] | [[start-url-not-valid]]: مش عارف يفتح أنهي صفحة لما تدوس الأيقونة |
-| أيقونة 192 بس (من غير 512) | مفيش أخطاء |
-| أيقونة 192 بمسار غلط ولا غيرها | [[no-acceptable-icon]] و [[minimum-icon-size-in-pixels: 144]] |
-| [[icons]] فاضية | [[manifest-missing-suitable-icon]]: مفيش أي أيقونة يحطها على الشاشة الرئيسية |
-
-يعني Chrome فعلًا بيطلب أيقونة واحدة على الأقل 144 pixel وتتحمّل فعلًا. الـ 192 والـ 512 هما المقاسات اللي بيوصّوا بيها عشان كل الشاشات تبقى حلوة (192 للأيقونة، و 512 لشاشة البداية)، فحطهم الاتنين.
-
-> الأخطاء دي بالظبط بتظهر بالكلام العادي في DevTools ← Application ← Manifest ← Installability. لو زرار التسطيب مظهرش، ده أول مكان تبص فيه.
+- [[getContext("2d")]]: هات أداة الرسم ثنائية الأبعاد.
+- [[fillRect(x, y, w, h)]]: ارسم مستطيل مليان يبدأ من الركن الشمال فوق [[(0, 0)]]، وعرضه وطوله نص الـ canvas، يعني ربعه.
 
 ---
 
 ## الخلاصة
 
-| لازم لـ Chrome | مستحسن |
+| الحاجة | معناها |
 |---|---|
-| HTTPS أو localhost | [[short_name]] و [[lang]] و [[dir]] |
-| [[name]] أو [[short_name]] | أيقونة 192 و 512 وواحدة [[maskable]] |
-| [[start_url]] صالح | [[theme_color]] و [[background_color]] (لون شريط العنوان وشاشة البداية) |
-| [[display]] مش [[browser]] | [[scope]] نسبي زي [[start_url]]، عشان يحدد الصفحات اللي جوه التطبيق |
-| أيقونة 144 pixel أو أكبر بتتحمّل | |
+| [[new ResizeObserver(cb)]] و [[observe(el)]] | ناديني لما مقاس el يتغير |
+| [[contentBoxSize[0].inlineSize]] | العرض من غير padding و border |
+| [[borderBoxSize[0].inlineSize]] | العرض بالـ padding و border |
+| [[contentRect.width/height]] | الطريقة الأقدم لمقاس الـ content |
+| [[devicePixelRatio]] | بكسلات الشاشة لكل CSS pixel |
+| [[disconnect()]] | وقّف المراقبة كلها |
 
-- المسارات النسبية ([["./"]]) بتتحسب من مكان الـ manifest، مش من الصفحة.
-- مفيش تعليقات في JSON.
-- على iPhone مفيش زرار تسطيب خالص: اليوزر بيضغط Share ← Add to Home Screen.`,
+- بيتنادى مرة في الـ frame، فمش محتاج debounce.
+- متغيّرش جوه الـ callback حاجة بتكبّر نفس العنصر اللي بتراقبه، والـ canvas لازم مقاسه على الشاشة يتحدد بالـ CSS.
+- لو المطلوب تغيير شكل بس، [[@container]] في CSS أسهل ومن غير JS.`,
           lines: [
-            R`بداية الـ manifest: ملف JSON عادي، object واحد. لازم يبقى JSON سليم (من غير تعليقات ولا فاصلة زيادة في الآخر)، وإلا المتصفح يطلّع syntax error ويتجاهل الملف، فالموقع مش هيتسطّب.`,
-            R`[[name]]: الاسم الكامل للتطبيق، بيظهر في رسالة التسطيب وفي قايمة التطبيقات. Chrome محتاج [[name]] أو [[short_name]] على الأقل عشان يعتبر الموقع قابل للتسطيب.`,
-            R`[[short_name]]: اسم قصير يتكتب تحت الأيقونة على الشاشة الرئيسية. المساحة هناك صغيرة، فالاسم الطويل بيتقص بـ «...»، عشان كده بنديله اسم مخصوص.`,
-            R`[[lang]]: لغة النصوص اللي جوه الـ manifest نفسه (الاسم والوصف)، عشان النظام يعرضها صح. مش بتغيّر لغة الصفحة؛ دي بيحددها [[lang]] على [[<html>]].`,
-            R`[[dir]]: اتجاه النصوص اللي في الـ manifest. [[rtl]] لأن الاسم عربي، فيتعرض من اليمين للشمال صح في شاشة التسطيب والقوايم.`,
-            R`[[start_url]]: الصفحة اللي تفتح لما اليوزر يدوس على الأيقونة. [[./]] نسبي لمكان ملف الـ manifest مش للصفحة الحالية، فالموقع يفتح صح حتى لو متحطوط في فولدر فرعي (زي GitHub Pages).`,
-            R`[[scope]]: الـ URLs اللي تتحسب «جوه التطبيق». لو اليوزر راح لرابط بره الـ scope، المتصفح يعرضه بشريط عنوان أو في المتصفح العادي بدل شباك التطبيق. ولازم [[start_url]] يبقى جواه، وإلا المتصفح يتجاهل الـ scope ده.`,
-            R`[[standalone]]: التطبيق يفتح في شباك لوحده من غير شريط العنوان والتابات، فيحس إنه تطبيق متسطّب. القيم التانية: [[browser]] (تاب عادي) و [[minimal-ui]] و [[fullscreen]].`,
-            R`[[background_color]]: لون الخلفية في شاشة البداية (splash) اللي بتظهر لحد ما الصفحة تحمّل. خليه نفس لون خلفية الموقع، وإلا هتشوف فلاش بلون تاني قبل ما الـ CSS يشتغل.`,
-            R`[[theme_color]]: لون شريط العنوان وشريط النظام حوالين شباك التطبيق. خليه متناسق مع ألوان الموقع عشان الشباك يبان حتة واحدة.`,
-            R`بداية ليستة الأيقونات. المتصفح بيختار منها المقاس الأنسب لكل مكان (الشاشة الرئيسية، شاشة البداية، قايمة التطبيقات)، عشان كده بنحط أكتر من مقاس.`,
-            R`أيقونة 192×192 للشاشة الرئيسية والأماكن الصغيرة. [[sizes]] و [[type]] بيخلوا المتصفح يختار من غير ما يحمّل كل الصور يجرّبها. وChrome محتاج 192 و 512 على الأقل عشان يسمح بالتسطيب.`,
-            R`أيقونة 512×512 لشاشة البداية والتسطيب والشاشات عالية الدقة، عشان متتمطّش وتبان مبكسلة.`,
-            R`[[maskable]]: أيقونة مرسومة بهامش أمان حوالين الرسمة، فـ Android يقدر يقصها دايرة أو مربع بحواف من غير ما يقطع منها حاجة. من غير الـ [[purpose]] ده، Android بيحط الأيقونة العادية صغيرة جوه شكل بخلفية.`,
-            R`نهاية ليستة [[icons]]. ومفيش فاصلة بعد آخر أيقونة قبلها، لأن JSON مبيقبلش الفاصلة الزيادة.`,
-            R`نهاية الـ manifest.`,
+            R`الكارت اللي عايزين شكله يتغير حسب **عرضه هو** مش عرض الشاشة. ده الفرق عن media query: نفس الكارت ممكن يبقى في sidebar ضيق أو واخد الصفحة كلها.`,
+            R`[[ResizeObserver]] بينادي الـ callback كل ما مقاس عنصر متراقب يتغير، مهما كان السبب (الشاشة اتصغرت، أو sidebar اتقفل، أو المحتوى زاد). و observer واحد ينفع تراقب بيه كذا عنصر.`,
+            R`[[entries]] فيها entry لكل عنصر مقاسه اتغير من آخر مرة، فبنلف عليهم.`,
+            R`العرض الجديد لمحتوى العنصر (من غير الـ padding والـ border). [[contentBoxSize]] array فبناخد أول عنصر فيها، و [[inlineSize]] هو العرض في الكتابة الأفقية. القيمة جاهزة في الـ entry، فمش محتاج تقيس بنفسك.`,
+            R`بنحوّل العرض لمقاس من تلاتة ([["s"]] أو [["m"]] أو [["l"]]) ونحطه في [[data-size]] على العنصر، والـ CSS بيختار الشكل بـ attribute selector على [[data-size]]. فالـ JS بيقيس بس والـ CSS بيرسم. وخلي بالك: لو غيّرت جوه الـ callback حاجة بتغيّر مقاس نفس العنصر، ممكن تعمل loop والمتصفح يكتب تحذير «ResizeObserver loop» في الـ console.`,
+            R`نهاية الـ [[for]].`,
+            R`نهاية الـ callback والـ [[ResizeObserver]].`,
+            R`نبدأ نراقب الكارت. أول ما تعمل [[observe]] الـ callback بيتنادى مرة بالمقاس الحالي (لو العنصر ظاهر)، فالـ [[data-size]] بيتحط من أول ما الصفحة تفتح.`,
+            R`مثال تاني: الـ [[<canvas>]] لازم نظبط مقاسه بإيدنا، لأن عدد البكسلات اللي بيرسم عليها منفصل عن مقاسه في الـ CSS.`,
+            R`بنعمل observer من غير ما نحفظه في متغير، والـ destructuring في الباراميتر بياخد أول entry بس لأننا بنراقب عنصر واحد.`,
+            R`[[contentRect]] فيه عرض وطول المحتوى بالـ CSS pixels، يعني المقاس اللي انت شايفه في DevTools.`,
+            R`بنظبط عدد بكسلات الرسم = المقاس في الـ CSS مضروب في [[devicePixelRatio]] (1 على شاشة عادية، و 2 أو 3 على الموبايل والشاشات الكثيفة). من غيرها الرسمة هتتمط وتطلع مغبّشة. و [[Math.round]] لأن [[canvas.width]] بياخد عدد صحيح من البكسلات.`,
+            R`نفس الكلام للطول، عشان النسبة بين العرض والطول تفضل مظبوطة.`,
+            R`تغيير [[canvas.width]] أو [[canvas.height]] بيمسح كل اللي اترسم ويرجّع الـ context لحالته الأولانية، فلازم نرسم تاني بعد كل تغيير مقاس، وإلا الـ canvas هيفضل فاضي.`,
+            R`بنراقب **أب** الـ canvas مش الـ canvas نفسه: الأب هو اللي مقاسه بيتغير مع الصفحة، واحنا بنغيّر مقاس الـ canvas جوه الـ callback، فلو راقبناه هو ممكن نعمل loop. ونهاية الـ observer.`,
+            R`دالة رسم بسيطة عشان نشوف النتيجة.`,
+            R`[[getContext("2d")]] بيرجّع الـ object اللي فيه أوامر الرسم الـ 2D (مستطيلات، خطوط، نصوص)، وبيرجّع نفس الـ context كل مرة لنفس الـ canvas.`,
+            R`بيرسم مستطيل مليان بيبدأ من الركن [[(0, 0)]]، عرضه نص عرض الـ canvas وطوله نص طوله، يعني ربع المساحة. ولأنه بيعتمد على [[canvas.width]] بيفضل ربع مهما المقاس اتغير.`,
+            R`نهاية [[draw]].`,
           ],
-          sol: R`Application ← Manifest بيعرض الاسم والألوان والأيقونات التلاتة، ولو فيه مشكلة (أيقونة ناقصة أو مقاس غلط) بتظهر كـ warning فوق. وفي «Installability» لو فيه سبب يمنع التسطيب.
+          sol: R`لما تسحب الـ div تحت 400px الـ [[data-size]] يبقى [["s"]] والـ CSS يقلب الترتيب، وبين 400 و 700 [["m"]]. التغيير بيحصل مع السحب نفسه من غير تأخير ومن غير debounce.
 
-في مشروعك: أيقونة التسطيب بتظهر في شريط العنوان على Chrome/Edge بعد ما الـ manifest يتقري صح والموقع على [[localhost]] أو HTTPS. الأسباب الشائعة إنها متظهرش: أيقونة 512 ناقصة، أو مسار أيقونة غلط (404 في Network)، أو [[display: "browser"]]، أو فاتح الملف بـ [[file://]]. وعلى iPhone مفيش أيقونة في الشريط أصلًا، التسطيب من زرار Share.`
+نسخة CSS: [[.wrap { container-type: inline-size }]] على الأب، و [[@container (width < 400px) { .card { flex-direction: column } }]]. نفس النتيجة، ومفيش JS، وبتشتغل قبل ما الـ JS يتحمّل (من غير flash). عشان كده للشكل استخدم CSS، وخلي ResizeObserver للحاجات اللي محتاجة رقم في JS (الـ canvas مثلًا).`
         },
         {
-          cmd: "دورة حياة الـ SW",
-          title: "الـ service worker بيتسطّب ويشتغل إزاي، وليه التحديث مش بيظهر؟",
-          desc: R`الـ service worker ملف JS بيشتغل في الخلفية بين صفحتك والشبكة: كل request من الصفحة بيعدّي عليه ([[fetch]] event)، ويقدر يرد من كاش أو من الشبكة. من غير DOM ومن غير [[window]]، وبيشتغل بس على HTTPS أو localhost.
+          cmd: "input type=file",
+          title: "تختار صور وتعاينها قبل الرفع إزاي؟",
+          desc: R`[[<input type="file">]] بيفتح اختيار الملفات. [[accept="image/png,image/jpeg,image/webp"]] أو [[accept="image/*"]] بيفلتر اللي يظهر (اقتراح بس، اليوزر يقدر يختار أي حاجة)، و [[multiple]] يسمح بأكتر من ملف، وعلى الموبايل [[capture="environment"]] بيفتح الكاميرا.
 
-دورة حياته: [[register]] من الصفحة ← install (تحفظ الملفات الأساسية في الكاش) ← waiting ← activate (تمسح الكاش القديم) ← يتحكم في الصفحات.
-
-waiting هي سر «عملت deploy والتحديث مش ظاهر»: لما يبقى فيه SW جديد، بيتسطّب ويستنى لحد ما كل التابات اللي شغالة بالقديم تتقفل. الـ refresh مش كفاية. [[self.skipWaiting()]] بيخليه يتفعّل فورًا، و [[clients.claim()]] بيخليه يمسك الصفحات المفتوحة من غير ما تتعمل reload.`,
-          example: R`// في الصفحة (app.js):
-if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
-// في sw.js:
-const CACHE = "app-v2";
-const PRECACHE = ["/", "/offline.html", "/app.css", "/app.js"];
-self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(PRECACHE)));
-});
-self.addEventListener("activate", (e) => {
-  e.waitUntil((async () => {
-    const keys = await caches.keys();
-    await Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)));
-    await self.clients.claim();
-  })());
-});
-self.addEventListener("message", (e) => {
-  if (e.data === "SKIP_WAITING") self.skipWaiting();
+[[input.files]] ليستة [[File]]: كل واحد فيه [[name]] و [[size]] (بالبايت) و [[type]] (MIME زي [["image/png"]]). و [[URL.createObjectURL(file)]] بيعمل URL مؤقت ([[blob:...]]) تحطه في [[img.src]] فتعرض الصورة من غير ما ترفعها، وبعد ما تخلص [[URL.revokeObjectURL(url)]] عشان الذاكرة.`,
+          example: R`// HTML: <input type="file" id="pics" accept="image/png,image/jpeg,image/webp" multiple> <div id="preview"></div>
+const input = document.querySelector("#pics");
+const preview = document.querySelector("#preview");
+const MAX = 2 * 1024 * 1024;
+let urls = [];
+input.addEventListener("change", () => {
+  urls.forEach((u) => URL.revokeObjectURL(u));
+  urls = [];
+  preview.replaceChildren();
+  for (const file of input.files) {
+    if (!file.type.startsWith("image/")) continue;
+    if (file.size > MAX) {
+      preview.append($__bt$__{file.name}: أكبر من 2MB. $__bt);
+      continue;
+    }
+    const url = URL.createObjectURL(file);
+    urls.push(url);
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = file.name;
+    img.width = 120;
+    preview.append(img);
+  }
 });`,
-          try: R`اعمل مشروع صغير بالملفات دي وشغّله على localhost. افتح Application ← Service workers وشوف الحالة. غيّر [[CACHE]] لـ [["app-v3"]] واعمل refresh: فيه SW في حالة «waiting to activate»؟ اعمل refresh تاني: اتفعّل؟ وبعدين دوس «skipWaiting» في DevTools، وبص على Cache storage: القديم اتمسح؟ وآخر حاجة: افتح [[sw.js]] بتاع الموقع ده في الـ repo واعرف هو بيعمل skipWaiting فين.`,
+          try: R`اختار ٣ صور منهم واحدة أكبر من 2MB وملف PDF (غيّر الـ accept لـ [[*/*]] عشان يظهر). إيه اللي اتعرض؟ وبعدين غيّر اسم ملف [[.txt]] لـ [[.png]] واختاره: [[file.type]] بيقول إيه؟ وآخر حاجة: اعرض تحت كل صورة حجمها بالـ KB ومقاسها بالبكسل ([[img.naturalWidth]] بعد [[img.onload]]).`,
           practice: [
-            { lvl: 'سريع', t: R`اتوقع الترتيب الأول وبعدين جرّب: حط [[console.log]] في [[install]] و [[activate]] ومعاه رقم النسخة. إيه اللي هيتطبع في (١) أول زيارة، (٢) refresh عادي، (٣) refresh بعد ما تغيّر حرف في [[sw.js]]؟`, done: R`(١) install وبعدها activate، (٢) ولا حاجة، (٣) install للنسخة الجديدة بس من غير activate، و Application ← Service workers بيعرضها «waiting to activate». لو توقعك كان غير كده، كتبت السبب في سطر.`, sol: R`**التوقع:** (١) [[install]] ثم [[activate]]. (٢) ولا حاجة: نفس الـ SW شغال ومفيش جديد. (٣) [[install]] للنسخة الجديدة بس، وبعدين تستنى (waiting) لأن القديمة لسه بتتحكم في الصفحة المفتوحة.
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<meta charset="utf-8">
-<title>دورة حياة الـ SW</title>
-<h1>افتح الـ Console</h1>
-<script>
-  if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
-</script>
-</html>
-~~~
-
-~~~js sw.js
-const VERSION = "v1";
-
-self.addEventListener("install", () => {
-  console.log($__bt[SW $__{VERSION}] install$__bt);
-});
-
-self.addEventListener("activate", () => {
-  console.log($__bt[SW $__{VERSION}] activate$__bt);
-});
-~~~
-
-الـ service worker محتاج [[http://localhost]] أو HTTPS، فمش هيشتغل في الـ preview ولا من [[file://]]. شغّل أي سيرفر صغير في الفولدر وافتح الصفحة.
-
-**القياس:** Chrome 158 headless على [[http://localhost:8831]]. قرينا الـ console بتاع الـ SW، وحالة كل نسخة من DevTools Protocol ([[ServiceWorker.workerVersionUpdated]]، نفس اللي Application ← Service workers بيعرضه). في الخطوة (٣) غيّرنا [["v1"]] لـ [["v2"]] في الملف قبل الـ refresh:
-
-~~~text الناتج (Chrome 158 headless)
-== (١) أول زيارة
-  console: ["[SW v1] install","[SW v1] activate"]
-  workers: ["activated/running"]
-== (٢) refresh عادي
-  console: []
-  workers: ["activated/running"]
-== (٣) refresh بعد ما غيّرنا حرف في sw.js
-  console: ["[SW v2] install"]
-  workers: ["activated/running","installed/running"]
-~~~
-
-[[installed]] في الخطوة (٣) هو اللي DevTools بيكتبه «waiting to activate».
-
-**ليه كده:**
-
-- **(١):** مفيش SW قبل كده، فالجديد بيتسطّب وبيتفعّل على طول.
-- **(٢):** مع كل navigation المتصفح بيطلب [[sw.js]] تاني ويقارنه **byte بـ byte** بالمتسطّب. نفس الملف = مفيش حاجة.
-- **(٣):** الملف اختلف (حتى حرف في رسالة)، فالنسخة الجديدة اتسطّبت. بس مينفعش يبقى فيه SW-ين بيتحكموا في نفس الصفحات، فالجديدة بتستنى لحد ما **كل** التابات اللي القديمة بتتحكم فيها تتقفل (refresh مش كفاية، لأن الصفحة الجديدة بتتحمّل قبل ما القديمة تتشال). أو لحد [[skipWaiting()]] (درس «نسخة جديدة، حدّث»).
-- **ليه القياس استنى ٣ ثواني:** فحص التحديث بيحصل في الخلفية بعد الـ navigation. بثانية واحدة أول مرة مشفناش النسخة الجديدة.
-
-**الغلطة الشائعة:** تغيّر [[sw.js]] وتعمل refresh وتستغرب إن الكود القديم لسه شغال، فتفتكر إن فيه كاش في السيرفر. هي ببساطة waiting. في التطوير فعّل «Update on reload» في Application ← Service workers.` },
-            { lvl: 'تطبيق', t: R`ابني badge صغير في فوتر الصفحة بيقول «SW: مفيش» أو «SW: شغّال app-v2» ([[navigator.serviceWorker.controller]] ورسالة للـ SW بتسأله عن [[CACHE]])، وبيتحدّث على [[controllerchange]]. جرّبه مرة من غير [[clients.claim()]] ومرة بيه (Unregister الأول من DevTools).`, done: R`من غير [[claim]] أول زيارة الـ badge بيقول «مفيش» ومبيتغيرش لحد refresh. مع [[claim]] بيتقلب لـ «شغّال app-v2» لوحده في أول زيارة من غير refresh، وبعد تحديث وتفعيل نسخة جديدة بيعرض الاسم الجديد.`, sol: R`~~~html index.html
+            { lvl: 'سريع', t: R`ابني تحت [[<input type="file" multiple>]] جدول فيه لكل ملف: الاسم، والحجم بالـ KB بـ [[(file.size / 1024).toFixed(1)]]، والنوع، وزرار «شيل». الشيل بيبني [[input.files]] من جديد بـ [[new DataTransfer()]] و [[dt.items.add(file)]] و [[input.files = dt.files]].`, done: R`ملف 1536 بايت بيظهر 1.5 KB، والنوع الفاضي بيظهر «غير معروف»، و «شيل» بيمسح السطر و [[input.files.length]] بيقل واحد، والفورم لما تبعته مبيبعتش الملف اللي شلته.`, sol: R`~~~live 300 file-table.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>badge الـ SW</title>
+<title>الملفات اللي اخترتها</title>
 <style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 0; min-height: 100vh; display: flex; flex-direction: column; }
-  main { flex: 1; padding: 16px; }
-  footer { padding: 8px 16px; background: #111827; color: #fff; font-size: 13px; }
-  #sw-badge { padding: 2px 8px; border-radius: 999px; background: #374151; }
-  #sw-badge.on { background: #065f46; }
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
+  table { border-collapse: collapse; margin: 12px 0; }
+  th, td { border-bottom: 1px solid #ddd; padding: 4px 8px; text-align: start; }
+  td:nth-child(2) { direction: ltr; text-align: end; }
+  button { font: inherit; }
+  #sent { color: #065f46; }
 </style>
 </head>
 <body>
-<main><h1>الصفحة</h1></main>
-<footer>الحالة: <span id="sw-badge">SW: مفيش</span></footer>
-<script>
-  const badge = document.querySelector("#sw-badge");
-
-  // نسأل الـ SW اللي بيتحكم في الصفحة عن اسم الكاش، بـ MessageChannel عشان الرد يجيلنا إحنا
-  function askVersion(worker) {
-    return new Promise((resolve) => {
-      const { port1, port2 } = new MessageChannel();
-      port1.onmessage = (e) => resolve(e.data);
-      worker.postMessage({ type: "GET_VERSION" }, [port2]);
-      setTimeout(() => resolve(null), 1000);          // SW قديم مبيردّش
-    });
-  }
-
-  async function update() {
-    const c = navigator.serviceWorker?.controller;
-    if (!c) { badge.textContent = "SW: مفيش"; badge.classList.remove("on"); return; }
-    const v = await askVersion(c);
-    badge.textContent = "SW: شغّال " + (v ?? "؟");
-    badge.classList.add("on");
-  }
-
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/sw.js");
-    navigator.serviceWorker.addEventListener("controllerchange", update);
-  }
-  update();
-</script>
-</body>
-</html>
-~~~
-
-~~~js sw.js
-const CACHE = "app-v2";
-const CLAIM = true;            // جرّب false
-
-self.addEventListener("install", () => self.skipWaiting());
-
-self.addEventListener("activate", (e) => {
-  if (CLAIM) e.waitUntil(self.clients.claim());   // خد الصفحات المفتوحة دلوقتي
-});
-
-self.addEventListener("message", (e) => {
-  if (e.data?.type === "GET_VERSION") e.ports[0].postMessage(CACHE);
-});
-~~~
-
-محتاج [[http://localhost]] (الـ SW مبيشتغلش في الـ preview المعزول).
-
-**القياس:** Chrome 158 headless على [[http://localhost:8832]]. كل تجربة في browser context جديد (ده زي Unregister ومسح الموقع من DevTools). مرة [[CLAIM = false]] ومرة [[true]]، وفي الآخر غيّرنا [[CACHE]] لـ [["app-v3"]] وطلبنا [[reg.update()]] من غير refresh:
-
-~~~text الناتج (Chrome 158 headless)
-claim=false | أول زيارة بعد 1.5s: SW: مفيش
-claim=false | بعد refresh: SW: شغّال app-v2
-claim=true | أول زيارة بعد 1.5s: SW: شغّال app-v2
-claim=true | بعد refresh: SW: شغّال app-v2
-claim=true | بعد نسخة جديدة (app-v3) من غير refresh: SW: شغّال app-v3
-~~~
-
-**ليه كده:**
-
-- **[[navigator.serviceWorker.controller]]:** الـ SW اللي **بيتحكم** في الصفحة دي (طلباتها بتعدّي عليه). في أول زيارة الصفحة اتحمّلت قبل ما يبقى فيه SW، فالـ controller بـ [[null]] حتى بعد ما الـ SW يتفعّل، لحد refresh. ده اللي حصل مع [[claim=false]].
-- **[[self.clients.claim()]] في [[activate]]:** بيقول «خد الصفحات المفتوحة دلوقتي». الصفحة بتاخد [[controllerchange]]، والـ badge اتقلب لوحده في أول زيارة.
-- **[[MessageChannel]]:** الصفحة بتبعت [[port2]] مع الرسالة، والـ SW بيرد على [[e.ports[0]]]. كده الرد بيرجع للصفحة اللي سألت بس، ومش محتاج تعرف الـ SW بيرد على مين.
-- **[[setTimeout(() => resolve(null), 1000)]]:** لو SW قديم ملوش [[message]] listener، الـ Promise مش هيعلّق للأبد، والـ badge بيكتب «؟».
-- **[[skipWaiting()]] في [[install]]:** عشان النسخة الجديدة تتفعّل على طول في التجربة. ومع [[claim]] الصفحة المفتوحة اتنقلت للنسخة الجديدة و [[controllerchange]] اتبعت تاني، فالـ badge كتب [[app-v3]] من غير refresh. (في تطبيق حقيقي [[skipWaiting]] بيبقى بعد موافقة اليوزر، درس «نسخة جديدة، حدّث».)
-
-**الغلطة الشائعة:** تقرا [[controller]] مرة واحدة أول ما الصفحة تفتح وتعرض النتيجة. في أول زيارة هتقول «مفيش» للأبد. اسمع [[controllerchange]].` },
-            { lvl: 'تحدي', t: R`صلّح الـ scope: سجّل الـ SW من [[/js/sw.js]]، واطبع [[reg.scope]]، وافتح [[/]] و [[/js/page.html]]. وبعدين صلّحها بطريقتين.`, done: R`[[reg.scope]] بيخلص بـ [[/js/]]، والصفحة اللي على [[/]] [[controller]] بتاعها [[null]] واللي جوه [[/js/]] controlled. التصليح الأول: الملف في الـ root. التاني: header [[Service-Worker-Allowed: /]] مع [[sw.js]] والتسجيل بـ [[{ scope: "/" }]]. ومن غير الـ header التسجيل بـ [[scope: "/"]] بيرمي error بيقول إن الـ scope مش مسموح.`, sol: R`**الـ SW نفسه** (نفس الملف في المكانين، بيتفعّل على طول وياخد الصفحات المفتوحة عشان التجربة متحتاجش refresh):
-
-~~~js js/sw.js
-self.addEventListener("install", () => self.skipWaiting());
-self.addEventListener("activate", (e) => e.waitUntil(self.clients.claim()));
-~~~
-
-**الصفحات:** كل صفحة بتسجّل الـ SW بشكل مختلف وبتطبع [[reg.scope]] و [[controller]]. اتعملت من قالب واحد بسيرفر [[node:http]] صغير، و [[/plain.html]] صفحة على الـ root مبتسجّلش حاجة، بتقول بس مين بيتحكم فيها:
-
-~~~js التسجيل في كل حالة
-navigator.serviceWorker.register("/js/sw.js");                  // /a.html و /js/page.html
-navigator.serviceWorker.register("/sw.js");                     // /root.html (التصليح ١)
-navigator.serviceWorker.register("/js/sw.js", { scope: "/" });  // /scoped.html (التصليح ٢)
-~~~
-
-~~~text الناتج (Chrome 158 headless، http://localhost:8833، كل تجربة في browser context جديد)
-== التسجيل من /js/sw.js
-  /a.html:
-    reg.scope = http://localhost:8833/js/
-    controller = null
-  /js/page.html:
-    ready
-    reg.scope = http://localhost:8833/js/
-    controller = http://localhost:8833/js/sw.js
-  /plain.html:
-    controller = null
-== التصليح ١: sw.js في الـ root
-  /root.html:
-    reg.scope = http://localhost:8833/
-    ready
-    controller = http://localhost:8833/sw.js
-  /plain.html:
-    controller = http://localhost:8833/sw.js
-== scope: "/" من غير header
-  /scoped.html:
-    SecurityError: Failed to register a ServiceWorker for scope ('http://localhost:8833/') with script ('http://localhost:8833/js/sw.js'): The path of the provided scope ('/') is not under the max scope allowed ('/js/'). Adjust the scope, move the Service Worker script, or use the Service-Worker-Allowed HTTP header to allow the scope.
-    controller = null
-== التصليح ٢: Service-Worker-Allowed: / و scope: "/"
-  /scoped.html:
-    reg.scope = http://localhost:8833/
-    ready
-    controller = http://localhost:8833/js/sw.js
-  /plain.html:
-    controller = http://localhost:8833/js/sw.js
-~~~
-
-**ليه كده:**
-
-- **الـ scope الافتراضي = فولدر ملف الـ SW:** [[/js/sw.js]] بيتحكم في [[/js/]] وتحتها بس. فـ [[/a.html]] سجّلته بس فضلت [[controller = null]] (هي برا الـ scope)، و [[/js/page.html]] اتحكمت فيها. وده مش باج: SW يقدر يشوف ويغيّر كل طلبات الصفحات اللي بيتحكم فيها، فالمتصفح مش بيدّيه أكتر من الفولدر بتاعه إلا لو السيرفر وافق.
-- **التصليح ١، الملف في الـ root:** [[/sw.js]] الـ scope بتاعه [[/]]، فـ [[/plain.html]] اتحكمت فيها من غير ما تسجّل حاجة. ده الحل الأبسط، وعشان كده كل الأدوات (vite-plugin-pwa مثلًا) بتحط [[sw.js]] في الـ root.
-- **[[{ scope: "/" }]] لوحدها مش كفاية:** رمت [[SecurityError]]، والرسالة نفسها بتقول الحلين: انقل الملف، أو header [[Service-Worker-Allowed]].
-- **التصليح ٢:** السيرفر رجّع [[Service-Worker-Allowed: /]] مع [[/js/sw.js]] بس (header على الـ SW نفسه، مش على الصفحة)، والتسجيل بـ [[scope: "/"]] نجح، و [[/plain.html]] بقت متحكّم فيها.
-
-**الغلطة الشائعة:** تحط [[sw.js]] جوه [[/assets/]] أو [[/static/]] مع باقي الـ JS عشان الـ bundler بيعمل كده، والـ SW يتسجّل من غير أي error بس مبيتحكمش في ولا صفحة. افتح Application ← Service workers وبص على الـ Scope قبل أي حاجة.` },
-          ],
-          ref: [
-            { t: "MDN: Service Worker API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API" },
-            { t: "MDN: Using Service Workers", url: "https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers" },
-            { t: "MDN: ServiceWorkerContainer.register()", url: "https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerContainer/register" },
-            { t: "web.dev: The service worker lifecycle", url: "https://web.dev/articles/service-worker-lifecycle" },
-          ],
-          flag: "script",
-          deep: {
-            why: "أول ما تحط SW في موقع، أول شكوى هتسمعها «أنا مش شايف التعديل». الـ SW بيتحكم في كل request، فلو فهمت دورة حياته غلط ممكن تقفل اليوزرز على نسخة قديمة أسابيع. ودي من أشهر مشاكل الـ PWAs في الشغل الحقيقي (وتاب «من مشاريعي» فيه أمثلة).",
-            how: R`المتصفح بيفحص [[sw.js]] عند كل تنقل (وكل ٢٤ ساعة على الأكتر، و [[reg.update()]] يدوي). لو الملف اختلف ولو byte واحد، يعتبره SW جديد ويبدأ install. عشان كده بتغيّر اسم الكاش أو أي حاجة فيه مع كل release (أو الأدوات بتحط hashes الملفات فيه لوحدها). والمتصفح بيتجاهل الـ HTTP cache لـ [[sw.js]] نفسه افتراضيًا، بس ملفات [[importScripts]] ممكن تتكاش.
-
-[[e.waitUntil(promise)]] بيقول «متعتبرش الـ install خلص لحد ما ده يخلص». لو أي ملف في [[addAll]] رجع 404، الـ install كله بيفشل والقديم يفضل شغال.
-
-ليه waiting موجود أصلًا؟ الصفحة المفتوحة اتحمّلت بـ HTML وJS قديم. لو SW جديد مسك كاش جديد في النص، الصفحة ممكن تطلب [[chunk-abc.js]] القديم فميلاقيهوش. فالافتراضي الآمن: استنى لما مفيش حد شغال بالقديم. والـ refresh مش كفاية لأن الصفحة الجديدة بتبدأ قبل ما القديمة تتقفل، فدايمًا فيه client.
-
-الموقع ده بيعمل [[skipWaiting()]] في الـ install و [[clients.claim()]] في الـ activate، ومعاهم كاش network-first (الدرس الجاي)، فالتحديث بيظهر من أول تحميل. ده مناسب لأن كل الملفات بتتجاب من الشبكة أصلًا، بس مع cache-first و chunks بـ hashes الأضمن تسأل اليوزر (زرار «نسخة جديدة»).`,
-            when: R`أي PWA. وفي الـ dev خلي «Update on reload» متعلّم في DevTools ← Application ← Service workers، وإلا هتقعد تتلخبط.`,
-            mistakes: R`SW على [[/js/sw.js]]: الـ scope بتاعه [[/js/]] بس، فمش هيتحكم في الصفحة (حطه في الـ root). وتنسى تمسح الكاش القديم في activate فالتخزين يكبر. و skipWaiting دايمًا مع cache-first فالصفحة المفتوحة تتكسر. و [[Cache-Control: max-age]] طويل على sw.js في CDN قديم. وفي الانترفيو: «ليه SW الجديد مش بيتفعّل؟» الإجابة waiting، والحل skipWaiting بموافقة اليوزر أو قفل كل التابات.`
-          },
-          teach: R`## الفكرة في سطر
-
-سطر واحد في الصفحة بيسجّل [[sw.js]]، وجوه [[sw.js]] بنسمع لـ ٣ events: [[install]] (احفظ الملفات)، و [[activate]] (امسح القديم وامسك الصفحات)، و [[message]] (اليوزر وافق، اتفعّل دلوقتي).
-
-جرّبته في Chrome headless (عن طريق playwright-core، بروفايل مؤقت) على سيرفر Node صغير على localhost فيه [[index.html]] و [[app.css]] و [[app.js]] و [[offline.html]] و [[sw.js]] بالظبط زي المثال. وبعد كل خطوة سألت الصفحة: مين الـ SW اللي بيتحكم؟ ومين active ومين waiting؟ وإيه الكاشات الموجودة؟
-
----
-
-## ١. التسجيل من الصفحة
-
-~~~text app.js
-if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js");
-~~~
-
-- [[navigator]]: object فيه معلومات وقدرات المتصفح.
-- [["serviceWorker" in navigator]]: [[in]] بيسأل «الخاصية دي موجودة؟». المتصفحات القديمة، أو صفحة مش على HTTPS ولا localhost، مفيهاش [[serviceWorker]]، فالسطر ميعملش حاجة بدل ما يرمي error.
-- [[register("/sw.js")]]: نزّل الملف ده وسطّبه كـ service worker. بيرجّع Promise بالـ registration.
-
-مكان الملف مهم: [[/sw.js]] في الـ root فبيتحكم في الموقع كله. لما جربت [[/js/sw.js]]:
-
-~~~text الناتج (Chrome)
-{"scope":"/js/","active":"activated","controller":false}
-after reload controller: false
-~~~
-
-اتسطّب واشتغل، بس الـ scope بتاعه [[/js/]] فمش بيتحكم في الصفحة [[/]] حتى بعد refresh. ولو طلبت scope أوسع بإيدك:
-
-~~~text الناتج (Chrome)
-SecurityError: Failed to register a ServiceWorker for scope ('http://localhost:PORT/') with script ('http://localhost:PORT/js/sw.js'): The path of the provided scope ('/') is not under the max scope allowed ('/js/'). Adjust the scope, move the Service Worker script, or use the Service-Worker-Allowed HTTP header to allow the scope.
-~~~
-
----
-
-## ٢. اسم الكاش وقايمة الملفات
-
-~~~text sw.js
-const CACHE = "app-v2";
-const PRECACHE = ["/", "/offline.html", "/app.css", "/app.js"];
-~~~
-
-- [[CACHE]]: اسم «درج» في Cache Storage (مخزن في المتصفح بيشيل request ← response). بنغيّر الرقم مع كل نسخة.
-- [[PRECACHE]]: الملفات اللي لازم تبقى موجودة من أول لحظة عشان الموقع يفتح من غير نت. [["/"]] هي الصفحة الرئيسية نفسها.
-
----
-
-## ٣. [[install]]
-
-~~~text sw.js
-self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(PRECACHE)));
-});
-~~~
-
-- [[self]]: جوه الـ SW مفيش [[window]]، و [[self]] هو الـ worker نفسه.
-- [[install]]: بيتنادى مرة واحدة لكل نسخة جديدة من [[sw.js]].
-- [[caches.open(CACHE)]]: افتح الدرج ده (أو اعمله لو مش موجود). بيرجّع Promise بالكاش.
-- [[c.addAll(PRECACHE)]]: اطلب كل الملفات دي من السيرفر واحفظها. لو أي واحد فشل، مفيش حاجة بتتحفظ خالص (كله أو ولا حاجة).
-- [[e.waitUntil(promise)]]: «متعتبرش الـ install خلص لحد ما الـ Promise ده يخلص». ولو اترفض، الـ install كله فشل.
-
-بعد أول تحميل، السيرفر استلم الطلبات دي (الـ ٤ الأخيرين من الـ SW وهو بيعمل [[addAll]]):
-
-~~~text طلبات السيرفر
-GET /  GET /app.css  GET /app.js  GET /favicon.ico  GET /sw.js
-GET /  GET /offline.html  GET /app.css  GET /app.js
-~~~
-
-ولما حطيت ملف مش موجود ([["/missing.js"]]) في القايمة في نسخة جديدة [["app-v4"]]:
-
-~~~text الناتج (Chrome)
-{"active":null,"installing":null,"keys":["app-v4"],"v4entries":0}
-~~~
-
-السيرفر رد 404، فالـ install فشل والـ worker اترمى (مفيش active ولا installing). الدرج [["app-v4"]] نفسه اتعمل بـ [[caches.open]] بس فاضي (صفر ملفات). ولما ده حصل على موقع فيه نسخة شغالة قبل كده، القديمة فضلت active ومحدش حس.
-
----
-
-## ٤. [[activate]]
-
-~~~text sw.js
-self.addEventListener("activate", (e) => {
-  e.waitUntil((async () => {
-    const keys = await caches.keys();
-    await Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)));
-    await self.clients.claim();
-  })());
-});
-~~~
-
-### من جوه لبرّه
-
-1. [[(async () => { ... })()]]: دالة async بنعرّفها وننادّيها في نفس اللحظة، عشان نقدر نستخدم [[await]] ونرجّع Promise واحد لـ [[waitUntil]].
-2. [[caches.keys()]]: أسماء كل الأدراج، مثلًا [[["app-v2", "app-v3"]]].
-3. [[.filter((k) => k !== CACHE)]]: سيب بس اللي اسمه مش الحالي.
-4. [[.map((k) => caches.delete(k))]]: لكل واحد قديم ابدأ مسح، فيطلع array من Promises.
-5. [[Promise.all(...)]]: استنى كل المسح يخلص.
-6. [[self.clients.claim()]]: «clients» هي الصفحات المفتوحة. من غيرها، الصفحة اللي سجّلت الـ SW لأول مرة مش بتبقى تحت تحكمه لحد الـ refresh.
-
----
-
-## ٥. [[message]]
-
-~~~text sw.js
-self.addEventListener("message", (e) => {
-  if (e.data === "SKIP_WAITING") self.skipWaiting();
-});
-~~~
-
-- [[message]]: الصفحة بعتت رسالة بـ [[worker.postMessage(...)]]، و [[e.data]] هو اللي اتبعت.
-- [[self.skipWaiting()]]: متستناش التابات القديمة تتقفل، اتفعّل دلوقتي.
-
----
-
-## ٦. اللي حصل لما شغّلته
-
-~~~text الناتج (Chrome)
-أول تحميل (فورًا)       {"controller":false,"active":null,"waiting":null,"caches":[]}
-بعد ready               {"controller":true,"active":"activated","waiting":null,"caches":["app-v2"]}
-refresh                 {"controller":true,"active":"activated","waiting":null,"caches":["app-v2"]}
-CACHE=app-v3 + refresh  {"controller":true,"active":"activated","waiting":"installed","caches":["app-v2","app-v3"]}
-refresh تاني            {"controller":true,"active":"activated","waiting":"installed","caches":["app-v2","app-v3"]}
-بعد SKIP_WAITING        {"controller":true,"active":"activated","waiting":null,"caches":["app-v3"]}
-~~~
-
-اقرا كل عمود كده:
-
-| العمود | معناه |
-|---|---|
-| [[controller]] | فيه SW بيتحكم في الصفحة دي دلوقتي؟ ([[navigator.serviceWorker.controller]]) |
-| [[active]] | حالة الـ SW الشغال ([[reg.active.state]]) |
-| [[waiting]] | فيه نسخة جديدة متسطّبة ومستنية؟ ([[reg.waiting]]) |
-| [[caches]] | [[caches.keys()]] |
-
-- **أول تحميل:** لسه مفيش حاجة. بعد [[navigator.serviceWorker.ready]] (Promise بيخلص لما يبقى فيه SW active) الـ controller بقى true في نفس الصفحة من غير refresh، وده بفضل [[clients.claim()]].
-- **غيّرت [[CACHE]] لـ [["app-v3"]]:** المتصفح لقى [[sw.js]] اتغير، فسطّب النسخة الجديدة (درج [["app-v3"]] اتعمل) ووقفها في [[waiting]] بحالة [["installed"]]. القديمة لسه active، والدرج القديم لسه موجود.
-- **refresh تاني:** ولا حاجة اتغيرت. التاب نفسه لسه client بالقديم، والصفحة الجديدة بتتحمّل قبل ما القديمة تتقفل.
-- **بعد [[postMessage("SKIP_WAITING")]]:** الجديدة بقت active، والـ activate مسح [["app-v2"]].
-
-> ملحوظة من التجربة: Chrome بيفحص [[sw.js]] بعد التنقل بشوية، مش قبله. فأول refresh بعد التغيير بيرجّع الصفحة لسه بالقديم، والفحص بيحصل في الخلفية.
-
----
-
-## الخلاصة
-
-| المرحلة | بتحصل إمتى | بنعمل فيها إيه |
-|---|---|---|
-| [[register]] | من الصفحة | نسجّل [[/sw.js]] من الـ root |
-| [[install]] | مرة لكل نسخة جديدة | [[addAll]] للملفات الأساسية |
-| waiting | فيه تاب شغال بالقديم | نستنى، أو [[skipWaiting]] بموافقة اليوزر |
-| [[activate]] | القديم مشي | نمسح الأدراج القديمة و [[clients.claim()]] |
-
-- أي byte اتغير في [[sw.js]] = نسخة جديدة. عشان كده بنغيّر [[CACHE]].
-- ملف واحد 404 في [[addAll]] = الـ install فشل واليوزرز فاضلين على القديم.
-- الـ refresh مش بيفعّل النسخة الجديدة: لازم كل التابات تتقفل أو [[skipWaiting]].`,
-          lines: [
-            R`في الصفحة: لو المتصفح بيدعم service workers ([[serviceWorker]] موجودة في [[navigator]]) سجّل [[/sw.js]]. الشرط بيخلي الموقع يشتغل عادي في المتصفحات القديمة أو على صفحة مش HTTPS بدل ما يرمي error. ومكان الملف مهم: [[/sw.js]] في الـ root يتحكم في كل صفحات الموقع.`,
-            R`اسم الكاش وفيه رقم النسخة. لما تغيّر أي ملف من اللي بتتحفظ غيّر الرقم ([[app-v3]]): ده بيغيّر محتوى [[sw.js]] نفسه، فالمتصفح يعتبره نسخة جديدة ويعمل install، و [[activate]] يمسح الكاش القديم بالاسم.`,
-            R`ليستة الملفات اللي التطبيق محتاجها عشان يفتح من غير نت: الصفحة الرئيسية وصفحة [[offline.html]] والـ CSS والـ JS. هتتحمّل وتتحفظ مرة واحدة وقت الـ install.`,
-            R`[[install]] بيحصل مرة لكل نسخة من [[sw.js]]: أول زيارة، أو لما المتصفح يلاقي الملف اتغير ولو بايت واحد. ده الوقت الصح تحفظ فيه الملفات الأساسية.`,
-            R`افتح الكاش بالاسم واحفظ فيه كل ملفات [[PRECACHE]]. [[waitUntil]] بتقول للمتصفح «الـ install مخلصش لحد ما الـ promise دي تخلص». ولو ملف واحد فشل، [[addAll]] كلها بتفشل والـ install يفشل، والنسخة القديمة تفضل شغالة بدل نسخة ناقصة.`,
-            R`نهاية الـ [[install]] listener.`,
-            R`[[activate]] بيحصل لما النسخة دي تستلم فعلًا: يا إما مفيش قديمة، يا إما القديمة مشيت (كل تابات الموقع اتقفلت أو اتعمل [[skipWaiting]]). ده الوقت الأمان تمسح فيه حاجات النسخة القديمة، لأن محدش بقى بيستخدمها.`,
-            R`[[waitUntil]] محتاجة promise، فبنكتب دالة [[async]] وننديها على طول، عشان نستخدم [[await]] جواها ونديها الـ promise اللي راجعة. كده المتصفح بيأجّل الـ fetch events لحد ما التنضيف يخلص.`,
-            R`[[caches.keys()]] بترجّع أسامي كل الكاشات اللي الموقع ده عملها، بما فيهم بتوع النسخ القديمة ([[app-v1]] مثلًا).`,
-            R`سيب الاسم الحالي ([[CACHE]]) وامسح الباقي كلهم مع بعض بـ [[Promise.all]]. من غير السطر ده، الكاشات القديمة تفضل واكلة مساحة على جهاز اليوزر.`,
-            R`[[clients.claim()]]: خلي الـ SW ده يتحكم في الصفحات المفتوحة دلوقتي على طول. من غيرها، في أول زيارة الصفحة اللي سجّلت الـ SW مش بتبقى تحت تحكمه لحد ما تعمل reload.`,
-            R`نهاية الدالة الـ [[async]] وندهها، وقفلة [[waitUntil]].`,
-            R`نهاية الـ [[activate]] listener.`,
-            R`استقبل رسايل من الصفحة (اللي بتتبعت بـ [[postMessage]]). ده الطريق اللي الصفحة بتكلّم بيه الـ SW، زي «اليوزر وافق على التحديث».`,
-            R`لو الرسالة [[SKIP_WAITING]]: [[skipWaiting()]] بتخلي النسخة الجديدة اللي مستنية تتفعّل دلوقتي بدل ما تستنى كل التابات تتقفل. بنعملها بس بعد ما اليوزر يوافق، لأن الصفحة المفتوحة محمّلة بـ JS قديم وممكن تطلب ملفات النسخة القديمة اللي اتمسحت.`,
-            R`نهاية الـ [[message]] listener.`,
-          ],
-          sol: R`بعد تغيير [[CACHE]] وأول refresh: DevTools بيعرض SW جديد «waiting to activate» والقديم لسه «activated and is running». الـ refresh التاني غالبًا مش هيفعّله، لأن التاب نفسه client بالقديم. لازم تقفل كل التابات أو تدوس skipWaiting. بعدها الـ activate بيشتغل، و Cache storage فيه [["app-v3"]] بس.
-
-في [[sw.js]] بتاع الموقع ده: [[await self.skipWaiting()]] في آخر الـ install، و [[self.clients.claim()]] في آخر الـ activate بعد ما يمسح أي كاش غير [[CACHE]]. يعني مفيش waiting خالص، ودا آمن هنا لأن استراتيجيته network-first.`
-        },
-        {
-          cmd: "استراتيجيات الكاش",
-          title: "ترد من الكاش ولا من الشبكة؟ (network-first و cache-first و stale-while-revalidate)",
-          desc: R`في [[fetch]] event بتاع الـ SW بتقرر لكل request:
-
-network-first: جرّب الشبكة، ولو فشلت رد من الكاش. للـ HTML (الصفحات): اليوزر يشوف الأحدث دايمًا، ومن غير نت يشوف آخر نسخة. ده اللي الموقع ده بيعمله لكل حاجة.
-
-cache-first: لو في الكاش رد منه ومتسألش الشبكة. للـ assets اللي في اسمها hash ([[app.3f9a1c.js]]): المحتوى عمره ما هيتغير لنفس الاسم، فمفيش سبب تسأل.
-
-stale-while-revalidate: رد من الكاش فورًا (سريع)، وفي نفس الوقت هات من الشبكة وحدّث الكاش للمرة الجاية. لحاجات تتحمل تكون قديمة شوية: أفاتارات، وخطوط، و API مش حساس.
-
-ومن غير نت وصفحة مش في الكاش: رد بـ [[offline.html]] اللي حفظته في الـ install.`,
-          example: R`self.addEventListener("fetch", (e) => {
-  const req = e.request;
-  const url = new URL(req.url);
-  if (req.method !== "GET" || url.origin !== self.location.origin) return;
-  if (req.mode === "navigate") return e.respondWith(networkFirst(req));
-  if (url.pathname.startsWith("/assets/")) return e.respondWith(cacheFirst(req));
-  if (url.pathname.startsWith("/api/public/")) return e.respondWith(staleWhileRevalidate(req, e));
-});
-async function networkFirst(req) {
-  const cache = await caches.open(CACHE);
-  try {
-    const res = await fetch(req);
-    if (res.ok) cache.put(req, res.clone());
-    return res;
-  } catch {
-    return (await cache.match(req)) ?? (await cache.match("/offline.html"));
-  }
-}
-async function cacheFirst(req) {
-  const hit = await caches.match(req);
-  if (hit) return hit;
-  const res = await fetch(req);
-  if (res.ok) (await caches.open(CACHE)).put(req, res.clone());
-  return res;
-}
-async function staleWhileRevalidate(req, e) {
-  const cache = await caches.open(CACHE);
-  const hit = await cache.match(req);
-  const fresh = fetch(req).then((res) => {
-    if (res.ok) cache.put(req, res.clone());
-    return res;
-  });
-  e.waitUntil(fresh.catch(() => {}));
-  return hit ?? fresh;
-}`,
-          try: R`كمّل على مشروع الدرس اللي فات: ضيف الكود ده في [[sw.js]]، واعمل [[offline.html]]. اعمل Offline من DevTools ← Network، وافتح صفحة زرتها قبل كده وصفحة مزرتهاش. وبعدين بص على عمود Size في Network: الـ requests اللي جاية من الـ SW مكتوب جنبها إيه؟ وآخر حاجة: ليه الـ API الخاص بكل يوزر ([[/api/me]]) مش في أي استراتيجية؟`,
-          practice: [
-            { lvl: 'سريع', t: R`محاكاة في Node: [[cacheFirst(req)]] بتاعة الدرس، بس [[caches]] عبارة عن [[Map]] بإيدك و [[fetch]] دالة وهمية بتزوّد عدّاد وبترجّع [[new Response("ok")]] (و [[status: 500]] لـ [[/broken]]).`, done: R`طلبين لنفس الـ URL: العدّاد 1 والتاني جه من الـ Map. طلبين لـ [[/broken]]: العدّاد بيزيد 2 (الـ 500 متكيّشش عشان [[res.ok]])، و [[await res.text()]] على الـ response اللي جه من الكاش بيرجّع [["ok"]] (عشان اتحفظ [[res.clone()]] مش الأصل).`, sol: R`**[[caches]] و [[fetch]] وهميين** بنفس شكل اللي في الـ SW. أهم نقطة: [[put]] بتقرا الـ body زي الحقيقية بالظبط (فبيتستهلك)، وإلا التجربة مش هتمسك غلطة الـ clone:
-
-~~~js fake-caches.mjs
-// caches و fetch وهميين بنفس شكل اللي في الـ SW، عشان نجرّب الاستراتيجيات في Node
-export function createFakeCaches() {
-  const stores = new Map();
-  const open = async (name) => {
-    if (!stores.has(name)) stores.set(name, new Map());
-    const m = stores.get(name);
-    const key = (req) => (typeof req === "string" ? req : req.url);
-    return {
-      match: async (req) => m.get(key(req))?.clone(),
-      put: async (req, res) => {                    // زي الحقيقي: put بتقرا الـ body (فبيتستهلك)
-        const body = await res.arrayBuffer();
-        m.delete(key(req));
-        m.set(key(req), new Response(body, { status: res.status, headers: res.headers }));   // الأحدث في الآخر
-      },
-      keys: async () => [...m.keys()].map((url) => new Request(url)),
-      delete: async (req) => m.delete(key(req)),
-    };
-  };
-  return {
-    open,
-    match: async (req) => { for (const name of stores.keys()) { const hit = await (await open(name)).match(req); if (hit) return hit; } },
-  };
-}
-
-export function createFakeFetch() {
-  const f = async (req) => {
-    f.calls++;
-    const url = typeof req === "string" ? req : req.url;
-    if (url.endsWith("/broken")) return new Response("boom", { status: 500 });
-    return new Response("ok");
-  };
-  f.calls = 0;
-  return f;
-}
-~~~
-
-~~~js cache-first.mjs
-import { createFakeCaches, createFakeFetch } from "./fake-caches.mjs";
-const CACHE = "app-v1";
-
-function make(awaitPut) {
-  const caches = createFakeCaches();
-  const fetch = createFakeFetch();
-  async function cacheFirst(req) {
-    const hit = await caches.match(req);
-    if (hit) return hit;
-    const res = await fetch(req);
-    if (res.ok) {
-      const saving = (await caches.open(CACHE)).put(req, res.clone());   // clone: الأصل للصفحة، النسخة للكاش
-      if (awaitPut) await saving;
-    }
-    return res;
-  }
-  return { cacheFirst, fetch };
-}
-
-for (const awaitPut of [false, true]) {
-  const { cacheFirst, fetch } = make(awaitPut);
-  console.log(awaitPut ? "== await على الـ put" : "== put من غير await (زي الدرس)");
-  const a1 = await cacheFirst(new Request("http://x/app.css"));
-  const a2 = await cacheFirst(new Request("http://x/app.css"));
-  console.log("  طلبين ورا بعض لـ /app.css → fetch اتنادى:", fetch.calls, "| التاني:", await a2.text());
-  await cacheFirst(new Request("http://x/broken"));
-  await cacheFirst(new Request("http://x/broken"));
-  console.log("  + طلبين لـ /broken → fetch بقى:", fetch.calls);
-  console.log("  الـ response الأول لسه ينفع يتقري:", await a1.text());
-}
-~~~
-
-~~~text الناتج (node cache-first.mjs، Node 24)
-== put من غير await (زي الدرس)
-  طلبين ورا بعض لـ /app.css → fetch اتنادى: 2 | التاني: ok
-  + طلبين لـ /broken → fetch بقى: 4
-  الـ response الأول لسه ينفع يتقري: ok
-== await على الـ put
-  طلبين ورا بعض لـ /app.css → fetch اتنادى: 1 | التاني: ok
-  + طلبين لـ /broken → fetch بقى: 3
-  الـ response الأول لسه ينفع يتقري: ok
-~~~
-
-**اكتشاف:** [[cacheFirst]] بتاعة الدرس (من غير [[await]] على الـ [[put]]) طلبت الملف **مرتين** لما الطلبين جم ورا بعض: الطلب التاني وصل والـ [[put]] الأول لسه بيكتب، فلقى الكاش فاضي. اتأكدنا إن ده مش من الـ Map بتاعنا: نفس الدالتين على Cache API الحقيقي في Chrome 158 (صفحة على [[http://localhost:8834]]) طلّعوا [[من غير await: fetch = 2 | await put: fetch = 1]]. فالحل فيه [[await]] على الـ [[put]]، وده بيأخّر الرد لحد ما الكتابة تخلص (أجزاء من الثانية). لو مش عايز تأخّر الرد، سيبها من غير [[await]] بس في [[e.waitUntil(saving)]] عشان الـ SW ميتقفلش قبل ما يكتب، واقبل إن الطلبات اللي جاية مع بعض في نفس اللحظة ممكن تروح للشبكة مرتين.
-
-**الـ clone:**
-
-~~~js no-clone.mjs
-// نفس الكلام بس put(req, res) من غير clone
-import { createFakeCaches, createFakeFetch } from "./fake-caches.mjs";
-const caches = createFakeCaches(), fetch = createFakeFetch();
-const res = await fetch("http://x/a.css");
-await (await caches.open("v1")).put("http://x/a.css", res);
-console.log("الكاش:", await (await caches.match("http://x/a.css")).text());
-try { console.log("الصفحة:", await res.text()); } catch (e) { console.log("الصفحة:", e.name + ": " + e.message); }
-~~~
-
-~~~text الناتج (node no-clone.mjs)
-الكاش: ok
-الصفحة: TypeError: Body is unusable: Body has already been read
-~~~
-
-**ليه كده:**
-
-- **[[if (res.ok)]]:** الـ 500 بيرجع للصفحة عادي بس متكيّشش، فكل طلب لـ [[/broken]] راح للشبكة (العدّاد زاد ٢). لو اتكيّش، الصفحة هتفضل شايفة الخطأ من الكاش حتى بعد ما السيرفر يتصلّح.
-- **[[res.clone()]]:** الـ body بتاع الـ [[Response]] stream بيتقري **مرة واحدة**. [[put]] بتقراه عشان تكتبه، فلو اديتها الأصل، الصفحة تاخد response مقري: [[Body is unusable]]. الـ clone نسخة تانية من الـ stream للكاش، والأصل للصفحة (السطر الأخير في كل تجربة: الأول لسه بيتقري [[ok]]).
-- **[[caches.match]] مش [[cache.match]]:** بتدوّر في كل الكاشات اللي عند الـ origin، فلو نسخة قديمة من الملف لسه في كاش تاني هتلاقيها (وده سبب مسح الكاشات القديمة في [[activate]]).
-
-**الغلطة الشائعة:** تكتب [[cache.put(req, res)]] وبعدين [[return res.clone()]]. جرّبناها في Chrome 158: [[TypeError: Failed to execute 'clone' on 'Response': Response body is already used]]. الـ [[put]] بدأت تقرا الـ body على طول، فالـ clone لازم يتعمل **قبل** أي حد يقرا.` },
-            { lvl: 'تطبيق', t: R`مسألة: كاش للصور بـ cache-first بحد أقصى ٥٠ صورة: [[trimCache(name, max)]] بعد كل [[put]]، بتعمل [[cache.keys()]] ولو أكتر من [[max]] تمسح الأقدم (أول keys في اللستة). جرّبها الأول على الـ Map بتاع التمرين اللي فات.`, done: R`بعد ٦٠ صورة مختلفة الكاش فيه ٥٠ بس وأول ١٠ اتمسحوا، و [[max]] بصفر بيمسح كله، وصورة موجودة بتتطلب تاني مبتزوّدش العدد، و Cache storage في المتصفح بيأكد نفس العدد.`, sol: R`الدوال بتاخد [[caches]] و [[fetch]] كـ arguments، فنفس الكود بيشتغل في الـ SW على الحقيقيين، وفي Node على الوهميين بتوع التمرين اللي فات ([[fake-caches.mjs]]):
-
-~~~js trim.mjs
-// بتشتغل على caches الحقيقي في الـ SW، أو الوهمي في Node
-export async function trimCache(caches, name, max) {
-  const cache = await caches.open(name);
-  const keys = await cache.keys();                 // بالترتيب: الأقدم الأول
-  const extra = keys.length - max;
-  for (let i = 0; i < extra; i++) await cache.delete(keys[i]);
-  return Math.max(0, extra);
-}
-
-export function imageCacheFirst(caches, fetch, { name = "images", max = 50 } = {}) {
-  return async function (req) {
-    const cache = await caches.open(name);
-    const hit = await cache.match(req);
-    if (hit) return hit;                           // موجودة: مفيش put فالعدد مبيزيدش
-    const res = await fetch(req);
-    if (res.ok) {
-      await cache.put(req, res.clone());
-      await trimCache(caches, name, max);
-    }
-    return res;
-  };
-}
-~~~
-
-~~~js trim-demo.mjs
-import { createFakeCaches, createFakeFetch } from "./fake-caches.mjs";
-import { trimCache, imageCacheFirst } from "./trim.mjs";
-
-const caches = createFakeCaches();
-const fetch = createFakeFetch();
-const getImage = imageCacheFirst(caches, fetch, { max: 50 });
-const count = async () => (await (await caches.open("images")).keys()).length;
-const first = async () => (await (await caches.open("images")).keys())[0].url;
-
-for (let i = 1; i <= 60; i++) await getImage(new Request($__bthttp://x/img/$__{i}.jpg$__bt));
-console.log("بعد 60 صورة:", await count(), "| أقدم واحدة فاضلة:", await first());
-await getImage(new Request("http://x/img/30.jpg"));
-console.log("طلبنا 30 تاني:", await count(), "| fetch:", fetch.calls);
-await trimCache(caches, "images", 0);
-console.log("trimCache بـ max = 0:", await count());
-~~~
-
-~~~text الناتج (node trim-demo.mjs، Node 24)
-بعد 60 صورة: 50 | أقدم واحدة فاضلة: http://x/img/11.jpg
-طلبنا 30 تاني: 50 | fetch: 60
-trimCache بـ max = 0: 0
-~~~
-
-**وفي المتصفح:** نفس [[trim.mjs]] على Cache API الحقيقي في صفحة على [[http://localhost:8834]]، ٦٠ صورة مختلفة، وبعدين سألنا Chrome نفسه عن الكاش بـ DevTools Protocol ([[CacheStorage.requestEntries]]، نفس اللي Application ← Cache storage بيعرضه):
-
-~~~text الناتج (Chrome 158 headless)
-Cache storage (DevTools Protocol): images فيه 50 entry | أول واحد: http://localhost:8834/img/11.jpg
-~~~
-
-وفي الـ SW بيبقى كده:
-
-~~~js sw.js (الجزء ده)
-import { imageCacheFirst } from "./trim.mjs";   // أو انسخ الدالتين لو الـ SW مش module
-const getImage = imageCacheFirst(caches, fetch, { name: "images", max: 50 });
-self.addEventListener("fetch", (e) => {
-  if (e.request.destination === "image") e.respondWith(getImage(e.request));
-});
-~~~
-
-**ليه كده:**
-
-- **[[cache.keys()]] بالترتيب:** بترجّع الطلبات بترتيب ما اتحطّت، فأول واحد هو الأقدم. عشان كده بعد ٦٠ صورة اتمسح من 1 لـ 10 وأقدم واحدة فاضلة 11، في Node وفي Chrome.
-- **[[extra = keys.length - max]]:** عدد اللي لازم يتمسح. ولو الكاش أقل من الحد، الرقم سالب والـ loop مبيلفّش.
-- **صورة موجودة مبتزوّدش العدد:** [[cache.match]] لقاها فرجعت من غير [[fetch]] ولا [[put]] (الـ fetch فضل 60).
-- **[[await]] على الـ [[put]] قبل الـ trim:** من غيره، الـ trim هيعدّ قبل ما الصورة الجديدة تتكتب، والعدد هيعدّي الحد بواحد (ونفس سباق التمرين اللي فات).
-- **[[max = 0]]:** [[extra]] = عدد الكل، فكله اتمسح.
-
-**ملحوظة:** ده «الأقدم إضافة» مش «الأقل استخدامًا». صورة بتتعرض كل يوم هتتمسح لو كانت من أول ١٠. لو عايز LRU حقيقي: مع كل hit اعمل [[put]] تاني لنفس الصورة فتروح لآخر الترتيب (جرّبناها في Chrome: [[put]] لـ [[/a]] تاني بعد [[/b]] و [[/c]] خلّى [[keys()]] ترجع [[/b /c /a]])، أو استخدم [[workbox-expiration]] اللي بيحفظ وقت الاستخدام في IndexedDB.
-
-**الغلطة الشائعة:** متحطّش حد للكاش خالص. كاش الصور بيكبر مع كل صفحة اليوزر يفتحها لحد ما المتصفح يمسح **كل** تخزين الموقع مرة واحدة لما الديسك يتملى، ومعاه الـ shell والداتا المهمة.` },
-            { lvl: 'تحدي', t: R`قارن وقيس: network-first بـ timeout ٣ ثواني بـ [[Promise.race]]، والـ response اللي يوصل متأخر يتحط في الكاش. قيس وقت ظهور الصفحة بـ custom throttling في Network بـ latency ٥ ثواني، مرة بالـ timeout ومرة من غيره.`, done: R`من غير الـ timeout الصفحة بتستنى حوالي ٥ ثواني، وبيه بتظهر بعد حوالي ٣ من الكاش، وبعدها الكاش بيتحدّث بالنسخة الجديدة. على شبكة سريعة بترد من الشبكة على طول، و Offline خالص بيرد من الكاش من غير ما يستنى الـ ٣ ثواني.`, sol: R`~~~js sw.js
-const CACHE = "pages-v1";
-const TIMEOUT = Number(new URL(self.location).searchParams.get("timeout") ?? 3000);   // ?timeout=0 = من غير timeout
-
-self.addEventListener("install", () => self.skipWaiting());
-self.addEventListener("activate", (e) => e.waitUntil(self.clients.claim()));
-
-self.addEventListener("fetch", (e) => {
-  if (e.request.mode === "navigate") e.respondWith(networkFirst(e));
-});
-
-async function networkFirst(e) {
-  const req = e.request;
-  const cache = await caches.open(CACHE);
-  const network = fetch(req).then((res) => {
-    if (res.ok) e.waitUntil(cache.put(req, res.clone()));   // حتى لو وصل متأخر: الكاش يتحدّث
-    return res;
-  });
-  e.waitUntil(network.catch(() => {}));                      // خلّي الـ SW صاحي لحد ما الشبكة ترد
-
-  if (!TIMEOUT) {
-    try { return await network; } catch { return (await cache.match(req)) ?? Response.error(); }
-  }
-  const timeout = new Promise((resolve) => setTimeout(() => resolve("timeout"), TIMEOUT));
-  try {
-    const winner = await Promise.race([network, timeout]);
-    if (winner !== "timeout") return winner;               // الشبكة ردت الأول
-    const cached = await cache.match(req);
-    return cached ?? (await network);                      // مفيش كاش: استنى الشبكة
-  } catch {
-    return (await cache.match(req)) ?? Response.error();   // Offline: الكاش على طول
-  }
-}
-~~~
-
-[[?timeout=0]] في عنوان التسجيل بيقفل الـ timeout، عشان نقارن بنفس الملف. للتجربة سيرفر [[node:http]] صغير بيرجّع [[/article.html]] فيها رقم نسخة بيزيد مع كل طلب، وبنتحكم في تأخيره من التجربة:
-
-~~~js server.mjs
-import { createServer } from "node:http";
-import { readFileSync } from "node:fs";
-let delay = 0, version = 0;
-export const control = { setDelay: (ms) => (delay = ms) };
-export function start(port) {
-  return new Promise((r) => {
-    const s = createServer(async (req, res) => {
-      const url = new URL(req.url, "http://x");
-      if (url.pathname === "/sw.js") return res.writeHead(200, { "content-type": "text/javascript", "cache-control": "no-cache" }).end(readFileSync("sw.js"));
-      if (url.pathname === "/article.html") {
-        const v = ++version;
-        await new Promise((d) => setTimeout(d, delay));
-        return res.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" }).end(
-          $__bt<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><title>مقالة</title><p id="v">نسخة $__{v}</p>
-<script>if (!navigator.serviceWorker.controller) navigator.serviceWorker.register("/sw.js" + (new URLSearchParams(location.search).get("sw") ?? ""));</script></html>$__bt);
-      }
-      res.writeHead(404).end();
-    }).listen(port, () => r(s));
-  });
-}
-~~~
-
-**القياس:** Chrome 158 headless على [[http://localhost:8835]]. التأخير ٥ ثواني اتعمل من السيرفر نفسه مش من throttling الـ DevTools (الـ throttling بيتطبّق على الصفحة، والطلب هنا بيطلع من الـ SW). وقسنا الوقت لحد [[DOMContentLoaded]]:
-
-~~~text الناتج (Chrome 158 headless)
-== بالـ timeout (3s) | البداية: نسخة 2
-  شبكة بطيئة (5s): ظهرت بعد 3.0s | نسخة 2
-  بعد ما الرد المتأخر وصل: الكاش فيه نسخة 3
-  شبكة سريعة: 0.0s | نسخة 4
-  Offline: 0.0s | نسخة 4
-== من غير timeout | البداية: نسخة 6
-  شبكة بطيئة (5s): ظهرت بعد 5.0s | نسخة 7
-  بعد ما الرد المتأخر وصل: الكاش فيه نسخة 7
-  شبكة سريعة: 0.0s | نسخة 8
-  Offline: 0.0s | نسخة 8
-~~~
-
-**الأرقام بتقول:** من غير timeout اليوزر استنى ٥ ثواني قدام شاشة بيضا. بالـ timeout الصفحة ظهرت بعد ٣ من الكاش (نسخة 2، القديمة)، والرد اللي وصل بعدها (نسخة 3) اتحط في الكاش للمرة الجاية. والشبكة السريعة بترد على طول بالجديد، و Offline بيرد من الكاش في 0.0s من غير ما يستنى الـ ٣ ثواني.
-
-**ليه كده:**
-
-- **[[const network = fetch(req).then(...)]] بيبدأ مرة واحدة:** الـ race والـ fallback بيستنوا **نفس** الطلب. لو كتبت [[fetch(req)]] تاني في الـ fallback، هتبعت طلبين للسيرفر.
-- **[[Promise.race([network, timeout])]]:** اللي يخلص الأول يكسب. الـ timeout بيرجّع النص [["timeout"]] فنعرف مين كسب.
-- **[[e.waitUntil(cache.put(...))]] جوه الـ then:** لما الشبكة تكسب أو تخسر، الرد بيتحط في الكاش أول ما يوصل. و [[e.waitUntil(network.catch(() => {}))]] بيخلّي المتصفح ميقفلش الـ SW بعد ما رجّعنا الكاش، وإلا الرد المتأخر ممكن يضيع.
-- **[[cached ?? (await network)]]:** أول زيارة مفيش كاش، فنستنى الشبكة مهما طولت بدل ما نرجّع خطأ.
-- **[[catch]] للـ Offline:** [[fetch]] بيرفض على طول من غير ما يستنى، فبنروح للكاش في نفس اللحظة.
-
-**الغلطة الشائعة:** الـ timeout بـ [[AbortController]] بيلغي الطلب نفسه بعد ٣ ثواني. الصفحة هتظهر من الكاش زي هنا، بس الرد الجديد عمره ما هيوصل، فالكاش هيفضل قديم للأبد على أي شبكة بطيئة.` },
-          ],
-          ref: [
-            { t: "MDN: Caching (PWA guide)", url: "https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Caching" },
-            { t: "MDN: Cache", url: "https://developer.mozilla.org/en-US/docs/Web/API/Cache" },
-            { t: "MDN: FetchEvent.respondWith()", url: "https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent/respondWith" },
-            { t: "Chrome for Developers: workbox-strategies", url: "https://developer.chrome.com/docs/workbox/modules/workbox-strategies" },
-          ],
-          flag: "script",
-          deep: {
-            why: "الاستراتيجية الغلط بتعمل واحد من اتنين: موقع بطيء (network-first لملفات مش بتتغير) أو موقع عالق على نسخة قديمة (cache-first للـ HTML). الـ bug الشهير «عملت deploy واليوزرز لسه شايفين القديم بعد أسبوع» غالبًا cache-first على [[index.html]].",
-            how: R`[[req.mode === "navigate"]] معناها request لصفحة (كتبت URL أو ضغطت لينك)، وده الـ HTML. [[e.respondWith(promise)]] بيقول للمتصفح «أنا هرد»، ولو مناديتهاش ([[return]] من غير حاجة) الـ request بيروح للشبكة عادي كأن مفيش SW.
-
-[[res.clone()]]: الـ Response body stream بيتقري مرة واحدة، فبتعمل نسخة للكاش ونسخة للصفحة. و [[res.ok]] قبل الحفظ عشان متكاشش صفحة 500 أو 404.
-
-في SWR: [[hit ?? fresh]] يعني لو في الكاش رد بيه فورًا، وإلا استنى الشبكة. و [[e.waitUntil(fresh)]] بيخلي الـ SW يفضل صاحي لحد ما التحديث يخلص حتى بعد ما رديت (المتصفح ممكن يوقف الـ SW لو فاضي). و [[catch]] هناك عشان فشل التحديث في الخلفية ميطلعش error ملوش لازمة.
-
-الـ requests اللي من origin تاني (CDN أو API خارجي) بنتجاهلها هنا. الموقع ده بيستثني Google Fonts بس، وردها «opaque» (مش مقروء بسبب CORS)، فمينفعش تعرف هو ok ولا لأ.
-
-وفي HTTP headers نفسها (درس «ETag و Cache-Control» في تاب APIs متقدمة): الـ assets بـ hash [[Cache-Control: max-age=31536000, immutable]]، والـ HTML [[no-cache]]. الـ SW بيشتغل فوق ده مش بداله.`,
-            when: R`HTML: network-first. JS/CSS/خطوط بـ hash: cache-first. صور وأفاتارات و API عام: SWR. وأي حاجة خاصة باليوزر (حسابه، سلته) أو POST: متكاشهاش في الـ SW خالص، أو بحذر شديد.`,
-            mistakes: R`cache-first للـ HTML. وكاش لـ responses فيها بيانات يوزر، فيعمل logout ويدخل يوزر تاني على نفس الجهاز ويشوف بيانات الأول. وتحفظ 500 في الكاش. وتنسى تمسح الكاشات القديمة فالتخزين يتملي. و [[respondWith]] جوه [[await]] (لازم تتنادى sync في الـ event، ابعتلها promise).`
-          },
-          teach: R`## الفكرة في سطر
-
-كل request من الصفحة بيعدّي على [[fetch]] event في الـ SW. الكود ده بيبص على نوع الـ request ويوزّعه على واحدة من ٣ دوال: صفحة ← network-first، ملف بـ hash ← cache-first، API عام ← stale-while-revalidate.
-
-جرّبته في Chrome headless (عن طريق playwright-core، بروفايل مؤقت) على سيرفر Node على localhost. الـ SW فيه الكود ده بالظبط ومعاه [[const CACHE = "app-v1"]] و install بيحفظ [[/offline.html]]. الصفحات: [[/]] و [[/about.html]] و [[/never.html]]، والصفحة الرئيسية بتحمّل [[/assets/app.3f9a1c.js]]. و [[/api/public/news]] بيرجّع [[{"version": N}]] والسيرفر بيزوّد N مع كل طلب، عشان نعرف الرد جه من الشبكة ولا قديم من الكاش.
-
----
-
-## ١. الموزّع: [[fetch]] event
-
-~~~text sw.js
-self.addEventListener("fetch", (e) => {
-  const req = e.request;
-  const url = new URL(req.url);
-  if (req.method !== "GET" || url.origin !== self.location.origin) return;
-  if (req.mode === "navigate") return e.respondWith(networkFirst(req));
-  if (url.pathname.startsWith("/assets/")) return e.respondWith(cacheFirst(req));
-  if (url.pathname.startsWith("/api/public/")) return e.respondWith(staleWhileRevalidate(req, e));
-});
-~~~
-
-- [[e.request]]: الـ Request object: فيه [[url]] و [[method]] و [[mode]] والـ headers.
-- [[new URL(req.url)]]: بيفك الـ URL لحتت: [[origin]] (البروتوكول والدومين والبورت) و [[pathname]] (المسار).
-- [[req.method !== "GET"]]: POST و PUT ودول بيغيّروا داتا، ومينفعش يتكاشوا. [[return]] من غير [[respondWith]] = «مليش دعوة»، والـ request يروح للشبكة عادي.
-- [[url.origin !== self.location.origin]]: request لموقع تاني (CDN، API خارجي): برضه سيبه.
-- [[req.mode === "navigate"]]: المتصفح بيفتح صفحة (كتبت URL أو ضغطت لينك). ده الـ HTML.
-- [[startsWith("/assets/")]]: المسار بيبدأ بكده.
-- [[e.respondWith(promise)]]: «أنا اللي هرد، والرد هو اللي الـ Promise ده هيرجّعه». لازم تتنادى على طول جوه الـ event، مش بعد [[await]].
-
-فـ [[return e.respondWith(...)]] معناها: رد، واخرج من الدالة عشان باقي الـ ifs متتفحصش.
-
----
-
-## ٢. network-first (للصفحات)
-
-~~~text sw.js
-async function networkFirst(req) {
-  const cache = await caches.open(CACHE);
-  try {
-    const res = await fetch(req);
-    if (res.ok) cache.put(req, res.clone());
-    return res;
-  } catch {
-    return (await cache.match(req)) ?? (await cache.match("/offline.html"));
-  }
-}
-~~~
-
-1. [[caches.open(CACHE)]]: افتح الدرج.
-2. [[try]]: جرّب [[fetch(req)]] من الشبكة.
-3. [[res.ok]]: true لو الـ status من 200 لـ 299. صفحة 404 أو 500 متتحفظش.
-4. [[cache.put(req, res.clone())]]: احفظ الرد. [[clone()]] لأن الـ body بيتقري مرة واحدة: نسخة للكاش ونسخة للصفحة. ومن غير [[await]] عشان الصفحة متستناش الحفظ. التمن: طلبين لنفس الملف ورا بعض ممكن يروحوا الاتنين للشبكة، لأن التاني بيوصل والحفظ الأول لسه شغال (قسناها في Chrome: [[fetch]] اتنادى مرتين من غير [[await]] ومرة واحدة بيه، تمرين cache-first). ولو مش عايز الصفحة تستنى، حط الحفظ في [[e.waitUntil(...)]] عشان المتصفح ميقفلش الـ SW قبل ما يخلص.
-5. [[catch]]: [[fetch]] بيرمي error بس لما الشبكة نفسها تفشل (مفيش نت، السيرفر مش موجود). الـ 404 مش error.
-6. [[cache.match(req)]]: دوّر على نسخة محفوظة، أو [[undefined]].
-7. [[?? cache.match("/offline.html")]]: لو مفيش، رجّع صفحة الـ offline.
-
----
-
-## ٣. cache-first (للملفات اللي في اسمها hash)
-
-~~~text sw.js
-async function cacheFirst(req) {
-  const hit = await caches.match(req);
-  if (hit) return hit;
-  const res = await fetch(req);
-  if (res.ok) (await caches.open(CACHE)).put(req, res.clone());
-  return res;
-}
-~~~
-
-- [[caches.match(req)]] (من غير open): بيدوّر في **كل** الأدراج.
-- لو لقاه، رد بيه فورًا ومتكلّمش الشبكة خالص.
-- لو لأ، هاته واحفظه للمرة الجاية. [[(await caches.open(CACHE)).put(...)]]: الأقواس عشان [[await]] يخلص الأول وبعدين ننادي [[put]] على النتيجة.
-
----
-
-## ٤. stale-while-revalidate (لـ API عام)
-
-~~~text sw.js
-async function staleWhileRevalidate(req, e) {
-  const cache = await caches.open(CACHE);
-  const hit = await cache.match(req);
-  const fresh = fetch(req).then((res) => {
-    if (res.ok) cache.put(req, res.clone());
-    return res;
-  });
-  e.waitUntil(fresh.catch(() => {}));
-  return hit ?? fresh;
-}
-~~~
-
-- [[hit]]: النسخة القديمة (stale) لو موجودة.
-- [[fresh]]: طلب الشبكة بيبدأ دلوقتي **من غير [[await]]**، فبيشتغل في الخلفية، ولما يرجع يحدّث الكاش.
-- [[e.waitUntil(fresh.catch(() => {}))]]: خلي الـ SW صاحي لحد ما التحديث يخلص (المتصفح بيوقف الـ SW الفاضي). و [[catch]] الفاضية عشان لو مفيش نت الفشل ده ميطلعش error.
-- [[hit ?? fresh]]: لو فيه قديم رد بيه فورًا، وإلا استنى الجديد.
-
----
-
-## ٥. اللي حصل لما شغّلته
-
-### online
-
-~~~text الناتج
-online / → server got: GET /
-SWR #1: {"version":1} server: GET /api/public/news
-SWR #2: {"version":1} server: GET /api/public/news
-SWR #3: {"version":2} server: GET /api/public/news
-POST server: POST /api/public/news
-~~~
-
-- فتح [[/]] للمرة التانية: السيرفر استلم [[GET /]] بس. الـ [[app.3f9a1c.js]] جه من الكاش (cache-first) والسيرفر مشافهوش.
-- SWR #1: مفيش كاش، فاستنى الشبكة وجاب version 1.
-- SWR #2: رد فورًا بالقديم (version 1)، مع إن السيرفر اتطلب منه في الخلفية وطلّع version 2 واتحفظ.
-- SWR #3: رد بـ version 2 اللي اتحفظ في المرة اللي فاتت. يعني SWR دايمًا متأخر خطوة: اللي بتشوفه هو نتيجة الطلب اللي قبله.
-- POST: راح للسيرفر عادي والـ SW مقربلوش.
-
-ده محتوى الكاش بعدها:
-
-~~~text الناتج
-[ '/offline.html', '/assets/app.3f9a1c.js', '/about.html', '/', '/api/public/news' ]
-~~~
-
-### offline (عملت [[setOffline(true)]] زي Offline في DevTools)
-
-~~~text الناتج
-offline / → home | home
-offline /about.html → about | about
-offline /never.html → offline | مفيش نت
-SWR offline: {"version":3}
-/api/me offline: TypeError: Failed to fetch
-~~~
-
-- [[/]] و [[/about.html]] اتزاروا قبل كده، فـ network-first فشل ورجع للكاش.
-- [[/never.html]] متزارتش، فرجعت [[offline.html]].
-- SWR رجّع آخر نسخة محفوظة (3)، والتحديث في الخلفية فشل بهدوء بسبب [[catch]].
-- [[/api/me]] مش في أي استراتيجية، فراح للشبكة وفشل بـ [[TypeError: Failed to fetch]]. ده مقصود: بيانات خاصة باليوزر متتحفظش في Cache Storage.
-
----
-
-## الخلاصة
-
-| الاستراتيجية | بترد من | سؤال الشبكة | لمين |
-|---|---|---|---|
-| network-first | الشبكة، ولو فشلت الكاش | كل مرة | الـ HTML |
-| cache-first | الكاش، ولو مش موجود الشبكة | أول مرة بس | ملفات بـ hash |
-| stale-while-revalidate | الكاش فورًا | كل مرة في الخلفية | API عام، صور |
-| مفيش [[respondWith]] | الشبكة عادي | | POST، origins تانية، بيانات اليوزر |
-
-- [[clone()]] قبل [[put]]، و [[res.ok]] قبل الحفظ.
-- [[fetch]] بيرمي error لما الشبكة تقع بس، مش مع 404.`,
-          lines: [
-            R`[[fetch]] بيتنادى على كل request بتطلبه أي صفحة تحت الـ scope (الصفحة نفسها، الصور، الـ CSS، الـ API). هنا بنقرر لكل request: نرد من الكاش ولا من الشبكة.`,
-            R`[[e.request]]: الـ request نفسه (الـ URL والـ method والـ mode). بنحطه في متغير قصير لأننا هنقرا منه كتير وهنبعته للـ fetch والكاش زي ما هو.`,
-            R`بنحوّل الـ URL النص لـ [[URL]] object عشان نقرا [[pathname]] و [[origin]] على طول بدل ما نقطّع النص بإيدنا.`,
-            R`لو مش [[GET]] (زي POST) أو الـ request رايح لموقع تاني: [[return]] من غير [[respondWith]]، فالمتصفح يكمّل بالشبكة عادي. الكاش بيخزّن GET بس ([[cache.put]] بيرمي error مع POST)، وردود المواقع التانية ممكن تبقى opaque فمنعرفش هي نجحت ولا لأ.`,
-            R`[[navigate]] يعني اليوزر بيفتح صفحة (HTML). network-first: هات الأحدث من الشبكة، والكاش احتياطي لما النت يقع، فاليوزر مش هيشوف صفحة قديمة طول ما النت شغال.`,
-            R`ملفات [[/assets/]] اسمها فيه hash (زي [[app.3f9a.js]])، فلو المحتوى اتغير الاسم يتغير. يبقى أي نسخة في الكاش صح دايمًا، و cache-first بيرد فورًا من غير شبكة.`,
-            R`API عام (داتا مش بتتغير كل ثانية ومش خاصة بيوزر): stale-while-revalidate يرد بالقديم فورًا ويحدّثه في الخلفية للمرة الجاية. متستخدمهاش مع داتا شخصية أو لازم تبقى لحظية، لأن اليوزر هيشوف نسخة متأخرة.`,
-            R`نهاية الـ [[fetch]] listener. أي request مدخلش في الشروط دي بيروح الشبكة عادي، لأننا ما ندهناش [[respondWith]].`,
-            R`network-first: جرّب الشبكة الأول، ولو فشلت ارجع للكاش. بتاخد الـ request وترجّع promise بالـ Response.`,
-            R`افتح الكاش بتاعنا بالاسم اللي في [[CACHE]] (بيتعمل لو مش موجود)، عشان نحفظ فيه ونقرا منه.`,
-            R`[[try]] لأن [[fetch]] بيرمي error لما مفيش نت خالص، وعايزين نمسك الحالة دي ونرد من الكاش بدل ما الصفحة تقع.`,
-            R`هات الصفحة من الشبكة. خلي بالك: [[fetch]] مبيرميش على 404 أو 500، بيرمي بس لو الشبكة نفسها فشلت.`,
-            R`احفظ نسخة في الكاش بس لو الرد ناجح ([[ok]] يعني 200 لـ 299)، عشان متحفظش صفحة error. و [[clone()]] لأن الـ body بيتقري مرة واحدة: نسخة للكاش ونسخة للصفحة.`,
-            R`رجّع الرد الأصلي للصفحة، حتى لو 404: ده رد حقيقي من السيرفر واليوزر لازم يشوفه.`,
-            R`وصلنا هنا يبقى [[fetch]] رمى: غالبًا مفيش نت. [[catch]] من غير متغير لأننا مش محتاجين الـ error نفسه.`,
-            R`رجّع الصفحة من الكاش لو اتحفظت قبل كده، ولو مش موجودة ([[match]] رجّعت [[undefined]] فـ [[??]] تكمّل) رجّع [[offline.html]] اللي اتحفظت وقت الـ install، بدل صفحة error بتاعة المتصفح.`,
-            R`نهاية الـ [[catch]].`,
-            R`نهاية [[networkFirst]].`,
-            R`cache-first: دوّر في الكاش الأول، ومتروحش للشبكة إلا لو الملف مش موجود. أسرع استراتيجية، بس مناسبة بس للملفات اللي مبتتغيرش تحت نفس الاسم.`,
-            R`[[caches.match]] بتدوّر في كل الكاشات مش كاش واحد، فتلاقي الملف حتى لو اتحفظ في الـ precache. بترجّع [[undefined]] لو ملقيتهوش.`,
-            R`لقيناه: رد بيه فورًا من غير شبكة خالص، فده بيشتغل offline وبسرعة.`,
-            R`مش في الكاش (أول مرة نطلبه): هاته من الشبكة. ولو مفيش نت هنا، الـ error يطلع والـ request يفشل، لأن مفيش حاجة نرد بيها.`,
-            R`لو الرد سليم احفظ نسخة ([[clone]]) في كاشنا، فالمرة الجاية السطر اللي فوق يلاقيه.`,
-            R`رجّع الرد الأصلي للصفحة.`,
-            R`نهاية [[cacheFirst]].`,
-            R`stale-while-revalidate: رد بالقديم فورًا، وفي نفس الوقت هات الجديد وحدّث الكاش. بتاخد [[e]] كمان عشان محتاجين [[waitUntil]].`,
-            R`افتح كاشنا عشان نقرا منه ونحدّثه.`,
-            R`دوّر على نسخة محفوظة من قبل. ممكن تبقى [[undefined]] لو دي أول مرة.`,
-            R`ابدأ طلب الشبكة **من غير** [[await]]، فهو يكمّل في الخلفية واحنا نرد بالقديم على طول. [[fresh]] هنا promise بالرد الجديد.`,
-            R`لما الجديد يوصل وهو سليم، حط نسخة منه في الكاش مكان القديمة، فالزيارة الجاية تاخد الأحدث.`,
-            R`رجّع الرد الجديد من الـ [[then]]، فـ [[fresh]] يبقى promise بالـ Response. ده اللي هنستخدمه لو مفيش قديم.`,
-            R`نهاية الـ [[then]].`,
-            R`[[waitUntil]] بتقول للمتصفح «متقفلش الـ SW لحد ما التحديث ده يخلص»، وإلا ممكن يقفله بعد ما الرد يوصل للصفحة والكاش ميتحدّثش. و [[catch(() => {})]] عشان لو مفيش نت، الفشل ده ميطلعش unhandled rejection.`,
-            R`لو فيه قديم رد بيه فورًا، ولو مفيش استنى الجديد. ولأن الدالة [[async]]، رجوع promise منها بيستنى نتيجته، فالاتنين بيوصلوا Response. ولو مفيش قديم والنت واقع، الـ request يفشل.`,
-            R`نهاية [[staleWhileRevalidate]].`,
-          ],
-          sol: R`Offline: الصفحة اللي زرتها قبل كده بتفتح من الكاش (network-first فشل فرجع للكاش)، واللي مزرتهاش بيظهر مكانها [[offline.html]]. ولو مظهرتش ولا دي ولا دي، غالبًا [[offline.html]] مش في [[PRECACHE]] أو الـ install فشل.
-
-في Network عمود Size بيقول «(ServiceWorker)» للـ requests اللي الـ SW رد عليها، وفي Chrome كمان بيظهر request تاني بترس ⚙ للـ fetch اللي الـ SW نفسه عمله للشبكة.
-
-[[/api/me]] مش متكاش بقصد: بيانات خاصة، ولو اتحفظت في Cache Storage هتفضل موجودة بعد الـ logout ويشوفها أي حد يفتح الجهاز. ولو محتاجها offline، خزّنها في IndexedDB وامسحها في الـ logout.`
-        },
-        {
-          cmd: "نسخة جديدة، حدّث",
-          title: "تعمل زرار «فيه نسخة جديدة، حدّث» إزاي؟",
-          desc: R`بدل skipWaiting أوتوماتيك (يكسر الصفحات المفتوحة) أو الاستنى لحد ما اليوزر يقفل كل التابات (ممكن أيام): اسأله. الصفحة تعرف إن فيه SW جديد في حالة waiting، فتظهر شريط «فيه نسخة جديدة» وزرار. لما يضغط، الصفحة تبعت للـ SW رسالة [["SKIP_WAITING"]] (الـ listener اللي عملناه في درس دورة الحياة)، والـ SW يتفعّل، والصفحة تسمع [[controllerchange]] وتعمل reload مرة واحدة.
-
-الحالتين اللي لازم تمسكهم: SW جديد بيتسطّب دلوقتي ([[updatefound]] ثم [[statechange]] لـ [["installed"]])، و SW كان مستني من قبل ما الصفحة تفتح ([[reg.waiting]] موجود من الأول).`,
-          example: R`// في app.js (type="module" عشان top-level await)
-const reg = await navigator.serviceWorker.register("/sw.js");
-const bar = document.querySelector("#update-bar");
-function showUpdate(worker) {
-  bar.hidden = false;
-  bar.querySelector("button").onclick = () => worker.postMessage("SKIP_WAITING");
-}
-if (reg.waiting && navigator.serviceWorker.controller) showUpdate(reg.waiting);
-reg.addEventListener("updatefound", () => {
-  const next = reg.installing;
-  next.addEventListener("statechange", () => {
-    if (next.state === "installed" && navigator.serviceWorker.controller) showUpdate(next);
-  });
-});
-let reloading = false;
-navigator.serviceWorker.addEventListener("controllerchange", () => {
-  if (reloading) return;
-  reloading = true;
-  location.reload();
-});
-setInterval(() => reg.update(), 60 * 60 * 1000);`,
-          try: R`ضيف [[<div id="update-bar" hidden>فيه نسخة جديدة <button>حدّث</button></div>]] في الصفحة، وشيل [[skipWaiting()]] من الـ install لو موجودة (خليها في الـ message بس). غيّر [[CACHE]] في sw.js، واعمل refresh: الشريط ظهر؟ اضغط «حدّث». وبعدين افتح الموقع في تابين وحدّث من واحد: التاني عمل إيه؟`,
-          practice: [
-            { lvl: 'سريع', t: R`ابني الـ toast بتاع التحديث: مخفي من الأول، فيه «حدّث» و «بعدين». «بعدين» بيخفيه لحد ما نسخة أجدد تيجي ([[updatefound]] تاني)، و «حدّث» بيعطّل نفسه بعد أول ضغطة عشان متتبعتش رسالتين.`, done: R`الـ toast بيظهر بعد ما تغيّر [[sw.js]] وتعمل refresh، و «بعدين» بيخفيه و refresh عادي مبيرجّعوش، والضغط مرتين بسرعة على «حدّث» بيعمل reload مرة واحدة، وبعد الـ reload [[reg.waiting]] بـ [[null]].`, sol: R`٣ ملفات، ومحتاجين [[http://localhost]] (الـ SW مبيشتغلش في الـ preview المعزول):
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>التطبيق</title>
-<style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
-  #update-toast { position: fixed; bottom: 16px; inset-inline: 16px; max-width: 420px; margin: auto; display: flex; gap: 8px; align-items: center; padding: 10px 14px; border-radius: 10px; background: #111827; color: #fff; }
-  #update-toast[hidden] { display: none; }
-  #update-toast span { flex: 1; }
-  #update-toast button { font: inherit; border: 0; border-radius: 6px; padding: 4px 12px; }
-  #reload-now { background: #fbbf24; }
-</style>
-</head>
-<body>
-<h1>التطبيق</h1>
-<p>النسخة: <b id="ver">؟</b></p>
-<div id="update-toast" role="status" hidden>
-  <span>فيه نسخة جديدة.</span>
-  <button id="reload-now" type="button">حدّث</button>
-  <button id="later" type="button">بعدين</button>
-</div>
-<script type="module" src="/app.js"></script>
-</body>
-</html>
-~~~
-
-~~~js app.js
-const toast = document.querySelector("#update-toast");
-const btn = document.querySelector("#reload-now");
-let waitingWorker = null;
-
-// «بعدين» بتتفكّر في التاب ده لحد ما نسخة أجدد تيجي
-const DISMISS = "update-dismissed";
-const dismissed = () => { try { return sessionStorage.getItem(DISMISS) === "1"; } catch { return false; } };
-const setDismissed = (v) => { try { v ? sessionStorage.setItem(DISMISS, "1") : sessionStorage.removeItem(DISMISS); } catch {} };
-
-function showUpdate(worker) {
-  waitingWorker = worker;
-  if (dismissed()) return;
-  btn.disabled = false;
-  toast.hidden = false;
-}
-
-btn.addEventListener("click", () => {
-  btn.disabled = true;                              // ضغطتين = رسالة واحدة
-  btn.textContent = "بيحدّث...";
-  waitingWorker?.postMessage("SKIP_WAITING");
-});
-document.querySelector("#later").addEventListener("click", () => {
-  toast.hidden = true;
-  setDismissed(true);
-});
-
-if ("serviceWorker" in navigator) {
-  const reg = await navigator.serviceWorker.register("/sw.js");
-  if (reg.waiting && navigator.serviceWorker.controller) showUpdate(reg.waiting);
-  reg.addEventListener("updatefound", () => {
-    const next = reg.installing;
-    setDismissed(false);                            // نسخة أجدد: اسأل تاني
-    next.addEventListener("statechange", () => {
-      if (next.state === "installed" && navigator.serviceWorker.controller) showUpdate(next);
-    });
-  });
-
-  let reloading = false;
-  navigator.serviceWorker.addEventListener("controllerchange", () => {
-    if (reloading) return;                          // controllerchange ممكن ييجي أكتر من مرة
-    reloading = true;
-    location.reload();
-  });
-
-  // اسأل الـ SW الشغال عن نسخته
-  const c = navigator.serviceWorker.controller;
-  if (c) {
-    const { port1, port2 } = new MessageChannel();
-    port1.onmessage = (e) => (document.querySelector("#ver").textContent = e.data);
-    c.postMessage("VERSION", [port2]);
-  }
-}
-~~~
-
-~~~js sw.js
-const VERSION = "v1";
-const CACHE = "app-" + VERSION;
-
-self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(["/", "/app.js"])));
-});
-self.addEventListener("activate", (e) => {
-  e.waitUntil((async () => {
-    for (const k of await caches.keys()) if (k !== CACHE) await caches.delete(k);
-    await self.clients.claim();
-  })());
-});
-self.addEventListener("message", (e) => {
-  if (e.data === "SKIP_WAITING") self.skipWaiting();
-  if (e.data === "VERSION") e.ports[0].postMessage(VERSION);
-});
-self.addEventListener("fetch", (e) => {
-  if (e.request.method !== "GET") return;
-  e.respondWith(caches.match(e.request).then((hit) => hit ?? fetch(e.request)));
-});
-~~~
-
-**القياس:** Chrome 158 headless على [[http://localhost:8831]]. غيّرنا [["v1"]] لـ [["v2"]] في [[sw.js]] وعملنا refresh، وبعدين «بعدين»، وrefresh، وبعدين نسخة [["v3"]] وصلت ([[reg.update()]])، وفي الآخر ضغطتين ورا بعض على «حدّث» ([[dblclick]]) وعدّينا الـ navigations:
-
-~~~text الناتج (Chrome 158 headless)
-أول زيارة + refresh                | toast: مخفي | النسخة: v1
-غيّرنا sw.js + refresh             | toast: ظاهر | النسخة: v1
-«بعدين»                            | toast: مخفي | النسخة: v1
-refresh عادي                       | toast: مخفي | النسخة: v1
-نسخة أجدد (v3) وصلت                | toast: ظاهر | النسخة: v1
-ضغطتين بسرعة على «حدّث»            | toast: مخفي | النسخة: v3
-  عدد الـ reloads: 1 | reg.waiting بعدها: null
-pageerrors: 0
-~~~
-
-**ليه كده:**
-
-- **«بعدين» في [[sessionStorage]]:** من غيرها، الـ refresh بيلاقي [[reg.waiting]] لسه موجود فبيظهر الـ toast تاني على طول. الـ flag بيعيش في التاب ده بس، و [[updatefound]] (نسخة أجدد) بيمسحه، فـ v3 ظهرت تاني.
-- **[[btn.disabled = true]] أول حاجة في الضغطة:** الضغطة التانية على زرار مقفول مبتعملش [[click]] أصلًا، فـ [[SKIP_WAITING]] اتبعتت مرة واحدة والصفحة عملت reload واحد.
-- **[[reloading]] في [[controllerchange]]:** حماية تانية لو الحدث جه أكتر من مرة.
-- **[[reg.waiting]] بـ [[null]] بعد الـ reload:** النسخة اللي كانت مستنية بقت هي الـ active، ومفيش حاجة تانية مستنية، والـ badge بيقول [[v3]].
-- **[[try]] حوالين [[sessionStorage]]:** لو التخزين ممنوع، الـ toast بيشتغل عادي من غير ما يفتكر «بعدين».
-
-**الغلطة الشائعة:** «بعدين» بتخفي الـ toast بس بـ [[hidden = true]] من غير ما تفتكر. أول refresh بيرجّعه، واليوزر بيحس إن الموقع بيزن عليه.` },
-            { lvl: 'تطبيق', t: R`اشرحها: ارسم الخطوات من «غيّرت sw.js» لحد «الصفحة عملت reload» بأسماء الأحداث ([[updatefound]] و [[statechange]] و [[postMessage]] و [[controllerchange]]...) ومين بيعملها (الصفحة ولا الـ SW). وبعدين حط [[console.log]] في كل خطوة (فعّل Preserve log) وقارن.`, done: R`كل حدث في رسمتك ظهر في اللوج (وحالات الـ worker: [[installing]] ثم [[installed]] ثم [[activating]] ثم [[activated]])، ولو الترتيب اختلف عن رسمتك كتبت ليه، وتقدر تشرح الرسمة لزميل في دقيقة.`, sol: R`**الرسمة (الإجابة النموذجية):**
-
-~~~text
-(الصفحة)  refresh أو reg.update()
-(المتصفح) بيجيب sw.js ويلاقيه مختلف byte بـ byte
-(SW جديد) install            ← state: installing ثم installed
-(الصفحة)  updatefound، وبعدها statechange = installed و controller موجود ← اعرض الشريط
-(اليوزر)  دوس «حدّث»
-(الصفحة)  waitingWorker.postMessage("SKIP_WAITING")
-(SW جديد) skipWaiting()       ← state: activating
-(الصفحة)  controllerchange    ← location.reload() مرة واحدة
-(SW جديد) activate: يمسح الكاشات القديمة و clients.claim()   ← state: activated
-(الصفحة)  اتحمّلت تاني والـ SW الجديد بيتحكم فيها
-~~~
-
-**الـ console.log في كل خطوة:** نسخة من [[app.js]] و [[sw.js]] بتوع التمرين اللي فات، ومعاهم سطر لوج قبل كل خطوة (الأسطر دي بس اللي زادت):
-
-~~~js app.js (اللي زاد)
-console.log("[الصفحة] اتحمّلت، الـ controller:", c ? "موجود" : "مفيش");
-console.log("[الصفحة] updatefound، الجديد:", next.state);
-console.log("[الصفحة] statechange →", next.state);       // جوه statechange
-console.log("[الصفحة] الشريط ظهر");                       // جوه showUpdate
-console.log("[الصفحة] postMessage(\"SKIP_WAITING\")");
-console.log("[الصفحة] controllerchange، reload");
-~~~
-
-~~~js sw.js (اللي زاد)
-console.log($__bt[SW $__{VERSION}] install$__bt);
-console.log($__bt[SW $__{VERSION}] activate$__bt);
-console.log($__bt[SW $__{VERSION}] skipWaiting$__bt);
-~~~
-
-اتجمّع اللوج من الصفحة والـ SW مع بعض عبر الـ reload (زي Preserve log في الـ Console):
-
-~~~text الناتج (Chrome 158 headless، http://localhost:8833، v1 ← v2)
-[الصفحة] اتحمّلت، الـ controller: موجود
-[الصفحة] updatefound، الجديد: installing
-[SW v2] install
-[الصفحة] statechange → installed
-[الصفحة] الشريط ظهر
-[الصفحة] postMessage("SKIP_WAITING")
-[SW v2] skipWaiting
-[الصفحة] statechange → activating
-[الصفحة] controllerchange، reload
-[SW v2] activate
-[الصفحة] statechange → activated
-[الصفحة] اتحمّلت، الـ controller: موجود
-~~~
-
-**اللي اختلف عن الرسمة:** [[controllerchange]] (والـ reload) جه **قبل** [[[SW v2] activate]]. الـ controller بيتغيّر أول ما الـ worker يبقى [[activating]]، مش بعد ما حدث [[activate]] يخلص. عشان كده الـ SW لازم يكون جاهز يرد على الطلبات حتى وهو لسه بيمسح الكاشات القديمة، والصفحة اللي بتتحمّل بعد الـ reload ممكن تعدّي عليه قبل ما الـ [[activate]] يخلص. والـ [[waitUntil]] في [[activate]] بيأجّل الـ fetch events لحد ما يخلص (ده مكتوب في مواصفات Service Workers: الـ fetch بيستنى لحد ما الحالة تبقى [[activated]])، فمفيش طلب بيروح لكاش اتمسح نصه.
-
-**الغلطة الشائعة:** تفتكر إن [[postMessage]] بيفعّل النسخة الجديدة. هو بيبعت رسالة بس، والـ SW هو اللي بيقرر ينادي [[skipWaiting()]]. لو نسيت الـ [[message]] listener في [[sw.js]]، الزرار هيتداس ومفيش حاجة هتحصل.` },
-            { lvl: 'تحدي', t: R`محاكاة يوزر عنده ٣ تابات: افتح الموقع ٣ مرات، وغيّر [[sw.js]]، واعمل refresh في واحد بس، واضغط «حدّث» منه. صلّح أي تاب بيعمل reload أكتر من مرة.`, done: R`الشريط بيظهر في التلات تابات، والضغط من تاب واحد بيعمل reload للتلاتة مرة واحدة لكل تاب، ومفيش reload loop حتى لو [[controllerchange]] اتنادى أكتر من مرة، وبعدها Application ← Service workers فيه worker واحد بس activated.`, sol: R`نفس [[index.html]] و [[app.js]] و [[sw.js]] بتوع أول تمرين في الدرس ده، من غير أي تعديل. الحماية من الـ reload المتكرر موجودة فيهم:
-
-~~~js app.js (الجزء ده)
-let reloading = false;
-navigator.serviceWorker.addEventListener("controllerchange", () => {
-  if (reloading) return;                          // controllerchange ممكن ييجي أكتر من مرة
-  reloading = true;
-  location.reload();
-});
-~~~
-
-**القياس:** Chrome 158 headless، ٣ تابات في نفس الـ browser context على [[http://localhost:8832]]. غيّرنا [[sw.js]] لـ [["v2"]]، وعملنا refresh في التاب التاني بس، وضغطنا «حدّث» منه، وعدّينا الـ navigations في كل تاب، وسألنا DevTools Protocol عن الـ workers اللي فاضلين:
-
-~~~text الناتج (Chrome 158 headless)
-الشريط ظاهر في: [true,true,true]
-reloads لكل تاب بعد «حدّث» من التاب ٢: [1,1,1]
-النسخة في التلات تابات: ["v2","v2","v2"]
-الـ workers: ["activated"]
-pageerrors: 0
-~~~
-
-**ليه كده:**
-
-- **الشريط ظهر في التلاتة مع إن الـ refresh في واحد بس:** الـ registration واحد للـ origin كله، والـ [[updatefound]] و [[statechange]] بيوصلوا لكل تاب عنده object للـ registration. التاب اللي عمل refresh هو اللي خلّى المتصفح يكتشف النسخة، والتانيين عرفوا من الأحداث.
-- **«حدّث» من تاب واحد = reload في التلاتة:** [[skipWaiting]] بيخلّي النسخة الجديدة active للـ origin كله، و [[clients.claim()]] بياخد كل التابات، فكل تاب بياخد [[controllerchange]] ويعمل reload لنفسه مرة واحدة.
-- **[[reloading]]:** جرّبنا نسخة من غيره والنتيجة كانت برضه [[[1,1,1]]] في Chrome 158، يعني الحدث جه مرة لكل تاب. الـ flag حماية رخيصة لو الحدث اتكرر (مثلًا SW تاني اتسجّل وعمل [[claim]] وإحنا بنعمل reload)، ومش هو اللي صلّح حاجة هنا.
-- **worker واحد بس [[activated]]:** القديم بقى [[redundant]] واتشال، ومفيش حاجة مستنية.
-
-**الغلطة الشائعة:** تعمل [[location.reload()]] جوه click handler بتاع «حدّث» مباشرة بدل ما تستنى [[controllerchange]]. التاب ده بيعمل reload قبل ما النسخة الجديدة تتفعّل فبيرجع بالقديمة والشريط تاني، والتابين التانيين ميعرفوش حاجة.` },
-          ],
-          ref: [
-            { t: "MDN: ServiceWorkerGlobalScope.skipWaiting()", url: "https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/skipWaiting" },
-            { t: "MDN: Clients.claim()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Clients/claim" },
-            { t: "MDN: controllerchange event", url: "https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerContainer/controllerchange_event" },
-            { t: "MDN: ServiceWorkerRegistration: updatefound event", url: "https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/updatefound_event" },
-          ],
-          flag: "script",
-          deep: {
-            why: "ده الحل المتوازن لمشكلة waiting: اليوزر بياخد التحديث بسرعة، ومفيش صفحة بتتكسر في النص، ومفيش reload فجأة وهو بيكتب. وكل مكتبات الـ PWA (vite-plugin-pwa و Workbox و Serwist) بتقدّم نفس الـ pattern جاهز.",
-            how: R`[[navigator.serviceWorker.controller]] بيبقى null في أول زيارة خالص (مفيش SW بيتحكم لسه). من غيره، أول تسطيب هيطلّع «نسخة جديدة» وده غلط: دي أول نسخة.
-
-[[updatefound]] بيتنادى لما المتصفح يلاقي sw.js اتغير ويبدأ يسطّبه، و [[reg.installing]] هو الـ worker الجديد. لما حالته تبقى [["installed"]] وفيه controller قديم، يبقى هو في waiting.
-
-لما اليوزر يضغط: [[postMessage("SKIP_WAITING")]] ← الـ SW الجديد ينادي [[skipWaiting()]] ← activate ← (و [[clients.claim()]] لو موجودة) ← كل التابات المفتوحة تاخد [[controllerchange]] ← reload. عشان كده التاب التاني بيعمل reload هو كمان. الـ [[reloading]] flag بيمنع reload مرتين (في DevTools مع «Update on reload» ممكن يحصل loop).
-
-[[reg.update()]] كل ساعة للتطبيقات اللي بتفضل مفتوحة أيام (dashboard على شاشة)، لأن الفحص التلقائي بيحصل مع التنقل بس.
-
-صفحة الـ offline: [[offline.html]] في الـ PRECACHE، ترد بيها في network-first لما الـ fetch يفشل ومفيش نسخة (الدرس اللي فات). خليها صفحة لوحدها بـ CSS inline ومن غير JS خارجي، عشان مش هتلاقي حاجة تانية من غير نت.`,
-            when: R`أي PWA بـ cache-first لملفات الـ JS. و autoUpdate (skipWaiting دايمًا) بس لو الموقع network-first أو static بسيط (زي الموقع ده).`,
-            mistakes: R`تنسى فحص controller فيظهر الشريط أول زيارة. وتنسى [[reg.waiting]] عند فتح الصفحة فاللي فتح بعد ما التحديث اتسطب مش هيشوف الشريط. و reload في controllerchange من غير flag. وتنسى إن [[clients.claim()]] بيطلّع controllerchange في أول زيارة كمان فيحصل reload زيادة (ابدأ الـ flag بـ [[!navigator.serviceWorker.controller]]). و reload وهو في نص فورم: احفظ المسودة الأول أو خلي الزرار هو اللي يبدأ الـ reload بس.`
-          },
-          teach: R`## الفكرة في سطر
-
-الصفحة بتراقب: لو فيه SW جديد واقف في waiting، تظهر شريط. اليوزر يضغط ← الصفحة تبعت [["SKIP_WAITING"]] ← الـ SW الجديد يتفعّل ← الصفحة تسمع [[controllerchange]] وتعمل reload مرة واحدة.
-
-جرّبته في Chrome headless (عن طريق playwright-core، بروفايل مؤقت) على سيرفر Node على localhost: [[index.html]] فيه [[<div id="update-bar" hidden>فيه نسخة جديدة <button>حدّث</button></div>]] و [[<script type="module" src="/app.js">]]، و [[app.js]] هو المثال بالظبط، و [[sw.js]] من درس دورة الحياة من غير [[skipWaiting]] في الـ install (فيه [[clients.claim()]] في الـ activate والـ message listener).
-
----
-
-## ١. التسجيل
-
-~~~text app.js
-const reg = await navigator.serviceWorker.register("/sw.js");
-const bar = document.querySelector("#update-bar");
-~~~
-
-- [[await]] برّه أي دالة (top-level await) مسموح بس في module، عشان كده [[type="module"]] في الـ script.
-- [[reg]]: الـ ServiceWorkerRegistration. فيه [[reg.installing]] و [[reg.waiting]] و [[reg.active]]، كل واحد worker أو [[null]].
-
----
-
-## ٢. دالة إظهار الشريط
-
-~~~text app.js
-function showUpdate(worker) {
-  bar.hidden = false;
-  bar.querySelector("button").onclick = () => worker.postMessage("SKIP_WAITING");
-}
-~~~
-
-- [[bar.hidden = false]]: شيل الـ attribute [[hidden]] فالشريط يظهر.
-- [[onclick = ...]]: لما الزرار يتضغط. بنستخدم [[onclick]] مش [[addEventListener]] عشان لو الدالة اتنادت مرتين، الـ handler يتبدّل بدل ما يتكرر.
-- [[worker.postMessage("SKIP_WAITING")]]: ابعت الرسالة للـ worker **الجديد** ده بالذات (مش للـ controller القديم). جوه [[sw.js]] الـ message listener بينادي [[skipWaiting()]].
-
----
-
-## ٣. الحالتين اللي بنمسكهم
-
-### كان مستني من قبل ما الصفحة تفتح
-
-~~~text app.js
-if (reg.waiting && navigator.serviceWorker.controller) showUpdate(reg.waiting);
-~~~
-
-- [[reg.waiting]]: فيه نسخة متسطّبة ومستنية.
-- [[navigator.serviceWorker.controller]]: الـ SW اللي بيتحكم في الصفحة دي. [[null]] في أول زيارة خالص، فالشرط ده بيمنع «نسخة جديدة» في أول مرة.
-- [[&&]]: الاتنين لازم يبقوا موجودين.
-
-### بيتسطّب دلوقتي
-
-~~~text app.js
-reg.addEventListener("updatefound", () => {
-  const next = reg.installing;
-  next.addEventListener("statechange", () => {
-    if (next.state === "installed" && navigator.serviceWorker.controller) showUpdate(next);
-  });
-});
-~~~
-
-1. [[updatefound]]: المتصفح لقى [[sw.js]] اتغير وبدأ يسطّبه.
-2. [[reg.installing]]: الـ worker الجديد، حالته [["installing"]].
-3. [[statechange]]: كل ما حالته تتغير: [[installing]] ← [[installed]] ← [[activating]] ← [[activated]] (أو [[redundant]] لو فشل).
-4. [["installed"]] وفيه controller قديم = هو في waiting، فاعرض الشريط.
-
----
-
-## ٤. الـ reload
-
-~~~text app.js
-let reloading = false;
-navigator.serviceWorker.addEventListener("controllerchange", () => {
-  if (reloading) return;
-  reloading = true;
-  location.reload();
-});
-~~~
-
-- [[controllerchange]]: الـ SW اللي بيتحكم في الصفحة اتغير. بيحصل في **كل** التابات المفتوحة.
-- [[reloading]]: flag عشان نعمل reload مرة واحدة حتى لو الـ event جه مرتين.
-- [[location.reload()]]: حمّل الصفحة من جديد، فتيجي الملفات الجديدة.
-
----
-
-## ٥. الفحص الدوري
-
-~~~text app.js
-setInterval(() => reg.update(), 60 * 60 * 1000);
-~~~
-
-- [[setInterval(fn, ms)]]: نادي الدالة كل كذا millisecond.
-- [[60 * 60 * 1000]]: 60 دقيقة × 60 ثانية × 1000 ms = 3600000 = ساعة.
-- [[reg.update()]]: روح شوف [[sw.js]] اتغير ولا لأ دلوقتي. لو اتغير بيبدأ install، فـ [[updatefound]] يتنادى.
-
----
-
-## ٦. اللي حصل لما شغّلته
-
-فتحت تاب A، وبعدين غيّرت [[CACHE]] في [[sw.js]] لـ [["v2"]]، وفتحت تاب B، وضغطت الزرار في A. وعدّيت مرات تحميل كل تاب:
-
-~~~text الناتج
-أول زيارة: الشريط مخفي controller: true
-refresh: الشريط مخفي
-بعد v2 + refresh: الشريط ظاهر
-تاب B اتفتح بعد التحديث: الشريط ظاهر (reg.waiting: true)
-loads قبل: {"A":4,"B":1} بعد الضغط: {"A":5,"B":2}
-caches: ["v2"] bar A: مخفي bar B: مخفي
-~~~
-
-- **أول زيارة:** الشريط مخفي بسبب شرط الـ controller.
-- **بعد v2:** [[updatefound]] ← [[statechange]] لـ [["installed"]] ← الشريط ظهر.
-- **تاب B:** اتفتح والـ SW الجديد كان واقف في waiting، فالشرط الأولاني ([[reg.waiting]]) هو اللي ظهّر الشريط. من غير السطر ده B مكانش هيعرف.
-- **بعد الضغط في A:** كل تاب اتحمّل **مرة واحدة زيادة بالظبط** (A من 4 لـ 5، و B من 1 لـ 2)، والكاش القديم اتمسح.
-
-### مفاجأة: reload زيادة في أول زيارة
-
-ليه A اتحمّل 4 مرات قبل الضغط مع إننا عملنا goto و refresh مرتين بس (3)؟ قِست أول زيارة لوحدها:
-
-~~~text الناتج
-loads after first visit: 2 2 x GET /
-~~~
-
-في أول زيارة الصفحة اتفتحت من غير controller، وبعدين الـ SW عمل [[clients.claim()]] فالـ controller اتغير من [[null]] لـ SW، فـ [[controllerchange]] اتنادى وعمل reload مش محتاجينه. الحل: ابدأ الـ flag بـ true لو مفيش controller أصلًا:
-
-~~~text app.js
-let reloading = !navigator.serviceWorker.controller;
-~~~
-
-~~~text الناتج بعد التعديل
-loads after first visit: 1 1 x GET /
-~~~
-
-وباقي السيناريو اشتغل زي ما هو (الشريط ظهر في A و B، وكل تاب اتحمّل مرة واحدة بعد الضغط). الثمن: الصفحة اللي اتفتحت أول زيارة مش هتعمل reload لوحدها لو جه تحديث وهي لسه مفتوحة، وده مقبول (هتاخده المرة الجاية).
-
----
-
-## الخلاصة
-
-| الحدث | معناه | بنعمل إيه |
-|---|---|---|
-| [[reg.waiting]] عند الفتح | نسخة مستنية من قبل | اعرض الشريط |
-| [[updatefound]] ← [["installed"]] | نسخة اتسطّبت دلوقتي | اعرض الشريط |
-| ضغطة الزرار | اليوزر وافق | [[postMessage("SKIP_WAITING")]] للجديد |
-| [[controllerchange]] | الجديد استلم | reload مرة واحدة |
-
-- شرط [[controller]] بيفرّق أول زيارة عن التحديث.
-- [[clients.claim()]] بيطلّع [[controllerchange]] في أول زيارة كمان، فخلي بالك من reload زيادة.
-- كل التابات بتعمل reload مع بعض، لأن الـ SW واحد للـ origin كله.`,
-          lines: [
-            R`سجّل الـ SW واستنى الـ registration object، اللي منه هنعرف لو فيه نسخة مستنية أو جديدة بتتسطّب. [[await]] برّه دالة محتاج الملف يتحمّل كـ module ([[type="module"]]).`,
-            R`الشريط اللي هيقول «فيه نسخة جديدة» وفيه زرار. بيبدأ [[hidden]] في الـ HTML ومش هيظهر إلا لما يبقى فيه تحديث فعلًا.`,
-            R`دالة بتظهر الشريط وتربط الزرار بالـ worker الجديد اللي مستني. بتاخد الـ worker عشان الزرار يبعتله هو بالذات.`,
-            R`اظهر الشريط: [[hidden = false]] بتشيل الـ attribute فيبان.`,
-            R`لما اليوزر يدوس، ابعت [[SKIP_WAITING]] للـ worker الجديد، فهو ينادي [[skipWaiting()]] ويتفعّل. [[onclick]] مش [[addEventListener]]، عشان لو الدالة اتندهت مرتين الزرار ميبقاش عليه اتنين listeners.`,
-            R`نهاية [[showUpdate]].`,
-            R`الحالة الأولى: الصفحة فتحت وفيه بالفعل نسخة مستنية من قبل ([[reg.waiting]])، فاعرض الشريط على طول. و [[controller]] بيتأكد إن فيه SW شغال بيتحكم في الصفحة دلوقتي؛ لو مفيش (زي أول زيارة) يبقى مفيش نسخة قديمة نحدّثها.`,
-            R`الحالة التانية: [[updatefound]] يعني المتصفح لقى إن [[sw.js]] اتغير وبدأ يسطّب النسخة الجديدة والصفحة مفتوحة.`,
-            R`[[reg.installing]]: الـ worker الجديد اللي لسه بيتسطّب. بنحفظه في متغير عشان نتابعه، لأنه لسه مخلصش install.`,
-            R`[[statechange]] بيتنادى كل ما حالة الـ worker تتغير ([[installing]] ثم [[installed]] ثم [[activating]] ثم [[activated]])، فبنستنى اللحظة الصح نظهر فيها الشريط.`,
-            R`لما يبقى [[installed]] وفيه SW قديم بيتحكم في الصفحة، يبقى الجديد واقف في waiting: اعرض الشريط. من غير شرط [[controller]] الشريط كان هيظهر في أول زيارة خالص، ومفيش حاجة قديمة نحدّثها.`,
-            R`نهاية الـ [[statechange]] listener.`,
-            R`نهاية الـ [[updatefound]] listener.`,
-            R`علامة إننا عملنا reload. محتاجينها لأن [[controllerchange]] ممكن يتنادى أكتر من مرة (زي لما DevTools يبقى عليه «Update on reload»)، ومن غيرها الصفحة تدخل في reload ورا reload.`,
-            R`[[controllerchange]]: الـ SW اللي بيتحكم في الصفحة اتغير، يعني الجديد اتفعّل بعد [[skipWaiting]] و [[clients.claim]]. الصفحة دلوقتي شغالة بـ JS قديم مع SW جديد، فلازم reload.`,
-            R`لو عملنا reload خلاص، اخرج ومتعملش تاني.`,
-            R`علّم إننا بدأنا الـ reload قبل ما ننديه، فأي نداء تاني يقف عند السطر اللي فوق.`,
-            R`حمّل الصفحة من جديد، فتيجي الـ HTML والـ JS من النسخة الجديدة اللي الـ SW الجديد بيقدّمها.`,
-            R`نهاية الـ [[controllerchange]] listener.`,
-            R`المتصفح بيفحص [[sw.js]] لوحده لما اليوزر يفتح صفحة، بس اللي سايب التاب مفتوح أيام مش بيفتح صفحات جديدة. [[reg.update()]] كل ساعة بتفحص بإيدك، ولو لقت نسخة جديدة [[updatefound]] يتنادى والشريط يظهر.`,
-          ],
-          sol: R`بعد تغيير [[CACHE]] والـ refresh: الـ SW الجديد بيتسطّب ويقف في waiting، فالشريط بيظهر. الضغط على «حدّث» بيعمل reload واحد، والصفحة بقت تحت الـ SW الجديد (Application ← Service workers بيعرض واحد بس activated).
-
-في التابين: التاني بيعمل reload لوحده في نفس اللحظة، لأن الـ SW واحد لكل الـ origin، ولما اتغير كل التابات خدت [[controllerchange]]. ده غالبًا اللي انت عايزه (مفيش تاب شغال بنسخة قديمة مع SW جديد)، بس لو فيه تاب فيه فورم نصه مكتوب، احفظ المسودة قبل الـ reload (درس visibilitychange).
-
-ولو الشريط ظهر في أول زيارة خالص: نسيت شرط [[navigator.serviceWorker.controller]].`
-        },
-        {
-          cmd: "vite-plugin-pwa و Serwist",
-          title: "تعمل PWA في مشروع Vite أو Next.js من غير ما تكتب SW بإيدك",
-          desc: R`كتابة SW بإيدك مفيدة عشان تفهم، بس في المشاريع الحقيقية فيه مشكلة: الـ build بيطلّع ملفات بأسماء فيها hashes بتتغير كل مرة، ولازم قايمة الـ precache تبقى مظبوطة. الأدوات بتعمل ده لوحدها: بتولّد القايمة من الـ build وبتحطها في الـ SW، وبتدّيك الاستراتيجيات والـ update prompt جاهزين. الاتنين مبنيين على أفكار Workbox بتاعة Google.
-
-Vite (React أو Vue أو أي حاجة): [[vite-plugin-pwa]]. بتضيف [[VitePWA({...})]] في [[vite.config]] بالـ manifest، و [[registerType: "prompt"]] للزرار أو [[autoUpdate]]، وفي الكود [[registerSW]] من [[virtual:pwa-register]] (أو [[useRegisterSW]] من [[virtual:pwa-register/react]]).
-
-Next.js: [[Serwist]] (fork من Workbox بيتطور). بتكتب [[app/sw.ts]] صغير بـ [[new Serwist({...})]]، وبتلف الـ config بـ [[withSerwistInit]] من [[@serwist/next]]. ولـ Turbopack فيه [[@serwist/turbopack]] بطريقة setup مختلفة شوية (route handler)، فبص على الـ docs بتاعة النسخة اللي عندك.`,
-          example: R`// vite.config.ts
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import { VitePWA } from "vite-plugin-pwa";
-export default defineConfig({
-  plugins: [
-    react(),
-    VitePWA({
-      registerType: "prompt",
-      includeAssets: ["favicon.svg", "apple-touch-icon.png"],
-      manifest: {
-        name: "مهامي", short_name: "مهامي", lang: "ar", dir: "rtl", theme_color: "#1f2430",
-        icons: [
-          { src: "pwa-192x192.png", sizes: "192x192", type: "image/png" },
-          { src: "pwa-512x512.png", sizes: "512x512", type: "image/png" },
-        ],
-      },
-      workbox: { globPatterns: ["**/*.{js,css,html,svg,png,woff2}"] },
-    }),
-  ],
-});
-// src/pwa.ts
-import { registerSW } from "virtual:pwa-register";
-const updateSW = registerSW({
-  onNeedRefresh() {
-    if (confirm("فيه نسخة جديدة، تحدّث؟")) updateSW(true);
-  },
-  onOfflineReady() {
-    console.log("الموقع جاهز يشتغل من غير نت");
-  },
-});`,
-          try: R`اعمل [[npm create vite@latest pwa-lab -- --template react-ts]]، و [[npm i -D vite-plugin-pwa]]، وحط الـ config ده، و [[import "./pwa"]] في [[main.tsx]]. اعمل [[npm run build]] و [[npm run preview]] (الـ SW مش بيشتغل في [[dev]] افتراضيًا). بص على [[dist/sw.js]]: فيه أسماء ملفاتك؟ غيّر أي نص في App، واعمل build و preview تاني، واعمل refresh: الـ confirm ظهر؟`,
-          practice: [
-            { lvl: 'سريع', t: R`ابني في [[pwa.ts]] شريط بدل الـ [[confirm]]: [[onNeedRefresh]] بيظهر شريط فيه «حدّث» بينادي [[updateSW(true)]]، و [[onOfflineReady]] بيظهر toast «الموقع جاهز من غير نت» ويختفي بعد ٣ ثواني.`, done: R`بعد أول [[npm run build]] و [[npm run preview]] الـ toast بيظهر مرة واحدة ويختفي لوحده، وبعد ما تغيّر نص في App وتعمل build تاني و refresh الشريط بيظهر، و «حدّث» بيجيب النص الجديد.`, sol: R`مشروع Vite صغير (من غير React عشان الحل يبقى أقصر، الـ plugin نفسه هو هو):
-
-~~~text
-pwa-toast/
-├── package.json
-├── vite.config.ts
-├── index.html
-├── public/pwa-192x192.png و pwa-512x512.png
-└── src/
-    ├── main.ts
-    ├── pwa.ts
-    └── style.css
-~~~
-
-التجهيز: [[npm i -D vite@6 vite-plugin-pwa@1]]، وبعدين [[npm run build]] و [[npm run preview]].
-
-~~~json package.json
-{
-  "name": "pwa-toast",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview --port 8831 --strictPort"
-  },
-  "type": "module",
-  "devDependencies": {
-    "fake-indexeddb": "^6.2.8",
-    "vite": "^6.4.6",
-    "vite-plugin-pwa": "^1.3.0"
-  },
-  "dependencies": {
-    "idb": "^8.0.4"
-  }
-}
-~~~
-
-~~~js vite.config.ts
-import { defineConfig } from "vite";
-import { VitePWA } from "vite-plugin-pwa";
-
-export default defineConfig({
-  plugins: [
-    VitePWA({
-      registerType: "prompt",
-      manifest: {
-        name: "مهامي", short_name: "مهامي", lang: "ar", dir: "rtl", theme_color: "#1f2430",
-        icons: [
-          { src: "pwa-192x192.png", sizes: "192x192", type: "image/png" },
-          { src: "pwa-512x512.png", sizes: "512x512", type: "image/png" },
-        ],
-      },
-      workbox: { globPatterns: ["**/*.{js,css,html,svg,png,woff2}"] },
-    }),
-  ],
-});
-~~~
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مهامي</title>
-<link rel="stylesheet" href="/src/style.css">
-</head>
-<body>
-<h1 id="title">مهامي: النسخة الأولى</h1>
-<div id="update-bar" role="status" hidden>
-  <span>فيه نسخة جديدة.</span>
-  <button id="update-now" type="button">حدّث</button>
-</div>
-<div id="offline-toast" role="status" hidden>الموقع جاهز من غير نت</div>
-<script type="module" src="/src/main.ts"></script>
-</body>
-</html>
-~~~
-
-~~~js src/main.ts
-import "./pwa";
-~~~
-
-~~~js src/pwa.ts
-import { registerSW } from "virtual:pwa-register";
-
-const bar = document.querySelector<HTMLElement>("#update-bar")!;
-const btn = document.querySelector<HTMLButtonElement>("#update-now")!;
-const toast = document.querySelector<HTMLElement>("#offline-toast")!;
-
-const updateSW = registerSW({
-  onNeedRefresh() {
-    bar.hidden = false;                       // بدل confirm: شريط اليوزر يختار منه
-  },
-  onOfflineReady() {
-    toast.hidden = false;
-    setTimeout(() => (toast.hidden = true), 3000);
-  },
-});
-
-btn.addEventListener("click", () => {
-  btn.disabled = true;
-  updateSW(true);                             // skipWaiting + reload لما الجديد يبقى active
-});
-~~~
-
-~~~css src/style.css
-body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
-#update-bar, #offline-toast { position: fixed; inset-inline: 16px; bottom: 16px; padding: 10px 14px; border-radius: 10px; color: #fff; display: flex; gap: 8px; align-items: center; }
-#update-bar { background: #111827; }
-#offline-toast { background: #065f46; }
-[hidden] { display: none !important; }
-#update-bar span { flex: 1; }
-~~~
-
-**القياس:** [[vite build]] و [[vite preview]] على [[http://localhost:8831]] و Chrome 158 headless. وبعدين غيّرنا «النسخة الأولى» لـ «النسخة التانية» في [[index.html]] وعملنا build تاني (الـ preview شغال زي ما هو):
-
-~~~text الناتج (vite 6.4.6، vite-plugin-pwa 1.3.0، Chrome 158 headless)
-أول build وأول زيارة (بعد 1.5s)          | toast: ظاهر | bar: مخفي | مهامي: النسخة الأولى
-بعد 4 ثواني                              | toast: مخفي | bar: مخفي | مهامي: النسخة الأولى
-refresh                                  | toast: مخفي | bar: مخفي | مهامي: النسخة الأولى
-build تاني + refresh                     | toast: مخفي | bar: ظاهر | مهامي: النسخة الأولى
-ضغطنا «حدّث»                             | toast: مخفي | bar: مخفي | مهامي: النسخة التانية
-pageerrors: 0
-~~~
-
-وناتج الـ build نفسه:
-
-~~~text الناتج (npx vite build)
-PWA v1.3.0
-mode      generateSW
-precache  9 entries (36.38 KiB)
-files generated
-  dist/sw.js
-  dist/workbox-2fbc6a65.js
-~~~
-
-**ليه كده:**
-
-- **[[registerSW]] من [[virtual:pwa-register]]:** module بيعمله الـ plugin وقت الـ build. جواه نفس كود درس «نسخة جديدة، حدّث» (التسجيل و [[updatefound]] و [[statechange]])، وبيدّيك نتيجته في callbacks.
-- **[[onOfflineReady]]:** بيتنادى **مرة واحدة**: أول ما الـ SW يتسطّب ويتكيّش كل الملفات اللي في الـ precache. الـ refresh بعدها مطلّعوش تاني (السطر التالت)، لأن مفيش تسطيب جديد.
-- **[[setTimeout(..., 3000)]]:** الـ toast اختفى لوحده (السطر التاني بعد ٤ ثواني).
-- **[[onNeedRefresh]]:** فيه SW جديد waiting (الـ build التاني غيّر الـ precache manifest جوه [[sw.js]]، فالملف اختلف). بنظهر الشريط بدل [[confirm]] اللي بيوقف الصفحة.
-- **[[updateSW(true)]]:** بيبعت [[SKIP_WAITING]] للجديد، ولما يبقى active بيعمل reload. النص الجديد ظهر بعد الضغطة.
-- **[[btn.disabled = true]]:** ضغطتين مش هيبعتوا مرتين.
-
-**الغلطة الشائعة:** تجرّب بـ [[npm run dev]] وتستنى الـ toast. الـ SW مش بيتعمل في وضع التطوير افتراضيًا (لازم [[devOptions: { enabled: true }]])، فلا [[onOfflineReady]] ولا [[onNeedRefresh]] هيتنادوا. جرّب دايمًا بـ [[build]] ثم [[preview]].` },
-            { lvl: 'تطبيق', t: R`دوّر بنفسك في docs بتاعة vite-plugin-pwa و Workbox: إزاي تعمل [[runtimeCaching]] لـ [[/api/]] بـ NetworkFirst، واسم الكاش [[api]]، وحد أقصى ٥٠ entry، وتسيب الـ network ياخد ٣ ثواني بالكتير؟ اكتبها من غير ما تنسخ مثال جاهز.`, done: R`الـ config فيه [[urlPattern]] و [[handler: "NetworkFirst"]] وجوه [[options]]: [[cacheName: "api"]] و [[expiration: { maxEntries: 50 }]] و [[networkTimeoutSeconds: 3]]، والـ build بيعدّي، و Cache storage فيه كاش [[api]] بعد أول نداء، و Offline الصفحة بتعرض آخر داتا جت.`, sol: R`**من الوثائق:** صفحة «Workbox → runtimeCaching» في docs بتاعة vite-plugin-pwa بتقول إن [[workbox.runtimeCaching]] array، كل عنصر فيه [[urlPattern]] (RegExp أو دالة بتاخد [[{ url, request }]])، و [[handler]] اسم الاستراتيجية ([["NetworkFirst"]] و [["CacheFirst"]] و [["StaleWhileRevalidate"]] و...)، و [[options]] بتتبعت لـ Workbox. وفي Workbox، [[NetworkFirst]] بياخد [[cacheName]] و [[networkTimeoutSeconds]]، والحد الأقصى بييجي من [[ExpirationPlugin]] اللي الـ plugin بيعمله لما تكتب [[expiration]].
-
-نفس مشروع التمرين اللي فات، مع [[runtimeCaching]] و API صغير للتجربة (plugin بيرد على [[/api/news]] في [[vite preview]]):
-
-~~~js vite.config.ts
-import { defineConfig } from "vite";
-import { VitePWA } from "vite-plugin-pwa";
-
-export default defineConfig({
-  plugins: [
-    // API صغير للتجربة: /api/news بيرجّع الساعة دلوقتي (شغال في dev و preview)
-    {
-      name: "fake-api",
-      configurePreviewServer(server) {
-        server.middlewares.use("/api/news", (req, res) => {
-          res.setHeader("content-type", "application/json");
-          res.end(JSON.stringify({ title: "آخر خبر", at: new Date().toISOString().slice(11, 19) }));
-        });
-      },
-    },
-    VitePWA({
-      registerType: "prompt",
-      manifest: { name: "مهامي", short_name: "مهامي", lang: "ar", dir: "rtl", icons: [{ src: "pwa-192x192.png", sizes: "192x192", type: "image/png" }, { src: "pwa-512x512.png", sizes: "512x512", type: "image/png" }] },
-      workbox: {
-        globPatterns: ["**/*.{js,css,html,svg,png,woff2}"],
-        runtimeCaching: [
-          {
-            urlPattern: ({ url }) => url.pathname.startsWith("/api/"),
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "api",
-              networkTimeoutSeconds: 3,
-              expiration: { maxEntries: 50 },
-            },
-          },
-        ],
-      },
-    }),
-  ],
-});
-~~~
-
-~~~js src/main.ts
-import "./pwa";
-
-async function showNews() {
-  const out = document.createElement("p");
-  out.id = "news";
-  document.body.append(out);
-  try {
-    const res = await fetch("/api/news");
-    const news = await res.json();
-    out.textContent = $__bt$__{news.title} ($__{news.at})$__bt;
-  } catch {
-    out.textContent = "مفيش نت ومفيش نسخة محفوظة";
-  }
-}
-showNews();
-~~~
-
-**الـ build عدّى، وده اللي اتكتب في [[dist/sw.js]]** ([[grep -o]] على الملف):
-
-~~~text الناتج (npx vite build ثم grep في dist/sw.js)
-✓ built in 141ms
-NetworkFirst({cacheName:"api",networkTimeoutSeconds:3,plugins:[new e.ExpirationPlugin({maxEntries:50})
-~~~
-
-**في المتصفح:** [[vite preview]] على [[http://localhost:8832]] و Chrome 158 headless. أول زيارة بتسطّب الـ SW، والـ refresh بيعدّي على الـ SW، وبعدين قطعنا النت ([[context.setOffline(true)]]، زي Offline في DevTools) وعملنا refresh:
-
-~~~text الناتج (Chrome 158 headless)
-Online: آخر خبر (09:24:44)
-Cache storage: ["workbox-precache-v2-http://localhost:8832/","api"]
-كاش api فيه: [ '/api/news' ]
-Offline: آخر خبر (09:24:44)
-pageerrors: 0
-~~~
-
-**ليه كده:**
-
-- **[[urlPattern]] دالة:** [[url.pathname.startsWith("/api/")]] أوضح من regex على الـ URL كله، ومش هيمسك [[/apiary.html]] بالغلط.
-- **[[NetworkFirst]]:** الداتا الطازة أهم، فالشبكة الأول. لو مردتش في ٣ ثواني ([[networkTimeoutSeconds]]) أو النت مقطوع، آخر نسخة من الكاش. Offline الصفحة عرضت نفس الساعة اللي جت Online.
-- **[[cacheName: "api"]]:** كاش لوحده للـ API بعيد عن الـ precache، فـ Cache storage فيه الاتنين.
-- **[[expiration: { maxEntries: 50 }]]:** Workbox بيمسح الأقدم لما العدد يعدّي ٥٠.
-
-**غلطة حصلت وإحنا بنكتب الحل:** أول [[main.ts]] كان فيه [[await fetch(...)]] في أول الملف (top-level await). الـ build وقع بـ [[Top-level await is not available in the configured target environment ("chrome87", "edge88", "es2020", "firefox78", "safari14" + 2 overrides)]]. Vite 6 بيبني لمتصفحات أقدم افتراضيًا، فاتحوّل الكود لدالة [[async]] بتتنادى (أو زوّد [[build.target]] في الـ config).
-
-**الغلطة الشائعة:** [[CacheFirst]] للـ API. أول رد بيتكيّش ومبيتغيّرش تاني، واليوزر هيشوف نفس الداتا القديمة حتى وهو Online لحد ما الكاش يتمسح.` },
-            { lvl: 'تحدي', t: R`صلّح باج: في SPA فيه [[navigateFallback]]، لينك [[/api/export.csv]] بيرجّع [[index.html]] بدل الملف، حتى Online (الـ NavigationRoute بيرد من الـ precache على أي navigation). صلّحها بـ [[navigateFallbackDenylist]] لـ [[/api/]] و [[/admin/]].`, done: R`Offline، refresh على [[/settings]] لسه بيفتح التطبيق، و [[/api/export.csv]] بيروح للشبكة (فبينزّل الملف Online وبيفشل Offline) ومبيرجّعش HTML، و [[dist/sw.js]] فيه الـ regex بتاع الـ denylist، وتقدر تقول ليه رجوع [[index.html]] لـ API كان هيبقى bug صعب تلاقيه.`, sol: R`نفس مشروع Vite بتاع التمرين الأول، و [[src/main.ts]] بيعرض المسار عشان نعرف التطبيق ولا الملف هو اللي رد، و [[/api/export.csv]] بيرجّع CSV فيه [[content-disposition: attachment]] من plugin صغير في [[vite preview]]:
-
-~~~js vite.config.ts
-import { defineConfig } from "vite";
-import { VitePWA } from "vite-plugin-pwa";
-
-const DENY = process.env.DENY !== "0";       // DENY=0 = النسخة اللي فيها الباج
-
-export default defineConfig({
-  plugins: [
-    {
-      name: "fake-api",
-      configurePreviewServer(server) {
-        server.middlewares.use("/api/export.csv", (req, res) => {
-          res.setHeader("content-type", "text/csv; charset=utf-8");
-          res.setHeader("content-disposition", 'attachment; filename="tasks.csv"');
-          res.end("id,title\n1,اشتري لبن\n");
-        });
-      },
-    },
-    VitePWA({
-      registerType: "prompt",
-      manifest: { name: "مهامي", short_name: "مهامي", icons: [{ src: "pwa-192x192.png", sizes: "192x192", type: "image/png" }, { src: "pwa-512x512.png", sizes: "512x512", type: "image/png" }] },
-      workbox: {
-        globPatterns: ["**/*.{js,css,html,svg,png,woff2}"],
-        navigateFallback: "index.html",                       // أي navigation → التطبيق (SPA)
-        navigateFallbackDenylist: DENY ? [/^\/api\//, /^\/admin\//] : [],
-      },
-    }),
-  ],
-});
-~~~
-
-~~~js src/main.ts
-import "./pwa";
-// SPA صغير: الصفحة بتعرض المسار
-const p = document.createElement("p");
-p.id = "route";
-p.textContent = "التطبيق، المسار: " + location.pathname;
-document.body.append(p);
-~~~
-
-**القياس:** [[DENY=0 npx vite build]] (الباج) و [[DENY=1]] (التصليح)، و [[vite preview]] على [[http://localhost:8833]]، و Chrome 158 headless. بعد ما الـ SW اتسطّب، ضغطنا لينك لـ [[/api/export.csv]] من [[/settings]]، وبعدين قطعنا النت:
-
-~~~text الناتج (vite-plugin-pwa 1.3.0، Chrome 158 headless)
-== DENY=0 | dist/sw.js: new e.NavigationRoute(e.createHandlerBoundToURL("index.html"),{denylist:[]})
-  Online، ضغطة على /api/export.csv → الصفحة: التطبيق، المسار: /api/export.csv
-  Offline، /settings → التطبيق، المسار: /settings
-  Offline، /api/export.csv → الصفحة: التطبيق، المسار: /api/export.csv
-== DENY=1 | dist/sw.js: new e.NavigationRoute(e.createHandlerBoundToURL("index.html"),{denylist:[/^\/api\//,/^\/admin\//]})
-  Online، ضغطة على /api/export.csv → اتنزّل ملف: tasks.csv
-  Offline، /settings → التطبيق، المسار: /settings
-  Offline، /api/export.csv → فشل: page.goto: net::ERR_INTERNET_DISCONNECTED at http://localhost:8833/api/export.csv
-~~~
-
-**ليه كده:**
-
-- **[[navigateFallback: "index.html"]]:** بيعمل [[NavigationRoute]] في الـ SW بيرد على **أي** navigation بـ [[index.html]] من الـ precache، حتى Online، من غير ما يسأل السيرفر. ده اللي بيخلّي [[/settings]] تفتح Offline (الـ SPA بيقرا المسار ويعرض الصفحة). بس اللينك للـ CSV navigation برضه، فالتطبيق رد بدل الملف، والسيرفر عمره ما شاف الطلب.
-- **[[navigateFallbackDenylist: [/^\/api\//, /^\/admin\//] ]]:** أي navigation مساره بيطابق واحد منهم بيعدّي على الـ SW للشبكة. الـ regex اتكتب في [[dist/sw.js]] زي ما هو ([[denylist:[/^\/api\//,/^\/admin\//]]]).
-- **Offline بعد التصليح:** [[/api/export.csv]] فشل بـ [[ERR_INTERNET_DISCONNECTED]]، وده الصح: ملف مش موجود من غير نت. وثائق vite-plugin-pwa بتقول ده صراحة: الطرق اللي في الـ denylist «you will get No internet connection» Offline، وانت مسؤول عنها.
-
-**ليه كان باج صعب تلاقيه:** Online كل حاجة شكلها شغال، والسيرفر مفيهوش أي error (الطلب موصلوش أصلًا). اليوزر بيدوس «تصدير» فيرجع للتطبيق، ولو فتح اللينك في تاب جديد من إيميل، نفس الحكاية. والوحيد اللي بيبيّنها عمود Size في Network: [[(ServiceWorker)]] جنب طلب المفروض يروح للسيرفر.
-
-**الغلطة الشائعة:** تحل الباج بإنك تشيل [[navigateFallback]] خالص. الـ CSV هيشتغل، بس أي refresh على [[/settings]] Offline هيطلّع ديناصور Chrome، وده اللي الـ PWA معمول عشان يمنعه.` },
-          ],
-          ref: [
-            { t: "vite-plugin-pwa docs: Prompt for update", url: "https://github.com/vite-pwa/docs/blob/main/guide/prompt-for-update.md" },
-            { t: "vite-plugin-pwa docs: generateSW (runtimeCaching و navigateFallbackDenylist)", url: "https://github.com/vite-pwa/docs/blob/main/workbox/generate-sw.md" },
-            { t: "vite-plugin-pwa docs: Development", url: "https://github.com/vite-pwa/docs/blob/main/guide/development.md" },
-            { t: "Chrome for Developers: workbox-strategies", url: "https://developer.chrome.com/docs/workbox/modules/workbox-strategies" },
-          ],
-          flag: "script",
-          deep: {
-            why: "الـ SW بإيدك مع build tool حديث معناه إنك لازم كل مرة تعرف أسماء الملفات الجديدة وتحدّث القايمة وتتأكد إن مفيش حاجة ناقصة. غلطة واحدة = install بيفشل أو يوزرز عالقين. الأدوات دي بتشيل ده، وبتسيبلك انت القرارات: prompt ولا auto، وإيه اللي يتكاش.",
-            how: R`vite-plugin-pwa بعد الـ build بيلف على [[dist/]] ويطابق [[globPatterns]]، ويعمل قايمة [[{ url, revision }]] (الـ revision hash للمحتوى)، ويولّد [[sw.js]] بـ Workbox فيه القايمة دي كـ precache. أي ملف اتغير = revision جديد = sw.js اتغير = تحديث. و [[registerType: "prompt"]] معناه الـ SW مش بيعمل skipWaiting لوحده، و [[onNeedRefresh]] بتتنادى لما يبقى فيه واحد waiting (نفس اللي عملناه بإيدنا في الدرس اللي فات)، و [[updateSW(true)]] بتبعت skipWaiting وتعمل reload.
-
-و [[navigateFallback]] (افتراضيًا index.html في الـ SPA) بيخلي أي navigation من غير نت يرد بالـ index.html المتكاش، فالراوتر بتاعك يكمّل. وفيه وضع [[injectManifest]] لو عايز تكتب الـ SW بنفسك وهو يحقن القايمة بس.
-
-Serwist في Next: [[self.__SW_MANIFEST]] بيتبدّل وقت الـ build بقايمة الـ precache، و [[defaultCache]] فيه استراتيجيات معقولة لكل نوع (صفحات، RSC payloads، صور، خطوط)، و [[fallbacks]] لصفحة offline ([[/~offline]] في الـ docs). وفي Next الـ HTML ممكن يكون ديناميك، فخلي بالك إيه اللي بيتكاش.
-
-والأيقونات: [[@vite-pwa/assets-generator]] بيولّد كل المقاسات (ومنها maskable و apple-touch-icon) من SVG واحد.`,
-            when: R`أي مشروع Vite أو Next عايزه PWA. الـ SW بإيدك لمواقع static صغيرة من غير build (زي الموقع ده)، أو لما تحتاج تحكم كامل (وقتها injectManifest).`,
-            mistakes: R`تجرّب في [[npm run dev]] وتستغرب إن مفيش SW (فعّل [[devOptions: { enabled: true }]] لو محتاج). و [[autoUpdate]] مع تطبيق فيه فورمز طويلة. و globPatterns بتاخد ملفات ضخمة (فيديو، source maps) فالـ install ياخد ميجات. وتنسى إن النسخة القديمة من Workbox في الـ SW القديم لسه شغالة عند اليوزرز لحد ما يتحدثوا.`
-          },
-          teach: R`## الفكرة في سطر
-
-بدل ما تكتب [[sw.js]] بإيدك، بتضيف plugin في [[vite.config.ts]]، وهو وقت الـ build بيولّد الـ manifest والـ SW وقايمة الملفات اللي تتحفظ. وفي الكود بتنادي [[registerSW]] وتقول هتعمل إيه لما تيجي نسخة جديدة.
-
-جرّبته فعلًا: [[npm create vite@latest pwa-lab -- --template react-ts]] (طلع Vite 8.3) و [[npm i -D vite-plugin-pwa]] (طلع 2.0.0)، والـ config ده بالظبط، و [[import "./pwa"]] أول سطر في [[src/main.tsx]]، و ٣ أيقونات PNG في [[public/]]. وبعدين [[npm run build]] و [[vite preview]] وفتحته في Chrome headless (playwright-core، بروفايل مؤقت). Serwist و Next.js مجرّبتهمش هنا: الكلام عنهم من الـ docs بتاعتهم.
-
----
-
-## ١. [[vite.config.ts]]: الـ imports
-
-~~~text vite.config.ts
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import { VitePWA } from "vite-plugin-pwa";
-~~~
-
-- [[defineConfig]]: دالة بترجّع الـ object زي ما هو، فايدتها إن الـ editor يكمّلك أسماء الإعدادات.
-- [[react]]: الـ plugin بتاع React (JSX و Fast Refresh). كان موجود في الـ template.
-- [[{ VitePWA }]]: الأقواس يعني named import: هات الحاجة اللي اسمها [[VitePWA]] بس من الـ package.
-
-## ٢. إعدادات الـ plugin
-
-~~~text vite.config.ts
-VitePWA({
-  registerType: "prompt",
-  includeAssets: ["favicon.svg", "apple-touch-icon.png"],
-  manifest: { name: "مهامي", short_name: "مهامي", lang: "ar", dir: "rtl", theme_color: "#1f2430", icons: [...] },
-  workbox: { globPatterns: ["**/*.{js,css,html,svg,png,woff2}"] },
-}),
-~~~
-
-| الإعداد | معناه |
-|---|---|
-| [[registerType: "prompt"]] | الـ SW الجديد يستنى في waiting لحد ما الكود بتاعك يقول (التاني [[autoUpdate]]: يتفعّل لوحده) |
-| [[includeAssets]] | ملفات من [[public/]] تدخل الـ precache حتى لو مش متوصّل بيها من الكود |
-| [[manifest]] | نفس حقول [[manifest.webmanifest]] (الدرس الأول)، والـ plugin بيكتب الملف |
-| [[workbox.globPatterns]] | أنواع الملفات من [[dist/]] اللي تتحفظ |
-
-### الـ glob
-
-[[**/*.{js,css,html,svg,png,woff2}]]:
-
-- [[**/]]: أي فولدر بأي عمق.
-- [[*]]: أي اسم ملف.
-- [[{js,css,...}]]: واحد من الامتدادات دي.
-
-## ٣. الـ build
-
-~~~text الناتج (npm run build، مختصر)
-dist/manifest.webmanifest                          0.31 kB
-dist/index.html                                    0.50 kB
-dist/assets/index-D64VDMd1.css                     4.10 kB
-dist/assets/workbox-window.prod.es5-Bd17z0YL.js    5.65 kB
-dist/assets/index-Dt7RnCgD.js                    225.14 kB
-✓ built in 407ms
-
-PWA v2.0.0
-mode      generateSW
-precache  17 entries (272.23 KiB)
-files generated
-  dist/sw.js
-  dist/workbox-2fbc6a65.js
-~~~
-
-- [[mode generateSW]]: الـ plugin كتب الـ SW كله لوحده (التاني [[injectManifest]]: انت تكتبه وهو يحقن القايمة بس).
-- [[precache 17 entries]]: ١٧ ملف هيتحفظوا في الـ install.
-- [[D64VDMd1]] و [[Dt7RnCgD]]: الـ hash بتاع المحتوى في الاسم. أي تعديل = اسم جديد.
-
-وأضاف لوحده سطر الـ manifest في [[dist/index.html]]:
-
-~~~text dist/index.html
-<link rel="manifest" href="/manifest.webmanifest"></head>
-~~~
-
-### جوه [[dist/sw.js]] (مختصر)
-
-~~~text dist/sw.js
-self.addEventListener("message",e=>{e.data&&"SKIP_WAITING"===e.data.type&&self.skipWaiting()}),
-e.precacheAndRoute([{url:"index.html",revision:"82654995126a90ce03408e36429fb177"},
-  {url:"assets/index-Dt7RnCgD.js",revision:null}, ...]),
-e.cleanupOutdatedCaches(),
-e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL("index.html")))
-~~~
-
-ده نفس اللي عملناه بإيدنا في الدروس اللي فاتت:
-
-| السطر | يقابل إيه بإيدنا |
-|---|---|
-| [[message]] و [[SKIP_WAITING]] | الـ message listener. بس هنا الرسالة object فيه [[type]]، مش string |
-| [[precacheAndRoute([...])]] | [[PRECACHE]] و [[addAll]] و cache-first ليهم |
-| [[revision: null]] | الاسم فيه hash، فالاسم لوحده كفاية |
-| [[revision: "8265..."]] | [[index.html]] اسمه ثابت، فالـ hash بتاع المحتوى هنا |
-| [[cleanupOutdatedCaches()]] | مسح الكاش القديم في activate |
-| [[NavigationRoute(... "index.html")]] | أي صفحة (navigate) ترد بـ [[index.html]] المتكاش، فالراوتر بتاع React يكمّل |
-
-> لاحظت إن [[favicon.svg]] و [[apple-touch-icon.png]] والأيقونتين طلعوا مرتين في القايمة: مرة من [[includeAssets]] ومرة من [[globPatterns]] (لأنهم بيتنسخوا لـ [[dist/]]). التسطيب عدّى عادي (نفس الـ URL بنفس الـ revision مش مشكلة)، بس ده بيوضّح إن [[includeAssets]] مش محتاجه لو الـ glob بيغطي الملفات دي.
-
----
-
-## ٤. [[src/pwa.ts]]
-
-~~~text src/pwa.ts
-import { registerSW } from "virtual:pwa-register";
-const updateSW = registerSW({
-  onNeedRefresh() {
-    if (confirm("فيه نسخة جديدة، تحدّث؟")) updateSW(true);
-  },
-  onOfflineReady() {
-    console.log("الموقع جاهز يشتغل من غير نت");
-  },
-});
-~~~
-
-- [["virtual:pwa-register"]]: مفيش ملف بالاسم ده. الـ plugin بيعمله وقت الـ build (virtual module).
-- [[registerSW({...})]]: بيسجّل [[/sw.js]] وبيتابع الحالات اللي عملناها بإيدنا (waiting و updatefound). بيرجّع دالة شايلناها في [[updateSW]].
-- [[onNeedRefresh]]: فيه نسخة في waiting (بتاع الشريط في الدرس اللي فات).
-- [[confirm(...)]]: dialog فيه OK و Cancel، بيرجّع true أو false.
-- [[updateSW(true)]]: ابعت [[SKIP_WAITING]] واعمل reload لما الجديد يستلم.
-- [[onOfflineReady]]: أول تسطيب خلص والملفات اتحفظت.
-
-### أول error
-
-أول [[npm run build]] وقع قبل Vite نفسه، في [[tsc]]:
-
-~~~text الناتج
-src/pwa.ts(1,28): error TS2307: Cannot find module 'virtual:pwa-register' or its corresponding type declarations.
-~~~
-
-TypeScript ميعرفش الـ virtual module. الحل إنك تضيف الـ types بتاعته في [[tsconfig.app.json]]:
-
-~~~text tsconfig.app.json
-"types": ["vite/client", "vite-plugin-pwa/client"],
-~~~
-
-(أو سطر [[/// <reference types="vite-plugin-pwa/client" />]] في ملف [[.d.ts]].) بعدها الـ build عدّى.
-
----
-
-## ٥. اللي حصل في المتصفح
-
-شغّلت [[vite preview --port 4789]] وفتحت الصفحة، وبعدين غيّرت [[<h1>]] في [[App.tsx]] لـ «نسخة 2» وعملت build تاني وrefresh:
-
-~~~text الناتج
-console: الموقع جاهز يشتغل من غير نت
-h1: Get started
-dialog: confirm فيه نسخة جديدة، تحدّث؟
-h1 بعد: نسخة 2 loads: 3
-offline /any/route h1: نسخة 2
-~~~
-
-1. أول فتح: [[onOfflineReady]] اتنادت.
-2. بعد الـ build الجديد والـ refresh: [[onNeedRefresh]] اتنادت وظهر الـ confirm. ضغطت OK.
-3. الصفحة عملت reload لوحدها وبقت «نسخة 2». ([[loads: 3]] = الفتح الأول، والـ refresh، والـ reload بعد OK.)
-4. من غير نت، [[/any/route]] (مسار مش موجود كملف) فتح عادي، بسبب الـ [[NavigationRoute]].
-
-> ليه [[preview]] مش [[dev]]؟ الـ docs بتقول إن الـ SW مش بيتولّد في [[npm run dev]] إلا لو فعّلت [[devOptions: { enabled: true }]]. وفي [[dev]] مفيش [[dist/]] أصلًا.
-
----
-
-## ٦. Next.js و Serwist (من الـ docs)
-
-نفس الفكرة: [[withSerwistInit]] من [[@serwist/next]] بيلف [[next.config]]، وانت بتكتب [[app/sw.ts]] فيه [[new Serwist({ precacheEntries: self.__SW_MANIFEST, ... })]]. الـ [[__SW_MANIFEST]] بيتبدّل وقت الـ build بقايمة الملفات، زي القايمة اللي شوفناها في [[dist/sw.js]] فوق.
-
----
-
-## الخلاصة
-
-| بإيدك (الدروس اللي فاتت) | vite-plugin-pwa |
-|---|---|
-| [[manifest.webmanifest]] | [[manifest: {...}]] في الـ config |
-| [[PRECACHE]] بإيدك | بيتولّد من [[dist/]] بـ [[globPatterns]] |
-| تغيّر [[CACHE]] كل release | الـ revisions بتتغير لوحدها |
-| شريط و [[postMessage]] و [[controllerchange]] | [[onNeedRefresh]] و [[updateSW(true)]] |
-
-- جرّب بـ [[build]] و [[preview]]، مش [[dev]].
-- مع TypeScript ضيف [[vite-plugin-pwa/client]] للـ types.`,
-          lines: [
-            R`[[defineConfig]] من Vite: بترجّع الـ config زي ما هو، وفايدتها إن المحرر يعرف شكل الـ config فيكمّلك الأسامي ويعلّم على أي خاصية غلط.`,
-            R`plugin الـ React الرسمي لـ Vite: بيحوّل JSX وبيشغّل Fast Refresh في الـ dev. مالوش علاقة بالـ PWA، موجود لأن ده config مشروع React عادي.`,
-            R`[[VitePWA]]: الـ plugin اللي بيولّد [[sw.js]] و [[manifest.webmanifest]] وقت الـ build، بدل ما تكتبهم بإيدك زي الدروس اللي فاتت.`,
-            R`الـ config نفسه، و [[export default]] لأن Vite بيدوّر على الـ default export في [[vite.config.ts]].`,
-            R`ليستة الـ plugins اللي Vite هيشغّلهم وقت الـ dev والـ build.`,
-            R`شغّل plugin الـ React بالإعدادات الافتراضية.`,
-            R`شغّل plugin الـ PWA، وكل اللي جوه الـ object ده إعداداته.`,
-            R`[[prompt]]: لما تنزل نسخة جديدة، الـ SW الجديد يفضل waiting ويستنى اليوزر يوافق (هتشوف [[onNeedRefresh]] تحت). البديل [[autoUpdate]] بيحدّث ويعمل reload لوحده، وده ممكن يضيّع على اليوزر حاجة كان بيكتبها في فورم.`,
-            R`ملفات من فولدر [[public/]] بنقول للـ plugin يضمها صراحة للـ precache، زي الـ favicon و [[apple-touch-icon]] اللي iOS بيستخدمها للشاشة الرئيسية، فتفضل موجودة من غير نت.`,
-            R`[[manifest]]: نفس حقول [[manifest.webmanifest]] من الدرس الأول بس كـ object. الـ plugin بيكتب منه الملف وقت الـ build ويضيف الـ link بتاعه في الـ HTML لوحده.`,
-            R`الاسم الكامل والقصير، واللغة عربي، والاتجاه من اليمين، ولون شريط النظام. نفس معنى الحقول في درس [[manifest.webmanifest]] بالظبط.`,
-            R`ليستة الأيقونات اللي هتتكتب في الـ manifest. الصور نفسها لازم تبقى موجودة في [[public/]]؛ الـ plugin بيكتب أساميها بس، مش بيعملها.`,
-            R`أيقونة 192×192 للشاشة الرئيسية. Chrome محتاج 192 و 512 عشان يسمح بالتسطيب.`,
-            R`أيقونة 512×512 لشاشة البداية والشاشات عالية الدقة.`,
-            R`نهاية ليستة [[icons]].`,
-            R`نهاية [[manifest]].`,
-            R`[[workbox]]: إعدادات Workbox اللي بيولّد الـ SW. [[globPatterns]] بتحدد أنهي ملفات من [[dist/]] تدخل الـ precache. لو نسيت امتداد (زي [[woff2]] للخطوط)، الملفات دي مش هتتحفظ والموقع يفتح offline من غيرها.`,
-            R`نهاية إعدادات [[VitePWA]].`,
-            R`نهاية ليستة الـ [[plugins]].`,
-            R`نهاية [[defineConfig]] وآخر [[vite.config.ts]].`,
-            R`[[virtual:pwa-register]]: module مش موجود كملف عندك؛ الـ plugin بيولّده وفيه كود التسجيل ومتابعة التحديثات اللي كتبناه بإيدنا في درس «نسخة جديدة، حدّث». مع TypeScript ضيف [[vite-plugin-pwa/client]] للـ types عشان يتعرف عليه.`,
-            R`[[registerSW]] بتسجّل الـ SW وبتنادي الدوال اللي تحت لما يحصل حاجة، وبترجّع دالة [[updateSW]] اللي بنفعّل بيها النسخة الجديدة.`,
-            R`[[onNeedRefresh]]: بتتنادى لما نسخة جديدة اتسطّبت وواقفة waiting. نفس اللحظة اللي كنا بنظهر فيها الشريط بإيدنا.`,
-            R`اسأل اليوزر. لو وافق، [[updateSW(true)]] بتخلي الـ SW الجديد يعمل skipWaiting وتعمل reload للصفحة. [[confirm]] هنا للتبسيط؛ في تطبيق حقيقي اعمل شريط مش بيوقف الصفحة.`,
-            R`نهاية [[onNeedRefresh]].`,
-            R`[[onOfflineReady]]: بتتنادى بعد أول تسطيب لما الـ precache يخلص، يعني كل الملفات اتحفظت والموقع يقدر يفتح من غير نت.`,
-            R`بلّغ إن الموقع جاهز offline. في تطبيق حقيقي اعرض رسالة صغيرة لليوزر بدل الـ console.`,
-            R`نهاية [[onOfflineReady]].`,
-            R`نهاية [[registerSW]].`,
-          ],
-          sol: R`[[dist/sw.js]] (أو ملف workbox جنبه) فيه قايمة زي [[{url:"assets/index-B3k9.js",revision:null}]] و [[{url:"index.html",revision:"a1b2..."}]]. الملفات اللي في اسمها hash الـ revision بتاعها null (الاسم نفسه كفاية)، والباقي ليه hash.
-
-بعد تغيير النص و build و preview والـ refresh: الـ confirm «فيه نسخة جديدة» بيظهر. لو ضغطت OK بيعمل reload بالنسخة الجديدة. لو Cancel، الصفحة تفضل بالقديم لحد ما تقفل كل التابات.
-
-لو مظهرش: اتأكد إنك في [[preview]] مش [[dev]]، وإن [[import "./pwa"]] موجود، وإنك مش فاتح DevTools بـ «Update on reload» (دي بتعمل skipWaiting لوحدها فمتشوفش الـ prompt).`
-        },
-        {
-          cmd: "IndexedDB و BroadcastChannel",
-          title: "تخزّن داتا كتير في المتصفح وتزامن التابات إزاي؟ (وحدود iOS)",
-          desc: R`[[localStorage]] strings بس، و sync (بيوقف الصفحة)، وحوالي 5MB، ومش متاح جوه الـ SW. للداتا الحقيقية offline (مسودات، رسايل، طلبات مستنية النت) فيه IndexedDB: داتابيز جوه المتصفح، بتخزّن objects و Blobs، و async، وبـ indexes، ومساحته بالـ GB حسب الجهاز. بس الـ API الأصلي قديم ومبني على events ومتعب.
-
-عشان كده بتستخدم wrapper: [[idb]] (صغيرة، نفس الـ API بس بـ promises) أو [[Dexie]] (أكبر، فيها queries و live queries لـ React).
-
-و [[BroadcastChannel]]: قناة رسايل بين كل التابات (والـ workers) اللي على نفس الـ origin. لما تاب يغيّر حاجة، يقول للباقي «حدّثوا».`,
-          example: R`import { openDB } from "idb";
-const db = await openDB("notes-app", 1, {
-  upgrade(db) {
-    const store = db.createObjectStore("notes", { keyPath: "id" });
-    store.createIndex("byUpdated", "updatedAt");
-  },
-});
-async function addNote(text) {
-  await db.put("notes", { id: crypto.randomUUID(), text, updatedAt: Date.now() });
-  channel.postMessage({ type: "notes-changed" });
-}
-const channel = new BroadcastChannel("notes");
-channel.onmessage = async (e) => {
-  if (e.data.type === "notes-changed") render(await db.getAllFromIndex("notes", "byUpdated"));
-};
-function render(notes) {
-  console.log(notes.map((n) => n.text));
-}
-await addNote("اشتري لبن");
-render(await db.getAllFromIndex("notes", "byUpdated"));
-if (navigator.storage?.persist) console.log("persisted:", await navigator.storage.persist());`,
-          try: R`اعمل صفحة بـ Vite (عشان الـ import) فيها input وزرار «ضيف»، وافتح الصفحة في تابين. ضيف ملاحظة في واحد: التاني اتحدّث؟ الملاحظة ظهرت في التاب اللي ضافها؟ وبعدين DevTools ← Application ← IndexedDB وشوف الداتا. وجرّب في Console [[await navigator.storage.estimate()]].`,
-          practice: [
-            { lvl: 'سريع', t: R`اتوقع وبعدين شغّل (في المتصفح أو Node بـ [[fake-indexeddb]]): [[db.put("notes", ...)]] مرتين بنفس الـ [[id]] بنصين مختلفين، وبعدين [[db.add("notes", ...)]] بنفس الـ [[id]] جوه try/catch. [[db.count]] كام؟ والـ error اسمه إيه؟`, done: R`[[db.count("notes")]] بيرجّع 1، و [[db.get]] بيرجّع النص التاني ([[put]] بيستبدل)، و [[add]] بيرمي error اسمه [[ConstraintError]] والداتا متغيرتش.`, sol: R`**التوقع:** [[put]] = «حط أو بدّل»، فالتانية بتبدّل الأولى والعدد 1. [[add]] = «حط بس لو مش موجود»، فبترمي [[ConstraintError]] والداتا متتغيّرش.
-
-~~~js put-add.mjs
-import "fake-indexeddb/auto";          // IndexedDB في Node (في المتصفح امسح السطر ده)
-import { openDB } from "idb";
-
-const db = await openDB("notes-app", 1, {
-  upgrade(db) {
-    db.createObjectStore("notes", { keyPath: "id" });
-  },
-});
-
-await db.put("notes", { id: "n1", text: "اشتري لبن" });
-await db.put("notes", { id: "n1", text: "اشتري لبن وعيش" });     // نفس الـ id
-console.log("count:", await db.count("notes"));
-console.log("get:", (await db.get("notes", "n1")).text);
-
-try {
-  await db.add("notes", { id: "n1", text: "نسخة تالتة" });
-} catch (err) {
-  console.log("add:", err.name, "|", err.message);
-}
-console.log("بعد الـ add:", (await db.get("notes", "n1")).text, "| count:", await db.count("notes"));
-~~~
-
-في Node: [[npm i idb fake-indexeddb]] و [[node put-add.mjs]]. وفي المتصفح نفس الكود من غير سطر [[fake-indexeddb]].
-
-~~~text الناتج (node put-add.mjs، Node 24، fake-indexeddb 6.2.8 و idb 8.0.4)
-count: 1
-get: اشتري لبن وعيش
-add: ConstraintError | A mutation operation in the transaction failed because a constraint was not satisfied. For example, an object such as an object store or index already exists and a request attempted to create a new one.
-بعد الـ add: اشتري لبن وعيش | count: 1
-~~~
-
-~~~text الناتج (نفس الكود في Chrome 158 headless على http://localhost:8834)
-count: 1
-get: اشتري لبن وعيش
-add: ConstraintError | Key already exists in the object store.
-بعد الـ add: اشتري لبن وعيش | count: 1
-~~~
-
-**ليه كده:**
-
-- **[[keyPath: "id"]]:** المفتاح بيتاخد من خاصية [[id]] في الـ object نفسه، فالاتنين [[n1]] نفس السجل.
-- **[[put]]:** لو المفتاح موجود بيبدّل السجل كله (مش بيدمج الخصائص). عشان كده [[get]] رجّع النص التاني.
-- **[[add]]:** بيرفض لو المفتاح موجود. الـ transaction بتاعته بتتلغي، فالسجل القديم فضل زي ما هو والعدد 1.
-- **اسم الـ error واحد، والرسالة مختلفة:** [[err.name]] = [[ConstraintError]] في الاتنين (ده اللي في المواصفات)، والرسالة من كل implementation بشكل. اكتب الكود على [[err.name]] مش على [[err.message]].
-
-**إمتى أنهي واحد:** [[put]] للحفظ العادي (إضافة أو تعديل بنفس الدالة). [[add]] لما التكرار نفسه غلط لازم تعرفه، زي عملية في outbox ليها id مش المفروض تتسجّل مرتين (مشروع التطبيق الكبير).
-
-**الغلطة الشائعة:** تستخدم [[add]] في «احفظ» وتلف الـ error في [[catch]] فاضي. أول تعديل على ملاحظة موجودة هيترمي ساكت، واليوزر هيفتكر إنه اتحفظ.` },
-            { lvl: 'تطبيق', t: R`ابني migration: ارفع الـ version لـ 2، وفي [[upgrade(db, oldVersion, newVersion, tx)]] زوّد index اسمه [[byTag]] على الـ store الموجود بـ [[tx.objectStore("notes").createIndex(...)]]، من غير ما تعمل الـ store تاني، وخلّي الكود يشتغل صح لو اليوزر جاي من version 0 أو 1.`, done: R`الـ upgrade بيتنادى بـ [[oldVersion]] 1 و [[newVersion]] 2، والملاحظات القديمة كلها لسه موجودة، و [[indexNames]] فيه [[byTag]] و [[byUpdated]]، ومتصفح جديد (version 0) بيعمل الاتنين من غير error، وفتح بـ version 1 بعدها بيرمي [[VersionError]].`, sol: R`~~~js db.mjs
-import { openDB } from "idb";
-
-// كل رقم version بيضيف حاجة، والـ switch من غير break بيعدّي على كل الخطوات اللي اليوزر فاتها
-export function openNotes(version = 2, log = () => {}) {
-  return openDB("notes-app", version, {
-    upgrade(db, oldVersion, newVersion, tx) {
-      log($__btupgrade من $__{oldVersion} لـ $__{newVersion}$__bt);
-      switch (oldVersion) {
-        case 0: {
-          const store = db.createObjectStore("notes", { keyPath: "id" });
-          store.createIndex("byUpdated", "updatedAt");
-        }
-        // falls through
-        case 1: {
-          if (newVersion < 2) break;
-          tx.objectStore("notes").createIndex("byTag", "tag");   // على الـ store الموجود، من غير ما نعمله تاني
-        }
-      }
-    },
-  });
-}
-~~~
-
-~~~js migrate.mjs
-import "fake-indexeddb/auto";
-import { openNotes } from "./db.mjs";
-const log = (s) => console.log("  " + s);
-
-console.log("== يوزر قديم: عنده version 1 وفيه ملاحظات");
-let db = await openNotes(1, log);
-await db.put("notes", { id: "a", text: "اشتري لبن", tag: "بيت", updatedAt: 1 });
-await db.put("notes", { id: "b", text: "راجع الدرس", tag: "مذاكرة", updatedAt: 2 });
-db.close();
-db = await openNotes(2, log);
-console.log("  الملاحظات:", await db.count("notes"), "| indexNames:", [...db.transaction("notes").store.indexNames].join(", "));
-console.log("  byTag = مذاكرة:", (await db.getAllFromIndex("notes", "byTag", "مذاكرة")).map((n) => n.text));
-db.close();
-
-console.log("== فتح بـ version 1 بعد ما بقت 2");
-try { await openNotes(1, log); } catch (e) { console.log("  " + e.name + ": " + e.message); }
-
-console.log("== متصفح جديد (version 0)");
-indexedDB.deleteDatabase("notes-app");
-await new Promise((r) => setTimeout(r, 50));
-db = await openNotes(2, log);
-console.log("  indexNames:", [...db.transaction("notes").store.indexNames].join(", "));
-~~~
-
-~~~text الناتج (node migrate.mjs، Node 24، fake-indexeddb)
-== يوزر قديم: عنده version 1 وفيه ملاحظات
-  upgrade من 0 لـ 1
-  upgrade من 1 لـ 2
-  الملاحظات: 2 | indexNames: byTag, byUpdated
-  byTag = مذاكرة: [ 'راجع الدرس' ]
-== فتح بـ version 1 بعد ما بقت 2
-  VersionError: An attempt was made to open a database using a lower version than the existing version.
-== متصفح جديد (version 0)
-  upgrade من 0 لـ 2
-  indexNames: byTag, byUpdated
-~~~
-
-ونفس الملفين في Chrome 158 headless (من غير [[fake-indexeddb]]) طلّعوا نفس السطور بالظبط، والفرق الوحيد رسالة الـ error: [[VersionError: The requested version (1) is less than the existing version (2).]]
-
-**ليه كده:**
-
-- **[[upgrade(db, oldVersion, newVersion, tx)]]:** بيتنادى بس لما الـ version اللي بتفتح بيه أكبر من اللي عند اليوزر. [[oldVersion]] هو اللي عنده (0 = مفيش قاعدة خالص).
-- **[[switch (oldVersion)]] من غير [[break]]:** كل [[case]] خطوة. اليوزر اللي جاي من 1 بيبدأ من [[case 1]] (الـ index الجديد بس)، واللي جاي من 0 بيعدّي على الاتنين بالترتيب. كده كل يوزر بيوصل لنفس الشكل مهما كان عنده نسخة قديمة قد إيه. وكومنت [[// falls through]] بيقول للي بيقرا (وللـ linter) إن ده مقصود.
-- **[[tx.objectStore("notes").createIndex(...)]]:** الـ store موجود، فبنوصل له من الـ transaction بتاعة الـ upgrade (الوحيدة اللي مسموح فيها تغيير الشكل). [[db.createObjectStore("notes")]] تاني كانت هترمي [[ConstraintError]] لأنه موجود.
-- **الملاحظات القديمة اتحفظت:** إضافة index مبتلمسش الداتا، والـ index اتبنى على السجلات الموجودة ([[byTag = مذاكرة]] لقى ملاحظة اتكتبت قبل ما الـ index يبقى موجود).
-- **[[VersionError]]:** مينفعش تفتح بـ version أقل من اللي عند اليوزر. ده بيحصل لو تاب قديم مفتوح بكود قديم بعد ما تاب تاني عمل upgrade، فلازم تمسكه وتقول لليوزر يعمل refresh.
-
-**الغلطة الشائعة:** تمسح الـ store وتعمله من الأول في كل upgrade ([[deleteObjectStore]] ثم [[createObjectStore]]) عشان «أسهل». كل يوزر بيعمل update بيخسر كل ملاحظاته.` },
-            { lvl: 'تحدي', t: R`محاكاة outbox: لما [[navigator.onLine]] يبقى [[false]] الإضافة تتحط في store اسمه [[outbox]]، وعلى [[online]] تتبعت لسيرفر Express على localhost واحدة واحدة بالترتيب وتتمسح بعد ما السيرفر يرد [[ok]] بس، وتبعت [[BroadcastChannel]] للتابات.`, done: R`Offline تضيف ٣ وترجع Online: لوج السيرفر فيه ٣ requests بنفس الترتيب و [[outbox]] بيفضى. لو السيرفر رجّع 500 العملية بتفضل في [[outbox]]. التاب التاني بيتحدّث، والتاب اللي بعت مبيستقبلش رسالته (BroadcastChannel مبيرجّعش للـ object اللي بعت).`, sol: R`~~~text
-notes-outbox/
-├── package.json
-├── server.js          # Express: POST /api/notes، و /api/fail للتجربة
-└── public/
-    ├── index.html
-    └── app.js         # IndexedDB (idb) و outbox و BroadcastChannel و Web Locks
-~~~
-
-التشغيل: [[npm install]] ثم [[npm start]]، وافتح [[http://localhost:3000]] في تابين.
-
-~~~json package.json
-{
-  "name": "notes-outbox",
-  "private": true,
-  "scripts": { "start": "node server.js" },
-  "dependencies": {
-    "express": "^5.3.0",
-    "idb": "^8.0.4"
-  }
-}
-~~~
-
-~~~js server.js
-const express = require("express");
-const path = require("node:path");
-
-const app = express();
-const notes = [];
-let failMode = false;                       // للتجربة: السيرفر يرجّع 500
-
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
-app.use("/vendor", express.static(path.join(__dirname, "node_modules/idb/build")));   // idb للمتصفح
-
-app.post("/api/notes", (req, res) => {
-  if (failMode) {
-    console.log("POST /api/notes → 500", req.body.text);
-    return res.status(500).json({ ok: false });
-  }
-  notes.push(req.body);
-  console.log("POST /api/notes → 201", req.body.text);
-  res.status(201).json({ ok: true });
-});
-app.post("/api/fail", (req, res) => { failMode = req.query.on === "1"; res.json({ failMode }); });
-
-const port = Number(process.env.PORT) || 3000;
-app.listen(port, () => console.log("على http://localhost:" + port));
-~~~
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ملاحظات بـ outbox</title>
-<style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; max-width: 560px; }
-  form { display: flex; gap: 8px; }
-  input { flex: 1; font: inherit; padding: 6px; }
-  .pending { color: #92400e; }
-  #net { font-size: 13px; }
-</style>
-</head>
-<body>
-<p id="net"></p>
-<form id="add"><input name="text" required placeholder="ملاحظة جديدة" aria-label="ملاحظة جديدة"><button>ضيف</button></form>
-<ul id="list"></ul>
-<p id="log"></p>
-<script type="module" src="/app.js"></script>
-</body>
-</html>
-~~~
-
-~~~js app.js
-import { openDB } from "/vendor/index.js";
-
-const db = await openDB("notes-outbox", 1, {
-  upgrade(db) {
-    db.createObjectStore("notes", { keyPath: "id" });
-    db.createObjectStore("outbox", { keyPath: "seq", autoIncrement: true });   // seq بيحفظ الترتيب
-  },
-});
-const channel = new BroadcastChannel("notes");
-const list = document.querySelector("#list");
-
-async function render() {
-  const pending = new Set((await db.getAll("outbox")).map((op) => op.note.id));
-  const notes = (await db.getAll("notes")).sort((a, b) => a.createdAt - b.createdAt);
-  list.replaceChildren(...notes.map((n) => {
-    const li = document.createElement("li");
-    li.textContent = n.text + (pending.has(n.id) ? " (مستنية النت)" : "");
-    if (pending.has(n.id)) li.className = "pending";
-    return li;
-  }));
-  document.querySelector("#net").textContent = navigator.onLine ? "Online" : "Offline: الإضافات هتتبعت لما النت يرجع";
-}
-
-async function addNote(text) {
-  const note = { id: crypto.randomUUID(), text, createdAt: Date.now() };
-  const tx = db.transaction(["notes", "outbox"], "readwrite");    // الاتنين مع بعض أو ولا واحد
-  await Promise.all([tx.objectStore("notes").put(note), tx.objectStore("outbox").add({ note }), tx.done]);
-  channel.postMessage("changed");
-  await render();
-  if (navigator.onLine) flush();
-}
-
-// Web Locks: قفل واحد لكل التابات، فتاب واحد بس بيبعت في نفس الوقت، والتاني بيستنى ويلاقي الـ outbox فاضي
-function flush() {
-  return navigator.locks.request("outbox-flush", sendAll);
-}
-async function sendAll() {
-  try {
-    for (const op of await db.getAll("outbox")) {               // بالترتيب بتاع seq
-      const res = await fetch("/api/notes", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(op.note),
-      }).catch(() => null);
-      if (!res?.ok) break;                 // 500 أو النت وقع: سيبها والباقي للمرة الجاية
-      await db.delete("outbox", op.seq);   // اتبعتت فعلًا: امسحها
-    }
-  } finally {
-    channel.postMessage("changed");
-    await render();
-  }
-}
-
-document.querySelector("#add").addEventListener("submit", (e) => {
-  e.preventDefault();
-  addNote(e.target.text.value.trim());
-  e.target.reset();
-});
-window.addEventListener("online", flush);
-window.addEventListener("offline", render);
-let received = 0;
-channel.onmessage = () => {
-  document.querySelector("#log").textContent = $__btوصلت $__{++received} رسالة من تابات تانية$__bt;
-  render();
-};
-await render();
-flush();
-~~~
-
-**القياس:** Chrome 158 headless، تابين في نفس الـ context على [[http://localhost:8835]]. قطعنا النت ([[context.setOffline(true)]]، وده بيخلّي [[navigator.onLine]] بـ [[false]] ويبعت [[offline]] و [[online]] زي DevTools)، وضفنا ٣ من التاب الأول، ورجّعنا النت. وبعدين خلّينا السيرفر يرجّع 500 لإضافة رابعة، وبعدين صلّحناه وفتحنا الصفحة تاني:
-
-~~~text الناتج (Chrome 158 headless)
-Offline بعد ٣ إضافات | outbox: 3 | تاب ١: ["أولى (مستنية النت)","تانية (مستنية النت)","تالتة (مستنية النت)"]
-  تاب ٢: ["أولى (مستنية النت)","تانية (مستنية النت)","تالتة (مستنية النت)"] | وصلت 3 رسالة من تابات تانية | تاب ١ log: ""
-Online | outbox: 0 | تاب ٢: ["أولى","تانية","تالتة"]
-لوج السيرفر: POST /api/notes → 201 أولى , POST /api/notes → 201 تانية , POST /api/notes → 201 تالتة
-السيرفر بيرجّع 500 | outbox: 1 | لوج: POST /api/notes → 500 رابعة , POST /api/notes → 500 رابعة
-السيرفر اتصلّح + فتح الصفحة | outbox: 0 | لوج: POST /api/notes → 201 رابعة
-pageerrors: 0
-~~~
-
-- ٣ requests بنفس الترتيب، والـ outbox فضى.
-- التاب التاني اتحدّث لوحده، وجاله ٣ رسايل. التاب الأول (اللي بعت) جاله **صفر**: [[BroadcastChannel]] مبيرجّعش الرسالة للـ object اللي بعتها.
-- الـ 500 خلّى العملية مستنية في الـ outbox (اتجرّبت مرتين: مرة من كل تاب لما النت رجع)، وأول ما السيرفر اتصلّح وفتحنا الصفحة اتبعتت مرة واحدة.
-
-**الباج اللي القياس مسكه:** أول نسخة كان فيها [[let flushing = false]] بيمنع لفتين في نفس الوقت. في تاب واحد ده كفاية، بس النت لما رجع، **التابين** أخدوا [[online]] مع بعض، وكل تاب عنده [[flushing]] بتاعه، فالاتنين قروا نفس الـ outbox وبعتوا:
-
-~~~text الناتج (النسخة الأولى)
-لوج السيرفر: POST /api/notes → 201 أولى , POST /api/notes → 201 أولى , POST /api/notes → 201 تانية , POST /api/notes → 201 تانية , POST /api/notes → 201 تالتة , POST /api/notes → 201 تالتة
-~~~
-
-كل ملاحظة اتبعتت مرتين. التصليح: **Web Locks API**. [[navigator.locks.request("outbox-flush", sendAll)]] قفل باسم واحد لكل التابات اللي على نفس الـ origin، فتاب واحد بس جوه [[sendAll]] في أي لحظة. التاني بيستنى، ولما يدخل يقرا الـ outbox من جديد فيلاقيه فاضي.
-
-**ليه كده (الباقي):**
-
-- **transaction واحدة لـ [[notes]] و [[outbox]]:** الملاحظة وعمليتها في الـ outbox بيتكتبوا مع بعض أو ميتكتبوش خالص. لو الصفحة اتقفلت في النص، مش هيبقى عندك ملاحظة من غير ما تتبعت.
-- **[[keyPath: "seq", autoIncrement: true]]:** رقم بيزيد مع كل عملية، و [[getAll]] بيرجّع بالترتيب ده، فالسيرفر بياخدهم بنفس ترتيب الإضافة.
-- **[[if (!res?.ok) break]]:** أول فشل بيوقف اللفة. لو كمّلنا للي بعدها، الترتيب هيبوظ (التالتة توصل قبل التانية).
-- **[[db.delete("outbox", op.seq)]] بعد الـ [[ok]] بس:** لو النت وقع والـ request مخلصش، العملية لسه في الـ outbox وهتتبعت المرة الجاية.
-- **[[flush()]] في آخر الملف:** لو الصفحة اتفتحت والنت شغال وفيه حاجات قديمة في الـ outbox (من غير [[online]] event)، تتبعت على طول. ده اللي بعت «رابعة» بعد الـ reload.
-
-**الغلطة الشائعة:** تمسح العملية من الـ outbox **قبل** الـ [[fetch]] («عشان متتبعتش مرتين»). أول ما النت يقع في النص، العملية بتضيع خالص.` },
-          ],
-          ref: [
-            { t: "MDN: Using IndexedDB", url: "https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB" },
-            { t: "MDN: IDBObjectStore.add()", url: "https://developer.mozilla.org/en-US/docs/Web/API/IDBObjectStore/add" },
-            { t: "MDN: BroadcastChannel", url: "https://developer.mozilla.org/en-US/docs/Web/API/BroadcastChannel" },
-            { t: "MDN: Web Locks API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Locks_API" },
-            { t: "MDN: StorageManager.persist()", url: "https://developer.mozilla.org/en-US/docs/Web/API/StorageManager/persist" },
-          ],
-          flag: "script",
-          deep: {
-            why: "PWA بيشتغل offline محتاج مكان يحفظ فيه اللي اليوزر عمله لحد ما النت يرجع. ولما اليوزر فاتح التطبيق في تابين، من غير مزامنة واحد فيهم هيعرض داتا قديمة ولو حفظ منه هيمسح تعديلات التاني.",
-            how: R`[[openDB(name, version, { upgrade })]]: الـ upgrade بيتنادى بس لما الـ version يزيد (أو أول مرة)، وهو المكان الوحيد اللي تعمل فيه object stores و indexes، زي migrations. عايز تضيف index؟ زوّد الـ version وضيفه في upgrade. [[keyPath: "id"]] يعني المفتاح جوه الـ object نفسه، و [[put]] بتضيف أو تستبدل. و [[getAllFromIndex]] بترجّع مترتبة حسب الـ index. كل عملية جوه transaction؛ idb بتفتحها وتقفلها لك.
-
-بالـ Dexie نفس الكلام: [[db.version(1).stores({ notes: "id, updatedAt" })]] و [[db.notes.orderBy("updatedAt").toArray()]]، و [[useLiveQuery]] في React بتحدّث الـ component لوحدها لما الداتا تتغير (حتى من تاب تاني).
-
-BroadcastChannel بيوصّل الرسالة لكل الـ instances بنفس الاسم ما عدا اللي بعت. عشان كده التاب اللي ضاف لازم يعمل render بنفسه. الرسالة بتتنسخ (structured clone) فمينفعش تبعت دوال.
-
-المساحة: المتصفح ممكن يمسح داتا الموقع لو المساحة قلت (best-effort). [[navigator.storage.persist()]] بيطلب إنه ميتمسحش (Chrome بيوافق غالبًا للمواقع المسطّبة أو اللي اليوزر بيستخدمها كتير، و Firefox ممكن يسأل اليوزر).
-
-حدود iOS/Safari: كل المتصفحات على iPhone بتستخدم WebKit (مع استثناءات في أوروبا). Safari بيمسح كل التخزين اللي بيكتبه JS (IndexedDB و localStorage و Cache Storage) للموقع اللي اليوزر مفتحهوش ٧ أيام، إلا لو الموقع متسطّب على الشاشة الرئيسية. مفيش [[beforeinstallprompt]]. والـ push notifications شغالة بس للـ PWA المتسطّب (من iOS 16.4). و Background Sync مش مدعوم. فمتعتمدش على التخزين المحلي كمصدر وحيد للداتا: السيرفر هو المصدر، والمحلي كاش ومسودات.`,
-            when: R`IndexedDB: مسودات، وداتا offline، و queue لطلبات مستنية النت، وملفات كبيرة (Blobs). localStorage: إعدادات صغيرة (theme، آخر تاب). BroadcastChannel: logout في كل التابات، ومزامنة سلة أو إشعارات. وفي الـ SW: IndexedDB بس (localStorage مش موجود هناك).`,
-            mistakes: R`localStorage لداتا كبيرة أو objects ([[JSON.stringify]] كل مرة ويوقف الصفحة). وتغيّر الـ schema من غير ما تزوّد الـ version. وتنسى إن الداتا خاصة بالجهاز والمتصفح (مش sync بين الأجهزة). وتخزّن tokens حساسة في IndexedDB وتفتكره آمن من XSS (أي JS على الصفحة يقراه). وتعتمد على التخزين المحلي على iPhone لداتا مهمة.`
-          },
-          teach: R`## الفكرة في سطر
-
-بنفتح داتابيز اسمها [[notes-app]] جوه المتصفح فيها جدول (store) اسمه [[notes]]، ونضيف ملاحظة، ونقول لباقي التابات «الداتا اتغيرت» عن طريق قناة [[BroadcastChannel]]، فكل تاب يقرا من جديد ويرسم.
-
-جرّبته بطريقتين:
-
-- **في Chrome headless** (playwright-core، بروفايل مؤقت) على سيرفر Node على localhost، بالمثال زي ما هو. بدل Vite استخدمت import map بيقول للمتصفح إن [["idb"]] هو ملف [[idb/build/index.js]] (نسخة 8.0.4)، وفتحت الصفحة في تابين.
-- **في Node 24** الـ solCode، ومعاه [[fake-indexeddb]] (IndexedDB مكتوبة بـ JS، عشان Node معندوش واحدة).
-
----
-
-## ١. فتح الداتابيز
-
-~~~text app.js
-import { openDB } from "idb";
-const db = await openDB("notes-app", 1, {
-  upgrade(db) {
-    const store = db.createObjectStore("notes", { keyPath: "id" });
-    store.createIndex("byUpdated", "updatedAt");
-  },
-});
-~~~
-
-- [[openDB(name, version, { upgrade })]]: افتح الداتابيز دي بالـ version ده.
-- [[1]]: رقم الـ schema. لو الداتابيز مش موجودة، أو موجودة برقم أقل، [[upgrade]] بتتنادى.
-- [[upgrade(db)]]: المكان الوحيد اللي تعمل فيه stores و indexes. زي migration.
-- [[createObjectStore("notes", { keyPath: "id" })]]: store اسمه [[notes]] (زي جدول)، والمفتاح بتاع كل object هو الخاصية [[id]] اللي جواه.
-- [[createIndex("byUpdated", "updatedAt")]]: index اسمه [[byUpdated]] على الخاصية [[updatedAt]]، عشان نجيب الملاحظات مترتبة بالوقت.
-
----
-
-## ٢. إضافة ملاحظة
-
-~~~text app.js
-async function addNote(text) {
-  await db.put("notes", { id: crypto.randomUUID(), text, updatedAt: Date.now() });
-  channel.postMessage({ type: "notes-changed" });
-}
-~~~
-
-- [[db.put(store, value)]]: ضيف، ولو فيه واحد بنفس المفتاح استبدله.
-- [[crypto.randomUUID()]]: id عشوائي فريد زي [[52d6a70d-a233-4d1b-9b78-9d1d3d7ec978]] (ده طلع لما جربته في Node).
-- [[text]] لوحدها جوه الـ object اختصار [[text: text]].
-- [[Date.now()]]: الوقت دلوقتي بالـ millisecond من 1970.
-- [[channel.postMessage(...)]]: ابعت رسالة لكل التابات التانية. ([[channel]] متعرّف تحت، بس الدالة مش بتتنادى غير بعد ما يتعرّف، فمفيش مشكلة.)
-
----
-
-## ٣. القناة
-
-~~~text app.js
-const channel = new BroadcastChannel("notes");
-channel.onmessage = async (e) => {
-  if (e.data.type === "notes-changed") render(await db.getAllFromIndex("notes", "byUpdated"));
-};
-~~~
-
-- [[new BroadcastChannel("notes")]]: اشترك في قناة اسمها [[notes]]. أي تاب أو worker على نفس الـ origin ومشترك في نفس الاسم بيسمع.
-- [[onmessage]]: جالك رسالة. [[e.data]] هو الـ object اللي اتبعت.
-- [[getAllFromIndex("notes", "byUpdated")]]: كل الملاحظات مترتبة بـ [[updatedAt]] من الأقدم للأحدث.
-
----
-
-## ٤. الرسم والتشغيل
-
-~~~text app.js
-function render(notes) {
-  console.log(notes.map((n) => n.text));
-}
-await addNote("اشتري لبن");
-render(await db.getAllFromIndex("notes", "byUpdated"));
-if (navigator.storage?.persist) console.log("persisted:", await navigator.storage.persist());
-~~~
-
-- [[render]]: هنا بتطبع النصوص بس، في تطبيق حقيقي بترسم الليستة.
-- السطر قبل الأخير: التاب اللي ضاف **مبيستلمش رسالته**، فلازم يرسم بنفسه.
-- [[navigator.storage?.persist]]: [[?.]] لو [[storage]] مش موجود رجّع [[undefined]] بدل error. و [[persist()]] بتطلب إن المتصفح ميمسحش الداتا دي لما المساحة تقل، وبترجّع true أو false.
-
----
-
-## ٥. اللي حصل في Chrome (تابين)
-
-~~~text الناتج
-A: [اشتري لبن]
-A: persisted: false
-B: [اشتري لبن, اشتري لبن]
-A: [اشتري لبن, اشتري لبن]
-B: persisted: false
---- A adds 'كلم ماما'
-B: [اشتري لبن, اشتري لبن, كلم ماما]
-~~~
-
-- A فتح: ضاف ملاحظة ورسم نفسه.
-- B فتح: هو كمان نفّذ [[addNote("اشتري لبن")]] (فبقوا اتنين)، ورسم نفسه، وA سمع الرسالة ورسم.
-- A ضاف «كلم ماما»: B بس اللي طبع. A مطبعش لأنه مبيستلمش رسالته، و [[addNote]] نفسها مبترسمش. ده بالظبط الـ bug اللي في الـ sol.
-- [[persisted: false]]: Chrome رفض الطلب هنا (بروفايل مؤقت ومش متسطّب). في موقع متسطّب أو بيتزار كتير غالبًا بيوافق.
-- (وكان فيه سطر [[Failed to load resource: 404]]: ده [[favicon.ico]] مش موجود، ملوش علاقة.)
-
-ودي المساحة اللي Chrome اداها للموقع:
-
-~~~text الناتج
-estimate: {"quota":10737491968,"usage":73728} 10.0 GB
-~~~
-
-[[quota]] الحد الأقصى بالبايت (هنا 10 GB في البروفايل المؤقت، وفي بروفايل عادي بيبقى نسبة من مساحة الديسك الفاضية)، و [[usage]] اللي الموقع مستخدمه فعلًا (حوالي 72 KB).
-
----
-
-## ٦. الـ solCode في Node
-
-~~~text app.js
-import "fake-indexeddb/auto";
-~~~
-
-ده بيحط [[indexedDB]] global في Node، فـ [[idb]] تشتغل زي المتصفح. وبعدين بيعمل قناتين بنفس الاسم في نفس البرنامج ([[tabA]] و [[tabB]]) كأنهم تابين، و A بيبعت. و [[close()]] في الآخر عشان القناة المفتوحة اللي عليها [[onmessage]] بتخلي Node مستني ومبيقفلش (جربت من غيرها: البرنامج فضل شغال لحد ما قفلته بعد ٥ ثواني).
-
-~~~text الناتج (Node 24)
-B: [ 'اشتري لبن' ]
-~~~
-
-سطر «A استلم» مظهرش: نفس النتيجة، الـ instance اللي بعت مبيستلمش.
-
----
-
-## ٧. المساحة: [[storage.estimate]] و quota و eviction
-
-IndexedDB و Cache Storage (بتاع الـ service worker) بياكلوا من **نفس** المساحة المسموحة للموقع (الـ quota). لو عدّيتها، الكتابة بتفشل. ولو الجهاز نفسه المساحة قلّت فيه، المتصفح ممكن **يمسح** داتا موقعك كلها (ده اسمه eviction).
-
-### كام مستخدم وكام فاضل؟
-
-~~~text app.js
-const mb = (n) => (n / 1024 / 1024).toFixed(1) + " MB";
-const { quota, usage, usageDetails } = await navigator.storage.estimate();
-console.log("usage:", mb(usage), "quota:", mb(quota), JSON.stringify(usageDetails));
-~~~
-
-- [[navigator.storage.estimate()]]: بترجّع Promise بـ object فيه [[usage]] (اللي موقعك مستخدمه بالبايت) و [[quota]] (أقصى حاجة مسموحة)، والاتنين **تقريب** مش رقم بالبايت الظبط (عشان المواقع متقدرش تعرف حاجات عن الجهاز من الأرقام دي).
-- [[usageDetails]]: في Chrome بس، بيقسّم الاستخدام: [[indexedDB]] و [[caches]] و [[serviceWorkerRegistrations]].
-- [[mb]]: دالة صغيرة بتحوّل البايت لـ MB برقم عشري واحد ([[toFixed(1)]]).
-
-حطيت ملف عشوائي 50 MB كـ Blob في IndexedDB وقستها قبل وبعد (Chrome 156 headless):
-
-~~~text الناتج
-قبل      usage: 0.0 MB   quota: 10240.0 MB
-بعد      usage: 50.0 MB  {"indexedDB":52430644,"serviceWorkerRegistrations":588}
-~~~
-
-ملاحظة غريبة: لما حطيت 50 MB **أصفار** بدل بيانات عشوائية، [[usage]] طلع حوالي 5 MB بس: Chrome بيضغط الداتا اللي جوه IndexedDB، فالرقم بيعتمد على الداتا نفسها مش حجمها في JS.
-
-### لما المساحة تخلص: [[QuotaExceededError]]
-
-خلّيت Chrome يدّي الموقع 4 MB بس (بأمر DevTools Protocol اسمه [[Storage.overrideQuotaForOrigin]]، ونفس الحاجة في DevTools ← Application ← Storage ← Simulate custom storage quota)، وحطيت 1 MB وبعدين حاولت 5 MB:
-
-~~~text الناتج
-بعد 1MB       usage: 1.1 MB
-catch: QuotaExceededError |
-بعد المحاولة   usage: 1.1 MB
-cache catch: QuotaExceededError | Quota exceeded.
-~~~
-
-- الـ transaction بتاع IndexedDB **اتلغى كله** ([[tx.onabort]] و [[tx.error.name]] بـ [[QuotaExceededError]] والرسالة فاضية)، والـ 1 MB القديم فضل زي ما هو: يا كله يا بلاش.
-- [[cache.put]] بيرمي نفس الاسم برسالة [[Quota exceeded.]]
-- يعني أي كتابة لازم تبقى جوه [[try]]، وتقول لليوزر «المساحة خلصت، امسح حاجات قديمة» بدل ما التطبيق يقف ساكت.
-- و [[estimate()]] فضل يقول 10 GB حتى مع الحد ده، فمتعتمدش على [[quota - usage]] كرقم مضمون: الفيصل هو الـ error.
-
-### الـ eviction: إمتى المتصفح يمسح داتا موقعك؟
-
-ده من الـ docs (MDN: Storage quotas and eviction criteria)، لأنه بيحصل لما ديسك الجهاز نفسه يتملي:
-
-| المتصفح | الـ quota تقريبًا | بيمسح إمتى |
-|---|---|---|
-| Chrome و Edge | لحد حوالي 60٪ من مساحة الديسك لكل موقع | لما الديسك يقرب يتملي، بيمسح المواقع اللي بقالها أطول وقت مااتفتحتش الأول (LRU) |
-| Firefox | حوالي 10٪ من الديسك أو 10 GB لكل مجموعة مواقع، الأقل فيهم | نفس فكرة الأقدم استخدامًا الأول |
-| Safari | حوالي 60٪ للمتصفح نفسه، وأقل للتطبيقات اللي جواها WebView | وكمان بيمسح كل التخزين لأي موقع اليوزر مفتحهوش ٧ أيام، إلا المتسطّب على الشاشة الرئيسية |
-
-الـ eviction بيمسح **الموقع كله** مرة واحدة (IndexedDB و Cache و localStorage مع بعض)، مش جزء منه، عشان متلاقيش داتا نصها موجود.
-
-### [[persist()]]: متمسحش داتايا
-
-~~~text app.js
-console.log("persisted:", await navigator.storage.persisted());
-console.log("persist():", await navigator.storage.persist());
-~~~
-
-- [[persisted()]]: الداتا دي محمية دلوقتي؟ ([[true]] أو [[false]]) من غير ما تطلب حاجة.
-- [[persist()]]: اطلب الحماية. لو اتوافق عليها، المتصفح مش هيمسح داتا موقعك لوحده لما الديسك يتملي، اليوزر بس يقدر يمسحها.
-- في تجربتي (بروفايل جديد، موقع مش متسطّب ومحدش زاره قبل كده) الاتنين رجّعوا [[false]]. حسب الـ docs، Chrome بيقرّر لوحده من غير ما يسأل: بيوافق غالبًا لو الموقع متسطّب، أو في الـ bookmarks، أو اليوزر بيزوره كتير، أو الإشعارات متفعّلة. و Firefox بيطلّع سؤال لليوزر.
-- اطلبها في الوقت اللي الداتا بقت مهمة فعلًا (أول ما اليوزر يحفظ أول ملاحظة offline)، مش أول ما الصفحة تفتح.
-
----
-
-## الخلاصة
-
-| الحاجة | بتعمل إيه |
-|---|---|
-| [[openDB(name, v, { upgrade })]] | تفتح، و upgrade بتتنادى لما الـ version يزيد |
-| [[createObjectStore]] و [[createIndex]] | جوه upgrade بس |
-| [[db.put]] | ضيف أو استبدل |
-| [[getAllFromIndex]] | كله مترتب بالـ index |
-| [[BroadcastChannel]] | رسالة لكل التابات **ما عدا** اللي بعت |
-| [[navigator.storage.persist()]] | اطلب الداتا متتمسحش |
-| [[navigator.storage.estimate()]] | [[usage]] و [[quota]] تقريبًا، والفيصل الحقيقي هو [[QuotaExceededError]] وقت الكتابة |
-
-- عايز تغيّر الـ schema؟ زوّد الـ version.
-- التاب اللي غيّر يرسم بنفسه.`,
-          lines: [
-            R`[[idb]]: مكتبة صغيرة بتلف IndexedDB بـ promises. الـ API الأصلي شغال بـ events ([[onsuccess]] و [[onerror]]) على كل عملية فالكود بيطول؛ بـ [[idb]] تكتب [[await]] عادي.`,
-            R`افتح داتابيز اسمها [[notes-app]] بـ version 1، ولو مش موجودة تتعمل. [[await]] برّه دالة لأن الملف module. الـ version رقم صحيح بتزوّده كل ما تغيّر شكل الداتا.`,
-            R`[[upgrade]] بتتنادى بس لما الداتابيز تتعمل أول مرة أو الـ version المطلوب أعلى من اللي على الجهاز. هي المكان الوحيد اللي تقدر تعمل فيه stores و indexes، زي migration.`,
-            R`اعمل store (زي جدول) اسمه [[notes]]. [[keyPath: "id"]] يعني المفتاح بيتاخد من خاصية [[id]] جوه كل object فمش محتاج تبعته لوحده. ولو حاولت تعمل store موجود بنفس الاسم يرمي error، عشان كده جوه [[upgrade]] بس.`,
-            R`index على [[updatedAt]]: بيخلي الداتابيز تجيب الملاحظات مترتبة بالتاريخ من غير ما تحمّل الكل وترتّب بإيدك. [[byUpdated]] اسم الـ index اللي هنقرا بيه.`,
-            R`نهاية [[upgrade]].`,
-            R`نهاية الـ options وقفلة [[openDB]].`,
-            R`دالة بتضيف ملاحظة وتبلّغ باقي التابات. [[async]] لأن الكتابة في IndexedDB بتاخد وقت ومش بتوقف الصفحة.`,
-            R`[[put]] بتضيف الـ object، ولو فيه واحد بنفس الـ [[id]] بتستبدله (عكس [[add]] اللي بترمي error). [[crypto.randomUUID()]] بيعمل id فريد، و [[updatedAt]] هو اللي الـ index بيرتّب بيه.`,
-            R`بعد ما الكتابة تخلص، ابعت رسالة صغيرة على القناة إن الداتا اتغيرت. مش بنبعت الداتا نفسها: كل تاب يقرا من الداتابيز، فالكل يبقى على نفس المصدر.`,
-            R`نهاية [[addNote]].`,
-            R`قناة باسم [[notes]]: أي تاب أو worker من نفس الـ origin يعمل قناة بنفس الاسم بيستلم اللي يتبعت عليها. [[addNote]] فوق بتستخدمها، وده سليم لأن الدالة مش بتتنادى غير بعد السطر ده.`,
-            R`لما رسالة توصل من تاب تاني. [[async]] لأننا هنقرا من الداتابيز جوه.`,
-            R`لو الرسالة بتقول إن الملاحظات اتغيرت: اقرا كلهم مترتبين بالـ index ([[getAllFromIndex]]) وارسمهم، فالتاب التاني يتحدّث من غير reload.`,
-            R`نهاية [[onmessage]].`,
-            R`دالة الرسم. هنا بتطبع في الـ console بس عشان المثال يبان؛ في تطبيق حقيقي بتبني الليستة في الصفحة.`,
-            R`اطبع نصوص الملاحظات بس: [[map]] بتاخد [[text]] من كل object.`,
-            R`نهاية [[render]].`,
-            R`ضيف ملاحظة: تتحفظ في الداتابيز وتتبعت رسالة للتابات التانية.`,
-            R`التاب اللي بعت الرسالة مبيستلمهاش هو ([[BroadcastChannel]] بيوصّل لكل القنوات بنفس الاسم ما عدا اللي بعتت)، فلازم يرسم بنفسه بعد الإضافة، وإلا الملاحظة الجديدة متظهرش عنده.`,
-            R`[[persist()]] بتطلب من المتصفح إن داتا الموقع متتمسحش لما مساحة الجهاز تقل؛ من غيرها الداتا ممكن تتمسح لو المتصفح احتاج مساحة. بترجّع [[true]] أو [[false]] حسب قرار المتصفح، و [[?.]] عشان المتصفحات اللي مش بتدعمها.`,
-          ],
-          sol: R`التاب التاني بيتحدّث فورًا ويعرض الملاحظة الجديدة. التاب اللي ضاف مش بيستلم رسالته، فلو معملتش render فيه بعد الإضافة مش هتظهر فيه لحد الـ refresh. ده أكتر حاجة بتلخبط في BroadcastChannel.
-
-في Application ← IndexedDB ← notes-app ← notes هتلاقي الـ objects بالـ id و text و updatedAt، وتحت الـ store الـ index [[byUpdated]].
-
-[[estimate()]] بترجّع [[{ quota, usage }]] بالبايت. الـ quota غالبًا بالـ GB (نسبة من مساحة الديسك الفاضية)، والـ usage اللي موقعك مستخدمه فعلًا (IndexedDB و Cache Storage مع بعض).`,
-          solCode: R`import "fake-indexeddb/auto";
-import { openDB } from "idb";
-const db = await openDB("notes-app", 1, {
-  upgrade(db) {
-    db.createObjectStore("notes", { keyPath: "id" }).createIndex("byUpdated", "updatedAt");
-  },
-});
-const tabA = new BroadcastChannel("notes");
-const tabB = new BroadcastChannel("notes");
-tabA.onmessage = () => console.log("A استلم (مش المفروض يحصل)");
-tabB.onmessage = async () => {
-  console.log("B:", (await db.getAllFromIndex("notes", "byUpdated")).map((n) => n.text));
-  tabA.close();
-  tabB.close();
-};
-await db.put("notes", { id: crypto.randomUUID(), text: "اشتري لبن", updatedAt: Date.now() });
-tabA.postMessage({ type: "notes-changed" });`
-        },
-        {
-          cmd: "push و Background Sync",
-          title: "توصّل إشعار والموقع مقفول، وتبعت اللي اتعمل offline أول ما النت يرجع",
-          desc: R`**Push API**: السيرفر بتاعك يبعت رسالة لليوزر حتى لو موقعك مش مفتوح خالص. الـ service worker بيصحى، وياخد الرسالة في [[push]] event، ويطلّع إشعار بـ [[registration.showNotification]]. ده اللي بيخلي «طلبك اتشحن» يوصل وانت قافل المتصفح.
-
-**Background Sync**: اليوزر عمل حاجة وهو offline (بعت رسالة، أو حفظ طلب). بدل ما تقوله «جرّب تاني»، بتعمل [[reg.sync.register("send-outbox")]]، والمتصفح بيصحّي الـ service worker بـ [[sync]] event أول ما النت يرجع، حتى لو اليوزر قفل التاب.
-
-الاتنين محتاجين service worker (درس «دورة حياة الـ SW»)، و HTTPS أو localhost. والـ push محتاج إذن الإشعارات (درس «Notification و permissions» في وحدة APIs المتصفح). Background Sync في Chrome و Edge بس، فلازم يبقى عندك بديل.`,
-          example: R`// الصفحة: بعد ضغطة زرار والإذن granted (درس «Notification و permissions»)
-const reg = await navigator.serviceWorker.ready;
-const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: VAPID_PUBLIC_KEY });
-await fetch("/api/push/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(sub) });
-async function queueSend() {
-  if ("sync" in reg) await reg.sync.register("send-outbox");
-  else await sendOutbox();
-}
-// sw.js
-self.addEventListener("push", (event) => {
-  const data = event.data?.json() ?? { title: "جديد" };
-  event.waitUntil(self.registration.showNotification(data.title, { body: data.body, tag: data.tag, data: { url: data.url } }));
-});
-self.addEventListener("notificationclick", (event) => {
-  event.notification.close();
-  event.waitUntil(clients.openWindow(event.notification.data.url));
-});
-self.addEventListener("sync", (event) => {
-  if (event.tag === "send-outbox") event.waitUntil(sendOutbox());
-});
-// السيرفر: Node بمكتبة web-push
-import webpush from "web-push";
-webpush.setVapidDetails("mailto:dev@example.com", process.env.VAPID_PUBLIC, process.env.VAPID_PRIVATE);
-await webpush.sendNotification(subscription, JSON.stringify({ title: "طلب جديد", body: "رقم 42", tag: "order-42", url: "/orders/42" }));`,
-          try: R`اعمل مفاتيح بـ [[npx web-push generate-vapid-keys]]، وسيرفر Node صغير على localhost فيه [[POST /api/push/subscribe]] بيحفظ الـ subscription في ملف JSON، و [[POST /api/send]] بيبعت إشعار لكل اللي في الملف. اشترك من Chrome، واقفل التاب، وابعت بـ [[curl -X POST localhost:3000/api/send]]: الإشعار ظهر والتاب مقفول؟ وبعدين DevTools ← Network ← Offline، ونادي [[queueSend()]]، وارجع Online وشوف [[/api/outbox]] في لوج السيرفر.`,
-          practice: [
-            { lvl: 'سريع', t: R`اشرحها: ارسم في ٥ خطوات بالترتيب رحلة إشعار «طلبك اتشحن» من لحظة ما اليوزر داس «فعّل الإشعارات» لحد ما ضغط على الإشعار وفتح صفحة الطلب. كل خطوة: مين بيعمل إيه (الصفحة، أو الـ SW، أو سيرفرك، أو push service زي FCM)، وإيه اللي بيتنقل.`, done: R`الخطوات فيها: [[requestPermission]] ثم [[pushManager.subscribe]] بالـ public key، والـ subscription بيتبعت لسيرفرك ويتحفظ، والسيرفر بيبعت بالـ private key للـ [[endpoint]] (مش للمتصفح مباشرة)، والـ SW بيصحى في [[push]] ويعمل [[showNotification]]، والضغطة [[notificationclick]] بتفتح [[data.url]]. وتقدر تقول ليه السيرفر مبيكلّمش المتصفح مباشرة.`, sol: R`**الإجابة النموذجية: رحلة «طلبك اتشحن» في ٥ خطوات**
-
-~~~text
-١. الصفحة   ← اليوزر داس «فعّل الإشعارات» → Notification.requestPermission() → "granted"
-            ← reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: VAPID_PUBLIC })
-            المتصفح بيكلّم الـ push service بتاعه (FCM في Chrome، Mozilla autopush في Firefox، Apple في Safari)
-            ويرجّع subscription: { endpoint: "https://fcm.googleapis.com/...", keys: { p256dh, auth } }
-
-٢. الصفحة → سيرفرك
-            fetch("/api/push/subscribe", { body: JSON.stringify(sub) })
-            سيرفرك بيحفظ الـ subscription مع اليوزر (كل جهاز ليه subscription لوحده)
-
-٣. سيرفرك → push service
-            الطلب اتشحن: web-push بيشفّر الـ payload بـ p256dh و auth (عشان الـ push service ميقدرش يقراه)
-            وبيوقّعه بالـ VAPID private key (عشان يثبت إن السيرفر ده صاحب الـ public key)
-            ويبعته POST للـ endpoint. الرد 201 = استلم، و 404/410 = الـ subscription مات (امسحه)
-
-٤. push service → المتصفح → الـ SW
-            المتصفح (حتى لو الموقع مقفول) بيصحّي الـ SW بحدث push
-            sw.js: event.waitUntil(self.registration.showNotification(data.title, { body, tag, data: { url } }))
-            userVisibleOnly: true معناها لازم يظهر إشعار في كل push، مينفعش push «ساكت»
-
-٥. اليوزر ← ضغط على الإشعار
-            sw.js: notificationclick → event.notification.close() و clients.openWindow(event.notification.data.url)
-            صفحة الطلب /orders/42 بتتفتح
-~~~
-
-**ليه السيرفر مبيكلّمش المتصفح مباشرة؟**
-
-- المتصفح مش سيرفر: معندوش عنوان ثابت ولا بورت مفتوح، وغالبًا ورا NAT أو موبايل بيغيّر شبكته، ومقفول معظم الوقت.
-- الـ push service عنده اتصال واحد مفتوح دايمًا مع المتصفح (أو مع نظام الموبايل) لكل المواقع مع بعض، فبطارية الموبايل متخلصش من اتصال لكل موقع.
-- عشان كده الـ [[endpoint]] لينك عند الـ push service مش عند اليوزر، وسيرفرك بيبعت هناك، وهو بيوصّلها لما الجهاز يبقى متاح (ولحد [[TTL]] اللي انت بتحدده).
-
-**مين بيعمل إيه في جملة:** الصفحة بتطلب الإذن وتعمل subscribe وتبعت الـ subscription. سيرفرك بيحفظ ويبعت مشفّر وموقّع. الـ push service بيوصّل. الـ SW بيصحى ويعرض الإشعار ويفتح الصفحة لما اليوزر يضغط.
-
-**مصدر الإجابة:** درس «push و Background Sync» نفسه، و MDN «Push API» ([[PushManager.subscribe()]] و [[PushSubscription.endpoint]] و [[ServiceWorkerGlobalScope: push event]]). الكود ده من الدرس واتجرّب جزء السيرفر منه في التمرين التالت على push service وهمي على localhost. التوصيل الحقيقي لـ FCM مش في التجربة: مبنبعتش من المعمل لخدمات حقيقية.
-
-**الغلطة الشائعة:** تفتكر إن الـ [[endpoint]] بتاع الـ subscription هو «عنوان المتصفح»، فتحاول تبعت له من غير تشفير وتوقيع. الـ push service بيرفض أي طلب من غير توقيع VAPID صح، والـ payload من غير تشفير مش هيوصل للـ SW أصلًا، فمحدش هيشوف حاجة.` },
-            { lvl: 'تطبيق', t: R`ابني «صندوق صادر» (outbox): فورم تعليق، لو [[navigator.onLine]] بـ false أو الـ [[fetch]] فشل، التعليق يتحفظ في IndexedDB (درس «IndexedDB و BroadcastChannel») ويتنادى [[queueSend()]]. و [[sendOutbox()]] واحدة بتشتغل في الصفحة والـ SW: بتقرا كل اللي في الـ outbox، وتبعته، وتمسح اللي اتبعت بس.`, done: R`٣ تعليقات وانت Offline بيوصلوا السيرفر بالترتيب أول ما ترجع Online (في Chrome حتى لو قفلت التاب قبلها)، ومفيش تعليق بيتبعت مرتين لو النت فصل في النص، وفي Firefox (من غير [[sync]]) بيتبعتوا لما تفتح الصفحة تاني أو [[online]] event يحصل.`, sol: R`~~~text
-comments-outbox/
-├── package.json        # express و idb (نفس package.json بتاع تمرين «IndexedDB و BroadcastChannel»)
-├── server.js
-└── public/
-    ├── index.html
-    ├── app.js          # الصفحة: تحفظ في الـ outbox و queueSend()
-    ├── outbox.js       # sendOutbox() واحدة للصفحة والـ SW
-    └── sw.js           # حدث sync
-~~~
-
-~~~js server.js
-const express = require("express");
-const path = require("node:path");
-const app = express();
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "public"), { setHeaders: (res) => res.setHeader("cache-control", "no-cache") }));
-app.use("/vendor", express.static(path.join(__dirname, "node_modules/idb/build")));
-const seen = new Set();
-app.post("/api/comments", (req, res) => {
-  const dup = seen.has(req.body.id);
-  seen.add(req.body.id);
-  console.log("POST /api/comments", req.body.text, dup ? "(مكرر!)" : "");
-  res.status(201).json({ ok: true });
-});
-const port = Number(process.env.PORT) || 3000;
-app.listen(port, () => console.log("على http://localhost:" + port));
-~~~
-
-~~~js outbox.js
-// بيشتغل في الصفحة وفي الـ SW (الاتنين modules)
-import { openDB } from "/vendor/index.js";
-
-const dbp = openDB("comments", 1, {
-  upgrade(db) { db.createObjectStore("outbox", { keyPath: "seq", autoIncrement: true }); },
-});
-
-export async function addToOutbox(comment) {
-  await (await dbp).add("outbox", comment);
-}
-
-export async function countOutbox() {
-  return (await dbp).count("outbox");
-}
-
-// بيبعت كل اللي في الـ outbox بالترتيب، ويمسح اللي اتبعت بس. Web Locks: صفحة و SW ميبعتوش مع بعض
-export function sendOutbox() {
-  return navigator.locks.request("send-outbox", async () => {
-    const db = await dbp;
-    let sent = 0;
-    for (const item of await db.getAll("outbox")) {
-      const res = await fetch("/api/comments", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ id: item.id, text: item.text }),
-      });
-      if (!res.ok) throw new Error("السيرفر رجّع " + res.status);   // sync هيعيد المحاولة بعدين
-      await db.delete("outbox", item.seq);
-      sent++;
-    }
-    return sent;
-  });
-}
-~~~
-
-~~~js sw.js
-import { sendOutbox } from "/outbox.js";
-
-self.addEventListener("install", () => self.skipWaiting());
-self.addEventListener("activate", (e) => e.waitUntil(self.clients.claim()));
-
-self.addEventListener("sync", (event) => {
-  if (event.tag === "send-outbox") event.waitUntil(sendOutbox());   // لو رمت، المتصفح بيعيد بعدين
-});
-~~~
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تعليق بيتبعت حتى لو النت قاطع</title>
-<style>body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; } textarea { width: 100%; font: inherit; }</style>
-</head>
-<body>
-<form id="f">
-  <label for="text">تعليقك</label>
-  <textarea id="text" name="text" required></textarea>
+<form id="form">
+  <label>اختار ملفات: <input type="file" name="files" id="files" multiple></label>
+  <table>
+    <thead><tr><th>الاسم</th><th>الحجم</th><th>النوع</th><th></th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
   <button>ابعت</button>
 </form>
-<p id="status" role="status"></p>
-<script type="module" src="/app.js"></script>
+<p id="sent"></p>
+<script>
+  const input = document.querySelector("#files");
+  const rows = document.querySelector("#rows");
+
+  function render() {
+    rows.replaceChildren(...[...input.files].map((file, i) => {
+      const tr = document.createElement("tr");
+      for (const text of [file.name, (file.size / 1024).toFixed(1) + " KB", file.type || "غير معروف"]) {
+        const td = document.createElement("td");
+        td.textContent = text;
+        tr.append(td);
+      }
+      const td = document.createElement("td");
+      const btn = document.createElement("button");
+      btn.type = "button";                     // مش submit
+      btn.textContent = "شيل";
+      btn.addEventListener("click", () => removeAt(i));
+      td.append(btn);
+      tr.append(td);
+      return tr;
+    }));
+  }
+
+  // input.files للقراية بس: بنبني FileList جديدة من DataTransfer
+  function removeAt(index) {
+    const dt = new DataTransfer();
+    [...input.files].forEach((file, i) => { if (i !== index) dt.items.add(file); });
+    input.files = dt.files;
+    render();
+  }
+
+  input.addEventListener("change", render);
+
+  // بدل ما نبعت لسيرفر: نعرض اللي الفورم كانت هتبعته
+  document.querySelector("#form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const names = new FormData(e.target).getAll("files").map((f) => f.name);
+    document.querySelector("#sent").textContent = "الفورم هتبعت: " + (names.join("، ") || "ولا ملف");
+  });
+</script>
 </body>
 </html>
 ~~~
 
-~~~js app.js
-import { addToOutbox, sendOutbox, countOutbox } from "/outbox.js";
+اختار كذا ملف من جهازك في الـ preview، ودوس «شيل» على واحد وبعدين «ابعت». (الـ preview مش هيبعت لسيرفر: الصفحة بتعرض اللي الفورم كانت هتبعته.)
 
-const status = document.querySelector("#status");
-const reg = await navigator.serviceWorker.register("/sw.js", { type: "module" });
-
-async function queueSend() {
-  const ready = await navigator.serviceWorker.ready;
-  if ("sync" in ready) {
-    await ready.sync.register("send-outbox");     // Chrome: الـ SW هيبعت لما النت يرجع، حتى لو التاب اتقفل
-  } else if (navigator.onLine) {
-    await sendOutbox().catch(() => {});            // Firefox و Safari: مفيش sync
-  }
-}
-
-async function showStatus() {
-  const n = await countOutbox();
-  status.textContent = n ? $__bt$__{n} تعليق مستني النت$__bt : "كله اتبعت";
-}
-
-document.querySelector("#f").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const text = e.target.text.value.trim();
-  e.target.reset();
-  await addToOutbox({ id: crypto.randomUUID(), text });
-  await queueSend();
-  await showStatus();
-});
-
-// من غير sync: ابعت لما النت يرجع أو الصفحة تفتح
-window.addEventListener("online", async () => { if (!("sync" in reg)) await sendOutbox().catch(() => {}); showStatus(); });
-if (!("sync" in reg) && navigator.onLine) await sendOutbox().catch(() => {});
-await showStatus();
-~~~
-
-**القياس:** Chrome 158 headless على [[http://localhost:8831]]. قطعنا النت، وبعتنا ٣ تعليقات، و **قفلنا التاب**، وبعدين رجّعنا النت ومفيش ولا صفحة مفتوحة:
-
-~~~text الناتج (Chrome 158 headless)
-sync موجود؟ true
-Offline: 3 تعليق مستني النت | السيرفر: 0 request
-التاب اتقفل. pages: 0 | service workers: 1
-بعد ما النت رجع (6s) من غير أي تاب:
-  POST /api/comments تعليق ١
-  POST /api/comments تعليق ٢
-  POST /api/comments تعليق ٣
+~~~text الناتج (Chrome 158 headless، اخترنا ٣ ملفات حقيقية من الديسك بـ setInputFiles)
+notes.txt | 1.5 KB | text/plain
+photo.png | 200.0 KB | image/png
+data.xyz | 0.0 KB | غير معروف
+input.files.length: 3
+--- بعد «شيل» على photo.png
+notes.txt | 1.5 KB | text/plain
+data.xyz | 0.0 KB | غير معروف
+input.files.length: 2
+الفورم هتبعت: notes.txt، data.xyz
 pageerrors: 0
 ~~~
 
-الـ ٣ وصلوا بالترتيب من الـ SW لوحده، والسيرفر مطبعش «(مكرر!)» ولا مرة.
+**ليه كده:**
+
+- **[[(file.size / 1024).toFixed(1)]]:** [[file.size]] بالبايت. 1536 ÷ 1024 = 1.5، و [[toFixed(1)]] بيسيب رقم عشري واحد كنص ([["1.5"]]).
+- **[[file.type || "غير معروف"]]:** المتصفح بيخمّن النوع **من الامتداد**. امتداد ميعرفوش ([[.xyz]]) = نص فاضي. ولاحظ إن [[photo.png]] هنا كلها أصفار ومع ذلك نوعها [[image/png]]: النوع مش فحص للمحتوى (التمرين اللي جاي بيعمل الفحص ده).
+- **[[input.files]] مبتتعدّلش:** دي [[FileList]] للقراية بس، مفيهاش [[remove]] ولا [[splice]]. الطريقة الوحيدة: [[new DataTransfer()]]، تضيف فيه الملفات اللي عايزها بـ [[dt.items.add(file)]]، وبعدين [[input.files = dt.files]].
+- **[[btn.type = "button"]]:** أي [[<button>]] جوه [[<form>]] نوعه [[submit]] افتراضيًا، فـ «شيل» كانت هتبعت الفورم.
+- **[[new FormData(form).getAll("files")]]:** ده بالظبط اللي الفورم هتبعته، وبيقرا من [[input.files]] الجديدة، فالملف اللي اتشال مش موجود.
+- **[[removeAt(i)]] بعدها [[render()]]:** الأرقام [[i]] اتغيّرت بعد الشيل، فبنرسم الجدول من جديد بدل ما نشيل الصف بس، وإلا «شيل» التانية هتشيل ملف غلط.
+
+**الغلطة الشائعة:** تخزّن الملفات في array بتاعتك وتشيل منها، وتنسى الـ input. الجدول هيبان صح، بس الفورم هتبعت كل الملفات القديمة لأنها بتقرا من [[input.files]] مش من الـ array.` },
+            { lvl: 'تطبيق', t: R`مسألة: اكتب [[async function sniffImage(file)]] بترجّع [["png"]] أو [["jpeg"]] أو [[null]] من أول bytes مش من الامتداد: [[new Uint8Array(await file.slice(0, 4).arrayBuffer())]]. PNG بيبدأ بـ [[89 50 4E 47]] و JPEG بـ [[FF D8 FF]]. جرّبها في Node بملفات بتعملها بـ [[new File([bytes], "a.png")]].`, done: R`ملف أوله bytes الـ PNG بيرجّع [["png"]]، وملف [[new File(["hello"], "fake.png", { type: "image/png" })]] بيرجّع [[null]] مع إن [[file.type]] بتاعه [[image/png]] (في المتصفح النوع بيتخمّن من الامتداد)، وملف فاضي أو أقل من 4 bytes بيرجّع [[null]] من غير error.`, sol: R`~~~js sniff.mjs
+export async function sniffImage(file) {
+  const bytes = new Uint8Array(await file.slice(0, 4).arrayBuffer());
+  if (bytes.length >= 4 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) return "png";
+  if (bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) return "jpeg";
+  return null;
+}
+~~~
+
+~~~js sniff-demo.mjs
+import { sniffImage } from "./sniff.mjs";
+
+const png = new File([new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])], "a.png");
+const jpeg = new File([new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0x00])], "b.jpg");
+const fake = new File(["hello"], "fake.png", { type: "image/png" });
+const empty = new File([], "empty.png");
+const tiny = new File([new Uint8Array([0x89, 0x50])], "tiny.png");
+
+for (const f of [png, jpeg, fake, empty, tiny]) {
+  console.log(f.name.padEnd(10), "type:", (f.type || '""').padEnd(10), "size:", String(f.size).padEnd(2), "→", await sniffImage(f));
+}
+~~~
+
+~~~text الناتج (node sniff-demo.mjs، Node 24)
+a.png      type: ""         size: 8  → png
+b.jpg      type: ""         size: 5  → jpeg
+fake.png   type: image/png  size: 5  → null
+empty.png  type: ""         size: 0  → null
+tiny.png   type: ""         size: 2  → null
+~~~
+
+وفي المتصفح: ملف نصي فيه [[hello]] اسمه [[fake.png]] اتختار من [[<input type="file">]]:
+
+~~~text الناتج (Chrome 158 headless)
+المتصفح: fake.png type=image/png → null
+~~~
 
 **ليه كده:**
 
-- **[[reg.sync.register("send-outbox")]]:** بيقول للمتصفح «صحّي الـ SW بحدث [[sync]] أول ما يبقى فيه نت». المتصفح بيفتكر الطلب ده حتى لو التاب اتقفل، وبيصحّي الـ SW وقتها. ولو التسجيل حصل والنت شغال، الحدث بيحصل على طول.
-- **[[event.waitUntil(sendOutbox())]]:** الـ SW بيفضل صاحي لحد ما الإرسال يخلص. ولو الـ Promise اترفض (السيرفر رجّع 500 مثلًا)، المتصفح بيعيد الـ [[sync]] بعدين لوحده.
-- **[[sendOutbox]] واحدة في [[outbox.js]]:** الصفحة والـ SW الاتنين modules (التسجيل بـ [[{ type: "module" }]])، فبيعملوا import لنفس الملف. نفس الكود بيشتغل في المكانين.
-- **[[navigator.locks.request("send-outbox", ...)]]:** موجود في الصفحة والـ SW، فلو الصفحة والـ SW (أو تابين) حاولوا يبعتوا في نفس اللحظة، واحد بس بيدخل، والتاني بيلاقي الـ outbox فاضي. ده اللي اتعلّمناه من باج تمرين «IndexedDB و BroadcastChannel» (كل ملاحظة اتبعتت مرتين).
-- **[[db.delete]] بعد الـ [[res.ok]] بس:** لو النت وقع بعد تعليق ١، الـ fetch بيرمي، و ٢ و ٣ لسه في الـ outbox. وأول ما يتبعتوا تاني محدش منهم بيتكرر.
-- **من غير [[sync]] (Firefox و Safari):** حسب جدول التوافق في MDN صفحة «Background Synchronization API»، الـ API ده في Chrome و Edge بس. فـ [[queueSend]] بتبعت على طول لو فيه نت، والصفحة بتبعت على [[online]] وأول ما تفتح. يعني لو قفلت التاب Offline، التعليقات بتستنى لحد ما تفتح الموقع تاني. ده من الوثائق، المعمل مفيهوش Firefox.
+- **[[file.slice(0, 4)]]:** بيرجّع [[Blob]] لأول ٤ bytes بس، من غير ما يقرا الملف كله. صورة 20MB هتتقري منها ٤ bytes.
+- **[[await ... .arrayBuffer()]] و [[new Uint8Array(...)]]:** الـ ArrayBuffer هو الـ bytes الخام، و [[Uint8Array]] بيخلّيك تقرا كل byte كرقم من 0 لـ 255.
+- **الـ magic numbers:** كل صيغة ملفات بتبدأ بتوقيع ثابت. PNG: [[89 50 4E 47]] (والـ 50 4E 47 هما حروف [[PNG]] بالـ ASCII). JPEG: [[FF D8 FF]]. بنقارن بـ [[0x89]] وكده عشان نكتبهم زي ما هما في المواصفات.
+- **[[bytes.length >= 4]]:** الملف الفاضي أو الصغير بيرجّع array أقصر، و [[bytes[3]]] هيبقى [[undefined]] فالمقارنة غلط والنتيجة [[null]] من غير error. الشرط مكتوب عشان القارئ يفهم ليه.
+- **[[File]] موجود في Node 20 وما بعده كـ global:** فالدالة نفسها اتختبرت في Node والمتصفح من غير تعديل.
+- **[[fake.png]]:** نوعه [[image/png]] في الاتنين لأن النوع بييجي من الامتداد (أو من اللي انت كتبته في [[new File]])، والفحص بالـ bytes كشف إنه مش صورة.
 
-**الغلطة الشائعة:** تحط الـ outbox في [[localStorage]]. الـ SW مبيقدرش يوصل لـ [[localStorage]] خالص، فالـ [[sync]] هيصحى ومش هيلاقي حاجة يبعتها. IndexedDB هو التخزين اللي الصفحة والـ SW بيشوفوه الاتنين.` },
-            { lvl: 'تحدي', t: R`محاكاة سيرفر حقيقي: [[sendToAll(subscriptions, payload)]] في Node بتبعت لـ ٥٠٠ subscription بحد ١٠ في نفس الوقت (فكرة [[mapLimit]])، وأي واحد يرجّع [[410]] أو [[404]] يتمسح من التخزين، وأي error تاني يتسجّل ويتعاد مرة واحدة بعد ثانيتين، وفي الآخر ملخص: اتبعت كام، واتمسح كام، وفشل كام.`, done: R`جرّبتها على push service وهمي على [[https://localhost]] بيرد زي FCM (201 للشغال، و 410 للي اتعمله unsubscribe، و 404 للي مش موجود، و 500 مرة، و 503 دايمًا): الـ 410 والـ 404 طلّعوا [[WebPushError]] بـ [[statusCode]] واتمسحوا من التخزين، وأكبر عدد طلبات في نفس الوقت عند الـ push service كان 10، والملخص بيطلع أرقام صح، وتشغيلها مرتين ورا بعض مبيبعتش للممسوح تاني.`, sol: R`**الدالة:**
+**الغلطة الشائعة:** تعتمد على [[file.type]] أو [[accept="image/*"]] وتفتكر ده أمان. الاتنين بيتغيّروا باسم الملف بس. والفحص ده في المتصفح لتجربة اليوزر بس: السيرفر لازم يفحص تاني، لأن أي حد يقدر يبعت request من غير صفحتك خالص.` },
+            { lvl: 'تحدي', t: R`قارن وقيس: [[resizeImage(file, max = 1024)]] بـ [[createImageBitmap(file)]] و canvas أكبر ضلع فيه [[max]] بنفس النسبة، و [[canvas.toBlob(cb, "image/jpeg", 0.8)]] ملفوفة في Promise، وبترجّع [[File]] جديد. اعرض الحجم والمقاس قبل وبعد لـ ٣ صور.`, done: R`صورة 4000×3000 بتطلع 1024×768 بالظبط، وصورة طولية 3000×4000 بتطلع 768×1024، وصورة أصغر من 1024 أصلًا بترجع بمقاسها مبتكبرش، وجدول قبل وبعد فيه الحجم بالـ KB للتلات صور، وملف مش صورة بيرفض الـ Promise برسالة مفهومة.`, sol: R`~~~live 260 resize.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>صغّر الصور قبل الرفع</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
+  table { border-collapse: collapse; margin-top: 12px; }
+  th, td { border-bottom: 1px solid #ddd; padding: 4px 8px; text-align: start; }
+  .err { color: #b91c1c; }
+</style>
+</head>
+<body>
+<label>اختار صور: <input type="file" id="pics" accept="image/*" multiple></label>
+<table>
+  <thead><tr><th>الملف</th><th>قبل</th><th>بعد</th></tr></thead>
+  <tbody id="rows"></tbody>
+</table>
+<script>
+  async function resizeImage(file, max = 1024) {
+    let bitmap;
+    try {
+      bitmap = await createImageBitmap(file);
+    } catch {
+      throw new Error($__bt«$__{file.name}» مش صورة المتصفح يقدر يفتحها$__bt);
+    }
+    const scale = Math.min(1, max / Math.max(bitmap.width, bitmap.height));   // مبنكبّرش
+    const w = Math.round(bitmap.width * scale);
+    const h = Math.round(bitmap.height * scale);
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    canvas.getContext("2d").drawImage(bitmap, 0, 0, w, h);
+    const before = [bitmap.width, bitmap.height];
+    bitmap.close();                       // بعد close الـ width و height بيبقوا 0
+    const blob = await new Promise((resolve, reject) =>
+      canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("toBlob رجّع null"))), "image/jpeg", 0.8),
+    );
+    const name = file.name.replace(/\.\w+$/, "") + ".jpg";
+    return { file: new File([blob], name, { type: "image/jpeg" }), before, after: [w, h] };
+  }
 
-~~~js send-to-all.mjs
-import webpush from "web-push";
+  const kb = (n) => (n / 1024).toFixed(0) + " KB";
+  document.querySelector("#pics").addEventListener("change", async (e) => {
+    const rows = document.querySelector("#rows");
+    rows.replaceChildren();
+    for (const file of e.target.files) {
+      const tr = rows.insertRow();
+      tr.insertCell().textContent = file.name;
+      try {
+        const r = await resizeImage(file);
+        tr.insertCell().textContent = $__bt$__{r.before.join("×")} | $__{kb(file.size)}$__bt;
+        tr.insertCell().textContent = $__bt$__{r.after.join("×")} | $__{kb(r.file.size)}$__bt;
+      } catch (err) {
+        const td = tr.insertCell();
+        td.colSpan = 2;
+        td.className = "err";
+        td.textContent = err.message;
+      }
+    }
+  });
+</script>
+</body>
+</html>
+~~~
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+اختار صور من جهازك في الـ preview (صورة موبايل كبيرة تبقى أوضح).
 
-// بيشغّل fn على كل عنصر، بس limit بالكتير في نفس الوقت
-async function mapLimit(items, limit, fn) {
-  const results = new Array(items.length);
+~~~text الناتج (Chrome 158 headless، جوه iframe معزول، ٣ صور اتعملت بـ canvas واتحفظت على الديسك + ملف نصي)
+landscape.jpg | 4000×3000 | 1192 KB | 1024×768 | 172 KB
+portrait.png | 3000×4000 | 6756 KB | 768×1024 | 173 KB
+small.jpg | 800×600 | 118 KB | 800×600 | 75 KB
+notes.txt | «notes.txt» مش صورة المتصفح يقدر يفتحها
+pageerrors: 0
+~~~
+
+**ليه كده:**
+
+- **[[createImageBitmap(file)]]:** بيفك الصورة (JPEG أو PNG أو WebP...) لـ bitmap جاهز للرسم، من غير [[<img>]] ولا [[onload]]. لو الملف مش صورة الـ Promise بيترفض، فبنمسكه ونرمي رسالة بالعربي فيها اسم الملف.
+- **[[Math.min(1, max / Math.max(w, h))]]:** النسبة على أكبر ضلع، فالطولية والعرضية الاتنين بيوصلوا 1024 في الضلع الكبير والتاني بنفس النسبة (4000×3000 × 0.256 = 1024×768). والـ [[Math.min(1, ...)]] بتمنع التكبير: 800×600 فضلت زي ما هي.
+- **[[canvas.toBlob(cb, "image/jpeg", 0.8)]]:** الـ API قديمة وبـ callback، فبنلفّها في Promise. والـ callback ممكن ياخد [[null]] (canvas كبير زيادة مثلًا)، فبنرفض الـ Promise بدل ما نكمّل بـ [[null]].
+- **[[new File([blob], name, { type })]]:** بيرجّع ملف حقيقي باسم [[.jpg]] تقدر تحطه في [[FormData]] زي أي ملف اختاره اليوزر.
+- **الأرقام:** صورة الـ PNG نزلت من 6.7MB لـ 173KB (PNG مش مضغوط بخسارة، والصورة كبيرة). وحتى 800×600 نزلت لـ 75KB لأن جودة 0.8 أقل من 0.92 اللي اتعملت بيها.
+
+**اللي حصل وإحنا بنكتبه:** أول نسخة كانت بتقرا [[bitmap.width]] **بعد** [[bitmap.close()]]، فعمود «قبل» طلع [[0×0]] للصورتين. [[close()]] بيرمي الصورة من الميموري وبيخلّي المقاسات صفر، فاتنقلت القراية قبله. والـ [[close()]] نفسه مهم: bitmap بـ 4000×3000 بياخد حوالي 48MB في الميموري لحد ما يتقفل أو الـ garbage collector يشيله.
+
+**الغلطة الشائعة:** تحسب المقاس الجديد بـ [[max / bitmap.width]] بس. الصورة الطولية 3000×4000 هتطلع 1024×1365، أطول من الحد.` },
+          ],
+          ref: [
+            { t: "MDN: <input type=\"file\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/file" },
+            { t: "MDN: Using files from web applications", url: "https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications" },
+            { t: "MDN: URL.createObjectURL()", url: "https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL_static" },
+            { t: "MDN: DataTransfer", url: "https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer" },
+            { t: "MDN: createImageBitmap()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/createImageBitmap" },
+          ],
+          flag: "script",
+          deep: {
+            why: "صورة بروفايل، وصور منتجات، ومرفقات. المعاينة قبل الرفع بتوفر وقت اليوزر والباندويدث، والفحص في المتصفح بيقول «الملف كبير» فورًا بدل ما يستنى رفع ٢٠ ميجا يترفض في الآخر.",
+            how: R`[[File]] نوع من [[Blob]] (داتا binary) ومعاه اسم وتاريخ تعديل. المتصفح مبيقراش الملف لما تختاره، بيدّيك reference بس. [[createObjectURL]] بيربط الـ reference ده بـ URL جوه الصفحة، فالـ img بيقرا من الديسك مباشرة، وده أسرع وأخف من [[FileReader.readAsDataURL]] (اللي بيحوّل الملف كله نص base64 في الذاكرة، أكبر بحوالي الثلث).
+
+كل URL بيفضل شايل الملف في الذاكرة لحد ما تعمل revoke أو الصفحة تتقفل، فلو اليوزر اختار صور ١٠ مرات من غير revoke، الذاكرة بتتراكم.
+
+[[file.type]] المتصفح بيخمّنه من الامتداد (مش من محتوى الملف)، و [[accept]] اقتراح لنافذة الاختيار. يعني الاتنين للراحة (UX) مش للأمان. السيرفر لازم يفحص الحجم وأول bytes في الملف (magic bytes) ويعيد تسمية الملف (درس «multer» في تاب Backend بـ Node، و «presigned URL» في تاب Cloud و DevOps). ولو عايز تصغّر الصورة قبل الرفع: ارسمها على canvas بمقاس أصغر و [[canvas.toBlob(cb, "image/webp", 0.8)]].`,
+            when: R`أي رفع ملفات. و [[multiple]] للمعارض والمرفقات. والتصغير في المتصفح للصور الكبيرة من الموبايل (١٢ ميجا بكسل) قبل ما ترفعها.`,
+            mistakes: R`تعتمد على accept أو file.type كأمان. و createObjectURL من غير revoke. و FileReader base64 لملفات كبيرة. وتعرض [[file.name]] بـ innerHTML (اسم الملف input من اليوزر: [["<img onerror=...>.png"]] اسم ملف قانوني). وتنسى إن اختيار نفس الملف مرتين مش بيطلق [[change]] (اعمل [[input.value = ""]] بعد ما تخلص).`
+          },
+          teach: R`## الفكرة في سطر
+
+اليوزر يختار صور، فنعرضها على طول من الجهاز بتاعه من غير ما نرفع حاجة، ونتخطى أي ملف مش صورة أو أكبر من 2MB.
+
+جرّبته في Chrome headless (عن طريق playwright-core): اخترت للـ input بـ [[setInputFiles]] خمس ملفات عملتهم بنفسي: [[cat.png]] (صورة 1×1)، و [[big.png]] (3MB)، و [[doc.pdf]]، و [[notes.png]] (ملف نص اسمه png)، و [[dog.jpg]].
+
+---
+
+## ١. الـ HTML
+
+~~~text index.html
+<input type="file" id="pics" accept="image/png,image/jpeg,image/webp" multiple>
+<div id="preview"></div>
+~~~
+
+- [[type="file"]]: زرار «Choose Files» بيفتح نافذة اختيار الملفات.
+- [[accept="image/png,image/jpeg,image/webp"]]: أنواع (MIME types) مفصولة بـ [[,]]. نافذة الاختيار بتعرض دول بس. **اقتراح** مش منع: اليوزر يقدر يغيّر الفلتر لـ «All files».
+- [[multiple]]: يسمح باختيار أكتر من ملف.
+- [[#preview]]: المكان اللي هنحط فيه المعاينات.
+
+---
+
+## ٢. التجهيز
+
+~~~text app.js
+const input = document.querySelector("#pics");
+const preview = document.querySelector("#preview");
+const MAX = 2 * 1024 * 1024;
+let urls = [];
+~~~
+
+- [[MAX = 2 * 1024 * 1024]]: 2MB بالبايت = [[2097152]]. (1KB = 1024 byte، و 1MB = 1024KB.) كتبناها ضرب عشان تتقري «2 ميجا» بدل رقم مش مفهوم.
+- [[urls]]: هنحفظ فيها كل URL مؤقت بنعمله، عشان نمسحه بعدين. [[let]] مش [[const]] لأننا هنبدّلها بـ array فاضية.
+
+---
+
+## ٣. لما اليوزر يختار: [[change]]
+
+~~~text app.js
+input.addEventListener("change", () => {
+  urls.forEach((u) => URL.revokeObjectURL(u));
+  urls = [];
+  preview.replaceChildren();
+~~~
+
+- [[change]]: بيحصل لما اليوزر يقفل نافذة الاختيار وهو مختار حاجة **مختلفة** عن اللي كان مختارها.
+- أول ٣ سطور تنضيف للاختيار اللي فات: [[revokeObjectURL]] لكل URL قديم (هنفهمها تحت)، وفضّي الـ array، و [[replaceChildren()]] من غير arguments بتمسح كل اللي جوه [[preview]].
+
+### [[input.files]]
+
+~~~text app.js
+  for (const file of input.files) {
+~~~
+
+[[input.files]] ليستة (FileList) فيها object من نوع [[File]] لكل ملف. طبعت اللي فيها بعد ما اخترت الخمسة:
+
+~~~text الناتج
+change: files = 5 cat.png image/png 70 | big.png image/png 3145798 | doc.pdf application/pdf 9 | notes.png image/png 16 | dog.jpg image/jpeg 70
+~~~
+
+| الخاصية | معناها | مثال |
+|---|---|---|
+| [[name]] | اسم الملف من غير المسار | [[cat.png]] |
+| [[type]] | الـ MIME type | [[image/png]] |
+| [[size]] | الحجم بالبايت | [[3145798]] |
+
+لاحظ [[notes.png]]: ملف نص جواه [[hello, I am text]]، و [[type]] بتاعه [[image/png]]. المتصفح بيخمّن النوع من **الامتداد** مش من المحتوى.
+
+### الفلترة
+
+~~~text app.js
+    if (!file.type.startsWith("image/")) continue;
+    if (file.size > MAX) {
+      preview.append($__bt$__{file.name}: أكبر من 2MB. $__bt);
+      continue;
+    }
+~~~
+
+- [[startsWith("image/")]]: النص بيبدأ بـ [["image/"]]؟ الـ PDF نوعه [["application/pdf"]] فـ [[continue]] تعدّيه من غير ما تعرض حاجة.
+- [[file.size > MAX]]: [[big.png]] حجمه 3145798 أكبر من 2097152، فبنضيف رسالة. [[append]] بنص (string) بيضيفه كـ **نص** مش HTML، فلو اسم الملف فيه [[<img onerror=...>]] مش هيتنفّذ.
+
+---
+
+## ٤. المعاينة: [[URL.createObjectURL]]
+
+~~~text app.js
+    const url = URL.createObjectURL(file);
+    urls.push(url);
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = file.name;
+    img.width = 120;
+    preview.append(img);
+  }
+});
+~~~
+
+- [[URL.createObjectURL(file)]]: بيعمل URL مؤقت بيشاور على الملف اللي على جهاز اليوزر. شكله على صفحة شغالة من localhost:
+
+~~~text الناتج
+blob:http://localhost:PORT/b238a9a3-8884-45b4-8586-18d241d0729d
+~~~
+
+[[blob:]] + الـ origin بتاع الصفحة + ID عشوائي. الـ URL ده شغال **جوه الصفحة دي بس**، ومحدش غيرك يقدر يفتحه.
+- [[img.src = url]]: الصورة بتتقري من الجهاز مباشرة، من غير رفع ومن غير base64.
+- [[img.alt = file.name]]: نص بديل للي مش شايف الصورة. ولأنه property مش HTML فآمن.
+- [[img.width = 120]]: عرض المعاينة 120px.
+
+### النتيجة
+
+~~~text الناتج (محتوى #preview)
+<img src="blob:..." alt="cat.png" width="120">
+big.png: أكبر من 2MB.
+<img src="blob:..." alt="notes.png" width="120">
+<img src="blob:..." alt="dog.jpg" width="120">
+~~~
+
+| الملف | حصل إيه | ليه |
+|---|---|---|
+| [[cat.png]] | اتعرض | صورة وصغيرة |
+| [[big.png]] | رسالة | أكبر من MAX |
+| [[doc.pdf]] | ولا حاجة | type مش image |
+| [[notes.png]] | img مكسور (المقاس [[0x0]]) | type بتاعه image/png من الامتداد، بس المحتوى نص |
+| [[dog.jpg]] | اتعرض | |
+
+> [[file.type]] و [[accept]] للراحة بس. السيرفر لازم يفحص الملف بنفسه.
+
+### ليه [[revokeObjectURL]]؟
+
+كل blob URL بيفضل ماسك الملف في الذاكرة لحد ما الصفحة تتقفل. جرّبت: [[fetch(url)]] قبل الـ revoke رجّع الملف (70 byte)، وبعد [[URL.revokeObjectURL(url)]]:
+
+~~~text الناتج
+TypeError: Failed to fetch
+~~~
+
+يعني الـ URL اتقفل والذاكرة اتحررت. عشان كده بنعمل revoke للقديم في أول كل [[change]].
+
+### نفس الملف مرتين
+
+اخترت [[cat.png]] لوحده، وبعدين [[cat.png]] تاني: المرة التانية مطلعتش [[change]] خالص، لأن الاختيار متغيرش. لو محتاج تسمح بكده، اعمل [[input.value = ""]] بعد ما تخلص.
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| [[accept]] و [[multiple]] | فلتر لنافذة الاختيار، وأكتر من ملف |
+| [[input.files]] | ليستة [[File]]: name و type و size |
+| [[URL.createObjectURL(file)]] | URL مؤقت [[blob:...]] للملف |
+| [[URL.revokeObjectURL(url)]] | اقفله وحرّر الذاكرة |
+| [[replaceChildren()]] | فضّي العنصر |
+
+- النوع جاي من الامتداد، فمتعتمدش عليه للأمان.
+- الحجم بالبايت: 2MB = [[2 * 1024 * 1024]].`,
+          lines: [
+            R`بنمسك الـ [[<input type="file">]] اللي اليوزر بيختار منه الصور.`,
+            R`العنصر اللي هنحط فيه صور المعاينة ورسايل الأخطاء.`,
+            R`أقصى حجم مسموح: 2 ميجابايت بالبايت (2 × 1024 × 1024)، لأن [[file.size]] بيتقاس بالبايت. كتابتها كده أوضح من رقم كبير محدش فاهم جه منين. والفحص ده لراحة اليوزر بس، والسيرفر لازم يفحص تاني.`,
+            R`هنحفظ هنا كل blob URL بنعمله عشان نمسحهم بعدين. كل URL من دول ماسك الملف في الذاكرة لحد ما تعمله revoke أو الصفحة تتقفل.`,
+            R`[[change]] بيحصل لما اليوزر يخلص اختيار ويقفل نافذة الملفات، مش مع كل ضغطة. وكل اختيار جديد بيستبدل اللي قبله في [[input.files]].`,
+            R`قبل ما نعرض الاختيار الجديد، بنمسح الـ blob URLs بتاعة الاختيار اللي فات بـ [[revokeObjectURL]]. من غير ده، كل مرة اليوزر يختار صور، القديمة تفضل في الذاكرة (memory leak).`,
+            R`نرجّع الليستة فاضية، لأن الـ URLs اللي كانت فيها اتمسحت ومبقتش تشتغل.`,
+            R`[[replaceChildren()]] من غير arguments بتمسح كل اللي جوه المعاينة، فالصور القديمة متفضلش جنب الجديدة.`,
+            R`[[input.files]] هي [[FileList]] فيها object [[File]] لكل ملف اختاره، وفيه [[name]] و [[size]] و [[type]]. مش array حقيقية (مفيهاش [[map]])، بس [[for...of]] بتلف عليها عادي.`,
+            R`[[file.type]] هو الـ MIME type زي [["image/png"]]. بنفحص هنا لأن [[accept]] في الـ HTML مجرد اقتراح لنافذة الاختيار، واليوزر يقدر يختار «All files» ويجيب أي ملف. ولو مش صورة، [[continue]] تعدّيه.`,
+            R`[[file.size]] حجم الملف بالبايت. لو أكبر من الحد هنعرض رسالة بدل الصورة.`,
+            R`بنضيف رسالة فيها اسم الملف. [[append]] لما تديها string بتحطه كـ text node، يعني اسم ملف فيه [[<script>]] هيظهر كنص ومش هيتنفذ، زي [[textContent]] بالظبط.`,
+            R`نكمّل على الملف اللي بعده من غير ما نعمل blob URL للملف الكبير ده.`,
+            R`نهاية الـ [[if]] بتاع الحجم.`,
+            R`[[URL.createObjectURL]] بتعمل URL مؤقت شكله [[blob:...]] بيشاور على الملف اللي على جهاز اليوزر. كده المعاينة بتظهر فورًا من غير ما ترفع حاجة للسيرفر.`,
+            R`نحفظ الـ URL في الليستة عشان نعمله revoke في الاختيار الجاي.`,
+            R`نعمل عنصر [[<img>]] جديد لكل صورة، لسه في الذاكرة ومش ظاهر لحد ما نضيفه في المعاينة.`,
+            R`الـ [[src]] هو الـ blob URL، فالمتصفح بيعرض الصورة من الملف المحلي مباشرة.`,
+            R`[[alt]] باسم الملف، عشان قارئ الشاشة يقول الصورة دي إيه. وبنحطه كـ property مش بنركّب HTML، فلو اسم الملف فيه علامات HTML مش هتتنفذ.`,
+            R`عرض المعاينة 120 بكسل. بنحدد العرض بس، فالمتصفح بيحسب الطول بنفس نسبة الصورة.`,
+            R`نضيف الصورة جوه المعاينة، وهنا بتظهر لليوزر.`,
+            R`نهاية الـ [[for]] اللي على الملفات.`,
+            R`نهاية الـ listener بتاع [[change]].`,
+          ],
+          sol: R`الصورتين الصغيرين بيظهروا، والكبيرة بيظهر مكانها «اسمها: أكبر من 2MB.»، والـ PDF مش بيظهر خالص (اتنط بـ continue لأن type بتاعه [["application/pdf"]]).
+
+الـ [[.txt]] اللي اسمه [[.png]]: [[file.type]] بـ [["image/png"]]، والـ img بيظهر مكسور. ده الدليل إن النوع جاي من الامتداد، ودي بالظبط الحركة اللي حد هيعملها عشان يرفع حاجة مش صورة على السيرفر بتاعك.
+
+الحجم: [[(file.size / 1024).toFixed(0) + " KB"]]، والمقاس لازم يستنى التحميل: [[img.onload = () => caption.textContent += $__bt $__{img.naturalWidth}×$__{img.naturalHeight}$__bt]]. قبل الـ onload الـ naturalWidth بـ 0.`
+        },
+        {
+          cmd: "drag and drop و progress",
+          title: "تسحب ملف وترفعه بشريط تقدم إزاي؟",
+          desc: R`السحب والإفلات: على العنصر اللي هيستقبل اسمع لـ [[dragover]] واعمل [[preventDefault()]] (من غيرها المتصفح مش هيسمح بالإفلات هنا وهيفتح الملف في التاب)، و [[drop]] واعمل [[preventDefault()]] واقرا [[e.dataTransfer.files]] (نفس نوع [[input.files]]). و [[dragenter]] و [[dragleave]] عشان تغيّر الشكل.
+
+شريط التقدم: [[XMLHttpRequest]] عنده [[xhr.upload.onprogress]] بيقولك اترفع كام byte من كام. [[fetch]] مفيهوش حدث تقدم للرفع. فلحد النهارده لو عايز progress bar للرفع بتستخدم XHR (أو مكتبة زي axios، اللي هي XHR من تحت في المتصفح).`,
+          example: R`const zone = document.querySelector("#drop");
+const bar = document.querySelector("progress");
+zone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  zone.classList.add("over");
+});
+zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+zone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  zone.classList.remove("over");
+  for (const file of e.dataTransfer.files) upload(file);
+});
+function upload(file) {
+  const fd = new FormData();
+  fd.append("file", file);
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "/api/upload");
+  xhr.upload.onprogress = (e) => {
+    if (e.lengthComputable) bar.value = e.loaded / e.total;
+  };
+  xhr.onload = () => console.log(xhr.status, xhr.responseText);
+  xhr.onerror = () => console.log("النت وقع");
+  xhr.send(fd);
+}`,
+          try: R`اعمل سيرفر Express صغير فيه [[POST /api/upload]] بـ multer (تاب Backend بـ Node)، وافتح DevTools ← Network ← Throttling ← «Slow 4G»، واسحب صورة ٥ ميجا. الشريط بيتحرك؟ وبعدين زوّد زرار «إلغاء» بيعمل [[xhr.abort()]]، و keyboard fallback: الـ zone يبقى [[<label>]] فيه [[<input type="file">]] مخفي، عشان اللي مبيستخدمش ماوس.`,
+          practice: [
+            { lvl: 'سريع', t: R`ابني Kanban صغير: عمودين «لسه» و «خلص» وكروت عليها [[draggable="true"]]. في [[dragstart]] اعمل [[e.dataTransfer.setData("text/plain", card.id)]]، وفي [[dragover]] على العمود [[preventDefault()]]، وفي [[drop]] انقل الكارت بـ [[append]].`, done: R`الكارت بيتنقل للعمود اللي تفلته فيه، والإفلات برا العمودين مبيعملش حاجة، والكارت مبيتكررش، وعدد الكروت في عنوان كل عمود بيتحدّث بعد كل نقلة.`, sol: R`~~~live 320 kanban.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kanban صغير</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
+  .board { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .col { background: #f3f4f6; border-radius: 8px; padding: 8px; min-height: 180px; }
+  .col.over { outline: 2px dashed #2563eb; }
+  .col h2 { font-size: 16px; margin: 0 0 8px; }
+  .card { background: #fff; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px; margin-bottom: 6px; cursor: grab; }
+  .card.dragging { opacity: 0.4; }
+</style>
+</head>
+<body>
+<div class="board">
+  <section class="col" id="todo"><h2>لسه (<span>0</span>)</h2>
+    <div class="card" draggable="true" id="c1">صمّم الصفحة</div>
+    <div class="card" draggable="true" id="c2">اكتب الـ API</div>
+    <div class="card" draggable="true" id="c3">اختبر الفورم</div>
+  </section>
+  <section class="col" id="done"><h2>خلص (<span>0</span>)</h2></section>
+</div>
+<p id="outside">برا العمودين</p>
+<script>
+  const cols = document.querySelectorAll(".col");
+
+  function updateCounts() {
+    for (const col of cols) col.querySelector("h2 span").textContent = col.querySelectorAll(".card").length;
+  }
+
+  document.addEventListener("dragstart", (e) => {
+    const card = e.target.closest(".card");
+    if (!card) return;
+    e.dataTransfer.setData("text/plain", card.id);
+    e.dataTransfer.effectAllowed = "move";
+    card.classList.add("dragging");
+  });
+  document.addEventListener("dragend", (e) => e.target.closest(".card")?.classList.remove("dragging"));
+
+  for (const col of cols) {
+    col.addEventListener("dragover", (e) => {
+      e.preventDefault();                  // من غيره المتصفح بيرفض الـ drop
+      e.dataTransfer.dropEffect = "move";
+      col.classList.add("over");
+    });
+    col.addEventListener("dragleave", (e) => {
+      if (!col.contains(e.relatedTarget)) col.classList.remove("over");
+    });
+    col.addEventListener("drop", (e) => {
+      e.preventDefault();
+      col.classList.remove("over");
+      const card = document.getElementById(e.dataTransfer.getData("text/plain"));
+      if (!card?.classList.contains("card")) return;   // سحب حاجة تانية (نص من برا مثلًا)
+      col.append(card);                     // append بينقل، مش بينسخ
+      updateCounts();
+    });
+  }
+  updateCounts();
+</script>
+</body>
+</html>
+~~~
+
+اسحب الكروت بين العمودين في الـ preview (بالماوس: الـ HTML drag and drop مبيشتغلش باللمس على أغلب الموبايلات).
+
+~~~text الناتج (Chrome 158 headless، جوه iframe معزول، السحب بـ dragAndDrop بتاع Playwright)
+البداية: لسه (3): صمّم الصفحة، اكتب الـ API، اختبر الفورم || خلص (0):  | كروت في الصفحة: 3
+c2 ← خلص: لسه (2): صمّم الصفحة، اختبر الفورم || خلص (1): اكتب الـ API | كروت في الصفحة: 3
+c1 ← خلص: لسه (1): اختبر الفورم || خلص (2): اكتب الـ API، صمّم الصفحة | كروت في الصفحة: 3
+c3 ← برا: لسه (1): اختبر الفورم || خلص (2): اكتب الـ API، صمّم الصفحة | كروت في الصفحة: 3
+c2 ← لسه: لسه (2): اختبر الفورم، اكتب الـ API || خلص (1): صمّم الصفحة | كروت في الصفحة: 3
+pageerrors: 0
+~~~
+
+**ليه كده:**
+
+- **[[draggable="true"]]:** الـ div مش بيتسحب لوحده (الصور واللينكات والنص المتعلّم بس اللي بيتسحبوا افتراضيًا).
+- **[[dragstart]] على [[document]]:** listener واحد لكل الكروت (event delegation)، و [[e.dataTransfer.setData("text/plain", card.id)]] بيشيل الـ id مع السحبة. الـ [[dataTransfer]] هو الطريقة الوحيدة اللي الـ [[drop]] يعرف بيها إيه اللي اتسحب.
+- **[[e.preventDefault()]] في [[dragover]]:** ده اللي بيقول للمتصفح «العنصر ده بيقبل الإفلات». من غيره الـ [[drop]] مبيحصلش خالص. ده أشهر سبب إن drag and drop «مش شغال».
+- **[[getData]] في [[drop]] وبعدين [[col.append(card)]]:** [[append]] لعنصر موجود في الصفحة **بينقله** مش بينسخه، فعدد الكروت فضل ٣.
+- **[[if (!card?.classList.contains("card")) return]]:** لو حد سحب نص من مكان تاني، [[getData]] هيرجّع النص ده، و [[getElementById]] هيرجّع [[null]] أو عنصر مش كارت. فبنتجاهل.
+- **الإفلات برا العمودين:** مفيش [[dragover]] بـ [[preventDefault]] هناك، فالمتصفح رفض الإفلات والكارت رجع مكانه.
+- **[[updateCounts()]] بعد كل نقلة:** العدد بيتحسب من الـ DOM نفسه، فمستحيل يختلف عن اللي ظاهر.
+
+**الغلطة الشائعة:** تعمل [[col.append(card.cloneNode(true))]] أو [[innerHTML += ...]] عشان «تحط الكارت في العمود». ده بيعمل نسخة والكارت الأصلي بيفضل مكانه، والنسخة مفيهاش أي listener متربط بيها مباشرة.` },
+            { lvl: 'تطبيق', t: R`صلّح الباج: حط جوه منطقة الإفلات بتاعة الدرس أيقونة ونص، واسحب ملف فوقهم: الـ class [[over]] بيرعش. صلّحها بعدّاد بيزيد في [[dragenter]] ويقل في [[dragleave]] ويتصفّر في [[drop]]، وارفض أي سحب مش ملفات ([[e.dataTransfer.types.includes("Files")]]).`, done: R`قبل التصليح الإطار بيختفي ويظهر كل ما تعدّي فوق الأيقونة أو النص (لأن [[dragleave]] بيحصل على الأب لما تدخل عنصر جواه)، وبعده بيفضل ثابت لحد ما تخرج من المنطقة كلها أو تفلت، وسحب نص متعلّم من الصفحة مبيفعّلش المنطقة.`, sol: R`~~~live 300 dropzone.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>منطقة إفلات مبترعشش</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
+  #drop { border: 3px dashed #9ca3af; border-radius: 12px; padding: 32px; text-align: center; }
+  #drop.over { border-color: #2563eb; background: #eff6ff; }
+  #drop .icon { font-size: 40px; display: block; }
+  #log { font-size: 13px; color: #374151; }
+</style>
+</head>
+<body>
+<div id="drop">
+  <span class="icon" aria-hidden="true">📁</span>
+  <p>اسحب <strong>الملفات</strong> هنا</p>
+</div>
+<p>نص تقدر تعلّمه وتسحبه: <em>جرّبني</em></p>
+<p id="log"></p>
+<script>
+  const zone = document.querySelector("#drop");
+  const log = document.querySelector("#log");
+  let depth = 0;                                   // جوه كام عنصر في المنطقة دلوقتي
+
+  const isFiles = (e) => e.dataTransfer?.types.includes("Files");
+
+  zone.addEventListener("dragenter", (e) => {
+    if (!isFiles(e)) return;
+    depth++;
+    zone.classList.add("over");
+  });
+  zone.addEventListener("dragover", (e) => {
+    if (!isFiles(e)) return;                       // من غير preventDefault = مرفوض
+    e.preventDefault();
+  });
+  zone.addEventListener("dragleave", (e) => {
+    if (!isFiles(e)) return;
+    depth--;
+    if (depth === 0) zone.classList.remove("over");
+  });
+  zone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    depth = 0;
+    zone.classList.remove("over");
+    log.textContent = "وصل: " + [...e.dataTransfer.files].map((f) => f.name).join("، ");
+  });
+</script>
+</body>
+</html>
+~~~
+
+اسحب ملف من جهازك فوق الأيقونة والنص في الـ preview: الإطار الأزرق بيفضل ثابت. وعلّم كلمة «جرّبني» واسحبها فوق المنطقة: مفيش إطار.
+
+**القياس:** headless Chrome مبيقدرش يسحب ملف حقيقي من الويندوز، فبعتنا نفس الأحداث اللي المتصفح بيبعتها وانت بتعدّي من المنطقة للأيقونة للنص، بنفس الترتيب ([[dragenter]] على الجديد الأول وبعدين [[dragleave]] على القديم)، وقرينا الإطار بعد كل حدث. [[dropzone-bad.html]] هو كود الدرس زي ما هو:
+
+~~~text الناتج (Chrome 158 headless، جوه iframe معزول)
+== dropzone-bad.html
+dragenter على المنطقة: مخفي
+dragover على المنطقة: ظاهر
+dragenter على الأيقونة: ظاهر
+dragleave من المنطقة: مخفي
+dragover على الأيقونة: ظاهر
+dragenter على النص: ظاهر
+dragleave من الأيقونة: مخفي
+dragover على النص: ظاهر
+dragleave من النص لبرا الصفحة: مخفي
+سحب نص متعلّم: الإطار ظاهر | قبل الإفلات؟ true
+== dropzone.html
+dragenter على المنطقة: ظاهر
+dragover على المنطقة: ظاهر
+dragenter على الأيقونة: ظاهر
+dragleave من المنطقة: ظاهر
+dragover على الأيقونة: ظاهر
+dragenter على النص: ظاهر
+dragleave من الأيقونة: ظاهر
+dragover على النص: ظاهر
+dragleave من النص لبرا الصفحة: مخفي
+سحب نص متعلّم: الإطار مخفي | قبل الإفلات؟ false
+pageerrors: 0
+~~~
+
+**ليه بيرعش في كود الدرس:** لما الماوس يدخل الأيقونة، المتصفح بيبعت [[dragenter]] للأيقونة و [[dragleave]] للمنطقة (هي «اتسابت» لصالح عنصر جواها). كود الدرس بيشيل [[over]] على أي [[dragleave]]، فالإطار بيختفي لحد [[dragover]] اللي جاي (بيتبعت كل ~50ms) فيرجع. ده الرعشة: «مخفي» ثم «ظاهر» مع كل عنصر جوه المنطقة.
+
+**التصليح:**
+
+- **[[depth]]:** كل [[dragenter]] (على المنطقة أو أي عنصر جواها، لأنه بيعمل bubble) بيزوّد واحد، وكل [[dragleave]] بينقّص واحد. الدخول لعنصر جوه بيحصل **قبل** الخروج من اللي قبله، فالعدّاد مبيوصلش صفر غير لما تخرج من المنطقة كلها.
+- **[[depth = 0]] في [[drop]]:** بعد الإفلات مفيش [[dragleave]] بيتبعت، فلو مصفّرناش هيفضل 1 والإطار هيظهر غلط في السحبة الجاية.
+- **[[e.dataTransfer.types.includes("Files")]]:** وقت السحب مينفعش تقرا الملفات نفسها (للأمان)، بس [[types]] متاحة. سحب نص بيبقى [[types]] فيه [["text/plain"]] بس، فبنتجاهله ومش بنعمل [[preventDefault]] فالمتصفح بيرفض الإفلات (السطر الأخير: [[قبل الإفلات؟ false]]). كود الدرس كان بيقبل أي حاجة.
+
+**الغلطة الشائعة:** تصلّحها بـ [[pointer-events: none]] على كل اللي جوه المنطقة. بتشتغل للرعشة، بس اللينكات والزراير اللي جوه (زي «اختار ملف») هتبطّل تتداس.` },
+            { lvl: 'تحدي', t: R`محاكاة طابور رفع: اكتبه الأول في Node، كل «رفع» [[setTimeout]] وقته عشوائي ونسبة فشل ٢٠٪: ١٠ ملفات، ٢ بس في نفس الوقت، والفاشل يتعاد مرة واحدة. وبعدين بدّل الـ setTimeout بـ XHR بتاع الدرس ومعاه [[<progress>]] وزرار إلغاء ([[xhr.abort()]]) لكل ملف.`, done: R`الـ simulation بيطبع إن أكبر عدد شغال مع بعض 2، وكل ملف نهايته «تم» أو «فشل بعد محاولتين»، ومجموعهم 10. وفي المتصفح على Slow 4G مفيش أكتر من ٢ upload في Network في أي لحظة، والإلغاء بيكتب «اتلغى» وبيسيب مكانه للي بعده.`, sol: R`**الجزء الأول: المحاكاة في Node.** الـ random بـ seed ثابت عشان تطلع نفس النتيجة عندك.
+
+~~~js queue-sim.mjs
+// random ثابت (seed) عشان التشغيل يطلع نفس الناتج عندك
+function mulberry32(seed) {
+  return () => {
+    seed |= 0; seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const random = mulberry32(2);
+
+let running = 0, maxRunning = 0;
+function fakeUpload(name) {
+  running++;
+  maxRunning = Math.max(maxRunning, running);
+  const ms = 100 + Math.floor(random() * 400);
+  const fails = random() < 0.2;
+  return new Promise((resolve, reject) =>
+    setTimeout(() => {
+      running--;
+      fails ? reject(new Error("الشبكة")) : resolve(ms);
+    }, ms),
+  );
+}
+
+async function uploadWithRetry(name) {
+  try {
+    await fakeUpload(name);
+    return $__bt$__{name}: تم$__bt;
+  } catch {
+    try {
+      await fakeUpload(name);
+      return $__bt$__{name}: تم (من المحاولة التانية)$__bt;
+    } catch {
+      return $__bt$__{name}: فشل بعد محاولتين$__bt;
+    }
+  }
+}
+
+// طابور: limit شغالين بالكتير، وكل واحد يخلص ياخد اللي بعده
+async function runQueue(items, limit, worker) {
+  const results = [];
   let next = 0;
   async function lane() {
     while (next < items.length) {
       const i = next++;
-      results[i] = await fn(items[i], i);
+      results[i] = await worker(items[i]);
+      console.log(results[i]);
     }
   }
-  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, lane));
+  await Promise.all(Array.from({ length: limit }, lane));
   return results;
 }
 
-// store: { all(), remove(endpoint) }  — في الحقيقة داتابيز، هنا أي حاجة بالشكل ده
-export async function sendToAll(store, payload, { limit = 10, retryDelay = 2000, send = webpush.sendNotification, log = console.log } = {}) {
-  const subs = await store.all();
-  const summary = { sent: 0, removed: 0, failed: 0 };
-  const body = JSON.stringify(payload);
+const files = Array.from({ length: 10 }, (_, i) => $__btfile-$__{i + 1}.jpg$__bt);
+const results = await runQueue(files, 2, uploadWithRetry);
+console.log("---");
+console.log("أكبر عدد شغال مع بعض:", maxRunning);
+console.log("تم:", results.filter((r) => r.includes("تم")).length, "| فشل:", results.filter((r) => r.includes("فشل")).length, "| المجموع:", results.length);
+~~~
 
-  await mapLimit(subs, limit, async (sub) => {
+~~~text الناتج (node queue-sim.mjs، Node 24)
+file-2.jpg: تم
+file-1.jpg: تم
+file-3.jpg: تم
+file-4.jpg: تم
+file-6.jpg: تم
+file-5.jpg: تم (من المحاولة التانية)
+file-8.jpg: تم
+file-7.jpg: فشل بعد محاولتين
+file-10.jpg: تم (من المحاولة التانية)
+file-9.jpg: تم (من المحاولة التانية)
+---
+أكبر عدد شغال مع بعض: 2
+تم: 9 | فشل: 1 | المجموع: 10
+~~~
+
+- **[[runQueue(items, limit, worker)]]:** بتشغّل [[limit]] «حارات» ([[lane]]) مع بعض بـ [[Promise.all]]. كل حارة بتاخد الملف اللي عليه الدور ([[next++]]) وتستناه يخلص وتاخد اللي بعده. فمستحيل يبقى شغال أكتر من ٢، وأول ما واحد يخلص اللي بعده بيبدأ على طول.
+- **[[next++]] آمن هنا:** JS بيشغّل كود واحد في المرة، فحارتين مستحيل ياخدوا نفس الرقم.
+- **الترتيب في الناتج مش ١، ٢، ٣:** كل ملف بياخد وقت مختلف، فاللي يخلص الأول يطبع الأول. [[results[i]]] بيحفظ كل نتيجة في مكانها الأصلي.
+
+**الجزء التاني: في المتصفح بـ XHR.** الصفحة بتبعت كل ملف لـ [[/api/upload]] بشريط تقدم وزرار إلغاء. ولو مفيش سيرفر (الـ preview، اللي الـ origin بتاعه [["null"]]) بترفع «وهمي» بتايمر وبتقول كده.
+
+~~~live 300 upload-queue.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>طابور رفع</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
+  ul { list-style: none; padding: 0; }
+  li { display: grid; grid-template-columns: 1fr 120px 90px 60px; gap: 8px; align-items: center; padding: 4px 0; border-bottom: 1px solid #eee; }
+  progress { width: 100%; }
+  #mode { font-size: 13px; color: #92400e; }
+  button { font: inherit; }
+</style>
+</head>
+<body>
+<label>اختار ملفات: <input type="file" id="files" multiple></label>
+<p id="mode"></p>
+<ul id="list"></ul>
+<p id="summary"></p>
+<script>
+  const LIMIT = 2;
+  // الـ preview صفحة معزولة من غير سيرفر: نرفع «وهمي» بتايمر عشان تشوف الطابور شغال
+  const FAKE = location.origin === "null";
+  if (FAKE) document.querySelector("#mode").textContent = "مفيش سيرفر هنا (صفحة معزولة): الرفع وهمي بتايمر. شغّلها من سيرفر محلي للرفع الحقيقي.";
+
+  let running = 0, maxRunning = 0;
+
+  // بترجّع { promise, abort } زي XHR
+  function send(file, onProgress) {
+    if (FAKE) {
+      let timer, done = 0;
+      const promise = new Promise((resolve, reject) => {
+        timer = setInterval(() => {
+          done = Math.min(file.size, done + Math.max(1, file.size / 10));
+          onProgress(done / file.size);
+          if (done >= file.size) { clearInterval(timer); resolve(); }
+        }, 150);
+        send.abortFake = () => { clearInterval(timer); reject(new DOMException("اتلغى", "AbortError")); };
+      });
+      const abort = send.abortFake;
+      return { promise, abort };
+    }
+    const xhr = new XMLHttpRequest();
+    const promise = new Promise((resolve, reject) => {
+      xhr.open("POST", "/api/upload?name=" + encodeURIComponent(file.name));
+      xhr.upload.onprogress = (e) => e.lengthComputable && onProgress(e.loaded / e.total);
+      xhr.onload = () => (xhr.status < 300 ? resolve() : reject(new Error("HTTP " + xhr.status)));
+      xhr.onerror = () => reject(new Error("الشبكة"));
+      xhr.onabort = () => reject(new DOMException("اتلغى", "AbortError"));
+      xhr.send(file);
+    });
+    return { promise, abort: () => xhr.abort() };
+  }
+
+  async function uploadOne(item) {
     for (let attempt = 1; attempt <= 2; attempt++) {
+      if (item.cancelled) throw new DOMException("اتلغى", "AbortError");
+      running++;
+      maxRunning = Math.max(maxRunning, running);
+      const job = send(item.file, (p) => (item.bar.value = p));
+      item.abort = job.abort;
       try {
-        await send(sub, body, { TTL: 60 * 60 });
-        summary.sent++;
-        return;
+        await job.promise;
+        return attempt === 1 ? "تم" : "تم (محاولة ٢)";
       } catch (err) {
-        const code = err.statusCode;
-        if (code === 404 || code === 410) {            // الـ subscription مات: امسحه ومتجرّبش تاني
-          await store.remove(sub.endpoint);
-          summary.removed++;
-          return;
-        }
-        if (attempt === 2) {
-          log($__btفشل نهائي $__{sub.endpoint.split("/").pop()}: $__{code ?? err.message}$__bt);
-          summary.failed++;
-          return;
-        }
-        log($__btهعيد $__{sub.endpoint.split("/").pop()} بعد $__{retryDelay}ms ($__{code ?? err.message})$__bt);
-        await sleep(retryDelay);
+        if (err.name === "AbortError" || attempt === 2) throw err;
+      } finally {
+        running--;
       }
     }
+  }
+
+  async function runQueue(items) {
+    let next = 0;
+    async function lane() {
+      while (next < items.length) {
+        const item = items[next++];
+        if (item.cancelled) continue;
+        item.status.textContent = "بيترفع...";
+        try {
+          item.status.textContent = await uploadOne(item);
+        } catch (err) {
+          item.status.textContent = err.name === "AbortError" ? "اتلغى" : "فشل بعد محاولتين";
+        }
+        item.btn.disabled = true;
+      }
+    }
+    await Promise.all(Array.from({ length: LIMIT }, lane));
+    document.querySelector("#summary").textContent = $__btخلص. أكبر عدد شغال مع بعض: $__{maxRunning}$__bt;
+  }
+
+  document.querySelector("#files").addEventListener("change", (e) => {
+    const list = document.querySelector("#list");
+    list.replaceChildren();
+    const items = [...e.target.files].map((file) => {
+      const li = document.createElement("li");
+      const name = document.createElement("span");
+      name.textContent = file.name;
+      const bar = document.createElement("progress");
+      bar.max = 1;
+      bar.value = 0;
+      const status = document.createElement("span");
+      status.textContent = "مستني";
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = "إلغاء";
+      li.append(name, bar, status, btn);
+      list.append(li);
+      const item = { file, bar, status, btn, cancelled: false, abort: null };
+      btn.addEventListener("click", () => {
+        item.cancelled = true;
+        item.abort?.();                        // لو شغال: وقّفه، ولو مستني: مش هيبدأ
+        status.textContent = "اتلغى";
+        btn.disabled = true;
+      });
+      return item;
+    });
+    runQueue(items);
   });
-  return summary;
-}
+</script>
+</body>
+</html>
 ~~~
 
-**المعمل:** مبنبعتش من المعمل لـ FCM ولا لأي push service حقيقي، فعملنا push service وهمي على [[https://localhost]] بيتأكد إن الطلب موقّع ([[Authorization: vapid ...]]) ومشفّر ([[Content-Encoding: aes128gcm]]) ويرد زي FCM حسب الـ id: [[gone-*]] = 410 (اتعمله unsubscribe)، و [[missing-*]] = 404، و [[flaky-*]] = 500 أول مرة بس، و [[down-*]] = 503 دايمًا، والباقي 201. و ٥٠٠ subscription بمفاتيح حقيقية الشكل (P-256 و auth 16 byte زي اللي المتصفح بيرجّعها):
+اتقاس على [[http://localhost:8831]] بسيرفر [[node:http]] صغير بيعدّ الـ uploads الشغالة، و upload مخنوق لحوالي 200KB/s (من DevTools Protocol، زي Slow 4G)، و ٥ ملفات كل واحد 300KB، وضغطنا «إلغاء» على التاني وهو شغال:
 
-~~~js fake-push-service.mjs
-// push service وهمي على https://localhost (web-push بيكلّم HTTPS بس) بيتصرف زي FCM: 201 للعادي، 410 للي اتعمله unsubscribe، 404 للي مش موجود
-import { createServer } from "node:https";
-import { readFileSync } from "node:fs";
-export function startPushService(port) {
-  const stats = { requests: 0, active: 0, maxActive: 0, seen: new Map() };
-  const server = createServer({ key: readFileSync("key.pem"), cert: readFileSync("cert.pem") }, (req, res) => {
-    const id = req.url.split("/").pop();
-    stats.requests++; stats.active++; stats.maxActive = Math.max(stats.maxActive, stats.active);
-    stats.seen.set(id, (stats.seen.get(id) ?? 0) + 1);
-    let size = 0;
-    req.on("data", (c) => (size += c.length));
-    req.on("end", () => setTimeout(() => {
-      stats.active--;
-      const ok = req.headers.authorization?.startsWith("vapid t=") && req.headers["content-encoding"] === "aes128gcm" && size > 0;
-      if (!ok) return res.writeHead(403).end();
-      if (id.startsWith("gone")) return res.writeHead(410).end();
-      if (id.startsWith("missing")) return res.writeHead(404).end();
-      if (id.startsWith("flaky") && stats.seen.get(id) === 1) return res.writeHead(500).end();
-      if (id.startsWith("down")) return res.writeHead(503).end();
-      res.writeHead(201).end();
-    }, 20));
-  });
-  return new Promise((r) => server.listen(port, () => r({ server, stats })));
-}
+~~~text الناتج (Chrome 158 headless)
+بعد 0.7s: photo-1.jpg 0.27 بيترفع... | photo-2.jpg 0.21 بيترفع... | photo-3.jpg 0.00 مستني | photo-4.jpg 0.00 مستني | photo-5.jpg 0.00 مستني
+الآخر: photo-1.jpg 1.00 تم | photo-2.jpg 0.21 اتلغى | photo-3.jpg 1.00 تم | photo-4.jpg 1.00 تم | photo-5.jpg 1.00 تم
+خلص. أكبر عدد شغال مع بعض: 2
+السيرفر: أكبر عدد uploads في نفس الوقت = 3
+بدأ photo-1.jpg (شغال 1)
+بدأ photo-2.jpg (شغال 2)
+بدأ photo-3.jpg (شغال 3)
+اتقطع photo-2.jpg 65536 bytes
+وصل photo-1.jpg 307200 bytes
+بدأ photo-4.jpg (شغال 2)
+وصل photo-3.jpg 307200 bytes
+بدأ photo-5.jpg (شغال 2)
+وصل photo-4.jpg 307200 bytes
+وصل photo-5.jpg 307200 bytes
+pageerrors: 0
+[sandbox] photo-1.jpg تم | photo-2.jpg تم | photo-3.jpg تم | خلص. أكبر عدد شغال مع بعض: 2
 ~~~
 
-~~~js run.mjs
-import { createECDH, randomBytes } from "node:crypto";
-import webpush from "web-push";
-import { Agent } from "node:https";
-import { sendToAll } from "./send-to-all.mjs";
-import { startPushService } from "./fake-push-service.mjs";
+- **[[send(file, onProgress)]] بترجّع [[{ promise, abort }]]:** الـ Promise عشان الطابور يستنى بـ [[await]]، و [[abort]] عشان زرار الإلغاء يوقّف الـ XHR. [[xhr.upload.onprogress]] (مش [[xhr.onprogress]]) هو تقدم **الرفع**.
+- **[[xhr.send(file)]]:** بيبعت الملف نفسه كـ body. في المشروع المتوسط بنبعته في [[FormData]] لـ multer.
+- **[[onabort]] بيرفض بـ [[AbortError]]:** والطابور بيفرّق: الإلغاء بيكتب «اتلغى» ومبيعيدش المحاولة، وأي error تاني بيتعاد مرة واحدة.
+- **الإلغاء بيسيب مكانه:** [[uploadOne]] بترمي، والحارة بتكمّل بالملف اللي بعده على طول ([[بدأ photo-3.jpg]] بعد الإلغاء).
 
-const { server, stats } = await startPushService(8832);
-const vapid = webpush.generateVAPIDKeys();
-webpush.setVapidDetails("mailto:dev@example.invalid", vapid.publicKey, vapid.privateKey);
+**اكتشاف من القياس:** الصفحة عدّت ٢ بالكتير، بس السيرفر شاف ٣ في لحظة. الإلغاء بيقفل الاتصال من ناحية المتصفح على طول وبيبدأ التالت، بس السيرفر بيعرف إن الاتصال اتقفل ([[aborted]]) بعد ما التالت يوصله بشوية. يعني «الحد ٢» حد في المتصفح، ولو السيرفر عنده حد حقيقي لازم يسيب هامش.
 
-// ٥٠٠ subscription بمفاتيح حقيقية الشكل (P-256 و auth 16 byte) زي اللي المتصفح بيدّيها
-const fakeSub = (id) => {
-  const ecdh = createECDH("prime256v1"); ecdh.generateKeys();
-  return { endpoint: $__bthttps://localhost:8832/push/$__{id}$__bt, keys: { p256dh: ecdh.getPublicKey().toString("base64url"), auth: randomBytes(16).toString("base64url") } };
-};
-const ids = Array.from({ length: 500 }, (_, i) => (i < 20 ? $__btgone-$__{i}$__bt : i < 25 ? $__btmissing-$__{i}$__bt : i < 28 ? $__btflaky-$__{i}$__bt : i < 30 ? $__btdown-$__{i}$__bt : $__btok-$__{i}$__bt));
-let subs = ids.map(fakeSub);
-// الشهادة self-signed بتاعة المعمل: agent بيقبلها. مع FCM الحقيقي مفيش داعي للسطر ده
-const agent = new Agent({ rejectUnauthorized: false, maxSockets: 50 });
-const send = (sub, body, opts) => webpush.sendNotification(sub, body, { ...opts, agent });
-const store = { all: async () => subs, remove: async (endpoint) => { subs = subs.filter((s) => s.endpoint !== endpoint); } };
-
-let t = Date.now();
-console.log("== التشغيلة الأولى");
-console.log(await sendToAll(store, { title: "طلبك اتشحن", url: "/orders/42" }, { limit: 10, retryDelay: 2000, send }));
-console.log($__btالوقت: $__{((Date.now() - t) / 1000).toFixed(1)}s | push service: $__{stats.requests} request، أكبر عدد في نفس الوقت $__{stats.maxActive} | subscriptions فاضلة: $__{subs.length}$__bt);
-
-stats.requests = 0; stats.seen.clear();
-console.log("== التشغيلة التانية");
-console.log(await sendToAll(store, { title: "تاني" }, { limit: 10, retryDelay: 100, send }));
-console.log($__btrequests للممسوحين: $__{[...stats.seen.keys()].filter((k) => k.startsWith("gone") || k.startsWith("missing")).length}$__bt);
-server.close();
-~~~
-
-الشهادة للمعمل: [[openssl req -x509 -newkey rsa:2048 -nodes -keyout key.pem -out cert.pem -days 2 -subj "/CN=localhost"]] (في Git Bash قبلها [[MSYS_NO_PATHCONV=1]] عشان الـ [[/CN]] ميتحوّلش لمسار ويندوز).
-
-~~~text الناتج (node run.mjs، Node 24، web-push 3.6.7)
-== التشغيلة الأولى
-هعيد flaky-25 بعد 2000ms (500)
-هعيد flaky-26 بعد 2000ms (500)
-هعيد flaky-27 بعد 2000ms (500)
-هعيد down-28 بعد 2000ms (503)
-هعيد down-29 بعد 2000ms (503)
-فشل نهائي down-28: 503
-فشل نهائي down-29: 503
-{ sent: 473, removed: 25, failed: 2 }
-الوقت: 3.5s | push service: 505 request، أكبر عدد في نفس الوقت 10 | subscriptions فاضلة: 475
-== التشغيلة التانية
-هعيد flaky-25 بعد 100ms (500)
-هعيد flaky-26 بعد 100ms (500)
-هعيد flaky-27 بعد 100ms (500)
-هعيد down-28 بعد 100ms (503)
-هعيد down-29 بعد 100ms (503)
-فشل نهائي down-28: 503
-فشل نهائي down-29: 503
-{ sent: 473, removed: 0, failed: 2 }
-requests للممسوحين: 0
-~~~
-
-**الأرقام:** ٥٠٠ = ٤٧٣ اتبعت (٤٧٠ عادي + ٣ flaky من المحاولة التانية) + ٢٥ اتمسحوا (٢٠ gone و ٥ missing) + ٢ فشلوا نهائي. و ٥٠٥ request = ٥٠٠ + ٥ إعادات. وأكبر عدد في نفس الوقت عند الـ push service 10 بالظبط. التشغيلة التانية مبعتتش ولا request للممسوحين. (الـ flaky رجعوا 500 تاني في التشغيلة التانية لأن المعمل بيصفّر عدّاده بين التشغيلتين.)
-
-**ليه كده:**
-
-- **[[mapLimit]]:** نفس فكرة طابور الرفع في وحدة «APIs المتصفح»: ١٠ «حارات» كل واحدة بتاخد اللي عليه الدور. ٥٠٠ طلب مرة واحدة كانوا هيفتحوا مئات الاتصالات، والـ push service ممكن يرد بـ 429.
-- **[[err.statusCode]] 404 أو 410:** [[webpush.sendNotification]] بيرمي [[WebPushError]] فيه الـ status. الاتنين معناهم «الـ subscription ده مبقاش موجود» (اليوزر قفل الإشعارات أو مسح بيانات الموقع)، فبيتمسح على طول ومن غير إعادة. لو سبته، كل إشعار هيبعت له ويفشل للأبد.
-- **أي error تاني:** مشكلة مؤقتة (500 أو 503 أو الشبكة)، فإعادة واحدة بعد [[retryDelay]]، وبعدها «فشل نهائي» في اللوج.
-- **[[send]] option:** الافتراضي [[webpush.sendNotification]]، والمعمل بيبعت نسخة معاها [[agent]] بيقبل الشهادة الـ self-signed. وده بيخلّي الدالة تتختبر من غير شبكة.
-- **[[TTL: 60 * 60]]:** لو الجهاز مقفول، الـ push service يحتفظ بالإشعار ساعة بس. «طلبك اتشحن» بعد يومين ملوش لازمة.
-
-**غلطة حصلت في المعمل:** أول push service وهمي كان [[http://localhost]]، وكل الـ ٥٠٠ فشلوا بـ [[write EPROTO ... SSL routines:tls_validate_record_header:wrong version number]]. [[web-push]] بيكلّم الـ endpoint بـ HTTPS دايمًا حتى لو مكتوب [[http://]]، فالمعمل بقى HTTPS بشهادة self-signed. وده كمان ورّى إن الـ retry شغال: كل واحد اتعاد مرة وطلع «فشل نهائي» بدل loop.
-
-**الغلطة الشائعة:** [[Promise.all(subs.map(send))]]. أول error واحد بيرفض الـ Promise كلها وانت مش عارف مين اتبعت ومين لأ، ومفيش حد للطلبات اللي في نفس الوقت.` },
+**الغلطة الشائعة:** [[Promise.all(files.map(upload))]]. ده بيبدأ الـ ١٠ مع بعض، والمتصفح نفسه بيحدد ٦ اتصالات لكل سيرفر في HTTP/1.1 والباقي بيستنى من غير ما الشريط يتحرك، وأي ملف كبير بياكل كل الـ upload.` },
           ],
           ref: [
-            { t: "MDN: Push API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Push_API" },
-            { t: "MDN: PushManager.subscribe()", url: "https://developer.mozilla.org/en-US/docs/Web/API/PushManager/subscribe" },
-            { t: "MDN: Background Synchronization API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Background_Synchronization_API" },
-            { t: "MDN: notificationclick event", url: "https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/notificationclick_event" },
+            { t: "MDN: HTML Drag and Drop API", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API" },
+            { t: "MDN: File drag and drop", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/File_drag_and_drop" },
+            { t: "MDN: XMLHttpRequest.upload", url: "https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/upload" },
+            { t: "MDN: <progress>", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/progress" },
           ],
           flag: "script",
           deep: {
-            why: R`من غير push، الموقع بيعرف يكلّمك بس وانت فاتحه، والتطبيقات الـ native بتكسب. ومن غير Background Sync، أي حاجة بتتعمل في مترو أو أسانسير بتضيع أو بتطلب من اليوزر يفتكر يعيدها. الاتنين بيخلّوا الـ PWA تتصرف زي تطبيق متسطّب: بتوصلك وبتكمّل شغلها لوحدها.`,
-            how: R`**الـ push**: [[pushManager.subscribe]] بيكلّم الـ push service بتاع المتصفح (Chrome: FCM، و Firefox: Mozilla autopush، و Safari: Apple) وبيرجّع subscription فيه [[endpoint]] (URL عند الـ push service) و [[keys]] ([[p256dh]] و [[auth]]). السيرفر بتاعك بيعمل POST للـ endpoint ده، والرسالة **متشفّرة** بالـ keys دي فالـ push service مبيقدرش يقراها، وموقّعة بالـ VAPID private key فمحدش غيرك يقدر يبعت لليوزرز بتوعك. و [[userVisibleOnly: true]] وعد إن كل push هيطلّع إشعار، و Chrome مبيقبلش غيره.
+            why: "رفع ملف كبير على نت بطيء من غير أي مؤشر، اليوزر بيفتكر إن الموقع علّق فيعمل refresh ويضيّع الرفع. والسحب والإفلات متوقع في أي dashboard أو محرر.",
+            how: R`[[dragover]] بيتنادى كل كام ملّي ثانية وانت ساحب فوق العنصر، و [[preventDefault]] فيه هي اللي بتقول للمتصفح «العنصر ده بيقبل drop». [[dragleave]] بيحصل كمان لما تعدّي فوق عنصر ابن جوه الـ zone، فالشكل ممكن يرمش؛ الحل عداد بـ dragenter/dragleave أو [[pointer-events: none]] على الأبناء وقت السحب.
 
-**الـ sync**: [[reg.sync.register(tag)]] بيسجّل «لما يبقى فيه نت، صحّيني بالـ tag ده». نفس الـ tag مرتين بيبقى تسجيل واحد. الـ SW بيصحى بـ [[sync]] event، ولو الـ Promise اللي في [[waitUntil]] اترفض، المتصفح بيعيد بعدين بفترات بتزيد، وآخر محاولة [[event.lastChance]] بيبقى [[true]].
+XHR بيبعت الـ body وبيطلق [[upload.progress]] كل ما جزء يخرج من الجهاز. [[lengthComputable]] بتبقى true لما الحجم الكلي معروف (مع FormData و File دايمًا معروف). والتقدم ده «اتبعت من الجهاز»، مش «السيرفر حفظه»؛ بعد ١٠٠٪ لسه فيه وقت لحد [[onload]].
 
-[[event.waitUntil(promise)]] في الاتنين: بيقول للمتصفح «متقفلش الـ SW لحد ما ده يخلص». من غيره الـ SW ممكن يتقفل قبل ما الإشعار يظهر أو الطلب يتبعت.`,
-            when: R`push: رسايل شات، وحالة طلب، وتنبيه أمني، وتذكير اليوزر طلبه بنفسه. مش للتسويق كل يوم. و Background Sync: أي حاجة اليوزر بيكتبها ولازم توصل (تعليق، طلب، رسالة، form)، مع outbox في IndexedDB. ولمزامنة دورية (أخبار كل ساعة) فيه Periodic Background Sync، بس في Chrome بس وللـ PWA المتسطّبة (من الـ docs).`,
-            mistakes: R`تحط الـ VAPID private key في كود الصفحة (هو للسيرفر بس، والـ public بس اللي في الصفحة). وتنسى [[event.waitUntil]] فالإشعار يظهر ساعات ويختفي ساعات. وتفترض إن [[reg.sync]] موجود في كل المتصفحات (Chrome و Edge بس). ومتمسحش الـ subscriptions اللي بترجّع [[410]] فسيرفرك بيبعت لناس مش موجودين للأبد. وتبعت push من غير [[showNotification]]: Chrome بيطلّع إشعار افتراضي بيقول إن الموقع اتحدّث في الخلفية (من الـ docs). وتنسى إن Safari على iPhone بيدعم Web Push للموقع المتسطّب على الشاشة الرئيسية بس.`
+ليه fetch لأ؟ [[fetch]] بيدّيك download progress عن طريق [[res.body.getReader()]] (تقرا الرد chunk chunk). بس الرفع: المواصفات فيها streaming request body ([[body: ReadableStream]] مع [[duplex: "half"]])، وده مدعوم في Chromium بس ومحتاج HTTP/2، وحتى معاه اللي بتعدّه هو اللي الـ stream بتاعك سلّمه للمتصفح مش اللي وصل للشبكة فعلًا. فمفيش طريقة بسيطة ومضمونة. عشان كده XHR لسه موجود ومش deprecated.
+
+للملفات الكبيرة (فيديو): ارفع مباشرة لـ S3/R2 بـ presigned URL من غير ما تعدّي على سيرفرك (بـ XHR PUT برضه عشان الـ progress)، أو multipart/resumable uploads (tus) عشان لو النت قطع تكمّل.`,
+            when: R`أي رفع أكبر من كام ميجا، أو على موبايل. والسحب للـ dashboards والمحررات، مع input عادي دايمًا.`,
+            mistakes: R`تنسى preventDefault في dragover فالمتصفح يفتح الصورة بدل ما يرفعها. و progress بـ fetch. وتحط [[Content-Type]] بإيدك مع FormData. وتعتبر ١٠٠٪ نجاح قبل ما [[onload]] يقول status 200. ومفيش بديل للكيبورد والموبايل (السحب مش شغال على iOS Safari من الملفات). وفي الانترفيو: «إزاي تعمل progress bar لرفع ملف؟» الإجابة XHR upload.onprogress، وليه fetch مبيعملهاش.`
           },
           teach: R`## الفكرة في سطر
 
-٣ أماكن بتشتغل مع بعض: **الصفحة** بتشترك وتبعت الاشتراك لسيرفرك، و**سيرفرك** بيبعت رسالة لما حاجة تحصل، و**الـ service worker** بيصحى وياخدها ويطلّع إشعار. ونفس الـ SW بيصحى تاني لما النت يرجع عشان يبعت اللي اتساب offline.
+جزئين: منطقة تسحب عليها ملف من الجهاز وتسيبه (drag and drop)، ودالة بترفع الملف للسيرفر وبتحرّك شريط تقدم وهي بترفع.
 
-جرّبت الكود ده كله من أوله لآخره: Chrome 156 headless ببروفايل حقيقي (عن طريق playwright-core، على [[http://127.0.0.1]]) وسيرفر Node 24 بـ [[web-push]] 3.6.7. الاشتراك اتعمل فعلًا على FCM (سيرفرات Google للـ push)، والرسالة اتبعتت ووصلت للـ SW. شكل الإشعار على الشاشة **من الـ docs**، لأن الـ headless مبيرسمش إشعارات.
+جرّبته في Chrome headless (عن طريق playwright-core): صفحة فيها [[<div id="drop">]] و [[<progress>]]، وسيرفر Node صغير على localhost بيستقبل [[POST /api/upload]] ويرد بعدد البايتات اللي وصلته. عملت في الصفحة [[File]] حجمه 5MB، وبعتّه للـ zone بأحداث [[dragover]] و [[dragleave]] و [[drop]] مصنوعة بـ [[new DragEvent(...)]] (headless مفيهوش ماوس يسحب من الديسك)، وبطّأت الشبكة بـ DevTools Protocol لـ 1MB في الثانية رفع و 100ms latency.
 
 ---
 
-## ١. المفاتيح: VAPID
-
-قبل أي حاجة، سيرفرك محتاج زوج مفاتيح (اسمهم VAPID: Voluntary Application Server Identification):
-
-~~~powershell
-npx web-push generate-vapid-keys
-~~~
-
-~~~text الناتج (المفاتيح نفسها مستخبية)
-=======================================
-
-Public Key:
-<KEY>
-
-Private Key:
-<KEY>
-
-=======================================
-~~~
-
-- **الـ public key** (87 حرف): بيتحط في الصفحة، وبتقوله للمتصفح وانت بتشترك.
-- **الـ private key** (43 حرف): في السيرفر بس، في متغير بيئة. بيه بتوقّع كل رسالة، فالـ push service يعرف إنها منك انت.
-- بتعملهم **مرة واحدة** للمشروع. لو غيّرتهم، كل الاشتراكات القديمة بتبوظ.
-
-## ٢. الصفحة: الاشتراك
+## ١. العناصر
 
 ~~~text app.js
-const reg = await navigator.serviceWorker.ready;
-const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: VAPID_PUBLIC_KEY });
-await fetch("/api/push/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(sub) });
+const zone = document.querySelector("#drop");
+const bar = document.querySelector("progress");
 ~~~
 
-- [[navigator.serviceWorker.ready]]: Promise بتتحل لما يبقى فيه SW شغّال، وبترجّع الـ registration.
-- [[reg.pushManager.subscribe(...)]]: اشترك في الـ push. المتصفح بيكلّم الـ push service بتاعه وبيرجّع subscription.
-- [[userVisibleOnly: true]]: وعد إن كل رسالة هتطلّع إشعار يشوفه اليوزر. جرّبت من غيرها:
+[[<progress>]] عنصر HTML جاهز بيرسم شريط. [[value]] بتاعه من 0 لحد [[max]]، و [[max]] الافتراضي [[1]] (طبعته وطلع 1)، فلو حطيت [[bar.value = 0.5]] يبقى نص الشريط مليان.
 
-~~~text الناتج (Chrome)
-NotAllowedError: Registration failed - permission denied
-Chrome currently only supports the Push API for subscriptions that will result in user-visible messages. You can indicate this by calling pushManager.subscribe({userVisibleOnly: true}) instead.
-~~~
+---
 
-- [[applicationServerKey]]: الـ public key. ومن غيره:
-
-~~~text الناتج (Chrome)
-AbortError: Registration failed - missing applicationServerKey, and manifest empty or missing
-~~~
-
-- [[fetch("/api/push/subscribe", ...)]]: ابعت الاشتراك لسيرفرك يحفظه (في داتابيز، مع اليوزر صاحبه). [[JSON.stringify(sub)]] بيحوّله لـ:
-
-~~~text اللي السيرفر استلمه
-endpoint, expirationTime, keys  |  endpoint host: fcm.googleapis.com
-~~~
-
-| الحقل | معناه |
-|---|---|
-| [[endpoint]] | URL عند الـ push service (هنا FCM) بيمثّل المتصفح ده بالظبط، وسيرفرك بيبعت عليه |
-| [[keys.p256dh]] و [[keys.auth]] | مفاتيح التشفير: سيرفرك بيشفّر الرسالة بيهم، فـ FCM نفسه مبيقدرش يقراها |
-| [[expirationTime]] | امتى الاشتراك ينتهي، وكان [[null]] (مفيش ميعاد) |
-
-> الـ endpoint ده سرّ صغير: أي حد معاه + المفاتيح يقدر يحاول يبعت، بس من غير الـ VAPID private key بتاعك الرسالة مش هتتقبل. خزّنه زي أي داتا يوزر.
-
-## ٣. الصفحة: لما النت مش موجود
+## ٢. السحب فوق المنطقة: [[dragover]]
 
 ~~~text app.js
-async function queueSend() {
-  if ("sync" in reg) await reg.sync.register("send-outbox");
-  else await sendOutbox();
-}
-~~~
-
-- الفكرة: اليوزر داس «ابعت» وهو offline. انت حفظت الرسالة في IndexedDB في store اسمه outbox (درس «IndexedDB و BroadcastChannel»)، وبعدين بتنادي [[queueSend()]].
-- [[("sync" in reg)]]: هل Background Sync موجود؟ في Chrome و Edge آه، في Firefox و Safari لأ (من الـ docs، MDN: Background Synchronization API).
-- [[reg.sync.register("send-outbox")]]: «لما النت يرجع، صحّي الـ SW بالاسم ده». الاسم (tag) انت اللي بتختاره.
-- [[else await sendOutbox()]]: البديل: حاول دلوقتي، ولو فشل خلّيه في الـ outbox وحاول تاني على [[online]] event أو أول ما الصفحة تفتح.
-- [[sendOutbox()]]: دالة انت بتكتبها: تقرا كل اللي في الـ outbox، وتعمل POST لكل واحد، وتمسح اللي اتبعت. نفس الدالة بتتحط في الصفحة وفي الـ SW.
-
-جرّبت: وانا Offline الـ [[register]] نجح و [[reg.sync.getTags()]] رجّع [[["send-outbox"]]]، ومحصلش حاجة. أول ما رجعت Online، الـ SW صحي لوحده وسيرفري استلم:
-
-~~~text لوج السيرفر
-server /api/outbox from-sync
-~~~
-
-وجرّبت كمان: لو الإذن [["background-sync"]] متقفل في إعدادات الموقع، [[register]] بيرمي [[NotAllowedError: Permission denied.]]، فحطه جوه [[try]] واعتبره زي «مفيش sync».
-
-## ٤. الـ SW: الـ [[push]] event
-
-~~~text sw.js
-self.addEventListener("push", (event) => {
-  const data = event.data?.json() ?? { title: "جديد" };
-  event.waitUntil(self.registration.showNotification(data.title, { body: data.body, tag: data.tag, data: { url: data.url } }));
+zone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  zone.classList.add("over");
 });
 ~~~
 
-- [[self]]: الـ SW نفسه (زي [[window]] في الصفحة).
-- [[event.data?.json()]]: الرسالة اللي سيرفرك بعتها، كـ JSON. و [[?.]] لأن push ممكن يوصل من غير داتا خالص، و [[?? { title: "جديد" }]] قيمة احتياطي.
-- [[self.registration.showNotification(title, options)]]: نفس [[new Notification]] بس من الـ SW، وبيشتغل والموقع مقفول. نفس الـ options: [[body]] و [[tag]]، و [[data]] أي حاجة عايزها وقت الضغط (هنا اللينك).
-- [[event.waitUntil(...)]]: «متقفلنيش لحد ما الإشعار يظهر». الـ SW بيتقفل لوحده لما مفيش شغل، فمن غير ده ممكن يموت في النص.
+- [[dragover]]: بيتنادى كل شوية (كل كام ملّي ثانية) طول ما انت ساحب حاجة فوق العنصر.
+- [[e.preventDefault()]]: أهم سطر. الافتراضي في المتصفح إن العناصر **مبتقبلش** drop، ولو سبت الملف المتصفح بيفتحه في التاب (صورة أو PDF). [[preventDefault]] في dragover معناها «العنصر ده بيقبل». (ده من المواصفات ومن MDN، وتقدر تجرّبه بإيدك: شيل السطر واسحب صورة.)
+- [[classList.add("over")]]: كلاس الـ CSS بتاعه يغيّر الشكل («سيبه هنا»).
 
-جرّبت أبعت رسالتين من السيرفر، والـ SW استلم الاتنين:
-
-~~~text الناتج
-server: sendNotification status 201
-server: second status 201
+~~~text app.js
+zone.addEventListener("dragleave", () => zone.classList.remove("over"));
 ~~~
 
-[[201]] معناه إن FCM قبل الرسالة وهيوصّلها. الرسالتين بنفس [[tag: "order-42"]]، فحسب الـ docs التانية بتبدّل الأولى في مركز الإشعارات بدل ما يبقوا اتنين.
+[[dragleave]]: الماوس خرج برّه المنطقة، فرجّع الشكل. بعد dragover الكلاس كان [["over"]]، وبعد dragleave بقى [[""]].
 
-## ٥. الـ SW: الضغط على الإشعار
+---
 
-~~~text sw.js
-self.addEventListener("notificationclick", (event) => {
-  event.notification.close();
-  event.waitUntil(clients.openWindow(event.notification.data.url));
+## ٣. الإفلات: [[drop]]
+
+~~~text app.js
+zone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  zone.classList.remove("over");
+  for (const file of e.dataTransfer.files) upload(file);
 });
 ~~~
 
-- [[event.notification]]: الإشعار اللي اتداس عليه. [[close()]] بتشيله.
-- [[event.notification.data.url]]: اللي حطيناه في [[data]] وقت [[showNotification]].
-- [[clients.openWindow(url)]]: افتح تاب جديد على اللينك ده. [[clients]] هي التابات المفتوحة من موقعك. (في مشروع حقيقي دوّر الأول بـ [[clients.matchAll()]]: لو فيه تاب مفتوح، اعمله [[focus()]] بدل تاب جديد.)
+- [[preventDefault()]] تاني: هنا بتمنع المتصفح يفتح الملف.
+- [[e.dataTransfer]]: الـ object اللي شايل الحاجة المسحوبة. و [[.files]] فيه نفس نوع [[input.files]] بالظبط (ليستة [[File]])، فكل اللي اتعلمته في درس «input type=file» شغال هنا.
+- لكل ملف نادي [[upload]].
 
-> الـ headless مبيقدرش «يدوس» على إشعار، فالجزء ده من الـ docs (MDN: notificationclick).
+---
 
-## ٦. الـ SW: الـ [[sync]] event
+## ٤. [[upload]]: الرفع بـ XHR
 
-~~~text sw.js
-self.addEventListener("sync", (event) => {
-  if (event.tag === "send-outbox") event.waitUntil(sendOutbox());
-});
+### الـ body: [[FormData]]
+
+~~~text app.js
+  const fd = new FormData();
+  fd.append("file", file);
 ~~~
 
-- [[event.tag]]: الاسم اللي سجّلته بيه. ممكن يبقى عندك أكتر من نوع (outbox و likes...).
-- [[event.waitUntil(sendOutbox())]]: لو الـ Promise اترفض (السيرفر وقع مثلًا)، المتصفح هيعيد المحاولة بعدين لوحده بفترات بتطول، وآخر محاولة [[event.lastChance]] بيبقى [[true]] (جرّبتها: أول مرة كان [[false]]). عشان كده [[sendOutbox]] لازم **ترمي** لو فشلت، مش تبلع الـ error.
-
-## ٧. السيرفر: الإرسال
-
-~~~text server.mjs
-import webpush from "web-push";
-webpush.setVapidDetails("mailto:dev@example.com", process.env.VAPID_PUBLIC, process.env.VAPID_PRIVATE);
-await webpush.sendNotification(subscription, JSON.stringify({ title: "طلب جديد", body: "رقم 42", tag: "order-42", url: "/orders/42" }));
-~~~
-
-- [[web-push]]: مكتبة npm بتعمل التشفير والتوقيع والـ POST للـ endpoint. (تتسطّب بـ [[npm i web-push]].)
-- [[setVapidDetails(subject, public, private)]]: الـ subject لازم يبدأ بـ [[mailto:]] أو [[https:]]، عشان الـ push service يكلّمك لو فيه مشكلة. جرّبت من غير [[mailto:]]:
+[[FormData]] بيبني body من نوع [[multipart/form-data]]، نفس اللي بيتبعت لو فورم HTML فيه input file. [[append("file", file)]] بيضيف الملف تحت اسم [["file"]] (السيرفر بيدوّر بالاسم ده، زي [[upload.single("file")]] في multer). السيرفر عندي طبع الـ header اللي وصله:
 
 ~~~text الناتج
-Vapid subject is not a valid URL. dev@example.com
+multipart/form-data; boundary=----WebKit...
 ~~~
 
-وبمفتاح غلط: [[Vapid public key should be 65 bytes long when decoded.]]
+المتصفح حط الـ [[Content-Type]] **و** الـ boundary (الفاصل بين الأجزاء) لوحده، عشان كده متكتبش Content-Type بإيدك مع FormData.
 
-- [[sendNotification(subscription, payload)]]: [[subscription]] هو الـ object اللي الصفحة بعتته وانت حفظته، والـ payload نص (هنا JSON) وده اللي [[event.data.json()]] بيقراه في الـ SW.
+### الطلب
 
-### الاشتراك اللي مات
+~~~text app.js
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "/api/upload");
+~~~
 
-اليوزر لغى الإذن، أو مسح داتا المتصفح، أو الاشتراك انتهى. جرّبت [[unsubscribe()]] من الصفحة وبعدين بعت من السيرفر:
+[[XMLHttpRequest]] (اختصاره XHR) الطريقة القديمة لعمل requests قبل [[fetch]]. الاسم فيه XML لأسباب تاريخية، وبيبعت أي حاجة. [[open(method, url)]] بتجهّز الطلب بس، ولسه مبعتش.
+
+### التقدم
+
+~~~text app.js
+  xhr.upload.onprogress = (e) => {
+    if (e.lengthComputable) bar.value = e.loaded / e.total;
+  };
+~~~
+
+- [[xhr.upload]]: object منفصل لأحداث **الرفع** (و [[xhr.onprogress]] من غير upload للتحميل).
+- [[e.loaded]]: اتبعت كام byte لحد دلوقتي. [[e.total]]: الحجم الكلي.
+- [[e.lengthComputable]]: الحجم الكلي معروف؟ مع FormData فيها File دايمًا [[true]].
+- [[e.loaded / e.total]]: نسبة من 0 لـ 1، بالظبط اللي [[<progress>]] عايزه.
+
+### الرد والأخطاء والإرسال
+
+~~~text app.js
+  xhr.onload = () => console.log(xhr.status, xhr.responseText);
+  xhr.onerror = () => console.log("النت وقع");
+  xhr.send(fd);
+~~~
+
+- [[onload]]: السيرفر رد، **أي** رد (200 أو 404 أو 500)، فلازم تبص على [[xhr.status]].
+- [[onerror]]: مفيش رد خالص: النت قطع أو السيرفر مش موجود.
+- [[send(fd)]]: دلوقتي بس الطلب بيتبعت.
+
+---
+
+## ٥. اللي حصل لما رفعت 5MB على 1MB/s
+
+حطيت [[console.log]] جوه onprogress بالوقت من لحظة الـ drop (مختصر):
 
 ~~~text الناتج
-WebPushError 410 push subscription has unsubscribed or expired.
+progress 106ms 98304 / 5243063 lengthComputable true bar 0.02
+progress 211ms 196608 / 5243063 lengthComputable true bar 0.04
+progress 325ms 311296 / 5243063 lengthComputable true bar 0.06
+...
+progress 2719ms 2670592 / 5243063 lengthComputable true bar 0.51
+...
+progress 5338ms 5243063 / 5243063 lengthComputable true bar 1.00
+5448ms 200 {"ok":true,"bytes":5243063,...}
 ~~~
 
-[[410]] (أو [[404]]) معناها «امسحه من الداتابيز». لو مامسحتهوش، كل مرة هتبعت لعدد ناس بيزيد ومش موجودين.
+- الحدث اتنادى تقريبًا كل 100ms، وكل مرة زيادة حوالي 100KB، وده منطقي مع 1MB في الثانية.
+- الـ [[total]] بـ 5243063 مش 5242880 (5 × 1024 × 1024): الفرق 183 byte هما الـ boundary والـ headers بتاعة الجزء جوه الـ multipart.
+- الشريط وصل 1.00 عند 5338ms، والـ [[onload]] جه بعدها بحوالي 110ms. الـ 100٪ معناها «اتبعت من الجهاز»، والنجاح الحقيقي هو [[200]] في onload.
+- السيرفر عدّ نفس الرقم [[bytes: 5243063]].
+
+### وليه مش [[fetch]]؟
+
+[[fetch]] مفيهوش حدث زي [[upload.onprogress]]. عشان كده لحد النهارده أي progress bar للرفع بيبقى XHR، ومكتبة axios في المتصفح XHR من تحت برضه.
 
 ---
 
 ## الخلاصة
 
-| الحاجة | فين | بتعمل إيه |
-|---|---|---|
-| [[pushManager.subscribe({ userVisibleOnly, applicationServerKey })]] | الصفحة | بترجّع subscription فيه [[endpoint]] و [[keys]]، وبتبعته لسيرفرك |
-| [[webpush.sendNotification(sub, payload)]] | السيرفر | بتشفّر وتوقّع وتبعت للـ endpoint، و [[410]] يعني امسح الاشتراك |
-| [[push]] و [[showNotification]] | الـ SW | بتصحى وتطلّع الإشعار، جوه [[event.waitUntil]] |
-| [[notificationclick]] و [[clients.openWindow]] | الـ SW | بتفتح الصفحة اللي في [[data.url]] |
-| [[reg.sync.register(tag)]] | الصفحة | صحّي الـ SW لما النت يرجع (Chrome و Edge بس) |
-| [[sync]] event | الـ SW | ابعت الـ outbox، ولو رميت error المتصفح بيعيد |
+| الحاجة | معناها |
+|---|---|
+| [[dragover]] + [[preventDefault()]] | العنصر ده بيقبل drop |
+| [[drop]] + [[preventDefault()]] | متفتحش الملف، و [[e.dataTransfer.files]] فيها الملفات |
+| [[dragleave]] | خرج برّه، رجّع الشكل |
+| [[FormData]] + [[append]] | body من نوع multipart، والمتصفح بيحط الـ Content-Type |
+| [[xhr.upload.onprogress]] | [[e.loaded]] من [[e.total]] |
+| [[onload]] / [[onerror]] | رد (افحص status) / مفيش رد |
 
-- الـ private key في السيرفر بس، والـ public في الصفحة.
-- [[event.waitUntil]] في كل event في الـ SW بيعمل شغل async.
-- Background Sync مش في Firefox و Safari: لازم بديل بـ [[online]] event.
-- Web Push على iPhone للموقع المتسطّب على الشاشة الرئيسية بس (iOS 16.4 وبعده، من الـ docs).`,
+- [[<progress>]] قيمته من 0 لـ 1 افتراضيًا.
+- ١٠٠٪ مش نجاح: استنى [[onload]] و [[status]].`,
           lines: [
-            R`استنى لحد ما يبقى فيه service worker شغّال، وخد الـ registration بتاعه. الـ push والـ sync الاتنين بيتسجّلوا على الـ registration ده، مش على الصفحة.`,
-            R`اشترك في الـ push: المتصفح بيكلّم الـ push service بتاعه (FCM في Chrome) وبيرجّع subscription. [[userVisibleOnly: true]] وعد إن كل رسالة هتطلّع إشعار (Chrome مبيقبلش غيره)، و [[applicationServerKey]] هو الـ VAPID public key بتاع سيرفرك.`,
-            R`ابعت الاشتراك لسيرفرك يحفظه مع اليوزر. [[JSON.stringify(sub)]] بيطلّع [[endpoint]] و [[expirationTime]] و [[keys]]، ودول كل اللي السيرفر محتاجه عشان يبعت بعدين.`,
-            R`دالة بتتنادى لما اليوزر يبعت حاجة والنت مش موجود، بعد ما الحاجة اتحفظت في outbox في IndexedDB.`,
-            R`لو المتصفح فيه Background Sync (Chrome و Edge)، سجّل tag اسمه [[send-outbox]]: المتصفح هيصحّي الـ SW بيه أول ما النت يرجع، حتى لو التاب اتقفل.`,
-            R`غير كده (Firefox و Safari) حاول تبعت دلوقتي بنفس الدالة، ولو فشلت الحاجة تفضل في الـ outbox لحد [[online]] event أو الزيارة الجاية.`,
-            R`نهاية [[queueSend]].`,
-            R`في الـ SW: [[push]] بيحصل لما رسالة توصل من سيرفرك عن طريق الـ push service، والـ SW بيصحى عشانها حتى لو الموقع مش مفتوح.`,
-            R`اقرا الرسالة كـ JSON. [[?.]] لأن push ممكن يوصل من غير داتا، و [[??]] بتدّي عنوان احتياطي بدل ما الكود يقع.`,
-            R`اطلّع الإشعار من الـ SW بنفس الـ options بتاعة [[new Notification]]، و [[data.url]] بيتحفظ مع الإشعار عشان نعرف نفتح إيه لما يتداس. [[event.waitUntil]] بيمنع المتصفح يقفل الـ SW قبل ما الإشعار يظهر.`,
-            R`نهاية الـ push listener.`,
-            R`[[notificationclick]] بيحصل لما اليوزر يدوس على إشعار طلع من الـ SW ده.`,
-            R`شيل الإشعار من مركز الإشعارات، عشان ميفضلش موجود بعد ما اليوزر شافه.`,
-            R`افتح تاب على اللينك اللي اتحفظ في [[data.url]]. [[clients]] هي تابات موقعك، و [[waitUntil]] عشان الـ SW يفضل صاحي لحد ما التاب يتفتح.`,
-            R`نهاية الـ notificationclick listener.`,
-            R`[[sync]] بيحصل لما المتصفح يشوف إن النت رجع وفيه tag متسجّل.`,
-            R`لو الـ tag هو بتاعنا، ابعت الـ outbox. لو الـ Promise اترفض، المتصفح بيعيد المحاولة بعدين لوحده، فـ [[sendOutbox]] لازم ترمي error لو فشلت.`,
-            R`نهاية الـ sync listener.`,
-            R`في السيرفر: مكتبة [[web-push]] بتعمل تشفير الرسالة بمفاتيح الاشتراك وتوقيعها بالـ VAPID key والـ POST للـ endpoint.`,
-            R`عرّف سيرفرك للـ push services: الـ subject لازم [[mailto:]] أو [[https:]] (وإلا [[Vapid subject is not a valid URL]])، والمفتاحين من متغيرات البيئة مش مكتوبين في الكود.`,
-            R`ابعت رسالة لاشتراك واحد. [[subscription]] اللي اتحفظ من الصفحة، والنص JSON بيوصل للـ SW في [[event.data.json()]]. بترجّع [[statusCode]] [[201]] لو اتقبلت، وبترمي [[WebPushError]] بـ [[410]] لو الاشتراك مات.`,
+            R`المنطقة اللي اليوزر هيسيب فيها الملفات ([[#drop]])، غالبًا [[<div>]] عليه كلام زي «اسحب الملفات هنا».`,
+            R`[[<progress>]] عنصر HTML جاهز بيرسم شريط تقدم. الـ [[max]] الافتراضي بتاعه 1، فبنحط [[value]] من 0 لـ 1 والشريط بيتملا لوحده.`,
+            R`[[dragover]] بيتكرر طول ما اليوزر ساحب حاجة فوق المنطقة، فبنعرف منه إنه فوقها.`,
+            R`افتراضيًا المتصفح مش بيسمح بالإفلات على أي عنصر، و [[preventDefault]] هنا معناها «اسمح بالإفلات هنا». من غيرها حدث [[drop]] مش هيحصل خالص، والمتصفح هيفتح الملف في التاب بدل صفحتك.`,
+            R`نضيف كلاس [[over]] عشان الـ CSS يغيّر شكل المنطقة (border أو لون) ويقول لليوزر «سيبه هنا». ولأن [[classList.add]] مبتكررش الكلاس، تكرار الحدث مش مشكلة.`,
+            R`نهاية الـ listener بتاع [[dragover]].`,
+            R`[[dragleave]] بيحصل لما الماوس يخرج برّه المنطقة، فبنشيل الكلاس ونرجّع الشكل. خلي بالك: بيحصل كمان لما تعدّي فوق عنصر جوه المنطقة، فالشكل ممكن يرمش، وحل شائع ليها [[pointer-events: none]] على العناصر اللي جوه.`,
+            R`[[drop]] بيحصل لما اليوزر يسيب الماوس فوق المنطقة، وده الحدث اللي فيه الملفات.`,
+            R`[[preventDefault]] تاني هنا عشان المتصفح ميعملش السلوك الافتراضي، وهو إنه يفتح الملف اللي اتسحب ويسيب صفحتك.`,
+            R`نرجّع شكل المنطقة، لأن [[dragleave]] مش بيحصل بعد الإفلات.`,
+            R`[[e.dataTransfer.files]] من نفس نوع [[input.files]] ([[FileList]])، فنفس الكود اللي بيتعامل مع ملفات الـ input ينفع هنا. وبنرفع كل ملف لوحده.`,
+            R`نهاية الـ listener بتاع [[drop]].`,
+            R`دالة بترفع ملف واحد وتحدّث الشريط.`,
+            R`[[FormData]] بيبني body بصيغة [[multipart/form-data]]، الصيغة اللي الفورمز بتبعت بيها ملفات.`,
+            R`نحط الملف تحت اسم [[file]]. الاسم ده لازم يطابق اللي السيرفر مستنيه (زي [[upload.single("file")]] في multer)، وإلا السيرفر مش هيلاقي الملف.`,
+            R`بنستخدم [[XMLHttpRequest]] القديم مش [[fetch]] لسبب واحد: XHR عنده [[upload.onprogress]] بيقولك اترفع كام، و [[fetch]] مالوش طريقة بسيطة لكده.`,
+            R`نجهّز طلب [[POST]] على الـ endpoint. [[open]] مش بيبعت حاجة لسه، بيجهّز بس.`,
+            R`[[xhr.upload.onprogress]] بيتنادى كذا مرة والملف بيترفع. لاحظ الـ [[upload]]: [[xhr.onprogress]] من غيرها بتاعة تحميل **الرد** مش الرفع.`,
+            R`[[lengthComputable]] بتقول إن الحجم الكلي معروف. لو معروف، [[e.loaded / e.total]] بتدّي نسبة من 0 لـ 1، وده بالظبط اللي الـ [[<progress>]] مستنيه.`,
+            R`نهاية الـ [[onprogress]].`,
+            R`[[onload]] بيتنادى لما السيرفر يرد بأي status، حتى 400 أو 500. فلازم تبص على [[xhr.status]] عشان تعرف الرفع نجح فعلًا ولا لأ.`,
+            R`[[onerror]] بيتنادى بس لو الطلب موصلش خالص (النت قطع أو السيرفر مش شغّال)، مش لما السيرفر يرد بخطأ.`,
+            R`نبعت الطلب بالـ [[FormData]]. متحطش [[Content-Type]] بإيدك: المتصفح بيحطه لوحده ومعاه الـ boundary اللي بيفصل الأجزاء، ولو كتبته من غيره السيرفر مش هيعرف يقرا الملف.`,
+            R`نهاية [[upload]].`,
           ],
-          sol: R`اتجرّب كله في Chrome 156 headless ببروفايل حقيقي و Node 24 و [[web-push]] 3.6.7: الاشتراك رجع endpoint على [[fcm.googleapis.com]]، و [[sendNotification]] رجّعت [[201]] مرتين والـ SW استلم الرسالتين في [[push]]، ووانا Offline [[reg.sync.register("send-outbox")]] نجح و [[getTags()]] رجّع [[["send-outbox"]]]، وأول ما رجعت Online السيرفر استلم [[POST /api/outbox]] من الـ SW لوحده. وبعد [[unsubscribe()]] الإرسال رمى [[WebPushError 410 push subscription has unsubscribed or expired.]]
+          sol: R`مع Slow 4G والـ ٥ ميجا الشريط بيتحرك تدريجيًا على مدار ثواني، وبعد ما يوصل ١٠٠٪ فيه لحظة لحد ما [[onload]] يطبع [[200]] والرد (السيرفر لسه بيكتب الملف).
 
-اللي من الـ docs (MDN: Push API و Background Synchronization API و notificationclick): شكل الإشعار على الشاشة وهو ظاهر والتاب مقفول، وإن الضغطة بتفتح [[/orders/42]]، وإن Firefox و Safari مفيهمش [[reg.sync]]، و Web Push على iPhone للموقع المتسطّب بس.`
+الإلغاء: خزّن الـ xhr في متغير برّه، والزرار [[xhr.abort()]]، واسمع لـ [[xhr.onabort]] ورجّع الشريط 0. في Network الطلب هيظهر «(canceled)».
+
+الـ fallback: [[<label id="drop"><input type="file" hidden multiple> اسحب هنا أو اضغط للاختيار</label>]]، والضغط على الـ label بيفتح اختيار الملفات لوحده، و [[change]] على الـ input بتنادي نفس [[upload]]. كده الكيبورد (Tab ثم Enter) والموبايل شغالين.`
+        },
+        {
+          cmd: "visibilitychange و bfcache",
+          title: "تعرف إن اليوزر ساب الصفحة أو رجعلها إزاي؟",
+          desc: R`[[visibilitychange]]: الصفحة بقت مخفية (اليوزر غيّر التاب، أو صغّر، أو قفل الشاشة، أو ساب التطبيق على الموبايل) أو ظهرت تاني. ده آخر حدث مضمون تقريبًا على الموبايل، فأي حفظ مسودة أو إرسال analytics يبقى هنا، بـ [[navigator.sendBeacon]] اللي بيبعت حتى لو الصفحة بتتقفل.
+
+[[beforeunload]]: الحدث اللي يطلّع «متأكد إنك عايز تخرج؟». استخدمه بس لما فيه تغييرات مش محفوظة، وشيله أول ما تتحفظ.
+
+وbfcache (back/forward cache): لما اليوزر يضغط back، المتصفح بيرجّع الصفحة زي ما هي من الذاكرة (JS و state و scroll) من غير تحميل. [[pageshow]] بـ [[e.persisted === true]] بيقولك إنها رجعت من الـ bfcache، فحدّث الداتا اللي ممكن تكون قدمت.`,
+          example: R`const form = document.querySelector("#post-form");
+function warn(e) {
+  e.preventDefault();
+  e.returnValue = "";
+}
+form.addEventListener("input", () => window.addEventListener("beforeunload", warn));
+form.addEventListener("submit", () => window.removeEventListener("beforeunload", warn));
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState !== "hidden") return;
+  const draft = JSON.stringify(Object.fromEntries(new FormData(form)));
+  navigator.sendBeacon("/api/draft", draft);
+});
+window.addEventListener("pageshow", (e) => {
+  if (e.persisted) console.log("رجعت من الـ bfcache: حدّث السلة والإشعارات");
+});
+window.addEventListener("pagehide", (e) => console.log("pagehide، هتتحفظ في bfcache؟", e.persisted));`,
+          try: R`افتح الصفحة، واكتب في الفورم، وجرّب تقفل التاب: الرسالة ظهرت؟ اعمل submit وجرّب تاني. وبعدين روح لصفحة تانية وارجع بـ back وبص على Console (فعّل Preserve log). وآخر حاجة: DevTools ← Application ← Back/forward cache ← «Test back/forward cache»: الصفحة eligible؟ ولو لأ، إيه السبب اللي بيقوله؟`,
+          practice: [
+            { lvl: 'سريع', t: R`محاكاة شات: [[setInterval]] بيضيف رسالة وهمية كل ٣ ثواني. لما الصفحة تبقى [[hidden]] عدّ الرسايل اللي جت وخلّي [[document.title]] يبقى «(3) الشات»، ولما ترجع [[visible]] رجّع العنوان وصفّر العدّاد.`, done: R`تسيب التاب ١٠ ثواني: عنوان التاب بيبان فيه رقم بيزيد (حوالي 3)، وأول ما ترجع العنوان بيرجع «الشات» والعدّاد صفر، وانت جوه الصفحة العنوان مبيتغيرش خالص.`, sol: R`~~~live 280 chat-title.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الشات</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
+  #msgs { list-style: none; padding: 0; max-height: 200px; overflow: auto; }
+  #msgs li { background: #f3f4f6; border-radius: 8px; padding: 4px 10px; margin: 4px 0; width: fit-content; }
+  #title { font-size: 13px; color: #555; }
+</style>
+</head>
+<body>
+<p id="title"></p>
+<ul id="msgs"></ul>
+<script>
+  const BASE = "الشات";
+  const msgs = document.querySelector("#msgs");
+  let unread = 0, n = 0;
+
+  function showTitle() {
+    document.title = unread ? $__bt($__{unread}) $__{BASE}$__bt : BASE;
+    // جوه الـ preview عنوان التاب مش بتاع الصفحة دي، فبنعرضه هنا كمان
+    document.querySelector("#title").textContent = "عنوان التاب: " + document.title;
+  }
+
+  setInterval(() => {
+    const li = document.createElement("li");
+    li.textContent = $__btرسالة $__{++n}$__bt;
+    msgs.append(li);
+    msgs.scrollTop = msgs.scrollHeight;
+    if (document.hidden) {             // اليوزر مش شايف: عدّ
+      unread++;
+      showTitle();
+    }
+  }, 3000);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      unread = 0;                      // رجع وشاف
+      showTitle();
+    }
+  });
+  showTitle();
+</script>
+</body>
+</html>
+~~~
+
+في الـ preview عنوان التاب بتاع الموقع مش بتاع الصفحة دي، فالصفحة بتكتب العنوان فوق كمان. روح لتاب تاني ١٠ ثواني وارجع.
+
+~~~text الناتج (Chrome 158 headless من غير Playwright، تاب جديد اتفتح واتفعّل وبعدين رجعنا للأول)
+4.1s جوه الصفحة: الشات
+6.6s في تاب تاني: الشات | hidden = true
+9.1s في تاب تاني: (1) الشات | hidden = true
+11.6s في تاب تاني: (2) الشات | hidden = true
+14.1s في تاب تاني: (3) الشات | hidden = true
+14.4s رجعنا: الشات | رسايل في الصفحة: 4
+17.9s جوه الصفحة تاني: الشات
+~~~
+
+**ليه كده:**
+
+- **[[document.hidden]] جوه الـ [[setInterval]]:** كل رسالة جديدة بتسأل «اليوزر شايفني؟». لو لأ، بنزوّد العدّاد ونكتب العنوان. وانت جوه الصفحة العنوان مبيتلمسش (أول وآخر سطر).
+- **[[visibilitychange]] و [[visibilityState === "visible"]]:** الحدث بيحصل في الاتجاهين، فبنصفّر بس لما يرجع. ده بيحصل لما تبدّل التاب، أو تصغّر الشباك، أو تقفل شاشة الموبايل.
+- **الأرقام:** بعد ١٠ ثواني برا جالنا ٣ رسايل والعنوان «(3) الشات»، وأول ما رجعنا اتصفّر. الصفحة فيها ٤ رسايل لأن واحدة جت وإحنا جوه.
+
+**إزاي اتقاس:** Playwright بيثبّت الصفحات «visible» حتى لو فتحت تاب تاني أو صغّرت الشباك (جرّبنا الاتنين و [[document.hidden]] فضل [[false]]). فشغّلنا Chrome لوحده وكلّمناه بـ DevTools Protocol مباشرة ([[Target.createTarget]] لتاب جديد و [[Target.activateTarget]] للرجوع)، وده بيتصرف زي يوزر بيبدّل تابات بالظبط.
+
+**الغلطة الشائعة:** تستخدم [[window.onblur]] و [[onfocus]]. دول بيحصلوا كمان لما تدوس على الـ DevTools أو على iframe جوه الصفحة أو شريط العنوان، والصفحة لسه قدامك، فالعدّاد هيشتغل غلط. [[visibilitychange]] بيقول «الصفحة مش ظاهرة» بس.` },
+            { lvl: 'تطبيق', t: R`ابني عدّاد «وقت المذاكرة الفعلي» لصفحة درس: بيعدّ الوقت اللي الصفحة كانت ظاهرة فيه بس، بـ [[performance.now()]] مش بعدّ ticks، وبيبعت المجموع بـ [[navigator.sendBeacon("/api/time", ...)]] كل ما الصفحة تتخبى.`, done: R`تسيب التاب ١٠ ثواني وترجع: العدّاد مزادش الـ ١٠ ثواني دول (بفرق ثانية بالكتير)، و Network فيه request لـ [[/api/time]] كل مرة الصفحة اتخبت، والرقم اللي اتبعت هو المجموع لحد اللحظة دي.`, sol: R`~~~live 220 study-time.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>وقت المذاكرة</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
+  #time { font-size: 36px; font-variant-numeric: tabular-nums; }
+  #log { font-size: 13px; color: #555; }
+</style>
+</head>
+<body>
+<h1>درس: الـ closures</h1>
+<p>وقت المذاكرة الفعلي: <span id="time">0:00</span></p>
+<p id="log"></p>
+<script>
+  let total = 0;                               // ms اتجمعت قبل كده
+  let since = document.hidden ? null : performance.now();   // من إمتى ظاهرة
+
+  const visibleMs = () => total + (since === null ? 0 : performance.now() - since);
+
+  function show() {
+    const s = Math.floor(visibleMs() / 1000);
+    document.querySelector("#time").textContent = $__bt$__{Math.floor(s / 60)}:$__{String(s % 60).padStart(2, "0")}$__bt;
+  }
+  setInterval(show, 500);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      total = visibleMs();                     // اقفل الفترة اللي فاتت
+      since = null;
+      const body = JSON.stringify({ lesson: "closures", seconds: Math.round(total / 1000) });
+      let sent = false;
+      try {
+        sent = navigator.sendBeacon("/api/time", new Blob([body], { type: "application/json" }));
+      } catch {}
+      document.querySelector("#log").textContent = sent ? "اتبعت: " + body : "مفيش سيرفر هنا، كان هيتبعت: " + body;
+    } else {
+      since = performance.now();               // فترة جديدة
+    }
+  });
+  show();
+</script>
+</body>
+</html>
+~~~
+
+في الـ preview مفيش سيرفر، فلما تبدّل التاب وترجع هتلاقي «مفيش سيرفر هنا، كان هيتبعت: ...» بالرقم اللي كان هيتبعت.
+
+~~~text الناتج (Chrome 158 headless من غير Playwright، http://localhost:8831 وسيرفر node:http بيطبع اللي بيوصله)
+3.4s ظاهرة: 0:02
+3.4s السيرفر استلم: POST /api/time application/json {"lesson":"closures","seconds":3}
+14.0s رجعنا بعد ١٠ ثواني برا: 0:03
+16.0s السيرفر استلم: POST /api/time application/json {"lesson":"closures","seconds":6}
+17.4s في الآخر: 0:06
+~~~
+
+قعدنا ٣ ثواني، وبرا ١٠، وجوه ٢ تاني، وبرا تاني. الـ ١٠ ثواني متحسبتش (العدّاد 0:03 لما رجعنا)، وكل مرة الصفحة اتخبت وصل request فيه المجموع لحد اللحظة دي (3 ثم 6).
+
+**ليه كده:**
+
+- **[[total]] و [[since]]:** بدل عدّاد بيزيد كل ثانية، بنسجّل **إمتى** الفترة الظاهرة بدأت. لما الصفحة تتخبى بنضيف طول الفترة لـ [[total]] ونقفلها ([[since = null]])، ولما ترجع نبدأ فترة جديدة.
+- **[[performance.now()]] مش [[Date.now()]]:** ساعة بتزيد بس ومبتتأثرش لو اليوزر غيّر ساعة الجهاز أو الجهاز ظبطها من النت.
+- **ليه مش ticks:** المتصفح بيبطّأ الـ [[setInterval]] في التابات المستخبية (لحد مرة في الدقيقة في Chrome بعد شوية)، فالعدّ بالـ ticks بيطلع أرقام غلط. هنا الـ interval للعرض بس، والحساب من الساعة.
+- **[[navigator.sendBeacon(url, blob)]]:** بيبعت [[POST]] صغير من غير ما يستنى رد، والمتصفح بيكمّله حتى لو الصفحة اتقفلت بعدها على طول. [[visibilitychange]] لـ [[hidden]] هو آخر لحظة مضمونة قبل ما اليوزر يقفل التاب أو الموبايل يقتل الصفحة.
+- **[[new Blob([body], { type: "application/json" })]]:** عشان السيرفر ياخد [[content-type: application/json]]. لو بعتّ النص نفسه هيوصل [[text/plain]].
+- **[[try]] حوالين [[sendBeacon]]:** في الصفحة المعزولة الـ URL النسبي ممكن يبقى مش صالح فيرمي [[TypeError]]، و [[sendBeacon]] بترجّع [[false]] لو المتصفح رفض يحطه في الطابور.
+
+**الغلطة الشائعة:** تبعت في [[beforeunload]] أو [[unload]]. على الموبايل الصفحة بتتقفل غالبًا من غير ما الحدثين دول يحصلوا (اليوزر بيروح للهوم والنظام بيقتل التاب)، و [[unload]] كمان بيمنع الـ bfcache.` },
+            { lvl: 'تحدي', t: R`صلّح صفحة bfcache مبيرجّعهاش: صفحة فاتحة WebSocket لسيرفر [[ws]] على localhost. اقفل الـ socket في [[pagehide]]، وافتحه تاني في [[pageshow]] لما [[e.persisted]] يبقى [[true]]، وشغّل Test back/forward cache قبل وبعد.`, done: R`لو الاختبار قال الصفحة مش eligible قبل التصليح، بتكتب السبب اللي DevTools طلّعه. بعد التصليح: back بيرجّع الصفحة من bfcache، و [[pageshow]] بيطبع [[persisted: true]]، والـ socket اتفتح تاني والرسايل بتوصل، ولوج السيرفر فيه اتصال اتقفل واتصال جديد.`, sol: R`٣ ملفات وصفحة: سيرفر WebSocket صغير بـ [[node:http]] بس (من غير ما تسطّب [[ws]])، والصفحة اللي فيها التصليح، وصفحة تانية تروح لها وترجع.
+
+~~~js ws-server.mjs
+// سيرفر WebSocket صغير جدًا بـ node:http بس (عشان منسطّبش ws): بيبعت «tick» كل ثانية
+import { createHash } from "node:crypto";
+
+export function attachWs(server, log = console.log) {
+  let nextId = 1;
+  server.on("upgrade", (req, socket) => {
+    const key = req.headers["sec-websocket-key"];
+    const accept = createHash("sha1").update(key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").digest("base64");
+    socket.write("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: " + accept + "\r\n\r\n");
+    const id = nextId++;
+    log($__btws #$__{id} اتفتح$__bt);
+    let n = 0;
+    const timer = setInterval(() => {
+      const text = Buffer.from($__bttick $__{++n} من #$__{id}$__bt);
+      socket.write(Buffer.concat([Buffer.from([0x81, text.length]), text]));   // frame نص صغير (< 126 byte)
+    }, 1000);
+    const close = () => { if (!timer._destroyed) { clearInterval(timer); log($__btws #$__{id} اتقفل$__bt); } };
+    socket.on("data", (buf) => { if ((buf[0] & 0x0f) === 0x8) { socket.end(); close(); } });   // frame قفل من المتصفح
+    socket.on("close", close);
+    socket.on("error", close);
+  });
+}
+~~~
+
+~~~js live-server.mjs
+import { createServer } from "node:http";
+import { readFile } from "node:fs/promises";
+import { attachWs } from "./ws-server.mjs";
+
+const server = createServer(async (req, res) => {
+  const file = req.url === "/" ? "live.html" : req.url.slice(1).split("?")[0];
+  try {
+    const body = await readFile(file);       // اقرا الأول: لو الملف مش موجود نوصل للـ catch قبل أي header
+    res.writeHead(200, { "content-type": "text/html; charset=utf-8" }).end(body);
+  } catch {
+    res.writeHead(404).end();
+  }
+});
+attachWs(server);
+server.listen(Number(process.env.PORT) || 8831, () => console.log("على http://localhost:" + server.address().port + "/live.html"));
+~~~
+
+~~~live 260 live.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تحديثات مباشرة</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
+  #events { font: 13px/1.6 ui-monospace, monospace; background: #f3f4f6; padding: 8px; border-radius: 6px; }
+</style>
+</head>
+<body>
+<p><a href="other.html">روح لصفحة تانية</a> وبعدين ارجع بـ back.</p>
+<p>آخر رسالة: <b id="last">-</b></p>
+<pre id="events"></pre>
+<script>
+  const out = document.querySelector("#events");
+  const log = (s) => { out.textContent += s + "\n"; (window.__log ||= []).push(s); };
+  let socket = null;
+
+  function connect() {
+    if (location.origin === "null") { log("مفيش سيرفر هنا (صفحة معزولة): شغّلها من node live-server.mjs"); return; }
+    socket = new WebSocket($__btws://$__{location.host}/live$__bt);
+    socket.onopen = () => log("الـ socket اتفتح");
+    socket.onmessage = (e) => (document.querySelector("#last").textContent = e.data);
+    socket.onclose = (e) => log("الـ socket اتقفل (" + e.code + ")");
+  }
+
+  // قبل ما الصفحة تتحط في الـ bfcache: اقفل أي اتصال مفتوح
+  window.addEventListener("pagehide", (e) => {
+    log("pagehide persisted=" + e.persisted);
+    socket?.close();
+    socket = null;
+  });
+  // لما ترجع من الـ bfcache: الصفحة بنفس حالتها بس من غير الاتصال، افتحه تاني
+  window.addEventListener("pageshow", (e) => {
+    log("pageshow persisted=" + e.persisted);
+    if (e.persisted) connect();
+  });
+
+  connect();
+</script>
+</body>
+</html>
+~~~
+
+~~~html other.html
+<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><title>صفحة تانية</title><p>دوس back.</p></html>
+~~~
+
+في الـ preview مفيش سيرفر، فالصفحة بتقول كده وبس. التشغيل الحقيقي: [[node live-server.mjs]] وافتح [[http://localhost:8831/live.html]].
+
+**القياس:** Playwright بيقفل الـ bfcache بـ flag ([[--disable-back-forward-cache]]، وطلّعها DevTools Protocol في سبب الرفض: [[BackForwardCacheDisabledByCommandLine]])، فشغّلنا Chrome لوحده وكلّمناه بـ DevTools Protocol: فتحنا الصفحة، ودوسنا اللينك، ورجعنا بـ [[Page.navigateToHistoryEntry]]، وسمعنا لـ [[Page.backForwardCacheNotUsed]] (ده نفس اللي زرار Test back/forward cache بيعرضه في DevTools). [[live-bad.html]] نفس الصفحة من غير [[pagehide]] وإعادة الاتصال:
+
+~~~text الناتج (Chrome 158 headless، http://localhost:8831)
+== live-bad.html
+  [server] ws #1 اتفتح
+  قبل: tick 2 من #1
+  [server] ws #1 اتقفل
+  بعد back: tick 2 من #1
+  لوج الصفحة: ["pageshow persisted=false","الـ socket اتفتح","pageshow persisted=true","الـ socket اتقفل (1006)"]
+== live.html
+  [server] ws #2 اتفتح
+  قبل: tick 2 من #2
+  [server] ws #2 اتقفل
+  [server] ws #3 اتفتح
+  بعد back: tick 2 من #3
+  لوج الصفحة: ["pageshow persisted=false","الـ socket اتفتح","pagehide persisted=true","الـ socket اتقفل (1006)","pageshow persisted=true","الـ socket اتفتح"]
+  [server] ws #3 اتقفل
+~~~
+
+**اللي طلع في Chrome 158 (مختلف عن اللي بتقراه في مقالات قديمة):** [[Page.backForwardCacheNotUsed]] متبعتش ولا مرة، يعني الصفحتين اترجعوا من الـ bfcache ([[persisted=true]]) **حتى** النسخة اللي فاتحة WebSocket. Chrome الجديد مبقاش يرفض الصفحة عشان الـ socket، لكنه **بيقفله** وهي داخلة الـ cache. ففي النسخة البايظة الصفحة رجعت بشكلها، بس الـ socket ميت: «آخر رسالة» واقفة على [[tick 2 من #1]] للأبد ومفيش اتصال جديد في لوج السيرفر. Chrome أقدم (وأي متصفح تاني بقواعد مختلفة) ممكن يرفض الصفحة خالص، فالتصليح لازم في الحالتين.
+
+**ليه التصليح شغال:**
+
+- **[[pagehide]]:** آخر حدث قبل ما الصفحة تتحط في الـ cache ([[persisted=true]]) أو تتقفل. بنقفل الـ socket بإيدينا، فالسيرفر بيعرف على طول ([[ws #2 اتقفل]]) بدل ما يفضل باعت لصفحة مش ظاهرة.
+- **[[pageshow]] و [[e.persisted]]:** [[true]] معناها «رجعت من الـ bfcache»: الـ JS والـ DOM زي ما سبتهم بالظبط، بس من غير اتصالات. فبنعمل [[connect()]] تاني، والسيرفر شاف [[ws #3 اتفتح]] والرسايل رجعت ([[tick 2 من #3]]). وأول تحميل [[persisted=false]] فمش بنفتح مرتين.
+- **[[socket?.close()]]:** الـ [[?.]] عشان لو الصفحة اتفتحت معزولة ومفيش socket أصلًا.
+
+**غلطة حصلت وإحنا بنبني السيرفر:** أول نسخة من [[live-server.mjs]] كانت [[res.writeHead(200, ...).end(await readFile(file))]]. أول request لملف مش موجود ([[/favicon.ico]]) وقّع السيرفر كله بـ [[ERR_HTTP_HEADERS_SENT: Cannot write headers after they are sent to the client]]، والصفحة شافت الـ socket بيتقفل بـ 1006 ومفيش رسايل. السبب: [[res.writeHead(200)]] بيتنفّذ **قبل** الـ [[await]] اللي في الـ argument، فلما [[readFile]] رمى، الـ catch حاول يكتب 404 بعد ما الـ 200 اتبعت. التصليح: اقرا الملف في سطر لوحده الأول.
+
+**الغلطة الشائعة:** تسمع لـ [[unload]] أو [[beforeunload]] عشان تقفل الاتصال. [[unload]] نفسه بيخلّي Chrome و Firefox يرفضوا الصفحة من الـ bfcache، فبتصلّح حاجة وتبوّظ التانية.` },
+          ],
+          ref: [
+            { t: "MDN: Page Visibility API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API" },
+            { t: "MDN: Navigator.sendBeacon()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon" },
+            { t: "MDN: pageshow event", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/pageshow_event" },
+            { t: "web.dev: Back/forward cache", url: "https://web.dev/articles/bfcache" },
+          ],
+          flag: "script",
+          deep: {
+            why: "اليوزر كتب بوست طويل وقفل التاب بالغلط. أو فتح الموبايل بعد ساعة ولقى السلة قديمة. أو الـ analytics بتقول إن نص الزيارات «ملهاش نهاية». كل ده دورة حياة الصفحة، وأغلب المواقع بتتعامل معاها غلط بـ [[unload]].",
+            how: R`[[beforeunload]]: [[preventDefault()]] هي الطريقة الحديثة، و [[returnValue = ""]] للمتصفحات القديمة. والرسالة نفسها بتاعة المتصفح ومتقدرش تغيّرها. وبيطلع بس لو اليوزر اتفاعل مع الصفحة قبل كده. وإضافة الـ listener بس وقت الحاجة مهمة لأن وجود beforeunload طول الوقت بيمنع الـ bfcache في بعض المتصفحات (Firefox مثلًا).
+
+[[unload]] متستخدمهاش: مش بتتنادى بشكل موثوق على الموبايل (النظام بيقفل التطبيق من غير ما يسأل)، ووجودها بيمنع الـ bfcache، و Chrome بيلغيها تدريجيًا. البديل [[visibilitychange]] (hidden) للحفظ، و [[pagehide]] لو محتاج لحظة الخروج نفسها.
+
+[[sendBeacon(url, data)]] بيبعت POST صغير (حوالي 64KB كحد) والمتصفح بيكمّله حتى لو الصفحة اتقفلت، ومبيرجّعش رد. البديل الحديث [[fetch(url, { method: "POST", body, keepalive: true })]].
+
+الـ bfcache بيجمّد الصفحة كلها: الـ timers واقفة، والـ promises متعلقة، ولما ترجع بتكمّل. أسباب إن الصفحة متدخلوش: [[unload]] listener، أو WebSocket أو IndexedDB transaction مفتوحين، أو (تاريخيًا) [[Cache-Control: no-store]] على الـ HTML. والـ DevTools test بيقولك السبب بالظبط.`,
+            when: R`حفظ مسودات، و analytics نهاية الزيارة، و pause للفيديو والـ polling لما التاب مخفي (توفير بطارية وrequests)، وتحديث داتا حساسة للوقت لما الصفحة ترجع (سلة، رصيد، إشعارات).`,
+            mistakes: R`[[unload]] لأي حاجة. و beforeunload متسجل على طول. و [[fetch]] عادي في visibilitychange من غير keepalive فيتلغي. وتفترض إن الصفحة «فتحت من جديد» لما اليوزر يرجع بـ back فمتحدّثش الداتا. و polling شغال في تاب مخفي طول اليوم.`
+          },
+          teach: R`## الفكرة في سطر
+
+٣ حاجات بتحصل للصفحة واليوزر مش بيقولك: هيقفل وهو كاتب حاجة (نحذّره)، أو التاب اتخفى (نحفظ المسودة)، أو رجع للصفحة بزرار back (نحدّث الداتا). المثال بيسمع للتلاتة.
+
+جرّبته في Chrome headless (عن طريق playwright-core) على صفحة من سيرفر Node على localhost فيها فورم بـ [[<input name="title">]] و [[<textarea name="body">]]، والسيرفر بيطبع أي [[POST /api/draft]] يوصله. ولاحظ: Playwright بيقفل الـ bfcache افتراضيًا ([[--disable-back-forward-cache]])، فشغّلته بـ [[ignoreDefaultArgs]] عشان أجرّب الـ bfcache بجد.
+
+---
+
+## ١. التحذير قبل الخروج: [[beforeunload]]
+
+~~~text app.js
+const form = document.querySelector("#post-form");
+function warn(e) {
+  e.preventDefault();
+  e.returnValue = "";
+}
+form.addEventListener("input", () => window.addEventListener("beforeunload", warn));
+form.addEventListener("submit", () => window.removeEventListener("beforeunload", warn));
+~~~
+
+- [[beforeunload]]: حدث على [[window]] قبل ما الصفحة تتقفل أو تروح لصفحة تانية أو تعمل refresh.
+- [[warn]] دالة **ليها اسم** (مش arrow جوه addEventListener)، لأن [[removeEventListener]] محتاج نفس الدالة بالظبط عشان يشيلها.
+- [[e.preventDefault()]]: الطريقة الحديثة تقول «اسأل اليوزر». و [[e.returnValue = ""]] نفس الطلب للمتصفحات القديمة. النص اللي بتحطه مبيظهرش: المتصفح بيعرض رسالته هو.
+- [[input]] على الفورم: بيحصل مع أي حرف في أي خانة جواه (الـ event بيطلع من الخانة للفورم). أول ما يكتب نسجّل التحذير، وتسجيل نفس الدالة مرتين مبيعملش حاجة، فمش مشكلة إنه بيتنادى مع كل حرف.
+- [[submit]]: اتحفظ، فشيل التحذير.
+
+### اللي حصل
+
+| الحالة | قفلت التاب | النتيجة |
+|---|---|---|
+| مكتبتش حاجة | اتقفل على طول | مفيش listener أصلًا |
+| كتبت في الخانتين | ظهر dialog نوعه [[beforeunload]] ورسالته [[""]] | رفضته فالتاب فضل مفتوح ([[closed? false]]) |
+| كتبت وعملت submit | اتقفل على طول | الـ listener اتشال |
+
+الرسالة فاضية من ناحية الكود لأن المتصفح هو اللي بيكتب «Leave site? Changes you made may not be saved» (أو بلغة المتصفح).
+
+---
+
+## ٢. حفظ المسودة: [[visibilitychange]]
+
+~~~text app.js
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState !== "hidden") return;
+  const draft = JSON.stringify(Object.fromEntries(new FormData(form)));
+  navigator.sendBeacon("/api/draft", draft);
+});
+~~~
+
+- [[visibilitychange]] على [[document]]: الصفحة اتخفت أو ظهرت (تاب تاني، تصغير، قفل الشاشة، الخروج من التطبيق على الموبايل، أو قفل التاب نفسه).
+- [[document.visibilityState]]: [["visible"]] أو [["hidden"]]. بنكمّل لما تبقى hidden بس.
+- السطر التالت من جوه لبرّه:
+
+| الخطوة | الناتج |
+|---|---|
+| [[new FormData(form)]] | كل خانات الفورم بأساميها ([[name]]) |
+| [[Object.fromEntries(...)]] | بتحوّل الأزواج دي لـ object عادي: [[{ title: "...", body: "..." }]] |
+| [[JSON.stringify(...)]] | حوّله نص JSON |
+
+- [[navigator.sendBeacon(url, data)]]: بيبعت POST صغير، والمتصفح **بيكمّله حتى لو الصفحة اتقفلت**. بيرجّع [[true]] لو قبل يبعته (مش لو السيرفر رد)، ومفيش طريقة تقرا الرد.
+
+### اللي وصل السيرفر
+
+كل مرة الصفحة اتقفلت أو اتنقلت منها، السيرفر طبع:
+
+~~~text الناتج (السيرفر)
+SERVER got POST /api/draft content-type=text/plain;charset=UTF-8 body={"title":"","body":""}
+SERVER got POST /api/draft content-type=text/plain;charset=UTF-8 body={"title":"","body":"x"}
+SERVER got POST /api/draft content-type=text/plain;charset=UTF-8 body={"title":"draft1","body":""}
+~~~
+
+- الطلبات وصلت حتى من التابات اللي اتقفلت.
+- لاحظ [[content-type=text/plain]]: لما تبعت string لـ sendBeacon بيروح كنص. فالسيرفر لازم يقراه نص ويعمل [[JSON.parse]] (مثلًا [[express.text()]] مش [[express.json()]])، أو ابعت [[new Blob([draft], { type: "application/json" })]].
+
+---
+
+## ٣. الرجوع بـ back: [[pageshow]] و [[pagehide]]
+
+~~~text app.js
+window.addEventListener("pageshow", (e) => {
+  if (e.persisted) console.log("رجعت من الـ bfcache: حدّث السلة والإشعارات");
+});
+window.addEventListener("pagehide", (e) => console.log("pagehide، هتتحفظ في bfcache؟", e.persisted));
+~~~
+
+- [[pageshow]]: الصفحة اتعرضت، سواء تحميل جديد أو رجوع من الـ bfcache.
+- [[pagehide]]: الصفحة بتمشي. ده البديل الصح لـ [[unload]].
+- [[e.persisted]]: في pageshow معناها «رجعت من الـ bfcache»، وفي pagehide معناها «هتتحفظ في الـ bfcache».
+
+bfcache اختصار back/forward cache: المتصفح بيجمّد الصفحة كلها في الذاكرة (الـ JS والمتغيرات والخانات ومكان الـ scroll)، ولما ترجع بيصحّيها بدل ما يحمّلها من الأول.
+
+### اللي حصل
+
+كتبت [[draft1]] في الخانة، ورحت لصفحة تانية ([[/other]])، ورجعت بـ back (بالترتيب، بعد ما وافقت على dialog الـ beforeunload):
+
+~~~text الناتج (Console)
+pageshow persisted = false
+pagehide، هتتحفظ في bfcache؟ true
+visibilitychange: hidden
+sendBeacon returned true
+visibilitychange: visible
+pageshow persisted = true
+رجعت من الـ bfcache: حدّث السلة والإشعارات
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[pageshow persisted = false]] | أول تحميل عادي |
+| [[pagehide ... true]] | ماشي، والصفحة هتتجمّد في الـ bfcache |
+| [[visibilitychange: hidden]] + beacon | الصفحة اختفت، فالمسودة اتبعتت بـ [[sendBeacon]] قبل ما المتصفح يجمّدها |
+| [[visibilitychange: visible]] | الصفحة رجعت تظهر تاني لما دوست Back |
+| [[pageshow persisted = true]] | من الـ bfcache، مش تحميل جديد |
+
+وبعد الرجوع، الخانة لسه فيها [[draft1]]: الصفحة نفسها رجعت زي ما هي. يعني أي كود في أول الصفحة (زي «هات السلة من السيرفر») **مش هيتنفّذ تاني**، وعشان كده بنحدّث في [[pageshow]] لما [[persisted]] تبقى true.
+
+ولما قفلت التاب (مش navigation) [[pagehide]] طلعت [[false]]: تاب اتقفل مفيش حاجة يرجعلها.
+
+> Chrome حط الصفحة في الـ bfcache هنا مع إن الـ beforeunload listener كان متسجّل. بس Firefox ممكن يرفض بسببه، وده سبب تاني إنك تسجّله وقت الحاجة بس.
+
+---
+
+## الخلاصة
+
+| الحدث | على | إمتى تستخدمه |
+|---|---|---|
+| [[beforeunload]] | [[window]] | تحذير لو فيه تغييرات مش محفوظة، وشيله بعد الحفظ |
+| [[visibilitychange]] (hidden) | [[document]] | احفظ واعمل analytics، مع [[sendBeacon]] |
+| [[pagehide]] | [[window]] | لحظة الخروج نفسها (بدل [[unload]]) |
+| [[pageshow]] + [[persisted]] | [[window]] | رجع من الـ bfcache: حدّث الداتا |
+
+- [[removeEventListener]] محتاج نفس الدالة، فاديها اسم.
+- [[sendBeacon]] مبيرجّعش رد، والـ string بيروح [[text/plain]].
+- متستخدمش [[unload]].`,
+          lines: [
+            R`الفورم اللي اليوزر بيكتب فيه البوست، وده اللي مش عايزين كلامه يضيع.`,
+            R`دالة التحذير متعرّفة باسم (مش arrow جوه [[addEventListener]]) عشان [[removeEventListener]] محتاج **نفس** الدالة بالظبط علشان يشيلها.`,
+            R`في [[beforeunload]]، [[preventDefault]] بيطلب من المتصفح يسأل اليوزر «عايز تمشي فعلًا؟». النص اللي بيظهر بتاع المتصفح ومتقدرش تغيّره.`,
+            R`متصفحات قديمة كانت بتبص على [[returnValue]] مش [[preventDefault]] عشان تظهر التحذير، فبنحطه برضه عشان يشتغل عندهم كمان.`,
+            R`نهاية [[warn]].`,
+            R`أول ما اليوزر يكتب أي حاجة نفعّل التحذير، فصفحة فاضية متسألوش على الفاضي. [[input]] بيحصل مع كل حرف، بس إضافة نفس الدالة لنفس الحدث أكتر من مرة بتتجاهل، فمفيش تكرار.`,
+            R`لما الفورم يتبعت الكلام اتحفظ، فبنشيل التحذير عشان الصفحة تمشي من غير سؤال.`,
+            R`[[visibilitychange]] بيحصل لما التاب يتخفى أو يرجع يظهر: اليوزر غيّر التاب، أو صغّر المتصفح، أو قفل الموبايل. ده أضمن وقت تحفظ فيه، لأن الموبايل ممكن يقفل الصفحة وهي في الخلفية من غير أي حدث تاني.`,
+            R`يهمنا لحظة الاختفاء بس، فلو التاب رجع ظاهر نخرج.`,
+            R`[[new FormData(form)]] بيقرا كل خانات الفورم، و [[Object.fromEntries]] بيحوّلها لـ object عادي، و [[JSON.stringify]] بيحوّله لنص نبعته.`,
+            R`[[sendBeacon]] بيبعت POST صغير والمتصفح بيكمّله حتى لو الصفحة اتقفلت. مالوش رد تقراه، وبيرجّع [[true]] لو الطلب اتحط في الطابور بس. ولأن الـ body string، السيرفر هيستقبله [[text/plain]] فلازم يعمل parse للـ JSON بنفسه.`,
+            R`نهاية الـ listener بتاع [[visibilitychange]].`,
+            R`[[pageshow]] بيحصل كل ما الصفحة تظهر: أول تحميل، أو رجوع ليها بزرار back.`,
+            R`[[e.persisted]] بـ [[true]] معناها الصفحة رجعت من الـ bfcache (المتصفح كان حافظها في الذاكرة زي ما هي)، فالكود مش بيشتغل من الأول والداتا اللي فيها ممكن تكون قديمة. ده المكان اللي تحدّث فيه السلة والإشعارات.`,
+            R`نهاية الـ listener بتاع [[pageshow]].`,
+            R`[[pagehide]] بيحصل لما اليوزر يسيب الصفحة، و [[e.persisted]] بتقول هتتحفظ في الـ bfcache ولا لأ. استخدمه بدل [[unload]]: وجود listener على [[unload]] بيمنع الصفحة من الـ bfcache في متصفحات كتير.`,
+          ],
+          sol: R`قبل الـ submit: قفل التاب بيطلّع رسالة المتصفح «Leave site?» (أو بالعربي حسب لغة المتصفح)، ونصها ثابت. بعد الـ submit مفيش رسالة لأن الـ listener اتشال. لو مطلعتش خالص، غالبًا مكتبتش حاجة بجد (المتصفح بيطلب تفاعل).
+
+الـ back: Console فيها [[pagehide، هتتحفظ في bfcache؟ true]] وبعد الرجوع [[رجعت من الـ bfcache...]]. ولاحظ إن الـ input لسه فيه اللي كتبته والـ scroll مكانه: ده الـ bfcache.
+
+لو الـ test قال «not eligible» الأسباب الشائعة: listener على [[unload]] (من مكتبة أو analytics)، أو الصفحة مفتوحة من DevTools بطريقة معيّنة، أو WebSocket مفتوح. وفي الحالة دي back بتعمل تحميل كامل و [[persisted]] بـ false.`
+        },
+        {
+          cmd: "pushState و popstate",
+          title: "تغيّر الـ URL من غير تحميل صفحة جديدة إزاي؟ (راوتر صغير)",
+          desc: R`[[history.pushState(state, "", "/about")]] بيغيّر الـ URL في الشريط ويضيف خطوة في الـ history من غير ما يطلب الصفحة من السيرفر. و [[replaceState]] نفس الكلام بس بيستبدل الخطوة الحالية (للفلاتر والبحث). ومفيش حاجة بتتعرض لوحدها: انت اللي بترسم المحتوى المناسب.
+
+و [[popstate]] بيتنادى لما اليوزر يضغط back أو forward، فتقرا [[location.pathname]] وترسم. ده كل الـ SPA router (React Router و Next.js client navigation) من تحت: اعترض ضغطة اللينك، و pushState، وارسم، واسمع لـ popstate.`,
+          example: R`const content = document.querySelector("#content");
+const pages = { "/": "الرئيسية", "/about": "عننا", "/contact": "كلمنا" };
+function render(path) {
+  content.textContent = pages[path] ?? "404: الصفحة مش موجودة";
+  document.title = pages[path] ?? "مش موجود";
+}
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("a[data-link]");
+  if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
+  e.preventDefault();
+  const path = new URL(a.href).pathname;
+  if (path === location.pathname) return;
+  history.pushState({ path }, "", path);
+  render(path);
+});
+window.addEventListener("popstate", () => render(location.pathname));
+render(location.pathname);`,
+          try: R`اعمل [[index.html]] فيه ٣ لينكات [[<a href="/about" data-link>]] و [[<main id="content">]]، وشغّله بـ [[npx serve -s]] (الـ [[-s]] بيرجّع index.html لأي path). اتنقل، واضغط back و forward، واعمل refresh على [[/about]]. وبعدين شغّله بـ [[npx serve]] من غير [[-s]] واعمل refresh على [[/about]]: إيه اللي حصل؟ وجرّب Ctrl+Click على لينك.`,
+          practice: [
+            { lvl: 'سريع', t: R`ابني tabs component (٣ تابات «الوصف» و «المواصفات» و «التقييمات»): الضغط على تاب بيعمل [[pushState]] لـ [[?tab=specs]]، و [[popstate]] بيرجّع التاب الصح، وفتح الصفحة بيقرا [[?tab=]] من [[location.search]].`, done: R`تضغط تابين ورا بعض وتعمل back مرتين: بترجع للتابين اللي قبل بالترتيب، و refresh على [[?tab=reviews]] بيفتح التقييمات، و [[?tab=xyz]] بيفتح التاب الأول من غير error.`, sol: R`~~~live 220 tabs-url.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>صفحة المنتج</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
+  [role="tablist"] { display: flex; gap: 4px; border-bottom: 2px solid #e5e7eb; }
+  [role="tab"] { font: inherit; border: 0; background: none; padding: 8px 12px; cursor: pointer; }
+  [role="tab"][aria-selected="true"] { border-bottom: 3px solid #1d4ed8; font-weight: 700; }
+  [role="tabpanel"] { padding: 12px 0; }
+  #note { font-size: 12px; color: #92400e; }
+</style>
+</head>
+<body>
+<div role="tablist" aria-label="تفاصيل المنتج">
+  <button role="tab" id="t-desc" aria-controls="desc" data-tab="desc">الوصف</button>
+  <button role="tab" id="t-specs" aria-controls="specs" data-tab="specs">المواصفات</button>
+  <button role="tab" id="t-reviews" aria-controls="reviews" data-tab="reviews">التقييمات</button>
+</div>
+<section role="tabpanel" id="desc" aria-labelledby="t-desc">مج سيراميك ٣٥٠ مل.</section>
+<section role="tabpanel" id="specs" aria-labelledby="t-specs">الارتفاع ٩ سم، ينفع في الميكروويف.</section>
+<section role="tabpanel" id="reviews" aria-labelledby="t-reviews">٤٫٥ من ٥ (١٢ تقييم).</section>
+<p id="note"></p>
+<script>
+  const TABS = ["desc", "specs", "reviews"];
+
+  function show(tab) {
+    if (!TABS.includes(tab)) tab = TABS[0];        // ?tab=xyz أو مفيش = الأول
+    for (const t of TABS) {
+      document.querySelector($__bt[data-tab="$__{t}"]$__bt).setAttribute("aria-selected", String(t === tab));
+      document.getElementById(t).hidden = t !== tab;
+    }
+  }
+  const tabFromUrl = () => new URLSearchParams(location.search).get("tab");
+
+  document.querySelector('[role="tablist"]').addEventListener("click", (e) => {
+    const tab = e.target.closest("[data-tab]")?.dataset.tab;
+    if (!tab || tab === tabFromUrl()) return;      // نفس التاب: متعملش entry زيادة
+    const url = new URL(location.href);
+    url.searchParams.set("tab", tab);
+    try {
+      history.pushState({ tab }, "", url);
+    } catch {
+      document.querySelector("#note").textContent = "الصفحة معزولة: الـ URL مبيتغيّرش، والتابات شغالة عادي";
+    }
+    show(tab);
+  });
+
+  window.addEventListener("popstate", () => show(tabFromUrl()));
+  show(tabFromUrl());
+</script>
+</body>
+</html>
+~~~
+
+في الـ preview التابات شغالة بس الـ URL مبيتغيّرش: الصفحة معزولة و [[pushState]] بيرمي فيها [[SecurityError]]، فالـ catch بيكتب ملاحظة ويكمّل. انسخها وشغّلها من سيرفر محلي.
+
+~~~text الناتج (Chrome 158 headless، http://localhost:8831/tabs-url.html)
+فتح الصفحة             الوصف      (مفيش) | history.length=2
+ضغط المواصفات          المواصفات  ?tab=specs | history.length=3
+ضغط التقييمات          التقييمات  ?tab=reviews | history.length=4
+نفس التاب تاني         التقييمات  ?tab=reviews | history.length=4
+back                   المواصفات  ?tab=specs | history.length=4
+back تاني              الوصف      (مفيش) | history.length=4
+forward                المواصفات  ?tab=specs | history.length=4
+refresh على ?tab=reviews التقييمات  ?tab=reviews | history.length=4
+?tab=xyz               الوصف      ?tab=xyz | history.length=5
+pageerrors: 0
+~~~
+
+(الـ [[history.length]] بيبدأ 2 لأن التاب كان فيه [[about:blank]] قبل الصفحة.)
+
+**ليه كده:**
+
+- **[[show(tab)]] هي المكان الوحيد اللي بيرسم:** الضغطة والـ [[popstate]] وفتح الصفحة التلاتة بينادوها بالتاب من الـ URL. فالشكل دايمًا = الـ URL.
+- **[[new URL(location.href)]] و [[searchParams.set("tab", tab)]]:** بيغيّر [[?tab=]] بس ويسيب أي parameter تاني في العنوان ([[?ref=ads]] مثلًا) زي ما هو.
+- **[[history.pushState({ tab }, "", url)]]:** entry جديد في الـ history من غير ما الصفحة تتحمّل، فـ back بيرجّع للتاب اللي قبل. الـ [[pushState]] نفسه **مبيعملش** [[popstate]]، فلازم [[show(tab)]] بعده.
+- **[[popstate]]:** بيحصل مع back و forward، والـ [[location]] ساعتها اتغيّر خلاص، فبنقرا منه.
+- **[[if (... tab === tabFromUrl()) return]]:** ضغطة على نفس التاب مبتعملش entry (الـ [[history.length]] فضل 4). من غيرها، اليوزر هيدوس back كذا مرة ومفيش حاجة بتتغيّر.
+- **[[if (!TABS.includes(tab)) tab = TABS[0]]]:** [[?tab=xyz]] أو مفيش [[tab]] خالص بيفتح الأول من غير error.
+- **[[role="tab"]] و [[aria-selected]]:** قارئ الشاشة بيقول إن ده تاب ومتحدد ولا لأ. (التنقل بالأسهم بين التابات خطوة زيادة مش في الحل ده.)
+
+**الغلطة الشائعة:** تعمل [[pushState]] في الـ [[popstate]] كمان (عشان «تحدّث الـ URL»). كل back بيعمل entry جديد، فاليوزر بيلف في نفس المكان ومبيعرفش يطلع من الصفحة.` },
+            { lvl: 'تطبيق', t: R`صلّح الباج: راوتر الدرس بيمسك كل [[a[data-link]]] حتى لو اللينك لموقع تاني، أو عليه [[target="_blank"]] أو [[download]]. حط ٣ لينكات زي دول جنب اللينكات العادية وصلّح الشرط عشان يسيبهم للمتصفح.`, done: R`لينك لـ [[https://example.com]] بيفتح الموقع ده فعلًا، و [[target="_blank"]] بيفتح تاب جديد، و [[download]] بينزّل الملف، واللينكات الداخلية لسه بتتنقل من غير reload، والشرط فيه مقارنة [[a.origin !== location.origin]].`, sol: R`**قبل التصليح:** راوتر الدرس زي ما هو، ومعاه التلات لينكات، على سيرفر محلي بيرجّع [[index.html]] لأي مسار:
+
+~~~text الناتج (Chrome 158 headless، النسخة القديمة)
+خارجي: http://localhost:8831/ | المحتوى: الرئيسية
+target=_blank: تابات جديدة = 0 | http://localhost:8831/about
+download: تنزيلات = 0 | http://localhost:8831/menu.txt | 404: الصفحة مش موجودة
+~~~
+
+لينك [[https://example.com]] فتح «الرئيسية» عندنا (الراوتر خد [[pathname]] بتاعه، [["/"]]، ورماه على موقعنا)، و [[target="_blank"]] فتح في نفس التاب، و [[download]] غيّر الـ URL لـ [[/menu.txt]] وعرض 404 بدل ما ينزّل الملف.
+
+**بعد التصليح:**
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الرئيسية</title>
+<style>
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
+  nav a { margin-inline-end: 12px; }
+  #content { padding: 16px; background: #f3f4f6; border-radius: 8px; margin-top: 12px; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" data-link>الرئيسية</a>
+  <a href="/about" data-link>عننا</a>
+  <a href="/contact" data-link>كلمنا</a>
+  <a href="https://example.com" data-link>موقع تاني</a>
+  <a href="/about" data-link target="_blank">عننا في تاب جديد</a>
+  <a href="/menu.txt" data-link download>نزّل المنيو</a>
+</nav>
+<div id="content"></div>
+<script>
+  const content = document.querySelector("#content");
+  const pages = { "/": "الرئيسية", "/about": "عننا", "/contact": "كلمنا" };
+  function render(path) {
+    content.textContent = pages[path] ?? "404: الصفحة مش موجودة";
+    document.title = pages[path] ?? "مش موجود";
+  }
+
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("a[data-link]");
+    if (!a || e.defaultPrevented) return;
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;  // تاب جديد/شباك
+    if (a.origin !== location.origin) return;           // موقع تاني: سيبه للمتصفح
+    if (a.target && a.target !== "_self") return;       // target="_blank" وغيره
+    if (a.hasAttribute("download")) return;             // تنزيل ملف
+    e.preventDefault();
+    if (a.pathname === location.pathname) return;
+    history.pushState({}, "", a.pathname);
+    render(a.pathname);
+  });
+  window.addEventListener("popstate", () => render(location.pathname));
+  render(location.pathname);
+</script>
+</body>
+</html>
+~~~
+
+~~~text menu.txt
+قهوة 30 / شاي 15
+~~~
+
+الصفحة دي محتاجة سيرفر بيرجّع [[index.html]] لأي مسار (refresh على [[/about]])، فمش هتشتغل في الـ preview. اتقاست على [[http://localhost:8831]] بسيرفر [[node:http]] بالشكل ده، و [[example.com]] اتردّ عليه من Playwright نفسه عشان التجربة متطلعش برا الجهاز:
+
+~~~text الناتج (Chrome 158 headless، بعد التصليح)
+داخلي «عننا»: http://localhost:8831/about | نفس الصفحة من غير reload: true | requests للـ document: 1
+target=_blank: تاب جديد على http://localhost:8831/about | العنوان: عننا
+download: اسم الملف menu.txt | الصفحة لسه: http://localhost:8831/about
+خارجي: https://example.com/ | Example Domain
+لوج السيرفر: GET / , GET /about , GET /menu.txt
+pageerrors: 0
+~~~
+
+**ليه كده:**
+
+- **[[a.origin !== location.origin]]:** أي لينك لـ origin تاني (دومين أو بورت أو بروتوكول مختلف) مش بتاعنا، فبنرجع من غير [[preventDefault]] والمتصفح بيفتحه عادي. الـ [[<a>]] نفسه فيه [[origin]] و [[pathname]] زي [[URL]] بالظبط.
+- **[[a.target && a.target !== "_self"]]:** [[_blank]] أو اسم شباك = اليوزر عايزه في مكان تاني. لوج السيرفر فيه [[GET /about]] من التاب الجديد (تحميل كامل، وده صح هناك).
+- **[[a.hasAttribute("download")]]:** المتصفح لازم يعمل التنزيل بنفسه ([[GET /menu.txt]] في اللوج والملف اتنزّل بالاسم).
+- **[[e.altKey]] و [[e.defaultPrevented]]:** Alt+Click بينزّل اللينك في Chrome، ولو كود تاني عمل [[preventDefault]] قبلنا منلمسش الضغطة.
+- **[[window.__same]]:** متغير حطيناه قبل الضغط. لو الصفحة اتحمّلت تاني كان هيختفي، ولقيناه [[true]]: التنقل الداخلي من غير reload.
+
+**الغلطة الشائعة:** تصلّح الخارجي بـ [[a.href.startsWith("http")]]. كل [[a.href]] بيرجع URL كامل بيبدأ بـ [[http]] حتى اللينكات الداخلية ([[/about]] بتبقى [[http://localhost:8831/about]])، فكل اللينكات هتتساب للمتصفح والـ SPA هيعمل reload في كل ضغطة.` },
+            { lvl: 'تحدي', t: R`مسألة: اكتب [[matchRoute(path, routes)]] بترجّع [[{ route, params }]] أو [[null]]، لـ routes زي [[/users/:id]] و [[/users/:id/posts]]، بـ [[URLPattern]] أو regex، واكتب لها تستات بـ [[node:test]]، وبعدين وصّلها بالراوتر.`, done: R`[[matchRoute("/users/42", routes).params.id]] بيرجّع [["42"]]، و [[/users/42/posts]] بيطابق الـ route التاني، و [[/users]] لوحدها و [[/users/42/x]] بيرجّعوا [[null]] (يعني 404)، و [[node --test]] بيعدّي، و back و forward و refresh (مع [[npx serve -s]]) بيفتحوا الصفحة الصح.`, sol: R`**الدالة وتستاتها** (Node 24 فيه [[URLPattern]] كـ global، وكل المتصفحات الحديثة كمان):
+
+~~~js match-route.mjs
+// كل route: pattern زي "/users/:id"، و URLPattern بيحوّله لمطابقة كاملة للمسار
+export function compileRoutes(routes) {
+  return routes.map((route) => ({ route, pattern: new URLPattern({ pathname: route.path }) }));
+}
+
+export function matchRoute(path, compiled) {
+  for (const { route, pattern } of compiled) {
+    const m = pattern.exec({ pathname: path });
+    if (m) return { route, params: { ...m.pathname.groups } };
+  }
+  return null;    // 404
+}
+~~~
+
+~~~js match-route.test.mjs
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { compileRoutes, matchRoute } from "./match-route.mjs";
+
+const routes = compileRoutes([
+  { path: "/", name: "home" },
+  { path: "/users/:id", name: "user" },
+  { path: "/users/:id/posts", name: "posts" },
+]);
+
+test("/users/42 بيطابق user و id = 42", () => {
+  const m = matchRoute("/users/42", routes);
+  assert.equal(m.route.name, "user");
+  assert.equal(m.params.id, "42");
+});
+
+test("/users/42/posts بيطابق التاني", () => {
+  assert.equal(matchRoute("/users/42/posts", routes).route.name, "posts");
+});
+
+test("/users لوحدها و /users/42/x = null (404)", () => {
+  assert.equal(matchRoute("/users", routes), null);
+  assert.equal(matchRoute("/users/42/x", routes), null);
+});
+
+test("الرئيسية بالظبط بس", () => {
+  assert.equal(matchRoute("/", routes).route.name, "home");
+  assert.equal(matchRoute("/about", routes), null);
+});
+
+test("حروف مش إنجليزي في الـ param", () => {
+  assert.equal(matchRoute("/users/%D8%B3%D8%A7%D8%B1%D8%A9", routes).params.id, "%D8%B3%D8%A7%D8%B1%D8%A9");
+});
+~~~
+
+~~~text الناتج (node --test، Node 24)
+✔ /users/42 بيطابق user و id = 42 (0.8201ms)
+✔ /users/42/posts بيطابق التاني (0.7359ms)
+✔ /users لوحدها و /users/42/x = null (404) (0.1662ms)
+✔ الرئيسية بالظبط بس (0.1621ms)
+✔ حروف مش إنجليزي في الـ param (0.1525ms)
+ℹ tests 5
+ℹ pass 5
+ℹ fail 0
+~~~
+
+**موصّلة بالراوتر** (٣ ملفات في فولدر واحد مع [[match-route.mjs]]):
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>يوزرز</title>
+<script type="module" src="/app.mjs"></script>
+</head>
+<body>
+<nav>
+  <a href="/" data-link>الرئيسية</a> |
+  <a href="/users/42" data-link>يوزر 42</a> |
+  <a href="/users/42/posts" data-link>بوستات 42</a> |
+  <a href="/users/42/x" data-link>لينك بايظ</a>
+</nav>
+<main id="content"></main>
+</body>
+</html>
+~~~
+
+~~~js app.mjs
+import { compileRoutes, matchRoute } from "./match-route.mjs";
+
+const routes = compileRoutes([
+  { path: "/", view: () => "الرئيسية" },
+  { path: "/users/:id", view: (p) => $__btبروفايل اليوزر $__{p.id}$__bt },
+  { path: "/users/:id/posts", view: (p) => $__btبوستات اليوزر $__{p.id}$__bt },
+]);
+
+const content = document.querySelector("#content");
+function render(path) {
+  const m = matchRoute(path, routes);
+  content.textContent = m ? m.route.view(m.params) : "404: الصفحة مش موجودة";
+  document.title = content.textContent;
+}
+
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("a[data-link]");
+  if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  if (a.origin !== location.origin || (a.target && a.target !== "_self") || a.hasAttribute("download")) return;
+  e.preventDefault();
+  if (a.pathname === location.pathname) return;
+  history.pushState({}, "", a.pathname);
+  render(a.pathname);
+});
+window.addEventListener("popstate", () => render(location.pathname));
+render(location.pathname);
+~~~
+
+~~~js spa-server.mjs
+// زي npx serve -s: أي مسار مش ملف بيرجّع index.html
+import { createServer } from "node:http";
+import { readFile } from "node:fs/promises";
+import { extname, join } from "node:path";
+
+const types = { ".html": "text/html; charset=utf-8", ".mjs": "text/javascript", ".js": "text/javascript" };
+createServer(async (req, res) => {
+  const path = new URL(req.url, "http://x").pathname;
+  const file = extname(path) ? join(".", path) : "index.html";
+  try {
+    const body = await readFile(file);
+    res.writeHead(200, { "content-type": types[extname(file)] ?? "application/octet-stream" }).end(body);
+  } catch {
+    res.writeHead(404).end("not found");
+  }
+}).listen(Number(process.env.PORT) || 8831, () => console.log("على http://localhost:" + (Number(process.env.PORT) || 8831)));
+~~~
+
+[[spa-server.mjs]] بيعمل اللي [[npx serve -s]] بيعمله (أي مسار من غير امتداد بيرجّع [[index.html]])، عشان متسطّبش حاجة. شغّله بـ [[node spa-server.mjs]].
+
+~~~text الناتج (Chrome 158 headless، http://localhost:8831)
+فتح /                      /                الرئيسية
+ضغط يوزر 42                /users/42        بروفايل اليوزر 42
+ضغط بوستات 42              /users/42/posts  بوستات اليوزر 42
+ضغط لينك بايظ              /users/42/x      404: الصفحة مش موجودة
+back                       /users/42/posts  بوستات اليوزر 42
+back                       /users/42        بروفايل اليوزر 42
+forward                    /users/42/posts  بوستات اليوزر 42
+refresh                    /users/42/posts  بوستات اليوزر 42
+فتح /users مباشرة          /users           404: الصفحة مش موجودة
+pageerrors: 0
+~~~
+
+**ليه كده:**
+
+- **[[new URLPattern({ pathname: "/users/:id" })]]:** [[:id]] جزء اسمه [[id]] بيطابق أي حاجة لحد الـ [[/]] اللي بعدها. والمطابقة **كاملة**: [[/users/42/x]] مش بيطابق [[/users/:id]] لأن فيه حاجة زيادة، و [[/users]] مش بيطابق لأن الجزء ناقص.
+- **[[compileRoutes]] مرة واحدة:** بنعمل الـ patterns أول ما الصفحة تفتح مش مع كل تنقل.
+- **[[m.pathname.groups]]:** فيها الأجزاء بأساميها ([[{ id: "42" }]]). القيم نصوص دايمًا، وزي ما هي في الـ URL (التست الأخير: الاسم العربي فاضل encoded، فك بـ [[decodeURIComponent]] لو محتاج).
+- **[[null]] = 404:** الراوتر بيعرض «مش موجودة» بدل ما يقع.
+- **[[src="/app.mjs"]] بـ [[/]] في الأول:** جرّبناها من غير الـ [[/]] و refresh على [[/users/42/posts]] جاب صفحة فاضية و [[Failed to load resource: the server responded with a status of 404]] مرتين. المتصفح حسب [[app.mjs]] بالنسبة للمسار الحالي، فطلب [[/users/42/app.mjs]]. في أي SPA بـ pushState، كل الملفات بمسار من الـ root.
+
+**الغلطة الشائعة:** تكتب الـ regex بإيدك [[/^\/users\/(.+)$/]]. الـ [[.+]] بيبلع الـ [[/]] كمان، فـ [[/users/42/posts]] هيطابق الأول و [[id]] يبقى [["42/posts"]]. [[[^/]+]] هو الصح، و [[URLPattern]] بيعمل ده لوحده.` },
+          ],
+          ref: [
+            { t: "MDN: History API", url: "https://developer.mozilla.org/en-US/docs/Web/API/History_API" },
+            { t: "MDN: History.pushState()", url: "https://developer.mozilla.org/en-US/docs/Web/API/History/pushState" },
+            { t: "MDN: popstate event", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event" },
+            { t: "MDN: URL Pattern API", url: "https://developer.mozilla.org/en-US/docs/Web/API/URL_Pattern_API" },
+          ],
+          flag: "script",
+          deep: {
+            why: "تحميل الصفحة كلها مع كل ضغطة بيضيّع الـ state (فيديو شغال، فورم نص مكتوب) وبيحمّل الـ JS والـ CSS تاني. الـ SPA بيغيّر الجزء اللي اتغير بس. بس اليوزر لسه متوقع إن back يشتغل، وإن اللينك يتنسخ ويتبعت، وإن refresh يرجّعه لنفس المكان، و pushState هو اللي بيحافظ على ده.",
+            how: R`[[pushState]] بيغيّر [[location]] ويضيف entry في الـ history stack ومبيطلقش أي event. [[popstate]] بيتنادى لما الـ entry الحالي يتغير بـ back/forward (أو [[history.back()]])، مش لما تعمل pushState بنفسك. عشان كده بتنادي [[render]] بإيدك بعد pushState.
+
+الـ [[state]] (أول argument) object بيتحفظ مع الـ entry وبيرجعلك في [[e.state]] وقت popstate، مفيد لحاجات زي مكان الـ scroll. لازم يبقى قابل للنسخ (structured clone): مفيش دوال ولا عناصر DOM.
+
+شرط اللينك: [[e.button !== 0]] (مش الزرار الشمال) وأزرار Ctrl/Cmd/Shift معناها «افتح في تاب جديد»، فسيبها للمتصفح. و [[data-link]] عشان اللينكات الخارجية أو التحميلات تفضل عادية.
+
+السيرفر: لما اليوزر يعمل refresh على [[/about]]، المتصفح بيطلب [[/about]] من السيرفر فعلًا. لو السيرفر مش عارفه هيرد 404. لازم أي path مش ملف يرجّع [[index.html]] (درس «SPA» في تاب Nginx: [[try_files $uri /index.html]]).
+
+وفيه Navigation API الأحدث ([[navigation.addEventListener("navigate", ...)]]) بيعترض كل التنقلات في مكان واحد بدل click و popstate. دعمه اتسع في 2025/2026، بس اتأكد من caniuse قبل ما تعتمد عليه من غير fallback.`,
+            when: R`لما تبني SPA صغير من غير framework، أو تحط الفلاتر والتابات في الـ URL ([[replaceState]]). وفي React/Next استخدم الراوتر بتاعهم، بس افهم إن ده اللي تحته.`,
+            mistakes: R`تستنى popstate بعد pushState. ومتعملش render في الأول ([[render(location.pathname)]]) فالـ refresh يعرض صفحة فاضية. والسيرفر مش راجع index.html. وتعترض Ctrl+Click. وتنسى [[document.title]] والـ focus (قارئات الشاشة مش هتعرف إن الصفحة اتغيرت: حرّك الـ focus للعنوان الجديد). و pushState لكل حرف في البحث فالـ back يبقى ١٠٠ خطوة (استخدم replaceState).`
+          },
+          teach: R`## الفكرة في سطر
+
+راوتر SPA كامل في 17 سطر: لما اليوزر يدوس لينك، بنمنع التحميل، ونغيّر الـ URL بإيدنا، ونرسم المحتوى المناسب. ولما يدوس back أو forward، نرسم حسب الـ URL الجديد.
+
+جرّبته في Chrome headless (عن طريق playwright-core) على [[index.html]] فيه ٤ لينكات عليها [[data-link]] ([[/]] و [[/about]] و [[/contact]] و [[/nope]]) و [[<main id="content">]]. بدل [[npx serve -s]] استخدمت سيرفر Node صغير على localhost بنفس السلوك: مرة بيرجّع [[index.html]] لأي path (زي [[-s]])، ومرة بيرجّعه لـ [[/]] بس و 404 لأي حاجة تانية (زي [[serve]] من غير [[-s]]).
+
+---
+
+## ١. الصفحات والرسم
+
+~~~text app.js
+const content = document.querySelector("#content");
+const pages = { "/": "الرئيسية", "/about": "عننا", "/contact": "كلمنا" };
+function render(path) {
+  content.textContent = pages[path] ?? "404: الصفحة مش موجودة";
+  document.title = pages[path] ?? "مش موجود";
+}
+~~~
+
+- [[pages]]: object كل key فيه path وكل value المحتوى بتاعه. في مشروع حقيقي الـ value بتبقى دالة بترسم component.
+- [[pages[path]]]: الأقواس المربعة بتجيب الخاصية اللي اسمها في متغير. [[pages["/about"]]] = [["عننا"]]، و [[pages["/nope"]]] = [[undefined]].
+- [[?? "404: ..."]]: لو [[undefined]] خد النص ده.
+- [[document.title]]: العنوان اللي في التاب. لازم نغيّره بإيدنا، المتصفح مش هيعمل كده لوحده.
+
+---
+
+## ٢. اعتراض الضغط على اللينكات
+
+~~~text app.js
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("a[data-link]");
+  if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
+  e.preventDefault();
+  const path = new URL(a.href).pathname;
+  if (path === location.pathname) return;
+  history.pushState({ path }, "", path);
+  render(path);
+});
+~~~
+
+### listener واحد على الـ document
+
+بدل listener على كل لينك، واحد على [[document]] بيمسك أي ضغطة في الصفحة (event delegation، درس في نفس التاب). كده لو ضفت لينكات بعدين هتشتغل لوحدها.
+
+### [[e.target.closest("a[data-link]")]]
+
+- [[e.target]]: العنصر اللي اتضغط عليه بالظبط (ممكن [[<span>]] أو أيقونة جوه اللينك).
+- [[closest(selector)]]: اطلع من العنصر ده لفوق (هو نفسه، وأبوه، وجدّه...) ورجّع أول واحد بيطابق الـ selector، أو [[null]].
+- [[a[data-link]]]: لينك [[<a>]] عليه attribute اسمه [[data-link]]. اللينكات من غيره (موقع خارجي، ملف للتحميل) بتفضل عادية.
+
+### الشرط الطويل
+
+[[return]] (سيب المتصفح يتصرف عادي) لو أي واحدة من دول صح، و [[||]] يعني «أو»:
+
+| الشرط | معناه |
+|---|---|
+| [[!a]] | مش لينك من بتوعنا |
+| [[e.button !== 0]] | مش الزرار الشمال (0 الشمال، 1 العجلة، 2 اليمين) |
+| [[e.metaKey]] | Cmd على الماك ماسك (تاب جديد) |
+| [[e.ctrlKey]] | Ctrl ماسك (تاب جديد) |
+| [[e.shiftKey]] | Shift ماسك (شباك جديد) |
+
+### الباقي
+
+1. [[e.preventDefault()]]: امنع المتصفح يحمّل الصفحة من السيرفر.
+2. [[new URL(a.href).pathname]]: [[a.href]] بيرجّع الـ URL **كامل** ([[http://localhost:PORT/about]]) حتى لو مكتوب في الـ HTML [[/about]]. [[new URL]] بيفكّه، و [[.pathname]] الجزء بتاع المسار بس: [["/about"]].
+3. [[path === location.pathname]]: [[location.pathname]] المسار الحالي. لو نفس الصفحة اخرج، عشان منضيفش خطوة في الـ history على الفاضي.
+4. [[history.pushState({ path }, "", path)]]: غيّر الـ URL وضيف خطوة في الـ history (تحت تفصيل الـ arguments).
+5. [[render(path)]]: [[pushState]] بيغيّر الـ URL **بس**، ومش بيطلق أي event ولا بيرسم حاجة، فبنرسم بإيدنا.
+
+| الـ argument | معناه |
+|---|---|
+| [[{ path }]] | الـ state: object بيتحفظ مع الخطوة دي ويرجعلك وقت back. وهو اختصار [[{ path: path }]] |
+| [[""]] | مكان قديم لعنوان، المتصفحات بتتجاهله |
+| [[path]] | الـ URL الجديد اللي هيظهر في الشريط |
+
+---
+
+## ٣. back و forward: [[popstate]]
+
+~~~text app.js
+window.addEventListener("popstate", () => render(location.pathname));
+render(location.pathname);
+~~~
+
+- [[popstate]]: بيتنادى لما اليوزر يتنقّل في الـ history بـ back أو forward. وقتها [[location.pathname]] بقى الـ path الجديد، فبنرسمه. (والـ state اللي حفظناه في [[e.state]].)
+- آخر سطر: ارسم أول مرة حسب الـ URL اللي الصفحة فتحت عليه. من غيره، refresh على [[/about]] يعرض [[<main>]] فاضي.
+
+---
+
+## ٤. اللي حصل لما شغّلته (السيرفر بيرجّع index.html لأي path)
+
+ضفت [[console.log]] في popstate يطبع الـ path والـ state:
+
+~~~text الناتج
+load /             → url=/        content=الرئيسية  history.length=2
+click about        → url=/about   content=عننا      history.length=3
+click about again  → url=/about   content=عننا      history.length=3
+click contact      → url=/contact content=كلمنا     history.length=4
+click nope         → url=/nope    content=404: الصفحة مش موجودة  history.length=5
+popstate /contact {"path":"/contact"}
+back               → url=/contact content=كلمنا
+popstate /about {"path":"/about"}
+back               → url=/about   content=عننا
+popstate /contact {"path":"/contact"}
+forward            → url=/contact content=كلمنا
+~~~
+
+- [[history.length]] (عدد الخطوات في الـ history) بدأ 2 لأن التاب كان فاتح [[about:blank]] الأول، وزاد واحد مع كل [[pushState]].
+- الضغط على about وانت في about: [[history.length]] فضل 3، بسبب سطر [[path === location.pathname]].
+- [[/nope]] مش في [[pages]] فاتعرض نص الـ 404 والعنوان [[مش موجود]].
+- back و forward بيطلقوا [[popstate]]، والـ state رجع زي ما حفظناه.
+- السيرفر مجالوش ولا طلب صفحة طول التنقل ده (غير [[favicon.ico]] اللي المتصفح بيطلبه لأيقونة التاب).
+
+### refresh على [[/about]] و Ctrl+Click
+
+| | السيرفر بيرجّع index.html لأي path | السيرفر بيرجّع 404 |
+|---|---|---|
+| refresh على [[/about]] | status 200، والمحتوى «عننا» | status 404، ولا [[#content]] ولا JS |
+| Ctrl+Click على about | تاب جديد اتفتح وطلب [[/about]] من السيرفر، والتاب الأصلي فضل مكانه | نفس الكلام، بس التاب الجديد 404 |
+
+ليه؟ في الـ refresh المتصفح بيطلب [[/about]] من السيرفر **فعلًا**. لو السيرفر مش عارف إن ده مسار في الـ SPA بيرد 404، والـ JS بتاعك مبيوصلش أصلًا. الحل في السيرفر (fallback لـ index.html)، مش في الـ JS. و Ctrl+Click اتساب للمتصفح بسبب [[e.ctrlKey]]، فاتفتح تاب جديد عادي.
+
+---
+
+## الخلاصة
+
+| الحاجة | بتعمل إيه | بتطلق event؟ |
+|---|---|---|
+| [[history.pushState(state, "", url)]] | تغيّر الـ URL وتضيف خطوة | لأ، ارسم بإيدك |
+| [[history.replaceState(state, "", url)]] | تغيّر الـ URL من غير خطوة جديدة | لأ |
+| back / forward | اليوزر اتنقل | [[popstate]] |
+| [[location.pathname]] | المسار الحالي | |
+
+- اعترض بس الضغطة الشمال من غير Ctrl/Cmd/Shift، على لينكات [[data-link]].
+- ارسم مرة في الأول بـ [[render(location.pathname)]].
+- السيرفر لازم يرجّع [[index.html]] لأي path من بتاع الـ SPA.`,
+          lines: [
+            R`العنصر اللي هنحط فيه محتوى كل «صفحة». الصفحة نفسها مش هتتحمّل تاني، احنا اللي هنغيّر اللي جوه العنصر ده.`,
+            R`object بيربط كل path بمحتواه. في تطبيق حقيقي القيمة هتبقى دالة بترسم الصفحة، بس الفكرة واحدة: الـ URL مفتاح بنختار بيه نرسم إيه.`,
+            R`دالة بترسم الصفحة المناسبة للـ path. هي المكان الوحيد اللي بيرسم، فكل الطرق (ضغطة لينك، back، أول تحميل) بتعدّي عليها.`,
+            R`بنحط المحتوى بـ [[textContent]]، ولو الـ path مش موجود في [[pages]] الـ [[??]] بتحط رسالة 404 بدل [[undefined]].`,
+            R`ونغيّر عنوان التاب كمان، لأن مفيش تحميل صفحة جديد هيغيّره لوحده، وده اللي بيظهر في الـ history والـ bookmarks.`,
+            R`نهاية [[render]].`,
+            R`listener واحد على الـ [[document]] كله بدل listener على كل لينك (event delegation): الضغطة بتطلع لفوق (bubbling) لحد الـ document، فحتى اللينكات اللي هتتضاف بعدين هتشتغل من غير ما تسجّلها.`,
+            R`[[closest]] بيدوّر من العنصر اللي اتضغط ولفوق على أقرب [[<a>]] عليه [[data-link]]. محتاجينها لأن الضغطة ممكن تكون على أيقونة أو [[<span>]] جوه اللينك، و [[data-link]] بتفرّق اللينكات الداخلية عن اللي رايحة لموقع تاني.`,
+            R`نسيب المتصفح يتصرف عادي لو مش لينك داخلي، أو مش الزرار الشمال ([[e.button !== 0]])، أو اليوزر داس Ctrl أو Cmd أو Shift: دول معناهم «افتح في تاب أو نافذة جديدة»، ولو منعناهم هنكسر حاجة اليوزر متعوّد عليها.`,
+            R`نمنع المتصفح يروح للينك ويحمّل الصفحة من السيرفر، احنا اللي هنرسم.`,
+            R`[[a.href]] كـ property بيرجّع الـ URL كامل حتى لو الـ HTML فيه [[/about]] بس، فبنعدّيه على [[new URL]] وناخد [[pathname]] لوحده.`,
+            R`لو اليوزر داس على لينك الصفحة اللي هو فيها، منضيفش خطوة جديدة في الـ history، وإلا زرار back هيحتاج كذا ضغطة عشان يرجع.`,
+            R`[[pushState]] بيغيّر الـ URL في شريط العنوان ويضيف خطوة في الـ history من غير ما يحمّل حاجة. الأول (state) بيتحفظ مع الخطوة دي، والتاني مش مستخدم فبيتساب [[""]]، والتالت هو الـ URL الجديد.`,
+            R`[[pushState]] مش بيرسم ولا بيطلق أي حدث، فلازم ننادي [[render]] بنفسنا. لو نسيت السطر ده، الـ URL هيتغير والصفحة زي ما هي.`,
+            R`نهاية الـ click listener.`,
+            R`[[popstate]] بيحصل لما اليوزر يدوس back أو forward، والمتصفح بيكون غيّر الـ URL خلاص، فبنرسم حسب [[location.pathname]] الجديد. ومش بيحصل مع [[pushState]] نفسها.`,
+            R`أول ما الصفحة تفتح بنرسم الـ path الحالي، عشان لو اليوزر فتح [[/about]] مباشرة أو عمل refresh يشوف الصفحة الصح. وده محتاج السيرفر يرجّع نفس الـ [[index.html]] لأي path، وإلا الـ refresh هيدّي 404 من السيرفر.`,
+          ],
+          sol: R`مع [[serve -s]]: التنقل من غير تحميل (Network مفيهاش طلبات HTML جديدة)، و back/forward بيغيّروا المحتوى والعنوان، و refresh على [[/about]] بيرجّع «عننا» لأن السيرفر رجّع index.html والسطر الأخير رسم الـ path.
+
+من غير [[-s]]: refresh على [[/about]] بيطلع 404 من السيرفر نفسه، والـ JS بتاعك مشتغلش أصلًا. ده أشهر bug بعد نشر SPA، والحل في السيرفر مش في الـ JS.
+
+Ctrl+Click بيفتح تاب جديد عادي لأن الشرط سابه للمتصفح، والتاب الجديد بيطلب [[/about]] من السيرفر (فمحتاج [[-s]] برضه).`
+        },
+        {
+          cmd: "MutationObserver",
+          title: "تعرف إن الـ DOM اتغيّر (عنصر اتضاف أو اتشال، أو attribute اتغيّر) إزاي؟",
+          desc: R`[[MutationObserver]] بيناديك لما حاجة تتغيّر في الـ DOM: عنصر اتضاف أو اتشال ([[childList]])، أو attribute اتغيّر ([[attributes]])، أو نص اتعدّل ([[characterData]]). بتديله callback، وبعدين [[observe(el, options)]] بتقوله يراقب إيه بالظبط.
+
+التغييرات مش بتوصلك واحدة واحدة وقت ما تحصل: المتصفح بيجمّعها في array ويناديك مرة واحدة كـ **microtask** بعد ما الكود اللي شغّال يخلص. ده نفس عيلة [[IntersectionObserver]] و [[ResizeObserver]] (الدرسين الأولانيين في الوحدة دي)، بس بيراقب **شكل الشجرة** مش الشاشة ولا المقاس.
+
+بتستخدمه لما مش انت اللي بتغيّر الـ DOM: widget من بره بيحط عناصر، أو مكتبة قديمة، أو extension، أو محتوى بييجي من السيرفر وعايز تعمله حاجة أول ما يظهر. لو انت اللي بتضيف العنصر بإيدك، اعمل اللي عايزه في نفس السطر من غير observer.`,
+          example: R`const chat = document.querySelector("#chat");
+const mo = new MutationObserver((records) => {
+  console.log("records:", records.length);
+  for (const r of records) {
+    if (r.type === "childList") console.log("childList +" + r.addedNodes.length, "-" + r.removedNodes.length);
+    else console.log(r.attributeName, r.oldValue, "→", r.target.getAttribute(r.attributeName));
+  }
+});
+mo.observe(chat, { childList: true, subtree: true, attributeFilter: ["data-state"], attributeOldValue: true });
+const msg = document.createElement("li");
+msg.textContent = "أهلًا";
+chat.append(msg);
+chat.dataset.state = "busy";
+chat.dataset.state = "idle";
+chat.title = "مش متراقب";
+msg.remove();
+console.log("الكود خلص");
+// استخدام حقيقي: الشات ينزل لآخر رسالة لوحده
+new MutationObserver(() => { chat.scrollTop = chat.scrollHeight; }).observe(chat, { childList: true });`,
+          try: R`اعمل صفحة فيها [[<ul id="chat">]] و [[<script>]] بالمثال، وافتح الـ Console. اتوقع الأول: «الكود خلص» هتتطبع قبل ولا بعد [[records: 4]]؟ وبعدين ضيف [[mo.disconnect()]] كآخر سطر في الـ script وشوف الـ callback لسه بيتنادى ولا لأ، وصلّحها بـ [[mo.takeRecords()]] قبل الـ disconnect.`,
+          practice: [
+            { lvl: 'سريع', t: R`اقرا وتوقّع: [[observe(el, { attributes: true })]] وبعدين [[el.className = "a"; el.className = "b"; el.className = "b";]] في نفس الكود. الـ callback هيتنادى كام مرة؟ وكام record؟ وإيه [[oldValue]] في كل واحد لو ضفت [[attributeOldValue: true]]؟ اكتب توقعك وبعدين شغّله.`, done: R`الـ callback اتنادى **مرة واحدة** بـ ٣ records (حتى التالت اللي مغيّرش القيمة اتسجّل)، و [[oldValue]] بالترتيب [[null]] و [["a"]] و [["b"]]، وتقدر تشرح ليه مرة واحدة: الـ records بتتجمّع وتتبعت كـ microtask بعد ما الكود يخلص.`, sol: R`**التوقع:** الـ callback **مرة واحدة** بعد ما الكود يخلص، فيها ٣ records (حتى التالت اللي كتب نفس القيمة)، و [[oldValue]] بالترتيب [[null]] ثم [["a"]] ثم [["b"]].
+
+~~~live 220 mo-predict.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<meta charset="utf-8">
+<title>MutationObserver: كام مرة؟</title>
+<style>body { font: 14px/1.6 system-ui, sans-serif; margin: 16px; } pre { background: #f3f4f6; padding: 8px; direction: ltr; text-align: left; }</style>
+<div id="el"></div>
+<pre id="out"></pre>
+<script>
+  const out = document.querySelector("#out");
+  const log = (s) => (out.textContent += s + "\n");
+  const el = document.querySelector("#el");
+  let calls = 0;
+
+  new MutationObserver((records) => {
+    calls++;
+    log($__btcallback رقم $__{calls}: $__{records.length} records$__bt);
+    records.forEach((r, i) => log($__bt  $__{i + 1}) $__{r.attributeName} oldValue=$__{JSON.stringify(r.oldValue)}$__bt));
+  }).observe(el, { attributes: true, attributeOldValue: true });
+
+  el.className = "a";
+  el.className = "b";
+  el.className = "b";
+  log("الكود خلص");
+  queueMicrotask(() => log("microtask اتسجّل بعد التغييرات"));
+  setTimeout(() => log("setTimeout: calls = " + calls), 0);
+</script>
+</html>
+~~~
+
+~~~text الناتج (Chrome 158 headless، جوه iframe معزول)
+الكود خلص
+callback رقم 1: 3 records
+  1) class oldValue=null
+  2) class oldValue="a"
+  3) class oldValue="b"
+microtask اتسجّل بعد التغييرات
+setTimeout: calls = 1
+~~~
+
+**ليه كده:**
+
+- **مرة واحدة:** المتصفح مبينادي الـ callback مع كل تغيير. بيحط الـ records في طابور، وأول تغيير بيجدول **microtask** واحد يسلّم الطابور كله. الـ microtask بيشتغل بعد ما الكود اللي شغال يخلص، فـ «الكود خلص» طلع الأول.
+- **التالت اتسجّل:** [[el.className = "b"]] وهي [["b"]] أصلًا لسه «كتابة» على الـ attribute، والـ observer بيسجّل الكتابة مش التغيير. لو عايز التغييرات الحقيقية بس، قارن [[r.oldValue]] بالقيمة الحالية.
+- **[[oldValue]]:** القيمة **قبل** كل كتابة. أول مرة الـ [[class]] مكانش موجود أصلًا فـ [[null]]. ومن غير [[attributeOldValue: true]] كانت هتبقى [[null]] في التلاتة.
+- **ترتيب الـ microtasks:** الـ [[queueMicrotask]] اتسجّل **بعد** التغييرات، فاشتغل بعد الـ callback (الطابور بالترتيب). والـ [[setTimeout]] task كاملة بعد كل الـ microtasks، وشاف [[calls = 1]].
+
+**الغلطة الشائعة:** تفتكر إنه زي الـ events وتكتب كود بيفترض record واحد ([[records[0]]]). لما الكود بيغيّر حاجات كتير مرة واحدة (زي [[innerHTML]] أو loop)، هتعالج أول تغيير بس وتفوّت الباقي. لف على [[records]] دايمًا.` },
+            { lvl: 'تطبيق', t: R`ابني «عدّاد غير مقروء»: [[<ul id="inbox">]] فيه رسايل [[<li data-read="false">]]، وزرار بيضيف رسالة جديدة، وضغطة على رسالة بتخلّي [[data-read="true"]]. العدّاد في العنوان ([[document.title = "(3) البريد"]]) بيتحسب من MutationObserver واحد بس، مش من كود الزرار ولا كود الضغطة.`, done: R`إضافة رسالة بتزوّد الرقم، وقراية رسالة بتنقّصه، و [[inbox.innerHTML = ""]] من الـ Console بيخلّي العنوان [[البريد]] من غير رقم، والـ observer عليه [[attributeFilter: ["data-read"]]] و [[subtree: true]]، والعدّ بيحصل مرة واحدة لكل دفعة تغييرات مش لكل record.`, sol: R`~~~live 320 inbox.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>البريد</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
+  #inbox { list-style: none; padding: 0; }
+  #inbox li { padding: 8px; border-bottom: 1px solid #e5e7eb; cursor: pointer; }
+  #inbox li[data-read="false"] { font-weight: 700; background: #eff6ff; }
+  #title { font-size: 13px; color: #555; }
+  button { font: inherit; }
+</style>
+</head>
+<body>
+<p id="title"></p>
+<button id="add">رسالة جديدة</button>
+<button id="clear">امسح الكل (innerHTML = "")</button>
+<ul id="inbox">
+  <li data-read="false">فاتورة نوفمبر</li>
+  <li data-read="false">دعوة اجتماع</li>
+  <li data-read="true">أهلًا بيك</li>
+</ul>
+<script>
+  const inbox = document.querySelector("#inbox");
+  let n = 0, counts = 0;
+
+  // الزرار والضغطة بيعدّلوا الـ DOM بس، ومحدش فيهم يعرف حاجة عن العنوان
+  document.querySelector("#add").addEventListener("click", () => {
+    inbox.insertAdjacentHTML("afterbegin", $__bt<li data-read="false">رسالة جديدة $__{++n}</li>$__bt);
+  });
+  inbox.addEventListener("click", (e) => {
+    const li = e.target.closest("li");
+    if (li) li.dataset.read = "true";
+  });
+  document.querySelector("#clear").addEventListener("click", () => (inbox.innerHTML = ""));
+
+  // العدّاد: مكان واحد بس
+  function updateTitle() {
+    counts++;
+    const unread = inbox.querySelectorAll('li[data-read="false"]').length;
+    document.title = unread ? $__bt($__{unread}) البريد$__bt : "البريد";
+    document.querySelector("#title").textContent = $__btعنوان التاب: $__{document.title} (اتحسب $__{counts} مرة)$__bt;
+  }
+
+  new MutationObserver(updateTitle).observe(inbox, {
+    childList: true,                 // رسايل اتضافت أو اتشالت
+    subtree: true,                   // الـ li جوه الـ ul
+    attributes: true,
+    attributeFilter: ["data-read"],  // بس ده، مش أي attribute
+  });
+  updateTitle();
+</script>
+</body>
+</html>
+~~~
+
+~~~text الناتج (Chrome 158 headless، جوه iframe معزول)
+البداية                          عنوان التاب: (2) البريد (اتحسب 1 مرة)
+رسالة جديدة                      عنوان التاب: (3) البريد (اتحسب 2 مرة)
+قرينا «فاتورة نوفمبر»            عنوان التاب: (2) البريد (اتحسب 3 مرة)
+٥ رسايل في نفس الكود             عنوان التاب: (7) البريد (اتحسب 4 مرة)
+attribute تاني (title)           عنوان التاب: (7) البريد (اتحسب 4 مرة)
+innerHTML = ""                   عنوان التاب: البريد (اتحسب 5 مرة)
+pageerrors: 0
+~~~
+
+**ليه كده:**
+
+- **العدّاد في مكان واحد:** كود الزرار بيضيف [[li]] وبس، وكود الضغطة بيغيّر [[data-read]] وبس. أي حاجة تغيّر الـ DOM (حتى [[innerHTML = ""]] من الـ Console، أو سكربت تاني، أو extension) العنوان بيتحدّث لوحده، لأن الـ observer بيراقب النتيجة مش الكود.
+- **[[childList: true]] و [[subtree: true]]:** [[childList]] على الـ [[ul]] بيمسك الرسايل اللي بتتضاف وتتشال. و [[subtree]] لازم عشان الـ [[data-read]] على الـ [[li]] اللي جوه، مش على الـ [[ul]] نفسه.
+- **[[attributeFilter: ["data-read"]]]:** بيراقب الـ attribute ده بس. تغيير [[title]] متحسبش (العدّاد فضل 4)، فالـ callback مبيشتغلش على تغييرات ملهاش علاقة.
+- **[[updateTitle]] بتعدّ من الـ DOM:** مش بتحسب من الـ records (+1 و -1)، بتسأل [[querySelectorAll('li[data-read="false"]').length]]. كده مستحيل الرقم يبعد عن الحقيقة حتى لو فاتك record.
+- **«٥ رسايل في نفس الكود» = حسبة واحدة:** الـ ٥ إضافات عملوا ٥ records، بس الـ callback اتنادى مرة واحدة بيهم كلهم (microtask بعد الكود). عشان كده بنتجاهل الـ records ونعدّ مرة.
+
+**الغلطة الشائعة:** [[attributes: true]] من غير [[attributeFilter]] و [[subtree]] على [[document.body]]. أي animation أو class بيتغيّر في الصفحة هينادي الـ callback ويعمل [[querySelectorAll]] على الفاضي عشرات المرات في الثانية.` },
+            { lvl: 'تحدي', t: R`صلّح الكود البايظ: observer على [[document.body]] بـ [[{ childList: true, subtree: true }]] بيضيف [[<span class="badge">جديد</span>]] جوه أي [[li]] جديد. شغّله وشوف الصفحة بتعلّق، واعرف ليه، وصلّحه من غير ما تشيل الـ subtree.`, done: R`عرفت إن إضافة الـ badge نفسها mutation جديدة فالـ callback بينادي نفسه للأبد (ومن غير ما الصفحة ترسم، لأنه microtask)، وصلّحته بإنك تتجاهل العناصر اللي عليها الـ badge أو تعمل [[disconnect]] وتضيف وتعمل [[observe]] تاني، وإضافة ١٠٠ [[li]] بتطلّع ١٠٠ badge بالظبط والصفحة مبتعلّقش.`, sol: R`**الكود البايظ** (زي التمرين، ومعاه عدّاد بيوقفه بعد ٢٠٠٠ نداء عشان التجربة متعلّقش المتصفح):
+
+~~~js
+new MutationObserver(() => {
+  calls++;
+  if (calls > 2000) throw new Error("وقفنا بعد 2000 نداء");
+  for (const li of document.querySelectorAll("li")) {
+    li.insertAdjacentHTML("beforeend", '<span class="badge">جديد</span>');
+  }
+}).observe(document.body, { childList: true, subtree: true });
+~~~
+
+~~~text الناتج (Chrome 158 headless، ضغطة واحدة على «ضيف عنصر»)
+[البايظة] بعد عنصر واحد: li: 1 | badge: 1999 | calls: 2001 | pageerror: وقفنا بعد 2000 نداء | 478ms
+~~~
+
+**ليه علّق:** إضافة الـ badge نفسها [[childList]] mutation جوه [[body]]، والـ observer عليه [[subtree]]، فالـ callback بيتجدول تاني. والـ callback الجديد بيضيف badge تاني لنفس الـ [[li]]... وهكذا. ولأن الـ callbacks دي microtasks، المتصفح مبيرسمش ولا بيرد على الضغط بينهم، فالصفحة بتتجمّد (من غير العدّاد كانت هتفضل كده).
+
+**المصلّحة:**
+
+~~~live 300 badges.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>badge لكل عنصر جديد</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
+  .badge { background: #dc2626; color: #fff; border-radius: 999px; padding: 0 8px; font-size: 12px; margin-inline-start: 6px; }
+  button { font: inherit; }
+</style>
+</head>
+<body>
+<button id="one">ضيف عنصر</button>
+<button id="many">ضيف ١٠٠</button>
+<p id="info"></p>
+<ul id="list"></ul>
+<script>
+  const list = document.querySelector("#list");
+  let calls = 0;
+
+  function addBadge(li) {
+    if (li.querySelector(".badge")) return;          // عليه badge خلاص: متضيفش تاني
+    li.insertAdjacentHTML("beforeend", '<span class="badge">جديد</span>');
+  }
+
+  new MutationObserver((records) => {
+    calls++;
+    for (const r of records) {
+      for (const node of r.addedNodes) {
+        if (node.nodeType !== Node.ELEMENT_NODE) continue;
+        if (node.matches("li")) addBadge(node);       // الـ span اللي بنضيفه مش li فبيتساب
+        node.querySelectorAll?.("li").forEach(addBadge);
+      }
+    }
+    // #info نفسه جوه body: كتابة نص فيه = mutation جديدة. نكتب بس لو النص اتغيّر، وإلا الـ callback هينادي نفسه للأبد
+    const text = $__btli: $__{list.querySelectorAll("li").length} | badge: $__{list.querySelectorAll(".badge").length}$__bt;
+    const info = document.querySelector("#info");
+    if (info.textContent !== text) info.textContent = text;
+  }).observe(document.body, { childList: true, subtree: true });
+
+  let n = 0;
+  const add = () => list.insertAdjacentHTML("beforeend", $__bt<li>عنصر $__{++n}</li>$__bt);
+  document.querySelector("#one").addEventListener("click", add);
+  document.querySelector("#many").addEventListener("click", () => { for (let i = 0; i < 100; i++) add(); });
+</script>
+</body>
+</html>
+~~~
+
+~~~text الناتج (Chrome 158 headless، جوه iframe معزول)
+[المصلّحة] عنصر: li: 1 | badge: 1 | calls: 4
+[المصلّحة] +١٠٠: li: 101 | badge: 101 | calls: 6 | 137ms
+pageerrors: 0
+~~~
+
+**ليه شغالة (والـ subtree لسه موجود):**
+
+- **[[r.addedNodes]] بدل كل الـ [[li]] في الصفحة:** بنبص على العناصر الجديدة بس. الـ [[span]] اللي إحنا ضفناه بيظهر في [[addedNodes]] في النداء اللي بعده، بس هو مش [[li]] فبيتساب، والـ loop بيقف.
+- **[[if (li.querySelector(".badge")) return]]:** حماية تانية: [[li]] عليه badge مبياخدش تاني، حتى لو اتشال واتحط في مكان تاني.
+- **[[node.querySelectorAll?.("li")]]:** لو حد ضاف [[ul]] كامل فيه [[li]] كتير مرة واحدة، الـ [[li]] اللي جواه مش هيبقوا في [[addedNodes]] لوحدهم، فبندوّر جوه العنصر الجديد.
+- **١٠٠ عنصر = ١٠١ badge بالظبط (مع الأولاني)** في نداءين بس للـ ١٠٠، لأن الـ records بتتجمّع.
+
+**الحل التاني اللي في التمرين:** [[mo.disconnect()]] في أول الـ callback، وبعدين تضيف الـ badges، وبعدين [[mo.observe(document.body, options)]] تاني. التغييرات اللي حصلت والـ observer مفصول مبتتسجّلش. بيشتغل، بس لو كود تاني ضاف [[li]] في نفس اللحظة دي هيفوتك.
+
+**وقعنا في نفس الفخ وإحنا بنكتب الحل:** أول نسخة كانت بتكتب في [[#info]] سطر فيه عدد مرات النداء. [[#info]] جوه [[body]]، فكتابة النص mutation، والعدد بيتغيّر كل مرة، فالنص دايمًا جديد، فالصفحة علّقت من غير ولا [[li]] زيادة (التجربة وقفت بعد ١٢٠ ثانية). التصليح: [[if (info.textContent !== text)]] والعدد اتشال من النص، فالنداء التاني بيلاقي نفس النص ومبيكتبش. أي observer على [[body]] لازم ميتأثرش بحاجة هو بيكتبها.
+
+**الغلطة الشائعة:** تحل المشكلة بإنك تشيل [[subtree]] وتراقب [[#list]] بس. بيشتغل هنا، بس أي [[li]] بيتضاف في مكان تاني في الصفحة (أو جوه [[ul]] متداخل) مش هيوصلك.` },
+          ],
+          ref: [
+            { t: "MDN: MutationObserver", url: "https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver" },
+            { t: "MDN: MutationObserver.observe()", url: "https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver/observe" },
+            { t: "MDN: MutationRecord", url: "https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord" },
+          ],
+          pre: [{ to: "js/microtasks و macrotasks", why: R`الـ records بتتسلّم في microtask بعد ما الكود يخلص، وده اللي بيفسّر «مرة واحدة» والـ loop اللانهائي` }],
+          flag: "script",
+          deep: {
+            why: R`قبل MutationObserver كان فيه Mutation Events ([[DOMNodeInserted]] وأخواتها) وكانت بتتنادى **جوه** كل تغيير، فالصفحة كانت بتبطأ جدًا، واتشالت من Chrome خالص (من الـ docs: اتشالت في Chrome 127 سنة 2024). الحل الجديد بيجمّع التغييرات ويبعتها مرة واحدة بعد ما الكود يخلص، فمش بيقاطع شغلك.`,
+            how: R`كل observer ليه طابور records. أي تغيير متراقب بيضيف record، وأول record بيحجز microtask واحدة. لما الكود الحالي يخلص (قبل أي [[setTimeout]] وقبل الرسم)، المتصفح بيدّي الـ callback كل الـ records مرة واحدة. عشان كده «الكود خلص» بتطلع الأول.
+
+الـ options: [[childList]] للأولاد المباشرين، و [[subtree]] يمدّها لكل الأحفاد، و [[attributes]] أو [[attributeFilter: [...]]] (الفلتر لوحده بيشغّل الـ attributes)، و [[characterData]] لنص الـ text nodes، و [[attributeOldValue]] و [[characterDataOldValue]] عشان تاخد القيمة القديمة. لازم واحد على الأقل من التلاتة الأولانيين وإلا [[TypeError]].
+
+[[disconnect()]] بيوقّف كل حاجة **وبيرمي** الـ records اللي لسه موصلتش، و [[takeRecords()]] بيرجّعهم ليك ويفضّي الطابور.`,
+            when: R`widget من بره (chat أو إعلانات أو تعليقات) بيضيف عناصر وعايز تظبطها، و auto-scroll لشات، و تفعيل حاجة على أي عنصر جديد بـ class معين (زي tooltips)، و تستات بتستنى عنصر يظهر، و extensions. ومش لحاجة انت اللي بتعملها بإيدك: نادي الدالة في نفس المكان.`,
+            mistakes: R`تعدّل نفس الجزء المتراقب جوه الـ callback فيبقى loop بيعلّق الصفحة. و [[subtree: true]] على [[document.body]] في صفحة كبيرة من غير فلتر فالـ callback بيشتغل على كل حاجة. و [[disconnect()]] من غير [[takeRecords()]] فتضيع آخر التغييرات. وتفتكر إن [[r.target.getAttribute(...)]] هي القيمة وقت التغيير: هي القيمة **دلوقتي**، والقديمة في [[oldValue]] بس. وتنسى إن [[textContent = "..."]] بيبدّل الـ text node (childList) مش characterData.`
+          },
+          teach: R`## الفكرة في سطر
+
+بتقول للمتصفح «لو حاجة اتغيرت جوه العنصر ده، ابعتلي لستة باللي حصل». المثال بيراقب شات: رسالة بتتضاف وتتشال، و [[data-state]] بيتغير مرتين، و [[title]] بيتغير بس مش متراقب.
+
+شغّلت المثال في Chrome 156 headless (عن طريق playwright-core) وفي jsdom 30، والناتج طلع واحد بالحرف.
+
+---
+
+## ١. الـ observer والـ callback
+
+~~~text app.js
+const mo = new MutationObserver((records) => {
+  console.log("records:", records.length);
+  for (const r of records) { ... }
+});
+~~~
+
+- [[new MutationObserver(callback)]]: بتعمل مراقب. لسه مبيراقبش حاجة لحد ما تنادي [[observe]].
+- [[records]]: array من [[MutationRecord]]، record لكل تغيير حصل من آخر مرة اتنادى فيها.
+- [[r.type]]: نوع التغيير، واحد من تلاتة: [["childList"]] (أولاد اتضافوا أو اتشالوا)، أو [["attributes"]]، أو [["characterData"]] (نص اتعدّل).
+- [[r.addedNodes]] و [[r.removedNodes]]: الـ nodes اللي اتضافت واللي اتشالت (NodeList، فبنستخدم [[.length]]).
+- [[r.attributeName]]: اسم الـ attribute اللي اتغير، و [[r.oldValue]] قيمته **قبل** التغيير، و [[r.target]] العنصر اللي اتغير.
+
+## ٢. [[observe]]: تراقب إيه بالظبط
+
+~~~text app.js
+mo.observe(chat, { childList: true, subtree: true, attributeFilter: ["data-state"], attributeOldValue: true });
+~~~
+
+| الـ option | معناه |
+|---|---|
+| [[childList: true]] | أولاد [[chat]] المباشرين لما يتضافوا أو يتشالوا |
+| [[subtree: true]] | نفس الكلام على كل الأحفاد كمان، مش الأولاد المباشرين بس |
+| [[attributeFilter: ["data-state"]]] | راقب الـ attributes دي بس، وأي attribute تاني (زي [[title]]) يتجاهل |
+| [[attributeOldValue: true]] | سجّل القيمة القديمة في [[r.oldValue]]، من غيرها بتبقى [[null]] |
+| [[characterData: true]] | تعديل نص جوه text node (مع [[subtree]] عشان توصل للنص اللي جوه العنصر) |
+
+جرّبت [[attributeFilter]] لوحده من غير [[attributes: true]]: شغّال، لأن الفلتر بيشغّل الـ attributes لوحده. وجرّبت [[observe(chat, {})]]:
+
+~~~text الناتج (Chrome)
+TypeError: Failed to execute 'observe' on 'MutationObserver': The options object must set at least one of 'attributes', 'characterData', or 'childList' to true.
+~~~
+
+ونفس الرسالة لو نسيت الـ options خالص. ولو العنصر مش موجود ([[querySelector]] رجّع [[null]]):
+
+~~~text الناتج (Chrome)
+TypeError: Failed to execute 'observe' on 'MutationObserver': parameter 1 is not of type 'Node'.
+~~~
+
+## ٣. التغييرات والناتج
+
+~~~text app.js
+const msg = document.createElement("li");
+msg.textContent = "أهلًا";
+chat.append(msg);
+chat.dataset.state = "busy";
+chat.dataset.state = "idle";
+chat.title = "مش متراقب";
+msg.remove();
+console.log("الكود خلص");
+~~~
+
+~~~text الناتج (Chrome 156 و jsdom)
+الكود خلص
+records: 4
+childList +1 -0
+data-state null → idle
+data-state busy → idle
+childList +0 -1
+~~~
+
+خمس حاجات تتعلمها من الناتج ده:
+
+1. **«الكود خلص» طلعت الأول.** الـ callback مش بيتنادى جوه [[append]]، بيتنادى بعد ما الـ script كله يخلص، كـ microtask (درس «microtasks و macrotasks»).
+2. **مرة واحدة بـ 4 records**، مش ٤ مرات. المتصفح جمّعهم.
+3. **[[msg.textContent = "أهلًا"]] مااتسجّلش**: ساعتها [[msg]] كان لسه برّه [[chat]]، والـ observer بيشوف اللي جوه بس.
+4. **[[title]] مااتسجّلش** بسبب [[attributeFilter]].
+5. **السطرين بتوع [[data-state]] بيقولوا [[→ idle]] الاتنين.** [[r.oldValue]] صح لكل record ([[null]] وبعدين [[busy]])، بس [[r.target.getAttribute(...)]] بيقرا القيمة **دلوقتي** وقت الـ callback، وهي [[idle]]. لو عايز القيمة الجديدة لكل خطوة، هي الـ [[oldValue]] بتاع الـ record اللي بعده.
+
+## ٤. الاستخدام الحقيقي: auto-scroll
+
+~~~text app.js
+new MutationObserver(() => { chat.scrollTop = chat.scrollHeight; }).observe(chat, { childList: true });
+~~~
+
+- [[chat.scrollHeight]]: طول المحتوى كله جوه الـ [[ul]]، حتى الجزء المستخبي.
+- [[chat.scrollTop = ...]]: انزل لحد كده، يعني آخر رسالة.
+- مش فارق مين اللي ضاف الرسالة (WebSocket، أو مكتبة، أو انت): الشات بينزل لوحده. جرّبت ٥ رسايل ورا بعض في [[ul]] طوله 40px: الـ callback اتنادى مرة واحدة، و [[scrollTop]] بقى 104 وده بالظبط [[scrollHeight - clientHeight]] (يعني تحت خالص).
+
+## ٥. [[disconnect]] و [[takeRecords]]
+
+جرّبت أضيف عنصر وبعدين [[mo.disconnect()]] على طول في نفس الكود: الـ callback **عمره ما اتنادى**. الـ disconnect بيرمي أي records لسه في الطابور. لو محتاجهم:
+
+~~~text app.js
+const pending = mo.takeRecords();
+mo.disconnect();
+console.log(pending.length, pending[0].type);
+~~~
+
+~~~text الناتج (Chrome، بعد إضافة عنصرين)
+2 childList
+~~~
+
+## ٦. الفخ: الـ callback بيغيّر اللي بيراقبه
+
+لو الـ callback ضاف عنصر جوه نفس الـ [[chat]]، ده تغيير جديد، فيتنادى تاني، ويضيف تاني... جرّبتها بعدّاد بيقف عند 1000: الـ callback اتنادى 1000 مرة و [[setTimeout(..., 0)]] اللي كان مستني اتنفّذ **بعدهم كلهم**. يعني من غير العدّاد الصفحة كانت هتعلّق ومش هترسم أبدًا، لأن الـ microtasks بتخلص كلها قبل أي رسم.
+
+الحل: اتجاهل التغييرات اللي انت عملتها (فحص زي [[if (el.querySelector(".badge")) continue]])، أو [[disconnect]] وعدّل وبعدين [[observe]] تاني.
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| [[new MutationObserver(cb)]] و [[observe(el, opts)]] | ابعتلي لستة بالتغييرات اللي حصلت جوه el |
+| [[childList]] و [[subtree]] | عناصر اتضافت أو اتشالت، في الأولاد بس أو في الشجرة كلها |
+| [[attributeFilter]] و [[attributeOldValue]] | attributes معينة بس، ومعاها قيمتها القديمة |
+| [[characterData]] | نص اتعدّل جوه text node موجود |
+| [[takeRecords()]] | هات اللي في الطابور دلوقتي وفضّيه |
+| [[disconnect()]] | وقّف المراقبة وارمي اللي لسه موصلش |
+
+- الـ callback microtask: بيتنادى مرة واحدة بعد ما الكود يخلص، وقبل الـ timers والرسم.
+- [[getAttribute]] جوه الـ callback = القيمة دلوقتي، والقديمة في [[oldValue]].
+- متغيّرش اللي بتراقبه جوه الـ callback من غير شرط يوقف.`,
+          lines: [
+            R`العنصر اللي هنراقبه: لستة رسايل الشات. لازم يكون موجود في الصفحة قبل السطر ده، وإلا [[querySelector]] هيرجّع [[null]] و [[observe]] هيرمي TypeError.`,
+            R`بنعمل المراقب ونديله callback. الـ callback بياخد [[records]]: array فيها record لكل تغيير حصل من آخر مرة اتنادى، مش تغيير واحد.`,
+            R`بنطبع عدد التغييرات في الدفعة دي، عشان نشوف بعينينا إن المتصفح جمّعهم ونادانا مرة واحدة بس.`,
+            R`بنلف على كل record. كل واحد فيه [[type]] و [[target]] وحاجات تانية حسب النوع.`,
+            R`لو النوع [["childList"]] يبقى عناصر اتضافت أو اتشالت: [[addedNodes]] و [[removedNodes]] لستتين بالـ nodes، وبنطبع عددهم.`,
+            R`غير كده هنا يبقى [["attributes"]]: بنطبع اسم الـ attribute وقيمته القديمة ([[oldValue]]) والقيمة **الحالية** من [[getAttribute]]. والحالية دي وقت الـ callback مش وقت التغيير، عشان كده الاتنين هيطلعوا [[idle]].`,
+            R`نهاية الـ [[for]].`,
+            R`نهاية الـ callback والـ [[MutationObserver]].`,
+            R`نبدأ نراقب [[chat]]: الأولاد اللي بيتضافوا أو بيتشالوا ([[childList]]) في كل الشجرة ([[subtree]])، والـ attribute [[data-state]] بس ([[attributeFilter]])، ومعاه القيمة القديمة ([[attributeOldValue]]).`,
+            R`بنعمل [[li]] جديد. لسه في الذاكرة بس، مش في الصفحة.`,
+            R`بنحط فيه نص. التغيير ده مش هيتسجّل، لأن [[msg]] لسه برّه [[chat]] اللي بنراقبه.`,
+            R`بنضيفه في آخر [[chat]]: أول record من نوع [[childList]] فيه [[addedNodes]] بعنصر واحد.`,
+            R`[[dataset.state]] بيكتب الـ attribute [[data-state="busy"]]: record من نوع [[attributes]] و [[oldValue]] بتاعه [[null]] لأنه مكانش موجود.`,
+            R`تغيير تاني لنفس الـ attribute: record تالت، و [[oldValue]] بتاعه [[busy]].`,
+            R`تغيير [[title]]: مش هيتسجّل خالص، لأن [[attributeFilter]] فيه [[data-state]] بس.`,
+            R`بنشيل الرسالة: record رابع من نوع [[childList]] فيه [[removedNodes]] بعنصر واحد.`,
+            R`السطر ده بيطلع **قبل** [[records: 4]]، لأن الـ callback microtask بيستنى الكود اللي شغّال يخلص.`,
+            R`observer تاني صغير بيعمل حاجة حقيقية: كل ما رسالة تتضاف، بينزّل الشات لآخره بإنه يخلّي [[scrollTop]] قد [[scrollHeight]]. مش فارق مين ضاف الرسالة، ومش محتاج تفتكر تنادي دالة scroll في كل مكان بيضيف رسايل.`,
+          ],
+          sol: R`«الكود خلص» بتطلع الأول، وبعدها [[records: 4]] والأربع سطور: [[childList +1 -0]]، و [[data-state null → idle]]، و [[data-state busy → idle]]، و [[childList +0 -1]] (اتجرّب في Chrome 156 و jsdom 30).
+
+لما تضيف [[mo.disconnect()]] كآخر سطر، الـ callback مبيتناداش خالص: الـ disconnect رمى الأربع records اللي كانوا مستنيين الـ microtask. التصليح: [[const pending = mo.takeRecords(); mo.disconnect();]] وبعدين لف على [[pending]] بنفسك، وهتلاقي فيها نفس الأربعة.`
+        },
+        {
+          cmd: "Notification و permissions",
+          title: "تبعت إشعار للنظام، وتسأل عن الإذن الأول من غير ما تزعج اليوزر",
+          desc: R`[[Notification]] بيطلّع إشعار من النظام نفسه (الركن بتاع ويندوز أو ماك أو أندرويد)، حتى لو التاب مش قدامك. بس لازم اليوزر يوافق الأول: [[Notification.requestPermission()]] بتطلّع سؤال المتصفح، وبترجّع [["granted"]] أو [["denied"]] أو [["default"]] (قفل السؤال من غير ما يختار).
+
+و [[navigator.permissions.query({ name })]] (اسمها Permissions API) بتقولك حالة أي إذن **من غير ما تسأل**: [["granted"]] أو [["denied"]] أو [["prompt"]]، وبتدّيك [[onchange]] لو اتغيّرت. دي نفس الطريقة اللي بتسأل بيها عن الكاميرا والموقع والـ clipboard (الـ Clipboard والـ Share ليهم درس لوحدهم في التاب ده: «Clipboard و Geolocation و Share»).
+
+القاعدة الذهبية: متسألش أول ما الصفحة تفتح. اسأل بعد ضغطة على زرار اليوزر فاهم هو بيعمل إيه. و [["denied"]] مبيتغيّرش من الكود أبدًا: اليوزر بس يغيّره من إعدادات الموقع.`,
+          example: R`const btn = document.querySelector("#notify");
+const status = await navigator.permissions.query({ name: "notifications" });
+console.log("الحالة:", status.state, "| Notification.permission:", Notification.permission);
+status.onchange = () => console.log("اتغيرت لـ", status.state);
+btn.addEventListener("click", async () => {
+  if (!("Notification" in window)) return console.log("المتصفح مبيدعمش");
+  if (Notification.permission === "denied") return console.log("اترفض قبل كده: من إعدادات الموقع بس");
+  const result = await Notification.requestPermission();
+  console.log("الرد:", result);
+  if (result !== "granted") return;
+  const n = new Notification("طلب جديد", { body: "رقم 42", tag: "order-42", icon: "/icon-192.png" });
+  n.onshow = () => console.log("ظهر:", n.title, n.body, n.tag);
+  n.onclick = () => { window.focus(); n.close(); };
+});`,
+          try: R`حط المثال في [[<script type="module">]] (عشان الـ [[await]] اللي برّه أي دالة) مع [[<button id="notify">]]، وافتحه من [[http://localhost]] (بـ [[npx serve]] مثلًا)، لأن الـ service worker في درس الـ push مش هيشتغل غير كده. دوس الزرار ووافق، وبعدين من القفل اللي جنب العنوان ← Site settings ← Notifications خليها Block، وارجع الصفحة ودوس تاني. وجرّب كمان تبعت نفس الإشعار مرتين بنفس الـ [[tag]] وشوف بيظهروا كام واحد.`,
+          practice: [
+            { lvl: 'سريع', t: R`دوّر بنفسك: من MDN (صفحة [[Permissions.query()]] وصفحة [[Notification.requestPermission()]])، إيه الفرق بين [["prompt"]] و [["default"]]؟ وإيه اللي بيحصل لو ناديت [[requestPermission()]] من غير ضغطة من اليوزر في Firefox و Safari؟`, done: R`كتبت إن الاتنين معناهم «لسه مسألناش» بس [["prompt"]] اسمها في Permissions API و [["default"]] في [[Notification.permission]]، وإن Firefox و Safari بيطلبوا user gesture (ضغطة) وإلا السؤال مبيظهرش، ومعاك لينك الصفحتين.`, sol: R`**الإجابة النموذجية:**
+
+1. **[["prompt"]] و [["default"]] نفس المعنى:** «اليوزر لسه مقررش». الفرق في الاسم بس، لأنهم من API-ين مختلفين:
+   - [[navigator.permissions.query({ name: "notifications" })]] بترجّع [[PermissionStatus]] و [[state]] بتاعه واحد من [["granted"]] أو [["denied"]] أو [["prompt"]] (صفحة [[PermissionStatus.state]] على MDN).
+   - [[Notification.permission]] (و [[Notification.requestPermission()]]) بترجّع [["granted"]] أو [["denied"]] أو [["default"]]، و MDN بيقول عن [["default"]]: «The user decision is unknown; in this case the application will act as if permission was denied». يعني تعامل معاها زي الرفض لحد ما تسأل.
+2. **من غير ضغطة من اليوزر في Firefox و Safari:** السؤال مش هيظهر. صفحة «Using the Notifications API» على MDN: «you should only request consent to display notifications in response to a user gesture (e.g., clicking a button)… Firefox is already doing this from version 72, for example, and Safari has done it for some time». وفي Chrome و Firefox كمان لازم secure context (HTTPS أو localhost)، ومينفعش تطلب الإذن من iframe من origin تاني.
+
+**اتأكدنا بنفسنا من الأسامي في Chrome** على صفحة على [[http://localhost:8831]] بـ ٣ حالات للإذن:
+
+~~~text الناتج (Chrome 158 headless)
+لسه مسألناش  permissions.query: "prompt" | Notification.permission: "default"
+granted      permissions.query: "granted" | Notification.permission: "granted"
+~~~
+
+نفس الحالة، اسمين: [["prompt"]] من ناحية و [["default"]] من الناحية التانية. وفي الـ iframe المعزول بتاع الـ preview في الموقع ده، [[Notification.permission]] رجّعت [["denied"]] على طول.
+
+**اللينكات:**
+
+- MDN: [[Notification.permission]]: https://developer.mozilla.org/en-US/docs/Web/API/Notification/permission_static
+- MDN: [[Notification.requestPermission()]]: https://developer.mozilla.org/en-US/docs/Web/API/Notification/requestPermission_static
+- MDN: [[Permissions.query()]]: https://developer.mozilla.org/en-US/docs/Web/API/Permissions/query
+- MDN: Using the Notifications API: https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API/Using_the_Notifications_API
+
+**الغلطة الشائعة:** تكتب [[if (Notification.permission === "prompt")]]. القيمة دي مش موجودة في [[Notification.permission]] أصلًا، فالشرط عمره ما هيبقى [[true]] والزرار مش هيظهر لحد أبدًا.` },
+            { lvl: 'تطبيق', t: R`ابني زرار «فعّل الإشعارات» بـ ٣ أشكال حسب الحالة: [["prompt"]] زرار عادي، و [["granted"]] علامة ✓ «الإشعارات شغالة»، و [["denied"]] رسالة بتقول «اتقفلت من إعدادات الموقع» من غير زرار. والشكل بيتغير لوحده بـ [[status.onchange]] لو اليوزر غيّر الإعدادات والصفحة مفتوحة.`, done: R`كل حالة من التلاتة بتطلّع شكلها، وتغيير الإذن من القفل اللي جنب العنوان بيقلب الشكل من غير refresh، وفي حالة [["denied"]] مفيش أي نداء لـ [[requestPermission]] (اتأكد بـ [[console.log]] جواها).`, sol: R`~~~live 160 notify-button.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>فعّل الإشعارات</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
+  #box { padding: 12px; border-radius: 8px; background: #f3f4f6; }
+  .ok { color: #065f46; font-weight: 700; }
+  .no { color: #92400e; }
+  button { font: inherit; padding: 6px 16px; }
+</style>
+</head>
+<body>
+<div id="box"></div>
+<script>
+  const box = document.querySelector("#box");
+  let calls = 0;                                   // كام مرة نادينا requestPermission
+
+  function render(state) {
+    box.dataset.state = state;
+    if (state === "granted") {
+      box.innerHTML = '<span class="ok">✓ الإشعارات شغالة</span>';
+    } else if (state === "denied") {
+      box.innerHTML = '<span class="no">الإشعارات اتقفلت من إعدادات الموقع (القفل اللي جنب العنوان ← الإشعارات ← سماح).</span>';
+    } else if (state === "unsupported") {
+      box.textContent = "المتصفح ده (أو الصفحة دي) مبيدعمش الإشعارات.";
+    } else {
+      box.innerHTML = '<button id="ask">فعّل الإشعارات</button>';
+      box.querySelector("#ask").addEventListener("click", ask);
+    }
+  }
+
+  async function ask() {
+    calls++;
+    console.log("requestPermission اتنادت، مرة رقم", calls);
+    const result = await Notification.requestPermission();
+    render(result === "default" ? "prompt" : result);    // default = قفل السؤال من غير ما يختار
+  }
+
+  async function start() {
+    // صفحة معزولة (زي الـ preview): الإشعارات ممنوعة فيها خالص
+    if (!("Notification" in window) || location.origin === "null") return render("unsupported");
+    const status = await navigator.permissions.query({ name: "notifications" });
+    render(status.state);
+    status.onchange = () => render(status.state);         // اليوزر غيّر الإذن والصفحة مفتوحة
+  }
+  start();
+</script>
+</body>
+</html>
+~~~
+
+في الـ preview هتشوف «المتصفح ده (أو الصفحة دي) مبيدعمش الإشعارات»: الصفحة معزولة ([[origin]] بتاعها [["null"]])، والإشعارات ممنوعة من iframe من origin تاني أصلًا (MDN بيقول كده في «Using the Notifications API»)، وقسناها: [[Notification.permission]] جوه الـ preview بيرجّع [["denied"]] على طول. انسخها وشغّلها من [[http://localhost]].
+
+**القياس:** شغّلنا Chrome لوحده (من غير Playwright، لأنه بيفرض حالة الإذن بتاعته) وغيّرنا الإذن من برا بـ DevTools Protocol ([[Browser.setPermission]])، وده نفس اللي بيحصل لما اليوزر يغيّره من القفل اللي جنب العنوان والصفحة مفتوحة:
+
+~~~text الناتج (Chrome 158 headless، http://localhost:8831)
+أول ما تفتح                    prompt | فعّل الإشعارات
+السماح من الإعدادات (من غير refresh) granted | ✓ الإشعارات شغالة
+المنع من الإعدادات             denied | الإشعارات اتقفلت من إعدادات الموقع (القفل اللي جنب العنوان ← الإشعارات ← سماح).
+  في حالة denied: مفيش زرار
+رجّعناه «اسأل»                 prompt | فعّل الإشعارات
+requestPermission اتنادت: 0 مرة
+~~~
+
+وضغطة على الزرار في headless Chrome (بـ [[userGesture: true]]): [[requestPermission]] رجّعت [["denied"]] على طول وبقى [[Notification.permission]] = [["denied"]]، لأن headless مفيهوش شاشة للسؤال فبيرفض لوحده. في Chrome عادي السؤال بيظهر ويستنى اليوزر.
+
+**ليه كده:**
+
+- **[[navigator.permissions.query({ name: "notifications" })]]:** بترجّع [[PermissionStatus]] فيه [[state]] ([["prompt"]] أو [["granted"]] أو [["denied"]]). ده من غير ما تسأل اليوزر حاجة، فينفع أول ما الصفحة تفتح.
+- **[[status.onchange]]:** بيتنادى لما الإذن يتغيّر والصفحة مفتوحة، فالشكل اتقلب ٣ مرات من غير refresh.
+- **[[render]] بتبني الشكل كله من الحالة:** في [["denied"]] مفيش زرار أصلًا، فمستحيل [[requestPermission]] تتنادى (العدّاد فضل 0). نداها هناك مالوش فايدة: المتصفح بيرجّع [["denied"]] على طول من غير سؤال، والطريق الوحيد إن اليوزر يغيّرها بنفسه.
+- **[[result === "default" ? "prompt" : result]]:** [[requestPermission]] بترجّع [["default"]] لو اليوزر قفل السؤال من غير ما يختار. ده نفس [["prompt"]] بأسامي الـ Permissions API، فبنرجّع الزرار.
+- **[[requestPermission]] جوه [[click]] بس:** Firefox (من 72) و Safari مبيظهروش السؤال من غير ضغطة من اليوزر.
+
+**الغلطة الشائعة:** تنادي [[requestPermission()]] أول ما الصفحة تفتح. اليوزر بيشوف سؤال من موقع لسه ميعرفوش فبيدوس «منع»، وده قرار مبيتغيّرش غير من الإعدادات. اسأل بعد ما اليوزر يعمل حاجة الإشعار يفيده فيها (زي «تابع الطلب»).` },
+            { lvl: 'تحدي', t: R`محاكاة: «مؤقّت بومودورو» بيبعت إشعار بعد ٢٥ دقيقة (خليها ١٠ ثواني وانت بتجرّب)، بس **لو التاب مستخبي بس** ([[document.hidden]] من درس «visibilitychange و bfcache»)، ولو التاب قدامك يطلّع رسالة جوه الصفحة بدل الإشعار. والإشعار بـ [[tag: "pomodoro"]] عشان ميتكوّموش، والضغط عليه يرجّعك للتاب.`, done: R`وانت في التاب مفيش إشعار نظام وفيه رسالة في الصفحة، ولو بدّلت لتاب تاني بيظهر إشعار واحد، وتشغيل المؤقت مرتين ورا بعض بيسيب إشعار واحد بس في مركز الإشعارات (نفس الـ [[tag]] بيبدّل القديم)، والضغط عليه بيجيب التاب قدام.`, sol: R`~~~live 220 pomodoro.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بومودورو</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
+  #left { font-size: 40px; font-variant-numeric: tabular-nums; }
+  #inpage { background: #fef3c7; padding: 8px 12px; border-radius: 8px; }
+  #inpage:empty { display: none; }
+  button { font: inherit; padding: 6px 14px; }
+</style>
+</head>
+<body>
+<p id="left">0:10</p>
+<button id="start">ابدأ (١٠ ثواني للتجربة)</button>
+<p id="inpage" role="status"></p>
+<script>
+  const SECONDS = 10;                      // في الحقيقي: 25 * 60
+  let timer = null;
+
+  async function finish() {
+    const text = "خلصت الجلسة، خد راحة ٥ دقايق";
+    const canNotify = "Notification" in window && location.origin !== "null" && Notification.permission === "granted";
+    if (document.hidden && canNotify) {
+      const n = new Notification("بومودورو", { body: text, tag: "pomodoro" });   // نفس الـ tag = يبدّل القديم
+      n.onclick = () => { window.focus(); n.close(); };
+    } else {
+      document.querySelector("#inpage").textContent = text;     // اليوزر قدام الصفحة (أو مفيش إذن)
+    }
+  }
+
+  document.querySelector("#start").addEventListener("click", async () => {
+    // الإذن من ضغطة اليوزر نفسها، قبل ما المؤقت يبدأ
+    if ("Notification" in window && location.origin !== "null" && Notification.permission === "default") {
+      await Notification.requestPermission();
+    }
+    clearInterval(timer);
+    document.querySelector("#inpage").textContent = "";
+    const end = Date.now() + SECONDS * 1000;
+    const tick = () => {
+      const left = Math.max(0, Math.ceil((end - Date.now()) / 1000));
+      document.querySelector("#left").textContent = $__bt0:$__{String(left).padStart(2, "0")}$__bt;
+      if (left === 0) { clearInterval(timer); finish(); }
+    };
+    timer = setInterval(tick, 250);
+    tick();
+  });
+</script>
+</body>
+</html>
+~~~
+
+في الـ preview الإشعارات ممنوعة (صفحة معزولة)، فالرسالة بتظهر جوه الصفحة دايمًا. التجربة الحقيقية من [[http://localhost]].
+
+**القياس:** Chrome لوحده بـ DevTools Protocol: الإذن [["granted"]] بـ [[Browser.setPermission]]، و [[Notification]] ملفوفة بحيث تسجّل كل إشعار اتعمل بالـ [[tag]] بتاعه وكل [[show]]، والضغط على «ابدأ» بـ [[userGesture: true]]، و «التاب التاني» تاب حقيقي اتفتح واتفعّل:
+
+~~~text الناتج (Chrome 158 headless، http://localhost:8831)
+== التجربة ١: التاب قدامك
+  إشعارات: [] | جوه الصفحة: خلصت الجلسة، خد راحة ٥ دقايق
+== التجربة ٢: بدّلنا لتاب تاني
+  hidden: true | إشعارات: ["pomodoro","show"] | جوه الصفحة: ""
+== التجربة ٣: مرتين ورا بعض وهو مستخبي
+  إشعارات: ["pomodoro","show","pomodoro","show","pomodoro","show"]
+~~~
+
+**ليه كده:**
+
+- **[[document.hidden]] ساعة الخلصان:** القرار بيتاخد لحظة ما المؤقت يخلص مش لما يبدأ، لأن اليوزر ممكن يروح ويرجع في النص. قدامك = رسالة في الصفحة (التجربة ١، صفر إشعارات). مستخبي = إشعار نظام (التجربة ٢).
+- **[[tag: "pomodoro"]]:** كل إشعار بنفس الـ tag **بيبدّل** اللي قبله بدل ما يتحط جنبه (ده سلوك الـ [[tag]] في مواصفات Notifications API و MDN). في التجربة ٣ اتعمل إشعارين جداد، بس في مركز الإشعارات بيفضل واحد. headless مفيهوش مركز إشعارات نشوفه، فالجزء ده من الوثائق مش من القياس.
+- **[[n.onclick = () => { window.focus(); n.close(); }]]:** الضغط على الإشعار بيجيب التاب قدام ويقفل الإشعار. ده كمان محتاج شاشة حقيقية تضغط فيها، فجرّبه في Chrome عادي.
+- **[[requestPermission]] جوه ضغطة «ابدأ» وقبل المؤقت:** بعد ١٠ ثواني (أو ٢٥ دقيقة) مفيش ضغطة من اليوزر، و Firefox و Safari مش هيظهروا السؤال. فبنسأل في اللحظة الوحيدة اللي فيها ضغطة.
+- **[[Date.now() + SECONDS * 1000]] والعدّ من الوقت:** التاب المستخبي بيبطّأ الـ [[setInterval]]، فالعدّ بالـ ticks كان هيتأخر. هنا كل tick بيحسب الباقي من الساعة، والإشعار طلع في ميعاده وهو مستخبي.
+
+**الغلطة الشائعة:** تبعت الإشعار في كل الحالات. اليوزر قاعد قدام الصفحة وشايف المؤقت، فإشعار نظام فوقها مزعج، وده أسرع طريق إنه يقفل الإشعارات للموقع كله.` },
+          ],
+          ref: [
+            { t: "MDN: Using the Notifications API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API/Using_the_Notifications_API" },
+            { t: "MDN: Notification.requestPermission()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Notification/requestPermission_static" },
+            { t: "MDN: Permissions.query()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Permissions/query" },
+            { t: "MDN: PermissionStatus change event", url: "https://developer.mozilla.org/en-US/docs/Web/API/PermissionStatus/change_event" },
+          ],
+          flag: "script",
+          deep: {
+            why: R`الإشعار أقوى طريقة توصل بيها لليوزر وهو مش بيبص على موقعك، وعشان كده أكتر حاجة بتتساء استخدامها. المتصفحات بقت بتخبّي السؤال لو المواقع بتسأل كتير من غير سبب (Chrome بيعمله «quiet UI» جنب العنوان)، واليوزر اللي داس Block مش هيرجع. فالسؤال في الوقت الغلط ممكن يخسّرك الإذن للأبد.`,
+            how: R`[[Notification.permission]] قيمة متزامنة بتقرا الحالة دلوقتي. و [[requestPermission()]] بترجّع Promise: لو الحالة [["default"]] بتطلّع السؤال، ولو [["granted"]] أو [["denied"]] بترجّع على طول من غير سؤال (جرّبتها: في [["denied"]] الكود وقف عند الشرط قبل ما يسأل أصلًا).
+
+[[new Notification(title, options)]] بيطلّع الإشعار على طول. أهم الـ options: [[body]] النص، و [[icon]]، و [[tag]] (إشعار جديد بنفس الـ tag بيبدّل القديم بدل ما يتكوّموا)، و [[data]] أي داتا تحتاجها في الضغطة.
+
+[[navigator.permissions.query]] بتاخد [[{ name }]] من لستة أسامي ثابتة ([["notifications"]] و [["geolocation"]] و [["camera"]] و [["clipboard-read"]]...)، واسم غلط بيرمي [[TypeError]]، وبترجّع [[PermissionStatus]] فيه [[state]] و [[onchange]].
+
+الإشعار ده بيشتغل والصفحة مفتوحة بس. عشان يوصل والموقع مقفول محتاج Push API و service worker (درس «push و Background Sync» في وحدة PWA)، وهناك بيبقى [[registration.showNotification]] مش [[new Notification]].`,
+            when: R`حاجة اليوزر طلبها بنفسه ومهمة له وهو مش في التاب: رسالة جديدة في شات، أو طلب اتوصّل، أو مؤقت خلص، أو build خلص. ومش للإعلانات ولا «ارجعلنا وحشتنا». ولو اليوزر قدام الصفحة، رسالة جوه الصفحة أحسن من إشعار نظام.`,
+            mistakes: R`[[requestPermission()]] أول ما الصفحة تفتح، فاليوزر يرفض من غير ما يفهم. وتفتكر إنك تقدر تسأل تاني بعد [["denied"]]: مش هيظهر حاجة. وتجرّب من الموبايل على [[http://192.168.1.5:3000]] فالـ API مش موجود، لأنه محتاج secure context: HTTPS أو localhost (و Chrome بيعتبر [[file://]] secure كمان: جرّبتها و [[isSecureContext]] طلع [[true]]). و [[new Notification]] على Chrome أندرويد بيرمي [[TypeError: Illegal constructor]] (من الـ docs): هناك لازم [[registration.showNotification]] من service worker. ونسيان الـ [[tag]] فاليوزر يلاقي ٢٠ إشعار لنفس الحاجة.`
+          },
+          teach: R`## الفكرة في سطر
+
+قبل ما تبعت إشعار لازم تعرف الإذن حالته إيه، ولو لسه مسألتش، تسأل بعد ضغطة زرار. المثال بيعمل التلاتة: يقرا الحالة، ويسمع لو اتغيّرت، ويسأل ويبعت إشعار لما اليوزر يدوس.
+
+جرّبت المثال في Chrome 156 headless (عن طريق playwright-core، من [[http://127.0.0.1]]) في ٣ حالات: إذن لسه متسألش وبعدين اتوافق عليه والصفحة مفتوحة، وإذن مرفوض، وإذن موافق عليه من الأول. الـ playwright بيوافق أو بيرفض مكان اليوزر، فشكل نافذة السؤال نفسها والإشعار على الشاشة **من الـ docs** مش من التجربة.
+
+---
+
+## ١. الحالة من غير ما تسأل: [[navigator.permissions.query]]
+
+~~~text app.js
+const status = await navigator.permissions.query({ name: "notifications" });
+console.log("الحالة:", status.state, "| Notification.permission:", Notification.permission);
+status.onchange = () => console.log("اتغيرت لـ", status.state);
+~~~
+
+- [[navigator.permissions]]: الـ Permissions API. فيها دالة واحدة مهمة: [[query]].
+- [[{ name: "notifications" }]]: اسم الإذن. الأسامي ثابتة، وأي اسم غلط بيرمي:
+
+~~~text الناتج (Chrome، name: "banana")
+TypeError: Failed to execute 'query' on 'Permissions': Failed to read the 'name' property from 'PermissionDescriptor': The provided value 'banana' is not a valid enum value of type PermissionName.
+~~~
+
+- [[await]]: [[query]] بترجّع Promise. و [[await]] برّه أي دالة محتاج [[<script type="module">]].
+- [[status.state]]: [["granted"]] أو [["denied"]] أو [["prompt"]].
+- [[status.onchange]]: بيتنادى لو الحالة اتغيرت والصفحة مفتوحة (اليوزر غيّرها من الإعدادات، أو وافق على السؤال).
+
+جرّبت أسامي تانية في نفس الصفحة:
+
+~~~text الناتج (Chrome 156، إذن مااتسألش)
+notifications prompt
+geolocation prompt
+camera prompt
+clipboard-read prompt
+push NotSupportedError: Push Permission without userVisibleOnly:true isn't supported yet.
+~~~
+
+الـ [["push"]] محتاج [[{ name: "push", userVisibleOnly: true }]]، ودي بتاعة درس الـ push في وحدة PWA.
+
+### [["prompt"]] و [["default"]]: نفس المعنى باسمين
+
+~~~text الناتج
+الحالة: prompt | Notification.permission: default
+~~~
+
+الاتنين معناهم «لسه مسألناش». الـ Permissions API بتسمّيها [["prompt"]]، و [[Notification.permission]] (الأقدم) بتسمّيها [["default"]]. والتانيين ([["granted"]] و [["denied"]]) نفس الاسم في الاتنين.
+
+## ٢. الزرار: الفحص قبل السؤال
+
+~~~text app.js
+btn.addEventListener("click", async () => {
+  if (!("Notification" in window)) return console.log("المتصفح مبيدعمش");
+  if (Notification.permission === "denied") return console.log("اترفض قبل كده: من إعدادات الموقع بس");
+~~~
+
+- [[async]] على الـ listener عشان نقدر نستخدم [[await]] جواه.
+- [[("Notification" in window)]]: هل الـ API موجود أصلًا؟ مش موجود على Safari على iPhone غير لو الموقع متسطّب كـ PWA على الشاشة الرئيسية (من الـ docs)، ومش موجود لو الصفحة مش secure context.
+- [[return console.log(...)]]: اطبع واخرج من الدالة في سطر واحد.
+- [[=== "denied"]]: اليوزر رفض قبل كده. مفيش أي كود يقدر يسأله تاني، فبدل ما تنادي [[requestPermission]] على الفاضي، قوله يغيّرها من الإعدادات.
+
+## ٣. السؤال
+
+~~~text app.js
+  const result = await Notification.requestPermission();
+  console.log("الرد:", result);
+  if (result !== "granted") return;
+~~~
+
+- [[requestPermission()]]: لو الحالة [["default"]] بتطلّع نافذة المتصفح «Allow / Block». بترجّع Promise بالرد.
+- لو اليوزر قفل النافذة من غير ما يختار، الرد [["default"]] وتقدر تسأل تاني بعدين.
+- [[!== "granted"]]: أي حاجة غير الموافقة، خلاص.
+
+ليه السؤال جوه الـ click؟ Firefox و Safari مبيطلّعوش السؤال أصلًا غير بعد ضغطة من اليوزر (user gesture)، و Chrome بيخبّي السؤال في أيقونة صغيرة جنب العنوان (اسمها quiet UI) للمواقع اللي الناس بترفضها كتير (من الـ docs). فالسؤال بعد ضغطة بيشتغل في كله وبيجيب موافقات أكتر.
+
+## ٤. الإشعار نفسه
+
+~~~text app.js
+  const n = new Notification("طلب جديد", { body: "رقم 42", tag: "order-42", icon: "/icon-192.png" });
+  n.onshow = () => console.log("ظهر:", n.title, n.body, n.tag);
+  n.onclick = () => { window.focus(); n.close(); };
+~~~
+
+| الـ option | معناه |
+|---|---|
+| أول argument ([["طلب جديد"]]) | العنوان، بيظهر بخط تقيل |
+| [[body]] | السطر اللي تحت العنوان |
+| [[tag]] | إشعار جديد بنفس الـ tag بيبدّل القديم بدل ما يتكوّموا جنب بعض |
+| [[icon]] | صورة صغيرة جنب الكلام (لو مش موجودة الإشعار بيظهر من غيرها) |
+
+- [[onshow]]: الإشعار ظهر فعلًا.
+- [[onclick]]: اليوزر داس عليه. [[window.focus()]] بيجيب التاب قدام، و [[n.close()]] بيشيله من مركز الإشعارات.
+
+## ٥. اللي حصل لما شغّلته
+
+~~~text الناتج (إذن مااتسألش، وبعدين اتوافق عليه والصفحة مفتوحة، وبعدين ضغطة)
+الحالة: prompt | Notification.permission: default
+اتغيرت لـ granted
+الرد: granted
+ظهر: طلب جديد رقم 42 order-42
+~~~
+
+~~~text الناتج (الإذن مرفوض قبل كده)
+الحالة: denied | Notification.permission: denied
+اترفض قبل كده: من إعدادات الموقع بس
+~~~
+
+~~~text الناتج (موافق عليه من الأول)
+الحالة: granted | Notification.permission: granted
+الرد: granted
+ظهر: طلب جديد رقم 42 order-42
+~~~
+
+- في الأولى [[onchange]] اشتغل لوحده أول ما الإذن اتغير، قبل ما ندوس الزرار.
+- في التالتة [[requestPermission]] رجّعت [["granted"]] على طول من غير سؤال.
+
+## ٦. الإشعار والموقع مقفول؟
+
+[[new Notification]] بيشتغل بس والصفحة مفتوحة (في أي تاب). عشان إشعار يوصل والمتصفح مش فاتح موقعك، محتاج service worker و Push API، وهناك بتستخدم [[registration.showNotification(...)]] من جوه الـ service worker. ده درس «push و Background Sync» في وحدة PWA. وعلى Chrome أندرويد، [[new Notification]] من الصفحة نفسها بيرمي [[TypeError: Illegal constructor]] وبيقولك تستخدم [[showNotification]] (من الـ docs).
+
+---
+
+## الخلاصة
+
+| الحاجة | بترجّع | بتسأل اليوزر؟ |
+|---|---|---|
+| [[Notification.permission]] | [["default"]] أو [["granted"]] أو [["denied"]] على طول | لأ، بتقرا الحالة بس |
+| [[navigator.permissions.query({ name })]] | Promise بـ [[state]] و [[onchange]] | لأ، وبتشتغل لأي إذن |
+| [[Notification.requestPermission()]] | Promise بالرد | آه، لو الحالة لسه [["default"]] |
+| [[new Notification(title, opts)]] | الإشعار، ومعاه [[onclick]] و [[close()]] | لأ، ولازم الإذن [["granted"]] |
+
+- اسأل بعد ضغطة، مش أول ما الصفحة تفتح.
+- [["denied"]] نهائي من ناحية الكود: وجّه اليوزر للإعدادات.
+- محتاج HTTPS أو localhost، و [[tag]] عشان الإشعارات متتكوّمش.`,
+          lines: [
+            R`الزرار اللي اليوزر هيدوس عليه عشان يفعّل الإشعارات. السؤال لازم يطلع من ضغطة عليه، مش لوحده.`,
+            R`بنسأل الـ Permissions API عن حالة إذن الإشعارات **من غير** ما نطلّع أي سؤال لليوزر. [[await]] هنا برّه أي دالة، فالـ script لازم يكون [[type="module"]].`,
+            R`بنطبع الحالة بالطريقتين: [[status.state]] بتقول [["prompt"]] لو لسه مسألناش، و [[Notification.permission]] بتقول نفس المعنى بكلمة [["default"]].`,
+            R`[[onchange]] بيتنادى لو الإذن اتغيّر والصفحة مفتوحة، سواء اليوزر وافق على السؤال أو غيّرها من إعدادات الموقع. فتقدر تحدّث شكل الزرار لوحده.`,
+            R`بنسمع للضغطة، و [[async]] عشان هنستنى رد السؤال بـ [[await]] جوه.`,
+            R`لو المتصفح مفيهوش [[Notification]] أصلًا (Safari على iPhone من غير ما الموقع يتسطّب، أو صفحة مش HTTPS) بنطبع رسالة ونخرج بدل ما الكود يقع.`,
+            R`لو اليوزر رفض قبل كده، مفيش كود يقدر يسأله تاني: [[requestPermission]] هترجّع [["denied"]] من غير ما يظهر حاجة. فبنقوله يغيّرها من الإعدادات ونخرج.`,
+            R`بنطلّع سؤال المتصفح «Allow / Block» ونستنى الرد. لو الحالة كانت [["granted"]] خلاص بترجّع على طول من غير سؤال.`,
+            R`بنطبع الرد: [["granted"]] أو [["denied"]] أو [["default"]] لو اليوزر قفل النافذة من غير ما يختار.`,
+            R`أي رد غير الموافقة، بنخرج ومبنحاولش نبعت إشعار (كان هيترمي أو ميظهرش).`,
+            R`بنطلّع الإشعار: العنوان، و [[body]] السطر اللي تحته، و [[tag]] اللي بيخلّي إشعار تاني بنفس الاسم يبدّل ده بدل ما يتكوّموا، و [[icon]] صورة صغيرة.`,
+            R`[[onshow]] بيتنادى لما الإشعار يظهر فعلًا، وبنطبع العنوان والنص والـ tag عشان نتأكد إنهم وصلوا صح.`,
+            R`لما اليوزر يدوس على الإشعار: [[window.focus()]] بيجيب التاب بتاعنا قدام، و [[n.close()]] بيشيل الإشعار من مركز الإشعارات.`,
+            R`نهاية الـ click listener.`,
+          ],
+          sol: R`اتجرّب في Chrome 156 headless من [[http://127.0.0.1]] (playwright بيوافق ويرفض مكانك): أول تحميل بيطبع [[الحالة: prompt | Notification.permission: default]]، ولما الإذن اتوافق عليه والصفحة مفتوحة [[onchange]] طبع [[اتغيرت لـ granted]]، والضغطة طبعت [[الرد: granted]] وبعدها [[ظهر: طلب جديد رقم 42 order-42]]. ولما الإذن مرفوض الضغطة طبعت [[اترفض قبل كده: من إعدادات الموقع بس]] ومسألتش.
+
+شكل نافذة السؤال والإشعار على الشاشة، وإن إشعارين بنفس الـ [[tag]] بيبقوا واحد في مركز الإشعارات، من الـ docs (MDN: Notification و Notification.tag)، لأن الـ headless مبيرسمش إشعارات حقيقية. ولو فتحتها من الموبايل على IP الجهاز بـ [[http]]، [[Notification]] مش هيبقى موجود أصلًا لأن الصفحة مش secure context، فشرط [["Notification" in window]] هو اللي هيشتغل.`
         }
       ]
     }

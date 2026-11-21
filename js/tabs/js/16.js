@@ -1,670 +1,437 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "الأخطاء",
+      t: "modules",
       l: 2,
-      n: "try و catch و finally، وأنواع الـ errors، و errors مخصصة بـ cause و AggregateError، والأخطاء العامة اللي محدش مسكها",
+      n: "import و export، والفرق بين ESM و CommonJS، والـ dynamic import",
       pre: [
-        { to: "js/اقرا الـ error", why: R`هنا بنمسك الـ errors ونرميها بنفسنا، فلازم تعرف تقرا الاسم والرسالة والـ stack الأول` },
-        { to: "js/class", why: R`الـ custom errors كلها [[class]] و [[constructor]]` },
-        { to: "js/extends و super", why: R`[[class AppError extends Error]] و [[super(message, { cause })]] هما أساس درس custom errors` },
-        { to: "js/import و export", why: R`المشاريع بتحط عيلة الـ errors في ملف [[errors.js]] وتستوردها في كل حتة` },
+        { to: "js/function و arrow", why: R`كل ملف هنا بيصدّر دوال، وأغلب الـ exports arrow functions أو function declarations` },
+        { to: "js/object literal", why: R`الـ module namespace والـ [[export default { ... }]] objects، والـ config والـ plugins كلها objects` },
+        { to: "js/object destructuring و spread", why: R`شكل [[import { a, b as c }]] و [[const { default: x } = await import()]] هو نفس فك الـ objects` },
       ],
       projects: [
-        { lvl: 'صغير', dir: "signup-validation", t: R`فاحص فورم بيقول كل الغلطات مرة واحدة`, what: R`[[validateSignup(data)]] بتفحص [[name]] و [[email]] و [[age]]، ولو فيه غلط واحد أو أكتر بترمي [[ValidationError]] واحد فيه [[fields]] (لكل حقل رسالته بالعربي)، ولو كله سليم بترجّع object نضيف (الاسم من غير مسافات في الأطراف، والسن رقم). وفورم في صفحة بيعرض كل رسالة تحت حقلها. من درسي الوحدة.`, done: R`[[validateSignup({ name: " ", email: "x", age: "abc" })]] بترمي error واحد و [[Object.keys(e.fields).length]] بيدّي 3، و [[e instanceof ValidationError]] بيدّي true. والبيانات السليمة بترجّع [[age]] كرقم مش string، والفورم بيمسح الرسالة لما الحقل يتصلّح.`, sol: R`## الشكل النهائي
+        { lvl: 'صغير', t: R`مكتبة utils بباب واحد`, what: R`فولدر [[utils]] فيه ٣ ملفات (نصوص، وأرقام، ومصفوفات)، كل واحد named exports بس، وملف [[index.js]] بيعمل [[export * from]] للتلاتة، و [[main.js]] بيستورد من مكان واحد. من درس import و export.`, done: R`[[main.js]] فيه سطر import واحد من [["./utils/index.js"]] وبيستخدم ٥ دوال على الأقل، ومفيش [[export default]] خالص. ولو غيّرت اسم دالة في ملفها، البرنامج بيقع بـ SyntaxError فيه اسم الـ export الناقص بالظبط.`, sol: R`## الشكل النهائي
 
-~~~view 470 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تسجيل حساب</title>
-<style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; max-width: 420px; }
-  label { display: block; margin-top: 12px; font-weight: 600; }
-  input { font: inherit; width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #888; border-radius: 6px; }
-  input[aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
-  .err { color: #b91c1c; font-size: 14px; min-height: 1.4em; margin: 2px 0 0; }
-  button { font: inherit; margin-top: 16px; padding: 8px 20px; }
-  #result { color: #15803d; white-space: pre-wrap; }
-</style>
-</head>
-<body>
-<form id="signup" novalidate>
-  <label for="name">الاسم</label>
-  <input id="name" name="name" aria-describedby="name-err" autocomplete="name">
-  <p class="err" id="name-err"></p>
-
-  <label for="email">الإيميل</label>
-  <input id="email" name="email" aria-describedby="email-err" autocomplete="email">
-  <p class="err" id="email-err"></p>
-
-  <label for="age">السن</label>
-  <input id="age" name="age" aria-describedby="age-err" inputmode="numeric">
-  <p class="err" id="age-err"></p>
-
-  <button>سجّل</button>
-</form>
-<p id="result"></p>
-
-<script>
-  class ValidationError extends Error {
-    constructor(fields) {
-      super("البيانات فيها " + Object.keys(fields).length + " غلط");
-      this.name = "ValidationError";
-      this.fields = fields;
-    }
-  }
-
-  function validateSignup(data) {
-    const fields = {};
-    const name = String(data.name ?? "").trim();
-    const email = String(data.email ?? "").trim();
-    const ageText = String(data.age ?? "").trim();
-    const age = Number(ageText);
-
-    if (name.length < 2) fields.name = "اكتب اسمك (حرفين على الأقل)";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) fields.email = "الإيميل شكله غلط، زي sara@mail.com";
-    if (ageText === "" || !Number.isInteger(age)) fields.age = "السن لازم يبقى رقم صحيح";
-    else if (age < 13 || age > 120) fields.age = "السن لازم يبقى من 13 لـ 120";
-
-    if (Object.keys(fields).length > 0) throw new ValidationError(fields);
-    return { name, email: email.toLowerCase(), age };
-  }
-
-  const form = document.querySelector("#signup");
-  const result = document.querySelector("#result");
-
-  function showErrors(fields) {
-    for (const input of form.querySelectorAll("input")) {
-      const msg = fields[input.name] ?? "";
-      document.querySelector("#" + input.name + "-err").textContent = msg;
-      input.setAttribute("aria-invalid", msg ? "true" : "false");
-    }
-  }
-
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    result.textContent = "";
-    try {
-      const clean = validateSignup(Object.fromEntries(new FormData(form)));
-      showErrors({});
-      result.textContent = "تمام: " + JSON.stringify(clean);
-    } catch (err) {
-      if (!(err instanceof ValidationError)) throw err;
-      showErrors(err.fields);
-    }
-  });
-
-  // الحقل اللي عليه غلط: أول ما يتصلّح الرسالة بتاعته تتمسح
-  form.addEventListener("input", (e) => {
-    const input = e.target;
-    if (input.getAttribute("aria-invalid") !== "true") return;
-    try {
-      validateSignup(Object.fromEntries(new FormData(form)));
-      showErrors({});
-    } catch (err) {
-      if (!(err instanceof ValidationError)) throw err;
-      if (!err.fields[input.name]) {
-        document.querySelector("#" + input.name + "-err").textContent = "";
-        input.setAttribute("aria-invalid", "false");
-      }
-    }
-  });
-</script>
-</body>
-</html>
+~~~text الناتج: node main.js (Node 24)
+summer-sale-50-off
+كوباية سيراميك…
+245.50 جنيه
+5 1
+[ [ 'a', 'b' ], [ 'c', 'd' ], [ 'e' ] ]
 ~~~
 
 ## هتشوف إيه
 
-فورم فيه ٣ حقول. لو دوست «سجّل» والبيانات فيها أكتر من غلط، **كل** الرسايل بتظهر مرة واحدة، كل واحدة تحت حقلها والحقل بيتلوّن أحمر. وأول ما تصلّح حقل، رسالته بتختفي وانت بتكتب من غير ما تدوس تاني. والبيانات السليمة بتطلع object نضيف: الاسم من غير مسافات في الأطراف، والإيميل حروف صغيرة، والسن **رقم**.
+٦ دوال من ٣ ملفات مختلفة، و [[main.js]] بيستوردهم كلهم في سطر import **واحد** من [[./utils/index.js]]. ولو حد غيّر اسم دالة في ملفها، البرنامج بيقع قبل ما يطبع أي حاجة، والرسالة فيها الاسم الناقص بالظبط.
+
+## شجرة الملفات
+
+~~~text
+utils-barrel/
+  package.json        { "type": "module" }
+  main.js             بيستخدم الدوال
+  utils/
+    index.js          الباب الواحد (barrel)
+    strings.js
+    numbers.js
+    arrays.js
+~~~
 
 ## الكود
 
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تسجيل حساب</title>
-<style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; max-width: 420px; }
-  label { display: block; margin-top: 12px; font-weight: 600; }
-  input { font: inherit; width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #888; border-radius: 6px; }
-  input[aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
-  .err { color: #b91c1c; font-size: 14px; min-height: 1.4em; margin: 2px 0 0; }
-  button { font: inherit; margin-top: 16px; padding: 8px 20px; }
-  #result { color: #15803d; white-space: pre-wrap; }
-</style>
-</head>
-<body>
-<form id="signup" novalidate>
-  <label for="name">الاسم</label>
-  <input id="name" name="name" aria-describedby="name-err" autocomplete="name">
-  <p class="err" id="name-err"></p>
+~~~js utils/strings.js
+export function slugify(text) {
+  return text.trim().toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
+}
 
-  <label for="email">الإيميل</label>
-  <input id="email" name="email" aria-describedby="email-err" autocomplete="email">
-  <p class="err" id="email-err"></p>
+export function truncate(text, max) {
+  return text.length <= max ? text : text.slice(0, max - 1) + "…";
+}
+~~~
 
-  <label for="age">السن</label>
-  <input id="age" name="age" aria-describedby="age-err" inputmode="numeric">
-  <p class="err" id="age-err"></p>
+~~~js utils/numbers.js
+export function formatPrice(n, currency = "جنيه") {
+  return n.toFixed(2) + " " + currency;
+}
 
-  <button>سجّل</button>
-</form>
-<p id="result"></p>
+export function clamp(n, min, max) {
+  return Math.min(Math.max(n, min), max);
+}
+~~~
 
-<script>
-  class ValidationError extends Error {
-    constructor(fields) {
-      super("البيانات فيها " + Object.keys(fields).length + " غلط");
-      this.name = "ValidationError";
-      this.fields = fields;
-    }
-  }
+~~~js utils/arrays.js
+export function sum(numbers) {
+  return numbers.reduce((total, n) => total + n, 0);
+}
 
-  function validateSignup(data) {
-    const fields = {};
-    const name = String(data.name ?? "").trim();
-    const email = String(data.email ?? "").trim();
-    const ageText = String(data.age ?? "").trim();
-    const age = Number(ageText);
+export function chunk(items, size) {
+  const out = [];
+  for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
+  return out;
+}
+~~~
 
-    if (name.length < 2) fields.name = "اكتب اسمك (حرفين على الأقل)";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) fields.email = "الإيميل شكله غلط، زي sara@mail.com";
-    if (ageText === "" || !Number.isInteger(age)) fields.age = "السن لازم يبقى رقم صحيح";
-    else if (age < 13 || age > 120) fields.age = "السن لازم يبقى من 13 لـ 120";
+~~~js utils/index.js
+export * from "./strings.js";
+export * from "./numbers.js";
+export * from "./arrays.js";
+~~~
 
-    if (Object.keys(fields).length > 0) throw new ValidationError(fields);
-    return { name, email: email.toLowerCase(), age };
-  }
+~~~js main.js
+import { slugify, truncate, formatPrice, clamp, sum, chunk } from "./utils/index.js";
 
-  const form = document.querySelector("#signup");
-  const result = document.querySelector("#result");
+const prices = [120, 45.5, 80];
 
-  function showErrors(fields) {
-    for (const input of form.querySelectorAll("input")) {
-      const msg = fields[input.name] ?? "";
-      document.querySelector("#" + input.name + "-err").textContent = msg;
-      input.setAttribute("aria-invalid", msg ? "true" : "false");
-    }
-  }
-
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    result.textContent = "";
-    try {
-      const clean = validateSignup(Object.fromEntries(new FormData(form)));
-      showErrors({});
-      result.textContent = "تمام: " + JSON.stringify(clean);
-    } catch (err) {
-      if (!(err instanceof ValidationError)) throw err;
-      showErrors(err.fields);
-    }
-  });
-
-  // الحقل اللي عليه غلط: أول ما يتصلّح الرسالة بتاعته تتمسح
-  form.addEventListener("input", (e) => {
-    const input = e.target;
-    if (input.getAttribute("aria-invalid") !== "true") return;
-    try {
-      validateSignup(Object.fromEntries(new FormData(form)));
-      showErrors({});
-    } catch (err) {
-      if (!(err instanceof ValidationError)) throw err;
-      if (!err.fields[input.name]) {
-        document.querySelector("#" + input.name + "-err").textContent = "";
-        input.setAttribute("aria-invalid", "false");
-      }
-    }
-  });
-</script>
-</body>
-</html>
+console.log(slugify("  Summer Sale: 50% OFF! "));
+console.log(truncate("كوباية سيراميك مرسوم عليها قطة", 15));
+console.log(formatPrice(sum(prices)));
+console.log(clamp(7, 1, 5), clamp(-3, 1, 5));
+console.log(chunk(["a", "b", "c", "d", "e"], 2));
 ~~~
 
 ## كل حتة مهمة بتعمل إيه
 
-- **[[class ValidationError extends Error]]:** بيشيل [[fields]]: object مفتاحه اسم الحقل وقيمته الرسالة. كده error **واحد** بيحمل كل الغلطات، بدل ما الدالة ترمي عند أول غلط واليوزر يصلّح واحدة واحدة.
-- **[[validateSignup]] بتجمع وبعدين ترمي:** كل فحص بيضيف لـ [[fields]] ومبيرميش. في الآخر: لو [[Object.keys(fields).length > 0]] ترمي مرة واحدة، غير كده ترجّع البيانات النضيفة.
-- **[[String(data.name ?? "")]]:** لو الحقل مش موجود خالص ([[undefined]]) يبقى نص فاضي بدل ما [[.trim()]] يقع.
-- **السن:** [[Number(ageText)]] بيحوّل النص، و [[Number.isInteger]] بترفض [["abc"]] ([[NaN]]) و [["2.5"]]. وفحص النص الفاضي لوحده لأن [[Number("")]] بـ [[0]] مش NaN.
-- **[[showErrors(fields)]]:** بتلف على كل الـ inputs وتكتب رسالة كل حقل أو تمسحها، و [[aria-invalid]] بيلوّن الحقل من الـ CSS ([[input[aria-invalid="true"]]]) وبيقول لقارئ الشاشة إن الحقل فيه غلط. و [[aria-describedby]] بيربط الرسالة بالحقل.
-- **[[if (!(err instanceof ValidationError)) throw err]]:** الـ catch بيتعامل مع غلطات الفورم بس. لو فيه باج تاني (اسم دالة غلط مثلًا) بيترمي ويظهر في Console بدل ما يتبلع.
-- **event [[input]] على الفورم كله:** listener واحد (event delegation). لو الحقل اللي بيتكتب فيه عليه غلط، بنعمل validate تاني، ولو الحقل ده بالذات مبقاش في [[err.fields]] بنمسح رسالته بس، ونسيب رسايل الحقول التانية زي ما هي.
+- **كل ملف named exports بس:** كل دالة قدامها [[export]]، ومفيش [[export default]] في أي ملف. اتأكدنا بـ [[grep -rc "export default" utils main.js]]: صفر في كل الملفات. الـ named بتخلّي الاسم واحد في المشروع كله، فالـ rename في VS Code والبحث بيلاقوا كل الأماكن.
+- **[[utils/index.js]]:** ٣ سطور [[export * from]]، كل سطر بيعدّي exports ملف من غير ما يستخدمهم. الملف ده مفيهوش ولا دالة.
+- **[[slugify]]:** [[/[^\p{L}\p{N}]+/gu]] معناها «أي حاجة مش حرف ([[\p{L}]] في أي لغة) ولا رقم ([[\p{N}]])، مرة أو أكتر»، وبتتبدّل بشرطة. الـ [[u]] لازمة عشان [[\p{...}]] تشتغل. وبعدين [[/^-|-$/g]] بتشيل الشرطة لو جت في الأول أو الآخر (من [["!"]] اللي في الآخر).
+- **[[truncate]]:** لو النص أطول من [[max]]، ياخد [[max - 1]] حرف ويحط [["…"]] (حرف واحد)، فالطول النهائي بالظبط [[max]].
+- **[[chunk]]:** [[for]] بيمشي بخطوة [[size]]، و [[slice(i, i + size)]] بتقطع من غير ما تعدّل الأصل. الآخر بياخد اللي فاضل (هنا [["e"]] لوحده).
 
-## اتقاس في Chrome
+## اسم اتغيّر في ملفه
 
-ناديت الدالة مباشرة، وبعدين ملّيت الفورم زي اليوزر:
+عملنا نسخة من الفولدر وغيّرنا [[export function slugify]] لـ [[export function makeSlug]] في [[strings.js]] بس:
 
-~~~text الناتج (Chrome headless)
-keys: 3 | instanceof: true | البيانات فيها 3 غلط
-fields: {"name":"اكتب اسمك (حرفين على الأقل)","email":"الإيميل شكله غلط، زي sara@mail.com","age":"السن لازم يبقى رقم صحيح"}
-سليم: {"name":"Sara Ali","email":"sara@mail.com","age":27} | typeof age: number
-سن 7: {"age":"السن لازم يبقى من 13 لـ 120"}
-بعد submit غلط: name=«اكتب اسمك (حرفين على الأقل)» email=«الإيميل شكله غلط، زي sara@mail.com» age=«السن لازم يبقى رقم صحيح»
-بعد تصليح الإيميل بس: name=«اكتب اسمك (حرفين على الأقل)» email=«» age=«السن لازم يبقى رقم صحيح»
-بعد التصليح كله: name=«» email=«» age=«»
-#result: تمام: {"name":"Sara","email":"sara@mail.com","age":27}
-[chrome] 157
+~~~text الناتج (السطور ٢ لـ ٤ من الـ error)
+import { slugify, truncate, formatPrice, clamp, sum, chunk } from "./utils/index.js";
+         ^^^^^^^
+SyntaxError: The requested module './utils/index.js' does not provide an export named 'slugify'
 ~~~
 
-- [[Object.keys(e.fields).length]] بـ 3 و [[instanceof]] بـ [[true]] زي المطلوب.
-- [[typeof age]] بـ [["number"]]: [[27]] مش [["27"]].
-- بعد تصليح الإيميل بس، رسالته اختفت والاتنين التانيين فضلوا.
+ولا سطر من الناتج اتطبع: الـ imports بتتربط قبل التنفيذ، فالغلط بيبان فورًا وباسم الـ export الناقص، مش [[undefined is not a function]] بعد ساعة شغل.
 
-## الغلطة الشائعة
+## الغلطات اللي ممكن تقابلها
 
-ترمي من جوه كل [[if]]: [[if (!name) throw new ValidationError(...)]]. كده اليوزر بيشوف أول غلط بس، يصلّحه، يدوس، يلاقي التاني. اجمع الأول وارمي مرة واحدة في الآخر.` },
-        { lvl: 'صغير', t: R`عيلة errors لتطبيقك`, what: R`ملف [[errors.js]] فيه [[AppError]] و [[NotFoundError]] و [[ValidationError]] و [[AuthError]]، كل واحد بـ status، و [[toJSON()]] بترجّع [[name]] و [[message]] و [[status]] من غير stack. من درس custom errors و cause ودرس import و export.`, done: R`[[JSON.stringify(new NotFoundError("المنتج"))]] فيه [["المنتج مش موجود"]] و [[404]] (ومن غير toJSON الرسالة مبتظهرش خالص: جرّب). و [[instanceof AppError]] بيدّي true للأربعة، و [[err.name]] صح لكل واحد من غير ما تكتبه بإيدك في كل class.`, sol: R`## الشكل النهائي
+- **نسيت ملف في [[index.js]]:** لو نسيت [[export * from "./arrays.js"]]، نفس الـ SyntaxError بيطلع بـ [['sum']]. أول حاجة تبص عليها هي الـ barrel.
+- **دالتين بنفس الاسم في ملفين:** لو [[strings.js]] و [[arrays.js]] الاتنين فيهم [[export function format]]، الاسم بيختفي من [[index.js]] (الـ namespace بتاعه طلع [[[]]])، والـ import بيقع. جرّبناها:
 
-~~~text الناتج: node main.js (Node 24)
-NotFoundError    true {"name":"NotFoundError","message":"المنتج مش موجود","status":404}
-ValidationError  true {"name":"ValidationError","message":"البيانات فيها غلط","status":400,"fields":{"email":"الإيميل ناقص"}}
-AuthError        true {"name":"AuthError","message":"لازم تسجّل دخول الأول","status":401}
-AppError         true {"name":"AppError","message":"حاجة غريبة حصلت","status":500}
-Error عادي:       {"status":404}
-NotFoundError: الطلب مش موجود
-stack موجود بس مش في الـ JSON: string false
+~~~text الناتج (import { format } من barrel فيه export * لملفين فيهم format)
+SyntaxError: The requested module './index.js' contains conflicting star exports for name 'format'
+[]
+~~~
+
+الحل: اسم مختلف، أو [[export { format as formatList } from "./arrays.js"]].` },
+        { lvl: 'صغير', t: R`إعدادات حسب البيئة`, what: R`[[config/dev.js]] و [[config/prod.js]]، كل واحد [[export default]] فيه [[port]] و [[apiUrl]]، و [[main.js]] بيعمل [[await import()]] للملف حسب [[process.env.APP_ENV]] (والافتراضي dev). من درس dynamic import().`, done: R`[[APP_ENV=prod node main.js]] (في PowerShell [[$env:APP_ENV = "prod"]] الأول) بيطبع إعدادات prod، ومن غير المتغير بيطبع dev، و [[APP_ENV=xyz]] بيطبع رسالة فيها البيئات المتاحة ويخرج بكود ١ بدل stack trace طويل.`, sol: R`## الشكل النهائي
+
+~~~text الناتج: Git Bash (Node 24)
+$ node main.js
+[dev] port=3000 apiUrl=http://localhost:4000
+$ APP_ENV=prod node main.js
+[prod] port=8080 apiUrl=https://api.shop.example
+$ APP_ENV=xyz node main.js; echo "exit code: $?"
+البيئة "xyz" مش معروفة. المتاح: dev، prod
+exit code: 1
+~~~
+
+وفي PowerShell المتغير بيتعمل الأول:
+
+~~~text الناتج: PowerShell 7
+PS> $env:APP_ENV = "prod"; node main.js
+[prod] port=8080 apiUrl=https://api.shop.example
 ~~~
 
 ## هتشوف إيه
 
-٤ أنواع errors، كل واحد [[instanceof AppError]] بـ [[true]]، واسمه صح لوحده، والـ JSON بتاعه فيه [[name]] و [[message]] و [[status]] (و [[fields]] للـ ValidationError) من غير stack. والـ [[Error]] العادي بنفس الخصايص طلع [[{"status":404}]] بس: الرسالة اختفت.
+نفس البرنامج بيطبع إعدادات مختلفة حسب متغير البيئة [[APP_ENV]]، والافتراضي dev. وبيئة مش موجودة بتطلّع سطر واحد مفهوم فيه المتاح، وكود خروج ١، بدل stack trace طويل.
 
 ## الكود
 
-~~~js errors.js
-export class AppError extends Error {
-  status = 500;
+~~~js config/dev.js
+export default {
+  port: 3000,
+  apiUrl: "http://localhost:4000",
+};
+~~~
 
-  constructor(message, options) {
-    super(message, options);
-    this.name = new.target.name;
-  }
-
-  toJSON() {
-    return { name: this.name, message: this.message, status: this.status };
-  }
-}
-
-export class NotFoundError extends AppError {
-  status = 404;
-
-  constructor(what, options) {
-    super(what + " مش موجود", options);
-  }
-}
-
-export class ValidationError extends AppError {
-  status = 400;
-
-  constructor(fields, options) {
-    super("البيانات فيها غلط", options);
-    this.fields = fields;
-  }
-
-  toJSON() {
-    return { ...super.toJSON(), fields: this.fields };
-  }
-}
-
-export class AuthError extends AppError {
-  status = 401;
-
-  constructor(message = "لازم تسجّل دخول الأول", options) {
-    super(message, options);
-  }
-}
+~~~js config/prod.js
+export default {
+  port: 8080,
+  apiUrl: "https://api.shop.example",
+};
 ~~~
 
 ~~~js main.js
-import { AppError, NotFoundError, ValidationError, AuthError } from "./errors.js";
+import { readdir } from "node:fs/promises";
 
-const errors = [
-  new NotFoundError("المنتج"),
-  new ValidationError({ email: "الإيميل ناقص" }),
-  new AuthError(),
-  new AppError("حاجة غريبة حصلت"),
-];
+const env = process.env.APP_ENV ?? "dev";
 
-for (const err of errors) {
-  console.log(err.name.padEnd(16), err instanceof AppError, JSON.stringify(err));
+const files = await readdir(new URL("./config/", import.meta.url));
+const available = files.filter((f) => f.endsWith(".js")).map((f) => f.replace(/\.js$/, ""));
+
+if (!available.includes(env)) {
+  console.error($__btالبيئة "$__{env}" مش معروفة. المتاح: $__{available.join("، ")}$__bt);
+  process.exit(1);
 }
 
-// من غير toJSON: Error عادي بنفس الخصايص
-const plain = new Error("المنتج مش موجود");
-plain.status = 404;
-console.log("Error عادي:      ", JSON.stringify(plain));
-
-console.log(String(new NotFoundError("الطلب")));
-console.log("stack موجود بس مش في الـ JSON:", typeof errors[0].stack, JSON.stringify(errors[0]).includes("at "));
+const { default: config } = await import($__bt./config/$__{env}.js$__bt);
+console.log($__bt[$__{env}] port=$__{config.port} apiUrl=$__{config.apiUrl}$__bt);
 ~~~
 
 وجنبهم [[package.json]] فيه [[{ "type": "module" }]].
 
 ## كل حتة مهمة بتعمل إيه
 
-- **[[this.name = new.target.name]] في [[AppError]] بس:** [[new.target]] هو الكلاس اللي اتعمله [[new]] فعلًا، فـ [[new NotFoundError(...)]] بياخد [["NotFoundError"]] من غير ما تكتب الاسم في كل كلاس.
-- **[[status = 404]] class field:** كل كلاس بيكتب الـ status بتاعه كـ field. الـ fields بتتعمل **بعد** ما [[super()]] يخلص، فـ [[status = 404]] في [[NotFoundError]] بيكتب فوق [[status = 500]] بتاع [[AppError]].
-- **[[toJSON()]]:** [[JSON.stringify]] بيدوّر على method بالاسم ده، ولو لقاها بيحوّل اللي بترجّعه بدل الـ object نفسه. ومن غيرها، [[message]] مش enumerable فـ [[JSON.stringify]] بيتجاهلها (سطر الـ Error العادي).
-- **[[{ ...super.toJSON(), fields: this.fields }]]:** الـ ValidationError بيزوّد [[fields]] على اللي الأب بيرجّعه، من غير ما يكرر الكود.
-- **الـ stack مش في الـ JSON:** [[typeof stack]] بـ [["string"]] (موجود للّوج) بس الـ JSON مفيهوش [["at "]]. الـ stack فيه مسارات الملفات على السيرفر، ومينفعش يوصل لليوزر.
-- **[[options]] بتتعدّى لـ [[super]]:** عشان [[new NotFoundError("المنتج", { cause: err })]] يشتغل.
+- **[[process.env.APP_ENV ?? "dev"]]:** [[process.env]] فيه متغيرات البيئة كنصوص. و [[??]] بتاخد [["dev"]] لو المتغير مش موجود ([[undefined]]).
+- **[[readdir(new URL("./config/", import.meta.url))]]:** بنقرا أسامي الملفات اللي في [[config]] **جنب [[main.js]]** (مش في الفولدر اللي انت واقف فيه)، ونشيل [[.js]]، فاللستة بتطلع [[dev]] و [[prod]]. لو زوّدت [[config/staging.js]] بكرة هتتضاف لوحدها من غير ما تلمس [[main.js]].
+- **[[if (!available.includes(env))]] قبل الـ import:** ده اللي بيدّي الرسالة الواضحة. ومن غيره، أي قيمة في [[APP_ENV]] كانت هتتحط في الـ path. جرّبنا [[APP_ENV=../package]]:
 
-## الغلطة الشائعة
+~~~text الناتج
+البيئة "../package" مش معروفة. المتاح: dev، prod
+exit code: 1
+~~~
 
-تكتب [[constructor() { this.status = 404; super(...) }]]: [[this]] قبل [[super()]] بيرمي [[ReferenceError: Must call super constructor in derived class before accessing 'this' or returning from derived constructor]]. عشان كده الـ class field أسهل: مكانه محسوب لوحده بعد [[super]].` },
-        { lvl: 'متوسط', t: R`قارئ إعدادات مبيقعش`, what: R`[[loadConfig(text)]] بتعمل JSON.parse جوه try، ولو بايظ ترمي [[ConfigError("ملف الإعدادات بايظ", { cause })]]، وبعدين تتأكد من [[port]] (رقم صحيح من 1 لـ 65535) و [[dbUrl]] (نص مش فاضي)، وتحط default لأي حقل اختياري. و [[main]] بيمسك الـ ConfigError ويطبع الرسالة والـ cause بس ويخرج بكود ١. من درسي الوحدة ووحدة الـ objects.`, done: R`JSON بايظ بيطبع «ملف الإعدادات بايظ» وتحتها رسالة الـ SyntaxError الأصلية. [[port: 70000]] و [[port: "80"]] كل واحد بيطبع رسالة فيها اسم الحقل. والإعدادات السليمة بترجّع object فيه الـ defaults. ومفيش stack trace بيوصل لليوزر في أي حالة.`, sol: R`## الشكل النهائي
+- **[[console.error]] و [[process.exit(1)]]:** الرسالة على stderr، والكود ١ بيقول لأي script أو CI إن التشغيل فشل.
+- **[[await import($__bt./config/$__{env}.js$__bt)]]:** dynamic import لأن الـ path متغير، فبيتحمّل ملف بيئة واحد بس. و [[const { default: config }]] بتطلّع الـ default export.
 
-~~~text الناتج: bash run-all.sh (Node 24)
-$ node main.js configs/good.json
-الإعدادات: {
-  host: '127.0.0.1',
-  logLevel: 'info',
-  port: 8080,
-  dbUrl: 'postgres://localhost/shop'
-}
-(exit 0)
-$ node main.js configs/broken.json
-✗ ملف الإعدادات بايظ
-  السبب: Unexpected end of JSON input
-(exit 1)
-$ node main.js configs/big-port.json
-✗ port لازم رقم صحيح من 1 لـ 65535، ولقيت 70000
-(exit 1)
-$ node main.js configs/string-port.json
-✗ port لازم رقم صحيح من 1 لـ 65535، ولقيت "80"
-(exit 1)
-$ node main.js configs/empty-db.json
-✗ dbUrl لازم يبقى نص مش فاضي
-(exit 1)
-$ node main.js configs/array.json
-✗ ملف الإعدادات لازم يبقى object {}
-(exit 1)
-$ node main.js configs/override.json
-الإعدادات: { host: '127.0.0.1', logLevel: 'debug', port: 80, dbUrl: 'x' }
-(exit 0)
-$ node main.js configs/nope.json
-✗ مش قادر أقرا configs/nope.json
-  السبب: ENOENT: no such file or directory, open 'C:\Users\ali\code\safe-config\configs\nope.json'
-(exit 1)
+## الغلطات اللي ممكن تقابلها
+
+- **في PowerShell [[APP_ENV=prod node main.js]] مبتشتغلش:** دي صيغة bash، و PowerShell بيعتبر [[APP_ENV=prod]] اسم أمر. الصح [[$env:APP_ENV = "prod"]] الأول، وخلي بالك إنه بيفضل موجود في نفس الترمنال لحد ما تقفله أو تعمل [[Remove-Item Env:APP_ENV]].
+- **من غير الفحص:** [[APP_ENV=xyz]] كانت هتوصل لـ [[import()]] وتطلّع [[ERR_MODULE_NOT_FOUND]] بـ stack trace ومسارات الجهاز كلها.` },
+        { lvl: 'متوسط', t: R`مكتبة بتشتغل مع require و import`, what: R`اكتب [[slug.mjs]] (ESM) فيه [[slugify]] كـ named و default، واستخدمه من [[app.cjs]] بـ [[require]] ومن [[app.mjs]] بـ import، وفي app.mjs اقرا [[version]] من package.json بـ [[createRequire]] واطبعها. من دروس import و export و CommonJS و ESM.`, done: R`الملفين بيطبعوا نفس الـ slug لنفس النص. وفيه README فيه أقل نسخة Node بتشغّل الـ require ده (22.12 أو 20.19). ولو زوّدت top-level await في slug.mjs، app.cjs بيقع بـ [[ERR_REQUIRE_ASYNC_MODULE]] وانت عارف تشرح ليه.`, sol: R`## الشكل النهائي
+
+~~~text الناتج (Node 24)
+$ node app.cjs
+cjs: cafe-creme-menu-2026 true
+$ node app.mjs
+esm: cafe-creme-menu-2026 true v1.2.0
+$ node app.cjs "أهلًا بيك  في  المحل"
+cjs: اهلا-بيك-في-المحل true
+$ node app.mjs "أهلًا بيك  في  المحل"
+esm: اهلا-بيك-في-المحل true v1.2.0
 ~~~
 
 ## هتشوف إيه
 
-٨ ملفات إعدادات: السليم بيرجّع object فيه الـ defaults ([[host]] و [[logLevel]])، واللي بيغيّر default بيكسب. وكل ملف بايظ بيطلّع سطر واحد مفهوم فيه اسم الحقل (والسبب الأصلي تحته لو فيه)، وكود خروج ١، ومفيش ولا stack trace.
+ملف واحد مكتوب ESM، وبرنامجين بنظامين مختلفين بيستخدموه وبيطبعوا **نفس** الـ slug لنفس النص، و [[true]] معناها إن الـ default والـ named هما نفس الدالة. والـ mjs بيطبع النسخة من [[package.json]].
 
 ## الكود
 
-~~~js config.js
-export class ConfigError extends Error {
-  constructor(message, options) {
-    super(message, options);
-    this.name = "ConfigError";
-  }
+~~~js slug.mjs
+export function slugify(text) {
+  return text
+    .normalize("NFKD")
+    .replace(/\p{M}/gu, "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, "-")
+    .replace(/^-|-$/g, "");
 }
 
-const DEFAULTS = { host: "127.0.0.1", logLevel: "info" };
+export default slugify;
+~~~
 
-export function loadConfig(text) {
-  let raw;
-  try {
-    raw = JSON.parse(text);
-  } catch (err) {
-    throw new ConfigError("ملف الإعدادات بايظ", { cause: err });
-  }
-  if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
-    throw new ConfigError("ملف الإعدادات لازم يبقى object {}");
-  }
+~~~js app.cjs
+const { slugify } = require("./slug.mjs");
+const slugDefault = require("./slug.mjs").default;
 
-  if (!Number.isInteger(raw.port) || raw.port < 1 || raw.port > 65535) {
-    throw new ConfigError($__btport لازم رقم صحيح من 1 لـ 65535، ولقيت $__{JSON.stringify(raw.port)}$__bt);
-  }
-  if (typeof raw.dbUrl !== "string" || raw.dbUrl.trim() === "") {
-    throw new ConfigError("dbUrl لازم يبقى نص مش فاضي");
-  }
+const title = process.argv[2] ?? "Café Crème: Menu 2026!";
+console.log("cjs:", slugify(title), slugDefault === slugify);
+~~~
 
-  return { ...DEFAULTS, ...raw };
+~~~js app.mjs
+import slugify from "./slug.mjs";
+import { slugify as named } from "./slug.mjs";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const { version } = require("./package.json");
+
+const title = process.argv[2] ?? "Café Crème: Menu 2026!";
+console.log("esm:", slugify(title), named === slugify, "v" + version);
+~~~
+
+~~~json package.json
+{
+  "name": "tiny-slug",
+  "version": "1.2.0",
+  "engines": { "node": ">=20.19 <21 || >=22.12" }
 }
 ~~~
 
-~~~js main.js
-import { readFileSync } from "node:fs";
-import { loadConfig, ConfigError } from "./config.js";
+~~~text README.md
+# tiny-slug
 
-function readText(file) {
-  try {
-    return readFileSync(file, "utf8");
-  } catch (err) {
-    throw new ConfigError("مش قادر أقرا " + file, { cause: err });
-  }
-}
+دالة slugify واحدة، مكتوبة ESM (slug.mjs)، وبتشتغل من الاتنين:
 
-function main(file) {
-  try {
-    const config = loadConfig(readText(file));
-    console.log("الإعدادات:", config);
-  } catch (err) {
-    if (!(err instanceof ConfigError)) throw err;
-    console.error("✗ " + err.message);
-    if (err.cause) console.error("  السبب: " + err.cause.message);
-    process.exitCode = 1;
-  }
-}
+- ESM: import slugify from "./slug.mjs"
+- CommonJS: const { slugify } = require("./slug.mjs")
 
-main(process.argv[2] ?? "config.json");
-~~~
-
-~~~bash run-all.sh
-for f in good broken big-port string-port empty-db array override nope; do
-  echo "\$ node main.js configs/$f.json"
-  node main.js configs/$f.json
-  echo "(exit $?)"
-done
-~~~
-
-وملفات التجربة في [[configs/]]:
-
-~~~text configs
-good.json         { "port": 8080, "dbUrl": "postgres://localhost/shop" }
-broken.json       { "port": 8080, "dbUrl": 
-big-port.json     { "port": 70000, "dbUrl": "x" }
-string-port.json  { "port": "80", "dbUrl": "x" }
-empty-db.json     { "port": 80, "dbUrl": "  " }
-array.json        [1, 2]
-override.json     { "port": 80, "dbUrl": "x", "logLevel": "debug" }
-nope.json         (مش موجود)
+أقل نسخة Node بتشغّل الـ require ده: 22.12 (أو 20.19 في خط 20).
+في النسخ الأقدم require لملف .mjs بيقع بـ ERR_REQUIRE_ESM، واستخدم await import() بداله.
+الملف لازم يفضل من غير top-level await، وإلا require بيقع بـ ERR_REQUIRE_ASYNC_MODULE.
 ~~~
 
 ## كل حتة مهمة بتعمل إيه
 
-- **[[JSON.parse]] جوه try لوحده:** بنمسك الـ SyntaxError ونرمي [[ConfigError("ملف الإعدادات بايظ", { cause: err })]]. اليوزر بيشوف جملة مفهومة، والسبب التقني (فين بالظبط) موجود في [[err.cause.message]].
-- **[[raw === null || typeof raw !== "object" || Array.isArray(raw)]]:** [[JSON.parse("[1, 2]")]] نجح، بس ده array مش إعدادات. و [[typeof null]] بـ [["object"]] فلازم فحص [[null]] لوحده.
-- **[[Number.isInteger(raw.port)]]:** بترفض [["80"]] (نص) و [[80.5]] و [[NaN]] مرة واحدة، وبعدين المدى من 1 لـ 65535 (أعلى رقم port في TCP). و [[JSON.stringify(raw.port)]] في الرسالة بيبيّن الفرق بين [[80]] و [["80"]].
-- **[[{ ...DEFAULTS, ...raw }]]:** الـ defaults الأول، وبعدين اللي في الملف يكتب فوقهم. فـ [[logLevel: "debug"]] كسبت.
-- **[[main]]:** بيمسك [[ConfigError]] **بس**، ويطبع الرسالة والسبب على stderr، و [[process.exitCode = 1]]. أي error تاني (باج في الكود) بيترمي بالـ stack عشان المطوّر يشوفه.
+- **[[export function slugify]] و [[export default slugify]]:** نفس الدالة باسمين: named لأي حد عايز [[{ slugify }]]، و default للي عايز [[import slugify]].
+- **[[normalize("NFKD")]] ثم [[replace(/\p{M}/gu, "")]]:** NFKD بيفك الحرف المتشكّل لحرف + علامة: [["é"]] تبقى [["e"]] + علامة. و [[\p{M}]] = أي علامة (Mark)، فبنشيلها. ده اللي خلّى [["Café Crème"]] تبقى [["cafe-creme"]]، و [["أهلًا"]] تبقى [["اهلا"]] (الهمزة والتنوين علامات).
+- **[[require("./slug.mjs")]] في [[app.cjs]]:** ده [[require(esm)]]، شغال من Node 22.12 (و 20.19). بيرجّع الـ namespace object، فـ [[{ slugify }]] بيطلّع الـ named، و [[.default]] الـ default.
+- **[[createRequire(import.meta.url)]] في [[app.mjs]]:** بيعمل [[require]] جوه ESM، وبنستخدمه نقرا [[package.json]] من غير import attributes.
+- **[["engines"]] في package.json:** بيقول لـ npm وللي بيقرا أقل نسخة Node شغالة. [[>=20.19 <21 || >=22.12]] = خط 20 من 20.19، أو 22.12 وأحدث.
 
-## الغلطة اللي حصلت وأنا ببنيه
+## لو زوّدت top-level await في slug.mjs
 
-أول نسخة من [[main.js]] كانت بتعمل [[loadConfig(readFileSync(file, "utf8"))]] على طول. جرّبت ملف مش موجود:
+نسخنا الفولدر وزوّدنا [[await Promise.resolve();]] أول سطر في [[slug.mjs]]:
 
-~~~text الناتج (النسخة الأولى، node main.js configs/nope.json، أول ٣ سطور)
-node:fs:483
-    return binding.readFileUtf8(path, stringToFlags(options.flag));
-                   ^
+~~~text الناتج: node app.cjs (السطر الخامس من الـ error)
+Error [ERR_REQUIRE_ASYNC_MODULE]: require() cannot be used on an ESM graph with top-level await. Use import() instead. To see where the top-level await comes from, use --experimental-print-required-tla.
 ~~~
 
-stack trace طويل وصل لليوزر، لأن [[ENOENT]] مش [[ConfigError]] فالـ catch رماه تاني. التصليح: [[readText]] بتلف غلط القراية في [[ConfigError("مش قادر أقرا ...", { cause })]]، فبقى سطرين مفهومين زي آخر حالة في الناتج فوق.` },
-        { lvl: 'متوسط', t: R`wrapper للـ handlers`, what: R`[[handle(fn)]] بتاخد دالة async وترجّع دالة بترجّع دايمًا [[{ status, body }]]: لو نجحت 200 والنتيجة، ولو رمت AppError الـ status بتاعه ورسالته، ولو أي حاجة تانية 500 برسالة عامة، والـ error الأصلي بيتطبع في [[console.error]] بس. من درسي الوحدة.`, done: R`٤ handlers تجريبية (بتنجح، و NotFound، و Validation، وواحد فيه [[undefined.x]]) بيرجّعوا 200 و 404 و 400 و 500 بالترتيب، والـ 500 مفيهوش [[Cannot read properties]] في الـ body، والـ wrapper نفسه عمره ما بيرمي.`, sol: R`## الشكل النهائي
+**ليه:** [[require]] لازم يرجّع النتيجة في نفس اللحظة (sync)، والـ module اللي فيه top-level await مش هيخلص غير بعد ما الـ await يخلص. فـ Node بيرفض بدل ما يرجّع module نص مستوي. أما [[app.mjs]] فبيكمّل يشتغل عادي، لأن [[import]] بيستنى.
 
-~~~text الناتج: node main.js 2>/dev/null (الـ stdout، Node 24)
-ok           200 {"id":1,"name":"كوباية"}
-notFound     404 {"name":"NotFoundError","message":"المنتج مش موجود","status":404}
-validation   400 {"name":"ValidationError","message":"البيانات فيها غلط","status":400,"fields":{"name":"الاسم مطلوب"}}
-bug          500 {"error":"حصل خطأ في السيرفر، جرّب كمان شوية"}
-syncThrow    500 {"error":"حصل خطأ في السيرفر، جرّب كمان شوية"}
-throwsString 500 {"error":"حصل خطأ في السيرفر، جرّب كمان شوية"}
-~~~
+## الغلطات اللي حصلت وإزاي اتصلحت
 
-~~~text الناتج: اللوج اللي على stderr (أول سطر من كل 500)
-[500] TypeError: Cannot read properties of undefined (reading 'x')
-[500] Error: sync
-[500] نص مش Error
+- **العربي باظ في أول نسخة:** كنت شايل العلامات بمدى العلامات اللاتيني بس (من U+0300 لـ U+036F). النص [["أهلًا بيك"]] طلع [["ا-هل-ا-بيك"]]: الـ NFKD فك [["أ"]] لـ [["ا"]] + همزة، والهمزة والتنوين مش في المدى ده، فالسطر اللي بعده بدّلهم بشرطة. التصليح: [[\p{M}]] بيمسك العلامات في كل اللغات.
+- **ملف [[.mjs]] مش [[.js]]:** من غير [["type": "module"]] في package.json، الامتداد [[.mjs]] هو اللي بيقول لـ Node إن ده ESM لما [[app.cjs]] يعمله require.` },
+        { lvl: 'متوسط', t: R`CLI أوامره بتتحمّل وقت الطلب`, what: R`[[cli.js]] بيقرا اسم الأمر ويعمل [[import()]] لـ [[commands/NAME.js]] بس للأمر اللي اتطلب. كل أمر فيه [[export default]] دالة و [[export const help]] نص. وأمر [[help]] بيلف على لستة الأوامر ويطبع الـ help بتاع كل واحد. من دروس الوحدة كلها.`, done: R`[[node cli.js help]] بيطبع كل الأوامر بوصفها، و [[node cli.js add 2 3]] بيطبع 5، والأمر الغلط بيطبع «مش معروف» ولستة الأوامر ويخرج بكود ١. وحط [[console.log]] في أول كل ملف أمر: لما تشغّل add بيتحمّل ملف add بس.`, sol: R`## الشكل النهائي
+
+~~~text الناتج (Node 24)
+$ node cli.js help
+[load] help.js
+الأوامر:
+[load] add.js
+  add A B      يجمع رقمين
+  help         يعرض الأوامر دي
+[load] upper.js
+  upper TEXT   يكبّر الحروف
+$ node cli.js add 2 3
+[load] add.js
+5
+$ node cli.js upper yalla bina
+[load] upper.js
+YALLA BINA
+$ node cli.js fly; echo "exit code: $?"
+الأمر "fly" مش معروف. الأوامر: add, help, upper
+exit code: 1
+$ node cli.js add 2; echo "exit code: $?"
+[load] add.js
+غلط: استخدمها كده: add 2 3
+exit code: 1
 ~~~
 
 ## هتشوف إيه
 
-٦ handlers ملفوفين بـ [[handle]]، وكلهم رجّعوا [[{ status, body }]] من غير ولا واحد يرمي: 200 والبيانات، و 404 و 400 من الـ AppErrors برسايلهم، و 500 برسالة عامة للباج الحقيقي ([[undefined.x]])، ولدالة مش async بترمي، ولحد رمى string. وتفاصيل الـ 500 راحت لـ stderr بس.
+سطور [[[load]]] هي الـ [[console.log]] اللي في أول كل ملف أمر. [[add 2 3]] حمّل [[add.js]] **بس**، و [[upper]] حمّل [[upper.js]] بس. أمر [[help]] هو الوحيد اللي بيحمّل الكل، لأنه محتاج نص الـ help من كل ملف. والأمر الغلط بيطلّع اللستة ويخرج بكود ١ من غير ما يحمّل أي ملف.
+
+## شجرة الملفات
+
+~~~text
+lazy-cli/
+  package.json      { "type": "module" }
+  cli.js            بيقرا الأمر ويحمّل ملفه بس
+  commands/
+    add.js
+    help.js
+    upper.js
+~~~
 
 ## الكود
 
-[[errors.js]] هو نفس ملف مشروع «عيلة errors لتطبيقك» (فيه [[AppError]] بـ [[status]] و [[toJSON()]]):
+~~~js cli.js
+import { readdir } from "node:fs/promises";
 
-~~~js errors.js
-export class AppError extends Error {
-  status = 500;
+const commandsDir = new URL("./commands/", import.meta.url);
+const names = (await readdir(commandsDir))
+  .filter((f) => f.endsWith(".js"))
+  .map((f) => f.slice(0, -3))
+  .sort();
 
-  constructor(message, options) {
-    super(message, options);
-    this.name = new.target.name;
-  }
+const load = (name) => import(new URL(name + ".js", commandsDir));
 
-  toJSON() {
-    return { name: this.name, message: this.message, status: this.status };
-  }
+const [name = "help", ...args] = process.argv.slice(2);
+
+if (!names.includes(name)) {
+  console.error($__btالأمر "$__{name}" مش معروف. الأوامر: $__{names.join(", ")}$__bt);
+  process.exit(1);
 }
 
-export class NotFoundError extends AppError {
-  status = 404;
-
-  constructor(what, options) {
-    super(what + " مش موجود", options);
-  }
-}
-
-export class ValidationError extends AppError {
-  status = 400;
-
-  constructor(fields, options) {
-    super("البيانات فيها غلط", options);
-    this.fields = fields;
-  }
-
-  toJSON() {
-    return { ...super.toJSON(), fields: this.fields };
-  }
-}
-
-export class AuthError extends AppError {
-  status = 401;
-
-  constructor(message = "لازم تسجّل دخول الأول", options) {
-    super(message, options);
-  }
+try {
+  const { default: run } = await load(name);
+  await run(args, { names, load });
+} catch (err) {
+  console.error("غلط:", err.message);
+  process.exitCode = 1;
 }
 ~~~
 
-~~~js handle.js
-import { AppError } from "./errors.js";
+~~~js commands/add.js
+console.log("[load] add.js");
 
-export function handle(fn) {
-  return async (...args) => {
-    try {
-      const body = await fn(...args);
-      return { status: 200, body };
-    } catch (err) {
-      if (err instanceof AppError) {
-        return { status: err.status, body: err.toJSON() };
-      }
-      console.error("[500]", err);
-      return { status: 500, body: { error: "حصل خطأ في السيرفر، جرّب كمان شوية" } };
-    }
-  };
+export const help = "add A B      يجمع رقمين";
+
+export default function add(args) {
+  const [a, b] = args.map(Number);
+  if (args.length !== 2 || Number.isNaN(a) || Number.isNaN(b)) {
+    throw new Error("استخدمها كده: add 2 3");
+  }
+  console.log(a + b);
 }
 ~~~
 
-~~~js main.js
-import { handle } from "./handle.js";
-import { NotFoundError, ValidationError } from "./errors.js";
+~~~js commands/upper.js
+console.log("[load] upper.js");
 
-const products = { 1: { id: 1, name: "كوباية" } };
+export const help = "upper TEXT   يكبّر الحروف";
 
-const handlers = {
-  ok: handle(async (id) => products[id]),
-  notFound: handle(async (id) => {
-    if (!products[id]) throw new NotFoundError("المنتج");
-  }),
-  validation: handle(async (body) => {
-    if (!body.name) throw new ValidationError({ name: "الاسم مطلوب" });
-  }),
-  bug: handle(async () => {
-    const order = undefined;
-    return order.x;
-  }),
-  // حالات غريبة: دالة مش async بترمي، ودالة بترمي string
-  syncThrow: handle(() => {
-    throw new Error("sync");
-  }),
-  throwsString: handle(async () => {
-    throw "نص مش Error";
-  }),
-};
+export default function upper(args) {
+  console.log(args.join(" ").toUpperCase());
+}
+~~~
 
-const args = { ok: [1], notFound: [99], validation: [{}], bug: [], syncThrow: [], throwsString: [] };
+~~~js commands/help.js
+console.log("[load] help.js");
 
-for (const [name, h] of Object.entries(handlers)) {
-  const res = await h(...args[name]);
-  console.log(name.padEnd(12), res.status, JSON.stringify(res.body));
+export const help = "help         يعرض الأوامر دي";
+
+export default async function helpCommand(args, { names, load }) {
+  console.log("الأوامر:");
+  for (const name of names) {
+    const mod = await load(name);
+    console.log("  " + mod.help);
+  }
 }
 ~~~
 
 ## كل حتة مهمة بتعمل إيه
 
-- **[[handle(fn)]] بترجّع دالة جديدة:** دي higher-order function: بتاخد الـ handler الأصلي وترجّع نسخة ملفوفة بنفس الـ arguments ([[...args]]).
-- **[[await fn(...args)]] جوه try:** الـ await بيحوّل الـ Promise المرفوض لـ throw يتمسك. ولو [[fn]] نفسها مش async ورمت فورًا (حالة [[syncThrow]])، الرمية بتحصل جوه الـ try برضه فبتتمسك.
-- **[[err instanceof AppError]]:** errors احنا رميناها بقصد، رسالتها معمولة لليوزر، فبنبعتها بالـ status بتاعها وبـ [[toJSON()]].
-- **أي حاجة تانية = 500:** الرسالة الأصلية ([[Cannot read properties of undefined]]) مبتظهرش في الـ body، لأنها بتكشف تفاصيل الكود. بتروح لـ [[console.error]] كاملة بالـ stack.
-- **[[throw "نص مش Error"]]:** [[instanceof]] على string بـ [[false]] من غير ما يقع، فوصل للـ 500. لو كنا كتبنا [[err.status ?? 500]] كان هيشتغل برضه، بس [[err.message]] كانت هتبقى [[undefined]].
+- **[[names]] من [[readdir]]:** لستة الأوامر هي أسامي الملفات في [[commands]]. أمر جديد = ملف جديد، من غير ما تلمس [[cli.js]].
+- **[[load = (name) => import(new URL(name + ".js", commandsDir))]]:** الـ path بيتحسب من مكان [[cli.js]]، فالأداة تشتغل من أي فولدر. والملف بيتحمّل **وقت النداء** بس.
+- **[[if (!names.includes(name))]] قبل أي import:** الاسم لازم يبقى من اللستة، فـ [[node cli.js ../package]] مستحيل يحمّل ملف برّه [[commands]].
+- **[[const [name = "help", ...args] = process.argv.slice(2)]]:** أول عنصرين في [[argv]] مسار node ومسار السكربت، فبنشيلهم. والـ default [["help"]] لو مكتبتش أمر.
+- **[[run(args, { names, load })]]:** كل أمر بياخد الـ arguments، و [[help]] بياخد [[names]] و [[load]] عشان يلف على الأوامر من غير ما يعرف هي فين.
+- **الـ try/catch:** [[add 2]] رمى Error برسالة استخدام، و [[cli.js]] طبع الرسالة بس و [[process.exitCode = 1]] من غير stack trace.
 
-## الغلطة الشائعة
+## الغلطات اللي ممكن تقابلها
 
-تكتب [[return fn(...args)]] من غير [[await]] جوه الـ try. الـ Promise بيرجع على طول، والـ try بيخلص قبل ما يترفض، فالـ catch عمره ما يشتغل والـ wrapper يرجّع Promise مرفوض بدل [[{ status: 500 }]]. الـ [[await]] هو اللي بيخلّي الرفض يحصل **جوه** الـ try.` },
-        { lvl: 'كبير', t: R`مستورد CSV للطلاب`, what: R`[[importStudents(csvText)]] بتقسم السطور، وتتأكد إن الـ header هو [[name,age,email]]، وتفحص كل سطر بـ ValidationError فيه رقم السطر والحقل، وتكمّل لآخر الملف من غير ما تقف عند أول غلط، وترجّع [[{ imported, errors }]]. وأي error مش متوقع يتلف في [[ImportError]] بـ cause ويترمي. وفي الآخر تقرير: كام سطر اتقري وكام اتضاف وكل غلط في سطره. ومعاه [[test.js]] فيه ٥ حالات. من وحدات النصوص والـ arrays والـ classes والـ modules والوحدة دي.`, done: R`ملف سليم ← errors فاضية. ملف فيه سطرين غلط ← [[errors.length === 2]] وكل واحد فيه رقم السطر الصح (عادّ الـ header). ملف فاضي أو header غلط ← ValidationError واضح من غير ما يكمّل. سطر فيه فاصلة زيادة أو سطر فاضي في الآخر ← غلط مفهوم أو تجاهل، مش crash. والـ ٥ اختبارات بتطبع نجح.`, ext: R`خلّي الإيميل المكرر غلط، واعرض التقرير في صفحة فيها [[textarea]] تلزق فيها الـ CSV وجدول بالسطور الغلط باللون الأحمر.`, sol: R`## الشكل النهائي
+- **[[help]] متحمّلش مرتين:** وهو بيلف، [[load("help")]] رجّع نفس الـ module اللي اتحمّل في الأول من الكاش، فسطر [[[load] help.js]] ظهر مرة واحدة. لو كنت مستني سطرين، ده الكاش.
+- **[[process.exit(1)]] جوه الـ catch:** بيقفل فورًا حتى لو فيه حاجة لسه بتتكتب. [[process.exitCode = 1]] بيسيب البرنامج يخلص طبيعي ويخرج بالكود ده.` },
+        { lvl: 'كبير', t: R`نظام plugins`, what: R`برنامج بيقرا لستة أسامي ملفات من [[plugins.json]]، ولكل واحد [[await import()]] جوه try/catch، ويتأكد إن الـ default فيه [[name]] نص و [[run]] دالة، وبعدين يشغّلهم بالترتيب على نص داخل (واحد بيشيل المسافات الزيادة، وواحد بيعمل uppercase، وواحد بيعد الكلمات). وكل خطوة بتتكتب في لوج فيه الوقت واسم الـ plugin والنتيجة أو السبب. من وحدات الدوال والـ objects والـ classes ودروس الوحدة دي.`, done: R`plugin فيه syntax error، وملف مش موجود، وواحد من غير [[run]]: كل واحد بيطلع سطر تحذير فيه اسمه والسبب، والباقي بيشتغل عادي. ولو كل الـ plugins فشلت البرنامج بيخرج بكود ١. وفيه [[test.js]] بيجرّب ٣ لستات (سليمة، وفيها واحد بايظ، وفاضية) ويطبع نجح أو فشل لكل حالة، والتشغيل مرتين ورا بعض بيدّي نفس الناتج.`, ext: R`خلّي كل plugin يعلن عن [[options]] بتاعته في [[export const schema]] والبرنامج يتأكد منها قبل التشغيل، وزوّد [[--only name]] يشغّل plugin واحد بس.`, sol: R`## الشكل النهائي
 
-~~~text الناتج: ٥ ملفات CSV (Node 24)
-$ node cli.js samples/good.csv
-اتقري 3 سطر، اتضاف 3، فيه 0 غلط
-(exit 0)
-$ node cli.js samples/two-bad.csv
-اتقري 4 سطر، اتضاف 2، فيه 2 غلط
-  سطر 3 (age): السن "abc" لازم رقم صحيح من 5 لـ 100
-  سطر 4 (email): الإيميل "mona-at-mail" شكله غلط
-(exit 1)
-$ node cli.js samples/empty.csv
-الملف مرفوض (سطر 1): الملف فاضي
-(exit 1)
-$ node cli.js samples/bad-header.csv
-الملف مرفوض (سطر 1): أول سطر لازم يبقى "name,age,email"، ولقيت "Name;Age;Email"
-(exit 1)
-$ node cli.js samples/messy.csv
-اتقري 3 سطر، اتضاف 1، فيه 2 غلط
-  سطر 2: عدد الأعمدة 4 بدل 3
-  سطر 3: سطر فاضي
-(exit 1)
+~~~text الناتج: node main.js (Node 24؛ الوقت في أول كل سطر تحذير بيتغيّر كل تشغيل)
+2026-11-21T06:13:19.082Z WARN  broken-syntax: اتساب: SyntaxError: Unexpected token '}'
+2026-11-21T06:13:19.084Z WARN  missing-file: اتساب: الملف مش موجود
+2026-11-21T06:13:19.085Z WARN  no-run: اتساب: PluginError: run لازم تبقى دالة
+3 من 6 plugins اشتغلوا
+النتيجة: "AHLAN YA GAMA3A [3 كلمات]"
+exit code: 0
 ~~~
 
 ~~~text الناتج: node --test test.js (الأوقات اتشالت لأنها بتتغيّر)
-✔ ملف سليم: الكل اتضاف ومفيش errors
-✔ سطرين غلط: errors.length = 2 وأرقام السطور عادّة الـ header
-✔ ملف فاضي أو header غلط: ValidationError على سطر 1 من غير ما يكمّل
-✔ فاصلة زيادة غلط مفهوم، والسطور الفاضية في الآخر بتتجاهل، و CRLF شغال
-✔ مدخل مش نص: ImportError والسبب الأصلي في cause
-✔ التقرير: سطر الملخص وسطر لكل غلط
+✔ لستة سليمة: التلاتة بيشتغلوا بالترتيب
+✔ لستة فيها ٣ بايظين: كل واحد سطر تحذير باسمه وسببه، والباقي شغال
+✔ لستة فاضية: مفيش plugins والنص زي ما هو
+✔ اسم فيه ../ مبيتحمّلش خالص
+✔ main: كله فشل أو لستة فاضية أو JSON بايظ = كود 1، والسليمة = 0
+✔ التشغيل مرتين ورا بعض بيدّي نفس الناتج
 ℹ tests 6
 ℹ suites 0
 ℹ pass 6
@@ -676,2216 +443,1952 @@ $ node cli.js samples/messy.csv
 
 ## هتشوف إيه
 
-الملف السليم بيتقري كله. الملف اللي فيه سطرين غلط بيكمّل لآخره، ويضيف الصح (٢ من ٤)، ويقول رقم كل سطر غلط **عادّ الـ header** واسم الحقل والسبب. والملف الفاضي أو اللي الـ header بتاعه غلط بيترفض من أوله بسطر واحد. والسطر اللي فيه فاصلة زيادة غلط مفهوم، والسطور الفاضية في الآخر بتتجاهل.
+[[plugins.json]] فيه ٦ أسامي: ٣ سليمين، وواحد فيه syntax error، وواحد ملفه مش موجود، وواحد مفيهوش [[run]]. التلاتة البايظين كل واحد طلّع سطر تحذير **باسمه وسببه**، والتلاتة السليمين اشتغلوا بالترتيب على النص: شالوا المسافات الزيادة، وكبّروا الحروف، وعدّوا الكلمات. وكل خطوة (حتى اللي نجحت) اتكتبت في [[app.log]].
 
 ## شجرة الملفات وترتيب البناء
 
 ~~~text
-csv-import/
-  package.json     { "type": "module" }
-  errors.js        ValidationError (line و field) و ImportError
-  importer.js      importStudents و report
-  cli.js           يقرا ملف ويطبع التقرير وكود الخروج
-  test.js          ٦ اختبارات بـ node --test
-  samples/         ٥ ملفات للتجربة
+plugins-app/
+  package.json            { "type": "module" }
+  plugins.json            لستة الـ plugins بالترتيب
+  main.js                 الدخول: يقرا اللستة، يحمّل، يشغّل، يطبع
+  lib/
+    log.js                لوج بالوقت والمستوى واسم الـ plugin
+    plugins.js            loadPlugins و runPipeline و PluginError
+  plugins/
+    trim-spaces.js  uppercase.js  word-count.js     سليمين
+    broken-syntax.js  no-run.js                     بايظين قصدًا
+  fixtures/               لستات للاختبارات
+    good.json  all-bad.json  empty.json  bad-json.json
+  test.js
 ~~~
 
-اتبنى بالترتيب ده: [[errors.js]]، وبعدين [[importStudents]] على الملف السليم بس، وبعدين فحص كل حقل في [[checkRow]]، وبعدين الحالات الطرفية (فاضي، header غلط، أعمدة زيادة، سطور فاضية، CRLF)، وبعدين [[report]] و [[cli.js]]، والاختبارات مع كل خطوة.
+اتبنى بالترتيب ده: [[log.js]] الأول (عشان كل حاجة بعده بتكتب فيه)، وبعدين plugin سليم واحد و [[loadPlugins]] لحد ما اتحمّل، وبعدين [[runPipeline]]، وبعدين الـ plugins البايظة واحد واحد والتأكد إن كل واحد بيطلّع سببه، وفي الآخر [[main.js]] وكود الخروج، والاختبارات.
 
 ## الكود
 
-~~~js errors.js
-export class ValidationError extends Error {
-  constructor(message, { line = null, field = null } = {}) {
-    super(message);
-    this.name = "ValidationError";
-    this.line = line;
-    this.field = field;
-  }
-}
+~~~js lib/log.js
+import { appendFileSync } from "node:fs";
 
-export class ImportError extends Error {
-  constructor(message, options) {
+// level: info | warn | error. كل سطر: الوقت، المستوى، اسم الـ plugin، الرسالة
+export function createLogger({ file, now = () => new Date().toISOString(), echo = true } = {}) {
+  const lines = [];
+  function write(level, plugin, message) {
+    const line = $__bt$__{now()} $__{level.toUpperCase().padEnd(5)} $__{plugin}: $__{message}$__bt;
+    lines.push(line);
+    if (file) appendFileSync(file, line + "\n");
+    if (echo && level !== "info") console.error(line);
+  }
+  return {
+    lines,
+    info: (plugin, msg) => write("info", plugin, msg),
+    warn: (plugin, msg) => write("warn", plugin, msg),
+    error: (plugin, msg) => write("error", plugin, msg),
+  };
+}
+~~~
+
+~~~js lib/plugins.js
+const NAME_RE = /^[a-z0-9-]+$/;
+
+export class PluginError extends Error {
+  constructor(plugin, message, options) {
     super(message, options);
-    this.name = "ImportError";
+    this.name = "PluginError";
+    this.plugin = plugin;
   }
 }
-~~~
 
-~~~js importer.js
-import { ValidationError, ImportError } from "./errors.js";
-
-const HEADER = ["name", "age", "email"];
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function checkRow(cols, line) {
-  const problems = [];
-  if (cols.length !== HEADER.length) {
-    return [new ValidationError($__btعدد الأعمدة $__{cols.length} بدل $__{HEADER.length}$__bt, { line })];
-  }
-  const [name, ageText, email] = cols.map((c) => c.trim());
-  const age = Number(ageText);
-  if (name === "") problems.push(new ValidationError("الاسم فاضي", { line, field: "name" }));
-  if (ageText === "" || !Number.isInteger(age) || age < 5 || age > 100) {
-    problems.push(new ValidationError($__btالسن "$__{ageText}" لازم رقم صحيح من 5 لـ 100$__bt, { line, field: "age" }));
-  }
-  if (!EMAIL_RE.test(email)) problems.push(new ValidationError($__btالإيميل "$__{email}" شكله غلط$__bt, { line, field: "email" }));
-  return problems.length ? problems : { name, age, email: email.toLowerCase() };
+function validate(file, mod) {
+  const p = mod.default;
+  if (!p || typeof p !== "object") throw new PluginError(file, "مفيش export default object");
+  if (typeof p.name !== "string" || !p.name) throw new PluginError(file, "name لازم يبقى نص مش فاضي");
+  if (typeof p.run !== "function") throw new PluginError(file, "run لازم تبقى دالة");
+  return p;
 }
 
-export function importStudents(csvText) {
-  try {
-    if (typeof csvText !== "string") throw new TypeError("المدخل لازم يبقى نص، جالي " + typeof csvText);
-
-    const lines = csvText.replace(/^\uFEFF/, "").split(/\r?\n/);
-    while (lines.length && lines.at(-1).trim() === "") lines.pop();
-    if (lines.length === 0) throw new ValidationError("الملف فاضي", { line: 1 });
-
-    const header = lines[0].split(",").map((h) => h.trim().toLowerCase());
-    if (header.join(",") !== HEADER.join(",")) {
-      throw new ValidationError($__btأول سطر لازم يبقى "$__{HEADER.join(",")}"، ولقيت "$__{lines[0]}"$__bt, { line: 1 });
-    }
-
-    const imported = [];
-    const errors = [];
-    lines.slice(1).forEach((text, i) => {
-      const line = i + 2;
-      if (text.trim() === "") {
-        errors.push(new ValidationError("سطر فاضي", { line }));
-        return;
+// بيحمّل كل plugin لوحده: اللي يفشل بيتسجّل ويتساب، والباقي يكمّل
+export async function loadPlugins(names, { dir, log }) {
+  const plugins = [];
+  for (const file of names) {
+    try {
+      if (typeof file !== "string" || !NAME_RE.test(file)) {
+        throw new PluginError(String(file), "اسم ملف مش مسموح (حروف صغيرة وأرقام وشرطة بس)");
       }
-      const result = checkRow(text.split(","), line);
-      if (Array.isArray(result)) errors.push(...result);
-      else imported.push(result);
-    });
-
-    return { read: lines.length - 1, imported, errors };
-  } catch (err) {
-    if (err instanceof ValidationError) throw err;
-    throw new ImportError("الاستيراد وقف بسبب غلط مش متوقع", { cause: err });
+      const mod = await import(new URL(file + ".js", dir));
+      plugins.push(validate(file, mod));
+      log.info(file, "اتحمّل");
+    } catch (err) {
+      const reason = err.code === "ERR_MODULE_NOT_FOUND" ? "الملف مش موجود" : $__bt$__{err.name}: $__{err.message}$__bt;
+      log.warn(file, "اتساب: " + reason);
+    }
   }
+  return plugins;
 }
 
-export function report({ read, imported, errors }) {
-  const out = [$__btاتقري $__{read} سطر، اتضاف $__{imported.length}، فيه $__{errors.length} غلط$__bt];
-  for (const e of errors) out.push($__bt  سطر $__{e.line}$__{e.field ? " (" + e.field + ")" : ""}: $__{e.message}$__bt);
-  return out.join("\n");
+// بيشغّلهم بالترتيب. لو plugin رمى وهو شغال، النص بيفضل زي ما هو والباقي يكمّل
+export async function runPipeline(plugins, input, { log }) {
+  let text = input;
+  for (const p of plugins) {
+    try {
+      const out = await p.run(text);
+      if (typeof out !== "string") throw new TypeError("run رجّعت " + typeof out + " مش نص");
+      text = out;
+      log.info(p.name, JSON.stringify(text));
+    } catch (err) {
+      log.warn(p.name, "فشل وهو شغال: " + err.message);
+    }
+  }
+  return text;
 }
 ~~~
 
-~~~js cli.js
-import { readFileSync } from "node:fs";
-import { importStudents, report } from "./importer.js";
-import { ValidationError } from "./errors.js";
+~~~js main.js
+import { readFile } from "node:fs/promises";
+import { createLogger } from "./lib/log.js";
+import { loadPlugins, runPipeline } from "./lib/plugins.js";
 
-const file = process.argv[2];
+const listFile = process.argv[2] ?? "plugins.json";
+const input = process.argv[3] ?? "   ahlan   ya   gama3a   ";
+const log = createLogger({ file: new URL("./app.log", import.meta.url) });
+
+let names;
 try {
-  const result = importStudents(readFileSync(file, "utf8"));
-  console.log(report(result));
-  if (result.errors.length) process.exitCode = 1;
+  names = JSON.parse(await readFile(new URL(listFile, import.meta.url), "utf8"));
+  if (!Array.isArray(names)) throw new TypeError("الملف لازم يبقى array");
 } catch (err) {
-  if (err instanceof ValidationError) {
-    console.error($__btالملف مرفوض (سطر $__{err.line}): $__{err.message}$__bt);
-  } else {
-    console.error("حصلت مشكلة:", err.message);
-    if (err.cause) console.error("  السبب:", err.cause.message);
-  }
-  process.exitCode = 1;
+  log.error("main", $__btمش قادر أقرا $__{listFile}: $__{err.message}$__bt);
+  process.exit(1);
 }
+
+const plugins = await loadPlugins(names, { dir: new URL("./plugins/", import.meta.url), log });
+if (plugins.length === 0) {
+  log.error("main", "ولا plugin اشتغل");
+  process.exit(1);
+}
+
+const result = await runPipeline(plugins, input, { log });
+console.log($__bt$__{plugins.length} من $__{names.length} plugins اشتغلوا$__bt);
+console.log("النتيجة:", JSON.stringify(result));
+~~~
+
+~~~json plugins.json
+["trim-spaces", "uppercase", "broken-syntax", "missing-file", "no-run", "word-count"]
+~~~
+
+~~~js plugins/trim-spaces.js
+export default {
+  name: "trim-spaces",
+  run: (text) => text.trim().replace(/\s+/g, " "),
+};
+~~~
+
+~~~js plugins/uppercase.js
+export default {
+  name: "uppercase",
+  run: (text) => text.toUpperCase(),
+};
+~~~
+
+~~~js plugins/word-count.js
+export default {
+  name: "word-count",
+  run: (text) => {
+    const words = text.split(" ").filter(Boolean).length;
+    return text + " [" + words + " كلمات]";
+  },
+};
+~~~
+
+~~~js plugins/broken-syntax.js
+export default {
+  name: "broken-syntax",
+  run: (text) => text.reverse(
+};
+~~~
+
+~~~js plugins/no-run.js
+export default {
+  name: "no-run",
+};
+~~~
+
+ملفات الـ fixtures سطر واحد لكل واحد:
+
+~~~text fixtures
+good.json      ["trim-spaces", "uppercase", "word-count"]
+all-bad.json   ["broken-syntax", "missing-file", "no-run"]
+empty.json     []
+bad-json.json  ["trim-spaces",
 ~~~
 
 ~~~js test.js
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { importStudents, report } from "./importer.js";
-import { ValidationError, ImportError } from "./errors.js";
+import { spawnSync } from "node:child_process";
+import { createLogger } from "./lib/log.js";
+import { loadPlugins, runPipeline } from "./lib/plugins.js";
 
-const csv = (...rows) => rows.join("\n");
+const dir = new URL("./plugins/", import.meta.url);
+const quiet = () => createLogger({ echo: false, now: () => "T" });
 
-test("ملف سليم: الكل اتضاف ومفيش errors", () => {
-  const r = importStudents(csv("name,age,email", "Sara,21,Sara@Mail.com", "Omar,19,omar@mail.com"));
-  assert.equal(r.errors.length, 0);
-  assert.equal(r.imported.length, 2);
-  assert.deepEqual(r.imported[0], { name: "Sara", age: 21, email: "sara@mail.com" });
+async function pipeline(names, input) {
+  const log = quiet();
+  const plugins = await loadPlugins(names, { dir, log });
+  return { plugins, log, result: await runPipeline(plugins, input, { log }) };
+}
+
+const runMain = (list) =>
+  spawnSync(process.execPath, ["main.js", list, "  hi  there "], { cwd: import.meta.dirname, encoding: "utf8" });
+
+test("لستة سليمة: التلاتة بيشتغلوا بالترتيب", async () => {
+  const { plugins, result, log } = await pipeline(["trim-spaces", "uppercase", "word-count"], "  hi   there ");
+  assert.equal(plugins.length, 3);
+  assert.equal(result, "HI THERE [2 كلمات]");
+  assert.equal(log.lines.filter((l) => l.includes("WARN")).length, 0);
 });
 
-test("سطرين غلط: errors.length = 2 وأرقام السطور عادّة الـ header", () => {
-  const r = importStudents(csv("name,age,email", "Sara,21,s@m.co", "Omar,abc,o@m.co", "Mona,22,mona-at-mail", "Ali,30,a@m.co"));
-  assert.equal(r.errors.length, 2);
-  assert.deepEqual(r.errors.map((e) => [e.line, e.field]), [[3, "age"], [4, "email"]]);
-  assert.ok(r.errors.every((e) => e instanceof ValidationError));
-  assert.equal(r.imported.length, 2);
-});
-
-test("ملف فاضي أو header غلط: ValidationError على سطر 1 من غير ما يكمّل", () => {
-  for (const text of ["", "\n\n", "Name;Age;Email\nSara;21;s@m.co"]) {
-    assert.throws(() => importStudents(text), (e) => e instanceof ValidationError && e.line === 1);
-  }
-});
-
-test("فاصلة زيادة غلط مفهوم، والسطور الفاضية في الآخر بتتجاهل، و CRLF شغال", () => {
-  const r = importStudents("name,age,email\r\nSara,21,s@m.co,extra\r\nOmar,19,o@m.co\r\n\r\n\r\n");
-  assert.equal(r.read, 2);
-  assert.equal(r.errors.length, 1);
-  assert.match(r.errors[0].message, /عدد الأعمدة 4 بدل 3/);
-  assert.equal(r.imported.length, 1);
-});
-
-test("مدخل مش نص: ImportError والسبب الأصلي في cause", () => {
-  assert.throws(
-    () => importStudents(null),
-    (e) => e instanceof ImportError && e.cause instanceof TypeError && /object/.test(e.cause.message),
+test("لستة فيها ٣ بايظين: كل واحد سطر تحذير باسمه وسببه، والباقي شغال", async () => {
+  const { plugins, result, log } = await pipeline(
+    ["trim-spaces", "broken-syntax", "missing-file", "no-run", "uppercase"],
+    " a  b ",
   );
+  assert.equal(plugins.length, 2);
+  assert.equal(result, "A B");
+  const warns = log.lines.filter((l) => l.includes("WARN"));
+  assert.equal(warns.length, 3);
+  assert.match(warns[0], /broken-syntax: .*SyntaxError/);
+  assert.match(warns[1], /missing-file: .*مش موجود/);
+  assert.match(warns[2], /no-run: .*run لازم تبقى دالة/);
 });
 
-test("التقرير: سطر الملخص وسطر لكل غلط", () => {
-  const r = importStudents(csv("name,age,email", ",21,s@m.co"));
-  assert.equal(report(r), 'اتقري 1 سطر، اتضاف 0، فيه 1 غلط\n  سطر 2 (name): الاسم فاضي');
+test("لستة فاضية: مفيش plugins والنص زي ما هو", async () => {
+  const { plugins, result } = await pipeline([], "x");
+  assert.equal(plugins.length, 0);
+  assert.equal(result, "x");
+});
+
+test("اسم فيه ../ مبيتحمّلش خالص", async () => {
+  const { plugins, log } = await pipeline(["../main"], "x");
+  assert.equal(plugins.length, 0);
+  assert.match(log.lines[0], /اسم ملف مش مسموح/);
+});
+
+test("main: كله فشل أو لستة فاضية أو JSON بايظ = كود 1، والسليمة = 0", () => {
+  assert.equal(runMain("fixtures/all-bad.json").status, 1);
+  assert.equal(runMain("fixtures/empty.json").status, 1);
+  const bad = runMain("fixtures/bad-json.json");
+  assert.equal(bad.status, 1);
+  assert.match(bad.stderr, /مش قادر أقرا/);
+  assert.equal(runMain("fixtures/good.json").status, 0);
+});
+
+test("التشغيل مرتين ورا بعض بيدّي نفس الناتج", () => {
+  const a = runMain("fixtures/good.json").stdout;
+  const b = runMain("fixtures/good.json").stdout;
+  assert.equal(a, b);
+  assert.match(a, /HI THERE \[2 كلمات\]/);
 });
 ~~~
-
-ملفات التجربة:
-
-~~~text samples/good.csv
-name,age,email
-Sara Ali,21,sara@mail.com
-Omar,19,omar@mail.com
-Mona,22,mona@mail.com
-~~~
-
-~~~text samples/two-bad.csv
-name,age,email
-Sara Ali,21,sara@mail.com
-Omar,abc,omar@mail.com
-Mona,22,mona-at-mail
-Khaled,20,khaled@mail.com
-~~~
-
-~~~text samples/bad-header.csv
-Name;Age;Email
-Sara;21;sara@mail.com
-~~~
-
-~~~text samples/messy.csv
-name,age,email
-Sara,21,sara@mail.com,extra
-
-Omar,19,omar@mail.com
-~~~
-
-و [[samples/empty.csv]] ملف فاضي خالص (صفر bytes).
 
 ## كل حتة مهمة بتعمل إيه
 
-- **نوعين errors:** [[ValidationError]] = غلط في **البيانات** (متوقع، رسالته لليوزر، وفيه [[line]] و [[field]]). [[ImportError]] = غلط مش متوقع في **الكود أو المدخل**، بيلف السبب الأصلي في [[cause]].
-- **[[replace(/^\uFEFF/, "")]]:** Excel ساعات بيحط حرف BOM مخفي في أول الملف، فالـ header يبان [[name,age,email]] وهو مش كده. بنشيله قبل أي حاجة.
-- **[[split(/\r?\n/)]]:** بيقسم على [[\n]] ومعاه [[\r]] لو موجود، فملفات ويندوز (CRLF) ولينكس الاتنين شغالين (الاختبار الرابع).
-- **[[while (... lines.at(-1).trim() === "") lines.pop()]]:** يشيل السطور الفاضية من **الآخر** بس. السطر الفاضي في النص بيبقى غلط ([[سطر فاضي]]) لأنه غالبًا بيانات ناقصة.
-- **[[const line = i + 2]]:** [[i]] بيبدأ من 0 على السطور اللي بعد الـ header، فأول سطر بيانات هو سطر 2 في الملف.
-- **[[checkRow]] بترجّع يا object يا array أخطاء:** وبتجمع كل غلطات السطر (اسم وسن وإيميل)، فلو السطر فيه غلطتين يطلعوا الاتنين. وعدد الأعمدة الغلط بيوقّف فحص السطر ده بس، لأن الحقول متلخبطة.
-- **الـ try/catch الكبير:** [[ValidationError]] بيعدّي زي ما هو (الملف الفاضي والـ header). أي حاجة تانية، زي [[TypeError]] من [[importStudents(null)]]، بتتلف في [[ImportError]] بـ [[cause]]، فاللي بينادي الدالة بيمسك نوعين بس.
-- **كود الخروج في [[cli.js]]:** ١ لو فيه أي غلط أو الملف اترفض، فسكربت تاني يقدر يعرف من غير ما يقرا النص.
+- **[[await import(...)]] جوه try/catch لكل plugin لوحده:** الـ syntax error والملف الناقص الاتنين بيرفضوا الـ Promise بتاع [[import()]]، فبيتمسكوا هنا. ولأن كل plugin في try لوحده، الفشل مبيوقّفش الباقي.
+- **[[validate]]:** الملف ممكن يتحمّل سليم ويبقى برضه مش plugin. بنتأكد إن [[default]] object، و [[name]] نص مش فاضي، و [[run]] دالة، وإلا [[PluginError]] برسالة بتقول الناقص إيه.
+- **[[NAME_RE]] قبل الـ import:** الاسم جاي من ملف JSON ممكن حد يعدّله. [[/^[a-z0-9-]+$/]] بيمنع [[../]] وأي مسار برّه [[plugins]].
+- **[[err.code === "ERR_MODULE_NOT_FOUND"]]:** رسالة Node الأصلية فيها المسار الكامل على الجهاز، فبنبدّلها بـ «الملف مش موجود». باقي الأخطاء بتتكتب بـ [[name: message]].
+- **[[runPipeline]]:** كل plugin بياخد ناتج اللي قبله. ولو plugin رمى وهو شغال أو رجّع حاجة مش نص، بيتكتب تحذير والنص بيفضل زي ما هو.
+- **[[createLogger({ now, echo })]]:** الوقت جاي من دالة، فالاختبارات بتديله [[() => "T"]] وتقارن السطور من غير ما الوقت يبوّظها. و [[echo: false]] بيخلّي الاختبارات ساكتة.
+- **كود الخروج:** لستة مش array أو JSON بايظ أو ولا plugin اتحمّل = [[process.exit(1)]] بعد سطر لوج مفهوم. الاختبار الخامس بيشغّل [[main.js]] نفسه بـ [[spawnSync]] ويقرا [[status]].
 
 ## اتقاس
 
-- ٦ اختبارات عدّوا ([[pass 6]])، فيهم الـ ٥ حالات المطلوبة واختبار للتقرير.
-- [[samples/two-bad.csv]] فيه سطر فاضي في الآخر، واتجاهل: [[اتقري 4 سطر]] مش 5.
+- ٦ اختبارات عدّوا: اللستة السليمة، واللستة اللي فيها ٣ بايظين (بالأسباب الصح بالترتيب)، والفاضية، والاسم اللي فيه [[../]]، وأكواد الخروج، والتشغيل مرتين بنفس الناتج.
+- كل تشغيل بيزوّد سطور في [[app.log]] ومبيمسحش القديم ([[appendFileSync]]).
 
-## الغلطات اللي حصلت وإزاي اتصلحت
+## الغلطات اللي ممكن تقابلها
 
-- **الاختبار نفسه كان غلط:** أول تشغيل لـ [[node --test]] طلّع [[fail 1]]: [[2 !== 3]] في اختبار «سطرين غلط». كنت كاتب إن ٣ سطور هتتضاف، والملف فيه ٤ سطور بيانات منهم ٢ غلط، يعني ٢ بس. الكود كان صح والاختبار هو اللي اتصلّح. الدرس: لما اختبار يفشل، اتأكد من الرقم المتوقع قبل ما تغيّر الكود.
-- **الـ BOM:** كتبت [[\uFEFF]] في الـ regex، والأداة اللي كتبت بيها الملف حوّلت الـ escape للحرف المخفي نفسه، فالكود بقى فيه حرف مش باين. اكتشفته لما [[grep "uFEFF"]] ملقاش حاجة، وصلّحته. لو حرف مخفي دخل كودك، [[cat -A]] في الترمنال بيبيّنه.` },
-        { lvl: 'فكرة', t: R`سياسة أخطاء لمشروعك`, what: R`خد مشروع من اللي عملتهم وحط فيه سياسة أخطاء: أنواع errors بتاعتك، ومكان واحد بيمسك ويقرر يعرض إيه لليوزر وإيه يتسجّل، و cause في كل مرة بتلف error.`, done: R`مفيش [[catch {}]] فاضي في المشروع كله، وكل رسالة بتظهر لليوزر مفهومة بالعربي، وكل error في اللوج فيه السبب الأصلي.`, ext: R`اعرض الأخطاء في الصفحة كـ toast بدل alert، وزوّد [[code]] ثابت لكل نوع (زي [[E_NOT_FOUND]]) عشان الواجهة تقرر من غير ما تقرا النص.`, sol: R`## الشكل النهائي
+- **الكاش بيحفظ اللي نجح بس:** كنت فاكر إن [[import()]] بيحفظ الـ SyntaxError كمان، فجرّبت: ملف بايظ، [[import()]] فشل، صلّحت الملف، و [[import()]] تاني في نفس التشغيل نجح ورجّع [[{ ok: true }]] (Node 24). العكس هو اللي بيوقع: plugin **اتحمّل** خلاص وبعدين عدّلته، النداء التاني بيرجّع النسخة القديمة من الكاش، فلازم تشغّل البرنامج من الأول.
+- **[[import(file + ".js")]] من غير [[new URL(..., dir)]]:** الـ path النسبي بيتحسب من مكان [[lib/plugins.js]] مش من [[plugins/]]، فكل plugin هيطلع «مش موجود». عشان كده [[dir]] بيتبعت كـ URL من [[main.js]].` },
+        { lvl: 'فكرة', t: R`قسّم سكربت قديم لـ modules`, what: R`خد أي ملف JS كبير كتبته في الوحدات اللي فاتت (لعبة، أو آلة حاسبة، أو todo) وقسّمه: كل ملف مسؤول عن حاجة واحدة، وفيه ملف دخول واحد، والحاجات التقيلة أو النادرة بتتحمّل بـ [[import()]]. انت اللي بتقرر التقسيمة.`, done: R`مفيش ملف فوق ١٥٠ سطر، ومفيش متغير global، ومفيش circular import (أو لو فيه، شارح في تعليق ليه آمن)، والتطبيق بيشتغل زي الأول بالظبط.`, ext: R`زوّد [[package.json]] فيه [["type": "module"]] و script للتشغيل، واعمله build بـ Vite وبص على الـ chunks اللي طلعت من الـ dynamic imports.`, sol: R`## الشكل النهائي
 
-~~~text الناتج: node demo.js (Node 24؛ الـ errorId بيتغيّر كل تشغيل فكتبناه …)
-POST /notes    200 {"id":1,"text":"اشتري لبن"}
-GET  /notes/1  200 {"id":1,"text":"اشتري لبن"}
-GET  /notes/9  404 {"code":"E_NOT_FOUND","message":"الملاحظة دي مش موجودة"}
-POST /notes    400 {"code":"E_VALIDATION","message":"الـ body لازم يبقى JSON سليم"}
-POST /notes    400 {"code":"E_VALIDATION","message":"اكتب نص الملاحظة"}
-GET  /notes    503 {"code":"E_STORAGE","message":"ملف الملاحظات بايظ","errorId":"…"}
-GET  /notes/1  500 {"code":"E_INTERNAL","message":"حصلت مشكلة عندنا، جرّب كمان شوية","errorId":"…"}
---- errors.log:
-GET /notes StorageError: ملف الملاحظات بايظ  ←  SyntaxError: Expected property name or '}' in JSON at position 3 (line 1 column 4)
-GET /notes/1 TypeError: (intermediate value).find is not a function
+نفس الأوامر اتشغّلت على النسخة القديمة (ملف واحد) والجديدة (modules)، وقارنّا الناتجين بـ [[diff]]:
+
+~~~text الناتج: bash run-both.sh (Node 24)
+النسختين نفس الناتج حرف بحرف
+اتضافت: [ ] 1. اشتري لبن
+اتضافت: [ ] 2. ذاكر modules
+خلصت: [x] 1. اشتري لبن
+مفيش مهمة رقم 9
+[x] 1. اشتري لبن
+[ ] 2. ذاكر modules
+1 من 2 خلصوا
+اتكتب todos.csv فيه 2 سطر
+id,text,done
+1,"اشتري لبن",true
+2,"ذاكر modules",false
 ~~~
 
-## النسخة النموذجية: API ملاحظات صغير بسياسة أخطاء
+## النسخة النموذجية: todo من ملف واحد لـ ٥ ملفات
 
-اخترنا API فيه ٣ endpoints ([[GET /notes]] و [[GET /notes/:id]] و [[POST /notes]]) بيحفظ في ملف JSON، لأنه فيه الـ ٣ أنواع اللي في أي مشروع: غلط من اليوزر، وغلط في التخزين، وباج في الكود.
+اخترنا todo صغير في الترمنال بيحفظ في [[todos.json]]: [[add]] و [[done]] و [[list]] و [[csv]].
 
-| النوع | مين بيرميه | اليوزر بيشوف | بيتسجّل؟ |
-|---|---|---|---|
-| [[ValidationError]] (400) | الكود لما الـ input غلط | الرسالة نفسها | لأ |
-| [[NotFoundError]] (404) | الكود لما الحاجة مش موجودة | الرسالة نفسها | لأ |
-| [[StorageError]] (503) | [[store.js]] لما الملف يبوظ | رسالة عامة + [[errorId]] | أيوه بالسبب الأصلي |
-| أي حاجة تانية (500) | باج | «حصلت مشكلة عندنا» + [[errorId]] | أيوه |
+### قبل: ملف واحد بيعمل كل حاجة
 
-## الكود
+~~~js before/todo.js
+import fs from "node:fs";
 
-~~~js errors.js
-// كل error بنرميه بقصد: رسالة لليوزر بالعربي + code ثابت للواجهة + status للـ HTTP
-export class AppError extends Error {
-  status = 500;
-  code = "E_INTERNAL";
+const FILE = new URL("./todos.json", import.meta.url);
+let todos = fs.existsSync(FILE) ? JSON.parse(fs.readFileSync(FILE, "utf8")) : [];
 
-  constructor(message, options) {
-    super(message, options);
-    this.name = new.target.name;
-  }
-
-  toJSON() {
-    return { code: this.code, message: this.message };
-  }
+function save() {
+  fs.writeFileSync(FILE, JSON.stringify(todos, null, 2));
+}
+function line(t) {
+  return (t.done ? "[x] " : "[ ] ") + t.id + ". " + t.text;
 }
 
-export class NotFoundError extends AppError {
-  status = 404;
-  code = "E_NOT_FOUND";
-}
-
-export class ValidationError extends AppError {
-  status = 400;
-  code = "E_VALIDATION";
-}
-
-export class StorageError extends AppError {
-  status = 503;
-  code = "E_STORAGE";
-}
-~~~
-
-~~~js store.js
-import { readFile, writeFile } from "node:fs/promises";
-import { StorageError } from "./errors.js";
-
-const FILE = new URL("./notes.json", import.meta.url);
-
-export async function readNotes() {
-  let text;
-  try {
-    text = await readFile(FILE, "utf8");
-  } catch (err) {
-    if (err.code === "ENOENT") return [];
-    throw new StorageError("مش قادرين نقرا الملاحظات دلوقتي", { cause: err });
-  }
-  try {
-    return JSON.parse(text);
-  } catch (err) {
-    throw new StorageError("ملف الملاحظات بايظ", { cause: err });
-  }
-}
-
-export async function saveNotes(notes) {
-  try {
-    await writeFile(FILE, JSON.stringify(notes, null, 2));
-  } catch (err) {
-    throw new StorageError("مش قادرين نحفظ دلوقتي", { cause: err });
-  }
+const [cmd, ...rest] = process.argv.slice(2);
+if (cmd === "add") {
+  const id = todos.length ? todos.at(-1).id + 1 : 1;
+  todos.push({ id, text: rest.join(" "), done: false });
+  save();
+  console.log("اتضافت:", line(todos.at(-1)));
+} else if (cmd === "done") {
+  const t = todos.find((x) => x.id === Number(rest[0]));
+  if (!t) { console.log("مفيش مهمة رقم", rest[0]); process.exitCode = 1; }
+  else { t.done = true; save(); console.log("خلصت:", line(t)); }
+} else if (cmd === "list") {
+  todos.forEach((t) => console.log(line(t)));
+  console.log(todos.filter((t) => t.done).length + " من " + todos.length + " خلصوا");
+} else if (cmd === "csv") {
+  const rows = todos.map((t) => [t.id, JSON.stringify(t.text), t.done].join(","));
+  fs.writeFileSync(new URL("./todos.csv", import.meta.url), "id,text,done\n" + rows.join("\n") + "\n");
+  console.log("اتكتب todos.csv فيه", todos.length, "سطر");
+} else {
+  console.log("الأوامر: add, done, list, csv");
 }
 ~~~
 
-~~~js log.js
-import { appendFileSync } from "node:fs";
-import { randomUUID } from "node:crypto";
+### بعد: كل ملف مسؤول عن حاجة واحدة
 
-const LOG = new URL("./errors.log", import.meta.url);
+~~~text
+after/
+  main.js         الدخول: يقرا الأمر وينادي الدالة بتاعته
+  store.js        القراية والكتابة في todos.json بس
+  format.js       شكل السطر والملخص بس
+  commands.js     الأوامر الأربعة
+  export-csv.js   التصدير، بيتحمّل بـ import() لما تطلبه بس
+~~~
 
-function chain(err) {
-  const out = [];
-  for (let e = err; e && out.length < 10; e = e.cause) {
-    out.push(e instanceof Error ? { name: e.name, message: e.message, code: e.code } : { value: String(e) });
-  }
-  return out;
+~~~js after/store.js
+import fs from "node:fs";
+
+const FILE = new URL("./todos.json", import.meta.url);
+
+export function load() {
+  return fs.existsSync(FILE) ? JSON.parse(fs.readFileSync(FILE, "utf8")) : [];
 }
 
-// بيسجّل الـ error بكل أسبابه وبيرجّع رقم يتبعت لليوزر عشان الدعم يلاقيه
-export function logError(err, context) {
-  const id = randomUUID().slice(0, 8);
-  appendFileSync(LOG, JSON.stringify({ id, time: new Date().toISOString(), ...context, chain: chain(err) }) + "\n");
-  return id;
+export function save(todos) {
+  fs.writeFileSync(FILE, JSON.stringify(todos, null, 2));
 }
 ~~~
 
-~~~js server.js
-import http from "node:http";
-import { AppError, NotFoundError, ValidationError } from "./errors.js";
-import { readNotes, saveNotes } from "./store.js";
-import { logError } from "./log.js";
-
-async function readJson(req) {
-  let body = "";
-  for await (const chunk of req) body += chunk;
-  try {
-    return JSON.parse(body || "{}");
-  } catch (err) {
-    throw new ValidationError("الـ body لازم يبقى JSON سليم", { cause: err });
-  }
+~~~js after/format.js
+export function line(t) {
+  return (t.done ? "[x] " : "[ ] ") + t.id + ". " + t.text;
 }
 
-async function route(req) {
-  const { pathname } = new URL(req.url, "http://x");
-  const match = pathname.match(/^\/notes\/(\d+)$/);
-
-  if (req.method === "GET" && pathname === "/notes") return readNotes();
-  if (req.method === "GET" && match) {
-    const note = (await readNotes()).find((n) => n.id === Number(match[1]));
-    if (!note) throw new NotFoundError("الملاحظة دي مش موجودة");
-    return note;
-  }
-  if (req.method === "POST" && pathname === "/notes") {
-    const { text } = await readJson(req);
-    if (typeof text !== "string" || !text.trim()) throw new ValidationError("اكتب نص الملاحظة");
-    const notes = await readNotes();
-    const note = { id: (notes.at(-1)?.id ?? 0) + 1, text: text.trim() };
-    await saveNotes([...notes, note]);
-    return note;
-  }
-  throw new NotFoundError("الصفحة دي مش موجودة");
-}
-
-// المكان الوحيد اللي بيقرر: اليوزر يشوف إيه، وإيه يتسجّل
-function sendError(res, err, req) {
-  const known = err instanceof AppError;
-  const status = known ? err.status : 500;
-  const body = known ? err.toJSON() : { code: "E_INTERNAL", message: "حصلت مشكلة عندنا، جرّب كمان شوية" };
-  if (!known || status >= 500) body.errorId = logError(err, { method: req.method, url: req.url });
-  res.writeHead(status, { "content-type": "application/json; charset=utf-8" });
-  res.end(JSON.stringify(body));
-}
-
-export function createServer() {
-  return http.createServer(async (req, res) => {
-    try {
-      const data = await route(req);
-      res.writeHead(200, { "content-type": "application/json; charset=utf-8" });
-      res.end(JSON.stringify(data));
-    } catch (err) {
-      sendError(res, err, req);
-    }
-  });
+export function summary(todos) {
+  return todos.filter((t) => t.done).length + " من " + todos.length + " خلصوا";
 }
 ~~~
 
-~~~js demo.js
-import { writeFileSync, rmSync, readFileSync } from "node:fs";
-import { createServer } from "./server.js";
+~~~js after/commands.js
+import { save } from "./store.js";
+import { line, summary } from "./format.js";
 
-rmSync(new URL("./notes.json", import.meta.url), { force: true });
-rmSync(new URL("./errors.log", import.meta.url), { force: true });
-
-const server = createServer().listen(0);
-const base = "http://127.0.0.1:" + server.address().port;
-
-async function call(method, path, body) {
-  const res = await fetch(base + path, { method, body });
-  console.log(method.padEnd(4), path.padEnd(9), res.status, await res.text());
+export function add(todos, words) {
+  const id = todos.length ? todos.at(-1).id + 1 : 1;
+  todos.push({ id, text: words.join(" "), done: false });
+  save(todos);
+  console.log("اتضافت:", line(todos.at(-1)));
 }
 
-await call("POST", "/notes", JSON.stringify({ text: "اشتري لبن" }));
-await call("GET", "/notes/1");
-await call("GET", "/notes/9");
-await call("POST", "/notes", "{text:");
-await call("POST", "/notes", JSON.stringify({ text: "  " }));
-writeFileSync(new URL("./notes.json", import.meta.url), "[{ bad json");
-await call("GET", "/notes");
-// باج حقيقي: الملف object مش array، فـ find مش موجودة
-writeFileSync(new URL("./notes.json", import.meta.url), JSON.stringify({ id: 1 }));
-await call("GET", "/notes/1");
-server.close();
+export function done(todos, [idText]) {
+  const t = todos.find((x) => x.id === Number(idText));
+  if (!t) {
+    console.log("مفيش مهمة رقم", idText);
+    process.exitCode = 1;
+    return;
+  }
+  t.done = true;
+  save(todos);
+  console.log("خلصت:", line(t));
+}
 
-console.log("--- errors.log:");
-const log = readFileSync(new URL("./errors.log", import.meta.url), "utf8").trim().split("\n");
-for (const line of log) {
-  const e = JSON.parse(line);
-  console.log(e.method, e.url, e.chain.map((c) => c.name + ": " + c.message).join("  ←  "));
+export function list(todos) {
+  todos.forEach((t) => console.log(line(t)));
+  console.log(summary(todos));
+}
+
+export async function csv(todos) {
+  const { writeCsv } = await import("./export-csv.js");
+  writeCsv(todos);
 }
 ~~~
 
-## ليه التصميم ده
+~~~js after/export-csv.js
+import fs from "node:fs";
 
-- **مكان واحد بيقرر ([[sendError]]):** كل route بيرمي وخلاص، ومحدش بيكتب [[res.writeHead(500)]] بإيده. لو حبيت تغيّر شكل الـ error بكرة، بتغيّره في دالة واحدة.
-- **[[code]] ثابت جنب الرسالة:** الواجهة بتقرر بـ [[E_NOT_FOUND]] مش بالنص العربي، فتقدر تغيّر صياغة الرسالة من غير ما تكسر حاجة.
-- **[[cause]] في كل لفّة:** [[store.js]] بيحوّل [[SyntaxError]] و أخطاء [[fs]] لـ [[StorageError]] مفهومة، بس السبب الأصلي جواها. اللوج طلّع السلسلة كاملة: [[StorageError ← SyntaxError ... position 3]].
-- **[[errorId]] بس للي بيتسجّل:** اليوزر بيبعته للدعم، والدعم بيدوّر بيه في [[errors.log]]. الـ 400 والـ 404 مش بيتسجّلوا لأنهم مش مشكلة عندنا.
-- **[[ENOENT]] مش غلط:** أول مرة الملف مش موجود، فـ [[readNotes]] بترجّع [[[]]]. ده قرار واعي ومكتوب في الكود، مش [[catch {}]] بيبلع كل حاجة.
-- **مفيش [[catch {}]] فاضي:** اتأكدنا بـ grep:
-
-~~~text الناتج: grep على catch فاضي
-مفيش catch فاضي
+export function writeCsv(todos) {
+  const rows = todos.map((t) => [t.id, JSON.stringify(t.text), t.done].join(","));
+  fs.writeFileSync(new URL("./todos.csv", import.meta.url), "id,text,done\n" + rows.join("\n") + "\n");
+  console.log("اتكتب todos.csv فيه", todos.length, "سطر");
+}
 ~~~
 
-## التصميم اللي اترفض
+~~~js after/main.js
+import { load } from "./store.js";
+import * as commands from "./commands.js";
 
-[[try/catch]] جوه كل route وكل واحد يقرر يرد بإيه. ده بيشتغل، بس كل route جديد بيكرر نفس الكود، وكل واحد ممكن يطلع بشكل error مختلف، وكفاية route واحد ينسى ويبعت [[err.message]] الأصلي في الـ 500 (اللي ممكن يبقى فيه مسار ملف على السيرفر زي رسالة الـ ENOENT). المكان الواحد بيمنع ده من الأساس.
+const [cmd, ...rest] = process.argv.slice(2);
+const todos = load();
 
-## خليه بتاعك
+if (Object.hasOwn(commands, cmd)) {
+  await commands[cmd](todos, rest);
+} else {
+  console.log("الأوامر: " + Object.keys(commands).join(", "));
+}
+~~~
 
-نفس الملفات الأربعة ([[errors.js]] و [[log.js]] و لفّ الـ cause في طبقة التخزين و [[sendError]]) تنفع في أي مشروع. في الواجهة: اقرا [[code]] واعرض toast بالـ [[message]]، ولو فيه [[errorId]] اعرضه صغير تحت.` },
+والسكربت اللي قارن النسختين (وجنبهم [[package.json]] فيه [[{ "type": "module" }]]):
+
+~~~bash run-both.sh
+# بيمسح البيانات القديمة ويشغّل نفس الأوامر على النسختين
+for v in before after; do
+  rm -f $v/todos.json $v/todos.csv
+  entry=$v/todo.js; [ $v = after ] && entry=$v/main.js
+  {
+    node $entry add اشتري لبن
+    node $entry add ذاكر modules
+    node $entry done 1
+    node $entry done 9
+    node $entry list
+    node $entry csv
+    cat $v/todos.csv
+  } > $v.out 2>&1
+done
+diff before.out after.out && echo "النسختين نفس الناتج حرف بحرف"
+cat after.out
+~~~
+
+## ليه التقسيمة دي
+
+- **التقسيم حسب «ليه هيتغيّر»:** لو بكرة الحفظ بقى في database بدل ملف، تغيّر [[store.js]] بس. لو الشكل بقى ✓ بدل [[[x]]]، تغيّر [[format.js]] بس. ده مقياس أحسن من «كل ملف ٢٠ سطر».
+- **مفيش متغير global:** في القديم [[todos]] كان [[let]] في أول الملف وكل الكود بيعدّل فيه. في الجديد [[main.js]] بيعمله [[load()]] ويبعته لكل أمر كـ parameter، فتقدر تختبر [[add]] بـ array انت عاملها.
+- **[[import * as commands]] و [[Object.hasOwn(commands, cmd)]]:** كل export في [[commands.js]] بقى أمر، ولستة الأوامر في رسالة المساعدة بتطلع من [[Object.keys]]. و [[hasOwn]] بيتأكد إن الاسم export فعلًا مش حاجة جاية من مكان تاني.
+- **[[csv]] بـ [[import()]]:** التصدير نادر، فـ [[export-csv.js]] مش بيتقري من الديسك في [[add]] و [[list]] خالص.
+- **مفيش circular import:** الاتجاه دايمًا لتحت: [[main]] ← [[commands]] ← [[store]] و [[format]]. ولا ملف من التحت بيستورد من فوق.
+- **أطول ملف ٣١ سطر** (بـ [[wc -l]])، والشرط كان أقل من ١٥٠.
+
+## التصميم التاني اللي اترفض
+
+تقسيمة حسب الأمر (ملف لكل أمر: [[add.js]] و [[done.js]]...). مع ٤ أوامر صغيرة دي ملفات كتير كل واحد ٥ سطور، وكلهم هيستوردوا [[store]] و [[format]]. لو الأوامر كبرت (زي مشروع الـ CLI اللي فوق) ساعتها التقسيمة دي تبقى أحسن.
+
+## الغلطة اللي تتجنبها
+
+لو [[format.js]] احتاج يعرف عدد المهام فعمل [[import { load } from "./store.js"]]، وفي نفس الوقت [[store.js]] استورد [[line]] من [[format.js]] عشان يطبع وهو بيحفظ، يبقى عندك دايرة. خلي البيانات تتبعت كـ parameter بدل ما كل ملف يجيبها بنفسه.` },
       ],
       items: [
         {
-          cmd: "try و catch و finally",
-          title: "تمسك error قبل ما البرنامج يقع",
-          desc: R`[[throw]] بيوقف الدالة ويطلع لفوق لحد أول [[try/catch]]، ولو ملقاش، البرنامج يقع (أو في المتصفح error في Console). [[catch (err)]] بتمسكه، و [[finally]] بتشتغل في الحالتين (نجح أو فشل)، ومكانها التنضيف: قفل loading أو connection.
+          cmd: "import و export",
+          title: "تقسّم الكود على ملفات وتستورد منهم",
+          desc: R`كل ملف ES module ليه scope بتاعه، ومحدش يشوف حاجة منه غير اللي عملها [[export]]. فيه نوعين: named export ([[export function add]])، وده بيتعمله import بنفس الاسم بين [[{ }]]، و default export ([[export default]]) واحد في الملف، وبيتعمله import بأي اسم.
 
-ارمي دايمًا [[Error]] أو حاجة وارثة منه ([[TypeError]] و [[RangeError]]...)، مش string، عشان يبقى فيه [[message]] و [[stack]].`,
-          example: R`function parseAge(input) {
-  const age = Number(input);
-  if (Number.isNaN(age)) throw new TypeError($__btمش رقم: $__{input}$__bt);
-  if (age < 0) throw new RangeError("السن مينفعش يبقى سالب");
-  return age;
-}
-try {
-  parseAge("abc");
-} catch (err) {
-  console.log(err.name, err.message);
-  if (!(err instanceof TypeError)) throw err;
-} finally {
-  console.log("خلصنا");
-}
-try { JSON.parse("{"); } catch { console.log("JSON بايظ"); }`,
-          try: R`اطبع [[err.stack]] وشوف أرقام السطور. وبعدين خلي الـ try يرجّع [[return "a"]] والـ finally يرجّع [[return "b"]] جوه دالة، وشوف مين بيكسب.`,
+في المتصفح: [[<script type="module" src="main.js">]]. وفي Node: [["type": "module"]] في package.json أو امتداد [[.mjs]].`,
+          example: R`// math.js
+export const PI = 3.14159;
+export function area(r) { return PI * r * r; }
+export default function round2(n) { return Math.round(n * 100) / 100; }
+// main.js
+import round2, { area, PI as pi } from "./math.js";
+import * as math from "./math.js";
+console.log(round2(area(2)), pi, math.PI);
+export { area as circleArea } from "./math.js";`,
+          try: R`اعمل الملفين في فولدر، وضيف [[package.json]] فيه [[{ "type": "module" }]]، وشغّل [[node main.js]]. وبعدين امسح [[.js]] من الـ import واقرا الـ error (ERR_MODULE_NOT_FOUND).`,
           practice: [
-            { lvl: 'سريع', t: R`**ابني:** زرار «احفظ» بينادي [[save()]]: الدالة بتقفل الزرار وتكتب عليه «بيحفظ...»، وبعدين بتنادي [[fakeSave()]] اللي بترمي Error عشوائيًا نص المرات، ولو فشلت تكتب الرسالة في [[<p>]] تحت. رجّع الزرار لحالته في [[finally]].`, done: R`في النجاح والفشل الاتنين الزرار بيرجع مفتوح ومكتوب عليه «احفظ»، ورسالة الغلط بتظهر في الفشل بس. ولو نقلت سطر الرجوع لآخر الـ try بدل finally، أول فشل بيسيب الزرار مقفول للأبد.`, sol: R`~~~live 170 index.html
+            { lvl: 'سريع', t: R`**ابني:** اعمل [[counter.js]] فيه [[export let count = 0]] و [[export function inc() { count++; }]]، وصفحة فيها زرار و [[<script type="module">]] بيعمل import للاتنين: كل ضغطة تنادي [[inc()]] وتكتب [[count]] في الزرار. وبعدين جرّب تكتب [[count = 5]] جوه الـ script.`, done: R`الزرار بيعد ١ و ٢ و ٣ مع كل ضغطة، يعني الـ import شايف المتغير نفسه مش نسخة منه (live binding). و [[count = 5]] بيرمي [[TypeError: Assignment to constant variable.]] حتى إن المتغير [[let]] في ملفه.`, sol: R`ملفين جنب بعض في فولدر واحد:
+
+~~~js counter.js
+export let count = 0;
+export function inc() {
+  count++;
+}
+~~~
+
+~~~html index.html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <meta charset="utf-8">
-<title>زرار احفظ</title>
-<style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
-  button { font: inherit; padding: 8px 20px; }
-  #msg { color: #b91c1c; min-height: 1.6em; }
-  #ok { color: #15803d; min-height: 1.6em; }
-</style>
-<button id="save">احفظ</button>
+<title>عدّاد بـ modules</title>
+<button id="btn">0</button>
 <p id="msg"></p>
-<p id="ok"></p>
-<script>
-  const btn = document.querySelector("#save");
-  const msg = document.querySelector("#msg");
-  const ok = document.querySelector("#ok");
-  let saves = 0;
+<script type="module">
+  import { count, inc } from "./counter.js";
 
-  // بتستنى ٦٠٠ms وبعدين بتفشل نص المرات (await هتتشرح في وحدة async)
-  async function fakeSave() {
-    await new Promise((r) => setTimeout(r, 600));
-    if (Math.random() < 0.5) throw new Error("السيرفر مردّش، جرّب تاني");
-    return ++saves;
+  const btn = document.querySelector("#btn");
+  btn.addEventListener("click", () => {
+    inc();
+    btn.textContent = count;
+  });
+
+  try {
+    count = 5;
+  } catch (err) {
+    document.querySelector("#msg").textContent = err.name + ": " + err.message;
   }
-
-  async function save() {
-    btn.disabled = true;
-    btn.textContent = "بيحفظ...";
-    msg.textContent = "";
-    ok.textContent = "";
-    try {
-      const n = await fakeSave();
-      ok.textContent = "اتحفظ (مرة رقم " + n + ")";
-    } catch (err) {
-      msg.textContent = err.message;
-    } finally {
-      btn.disabled = false;
-      btn.textContent = "احفظ";
-    }
-  }
-
-  btn.addEventListener("click", save);
 </script>
 </html>
 ~~~
 
-دوس «احفظ» كذا مرة في الـ preview: نص المرات هتشوف الرسالة الحمرا، ونص المرات «اتحفظ»، وفي الحالتين الزرار بيرجع.
+**مهم:** الـ module مبيشتغلش لو فتحت [[index.html]] بدبل كليك. شغّل سيرفر صغير من الفولدر ([[npx serve .]] أو [[python -m http.server]]) وافتح [[http://localhost:...]]. جرّبنا الاتنين في Chrome headless:
 
-## اتقاس في Chrome
-
-ثبّتنا [[Math.random]] في كل ضغطة عشان نجرّب النجاح والفشل بالترتيب اللي عايزينه، وقرينا الزرار مرة وهو شغال (بعد 100ms) ومرة بعد ما يخلص. وعملنا نسخة تانية [[broken.html]] فيها سطور الرجوع في آخر الـ try بدل finally:
-
-~~~js broken.html (الجزء اللي اتغيّر بس)
-    try {
-      const n = await fakeSave();
-      ok.textContent = "اتحفظ (مرة رقم " + n + ")";
-      btn.disabled = false;
-      btn.textContent = "احفظ";
-    } catch (err) {
-      msg.textContent = err.message;
-    }
+~~~text الناتج (Chrome، الصفحة على http://127.0.0.1، ٣ ضغطات)
+الزرار بعد كل ضغطة: 1 ، 2 ، 3
+#msg: TypeError: Assignment to constant variable.
+[chrome] 157
 ~~~
 
-~~~text الناتج (Chrome headless)
-=== index.html
-نجاح: وهو شغال disabled=true «بيحفظ...» | بعدها disabled=false «احفظ» msg=«» ok=«اتحفظ (مرة رقم 1)»
-فشل: وهو شغال disabled=true «بيحفظ...» | بعدها disabled=false «احفظ» msg=«السيرفر مردّش، جرّب تاني» ok=«»
-فشل تاني: وهو شغال disabled=true «بيحفظ...» | بعدها disabled=false «احفظ» msg=«السيرفر مردّش، جرّب تاني» ok=«»
-نجاح: وهو شغال disabled=true «بيحفظ...» | بعدها disabled=false «احفظ» msg=«» ok=«اتحفظ (مرة رقم 2)»
-=== broken.html
-نجاح: وهو شغال disabled=true «بيحفظ...» | بعدها disabled=false «احفظ» msg=«» ok=«اتحفظ (مرة رقم 1)»
-فشل: وهو شغال disabled=true «بيحفظ...» | بعدها disabled=true «بيحفظ...» msg=«السيرفر مردّش، جرّب تاني» ok=«»
-فشل تاني: وهو شغال disabled=true «بيحفظ...» | بعدها disabled=true «بيحفظ...» msg=«السيرفر مردّش، جرّب تاني» ok=«»
-نجاح: وهو شغال disabled=true «بيحفظ...» | بعدها disabled=true «بيحفظ...» msg=«السيرفر مردّش، جرّب تاني» ok=«»
+~~~text الناتج (نفس الصفحة مفتوحة كملف file://)
+[console] Access to script at 'file:///C:/Users/ali/code/counter-page/counter.js' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: chrome, chrome-experimental-site-token-provider, chrome-extension, chrome-untrusted, data, http, https, isolated-app.
+[console] Failed to load resource: net::ERR_FAILED
+الزرار: 0
 [chrome] 157
 ~~~
 
 **ليه كده:**
 
-- **قبل الـ try:** بنقفل الزرار ونكتب «بيحفظ...» ونمسح الرسايل القديمة، فاليوزر عارف إن فيه حاجة شغالة ومش هيدوس مرتين.
-- **[[try]]:** الحتة اللي ممكن تفشل بس ([[fakeSave]]). لو نجحت بنكتب الرسالة الخضرا.
-- **[[catch (err)]]:** بيتنفّذ لو [[fakeSave]] رمت، و [[err.message]] هي النص اللي اترمى مع الـ Error.
-- **[[finally]]:** بيتنفّذ **في الحالتين**، بعد الـ try أو بعد الـ catch. ده المكان الصح لأي «رجّع الحالة زي ما كانت»: فك القفل، شيل الـ loading، اقفل ملف.
-- **في [[broken.html]]:** أول فشل نط من سطر [[await fakeSave()]] للـ catch على طول، فسطرين الرجوع اللي في آخر الـ try متنفّذوش، والزرار فضل [[disabled=true]] و «بيحفظ...» للأبد. الضغطة الرابعة ([[click]] على زرار مقفول) معملتش حاجة خالص.
-- **[[await]]:** هنا عشان [[fakeSave]] بتستنى 600ms زي سيرفر حقيقي، والـ try/catch بيمسك الـ error بتاع الـ await عادي. ده هيتشرح بالتفصيل في وحدة async.
+- **[[export let count = 0]]** و **[[inc()]]** في نفس الملف: [[inc]] بتغيّر [[count]] جوه [[counter.js]] نفسه.
+- **[[import { count, inc }]]** مش بيعمل نسخة من الرقم. الـ [[count]] اللي في الصفحة **رابط حي (live binding)** للمتغير اللي في [[counter.js]]، فبعد كل [[inc()]] بنقرا القيمة الجديدة: 1 ثم 2 ثم 3.
+- **[[count = 5]]** رمت [[TypeError: Assignment to constant variable.]]: الاسم المستورد read-only من ناحية اللي استورده، حتى لو هو [[let]] في ملفه. اللي يقدر يغيّره هو الملف اللي عامله export بس، وعشان كده عملنا [[inc()]].
+- **من file://** الـ module اتمنع بـ CORS والزرار فضل 0: المتصفح بيحمّل الـ modules بنفس قواعد [[fetch]]، و [[file://]] origin بتاعه [[null]].
 
-**الغلطة الشائعة:** تكرّر سطور الرجوع في الـ try وفي الـ catch الاتنين. بيشتغل، بس أول ما حد يزوّد [[return]] جوه الـ try أو error تاني يطلع من الـ catch، النسخة المكررة بتتنسي. [[finally]] مكان واحد بيتنفّذ دايمًا.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[function f() { try { console.log("a"); return "b"; } finally { console.log("c"); } } console.log(f());]]. اكتب الترتيب.`, done: R`توقعت وطلع [[a]] ثم [[c]] ثم [[b]]: الـ finally بتشتغل قبل ما الدالة ترجع فعلًا، حتى مع return.`, sol: R`**التوقع:** [[a]] ثم [[c]] ثم [[b]].
+**الغلطة الشائعة:** تكتب [[let c = count; c++]] وتستنى الزرار يتغيّر. [[c]] نسخة عادية من القيمة ساعتها، والـ live binding في الاسم المستورد نفسه بس.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[stats.js]] أول سطر فيه [[console.log("loaded")]]. و [[a.js]] و [[b.js]] الاتنين بيعملوا [[import "./stats.js"]]، و [[main.js]] بيعمل import لـ a و b. «loaded» هتتطبع كام مرة لما تشغّل main.js؟`, done: R`توقعت وطلعت مرة واحدة: الـ module بيتنفّذ أول مرة بس وبعد كده كل اللي بيعمله import بياخد نفس النسخة. ودي اللي بتخلي ملف config أو اتصال database يتعمل مرة واحدة.`, sol: R`عشان نشوف «loaded» اتطبعت كام مرة، وكمان نثبت إن الاتنين واخدين **نفس** النسخة، خلّينا [[stats.js]] يصدّر object وكل ملف يزوّد فيه:
 
-~~~js finally-order.js
-function f() {
-  try {
-    console.log("a");
-    return "b";
-  } finally {
-    console.log("c");
-  }
-}
-console.log(f());
+~~~js stats.js
+console.log("loaded");
+export const hits = { count: 0 };
 ~~~
 
-~~~text الناتج (node finally-order.js، Node 24)
-a
-c
-b
+~~~js a.js
+import { hits } from "./stats.js";
+hits.count++;
+console.log("a.js شايف count =", hits.count);
 ~~~
 
-**ليه كده بالترتيب:**
-
-1. [[f()]] بتبدأ، والـ try بيطبع [[a]].
-2. [[return "b"]]: الدالة **قررت** ترجّع [["b"]]، بس قبل ما ترجع فعلًا لازم الـ finally يتنفّذ. القيمة [["b"]] بتتشال على جنب.
-3. الـ finally بيطبع [[c]].
-4. الدالة بترجع [["b"]]، و [[console.log(f())]] اللي برّه بيطبعها.
-
-يعني [[console.log(f())]] مستني نتيجة [[f()]] الأول، وكل اللي جوه [[f]] (حتى الـ finally) بيخلص قبل ما الطباعة اللي برّه تحصل.
-
-**الغلطة الشائعة:** تفتكر إن [[return]] بتقطع كل حاجة فالـ finally ميتنفّذش. لأ: [[finally]] بيتنفّذ مع [[return]] و [[throw]] و [[break]]. وده بالظبط اللي بيخليه آمن لتنظيف الموارد.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** اكتب [[safeJSON(text, fallback)]] بترجّع الـ object لو النص سليم، و fallback لو [[SyntaxError]] بس، وأي error تاني تعمله throw تاني. جرّبها على [['{"a":1}']] و [["{"]] و [[undefined]].`, done: R`النتايج [[{ a: 1 }]] وبعدين الـ fallback مرتين: [[undefined]] كمان بيدّي SyntaxError ورسالته [["undefined" is not valid JSON]]. وجرّب كمان [[function g() { try { throw new Error("x"); } finally { return "ok"; } }]]: بترجّع [["ok"]] والـ error بيختفي، وده سبب إنك متعملش return جوه finally.`, sol: R`~~~js safe-json.js
-function safeJSON(text, fallback) {
-  try {
-    return JSON.parse(text);
-  } catch (err) {
-    if (err instanceof SyntaxError) {
-      console.log("  (SyntaxError: " + err.message + ")");
-      return fallback;
-    }
-    throw err;
-  }
-}
-
-console.log(safeJSON('{"a":1}', {}));
-console.log(safeJSON("{", { empty: true }));
-console.log(safeJSON(undefined, { empty: true }));
-
-// أي error تاني بيعدّي: object بيرمي وهو بيتحوّل لنص
-const evil = { toString() { throw new RangeError("مش نص"); } };
-try {
-  safeJSON(evil, {});
-} catch (err) {
-  console.log("اتعدّى لبرّه:", err.name, err.message);
-}
-
-function g() {
-  try {
-    throw new Error("x");
-  } finally {
-    return "ok";
-  }
-}
-console.log(g());
+~~~js b.js
+import { hits } from "./stats.js";
+hits.count++;
+console.log("b.js شايف count =", hits.count);
 ~~~
 
-~~~text الناتج (node safe-json.js، Node 24)
-{ a: 1 }
-  (SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2))
-{ empty: true }
-  (SyntaxError: "undefined" is not valid JSON)
-{ empty: true }
-اتعدّى لبرّه: RangeError مش نص
-ok
-~~~
-
-**ليه كده:**
-
-- **[[return JSON.parse(text)]] جوه الـ try:** لو النص سليم بيرجع الـ object على طول.
-- **[[if (err instanceof SyntaxError)]]:** [[JSON.parse]] بترمي [[SyntaxError]] لما النص مش JSON. ده النوع **الوحيد** اللي احنا عارفين نتعامل معاه (نرجّع الـ fallback). سطر الطباعة بين قوسين موجود عشان تشوف الرسالة بس.
-- **[[undefined]]:** [[JSON.parse(undefined)]] بتحوّله لنص [["undefined"]] الأول، وده مش JSON، فـ SyntaxError برسالة [["undefined" is not valid JSON]] والـ fallback رجع.
-- **[[throw err]]:** أي نوع تاني بيترمي زي ما هو. جرّبناه بـ object الـ [[toString]] بتاعه بيرمي [[RangeError]]: الـ catch مسكه، شاف إنه مش SyntaxError، ورماه تاني، فوصل للـ try اللي برّه.
-
-## [[return]] جوه [[finally]]
-
-آخر سطر [[ok]]: الدالة [[g]] رمت [[Error("x")]]، بس الـ finally عمل [[return "ok"]]، والـ return ده **مسح** الـ error. الـ error اختفى من غير ما حد يعرف، ومفيش ولا سطر في اللوج. عشان كده متكتبش [[return]] (ولا [[throw]]) جوه finally: خليه للتنظيف بس.
-
-**الغلطة الشائعة:** [[catch { return fallback; }]] من غير ما تفحص النوع. كده أي باج تاني (اسم متغير غلط، أو [[TypeError]]) هيرجّع الـ fallback بهدوء وعمرك ما هتلاقيه.` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[try { setTimeout(() => { throw new Error("x"); }, 0); } catch (e) { console.log("caught"); } console.log("after");]]. صاحبه فاكر إن الـ try حامية الـ timer. شغّله، وفسّر ليه، وصلّحه بحيث الغلط يتمسك ويتطبع والبرنامج يكمّل.`, done: R`قبل التصليح بيطبع [[after]]، وبعدها البرنامج بيقع بـ [[Error: x]] ويخرج بكود ١، و [[caught]] عمرها ما بتطبع: الـ try خلص قبل ما الـ callback يشتغل بكتير. بعد ما تنقل الـ try/catch جوه الـ callback نفسه بيطبع [[after]] وبعدين [[caught]] والكود ٠.`, sol: R`## قبل التصليح
-
-~~~js timer-broken.js
-try {
-  setTimeout(() => {
-    throw new Error("x");
-  }, 0);
-} catch (e) {
-  console.log("caught");
-}
-console.log("after");
-~~~
-
-~~~text الناتج (node timer-broken.js; echo "exit code: $?" ، Node 24، أول ٦ سطور والكود)
-after
-C:\Users\ali\code\try-basics\timer-broken.js:3
-    throw new Error("x");
-    ^
-
-Error: x
-exit code: 1
-~~~
-
-## ليه الـ try محمتهوش
-
-بالترتيب اللي حصل فعلًا:
-
-1. الـ try بدأ، و [[setTimeout]] **سجّلت** الدالة عشان تتنادى بعدين، ورجعت على طول من غير ما تنفّذها.
-2. الـ try خلص من غير أي error، فالـ catch اتخطّى.
-3. [[console.log("after")]] اتطبعت.
-4. الكود الأساسي خلص، وبعدين Node نادى الدالة بتاعة الـ timer. ساعتها الـ try **مش موجود أصلًا**: هو كان حوالين سطر التسجيل بس، مش حوالين الدالة لما تشتغل.
-5. الـ throw ملقاش أي catch، فبقى **uncaught exception**: Node طبع الـ error ووقف البرنامج بكود ١، و [[caught]] عمرها ما اتطبعت.
-
-## التصليح: الـ try جوه الـ callback
-
-~~~js timer-fixed.js
-setTimeout(() => {
-  try {
-    throw new Error("x");
-  } catch (e) {
-    console.log("caught", e.message);
-  }
-}, 0);
-console.log("after");
-~~~
-
-~~~text الناتج (node timer-fixed.js; echo "exit code: $?")
-after
-caught x
-exit code: 0
-~~~
-
-الـ try دلوقتي جزء من الدالة نفسها، فلما الدالة تشتغل بعدين، الـ try بيشتغل معاها ويمسك الـ error. [[after]] لسه أول سطر، لأن الـ timer بيتنفّذ بعد الكود الأساسي في الحالتين.
-
-**الغلطة الشائعة:** نفس الكلام على [[addEventListener]] و [[fs.readFile]] بالـ callback: try حوالين **تسجيل** الـ callback مبيحميش الـ callback. القاعدة: الـ try لازم يبقى في نفس الدالة اللي بتنفّذ السطر اللي بيرمي، أو تستخدم Promise و [[await]] (وحدة async).` },
-            { lvl: 'تحدي', t: R`**بيانات حقيقية:** لوج فيه سطر JSON لكل حدث، وفيه سطر بايظ: [[['{"level":"info"}', '{bad', '{"level":"error"}']]]. اقرا كل سطر بـ try/catch جوه الـ loop، وعدّ السليم، واطبع رقم السطر البايظ ورسالته، ومتوقفش عنده.`, done: R`بيطبع [[سطر 2 Expected property name or '}' in JSON at position 1 (line 1 column 2)]] وبعدين عدد السليم 2. ولو حطيت الـ try برّه الـ loop، أول سطر بايظ بيوقّف القراية وتضيع الأحداث اللي بعده.`, sol: R`~~~js log-lines.js
-const lines = ['{"level":"info"}', "{bad", '{"level":"error"}'];
-const events = [];
-
-lines.forEach((line, i) => {
-  try {
-    events.push(JSON.parse(line));
-  } catch (err) {
-    console.log("سطر", i + 1, err.message);
-  }
-});
-
-console.log("السليم:", events.length, events.map((e) => e.level));
-~~~
-
-~~~text الناتج (node log-lines.js، Node 24)
-سطر 2 Expected property name or '}' in JSON at position 1 (line 1 column 2)
-السليم: 2 [ 'info', 'error' ]
-~~~
-
-## لو الـ try برّه الـ loop
-
-~~~js log-lines-wrong.js
-const lines = ['{"level":"info"}', "{bad", '{"level":"error"}'];
-const events = [];
-
-try {
-  for (const line of lines) events.push(JSON.parse(line));
-} catch (err) {
-  console.log("وقفنا:", err.message);
-}
-
-console.log("السليم:", events.length);
-~~~
-
-~~~text الناتج (node log-lines-wrong.js)
-وقفنا: Expected property name or '}' in JSON at position 1 (line 1 column 2)
-السليم: 1
-~~~
-
-**ليه كده:**
-
-- **الـ try جوه الـ [[forEach]]:** كل سطر ليه try لوحده. السطر البايظ بيرمي، الـ catch بتاعه بيطبع رقمه، والـ loop بيكمّل للسطر اللي بعده عادي. فالحدثين السليمين (info و error) وصلوا.
-- **[[i + 1]]:** الـ index بيبدأ من 0، والناس بتعد السطور من 1.
-- **[[err.message]]:** [[Expected property name or '}' in JSON at position 1 (line 1 column 2)]]: بعد [[{]] كان مستني اسم خاصية بين علامتين، ولقى [[b]] في الحرف رقم 1 (العد من 0).
-- **في النسخة الغلط:** الـ try حوالين الـ loop كله، فأول throw طلّعنا من الـ loop **كله** للـ catch. السطر التالت عمره ما اتقري، وطلع عندنا حدث واحد بس بدل ٢: حدث الـ error (الأهم في اللوج!) ضاع.
-
-**الغلطة الشائعة:** تحط [[continue]] أو تسيب الـ catch فاضي من غير ما تطبع. لازم تعرف **أنهي** سطر باظ وليه، وإلا اللوج هيبان سليم وهو ناقص.` }
-          ],
-          ref: [
-            { t: "MDN: try...catch", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/try...catch" },
-            { t: "MDN: throw", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/throw" },
-            { t: "MDN: Control flow and error handling", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Control_flow_and_error_handling" },
-            { t: "MDN: Error", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error" },
-          ],
-          flag: "script",
-          deep: {
-            why: "الداتا الغلط والنت اللي بيقطع والـ JSON البايظ هيحصلوا أكيد. الفرق بين تطبيق محترم وتطبيق بيقع إنك تمسك الـ error في المكان الصح، وتعرض رسالة مفهومة، وتسجّل التفاصيل.",
-            how: R`الـ throw بيفك الـ call stack: بيطلع من الدوال واحدة واحدة لحد ما يلاقي try. أي كود بعد الـ throw في نفس الدالة مبيشتغلش.
-
-[[catch]] بتمسك أي حاجة اترمت، مش Error بس، عشان كده في TypeScript نوعها unknown. و [[catch {}]] من غير متغير مسموحة لو مش محتاجه (ES2019).
-
-[[finally]] بتشتغل دايمًا، حتى لو فيه return جوه try أو catch. ولو الـ finally نفسها عملت return، بتلغي أي return أو throw قبلها، وده بيخبّي errors، فمتعملش كده.
-
-try/catch بتمسك الـ errors المتزامنة بس. لو الـ error حصل جوه setTimeout أو Promise من غير await، الـ try اللي حوالين مش هتشوفه. مع async/await، [[await]] جوه try بيمسك رفض الـ Promise (درس async).
-
-الأنواع المدمجة: [[TypeError]] (عملية على نوع غلط، زي نداء undefined)، و [[ReferenceError]] (متغير مش موجود)، و [[SyntaxError]] (كود أو JSON بايظ)، و [[RangeError]] (قيمة برا المدى).`,
-            when: R`حوالين أي حاجة ممكن تفشل لأسباب برّه الكود: JSON.parse، و fetch، والملفات، و input اليوزر. وفي الطبقة اللي تعرف تعمل حاجة مفيدة بالـ error (تعرض رسالة، تعيد المحاولة). وفي Express فيه error middleware بيلم كله (تاب Backend بـ Node).`,
-            mistakes: R`[[catch (e) {}]] فاضية: الـ error اختفى وانت مش عارف. و [[throw "error"]] كـ string: مفيش stack. وتلف كل دالة في try/catch بدل مكان واحد مناسب. وتمسك كل الـ errors وانت عايز نوع واحد: افحص النوع وارمي الباقي تاني زي المثال.`
-          },
-          teach: R`## الكود ده بيعمل إيه؟
-
-دالة [[parseAge]] بتحوّل input لسن، وبترمي error بنوع واضح لو الـ input غلط. وبعدين بنناديها بحاجة غلط جوه [[try]]، ونمسك الـ error في [[catch]]، ونطبع رسالة في [[finally]] في كل الأحوال. وفي الآخر [[catch]] من غير متغير. اتشغّل في Node 24.
-
----
-
-## ١. الدالة اللي بترمي
-
-~~~text app.js
-function parseAge(input) {
-  const age = Number(input);
-~~~
-
-[[Number(input)]] بيحوّل أي حاجة لرقم. لو مقدرش بيرجّع [[NaN]] (Not a Number، «مش رقم»). جرّبنا شوية قيم:
-
-~~~text الناتج: Number("abc"), Number("25"), Number(""), Number(" 7 "), Number("-3")
-NaN 25 0 7 -3
-~~~
-
-لاحظ إن النص الفاضي بيبقى 0 مش NaN، والمسافات حوالين الرقم بتتشال.
-
-~~~text app.js
-  if (Number.isNaN(age)) throw new TypeError($__btمش رقم: $__{input}$__bt);
-~~~
-
-- [[Number.isNaN(age)]]: هل age هي NaN؟ (مينفعش تكتب [[age === NaN]]: NaN مش بتساوي حتى نفسها.)
-- [[throw]]: ارمي error. التنفيذ **بيقف هنا فورًا**، والدالة مبترجّعش حاجة، والـ error بيطلع لفوق لحد أول try.
-- [[new TypeError(...)]]: نوع جاهز من الـ errors معناه «القيمة نوعها غلط». والرسالة template فيها الـ input.
-
-~~~text app.js
-  if (age < 0) throw new RangeError("السن مينفعش يبقى سالب");
-  return age;
-}
-~~~
-
-- [[RangeError]]: نوع تاني معناه «القيمة نوعها صح بس برّه المدى المسموح».
-- [[return age]]: لو عدّى الفحصين، رجّع الرقم. [[parseAge("25")]] رجّعت [[25]].
-
----
-
-## ٢. [[try]] و [[catch]]
-
-~~~text app.js
-try {
-  parseAge("abc");
-} catch (err) {
-  console.log(err.name, err.message);
-~~~
-
-- [[try { ... }]]: «جرّب الكود ده، ولو رمى error متوقعش البرنامج».
-- [[parseAge("abc")]] رمت TypeError، فباقي الـ try اتلغى، والتنفيذ نط على الـ catch.
-- [[catch (err)]]: [[err]] هو الـ object اللي اترمى. وأي Error ليه ٣ خصايص: [[name]] اسم النوع ([["TypeError"]])، و [[message]] الرسالة اللي كتبناها، و [[stack]] مكان الـ error بالسطر (تحت).
-
-~~~text الناتج
-TypeError مش رقم: abc
-~~~
-
----
-
-## ٣. ارمي اللي مش بتاعك تاني
-
-~~~text app.js
-  if (!(err instanceof TypeError)) throw err;
-~~~
-
-- [[err instanceof TypeError]]: الـ error ده من نوع TypeError؟
-- [[!( ... )]]: عكس الشرط. يعني «لو **مش** TypeError، ارميه تاني لفوق».
-
-الفكرة: الـ catch ده عارف يتعامل مع «مش رقم» بس. أي حاجة تانية (bug حقيقي مثلًا) متبلعهاش في صمت. جرّبنا [[parseAge(-3)]] بدل abc:
-
-~~~text الناتج
-RangeError السن مينفعش يبقى سالب
-خلصنا
-C:\Users\ali\code\app.js:11
-  if (!(err instanceof TypeError)) throw err;
-                                   ^
-
-RangeError: السن مينفعش يبقى سالب
-    at parseAge (C:\Users\ali\code\app.js:4:22)
-~~~
-
-الـ catch طبع الرسالة، والـ RangeError اترمى تاني، ومفيش try فوقه فالبرنامج وقع. بس لاحظ [[خلصنا]] اتطبعت **قبل** ما يقع: ده الـ finally.
-
----
-
-## ٤. [[finally]]
-
-~~~text app.js
-} finally {
-  console.log("خلصنا");
-}
-~~~
-
-[[finally]] بتشتغل **دايمًا**: لو الـ try نجح، لو الـ catch مسك، ولو حتى الـ catch نفسه رمى error زي اللي فوق. مكانها التنضيف: قفل loading أو connection أو ملف.
-
-~~~text الناتج: المثال كامل
-TypeError مش رقم: abc
-خلصنا
-JSON بايظ
-~~~
-
----
-
-## ٥. [[catch]] من غير متغير
-
-~~~text app.js
-try { JSON.parse("{"); } catch { console.log("JSON بايظ"); }
-~~~
-
-- [[JSON.parse("{")]]: نص JSON ناقص، فبيرمي SyntaxError. لما طبعناه:
-
-~~~text الناتج
-SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)
-~~~
-
-يعني «بعد [[{]] كنت مستني اسم خاصية أو [[}]]». و [[position 1]] بالعدّ من صفر، يعني الحرف التاني.
-
-- [[catch { ... }]] من غير [[(err)]]: مسموحة لو مش محتاج تعرف الـ error (من ES2019).
-
----
-
-## ٦. [[err.stack]] (الـ solCode)
-
-~~~text app.js
-try { parseAge("abc"); } catch (err) { console.log(err.stack); }
-~~~
-
-~~~text الناتج
-TypeError: مش رقم: abc
-    at parseAge (C:\Users\ali\code\app.js:3:32)
-    at Object.<anonymous> (C:\Users\ali\code\app.js:6:7)
-    at Module._compile (node:internal/modules/cjs/loader:1872:14)
-    ...
-~~~
-
-اقراه من فوق لتحت: أول سطر النوع والرسالة، وبعده **مكان الرمي** ([[app.js:3:32]] يعني الملف، سطر 3، عمود 32)، وبعده مين نادى الدالة دي (سطر 6). السطور اللي فيها [[node:internal]] ده كود Node نفسه، سيبها.
-
----
-
-## ٧. return جوه finally (الـ solCode)
-
-~~~text app.js
-function who() {
-  try { return "a"; } finally { return "b"; }
-}
-console.log(who());
-~~~
-
-~~~text الناتج
-b
-~~~
-
-الـ try قال «رجّع a»، بس قبل ما الدالة تخرج فعلًا الـ finally اشتغلت ورجّعت b، فغطّت عليها. نفس الحاجة لو الـ try كان رمى error: return في finally بتبلعه. عشان كده **متكتبش return جوه finally أبدًا**.
-
----
-
-## ٨. ليه try مبيمسكش error جوه callback
-
-[[try]] بيحمي الكود اللي بيشتغل **وهو لسه جواه**. الـ callback اللي بتبعته لـ [[setTimeout]] أو [[addEventListener]] أو [[.then]] مش بيشتغل دلوقتي: بيتسجّل، والـ try يخلص، وبعدين الـ event loop يناديه بعدين في لفة لوحدها (درس «event loop»).
-
-~~~text cb.mjs
-try {
-  setTimeout(() => { throw new Error("جوه الـ timer"); }, 0);
-} catch (e) {
-  console.log("caught", e.message);
-}
-console.log("after try");
-~~~
-
-~~~text الناتج (Node 24)
-after try
-file:///C:/.../cb.mjs:2
-  setTimeout(() => { throw new Error("جوه الـ timer"); }, 0);
-                     ^
-
-Error: جوه الـ timer
-    at Timeout._onTimeout (file:///C:/.../cb.mjs:2:28)
-    at listOnTimeout (node:internal/timers:685:17)
-
-Node.js v24.22.1
-~~~
-
-[[caught]] عمرها ما اتطبعت، والبرنامج وقع بكود خروج ١. شوف الـ stack: أول سطر [[Timeout._onTimeout]] جاي من [[node:internal/timers]] مش من الـ try بتاعك. يعني ساعة ما الـ error اترمى، الـ try كان خلص من زمان ومش موجود في الـ call stack.
-
-### التصليح: الـ try يبقى جوه الـ callback، أو await
-
-~~~text cb2.mjs
-function later(fn) { setTimeout(fn, 0); }
-later(() => {
-  try { JSON.parse("{"); } catch (e) { console.log("اتمسك جوه الـ callback:", e.name); }
-});
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-async function main() {
-  try {
-    await wait(10);
-    JSON.parse("{");
-  } catch (e) { console.log("اتمسك بعد await:", e.name); }
-  try {
-    Promise.reject(new Error("من غير await"));
-  } catch { console.log("مش هتتطبع"); }
-}
-main();
-~~~
-
-~~~text الناتج (Node 24)
-اتمسك جوه الـ callback: SyntaxError
-اتمسك بعد await: SyntaxError
-file:///C:/.../cb2.mjs:12
-    Promise.reject(new Error("من غير await"));
-                   ^
-
-Error: من غير await
-~~~
-
-- الأول: الـ try **جوه** الـ callback، فهو موجود ساعة ما الكود بيشتغل.
-- التاني: [[await]] بيوقّف [[main]] ويرجّعها **جوه نفس الـ try** لما الـ Promise يخلص، فالـ error بعده بيتمسك. ده أحسن حل: حوّل الـ callback لـ Promise وخلّي [[await]] جوه try.
-- التالت: Promise اترفض من غير [[await]] ولا [[.catch]]: الـ try مش شايفه، و Node وقّع البرنامج كله (ده اسمه unhandled rejection، ليه درس لوحده: «الأخطاء العامة: unhandledrejection و uncaughtException»).
-
-| الكود | الـ try اللي برّه بيمسكه؟ | ليه |
-|---|---|---|
-| [[JSON.parse]] جوه الـ try على طول | أيوه | بيشتغل والـ try لسه مفتوح |
-| [[setTimeout(() => { throw ... })]] | لأ | الـ callback بيشتغل بعد ما الـ try خلص |
-| [[el.addEventListener("click", () => { throw ... })]] | لأ | نفس الكلام: بيشتغل مع كل ضغطة بعدين |
-| [[promise.then(() => { throw ... })]] من غير await | لأ | بيبقى rejection، محتاج [[.catch]] أو await |
-| [[await promise]] جوه try | أيوه | الـ await بيرجّع التنفيذ جوه الـ try |
-
----
-
-## الخلاصة
-
-| الحتة | بتشتغل إمتى |
-|---|---|
-| [[try]] | دايمًا، لحد أول throw |
-| [[catch (err)]] | لو حصل throw في الـ try بس |
-| [[finally]] | دايمًا في الآخر، حتى لو catch رمى تاني |
-| [[throw err]] جوه catch | لو الـ error مش من النوع اللي انت عارف تتعامل معاه |
-
-| النوع | معناه |
-|---|---|
-| [[TypeError]] | نوع القيمة غلط (نداء undefined، رقم مكان نص) |
-| [[RangeError]] | القيمة برّه المدى |
-| [[SyntaxError]] | كود أو JSON بايظ |
-| [[ReferenceError]] | متغير مش موجود |
-
-- ارمي [[new Error]] أو نوع منه، مش string، عشان يبقى فيه name و stack.
-- الـ try مبيشوفش errors جوه callbacks بتشتغل بعدين (timer، أو event، أو [[.then]]): حط الـ try جوه الـ callback، أو استخدم await جوه try.`,
-          lines: [
-            R`دالة بتاخد input (غالبًا string جاي من فورم) وتحوّله سن، أو ترمي error لو القيمة مينفعش تبقى سن.`,
-            R`[[Number()]] بتحوّل الـ string لرقم، ولو مش رقم بترجّع [[NaN]] من غير error. خلي بالك: [[Number("")]] بترجّع [[0]] مش NaN، فالخانة الفاضية هتعدّي كسن صفر لو مشيكتش عليها.`,
-            R`[[NaN]] مبيساويش أي حاجة ولا حتى نفسه، فلازم [[Number.isNaN]] مش [[===]]. [[throw]] بتوقف الدالة فورًا وترمي [[TypeError]] برسالة فيها القيمة الغلط، وأقرب [[catch]] فوق هي اللي بتمسكه.`,
-            R`السن سالب: مشكلة من نوع تاني (رقم بس برّه المسموح)، فبنرمي [[RangeError]]. النوع المختلف بيخلي اللي ماسك الـ error يفرّق بين الحالتين.`,
-            R`لو وصلنا هنا يبقى القيمة عدّت الفحصين، فبنرجّعها رقم.`,
-            R`نهاية [[parseAge]].`,
-            R`[[try]]: الكود اللي ممكن يرمي. لو رمى، باقي السطور جوه الـ try بتتلغي والتنفيذ ينط على [[catch]] على طول.`,
-            R`[[abc]] مش رقم، فـ [[parseAge]] هترمي TypeError، وأي سطر كان بعده جوه الـ try مش هيتنفّذ.`,
-            R`[[catch]] بتمسك الـ error في [[err]]، فالبرنامج مبيقعش ويكمّل.`,
-            R`بيطبع [[TypeError مش رقم: abc]]: [[name]] نوع الـ error و [[message]] الرسالة اللي كتبناها في الـ throw.`,
-            R`إحنا مستعدين لـ TypeError بس. لو جالنا نوع تاني (RangeError، أو bug في الكود) بنرميه تاني لفوق بدل ما نبلعه، عشان منخبّيش مشكلة مش فاهمينها. هنا هو TypeError فمش هيترمي تاني.`,
-            R`[[finally]] بتشتغل في كل الأحوال: الـ try نجح، أو اتمسك error، أو حتى الـ catch رمى تاني. مكانها الطبيعي للتنضيف، زي قفل ملف أو إخفاء الـ loading.`,
-            R`بيطبع «خلصنا» بعد الـ catch. ولو الـ catch كان رمى الـ error تاني، كانت هتتطبع برضه قبل ما الـ error يطلع لفوق.`,
-            R`نهاية الـ try/catch/finally.`,
-            R`[[catch]] من غير [[(err)]] لما مش محتاج تفاصيل الـ error: هنا يكفينا نعرف إن الـ JSON بايظ. [[JSON.parse("{")]] بترمي SyntaxError فبيطبع «JSON بايظ».`,
-          ],
-          sol: R`[[err.stack]] بيطبع [[TypeError: مش رقم: abc]] وتحته سطور [[at parseAge (file.js:3:...)]] وبعدها السطر اللي ناداها. اقراه من فوق لتحت: أول سطر هو المكان اللي الـ error اترمى فيه، واللي تحته مين نادى مين.
-
-الدالة اللي فيها [[try { return "a"; } finally { return "b"; }]] بترجّع [["b"]]: الـ finally بيشتغل دايمًا قبل ما الدالة تخرج، والـ return بتاعته بيغطّي على اللي في الـ try (وكمان بيبلع أي error اترمى). عشان كده متكتبش return جوه finally أبدًا، استخدمه للتنضيف بس. ولو finally من غير return، الدالة بترجّع [["a"]] بعد ما الـ finally يشتغل.`,
-          solCode: R`function parseAge(input) {
-  const age = Number(input);
-  if (Number.isNaN(age)) throw new TypeError($__btمش رقم: $__{input}$__bt);
-  return age;
-}
-try { parseAge("abc"); } catch (err) { console.log(err.stack); }
-function who() {
-  try { return "a"; } finally { return "b"; }
-}
-console.log(who()); // "b"`
-        },
-        {
-          cmd: "custom errors و cause",
-          title: "تعمل أنواع errors بتاعتك وتحافظ على السبب الأصلي",
-          desc: R`[[class NotFoundError extends Error]] بتخليك تفرّق بين الأخطاء بـ [[instanceof]]: الـ NotFound يرجّع 404، والـ Validation يرجّع 400، والباقي 500.
-
-ولما تمسك error وترمي واحد أوضح منه، ابعت الأصلي في [[{ cause: err }]] (ES2022). كده الرسالة مفهومة، والتفاصيل التقنية مضاعتش للـ debugging.`,
-          example: R`class AppError extends Error {
-  constructor(message, { status = 500, cause } = {}) {
-    super(message, { cause });
-    this.name = this.constructor.name;
-    this.status = status;
-  }
-}
-class NotFoundError extends AppError {
-  constructor(what) { super($__bt$__{what} مش موجود$__bt, { status: 404 }); }
-}
-async function loadUser(id) {
-  try {
-    const res = await fetch($__bthttps://api.example.com/users/$__{id}$__bt);
-    if (res.status === 404) throw new NotFoundError("اليوزر");
-    return await res.json();
-  } catch (err) {
-    if (err instanceof AppError) throw err;
-    throw new AppError("فشل تحميل اليوزر", { cause: err });
-  }
-}
-loadUser(1).catch((e) => console.log(e.name, e.status, e.message, e.cause?.message));`,
-          try: R`شغّل الكود من غير نت (أو بدومين غلط) واطبع [[e.cause]]. وبعدين اعمل [[ValidationError]] بـ status 400 وفيه [[fields]].`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اعمل [[class ValidationError extends Error]] فيها [[this.name = "ValidationError"]]، و [[const e = new ValidationError("الإيميل ناقص")]]، واكتب على ورقة إيه اللي هيطلع من [[e instanceof ValidationError]] و [[e instanceof Error]] و [[String(e)]] و [[JSON.stringify(e)]]، وبعدين شغّل وقارن.`, done: R`[[true true]] وبعدين [[ValidationError: الإيميل ناقص]]. والـ JSON بيطلع [[{"name":"ValidationError"}]] من غير الرسالة: [[message]] و [[stack]] مش enumerable، فلو هتبعت error في API لازم تكتب الحقول بإيدك أو تعمل [[toJSON()]].`, sol: R`**التوقع على الورق:** [[true]] و [[true]]، وبعدين [[ValidationError: الإيميل ناقص]]، والـ JSON... ده اللي بيفاجئ.
-
-~~~js validation.js
-class ValidationError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "ValidationError";
-  }
-}
-
-const e = new ValidationError("الإيميل ناقص");
-console.log(e instanceof ValidationError, e instanceof Error);
-console.log(String(e));
-console.log(JSON.stringify(e));
-console.log(Object.keys(e));
-console.log(Object.getOwnPropertyDescriptor(e, "message"));
-~~~
-
-~~~text الناتج (node validation.js، Node 24)
-true true
-ValidationError: الإيميل ناقص
-{"name":"ValidationError"}
-[ 'name' ]
-{
-  value: 'الإيميل ناقص',
-  writable: true,
-  enumerable: false,
-  configurable: true
-}
-~~~
-
-**ليه كده:**
-
-- **[[instanceof]] الاتنين [[true]]:** [[extends Error]] بيخلّي سلسلة الـ prototype: [[e]] ← [[ValidationError.prototype]] ← [[Error.prototype]]. و [[instanceof]] بيدوّر في السلسلة دي كلها.
-- **[[String(e)]]:** بينادي [[Error.prototype.toString]] اللي بترجّع [[name + ": " + message]]. وعشان كتبنا [[this.name = "ValidationError"]] طلع الاسم الصح بدل [[Error]].
-- **[[JSON.stringify(e)]] بـ [[{"name":"ValidationError"}]] بس:** [[JSON.stringify]] بياخد الخصايص الـ **enumerable** بس. [[Object.keys(e)]] طلّعت [[name]] لوحده (لأننا عملناه بـ [[=]] عادي)، و [[message]] اتعمل جوه [[super(message)]] بـ [[enumerable: false]] زي ما الـ descriptor بيقول. و [[stack]] كمان مش enumerable.
-
-**الغلطة الشائعة:** تبعت [[res.json(err)]] في API وتستغرب إن اليوزر وصله [[{}]] أو [[{"name":...}]] من غير رسالة. اكتب الحقول بإيدك ([[{ error: err.message }]]) أو اعمل [[toJSON()]] في الكلاس (المشروع التاني في الوحدة).` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[class AppError extends Error { constructor(msg) { super(msg); } }]] وفي الـ catch [[if (e.name === "AppError")]] مبيدخلش. اطبع [[String(new AppError("x"))]] وصلّح.`, done: R`قبل التصليح بيطبع [[Error: x]] والـ name [["Error"]]. بعد [[this.name = new.target.name]] في الـ constructor بيطبع [[AppError: x]]، وأي كلاس بيورث منه زي [[DbError]] بياخد اسمه هو لوحده ([[DbError: y]]).`, sol: R`## قبل التصليح
-
-~~~js name-broken.js
-class AppError extends Error {
-  constructor(msg) {
-    super(msg);
-  }
-}
-const e = new AppError("x");
-console.log(String(e), "| name =", JSON.stringify(e.name));
-console.log(e.name === "AppError" ? "دخل الـ if" : "مدخلش الـ if");
-~~~
-
-~~~text الناتج (node name-broken.js، Node 24)
-Error: x | name = "Error"
-مدخلش الـ if
-~~~
-
-## بعد التصليح
-
-~~~js name-fixed.js
-class AppError extends Error {
-  constructor(msg, options) {
-    super(msg, options);
-    this.name = new.target.name;
-  }
-}
-class DbError extends AppError {}
-
-console.log(String(new AppError("x")));
-console.log(String(new DbError("y")));
-console.log(new DbError("y") instanceof AppError);
-~~~
-
-~~~text الناتج (node name-fixed.js)
-AppError: x
-DbError: y
-true
-~~~
-
-**ليه كده:**
-
-- **[[name]] مش بيتورّث من اسم الكلاس:** [[e.name]] بيتقري من [[Error.prototype.name]] اللي قيمته [["Error"]]، مهما كان اسم الكلاس اللي عمل الـ object. فلازم تحطه بإيدك.
-- **[[new.target]]:** جوه الـ constructor، [[new.target]] هو الكلاس اللي اتعمله [[new]] فعلًا. لما تكتب [[new DbError("y")]]، الـ constructor بتاع [[AppError]] هو اللي بيشتغل (لأن [[DbError]] مالوش constructor)، بس [[new.target]] بيبقى [[DbError]]، فـ [[new.target.name]] بـ [["DbError"]]. عشان كده كل كلاس بيورث بياخد اسمه لوحده من غير ولا سطر.
-- **[[super(msg, options)]]:** بنعدّي الـ options لـ [[Error]] عشان [[cause]] يشتغل (الدرس ده).
-
-**الغلطة الشائعة:** تكتب [[this.name = "AppError"]] نص ثابت. هيشتغل لـ [[AppError]]، وبعدين كل كلاس بيورث منه ([[DbError]] و [[AuthError]]) هيطلع اسمه [[AppError]] برضه، والـ [[if (e.name === "DbError")]] عمره ما هيدخل. وقريب منها [[this.constructor.name]]، وده شغال برضه (زي مثال الدرس).` },
-            { lvl: 'تطبيق', t: R`**ابني:** اكتب [[toHttp(err)]] بترجّع [[{ status, body }]]: [[NotFoundError]] ← 404 ورسالته، و [[ValidationError]] ← 400 ومعاها [[fields]]، وأي حاجة تانية ← 500 برسالة عامة «حصل خطأ» من غير رسالة الـ error الأصلية.`, done: R`[[toHttp(new NotFoundError("المنتج"))]] بترجّع [[{ status: 404, body: { error: "المنتج مش موجود" } }]]، و [[toHttp(new TypeError("db password wrong"))]] بترجّع 500 والـ body مفيهوش كلمة password خالص، و [[toHttp("نص")]] (حد رمى string) بترجّع 500 برضه من غير ما تقع.`, sol: R`~~~js errors.js
-export class AppError extends Error {
-  constructor(message, { status = 500, cause } = {}) {
-    super(message, { cause });
-    this.name = new.target.name;
-    this.status = status;
-  }
-}
-
-export class NotFoundError extends AppError {
-  constructor(what) {
-    super(what + " مش موجود", { status: 404 });
-  }
-}
-
-export class ValidationError extends AppError {
-  constructor(fields) {
-    super("البيانات فيها غلط", { status: 400 });
-    this.fields = fields;
-  }
-}
-~~~
-
-~~~js to-http.js
-import { AppError, NotFoundError, ValidationError } from "./errors.js";
-
-export function toHttp(err) {
-  if (err instanceof ValidationError) {
-    return { status: 400, body: { error: err.message, fields: err.fields } };
-  }
-  if (err instanceof NotFoundError) {
-    return { status: 404, body: { error: err.message } };
-  }
-  if (err instanceof AppError) {
-    return { status: err.status, body: { error: err.message } };
-  }
-  console.error("[غلط مش متوقع]", err);
-  return { status: 500, body: { error: "حصل خطأ" } };
-}
-~~~
-
-~~~js try-to-http.js
-import { toHttp } from "./to-http.js";
-import { NotFoundError, ValidationError } from "./errors.js";
-
-console.log(toHttp(new NotFoundError("المنتج")));
-console.log(JSON.stringify(toHttp(new ValidationError({ email: "الإيميل ناقص" }))));
-console.log(toHttp(new TypeError("db password wrong")));
-console.log(toHttp("نص"));
+~~~js main.js
+import "./a.js";
+import "./b.js";
+console.log("main.js خلص");
 ~~~
 
 وجنبهم [[package.json]] فيه [[{ "type": "module" }]].
 
-~~~text الناتج (node try-to-http.js 2>/dev/null ، الـ stdout بس، Node 24)
-{ status: 404, body: { error: 'المنتج مش موجود' } }
-{"status":400,"body":{"error":"البيانات فيها غلط","fields":{"email":"الإيميل ناقص"}}}
-{ status: 500, body: { error: 'حصل خطأ' } }
-{ status: 500, body: { error: 'حصل خطأ' } }
+~~~text الناتج (node main.js، Node 24)
+loaded
+a.js شايف count = 1
+b.js شايف count = 2
+main.js خلص
 ~~~
 
-والـ stderr (ده اللوج اللي بيوصل للمطوّر بس، أول سطرين):
+**ليه مرة واحدة:**
 
-~~~text الناتج (node try-to-http.js 2>&1 >/dev/null | head -2)
-[غلط مش متوقع] TypeError: db password wrong
-    at file:///C:/Users/ali/code/custom-errors/try-to-http.js:6:20
+- أول ما [[a.js]] عمل import لـ [[stats.js]]، Node حمّله **ونفّذه** (فاتطبعت «loaded»)، وحفظ الـ module في كاش بالـ URL بتاعه.
+- لما [[b.js]] طلب نفس الملف، Node لقاه في الكاش ورجّع **نفس** الـ module من غير ما ينفّذه تاني.
+- الدليل التاني: [[b.js]] شاف [[count = 2]] مش 1، يعني الـ object اللي زوّده [[a.js]] هو هو اللي وصل لـ [[b.js]].
+- الترتيب: الـ imports بتتنفّذ بالترتيب اللي مكتوبة بيه (عمق الأول): [[stats.js]] ثم [[a.js]] ثم [[b.js]]، وفي الآخر جسم [[main.js]].
+
+**الغلطة الشائعة:** تفتكر إن كل import بيعمل نسخة جديدة. ده بالظبط اللي بيخلي ملف فيه اتصال database أو config يتعمل مرة واحدة في البرنامج كله. ولو عايز نسخة جديدة لكل واحد، صدّر **دالة** بتعمل object جديد مع كل نداء.` },
+            { lvl: 'تطبيق', t: R`**refactor:** اكتب [[main.js]] واحد فيه ٤ دوال ([[slugify]] و [[capitalize]] و [[formatPrice]] و [[clamp]]) وتحتهم ٤ سطور بتطبع نتايجهم، واحفظ الناتج. وبعدين قسّمه من غير ما الناتج يتغيّر: [[utils/strings.js]] و [[utils/numbers.js]]، وملف [[utils/index.js]] فيه [[export * from "./strings.js"]] وزيه لـ numbers، و main.js يستورد من [["./utils/index.js"]] بس.`, done: R`الناتج حرف بحرف زي ما كان قبل التقسيم، و main.js مفيهوش غير سطر import واحد وسطور الطباعة. ولو كتبت اسم مش موجود زي [[import { nope } from "./utils/index.js"]] البرنامج بيقع قبل أي سطر بـ [[SyntaxError: The requested module './utils/index.js' does not provide an export named 'nope']].`, sol: R`## قبل التقسيم: ملف واحد
+
+~~~js before.js
+function slugify(text) {
+  return text.trim().toLowerCase().replace(/\s+/g, "-");
+}
+function capitalize(word) {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+function formatPrice(n) {
+  return n.toFixed(2) + " جنيه";
+}
+function clamp(n, min, max) {
+  return Math.min(Math.max(n, min), max);
+}
+
+console.log(slugify("  Hello Modules World "));
+console.log(capitalize("cairo"));
+console.log(formatPrice(49.5));
+console.log(clamp(120, 0, 100));
+~~~
+
+## بعد التقسيم
+
+~~~js utils/strings.js
+export function slugify(text) {
+  return text.trim().toLowerCase().replace(/\s+/g, "-");
+}
+export function capitalize(word) {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}
+~~~
+
+~~~js utils/numbers.js
+export function formatPrice(n) {
+  return n.toFixed(2) + " جنيه";
+}
+export function clamp(n, min, max) {
+  return Math.min(Math.max(n, min), max);
+}
+~~~
+
+~~~js utils/index.js
+export * from "./strings.js";
+export * from "./numbers.js";
+~~~
+
+~~~js main.js
+import { slugify, capitalize, formatPrice, clamp } from "./utils/index.js";
+
+console.log(slugify("  Hello Modules World "));
+console.log(capitalize("cairo"));
+console.log(formatPrice(49.5));
+console.log(clamp(120, 0, 100));
+~~~
+
+وجنبهم [[package.json]] فيه [[{ "type": "module" }]].
+
+## الناتج: قبل وبعد
+
+~~~text الناتج (node main.js، Node 24)
+hello-modules-world
+Cairo
+49.50 جنيه
+100
+~~~
+
+قارنّا الناتجين حرف بحرف بـ [[diff]]: لو مفيش فرق مبيطبعش حاجة، وبعدها [[echo]] بتأكد:
+
+~~~text الناتج (diff <(node before.js) <(node main.js) && echo "نفس الناتج")
+نفس الناتج
+~~~
+
+## اسم مش موجود
+
+~~~js bad.js
+import { nope } from "./utils/index.js";
+console.log("السطر ده مش هيتطبع");
+~~~
+
+~~~text الناتج (node bad.js، من السطر ٢ لـ ٤)
+import { nope } from "./utils/index.js";
+         ^^^^
+SyntaxError: The requested module './utils/index.js' does not provide an export named 'nope'
 ~~~
 
 **ليه كده:**
 
-- **الترتيب من الأخص للأعم:** [[ValidationError]] و [[NotFoundError]] الاتنين بيورثوا من [[AppError]]، فلازم يتفحصوا **قبله**. وأي [[AppError]] تاني بياخد الـ status بتاعه.
-- **الـ 500 مفيهاش رسالة الـ error:** [[TypeError("db password wrong")]] ممكن يبقى فيه معلومات سرية (أسامي جداول، باسوردات، مسارات). اليوزر بياخد «حصل خطأ» بس، والتفاصيل بتروح لـ [[console.error]] اللي بيقراه المطوّر.
-- **[[toHttp("نص")]]:** حد رمى string مش Error. [[instanceof]] على string بترجّع [[false]] من غير ما تقع، فوصلنا للآخر و 500. لو كنا كتبنا [[err.status]] أو [[err.message.includes]] قبل الفحص كان ممكن يقع.
-- **[[fields]]** بيوصل للـ 400 بس، عشان الواجهة تكتب كل رسالة تحت الحقل بتاعها.
+- كل دالة اتنقلت **زي ما هي** وقدامها [[export]]، فالسلوك مستحيل يتغيّر: ده معنى refactor.
+- [[export * from "./strings.js"]]: بيعدّي كل الـ named exports بتاعة [[strings.js]] لأي حد بيستورد من [[index.js]]، من غير ما [[index.js]] نفسه يستخدمهم. ده الـ **barrel file**.
+- [[main.js]] بقى يعرف مكان واحد بس ([[./utils/index.js]])، فلو نقلت [[clamp]] لملف تالت بكرة، [[main.js]] مش هيتغيّر.
+- **[[bad.js]] وقع قبل أي سطر:** «السطر ده مش هيتطبع» فعلًا متطبعش. الـ imports بتتربط (linking) قبل التنفيذ، فالاسم الغلط بيتمسك فورًا مش لما توصل للسطر.
 
-**الغلطة الشائعة:** [[body: { error: err.message }]] في كل الحالات. ده بيسرّب رسايل داخلية زي [[db password wrong]] لأي حد بيبعت request غلط.` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** لـ [[toHttp]] اللي في التمرين التاني اكتب ٤ سطور [[console.assert]] أو [[console.log(x === y)]]: NotFoundError بـ 404، و ValidationError بـ 400 وفيها fields، و TypeError بـ 500 والـ body مفيهوش رسالته، و string مرمي بـ 500.`, done: R`الـ ٤ بيعدّوا. ولو غيّرت ترتيب الـ instanceof بحيث فحص [[Error]] ييجي الأول، اختبار 404 و 400 بيفشلوا، فعرفت إن الكلاس الأخص لازم يتفحص الأول.`, sol: R`الاختبار بيستخدم [[errors.js]] و [[to-http.js]] اللي في التمرين اللي قبله، وبياخد اسم الملف اللي هيختبره من الـ command line عشان نجرّبه على نسختين:
+**الغلطة الشائعة:** [[export * from]] **مبيعدّيش الـ default**. لو [[strings.js]] كان فيه [[export default]] مش هيوصل من [[index.js]]، ولازم تكتب [[export { default as slug } from "./strings.js"]].` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** اعمل circular import: [[a.js]] بيستورد [[b]] من [[b.js]]، و b.js بيستورد [[a]] من a.js، وكل ملف بيطبع اللي استورده في الـ top level. شغّل [[node a.js]] وافهم مين اتنفّذ الأول، وبعدين صلّحها من غير ما تشيل ولا import.`, done: R`قبل التصليح بيقع بـ [[ReferenceError: Cannot access 'a' before initialization]] جوه b.js، لأن b.js اتنفّذ الأول و [[a]] لسه في الـ TDZ. وبعد ما تنقل الطباعة جوه دالة متصدّرة بتتنادي بعد ما الملفين يتحمّلوا، بيطبعوا [[a sees B]] و [[b sees A]] من غير error.`, sol: R`## الكود البايظ
 
-~~~js test-to-http.js
-import { NotFoundError, ValidationError } from "./errors.js";
-
-const file = process.argv[2] ?? "./to-http.js";
-const { toHttp } = await import(file);
-console.error = () => {}; // نسكّت اللوج بتاع الـ 500 عشان الناتج يبقى السطور بس
-
-const nf = toHttp(new NotFoundError("المنتج"));
-const v = toHttp(new ValidationError({ email: "ناقص" }));
-const t = toHttp(new TypeError("db password wrong"));
-const s = toHttp("نص");
-
-console.log("404:", nf.status === 404 && nf.body.error === "المنتج مش موجود");
-console.log("400 + fields:", v.status === 400 && v.body.fields?.email === "ناقص");
-console.log("500 من غير الرسالة:", t.status === 500 && !JSON.stringify(t.body).includes("password"));
-console.log("string مرمي = 500:", s.status === 500);
+~~~js broken/a.js
+import { b } from "./b.js";
+export const a = "A";
+console.log("a sees", b);
 ~~~
 
-~~~text الناتج (node test-to-http.js، Node 24)
-404: true
-400 + fields: true
-500 من غير الرسالة: true
-string مرمي = 500: true
+~~~js broken/b.js
+import { a } from "./a.js";
+export const b = "B";
+console.log("b sees", a);
 ~~~
 
-## نسخة الترتيب فيها غلط
+~~~text الناتج (node broken/a.js، Node 24، أول ٥ سطور)
+file:///C:/Users/ali/code/circular/broken/b.js:3
+console.log("b sees", a);
+                      ^
 
-~~~js to-http-wrong-order.js
-import { AppError, NotFoundError, ValidationError } from "./errors.js";
+ReferenceError: Cannot access 'a' before initialization
+~~~
 
-// نفس الدالة، بس فحص Error العام اتنقل الأول
-export function toHttp(err) {
-  if (err instanceof Error) {
-    return { status: 500, body: { error: "حصل خطأ" } };
-  }
-  if (err instanceof ValidationError) {
-    return { status: 400, body: { error: err.message, fields: err.fields } };
-  }
-  if (err instanceof NotFoundError) {
-    return { status: 404, body: { error: err.message } };
-  }
-  if (err instanceof AppError) {
-    return { status: err.status, body: { error: err.message } };
-  }
-  return { status: 500, body: { error: "حصل خطأ" } };
+## مين اتنفّذ الأول؟
+
+1. شغّلنا [[a.js]]. قبل ما ينفّذ أي سطر، Node قرا الـ imports: محتاج [[b.js]].
+2. [[b.js]] محتاج [[a.js]]، و [[a.js]] **في النص بالفعل** (بيتحمّل)، فـ Node مبيرجعلوش تاني (وإلا هيلف للأبد).
+3. فـ [[b.js]] **اتنفّذ الأول**. ولما وصل [[console.log("b sees", a)]]، الـ [[const a]] اللي في [[a.js]] لسه مااتنفّذتش: في الـ TDZ (منطقة قبل التعريف)، فـ [[ReferenceError]].
+
+## التصليح: الطباعة جوه دوال بتتنادي بعد ما الكل يتحمّل
+
+~~~js fixed/a.js
+import { b, showB } from "./b.js";
+export const a = "A";
+export function showA() {
+  console.log("a sees", b);
+}
+showA();
+showB();
+~~~
+
+~~~js fixed/b.js
+import { a } from "./a.js";
+export const b = "B";
+export function showB() {
+  console.log("b sees", a);
 }
 ~~~
 
-~~~text الناتج (node test-to-http.js ./to-http-wrong-order.js)
-404: false
-400 + fields: false
-500 من غير الرسالة: true
-string مرمي = 500: true
+~~~text الناتج (node fixed/a.js)
+a sees B
+b sees A
 ~~~
 
-**ليه كده:**
+**ليه اشتغل:** الـ imports هي هي (a بيستورد من b و b من a). اللي اتغيّر إن مفيش ملف بيقرا اسم مستورد **في الـ top level** وهو بيتنفّذ. [[showA()]] و [[showB()]] بيتنادوا في آخر [[a.js]]: ساعتها [[b.js]] خلص كله و [[const a]] اتعرّفت، فالاتنين موجودين. والـ live binding بيخلي [[a]] جوه [[showB]] تقرا القيمة وقت النداء مش وقت الـ import.
 
-- **كل سطر اختبار = شرط واحد بيطبع [[true]] أو [[false]]:** بنفحص الـ status **و** حاجة في الـ body، عشان دالة بترجّع 404 برسالة غلط متعدّيش.
-- **[[!JSON.stringify(t.body).includes("password")]]:** بنحوّل الـ body كله لنص ونتأكد إن الكلمة مش فيه في أي حتة، مش في [[error]] بس.
-- **[[console.error = () => {}]]:** الدالة الأصلية بتطبع الـ error المش متوقع على stderr، وده سليم، بس في الاختبار بيبوّظ شكل الناتج فسكّتناه.
-- **النسخة الغلط:** [[NotFoundError]] و [[ValidationError]] الاتنين [[instanceof Error]]، فأول if مسكهم ورجّع 500، والـ ifs اللي تحت عمرها ما اتوصلت. اختبارين الـ 404 والـ 400 فشلوا، والاتنين التانيين نجحوا بالصدفة. فعرفنا إن الكلاس الأخص لازم يتفحص الأول.
+**الغلطة الشائعة:** الـ circular import مش دايمًا بيقع: لو المتغير [[var]] أو دالة عادية، هتاخد [[undefined]] بهدوء أو الدالة تشتغل، والباج يبان بعدين. الأحسن تكسر الدايرة: انقل الحاجة المشتركة لملف تالت الاتنين يستوردوا منه.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** اكتب لزميلك ٣ سطور: إمتى [[export default]] وإمتى named exports، وإيه اللي بيحصل لو كتبت [[import { x } from]] لملف عامل default بس، وليه فرق اسم الـ import بيفرق في named ومبيفرقش في default.`, done: R`الـ ٣ سطور فيهم: default لحاجة واحدة أساسية في الملف (component أو class)، و named لملفات أدوات فيها كذا دالة، وإن الغلطة بتطلّع [[SyntaxError: The requested module ... does not provide an export named 'x']]، وإن الـ default تقدر تسميه أي اسم وانت بتستورده.`, sol: R`## الإجابة النموذجية (٣ سطور)
 
-**الغلطة الشائعة:** تكتب اختبار بيفحص [[status === 500]] بس للحالات الغريبة. النسخة الغلط بتعدّي الاختبار ده! لازم يبقى فيه اختبار لكل فرع، وإلا ترتيب الـ ifs يبوظ والاختبارات تفضل خضرا.` },
-            { lvl: 'تحدي', t: R`**مسألة:** اعمل سلسلة ٣ مستويات: [[readFileFake]] بترمي [[new Error("ENOENT")]]، و [[loadConfig]] بتمسكه وترمي [[ConfigError]] بـ cause، و [[startApp]] بتمسكه وترمي [[AppError("السيرفر مقامش")]] بـ cause. واكتب [[explain(err)]] بتمشي على [[.cause]] وتطبع كل مستوى في سطر، وبحد أقصى ١٠ مستويات.`, done: R`[[explain]] بتطبع ٣ سطور بالترتيب: AppError، وبعدين ConfigError، وبعدين Error ENOENT. و [[console.log(err)]] العادي في Node بيطبع الـ cause تحت كلمة [[[cause]:]]. ولو عملت [[a.cause = b; b.cause = a]]، الدالة بتقف بعد ١٠ سطور ومبتعلّقش.`, sol: R`~~~js cause-chain.js
-import { inspect } from "node:util";
+1. **default** للحاجة الأساسية الوحيدة في الملف (component، أو class، أو صفحة)، و **named** لملف أدوات فيه كذا دالة: الاسم ثابت في كل المشروع فالبحث والـ refactoring أسهل.
+2. لو الملف عامل [[export default]] بس وانت كتبت [[import { x } from ...]]، البرنامج بيقع قبل أي سطر بـ [[SyntaxError: The requested module ... does not provide an export named 'x']]، لأن مفيش export **اسمه** x.
+3. named بتتطلب **بالاسم** اللي اتصدّرت بيه (أو [[as]] عشان تغيّره)، أما الـ default فهو export واحد اسمه الداخلي [[default]]، فانت بتديله أي اسم محلي وانت بتستورده.
 
-class AppError extends Error {
-  constructor(message, options) {
-    super(message, options);
-    this.name = new.target.name;
-  }
+## اتجرّبت
+
+~~~js logger.js
+export default function log(msg) {
+  console.log("[log]", msg);
 }
-class ConfigError extends AppError {}
-
-function readFileFake() {
-  throw new Error("ENOENT");
-}
-function loadConfig() {
-  try {
-    readFileFake();
-  } catch (err) {
-    throw new ConfigError("مش لاقي config.json", { cause: err });
-  }
-}
-function startApp() {
-  try {
-    loadConfig();
-  } catch (err) {
-    throw new AppError("السيرفر مقامش", { cause: err });
-  }
-}
-
-function explain(err, max = 10) {
-  let depth = 0;
-  for (let e = err; e && depth < max; e = e.cause, depth++) {
-    const label = e instanceof Error ? e.name + ": " + e.message : String(e);
-    console.log("  ".repeat(depth) + (depth ? "↳ سببه " : "") + label);
-  }
-}
-
-try {
-  startApp();
-} catch (err) {
-  explain(err);
-  console.log("--- console.log(err) العادي (أول ١٠ سطور):");
-  console.log(inspect(err).split("\n").slice(0, 10).join("\n"));
-}
-
-const a = new Error("a");
-const b = new Error("b");
-a.cause = b;
-b.cause = a;
-console.log("--- دايرة a ↔ b:");
-explain(a);
 ~~~
 
-~~~text الناتج (node cause-chain.js، Node 24)
-AppError: السيرفر مقامش
-  ↳ سببه ConfigError: مش لاقي config.json
-    ↳ سببه Error: ENOENT
---- console.log(err) العادي (أول ١٠ سطور):
-AppError: السيرفر مقامش
-    at startApp (file:///C:/Users/ali/code/custom-errors/cause-chain.js:25:11)
-    at file:///C:/Users/ali/code/custom-errors/cause-chain.js:38:3
-    ... 2 lines matching cause stack trace ...
-    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
-  [cause]: ConfigError: مش لاقي config.json
-      at loadConfig (file:///C:/Users/ali/code/custom-errors/cause-chain.js:18:11)
-      at startApp (file:///C:/Users/ali/code/custom-errors/cause-chain.js:23:5)
-      ... 3 lines matching cause stack trace ...
-      at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
---- دايرة a ↔ b:
-Error: a
-  ↳ سببه Error: b
-    ↳ سببه Error: a
-      ↳ سببه Error: b
-        ↳ سببه Error: a
-          ↳ سببه Error: b
-            ↳ سببه Error: a
-              ↳ سببه Error: b
-                ↳ سببه Error: a
-                  ↳ سببه Error: b
+~~~js right.js
+import anyName from "./logger.js";
+anyName("default بأي اسم شغال");
 ~~~
 
-**ليه كده:**
+~~~js wrong.js
+import { log } from "./logger.js";
+log("مش هيوصل هنا");
+~~~
 
-- **كل مستوى بيلف اللي تحته:** [[loadConfig]] مسكت [[Error("ENOENT")]] ورمت [[ConfigError]] رسالته مفهومة لمستواها، و [[{ cause: err }]] حفظت الأصلي جواه. و [[startApp]] عملت نفس الحاجة. فوصلنا error واحد فوق، بس جواه السلسلة كلها.
-- **[[explain]]:** [[for (let e = err; e && depth < max; e = e.cause, depth++)]] بيمشي من الـ error لسببه لسبب سببه، وبيقف لما ميبقاش فيه [[cause]] ([[e]] بقت [[undefined]]) **أو** يوصل ١٠. و [[e instanceof Error ? ... : String(e)]] عشان [[cause]] ممكن يبقى أي قيمة مش Error بس.
-- **[[console.log(err)]] في Node:** بيطبع الـ stack، وتحته [[[cause]:]] والـ stack بتاع السبب، وجواه السبب اللي بعده. وسطور زي [[... 2 lines matching cause stack trace ...]] معناها إن Node شال السطور المتكررة بين المستويات.
-- **الدايرة:** [[a.cause = b; b.cause = a]] سلسلة ملهاش آخر. الشرط [[depth < max]] وقّفها بعد ١٠ سطور بالظبط. من غيره الـ loop كان هيلف للأبد والبرنامج يعلّق.
+~~~text الناتج (node right.js ثم node wrong.js، Node 24)
+[log] default بأي اسم شغال
+import { log } from "./logger.js";
+         ^^^
+SyntaxError: The requested module './logger.js' does not provide an export named 'log'
+~~~
 
-**الغلطة الشائعة:** [[throw new ConfigError("مش لاقي config.json")]] من غير [[cause]]. الرسالة أحسن، بس الـ [[ENOENT]] الأصلي (اللي فيه المسار الحقيقي) ضاع، واللي هيصلّح المشكلة مش هيعرف أنهي ملف.` }
+**الغلطة الشائعة:** تصلّح [[wrong.js]] بـ [[import * as m]] وتنادي [[m.log]]: هتطلع [[undefined]]، لأن الـ default جوه الـ namespace اسمه [[m.default]]. التصليح الصح [[import log from "./logger.js"]] أو [[import { default as log } from "./logger.js"]].` }
           ],
           ref: [
-            { t: "MDN: Error (Custom error types)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error" },
-            { t: "MDN: Error: cause", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause" },
-            { t: "MDN: extends", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/extends" },
-            { t: "Node.js: Errors", url: "https://nodejs.org/api/errors.html" },
+            { t: "MDN: JavaScript modules", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules" },
+            { t: "MDN: import", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import" },
+            { t: "MDN: export", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export" },
+            { t: "MDN: The module graph", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules/Module_graph" },
+            { t: "MDN: <script type=\"importmap\">", url: "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script/type/importmap" },
           ],
-          pre: [{ to: "js/Function: length و name و toString و new.target", why: R`[[this.name = new.target.name]] هو اللي بيدّي كل error اسم كلاسه لوحده` }],
+          pre: [{ to: "js/defer و async و module", why: R`[[<script type="module">]] في الصفحة اتشرح هناك، وهنا بنقسّم الكود على ملفات` }],
           flag: "script",
           deep: {
-            why: R`في أي backend أو تطبيق كبير، طريقة التعامل مع الـ error بتعتمد على نوعه: تعرض رسالة لليوزر؟ تعيد المحاولة؟ تسجّل وتنبّه؟ لو كله [[Error]] بـ message بس، هتقارن نصوص، وده بيبوظ أول ما حد يعدّل الرسالة.`,
-            how: R`[[super(message, { cause })]] بيحط الـ message والـ cause على الـ error. و [[this.name = this.constructor.name]] بيخلي الـ name يطلع اسم الكلاس الفعلي في الـ logs والـ stack، بدل "Error".
+            why: "أي مشروع حقيقي عشرات الملفات. الـ modules بتخلي كل ملف مسؤول عن حاجة واحدة، ومتغيراته مش بتتلخبط مع غيره، والـ bundlers (Vite) بيشيلوا الكود اللي محدش عمله import (tree shaking).",
+            how: R`الـ imports بتتقري قبل ما الكود يشتغل (static): لازم تبقى في الـ top level (مش جوه if أو function)، وبتتعمل hoisting فبتتحمّل قبل أي سطر حتى لو اتكتبت تحت، والعادة تحطها في أول الملف. والـ path لازم string ثابت. ده اللي بيخلي الأدوات تعرف شجرة الملفات كلها وتعمل tree shaking.
 
-[[cause]] بيتعرض في Node وفي DevTools مع الـ stack، فبتشوف السلسلة كاملة: «فشل تحميل اليوزر» سببه «fetch failed» سببه «ECONNREFUSED».
+الـ import بيجيب live binding مش نسخة: لو الملف الأصلي غيّر قيمة [[export let count]]، اللي عامل import هيشوف الجديد. ومينفعش تعيّن قيمة للـ import نفسه.
 
-وفيه [[AggregateError]] لما عندك كذا error مع بعض، وده اللي [[Promise.any]] بترميه لو كله فشل.
+كل module بيتنفّذ مرة واحدة بس مهما اتعمله import من كام ملف، والنتيجة بتتكاش. ES modules شغالة strict mode لوحدها.
 
-والفكرة العامة: الطبقات التحت ترمي errors بنوع ومعنى، وطبقة واحدة فوق (error middleware في Express، أو error boundary في React) بتقرر تعمل إيه بيها.`,
-            when: "في أي backend (errors بـ status codes)، وفي المكتبات، وفي أي مكان بتمسك error تقني وتحوّله لحاجة ليها معنى.",
-            mistakes: R`ترمي error جديد وتضيّع الأصلي من غير cause. وترجّع [[err.message]] الداخلي لليوزر (ممكن يكون فيه تفاصيل قاعدة بيانات أو paths). وتفرّق بين الأخطاء بـ [[err.message.includes(...)]].`
+الـ path: في Node والمتصفح لازم الامتداد ([[./math.js]])، والـ bundlers (Vite و Next) بيسامحوك. و [[import "lodash"]] من غير [[./]] معناها package من node_modules (bare specifier)، والمتصفح مبيفهمهاش لوحده من غير bundler أو import map.
+
+و [[export ... from]] بيعمل re-export، ودي فكرة ملفات [[index.js]] اللي بتجمّع exports فولدر كامل (barrel file).`,
+            when: "دايمًا في كود جديد. named exports للأغلب لأنها أوضح في البحث والـ refactoring، و default للـ components والصفحات لما الـ framework بيطلبها (Next.js pages).",
+            mistakes: R`تنسى الامتداد في Node. وتخلط default و named: [[import { round2 }]] وهي default فتطلع undefined أو error. و barrel files كبيرة بتبطّأ الـ dev server والـ tests. و circular imports (a بيستورد من b و b من a) فتلاقي قيمة undefined وقت التشغيل.`
           },
           teach: R`## الكود ده بيعمل إيه؟
 
-بيعمل نوعين errors بتوعنا: [[AppError]] (أي خطأ في التطبيق ومعاه HTTP status)، و [[NotFoundError]] (حاجة مش موجودة، 404). وبعدين دالة [[loadUser]] بتجيب يوزر من API، وأي error تقني بيحصل بتلفّه في AppError برسالة مفهومة، والأصلي بيفضل محفوظ في [[cause]].
+ملفين: [[math.js]] بيعمل [[export]] لـ ٣ حاجات، و [[main.js]] بيستوردهم بـ ٣ أشكال مختلفة ويستخدمهم. عشان Node يعامل الملفات كـ ES modules، حطينا جنبهم [[package.json]] فيه سطر واحد:
 
-[[api.example.com]] دومين محجوز للأمثلة، مفيش عليه API. فشغّلنا الكود في Node 24 مرتين: مرة زي ما هو (فالطلب بيفشل)، ومرة على سيرفر صغير محلي فيه [[/users/1]] بس، وأي حاجة تانية 404.
+~~~text package.json
+{ "type": "module" }
+~~~
+
+واتشغّل بـ [[node main.js]] على Node 24.
 
 ---
 
-## ١. [[AppError]]
+## ١. [[math.js]]: الـ exports
 
-~~~text app.js
-class AppError extends Error {
-  constructor(message, { status = 500, cause } = {}) {
+~~~text math.js
+export const PI = 3.14159;
+export function area(r) { return PI * r * r; }
+export default function round2(n) { return Math.round(n * 100) / 100; }
 ~~~
 
-- [[extends Error]]: AppError نوع من Error، فبياخد message و stack وكل حاجة (درس extends).
-- [[{ status = 500, cause } = {}]]: التاني object خيارات، بنفكّه في السطر نفسه (destructuring):
-- [[status = 500]]: لو مبعتش status، يبقى 500 (خطأ في السيرفر).
-- [[cause]]: الـ error الأصلي لو فيه.
-- [[= {}]] في الآخر: لو مبعتش الـ object خالص، اعتبره object فاضي. من غيرها [[new AppError("x")]] كانت هتقع لأن مينفعش تفك undefined. بيها [[new AppError("x").status]] طلعت [[500]].
+### [[export const PI]] و [[export function area]]
 
-~~~text app.js
-    super(message, { cause });
-    this.name = this.constructor.name;
-    this.status = status;
-  }
-}
-~~~
+دول **named exports**: كل واحد ليه اسم، واللي هيستورده لازم يطلبه **بنفس الاسم**. أي حاجة في الملف **من غير** export مستخبية، محدش برّه يشوفها: كل module ليه scope لوحده.
 
-- [[super(message, { cause })]]: نادي constructor بتاع Error. و Error نفسه بيقبل [[{ cause }]] من ES2022 وبيحطها على الـ error كخاصية [[cause]].
-- [[this.constructor.name]]: [[this.constructor]] هو الكلاس اللي اتعمل بيه الـ object فعلًا، و [[.name]] اسمه. فلو اتعمل بـ NotFoundError، الاسم يطلع [["NotFoundError"]] **من غير** ما تكتبه في كل كلاس. ومن غير السطر ده، جرّبنا [[class NoName extends Error {}]]: الاسم طلع [["Error"]]، فالـ logs متقولكش النوع.
-- [[this.status = status]]: خاصية زيادة بتاعتنا.
+- [[area(r)]]: مساحة الدايرة = PI × نص القطر × نص القطر.
+
+### [[export default function round2]]
+
+ده **default export**: واحد بس في الملف، و «الحاجة الأساسية» فيه. اللي بيستورده يسمّيه أي اسم.
+
+- [[Math.round(n * 100) / 100]]: حيلة للتقريب لرقمين عشريين: اضرب في 100، قرّب لأقرب رقم صحيح، واقسم على 100. يعني [[12.56636]] ← [[1256.636]] ← [[1257]] ← [[12.57]].
 
 ---
 
-## ٢. [[NotFoundError]]
+## ٢. [[main.js]]: الـ imports
 
-~~~text app.js
-class NotFoundError extends AppError {
-  constructor(what) { super($__bt$__{what} مش موجود$__bt, { status: 404 }); }
-}
+~~~text main.js
+import round2, { area, PI as pi } from "./math.js";
 ~~~
 
-بياخد اسم الحاجة بس، ويبني الرسالة لوحده، ويثبّت status على 404. واتأكدنا إن [[new NotFoundError("x")]] هو [[instanceof]] الاتنين: NotFoundError و AppError و Error كمان. ده اللي بيخليك تفرّق بالنوع.
+نفكّه حتة حتة:
 
----
-
-## ٣. [[loadUser]]: الطلب
-
-~~~text app.js
-async function loadUser(id) {
-  try {
-    const res = await fetch($__bthttps://api.example.com/users/$__{id}$__bt);
-    if (res.status === 404) throw new NotFoundError("اليوزر");
-    return await res.json();
-~~~
-
-- [[async]] و [[await]]: استنى الطلب من غير ما توقف البرنامج (درس async و await).
-- [[res.status === 404]]: fetch **مبترميش** error على 404، فبنفحص بنفسنا ونرمي النوع الواضح.
-- [[return await res.json()]]: حوّل الرد لـ object ورجّعه.
-
----
-
-## ٤. الـ catch: عدّي أو لِف
-
-~~~text app.js
-  } catch (err) {
-    if (err instanceof AppError) throw err;
-    throw new AppError("فشل تحميل اليوزر", { cause: err });
-  }
-}
-~~~
-
-- [[err instanceof AppError]]: لو ده error **بتاعنا** (زي الـ NotFoundError اللي رميناه فوق)، عدّيه زي ما هو، معناه واضح أصلًا.
-- غير كده يبقى error تقني مش متوقع (النت، DNS، JSON بايظ): اعمل AppError برسالة مفهومة، وحط الأصلي في [[cause]] عشان التفاصيل متضيعش.
-
----
-
-## ٥. التشغيل
-
-~~~text app.js
-loadUser(1).catch((e) => console.log(e.name, e.status, e.message, e.cause?.message));
-~~~
-
-[[.catch(...)]] على الـ Promise اللي loadUser رجّعته، وبنطبع ٤ حاجات. و [[e.cause?.message]]: [[?.]] عشان لو مفيش cause ميقعش.
-
-### على [[api.example.com]] (الدومين مش موجود)
-
-~~~text الناتج
-AppError 500 فشل تحميل اليوزر fetch failed
-~~~
-
-fetch رمت [[TypeError: fetch failed]]، والـ catch لفّها. وفي Node الـ error الأصلي جواه cause **تاني** بالسبب الحقيقي، طبعناه:
-
-~~~text الناتج: e.cause.cause.code, e.cause.cause.message
-ENOTFOUND getaddrinfo ENOTFOUND api.example.com
-~~~
-
-[[ENOTFOUND]] يعني الـ DNS ملقاش الدومين. فالسلسلة كاملة: «فشل تحميل اليوزر» ← سببه «fetch failed» ← سببه «ENOTFOUND». وفي Chrome نفس الطلب لدومين مش موجود رمى [[TypeError: Failed to fetch]].
-
-### على السيرفر المحلي
-
-~~~text الناتج
-{ id: 1, name: 'Sara' }                         ← loadUser(1)
-NotFoundError 404 اليوزر مش موجود undefined     ← loadUser(2)
-~~~
-
-مع 2، الـ NotFoundError عدّى من الـ catch زي ما هو، و cause بـ undefined لأنه مش ملفوف.
-
-### شكل الـ error في Node
-
-لما تطبع AppError فيه cause بـ console.log، Node بيعرض الاتنين (من ملف تجربة، السطر 37 فيه [[new AppError("فشل تحميل اليوزر", { cause: new TypeError("fetch failed") })]]):
-
-~~~text الناتج
-AppError: فشل تحميل اليوزر
-    at file:///C:/Users/ali/code/test.mjs:37:14
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
-  status: 500,
-  [cause]: TypeError: fetch failed
-      at file:///C:/Users/ali/code/test.mjs:37:56
-      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-}
-~~~
-
----
-
-## ٦. نوع تالت (الـ solCode)
-
-~~~text app.js
-class ValidationError extends AppError {
-  constructor(fields) {
-    super("البيانات مش صحيحة", { status: 400 });
-    this.fields = fields;
-  }
-}
-const err = new ValidationError({ email: "لازم يبقى إيميل صحيح" });
-console.log(err.name, err.status, err.fields, err instanceof AppError);
-~~~
-
-- [[super(...)]] الأول دايمًا، وبعدين [[this.fields]]: object فيه كل خانة غلط ورسالتها، عشان الفورم يعرض كل غلطة جنب خانتها.
-
-~~~text الناتج
-ValidationError 400 { email: 'لازم يبقى إيميل صحيح' } true
-~~~
-
-الاسم طلع ValidationError لوحده بفضل [[this.constructor.name]] في AppError.
-
----
-
-## ٧. AggregateError: كذا error في error واحد
-
-ساعات الفشل مش سبب واحد: كل الـ mirrors وقعت، أو الفورم فيه ٣ غلطات. [[AggregateError]] نوع مدمج (ES2021) شايل array من الـ errors في [[errors]]، و [[message]] واحدة فوقهم.
-
-### بيجيلك من [[Promise.any]]
-
-[[Promise.any]] بتستنى **أول** Promise ينجح. لو كلهم فشلوا، بترمي AggregateError فيه كل الأسباب:
-
-~~~text agg.mjs
-const fail = (name, ms) => new Promise((_, rej) => setTimeout(() => rej(new Error($__bt$__{name} واقع$__bt)), ms));
-try {
-  await Promise.any([fail("mirror1", 10), fail("mirror2", 20)]);
-} catch (e) {
-  console.log(e.name, "|", e.message, "|", e instanceof AggregateError);
-  console.log(e.errors.map((x) => x.message));
-}
-~~~
-
-~~~text الناتج (Node 24)
-AggregateError | All promises were rejected | true
-[ 'mirror1 واقع', 'mirror2 واقع' ]
-~~~
-
-- [[e.message]] عامة («كلهم اترفضوا»)، فمتعرضهاش لليوزر لوحدها.
-- [[e.errors]]: الأسباب الحقيقية بنفس ترتيب الـ promises (مش ترتيب الفشل)، فتقدر تسجّل كل واحد.
-- لو واحد بس نجح، [[Promise.any]] بترجّعه ومفيش error خالص (جرّبتها: [["b شغال"]]).
-- [[Promise.any([])]] على array فاضية بترمي AggregateError على طول و [[errors.length]] بـ 0.
-
-### تعمله بنفسك: كل غلطات الفورم مرة واحدة
-
-~~~text agg.mjs
-const errs = [new RangeError("age"), new TypeError("email")];
-const agg = new AggregateError(errs, "الفورم فيه 2 غلط");
-console.log(agg.message, agg.errors.length, agg.errors[1].name);
-throw agg;
-~~~
-
-~~~text الناتج (Node 24)
-الفورم فيه 2 غلط 2 TypeError
-AggregateError: الفورم فيه 2 غلط
-    at file:///C:/.../agg.mjs:9:13 {
-  [errors]: [
-    RangeError: age
-        at file:///C:/.../agg.mjs:8:15,
-    TypeError: email
-        at file:///C:/.../agg.mjs:8:38
-  ]
-}
-~~~
-
-- [[new AggregateError(errors, message)]]: الأول الـ array (أي iterable)، وبعدها الرسالة. وبيقبل [[{ cause }]] كتالت argument زي أي Error.
-- لما يوقع من غير ما يتمسك، Node بيطبع كل error جواه بالـ stack بتاعه تحت [[[errors]]]، فاللوج بيبقى فيه كل حاجة.
-- الفرق عن [[ValidationError]] بتاع الـ solCode: هناك [[fields]] object رسايل بالخانة، وهنا errors كاملة بـ stack. استخدم AggregateError لما كل سبب error حقيقي (طلبات فشلت)، و [[fields]] لما هي رسايل للفورم.
-
----
-
-## الخلاصة
-
-| الحتة | ليه |
+| الحتة | معناها |
 |---|---|
-| [[class X extends Error]] | تفرّق بين الأخطاء بـ [[instanceof]] مش بمقارنة الرسايل |
-| [[this.name = this.constructor.name]] | اسم النوع الحقيقي يظهر في الـ logs |
-| [[status]] | الطبقة اللي فوق تعرف ترد بأنهي HTTP code |
-| [[{ cause: err }]] | رسالة مفهومة فوق، والسبب التقني محفوظ تحت |
-| [[if (err instanceof AppError) throw err]] | errors بتاعتك تعدّي، والغريبة تتلف |
-| [[AggregateError]] و [[e.errors]] | كذا سبب في error واحد، زي اللي بترميه [[Promise.any]] لما كله يفشل |`,
-          lines: [
-            R`كلاس أساسي لكل أخطاء التطبيق، بيورث من [[Error]] فبياخد [[message]] و [[stack]] وبيعدّي [[instanceof Error]]. وجود أب واحد بيخليك تفرّق بين «خطأ إحنا عارفينه» وأي error تاني.`,
-            R`الـ constructor بياخد الرسالة ومعاها object خيارات بيتفك على طول: [[status]] (افتراضي 500) و [[cause]]. و [[= {}]] الأخيرة عشان لو مبعتش خيارات خالص ميرميش وهو بيفك [[undefined]].`,
-            R`[[super]] بينادي constructor بتاع [[Error]]، ولازم ييجي قبل أي استخدام لـ [[this]]. وبنبعتله [[cause]]، و [[Error]] نفسه بيقبلها وبيحطها في [[err.cause]].`,
-            R`من غير السطر ده [[name]] هيفضل [["Error"]] لكل الأنواع. [[this.constructor.name]] بيجيب اسم الكلاس الفعلي اللي اتعمل منه الـ object، فـ [[NotFoundError]] اسمه يبقى [["NotFoundError"]] من غير ما يكتبه بنفسه.`,
-            R`status الـ HTTP اللي المفروض يرجع للعميل، فالـ error handler في السيرفر يقرا [[err.status]] على طول بدل ما يخمّن.`,
-            R`نهاية الـ constructor.`,
-            R`نهاية [[AppError]].`,
-            R`نوع أخص لحالة «مش موجود». بيورث من [[AppError]]، فـ [[instanceof AppError]] و [[instanceof NotFoundError]] الاتنين [[true]] عليه.`,
-            R`constructor بياخد اسم الحاجة بس ويبني الرسالة ويثبّت [[status: 404]]، فاللي بيرمي يكتب [[new NotFoundError("اليوزر")]] من غير ما يفتكر رقم الـ status.`,
-            R`نهاية [[NotFoundError]].`,
-            R`دالة [[async]] بتجيب يوزر من API، وبتحوّل أي فشل لنوع من أخطاءنا.`,
-            R`[[try]] حوالين الطلب وقراية الرد، عشان أي error منهم يتجمع في الـ catch.`,
-            R`الطلب. لو الشبكة وقعت أو الـ domain مش موجود، [[fetch]] بترمي TypeError (رسالته في Node [[fetch failed]]).`,
-            R`404 مش error عند fetch، فبنرمي النوع الواضح بنفسنا عشان اللي فوق يعرف يتصرف (يعرض «مش موجود» بدل «حصلت مشكلة»).`,
-            R`بنرجّع الداتا. الـ [[await]] هنا مهمة: من غيرها لو [[res.json()]] فشلت، الـ rejection هتطلع برّه الـ try والـ catch اللي تحت مش هيشوفها.`,
-            R`هنا بيوصل أي error من فوق: [[NotFoundError]] بتاعنا، أو error الشبكة، أو JSON بايظ.`,
-            R`لو الـ error من أخطاءنا (زي [[NotFoundError]]) بنعدّيه زي ما هو، عشان منلفّهوش تاني ويضيع الـ status بتاعه.`,
-            R`غير كده ده error غريب (شبكة مثلًا)، فبنلفه في [[AppError]] برسالة مفهومة، والأصلي محفوظ في [[cause]] فالتفاصيل مبتضيعش وانت بتدوّر على المشكلة.`,
-            R`نهاية الـ catch.`,
-            R`نهاية [[loadUser]].`,
-            R`[[catch]] على الـ Promise بتطبع السلسلة كلها. الـ domain هنا وهمي فالطلب بيفشل: بيطبع [[AppError 500 فشل تحميل اليوزر]] ومعاه [[fetch failed]] من [[e.cause?.message]]. و [[?.]] عشان مش كل error ليه cause.`,
-          ],
-          sol: R`من غير نت أو بدومين غلط، [[fetch]] نفسها بترمي [[TypeError: fetch failed]] (في المتصفح [[Failed to fetch]])، فالـ catch بيلفّها في AppError. الناتج: [[AppError 500 فشل تحميل اليوزر]] و [[e.cause]] هو الـ TypeError الأصلي، وفي Node جواه كمان [[cause]] فيه كود زي [[ENOTFOUND]]. يعني الرسالة العامة لليوزر، والسبب الحقيقي محفوظ للـ logs.
+| [[round2]] (برّه الأقواس) | الـ default export. الاسم ده من اختيارك، كان ممكن [[import r from ...]] |
+| [[{ area }]] | named export اسمه area، لازم بنفس الاسم |
+| [[PI as pi]] | named export اسمه PI، بس سمّيه هنا pi |
+| [[from "./math.js"]] | من الملف ده. [[./]] = نفس الفولدر، والامتداد [[.js]] إجباري في Node |
 
-[[ValidationError]] بتورث من AppError وبتضيف [[fields]]، و [[this.name]] بيطلع [["ValidationError"]] لوحده بفضل [[this.constructor.name]]. الغلطة الشائعة إنك تعمل [[this.fields = fields]] قبل [[super(...)]] فيطلع ReferenceError.`,
-          solCode: R`class ValidationError extends AppError {
-  constructor(fields) {
-    super("البيانات مش صحيحة", { status: 400 });
-    this.fields = fields;
-  }
-}
-const err = new ValidationError({ email: "لازم يبقى إيميل صحيح" });
-console.log(err.name, err.status, err.fields, err instanceof AppError);
-// ValidationError 400 { email: 'لازم يبقى إيميل صحيح' } true`
-        },
-        {
-          cmd: "الأخطاء العامة: unhandledrejection و uncaughtException",
-          title: "تمسك أي error محدش مسكه قبل ما البرنامج يقع ساكت",
-          desc: R`أي error محدش مسكه بيوصل لآخر مكان: في Node بيوقّع البرنامج كله بكود خروج ١، وفي المتصفح بيطلع أحمر في Console والصفحة تكمّل. الـ global handlers هي آخر شبكة: [[process.on("unhandledRejection")]] و [[process.on("uncaughtException")]] في Node، و [[window]] events اسمها [[error]] و [[unhandledrejection]] في المتصفح.
-
-وظيفتهم **تسجّل** الـ error (لوج أو خدمة زي Sentry) وتقفل بنضافة، مش إنهم يخلّوا البرنامج يكمّل كأن مفيش حاجة. الـ try/catch في المكان الصح لسه هو الأساس (درس «try و catch و finally»).`,
-          example: R`process.on("unhandledRejection", (reason) => {
-  console.error("[unhandledRejection]", reason instanceof Error ? reason.message : reason);
-  process.exitCode = 1;
-});
-process.on("uncaughtException", (err, origin) => {
-  console.error("[uncaughtException]", origin, err.message);
-  process.exit(1);
-});
-process.on("exit", (code) => console.error("exit code", code));
-Promise.reject(new Error("DB اتقفلت"));
-setTimeout(() => { throw new Error("bug في timer"); }, 10);
-setTimeout(() => console.log("مش هتتطبع"), 50);`,
-          try: R`احفظ المثال [[gh.mjs]] وشغّله، وبعدين امسح الـ handler الأول بس وشغّل تاني: الـ rejection بقى بيوصل لأنهي handler، و [[origin]] بقى إيه؟ وبعدين اعمل صفحة HTML فيها [[window.addEventListener("unhandledrejection", ...)]] و [[fetch("/nope.json").then((r) => r.json())]] وشوف الـ reason.`,
-          practice: [
-            { lvl: 'سريع', t: R`اقرا وتوقّع: [[const p = Promise.reject(new Error("late")); setTimeout(() => p.catch(() => console.log("اتمسك")), 0);]] في Node 24 من غير أي handler. هيطبع «اتمسك» ولا هيقع؟ وبعدين غيّر [[setTimeout(..., 0)]] لـ [[queueMicrotask(...)]] وتوقّع تاني، وشغّل الاتنين.`, done: R`نسخة [[setTimeout]] بتقع بـ [[Error: late]] وكود ١ و «اتمسك» مبتتطبعش، لأن Node بيفحص الـ rejections اللي ملهاش handler بعد ما الـ microtasks تخلص وقبل الـ timer. نسخة [[queueMicrotask]] بتطبع «اتمسك في microtask» ومبتقعش، وتقدر تقول القاعدة: الـ [[.catch]] لازم يتحط قبل ما اللفة الحالية تخلص.`, sol: R`**التوقع:** نسخة [[setTimeout]] هتقع، ونسخة [[queueMicrotask]] هتطبع.
-
-~~~js late-timeout.js
-const p = Promise.reject(new Error("late"));
-setTimeout(() => p.catch(() => console.log("اتمسك")), 0);
+~~~text main.js
+import * as math from "./math.js";
 ~~~
 
-~~~text الناتج (node late-timeout.js، Node 24، أول ٥ سطور والكود)
-file:///C:/Users/ali/code/global-errors/late-timeout.js:1
-const p = Promise.reject(new Error("late"));
-                         ^
+[[* as math]]: هات **كل** الـ exports في object واحد اسمه math. طبعناه:
 
-Error: late
-exit code: 1
-~~~
-
-~~~js late-microtask.js
-const p = Promise.reject(new Error("late"));
-queueMicrotask(() => p.catch(() => console.log("اتمسك في microtask")));
-~~~
-
-~~~text الناتج (node late-microtask.js; echo "exit code: $?")
-اتمسك في microtask
-exit code: 0
-~~~
-
-**ليه كده:**
-
-- **[[Promise.reject(...)]]** بيعمل Promise مرفوض فورًا، ومفيش حد عامله [[.catch]] لسه.
-- **Node بيفحص إمتى؟** بعد ما الكود الحالي يخلص **وكل الـ microtasks** (الـ [[.then]] و [[.catch]] و [[queueMicrotask]]) تخلص، Node بيبص: فيه Promise مرفوض ومحدش مسكه؟ لو أيوه، ده [[unhandledRejection]]، والسلوك الافتراضي من Node 15 إنه يرميه كـ error ويقفل البرنامج بكود ١.
-- **[[setTimeout(..., 0)]]** حتى بصفر بيتنفّذ في دور الـ timers، وده **بعد** الفحص. فالبرنامج وقع قبل ما الـ [[.catch]] يتحط، و «اتمسك» متطبعتش.
-- **[[queueMicrotask]]** بيتنفّذ في نفس دور الـ microtasks، **قبل** الفحص، فالـ [[.catch]] اتحط في الوقت، و Node شاف إن الـ Promise ليه handler.
-
-**القاعدة:** الـ [[.catch]] (أو الـ [[await]] جوه try) لازم يتحط قبل ما اللفة الحالية من الكود والـ microtasks تخلص. عمليًا: اعمل [[await]] أو [[.catch]] على أي Promise في نفس المكان اللي عملته فيه.
-
-**الغلطة الشائعة:** تخزّن Promise في متغير وتعمله [[await]] بعدين بعد [[await]] تاني بياخد وقت. لو اترفض في النص، البرنامج بيقع بنفس الطريقة (تمرين «قارن وقيس» في درس async و await).` },
-            { lvl: 'تطبيق', t: R`ابني [[crash-guard.mjs]] تعمله import في أول أي سكربت: بيسجّل [[unhandledRejection]] و [[uncaughtException]]، ولكل واحد بيكتب سطر JSON في [[crash.log]] فيه [[time]] و [[type]] و [[message]] و [[stack]]، وبعدين [[process.exit(1)]]. و [[process.on("exit")]] بيطبع كود الخروج.`, done: R`سكربت فيه [[Promise.reject(new Error("x"))]] وسكربت فيه [[setTimeout(() => null.a)]] الاتنين بيخرجوا بكود ١ ([[echo $?]] أو [[$LASTEXITCODE]])، و [[crash.log]] فيه سطرين JSON صالحين ([[JSON.parse]] لكل سطر بينجح) فيهم النوع الصح والـ stack، وتشغيل السكربت مرتين بيزوّد سطور مش بيمسح القديم.`, sol: R`~~~js crash-guard.mjs
-import { appendFileSync } from "node:fs";
-
-const LOG = new URL("./crash.log", import.meta.url);
-
-function record(type, err) {
-  const e = err instanceof Error ? err : new Error(String(err));
-  const line = JSON.stringify({
-    time: new Date().toISOString(),
-    type,
-    message: e.message,
-    stack: e.stack,
-  });
-  appendFileSync(LOG, line + "\n");
-  console.error($__bt[$__{type}] $__{e.message} (اتسجّل في crash.log)$__bt);
-}
-
-process.on("unhandledRejection", (reason) => {
-  record("unhandledRejection", reason);
-  process.exit(1);
-});
-
-process.on("uncaughtException", (err) => {
-  record("uncaughtException", err);
-  process.exit(1);
-});
-
-process.on("exit", (code) => console.error("exit code", code));
-~~~
-
-سكربتين بيوقعوا بطريقتين:
-
-~~~js reject.mjs
-import "./crash-guard.mjs";
-
-Promise.reject(new Error("x"));
-~~~
-
-~~~js timer-null.mjs
-import "./crash-guard.mjs";
-
-setTimeout(() => null.a, 10);
-~~~
-
-وسكربت بيقرا [[crash.log]] ويعمل [[JSON.parse]] لكل سطر (لو أي سطر مش JSON صالح هيقع):
-
-~~~js check-log.mjs
-import { readFileSync } from "node:fs";
-
-const lines = readFileSync(new URL("./crash.log", import.meta.url), "utf8").trim().split("\n");
-for (const line of lines) {
-  const entry = JSON.parse(line);
-  console.log(entry.type.padEnd(19), entry.message, "| stack:", entry.stack.split("\n").length, "سطور");
-}
-console.log("عدد السطور:", lines.length);
-~~~
-
-~~~text الناتج (Git Bash، Node 24، بعد ما مسحنا crash.log)
-$ node reject.mjs; echo "\$? = $?"
-[unhandledRejection] x (اتسجّل في crash.log)
-exit code 1
-$? = 1
-[uncaughtException] Cannot read properties of null (reading 'a') (اتسجّل في crash.log)
-exit code 1
-$? = 1
-unhandledRejection  x | stack: 5 سطور
-uncaughtException   Cannot read properties of null (reading 'a') | stack: 4 سطور
-عدد السطور: 2
---- تشغيل reject.mjs تاني:
-عدد السطور: 3
-~~~
-
-وفي PowerShell كود الخروج في [[$LASTEXITCODE]]:
-
-~~~text الناتج (PowerShell 7)
-[unhandledRejection] x (اتسجّل في crash.log)
-exit code 1
-LASTEXITCODE = 1
-~~~
-
-**ليه كده:**
-
-- **[[import "./crash-guard.mjs"]] أول سطر:** import من غير أسامي بينفّذ الملف بس. ولأن الـ imports بتتنفّذ قبل جسم السكربت، الـ handlers بتتسجّل قبل أي سطر ممكن يوقع.
-- **[[unhandledRejection]]:** Promise اترفض ومحدش مسكه ([[reject.mjs]]). **[[uncaughtException]]:** throw عادي محدش مسكه، هنا [[null.a]] جوه timer بيرمي [[TypeError]].
-- **[[err instanceof Error ? err : new Error(String(err))]]:** اللي بيترفض ممكن يبقى أي حاجة ([[Promise.reject("نص")]])، فبنحوّله لـ Error عشان يبقى فيه [[message]] و [[stack]] دايمًا.
-- **[[appendFileSync]] مش [[appendFile]]:** إحنا على وشك [[process.exit]]. النسخة الـ async كانت هتبدأ تكتب والبرنامج يقفل قبل ما تخلص. الـ sync بتخلص الكتابة الأول. وهي append، فالتشغيل التاني زوّد سطر (بقوا ٣) ومسحش القديم.
-- **[[JSON.stringify]] لكل سطر:** الـ stack فيه سطور جديدة، و [[JSON.stringify]] بيحوّلها لـ [[\n]] جوه النص، فكل حدث بيفضل **سطر واحد** في الملف. ده اسمه JSON Lines، وكل سطر بيتقري لوحده.
-- **[[process.on("exit")]]:** بيتنادى وقت الخروج بالكود. مينفعش تعمل فيه حاجة async.
-
-**الغلطة الشائعة:** تسجّل [[uncaughtException]] وتنسى [[process.exit(1)]]. البرنامج هيكمّل بـ state بايظة (التمرين الجاي)، وكود الخروج هيبقى ٠ فالـ CI أو الـ process manager مش هيعرف إن فيه مشكلة.` },
-            { lvl: 'تحدي', t: R`صلّح الكود البايظ: سيرفر فيه [[process.on("uncaughtException", (e) => console.log("تمام، كمّل", e.message))]] وبعدين request handler بيعمل [[connections++]] وبعدها بيرمي قبل [[connections--]]. ابعت ١٠ requests بايظة واطبع [[connections]]. اشرح ليه «كمّل عادي» غلط، وصلّحه بإن الـ handler يسجّل ويقفل السيرفر بـ [[server.close()]] ويخرج بكود ١، والـ restart يبقى شغل الـ process manager.`, done: R`قبل التصليح [[connections]] بيوصل 10 والسيرفر لسه شغال وبيكذب (الـ state باظ ومحدش عارف)، وبعد التصليح أول request بايظ بيكتب الـ error ويخرج بكود ١ بعد ما الـ requests المفتوحة تخلص، وكتبت في سطرين ليه وثائق Node بتقول إن الكمّل بعد [[uncaughtException]] مش آمن.`, sol: R`## السيرفر البايظ
-
-~~~js server-broken.mjs
-import http from "node:http";
-
-let connections = 0;
-
-process.on("uncaughtException", (e) => console.log("تمام، كمّل", e.message));
-
-const server = http.createServer((req, res) => {
-  if (req.url === "/stats") return res.end("connections = " + connections + "\n");
-  connections++;
-  if (req.url === "/bad") throw new Error("bug في الـ handler");
-  res.end("ok\n");
-  connections--;
-});
-
-server.listen(3100, () => console.log("شغال على 3100"));
-~~~
-
-عميل بيبعت ١٠ requests على [[/bad]] مع بعض (كل واحد بمهلة 500ms عشان مايستناش للأبد)، وبعدين يسأل [[/stats]]:
-
-~~~js hammer.mjs
-// بيبعت 10 requests على /bad (كل واحد بمهلة 500ms) وبعدين يسأل عن /stats
-const port = process.argv[2];
-const base = $__bthttp://127.0.0.1:$__{port}$__bt;
-let failed = 0;
-await Promise.all(
-  Array.from({ length: 10 }, () =>
-    fetch(base + "/bad", { signal: AbortSignal.timeout(500) }).catch(() => failed++),
-  ),
-);
-console.log("requests على /bad من غير رد:", failed);
-try {
-  const res = await fetch(base + "/stats", { signal: AbortSignal.timeout(500) });
-  console.log("/stats:", (await res.text()).trim());
-} catch (err) {
-  console.log("/stats:", err.name, "- السيرفر مش بيرد");
+~~~text الناتج: console.log(math)
+[Module: null prototype] {
+  PI: 3.14159,
+  area: [Function: area],
+  default: [Function: round2]
 }
 ~~~
 
-~~~bash demo-broken.sh
-node server-broken.mjs > broken.out 2>&1 &
-pid=$!
-sleep 0.5
-node hammer.mjs 3100
-kill $pid
-echo "--- اللي طبعه السيرفر:"
-sort broken.out | uniq -c
+ده اسمه **module namespace object**: كل named export خاصية، والـ default موجود باسم [[default]]. ومينفعش تعدّل فيه: [[math.PI = 3]] طلّعت:
+
+~~~text الناتج
+TypeError: Cannot assign to read only property 'PI' of object '[object Module]'
 ~~~
-
-~~~text الناتج (bash demo-broken.sh، Node 24)
-requests على /bad من غير رد: 10
-/stats: connections = 10
---- اللي طبعه السيرفر:
-     10 تمام، كمّل bug في الـ handler
-      1 شغال على 3100
-~~~
-
-## ليه «كمّل عادي» غلط
-
-- كل request بايظ عمل [[connections++]] ووقع قبل [[connections--]]. الـ handler قال «تمام» وكمّل، فالعدّاد بقى **10** والسيرفر بيقول إن فيه ١٠ اتصالات مفتوحة وهي مش موجودة. لو العدّاد ده بيمنع اتصالات جديدة بعد حد معيّن، السيرفر هيقفل الباب على الناس من غير سبب.
-- والأسوأ: الـ ١٠ requests **ماتردّش عليهم خالص** ([[res.end]] متنادتش)، فالعميل قعد مستني لحد مهلته. والسيرفر لسه «شغال» قدام أي health check.
-- وثائق Node (صفحة process، جزء «Warning: Using uncaughtException correctly») بتقول بالظبط كده: بعد [[uncaughtException]] البرنامج في حالة مش معروفة، والـ resources ممكن تكون فاضلة مفتوحة، ومش آمن تكمّل. المسموح: تسجّل وتنضّف وتخرج.
-
-## التصليح
-
-~~~js server-fixed.mjs
-import http from "node:http";
-
-let connections = 0;
-
-const server = http.createServer((req, res) => {
-  if (req.url === "/stats") return res.end("connections = " + connections + "\n");
-  connections++;
-  if (req.url === "/bad") throw new Error("bug في الـ handler");
-  res.end("ok\n");
-  connections--;
-});
-
-let shuttingDown = false;
-
-process.on("uncaughtException", (err) => {
-  console.error("[uncaughtException]", err.stack.split("\n")[0]);
-  if (shuttingDown) return;
-  shuttingDown = true;
-  process.exitCode = 1;
-  // بطّل تستقبل جديد، واقفل لما المفتوحين يخلصوا
-  server.close(() => {
-    console.error("السيرفر اتقفل، خارج بكود 1");
-    process.exit(1);
-  });
-  server.closeIdleConnections();
-  // لو فيه request معلّق (زي اللي وقع في النص) متستناش للأبد
-  setTimeout(() => {
-    console.error("مهلة الـ 3 ثواني خلصت، خارج بالعافية");
-    process.exit(1);
-  }, 3000).unref();
-});
-
-server.listen(3101, () => console.log("شغال على 3101"));
-~~~
-
-~~~bash demo-fixed.sh
-node server-fixed.mjs > fixed.out 2>&1 &
-pid=$!
-sleep 0.5
-start=$(date +%s%N)
-node hammer.mjs 3101
-wait $pid
-code=$?
-echo "السيرفر خرج بكود $code بعد $(( ($(date +%s%N) - start) / 1000000 ))ms من أول request"
-echo "--- اللي طبعه السيرفر:"
-cat fixed.out
-~~~
-
-~~~text الناتج (bash demo-fixed.sh)
-requests على /bad من غير رد: 10
-/stats: TypeError - السيرفر مش بيرد
-السيرفر خرج بكود 1 بعد 720ms من أول request
---- اللي طبعه السيرفر:
-شغال على 3101
-[uncaughtException] Error: bug في الـ handler
-[uncaughtException] Error: bug في الـ handler
-[uncaughtException] Error: bug في الـ handler
-[uncaughtException] Error: bug في الـ handler
-[uncaughtException] Error: bug في الـ handler
-[uncaughtException] Error: bug في الـ handler
-[uncaughtException] Error: bug في الـ handler
-[uncaughtException] Error: bug في الـ handler
-[uncaughtException] Error: bug في الـ handler
-[uncaughtException] Error: bug في الـ handler
-السيرفر اتقفل، خارج بكود 1
-~~~
-
-**كل حتة بتعمل إيه:**
-
-- **[[server.close(cb)]]:** بيبطّل يقبل اتصالات جديدة، والـ callback بيتنادى لما **كل** الاتصالات المفتوحة تتقفل. ساعتها بنخرج بكود ١.
-- **[[closeIdleConnections()]]:** يقفل الاتصالات الفاضية (keep-alive) على طول بدل ما تفضل مستنية.
-- **[[shuttingDown]]:** الـ ١٠ requests وصلوا مع بعض، فالـ handler اتنادى ١٠ مرات. كلهم بيتسجّلوا في اللوج، بس القفل بيبدأ مرة واحدة بس.
-- **[[process.exitCode = 1]]:** لو خرجنا بأي طريق، الكود ١.
-
-## الغلطة اللي ظهرت وأنا ببنيه: request معلّق بيمنع القفل
-
-الـ request اللي وقع في النص **مقفلش** الاتصال بتاعه. لما العميل كان عنده مهلة 500ms، هو اللي قفل، فالسيرفر خرج بعد حوالي 600ms. جرّبنا request واحد من غير مهلة عند العميل:
-
-~~~js hammer-one.mjs
-// request واحد بايظ من غير مهلة عند العميل، عشان نشوف مهلة السيرفر نفسه
-const port = process.argv[2];
-try {
-  await fetch($__bthttp://127.0.0.1:$__{port}/bad$__bt);
-} catch (err) {
-  console.log("العميل:", err.name, err.message, "-", err.cause?.code);
-}
-~~~
-
-~~~text الناتج (السيرفر شغال بـ server-fixed.mjs وبعدين node hammer-one.mjs 3101)
-العميل: TypeError fetch failed - ECONNRESET
-السيرفر خرج بكود 1 بعد 3167ms
-شغال على 3101
-[uncaughtException] Error: bug في الـ handler
-مهلة الـ 3 ثواني خلصت، خارج بالعافية
-~~~
-
-من غير الـ [[setTimeout(..., 3000)]] السيرفر كان هيفضل مستني الـ request ده للأبد، و [[server.close]] عمرها ما هتنادي الـ callback. عشان كده لازم مهلة. و [[.unref()]] معناها «التايمر ده لوحده ميخلّيش البرنامج عايش»: لو كل حاجة قفلت قبله، البرنامج يخرج من غير ما يستناه. الأرقام بالـ ms بتتغيّر شوية كل تشغيل.
-
-**مين يرجّع السيرفر؟** الـ process manager (systemd، أو pm2، أو Docker بـ [[restart: always]]) بيشوف كود ١ ويشغّل نسخة **جديدة** نضيفة. ده الفرق: بدل سيرفر شغال بـ state بايظة، سيرفر وقع ثانية ورجع سليم.` },
-          ],
-          ref: [
-            { t: "MDN: Window: unhandledrejection event", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/unhandledrejection_event" },
-            { t: "Node.js: process (uncaughtException و unhandledRejection)", url: "https://nodejs.org/api/process.html" },
-            { t: "Node.js: Errors", url: "https://nodejs.org/api/errors.html" },
-            { t: "MDN: Using promises", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises" },
-          ],
-          flag: "script",
-          deep: {
-            why: R`في Node من النسخة 15، أي Promise اترفض ومحدش مسكه بيوقّع الـ process كله، فـ API كامل بيقع عشان [[await]] واحدة ناقصة. والـ global handler هو اللي بيضمن إن السبب يتسجّل في اللوج بدل ما السيرفر يموت ساكت، وإن الخروج يبقى بكود ١ فالـ process manager (systemd أو Docker أو PM2) يعرف ويعيد التشغيل. وفي المتصفح من غيرهم الـ errors اللي بتحصل عند اليوزرز بتضيع في Console محدش بيفتحه.`,
-            how: R`Node: لما Promise يترفض، بيتسجّل في لستة. بعد ما الـ microtasks تخلص، أي واحد لسه ملوش handler بيطلّع [[unhandledRejection]]. لو مفيش listener للحدث ده، Node (الوضع الافتراضي [[--unhandled-rejections=throw]]) بيحوّله لـ uncaught exception، فلو فيه [[uncaughtException]] listener بياخده و [[origin]] بيبقى [["unhandledRejection"]]، ولو مفيش البرنامج بيقع. ولو الـ reason مش Error (زي [[Promise.reject("نص")]]) Node بيطبع [[UnhandledPromiseRejection]] بكود [[ERR_UNHANDLED_REJECTION]].
-
-[[uncaughtException]] بيتنادى لأي throw وصل لآخر الـ stack. وجوده بيمنع الخروج، فالبرنامج **بيكمّل** (جرّبتها: timer بعده اشتغل عادي)، وده الخطر: نص عملية اتنفّذت والـ state ممكن يكون باظ. عشان كده بنسجّل ونعمل [[process.exit(1)]].
-
-[[process.exitCode = 1]] بيحدد كود الخروج من غير ما يقفل فورًا (اللي شغال يكمّل)، و [[process.exit(1)]] بيقفل حالًا. و [[exit]] event بيتنادى في الحالتين، وجواه كود synchronous بس.
-
-المتصفح: [[window]] بيطلّع [[error]] لأي throw محدش مسكه ([[event.message]] و [[event.filename]] و [[event.lineno]] و [[event.error]])، و [[unhandledrejection]] لأي Promise مترفض ([[event.reason]] و [[event.promise]]). و [[event.preventDefault()]] بيمنع الرسالة الافتراضية في Console (من MDN). والصفحة بتكمّل في الحالتين.`,
-            when: R`في أي سيرفر أو سكربت Node هيشتغل لوحده (cron، worker، API): handler واحد في أول ملف بيسجّل ويخرج. وفي أي تطبيق ويب في production: listener على الحدثين بيبعت الـ error لخدمة تتبّع. ومش بديل عن try/catch: الـ handler بيعرف إن فيه حاجة وقعت، بس مبيعرفش يعرض رسالة مفيدة لليوزر في المكان الصح.`,
-            mistakes: R`تحط [[uncaughtException]] وتكمّل عادي بعده كأن مفيش حاجة: الـ state باظ. وتحط [[unhandledRejection]] فاضي عشان «التحذير يختفي»: كده بتبلع bugs. وتنسى إن [[.catch]] اللي بيتحط في [[setTimeout]] متأخر: البرنامج بيكون وقع. وتعمل حاجة async جوه [[exit]] event (مش هتخلص). وفي المتصفح تقرا [[event.reason.message]] من غير ما تتأكد إن الـ reason Error أصلًا. والـ scripts من دومين تاني بتوصّل [[Script error.]] من غير تفاصيل إلا لو [[crossorigin]] متحطوط والسيرفر بيبعت CORS (من MDN).`
-          },
-          teach: R`## الفكرة في سطر
-
-أي error محدش مسكه بيوصل لـ «آخر الدنيا». المثال بيحط شبكة هناك في Node: handler للـ Promise اللي اترفض من غير catch، و handler لأي throw وصل لفوق، وبعدين بيعمل الغلطتين عمدًا عشان نشوفهم بيتمسكوا. كل حاجة هنا اتشغّلت على ويندوز 11 بـ Node 24.22، وجزء المتصفح في Chrome 156 (headless بـ playwright).
 
 ---
 
-## ١. من غير أي handler: Node بيقع
+## ٣. الاستخدام
 
-~~~text crash.mjs
-Promise.reject(new Error("DB اتقفلت"));
+~~~text main.js
+console.log(round2(area(2)), pi, math.PI);
 ~~~
 
-~~~text الناتج (Node 24)
-file:///C:/.../crash.mjs:1
-Promise.reject(new Error("DB اتقفلت"));
-               ^
+من جوه لبرّه: [[area(2)]] = 3.14159 × 2 × 2 = [[12.56636]]، و [[round2]] قرّبتها [[12.57]]. و [[pi]] و [[math.PI]] نفس القيمة بطريقتين.
 
-Error: DB اتقفلت
-    at file:///C:/.../crash.mjs:1:16
-
-Node.js v24.22.1
+~~~text الناتج: node main.js
+12.57 3.14159 3.14159
 ~~~
-
-وكود الخروج ١. من Node 15 ده الافتراضي: Promise اترفض ومحدش عمله [[.catch]] ولا [[await]] جوه try = البرنامج كله يقع. ولو الـ reason مش Error:
-
-~~~text الناتج (Node 24، Promise.reject("نص مش Error"))
-UnhandledPromiseRejection: This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). The promise rejected with the reason "نص مش Error".
-  code: 'ERR_UNHANDLED_REJECTION'
-~~~
-
-مفيش stack يقولك فين، وده سبب تاني إنك ترمي [[Error]] دايمًا مش string.
 
 ---
 
-## ٢. [[process.on("unhandledRejection")]]
+## ٤. re-export
 
-~~~text gh.mjs
-process.on("unhandledRejection", (reason) => {
-  console.error("[unhandledRejection]", reason instanceof Error ? reason.message : reason);
-  process.exitCode = 1;
-});
+~~~text main.js
+export { area as circleArea } from "./math.js";
 ~~~
 
-- [[process]]: object عام في Node بيمثّل البرنامج الشغال، وهو EventEmitter (درس «EventEmitter»)، فـ [[.on(name, fn)]] بتشترك في حدث.
-- [[reason]]: القيمة اللي الـ Promise اترفض بيها (غالبًا Error، بس ممكن أي حاجة). الـ listener بياخد كمان [[promise]] نفسه كـ argument تاني لو محتاجه.
-- [[reason instanceof Error ? reason.message : reason]]: لو Error اطبع الرسالة، غير كده اطبع القيمة زي ما هي.
-- [[console.error]]: بيكتب على stderr مش stdout، فاللوج بيفصل الأخطاء.
-- [[process.exitCode = 1]]: «لما تخلص، اخرج بكود ١». مش بيقفل دلوقتي.
+ده **مش** import: main.js بيعدّي area من math.js لأي حد بيستورد من main.js، باسم جديد circleArea. جرّبنا ملف تالت:
 
-مجرد وجود الـ listener ده بيوقّف الوقوع الافتراضي. يعني انت اللي مسؤول تقرر: تخرج ولا لأ.
+~~~text ns.js
+import { circleArea } from "./main.js";
+console.log(circleArea(1));
+~~~
+
+~~~text الناتج: node ns.js
+12.57 3.14159 3.14159
+3.14159
+~~~
+
+السطر الأول هو console.log بتاع main.js: لما ns.js استورد منه، main.js اتنفّذ **مرة واحدة**. ولو استورده ١٠ ملفات، برضه مرة واحدة، والباقي بياخدوا نفس النسخة. وده نفس فكرة ملفات [[index.js]] اللي بتجمّع exports فولدر كامل.
 
 ---
 
-## ٣. [[process.on("uncaughtException")]]
+## ٥. الأخطاء المشهورة
 
-~~~text gh.mjs
-process.on("uncaughtException", (err, origin) => {
-  console.error("[uncaughtException]", origin, err.message);
-  process.exit(1);
-});
+### نسيت [[.js]]
+
+غيّرنا السطر لـ [[from "./math"]]:
+
+~~~text الناتج
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\ali\code\math' imported from C:\Users\ali\code\main.js
+Did you mean to import "./math.js"?
 ~~~
 
-- بيتنادى لأي [[throw]] وصل لآخر الـ call stack من غير ما try يمسكه، زي throw جوه [[setTimeout]] (ليه try اللي برّه مبيمسكوش؟ درس «try و catch و finally» الجزء ٨).
-- [[origin]]: نص بيقول جه منين: [["uncaughtException"]] لـ throw عادي، و [["unhandledRejection"]] لو Promise اترفض ومفيش listener للحدث اللي فوق (جرّبت: شيلت الـ handler الأول فالـ rejection وصل هنا و [[origin]] بقى [[unhandledRejection]]).
-- [[process.exit(1)]]: اقفل **حالًا** بكود ١.
+Node في ES modules مبيخمّنش الامتداد، و Vite بيخمّن، فالكود يشتغل هناك ويقع هنا.
 
-### ليه لازم تخرج؟
+### نسيت [[type: module]]
 
-جرّبت handler بيطبع بس ومبيخرجش، وبعده timer:
+بـ [[package.json]] فيه [[{}]] بس، Node 24 شغّله، بس بتحذير:
 
-~~~text الناتج (Node 24)
-caught a
-كمّل عادي بعد uncaught
+~~~text الناتج
+[MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/ali/code/main.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to C:\Users\ali\code\package.json.
+12.57 3.14159 3.14159
 ~~~
 
-البرنامج كمّل. ده شكله حلو بس خطر: الـ error حصل في نص حاجة (اتصال اتفتح ومتقفلش، عداد زاد ومنقصش)، ومحدش عارف الـ state بقى عامل إزاي. وثائق Node نفسها بتقول إن الكمّل بعد [[uncaughtException]] مش آمن، والصح: سجّل، واقفل، وخلّي الـ process manager (systemd أو Docker [[restart: always]] أو PM2) يشغّله من جديد نضيف.
+يعني «حاولت أقراه CommonJS وفشلت، فقريته تاني ES module، وده أبطأ. حط الـ type».
 
 ---
 
-## ٤. [[exit]] والتشغيل
+## ٦. import map: أسامي packages في المتصفح من غير bundler
 
-~~~text gh.mjs
-process.on("exit", (code) => console.error("exit code", code));
-Promise.reject(new Error("DB اتقفلت"));
-setTimeout(() => { throw new Error("bug في timer"); }, 10);
-setTimeout(() => console.log("مش هتتطبع"), 50);
+في Node [[import x from "lodash"]] (اسم من غير [[./]]، اسمه **bare specifier**) بيدوّر في [[node_modules]]. المتصفح معندوش [[node_modules]]، فلو كتبتها في صفحة عادية:
+
+~~~text الناتج (Chrome 156)
+Failed to resolve module specifier "utils". Relative references must start with either "/", "./", or "../".
 ~~~
 
-~~~powershell
-node gh.mjs; $LASTEXITCODE
-~~~
-
-~~~text الناتج (Node 24)
-[unhandledRejection] DB اتقفلت
-[uncaughtException] uncaughtException bug في timer
-exit code 1
-1
-~~~
-
-| اللي حصل | مين مسكه | ليه بالترتيب ده |
-|---|---|---|
-| [[Promise.reject]] | [[unhandledRejection]]، وحط exitCode بـ 1 | Node بيفحص الـ rejections بعد ما الكود المتزامن والـ microtasks يخلصوا، قبل أي timer |
-| throw في timer بعد 10ms | [[uncaughtException]] و [[origin]] بـ [[uncaughtException]] | ده throw عادي مش Promise |
-| [[process.exit(1)]] | | بيقفل حالًا، فالـ timer بتاع 50ms عمره ما اشتغل |
-| [[exit]] event | بيطبع الكود | بيتنادى قبل الخروج في كل الأحوال |
-
-في bash بتشوف الكود بـ [[echo $?]] بدل [[$LASTEXITCODE]].
-
----
-
-## ٥. الـ catch المتأخر
-
-Node بيقرر «الـ Promise ده ملوش handler» بعد ما **الـ microtasks** تخلص. فلو حطيت الـ catch في timer، متأخر:
-
-~~~text late.mjs
-const p = Promise.reject(new Error("late"));
-setTimeout(() => p.catch(() => console.log("اتمسك متأخر")), 0);
-~~~
-
-~~~text الناتج (Node 24)
-Error: late
-    at file:///C:/.../late.mjs:1:24
-~~~
-
-وقع، و «اتمسك متأخر» متطبعتش. نفس الكود بـ [[queueMicrotask(() => p.catch(...))]] بدل [[setTimeout]] طبع «اتمسك في microtask» ومقعش، لأن الـ microtask بيشتغل قبل الفحص. القاعدة العملية: اعمل [[await]] أو [[.catch]] في نفس المكان اللي عملت فيه الـ Promise.
-
-(ولو فيه [[unhandledRejection]] listener والـ catch اتحط بعدين، Node بيطلّع حدث [[rejectionHandled]] وتحذير [[PromiseRejectionHandledWarning]]. جرّبتها.)
-
----
-
-## ٦. في المتصفح: [[error]] و [[unhandledrejection]] على [[window]]
+الـ **import map** بيقول للمتصفح «الاسم ده معناه الملف ده». بيتكتب JSON جوه [[<script type="importmap">]] **قبل** أي module بيستخدمه:
 
 ~~~text index.html
-<script>
-window.addEventListener("error", (event) => {
-  console.log("[error]", event.message, "|", event.filename, event.lineno, "|", event.error instanceof Error);
-});
-window.addEventListener("unhandledrejection", (event) => {
-  console.log("[unhandledrejection]", event.reason.message, event.promise instanceof Promise);
-  event.preventDefault();
-});
-setTimeout(() => { null.x; }, 0);
-fetch("/nope.json").then((r) => r.json());
-Promise.reject(new Error("API وقع"));
-setTimeout(() => console.log("الصفحة لسه شغالة"), 200);
+<script type="importmap">
+{
+  "imports": {
+    "utils": "./lib/utils.js",
+    "dayjs/": "./vendor/dayjs/"
+  }
+}
+</script>
+<script type="module">
+import { slug } from "utils";
+import { fmt } from "dayjs/format.js";
+console.log(slug("Hello World"), fmt(5));
 </script>
 ~~~
 
+- [[type="importmap"]]: المتصفح مش بينفّذه كـ JavaScript، بيقراه كإعدادات.
+- [["imports"]]: object، المفتاح هو الاسم اللي هتكتبه في [[import]]، والقيمة الـ URL الحقيقي.
+- [["utils": "./lib/utils.js"]]: اسم بالظبط ← ملف واحد.
+- [["dayjs/": "./vendor/dayjs/"]]: مفتاح بيخلص بـ [[/]] معناه **prefix**: أي حاجة تبدأ بـ [[dayjs/]] بتتبدّل، فـ [[dayjs/format.js]] بقت [[./vendor/dayjs/format.js]].
+
 ~~~text الناتج (Chrome 156، الصفحة على http://127.0.0.1)
-[error] Uncaught TypeError: Cannot read properties of null (reading 'x') | http://127.0.0.1:64275/ 10 | true
-[unhandledrejection] API وقع true
-[unhandledrejection] Failed to execute 'json' on 'Response': Unexpected end of JSON input true
-الصفحة لسه شغالة
+hello-world day 5
 ~~~
 
-- [[event.message]]: نص الـ error زي ما Console بيكتبه، و [[event.filename]] و [[event.lineno]]: الملف والسطر (هنا الصفحة نفسها لأن الـ script جوه HTML)، و [[event.error]]: الـ Error object نفسه بالـ stack.
-- [[event.reason]]: زي [[reason]] في Node، و [[event.promise]]: الـ Promise اللي اترفض.
-- الـ fetch لملف مش موجود مرماش (404 مش error عند fetch)، بس [[r.json()]] على صفحة 404 فاضية رمت، ومحدش مسكها. ده أشهر unhandled rejection في الويب.
-- [[event.preventDefault()]]: بيمنع المتصفح يطبع الرسالة الحمرا الافتراضية في Console (من MDN). مفيد لو انت بتسجّلها بنفسك.
-- **الفرق الكبير عن Node**: الصفحة مبتقعش. «الصفحة لسه شغالة» اتطبعت. فمن غير listener محدش هيعرف إن فيه حاجة باظت عند اليوزر.
+ده بيخلّيك تكتب نفس الـ imports اللي في Node وتشغّلها في المتصفح من غير Vite، وده مفيد في صفحة صغيرة أو demo. والقيمة ممكن تبقى URL على CDN ([["https://esm.sh/dayjs@1"]]). في المشاريع الكبيرة الـ bundler أحسن: بيجمّع الملفات ويشيل اللي مش مستخدم. فيه كمان [["scopes"]] عشان نسخة مختلفة لفولدر معين، والتفاصيل في MDN (صفحة [[<script type="importmap">]]).
 
-> لو الـ script جاي من دومين تاني (CDN)، المتصفح بيخبّي التفاصيل وبيدّيك [[Script error.]] بس، إلا لو [[<script crossorigin>]] والسيرفر بيبعت [[Access-Control-Allow-Origin]] (من MDN). خدمات زي Sentry بتعمل نفس الـ listeners دول ومعاهم إرسال للسيرفر.
+> جرّبت كمان import map بعد module اتنفّذ في Chrome 156 واشتغل (النسخ الحديثة بتسمح بأكتر من map). النسخ الأقدم بتتجاهله، فحطه دايمًا في أول الـ [[<head>]].
 
 ---
 
 ## الخلاصة
 
-| المكان | الحدث | بيتنادى لما |
+| الكتابة | التصدير | الاستيراد |
 |---|---|---|
-| Node | [[unhandledRejection]] | Promise اترفض ومفيش catch لحد ما الـ microtasks خلصت |
-| Node | [[uncaughtException]] | throw وصل لآخر الـ stack، أو rejection مفيش ليه listener |
-| Node | [[exit]] | قبل الخروج دايمًا، وجواه كود synchronous بس |
-| المتصفح | [[window]] و [[error]] | throw محدش مسكه، والصفحة بتكمّل |
-| المتصفح | [[window]] و [[unhandledrejection]] | Promise اترفض من غير catch، والصفحة بتكمّل |
+| named | [[export function area]] | [[import { area } from ...]] بنفس الاسم |
+| default | [[export default ...]] | [[import anyName from ...]] بأي اسم |
+| تغيير اسم | [[export { a as b }]] | [[import { a as b }]] |
+| الكل | (مفيش) | [[import * as m]] والـ default في [[m.default]] |
+| تعدية | [[export { x } from "./y.js"]] | (مش import) |
 
-- من غير handlers: Node بيقع بكود ١، والمتصفح بيكتب في Console وبس.
-- الـ handler بيسجّل ويخرج، مش بيكمّل كأن مفيش حاجة.
-- [[process.exitCode = 1]] بيستنى، و [[process.exit(1)]] بيقفل حالًا.`,
+- الامتداد [[.js]] إجباري في Node والمتصفح.
+- كل module بيتنفّذ مرة واحدة، والـ imports مبتتعدّلش.`,
           lines: [
-            R`بنشترك في حدث [[unhandledRejection]] على [[process]] (الـ object اللي بيمثّل البرنامج في Node). بيتنادى لأي Promise اترفض ومحدش عمله catch، ووجوده لوحده بيمنع الوقوع الافتراضي.`,
-            R`بنطبع على stderr: لو الـ [[reason]] Error بنطبع رسالته، ولو حاجة تانية (نص مثلًا) بنطبعها زي ما هي، لأن مش كل rejection جواه Error.`,
-            R`[[process.exitCode = 1]]: لما البرنامج يخلص يخرج بكود ١ (يعني فشل)، من غير ما يقفل دلوقتي. كده اللي شغّل السكربت (CI أو cron) يعرف إن فيه حاجة وقعت.`,
-            R`قفلة الـ listener.`,
-            R`حدث [[uncaughtException]]: لأي [[throw]] محدش مسكه. [[origin]] بيقول هل هو throw عادي ([["uncaughtException"]]) ولا rejection ملوش listener ([["unhandledRejection"]]).`,
-            R`بنسجّل النوع والرسالة. في الشغل الحقيقي هنا بتكتب في ملف لوج أو تبعت لخدمة تتبّع، ومعاها [[err.stack]].`,
-            R`[[process.exit(1)]] بيقفل حالًا بكود ١. ده مقصود: بعد error محدش توقّعه الـ state ممكن يكون باظ، والأمان إنك تقفل ويتشغّل من جديد.`,
-            R`قفلة الـ listener.`,
-            R`حدث [[exit]] بيتنادى قبل ما البرنامج يقفل في كل الأحوال وبياخد الكود. بنطبعه عشان نشوف إن الكود فعلًا 1. جواه كود synchronous بس، أي حاجة async مش هتلحق.`,
-            R`Promise مترفض ومحدش عمله catch ولا await: بعد ما الكود المتزامن يخلص، Node بينادي الـ [[unhandledRejection]] listener اللي فوق، فيطبع [[[unhandledRejection] DB اتقفلت]]. من غير الـ listener البرنامج كان هيقع هنا.`,
-            R`throw جوه timer بعد 10ms: مفيش try حواليه ساعة ما بيشتغل، فبيروح للـ [[uncaughtException]] listener اللي بيطبع ويقفل بـ [[process.exit(1)]].`,
-            R`timer بعد 50ms عمره ما بيشتغل: البرنامج اتقفل عند الـ 10ms. ده بيثبت إن [[process.exit]] بيقفل حالًا مش بيستنى اللي فاضل.`,
+            R`في [[math.js]]: [[export]] قبل التعريف بتخلي ملفات تانية تقدر تستورد [[PI]] باسمه بالظبط (named export). أي حاجة في الملف من غير [[export]] بتفضل خاصة بيه ومحدش برّه يشوفها.`,
+            R`named export لدالة بنفس الطريقة. الملف ممكن يبقى فيه named exports كتير، وكل واحد بيتستورد باسمه.`,
+            R`default export: الحاجة «الأساسية» في الملف، وواحد بس مسموح. اللي بيستورده بيسميه اللي هو عايزه. و [[Math.round(n * 100) / 100]] بتقرّب الرقم لرقمين بعد العلامة.`,
+            R`في [[main.js]]: الـ default من غير أقواس وبأي اسم ([[round2]] هنا)، والـ named بين [[{ }]] بأساميها بالظبط، و [[PI as pi]] بتستورد [[PI]] باسم محلي [[pi]]. الـ path لازم يبدأ بـ [[./]] وفيه [[.js]]، لأن ESM مش بيكمّل الامتداد لوحده. والحاجة المستوردة read-only: [[pi = 3]] بترمي TypeError.`,
+            R`[[* as math]] بتجيب كل الـ exports في object واحد: [[math.PI]] و [[math.area]]، والـ default موجود كـ [[math.default]]. مفيد لما الملف فيه دوال كتير وعايز تبان وانت بتقرا كل دالة جاية منين.`,
+            R`بيستخدم الاتنين: [[area(2)]] بتطلع 12.566… و [[round2]] بتخليها [[12.57]]. و [[pi]] و [[math.PI]] نفس القيمة لأنهم نفس الـ export اتستورد بطريقتين.`,
+            R`re-export: [[main.js]] بيعدّي [[area]] من [[math.js]] لبرّه باسم [[circleArea]]، من غير ما يستوردها لنفسه ([[area]] مش متعرّفة جوه الملف بالسطر ده). بيستخدموه في ملف [[index.js]] بيجمع exports فولدر كامل في مكان واحد.`,
           ],
-          sol: R`[[node gh.mjs]] بيطبع [[[unhandledRejection] DB اتقفلت]] وبعدين [[[uncaughtException] uncaughtException bug في timer]] وبعدين [[exit code 1]]، وكود الخروج 1، و «مش هتتطبع» فعلًا مبتتطبعش.
+          sol: R`[[node main.js]] بيطبع [[12.57 3.14159 3.14159]]: [[area(2)]] بـ 12.566 و round2 قرّبتها، و [[pi]] هو PI بعد إعادة التسمية، و [[math.PI]] من الـ namespace.
 
-لما تمسح الـ handler الأول: الـ rejection بيروح لـ [[uncaughtException]] و [[origin]] بيبقى [[unhandledRejection]]، فبيطبع [[[uncaughtException] unhandledRejection DB اتقفلت]] ويخرج على طول بكود 1، والـ timer بتاع الـ 10ms مبيلحقش يشتغل.
+لما تمسح [[.js]] بيطلع [[Error [ERR_MODULE_NOT_FOUND]: Cannot find module '.../math' imported from .../main.js]] ومعاه [[Did you mean to import "./math.js"?]]. في ESM الامتداد إجباري لأن Node مبيخمّنش زي CommonJS (بعض الـ bundlers زي Vite بيخمّن، فالكود يشتغل هناك ويقع في Node). ولو فيه [[package.json]] من غير [["type": "module"]]، Node 22 بيكتشف إن الملف ESM ويشغّله، بس بتحذير [[MODULE_TYPELESS_PACKAGE_JSON]] وبيحلّل الملف مرتين، فحط الـ type دايمًا.`
+        },
+        {
+          cmd: "CommonJS و ESM",
+          title: "ليه فيه require و import، وأستخدم أنهي؟",
+          desc: R`CommonJS ([[require]] و [[module.exports]]) هو نظام Node القديم من قبل ما JS يبقى فيه modules. ESM ([[import]] و [[export]]) هو الرسمي في اللغة، وشغال في المتصفح و Node.
 
-في المتصفح (جرّبتها في Chrome 156): [[fetch("/nope.json")]] بيرجّع 404 من غير error، و [[r.json()]] على الصفحة الفاضية بترمي، فالـ listener بيطبع [[Failed to execute 'json' on 'Response': Unexpected end of JSON input]]، والصفحة بتكمّل عادي. التصليح: افحص [[r.ok]] قبل [[r.json()]] واعمل [[.catch]] أو [[await]] جوه try.`,
-          solCode: R`// crash-guard.mjs: اعمله import في أول أي سكربت
-import { appendFileSync } from "node:fs";
-function record(type, err) {
-  const line = JSON.stringify({
-    time: new Date().toISOString(),
-    type,
-    message: err instanceof Error ? err.message : String(err),
-    stack: err instanceof Error ? err.stack : undefined,
-  });
-  appendFileSync("crash.log", line + "\n");
+في ٢٠٢٦: اكتب ESM في أي مشروع جديد. و Node الحديث (22 و 24) بيسمح لـ [[require]] إنه يجيب ESM (require(esm)) طالما مفيهوش top-level await، فالخلط بقى أسهل من الأول. بس هتقابل CommonJS كتير في مشاريع ومكتبات قديمة.`,
+          example: R`// CommonJS: utils.cjs
+const path = require("node:path");
+function slug(s) { return s.toLowerCase().replaceAll(" ", "-"); }
+module.exports = { slug };
+// ESM: app.mjs
+import { slug } from "./utils.cjs";
+import { readFile } from "node:fs/promises";
+const pkg = JSON.parse(await readFile(new URL("./package.json", import.meta.url), "utf8"));
+console.log(slug("Hello World"), import.meta.dirname);`,
+          try: R`اعمل الملفين وجنبهم [[package.json]] (ولو فيه [[{}]] بس، لأن السطر التالت بيقراه)، وشغّل [[node app.mjs]]. وبعدين جرّب في ملف [[.cjs]] تكتب [[import]] واقرا الـ error. وجرّب [[__dirname]] في [[.mjs]] وشوف إنها مش موجودة.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سطر [[console.log(typeof require, typeof module, typeof __filename)]] هيطبع إيه في [[t.cjs]] وإيه في [[t.mjs]]؟ اكتب توقعك وبعدين شغّلهم. وفي الـ mjs اطبع مسار الملف وفولدره بالطريقة بتاعة ESM ([[import.meta.filename]] و [[import.meta.dirname]]).`, done: R`الـ cjs بيطبع [[function object string]]، والـ mjs بيطبع [[undefined undefined undefined]] من غير error، وبعدها المسار والفولدر كاملين: نفس المعلومة بس بطريقة ESM.`, sol: R`**التوقع:** في [[.cjs]] الـ ٣ موجودين ([[require]] دالة، و [[module]] object، و [[__filename]] نص). في [[.mjs]] الـ ٣ مش موجودين، و [[typeof]] على اسم مش متعرّف بترجّع [["undefined"]] من غير ما ترمي.
+
+~~~js t.cjs
+console.log(typeof require, typeof module, typeof __filename);
+~~~
+
+~~~js t.mjs
+console.log(typeof require, typeof module, typeof __filename);
+console.log(import.meta.filename);
+console.log(import.meta.dirname);
+~~~
+
+~~~text الناتج (node t.cjs ثم node t.mjs، Node 24 على ويندوز)
+function object string
+undefined undefined undefined
+C:\Users\ali\code\cjs-esm-globals\t.mjs
+C:\Users\ali\code\cjs-esm-globals
+~~~
+
+**ليه كده:**
+
+- في CommonJS، Node بيلف كل ملف في دالة قبل ما يشغّله، والدالة دي بتاخد [[exports]] و [[require]] و [[module]] و [[__filename]] و [[__dirname]] كـ parameters. عشان كده موجودين في كل ملف [[.cjs]] من غير ما تعرّفهم.
+- ESM مفيهوش اللفّة دي، فالأسامي دي مش موجودة. و [[typeof x]] هي العملية الوحيدة اللي مبترميش [[ReferenceError]] على اسم مش متعرّف، لكن [[console.log(__filename)]] لوحدها كانت هترمي.
+- البديل في ESM جوه [[import.meta]]: [[import.meta.filename]] المسار الكامل، و [[import.meta.dirname]] الفولدر (Node 20.11 وأحدث).
+
+**الغلطة الشائعة:** تنسخ كود قديم فيه [[path.join(__dirname, "x")]] لملف [[.mjs]] فيقع بـ [[ReferenceError: __dirname is not defined in ES module scope]]. بدّلها بـ [[path.join(import.meta.dirname, "x")]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** في ملف [[.mjs]] اقرا [[package.json]] بطريقتين: [[import pkg from "./package.json" with { type: "json" }]]، و [[createRequire(import.meta.url)]] من [[node:module]] وبعدها [[require("./package.json")]]. اطبع [[name]] من الأولى و [[version]] من التانية. وبعدين شيل [[with { type: "json" }]].`, done: R`الاتنين بيطبعوا القيم اللي في package.json بتاعك. ومن غير الـ attribute بيقع بـ [[ERR_IMPORT_ATTRIBUTE_MISSING]] ورسالة بتقول إن الملف محتاج [[type: json]].`, sol: R`~~~json package.json
+{
+  "name": "pkg-reader",
+  "version": "1.4.0",
+  "type": "module"
 }
-process.on("unhandledRejection", (reason) => { record("unhandledRejection", reason); process.exit(1); });
-process.on("uncaughtException", (err, origin) => { record(origin, err); process.exit(1); });
-// المتصفح: نفس الفكرة
-// window.addEventListener("error", (e) => send({ type: "error", message: e.message, stack: e.error?.stack }));
-// window.addEventListener("unhandledrejection", (e) => send({ type: "rejection", message: String(e.reason?.message ?? e.reason) }));`
+~~~
+
+~~~js read.mjs
+import pkg from "./package.json" with { type: "json" };
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const pkg2 = require("./package.json");
+
+console.log("name من import:", pkg.name);
+console.log("version من require:", pkg2.version);
+~~~
+
+~~~text الناتج (node read.mjs، Node 24)
+name من import: pkg-reader
+version من require: 1.4.0
+~~~
+
+## من غير الـ attribute
+
+~~~js no-attr.mjs
+import pkg from "./package.json";
+console.log(pkg.name);
+~~~
+
+~~~text الناتج (node no-attr.mjs، أول ٥ سطور)
+node:internal/modules/esm/assert:110
+        throw new ERR_IMPORT_ATTRIBUTE_MISSING(url, 'type', validType);
+              ^
+
+TypeError [ERR_IMPORT_ATTRIBUTE_MISSING]: Module "file:///C:/Users/ali/code/read-pkg/package.json" needs an import attribute of "type: json"
+~~~
+
+**ليه كده:**
+
+- **[[with { type: "json" }]]** اسمها **import attributes**. بتقول لـ Node «أنا عارف إن ده JSON، عامله كبيانات». من غيرها Node بيرفض، عشان ملف كنت فاكره بيانات ميتنفّذش كـ JavaScript لو السيرفر أو الامتداد كدب (نفس القاعدة في المتصفح). الـ default export هو الـ object كله.
+- **[[createRequire(import.meta.url)]]** من [[node:module]] بتعمل دالة [[require]] حقيقية جوه ملف ESM، والمسارات النسبية فيها بتتحسب من مكان الملف ده ([[import.meta.url]]). و [[require]] بيقرا JSON لوحده من غير أي attribute.
+- الاتنين بيقروا الملف **مرة واحدة** ويحفظوه في كاش، فلو غيّرت [[package.json]] وانت شغال مش هتشوف التغيير غير لما تشغّل تاني.
+
+**الغلطة الشائعة:** تكتب [[assert { type: "json" }]] من مقالات قديمة. دي الصيغة القديمة (import assertions) واتشالت، والصح [[with]]. جرّبناها:
+
+~~~js old-assert.mjs
+import pkg from "./package.json" assert { type: "json" };
+console.log(pkg.name);
+~~~
+
+~~~text الناتج (node old-assert.mjs، أول ٥ سطور)
+file:///C:/Users/ali/code/read-pkg/old-assert.mjs:1
+import pkg from "./package.json" assert { type: "json" };
+                                 ^^^^^^
+
+SyntaxError: Unexpected identifier 'assert'
+~~~` },
+            { lvl: 'تطبيق', t: R`**refactor:** حوّل [[util.cjs]] ده لـ [[util.mjs]]: [[const fs = require("node:fs"); const path = require("node:path"); function readJson(name) { return JSON.parse(fs.readFileSync(path.join(__dirname, name), "utf8")); } module.exports = { readJson };]]، وخلّي ملف تاني يستورده ويقرا ملف JSON جنبه.`, done: R`النسخة الجديدة فيها [[import fs from "node:fs"]] و [[export function readJson]] و [[import.meta.dirname]] مكان [[__dirname]]، ومفيش require ولا module.exports. والملف التاني بيطبع نفس الـ object اللي كانت النسخة القديمة بتطبعه.`, sol: R`## القديم
+
+~~~js util.cjs
+const fs = require("node:fs");
+const path = require("node:path");
+function readJson(name) {
+  return JSON.parse(fs.readFileSync(path.join(__dirname, name), "utf8"));
+}
+module.exports = { readJson };
+~~~
+
+~~~js old-main.cjs
+const { readJson } = require("./util.cjs");
+console.log(readJson("settings.json"));
+~~~
+
+## الجديد
+
+~~~js util.mjs
+import fs from "node:fs";
+import path from "node:path";
+
+export function readJson(name) {
+  return JSON.parse(fs.readFileSync(path.join(import.meta.dirname, name), "utf8"));
+}
+~~~
+
+~~~js main.mjs
+import { readJson } from "./util.mjs";
+console.log(readJson("settings.json"));
+~~~
+
+وملف البيانات اللي بيتقري:
+
+~~~json settings.json
+{ "shop": "Bon Café", "open": true }
+~~~
+
+~~~text الناتج (node old-main.cjs، ثم node main.mjs، ثم من فولدر تاني: cd sub && node ../main.mjs)
+{ shop: 'Bon Café', open: true }
+{ shop: 'Bon Café', open: true }
+{ shop: 'Bon Café', open: true }
+~~~
+
+**التبديلات واحدة واحدة:**
+
+| CommonJS | ESM |
+|---|---|
+| [[const fs = require("node:fs")]] | [[import fs from "node:fs"]] |
+| [[function readJson]] + [[module.exports = { readJson }]] | [[export function readJson]] |
+| [[__dirname]] | [[import.meta.dirname]] |
+| [[const { readJson } = require("./util.cjs")]] | [[import { readJson } from "./util.mjs"]] |
+
+- **[[import fs from "node:fs"]]:** الـ built-in modules بتاعة Node بتصدّر الـ object كله كـ default، وكمان كل دالة كـ named ([[import { readFileSync } from "node:fs"]] شغالة برضه).
+- **[[import.meta.dirname]] مش [[process.cwd()]]:** التشغيل الأخير من فولدر [[sub]] طلّع نفس الناتج، لأن المسار بيتحسب من مكان [[util.mjs]] نفسه مش من مكانك في الترمنال.
+
+**الغلطة الشائعة:** تكتب [[fs.readFileSync("settings.json")]] من غير مسار كامل. ده بيدوّر في الفولدر اللي انت واقف فيه، فيشتغل عندك ويقع بـ [[ENOENT]] لما حد يشغّل السكربت من مكان تاني.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** اكتب [[lib.mjs]] فيه [[export const x = 1]] و [[export default function hi() { return "hi"; }]]، واعمله [[require]] من [[use.cjs]] واطبع اللي راجع ونادي الدالة. وبعدين زوّد في lib.mjs سطر top-level await زي [[await new Promise((r) => setTimeout(r, 10));]] وجرّب تاني، وصلّح use.cjs عشان يشتغل في الحالتين.`, done: R`على Node 22.12 وأحدث، الـ require بيرجّع module object فيه [[default]] و [[x: 1]] (و [[__esModule: true]])، فـ [[m.default()]] بترجّع [["hi"]]. ومع الـ top-level await بيقع بـ [[ERR_REQUIRE_ASYNC_MODULE]] ورسالة بتقولك استخدم [[import()]]، وبعد ما تستخدم [[await import("./lib.mjs")]] جوه دالة async بيشتغل.`, sol: R`## الحالة الأولى: lib.mjs عادي
+
+~~~js plain/lib.mjs
+export const x = 1;
+export default function hi() {
+  return "hi";
+}
+~~~
+
+~~~js use-broken.cjs
+const dir = process.argv[2];
+const m = require($__bt./$__{dir}/lib.mjs$__bt);
+console.log(m);
+console.log(m.default());
+~~~
+
+~~~text الناتج (node use-broken.cjs plain، Node 24)
+[Module: null prototype] {
+  __esModule: true,
+  default: [Function: hi],
+  x: 1
+}
+hi
+~~~
+
+## الحالة التانية: lib.mjs فيه top-level await
+
+~~~js tla/lib.mjs
+await new Promise((r) => setTimeout(r, 10));
+export const x = 1;
+export default function hi() {
+  return "hi";
+}
+~~~
+
+~~~text الناتج (node use-broken.cjs tla، أول ٥ سطور)
+node:internal/modules/esm/module_job:313
+    throw new ERR_REQUIRE_ASYNC_MODULE(filename, parent, locations);
+    ^
+
+Error [ERR_REQUIRE_ASYNC_MODULE]: require() cannot be used on an ESM graph with top-level await. Use import() instead. To see where the top-level await comes from, use --experimental-print-required-tla.
+~~~
+
+## التصليح: import() بيشتغل في الحالتين
+
+~~~js use.cjs
+async function main(dir) {
+  const m = await import($__bt./$__{dir}/lib.mjs$__bt);
+  console.log(m.default(), m.x);
+}
+main(process.argv[2]);
+~~~
+
+~~~text الناتج (node use.cjs plain ثم node use.cjs tla)
+hi 1
+hi 1
+~~~
+
+**ليه كده:**
+
+- **[[require]] متزامن (sync):** لازم يرجّع الـ module في نفس السطر. Node 22.12 وأحدث (و 20.19) بيقدر يحمّل ESM بشكل متزامن **طالما** مفيش حاجة فيه محتاجة تستنى. ورجّع الـ namespace object: الـ default في [[m.default]]، و [[__esModule: true]] علامة بتفهّم أدوات CommonJS القديمة إن ده كان ESM.
+- **top-level await** معناه إن الـ module نفسه مش هيخلص غير بعد وقت، و [[require]] مبيعرفش يستنى، فـ Node بيرفض بـ [[ERR_REQUIRE_ASYNC_MODULE]] وبيقولك الحل في الرسالة: [[import()]].
+- **[[await import()]]** بيرجّع Promise، فبيستنى أي top-level await لحد ما يخلص، وشغال في ملفات CommonJS عادي. بس لازم يبقى جوه دالة [[async]]، لأن ملف [[.cjs]] مفيهوش top-level await.
+
+**الغلطة الشائعة:** تفتكر إن [[require(esm)]] شغال دايمًا لأنه اشتغل معاك مرة. أي مكتبة ESM تزوّد top-level await في نسخة جديدة هتكسر كل اللي بيعملها [[require]]. لو مش متأكد، [[import()]] أأمن.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** اكتب جدول قرار من ٤ سطور: مشروع Node جديد، ومكتبة قديمة بـ require بس، وكود بيشتغل في المتصفح، وسكربت صغير لوحده. لكل واحد: ESM ولا CommonJS، والامتداد أو [[type]] في package.json.`, done: R`الجدول: الجديد ESM بـ [["type": "module"]]، والمكتبة القديمة تفضل تستوردها عادي من ESM (أو [[createRequire]] لو لازم)، والمتصفح ESM بس، والسكربت الصغير [[.mjs]]. وكل سطر جنبه سبب في كلمتين.`, sol: R`## الجدول النموذجي
+
+| الحالة | النظام | الامتداد أو package.json | السبب |
+|---|---|---|---|
+| مشروع Node جديد | ESM | [["type": "module"]] وملفات [[.js]] | الرسمي، وفيه top-level await |
+| مكتبة قديمة بـ require بس | استوردها من ESM عادي | [[import lib from "old-lib"]] (أو [[createRequire]] لو محتاج require نفسه) | ESM بيقرا CommonJS دايمًا |
+| كود في المتصفح | ESM بس | [[<script type="module">]] | المتصفح معندوش require |
+| سكربت صغير لوحده | ESM | ملف [[.mjs]] | النوع واضح من غير package.json |
+
+## اتجرّب: سكربت ESM بامتداد .js في package.json من غير type
+
+~~~json package.json
+{ "name": "old-tool" }
+~~~
+
+~~~js script.js
+import { argv } from "node:process";
+console.log("script.js:", argv.length, "args");
+~~~
+
+ونسخة منه بالظبط اسمها [[script.mjs]]:
+
+~~~text الناتج (node script.js ثم node script.mjs، Node 24)
+(node:217492) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/ali/code/module-kind/script.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\ali\code\module-kind\package.json.
+(Use $__btnode --trace-warnings ...$__bt to show where the warning was created)
+script.js: 2 args
+---
+script.mjs: 2 args
+~~~
+
+**ليه السطر الرابع [[.mjs]]:** نفس الكود بالظبط. بـ [[.js]] و package.json من غير [[type]]، Node حاول يقراه CommonJS الأول، وفشل، ورجع قراه ESM، وطلّع تحذير إن ده أبطأ. بـ [[.mjs]] النوع معروف من الامتداد فاشتغل على طول من غير تحذير. (رقم الـ process اللي في أول سطر بيتغيّر كل تشغيل.)
+
+**الغلطة الشائعة:** تحط [["type": "module"]] في مشروع قديم كله [[require]]: كل ملفات [[.js]] فجأة بقت ESM وتقع بـ [[ReferenceError: require is not defined in ES module scope]]. في المشروع القديم سيب الـ type، وسمّي الملفات الجديدة [[.mjs]].` }
+          ],
+          ref: [
+            { t: "Node.js: ECMAScript modules", url: "https://nodejs.org/api/esm.html" },
+            { t: "Node.js: CommonJS modules", url: "https://nodejs.org/api/modules.html" },
+            { t: "Node.js: Packages (exports و imports و type)", url: "https://nodejs.org/api/packages.html" },
+            { t: "MDN: import.meta", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import.meta" },
+            { t: "MDN: import.meta.resolve()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import.meta/resolve" },
+            { t: "MDN: Import attributes (with)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import/with" },
+          ],
+          flag: "script",
+          deep: {
+            why: R`أشهر errors في Node: «Cannot use import statement outside a module» و «require is not defined in ES module scope» و «ERR_REQUIRE_ESM». كلهم من خلط النظامين. لازم تعرف الملف ده بيتعامل كأنهي نوع وليه.`,
+            how: R`Node بيقرر نوع الملف كده: [[.mjs]] دايمًا ESM، و [[.cjs]] دايمًا CommonJS، و [[.js]] حسب [["type"]] في أقرب package.json (الافتراضي commonjs). والأحدث من كده إن Node بيحاول يكتشف ESM syntax لوحده في ملفات .js لو مفيش type، بس متعتمدش على ده، اكتب الـ type.
+
+CommonJS: [[require]] دالة عادية بتشتغل وقت التنفيذ (sync)، وممكن تتنادي جوه if، وبترجّع الـ object بتاع [[module.exports]] نفسه (ونفس الـ object من الكاش في كل require)، ولو فكّيته بـ destructuring بتاخد القيم اللي كانت وقتها بس، مش live binding زي ESM. وفيه [[__dirname]] و [[__filename]].
+
+ESM: الـ imports static وبتتحمّل async، وفيه top-level await (زي السطر اللي بيقرا package.json). ومفيش __dirname، بدالها [[import.meta.dirname]] و [[import.meta.filename]] (Node 20.11+) أو [[import.meta.url]].
+
+ESM يقدر يعمل import لـ CommonJS، والـ [[module.exports]] بتبقى الـ default. والعكس: [[require(esm)]] شغال في Node 22.12+ و 20.19+ لو الـ module مفيهوش top-level await، وإلا [[await import()]].
+
+الـ prefix [[node:]] ([[node:fs]]) بيوضح إن ده built-in مش package.`,
+            when: R`ESM لكل حاجة جديدة، مع [["type": "module"]]. CommonJS لو بتعدّل مشروع قديم أو أداة config لسه بتطلبه. وتفاصيل package.json في تاب «Node و npm».`,
+            mistakes: R`تحط [[import]] في ملف .js من غير type: module. وتستخدم __dirname في ESM. وتعمل [[module.exports = x]] وبعدين [[exports.y = z]] فالتانية تضيع. وتنشر مكتبة ESM بس فمشاريع CommonJS قديمة متعرفش تستخدمها.`
+          },
+          teach: R`## الكود ده بيعمل إيه؟
+
+ملفين بنظامين مختلفين: [[utils.cjs]] مكتوب CommonJS (النظام القديم بتاع Node)، و [[app.mjs]] مكتوب ESM (النظام الرسمي). الـ ESM بيستورد من الـ CommonJS عادي، وبيقرا [[package.json]] بـ top-level await، وبيطبع مكان الفولدر. اتشغّل على Node 24 في فولدر فيه الملفين و [[package.json]] فيه [[{}]] بس.
+
+---
+
+## ١. Node بيعرف نوع الملف إزاي؟
+
+من الامتداد قبل أي حاجة:
+
+| الامتداد | النوع |
+|---|---|
+| [[.cjs]] | CommonJS دايمًا |
+| [[.mjs]] | ESM دايمًا |
+| [[.js]] | حسب [["type"]] في أقرب package.json ([["module"]] = ESM، غير كده CommonJS) |
+
+عشان كده المثال استخدم [[.cjs]] و [[.mjs]]: النوع واضح من غير ما نلمس package.json.
+
+---
+
+## ٢. [[utils.cjs]]: CommonJS
+
+~~~text utils.cjs
+const path = require("node:path");
+function slug(s) { return s.toLowerCase().replaceAll(" ", "-"); }
+module.exports = { slug };
+~~~
+
+### [[require("node:path")]]
+
+- [[require]] **دالة عادية**: بتشتغل وقت التنفيذ، وبترجّع اللي الملف التاني صدّره. عشان كده ممكن تتنادي جوه if أو function.
+- [[node:path]]: الـ [[node:]] في الأول بتقول «ده module جاي مع Node نفسه»، مش package من npm. و [[path]] فيه دوال للمسارات.
+- في المثال [[path]] مش مستخدم، موجود بس عشان تشوف شكل require. جرّبناه في ملف تاني: [[path.join("a", "b")]] طلّعت [[a\b]] على ويندوز (وفي لينكس [[a/b]]).
+
+### [[slug]]
+
+دالة بتحوّل عنوان لشكل ينفع في URL:
+
+- [[s.toLowerCase()]]: حروف صغيرة: [["hello world"]].
+- [[.replaceAll(" ", "-")]]: كل مسافة تبقى شرطة: [["hello-world"]].
+
+### [[module.exports = { slug }]]
+
+في CommonJS، اللي بتحطه في [[module.exports]] هو اللي [[require]] هترجّعه. و [[{ slug }]] اختصار [[{ slug: slug }]].
+
+---
+
+## ٣. [[app.mjs]]: ESM
+
+~~~text app.mjs
+import { slug } from "./utils.cjs";
+~~~
+
+ESM يقدر يستورد CommonJS. Node بيحوّل [[module.exports]] لـ **default**، ولو قدر يعرف أسامي الخصايص بيطلّعهم كـ named كمان. طبعنا الاتنين:
+
+~~~text الناتج: import u from "./utils.cjs" و import * as ns from "./utils.cjs"
+{ slug: [Function: slug] }
+[Module: null prototype] {
+  default: { slug: [Function: slug] },
+  'module.exports': { slug: [Function: slug] },
+  slug: [Function: slug]
+}
+~~~
+
+عشان كده [[{ slug }]] اشتغلت.
+
+~~~text app.mjs
+import { readFile } from "node:fs/promises";
+~~~
+
+[[fs]] = file system. و [[fs/promises]] النسخة اللي دوالها بترجّع Promises، فتنفع مع await.
+
+---
+
+## ٤. السطر الطويل: قراية package.json
+
+~~~text app.mjs
+const pkg = JSON.parse(await readFile(new URL("./package.json", import.meta.url), "utf8"));
+~~~
+
+من جوه لبرّه:
+
+### [[import.meta.url]]
+
+[[import.meta]] object فيه معلومات عن الـ module الحالي، و [[.url]] عنوان الملف نفسه:
+
+~~~text الناتج
+file:///C:/Users/ali/code/meta.mjs
+~~~
+
+### [[new URL("./package.json", import.meta.url)]]
+
+[[URL]] بيحسب عنوان نسبي من عنوان أساسي: «package.json اللي **جنب الملف ده**»، مش جنب الفولدر اللي انت واقف فيه في الترمنال:
+
+~~~text الناتج: .href
+file:///C:/Users/ali/code/package.json
+~~~
+
+### [[await readFile(..., "utf8")]]
+
+[[readFile]] بتقرا الملف وترجّع Promise، و [[utf8]] عشان يرجع نص مش bytes. و [[await]] هنا في **أول الملف** من غير async function: ده اسمه **top-level await**، شغال في ESM بس.
+
+### [[JSON.parse(...)]]
+
+بيحوّل النص لـ object. هنا [[{}]] فـ pkg بقى object فاضي. ولو مفيش package.json جنب الملف، السطر ده بيقع بـ [[ENOENT]] (الملف مش موجود).
+
+---
+
+## ٥. الطباعة
+
+~~~text app.mjs
+console.log(slug("Hello World"), import.meta.dirname);
+~~~
+
+~~~text الناتج: node app.mjs
+hello-world C:\Users\ali\code
+~~~
+
+[[import.meta.dirname]] (Node 20.11+) = الفولدر اللي فيه الملف. ومعاه [[import.meta.filename]] = المسار الكامل للملف. دول بدل [[__dirname]] و [[__filename]] بتوع CommonJS.
+
+---
+
+## ٦. لما تخلط غلط
+
+جرّبنا الأخطاء المشهورة واحدة واحدة:
+
+| اللي عملته | الناتج | التصليح |
+|---|---|---|
+| [[import]] في ملف [[.cjs]] | [[SyntaxError: Cannot use import statement outside a module]] | سمّي الملف [[.mjs]] أو استخدم [[require]] |
+| [[console.log(__dirname)]] في [[.mjs]] | [[ReferenceError: __dirname is not defined in ES module scope]] | [[import.meta.dirname]] بداله |
+| [[typeof require]] في [[.mjs]] | [["undefined"]]: مفيش require في ESM | [[import]]، أو [[createRequire(import.meta.url)]] من [[node:module]] لو لازم |
+| [[require("./app.mjs")]] من [[.cjs]] | [[Error [ERR_REQUIRE_ASYNC_MODULE]: require() cannot be used on an ESM graph with top-level await. Use import() instead.]] | [[await import("./app.mjs")]] جوه دالة async |
+
+الأخير مهم: Node 24 بيسمح لـ require إنها تجيب ESM، **إلا** لو فيه top-level await زي app.mjs. ساعتها استخدم [[await import()]] (الدرس الجاي).
+
+---
+
+## ٧. package.json: exports و imports
+
+لما بتكتب package (أو مشروع كبير)، [[package.json]] فيه حقلين بيتحكّموا في الـ imports:
+
+- [["exports"]]: مين برّه الـ package يقدر يستورد إيه منه، ومن أنهي ملف.
+- [["imports"]]: اختصارات **جوه** مشروعك، بتبدأ بـ [[#]].
+
+جرّبت الاتنين على Node 24 بـ package صغير اسمه [[greet]] جوه [[node_modules]]:
+
+~~~text node_modules/greet/package.json
+{
+  "name": "greet",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./lib/index.mjs",
+      "require": "./lib/index.cjs"
+    },
+    "./format": "./lib/format.mjs",
+    "./package.json": "./package.json"
+  }
+}
+~~~
+
+- [["."]]: الـ package نفسه، يعني [[import ... from "greet"]].
+- [["import"]] و [["require"]]: اسمها **conditional exports**. نفس الاسم بيروح لملف مختلف حسب مين بيستورد: [[import]] ياخد نسخة ESM، و [[require]] ياخد نسخة CommonJS. كده الـ package يشتغل مع الاتنين.
+- [["./format"]]: **subpath**: [[import { upper } from "greet/format"]] بيروح لـ [[lib/format.mjs]].
+- [["./package.json"]]: لازم تصدّره صراحة لو أدوات محتاجة تقراه، لأن أي ملف مش مكتوب هنا بقى مقفول.
+
+~~~text app.mjs
+import { hi } from "greet";
+import { upper } from "greet/format";
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+console.log(hi("sara"), require("greet").hi("sara"));
+~~~
+
+~~~text الناتج (Node 24)
+hi sara (esm) hi sara (cjs)
+~~~
+
+نفس الاسم [["greet"]] جاب ملفين مختلفين: [[import]] جاب [[index.mjs]] و [[require]] جاب [[index.cjs]]. ([[createRequire]] بيعمل [[require]] جوه ملف ESM.)
+
+### الملفات اللي مش في exports مقفولة
+
+~~~text الناتج (Node 24)
+import("greet/internal/secret.mjs")
+ERR_PACKAGE_PATH_NOT_EXPORTED: Package subpath './internal/secret.mjs' is not defined by "exports" in ...\node_modules\greet\package.json
+~~~
+
+ده الهدف: صاحب الـ package يقدر يغيّر أي ملف داخلي من غير ما يكسر حد، لأن محدش يقدر يوصله. ولو انت **بتستخدم** package وقابلت الـ error ده، استورد الاسم اللي في [["exports"]] (اقرا [[package.json]] بتاعه)، ومتحاولش توصل لـ [[lib/...]] مباشرة.
+
+### [["imports"]]: اختصارات بـ [[#]] جوه مشروعك
+
+~~~text package.json
+{
+  "name": "shop",
+  "type": "module",
+  "imports": {
+    "#utils/*": "./src/utils/*.js",
+    "#db": {
+      "browser": "./src/db-browser.js",
+      "node": "./src/db-node.js",
+      "default": "./src/db-browser.js"
+    }
+  }
+}
+~~~
+
+- [["#utils/*"]]: الـ [[*]] بيتبدّل بأي حاجة، فـ [[import { money } from "#utils/money"]] بتروح لـ [[./src/utils/money.js]]. بدل [[../../../utils/money.js]] من ملف عميق.
+- [["#db"]]: conditions تاني: [["node"]] في Node و [["browser"]] لما bundler زي Vite يبني للمتصفح، و [["default"]] لو مفيش ولا واحد اتطابق.
+
+**الترتيب مهم**: Node بياخد **أول** مفتاح بيتطابق من فوق لتحت. جرّبت [["node"]] قبل [["browser"]] وشغّلت [[node --conditions=browser]]: طلع [[node]] برضه، لأن condition [["node"]] شغالة دايمًا في Node وجت الأول. لما حطيت [["browser"]] الأول طلع [[browser]]. والـ [["default"]] دايمًا آخر واحد.
+
+اسم مش موجود في [["imports"]]:
+
+~~~text الناتج (Node 24)
+ERR_PACKAGE_IMPORT_NOT_DEFINED: Package import specifier "#nothing" is not defined in package ...\package.json
+~~~
+
+> TypeScript بيفهم الاتنين لو [["moduleResolution": "nodenext"]] أو [["bundler"]]، و condition اسمه [["types"]] بيتحط **أول** واحد عشان TS يلاقي ملف الـ types (من وثائق TypeScript).
+
+---
+
+## ٨. import.meta.resolve: الاسم ده هيروح لأنهي ملف؟
+
+[[import.meta.resolve(specifier)]] بترجّع الـ URL الكامل اللي الـ import كان هيروحله، **من غير** ما تحمّل الملف. مفيدة عشان تعرف package جاي منين، أو تبعت مسار ملف لـ Worker:
+
+~~~text app.mjs
+console.log(import.meta.resolve("greet"));
+console.log(import.meta.resolve("#utils/money"));
+console.log(import.meta.resolve("./nothing-here.js"));
+~~~
+
+~~~text الناتج (Node 24)
+file:///C:/.../pk/node_modules/greet/lib/index.mjs
+file:///C:/.../pk/src/utils/money.js
+file:///C:/.../pk/nothing-here.js
+~~~
+
+- الأول: طبّقت [["exports"]] والـ condition [["import"]] ورجّعت [[index.mjs]].
+- التاني: طبّقت [["imports"]].
+- التالت: مسار نسبي **مش موجود** ومع ذلك رجعت URL من غير error. هي بتحسب المسار بس، مش بتتأكد إن الملف موجود.
+- package مش متسطّب: [[import.meta.resolve("nopkg")]] بترمي [[ERR_MODULE_NOT_FOUND: Cannot find package 'nopkg']].
+
+وفي المتصفح نفس الدالة بتطبّق الـ import map: في الصفحة اللي فوق [[import.meta.resolve("utils")]] رجّعت [[http://127.0.0.1:.../lib/utils.js]]، و [[import.meta.resolve("lodash")]] (مش في الـ map) رمت [[TypeError: Failed to resolve module specifier lodash]] (جرّبتها في Chrome 156). وهي synchronous في Node 20.6+ والمتصفحات الحديثة.
+
+---
+
+## الخلاصة
+
+| | CommonJS | ESM |
+|---|---|---|
+| تستورد | [[require("x")]] | [[import ... from "x"]] |
+| تصدّر | [[module.exports = ...]] | [[export]] |
+| الفولدر الحالي | [[__dirname]] | [[import.meta.dirname]] |
+| await في أول الملف | لأ | أيوه |
+| الامتداد | [[.cjs]] أو [[.js]] من غير type | [[.mjs]] أو [[.js]] مع [["type": "module"]] |
+| package بيدعم الاتنين | [["require"]] في [["exports"]] | [["import"]] في [["exports"]] |
+
+- مشروع جديد = ESM و [["type": "module"]].
+- [["exports"]] بيقفل كل ملف مش مكتوب فيه ([[ERR_PACKAGE_PATH_NOT_EXPORTED]])، و [["imports"]] بـ [[#]] اختصارات جوه مشروعك، والـ conditions بتتقري بالترتيب.
+- [[import.meta.resolve]] بتقولك الاسم هيروح فين من غير ما تحمّل حاجة.
+- ESM يقدر يستورد CommonJS دايمًا، والعكس شغال بـ require في Node الحديث طالما مفيش top-level await.`,
+          lines: [
+            R`في [[utils.cjs]] (الامتداد [[.cjs]] معناه CommonJS دايمًا): [[require]] دالة عادية بترجّع الـ module فورًا (synchronous)، فتقدر تناديها في أي مكان حتى جوه if. و [[node:]] بتقول صراحة إن ده module مدمج في Node مش package من npm. ([[path]] مش مستخدم تحت، السطر موجود عشان تشوف الشكل.)`,
+            R`دالة بتحوّل النص لـ slug: حروف صغيرة والمسافات شُرَط، فـ [["Hello World"]] تبقى [["hello-world"]].`,
+            R`CommonJS بيصدّر بإنه يحط اللي عايزه في [[module.exports]]: هنا object فيه [[slug]]، فاللي يعمل [[require("./utils.cjs")]] ياخد الـ object ده. لو كتبت [[exports = { slug }]] من غير [[module.]] مش هيتصدّر حاجة، لأنك غيّرت متغير محلي بس.`,
+            R`في [[app.mjs]] ([[.mjs]] = ESM دايمًا): ESM يقدر يستورد من CommonJS. Node بيحلل الملف ويطلّع [[slug]] كـ named export، و [[module.exports]] كله موجود كـ default. العكس ([[require]] لملف ESM) مدعوم في نسخ Node الحديثة بس، ومبيشتغلش لو الملف فيه top-level await.`,
+            R`[[node:fs/promises]] نسخة [[fs]] اللي دوالها بترجّع Promises، فتستخدمها مع [[await]] بدل الـ callbacks.`,
+            R`top-level await: [[await]] برّه أي دالة async، ومسموحة في ESM بس (في [[.cjs]] بترمي SyntaxError). و [[new URL("./package.json", import.meta.url)]] بتحسب المسار نسبةً لمكان الملف ده، مش للفولدر اللي شغّلت منه الأمر، فالملف يتلاقي من أي مكان. وبعدها [[JSON.parse]] بتحوّل النص لـ object.`,
+            R`بيطبع [[hello-world]] ومسار الفولدر اللي فيه الملف. [[import.meta.dirname]] هي البديل في ESM لـ [[__dirname]]، لأن [[__dirname]] و [[require]] مش موجودين في ESM أصلًا (موجودة من Node 20.11).`,
+          ],
+          sol: R`[[node app.mjs]] بيطبع [[hello-world]] ومسار الفولدر بتاعك (من [[import.meta.dirname]]). الـ ESM قدر يعمل import للـ CommonJS عادي، و [[await]] في أول الملف اشتغلت من غير async (top-level await، في ESM بس).
+
+[[import]] في ملف [[.cjs]] بيطلع [[SyntaxError: Cannot use import statement outside a module]]. و [[console.log(__dirname)]] في [[.mjs]] بيطلع [[ReferenceError: __dirname is not defined in ES module scope]]، والبديل [[import.meta.dirname]] و [[import.meta.filename]]. ولو package.json مش موجود جنب app.mjs السطر التالت هيقع بـ [[ENOENT]]، ودي الغلطة الأشهر في التجربة دي.`
+        },
+        {
+          cmd: "dynamic import()",
+          title: "تحمّل module وقت ما تحتاجه بس",
+          desc: R`[[import("./heavy.js")]] (بأقواس) دالة بترجّع Promise بالـ module، وبتشتغل في أي مكان: جوه if، أو بعد ضغطة زرار، والـ path ممكن يبقى متغير.
+
+فايدتها: الكود التقيل (محرر نصوص، أو مكتبة charts، أو لغة ترجمة) ميتحمّلش مع الصفحة، يتحمّل لما اليوزر يحتاجه. والـ bundlers بتفصله في ملف لوحده (code splitting)، وده اللي [[React.lazy]] و [[next/dynamic]] مبنيين عليه.`,
+          example: R`const btn = document.querySelector("#export");
+btn.addEventListener("click", async () => {
+  const { exportToPdf } = await import("./pdf-export.js");
+  exportToPdf(document.body);
+});
+const lang = navigator.language.startsWith("ar") ? "ar" : "en";
+const messages = (await import($__bt./locales/$__{lang}.js$__bt)).default;
+if (import.meta.env?.DEV) {
+  const { setupMocks } = await import("./mocks.js");
+  setupMocks();
+}`,
+          try: R`في مشروع Vite (تاب React)، حط [[import()]] لملف كبير جوه onClick، واعمل [[npm run build]]: هتلاقي الملف طلع chunk لوحده في dist. وافتح Network وشوفه بيتحمّل بس لما تضغط.`,
+          practice: [
+            { lvl: 'سريع', t: R`**ابني:** صفحة فيها زرار «اعرض الإحصائيات». اعمل [[stats.js]] أول سطر فيه [[console.log("stats.js اتحمّل")]] و [[export function render(el)]] بتكتب أي أرقام في عنصر. الزرار بيعمل [[await import("./stats.js")]] ويستدعي render. اضغط ٣ مرات.`, done: R`أول ما الصفحة تفتح stats.js مش في Network. أول ضغطة بيتحمّل وتظهر «stats.js اتحمّل» مرة واحدة، والضغطتين اللي بعدها الأرقام بتتكتب من غير ما الرسالة تتكرر ولا الملف يتحمّل تاني (الـ module بيتعمله cache).`, sol: R`~~~js stats.js
+console.log("stats.js اتحمّل");
+
+let renders = 0;
+
+export function render(el) {
+  renders++;
+  el.textContent = $__btزيارات النهارده: 342 (اتعرضت $__{renders} مرة)$__bt;
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<meta charset="utf-8">
+<title>إحصائيات عند الطلب</title>
+<button id="show">اعرض الإحصائيات</button>
+<p id="out"></p>
+<script type="module">
+  const out = document.querySelector("#out");
+  document.querySelector("#show").addEventListener("click", async () => {
+    try {
+      const { render } = await import("./stats.js");
+      render(out);
+    } catch (err) {
+      out.textContent = "مقدرناش نحمّل الإحصائيات: " + err.message;
+    }
+  });
+</script>
+</html>
+~~~
+
+شغّل سيرفر من الفولدر ([[npx serve .]]) عشان الـ modules متشتغلش من [[file://]]. سجّلنا كل طلب شبكة (زي تاب Network) ورسايل الـ Console:
+
+~~~text الناتج (Chrome headless، ٣ ضغطات)
+[request] /
+--- الصفحة فتحت، لسه محدش ضغط
+--- ضغطة 1
+[request] /stats.js
+[console] stats.js اتحمّل
+#out: زيارات النهارده: 342 (اتعرضت 1 مرة)
+--- ضغطة 2
+#out: زيارات النهارده: 342 (اتعرضت 2 مرة)
+--- ضغطة 3
+#out: زيارات النهارده: 342 (اتعرضت 3 مرة)
+[chrome] 157
+~~~
+
+**ليه كده:**
+
+- **فتح الصفحة طلب [[/]] بس:** [[stats.js]] مش مكتوب في أي [[import ... from]]، فالمتصفح ميعرفش عنه حاجة لحد ما السطر بتاع [[import()]] يتنفّذ.
+- **أول ضغطة:** طلب [[/stats.js]]، واتنفّذ (فطبع «stats.js اتحمّل»)، و [[await]] رجّعت الـ namespace object، والـ destructuring طلّع [[render]].
+- **الضغطة ٢ و ٣:** مفيش طلب ومفيش «اتحمّل» تاني، والعدّاد اللي جوه الملف كمّل 2 و 3. يعني [[import()]] رجّع **نفس** الـ module من الكاش، والمتغير [[renders]] اللي جواه فاضل عايش.
+- **الـ try/catch:** [[import()]] Promise، فلو النت قطع أو الملف اتمسح بيترفض، والرسالة بتظهر لليوزر بدل ما الزرار يبقى ميت.
+
+**الغلطة الشائعة:** تحط [[import "./stats.js"]] العادي كمان في أول الملف «عشان الـ autocomplete». كده الملف بيتحمّل مع الصفحة والـ dynamic import ملوش لازمة.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const { render } = import("./stats.js"); render();]]. شغّله واقرا الرسالة.`, done: R`الرسالة [[TypeError: render is not a function]]: [[import()]] بترجّع Promise فالـ destructuring طلّع undefined. بعد [[const { render } = await import("./stats.js");]] بيشتغل.`, sol: R`~~~js stats.js
+export function render() {
+  console.log("الإحصائيات: 342 زيارة");
+}
+~~~
+
+~~~js broken.js
+const { render } = import("./stats.js");
+render();
+~~~
+
+~~~text الناتج (node broken.js، أول ٥ سطور، Node 24)
+file:///C:/Users/ali/code/lazy-node/broken.js:2
+render();
+^
+
+TypeError: render is not a function
+~~~
+
+## التصليح
+
+~~~js fixed.js
+const { render } = await import("./stats.js");
+render();
+~~~
+
+~~~text الناتج (node fixed.js)
+الإحصائيات: 342 زيارة
+~~~
+
+**ليه [[render is not a function]] مش «مش موجود»:**
+
+- [[import("./stats.js")]] بترجّع **Promise** فورًا، مش الـ module.
+- [[const { render } = promise]] بيدوّر على خاصية اسمها [[render]] جوه الـ Promise نفسه. مفيش، فـ [[render]] بقت [[undefined]] من غير أي error.
+- السطر اللي بعده نادى [[undefined()]]، فـ [[TypeError: render is not a function]].
+- [[await]] بتستنى الـ Promise يخلص وترجّع الـ namespace object، فالـ destructuring بيلاقي [[render]]. وهنا [[await]] في أول الملف شغالة لأنه ESM ([["type": "module"]])، وفي دالة عادية لازم تبقى [[async]].
+
+**الغلطة الشائعة:** تصلّحها بـ [[import("./stats.js").render()]]: نفس المشكلة، [[.render]] بتتقري من الـ Promise. لو مش عايز await: [[import("./stats.js").then(({ render }) => render())]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** اعمل [[locales/ar.js]] و [[locales/en.js]]، كل واحد [[export default]] object فيه [[hello]]. واكتب [[async function loadMessages(lang)]] بتعمل import للملف حسب اللغة، ولو [[err.code === "ERR_MODULE_NOT_FOUND"]] ترجع للإنجليزي.`, done: R`[[await loadMessages("ar")]] بيرجّع العربي، و [[await loadMessages("fr")]] بيرجّع الإنجليزي من غير ما البرنامج يقع، وأي error تاني (زي syntax error جوه ar.js) لسه بيترمي ومبيتبلعش.`, sol: R`~~~js locales/ar.js
+export default { hello: "مرحبا" };
+~~~
+
+~~~js locales/en.js
+export default { hello: "Hello" };
+~~~
+
+وملف بايظ قصدًا عشان نتأكد إن الأخطاء التانية مبتتبلعش (القوس مش مقفول):
+
+~~~js locales/de.js
+export default { hello: "Bonjour" 
+~~~
+
+~~~js messages.js
+export async function loadMessages(lang) {
+  try {
+    const mod = await import($__bt./locales/$__{lang}.js$__bt);
+    return mod.default;
+  } catch (err) {
+    if (err.code === "ERR_MODULE_NOT_FOUND") {
+      console.log($__btمفيش ترجمة لـ "$__{lang}"، هنستخدم الإنجليزي$__bt);
+      return loadMessages("en");
+    }
+    throw err;
+  }
+}
+~~~
+
+~~~js main.js
+import { loadMessages } from "./messages.js";
+
+console.log(await loadMessages("ar"));
+console.log(await loadMessages("fr"));
+try {
+  await loadMessages("de");
+} catch (err) {
+  console.log("اترمى زي ما هو:", err.name, "-", err.message);
+}
+~~~
+
+~~~text الناتج (node main.js، Node 24)
+{ hello: 'مرحبا' }
+مفيش ترجمة لـ "fr"، هنستخدم الإنجليزي
+{ hello: 'Hello' }
+اترمى زي ما هو: SyntaxError - Unexpected end of input
+~~~
+
+**ليه كده:**
+
+- **[[import($__bt./locales/$__{lang}.js$__bt)]]:** الـ path متغير، وده مسموح في [[import()]] بس. وبنرجّع [[mod.default]] لأن كل ملف لغة عامل [[export default]].
+- **[[err.code === "ERR_MODULE_NOT_FOUND"]]:** Node بيحط [[code]] ثابت على الـ error. بنفحص الـ code مش الرسالة، لأن الرسالة ممكن تتغيّر بين النسخ.
+- **[[return loadMessages("en")]]:** الرجوع للإنجليزي بنفس الدالة. (لو [[en.js]] نفسه اتمسح هتلف للأبد؟ لأ: [[en.js]] موجود. في كود حقيقي حط شرط [[lang !== "en"]] قبل الرجوع.)
+- **[[throw err]]:** أي حاجة تانية، زي الـ SyntaxError اللي في [[de.js]]، بتترمي زي ما هي. لو كنا عملنا [[catch { return en }]] على أي error، الملف البايظ كان هيتخبّى وعمرك ما هتعرف إن الترجمة الألماني بايظة.
+
+**الغلطة الشائعة:** تبني الـ path من input اليوزر مباشرة ([[?lang=../../secret]]). في كود حقيقي اعمل قايمة باللغات المسموحة ([[["ar", "en"].includes(lang)]]) قبل الـ import.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[locales/ar.js]] فيه [[export default { hello: "مرحبا" }]]. بعد [[const m = await import("./locales/ar.js")]]، [[m.hello]] و [[m.default.hello]] هيطبعوا إيه؟`, done: R`توقعت وطلع [[undefined]] و [[مرحبا]]: الـ dynamic import بيرجّع الـ module كله، والـ default جوه [[.default]]. فالسطر الصح [[const { default: messages } = await import(...)]].`, sol: R`**التوقع:** [[m.hello]] بـ [[undefined]]، و [[m.default.hello]] بـ [["مرحبا"]].
+
+~~~js namespace.js
+const m = await import("./locales/ar.js");
+console.log(m.hello);
+console.log(m.default.hello);
+console.log(m);
+
+const { default: messages } = await import("./locales/ar.js");
+console.log(messages.hello);
+~~~
+
+~~~text الناتج (node namespace.js، Node 24)
+undefined
+مرحبا
+[Module: null prototype] { default: { hello: 'مرحبا' } }
+مرحبا
+~~~
+
+**ليه كده:**
+
+- [[import()]] بترجّع الـ **module namespace object**: object فيه خاصية لكل export. الملف ده مفيهوش غير export واحد اسمه [[default]]، فده شكله: [[{ default: { hello: 'مرحبا' } }]] (السطر التالت).
+- [[m.hello]] بتدوّر على export **اسمه** hello، ومفيش، فـ [[undefined]].
+- [[m.default.hello]]: خش جوه الـ default وبعدين hello.
+- السطر الأخير هو الشكل اللي بيتكتب في الكود الحقيقي: [[const { default: messages } = ...]] معناها «خد خاصية [[default]] وسمّيها [[messages]]»، لأن [[default]] كلمة محجوزة ومينفعش تبقى اسم متغير.
+
+**الغلطة الشائعة:** الـ static import بيخبّي الفرق ده: [[import messages from "./ar.js"]] بيديك الـ default على طول. فلما تحوّله لـ [[import()]] تنسى [[.default]] والكود يطلّع [[undefined]] في كل حتة من غير error.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** اعمل [[heavy.js]] في الـ top level بتاعه loop بيلف [[1e8]] مرة (كأنه مكتبة تقيلة بتجهّز نفسها) و [[export function run()]]. وفي [[app.js]] اطبع [[performance.now()]] أول ما البرنامج يبدأ يشتغل، مرة و heavy.js متعمله import عادي فوق، ومرة بـ [[await import()]] جوه [[if (process.argv.includes("--heavy"))]].`, done: R`مع الـ import العادي، الرقم كبير حتى لو مش هتستخدم run خالص، لأن الملف بيتنفّذ قبل أول سطر في app.js. ومع الـ dynamic import الرقم صغير، والوقت التقيل بيظهر بس لما تشغّل بـ [[--heavy]]. اكتب الرقمين اللي قستهم جنب بعض.`, sol: R`~~~js heavy.js
+let x = 0;
+for (let i = 0; i < 1e8; i++) x += i;
+
+export function run() {
+  return x;
+}
+~~~
+
+## مرة بـ import عادي
+
+~~~js app-static.js
+import { run } from "./heavy.js";
+
+console.log("البرنامج بدأ بعد", performance.now().toFixed(0), "ms");
+if (process.argv.includes("--heavy")) console.log("run():", run());
+~~~
+
+## مرة بـ import() عند الطلب
+
+~~~js app-dynamic.js
+console.log("البرنامج بدأ بعد", performance.now().toFixed(0), "ms");
+
+if (process.argv.includes("--heavy")) {
+  const { run } = await import("./heavy.js");
+  console.log("run():", run(), "بعد", performance.now().toFixed(0), "ms");
+}
+~~~
+
+## القياس
+
+شغّلنا كل واحد ٣ مرات بالتبادل، وبعدين النسخة الـ dynamic مع [[--heavy]]:
+
+~~~text الناتج (Node 24 على لابتوب ويندوز؛ الأرقام بتتغيّر شوية كل تشغيل)
+البرنامج بدأ بعد 700 ms
+البرنامج بدأ بعد 19 ms
+البرنامج بدأ بعد 711 ms
+البرنامج بدأ بعد 22 ms
+البرنامج بدأ بعد 696 ms
+البرنامج بدأ بعد 20 ms
+البرنامج بدأ بعد 20 ms
+run(): 4999999950000000 بعد 713 ms
+~~~
+
+| | أول سطر في البرنامج بعد |
+|---|---|
+| import عادي (حتى من غير [[--heavy]]) | حوالي ٦٥٠ms |
+| [[import()]] من غير [[--heavy]] | حوالي ٢٠ms |
+| [[import()]] مع [[--heavy]] | ٢٠ms للبداية، والـ ٦٥٠ بتتدفع بس ساعة ما تطلب |
+
+**ليه كده:**
+
+- [[performance.now()]] بتقيس بالـ milliseconds من أول ما الـ process بدأ.
+- **الـ import العادي** بيتحمّل ويتنفّذ **قبل** أول سطر في [[app-static.js]]، فالـ loop بتاع الـ 1e8 (١٠٠ مليون لفة) بيتدفع حتى لو [[run]] عمرها ما اتنادت.
+- **[[import()]] جوه الـ if:** من غير [[--heavy]] السطر ده مبيتنفّذش، فـ [[heavy.js]] عمره ما بيتقري من الديسك أصلًا. ومع [[--heavy]] نفس التمن بيتدفع، بس في الوقت اللي اليوزر طلبه.
+- الـ ٢٠ms دي وقت تشغيل Node نفسه قبل ما يوصل لكودك.
+
+**الغلطة الشائعة:** تقيس بـ [[console.time]] جوه [[app-static.js]]: هيقولك صفر تقريبًا، لأن التايمر بيبدأ **بعد** ما الـ imports خلصت. عشان كده استخدمنا [[performance.now()]] اللي بيعد من بداية الـ process.` }
+          ],
+          ref: [
+            { t: "MDN: import()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import" },
+            { t: "MDN: JavaScript modules", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules" },
+            { t: "Node.js: ECMAScript modules", url: "https://nodejs.org/api/esm.html" },
+          ],
+          flag: "script",
+          deep: {
+            why: "حجم الـ JS أكبر سبب لبطء فتح الصفحات على الموبايل. أي كود مش محتاجه أول ما الصفحة تفتح، مكانه import().",
+            how: R`[[import()]] مش دالة عادية، هي syntax خاص، بس بيرجّع Promise بـ module namespace object: فيه كل الـ named exports، والـ default في [[.default]].
+
+الـ module بيتحمّل ويتنفّذ مرة واحدة، والنداءات اللي بعدها بترجّع نفس النسخة من الكاش.
+
+الـ bundler بيشوف [[import("./x.js")]] ويعمل ملف لوحده (chunk). ولو الـ path فيه متغير زي [[$__btlocales/$__{lang}.js$__bt]]، Vite بيعمل chunk لكل ملف ممكن يطابق الـ pattern.
+
+شغالة كمان في CommonJS، وده الطريقة الوحيدة CommonJS يجيب ESM فيه top-level await.`,
+            when: "المودالز والصفحات التقيلة، والمكتبات الكبيرة اللي بتستخدم في feature واحدة، وملفات الترجمة، والكود اللي في dev بس.",
+            mistakes: R`تعمل dynamic import لحاجة صغيرة محتاجها على طول، فتزود request من غير فايدة. وتنسى [[.default]]. ومتتعاملش مع فشل التحميل (نت ضعيف): حطها في try/catch واعرض رسالة.`
+          },
+          teach: R`## الكود ده بيعمل إيه؟
+
+٣ أمثلة على تحميل ملف JS **وقت ما تحتاجه** بدل أول ما الصفحة تفتح: مكتبة تصدير PDF لما اليوزر يدوس الزرار، وملف ترجمة حسب لغة المتصفح، وكود تجارب في وضع التطوير بس. ده كود متصفح، فشغّلناه في Chrome (headless بـ playwright) في صفحة فيها:
+
+~~~text index.html
+<button id="export">Export</button>
+<script type="module" src="main.js"></script>
+~~~
+
+والمثال كله هو [[main.js]]، وجنبه ملفات صغيرة: [[pdf-export.js]] بيطبع رسالة لما يتحمّل وفيه [[exportToPdf]]، و [[locales/en.js]] و [[locales/ar.js]] فيهم [[export default { save: ... }]]. وسجّلنا كل طلب شبكة الصفحة عملته.
+
+> [[type="module"]] لازم: الكود فيه await في أول الملف، وده شغال في ES modules بس.
+
+---
+
+## ١. الزرار
+
+~~~text main.js
+const btn = document.querySelector("#export");
+btn.addEventListener("click", async () => {
+  const { exportToPdf } = await import("./pdf-export.js");
+  exportToPdf(document.body);
+});
+~~~
+
+- [[document.querySelector("#export")]]: هات العنصر اللي id بتاعه export.
+- [[addEventListener("click", async () => { ... })]]: سجّل دالة تشتغل مع كل ضغطة. وهي [[async]] عشان نقدر نستخدم await جواها.
+- [[import("./pdf-export.js")]]: بأقواس، زي دالة. **ده مش** [[import ... from]] اللي في أول الملف: ده بيتنفّذ **في السطر ده بالظبط**، وبيرجّع Promise.
+- [[await]]: استنى لحد ما الملف يتحمّل ويتنفّذ. القيمة اللي بترجع هي الـ **module namespace object**: object فيه كل الـ exports.
+- [[const { exportToPdf } = ...]]: destructuring: خد خاصية exportToPdf منه في متغير بنفس الاسم.
+- [[exportToPdf(document.body)]]: نادِيها على جسم الصفحة.
+
+اللي حصل في الشبكة والـ Console:
+
+~~~text الناتج: فتح الصفحة
+[request] /index.html
+[request] /main.js
+[request] /locales/en.js
+~~~
+
+[[pdf-export.js]] **مش** في القايمة. ولما دوسنا الزرار:
+
+~~~text الناتج: الضغطة الأولى
+[request] /pdf-export.js
+pdf-export.js اتحمّل واتنفّذ
+exportToPdf على BODY
+~~~
+
+~~~text الناتج: الضغطة التانية
+exportToPdf على BODY
+~~~
+
+في التانية مفيش طلب جديد، والملف متنفّذش تاني: الـ module بيتحمّل **مرة واحدة**، وأي [[import()]] بعد كده بيرجّع نفس النسخة من الكاش. واتأكدنا بـ [[ns === await import(...)]] على نفس الملف: [[true]].
+
+---
+
+## ٢. ملف حسب اللغة
+
+~~~text main.js
+const lang = navigator.language.startsWith("ar") ? "ar" : "en";
+const messages = (await import($__bt./locales/$__{lang}.js$__bt)).default;
+~~~
+
+- [[navigator.language]]: لغة المتصفح، زي [["en-US"]] أو [["ar-EG"]].
+- [[.startsWith("ar")]]: بتبدأ بـ ar؟
+- [[شرط ? أ : ب]]: اسمه **ternary**: لو الشرط صح خد أ، غير كده ب.
+- [[$__bt./locales/$__{lang}.js$__bt]]: الـ path **نص متغير**. ده مستحيل في [[import ... from]] (لازم نص ثابت)، وممكن في [[import()]].
+- [[(await import(...)).default]]: الأقواس عشان await تخلص الأول، وبعدين ناخد [[.default]]: الـ default export بيبقى في خاصية اسمها default.
+
+شغّلنا الصفحة مرتين بلغتين:
+
+~~~text الناتج
+locale en-US:  [request] /locales/en.js   messages: {"save":"Save"}
+locale ar-EG:  [request] /locales/ar.js   messages: {"save":"احفظ"}
+~~~
+
+كل لغة حمّلت ملفها بس.
+
+---
+
+## ٣. كود التطوير بس
+
+~~~text main.js
+if (import.meta.env?.DEV) {
+  const { setupMocks } = await import("./mocks.js");
+  setupMocks();
+}
+~~~
+
+- [[import.meta.env]]: Vite بيحط فيه معلومات البيئة، و [[DEV]] بـ true وانت شغال [[npm run dev]].
+- برّه Vite مفيش env. طبعناها في Chrome: [[undefined]]. فالـ [[?.]] رجّعت undefined بدل ما تقع، والـ if متنفّذش، و [[mocks.js]] **متطلبش خالص** من السيرفر.
+
+---
+
+## ٤. لو الملف مش موجود
+
+جرّبنا [[await import("./missing.js")]] جوه try:
+
+~~~text الناتج
+TypeError: Failed to fetch dynamically imported module: http://demo.test/missing.js
+~~~
+
+[[import()]] Promise عادي، فبيترفض لو الملف مش موجود أو النت قطع. عشان كده في التطبيقات الحقيقية حطه في try/catch واعرض رسالة.
+
+---
+
+## الخلاصة
+
+| | [[import x from "./a.js"]] | [[await import("./a.js")]] |
+|---|---|---|
+| إمتى بيتحمّل | قبل ما أي سطر يشتغل | لما السطر ده يتنفّذ |
+| مكانه | أول الملف بس | أي حتة: if، دالة، onClick |
+| الـ path | نص ثابت | ممكن متغير |
+| الـ default | [[import x]] | [[.default]] |
+| بيرجّع | الـ exports مباشرة في متغيرات | Promise بالـ namespace object |
+
+- الـ bundlers (Vite) بيفصلوا كل ملف عليه [[import()]] في ملف لوحده (chunk)، فالصفحة الأولى تبقى أخف.
+- الملف بيتحمّل مرة واحدة مهما ناديته.`,
+          lines: [
+            R`زرار التصدير. الكود التقيل بتاع الـ PDF مش هيتحمّل غير لما حد يضغط عليه.`,
+            R`الـ listener [[async]] عشان نقدر نستنى تحميل الملف بـ [[await]] جواه.`,
+            R`[[import()]] بشكل دالة بترجّع Promise بالـ module، والملف بيتحمّل وقت الضغطة بس: الصفحة تفتح أسرع، واللي عمره ما صدّر PDF عمره ما يحمّله. الـ destructuring بيطلّع [[exportToPdf]] من الـ module. وبيتحمّل أول مرة بس، والضغطات اللي بعدها بترجّع نفس الـ module من غير تحميل تاني.`,
+            R`بننادي الدالة اللي لسه متحمّلة. لو التحميل فشل (النت قطع مثلًا) الـ [[await]] اللي فوق هترمي والسطر ده مش هيتنفذ، فيستاهل [[try/catch]] يعرض رسالة لليوزر.`,
+            R`نهاية الـ listener.`,
+            R`[[navigator.language]] لغة المتصفح زي [["ar-EG"]] أو [["en-US"]]. أي حاجة تبدأ بـ [["ar"]] تبقى عربي، وأي حاجة تانية إنجليزي.`,
+            R`الـ path متغير، فالمتصفح بيحمّل ملف لغة واحد بس مش كل اللغات. [[import()]] بترجّع الـ module كله، فالـ default export بييجي من [[.default]]، والأقواس حوالين الـ [[await]] لازمة عشان [[.default]] تتقري من النتيجة مش من الـ Promise. والـ [[await]] هنا top-level، فلازم السكريبت يبقى module.`,
+            R`[[import.meta.env]] بيحطه Vite، و [[DEV]] بتبقى [[true]] في الـ dev server بس. برّه Vite [[import.meta.env]] مش موجود، و [[?.]] بترجّع [[undefined]] بدل ما ترمي TypeError.`,
+            R`بنحمّل ملف الـ mocks في التطوير بس، فكود الداتا المزيّفة عمره ما يتحمّل عند اليوزرز في الـ production.`,
+            R`بنشغّل الـ mocks بعد ما الملف اتحمّل.`,
+            R`نهاية الـ if.`,
+          ],
+          sol: R`بعد [[npm run build]] هتلاقي في الـ output ملفين JS مش واحد، حاجة زي [[dist/assets/index-xxxx.js]] (صغير) و [[dist/assets/pdf-export-xxxx.js]] (الملف الكبير لوحده). الاسم فيه hash بيتغير لما المحتوى يتغير. في Network (مع [[npm run preview]]) أول ما الصفحة تفتح هتشوف index بس، ولما تضغط الزرار هتلاقي طلب جديد لـ pdf-export، ومش هيتكرر لو ضغطت تاني لأن الـ module اتعمله cache.
+
+لو ملقتش chunk منفصل، يبقى نفس الملف متعمله import عادي (static) في حتة تانية، فـ Vite حطه في الـ bundle الأساسي. الـ dynamic import بيفصل الملف بس لو ده الطريق الوحيد ليه.`
         }
       ]
     }

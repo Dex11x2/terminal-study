@@ -1,4450 +1,2304 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: R`الـ object model: الخصائص من جوه، و Reflect و Proxy`,
-      l: 3,
-      n: "كل أشكال الـ object literal و property accessors، والـ descriptors (writable و enumerable و configurable)، ومين بيشوف أنهي خاصية، والأقفال التلاتة، والـ prototype كـ API، والتحويل لرقم ونص، والدالة كـ object و arguments، و Reflect كله، وكل traps الـ Proxy بالـ invariants بتاعتها، ومشاريع: config بـ schema و undo و views بتتسحب",
+      t: "prototypes و classes",
+      l: 2,
+      n: "الوراثة في JS بالـ prototype chain، و class شكل أوضح لنفس الفكرة، و extends و super و private fields",
       pre: [
-        { to: "js/object literal", why: R`الـ object literal في أبسط صورته و [[?.]]، والوحدة دي بتكمّل كل الأشكال الباقية` },
-        { to: "js/prototype chain", why: R`[[Object.getPrototypeOf]] و [[Object.create]] والقراية في السلسلة` },
-        { to: "js/class", why: R`الـ getters والـ setters والـ [[#private]] في الـ class` },
-        { to: "js/Object.keys و entries", why: R`[[Object.keys]] و [[entries]] و [[Object.hasOwn]] في أبسط صورهم` },
-        { to: "js/this", why: R`[[this]] جوه الـ methods والـ getters، وهو الـ receiver في [[Reflect]]` },
-        { to: "js/Proxy و Reflect", why: R`الـ traps الأربعة [[get]] و [[set]] و [[has]] و [[deleteProperty]]: الوحدة دي بتكمّل الباقي` },
+        { to: "js/this", why: R`كل method في كلاس بتشتغل بـ this، و [[new]] قاعدة من قواعد this الأربعة`},
+        { to: "js/object literal", why: R`الكلاس طريقة تانية تعمل بيها objects بـ methods، والـ getters اتشافت هناك الأول`},
+        { to: "js/closure", why: R`الـ private fields [[#]] بتعمل نفس اللي الـ closure كان بيعمله: حالة محدش يوصلها من برّه`},
       ],
-      goal: [
-        R`تكتب أي object literal بكل أشكاله (shorthand و computed و method definitions و [[get]]/[[set]] و [[async]] و [[*generator]] و [[__proto__]])، وتعرف ليه [[m() {}]] مش [[m: function () {}]]، وإن كل مفتاح بيتحوّل لنص.`,
-        R`تقرا وتكتب الـ descriptors بـ [[Object.defineProperty]] و [[getOwnPropertyDescriptors]]، وتتجنّب الـ defaults trap، وتنسخ object بالـ getters بتاعته.`,
-        R`تختار الطريقة الصح للّف والفحص ([[Object.keys]] ولا [[for...in]] ولا [[getOwnPropertyNames]] ولا [[Reflect.ownKeys]]، و [[in]] ولا [[Object.hasOwn]] ولا [[propertyIsEnumerable]]) من جدول واحد.`,
-        R`تقفل objects بالدرجة اللي محتاجها ([[preventExtensions]] و [[seal]] و [[freeze]] وعميق)، وتعرف اللي القفل مبيوصلوش.`,
-        R`تتحكم في تحويل objects بتاعتك لرقم ونص ([[valueOf]] و [[toString]] و [[Symbol.toPrimitive]] و [[toLocaleString]])، وتستخدم خصايص الدوال ([[length]] و [[name]] و [[Symbol.hasInstance]] و [[new.target]] و [[arguments]]).`,
-        R`تستخدم الـ ١٣ دالة في [[Reflect]] والـ ١٣ trap في [[Proxy]] من غير ما تكسر الـ invariants، وتعمل views بتتسحب بـ [[Proxy.revocable]]، وتعرف تمن الـ Proxy بالأرقام.`,
-      ],
-      use: {
-        prog: R`كل مكتبة و framework بتستخدمه مبني على الحاجات دي: Vue 3 على Proxy، و Vue 2 على [[defineProperty]]، و Immer على Proxy و [[freeze]]، و ORMs بتعرض الأعمدة كخصايص. ولما تفهم الـ object model مش هتتفاجئ بخاصية «موجودة ومش ظاهرة»، ولا بـ [[[object Object]]] في الواجهة، ولا بـ Proxy بيقع أول ما حد يعمل [[freeze]].`,
-        work: R`إعدادات لازم تتحقق وتتقفل، و APIs بتدّي كود تاني صلاحية للقراية بس وتسحبها، وتتبّع «فيه تعديلات متحفظتش» في فورم، وأنواع فلوس ومدد بتتعرض وتتقارن صح، و mocks و tracers في الاختبارات والـ debugging.`,
-        cs: R`الـ metaprogramming و reflection (برنامج بيقرا ويغيّر بنية نفسه)، والفرق بين الـ interface والـ implementation (الـ internal methods في المواصفات)، والـ invariants كـ «عقد» لازم أي implementation تحترمه، و hidden classes و inline caches في المحركات.`,
-      },
       projects: [
-        { lvl: 'صغير', t: R`جدول الـ descriptors زي ls -l`, what: R`أداة [[props.js]] فيها [[listProps(obj, { inherited })]] بتطبع كل خاصية own (نصوص و Symbols، ظاهرة ومخفية) في سطر: الأذونات بحروف زي [[ls -l]] ([[w]] أو [[a]] للـ accessor أو [[-]]، ثم [[e]]، ثم [[c]])، ومكانها ([[own]] أو [[↑1]] لو موروثة)، واسمها، ومعاينة للقيمة (دالة باسمها وعدد الـ parameters). وفي أول سطر درجة القفل وعدد الخصايص. من دروس «property descriptors» و «enumerability و ownership» و «Object.preventExtensions و seal و freeze».`, done: R`على instance من class بـ [[{ inherited: true }]] بيطلّع الـ field والخاصية المخفية والـ [[constructor]] والـ methods والـ getter والـ [[Symbol.iterator]] كل واحد بأذوناته الصح، وعلى [[[10, 20]]] بيطلّع [[length]] بـ [[w--]]، وعلى object متجمّد بيقول [[frozen]] وكل خاصية [[-e-]].`, sol: R`**هتشوف إيه:** ٣ جداول، واحد لكل object، شبه [[ls -l]] بالظبط:
+        { lvl: 'صغير', t: R`كلاس فلوس`, what: R`[[class Money]] بتخزّن المبلغ بالقروش في [[#cents]] (عدد صحيح)، وفيها [[add(other)]] بترجّع Money جديدة، و [[format()]] بترجّع [["12.50 جنيه"]]، و [[static from(pounds)]]. من درس class.`, done: R`[[Money.from(0.1).add(Money.from(0.2)).format()]] بترجّع [["0.30 جنيه"]] (مش [[0.30000000000000004]])، و [[add]] مبتغيرش الأصل، ومبلغ سالب أو مش رقم بيرمي RangeError.`, sol: R`~~~js money.js
+class Money {
+  #cents;                                    // عدد صحيح دايمًا
 
-~~~text الناتج: node props.js
-== new Account("Sara") ومعاه الموروث
-(open, 6 خاصية)
-wec  own  owner                    "Sara"
----  own  id                       "AC-1"
-w-c  ↑1   constructor              ƒ Account(1)
-w-c  ↑1   deposit                  ƒ deposit(1)
-a-c  ↑1   label                    get
-w-c  ↑1   Symbol(Symbol.iterator)  ƒ [Symbol.iterator](0)
-
-== [10, 20]
-(open, 3 خاصية)
-wec  own  0       10
-wec  own  1       20
-w--  own  length  2
-
-== Object.freeze({ port: 8080, hosts: [...] })
-(frozen, 2 خاصية)
--e-  own  port   8080
--e-  own  hosts  Array(2)
-~~~
-
-~~~js props.js
-// node props.js: بيطبع خصايص أي object زي ls -l، كل خاصية بإعداداتها
-function flags(d) {
-  const kind = 'value' in d ? (d.writable ? 'w' : '-') : 'a';
-  return kind + (d.enumerable ? 'e' : '-') + (d.configurable ? 'c' : '-');
-}
-
-function preview(d) {
-  if (!('value' in d)) return (d.get ? 'get' : '') + (d.get && d.set ? '/' : '') + (d.set ? 'set' : '');
-  const v = d.value;
-  if (typeof v === 'function') return 'ƒ ' + (v.name || '(من غير اسم)') + '(' + v.length + ')';
-  if (typeof v === 'string') return JSON.stringify(v.length > 20 ? v.slice(0, 20) + '…' : v);
-  if (v !== null && typeof v === 'object') return Array.isArray(v) ? 'Array(' + v.length + ')' : '{…}';
-  return String(v);
-}
-
-function listProps(obj, { inherited = false } = {}) {
-  const rows = [];
-  let level = 0;
-  for (let o = obj; o !== null && (level === 0 || inherited); o = Object.getPrototypeOf(o), level++) {
-    if (o === Object.prototype && level > 0) break;
-    for (const key of Reflect.ownKeys(o)) {
-      const d = Reflect.getOwnPropertyDescriptor(o, key);
-      rows.push([flags(d), level === 0 ? 'own' : '↑' + level, String(key), preview(d)]);
+  constructor(cents) {
+    if (!Number.isInteger(cents) || cents < 0) {
+      throw new RangeError("المبلغ لازم يبقى عدد قروش صحيح مش سالب: " + cents);
     }
-  }
-  const lock = Object.isFrozen(obj) ? 'frozen' : Object.isSealed(obj) ? 'sealed' : Object.isExtensible(obj) ? 'open' : 'no-add';
-  const width = Math.max(4, ...rows.map((r) => r[2].length));
-  const lines = rows.map(([f, where, key, val]) => f + '  ' + where.padEnd(4) + ' ' + key.padEnd(width) + '  ' + val);
-  return ['(' + lock + ', ' + rows.length + ' خاصية)', ...lines].join('\n');
-}
-
-class Account {
-  #pin = 1234;
-  owner;
-  constructor(owner) {
-    this.owner = owner;
-    Object.defineProperty(this, 'id', { value: 'AC-1' });
-  }
-  deposit(amount) { return amount; }
-  get label() { return this.owner + ' ' + this.id; }
-  [Symbol.iterator]() { return [].values(); }
-}
-
-console.log('== new Account("Sara") ومعاه الموروث');
-console.log(listProps(new Account('Sara'), { inherited: true }));
-console.log('\n== [10, 20]');
-console.log(listProps([10, 20]));
-console.log('\n== Object.freeze({ port: 8080, hosts: [...] })');
-console.log(listProps(Object.freeze({ port: 8080, hosts: ['a', 'b'] })));
-
-export { listProps };
-~~~
-
-~~~json package.json
-{ "type": "module" }
-~~~
-
-**كل حتة بتعمل إيه:**
-
-- [[flags(d)]]: لو الـ descriptor فيه [[value]] يبقى data وأول حرف من [[writable]]، وإلا accessor ([[a]]). ده نفس منطق تمرين [[describeProps]].
-- [[preview(d)]]: الـ getter **مبيتناداش** (بيكتب [[get]] بس)، لأن نداء getter ممكن يعمل حاجة. والدالة بتتعرض بـ [[name]] و [[length]] (درس «Function»).
-- اللوب الكبير بيطلع في السلسلة بـ [[Object.getPrototypeOf]] لحد [[Object.prototype]] (اللي بنقف عنده عشان مطلعش ١٢ method مالهمش لازمة)، ولكل مستوى [[Reflect.ownKeys]] و [[Reflect.getOwnPropertyDescriptor]].
-- درجة القفل بالترتيب من الأقوى: frozen ثم sealed ثم no-add ثم open (درس الأقفال: الأسئلة بتقيس الحالة).
-- العرض: [[padEnd]] بعرض أطول اسم، عشان الأعمدة تتراص.
-
-**الغلطات اللي حصلت وأنا ببنيه:**
-
-- أول نسخة كانت بتلف بـ [[Object.keys]]، والجدول بتاع الـ Account طلع كده:
-
-~~~text الناتج من النسخة الأولى
-(open, 1 خاصية)
-wec  own  owner  "Sara"
-~~~
-
-  [[id]] المخفية والـ methods والـ getter والـ Symbol كلهم اختفوا، لأن [[Object.keys]] own وظاهر ونص بس (درس «enumerability و ownership»). الحل [[Reflect.ownKeys]].
-- لما غيّرتها لـ [[Reflect.ownKeys]] وكنت حاطط [[key]] نفسه في الصف (من غير [[String(key)]])، البرنامج وقع عند الـ Symbol: [[TypeError: key.padEnd is not a function]]. الـ Symbol مش نص فمفيهوش methods النصوص. الحل [[String(key)]] قبل أي حاجة.
-- [[#pin]] مظهرتش في أي نسخة: الـ private field مش property أصلًا، وده صح مش باج.` },
-        { lvl: 'صغير', t: R`تقرير قفل الـ objects`, what: R`[[lock-report.js]] فيه [[lockReport(root, name)]] بيلف على object متداخل (objects و arrays جوه بعض) ويطبع كل مسار ودرجة قفله ([[open]] أو [[no-add]] أو [[sealed]] أو [[frozen]])، ويحذّر لو جزء مش متجمّد جوه object متجمّد (لأن ده معناه إن الـ freeze السطحي ضحك عليك)، ومبيلفش للأبد على المراجع الدايرية. من دروس «Object.preventExtensions و seal و freeze» و «enumerability و ownership».`, done: R`على إعدادات [[Object.freeze]] من برّه بس، التقرير بيطلّع [[settings.db]] [[sealed]] و [[settings.db.pool]] [[open]] وتحذيرين، وعلى object فيه [[self]] بيكتب «مرجع دايري» ويكمّل، وآخر سطر بيثبت إن التعديل جوه المتجمّد شغال فعلًا.`, sol: R`**هتشوف إيه:** كل مسار في سطر بدرجة قفله، والتحذيرات تحته:
-
-~~~text الناتج: node lock-report.js
-settings               frozen
-settings.db            sealed
-settings.db.pool       open
-settings.origins       frozen
-settings.flags         no-add
-⚠ settings.db جوه object متجمّد بس هو نفسه sealed: أي حد يقدر يعدّل فيه
-⚠ settings.flags جوه object متجمّد بس هو نفسه no-add: أي حد يقدر يعدّل فيه
-
-loop                   open
-loop.self ↺ (مرجع دايري، اتخطيته)
-
-عدّلت settings.db.pool.max وهي جوه settings المتجمّدة: 999
-~~~
-
-~~~js lock-report.js
-// node lock-report.js: بيلف على object متداخل ويقول كل جزء متقفل لأي درجة
-
-function lockLevel(o) {
-  if (Object.isFrozen(o)) return 'frozen';
-  if (Object.isSealed(o)) return 'sealed';
-  if (!Object.isExtensible(o)) return 'no-add';
-  return 'open';
-}
-
-function lockReport(root, name = 'root') {
-  const lines = [];
-  const warnings = [];
-  const seen = new WeakSet();
-  (function walk(value, path, parentLevel) {
-    if (value === null || typeof value !== 'object') return;
-    if (seen.has(value)) { lines.push(path + ' ↺ (مرجع دايري، اتخطيته)'); return; }
-    seen.add(value);
-    const level = lockLevel(value);
-    lines.push(path.padEnd(22) + ' ' + level);
-    if (parentLevel === 'frozen' && level !== 'frozen') warnings.push(path + ' جوه object متجمّد بس هو نفسه ' + level + ': أي حد يقدر يعدّل فيه');
-    for (const key of Reflect.ownKeys(value)) {
-      const d = Object.getOwnPropertyDescriptor(value, key);
-      if ('value' in d) walk(d.value, path + (Array.isArray(value) ? '[' + String(key) + ']' : '.' + String(key)), level);
-    }
-  })(root, name, null);
-  return { lines, warnings };
-}
-
-const settings = Object.freeze({
-  port: 8080,
-  db: Object.seal({ host: 'localhost', pool: { min: 1, max: 10 } }),
-  origins: Object.freeze(['https://shop.example']),
-  flags: Object.preventExtensions({ beta: false }),
-});
-const loop = { name: 'loop' };
-loop.self = loop;
-
-for (const [label, obj] of [['settings', settings], ['loop', loop]]) {
-  const { lines, warnings } = lockReport(obj, label);
-  console.log(lines.join('\n'));
-  for (const w of warnings) console.log('⚠ ' + w);
-  console.log('');
-}
-
-settings.db.pool.max = 999;
-console.log('عدّلت settings.db.pool.max وهي جوه settings المتجمّدة:', settings.db.pool.max);
-
-export { lockReport, lockLevel };
-~~~
-
-~~~json package.json
-{ "type": "module" }
-~~~
-
-**كل حتة بتعمل إيه:**
-
-- [[lockLevel]]: بيسأل من الأقوى للأضعف، لأن أي object متجمّد هو كمان sealed ومش extensible. لو سألت [[isSealed]] الأول كان كل المتجمّد هيطلع sealed.
-- [[walk]] دالة recursive جوه IIFE (درس «module pattern و IIFE»)، وبتاخد درجة الأب عشان تقارن.
-- [[WeakSet]] للمراجع الدايرية: من غيره [[loop.self]] كان هيلف لحد [[RangeError: Maximum call stack size exceeded]].
-- الـ descriptor مش القيمة: لو فيه getter مبنقراهوش.
-- التحذير بس لما الأب [[frozen]]: لأن ده المكان اللي الناس بتفتكر فيه إن «كله اتقفل». ولاحظ إن [[settings.db.pool]] [[open]] جوه [[sealed]] من غير تحذير، لأن الـ seal أصلًا بيسمح بالتعديل.
-
-**الغلطة اللي حصلت:** أول نسخة كانت من غير سطر [[seen.has(value)]]، فالـ [[loop]] وقع البرنامج كله: [[RangeError: Maximum call stack size exceeded]] (الدالة نادت نفسها على [[loop.self]] ثم [[loop.self.self]] للأبد). الحل [[WeakSet]] بيفتكر اللي اتزار، ولما الـ object يتكرر بنكتب سطر «مرجع دايري» ونرجع.` },
-        { lvl: 'متوسط', t: R`Money بيتحوّل صح ومبيتجمعش غلط`, what: R`class [[Money]] في [[money.js]]: المبلغ قروش في [[#cents]] (integer، وأي كسر بيرمي)، و [[Money.from('125.50')]] بيقرا نص برقمين عشريين بالكتير، و [[add]] و [[subtract]] بيرفضوا عملتين مختلفتين، و [[allocate(n)]] بيقسم المبلغ على [[n]] من غير ما قرش يضيع. والتحويل: [[Number(m)]] رقم، و [[String(m)]] و template literal [["125.50 EGP"]]، و [[toLocaleString('ar-EG')]] بالأرقام العربي، و [[JSON.stringify]] بيطلّع [[{ amount, currency }]]. و [[m + 10]] و [[m == 155.5]] **بيرموا** بدل ما يحسبوا غلط. والـ object متجمّد. من دروس «valueOf و toString و Symbol.toPrimitive» و «Object.preventExtensions و seal و freeze» و «Function» ([[instanceof]]).`, done: R`[[demo.js]] بيطبع الإجمالي ١٥٥٫٥٠ بالشكلين، و [[allocate(3)]] بيطلّع [[51.84]] و [[51.83]] و [[51.83]] (مجموعهم المبلغ بالظبط)، والست محاولات الغلط بيرموا ٦ رسايل مفهومة، والترتيب بـ [[a - b]] شغال.`, sol: R`**هتشوف إيه:** المبلغ بكل الأشكال، وبعده كل استخدام غلط بيرمي رسالة بتقولك تعمل إيه:
-
-~~~text الناتج: node demo.js
-155.50 EGP | ١٥٥٫٥٠ EGP | 155.50 EGP
-155.5 true 15550
-الإجمالي: 155.50 EGP | 155.50 EGP
-{"order":7,"total":{"amount":155.5,"currency":"EGP"}}
-[ '51.84 EGP', '51.83 EGP', '51.83 EGP' ]
-TypeError: Money مبيتجمعش ولا يتقارن بـ == ضمني: استخدم add() أو Number(m) أو String(m)
-TypeError: Money مبيتجمعش ولا يتقارن بـ == ضمني: استخدم add() أو Number(m) أو String(m)
-TypeError: متوقع Money، وصلني number
-TypeError: عملتين مختلفتين: EGP و USD
-SyntaxError: مبلغ مش مفهوم: "12.345"
-TypeError: Money بياخد قروش (integer)، وصلني 1.5
-TypeError: Cannot add property extra, object is not extensible
-[ '25.00 EGP', '90.00 EGP', '150.00 EGP' ]
-~~~
-
-~~~js money.js
-// Money: فلوس بالقروش (integer) بتتحوّل لرقم أو نص صح، وبترفض الجمع الضمني
-export class Money {
-  #cents;
-  #currency;
-
-  constructor(cents, currency = 'EGP') {
-    if (!Number.isSafeInteger(cents)) throw new TypeError('Money بياخد قروش (integer)، وصلني ' + cents);
     this.#cents = cents;
-    this.#currency = currency;
-    Object.freeze(this);
   }
 
-  static from(text, currency = 'EGP') {
-    const m = /^\s*(-)?(\d+)(?:\.(\d{1,2}))?\s*$/.exec(String(text));
-    if (!m) throw new SyntaxError('مبلغ مش مفهوم: ' + JSON.stringify(text));
-    const cents = Number(m[2]) * 100 + Number((m[3] ?? '0').padEnd(2, '0'));
-    return new Money(m[1] ? -cents : cents, currency);
+  static from(pounds) {
+    if (typeof pounds !== "number" || !Number.isFinite(pounds) || pounds < 0) {
+      const shown = typeof pounds === "string" ? '"' + pounds + '"' : String(pounds);
+      throw new RangeError("المبلغ لازم يبقى رقم مش سالب: " + shown);
+    }
+    return new Money(Math.round(pounds * 100));
   }
 
-  get cents() { return this.#cents; }
-  get currency() { return this.#currency; }
-
-  #same(other) {
-    if (!(other instanceof Money)) throw new TypeError('متوقع Money، وصلني ' + typeof other);
-    if (other.currency !== this.#currency) throw new TypeError('عملتين مختلفتين: ' + this.#currency + ' و ' + other.currency);
-    return other.cents;
+  get cents() {
+    return this.#cents;
   }
 
-  add(other) { return new Money(this.#cents + this.#same(other), this.#currency); }
-  subtract(other) { return new Money(this.#cents - this.#same(other), this.#currency); }
-
-  allocate(parts) {
-    const base = Math.trunc(this.#cents / parts);
-    let rest = this.#cents - base * parts;
-    return Array.from({ length: parts }, () => new Money(base + (rest-- > 0 ? 1 : 0), this.#currency));
+  add(other) {
+    if (!(other instanceof Money)) throw new TypeError("add بتاخد Money بس");
+    return new Money(this.#cents + other.#cents);   // instance جديدة، والأصل زي ما هو
   }
 
-  [Symbol.toPrimitive](hint) {
-    if (hint === 'number') return this.#cents / 100;
-    if (hint === 'string') return this.toString();
-    throw new TypeError('Money مبيتجمعش ولا يتقارن بـ == ضمني: استخدم add() أو Number(m) أو String(m)');
-  }
-
-  toString() { return (this.#cents / 100).toFixed(2) + ' ' + this.#currency; }
-
-  toLocaleString(locale = 'ar-EG') {
-    const amount = new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(this.#cents / 100);
-    return amount + ' ' + this.#currency;
-  }
-
-  toJSON() { return { amount: this.#cents / 100, currency: this.#currency }; }
-}
-~~~
-
-~~~js demo.js
-import { Money } from './money.js';
-
-const price = Money.from('125.50');
-const shipping = Money.from('30');
-const total = price.add(shipping);
-
-console.log(String(total), '|', total.toLocaleString(), '|', total.toLocaleString('en-US'));
-console.log(Number(total), +total > 150, total.cents);
-console.log('الإجمالي: ' + String(total), '|', $__bt$__{total}$__bt);
-console.log(JSON.stringify({ order: 7, total }));
-console.log(total.allocate(3).map(String));
-
-const checks = [
-  () => total + 10,
-  () => total == 155.5,
-  () => total.add(155),
-  () => total.add(new Money(100, 'USD')),
-  () => Money.from('12.345'),
-  () => new Money(1.5),
-];
-for (const fn of checks) {
-  try { console.log(fn()); } catch (e) { console.log(e.name + ': ' + e.message); }
-}
-try { total.extra = 1; } catch (e) { console.log(e.name + ': ' + e.message); }
-console.log([Money.from('90'), Money.from('150'), Money.from('25')].sort((a, b) => a - b).map(String));
-~~~
-
-~~~json package.json
-{ "type": "module" }
-~~~
-
-**كل حتة بتعمل إيه:**
-
-- [[#cents]] و [[#currency]] private، و getters للقراية بس، و [[Object.freeze(this)]] في آخر الـ constructor: محدش يقدر يزوّد خاصية ([[extra]] رمت). والـ private لسه بتتقري لأن القفل مبيوصلهاش، بس محدش بيكتب فيها بعد الإنشاء.
-- [[Money.from]]: regex على النص **كله** برقمين عشريين بالكتير، و [[padEnd(2, '0')]] بيخلي [["5"]] تبقى ٥٠ قرش مش ٥. والحساب كله integers.
-- [[#same(other)]]: method private بتتأكد إن التاني [[Money]] وبنفس العملة. ورجّعت [[other.cents]] (الـ getter) لأن [[#cents]] بتاع object تاني من نفس الـ class مسموح تقراه، بس الـ getter أوضح.
-- [[allocate]]: كل جزء [[Math.trunc]] والباقي (قرش أو اتنين) بيتوزّع على الأوائل. ١٥٥٥٠ / ٣ = ٥١٨٣ والباقي ١، فالأول ٥١٨٤.
-- [[Symbol.toPrimitive]]: [['number']] الجنيهات، و [['string']] النص، و [['default']] **يرمي**. ده بيمنع [[total + 10]] (اللي [[+]] بتاعها [['default']]) و [[==]]. بس [[a - b]] في الـ sort شغال لأنه [['number']]، و template literal و [[String()]] شغالين لأنهم [['string']].
-- [[toLocaleString]] بـ [[Intl.NumberFormat]] رقمين عشريين، و [[toJSON]] عشان JSON (اللي مش بيستخدم التحويل خالص، درس الـ conversion).
-
-**الغلطات اللي حصلت وأنا ببنيه:** أول نسخة كانت [[valueOf]] و [[toString]] عاديين:
-
-~~~text الناتج من النسخة الأولى
-165.5 الإجمالي: 155.5 155.50 EGP
-0.30 EGP
-1234.5
-~~~
-
-- [[total + 10]] طلّعت [[165.5]] ساكتة: جمع جنيهات على Money من غير عملة ومن غير ما حد يلاحظ. الحل [[Symbol.toPrimitive]] اللي بيرمي في [['default']].
-- [['الإجمالي: ' + total]] طلّعت [[155.5]] من غير العملة ومن غير الصفر: الـ [[+]] راح لـ [[valueOf]]. الحل نفسه، و [[String(total)]] صراحة.
-- [[12.345 * 100]] بقت [[1234.5]] قرش (كسر). الحل [[Number.isSafeInteger]] في الـ constructor، و [[Money.from]] بيقبل رقمين عشريين بس.` },
-        { lvl: 'متوسط', t: R`tracer للدوال والـ classes بـ Proxy`, what: R`[[trace.js]] فيه [[trace(target, { name, out })]]: لو الـ target دالة بيلفها في Proxy بـ [[apply]] يطبع النداء بالـ arguments والنتيجة والوقت، ولو class بيلفها بـ [[construct]] ويلف الـ instance نفسه، ولو object بيلف كل method بيتقري منه بـ [[get]]. النداءات المتداخلة (method بتنادي method) بتتطبع بمسافة، والـ error بيتطبع ويترمي زي ما هو. والـ [[name]] و [[length]] و [[instanceof]] بيفضلوا زي الأصل، و [[cart.add === cart.add]]. من دروس «Proxy: باقي الـ traps» و «Reflect» و «Function».`, done: R`[[node demo.js]] بيطبع شجرة نداءات Cart فيها [[Cart.subtotal]] متزقّحة جوه [[Cart.total]]، والنداء اللي رمى بعلامة ✗ والبرنامج كمّل، و [[slugify]] كمان، وآخر سطر [[Cart 2 2 true true]].`, sol: R`**هتشوف إيه:** كل نداء بسهم داخل وسهم خارج بالنتيجة والوقت، والمتداخل بمسافة:
-
-~~~text الناتج: node demo.js
-→ new Cart("Sara")
-← new Cart = Cart{…} (0.07ms)
-→ Cart.add("A-7", 120, 2)
-← Cart.add = 1 (0.04ms)
-→ Cart.add("B-1", 45)
-← Cart.add = 2 (0.00ms)
-→ Cart.total(0.14)
-  → Cart.subtotal()
-  ← Cart.subtotal = 285 (0.03ms)
-← Cart.total = 324.9 (0.16ms)
-→ Cart.total(-1)
-✗ Cart.total رمى RangeError: الضريبة بالسالب
-→ slugify("  Hello World ")
-← slugify = "hello-world" (0.09ms)
-
-الاسم والـ length لسه زي الأصل: Cart 2 2 true true
-~~~
-
-~~~js trace.js
-// trace(): بيلف دالة أو class أو object في Proxy ويسجّل كل نداء بالـ arguments والنتيجة والوقت
-let depth = 0;
-const wrapped = new WeakMap();
-
-function show(v) {
-  if (typeof v === 'function') return 'ƒ ' + (v.name || 'anonymous');
-  if (typeof v === 'string') return JSON.stringify(v);
-  if (v && typeof v === 'object') return v.constructor?.name === 'Object' ? JSON.stringify(v) : (v.constructor?.name ?? 'Object') + '{…}';
-  return String(v);
-}
-
-function record(label, args, run, out) {
-  const pad = '  '.repeat(depth);
-  out(pad + '→ ' + label + '(' + args.map(show).join(', ') + ')');
-  depth++;
-  const t0 = performance.now();
-  try {
-    const result = run();
-    out(pad + '← ' + label + ' = ' + show(result) + ' (' + (performance.now() - t0).toFixed(2) + 'ms)');
-    return result;
-  } catch (e) {
-    out(pad + '✗ ' + label + ' رمى ' + e.name + ': ' + e.message);
-    throw e;
-  } finally {
-    depth--;
+  format() {
+    return (this.#cents / 100).toFixed(2) + " جنيه";
   }
 }
 
-export function trace(target, { name = target.name || 'object', out = console.log } = {}) {
-  if (wrapped.has(target)) return wrapped.get(target);
-  const handler = {
-    apply: (fn, thisArg, args) => record(name, args, () => Reflect.apply(fn, thisArg, args), out),
-    construct: (C, args, newTarget) => record('new ' + name, args, () => {
-      const instance = Reflect.construct(C, args, newTarget);
-      return trace(instance, { name, out });
-    }, out),
-    get(t, key, receiver) {
-      const value = Reflect.get(t, key, receiver);
-      if (typeof t === 'function' || typeof value !== 'function' || typeof key === 'symbol' || key === 'constructor') return value;
-      return trace(value, { name: name + '.' + key, out });
-    },
-  };
-  const proxy = new Proxy(target, handler);
-  wrapped.set(target, proxy);
-  return proxy;
+console.log(0.1 + 0.2);
+const a = Money.from(0.1);
+const sum = a.add(Money.from(0.2));
+console.log(sum.format(), "| الأصل:", a.format(), "| قروش:", sum.cents);
+console.log(Money.from(12.5).format(), Money.from(0).format(), Money.from(1999.99).add(Money.from(0.01)).format());
+
+for (const bad of [-5, "10", NaN, Infinity]) {
+  try { Money.from(bad); } catch (e) { console.log(e.name + ": " + e.message); }
 }
+try { a.add(0.2); } catch (e) { console.log(e.name + ": " + e.message); }
+console.log(a.cents, a.toString(), JSON.stringify(a));
 ~~~
 
-~~~js demo.js
-import { trace } from './trace.js';
+## هتشوف إيه
 
-class Cart {
-  constructor(owner) { this.owner = owner; this.items = []; }
-  add(sku, price, qty = 1) { this.items.push({ sku, price, qty }); return this.items.length; }
-  subtotal() { return this.items.reduce((s, i) => s + i.price * i.qty, 0); }
-  total(taxRate) {
-    if (taxRate < 0) throw new RangeError('الضريبة بالسالب');
-    return Math.round(this.subtotal() * (1 + taxRate) * 100) / 100;
+~~~text الناتج (node money.js، Node 24)
+0.30000000000000004
+0.30 جنيه | الأصل: 0.10 جنيه | قروش: 30
+12.50 جنيه 0.00 جنيه 2000.00 جنيه
+RangeError: المبلغ لازم يبقى رقم مش سالب: -5
+RangeError: المبلغ لازم يبقى رقم مش سالب: "10"
+RangeError: المبلغ لازم يبقى رقم مش سالب: NaN
+RangeError: المبلغ لازم يبقى رقم مش سالب: Infinity
+TypeError: add بتاخد Money بس
+10 [object Object] {}
+~~~
+
+## كل حتة بتعمل إيه
+
+- **[[#cents]] عدد صحيح:** المشكلة في أول سطر ([[0.30000000000000004]]) سببها إن 0.1 و 0.2 مش بيتخزنوا بالظبط في الـ binary. القروش أعداد صحيحة، والأعداد الصحيحة لحد [[Number.MAX_SAFE_INTEGER]] بتتخزن بالظبط، فـ 10 + 20 = 30 دايمًا.
+- **[[static from(pounds)]]:** المدخل بالجنيه (زي ما اليوزر بيكتب)، و [[Math.round(pounds * 100)]] بيحوّل لقروش ويقرّب أي كسر صغير زي [[0.1 * 100 = 10.000000000000002]].
+- **الـ constructor بيتحقق كمان:** حتى لو حد نادى [[new Money(1.5)]] مباشرة، بيترفض. فمستحيل يبقى فيه Money قيمتها مش سليمة.
+- **[[other.#cents]]:** الـ private field ينفع يتقري من أي instance من **نفس الكلاس** جوه جسم الكلاس. و [[instanceof Money]] قبلها عشان لو حد بعت رقم، الرسالة تبقى واضحة بدل [[TypeError: Cannot read private member]].
+- **[[add]] بترجّع [[new Money]]:** الـ object مبيتغيرش بعد ما يتعمل (immutable)، والدليل [[a.format()]] لسه 0.10.
+- **آخر سطر:** الـ private field مش بيظهر في [[JSON.stringify]] ([[{}]]) ولا في [[toString]]. لو محتاج تحفظه زوّد [[toJSON]] (تمرين BankAccount).
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **أول نسخة كانت [[this.pounds = pounds]] و [[add]] بتجمع جنيهات:** [[Money.from(0.1).add(Money.from(0.2)).format()]] طلعت [["0.30"]] بالصدفة بسبب [[toFixed(2)]]، لكن [[sum.pounds === 0.3]] كانت [[false]]، وأي مقارنة أو تجميع كبير كان هيبوظ. القروش هي الحل الحقيقي مش التقريب في العرض.
+- **[[typeof pounds !== "number"]] لوحدها:** عدّت [[NaN]] و [[Infinity]] (نوعهم number). زوّدت [[Number.isFinite]].
+- **رسالة الـ error كانت بتقول [[null]] لـ NaN و Infinity:** كنت كاتب [[JSON.stringify(pounds)]] في الرسالة، و [[JSON.stringify(NaN)]] بـ [["null"]]. بقت [[String(pounds)]]، وعلامات تنصيص للنص بس عشان يبان إن [["10"]] نص.` },
+        { lvl: 'صغير', t: R`Stack بـ private field`, what: R`[[class Stack]] فيها [[#items]] و [[push]] و [[pop]] و [[peek]] و getter [[size]]، و [[pop]] على stack فاضي بيرمي Error برسالة. من درس class.`, done: R`[[push(1).push(2)]] بتتسلسل (لأنها بترجّع this)، و [[pop()]] بترجّع [[2]]، و [[size]] صح، و [[stack.items]] بترجّع [[undefined]] من برّه.`, sol: R`~~~js stack.js
+class Stack {
+  #items = [];
+
+  push(item) {
+    this.#items.push(item);
+    return this;                     // عشان push(1).push(2)
+  }
+  pop() {
+    if (this.#items.length === 0) throw new Error("الـ stack فاضي: مفيش حاجة تتشال");
+    return this.#items.pop();
+  }
+  peek() {
+    return this.#items.at(-1);
+  }
+  get size() {
+    return this.#items.length;
   }
 }
 
-const TracedCart = trace(Cart);
-const cart = new TracedCart('Sara');
-cart.add('A-7', 120, 2);
-cart.add('B-1', 45);
-cart.total(0.14);
-try { cart.total(-1); } catch {}
-
-const slugify = trace((text) => text.trim().toLowerCase().replace(/\s+/g, '-'), { name: 'slugify' });
-slugify('  Hello World ');
-console.log('');
-console.log('الاسم والـ length لسه زي الأصل:', TracedCart.name, Cart.prototype.add.length, cart.add.length, cart instanceof Cart, cart.add === cart.add);
-~~~
-
-~~~json package.json
-{ "type": "module" }
-~~~
-
-**كل حتة بتعمل إيه:**
-
-- [[record]]: بيطبع السهم الداخل، ويزوّد [[depth]]، وينفّذ، ويطبع النتيجة أو الـ error، وفي [[finally]] بيرجّع [[depth]] حتى لو حصل error. من غير [[finally]] أول error كان هيخلّي كل اللي بعده متزقّح زيادة.
-- [[apply]] trap: للدوال. [[Reflect.apply(fn, thisArg, args)]] بنفس الـ [[this]] اللي اتنادت بيه.
-- [[construct]] trap: للـ classes. بيعمل الـ instance بـ [[Reflect.construct(C, args, newTarget)]] (عشان الوراثة)، وبعدين يلفّه هو كمان في [[trace]] عشان الـ methods تتسجّل.
-- [[get]] trap: لما تقرا method من object متلف بيرجّعها ملفوفة باسم [[Cart.add]]. وبيسيب كل حاجة تانية: القيم العادية، والـ Symbols، و [[constructor]] (عشان [[instanceof]] و [[show]] يشتغلوا)، وأي حاجة على دالة (عشان [[TracedCart.name]] يرجع النص مش Proxy).
-- ليه [[Cart.subtotal]] اتسجّلت؟ [[total]] اتنادت بـ [[this]] = الـ proxy (مش الـ object الأصلي)، فـ [[this.subtotal()]] جواها عدّت على [[get]] تاني. ده نفس سبب الـ receiver في درس «Proxy و Reflect».
-- [[WeakMap]] كاش: كل target بيتلف مرة واحدة.
-
-**الغلطات اللي حصلت:** أول نسخة كانت من غير الـ [[WeakMap]]، والسطر الأخير طلع:
-
-~~~text الناتج من النسخة الأولى (آخر سطر)
-الاسم والـ length لسه زي الأصل: Cart 2 2 true false
-~~~
-
-[[cart.add === cart.add]] بقت [[false]] لأن كل قراية بتعمل Proxy جديد. ده بيبوّظ أي كود بيقارن دوال (زي [[removeEventListener(type, fn)]] اللي لازم ياخد نفس الدالة)، وبيعمل objects جديدة مع كل نداء. والكاش [[WeakMap]] مش [[Map]] عشان الـ targets تتمسح من الذاكرة لما محدش يستخدمها.
-
-**الوقت:** الأرقام بين القوسين بتتغيّر كل تشغيل، والمهم ترتيب السطور والقيم.` },
-        { lvl: 'كبير', t: R`config store بـ schema و undo و views بتتسحب`, what: R`مكتبة صغيرة [[config-store]]: [[createStore(schema, initial)]] بترجّع [[{ config, reset, undo, history, freeze, frozen, view, revokeViews }]]. الـ [[schema]] لكل إعداد: نوعه ([[integer]] و [[string]] و [[boolean]])، وحدوده ([[min]] و [[max]] و [[oneOf]] و [[pattern]])، وقيمته الافتراضية (اللي بتتفحص هي كمان). [[config]] Proxy: القراية لاسم غلط بترمي [[ReferenceError]] ومعاها «قصدك port؟»، والكتابة بتتحقق وبتتسجّل في [[history]]، و [[delete]] و [[Object.defineProperty]] و [[Object.setPrototypeOf]] بيترفضوا برسايل بتقول تعمل إيه، و JSON والـ spread و [[Object.keys]] و [[in]] شغالين. [[undo()]] بيرجّع آخر تغيير، و [[freeze()]] بيقفل كل حاجة، و [[view()]] بيدّي نسخة للقراية بس بـ [[Proxy.revocable]] و [[revokeViews()]] بيسحبها كلها. ومعاه ١٠ اختبارات بـ [[node --test]]. من الوحدة كلها.`, done: R`[[npm test]] بيطلّع ١٠ ✔ وصفر fail، و [[node demo.js]] بيطلّع السيناريو كامل: كتابات سليمة، و ٦ محاولات غلط برسايلها، و history و undo، و view بتقرا آخر قيمة ومبتكتبش، وبعد [[freeze]] مفيش كتابة، وبعد [[revokeViews]] الـ view بترمي.`, ext: R`زوّد نوع [[url]] (بـ [[URL.canParse]]) ونوع [[array]] بعناصر من نوع معيّن، و [[subscribe(key, fn)]] بينادي الدالة مع كل تغيير، و [[loadEnv(process.env, prefix)]] بيقرا [[APP_PORT]] ويحوّله للنوع الصح، و [[redo()]].`, sol: R`**هتشوف إيه:** سيناريو كامل، كل سطر فيه العملية ونتيجتها أو الـ error بتاعها:
-
-~~~text الناتج: node demo.js
-البداية                    {"port":8080,"host":"localhost","logLevel":"info","debug":false}
-config.port = 9090         9090
-config.logLevel = "debug"  debug
-config.port = "80"         ✗ TypeError: port: لازم رقم صحيح، وصلني "80"
-config.port = 70000        ✗ TypeError: port: أكبر من 65535، وصلني 70000
-config.prot                ✗ ReferenceError: مفيش إعداد اسمه prot، قصدك port؟
-config.colour = "red"      ✗ ReferenceError: مفيش إعداد اسمه colour
-delete config.host         ✗ TypeError: مينفعش تمسح host، استخدم reset("host")
-defineProperty             ✗ TypeError: مينفعش Object.defineProperty على الإعدادات (port)، اكتب config.port = ...
-Object.keys                port, host, logLevel, debug
-history                    port: 8080 → 9090 | logLevel: info → debug
-undo()                     {"key":"logLevel","from":"info","to":"debug"}
-بعد undo                   info
-view.port                  9090
-view.port = 1              ✗ TypeError: view للقراية بس: مينفعش تكتب port
-بعد freeze: config.debug   ✗ TypeError: الإعدادات اتقفلت بـ freeze()، مينفعش تتغيّر
-بعد freeze: undo()         ✗ TypeError: الإعدادات اتقفلت بـ freeze()، مينفعش تتغيّر
-revokeViews()              1
-view.port بعد revoke       ✗ TypeError: Cannot perform 'get' on a proxy that has been revoked
-الآخر                      {"port":9090,"host":"localhost","logLevel":"info","debug":false}
-~~~
-
-### شجرة الملفات
-
-~~~text config-store/
-config-store/
-├── package.json            type: module و npm test
-├── demo.js                 السيناريو اللي فوق
-├── src/
-│   ├── schema.js           قواعد التحقق، وفحص الـ schema نفسها، و «قصدك ...؟»
-│   └── config-store.js     createStore: الـ Proxy والـ history والـ views
-└── test/
-    └── config-store.test.js   ١٠ اختبارات بـ node:test
-~~~
-
-### ترتيب البناء
-
-1. [[schema.js]] الأول: دالة لكل نوع بترجّع رسالة أو [[null]]، واختبرتها في الـ REPL على قيم صح وغلط.
-2. [[createStore]] بـ [[get]] و [[set]] بس، وبعدها الاختبارين الأولانيين.
-3. الأبواب الخلفية: [[deleteProperty]] و [[defineProperty]] و [[setPrototypeOf]]، واختبارهم.
-4. [[history]] و [[undo]]، وبعدين [[freeze]]، وبعدين [[view]] و [[revokeViews]]، وكل واحدة باختبار قبل اللي بعدها.
-5. [[demo.js]] في الآخر عشان أشوف الرسايل كلها مع بعض وأصلّح صياغتها.
-
-~~~json package.json
-{
-  "name": "config-store",
-  "type": "module",
-  "scripts": { "test": "node --test", "demo": "node demo.js" }
-}
-~~~
-
-~~~js src/schema.js
-// قواعد التحقق: كل قاعدة بترجّع رسالة الغلط أو null
-const CHECKS = {
-  integer: (v, r) => !Number.isInteger(v) ? 'لازم رقم صحيح'
-    : r.min !== undefined && v < r.min ? 'أقل من ' + r.min
-    : r.max !== undefined && v > r.max ? 'أكبر من ' + r.max : null,
-  string: (v, r) => typeof v !== 'string' ? 'لازم نص'
-    : r.oneOf && !r.oneOf.includes(v) ? 'لازم واحدة من: ' + r.oneOf.join(' أو ')
-    : r.pattern && !r.pattern.test(v) ? 'شكلها مش مظبوط (' + r.pattern + ')' : null,
-  boolean: (v) => typeof v !== 'boolean' ? 'لازم true أو false' : null,
-};
-
-export function validateSchema(schema) {
-  for (const [key, rule] of Object.entries(schema)) {
-    if (!CHECKS[rule.type]) throw new TypeError('نوع مش معروف لـ ' + key + ': ' + rule.type);
-    const problem = CHECKS[rule.type](rule.default, rule);
-    if (problem) throw new TypeError('الـ default بتاع ' + key + ' نفسه غلط: ' + problem);
-  }
-  return schema;
+const stack = new Stack();
+stack.push(1).push(2);
+console.log(stack.pop(), stack.size, stack.peek(), stack.items);
+stack.pop();
+try {
+  stack.pop();
+} catch (e) {
+  console.log(e.name + ": " + e.message);
 }
 
-export function checkValue(schema, key, value) {
-  const problem = CHECKS[schema[key].type](value, schema[key]);
-  return problem && key + ': ' + problem + '، وصلني ' + JSON.stringify(value);
-}
-
-// أقرب اسم بعدد التعديلات (Levenshtein)، عشان «prot» تقول «قصدك port؟»
-function distance(a, b) {
-  const row = Array.from({ length: b.length + 1 }, (_, i) => i);
-  for (let i = 1; i <= a.length; i++) {
-    let prev = row[0];
-    row[0] = i;
-    for (let j = 1; j <= b.length; j++) {
-      const tmp = row[j];
-      row[j] = Math.min(row[j] + 1, row[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1));
-      prev = tmp;
+// استخدام حقيقي: الأقواس متقفلة صح؟
+function isBalanced(text) {
+  const pairs = { ")": "(", "]": "[", "}": "{" };
+  const open = new Stack();
+  for (const ch of text) {
+    if ("([{".includes(ch)) open.push(ch);
+    else if (ch in pairs) {
+      if (open.size === 0 || open.pop() !== pairs[ch]) return false;
     }
   }
-  return row[b.length];
+  return open.size === 0;
 }
-
-export function suggest(key, keys) {
-  const best = keys.map((k) => [k, distance(key, k)]).sort((x, y) => x[1] - y[1])[0];
-  return best && best[1] <= 2 ? '، قصدك ' + best[0] + '؟' : '';
-}
+console.log(isBalanced("f(a[0], { b: 1 })"), isBalanced("(]"), isBalanced("(("), isBalanced("))"));
 ~~~
 
-~~~js src/config-store.js
-import { validateSchema, checkValue, suggest } from './schema.js';
+## هتشوف إيه
 
-export function createStore(schema, initial = {}) {
-  validateSchema(schema);
-  const keys = Object.keys(schema);
-  const data = Object.create(null);
-  for (const key of keys) data[key] = schema[key].default;
-  const changes = [];
-  const revokers = [];
+~~~text الناتج (node stack.js، Node 24)
+2 1 1 undefined
+Error: الـ stack فاضي: مفيش حاجة تتشال
+true false false false
+~~~
 
-  const unknown = (key) => new ReferenceError('مفيش إعداد اسمه ' + key + suggest(key, keys));
-  const locked = () => new TypeError('الإعدادات اتقفلت بـ freeze()، مينفعش تتغيّر');
+## كل حتة بتعمل إيه
 
-  function write(key, value, record) {
-    if (Object.isFrozen(data)) throw locked();
-    if (!Object.hasOwn(schema, key)) throw unknown(key);
-    const problem = checkValue(schema, key, value);
-    if (problem) throw new TypeError(problem);
-    if (record && data[key] !== value) changes.push(Object.freeze({ key, from: data[key], to: value }));
-    data[key] = value;
-    return true;
+- **[[#items]]:** الـ array الخاصة. [[stack.items]] من برّه بـ [[undefined]] لأن [[#items]] مش خاصية اسمها items أصلًا.
+- **[[push]] بترجّع [[this]]:** النداء [[stack.push(1)]] بيرجّع stack، فـ [[.push(2)]] بتتنده عليه.
+- **[[pop]] على فاضي بيرمي Error:** عكس [[Array.prototype.pop]] اللي بترجّع [[undefined]] بهدوء. في stack، الشيل من فاضي غالبًا باج (زي قوس قافل من غير فاتح)، فالأحسن يبان.
+- **[[peek]] بـ [[at(-1)]]:** آخر عنصر من غير ما يشيله.
+- **[[get size]]:** getter، فبيتقري [[stack.size]] من غير أقواس، ومفيش طريقة تكتب فيه.
+- **[[isBalanced]]:** كل قوس فاتح بيدخل الـ stack، وكل قافل لازم يقابل آخر فاتح. وفي الآخر الـ stack لازم يبقى فاضي. ده نفس اللي محرر الكود بيعمله وهو بيلوّن الأقواس.
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **[[isBalanced("))")]] رمت Error بدل ما ترجّع false:** [[open.pop()]] على stack فاضي. الحل [[open.size === 0 ||]] قبلها.
+- **[[size()]] كانت method:** [[stack.size]] كانت بترجّع الدالة نفسها والـ console طبع [[[Function: size]]]. خليتها getter.` },
+        { lvl: 'متوسط', t: R`عيلة errors للـ API`, what: R`[[class AppError extends Error]] فيها [[status]]، ومنها [[NotFoundError]] (404) و [[ValidationError]] (400 ومعاها [[field]]) و [[AuthError]] (401). ودالة [[toResponse(err)]] بترجّع [[{ status, body }]] حسب النوع بـ [[instanceof]]، وأي error مش معروف بيبقى 500 من غير تفاصيله. من درس extends و super ودرس class.`, done: R`كل نوع بيطلع الـ status بتاعه، و [[new TypeError("x")]] بيطلع 500 والـ body مفيهوش [["x"]]، و [[err.name]] صح لكل نوع، وكل ده متجرّب بـ [[console.assert]].`, sol: R`~~~js errors.js
+class AppError extends Error {
+  constructor(message, status = 500, options) {
+    super(message, options);
+    this.name = this.constructor.name;      // اسم الكلاس الحقيقي حتى في الأبناء
+    this.status = status;
+  }
+}
+class NotFoundError extends AppError {
+  constructor(what) {
+    super(what + " مش موجود", 404);
+  }
+}
+class ValidationError extends AppError {
+  constructor(message, field) {
+    super(message, 400);
+    this.field = field;
+  }
+}
+class AuthError extends AppError {
+  constructor(message = "لازم تسجّل دخول") {
+    super(message, 401);
+  }
+}
+
+function toResponse(err, log = console.error) {
+  if (err instanceof ValidationError) {
+    return { status: err.status, body: { error: err.message, field: err.field } };
+  }
+  if (err instanceof AppError) {
+    return { status: err.status, body: { error: err.message } };
+  }
+  log("[500]", err);                         // التفاصيل للّوج بس، مش لليوزر
+  return { status: 500, body: { error: "حصل خطأ عندنا" } };
+}
+
+// الاختبارات
+let passed = 0, total = 0;
+function check(cond, msg) {
+  total++;
+  console.assert(cond, msg);
+  if (cond) passed++;
+}
+
+const logged = [];
+const quiet = (...a) => logged.push(a);
+
+const nf = toResponse(new NotFoundError("المنتج 7"));
+check(nf.status === 404 && nf.body.error === "المنتج 7 مش موجود", "404");
+const val = toResponse(new ValidationError("الإيميل غلط", "email"));
+check(val.status === 400 && val.body.field === "email", "400 + field");
+const auth = toResponse(new AuthError());
+check(auth.status === 401 && auth.body.error === "لازم تسجّل دخول", "401");
+const unknown = toResponse(new TypeError("x is undefined في db.js:42"), quiet);
+check(unknown.status === 500, "500");
+check(!JSON.stringify(unknown.body).includes("x is undefined"), "الـ body مفيهوش التفاصيل");
+check(logged.length === 1 && logged[0][1] instanceof TypeError, "التفاصيل راحت للّوج");
+check(new NotFoundError("x").name === "NotFoundError" && new AuthError().name === "AuthError", "name");
+check(new ValidationError("m", "f") instanceof AppError && new ValidationError("m", "f") instanceof Error, "السلسلة");
+check(String(new AuthError()) === "AuthError: لازم تسجّل دخول", "String(err)");
+const wrapped = new AppError("فشل الحفظ", 503, { cause: new Error("ECONNREFUSED") });
+check(toResponse(wrapped).status === 503 && wrapped.cause.message === "ECONNREFUSED", "cause");
+
+console.log(passed + " من " + total + " assert عدّوا");
+console.log(nf, val, unknown);
+~~~
+
+## هتشوف إيه
+
+~~~text الناتج (node errors.js، Node 24)
+10 من 10 assert عدّوا
+{ status: 404, body: { error: 'المنتج 7 مش موجود' } } { status: 400, body: { error: 'الإيميل غلط', field: 'email' } } { status: 500, body: { error: 'حصل خطأ عندنا' } }
+~~~
+
+## كل حتة بتعمل إيه
+
+- **[[AppError extends Error]]:** كل errors التطبيق ليهم أب واحد فيه [[status]]. فـ [[toResponse]] تقدر تقول «أي AppError، خد الـ status بتاعه» من غير ما تعرف كل الأنواع.
+- **[[this.name = this.constructor.name]]:** مكتوبة مرة واحدة في الأب، وبتدّي كل ابن اسمه هو، لأن this وقت التنفيذ هي الـ instance الحقيقي ([[NotFoundError]] مثلًا). ملحوظة: لو الكود اتعمله minify الأسامي ممكن تتغير، وساعتها اكتب الاسم صريح في كل كلاس.
+- **[[super(message, options)]]:** الـ [[options]] بتعدّي [[{ cause }]] لـ Error، فتقدر تلف error قديم في جديد من غير ما تضيّع الأصلي (آخر assert).
+- **ترتيب الـ [[instanceof]]:** [[ValidationError]] الأول لأنه محتاج [[field]] زيادة. لو [[AppError]] الأول كان هيمسكه وتضيع الـ field.
+- **الـ 500:** أي error مش معروف (باج حقيقي) بيروح للّوج كامل، واليوزر بياخد رسالة عامة. ده أمان: رسالة زي [["x is undefined في db.js:42"]] بتكشف تفاصيل الكود لأي حد.
+- **[[log]] parameter:** في الشغل الحقيقي [[console.error]]، وفي الاختبار دالة بتجمع، فنتأكد إن التفاصيل اتسجّلت من غير ما تملا الشاشة.
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **[[err.name]] كان [["Error"]] لكل الأنواع:** نسيت [[this.name]]، والـ [[name]] بيتورث من [[Error.prototype]]. الـ assert بتاع name مسكها.
+- **أول [[toResponse]] كانت بترجّع [[body: { error: err.message }]] لأي error:** رسالة الـ TypeError بتفاصيل الملف ظهرت في الـ response. الـ assert الخامس اتكتب عشان ده ميرجعش.` },
+        { lvl: 'متوسط', dir: "shapes-page", t: R`أشكال على الصفحة`, what: R`[[Shape]] وتحتها [[Circle]] و [[Rect]] و [[Square extends Rect]]، كل واحدة بتعرف [[area()]] و [[render(root)]] بترسم [[div]] بالمقاس الصح بـ [[style]]. فورم بتختار منه الشكل والمقاسات وبيضيفه. من دروس الوحدة ووحدة الـ DOM.`, done: R`[[new Square(3) instanceof Rect]] بترجّع [[true]]، والمساحة الكلية تحت الرسمة بتتحدث مع كل شكل جديد، والمقاس السالب أو الفاضي بيطلع رسالة ومبيرسمش.`, sol: R`~~~live 470 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أشكال</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 0; padding: 16px; background: #f8fafc; color: #0f172a; }
+  form { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  input, select, button { font: inherit; padding: 4px 8px; }
+  input { width: 70px; }
+  #canvas { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; min-height: 80px; margin: 12px 0; padding: 10px; background: #fff; border: 1px dashed #cbd5e1; border-radius: 8px; }
+  .shape { background: #60a5fa; display: grid; place-items: center; color: #fff; font-size: 12px; }
+  .shape.circle { border-radius: 50%; background: #f59e0b; }
+  .error { color: #b91c1c; min-height: 1.6em; margin: 4px 0; }
+</style>
+</head>
+<body>
+<form id="form">
+  <select name="type" aria-label="الشكل">
+    <option value="circle">دايرة (نص قطر)</option>
+    <option value="rect">مستطيل (عرض × طول)</option>
+    <option value="square">مربع (ضلع)</option>
+  </select>
+  <input name="a" inputmode="decimal" aria-label="المقاس الأول" placeholder="أ">
+  <input name="b" inputmode="decimal" aria-label="المقاس التاني" placeholder="ب">
+  <button>ارسم</button>
+</form>
+<p class="error" id="error" role="alert"></p>
+<div id="canvas"></div>
+<p>المساحة الكلية: <b id="total">0</b> وحدة مربعة</p>
+<script>
+  const UNIT = 10;                                    // كل وحدة = 10px على الشاشة
+
+  class Shape {
+    area() { return 0; }
+    size() { return { w: 0, h: 0 }; }
+    render(root) {
+      const { w, h } = this.size();
+      const el = document.createElement("div");
+      el.className = "shape " + this.constructor.name.toLowerCase();
+      el.style.width = w * UNIT + "px";
+      el.style.height = h * UNIT + "px";
+      el.textContent = Number(this.area().toFixed(1));
+      el.title = this.constructor.name;
+      root.append(el);
+      return el;
+    }
+    static checkSize(...nums) {
+      for (const n of nums) {
+        if (!Number.isFinite(n) || n < 1 || n > 30) throw new RangeError("المقاسات لازم تبقى أرقام من 1 لـ 30");
+      }
+    }
+  }
+  class Circle extends Shape {
+    constructor(r) { super(); Shape.checkSize(r); this.r = r; }
+    area() { return Math.PI * this.r ** 2; }
+    size() { return { w: this.r * 2, h: this.r * 2 }; }
+  }
+  class Rect extends Shape {
+    constructor(w, h) { super(); Shape.checkSize(w, h); this.w = w; this.h = h; }
+    area() { return this.w * this.h; }
+    size() { return { w: this.w, h: this.h }; }
+  }
+  class Square extends Rect {
+    constructor(side) { super(side, side); }
   }
 
-  const config = new Proxy(data, {
-    get(t, key) {
-      if (typeof key === 'symbol') return undefined;
-      if (key === 'toJSON' || key === 'then') return undefined;
-      if (Object.hasOwn(schema, key)) return t[key];
-      if (key in Object.prototype) return Object.prototype[key];
-      throw unknown(key);
-    },
-    set: (t, key, value) => write(String(key), value, true),
-    has: (t, key) => Object.hasOwn(schema, key),
-    deleteProperty(t, key) { throw new TypeError('مينفعش تمسح ' + String(key) + '، استخدم reset("' + String(key) + '")'); },
-    defineProperty(t, key) { throw new TypeError('مينفعش Object.defineProperty على الإعدادات (' + String(key) + ')، اكتب config.' + String(key) + ' = ...'); },
-    setPrototypeOf() { throw new TypeError('مينفعش تغيّر الـ prototype بتاع الإعدادات'); },
-    ownKeys: (t) => Reflect.ownKeys(t),
-    getOwnPropertyDescriptor: (t, key) => Reflect.getOwnPropertyDescriptor(t, key),
+  const shapes = [];
+  const form = document.querySelector("#form");
+  const error = document.querySelector("#error");
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const { type, a, b } = Object.fromEntries(new FormData(form));
+    const x = a.trim() === "" ? NaN : Number(a);
+    const y = b.trim() === "" ? NaN : Number(b);
+    try {
+      const shape = type === "circle" ? new Circle(x) : type === "rect" ? new Rect(x, y) : new Square(x);
+      shape.render(document.querySelector("#canvas"));
+      shapes.push(shape);
+      error.textContent = "";
+      const total = shapes.reduce((sum, s) => sum + s.area(), 0);
+      document.querySelector("#total").textContent = Number(total.toFixed(1));
+    } catch (err) {
+      if (!(err instanceof RangeError)) throw err;
+      error.textContent = err.message;
+    }
   });
-
-  for (const [key, value] of Object.entries(initial)) write(key, value, false);
-
-  return {
-    config,
-    reset: (key) => write(key, schema[key]?.default, true) && undefined,
-    undo() {
-      if (Object.isFrozen(data)) throw locked();
-      const last = changes.pop();
-      if (last) write(last.key, last.from, false);
-      return last ?? null;
-    },
-    history: () => Object.freeze([...changes]),
-    freeze() { Object.freeze(data); return this; },
-    get frozen() { return Object.isFrozen(data); },
-    view() {
-      const { proxy, revoke } = Proxy.revocable(data, {
-        set(t, key) { throw new TypeError('view للقراية بس: مينفعش تكتب ' + String(key)); },
-        deleteProperty(t, key) { throw new TypeError('view للقراية بس: مينفعش تمسح ' + String(key)); },
-        defineProperty(t, key) { throw new TypeError('view للقراية بس: مينفعش تعرّف ' + String(key)); },
-      });
-      revokers.push(revoke);
-      return proxy;
-    },
-    revokeViews() {
-      const n = revokers.length;
-      for (const revoke of revokers.splice(0)) revoke();
-      return n;
-    },
-  };
-}
+</script>
+</body>
+</html>
 ~~~
 
-~~~js demo.js
-import { createStore } from './src/config-store.js';
+## هتشوف إيه
 
-const schema = {
-  port: { type: 'integer', min: 1, max: 65535, default: 3000 },
-  host: { type: 'string', pattern: /^[a-z0-9.-]+$/, default: 'localhost' },
-  logLevel: { type: 'string', oneOf: ['error', 'warn', 'info', 'debug'], default: 'info' },
-  debug: { type: 'boolean', default: false },
-};
-const log = (label, fn) => { try { console.log(label.padEnd(26), fn()); } catch (e) { console.log(label.padEnd(26), '✗', e.name + ':', e.message); } };
+فورم فيه اختيار الشكل وخانتين للمقاسات وزرار «ارسم». كل شكل بيترسم في المساحة اللي تحت بمقاسه الحقيقي (كل وحدة 10px): الدايرة برتقاني مدوّر، والمستطيل والمربع أزرق، ومكتوب جوه كل واحد مساحته. وتحت المساحة الكلية بتزيد مع كل شكل. مقاس سالب أو فاضي أو أكبر من 30 بيطلع رسالة حمرا ومبيرسمش.
 
-const store = createStore(schema, { port: 8080 });
-const { config } = store;
-log('البداية', () => JSON.stringify(config));
-log('config.port = 9090', () => (config.port = 9090));
-log('config.logLevel = "debug"', () => (config.logLevel = 'debug'));
-log('config.port = "80"', () => (config.port = '80'));
-log('config.port = 70000', () => (config.port = 70000));
-log('config.prot', () => config.prot);
-log('config.colour = "red"', () => (config.colour = 'red'));
-log('delete config.host', () => delete config.host);
-log('defineProperty', () => Object.defineProperty(config, 'port', { value: 1 }));
-log('Object.keys', () => Object.keys(config).join(', '));
-log('history', () => store.history().map((c) => c.key + ': ' + c.from + ' → ' + c.to).join(' | '));
-log('undo()', () => JSON.stringify(store.undo()));
-log('بعد undo', () => config.logLevel);
-
-const view = store.view();
-log('view.port', () => view.port);
-log('view.port = 1', () => (view.port = 1));
-store.freeze();
-log('بعد freeze: config.debug', () => (config.debug = true));
-log('بعد freeze: undo()', () => store.undo());
-log('revokeViews()', () => store.revokeViews());
-log('view.port بعد revoke', () => view.port);
-log('الآخر', () => JSON.stringify(config));
+~~~text الناتج (Chrome 157، Playwright)
+دايرة 3        → div 60×60px، border-radius 50%، مكتوب 28.3، الكلية 28.3
+مستطيل 4 × 2   → div 40×20px، مكتوب 8، الكلية 36.3
+مربع 3         → div 30×30px، مكتوب 9، الكلية 45.3، و class="shape square"
+مستطيل -2 × 3  → «المقاسات لازم تبقى أرقام من 1 لـ 30»، ومفيش شكل جديد
+مستطيل 5 × فاضي → نفس الرسالة
+new Square(3) instanceof Rect → true
 ~~~
 
-~~~js test/config-store.test.js
-import { test, describe } from 'node:test';
-import assert from 'node:assert/strict';
-import { createStore } from '../src/config-store.js';
+## كل حتة بتعمل إيه
 
-const schema = {
-  port: { type: 'integer', min: 1, max: 65535, default: 3000 },
-  host: { type: 'string', pattern: /^[a-z0-9.-]+$/, default: 'localhost' },
-  debug: { type: 'boolean', default: false },
-};
+- **[[Shape]]** فيها [[render]] مكتوبة مرة واحدة: بتسأل [[this.size()]] و [[this.area()]]، وكل ابن بيرد بطريقته (polymorphism). و [[this.constructor.name.toLowerCase()]] بيدّي الـ class بتاع الـ CSS ([[circle]] أو [[rect]] أو [[square]]) من غير [[if]].
+- **[[Square extends Rect]]:** المربع **نوع من** المستطيل، فبيورث [[area]] و [[size]] كاملين، والـ constructor بتاعه سطر واحد [[super(side, side)]]. والدليل [[instanceof Rect]] بـ [[true]].
+- **[[static checkSize(...nums)]]:** التحقق في مكان واحد بيستخدمه كل constructor. بيرمي [[RangeError]] قبل ما أي حاجة تترسم.
+- **[[a.trim() === "" ? NaN : Number(a)]]:** لأن [[Number("")]] بـ [[0]] مش NaN، وكانت هتعدّي على أنها رقم.
+- **[[if (!(err instanceof RangeError)) throw err]]:** الـ catch بيمسك أخطاء التحقق بس. أي باج تاني يطلع في Console زي ما هو.
+- **[[el.style.width = w * UNIT + "px"]]:** المقاس في الـ JS بالوحدات، والتحويل لبيكسل في مكان واحد.
 
-describe('القراية والكتابة', () => {
-  test('الـ defaults والـ initial بيتحطوا', () => {
-    const { config } = createStore(schema, { port: 8080 });
-    assert.deepEqual({ ...config }, { port: 8080, host: 'localhost', debug: false });
-  });
-  test('قيمة سليمة بتتكتب وقيمة غلط بترمي TypeError فيه اسم الإعداد', () => {
-    const { config } = createStore(schema);
-    config.port = 443;
-    assert.equal(config.port, 443);
-    assert.throws(() => { config.port = '80'; }, { name: 'TypeError', message: /^port: لازم رقم صحيح/ });
-    assert.throws(() => { config.host = 'Bad Host'; }, /host: شكلها مش مظبوط/);
-    assert.equal(config.port, 443);
-  });
-  test('اسم غلط بيرمي ReferenceError ومعاه اقتراح', () => {
-    const { config } = createStore(schema);
-    assert.throws(() => config.prot, { name: 'ReferenceError', message: /قصدك port؟/ });
-    assert.throws(() => { config.timeout = 5; }, ReferenceError);
-  });
-  test('initial فيه قيمة غلط بيرمي قبل ما الـ store يتعمل', () => {
-    assert.throws(() => createStore(schema, { port: 0 }), /port: أقل من 1/);
-  });
-  test('schema الـ default بتاعها غلط بترمي', () => {
-    assert.throws(() => createStore({ n: { type: 'integer', min: 5, default: 1 } }), /الـ default بتاع n نفسه غلط/);
-  });
-});
+## الغلطات اللي حصلت وإزاي اتصلحت
 
-describe('الأبواب الخلفية مقفولة', () => {
-  test('delete و defineProperty و setPrototypeOf بيترفضوا', () => {
-    const { config } = createStore(schema);
-    assert.throws(() => { delete config.port; }, /reset\("port"\)/);
-    assert.throws(() => Object.defineProperty(config, 'port', { value: 1 }), /Object.defineProperty/);
-    assert.throws(() => Object.setPrototypeOf(config, {}), /prototype/);
-  });
-  test('JSON و in و Object.keys شغالين', () => {
-    const { config } = createStore(schema);
-    assert.equal(JSON.stringify(config), '{"port":3000,"host":"localhost","debug":false}');
-    assert.equal('port' in config, true);
-    assert.equal('toString' in config, false);
-    assert.deepEqual(Object.keys(config), ['port', 'host', 'debug']);
-    assert.equal(String(config), '[object Object]');
-  });
-});
+- **الخانة الفاضية كانت بترسم شكل بمقاس 0:** [[Number("")]] بـ 0. اتصلحت بحالة الفاضي.
+- **[[Square]] كانت بتكرر [[area() { return this.side ** 2; }]]:** كود مكرر ممكن يختلف عن Rect بعدين. الوراثة الصح إنها تبعت الضلع مرتين لـ Rect وخلاص.` },
+        { lvl: 'كبير', t: R`نظام مكتبة كتب`, what: R`classes [[Book]] و [[Member]] و [[Library]]: الـ Library فيها Maps خاصة للكتب والأعضاء والاستعارات، و [[borrow(memberId, isbn)]] و [[returnBook]] بيرموا errors من عيلة [[LibraryError]] ([[NotFoundError]] و [[AlreadyBorrowedError]] و [[LimitError]] لو العضو عنده ٣ كتب). و [[toJSON]] و [[static fromJSON]] عشان الحالة تتحفظ في ملف وترجع. وفي [[test.js]] حالات بـ [[console.assert]] لكل error ولرحلة حفظ وتحميل كاملة، وكل عملية بتتكتب في لوج بـ [[console.info]]. من الوحدة دي، و JSON و Map من وحدة الـ objects، و this.`, done: R`[[node test.js]] بيعدّي كل الـ asserts: استعارة كتاب مستعار بترمي [[AlreadyBorrowedError]] والحالة متغيرتش، والكتاب الرابع بيرمي [[LimitError]]، وبعد [[fromJSON(JSON.stringify(lib))]] كل الاستعارات زي ما هي و [[borrow]] شغالة على النسخة الجديدة، وملف JSON بايظ بيطلع error واضح مش crash غامض.`, ext: R`زوّد مواعيد إرجاع وغرامات بالتواريخ، وواجهة DOM فوقه، وبحث بالعنوان والمؤلف.`, sol: R`## الشكل النهائي
 
-describe('history و undo و freeze و view', () => {
-  test('كل تغيير بيتسجّل، والكتابة بنفس القيمة مبتتسجّلش، و undo بيرجّع', () => {
-    const store = createStore(schema);
-    store.config.port = 1;
-    store.config.port = 1;
-    store.config.debug = true;
-    assert.equal(store.history().length, 2);
-    assert.deepEqual(store.undo(), { key: 'debug', from: false, to: true });
-    assert.equal(store.config.debug, false);
-    assert.equal(store.undo().key, 'port');
-    assert.equal(store.undo(), null);
-  });
-  test('بعد freeze مفيش كتابة ولا undo', () => {
-    const store = createStore(schema).freeze();
-    assert.equal(store.frozen, true);
-    assert.throws(() => { store.config.port = 2; }, /اتقفلت/);
-    assert.throws(() => store.undo(), /اتقفلت/);
-    assert.equal(store.config.port, 3000);
-  });
-  test('الـ view بيقرا آخر قيمة، ومبيكتبش، وبيتقفل بـ revokeViews', () => {
-    const store = createStore(schema);
-    const view = store.view();
-    store.config.port = 9000;
-    assert.equal(view.port, 9000);
-    assert.throws(() => { view.port = 1; }, /للقراية بس/);
-    assert.equal(store.revokeViews(), 1);
-    assert.throws(() => view.port, /revoked/);
-    assert.equal(store.config.port, 9000);
-  });
-});
+~~~text الناتج (node demo.js، Node 24)
+[library] كتاب: 111 «مقدمة في JS»
+[library] كتاب: 222 «الشبكات ببساطة»
+[library] عضو: m1
+[library] استعارة: m1 ← 111
+اتحفظ: 332 حرف
+بعد التحميل: [ '111' ] 222 متاح؟ true
+استعارة على النسخة الجديدة: [ '111', '222' ]
+AlreadyBorrowedError: الكتاب 111 مستعار دلوقتي
+true LibraryError: ملف الحالة بايظ (Unexpected end of JSON input)
 ~~~
 
-~~~text الناتج: npm test
-▶ القراية والكتابة
-  ✔ الـ defaults والـ initial بيتحطوا (1.4686ms)
-  ✔ قيمة سليمة بتتكتب وقيمة غلط بترمي TypeError فيه اسم الإعداد (0.5718ms)
-  ✔ اسم غلط بيرمي ReferenceError ومعاه اقتراح (0.3536ms)
-  ✔ initial فيه قيمة غلط بيرمي قبل ما الـ store يتعمل (0.1726ms)
-  ✔ schema الـ default بتاعها غلط بترمي (0.1615ms)
-✔ القراية والكتابة (4.0212ms)
-▶ الأبواب الخلفية مقفولة
-  ✔ delete و defineProperty و setPrototypeOf بيترفضوا (0.3298ms)
-  ✔ JSON و in و Object.keys شغالين (0.2118ms)
-✔ الأبواب الخلفية مقفولة (0.7268ms)
-▶ history و undo و freeze و view
-  ✔ كل تغيير بيتسجّل، والكتابة بنفس القيمة مبتتسجّلش، و undo بيرجّع (0.2579ms)
-  ✔ بعد freeze مفيش كتابة ولا undo (0.2282ms)
-  ✔ الـ view بيقرا آخر قيمة، ومبيكتبش، وبيتقفل بـ revokeViews (0.3257ms)
-✔ history و undo و freeze و view (1.0669ms)
-ℹ tests 10
-ℹ suites 3
-ℹ pass 10
+~~~text الناتج (node --test library.test.js، Node 24)
+✔ Book و Member بيرفضوا البيانات الناقصة (1.41ms)
+✔ استعارة كتاب مستعار بترمي AlreadyBorrowedError والحالة متغيرتش (0.7786ms)
+✔ الكتاب الرابع بيرمي LimitError (0.8194ms)
+✔ عضو أو كتاب مش موجود، أو رجوع من غير المستعير: NotFoundError (0.2713ms)
+✔ كل الـ errors من عيلة LibraryError و Error (0.2216ms)
+✔ رحلة حفظ وتحميل كاملة (0.4056ms)
+✔ JSON بايظ أو شكله غلط بيطلع LibraryError واضح (0.2464ms)
+✔ كل عملية بتتكتب في اللوج (0.1339ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 87.5948
+ℹ duration_ms 91.9328
 ~~~
 
-### كل حتة مهمة بتعمل إيه وليه
+## شجرة الملفات وترتيب البناء
 
-- **[[data = Object.create(null)]]:** الـ target من غير prototype، فاسم إعداد زي [[constructor]] أو [[toString]] مش هيتلخبط بحاجة موروثة (درس «setPrototypeOf»).
-- **[[write(key, value, record)]]:** كل كتابة (من [[set]] أو [[reset]] أو [[undo]] أو الـ initial) بتعدّي من هنا: مقفول؟ اسم معروف؟ قيمة سليمة؟ وبعدين التسجيل. مكان واحد للقواعد.
-- **[[get]]:** الـ Symbols بترجّع [[undefined]] (عشان [[console.log]] و [[Symbol.toPrimitive]])، و [[toJSON]] و [[then]] [[undefined]] (عشان JSON و [[await]] ميقعوش، درس «Proxy و Reflect»)، والأسامي اللي على [[Object.prototype]] بترجّع الأصلية (عشان [[String(config)]])، وأي اسم تاني غلط بيرمي باقتراح.
-- **[[defineProperty]] مقفول:** من غيره [[Object.defineProperty(config, 'port', { value: 'x' })]] كان هيعدّي من ورا التحقق كله (درس «باقي الـ traps»، الباب الخلفي).
-- **[[ownKeys]] و [[getOwnPropertyDescriptor]] بيرجّعوا الحقيقة:** محدش مخبّي، فالـ invariants مش هتقع حتى بعد [[freeze]].
-- **[[freeze()]]:** [[Object.freeze(data)]] على الـ target نفسه، و [[write]] بيسأل [[Object.isFrozen(data)]] الأول عشان الرسالة تبقى مفهومة بدل [[trap returned falsish]].
-- **[[view()]]:** [[Proxy.revocable]] على **نفس** [[data]]، فالـ view بتشوف آخر قيمة من غير نسخ. و [[revokers]] لستة بدوال السحب.
-- **[[history()]]** بترجّع نسخة متجمّدة، وكل تغيير جواها متجمّد، فمحدش يقدر يزوّر التاريخ.
-- **«قصدك port؟»:** مسافة Levenshtein (أقل عدد حروف تتغيّر عشان كلمة تبقى التانية)، ولو ٢ أو أقل بنقترح. [[prot]] و [[port]] مسافتهم ٢، و [[colour]] بعيدة عن كل الأسامي فمفيش اقتراح.
-
-### الغلطات اللي حصلت وأنا ببنيه وإزاي اتصلحت
-
-1. **[[String(config)]] كانت بترمي.** أول نسخة من الـ [[get]] كانت بترمي على أي اسم مش في الـ schema، و [[String()]] بيسأل عن [[toString]]: [[ReferenceError: مفيش إعداد اسمه toString]]. يعني أي لوج فيه الـ config كان هيوقع البرنامج. الحل سطر [[key in Object.prototype]]، واختبار جديد [[String(config) === '[object Object]']]. و [['toString' in config]] لسه [[false]] لأن [[has]] بيسأل الـ schema بس.
-2. **الـ initial كان بيتسجّل في الـ history.** أول نسخة كانت بتنادي [[write(key, value, true)]] للقيم الأولانية:
-
-~~~text الناتج من النسخة دي
-[ { key: 'port', from: 3000, to: 8080 } ]
-3000
+~~~text الملفات
+library/
+├── library.js        ← الـ errors و Book و Member و Library، وبيتصدّروا
+├── demo.js           ← رحلة كاملة: إضافة واستعارة وحفظ في library.json وتحميل
+└── library.test.js   ← الاختبارات بـ node --test
 ~~~
 
-يعني [[undo()]] على store لسه معمول رجّع الـ port للـ default. الحل [[record = false]] للـ initial ولـ [[undo]] نفسه.
-3. **[[structuredClone(config)]] بيرمي:** [[DataCloneError: [object Object] could not be cloned.]]. الـ structured clone مش بيعدّي على traps، وبيرفض أي Proxy. سيبتها كده (الـ Proxy مش داتا) والحل للي محتاج نسخة: [[structuredClone({ ...config })]] اشتغلت وطلّعت [[{ port: 3000 }]].
-4. **[[console.log(config)]]** بيطبع [[[Object: null prototype] { port: 3000 }]]: Node بيعرض الـ target مباشرة من غير ما يعدّي على الـ traps، فده عادي ومش باج.
+1. عيلة الـ errors، وبعدين [[Book]] و [[Member]] بالتحقق، واختبار ليهم.
+2. [[Library]]: الإضافة، وبعدين [[borrow]] بالتلات أخطاء، وبعدين [[returnBook]]، واختبار مع كل واحدة.
+3. [[toJSON]] و [[fromJSON]] واختبار رايح جاي، وبعدين الملف البايظ.
+4. [[demo.js]] آخر حاجة.
 
-### إزاي تكبر
+## الكود
 
-اللي في [[ext]]، وكمان: تقرا الـ schema من JSON Schema حقيقي بدل الشكل ده، وتطلّع الـ errors كلها مرة واحدة بدل أول واحد (للفورمز)، وتعمل [[store.snapshot()]] بيرجّع object متجمّد عادي للي محتاج يبعته لـ worker.` },
-        { lvl: 'فكرة', t: R`حط حارس على حاجة عندك`, what: R`اختار object في مشروع بتاعك بيتغيّر من أماكن كتير ومحتاج تعرف عنه حاجة: فورم «فيه تعديلات متحفظتش»، أو state عايز تعرف مين غيّره، أو إعدادات عايز تقفلها بعد التشغيل، أو API client عايز تلوج نداءاته. اختار الأداة الأنسب من الوحدة (descriptors، ولا أقفال، ولا Proxy بالـ traps اللي محتاجها بس)، واكتب ليه اخترتها، وابنيها بـ ٣ اختبارات على الأقل.`, done: R`الأداة شغالة على داتا حقيقية من مشروعك (أسامي مخترعة لو هتنشرها)، وفيه سطر بيقول ليه الأداة دي مش التانية، وفيه حالة طرفية اتعاملت معاها (مسح خاصية، أو رجوع لنفس القيمة، أو object متداخل).`, ext: R`خلّيها deep (تتبّع objects جوه objects بـ [[WeakMap]] كاش زي Vue)، أو اعرض التعديلات في الصفحة كـ diff، أو اربطها بـ [[beforeunload]] عشان المتصفح يسأل «متأكد إنك عايز تقفل؟» لما يبقى فيه تعديلات.`, sol: R`**النسخة النموذجية: «فيه تعديلات متحفظتش» لفورم بروفايل.** اخترت Proxy بـ [[set]] و [[deleteProperty]] و [[defineProperty]] بدل getters و setters لأن حقول الفورم بتتغيّر من مشروع للتاني ومش عايز أكتب setter لكل حقل، وبدل المقارنة الكاملة كل مرة لأن الـ Proxy بيعرف **أنهي** حقول اتلمست بس فبيقارنها هي.
-
-~~~text الناتج: node demo.js
-أول ما الفورم فتح: false
-بعد التعديل: true {
-  city: { from: 'Giza', to: 'Cairo' },
-  newsletter: { from: false, to: true },
-  phone: { from: '0100', to: undefined }
+~~~js library.js
+class LibraryError extends Error {
+  constructor(message, options) {
+    super(message, options);
+    this.name = this.constructor.name;
+  }
 }
-رجّعت المدينة زي ما كانت: {
-  newsletter: { from: false, to: true },
-  phone: { from: '0100', to: undefined }
-}
-بعد reset: false { name: 'Sara', city: 'Giza', phone: '0100', newsletter: false } false
-~~~
+class NotFoundError extends LibraryError {}
+class AlreadyBorrowedError extends LibraryError {}
+class LimitError extends LibraryError {}
 
-~~~js track-changes.js
-// trackChanges: نسخة «مسودة» من بيانات فورم، بتعرف إيه اتغيّر عن الأصل
-export function trackChanges(original) {
-  const base = structuredClone(original);
-  const draft = structuredClone(original);
-  const touched = new Set();
-  const proxy = new Proxy(draft, {
-    set(t, key, value, receiver) {
-      touched.add(key);
-      return Reflect.set(t, key, value, receiver);
-    },
-    deleteProperty(t, key) {
-      touched.add(key);
-      return Reflect.deleteProperty(t, key);
-    },
-    defineProperty(t, key, desc) {
-      touched.add(key);
-      return Reflect.defineProperty(t, key, desc);
-    },
-  });
-  const changes = () => {
-    const out = {};
-    for (const key of touched) {
-      const before = base[key];
-      const after = Object.hasOwn(draft, key) ? draft[key] : undefined;
-      if (!Object.is(before, after)) out[key] = { from: before, to: after };
+function requireText(value, what) {
+  if (typeof value !== "string" || value.trim() === "") throw new TypeError(what + " لازم يبقى نص مش فاضي");
+  return value.trim();
+}
+
+class Book {
+  constructor({ isbn, title, author = "" }) {
+    this.isbn = requireText(isbn, "isbn");
+    this.title = requireText(title, "title");
+    this.author = String(author);
+  }
+}
+
+class Member {
+  constructor({ id, name }) {
+    this.id = requireText(id, "id");
+    this.name = requireText(name, "name");
+  }
+}
+
+class Library {
+  static LIMIT = 3;
+  #books = new Map();      // isbn ← Book
+  #members = new Map();    // id ← Member
+  #loans = new Map();      // isbn ← memberId
+  #log;
+
+  constructor({ log = console.info } = {}) {
+    this.#log = log;
+  }
+
+  addBook(data) {
+    const book = data instanceof Book ? data : new Book(data);
+    this.#books.set(book.isbn, book);
+    this.#log("[library] كتاب: " + book.isbn + " «" + book.title + "»");
+    return book;
+  }
+
+  addMember(data) {
+    const member = data instanceof Member ? data : new Member(data);
+    this.#members.set(member.id, member);
+    this.#log("[library] عضو: " + member.id);
+    return member;
+  }
+
+  #book(isbn) {
+    const book = this.#books.get(isbn);
+    if (!book) throw new NotFoundError("مفيش كتاب بالـ isbn ده: " + isbn);
+    return book;
+  }
+
+  #member(id) {
+    const member = this.#members.get(id);
+    if (!member) throw new NotFoundError("مفيش عضو بالـ id ده: " + id);
+    return member;
+  }
+
+  loansOf(memberId) {
+    return [...this.#loans].filter(([, m]) => m === memberId).map(([isbn]) => isbn);
+  }
+
+  isAvailable(isbn) {
+    this.#book(isbn);
+    return !this.#loans.has(isbn);
+  }
+
+  borrow(memberId, isbn) {
+    this.#member(memberId);
+    this.#book(isbn);
+    const holder = this.#loans.get(isbn);
+    if (holder !== undefined) throw new AlreadyBorrowedError("الكتاب " + isbn + " مستعار دلوقتي");
+    if (this.loansOf(memberId).length >= Library.LIMIT) {
+      throw new LimitError(memberId + " معاه " + Library.LIMIT + " كتب، لازم يرجّع واحد الأول");
     }
-    return out;
-  };
-  return {
-    draft: proxy,
-    changes,
-    isDirty: () => Object.keys(changes()).length > 0,
-    reset() {
-      for (const key of Reflect.ownKeys(draft)) delete draft[key];
-      Object.assign(draft, structuredClone(base));
-      touched.clear();
-    },
-  };
+    this.#loans.set(isbn, memberId);
+    this.#log("[library] استعارة: " + memberId + " ← " + isbn);
+    return this;
+  }
+
+  returnBook(memberId, isbn) {
+    this.#book(isbn);
+    if (this.#loans.get(isbn) !== memberId) throw new NotFoundError(memberId + " مش مستعير " + isbn);
+    this.#loans.delete(isbn);
+    this.#log("[library] رجوع: " + memberId + " → " + isbn);
+    return this;
+  }
+
+  toJSON() {
+    return {
+      version: 1,
+      books: [...this.#books.values()],
+      members: [...this.#members.values()],
+      loans: [...this.#loans],
+    };
+  }
+
+  static fromJSON(text, options) {
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      throw new LibraryError("ملف الحالة بايظ (" + e.message + ")", { cause: e });
+    }
+    if (data?.version !== 1 || ![data.books, data.members, data.loans].every(Array.isArray)) {
+      throw new LibraryError("ملف الحالة شكله غلط: مستني version 1 و books و members و loans");
+    }
+    const lib = new Library(options);
+    data.books.forEach((b) => lib.addBook(b));
+    data.members.forEach((m) => lib.addMember(m));
+    for (const [isbn, memberId] of data.loans) lib.borrow(memberId, isbn);   // من نفس الباب: نفس التحقق
+    return lib;
+  }
 }
+
+module.exports = { Library, Book, Member, LibraryError, NotFoundError, AlreadyBorrowedError, LimitError };
 ~~~
 
 ~~~js demo.js
-import { trackChanges } from './track-changes.js';
+const fs = require("node:fs");
+const { Library, LibraryError } = require("./library.js");
 
-const profile = { name: 'Sara', city: 'Giza', phone: '0100', newsletter: false };
-const form = trackChanges(profile);
-const { draft } = form;
+const lib = new Library();
+lib.addBook({ isbn: "111", title: "مقدمة في JS", author: "منى" });
+lib.addBook({ isbn: "222", title: "الشبكات ببساطة" });
+lib.addMember({ id: "m1", name: "Sara" });
+lib.borrow("m1", "111");
 
-console.log('أول ما الفورم فتح:', form.isDirty());
-draft.city = 'Cairo';
-draft.newsletter = true;
-draft.name = 'Sara';
-delete draft.phone;
-console.log('بعد التعديل:', form.isDirty(), form.changes());
-draft.city = 'Giza';
-console.log('رجّعت المدينة زي ما كانت:', form.changes());
-form.reset();
-console.log('بعد reset:', form.isDirty(), draft, profile === draft);
+fs.writeFileSync("library.json", JSON.stringify(lib, null, 2));
+console.log("اتحفظ:", fs.readFileSync("library.json", "utf8").length, "حرف");
+
+const loaded = Library.fromJSON(fs.readFileSync("library.json", "utf8"), { log: () => {} });
+console.log("بعد التحميل:", loaded.loansOf("m1"), "222 متاح؟", loaded.isAvailable("222"));
+loaded.borrow("m1", "222");
+console.log("استعارة على النسخة الجديدة:", loaded.loansOf("m1"));
+
+try {
+  lib.borrow("m1", "111");
+} catch (e) {
+  console.log(e.name + ": " + e.message);
+}
+
+fs.writeFileSync("broken.json", '{"version": 1, "books": [');
+try {
+  Library.fromJSON(fs.readFileSync("broken.json", "utf8"));
+} catch (e) {
+  console.log(e instanceof LibraryError, e.name + ": " + e.message);
+}
 ~~~
 
-~~~json package.json
-{ "type": "module" }
+~~~js library.test.js
+const test = require("node:test");
+const assert = require("node:assert/strict");
+const L = require("./library.js");
+
+function fresh() {
+  const logs = [];
+  const lib = new L.Library({ log: (msg) => logs.push(msg) });
+  ["1", "2", "3", "4"].forEach((n) => lib.addBook({ isbn: n, title: "كتاب " + n }));
+  lib.addMember({ id: "sara", name: "Sara" });
+  lib.addMember({ id: "ali", name: "Ali" });
+  return { lib, logs };
+}
+
+test("Book و Member بيرفضوا البيانات الناقصة", () => {
+  assert.throws(() => new L.Book({ title: "x" }), { name: "TypeError", message: "isbn لازم يبقى نص مش فاضي" });
+  assert.throws(() => new L.Member({ id: "m", name: "  " }), TypeError);
+});
+
+test("استعارة كتاب مستعار بترمي AlreadyBorrowedError والحالة متغيرتش", () => {
+  const { lib } = fresh();
+  lib.borrow("sara", "1");
+  assert.throws(() => lib.borrow("ali", "1"), L.AlreadyBorrowedError);
+  assert.deepEqual(lib.loansOf("sara"), ["1"]);
+  assert.deepEqual(lib.loansOf("ali"), []);
+});
+
+test("الكتاب الرابع بيرمي LimitError", () => {
+  const { lib } = fresh();
+  lib.borrow("sara", "1").borrow("sara", "2").borrow("sara", "3");
+  assert.throws(() => lib.borrow("sara", "4"), { name: "LimitError", message: "sara معاه 3 كتب، لازم يرجّع واحد الأول" });
+  assert.equal(lib.isAvailable("4"), true);
+});
+
+test("عضو أو كتاب مش موجود، أو رجوع من غير المستعير: NotFoundError", () => {
+  const { lib } = fresh();
+  assert.throws(() => lib.borrow("nobody", "1"), { name: "NotFoundError" });
+  assert.throws(() => lib.borrow("sara", "999"), L.NotFoundError);
+  lib.borrow("sara", "1");
+  assert.throws(() => lib.returnBook("ali", "1"), L.NotFoundError);
+  lib.returnBook("sara", "1");
+  assert.equal(lib.isAvailable("1"), true);
+});
+
+test("كل الـ errors من عيلة LibraryError و Error", () => {
+  for (const E of [L.NotFoundError, L.AlreadyBorrowedError, L.LimitError]) {
+    const e = new E("x");
+    assert.ok(e instanceof L.LibraryError && e instanceof Error);
+    assert.equal(e.name, E.name);
+  }
+});
+
+test("رحلة حفظ وتحميل كاملة", () => {
+  const { lib } = fresh();
+  lib.borrow("sara", "1").borrow("ali", "2");
+  const copy = L.Library.fromJSON(JSON.stringify(lib), { log() {} });
+  assert.deepEqual(copy.loansOf("sara"), ["1"]);
+  assert.deepEqual(copy.loansOf("ali"), ["2"]);
+  copy.borrow("sara", "3");
+  assert.throws(() => copy.borrow("ali", "1"), L.AlreadyBorrowedError);
+  assert.equal(lib.isAvailable("3"), true);          // الأصل متأثرش
+});
+
+test("JSON بايظ أو شكله غلط بيطلع LibraryError واضح", () => {
+  assert.throws(() => L.Library.fromJSON("{bad"), (e) => e instanceof L.LibraryError && /بايظ/.test(e.message) && e.cause instanceof SyntaxError);
+  assert.throws(() => L.Library.fromJSON('{"version":2}'), /شكله غلط/);
+  assert.throws(() => L.Library.fromJSON("null"), L.LibraryError);
+});
+
+test("كل عملية بتتكتب في اللوج", () => {
+  const { lib, logs } = fresh();
+  logs.length = 0;
+  lib.borrow("sara", "1");
+  lib.returnBook("sara", "1");
+  assert.deepEqual(logs, ["[library] استعارة: sara ← 1", "[library] رجوع: sara → 1"]);
+});
 ~~~
 
-**ليه التصميم ده:**
+## كل حتة مهمة بتعمل إيه
 
-- **نسختين بـ [[structuredClone]]:** [[base]] الأصل اللي بنقارن بيه، و [[draft]] اللي بيتعدّل. ولو الأصل اتغيّر من برّه، الفورم مش بيتأثر.
-- **[[touched]]** بيسجّل المفاتيح اللي اتلمست بس، و [[changes()]] بيقارنها بـ [[Object.is]] (عشان [[NaN]] و [[-0]]). فلو اليوزر كتب نفس الاسم ([[draft.name = 'Sara']]) أو رجّع المدينة، الحقل مش بيبان متغيّر. ده الفرق بين «اتلمس» و «اتغيّر».
-- **المسح:** [[delete draft.phone]] بيتحسب تغيير لـ [[undefined]]، و [[Object.hasOwn]] بيفرّق بين حقل اتمسح وحقل قيمته [[undefined]].
-- **[[defineProperty]] trap:** عشان [[Object.defineProperty(draft, ...)]] ميعدّيش من غير تسجيل. وخلي بالك: [[Reflect.set]] بالـ receiver بينادي [[defineProperty]] كمان، فالكتابة العادية بتسجّل مرتين في الـ [[Set]]، وده مش مشكلة لأن الـ [[Set]] مبيكرّرش.
-- **[[reset()]]:** بيمسح كل المفاتيح ويرجّع نسخة من الأصل على **نفس** الـ object، عشان أي حد ماسك [[draft]] يفضل ماسك نفس الحاجة.
-- آخر قيمة [[false]] في الناتج: [[profile === draft]]، إثبات إن الأصل متلمسش.
+- **عيلة [[LibraryError]]:** الأبناء فاضيين ([[class LimitError extends LibraryError {}]]) لأن الفرق بينهم هو **النوع** بس، وده اللي الكود اللي بيمسك بيسأل عليه بـ [[instanceof]]. و [[this.name = this.constructor.name]] في الأب بيدّي كل واحد اسمه.
+- **[[#books]] و [[#members]] و [[#loans]] Maps خاصة:** محدش يقدر يحط استعارة من غير [[borrow]]، فالتحقق مستحيل يتلف حواليه. و [[#loans]] مفتاحها الـ isbn، فكتاب واحد مستعار مع واحد بس بطبيعة الشكل.
+- **[[#book(isbn)]] و [[#member(id)]] private methods:** بيدوّروا ويرموا [[NotFoundError]]، فكل method عامة بتبدأ بسطر واحد بدل [[if]] متكرر.
+- **ترتيب التحقق في [[borrow]]:** كل الفحوصات قبل [[set]]، فأي error بيسيب الحالة زي ما هي (الاختبار التاني بيثبت ده).
+- **[[static LIMIT = 3]]:** الحد على الكلاس، فتقدر تغيّره في مكان واحد، والرسالة بتقراه.
+- **[[toJSON]] بيرجّع [[version]] و arrays:** Maps مش بتتحوّل JSON لوحدها ([[JSON.stringify(new Map())]] بـ [[{}]])، فبنحوّلها arrays. والـ version عشان لو الشكل اتغيّر بعدين تعرف الملف القديم.
+- **[[fromJSON]] بيبني بـ [[addBook]] و [[borrow]]:** نفس الأبواب الرسمية، فملف متلاعب فيه (كتاب مستعار مرتين، أو ٤ كتب لعضو) بيرمي نفس الـ errors. و [[JSON.parse]] جوه [[try]] بيتلف في [[LibraryError]] مع [[cause]]، فالرسالة مفهومة والسبب الأصلي محفوظ.
+- **[[log]] parameter:** [[console.info]] في التشغيل العادي، ودالة بتجمع في الاختبار.
 
-**إمتى متختارهاش:** لو الفورم فيه objects متداخلة (عنوان جواه شارع ومدينة)، الـ Proxy ده سطحي ومش هيشوف [[draft.address.city = 'x']] (درس «Proxy و Reflect»، حاجات Proxy مبيعملهاش). ساعتها يا إما deep proxy (الـ ext) يا إما مقارنة كاملة بـ deep equal وقت الحفظ بس.` },
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **[[JSON.stringify(lib)]] طلّع [[{}]]:** الـ private fields مش بتتحفظ. اتحل بـ [[toJSON]].
+- **[[fromJSON]] الأولى كانت بتعمل [[lib.#loans = new Map(data.loans)]]:** شغالة، لكن ملف فيه نفس الكتاب مع عضوين اتحمّل من غير أي اعتراض. البناء بـ [[borrow]] قفل الثغرة دي.
+- **[[node demo.js]] كانت بتملا الشاشة بسطور [[[library]]] وقت التحميل:** بعت [[{ log: () => {} }]] للنسخة اللي بتتحمّل في الـ demo.` },
+        { lvl: 'فكرة', t: R`موديل لحاجة حقيقية`, what: R`اختار حاجة فيها أنواع ووراثة حقيقية (حسابات بنك بأنواعها، أو موظفين ومديرين، أو وسائل مواصلات، أو عناصر في لعبة)، واعملها classes بـ private fields و validation و errors خاصة بيها. وقبل أي extends اسأل نفسك: ينفع تركيب أحسن؟ انت اللي بتختار.`, done: R`فيه مكان واحد على الأقل اخترت فيه composition بدل الوراثة وكاتب ليه في كومنت، ومفيش field مهم يتعدل من برّه غير من method بتتحقق، وفيه ٥ asserts على الأقل بتعدّي.`, ext: R`اربطه بصفحة، واحفظه JSON، وبعد قسم TypeScript اكتب الـ types بتاعته.`, sol: R`النسخة النموذجية: حسابات بنك. **الوراثة** في مكان واحد بس (حساب التوفير نوع من الحساب)، و **التركيب** في سجل العمليات (الحساب «عنده» سجل، مش «هو» سجل).
+
+~~~js bank.js
+class BankError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = this.constructor.name;
+  }
+}
+class InsufficientFundsError extends BankError {}
+
+// سجل العمليات: كلاس لوحده، والحساب بيستخدمه جواه (composition)
+class Ledger {
+  #entries = [];
+  record(type, amount) {
+    this.#entries.push({ type, amount, at: this.#entries.length + 1 });
+  }
+  get entries() {
+    return this.#entries.map((e) => ({ ...e }));      // نسخ: محدش يعدّل السجل من برّه
+  }
+}
+
+class Account {
+  #balance = 0;
+  // composition: الحساب «عنده» سجل. لو ورثنا من Ledger كان أي حد هيقدر ينادي record ويزوّر عملية.
+  #ledger = new Ledger();
+
+  constructor(owner) {
+    if (typeof owner !== "string" || owner.trim() === "") throw new TypeError("owner لازم يبقى نص");
+    this.owner = owner;
+  }
+  static #check(amount) {
+    if (!Number.isInteger(amount) || amount <= 0) throw new RangeError("المبلغ لازم يبقى عدد صحيح موجب (بالقروش)");
+  }
+  deposit(amount) {
+    Account.#check(amount);
+    this.#balance += amount;
+    this.#ledger.record("deposit", amount);
+    return this;
+  }
+  withdraw(amount) {
+    Account.#check(amount);
+    if (amount > this.#balance) throw new InsufficientFundsError("الرصيد " + this.#balance + " مش كفاية لـ " + amount);
+    this.#balance -= amount;
+    this.#ledger.record("withdraw", amount);
+    return this;
+  }
+  get balance() {
+    return this.#balance;
+  }
+  get history() {
+    return this.#ledger.entries;
+  }
+}
+
+// inheritance: حساب التوفير «نوع من» الحساب، بكل سلوكه وزيادة الفايدة
+class SavingsAccount extends Account {
+  #rate;
+  constructor(owner, ratePercent) {
+    super(owner);
+    if (!(ratePercent >= 0 && ratePercent <= 30)) throw new RangeError("الفايدة من 0 لـ 30%");
+    this.#rate = ratePercent;
+  }
+  addInterest() {
+    const interest = Math.floor(this.balance * this.#rate / 100);
+    if (interest > 0) this.deposit(interest);
+    return interest;
+  }
+}
+
+// الاختبارات
+let passed = 0, total = 0;
+const check = (cond, msg) => { total++; console.assert(cond, msg); if (cond) passed++; };
+const throwsType = (fn, Type) => { try { fn(); return false; } catch (e) { return e instanceof Type; } };
+
+const acc = new Account("Sara").deposit(10000).withdraw(2500);
+check(acc.balance === 7500, "الرصيد بعد إيداع وسحب");
+check(throwsType(() => acc.withdraw(999999), InsufficientFundsError), "سحب أكبر من الرصيد");
+check(acc.balance === 7500, "السحب الفاشل مغيّرش حاجة");
+check(throwsType(() => acc.deposit(-5), RangeError) && throwsType(() => acc.deposit(10.5), RangeError), "مبلغ سالب أو كسر");
+acc.balance = 1e9;                                    // getter من غير setter: متجاهَل في sloppy
+check(acc.balance === 7500, "مفيش تعديل للرصيد من برّه");
+acc.history.push({ type: "deposit", amount: 1e9 });
+check(acc.history.length === 2, "السجل مبيتعدّلش من برّه");
+const sav = new SavingsAccount("Omar", 10).deposit(5000);
+check(sav.addInterest() === 500 && sav.balance === 5500, "الفايدة");
+check(sav instanceof Account && sav.history.at(-1).type === "deposit", "التوفير نوع من الحساب وبيستخدم نفس السجل");
+check(throwsType(() => new SavingsAccount("X", 50), RangeError) && throwsType(() => new Account(""), TypeError), "validation في الـ constructor");
+check(new InsufficientFundsError("x").name === "InsufficientFundsError", "اسم الـ error");
+
+console.log(passed + " من " + total + " assert عدّوا");
+console.log(acc.history);
+try { acc.withdraw(8000); } catch (e) { console.log(e.name + ": " + e.message); }
+~~~
+
+~~~text الناتج (node bank.js، Node 24)
+10 من 10 assert عدّوا
+[
+  { type: 'deposit', amount: 10000, at: 1 },
+  { type: 'withdraw', amount: 2500, at: 2 }
+]
+InsufficientFundsError: الرصيد 7500 مش كفاية لـ 8000
+~~~
+
+## ليه اخترت التصميم ده
+
+- **مكان واحد للوراثة:** [[SavingsAccount extends Account]] لأن جملة «حساب التوفير **هو** حساب» صح: كل اللي بيتعمل على الحساب بيتعمل عليه، وبيزوّد [[addInterest]]. والـ [[instanceof Account]] بيعدّي، فأي كود بيتعامل مع حسابات بيقبله.
+- **التركيب في السجل (الكومنت جوه الكود بيقول ليه):** [[Account extends Ledger]] كانت هتخلّي [[record]] جزء من الـ API بتاع الحساب، وأي حد يقدر يكتب «إيداع مليون» في السجل من غير فلوس. [[#ledger]] جوه الحساب معناه إن الحساب بس هو اللي بيكتب فيه.
+- **كل حاجة مهمة private:** [[#balance]] بيتغيّر من [[deposit]] و [[withdraw]] بس (اللي بيتحققوا)، والـ getter مالوش setter، و [[history]] بيرجّع نسخ. والـ asserts الخامس والسادس بيثبتوا إن التعديل من برّه ملوش أثر.
+- **المبالغ بالقروش أعداد صحيحة:** نفس درس مشروع [[Money]]، و [[static #check]] private static method بتتحقق في مكان واحد.
+- **[[this.balance]] في [[addInterest]] مش [[this.#balance]]:** الـ private field بتاع الأب مش متاح للابن (كل كلاس شايف الـ [[#]] بتوعه بس)، فالابن بيستخدم الـ getter والـ [[deposit]] الرسميين، وده كمان بيسجّل الفايدة في السجل لوحده.
+
+**إزاي تعرف إن نسختك صح:** عندك مكان فيه composition ومكتوب جنبه ليه، ومفيش field مهم بيتغير غير من method بتتحقق (جرّب تكتب فيه من برّه وتأكد إنه مااتغيرش)، و ٥ asserts على الأقل بتعدّي بـ [[node]]. والسؤال اللي يحسم أي [[extends]]: «الابن **هو** الأب؟» لو الإجابة «لأ، بيستخدمه» يبقى تركيب.` },
       ],
       items: [
         {
-          cmd: "method definitions و property accessors",
-          title: "كل اللي ينفع يتكتب جوه {}: shorthand و computed و get و set و async و *method و __proto__، وتقرا الخاصية بالنقطة ولا بالأقواس؟",
-          desc: R`الـ object literal ([[{ ... }]]) فيه أشكال كتير غير [[key: value]]: اسم المتغير لوحده (shorthand)، ومفتاح محسوب [[[expr]: v]]، و methods بالشكل المختصر، و [[get]] و [[set]]، و [[async]] و [[*generator]] methods، و [[__proto__: obj]] اللي بيحدد الـ prototype. وتقرا أي خاصية بطريقتين: [[obj.name]] أو [[obj["name"]]]، والتانية بتقبل أي expression.
+          cmd: "prototype chain",
+          title: "إزاي [].map موجودة وانت معرّفتهاش؟",
+          desc: R`كل object في JS ليه لينك مخفي لـ object تاني اسمه الـ prototype. لما تقرا خاصية مش موجودة في الـ object، JS بيدوّر في الـ prototype، وبعدين في الـ prototype بتاعه، لحد [[Object.prototype]] وبعده null. ده اسمه prototype chain.
 
-درس «object literal» علّمك الأساس ([[name,]] و [[[key]: "red"]] و method بسيطة و [[?.]]). هنا بنكمّل الباقي: الفرق الحقيقي بين [[m() {}]] و [[m: function () {}]] ([[super]] والـ [[new]])، وقواعد الـ getters والـ setters، و [[__proto__]] جوه الـ literal، وإن **أي مفتاح بيتحوّل لنص** إلا الـ Symbol، فـ [[o[1]]] و [[o["1"]]] نفس الخانة، و [[ o[{}] ]] بتبقى [["[object Object]"]].`,
-          example: R`// object literal فيه كل أشكال التعريف
-const sku = 'A-7';
-const qty = 3;
-const field = 'price';
-const base = { describe() { return 'منتج'; } };
-const item = {
-  __proto__: base,
-  sku,
-  qty,
-  [field]: 120,
-  [field + 'WithTax']: 136.8,
-  get total() { return this.price * this.qty; },
-  set total(v) { this.qty = Math.round(v / this.price); },
-  describe() { return super.describe() + ' ' + this.sku; },
-  async stock() { return 12; },
-  *lines() { yield this.sku; yield this.qty; },
-};
-console.log(item.total, item['priceWithTax'], item.describe());
-item.total = 600;
-console.log(item.qty, [...item.lines()]);
-item.stock().then((n) => console.log('stock', n));
-console.log(Object.getPrototypeOf(item) === base, Object.keys(item));`,
-          try: R`اعمل ملف [[keys.mjs]] فيه [[const k = {}]] وبعدين اكتب فيه بـ ٥ مفاتيح: [[k[1] = 'a']] و [[k[{}] = 'b']] و [[k[ [1, 2] ] = 'c']] و [[k[true] = 'd']] و [[k[null] = 'e']]، وزوّد [[k[Symbol('id')] = 'f']]. اطبع [[Object.keys(k)]]، وبعدين اطبع [[k['1,2']]] و [[k['[object Object]']]]. وآخر حاجة جرّب في ملف تاني [[({ get x(a) { return a; } })]] واقرا الـ error.`,
-          sol: R`اتجرّب على Node 24.22:
-
-~~~js keys.mjs
-const k = {};
-k[1] = 'a'; k[{}] = 'b'; k[[1, 2]] = 'c'; k[true] = 'd'; k[null] = 'e';
-const s = Symbol('id'); k[s] = 'f';
-console.log(Object.keys(k), k['1'], k['[object Object]'], k['1,2'], k[s]);
-~~~
-
-~~~text الناتج
-[ '1', '[object Object]', '1,2', 'true', 'null' ] a b c f
-~~~
-
-كل مفتاح مش Symbol اتحوّل لنص بـ [[String()]]: الرقم [[1]] بقى [["1"]]، والـ object الفاضي بقى [["[object Object]"]]، والـ array بقت [["1,2"]] (زي [[join]])، و [[true]] و [[null]] بقوا كلمات. والـ Symbol فضل Symbol ومظهرش في [[Object.keys]] (ده درس «enumerability و ownership»).
-
-والـ getter بـ parameter ([[getter.mjs]] فيه سطر واحد: [[({ get x(a) { return a; } });]]):
-
-~~~text الناتج
-SyntaxError: Getter must not have any formal parameters.
-~~~
-
-الـ getter بيتنادى من غير أقواس ([[obj.x]])، فمفيش حد يبعتله argument، والـ parser بيرفضه قبل ما أي سطر يشتغل.`,
+عشان كده [[[1, 2].map]] شغالة: map مش على الـ array نفسها، هي على [[Array.prototype]]، وكل array لينكها بيشاور عليه. والـ classes نفسها مبنية على ده.`,
+          example: R`const arr = [1, 2];
+Object.getPrototypeOf(arr) === Array.prototype;               // true
+Object.getPrototypeOf(Array.prototype) === Object.prototype;  // true
+Object.hasOwn(arr, "map");     // false: مش عنده
+"map" in arr;                  // true: لقاها في السلسلة
+const animal = { speak() { return $__bt$__{this.name} بيتكلم$__bt; } };
+const cat = Object.create(animal);
+cat.name = "Mishmish";
+cat.speak();                   // "Mishmish بيتكلم"
+Object.getPrototypeOf(cat) === animal;  // true
+cat.speak = () => "مياو";      // shadowing: بقت على cat نفسه
+animal.speak.call(cat);        // لسه موجودة على الـ prototype`,
+          try: R`في Console اكتب [[console.dir([1, 2])]] وافتح [[[[Prototype]]]] جوه بعض لحد ما توصل null. وبعدين جرّب [[Object.create(null)]] وشوف مفيهوش [[toString]] خالص.`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** قبل ما تشغّل، اكتب الناتج:
-
-~~~js
-const o = {};
-o[1] = 'a';
-o['1'] = 'b';
-o[{}] = 'c';
-o[{ id: 2 }] = 'd';
-console.log(Object.keys(o), o[1], o['[object Object]']);
-~~~`, done: R`كتبت [[[ '1', '[object Object]' ] b d]] قبل التشغيل، وتقدر تقول ليه في مفتاحين بس مش أربعة.`, sol: R`~~~text الناتج (Node 24.22)
-[ '1', '[object Object]' ] b d
-~~~
-
-**ليه مفتاحين بس:** [[o[1]]] و [[o['1']]] نفس الخانة لأن الرقم بيتحوّل لنص [["1"]]، فالتانية كتبت [['b']] فوق [['a']]. والـ object الفاضي والـ object اللي فيه [[id]] الاتنين بيتحوّلوا لنفس النص [["[object Object]"]] (ده [[Object.prototype.toString]])، فـ [['d']] كتبت فوق [['c']].
-
-**الغلطة الشائعة:** إنك تستخدم object عادي كـ «قاموس» مفاتيحه objects (يوزر ← بياناته). كل اليوزرز هيبقوا مفتاح واحد. الحل [[Map]] اللي بيقبل أي قيمة كمفتاح (درس «Map و Set»).` },
-            { lvl: 'تطبيق', t: R`**ابني:** دالة [[makeCounter(start)]] بترجّع object literal فيه: [[count]]، و getter [[value]]، و setter [[value]] بيرفض أي حاجة مش رقم صحيح موجب بـ [[RangeError]]، و method [[inc(step = 1)]] بترجّع الـ object نفسه عشان تتسلسل ([[c.inc().inc(3)]])، و generator method [[*history()]] بيطلّع كل القيم اللي اتكتبت.`, done: R`[[makeCounter(5)]] وبعدها [[inc().inc(3)]] بيطلّع [[value]] بـ 9 و [[[...c.history()]]] بـ [[[ 5, 6, 9 ]]]، و [[c.value = -1]] بيرمي والقيمة بتفضل 9.`, sol: R`~~~js counter.mjs
-function makeCounter(start = 0) {
-  const steps = [start];
-  return {
-    count: start,
-    get value() { return this.count; },
-    set value(v) {
-      if (!Number.isInteger(v) || v < 0) throw new RangeError('العدّاد رقم صحيح موجب، وصلني ' + v);
-      this.count = v;
-      steps.push(v);
-    },
-    inc(step = 1) { this.value = this.count + step; return this; },
-    *history() { yield* steps; },
-  };
-}
-const c = makeCounter(5);
-c.inc().inc(3);
-console.log(c.value, [...c.history()]);
-try { c.value = -1; } catch (e) { console.log(e.name, e.message); }
-console.log(c.value, Object.keys(c));
-~~~
-
-~~~text الناتج (Node 24.22)
-9 [ 5, 6, 9 ]
-RangeError العدّاد رقم صحيح موجب، وصلني -1
-9 [ 'count', 'value', 'inc', 'history' ]
-~~~
-
-**الشرح:**
-
-- [[inc]] مبتكتبش في [[count]] مباشرة، بتكتب في [[this.value]]، فالتحقق اللي في الـ setter بيشتغل على كل الطرق. لو كتبت [[this.count += step]] كان الـ history هيفضل [[[5]]].
-- الـ getter والـ setter ليهم **نفس الاسم** [[value]] وده خاصية واحدة (accessor property) مش اتنين، عشان كده [[Object.keys]] طلّع [[value]] مرة واحدة.
-- [[steps]] برّه الـ object (closure)، فمحدش يقدر يعدّل الـ history من برّه. و [[yield*]] بيسلّم القيم واحدة واحدة.
-- الغلطة اللي ناس كتير بتقع فيها: setter بيكتب في نفس اسمه ([[set value(v) { this.value = v; }]]) فبينادي نفسه للأبد ويطلع [[RangeError: Maximum call stack size exceeded]]. عشان كده التخزين في [[count]].` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الملف ده مش بيشتغل خالص. شغّله، اقرا الـ error، وصلّحه من غير ما تغيّر الـ [[__proto__]] ولا تشيل [[super]]:
-
-~~~js
-const base = { describe() { return 'منتج'; } };
-const item = {
-  __proto__: base,
-  sku: 'A-7',
-  describe: function () { return super.describe() + ' رقم ' + this.sku; },
-};
-console.log(item.describe());
-~~~`, done: R`الملف بيطبع [[منتج رقم A-7]]، وتقدر تقول ليه [[function ()]] مينفعش فيها [[super]].`, sol: R`الـ error قبل ما أي سطر يشتغل:
-
-~~~text الناتج
-  describe: function () { return super.describe() + ' رقم ' + this.sku; },
-                                 ^^^^^
-
-SyntaxError: 'super' keyword unexpected here
-~~~
-
-الحل: اكتبها **method definition** بدل property قيمتها function:
-
-~~~js fix-super.mjs
-const base = { describe() { return 'منتج'; } };
-const item = {
-  __proto__: base,
-  sku: 'A-7',
-  describe() { return super.describe() + ' رقم ' + this.sku; },
-};
-console.log(item.describe());
-~~~
-
-~~~text الناتج (Node 24.22)
-منتج رقم A-7
-~~~
-
-**ليه:** الـ method المكتوبة بالشكل المختصر بتتربط وقت الإنشاء بالـ object اللي اتكتبت فيه (اسمها في المواصفات [[HomeObject]])، و [[super]] معناها «الـ prototype بتاع الـ HomeObject». الـ [[function ()]] العادية ملهاش HomeObject، فالـ parser بيرفض [[super]] جواها. ودا من الفروق اللي بتخلي [[m() {}]] مش مجرد اختصار لـ [[m: function () {}]].` },
-            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[getPath(obj, path)]] بتقرا قيمة متداخلة بمسار نصي زي [['items[0].sku']] أو [['customer.name']] أو [['ship-to.city']]، وترجّع [[undefined]] (من غير error) لو أي حتة في النص مش موجودة. المسار الفاضي بيرجّع الـ object نفسه.`, done: R`[[getPath(order, 'items[0].sku')]] و [[getPath(order, 'items.0.sku')]] بيرجّعوا نفس القيمة، و [['ship-to.city']] شغالة، و [['a.b.c']] و [['items[5].sku']] بيرجّعوا [[undefined]]، و [[getPath({ x: 0 }, 'x')]] بيرجّع [[0]] مش [[undefined]]، وتمرين «شغّل واختبر» عدّى.`, sol: R`~~~js get-path.mjs
-function getPath(obj, path) {
-  const keys = path.match(/[^.[\]]+/g) ?? [];
-  let cur = obj;
-  for (const key of keys) {
-    if (cur === null || cur === undefined) return undefined;
-    cur = cur[key];
-  }
-  return cur;
-}
-const order = { customer: { name: 'Sara' }, items: [{ sku: 'A-7', qty: 2 }], 'ship-to': { city: 'Giza' } };
-console.log(getPath(order, 'customer.name'));
-console.log(getPath(order, 'items[0].sku'), getPath(order, 'items.0.qty'));
-console.log(getPath(order, 'ship-to.city'), getPath(order, 'items[5].sku'), getPath(order, 'a.b.c'));
-console.log(getPath({ x: 0 }, 'x'), getPath({ x: null }, 'x.y'));
-~~~
-
-~~~text الناتج (Node 24.22)
-Sara
-A-7 2
-Giza undefined undefined
-0 undefined
-~~~
-
-**الشرح:**
-
-- الـ regex اللي في أول سطر في الدالة بيطلّع كل حتة مش نقطة ولا قوس، فـ [['items[0].sku']] بتبقى [[[ 'items', '0', 'sku' ]]]. و [[?? []]] عشان [[match]] بترجّع [[null]] مع النص الفاضي.
-- [[cur[key]]] هو الـ bracket notation: بيقبل أي نص حتى [['ship-to']] اللي مينفعش بالنقطة، و [['0']] نص بس بيقرا الـ array عادي لأن مفاتيح الـ array نفسها نصوص.
-- الفحص [[cur === null || cur === undefined]] قبل القراية هو اللي [[?.]] بيعمله. ومينفعش تكتب [[if (!cur)]]: كانت هتوقف عند [[0]] و [[""]] وترجّع [[undefined]] غلط.` },
-          ],
-          check: { lang: "js", starter: R`function getPath(obj, path) {
-  // قسّم المسار لمفاتيح، وامشي مفتاح مفتاح، ورجّع undefined لو وقفت
-}`, tests: R`const order = { customer: { name: 'Sara' }, items: [{ sku: 'A-7', qty: 2 }], 'ship-to': { city: 'Giza' } };
-test("نقط", () => expect(getPath(order, 'customer.name')).toBe('Sara'));
-test("أقواس", () => expect(getPath(order, 'items[0].sku')).toBe('A-7'));
-test("رقم بالنقطة", () => expect(getPath(order, 'items.0.qty')).toBe(2));
-test("مفتاح فيه شرطة", () => expect(getPath(order, 'ship-to.city')).toBe('Giza'));
-test("مش موجود", () => expect(getPath(order, 'a.b.c')).toBe(undefined));
-test("index برّه الـ array", () => expect(getPath(order, 'items[5].sku')).toBe(undefined));
-test("صفر مش undefined", () => expect(getPath({ x: 0 }, 'x')).toBe(0));
-test("null في النص", () => expect(getPath({ x: null }, 'x.y')).toBe(undefined));
-test("مسار فاضي", () => expect(getPath(order, '')).toBe(order));`, solution: R`function getPath(obj, path) {
-  const keys = path.match(/[^.[\]]+/g) ?? [];
-  let cur = obj;
-  for (const key of keys) {
-    if (cur === null || cur === undefined) return undefined;
-    cur = cur[key];
-  }
-  return cur;
-}` },
-          flag: "script",
-          deep: {
-            why: R`أغلب الكود اللي هتقراه في مكتبات و frameworks مكتوب بالأشكال دي: Vue options فيها methods و [[computed]] getters، و [[ [Symbol.iterator]() ]] بيخلي أي object يتلف عليه، و [[async load()]] جوه object خدمات. ولو مش فاهم إن [[m() {}]] و [[m: function () {}]] مختلفين، هتتلخبط لما [[super]] أو [[new]] يتصرّفوا بشكل مختلف. وموضوع تحويل المفاتيح لنص هو سبب باجات «كل اليوزرز ظهروا تحت نفس المفتاح».`,
-            how: R`الـ parser بيقرا الـ literal من فوق لتحت، وكل سطر بيعرّف خاصية بالترتيب: المفتاح المحسوب [[[expr]]] بيتحسب الأول وبعده القيمة (اتجرّب: ترتيب الحساب طلع [[[ 'k1', 'v1', 'k2', 'v2' ]]]). والمفتاح بيعدّي على عملية اسمها ToPropertyKey: لو Symbol يفضل Symbol، وأي حاجة تانية بتتحوّل لنص بـ [[String()]].
-
-الـ method definition بتعمل دالة ليها [[HomeObject]] (عشان [[super]])، ومن غير [[prototype]] ومش constructor: [[new item.describe()]] رمت [[TypeError: o.describe is not a constructor]]. و [[get x() {}]] و [[set x(v) {}]] بيعملوا **خاصية واحدة** نوعها accessor فيها دالتين بدل قيمة (درس «property descriptors»).
-
-و [[__proto__: value]] حالة خاصة في الـ literal: لو القيمة object أو [[null]] بتبقى الـ prototype، ولو رقم أو نص بتتجاهل. ولو كتبتها computed ([[['__proto__']: x]]) أو shorthand ([[{ __proto__ }]]) بتبقى خاصية عادية اسمها [["__proto__"]] (اتجرّبت: [[Object.keys]] طلّعت [[[ '__proto__' ]]]).`,
-            when: R`الـ shorthand في أي object بتبنيه من متغيرات بنفس الأسامي (رد API، أو props). الـ computed لما اسم المفتاح جاي من متغير أو من Symbol. الـ method definition لأي دالة جوه object، إلا لو محتاجها arrow عشان [[this]] بتاع اللي برّه. الـ getter لقيمة محسوبة من خصايص تانية ([[total]])، والـ setter لما الكتابة محتاجة تحقق. و [[__proto__]] في الـ literal بس لما عايز object صغير يورث من object تاني من غير class، وفي الكود الكبير [[class]] أوضح. والـ bracket notation لما المفتاح متغير أو فيه حروف مش مسموحة في الاسم.`,
-            mistakes: R`- تكتب [[obj.key]] وانت قاصد المتغير [[key]]: النقطة دايمًا بتقرا خاصية اسمها حرفيًا «key». المتغير محتاج [[obj[key] ]].
-- تستخدم object كقاموس مفاتيحه objects: كلهم بيبقوا [["[object Object]"]].
-- getter بـ parameter أو setter من غير parameter: SyntaxError قبل التشغيل ([[Getter must not have any formal parameters.]] و [[Setter must have exactly one formal parameter.]]).
-- [[__proto__]] مرتين في نفس الـ literal: [[SyntaxError: Duplicate __proto__ fields are not allowed in object literals]]. بس مفتاح عادي مكرر مبيرميش: [[{ a: 1, a: 2 }]] بيطلع [[{ a: 2 }]] من غير ولا كلمة.
-- [[5.toString()]]: الـ parser بيفتكر النقطة علامة عشرية. اكتب [[(5).toString()]] أو [[5..toString()]].
-- arrow function كـ method وانت محتاج [[this]] بتاع الـ object (درس «arrow و this»).`,
-          },
-          teach: R`## الفكرة في سطرين
-
-الـ object literal مش بس [[key: value]]. فيه ٨ أشكال للتعريف، وكل واحد بيعمل حاجة مختلفة من جوه. وقراية الخاصية ليها شكلين (property accessors)، والاتنين بيحوّلوا المفتاح لنص. كل اللي تحت اتشغّل على ويندوز ١١ بـ Node 24.22 كملفات [[.mjs]] (يعني strict mode)، والناتج منسوخ زي ما طلع.
-
----
-
-## ١. shorthand properties و computed keys
-
-~~~js
-const sku = 'A-7';
-const qty = 3;
-const field = 'price';
-const item = { sku, qty, [field]: 120, [field + 'WithTax']: 136.8 };
-~~~
-
-| الشكل | معناه | المفتاح اللي اتعمل |
-|---|---|---|
-| [[sku,]] | shorthand property: اسم المتغير بقى المفتاح وقيمته بقت القيمة، يعني [[sku: sku]] | [["sku"]] |
-| [[[field]: 120]] | computed key: اللي بين الأقواس المربعة expression بيتحسب، وناتجه هو المفتاح | [["price"]] |
-| [[[field + 'WithTax']: ...]] | أي expression ينفع، حتى نداء دالة | [["priceWithTax"]] |
-| [[[Symbol.iterator]() {}]] | computed key من نوع Symbol، وبيفضل Symbol مش نص | [[Symbol(Symbol.iterator)]] |
-
-الترتيب: كل مفتاح محسوب بيتحسب، وبعده قيمته، وبعدين اللي بعده. اتجرّب بـ [[order.push]] جوه المفاتيح والقيم وطلع [[[ 'k1', 'v1', 'k2', 'v2' ]]].
-
----
-
-## ٢. method definitions: الـ method بالشكل المختصر
-
-~~~js
-describe() { return super.describe() + ' ' + this.sku; },
-async stock() { return 12; },
-*lines() { yield this.sku; yield this.qty; },
-~~~
-
-الـ method definition هي [[name() {}]] جوه الـ object. وليها ٤ أشكال: عادية، و [[async name() {}]] بترجّع Promise، و [[*name() {}]] generator، و [[async *name() {}]] async generator. ومعاهم الاسم ممكن يبقى computed: [[[key]() {}]].
-
-**الفرق بينها وبين [[name: function () {}]]** (اتجرّب):
-
-~~~js
-const o = { describe() { return 1; }, old: function () { return 2; }, arrow: () => 3 };
-try { new o.describe(); } catch (e) { console.log(e.constructor.name + ': ' + e.message); }
-console.log(typeof new o.old(), 'prototype' in o.describe, 'prototype' in o.old);
-~~~
-
-~~~text الناتج
-TypeError: o.describe is not a constructor
-object false true
-~~~
-
-| الحاجة | [[m() {}]] | [[m: function () {}]] | [[m: () => {}]] |
-|---|---|---|---|
-| [[super]] جواها | شغالة | [[SyntaxError: 'super' keyword unexpected here]] | نفس الـ SyntaxError |
-| [[new o.m()]] | [[TypeError: ... is not a constructor]] | بيشتغل | [[TypeError]] |
-| ليها [[prototype]] | لأ | أيوه | لأ |
-| [[this]] | الـ object اللي قبل النقطة | الـ object اللي قبل النقطة | [[this]] بتاع اللي برّه |
-| [[name]] | [["describe"]] | [["old"]] (بتتاخد من المفتاح) | [["arrow"]] |
-
-يعني الـ method definition مش اختصار وبس: هي دالة «method» بجد، مربوطة بالـ object اللي اتكتبت فيه (عشان [[super]])، ومش بتنفع [[new]].
-
----
-
-## ٣. [[get]] و [[set]]: خاصية بتتحسب
-
-~~~js
-get total() { return this.price * this.qty; },
-set total(v) { this.qty = Math.round(v / this.price); },
-~~~
-
-- [[item.total]] من غير أقواس بينادي الـ getter: [[120 * 3 = 360]].
-- [[item.total = 600]] بينادي الـ setter بـ [[v = 600]]، فـ [[qty]] بقت [[Math.round(600 / 120) = 5]].
-- الاتنين **خاصية واحدة** اسمها [[total]]، وظهرت في [[Object.keys]] زي أي خاصية.
-- الـ getter مينفعش ياخد parameter، والـ setter لازم ياخد واحد بالظبط. ده SyntaxError قبل التشغيل:
-
-~~~text الناتج
-SyntaxError: Getter must not have any formal parameters.
-SyntaxError: Setter must have exactly one formal parameter.
-~~~
-
-وتقدر تعمل getter من غير setter (خاصية للقراية بس): الكتابة عليها في strict mode بترمي [[TypeError: Cannot set property only of #<Object> which has only a getter]].
-
----
-
-## ٤. [[__proto__]] جوه الـ literal
-
-~~~js
-const base = { describe() { return 'منتج'; } };
-const item = { __proto__: base, sku };
-~~~
-
-[[__proto__: base]] جوه الـ literal بيخلّي [[base]] هو الـ prototype بتاع [[item]]، فـ [[super.describe()]] بتلاقي [[describe]] بتاعة [[base]]، و [[Object.getPrototypeOf(item) === base]] طلعت [[true]]. وده شكل في المواصفات نفسها (مش زي [[obj.__proto__]] القديمة اللي على [[Object.prototype]]).
-
-| اللي كتبته | النتيجة (اتجرّبت) |
-|---|---|
-| [[{ __proto__: base }]] | الـ prototype بقى [[base]] |
-| [[{ __proto__: null }]] | object من غير prototype خالص، و [['toString' in o]] بـ [[false]] |
-| [[{ __proto__: 5 }]] | القيمة اتجاهلت والـ prototype فضل [[Object.prototype]] |
-| [[{ ['__proto__']: x }]] | خاصية عادية اسمها [["__proto__"]]، مش prototype |
-| [[{ __proto__ }]] (shorthand) | برضه خاصية عادية |
-| [[{ __proto__: a, __proto__: b }]] | [[SyntaxError: Duplicate __proto__ fields are not allowed in object literals]] |
-
----
-
-## ٥. property accessors: النقطة ولا الأقواس
-
-~~~js
-console.log(item.total, item['priceWithTax'], item.describe());
-~~~
-
-| الشكل | المفتاح | ينفع إمتى |
-|---|---|---|
-| [[obj.name]] (dot notation) | الكلمة اللي بعد النقطة حرفيًا | الاسم identifier: حروف وأرقام و [[_]] و [[$]] ومبيبدأش برقم. الكلمات المحجوزة مسموحة: [[r.class]] و [[r.delete]] و [[r.if]] اشتغلوا |
-| [[ obj[expr] ]] (bracket notation) | ناتج الـ expression بعد ما يتحوّل لنص (أو يفضل Symbol) | المفتاح في متغير، أو فيه شرطة أو مسافة ([[ r['first-name'] ]])، أو رقم، أو Symbol |
-| [[obj?.name]] و [[ obj?.[expr] ]] و [[obj.fn?.()]] | زي اللي فوق | لو اللي قبل [[?.]] ممكن يبقى [[null]] أو [[undefined]] (درس «object literal»، قسم [[?.]]) |
-
-**المفتاح دايمًا بيتحوّل لنص** (إلا الـ Symbol):
-
-~~~js
-const k = {};
-k[1] = 'a'; k[{}] = 'b'; k[[1, 2]] = 'c'; k[true] = 'd'; k[null] = 'e';
-console.log(Object.keys(k));
-~~~
-
-~~~text الناتج
-[ '1', '[object Object]', '1,2', 'true', 'null' ]
-~~~
-
-وعشان كده [[ r[2] ]] و [[ r['2'] ]] نفس القيمة، و [[o.1]] مينفعش ([[SyntaxError: Unexpected number]]) لأن [[1]] مش identifier.
-
----
-
-## ٦. المثال كله
-
-~~~text الناتج (node literal.mjs)
-360 136.8 منتج A-7
-5 [ 'A-7', 5 ]
-true [
-  'sku',
-  'qty',
-  'price',
-  'priceWithTax',
-  'total',
-  'describe',
-  'stock',
-  'lines'
-]
-stock 12
-~~~
-
-لاحظ إن [[stock 12]] اتطبع **آخر حاجة** مع إن سطره قبل آخر سطر: الـ [[async]] method بترجّع Promise، و [[then]] بيستنى لما الكود العادي يخلص (درس «microtasks و macrotasks»). ولاحظ إن [[base]] و [[describe]] بتاعتها مش في [[Object.keys]]: دي موروثة مش own (درس «enumerability و ownership»).
-
----
-
-## الخلاصة
-
-- [[{ sku }]] = [[{ sku: sku }]]، و [[{ [expr]: v }]] المفتاح بيتحسب.
-- [[m() {}]] مش [[m: function () {}]]: الأولى فيها [[super]] ومش constructor.
-- [[get]] و [[set]] خاصية واحدة؛ الـ getter من غير parameter والـ setter بواحد.
-- [[__proto__: obj]] في الـ literal بيحدد الـ prototype، والـ computed منه خاصية عادية.
-- [[obj.x]] للاسم الثابت، و [[ obj[x] ]] لأي حاجة تانية، وكل مفتاح بيبقى نص إلا الـ Symbol.`,
-          lines: [
-            R`متغير نصي بنفس اسم الخاصية اللي عايزينها، عشان نستخدمه shorthand تحت.`,
-            R`الكمية في متغير بنفس الاسم برضه. الـ shorthand محتاج المتغير يبقى اسمه هو اسم المفتاح بالظبط.`,
-            R`اسم المفتاح نفسه جوه متغير ([['price']]). ده اللي هيتحسب في الـ computed key تحت.`,
-            R`object صغير فيه method هيبقى الـ prototype بتاع المنتج، عشان نجرّب [[__proto__]] و [[super]].`,
-            R`بداية الـ object literal. كل سطر جواه بيعرّف خاصية بالترتيب من فوق لتحت.`,
-            R`[[__proto__: base]] جوه الـ literal بيخلّي [[base]] هو الـ prototype، مش خاصية اسمها [[__proto__]].`,
-            R`shorthand property: [[sku]] لوحدها = [[sku: sku]]، فالمفتاح [["sku"]] وقيمته [['A-7']].`,
-            R`shorthand تاني: المفتاح [["qty"]] وقيمته 3.`,
-            R`computed key: [[[field]]] بيتحسب وقت الإنشاء فبيبقى [["price"]]، وقيمته 120.`,
-            R`computed key بـ expression كامل: [[field + 'WithTax']] = [["priceWithTax"]]. أي كود ينفع بين الأقواس المربعة.`,
-            R`getter: [[item.total]] من غير أقواس بينادي الدالة دي وبيرجّع السعر في الكمية. مش بياخد parameters.`,
-            R`setter بنفس الاسم: [[item.total = 600]] بينادي الدالة دي بـ [[v = 600]] ويحسب الكمية من الإجمالي. الاتنين خاصية واحدة.`,
-            R`method definition فيها [[super]]: بتنادي [[describe]] بتاعة الـ prototype ([[base]]) وتزوّد عليها الكود. [[super]] بتشتغل هنا بس، مش في [[function ()]].`,
-            R`async method: بترجّع Promise دايمًا حتى لو القيمة جاهزة. شكلها [[async اسم() {}]].`,
-            R`generator method: النجمة قبل الاسم، وكل [[yield]] بيطلّع قيمة لما حد يلف عليها.`,
-            R`قفلة الـ object. الفاصلة بعد آخر خاصية مسموحة (trailing comma) وبتخلي إضافة سطر جديد diff بسطر واحد.`,
-            R`تلات قرايات: [[item.total]] (getter = 360)، و [[item['priceWithTax']]] بالأقواس (136.8)، و [[item.describe()]] اللي بتطبع «منتج A-7».`,
-            R`كتابة على الـ setter: [[qty]] بقت [[Math.round(600 / 120)]] = 5.`,
-            R`[[qty]] بقت 5، و [[[...item.lines()]]] لف على الـ generator وجمّع القيمتين في array: [[[ 'A-7', 5 ]]].`,
-            R`[[stock()]] بترجّع Promise، و [[then]] بيطبع «stock 12» بعد ما كل السطور العادية تخلص، عشان كده بيظهر آخر الناتج.`,
-            R`الـ prototype هو [[base]] فعلًا ([[true]])، و [[Object.keys]] طلّع الـ ٨ خصايص اللي اتكتبت في الـ literal بالترتيب، ومن ضمنهم [[total]] مرة واحدة، ومفيش [[__proto__]].`,
-          ],
-          ref: [
-            { t: "MDN: Object initializer (shorthand و computed و __proto__)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer" },
-            { t: "MDN: Method definitions", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions" },
-            { t: "MDN: Property accessors", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Property_accessors" },
-            { t: "MDN: Lexical grammar (shorthand object literals)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar" },
-            { t: "MDN: get", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get" },
-            { t: "MDN: set", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/set" },
-            { t: "ECMAScript: Object Initializer", url: "https://tc39.es/ecma262/multipage/ecmascript-language-expressions.html#sec-object-initializer" },
-            { t: "ECMAScript: Method Definitions", url: "https://tc39.es/ecma262/multipage/ecmascript-language-functions-and-classes.html#sec-method-definitions" }
-          ],
-          pre: ["js/object literal", { to: "js/this", why: R`[[this]] جوه الـ method والـ getter هو الـ object اللي قبل النقطة` }, { to: "js/iterators و generators", why: R`الـ generator method و [[yield]] و [[yield*]]` }]
-        },
-        {
-          cmd: "property descriptors: Object.defineProperty",
-          title: "كل خاصية ليها ٣ مفاتيح مخفية: writable و enumerable و configurable. تشوفهم وتغيّرهم إزاي؟",
-          desc: R`كل خاصية في أي object مش قيمة وبس: معاها **descriptor** فيه ٣ إعدادات: [[writable]] (تتكتب؟)، و [[enumerable]] (تظهر في [[Object.keys]] و JSON و [[for...in]]؟)، و [[configurable]] (تتمسح أو إعداداتها تتغيّر؟). [[Object.getOwnPropertyDescriptor(obj, key)]] بيوريهم، و [[Object.defineProperty(obj, key, descriptor)]] بيعرّف خاصية بالإعدادات اللي انت عايزها.
-
-الفخ الأشهر: الخاصية اللي بتتعمل عادي ([[obj.x = 1]] أو في الـ literal) التلاتة بتوعها [[true]]، بس اللي بتتعمل بـ [[defineProperty]] أي إعداد مكتبتهوش بيبقى [[false]]. فـ [[Object.defineProperty(o, 'id', { value: 501 })]] بتعمل خاصية مبتتكتبش، ومبتظهرش، ومبتتمسحش، ومن غير ما تقصد.
-
-وفيه نوعين descriptors: **data** ([[value]] و [[writable]]) و **accessor** ([[get]] و [[set]])، ومينفعش تخلط الاتنين.`,
-          example: R`// خاصية ليها إعدادات: قيمة، وتتكتب؟ وتظهر؟ وتتمسح؟
-const product = { name: 'كوباية' };
-Object.defineProperty(product, 'id', { value: 501 });
-console.log(Object.getOwnPropertyDescriptor(product, 'name'));
-console.log(Object.getOwnPropertyDescriptor(product, 'id'));
-console.log(Object.keys(product), JSON.stringify(product), product.id);
-try { product.id = 9; } catch (e) { console.log(e.message); }
-try { delete product.id; } catch (e) { console.log(e.message); }
-Object.defineProperties(product, {
-  priceCents: { value: 4500, writable: true, enumerable: true },
-  price: {
-    get() { return this.priceCents / 100; },
-    set(v) { this.priceCents = Math.round(v * 100); },
-    enumerable: true,
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const base = { greet() { return "hi " + this.name; } }; const u = Object.create(base); u.name = "Sara";]] واطبع [[u.greet()]] و [[Object.hasOwn(u, "greet")]] و [["greet" in u]].`, done: R`[["hi Sara"]] ثم [[false]] ثم [[true]]: الـ method مش على u، اتلقت في الـ prototype.`, sol: R`~~~js create-base.js
+const base = {
+  greet() {
+    return "hi " + this.name;
   },
-});
-product.price = 52.5;
-console.log(product.priceCents, product.price);
-console.log(Object.getOwnPropertyDescriptors(product));
-try { Object.defineProperty(product, 'id', { value: 1 }); } catch (e) { console.log(e.message); }`,
-          try: R`في ملف [[desc.mjs]] اطبع [[Object.getOwnPropertyDescriptor([1, 2], 'length')]] و [[Object.getOwnPropertyDescriptor('hi', 'length')]] و descriptor الـ method [[open]] في [[class Box { open() {} }]] (من [[Box.prototype]]). أنهي فيهم [[enumerable]] و أنهي [[writable]]؟ وبعدين جرّب تعرّف خاصية فيها [[value]] و [[get]] مع بعض واقرا الـ error كله.`,
-          sol: R`~~~js desc.mjs
-console.log(Object.getOwnPropertyDescriptor([1, 2], 'length'));
-console.log(Object.getOwnPropertyDescriptor('hi', 'length'));
-class Box { open() {} }
-console.log(Object.getOwnPropertyDescriptor(Box.prototype, 'open'));
-try { Object.defineProperty({}, 'y', { value: 1, get() { return 2; } }); } catch (e) { console.log(e.constructor.name + ': ' + e.message); }
-~~~
-
-~~~text الناتج (Node 24.22)
-{ value: 2, writable: true, enumerable: false, configurable: false }
-{ value: 2, writable: false, enumerable: false, configurable: false }
-{
-  value: [Function: open],
-  writable: true,
-  enumerable: false,
-  configurable: true
-}
-TypeError: Invalid property descriptor. Cannot both specify accessors and a value or writable attribute, #<Object>
-~~~
-
-- [[length]] بتاعة الـ array بتتكتب (عشان [[arr.length = 0]] بيفضّيها) بس مش enumerable، عشان كده [[for...in]] على array مبيطلّعش [["length"]].
-- [[length]] بتاعة النص مبتتكتبش خالص: النصوص immutable.
-- الـ methods اللي في [[class]] مش enumerable، وده الفرق بينها وبين method حطيتها بإيدك بـ [[Box.prototype.open = ...]] (دي enumerable وهتظهر في [[for...in]] على أي instance).
-- الخلط بين data و accessor مرفوض: الخاصية يا إما ليها قيمة متخزنة، يا إما دالة بتحسبها.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** نفس الكود مرة في [[a.cjs]] (sloppy) ومرة في [[a.mjs]] (strict). اكتب الناتج في الحالتين قبل التشغيل:
-
-~~~js
-const o = {};
-Object.defineProperty(o, 'x', { value: 1 });
-o.x = 2;
-console.log(o.x, Object.keys(o), JSON.stringify(o), delete o.x);
-~~~`, done: R`توقّعت إن الـ cjs بيطبع [[1 [] {} false]] والـ mjs بيقع عند [[o.x = 2]]، وطلع كده.`, sol: R`~~~text الناتج: node a.cjs
-1 [] {} false
-~~~
-
-~~~text الناتج: node a.mjs
-o.x = 2;
-    ^
-
-TypeError: Cannot assign to read only property 'x' of object '#<Object>'
-~~~
-
-**ليه:** [[{ value: 1 }]] لوحدها = [[writable: false, enumerable: false, configurable: false]]. في الـ cjs (من غير [['use strict']]) الكتابة والمسح بيفشلوا **ساكتين**: [[o.x]] فضلت 1، و [[delete]] رجّعت [[false]]. وفي الـ mjs (ESM دايمًا strict) نفس الكتابة رمت [[TypeError]]. والخاصية مش ظاهرة في [[Object.keys]] ولا JSON لأنها مش enumerable.
-
-الغلطة الشائعة: تفتكر الكود «شغال» لأن الـ cjs مرماش error، وهو أصلًا مكتبش حاجة.` },
-            { lvl: 'تطبيق', t: R`**ابني:** دالتين: [[constant(obj, key, value)]] بتعمل خاصية ظاهرة بس مبتتكتبش ولا تتمسح، و [[hidden(obj, key, value)]] بتعمل خاصية بتتكتب بس مش ظاهرة في [[Object.keys]] ولا JSON. جرّبهم على فاتورة: [[currency]] ثابتة و [[_dbId]] مخفية.`, done: R`[[JSON.stringify(invoice)]] فيه [[currency]] ومفيهوش [[_dbId]]، و [[invoice._dbId]] بيتقري ويتكتب عادي، و [[invoice.currency = 'USD']] بيرمي في الـ mjs.`, sol: R`~~~js invoice.mjs
-function constant(obj, key, value) {
-  return Object.defineProperty(obj, key, { value, enumerable: true, writable: false, configurable: false });
-}
-function hidden(obj, key, value) {
-  return Object.defineProperty(obj, key, { value, enumerable: false, writable: true, configurable: true });
-}
-const invoice = { total: 250 };
-constant(invoice, 'currency', 'EGP');
-hidden(invoice, '_dbId', 9812);
-console.log(invoice, JSON.stringify(invoice), invoice._dbId);
-try { invoice.currency = 'USD'; } catch (e) { console.log(e.message); }
-invoice._dbId = 1;
-console.log(invoice._dbId, Object.keys(invoice));
-~~~
-
-~~~text الناتج (Node 24.22)
-{ total: 250, currency: 'EGP' } {"total":250,"currency":"EGP"} 9812
-Cannot assign to read only property 'currency' of object '#<Object>'
-1 [ 'total', 'currency' ]
-~~~
-
-**الشرح:** كتبت التلات إعدادات صراحة في الاتنين حتى اللي قيمته [[false]] (ومكانش لازم)، عشان اللي يقرا الكود يعرف إنها مقصودة. و [[defineProperty]] بترجّع الـ object نفسه، فالدالتين بيرجّعوه كمان. و [[console.log]] في Node مبيعرضش الخصايص اللي مش enumerable، عشان كده [[_dbId]] مش في السطر الأول مع إنها موجودة.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** زميلك كتب ده عشان «يضيف [[role]] بطريقة احترافية»، والـ API بقى بيرجّع اليوزر من غير [[role]]، والأدمن مش قادر يغيّرها. لاقي السبب وصلّحه بسطر واحد:
-
-~~~js
-const user = { name: 'Sara' };
-Object.defineProperty(user, 'role', { value: 'admin' });
-console.log(Object.keys(user), JSON.stringify(user));
-user.role = 'editor';
-~~~`, done: R`[[Object.keys(user)]] فيه [[role]]، و JSON فيه [["role":"admin"]]، و [[user.role = 'editor']] بيشتغل في strict mode.`, sol: R`قبل التصليح (في [[.mjs]]):
-
-~~~text الناتج
-[ 'name' ] {"name":"Sara"}
-Cannot assign to read only property 'role' of object '#<Object>'
-~~~
-
-ده الـ defaults trap: [[{ value: 'admin' }]] لوحدها خلّت التلاتة [[false]]. التصليح إنك تكتب الإعدادات صراحة (أو تكتب [[user.role = 'admin']] عادي وخلاص، لو مش محتاج أي إعداد مختلف):
-
-~~~js role.mjs
-const user = { name: 'Sara' };
-Object.defineProperty(user, 'role', { value: 'admin', writable: true, enumerable: true, configurable: true });
-console.log(Object.keys(user), JSON.stringify(user));
-user.role = 'editor';
-console.log(user.role);
-~~~
-
-~~~text الناتج (Node 24.22)
-[ 'name', 'role' ] {"name":"Sara","role":"admin"}
-editor
-~~~
-
-**القاعدة:** [[defineProperty]] تستخدمها لما عايز إعداد **مختلف** عن العادي. لو كلهم [[true]] الإسناد العادي أوضح.` },
-            { lvl: 'تحدي', t: R`**قارن:** object فيه array [[items]] و getter [[total]] بيجمعها. انسخه ٣ مرات: بـ [[{ ...cart }]]، و بـ [[Object.assign({}, cart)]]، و بـ [[Object.defineProperties({}, Object.getOwnPropertyDescriptors(cart))]]. بعد ما تزوّد عنصر في [[cart.items]]، اطبع [[total]] من التلات نسخ و descriptor [[total]] في أول وآخر نسخة.`, done: R`أول نسختين طلّعوا الإجمالي القديم و descriptor فيه [[value]]، والتالتة طلّعت الإجمالي الجديد و descriptor فيه [[get]]، وتقدر تقول ليه.`, sol: R`~~~js copy-getter.mjs
-const cart = {
-  items: [120, 80],
-  get total() { return this.items.reduce((a, b) => a + b, 0); },
 };
-const bySpread = { ...cart };
-const byAssign = Object.assign({}, cart);
-const exact = Object.defineProperties({}, Object.getOwnPropertyDescriptors(cart));
-cart.items.push(50);
-console.log(bySpread.total, byAssign.total, exact.total);
-console.log(Object.getOwnPropertyDescriptor(bySpread, 'total'));
-console.log(Object.getOwnPropertyDescriptor(exact, 'total'));
+const u = Object.create(base);   // object جديد الـ prototype بتاعه base
+u.name = "Sara";
+
+console.log(u.greet());
+console.log(Object.hasOwn(u, "greet"));
+console.log("greet" in u);
+console.log(Object.getPrototypeOf(u) === base, Object.keys(u));
 ~~~
 
-~~~text الناتج (Node 24.22)
-200 200 250
-{ value: 200, writable: true, enumerable: true, configurable: true }
-{
-  get: [Function: get total],
-  set: undefined,
-  enumerable: true,
-  configurable: true
-}
-~~~
-
-**الشرح:** الـ spread و [[Object.assign]] بيعملوا **قراية** لكل خاصية ([[cart.total]] = 200 وقتها) ويكتبوا الناتج كقيمة عادية. فالـ getter اتشغّل مرة واتنسى. لكن [[getOwnPropertyDescriptors]] بيرجّع الـ descriptors نفسها، و [[defineProperties]] بيعرّفها زي ما هي، فالـ getter فضل getter. ولاحظ إن [[items]] نفس الـ array في التلاتة (النسخ سطحي)، عشان كده [[exact.total]] شاف الـ 50.
-
-ده نفس سبب إن [[{ ...obj }]] بيضيّع الـ getters والخصايص المخفية والإعدادات، والطريقة الكاملة للنسخ «زي ما هو» هي الزوج ده.` },
-            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[describeProps(obj)]] بترجّع array نصوص زي [['name: wec']] لكل خاصية own (من [[Object.getOwnPropertyNames]]): أول حرف [[w]] لو writable و [[a]] لو accessor و [[-]] لو مبتتكتبش، وبعده [[e]] أو [[-]]، وبعده [[c]] أو [[-]].`, done: R`[[describeProps([10])]] بيرجّع [[[ '0: wec', 'length: w--' ]]]، و object متجمّد فيه [[a]] بيرجّع [[[ 'a: -e-' ]]]، وتمرين «شغّل واختبر» عدّى.`, sol: R`~~~js describe-props.mjs
-function describeProps(obj) {
-  return Object.getOwnPropertyNames(obj).map((key) => {
-    const d = Object.getOwnPropertyDescriptor(obj, key);
-    const w = 'get' in d || 'set' in d ? 'a' : d.writable ? 'w' : '-';
-    return key + ': ' + w + (d.enumerable ? 'e' : '-') + (d.configurable ? 'c' : '-');
-  });
-}
-const o = { name: 'Sara', get full() { return this.name; } };
-Object.defineProperty(o, 'id', { value: 1 });
-console.log(describeProps(o));
-console.log(describeProps([10]));
-console.log(describeProps(Object.freeze({ a: 1 })));
-~~~
-
-~~~text الناتج (Node 24.22)
-[ 'name: wec', 'full: aec', 'id: ---' ]
-[ '0: wec', 'length: w--' ]
-[ 'a: -e-' ]
-~~~
-
-**الشرح:** الـ accessor descriptor مفيهوش [[writable]] أصلًا، فلازم تفحص [[get]] أو [[set]] الأول بـ [[in]] (مش [[d.get]]، لأن [[set: undefined]] موجودة كمفتاح). و [[getOwnPropertyNames]] مش [[Object.keys]] عشان الخصايص المخفية ([[id]] و [[length]]) تظهر. والـ freeze خلّى [[a]] مبتتكتبش ولا configurable، بس فضلت enumerable.` },
-          ],
-          check: { lang: "js", starter: R`function describeProps(obj) {
-  // لكل اسم من Object.getOwnPropertyNames: "اسم: " + (w أو a أو -) + (e أو -) + (c أو -)
-}`, tests: R`test("خاصية عادية", () => expect(describeProps({ a: 1 })).toEqual(['a: wec']));
-test("getter", () => expect(describeProps({ get g() { return 1; } })).toEqual(['g: aec']));
-test("defineProperty بالـ defaults", () => { const o = {}; Object.defineProperty(o, 'id', { value: 1 }); expect(describeProps(o)).toEqual(['id: ---']); });
-test("array", () => expect(describeProps([10])).toEqual(['0: wec', 'length: w--']));
-test("freeze", () => expect(describeProps(Object.freeze({ a: 1 }))).toEqual(['a: -e-']));
-test("فاضي", () => expect(describeProps({})).toEqual([]));`, solution: R`function describeProps(obj) {
-  return Object.getOwnPropertyNames(obj).map((key) => {
-    const d = Object.getOwnPropertyDescriptor(obj, key);
-    const w = 'get' in d || 'set' in d ? 'a' : d.writable ? 'w' : '-';
-    return key + ': ' + w + (d.enumerable ? 'e' : '-') + (d.configurable ? 'c' : '-');
-  });
-}` },
-          flag: "script",
-          deep: {
-            why: R`كل الحاجات اللي بتشوفها «سحر» في JavaScript مبنية على الإعدادات دي: ليه [[length]] مش بتظهر في [[for...in]]، وليه methods الـ class مش في [[Object.keys]]، وليه [[Math.PI = 3]] مبيعملش حاجة، وإزاي [[Object.freeze]] شغالة (بتخلّي كل خاصية [[writable: false, configurable: false]]). و Vue 2 كلها كانت مبنية على [[defineProperty]] بـ getter و setter لكل خاصية. ولما تعرفها تقدر تعمل ثوابت حقيقية، وخصايص داخلية متطلعش في JSON، و lazy getters.`,
-            how: R`المحرك بيخزّن كل خاصية كسجل فيه المفتاح ومعاه إما Value و Writable، أو Get و Set، ومعاهم في الحالتين Enumerable و Configurable (دي أسامي الخانات في المواصفات، و [[getOwnPropertyDescriptor]] بيرجّعها بحروف صغيرة).
-
-- الإسناد العادي [[o.x = v]]: لو الخاصية مش موجودة بيعملها بالتلاتة [[true]]، ولو موجودة و [[writable: false]] بيفشل (ساكت في sloppy، و [[TypeError]] في strict).
-- [[defineProperty]]: لو الخاصية **جديدة** أي إعداد مش مكتوب بيبقى [[false]] (أو [[undefined]] للقيمة والدوال)، ولو **موجودة** بيغيّر اللي كتبته بس ويسيب الباقي. اتجرّب: [[Object.defineProperty(a, 'x', { enumerable: false })]] على خاصية عادية سابت [[writable: true]] و [[configurable: true]].
-- [[configurable: false]] قفل نهائي: مينفعش تمسح، ولا تغيّر [[enumerable]]، ولا تحوّل data لـ accessor. الاستثناء الوحيد: [[writable]] ينفع تقلبها من [[true]] لـ [[false]] (مش العكس)، والقيمة تتغيّر طول ما [[writable: true]]. اتجرّب: [[value]] اتغيّرت لـ 2 وبعدها [[writable: false]] عدّت، ورجوعها [[true]] رمى [[Cannot redefine property: v]].
-- والخاصية الموروثة اللي [[writable: false]] بتمنع الكتابة على الابن كمان: [[child.kind = 'x']] رمت [[Cannot assign to read only property 'kind']] مع إن [[child]] نفسه مفيهوش [[kind]]، والحل الوحيد إنك تعرّفها على الابن بـ [[defineProperty]].`,
-            when: R`ثابت حقيقي على object ([[writable: false]]). خاصية داخلية مش عايزها في JSON أو [[Object.keys]] ([[enumerable: false]]) زي cache أو id من الداتابيز. getter محسوب بتضيفه على object موجود أو على prototype. نسخ object بالـ getters بتاعته (الزوج [[getOwnPropertyDescriptors]] و [[defineProperties]]). وفي الكود العادي اليومي: الإسناد العادي أوضح، و [[class]] بالـ [[#private]] و [[get]] أحسن من [[defineProperty]] على كل instance.`,
-            mistakes: R`- الـ defaults trap: [[defineProperty(o, 'x', { value: 1 })]] تعمل خاصية مخفية ومبتتكتبش وانت مش واخد بالك.
-- تخلط [[value]] مع [[get]]: [[TypeError: Invalid property descriptor. Cannot both specify accessors and a value or writable attribute, #<Object>]].
-- تعرّف خاصية [[configurable: false]] وبعدين تحاول تعدّلها: [[TypeError: Cannot redefine property: id]]، وده مالوش رجعة غير إنك تعمل object جديد.
-- تفتكر [[delete]] نجح في sloppy mode: رجّع [[false]] ساكت. وفي strict: [[TypeError: Cannot delete property 'id' of #<Object>]].
-- تنسخ object فيه getters بالـ spread وتتوقع الـ getter يفضل شغال.
-- [[defineProperty]] على قيمة primitive: [[TypeError: Object.defineProperty called on non-object]].`,
-          },
-          teach: R`## الفكرة في سطرين
-
-كل خاصية = مفتاح + descriptor. الـ descriptor فيه القيمة (أو getter و setter) و ٣ أذونات. انت كنت بتشوفهم كلهم [[true]] لأن الإسناد العادي بيعمل كده. كل الأمثلة اتشغّلت على Node 24.22 كملف [[.mjs]] (strict).
-
----
-
-## ١. [[Object.getOwnPropertyDescriptor]]: شوف الإعدادات
-
-~~~js
-const product = { name: 'كوباية' };
-console.log(Object.getOwnPropertyDescriptor(product, 'name'));
-~~~
-
-~~~text الناتج
-{
-  value: 'كوباية',
-  writable: true,
-  enumerable: true,
-  configurable: true
-}
-~~~
-
-| الإعداد | لو [[true]] | لو [[false]] |
-|---|---|---|
-| [[value]] | القيمة المتخزنة | (مش boolean) |
-| [[writable]] | [[obj.x = v]] بتغيّرها | الكتابة بتفشل: ساكتة في sloppy، و [[TypeError]] في strict |
-| [[enumerable]] | بتظهر في [[Object.keys]] و [[for...in]] و JSON والـ spread | مخفية عنهم، بس [[obj.x]] بتقراها عادي |
-| [[configurable]] | تتمسح، وإعداداتها تتغيّر | مبتتمسحش، وإعداداتها مقفولة نهائيًا (إلا [[writable]] من [[true]] لـ [[false]]) |
-
-ولو الخاصية مش موجودة أو موروثة، [[getOwnPropertyDescriptor]] بيرجّع [[undefined]]: جرّبت [['nope']] و [['toString']] على object عادي والاتنين [[undefined]]. الكلمة Own في الاسم معناها «بتاعته هو بس».
-
----
-
-## ٢. [[Object.defineProperty]] والـ defaults
-
-~~~js
-Object.defineProperty(product, 'id', { value: 501 });
-console.log(Object.getOwnPropertyDescriptor(product, 'id'));
-console.log(Object.keys(product), JSON.stringify(product), product.id);
-~~~
-
-~~~text الناتج
-{ value: 501, writable: false, enumerable: false, configurable: false }
-[ 'name' ] {"name":"كوباية"} 501
-~~~
-
-كتبنا [[value]] بس، والتلات أذونات بقوا [[false]]. [[id]] موجودة وبتتقري (501)، بس مش ظاهرة في [[Object.keys]] ولا JSON. وكمان:
-
-~~~text الناتج
-Cannot assign to read only property 'id' of object '#<Object>'
-Cannot delete property 'id' of #<Object>
-~~~
-
-| بتعمل الخاصية إزاي | الأذونات |
-|---|---|
-| [[obj.x = 1]] أو [[{ x: 1 }]] | التلاتة [[true]]: بتتكتب وتظهر وتتمسح |
-| [[Object.defineProperty(obj, 'x', { value: 1 })]] (خاصية جديدة) | التلاتة [[false]]: أي إذن مكتبتهوش بيتقفل |
-| [[defineProperty]] على خاصية موجودة | اللي كتبته بس بيتغيّر، والباقي بيفضل زي ما هو |
-| method في [[class]] | [[writable: true, enumerable: false, configurable: true]] |
-
----
-
-## ٣. [[Object.defineProperties]]: كذا خاصية مرة واحدة
-
-~~~js
-Object.defineProperties(product, {
-  priceCents: { value: 4500, writable: true, enumerable: true },
-  price: {
-    get() { return this.priceCents / 100; },
-    set(v) { this.priceCents = Math.round(v * 100); },
-    enumerable: true,
-  },
-});
-product.price = 52.5;
-console.log(product.priceCents, product.price);
-~~~
-
-~~~text الناتج
-5250 52.5
-~~~
-
-التاني argument object: كل مفتاح فيه اسم خاصية، وقيمته الـ descriptor بتاعها. [[priceCents]] **data descriptor** (قيمة)، و [[price]] **accessor descriptor** ([[get]] و [[set]] بدل [[value]] و [[writable]]). الفكرة: نخزّن الفلوس قروش (integer) ونعرضها جنيهات، فـ [[52.5]] اتخزنت [[5250]] من غير كسور.
-
-| النوع | مفاتيحه | مينفعش معاه |
-|---|---|---|
-| data descriptor | [[value]] و [[writable]] و [[enumerable]] و [[configurable]] | [[get]] و [[set]] |
-| accessor descriptor | [[get]] و [[set]] و [[enumerable]] و [[configurable]] | [[value]] و [[writable]] |
-
-الخلط بيرمي: [[TypeError: Invalid property descriptor. Cannot both specify accessors and a value or writable attribute, #<Object>]].
-
----
-
-## ٤. [[Object.getOwnPropertyDescriptors]]: كل الإعدادات
-
-~~~text الناتج (نفس اللي Node طبعه، متجمّع في سطور أقل)
-  id: { value: 501, writable: false, enumerable: false, configurable: false },
-  priceCents: { value: 5250, writable: true, enumerable: true, configurable: false },
-  price: { get: [Function: get], set: [Function: set], enumerable: true, configurable: false }
-~~~
-
-لاحظ [[configurable: false]] في [[priceCents]] و [[price]]: محدّدناهاش في [[defineProperties]] فبقت [[false]]. والدالتين اسمهم [[get]] و [[set]] لأنهم method definitions جوه الـ descriptor. واستخدامه الأهم: نسخ object «زي ما هو»:
-
-~~~js
-const copy = Object.defineProperties({}, Object.getOwnPropertyDescriptors(src));
-~~~
-
-ده بينقل الـ getters كـ getters والخصايص المخفية مخفية، عكس [[{ ...src }]] اللي بيقرا كل قيمة ويكتبها عادي (اتجرّب: الـ spread طلّع [[Sara Ali]] بعد ما غيّرنا [[first]]، والنسخة بالـ descriptors طلّعت [[Mona Ali]]).
-
----
-
-## ٥. [[configurable: false]] نهائي
-
-~~~js
-try { Object.defineProperty(product, 'id', { value: 1 }); } catch (e) { console.log(e.message); }
-~~~
-
-~~~text الناتج
-Cannot redefine property: id
-~~~
-
-مفيش [[undefineProperty]]. الخاصية دي هتفضل كده طول عمر الـ object. عشان كده [[Math.PI]] و [[undefined]] و [[NaN]] على [[globalThis]] متعرّفين كده: محدش يقدر يبوّظهم.
-
----
-
-## الخلاصة
-
-- [[getOwnPropertyDescriptor(s)]] بيقرا، و [[defineProperty]] / [[defineProperties]] بيكتب.
-- الإسناد العادي = التلاتة [[true]]. [[defineProperty]] على خاصية جديدة = أي حاجة مكتبتهاش [[false]].
-- data ([[value]]) أو accessor ([[get]]/[[set]])، مش الاتنين.
-- [[configurable: false]] مالوش رجعة.
-- النسخ الكامل: [[defineProperties({}, getOwnPropertyDescriptors(src))]].`,
-          lines: [
-            R`object عادي: [[name]] اتعملت بالإسناد العادي، فأذوناتها التلاتة [[true]].`,
-            R`نعرّف [[id]] بـ [[value]] بس. الأذونات اللي مكتبناهاش هتبقى [[false]]، وده الـ defaults trap.`,
-            R`بنطبع الـ descriptor بتاع [[name]]: القيمة ومعاها تلات أذونات كلهم [[true]] لأنها اتعملت بالإسناد العادي.`,
-            R`الـ descriptor بتاع [[id]] فيه التلات أذونات [[false]]: [[{ value: 501, writable: false, enumerable: false, configurable: false }]].`,
-            R`[[Object.keys]] و JSON مش شايفين [[id]] (مش enumerable)، بس [[product.id]] بتقراها عادي: 501.`,
-            R`كتابة على [[id]]: في الـ mjs بترمي [[Cannot assign to read only property 'id' of object '#<Object>']]، والـ [[catch]] بيطبع الرسالة.`,
-            R`مسح [[id]]: بيرمي [[Cannot delete property 'id' of #<Object>]] لأنها [[configurable: false]].`,
-            R`[[defineProperties]] بيعرّف كذا خاصية مرة واحدة: كل مفتاح في الـ object ده اسم خاصية، وقيمته الـ descriptor بتاعها.`,
-            R`[[priceCents]] data descriptor: قيمة 4500، بتتكتب وظاهرة. ومش configurable لأننا مكتبناش.`,
-            R`بداية [[price]]: accessor descriptor، يعني مفيهوش قيمة متخزنة، فيه دالتين.`,
-            R`الـ getter: القراية بتقسم القروش على 100 فبترجّع جنيهات.`,
-            R`الـ setter: الكتابة بتضرب في 100 وتقرّب، فالكسور (52.5) بتتخزن integer (5250) من غير غلطات floating point.`,
-            R`[[price]] ظاهرة في [[Object.keys]] و JSON. من غير السطر ده كانت هتبقى مخفية.`,
-            R`قفلة الـ descriptor بتاع [[price]] بعد ما حددنا الدالتين والظهور.`,
-            R`قفلة الـ object اللي فيه الخاصيتين، وقفلة نداء [[defineProperties]] نفسه.`,
-            R`كتابة على الـ setter: [[priceCents]] بقت 5250.`,
-            R`[[5250 52.5]]: القيمة المتخزنة والقيمة المحسوبة من الـ getter.`,
-            R`كل الـ descriptors مرة واحدة كـ object: [[name]] و [[id]] و [[priceCents]] و [[price]]، وتقدر تشوف إن الاتنين الأخيرين [[configurable: false]].`,
-            R`محاولة تعريف [[id]] تاني: [[Cannot redefine property: id]]. الخاصية [[configurable: false]] فمقفولة نهائيًا.`,
-          ],
-          ref: [
-            { t: "MDN: Object.defineProperty()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty" },
-            { t: "MDN: Object.defineProperties()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperties" },
-            { t: "MDN: Object.getOwnPropertyDescriptor()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/getOwnPropertyDescriptor" },
-            { t: "MDN: Object.getOwnPropertyDescriptors()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/getOwnPropertyDescriptors" },
-            { t: "ECMAScript: Property Attributes", url: "https://tc39.es/ecma262/multipage/ecmascript-data-types-and-values.html#sec-property-attributes" },
-            { t: "ECMAScript: Object.defineProperty", url: "https://tc39.es/ecma262/multipage/fundamental-objects.html#sec-object.defineproperty" }
-          ],
-          pre: ["js/method definitions و property accessors", { to: "js/class", why: R`الـ getter والـ setter في الـ class، ونفس الفكرة هنا بس بإيدك على أي object` }, { to: "js/reference و copy", why: R`النسخ السطحي بالـ spread، وهنا هتشوف إنه كمان بيضيّع الـ getters` }]
-        },
-        {
-          cmd: "enumerability و ownership",
-          title: "Object.keys و for...in و JSON و Reflect.ownKeys: كل واحد بيشوف أنهي خصايص بالظبط؟",
-          desc: R`كل خاصية ليها صفتين بيحددوا مين يشوفها: هي **own** (على الـ object نفسه) ولا **موروثة** من الـ prototype؟ وهي **enumerable** ولا مخفية؟ وكمان مفتاحها نص ولا Symbol؟ وكل طريقة لف أو فحص بتشوف تركيبة مختلفة: [[Object.keys]] own و enumerable و نصوص بس، و [[for...in]] بيزوّد الموروث، و [[Object.getOwnPropertyNames]] بيزوّد المخفي، و [[Object.getOwnPropertySymbols]] الـ Symbols بس، و [[Reflect.ownKeys]] كل الـ own.
-
-وفي الفحص: [[in]] بيدوّر في السلسلة كلها، و [[Object.hasOwn]] (والقديمة [[obj.hasOwnProperty]]) own بس، و [[obj.propertyIsEnumerable(k)]] own **و** enumerable. والدرس فيه الجدول الكامل لكل الطرق، لأن «الخاصية موجودة بس مش ظاهرة» من أكتر الباجات اللي بتضيّع وقت.`,
-          example: R`// خاصية من ٤ أنواع: موروثة، وعادية، ومخفية، و Symbol
-const base = { inherited: 1 };
-const secret = Symbol('secret');
-const user = Object.create(base);
-user.name = 'Sara';
-Object.defineProperty(user, 'hidden', { value: 'h', enumerable: false });
-user[secret] = 's';
-console.log(Object.keys(user), Object.getOwnPropertyNames(user));
-console.log(Object.getOwnPropertySymbols(user), Reflect.ownKeys(user));
-for (const k in user) console.log('for-in', k);
-console.log('inherited' in user, Object.hasOwn(user, 'inherited'), user.hasOwnProperty('hidden'));
-console.log(user.propertyIsEnumerable('name'), user.propertyIsEnumerable('hidden'), user.propertyIsEnumerable('inherited'));
-console.log(JSON.stringify(user), { ...user }, Object.assign({}, user));`,
-          try: R`في نفس ملف المثال زوّد سطر: [[console.log(structuredClone(user), Object.entries(user), Object.values(user))]]. قبل ما تشغّل: أنهي خصايص هتظهر في كل واحد؟ وبعدين اطبع [[Object.getOwnPropertyNames(Math).length]] و [[Object.keys(Math).length]]: ليه الفرق ده؟`,
-          sol: R`~~~text الناتج (Node 24.22)
-{ name: 'Sara' } [ [ 'name', 'Sara' ] ] [ 'Sara' ]
-44 0
-~~~
-
-التلاتة شافوا [[name]] بس: own و enumerable ونص. [[structuredClone]] كمان ساب الـ Symbol والمخفي والموروث (والـ prototype نفسه: النسخة object عادي، مش وارث من [[base]]).
-
-و [[Math]] فيه ٤٤ خاصية own في Node 24 (الثوابت زي [[PI]] والدوال زي [[max]] و [[sumPrecise]])، وكلهم [[enumerable: false]]، عشان كده [[Object.keys(Math)]] فاضية. ونفس الكلام لأي built-in: [[Object.keys(Array.prototype)]] فاضية مع إن فيها عشرات الـ methods. لو عايز تشوف الـ API بتاع object من الـ Console استخدم [[Object.getOwnPropertyNames]].`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ترتيب المفاتيح. اكتب الناتج قبل التشغيل:
-
-~~~js
-const o = { b: 1, 2: 'x', a: 2, 1: 'y', [Symbol('s')]: 0, '1.5': 'z' };
-console.log(Object.keys(o));
-console.log(Reflect.ownKeys(o).length);
-~~~`, done: R`كتبت [[[ '1', '2', 'b', 'a', '1.5' ]]] و 6 قبل التشغيل، وتقدر تقول ليه [['1.5']] جت آخر حاجة.`, sol: R`~~~text الناتج (Node 24.22)
-[ '1', '2', 'b', 'a', '1.5' ]
-6
-~~~
-
-**القاعدة** (اسمها OrdinaryOwnPropertyKeys في المواصفات، وكل الطرق بتمشي عليها):
-
-1. المفاتيح اللي شكلها **index** (رقم صحيح موجب في صورة نص، زي [['1']] و [['2']]) الأول، مترتبة تصاعدي.
-2. باقي النصوص بترتيب الإضافة: [['b']] ثم [['a']] ثم [['1.5']]. [['1.5']] مش index (فيه كسر) فبيتعامل كنص عادي. وكمان [['-1']] و [['01']] نصوص عادية (اتجرّبت).
-3. الـ Symbols في الآخر بترتيب الإضافة، و [[Object.keys]] مبيطلّعهاش، عشان كده [[Reflect.ownKeys]] عدّها ٦.
-
-الغلطة الشائعة: تعتمد على ترتيب مفاتيح زي [[{ "10": .., "9": .. }]] جاية من API وتستغرب إنها اتقلبت.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** إعدادات اليوزر وارثة من الـ defaults، والكود بيعدّ «اليوزر غيّر كام إعداد». اليوزر غيّر واحد بس والكود بيقول ٢:
-
-~~~js
-const defaults = { theme: 'light', lang: 'ar' };
-const userPrefs = Object.create(defaults);
-userPrefs.theme = 'dark';
-let changed = 0;
-for (const key in userPrefs) changed++;
-console.log('اليوزر غيّر', changed, 'إعداد');
-~~~`, done: R`بيطبع «اليوزر غيّر 1 إعداد» بطريقتين: [[Object.keys]] و [[for...in]] مع [[Object.hasOwn]].`, sol: R`[[for...in]] بيلف على الـ enumerable **والموروث**، فعدّ [[theme]] (own) و [[lang]] (من [[defaults]]):
-
-~~~text الناتج قبل التصليح
-اليوزر غيّر 2 إعداد
-~~~
-
-~~~js prefs.mjs
-const defaults = { theme: 'light', lang: 'ar' };
-const userPrefs = Object.create(defaults);
-userPrefs.theme = 'dark';
-console.log('اليوزر غيّر', Object.keys(userPrefs).length, 'إعداد');
-let viaForIn = 0;
-for (const key in userPrefs) if (Object.hasOwn(userPrefs, key)) viaForIn++;
-console.log('ونفس العدد بـ for...in و Object.hasOwn:', viaForIn);
-~~~
-
-~~~text الناتج (Node 24.22)
-اليوزر غيّر 1 إعداد
-ونفس العدد بـ for...in و Object.hasOwn: 1
-~~~
-
-[[Object.keys]] own بس، فهو الأنسب هنا. والطريقة التانية موجودة في كود قديم كتير ([[for...in]] + فحص own)، وكانت بتتكتب [[obj.hasOwnProperty(key)]] قبل [[Object.hasOwn]].` },
-            { lvl: 'تطبيق', t: R`**ابني:** دالة [[allKeys(obj)]] بتلف على السلسلة كلها (الـ object وبعده الـ prototype وهكذا لحد قبل [[Object.prototype]])، ولكل مستوى بتطبع: الظاهر، والمخفي، والـ Symbols. جرّبها على instance من class فيها field و method و getter و [[ [Symbol.toPrimitive]() ]] وخاصية [[id]] مخفية.`, done: R`المستوى 0 فيه الـ field ظاهر و [[id]] مخفية، والمستوى 1 فيه [[constructor]] والـ method والـ getter مخفيين والـ Symbol، والـ private field مش ظاهر خالص.`, sol: R`~~~js all-keys.mjs
-function allKeys(obj) {
-  const out = [];
-  let level = 0;
-  for (let o = obj; o !== null; o = Object.getPrototypeOf(o), level++) {
-    if (o === Object.prototype) { out.push(level + ' Object.prototype (اتخطيته)'); break; }
-    const names = Object.getOwnPropertyNames(o);
-    const shown = names.filter((k) => Object.prototype.propertyIsEnumerable.call(o, k));
-    const hiddenKeys = names.filter((k) => !Object.prototype.propertyIsEnumerable.call(o, k));
-    const syms = Object.getOwnPropertySymbols(o).map(String);
-    out.push(level + ' ' + JSON.stringify({ shown, hidden: hiddenKeys, symbols: syms }));
-  }
-  return out.join('\n');
-}
-class Account {
-  static #count = 0;
-  owner;
-  constructor(owner) { this.owner = owner; Object.defineProperty(this, 'id', { value: ++Account.#count }); }
-  deposit() {}
-  get label() { return this.owner + '#' + this.id; }
-  [Symbol.toPrimitive]() { return this.label; }
-}
-console.log(allKeys(new Account('Sara')));
-~~~
-
-~~~text الناتج (Node 24.22)
-0 {"shown":["owner"],"hidden":["id"],"symbols":[]}
-1 {"shown":[],"hidden":["constructor","deposit","label"],"symbols":["Symbol(Symbol.toPrimitive)"]}
-2 Object.prototype (اتخطيته)
-~~~
-
-**الشرح:**
-
-- [[Object.prototype.propertyIsEnumerable.call(o, k)]] بدل [[o.propertyIsEnumerable(k)]]: لو [[o]] جاي من [[Object.create(null)]] مفيهوش الـ method أصلًا. ده نفس سبب [[Object.hasOwn]].
-- الـ class field ([[owner]]) خاصية own عادية ظاهرة، والـ methods والـ getter على الـ prototype ومخفيين (الـ class بيعرّفهم [[enumerable: false]]).
-- [[#count]] و أي [[#private]] مش property خالص، فمفيش طريقة من دول تشوفه. ده الفرق بينه وبين [[_name]] اللي بيظهر في كل حاجة.
-- [[String(symbol)]] عشان [[JSON.stringify]] بيشيل الـ Symbols من الـ arrays ويحط [[null]] مكانها.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** endpoint بيفحص الـ body اللي جاي من اليوزر. يوزر بعت JSON فيه مفتاح اسمه [["hasOwnProperty"]] والسيرفر وقع:
-
-~~~js
-const body = JSON.parse('{"hasOwnProperty": "x", "email": "a@b.c"}');
-console.log(body.hasOwnProperty('email'));
-~~~`, done: R`الفحص بقى [[Object.hasOwn(body, 'email')]] وبيرجّع [[true]]، وشغال كمان على object من [[Object.create(null)]].`, sol: R`~~~text الناتج قبل التصليح
-TypeError: body.hasOwnProperty is not a function
-~~~
-
-اليوزر بعت مفتاح بنفس اسم الـ method، فـ [[body.hasOwnProperty]] بقت النص [["x"]] (الـ own بيغطّي على الموروث)، ونداء نص = [[TypeError]]. وده باب لوقوع السيرفر من أي input.
-
-~~~js has-own.mjs
-const body = JSON.parse('{"hasOwnProperty": "x", "email": "a@b.c"}');
-const dict = Object.create(null);
-dict.email = 'a@b.c';
-console.log(Object.hasOwn(body, 'email'), Object.hasOwn(dict, 'email'), Object.hasOwn(body, 'toString'));
-console.log(Object.prototype.hasOwnProperty.call(body, 'email'));
-~~~
-
-~~~text الناتج (Node 24.22)
-true true false
+~~~text الناتج (node create-base.js، Node 24)
+hi Sara
+false
 true
+true [ 'name' ]
 ~~~
 
-[[Object.hasOwn]] static: مش بتتقري من الـ object، فمحدش يقدر يغطّي عليها، وشغالة على الـ object اللي من غير prototype. والسطر الأخير الطريقة القديمة الآمنة (قبل ES2022): تاخد الـ method من [[Object.prototype]] مباشرة وتناديها بـ [[call]].` },
-            { lvl: 'تحدي', t: R`**اشرحها:** زميلك سألك: «ليه [[JSON.stringify]] شال الـ Symbol والخاصية المخفية، بس [[{ ...user }]] شال المخفية بس وساب الـ Symbol؟». اكتبله الإجابة في ٣ أو ٤ سطور، ومعاها سطر كود يثبت كلامك.`, done: R`الإجابة فيها إن الاتنين own و enumerable بس، والفرق إن JSON نص ومفيش Symbol في JSON، والكود بيطبع الفرق.`, sol: R`**الإجابة النموذجية:**
-
-1. الاتنين بيبدأوا من نفس القاعدة: الخصايص الـ **own** والـ **enumerable** بس. عشان كده المخفية ([[enumerable: false]]) والموروثة اتشالوا في الاتنين.
-2. الـ spread بيعمل object تاني، والـ object بيقبل مفاتيح Symbol، فبينسخها (هو بيلف على [[Reflect.ownKeys]] مش [[Object.keys]]).
-3. [[JSON.stringify]] بيعمل **نص** بصيغة JSON، و JSON مفيهوش حاجة اسمها Symbol، فبيلف على [[Object.keys]] (نصوص بس). ونفس السبب بيشيل الـ [[undefined]] والدوال.
-
-~~~js explain.mjs
-const user = { name: 'Sara', [Symbol('s')]: 1 };
-Object.defineProperty(user, 'hidden', { value: 'h' });
-console.log(JSON.stringify(user), { ...user });
-~~~
-
-~~~text الناتج (Node 24.22)
-{"name":"Sara"} { name: 'Sara', Symbol(s): 1 }
-~~~
-
-لاحظ إن [[console.log]] في Node بيكتب المفتاح [[Symbol(s)]] بالوصف بتاعه، بس ده عرض بس: مفيش مفتاح نصي اسمه [["Symbol(s)"]]، وعشان تقرا القيمة لازم يبقى معاك الـ Symbol نفسه.` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`كل كود بيلف على object (يعمل JSON، أو ينسخ، أو يقارن، أو يعرض فورم) بيستخدم واحدة من الطرق دي، ولو اخترت الغلط يا إما هتطلع خصايص مش عايزها (موروثة في [[for...in]])، يا إما هتضيع خصايص مهمة (Symbols في [[Object.keys]]). و [[hasOwnProperty]] على input من يوزر ثغرة حقيقية: أي حد يبعت مفتاح بنفس الاسم يوقّع الكود.`,
-            how: R`كل object ليه «قايمة مفاتيح own» مترتبة (الـ index الأول تصاعدي، وبعدها النصوص بترتيب الإضافة، وبعدها الـ Symbols)، و [[Reflect.ownKeys]] بيرجّعها كلها. وكل طريقة تانية فلتر عليها:
-
-- [[Object.getOwnPropertyNames]] = القايمة من غير Symbols.
-- [[Object.getOwnPropertySymbols]] = الـ Symbols بس.
-- [[Object.keys]] و [[values]] و [[entries]] = النصوص اللي [[enumerable: true]].
-- [[for...in]] = [[Object.keys]] للـ object وبعده لكل prototype في السلسلة، من غير تكرار (لو الاسم ظهر قبل كده مبيتعدّش تاني)، ومن غير Symbols.
-- [[JSON.stringify]] = [[Object.keys]]، ومن غير القيم اللي مالهاش مكان في JSON.
-- الـ spread و [[Object.assign]] = كل الـ own الـ enumerable، نصوص و Symbols، وبيقروا القيمة (فالـ getter بيتنادى).
-
-والفحص: [[in]] بيمشي في السلسلة كلها ومش بيفرق مع enumerable. [[Object.hasOwn(o, k)]] = «فيه descriptor own للمفتاح ده؟». و [[o.propertyIsEnumerable(k)]] = «فيه descriptor own و [[enumerable]] بتاعه [[true]]؟»، فبيرجّع [[false]] للموروث حتى لو ظاهر في [[for...in]].`,
-            when: R`[[Object.keys]] / [[entries]] لأي لف عادي على داتا (الافتراضي). [[for...in]] نادرًا، ومعاه [[Object.hasOwn]] لو مش متأكد إن مفيش وراثة. [[Object.getOwnPropertyNames]] للـ debugging وانت عايز تشوف API object. [[Reflect.ownKeys]] لما بتعمل أداة عامة (نسخ عميق، deep freeze، مقارنة) لازم تشوف كل حاجة. [[Object.hasOwn]] دايمًا بدل [[hasOwnProperty]]، و [[propertyIsEnumerable]] لما بتبني نسخ أو serialization بإيدك وعايز تحترم المخفي.`,
-            mistakes: R`- [[for...in]] على object وارث فبيطلّع خصايص الـ prototype (الإعدادات الافتراضية، أو method حد زوّدها على [[Object.prototype]]).
-- [[for...in]] على array: المفاتيح نصوص ([['0']] مش [[0]])، وأي خاصية زيادة على الـ array بتطلع معاها. استخدم [[for...of]].
-- [[obj.hasOwnProperty(k)]] على input أو على [[Object.create(null)]]: [[TypeError: obj.hasOwnProperty is not a function]].
-- تفتكر [[Object.keys]] بتشوف الـ Symbols أو الخصايص اللي [[defineProperty]] عملها من غير [[enumerable: true]].
-- تعتمد على إن المفاتيح الرقمية هتفضل بترتيب الإضافة: دايمًا بتتطلع الأول تصاعدي.
-- تفتكر [[propertyIsEnumerable]] بيرد [[true]] للموروث الظاهر في [[for...in]]: لأ، own بس.`,
-          },
-          teach: R`## الفكرة في سطرين
-
-السؤال «الخاصية دي موجودة؟» ليه ٣ أبعاد: own ولا موروثة، وظاهرة (enumerable) ولا مخفية، ونص ولا Symbol. كل طريقة في اللغة بتختار تركيبة، والدرس ده بيحطهم جنب بعض. الناتج من Node 24.22 كملف [[.mjs]].
-
----
-
-## ١. نبني object فيه الأربع أنواع
-
-~~~js
-const base = { inherited: 1 };
-const secret = Symbol('secret');
-const user = Object.create(base);
-user.name = 'Sara';
-Object.defineProperty(user, 'hidden', { value: 'h', enumerable: false });
-user[secret] = 's';
-~~~
-
-| الخاصية | own؟ | enumerable؟ | نوع المفتاح |
-|---|---|---|---|
-| [[inherited]] | لأ، جاية من [[base]] | أيوه | نص |
-| [[name]] | أيوه | أيوه | نص |
-| [[hidden]] | أيوه | لأ | نص |
-| [[secret]] | أيوه | أيوه | Symbol |
-
----
-
-## ٢. اللف على المفاتيح
-
-~~~text الناتج
-[ 'name' ] [ 'name', 'hidden' ]
-[ Symbol(secret) ] [ 'name', 'hidden', Symbol(secret) ]
-for-in name
-for-in inherited
-~~~
-
-| الطريقة | own | موروث | مخفي (enumerable: false) | Symbol | طلّعت إيه هنا |
-|---|---|---|---|---|---|
-| [[Object.keys]] و [[values]] و [[entries]] | ✓ | ✗ | ✗ | ✗ | [[name]] |
-| [[Object.getOwnPropertyNames]] | ✓ | ✗ | ✓ | ✗ | [[name]] و [[hidden]] |
-| [[Object.getOwnPropertySymbols]] | ✓ | ✗ | ✓ | ✓ (بس) | [[Symbol(secret)]] |
-| [[Reflect.ownKeys]] | ✓ | ✗ | ✓ | ✓ | التلاتة الـ own |
-| [[for...in]] | ✓ | ✓ | ✗ | ✗ | [[name]] و [[inherited]] |
-| [[JSON.stringify]] | ✓ | ✗ | ✗ | ✗ | [[{"name":"Sara"}]] |
-| [[{ ...obj }]] و [[Object.assign]] | ✓ | ✗ | ✗ | ✓ | [[name]] و الـ Symbol |
-| [[structuredClone]] | ✓ | ✗ | ✗ | ✗ | [[{ name: 'Sara' }]] |
-
-### [[Object.getOwnPropertyNames]]
-
-بيرجّع **كل** المفاتيح النصية الـ own، ظاهرة ومخفية. مفيد جدًا مع الـ built-ins: [[Object.getOwnPropertyNames([7, 8])]] طلّعت [[[ '0', '1', 'length' ]]] و [[Object.keys]] طلّعت [[[ '0', '1' ]]] بس. و [[Object.getOwnPropertyNames(Math)]] فيها ٤٤ اسم و [[Object.keys(Math)]] صفر.
-
-### [[Object.getOwnPropertySymbols]]
-
-الـ Symbols بس. مثال: [[Object.getOwnPropertySymbols(Array.prototype)]] طلّعت [[[ Symbol(Symbol.iterator), Symbol(Symbol.unscopables) ]]]، ودي اللي بتخلي الـ array تتلف بـ [[for...of]].
-
----
-
-## ٣. الفحص: [[in]] و [[Object.hasOwn]] و [[hasOwnProperty]] و [[propertyIsEnumerable]]
-
-~~~text الناتج
-true false true
-true false false
-~~~
-
-| السؤال | own | موروث | مخفي | اللي طلع |
-|---|---|---|---|---|
-| [['k' in obj]] | ✓ | ✓ | ✓ | [['inherited' in user]] بـ [[true]] |
-| [[Object.hasOwn(obj, 'k')]] | ✓ | ✗ | ✓ | [[Object.hasOwn(user, 'inherited')]] بـ [[false]] |
-| [[Object.prototype.hasOwnProperty]] ([[obj.hasOwnProperty('k')]]) | ✓ | ✗ | ✓ | [[user.hasOwnProperty('hidden')]] بـ [[true]] |
-| [[Object.prototype.propertyIsEnumerable]] ([[obj.propertyIsEnumerable('k')]]) | ✓ | ✗ | ✗ | [[name]] بـ [[true]]، و [[hidden]] و [[inherited]] بـ [[false]] |
-
-**[[hasOwnProperty]] ولا [[Object.hasOwn]]؟** نفس الإجابة، بس [[hasOwnProperty]] method بتتقري من الـ object نفسه، فبتقع في حالتين اتجرّبوا:
-
-~~~text الناتج
-dict.hasOwnProperty is not a function
-fromApi.hasOwnProperty is not a function
-~~~
-
-الأولى object من [[Object.create(null)]] (مفيهوش [[Object.prototype]] أصلًا)، والتانية JSON من يوزر فيه مفتاح [["hasOwnProperty"]] غطّى على الـ method. [[Object.hasOwn]] (ES2022) مش بتتأثر بالاتنين.
-
-**[[propertyIsEnumerable]]** هي السؤال اللي [[Object.keys]] بيسأله لكل مفتاح: own **و** ظاهر. و [[[].propertyIsEnumerable('length')]] بـ [[false]]، و [[[5].propertyIsEnumerable(0)]] بـ [[true]].
-
----
-
-## ٤. النسخ: مين بيعدّي
-
-~~~text الناتج
-{"name":"Sara"} { name: 'Sara', Symbol(secret): 's' } { name: 'Sara', Symbol(secret): 's' }
-~~~
-
-JSON شال الـ Symbol (مفيش Symbol في JSON)، والـ spread و [[Object.assign]] نسخوه. والتلاتة شالوا [[hidden]] و [[inherited]]، والنسخ كلها بقت objects عادية وارثة من [[Object.prototype]] مش من [[base]].
-
----
-
-## ٥. ترتيب المفاتيح
-
-[[Object.keys({ b: 1, 10: 'x', a: 2, 2: 'y', '-1': 'n', '01': 'z' })]] طلّعت [[[ '2', '10', 'b', 'a', '-1', '01' ]]]: الأرقام الصحيحة الموجبة الأول تصاعدي، وبعدها الباقي بترتيب الإضافة، والـ Symbols في الآخر في [[Reflect.ownKeys]].
-
----
-
-## ٦. الـ class
-
-~~~js
-class Account { #pin = 1; balance = 0; deposit() {} }
-const acc = new Account();
-console.log(Reflect.ownKeys(acc), Object.getOwnPropertyNames(Account.prototype));
-~~~
-
-~~~text الناتج
-[ 'balance' ] [ 'constructor', 'deposit' ]
-~~~
-
-الـ field العادي own وظاهر، والـ method على الـ prototype ومخفية، و [[#pin]] مش property أصلًا فمفيش طريقة بتشوفه.
-
----
-
-## الخلاصة
-
-- [[Object.keys]]: own + ظاهر + نص. ده الافتراضي.
-- [[getOwnPropertyNames]] بيزوّد المخفي، و [[getOwnPropertySymbols]] الـ Symbols بس، و [[Reflect.ownKeys]] الاتنين.
-- [[for...in]] الوحيد اللي بيطلع للموروث.
-- [[in]] سلسلة كاملة، و [[Object.hasOwn]] own (واستخدمها بدل [[hasOwnProperty]])، و [[propertyIsEnumerable]] own وظاهر.`,
-          lines: [
-            R`الـ object اللي هيبقى prototype. أي خاصية فيه هتبقى «موروثة» عند اللي تحت.`,
-            R`Symbol جديد بوصف [['secret']]. هنستخدمه مفتاح، والمفتاح ده عمره ما هيتحوّل لنص.`,
-            R`[[Object.create(base)]] بيعمل object فاضي الـ prototype بتاعه [[base]]، فـ [[user.inherited]] بيتقري من فوق.`,
-            R`خاصية own عادية: own وظاهرة ومفتاحها نص.`,
-            R`خاصية own مخفية: [[enumerable: false]]، وأي إذن مكتبناهوش بيبقى [[false]] (درس «property descriptors»).`,
-            R`خاصية own مفتاحها Symbol، وقيمتها [['s']].`,
-            R`[[Object.keys]] شاف [[name]] بس، و [[getOwnPropertyNames]] شاف [[name]] و [[hidden]]: المخفي ظاهر هنا لأنها بتجيب كل النصوص الـ own.`,
-            R`[[getOwnPropertySymbols]] جاب الـ Symbol بس، و [[Reflect.ownKeys]] جاب التلاتة الـ own (نصوص و Symbol).`,
-            R`[[for...in]] طلّع [[name]] و [[inherited]]: الظاهر من الـ object نفسه ومن الـ prototype، ومن غير المخفي ولا الـ Symbol.`,
-            R`[[in]] لقى الموروث ([[true]])، و [[Object.hasOwn]] قال إنه مش own ([[false]])، و [[hasOwnProperty]] قال إن [[hidden]] own ([[true]]) لأنها مش بتهتم بالظهور.`,
-            R`[[propertyIsEnumerable]] own **و** ظاهر: [[name]] بـ [[true]]، و [[hidden]] بـ [[false]] (مخفية)، و [[inherited]] بـ [[false]] (موروثة).`,
-            R`النسخ: JSON طلّع [[name]] بس، والـ spread و [[Object.assign]] طلّعوا [[name]] والـ Symbol. ومفيش نسخة فيها [[hidden]] أو [[inherited]].`,
-          ],
-          ref: [
-            { t: "MDN: Enumerability and ownership of properties", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Enumerability_and_ownership_of_properties" },
-            { t: "MDN: Object.getOwnPropertyNames()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/getOwnPropertyNames" },
-            { t: "MDN: Object.getOwnPropertySymbols()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/getOwnPropertySymbols" },
-            { t: "MDN: Object.prototype.hasOwnProperty()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty" },
-            { t: "MDN: Object.prototype.propertyIsEnumerable()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/propertyIsEnumerable" },
-            { t: "ECMAScript: OrdinaryOwnPropertyKeys", url: "https://tc39.es/ecma262/multipage/ordinary-and-exotic-objects-behaviours.html#sec-ordinaryownpropertykeys" }
-          ],
-          pre: ["js/property descriptors: Object.defineProperty", { to: "js/Object.keys و entries", why: R`[[Object.keys]] و [[entries]] و [[Object.hasOwn]] في أبسط صورهم` }, { to: "js/prototype chain", why: R`الموروث جاي منين، و [[Object.create]]` }, "js/for...of و for...in"]
-        },
-        {
-          cmd: "Object.preventExtensions و seal و freeze",
-          title: "تلات درجات قفل للـ object: تمنع الإضافة، ولا الإضافة والمسح، ولا أي تعديل؟",
-          desc: R`[[Object.preventExtensions(o)]] بيمنع إضافة خصايص جديدة بس. [[Object.seal(o)]] بيمنع الإضافة **والمسح**، والقيم لسه بتتغيّر. [[Object.freeze(o)]] بيمنع الإضافة والمسح **والتعديل**. وكل واحد ليه سؤال: [[Object.isExtensible]] و [[Object.isSealed]] و [[Object.isFrozen]].
-
-التلاتة **سطحيين**: بيقفلوا الـ object نفسه بس، والـ objects اللي جواه مفتوحة. والتلاتة **ملهمش رجعة**. وفي strict mode (أي ملف [[.mjs]] أو [[class]]) أي محاولة ممنوعة بترمي [[TypeError]]، وفي sloppy بتفشل ساكتة.
-
-درس «immutability» علّمك [[Object.freeze]] كأداة للـ state. هنا بنشوف السلّم كله والأسئلة والحالات الطرفية: الـ arrays، و typed arrays، و [[Map]]، والـ private fields، والـ object الفاضي.`,
-          example: R`// تلات أقفال بالترتيب: preventExtensions ثم seal ثم freeze
-const tryIt = (label, fn) => { try { fn(); console.log(label, 'ok'); } catch (e) { console.log(label, '✗', e.message); } };
-const open = { x: 1 };
-const noAdd = Object.preventExtensions({ x: 1 });
-const sealed = Object.seal({ x: 1 });
-const frozen = Object.freeze({ x: 1, inner: { y: 1 } });
-for (const [name, o] of Object.entries({ noAdd, sealed, frozen })) {
-  tryIt(name + ' add', () => { o.z = 1; });
-  tryIt(name + ' edit', () => { o.x = 2; });
-  tryIt(name + ' delete', () => { delete o.x; });
-}
-frozen.inner.y = 99;
-console.log(frozen.inner.y);
-console.log(Object.isExtensible(open), Object.isExtensible(noAdd), Object.isSealed(sealed), Object.isFrozen(sealed), Object.isFrozen(frozen));`,
-          try: R`جرّب السؤال الغريب ده في [[edge.mjs]]: [[const e = Object.preventExtensions({})]] واطبع [[Object.isSealed(e)]] و [[Object.isFrozen(e)]]. وبعدين اطبع [[Object.isFrozen(1)]] و [[Object.isExtensible('s')]]. وآخر حاجة: [[Object.freeze(new Uint8Array(2))]] واقرا الـ error.`,
-          sol: R`~~~js edge.mjs
-const e = Object.preventExtensions({});
-console.log(Object.isSealed(e), Object.isFrozen(e));
-console.log(Object.isFrozen(1), Object.isExtensible('s'));
-try { Object.freeze(new Uint8Array(2)); } catch (er) { console.log(er.message); }
-console.log(Object.isFrozen(Object.freeze(new Uint8Array(0))));
-~~~
-
-~~~text الناتج (Node 24.22)
-true true
-true false
-Cannot freeze array buffer views with elements
-true
-~~~
-
-- object فاضي ممنوع الإضافة عليه = sealed و frozen في نفس الوقت: مفيش خاصية تتمسح ولا تتعدّل أصلًا. الأسئلة بتفحص الحالة مش «اتنادى عليه freeze ولا لأ».
-- الـ primitives ([[1]] و [['s']]) بتتعامل كأنها متجمّدة ومش قابلة للإضافة، والأسئلة مبترميش عليها.
-- الـ typed array اللي فيه عناصر مينفعش يتجمّد: عناصره متخزنة في buffer، والمحرك مش بيقدر يقفلها كخصايص. الفاضي بيتجمّد عادي.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الكود ده في ملف [[seal.cjs]] (من غير strict). اكتب الناتج قبل ما تشغّل:
-
-~~~js
-const s = Object.seal({ qty: 1 });
-s.qty = 5;
-s.price = 10;
-const removed = delete s.qty;
-console.log(s, removed, Object.isSealed(s), Object.isFrozen(s));
-~~~`, done: R`كتبت [[{ qty: 5 } false true false]] وطلع كده، وتعرف أنهي سطر فشل ساكت.`, sol: R`~~~text الناتج (Node 24.22)
-{ qty: 5 } false true false
-~~~
-
-- [[s.qty = 5]] نجح: الـ seal بيسيب التعديل.
-- [[s.price = 10]] فشل **ساكت**: إضافة على object مختوم. في الـ cjs مفيش error.
-- [[delete s.qty]] فشل ورجّع [[false]] بدل ما يرمي.
-- [[isFrozen]] بـ [[false]] لأن [[qty]] لسه [[writable]].
-
-لو نفس الكود في [[.mjs]] كان هيقف عند [[s.price = 10]] بـ [[TypeError: Cannot add property price, object is not extensible]]. عشان كده الأقفال دي «بتشتغل بجد» بس في strict mode.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[deepFreeze(obj)]] بتجمّد الـ object وكل اللي جواه: arrays و objects متداخلة، ومفاتيح Symbol، ومراجع دايرية ([[config.self = config]]) من غير ما تلف للأبد. ومتناديش الـ getters (اقرا الـ descriptor مش القيمة). والـ typed arrays سيبها.`, done: R`بعد [[deepFreeze(config)]]: [[config.db.hosts.push('c')]] بيرمي، و [[Object.isFrozen]] بـ [[true]] على كل مستوى وعلى قيمة الـ Symbol، و [[deepFreeze(5)]] و [[deepFreeze(null)]] بيرجّعوا نفسهم، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js deep-freeze.mjs
-function deepFreeze(obj, seen = new WeakSet()) {
-  if (obj === null || (typeof obj !== 'object' && typeof obj !== 'function') || seen.has(obj)) return obj;
-  seen.add(obj);
-  for (const key of Reflect.ownKeys(obj)) {
-    const d = Object.getOwnPropertyDescriptor(obj, key);
-    if ('value' in d) deepFreeze(d.value, seen);
-  }
-  return ArrayBuffer.isView(obj) ? obj : Object.freeze(obj);
-}
-const config = { db: { hosts: ['a', 'b'] }, [Symbol('meta')]: { v: 1 } };
-config.self = config;
-deepFreeze(config);
-console.log(Object.isFrozen(config.db), Object.isFrozen(config.db.hosts), Object.isFrozen(config[Object.getOwnPropertySymbols(config)[0]]));
-try { config.db.hosts.push('c'); } catch (e) { console.log(e.message); }
-console.log(deepFreeze(5), deepFreeze(null), config.self === config);
-~~~
-
-~~~text الناتج (Node 24.22)
-true true true
-Cannot add property 2, object is not extensible
-5 null true
-~~~
-
-**كل حتة ليه:**
-
-- [[WeakSet]] بيفتكر اللي اتجمّد، فـ [[config.self]] بيرجع على طول بدل ما يلف للأبد ([[RangeError: Maximum call stack size exceeded]]). و [[WeakSet]] مش [[Set]] عشان ميمسكش الـ objects في الذاكرة.
-- [[Reflect.ownKeys]] مش [[Object.keys]]: عشان المخفي والـ Symbols (درس «enumerability و ownership»).
-- [[getOwnPropertyDescriptor]] و [[ 'value' in d ]]: لو الخاصية getter مبنقراهاش، لأن نداء getter ممكن يعمل حاجة (يحسب، أو يكتب لوج، أو يرمي).
-- [[ArrayBuffer.isView]] بيمسك الـ typed arrays و [[DataView]]، اللي [[Object.freeze]] بيرمي عليهم لو فيهم عناصر.
-- الـ push رسالته «Cannot add property 2»: [[push]] بيحاول يضيف خاصية بالـ index الجديد.` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** موديول [[settings.js]] بيصدّر [[settings]] متجمّدة وفيها array [[origins]] متجمّدة كمان. اكتب [[settings.test.js]] بـ [[node:test]] بيتأكد إن الكتابة والإضافة بيرموا [[TypeError]] بالرسالة الصح، وإن الـ array الداخلية مبتقبلش [[push]].`, done: R`[[node --test]] بيطلّع اختبارين ✔ وصفر fail، ولو شلت [[Object.freeze]] من الـ array الاختبار التاني بيقع.`, sol: R`~~~js settings.js
-export const settings = Object.freeze({ port: 8080, origins: Object.freeze(['https://shop.example']) });
-~~~
-
-~~~js settings.test.js
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
-import { settings } from './settings.js';
-
-test('الإعدادات متقفلة على المستوى الأول', () => {
-  assert.equal(Object.isFrozen(settings), true);
-  assert.throws(() => { settings.port = 1; }, { name: 'TypeError', message: /read only property 'port'/ });
-  assert.throws(() => { settings.debug = true; }, /not extensible/);
-  assert.equal(settings.port, 8080);
-});
-
-test('والـ array اللي جوه متقفلة كمان', () => {
-  assert.equal(Object.isFrozen(settings.origins), true);
-  assert.throws(() => settings.origins.push('https://evil.example'), /not extensible/);
-  assert.deepEqual(settings.origins, ['https://shop.example']);
-});
-~~~
-
-~~~json package.json
-{ "type": "module" }
-~~~
-
-~~~text الناتج: node --test
-✔ الإعدادات متقفلة على المستوى الأول (1.5247ms)
-✔ والـ array اللي جوه متقفلة كمان (0.5607ms)
-ℹ tests 2
-ℹ suites 0
-ℹ pass 2
-ℹ fail 0
-ℹ cancelled 0
-ℹ skipped 0
-ℹ todo 0
-ℹ duration_ms 85.3372
-~~~
-
-**ليه شغال:** ملف الاختبار ESM ([[type: module]])، فهو strict، فالكتابة على متجمّد بترمي بدل ما تفشل ساكتة. ولو كان [[.cjs]] من غير [['use strict']] كان [[assert.throws]] هيفشل («Missing expected exception») مع إن الـ object متجمّد. و [[assert.throws]] بياخد object يقارن [[name]] و regex على [[message]]، فبيتأكد إنه الـ error الصح مش أي error.` },
-            { lvl: 'تحدي', t: R`**اشرحها:** زميلك كاتب [[const settings = { port: 80 };]] وفاكر إن [[const]] كده «قفل» الإعدادات. اشرحله في ٣ سطور الفرق بين [[const]] و [[Object.freeze]]، وإمتى يستخدم [[seal]] بدل [[freeze]]، ومعاها كود صغير يثبت كلامك.`, done: R`الشرح فيه إن [[const]] على المتغير و [[freeze]] على الـ object، ومثال لـ seal مناسب (شكل ثابت وقيم بتتغيّر)، والكود بيطبع الفرق.`, sol: R`**الإجابة النموذجية:**
-
-1. [[const]] بيقفل **المتغير**: مينفعش [[settings = {}]]. بس الـ object اللي فيه مفتوح، فـ [[settings.port = 1]] شغالة.
-2. [[Object.freeze]] بيقفل **الـ object**: الخصايص متتغيّرش ولا تتضاف ولا تتمسح، بس المتغير لو [[let]] ممكن يشاور على object تاني. وعادة بتستخدم الاتنين مع بعض.
-3. [[Object.seal]] لما الشكل ثابت والقيم بتتغيّر: state بتاع لعبة أو فورم مفاتيحه معروفة، فغلطة إملا زي [[state.scroe = 5]] ترمي بدل ما تعمل خاصية جديدة.
-
-~~~js const-vs-freeze.mjs
-const a = { port: 80 };
-a.port = 1;
-let b = Object.freeze({ port: 80 });
-b = { port: 2 };
-const form = Object.seal({ score: 0 });
-form.score = 5;
-try { form.scroe = 6; } catch (e) { console.log(e.message); }
-console.log(a.port, b.port, form.score);
-~~~
-
-~~~text الناتج (Node 24.22)
-Cannot add property scroe, object is not extensible
-1 2 5
-~~~` },
-          ],
-          check: { lang: "js", starter: R`function deepFreeze(obj, seen = new WeakSet()) {
-  // جمّد obj وكل object جواه، من غير ما تلف للأبد ومن غير ما تنادي getters
-  return obj;
-}`, tests: R`test("المستوى التاني متجمّد", () => { const o = deepFreeze({ a: { b: 1 } }); expect(Object.isFrozen(o.a)).toBe(true); });
-test("array جوه object", () => { const o = deepFreeze({ list: [1, { x: 1 }] }); expect(Object.isFrozen(o.list) && Object.isFrozen(o.list[1])).toBe(true); });
-test("Symbol key", () => { const s = Symbol('k'); const o = deepFreeze({ [s]: { v: 1 } }); expect(Object.isFrozen(o[s])).toBe(true); });
-test("مرجع دايري مبيلفش للأبد", () => { const o = { n: 1 }; o.self = o; expect(deepFreeze(o) === o && Object.isFrozen(o)).toBe(true); });
-test("primitives بترجع زي ما هي", () => { expect(deepFreeze(5)).toBe(5); expect(deepFreeze(null)).toBe(null); });
-test("الـ getter مبيتناداش", () => { let calls = 0; const o = { get g() { calls++; return {}; } }; deepFreeze(o); expect(calls).toBe(0); });
-test("typed array بيعدّي من غير error", () => { const o = deepFreeze({ bytes: new Uint8Array(2) }); expect(Object.isFrozen(o)).toBe(true); });
-test("الكتابة بترمي في strict", () => { const o = deepFreeze({ a: { b: 1 } }); expect(() => { 'use strict'; o.a.b = 2; }).toThrow('read only'); });`, solution: R`function deepFreeze(obj, seen = new WeakSet()) {
-  if (obj === null || (typeof obj !== 'object' && typeof obj !== 'function') || seen.has(obj)) return obj;
-  seen.add(obj);
-  for (const key of Reflect.ownKeys(obj)) {
-    const d = Object.getOwnPropertyDescriptor(obj, key);
-    if ('value' in d) deepFreeze(d.value, seen);
-  }
-  return ArrayBuffer.isView(obj) ? obj : Object.freeze(obj);
-}` },
-          flag: "script",
-          deep: {
-            why: R`الإعدادات والثوابت والـ state اللي المفروض ميتغيّرش: لو أي كود (مكتبة، أو زميل، أو انت بعد شهر) عدّل فيهم بالغلط، الباج هيظهر بعيد جدًا عن مكانه. القفل بيخلّي الغلطة ترمي error في السطر اللي عملها. و [[seal]] بالذات بيمسك غلطات الإملا في أسامي الخصايص، اللي من غيره بتعمل خاصية جديدة ساكتة.`,
-            how: R`كل object فيه علامة داخلية اسمها Extensible (بتقبل إضافة ولا لأ)، وكل خاصية فيها [[writable]] و [[configurable]] (درس «property descriptors»). والتلات دوال بيغيّروهم:
-
-- [[preventExtensions]]: Extensible = false. بس.
-- [[seal]]: نفس اللي فوق + كل خاصية [[configurable: false]].
-- [[freeze]]: نفس اللي فوق + كل data property [[writable: false]] (الـ accessors بتفضل زي ما هي، فالـ setter لسه بيشتغل لو بيكتب في حتة تانية).
-
-والأسئلة بتفحص الحالة الفعلية: [[isFrozen]] = مش extensible و كل الخصايص non-configurable و الـ data منهم non-writable. عشان كده الـ object الفاضي بعد [[preventExtensions]] بيقول frozen.
-
-والـ [[Map]] و [[Set]] و [[Date]] داتاهم في «خانات داخلية» مش خصايص، فـ [[Object.freeze(new Map())]] مبيمنعش [[set]] (اتجرّب: [[size]] بقى 1)، و [[Object.freeze(new Date(0))]] مبيمنعش [[setFullYear]] (السنة بقت 2030). ونفس الكلام الـ [[#private]] fields: [[Object.freeze(new Counter())]] و [[inc()]] لسه بيزوّد [[#n]] (طلع 1 ثم 2).`,
-            when: R`[[freeze]] للثوابت والإعدادات والـ enums ([[Object.freeze({ PENDING: 'pending', ... })]]) والـ state في تطبيقات بتعتمد على immutability. [[seal]] لـ object شكله ثابت والقيم بتتغيّر (state لعبة، record من الداتابيز). [[preventExtensions]] نادر: لما عايز تسمح بالمسح والتعديل بس مش الإضافة. ولو عايز قفل عميق: deepFreeze (التمرين). والقفل مش أمان ضد كود خبيث معاه نفس الـ object قبل ما تقفله، هو حماية من الغلط.`,
-            mistakes: R`- تفتكر [[freeze]] عميق: [[frozen.inner.y = 99]] اشتغلت.
-- تختبر في sloppy mode فمفيش error، وتفتكر القفل مش شغال أو العكس.
-- تفتكر [[const]] = [[freeze]].
-- [[Object.freeze([2, 1]).sort()]] بيرمي [[Cannot assign to read only property '0' of object '[object Array]']]: الـ methods اللي بتعدّل في مكانها ([[sort]] و [[reverse]] و [[push]]) ممنوعة، استخدم [[toSorted]] و [[toReversed]].
-- تتوقع [[freeze]] تقفل [[Map]] أو [[Date]] أو [[#private]].
-- [[Object.setPrototypeOf]] على object مش extensible: [[TypeError: #<Object> is not extensible]].
-- [[defineProperty]] على object مختوم: [[Cannot define property n, object is not extensible]] للجديد، و [[Cannot redefine property: x]] لو بتغيّر [[enumerable]] لخاصية موجودة.`,
-          },
-          teach: R`## الفكرة في سطرين
-
-تلات دوال بتقفل object بدرجات، وتلات أسئلة بتقولك هو مقفول لأي درجة. الأقفال على الـ object نفسه بس (مش اللي جواه)، ومالهاش فك. الناتج من Node 24.22 كملف [[.mjs]] (strict).
-
----
-
-## ١. السلّم
-
-| الدالة | إضافة | مسح | تعديل قيمة | السؤال |
-|---|---|---|---|---|
-| (من غير قفل) | ✓ | ✓ | ✓ | [[Object.isExtensible]] بـ [[true]] |
-| [[Object.preventExtensions]] | ✗ | ✓ | ✓ | [[Object.isExtensible]] بـ [[false]] |
-| [[Object.seal]] | ✗ | ✗ | ✓ | [[Object.isSealed]] بـ [[true]] |
-| [[Object.freeze]] | ✗ | ✗ | ✗ | [[Object.isFrozen]] بـ [[true]] |
-
-والتلاتة بيرجّعوا **نفس الـ object** (مش نسخة): [[Object.freeze(ret) === ret]] بـ [[true]]. فتقدر تكتب [[const cfg = Object.freeze({...})]].
-
----
-
-## ٢. [[Object.preventExtensions]]
-
-~~~text الناتج
-noAdd add ✗ Cannot add property z, object is not extensible
-noAdd edit ok
-noAdd delete ok
-~~~
-
-الإضافة بس اللي ممنوعة. ولاحظ إن [[delete]] نجح، فممكن الـ object «يفضى» بس عمره ما يكبر. و [[defineProperty]] لخاصية جديدة كمان بيرمي: [[Cannot define property n, object is not extensible]].
-
----
-
-## ٣. [[Object.seal]]
-
-~~~text الناتج
-sealed add ✗ Cannot add property z, object is not extensible
-sealed edit ok
-sealed delete ✗ Cannot delete property 'x' of #<Object>
-~~~
-
-الشكل ثابت (نفس المفاتيح)، والقيم بتتغيّر. ومن جوه: [[seal]] = [[preventExtensions]] + كل خاصية [[configurable: false]]. عشان كده تغيير [[enumerable]] بـ [[defineProperty]] رمى [[Cannot redefine property: x]]، بس تغيير [[value]] بـ [[defineProperty]] عدّى (لأن [[writable]] لسه [[true]]).
-
----
-
-## ٤. [[Object.freeze]] وإنه سطحي
-
-~~~text الناتج
-frozen add ✗ Cannot add property z, object is not extensible
-frozen edit ✗ Cannot assign to read only property 'x' of object '#<Object>'
-frozen delete ✗ Cannot delete property 'x' of #<Object>
-99
-~~~
-
-[[frozen.x]] مقفولة تمامًا، بس [[frozen.inner.y = 99]] **اشتغلت**: [[inner]] نفسها خاصية مقفولة (مينفعش تحط object تاني مكانها)، لكن الـ object اللي جواها مفتوح. القفل العميق محتاج تلف بنفسك (تمرين deepFreeze).
-
-### الـ arrays
-
-~~~text الناتج
-Cannot add property 1, object is not extensible
-Cannot assign to read only property '0' of object '[object Array]'
-~~~
-
-الأول من [[Object.freeze([1]).push(2)]]، والتاني من [[Object.freeze([2, 1]).sort()]]. أي method بتعدّل الـ array في مكانها بترمي. والـ methods اللي بترجّع array جديدة ([[map]] و [[toSorted]]) شغالة عادي.
-
----
-
-## ٥. الأسئلة: [[Object.isExtensible]] و [[Object.isSealed]] و [[Object.isFrozen]]
-
-~~~text الناتج
-true false true false true
-~~~
-
-بالترتيب: [[open]] بيقبل إضافة، و [[noAdd]] لأ، و [[sealed]] مختوم، و [[sealed]] **مش** متجمّد (قيمته بتتغيّر)، و [[frozen]] متجمّد.
-
-| الحالة الطرفية | [[isExtensible]] | [[isSealed]] | [[isFrozen]] |
-|---|---|---|---|
-| [[Object.preventExtensions({})]] (فاضي) | [[false]] | [[true]] | [[true]] |
-| primitive زي [[1]] أو [['s']] | [[false]] | [[true]] | [[true]] |
-| [[Object.freeze(new Map())]] | [[false]] | [[true]] | [[true]]، وبرضه [[set]] شغالة |
-
-الأسئلة بتفحص **الحالة**، مش «مين اتنادى». عشان كده الفاضي frozen.
-
----
-
-## ٦. حاجات القفل مبيلمسهاش
-
-| الحاجة | اللي حصل (اتجرّب) | ليه |
-|---|---|---|
-| [[#private]] fields | [[c.inc()]] على instance متجمّد طلّع 1 ثم 2 | الـ private مش property أصلًا |
-| [[Map]] و [[Set]] | [[m.set('k', 1)]] و [[size]] بقى 1 | الداتا في خانة داخلية |
-| [[Date]] | [[setFullYear(2030)]] اشتغلت | نفس السبب |
-| typed array فيه عناصر | [[Cannot freeze array buffer views with elements]] | العناصر في buffer مش خصايص عادية |
-| الـ prototype | [[Object.setPrototypeOf(ne, {})]] رمى [[#<Object> is not extensible]] | تغيير الـ prototype محسوب «توسيع» |
-
----
-
-## الخلاصة
-
-- [[preventExtensions]] < [[seal]] < [[freeze]]، وكل واحد بيعمل اللي قبله وزيادة.
-- سطحيين، ومالهمش فك، وبيرجّعوا نفس الـ object.
-- بيرموا في strict بس، وفي sloppy بيفشلوا ساكتين.
-- الأسئلة بتقيس الحالة: الفاضي اللي مبيقبلش إضافة = frozen.
-- مبيوصلوش للـ private ولا [[Map]] ولا [[Date]].`,
-          lines: [
-            R`دالة مساعدة بتجرّب عملية: لو عدّت تطبع [[ok]]، ولو رمت تطبع [[✗]] ونص الـ error. كده نشوف كل محاولة في سطر.`,
-            R`object مفتوح عادي للمقارنة في الآخر.`,
-            R`[[preventExtensions]] على object جديد: ممنوع يضاف عليه، والقيم والمسح مسموحين. وبترجّع نفس الـ object فبنحطه في متغير على طول.`,
-            R`[[seal]]: ممنوع الإضافة والمسح، والتعديل مسموح.`,
-            R`[[freeze]]: ممنوع كل حاجة على المستوى الأول. و [[inner]] object جوه عشان نشوف إن القفل سطحي.`,
-            R`بنلف على التلات objects بأسمائهم. [[Object.entries({ noAdd, ... })]] بيستخدم الـ shorthand عشان الاسم يبقى المفتاح.`,
-            R`محاولة إضافة خاصية جديدة [[z]]: ممنوعة في التلاتة، والرسالة [[Cannot add property z, object is not extensible]].`,
-            R`محاولة تعديل [[x]]: بتنجح في [[noAdd]] و [[sealed]]، وبترمي في [[frozen]] بـ [[Cannot assign to read only property 'x']].`,
-            R`محاولة مسح [[x]]: بتنجح في [[noAdd]] بس، وبترمي في الاتنين التانيين بـ [[Cannot delete property 'x' of #<Object>]].`,
-            R`قفلة الـ loop بعد ما جرّبنا ٩ محاولات.`,
-            R`تعديل جوه الـ object الداخلي: بيشتغل مع إن [[frozen]] متجمّد، لأن [[freeze]] سطحي.`,
-            R`بيطبع 99: إثبات إن الـ object الداخلي اتعدّل.`,
-            R`الأسئلة التلاتة: [[true false true false true]]. و [[isFrozen(sealed)]] بـ [[false]] لأن قيمته لسه بتتكتب.`,
-          ],
-          ref: [
-            { t: "MDN: Object.preventExtensions()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/preventExtensions" },
-            { t: "MDN: Object.seal()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/seal" },
-            { t: "MDN: Object.freeze()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze" },
-            { t: "MDN: Object.isExtensible()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/isExtensible" },
-            { t: "MDN: Object.isSealed()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/isSealed" },
-            { t: "MDN: Object.isFrozen()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/isFrozen" },
-            { t: "ECMAScript: SetIntegrityLevel و TestIntegrityLevel", url: "https://tc39.es/ecma262/multipage/abstract-operations.html#sec-setintegritylevel" }
-          ],
-          pre: ["js/property descriptors: Object.defineProperty", { to: "js/immutability", why: R`[[Object.freeze]] كأداة للـ state، والنسخ بدل التعديل` }, { to: "js/let و const و var", why: R`الفرق بين قفل المتغير ([[const]]) وقفل الـ object` }]
-        },
-        {
-          cmd: "Object.setPrototypeOf و isPrototypeOf",
-          title: "تغيّر الـ prototype بتاع object موجود، وتسأل «ده جد ده؟»، وليه ده بطيء",
-          desc: R`[[Object.setPrototypeOf(obj, proto)]] بيغيّر الـ prototype بتاع object **بعد** ما اتعمل، و [[proto.isPrototypeOf(obj)]] بيسأل: [[proto]] موجود في أي مكان في سلسلة [[obj]]؟ والاتنين بيكمّلوا [[Object.getPrototypeOf]] و [[Object.create]] اللي في درس «prototype chain».
-
-[[isPrototypeOf]] زي [[instanceof]] بس من غير constructor: بتشتغل مع objects عادية مالهاش class. و [[setPrototypeOf]] موجودة وشغالة، بس MDN والمحركات بيحذّروا منها: تغيير الـ prototype بعد الإنشاء بيبوّظ تحسينات المحرك. قِسناها: إنشاء مليون object بـ [[setPrototypeOf]] أبطأ من [[Object.create]] بـ ٣ لـ ٨ مرات. فالقاعدة: حدّد الـ prototype **وقت الإنشاء** ([[Object.create]] أو [[class]] أو [[__proto__]] في الـ literal).`,
-          example: R`// تغيّر الـ prototype بعد الإنشاء، وتسأل مين جد مين
-const animal = { speak() { return this.name + ' بيعمل صوت'; } };
-const dog = { name: 'Rex' };
-console.log(typeof dog.speak);
-Object.setPrototypeOf(dog, animal);
-console.log(dog.speak(), animal.isPrototypeOf(dog), Object.prototype.isPrototypeOf(dog));
-class Shape {}
-class Circle extends Shape {}
-const c = new Circle();
-console.log(Shape.prototype.isPrototypeOf(c), c instanceof Shape);
-const dict = Object.create(null);
-dict.toString = 'مش دالة';
-console.log(Object.prototype.isPrototypeOf(dict), dict instanceof Object, Object.keys(dict));
-try { Object.setPrototypeOf(animal, dog); } catch (e) { console.log(e.message); }
-try { Object.setPrototypeOf(dog, 5); } catch (e) { console.log(e.message); }`,
-          try: R`في [[proto.mjs]] جرّب ٤ حاجات واقرا كل ناتج: [[Object.setPrototypeOf(1, {})]]، و [[Object.setPrototypeOf(Object.prototype, {})]]، و [[Object.setPrototypeOf(null, {})]]، وآخر حاجة: [[function F() {}]] و [[const f = new F()]] وبعدين [[F.prototype = {}]] واطبع [[f instanceof F]].`,
-          sol: R`~~~js proto.mjs
-console.log(Object.setPrototypeOf(1, {}));
-try { Object.setPrototypeOf(Object.prototype, {}); } catch (e) { console.log(e.message); }
-try { Object.setPrototypeOf(null, {}); } catch (e) { console.log(e.message); }
-function F() {}
-const f = new F();
-F.prototype = {};
-console.log(f instanceof F, Object.getPrototypeOf(f) === F.prototype);
-~~~
-
-~~~text الناتج (Node 24.22)
-1
-Immutable prototype object 'Object.prototype' cannot have their prototype set
-Object.setPrototypeOf called on null or undefined
-false false
-~~~
-
-- على primitive مبيعملش حاجة وبيرجّعه زي ما هو (مفيش object يتغيّر).
-- [[Object.prototype]] نفسه prototype بتاعه مقفول في المواصفات (immutable prototype exotic object)، عشان محدش يعمل سلسلة دايرية من أساس اللغة.
-- [[null]] و [[undefined]] بيرموا.
-- [[instanceof]] بيسأل «[[F.prototype]] **الحالي** في السلسلة؟». [[f]] اتعمل بالقديم، ولما [[F.prototype]] اتغيّر بقى [[false]]. ده سبب إن [[isPrototypeOf]] بالـ object نفسه أوضح لما بتغيّر حاجات.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** سلسلة من ٣ مستويات: [[a]] ← [[b]] ← [[c]]. اكتب الـ ٦ قيم قبل التشغيل:
-
-~~~js
-const c = { level: 'c' };
-const b = Object.create(c);
-const a = Object.create(b);
-console.log(b.isPrototypeOf(a), c.isPrototypeOf(a), a.isPrototypeOf(b));
-console.log(Object.prototype.isPrototypeOf(a), Object.prototype.isPrototypeOf(Object.create(null)));
-console.log(a.level, Object.hasOwn(a, 'level'));
-~~~`, done: R`كتبت [[true true false]] و [[true false]] و [[c false]]، وتقدر تقول ليه [[c.isPrototypeOf(a)]] بـ [[true]] مع إن [[c]] مش الأب المباشر.`, sol: R`~~~text الناتج (Node 24.22)
-true true false
-true false
-c false
-~~~
-
-- [[isPrototypeOf]] بيدوّر في **السلسلة كلها** مش أول مستوى بس، فـ [[c]] (الجد) بـ [[true]].
-- العكس [[false]]: [[a]] مش في سلسلة [[b]]، السلسلة بتطلع لفوق بس.
-- كل object عادي آخر سلسلته [[Object.prototype]]، إلا اللي اتعمل بـ [[Object.create(null)]].
-- [[a.level]] اتقرت من [[c]] بالوراثة، بس مش own.` },
-            { lvl: 'تطبيق', t: R`**refactor وقيس:** الكود ده بيعمل مليون شكل ويحط الـ methods بـ [[setPrototypeOf]] لكل واحد. خليه [[class]] وقيس الفرق برقم:
-
-~~~js
-const shapeMethods = { area() { return this.w * this.h; } };
-function before(n) {
-  const out = [];
-  for (let i = 0; i < n; i++) { const s = { w: i, h: 2 }; Object.setPrototypeOf(s, shapeMethods); out.push(s); }
-  return out;
-}
-~~~`, done: R`النسخة الـ class بتطلّع نفس [[area()]] لنفس العنصر، وقسّت الاتنين مرتين، والـ class أسرع بشكل واضح في الرقم اللي طلع عندك.`, sol: R`~~~js bench-shapes.mjs
-const shapeMethods = { area() { return this.w * this.h; } };
-function before(n) {
-  const out = [];
-  for (let i = 0; i < n; i++) { const s = { w: i, h: 2 }; Object.setPrototypeOf(s, shapeMethods); out.push(s); }
-  return out;
-}
-class Rect { constructor(w, h) { this.w = w; this.h = h; } area() { return this.w * this.h; } }
-function after(n) {
-  const out = [];
-  for (let i = 0; i < n; i++) out.push(new Rect(i, 2));
-  return out;
-}
-for (const [label, fn] of [['setPrototypeOf', before], ['class', after], ['setPrototypeOf', before], ['class', after]]) {
-  const t0 = performance.now();
-  const list = fn(1_000_000);
-  console.log(label.padEnd(15), (performance.now() - t0).toFixed(0).padStart(4), 'ms', list[3].area());
-}
-~~~
-
-~~~text الناتج (Node 24.22، ويندوز ١١، لابتوب)
-setPrototypeOf   188 ms 6
-class             37 ms 6
-setPrototypeOf   182 ms 6
-class             14 ms 6
-~~~
-
-**الفرق ٥ لـ ١٣ مرة** في القياس ده. السبب: المحرك (V8) بيعمل لكل «شكل» object وصف داخلي (hidden class أو map). الـ class بيعمل الشكل مرة وكل الـ objects بتشاركه. أما [[setPrototypeOf]] بعد الإنشاء فبيجبر المحرك يحوّل الـ object لشكل تاني في كل مرة. والتشغيل التاني أسرع في الاتنين لأن المحرك «سخن» (JIT). الأرقام بتختلف من جهاز للتاني، والنسبة هي المهمة.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[chainOf(value)]] بترجّع نص فيه السلسلة كلها بالأسامي: [[Dog.prototype → Animal.prototype → Object.prototype → null]]. استخدم [[constructor.name]] لو الـ prototype ليه [[constructor]] own، وإلا اكتب إنه object من غير constructor. لازم تشتغل على primitives ([['نص']]) وعلى [[Object.create(null)]].`, done: R`بتطلّع السلسلة صح لـ array، و instance من class وارثة، ونص، و [[Object.create({ a: 1 })]]، و [[Object.create(null)]] (بتطلّع [[null]] بس)، و async arrow.`, sol: R`~~~js chain-of.mjs
-function chainOf(value) {
+**ليه كده:**
+
+- **[[Object.create(base)]]** بتعمل object فاضي، والسهم الخفي بتاعه (الـ prototype) بيشاور على base.
+- **[[u.greet()]]:** JS دوّرت على [[greet]] في u نفسه، ملقتهاش، فطلعت للـ prototype ولقتها في base. ولما اتنادت، this هي u (اللي قبل النقطة)، فـ [[this.name]] = [["Sara"]].
+- **[[Object.hasOwn(u, "greet")]]** بتسأل «المفتاح ده على u نفسه؟»: لأ. و **[["greet" in u]]** بتسأل «موجود في أي حتة في السلسلة؟»: أيوه.
+- **[[Object.keys(u)]]** بيرجّع المفاتيح الخاصة بس: [[name]].
+
+**الغلطة الشائعة:** تستخدم [[in]] عشان تعرف إذا المفتاح «بتاع» الـ object. [[in]] بيشوف السلسلة كلها، فـ [["toString" in {}]] بـ [[true]]. للمفاتيح الخاصة [[Object.hasOwn]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** اكتب [[chainOf(obj)]] بتلف بـ [[Object.getPrototypeOf]] لحد null، وترجّع أسامي الـ constructors اللي في السلسلة ([[proto.constructor.name]]).`, done: R`[[chainOf([ ])]] بترجّع [[[ 'Array', 'Object' ] ]]، و [[chainOf(new Map())]] بترجّع [[[ 'Map', 'Object' ] ]]، و [[chainOf(Object.create(null))]] بترجّع array فاضية.`, sol: R`~~~js chain-of.js
+function chainOf(obj) {
   const names = [];
-  for (let o = Object.getPrototypeOf(Object(value)); o !== null; o = Object.getPrototypeOf(o)) {
-    names.push(Object.hasOwn(o, 'constructor') ? o.constructor.name + '.prototype' : '(object من غير constructor)');
+  let proto = Object.getPrototypeOf(obj);
+  while (proto !== null) {
+    names.push(proto.constructor?.name ?? "(من غير constructor)");
+    proto = Object.getPrototypeOf(proto);
   }
-  return names.concat('null').join(' → ');
+  return names;
 }
+
 class Animal {}
 class Dog extends Animal {}
-console.log(chainOf([1]));
-console.log(chainOf(new Dog()));
-console.log(chainOf('نص'));
-console.log(chainOf(Object.create({ a: 1 })));
+
+console.log(chainOf([]));
+console.log(chainOf(new Map()));
 console.log(chainOf(Object.create(null)));
-console.log(chainOf(async () => {}));
+console.log(chainOf(new Dog()));
+console.log(chainOf(Object.create(Object.create(null))));
 ~~~
 
-~~~text الناتج (Node 24.22)
-Array.prototype → Object.prototype → null
-Dog.prototype → Animal.prototype → Object.prototype → null
-String.prototype → Object.prototype → null
-(object من غير constructor) → Object.prototype → null
-null
-AsyncFunction.prototype → Function.prototype → Object.prototype → null
+~~~text الناتج (node chain-of.js، Node 24)
+[ 'Array', 'Object' ]
+[ 'Map', 'Object' ]
+[]
+[ 'Dog', 'Animal', 'Object' ]
+[ '(من غير constructor)' ]
 ~~~
 
-**الشرح:** [[Object(value)]] بيلف الـ primitive في object ([[new String('نص')]]) عشان [[getPrototypeOf]] يشتغل بنفس الطريقة على الكل. و [[Object.hasOwn(o, 'constructor')]] مش [[o.constructor]] بس: من غير [[hasOwn]] الـ object اللي من [[Object.create({ a: 1 })]] كان هيقرا [[constructor]] بالوراثة من [[Object.prototype]] ويقول [[Object.prototype]] مرتين. والسطر الأخير بيوريك إن الـ async function ليها prototype خاص [[AsyncFunction.prototype]] قبل [[Function.prototype]].` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[countWords(text)]] بتعدّ تكرار كل كلمة (بعد ما تصغّر الحروف). لازم تشتغل صح على كلمات زي [[constructor]] و [[toString]] و [[__proto__]]. شغّل النسخة دي الأول وشوف بتطلّع إيه:
+**ليه كده:**
 
-~~~js
-function countWordsBad(text) {
-  const counts = {};
-  for (const w of text.split(/\s+/)) counts[w] = (counts[w] || 0) + 1;
-  return counts;
-}
-console.log(countWordsBad('constructor toString __proto__'));
-~~~`, done: R`نسختك بتطلّع [[constructor: 1]] و [[tostring: 1]] و [[__proto__: 2]] للنص [['the constructor of the toString __proto__ __proto__']]، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`النسخة البايظة:
+- **[[Object.getPrototypeOf(obj)]]** بترجّع السهم الخفي. بنبدأ من prototype بتاع obj نفسه (مش obj)، ونفضل نطلع لحد ما نوصل [[null]]، وده آخر السلسلة دايمًا.
+- **[[proto.constructor.name]]:** كل prototype عادي فيه [[constructor]] بيشاور على الدالة أو الكلاس اللي عملته، و [[.name]] اسمه. فـ Array.prototype بيدّي [["Array"]].
+- **[[Object.create(null)]]:** object مالوش prototype خالص، فالـ loop مبيلفش، و array فاضية.
+- **[[?.]] و [[??]]:** آخر سطر عامل prototype مالوش [[constructor]] (اتعمل بـ [[Object.create(null)]])، فمن غير [[?.]] كان [[undefined.name]] هيرمي TypeError.
 
-~~~text الناتج
-{
-  constructor: 'function Object() { [native code] }1',
-  toString: 'function toString() { [native code] }1'
-}
+**الغلطة الشائعة:** تبدأ الـ loop بـ [[let proto = obj]] فيطلع اسم obj نفسه في الأول ([[Array]] مرتين لما obj يبقى Array.prototype مثلًا). أو تكتب الشرط [[while (proto)]] وده صح هنا، بس [[!== null]] أوضح في المعنى.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** في Console اكتب [[[]]] وافتح سهم [[Prototype]] مرتين. لاقي ٣ methods على Array.prototype عمرك ما استخدمتها، واقرا صفحة واحدة منهم على MDN وجرّبها. واطبع [[Object.getOwnPropertyNames(Array.prototype).length]].`, done: R`كتبت ٣ أسامي (مثلًا [[with]] و [[copyWithin]] و [[findLast]]) ومثال شغّال لواحدة. والرقم في Node 24 طلع 40 (ممكن يختلف شوية في المتصفح)، والمستوى التاني كان Object.prototype وفيه [[hasOwnProperty]] و [[toString]].`, sol: R`~~~js array-proto.js
+const own = Object.getOwnPropertyNames(Array.prototype);
+console.log(own.length);
+console.log(own.filter((n) => ["with", "copyWithin", "findLast", "toSpliced", "flatMap"].includes(n)));
+
+const next = Object.getPrototypeOf(Array.prototype);
+console.log(next === Object.prototype, Object.hasOwn(next, "hasOwnProperty"), Object.hasOwn(next, "toString"));
+
+const scores = [10, 20, 30];
+console.log(scores.with(1, 99), scores);              // نسخة، والأصل زي ما هو
+console.log([1, 2, 3, 4, 5].copyWithin(0, 3));        // بيعدّل في نفس الـ array
+console.log([5, 12, 8, 130, 44].findLast((n) => n > 10));
 ~~~
 
-[[counts['constructor']]] لقى [[Object]] بالوراثة (مش [[undefined]])، فـ [[|| 0]] مشتغلش، والدالة + 1 بقت نص. و [[__proto__]] **اختفت**: [[counts['__proto__']]] هي [[Object.prototype]] نفسه، والكتابة عليها بنص اتجاهلت.
-
-~~~js count-words.mjs
-function countWords(text) {
-  const counts = Object.create(null);
-  for (const w of text.toLowerCase().split(/\s+/).filter(Boolean)) counts[w] = (counts[w] ?? 0) + 1;
-  return counts;
-}
-console.log(countWords('the constructor of the toString __proto__ __proto__'));
+~~~text الناتج (node array-proto.js، Node 24)
+40
+[ 'copyWithin', 'findLast', 'flatMap', 'toSpliced', 'with' ]
+true true true
+[ 10, 99, 30 ] [ 10, 20, 30 ]
+[ 4, 5, 3, 4, 5 ]
+44
 ~~~
 
-~~~text الناتج (Node 24.22)
-[Object: null prototype] {
-  the: 2,
-  constructor: 1,
-  of: 1,
-  tostring: 1,
-  ['__proto__']: 2
-}
+ونفس السطر الأول في Console بتاع Chrome 157 (Playwright): [[40]] برضه.
+
+**الإجابة النموذجية:**
+
+- **في Console:** اكتب [[ [] ]] وبعدين افتح السهم اللي مكتوب عليه Prototype وجنبه [[Array(0)]]: ده Array.prototype وفيه كل الـ methods ([[at]] و [[map]] و [[with]]...). والسهم اللي جواه (Prototype وجنبه [[Object]]) بيفتح Object.prototype وفيه [[hasOwnProperty]] و [[toString]] و [[valueOf]]. والسطر التاني في الناتج بيثبت المستوى ده بالكود.
+- **٣ methods ممكن متكونش استخدمتها:**
+  - [[with(index, value)]]: نسخة جديدة بقيمة متغيرة في مكان، والأصل متلمسش ([[[ 10, 20, 30 ] ]] فضلت زي ما هي).
+  - [[copyWithin(target, start)]]: بتنسخ حتة من الـ array فوق حتة تانية **في نفس الـ array**: [[4, 5]] اتنسخوا مكان أول عنصرين.
+  - [[findLast(fn)]]: زي [[find]] بس من الآخر: أول عنصر من ورا أكبر من 10 هو 44.
+- **[[40]]** في Node 24 و Chrome 157 (نفس الـ V8 تقريبًا). في Firefox أو نسخة قديمة ممكن يطلع رقم تاني، لأن كل نسخة بتضيف methods جديدة (زي [[with]] و [[toSpliced]] في 2023).
+
+**الغلطة الشائعة:** تعد بـ [[Object.keys(Array.prototype)]] فيطلع [[0]]: الـ methods المبنية non-enumerable، و [[keys]] بيرجّع الـ enumerable بس. [[getOwnPropertyNames]] بيرجّع الكل.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** عدّاد كلمات بـ object عادي: [[const c = {}; for (const w of text.split(" ")) c[w] = (c[w] || 0) + 1;]]. جرّبه على [["constructor constructor"]]. وصلّحه بطريقتين: [[Object.create(null)]] و [[Object.hasOwn]].`, done: R`قبل التصليح [[c.constructor]] بتطلع نص غريب فيه [[native code]] و [[11]] بدل [[2]]، لأن [[c["constructor"] ]] لقت [[Object]] في الـ prototype. وبعد أي تصليح [[c.constructor]] بترجّع [[2]].`, sol: R`~~~js word-count.js
+const text = "constructor constructor";
+
+// البايظ: object عادي وارث من Object.prototype
+const c = {};
+for (const w of text.split(" ")) c[w] = (c[w] || 0) + 1;
+console.log("قبل:", c.constructor);
+
+// تصليح ١: object من غير prototype
+const c1 = Object.create(null);
+for (const w of text.split(" ")) c1[w] = (c1[w] || 0) + 1;
+console.log("Object.create(null):", c1.constructor);
+
+// تصليح ٢: نسأل عن المفتاح الخاص بس
+const c2 = {};
+for (const w of text.split(" ")) c2[w] = (Object.hasOwn(c2, w) ? c2[w] : 0) + 1;
+console.log("Object.hasOwn:", c2.constructor);
+
+// الحل الأنضف من غير فخاخ: Map
+const m = new Map();
+for (const w of text.split(" ")) m.set(w, (m.get(w) ?? 0) + 1);
+console.log("Map:", m.get("constructor"), m.get("toString"));
 ~~~
 
-[[Object.create(null)]] مفيهوش أي حاجة موروثة، فكل كلمة بتبدأ [[undefined]]، و [[__proto__]] بقت مفتاح عادي (الـ setter بتاعها على [[Object.prototype]] اللي مش في السلسلة). و [[filter(Boolean)]] بيشيل النص الفاضي لو النص بيبدأ أو بيخلص بمسافة. والبديل التاني [[Map]]، وده أحسن لو هتحتاج [[size]] أو ترتيب.` },
+~~~text الناتج (node word-count.js، Node 24)
+قبل: function Object() { [native code] }11
+Object.create(null): 2
+Object.hasOwn: 2
+Map: 2 undefined
+~~~
+
+**ليه كده:**
+
+- **[[c["constructor"]]] في أول لفة** مش موجود على c، فـ JS طلعت للـ prototype ولقت [[Object.prototype.constructor]] (الدالة [[Object]] نفسها). [[c[w] || 0]] رجّعت الدالة (truthy)، و [[دالة + 1]] بتحوّل الدالة لنص وتلزق [["1"]] جنبها. اللفة التانية لزقت [["1"]] تاني. عشان كده [[function Object() { [native code] }11]].
+- **[[Object.create(null)]]:** object مالوش prototype خالص، فـ [[constructor]] مش موجودة وبتبدأ من 0. ده اللي بيتسمى «dictionary object».
+- **[[Object.hasOwn(c2, w)]]:** بنعدّ بس لو المفتاح على c2 نفسه، فالموروث بيتجاهل.
+- **Map:** مفيهاش مفاتيح موروثة أصلًا، و [[m.get("toString")]] بـ [[undefined]]. ده الأنسب لعدّ كلمات جاية من يوزر.
+
+**الغلطة الشائعة:** تفتكر إن الكلمات «الغريبة» نادرة. أي نص من يوزر ممكن يبقى فيه [[constructor]] أو [[toString]] أو [[__proto__]]، والأخيرة أخطر: [[c["__proto__"] = ...]] بتغيّر الـ prototype نفسه مش بتعمل مفتاح.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** لـ [[class Animal {}]] و [[class Dog extends Animal {}]] و [[const d = new Dog()]]: ارسم السلسلة من d لحد null، وأثبت كل سهم بسطر [[Object.getPrototypeOf(...) === ...]].`, done: R`الرسمة: d ← Dog.prototype ← Animal.prototype ← Object.prototype ← null، و ٤ سطور كلهم بيطبعوا [[true]]. وكمان [[Object.getPrototypeOf(Dog) === Animal]] true (الكلاس نفسه وارث للـ static).`, sol: R`~~~text الرسمة
+d ──► Dog.prototype ──► Animal.prototype ──► Object.prototype ──► null
+
+Dog ──► Animal ──► Function.prototype     (الكلاسات نفسها: عشان الـ static يتورث)
+~~~
+
+~~~js dog-chain.js
+class Animal {}
+class Dog extends Animal {}
+const d = new Dog();
+
+console.log(Object.getPrototypeOf(d) === Dog.prototype);
+console.log(Object.getPrototypeOf(Dog.prototype) === Animal.prototype);
+console.log(Object.getPrototypeOf(Animal.prototype) === Object.prototype);
+console.log(Object.getPrototypeOf(Object.prototype) === null);
+console.log("Dog ← Animal:", Object.getPrototypeOf(Dog) === Animal);
+console.log("Animal ← Function.prototype:", Object.getPrototypeOf(Animal) === Function.prototype);
+~~~
+
+~~~text الناتج (node dog-chain.js، Node 24)
+true
+true
+true
+true
+Dog ← Animal: true
+Animal ← Function.prototype: true
+~~~
+
+**الإجابة النموذجية:**
+
+- **السلسلة الأولى (الـ instances):** [[new Dog()]] بتعمل d وسهمه على [[Dog.prototype]]. و [[extends Animal]] خلّت [[Dog.prototype]] نفسه سهمه على [[Animal.prototype]]. و Animal كلاس عادي، فـ prototype بتاعه سهمه على [[Object.prototype]]، وده سهمه على [[null]] (آخر السلسلة). الـ ٤ سطور الأولى بيثبتوا كل سهم.
+- **السلسلة التانية (الكلاسات):** [[extends]] بتعمل سهم تاني بين الكلاسات نفسها: [[Dog]] سهمه على [[Animal]]. ده اللي بيخلّي [[Dog.create()]] تلاقي [[static create()]] لو كانت معرّفة في Animal.
+- **ليه ده مهم:** [[d.toString()]] بتشتغل لأن JS بتلف السلسلة الأولى لحد Object.prototype. و [[d instanceof Animal]] بيسأل «Animal.prototype موجود في سلسلة d؟».
+
+**الغلطة الشائعة:** ترسم d ← Dog ← Animal (الكلاسات نفسها). الـ instance سهمه على [[Dog.prototype]] مش على [[Dog]]: [[Object.getPrototypeOf(d) === Dog]] بـ [[false]].` }
           ],
-          check: { lang: "js", starter: R`function countWords(text) {
-  // رجّع object كل مفتاح فيه كلمة (بحروف صغيرة) وقيمته عدد مراتها
-}`, tests: R`test("كلمات عادية", () => { const c = countWords('a b a'); expect(c.a).toBe(2); expect(c.b).toBe(1); });
-test("constructor", () => expect(countWords('constructor')['constructor']).toBe(1));
-test("toString بحروف صغيرة", () => expect(countWords('toString TOSTRING')['tostring']).toBe(2));
-test("__proto__ مفتاح عادي", () => expect(countWords('__proto__ __proto__')['__proto__']).toBe(2));
-test("مفيش مفاتيح موروثة", () => expect('hasOwnProperty' in countWords('x')).toBe(false));
-test("مسافات زيادة", () => expect(Object.keys(countWords('  a   b  ')).length).toBe(2));
-test("نص فاضي", () => expect(Object.keys(countWords('')).length).toBe(0));`, solution: R`function countWords(text) {
-  const counts = Object.create(null);
-  for (const w of text.toLowerCase().split(/\s+/).filter(Boolean)) counts[w] = (counts[w] ?? 0) + 1;
-  return counts;
-}` },
+          ref: [
+            { t: "MDN: Inheritance and the prototype chain", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain" },
+            { t: "MDN: Object.create()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create" },
+            { t: "MDN: Object.getPrototypeOf()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/getPrototypeOf" },
+            { t: "MDN: Object.hasOwn()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwn" },
+          ],
+          pre: [{ to: "js/Map و Set", why: R`تمرين عدّ الكلمات بيقارن الـ object العادي بـ Map اللي مفيهاش مفاتيح موروثة`}],
           flag: "script",
           deep: {
-            why: R`[[isPrototypeOf]] بتجاوب على سؤال «الـ object ده من النوع ده؟» لما مفيش class: plugins بتورث من object أساسي، أو objects من [[Object.create]]. و [[setPrototypeOf]] لازم تعرفها لأنك هتلاقيها في كود قديم ومكتبات (mixins، و polyfills)، ولازم تعرف ليه بنتجنبها. و [[Object.create(null)]] هو الحل الصح لأي «قاموس» مفاتيحه جاية من يوزر (عدّاد كلمات، cache بالـ URL، headers)، لأن الـ object العادي فيه مفاتيح «مستخبية» زي [[constructor]] و [[__proto__]].`,
-            how: R`كل object فيه خانة داخلية اسمها Prototype. [[getPrototypeOf]] بيقراها، و [[setPrototypeOf]] بيكتبها بعد ٣ فحوص: القيمة object أو [[null]] (وإلا [[Object prototype may only be an Object or null: 5]])، والـ object extensible (وإلا [[#<Object> is not extensible]])، ومفيش دايرة (وإلا [[Cyclic __proto__ value]]).
+            why: "ده نظام الوراثة الحقيقي في JS، والـ class مجرد syntax فوقه. لو فاهمه، هتفهم instanceof، وليه methods الـ class مش بتتنسخ لكل instance، وإيه هو prototype pollution، وسؤال انترفيو ثابت: «اشرح prototypal inheritance».",
+            how: R`اللينك ده اسمه في الـ spec [[[[Prototype]]]]، وبتقراه بـ [[Object.getPrototypeOf(obj)]]. فيه [[obj.__proto__]] القديمة، بس متستخدمهاش في كود جديد.
 
-و [[proto.isPrototypeOf(obj)]] بيعمل loop: [[o = getPrototypeOf(obj)]]، ولو [[o === proto]] يرجّع [[true]]، ولو [[null]] يرجّع [[false]]. و [[obj instanceof F]] نفس الـ loop بالظبط بس بيقارن بـ [[F.prototype]] (إلا لو [[F]] ليها [[ [Symbol.hasInstance] ]]، درس «Function»).
+متتلخبطش: [[Fn.prototype]] (خاصية على الدوال) هو الـ object اللي هيبقى prototype لأي حاجة تتعمل بـ [[new Fn()]]. يعني [[Object.getPrototypeOf(new Fn()) === Fn.prototype]].
 
-والـ [[obj.__proto__]] (getter و setter على [[Object.prototype]]) هو نفس [[getPrototypeOf]] و [[setPrototypeOf]] بشكل قديم ومهجور في MDN. وعلى [[Object.create(null)]] مش موجود: [[n.__proto__ = {...}]] عملت خاصية عادية اسمها [[__proto__]] والـ prototype فضل [[null]] (اتجرّب).
+القراية بتمشي في السلسلة، بس الكتابة لأ: [[cat.speak = ...]] بتعمل خاصية جديدة على cat وتخبّي اللي في الـ prototype (shadowing)، والـ prototype متلمسش.
 
-**ليه بطيء:** V8 بيحسّن الوصول للخصايص بـ «shapes» (hidden classes)، وكل shape مربوط بـ prototype. تغيير الـ prototype بعد الإنشاء بيخلّي الـ object ياخد shape جديد، وتغيير prototype **لـ objects كتير** بيخلّي المحرك يرمي الكاش اللي عامله لأي كود بيقرا منهم. قياسنا (مليون object): الإنشاء بـ [[setPrototypeOf]] من ١٥٠ لـ ٤٥٠ ms، وبـ [[Object.create]] من ٣٠ لـ ١٣٠ ms، ونداء الـ method بعدها كان قريب في الاتنين.`,
-            when: R`[[isPrototypeOf]]: فحص نوع objects مالهاش constructor، أو لما [[instanceof]] مش متاح (مفيش دالة) أو مش موثوق (عابر لـ iframes). [[setPrototypeOf]]: في أدوات وتجارب صغيرة، أو object واحد في بداية البرنامج، أو لما الـ object جاي جاهز ومش بتاعك. في أي حاجة بتتعمل كتير: [[Object.create(proto)]] أو [[class]] أو [[{ __proto__: proto, ... }]]. و [[Object.create(null)]] لأي قاموس مفاتيحه من برّه، أو استخدم [[Map]].`,
-            mistakes: R`- تستخدم [[setPrototypeOf]] جوه loop أو factory بتتنادى كتير.
-- تقلب الترتيب: [[obj.isPrototypeOf(proto)]] بدل [[proto.isPrototypeOf(obj)]].
-- تعمل [[X.isPrototypeOf(obj)]] على الـ constructor نفسه: الصح [[X.prototype.isPrototypeOf(obj)]].
-- تنادي [[dict.isPrototypeOf]] أو أي method من [[Object.prototype]] على [[Object.create(null)]]: مش موجودة. استخدم [[Object.prototype.isPrototypeOf.call(...)]] أو [[Object.getPrototypeOf]].
-- object عادي كقاموس لمفاتيح من يوزر: [[constructor]] و [[toString]] بيرجعوا دوال، و [[__proto__]] بتختفي (تمرين التحدي).
-- سلسلة دايرية: [[TypeError: Cyclic __proto__ value]].`,
+[[Object.create(proto)]] بتعمل object فاضي الـ prototype بتاعه proto. و [[Object.create(null)]] object من غير prototype خالص: مفيهوش toString ولا hasOwnProperty، ومفيد كـ dictionary نضيف.
+
+و [[a instanceof B]] بيمشي في سلسلة a ويسأل: [[B.prototype]] موجود فيها؟
+
+الـ methods على الـ prototype موجودة مرة واحدة في الذاكرة ومشتركة بين كل الـ instances، عكس لو حطيتها في الـ constructor.`,
+            when: "مش هتكتب Object.create كتير في الشغل اليومي، هتستخدم class. بس هتحتاج الفهم ده في الـ debugging، وفي الانترفيو، ولما تقرا كود مكتبات قديم.",
+            mistakes: R`تعدّل [[Array.prototype]] أو [[Object.prototype]] (monkey patching): بيأثر على كل الكود وكل المكتبات. وتدمج objects جاية من اليوزر من غير فحص فمفتاح زي [["__proto__"]] يعدّل الـ prototype (prototype pollution، ثغرة حقيقية اتلاقت في lodash). وتتلخبط بين [[__proto__]] و [[prototype]].`
           },
-          teach: R`## الفكرة في سطرين
+          teach: R`## الكود ده بيعمل إيه؟
 
-الـ prototype بيتحدد عادة وقت الإنشاء. [[Object.setPrototypeOf]] بيغيّره بعدين، و [[isPrototypeOf]] بيسأل عن السلسلة كلها. كل اللي تحت من Node 24.22 كملف [[.mjs]].
+جزئين: الأول بيثبت إن [[map]] مش موجودة على الـ array نفسها، موجودة «فوقها» في السلسلة. والتاني بيعمل سلسلة بإيدنا: object اسمه [[cat]] بيورث method من object اسمه [[animal]]. اتشغّل في Node 24، وكل سطر طبعناه بـ console.log.
 
 ---
 
-## ١. [[Object.setPrototypeOf]]
+## ١. مين الـ prototype بتاع الـ array؟
 
-~~~js
-const animal = { speak() { return this.name + ' بيعمل صوت'; } };
-const dog = { name: 'Rex' };
-console.log(typeof dog.speak);
-Object.setPrototypeOf(dog, animal);
-console.log(dog.speak());
+~~~text app.js
+const arr = [1, 2];
+Object.getPrototypeOf(arr) === Array.prototype;
+~~~
+
+- [[Object.getPrototypeOf(x)]]: دالة جاهزة بترجّع الـ **prototype** بتاع x، يعني الـ object اللي x بيدوّر فيه لما ميلاقيش حاجة عنده.
+- [[Array.prototype]]: object واحد في JS كلها، متخزّن فيه map و filter و push وكل methods الـ arrays.
+- [[===]]: هل الاتنين **نفس** الـ object بالظبط؟
+
+~~~text الناتج
+true
+~~~
+
+يعني كل array بتعملها، الـ prototype بتاعها هو نفس الـ [[Array.prototype]].
+
+---
+
+## ٢. وفوقه؟
+
+~~~text app.js
+Object.getPrototypeOf(Array.prototype) === Object.prototype;
+~~~
+
+~~~text الناتج
+true
+~~~
+
+و [[Object.prototype]] ده آخر محطة، الـ prototype بتاعه [[null]] (طبعناه: [[Object.getPrototypeOf(Object.prototype)]] طلع [[null]]). فالسلسلة:
+
+~~~text السلسلة
+arr  →  Array.prototype  →  Object.prototype  →  null
+~~~
+
+---
+
+## ٣. [[Object.hasOwn]] ضد [[in]]
+
+~~~text app.js
+Object.hasOwn(arr, "map");
+"map" in arr;
+~~~
+
+- [[Object.hasOwn(obj, key)]] (من ES2022): الخاصية دي **على الـ object نفسه**؟ من غير ما يدوّر فوق.
+- [[key in obj]]: الخاصية دي موجودة **في أي حتة في السلسلة**؟
+
+~~~text الناتج
+false
+true
+~~~
+
+map مش على arr، بس [[in]] لقاها في Array.prototype. وللمقارنة: [[Object.hasOwn(arr, 0)]] و [[Object.hasOwn(arr, "length")]] طلعوا [[true]]: العناصر و length على الـ array نفسها.
+
+---
+
+## ٤. سلسلة بإيدك: [[Object.create]]
+
+~~~text app.js
+const animal = { speak() { return $__bt$__{this.name} بيتكلم$__bt; } };
+const cat = Object.create(animal);
+cat.name = "Mishmish";
+~~~
+
+- [[animal]]: object عادي فيه method واحدة. و [[$__bt...$__bt]] نص template، و [[$__{this.name}]] بتتبدل بالاسم.
+- [[Object.create(animal)]]: اعمل object **فاضي** والـ prototype بتاعه animal.
+- [[cat.name = "Mishmish"]]: خاصية على cat نفسه.
+
+~~~text الناتج: console.log(cat)
+{ name: 'Mishmish' }
+~~~
+
+لاحظ إن [[speak]] مش ظاهرة: هي مش على cat.
+
+---
+
+## ٥. القراية بتمشي في السلسلة
+
+~~~text app.js
+cat.speak();
+Object.getPrototypeOf(cat) === animal;
+~~~
+
+~~~text الناتج
+Mishmish بيتكلم
+true
+~~~
+
+اللي حصل خطوة خطوة:
+
+1. JS دوّر على [[speak]] في cat: مش موجودة.
+2. طلع للـ prototype (animal): لقاها.
+3. نادها، و **this = cat** لأن النداء كان [[cat.speak()]] (قاعدة النقطة)، فـ [[this.name]] = Mishmish.
+
+---
+
+## ٦. الكتابة مبتمشيش في السلسلة (shadowing)
+
+~~~text app.js
+cat.speak = () => "مياو";
+animal.speak.call(cat);
+~~~
+
+- [[cat.speak = ...]]: الكتابة **دايمًا** بتحط الخاصية على cat نفسه. فبقى فيه speak على cat «بتغطّي» على اللي فوق. ده اسمه **shadowing**.
+- [[animal.speak.call(cat)]]: اللي فوق لسه موجودة زي ما هي، ندهناها بـ this = cat بـ [[call]].
+
+~~~text الناتج
+مياو                    ← cat.speak()
+Mishmish بيتكلم        ← animal.speak.call(cat)
+~~~
+
+و [[Object.keys(cat)]] بقت فيها [['name']] و [['speak']]، و animal ملمستش.
+
+---
+
+## ٧. object من غير prototype
+
+جرّبنا [[Object.create(null)]] (من التجربة):
+
+~~~text app.js
+const o = Object.create(null);
+o.toString;
+"toString" in o;
+String(o);
 ~~~
 
 ~~~text الناتج
 undefined
-Rex بيعمل صوت
+false
+TypeError: Cannot convert object to primitive value
 ~~~
 
-قبل التغيير [[dog]] مفيهوش [[speak]]. بعده [[dog.speak()]] اتقرت من [[animal]]، و [[this]] جواها [[dog]] (اللي قبل النقطة). [[setPrototypeOf]] بترجّع [[dog]] نفسه.
-
-| اللي بتبعته | اللي حصل (اتجرّب) |
-|---|---|
-| [[setPrototypeOf(obj, otherObj)]] | السلسلة اتغيّرت، والقراية بقت تدوّر في [[otherObj]] |
-| [[setPrototypeOf(obj, null)]] | object من غير prototype: [[toString]] بقت [[undefined]] |
-| [[setPrototypeOf(obj, 5)]] | رمت [[TypeError: Object prototype may only be an Object or null: 5]] لأن الرقم مش object |
-| [[setPrototypeOf(animal, dog)]] بعد ما [[dog]] ورث [[animal]] | رمت [[TypeError: Cyclic __proto__ value]] لأن السلسلة هتلف على نفسها |
-| [[setPrototypeOf(1, {})]] | رجّعت [[1]] زي ما هو ومحصلش أي تغيير |
-| object مقفول بـ [[preventExtensions]] | رمت [[TypeError: #<Object> is not extensible]] لأن الـ object مقفول |
-
-### الشكل القديم: [[obj.__proto__ = x]]
-
-نفس الحاجة، بس من getter و setter على [[Object.prototype]]، وMDN معلّمها deprecated. استخدم [[Object.getPrototypeOf]] و [[Object.setPrototypeOf]] (أو [[__proto__]] **جوه الـ literal** بس، ودي حاجة تانية في المواصفات).
-
----
-
-## ٢. [[Object.prototype.isPrototypeOf]]
-
-~~~js
-console.log(animal.isPrototypeOf(dog), Object.prototype.isPrototypeOf(dog));
-~~~
-
-~~~text الناتج
-true true
-~~~
-
-[[animal]] الأب المباشر، و [[Object.prototype]] الجد. الاتنين [[true]] لأن السؤال عن السلسلة كلها.
-
-### [[isPrototypeOf]] ضد [[instanceof]]
-
-~~~js
-class Shape {}
-class Circle extends Shape {}
-const c = new Circle();
-console.log(Shape.prototype.isPrototypeOf(c), c instanceof Shape);
-~~~
-
-~~~text الناتج
-true true
-~~~
-
-| | [[proto.isPrototypeOf(obj)]] | [[obj instanceof F]] |
-|---|---|---|
-| بيقارن بـ | الـ object اللي بتديهوله | [[F.prototype]] الحالي |
-| محتاج دالة؟ | لأ، أي object | أيوه، [[F]] لازم يبقى callable |
-| بيتأثر بـ [[Symbol.hasInstance]] | لأ | أيوه |
-| لو [[F.prototype]] اتغيّر بعد الإنشاء | مش بيتأثر | بيرجّع [[false]] للقديم |
-
----
-
-## ٣. [[Object.create(null)]]: object من غير جد
-
-~~~js
-const dict = Object.create(null);
-dict.toString = 'مش دالة';
-console.log(Object.prototype.isPrototypeOf(dict), dict instanceof Object, Object.keys(dict));
-~~~
-
-~~~text الناتج
-false false [ 'toString' ]
-~~~
-
-[[dict]] مش وارث من [[Object.prototype]]، فـ [[instanceof Object]] بـ [[false]]، و [[toString]] بقت مفتاح عادي زي أي مفتاح. ده «قاموس» نضيف: مفيش [[constructor]] ولا [[hasOwnProperty]] ولا [[__proto__]] مستخبيين. والتمن: مفيش methods خالص، فـ [[String(dict)]] و [[dict + '']] بيرموا، واستخدم [[Object.hasOwn]] و [[Object.keys]] (static).
-
----
-
-## ٤. ليه [[setPrototypeOf]] بطيء: الرقم
-
-~~~js
-function viaCreate(i) { const o = Object.create(proto); o.w = i; o.h = 2; return o; }
-function viaSet(i) { const o = { w: i, h: 2 }; Object.setPrototypeOf(o, proto); return o; }
-~~~
-
-~~~text الناتج (مليون object، Node 24.22، أول تشغيل وتاني تشغيل)
-Object.create    إنشاء    68 ms | نداء   108 ms true
-setPrototypeOf   إنشاء   174 ms | نداء    63 ms true
-Object.create    إنشاء    28 ms | نداء    61 ms true
-setPrototypeOf   إنشاء   152 ms | نداء    88 ms true
-~~~
-
-على ٣ تشغيلات كمان الإنشاء بـ [[setPrototypeOf]] كان دايمًا أبطأ (٣ لـ ٨ مرات)، والنداء بعدها كان قريب ومتذبذب. يعني التمن الأكبر في لحظة التغيير نفسها. وفي برنامج حقيقي التغيير ده بيبوّظ كمان الكاش اللي المحرك عامله للكود اللي بيقرا من الـ objects دي. عشان كده: حدّد الـ prototype وقت الإنشاء.
+مفيش سلسلة خالص، فمفيش toString، و [[String(o)]] مش لاقي طريقة يحوّله لنص. ده مفيد كـ dictionary نضيف من غير مفاتيح موروثة.
 
 ---
 
 ## الخلاصة
 
-- [[Object.setPrototypeOf(obj, proto)]] شغالة، بس بطيئة: استخدم [[Object.create]] أو [[class]].
-- [[proto.isPrototypeOf(obj)]]: السلسلة كلها، من غير constructor.
-- [[instanceof]] = نفس الفحص بـ [[F.prototype]] الحالي.
-- [[Object.create(null)]] للقواميس اللي مفاتيحها من برّه.`,
-          lines: [
-            R`object فيه method واحدة. [[this.name]] جواها هيبقى اسم اللي بينادي.`,
-            R`object تاني فيه [[name]] بس، ومفيهوش [[speak]].`,
-            R`قبل أي تغيير: [[dog.speak]] مش موجودة، فـ [[typeof]] بيطبع [[undefined]].`,
-            R`[[setPrototypeOf]] بيخلّي [[animal]] هو الـ prototype بتاع [[dog]] بعد ما اتعمل. من دلوقتي أي حاجة مش في [[dog]] بتتدوّر في [[animal]].`,
-            R`[[dog.speak()]] اشتغلت ([[Rex بيعمل صوت]])، و [[animal]] في السلسلة ([[true]])، و [[Object.prototype]] في السلسلة كمان ([[true]]).`,
-            R`class أساسي فاضي، هنستخدمه عشان نقارن [[isPrototypeOf]] بـ [[instanceof]] على نفس السلسلة.`,
-            R`class وارثة منه، فـ [[Circle.prototype]] الـ prototype بتاعه [[Shape.prototype]].`,
-            R`object جديد من [[Circle]]، سلسلته: [[Circle.prototype]] ثم [[Shape.prototype]] ثم [[Object.prototype]].`,
-            R`[[Shape.prototype.isPrototypeOf(c)]] و [[c instanceof Shape]] الاتنين [[true]]: نفس السؤال بشكلين. لاحظ إن [[isPrototypeOf]] بتتنادى على [[Shape.prototype]] مش [[Shape]].`,
-            R`object من غير prototype خالص: ده قاموس نضيف.`,
-            R`[[toString]] هنا خاصية عادية قيمتها نص، ومفيش [[Object.prototype.toString]] تتغطّى أصلًا.`,
-            R`[[false false [ 'toString' ] ]]: مش وارث من [[Object.prototype]]، و [[instanceof Object]] غلط، و [[toString]] مفتاح زي أي مفتاح.`,
-            R`سلسلة دايرية: [[dog]] وارث [[animal]]، فلو [[animal]] ورث [[dog]] هيلفوا للأبد، والمحرك بيرفض بـ [[Cyclic __proto__ value]].`,
-            R`prototype رقم: مرفوض بـ [[Object prototype may only be an Object or null: 5]].`,
-          ],
-          ref: [
-            { t: "MDN: Object.setPrototypeOf()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/setPrototypeOf" },
-            { t: "MDN: Object.prototype.isPrototypeOf()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/isPrototypeOf" },
-            { t: "MDN: Object.prototype.__proto__ (deprecated)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/proto" },
-            { t: "MDN: Inheritance and the prototype chain", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain" },
-            { t: "ECMAScript: Object.setPrototypeOf", url: "https://tc39.es/ecma262/multipage/fundamental-objects.html#sec-object.setprototypeof" }
-          ],
-          pre: [{ to: "js/prototype chain", why: R`[[Object.getPrototypeOf]] و [[Object.create]] والقراية في السلسلة` }, { to: "js/extends و super", why: R`السلسلة اللي [[extends]] بتعملها بين الـ classes` }, "js/enumerability و ownership"]
-        },
-        {
-          cmd: "valueOf و toString و Symbol.toPrimitive",
-          title: "لما object يدخل في + أو > أو نص: JavaScript بيحوّله لإيه، وانت تتحكم في ده إزاي؟",
-          desc: R`لما object يتستخدم مكان رقم أو نص ([[price + 10]] أو [[price > 100]] أو [[String(price)]])، JavaScript بيحوّله لـ primitive بـ ٣ methods: [[valueOf]] (القيمة كرقم)، و [[toString]] (كنص)، و [[ [Symbol.toPrimitive](hint) ]] اللي لو موجودة بتكسب على الاتنين وبتعرف المكان عايز إيه ([[hint]]: [['number']] أو [['string']] أو [['default']]). و [[toLocaleString]] مش بتدخل في التحويل التلقائي: بتتنادى بإيدك عشان العرض باللغة.
-
-الافتراضي من [[Object.prototype]]: [[valueOf]] بيرجّع الـ object نفسه (مش primitive، فبيتجاهل)، و [[toString]] بيرجّع [["[object Object]"]]، و [[toLocaleString]] بينادي [[toString]]. عشان كده [[{} + 1]] بيطلع [["[object Object]1"]].
-
-والفخ الأشهر: [[+]] و [[==]] بيبعتوا hint [['default']] ودي بتتعامل زي [['number']]، فـ [[price + '']] بيستخدم [[valueOf]] مش [[toString]].`,
-          example: R`// object فلوس بيتحوّل لرقم أو نص حسب المكان اللي اتستخدم فيه
-const price = {
-  cents: 12550,
-  currency: 'EGP',
-  valueOf() { return this.cents / 100; },
-  toString() { return (this.cents / 100).toFixed(2) + ' ' + this.currency; },
-  toLocaleString(locale = 'ar-EG') {
-    return new Intl.NumberFormat(locale, { minimumFractionDigits: 2 }).format(this.cents / 100) + ' ' + this.currency;
-  },
-};
-console.log(price + 10, price * 2, price > 100);
-console.log(String(price), price + '', [price].join());
-console.log(price.toLocaleString(), price.toLocaleString('en-US'), [price].toLocaleString());
-const plain = { a: 1 };
-console.log(plain.valueOf() === plain, plain.toString(), plain.toLocaleString(), plain + 1);
-const hinted = { [Symbol.toPrimitive](hint) { return hint === 'number' ? 42 : 'hint=' + hint; } };
-console.log(+hinted, String(hinted), hinted + '');`,
-          try: R`اعمل object فيه [[ [Symbol.toPrimitive](hint) ]] بيطبع الـ [[hint]] قبل ما يرجّع، وجرّب عليه ٦ أماكن: [[+t]] و template literal فيه [[t]] و [[t + '']] و [[t * 1]] و [[t == 'x']] و [[String(t)]]. وبعدين اعمل object فيه [[valueOf]] و [[toString]] الاتنين بيرجّعوا [[{}]] وجرّب [[obj + 1]].`,
-          sol: R`~~~js hints.mjs
-const t = {
-  [Symbol.toPrimitive](hint) { console.log('hint', hint); return hint === 'number' ? 42 : 'نص'; },
-};
-console.log(+t); console.log(String(t)); console.log(t + ''); console.log(t * 1); console.log(t == 'نص');
-const bad = { valueOf() { return {}; }, toString() { return {}; } };
-try { bad + 1; } catch (e) { console.log(e.message); }
-~~~
-
-~~~text الناتج (Node 24.22)
-hint number
-42
-hint string
-نص
-hint default
-نص
-hint number
-42
-hint default
-true
-Cannot convert object to primitive value
-~~~
-
-والـ template literal ([[$__bt$__{t}$__bt]]) طبع [[hint string]] زي [[String(t)]] بالظبط.
-
-| المكان | الـ hint |
+| العملية | بتعمل إيه |
 |---|---|
-| [[+t]] و [[t * 1]] و [[t > 5]] و [[Math.max(t)]] و [[Number(t)]] | [['number']] |
-| [[String(t)]] و template literal و مفتاح [[ obj[t] ]] | [['string']] |
-| [[t + x]] و [[t == x]] | [['default']] |
+| [[Object.getPrototypeOf(x)]] | هات الحلقة اللي فوق x |
+| [[Object.create(p)]] | object جديد فوقه p |
+| [[Object.hasOwn(x, k)]] | k على x نفسه؟ |
+| [[k in x]] | k في أي حتة في السلسلة؟ |
+| قراية [[x.k]] | دوّر في x وبعدين فوق لحد null |
+| كتابة [[x.k = v]] | على x نفسه دايمًا (shadowing) |
 
-ولو مفيش method بترجّع primitive (حتى [[Symbol.toPrimitive]] لو رجّعت object) بيترمي [[TypeError: Cannot convert object to primitive value]].`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** object فيه [[valueOf]] بيرجّع 10 و [[toString]] بيرجّع [['T']]. اكتب الـ ٦ قيم بالترتيب قبل التشغيل:
-
-~~~js
-const o = { valueOf() { return 10; }, toString() { return 'T'; } };
-console.log(String(o), o + '', o * 2, [o].join(), o + o, o > 9);
-~~~`, done: R`كتبت [[T 10 20 T 20 true]] وطلع كده، وتقدر تقول ليه [[o + '']] بقت [[10]] مش [[T]].`, sol: R`~~~text الناتج (Node 24.22)
-T 10 20 T 20 true
-~~~
-
-- [[String(o)]] و [[[o].join()]]: hint [['string']]، فـ [[toString]] الأول: [[T]].
-- [[o + '']]: hint [['default']] اللي بيمشي زي [['number']]، فـ [[valueOf]] الأول: [[10]]، وبعدين [[10 + '']] = [["10"]].
-- [[o * 2]] و [[o + o]] و [[o > 9]]: [[valueOf]]، فـ 20 و 20 و [[true]].
-
-والـ template literal ([[$__bt$__{o}$__bt]]) بيطلّع [[T]] زي [[String(o)]]. يعني [[o + '']] و الـ template **مش** نفس الحاجة لما الـ object فيه [[valueOf]]، وده بيفاجئ ناس كتير في أي object زي [[Date]] أو Money.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[temperature(celsius)]] بترجّع object فيه [[ [Symbol.toPrimitive](hint) ]]: مع [['number']] يرجّع الرقم، ومع أي hint تاني يرجّع نص زي [['36.6°C']]. وفيه [[toLocaleString(locale = 'ar-EG')]] بيستخدم [[Intl.NumberFormat]] بـ [[style: 'unit']] و [[unit: 'celsius']].`, done: R`[[+t]] بـ 36.6، و [[t > 37]] بـ [[false]]، و [[String(t)]] و [['الحرارة ' + t]] فيهم [[°C]]، و [[t.toLocaleString()]] بالعربي، و [[[t1, t2].toLocaleString()]] بيستخدم الـ method بتاعتك لكل عنصر.`, sol: R`~~~js temperature.mjs
-function temperature(celsius) {
-  return {
-    celsius,
-    [Symbol.toPrimitive](hint) {
-      if (hint === 'number') return this.celsius;
-      return this.celsius + '°C';
-    },
-    toLocaleString(locale = 'ar-EG') {
-      return new Intl.NumberFormat(locale, { style: 'unit', unit: 'celsius', maximumFractionDigits: 1 }).format(this.celsius);
-    },
-  };
-}
-const t = temperature(36.6);
-console.log(+t, t > 37, String(t), 'الحرارة ' + t);
-console.log(t.toLocaleString(), t.toLocaleString('en-US'));
-console.log([temperature(20), temperature(18.25)].toLocaleString());
-~~~
-
-~~~text الناتج (Node 24.22)
-36.6 false 36.6°C الحرارة 36.6°C
-٣٦٫٦°م 36.6°C
-٢٠°م,١٨٫٣°م
-~~~
-
-**الشرح:** [[Symbol.toPrimitive]] بيكسب على [[valueOf]] و [[toString]]، فمكتبناهمش. و [[t > 37]] hint [['number']] فاتقارن بالرقم، و [['الحرارة ' + t]] hint [['default']] فرجع النص (عكس الـ [[valueOf]] في التمرين اللي فات). و [[Array.prototype.toLocaleString]] بينادي [[toLocaleString]] على كل عنصر ويفصل بـ [[,]] (الفاصل مش بيتترجم). و [[18.25]] بقت [[١٨٫٣]] بسبب [[maximumFractionDigits: 1]].` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** أسعار متخزنة كـ objects فيها [[valueOf]] بالقروش، و [[sort()]] رتّبها غلط:
-
-~~~js
-const money = (cents) => ({ cents, valueOf() { return this.cents; }, toString() { return (this.cents / 100).toFixed(2) + ' EGP'; } });
-const prices = [money(9000), money(15000), money(2500)];
-console.log(prices.slice().sort().map(String));
-~~~`, done: R`الترتيب طلع [[25.00 EGP]] ثم [[90.00 EGP]] ثم [[150.00 EGP]]، وتعرف ليه [[sort()]] من غير دالة استخدم [[toString]].`, sol: R`~~~text الناتج قبل التصليح
-[ '150.00 EGP', '25.00 EGP', '90.00 EGP' ]
-~~~
-
-[[sort()]] من غير دالة مقارنة بيحوّل كل عنصر **لنص** (hint [['string']]، يعني [[toString]]) ويقارن النصوص حرف حرف، فـ [["150..."]] قبل [["25..."]] لأن [["1"]] قبل [["2"]].
-
-~~~js sort-money.mjs
-const money = (cents) => ({ cents, valueOf() { return this.cents; }, toString() { return (this.cents / 100).toFixed(2) + ' EGP'; } });
-const prices = [money(9000), money(15000), money(2500)];
-console.log(prices.slice().sort((a, b) => a - b).map(String));
-~~~
-
-~~~text الناتج (Node 24.22)
-[ '25.00 EGP', '90.00 EGP', '150.00 EGP' ]
-~~~
-
-[[a - b]] بيبعت hint [['number']]، فـ [[valueOf]] بيرجّع القروش والطرح بيقارن أرقام. وأوضح منها لو حد بيقرا الكود: [[(a, b) => a.cents - b.cents]].` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[duration(seconds)]] بترجّع object: [[valueOf]] بيرجّع الثواني، و [[toString]] بيرجّع [['ساعات:دقايق:ثواني']] بدقايق وثواني دايمًا رقمين ([['1:05:09']]). لازم [[a > b]] و [[a - b]] يشتغلوا بالأرقام، و [[String(a)]] يرجّع الشكل.`, done: R`[[String(duration(3909))]] بـ [['1:05:09']]، و [[duration(3909) > duration(60)]] بـ [[true]]، و [[[duration(59), duration(3600)].join(' و ')]] بيطلّع [[0:00:59 و 1:00:00]]، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js duration.mjs
-function duration(seconds) {
-  return {
-    seconds,
-    valueOf() { return this.seconds; },
-    toString() {
-      const h = Math.floor(this.seconds / 3600);
-      const m = Math.floor((this.seconds % 3600) / 60);
-      const s = this.seconds % 60;
-      return h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-    },
-  };
-}
-const a = duration(3909);
-console.log(String(a), a + 0, a > duration(60), [duration(59), duration(3600)].join(' و '));
-~~~
-
-~~~text الناتج (Node 24.22)
-1:05:09 3909 true 0:00:59 و 1:00:00
-~~~
-
-**الشرح:** ٣٩٠٩ ثانية = ساعة (٣٦٠٠) + ٣٠٩، و ٣٠٩ = ٥ دقايق (٣٠٠) + ٩. و [[padStart(2, '0')]] بيخلي ٥ تبقى [["05"]]. و [[join]] بينادي [[toString]] على كل عنصر. ولاحظ [[a + 0]] طلّع [[3909]] مش النص: الـ [[+]] بيروح لـ [[valueOf]] الأول.` },
-          ],
-          check: { lang: "js", starter: R`function duration(seconds) {
-  return {
-    seconds,
-    // valueOf: الثواني، و toString: "h:mm:ss"
-  };
-}`, tests: R`test("String", () => expect(String(duration(3909))).toBe('1:05:09'));
-test("صفر", () => expect(String(duration(0))).toBe('0:00:00'));
-test("ساعة بالظبط", () => expect(String(duration(3600))).toBe('1:00:00'));
-test("مقارنة", () => expect(duration(3909) > duration(60)).toBe(true));
-test("طرح", () => expect(duration(100) - duration(40)).toBe(60));
-test("join", () => expect([duration(59), duration(61)].join(' ')).toBe('0:00:59 0:01:01'));
-test("أكتر من ١٠ ساعات", () => expect(String(duration(36000 + 61))).toBe('10:01:01'));`, solution: R`function duration(seconds) {
-  return {
-    seconds,
-    valueOf() { return this.seconds; },
-    toString() {
-      const h = Math.floor(this.seconds / 3600);
-      const m = Math.floor((this.seconds % 3600) / 60);
-      const s = this.seconds % 60;
-      return h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-    },
-  };
-}` },
-          flag: "script",
-          deep: {
-            why: R`أي object بيمثل قيمة (فلوس، مدة، حرارة، تاريخ، نسخة برنامج) هيتحط في نص أو مقارنة أو حساب في مكان ما. لو مش متحكم في التحويل هتشوف [["[object Object]"]] في الواجهة، أو [[NaN]] في الحساب، أو مقارنة بتشتغل «صدفة». وفهم الـ hints بيفسّر سلوك [[Date]] الغريب: [[new Date(0) + 1]] نص و [[new Date(0) - 0]] رقم.`,
-            how: R`لما المحرك محتاج primitive من object بيعمل ToPrimitive بـ hint:
-
-1. لو فيه [[ obj[Symbol.toPrimitive] ]]: بيناديها بالـ hint، ولو رجّعت primitive خلاص، ولو رجّعت object يرمي [[TypeError]].
-2. لو مفيش: لو الـ hint [['string']] بيجرّب [[toString]] وبعدين [[valueOf]]. ولو [['number']] أو [['default']] بيجرّب [[valueOf]] وبعدين [[toString]]. أول واحدة ترجّع primitive بتكسب.
-3. لو الاتنين رجّعوا objects: [[TypeError: Cannot convert object to primitive value]].
-
-و [[Object.prototype.valueOf]] بيرجّع [[this]] (object)، فبيتعدّى في الخطوة ٢ وبيكسب [[toString]] اللي بيرجّع [["[object Object]"]]. و [[Date.prototype]] عنده [[Symbol.toPrimitive]] بيعامل [['default']] كأنها [['string']]، عشان كده [[typeof (d + 1)]] بـ [[string]] و [[d - 0]] بـ [[0]] (اتجرّبوا).
-
-و [[Object.prototype.toLocaleString]] مجرد [[return this.toString()]]، والفكرة إن كل نوع يعمل override: [[Number]] و [[Date]] و [[Array]] (بينادي [[toLocaleString]] على كل عنصر). اتجرّب: [[[1234.5].toLocaleString('de-DE')]] طلّع [[1.234,5]].`,
-            when: R`[[toString]] لأي object هيظهر في لوج أو رسالة: خليه يرجّع شكل مقروء. [[valueOf]] لما الـ object فعلًا «رقم» ومقارنته بـ [[<]] و [[>]] و [[-]] منطقية (مدة، نسخة). [[Symbol.toPrimitive]] لما عايز تحكم كامل: نص في النصوص ورقم في الحسابات، أو ترمي error في [['default']] عشان تمنع [[+]] الملتبس (مشروع Money في الوحدة). [[toLocaleString]] للعرض لليوزر بلغته، ومتعتمدش على التحويل التلقائي للعرض.`,
-            mistakes: R`- تفتكر [[obj + '']] زي [[String(obj)]]: الأولى [[valueOf]] الأول.
-- [[valueOf]] بترجّع object (أو [[this]]) وتستغرب إنه مش بيتستخدم.
-- [[sort()]] من غير دالة على objects بيرتّب بـ [[toString]].
-- [[==]] بين object ورقم بيعمل تحويل ([[m == 10]] بـ [[true]]) و [[===]] لأ ([[false]]): ده من أسباب «استخدم [[===]]».
-- [[JSON.stringify]] مش بيستخدم أي واحدة فيهم: object فيه [[toString]] و [[valueOf]] بس طلع [[{"tpl":{}}]] (اتجرّب). JSON محتاج [[toJSON]].
-- [[new Number(5)]]: object مش رقم، [[typeof]] بـ [[object]]، بس [[+ 1]] بيطلع 6 بالـ [[valueOf]].`,
-          },
-          teach: R`## الفكرة في سطرين
-
-الـ object مش رقم ولا نص، فلما يتحط في مكان محتاج واحد منهم JavaScript بيسأله يتحوّل إزاي. انت بتجاوب بـ [[valueOf]] و [[toString]]، أو بـ [[Symbol.toPrimitive]] اللي بتشوف السؤال نفسه. الناتج من Node 24.22.
-
----
-
-## ١. [[Object.prototype.valueOf]] و [[Object.prototype.toString]]: الافتراضي
-
-~~~js
-const plain = { a: 1 };
-console.log(plain.valueOf() === plain, plain.toString(), plain.toLocaleString(), plain + 1);
-~~~
-
-~~~text الناتج
-true [object Object] [object Object] [object Object]1
-~~~
-
-| الـ method الافتراضية | بترجّع | يعني إيه في التحويل |
-|---|---|---|
-| [[Object.prototype.valueOf]] | الـ object نفسه | مش primitive، فالمحرك بيتجاهلها ويروح للي بعدها |
-| [[Object.prototype.toString]] | [["[object Object]"]] | دي اللي بتكسب في أي object عادي |
-| [[Object.prototype.toLocaleString]] | نفس [[this.toString()]] | موجودة عشان الأنواع التانية تعمل override |
-
-عشان كده [[plain + 1]] بقت نص: [["[object Object]" + 1]].
-
----
-
-## ٢. Money بـ [[valueOf]] و [[toString]]
-
-~~~js
-valueOf() { return this.cents / 100; },
-toString() { return (this.cents / 100).toFixed(2) + ' ' + this.currency; },
-~~~
-
-~~~text الناتج
-135.5 251 true
-125.50 EGP 125.5 125.50 EGP
-~~~
-
-السطر الأول حسابات: [[price + 10]] = 135.5 و [[price * 2]] = 251 و [[price > 100]] = [[true]]، كلهم [[valueOf]]. السطر التاني نصوص: [[String(price)]] و [[[price].join()]] طلّعوا [[125.50 EGP]] من [[toString]]، بس [[price + '']] طلّع [[125.5]] من غير العملة.
-
-### ليه [[price + '']] أخدت [[valueOf]]؟
-
-الـ [[+]] مش عارف هو جمع ولا لزق نصوص لحد ما يحوّل الاتنين، فبيبعت hint اسمه [['default']]، و [['default']] بيتعامل زي [['number']]: [[valueOf]] الأول. فالقاعدة:
-
-| المكان | الـ hint | الترتيب |
-|---|---|---|
-| [[String(x)]]، template literal، [[join]]، مفتاح [[ obj[x] ]] | [['string']] | [[toString]] ثم [[valueOf]] |
-| [[+x]] و [[x * 2]] و [[x > y]] و [[Number(x)]] و [[x - y]] | [['number']] | [[valueOf]] ثم [[toString]] |
-| [[x + y]] و [[x == y]] | [['default']] | زي [['number']] (إلا [[Date]]) |
-
----
-
-## ٣. [[Object.prototype.toLocaleString]]: العرض بلغة اليوزر
-
-~~~js
-toLocaleString(locale = 'ar-EG') {
-  return new Intl.NumberFormat(locale, { minimumFractionDigits: 2 }).format(this.cents / 100) + ' ' + this.currency;
-},
-~~~
-
-~~~text الناتج
-١٢٥٫٥٠ EGP 125.50 EGP ١٢٥٫٥٠ EGP
-~~~
-
-[[toLocaleString]] مش بتتنادى في أي تحويل تلقائي. انت بتناديها بإيدك، أو حاجة بتناديها زي [[Array.prototype.toLocaleString]] (التالتة: [[[price].toLocaleString()]] نادت الـ method بتاعتنا على العنصر). والـ [[Intl.NumberFormat]] بالـ [[minimumFractionDigits: 2]] بيكتب [[١٢٥٫٥٠]] بالأرقام العربي والفاصلة العشرية العربي (درس «Number: toFixed و toString و toLocaleString»).
-
----
-
-## ٤. [[Symbol.toPrimitive]]: method واحدة بتعرف السؤال
-
-~~~js
-const hinted = { [Symbol.toPrimitive](hint) { return hint === 'number' ? 42 : 'hint=' + hint; } };
-console.log(+hinted, String(hinted), hinted + '');
-~~~
-
-~~~text الناتج
-42 hint=string hint=default
-~~~
-
-لو موجودة، [[valueOf]] و [[toString]] مبيتسألوش في التحويل خالص. وبتاخد الـ hint كـ argument، فتقدر تفرّق بين [['default']] و [['number']] (اللي [[valueOf]] مبتقدرش). استخدام مهم: ترمي error في [['default']] عشان [[price + 10]] الملتبسة متعدّيش (مشروع «Money» في الوحدة دي).
-
----
-
-## ٥. الأنواع اللي جاهزة
-
-| النوع | [['default']] بيروح لـ | اتجرّب |
-|---|---|---|
-| [[Date]] | نص (عنده [[Symbol.toPrimitive]] خاص) | [[typeof (new Date(0) + 1)]] بـ [[string]]، و [[new Date(0) - 0]] بـ [[0]] |
-| [[Array]] | [[toString]] = [[join(',')]] | [[[] + []]] نص فاضي، و [[[1] * [2]]] بـ [[2]] |
-| [[Number]] object | [[valueOf]] = الرقم | [[new Number(5) + 1]] بـ [[6]] |
-
----
-
-## الخلاصة
-
-- التحويل بيسأل [[Symbol.toPrimitive]] الأول، ولو مش موجودة [[valueOf]] و [[toString]] بترتيب حسب الـ hint.
-- [[+]] و [[==]] hint [['default']] = رقم الأول، فـ [[obj + '']] مش زي [[String(obj)]].
-- [[valueOf]] الافتراضية بترجّع الـ object نفسه، و [[toString]] [["[object Object]"]].
-- [[toLocaleString]] للعرض وبتتنادى بإيدك، و JSON محتاج [[toJSON]] مش دول.`,
+- كل array و object و دالة جزء من سلسلة كده، والـ class (الدرس الجاي) بتبني نفس السلسلة بشكل أوضح.`,
           lines: [
-            R`بداية object بيمثل مبلغ. هنحط فيه طرق التحويل التلاتة.`,
-            R`المبلغ متخزن قروش (integer) عشان مفيش كسور floating point.`,
-            R`العملة كنص، هتظهر في [[toString]] و [[toLocaleString]].`,
-            R`[[valueOf]]: لما حد يعامل المبلغ كرقم ([[+]] و [[*]] و [[>]]) بيرجّع الجنيهات: 125.5.`,
-            R`[[toString]]: لما حد يعامله كنص بيرجّع [["125.50 EGP"]]. [[toFixed(2)]] بيثبّت رقمين بعد العلامة.`,
-            R`[[toLocaleString]] بـ locale افتراضي [['ar-EG']]: مش بتتنادى لوحدها، دي للعرض بلغة اليوزر.`,
-            R`[[Intl.NumberFormat]] بيكتب الرقم بأرقام وفاصلة اللغة، و [[minimumFractionDigits: 2]] بيخلي 125.5 تبقى 125.50، وبعدها العملة.`,
-            R`قفلة [[toLocaleString]].`,
-            R`قفلة الـ object.`,
-            R`حسابات: [[valueOf]] في التلاتة، فـ [[135.5 251 true]].`,
-            R`[[String]] و [[join]] استخدموا [[toString]] ([[125.50 EGP]])، بس [[price + '']] استخدمت [[valueOf]] ([[125.5]]) لأن [[+]] بيبعت hint [['default']].`,
-            R`[[toLocaleString()]] بالعربي، و [['en-US']] بالإنجليزي، و [[[price].toLocaleString()]] الـ array نادت الـ method بتاعتنا على العنصر.`,
-            R`object عادي من غير أي method بتاعته، عشان نشوف الافتراضي من [[Object.prototype]].`,
-            R`[[valueOf]] رجّعت الـ object نفسه ([[true]])، و [[toString]] و [[toLocaleString]] [["[object Object]"]]، و [[plain + 1]] بقت نص [["[object Object]1"]].`,
-            R`object بـ [[Symbol.toPrimitive]] بيرجّع 42 لو الـ hint رقم، وإلا بيرجّع اسم الـ hint كنص عشان نشوفه.`,
-            R`[[+hinted]] بعت [['number']] فرجع 42، و [[String]] بعت [['string']]، و [[+ '']] بعت [['default']].`,
+            R`array عادية. هنستخدمها نشوف منين جات [[map]] و [[filter]] مع إننا عمرنا ما عرّفناهم عليها.`,
+            R`كل object ليه لينك مخفي لـ object تاني اسمه الـ prototype. الـ array بتاعتنا الـ prototype بتاعها [[Array.prototype]]، وده المكان اللي فيه [[map]] و [[filter]] و [[push]] متعرّفين **مرة واحدة** لكل الـ arrays.`,
+            R`و [[Array.prototype]] نفسه ليه prototype هو [[Object.prototype]] (فيه [[toString]] و [[hasOwnProperty]]). ده آخر حلقة، والـ prototype بتاعه [[null]]: هنا السلسلة بتخلص.`,
+            R`[[Object.hasOwn]] بيسأل عن الخصايص اللي على الـ object **نفسه** بس، ورجّع [[false]]: [[arr]] مفيهاش [[map]] فعلًا.`,
+            R`[[in]] بيدوّر في السلسلة كلها، فلاقى [[map]] على [[Array.prototype]] ورجّع [[true]]. ده نفس اللي بيحصل لما تكتب [[arr.map]]: JS بيدوّر في الـ object، ولو ملقاش يطلع للـ prototype، وهكذا لحد [[null]].`,
+            R`object فيه method [[speak]] بتستخدم [[this.name]]. هنخليه prototype لـ object تاني بدل ما نكرر الـ method.`,
+            R`[[Object.create]] بيعمل object فاضي جديد ويخلي الـ prototype بتاعه [[animal]]. فـ [[cat]] نفسه مفيهوش أي خاصية، بس يقدر يستخدم أي حاجة في [[animal]].`,
+            R`بيحط [[name]] على [[cat]] نفسه (own property) مش على [[animal]]، فلو عملنا object تاني من نفس الـ [[animal]] مش هيشوف الاسم ده.`,
+            R`[[speak]] مش على [[cat]]، فـ JS طلع في السلسلة ولقاها على [[animal]]. بس [[this]] لسه [[cat]] (اللي قبل النقطة)، فـ [[this.name]] بقت [["Mishmish"]].`,
+            R`بيأكد إن اللينك المخفي بتاع [[cat]] رايح لـ [[animal]] بالظبط، ورجّع [[true]].`,
+            R`الكتابة **عمرها ما بتطلع في السلسلة**: بتعمل [[speak]] جديدة على [[cat]] نفسه. ودلوقتي [[cat.speak()]] بترجّع [["مياو"]] لأن JS بيلاقيها على [[cat]] الأول وميطلعش لفوق (shadowing).`,
+            R`النسخة الأصلية لسه على [[animal]] متلمستش، و [[call(cat)]] بتشغّلها بـ [[this]] هو [[cat]] فترجّع [["Mishmish بيتكلم"]]. يعني الـ shadowing خبّى الـ method على [[cat]] بس، ممسحهاش.`,
           ],
-          ref: [
-            { t: "MDN: Object.prototype.valueOf()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf" },
-            { t: "MDN: Object.prototype.toLocaleString()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toLocaleString" },
-            { t: "MDN: Object.prototype.toString()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString" },
-            { t: "MDN: Symbol.toPrimitive", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toPrimitive" },
-            { t: "MDN: Type coercion (primitive coercion)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#primitive_coercion" },
-            { t: "ECMAScript: ToPrimitive", url: "https://tc39.es/ecma262/multipage/abstract-operations.html#sec-toprimitive" }
-          ],
-          pre: [{ to: "js/== و ===", why: R`التحويل التلقائي اللي بيحصل في [[==]]` }, "js/method definitions و property accessors", { to: "js/Number: toFixed و toString و toLocaleString", why: R`[[toFixed]] و [[Intl.NumberFormat]] بالعربي` }]
+          sol: R`[[console.dir([1, 2])]] بيوريك الـ array، وجواها خانة Prototype مكتوب جنبها [[Array(0)]] وفيه map و filter وكل الـ methods، وجواه خانة Prototype تانية مكتوب جنبها [[Object]] وفيه toString و hasOwnProperty، وده آخرها: الـ prototype بتاعه null (مش هيظهرلك سطر تالت). يعني السلسلة [[arr → Array.prototype → Object.prototype → null]].
+
+[[const o = Object.create(null)]] بيعمل object مفيش فوقيه أي حاجة: [[o.toString]] بـ undefined، و [["toString" in o]] بـ false، و [[String(o)]] أو [[$__bt$__{o}$__bt]] بتطلع [[TypeError: Cannot convert object to primitive value]]. بيستخدم كـ dictionary نضيف مفيهوش مفاتيح موروثة (عشان مفتاح زي [["constructor"]] ميضربش)، ودي نفس فكرة الـ null prototype اللي [[Object.groupBy]] بترجّعها.`
         },
         {
-          cmd: "Function: length و name و toString و new.target",
-          title: "الدالة object زي أي object: عدد الـ parameters بتاعها، واسمها، وكودها، و instanceof بتاعك، وعرفت إنها اتنادت بـ new",
-          desc: R`كل دالة في JavaScript object من نوع [[Function]]، وليها خصايص: [[length]] (عدد الـ parameters «المطلوبة»: بيقف عند أول default أو rest)، و [[name]] (اسمها، حتى لو اتعرّفت في متغير)، و [[toString()]] (الكود بتاعها كنص). وتقدر تغيّر معنى [[instanceof]] لـ class بـ [[ static [Symbol.hasInstance](x) ]]. وجوه الدالة [[new.target]] بيقولك اتنادت بـ [[new]] ولا لأ، ومين الـ class اللي اتعمل فعلًا.
+          cmd: "class",
+          title: "تكتب class بـ constructor و methods و private fields",
+          desc: R`[[class]] طريقة واضحة تعمل «قالب» لـ objects: [[constructor]] بيتنادي مع [[new]]، والـ methods بتتحط على الـ prototype (مشتركة بين كل الـ instances).
 
-و [[new Function('a', 'b', 'return a + b')]] بيعمل دالة من نص وقت التشغيل، وده نفس خطر [[eval]]: متستخدمهوش مع input من يوزر، والمتصفحات اللي فيها CSP بتمنعه.
+وفيه: fields ([[count = 0]])، و private fields بـ [[#]] ([[#balance]]) محدش يوصلها من برّه الكلاس خالص، و [[static]] للحاجات اللي على الكلاس نفسه مش على الـ instance، و [[get]] و [[set]] لخصايص محسوبة.
 
-الدرس ده بيكمّل «function و arrow» و «call و apply و bind» (اللي اتشرح فيهم [[bind]] و [[call]])، وبيوصّل لدرس «arguments object» بعده.`,
-          example: R`// الدالة object: ليها length و name و toString، وتعرف اتنادت بـ new ولا لأ
-function area(w, h = w, ...rest) { return w * h; }
-const add = (a, b) => a + b;
-console.log(area.length, add.length, ((a, b = 1, c) => 0).length, ((...xs) => 0).length);
-console.log(area.name, add.name, add.bind(null).name, (() => {}).name);
-console.log(add.toString(), '|', Math.max.toString());
-class Even {
-  static [Symbol.hasInstance](n) { return Number.isInteger(n) && n % 2 === 0; }
-}
-console.log(4 instanceof Even, 3 instanceof Even, '4' instanceof Even);
-function Point(x) {
-  if (!new.target) return new Point(x);
-  this.x = x;
-}
-console.log(Point(3).x, new Point(5).x);
-const sum = new Function('a', 'b', 'return a + b');
-console.log(sum(2, 3), sum.name, sum.length, typeof Function.prototype, area instanceof Function);`,
-          try: R`في [[fn.mjs]]: (١) اطبع [[Object.getOwnPropertyDescriptor((a, b) => 0, 'length')]]. (٢) اعمل [[function F() {}]] وحاول تكتب [[F[Symbol.hasInstance] = () => true]]: إيه اللي حصل؟ وبعدين اعملها بـ [[Object.defineProperty]] وجرّب [[({}) instanceof F]]. (٣) اطبع [[toString()]] لـ class، ولـ method بالشكل المختصر، ولدالة فيها تعليق جوه الـ parameters.`,
-          sol: R`~~~js fn.mjs
-console.log(Object.getOwnPropertyDescriptor((a, b) => 0, 'length'));
-function F() {}
-try { F[Symbol.hasInstance] = () => true; } catch (e) { console.log(e.message); }
-Object.defineProperty(F, Symbol.hasInstance, { value: () => true });
-console.log({} instanceof F);
-console.log(class Cat { meow() { return 1; } }.toString());
-const obj = { describe() { return 1; } };
-console.log(obj.describe.toString());
-function add2(a, /* تعليق */ b) { return a + b; }
-console.log(add2.toString());
-~~~
-
-~~~text الناتج (Node 24.22)
-{ value: 2, writable: false, enumerable: false, configurable: true }
-Cannot assign to read only property 'Symbol(Symbol.hasInstance)' of function 'function F() {}'
-true
-class Cat { meow() { return 1; } }
-describe() { return 1; }
-function add2(a, /* تعليق */ b) { return a + b; }
-~~~
-
-- [[length]] مبتتكتبش ([[writable: false]]) بس [[configurable: true]]، فتقدر تغيّرها بـ [[defineProperty]] لو بتعمل wrapper عايزه يبان زي الأصل.
-- الكتابة العادية على [[F[Symbol.hasInstance]]] رمت: الخاصية موروثة من [[Function.prototype]] وهي [[writable: false]]، والموروث اللي مبيتكتبش بيمنع الكتابة على الابن (درس «property descriptors»). الحل [[defineProperty]] على [[F]] نفسها، أو [[static [Symbol.hasInstance]]] جوه class (ده تعريف مش إسناد).
-- [[toString]] بيرجّع **الكود الأصلي حرفيًا** بالتعليقات والمسافات، وللـ method بالشكل المختصر بيرجّعها من غير [[function]].`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب الـ ٤ أرقام قبل التشغيل:
-
-~~~js
-console.log(((a, b = 2, c) => {}).length, (function (...args) {}).length, (function (a, [b, c], { d }) {}).length, (async (x) => x).length);
-~~~`, done: R`كتبت [[1 0 3 1]] وطلع كده، وتقدر تقول ليه [[c]] في الأولى متحسبتش مع إنها مش default.`, sol: R`~~~text الناتج (Node 24.22)
-1 0 3 1
-~~~
-
-- [[(a, b = 2, c)]]: العدّ بيقف عند أول default، فـ [[c]] بعده متحسبتش حتى لو هي نفسها مالهاش default: 1.
-- [[(...args)]]: الـ rest مش بيتحسب: 0.
-- [[(a, [b, c], { d })]]: كل destructuring pattern = parameter واحد: 3.
-- [[async (x) => x]]: [[async]] ملهاش دعوة: 1.
-
-[[length]] معناها «كام argument الدالة **مستنياهم** على الأقل»، مش عدد الأسامي.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[describeFn(fn)]] بترجّع [[{ name, length, kind, type }]]: [[kind]] واحدة من [[class]] و [[arrow]] و [[method]] و [[native]] و [[bound]] و [[function]]، و [[type]] اسم الـ constructor ([[AsyncFunction]] و [[GeneratorFunction]]...). استخدم [[Function.prototype.toString.call(fn)]] و [[Object.hasOwn(fn, 'prototype')]].`, done: R`على ٨ دوال مختلفة (class، و method، و arrow، و async، و generator، و [[Math.max]]، و bound، و دالة من غير اسم) كل واحدة طلعت [[kind]] صح.`, sol: R`~~~js describe-fn.mjs
-function describeFn(fn) {
-  const src = Function.prototype.toString.call(fn);
-  let kind = 'function';
-  if (src.startsWith('class')) kind = 'class';
-  else if (/\{ \[native code\] \}$/.test(src)) kind = fn.name.startsWith('bound ') ? 'bound' : 'native';
-  else if (!Object.hasOwn(fn, 'prototype') && !fn.constructor.name.startsWith('Async')) kind = /^(async\s*)?(\(|[\w$]+\s*=>)/.test(src) ? 'arrow' : 'method';
-  return { name: fn.name || '(من غير اسم)', length: fn.length, kind, type: fn.constructor.name };
-}
-class Cart { add(item) {} }
-const list = [Cart, Cart.prototype.add, (a, b) => a, async function load(url) {}, function* ids() {}, Math.max, Cart.prototype.add.bind(null), function () {}];
-for (const fn of list) console.log(describeFn(fn));
-~~~
-
-~~~text الناتج (Node 24.22)
-{ name: 'Cart', length: 0, kind: 'class', type: 'Function' }
-{ name: 'add', length: 1, kind: 'method', type: 'Function' }
-{ name: '(من غير اسم)', length: 2, kind: 'arrow', type: 'Function' }
-{ name: 'load', length: 1, kind: 'function', type: 'AsyncFunction' }
-{ name: 'ids', length: 0, kind: 'function', type: 'GeneratorFunction' }
-{ name: 'max', length: 2, kind: 'native', type: 'Function' }
-{ name: 'bound add', length: 1, kind: 'bound', type: 'Function' }
-{ name: '(من غير اسم)', length: 0, kind: 'function', type: 'Function' }
-~~~
-
-**الشرح:**
-
-- [[Function.prototype.toString.call(fn)]] مش [[fn.toString()]]: لو حد عمل override لـ [[toString]] على الدالة، الأصلية لسه موثوقة.
-- الـ class كوده بيبدأ بـ [[class]]. والدوال المكتوبة بـ C++ جوه المحرك ([[Math.max]]) والـ bound كودهم [[{ [native code] }]]، والـ bound اسمها بيبدأ بـ [[bound ]].
-- الـ arrow والـ method مالهمش [[prototype]] (مش constructors)، والفرق بينهم إن كود الـ arrow فيه [[=>]] بعد الـ parameters. والـ async function برضه مالهاش [[prototype]]، عشان كده استثنيناها بالـ [[constructor.name]].
-- ده تحليل نصي للكود، يعني تقريبي: مفيد للـ debugging والأدوات، مش للمنطق الأساسي في برنامج.` },
-            { lvl: 'تطبيق', t: R`**ابني:** class [[Range]] فيها [[from]] و [[to]]، و [[ static [Symbol.hasInstance](value) ]] بيقول [[true]] لأي object فيه [[from]] و [[to]] أرقام و [[from <= to]]، حتى لو مش معمول بـ [[new Range]] (duck typing).`, done: R`[[new Range(1, 5) instanceof Range]] و [[{ from: 1, to: 3 } instanceof Range]] بـ [[true]]، و [[{ from: 5, to: 1 }]] و [[null]] و [[[1, 2]]] بـ [[false]].`, sol: R`~~~js range.mjs
-class Range {
-  constructor(from, to) { this.from = from; this.to = to; }
-  static [Symbol.hasInstance](value) {
-    return value !== null && typeof value === 'object' && Number.isFinite(value.from) && Number.isFinite(value.to) && value.from <= value.to;
+و [[typeof BankAccount]] هيطلع [["function"]]: الكلاس في الآخر constructor function فوق الـ prototypes.`,
+          example: R`class BankAccount {
+  static count = 0;
+  #balance = 0;
+  constructor(owner) {
+    this.owner = owner;
+    BankAccount.count++;
+  }
+  deposit(amount) {
+    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
+    this.#balance += amount;
+    return this;
+  }
+  get balance() {
+    return this.#balance;
   }
 }
-console.log(new Range(1, 5) instanceof Range, { from: 1, to: 3 } instanceof Range, { from: 5, to: 1 } instanceof Range, null instanceof Range, [1, 2] instanceof Range);
+const acc = new BankAccount("Sara");
+acc.deposit(100).deposit(50);
+acc.balance;          // 150
+acc.balance = 1e6;    // مفيش setter: بيتجاهل (وفي strict TypeError)
+BankAccount.count;    // 1
+typeof BankAccount;   // "function"`,
+          try: R`ضيف [[withdraw(amount)]] بترمي error لو الرصيد مش كفاية. وبعدين جرّب تكتب [[acc.#balance]] برا الكلاس: هتلاقي SyntaxError قبل ما الملف يشتغل أصلًا. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الكلاس جاهز في المربع: ضيف [[withdraw]]، و getter اسمه [[history]] بيرجّع العمليات اللي نجحت بس بالترتيب، كل واحدة [[{ type: "deposit", amount: 100 }]] (أو [["withdraw"]]). خزّن السجل في field خاص [[#log]]، واللي بره ميقدرش يعدّل السجل حتى لو عمل push في الـ array اللي رجعتله.`,
+          practice: [
+            { lvl: 'سريع', t: R`**ابني:** [[class Temperature]] فيها [[#celsius]] من الـ constructor، و getter [[fahrenheit]]، و [[static fromFahrenheit(f)]] بترجّع instance جديدة.`, done: R`[[new Temperature(100).fahrenheit]] بترجّع [[212]]، و [[Temperature.fromFahrenheit(32)]] بترجّع instance الـ fahrenheit بتاعها [[32]]، و [[new Temperature(0).fromFahrenheit]] بترجّع [[undefined]] (الـ static على الكلاس مش الـ instance).`, sol: R`~~~js temperature.js
+class Temperature {
+  #celsius;
+  constructor(celsius) {
+    this.#celsius = celsius;
+  }
+  get fahrenheit() {
+    return this.#celsius * 9 / 5 + 32;
+  }
+  get celsius() {
+    return this.#celsius;
+  }
+  static fromFahrenheit(f) {
+    return new Temperature((f - 32) * 5 / 9);
+  }
+}
+
+console.log(new Temperature(100).fahrenheit);
+const t = Temperature.fromFahrenheit(32);
+console.log(t instanceof Temperature, t.fahrenheit, t.celsius);
+console.log(new Temperature(0).fromFahrenheit);
+const body = Temperature.fromFahrenheit(100);
+console.log(body.celsius, body.celsius.toFixed(1));
 ~~~
 
-~~~text الناتج (Node 24.22)
-true true false false false
+~~~text الناتج (node temperature.js، Node 24)
+212
+true 32 0
+undefined
+37.77777777777778 37.8
 ~~~
 
-**الشرح:** [[x instanceof Range]] بيدوّر الأول على [[Range[Symbol.hasInstance]]]، ولو لقاه بيناديه ويرجّع نتيجته كـ boolean من غير ما يبص على السلسلة. و [[static]] بيحطها على الـ class نفسها (مش الـ instances). وفحص [[null]] الأول ضروري: [[null.from]] بيرمي. ولاحظ إن [[new Range(5, 1) instanceof Range]] هيطلع [[false]] مع إنها اتعملت بـ [[new]]: انت غيّرت معنى [[instanceof]] بالكامل، فده سلاح ذو حدين.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** constructor function قديمة، وحد نادى عليها من غير [[new]]:
+**ليه كده:**
+
+- **[[#celsius]]** private field: معرّف في جسم الكلاس، ومحدش يقدر يقراه من برّه غير بالـ getter.
+- **[[get fahrenheit()]]:** getter: بتتقري زي خاصية من غير أقواس ([[t.fahrenheit]])، وبتتحسب كل مرة من [[#celsius]]، فمفيش رقمين ممكن يختلفوا.
+- **[[static fromFahrenheit(f)]]:** على الكلاس نفسه ([[Temperature.fromFahrenheit]])، وبترجّع [[new Temperature(...)]]. ده اسمه factory method: طريقة تانية تعمل بيها instance.
+- **[[new Temperature(0).fromFahrenheit]] بـ [[undefined]]:** الـ static مش في سلسلة الـ instance، هي على الكلاس.
+- **آخر سطر:** 100 فهرنهايت = [[37.77777777777778]] سلزيوس. الـ getter بيرجّع الرقم كامل، والتقريب للعرض بس بـ [[toFixed(1)]] (اللي بترجّع نص [["37.8"]]). متخزّنش الرقم المقرّب جوه الكلاس عشان التحويل رايح جاي ميخسرش دقة.
+
+**الغلطة الشائعة:** تكتب [[fahrenheit()]] method وتناديها [[t.fahrenheit]] من غير أقواس، فترجعلك الدالة نفسها. أو العكس: getter وتناديه [[t.fahrenheit()]] فـ [[TypeError: t.fahrenheit is not a function]].` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[class Cart {}]] وبعدها [[const c = Cart();]]. اقرا الرسالة وصلّح.`, done: R`الرسالة [[TypeError: Class constructor Cart cannot be invoked without 'new']]. بعد [[new Cart()]] بيشتغل. وعرفت إن ده فرق بين الكلاس والـ function العادية اللي كانت هتشتغل غلط من غير ما تقول.`, sol: R`~~~js cart-no-new.js
+class Cart {}
+try {
+  const c = Cart();
+} catch (e) {
+  console.log(e.name + ": " + e.message);
+}
+const c = new Cart();
+console.log(c instanceof Cart);
+
+function OldCart() { this.items = []; }
+const oops = OldCart();                // من غير new، ومن غير error
+console.log(oops, typeof globalThis.items);
+~~~
+
+~~~text الناتج (node cart-no-new.js، Node 24)
+TypeError: Class constructor Cart cannot be invoked without 'new'
+true
+undefined object
+~~~
+
+**ليه كده:**
+
+- **الكلاس لازم يتنده بـ [[new]]:** [[new]] هي اللي بتعمل الـ object الجديد وتديه لـ this. والكلاس بيرفض يتنده من غيرها برسالة واضحة.
+- **الـ function القديمة (constructor function) مش بتحمي نفسها:** [[OldCart()]] من غير new اشتغلت كدالة عادية، this بقت الـ global object (ملف [[.js]] sloppy)، فـ [[this.items = []]] عملت متغير global اسمه [[items]]، والدالة رجّعت [[undefined]]. كل ده من غير ولا رسالة.
+
+**الغلطة الشائعة:** تفتكر إن [[class]] مجرد شكل أحلى للـ function. في حاجات زيادة: لازم [[new]]، وجسمه strict mode لوحده، وبيتعمله TDZ زي [[let]].` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[class C { static count = 0; constructor() { C.count++; } }]]، وبعدين [[new C(); new C();]] واطبع [[C.count]] و [[new C().count]] و [[C.count]] تاني.`, done: R`توقعت وطلع 2 و undefined و 3: الـ static على الكلاس نفسه مش على الـ instance، وسطر [[new C().count]] نفسه زوّد العدّاد.`, sol: R`~~~js static-count.js
+class C {
+  static count = 0;
+  constructor() {
+    C.count++;
+  }
+}
+new C();
+new C();
+console.log(C.count);
+console.log(new C().count);
+console.log(C.count);
+~~~
+
+~~~text الناتج (node static-count.js، Node 24)
+2
+undefined
+3
+~~~
+
+**ليه كده:**
+
+- **[[static count = 0]]:** خاصية على الكلاس [[C]] نفسه، مش على كل instance. والـ constructor بيزوّدها بـ [[C.count++]].
+- **أول سطر:** اتعمل instanceين، فـ 2.
+- **[[new C().count]]:** ده **عمل instance تالت** (العدّاد بقى 3)، وبعدين قرا [[count]] من الـ instance، والـ instance مفيهوش [[count]] ولا في سلسلته (الـ static مش على [[C.prototype]])، فـ [[undefined]].
+- **التالت:** 3 بسبب السطر اللي فات.
+
+**الغلطة الشائعة:** تكتب [[this.count++]] في الـ constructor. this هنا الـ instance الجديد، فبيعمل [[count]] عليه بـ [[NaN]] والعدّاد بتاع الكلاس مبيتحركش. للـ static اكتب اسم الكلاس ([[C.count]]) أو [[this.constructor.count]] لو عايزه يشتغل مع الوراثة.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[class Cart]] فيها [[#items]] (Map)، و [[add(name, price, qty = 1)]] بترمي [[TypeError]] لو السعر مش رقم و [[RangeError]] لو الكمية صفر أو سالبة، و [[remove(name)]]، و getters [[total]] و [[count]].`, done: R`بعد [[add("mug", 120, 2)]] و [[add("cap", 90)]]: [[total]] بترجّع [[330]] و [[count]] بترجّع [[3]]، و [[add("x", "10")]] بترمي TypeError والسلة متغيرتش، و [[cart.#items]] برّه الكلاس SyntaxError.`, sol: R`~~~js cart-class.js
+class Cart {
+  #items = new Map();                       // name ← { price, qty }
+
+  add(name, price, qty = 1) {
+    if (typeof price !== "number" || !Number.isFinite(price)) {
+      throw new TypeError("السعر لازم يبقى رقم: " + JSON.stringify(price));
+    }
+    if (!Number.isInteger(qty) || qty <= 0) {
+      throw new RangeError("الكمية لازم تبقى عدد صحيح أكبر من صفر");
+    }
+    const old = this.#items.get(name);
+    this.#items.set(name, { price, qty: (old?.qty ?? 0) + qty });
+    return this;
+  }
+  remove(name) {
+    return this.#items.delete(name);
+  }
+  get total() {
+    let sum = 0;
+    for (const { price, qty } of this.#items.values()) sum += price * qty;
+    return sum;
+  }
+  get count() {
+    let n = 0;
+    for (const { qty } of this.#items.values()) n += qty;
+    return n;
+  }
+}
+
+const cart = new Cart();
+cart.add("mug", 120, 2).add("cap", 90);
+console.log(cart.total, cart.count);
+
+for (const bad of [() => cart.add("x", "10"), () => cart.add("y", 5, 0), () => cart.add("z", 5, -1)]) {
+  try { bad(); } catch (e) { console.log(e.name + ": " + e.message); }
+}
+console.log("بعد المحاولات:", cart.total, cart.count);
+console.log(cart.remove("cap"), cart.remove("cap"), cart.total);
+
+try {
+  eval("cart.#items");
+} catch (e) {
+  console.log(e.name + ": " + e.message);
+}
+~~~
+
+~~~text الناتج (node cart-class.js، Node 24)
+330 3
+TypeError: السعر لازم يبقى رقم: "10"
+RangeError: الكمية لازم تبقى عدد صحيح أكبر من صفر
+RangeError: الكمية لازم تبقى عدد صحيح أكبر من صفر
+بعد المحاولات: 330 3
+true false 240
+SyntaxError: Private field '#items' must be declared in an enclosing class
+~~~
+
+**ليه كده:**
+
+- **[[#items = new Map()]]:** private field بيتعمل لكل instance. Map عشان المفتاح اسم المنتج والقيمة [[{ price, qty }]].
+- **التحقق قبل أي تعديل:** الـ [[throw]] بيحصل قبل سطر [[set]]، فالمحاولات البايظة مغيّرتش السلة (330 و 3 زي ما هما). [[TypeError]] للنوع الغلط و [[RangeError]] للرقم اللي برّه المدى المسموح.
+- **[[Number.isFinite(price)]]:** بيرفض [[NaN]] و [[Infinity]] كمان، مش بس النصوص. و [[Number.isInteger(qty)]] بيرفض [[1.5]].
+- **[[get total]] و [[get count]]:** بيتحسبوا من الـ Map كل مرة، فمستحيل يبقوا غلط بعد [[remove]].
+- **[[cart.#items]] برّه الكلاس:** ده SyntaxError وقت **قراية** الكود، يعني لو كتبته في الملف نفسه الملف كله مش هيشتغل. عشان أوريك الرسالة من غير ما أوقف الملف حطيته في [[eval]].
+
+**الغلطة الشائعة:** تتحقق بـ [[if (!price)]]: بيرفض منتج سعره 0 (هدية)، وبيقبل [["10"]] لأنه نص truthy. اسأل عن النوع صريح.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[JSON.stringify(acc)]] على الـ BankAccount بتاعة الدرس. وبعدين زوّد [[toJSON()]] بترجّع [[{ owner, balance }]] و [[static fromJSON(text)]] بترجّع instance حقيقية بنفس الرصيد (من غير ما تكسر الـ private field).`, done: R`من غير toJSON بيطلع [['{"owner":"Sara"}']] بس (الـ private fields مش بتتحفظ). وبعدها [[BankAccount.fromJSON(JSON.stringify(acc))]] بترجّع object [[instanceof BankAccount]] بـ [[true]]، والرصيد نفسه، و [[deposit]] شغالة عليه.`, sol: R`~~~js bank-json.js
+class BankAccount {
+  static count = 0;
+  #balance = 0;
+  constructor(owner) {
+    this.owner = owner;
+    BankAccount.count++;
+  }
+  deposit(amount) {
+    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
+    this.#balance += amount;
+    return this;
+  }
+  get balance() {
+    return this.#balance;
+  }
+  toJSON() {
+    return { owner: this.owner, balance: this.#balance };
+  }
+  static fromJSON(text) {
+    const data = JSON.parse(text);
+    if (typeof data?.owner !== "string" || !Number.isFinite(data.balance) || data.balance < 0) {
+      throw new TypeError("بيانات الحساب مش سليمة");
+    }
+    const acc = new BankAccount(data.owner);
+    if (data.balance > 0) acc.deposit(data.balance);   // من الباب الرسمي، مش من برّه
+    return acc;
+  }
+}
+
+const acc = new BankAccount("Sara").deposit(100).deposit(50);
+const json = JSON.stringify(acc);
+console.log(json);
+
+const copy = BankAccount.fromJSON(json);
+console.log(copy instanceof BankAccount, copy.balance, copy.deposit(25).balance, acc.balance);
+console.log(BankAccount.fromJSON('{"owner":"Ali","balance":0}').balance);
+
+for (const bad of ['{"owner":"X","balance":-5}', '{"balance":10}', "{bad"]) {
+  try { BankAccount.fromJSON(bad); } catch (e) { console.log(e.name + ": " + e.message); }
+}
+~~~
+
+ومن غير [[toJSON]] (نفس الكلاس من غير الـ method دي):
+
+~~~js bank-json-before.js
+class BankAccount {
+  #balance = 0;
+  constructor(owner) { this.owner = owner; }
+  deposit(amount) { this.#balance += amount; return this; }
+}
+console.log(JSON.stringify(new BankAccount("Sara").deposit(150)));
+~~~
+
+~~~text الناتج (node bank-json-before.js ثم node bank-json.js، Node 24)
+{"owner":"Sara"}
+---
+{"owner":"Sara","balance":150}
+true 150 175 150
+0
+TypeError: بيانات الحساب مش سليمة
+TypeError: بيانات الحساب مش سليمة
+SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+~~~
+
+**ليه كده:**
+
+- **من غير toJSON:** [[JSON.stringify]] بيحفظ الخصائص العادية الـ enumerable بس، والـ private fields مش خصائص أصلًا. فالرصيد ضاع.
+- **[[toJSON()]]:** لو الـ object فيه method بالاسم ده، [[JSON.stringify]] بيناديها وبيحفظ اللي رجعته بدل الـ object. فبنقرّر احنا إيه اللي يتحفظ.
+- **[[static fromJSON(text)]]:** بتعمل instance حقيقية بـ [[new]] (فـ [[instanceof]] true والـ methods شغالة)، وبتحط الرصيد **بـ [[deposit]]** اللي بتتحقق، مش بكتابة على الـ field. وبتتحقق من الشكل الأول، فـ رصيد سالب أو owner ناقص بيرمي TypeError واضح، و JSON بايظ بيطلع [[SyntaxError]] من [[JSON.parse]] نفسها.
+- **[[if (data.balance > 0)]]:** لأن [[deposit(0)]] بترمي RangeError، والحساب الفاضي لازم يرجع عادي.
+- **[[copy.deposit(25)]] مغيّرش [[acc]]:** دول instanceين مستقلين.
+
+**الغلطة الشائعة:** [[Object.assign(new BankAccount(), data)]] بدل fromJSON. [[balance]] getter على الـ prototype ومالوش setter، و [[Object.assign]] بيكتب بالتعيين العادي، فبيرمي [[TypeError: Cannot set property balance of #<BankAccount> which has only a getter]] (اتجرّبت). والـ private field مستحيل يتكتب من برّه أصلًا، عشان كده الطريق الوحيد method جوه الكلاس زي [[deposit]].` },
+            { lvl: 'تحدي', t: R`**محاكاة:** [[class Queue]] لطابور البنك بـ [[#items]]: [[enqueue(name)]] و [[dequeue()]] و [[peek()]] و getter [[size]]. دخّل Ali و Mona و Omar، وخدّم اتنين.`, done: R`[[dequeue()]] مرتين بترجّع Ali ثم Mona، و [[size]] بقى 1، و [[peek()]] بترجّع Omar. و [[dequeue()]] على طابور فاضي بترجّع undefined من غير error.`, sol: R`~~~js bank-queue.js
+class Queue {
+  #items = [];
+  enqueue(name) {
+    this.#items.push(name);
+    return this;
+  }
+  dequeue() {
+    return this.#items.shift();          // undefined لو فاضي
+  }
+  peek() {
+    return this.#items[0];
+  }
+  get size() {
+    return this.#items.length;
+  }
+}
+
+const q = new Queue();
+q.enqueue("Ali").enqueue("Mona").enqueue("Omar");
+console.log(q.dequeue(), q.dequeue());
+console.log(q.size, q.peek());
+console.log(q.dequeue(), q.dequeue(), q.size);
+~~~
+
+~~~text الناتج (node bank-queue.js، Node 24)
+Ali Mona
+1 Omar
+Omar undefined 0
+~~~
+
+**ليه كده:**
+
+- **طابور = اللي دخل الأول يخرج الأول (FIFO):** [[push]] بتحط في الآخر، و [[shift]] بتشيل من الأول. فـ Ali ثم Mona.
+- **[[peek()]]:** بيبص على أول واحد من غير ما يشيله.
+- **[[shift()]] على array فاضية** بترجّع [[undefined]] من غير error، فمش محتاج [[if]].
+- **[[#items]] private:** محدش يقدر يعمل [[q.items.unshift("واسطة")]] ويدخل قبل الدور.
+
+**الغلطة الشائعة:** [[pop()]] بدل [[shift()]]: ده stack (اللي دخل آخر يخرج الأول)، فـ Omar هيتخدم الأول. وللمعلومة: [[shift]] على array فيها مليون عنصر بطيئة لأنها بتزحزح الكل، فالطوابير الضخمة بتتعمل بـ index للبداية بدل shift.` }
+          ],
+          ref: [
+            { t: "MDN: Classes", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes" },
+            { t: "MDN: Using classes", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_classes" },
+            { t: "MDN: Private elements", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_elements" },
+            { t: "MDN: static", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/static" },
+            { t: "MDN: getter", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get" },
+            { t: "MDN: constructor", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/constructor" },
+          ],
+          pre: [{ to: "js/prototype chain", why: R`الكلاس بيبني نفس السلسلة: الـ methods على [[Class.prototype]]`}, { to: "js/JSON", why: R`تمرين [[toJSON]] و [[fromJSON]] بيحفظ instance ويرجّعها`}],
+          flag: "script",
+          deep: {
+            why: R`الـ classes في كل حتة: Error مخصص، و services في الباك، و SDKs زي [[new PrismaClient()]] و [[new Stripe()]]، و Web Components. ومع private fields بقى عندك encapsulation حقيقي، مش underscore بالاتفاق.`,
+            how: R`[[class A {}]] بتعمل constructor function، والـ methods بتتحط على [[A.prototype]] (مش enumerable). الفروق عن الـ function القديمة: الكلاس لازم يتنادي بـ new (وإلا TypeError)، وكل الكود جواه strict mode، والكلاس في TDZ زي let (مفيش hoisting بقيمة).
+
+الـ fields ([[count = 0]] و [[#balance = 0]]) بتتحط على كل instance لوحده، وقت الـ constructor. عشان كده arrow function كـ field بتتعمل نسخة لكل instance (ذاكرة أكتر، بس this متثبت).
+
+الـ private fields ([[#x]]) مش خصايص عادية: مش بتظهر في [[Object.keys]] ولا [[JSON.stringify]] ولا console.log العادي (DevTools بيعرضها)، والكتابة ليها برا الكلاس SyntaxError. و [[#x in obj]] بيفحص لو الـ object عنده الـ field ده.
+
+[[return this]] في آخر method بيخليك تعمل chaining. و [[static]] بيتقرا من الكلاس نفسه، وفيه [[static { }]] block للتهيئة.
+
+الـ getter بيتقرا كأنه خاصية ([[acc.balance]] من غير أقواس). ولو مفيش setter، الكتابة بتتجاهل في sloppy mode وبترمي TypeError في strict.`,
+            when: "لما عندك state وسلوك مرتبطين ببعض وهتعمل منهم instances كتير، أو مكتبة بتطلب كده (Error و Web Components). للداتا البسيطة، objects ودوال أبسط. وفي React الحديثة مفيش classes تقريبًا.",
+            mistakes: R`تنسى [[new]]. وتبعت method كـ callback فـ this تضيع (درس this). وتحط كل حاجة في class على طريقة Java حتى لو دوال عادية كفاية. وتعتمد على [[_balance]] كـ private: أي حد يقدر يوصلها. وفي الانترفيو: «الفرق بين class و constructor function؟» الإجابة: syntax فوق نفس الـ prototypes، مع strict و new إجباري و private fields.`
+          },
+          teach: R`## الكود ده بيعمل إيه؟
+
+بيعرّف «قالب» لحساب بنكي: كل حساب ليه صاحب ورصيد، والرصيد **private** محدش يقدر يلعب فيه من برّه، وتزوّده بـ [[deposit]] بس. وفي الآخر بيجرّب الحاجات اللي الكلاس بيوفّرها. اتشغّل في Node 24 كملف [[.cjs]] وكملف [[.mjs]].
+
+---
+
+## ١. [[class]] والـ static
+
+~~~text app.js
+class BankAccount {
+  static count = 0;
+~~~
+
+- [[class BankAccount { ... }]]: بيعرّف كلاس اسمه BankAccount. العُرف إن اسم الكلاس يبدأ بحرف كبير.
+- [[static count = 0;]]: خاصية على **الكلاس نفسه** مش على كل حساب. فيه [[BankAccount.count]] واحدة بس مشتركة. بنستخدمها نعدّ الحسابات اللي اتعملت.
+
+---
+
+## ٢. الـ private field
+
+~~~text app.js
+  #balance = 0;
+~~~
+
+- [[#balance]]: الـ [[#]] جزء من الاسم، ومعناها **private**: الخاصية دي موجودة على كل حساب، بس مفيش أي كود يقدر يقراها أو يكتبها **غير الكود اللي جوه الكلاس**.
+- [[= 0]]: كل حساب جديد بيبدأ رصيده 0. ده اسمه **field**: بيتحط على كل instance لوحده وقت ما يتعمل.
+
+---
+
+## ٣. الـ constructor
+
+~~~text app.js
+  constructor(owner) {
+    this.owner = owner;
+    BankAccount.count++;
+  }
+~~~
+
+- [[constructor]]: دالة خاصة بتتنادي **لوحدها** مع [[new]]. الـ arguments اللي بتبعتها لـ new بتوصل هنا.
+- [[this.owner = owner]]: [[this]] هنا = الحساب الجديد (قاعدة new). فبنحط عليه خاصية **عامة** اسمها owner.
+- [[BankAccount.count++]]: زوّد العداد اللي على الكلاس.
+
+---
+
+## ٤. method بتعدّل الرصيد
+
+~~~text app.js
+  deposit(amount) {
+    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
+    this.#balance += amount;
+    return this;
+  }
+~~~
+
+- [[deposit(amount)]]: method. كل methods الكلاس بتتحط **مرة واحدة** على [[BankAccount.prototype]]، وكل الحسابات بتشوفها من السلسلة (درس prototype chain).
+- [[if (amount <= 0) throw ...]]: افحص الـ input الأول. [[throw new RangeError(...)]] بيوقف الدالة ويرمي error من نوع RangeError (قيمة برّه المدى المسموح).
+- [[this.#balance += amount]]: زوّد الرصيد. ده مسموح لأننا **جوه** الكلاس.
+- [[return this]]: رجّع الحساب نفسه. ده اللي بيخلّي [[acc.deposit(100).deposit(50)]] تشتغل: أول deposit بترجّع acc، فالتانية بتتنادي عليه. ده اسمه **chaining**.
+
+---
+
+## ٥. getter
+
+~~~text app.js
+  get balance() {
+    return this.#balance;
+  }
+}
+~~~
+
+- [[get balance()]]: **getter**: دالة بتتقري كأنها خاصية عادية. تكتب [[acc.balance]] **من غير أقواس**، وهي بتشتغل وترجّع الرصيد.
+- مفيش [[set balance()]]، يعني الرصيد **للقراية بس** من برّه.
+
+---
+
+## ٦. الاستخدام
+
+~~~text app.js
+const acc = new BankAccount("Sara");
+acc.deposit(100).deposit(50);
+acc.balance;
+~~~
+
+~~~text الناتج
+BankAccount { owner: 'Sara' }      ← console.log(acc)
+true                               ← acc.deposit(100) === acc
+150                                ← acc.balance
+~~~
+
+لاحظ إن [[console.log(acc)]] في Node مبيعرضش [[#balance]] خالص. ولا [[Object.keys(acc)]] (طلعت [['owner']] بس) ولا [[JSON.stringify(acc)]] (طلعت [[{"owner":"Sara"}]]).
+
+---
+
+## ٧. تحاول تكتب الرصيد من برّه
+
+~~~text app.js
+acc.balance = 1e6;
+~~~
+
+[[1e6]] يعني 1 × 10 أس 6 = مليون. النتيجة بتفرق حسب الملف:
+
+| الملف | اللي حصل |
+|---|---|
+| [[.cjs]] (من غير "use strict") | الكتابة اتجاهلت في صمت، و [[acc.balance]] فضلت [[150]] |
+| [[.mjs]] (strict لوحده) | [[TypeError: Cannot set property balance of #<BankAccount> which has only a getter]] |
+
+ولو حاولت توصل للـ private نفسه من برّه الكلاس:
+
+~~~text app.js
+console.log(acc.#balance);
+~~~
+
+~~~text الناتج
+SyntaxError: Private field '#balance' must be declared in an enclosing class
+~~~
+
+ده **SyntaxError**: الملف كله مش بيشتغل، حتى السطور اللي قبل الغلطة، لأن JS بيلاقيها وهو بيقرا الكود قبل ما ينفّذه.
+
+---
+
+## ٨. الكلاس من جوه
+
+~~~text app.js
+BankAccount.count;
+typeof BankAccount;
+~~~
+
+~~~text الناتج
+1
+function
+~~~
+
+- [[BankAccount.count]] = 1 (حساب واحد اتعمل). و [[acc.count]] طلعت [[undefined]]: الـ static على الكلاس مش على الـ instance.
+- [[typeof BankAccount]] = [["function"]]: الكلاس في الآخر constructor function. وطبعنا [[Object.getOwnPropertyNames(BankAccount.prototype)]]:
+
+~~~text الناتج
+[ 'constructor', 'deposit', 'balance' ]
+~~~
+
+يعني deposit والـ getter على الـ prototype، و [[Object.hasOwn(acc, "deposit")]] طلعت [[false]].
+
+ومن الفروق عن الـ function العادية: مينفعش تنادي الكلاس من غير new:
+
+~~~text الناتج: BankAccount("x")
+TypeError: Class constructor BankAccount cannot be invoked without 'new'
+~~~
+
+---
+
+## ٩. setter: الكتابة بتعدّي على فحص
+
+الـ getter بيخلي القراية تبان خاصية. والـ **setter** هو الجزء التاني: [[obj.price = 50]] شكلها كتابة عادية، بس بتنادي دالة بتفحص الأول.
+
+~~~js setter.mjs
+class Product {
+  #price = 0;
+  constructor(name, price) {
+    this.name = name;
+    this.price = price;            // بيعدّي على الـ setter كمان
+  }
+  get price() { return this.#price; }
+  set price(value) {
+    if (!Number.isFinite(value) || value < 0) throw new RangeError($__btسعر غلط: $__{value}$__bt);
+    this.#price = Math.round(value * 100) / 100;
+  }
+}
+const p = new Product('mug', 120);
+p.price = 99.999;
+console.log(p.price);
+try { p.price = -5; } catch (e) { console.log(e.name + ':', e.message); }
+try { new Product('cap', '90'); } catch (e) { console.log(e.name + ':', e.message); }
+console.log(Object.keys(p), JSON.stringify(p));
+~~~
+
+~~~text الناتج · Node 24.22.1
+100
+RangeError: سعر غلط: -5
+RangeError: سعر غلط: 90
+[ 'name' ] {"name":"mug"}
+~~~
+
+- [[set price(value)]]: دالة بتاخد parameter واحد بالظبط، القيمة اللي على يمين الـ [[=]].
+- الـ constructor نفسه بيكتب [[this.price = price]]، فالفحص بيحصل **من أول لحظة**. لو كتب في [[this.#price]] مباشرة، [[new Product('cap', -5)]] كانت هتعدّي.
+- [['90']] اترفضت لأن [[Number.isFinite('90')]] بـ [[false]] (مبتحوّلش نصوص، عكس [[isFinite]] القديمة).
+- [[99.999]] اتقرّبت لـ [[100]]: الـ setter مش بس بيفحص، ممكن **ينضّف** كمان.
+- [[Object.keys]] و [[JSON.stringify]] مبيشوفوش [[price]]، لأن الـ getter والـ setter متعرّفين على [[Product.prototype]] مش على الـ object. فـ [[Object.hasOwn(p, 'price')]] بـ [[false]] و [['price' in p]] بـ [[true]]. ولو محتاجها في الـ JSON، [[toJSON()]] (التحدي اللي تحت).
+
+### الفخ الكلاسيكي: setter بيكتب في نفسه
 
 ~~~js
-function Product(name) {
-  this.name = name;
+class Bad { set price(v) { this.price = v; } }
+new Bad().price = 1;
+~~~
+
+~~~text الناتج
+RangeError: Maximum call stack size exceeded
+~~~
+
+[[this.price = v]] جوه الـ setter بتنادي الـ setter تاني، وهكذا للأبد (recursion من غير base case، درس «function و arrow»). عشان كده القيمة نفسها بتتخزن في اسم تاني: [[#price]] أو [[_price]].
+
+### ونفس الكلام في object عادي
+
+~~~js
+const temp = { c: 0, get f() { return this.c * 9 / 5 + 32; }, set f(v) { this.c = (v - 32) * 5 / 9; } };
+temp.f = 212;
+console.log(temp.c, temp.f);   // 100 212
+~~~
+
+| الشكل | امتى |
+|---|---|
+| خاصية عادية | مفيش قاعدة، أي قيمة مقبولة |
+| [[get]] لوحده | قيمة محسوبة أو للقراية بس |
+| [[get]] و [[set]] | الكتابة لازم تتفحص أو تتحوّل (سعر، درجة حرارة، إيميل) |
+| method زي [[setPrice(v)]] | لو العملية تقيلة أو ممكن تفشل كتير، عشان اللي بيقرا الكود يعرف إنها مش مجرد كتابة |
+
+---
+
+## الخلاصة
+
+| الحتة | مكانها | مين يوصلها |
+|---|---|---|
+| [[static count]] | الكلاس نفسه | [[BankAccount.count]] |
+| [[#balance]] | كل instance | كود الكلاس بس |
+| [[this.owner]] | كل instance | أي حد |
+| [[deposit]] و [[get balance]] | [[BankAccount.prototype]] | كل الـ instances بالسلسلة |
+
+- [[return this]] في آخر method = chaining.
+- getter من غير setter = خاصية للقراية بس.
+- في التمرين تحت هتضيف [[withdraw]] وسجل للعمليات: بص على deposit كويس، وفكّر إيه الحالات الغلط اللي لازم ترفضها، وإيه اللي لازم ترجّعه عشان الـ chaining يفضل شغال، وفين تخزّن السجل بحيث محدش من بره يقدر يعدّله.
+- setter بيفحص وينضّف قبل ما يكتب، والقيمة نفسها في [[#field]] تاني، وإلا recursion للأبد.`,
+          lines: [
+            R`بيعرّف كلاس: قالب نعمل منه حسابات بـ [[new BankAccount(...)]]. كل حساب object ليه رصيده، والـ methods متشاركة بينهم.`,
+            R`[[static]] معناها الخاصية دي على الكلاس **نفسه** مش على كل حساب. فيه [[count]] واحد بس للكل ([[BankAccount.count]])، ومش هتلاقيه في [[acc.count]].`,
+            R`private field: كل حساب بيبدأ برصيد 0، والـ [[#]] بتمنع أي كود برّه الكلاس يقرا أو يكتب الرصيد (حتى المحاولة نفسها SyntaxError). فالطريقة الوحيدة لتغييره هي [[deposit]].`,
+            R`الدالة اللي بتتنادى أوتوماتيك مع [[new]]، والـ arguments اللي في [[new BankAccount("Sara")]] بتوصلها. هنا بنجهّز الحساب الجديد.`,
+            R`بتحط اسم صاحب الحساب كخاصية عادية (public) على الـ instance الجديد، فأي حد يقدر يقرا [[acc.owner]].`,
+            R`كل مرة حساب يتعمل نزوّد العداد المشترك اللي على الكلاس. استخدمنا اسم الكلاس مش [[this]]، لأن [[this]] هنا الحساب الجديد مش الكلاس.`,
+            R`نهاية الـ [[constructor]].`,
+            R`method: بتتحط على [[BankAccount.prototype]] مرة واحدة، وكل الحسابات بتستخدم نفس الدالة عن طريق الـ prototype chain بدل ما كل حساب ياخد نسخة.`,
+            R`بنرفض أي مبلغ صفر أو سالب فورًا بـ error واضح. من غير الفحص ده [[deposit(-100)]] كانت هتسحب فلوس من غير ما حد يلاحظ. و [[RangeError]] نوع error مناسب لقيمة برّه المدى المسموح.`,
+            R`بنزوّد الرصيد الخاص. ده مسموح لأن السطر جوه الكلاس.`,
+            R`بترجّع الحساب نفسه، فتقدر تكمّل نداء تاني على طول ([[acc.deposit(100).deposit(50)]]). من غيرها [[deposit]] هترجّع [[undefined]] والنداء التاني هيرمي TypeError.`,
+            R`نهاية [[deposit]].`,
+            R`getter: دالة بتتقري كإنها خاصية، فتكتب [[acc.balance]] من غير [[()]]. ولأن مفيش [[set balance]]، الرصيد يتقري بس ومحدش يغيّره من برّه.`,
+            R`بترجّع قيمة الـ private field. كده الرصيد ظاهر للقراية بس، والتعديل الوحيد عن طريق [[deposit]] اللي بتفحص المبلغ.`,
+            R`نهاية الـ getter.`,
+            R`نهاية الكلاس [[BankAccount]].`,
+            R`[[new]] بيعمل object جديد، وينادي الـ [[constructor]] بـ [["Sara"]]، ويرجّع الحساب. دلوقتي [[owner]] بقى [["Sara"]]، والرصيد 0، و [[BankAccount.count]] بقى 1.`,
+            R`chaining: أول [[deposit]] رجّعت [[acc]] نفسه، فاتنادت التانية عليه. الرصيد بقى 150.`,
+            R`الـ getter اشتغل من غير [[()]] ورجّع [[150]].`,
+            R`محاولة تغيير الرصيد لمليون. ولأن [[balance]] getter من غير setter، الكتابة بتتجاهل بالسكوت في الكود العادي، وفي strict mode (وجوه الـ modules) بترمي TypeError. والرصيد يفضل 150.`,
+            R`بنقرا الـ [[static]] من الكلاس نفسه: [[1]] لأننا عملنا حساب واحد. أما [[acc.count]] كانت هترجّع [[undefined]].`,
+            R`بيرجّع [["function"]]: الكلاس في الآخر constructor function بشكل أنضف، والـ methods بتتحط على الـ prototype زي ما شفنا في درس الـ prototype chain.`,
+          ],
+          sol: R`[[withdraw]] بتفحص إن المبلغ موجب وإنه مش أكبر من الرصيد، وترمي error لو لأ. بعد [[deposit(100).deposit(50).withdraw(30)]] الـ balance بـ 120، و [[withdraw(500)]] بترمي error برسالة فيها الرصيد والمطلوب.
+
+[[acc.#balance]] برّه الكلاس بيطلع [[SyntaxError: Private field '#balance' must be declared in an enclosing class]] والملف كله مبيشتغلش، حتى أول console.log فيه، لأن الغلطة بتتمسك وقت الـ parsing. ده الفرق بين [[#balance]] و [[_balance]] (convention بس وأي حد يقدر يقراه). ولو نسيت [[return this]] في withdraw، الـ chaining اللي بعدها هيقع بـ [[Cannot read properties of undefined]].`,
+          solCode: R`class BankAccount {
+  #balance = 0;
+  constructor(owner) { this.owner = owner; }
+  deposit(amount) {
+    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
+    this.#balance += amount;
+    return this;
+  }
+  withdraw(amount) {
+    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
+    if (amount > this.#balance) {
+      throw new Error($__btالرصيد مش كفاية: معاك $__{this.#balance} وعايز تسحب $__{amount}$__bt);
+    }
+    this.#balance -= amount;
+    return this;
+  }
+  get balance() { return this.#balance; }
 }
-const p = Product('كوباية');
-console.log(p);
-~~~
+const acc = new BankAccount("Sara");
+acc.deposit(100).deposit(50).withdraw(30);
+console.log(acc.balance); // 120
+try { acc.withdraw(500); } catch (e) { console.log(e.message); }`,
+          check: {
+            lang: "js",
+            starter: R`class BankAccount {
+  #balance = 0;
+  constructor(owner) { this.owner = owner; }
+  deposit(amount) {
+    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
+    this.#balance += amount;
+    return this;
+  }
+  withdraw(amount) {
+    // موجب، ومش أكبر من الرصيد، و return this
+  }
+  get balance() { return this.#balance; }
+  get history() {
+    return [];
+  }
+}`,
+            tests: R`test("deposit(100).deposit(50).withdraw(30) ← balance 120", () => expect(new BankAccount("Sara").deposit(100).deposit(50).withdraw(30).balance).toBe(120));
+test("withdraw أكبر من الرصيد بترمي error، والرصيد ميتغيّرش", () => {
+  const acc = new BankAccount("Ali").deposit(100);
+  expect(() => acc.withdraw(500)).toThrow();
+  expect(() => acc.withdraw(0)).toThrow();
+  expect(acc.balance).toBe(100);
+});
+test("history: العمليات اللي نجحت بس، بالترتيب", () => {
+  const acc = new BankAccount("Sara").deposit(100).withdraw(30);
+  try { acc.withdraw(500); } catch {}
+  try { acc.deposit(-1); } catch {}
+  acc.deposit(5);
+  expect(acc.history).toEqual([{ type: "deposit", amount: 100 }, { type: "withdraw", amount: 30 }, { type: "deposit", amount: 5 }]);
+});
+test("اللي بره ميقدرش يعدّل السجل", () => {
+  const acc = new BankAccount("Mona").deposit(10);
+  acc.history.push({ type: "deposit", amount: 1e6 });
+  acc.history.length = 0;
+  expect(acc.history).toEqual([{ type: "deposit", amount: 10 }]);
+});
+test("كل حساب ليه سجله", () => {
+  const a = new BankAccount("A").deposit(1), b = new BankAccount("B");
+  expect([a.history.length, b.history.length]).toEqual([1, 0]);
+});
+test("withdraw بترجّع this عشان الـ chaining", () => {
+  const acc = new BankAccount("Omar").deposit(50);
+  expect(acc.withdraw(10) === acc).toBe(true);
+});`,
+            solution: R`class BankAccount {
+  #balance = 0;
+  #log = [];
+  constructor(owner) { this.owner = owner; }
+  deposit(amount) {
+    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
+    this.#balance += amount;
+    this.#log.push({ type: "deposit", amount });
+    return this;
+  }
+  withdraw(amount) {
+    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
+    if (amount > this.#balance) throw new Error($__btالرصيد مش كفاية: معاك $__{this.#balance} وعايز تسحب $__{amount}$__bt);
+    this.#balance -= amount;
+    this.#log.push({ type: "withdraw", amount });
+    return this;
+  }
+  get balance() { return this.#balance; }
+  get history() { return this.#log.map(e => ({ ...e })); }
+}`
+          }
+        },
+        {
+          cmd: "extends و super",
+          title: "كلاس بيورث من كلاس تاني",
+          desc: R`[[class Admin extends User]] بتخلي Admin ياخد كل methods بتاعة User، ويضيف أو يغيّر عليها. جوه الـ constructor لازم تنادي [[super(...)]] قبل ما تستخدم [[this]]، و [[super.method()]] بتنادي النسخة بتاعة الأب.
 
-شغّلها مرة في [[.mjs]] ومرة في [[.cjs]]، وبعدين خلّيها ترمي رسالة واضحة لو اتنادت من غير [[new]].`, done: R`في الـ mjs شفت [[TypeError: Cannot set properties of undefined]]، وفي الـ cjs [[undefined]] واسم المنتج اتكتب في [[globalThis]]، وبعد التصليح [[Product('x')]] بترمي رسالتك و [[new Product('x')]] شغالة.`, sol: R`~~~text الناتج: node product.mjs
-  this.name = name;
-            ^
+أشهر استخدام عملي: [[class NotFoundError extends Error]] عشان يبقى عندك أنواع errors تفرّق بينها بـ instanceof (درس الأخطاء).
 
-TypeError: Cannot set properties of undefined (setting 'name')
-~~~
-
-~~~text الناتج: node product.cjs (مع سطر زيادة console.log(p, globalThis.name))
-undefined كوباية
-~~~
-
-في strict mode، [[this]] في نداء عادي [[undefined]] فوقعت. وفي sloppy، [[this]] هو [[globalThis]]، فالاسم اتكتب كمتغير global والدالة رجّعت [[undefined]] من غير أي error: ده أسوأ.
-
-~~~js product.mjs
-function Product(name) {
-  if (!new.target) throw new TypeError('Product لازم يتنادى بـ new: new Product(name)');
-  this.name = name;
+وقبل ما تورّث، اسأل: هل ينفع أركّب (composition) بدل ما أورّث؟ غالبًا أبسط.`,
+          example: R`class User {
+  constructor(name) {
+    this.name = name;
+  }
+  describe() {
+    return $__btUser: $__{this.name}$__bt;
+  }
 }
-console.log(new Product('كوباية'));
-try { Product('كوباية'); } catch (e) { console.log(e.message); }
-~~~
-
-~~~text الناتج (Node 24.22)
-Product { name: 'كوباية' }
-Product لازم يتنادى بـ new: new Product(name)
-~~~
-
-[[new.target]] بـ [[undefined]] في النداء العادي، وبيبقى الدالة نفسها مع [[new]]. والحل البديل: [[return new Product(name)]] بدل الرمي (زي [[Point]] في المثال). والحل الأحسن في كود جديد: [[class]]، لأنها بترمي لوحدها [[Class constructor Product cannot be invoked without 'new']].` },
-            { lvl: 'تحدي', t: R`**مسألة:** class [[Shape]] «مجردة»: [[new Shape()]] بيرمي، وأي class وارثة منها لازم يكون فيها method اسمها [[area]] وإلا الإنشاء يرمي برسالة فيها اسم الـ class الوارثة. و [[describe()]] بترجّع [['مربع: 9']].`, done: R`[[new Square(3).describe()]] بـ [['مربع: 9']]، و [[new Shape()]] بيرمي، و class [[Blob]] من غير [[area]] بيرمي برسالة فيها «Blob»، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js shape.mjs
+class Admin extends User {
+  constructor(name, permissions) {
+    super(name);
+    this.permissions = permissions;
+  }
+  describe() {
+    return $__bt$__{super.describe()} (admin: $__{this.permissions.join(", ")})$__bt;
+  }
+}
+const a = new Admin("Sara", ["users", "billing"]);
+a.describe();          // "User: Sara (admin: users, billing)"
+a instanceof Admin;    // true
+a instanceof User;     // true`,
+          try: R`امسح سطر [[super(name)]] وشغّل واقرا الـ error. وبعدين اعمل [[class Guest extends User]] من غير constructor خالص وجرّب [[new Guest("x").describe()]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**ابني:** [[class Shape]] فيها [[area()]] بترجّع 0 و [[describe()]] بترجّع [[this.constructor.name]] والمساحة. ورّث منها [[Circle]] و [[Rect]] وغيّر [[area]] في كل واحد.`, done: R`[[new Circle(1).describe()]] بترجّع [["Circle: 3.14"]] (لو قرّبت بـ [[Number(area.toFixed(2))]])، و [[new Rect(2, 3).describe()]] بترجّع [["Rect: 6"]]، و [[describe]] نفسها مكتوبة مرة واحدة في Shape.`, sol: R`~~~js shapes.js
 class Shape {
-  constructor(name) {
-    if (new.target === Shape) throw new TypeError('Shape مجردة، اعمل class وارثة منها');
-    if (typeof this.area !== 'function') throw new TypeError(new.target.name + ' لازم يكون فيها area()');
-    this.name = name;
+  area() {
+    return 0;
   }
-  describe() { return this.name + ': ' + this.area(); }
-}
-class Square extends Shape { constructor(s) { super('مربع'); this.s = s; } area() { return this.s ** 2; } }
-class Blob extends Shape {}
-console.log(new Square(3).describe());
-for (const make of [() => new Shape('x'), () => new Blob('y')]) {
-  try { make(); } catch (e) { console.log(e.message); }
-}
-~~~
-
-~~~text الناتج (Node 24.22)
-مربع: 9
-Shape مجردة، اعمل class وارثة منها
-Blob لازم يكون فيها area()
-~~~
-
-**الشرح:** جوه constructor الأب، [[new.target]] هو الـ class اللي اتنادى عليها [[new]] فعلًا ([[Square]] أو [[Blob]])، مش [[Shape]]. فـ [[new.target === Shape]] معناها «حد عمل [[new Shape]] مباشرة». و [[this.area]] بيتقري من الـ prototype بتاع الـ class الوارثة، فموجود في [[Square]] ومش في [[Blob]]. و [[new.target.name]] بيدّي اسم الـ class للرسالة.` },
-          ],
-          check: { lang: "js", starter: R`class Shape {
-  constructor(name) {
-    // ارمي لو new Shape مباشرة، أو لو الـ class الوارثة مفيهاش area()
-    this.name = name;
-  }
-  describe() { return this.name + ': ' + this.area(); }
-}`, tests: R`class Square extends Shape { constructor(s) { super('مربع'); this.s = s; } area() { return this.s ** 2; } }
-class Blob extends Shape {}
-test("الوارثة شغالة", () => expect(new Square(3).describe()).toBe('مربع: 9'));
-test("new Shape بيرمي", () => expect(() => new Shape('x')).toThrow('مجردة'));
-test("من غير area بيرمي باسم الـ class", () => expect(() => new Blob('y')).toThrow('Blob'));
-test("TypeError", () => { let err; try { new Blob('y'); } catch (e) { err = e; } expect(err instanceof TypeError).toBe(true); });`, solution: R`class Shape {
-  constructor(name) {
-    if (new.target === Shape) throw new TypeError('Shape مجردة، اعمل class وارثة منها');
-    if (typeof this.area !== 'function') throw new TypeError(new.target.name + ' لازم يكون فيها area()');
-    this.name = name;
-  }
-  describe() { return this.name + ': ' + this.area(); }
-}` },
-          flag: "script",
-          deep: {
-            why: R`مكتبات كتير بتقرا خصايص الدوال: Express بيعرف إن الـ middleware بتاع الأخطاء لأن [[fn.length === 4]]، و Mocha بيعرف إن الاختبار مستني [[done]] من [[length]]، و [[curry]] بيعرف إمتى يقف من [[length]] (درس «curry»). و [[name]] هو اللي بيظهر في الـ stack traces والـ profiler، فدالة من غير اسم صعب تلاقيها. و [[new.target]] هو الطريقة الوحيدة الموثوقة تعرف بيها إن الدالة اتنادت بـ [[new]] وإن مين الـ class الوارثة.`,
-            how: R`أي دالة object وارث من [[Function.prototype]] (اللي هو نفسه دالة: [[typeof Function.prototype]] بـ [[function]]، وبترجّع [[undefined]] لو ناديتها). وكل دالة بتتعمل ومعاها خاصيتين own: [[length]] و [[name]]، الاتنين [[writable: false, configurable: true]].
-
-- [[name]] بتتحسب وقت التعريف: من اسم الدالة، أو من المتغير ([[const add = () => ...]] → [["add"]])، أو من المفتاح ([[{ ['x' + 1]: function () {} }]] → [["x1"]]، والـ Symbol → [["[sym]"]])، والـ getter → [["get total"]]، والـ bound → [["bound add"]]. ولو مفيش أي حاجة: نص فاضي. و [[new Function(...)]] اسمها [["anonymous"]].
-- [[Function.prototype.toString]] بيرجّع النص الأصلي من الملف بالظبط، وللدوال المبنية في المحرك [["function max() { [native code] }"]].
-- [[instanceof]]: [[x instanceof C]] بينادي [[ C[Symbol.hasInstance](x) ]]. و [[Function.prototype[Symbol.hasInstance]]] هو الافتراضي اللي بيمشي في السلسلة ويقارن بـ [[C.prototype]]، وهو [[writable: false]] و [[configurable: false]] عشان محدش يبوّظ [[instanceof]] لكل الدوال مرة واحدة. اتجرّب: [[Function.prototype[Symbol.hasInstance].call(Even, 4)]] بـ [[false]] (الافتراضي متجاهل الـ static بتاعتنا).
-- [[new.target]]: في نداء عادي [[undefined]]. مع [[new F()]] هو [[F]]. ومع [[class B extends A]] و [[new B()]] هو [[B]] حتى جوه constructor [[A]]. ومع [[Reflect.construct(A, [], B)]] هو [[B]] (اتجرّب: [[A sees B]]). والـ arrow function مالهاش [[new.target]] بتاعها: بتشوف بتاع الدالة اللي حواليها.
-- [[new Function(args..., body)]] بيعمل دالة في الـ global scope: مش شايفة المتغيرات اللي حواليها (اتجرّب: [[typeof local]] جواها طلع [[undefined]]).`,
-            when: R`[[length]]: لما بتبني أداة بتتعامل مع دوال غيرك (curry، و middleware، و dependency injection)، أو wrapper عايزه يحافظ على الشكل. [[name]]: سمّي الدوال اللي بتتبعت callbacks عشان الـ stack trace. [[toString]]: للـ debugging والأدوات (مش منطق برنامج). [[Symbol.hasInstance]]: نادر، لما الـ «نوع» تعريفه شكل الداتا مش طريقة إنشائها، وخلي بالك إنه بيلخبط اللي بيقرا الكود. [[new.target]]: classes مجردة، أو constructor function قديمة لازم تشتغل بـ [[new]] ومن غيرها. و [[new Function]]: تقريبًا أبدًا، إلا في أدوات بتولّد كود من مصادر موثوقة.`,
-            mistakes: R`- تفتكر [[length]] = عدد كل الـ parameters: بتقف عند أول default أو rest.
-- تحاول [[F[Symbol.hasInstance] = ...]] بالإسناد: [[Cannot assign to read only property 'Symbol(Symbol.hasInstance)']].
-- تعتمد على [[fn.name]] بعد minification: الأدوات بتغيّر الأسامي لحروف.
-- [[new.target]] في arrow مستني إنها تبقى بتاعتها: بتاخد بتاعة الدالة اللي حواليها، ولو مفيش دالة حواليها [[SyntaxError: new.target expression is not allowed here]].
-- [[new Function(userInput)]] أو [[eval]]: تنفيذ كود من يوزر. وفي متصفح عليه CSP من غير [['unsafe-eval']] بيرمي [[EvalError]] (من الـ docs).
-- تنادي constructor function من غير [[new]] في sloppy mode: بتكتب في [[globalThis]] ساكتة.`,
-          },
-          teach: R`## الفكرة في سطرين
-
-الدالة object وارث من [[Function.prototype]]، وليها خصايص تقراها زي أي object، وجواها كلمة [[new.target]] بتقولها اتنادت إزاي. كل اللي تحت من Node 24.22 كملف [[.mjs]].
-
----
-
-## ١. [[Function]] نفسها
-
-~~~js
-const sum = new Function('a', 'b', 'return a + b');
-console.log(sum(2, 3), sum.name, sum.length, typeof Function.prototype, area instanceof Function);
-~~~
-
-~~~text الناتج
-5 anonymous 2 function true
-~~~
-
-[[Function]] هو الـ constructor بتاع كل الدوال: آخر argument هو جسم الدالة كنص، واللي قبله أسامي الـ parameters. الدالة اللي بيعملها اسمها [["anonymous"]] وبتشتغل في الـ global scope (مش شايفة المتغيرات اللي حوالين السطر). ولأنها بتحوّل نص لكود وقت التشغيل، هي و [[eval]] باب لتنفيذ أي كود: متدخّلش فيها input من يوزر أبدًا.
-
-وأي دالة [[instanceof Function]]، و [[Function.prototype]] نفسه دالة ([[typeof]] بـ [[function]]) فيها [[call]] و [[apply]] و [[bind]] و [[toString]].
-
-| الدالة | [[constructor.name]] |
-|---|---|
-| [[function f() {}]] و arrow و method | [[Function]]: الدوال العادية كلها من نفس النوع |
-| [[async function]] و async arrow | [[AsyncFunction]]: بترجّع Promise ومالهاش [[prototype]] |
-| [[function*]] | [[GeneratorFunction]]: بترجّع generator object لما تتنادى |
-
----
-
-## ٢. [[Function.prototype.length]]: كام argument مستنية
-
-~~~js
-function area(w, h = w, ...rest) { return w * h; }
-const add = (a, b) => a + b;
-console.log(area.length, add.length, ((a, b = 1, c) => 0).length, ((...xs) => 0).length);
-~~~
-
-~~~text الناتج
-1 2 1 0
-~~~
-
-| الدالة | [[length]] | ليه |
-|---|---|---|
-| [[(w, h = w, ...rest)]] | 1 | العدّ وقف عند [[h]] (أول default) |
-| [[(a, b)]] | 2 | الاتنين من غير default |
-| [[(a, b = 1, c)]] | 1 | [[c]] بعد الـ default، فمتحسبتش |
-| [[(...xs)]] | 0 | الـ rest مش بيتحسب |
-
-وهي خاصية own: [[{ value: 2, writable: false, enumerable: false, configurable: true }]]. والـ bound function [[length]] بتاعتها بتقل بعدد الـ arguments اللي اتربطت. ومختلفة عن [[arguments.length]] (عدد اللي **اتبعت فعلًا**، الدرس الجاي).
-
----
-
-## ٣. [[Function.prototype.name]]
-
-~~~text الناتج
-area add bound add
-~~~
-
-[[area]] من التعريف، و [[add]] من اسم المتغير اللي الـ arrow اتحطت فيه، و [[bind]] بيزوّد [["bound "]]، والـ arrow اللي متحطتش في متغير اسمها نص فاضي (الفراغ في آخر السطر).
-
----
-
-## ٤. [[Function.prototype.toString]]: الكود كنص
-
-~~~text الناتج
-(a, b) => a + b | function max() { [native code] }
-~~~
-
-الدوال اللي انت كاتبها: نفس النص من الملف حرفيًا (بالتعليقات والمسافات). الدوال المبنية في المحرك: [[[native code]]]. الـ class: [[class Cat { ... }]] كاملة، والـ method المختصرة: [[describe() { ... }]] من غير [[function]].
-
----
-
-## ٥. [[Function.prototype[Symbol.hasInstance]]] و [[instanceof]] بتاعك
-
-~~~js
-class Even {
-  static [Symbol.hasInstance](n) { return Number.isInteger(n) && n % 2 === 0; }
-}
-console.log(4 instanceof Even, 3 instanceof Even, '4' instanceof Even);
-~~~
-
-~~~text الناتج
-true false false
-~~~
-
-[[x instanceof C]] أول حاجة بيعملها: يدوّر على [[ C[Symbol.hasInstance] ]] ويناديها. كل الدوال وارثاه من [[Function.prototype]]، والافتراضي بيمشي في سلسلة [[x]] ويدوّر على [[C.prototype]]. لما عرّفنا [[static [Symbol.hasInstance]]] على [[Even]] غطّينا على الافتراضي، فبقى [[4 instanceof Even]] (رقم primitive!) بـ [[true]].
-
-| اللي حصل | الناتج (اتجرّب) |
-|---|---|
-| [[Object.getOwnPropertyDescriptor(Function.prototype, Symbol.hasInstance)]] | [[writable: false]] و [[configurable: false]]: الافتراضي مقفول ومحدش يقدر يغيّره لكل الدوال |
-| [[F[Symbol.hasInstance] = () => true]] على دالة عادية | رمت [[TypeError: Cannot assign to read only property 'Symbol(Symbol.hasInstance)' of function 'function F() {}']] لأن الموروث مبيتكتبش |
-| [[Object.defineProperty(F, Symbol.hasInstance, { value: () => true })]] | [[({}) instanceof F]] بقت [[true]] لأن التعريف مش إسناد |
-| [[Function.prototype[Symbol.hasInstance].call(Even, 4)]] | [[false]]: ده الفحص الافتراضي بالسلسلة |
-
----
-
-## ٦. [[new.target]]: اتنادت بـ [[new]]؟
-
-~~~js
-function Point(x) {
-  if (!new.target) return new Point(x);
-  this.x = x;
-}
-console.log(Point(3).x, new Point(5).x);
-~~~
-
-~~~text الناتج
-3 5
-~~~
-
-[[new.target]] meta property (كلمة خاصة مش متغير): [[undefined]] لو الدالة اتنادت عادي، والدالة اللي اتعمل بيها [[new]] لو بـ [[new]]. هنا لو حد نسي [[new]] بنناديها إحنا صح.
-
-| الحالة | [[new.target]] (اتجرّب) |
-|---|---|
-| [[plain()]] | [[undefined]] لأن النداء عادي من غير [[new]] |
-| [[new Point(5)]] | الدالة نفسها [[Point]] |
-| [[new Square()]] و جوه constructor الأب [[Base]] | [[Square]] (مش [[Base]])، يعني الـ class اللي اتعمل منها الـ object فعلًا |
-| [[Reflect.construct(A, [], B)]] | [[B]]: التالت argument بيحدد [[new.target]] بإيدك |
-| arrow جوه دالة اتنادت بـ [[new]] | بتاع الدالة اللي حواليها: [[arrow sees true]] مع [[new]] و [[false]] من غيرها |
-
-ودي اللي بتعمل class «مجردة»: [[if (new.target === Base) throw ...]] (تمرين التحدي).
-
----
-
-## الخلاصة
-
-- الدالة object: [[length]] (لحد أول default أو rest)، و [[name]]، و [[toString()]] (الكود الأصلي).
-- [[ static [Symbol.hasInstance] ]] بيغيّر [[instanceof]]، والإسناد العادي عليها ممنوع.
-- [[new.target]]: [[undefined]] من غير [[new]]، والـ class الحقيقية مع [[new]].
-- [[new Function]] = [[eval]]: متستخدمهاش مع input.`,
-          lines: [
-            R`دالة فيها parameter عادي، وواحد default، و rest. هنشوف [[length]] بيعدّ أنهي فيهم.`,
-            R`arrow في متغير. اسمها هيتاخد من المتغير.`,
-            R`[[length]] لأربع دوال: [[1 2 1 0]]. العدّ بيقف عند أول default أو rest.`,
-            R`[[name]]: [[area]] من التعريف، و [[add]] من المتغير، و [[bound add]] من [[bind]]، والـ arrow اللي ملهاش متغير اسمها نص فاضي.`,
-            R`[[toString()]]: كود الـ arrow زي ما اتكتب، و [[Math.max]] مكتوبة جوه المحرك فبتطلع [[[native code]]].`,
-            R`class هنغيّر معنى [[instanceof]] بتاعها.`,
-            R`[[static [Symbol.hasInstance](n)]]: [[x instanceof Even]] هينادي الدالة دي بـ [[x]] ويرجّع ناتجها، من غير ما يبص على السلسلة.`,
-            R`قفلة الـ class.`,
-            R`[[4]] زوجي فـ [[true]]، و [[3]] فردي، و [[4]] النص مش integer: [[true false false]].`,
-            R`constructor function قديمة بتحمي نفسها لو حد ناداها من غير [[new]].`,
-            R`[[new.target]] بـ [[undefined]] في النداء العادي، فبتنادي نفسها بـ [[new]] وترجّع الناتج.`,
-            R`هنا الدالة اتنادت بـ [[new]]، فـ [[this]] هو الـ object الجديد.`,
-            R`قفلة [[Point]].`,
-            R`الاتنين اشتغلوا: [[3 5]]، مع إن الأولى اتنادت من غير [[new]].`,
-            R`[[new Function]] بيعمل دالة من نصوص: [['a']] و [['b']] أسامي الـ parameters، والأخير جسمها. خطيرة مع أي input من برّه.`,
-            R`[[5 anonymous 2 function true]]: شغالة، واسمها [[anonymous]]، و [[length]] 2، و [[Function.prototype]] نفسه دالة، وأي دالة [[instanceof Function]].`,
-          ],
-          ref: [
-            { t: "MDN: Function", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" },
-            { t: "MDN: Function.prototype.length", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/length" },
-            { t: "MDN: Function.prototype.toString()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/toString" },
-            { t: "MDN: Function.prototype[Symbol.hasInstance]()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/Symbol.hasInstance" },
-            { t: "MDN: Function.prototype.name", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/name" },
-            { t: "MDN: new.target", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new.target" },
-            { t: "ECMAScript: Function Objects", url: "https://tc39.es/ecma262/multipage/fundamental-objects.html#sec-function-objects" }
-          ],
-          pre: [{ to: "js/function و arrow", why: R`أشكال تعريف الدوال، والفرق بين arrow والدالة العادية` }, { to: "js/default و rest و spread", why: R`الـ default والـ rest اللي بيحددوا [[length]]` }, "js/call و apply و bind", { to: "js/extends و super", why: R`[[new.target]] جوه constructor الأب` }]
-        },
-        {
-          cmd: "arguments object",
-          title: "arguments: كل الـ arguments اللي اتبعتت للدالة، عددها، واللف عليها، وليه rest أحسن",
-          desc: R`جوه أي دالة عادية (مش arrow) فيه object اسمه [[arguments]] فيه **كل** اللي اتبعت في النداء، حتى اللي ملوش parameter باسمه. [[arguments.length]] عدد اللي اتبعت فعلًا (مش [[fn.length]] اللي هو عدد المستنيين)، و [[ arguments[0] ]] أول واحد، و [[ arguments[Symbol.iterator] ]] هو اللي بيخلّيك تلف عليه بـ [[for...of]] وتعمل [[[...arguments]]].
-
-بس هو **مش array**: مفيهوش [[map]] ولا [[reduce]]. والـ arrow function ملهاش [[arguments]] بتاعها. وفي الكود الجديد الـ rest parameter ([[...nums]]) بيعمل نفس الشغل وأوضح: array حقيقية، وباسم، وبتشتغل في الـ arrow. هتقابل [[arguments]] في كود قديم ومكتبات، وفي حالة واحدة مفيدة: تفرّق بين «مبعتش» و «بعت [[undefined]]».`,
-          example: R`// arguments: كل اللي اتبعت للدالة، حتى اللي ملوش اسم
-function total(label) {
-  console.log(arguments.length, total.length, typeof arguments, Array.isArray(arguments));
-  let sum = 0;
-  for (const n of arguments) if (typeof n === 'number') sum += n;
-  return label + ': ' + sum;
-}
-console.log(total('فاتورة', 10, 20, 5));
-console.log(total());
-function totalRest(label, ...nums) {
-  return label + ': ' + nums.reduce((a, b) => a + b, 0);
-}
-console.log(totalRest('فاتورة', 10, 20, 5));
-const arrow = () => typeof arguments;
-console.log(arrow());`,
-          try: R`اعمل ملف [[args.cjs]] (من غير strict) فيه ٣ دوال: [[function mapped(a) { arguments[0] = 'changed'; return a; }]]، ونفسها بس أول سطر فيها [['use strict';]]، ونفسها بـ [[a = 1]] default. نادي التلاتة بـ [['orig']]. وبعدين جرّب [[function f() { return Object.prototype.toString.call(arguments); }]] و [[function h() { return arguments.map((x) => x); }]].`,
-          sol: R`~~~js args.cjs
-function mapped(a) { arguments[0] = 'changed'; return a; }
-function unmapped(a) { 'use strict'; arguments[0] = 'changed'; return a; }
-function withDefault(a = 1) { arguments[0] = 'changed'; return a; }
-console.log(mapped('orig'), unmapped('orig'), withDefault('orig'));
-function f() { return Object.prototype.toString.call(arguments); }
-console.log(f(1));
-function h() { try { return arguments.map((x) => x); } catch (e) { return e.message; } }
-console.log(h(1));
-~~~
-
-~~~text الناتج (Node 24.22)
-changed orig orig
-[object Arguments]
-arguments.map is not a function
-~~~
-
-- في sloppy mode و parameters بسيطة، [[arguments]] **مربوط** بالـ parameters ("mapped"): تغيير [[ arguments[0] ]] غيّر [[a]] نفسها. ده سلوك قديم مربك.
-- في strict mode، أو لو فيه default أو rest أو destructuring في الـ parameters، الربط بيتلغي ("unmapped"): [[a]] فضلت [['orig']].
-- نوعه الداخلي [[Arguments]]، مش [[Array]]: فيه [[length]] و indexes و [[Symbol.iterator]] بس.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الدالة مستنية اتنين. اكتب الـ ٤ نتايج قبل التشغيل:
-
-~~~js
-function f(a, b) { return [arguments.length, f.length]; }
-console.log(f(1), f(1, 2, 3), f(...[]), f(undefined, undefined));
-~~~`, done: R`كتبت [[[ 1, 2 ] [ 3, 2 ] [ 0, 2 ] [ 2, 2 ]]] وطلع كده، وتقدر تقول ليه [[f(undefined, undefined)]] طلّعت 2 مش 0.`, sol: R`~~~text الناتج (Node 24.22)
-[ 1, 2 ] [ 3, 2 ] [ 0, 2 ] [ 2, 2 ]
-~~~
-
-[[f.length]] ثابت (2): ده عدد الـ parameters في التعريف. و [[arguments.length]] بيتغيّر مع كل نداء: عدد اللي **اتبعت فعلًا**. [[f(...[])]] مبعتش حاجة: 0. و [[f(undefined, undefined)]] بعت اتنين قيمتهم [[undefined]]: 2. وده الفرق اللي ميظهرش لو بصيت على [[a]] و [[b]] بس، لأنهم [[undefined]] في الحالتين.` },
-            { lvl: 'تطبيق', t: R`**refactor:** الدالة دي من كود قديم. خليها بالـ rest parameter، ونفس الناتج بالظبط:
-
-~~~js
-function logLine(level) {
-  var parts = Array.prototype.slice.call(arguments, 1);
-  return '[' + level.toUpperCase() + '] ' + parts.join(' ');
-}
-console.log(logLine('warn', 'disk', 91, '%'));
-~~~`, done: R`النسختين بيطبعوا [[[WARN] disk 91 %]]، والجديدة مفيهاش [[arguments]] ولا [[slice.call]].`, sol: R`~~~js log-line.mjs
-function logLine(level, ...parts) {
-  return '[' + level.toUpperCase() + '] ' + parts.join(' ');
-}
-console.log(logLine('warn', 'disk', 91, '%'));
-~~~
-
-~~~text الناتج (Node 24.22، والنسخة القديمة طلّعت نفس السطر)
-[WARN] disk 91 %
-~~~
-
-**الشرح:** [[Array.prototype.slice.call(arguments, 1)]] كانت الطريقة المشهورة قبل ES2015: تستلف [[slice]] من الـ arrays وتناديها على [[arguments]] (لأنه شبه array: فيه [[length]] و indexes) عشان تاخد كل حاجة بعد أول واحد. الـ rest [[...parts]] بيعمل نفس الحاجة: array حقيقية فيها كل اللي بعد [[level]]، وباسم بيقول هي إيه. و [[var]] بقت مش محتاجينها.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حد حوّل دالة لـ arrow عشان «أقصر»، في ملف [[sum.cjs]]:
-
-~~~js
-const sum = () => {
-  let total = 0;
-  for (const n of arguments) total += typeof n === 'number' ? n : 0;
-  return total + ' (من ' + arguments.length + ' arguments)';
-};
-console.log(sum(1, 2, 3));
-~~~
-
-شغّلها كـ [[.cjs]] وكـ [[.mjs]]، وفسّر الناتجين، وصلّحها.`, done: R`فهمت الـ 5 الغريبة في الـ cjs والـ [[ReferenceError]] في الـ mjs، والتصليح بيطبع [[6 (من 3 arguments)]] في الاتنين.`, sol: R`~~~text الناتج: node sum.cjs
-0 (من 5 arguments)
-~~~
-
-~~~text الناتج: node sum.mjs
-ReferenceError: arguments is not defined
-~~~
-
-الـ arrow ملهاش [[arguments]] بتاعها، فبتدوّر عليه برّه:
-
-- في CommonJS، Node بيلف الملف كله في دالة بـ ٥ parameters ([[exports]] و [[require]] و [[module]] و [[__filename]] و [[__dirname]]). فالـ arrow لقت [[arguments]] بتاع **الملف**: ٥ حاجات مش أرقام، فالمجموع 0. باج ساكت.
-- في ESM مفيش دالة حوالين الملف، فـ [[arguments]] مش متعرّف: [[ReferenceError]].
-
-~~~js sum.cjs
-const sum = (...nums) => {
-  let total = 0;
-  for (const n of nums) total += typeof n === 'number' ? n : 0;
-  return total + ' (من ' + nums.length + ' arguments)';
-};
-console.log(sum(1, 2, 3));
-~~~
-
-~~~text الناتج (Node 24.22)
-6 (من 3 arguments)
-~~~` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[area(w, h)]]: لو اتبعت رقم واحد بس ترجّع مساحة مربع، ولو اتنين مساحة مستطيل. ولو مفيش ولا واحد ترمي [[TypeError]]. ولو حد بعت [[area(5, undefined)]] (غالبًا متغير فاضي بالغلط) ترمي برضه، متعتبرهاش مربع. لازم تفرّق بين «مبعتش» و «بعت [[undefined]]».`, done: R`[[area(5)]] بـ 25، و [[area(5, 2)]] بـ 10، و [[area()]] و [[area(5, undefined)]] بيرموا رسايل مختلفة، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js area.mjs
-function area(w, h) {
-  if (arguments.length === 0) throw new TypeError('area محتاجة على الأقل ضلع واحد');
-  if (arguments.length === 1) return w * w;
-  if (h === undefined) throw new TypeError('العرض اتبعت undefined: لو مربع ابعت رقم واحد بس');
-  return w * h;
-}
-console.log(area(5), area(5, 2));
-for (const args of [[], [5, undefined]]) {
-  try { area(...args); } catch (e) { console.log(e.message); }
-}
-~~~
-
-~~~text الناتج (Node 24.22)
-25 10
-area محتاجة على الأقل ضلع واحد
-العرض اتبعت undefined: لو مربع ابعت رقم واحد بس
-~~~
-
-**الشرح:** [[h === undefined]] لوحدها مش هتفرّق بين [[area(5)]] و [[area(5, undefined)]]: [[h]] [[undefined]] في الاتنين. [[arguments.length]] هي اللي بتفرّق (1 ضد 2). والبديل الحديث من غير [[arguments]]: [[function area(...args)]] و [[args.length]]، بس كده بتخسر الأسامي [[w]] و [[h]] في التوقيع.` },
-          ],
-          check: { lang: "js", starter: R`function area(w, h) {
-  // رقم واحد = مربع، اتنين = مستطيل، ومفيش أو h اتبعت undefined = TypeError
-}`, tests: R`test("مربع", () => expect(area(5)).toBe(25));
-test("مستطيل", () => expect(area(5, 2)).toBe(10));
-test("من غير arguments", () => expect(() => area()).toThrow("ضلع"));
-test("h اتبعت undefined", () => expect(() => area(5, undefined)).toThrow("undefined"));
-test("نوع الـ error", () => { let err; try { area(); } catch (e) { err = e; } expect(err instanceof TypeError).toBe(true); });
-test("صفر مش undefined", () => expect(area(5, 0)).toBe(0));`, solution: R`function area(w, h) {
-  if (arguments.length === 0) throw new TypeError('area محتاجة على الأقل ضلع واحد');
-  if (arguments.length === 1) return w * w;
-  if (h === undefined) throw new TypeError('العرض اتبعت undefined: لو مربع ابعت رقم واحد بس');
-  return w * h;
-}` },
-          flag: "script",
-          deep: {
-            why: R`[[arguments]] موجود في كود كتير قبل 2015 (مكتبات، و polyfills، و jQuery plugins)، ولازم تقراه وتحوّله. وفيه باجات بتيجي منه بالذات: arrow بتاخد [[arguments]] بتاع حد تاني، و «mapped arguments» اللي بيغيّر الـ parameters من ورا ضهرك، و [[arguments.map]] اللي مش موجودة. ومعرفة [[arguments.length]] ضد [[fn.length]] بتوضّح الفرق بين «الدالة مستنية كام» و «اتبعتلها كام».`,
-            how: R`لما دالة عادية تتنادى، المحرك بيعمل object من نوع Arguments فيه: indexes من [[0]] لـ [[n - 1]]، و [[length]] (خاصية own [[writable: true]] و [[enumerable: false]]، فتقدر تغيّرها: [[arguments.length = 1]] خلّت [[[...arguments]]] [[[ 'a' ]]])، و [[ [Symbol.iterator] ]] اللي هو نفس [[Array.prototype.values]] بالظبط ([[arguments[Symbol.iterator] === Array.prototype.values]] طلعت [[true]])، فـ [[for...of]] والـ spread و [[Array.from]] شغالين. وفي sloppy mode فيه كمان [[callee]] (الدالة نفسها)، وفي strict قرايته بترمي [[TypeError: 'caller', 'callee', and 'arguments' properties may not be accessed on strict mode functions or the arguments objects for calls to them]].
-
-والـ arrow functions مالهاش [[arguments]] ولا [[this]] ولا [[new.target]] بتوعها: بتشوف بتوع أقرب دالة عادية حواليها. وده سبب الـ 5 الغريبة في CommonJS، لأن الملف نفسه جوه دالة wrapper.`,
-            when: R`في الكود الجديد: rest parameter دايمًا ([[...args]]). [[arguments.length]] بس لما محتاج تفرّق بين «مبعتش» و «بعت [[undefined]]» ومش عايز تخسر أسامي الـ parameters. ولما تقرا كود قديم: [[Array.prototype.slice.call(arguments)]] = [[[...arguments]]] = [[Array.from(arguments)]]، وكلهم = rest.`,
-            mistakes: R`- [[arguments.map(...)]]: [[TypeError: arguments.map is not a function]]. حوّله الأول أو استخدم rest.
-- [[arguments]] جوه arrow: بتاخد بتاع الدالة اللي برّه، أو بتاع ملف الـ CommonJS، أو [[ReferenceError]] في ESM.
-- تفتكر [[arguments.length]] = [[fn.length]].
-- تعدّل [[ arguments[0] ]] في sloppy mode وتفاجأ إن الـ parameter اتغيّر.
-- [[arguments.callee]] في strict mode: [[TypeError]]، و MDN معلّماه deprecated. سمّي الدالة واستخدم اسمها.
-- تعمل [[ 'use strict' ]] جوه دالة فيها default أو rest: [[SyntaxError: Illegal 'use strict' directive in function with non-simple parameter list]] (اتجرّب). وفايرفوكس بيكتبها «"use strict" not allowed in function with non-simple parameters» (من MDN).`,
-          },
-          teach: R`## الفكرة في سطرين
-
-[[arguments]] هو «شنطة» فيها كل اللي اتبعت للدالة. شبه array بس مش array. والـ rest parameter عمل نفس الشغل بشكل أحسن. كل اللي تحت من Node 24.22، والمثال ملف [[.mjs]].
-
----
-
-## ١. [[arguments.length]]: كام واحد اتبعت
-
-~~~js
-function total(label) {
-  console.log(arguments.length, total.length, typeof arguments, Array.isArray(arguments));
-~~~
-
-~~~text الناتج
-4 1 object false
-0 1 object false
-~~~
-
-| | [[arguments.length]] | [[total.length]] |
-|---|---|---|
-| معناه | عدد اللي اتبعت **في النداء ده** | عدد الـ parameters في التعريف (لحد أول default أو rest) |
-| [[total('فاتورة', 10, 20, 5)]] | 4 | 1 |
-| [[total()]] | 0 | 1 |
-| بيتغيّر؟ | مع كل نداء | ثابت |
-
-و [[typeof]] بـ [[object]]، و [[Array.isArray]] بـ [[false]]: مش array.
-
----
-
-## ٢. [[arguments[Symbol.iterator]]]: اللف عليه
-
-~~~js
-for (const n of arguments) if (typeof n === 'number') sum += n;
-~~~
-
-[[for...of]] شغال لأن [[arguments]] فيه [[ [Symbol.iterator] ]]، وده **نفس** [[Array.prototype.values]] (اتجرّب: المقارنة [[===]] طلعت [[true]]). فكل حاجة بتحتاج iterable شغالة:
-
-~~~text الناتج (من g('a', 'b'))
-{ value: 'a', done: false }
-[ 'a', 'b' ]
-[ 'a', 'b' ]
-[ 'a', 'b' ]
-~~~
-
-بالترتيب: [[ arguments[Symbol.iterator]().next() ]]، و [[[...arguments]]]، و [[Array.from(arguments)]]، و [[Array.prototype.slice.call(arguments)]]. التلاتة الأخيرة بيحوّلوه لـ array حقيقية. والقديم [[for (let i = 0; i < arguments.length; i++)]] شغال برضه عشان [[length]] و الـ indexes.
-
----
-
-## ٣. اللي مش موجود فيه
-
-| الحاجة | النتيجة (اتجرّب) |
-|---|---|
-| [[arguments.map(...)]] | [[TypeError: arguments.map is not a function]]: مفيش methods الـ array |
-| [[Object.prototype.toString.call(arguments)]] | [["[object Arguments]"]]: نوع لوحده |
-| [[arguments]] في arrow جوه ESM | [[ReferenceError: arguments is not defined]] لو قريته، و [[typeof arguments]] بـ [[undefined]] (زي آخر سطر في المثال) |
-| [[arguments]] في arrow في ملف CommonJS | بتاع الملف نفسه: [[length]] بـ 5 |
-| [[arguments.callee]] في strict | [[TypeError: 'caller', 'callee', and 'arguments' properties may not be accessed on strict mode functions ...]] |
-
----
-
-## ٤. mapped و unmapped
-
-~~~text الناتج (args.cjs)
-changed orig orig
-~~~
-
-في الـ sloppy mode ولو الـ parameters بسيطة (من غير default ولا rest ولا destructuring)، [[ arguments[0] ]] و [[a]] **نفس الخانة**: تغيير واحد بيغيّر التاني. في strict mode أو مع parameters مش بسيطة، الربط مش موجود. ده واحد من أسباب إن كل الكود الجديد strict (ESM و class).
-
----
-
-## ٥. rest parameter: البديل
-
-~~~js
-function totalRest(label, ...nums) {
-  return label + ': ' + nums.reduce((a, b) => a + b, 0);
-}
-~~~
-
-| | [[arguments]] | [[...nums]] |
-|---|---|---|
-| النوع | Arguments (شبه array) | Array حقيقية: [[map]] و [[reduce]] على طول |
-| فيه | **كل** الـ arguments حتى اللي ليهم أسامي | اللي بعد الـ parameters اللي ليها أسامي بس |
-| في arrow | مش موجود | شغال |
-| الاسم | ثابت [[arguments]] | انت بتسمّيه |
-| [[fn.length]] | مبيأثرش | مبيتحسبش |
-
----
-
-## الخلاصة
-
-- [[arguments.length]] = اتبعت كام فعلًا. [[fn.length]] = مستنية كام.
-- [[ arguments[Symbol.iterator] ]] = [[Array.prototype.values]]، فـ [[for...of]] والـ spread شغالين، بس [[map]] لأ.
-- الـ arrow ملهاش [[arguments]]: في CommonJS بتاخد بتاع الملف (باج ساكت)، وفي ESM [[ReferenceError]].
-- في الكود الجديد: [[...rest]].`,
-          lines: [
-            R`دالة عادية بـ parameter واحد بس، وهنبعتلها أكتر.`,
-            R`[[arguments.length]] عدد اللي اتبعت فعلًا، و [[total.length]] عدد الـ parameters في التعريف (1)، و [[typeof]] بـ [[object]]، و [[Array.isArray]] بـ [[false]].`,
-            R`مجموع بيبدأ من صفر.`,
-            R`[[for...of]] على [[arguments]] شغال بسبب [[ arguments[Symbol.iterator] ]]. بنجمع الأرقام بس، فالنص [['فاتورة']] بيتعدّى.`,
-            R`[[label]] لسه بالاسم بتاعه، وهو نفسه [[ arguments[0] ]].`,
-            R`قفلة [[total]].`,
-            R`٤ arguments: السطر الأول من جوه الدالة [[4 1 object false]]، وبعده [[فاتورة: 35]].`,
-            R`من غير arguments: [[0 1 object false]] وبعده [[undefined: 0]] لأن [[label]] مبعتهوش حد.`,
-            R`نفس الدالة بالـ rest: [[nums]] array حقيقية فيها كل اللي بعد [[label]].`,
-            R`[[reduce]] شغالة على طول لأن [[nums]] array، والـ [[0]] قيمة البداية عشان لو الـ array فاضية.`,
-            R`قفلة [[totalRest]].`,
-            R`نفس الناتج [[فاتورة: 35]] من غير [[arguments]].`,
-            R`arrow بتسأل عن [[typeof arguments]]. في ملف [[.mjs]] مفيش دالة حواليها، فمفيش [[arguments]].`,
-            R`بيطبع [[undefined]]: [[typeof]] مبترميش على اسم مش متعرّف. لو كتبت [[arguments]] لوحدها كانت هترمي [[ReferenceError]]، ولو الملف [[.cjs]] كانت هتطلع [[object]] (بتاع الملف).`,
-          ],
-          ref: [
-            { t: "MDN: The arguments object", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments" },
-            { t: "MDN: arguments.length", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments/length" },
-            { t: "MDN: arguments[Symbol.iterator]()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments/Symbol.iterator" },
-            { t: "MDN: arguments.callee (deprecated)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments/callee" },
-            { t: "MDN: Rest parameters", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/rest_parameters" },
-            { t: "ECMAScript: Arguments Exotic Objects", url: "https://tc39.es/ecma262/multipage/ordinary-and-exotic-objects-behaviours.html#sec-arguments-exotic-objects" }
-          ],
-          pre: ["js/Function: length و name و toString و new.target", { to: "js/default و rest و spread", why: R`الـ rest parameter اللي هو البديل الحديث` }, { to: "js/CommonJS و ESM", why: R`ليه ملف الـ CommonJS جوه دالة wrapper، والـ ESM لأ` }, "js/iterators و generators"]
-        },
-        {
-          cmd: "Reflect: الـ ١٣ دالة",
-          title: "Reflect كله: نفس عمليات المحرك على الـ objects، كدوال بترجّع true و false بدل ما ترمي",
-          desc: R`[[Reflect]] object جاهز فيه ١٣ دالة static، كل واحدة بتعمل عملية واحدة من العمليات الداخلية اللي المحرك بيعملها على أي object: [[Reflect.get]] (قراية)، و [[Reflect.set]] (كتابة)، و [[Reflect.has]] ([[in]])، و [[Reflect.deleteProperty]] ([[delete]])، و [[Reflect.ownKeys]] (كل المفاتيح)، و [[Reflect.defineProperty]] و [[Reflect.getOwnPropertyDescriptor]]، و [[Reflect.getPrototypeOf]] و [[Reflect.setPrototypeOf]]، و [[Reflect.isExtensible]] و [[Reflect.preventExtensions]]، و [[Reflect.apply]] (نداء دالة)، و [[Reflect.construct]] ([[new]]).
-
-ليه موجود جنب [[Object.*]]؟ لأن [[Reflect]] بيرجّع [[true]] أو [[false]] لما العملية تفشل بدل ما يرمي، وبيرمي لو الـ target مش object بدل ما يحوّله ساكت، وكل دالة فيه بنفس اسم trap في [[Proxy]] وبنفس الـ arguments. ودا اللي خلّى [[return Reflect.set(...)]] هي الطريقة الصح في درس «Proxy و Reflect».`,
-          example: R`// Reflect: نفس عمليات المحرك، بترجّع true و false بدل ما ترمي
-const locked = Object.freeze({ id: 7 });
-console.log(Reflect.defineProperty(locked, 'id', { value: 8 }), Reflect.set(locked, 'id', 8));
-try { Object.defineProperty(locked, 'id', { value: 8 }); } catch (e) { console.log(e.message); }
-console.log(Reflect.deleteProperty(locked, 'id'), Reflect.has(locked, 'id'), Reflect.ownKeys({ a: 1, [Symbol('s')]: 2 }));
-const user = { first: 'Sara', get greet() { return 'أهلًا ' + this.first; } };
-console.log(Reflect.get(user, 'greet'), Reflect.get(user, 'greet', { first: 'Mona' }));
-function sum(...n) { return n.reduce((a, b) => a + b, 0); }
-sum.apply = null;
-console.log(Reflect.apply(sum, null, [1, 2, 3]));
-class Point { constructor(x) { this.x = x; } }
-const p = Reflect.construct(Point, [4]);
-console.log(p instanceof Point, p.x);
-console.log(Reflect.getPrototypeOf(p) === Point.prototype, Reflect.setPrototypeOf(locked, null), Reflect.isExtensible(locked));
-console.log(Reflect.getOwnPropertyDescriptor(locked, 'id'), Reflect.preventExtensions({}));
-try { Reflect.getPrototypeOf(1); } catch (e) { console.log(e.message); }`,
-          try: R`اطبع [[Object.getOwnPropertyNames(Reflect)]] و [[Object.keys(Reflect)]]: ليه التانية فاضية؟ وبعدين جرّب [[const o = {}]] و [[Reflect.set(o, 'x', 1, { other: true })]]: رجّعت إيه؟ و [[o.x]] بقت إيه؟ وفين راحت القيمة؟`,
-          sol: R`~~~js reflect-list.mjs
-console.log(Object.getOwnPropertyNames(Reflect), Object.keys(Reflect));
-const o = {};
-const receiver = { other: true };
-console.log(Reflect.set(o, 'x', 1, receiver), o.x, receiver);
-~~~
-
-~~~text الناتج (Node 24.22)
-[
-  'defineProperty',
-  'deleteProperty',
-  'apply',
-  'construct',
-  'get',
-  'getOwnPropertyDescriptor',
-  'getPrototypeOf',
-  'has',
-  'isExtensible',
-  'ownKeys',
-  'preventExtensions',
-  'set',
-  'setPrototypeOf'
-] []
-true undefined { other: true, x: 1 }
-~~~
-
-- الـ ١٣ دالة [[enumerable: false]] زي كل الـ built-ins، عشان كده [[Object.keys]] فاضية (درس «enumerability و ownership»).
-- الـ argument الرابع في [[Reflect.set]] هو الـ **receiver**: الـ object اللي الكتابة بتحصل عليه فعلًا (وهو [[this]] لو فيه setter). بعتنا receiver تاني فالقيمة اتكتبت **عليه** مش على [[o]]، و [[Reflect.set]] رجّعت [[true]]. ده سبب إن الـ Proxy trap لازم يعدّي الـ [[receiver]] اللي جاله، مش object من عنده.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب الـ ٦ قيم قبل التشغيل:
-
-~~~js
-const frozen = Object.freeze({ a: 1 });
-const child = Object.create({ inherited: true });
-console.log(Reflect.set(frozen, 'a', 2), Reflect.deleteProperty(frozen, 'a'), Reflect.deleteProperty(frozen, 'zzz'));
-console.log(Reflect.has(child, 'inherited'), Reflect.ownKeys(child), Reflect.getOwnPropertyDescriptor(child, 'inherited'));
-~~~`, done: R`كتبت [[false false true]] و [[true [] undefined]]، وتقدر تقول ليه مسح خاصية مش موجودة من object متجمّد رجّع [[true]].`, sol: R`~~~text الناتج (Node 24.22)
-false false true
-true [] undefined
-~~~
-
-- الكتابة والمسح على متجمّد: [[false]] من غير ما يرمي، حتى في strict mode (الملف [[.mjs]]). ده الفرق عن [[frozen.a = 2]] اللي كانت هترمي.
-- مسح حاجة **مش موجودة** بيعتبر نجاح ([[true]]): النتيجة النهائية «مفيش [[zzz]]» اتحققت. ونفس الكلام في [[delete obj.zzz]].
-- [[Reflect.has]] زي [[in]]: بيشوف الموروث. بس [[ownKeys]] و [[getOwnPropertyDescriptor]] own بس، فـ [[[]]] و [[undefined]].` },
-            { lvl: 'تطبيق', t: R`**refactor:** الدالة دي بتستخدم [[try/catch]] عشان تعرف إذا التعريف نجح. خليها من غير [[try]] بـ [[Reflect.defineProperty]]:
-
-~~~js
-function addId(obj, id) {
-  try {
-    Object.defineProperty(obj, 'id', { value: id, enumerable: true });
-    return 'اتضاف';
-  } catch (e) {
-    return 'مش ممكن: ' + e.message;
+  describe() {
+    return this.constructor.name + ": " + Number(this.area().toFixed(2));
   }
 }
-console.log(addId({}, 1), '|', addId(Object.freeze({}), 2));
-~~~`, done: R`النسختين بيرجّعوا [[اتضاف]] للأول و «مش ممكن» للتاني، والجديدة مفيهاش [[try]].`, sol: R`~~~text الناتج (القديمة)
-اتضاف | مش ممكن: Cannot define property id, object is not extensible
-~~~
-
-~~~js add-id.mjs
-function addId(obj, id) {
-  return Reflect.defineProperty(obj, 'id', { value: id, enumerable: true }) ? 'اتضاف' : 'مش ممكن: الـ object مقفول أو id متعرّفة قبل كده';
+class Circle extends Shape {
+  constructor(r) {
+    super();
+    this.r = r;
+  }
+  area() {
+    return Math.PI * this.r ** 2;
+  }
 }
-console.log(addId({}, 1), '|', addId(Object.freeze({}), 2));
-~~~
-
-~~~text الناتج (Node 24.22)
-اتضاف | مش ممكن: الـ object مقفول أو id متعرّفة قبل كده
-~~~
-
-**التمن:** خسرنا نص الـ error بتاع المحرك، لأن [[Reflect]] بيقول نجح ولا لأ بس. لو محتاج السبب بالظبط (للوج مثلًا) القديمة أحسن. ولو الفشل حالة عادية متوقعة (مش استثناء)، [[Reflect]] أوضح وأرخص: الـ [[throw]] والـ [[catch]] بيكلّفوا أكتر من [[if]].` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[safeCall(obj, method, ...args)]] بتنادي method على object حتى لو حد غيّر [[apply]] و [[call]] على الدالة نفسها، وبترمي [[TypeError]] لو الاسم مش method. و [[createFrom(Class, args)]] بتعمل instance من أي class والـ arguments في array.`, done: R`[[weird.total.apply(...)]] بيرجّع الكلام المزيّف و [[safeCall(weird, 'total', 1, 2)]] بيرجّع 8، و [[createFrom(Date, [0])]] و [[createFrom(Map, ...)]] شغالين، و [[safeCall(weird, 'fee')]] بيرمي.`, sol: R`~~~js safe-call.mjs
-function safeCall(obj, method, ...args) {
-  const fn = Reflect.get(obj, method);
-  if (typeof fn !== 'function') throw new TypeError(String(method) + ' مش method في الـ object ده');
-  return Reflect.apply(fn, obj, args);
+class Rect extends Shape {
+  constructor(w, h) {
+    super();
+    this.w = w;
+    this.h = h;
+  }
+  area() {
+    return this.w * this.h;
+  }
 }
-function createFrom(Class, args) {
-  return Reflect.construct(Class, args);
+
+console.log(new Circle(1).describe());
+console.log(new Rect(2, 3).describe());
+console.log(new Shape().describe());
+console.log(Object.hasOwn(Circle.prototype, "describe"), "describe" in new Circle(1));
+~~~
+
+~~~text الناتج (node shapes.js، Node 24)
+Circle: 3.14
+Rect: 6
+Shape: 0
+false true
+~~~
+
+**ليه كده:**
+
+- **[[describe]] مكتوبة مرة واحدة في Shape،** و Circle و Rect بيلاقوها في السلسلة (آخر سطر: مش على Circle.prototype، بس موجودة).
+- **[[this.area()]] جوه describe:** this هي الـ instance الحقيقي (Circle مثلًا)، فـ JS بتدوّر على [[area]] من أول سلسلته وتلاقي نسخة Circle الأول. ده اسمه polymorphism: نفس السطر بيشغّل كود مختلف حسب النوع.
+- **[[this.constructor.name]]:** الـ constructor بتاع الـ instance هو الكلاس اللي اتعمل بيه، فـ [["Circle"]] مش [["Shape"]].
+- **[[Number(x.toFixed(2))]]:** [[toFixed]] بترجّع نص [["3.14"]] و [["6.00"]]، و [[Number]] بيشيل الأصفار الزيادة: 6 مش 6.00.
+- **[[super()]] في كل constructor:** لازم قبل [[this.r = r]] (التمرين اللي جاي).
+
+**الغلطة الشائعة:** تكتب [[describe]] في كل كلاس ابن، أو تكتب [[if (this instanceof Circle)]] جوه Shape. الكلاس الأب ميعرفش ولاده: كل ابن بيغيّر [[area]] بس.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[class Child extends Parent { constructor(n) { this.x = 1; super(n); } }]]. اعمل [[new Child(1)]] واقرا الرسالة.`, done: R`الرسالة [[ReferenceError: Must call super constructor in derived class before accessing 'this' or returning from derived constructor]]. بعد ما تخلي [[super(n)]] أول سطر بيشتغل، و [[this.x]] بـ 1.`, sol: R`~~~js super-order.js
+class Parent {
+  constructor(n) {
+    this.n = n;
+  }
 }
-const weird = { total(a, b) { return a + b + this.fee; }, fee: 5 };
-weird.total.apply = () => 'apply اتغيّرت!';
-weird.total.call = () => 'call اتغيّرت!';
-console.log(weird.total.apply(weird, [1, 2]), safeCall(weird, 'total', 1, 2));
-console.log(createFrom(Date, [0]).toISOString(), createFrom(Map, [[['k', 1]]]).get('k'));
-try { safeCall(weird, 'fee'); } catch (e) { console.log(e.message); }
+class Broken extends Parent {
+  constructor(n) {
+    this.x = 1;          // قبل super
+    super(n);
+  }
+}
+class Child extends Parent {
+  constructor(n) {
+    super(n);            // الأول
+    this.x = 1;
+  }
+}
+
+try {
+  new Broken(1);
+} catch (e) {
+  console.log(e.name + ": " + e.message);
+}
+const c = new Child(1);
+console.log(c.x, c.n);
 ~~~
 
-~~~text الناتج (Node 24.22)
-apply اتغيّرت! 8
-1970-01-01T00:00:00.000Z 1
-fee مش method في الـ object ده
-~~~
-
-**الشرح:** [[fn.apply(...)]] بيقرا [[apply]] من الدالة نفسها، وحد غطّى عليها بخاصية own. [[Reflect.apply(fn, thisArg, args)]] static، فمحدش يقدر يغيّرها من على الدالة. ده نفس سبب [[Object.hasOwn]] بدل [[obj.hasOwnProperty]]. و [[Reflect.construct(Class, args)]] = [[new Class(...args)]] بس الـ args في array، وده مفيد في factory أو dependency injection.` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** Proxy بيعدّي كل كتابة للأصل، بس الكتابة مش بتوصل:
-
-~~~js
-const target = { qty: 1 };
-const p = new Proxy(target, { set(t, k, v) { return Reflect.set(t, k, v, {}); } });
-p.qty = 5;
-console.log(target.qty, p.qty);
-~~~`, done: R`بيطبع [[5 5]] بعد التصليح، وتقدر تقول القيمة كانت بتروح فين.`, sol: R`~~~text الناتج قبل التصليح
+~~~text الناتج (node super-order.js، Node 24)
+ReferenceError: Must call super constructor in derived class before accessing 'this' or returning from derived constructor
 1 1
 ~~~
 
-الرابع في [[Reflect.set]] هو الـ receiver، والـ trap بعت [[{}]] جديد. فالكتابة حصلت على الـ object الفاضي ده (اللي اترمى بعدها)، و [[Reflect.set]] رجّعت [[true]] فالـ Proxy مرماش أي error. باج ساكت.
+**ليه كده:**
 
-~~~js receiver.mjs
-const target = { qty: 1 };
-const p = new Proxy(target, { set(t, k, v, receiver) { return Reflect.set(t, k, v, receiver); } });
-p.qty = 5;
-console.log(target.qty, p.qty);
-~~~
+- **في كلاس وارث ([[extends]])، الـ object نفسه بيتعمل في constructor الأب،** و [[super(n)]] هي اللي بتناديه. قبلها this لسه مش موجودة، فأي [[this.x]] بيرمي ReferenceError (نفس فكرة الـ TDZ).
+- **بعد [[super(n)]]:** الأب حط [[n]]، وبعدين الابن حط [[x]].
 
-~~~text الناتج (Node 24.22)
-5 5
-~~~
+**الغلطة الشائعة:** تنسى [[super()]] خالص في constructor الابن. الرسالة ساعتها نفسها (أول ما تلمس this أو الـ constructor يخلص). ولو الابن مالوش constructor أصلًا، JS بتعمله واحد لوحده بينادي [[super(...args)]]، فمش لازم تكتبه لو مش هتزوّد حاجة.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[class ValidationError extends Error]] بتاخد [[(message, field)]]، وبتنادي [[super(message)]]، وبتحط [[this.name]] و [[this.field]]. ارميها من [[validateUser(user)]] لو الإيميل مفيهوش [[@]]، وامسكها في [[try]] وفرّق بـ [[instanceof]].`, done: R`[[err instanceof ValidationError]] و [[err instanceof Error]] الاتنين [[true]]، و [[err.field]] بترجّع [["email"]]، و [[String(err)]] بترجّع [["ValidationError: "]] وبعدها الرسالة، وأي error تاني (زي TypeError) مبيتمسكش في نفس الفرع.`, sol: R`~~~js validation-error.js
+class ValidationError extends Error {
+  constructor(message, field) {
+    super(message);
+    this.name = "ValidationError";
+    this.field = field;
+  }
+}
 
-الـ receiver هنا هو [[p]] نفسه. [[Reflect.set]] لقى إن [[qty]] data property في [[target]]، فعرّفها على الـ receiver ([[p]])، والـ Proxy مفيهوش trap [[defineProperty]] فوصلت لـ [[target]]. القاعدة: عدّي الـ arguments اللي جاتلك للـ trap زي ما هي.` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من MDN ومن التجربة: لكل دالة في [[Reflect]] فيه مقابل في [[Object]] أو operator؟ واعمل جدول فيه المقابل، والفرق في السلوك لو فيه، وجرّب على الأقل حالتين بنفسك.`, done: R`جدول فيه الـ ١٣، وكل صف فيه المقابل، وعرفت إن [[getPrototypeOf]] و [[isExtensible]] و [[preventExtensions]] و [[getOwnPropertyDescriptor]] بيختلفوا مع الـ primitives، وجرّبت حالتين.`, sol: R`**الإجابة النموذجية:**
+function validateUser(user) {
+  if (typeof user?.email !== "string" || !user.email.includes("@")) {
+    throw new ValidationError("الإيميل لازم يبقى فيه @", "email");
+  }
+  return true;
+}
 
-| [[Reflect]] | المقابل | الفرق |
-|---|---|---|
-| [[get(o, k, r)]] | [[ o[k] ]] | بياخد receiver |
-| [[set(o, k, v, r)]] | [[o[k] = v]] | بيرجّع boolean مهما كان الـ mode |
-| [[has(o, k)]] | [[k in o]] | دالة مش operator |
-| [[deleteProperty(o, k)]] | [[delete o[k] ]] | boolean من غير رمي في strict |
-| [[ownKeys(o)]] | [[getOwnPropertyNames]] + [[getOwnPropertySymbols]] | الاتنين في نداء واحد |
-| [[defineProperty]] | [[Object.defineProperty]] | boolean بدل الرمي |
-| [[getOwnPropertyDescriptor]] | نفس الاسم في [[Object]] | بيرمي مع primitive |
-| [[getPrototypeOf]] | نفس الاسم في [[Object]] | بيرمي مع primitive |
-| [[setPrototypeOf]] | نفس الاسم في [[Object]] | boolean بدل الرمي |
-| [[isExtensible]] | [[Object.isExtensible]] | بيرمي مع primitive |
-| [[preventExtensions]] | [[Object.preventExtensions]] | boolean، وبيرمي مع primitive |
-| [[apply(f, t, args)]] | [[f.apply(t, args)]] | مش بيتأثر لو [[apply]] اتغيّرت على الدالة |
-| [[construct(C, args, nt)]] | [[new C(...args)]] | التالت بيحدد [[new.target]] |
+function trySave(user) {
+  try {
+    validateUser(user);
+    return "اتحفظ";
+  } catch (err) {
+    if (err instanceof ValidationError) return "خانة " + err.field + ": " + err.message;
+    throw err;                              // أي error تاني مش بتاعنا: يطلع لفوق
+  }
+}
 
-~~~js reflect-vs-object.mjs
-console.log(Object.getPrototypeOf(1) === Number.prototype, Object.isExtensible(1), Object.preventExtensions(1));
-for (const f of [() => Reflect.getPrototypeOf(1), () => Reflect.isExtensible(1), () => Reflect.preventExtensions(1)]) {
-  try { f(); } catch (e) { console.log(e.message); }
+try {
+  validateUser({ email: "sara.example" });
+} catch (err) {
+  console.log(err instanceof ValidationError, err instanceof Error, err.field);
+  console.log(String(err));
+}
+console.log(trySave({ email: "sara@site.test" }));
+console.log(trySave({ email: "sara" }));
+try {
+  trySave(null);
+  trySave({ get email() { throw new TypeError("باظ"); } });
+} catch (err) {
+  console.log("طلع برّه:", err.name, err.message);
 }
 ~~~
 
-~~~text الناتج (Node 24.22)
-true false 1
-Reflect.getPrototypeOf called on non-object
-Reflect.isExtensible called on non-object
-Reflect.preventExtensions called on non-object
+~~~text الناتج (node validation-error.js، Node 24)
+true true email
+ValidationError: الإيميل لازم يبقى فيه @
+اتحفظ
+خانة email: الإيميل لازم يبقى فيه @
+طلع برّه: TypeError باظ
 ~~~
 
-[[Object.*]] بتحوّل الـ primitive (أو تتعامل معاه كأنه متجمّد) من غير ما تقول، و [[Reflect.*]] بترمي، لأن الـ trap المقابل في Proxy عمره ما بيستقبل primitive.` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`[[Reflect]] اتعمل مع [[Proxy]] في ES2015 لسببين: يدّي كل trap طريقة يكمّل بيها السلوك الأصلي بنفس الـ arguments ([[return Reflect.set(t, k, v, r)]])، ويلم العمليات اللي كانت متفرقة (operators زي [[in]] و [[delete]]، و methods على [[Object]]، و [[Function.prototype.apply]]) في مكان واحد بشكل واحد: دوال بترجّع نتيجة واضحة. ولو بتكتب أداة عامة (validation، أو serializer، أو test mocks، أو ORM) هتحتاج تعمل العمليات دي على objects مش بتاعتك من غير ما تقع.`,
-            how: R`كل object في المواصفات ليه ١١ «internal method» (و ١٣ لو دالة: Call و Construct). كل دالة في [[Reflect]] بتنادي واحدة منهم مباشرة، وبترجّع نتيجتها زي ما هي:
+**ليه كده:**
 
-- العمليات اللي بتغيّر ([[set]] و [[defineProperty]] و [[deleteProperty]] و [[setPrototypeOf]] و [[preventExtensions]]) بترجّع boolean النجاح، و [[Object.*]] و الـ operators في strict mode هما اللي بيحوّلوا [[false]] لـ [[TypeError]].
-- أي target مش object بيرمي ([[Reflect.get called on non-object]]) لأن العملية الداخلية مش موجودة على primitive.
-- [[Reflect.apply(f, thisArg, argsList)]]: [[argsList]] لازم array-like، وإلا [[TypeError: CreateListFromArrayLike called on non-object]] (اتجرّب بـ [[Reflect.apply(Math.max, null)]]).
-- [[Reflect.construct(C, args, newTarget)]]: [[C]] لازم constructor (arrow رمت [[() => {} is not a constructor]])، والتالت بيحدد [[new.target]] والـ prototype: [[Reflect.construct(Animal, [], Dog)]] طلّع [[Dog { kind: 'Dog' }]] و [[instanceof Dog]] بـ [[true]].
-- و [[Reflect]] نفسه مش constructor: [[new Reflect()]] رمت [[Reflect is not a constructor]]، و [[Reflect[Symbol.toStringTag] ]] بـ [["Reflect"]].`,
-            when: R`جوه أي Proxy trap: دايمًا [[Reflect]] بنفس الاسم ونفس الـ arguments. في كود عام بيتعامل مع objects غريبة: [[Reflect.ownKeys]] (كل المفاتيح)، و [[Reflect.apply]] (نداء آمن)، و [[Reflect.defineProperty]] لما الفشل حالة عادية. و [[Reflect.construct]] لما محتاج [[new]] بـ arguments في array أو [[new.target]] مختلف. وفي الكود العادي اليومي: [[obj.x]] و [[x in obj]] أوضح من [[Reflect.get]] و [[Reflect.has]].`,
-            mistakes: R`- تستخدم [[Reflect.set]] وتنسى تبص على الناتج: الفشل ساكت ([[false]]) حتى في strict.
-- تبعت receiver غلط في [[Reflect.set]] أو [[Reflect.get]]: الكتابة بتروح لـ object تاني.
-- [[Reflect.apply(fn, null)]] من غير array: [[CreateListFromArrayLike called on non-object]].
-- تتوقع [[Reflect.getPrototypeOf(1)]] يرجّع [[Number.prototype]] زي [[Object.getPrototypeOf]]: بيرمي.
-- [[Object.keys(Reflect)]] فاضية فتفتكر [[Reflect]] فاضي.
-- تفتكر [[Reflect.has]] = [[Object.hasOwn]]: لأ، [[has]] = [[in]] وبيشوف الموروث.`,
-          },
-          teach: R`## الفكرة في سطرين
+- **[[super(message)]]:** constructor بتاع Error هو اللي بيحط [[message]] و [[stack]]. لازم قبل أي this.
+- **[[this.name = "ValidationError"]]:** من غيرها [[name]] بيفضل [["Error"]] (موروث من Error.prototype)، و [[String(err)]] كانت هتطلع [["Error: ..."]].
+- **[[instanceof]] الاتنين true:** ValidationError.prototype وبعده Error.prototype في السلسلة.
+- **[[trySave(null)]]:** [[user?.email]] رجّعت undefined فطلع ValidationError عادي واتمسك جوه. لكن الـ getter اللي بيرمي [[TypeError]] مش ValidationError، فـ [[throw err]] رماه تاني لبرّه. ده المطلوب: كل catch يمسك اللي يعرف يتعامل معاه بس.
 
-[[Reflect]] = العمليات الداخلية بتاعة المحرك على الـ objects، كدوال عادية. نفس اللي بيحصل في [[obj.x]] و [[x in obj]] و [[delete]] و [[new]]، بس بترجّع النتيجة بدل ما ترمي. الناتج من Node 24.22 كملف [[.mjs]] (strict).
-
----
-
-## ١. الـ ١٣ دالة
-
-| الدالة | العملية | بترجّع |
-|---|---|---|
-| [[Reflect.get]] ([[target, key, receiver]]) | قراية [[ target[key] ]]، والـ getter بيتنادى بـ [[this = receiver]] | القيمة |
-| [[Reflect.set]] ([[target, key, value, receiver]]) | كتابة | [[true]] أو [[false]] |
-| [[Reflect.has]] ([[target, key]]) | [[key in target]] (بالموروث) | boolean |
-| [[Reflect.deleteProperty]] ([[target, key]]) | [[delete target[key] ]] | [[true]] أو [[false]] |
-| [[Reflect.ownKeys]] ([[target]]) | كل المفاتيح الـ own: نصوص و Symbols، ظاهرة ومخفية | array |
-| [[Reflect.defineProperty]] ([[target, key, desc]]) | زي [[Object.defineProperty]] | [[true]] أو [[false]] |
-| [[Reflect.getOwnPropertyDescriptor]] ([[target, key]]) | زي [[Object.getOwnPropertyDescriptor]] | descriptor أو [[undefined]] |
-| [[Reflect.getPrototypeOf]] ([[target]]) | الـ prototype | object أو [[null]] |
-| [[Reflect.setPrototypeOf]] ([[target, proto]]) | تغيير الـ prototype | [[true]] أو [[false]] |
-| [[Reflect.isExtensible]] ([[target]]) | بيقبل إضافة؟ | boolean |
-| [[Reflect.preventExtensions]] ([[target]]) | امنع الإضافة | [[true]] أو [[false]] |
-| [[Reflect.apply]] ([[fn, thisArg, args]]) | نداء الدالة بـ [[this]] و arguments في array | ناتج الدالة |
-| [[Reflect.construct]] ([[C, args, newTarget]]) | [[new C(...args)]] | الـ object الجديد |
-
-كل اسم هنا هو نفس اسم trap في [[Proxy]] بنفس الـ arguments بالظبط. ده مقصود.
-
----
-
-## ٢. boolean بدل الرمي
-
-~~~js
-const locked = Object.freeze({ id: 7 });
-console.log(Reflect.defineProperty(locked, 'id', { value: 8 }), Reflect.set(locked, 'id', 8));
-try { Object.defineProperty(locked, 'id', { value: 8 }); } catch (e) { console.log(e.message); }
+**الغلطة الشائعة:** [[catch (err) { return "الإيميل غلط"; }]] من غير [[instanceof]]: أي باج حقيقي (TypeError من كود تاني) هيتعرض لليوزر كإنه «إيميل غلط» ومحدش هيعرف إن فيه مشكلة.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[class A { hi() { return "A"; } } class B extends A { hi() { return super.hi() + "B"; } }]]. اكتب ناتج [[new B().hi()]] و [[new B() instanceof A]] و [[Object.getPrototypeOf(B) === A]].`, done: R`توقعت وطلع [["AB"]] و [[true]] و [[true]]. و [[super.hi()]] نادت نسخة A من غير ما تدخل في loop.`, sol: R`~~~js super-method.js
+class A {
+  hi() {
+    return "A";
+  }
+}
+class B extends A {
+  hi() {
+    return super.hi() + "B";
+  }
+}
+console.log(new B().hi());
+console.log(new B() instanceof A);
+console.log(Object.getPrototypeOf(B) === A);
+console.log(new A().hi());
 ~~~
 
-~~~text الناتج
-false false
-Cannot redefine property: id
+~~~text الناتج (node super-method.js، Node 24)
+AB
+true
+true
+A
 ~~~
 
-نفس العملية: [[Reflect]] قال «فشلت» بـ [[false]]، و [[Object.defineProperty]] رمى. والملف strict، يعني حتى [[Reflect.set]] مرماش زي ما [[locked.id = 8]] كانت هترمي.
+**ليه كده:**
 
-### [[Reflect.deleteProperty]] و [[Reflect.has]] و [[Reflect.ownKeys]]
+- **[[super.hi()]]** بتدوّر على [[hi]] بداية من **prototype الأب** ([[A.prototype]])، مش من الـ object نفسه. فبتلاقي نسخة A على طول وترجّع [["A"]]، وبعدين B بتزوّد [["B"]].
+- **ليه مفيش loop:** لو كتبت [[this.hi()]] بدل [[super.hi()]]، this هي الـ B instance، والدوّارة هتبدأ من B.prototype وتلاقي [[hi]] بتاعة B نفسها، فتنادي نفسها للأبد ([[RangeError: Maximum call stack size exceeded]]).
+- **[[instanceof A]]:** A.prototype في سلسلة الـ instance. و [[Object.getPrototypeOf(B) === A]]: الكلاس نفسه وارث من الكلاس (عشان الـ static).
+- **[[new A().hi()]]** لسه [["A"]]: B مغيّرتش حاجة في A.
 
-~~~text الناتج
-false true [ 'a', Symbol(s) ]
+**الغلطة الشائعة:** تستخدم [[super]] في دالة عادية برّه الكلاس أو في arrow برّه method: [[SyntaxError: 'super' keyword unexpected here]]. الـ super بتشتغل جوه methods الكلاس (أو object literal methods) بس.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** [[class Store extends EventTarget]] فيها Map خاصة و [[set(key, value)]] بتعمل [[dispatchEvent(new CustomEvent("change", { detail: { key, value } }))]]. وبعدين اكتبها تاني بالتركيب (composition): [[#events = new EventTarget()]] جواها و [[on(fn)]] بتاعتك.`, done: R`في Node والمتصفح: [[store.addEventListener("change", (e) => console.log(e.detail))]] وبعدها [[store.set("theme", "dark")]] بيطبع [[{ key: 'theme', value: 'dark' }]]. والنسخة اللي بالتركيب بتطبع نفس الحاجة، بس من برّه مفيش [[dispatchEvent]] تقدر تناديها، وتقدر تقول أنهي أأمن وليه.`, sol: R`~~~js store-events.js
+// ١) وراثة: Store هو نفسه EventTarget
+class InheritStore extends EventTarget {
+  #data = new Map();
+  set(key, value) {
+    this.#data.set(key, value);
+    this.dispatchEvent(new CustomEvent("change", { detail: { key, value } }));
+  }
+  get(key) {
+    return this.#data.get(key);
+  }
+}
+
+// ٢) تركيب: Store جواه EventTarget خاص
+class ComposedStore {
+  #data = new Map();
+  #events = new EventTarget();
+  set(key, value) {
+    this.#data.set(key, value);
+    this.#events.dispatchEvent(new CustomEvent("change", { detail: { key, value } }));
+  }
+  get(key) {
+    return this.#data.get(key);
+  }
+  on(fn) {
+    const listener = (e) => fn(e.detail);
+    this.#events.addEventListener("change", listener);
+    return () => this.#events.removeEventListener("change", listener);   // unsubscribe
+  }
+}
+
+const s1 = new InheritStore();
+s1.addEventListener("change", (e) => console.log("وراثة:", e.detail));
+s1.set("theme", "dark");
+
+const s2 = new ComposedStore();
+const off = s2.on((detail) => console.log("تركيب:", detail));
+s2.set("theme", "dark");
+off();
+s2.set("theme", "light");                       // مفيش طباعة بعد off
+
+// مين يقدر يزوّر حدث من برّه؟
+s1.dispatchEvent(new CustomEvent("change", { detail: { key: "theme", value: "مزوّر" } }));
+console.log("s1 لسه:", s1.get("theme"), "| s2.dispatchEvent:", typeof s2.dispatchEvent);
 ~~~
 
-المسح من متجمّد فشل ([[false]]) و [[id]] لسه موجودة ([[true]]). و [[ownKeys]] جابت النص والـ Symbol مع بعض (درس «enumerability و ownership»).
-
----
-
-## ٣. [[Reflect.get]] والـ receiver
-
-~~~js
-const user = { first: 'Sara', get greet() { return 'أهلًا ' + this.first; } };
-console.log(Reflect.get(user, 'greet'), Reflect.get(user, 'greet', { first: 'Mona' }));
+~~~text الناتج (node store-events.js، Node 24)
+وراثة: { key: 'theme', value: 'dark' }
+تركيب: { key: 'theme', value: 'dark' }
+وراثة: { key: 'theme', value: 'مزوّر' }
+s1 لسه: dark | s2.dispatchEvent: undefined
 ~~~
 
-~~~text الناتج
-أهلًا Sara أهلًا Mona
-~~~
+اتجرّب نفس الملف في Console بتاع Chrome 157 (Playwright) وطلع نفس السطور ([[CustomEvent]] و [[EventTarget]] موجودين في الاتنين).
 
-التالت هو الـ receiver: الـ [[this]] اللي الـ getter بيشتغل بيه. الـ getter موجود في [[user]]، بس [[this.first]] اتقرت من الـ receiver. ده بالظبط اللي بيخلّي الـ Proxy يشوف القرايات اللي جوه الـ getters (درس «Proxy و Reflect»، قسم [[receiver]]).
+**ليه كده:**
 
----
+- **الوراثة:** [[InheritStore]] **هو** EventTarget، فكل methods الـ EventTarget بقت جزء من الـ API بتاعه: [[addEventListener]] و [[removeEventListener]] و **[[dispatchEvent]]**. والسطر قبل الأخير بيثبت المشكلة: أي حد من برّه بعت حدث «change» مزوّر، والـ listener صدّقه وطبع «مزوّر» مع إن القيمة الحقيقية لسه [["dark"]].
+- **التركيب:** [[ComposedStore]] **عنده** EventTarget خاص في [[#events]]. من برّه مفيش غير [[set]] و [[get]] و [[on]]، و [[typeof s2.dispatchEvent]] بـ [["undefined"]]. فمحدش يقدر يطلق حدث غير الـ store نفسه.
+- **[[on(fn)]] بترجّع دالة unsubscribe:** الـ [[listener]] متخزّن في الـ closure، فـ [[removeEventListener]] بياخد نفس الـ reference (نفس فكرة تمرين removeEventListener في درس call و apply و bind).
+- **[[CustomEvent]] و [[detail]]:** حدث بيشيل بيانات في [[detail]]، موجود في المتصفح و Node 19+.
 
-## ٤. [[Reflect.apply]] و [[Reflect.construct]]
+**أنهي أأمن:** التركيب. الـ API الصغير معناه حاجات أقل ممكن تتستخدم غلط، وتقدر تغيّر جوه (تبدّل EventTarget بـ Set من الدوال) من غير ما تكسر حد. الوراثة تنفع لما الكلاس فعلًا **نوع** من الأب ومحتاج كل الـ API بتاعه (زي custom element بيورث HTMLElement).
 
-~~~js
-function sum(...n) { return n.reduce((a, b) => a + b, 0); }
-sum.apply = null;
-console.log(Reflect.apply(sum, null, [1, 2, 3]));
-~~~
-
-~~~text الناتج
-6
-~~~
-
-حد بوّظ [[sum.apply]]، فـ [[sum.apply(null, [1, 2, 3])]] كانت هترمي [[sum.apply is not a function]]. [[Reflect.apply]] مش بتقرا حاجة من الدالة، فشغالة. وده نفس [[Function.prototype.apply.call(sum, null, [1, 2, 3])]] بس مقروء.
-
-~~~js
-class Point { constructor(x) { this.x = x; } }
-const p = Reflect.construct(Point, [4]);
-console.log(p instanceof Point, p.x);
-~~~
-
-~~~text الناتج
-true 4
-~~~
-
-[[Reflect.construct(Point, [4])]] = [[new Point(4)]]. والتالت الاختياري [[newTarget]] بيغيّر [[new.target]] والـ prototype (درس «Function»، قسم [[new.target]]).
-
----
-
-## ٥. الـ prototype والقفل
-
-~~~text الناتج
-true false false
-{ value: 7, writable: false, enumerable: true, configurable: false } true
-~~~
-
-[[getPrototypeOf]] زي [[Object.getPrototypeOf]]، و [[setPrototypeOf]] على متجمّد رجّعت [[false]] (مش [[TypeError]] زي [[Object.setPrototypeOf]])، و [[isExtensible]] [[false]]. و [[preventExtensions({})]] نجحت فرجّعت [[true]] (مش الـ object زي [[Object.preventExtensions]]).
-
----
-
-## ٦. الـ primitives بترمي
-
-~~~text الناتج
-Reflect.getPrototypeOf called on non-object
-~~~
-
-[[Object.getPrototypeOf(1)]] بترجّع [[Number.prototype]] لأنها بتلف الرقم في object الأول. [[Reflect]] مبيعملش كده: كل دوالّه (حتى [[get]] و [[has]] و [[ownKeys]]) رمت مع primitive، والرسالة دايمًا [[Reflect.xxx called on non-object]].
-
----
-
-## الخلاصة
-
-- ١٣ دالة بأسامي الـ Proxy traps وبنفس الـ arguments.
-- اللي بيغيّر بيرجّع boolean، ومبيرميش حتى في strict.
-- الـ primitive بيرمي، عكس [[Object.*]].
-- [[Reflect.apply]] و [[Reflect.construct]] آمنين ضد اللي بيغيّر [[apply]] على الدالة.
-- الـ receiver في [[get]] و [[set]] هو [[this]] والمكان اللي الكتابة بتروحله.`,
-          lines: [
-            R`object متجمّد عشان نشوف [[Reflect]] بيتصرّف إزاي لما العملية تفشل.`,
-            R`[[Reflect.defineProperty]] و [[Reflect.set]] الاتنين فشلوا ورجّعوا [[false false]]، من غير رمي مع إن الملف strict.`,
-            R`نفس التعريف بـ [[Object.defineProperty]]: رمى [[Cannot redefine property: id]]. ده الفرق كله.`,
-            R`المسح فشل ([[false]])، و [[id]] لسه موجودة ([[true]])، و [[ownKeys]] جابت [[ 'a' ]] والـ Symbol مع بعض.`,
-            R`object فيه getter بيستخدم [[this.first]]، عشان نشوف الـ receiver.`,
-            R`من غير receiver: [[this = user]] فـ «أهلًا Sara». ومع receiver تاني: [[this]] بقى الـ object ده فـ «أهلًا Mona».`,
-            R`دالة بتجمع أي عدد أرقام.`,
-            R`بنبوّظ [[apply]] على الدالة نفسها: خاصية own بتغطّي على [[Function.prototype.apply]].`,
-            R`[[Reflect.apply(sum, null, [1, 2, 3])]] مش بتقرا [[sum.apply]] خالص، فطلّعت 6.`,
-            R`class صغيرة الـ constructor بتاعها بيحط [[x]] على الـ object الجديد، عشان نعملها من غير [[new]] مكتوبة.`,
-            R`[[Reflect.construct]] = [[new Point(4)]] والـ arguments في array.`,
-            R`[[true 4]]: instance حقيقي من [[Point]].`,
-            R`الـ prototype صح ([[true]])، وتغيير prototype المتجمّد فشل ([[false]])، والمتجمّد مش extensible ([[false]]).`,
-            R`الـ descriptor بتاع [[id]]: مقفولة ([[writable: false]] و [[configurable: false]])، و [[preventExtensions]] على object جديد نجحت ([[true]]).`,
-            R`primitive مع [[Reflect]]: رمى [[Reflect.getPrototypeOf called on non-object]]، عكس [[Object.getPrototypeOf(1)]].`,
+**الغلطة الشائعة:** تفتكر إن [[extends]] هي الطريقة الوحيدة «تاخد» قدرات كلاس تاني. اسأل «هو نوع منه؟» ولا «بيستخدمه؟». الـ Store بيستخدم الأحداث، مش نوع من الأحداث.` }
           ],
           ref: [
-            { t: "MDN: Reflect", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect" },
-            { t: "MDN: Reflect.apply()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect/apply" },
-            { t: "MDN: Reflect.construct()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect/construct" },
-            { t: "MDN: Reflect.defineProperty()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect/defineProperty" },
-            { t: "MDN: Reflect.ownKeys()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect/ownKeys" },
-            { t: "MDN: Reflect.set()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect/set" },
-            { t: "MDN: Comparing Reflect and Object methods", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect/Comparing_Reflect_and_Object_methods" },
-            { t: "ECMAScript: The Reflect Object", url: "https://tc39.es/ecma262/multipage/reflection.html#sec-reflect-object" }
+            { t: "MDN: extends", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/extends" },
+            { t: "MDN: super", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/super" },
+            { t: "MDN: ReferenceError: must call super constructor before using 'this'", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Super_not_called" },
+            { t: "MDN: Error (custom error types)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error" },
+            { t: "MDN: instanceof", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof" },
+            { t: "MDN: CustomEvent", url: "https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent" },
           ],
-          pre: [{ to: "js/Proxy و Reflect", why: R`أول مرة شفت [[Reflect.get]] و [[Reflect.set]] جوه traps الـ [[get]] و [[set]]` }, "js/property descriptors: Object.defineProperty", "js/Object.preventExtensions و seal و freeze", "js/call و apply و bind"]
-        },
-        {
-          cmd: "Proxy: باقي الـ traps و Proxy.revocable",
-          title: "الـ traps التسعة اللي فاضلين (ownKeys و defineProperty و apply و construct...)، والـ invariants اللي المحرك بيفرضها، و Proxy.revocable",
-          desc: R`درس «Proxy و Reflect» غطّى [[get]] و [[set]] و [[has]] و [[deleteProperty]]. فيه ٩ traps تانيين: [[ownKeys]] (المفاتيح: [[Object.keys]] و JSON والـ spread)، و [[getOwnPropertyDescriptor]]، و [[defineProperty]]، و [[getPrototypeOf]] و [[setPrototypeOf]]، و [[isExtensible]] و [[preventExtensions]]، و [[apply]] (لما الـ Proxy دالة وحد ناداها)، و [[construct]] (لما حد عمل [[new]]). وكل trap ليه دالة [[Reflect]] بنفس الاسم.
+          pre: [{ to: "js/class", why: R`الوراثة بين كلاسات، فلازم الكلاس نفسه يبقى واضح الأول`}, { to: "js/addEventListener", why: R`تمرين [[Store extends EventTarget]] بيستخدم نفس [[addEventListener]] بتاع الـ DOM`}],
+          flag: "script",
+          deep: {
+            why: "هتقابلها في الـ Errors المخصصة، وفي مكتبات بتطلب إنك تورّث من كلاس بتاعها (Web Components بـ HTMLElement مثلًا)، وفي أسئلة OOP في الانترفيو (تاب الانترفيو فيه OOP بالتفصيل).",
+            how: R`[[extends]] بيعمل سلسلتين prototype: [[Admin.prototype]] الـ prototype بتاعه [[User.prototype]] (عشان الـ methods)، و [[Admin]] نفسه الـ prototype بتاعه [[User]] (عشان الـ static).
 
-والـ Proxy مش حر يكدب: فيه **invariants** المحرك بيتأكد منها بعد كل trap. مثلًا لو الـ target مقفول بـ [[preventExtensions]]، الـ [[ownKeys]] لازم يرجّع كل مفاتيحه، وإلا [[TypeError: 'ownKeys' on proxy: trap result did not include '_token']].
+في كلاس بيورث، الـ this مبيتعملش لحد ما [[super()]] يتنادى، لأن الأب هو اللي بيعمل الـ object. عشان كده this قبل super بترمي ReferenceError. ولو مكتبتش constructor خالص، JS بيعمل واحد بينادي [[super(...args)]] لوحده.
 
-و [[Proxy.revocable(target, handler)]] بيرجّع [[{ proxy, revoke }]]: بعد [[revoke()]] أي عملية على الـ proxy بترمي. مفيد لما تدّي كود تاني صلاحية مؤقتة على object.`,
-          example: R`// الـ traps اللي بتتحكم في المفاتيح والتعريف والقفل والـ prototype، وفي النداء نفسه
-const log = [];
-const hidden = (k) => typeof k === 'string' && k.startsWith('_');
-const store = new Proxy({ id: 1, _token: 'x' }, {
-  ownKeys(t) { log.push('ownKeys'); return Reflect.ownKeys(t).filter((k) => !hidden(k)); },
-  getOwnPropertyDescriptor(t, k) { log.push('gopd ' + String(k)); return Reflect.getOwnPropertyDescriptor(t, k); },
-  defineProperty(t, k, d) { log.push('define ' + String(k)); return !hidden(k) && Reflect.defineProperty(t, k, d); },
-  preventExtensions(t) { log.push('preventExtensions'); return Reflect.preventExtensions(t); },
-  isExtensible(t) { log.push('isExtensible'); return Reflect.isExtensible(t); },
-  setPrototypeOf() { log.push('setPrototypeOf'); return false; },
-});
-console.log(Object.keys(store), JSON.stringify(store));
-Object.defineProperty(store, 'name', { value: 'Sara', enumerable: true });
-try { Object.defineProperty(store, '_x', { value: 1 }); } catch (e) { console.log(e.message); }
-try { Object.setPrototypeOf(store, null); } catch (e) { console.log(e.message); }
-Object.preventExtensions(store);
-console.log(Object.isExtensible(store), log);
-let calls = 0;
-const price = new Proxy((base, qty) => base * qty, {
-  apply(fn, thisArg, args) { calls++; return Reflect.apply(fn, thisArg, args); },
-});
-class User { constructor(name) { this.name = name; } }
-const Tracked = new Proxy(User, {
-  construct(C, args, newTarget) { if (!args[0]) throw new TypeError('الاسم مطلوب'); return Reflect.construct(C, args, newTarget); },
-});
-console.log(price(10, 3), price(2, 2), calls, new Tracked('Mona') instanceof User);
-try { new Tracked(); } catch (e) { console.log(e.message); }
-const { proxy, revoke } = Proxy.revocable({ plan: 'pro' }, {});
-console.log(proxy.plan);
-revoke();
-try { proxy.plan; } catch (e) { console.log(e.message); }`,
-          try: R`في ملف المثال، بعد سطر [[Object.preventExtensions(store)]] زوّد [[console.log(Object.keys(store))]] وشغّل: إيه اللي حصل وليه؟ وبعدين جرّب Proxy على object متجمّد [[Object.freeze({ id: 1 })]] بـ [[get: () => 2]] واقرا [[.id]].`,
-          sol: R`~~~text الناتج (Node 24.22)
-TypeError: 'ownKeys' on proxy: trap result did not include '_token'
-TypeError: 'get' on proxy: property 'id' is a read-only and non-configurable data property on the proxy target but the proxy did not return its actual value (expected '1' but got '2')
-~~~
+[[super.describe()]] بتدوّر على describe في prototype الأب، وبتناديها بنفس الـ this. ده بيخليك تكمّل على سلوك الأب بدل ما تكرره.
 
-الاتنين invariants:
+تقدر تورّث من built-ins: [[class MyArray extends Array]] و [[extends Error]] و [[extends EventTarget]].`,
+            when: "علاقة «نوع من» حقيقية ومستقرة (NotFoundError نوع من Error). لو بتورّث عشان تاخد دالتين بس، استخدم composition أو دوال مساعدة.",
+            mistakes: R`this قبل super. وسلسلة وراثة عميقة (A extends B extends C extends D) كل تعديل فيها بيكسر حاجة. وتنسى إن الـ override بيلغي method الأب لو منادتش super. وفي الانترفيو: «composition vs inheritance؟» (تاب الانترفيو وتاب هندسة البرمجيات).`
+          },
+          teach: R`## الكود ده بيعمل إيه؟
 
-- بعد [[preventExtensions]] الـ target مبقاش بيقبل إضافة، فالمحرك بقى يطلب من [[ownKeys]] يرجّع **كل** مفاتيح الـ target بالظبط. الـ trap خبّى [[_token]] فرمى. قبل القفل نفس الـ trap كان شغال ([[[ 'id' ]]]). يعني الإخفاء بـ [[ownKeys]] بيتكسر لحظة ما حد يعمل [[Object.freeze]] أو [[seal]] على الـ proxy.
-- خاصية [[writable: false]] و [[configurable: false]] (والـ freeze بيعمل كده) لازم [[get]] يرجّع قيمتها الحقيقية. المحرك بيقارن بنفسه ويرمي.
+كلاس أب [[User]] فيه اسم و method بتوصفه، وكلاس ابن [[Admin]] بياخد كل حاجة من User ويزوّد عليها صلاحيات، ويعدّل الوصف **من غير ما يعيد كتابة** وصف الأب. اتشغّل في Node 24.
 
-الفكرة: المحرك بيضمن إن أي حاجة «مقفولة نهائيًا» في الـ target تفضل بنفس الشكل من برّه، حتى لو في Proxy في النص.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** Proxy كل traps بتاعته بتسجّل اسمها وترجّع [[Reflect]] بنفس الاسم. اكتب الـ traps اللي هتتنادى بالترتيب لـ: [[Object.keys(p)]]، و [[{ ...p }]]، و [[JSON.stringify(p)]]، و [[ 'a' in p ]]، على [[{ a: 1, b: 2 }]]:
+---
 
-~~~js
-const log = [];
-const handler = {};
-for (const trap of Object.getOwnPropertyNames(Reflect)) {
-  handler[trap] = (...args) => { log.push(trap + (typeof args[1] === 'string' ? ' ' + args[1] : '')); return Reflect[trap](...args); };
-}
-const p = new Proxy({ a: 1, b: 2 }, handler);
-Object.keys(p); console.log('keys:', log.splice(0));
-({ ...p }); console.log('spread:', log.splice(0));
-JSON.stringify(p); console.log('json:', log.splice(0));
-'a' in p; console.log('in:', log.splice(0));
-~~~`, done: R`توقّعت إن [[Object.keys]] بينادي [[ownKeys]] وبعده [[getOwnPropertyDescriptor]] لكل مفتاح، وإن JSON بيبدأ بـ [[get toJSON]]، وطلع قريب من توقّعك، وتعرف ليه [[Object.keys]] محتاج الـ descriptor.`, sol: R`~~~text الناتج (Node 24.22)
-keys: [
-  'ownKeys',
-  'getOwnPropertyDescriptor a',
-  'getOwnPropertyDescriptor b'
-]
-spread: [
-  'ownKeys',
-  'getOwnPropertyDescriptor a',
-  'get a',
-  'getOwnPropertyDescriptor b',
-  'get b'
-]
-json: [
-  'get toJSON',
-  'ownKeys',
-  'getOwnPropertyDescriptor a',
-  'getOwnPropertyDescriptor b',
-  'get a',
-  'get b'
-]
-in: [ 'has a' ]
-~~~
+## ١. الكلاس الأب
 
-- [[Object.keys]] = [[ownKeys]] وبعدين لكل مفتاح «هو enumerable؟» = [[getOwnPropertyDescriptor]]. عشان كده لو [[ownKeys]] رجّع مفتاح مش موجود في الـ target ومعملتش [[getOwnPropertyDescriptor]] يأكّده، [[Object.keys]] بيشيله (اتجرّب: [[ownKeys: () => ['ghost']]] طلّع [[[]]]، ولما زوّدنا descriptor طلّع [[[ 'ghost' ]]]).
-- الـ spread بيعمل نفس الحاجة بس بيقرا كل قيمة بعد ما يتأكد منها ([[get]]).
-- JSON بيسأل عن [[toJSON]] الأول، وبعدين بيجمع المفاتيح كلها، وبعدين يقرا القيم.
-- [[in]] = [[has]] بس.
-
-ده بيوضّح ليه trap واحد زي [[ownKeys]] مش كفاية عشان تخبّي خاصية: لازم [[getOwnPropertyDescriptor]] و [[has]] و [[get]] يتفقوا معاه.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[readOnly(obj, name)]] بترجّع Proxy القراية فيه عادية (و [[Object.keys]] و JSON شغالين)، بس أي محاولة تغيير ترمي [[TypeError]] برسالة فيها الاسم والعملية: الكتابة، والـ [[defineProperty]]، والمسح، وتغيير الـ prototype، والقفل ([[Object.freeze]]).`, done: R`[[plan.tier]] و [[Object.keys(plan)]] و [[JSON.stringify(plan)]] شغالين، والخمس محاولات بيرموا ٥ رسايل مختلفة، والتمرين اللي بيتصحح لوحده عدّى.`, sol: R`~~~js read-only.mjs
-function readOnly(obj, name = 'object') {
-  const refuse = (op) => () => { throw new TypeError(name + ' للقراية بس: مينفعش ' + op); };
-  return new Proxy(obj, {
-    set: refuse('تكتب'),
-    defineProperty: refuse('تعرّف خاصية'),
-    deleteProperty: refuse('تمسح'),
-    setPrototypeOf: refuse('تغيّر الـ prototype'),
-    preventExtensions: refuse('تقفله'),
-  });
-}
-const plan = readOnly({ tier: 'pro', seats: 5 }, 'plan');
-console.log(plan.tier, Object.keys(plan), JSON.stringify(plan));
-for (const op of [() => { plan.seats = 99; }, () => { delete plan.tier; }, () => Object.defineProperty(plan, 'x', { value: 1 }), () => Object.setPrototypeOf(plan, null), () => Object.freeze(plan)]) {
-  try { op(); } catch (e) { console.log(e.message); }
-}
-~~~
-
-~~~text الناتج (Node 24.22)
-pro [ 'tier', 'seats' ] {"tier":"pro","seats":5}
-plan للقراية بس: مينفعش تكتب
-plan للقراية بس: مينفعش تمسح
-plan للقراية بس: مينفعش تعرّف خاصية
-plan للقراية بس: مينفعش تغيّر الـ prototype
-plan للقراية بس: مينفعش تقفله
-~~~
-
-**الشرح:** الرمي من جوه الـ trap بيوصل للي نادى زي ما هو، فرسالتك بتظهر بدل [[trap returned falsish]]. و [[defineProperty]] لازم يتقفل كمان، وإلا [[Object.defineProperty(plan, ...)]] كانت هتعدّي من ورا [[set]]. و [[Object.freeze(plan)]] أول حاجة بتعملها [[preventExtensions]] فوقعت هناك. ولاحظ إن ده بيحمي من اللي معاه الـ proxy بس: اللي معاه الـ object الأصلي يقدر يغيّره (والـ proxy هيشوف التغيير).` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[memo(fn)]] بترجّع Proxy على الدالة بـ trap [[apply]] بيحفظ الناتج في [[Map]] بمفتاح [[JSON.stringify(args)]]، فالنداء التاني بنفس الـ arguments مبيشغّلش الدالة. واطبع إن [[name]] و [[length]] و [[typeof]] لسه زي الأصل.`, done: R`٣ نداءات منهم اتنين متشابهين بيشغّلوا الدالة مرتين بس ([[runs]] بـ 2)، و [[slowTax.name]] بـ [[tax]] و [[length]] بـ 2.`, sol: R`~~~js memo.mjs
-function memo(fn) {
-  const cache = new Map();
-  return new Proxy(fn, {
-    apply(target, thisArg, args) {
-      const key = JSON.stringify(args);
-      if (!cache.has(key)) cache.set(key, Reflect.apply(target, thisArg, args));
-      return cache.get(key);
-    },
-  });
-}
-let runs = 0;
-const slowTax = memo(function tax(amount, rate) { runs++; return Math.round(amount * rate * 100) / 100; });
-console.log(slowTax(100, 0.14), slowTax(100, 0.14), slowTax(250, 0.14), runs);
-console.log(slowTax.name, slowTax.length, typeof slowTax);
-~~~
-
-~~~text الناتج (Node 24.22)
-14 14 35 2
-tax 2 function
-~~~
-
-**الشرح:** الـ [[apply]] trap بيستقبل الدالة الأصلية، والـ [[this]] اللي اتنادت بيه، والـ arguments كـ array. وميزة الـ Proxy على wrapper عادي ([[(...args) => ...]]): القراية من الـ proxy (زي [[name]] و [[length]]) بتعدّي للأصل، فالأدوات اللي بتبص على [[fn.length]] (درس «Function») مش بتتلخبط. والـ [[apply]] trap بيشتغل بس لو الـ target نفسه دالة: Proxy على object عادي بـ [[apply]] ونداه رمى [[TypeError: ... is not a function]]. وعيب [[JSON.stringify(args)]]: objects مختلفة بنفس الشكل بتاخد نفس المفتاح، و [[undefined]] بيبقى [[null]].` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** عايز تدّي واجهة الإعدادات من غير المفاتيح السرية، والإعدادات متجمّدة:
-
-~~~js
-const config = Object.freeze({ port: 8080, _secret: 'k' });
-const publicView = new Proxy(config, { ownKeys: (t) => Reflect.ownKeys(t).filter((k) => !k.startsWith('_')) });
-console.log(Object.keys(publicView));
-~~~`, done: R`[[Object.keys(publicView)]] بـ [[[ 'port' ]]]، و [[publicView._secret]] بـ [[undefined]]، والـ view متجمّد.`, sol: R`~~~text الناتج قبل التصليح
-TypeError: 'ownKeys' on proxy: trap result did not include '_secret'
-~~~
-
-الـ target متجمّد يعني non-extensible، والـ invariant بيقول: [[ownKeys]] على target مش extensible لازم يرجّع **كل** مفاتيحه. فمفيش أي trap يقدر يخبّي مفتاح من object متجمّد. (وحتى لو مش متجمّد، [[_secret]] لو كانت [[configurable: false]] كانت هتوقع برضه: [[trap result did not include '_fixed']] في التجربة.)
-
-الحل: متخبّيش من الأصل، اعمل object تاني فيه اللي عايز تظهره بس:
-
-~~~js public-view.mjs
-const config = Object.freeze({ port: 8080, _secret: 'k' });
-const visible = Object.freeze(Object.fromEntries(Object.entries(config).filter(([k]) => !k.startsWith('_'))));
-const publicView = new Proxy(visible, {});
-console.log(Object.keys(publicView), publicView._secret, Object.isFrozen(publicView));
-~~~
-
-~~~text الناتج (Node 24.22)
-[ 'port' ] undefined true
-~~~
-
-وكمان أأمن: [[_secret]] مش موجودة أصلًا في اللي اتدّى، فمفيش trap نسيته ([[get]] أو [[has]] أو [[getOwnPropertyDescriptor]]) يسرّبها. والـ Proxy الفاضي هنا ملوش لازمة غير لو هتزوّد traps بعدين، وممكن تدّي [[visible]] نفسها.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** تحقق على [[age]] بطريقتين: Proxy بـ [[set]]، و object فيه getter و setter. اكتب مليون مرة في كل واحد وقيس بـ [[performance.now()]]، مرتين.`, done: R`عندك ٤ أرقام، والـ setter أسرع بفرق واضح، وتقدر تقول إمتى الفرق ده يفرق وإمتى لأ.`, sol: R`~~~js bench-validate.mjs
-function viaProxy() {
-  return new Proxy({ age: 0 }, {
-    set(t, k, v, r) {
-      if (k === 'age' && (!Number.isInteger(v) || v < 0)) throw new TypeError('age غلط');
-      return Reflect.set(t, k, v, r);
-    },
-  });
-}
-function viaAccessor() {
-  let age = 0;
-  return {
-    get age() { return age; },
-    set age(v) { if (!Number.isInteger(v) || v < 0) throw new TypeError('age غلط'); age = v; },
-  };
-}
-for (let round = 0; round < 2; round++) {
-  for (const [label, make] of [['Proxy set', viaProxy], ['setter', viaAccessor]]) {
-    const o = make();
-    const t0 = performance.now();
-    for (let i = 0; i < 1_000_000; i++) o.age = i;
-    console.log(label.padEnd(10), (performance.now() - t0).toFixed(1).padStart(6), 'ms', o.age);
+~~~text app.js
+class User {
+  constructor(name) {
+    this.name = name;
+  }
+  describe() {
+    return $__btUser: $__{this.name}$__bt;
   }
 }
 ~~~
 
-~~~text الناتج (Node 24.22، ويندوز ١١)
-Proxy set   276.1 ms 999999
-setter       79.3 ms 999999
-Proxy set   273.9 ms 999999
-setter       75.1 ms 999999
+كلاس عادي زي الدرس اللي فات: constructor بيحط [[name]] على الـ instance، و method [[describe]] بترجّع نص template. [[new User("Ali").describe()]] بترجّع [[User: Ali]].
+
+---
+
+## ٢. [[extends]]
+
+~~~text app.js
+class Admin extends User {
 ~~~
 
-**الـ setter أسرع حوالي ٣.٥ مرة.** الـ Proxy كل كتابة فيها نداء trap ونداء [[Reflect.set]] وفحوص invariants، والمحرك بيعرف يحسّن الـ setter العادي أكتر بكتير. بس خلي بالك من الرقم نفسه: ٠٫٢٧ مايكروثانية للكتابة. في فورم أو إعدادات أو state بيتغيّر عشرات المرات في الثانية، الفرق صفر عمليًا. في loop بيعالج ملايين عناصر، ابعد عن الـ Proxy. والـ Proxy بيكسب لما الخصايص مش معروفة مقدمًا (validation بـ schema، أو reactivity).` },
-          ],
-          check: { lang: "js", starter: R`function readOnly(obj, name = 'object') {
-  // رجّع Proxy القراية فيه عادية، وأي تغيير يرمي TypeError فيه name
-  return obj;
-}`, tests: R`test("القراية شغالة", () => { const p = readOnly({ a: 1 }); expect(p.a).toBe(1); expect(Object.keys(p)).toEqual(['a']); });
-test("الكتابة بترمي", () => { const p = readOnly({ a: 1 }, 'plan'); expect(() => { p.a = 2; }).toThrow('plan'); });
-test("defineProperty بيرمي", () => { const p = readOnly({ a: 1 }, 'plan'); expect(() => Object.defineProperty(p, 'b', { value: 1 })).toThrow('plan'); });
-test("المسح بيرمي", () => { const p = readOnly({ a: 1 }, 'plan'); expect(() => { delete p.a; }).toThrow('plan'); });
-test("setPrototypeOf بيرمي", () => { const p = readOnly({ a: 1 }, 'plan'); expect(() => Object.setPrototypeOf(p, null)).toThrow('plan'); });
-test("freeze بيرمي", () => { const p = readOnly({ a: 1 }, 'plan'); expect(() => Object.freeze(p)).toThrow('plan'); });
-test("الأصل مبيتغيّرش", () => { const raw = { a: 1 }; const p = readOnly(raw, 'x'); try { p.a = 5; } catch (e) {} expect(raw.a).toBe(1); });`, solution: R`function readOnly(obj, name = 'object') {
-  const refuse = (op) => () => { throw new TypeError(name + ' للقراية بس: مينفعش ' + op); };
-  return new Proxy(obj, {
-    set: refuse('تكتب'),
-    defineProperty: refuse('تعرّف خاصية'),
-    deleteProperty: refuse('تمسح'),
-    setPrototypeOf: refuse('تغيّر الـ prototype'),
-    preventExtensions: refuse('تقفله'),
-  });
-}` },
-          flag: "script",
-          deep: {
-            why: R`الأربع traps الأولانيين بيكفّوا لـ validation بسيط، بس أي أداة حقيقية (read-only views، و mocks في الاختبارات، و ORM بيعرض أعمدة الجدول كخصايص، و reactivity زي Vue) لازم تتحكم في المفاتيح ([[ownKeys]]) والتعريف ([[defineProperty]]) عشان محدش يعدّي من الباب الخلفي، وفي النداء ([[apply]] و [[construct]]) عشان تلف دوال و classes. والـ invariants هي اللي بتقولك إيه اللي **مينفعش** تعمله، فلو مش عارفها هتكتب Proxy بيشتغل في التجربة ويقع أول ما حد يعمل [[Object.freeze]].`,
-            how: R`كل عملية على الـ proxy بتنادي الـ internal method المقابلة: [[OwnPropertyKeys]] ← [[ownKeys]]، و [[GetOwnProperty]] ← [[getOwnPropertyDescriptor]]، و [[DefineOwnProperty]] ← [[defineProperty]]، و [[Call]] ← [[apply]]، و [[Construct]] ← [[construct]]... ولو الـ trap مش موجود العملية بتروح للـ target.
+[[extends User]] معناها «Admin نوع من User». JS بيوصّل سلسلتين prototype (اتأكدنا من الاتنين، طلعوا [[true]]):
 
-بعد ما الـ trap يرجّع، المحرك بيقارن الناتج بالـ target ويرمي لو الكدبة تكسر حاجة مضمونة:
-
-- [[ownKeys]]: لازم array من نصوص و Symbols من غير تكرار، وفيها كل مفتاح non-configurable، ولو الـ target مش extensible لازم تبقى مفاتيحه بالظبط.
-- [[getOwnPropertyDescriptor]]: متقولش non-configurable على حاجة configurable، ومتخبّيش ([[undefined]]) حاجة non-configurable.
-- [[defineProperty]]: متقولش «نجحت» في تعريف non-configurable مش موجود فعلًا كده في الـ target.
-- [[isExtensible]]: لازم يطابق الـ target بالظبط. و [[preventExtensions]]: متقولش [[true]] والـ target لسه extensible.
-- [[getPrototypeOf]] و [[setPrototypeOf]]: لو الـ target مش extensible لازم الحقيقة.
-- [[construct]]: لازم يرجّع object.
-
-و [[apply]] و [[construct]] موجودين بس لو الـ target دالة (أو constructor)، و [[typeof]] الـ proxy بيبقى [[function]] ساعتها. و [[Proxy.revocable]] بيعمل proxy عادي ودالة [[revoke]] بتمسح الـ target والـ handler من جواه، فأي عملية بعدها [[Cannot perform 'xxx' on a proxy that has been revoked]]، و [[revoke()]] تاني مبترميش.`,
-            when: R`[[ownKeys]] + [[getOwnPropertyDescriptor]]: لما بتعرض مفاتيح مش موجودة فعلًا (ORM، أو env vars) أو بتخفي مفاتيح من object **مش مقفول**. [[defineProperty]]: اقفله في أي Proxy بيعمل validation، وإلا [[Object.defineProperty]] بيعدّي من ورا [[set]]. [[apply]]: لوج، و memoize، و rate limit، و mocks للدوال. [[construct]]: تحقق من arguments الـ class، أو تسجيل كل instance، أو singleton. [[setPrototypeOf]] و [[preventExtensions]]: لما عايز object محدش يغيّر شكله. و [[Proxy.revocable]]: plugin أو كود طرف تالت أو صلاحية مؤقتة (session) تقدر تسحبها.`,
-            mistakes: R`- تخبّي مفتاح بـ [[ownKeys]] بس: [[get]] و [[has]] و [[getOwnPropertyDescriptor]] لسه بيكشفوه.
-- تخبّي بـ [[ownKeys]] من target هيتقفل بعدين: [[trap result did not include '_token']].
-- [[get]] بيرجّع قيمة تانية لخاصية متجمّدة: [[TypeError: 'get' on proxy: property 'id' is a read-only and non-configurable data property ...]].
-- [[ownKeys]] بيرجّع تكرار: [[trap returned duplicate entries]]، أو رقم: [[1 is not a valid property name]].
-- [[isExtensible]] بيكدب: [[trap result does not reflect extensibility of proxy target (which is 'true')]].
-- [[construct]] بيرجّع primitive: [[trap returned non-object ('1')]].
-- [[apply]] على target مش دالة: الـ proxy مش callable أصلًا.
-- [[Proxy(...)]] من غير [[new]]: [[TypeError: Constructor Proxy requires 'new']].
-- [[setPrototypeOf]] بيرجّع [[false]]: الرسالة في V8 [['setPrototypeOf' on proxy: trap returned falsish for property 'undefined']] (كلمة property هنا ملهاش معنى، دي من V8 نفسه).
-- تحط Proxy في كود سخن: قراية من Proxy فاضي أبطأ ٢٥ مرة من object عادي في القياس.`,
-          },
-          teach: R`## الفكرة في سطرين
-
-فيه ١٣ trap، وكل واحد بيعترض عملية داخلية واحدة. الأربعة المشهورين في درس «Proxy و Reflect». هنا التسعة الباقيين، والقواعد اللي بتمنع الـ Proxy يكدب، و [[Proxy.revocable]]. الناتج من Node 24.22 كملف [[.mjs]].
+- [[Object.getPrototypeOf(Admin.prototype) === User.prototype]]: أي admin لما ميلاقيش method عنده، بيدوّر في methods بتاعة User.
+- [[Object.getPrototypeOf(Admin) === User]]: حتى الـ static بتاعة User بتتورث.
 
 ---
 
-## ١. خريطة الـ traps الـ ١٣
+## ٣. constructor الابن و [[super()]]
 
-| الـ trap | بيتنادى مع | المقابل |
-|---|---|---|
-| [[get]] و [[set]] و [[has]] و [[deleteProperty]] | القراية والكتابة و [[in]] و [[delete]] | درس «Proxy و Reflect» |
-| [[ownKeys]] | [[Object.keys]] و [[Reflect.ownKeys]] و [[for...in]] و JSON والـ spread و [[getOwnPropertyNames]] | [[Reflect.ownKeys]] |
-| [[getOwnPropertyDescriptor]] | [[Object.getOwnPropertyDescriptor]]، وكل اللي بيسأل «enumerable؟» زي [[Object.keys]] | [[Reflect.getOwnPropertyDescriptor]] |
-| [[defineProperty]] | [[Object.defineProperty]]، وكمان آخر خطوة في [[Reflect.set]] لما الـ receiver هو الـ proxy | [[Reflect.defineProperty]] |
-| [[getPrototypeOf]] | [[Object.getPrototypeOf]] و [[instanceof]] و [[isPrototypeOf]] | [[Reflect.getPrototypeOf]] |
-| [[setPrototypeOf]] | [[Object.setPrototypeOf]] | [[Reflect.setPrototypeOf]] |
-| [[isExtensible]] | [[Object.isExtensible]] و [[isSealed]] و [[isFrozen]] | [[Reflect.isExtensible]] |
-| [[preventExtensions]] | [[Object.preventExtensions]] و [[seal]] و [[freeze]] | [[Reflect.preventExtensions]] |
-| [[apply]] | نداء الـ proxy كدالة | [[Reflect.apply]] |
-| [[construct]] | [[new proxy()]] | [[Reflect.construct]] |
+~~~text app.js
+  constructor(name, permissions) {
+    super(name);
+    this.permissions = permissions;
+  }
+~~~
+
+- الـ constructor بياخد باراميتر زيادة: [[permissions]] (array صلاحيات).
+- [[super(name)]]: **نادي constructor الأب** وابعتله name. هو اللي بيعمل الـ object ويحط عليه [[this.name]].
+- [[this.permissions = ...]]: بعد كده بس نقدر نستخدم this ونزوّد.
+
+ليه الترتيب ده إجباري؟ في كلاس وارث، الـ object **مبيتعملش** غير لما الأب يعمله جوه super. فـ this قبل super مش موجودة أصلًا. جرّبنا [[this.x = 1; super(n);]]:
+
+~~~text الناتج
+ReferenceError: Must call super constructor in derived class before accessing 'this' or returning from derived constructor
+~~~
+
+يعني «في الكلاس الوارث (derived) لازم تنادي super قبل ما تلمس this».
 
 ---
 
-## ٢. [[ownKeys]] و [[getOwnPropertyDescriptor]]: المفاتيح
+## ٤. override و [[super.describe()]]
 
-~~~js
-ownKeys(t) { log.push('ownKeys'); return Reflect.ownKeys(t).filter((k) => !hidden(k)); },
-getOwnPropertyDescriptor(t, k) { log.push('gopd ' + String(k)); return Reflect.getOwnPropertyDescriptor(t, k); },
+~~~text app.js
+  describe() {
+    return $__bt$__{super.describe()} (admin: $__{this.permissions.join(", ")})$__bt;
+  }
+}
+~~~
+
+- كتبنا [[describe]] تاني في Admin: دي اسمها **override**. لما تنادي [[a.describe()]]، JS بيلاقيها في Admin.prototype الأول فبيوقف هناك.
+- [[super.describe()]]: «هات نسخة **الأب** من describe ونادِيها على نفس this». فبترجّع [[User: Sara]].
+- [[this.permissions.join(", ")]]: [[join]] بتلزق عناصر الـ array في نص واحد بالفاصل اللي تديهولها: [["users, billing"]].
+- والنص كله: نتيجة الأب + الزيادة بين أقواس.
+
+---
+
+## ٥. الاستخدام
+
+~~~text app.js
+const a = new Admin("Sara", ["users", "billing"]);
+a.describe();
+a instanceof Admin;
+a instanceof User;
 ~~~
 
 ~~~text الناتج
-[ 'id' ] {"id":1}
+Admin { name: 'Sara', permissions: [ 'users', 'billing' ] }   ← console.log(a)
+User: Sara (admin: users, billing)
+true
+true
 ~~~
 
-و اللوج بعد السطر ده: [[ownKeys]] ثم [[gopd id]] مرتين (مرة لـ [[Object.keys]] ومرة لـ JSON). [[ownKeys]] خبّى [[_token]] فمحدش سأل عنها. والـ [[getOwnPropertyDescriptor]] اتسأل عشان [[Object.keys]] لازم يعرف المفتاح enumerable ولا لأ.
-
-### الـ invariants بتوع [[ownKeys]] (اتجرّبوا كلهم)
-
-| الحالة | الرسالة |
-|---|---|
-| target اتقفل ([[preventExtensions]]) والـ trap خبّى مفتاح | رمى [[TypeError: 'ownKeys' on proxy: trap result did not include '_token']] لأن المقفول لازم يطلع كامل |
-| target فيه خاصية [[configurable: false]] والـ trap خبّاها | رمى [[TypeError: 'ownKeys' on proxy: trap result did not include '_fixed']] حتى والـ target مفتوح |
-| المفتاح متكرر في الناتج | [[TypeError: 'ownKeys' on proxy: trap returned duplicate entries]] |
-| فيه رقم في الناتج | [[TypeError: 1 is not a valid property name]] |
-| الناتج مش array | [[TypeError: CreateListFromArrayLike called on non-object]] |
-| مفتاح زيادة مش في الـ target (والـ target مفتوح) | مفيش error، بس [[Object.keys]] شالته لأن الـ descriptor بـ [[undefined]]، ولما [[getOwnPropertyDescriptor]] رجّع descriptor ظهر |
-
-### invariants الـ [[getOwnPropertyDescriptor]]
-
-~~~text الناتج
-'getOwnPropertyDescriptor' on proxy: trap reported non-configurability for property 'a' which is either non-existent or configurable in the proxy target
-'getOwnPropertyDescriptor' on proxy: trap returned undefined for property '_fixed' which is non-configurable in the proxy target
-~~~
-
-الأولى: الـ trap قال إن [[a]] non-configurable وهي في الـ target configurable. التانية: الـ trap خبّى خاصية non-configurable. الاتنين ممنوعين.
+- [[name]] جت من constructor الأب (عن طريق super)، و [[permissions]] من الابن، والاتنين على نفس الـ object.
+- [[a instanceof User]] = [[true]]: [[instanceof]] بيمشي في سلسلة a ويسأل «User.prototype موجود فيها؟»، وهو موجود.
 
 ---
 
-## ٣. [[defineProperty]]: الباب الخلفي
+## ٦. من غير constructor خالص
 
-~~~js
-defineProperty(t, k, d) { log.push('define ' + String(k)); return !hidden(k) && Reflect.defineProperty(t, k, d); },
+من التجربة:
+
+~~~text app.js
+class Guest extends User {}
+new Guest("x").describe();
 ~~~
 
 ~~~text الناتج
-'defineProperty' on proxy: trap returned falsish for property '_x'
+User: x
 ~~~
 
-[[Object.defineProperty(store, 'name', ...)]] عدّى، و [[_x]] اترفض. لاحظ إن [[Object.defineProperty]] رمى لأنه دايمًا بيرمي على الفشل (مش بس في strict). ولو عندك Proxy بـ [[set]] بيعمل validation ومعندكش [[defineProperty]]، أي حد يقدر يكتب بـ [[Object.defineProperty]] من غير ما يعدّي على التحقق. والعكس كمان: [[Reflect.set(t, k, v, receiver)]] لما الـ receiver هو الـ proxy بينادي [[defineProperty]] بتاعه في الآخر، فالـ trap ده بيتنادى مع الكتابة العادية كمان (اتشاف في مشروع «تتبّع التعديلات»).
-
-والـ invariant: [[defineProperty: () => true]] مع descriptor [[configurable: false]] لخاصية مش موجودة رمى [[trap returned truish for defining non-configurable property 'z' which is either non-existent or configurable in the proxy target]].
-
----
-
-## ٤. [[setPrototypeOf]] و [[getPrototypeOf]]
-
-~~~text الناتج
-'setPrototypeOf' on proxy: trap returned falsish for property 'undefined'
-~~~
-
-الـ trap رجّع [[false]] فـ [[Object.setPrototypeOf]] رمى. وكلمة [[property 'undefined']] غريبة: دي رسالة V8 كده (العملية ملهاش property أصلًا). و [[getPrototypeOf]] يقدر «يكدب» طول ما الـ target مفتوح: [[getPrototypeOf: () => Array.prototype]] خلّى [[proxy instanceof Array]] بـ [[true]] (بس [[Array.isArray]] لأ). ولو الـ target مقفول، لازم الحقيقة: [['getPrototypeOf' on proxy: proxy target is non-extensible but the trap did not return its actual prototype]]. ونفس الكلام [[setPrototypeOf]] اللي بيقول [[true]] على target مقفول: [[trap returned truish for setting a new prototype on the non-extensible proxy target]].
-
----
-
-## ٥. [[preventExtensions]] و [[isExtensible]]
-
-~~~text الناتج (آخر سطر في الجزء الأول)
-false [
-  'ownKeys',
-  'gopd id',
-  'ownKeys',
-  'gopd id',
-  'define name',
-  'define _x',
-  'setPrototypeOf',
-  'preventExtensions',
-  'isExtensible'
-]
-~~~
-
-[[Object.preventExtensions(store)]] نادى الـ trap فقفل الـ target، و [[Object.isExtensible(store)]] نادى [[isExtensible]] فرجّع [[false]]. الاتنين **لازم** يقولوا الحقيقة:
-
-| الكدبة | الرسالة (اتجرّبت) |
-|---|---|
-| [[isExtensible: () => false]] والـ target مفتوح | رمى [[trap result does not reflect extensibility of proxy target (which is 'true')]] |
-| [[preventExtensions: () => true]] من غير ما تقفل الـ target | رمى [[trap returned truish but the proxy target is extensible]] |
-
-يعني تقدر **ترفض** القفل (ترجّع [[false]] أو ترمي، زي تمرين [[readOnly]])، بس متقدرش تدّعي إنه حصل.
-
----
-
-## ٦. [[apply]]: Proxy على دالة
-
-~~~js
-const price = new Proxy((base, qty) => base * qty, {
-  apply(fn, thisArg, args) { calls++; return Reflect.apply(fn, thisArg, args); },
-});
-~~~
-
-[[price(10, 3)]] و [[price(2, 2)]] عدّوا على الـ trap: [[30 4]] و [[calls]] بقت 2. الـ trap بياخد الدالة الأصلية، و [[this]] (لو اتنادت كـ method: [[o.m()]] بيبعت [[o]]، و [[fn.call('X')]] بيبعت [['X']])، والـ arguments كـ array. والـ trap ده بيشتغل بس لو الـ target دالة: [[new Proxy({}, { apply: () => 1 })()]] رمى [[is not a function]].
-
----
-
-## ٧. [[construct]]: Proxy على class
-
-~~~js
-const Tracked = new Proxy(User, {
-  construct(C, args, newTarget) { if (!args[0]) throw new TypeError('الاسم مطلوب'); return Reflect.construct(C, args, newTarget); },
-});
-~~~
-
-~~~text الناتج
-30 4 2 true
-الاسم مطلوب
-~~~
-
-[[new Tracked('Mona')]] عدّى على الـ trap وطلع [[User]] حقيقي ([[instanceof User]] بـ [[true]])، و [[new Tracked()]] اترفض. التالت [[newTarget]] هو الـ proxy نفسه (أو class وارثة منه)، وعدّيناه لـ [[Reflect.construct]] عشان الوراثة تفضل شغالة. لازم الـ trap يرجّع object: [[construct: () => 1]] رمى [['construct' on proxy: trap returned non-object ('1')]]. والـ target لازم يبقى constructor: Proxy على arrow و [[new]] رمى [[is not a constructor]].
-
----
-
-## ٨. [[Proxy.revocable]]: صلاحية تتسحب
-
-~~~js
-const { proxy, revoke } = Proxy.revocable({ plan: 'pro' }, {});
-console.log(proxy.plan);
-revoke();
-try { proxy.plan; } catch (e) { console.log(e.message); }
-~~~
-
-~~~text الناتج
-pro
-Cannot perform 'get' on a proxy that has been revoked
-~~~
-
-بعد [[revoke()]] كل العمليات بترمي باسم العملية: [[Cannot perform 'ownKeys' ...]] لـ [[Object.keys]]، و [['has']] لـ [[in]]، و [['IsArray']] لـ [[Array.isArray]] (اتجرّبوا). و [[revoke()]] مرة تانية مبترميش، و [[typeof]] الـ proxy المسحوب لسه بيرجّع نوعه ([[function]] لو كان دالة). الاستخدام: تدّي plugin أو كود تاني الـ [[proxy]] وتحتفظ بـ [[revoke]] عندك، ولما الجلسة تخلص أو الـ plugin يتشال تسحب الصلاحية. وبعد الـ revoke الـ target بيبقى ممكن يتمسح من الذاكرة لو مفيش حد تاني ماسكه.
-
----
-
-## ٩. التمن: رقم
-
-~~~text الناتج (١٠ مليون قراية، Node 24.22)
-plain          5.0 ms 10000000
-empty        143.2 ms 10000000
-get trap     319.4 ms 10000000
-plain         42.0 ms 10000000
-empty        126.9 ms 10000000
-get trap     306.1 ms 10000000
-~~~
-
-Proxy فاضي (من غير traps) أبطأ من object عادي حوالي ٢٥ مرة، و بـ [[get]] trap حوالي ٦٠ مرة. والـ [[plain]] في الجولة التانية بقى 42 مش 5: نفس دالة القياس شافت ٣ أنواع objects فالمحرك بطّل يحسّنها لنوع واحد. يعني الـ Proxy كمان بيبطّأ الكود اللي **حواليه**. بس ٣٠ نانوثانية للقراية مش هتفرق في واجهة أو إعدادات، هتفرق في loop على ملايين.
+لو مكتبتش constructor، JS بيعمل واحد لوحده كده: [[constructor(...args) { super(...args); }]]، يعني بيبعت كل حاجة للأب زي ما هي.
 
 ---
 
 ## الخلاصة
 
-- ١٣ trap = ١٣ دالة في [[Reflect]]، ودايمًا كمّل بـ [[Reflect]] بنفس الـ arguments.
-- [[ownKeys]] لوحده مبيخبّيش: [[get]] و [[has]] و [[getOwnPropertyDescriptor]] لازم يتفقوا.
-- اقفل [[defineProperty]] في أي Proxy بيعمل validation.
-- الـ invariants: اللي مقفول نهائيًا في الـ target (non-configurable، أو non-extensible) لازم يبان زي ما هو.
-- [[apply]] و [[construct]] للدوال والـ classes، و [[Proxy.revocable]] لصلاحية تتسحب.`,
+| الحتة | معناها |
+|---|---|
+| [[class B extends A]] | B بيورث methods و static بتاعة A |
+| [[super(...)]] في الـ constructor | نادي constructor الأب. إجباري قبل أي this |
+| [[super.method()]] | نادي نسخة الأب من method على نفس this |
+| method بنفس الاسم في الابن | override: بتغطّي على بتاعة الأب |
+| مفيش constructor في الابن | JS بيبعت كل الـ arguments للأب لوحده |
+
+- اكتب constructor في الابن بس لو عندك حاجة **زيادة** تعملها.
+- استخدم الوراثة لعلاقة «نوع من» حقيقية (Admin نوع من User، و NotFoundError نوع من Error).`,
           lines: [
-            R`لستة هنسجّل فيها كل trap اتنادى، عشان نشوف أنهي عملية بتنادي أنهي trap.`,
-            R`دالة بتقول المفتاح «داخلي» لو نص بيبدأ بـ [[_]]. الـ [[typeof k === 'string']] عشان الـ Symbols مالهاش [[startsWith]].`,
-            R`Proxy على object فيه مفتاح عادي ومفتاح داخلي، والـ handler فيه ٦ traps من اللي مكانوش في الدرس اللي فات.`,
-            R`[[ownKeys]]: بيرجّع كل المفاتيح الـ own من غير الداخلية. ده اللي [[Object.keys]] و JSON والـ spread بيسألوه.`,
-            R`[[getOwnPropertyDescriptor]]: بيرجّع الـ descriptor الحقيقي. [[Object.keys]] بيسأله عن كل مفتاح عشان يعرف هو enumerable.`,
-            R`[[defineProperty]]: بيرفض تعريف أي مفتاح داخلي برجوع [[false]]، والباقي بيتعرّف عادي في الأصل.`,
-            R`[[preventExtensions]]: بيسجّل وبيقفل الأصل فعلًا بـ [[Reflect]]. لازم القفل يحصل بجد عشان الـ invariant.`,
-            R`[[isExtensible]]: بيسجّل ويرجّع الحقيقة. أي كدبة هنا بترمي [[TypeError]].`,
-            R`[[setPrototypeOf]]: بيرفض أي تغيير للـ prototype برجوع [[false]].`,
-            R`قفلة الـ handler والـ Proxy.`,
-            R`[[Object.keys]] و JSON شافوا [[id]] بس: [[[ 'id' ]]] و [[{"id":1}]]. [[_token]] اتخبّت.`,
-            R`تعريف [[name]] من برّه عدّى على [[defineProperty]] واتعرّف في الأصل.`,
-            R`تعريف [[_x]]: الـ trap رجّع [[false]]، و [[Object.defineProperty]] رمى [['defineProperty' on proxy: trap returned falsish for property '_x']].`,
-            R`تغيير الـ prototype: الـ trap رجّع [[false]] فرمى [['setPrototypeOf' on proxy: trap returned falsish for property 'undefined']].`,
-            R`القفل: عدّى على [[preventExtensions]] اللي قفل الأصل. بعد السطر ده [[Object.keys(store)]] هترمي لأن [[ownKeys]] بيخبّي مفتاح من target مقفول.`,
-            R`[[false]] من [[isExtensible]]، واللوج فيه الـ ٩ نداءات بالترتيب.`,
-            R`عدّاد بيبدأ من صفر، والـ [[apply]] trap هيزوّده مع كل نداء للدالة.`,
-            R`Proxy على arrow function: الـ target لازم يبقى دالة عشان [[apply]] يشتغل.`,
-            R`[[apply]]: بيعدّ النداء ويكمّل بـ [[Reflect.apply]] بنفس الدالة و [[this]] والـ arguments.`,
-            R`قفلة الـ handler.`,
-            R`class عادية بـ constructor بياخد الاسم.`,
-            R`Proxy على الـ class نفسها، عشان نعترض [[new]].`,
-            R`[[construct]]: لو أول argument فاضي يرمي، وإلا يكمّل بـ [[Reflect.construct]] ومعاه [[newTarget]] عشان الوراثة.`,
-            R`قفلة الـ handler.`,
-            R`[[30 4 2 true]]: النداءين اشتغلوا والعدّاد 2، و [[new Tracked('Mona')]] طلع [[User]] حقيقي.`,
-            R`[[new Tracked()]] من غير اسم: الـ trap رمى «الاسم مطلوب».`,
-            R`[[Proxy.revocable]] بيرجّع object فيه الـ [[proxy]] ودالة [[revoke]]، وبنفكّهم بالـ destructuring.`,
-            R`قبل السحب: القراية عادية [[pro]].`,
-            R`السحب: من هنا أي عملية على [[proxy]] بترمي.`,
-            R`القراية بعد السحب: [[Cannot perform 'get' on a proxy that has been revoked]].`,
+            R`الكلاس الأب: فيه اللي أي مستخدم محتاجه (اسم و [[describe]])، والكلاسات اللي هتورث منه هتاخد ده من غير ما تكرره.`,
+            R`بيتنادى مع [[new User(...)]]، أو من الكلاس الابن عن طريق [[super(...)]].`,
+            R`بيحط الاسم على الـ instance. ولما [[Admin]] ينادي [[super(name)]]، السطر ده هو اللي بيحط الاسم على الـ admin.`,
+            R`نهاية constructor الأب.`,
+            R`method على [[User.prototype]]، فأي [[User]] وأي كلاس ابن يقدر يناديها.`,
+            R`بترجّع وصف بسيط زي [["User: Sara"]]. و [[this]] هنا هتبقى الـ instance اللي اتنادت عليه، حتى لو كان [[Admin]].`,
+            R`نهاية [[describe]].`,
+            R`نهاية الكلاس [[User]].`,
+            R`[[extends]] بيخلي [[Admin.prototype]] يورث من [[User.prototype]]، فأي admin عنده [[describe]] وأي method تانية في [[User]] أوتوماتيك، ونضيف عليها اللي يخص الـ admin بس.`,
+            R`constructor خاص بالابن، بياخد الاسم زي الأب وكمان قايمة الصلاحيات.`,
+            R`بينادي constructor الأب بالاسم عشان يعمل الجزء بتاعه. في كلاس ابن لازم [[super()]] قبل أي استخدام لـ [[this]]، وإلا ReferenceError، لأن الأب هو اللي بيجهّز [[this]] أصلًا.`,
+            R`بعد [[super]] بقى مسموح نستخدم [[this]]، فبنضيف الخاصية اللي الـ admin بس عنده.`,
+            R`نهاية constructor الابن.`,
+            R`override: [[describe]] جديدة على [[Admin.prototype]]. لما تنادي [[a.describe()]]، JS بيلاقي دي الأول في السلسلة فمبيوصلش لنسخة الأب.`,
+            R`[[super.describe()]] بتنادي نسخة الأب (بنفس [[this]]) فترجّع [["User: Sara"]]، وبنكمّل عليها الصلاحيات مفصولة بـ [[join(", ")]]. كده بنعيد استخدام كود الأب بدل ما ننسخه.`,
+            R`نهاية [[describe]] الجديدة.`,
+            R`نهاية الكلاس [[Admin]].`,
+            R`بيعمل admin: constructor [[Admin]] بينادي [[super("Sara")]] فيتحط [[name]]، وبعدين [[permissions]] تتحط.`,
+            R`بيشغّل النسخة الجديدة (الـ override)، اللي جواها نادت نسخة الأب: [["User: Sara (admin: users, billing)"]].`,
+            R`[[instanceof]] بيدوّر في الـ prototype chain بتاعة [[a]] على [[Admin.prototype]]، ولقاها فرجّع [[true]].`,
+            R`و [[User.prototype]] برضه في السلسلة (فوق [[Admin.prototype]])، فـ [[true]]. يعني الـ admin يتعامل كـ user في أي كود مستني user.`,
           ],
-          ref: [
-            { t: "MDN: Proxy", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy" },
-            { t: "MDN: handler.ownKeys()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy/ownKeys" },
-            { t: "MDN: handler.getOwnPropertyDescriptor()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy/getOwnPropertyDescriptor" },
-            { t: "MDN: handler.defineProperty()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy/defineProperty" },
-            { t: "MDN: handler.setPrototypeOf()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy/setPrototypeOf" },
-            { t: "MDN: handler.isExtensible()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy/isExtensible" },
-            { t: "MDN: handler.preventExtensions()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy/preventExtensions" },
-            { t: "MDN: handler.apply()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy/apply" },
-            { t: "MDN: handler.construct()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy/construct" },
-            { t: "MDN: Proxy.revocable()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/revocable" },
-            { t: "ECMAScript: Proxy Object Internal Methods", url: "https://tc39.es/ecma262/multipage/ordinary-and-exotic-objects-behaviours.html#sec-proxy-object-internal-methods-and-internal-slots" }
-          ],
-          pre: [{ to: "js/Proxy و Reflect", why: R`الـ traps الأربعة [[get]] و [[set]] و [[has]] و [[deleteProperty]]، والـ receiver، و [[trap returned falsish]]` }, "js/Reflect: الـ ١٣ دالة", "js/enumerability و ownership", "js/Object.preventExtensions و seal و freeze"]
-        },
+          sol: R`من غير [[super(name)]] بيطلع [[ReferenceError: Must call super constructor in derived class before accessing 'this' or returning from derived constructor]]: في الكلاس الابن this مبتتعملش غير لما الأب يعملها بـ super، فأي [[this.x]] قبلها ممنوع. ولو حطيت super بعد [[this.permissions = ...]] نفس الـ error.
+
+[[class Guest extends User {}]] من غير constructor و [[new Guest("x").describe()]] بترجّع [["User: x"]]: لو مكتبتش constructor، JS بيعملك واحد لوحده [[constructor(...args) { super(...args); }]] بيبعت كل حاجة للأب. فمتكتبش constructor غير لو عندك حاجة زيادة تعملها.`
+        }
       ]
     }
 ]);

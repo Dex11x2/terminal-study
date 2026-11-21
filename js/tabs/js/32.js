@@ -1,1125 +1,1822 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "أسئلة انترفيو",
+      t: R`الصوت والفيديو من JavaScript: مشغّل خاص و getUserMedia و Web Audio`,
       l: 3,
-      n: "الأسئلة اللي بتتكرر في انترفيوهات JavaScript: إجابات تقولها بصوتك، وكود تكتبه على السبورة",
+      n: "الصيغ والـ codecs و canPlayType و MediaCapabilities، و play و pause و currentTime و duration والأحداث، ومشغّل فيديو خاص بالكيبورد والـ aria و fullscreen و PiP، وأخطاء الميديا و MediaError والـ MIME والـ Range، والكاميرا والميكروفون بـ getUserMedia، والتسجيل بـ MediaRecorder، و Web Audio (oscillator و gain و analyser)، و Media Source Extensions، ومشاريع: مشغّل بودكاست بيفتكر، ومسجّل ملاحظات صوتية، ومشغّل دروس بفصول، ومترونوم",
       pre: [
-        { to: "js/closure", why: R`curry و debounce و memoize كلهم دوال بترجّع دوال فاكرة متغيرات، وده الـ closure` },
-        { to: "js/call و apply و bind", why: R`درس الـ polyfills بيكتب [[bind]] و [[call]] بإيده، فلازم تعرف بيعملوا إيه الأول` },
-        { to: "js/Promise.all و allSettled", why: R`قبل ما تكتب [[Promise.all]] بإيدك لازم تكون استخدمتها وعارف بترجّع إيه وإمتى بترفض` },
-        { to: "js/microtasks و macrotasks", why: R`نص أسئلة «إيه الناتج؟» عن ترتيب then و setTimeout و await` },
-        { to: "js/debounce و throttle", why: R`درس الانترفيو بيكمّل عليه: نسخة leading و cancel واختبارها من غير وقت حقيقي` },
+        { to: "css/audio و source", why: R`الجزء الـ HTML: [[<audio controls>]] و [[<source type>]] و [[autoplay]] و [[preload]]. هنا بنكمل من JavaScript ومش هنكرره` },
+        { to: "css/video و iframe", why: R`[[<video>]] و [[poster]] و [[<track>]] والترجمة بـ WebVTT` },
+        { to: "js/addEventListener", why: R`كل حاجة في الوحدة دي أحداث: [[loadedmetadata]] و [[timeupdate]] و [[ended]] و [[dataavailable]]` },
+        { to: "js/async و await", why: R`[[play()]] و [[getUserMedia()]] و [[decodeAudioData()]] بيرجّعوا Promise، والرفض فيهم هو الخطأ الحقيقي` },
+        { to: "js/DataView: getUint16 و setFloat32 و endianness", why: R`بنعمل ملفات WAV في الذاكرة بـ [[DataView]] عشان الأمثلة متحتاجش ملفات` },
+        { to: "js/canvas: ارسم أشكال وحرّكها", why: R`الصورة من الكاميرا، والفيديو التجريبي، ورسم الموجة، كلهم على canvas` },
+        { to: "js/Web Animations API: element.animate", why: R`[[currentTime]] و [[playbackRate]] و [[play]] و [[pause]]: نفس الأفكار على الـ animation، فالميديا هتبقى مألوفة` },
       ],
+      goal: [
+        R`تفرق بين الـ container (MP4 و WebM) والـ codec (H.264 و VP9 و AV1 و AAC و Opus)، وتسأل المتصفح بـ [[canPlayType]] و [[MediaCapabilities]] قبل ما تختار.`,
+        R`تتحكم في أي [[<audio>]] أو [[<video>]] من JavaScript: [[play()]] كـ Promise ورفضها، و [[pause]] و stop بإيدك، و [[currentTime]] و [[duration]] و [[volume]] و [[playbackRate]]، والأحداث بترتيبها.`,
+        R`تبني مشغّل خاص بأزرار حقيقية وشريط وقت واختصارات كيبورد و [[aria]] صح، و fullscreen و صورة في صورة.`,
+        R`تفهم أخطاء الميديا: [[MediaError]] وأكواده، و [[error]] على العنصر مقابل آخر [[<source>]]، والسيرفر اللي مبيدعمش Range.`,
+        R`تفتح الكاميرا والميكروفون بـ [[getUserMedia]] وتتعامل مع كل رفض، وتقفلهم صح، وتصوّر صورة على canvas.`,
+        R`تسجّل صوت وفيديو بـ [[MediaRecorder]] وتنزّلهم، وتولّد صوت وتحلله بـ Web Audio، وتعرف Media Source Extensions بتتعمل لإيه.`,
+      ],
+      use: {
+        prog: R`أي موقع فيه درس فيديو، أو بودكاست، أو رسالة صوتية، أو مكالمة، أو «صوّر البطاقة»، أو إشعار بصوت، بيعدّي من هنا. ومشغّلات YouTube و Spotify Web و Google Meet مبنية على نفس الـ APIs دي: [[HTMLMediaElement]] للتشغيل، و [[getUserMedia]] للكاميرا، و [[MediaRecorder]] للتسجيل، و Web Audio للصوت، و MSE للـ streaming.`,
+        work: R`منصات تعليم بتحتاج مشغّل بيفتكر مكانك وفيه فصول وسرعات، وتطبيقات دعم فني بتسجّل رسالة صوتية، وفورمات KYC بتصوّر البطاقة بالكاميرا، وأدوات اجتماعات وتسجيل شاشة، وألعاب ومحررات صوت في المتصفح، ومواقع أخبار بتشغّل فيديو HLS. والباجات المشهورة هنا: فيديو مبيشتغلش على iPhone، وشريط وقت مبيقدّمش، وكاميرا نورها فاضل منور.`,
+        cs: R`الـ digital audio: الـ sampling والـ sample rate و Nyquist، و PCM، والـ compression (lossy و lossless)، والـ container مقابل الـ codec، و FFT (الـ AnalyserNode بيحسبه)، والـ envelopes و ADSR، و HTTP Range requests، والـ adaptive bitrate streaming (HLS و DASH)، والـ scheduling الدقيق بساعة الصوت بدل الـ timers.`,
+      },
       projects: [
-        { lvl: 'صغير', t: R`بنك أسئلة «إيه الناتج؟» بيصحح نفسه`, what: R`ملف [[quiz.mjs]] فيه ١٥ سؤال من درس «اتوقع الناتج» ومن الوحدات اللي فاتت (coercion و this و hoisting و event loop)، كل سؤال [[{ code, expected, rule }]]. انت بتكتب [[expected]] قبل ما تشغّل، والسكربت بيشغّل كل [[code]] بـ [[new Function]] ويقارن، ولو غلط يطبع الـ [[rule]].`, done: R`[[node quiz.mjs]] بيطبع كل سؤال وجنبه صح ولا غلط وعدد الصح من ١٥، وكل سؤال غلطت فيه بيطبع القاعدة بكلامك، والسؤال اللي فيه [[setTimeout]] أو Promise بيتصحح صح (السكربت بيستنى الناتج)، ولما تعيد بعد يومين تجيب ١٥ من ١٥.`, sol: R`## الشكل النهائي
+        { lvl: 'صغير', dir: "notify-sounds", t: R`أصوات التنبيه من غير ولا ملف`, what: R`صفحة فيها ٤ أصوات لتطبيق: «نجاح» و «خطأ» و «رسالة جديدة» و «الوقت خلص». كل صوت لستة نغمات (تردد، ومن إمتى لحد إمتى، والموجة) بتتعزف بـ Web Audio بـ envelope من غير «تكة». وجنب كل صوت زرار «نزّل WAV» بيعمل نفس الصوت بالظبط في [[OfflineAudioContext]] ويحوّله ملف WAV بـ [[DataView]]، عشان المصمم ياخده لتطبيق الموبايل. من دروس «Web Audio API» و «MediaRecorder» (الـ Blob والتحميل).`, done: R`كل زرار بيشغّل صوت مختلف وواضح، والضغط كذا مرة ورا بعض مبيقطعش الصوت اللي قبله. و «نزّل WAV» بينزّل ملف حجمه = ٤٤ + (المدة × 44100 × 2) byte ويشتغل في أي مشغّل، و«نجاح» بالظبط 35324 byte.`, sol: R`## الشكل النهائي
 
-~~~text الناتج (node quiz.mjs، Node 24)
- 1. صح   log([] + [])
- 2. صح   log(1 + "2" - 1)
- 3. صح   log([] == false, null == 0, null >= 0)
- 4. صح   log(typeof null, typeof NaN, typeof [])
- 5. صح   log([10, 9, 1].sort())
- 6. صح   log(0.1 + 0.2 === 0.3)
- 7. صح   log(typeof f, typeof g); function f() {} var g = 1;
- 8. صح   try { log(x); } catch (e) { log(e.name); } let x = 1;
- 9. صح   const o = { n: 1, f() { return this.n; } }; const f = o.f; log(o.f(), f())
-10. صح   const o = { n: 1, f() { return () => this.n; } }; log(o.f()())
-11. صح   for (var i = 0; i < 3; i++) setTimeout(() => log(i));
-12. صح   log(1); setTimeout(() => log(2)); Promise.resolve().then(() => log(3)); log(4);
-13. صح   (async () => { log("a"); await null; log("b"); })(); log("c");
-14. صح   log(["1", "7", "11"].map(parseInt))
-15. صح   const a = [1, 2]; const b = a; b.push(3); log(a.length, [1] === [1])
-
-15 من 15
-~~~
-
-وده شكله لما تغلط (غيّرت توقع السؤال ٥ لـ [[[ 1, 9, 10 ]]] والسؤال ١٢ لـ [[1 4 2 3]] عن قصد):
-
-~~~text الناتج (السطور المهمة)
- 5. غلط  log([10, 9, 1].sort())
-      توقعت: ["[ 1, 9, 10 ]"]
-      الحقيقي: ["[ 1, 10, 9 ]"]
-      القاعدة: sort من غير دالة بيرتب كنصوص
-12. غلط  log(1); setTimeout(() => log(2)); Promise.resolve().then(() => log(3)); log(4);
-      توقعت: ["1","4","2","3"]
-      الحقيقي: ["1","4","3","2"]
-      القاعدة: sync، بعدين microtasks، بعدين timers
-
-13 من 15
-~~~
-
-## هتشوف إيه
-
-سطر لكل سؤال فيه «صح» أو «غلط» والكود نفسه. السؤال الغلط تحته توقعك والحقيقي والقاعدة اللي كتبتها بكلامك. وفي الآخر العدد من ١٥، و exit code بـ 1 لو فيه غلط (فينفع تحطه في script أو CI).
-
-## الكود
-
-~~~js questions.mjs
-// كل سؤال: code بيطبع بـ log بدل console.log، و expected توقعك قبل ما تشغّل (سطر لكل log)
-export const questions = [
-  { code: $__btlog([] + [])$__bt, expected: [""], rule: "الـ array بتتحوّل لنص بـ join، والفاضية نص فاضي" },
-  { code: $__btlog(1 + "2" - 1)$__bt, expected: ["11"], rule: "+ مع نص بيلزق، و - دايمًا بيحوّل لأرقام" },
-  { code: $__btlog([] == false, null == 0, null >= 0)$__bt, expected: ["true false true"], rule: "== مع null بيساوي undefined بس، و >= بيحوّل لرقم" },
-  { code: $__btlog(typeof null, typeof NaN, typeof [])$__bt, expected: ["object number object"], rule: "typeof null غلطة تاريخية، و NaN رقم، والـ array object" },
-  { code: $__btlog([10, 9, 1].sort())$__bt, expected: ["[ 1, 10, 9 ]"], rule: "sort من غير دالة بيرتب كنصوص" },
-  { code: $__btlog(0.1 + 0.2 === 0.3)$__bt, expected: ["false"], rule: "الكسور العشرية مش بتتخزن بالظبط في binary" },
-  { code: $__btlog(typeof f, typeof g); function f() {} var g = 1;$__bt, expected: ["function undefined"], rule: "function declaration بتطلع كاملة، و var الاسم بس" },
-  { code: $__bttry { log(x); } catch (e) { log(e.name); } let x = 1;$__bt, expected: ["ReferenceError"], rule: "let في الـ TDZ لحد سطر التعريف" },
-  { code: $__btconst o = { n: 1, f() { return this.n; } }; const f = o.f; log(o.f(), f())$__bt, expected: ["1 undefined"], rule: "this بيتحدد وقت النداء: من غير object بقى globalThis" },
-  { code: $__btconst o = { n: 1, f() { return () => this.n; } }; log(o.f()())$__bt, expected: ["1"], rule: "الـ arrow بتاخد this من الدالة اللي حواليها" },
-  { code: $__btfor (var i = 0; i < 3; i++) setTimeout(() => log(i));$__bt, expected: ["3", "3", "3"], rule: "var متغير واحد للدالة كلها" },
-  { code: $__btlog(1); setTimeout(() => log(2)); Promise.resolve().then(() => log(3)); log(4);$__bt, expected: ["1", "4", "3", "2"], rule: "sync، بعدين microtasks، بعدين timers" },
-  { code: $__bt(async () => { log("a"); await null; log("b"); })(); log("c");$__bt, expected: ["a", "c", "b"], rule: "الـ async بتشتغل sync لحد أول await" },
-  { code: $__btlog(["1", "7", "11"].map(parseInt))$__bt, expected: ["[ 1, NaN, 3 ]"], rule: "map بيبعت الـ index، و parseInt بيفهمه radix" },
-  { code: $__btconst a = [1, 2]; const b = a; b.push(3); log(a.length, [1] === [1])$__bt, expected: ["3 false"], rule: "الـ objects بتتنسخ بالـ reference، و === بيقارن الـ reference" },
-];
-~~~
-
-~~~js quiz.mjs
-import { inspect } from "node:util";
-import { questions } from "./questions.mjs";
-
-const show = (v) => (typeof v === "string" ? v : inspect(v));
-
-// بيشغّل الكود بـ log خاص، ويستنى الـ timers والـ microtasks تخلص
-async function run(code) {
-  const out = [];
-  const log = (...args) => out.push(args.map(show).join(" "));
-  try {
-    new Function("log", code)(log);
-  } catch (e) {
-    out.push("رمى " + e.name + ": " + e.message);
-  }
-  await new Promise((r) => setTimeout(r, 20));   // بعد أي setTimeout(…, 0) اتسجل جوه الكود
-  return out;
-}
-
-let right = 0;
-for (const [i, q] of questions.entries()) {
-  const actual = await run(q.code);
-  const ok = actual.length === q.expected.length && actual.every((line, k) => line === q.expected[k]);
-  if (ok) right++;
-  console.log($__bt$__{String(i + 1).padStart(2)}. $__{ok ? "صح " : "غلط"}  $__{q.code}$__bt);
-  if (!ok) {
-    console.log("      توقعت:", JSON.stringify(q.expected));
-    console.log("      الحقيقي:", JSON.stringify(actual));
-    console.log("      القاعدة:", q.rule);
-  }
-}
-console.log($__bt\n$__{right} من $__{questions.length}$__bt);
-process.exitCode = right === questions.length ? 0 : 1;
-~~~
-
-## الكود بيعمل إيه
-
-- **الأسئلة في ملف لوحده:** [[questions.mjs]] هو اللي بتعدّل فيه (تكتب [[expected]] قبل ما تشغّل)، و [[quiz.mjs]] مبيتلمسش. كل [[expected]] array: عنصر لكل [[log]]، عشان أسئلة الترتيب (١١ و ١٢ و ١٣) تتقارن سطر بسطر.
-- **[[new Function("log", code)]]:** بيعمل دالة باراميترها [[log]] وجسمها الكود. فالكود بيكتب في [[log]] بتاعتنا (array) بدل الشاشة، ومش شايف المتغيرات اللي في [[quiz.mjs]]. ولو الكود رمى error مش متوقع بيتسجّل كسطر وبيكمّل باقي الأسئلة.
-- **[[show]]:** النصوص زي ما هي، وأي حاجة تانية بـ [[inspect]] (نفس تنسيق [[console.log]])، فالتوقع بتكتبه زي ما بتشوفه في الترمنال: [[[ 1, 10, 9 ]]] بالمسافات.
-- **[[await new Promise((r) => setTimeout(r, 20))]]:** ده اللي بيخلي أسئلة الـ setTimeout والـ Promise تتصحح صح. الـ timer بتاعنا اتسجّل **بعد** أي [[setTimeout]] جوه الكود، فلما يشتغل يبقى الكل خلص (والـ microtasks بتخلص قبل أي timer أصلًا).
-- **[[for ... of]] مع [[await]]:** الأسئلة بتتشغّل واحد ورا التاني، عشان timers سؤال متدخلش في ناتج اللي بعده.
-- **[[process.exitCode]]:** مش [[process.exit()]]، عشان البرنامج يقفل لوحده بعد ما الطباعة تخلص.
-
-## الغلطات اللي حصلت وأنا ببنيه
-
-**١. من غير انتظار حقيقي، أسئلة الـ timers بتطلع غلط.** أول نسخة كانت [[await null]] بدل الـ setTimeout (افتكرت إن ده كفاية عشان الـ Promise):
-
-~~~text الناتج (بـ await null)
-11. غلط  for (var i = 0; i < 3; i++) setTimeout(() => log(i));
-      توقعت: ["3","3","3"]
-      الحقيقي: []
-      القاعدة: var متغير واحد للدالة كلها
-12. غلط  log(1); setTimeout(() => log(2)); Promise.resolve().then(() => log(3)); log(4);
-      توقعت: ["1","4","3","2"]
-      الحقيقي: ["1","4","3"]
-~~~
-
-[[await null]] بيستنى microtask بس، فالـ [[3]] لحقت، لكن الـ timers مش. والأوحش: الـ timers دي بتشتغل بعدين وبتكتب في الـ array القديمة بتاعة سؤال خلص. التصليح: انتظار timer حقيقي.
-
-**٢. سؤال الـ this في ملف [[.mjs]].** كنت متوقع [[f()]] ترمي TypeError لأن الـ ES modules strict. بس الكود اللي جوه [[new Function]] بيتعمل **sloppy** دايمًا مهما كان الملف اللي ناداه، فـ [[this]] بقى [[globalThis]] و [[this.n]] بـ undefined. لو عايز تختبر strict حط [["use strict";]] في أول الـ code.
-
-**الغلطة الشائعة:** تكتب [[expected]] بعد ما تشغّل. الأداة دي قيمتها كلها إنك تكتب التوقع الأول، وتعيدها بعد يومين من غير ما تبص على الإجابات.` },
-        { lvl: 'صغير', t: R`includes بإيدك وفخ NaN`, what: R`[[Array.prototype.myIncludes(value, fromIndex = 0)]] بنفس شكل درس الـ polyfills، بس بالمقارنة اللي الأصلي بيستخدمها (SameValueZero): [[NaN]] بيساوي [[NaN]] و 0 بيساوي -0، و [[fromIndex]] السالب بيتحسب من الآخر، والـ holes بتتعامل كـ [[undefined]].`, done: R`[[[NaN].myIncludes(NaN)]] بيرجّع [[true]] مع إن [[[NaN].indexOf(NaN)]] بيرجّع -1، و [[[1, 2, 3].myIncludes(1, -2)]] بيرجّع [[false]] و [[[1, 2, 3].myIncludes(3, -1)]] بيرجّع [[true]]، و [[[1, , 3].myIncludes(undefined)]] بيرجّع [[true]]، وكل ده نفس اللي [[includes]] الأصلي بيرجّعه بالظبط (قارنهم في loop).`, sol: R`## الشكل النهائي
-
-~~~text الناتج (node my-includes.js، Node 24)
-true -1
-false true
-true -1
-true true
-اتقارن 720 حالة، والاختلافات: 0
-~~~
-
-## هتشوف إيه
-
-أول ٤ سطور هي الحالات اللي في المطلوب، وجنب كل واحدة اللي [[indexOf]] بيعمله عشان الفرق يبان: [[NaN]] اتلقى بـ [[myIncludes]] و [[indexOf]] قال -1، والـ [[fromIndex]] السالب اتحسب من الآخر، والـ hole اتعامل كـ [[undefined]]، و 0 و -0 متساويين. وآخر سطر: loop قارن [[myIncludes]] بـ [[includes]] الأصلي في ٧٢٠ حالة (arrays × قيم × fromIndex) ومفيش ولا اختلاف.
-
-## الكود
-
-~~~js my-includes.js
-// SameValueZero: زي === بس NaN بيساوي NaN (و 0 بيساوي -0 زي ===)
-const sameValueZero = (a, b) => a === b || (a !== a && b !== b);
-
-Array.prototype.myIncludes = function (value, fromIndex = 0) {
-  const len = this.length;
-  if (len === 0) return false;
-  let start = Math.trunc(Number(fromIndex)) || 0;      // "1" و 1.7 و NaN زي الأصلي
-  if (start < 0) start = Math.max(len + start, 0);     // السالب من الآخر، ولو أكبر من الطول من الأول
-  for (let i = start; i < len; i++) {
-    if (sameValueZero(this[i], value)) return true;    // this[i] على الـ hole بيرجّع undefined
-  }
-  return false;
+~~~live 300 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>أصوات التنبيه</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 16px; background: #f8fafc; color: #0f172a; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; max-width: 640px; }
+  .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; display: grid; gap: 6px; }
+  .card button { font: inherit; min-height: 44px; border: 0; border-radius: 8px; cursor: pointer; }
+  .play { background: #0f766e; color: #fff; }
+  .wav { background: #e2e8f0; color: #0f172a; }
+  #msg { margin-top: 12px; }
+</style>
+</head>
+<body>
+<h1>أصوات التنبيه</h1>
+<p>كل صوت هنا معمول بـ Web Audio، من غير ولا ملف.</p>
+<div class="grid" id="grid"></div>
+<p id="msg" role="status"></p>
+<script>
+// كل صوت = لستة نغمات: [تردد البداية، تردد النهاية، من إمتى، لحد إمتى، الموجة]
+const SOUNDS = {
+  'نجاح': [[523.25, 523.25, 0, 0.12, 'sine'], [783.99, 783.99, 0.1, 0.35, 'sine']],
+  'خطأ': [[220, 180, 0, 0.18, 'square'], [220, 180, 0.22, 0.42, 'square']],
+  'رسالة جديدة': [[880, 880, 0, 0.08, 'triangle'], [1318.5, 1318.5, 0.09, 0.3, 'triangle']],
+  'الوقت خلص': [[880, 880, 0, 0.15, 'sine'], [880, 880, 0.25, 0.4, 'sine'], [880, 880, 0.5, 0.65, 'sine'], [1760, 1760, 0.75, 1.2, 'sine']],
 };
+const VOLUME = 0.25;
 
-console.log([NaN].myIncludes(NaN), [NaN].indexOf(NaN));
-console.log([1, 2, 3].myIncludes(1, -2), [1, 2, 3].myIncludes(3, -1));
-console.log([1, , 3].myIncludes(undefined), [1, , 3].indexOf(undefined));
-console.log([0].myIncludes(-0), [-0].myIncludes(0));
-
-// نفس الناتج زي includes الأصلي في كل الحالات دي
-const arrays = [[], [1, 2, 3], [NaN, 0], [-0], [1, , 3], ["1", 1], [undefined], [null]];
-const values = [1, 3, "1", NaN, 0, -0, undefined, null, 4];
-const froms = [undefined, 0, 1, -1, -2, -10, 10, 1.7, "1", NaN];
-let checked = 0, diffs = 0;
-for (const arr of arrays) for (const v of values) for (const f of froms) {
-  checked++;
-  if (arr.myIncludes(v, f) !== arr.includes(v, f)) {
-    diffs++;
-    console.log("اختلاف:", arr, v, f);
+// بيرسم الصوت في أي context: الحقيقي (للسماعة) أو الـ offline (للملف)
+function schedule(ctx, notes, start) {
+  for (const [f1, f2, from, to, type] of notes) {
+    const osc = ctx.createOscillator(), env = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(f1, start + from);
+    if (f2 !== f1) osc.frequency.exponentialRampToValueAtTime(f2, start + to);
+    env.gain.setValueAtTime(0, start + from);
+    env.gain.linearRampToValueAtTime(VOLUME, start + from + 0.01);
+    env.gain.exponentialRampToValueAtTime(0.001, start + to);
+    osc.connect(env).connect(ctx.destination);
+    osc.start(start + from);
+    osc.stop(start + to + 0.02);
   }
 }
-console.log($__btاتقارن $__{checked} حالة، والاختلافات: $__{diffs}$__bt);
-~~~
+const length = (notes) => Math.max(...notes.map((n) => n[3])) + 0.05;
 
-## كل حتة بتعمل إيه
-
-- **[[sameValueZero]]:** فيه ٣ طرق مقارنة في JS. [[===]] (Strict Equality): [[NaN]] مش بيساوي نفسه، وده اللي [[indexOf]] بيستخدمه. [[Object.is]] (SameValue): [[NaN]] بيساوي [[NaN]] بس 0 مش بيساوي -0. و SameValueZero (اللي [[includes]] و [[Map]] و [[Set]] بيستخدموه): [[NaN]] بيساوي [[NaN]] **و** 0 بيساوي -0. [[a !== a]] بيبقى true لـ NaN بس، فـ [[(a !== a && b !== b)]] معناها «الاتنين NaN».
-- **[[Math.trunc(Number(fromIndex)) || 0]]:** الأصلي بيحوّل الـ fromIndex لرقم صحيح: [["1"]] بقى 1، و 1.7 بقى 1، و [[NaN]] بقى 0 (الـ [[|| 0]] بتمسك NaN).
-- **[[Math.max(len + start, 0)]]:** -1 في array طولها 3 = يبدأ من 2. ولو السالب أكبر من الطول (-10) يبدأ من 0 بدل index سالب.
-- **مفيش [[i in this]]:** عكس [[map]] بالظبط. [[includes]] بيقرا [[this[i]]] لكل index، والـ hole بيرجّع [[undefined]]، فـ [[[1, , 3].includes(undefined)]] بـ true. ([[indexOf]] بيتخطى الـ holes، وعشان كده -1.)
-- **الـ loop في الآخر** أهم من الـ ٤ سطور: بدل ما تختار حالات بإيدك وتنسى واحدة، بيجرّب كل التوافيق ويقارن بالأصلي.
-
-## الغلطات اللي حصلت وأنا ببنيه
-
-**١. استخدمت [[Object.is]] الأول** (افتكرته هو اللي بيخلي NaN بيساوي NaN، وده صح، بس نسيت -0). الـ loop مسكها على طول:
-
-~~~text الناتج (بـ Object.is، آخر السطور)
-اختلاف: [ -0 ] 0 -2
-اختلاف: [ -0 ] 0 -10
-اختلاف: [ -0 ] 0 NaN
-اتقارن 720 حالة، والاختلافات: 15
-~~~
-
-**٢. نسخت [[if (i in this)]] من [[myMap]]** عشان «الـ polyfills بتتخطى الـ holes». بس [[includes]] مبيتخطاش:
-
-~~~text الناتج (بـ i in this، آخر السطور)
-اختلاف: [ 1, <1 empty item>, 3 ] undefined 1
-اختلاف: [ 1, <1 empty item>, 3 ] undefined NaN
-اتقارن 720 حالة، والاختلافات: 8
-~~~
-
-الدرس: كل method ليها قواعدها في الـ spec ([[indexOf]] بيتخطى الـ holes و [[includes]] لأ)، فارجع لـ MDN أو للـ spec لكل method، ومتعممش.
-
-**في الانترفيو:** «[[includes]] بيستخدم SameValueZero فبيلاقي NaN، و [[indexOf]] بيستخدم === فمش بيلاقيه، وده السبب الأساسي إن [[includes]] اتضاف في ES2016».` },
-        { lvl: 'متوسط', t: R`مكتبة utils بتستات`, what: R`ملف [[utils.mjs]] فيه [[promiseAll]] و [[myMap]] و [[myBind]] و [[curry]] و [[deepEqual]] من دروس الوحدة، وملف [[utils.test.mjs]] بـ [[node:test]] و [[node:assert]] فيه ٣ تستات على الأقل لكل دالة، منهم حالة طرفية واحدة على الأقل (array فاضية، أو hole، أو [[new]]، أو [[NaN]]).`, done: R`[[node --test]] بيعدّي كل التستات، وكل تست بيفشل فعلًا لو بوّظت الدالة (جرّب تشيل [[if (i in this)]] أو [[Object.is]] وشوف تست بيقع)، وكل دالة بترمي [[TypeError]] لو اتبعتلها حاجة غلط (callback مش function مثلًا).`, sol: R`## الشكل النهائي
-
-~~~text الناتج (node --test، Node 24)
-▶ promiseAll
-  ✔ النتايج بترتيب المدخلات مش بترتيب الخلاص (39.8899ms)
-  ✔ array فاضية بتتحل على طول (0.3211ms)
-  ✔ أول رفض بيرفض الكل (0.6966ms)
-  ✔ مدخل مش iterable بيترفض بـ TypeError (0.1797ms)
-✔ promiseAll (42.1849ms)
-▶ myMap
-  ✔ بيطبّق الـ callback وبيبعت index والـ array (0.2575ms)
-  ✔ الـ hole بيفضل hole والـ callback مبيتنداش عليه (0.2308ms)
-  ✔ thisArg بيوصل لـ callback عادي (0.172ms)
-  ✔ callback مش function بيرمي TypeError حتى على array فاضية (0.1681ms)
-✔ myMap (1.8424ms)
-▶ myBind
-  ✔ بيثبّت this (0.2182ms)
-  ✔ بيثبّت arguments من الأول ويكمّل بالباقي (0.1448ms)
-  ✔ مع new بيتجاهل ctx والـ instanceof شغال (0.1903ms)
-  ✔ مش function بيرمي TypeError (0.089ms)
-✔ myBind (0.8384ms)
-▶ curry
-  ✔ كل طرق التقسيم بتدّي نفس الناتج (0.1546ms)
-  ✔ النسخ الجزئية مستقلة عن بعض (0.0833ms)
-  ✔ arity صريح للدوال اللي length بتاعها غلط (0.1016ms)
-  ✔ مش function بيرمي TypeError (0.0989ms)
-✔ curry (0.5631ms)
-▶ deepEqual
-  ✔ objects متداخلة والترتيب مش فارق (0.1571ms)
-  ✔ NaN بيساوي NaN، و 1 مش بيساوي '1' (0.0748ms)
-  ✔ undefined مقابل key مش موجود (0.0788ms)
-  ✔ array مقابل object بنفس المفاتيح (0.0728ms)
-✔ deepEqual (0.5125ms)
-ℹ tests 20
-ℹ suites 5
-ℹ pass 20
-ℹ fail 0
-~~~
-
-## هتشوف إيه
-
-[[node --test]] في الفولدر بيلاقي [[utils.test.mjs]] لوحده (أي ملف اسمه فيه [[.test.]]) ويطبع مجموعة لكل دالة (بـ [[describe]]) وتحتها ٤ تستات: حالة عادية، وحالات طرفية، و TypeError للمدخل الغلط. ٢٠ من ٢٠.
-
-## الملفات
-
-~~~text شجرة الملفات
-utils/
-├── utils.mjs        الدوال
-└── utils.test.mjs   التستات
-~~~
-
-~~~js utils.mjs
-// دوال الوحدة كـ functions عادية (مش على الـ prototype): أسهل في الاختبار ومبتلمسش الـ built-ins
-
-export function promiseAll(items) {
-  if (items == null || typeof items[Symbol.iterator] !== "function") {
-    return Promise.reject(new TypeError("promiseAll: المدخل لازم يبقى iterable"));
-  }
-  return new Promise((resolve, reject) => {
-    const list = Array.from(items);
-    const results = new Array(list.length);
-    let done = 0;
-    if (list.length === 0) return resolve(results);
-    list.forEach((item, i) => {
-      Promise.resolve(item).then((value) => {
-        results[i] = value;
-        if (++done === list.length) resolve(results);
-      }, reject);
-    });
-  });
+let ctx;
+async function play(name) {
+  ctx ??= new AudioContext();
+  if (ctx.state === 'suspended') await ctx.resume();
+  schedule(ctx, SOUNDS[name], ctx.currentTime + 0.01);
+  document.querySelector('#msg').textContent = 'اتشغّل: ' + name;
 }
 
-export function myMap(array, callback, thisArg) {
-  if (array == null) throw new TypeError("myMap: مفيش array");
-  if (typeof callback !== "function") throw new TypeError("myMap: الـ callback لازم يبقى function");
-  const len = array.length;
-  const result = new Array(len);
-  for (let i = 0; i < len; i++) {
-    if (i in array) result[i] = callback.call(thisArg, array[i], i, array);
-  }
-  return result;
+// WAV من OfflineAudioContext: نفس schedule بالظبط
+async function toWav(name) {
+  const rate = 44100, notes = SOUNDS[name];
+  const off = new OfflineAudioContext(1, Math.ceil(length(notes) * rate), rate);
+  schedule(off, notes, 0);
+  const data = (await off.startRendering()).getChannelData(0), n = data.length;
+  const buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+  const str = (o, s) => [...s].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+  str(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); str(8, 'WAVE'); str(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  str(36, 'data'); v.setUint32(40, n * 2, true);
+  for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, Math.max(-1, Math.min(1, data[i])) * 0x7fff, true);
+  return new Blob([buf], { type: 'audio/wav' });
 }
 
-export function myBind(fn, ctx, ...preset) {
-  if (typeof fn !== "function") throw new TypeError("myBind: لازم function");
-  function bound(...args) {
-    if (new.target) return new fn(...preset, ...args);   // مع new: تجاهل ctx زي bind الأصلية
-    return fn.apply(ctx, [...preset, ...args]);
-  }
-  if (fn.prototype) bound.prototype = Object.create(fn.prototype);
-  return bound;
+for (const name of Object.keys(SOUNDS)) {
+  const card = document.createElement('div');
+  card.className = 'card';
+  const playBtn = Object.assign(document.createElement('button'), { type: 'button', className: 'play', textContent: '▶ ' + name });
+  const wavBtn = Object.assign(document.createElement('button'), { type: 'button', className: 'wav', textContent: 'نزّل WAV' });
+  playBtn.addEventListener('click', () => play(name));
+  wavBtn.addEventListener('click', async () => {
+    const blob = await toWav(name);
+    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'sound-' + Object.keys(SOUNDS).indexOf(name) + '.wav' });
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    document.querySelector('#msg').textContent = 'اتعمل ملف ' + name + ': ' + blob.size + ' byte';
+  });
+  card.append(playBtn, wavBtn);
+  document.querySelector('#grid').append(card);
 }
-
-export function curry(fn, arity = fn.length) {
-  if (typeof fn !== "function") throw new TypeError("curry: لازم function");
-  return function curried(...args) {
-    if (args.length >= arity) return fn.apply(this, args);
-    return (...more) => curried.apply(this, [...args, ...more]);
-  };
-}
-
-export function deepEqual(a, b) {
-  if (Object.is(a, b)) return true;
-  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
-  if (Array.isArray(a) !== Array.isArray(b)) return false;
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-  if (keysA.length !== keysB.length) return false;
-  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k]));
-}
+</script>
+</body>
+</html>
 ~~~
 
-~~~js utils.test.mjs
-import { describe, test } from "node:test";
-import assert from "node:assert/strict";
-import { promiseAll, myMap, myBind, curry, deepEqual } from "./utils.mjs";
+**هتشوف إيه:** عنوان، و ٤ كروت في grid، كل كارت فيه زرار أخضر «▶ نجاح» وزرار رمادي «نزّل WAV». الضغط على الأخضر بيعزف الصوت، والسطر تحت بيقول «اتشغّل: نجاح». جوه الـ preview العزف شغال والتحميل لأ (الـ iframe معزول من غير [[allow-downloads]])، والسطر هيكتب حجم الملف اللي اتعمل برده.
 
-const later = (ms, v) => new Promise((r) => setTimeout(() => r(v), ms));
+## الشرح
 
-describe("promiseAll", () => {
-  test("النتايج بترتيب المدخلات مش بترتيب الخلاص", async () => {
-    assert.deepEqual(await promiseAll([later(30, "slow"), 2, later(5, "fast")]), ["slow", 2, "fast"]);
-  });
-  test("array فاضية بتتحل على طول", async () => {
-    assert.deepEqual(await promiseAll([]), []);
-  });
-  test("أول رفض بيرفض الكل", async () => {
-    await assert.rejects(promiseAll([1, Promise.reject(new Error("x")), later(10, 3)]), { message: "x" });
-  });
-  test("مدخل مش iterable بيترفض بـ TypeError", async () => {
-    await assert.rejects(promiseAll(5), TypeError);
-  });
+- **[[SOUNDS]] بيانات مش كود:** كل نغمة [[[f1, f2, from, to, type]]]. لو [[f2]] مختلف، التردد بيتزحلق (الـ «خطأ» بينزل من 220 لـ 180، فبيبان «زعلان»). تزوّد صوت جديد = سطر واحد.
+- **[[schedule(ctx, notes, start)]]** بتشتغل على **أي** context: الحقيقي ([[AudioContext]] للسماعة) والـ offline (للملف). كده الملف والصوت اللي سمعته نفس الحاجة بالظبط، مش نسختين ممكن يختلفوا.
+- **الـ envelope:** صفر ← [[VOLUME]] في ١٠ ms ← [[0.001]] في آخر النغمة. و [[osc.stop(to + 0.02)]] بعد ما الصوت يوصل للصفر بشوية.
+- **[[ctx ??= new AudioContext()]]** مع أول ضغطة، و [[resume()]] لو [[suspended]]: سياسة الـ autoplay (درس Web Audio قسم ١).
+- **[[toWav]]:** [[OfflineAudioContext(1, length × 44100, 44100)]] ← [[startRendering()]] ← العينات [[Float32]] ← [[Int16]] في WAV. ٤٤١٠٠ مش ٢٢٠٥٠ عشان الـ «رسالة جديدة» فيها 1318 Hz والصوت يفضل نضيف.
+- **[[a.click()]]** على لينك اتعمل في الكود بينزّل من غير ما يتحط في الصفحة، و [[revokeObjectURL]] بعد ثانية (لو عملته على طول، التحميل ممكن ميلحقش).
+- **اسم الملف [[sound-0.wav]]** مش اسم الصوت بالعربي: أسامي الملفات بالإنجليزي أسلم على كل الأنظمة والسيرفرات.
+
+## غلطات وقعت فيها وأنا ببنيها
+
+- مفيش باج طلع في الاختبار هنا. اللي اتأكدت منه قبل ما أكتب الحل: كل ملف WAV حجمه طالع بالحسبة بالظبط (تحت)، والصوت بيشتغل جوه الـ preview المعزول، والتحميل بيحصل من صفحة عادية ومبيحصلش جوه الـ preview (ده سلوك الـ sandbox مش باج).
+- قرار اتاخد عمدًا: [[osc.stop(to + 0.02)]] بعد ما الـ envelope يوصل لـ [[0.001]] بـ ٢٠ ms، عشان الموجة متتقطعش وهي لسه مسموعة.
+
+## اتقاس
+
+~~~text الناتج (Chrome 157، Playwright من سيرفر محلي)
+▶ نجاح:            اتشغّل: نجاح   (ctx.state = running)
+نزّل WAV نجاح:      download: sound-0.wav 35324 byte
+نزّل WAV خطأ:       download: sound-1.wav 41498 byte
+نزّل WAV رسالة:     download: sound-2.wav 30914 byte
+نزّل WAV الوقت خلص: download: sound-3.wav 110294 byte
+جوه الـ preview المعزول: «اتشغّل: خطأ» و «اتعمل ملف الوقت خلص: 110294 byte» ومفيش تحميل
+~~~
+
+- [[35324 = 44 + 17640 × 2]]: الـ «نجاح» آخر نغمة فيه بتخلص عند 0.35 + 0.05 = 0.4 ثانية × 44100 = 17640 عينة. الحسبة دي هي اختبار إن الـ header والطول صح.` },
+        { lvl: 'صغير', dir: "episode-controls", t: R`أزرار حلقة بودكاست: ١٥ لورا و ٣٠ لقدام والسرعة`, what: R`مشغّل حلقة واحدة بشكل تطبيقات البودكاست: شريط وقت، والوقت اللي فات والوقت الباقي بالسالب، وزرار تشغيل كبير، و «↺15» يرجع ١٥ ثانية، و «30↻» يقدّم ٣٠، وزرار سرعة بيلف [[1× ← 1.25× ← 1.5× ← 2× ← 1×]]. والكيبورد: [[k]] تشغيل، والأسهم ١٥ و ٣٠. كل الأزرار [[<button>]] عليها [[aria-label]]، والواجهة بتتحدث من أحداث الصوت. من دروس «HTMLMediaElement» و «مشغّل فيديو خاص».`, done: R`على حلقة ١:٣٠: «30↻» = [[0:30]] و [[-1:00]]، و «↺15» = [[0:15]]، وضغطتين كمان = [[0:00]] (مش سالب). السرعة بعد ٤ ضغطات بترجع [[1×]]. والسهم اليمين وهو شغال = [[0:30]] و [[aria-valuetext]] = «0:30 من 1:30».`, sol: R`## الشكل النهائي
+
+~~~view 300
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حلقة ١٢: الـ Promises</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 16px; background: #fafaf9; color: #1c1917; }
+  .ep { max-width: 520px; background: #fff; border: 1px solid #e7e5e4; border-radius: 14px; padding: 14px; }
+  .ep h1 { font-size: 1.1rem; margin: 0 0 10px; }
+  .bar { display: flex; align-items: center; gap: 8px; direction: ltr; }
+  .bar button { font: inherit; min-width: 48px; min-height: 48px; border: 0; border-radius: 50%; background: #f5f5f4; cursor: pointer; }
+  .bar #play { background: #ea580c; color: #fff; min-width: 56px; min-height: 56px; font-size: 1.2rem; }
+  .bar #speed { border-radius: 24px; padding: 0 12px; font-variant-numeric: tabular-nums; }
+  .bar button:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+  .times { display: flex; justify-content: space-between; direction: ltr; font-variant-numeric: tabular-nums; color: #57534e; margin-top: 8px; }
+  #seek { width: 100%; accent-color: #ea580c; margin-top: 10px; }
+</style>
+</head>
+<body>
+<section class="ep" id="ep" aria-label="مشغّل الحلقة">
+  <h1>حلقة ١٢: الـ Promises من غير صداع</h1>
+  <audio id="audio" preload="metadata"></audio>
+  <input id="seek" type="range" min="0" max="0" step="1" value="0" aria-label="مكان التشغيل">
+  <div class="times"><span id="cur">0:00</span><span id="left">-0:00</span></div>
+  <div class="bar">
+    <button id="back" type="button" aria-label="ارجع ١٥ ثانية">↺15</button>
+    <button id="play" type="button" aria-label="شغّل">▶</button>
+    <button id="fwd" type="button" aria-label="قدّم ٣٠ ثانية">30↻</button>
+    <button id="speed" type="button" aria-label="السرعة 1×">1×</button>
+  </div>
+</section>
+<script>
+// الـ preview مفيهوش ملفات صوت: WAV بيتعمل في الذاكرة (صفارة كل ثانية)
+function demoWav(seconds, freq) {
+  const rate = 8000, n = seconds * rate, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+  const str = (o, s) => [...s].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+  str(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); str(8, 'WAVE'); str(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  str(36, 'data'); v.setUint32(40, n * 2, true);
+  for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, (i / rate) % 1 < 0.15 ? Math.sin(2 * Math.PI * freq * i / rate) * 6000 : 0, true);
+  return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+}
+document.querySelector('#audio').src = demoWav(90, 660);
+
+const $ = (s) => document.querySelector(s);
+const audio = $('#audio');
+const SPEEDS = [1, 1.25, 1.5, 2];
+const fmt = (s) => (Number.isFinite(s) ? Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0') : '--:--');
+
+function jump(sec) {
+  if (!Number.isFinite(audio.duration)) return;
+  audio.currentTime = Math.min(Math.max(audio.currentTime + sec, 0), audio.duration);
+}
+function show() {
+  $('#seek').value = audio.currentTime;
+  $('#cur').textContent = fmt(audio.currentTime);
+  $('#left').textContent = '-' + fmt(audio.duration - audio.currentTime);
+  $('#seek').setAttribute('aria-valuetext', fmt(audio.currentTime) + ' من ' + fmt(audio.duration));
+}
+audio.addEventListener('loadedmetadata', () => { $('#seek').max = Math.floor(audio.duration); show(); });
+for (const ev of ['timeupdate', 'seeked']) audio.addEventListener(ev, show);
+audio.addEventListener('play', () => { $('#play').textContent = '❚❚'; $('#play').setAttribute('aria-label', 'وقّف'); });
+audio.addEventListener('pause', () => { $('#play').textContent = '▶'; $('#play').setAttribute('aria-label', 'شغّل'); });
+audio.addEventListener('ratechange', () => {
+  $('#speed').textContent = audio.playbackRate + '×';
+  $('#speed').setAttribute('aria-label', 'السرعة ' + audio.playbackRate + '×');
 });
 
-describe("myMap", () => {
-  test("بيطبّق الـ callback وبيبعت index والـ array", () => {
-    assert.deepEqual(myMap(["a", "b"], (x, i, arr) => x + i + arr.length), ["a02", "b12"]);
-  });
-  test("الـ hole بيفضل hole والـ callback مبيتنداش عليه", () => {
-    let calls = 0;
-    const out = myMap([1, , 3], (x) => { calls++; return x * 2; });
-    assert.equal(calls, 2);
-    assert.equal(1 in out, false);
-    assert.equal(out.length, 3);
-  });
-  test("thisArg بيوصل لـ callback عادي", () => {
-    assert.deepEqual(myMap([1, 2], function (x) { return x * this.k; }, { k: 10 }), [10, 20]);
-  });
-  test("callback مش function بيرمي TypeError حتى على array فاضية", () => {
-    assert.throws(() => myMap([], "x"), TypeError);
-  });
+$('#play').addEventListener('click', () => (audio.paused ? audio.play().catch(() => {}) : audio.pause()));
+$('#back').addEventListener('click', () => jump(-15));
+$('#fwd').addEventListener('click', () => jump(30));
+$('#speed').addEventListener('click', () => {
+  const i = SPEEDS.indexOf(audio.playbackRate);
+  audio.playbackRate = SPEEDS[(i + 1) % SPEEDS.length];       // بعد 2 بيرجع 1
 });
+$('#seek').addEventListener('input', () => (audio.currentTime = Number($('#seek').value)));
 
-describe("myBind", () => {
-  function greet(word, mark) { return word + " " + this.name + mark; }
-  test("بيثبّت this", () => {
-    assert.equal(myBind(greet, { name: "Sara" })("Hi", "!"), "Hi Sara!");
-  });
-  test("بيثبّت arguments من الأول ويكمّل بالباقي", () => {
-    assert.equal(myBind(greet, { name: "Omar" }, "Yo")("?"), "Yo Omar?");
-  });
-  test("مع new بيتجاهل ctx والـ instanceof شغال", () => {
-    function Point(x, y) { this.x = x; this.y = y; }
-    const P = myBind(Point, { ignored: true }, 1);
-    const p = new P(2);
-    assert.deepEqual({ ...p }, { x: 1, y: 2 });
-    assert.ok(p instanceof Point);
-  });
-  test("مش function بيرمي TypeError", () => {
-    assert.throws(() => myBind({}, null), TypeError);
-  });
+// كيبورد على المشغّل: k للتشغيل، والأسهم ١٥ و ٣٠ زي الأزرار
+$('#ep').addEventListener('keydown', (e) => {
+  const k = e.key.toLowerCase();
+  if (k === 'k') $('#play').click();
+  else if (k === 'arrowleft') jump(-15);
+  else if (k === 'arrowright') jump(30);
+  else return;
+  e.preventDefault();
 });
-
-describe("curry", () => {
-  const add3 = (a, b, c) => a + b + c;
-  test("كل طرق التقسيم بتدّي نفس الناتج", () => {
-    const add = curry(add3);
-    assert.equal(add(1)(2)(3), 6);
-    assert.equal(add(1, 2)(3), 6);
-    assert.equal(add(1)(2, 3), 6);
-  });
-  test("النسخ الجزئية مستقلة عن بعض", () => {
-    const add = curry(add3);
-    const plus1 = add(1);
-    assert.equal(plus1(1)(1), 3);
-    assert.equal(plus1(10)(10), 21);
-  });
-  test("arity صريح للدوال اللي length بتاعها غلط", () => {
-    const sum = curry((...n) => n.reduce((a, b) => a + b, 0), 3);
-    assert.equal(sum(1)(2)(3), 6);
-  });
-  test("مش function بيرمي TypeError", () => {
-    assert.throws(() => curry(42), TypeError);
-  });
-});
-
-describe("deepEqual", () => {
-  test("objects متداخلة والترتيب مش فارق", () => {
-    assert.equal(deepEqual({ a: [1, { b: 2 }], c: 3 }, { c: 3, a: [1, { b: 2 }] }), true);
-  });
-  test("NaN بيساوي NaN، و 1 مش بيساوي '1'", () => {
-    assert.equal(deepEqual([NaN], [NaN]), true);
-    assert.equal(deepEqual({ a: 1 }, { a: "1" }), false);
-  });
-  test("undefined مقابل key مش موجود", () => {
-    assert.equal(deepEqual({ a: undefined }, { b: undefined }), false);
-  });
-  test("array مقابل object بنفس المفاتيح", () => {
-    assert.equal(deepEqual([1, 2], { 0: 1, 1: 2 }), false);
-  });
-});
+</script>
+</body>
+</html>
 ~~~
 
-## كل حتة مهمة
-
-- **functions مش prototype:** [[myMap(array, cb)]] بدل [[array.myMap(cb)]] و [[myBind(fn, ctx)]] بدل [[fn.myBind(ctx)]]. نفس المنطق بتاع الدروس، بس من غير ما نعدّل [[Array.prototype]] في كل ملف بيعمل import للمكتبة.
-- **الـ TypeError في الأول:** كل دالة بتفحص المدخل قبل أي شغل. [[promiseAll]] بترجّع [[Promise.reject]] مش [[throw]]، لأن اللي بيستخدمها مستني Promise ويعمل [[await]] أو [[catch]]، زي [[Promise.all]] الأصلية. و [[deepEqual]] هي الاستثناء: أي قيمتين مدخل صحيح، فمفيش حاجة «غلط» تترمي عليها.
-- **[[myMap]] بتقرا الطول مرة واحدة** ([[const len]]) زي [[map]] الأصلية، عشان لو الـ callback زوّد عناصر متتلفش عليها.
-- **[[myBind]] بتدعم [[new]]** بـ [[new.target]] (حل تمرين درس الـ polyfills)، و [[curry]] بتاخد [[arity]] اختياري للدوال اللي [[length]] بتاعها غلط (rest أو defaults، من تمرين درس curry).
-- **[[assert.rejects]]** للـ promises و **[[assert.throws]]** للـ sync. ومن غير [[await]] قبل [[assert.rejects]] التست هيعدّي قبل ما الـ Promise يخلص.
-- **[[assert/strict]]:** [[deepEqual]] و [[equal]] فيه strict (بـ [[Object.is]])، فـ [[1]] و [["1"]] مختلفين.
-
-## اتأكدت إن التستات بتمسك فعلًا
-
-شلت حاجة من الكود وشغّلت تاني، لكل غلطة:
-
-~~~text الناتج (شلت if (i in array) من myMap)
-  ✖ الـ hole بيفضل hole والـ callback مبيتنداش عليه (0.8126ms)
-ℹ pass 19
-ℹ fail 1
-~~~
-
-~~~text الناتج (بدّلت Object.is بـ === في deepEqual)
-  ✖ NaN بيساوي NaN، و 1 مش بيساوي '1' (0.8128ms)
-ℹ pass 19
-ℹ fail 1
-~~~
-
-## الغلطة اللي حصلت وأنا ببنيه
-
-أول نسخة من [[promiseAll]] كانت نسخة الدرس زي ما هي، وتست «مدخل مش iterable» وقع:
-
-~~~text الناتج (من غير فحص Symbol.iterator)
-  ✖ مدخل مش iterable بيترفض بـ TypeError (1.1288ms)
-  AssertionError [ERR_ASSERTION]: Missing expected rejection (TypeError).
-~~~
-
-السبب: [[Array.from(5)]] مبيرميش، بيرجّع array فاضية (بيعامل أي حاجة ملهاش [[length]] كأن طولها صفر)، فـ [[promiseAll(5)]] اتحلت بـ [[[]]] والأصلية بترفض. التصليح هو أول ٣ سطور في [[promiseAll]]: لو المدخل null أو ملوش [[Symbol.iterator]] ارفض بـ TypeError. (واتضافت الملاحظة دي في درس «Promise.all بإيدك» نفسه.)
-
-**الغلطة الشائعة:** تستات بتعدّي على أي كود (زي [[assert.ok(myMap([1], x => x))]]). التست اللي ملوش لازمة هو اللي مبيقعش لما تبوّظ الكود، فجرّب تبوّظ وشوف.` },
-        { lvl: 'متوسط', t: R`انترفيو تجريبي متسجّل`, what: R`اختار ٣ أسئلة من الوحدة (واحد شرح زي null و undefined، وواحد كود زي curry، وواحد output)، وادّي نفسك ٢٠ دقيقة لكل سؤال، وسجّل صوتك وانت بتشرح وبتكتب على ورقة أو editor من غير تشغيل. بعدها شغّل الكود واسمع التسجيل.`, done: R`فيه ٣ تسجيلات، والكود اللي كتبته من غير تشغيل اشتغل من أول مرة أو مكتوب جنبه الغلطة بالظبط، وتقدر تشرح كل سؤال في دقيقتين من غير سكوت أطول من ١٠ ثواني، وكتبت لكل سؤال الحالات الطرفية اللي كان ممكن تتسأل عليها.`, sol: R`## الشكل النهائي: نسخة نموذجية من الجلسة
-
-~~~text شجرة الملفات
-mock-interview/
-├── notes.md              ورقة التقييم (تحت)
-├── q1-nil.js             الكود اللي اتكتب وأنا بشرح null و undefined
-├── q2-curry-paper.js     curry زي ما اتكتب على الورقة من غير تشغيل
-├── q2-curry-fixed.js     بعد ما شغّلته ولقيت الغلطتين
-├── q3-output.js          سؤال الـ output
-└── recordings/           q1.m4a و q2.m4a و q3.m4a (من مسجّل الموبايل)
-~~~
-
-~~~md notes.md
-| السؤال | الوقت | أطول سكوت | الكود اشتغل من أول مرة؟ | الحالات الطرفية اللي كان ممكن تتسأل |
-|---|---|---|---|---|
-| null و undefined | 4 دقايق | 6 ثواني | أيوه | typeof null، و JSON، و default params، و == null |
-| curry | 17 دقيقة | 25 ثانية (عند this) | لأ: غلطتين (تحت) | args أكتر من المطلوب، و this، و rest/default في fn.length |
-| الـ output | دقيقتين | 4 ثواني | التوقع صح | لو two فيها await، ولو then بدل await |
-~~~
-
-## هتعمل إيه بالترتيب
-
-1. **اختار ٣ أسئلة من أنواع مختلفة:** شرح (null و undefined)، وكود (curry)، و output (async). ٣ من نفس النوع مش بيختبروا غير مهارة واحدة.
-2. **شغّل مسجّل الصوت** على الموبايل، وتايمر ٢٠ دقيقة لكل سؤال، واقفل الـ terminal. اكتب في editor فاضي أو على ورقة.
-3. **اتكلم بصوت عالي طول الوقت:** في الانترفيو الحقيقي السكوت أوحش من الغلط، لأن الانترفيور مش عارف انت بتفكر في إيه.
-4. **بعد الـ ٣ أسئلة بس** شغّل الكود، واسمع التسجيلات، واملا [[notes.md]].
-
-## السؤال ١: null و undefined (شرح)
-
-**الإجابة اللي اتقالت (حوالي دقيقة ونص):** «الاتنين معناهم مفيش قيمة، والفرق مين اللي حطها. undefined بتحطها JS: متغير متعرّف من غير قيمة، أو property مش موجودة، أو argument متبعتش. null بحطها أنا بقصد عشان أقول فاضي. typeof null بيطلع object وده bug تاريخي. null == undefined صح بس === لأ. وفي JSON الـ undefined بتختفي والـ null بتفضل، والـ default parameters بتشتغل مع undefined بس».
-
-~~~js q1-nil.js
-// السؤال ١: إيه الفرق بين null و undefined؟ (الكود اللي بكتبه وأنا بشرح)
-let a;
-const user = { middleName: null };
-console.log(a, user.age, user.middleName);          // JS حطت undefined، وأنا حطيت null
-console.log(typeof a, typeof user.middleName);      // undefined object
-console.log(null == undefined, null === undefined); // true false
-console.log(JSON.stringify({ a: undefined, b: null }));
-const f = (x = "default") => x;
-console.log(f(undefined), f(null));                 // الـ default مع undefined بس
-~~~
-
-~~~text الناتج (node q1-nil.js)
-undefined undefined null
-undefined object
-true false
-{"b":null}
-default null
-~~~
-
-## السؤال ٢: curry (كود من غير تشغيل)
-
-ده اللي اتكتب على الورقة، زي ما هو:
-
-~~~js q2-curry-paper.js
-// السؤال ٢: اكتب curry. ده اللي اتكتب على الورقة في ٢٠ دقيقة من غير تشغيل
-function curry(fn) {
-  return function curried(...args) {
-    if (args.length === fn.length) return fn(...args);
-    return (...more) => curried(...args, ...more);
-  };
-}
-const add = curry((a, b, c) => a + b + c);
-console.log(add(1)(2)(3), add(1, 2)(3), add(1)(2, 3));
-console.log(add(1, 2, 3, 4));
-const obj = { base: 10, plus: curry(function (a, b) { return this.base + a + b; }) };
-try { console.log(obj.plus(1)(2)); } catch (e) { console.log(e.name + ": " + e.message); }
-~~~
-
-~~~text الناتج (node q2-curry-paper.js، أول تشغيل بعد الجلسة)
-6 6 6
-[Function (anonymous)]
-NaN
-~~~
-
-**الغلطتين، مكتوبين جنب الكود في [[notes.md]]:**
-
-1. **[[===]] بدل [[>=]]:** [[add(1, 2, 3, 4)]] رجّعت دالة بدل 6. ٤ arguments مش بيساووا ٣، فالـ curry فضل مستني للأبد. الـ [[>=]] بتقول «لو عندك كفاية، نادي».
-2. **[[fn(...args)]] بدل [[fn.apply(this, args)]]:** [[obj.plus(1)(2)]] طلعت NaN بدل 13. الـ [[this]] بتاع [[obj]] مبيوصلش للدالة الأصلية، فـ [[this.base]] بقت undefined. ده كان مكان الـ ٢٥ ثانية سكوت في التسجيل: كنت حاسس إن فيه حاجة في [[this]] ومقولتهاش.
-
-~~~js q2-curry-fixed.js
-function curry(fn) {
-  return function curried(...args) {
-    if (args.length >= fn.length) return fn.apply(this, args);       // >= ، و this بيتعدّى
-    return (...more) => curried.apply(this, [...args, ...more]);
-  };
-}
-const add = curry((a, b, c) => a + b + c);
-console.log(add(1)(2)(3), add(1, 2)(3), add(1)(2, 3));
-console.log(add(1, 2, 3, 4));
-const obj = { base: 10, plus: curry(function (a, b) { return this.base + a + b; }) };
-console.log(obj.plus(1)(2));
-~~~
-
-~~~text الناتج (node q2-curry-fixed.js)
-6 6 6
-6
-13
-~~~
-
-**اللي كان المفروض يتقال بدل السكوت:** «هنا الـ this ممكن يضيع لو حد استخدم curry على method، فهستخدم apply عشان أعدّيه». جملة زي دي بتاخد نص النقط حتى لو الكود ناقص.
-
-## السؤال ٣: الـ output
-
-~~~js q3-output.js
-// السؤال ٣: إيه الناتج؟ (توقعي على الورقة: start، 1a، 2، end، 1b، timeout)
-async function one() { console.log("1a"); await two(); console.log("1b"); }
-async function two() { console.log("2"); }
-setTimeout(() => console.log("timeout"), 0);
-console.log("start");
-one();
-console.log("end");
-~~~
-
-~~~text الناتج (node q3-output.js)
-start
-1a
-2
-end
-1b
-timeout
-~~~
-
-التوقع على الورقة كان صح. **الشرح اللي اتقال:** «الـ timeout بيتسجّل macrotask. start sync. one بتشتغل sync لحد الـ await: بتطبع 1a وبتنادي two اللي بتطبع 2 sync. الـ await بيحط باقي one في الـ microtasks، فـ end تتطبع، وبعدين 1b من الـ microtask، وفي الآخر timeout».
-
-## ليه الطريقة دي
-
-- **التسجيل** بيوريك حاجات مش هتحس بيها وانت بتتكلم: السكوت الطويل، و «يعني... يعني»، والجمل اللي مبتخلصش. ومن التسجيل اتعرف إن السكوت كان عند [[this]] بالظبط.
-- **من غير تشغيل** لأن الانترفيو غالبًا على سبورة أو editor مشترك من غير run. الغلطتين في curry عمرهم ما كانوا هيظهروا لو اشتغلت بالـ terminal مفتوح.
-- **عمود الحالات الطرفية:** الانترفيور غالبًا بيسأل «وإيه اللي يحصل لو...؟» بعد ما تخلص. لو كتبتهم قبلها هتلاقيهم جاهزين.
-
-**الغلطة الشائعة:** تعمل الجلسة وتشغّل الكود بعد كل سطر، أو تسجّل ومتسمعش. القيمة في المقارنة بين اللي افتكرته قلته واللي قلته فعلًا.` },
-        { lvl: 'كبير', t: R`lodash صغير بتاعك`, what: R`مكتبة فيها [[debounce]] و [[throttle]] (وحدة الأداء)، و [[deepClone]] بيدعم Date و Map و Set والـ objects اللي بتشاور على نفسها بـ WeakMap، و [[deepEqual]] بنفس الدعم (درس deep equal)، و [[get(obj, "a.b.0.c", fallback)]]، و [[mapLimit(items, limit, fn)]] (فكرة Promise.all بإيدك بحد للتوازي)، و [[curry]]. كل دالة بتفحص المدخلات وبترمي [[TypeError]] برسالة واضحة.`, done: R`[[node --test]] فيه تستات للحالات الطرفية وبتعدّي: object بيشاور على نفسه بيتنسخ ويتقارن من غير stack overflow، و [[deepEqual(new Date(1), new Date(2))]] بيرجّع [[false]]، و [[mapLimit]] على ٥ مهام كل واحدة 100ms بحد 2 بياخد حوالي 300ms والنتايج بترتيب المدخلات، و [[get]] على path مش موجود بيرجّع الـ fallback من غير error، و [[node --test --experimental-test-coverage]] بيقول فوق 90٪ سطور.`, ext: R`انشرها كـ package على npm (أو GitHub Packages) بـ README و types، وزوّد [[memoize]] و [[groupBy]] و [[retry]]، وقارن أداء [[deepClone]] بتاعك بـ [[structuredClone]] برقم.`, sol: R`## الشكل النهائي
-
-~~~text الناتج (npm test، يعني node --test، Node 24)
-▶ curry
-  ✔ كل التقسيمات، و args زيادة، و this (0.7777ms)
-  ✔ arity صريح مع rest (0.1557ms)
-  ✔ مدخلات غلط بترمي TypeError (0.8112ms)
-✔ curry (2.8931ms)
-▶ mapLimit
-  ✔ ٥ مهام × 100ms بحد ٢: حوالي 300ms، والترتيب صح، ومفيش أكتر من ٢ مع بعض (329.6684ms)
-  ✔ النتايج بترتيب المدخلات حتى لو خلصت بالعكس (30.8561ms)
-  ✔ فاضية، ومهمة بترمي sync أو async بترفض الكل (0.8826ms)
-  ✔ مدخلات غلط بترجّع promise مرفوض بـ TypeError (0.4725ms)
-✔ mapLimit (362.5769ms)
-▶ deepClone
-  ✔ Date و RegExp و Map و Set بيتنسخوا بنوعهم ومستقلين (2.264ms)
-  ✔ object بيشاور على نفسه بيتنسخ من غير stack overflow (0.3062ms)
-  ✔ الـ prototype بيفضل (class instance بالـ methods)، والـ holes بتفضل (0.3372ms)
-✔ deepClone (4.6665ms)
-▶ deepEqual
-  ✔ Date بالوقت مش بالـ keys (0.5249ms)
-  ✔ RegExp و Map و Set (0.4224ms)
-  ✔ circular في الاتنين بيتقارن من غير stack overflow (0.2353ms)
-  ✔ النوع والمفاتيح (0.3344ms)
-✔ deepEqual (2.1058ms)
-▶ get
-  ✔ path بنقط وبـ index (0.296ms)
-  ✔ path مش موجود بيرجّع الـ fallback من غير error (0.1499ms)
-  ✔ path مش string ولا array بيرمي TypeError (1.5601ms)
-✔ get (2.3285ms)
-✔ debounce: آخر نداء بس، بعد ms من آخر نداء، و this بيوصل (3.2184ms)
-✔ debounce leading: الأول فورًا ومفيش تنفيذ في الآخر (0.7999ms)
-✔ debounce cancel بيمنع التنفيذ (0.5247ms)
-✔ throttle: الأول فورًا والأخير بآخر args في آخر الفترة، و cancel (0.9448ms)
-✔ مدخلات غلط بترمي TypeError برسالة واضحة (1.183ms)
-ℹ tests 22
-ℹ suites 5
-ℹ pass 22
-ℹ fail 0
-ℹ duration_ms 475.0618
-~~~
-
-~~~text الناتج (npm run coverage، يعني node --test --experimental-test-coverage، آخره)
-ℹ start of coverage report
-ℹ --------------------------------------------------------------
-ℹ file          | line % | branch % | funcs % | uncovered lines
-ℹ --------------------------------------------------------------
-ℹ src           |        |          |         | 
-ℹ  check.js     | 100.00 |    90.00 |  100.00 | 
-ℹ  functions.js | 100.00 |   100.00 |  100.00 | 
-ℹ  index.js     | 100.00 |   100.00 |  100.00 | 
-ℹ  objects.js   | 100.00 |    97.06 |  100.00 | 
-ℹ  timing.js    | 100.00 |   100.00 |  100.00 | 
-ℹ --------------------------------------------------------------
-ℹ all files     | 100.00 |    97.52 |  100.00 | 
-ℹ --------------------------------------------------------------
-ℹ end of coverage report
-~~~
-
-## هتشوف إيه
-
-٢٢ تست في ٣ ملفات بيعدّوا في أقل من نص ثانية. تست الـ [[mapLimit]] هو الوحيد اللي بياخد وقت حقيقي (حوالي 330ms، ودي النقطة: إنه ٣ دفعات مش ١ ولا ٥)، وتستات الـ debounce والـ throttle بتستخدم ساعة وهمية فبتخلص في ms. والـ coverage بيقول 100٪ سطور (المطلوب فوق 90٪)، والـ coverage بيعد ملفات [[src]] بس لأن Node بيستبعد ملفات التست لوحده.
-
-## شجرة الملفات وترتيب البناء
-
-~~~text شجرة الملفات
-mini-lodash/
-├── package.json
-├── src/
-│   ├── check.js       فحص المدخلات ورسايل الـ TypeError (١)
-│   ├── functions.js   curry و mapLimit (٢)
-│   ├── objects.js     deepClone و deepEqual و get (٣)
-│   ├── timing.js      debounce و throttle (٤)
-│   └── index.js       نقطة الدخول: بيعمل export للكل (٥)
-└── test/
-    ├── functions.test.js
-    ├── objects.test.js
-    └── timing.test.js
-~~~
-
-اتبنى بالترتيب ده: [[check.js]] الأول عشان كل الدوال تستخدمه، وبعدين كل ملف ومعاه التست بتاعه في نفس الخطوة (تكتب الدالة، تكتب تستاتها، تشغّل [[node --test]]، وبعدين اللي بعدها). [[index.js]] في الآخر، والتستات بتعمل import منه هو بس عشان تختبر اللي اليوزر هيستخدمه فعلًا.
+**هتشوف إيه:** كارت أبيض فيه اسم الحلقة، وشريط برتقاني، و [[0:00]] على الشمال و [[-1:30]] على اليمين، وتحتهم ٤ أزرار مدورة: ↺15، والتشغيل البرتقاني الكبير، و 30↻، والسرعة. (الـ preview بيعمل حلقة تجربة ٩٠ ثانية فيها صفارة كل ثانية، لأنه مفيهوش ملفات. ملفك فيه [[episode.wav]] أو MP3.)
 
 ## الكود
 
-~~~json package.json
-{
-  "name": "mini-lodash",
-  "version": "1.0.0",
-  "type": "module",
-  "exports": "./src/index.js",
-  "scripts": {
-    "test": "node --test",
-    "coverage": "node --test --experimental-test-coverage"
-  }
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حلقة ١٢: الـ Promises</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 16px; background: #fafaf9; color: #1c1917; }
+  .ep { max-width: 520px; background: #fff; border: 1px solid #e7e5e4; border-radius: 14px; padding: 14px; }
+  .ep h1 { font-size: 1.1rem; margin: 0 0 10px; }
+  .bar { display: flex; align-items: center; gap: 8px; direction: ltr; }
+  .bar button { font: inherit; min-width: 48px; min-height: 48px; border: 0; border-radius: 50%; background: #f5f5f4; cursor: pointer; }
+  .bar #play { background: #ea580c; color: #fff; min-width: 56px; min-height: 56px; font-size: 1.2rem; }
+  .bar #speed { border-radius: 24px; padding: 0 12px; font-variant-numeric: tabular-nums; }
+  .bar button:focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+  .times { display: flex; justify-content: space-between; direction: ltr; font-variant-numeric: tabular-nums; color: #57534e; margin-top: 8px; }
+  #seek { width: 100%; accent-color: #ea580c; margin-top: 10px; }
+</style>
+</head>
+<body>
+<section class="ep" id="ep" aria-label="مشغّل الحلقة">
+  <h1>حلقة ١٢: الـ Promises من غير صداع</h1>
+  <audio id="audio" src="episode.wav" preload="metadata"></audio>
+  <input id="seek" type="range" min="0" max="0" step="1" value="0" aria-label="مكان التشغيل">
+  <div class="times"><span id="cur">0:00</span><span id="left">-0:00</span></div>
+  <div class="bar">
+    <button id="back" type="button" aria-label="ارجع ١٥ ثانية">↺15</button>
+    <button id="play" type="button" aria-label="شغّل">▶</button>
+    <button id="fwd" type="button" aria-label="قدّم ٣٠ ثانية">30↻</button>
+    <button id="speed" type="button" aria-label="السرعة 1×">1×</button>
+  </div>
+</section>
+<script>
+const $ = (s) => document.querySelector(s);
+const audio = $('#audio');
+const SPEEDS = [1, 1.25, 1.5, 2];
+const fmt = (s) => (Number.isFinite(s) ? Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0') : '--:--');
+
+function jump(sec) {
+  if (!Number.isFinite(audio.duration)) return;
+  audio.currentTime = Math.min(Math.max(audio.currentTime + sec, 0), audio.duration);
 }
+function show() {
+  $('#seek').value = audio.currentTime;
+  $('#cur').textContent = fmt(audio.currentTime);
+  $('#left').textContent = '-' + fmt(audio.duration - audio.currentTime);
+  $('#seek').setAttribute('aria-valuetext', fmt(audio.currentTime) + ' من ' + fmt(audio.duration));
+}
+audio.addEventListener('loadedmetadata', () => { $('#seek').max = Math.floor(audio.duration); show(); });
+for (const ev of ['timeupdate', 'seeked']) audio.addEventListener(ev, show);
+audio.addEventListener('play', () => { $('#play').textContent = '❚❚'; $('#play').setAttribute('aria-label', 'وقّف'); });
+audio.addEventListener('pause', () => { $('#play').textContent = '▶'; $('#play').setAttribute('aria-label', 'شغّل'); });
+audio.addEventListener('ratechange', () => {
+  $('#speed').textContent = audio.playbackRate + '×';
+  $('#speed').setAttribute('aria-label', 'السرعة ' + audio.playbackRate + '×');
+});
+
+$('#play').addEventListener('click', () => (audio.paused ? audio.play().catch(() => {}) : audio.pause()));
+$('#back').addEventListener('click', () => jump(-15));
+$('#fwd').addEventListener('click', () => jump(30));
+$('#speed').addEventListener('click', () => {
+  const i = SPEEDS.indexOf(audio.playbackRate);
+  audio.playbackRate = SPEEDS[(i + 1) % SPEEDS.length];       // بعد 2 بيرجع 1
+});
+$('#seek').addEventListener('input', () => (audio.currentTime = Number($('#seek').value)));
+
+// كيبورد على المشغّل: k للتشغيل، والأسهم ١٥ و ٣٠ زي الأزرار
+$('#ep').addEventListener('keydown', (e) => {
+  const k = e.key.toLowerCase();
+  if (k === 'k') $('#play').click();
+  else if (k === 'arrowleft') jump(-15);
+  else if (k === 'arrowright') jump(30);
+  else return;
+  e.preventDefault();
+});
+</script>
+</body>
+</html>
 ~~~
 
-~~~js src/check.js
-// فحص المدخلات في مكان واحد، عشان كل الرسايل بنفس الشكل: "اسم الدالة: المشكلة (اللي وصل)"
-const describe = (v) => (v === null ? "null" : Array.isArray(v) ? "array" : typeof v);
+حط جنبه أي ملف صوت باسم [[episode.wav]] (أو غيّر الـ [[src]] لـ MP3 عندك). الـ lab عمل [[episode.wav]] ٩٠ ثانية بـ Node.
 
-export function assertFunction(name, value, what = "الـ fn") {
-  if (typeof value !== "function") {
-    throw new TypeError($__bt$__{name}: $__{what} لازم يبقى function (وصل $__{describe(value)})$__bt);
-  }
+## الشرح
+
+- **[[jump(sec)]]**: clamp بين 0 والمدة، ومبتعملش حاجة لو المدة لسه [[NaN]].
+- **السرعة:** [[SPEEDS.indexOf(audio.playbackRate)]] وبعدين [[(i + 1) % SPEEDS.length]]: الـ [[%]] (باقي القسمة) بيرجّع للأول بعد الآخر. والزرار بيتغيّر من [[ratechange]]، مش من الضغطة.
+- **[[seek.max = Math.floor(duration)]] و [[step="1"]]**: البودكاست بالثواني كفاية، والسهم على الشريط (لو عليه الـ focus) بيمشي ثانية.
+- **الوقت الباقي** [[duration - currentTime]] بالسالب زي Spotify و Apple Podcasts.
+- **[[aria-valuetext]]** على الشريط، و [[aria-label]] على كل زرار لأن «↺15» مش كلام.
+- **الكيبورد على [[#ep]]**: لما الـ focus جوه المشغّل بس.
+
+## غلطات وقعت فيها وأنا ببنيها
+
+- في الاختبار الأول السرعة كانت بتبان «متأخرة ضغطة»: بعد ٣ ضغطات مكتوب [[1.5×]]. اتضح إن الكود صح، والاختبار كان بيقرا الزرار قبل ما [[ratechange]] يتبعت (الحدث async). استنيت ١٠٠ ms بعد كل ضغطة والأرقام بقت مظبوطة. الدرس: الواجهة اللي بتتحدث من الأحداث بتتأخر لحظة عن الضغطة، واختبارك لازم يستنى.
+- أول ملف تجربة كان ٣ ثواني، و «30↻» من أول ضغطة بيوصل للآخر، فمكنتش شايف حاجة. عملت ملف ٩٠ ثانية.
+
+## اتقاس
+
+~~~text الناتج (Chrome 157، Playwright، episode.wav مدته 1:30)
+البداية:        0:00   -1:30
+30↻:            0:30   -1:00
+↺15:            0:15   -1:15
+↺15 مرتين:      0:00   -1:30
+السرعة:         1.25× ثم 2× (بعد ٣) ثم 1× (بعد ٤)
+k:              aria-label = وقّف
+→:              0:30   -0:59   aria-valuetext = 0:30 من 1:30
+الـ preview:    0:30 بعد 30↻، والتشغيل اشتغل
+~~~` },
+        { lvl: 'متوسط', dir: "podcast-resume", t: R`بودكاست بيفتكر انت وقفت فين`, what: R`صفحة برنامج بودكاست فيها ٣ حلقات. كل حلقة في اللستة مكتوب جنبها «لسه متسمعتش» أو «وقفت عند 0:12 من 0:30» وشريط صغير، أو ✓ لو خلصت. المكان بيتحفظ في [[localStorage]] كل ٥ ثواني تشغيل وعند الإيقاف وقبل ما الصفحة تتقفل ([[pagehide]]). لما تفتح حلقة ليها مكان محفوظ يظهر «كمّل من 0:12» و «من الأول». ولما حلقة تخلص تتعلّم ✓ واللي بعدها تشتغل. ولو التخزين مقفول، الصفحة تشتغل من الذاكرة وتقول كده. من دروس «HTMLMediaElement» و «Web Storage».`, done: R`شغّل حلقة ١ واقف عند 0:12 و reload: «كمّل من 0:12»، والضغط عليه بيكمّل من 12. خلّي حلقة ١ تخلص: بتتعلّم ✓ وحلقة ٢ بتشتغل لوحدها من 0:00، والتخزين فيه [[{"ep1":{"t":30,"d":30,"done":true}}]]. وجوه الـ preview الرسالة الصفرا ظاهرة والتشغيل شغال.`, sol: R`## الشكل النهائي
+
+~~~view 420
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بودكاست كود بالعربي</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 16px; background: #f5f3ff; color: #1e1b4b; }
+  main { max-width: 560px; }
+  .note { background: #fef9c3; padding: 8px; border-radius: 8px; }
+  ol { list-style: none; padding: 0; display: grid; gap: 8px; }
+  li button { width: 100%; text-align: start; font: inherit; padding: 10px; border: 1px solid #c4b5fd; border-radius: 10px; background: #fff; cursor: pointer; display: grid; gap: 4px; }
+  li button[aria-current="true"] { border-color: #6d28d9; box-shadow: 0 0 0 2px #6d28d9; }
+  .meta { font-size: 0.85rem; color: #4c1d95; }
+  .done .meta::after { content: ' ✓ خلصت'; color: #15803d; }
+  .bar { height: 4px; background: #ede9fe; border-radius: 2px; overflow: hidden; }
+  .bar span { display: block; height: 100%; background: #7c3aed; width: 0; }
+  #resume { margin: 8px 0; }
+  #resume button { font: inherit; min-height: 40px; }
+  audio { width: 100%; }
+</style>
+</head>
+<body>
+<main>
+  <h1>بودكاست كود بالعربي</h1>
+  <p class="note" id="note" hidden>التخزين مقفول هنا، فالمكان هيتنسي مع الـ reload. التشغيل شغال عادي.</p>
+  <audio id="audio" controls preload="metadata"></audio>
+  <p id="resume" hidden><button id="resumeBtn" type="button"></button> <button id="fromStart" type="button">من الأول</button></p>
+  <ol id="list"></ol>
+</main>
+<script>
+// الـ preview مفيهوش ملفات صوت: WAV بيتعمل في الذاكرة (صفارة كل ثانية)
+function demoWav(seconds, freq) {
+  const rate = 8000, n = seconds * rate, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+  const str = (o, s) => [...s].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+  str(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); str(8, 'WAVE'); str(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  str(36, 'data'); v.setUint32(40, n * 2, true);
+  for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, (i / rate) % 1 < 0.15 ? Math.sin(2 * Math.PI * freq * i / rate) * 6000 : 0, true);
+  return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
 }
 
-export function assertNonNegativeNumber(name, value, what) {
-  if (typeof value !== "number" || !Number.isFinite(value) || value < 0) {
-    throw new TypeError($__bt$__{name}: $__{what} لازم يبقى رقم >= 0 (وصل $__{describe(value)} $__{String(value)})$__bt);
-  }
+const EPISODES = [
+  { id: 'ep1', title: 'حلقة ١: يعني إيه برنامج', src: demoWav(30, 523) },
+  { id: 'ep2', title: 'حلقة ٢: الـ Promises من غير صداع', src: demoWav(45, 659) },
+  { id: 'ep3', title: 'حلقة ٣: الـ event loop', src: demoWav(20, 784) },
+];
+const $ = (s) => document.querySelector(s);
+const audio = $('#audio');
+const fmt = (s) => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+
+// ١. التخزين: localStorage ممكن يرمي (sandbox أو إعدادات المتصفح)، فبديل في الذاكرة
+function safeStorage() {
+  try { localStorage.setItem('_t', '1'); localStorage.removeItem('_t'); return localStorage; }
+  catch { $('#note').hidden = false; const m = new Map(); return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) }; }
 }
+const store = safeStorage();
+const KEY = 'podcast-progress';
+// { ep1: { t: 83.2, d: 1800, done: false }, ... }
+function load() { try { return JSON.parse(store.getItem(KEY)) || {}; } catch { return {}; } }
+let progress = load();
+function save() { store.setItem(KEY, JSON.stringify(progress)); }
+
+// ٢. اللستة: كل حلقة زرار، وفيه المكان اللي وقفت فيه وشريط صغير
+function render() {
+  $('#list').replaceChildren(...EPISODES.map((ep) => {
+    const p = progress[ep.id] || {};
+    const li = document.createElement('li');
+    li.className = p.done ? 'done' : '';
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-current', String(current?.id === ep.id));
+    const pct = p.d ? Math.min(100, (p.t / p.d) * 100) : 0;
+    b.innerHTML = '<span></span><span class="meta"></span><span class="bar"><span></span></span>';
+    b.children[0].textContent = ep.title;
+    b.children[1].textContent = p.d ? (p.done ? fmt(p.d) : 'وقفت عند ' + fmt(p.t) + ' من ' + fmt(p.d)) : 'لسه متسمعتش';
+    b.children[2].firstChild.style.width = (p.done ? 100 : pct) + '%';
+    b.addEventListener('click', () => open(ep, true));
+    li.append(b);
+    return li;
+  }));
+}
+
+// ٣. فتح حلقة: لو فيه مكان محفوظ، نعرض «كمّل من …»
+let current = null, lastSave = 0;
+function open(ep, autoplay) {
+  current = ep;
+  audio.src = ep.src;
+  const p = progress[ep.id];
+  const resumeAt = p && !p.done && p.t > 5 ? p.t : 0;
+  lastSave = resumeAt;                        // العدّ لـ ٥ ثواني يبدأ من مكان الحلقة دي
+  $('#resume').hidden = !resumeAt;
+  if (resumeAt) $('#resumeBtn').textContent = 'كمّل من ' + fmt(resumeAt);
+  audio.addEventListener('loadedmetadata', () => {
+    if (resumeAt) audio.currentTime = resumeAt;
+    if (autoplay) audio.play().catch(() => {});
+  }, { once: true });
+  render();
+}
+$('#resumeBtn').addEventListener('click', () => { $('#resume').hidden = true; audio.play().catch(() => {}); });
+$('#fromStart').addEventListener('click', () => { audio.currentTime = 0; $('#resume').hidden = true; audio.play().catch(() => {}); });
+
+// ٤. الحفظ: كل ٥ ثواني تشغيل، وعند الإيقاف، وقبل ما الصفحة تتقفل
+function remember(force) {
+  if (!current || !Number.isFinite(audio.duration)) return;
+  if (!force && Math.abs(audio.currentTime - lastSave) < 5) return;
+  lastSave = audio.currentTime;
+  progress[current.id] = { t: audio.currentTime, d: audio.duration, done: audio.ended || audio.duration - audio.currentTime < 2 };
+  save(); render();
+}
+audio.addEventListener('timeupdate', () => remember(false));
+audio.addEventListener('pause', () => remember(true));
+addEventListener('pagehide', () => remember(true));
+
+// ٥. خلصت: علّم عليها وشغّل اللي بعدها
+audio.addEventListener('ended', () => {
+  remember(true);
+  const next = EPISODES[EPISODES.indexOf(current) + 1];
+  if (next) open(next, true);
+});
+
+open(EPISODES.find((ep) => !(progress[ep.id] || {}).done) || EPISODES[0], false);
+</script>
+</body>
+</html>
 ~~~
 
-~~~js src/functions.js
-import { assertFunction, assertNonNegativeNumber } from "./check.js";
+**هتشوف إيه:** رسالة صفرا (الـ preview مفيهوش تخزين، اتشرحت تحت)، ومشغّل الصوت بتاع المتصفح، و ٣ كروت بنفسجي فاتح. دوس على حلقة ٢: الكارت بيتحدد بإطار والتشغيل بيبدأ، ولما توقف الكارت بيكتب «وقفت عند…» والشريط البنفسجي بيتملا. (حلقات التجربة صفارات اتعملت في الصفحة، وملفاتك [[ep1.wav]] وغيرها.)
 
-export function curry(fn, arity = fn?.length) {
-  assertFunction("curry", fn);
-  assertNonNegativeNumber("curry", arity, "الـ arity");
-  return function curried(...args) {
-    if (args.length >= arity) return fn.apply(this, args);
-    return (...more) => curried.apply(this, [...args, ...more]);
-  };
+## الكود
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بودكاست كود بالعربي</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 16px; background: #f5f3ff; color: #1e1b4b; }
+  main { max-width: 560px; }
+  .note { background: #fef9c3; padding: 8px; border-radius: 8px; }
+  ol { list-style: none; padding: 0; display: grid; gap: 8px; }
+  li button { width: 100%; text-align: start; font: inherit; padding: 10px; border: 1px solid #c4b5fd; border-radius: 10px; background: #fff; cursor: pointer; display: grid; gap: 4px; }
+  li button[aria-current="true"] { border-color: #6d28d9; box-shadow: 0 0 0 2px #6d28d9; }
+  .meta { font-size: 0.85rem; color: #4c1d95; }
+  .done .meta::after { content: ' ✓ خلصت'; color: #15803d; }
+  .bar { height: 4px; background: #ede9fe; border-radius: 2px; overflow: hidden; }
+  .bar span { display: block; height: 100%; background: #7c3aed; width: 0; }
+  #resume { margin: 8px 0; }
+  #resume button { font: inherit; min-height: 40px; }
+  audio { width: 100%; }
+</style>
+</head>
+<body>
+<main>
+  <h1>بودكاست كود بالعربي</h1>
+  <p class="note" id="note" hidden>التخزين مقفول هنا، فالمكان هيتنسي مع الـ reload. التشغيل شغال عادي.</p>
+  <audio id="audio" controls preload="metadata"></audio>
+  <p id="resume" hidden><button id="resumeBtn" type="button"></button> <button id="fromStart" type="button">من الأول</button></p>
+  <ol id="list"></ol>
+</main>
+<script>
+const EPISODES = [
+  { id: 'ep1', title: 'حلقة ١: يعني إيه برنامج', src: 'ep1.wav' },
+  { id: 'ep2', title: 'حلقة ٢: الـ Promises من غير صداع', src: 'ep2.wav' },
+  { id: 'ep3', title: 'حلقة ٣: الـ event loop', src: 'ep3.wav' },
+];
+const $ = (s) => document.querySelector(s);
+const audio = $('#audio');
+const fmt = (s) => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+
+// ١. التخزين: localStorage ممكن يرمي (sandbox أو إعدادات المتصفح)، فبديل في الذاكرة
+function safeStorage() {
+  try { localStorage.setItem('_t', '1'); localStorage.removeItem('_t'); return localStorage; }
+  catch { $('#note').hidden = false; const m = new Map(); return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) }; }
+}
+const store = safeStorage();
+const KEY = 'podcast-progress';
+// { ep1: { t: 83.2, d: 1800, done: false }, ... }
+function load() { try { return JSON.parse(store.getItem(KEY)) || {}; } catch { return {}; } }
+let progress = load();
+function save() { store.setItem(KEY, JSON.stringify(progress)); }
+
+// ٢. اللستة: كل حلقة زرار، وفيه المكان اللي وقفت فيه وشريط صغير
+function render() {
+  $('#list').replaceChildren(...EPISODES.map((ep) => {
+    const p = progress[ep.id] || {};
+    const li = document.createElement('li');
+    li.className = p.done ? 'done' : '';
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-current', String(current?.id === ep.id));
+    const pct = p.d ? Math.min(100, (p.t / p.d) * 100) : 0;
+    b.innerHTML = '<span></span><span class="meta"></span><span class="bar"><span></span></span>';
+    b.children[0].textContent = ep.title;
+    b.children[1].textContent = p.d ? (p.done ? fmt(p.d) : 'وقفت عند ' + fmt(p.t) + ' من ' + fmt(p.d)) : 'لسه متسمعتش';
+    b.children[2].firstChild.style.width = (p.done ? 100 : pct) + '%';
+    b.addEventListener('click', () => open(ep, true));
+    li.append(b);
+    return li;
+  }));
 }
 
-export function mapLimit(items, limit, fn) {
+// ٣. فتح حلقة: لو فيه مكان محفوظ، نعرض «كمّل من …»
+let current = null, lastSave = 0;
+function open(ep, autoplay) {
+  current = ep;
+  audio.src = ep.src;
+  const p = progress[ep.id];
+  const resumeAt = p && !p.done && p.t > 5 ? p.t : 0;
+  lastSave = resumeAt;                        // العدّ لـ ٥ ثواني يبدأ من مكان الحلقة دي
+  $('#resume').hidden = !resumeAt;
+  if (resumeAt) $('#resumeBtn').textContent = 'كمّل من ' + fmt(resumeAt);
+  audio.addEventListener('loadedmetadata', () => {
+    if (resumeAt) audio.currentTime = resumeAt;
+    if (autoplay) audio.play().catch(() => {});
+  }, { once: true });
+  render();
+}
+$('#resumeBtn').addEventListener('click', () => { $('#resume').hidden = true; audio.play().catch(() => {}); });
+$('#fromStart').addEventListener('click', () => { audio.currentTime = 0; $('#resume').hidden = true; audio.play().catch(() => {}); });
+
+// ٤. الحفظ: كل ٥ ثواني تشغيل، وعند الإيقاف، وقبل ما الصفحة تتقفل
+function remember(force) {
+  if (!current || !Number.isFinite(audio.duration)) return;
+  if (!force && Math.abs(audio.currentTime - lastSave) < 5) return;
+  lastSave = audio.currentTime;
+  progress[current.id] = { t: audio.currentTime, d: audio.duration, done: audio.ended || audio.duration - audio.currentTime < 2 };
+  save(); render();
+}
+audio.addEventListener('timeupdate', () => remember(false));
+audio.addEventListener('pause', () => remember(true));
+addEventListener('pagehide', () => remember(true));
+
+// ٥. خلصت: علّم عليها وشغّل اللي بعدها
+audio.addEventListener('ended', () => {
+  remember(true);
+  const next = EPISODES[EPISODES.indexOf(current) + 1];
+  if (next) open(next, true);
+});
+
+open(EPISODES.find((ep) => !(progress[ep.id] || {}).done) || EPISODES[0], false);
+</script>
+</body>
+</html>
+~~~
+
+وجنبه [[ep1.wav]] و [[ep2.wav]] و [[ep3.wav]] (أو MP3 وغيّر [[src]] في [[EPISODES]]).
+
+## الشرح
+
+- **[[safeStorage()]]:** بيجرّب يكتب ويمسح. لو رمى (sandbox، أو اليوزر قافل الـ site data) بيرجّع نفس الواجهة على [[Map]]، ويظهر الرسالة. باقي الكود مبيعرفش الفرق. نفس النمط من مشروع «صفحة إعدادات بتفتكر في ٣ أماكن».
+- **شكل البيانات:** [[{ ep1: { t, d, done } }]] في مفتاح واحد JSON، و [[load()]] جواها [[try]] عشان JSON بايظ ميوقعش الصفحة.
+- **[[remember(force)]]:** من [[timeupdate]] كل ٥ ثواني بس (مش ٤ مرات في الثانية)، ومن [[pause]] و [[pagehide]] على طول. و [[done]] لو باقي أقل من ثانيتين، عشان اللي قفل قبل النهاية بشوية يتحسبله.
+- **[[open(ep, autoplay)]]:** بيحط الـ [[src]]، ولو فيه مكان أكبر من ٥ ثواني ومش خلصان بيظهر «كمّل من». والـ [[currentTime]] بيتظبط في [[loadedmetadata]] (قبله مينفعش). و [[{ once: true }]] عشان الـ listener ميتكررش مع كل حلقة.
+- **[[ended]]:** يحفظ ✓ ويفتح [[EPISODES[i + 1] ]] بـ autoplay. ده مسموح لأن اليوزر داس قبل كده في الصفحة.
+- **أول ما الصفحة تفتح:** بتفتح أول حلقة مش خلصانة، من غير تشغيل.
+- **[[aria-current]]** على الحلقة الحالية، والـ [[render()]] بيرسم اللستة كلها من [[progress]] (مصدر واحد).
+
+## غلطات وقعت فيها وأنا ببنيها
+
+- **حلقة ٢ اتحفظت عند 0:00 أول ما بدأت:** [[lastSave]] كان لسه 29 من حلقة ١، فأول [[timeupdate]] في حلقة ٢ لقى فرق أكبر من ٥ وحفظ 0.22، واللستة كتبت «وقفت عند 0:00». التصليح: [[lastSave = resumeAt]] جوه [[open()]]، فالعد يبدأ من مكان الحلقة الجديدة.
+- **جوه الـ preview الحلقة مكانتش بتشتغل:** [[src: 'ep2.wav']] ملف مش موجود هناك (الـ preview مالوش فولدر). نسخة الشكل النهائي فوق بتعمل الحلقات في الذاكرة.
+
+## اتقاس
+
+~~~text الناتج (Chrome 157، Playwright من سيرفر محلي)
+أول مرة:            لسه متسمعتش / لسه متسمعتش / لسه متسمعتش   stored=null
+12 ثانية وإيقاف:     وقفت عند 0:12 من 0:30                      stored={"ep1":{"t":12.36,"d":30,"done":false}}
+بعد reload:          resume = «كمّل من 0:12»
+كمّل:                t=12.8 paused=false
+ep1 خلصت:            src=ep2.wav t=1.4 paused=false
+                     اللستة: 0:30 ✓ خلصت / لسه متسمعتش / لسه متسمعتش
+                     stored={"ep1":{"t":30,"d":30,"done":true}}
+الـ preview:         التخزين مقفول هنا… | حلقة ٢ اشتغلت (duration 45) | «وقفت عند 0:20 من 0:45»
+~~~` },
+        { lvl: 'متوسط', dir: "voice-notes", t: R`مسجّل ملاحظات صوتية بيحفظ في المتصفح`, what: R`زرار «● سجّل» بيبدأ تسجيل من الميكروفون بعداد، ونفس الزرار «■ وقّف»، والتسجيل بيقف لوحده عند دقيقة. كل ملاحظة في لستة: اسم تقدر تعدّله، ومشغّل، والمدة والحجم والتاريخ، و «نزّل» و «امسح». الملاحظات بتتحفظ في **IndexedDB** (الـ Blob نفسه) فبترجع بعد الـ reload، ولو IndexedDB مقفول بتتحفظ في الذاكرة. ولو الميكروفون مش متاح يظهر زرار «جرّب بصوت تجربة» بيسجّل نغمات من Web Audio. من دروس «getUserMedia» و «MediaRecorder» و «تختار تخزين إيه».`, done: R`تسجيل ٢.٥ ثانية = ملاحظة [[0:02 · 31 KB]]، وتاني ١.٥ ثانية فوقيها. تغيير اسم الأولى لـ «فكرة المشروع» و reload = الاسم والملاحظتين لسه موجودين ومدة التسجيل 1.44. «امسح» بيشيلها. وجوه الـ preview: رسالة الميكروفون بالسبب، و«جرّب بصوت تجربة» بيضيف ملاحظة.`, sol: R`## الشكل النهائي
+
+~~~live 380 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ملاحظات صوتية</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 16px; background: #f0fdf4; color: #052e16; }
+  main { max-width: 560px; }
+  .rec { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  button { font: inherit; min-height: 44px; padding: 0 14px; border-radius: 8px; border: 1px solid #86efac; background: #fff; cursor: pointer; }
+  #rec { background: #dc2626; color: #fff; border: 0; }
+  #rec[aria-pressed="true"] { background: #7f1d1d; }
+  #clock { font-variant-numeric: tabular-nums; font-size: 1.3rem; min-width: 4ch; }
+  #msg { min-height: 1.5em; }
+  #msg.bad { color: #b91c1c; }
+  ul { list-style: none; padding: 0; display: grid; gap: 10px; }
+  li { background: #fff; border: 1px solid #bbf7d0; border-radius: 10px; padding: 10px; display: grid; gap: 6px; }
+  li input { font: inherit; padding: 6px; border: 1px solid #d1d5db; border-radius: 6px; }
+  li audio { width: 100%; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .meta { color: #166534; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>ملاحظات صوتية</h1>
+  <div class="rec">
+    <button id="rec" type="button" aria-pressed="false">● سجّل</button>
+    <span id="clock">0:00</span>
+    <button id="demo" type="button" hidden>جرّب بصوت تجربة</button>
+  </div>
+  <p id="msg" role="status"></p>
+  <ul id="list"></ul>
+</main>
+<script type="module">
+const $ = (s) => document.querySelector(s);
+const MAX = 60;
+const fmt = (s) => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+const say = (t, bad = false) => { $('#msg').textContent = t; $('#msg').className = bad ? 'bad' : ''; };
+
+// ١. التخزين: IndexedDB بيشيل الـ Blob نفسه. ولو مقفول (sandbox أو private)، الذاكرة
+const db = await new Promise((resolve) => {
   try {
-    if (items == null || typeof items[Symbol.iterator] !== "function") {
-      throw new TypeError("mapLimit: الـ items لازم تبقى iterable");
-    }
-    if (!Number.isInteger(limit) || limit < 1) {
-      throw new TypeError($__btmapLimit: الـ limit لازم يبقى رقم صحيح >= 1 (وصل $__{String(limit)})$__bt);
-    }
-    assertFunction("mapLimit", fn);
-  } catch (e) {
-    return Promise.reject(e);                         // دالة async: الغلط بيرجع promise مرفوض
-  }
-  return new Promise((resolve, reject) => {
-    const list = Array.from(items);
-    const results = new Array(list.length);
-    let next = 0, done = 0, failed = false;
-    if (list.length === 0) return resolve(results);
-    function startOne() {
-      if (failed || next >= list.length) return;
-      const i = next++;
-      Promise.resolve()
-        .then(() => fn(list[i], i))
-        .then((value) => {
-          results[i] = value;
-          if (++done === list.length) resolve(results);
-          else startOne();
-        }, (err) => { failed = true; reject(err); });
-    }
-    for (let k = 0; k < Math.min(limit, list.length); k++) startOne();
-  });
-}
-~~~
+    const req = indexedDB.open('voice-notes', 1);
+    req.onupgradeneeded = () => req.result.createObjectStore('notes', { keyPath: 'id' });
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => resolve(null);
+  } catch { resolve(null); }
+});
+const memory = new Map();
+const tx = (mode) => db.transaction('notes', mode).objectStore('notes');
+const store = {
+  all: () => db ? new Promise((r) => { const q = tx('readonly').getAll(); q.onsuccess = () => r(q.result); }) : Promise.resolve([...memory.values()]),
+  put: (n) => db ? new Promise((r) => { tx('readwrite').put(n).onsuccess = r; }) : Promise.resolve(memory.set(n.id, n)),
+  del: (id) => db ? new Promise((r) => { tx('readwrite').delete(id).onsuccess = r; }) : Promise.resolve(memory.delete(id)),
+};
+if (!db) say('التخزين مقفول هنا: الملاحظات هتتمسح مع الـ reload.');
 
-~~~js src/objects.js
-const isObject = (v) => typeof v === "object" && v !== null;
-
-export function deepClone(value, seen = new WeakMap()) {
-  if (!isObject(value)) return value;                 // primitives والدوال بترجع زي ما هي
-  if (seen.has(value)) return seen.get(value);        // circular: رجّع النسخة اللي بتتعمل
-  if (value instanceof Date) return new Date(value.getTime());
-  if (value instanceof RegExp) return new RegExp(value.source, value.flags);
-  if (value instanceof Map) {
-    const out = new Map();
-    seen.set(value, out);
-    for (const [k, v] of value) out.set(deepClone(k, seen), deepClone(v, seen));
-    return out;
-  }
-  if (value instanceof Set) {
-    const out = new Set();
-    seen.set(value, out);
-    for (const v of value) out.add(deepClone(v, seen));
-    return out;
-  }
-  const out = Array.isArray(value) ? new Array(value.length) : Object.create(Object.getPrototypeOf(value));
-  seen.set(value, out);                               // قبل ما ننزل جوه
-  for (const key of Object.keys(value)) out[key] = deepClone(value[key], seen);
-  return out;
+// ٢. اللستة
+const urls = new Map();                                   // id => عنوان blob: عشان نعمله revoke
+async function render() {
+  const notes = (await store.all()).sort((a, b) => b.created - a.created);
+  for (const [id, url] of urls) if (!notes.some((n) => n.id === id)) { URL.revokeObjectURL(url); urls.delete(id); }
+  $('#list').replaceChildren(...notes.map((n) => {
+    if (!urls.has(n.id)) urls.set(n.id, URL.createObjectURL(n.blob));
+    const li = document.createElement('li');
+    const name = Object.assign(document.createElement('input'), { value: n.name });
+    name.setAttribute('aria-label', 'اسم الملاحظة');
+    name.addEventListener('change', () => store.put({ ...n, name: name.value.trim() || n.name }));
+    const audio = Object.assign(document.createElement('audio'), { controls: true, src: urls.get(n.id), preload: 'metadata' });
+    const ext = n.blob.type.includes('mp4') ? 'm4a' : n.blob.type.includes('ogg') ? 'ogg' : 'webm';
+    const dl = Object.assign(document.createElement('a'), { href: urls.get(n.id), download: 'voice-note-' + n.id + '.' + ext, textContent: 'نزّل' });
+    const del = Object.assign(document.createElement('button'), { type: 'button', textContent: 'امسح' });
+    del.addEventListener('click', async () => { await store.del(n.id); render(); say('اتمسحت: ' + n.name); });
+    const meta = Object.assign(document.createElement('span'), { className: 'meta', textContent: fmt(n.seconds) + ' · ' + Math.round(n.blob.size / 1024) + ' KB · ' + new Date(n.created).toLocaleString('ar-EG') });
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.append(meta, dl, del);
+    li.append(name, audio, row);
+    return li;
+  }));
 }
 
-export function deepEqual(a, b, seen = new WeakMap()) {
-  if (Object.is(a, b)) return true;
-  if (!isObject(a) || !isObject(b)) return false;
-  if (Object.getPrototypeOf(a) !== Object.getPrototypeOf(b)) return false;   // array و object، و Date و {}
-  if (seen.get(a) === b) return true;                 // الزوج ده بيتقارن دلوقتي (circular)
-  seen.set(a, b);
+// ٣. التسجيل: من الميكروفون، أو من صوت تجربة لو الميكروفون مش متاح
+let rec = null, stopSource = null, timer = null;
+const pickType = () => ['audio/webm;codecs=opus', 'audio/mp4', 'audio/ogg;codecs=opus'].find((t) => MediaRecorder.isTypeSupported(t)) || '';
+async function micSource() {
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  return { stream, stop: () => stream.getTracks().forEach((t) => t.stop()) };
+}
+function demoSource() {
+  const ctx = new AudioContext(), out = ctx.createMediaStreamDestination(), osc = ctx.createOscillator(), g = ctx.createGain();
+  g.gain.value = 0.2;
+  osc.connect(g).connect(out);
+  for (let i = 0; i < 240; i++) osc.frequency.setValueAtTime([392, 440, 494, 523][i % 4], ctx.currentTime + i * 0.25);
+  osc.start();
+  return { stream: out.stream, stop: () => { osc.stop(); ctx.close(); } };
+}
+async function start(getSource) {
+  let src;
+  try { src = await getSource(); }
+  catch (e) {
+    say('الميكروفون مش متاح: ' + e.name + (e.message ? ' (' + e.message + ')' : '') + '. جرّب بصوت تجربة.', true);
+    $('#demo').hidden = false;
+    return;
+  }
+  stopSource = src.stop;
+  const mimeType = pickType();
+  rec = new MediaRecorder(src.stream, mimeType ? { mimeType } : {});
+  const chunks = [];
+  const began = performance.now();
+  rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+  rec.onstop = async () => {
+    clearInterval(timer);
+    stopSource();
+    const seconds = (performance.now() - began) / 1000;
+    const id = Date.now();
+    await store.put({ id, name: 'ملاحظة ' + new Date(id).toLocaleTimeString('ar-EG'), seconds, created: id, blob: new Blob(chunks, { type: rec.mimeType }) });
+    $('#rec').textContent = '● سجّل';
+    $('#rec').setAttribute('aria-pressed', 'false');
+    $('#clock').textContent = '0:00';
+    say('اتحفظت: ' + fmt(seconds) + (seconds >= MAX ? ' (وقفت لوحدها عند الحد)' : ''));
+    rec = null;
+    render();
+  };
+  rec.start();
+  timer = setInterval(() => {
+    const s = (performance.now() - began) / 1000;
+    $('#clock').textContent = fmt(s);
+    if (s >= MAX && rec.state === 'recording') rec.stop();
+  }, 250);
+  $('#rec').textContent = '■ وقّف';
+  $('#rec').setAttribute('aria-pressed', 'true');
+  say('بيسجّل…');
+}
+$('#rec').addEventListener('click', () => (rec ? rec.stop() : start(micSource)));
+$('#demo').addEventListener('click', () => { if (!rec) start(demoSource); });
+render();
+</script>
+</body>
+</html>
+~~~
 
-  if (a instanceof Date) return Object.is(a.getTime(), b.getTime());
-  if (a instanceof RegExp) return a.source === b.source && a.flags === b.flags;
-  if (a instanceof Map) {
-    if (a.size !== b.size) return false;
-    for (const [k, v] of a) if (!b.has(k) || !deepEqual(v, b.get(k), seen)) return false;
-    return true;
-  }
-  if (a instanceof Set) {
-    if (a.size !== b.size) return false;
-    const rest = [...b];
-    for (const v of a) {
-      if (b.has(v)) continue;                         // primitive أو نفس الـ reference
-      // seen جديد لكل محاولة: محاولة فاشلة متسيبش أزواج غلط في seen للي بعدها
-      if (!rest.some((w) => isObject(w) && deepEqual(v, w, new WeakMap()))) return false;
-    }
-    return true;
-  }
-  const keysA = Object.keys(a);
-  if (keysA.length !== Object.keys(b).length) return false;
-  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k], seen));
+**هتشوف إيه:** زرار أحمر «● سجّل» وعداد [[0:00]]. جوه الـ preview: سطر «التخزين مقفول هنا»، ولما تدوس سجّل هيقولك «الميكروفون مش متاح: SecurityError…» ويظهر «جرّب بصوت تجربة». دوسه، استنى ثانيتين، ودوس «■ وقّف»: كارت أخضر فاتح فيه الاسم والمشغّل والمدة. من [[localhost]] الميكروفون بيشتغل والملاحظات بتفضل بعد الـ reload.
+
+## الشرح
+
+- **[[<script type="module">]]** عشان [[await]] في أول السكربت (top-level await) لفتح الـ IndexedDB قبل أي حاجة.
+- **IndexedDB بيشيل [[Blob]] زي ما هو**، مش base64. ده سبب اختياره هنا بدل [[localStorage]] (نص بس وحوالي 5 MB). الـ [[store]] واجهة صغيرة ([[all]] و [[put]] و [[del]]) على IndexedDB أو على [[Map]]، فباقي الكود واحد.
+- **[[urls]] Map:** كل ملاحظة ليها عنوان [[blob:]] واحد بيتعمل مرة، ولما الملاحظة تتمسح العنوان بيتعمله revoke. من غيرها كل [[render()]] كان هيعمل عناوين جديدة ويسيب القديمة في الذاكرة.
+- **[[micSource]] و [[demoSource]]** بيرجّعوا نفس الشكل [[{ stream, stop }]]، فـ [[start(getSource)]] مبتعرفش جاي منين. الـ demo: oscillator بيتنقل بين ٤ نغمات كل ربع ثانية على [[createMediaStreamDestination()]].
+- **الحد:** الـ interval كل ٢٥٠ ms بيحدّث العداد ويوقف عند [[MAX]]، و [[rec.state === 'recording']] عشان [[stop()]] ميتنادهش مرتين.
+- **الاسم:** [[change]] (مش [[input]]) بيحفظ لما تسيب الخانة أو تدوس Enter، و [[...n]] بيعمل نسخة من الملاحظة بالاسم الجديد.
+- **الامتداد** من نوع الـ Blob: [[m4a]] لـ MP4 (Safari) و [[webm]] لـ Chrome.
+
+## غلطات وقعت فيها وأنا ببنيها
+
+- **[[setAttribute('aria-label', …)]]** على خانة الاسم بدل ما أحطها جوه [[Object.assign]]: كده الـ attribute بيتكتب في الـ HTML نفسه وبيبان في DevTools وقارئ الشاشة بيقراه. (قرار، مش باج اتقاس.)
+- **الـ preview مكانش بيعرض حاجة غير الخطأ:** من غير مصدر تجربة، الصفحة جوه الـ preview عبارة عن رسالة حمرا. زرار «جرّب بصوت تجربة» خلّى الشكل يبان، وكمان مفيد لأي يوزر عنده مشكلة في المايك ويجرّب الصفحة.
+
+## اتقاس
+
+~~~text الناتج (Chrome 157 بمايك وهمي، Playwright من سيرفر محلي)
+أول مرة:         (اللستة فاضية)
+بعد تسجيل:       اتحفظت | ملاحظة ٥:١٣ [0:02 · 31 KB]
+بعد تاني:        اتحفظت | ملاحظة ٥:١٣ [0:01 · 16 KB] / ملاحظة ٥:١٣ [0:02 · 31 KB]
+بعد reload:      فكرة المشروع [0:01 · 16 KB] / ملاحظة ٥:١٣ [0:02 · 31 KB]
+duration أول تسجيل في اللستة: 1.44
+بعد امسح:        اتمسحت: فكرة المشروع | ملاحظة ٥:١٣ [0:02 · 31 KB]
+الـ preview:     التخزين مقفول هنا… | الميكروفون مش متاح: SecurityError (Invalid security origin). جرّب بصوت تجربة.
+                 جرّب بصوت تجربة ثم وقّف: اتحفظت: 0:02 | ملاحظات في اللستة = 1
+~~~
+
+- المدة [[1.44]] رقم حقيقي مش [[Infinity]]، لأن [[start()]] من غير timeslice (درس MediaRecorder قسم ٣).` },
+        { lvl: 'كبير', dir: "lesson-player", t: R`مشغّل دروس بفصول وترجمة واختصارات وبيفتكر مكانك`, what: R`مشغّل فيديو لمنصة دروس، ٣ ملفات و ٤ ملفات ميديا: الفصول جاية من ملف [[chapters.vtt]] ([[<track kind="chapters">]]) وبتظهر لستة جنب الفيديو (الفصل الحالي متعلّم عليه) وعلامات على شريط الوقت، والضغط على فصل بيروحله. الترجمة من [[captions.vtt]] بزرار CC بيتفتكر. اختصارات: [[k]] و [[j]]/[[l]] و الأسهم و [[n]]/[[p]] للفصل اللي بعده/قبله و [[c]] و [[m]] و [[f]]. وبيفتكر مكانك لكل فيديو ([[data-video-id]]) ويعرض «كمّل من». وكل حاجة من الدرسين الأولين: أزرار حقيقية، و [[aria]]، وملء الشاشة وصورة في صورة لو مسموحين، والأخطاء. من الوحدة كلها.`, done: R`عند التحميل: ٣ فصول في اللستة و ٢ علامة على الشريط و [[aria-valuetext]] = «0:00 من 0:05، المقدمة». [[n]] = الفصل التاني (t≈2.2)، و [[n]] تاني = التالت، و [[p]] في أول ثانيتين من الفصل = الفصل اللي قبله. [[c]] = ترجمة [[showing]] والجملة «الـ Promise وعد بقيمة هتيجي بعدين» ظاهرة. reload = «كمّل من 0:02» والترجمة لسه شغالة.`, ext: R`(١) صورة مصغّرة فوق الشريط وانت بتعدّي عليه (thumbnail track أو sprite). (٢) «اتفرجت على ٨٠٪» من [[video.played]] وتبعتها لسيرفر بـ [[navigator.sendBeacon]]. (٣) Media Session (تمرين في درس المشغّل) عشان أزرار الكيبورد وشاشة القفل. (٤) فيديو HLS بـ hls.js بجودات (درس Web Audio قسم ٨). (٥) نسخة Web Component [[<lesson-player src chapters>]] (وحدة Web Components).`, sol: R`## الشكل النهائي
+
+~~~view 520
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الدرس ٧: الـ Promises</title>
+<style>
+body { font-family: system-ui, sans-serif; margin: 16px; background: #f4f4f5; color: #18181b; }
+h1 { font-size: 1.3rem; }
+.layout { display: grid; gap: 16px; grid-template-columns: minmax(0, 2fr) minmax(200px, 1fr); max-width: 980px; }
+@media (max-width: 700px) { .layout { grid-template-columns: 1fr; } }
+.player { margin: 0; background: #000; border-radius: 10px; overflow: hidden; position: relative; }
+.player video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #000; }
+.seekwrap { position: relative; background: #18181b; padding: 6px 8px 0; direction: ltr; }
+#seek { width: 100%; margin: 0; accent-color: #facc15; }
+#marks { position: absolute; inset: 6px 8px auto; height: 100%; pointer-events: none; }
+#marks span { position: absolute; top: 4px; width: 3px; height: 10px; background: #fff; border-radius: 1px; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px; background: #18181b; color: #fff; direction: ltr; }
+.controls button, .controls select { font: inherit; min-width: 44px; min-height: 44px; border: 0; border-radius: 6px; background: #3f3f46; color: #fff; cursor: pointer; }
+.controls button[aria-pressed="true"] { background: #facc15; color: #18181b; }
+.controls :focus-visible, nav button:focus-visible { outline: 3px solid #facc15; outline-offset: 2px; }
+#time { font-variant-numeric: tabular-nums; min-width: 92px; text-align: center; }
+.msg { margin: 0; padding: 8px; background: #7f1d1d; color: #fff; }
+.toast { position: absolute; inset: 12px 12px auto auto; margin: 0; }
+.toast button { font: inherit; padding: 8px 12px; border: 0; border-radius: 8px; background: #facc15; cursor: pointer; }
+nav { background: #fff; border-radius: 10px; padding: 12px; }
+nav h2 { margin: 0 0 8px; font-size: 1rem; }
+nav ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+nav button { width: 100%; text-align: start; font: inherit; padding: 8px; border: 1px solid #e4e4e7; border-radius: 8px; background: #fff; cursor: pointer; display: flex; justify-content: space-between; gap: 8px; }
+nav button[aria-current="true"] { background: #fef9c3; border-color: #ca8a04; font-weight: 600; }
+.keys { font-size: 0.85rem; color: #52525b; }
+kbd { background: #f4f4f5; border: 1px solid #d4d4d8; border-radius: 4px; padding: 0 4px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.player:fullscreen { display: flex; flex-direction: column; justify-content: center; }
+.player:fullscreen video { flex: 1; aspect-ratio: auto; }
+</style>
+</head>
+<body>
+<h1>الدرس ٧: الـ Promises</h1>
+<p id="wait">بنجهّز فيديو تجربة (٦ ثواني)…</p>
+<div class="layout">
+  <figure class="player" id="player" data-video-id="lesson-07">
+    <video id="video" controls preload="metadata" playsinline>
+      <track kind="chapters" srclang="ar" label="الفصول" default>
+      <track kind="captions" srclang="ar" label="عربي">
+      <p>المتصفح ده مش بيشغّل الفيديو. <a href="lesson.mp4">نزّله</a>.</p>
+    </video>
+    <div class="seekwrap"><input id="seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="مكان التشغيل"><div id="marks" aria-hidden="true"></div></div>
+    <div class="controls" id="controls" role="group" aria-label="التحكم في الفيديو" hidden>
+      <button id="play" type="button" aria-label="شغّل">▶</button>
+      <span id="time">0:00 / 0:00</span>
+      <button id="mute" type="button" aria-label="اكتم الصوت" aria-pressed="false">🔊</button>
+      <select id="rate" aria-label="سرعة التشغيل">
+        <option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option>
+      </select>
+      <button id="cc" type="button" aria-label="الترجمة" aria-pressed="false">CC</button>
+      <button id="pip" type="button" aria-label="صورة في صورة">⧉</button>
+      <button id="fs" type="button" aria-label="ملء الشاشة">⛶</button>
+    </div>
+    <p class="msg" id="msg" role="alert" hidden></p>
+    <p class="toast" id="toast" hidden><button id="resume" type="button"></button></p>
+  </figure>
+  <nav aria-label="فصول الدرس">
+    <h2>الفصول</h2>
+    <ol id="chapters"></ol>
+    <p class="keys">الاختصارات: <kbd>k</kbd> تشغيل، <kbd>j</kbd>/<kbd>l</kbd> ١٠ ثواني، <kbd>←</kbd>/<kbd>→</kbd> ٥ ثواني، <kbd>n</kbd>/<kbd>p</kbd> الفصل اللي بعده/قبله، <kbd>c</kbd> الترجمة، <kbd>m</kbd> كتم، <kbd>f</kbd> ملء الشاشة</p>
+  </nav>
+</div>
+<p class="sr-only" id="status" role="status"></p>
+<script>
+// الـ preview مفيهوش ملفات: الفيديو canvas متسجّل، وملفات الـ VTT بتتعمل Blob
+const VTT = { chapters: "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nالمقدمة\n\n00:00:02.000 --> 00:00:04.000\nإزاي الـ Promise بيشتغل\n\n00:00:04.000 --> 00:00:06.000\nالخلاصة\n", captions: "WEBVTT\n\n00:00:00.200 --> 00:00:01.800\nأهلًا، النهارده هنتكلم عن الـ Promises\n\n00:00:02.200 --> 00:00:03.800\nالـ Promise وعد بقيمة هتيجي بعدين\n\n00:00:04.200 --> 00:00:05.800\nوده كل اللي محتاج تعرفه\n" };
+for (const t of document.querySelectorAll('track')) t.src = URL.createObjectURL(new Blob([VTT[t.kind]], { type: 'text/vtt' }));
+(async () => {
+  const c = document.createElement('canvas'); c.width = 320; c.height = 180;
+  const g = c.getContext('2d');
+  const type = ['video/mp4', 'video/webm'].find((t) => MediaRecorder.isTypeSupported(t));
+  const rec = new MediaRecorder(c.captureStream(30), { mimeType: type });
+  const chunks = []; rec.ondataavailable = (e) => chunks.push(e.data);
+  const t0 = performance.now(), names = ['المقدمة', 'الـ Promise', 'الخلاصة'], colors = ['#1e3a8a', '#065f46', '#7c2d12'];
+  const draw = () => {
+    const s = (performance.now() - t0) / 1000, i = Math.min(2, Math.floor(s / 2));
+    g.fillStyle = colors[i]; g.fillRect(0, 0, 320, 180);
+    g.fillStyle = '#fff'; g.font = 'bold 28px sans-serif'; g.textAlign = 'center'; g.fillText(names[i], 160, 80);
+    g.font = '20px sans-serif'; g.fillText(s.toFixed(1) + 's', 160, 120);
+  };
+  const timer = setInterval(draw, 33); draw();
+  rec.start();
+  await new Promise((r) => setTimeout(r, 6000));
+  rec.stop(); await new Promise((r) => (rec.onstop = r)); clearInterval(timer);
+  document.getElementById('video').src = URL.createObjectURL(new Blob(chunks, { type: rec.mimeType }));
+  document.getElementById('wait').hidden = true;
+})();
+
+// player.js: مشغّل دروس بفصول وترجمة واختصارات، وبيفتكر مكانك
+const $ = (id) => document.getElementById(id);
+const player = $('player'), video = $('video'), seek = $('seek'), status = $('status');
+const VIDEO_ID = player.dataset.videoId;
+
+// ١. JavaScript شغال: أزرارنا بدل أزرار المتصفح
+video.controls = false;
+$('controls').hidden = false;
+
+function fmt(s) {
+  if (!Number.isFinite(s)) return '--:--';
+  s = Math.floor(s);
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = String(s % 60).padStart(2, '0');
+  return h ? h + ':' + String(m).padStart(2, '0') + ':' + sec : m + ':' + sec;
+}
+function showError(text) { $('msg').textContent = text; $('msg').hidden = false; }
+const clamp = (t) => Math.min(Math.max(t, 0), Number.isFinite(video.duration) ? video.duration : 0);
+
+// ٢. التخزين الآمن (localStorage ممكن يرمي)
+const store = (() => {
+  try { localStorage.setItem('_t', '1'); localStorage.removeItem('_t'); return localStorage; }
+  catch { const m = new Map(); return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) }; }
+})();
+
+// ٣. الوقت والشريط
+let dragging = false;
+function showTime() {
+  if (!dragging) seek.value = video.currentTime;
+  $('time').textContent = fmt(video.currentTime) + ' / ' + fmt(video.duration);
+  seek.setAttribute('aria-valuetext', fmt(video.currentTime) + ' من ' + fmt(video.duration) + (currentChapter ? '، ' + currentChapter.text : ''));
+}
+function onMeta() { seek.max = video.duration; showTime(); drawMarks(); offerResume(); }
+video.addEventListener('timeupdate', () => { showTime(); savePosition(); });
+seek.addEventListener('pointerdown', () => (dragging = true));
+seek.addEventListener('pointerup', () => (dragging = false));
+seek.addEventListener('input', () => { video.currentTime = Number(seek.value); showTime(); });
+
+// ٤. تشغيل وإيقاف من الأحداث
+function togglePlay() {
+  if (video.paused || video.ended) video.play().catch((e) => { if (e.name !== 'AbortError') showError('التشغيل اترفض: ' + e.name); });
+  else video.pause();
+}
+$('play').addEventListener('click', togglePlay);
+video.addEventListener('click', togglePlay);
+video.addEventListener('play', () => { $('play').textContent = '❚❚'; $('play').setAttribute('aria-label', 'وقّف'); });
+video.addEventListener('pause', () => {
+  $('play').textContent = '▶'; $('play').setAttribute('aria-label', 'شغّل');
+  status.textContent = video.ended ? 'الدرس خلص' : 'اتوقف عند ' + fmt(video.currentTime);
+  savePosition(true);
+});
+
+// ٥. الصوت والسرعة
+$('mute').addEventListener('click', () => (video.muted = !video.muted));
+video.addEventListener('volumechange', () => {
+  $('mute').textContent = video.muted ? '🔇' : '🔊';
+  $('mute').setAttribute('aria-pressed', String(video.muted));
+});
+$('rate').addEventListener('change', () => (video.playbackRate = Number($('rate').value)));
+
+// ٦. الفصول: من <track kind="chapters">
+const chaptersTrack = [...video.textTracks].find((t) => t.kind === 'chapters');
+let chapters = [], currentChapter = null;
+function loadChapters() {
+  chapters = [...chaptersTrack.cues].map((c) => ({ start: c.startTime, end: c.endTime, text: c.text }));
+  $('chapters').replaceChildren(...chapters.map((ch) => {
+    const li = document.createElement('li');
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.innerHTML = '<span></span><span></span>';
+    b.firstChild.textContent = ch.text;
+    b.lastChild.textContent = fmt(ch.start);
+    b.addEventListener('click', () => { video.currentTime = ch.start; video.play().catch(() => {}); });
+    li.append(b);
+    return li;
+  }));
+  drawMarks();
+  markChapter();
+}
+function markChapter() {
+  const t = video.currentTime;
+  const now = chapters.find((ch) => t >= ch.start && t < ch.end) || null;
+  if (now === currentChapter) return;
+  currentChapter = now;
+  [...$('chapters').querySelectorAll('button')].forEach((b, i) => b.setAttribute('aria-current', String(chapters[i] === now)));
+  if (now && !video.paused) status.textContent = 'الفصل: ' + now.text;
+}
+function drawMarks() {
+  if (!chapters.length || !Number.isFinite(video.duration)) return;
+  $('marks').replaceChildren(...chapters.slice(1).map((ch) => {
+    const s = document.createElement('span');
+    s.style.left = (ch.start / video.duration) * 100 + '%';
+    return s;
+  }));
+}
+function goChapter(step) {
+  const i = chapters.indexOf(currentChapter);
+  // p في أول ثانيتين من الفصل بيرجع للي قبله، بعد كده لأول الفصل نفسه (زي المشغّلات)
+  const target = step < 0 && currentChapter && video.currentTime - currentChapter.start > 2 ? currentChapter : chapters[i + step];
+  if (target) video.currentTime = target.start;
+}
+if (chaptersTrack) {
+  chaptersTrack.mode = 'hidden';                       // hidden: الـ cues بتتحمّل بس مبتترسمش
+  chaptersTrack.addEventListener('cuechange', markChapter);
+  const el = video.querySelector('track[kind="chapters"]');
+  if (chaptersTrack.cues && chaptersTrack.cues.length) loadChapters();
+  else el.addEventListener('load', loadChapters);
+}
+video.addEventListener('seeked', markChapter);
+
+// ٧. الترجمة: CC بيبدّل showing و hidden
+const captions = [...video.textTracks].find((t) => t.kind === 'captions');
+$('cc').hidden = !captions;
+function setCaptions(on) {
+  captions.mode = on ? 'showing' : 'hidden';
+  $('cc').setAttribute('aria-pressed', String(on));
+  store.setItem('captions', on ? '1' : '0');
+}
+if (captions) setCaptions(store.getItem('captions') === '1');
+$('cc').addEventListener('click', () => setCaptions(captions.mode !== 'showing'));
+
+// ٨. صورة في صورة وملء الشاشة
+$('pip').hidden = !document.pictureInPictureEnabled;
+$('pip').addEventListener('click', async () => {
+  try { document.pictureInPictureElement ? await document.exitPictureInPicture() : await video.requestPictureInPicture(); }
+  catch (e) { showError('صورة في صورة: ' + e.message); }
+});
+$('fs').hidden = !document.fullscreenEnabled;
+$('fs').addEventListener('click', () => {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else player.requestFullscreen().catch((e) => showError('ملء الشاشة: ' + e.message));
+});
+
+// ٩. افتكر المكان: كل ٥ ثواني وعند الإيقاف، و «كمّل من» لما ترجع
+const POS_KEY = 'pos:' + VIDEO_ID;
+let lastSaved = 0;
+function savePosition(force) {
+  if (!Number.isFinite(video.duration)) return;
+  if (!force && Math.abs(video.currentTime - lastSaved) < 5) return;
+  lastSaved = video.currentTime;
+  const nearEnd = video.duration - video.currentTime < 3;
+  store.setItem(POS_KEY, nearEnd ? '0' : String(video.currentTime.toFixed(1)));
+}
+function offerResume() {
+  const t = Number(store.getItem(POS_KEY));
+  if (!(t > 1) || t >= video.duration - 3) return;
+  $('resume').textContent = 'كمّل من ' + fmt(t);
+  $('toast').hidden = false;
+  $('resume').onclick = () => { video.currentTime = t; $('toast').hidden = true; video.play().catch(() => {}); };
+  setTimeout(() => ($('toast').hidden = true), 8000);
+}
+addEventListener('pagehide', () => savePosition(true));
+
+// ١٠. الكيبورد على المشغّل
+player.addEventListener('keydown', (e) => {
+  if (e.ctrlKey || e.altKey || e.metaKey || e.target === $('rate')) return;
+  const k = e.key.toLowerCase();
+  if (k === 'k' || (k === ' ' && !e.target.matches('button'))) togglePlay();
+  else if (k === 'j') video.currentTime = clamp(video.currentTime - 10);
+  else if (k === 'l') video.currentTime = clamp(video.currentTime + 10);
+  else if (k === 'arrowleft') video.currentTime = clamp(video.currentTime - 5);
+  else if (k === 'arrowright') video.currentTime = clamp(video.currentTime + 5);
+  else if (k === 'n') goChapter(1);
+  else if (k === 'p') goChapter(-1);
+  else if (k === 'c' && captions) $('cc').click();
+  else if (k === 'm') video.muted = !video.muted;
+  else if (k === 'f' && document.fullscreenEnabled) $('fs').click();
+  else return;
+  e.preventDefault();
+});
+
+// ١١. الأخطاء: src واحد أو آخر source
+video.addEventListener('error', () => showError('الفيديو مش راضي يشتغل (' + video.error.code + ').'));
+const sources = video.querySelectorAll('source');
+if (sources.length) sources[sources.length - 1].addEventListener('error', () => showError('مفيش ولا صيغة من الفيديو اشتغلت. نزّله من اللينك تحت.'));
+
+// ١٢. آخر سطر: player.js ممكن يوصل بعد ما الـ metadata اتحمّلت فعلًا، فالحدث يكون فات
+if (video.readyState >= HTMLMediaElement.HAVE_METADATA) onMeta();
+else video.addEventListener('loadedmetadata', onMeta);
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** «بنجهّز فيديو تجربة (٦ ثواني)» وبعدين فيديو بيتغيّر لونه كل ثانيتين وعليه اسم الفصل، وتحته شريط بعلامتين بيض، وأزرار، وجنبه (أو تحته على الموبايل) كارت «الفصول» فيه ٣ فصول والحالي أصفر، وتحته الاختصارات. دوس CC: الجملة بتظهر على الفيديو. زرار ملء الشاشة مستخبي هنا (الـ iframe مش مسموحله)، والتخزين في الذاكرة بس. (الـ preview بيعمل الفيديو وملفات الـ VTT في الصفحة، وده الجزء الوحيد المختلف عن ملفاتك.)
+
+## شجرة الملفات
+
+~~~text lesson-player
+lesson-player/
+├── index.html      الهيكل: الفيديو و track للفصول و track للترجمة والأزرار ولستة الفصول
+├── player.css      الشكل: grid للفيديو واللستة، والعلامات على الشريط، و :fullscreen
+├── player.js       كل السلوك (١٢ جزء مترقّمين)
+├── chapters.vtt    الفصول: بداية ونهاية واسم
+├── captions.vtt    الترجمة
+├── lesson.webm     الفيديو (VP9)
+└── lesson.mp4      نفس الفيديو (H.264) للأجهزة اللي مبتشغّلش WebM
+~~~
+
+## الكود
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الدرس ٧: الـ Promises</title>
+<link rel="stylesheet" href="player.css">
+</head>
+<body>
+<h1>الدرس ٧: الـ Promises</h1>
+<div class="layout">
+  <figure class="player" id="player" data-video-id="lesson-07">
+    <video id="video" controls preload="metadata" playsinline>
+      <source src="lesson.webm" type="video/webm">
+      <source src="lesson.mp4" type="video/mp4">
+      <track kind="chapters" src="chapters.vtt" srclang="ar" label="الفصول" default>
+      <track kind="captions" src="captions.vtt" srclang="ar" label="عربي">
+      <p>المتصفح ده مش بيشغّل الفيديو. <a href="lesson.mp4">نزّله</a>.</p>
+    </video>
+    <div class="seekwrap"><input id="seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="مكان التشغيل"><div id="marks" aria-hidden="true"></div></div>
+    <div class="controls" id="controls" role="group" aria-label="التحكم في الفيديو" hidden>
+      <button id="play" type="button" aria-label="شغّل">▶</button>
+      <span id="time">0:00 / 0:00</span>
+      <button id="mute" type="button" aria-label="اكتم الصوت" aria-pressed="false">🔊</button>
+      <select id="rate" aria-label="سرعة التشغيل">
+        <option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option>
+      </select>
+      <button id="cc" type="button" aria-label="الترجمة" aria-pressed="false">CC</button>
+      <button id="pip" type="button" aria-label="صورة في صورة">⧉</button>
+      <button id="fs" type="button" aria-label="ملء الشاشة">⛶</button>
+    </div>
+    <p class="msg" id="msg" role="alert" hidden></p>
+    <p class="toast" id="toast" hidden><button id="resume" type="button"></button></p>
+  </figure>
+  <nav aria-label="فصول الدرس">
+    <h2>الفصول</h2>
+    <ol id="chapters"></ol>
+    <p class="keys">الاختصارات: <kbd>k</kbd> تشغيل، <kbd>j</kbd>/<kbd>l</kbd> ١٠ ثواني، <kbd>←</kbd>/<kbd>→</kbd> ٥ ثواني، <kbd>n</kbd>/<kbd>p</kbd> الفصل اللي بعده/قبله، <kbd>c</kbd> الترجمة، <kbd>m</kbd> كتم، <kbd>f</kbd> ملء الشاشة</p>
+  </nav>
+</div>
+<p class="sr-only" id="status" role="status"></p>
+<script src="player.js"></script>
+</body>
+</html>
+~~~
+
+~~~css player.css
+body { font-family: system-ui, sans-serif; margin: 16px; background: #f4f4f5; color: #18181b; }
+h1 { font-size: 1.3rem; }
+.layout { display: grid; gap: 16px; grid-template-columns: minmax(0, 2fr) minmax(200px, 1fr); max-width: 980px; }
+@media (max-width: 700px) { .layout { grid-template-columns: 1fr; } }
+.player { margin: 0; background: #000; border-radius: 10px; overflow: hidden; position: relative; }
+.player video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #000; }
+.seekwrap { position: relative; background: #18181b; padding: 6px 8px 0; direction: ltr; }
+#seek { width: 100%; margin: 0; accent-color: #facc15; }
+#marks { position: absolute; inset: 6px 8px auto; height: 100%; pointer-events: none; }
+#marks span { position: absolute; top: 4px; width: 3px; height: 10px; background: #fff; border-radius: 1px; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px; background: #18181b; color: #fff; direction: ltr; }
+.controls button, .controls select { font: inherit; min-width: 44px; min-height: 44px; border: 0; border-radius: 6px; background: #3f3f46; color: #fff; cursor: pointer; }
+.controls button[aria-pressed="true"] { background: #facc15; color: #18181b; }
+.controls :focus-visible, nav button:focus-visible { outline: 3px solid #facc15; outline-offset: 2px; }
+#time { font-variant-numeric: tabular-nums; min-width: 92px; text-align: center; }
+.msg { margin: 0; padding: 8px; background: #7f1d1d; color: #fff; }
+.toast { position: absolute; inset: 12px 12px auto auto; margin: 0; }
+.toast button { font: inherit; padding: 8px 12px; border: 0; border-radius: 8px; background: #facc15; cursor: pointer; }
+nav { background: #fff; border-radius: 10px; padding: 12px; }
+nav h2 { margin: 0 0 8px; font-size: 1rem; }
+nav ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+nav button { width: 100%; text-align: start; font: inherit; padding: 8px; border: 1px solid #e4e4e7; border-radius: 8px; background: #fff; cursor: pointer; display: flex; justify-content: space-between; gap: 8px; }
+nav button[aria-current="true"] { background: #fef9c3; border-color: #ca8a04; font-weight: 600; }
+.keys { font-size: 0.85rem; color: #52525b; }
+kbd { background: #f4f4f5; border: 1px solid #d4d4d8; border-radius: 4px; padding: 0 4px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.player:fullscreen { display: flex; flex-direction: column; justify-content: center; }
+.player:fullscreen video { flex: 1; aspect-ratio: auto; }
+~~~
+
+~~~js player.js
+// player.js: مشغّل دروس بفصول وترجمة واختصارات، وبيفتكر مكانك
+const $ = (id) => document.getElementById(id);
+const player = $('player'), video = $('video'), seek = $('seek'), status = $('status');
+const VIDEO_ID = player.dataset.videoId;
+
+// ١. JavaScript شغال: أزرارنا بدل أزرار المتصفح
+video.controls = false;
+$('controls').hidden = false;
+
+function fmt(s) {
+  if (!Number.isFinite(s)) return '--:--';
+  s = Math.floor(s);
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = String(s % 60).padStart(2, '0');
+  return h ? h + ':' + String(m).padStart(2, '0') + ':' + sec : m + ':' + sec;
+}
+function showError(text) { $('msg').textContent = text; $('msg').hidden = false; }
+const clamp = (t) => Math.min(Math.max(t, 0), Number.isFinite(video.duration) ? video.duration : 0);
+
+// ٢. التخزين الآمن (localStorage ممكن يرمي)
+const store = (() => {
+  try { localStorage.setItem('_t', '1'); localStorage.removeItem('_t'); return localStorage; }
+  catch { const m = new Map(); return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) }; }
+})();
+
+// ٣. الوقت والشريط
+let dragging = false;
+function showTime() {
+  if (!dragging) seek.value = video.currentTime;
+  $('time').textContent = fmt(video.currentTime) + ' / ' + fmt(video.duration);
+  seek.setAttribute('aria-valuetext', fmt(video.currentTime) + ' من ' + fmt(video.duration) + (currentChapter ? '، ' + currentChapter.text : ''));
+}
+function onMeta() { seek.max = video.duration; showTime(); drawMarks(); offerResume(); }
+video.addEventListener('timeupdate', () => { showTime(); savePosition(); });
+seek.addEventListener('pointerdown', () => (dragging = true));
+seek.addEventListener('pointerup', () => (dragging = false));
+seek.addEventListener('input', () => { video.currentTime = Number(seek.value); showTime(); });
+
+// ٤. تشغيل وإيقاف من الأحداث
+function togglePlay() {
+  if (video.paused || video.ended) video.play().catch((e) => { if (e.name !== 'AbortError') showError('التشغيل اترفض: ' + e.name); });
+  else video.pause();
+}
+$('play').addEventListener('click', togglePlay);
+video.addEventListener('click', togglePlay);
+video.addEventListener('play', () => { $('play').textContent = '❚❚'; $('play').setAttribute('aria-label', 'وقّف'); });
+video.addEventListener('pause', () => {
+  $('play').textContent = '▶'; $('play').setAttribute('aria-label', 'شغّل');
+  status.textContent = video.ended ? 'الدرس خلص' : 'اتوقف عند ' + fmt(video.currentTime);
+  savePosition(true);
+});
+
+// ٥. الصوت والسرعة
+$('mute').addEventListener('click', () => (video.muted = !video.muted));
+video.addEventListener('volumechange', () => {
+  $('mute').textContent = video.muted ? '🔇' : '🔊';
+  $('mute').setAttribute('aria-pressed', String(video.muted));
+});
+$('rate').addEventListener('change', () => (video.playbackRate = Number($('rate').value)));
+
+// ٦. الفصول: من <track kind="chapters">
+const chaptersTrack = [...video.textTracks].find((t) => t.kind === 'chapters');
+let chapters = [], currentChapter = null;
+function loadChapters() {
+  chapters = [...chaptersTrack.cues].map((c) => ({ start: c.startTime, end: c.endTime, text: c.text }));
+  $('chapters').replaceChildren(...chapters.map((ch) => {
+    const li = document.createElement('li');
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.innerHTML = '<span></span><span></span>';
+    b.firstChild.textContent = ch.text;
+    b.lastChild.textContent = fmt(ch.start);
+    b.addEventListener('click', () => { video.currentTime = ch.start; video.play().catch(() => {}); });
+    li.append(b);
+    return li;
+  }));
+  drawMarks();
+  markChapter();
+}
+function markChapter() {
+  const t = video.currentTime;
+  const now = chapters.find((ch) => t >= ch.start && t < ch.end) || null;
+  if (now === currentChapter) return;
+  currentChapter = now;
+  [...$('chapters').querySelectorAll('button')].forEach((b, i) => b.setAttribute('aria-current', String(chapters[i] === now)));
+  if (now && !video.paused) status.textContent = 'الفصل: ' + now.text;
+}
+function drawMarks() {
+  if (!chapters.length || !Number.isFinite(video.duration)) return;
+  $('marks').replaceChildren(...chapters.slice(1).map((ch) => {
+    const s = document.createElement('span');
+    s.style.left = (ch.start / video.duration) * 100 + '%';
+    return s;
+  }));
+}
+function goChapter(step) {
+  const i = chapters.indexOf(currentChapter);
+  // p في أول ثانيتين من الفصل بيرجع للي قبله، بعد كده لأول الفصل نفسه (زي المشغّلات)
+  const target = step < 0 && currentChapter && video.currentTime - currentChapter.start > 2 ? currentChapter : chapters[i + step];
+  if (target) video.currentTime = target.start;
+}
+if (chaptersTrack) {
+  chaptersTrack.mode = 'hidden';                       // hidden: الـ cues بتتحمّل بس مبتترسمش
+  chaptersTrack.addEventListener('cuechange', markChapter);
+  const el = video.querySelector('track[kind="chapters"]');
+  if (chaptersTrack.cues && chaptersTrack.cues.length) loadChapters();
+  else el.addEventListener('load', loadChapters);
+}
+video.addEventListener('seeked', markChapter);
+
+// ٧. الترجمة: CC بيبدّل showing و hidden
+const captions = [...video.textTracks].find((t) => t.kind === 'captions');
+$('cc').hidden = !captions;
+function setCaptions(on) {
+  captions.mode = on ? 'showing' : 'hidden';
+  $('cc').setAttribute('aria-pressed', String(on));
+  store.setItem('captions', on ? '1' : '0');
+}
+if (captions) setCaptions(store.getItem('captions') === '1');
+$('cc').addEventListener('click', () => setCaptions(captions.mode !== 'showing'));
+
+// ٨. صورة في صورة وملء الشاشة
+$('pip').hidden = !document.pictureInPictureEnabled;
+$('pip').addEventListener('click', async () => {
+  try { document.pictureInPictureElement ? await document.exitPictureInPicture() : await video.requestPictureInPicture(); }
+  catch (e) { showError('صورة في صورة: ' + e.message); }
+});
+$('fs').hidden = !document.fullscreenEnabled;
+$('fs').addEventListener('click', () => {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else player.requestFullscreen().catch((e) => showError('ملء الشاشة: ' + e.message));
+});
+
+// ٩. افتكر المكان: كل ٥ ثواني وعند الإيقاف، و «كمّل من» لما ترجع
+const POS_KEY = 'pos:' + VIDEO_ID;
+let lastSaved = 0;
+function savePosition(force) {
+  if (!Number.isFinite(video.duration)) return;
+  if (!force && Math.abs(video.currentTime - lastSaved) < 5) return;
+  lastSaved = video.currentTime;
+  const nearEnd = video.duration - video.currentTime < 3;
+  store.setItem(POS_KEY, nearEnd ? '0' : String(video.currentTime.toFixed(1)));
+}
+function offerResume() {
+  const t = Number(store.getItem(POS_KEY));
+  if (!(t > 1) || t >= video.duration - 3) return;
+  $('resume').textContent = 'كمّل من ' + fmt(t);
+  $('toast').hidden = false;
+  $('resume').onclick = () => { video.currentTime = t; $('toast').hidden = true; video.play().catch(() => {}); };
+  setTimeout(() => ($('toast').hidden = true), 8000);
+}
+addEventListener('pagehide', () => savePosition(true));
+
+// ١٠. الكيبورد على المشغّل
+player.addEventListener('keydown', (e) => {
+  if (e.ctrlKey || e.altKey || e.metaKey || e.target === $('rate')) return;
+  const k = e.key.toLowerCase();
+  if (k === 'k' || (k === ' ' && !e.target.matches('button'))) togglePlay();
+  else if (k === 'j') video.currentTime = clamp(video.currentTime - 10);
+  else if (k === 'l') video.currentTime = clamp(video.currentTime + 10);
+  else if (k === 'arrowleft') video.currentTime = clamp(video.currentTime - 5);
+  else if (k === 'arrowright') video.currentTime = clamp(video.currentTime + 5);
+  else if (k === 'n') goChapter(1);
+  else if (k === 'p') goChapter(-1);
+  else if (k === 'c' && captions) $('cc').click();
+  else if (k === 'm') video.muted = !video.muted;
+  else if (k === 'f' && document.fullscreenEnabled) $('fs').click();
+  else return;
+  e.preventDefault();
+});
+
+// ١١. الأخطاء: src واحد أو آخر source
+video.addEventListener('error', () => showError('الفيديو مش راضي يشتغل (' + video.error.code + ').'));
+const sources = video.querySelectorAll('source');
+if (sources.length) sources[sources.length - 1].addEventListener('error', () => showError('مفيش ولا صيغة من الفيديو اشتغلت. نزّله من اللينك تحت.'));
+
+// ١٢. آخر سطر: player.js ممكن يوصل بعد ما الـ metadata اتحمّلت فعلًا، فالحدث يكون فات
+if (video.readyState >= HTMLMediaElement.HAVE_METADATA) onMeta();
+else video.addEventListener('loadedmetadata', onMeta);
+~~~
+
+~~~text chapters.vtt
+WEBVTT
+
+00:00:00.000 --> 00:00:02.000
+المقدمة
+
+00:00:02.000 --> 00:00:04.000
+إزاي الـ Promise بيشتغل
+
+00:00:04.000 --> 00:00:06.000
+الخلاصة
+~~~
+
+~~~text captions.vtt
+WEBVTT
+
+00:00:00.200 --> 00:00:01.800
+أهلًا، النهارده هنتكلم عن الـ Promises
+
+00:00:02.200 --> 00:00:03.800
+الـ Promise وعد بقيمة هتيجي بعدين
+
+00:00:04.200 --> 00:00:05.800
+وده كل اللي محتاج تعرفه
+~~~
+
+**مهم:** شغّله من سيرفر محلي ([[npx serve]] أو [[media-server.mjs]] من درس الأخطاء بعد ما تزوّد [[.css]] و [[.js]] و [[.vtt]] في الأنواع)، مش بفتح [[index.html]] كملف: المتصفح مبيحمّلش ملفات الـ [[<track>]] من [[file://]]، والسيرفر لازم يبعت [[.vtt]] بـ [[text/vtt]].
+
+## ترتيب البناء
+
+1. **الهيكل والأساس:** [[index.html]] و [[player.css]] وأجزاء ١ لـ ٥ في [[player.js]] (نفس مشغّل درس «مشغّل فيديو خاص»). اختبر التشغيل والشريط والصوت.
+2. **الفصول:** [[chapters.vtt]] وجزء ٦: اللستة والعلامات و [[n]]/[[p]].
+3. **الترجمة:** [[captions.vtt]] وجزء ٧.
+4. **صورة في صورة وملء الشاشة** (جزء ٨) و **الكيبورد** (جزء ١٠).
+5. **التخزين:** جزء ٢ و ٩.
+6. **الأخطاء** (جزء ١١)، وجزء ١٢ في الآخر.
+
+## الشرح
+
+- **الفصول من [[textTracks]]:** [[<track kind="chapters">]] بيتحمّل ويتحوّل لـ cues (بداية ونهاية ونص) من غير ما تكتب parser للـ VTT. [[mode = 'hidden']] بيحمّل الـ cues من غير ما يرسمهم، و [[cuechange]] بيتبعت لما الفصل الحالي يتغيّر.
+- **الـ cues ممكن تكون اتحمّلت قبل الـ script:** فبنشيك [[chaptersTrack.cues.length]] الأول، ولو لأ بنستنى [[load]] على عنصر الـ [[<track>]]. نفس فكرة [[readyState]].
+- **[[markChapter()]]** من [[cuechange]] و [[seeked]]: بيدوّر على الفصل اللي فيه [[currentTime]]، وبيحدّث [[aria-current]]، وبيعلن «الفصل: …» لقارئ الشاشة وهو شغال بس. واسم الفصل داخل في [[aria-valuetext]] بتاع الشريط كمان.
+- **العلامات:** [[left = start / duration × 100%]] لكل فصل بعد الأول، و [[pointer-events: none]] عشان الضغط يروح للشريط. و [[direction: ltr]] على الشريط عشان العلامات تمشي مع الـ thumb حتى والصفحة RTL.
+- **[[goChapter(-1)]]:** زي المشغّلات: لو عدّى أكتر من ثانيتين من أول الفصل، بيرجع لأوله؛ ولو لأ، للفصل اللي قبله.
+- **الترجمة:** [[captions.mode]] بين [[showing]] و [[hidden]]، و [[aria-pressed]] على CC، والاختيار بيتحفظ.
+- **المكان لكل فيديو:** المفتاح [[pos:lesson-07]] من [[data-video-id]]، فكل درس ليه مكانه. وقرب النهاية (أقل من ٣ ثواني) بيتحفظ صفر عشان الدرس اللي خلص ميسألش «كمّل من».
+- **«كمّل من»** toast بيختفي بعد ٨ ثواني لوحده، ومش بيشغّل غير لما تدوس.
+- **[[clamp]]** لكل القفزات، و [[e.target === rate]] عشان الأسهم في قايمة السرعة تفضل للقايمة.
+
+## غلطات وقعت فيها وأنا ببنيها
+
+- **«كمّل من» مظهرش في أول تشغيل للاختبار، وظهر في التاني.** السبب: [[player.js]] ملف خارجي بيتحمّل بطلب لوحده، والفيديو المحلي الصغير قرا الـ metadata **قبل** ما السكربت يوصل، فـ [[loadedmetadata]] اتبعت ومحدش كان سامع: لا الشريط اتظبط ولا العلامات اترسمت ولا «كمّل من» ظهر. التصليح: [[onMeta()]] بتتنادى على طول لو [[readyState >= HAVE_METADATA]]، وغير كده بنستنى الحدث. نفس غلطة «تقرا [[duration]] بعد ما الحدث فات» من درس [[HTMLMediaElement]].
+- **وأول تصليح وقّع الصفحة:** حطيت سطر الـ [[readyState]] مكان الـ listener (فوق)، و [[onMeta]] بتنادي [[drawMarks]] اللي بتقرا [[chapters]] المتعرّفة بـ [[let]] تحت: [[ReferenceError]] (الـ TDZ). نقلت السطر لآخر الملف (جزء ١٢) بعد ما كل حاجة اتعرّفت.
+
+## اتقاس
+
+~~~text الناتج (Chrome 157، Playwright من سيرفر محلي، lesson.webm مدته 5.98، الـ fix اتجرّب مرتين ورا بعض)
+load:     t=0.00 chapter#=0 cc=hidden marks=2 valuetext=0:00 من 0:05، المقدمة
+n:        t=2.24 chapter#=1 valuetext=0:02 من 0:05، إزاي الـ Promise بيشتغل
+n تاني:   t=4.25 chapter#=2 valuetext=0:04 من 0:05، الخلاصة
+p:        t=2.24 chapter#=1                  (كان في أول ثانيتين من الخلاصة، فرجع للفصل اللي قبله)
+c:        cc=showing
+فصل ٢ + k: الترجمة الظاهرة: «الـ Promise وعد بقيمة هتيجي بعدين»
+reload:   toast = «كمّل من 0:02»   cc=showing   stored=2.9
+كمّل:     t=3.22 paused=false chapter#=1
+الـ preview المعزول: الفصول الـ ٣، d=6.006467، marks=2، pip ظاهر، fs مستخبي، n = «إزاي الـ Promise بيشتغل»،
+          c = showing و «الـ Promise وعد بقيمة هتيجي بعدين»
+~~~` },
+        { lvl: 'كبير', dir: "metronome", t: R`مترونوم دقيق بـ Web Audio`, what: R`مترونوم لموسيقي: السرعة من 40 لـ 240 BPM (شريط و ±)، وعدد الضربات في المازورة (2 و 3 و 4 و 6) والأولى بنغمة أعلى، ونقط بتنوّر مع كل ضربة، و Tap tempo (تدوس على الإيقاع والسرعة تتحسب)، والكيبورد: مسافة تشغيل و [[t]] للـ tap والأسهم ±1 و Shift ±10. **الدقة هي المشروع:** الضربات بتتجدول بساعة الصوت ([[ctx.currentTime]]) قبلها بـ ١٠٠ ms، و [[setInterval]] كل ٢٥ ms بس بيصحّي الجدولة، فالـ main thread لو اتشغل الإيقاع ميتأثرش. من درس «Web Audio API».`, done: R`عند 100 BPM الفرق بين كل ضربتين متجدولتين 600 ms بالظبط (أكبر انحراف 0.000000 ms)، حتى والـ main thread مشغول ١٥٠ ms كل ٤٠٠ ms. و ٥ ضغطات Tap كل نص ثانية = حوالي 120 BPM، و Shift+↑ = +10، واختيار ٣ = ٣ نقط.`, ext: R`(١) Tuner: الميكروفون ← [[AnalyserNode]] ← autocorrelation على الـ time domain ← اسم النوتة وكام cent بعيد (درس Web Audio، تمرين الـ fftSize). (٢) تقسيم الضربة (ثمنيات وثلاثيات) بنغمة أوطى. (٣) «تمرين سرعة»: يبدأ 80 ويزيد 2 كل 8 مازورات لحد هدف. (٤) شغّل الـ scheduler في Web Worker عشان التاب في الخلفية (الـ timers في التابات المستخبية بتبطأ).`, sol: R`## الشكل النهائي
+
+~~~view 470
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مترونوم</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 16px; background: #0f172a; color: #e2e8f0; }
+  main { max-width: 460px; display: grid; gap: 14px; }
+  .bpm { display: flex; align-items: center; gap: 8px; }
+  .bpm output { font-size: 2.6rem; font-variant-numeric: tabular-nums; min-width: 3ch; text-align: center; }
+  button, select, input[type="number"] { font: inherit; min-height: 44px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: #e2e8f0; padding: 0 12px; }
+  button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid #facc15; outline-offset: 2px; }
+  #start { background: #16a34a; border: 0; font-size: 1.1rem; }
+  #start[aria-pressed="true"] { background: #dc2626; }
+  input[type="range"] { width: 100%; accent-color: #facc15; }
+  .dots { display: flex; gap: 10px; direction: ltr; }
+  .dots span { width: 28px; height: 28px; border-radius: 50%; background: #334155; transition: background 60ms; }
+  .dots span.first { border: 2px solid #facc15; }
+  .dots span.on { background: #facc15; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  #msg { color: #94a3b8; min-height: 1.4em; }
+</style>
+</head>
+<body>
+<main id="app">
+  <h1>مترونوم</h1>
+  <div class="bpm">
+    <button id="minus" type="button" aria-label="أبطأ">−</button>
+    <output id="bpmOut" for="bpm">100</output>
+    <button id="plus" type="button" aria-label="أسرع">+</button>
+    <span>BPM</span>
+  </div>
+  <input id="bpm" type="range" min="40" max="240" value="100" aria-label="السرعة بالـ BPM">
+  <div class="row">
+    <label>الضربات في المازورة
+      <select id="beats"><option>2</option><option>3</option><option selected>4</option><option>6</option></select>
+    </label>
+    <button id="tap" type="button">Tap (t)</button>
+  </div>
+  <div class="dots" id="dots" aria-hidden="true"></div>
+  <button id="start" type="button" aria-pressed="false">ابدأ (مسافة)</button>
+  <p id="msg" role="status"></p>
+</main>
+<script>
+// metronome.js: الضربات بتتجدول بساعة الصوت، والـ timer بس بيصحّى الجدولة
+const $ = (id) => document.getElementById(id);
+const LOOKAHEAD_MS = 25;        // الـ timer بيصحى كل 25 ms
+const AHEAD_S = 0.1;            // ويجدول أي ضربة جاية في الـ 100 ms الجايين
+const state = { bpm: 100, beats: 4, running: false };
+let ctx = null, timer = null, nextTime = 0, beat = 0;
+const visualQueue = [];         // { beat, time } عشان النور يولع مع الصوت مش مع الجدولة
+const log = [];                 // للقياس: كل ضربة اتجدولت امتى
+
+// ١. ضربة واحدة: نغمة قصيرة جدًا، والأولى في المازورة أعلى
+function click(time, accent) {
+  const osc = ctx.createOscillator(), env = ctx.createGain();
+  osc.frequency.value = accent ? 1500 : 1000;
+  env.gain.setValueAtTime(0, time);
+  env.gain.linearRampToValueAtTime(accent ? 0.5 : 0.3, time + 0.002);
+  env.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+  osc.connect(env).connect(ctx.destination);
+  osc.start(time);
+  osc.stop(time + 0.06);
 }
 
-export function get(obj, path, fallback) {
-  if (typeof path !== "string" && !Array.isArray(path)) {
-    throw new TypeError($__btget: الـ path لازم يبقى string أو array (وصل $__{typeof path})$__bt);
+// ٢. الجدولة: كل اللي ميعاده قبل «دلوقتي + 100 ms» يتجدول دلوقتي بميعاده بالظبط
+function scheduler() {
+  while (nextTime < ctx.currentTime + AHEAD_S) {
+    click(nextTime, beat === 0);
+    visualQueue.push({ beat, time: nextTime });
+    log.push(nextTime);
+    nextTime += 60 / state.bpm;
+    beat = (beat + 1) % state.beats;
   }
-  const keys = Array.isArray(path) ? path : path.split(".").filter(Boolean);
-  let cur = obj;
-  for (const key of keys) {
-    if (cur == null) return fallback;                 // null أو undefined في النص
-    cur = cur[key];
-  }
-  return cur === undefined ? fallback : cur;
-}
-~~~
-
-~~~js src/timing.js
-import { assertFunction, assertNonNegativeNumber } from "./check.js";
-
-export function debounce(fn, ms, { leading = false } = {}) {
-  assertFunction("debounce", fn);
-  assertNonNegativeNumber("debounce", ms, "الـ ms");
-  let timer = null;
-  function debounced(...args) {
-    const callNow = leading && timer === null;
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      timer = null;
-      if (!leading) fn.apply(this, args);
-    }, ms);
-    if (callNow) fn.apply(this, args);
-  }
-  debounced.cancel = () => { clearTimeout(timer); timer = null; };
-  return debounced;
 }
 
-export function throttle(fn, ms) {
-  assertFunction("throttle", fn);
-  assertNonNegativeNumber("throttle", ms, "الـ ms");
-  let last = -Infinity, timer = null, lastArgs, lastThis;
-  function throttled(...args) {
-    lastArgs = args; lastThis = this;
-    const wait = ms - (Date.now() - last);
-    if (wait <= 0) { last = Date.now(); fn.apply(this, args); return; }
-    if (timer === null) timer = setTimeout(() => {
-      timer = null; last = Date.now(); fn.apply(lastThis, lastArgs);
-    }, wait);
+// ٣. النور: كل frame نشوف أنهي ضربة ميعادها جه في ساعة الصوت
+function drawDots() {
+  if (!state.running) return;
+  while (visualQueue.length && visualQueue[0].time <= ctx.currentTime) {
+    const { beat: b } = visualQueue.shift();
+    [...$('dots').children].forEach((d, i) => d.classList.toggle('on', i === b));
   }
-  throttled.cancel = () => { clearTimeout(timer); timer = null; };
-  return throttled;
+  requestAnimationFrame(drawDots);
 }
+function makeDots() {
+  $('dots').replaceChildren(...Array.from({ length: state.beats }, (_, i) => Object.assign(document.createElement('span'), { className: i === 0 ? 'first' : '' })));
+}
+
+// ٤. تشغيل وإيقاف
+async function start() {
+  ctx ??= new AudioContext();
+  if (ctx.state === 'suspended') await ctx.resume();
+  state.running = true;
+  beat = 0;
+  nextTime = ctx.currentTime + 0.05;
+  visualQueue.length = 0;
+  log.length = 0;
+  scheduler();
+  timer = setInterval(scheduler, LOOKAHEAD_MS);
+  requestAnimationFrame(drawDots);
+  $('start').textContent = 'وقّف (مسافة)';
+  $('start').setAttribute('aria-pressed', 'true');
+  $('msg').textContent = 'شغال: ' + state.bpm + ' BPM، ' + state.beats + ' في المازورة';
+}
+function stop() {
+  state.running = false;
+  clearInterval(timer);
+  [...$('dots').children].forEach((d) => d.classList.remove('on'));
+  $('start').textContent = 'ابدأ (مسافة)';
+  $('start').setAttribute('aria-pressed', 'false');
+  $('msg').textContent = 'واقف';
+}
+$('start').addEventListener('click', () => (state.running ? stop() : start()));
+
+// ٥. السرعة: range وأزرار، والتغيير بيبان من الضربة الجاية
+function setBpm(v) {
+  state.bpm = Math.min(240, Math.max(40, Math.round(v)));
+  $('bpm').value = state.bpm;
+  $('bpmOut').textContent = state.bpm;
+}
+$('bpm').addEventListener('input', () => setBpm(Number($('bpm').value)));
+$('minus').addEventListener('click', () => setBpm(state.bpm - 1));
+$('plus').addEventListener('click', () => setBpm(state.bpm + 1));
+$('beats').addEventListener('change', () => { state.beats = Number($('beats').value); beat = 0; makeDots(); });
+
+// ٦. Tap tempo: متوسط آخر ٤ فترات، ولو سكت أكتر من ثانيتين نبدأ من جديد
+const taps = [];
+function tap() {
+  const now = performance.now();
+  if (taps.length && now - taps[taps.length - 1] > 2000) taps.length = 0;
+  taps.push(now);
+  if (taps.length > 5) taps.shift();
+  if (taps.length >= 2) {
+    const gaps = taps.slice(1).map((t, i) => t - taps[i]);
+    setBpm(60000 / (gaps.reduce((a, b) => a + b, 0) / gaps.length));
+    $('msg').textContent = 'Tap: ' + state.bpm + ' BPM من ' + gaps.length + ' فترة';
+  }
+}
+$('tap').addEventListener('click', tap);
+
+// ٧. الكيبورد: مسافة تشغيل، و t للـ tap، والأسهم ±1 (و Shift ±10)
+addEventListener('keydown', (e) => {
+  if (e.target.matches('input, select') && e.key !== ' ') return;
+  if (e.key === ' ' && !e.target.matches('button')) { e.preventDefault(); $('start').click(); }
+  else if (e.key.toLowerCase() === 't') tap();
+  else if (e.key === 'ArrowUp') { e.preventDefault(); setBpm(state.bpm + (e.shiftKey ? 10 : 1)); }
+  else if (e.key === 'ArrowDown') { e.preventDefault(); setBpm(state.bpm - (e.shiftKey ? 10 : 1)); }
+});
+
+// ٨. التاب اتخبى: الـ timers بتبطأ، والصوت المتجدول بيكمّل. لما نرجع نكمّل من غير ما نجدول اللي فات
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && state.running && nextTime < ctx.currentTime) nextTime = ctx.currentTime + 0.05;
+});
+makeDots();
+</script>
+</body>
+</html>
 ~~~
 
-~~~js src/index.js
-export { debounce, throttle } from "./timing.js";
-export { deepClone, deepEqual, get } from "./objects.js";
-export { curry, mapLimit } from "./functions.js";
+**هتشوف إيه:** خلفية كحلي، و «−» والرقم 100 الكبير و «+» و BPM، وشريط أصفر، واختيار الضربات و Tap، و ٤ نقط رمادي أولها بإطار أصفر، وزرار أخضر «ابدأ (مسافة)». دوس ابدأ: تكة كل 0.6 ثانية والنقطة الأولى بتكة أعلى، والنقط بتنوّر واحدة واحدة مع الصوت، والزرار بيبقى أحمر «وقّف».
+
+## الكود
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مترونوم</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 16px; background: #0f172a; color: #e2e8f0; }
+  main { max-width: 460px; display: grid; gap: 14px; }
+  .bpm { display: flex; align-items: center; gap: 8px; }
+  .bpm output { font-size: 2.6rem; font-variant-numeric: tabular-nums; min-width: 3ch; text-align: center; }
+  button, select, input[type="number"] { font: inherit; min-height: 44px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: #e2e8f0; padding: 0 12px; }
+  button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid #facc15; outline-offset: 2px; }
+  #start { background: #16a34a; border: 0; font-size: 1.1rem; }
+  #start[aria-pressed="true"] { background: #dc2626; }
+  input[type="range"] { width: 100%; accent-color: #facc15; }
+  .dots { display: flex; gap: 10px; direction: ltr; }
+  .dots span { width: 28px; height: 28px; border-radius: 50%; background: #334155; transition: background 60ms; }
+  .dots span.first { border: 2px solid #facc15; }
+  .dots span.on { background: #facc15; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  #msg { color: #94a3b8; min-height: 1.4em; }
+</style>
+</head>
+<body>
+<main id="app">
+  <h1>مترونوم</h1>
+  <div class="bpm">
+    <button id="minus" type="button" aria-label="أبطأ">−</button>
+    <output id="bpmOut" for="bpm">100</output>
+    <button id="plus" type="button" aria-label="أسرع">+</button>
+    <span>BPM</span>
+  </div>
+  <input id="bpm" type="range" min="40" max="240" value="100" aria-label="السرعة بالـ BPM">
+  <div class="row">
+    <label>الضربات في المازورة
+      <select id="beats"><option>2</option><option>3</option><option selected>4</option><option>6</option></select>
+    </label>
+    <button id="tap" type="button">Tap (t)</button>
+  </div>
+  <div class="dots" id="dots" aria-hidden="true"></div>
+  <button id="start" type="button" aria-pressed="false">ابدأ (مسافة)</button>
+  <p id="msg" role="status"></p>
+</main>
+<script src="metronome.js"></script>
+</body>
+</html>
 ~~~
 
-~~~js test/functions.test.js
-import { describe, test } from "node:test";
-import assert from "node:assert/strict";
-import { curry, mapLimit } from "../src/index.js";
+~~~js metronome.js
+// metronome.js: الضربات بتتجدول بساعة الصوت، والـ timer بس بيصحّى الجدولة
+const $ = (id) => document.getElementById(id);
+const LOOKAHEAD_MS = 25;        // الـ timer بيصحى كل 25 ms
+const AHEAD_S = 0.1;            // ويجدول أي ضربة جاية في الـ 100 ms الجايين
+const state = { bpm: 100, beats: 4, running: false };
+let ctx = null, timer = null, nextTime = 0, beat = 0;
+const visualQueue = [];         // { beat, time } عشان النور يولع مع الصوت مش مع الجدولة
+const log = [];                 // للقياس: كل ضربة اتجدولت امتى
 
-describe("curry", () => {
-  test("كل التقسيمات، و args زيادة، و this", () => {
-    const add = curry((a, b, c) => a + b + c);
-    assert.equal(add(1)(2)(3), 6);
-    assert.equal(add(1, 2)(3), 6);
-    assert.equal(add(1, 2, 3, 4), 6);
-    const o = { base: 10, plus: curry(function (a, b) { return this.base + a + b; }) };
-    assert.equal(o.plus(1)(2), 13);
-  });
-  test("arity صريح مع rest", () => {
-    assert.equal(curry((...n) => n.length, 2)(1)(2), 2);
-  });
-  test("مدخلات غلط بترمي TypeError", () => {
-    assert.throws(() => curry(null), { name: "TypeError", message: /curry: الـ fn لازم يبقى function \(وصل null\)/ });
-    assert.throws(() => curry(() => {}, -2), TypeError);
-  });
+// ١. ضربة واحدة: نغمة قصيرة جدًا، والأولى في المازورة أعلى
+function click(time, accent) {
+  const osc = ctx.createOscillator(), env = ctx.createGain();
+  osc.frequency.value = accent ? 1500 : 1000;
+  env.gain.setValueAtTime(0, time);
+  env.gain.linearRampToValueAtTime(accent ? 0.5 : 0.3, time + 0.002);
+  env.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+  osc.connect(env).connect(ctx.destination);
+  osc.start(time);
+  osc.stop(time + 0.06);
+}
+
+// ٢. الجدولة: كل اللي ميعاده قبل «دلوقتي + 100 ms» يتجدول دلوقتي بميعاده بالظبط
+function scheduler() {
+  while (nextTime < ctx.currentTime + AHEAD_S) {
+    click(nextTime, beat === 0);
+    visualQueue.push({ beat, time: nextTime });
+    log.push(nextTime);
+    nextTime += 60 / state.bpm;
+    beat = (beat + 1) % state.beats;
+  }
+}
+
+// ٣. النور: كل frame نشوف أنهي ضربة ميعادها جه في ساعة الصوت
+function drawDots() {
+  if (!state.running) return;
+  while (visualQueue.length && visualQueue[0].time <= ctx.currentTime) {
+    const { beat: b } = visualQueue.shift();
+    [...$('dots').children].forEach((d, i) => d.classList.toggle('on', i === b));
+  }
+  requestAnimationFrame(drawDots);
+}
+function makeDots() {
+  $('dots').replaceChildren(...Array.from({ length: state.beats }, (_, i) => Object.assign(document.createElement('span'), { className: i === 0 ? 'first' : '' })));
+}
+
+// ٤. تشغيل وإيقاف
+async function start() {
+  ctx ??= new AudioContext();
+  if (ctx.state === 'suspended') await ctx.resume();
+  state.running = true;
+  beat = 0;
+  nextTime = ctx.currentTime + 0.05;
+  visualQueue.length = 0;
+  log.length = 0;
+  scheduler();
+  timer = setInterval(scheduler, LOOKAHEAD_MS);
+  requestAnimationFrame(drawDots);
+  $('start').textContent = 'وقّف (مسافة)';
+  $('start').setAttribute('aria-pressed', 'true');
+  $('msg').textContent = 'شغال: ' + state.bpm + ' BPM، ' + state.beats + ' في المازورة';
+}
+function stop() {
+  state.running = false;
+  clearInterval(timer);
+  [...$('dots').children].forEach((d) => d.classList.remove('on'));
+  $('start').textContent = 'ابدأ (مسافة)';
+  $('start').setAttribute('aria-pressed', 'false');
+  $('msg').textContent = 'واقف';
+}
+$('start').addEventListener('click', () => (state.running ? stop() : start()));
+
+// ٥. السرعة: range وأزرار، والتغيير بيبان من الضربة الجاية
+function setBpm(v) {
+  state.bpm = Math.min(240, Math.max(40, Math.round(v)));
+  $('bpm').value = state.bpm;
+  $('bpmOut').textContent = state.bpm;
+}
+$('bpm').addEventListener('input', () => setBpm(Number($('bpm').value)));
+$('minus').addEventListener('click', () => setBpm(state.bpm - 1));
+$('plus').addEventListener('click', () => setBpm(state.bpm + 1));
+$('beats').addEventListener('change', () => { state.beats = Number($('beats').value); beat = 0; makeDots(); });
+
+// ٦. Tap tempo: متوسط آخر ٤ فترات، ولو سكت أكتر من ثانيتين نبدأ من جديد
+const taps = [];
+function tap() {
+  const now = performance.now();
+  if (taps.length && now - taps[taps.length - 1] > 2000) taps.length = 0;
+  taps.push(now);
+  if (taps.length > 5) taps.shift();
+  if (taps.length >= 2) {
+    const gaps = taps.slice(1).map((t, i) => t - taps[i]);
+    setBpm(60000 / (gaps.reduce((a, b) => a + b, 0) / gaps.length));
+    $('msg').textContent = 'Tap: ' + state.bpm + ' BPM من ' + gaps.length + ' فترة';
+  }
+}
+$('tap').addEventListener('click', tap);
+
+// ٧. الكيبورد: مسافة تشغيل، و t للـ tap، والأسهم ±1 (و Shift ±10)
+addEventListener('keydown', (e) => {
+  if (e.target.matches('input, select') && e.key !== ' ') return;
+  if (e.key === ' ' && !e.target.matches('button')) { e.preventDefault(); $('start').click(); }
+  else if (e.key.toLowerCase() === 't') tap();
+  else if (e.key === 'ArrowUp') { e.preventDefault(); setBpm(state.bpm + (e.shiftKey ? 10 : 1)); }
+  else if (e.key === 'ArrowDown') { e.preventDefault(); setBpm(state.bpm - (e.shiftKey ? 10 : 1)); }
 });
 
-describe("mapLimit", () => {
-  test("٥ مهام × 100ms بحد ٢: حوالي 300ms، والترتيب صح، ومفيش أكتر من ٢ مع بعض", async () => {
-    let running = 0, max = 0;
-    const task = (x) => new Promise((r) => {
-      running++; max = Math.max(max, running);
-      setTimeout(() => { running--; r(x * 10); }, 100);
-    });
-    const t0 = performance.now();
-    const out = await mapLimit([1, 2, 3, 4, 5], 2, task);
-    const ms = performance.now() - t0;
-    assert.deepEqual(out, [10, 20, 30, 40, 50]);
-    assert.equal(max, 2);
-    assert.ok(ms >= 290 && ms < 450, $__btأخد $__{Math.round(ms)}ms$__bt);
-  });
-  test("النتايج بترتيب المدخلات حتى لو خلصت بالعكس", async () => {
-    const out = await mapLimit([30, 10, 20], 3, (ms) => new Promise((r) => setTimeout(() => r(ms), ms)));
-    assert.deepEqual(out, [30, 10, 20]);
-  });
-  test("فاضية، ومهمة بترمي sync أو async بترفض الكل", async () => {
-    assert.deepEqual(await mapLimit([], 2, () => 1), []);
-    await assert.rejects(mapLimit([1, 2], 1, (x) => { if (x === 2) throw new Error("sync boom"); return x; }), /sync boom/);
-    await assert.rejects(mapLimit([1, 2], 2, async () => { throw new Error("async boom"); }), /async boom/);
-  });
-  test("مدخلات غلط بترجّع promise مرفوض بـ TypeError", async () => {
-    await assert.rejects(mapLimit(5, 2, (x) => x), { name: "TypeError", message: /iterable/ });
-    await assert.rejects(mapLimit([1], 0, (x) => x), { name: "TypeError", message: /الـ limit/ });
-    await assert.rejects(mapLimit([1], 1.5, (x) => x), TypeError);
-    await assert.rejects(mapLimit([1], 1, "x"), { name: "TypeError", message: /mapLimit: الـ fn/ });
-  });
+// ٨. التاب اتخبى: الـ timers بتبطأ، والصوت المتجدول بيكمّل. لما نرجع نكمّل من غير ما نجدول اللي فات
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && state.running && nextTime < ctx.currentTime) nextTime = ctx.currentTime + 0.05;
 });
+makeDots();
 ~~~
 
-~~~js test/objects.test.js
-import { describe, test } from "node:test";
-import assert from "node:assert/strict";
-import { deepClone, deepEqual, get } from "../src/index.js";
+## ليه مش [[setInterval(click, 600)]] وخلاص؟
 
-describe("deepClone", () => {
-  test("Date و RegExp و Map و Set بيتنسخوا بنوعهم ومستقلين", () => {
-    const src = { d: new Date(5), r: /a+/gi, m: new Map([["k", { v: 1 }]]), s: new Set([1, [2]]) };
-    const c = deepClone(src);
-    assert.ok(c.d instanceof Date && c.d.getTime() === 5 && c.d !== src.d);
-    assert.equal(String(c.r), "/a+/gi");
-    assert.deepEqual(c.m.get("k"), { v: 1 });
-    assert.notEqual(c.m.get("k"), src.m.get("k"));
-    assert.ok(c.s.has(1) && c.s.size === 2);
-  });
+| | [[setInterval]] لوحده | ساعة الصوت + lookahead |
+|---|---|---|
+| مين بيحدد ميعاد الصوت | الـ timer لما يصحى | [[osc.start(time)]] بميعاد في المستقبل |
+| لو الـ main thread مشغول | الصوت بيتأخر مع الـ timer | الصوت متجدول خلاص في thread الصوت |
+| اتقاس عند 600 ms، والصفحة مشغولة ١٥٠ ms كل ٤٠٠ | الفترات 608 592 597 607 594 606 (لحد ٨ ms) | 600 بالظبط (0.000000 ms) |
 
-  test("object بيشاور على نفسه بيتنسخ من غير stack overflow", () => {
-    const o = { name: "root", list: [] };
-    o.self = o;
-    o.list.push(o);
-    const c = deepClone(o);
-    assert.equal(c.self, c);
-    assert.equal(c.list[0], c);
-    assert.notEqual(c, o);
-  });
+والـ ٨ ms دي والصفحة مشغولة شوية بس؛ صفحة تقيلة (رسم، أو JSON كبير) بتأخر الـ timer أكتر بكتير، والموسيقي بيسمع الإيقاع وهو بيتهز. الطريقة دي اتشرحت في مقال «A Tale of Two Clocks» المشهور، وهي نفس اللي المكتبات الموسيقية بتعمله.
 
-  test("الـ prototype بيفضل (class instance بالـ methods)، والـ holes بتفضل", () => {
-    class P { constructor(x) { this.x = x; } double() { return this.x * 2; } }
-    assert.equal(deepClone(new P(3)).double(), 6);
-    const holes = deepClone([1, , 3]);
-    assert.equal(holes.length, 3);
-    assert.equal(1 in holes, false);
-  });
-});
+## الشرح
 
-describe("deepEqual", () => {
-  test("Date بالوقت مش بالـ keys", () => {
-    assert.equal(deepEqual(new Date(1), new Date(2)), false);
-    assert.equal(deepEqual(new Date(1), new Date(1)), true);
-    assert.equal(deepEqual(new Date(NaN), new Date(NaN)), true);
-  });
+- **[[scheduler()]]:** [[while (nextTime < ctx.currentTime + 0.1)]]: كل ضربة ميعادها في الـ ١٠٠ ms الجايين تتجدول دلوقتي بميعادها بالظبط، و [[nextTime += 60 / bpm]]. الـ timer كل ٢٥ ms، فحتى لو اتأخر ٧٥ ms لسه فيه ضربات متجدولة.
+- **[[click(time, accent)]]:** oscillator 1000 Hz (أو 1500 للأولى) بـ envelope ٥٠ ms. صوت قصير جدًا عشان التكة تبقى واضحة.
+- **النور مع الصوت مش مع الجدولة:** الجدولة بتحصل قبل الصوت بلحد ١٠٠ ms. لو نوّرنا وقت الجدولة النور هيسبق. فبنحط [[{ beat, time }]] في [[visualQueue]]، و [[requestAnimationFrame]] بينوّر النقطة لما [[ctx.currentTime]] يوصل لـ [[time]].
+- **تغيير السرعة** بيبان من الضربة الجاية لوحده، لأن [[nextTime]] بيتحسب من [[state.bpm]] كل مرة.
+- **Tap:** آخر ٥ ضغطات (٤ فترات)، والمتوسط ← [[60000 / متوسط ms]]. ولو سكت أكتر من ثانيتين نبدأ عد جديد.
+- **الكيبورد على [[window]]** عشان المسافة تشتغل من أي حتة، بس بنسيب الحروف للـ [[input]] و [[select]].
+- **[[visibilitychange]]:** لما التاب يرجع ظاهر و [[nextTime]] بقى في الماضي، بنكمّل من دلوقتي بدل ما نجدول كل الضربات اللي فاتت مرة واحدة.
 
-  test("RegExp و Map و Set", () => {
-    assert.equal(deepEqual(/a/g, /a/g), true);
-    assert.equal(deepEqual(/a/g, /a/i), false);
-    assert.equal(deepEqual(new Map([[1, { a: 1 }]]), new Map([[1, { a: 1 }]])), true);
-    assert.equal(deepEqual(new Map([[1, 2]]), new Map([[1, 3]])), false);
-    assert.equal(deepEqual(new Map([[1, 2]]), new Map([[2, 2]])), false);
-    assert.equal(deepEqual(new Set([1, { a: 1 }]), new Set([{ a: 1 }, 1])), true);
-    assert.equal(deepEqual(new Set([1, 2]), new Set([1, 3])), false);
-    assert.equal(deepEqual(new Set([{ a: 1 }]), new Set([{ a: 2 }])), false);
-    assert.equal(deepEqual(new Set([1]), new Set([1, 2])), false);
-  });
+## غلطات وقعت فيها وأنا ببنيها
 
-  test("circular في الاتنين بيتقارن من غير stack overflow", () => {
-    const a = { v: 1 }; a.self = a;
-    const b = { v: 1 }; b.self = b;
-    const c = { v: 2 }; c.self = c;
-    assert.equal(deepEqual(a, b), true);
-    assert.equal(deepEqual(a, c), false);
-    assert.equal(deepEqual(a, deepClone(a)), true);
-  });
+- **Tap طلّع 110 بدل 120** في أول اختبار: Playwright [[page.click]] كل ٥٠٠ ms بياخد وقت هو كمان (يدوّر على العنصر ويستنى)، فالفترات الحقيقية كانت حوالي ٥٤٥ ms. لما الضغطات اتعملت من جوه الصفحة كل ٥٠٠ ms بـ [[setTimeout]] طلع 118 (الـ timer بيتأخر كام ms). الكود صح، والدرس: الـ tap بيقيس اليوزر بالظبط زي ما داس، وده المطلوب.
+- **قرار:** أول ضربة عند [[ctx.currentTime + 0.05]] مش [[ctx.currentTime]] بالظبط، عشان تتجدول في المستقبل دايمًا ومتبقاش ميعادها فات وهي لسه بتتعمل ([[start(time)]] بميعاد فات بيبدأ على طول من غير ما يستنى، من MDN، فالتأخير الصغير ده بيضمن إن كل الضربات بنفس المسافة).
 
-  test("النوع والمفاتيح", () => {
-    assert.equal(deepEqual([1, 2], { 0: 1, 1: 2 }), false);
-    assert.equal(deepEqual({ a: undefined }, { b: undefined }), false);
-    assert.equal(deepEqual({ a: 1 }, { a: 1, b: 2 }), false);
-    assert.equal(deepEqual(new Date(0), {}), false);
-    assert.equal(deepEqual(1, "1"), false);
-    assert.equal(deepEqual(NaN, NaN), true);
-  });
-});
+## اتقاس
 
-describe("get", () => {
-  const data = { a: { b: [{ c: 42 }, { c: 0 }] }, n: null };
-  test("path بنقط وبـ index", () => {
-    assert.equal(get(data, "a.b.0.c"), 42);
-    assert.equal(get(data, ["a", "b", 1, "c"]), 0);   // 0 مش بيتبدّل بالـ fallback
-  });
-  test("path مش موجود بيرجّع الـ fallback من غير error", () => {
-    assert.equal(get(data, "a.x.y.z", "مفيش"), "مفيش");
-    assert.equal(get(data, "n.deep", "مفيش"), "مفيش");
-    assert.equal(get(undefined, "a", 5), 5);
-    assert.equal(get(data, "n", "مفيش"), null);       // null قيمة موجودة
-  });
-  test("path مش string ولا array بيرمي TypeError", () => {
-    assert.throws(() => get(data, 42), { name: "TypeError", message: /get: الـ path/ });
-  });
-});
+~~~text الناتج (Chrome 157، Playwright من سيرفر محلي)
+ابدأ:                    شغال: 100 BPM، 4 في المازورة
+بعد 3.1 ثانية:           ضربات اتجدولت=6 الفترة المطلوبة=600ms أكبر انحراف=0.000000ms
+مع main thread مشغول:    ضربات=5 أكبر انحراف في الصوت=0.000000ms
+setInterval(600) لوحده:  600.0 600.0 599.8 600.1 (والصفحة فاضية)
+                         608 592 597 607 594 606 أكبر انحراف=8ms (والصفحة مشغولة)
+tap كل 500ms من جوه الصفحة: Tap: 118 BPM من 4 فترة
+Shift+↑ من 110:          120
+الضربات 3:               dots=3
+الـ preview المعزول:     شغال: 100 BPM، 4 في المازورة، والنقطة بتنوّر
 ~~~
 
-~~~js test/timing.test.js
-import { test, mock, beforeEach, afterEach } from "node:test";
-import assert from "node:assert/strict";
-import { debounce, throttle } from "../src/index.js";
-
-beforeEach(() => mock.timers.enable({ apis: ["setTimeout", "Date"] }));
-afterEach(() => mock.timers.reset());
-
-test("debounce: آخر نداء بس، بعد ms من آخر نداء، و this بيوصل", () => {
-  const seen = [];
-  const o = { n: 7, d: debounce(function (q) { seen.push([this.n, q]); }, 100) };
-  o.d("a"); mock.timers.tick(50);
-  o.d("ab"); mock.timers.tick(99);
-  assert.deepEqual(seen, []);
-  mock.timers.tick(1);
-  assert.deepEqual(seen, [[7, "ab"]]);
-});
-
-test("debounce leading: الأول فورًا ومفيش تنفيذ في الآخر", () => {
-  const fn = mock.fn();
-  const d = debounce(fn, 100, { leading: true });
-  d(1); d(2); d(3);
-  mock.timers.tick(200);
-  assert.deepEqual(fn.mock.calls.map((c) => c.arguments[0]), [1]);
-});
-
-test("debounce cancel بيمنع التنفيذ", () => {
-  const fn = mock.fn();
-  const d = debounce(fn, 100);
-  d(); d.cancel(); mock.timers.tick(500);
-  assert.equal(fn.mock.callCount(), 0);
-});
-
-test("throttle: الأول فورًا والأخير بآخر args في آخر الفترة، و cancel", () => {
-  const fn = mock.fn();
-  const t = throttle(fn, 100);
-  t(1); mock.timers.tick(30); t(2); mock.timers.tick(30); t(3);
-  mock.timers.tick(40);
-  assert.deepEqual(fn.mock.calls.map((c) => c.arguments[0]), [1, 3]);
-  mock.timers.tick(100);                         // آخر تنفيذ كان عند 100، فلازم فترة كاملة
-  t(4); mock.timers.tick(10); t(5); t.cancel(); mock.timers.tick(500);
-  assert.deepEqual(fn.mock.calls.map((c) => c.arguments[0]), [1, 3, 4]);
-});
-
-test("مدخلات غلط بترمي TypeError برسالة واضحة", () => {
-  assert.throws(() => debounce("x", 10), { name: "TypeError", message: /debounce: الـ fn لازم يبقى function \(وصل string\)/ });
-  assert.throws(() => throttle(() => {}, -1), { name: "TypeError", message: /throttle: الـ ms/ });
-  assert.throws(() => debounce(() => {}, NaN), TypeError);
-});
-~~~
-
-## كل حتة مهمة
-
-- **[[check.js]]:** كل الرسايل بنفس الشكل «الدالة: المشكلة (اللي وصل)»، فلما حد يغلط يعرف أنهي دالة وأنهي argument واتبعتله إيه. [[Number.isFinite]] بيرفض [[NaN]] و [[Infinity]] والنصوص مع بعض.
-- **[[mapLimit]] بيرجّع Promise مرفوض مش [[throw]]:** اللي بيستخدمها كاتب [[await]] جوه [[try]] أو [[.catch]]، فالغلط لازم يوصل من نفس الطريق. الـ [[try/catch]] اللي في الأول بيحوّل أي فحص فشل لـ [[Promise.reject]].
-- **[[deepClone]]:** [[seen]] بيتسجّل **قبل** ما ننزل جوه (تمرين درس deepClone)، والـ Map بتنسخ المفاتيح كمان (مفتاح object بيتنسخ هو كمان)، و [[new Array(value.length)]] بيحافظ على الـ holes.
-- **[[deepEqual]]:**
-  - [[Object.getPrototypeOf(a) !== Object.getPrototypeOf(b)]] سطر واحد بيفرّق array عن object و Date عن [[{}]] و class عن object عادي.
-  - الـ circular: [[seen]] بيحفظ «a بيتقارن مع b دلوقتي». لو رجعنا لنفس الزوج وإحنا لسه جوه المقارنة، نفترض إنهم متساويين ونكمّل الباقي؛ لو فيه فرق حقيقي هيطلع من مكان تاني.
-  - الـ Set: [[b.has(v)]] للـ primitives، ولو العنصر object بندوّر على واحد يساويه deep. وكل محاولة بـ [[WeakMap]] جديد، عشان محاولة فاشلة متسيبش أزواج غلط في [[seen]] للمحاولة اللي بعدها.
-  - الـ Map: المفاتيح بتتقارن بـ [[has]] (يعني بالـ reference لو object)، والقيم deep. ده نفس اختيار مكتبات كتير، ومكتوب هنا عشان ميتفهمش غلط.
-- **[[get]]:** [[cur == null]] بيوقف على null أو undefined في النص، و [[cur === undefined ? fallback : cur]] بيخلي [[0]] و [[null]] قيم حقيقية مش بتتبدّل بالـ fallback (التست بيتأكد من الاتنين).
-- **التستات:** الـ timing بـ [[mock.timers]] (من تمرين درس debounce و throttle)، و [[mapLimit]] بوقت حقيقي ومعاه حد أدنى وأقصى ([[ms >= 290 && ms < 450]]) لأن الـ timers على CI ممكن تتأخر.
-
-## الغلطات اللي حصلت وأنا ببنيه
-
-**١. [[arity = fn.length]] في الـ default.** الـ default parameter بيتحسب **قبل** أول سطر في الدالة، فـ [[curry(null)]] وقعت قبل ما توصل للفحص برسالة مش بتاعتنا:
-
-~~~text الناتج (بـ arity = fn.length)
-  ✖ مدخلات غلط بترمي TypeError (1.5586ms)
-  +   message: "Cannot read properties of null (reading 'length')",
-  -   message: /curry: الـ fn لازم يبقى function \(وصل null\)/,
-~~~
-
-التصليح: [[arity = fn?.length]]، فـ null بيدّي undefined والفحص بتاعنا هو اللي بيرمي.
-
-**٢. تست الـ throttle نفسه كان غلط.** كتبت [[t(4)]] على طول بعد ما [[3]] اتنفّذت وتوقعت إنها تتنفّذ فورًا:
-
-~~~text الناتج (أول نسخة من التست)
-✖ throttle: الأول فورًا والأخير بآخر args في آخر الفترة، و cancel (3.6844ms)
-  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
-    actual: [ 1, 3 ],
-    expected: [ 1, 3, 4 ],
-~~~
-
-الكود كان صح: [[3]] اتنفّذت عند 100ms، فـ [[last]] بقى 100، و [[t(4)]] عند 100 لسه جوه فترة جديدة فاتأجلت، وبعدين [[cancel]] لغاها. التصليح في التست: [[mock.timers.tick(100)]] قبل [[t(4)]]. الدرس: لما تست يقع، اتأكد الأول إن التوقع نفسه صح.
-
-**٣. اتأكدت إن تست الـ circular بيمسك فعلًا:** شلت سطر [[seen.get(a) === b]] من [[deepEqual]]:
-
-~~~text الناتج (من غير فحص seen)
-  ✖ circular في الاتنين بيتقارن من غير stack overflow (4.2444ms)
-  RangeError [Error]: Maximum call stack size exceeded
-~~~
-
-**استخدامها من مشروع تاني:** [[package.json]] فيه [[exports]]، فلو عملت [[npm link]] أو حطيت الفولدر في [[node_modules]]: [[import { deepClone, mapLimit } from "mini-lodash";]].` },
-        { lvl: 'فكرة', dir: "parseint-trap", t: R`اشرحها لحد تاني`, what: R`اختار سؤال من الوحدة دي حسيت إنه صعب عليك، واعمله شرح بتاعك: بوست أو فيديو قصير أو صفحة HTML تفاعلية، فيه الإجابة اللي تتقال في الانترفيو، والكود، والحالات اللي بتوقع الناس.`, done: R`الشرح فيه كود حد يقدر ينسخه ويشغّله ويطلعله نفس الناتج اللي انت كاتبه، وفيه غلطة شائعة واحدة على الأقل وإزاي تكتشفها، وحد تاني قراه وفهمه من غير ما تشرح له جنبه.`, ext: R`اعمل سلسلة لكل أسئلة الوحدة، أو حوّلها لـ quiz تفاعلي، أو سجّل نفسك بتجاوب بالإنجليزي عشان الانترفيوهات الأجنبي.`, sol: R`## نسخة نموذجية: صفحة بتشرح فخ [[map(parseInt)]]
-
-اخترت سؤال [[["1", "7", "11"].map(parseInt)]] من درس «اتوقع الناتج»، لأن الإجابة الصح بتحتاج تعرف حاجتين مع بعض ([[map]] بتبعت إيه، و [[parseInt]] بتاخد إيه)، ولأن الشرح بالكلام لوحده مش بيقنع: لازم تشوف النداءات بعينك. فالشكل صفحة HTML واحدة: الإجابة اللي تتقال، وجدول بيتحسب في المتصفح للنداءات الحقيقية، و input تجرّب فيه قيم تانية.
-
-## الشكل النهائي
+- **اللي متقاسش:** التاب في الخلفية. وثائق Chrome بتقول الـ timers في التابات المستخبية بتتبطّأ (لحد مرة في الثانية أو أقل)، و ١٠٠ ms lookahead مش هيكفي ساعتها. ده الـ ext رقم ٤.` },
+        { lvl: 'فكرة', dir: "photo-booth", t: R`كابينة صور: عد تنازلي وفلاتر وشريط ٤ صور`, what: R`فكرة لحفلة أو فعالية: «افتح الكاميرا»، واختار فلتر (أبيض وأسود، قديم، ألوان قوية)، و «صوّر ٤ صور»: لكل صورة عد ٣ ٢ ١ على الشاشة بصوت تكة، وبعدين فلاش أبيض وصوت أعلى. الـ ٤ صور بيتجمعوا في شريط طولي بهامش أبيض وتاريخ النهارده، وتنزّله PNG. الصورة متقلوبة زي المراية زي الشاشة. ولو الكاميرا مش متاحة، الكابينة بتشتغل على «صورة تجربة» بتتحرك عشان تقدر تجرّب كل حاجة. من دروس «getUserMedia» و «Web Audio API» و «canvas».`, done: R`بالكاميرا: الشريط 324×996 فيه ٤ صور، ومع «أبيض وأسود» pixel من الصورة لونه [[96,96,96]] (رمادي)، والهامش [[255,255,255]]. وجوه الـ preview: «الكاميرا مش متاحة (SecurityError)، فهنصوّر صورة تجربة» والشريط برده بيطلع.`, ext: R`(١) ابعت الشريط بـ [[navigator.share({ files })]] على الموبايل. (٢) إطار PNG شفاف (لوجو الفعالية) يترسم فوق كل صورة. (٣) GIF أو فيديو قصير بـ [[MediaRecorder]] من الـ canvas بدل الصور. (٤) QR code للتحميل من الموبايل لو الكابينة على لابتوب.`, sol: R`## الشكل النهائي
 
 ~~~live 560 index.html
 <!doctype html>
@@ -1127,3884 +1824,3493 @@ test("مدخلات غلط بترمي TypeError برسالة واضحة", () => {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ليه map(parseInt) بيطلع NaN؟</title>
+<title>كابينة الصور</title>
 <style>
-  body { font: 16px/1.7 system-ui, sans-serif; margin: 0 auto; padding: 16px; max-width: 680px; color: #1d1d1f; background: #fff; }
-  h1 { font-size: 22px; margin: 0 0 8px; }
-  h2 { font-size: 18px; margin: 24px 0 8px; }
-  code { font-family: ui-monospace, Consolas, monospace; background: #f1f1f4; padding: 1px 5px; border-radius: 4px; direction: ltr; unicode-bidi: isolate; }
-  .answer { background: #eef6ff; border-inline-start: 4px solid #2f6fdf; padding: 10px 14px; border-radius: 6px; }
-  table { border-collapse: collapse; width: 100%; direction: ltr; font-family: ui-monospace, Consolas, monospace; font-size: 14px; }
-  th, td { border: 1px solid #ccd; padding: 6px 8px; text-align: left; }
-  th { background: #f6f6f9; }
-  .bad { color: #b00020; font-weight: 700; }
-  label { display: block; margin-bottom: 4px; }
-  input { font: inherit; width: 100%; box-sizing: border-box; padding: 6px 8px; direction: ltr; }
-  #results p { margin: 6px 0; }
+  body { font-family: system-ui, sans-serif; margin: 16px; background: #fdf2f8; color: #500724; }
+  main { max-width: 620px; display: grid; gap: 10px; }
+  .stage { position: relative; width: 100%; max-width: 480px; aspect-ratio: 4 / 3; background: #111; border-radius: 12px; overflow: hidden; }
+  .stage video, .stage canvas { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #count { position: absolute; inset: 0; display: grid; place-items: center; font-size: 5rem; color: #fff; text-shadow: 0 2px 8px #000; pointer-events: none; }
+  #flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; transition: opacity 250ms; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  button, select { font: inherit; min-height: 44px; padding: 0 14px; border-radius: 8px; border: 1px solid #f9a8d4; background: #fff; cursor: pointer; }
+  #go { background: #be185d; color: #fff; border: 0; }
+  #msg { min-height: 1.4em; }
+  #strip { max-width: 240px; border-radius: 8px; box-shadow: 0 2px 12px #0003; }
 </style>
 </head>
 <body>
-<h1>ليه <code>["1", "7", "11"].map(parseInt)</code> بيطلع <code>[1, NaN, 3]</code>؟</h1>
-
-<p class="answer"><strong>الإجابة في الانترفيو:</strong> <code>map</code> بتنادي الـ callback بـ ٣ arguments: العنصر والـ index والـ array. و <code>parseInt</code> بتاخد تاني argument كـ radix (أساس العد). فالـ index بقى radix: صفر يعني «خمّن» فطلع 1، و 1 مش أساس عد فطلع NaN، و 2 يعني ثنائي فـ "11" بقت 3.</p>
-
-<h2>النداءات اللي حصلت فعلًا</h2>
-<p>الجدول ده بيتحسب في المتصفح دلوقتي: بنلف <code>parseInt</code> بدالة بتسجّل الـ arguments اللي وصلتلها.</p>
-<table>
-  <thead><tr><th>call</th><th>radix</th><th>result</th></tr></thead>
-  <tbody id="calls"></tbody>
-</table>
-
-<h2>جرّب بنفسك</h2>
-<label for="input">اكتب نصوص بينها فاصلة:</label>
-<input id="input" value="1, 7, 11, 08, 12px">
-<div id="results"></div>
-
-<h2>الغلطة اللي بتوقّع الناس</h2>
-<p>إنهم يصلّحوها بـ <code>map(Number)</code> ويفتكروا إن ده نفس الكلام. <code>Number</code> بتاخد أول argument بس، بس بتحوّل النص كله: <code>Number("12px")</code> بـ NaN، و <code>parseInt("12px", 10)</code> بـ 12. اختار على حسب الداتا. وفي أي حال، اكتب الـ radix صريح: <code>map((s) => parseInt(s, 10))</code>.</p>
-
+<main>
+  <h1>كابينة الصور</h1>
+  <div class="stage">
+    <video id="cam" muted playsinline hidden></video>
+    <canvas id="test" width="640" height="480" hidden></canvas>
+    <div id="count" aria-live="assertive"></div>
+    <div id="flash"></div>
+  </div>
+  <div class="row">
+    <button id="open" type="button">افتح الكاميرا</button>
+    <label>الفلتر
+      <select id="filter">
+        <option value="none">من غير</option>
+        <option value="grayscale(1)">أبيض وأسود</option>
+        <option value="sepia(0.9)">قديم</option>
+        <option value="contrast(1.4) saturate(1.6)">ألوان قوية</option>
+      </select>
+    </label>
+    <button id="go" type="button" disabled>صوّر ٤ صور</button>
+  </div>
+  <p id="msg" role="status"></p>
+  <img id="strip" alt="شريط الصور" hidden>
+  <a id="dl" download="photo-strip.png" hidden>نزّل الشريط</a>
+</main>
 <script>
-  const show = (v) => Array.isArray(v) ? "[" + v.map(show).join(", ") + "]" : typeof v === "string" ? JSON.stringify(v) : String(v);
+const $ = (s) => document.querySelector(s);
+const cam = $('#cam'), test = $('#test');
+let source = null, stream = null, ctx = null;
 
-  // parseInt متغلفة: بتسجّل كل نداء قبل ما تنادي الأصلية
-  const calls = [];
-  const spyParseInt = (...args) => {
-    const result = parseInt(...args);
-    calls.push({ args, result });
-    return result;
-  };
-  ["1", "7", "11"].map(spyParseInt);
-
-  const tbody = document.getElementById("calls");
-  for (const { args, result } of calls) {
-    const tr = document.createElement("tr");
-    const cells = [
-      "parseInt(" + args.map(show).join(", ") + ")",
-      String(args[1]),
-      String(result),
-    ];
-    cells.forEach((text, i) => {
-      const td = document.createElement("td");
-      td.textContent = text;
-      if (i === 2 && Number.isNaN(result)) td.className = "bad";
-      tr.append(td);
-    });
-    tbody.append(tr);
+// ١. المصدر: الكاميرا، ولو مش متاحة canvas بيتحرك عشان الكابينة تفضل شغالة
+function testPattern() {
+  const g = test.getContext('2d'), t0 = performance.now();
+  (function frame() {
+    const s = (performance.now() - t0) / 1000;
+    g.fillStyle = 'hsl(' + (s * 40 % 360) + ' 70% 45%)'; g.fillRect(0, 0, 640, 480);
+    g.fillStyle = '#fff'; g.beginPath(); g.arc(320 + Math.sin(s * 2) * 160, 240, 70, 0, 7); g.fill();
+    g.fillStyle = '#000'; g.font = 'bold 36px sans-serif'; g.textAlign = 'center'; g.fillText('صورة تجربة', 320, 420);
+    requestAnimationFrame(frame);
+  })();
+  test.hidden = false;
+  return test;
+}
+$('#open').addEventListener('click', async () => {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' } });
+    cam.srcObject = stream;
+    await cam.play();
+    cam.hidden = false;
+    cam.style.transform = 'scaleX(-1)';                       // مراية زي أي كاميرا أمامية
+    source = cam;
+    $('#msg').textContent = 'الكاميرا شغالة.';
+  } catch (e) {
+    source = testPattern();
+    $('#msg').textContent = 'الكاميرا مش متاحة (' + e.name + ')، فهنصوّر صورة تجربة.';
   }
+  applyFilter();
+  $('#go').disabled = false;
+  $('#open').disabled = true;
+});
+// الفلتر على الشاشة: لو المصدر لسه متفتحش، هيتطبّق أول ما يتفتح
+const applyFilter = () => { if (source) source.style.filter = $('#filter').value; };
+$('#filter').addEventListener('change', applyFilter);
 
-  const input = document.getElementById("input");
-  const results = document.getElementById("results");
-  function update() {
-    const list = input.value.split(",").map((s) => s.trim()).filter(Boolean);
-    const rows = [
-      ["map(parseInt)", list.map(parseInt)],
-      ["map(Number)", list.map(Number)],
-      ["map((s) => parseInt(s, 10))", list.map((s) => parseInt(s, 10))],
-    ];
-    results.replaceChildren(...rows.map(([label, out]) => {
-      const p = document.createElement("p");
-      const code = document.createElement("code");
-      code.textContent = label + " → " + show(out);
-      p.append(code);
-      return p;
-    }));
+// ٢. صوت العد: Web Audio، من غير ملفات
+async function beep(freq, ms) {
+  ctx ??= new AudioContext();
+  if (ctx.state === 'suspended') await ctx.resume();
+  const o = ctx.createOscillator(), g = ctx.createGain(), t = ctx.currentTime;
+  o.frequency.value = freq;
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.3, t + 0.01); g.gain.exponentialRampToValueAtTime(0.001, t + ms / 1000);
+  o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + ms / 1000);
+}
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// ٣. صورة واحدة: نفس الفلتر والمراية بتوع الشاشة
+function snap() {
+  const w = source.videoWidth || source.width, h = source.videoHeight || source.height;
+  const c = Object.assign(document.createElement('canvas'), { width: w, height: h });
+  const g = c.getContext('2d');
+  g.filter = $('#filter').value;
+  if (source === cam) { g.translate(w, 0); g.scale(-1, 1); }
+  g.drawImage(source, 0, 0, w, h);
+  return c;
+}
+
+// ٤. العد ٣ ٢ ١ والفلاش، ٤ مرات، وبعدين الشريط
+$('#go').addEventListener('click', async () => {
+  $('#go').disabled = true;
+  const shots = [];
+  for (let i = 0; i < 4; i++) {
+    for (const n of [3, 2, 1]) { $('#count').textContent = n; beep(660, 120); await wait(700); }
+    $('#count').textContent = '';
+    beep(1320, 250);
+    $('#flash').style.opacity = 1; setTimeout(() => ($('#flash').style.opacity = 0), 120);
+    shots.push(snap());
+    $('#msg').textContent = 'صورة ' + (i + 1) + ' من ٤';
+    await wait(400);
   }
-  input.addEventListener("input", update);
-  update();
+  const W = 300, H = Math.round(W * shots[0].height / shots[0].width), PAD = 12;
+  const strip = Object.assign(document.createElement('canvas'), { width: W + PAD * 2, height: (H + PAD) * 4 + PAD + 36 });
+  const g = strip.getContext('2d');
+  g.fillStyle = '#fff'; g.fillRect(0, 0, strip.width, strip.height);
+  shots.forEach((s, i) => g.drawImage(s, PAD, PAD + i * (H + PAD), W, H));
+  g.fillStyle = '#500724'; g.font = '18px sans-serif'; g.textAlign = 'center';
+  g.fillText(new Date().toLocaleDateString('ar-EG'), strip.width / 2, strip.height - 14);
+  strip.toBlob((blob) => {
+    const url = URL.createObjectURL(blob);
+    $('#strip').src = url; $('#strip').hidden = false;
+    $('#dl').href = url; $('#dl').hidden = false;
+    $('#msg').textContent = 'الشريط جاهز: ' + strip.width + '×' + strip.height + '، ' + Math.round(blob.size / 1024) + ' KB';
+    $('#go').disabled = false;
+  }, 'image/png');
+});
+addEventListener('pagehide', () => stream && stream.getTracks().forEach((t) => t.stop()));
 </script>
 </body>
 </html>
 ~~~
 
-## هتشوف إيه
-
-- **فوق:** الإجابة اللي تتقال في الانترفيو في ٣ سطور، في صندوق أزرق.
-- **الجدول:** ٣ نداءات، وكل واحد بالـ arguments اللي وصلت فعلًا، والـ NaN بالأحمر. لاحظ إن فيه argument تالت (الـ array نفسها): [[map]] بتبعتها برده و [[parseInt]] بتتجاهلها.
-- **جرّب بنفسك:** القيم الافتراضية [[1, 7, 11, 08, 12px]] بتطلّع ٣ سطور مختلفة، والكتابة بتحدّثهم على طول.
-- **الغلطة الشائعة:** إن [[map(Number)]] مش بديل مطابق.
-
-## اتقاس (Chrome بـ Playwright، عرض 400px)
-
-~~~text اللي اتقرا من الصفحة
-الجدول:
-parseInt("1", 0, ["1", "7", "11"])  | 0 | 1
-parseInt("7", 1, ["1", "7", "11"])  | 1 | NaN
-parseInt("11", 2, ["1", "7", "11"]) | 2 | 3
-
-جرّب بنفسك (القيمة الافتراضية 1, 7, 11, 08, 12px):
-map(parseInt) → [1, NaN, 3, 0, 6]
-map(Number) → [1, 7, 11, 8, NaN]
-map((s) => parseInt(s, 10)) → [1, 7, 11, 8, 12]
-
-بعد ما كتبت 10, 10, 10, 10:
-map(parseInt) → [10, NaN, 2, 3]
-map(Number) → [10, 10, 10, 10]
-map((s) => parseInt(s, 10)) → [10, 10, 10, 10]
-
-scroll أفقي: 0px
-~~~
-
-السطر [[[1, NaN, 3, 0, 6]]] نفسه مفاجأة تستاهل تتشرح: [["08"]] بـ radix 3 بقت 0 (الـ 8 مش رقم في نظام ٣، فـ parseInt وقفت عند الـ 0)، و [["12px"]] بـ radix 4 بقت 6 (الـ "12" في نظام ٤ = 4 + 2). و [[10, 10, 10, 10]] هي النسخة المشهورة من السؤال على النت.
-
-## كل حتة مهمة بتعمل إيه
-
-- **[[spyParseInt]]:** دالة بتاخد أي arguments ([[...args]])، وتنادي [[parseInt]] الحقيقية بيهم، وتسجّلهم مع النتيجة. لما نديها لـ [[map]] بدل [[parseInt]] بنشوف بالظبط اللي [[map]] بعته. دي نفس فكرة الـ spy في التستات ([[mock.fn()]] في node:test)، وطريقة كويسة تثبت بيها أي حاجة «بيتبعتلها إيه».
-- **الجدول بيتبني بـ [[textContent]]:** مش بـ [[innerHTML]]، فأي نص حتى لو فيه [[<]] بيتعرض زي ما هو.
-- **[[show]]:** النصوص بتتعرض بعلامات تنصيص ([[JSON.stringify]]) عشان تفرّق بين [["1"]] النص و [[1]] الرقم في الجدول، والـ NaN بيفضل NaN.
-- **الـ input:** [[split(",")]] و [[trim]] و [[filter(Boolean)]] (عشان فاصلة زيادة متعملش نص فاضي)، وبعدين الـ ٣ طرق على نفس اللستة. [[replaceChildren]] بيمسح القديم ويحط الجديد في سطر.
-- **[[direction: ltr]] على الكود والجدول:** الصفحة RTL، والكود لو اتعرض RTL الأقواس بتتقلب. [[unicode-bidi: isolate]] على [[code]] جوه الجمل العربي بيمنع الكود يلخبط ترتيب الكلام اللي حواليه.
+**هتشوف إيه:** مستطيل أسود، و «افتح الكاميرا» واختيار الفلتر و «صوّر ٤ صور». جوه الـ preview: «افتح الكاميرا» بيقول الكاميرا مش متاحة ويشغّل صورة تجربة ألوانها بتتغير ودايرة بيضا بتتحرك. اختار فلتر ودوس «صوّر»: ٣ ٢ ١ كبيرة على الصورة، وفلاش، ٤ مرات، وبعدين الشريط بيظهر تحت. ده نسخة نموذجية لفكرة، وانت حر في التصميم.
 
 ## ليه التصميم ده
 
-- **الجدول بيتحسب مش مكتوب بإيدي:** لو حد شك في الإجابة، الصفحة نفسها هي الدليل. وكده مستحيل أكتب ناتج غلط.
-- **الإجابة الأول:** القارئ اللي عنده انترفيو بكرة ياخد الـ ٣ سطور ويمشي، واللي عايز يفهم يكمّل.
-- **«جرّب بنفسك» بقيم مختارة:** [["08"]] و [["12px"]] اتحطوا عن قصد عشان يورّوا الفرق بين [[Number]] و [[parseInt]]، اللي هو الغلطة الشائعة في التصليح.
+- **المصدر واحد من اتنين (كاميرا أو canvas)** وباقي الكود مبيفرقش: [[snap()]] بتاخد [[videoWidth || width]]. كده الفكرة بتتجرّب في أي مكان (الـ preview، ولابتوب من غير كاميرا)، والفشل مش نهاية الصفحة.
+- **الفلتر واحد في مكانين:** [[style.filter]] على الشاشة (CSS) و [[ctx.filter]] في الصورة (نفس الصيغة بالظبط: [[grayscale(1)]])، فاللي بتشوفه هو اللي بيتصور.
+- **المراية:** الشاشة بـ [[transform: scaleX(-1)]]، والصورة بـ [[translate]] و [[scale(-1, 1)]] (تمرين السيلفي في درس getUserMedia). لو صوّرت من غير قلب، الصورة هتطلع عكس اللي اليوزر شافه وهيحس إنها غلط.
+- **العد بصوت:** [[beep(660)]] للعد و [[beep(1320)]] للصورة: نفس دالة الـ beep من درس Web Audio. والعد في [[aria-live="assertive"]] عشان قارئ الشاشة يقوله على طول.
+- **الشريط:** canvas واحد [[(W + 24) × ((H + 12) × 4 + 48)]]، والصور بنسبة الكاميرا (4:3) مصغّرة لعرض 300. و [[toBlob]] PNG لأن فيه نص وحواف حادة.
 
-## حتة سهل تتنسي
+## غلطات وقعت فيها وأنا ببنيها
 
-الجدول بيعرض **كل** الـ args مش أول اتنين بس، فبتشوف [[parseInt("1", 0, ["1", "7", "11"])]]. لو عرضت [[args[0]]] و [[args[1]]] بس كان هيبان أنضف، بس هتخبّي جزء من الإجابة: [[map]] بتبعت ٣ arguments دايمًا، والدالة اللي بتديها لـ [[map]] هي اللي بتقرر تستخدم كام. وده نفس سبب إن [[map(Number)]] شغالة: [[Number]] بتبص على أول واحد بس.
+- **اختيار فلتر قبل «افتح الكاميرا» وقّع الصفحة:** [[source.style.filter]] و [[source]] لسه [[null]]: [[Cannot read properties of null (reading 'style')]] (اتقاس). التصليح: [[applyFilter()]] بتشيك [[if (source)]]، وبتتنادى تاني أول ما المصدر يتفتح. بعدها: فلتر «قديم» قبل الفتح ← الكاميرا فتحت و [[style.filter]] = [[sepia(0.9)]].
+- **ده مشروع «فكرة»** فالنسخة دي نموذج واحد: مفيهاش حفظ في المتصفح ولا مشاركة (دول الـ ext).
 
-**إزاي تعرف إن الشرح نجح:** ابعته لحد معرفش السؤال، واطلب منه يتوقع [[["10", "10", "10"].map(parseInt)]] بعد ما يقرا. لو قال [[[10, NaN, 2]]] من غير ما تكلمه، الشرح وصل.` },
+## اتقاس
+
+~~~text الناتج (Chrome 157، Playwright)
+بكاميرا وهمية من localhost:  الكاميرا شغالة. ← فلتر أبيض وأسود ← صوّر
+                             الشريط جاهز: 324×996، 26 KB
+                             pixel صورة 1 (40,40)=96,96,96 | pixel صورة 3 (100,600)=96,96,96 | الهامش (5,5)=255,255,255
+جوه الـ preview المعزول:      الكاميرا مش متاحة (SecurityError)، فهنصوّر صورة تجربة.
+                             الشريط جاهز: 324×996، 27 KB
+~~~
+
+- [[996 = (225 + 12) × 4 + 12 + 36]]: كل صورة 300×225 (نسبة 640×480)، وده يأكد إن الحسبة صح.
+- [[96,96,96]]: خلفية الكاميرا الوهمية الخضرا ([[0,144,0]]) بقت رمادي، يعني [[ctx.filter]] اتطبّق على الصورة نفسها مش على الشاشة بس.` },
       ],
       items: [
         {
-          cmd: "null و undefined",
-          title: "إيه الفرق بين null و undefined؟ (null vs undefined)",
-          desc: R`الاتنين معناهم «مفيش قيمة»، والفرق مين اللي قال كده. [[undefined]] بتحطها JS لوحدها: متغير من غير قيمة، أو خاصية مش موجودة، أو argument متبعتش، أو دالة من غير return. [[null]] بيحطها المبرمج بقصد عشان يقول «فاضي». [[typeof null]] بيطلع "object" كغلطة تاريخية، و [[null == undefined]] true لكن بـ === لأ. في JSON الـ undefined بتختفي والـ null بتفضل، والـ default parameters بتشتغل مع undefined بس.`,
-          example: R`let a;
-const obj = {};
-function f(x) { return x; }
-a;                                // undefined: متعرّف من غير قيمة
-obj.missing;                      // undefined: خاصية مش موجودة
-f();                              // undefined: argument متبعتش
-const user = { middleName: null }; // null: قلت «مفيش» بقصد
-typeof null;                      // "object"
-null == undefined;                // true
-null === undefined;               // false
-JSON.stringify({ a: undefined, b: null }); // '{"b":null}'`,
-          try: R`اكتب [[isNil(v)]] بترجّع true لـ null و undefined بس، بطريقتين: [[v == null]] و [[v === null || v === undefined]].`,
-          ref: [
-            { t: "MDN: null", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null" },
-            { t: "MDN: undefined", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined" },
-            { t: "MDN: Nullish coalescing operator (??)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing" },
-            { t: "MDN: typeof", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof" },
-          ],
+          cmd: "HTMLMediaElement: play و pause و currentTime والصيغ",
+          title: "إزاي تتحكم في audio و video من JavaScript، وتعرف المتصفح هيشغّل أنهي صيغة؟",
+          desc: R`[[<audio>]] و [[<video>]] الاتنين من نوع [[HTMLMediaElement]]، فنفس الـ API بيشغّلهم: [[play()]] بيرجّع Promise (ممكن تترفض)، و [[pause()]]، ومفيش [[stop()]] (بتعمله بـ [[pause()]] و [[currentTime = 0]])، و [[currentTime]] للمكان، و [[duration]] للمدة (وهي [[NaN]] لحد [[loadedmetadata]])، و [[volume]] و [[muted]] و [[playbackRate]]، وأحداث بتقولك كل اللي بيحصل.
+
+• الملف = **container** (MP4 أو WebM أو Ogg) جواه **codecs** (فيديو زي H.264 و VP9 و AV1، وصوت زي AAC و Opus و MP3).
+• [[canPlayType(type)]] بيرد بـ [["probably"]] أو [["maybe"]] أو [[""]]، و [[navigator.mediaCapabilities.decodingInfo()]] بيقولك كمان هيشتغل smooth وموفّر للبطارية ولا لأ.
+• [[play()]] من غير ضغطة من اليوزر بيترفض بـ [[NotAllowedError]]، وده الخطأ اللي لازم تمسكه.`,
+          example: R`// media.js: الصفحة فيها <video id="v" src="lesson.webm"> وزرارين #play و #stop
+const v = document.querySelector('#v');
+console.log(v.duration, v.readyState);
+v.addEventListener('loadedmetadata', () => console.log('المدة:', v.duration));
+v.addEventListener('ended', () => console.log('خلص'));
+document.querySelector('#play').addEventListener('click', async () => {
+  try { await v.play(); } catch (e) { console.log(e.name + ': ' + e.message); }
+});
+document.querySelector('#stop').addEventListener('click', () => { v.pause(); v.currentTime = 0; });
+v.playbackRate = 1.5;
+console.log(v.canPlayType('video/webm; codecs="vp9, opus"'));`,
+          try: R`افتح المختبر الحي في آخر الشرح («مختبر الـ media element»). قبل أي ضغطة اقرا اللوج: [[duration]] كانت كام قبل الـ [[src]]؟ دوس [[play()]] وبعدها [[pause()]] وبعدها «+1s» وبعدها «stop»، وبص على الأحداث اللي ظهرت بالترتيب. وبعدين دوس [[volume = 2]] واقرا الخطأ. آخر حاجة: اختار سرعة 2 وشغّل لحد الآخر: كام [[ended]] ظهر؟ وكان [[paused]] إيه؟`,
+          sol: R`~~~text الناتج (نفس المختبر جوه iframe معزول زي الـ preview، Chrome 157، Playwright؛ مختصر: شلنا canplay و playing اللي بيتكرروا)
+0ms  قبل الـ src: duration=NaN
+20ms  loadedmetadata
+65ms  canplay
+602ms  play
+602ms  playing
+603ms  play() اتحقق
+1442ms  pause
+1476ms  seeking
+1476ms  seeked
+1709ms  seeking
+1709ms  seeked
+1933ms  IndexSizeError: Failed to set the 'volume' property on 'HTMLMediaElement': The volume provided (2) is outside the range [0, 1].
+1942ms  ratechange
+1992ms  play
+1993ms  play() اتحقق
+3573ms  pause
+3573ms  ended
+
+currentTime=3.00 duration=3 paused=true ended=true readyState=4 rate=2
+~~~
+
+- [[duration]] كانت [[NaN]] قبل الـ [[src]]: المتصفح لسه ميعرفش حاجة عن الملف. بعد [[loadedmetadata]] بقت [[3]].
+- [[play]] و [[playing]] جم قبل ما الـ Promise يتحقق ([[play() اتحقق]]): الأحداث بتتبعت الأول، وبعدها الـ Promise.
+- «+1s» و «stop» الاتنين عملوا [[seeking]] ثم [[seeked]]: أي تغيير لـ [[currentTime]] هو seek.
+- [[volume = 2]] رمى [[IndexSizeError]]: المسموح من 0 لـ 1 بس.
+- في الآخر [[pause]] ثم [[ended]] في نفس اللحظة، و [[paused]] بقت [[true]] لوحدها و [[currentTime]] واقفة على [[3.00]]. الـ 1.6 ثانية بين [[play]] و [[ended]] لأن السرعة 2 (من 0 لـ 3 ثواني في 1.6 ثانية تقريبًا).`,
           practice: [
-            { lvl: 'سريع', t: R`اتوقع على ورقة وبعدين شغّل: [[typeof undefined]] و [[typeof null]] و [[null + 1]] و [[undefined + 1]] و [[[null, undefined].join("-")]].`, done: R`الناتج بالترتيب: [["undefined"]] و [["object"]] و 1 و [[NaN]] و [["-"]]، وتقدر تقول ليه [[null]] بقى 0 و [[undefined]] بقى [[NaN]] في الجمع، وليه [[join]] حطّهم نص فاضي.`, sol: R`~~~js nil-predict.js
-console.log(typeof undefined);
-console.log(typeof null);
-console.log(null + 1);
-console.log(undefined + 1);
-console.log([null, undefined].join("-"));
-console.log(Number(null), Number(undefined));
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الكود ده بيتشغّل جوه ضغطة زرار (فالـ autoplay مش مشكلة). إيه اللي هيتطبع؟
+
+~~~js
+const v = document.createElement('video');
+v.src = 'lesson.webm';
+console.log(v.duration, v.paused, typeof v.stop);
+const p = v.play();
+v.pause();
+p.catch((e) => console.log(e.name + ': ' + e.message));
+~~~`, done: R`كتبت السطرين قبل ما تشغّل، وعرفت ليه الـ Promise اترفض مع إن مفيش autoplay.`, sol: R`~~~text الناتج (Chrome 157، جوه ضغطة حقيقية)
+NaN true undefined
+AbortError: The play() request was interrupted by a call to pause(). https://goo.gl/LdLk22
 ~~~
 
-~~~text الناتج (node nil-predict.js، Node 24)
-undefined
-object
-1
-NaN
--
-0 NaN
+- [[duration]] بـ [[NaN]] لأن الملف لسه متحمّلش، و [[paused]] بـ [[true]] لأن أي عنصر بيبدأ واقف، و [[stop]] مش موجودة أصلًا ([[undefined]]).
+- [[play()]] بيرجّع Promise بيستنى الملف يبقى جاهز. قبل ما يجهز، [[pause()]] لغى الطلب، فالـ Promise اترفض بـ [[AbortError]]. ده مش باج في كودك، بس لو مكتبتش [[catch]] هيظهر [[Uncaught (in promise)]] في الـ Console.
+- ونفس الكلام لو غيّرت الـ [[src]] أو عملت [[load()]] وانت مستني: [[AbortError: The play() request was interrupted by a new load request.]] (اتجرّب).
+- القاعدة: كل [[play()]] ليه [[catch]]، و [[AbortError]] بالذات تجاهله، و [[NotAllowedError]] اعرض بسببه زرار «شغّل».` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من صفحة [[HTMLMediaElement]] على MDN: [[readyState]] بياخد ٥ قيم و [[networkState]] بياخد ٤. اكتب اسم كل قيمة ورقمها ومعناها في كلمتين، وبعدين اتأكد من الأرقام من الـ Console.`, done: R`عندك جدول بالـ ٩ ثوابت، والأرقام اللي في الـ Console طابقت.`, sol: R`~~~js
+console.log(['HAVE_NOTHING', 'HAVE_METADATA', 'HAVE_CURRENT_DATA', 'HAVE_FUTURE_DATA', 'HAVE_ENOUGH_DATA',
+  'NETWORK_EMPTY', 'NETWORK_IDLE', 'NETWORK_LOADING', 'NETWORK_NO_SOURCE'].map((k) => k + '=' + HTMLMediaElement[k]).join(' '));
 ~~~
 
-**ليه كل سطر طلع كده:**
-
-| السطر | الناتج | السبب |
-|---|---|---|
-| [[typeof undefined]] | [["undefined"]] | ليها نوع باسمها |
-| [[typeof null]] | [["object"]] | غلطة من أول نسخة في JS واتسابت عشان متكسرش مواقع قديمة |
-| [[null + 1]] | [[1]] | الجمع بيحوّل لـ number، و [[Number(null)]] بـ [[0]] |
-| [[undefined + 1]] | [[NaN]] | [[Number(undefined)]] بـ [[NaN]]، وأي حساب فيه NaN بيطلع NaN |
-| [[[null, undefined].join("-")]] | [["-"]] | [[join]] بيكتب الـ null والـ undefined نص فاضي، فمفيش غير الفاصل |
-
-السطر الأخير في الكود ([[Number(null), Number(undefined)]]) زوّدناه عشان يثبت سبب السطرين ٣ و ٤.
-
-**الانترفيور بيختبر إيه:** إنك عارف إن الاتنين بيتحوّلوا لأرقام مختلفة، مش بس «الاتنين فاضيين».
-
-**إجابة تتقال:** «null في الحساب بتبقى صفر، و undefined بتبقى NaN، و typeof null بيطلع object كغلطة تاريخية، و join بيكتبهم الاتنين نص فاضي».
-
-**الغلطة الشائعة:** تتوقع [[null + 1]] بـ [[NaN]] زي undefined، أو [[join]] يكتب [["null-undefined"]] (ده اللي [[String(null)]] بيعمله، مش [[join]]).` },
-            { lvl: 'تطبيق', t: R`refactor فيه باج: [[const opts = { port: config.port || 3000, retries: config.retries || 3, name: config.name || "app" };]]. اليوزر بعت [[{ retries: 0, name: "" }]] قاصد. صلّحه بـ [[??]] واكتب ٣ assertions تثبت التصليح.`, done: R`قبل التصليح [[opts.retries]] بيطلع 3 و [[opts.name]] بيطلع [["app"]] (الـ [[||]] بلع 0 و [[""]])، وبعده [[retries]] بـ 0 و [[name]] نص فاضي، و [[port]] لسه 3000 لما ميتبعتش، والـ assertions بتعدّي، وتقدر تقول إمتى [[||]] لسه هو الصح.`, sol: R`~~~js opts.js
-const assert = require("node:assert");
-
-function oldOpts(config) {
-  return { port: config.port || 3000, retries: config.retries || 3, name: config.name || "app" };
-}
-function newOpts(config) {
-  return { port: config.port ?? 3000, retries: config.retries ?? 3, name: config.name ?? "app" };
-}
-
-const input = { retries: 0, name: "" };
-console.log("قبل:", oldOpts(input));
-console.log("بعد:", newOpts(input));
-
-const o = newOpts(input);
-assert.strictEqual(o.retries, 0);      // 0 اتحفظ
-assert.strictEqual(o.name, "");        // النص الفاضي اتحفظ
-assert.strictEqual(o.port, 3000);      // اللي متبعتش خد الـ default
-assert.strictEqual(newOpts({ port: null }).port, 3000); // ?? بيعامل null زي undefined
-console.log("الـ assertions عدّت");
+~~~text الناتج (Chrome 157)
+HAVE_NOTHING=0 HAVE_METADATA=1 HAVE_CURRENT_DATA=2 HAVE_FUTURE_DATA=3 HAVE_ENOUGH_DATA=4 NETWORK_EMPTY=0 NETWORK_IDLE=1 NETWORK_LOADING=2 NETWORK_NO_SOURCE=3
 ~~~
 
-~~~text الناتج (node opts.js)
-قبل: { port: 3000, retries: 3, name: 'app' }
-بعد: { port: 3000, retries: 0, name: '' }
-الـ assertions عدّت
-~~~
-
-**ليه الباج حصل:** [[a || b]] بيرجّع [[b]] لو [[a]] **falsy**، والـ falsy فيها [[0]] و [[""]] و [[false]] و [[NaN]] مش بس null و undefined. فاليوزر اللي قال «متعيدش خالص» ([[retries: 0]]) اتقلب لـ ٣ محاولات من غير ما يعرف.
-
-**التصليح:** [[a ?? b]] بيرجّع [[b]] لو [[a]] **null أو undefined بس**. كل حاجة تانية (حتى 0 والنص الفاضي) بيعتبرها قيمة اليوزر قصدها.
-
-**الـ assertions:** [[strictEqual]] بيقارن بـ [[Object.is]]، فـ [[0]] لازم يطلع 0 مش [[false]]. الرابع بيثبت إن [[??]] بيعامل null زي undefined (default برده).
-
-**إمتى [[||]] لسه الصح:** لما القيمة الفاضية نفسها مش منطقية، زي [[const title = input.trim() || "من غير عنوان"]]: نص فاضي هنا معناه «مكتبش حاجة» فعلًا.
-
-**الانترفيور بيختبر إيه:** إنك عارف الفرق بين falsy و nullish. **إجابة تتقال:** «[[||]] بيبلع أي falsy زي 0 والنص الفاضي، و [[??]] بيبدّل null و undefined بس، فللـ defaults اللي ممكن تبقى صفر استخدم [[??]]».` },
-            { lvl: 'تحدي', t: R`مسألة: اكتب [[pickDefined(obj)]] بتشيل كل key قيمته [[undefined]] وتسيب [[null]]، جوه الـ objects المتداخلة كمان، والـ arrays بتفضل بنفس طولها. وبعدين قارن ناتجها بـ [[JSON.parse(JSON.stringify(obj))]].`, done: R`[[pickDefined({ a: undefined, b: null, c: { d: undefined, e: 0 } })]] بيرجّع [[{ b: null, c: { e: 0 } }]]، والأصل متغيرش، و [[Date]] بيفضل [[Date]] عندك لكن الـ JSON حوّله string، وتقدر تشرح ليه [[JSON.stringify([undefined])]] بيطلع [['[null]']] مش [['[]']].`, sol: R`~~~js pick-defined.js
-function pickDefined(value) {
-  if (Array.isArray(value)) return value.map(pickDefined);   // نفس الطول، العناصر بتتنضف من جوه
-  if (value === null || typeof value !== "object") return value;
-  if (Object.getPrototypeOf(value) !== Object.prototype && Object.getPrototypeOf(value) !== null) {
-    return value;                                            // Date و Map وغيرهم يفضلوا زي ما هم
-  }
-  const out = {};
-  for (const [k, v] of Object.entries(value)) {
-    if (v !== undefined) out[k] = pickDefined(v);
-  }
-  return out;
-}
-
-const obj = { a: undefined, b: null, c: { d: undefined, e: 0 }, list: [1, undefined, { x: undefined }], at: new Date(0) };
-const picked = pickDefined(obj);
-console.log(picked);
-console.log("الأصل:", obj);
-console.log("JSON :", JSON.parse(JSON.stringify(obj)));
-console.log(picked.at instanceof Date, typeof JSON.parse(JSON.stringify(obj)).at);
-console.log(JSON.stringify([undefined]), JSON.stringify({ k: undefined }));
-~~~
-
-~~~text الناتج (node pick-defined.js)
-{
-  b: null,
-  c: { e: 0 },
-  list: [ 1, undefined, {} ],
-  at: 1970-01-01T00:00:00.000Z
-}
-الأصل: {
-  a: undefined,
-  b: null,
-  c: { d: undefined, e: 0 },
-  list: [ 1, undefined, { x: undefined } ],
-  at: 1970-01-01T00:00:00.000Z
-}
-JSON : {
-  b: null,
-  c: { e: 0 },
-  list: [ 1, null, {} ],
-  at: '1970-01-01T00:00:00.000Z'
-}
-true string
-[null] {}
-~~~
-
-**الحل سطر سطر:**
-
-- **الـ array الأول:** [[map]] بيرجّع array جديدة بنفس الطول، فالـ [[undefined]] اللي جواها بيفضل مكانه (المطلوب إن الطول ميتغيرش)، والـ objects اللي جواها بتتنضف بالـ recursion.
-- **القيم البسيطة** (رقم، نص، null) بترجع زي ما هي. [[typeof null]] بـ "object" فلازم نفحص [[value === null]] الأول.
-- **object مش عادي** (Date و Map و class instance): لو الـ prototype مش [[Object.prototype]] بنرجّعه زي ما هو، وإلا [[Object.entries(new Date())]] هيرجّع array فاضية ويبقى [[{}]].
-- **الـ object العادي:** object جديد ([[out]])، فالأصل مبيتلمسش، وبنكتب كل key قيمته مش [[undefined]] بعد ما ننضّفها هي كمان.
-
-**الفرق عن JSON:** الـ JSON شال الـ undefined برده، بس حوّل الـ undefined اللي في الـ array لـ [[null]] (الـ array مينفعش يبقى فيها «مكان فاضي» في JSON، فلازم يكتب حاجة)، وحوّل الـ Date لـ string. وده سبب [[JSON.stringify([undefined])]] بـ [['[null]']]: لو شاله الطول هيتغير والـ indexes اللي بعده هتزحف.
-
-**الغلطة الشائعة:** تكتب [[if (v)]] بدل [[if (v !== undefined)]]، فتشيل [[0]] و [[null]] و [[""]] كمان. أو تعدّل الـ object الأصلي بـ [[delete]] وانت بتلف عليه.` },
-          ],
-          flag: "script",
-          deep: {
-            why: "سؤال افتتاحي في انترفيوهات كتير، بيختبر إنك فاهم إن القيمتين ليهم استخدامات مختلفة مش مجرد حاجة واحدة باسمين.",
-            how: R`نقط تقولها لو اتسألت أكتر: [[??]] و [[?.]] بيعاملوا الاتنين زي بعض. و [[Number(null)]] بـ 0 و [[Number(undefined)]] بـ NaN. وفي APIs كتير null معناها «اتمسحت» (PATCH بـ null بيفضّي الحقل) و undefined معناها «متلمستش». وقواعد البيانات فيها NULL بس مفيهاش undefined، و Prisma بيفرّق بينهم بنفس المعنى ده.`,
-            when: "«إمتى تستخدم null بنفسك؟» (لما تقصد تفضّي قيمة)، و «typeof null؟»، و «إزاي تفحص الاتنين مرة واحدة؟» (== null أو ??).",
-            mistakes: R`«الاتنين زي بعض». و «undefined يعني المتغير مش متعرّف» (ده ReferenceError، حاجة تانية). وتحط undefined بإيدك كقيمة بدل null.`
-          },
-          teach: R`## الفكرة في سطر
-
-الاتنين معناهم «مفيش قيمة». [[undefined]] JS هي اللي بتحطها لوحدها، و [[null]] انت اللي بتحطها بقصد. المثال بيوريك كل مكان بتطلع فيه كل واحدة، وإزاي بيتقارنوا.
-
-شغّلت كل سطر جوه [[console.log]] في Node 24 (المثال نفسه مكتوب من غير console.log زي ما بتكتبه في Console المتصفح، وهناك بيطبع نفس القيم).
-
----
-
-## ١. أماكن [[undefined]]
-
-~~~text app.js
-let a;
-const obj = {};
-function f(x) { return x; }
-a;
-obj.missing;
-f();
-~~~
-
-~~~text الناتج
-undefined
-undefined
-undefined
-~~~
-
-| السطر | ليه undefined |
+| الثابت | معناه |
 |---|---|
-| [[a]] | [[let a;]] اتعرّف من غير [[=]] |
-| [[obj.missing]] | الـ object مفيهوش خاصية بالاسم ده |
-| [[f()]] | الباراميتر [[x]] محدش بعتله قيمة، والدالة رجّعته |
+| [[HAVE_NOTHING]] (0) | لسه ميعرفش أي حاجة عن الملف |
+| [[HAVE_METADATA]] (1) | عرف المدة والمقاس، ده وقت [[loadedmetadata]] |
+| [[HAVE_CURRENT_DATA]] (2) | عنده الـ frame الحالي بس، مش اللي بعده |
+| [[HAVE_FUTURE_DATA]] (3) | عنده كفاية يبدأ يشغّل شوية ([[canplay]]) |
+| [[HAVE_ENOUGH_DATA]] (4) | متوقع يشغّل للآخر من غير ما يقف ([[canplaythrough]]) |
+| [[NETWORK_EMPTY]] (0) | العنصر لسه متعملوش أي ملف |
+| [[NETWORK_IDLE]] (1) | اختار ملف ومش بيحمّل دلوقتي |
+| [[NETWORK_LOADING]] (2) | بيحمّل دلوقتي من الشبكة |
+| [[NETWORK_NO_SOURCE]] (3) | ملقاش ولا ملف يشغّله، ودي اللي هنقابلها في درس الأخطاء |
 
-ومكان رابع: دالة من غير [[return]] بترجّع [[undefined]].
-
-> «undefined» مش «مش متعرّف». لو استخدمت اسم عمرك ما عرّفته، ده error تاني خالص:
-
-~~~text الناتج (Node)
-ReferenceError: notDeclared is not defined
-~~~
-
----
-
-## ٢. [[null]]: بإيدك
-
-~~~text app.js
-const user = { middleName: null };
-~~~
-
-~~~text الناتج
-{ middleName: null }
-~~~
-
-يعني «اليوزر ده معندوش اسم وسطاني، وأنا عارف كده». الفرق عن إن الخاصية مش موجودة خالص: هنا الحقل موجود وقيمته «فاضي» بقصد.
-
----
-
-## ٣. [[typeof null]]
-
-~~~text app.js
-typeof null;
-~~~
-
-~~~text الناتج
-object
-~~~
-
-- [[typeof]]: بيرجّع اسم النوع كـ string.
-- [[null]] مش object. ده bug من أول نسخة من JavaScript سنة 1995، ومحدش يقدر يصلّحه عشان مواقع قديمة بتعتمد عليه. و [[typeof undefined]] بيرجّع [["undefined"]] عادي.
-
-يعني لو عايز تعرف حاجة object حقيقي: [[typeof x === "object" && x !== null]].
-
----
-
-## ٤. المقارنة
-
-~~~text app.js
-null == undefined;
-null === undefined;
-~~~
-
-~~~text الناتج
-true
-false
-~~~
-
-- [[==]] (loose equality): قاعدة خاصة في اللغة: [[null]] و [[undefined]] بيساووا بعض **وبس**، ومش بيساووا أي حاجة تانية. جربت: [[null == 0]] و [[undefined == 0]] و [[null == false]] كلهم [[false]].
-- [[===]] (strict): لازم نفس النوع، وهما نوعين مختلفين.
-
----
-
-## ٥. JSON
-
-~~~text app.js
-JSON.stringify({ a: undefined, b: null });
-~~~
-
-~~~text الناتج
-{"b":null}
-~~~
-
-- [[JSON.stringify]]: بيحوّل الـ object لنص JSON.
-- JSON مفيهوش [[undefined]] أصلًا، فالخاصية [[a]] اختفت. و [[null]] موجودة في JSON ففضلت.
-
-ده مهم في الـ APIs: لو بعتت [[{ name: undefined }]] السيرفر مش هيشوف الحقل خالص، ولو بعتت [[{ name: null }]] هيشوفه وهيفضّيه.
-
----
-
-## ٦. حاجات زيادة بتتسأل (جربتها)
-
-~~~text app.js
-function g(x = "default") { return x; }
-console.log(g(undefined), g(null));
-console.log(null ?? "x", undefined ?? "x", 0 ?? "x");
-console.log(Number(null), Number(undefined));
-~~~
-
-~~~text الناتج
-default null
-x x 0
-0 NaN
-~~~
-
-- الـ default parameter بيشتغل مع [[undefined]] بس. [[null]] قيمة اتبعتت فعلًا.
-- [[??]] بيعامل الاتنين زي بعض، ومش بيلمس [[0]].
-- [[Number(null)]] بـ 0 و [[Number(undefined)]] بـ [[NaN]] (Not a Number).
-
----
-
-## ٧. الـ solCode: [[isNil]]
-
-~~~text app.js
-const isNil = (v) => v == null;
-const isNilStrict = (v) => v === null || v === undefined;
-for (const v of [null, undefined, 0, "", false, NaN, []]) {
-  console.log(v, isNil(v), isNilStrict(v));
+الاستخدام العملي: [[if (v.readyState >= HTMLMediaElement.HAVE_METADATA)]] قبل ما تقرا [[duration]]، بدل ما تستنى حدث فات خلاص.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** اكتب [[formatTime(seconds)]] اللي بترجّع الوقت زي المشغّلات: [[75.4]] تبقى [["1:15"]]، و [[3725.9]] تبقى [["1:02:05"]]، و [[NaN]] و [[Infinity]] والسالب يبقوا [["--:--"]] (عشان [[duration]] بتبقى كده قبل الـ metadata وفي البث المباشر). جرّبها في المربع تحت.`, done: R`الاختبارات كلها عدّت، ومنهم [[3599]] = [["59:59"]] و [[3600]] = [["1:00:00"]] و [[9.99]] = [["0:09"]] (مش بتقرّب لفوق).`, sol: R`~~~js
+function formatTime(s) {
+  if (!Number.isFinite(s) || s < 0) return '--:--';
+  s = Math.floor(s);
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = String(s % 60).padStart(2, '0');
+  return h ? h + ':' + String(m).padStart(2, '0') + ':' + sec : m + ':' + sec;
 }
+for (const x of [0, 9.99, 75.4, 600, 3599, 3600, 3725.9, NaN, Infinity, -3]) console.log(String(x).padEnd(8), formatTime(x));
 ~~~
 
-- [[v == null]]: بسبب قاعدة [[==]] اللي فوق، دي true لـ [[null]] و [[undefined]] بس.
-- [[v === null || v === undefined]]: نفس الكلام مكتوب صريح. [[||]] يعني «أو».
-- [[for (const v of [...])]]: لف على كل قيمة في الـ array.
-
-~~~text الناتج (Node 24)
-null true true
-undefined true true
-0 false false
- false false
-false false false
-NaN false false
-[] false false
+~~~text الناتج (Node 24.22)
+0        0:00
+9.99     0:09
+75.4     1:15
+600      10:00
+3599     59:59
+3600     1:00:00
+3725.9   1:02:05
+NaN      --:--
+Infinity --:--
+-3       --:--
 ~~~
 
-السطر اللي شكله فاضي في الأول ده الـ string الفاضي [[""]]: Node بيطبعه من غير علامات. الطريقتين متطابقتين، وكل القيم «الـ falsy» التانية (0 و "" و false و NaN) طلعت false، عكس [[!v]] اللي كان هيرجّع true ليهم.
+- [[Number.isFinite]] بيرفض [[NaN]] و [[Infinity]] مع بعض، وده اللي [[duration]] بترجّعه في الحالتين الغريبتين.
+- [[Math.floor]] مش [[Math.round]]: المشغّلات بتعرض الثانية اللي انت فيها، فـ [[9.99]] لسه [[0:09]]. لو قرّبت، العداد هيقول [[0:10]] قبل ما الثانية العاشرة تبدأ.
+- الدقايق بتتملى بصفر بس لو فيه ساعات ([[1:02:05]])، غير كده [[1:15]] مش [[01:15]]: ده شكل YouTube.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الصفحة دي عايزة تشغّل موسيقى خلفية أول ما تفتح. في الـ Console بيظهر خطأ أحمر، والزرار «شغّل» مش بيظهر خالص. صلّحها بحيث لو التشغيل اترفض يظهر الزرار، والضغط عليه يشغّل.
 
----
-
-## الخلاصة
-
-| | [[undefined]] | [[null]] |
-|---|---|---|
-| مين بيحطها | اللغة | انت بقصد |
-| [[typeof]] | [["undefined"]] | [["object"]] (غلطة قديمة) |
-| في JSON | بتختفي | بتفضل |
-| default parameter | بيشتغل | لأ |
-| [[Number(...)]] | NaN | 0 |
-
-- [[null == undefined]] true، و [[===]] false.
-- [[v == null]] هي الطريقة المختصرة تفحص الاتنين، والوحيدة اللي [[==]] فيها مقبولة.`,
-          lines: [
-            R`بيعرّف متغير من غير ما يدّيله قيمة، فـ JavaScript بتحط فيه [[undefined]] لوحدها. ده ينفع مع [[let]] و [[var]] بس، أما [[const]] فلازم تدّيها قيمة في نفس السطر.`,
-            R`object فاضي مفيهوش أي خاصية، هنستخدمه عشان نشوف إيه اللي بيرجع لما تقرا خاصية مش موجودة.`,
-            R`دالة بترجّع الباراميتر زي ما هو، عشان نشوف قيمة باراميتر محدش بعتله argument.`,
-            R`[[a]] متعرّف بس محدش حط فيه قيمة، فقيمته [[undefined]]. ده غير متغير مش متعرّف خالص: ده بيرمي [[ReferenceError]].`,
-            R`قراية خاصية مش موجودة بترجّع [[undefined]] من غير error. بس لو كمّلت خطوة كمان زي [[obj.missing.x]] هيرمي [[TypeError]]، وعشان كده اتعملت [[?.]].`,
-            R`ناديت الدالة من غير argument، فالباراميتر [[x]] بقى [[undefined]]. JavaScript مبتشتكيش لو بعتّ arguments أقل من المطلوب، وده سبب إن الـ default parameters زي [[x = 0]] مهمة.`,
-            R`[[null]] عمره ما بييجي لوحده: لازم حد يكتبه بإيده. فمعناه «فاضي بقصد»: اليوزر ده معندوش اسم وسطاني، مش إننا نسينا نحط الخاصية.`,
-            R`[[typeof null]] بيرجّع [["object"]]، وده bug من أول نسخة في JavaScript ومينفعش يتصلّح عشان مواقع كتير بتعتمد عليه. فلو بتفحص «ده object؟» لازم تفحص [[x !== null]] كمان.`,
-            R`[[==]] (المقارنة السايبة) بتعتبر [[null]] و [[undefined]] متساويين، ومبيساووش أي حاجة تانية زي [[0]] أو [[false]]. عشان كده [[x == null]] اختصار مقبول لـ «x فاضي بأي شكل من الاتنين».`,
-            R`[[===]] (المقارنة الصارمة) بتفحص النوع كمان، والاتنين نوعين مختلفين فالناتج [[false]]. استخدمها لما الفرق بين «مش موجود» و«فاضي بقصد» يفرق معاك.`,
-            R`[[JSON.stringify]] بيشيل أي خاصية قيمتها [[undefined]] كأنها مش موجودة، وبيسيب [[null]]. فلو عايز تقول للـ API «امسح القيمة دي» ابعت [[null]]، لأن [[undefined]] مش هيوصل خالص.`,
-          ],
-          sol: R`الطريقتين بيرجّعوا true لـ null و undefined بس، و false لـ [[0]] و [[""]] و [[false]] و [[NaN]] و [[[]]]. ده الاستثناء الوحيد اللي [[==]] فيه مقبولة في الكود المحترف: [[v == null]] بتساوي null و undefined بس، ومش بتحوّل أي حاجة تانية. ESLint بيسمح بيها بإعداد [[eqeqeq: ["error", "always", { null: "ignore" }]]].
-
-الغلطة الشائعة إنك تكتب [[!v]] بدالها: دي بترجّع true لـ 0 و "" كمان، فحقل قيمته 0 هيتعامل كأنه مش موجود. وفي الانترفيو قول الفرق في جملة: undefined يعني «لسه مفيش قيمة» (اللغة اللي حطّاها)، و null يعني «مفيش قيمة بقصد» (انت اللي حاططها).`,
-          solCode: R`const isNil = (v) => v == null;
-const isNilStrict = (v) => v === null || v === undefined;
-for (const v of [null, undefined, 0, "", false, NaN, []]) {
-  console.log(v, isNil(v), isNilStrict(v));
-}
-// null true true / undefined true true / والباقي false false`
-        },
-        {
-          cmd: "Promise.all بإيدك",
-          title: "اكتب Promise.all بنفسك (implement Promise.all)",
-          desc: R`بترجّع Promise جديد. بلف على العناصر، وكل واحد بحوّله Promise بـ [[Promise.resolve]] (عشان القيم العادية تشتغل). لما واحد ينجح بحط قيمته في نفس الـ index مش بـ push، عشان الترتيب يفضل زي المدخلات مهما مين خلص الأول، وبعد عدّاد. لما العدّاد يوصل للطول أعمل resolve. وأول rejection أعمل reject على طول. والـ array الفاضية ترجع [[[]]] فورًا.`,
-          example: R`function promiseAll(items) {
-  return new Promise((resolve, reject) => {
-    const list = Array.from(items);
-    const results = new Array(list.length);
-    let done = 0;
-    if (list.length === 0) return resolve(results);
-    list.forEach((item, i) => {
-      Promise.resolve(item).then((value) => {
-        results[i] = value;
-        done++;
-        if (done === list.length) resolve(results);
-      }, reject);
-    });
+~~~html
+<audio id="bg" src="music.mp3" loop></audio>
+<button id="start" hidden>شغّل الموسيقى</button>
+<script>
+  const bg = document.querySelector('#bg');
+  bg.play();
+  document.querySelector('#start').hidden = !bg.paused;
+</script>
+~~~`, done: R`لما تفتح الصفحة الزرار بيظهر ومفيش خطأ أحمر، والضغط عليه بيشغّل ويخفي الزرار.`, sol: R`~~~html
+<audio id="bg" src="music.mp3" loop></audio>
+<button id="start" hidden>شغّل الموسيقى</button>
+<script>
+  const bg = document.querySelector('#bg');
+  const btn = document.querySelector('#start');
+  bg.play().catch((e) => {
+    if (e.name === 'NotAllowedError') btn.hidden = false;
   });
-}
-const slow = new Promise((r) => setTimeout(() => r("slow"), 100));
-promiseAll([slow, 2, Promise.resolve(3)]).then(console.log); // ["slow", 2, 3]`,
-          try: R`اكتب [[promiseAllSettled]] بنفس الطريقة، وبعدين [[promiseRace]] (أسهل بكتير: كل واحد بيعمل resolve أو reject مباشرة). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[promiseAllSettled]] و [[promiseRace]] (الاختبارات بـ promises جاهزة من غير timers).`,
-          ref: [
-            { t: "MDN: Promise.all()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all" },
-            { t: "MDN: Promise.any()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/any" },
-            { t: "MDN: AggregateError", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AggregateError" },
-          ],
-          practice: [
-            { lvl: 'سريع', t: R`اتوقع بصوتك وبعدين شغّل: [[Promise.all([])]] و [[Promise.all([1, Promise.reject(new Error("x")), 3])]] و [[Promise.all(5)]].`, done: R`الأول بيتحل بـ array فاضية، والتاني بيترفض بالـ error اللي رسالته [["x"]]، والتالت بيترفض بـ [[TypeError]] لأن 5 مش iterable، وتقدر تقول إن الـ promises التانية في التاني بتكمّل شغلها عادي (مفيش إلغاء).`, sol: R`**التوقع:** الأول بيتحل بـ array فاضية، والتاني بيترفض بـ [[Error: x]]، والتالت بيترفض بـ [[TypeError]].
-
-~~~js all-edge.js
-const show = (label, p) =>
-  p.then((v) => console.log(label, "اتحل بـ", v), (e) => console.log(label, "اترفض بـ", e.constructor.name + ":", e.message));
-
-show("[] :", Promise.all([]));
-show("[1, reject, 3] :", Promise.all([1, Promise.reject(new Error("x")), 3]));
-show("5 :", Promise.all(5));
-
-// الـ promises التانية مبتتلغيش: دي بتكمّل وتطبع بعد الرفض
-const slow = new Promise((r) => setTimeout(() => { console.log("slow لسه اشتغلت وخلصت"); r("slow"); }, 50));
-show("[slow, reject] :", Promise.all([slow, Promise.reject(new Error("y"))]));
-~~~
-
-~~~text الناتج (node all-edge.js، Node 24)
-[] : اتحل بـ []
-5 : اترفض بـ TypeError: number 5 is not iterable (cannot read property Symbol(Symbol.iterator))
-[1, reject, 3] : اترفض بـ Error: x
-[slow, reject] : اترفض بـ Error: y
-slow لسه اشتغلت وخلصت
-~~~
-
-**ليه:**
-
-- **[[Promise.all([])]]:** مفيش حاجة يستناها، فبيتحل على طول بـ array فاضية. (ودي الحالة اللي لازم [[promiseAll]] بتاعك يعملها بـ [[if (list.length === 0)]]، وإلا هيفضل pending للأبد.)
-- **[[Promise.all(5)]]:** بيحاول يلف على المدخل بـ [[Symbol.iterator]]، والرقم مش iterable، فبيرجّع promise **مرفوض** (مش بيرمي error sync). لاحظ إنه طبع قبل التاني: الـ promise ده اترفض ساعة ما اتعمل، أما التاني محتاج لفة microtask زيادة عشان يشوف الـ reject اللي جواه.
-- **[[[1, reject, 3]]]:** أول رفض بيرفض الكل، والقيم التانية بتضيع.
-- **السطر الأخير:** [[slow]] كمّلت وطبعت بعد ما الـ all اترفض. [[Promise.all]] مبيلغيش حاجة: الـ promise مجرد نتيجة، مش زرار وقف. لو عايز إلغاء فعلًا محتاج [[AbortController]].
-
-**الانترفيور بيختبر إيه:** الحالات الطرفية اللي بتكسر الـ polyfill (الفاضية، والمدخل اللي مش iterable، والرفض)، وإنك مش فاكر إن الرفض بيوقّف الباقي.
-
-**إجابة تتقال:** «فاضية بتتحل على طول، وأول رفض بيرفض الكل بس الباقي بيكمّل في الخلفية، واللي مش iterable بيرجّع promise مرفوض بـ TypeError».` },
-            { lvl: 'تطبيق', t: R`مسألة: اكتب [[promiseAny(items)]]: أول واحد ينجح بيكسب، ولو كلهم فشلوا ترفض بـ [[new AggregateError(errors, "All promises were rejected")]] والأخطاء بترتيب المدخلات مش بترتيب الفشل.`, done: R`[[promiseAny([Promise.reject(1), Promise.resolve(2)])]] بيتحل بـ 2، ولو الاتنين مرفوضين بـ 1 و 2 الـ error [[instanceof AggregateError]] و [[errors]] فيها 1 و 2 بالترتيب ده، و [[promiseAny([])]] بيترفض بـ [[AggregateError]] على طول، وده نفس اللي [[Promise.any]] الأصلي بيعمله.`, sol: R`~~~js promise-any.js
-function promiseAny(items) {
-  return new Promise((resolve, reject) => {
-    const list = Array.from(items);
-    const errors = new Array(list.length);
-    let failed = 0;
-    if (list.length === 0) {
-      return reject(new AggregateError([], "All promises were rejected"));
-    }
-    list.forEach((item, i) => {
-      Promise.resolve(item).then(resolve, (err) => {
-        errors[i] = err;                 // بمكانه، مش بترتيب الفشل
-        failed++;
-        if (failed === list.length) reject(new AggregateError(errors, "All promises were rejected"));
-      });
-    });
+  btn.addEventListener('click', async () => {
+    await bg.play();
+    btn.hidden = true;
   });
-}
-
-const later = (ms, fn) => new Promise((res, rej) => setTimeout(() => fn(res, rej), ms));
-
-async function main() {
-  console.log("1:", await promiseAny([Promise.reject(1), Promise.resolve(2)]));
-
-  // الأول بيفشل متأخر والتاني بيفشل بدري: الترتيب لازم يفضل [1, 2]
-  const both = [later(50, (_, rej) => rej(1)), later(10, (_, rej) => rej(2))];
-  for (const [name, fn] of [["mine", promiseAny], ["native", (x) => Promise.any(x)]]) {
-    try { await fn(both); } catch (e) {
-      console.log(name, e instanceof AggregateError, e.errors, e.message);
-    }
-  }
-  for (const [name, fn] of [["mine []", promiseAny], ["native []", (x) => Promise.any(x)]]) {
-    try { await fn([]); } catch (e) { console.log(name, e instanceof AggregateError, e.errors); }
-  }
-}
-main();
+</script>
 ~~~
 
-~~~text الناتج (node promise-any.js)
-1: 2
-mine true [ 1, 2 ] All promises were rejected
-native true [ 1, 2 ] All promises were rejected
-mine [] true []
-native [] true []
+~~~text الخطأ قبل التصليح (Chrome 157، صفحة اتفتحت ومحدش لمسها)
+Uncaught (in promise) NotAllowedError: play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD
 ~~~
 
-**هي عكس [[promiseAll]] بالظبط:** هناك النجاح بيتجمع والفشل بيكسب على طول. هنا النجاح بيكسب على طول ([[then(resolve, ...)]])، والفشل هو اللي بيتجمع.
-
-- **[[errors[i] = err]]:** بنحط الخطأ في مكان الـ promise بتاعه، مش [[errors.push(err)]]. التجربة التانية معمولة مخصوص: الأول بيفشل بعد 50ms والتاني بعد 10ms، ولو كنت عملت [[push]] كانت هتطلع [[[2, 1]]].
-- **[[failed]] عدّاد مش [[errors.length]]:** [[new Array(n)]] طولها n من الأول، فمينفعش تعتمد على الطول.
-- **[[resolve]] أكتر من مرة:** لو اتنين نجحوا، [[resolve]] بتتنادى مرتين، بس الـ promise بيتحل مرة واحدة والتانية بتتجاهل، فمش محتاج flag.
-- **الفاضية:** مفيش حد ممكن ينجح، فالرفض فوري بـ [[AggregateError]] فيه [[errors]] فاضية، زي الأصلي.
-
-**الغلطة الشائعة:** ترفض أول ما واحد يفشل (عادة من [[promiseAll]])، أو تنسى حالة الفاضية فيفضل pending.
-
-**إجابة تتقال:** «any بيتحل بأول نجاح، ولو كله فشل بيرفض بـ AggregateError فيها الأخطاء بترتيب المدخلات، وعشان كده بخزّن كل خطأ بالـ index بتاعه وبعد الفشل بعدّاد».` },
-            { lvl: 'تحدي', t: R`محاكاة pool: اكتب [[mapLimit(items, limit, fn)]]: زي Promise.all بس مفيش أكتر من [[limit]] شغالين في نفس الوقت، والنتايج بترتيب المدخلات. جرّبه على ٥ مهام كل واحدة [[setTimeout]] بـ 100ms و [[limit]] بـ 2، وعدّاد بيقيس أكبر عدد شغال مع بعض.`, done: R`النتايج بنفس ترتيب المدخلات، والعدّاد أكبر قيمة وصلها 2، والوقت الكلي حوالي 300ms (٣ دفعات) مش 100 ولا 500، و [[mapLimit([], 2, fn)]] بيرجّع array فاضية من غير ما يعلّق، ومهمة بترمي error بترفض الكل زي Promise.all.`, sol: R`~~~js map-limit.js
-function mapLimit(items, limit, fn) {
-  return new Promise((resolve, reject) => {
-    const list = Array.from(items);
-    const results = new Array(list.length);
-    let next = 0, done = 0, failed = false;
-    if (list.length === 0) return resolve(results);
-
-    function startOne() {
-      if (failed || next >= list.length) return;
-      const i = next++;                         // احجز الـ index قبل أي await
-      Promise.resolve()
-        .then(() => fn(list[i], i))
-        .then((value) => {
-          results[i] = value;
-          done++;
-          if (done === list.length) resolve(results);
-          else startOne();                      // مكان فضي: ابدأ اللي بعده
-        }, (err) => { failed = true; reject(err); });
-    }
-    for (let k = 0; k < Math.min(limit, list.length); k++) startOne();
-  });
-}
-
-let running = 0, maxRunning = 0;
-const task = (x) => new Promise((r) => {
-  running++; maxRunning = Math.max(maxRunning, running);
-  setTimeout(() => { running--; r(x * 10); }, 100);
-});
-
-async function main() {
-  const t0 = performance.now();
-  const out = await mapLimit([1, 2, 3, 4, 5], 2, task);
-  console.log("النتايج:", out);
-  console.log("أكبر عدد شغال مع بعض:", maxRunning);
-  console.log("الوقت:", Math.round(performance.now() - t0), "ms");
-  console.log("فاضية:", await mapLimit([], 2, task));
-  try {
-    await mapLimit([1, 2, 3], 2, (x) => (x === 2 ? Promise.reject(new Error("مهمة 2 وقعت")) : task(x)));
-  } catch (e) { console.log("اترفض:", e.message); }
-}
-main();
-~~~
-
-~~~text الناتج (node map-limit.js على Windows)
-النتايج: [ 10, 20, 30, 40, 50 ]
-أكبر عدد شغال مع بعض: 2
-الوقت: 333 ms
-فاضية: []
-اترفض: مهمة 2 وقعت
-~~~
-
-**الفكرة:** بدل ما تبدأ الكل مرة واحدة، ابدأ [[limit]] بس، وكل واحد يخلص يبدأ اللي بعده. فيه دايمًا [[limit]] «عمّال» شغالين لحد ما المهام تخلص.
-
-- **[[const i = next++]]:** بياخد رقم المهمة ويزوّد العدّاد في نفس السطر sync. لو اتنين عمّال خلصوا في نفس اللفة، كل واحد بياخد رقم مختلف.
-- **[[results[i] = value]]:** النتيجة في مكان المدخل، فالترتيب صح حتى لو المهمة ٤ خلصت قبل ٣.
-- **[[Promise.resolve().then(() => fn(...))]]:** لو [[fn]] رمت error sync (مش promise مرفوض) بيتحوّل لرفض بدل ما يوقع البرنامج.
-- **[[failed]]:** بعد أول رفض محدش بيبدأ مهام جديدة (اللي شغالة بتكمّل، زي Promise.all).
-- **الوقت:** ٥ مهام على ٢ عمّال = ٣ دفعات (٢ و ٢ و ١) = حوالي 300ms. على Windows طلع 333 لأن كل [[setTimeout]] بيتأخر شوية (دقة الـ timer هناك حوالي 15ms)؛ المهم إنه مش 100 (يبقى الحد مش شغال) ولا 500 (يبقى بيشغّلهم واحد واحد).
-
-**الغلطة الشائعة:** تقسّم المهام لدفعات ثابتة ([[chunk]] ٢ و ٢ و ١) وتعمل [[await Promise.all]] لكل دفعة. ده بيشتغل بس أبطأ: الدفعة بتستنى أبطأ واحد فيها والعامل التاني قاعد فاضي. الـ pool بيبدأ المهمة الجديدة أول ما أي مكان يفضى.
-
-**إجابة تتقال:** «بشغّل limit عمّال، كل عامل بياخد الـ index اللي عليه الدور ويحط النتيجة في مكانها ويبدأ اللي بعده، وأول رفض بيرفض الكل».` },
-          ],
-          flag: "script",
-          deep: {
-            why: "بيختبر فهمك للـ Promises مش حفظ الـ API: الترتيب، والعدّاد، و fail-fast، والقيم اللي مش Promises، والحالة الفاضية.",
-            how: R`نقط تقولها: [[results.push]] غلط لأن الترتيب هيبقى حسب مين خلص الأول. و [[results.length]] مينفعش كعدّاد لأن [[results[2] = x]] بتخلي الطول 3 وأول عنصرين لسه فاضيين. والـ reject بعد أول مرة ملهوش تأثير لأن الـ Promise مبيتغيرش بعد ما يخلص. والباقي مبيتلغيش. ومع Array.from بيقبل أي iterable زي الأصلي. بس خد بالك: [[Array.from]] بيقبل كمان اللي مش iterable ([[Array.from(5)]] بـ array فاضية)، فـ [[promiseAll(5)]] بيتحل بـ array فاضية والأصلي بيترفض بـ TypeError. لو عايز نفس السلوك افحص [[typeof items?.[Symbol.iterator] === "function"]] الأول وارجع [[Promise.reject(new TypeError(...))]].`,
-            when: "«اكتب allSettled»، و «اعمل concurrency limit: شغّل n بس في نفس الوقت» (السؤال الأصعب والأشهر للـ senior)، و «retry مع exponential backoff».",
-            mistakes: R`push بدل index. ونسيان الـ array الفاضية (هتفضل pending للأبد). ونسيان [[Promise.resolve]] للقيم العادية.`
-          },
-          teach: R`## الفكرة في سطر
-
-[[promiseAll]] بتاخد ليستة (Promises أو قيم عادية) وبترجّع Promise واحد: بيخلص لما **كلهم** يخلصوا، بالنتايج بنفس ترتيب الليستة، وبيترفض أول ما **أي واحد** يترفض.
-
-شغّلت المثال في Node 24، وضفت [[console.log]] جوه الـ [[then]] عشان نشوف مين خلص إمتى.
-
----
-
-## ١. الهيكل: Promise جديد
-
-~~~text app.js
-function promiseAll(items) {
-  return new Promise((resolve, reject) => {
-    ...
-  });
+- **الغلطة الأولى:** [[bg.play()]] من غير [[catch]]. الرفض بيبقى Promise مترفض ومحدش ماسكه، فبيظهر [[Uncaught (in promise)]].
+- **الغلطة التانية:** [[bg.paused]] اتقرت في نفس اللحظة، قبل ما المتصفح يقرر. [[play()]] async: [[paused]] بتبقى [[false]] لحظيًا وبعدين ترجع [[true]] لما الرفض يحصل، فالزرار فضل مستخبي. القرار لازم يبقى جوه [[catch]].
+- ليه بنشيك على [[NotAllowedError]] بالاسم؟ عشان [[AbortError]] (حد غيّر الـ [[src]]) مش محتاج زرار.
+- اللي اتقاس في الـ lab: نفس الفكرة على [[<video>]] فيه صوت = نفس الرفض، و [[<video muted>]] = اشتغل من غير ضغطة.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** [[timeupdate]] بيتبعت كام مرة في الثانية؟ شغّل فيديو ثانيتين بسرعة 1 ومرة بسرعة 2، وعدّ [[timeupdate]] وعدّ [[requestAnimationFrame]] في نفس الوقت. بعدين قرر: شريط وقت ناعم يتحدث من أنهي واحد؟`, done: R`عندك ٤ أرقام من متصفحك، وقرار بسبب.`, sol: R`~~~js
+// جوه ضغطة زرار، والفيديو muted وجاهز (canplaythrough)
+async function measure(v, rate) {
+  v.currentTime = 0; v.playbackRate = rate;
+  let tu = 0, raf = 0, go = true;
+  const h = () => tu++;
+  v.addEventListener('timeupdate', h);
+  const loop = () => { if (go) { raf++; requestAnimationFrame(loop); } };
+  requestAnimationFrame(loop);
+  await v.play();
+  await new Promise((r) => setTimeout(r, 2000));
+  v.pause(); go = false; v.removeEventListener('timeupdate', h);
+  console.log('rate ' + rate + ': timeupdate=' + tu + ' requestAnimationFrame=' + raf + ' currentTime=' + v.currentTime.toFixed(2));
 }
 ~~~
 
-- [[new Promise((resolve, reject) => {...})]]: بتعمل Promise بإيدك. الدالة اللي جوه بتتنفذ فورًا، وبتاخد زرارين: [[resolve(value)]] (خلص بنجاح بالقيمة دي) و [[reject(error)]] (فشل).
-- الـ Promise بيتحسم **مرة واحدة بس**. أي [[resolve]] أو [[reject]] بعد كده بيتجاهل. دي حاجة هنعتمد عليها.
-
----
-
-## ٢. التحضير
-
-~~~text app.js
-const list = Array.from(items);
-const results = new Array(list.length);
-let done = 0;
-if (list.length === 0) return resolve(results);
+~~~text الناتج (Chrome 157، ثانيتين لكل سرعة)
+rate 1: timeupdate=8 requestAnimationFrame=124 currentTime=1.95
+rate 2: timeupdate=9 requestAnimationFrame=120 currentTime=3.90
 ~~~
 
-- [[Array.from(items)]]: حوّل أي iterable لـ array. كده الدالة بتقبل Set مثلًا زي [[Promise.all]] الحقيقية. جربت [[Array.from("abc")]] طلعت [[[ 'a', 'b', 'c' ]]].
-- [[new Array(3)]]: array طولها 3 بس فاضية. Node بيطبعها [[[ <3 empty items> ]]].
-- [[done]]: عدّاد اللي خلصوا. [[let]] عشان هيتغير.
-- الحالة الفاضية: لو مفيش عناصر، مفيش [[then]] هيتنادى عشان يعمل [[resolve]]، فالـ Promise كان هيفضل pending للأبد. فبنخلص فورًا بـ [[[]]].
-
----
-
-## ٣. اللفة
-
-~~~text app.js
-list.forEach((item, i) => {
-  Promise.resolve(item).then((value) => {
-    results[i] = value;
-    done++;
-    if (done === list.length) resolve(results);
-  }, reject);
-});
-~~~
-
-### [[Promise.resolve(item)]]
-
-لو [[item]] Promise بيرجّعه زي ما هو، ولو قيمة عادية زي [[2]] بيلفها في Promise خلص بيها. من غيره، [[(2).then]] مش موجودة:
-
-~~~text الناتج (Node)
-x.then is not a function
-~~~
-
-### [[.then(onSuccess, reject)]]
-
-[[then]] بتاخد دالتين: الأولى لما ينجح، والتانية لما يفشل. التانية هنا [[reject]] نفسها، يعني أول عنصر يفشل بيرفض الـ Promise الكبير على طول.
-
-### جوه الـ onSuccess
-
-1. [[results[i] = value]]: حط النتيجة في **مكانها** حسب الـ index، مش [[push]].
-2. [[done++]]: زوّد العدّاد.
-3. لو العدّاد وصل لعدد العناصر، خلصنا: [[resolve(results)]].
-
-ليه عدّاد ومش [[results.length]]؟ جربت:
-
-~~~text app.js
-const r = []; r[2] = "x"; console.log(r.length, r);
-~~~
-
-~~~text الناتج
-3 [ <2 empty items>, 'x' ]
-~~~
-
-حطيت عنصر واحد والطول بقى 3. فالطول ميقولش كام واحد خلص فعلًا.
-
----
-
-## ٤. التشغيل
-
-~~~text app.js
-const slow = new Promise((r) => setTimeout(() => r("slow"), 100));
-promiseAll([slow, 2, Promise.resolve(3)]).then(console.log);
-~~~
-
-- [[slow]]: Promise بيخلص بعد 100 millisecond بقيمة [["slow"]].
-- [[2]]: قيمة عادية.
-- [[Promise.resolve(3)]]: Promise خلص خلاص.
-
-~~~text الناتج (مع الـ console.log اللي ضفته)
-  خلص index 1 بقيمة 2 ← done=1 [ <1 empty item>, 2, <1 empty item> ]
-  خلص index 2 بقيمة 3 ← done=2 [ <1 empty item>, 2, 3 ]
-  خلص index 0 بقيمة "slow" ← done=3 [ 'slow', 2, 3 ]
-[ 'slow', 2, 3 ] (بعد ~100ms)
-~~~
-
-- [[2]] و [[3]] خلصوا الأول (في الـ microtasks على طول)، و [["slow"]] بعد 100ms.
-- مع كده الناتج [[[ 'slow', 2, 3 ]]] بنفس ترتيب المدخلات، بفضل [[results[i]]]. لو كان [[push]] كان هيطلع [[[2, 3, "slow"]]].
-
-### حالات تانية جربتها
-
-~~~text الناتج
-empty: []
-rejected: boom 30ms
-Set: [ 1, 2 ]
-~~~
-
-- [[promiseAll([])]] خلصت فورًا بـ [[[]]].
-- [[promiseAll([slow2(), boom])]] حيث [[slow2]] بياخد 200ms و [[boom]] بيترفض بعد 20ms: اترفضت بعد حوالي 20 إلى 30ms (التوقيت مش دقيق بالظبط)، من غير ما تستنى الـ 200ms. ده fail-fast.
-- بس [[slow2]] نفسه **ماتلغاش**: بعدها بشوية لسه اشتغل وخلص (الـ log بتاعه ظهر في الآخر). Promise.all مبتلغيش الباقي.
-- [[new Set([1, 2])]] اشتغلت بسبب [[Array.from]].
-
----
-
-## الخلاصة
-
-| الحتة | ليه |
-|---|---|
-| [[new Promise]] | نرجّع Promise واحد نتحكم إمتى يخلص |
-| [[Array.from]] | يقبل أي iterable ونعرف الطول |
-| [[if (length === 0)]] | وإلا pending للأبد |
-| [[Promise.resolve(item)]] | القيم العادية تشتغل |
-| [[results[i]]] | الترتيب زي المدخلات |
-| عدّاد [[done]] | الطول مش بيعد اللي خلصوا |
-| [[reject]] كتاني argument لـ [[then]] | أول فشل يرفض الكل |
-
-> في التمرين اللي تحت هتكتب [[promiseAllSettled]] و [[promiseRace]]. فكّر: إيه اللي لازم يتغير في الـ onSuccess والـ onFailure عشان الفشل ميوقفش كل حاجة؟ وفي race، محتاج عدّاد أصلًا؟`,
-          lines: [
-            R`[[promiseAll]] بتاخد أي iterable (array أو Set أو generator) فيه Promises أو قيم عادية، زي [[Promise.all]] الأصلية (الفرق الوحيد في المدخل اللي مش iterable، وده في «نقط تقولها» تحت).`,
-            R`بترجّع Promise جديد واحد بيمثّل «كلهم». الـ executor بياخد [[resolve]] و [[reject]]، واحنا اللي هنقرر إمتى نناديهم: [[resolve]] لما الكل يخلص، و [[reject]] مع أول فشل.`,
-            R`[[Array.from]] بيحوّل الـ iterable لـ array عادية. محتاجينها عشان نعرف الطول من الأول، ولأن generator مثلًا ينفع يتلف عليه مرة واحدة بس.`,
-            R`array فاضية بنفس عدد العناصر. هنحط كل نتيجة في الـ index بتاعها، فالترتيب يفضل زي المدخلات حتى لو التاني خلص قبل الأول.`,
-            R`عدّاد للي خلصوا. مينفعش نستخدم [[results.length]] بداله لأنه ثابت من الأول، ومينفعش نعتمد على «آخر واحد خلص» لأن ترتيب الخلصان مش مضمون.`,
-            R`لو الليستة فاضية مفيش [[then]] هيتنادى أصلًا عشان يعمل resolve، فالـ Promise هيفضل pending للأبد. فبنعمل resolve بـ array فاضية على طول، زي [[Promise.all]] الأصلية لما تدّيها array فاضية.`,
-            R`بنلف على كل عنصر ومعاه الـ index بتاعه [[i]]، وبنعلّق handler على كل واحد في نفس اللحظة من غير ما نستنى اللي قبله. ده اللي بيخلي [[Promise.all]] أسرع من [[await]] واحد ورا التاني.`,
-            R`[[Promise.resolve(item)]] بتلف أي قيمة في Promise: لو كانت Promise بترجّعها زي ما هي، ولو رقم زي [[2]] بتعمل Promise خلص بيه. كده بنعامل الاتنين بنفس الكود، ومن غيرها [[then]] على رقم هيرمي TypeError.`,
-            R`بنحط النتيجة في نفس الـ index بتاع العنصر، مش [[push]]. لو استخدمنا [[push]] الترتيب هيبقى حسب مين خلص الأول، مش حسب المدخلات.`,
-            R`واحد كمان خلص. العدّاد ده هو الطريقة الوحيدة نعرف بيها إن الكل وصل، لأن كل [[then]] بيشتغل لوحده في وقت مختلف.`,
-            R`لو ده آخر واحد، نعمل resolve بالـ array كلها. السطر ده بيتنفذ جوه آخر Promise يخلص، أيًّا كان مكانه في الليستة.`,
-            R`[[reject]] متبعتة كتاني argument لـ [[then]]، فأول عنصر يفشل بيعمل reject للـ Promise الكبير بالـ error بتاعه. وأي resolve أو reject بعد كده بيتجاهل، لأن الـ Promise مبيتغيرش بعد ما يخلص.`,
-            R`نهاية الـ [[forEach]].`,
-            R`نهاية الـ executor بتاع [[new Promise]].`,
-            R`نهاية [[promiseAll]].`,
-            R`Promise بيخلص بعد ١٠٠ms بالقيمة [["slow"]]. حطيناه الأول في الليستة عشان نثبت إن الترتيب مش حسب مين خلص الأول.`,
-            R`جرّبناها بخليط: Promise بطيء، ورقم عادي، و Promise خلص على طول. الناتج [["slow"]] ثم [[2]] ثم [[3]] بنفس ترتيب المدخلات مع إن [[slow]] خلص الأخير، وده بفضل إننا حطينا كل نتيجة في الـ index بتاعها.`,
-          ],
-          sol: R`[[promiseAllSettled([slow, 2, Promise.reject(new Error("x"))])]] لازم ترجّع بعد 100ms: [[{ status: "fulfilled", value: "slow" }]] و [[{ status: "fulfilled", value: 2 }]] و [[{ status: "rejected", reason: Error: x }]] بنفس الترتيب، ومبتترفضش أبدًا. الفرق عن promiseAll إن الـ reject handler بيسجّل النتيجة بدل ما يرفض.
-
-[[promiseRace]] بتلف على كل واحد وتعمل [[Promise.resolve(item).then(resolve, reject)]]: أول واحد يخلص بيحدد النتيجة، والباقي نداءاتهم على resolve أو reject بتتجاهل لأن الـ promise متحسمة. والحالة اللي بتتسأل: [[promiseRace([])]] بتفضل pending للأبد، زي [[Promise.race([])]] الحقيقية. والغلطة الشائعة إنك تنسى [[Promise.resolve(item)]] فالقيم العادية زي 2 تطلع [[item.then is not a function]].`,
-          solCode: R`function promiseAllSettled(items) {
-  return new Promise((resolve) => {
-    const list = Array.from(items);
-    const results = new Array(list.length);
-    let done = 0;
-    if (list.length === 0) return resolve(results);
-    list.forEach((item, i) => {
-      Promise.resolve(item)
-        .then(
-          (value) => { results[i] = { status: "fulfilled", value }; },
-          (reason) => { results[i] = { status: "rejected", reason }; }
-        )
-        .then(() => { if (++done === list.length) resolve(results); });
-    });
-  });
+- [[timeupdate]] حوالي **٤ مرات في الثانية** (كل ٢٥٠ ms)، ومش بيتغيّر مع السرعة: في سرعة 2 الفيديو مشي ٣.٩ ثانية والحدث جه ٩ مرات بس. الـ spec بيقول بين ١٥ و ٢٥٠ ms، و Chrome بياخد الطرف البطيء.
+- [[requestAnimationFrame]] ٦٠ مرة في الثانية (على شاشة 60Hz).
+- **القرار:** النص [[1:15 / 3:20]] من [[timeupdate]] كفاية (بيتغيّر كل ثانية أصلًا). شريط تقدّم بيتحرك ناعم أو كاريوكي أو ترجمة بتتلوّن كلمة كلمة: من [[requestAnimationFrame]] وتقرا [[currentTime]] جواه، وتوقفه في [[pause]].` },
+            { lvl: 'تحدي', t: R`**ابني:** [[pickSource(list)]] بتاخد لستة [[{ src, type }]] وترجّع أول واحد المتصفح رده عليه [["probably"]]، ولو مفيش فأول [["maybe"]]، ولو مفيش ترجّع [[null]]. جرّبها على: [[video/quicktime]] و [[video/ogg; codecs="theora"]] و [[video/x-matroska]] و WebM بـ AV1 و MP4 بـ H.264. وبعدين اكتب في سطر: ليه ترتيب اللستة نفسه مهم؟`, done: R`على Chrome بترجّع الـ WebM، ولما تشيل كل اللي [["probably"]] بترجّع الـ mkv، ولما تسيب [[quicktime]] بس بترجّع [[null]].`, sol: R`~~~js
+function pickSource(list) {
+  const probe = document.createElement('video');
+  return list.find((s) => probe.canPlayType(s.type) === 'probably')
+    || list.find((s) => probe.canPlayType(s.type) === 'maybe')
+    || null;
 }
-function promiseRace(items) {
-  return new Promise((resolve, reject) => {
-    for (const item of items) Promise.resolve(item).then(resolve, reject);
-  });
-}
-const slow = new Promise((r) => setTimeout(() => r("slow"), 100));
-const fast = new Promise((r) => setTimeout(() => r("fast"), 10));
-promiseAllSettled([slow, 2, Promise.reject(new Error("x"))]).then(console.log);
-promiseRace([slow, fast]).then((v) => console.log("race:", v)); // race: fast`,
-          check: {
-            lang: "js",
-            starter: R`function promiseAllSettled(items) {
-  return Promise.all(items);
-}
-function promiseRace(items) {
-  return new Promise((resolve, reject) => {
-    // كل واحد: Promise.resolve(item).then(resolve, reject)
-  });
-}`,
-            tests: R`const later = (v, steps = 5) => { let p = Promise.resolve(v); for (let i = 0; i < steps; i++) p = p.then(x => x); return p; };
-const within = p => Promise.race([p, later("لسه pending", 60)]);
-const rejected = msg => { const p = Promise.reject(new Error(msg)); p.catch(() => {}); return p; };
-test("fulfilled و rejected وقيمة عادية، بنفس الترتيب ومبترفضش", async () => {
-  const r = await within(promiseAllSettled([later("slow"), 2, rejected("x")]));
-  expect([r[0], r[1], r[2].status, r[2].reason.message]).toEqual([{ status: "fulfilled", value: "slow" }, { status: "fulfilled", value: 2 }, "rejected", "x"]);
-});
-test("الترتيب حسب الـ input مش حسب مين خلص الأول", async () => {
-  const r = await within(promiseAllSettled([later("a", 10), "b"]));
-  expect(r.map(x => x.value)).toEqual(["a", "b"]);
-});
-test("[] ← []", async () => expect(await within(promiseAllSettled([]))).toEqual([]));
-test("promiseRace: الأسرع يكسب", async () => expect(await within(promiseRace([later("slow", 10), later("fast", 1)]))).toBe("fast"));
-test("promiseRace: لو الأسرع اترفض، بترفض", async () => {
-  let msg = "";
-  try { await within(promiseRace([later("slow", 10), rejected("fail")])); } catch (e) { msg = e.message; }
-  expect(msg).toBe("fail");
-});
-test("promiseRace([]) بتفضل pending للأبد، زي Promise.race([])", async () => {
-  const r = await Promise.race([promiseRace([]).then(() => "resolved"), later("still pending", 20)]);
-  expect(r).toBe("still pending");
-});`,
-            solution: R`function promiseAllSettled(items) {
-  return new Promise((resolve) => {
-    const list = Array.from(items);
-    const results = new Array(list.length);
-    let done = 0;
-    if (list.length === 0) return resolve(results);
-    list.forEach((item, i) => {
-      Promise.resolve(item)
-        .then(
-          (value) => { results[i] = { status: "fulfilled", value }; },
-          (reason) => { results[i] = { status: "rejected", reason }; }
-        )
-        .then(() => { if (++done === list.length) resolve(results); });
-    });
-  });
-}
-function promiseRace(items) {
-  return new Promise((resolve, reject) => {
-    for (const item of items) Promise.resolve(item).then(resolve, reject);
-  });
-}`
-          }
-        },
-        {
-          cmd: "polyfills: map و bind",
-          title: "اكتب map و bind بنفسك (polyfill)",
-          desc: R`الـ polyfill كود بيعمل feature موجودة في اللغة، عشان يشتغل في بيئات قديمة، وفي الانترفيو عشان يشوفوا فاهم الـ feature من جوه. [[map]]: بلف على [[this]] (الـ array)، وبنادي الـ callback بـ (العنصر، الـ index، الـ array)، وبحط الناتج في array جديدة بنفس الطول، وبتخطى الأماكن الفاضية (holes). [[bind]]: بحفظ الدالة الأصلية ([[this]])، وبرجّع دالة جديدة بتناديها بـ [[apply]] على الـ context اللي اتحدد، مع الـ arguments المتثبتة الأول والجديدة بعدها.`,
-          example: R`Array.prototype.myMap = function (callback, thisArg) {
-  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
-  const result = new Array(this.length);
-  for (let i = 0; i < this.length; i++) {
-    if (i in this) result[i] = callback.call(thisArg, this[i], i, this);
-  }
-  return result;
-};
-Function.prototype.myBind = function (ctx, ...preset) {
-  const fn = this;
-  return function (...args) {
-    return fn.apply(ctx, [...preset, ...args]);
-  };
-};
-[1, 2, 3].myMap((x) => x * 2);                    // [2, 4, 6]
-const hi = function (greet) { return greet + " " + this.name; };
-hi.myBind({ name: "Sara" }, "Hi")();              // "Hi Sara"`,
-          try: R`اكتب [[myFilter]] و [[myReduce]] (خد بالك من حالة من غير قيمة أولية على array فاضية: لازم TypeError). وبعدين خلي [[myBind]] تشتغل مع [[new]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[myFilter]] و [[myReduce]] و [[myBind]] اللي بتشتغل مع [[new]].`,
-          ref: [
-            { t: "MDN: Polyfill", url: "https://developer.mozilla.org/en-US/docs/Glossary/Polyfill" },
-            { t: "MDN: Array.prototype.map()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map" },
-            { t: "MDN: Function.prototype.bind()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind" },
-            { t: "MDN: Function.prototype.call()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/call" },
-          ],
-          pre: [
-            { to: "js/prototype chain", why: R`الـ polyfill بيتحط على [[Array.prototype]] و [[Function.prototype]]، فكل array وكل دالة بتلاقيه بالوراثة` },
-          ],
-          practice: [
-            { lvl: 'سريع', t: R`اتوقع على ورقة: إيه اللي Node هيطبعه لـ [[[1, , 3].map((x) => x * 2)]]؟ والـ callback هيتنادى كام مرة؟ وبعدين شغّله بـ [[map]] وبـ [[myMap]] بتاع الدرس.`, done: R`Node بيطبع [[2, <1 empty item>, 6]] جوه أقواس، والاتنين نفس الناتج و [[length]] بتاعهم 3، والـ callback اتنادى مرتين بس (الـ hole بيتعدّى).`, sol: R`**التوقع:** array طولها 3 فيها 2 وخانة فاضية و 6، والـ callback بيتنادى مرتين بس.
-
-~~~js holes.js
-Array.prototype.myMap = function (callback, thisArg) {
-  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
-  const result = new Array(this.length);
-  for (let i = 0; i < this.length; i++) {
-    if (i in this) result[i] = callback.call(thisArg, this[i], i, this);
-  }
-  return result;
-};
-
-let calls = 0;
-const a = [1, , 3].map((x) => { calls++; return x * 2; });
-console.log("map  :", a, "length", a.length, "calls", calls);
-
-calls = 0;
-const b = [1, , 3].myMap((x) => { calls++; return x * 2; });
-console.log("myMap:", b, "length", b.length, "calls", calls);
-console.log(1 in a, 1 in b);
-~~~
-
-~~~text الناتج (node holes.js)
-map  : [ 2, <1 empty item>, 6 ] length 3 calls 2
-myMap: [ 2, <1 empty item>, 6 ] length 3 calls 2
-false false
-~~~
-
-**ليه:** [[[1, , 3]]] فيها «hole»: الـ index 1 مش موجود أصلًا (مش موجود وقيمته undefined). [[map]] بتسأل [[i in arr]] قبل كل نداء، فبتعدّي الخانة دي ومبتكتبش حاجة مكانها في الناتج، فالناتج فيه hole برده في نفس المكان. [[<1 empty item>]] هي طريقة Node في عرض الـ hole، والسطر الأخير بيثبت إن الخانة مش موجودة في الاتنين ([[1 in a]] بـ false).
-
-**الانترفيور بيختبر إيه:** إنك عارف الفرق بين hole و [[undefined]]، وإن [[i in this]] في الـ polyfill مش زيادة.
-
-**الغلطة الشائعة:** تتوقع [[[2, NaN, 6]]] (يعني الـ callback اتنادى بـ undefined و [[undefined * 2]] بـ NaN). ده اللي هيحصل فعلًا لو اتكتبت [[[1, undefined, 3]]]، أو لو الـ polyfill نسي [[i in this]].` },
-            { lvl: 'تطبيق', t: R`مسألة: اكتب [[myCall(ctx, ...args)]] من غير [[call]] ولا [[apply]] ولا [[bind]]: حط الدالة على [[ctx]] تحت key من نوع [[Symbol()]]، وناديها، وامسحها في [[finally]].`, done: R`[[greet.myCall({ name: "Sara" }, "Hi")]] بيرجّع [["Hi Sara"]]، وبعدها [[Object.getOwnPropertySymbols(ctx).length]] بيرجّع 0 (مفيش أثر)، ولو الدالة رمت error الـ symbol برضه بيتمسح، و [[ctx]] اللي فيه key اسمه [[fn]] أصلًا مبيتبوّظش.`, sol: R`~~~js my-call.js
-Function.prototype.myCall = function (ctx, ...args) {
-  if (typeof this !== "function") throw new TypeError("myCall لازم تتنادى على function");
-  const target = ctx == null ? globalThis : Object(ctx);  // null/undefined → globalThis، و 5 → Number object
-  const key = Symbol("fn");                                // مستحيل يتصادم مع key موجود
-  target[key] = this;
-  try {
-    return target[key](...args);                          // نداء كـ method: this = target
-  } finally {
-    delete target[key];                                   // بيتنفّذ حتى لو الدالة رمت
-  }
-};
-
-function greet(word) { return word + " " + this.name; }
-const ctx = { name: "Sara", fn: "مهم متتمسحش" };
-
-console.log(greet.myCall(ctx, "Hi"));
-console.log("symbols باقية:", Object.getOwnPropertySymbols(ctx).length);
-console.log("fn لسه:", ctx.fn);
-
-function boom() { throw new Error("وقعت"); }
-try { boom.myCall(ctx); } catch (e) { console.log("الخطأ عدّى:", e.message); }
-console.log("symbols بعد الخطأ:", Object.getOwnPropertySymbols(ctx).length);
-console.log(function () { return typeof this; }.myCall(5));
-~~~
-
-~~~text الناتج (node my-call.js)
-Hi Sara
-symbols باقية: 0
-fn لسه: مهم متتمسحش
-الخطأ عدّى: وقعت
-symbols بعد الخطأ: 0
-object
-~~~
-
-**الفكرة كلها في قاعدة واحدة من درس this:** لما تنادي [[obj.method()]]، [[this]] جوه الدالة بيبقى [[obj]]. فلو حطينا الدالة مؤقتًا على [[ctx]] وناديناها من عليه، [[this]] هيبقى [[ctx]] من غير [[call]].
-
-- **[[Symbol("fn")]]:** كل Symbol جديد فريد، فمستحيل يمسح key موجود. لو استخدمت [[ctx.fn = this]] كانت القيمة [["مهم متتمسحش"]] هتضيع (وده اللي السطر التالت بيثبت إنه محصلش).
-- **[[try / finally]]:** الـ [[finally]] بيتنفّذ بعد [[return]] وبعد [[throw]]، فالـ key بيتمسح في الحالتين، والخطأ نفسه بيعدّي للي نادى (السطر الرابع).
-- **[[Object(ctx)]]:** مينفعش تحط property على primitive زي 5، فـ [[Object(5)]] بيعمل Number object. عشان كده آخر سطر طبع [["object"]]، وده نفس سلوك [[call]] الأصلية في non-strict.
-- **[[ctx == null]]:** null و undefined بيبقوا [[globalThis]]، زي [[call]] في non-strict.
-
-**الغلطة الشائعة:** تمسح الـ key بعد [[return]] من غير [[finally]] (السطر ده عمره ما هيتنفّذ)، أو تستخدم اسم string ثابت يكسر object فيه نفس الاسم.
-
-**إجابة تتقال:** «بحط الدالة على الـ context تحت Symbol، وبناديها كـ method عشان this يبقى الـ context، وبمسحها في finally عشان متسبش أثر حتى لو رمت».` },
-            { lvl: 'تحدي', t: R`اكتب اختبار: زميلك كتب [[myMap]] من غير [[if (i in this)]] ومن غير [[thisArg]]. اكتب بـ [[node:test]] تستات تمسك الغلطتين دول وحاجة تالتة من عندك، من غير ما تقرا الكود بتاعه، وشغّلها على نسخته وعلى نسخة الدرس.`, done: R`على نسخة الدرس كل التستات بتعدّي، وعلى نسخة زميلك على الأقل تستين بيقعوا: واحد بيعدّ نداءات الـ callback على [[[1, , 3]]] (المفروض 2)، وواحد بيتأكد إن [[this]] جوه callback عادي ([[function]] مش arrow) هو الـ [[thisArg]].`, sol: R`التستات بتختبر **السلوك** من برّه (المدخلات والناتج وعدد النداءات)، فمش محتاج تقرا كود زميلك. والنسختين في ملف واحد عشان تشغّل نفس التستات على الاتنين:
-
-~~~js impl.mjs
-// نسخة الدرس
-export function lessonMap(callback, thisArg) {
-  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
-  const result = new Array(this.length);
-  for (let i = 0; i < this.length; i++) {
-    if (i in this) result[i] = callback.call(thisArg, this[i], i, this);
-  }
-  return result;
-}
-// نسخة الزميل: من غير i in this ومن غير thisArg
-export function friendMap(callback) {
-  const result = [];
-  for (let i = 0; i < this.length; i++) result[i] = callback(this[i], i, this);
-  return result;
-}
-~~~
-
-~~~js mymap.test.mjs
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { lessonMap, friendMap } from "./impl.mjs";
-
-// IMPL=friend node --test  ← يشغّل نفس التستات على نسخة الزميل
-const myMap = process.env.IMPL === "friend" ? friendMap : lessonMap;
-
-test("بيتخطى الـ holes ومبيناديش الـ callback عليها", () => {
-  let calls = 0;
-  const out = myMap.call([1, , 3], (x) => { calls++; return x * 2; });
-  assert.equal(calls, 2);
-  assert.equal(out.length, 3);
-  assert.equal(1 in out, false);        // الـ hole فضل hole
-});
-
-test("this جوه callback عادي هو thisArg", () => {
-  const ctx = { factor: 10 };
-  const out = myMap.call([1, 2], function (x) { return x * this.factor; }, ctx);
-  assert.deepEqual(out, [10, 20]);
-});
-
-test("callback مش function بيرمي TypeError حتى على array فاضية", () => {
-  assert.throws(() => myMap.call([], "مش دالة"), TypeError);
-});
-
-test("الحالات العادية: index والـ array نفسها", () => {
-  const src = ["a", "b"];
-  assert.deepEqual(myMap.call(src, (x, i, arr) => x + i + arr.length), ["a02", "b12"]);
-});
-~~~
-
-~~~text الناتج (node --test على نسخة الدرس)
-✔ بيتخطى الـ holes ومبيناديش الـ callback عليها (0.8773ms)
-✔ this جوه callback عادي هو thisArg (0.7418ms)
-✔ callback مش function بيرمي TypeError حتى على array فاضية (0.5241ms)
-✔ الحالات العادية: index والـ array نفسها (0.1752ms)
-ℹ tests 4
-ℹ pass 4
-ℹ fail 0
-~~~
-
-~~~text الناتج (IMPL=friend node --test على نسخة الزميل، السطور المهمة)
-✖ بيتخطى الـ holes ومبيناديش الـ callback عليها (1.3762ms)
-✖ this جوه callback عادي هو thisArg (0.1673ms)
-✖ callback مش function بيرمي TypeError حتى على array فاضية (0.3584ms)
-✔ الحالات العادية: index والـ array نفسها (0.8226ms)
-ℹ tests 4
-ℹ pass 1
-ℹ fail 3
-~~~
-
-(في PowerShell: [[$env:IMPL="friend"; node --test]]، وبعدها [[Remove-Item Env:IMPL]].)
-
-**كل تست بيمسك إيه:**
-
-- **الأول** بيعد النداءات: نسخة الزميل نادت الـ callback ٣ مرات (واحدة على الـ hole بـ undefined)، وكتبت [[NaN]] مكان الـ hole. تست [[out]] لوحده مش كفاية، لازم العدّاد و [[1 in out]].
-- **التاني** بيستخدم [[function]] مش arrow عن قصد: الـ arrow بتاخد [[this]] من برّه وبتتجاهل [[thisArg]] في أي نسخة، فتست بـ arrow كان هيعدّي على الغلط.
-- **التالت** هو الحاجة التالتة من عندنا: على array **فاضية** عن قصد. الأصلية ونسخة الدرس بيفحصوا الـ callback قبل اللفة فبيرموا TypeError، ونسخة الزميل مبتفحصش ومفيش لفة تنادي الـ string، فبترجّع array فاضية في صمت. (على [[[1]]] كان التست هيعدّي على الاتنين، لأن نداء string كدالة بيرمي TypeError لوحده.)
-- **الرابع** بيتأكد من الـ arguments التلاتة.
-
-**حاجة كمان ممكن تتسأل عليها:** [[map]] الأصلية بتقرا الطول **مرة واحدة** في الأول، ونسخة الدرس بتقرا [[this.length]] كل لفة. لو الـ callback زوّد عناصر في الـ array:
-
-~~~text الناتج (callback بيعمل push لحد ما الطول 4)
-map  : [ 1, 2 ]
-myMap: [ 1, 2, 9, 9 ]
-~~~
-
-التصليح: [[const len = this.length]] قبل اللفة واستخدم [[len]]. ده تست رابع تقدر تزوّده، وهيقع على النسختين.
-
-**الغلطة الشائعة:** تكتب التستات وانت شايف الكود فتختبر اللي الكود بيعمله مش اللي المفروض يعمله. ابدأ من سلوك [[map]] الأصلية: اكتب التست وشغّله عليها الأول (لازم يعدّي)، وبعدين على النسخ.` },
-          ],
-          flag: "script",
-          deep: {
-            why: "بيختبر this، و prototypes، و call و apply، والـ closures في سؤال واحد. و map و reduce و bind و debounce و Promise.all هم أشهر ٥ polyfills بتتسأل.",
-            how: R`نقط تقولها: [[function]] مش arrow عشان this تبقى الـ array أو الدالة. و [[i in this]] عشان الـ sparse arrays ([[[1, , 3]]]): الـ map الأصلية بتسيب الـ holes فاضية. و thisArg التاني لـ map. والـ bind الحقيقية لما تتنادي بـ new بتتجاهل ctx، والنسخة الكاملة بتفحص [[new.target]]. وقول إنك في كود حقيقي مش هتعدّل الـ prototypes المدمجة، ده للانترفيو بس.`,
-            when: "«اكتب reduce»، و «اكتب call من غير call» (حط الدالة كخاصية مؤقتة على الـ object ونادي)، و «اكتب flat بـ recursion».",
-            mistakes: R`arrow function للـ polyfill فـ this تضيع. ونسيان الـ index والـ array في الـ callback. وتعدّل الـ prototype في كود إنتاج.`
-          },
-          teach: R`## الفكرة في سطر
-
-بنكتب [[myMap]] بتعمل اللي [[map]] بتعمله، و [[myBind]] بتعمل اللي [[bind]] بتعمله، وبنحطهم على الـ prototype عشان كل array وكل دالة تقدر تناديهم. المفتاح في الاتنين هو [[this]].
-
-شغّلت المثال في Node 24، وضفت تجارب تانية تحت.
-
----
-
-## ١. [[myMap]]
-
-~~~text app.js
-Array.prototype.myMap = function (callback, thisArg) {
-  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
-  const result = new Array(this.length);
-  for (let i = 0; i < this.length; i++) {
-    if (i in this) result[i] = callback.call(thisArg, this[i], i, this);
-  }
-  return result;
-};
-~~~
-
-### [[Array.prototype.myMap = function ...]]
-
-- [[Array.prototype]]: الـ object اللي كل الـ arrays بتورث منه. أي method تتحط عليه تبقى متاحة لـ [[[1, 2, 3].myMap(...)]].
-- [[function]] مش arrow: لما تنادي [[arr.myMap()]]، [[this]] جوه الدالة بيبقى [[arr]]. الـ arrow معندهاش [[this]] بتاعها، بتاخده من المكان اللي اتكتبت فيه. جربت arrow على الـ prototype في ملف CommonJS:
-
-~~~text الناتج (Node)
-undefined
-~~~
-
-[[this.length]] طلع [[undefined]] لأن [[this]] بقى [[module.exports]] (object فاضي)، مش الـ array.
-
-### فحص الـ callback
-
-[[typeof callback !== "function"]]: لو حد بعت حاجة مش دالة ارمي [[TypeError]] زي الأصلية:
-
-~~~text الناتج
-TypeError: 5 is not a function
-TypeError: number 5 is not a function
-~~~
-
-الأول من [[myMap(5)]] والتاني من [[map(5)]] الأصلية. نفس النوع، والرسالة قريبة.
-
-### اللفة
-
-- [[new Array(this.length)]]: array جديدة بنفس الطول (map مبتغيّرش الأصلية).
-- [[i in this]]: [[in]] بيسأل «فيه عنصر في الـ index ده أصلًا؟». في [[[1, , 3]]] (sparse array، فيها خانة فاضية) [[1 in arr]] بـ false و [[0 in arr]] بـ true.
-- [[callback.call(thisArg, this[i], i, this)]]: نادي الـ callback، و [[call]] أول argument فيها هو الـ [[this]] جوه الـ callback، والباقي arguments عادية: العنصر، والـ index، والـ array كلها.
-
-~~~text الناتج
-[ 2, 4, 6 ]
-[ 10, <1 empty item>, 30 ] [ 10, <1 empty item>, 30 ]
-[ '>a02', '>b12' ]
-~~~
-
-- [[[1, 2, 3].myMap((x) => x * 2)]] = [[[2, 4, 6]]].
-- الخانة الفاضية فضلت فاضية في [[myMap]] وفي [[map]] الأصلية بالظبط.
-- الأخير: [[["a","b"].myMap(function (v, i, arr) { return this.p + v + i + arr.length; }, { p: ">" })]]: [[this.p]] جه من [[thisArg]]، و [[i]] و [[arr.length]] اتبعتوا صح.
-
----
-
-## ٢. [[myBind]]
-
-~~~text app.js
-Function.prototype.myBind = function (ctx, ...preset) {
-  const fn = this;
-  return function (...args) {
-    return fn.apply(ctx, [...preset, ...args]);
-  };
-};
-~~~
-
-- [[Function.prototype]]: كل الدوال بتورث منه، فـ [[hi.myBind(...)]] تشتغل.
-- [[(ctx, ...preset)]]: أول argument هو الـ [[this]] اللي عايزينه، و [[...preset]] (rest) بيلم أي arguments بعده في array.
-- [[const fn = this]]: [[this]] هنا هي الدالة اللي اتنادت عليها [[myBind]] ([[hi]]). بنحفظها في متغير لأن الدالة اللي جوه ليها [[this]] بتاعها.
-- [[return function (...args)]]: بنرجّع دالة جديدة. لما تتنادى بعدين، بتلم الـ arguments الجديدة في [[args]].
-- [[fn.apply(ctx, [...])]]: [[apply]] زي [[call]] بس الـ arguments بتتبعت array. [[[...preset, ...args]]] يعني المتثبتين الأول وبعدين الجداد.
-- الدالة الجديدة فاكرة [[fn]] و [[ctx]] و [[preset]] بعد ما [[myBind]] خلصت: ده closure.
-
-### التشغيل
-
-~~~text app.js
-const hi = function (greet) { return greet + " " + this.name; };
-hi.myBind({ name: "Sara" }, "Hi")();
-~~~
-
-~~~text الناتج
-Hi Sara
-~~~
-
-[[myBind({ name: "Sara" }, "Hi")]] رجّعت دالة، و [[()]] اللي بعدها نادتها من غير arguments. جوه: [[fn.apply({ name: "Sara" }, ["Hi"])]].
-
-### مقارنة بـ [[call]] و [[apply]] ومن غير حاجة
-
-~~~text الناتج
-Yo Mona Ahlan Omar
-x undefined
-TypeError: Cannot read properties of undefined (reading 'name')
-~~~
-
-- [[hi.call({ name: "Mona" }, "Yo")]] و [[hi.apply({ name: "Omar" }, ["Ahlan"])]]: بينادوا فورًا. [[bind]] بترجّع دالة تتنادى بعدين.
-- [[hi("x")]] من غير أي حاجة في ملف CommonJS عادي: [[this]] بقى الـ global object، ومفيهوش [[name]]، فطلع [[x undefined]].
-- نفس السطر في ES module (strict mode): [[this]] بقى [[undefined]] فوقع بالـ TypeError.
-
-وتثبيت جزء من الـ arguments:
-
-~~~text app.js
-const add = function (a, b, c) { return a + b + c; };
-add.myBind(null, 1)(2, 3);
-add.myBind(null, 1, 2)(3);
-~~~
-
-~~~text الناتج
-6 6
-~~~
-
----
-
-## الخلاصة
-
-| الحتة | ليه |
-|---|---|
-| [[function]] مش arrow | [[this]] يبقى الـ array أو الدالة |
-| [[i in this]] | الخانات الفاضية تفضل فاضية |
-| [[callback.call(thisArg, el, i, arr)]] | نفس arguments الأصلية |
-| [[const fn = this]] | نحفظ الدالة قبل ما ندخل دالة جديدة |
-| [[...preset]] و [[...args]] | المتثبتين الأول وبعدين الجداد |
-| [[fn.apply(ctx, [...])]] | نادي بالـ this اللي اخترناه |
-
-> في التمرين اللي تحت: [[myFilter]] قريبة جدًا من [[myMap]] (فكّر: إمتى تحط العنصر؟). و [[myReduce]] محتاجة تفرّق بين «مفيش قيمة أولية» و «القيمة الأولية undefined»: افتكر إن [[...init]] array، وطولها بيقولك اتبعت كام. و [[new]] مع [[myBind]]: ابحث عن [[new.target]].`,
-          lines: [
-            R`بنضيف method اسمها [[myMap]] على [[Array.prototype]]، فكل array في البرنامج تقدر تناديها. ولازم [[function]] مش arrow: الـ arrow مالهاش [[this]] بتاعها، فمش هتعرف الـ array اللي اتنادت عليها. في كود حقيقي متعدّلش prototypes الجاهزة، دي للتعلّم والانترفيو.`,
-            R`لو الـ callback مش دالة بنرمي [[TypeError]] زي [[map]] الأصلية بالظبط. من غير الفحص ده الـ error هيطلع من جوه اللفة برسالة أقل وضوحًا، أو مش هيطلع خالص لو الـ array فاضية.`,
-            R`array جديدة بنفس الطول، فاضية من جوه. [[map]] عمرها ما بتعدّل الأصلية، دايمًا بترجّع واحدة جديدة.`,
-            R`لفة عادية على الـ indexes من 0 لآخر الـ array. و [[this]] هنا هي الـ array اللي ناديت عليها [[myMap]].`,
-            R`[[i in this]] بيفحص إن الخانة دي فيها عنصر فعلًا، فالخانات الفاضية (زي اللي في [[new Array(3)]]) بتتخطى وتفضل فاضية في الناتج زي الأصلية. و [[callback.call(thisArg, ...)]] بتنادي الدالة بالـ [[this]] اللي اليوزر اختاره، وبنفس التلات arguments: العنصر والـ index والـ array كلها.`,
-            R`نهاية الـ [[for]].`,
-            R`بترجّع الـ array الجديدة والأصلية زي ما هي، وده اللي بيخلي [[map]] آمنة في الـ chaining.`,
-            R`نهاية [[myMap]].`,
-            R`نفس الفكرة على [[Function.prototype]]: كل دالة هيبقى عندها [[myBind]]. بتاخد الـ [[this]] اللي عايزين نثبّته ([[ctx]])، و [[...preset]] أي arguments عايزين نثبّتها من الأول.`,
-            R`جوه [[myBind]]، [[this]] هي الدالة اللي ناديناها عليها (زي [[hi]] تحت). بنحفظها في [[fn]] لأن الدالة اللي هنرجّعها هيبقى ليها [[this]] تاني خالص.`,
-            R`بترجّع دالة جديدة ومبتنديش حاجة دلوقتي: [[bind]] بتجهّز بس، والنداء الحقيقي بيحصل بعدين لما حد ينادي الدالة الراجعة.`,
-            R`[[apply]] بتنادي الأصلية بـ [[ctx]] كـ [[this]]، وبتاخد الـ arguments كـ array: المتثبتة الأول وبعدها اللي جت وقت النداء. النسخة دي مبتدعمش [[new]] زي [[bind]] الأصلية، وده غالبًا كفاية في الانترفيو.`,
-            R`نهاية الدالة الراجعة.`,
-            R`نهاية [[myBind]].`,
-            R`تجربة: كل عنصر مضروب في 2 والناتج [[2, 4, 6]] في array جديدة، نفس ناتج [[map]] الأصلية.`,
-            R`دالة عادية (مش arrow) بتقرا [[this.name]]، فقيمة [[this]] بتتحدد وقت النداء. لو ناديتها لوحدها مش هتلاقي [[name]] اللي انت عايزه، وده بالظبط اللي [[bind]] بيحلّه.`,
-            R`[[myBind]] ثبّتت [[this]] على [[{ name: "Sara" }]] وثبّتت أول argument [["Hi"]]، والقوسين [[()]] في الآخر بينادوا الدالة الراجعة من غير arguments زيادة، فالناتج [["Hi Sara"]].`,
-          ],
-          sol: R`[[[1, 2, 3, 4].myFilter((x) => x % 2 === 0)]] بترجّع [[[2, 4]]]، و [[[1, 2, 3].myReduce((a, b) => a + b)]] بـ 6، و [[[].myReduce((a, b) => a + b)]] بترمي [[TypeError: Reduce of empty array with no initial value]] زي الأصلية بالظبط. عشان تفرّق بين «مفيش قيمة أولية» و «القيمة الأولية undefined» استخدم rest [[...init]] وافحص [[init.length]]، مش [[init === undefined]].
-
-myBind مع new: جوه الدالة اللي بترجّعها افحص [[new.target]]، ولو موجود اعمل [[new fn(...preset, ...args)]] وتجاهل الـ ctx. النتيجة: [[new (Point.myBind(null, 1))(2)]] بترجّع [[Point { x: 1, y: 2 }]] و [[instanceof Point]] بـ true. من غير الفحص ده النسخة البسيطة بترجّع [[{}]] فاضي و instanceof بـ false، لأن this راحت للـ ctx مش للـ object الجديد.`,
-          solCode: R`Array.prototype.myFilter = function (callback, thisArg) {
-  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
-  const result = [];
-  for (let i = 0; i < this.length; i++) {
-    if (i in this && callback.call(thisArg, this[i], i, this)) result.push(this[i]);
-  }
-  return result;
-};
-Array.prototype.myReduce = function (callback, ...init) {
-  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
-  let i = 0;
-  let acc;
-  if (init.length > 0) {
-    acc = init[0];
-  } else {
-    while (i < this.length && !(i in this)) i++;
-    if (i >= this.length) throw new TypeError("Reduce of empty array with no initial value");
-    acc = this[i++];
-  }
-  for (; i < this.length; i++) if (i in this) acc = callback(acc, this[i], i, this);
-  return acc;
-};
-Function.prototype.myBind = function (ctx, ...preset) {
-  const fn = this;
-  function bound(...args) {
-    if (new.target) return new fn(...preset, ...args);
-    return fn.apply(ctx, [...preset, ...args]);
-  }
-  if (fn.prototype) bound.prototype = Object.create(fn.prototype);
-  return bound;
-};
-function Point(x, y) { this.x = x; this.y = y; }
-const P = Point.myBind(null, 1);
-console.log(new P(2), new P(2) instanceof Point); // Point { x: 1, y: 2 } true`,
-          check: {
-            lang: "js",
-            starter: R`Array.prototype.myFilter = function (callback, thisArg) {
-  // ...
-};
-Array.prototype.myReduce = function (callback, ...init) {
-  // init.length بيفرّق بين «مفيش قيمة أولية» و «القيمة الأولية undefined»
-};
-Function.prototype.myBind = function (ctx, ...preset) {
-  const fn = this;
-  return function (...args) {
-    return fn.apply(ctx, [...preset, ...args]);
-  };
-};`,
-            tests: R`test("[1, 2, 3, 4].myFilter(زوجي) ← [2, 4]", () => expect([1, 2, 3, 4].myFilter((x) => x % 2 === 0)).toEqual([2, 4]));
-test("myFilter بتبعت (value, index, array)", () => expect(["a", "b", "c"].myFilter((v, i, arr) => i > 0 && arr.length === 3)).toEqual(["b", "c"]));
-test("[1, 2, 3].myReduce(جمع) ← 6، ومع قيمة أولية 10 ← 16", () => expect([[1, 2, 3].myReduce((a, b) => a + b), [1, 2, 3].myReduce((a, b) => a + b, 10)]).toEqual([6, 16]));
-test("[].myReduce من غير قيمة أولية ← TypeError", () => {
-  let err;
-  try { [].myReduce((a, b) => a + b); } catch (e) { err = e; }
-  expect(err instanceof TypeError).toBe(true);
-});
-test("القيمة الأولية undefined مش زي مفيش قيمة: [1].myReduce(f, undefined) ← [undefined, 1]", () => expect([1].myReduce((a, b) => [a, b], undefined)).toEqual([undefined, 1]));
-test("[].myReduce(f, 0) ← 0", () => expect([].myReduce((a, b) => a + b, 0)).toBe(0));
-test("myBind مع new: new (Point.myBind(null, 1))(2) instanceof Point و x = 1 و y = 2", () => {
-  function Point(x, y) { this.x = x; this.y = y; }
-  const P = Point.myBind(null, 1);
-  const p = new P(2);
-  expect([p instanceof Point, p.x, p.y]).toEqual([true, 1, 2]);
-});`,
-            solution: R`Array.prototype.myFilter = function (callback, thisArg) {
-  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
-  const result = [];
-  for (let i = 0; i < this.length; i++) {
-    if (i in this && callback.call(thisArg, this[i], i, this)) result.push(this[i]);
-  }
-  return result;
-};
-Array.prototype.myReduce = function (callback, ...init) {
-  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
-  let i = 0;
-  let acc;
-  if (init.length > 0) {
-    acc = init[0];
-  } else {
-    while (i < this.length && !(i in this)) i++;
-    if (i >= this.length) throw new TypeError("Reduce of empty array with no initial value");
-    acc = this[i++];
-  }
-  for (; i < this.length; i++) if (i in this) acc = callback(acc, this[i], i, this);
-  return acc;
-};
-Function.prototype.myBind = function (ctx, ...preset) {
-  const fn = this;
-  function bound(...args) {
-    if (new.target) return new fn(...preset, ...args);
-    return fn.apply(ctx, [...preset, ...args]);
-  }
-  if (fn.prototype) bound.prototype = Object.create(fn.prototype);
-  return bound;
-};`
-          }
-        },
-        {
-          cmd: "curry",
-          title: "اكتب دالة curry (currying)",
-          desc: R`الـ currying بيحوّل دالة بتاخد كذا argument مرة واحدة [[f(a, b, c)]] لسلسلة دوال كل واحدة بتاخد جزء [[f(a)(b)(c)]]. الـ implementation: بقارن عدد الـ arguments اللي اتجمعت بـ [[fn.length]] (عدد باراميترات الدالة). لو كفاية بنادي الدالة، ولو لأ برجّع دالة بتجمع الباقي وتنادي نفسها تاني. الفايدة العملية: تعمل نسخ «متظبطة» من دالة عامة، زي [[addTax]] بنسبة ثابتة.`,
-          example: R`function curry(fn) {
-  return function curried(...args) {
-    if (args.length >= fn.length) return fn.apply(this, args);
-    return (...more) => curried.apply(this, [...args, ...more]);
-  };
-}
-const add3 = (a, b, c) => a + b + c;
-const add = curry(add3);
-add(1)(2)(3);    // 6
-add(1, 2)(3);    // 6
-add(1)(2, 3);    // 6
-const withTax = curry((ratePct, price) => (price * (100 + ratePct)) / 100);
-const addVat = withTax(14);
-addVat(100);     // 114`,
-          try: R`اكتب [[sum(1)(2)(3)()]] بيرجّع 6 بأي عدد نداءات، ويخلص لما تناديه من غير arguments. ده سؤال تاني مشهور بنفس الفكرة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[sum]].`,
-          ref: [
-            { t: "MDN: Function: length", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/length" },
-            { t: "MDN: Closures", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Closures" },
-          ],
-          pre: [
-            { to: "js/Function: length و name و toString و new.target", why: R`الـ curry بيقرر يستنى ولا ينادي بـ [[fn.length]]، وقواعده مع الـ rest والـ defaults هناك` },
-          ],
-          practice: [
-            { lvl: 'سريع', t: R`اتوقع وبعدين شغّل بـ [[curry]] بتاع الدرس: [[curry((...a) => a.length)(1, 2)]] و [[curry((...a) => a.length)()]] و [[((a, b = 2) => {}).length]] و [[curry((a, b = 2) => a + b)(1)]].`, done: R`الناتج: 2 و 0 و 1 و 3، وتقدر تشرح إن [[fn.length]] مبيعدّش الـ rest parameter ولا أي باراميتر بعد أول default، فالـ curry بينادي الدالة على طول في الحالات دي.`, sol: R`**التوقع:** 2 و 0 و 1 و 3.
-
-~~~js curry.js
-function curry(fn) {
-  return function curried(...args) {
-    if (args.length >= fn.length) return fn.apply(this, args);
-    return (...more) => curried.apply(this, [...args, ...more]);
-  };
-}
-module.exports = { curry };
-~~~
-
-~~~js length.js
-const { curry } = require("./curry");
-console.log(curry((...a) => a.length)(1, 2));
-console.log(curry((...a) => a.length)());
-console.log(((a, b = 2) => {}).length);
-console.log(curry((a, b = 2) => a + b)(1));
-console.log("lengths:", ((...a) => {}).length, ((a, b = 2, c) => {}).length, ((a, b) => {}).length);
-~~~
-
-~~~text الناتج (node length.js)
-2
-0
-1
-3
-lengths: 0 1 2
-~~~
-
-**المفتاح كله في [[fn.length]]:** الـ curry بتاع الدرس بيقرر «أنادي الدالة ولا أستنى arguments تانية؟» بـ [[args.length >= fn.length]]. و [[fn.length]] بيعد الباراميترز **العادية اللي قبل أول default أو rest** بس (السطر الأخير بيوريها: rest بـ 0، و [[(a, b = 2, c)]] بـ 1 حتى إن [[c]] مالهاش default).
-
-| النداء | [[fn.length]] | اللي حصل |
-|---|---|---|
-| [[curry((...a) => a.length)(1, 2)]] | 0 | 2 أكبر من 0 فنادى على طول، والدالة رجّعت عدد الـ args: 2 |
-| [[curry((...a) => a.length)()]] | 0 | حتى صفر args أكبر من أو يساوي 0، فنادى: 0 |
-| [[((a, b = 2) => {}).length]] | 1 | [[b]] ليها default فمش محسوبة |
-| [[curry((a, b = 2) => a + b)(1)]] | 1 | arg واحد كفاية، فنادى و [[b]] خدت 2: النتيجة 3 |
-
-**الانترفيور بيختبر إيه:** إن الـ curry العام بيعتمد على [[fn.length]]، وإن ده بيبوظ مع الـ rest والـ defaults. **إجابة تتقال:** «length مبيعدّش الـ rest ولا اللي بعد أول default، فالـ curry بيشوف إن الدالة مش محتاجة arguments فبيناديها على طول؛ الحل إنك تبعت الـ arity بإيدك: [[curry(fn, n = fn.length)]]».
-
-**الغلطة الشائعة:** تتوقع إن [[curry((a, b = 2) => a + b)(1)]] يرجّع دالة مستنية [[b]].` },
-            { lvl: 'تطبيق', t: R`ابني على بيانات حقيقية الشكل: [[users.json]] فيه ٢٠ يوزر ([[{ name, role, city }]])، و [[const filterBy = curry((key, value, list) => list.filter((o) => o[key] === value))]]، واعمل منها [[admins]] و [[fromCairo]] جاهزين.`, done: R`[[admins(users)]] بيرجّع اليوزرز اللي [[role]] بتاعهم [["admin"]] بس، و [[fromCairo(admins(users))]] بيجمع الشرطين، و [[filterBy("role", "admin", users)]] مرة واحدة بيرجّع نفس نتيجة [[admins(users)]]، ولستة فاضية بترجّع لستة فاضية.`, sol: R`~~~json users.json
-[
-  {"name":"Sara","role":"admin","city":"Cairo"},
-  {"name":"Omar","role":"editor","city":"Cairo"},
-  {"name":"Mona","role":"viewer","city":"Alex"},
-  {"name":"Ali","role":"viewer","city":"Mansoura"},
-  {"name":"Nour","role":"admin","city":"Giza"},
-  {"name":"Hany","role":"editor","city":"Cairo"},
-  {"name":"Laila","role":"viewer","city":"Cairo"},
-  {"name":"Karim","role":"viewer","city":"Alex"},
-  {"name":"Dina","role":"admin","city":"Mansoura"},
-  {"name":"Tarek","role":"editor","city":"Giza"},
-  {"name":"Yara","role":"viewer","city":"Cairo"},
-  {"name":"Ziad","role":"viewer","city":"Cairo"},
-  {"name":"Reem","role":"admin","city":"Alex"},
-  {"name":"Adel","role":"editor","city":"Mansoura"},
-  {"name":"Heba","role":"viewer","city":"Giza"},
-  {"name":"Samy","role":"viewer","city":"Cairo"},
-  {"name":"Rana","role":"admin","city":"Cairo"},
-  {"name":"Fady","role":"editor","city":"Alex"},
-  {"name":"Mai","role":"viewer","city":"Mansoura"},
-  {"name":"Amr","role":"viewer","city":"Giza"}
-]
-~~~
-
-~~~js filter-users.js
-const { curry } = require("./curry");   // curry.js بتاع الدرس
-const users = require("./users.json");
-
-const filterBy = curry((key, value, list) => list.filter((o) => o[key] === value));
-const admins = filterBy("role", "admin");      // ناقصها list بس
-const fromCairo = filterBy("city", "Cairo");
-
-console.log("عدد اليوزرز:", users.length);
-console.log("admins:", admins(users).map((u) => u.name));
-console.log("admins من القاهرة:", fromCairo(admins(users)).map((u) => u.name));
-console.log("نفس النتيجة مرة واحدة:",
-  JSON.stringify(filterBy("role", "admin", users)) === JSON.stringify(admins(users)));
-console.log("لستة فاضية:", admins([]));
-~~~
-
-~~~text الناتج (node filter-users.js)
-عدد اليوزرز: 20
-admins: [ 'Sara', 'Nour', 'Dina', 'Reem', 'Rana' ]
-admins من القاهرة: [ 'Sara', 'Rana' ]
-نفس النتيجة مرة واحدة: true
-لستة فاضية: []
-~~~
-
-**ليه الترتيب [[(key, value, list)]]:** الـ curry بيملا الباراميترز من الشمال. فاللي بيتثبّت (الشرط) ييجي الأول، والداتا اللي بتتغير كل مرة تيجي **آخر حاجة**. لو كانت [[(list, key, value)]] مكنتش هتقدر تعمل [[admins]] جاهزة من غير list. دي قاعدة «data last» اللي مكتبات زي Ramda ماشية بيها.
-
-- **[[filterBy("role", "admin")]]:** اتنين من ٣، فالـ curry رجّع دالة مستنية الـ list.
-- **[[fromCairo(admins(users))]]:** الفلتر الأولاني بيرجّع array، والتاني بياخدها: الشرطين مع بعض من غير ما تكتب [[filter]] جديدة.
-- **المقارنة بـ [[JSON.stringify]]:** النتيجتين arrays مختلفة في الذاكرة، فـ [[===]] عليهم مباشرة هيطلع false؛ بنقارن المحتوى. (أو [[assert.deepStrictEqual]].)
-- **اللستة الفاضية:** [[filter]] على array فاضية بيرجّع array فاضية، فمحتاجناش حالة خاصة.
-
-**الغلطة الشائعة:** تكتب [[filterBy("role")("admin")]] وتنسى إن الناتج لسه دالة، فتطبع [[[Function (anonymous)]]] بدل اليوزرز.` },
-            { lvl: 'تحدي', t: R`مسألة: اكتب [[pipe(...fns)]] و [[compose(...fns)]]، واستخدمهم مع [[curry]]: [[const split = curry((sep, s) => s.split(sep));]] و [[pipe((s) => s.trim(), (s) => s.toLowerCase(), split(" "))]].`, done: R`الـ pipe على [["  Hello World "]] بيرجّع [["hello", "world"]]، و [[compose]] بنفس الدوال بالعكس بيرجّع نفس الناتج، و [[pipe()]] من غير دوال بترجّع المدخل زي ما هو، وتقدر تقول الفرق بين currying و partial application في جملتين.`, sol: R`~~~js pipe.js
-const { curry } = require("./curry");   // curry.js بتاع الدرس
-
-const pipe = (...fns) => (input) => fns.reduce((acc, fn) => fn(acc), input);
-const compose = (...fns) => (input) => fns.reduceRight((acc, fn) => fn(acc), input);
-
-const split = curry((sep, s) => s.split(sep));
-const trim = (s) => s.trim();
-const lower = (s) => s.toLowerCase();
-
-console.log(pipe(trim, lower, split(" "))("  Hello World "));
-console.log(compose(split(" "), lower, trim)("  Hello World "));
-console.log(pipe()("زي ما هو"));
-~~~
-
-~~~text الناتج (node pipe.js)
-[ 'hello', 'world' ]
-[ 'hello', 'world' ]
-زي ما هو
-~~~
-
-**الحل:**
-
-- **[[pipe]]:** [[reduce]] بيبدأ بالمدخل ([[input]] كقيمة أولية)، وكل دالة بتاخد ناتج اللي قبلها: [[split(" ")(lower(trim(input)))]]. الترتيب من الشمال لليمين، زي ما بتقراه.
-- **[[compose]]:** نفس الفكرة بـ [[reduceRight]]، فالترتيب من اليمين للشمال زي الرياضيات (f∘g). عشان كده كتبنا الدوال بالعكس وطلع نفس الناتج.
-- **[[pipe()]] فاضية:** [[reduce]] على array فاضية **ومعاه قيمة أولية** بيرجّع القيمة الأولية، فالمدخل بيرجع زي ما هو. (من غير قيمة أولية كان هيرمي TypeError.)
-- **[[split(" ")]]:** الـ curry خلاها دالة بتاخد arg واحد (النص)، فاتحطت في الـ pipe زي [[trim]] بالظبط. ده سبب إن الـ curry والـ pipe بيتسألوا مع بعض.
-
-**currying و partial application في جملتين:** الـ currying بيحوّل دالة بـ n باراميترز لسلسلة دوال كل واحدة بتاخد arg واحد ([[f(a)(b)(c)]]). الـ partial application بيثبّت شوية arguments ويرجّع دالة بالباقي مرة واحدة ([[f.bind(null, a)]] بترجّع دالة بتاخد [[b, c]] مع بعض)؛ والـ curry بتاع الدرس بيعمل الاتنين لأنه بيقبل أكتر من arg في النداء.
-
-**الغلطة الشائعة:** تنسى القيمة الأولية في [[reduce]]، فأول دالة مبتتنداش على المدخل وتستخدم الدالة الأولى نفسها كـ acc.` },
-          ],
-          flag: "script",
-          deep: {
-            why: "بيختبر closures و recursion و fn.length و rest/spread. وفكرته (partial application) موجودة في الشغل الحقيقي حتى لو مش بالاسم ده: [[bind]] مع arguments، و factories، و middleware.",
-            how: R`نقط تقولها: [[fn.length]] بيعد الباراميترات قبل أول واحد ليه default أو rest، فمع [[(a, b = 1) => ...]] الطول 1، ومع [[(...args)]] صفر، فالـ curry مش هيشتغل صح معاهم. وكل نداء جزئي بيعمل closure جديد شايل الـ args اللي اتجمعت، فتقدر تعيد استخدام [[add(1)]] مع أرقام مختلفة من غير ما يتلخبطوا. والفرق بين currying (argument واحد كل مرة) و partial application (تثبيت جزء).`,
-            when: "«الفرق بين currying و partial application؟»، و «sum(1)(2)(3)» بكل أشكاله، و «compose و pipe».",
-            mistakes: R`تعدّل [[args]] المتجمعة (push) فالنداءات الجزئية تتلخبط مع بعض: اعمل array جديدة كل مرة. وتنسى الحالة اللي فيها arguments أكتر من المطلوب.`
-          },
-          teach: R`## الفكرة في سطر
-
-[[curry(fn)]] بترجّع نسخة من [[fn]] تقدر تبعتلها الـ arguments على دفعات. كل مرة بتعدّ اللي اتجمع: لو كفاية تنادي [[fn]]، ولو لأ ترجّع دالة تستنى الباقي.
-
-شغّلت المثال في Node 24، وضفت سطر [[console.log]] جوه [[curried]] يطبع الـ arguments اللي اتجمعت كل مرة.
-
----
-
-## ١. [[fn.length]]
-
-~~~text app.js
-const add3 = (a, b, c) => a + b + c;
-console.log(add3.length);
-~~~
-
-~~~text الناتج
-3
-~~~
-
-[[length]] على دالة = عدد الباراميترات اللي مكتوبة. ده اللي [[curry]] بتعرف منه «محتاج كام؟».
-
-بس فيه استثناء: بيعد لحد أول باراميتر ليه default أو rest:
-
-~~~text الناتج
-1 0
-~~~
-
-ده [[((a, b = 1) => a).length]] و [[((...r) => r).length]]. مع دوال زي دي [[curry]] هتنادي بدري.
-
----
-
-## ٢. [[curry]] سطر سطر
-
-~~~text app.js
-function curry(fn) {
-  return function curried(...args) {
-    if (args.length >= fn.length) return fn.apply(this, args);
-    return (...more) => curried.apply(this, [...args, ...more]);
-  };
-}
-~~~
-
-1. [[curry(fn)]] مش بتنادي [[fn]]: بترجّع دالة اسمها [[curried]].
-2. [[function curried(...args)]]: دالة **ليها اسم** عشان تقدر تنادي نفسها من جوه. [[...args]] بيلم كل اللي اتبعت في array.
-3. [[args.length >= fn.length]]: اتجمع كفاية (أو أكتر)؟ نادي الأصلية بيهم. [[apply(this, args)]] بتبعت الـ array كـ arguments منفصلة، وبتعدّي [[this]] زي ما هو لو كانت method.
-4. لو مش كفاية: رجّع arrow بتستنى [[...more]]، ولما تتنادى تنادي [[curried]] تاني بـ [[[...args, ...more]]]: اللي فات واللي جه، في array **جديدة**.
-
-ليه array جديدة ومش [[args.push(...more)]]؟ لأن [[args]] محفوظة في الـ closure. لو عدّلتها، أي نداء تاني من نفس الدالة الجزئية هيلاقيها متغيرة.
-
----
-
-## ٣. التشغيل
-
-~~~text app.js
-const add = curry(add3);
-add(1)(2)(3);
-add(1, 2)(3);
-add(1)(2, 3);
-~~~
-
-~~~text الناتج (مع الـ console.log اللي ضفته)
-  curried اتنادت بـ [ 1 ] ← محتاجين 3
-  curried اتنادت بـ [ 1, 2 ] ← محتاجين 3
-  curried اتنادت بـ [ 1, 2, 3 ] ← محتاجين 3
-6
-  curried اتنادت بـ [ 1, 2 ] ← محتاجين 3
-  curried اتنادت بـ [ 1, 2, 3 ] ← محتاجين 3
-6
-  curried اتنادت بـ [ 1 ] ← محتاجين 3
-  curried اتنادت بـ [ 1, 2, 3 ] ← محتاجين 3
-6
-~~~
-
-- [[add(1)(2)(3)]]: [[curried]] اتنادت ٣ مرات، والـ array كبرت لحد ما بقت 3.
-- [[add(1, 2)(3)]]: أول مرة جه اتنين، فمرتين بس.
-- [[add(1)(2, 3)]]: نفس الكلام بالعكس.
-
-وجربت كمان:
-
-~~~text الناتج
-function
-6
-~~~
-
-- [[typeof add(1)]] = [["function"]]: لسه مستنية.
-- [[add(1, 2, 3, 4)]] = 6: [[>=]] بتسمح بأكتر من المطلوب، و [[add3]] بتتجاهل الرابع.
-
----
-
-## ٤. الاستخدام العملي: ضريبة
-
-~~~text app.js
-const withTax = curry((ratePct, price) => (price * (100 + ratePct)) / 100);
-const addVat = withTax(14);
-addVat(100);
-~~~
-
-~~~text الناتج
-  curried اتنادت بـ [ 14 ] ← محتاجين 2
-  curried اتنادت بـ [ 14, 100 ] ← محتاجين 2
-114
-  curried اتنادت بـ [ 14, 250 ] ← محتاجين 2
-285
-~~~
-
-- [[withTax(14)]]: ثبّتنا النسبة 14٪، فرجعت دالة [[addVat]] فاكرة [[[14]]].
-- [[addVat(100)]]: [[100 × 114 ÷ 100 = 114]].
-- [[addVat(250)]]: [[250 × 114 ÷ 100 = 285]]، ومن غير ما تتلخبط بالنداء اللي قبله، لأن كل نداء بيعمل array جديدة.
-- ليه [[price * (100 + ratePct) / 100]] مش [[price * 1.14]]؟ عشان الضرب في كسر عشري ممكن يطلع أرقام غريبة: جربت [[100 * 1.14]] في Node وطلعت [[113.99999999999999]] (درس floating point)، والضرب في أرقام صحيحة الأول أأمن.
-
----
-
-## الخلاصة
-
-| الحتة | ليه |
-|---|---|
-| [[fn.length]] | عدد الباراميترات المطلوبة |
-| [[function curried]] بالاسم | تنادي نفسها |
-| [[>=]] | arguments زيادة مسموحة |
-| [[[...args, ...more]]] | array جديدة كل مرة، فالنسخ الجزئية متتلخبطش |
-| closure | كل دالة جزئية فاكرة اللي اتجمع لحد عندها |
-
-> في التمرين اللي تحت ([[sum(1)(2)(3)()]]) مفيش [[fn.length]] تعرف منه إمتى تخلص، فالنهاية هي النداء الفاضي. وخلي بالك من الـ starter: فيه مجموع global، وده بالظبط اللي الاختبار الرابع بيمسكه.`,
-          lines: [
-            R`[[curry]] بتاخد دالة عادية بكذا باراميتر، وبترجّع نسخة تقدر تدّيها الـ arguments على دفعات بدل مرة واحدة.`,
-            R`بترجّع دالة ليها اسم [[curried]] عشان تقدر تنادي نفسها في السطر الجاي. و [[...args]] بتجمع اللي اتبعت في النداء ده في array.`,
-            R`[[fn.length]] عدد الباراميترات اللي الدالة الأصلية متعرّفة بيها. لو اللي اتجمع لحد دلوقتي كفاية بننادي الأصلية بيه ونرجّع الناتج. خلي بالك: الباراميتر اللي ليه default أو [[...rest]] مبيتحسبش في [[length]]، فـ curry دي مش هتشتغل صح مع الدوال دي.`,
-            R`لو مش كفاية، بنرجّع دالة جديدة مستنية الباقي ([[...more]]). لما تتنادى بتلزق القديم على الجديد وتنادي [[curried]] تاني، فتتأكد هل كفاية ولا لسه. والـ arrow هنا بتحافظ على [[this]] بتاع النداء الأول.`,
-            R`نهاية [[curried]].`,
-            R`نهاية [[curry]].`,
-            R`دالة جمع عادية بتلات باراميترات، فـ [[fn.length]] بتاعها 3. ده الرقم اللي [[curry]] هتستناه قبل ما تحسب.`,
-            R`[[add]] النسخة الـ curried من [[add3]]. لسه محسبتش حاجة، هي بس مستنية arguments.`,
-            R`كل نداء بياخد argument واحد: [[add(1)]] بترجّع دالة، و [[(2)]] بترجّع دالة، و [[(3)]] أخيرًا بتكمّل التلاتة وتحسب 6.`,
-            R`أول نداء بياخد اتنين مرة واحدة فيفضل ناقص واحد بس، والنداء التاني بيكمّله. نفس الناتج 6.`,
-            R`العكس: واحد الأول واتنين بعده. يعني [[curry]] دي مرنة، وأي تقسيمة للـ arguments بتوصل لنفس الناتج.`,
-            R`الاستخدام الحقيقي: دالة ضريبة عامة بتاخد النسبة الأول والسعر بعدها، و [[curry]] بتخلينا نثبّت النسبة مرة. ترتيب الباراميترات مهم: اللي بيتثبّت الأول، واللي بيتغير كل مرة في الآخر.`,
-            R`ادّيناها النسبة بس، فرجعت دالة مستنية السعر ومتظبطة على ١٤٪ (ضريبة القيمة المضافة في مصر). تقدر تستخدمها في أي مكان محتاج دالة بتاخد سعر، زي [[prices.map(addVat)]].`,
-            R`بيحسب [[100 * 114 / 100]] = 114. ضربنا في ١١٤ الأول وقسمنا بعدين بدل [[price * 1.14]]، لأن [[100 * 1.14]] في JavaScript بتطلع [[113.99999999999999]].`,
-          ],
-          sol: R`[[sum(1)(2)(3)()]] بترجّع 6، و [[sum(5)()]] بترجّع 5، و [[sum(1)(2)(3)(4)(10)()]] بترجّع 20. الفكرة إن كل نداء فيه رقم بيرجّع دالة جديدة شايلة المجموع لحد دلوقتي في الـ closure، والنداء الفاضي هو اللي بيرجّع الرقم.
-
-الفرق عن curry اللي فوق إن هنا مفيش عدد arguments معروف ([[fn.length]])، فلازم إشارة للنهاية، وهي النداء الفاضي. الغلطة الشائعة إنك تخزّن المجموع في متغير برّه الدالة (global)، فنداء [[sum(1)(2)()]] التاني يبدأ من المجموع القديم. ولو نسيت [[()]] في الآخر هتطبع [[[Function: next]]] بدل الرقم.`,
-          solCode: R`function sum(a) {
-  return function next(b) {
-    if (b === undefined) return a;
-    return sum(a + b);
-  };
-}
-console.log(sum(1)(2)(3)());        // 6
-console.log(sum(5)());              // 5
-console.log(sum(1)(2)(3)(4)(10)()); // 20`,
-          check: {
-            lang: "js",
-            starter: R`let total = 0;
-function sum(a) {
-  total += a;
-  return function next(b) {
-    if (b === undefined) return total;
-    return sum(b);
-  };
-}`,
-            tests: R`test("sum(1)(2)(3)() ← 6", () => expect(sum(1)(2)(3)()).toBe(6));
-test("sum(5)() ← 5", () => expect(sum(5)()).toBe(5));
-test("sum(1)(2)(3)(4)(10)() ← 20", () => expect(sum(1)(2)(3)(4)(10)()).toBe(20));
-test("كل سلسلة مستقلة (مفيش مجموع global): a = sum(1)، و a(2)() ← 3، و a(10)() ← 11", () => {
-  const a = sum(1);
-  expect([a(2)(), a(10)()]).toEqual([3, 11]);
-});
-test("النداء الفاضي بس اللي بيرجّع رقم", () => expect(typeof sum(1)(2)).toBe("function"));`,
-            solution: R`function sum(a) {
-  return function next(b) {
-    if (b === undefined) return a;
-    return sum(a + b);
-  };
-}`
-          }
-        },
-        {
-          cmd: "deep equal",
-          title: "قارن اتنين objects بالمحتوى (deep equal)",
-          desc: R`=== بيقارن الـ reference، فمحتاج دالة recursive. الأول لو [[Object.is(a, b)]] يبقى متساويين (بتغطي الـ primitives و NaN ونفس الـ reference). لو واحد فيهم مش object أو null يبقى مختلفين. لو واحد array والتاني لأ مختلفين. بعد كده أقارن عدد المفاتيح، وبعدين كل مفتاح موجود في التاني وقيمته متساوية بنفس الدالة.`,
-          example: R`function deepEqual(a, b) {
-  if (Object.is(a, b)) return true;
-  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
-  if (Array.isArray(a) !== Array.isArray(b)) return false;
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-  if (keysA.length !== keysB.length) return false;
-  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k]));
-}
-deepEqual({ a: [1, { b: 2 }] }, { a: [1, { b: 2 }] }); // true
-deepEqual({ a: 1 }, { a: "1" });                       // false
-deepEqual([1, 2], { 0: 1, 1: 2 });                     // false
-deepEqual(NaN, NaN);                                   // true
-deepEqual(new Date(1), new Date(2));                   // true! غلط: حدود النسخة دي
-deepEqual(/a/g, /b/i);                                 // true! غلط برضه`,
-          try: R`ضيف دعم لـ Date (قارن [[getTime()]]) و RegExp (قارن [[source]] و [[flags]]) و Map و Set. وبعدين جرّب object بيشاور على نفسه ([[a.self = a]]) وشوف الـ stack overflow، وفكّر إزاي تحلها بـ WeakMap للأزواج اللي اتقارنت. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[deepEqual]] مع Date و RegExp و Map و Set، والـ object اللي بيشاور على نفسه.`,
-          ref: [
-            { t: "MDN: Equality comparisons and sameness", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Equality_comparisons_and_sameness" },
-            { t: "MDN: Object.is()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is" },
-            { t: "MDN: Object.keys()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys" },
-            { t: "MDN: Object.hasOwn()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwn" },
-          ],
-          pre: [
-            { to: "js/reference و copy", why: R`[[===]] على objects بيقارن الـ reference، وده سبب إننا محتاجين deep equal أصلًا` },
-          ],
-          practice: [
-            { lvl: 'سريع', t: R`اتوقع بـ [[deepEqual]] بتاع الدرس: [[deepEqual([1, 2, 3], [1, 2, 3])]] و [[deepEqual({ a: 1, b: 2 }, { b: 2, a: 1 })]] و [[deepEqual({ a: undefined }, { b: undefined })]] و [[deepEqual(0, -0)]] و [[deepEqual(new Date(1), new Date(2))]].`, done: R`الناتج: [[true]] و [[true]] و [[false]] و [[false]] و [[true]]. الأخير مفاجأة: الـ Date ملوش keys خاصة بيه فالدالة بتشوف اتنين objects فاضيين، و 0 و -0 مختلفين عشان [[Object.is]]، وتقدر تقول إمتى ده يبقى bug.`, sol: R`**التوقع:** [[true]] و [[true]] و [[false]] و [[false]] و [[true]].
-
-~~~js deep-equal.js
-function deepEqual(a, b) {
-  if (Object.is(a, b)) return true;
-  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
-  if (Array.isArray(a) !== Array.isArray(b)) return false;
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-  if (keysA.length !== keysB.length) return false;
-  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k]));
-}
-module.exports = { deepEqual };
-~~~
-
-~~~js predict.js
-const { deepEqual } = require("./deep-equal");
-console.log(deepEqual([1, 2, 3], [1, 2, 3]));
-console.log(deepEqual({ a: 1, b: 2 }, { b: 2, a: 1 }));
-console.log(deepEqual({ a: undefined }, { b: undefined }));
-console.log(deepEqual(0, -0));
-console.log(deepEqual(new Date(1), new Date(2)));
-console.log(Object.keys(new Date(1)));
-~~~
-
-~~~text الناتج (node predict.js)
-true
-true
-false
-false
-true
-[]
-~~~
-
-**كل سطر:**
-
-1. arrays نفس العناصر: [[Object.keys]] بيرجّع [[["0","1","2"]]] للاتنين، وكل عنصر [[Object.is]] بيقول true.
-2. الترتيب مش فارق: [[every]] بيلف على مفاتيح [[a]] ويدوّر على كل واحد في [[b]] بالاسم.
-3. [[{ a: undefined }]] و [[{ b: undefined }]]: عدد المفاتيح واحد، بس [[Object.hasOwn(b, "a")]] بـ false. من غير الفحص ده كان [[b.a]] هيطلع undefined ويساوي [[a.a]] ويقول true غلط.
-4. [[0]] و [[-0]]: [[Object.is(0, -0)]] بـ false (مع إن [[0 === -0]] بـ true)، وبعدها مش objects فبيرجع false.
-5. الـ Date: [[Object.keys(new Date(1))]] بـ array فاضية (السطر الأخير). الوقت جوه الـ Date في internal slot مش property، فالدالة شافت اتنين objects فاضيين وقالت true.
-
-**إمتى ده bug:** لو بتقارن state فيها تواريخ (مثلًا «الفورم اتغيّر؟» عشان تفعّل زرار الحفظ)، تغيير التاريخ لوحده مش هيتشاف. التصليح: [[if (a instanceof Date && b instanceof Date) return a.getTime() === b.getTime();]] قبل مقارنة المفاتيح، ونفس الفكرة لـ RegExp و Map و Set.
-
-**وإمتى 0 و -0 يبقوا مشكلة:** في الغالب عايزهم متساويين (زي [[===]])، فلو بتقارن داتا من فورم استخدم [[===]] للأرقام. [[Object.is]] اتاختار عشان [[NaN]] يساوي [[NaN]].
-
-**إجابة تتقال:** «deep equal بيقارن المفاتيح الخاصة بالـ recursion، فأي object حالته جوه internal slots زي Date و Map بيبان فاضي ولازم حالة خاصة ليه».` },
-            { lvl: 'تطبيق', t: R`قارن: ليه [[JSON.stringify(a) === JSON.stringify(b)]] مش deep equal؟ جرّب [[{ a: 1, b: 2 }]] مقابل [[{ b: 2, a: 1 }]]، و [[{ a: undefined }]] مقابل [[{}]]، و [[NaN]] مقابل [[null]] جوه array، واكتب جدول صغير بالنتيجة بالطريقتين.`, done: R`الـ JSON بيقول [[false]] للأولى (ترتيب المفاتيح) و [[true]] للتانية و [[true]] للتالتة ([[NaN]] بيتحوّل [[null]])، و [[deepEqual]] بيقول [[true]] و [[false]] و [[false]]، والجدول فيه الست نتايج دول.`, sol: R`~~~js json-vs-deep.js
-const { deepEqual } = require("./deep-equal");   // deep-equal.js بتاع الدرس
-const viaJSON = (a, b) => JSON.stringify(a) === JSON.stringify(b);
-
-const cases = [
-  ["ترتيب المفاتيح", { a: 1, b: 2 }, { b: 2, a: 1 }],
-  ["undefined مقابل مفيش", { a: undefined }, {}],
-  ["NaN مقابل null", [NaN], [null]],
+const list = [
+  { src: 'lesson.mov', type: 'video/quicktime' },
+  { src: 'lesson.ogv', type: 'video/ogg; codecs="theora"' },
+  { src: 'lesson.mkv', type: 'video/x-matroska' },
+  { src: 'lesson.webm', type: 'video/webm; codecs="av01.0.05M.08, opus"' },
+  { src: 'lesson.mp4', type: 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"' },
 ];
-console.table(cases.map(([name, a, b]) => ({ الحالة: name, JSON: viaJSON(a, b), deepEqual: deepEqual(a, b) })));
-console.log(JSON.stringify({ a: 1, b: 2 }), JSON.stringify({ b: 2, a: 1 }));
-console.log(JSON.stringify({ a: undefined }), JSON.stringify([NaN]));
+console.log(pickSource(list));
+console.log(pickSource([list[0], list[2]]));
+console.log(pickSource([list[0]]));
 ~~~
 
-~~~text الناتج (node json-vs-deep.js)
-┌─────────┬────────────────────────┬───────┬───────────┐
-│ (index) │ الحالة                 │ JSON  │ deepEqual │
-├─────────┼────────────────────────┼───────┼───────────┤
-│ 0       │ 'ترتيب المفاتيح'       │ false │ true      │
-│ 1       │ 'undefined مقابل مفيش' │ true  │ false     │
-│ 2       │ 'NaN مقابل null'       │ true  │ false     │
-└─────────┴────────────────────────┴───────┴───────────┘
-{"a":1,"b":2} {"b":2,"a":1}
-{} [null]
+~~~text الناتج (Chrome 157)
+{ src: 'lesson.webm', type: 'video/webm; codecs="av01.0.05M.08, opus"' }
+{ src: 'lesson.mkv', type: 'video/x-matroska' }
+null
 ~~~
 
-**الجدول:**
-
-| الحالة | JSON | deepEqual | ليه الـ JSON غلط |
-|---|---|---|---|
-| [[{ a: 1, b: 2 }]] و [[{ b: 2, a: 1 }]] | false | true | النص بيتكتب بترتيب إضافة المفاتيح، فالنصين مختلفين مع إن الـ objects نفس المحتوى |
-| [[{ a: undefined }]] و [[{}]] | true | false | [[JSON.stringify]] بيشيل أي key قيمته undefined، فالاتنين بقوا [["{}"]] |
-| [[[NaN]]] و [[[null]]] | true | false | JSON مفيهوش NaN، فبيتكتب [[null]] |
-
-السطرين اللي تحت الجدول بيوروا النصوص نفسها، وده السبب بالظبط.
-
-**الـ JSON بيغلط في الاتجاهين:** بيقول «مختلفين» لحاجات متساوية (الترتيب)، وبيقول «متساويين» لحاجات مختلفة (undefined و NaN، وكمان Date بيبقى string، و Map و Set بيبقوا [["{}"]]، والدوال بتختفي). ولو فيه object بيشاور على نفسه بيرمي [[TypeError: Converting circular structure to JSON]].
-
-**إمتى الـ JSON مقبول:** لو الداتا أصلًا جاية من JSON (رد API) ومتولدة بنفس الكود، فالترتيب ثابت ومفيش undefined ولا NaN. بس مش في انترفيو، ومش كـ deep equal عام.
-
-**إجابة تتقال:** «stringify حساس لترتيب المفاتيح، وبيضيّع undefined وبيحوّل NaN لـ null، فبيدّي false غلط و true غلط».` },
-            { lvl: 'تحدي', t: R`مسألة: اكتب [[diff(a, b)]] بترجّع لستة الـ paths اللي فيها اختلاف، بالـ recursion، و [[Object.is]] للقيم البسيطة.`, done: R`[[diff({ a: 1, b: { c: 2 } }, { a: 1, b: { c: 3 }, d: 4 })]] بيرجّع [["b.c", "d"]]، و [[diff(x, x)]] بيرجّع لستة فاضية، و key موجود في الأول بس بيظهر، والـ arrays بتطلع paths زي [["items.0"]].`, sol: R`~~~js diff.js
-function diff(a, b, path = "") {
-  if (Object.is(a, b)) return [];
-  const bothObjects = a !== null && b !== null && typeof a === "object" && typeof b === "object"
-    && Array.isArray(a) === Array.isArray(b);
-  if (!bothObjects) return [path];                     // قيمة بسيطة مختلفة، أو نوع مختلف
-
-  const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
-  const out = [];
-  for (const k of keys) {
-    const p = path ? path + "." + k : k;
-    if (!Object.hasOwn(a, k) || !Object.hasOwn(b, k)) out.push(p);   // موجود في واحد بس
-    else out.push(...diff(a[k], b[k], p));
-  }
-  return out;
-}
-
-const x = { items: [1, 2], user: { name: "Sara" } };
-console.log(diff({ a: 1, b: { c: 2 } }, { a: 1, b: { c: 3 }, d: 4 }));
-console.log(diff(x, x));
-console.log(diff({ only: 1, same: 2 }, { same: 2 }));
-console.log(diff({ items: [1, 2, 3] }, { items: [1, 5] }));
-console.log(diff({ v: [1] }, { v: { 0: 1 } }));
-console.log(diff(1, 2));
-~~~
-
-~~~text الناتج (node diff.js)
-[ 'b.c', 'd' ]
-[]
-[ 'only' ]
-[ 'items.1', 'items.2' ]
-[ 'v' ]
-[ '' ]
-~~~
-
-**نفس هيكل [[deepEqual]] بس بيجمع بدل ما يقف:**
-
-- **[[Object.is(a, b)]] الأول:** لو نفس القيمة (أو نفس الـ object بالظبط) مفيش فرق، وده اللي خلّى [[diff(x, x)]] ترجع فاضية على طول من غير ما تلف.
-- **[[bothObjects]]:** لو واحد فيهم مش object، أو واحد array والتاني object، يبقى المكان ده كله مختلف ونرجّع الـ path بتاعه (حالة [[v]]: array مقابل object ليه نفس المفاتيح).
-- **[[new Set([...keys a, ...keys b])]]:** مفاتيح الاتنين من غير تكرار، عشان الـ key اللي في [[b]] بس ([[d]]) أو في [[a]] بس ([[only]]) يظهر.
-- **[[path ? path + "." + k : k]]:** أول مستوى من غير نقطة في الأول. والـ arrays مفاتيحها [["0"]] و [["1"]] فبتطلع [["items.1"]] لوحدها.
-- **السطر الأخير:** لو الجذر نفسه مختلف الـ path نص فاضي، يعني «القيمة كلها». لو عايزه أوضح رجّع [[["(root)"]]].
-
-**الغلطة الشائعة:** تلف على مفاتيح [[a]] بس (زي [[deepEqual]])، فالمفاتيح الجديدة في [[b]] متظهرش. أو تكتب [[a[k] === undefined]] بدل [[Object.hasOwn]]، فـ [[{ k: undefined }]] و [[{}]] يبانوا زي بعض.` },
+- الـ WebM بـ AV1 والـ MP4 بـ H.264 الاتنين [["probably"]]، فكسب اللي قبل في اللستة. **الترتيب هو الأولوية:** حط الأصغر حجمًا (AV1 ثم VP9) الأول، والأوسع انتشارًا (H.264) في الآخر كاحتياطي. نفس قاعدة [[<source>]] في HTML.
+- [[video/x-matroska]] من غير codecs = [["maybe"]]: النوع معروف بس ممكن يكون جواه حاجة مش مدعومة.
+- [[quicktime]] و Theora = [[""]] على Chrome 157: فاضي يعني «لأ أكيد».
+- [["probably"]] مش وعد: الملف ممكن يبقى بايظ أو تقيل على الجهاز. الضمان الحقيقي هو حدث [[error]] (درس الأخطاء) و [[decodingInfo]] للـ smooth.` },
           ],
+          check: { lang: "js", starter: R`function formatTime(s) {
+  // 75.4 => "1:15"، 3725.9 => "1:02:05"، NaN أو Infinity أو سالب => "--:--"
+}`, tests: R`test("صفر", () => expect(formatTime(0)).toBe("0:00"));
+test("ثواني بس ومن غير تقريب لفوق", () => expect(formatTime(9.99)).toBe("0:09"));
+test("دقيقة وشوية", () => expect(formatTime(75.4)).toBe("1:15"));
+test("آخر ثانية قبل الساعة", () => expect(formatTime(3599)).toBe("59:59"));
+test("ساعة بالظبط", () => expect(formatTime(3600)).toBe("1:00:00"));
+test("ساعة ودقيقتين", () => expect(formatTime(3725.9)).toBe("1:02:05"));
+test("NaN قبل الـ metadata", () => expect(formatTime(NaN)).toBe("--:--"));
+test("Infinity في البث", () => expect(formatTime(Infinity)).toBe("--:--"));
+test("سالب", () => expect(formatTime(-3)).toBe("--:--"));`, solution: R`function formatTime(s) {
+  if (!Number.isFinite(s) || s < 0) return '--:--';
+  s = Math.floor(s);
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = String(s % 60).padStart(2, '0');
+  return h ? h + ':' + String(m).padStart(2, '0') + ':' + sec : m + ':' + sec;
+}` },
           flag: "script",
           deep: {
-            why: "بيختبر recursion، والفرق بين الـ reference والقيمة، والحالات الحدية (null و NaN و arrays مقابل objects). وهي نفس الفكرة اللي ورا [[expect(x).toEqual(y)]] في الـ tests و [[assert.deepStrictEqual]] في Node.",
-            how: R`نقط تقولها: [[typeof null]] بـ "object" فلازم فحص null لوحده. و [[Object.is]] بدل === عشان NaN. والـ prototype مش بيتقارن هنا (instance من class ممكن يساوي object عادي بنفس المفاتيح)، والنسخ الكاملة بتقارن [[Object.getPrototypeOf]]. والتعقيد O(n) في عدد القيم كلها. والمراجع الدائرية محتاجة تتبّع الأزواج اللي بتتقارن. وفي الشغل: [[node:util]] فيه [[isDeepStrictEqual]] جاهز.`,
-            when: R`«اكتب deep clone» (نفس الـ recursion، واذكر structuredClone)، و «flatten object لمفاتيح بنقط» ([[{a: {b: 1}}]] → [[{"a.b": 1}]])، و «get(obj, 'a.b.c')».`,
-            mistakes: R`تقارن بـ [[JSON.stringify]]: ترتيب المفاتيح بيفرق، و undefined بيختفي، و NaN بتبقى null. ونسيان فحص null. ونسيان إن [[[]]] و [[{}]] الفاضيين ليهم نفس عدد المفاتيح.`
+            why: R`[[controls]] في HTML بيدّيك مشغّل جاهز، بس مجرد ما تحتاج حاجة واحدة زيادة (زرار «قدّم ١٠ ثواني»، أو تفتكر مكان اليوزر، أو تشغّل صوت لما حاجة تحصل، أو تعرف الفيديو خلص عشان تفتح الدرس اللي بعده) لازم تكلّم العنصر من JavaScript. و [[HTMLMediaElement]] هو الـ API الوحيد لده، وكل مكتبة مشغّلات (Video.js و Plyr و hls.js) فوقه. والصيغ مهمة لأن مفيش صيغة واحدة شغالة بنفس الكفاءة في كل مكان: AV1 أصغر بكتير بس أتقل على الأجهزة القديمة، و H.264 في كل حتة بس أكبر.`,
+            how: R`لما تحط [[src]]، المتصفح بيبدأ «resource selection»: بيطلب الملف (بـ [[Range: bytes=0-]] زي ما شفنا في لوج السيرفر)، ويقرا الـ header بتاع الـ container عشان يعرف المدة والمقاس والـ codecs. ساعتها [[readyState]] بيبقى 1 ويتبعت [[loadedmetadata]]. بعدين بيفك (decode) أول frames ويبقى 2 ثم 3 ([[canplay]]) ثم 4 ([[canplaythrough]]) لما يحسب إن التحميل أسرع من التشغيل.
+
+[[play()]] بيتحقق من سياسة الـ autoplay (لازم ضغطة، أو العنصر [[muted]] لو فيديو)، ولو مسموح بيبعت [[play]] على طول، ولما الداتا تكفي يبعت [[playing]] ويحقق الـ Promise. أثناء التشغيل [[currentTime]] بيزيد بالسرعة [[playbackRate]] وبيتبعت [[timeupdate]] كل حوالي ٢٥٠ ms. لو الداتا خلصت قبل الوقت: [[waiting]]، ولما ترجع: [[playing]] تاني. وأي كتابة في [[currentTime]] = seek: [[seeking]] ثم [[seeked]]، والقيمة بتتقص على [[0]] و [[duration]]. في الآخر: [[paused]] تبقى [[true]] ويتبعت [[pause]] ثم [[ended]].`,
+            when: R`كل ما تحتاج تتحكم أو تعرف: زراير خاصة، وحفظ المكان، وتشغيل الدرس اللي بعده عند [[ended]]، وتحليلات (اتفرج قد إيه)، وأصوات تنبيه صغيرة بـ [[new Audio('ding.mp3')]]، وتشغيل/إيقاف فيديو لما يظهر في الشاشة (مع [[IntersectionObserver]]). واسأل [[canPlayType]] لما بتختار ملف من JavaScript (مش من [[<source>]])، و [[decodingInfo]] لما عندك أكتر من جودة وعايز تختار اللي مش هيقطّع.`,
+            mistakes: R`- [[v.play()]] من غير [[catch]]: [[Uncaught (in promise) NotAllowedError]] في الـ Console، واليوزر مش عارف إن فيه زرار المفروض يدوسه.
+- تقرا [[duration]] على طول بعد [[src]]: [[NaN]]. استنى [[loadedmetadata]] أو شيك [[readyState >= 1]].
+- تدوّر على [[stop()]]: مش موجودة ([[TypeError: v.stop is not a function]]). [[pause()]] و [[currentTime = 0]].
+- [[v.volume = 2]] أو [[-0.1]]: [[IndexSizeError]]. استخدم [[Math.min(Math.max(x, 0), 1)]].
+- [[playbackRate = 20]] أو بالسالب: [[NotSupportedError]] في Chrome. المسموح اتقاس من [[0.0625]] لـ [[16]]، و [[0]] مسموح وبيوقّف الوقت من غير ما يبعت [[pause]].
+- تحدّث شريط ناعم من [[timeupdate]]: هيتنطط ٤ مرات في الثانية.
+- تفتكر [[canPlayType('video/mp4')]] = [["probably"]] كفاية: من غير codecs هو [["maybe"]] بس، وممكن الملف يبقى HEVC والجهاز ميعرفش يفكه.`,
           },
           teach: R`## الفكرة في سطر
 
-[[===]] على objects بيسأل «ده نفس الـ object في الميموري؟» مش «جواهم نفس الحاجة؟». [[deepEqual]] بتنزل جوه الاتنين وتقارن كل مفتاح، وبتنادي نفسها (recursion) لما القيمة تبقى object أو array.
-
-شغّلت المثال في Node 24، وجربت حالات زيادة.
+[[<audio>]] و [[<video>]] نفس الـ object من جوه ([[HTMLMediaElement]])، وانت بتكلمه بـ methods (أوامر) وخصائص (حالة) وأحداث (أخبار). كل الناتج هنا من Chrome 157 على ويندوز 11، شغّال بـ Playwright على سيرفر [[node:http]] محلي، والملفات اتعملت في الـ lab نفسه: [[tone.wav]] (٣ ثواني 440Hz اتكتب بـ Node و [[DataView]])، و [[clip.webm]] و [[clip.mp4]] (canvas بيتحرك اتسجّل بـ [[MediaRecorder]]، درس التسجيل).
 
 ---
 
-## ١. ليه [[===]] مش كفاية
+## ١. الصيغة = container + codecs
 
-~~~text الناتج (Node)
-false false true false true
-~~~
+لما تقول «ملف MP4» انت بتتكلم عن **الصندوق** (container) بس. جواه **streams**: فيديو متضغوط بـ codec، وصوت متضغوط بـ codec تاني، وأحيانًا ترجمة. الـ codec (coder/decoder) هو طريقة الضغط نفسها.
 
-ده بالترتيب:
-
-| التعبير | الناتج | ليه |
+| الـ container | الامتداد والـ MIME | بيشيل عادةً |
 |---|---|---|
-| [[{a:1} === {a:1}]] | false | اتنين objects مختلفين في الميموري |
-| [[NaN === NaN]] | false | قاعدة في الأرقام العشرية: NaN مبيساويش حاجة، ولا نفسه |
-| [[Object.is(NaN, NaN)]] | true | [[Object.is]] بتعتبرهم متساويين |
-| [[Object.is(0, -0)]] | false | بتفرّق بين الصفر الموجب والسالب |
-| [[0 === -0]] | true | [[===]] مبتفرّقش |
+| MP4 | [[.mp4]] و [[video/mp4]] و [[audio/mp4]] | فيديو H.264 أو HEVC أو AV1، وصوت AAC أو Opus |
+| WebM | [[.webm]] و [[video/webm]] و [[audio/webm]] | فيديو VP8 أو VP9 أو AV1، وصوت Opus أو Vorbis |
+| Ogg | [[.ogg]] و [[.ogv]] و [[audio/ogg]] | صوت Opus أو Vorbis (فيديو Theora قديم ومبقاش مدعوم في Chrome) |
+| MP3 و WAV و FLAC | [[audio/mpeg]] و [[audio/wav]] و [[audio/flac]] | الملف هو الـ codec نفسه تقريبًا: صوت بس |
 
----
-
-## ٢. الدالة سطر سطر
-
-~~~text app.js
-function deepEqual(a, b) {
-  if (Object.is(a, b)) return true;
-  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
-  if (Array.isArray(a) !== Array.isArray(b)) return false;
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-  if (keysA.length !== keysB.length) return false;
-  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k]));
-}
-~~~
-
-### السطر ١: نفس القيمة؟
-
-[[Object.is(a, b)]]: لو نفس الرقم أو النص، أو نفس الـ object بالظبط، أو الاتنين NaN، خلصنا: متساويين.
-
-### السطر ٢: واحد فيهم مش object؟
-
-لو وصلنا هنا يبقى مش متساويين بـ [[Object.is]]. لو أي واحد primitive (رقم، نص، boolean...) يبقى مختلفين ومفيش حاجة ننزل جواها.
-
-- [[typeof a !== "object"]]: [[typeof]] بيرجّع [["object"]] للـ objects والـ arrays.
-- [[a === null]]: لازم فحص لوحده لأن [[typeof null]] بيرجّع [["object"]] برضه (جربت: [[object object true]] لـ [[typeof null]] و [[typeof []]] و [[Array.isArray([])]]).
-- [[||]]: لو أي شرط من دول صح.
-
-### السطر ٣: array قدام object؟
-
-[[Array.isArray(a) !== Array.isArray(b)]]: لو واحد array والتاني لأ، مختلفين. ليه محتاجينه؟ لأن مفاتيحهم ممكن تبقى زي بعض:
-
-~~~text الناتج
-[ '0', '1' ] [ '0', '1' ]
-~~~
-
-ده [[Object.keys([1, 2])]] و [[Object.keys({ 0: 1, 1: 2 })]]: نفس المفاتيح بالظبط (والمفاتيح دايمًا strings).
-
-### السطور ٤ و ٥ و ٦: عدد المفاتيح
-
-[[Object.keys(x)]]: array بأسماء المفاتيح بتاعة الـ object نفسه. لو العدد مختلف، مختلفين، ووفّرنا اللفة.
-
-### السطر ٧: كل مفتاح
-
-- [[keysA.every(fn)]]: true لو [[fn]] رجّعت true لكل عنصر، وبتقف عند أول false.
-- [[Object.hasOwn(b, k)]]: [[b]] فيه المفتاح ده نفسه؟
-- [[deepEqual(a[k], b[k])]]: قارن القيمتين **بنفس الدالة**. لو القيمة object، الدالة هتنزل جواه، وهكذا لحد ما توصل لـ primitives.
-- [[&&]]: الاتنين لازم يبقوا صح. ولو [[hasOwn]] false، الـ recursion مش بيتنادى أصلًا.
-
-ليه [[hasOwn]] مهم؟ جربت [[deepEqual({a:1, b:undefined}, {a:1, c:undefined})]]: نفس العدد، و [[a.b]] و [[b.b]] الاتنين [[undefined]]، بس النتيجة [[false]] صح بسبب [[hasOwn]].
-
----
-
-## ٣. التشغيل
-
-~~~text app.js
-deepEqual({ a: [1, { b: 2 }] }, { a: [1, { b: 2 }] });
-deepEqual({ a: 1 }, { a: "1" });
-deepEqual([1, 2], { 0: 1, 1: 2 });
-deepEqual(NaN, NaN);
-~~~
-
-~~~text الناتج
-true
-false
-false
-true
-~~~
-
-خلينا نمشي ورا الأول:
-
-1. الـ objects الخارجية مختلفة في الميموري، والاتنين objects مش arrays، والمفاتيح [[["a"]]] و [[["a"]]].
-2. [[deepEqual([1, {b: 2}], [1, {b: 2}])]]: الاتنين arrays، المفاتيح [[["0", "1"]]].
-3. [[deepEqual(1, 1)]]: [[Object.is]] ← true.
-4. [[deepEqual({b: 2}, {b: 2})]] ← [[deepEqual(2, 2)]] ← true.
-5. كله true فالنتيجة true.
-
-والتاني: [[deepEqual(1, "1")]] ← مش [[Object.is]]، و [[typeof 1]] مش [["object"]] ← false.
-
-### حالات تانية جربتها
-
-~~~text الناتج
-true
-false
-false
-false true
-~~~
-
-| التعبير | الناتج |
+| codec فيديو | بيتميز بإيه |
 |---|---|
-| [[deepEqual({a:1,b:2}, {b:2,a:1})]] | true، الترتيب مش مهم |
-| [[JSON.stringify]] لنفس الاتنين ومقارنة النصوص | false، عشان كده JSON مش حل |
-| [[deepEqual(0, -0)]] | false، بسبب [[Object.is]] |
-| [[deepEqual([], {})]] و [[deepEqual([], [])]] | false و true، بفضل فحص الـ array |
+| H.264 (AVC) | شغال في كل جهاز تقريبًا وفيه hardware decoding، بس أكبر حجمًا |
+| HEVC (H.265) | أصغر من H.264 بحوالي النص، بس براءات اختراع فدعمه بيعتمد على الجهاز |
+| VP9 | من Google ومن غير رسوم، أصغر من H.264، و YouTube بيستخدمه كتير |
+| AV1 | الأحدث ومن غير رسوم وأصغر واحد، بس فكه تقيل على الأجهزة اللي مفيهاش hardware له |
+
+| codec صوت | بيتميز بإيه |
+|---|---|
+| AAC | الافتراضي مع MP4 وشغال في كل مكان |
+| Opus | الأحسن جودة في الحجم الصغير، وهو اللي المكالمات و [[MediaRecorder]] بيستخدموه |
+| MP3 | قديم وأكبر، بس كل حاجة بتشغّله |
+| FLAC و WAV | من غير فقد (lossless): جودة كاملة وحجم كبير |
+
+**الخلاصة العملية:** ملف واحد يشغّل في كل حتة = MP4 بـ H.264 و AAC. ولو عايز توفّر باندويدث: WebM بـ AV1 أو VP9 الأول، و MP4 بعده كاحتياطي.
 
 ---
 
-## ٤. اللي النسخة دي مش بتعرفه
+## ٢. [[canPlayType]]: اسأل قبل ما تحمّل
 
-~~~text الناتج
-true []
-true [] a g
-true
-RangeError: Maximum call stack size exceeded
+~~~js
+const v = document.createElement('video');
+console.log(v.canPlayType('video/webm; codecs="vp9, opus"'));
 ~~~
 
-- [[deepEqual(new Date(1), new Date(2))]] رجّعت **true** غلط: [[Object.keys(new Date(1))]] بـ [[[]]]، يعني الـ Date معندهاش مفاتيح عادية (التاريخ متخزن جوه بطريقة تانية)، فاتنين Dates أي كانوا شكلهم «متساويين».
-- [[deepEqual(/a/g, /b/i)]]: **true** غلط برضه. السطر التاني في الناتج فيه [[Object.keys(/a/g)]] بـ [[[]]]، وبعدها [[/a/g.source]] بـ [[a]] و [[/a/g.flags]] بـ [[g]]: دول اللي المفروض يتقارنوا.
-- [[new Map([ [1, 1] ])]] و [[new Map([ [2, 2] ])]]: true غلط، لنفس السبب.
-- object بيشاور على نفسه ([[x.self = x]]): الدالة بتنزل في [[self]] ثم [[self]] ثم... للأبد لحد ما الـ call stack (المكان اللي بيتسجل فيه كل نداء لسه مخلصش) يتملي.
+بيرد بواحدة من ٣: [["probably"]] (غالبًا هيشتغل)، أو [["maybe"]] (النوع معروف بس محتاج أشوف الملف)، أو [[""]] (لأ). ده اللي Chrome 157 رد بيه:
 
-ودي بالظبط اللي التمرين اللي تحت بيطلبها.
+~~~text الناتج (Chrome 157)
+"maybe"    video/mp4
+"probably" video/mp4; codecs="avc1.42E01E, mp4a.40.2"
+"probably" video/mp4; codecs="hvc1.1.6.L93.B0"
+"maybe"    video/webm
+"probably" video/webm; codecs="vp9, opus"
+"probably" video/webm; codecs="av01.0.05M.08, opus"
+""         video/ogg; codecs="theora"
+"maybe"    video/x-matroska
+""         video/quicktime
+"maybe"    application/vnd.apple.mpegurl
+""         application/dash+xml
+"probably" audio/mpeg
+"probably" audio/ogg; codecs="opus"
+"probably" audio/flac
+"maybe"    audio/wav
+""         video/webm; codecs="vp9, nope"
+~~~
+
+- **من غير [[codecs]]** الرد أقصاه [["maybe"]]: [[video/mp4]] لوحده ممكن يبقى جواه أي حاجة.
+- الأرقام في [[avc1.42E01E]] بتحدد الـ profile والـ level (هنا Baseline 3.0)، وده اللي بيخلي المتصفح يقدر يقول [["probably"]]. أداة زي [[ffprobe]] أو MediaInfo بتطلّعهولك من الملف.
+- **codec واحد مش معروف بيبوّظ السطر كله:** [[vp9, nope]] رجع [[""]].
+- [[application/vnd.apple.mpegurl]] (HLS) طلع [["maybe"]] على Chrome 157 للديسكتوب، يعني Chrome بقى بيفهم HLS بنفسه. ده على المتصفح اللي اتقاس، ومتعتمدش عليه في متصفحات تانية: [[hls.js]] لسه هو الطريق المضمون (آخر الوحدة).
+- [[canPlayType]] مبيحمّلش حاجة ومبيضمنش إن الملف نفسه سليم.
+
+---
+
+## ٣. [[MediaCapabilities.decodingInfo]]: هيشتغل كويس؟
+
+[[canPlayType]] بيقول «أعرف أفكه». [[decodingInfo]] بيقول كمان: **smooth** (من غير ما يقطّع) و **powerEfficient** (بالـ hardware، فالبطارية مش هتخلص):
+
+~~~js
+const r = await navigator.mediaCapabilities.decodingInfo({
+  type: 'file',
+  video: { contentType: 'video/mp4; codecs="av01.0.08M.08"', width: 1920, height: 1080, bitrate: 3e6, framerate: 30 },
+});
+console.log(r.supported, r.smooth, r.powerEfficient);
+~~~
+
+~~~text الناتج (Chrome 157 على لابتوب ويندوز)
+H.264 1080p  supported=true smooth=true powerEfficient=true
+VP9 1080p    supported=true smooth=true powerEfficient=true
+AV1 1080p    supported=true smooth=true powerEfficient=false
+VP9 4K 60    supported=true smooth=true powerEfficient=true
+HEVC 1080p   supported=true smooth=true powerEfficient=true
+~~~
+
+- [[type: 'file']] للملفات العادية، و [['media-source']] لو هتشغّل بـ MSE (آخر الوحدة).
+- AV1 على الجهاز ده شغال وناعم بس **مش** موفّر: بيتفك بالـ CPU. على موبايل ده معناه سخونة وبطارية، فممكن تختار VP9 هنا حتى لو AV1 أصغر.
+- **كل الحقول مطلوبة:** نسيت [[bitrate]] = [[TypeError: Failed to execute 'decodingInfo' on 'MediaCapabilities': Failed to read the 'video' property from 'MediaConfiguration': Failed to read the 'bitrate' property from 'VideoConfiguration': Required member is undefined.]]
+- النتيجة بتختلف من جهاز لجهاز، وده المقصود: انت بتسأل جهاز اليوزر نفسه.
+
+---
+
+## ٤. [[readyState]] و [[duration]]: المتصفح يعرف إيه دلوقتي
+
+~~~text الناتج (Chrome 157، video.src = clip.webm)
+قبل: duration=NaN readyState=0 paused=true typeof stop=undefined
+loadedmetadata: duration=5.975858 readyState=4 320x180
+~~~
+
+- قبل الـ metadata: [[duration]] = [[NaN]] و [[readyState]] = 0 ([[HAVE_NOTHING]]). أي حساب زي [[currentTime / duration]] هيطلع [[NaN]].
+- بعد [[loadedmetadata]]: المدة والمقاس ([[videoWidth]] و [[videoHeight]]). الملف صغير ومحلي فـ [[readyState]] وصل 4 على طول، وعلى نت بطيء هتشوفه 1 الأول.
+- [[duration]] ممكن تبقى [[Infinity]]: في البث المباشر، وفي ملف WebM اتسجّل بـ [[MediaRecorder]] على حتت (درس التسجيل: النسخة الأولى من [[clip.webm]] كانت كده بالظبط).
+
+---
+
+## ٥. [[play()]] بيرجّع Promise
+
+~~~text الناتج (Chrome 157، صفحة بتنادي play() أول ما تفتح، ومحدش داس)
+auto: NotAllowedError: play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD
+audio auto: NotAllowedError: play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD
+muted video auto: اشتغل
+---- بعد ضغطة على زرار ----
+بعد الضغط: اشتغل paused=false
+race بعد الضغط: AbortError: The play() request was interrupted by a call to pause(). https://goo.gl/LdLk22
+load أثناء play: AbortError: The play() request was interrupted by a new load request. https://goo.gl/LdLk22
+~~~
+
+- **[[NotAllowedError]]**: سياسة الـ autoplay (درس «audio و source» شرحها من ناحية HTML). من JavaScript انت بتعرف بالرفض ده، فاعرض زرار.
+- **[[<video muted>]]** مسموح يشتغل لوحده، وده اللي فيديو الخلفية بيعتمد عليه.
+- **[[AbortError]]**: حد قاطع الطلب ([[pause()]] أو [[load()]] أو [[src]] جديد). مش مشكلة، بس امسكه عشان الـ Console يفضل نضيف.
+- ملحوظة اختبار: [[page.evaluate]] في Playwright و [[evaluate_script]] في DevTools بيتحسبوا ضغطة يوزر، فالـ [[play()]] منهم بيعدّي. عشان تقيس الرفض الحقيقي، النداء لازم يبقى من سكربت الصفحة نفسها، وده اللي اتعمل هنا.
+
+---
+
+## ٦. [[pause()]]، ومفيش [[stop()]]
+
+~~~js
+v.pause();
+v.currentTime = 0;
+~~~
+
+~~~text الناتج (Chrome 157)
+قبل: duration=NaN readyState=0 paused=true typeof stop=undefined
+TypeError: v.stop is not a function
+pause() returned undefined
+stop() بإيدنا: paused=true t=0
+~~~
+
+[[pause()]] بيرجّع [[undefined]] مش Promise، والوقفة فورية. الـ «stop» في أي مشغّل هو السطرين دول.
+
+---
+
+## ٧. [[currentTime]] والـ seeking
+
+~~~text الناتج (Chrome 157، clip.webm مدته 5.98)
+currentTime = 2       => seeking ثم seeked، currentTime=2
+currentTime = 999     => 5.975858 (اتقص على duration)، ended=false لأن الفيديو كان واقف
+currentTime = -5      => 0
+buffered=0.00-5.98 seekable=0.00-5.98 played=0.00-0.94
+~~~
+
+- القيمة بالثواني ككسر ([[2.5]] = ثانيتين ونص)، والمتصفح بيقصها على [[0]] و [[duration]] من غير error.
+- [[buffered]] (اللي اتحمّل) و [[seekable]] (اللي ينفع تروحله) و [[played]] (اللي اتشغّل فعلًا) من نوع [[TimeRanges]]: [[length]] وفيها [[start(i)]] و [[end(i)]]. [[played]] هي اللي بتعمل منها «اتفرج على كام في المية».
+- [[seekable]] فاضية = مش هتعرف تقدّم، ودي مشكلة سيرفر (درس الأخطاء: الـ Range).
+- [[fastSeek()]] (seek تقريبي أسرع) [[undefined]] في Chrome 157، موجودة في Firefox و Safari (من MDN).
+
+---
+
+## ٨. [[volume]] و [[muted]] و [[playbackRate]]
+
+~~~text الناتج (Chrome 157)
+volume=2 => IndexSizeError: Failed to set the 'volume' property on 'HTMLMediaElement': The volume provided (2) is outside the range [0, 1].
+volume=-0.1 => IndexSizeError: ... The volume provided (-0.1) is outside the range [0, 1].
+playbackRate=20 => NotSupportedError: Failed to set the 'playbackRate' property on 'HTMLMediaElement': The provided playback rate (20) is not in the supported playback range.
+playbackRate=-1 => NotSupportedError: ... The provided playback rate (-1) is not in the supported playback range.
+playbackRate=0 => 0
+playbackRate=16 => 16
+playbackRate=0.0625 => 0.0625
+muted=true => volume لسه 1
+preservesPitch=true defaultPlaybackRate=1
+~~~
+
+- [[volume]] من 0 لـ 1، و [[muted]] منفصلة عنها: الكتم مبيمسحش مستوى الصوت، فلما تفك الكتم بيرجع زي ما كان.
+- [[playbackRate]] في Chrome من [[0.0625]] (١/١٦) لـ [[16]]، والسالب (تشغيل لورا) مش مدعوم. [[preservesPitch]] [[true]] افتراضيًا: سرعة 2 مش هتخلي الصوت رفيع.
+- [[defaultPlaybackRate]] السرعة اللي بيرجعلها بعد [[load()]]، و [[playbackRate]] الحالية.
+- كل تغيير بيبعت [[volumechange]] أو [[ratechange]]: حدّث الواجهة منهم، مش من الزرار (الدرس الجاي).
+
+---
+
+## ٩. الأحداث بالترتيب
+
+ده لوج حقيقي لفيديو بيتشغّل، يتوقف، يعمل seek، ويخلص:
+
+~~~text الناتج (Chrome 157، clip.webm، مختصر: شلنا canplay و canplaythrough اللي بيتكرروا بعد كل seek)
+play() returned [object Promise]
+promise resolved paused=false
+1008ms pause t=2.00
+1008ms seeking t=2.00
+1018ms seeked t=2.00
+1036ms seeking t=3.50
+1036ms ratechange t=3.50
+1036ms play t=3.50
+1036ms waiting t=3.50
+1038ms seeked t=3.50
+1038ms playing t=3.50
+2382ms pause t=5.98
+2382ms ended t=5.98
+after ended paused=true ended=true t=5.975858
+2383ms seeking t=0.00
+2383ms play t=0.00
+play after ended => t=0.00
+~~~
+
+| الحدث | بيتبعت إمتى | بتستخدمه في |
+|---|---|---|
+| [[loadedmetadata]] | المدة والمقاس اتعرفوا | تظبط [[max]] بتاع شريط الوقت وتعرض المدة |
+| [[canplay]] و [[canplaythrough]] | فيه داتا تكفي تبدأ، أو تكفي للآخر | تشيل علامة «بيحمّل» |
+| [[play]] | [[play()]] اتقبل (لسه ممكن يستنى داتا) | تغيّر الزرار لـ «وقّف» |
+| [[playing]] | الصورة والصوت بيتحركوا فعلًا | تشيل الـ spinner بعد [[waiting]] |
+| [[pause]] | وقف، بإيدك أو لأنه خلص | تغيّر الزرار لـ «شغّل» |
+| [[waiting]] | وقف غصب عنه عشان الداتا خلصت | تعرض spinner |
+| [[timeupdate]] | كل حوالي ٢٥٠ ms أثناء التشغيل، ومع كل seek | تحدّث الوقت والشريط |
+| [[seeking]] و [[seeked]] | بداية ونهاية الانتقال | تعرف إمتى المكان الجديد جاهز |
+| [[ended]] | وصل للآخر (ومفيش [[loop]]) | تشغّل اللي بعده أو تعرض «إعادة» |
+| [[ratechange]] و [[volumechange]] | السرعة أو الصوت أو الكتم اتغيروا | تحدّث الأزرار |
+| [[error]] | الملف فشل (الدرس الجاي بعده) | تعرض رسالة وبديل |
+
+- [[waiting]] ظهر لحظيًا بعد seek لمكان جديد، و [[playing]] جه بعده بـ ٢ ms: الملف محلي. على نت بطيء المسافة دي هي اللي بتشوف فيها الـ spinner.
+- من 3.5 للآخر (5.98) بسرعة 2 خد 1.35 ثانية تقريبًا (من 1036 لـ 2382 ms): السرعة بتأثر على الوقت الحقيقي زي ما متوقع.
+- بعد [[ended]]، [[play()]] تاني بيعمل seek لـ [[0]] لوحده ويبدأ من الأول.
+
+---
+
+## ١٠. المختبر الحي
+
+الصوت بيتعمل في الذاكرة كملف WAV (نفس [[DataView]] من درس «DataView»)، فمفيش ملفات. دوس الأزرار وشوف الأحداث:
+
+~~~live 420 مختبر الـ media element
+<style>
+  body { font-family: system-ui, sans-serif; margin: 12px; }
+  .row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  button, select { font: inherit; min-height: 40px; padding: 0 12px; }
+  #state { font-family: monospace; background: #f1f5f9; padding: 8px; direction: ltr; text-align: left; }
+  #log { font-family: monospace; font-size: 13px; height: 150px; overflow: auto; background: #0f172a; color: #e2e8f0; padding: 8px; direction: ltr; text-align: left; margin: 0; }
+</style>
+<div class="row">
+  <button id="play">play()</button>
+  <button id="pause">pause()</button>
+  <button id="stop">stop (pause + 0)</button>
+  <button id="back">−1s</button>
+  <button id="fwd">+1s</button>
+  <select id="rate" aria-label="السرعة"><option>0.5</option><option selected>1</option><option>2</option></select>
+  <button id="loud">volume = 2</button>
+</div>
+<p id="state">…</p>
+<pre id="log"></pre>
+<script>
+  // صوت ٣ ثواني بيتعمل في الذاكرة (WAV): الصفحة مش محتاجة ملفات
+  function makeWav(seconds, freq, rate = 8000) {
+    const n = seconds * rate, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+    const str = (o, s) => [...s].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+    str(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); str(8, 'WAVE'); str(12, 'fmt ');
+    v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+    str(36, 'data'); v.setUint32(40, n * 2, true);
+    for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, Math.sin(2 * Math.PI * freq * i / rate) * 6000, true);
+    return new Blob([buf], { type: 'audio/wav' });
+  }
+  const audio = new Audio();
+  const log = document.querySelector('#log'), state = document.querySelector('#state');
+  const t0 = performance.now();
+  const say = (s) => { log.textContent += Math.round(performance.now() - t0) + 'ms  ' + s + '\n'; log.scrollTop = 1e9; };
+  const show = () => (state.textContent = 'currentTime=' + audio.currentTime.toFixed(2) + '  duration=' + audio.duration +
+    '  paused=' + audio.paused + '  ended=' + audio.ended + '  readyState=' + audio.readyState + '  rate=' + audio.playbackRate);
+  for (const ev of ['loadedmetadata', 'canplay', 'play', 'playing', 'pause', 'seeking', 'seeked', 'ratechange', 'ended', 'error'])
+    audio.addEventListener(ev, () => { say(ev); show(); });
+  audio.addEventListener('timeupdate', show);
+  say('قبل الـ src: duration=' + audio.duration);
+  audio.src = URL.createObjectURL(makeWav(3, 440));
+  document.querySelector('#play').onclick = () => audio.play().then(() => say('play() اتحقق')).catch((e) => say(e.name + ': ' + e.message));
+  document.querySelector('#pause').onclick = () => audio.pause();
+  document.querySelector('#stop').onclick = () => { audio.pause(); audio.currentTime = 0; };
+  document.querySelector('#back').onclick = () => (audio.currentTime -= 1);
+  document.querySelector('#fwd').onclick = () => (audio.currentTime += 1);
+  document.querySelector('#rate').onchange = (e) => (audio.playbackRate = Number(e.target.value));
+  document.querySelector('#loud').onclick = () => { try { audio.volume = 2; } catch (e) { say(e.name + ': ' + e.message); } };
+  show();
+</script>
+~~~
+
+- **[[makeWav]]:** ٤٤ byte header (درس «DataView» شرح الـ WAV header) وبعده عينات [[Int16]] لموجة sine. [[new Blob([buf], { type: 'audio/wav' })]] بيحوّلها ملف في الذاكرة، و [[URL.createObjectURL]] بيدّيه عنوان [[blob:]] يتحط في [[src]].
+- **[[new Audio()]]** نفس [[document.createElement('audio')]]: عنصر مش ظاهر في الصفحة بس شغال عادي.
+- الـ preview ده [[iframe]] معزول ([[sandbox]] من غير [[allow-same-origin]])، والتشغيل من [[blob:]] شغال فيه عادي بعد الضغطة (اتقاس، والناتج في «جرّب» تحت).
 
 ---
 
 ## الخلاصة
 
-| الفحص | بيمسك إيه |
-|---|---|
-| [[Object.is]] | نفس القيمة، و NaN |
-| [[typeof]] و [[null]] | primitive قدام object |
-| [[Array.isArray]] | array قدام object بنفس المفاتيح |
-| عدد [[Object.keys]] | مفتاح زيادة أو ناقص |
-| [[hasOwn]] + recursion | كل قيمة بنفس الدالة |
-
-> في التمرين: فكّر إزاي تعرف إن [[a]] Date أو RegExp أو Map أو Set، وإيه اللي تقارنه في كل واحد بدل المفاتيح. وللـ object اللي بيشاور على نفسه: محتاج «تفتكر» الأزواج اللي بدأت تقارنها قبل كده، والـ [[WeakMap]] بتشيل object كمفتاح.`,
+- الصيغة container + codecs. اسأل بـ [[canPlayType]] (مع codecs) وبـ [[decodingInfo]] للـ smooth والبطارية، والترتيب في اللستة هو الأولوية.
+- [[play()]] Promise: امسك [[NotAllowedError]] واعرض زرار، وتجاهل [[AbortError]].
+- مفيش [[stop()]]: [[pause()]] و [[currentTime = 0]]. و [[duration]] [[NaN]] قبل [[loadedmetadata]] وممكن [[Infinity]].
+- [[volume]] من 0 لـ 1، و [[playbackRate]] من [[0.0625]] لـ [[16]] في Chrome، وغير كده exception.
+- الواجهة بتتحدث من الأحداث ([[play]] و [[pause]] و [[timeupdate]] و [[ended]])، و [[timeupdate]] ٤ مرات في الثانية بس.`,
           lines: [
-            R`دالة recursive: بتقارن قيمتين، ولو لقت جواهم objects أو arrays بتنادي نفسها على كل جزء لحد ما توصل لقيم بسيطة.`,
-            R`[[Object.is]] زي [[===]] بس بتعتبر [[NaN]] بيساوي [[NaN]]. لو القيمتين نفس الحاجة أو نفس الـ reference نخلص بـ [[true]] على طول من غير لف. وخلي بالك إنها بتفرّق بين [[0]] و [[-0]]، فـ [[deepEqual(0, -0)]] بتطلع [[false]].`,
-            R`لو وصلنا هنا يبقى القيمتين مش متساويين، فلو أي واحدة فيهم مش object (رقم أو نص مثلًا) أو [[null]] يبقوا مختلفين. فحص [[null]] لازم لوحده لأن [[typeof null]] بيرجّع [["object"]]، ومن غيره [[Object.keys(null)]] هيرمي error.`,
-            R`array و object عادي ممكن يبقى ليهم نفس المفاتيح ([["0"]] و [["1"]])، فبنفرّق بينهم الأول. من غير السطر ده المثال التالت تحت كان هيطلع [[true]] غلط.`,
-            R`[[Object.keys]] بترجّع أسامي الخصايص بتاعة [[a]] نفسه بس (مش اللي ورثها)، وفي array بترجّع الـ indexes كنصوص. ولأن Date و Map مالهمش مفاتيح من النوع ده، الدالة دي هتشوف أي اتنين Date متساويين، فمحتاجة فحص زيادة لو هتقارنهم.`,
-            R`نفس الكلام لـ [[b]]. محتاجين الاتنين عشان نقارن العدد.`,
-            R`لو العدد مختلف يبقوا مختلفين أكيد، ونوفّر اللفة. والفحص ده كمان بيمسك حالة إن [[b]] فيه مفتاح زيادة مش في [[a]]، لأن السطر الجاي بيلف على مفاتيح [[a]] بس.`,
-            R`[[every]] بترجّع [[true]] لو كل مفتاح عدّى: [[Object.hasOwn(b, k)]] بتتأكد إن المفتاح موجود في [[b]] (عشان [[{ a: undefined }]] ميساويش [[{ b: undefined }]])، و [[deepEqual]] بتنادي نفسها على القيمتين. وأول مفتاح يفشل اللفة بتقف.`,
-            R`نهاية [[deepEqual]].`,
-            R`objects متداخلة: array جواها object. الـ [[===]] هنا هتدّي [[false]] لأنهم objects مختلفة في الذاكرة، بس [[deepEqual]] بتنزل لحد الأرقام وتلاقيها متساوية فترجّع [[true]].`,
-            R`[[1]] و [["1"]]: [[Object.is]] بتقول مختلفين، وواحد منهم مش object فبنرجّع [[false]]. لو كنا استخدمنا [[==]] بدل [[Object.is]] كانوا هيطلعوا متساويين غلط.`,
-            R`array و object ليهم نفس المفاتيح والقيم، وفحص [[Array.isArray]] هو اللي مسكهم وقال [[false]].`,
-            R`[[NaN === NaN]] بـ [[false]] في JavaScript، بس [[Object.is]] بتقول [[true]]، فـ [[deepEqual]] بتعتبرهم متساويين. ده اللي عادة عايزه لما تقارن داتا.`,
-            R`حدود النسخة دي بصراحة: تاريخين مختلفين بيطلعوا [[true]] غلط، لأن [[Object.keys(new Date(1))]] بترجّع [[[]]]: الوقت متخزن جوه الـ Date في خانة داخلية مش مفتاح، فالدالة شايفة اتنين objects فاضيين. نفس الكلام لـ [[Map]] و [[Set]]. التمرين تحت بيصلّحها.`,
-            R`نفس الغلطة مع الـ regex: [[/a/g]] و [[/b/i]] مالهمش مفاتيح عادية ([[Object.keys(/a/g)]] بـ [[[]]]، و [[lastIndex]] مش enumerable)، فبيطلعوا متساويين. الصح تقارن [[a.source]] (النص [["a"]]) و [[a.flags]] (النص [["g"]]).`,
+            R`بنجيب عنصر الفيديو من الصفحة بالـ id بتاعه. نفس الكود شغال على [[<audio>]] لأن الاتنين [[HTMLMediaElement]].`,
+            R`بيطبع [[NaN 0]]: المدة لسه مش معروفة و [[readyState]] صفر لأن الملف لسه متقراش.`,
+            R`[[loadedmetadata]] بيتبعت أول ما المتصفح يقرا الـ header، وساعتها [[duration]] بتبقى رقم حقيقي بالثواني.`,
+            R`[[ended]] بيتبعت لما الفيديو يوصل للآخر، ومكانه المثالي لتشغيل الحلقة اللي بعدها.`,
+            R`زرار «شغّل»: الدالة [[async]] عشان نستنى الـ Promise بتاع [[play()]] بـ [[await]].`,
+            R`[[try]] و [[catch]] حوالين [[await v.play()]]: لو اترفض بنطبع اسم الخطأ ورسالته بدل [[Uncaught (in promise)]].`,
+            R`قفلة الدالة والـ listener.`,
+            R`زرار «stop»: مفيش [[stop()]] في الـ API، فبنوقف بـ [[pause()]] ونرجع للأول بـ [[currentTime = 0]].`,
+            R`السرعة ١.٥: المسموح في Chrome من [[0.0625]] لـ [[16]]، والصوت مبيرفعش لأن [[preservesPitch]] [[true]].`,
+            R`بنسأل المتصفح عن WebM بـ VP9 و Opus، و Chrome 157 بيرد [["probably"]].`,
           ],
-          sol: R`بعد الإضافات: [[deepEqual(new Date(1), new Date(2))]] بترجّع false (النسخة الأصلية كانت بترجّع true غلط، لأن الـ Date معندهاش keys فبتبان متساوية)، ونفس المشكلة مع Map و Set: الأصلية بتقول [[new Map([ [1, 1] ])]] بتساوي [[new Map([ [2, 2] ])]]. ونفسها مع الـ regex: [[deepEqual(/a/g, /b/i)]] في الأصلية [[true]]، وفي الحل [[false]]، و [[deepEqual(/a/g, /a/g)]] [[true]] (جرّبت الاتنين في Node 24). الحل إنك تفحص النوع بـ instanceof وتقارن [[getTime()]] للـ Date، و [[source]] و [[flags]] للـ RegExp، و size وكل مفتاح للـ Map، و has للـ Set.
-
-الـ object اللي بيشاور على نفسه بيوقّع النسخة الأصلية بـ [[RangeError: Maximum call stack size exceeded]]. الحل [[WeakMap]] بتسجّل كل زوج [[a → b]] دخلت تقارنه، ولو قابلته تاني ترجّع true (افترضنا إنهم متساويين لحد ما يثبت العكس). مع الحل، اتنين objects كل واحد بيشاور على نفسه بيطلعوا متساويين. ولـ Set جوه objects المقارنة بـ has بتقارن بالـ reference، ودي حدود مقبولة في الانترفيو لو قلتها.`,
-          solCode: R`function deepEqual(a, b, seen = new WeakMap()) {
-  if (Object.is(a, b)) return true;
-  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
-  if (Object.getPrototypeOf(a) !== Object.getPrototypeOf(b)) return false;
-  if (seen.get(a) === b) return true;
-  seen.set(a, b);
-  if (a instanceof Date) return a.getTime() === b.getTime();
-  if (a instanceof RegExp) return a.source === b.source && a.flags === b.flags;
-  if (a instanceof Map) {
-    if (a.size !== b.size) return false;
-    for (const [k, v] of a) if (!b.has(k) || !deepEqual(v, b.get(k), seen)) return false;
-    return true;
-  }
-  if (a instanceof Set) {
-    if (a.size !== b.size) return false;
-    for (const v of a) if (!b.has(v)) return false;
-    return true;
-  }
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-  if (keysA.length !== keysB.length) return false;
-  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k], seen));
-}
-const x = { v: 1 }; x.self = x;
-const y = { v: 1 }; y.self = y;
-console.log(deepEqual(x, y));                                  // true
-console.log(deepEqual(new Date(1), new Date(2)));              // false
-console.log(deepEqual(/a/g, /b/i), deepEqual(/a/g, /a/g));     // false true
-console.log(deepEqual(new Map([["a", [1]]]), new Map([["a", [1]]]))); // true`,
-          check: {
-            lang: "js",
-            starter: R`function deepEqual(a, b) {
-  if (Object.is(a, b)) return true;
-  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
-  if (Array.isArray(a) !== Array.isArray(b)) return false;
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-  if (keysA.length !== keysB.length) return false;
-  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k]));
-}`,
-            tests: R`test("objects و arrays متداخلة", () => expect([deepEqual({ a: [1, { b: 2 }] }, { a: [1, { b: 2 }] }), deepEqual({ a: 1 }, { a: "1" }), deepEqual([1, 2], { 0: 1, 1: 2 })]).toEqual([true, false, false]));
-test("Date: new Date(1) و new Date(2) مش متساويين (الأصلية كانت بتقول true)", () => expect([deepEqual(new Date(1), new Date(2)), deepEqual(new Date(5), new Date(5))]).toEqual([false, true]));
-test("Map: بالمفاتيح والقيم", () => expect([deepEqual(new Map([[1, 1]]), new Map([[2, 2]])), deepEqual(new Map([["a", [1]]]), new Map([["a", [1]]]))]).toEqual([false, true]));
-test("RegExp: بالـ source والـ flags (الأصلية كانت بتقول /a/g زي /b/i)", () => expect([deepEqual(/a/g, /b/i), deepEqual(/a/g, /a/i), deepEqual(/a/g, /a/g)]).toEqual([false, false, true]));
-test("Set: نفس العناصر", () => expect([deepEqual(new Set([1, 2]), new Set([2, 1])), deepEqual(new Set([1]), new Set([2]))]).toEqual([true, false]));
-test("Date مش زي {} فاضي", () => expect(deepEqual(new Date(1), {})).toBe(false));
-test("NaN زي NaN", () => expect(deepEqual({ x: NaN }, { x: NaN })).toBe(true));
-test("اتنين بيشاوروا على نفسهم ← true من غير stack overflow (WeakMap)", () => {
-  const x = { v: 1 }; x.self = x;
-  const y = { v: 1 }; y.self = y;
-  expect(deepEqual(x, y)).toBe(true);
-});`,
-            solution: R`function deepEqual(a, b, seen = new WeakMap()) {
-  if (Object.is(a, b)) return true;
-  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
-  if (Object.getPrototypeOf(a) !== Object.getPrototypeOf(b)) return false;
-  if (seen.get(a) === b) return true;
-  seen.set(a, b);
-  if (a instanceof Date) return a.getTime() === b.getTime();
-  if (a instanceof RegExp) return a.source === b.source && a.flags === b.flags;
-  if (a instanceof Map) {
-    if (a.size !== b.size) return false;
-    for (const [k, v] of a) if (!b.has(k) || !deepEqual(v, b.get(k), seen)) return false;
-    return true;
-  }
-  if (a instanceof Set) {
-    if (a.size !== b.size) return false;
-    for (const v of a) if (!b.has(v)) return false;
-    return true;
-  }
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-  if (keysA.length !== keysB.length) return false;
-  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k], seen));
-}`
-          }
+          ref: [
+            { t: "MDN: HTMLMediaElement", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement" },
+            { t: "MDN: HTMLMediaElement.play()", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/play" },
+            { t: "MDN: HTMLMediaElement.canPlayType()", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/canPlayType" },
+            { t: "MDN: MediaCapabilities.decodingInfo()", url: "https://developer.mozilla.org/en-US/docs/Web/API/MediaCapabilities/decodingInfo" },
+            { t: "MDN: Media container formats", url: "https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Formats/Containers" },
+            { t: "MDN: Web video codec guide", url: "https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Formats/Video_codecs" },
+            { t: "MDN: Web audio codec guide", url: "https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Formats/Audio_codecs" },
+            { t: "MDN: Autoplay guide for media and Web Audio APIs", url: "https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay" },
+            { t: "MDN: timeupdate event", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/timeupdate_event" },
+          ],
+          pre: [{ to: "css/audio و source", why: R`[[<source type>]] و [[autoplay]] من ناحية HTML` }, { to: "js/async و await", why: R`[[play()]] بيرجّع Promise` }],
         },
         {
-          cmd: "debounce و throttle في الانترفيو",
-          title: "تكتب debounce و throttle بإيدك على السبورة بالحالات اللي بيسألوا عليها",
-          desc: R`سؤال «اكتب debounce» بيتسأل في أغلب انترفيوهات الـ frontend، وبعده على طول «طب و throttle؟». المطلوب مش النسخة اللي في ٥ سطور وبس: لازم [[this]] والـ arguments يوصلوا للدالة الأصلية، و [[cancel()]]، ونسخة [[leading]] بتنفّذ أول نداء فورًا، و throttle مبيرميش آخر نداء.
+          cmd: "مشغّل فيديو خاص: أزرار و range وكيبورد",
+          title: "إزاي تبني مشغّل فيديو بأزرارك انت، شغال بالكيبورد وقارئ الشاشة، وفيه ملء الشاشة وصورة في صورة؟",
+          desc: R`المشغّل الخاص = [[<video>]] من غير [[controls]]، وتحته أزرار انت عاملها بتكلّم الـ API بتاع الدرس اللي فات. بتعمله لما أزرار المتصفح مش كفاية: شكلها مختلف في كل متصفح، وبعضها مش سهل بالكيبورد، ومحتاج حاجات مش فيها (فصول، «قدّم ٣٠ ثانية»، سرعات معينة).
 
-الفكرة نفسها واستخدامها في البحث والـ scroll متشرحة في درس «debounce و throttle» (وحدة الأداء والذاكرة). الدرس ده عن الكتابة تحت ضغط الانترفيو، والأسئلة اللي بتيجي بعد الكود، وإزاي تختبرهم من غير ما تستنى الوقت بجد.`,
-          example: R`function debounce(fn, ms, { leading = false } = {}) {
-  let timer = null;
-  function debounced(...args) {
-    const callNow = leading && timer === null;
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      timer = null;
-      if (!leading) fn.apply(this, args);
-    }, ms);
-    if (callNow) fn.apply(this, args);
-  }
-  debounced.cancel = () => { clearTimeout(timer); timer = null; };
-  return debounced;
-}
-function throttle(fn, ms) {
-  let last = -Infinity, timer = null, lastArgs, lastThis;
-  return function (...args) {
-    lastArgs = args; lastThis = this;
-    const wait = ms - (Date.now() - last);
-    if (wait <= 0) { last = Date.now(); fn.apply(this, args); return; }
-    if (timer === null) timer = setTimeout(() => {
-      timer = null; last = Date.now(); fn.apply(lastThis, lastArgs);
-    }, wait);
-  };
-}
-const search = debounce((q) => console.log("search", q), 100);
-search("j"); search("ja"); search("jav");          // بعد 100ms: search jav
-const save = debounce((n) => console.log("save", n), 100, { leading: true });
-save(1); save(2);                                   // فورًا: save 1
-const move = throttle((i) => console.log("move", i), 50);
-for (let i = 1; i <= 5; i++) move(i);               // فورًا move 1، وبعد 50ms move 5`,
-          try: R`ضيف [[flush()]] للـ debounce: لو فيه نداء مستني، نفّذه دلوقتي حالًا وامسح الـ timer، ولو مفيش متعملش حاجة. وبعدين ضيف للـ throttle خيار [[{ trailing: false }]] بيلغي النداء الأخير. جرّب [[search("x"); search.flush();]] واتأكد إنه طبع فورًا ومطبعش تاني بعد 100ms.`,
-          ref: [
-            { t: "MDN: Debounce", url: "https://developer.mozilla.org/en-US/docs/Glossary/Debounce" },
-            { t: "MDN: Throttle", url: "https://developer.mozilla.org/en-US/docs/Glossary/Throttle" },
-            { t: "MDN: Window.setTimeout()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout" },
-            { t: "MDN: Window.clearTimeout()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/clearTimeout" },
-            { t: "Node.js: Class MockTimers (node:test)", url: "https://nodejs.org/api/test.html#class-mocktimers" },
-          ],
+• [[controls]] يفضل في الـ HTML، و JavaScript هو اللي يشيله ([[video.controls = false]]): من غير JS اليوزر لسه عنده مشغّل.
+• أزرار حقيقية [[<button>]] عليها [[aria-label]]، وشريط الوقت [[<input type="range">]].
+• الواجهة بتتحدث من **أحداث** الفيديو ([[play]] و [[pause]] و [[timeupdate]] و [[volumechange]])، مش من الضغطة.
+• اختصارات كيبورد على المشغّل كله، و [[requestFullscreen()]] على الغلاف، و [[requestPictureInPicture()]] على الفيديو.`,
+          example: R`// player.js: أساس أي مشغّل خاص (الصفحة فيها video و #play و #seek و #time و #fs)
+const video = document.querySelector('video');
+const [playBtn, seek, time] = ['#play', '#seek', '#time'].map((s) => document.querySelector(s));
+video.controls = false;
+playBtn.addEventListener('click', () => (video.paused || video.ended ? video.play().catch(() => {}) : video.pause()));
+video.addEventListener('play', () => playBtn.setAttribute('aria-label', 'وقّف'));
+video.addEventListener('pause', () => playBtn.setAttribute('aria-label', 'شغّل'));
+video.addEventListener('loadedmetadata', () => (seek.max = video.duration));
+video.addEventListener('timeupdate', () => { seek.value = video.currentTime; time.textContent = formatTime(video.currentTime); });
+seek.addEventListener('input', () => (video.currentTime = Number(seek.value)));
+document.querySelector('#fs').addEventListener('click', () => video.parentElement.requestFullscreen());`,
+          try: R`افتح المشغّل الحي في آخر الشرح واستنى ٤ ثواني لحد ما فيديو التجربة يجهز. من غير ماوس خالص: [[Tab]] لحد زرار التشغيل، و [[Enter]]، وبعدين [[k]] و [[→]] و [[5]] و [[m]]. ركّز: الزرار اتغيّر شكله لما شغّلت بـ [[k]] مش بالضغط؟ وبعدين دوس ⧉ (صورة في صورة). ليه زرار ملء الشاشة مش ظاهر؟`,
+          sol: R`~~~text الناتج (نفس الصفحة جوه iframe معزول زي الـ preview، Chrome 157، Playwright)
+بعد ٥ ثواني:            #time = 0:00 / 0:04    duration=4.000833  src=blob:
+                         pipHidden=false  fsHidden=true
+click #play + 1.5s:     #time = 0:01 / 0:04
+ArrowRight:             #time = 0:04 / 0:04    (1.5 + 5 اتقص على المدة)
+k:                      #status = «بيحمّل…»    (k بعد ended بدأ من الأول، و waiting ظهر لحظة)
+click ⧉:                document.pictureInPictureElement = [object HTMLVideoElement]
+~~~
+
+- الزرار اتغيّر مع [[k]] لأن الـ listener بتاعه على حدث [[play]] نفسه، مش على الضغطة. أي طريقة تشغيل (زرار، كيبورد، Media Session، كود) بتحدّثه.
+- زرار ملء الشاشة **مستخبي** لأن [[document.fullscreenEnabled]] = [[false]] جوه الـ preview: الـ [[iframe]] مفهوش [[allowfullscreen]]. الكود بيخفيه بدل ما يسيب زرار بيرمي [[TypeError: Disallowed by permissions policy]] (ده اللي طلع لما جربناه غصب).
+- صورة في صورة اشتغلت جوه الـ iframe المعزول ([[pictureInPictureEnabled]] = [[true]]).`,
           practice: [
-            { lvl: 'سريع', t: R`اقرا وتوقّع: نفس الكتابة بتوصل للاتنين: [[const d = debounce((q) => console.log("debounce", q), 100)]] و [[const t = throttle((q) => console.log("throttle", q), 100)]]، والنداءات [[d(q); t(q);]] بتحصل عند 0 و 50 و 120 و 300ms بالنصوص [["a"]] و [["ab"]] و [["abc"]] و [["abcd"]] (اعملها بـ [[setTimeout]] لكل وقت). اكتب على ورقة اللي هيتطبع بالترتيب، وبعدين شغّل.`, done: R`الناتج في Node 24 (اتشغّل ٣ مرات وطلع نفس الترتيب): [[throttle a]] و [[throttle ab]] و [[throttle abc]] و [[debounce abc]] و [[throttle abcd]] و [[debounce abcd]]. وتقدر تقول ليه [["a"]] و [["ab"]] اختفوا من الـ debounce (كل نداء جديد بيلغي اللي قبله لحد ما ييجي سكوت 100ms)، وليه الـ throttle مضيّعش ولا كلمة.`, sol: R`**التوقع على ورقة** (خط زمني، والـ debounce والـ throttle بتوع الدرس في [[timing.mjs]]):
+            { lvl: 'سريع', t: R`**اشرحها:** زميلك شال [[controls]] من الـ HTML خالص وقال «أنا عامل أزرار بـ JavaScript أصلًا». اكتبله ٣ سطور: ليه الأحسن تسيبه في الـ HTML وتشيله من JavaScript؟ وإيه اللي بيحصل لو الـ script وقع؟`, done: R`الـ ٣ سطور فيهم: يوزر من غير JS (أو script وقع أو اتأخر) لسه عنده مشغّل، و [[hidden]] على أزرارك لحد ما JS يشتغل، والمصطلح (progressive enhancement).`, sol: R`**الإجابة النموذجية:**
 
-| الوقت | debounce (100ms) | throttle (100ms) |
-|---|---|---|
-| 0 | [["a"]]: timer لـ 100 | [["a"]]: فات أكتر من 100 من آخر تنفيذ ← **يطبع فورًا** |
-| 50 | [["ab"]]: يلغي timer الـ 100 ويعمل واحد لـ 150 | [["ab"]]: فاضل 50 ← timer لـ 100 |
-| 100 | | الـ timer ← **throttle ab** |
-| 120 | [["abc"]]: يلغي الـ 150 ويعمل واحد لـ 220 | [["abc"]]: آخر تنفيذ عند 100، فاضل 80 ← timer لـ 200 |
-| 200 | | **throttle abc** |
-| 220 | **debounce abc** (سكوت 100ms) | |
-| 300 | [["abcd"]]: timer لـ 400 | [["abcd"]]: فات 100 من 200 ← **يطبع فورًا** |
-| 400 | **debounce abcd** | |
+1. لو [[controls]] في الـ HTML و JavaScript بيشيله ([[video.controls = false]])، اليوزر اللي الـ script عنده وقع (خطأ، أو CDN واقع، أو JS مقفول، أو لسه بيحمّل على نت بطيء) بيلاقي مشغّل المتصفح شغال. ولو شلته من الـ HTML، اليوزر ده عنده صورة ثابتة مبتعملش حاجة.
+2. وأزرارك نفسها تبدأ [[hidden]] وتظهر من JavaScript، عشان متبقاش أزرار ميتة لو الـ script مشتغلش.
+3. ده اسمه **progressive enhancement**: الأساس شغال من HTML بس، و JavaScript بيحسّن فوقه. MDN بيعمل نفس الحركة في درس «Creating a cross-browser video player».
 
-~~~js predict.mjs
-import { debounce, throttle } from "./timing.mjs";   // الدالتين من مثال الدرس مع export
-const t0 = Date.now();
-const at = () => String(Date.now() - t0).padStart(3) + "ms";
-const d = debounce((q) => console.log(at(), "debounce", q), 100);
-const t = throttle((q) => console.log(at(), "throttle", q), 100);
-for (const [ms, q] of [[0, "a"], [50, "ab"], [120, "abc"], [300, "abcd"]]) {
-  setTimeout(() => { d(q); t(q); }, ms);
-}
-~~~
-
-~~~text الناتج (node predict.mjs على Windows)
-  1ms throttle a
-111ms throttle ab
-219ms throttle abc
-235ms debounce abc
-328ms throttle abcd
-424ms debounce abcd
-~~~
-
-نفس الترتيب اللي على الورقة، والأوقات متأخرة شوية عن الجدول لأن كل [[setTimeout]] بيتأخر كام ms (على Windows دقة الـ timer حوالي 15ms).
-
-**ليه [["a"]] و [["ab"]] اختفوا من الـ debounce:** كل نداء بيعمل [[clearTimeout]] للي قبله. [["ab"]] جت بعد 50ms بس من [["a"]] فلغتها، و [["abc"]] جت بعد 70ms فلغت [["ab"]]. أول سكوت 100ms كان بعد [["abc"]]. الـ debounce = «استنى لما اليوزر يقف».
-
-**وليه الـ throttle مضيّعش ولا كلمة هنا:** النداءات كانت متباعدة كفاية إن كل واحد لقى فترة جديدة أو timer فاضي. لو كانوا جم ٣ في نفس الفترة كان هيطبع الأول والأخير بس (الـ throttle بتاع الدرس بيحفظ [[lastArgs]]). الـ throttle = «مرة كل 100ms بالكتير».
-
-**خلي بالك:** [[throttle abc]] (200) و [[debounce abc]] (220) بينهم 20ms بس على الورقة. شغّلت السكربت ١٢ مرة على Windows: ١١ مرة بالترتيب ده، ومرة اتبدّلوا الاتنين دول بسبب تأخير الـ timers. في الانترفيو قول الترتيب النظري ووضّح إن الفرق الصغير ده مش مضمون.
-
-**إجابة تتقال:** «debounce بينفّذ مرة بعد ما الأحداث تقف بآخر قيمة، وthrottle بينفّذ على فترات ثابتة وبيضمن أول وآخر قيمة؛ debounce للبحث والـ autosave، و throttle للـ scroll والـ resize».` },
-            { lvl: 'تطبيق', t: R`صلّح الكود البايظ: [[function debounceBad(fn, ms) { return (...a) => setTimeout(() => fn(...a), ms); }]] فيه غلطتين. جرّبه بـ [[const g = debounceBad(() => calls++, 10); g(); g(); g();]] وبعد 30ms اطبع [[calls]]، وبـ [[const o = { n: 7, f: debounceBad(function () { console.log(this?.n); }, 10) }; o.f();]].`, done: R`قبل التصليح [[calls]] بـ 3 (مفيش [[clearTimeout]] فكل نداء عمل timer لوحده) و [[this?.n]] بـ [[undefined]] (الـ arrow اللي راجعة مالهاش [[this]]، و [[fn(...a)]] بتنادي من غير object). بعد ما ترجّع [[function]] عادية وتحفظ الـ timer وتنادي [[fn.apply(this, a)]]: [[calls]] بـ 1 و [[this?.n]] بـ 7.`, sol: R`~~~js debounce-fix.js
-function debounceBad(fn, ms) { return (...a) => setTimeout(() => fn(...a), ms); }
-
-function debounceFixed(fn, ms) {
-  let timer = null;
-  return function (...a) {            // function عادية: this بييجي من اللي نادى
-    clearTimeout(timer);              // الغلطة الأولى: الغي الـ timer القديم
-    timer = setTimeout(() => fn.apply(this, a), ms);   // الغلطة التانية: وصّل this
-  };
-}
-
-for (const [name, make] of [["البايظ", debounceBad], ["المصلّح", debounceFixed]]) {
-  let calls = 0;
-  const g = make(() => calls++, 10);
-  g(); g(); g();
-  const o = { n: 7, f: make(function () { console.log(name, "this?.n =", this?.n); }, 10) };
-  o.f();
-  setTimeout(() => console.log(name, "calls =", calls), 30);
-}
-~~~
-
-~~~text الناتج (node debounce-fix.js)
-البايظ this?.n = undefined
-المصلّح this?.n = 7
-البايظ calls = 3
-المصلّح calls = 1
-~~~
-
-**الغلطة الأولى: مفيش [[clearTimeout]].** كل نداء بيعمل timer جديد ومحدش بيلغي القديم، فالـ ٣ نداءات = ٣ تنفيذات بعد 10ms. ده «delay» مش debounce. التصليح: متغير [[timer]] في الـ closure (بيتشارك بين كل النداءات) و [[clearTimeout(timer)]] قبل أي timer جديد. [[clearTimeout(null)]] أول مرة مبتعملش حاجة، فمش محتاج [[if]].
-
-**الغلطة التانية: [[this]] بيضيع في مكانين.**
-
-1. الدالة الراجعة arrow، والـ arrow مالهاش [[this]] بتاعها، فـ [[o.f()]] مبيوصّلش [[o]].
-2. [[fn(...a)]] بينادي [[fn]] من غير object، فحتى لو [[this]] وصل مش هيتبعت.
-
-التصليح: الدالة الراجعة [[function]] عادية (فـ [[o.f()]] تخلي [[this]] = [[o]])، وجوه الـ timer **arrow** (عشان تفضل شايفة [[this]] بتاع الدالة اللي برّه)، و [[fn.apply(this, a)]].
-
-**ليه [[this?.n]] مش [[this.n]]:** [[fn()]] من غير object في ملف CommonJS عادي (مش strict) بتخلي [[this]] = [[globalThis]]، ومفيهوش [[n]] فطلعت undefined. لكن في ES module أو strict mode [[this]] بيبقى undefined، و [[this.n]] كانت هترمي TypeError. الـ [[?.]] بتخلي الكود يطبع في الحالتين.
-
-**الانترفيور بيختبر إيه:** الـ closure (الـ timer المشترك) و [[this]] في الـ arrow مقابل function. **إجابة تتقال:** «لازم timer واحد في الـ closure بيتلغي كل نداء، والدالة الراجعة تبقى function عشان تاخد this وتعدّيه بـ apply».` },
-            { lvl: 'تحدي', t: R`اكتب اختبار: ملف [[debounce.test.mjs]] بـ [[node:test]] بيختبر الاتنين من غير ما يستنى وقت حقيقي، بـ [[mock.timers.enable({ apis: ["setTimeout", "Date"] })]] و [[mock.timers.tick(ms)]]. على الأقل: debounce بينفّذ آخر نداء بس بعد [[ms]] من آخر نداء، و [[cancel()]] بيمنعه، و throttle بينفّذ الأول فورًا والأخير في آخر الفترة، و [[this]] بيوصل.`, done: R`[[node --test]] بيعدّي كل الاختبارات في أقل من ثانية (مش مستني 100ms بجد)، ولو شلت [[clearTimeout(timer)]] من الـ debounce اختبار واحد على الأقل بيقع، ولو شلت [[lastArgs]] من الـ throttle وخليته ينادي بالـ args الأولانية، اختبار «الأخير في آخر الفترة» بيقع.`, sol: R`**[[timing.mjs]]:** الـ [[debounce]] والـ [[throttle]] من مثال الدرس زي ما هم، وقدام كل واحدة [[export]].
-
-~~~js debounce.test.mjs
-import { test, mock, beforeEach, afterEach } from "node:test";
-import assert from "node:assert/strict";
-import { debounce, throttle } from "./timing.mjs";
-
-beforeEach(() => mock.timers.enable({ apis: ["setTimeout", "Date"] }));
-afterEach(() => mock.timers.reset());
-
-test("debounce بينفّذ آخر نداء بس، بعد ms من آخر نداء", () => {
-  const fn = mock.fn();
-  const d = debounce(fn, 100);
-  d("a"); mock.timers.tick(50);
-  d("ab"); mock.timers.tick(99);
-  assert.equal(fn.mock.callCount(), 0);          // لسه 99ms من آخر نداء
-  mock.timers.tick(1);
-  assert.equal(fn.mock.callCount(), 1);
-  assert.deepEqual(fn.mock.calls[0].arguments, ["ab"]);
-});
-
-test("cancel بيمنع التنفيذ", () => {
-  const fn = mock.fn();
-  const d = debounce(fn, 100);
-  d(1); d.cancel();
-  mock.timers.tick(500);
-  assert.equal(fn.mock.callCount(), 0);
-});
-
-test("throttle: الأول فورًا والأخير في آخر الفترة", () => {
-  const fn = mock.fn();
-  const t = throttle(fn, 100);
-  t(1);
-  assert.deepEqual(fn.mock.calls.map((c) => c.arguments[0]), [1]);
-  mock.timers.tick(30); t(2);
-  mock.timers.tick(30); t(3);
-  mock.timers.tick(39);
-  assert.equal(fn.mock.callCount(), 1);          // لسه 99ms
-  mock.timers.tick(1);
-  assert.deepEqual(fn.mock.calls.map((c) => c.arguments[0]), [1, 3]);
-});
-
-test("this بيوصل في الاتنين", () => {
-  const seen = [];
-  const o = { n: 7 };
-  o.d = debounce(function () { seen.push(this.n); }, 10);
-  o.t = throttle(function () { seen.push(this.n); }, 10);
-  o.d(); o.t();
-  mock.timers.tick(10);
-  assert.deepEqual(seen, [7, 7]);
-});
-~~~
-
-~~~text الناتج (node --test)
-✔ debounce بينفّذ آخر نداء بس، بعد ms من آخر نداء (3.1017ms)
-✔ cancel بيمنع التنفيذ (0.3557ms)
-✔ throttle: الأول فورًا والأخير في آخر الفترة (0.4724ms)
-✔ this بيوصل في الاتنين (0.4465ms)
-ℹ tests 4
-ℹ pass 4
-ℹ fail 0
-ℹ duration_ms 86.4884
-~~~
-
-الأربع اختبارات خلصوا في أقل من 4ms مع إنهم «بيستنوا» أكتر من 700ms من الوقت الوهمي.
-
-**إزاي الـ mock بيشتغل:**
-
-- **[[mock.timers.enable({ apis: ["setTimeout", "Date"] })]]:** بيبدّل [[setTimeout]] و [[clearTimeout]] و [[Date.now()]] بنسخ وهمية الوقت فيها واقف لحد ما انت تحرّكه. لازم [[Date]] كمان لأن الـ throttle بيحسب [[Date.now() - last]]؛ من غيرها الـ throttle بيحسب الفترة بالساعة الحقيقية والـ timer بالساعة الوهمية، والاتنين مبيتفقوش (جرّبتها تحت: اختبار الـ throttle وقع).
-- **[[mock.timers.tick(ms)]]:** بيقدّم الساعة الوهمية ويشغّل كل timer وقته جه، sync.
-- **[[mock.fn()]]:** دالة بتسجّل كل نداء: [[callCount()]] و [[calls[i].arguments]].
-- **[[afterEach(() => mock.timers.reset())]]:** يرجّع الـ timers الحقيقية، عشان اختبار ميأثّرش على اللي بعده.
-
-**الحدود اللي بتمسك الأخطاء:** الاختبار بيقف عند 99ms ويتأكد إن مفيش تنفيذ، وبعدين 1ms ويتأكد إن فيه. اختبار بيستنى 500ms وخلاص كان هيعدّي على نسخ غلط كتير.
-
-**جرّبت أبوّظ الكود عشان أتأكد إن الاختبارات بتمسك:**
-
-~~~text الناتج (شلت clearTimeout(timer) من الـ debounce)
-✖ debounce بينفّذ آخر نداء بس، بعد ms من آخر نداء
-~~~
-
-~~~text الناتج (خليت الـ throttle ينادي بأول args بدل lastArgs)
-✖ throttle: الأول فورًا والأخير في آخر الفترة
-~~~
-
-~~~text الناتج (شلت "Date" من apis)
-✖ throttle: الأول فورًا والأخير في آخر الفترة
-~~~
-
-**الغلطة الشائعة:** تنسى [[Date]] في [[apis]] (التجربة اللي فوق)، أو تستخدم [[await new Promise(r => setTimeout(r, 100))]] في الاختبار (أبطأ، ومش ثابت على CI).` },
-          ],
-          flag: "script",
-          deep: {
-            why: "السؤال ده بيختبر closures (الـ timer فاضل عايش بين النداءات)، و this و apply، والـ event loop (setTimeout مش بيستنى بالظبط)، والتفكير في الحالات الطرفية، كلهم في ١٥ سطر. واللي بيكتب النسخة البسيطة بس ومبيعرفش يرد على «طب لو عايز أول نداء يتنفّذ فورًا؟» بياخد نص الدرجة.",
-            how: R`debounce بيحفظ timer واحد في closure: كل نداء بيعمل [[clearTimeout]] للقديم ويعمل واحد جديد، فالدالة مبتتنفذش غير لما النداءات تسكت [[ms]]. نسخة [[leading]] بتنفّذ لو مفيش timer شغال ([[timer === null]])، وبتستخدم الـ timer كـ «فترة سكوت» بس.
-
-throttle بيحفظ وقت آخر تنفيذ ([[last]]). لو عدّى [[ms]] بينفّذ فورًا، ولو لأ بيحجز تنفيذ واحد في آخر الفترة بآخر arguments وصلت ([[lastArgs]])، فمفيش نداء أخير بيضيع.
-
-الاتنين بيرجّعوا [[function]] عادية مش arrow عشان ياخدوا [[this]] بتاع اللي نادى، وبيستخدموا [[fn.apply(this, args)]] عشان يعدّوه للأصلية. واختبارهم بيبقى بـ fake timers ([[mock.timers]] في Node، أو [[vi.useFakeTimers()]] في Vitest) بدل ما الاختبار يستنى وقت حقيقي.`,
-            when: R`في الانترفيو: اكتب النسخة البسيطة الأول وقول إنها شغالة، وبعدين زوّد [[this]] و [[cancel]] و [[leading]] لوحدك قبل ما يتسألوا. وفي الشغل: [[lodash.debounce]] أو الـ hook الجاهز في مكتبتك، إلا لو المشروع صغير ومش عايز dependency. وللـ animation والـ scroll البصري، throttle بـ [[requestAnimationFrame]] أحسن من رقم ثابت.`,
-            mistakes: R`ترجّع arrow function فـ [[this]] يضيع. وتنسى [[clearTimeout]] فيبقى «delay» مش debounce. وتعمل [[debounce(fn, 300)]] جوه component بيترسم كل مرة (في React مثلًا) فكل رسمة بيبقى ليها timer جديد ومفيش حاجة بتتلغي: لازم تتعمل مرة واحدة ([[useMemo]] أو [[useRef]]). وتنسى [[cancel()]] لما الصفحة أو الـ component يتقفل، فالدالة بتتنادى على حاجة اتمسحت. و throttle من غير trailing بيضيّع آخر قيمة (آخر مكان للـ scroll مثلًا).`
-          },
-          teach: R`## الفكرة في سطر
-
-debounce: «استنى لحد ما الناس تسكت، ونفّذ آخر طلب». throttle: «نفّذ مرة كل فترة، مهما الطلبات كترت». الكود اتشغّل على ويندوز 11 بـ Node 24.22، وشرح الفكرة والاستخدام في الصفحة موجود في درس «debounce و throttle» في وحدة الأداء والذاكرة.
-
----
-
-## ١. الفرق في جدول
-
-نفس ٥ نداءات ورا بعض بسرعة:
-
-| | debounce (trailing) | debounce بـ [[leading]] | throttle |
-|---|---|---|---|
-| أول نداء | مبيتنفّذش دلوقتي | بيتنفّذ فورًا | بيتنفّذ فورًا |
-| النداءات اللي في النص | كل واحد بيلغي اللي قبله | بتتجاهل وبتطوّل فترة السكوت | واحد بس منهم بيتحجز لآخر الفترة |
-| إمتى بيتنفّذ تاني | بعد [[ms]] من **آخر** نداء | بعد سكوت [[ms]] وييجي نداء جديد | كل [[ms]] بالكتير مرة |
-| مثال | البحث وانت بتكتب | زرار «احفظ» ميتضغطش مرتين | الـ scroll و [[mousemove]] |
-
----
-
-## ٢. debounce سطر سطر
-
-~~~text app.js
-function debounce(fn, ms, { leading = false } = {}) {
-  let timer = null;
-~~~
-
-- [[{ leading = false } = {}]]: الباراميتر التالت object، وبنفكّه (destructuring) ونحط قيمة افتراضية. و [[= {}]] اللي في الآخر عشان لو محدش بعت التالت خالص، منفكّش [[undefined]] (كان هيرمي TypeError).
-- [[let timer = null]]: رقم الـ timer الحالي. ده عايش في الـ closure بين كل النداءات، وهو اللي بيخلّي النداء الجديد يعرف إن فيه قديم مستني.
-
-~~~text app.js
-  function debounced(...args) {
-    const callNow = leading && timer === null;
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      timer = null;
-      if (!leading) fn.apply(this, args);
-    }, ms);
-    if (callNow) fn.apply(this, args);
+~~~text الناتج (Chrome 157، المشغّل الكامل في الشرح)
+بعد ما الـ script اشتغل: controls attr= false   والأزرار ظاهرة
+~~~` },
+            { lvl: 'تطبيق', t: R`**ابني:** تحت فيديو عادي (بـ [[controls]]) حط زرارين «↺ 10» يرجع ١٠ ثواني و «30 ↻» يقدّم ٣٠ ثانية، وجنبهم الوقت الباقي بالسالب ([[-1:42]]). القفزة متعدّيش أول الفيديو ولا آخره، ومتعملش حاجة لو المدة لسه مش معروفة.`, done: R`على فيديو مدته ٦ ثواني: «30 ↻» بيوصّل لآخره بالظبط (مش أكتر) والباقي [[-0:00]]، و «↺ 10» بعدها بيرجع لـ [[0]] مش لسالب.`, sol: R`~~~html skip.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>تخطي</title></head>
+<body>
+<video id="v" src="lesson.webm" controls preload="metadata" width="320"></video>
+<div>
+  <button id="back" type="button" aria-label="ارجع ١٠ ثواني">↺ 10</button>
+  <button id="fwd" type="button" aria-label="قدّم ٣٠ ثانية">30 ↻</button>
+  <span id="left">--:--</span>
+</div>
+<script>
+  const v = document.querySelector('#v'), left = document.querySelector('#left');
+  const fmt = (s) => (Number.isFinite(s) ? Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0') : '--:--');
+  // القفزة بتتقص على أول الفيديو وآخره
+  function jump(sec) {
+    if (!Number.isFinite(v.duration)) return;
+    v.currentTime = Math.min(Math.max(v.currentTime + sec, 0), v.duration);
   }
+  document.querySelector('#back').addEventListener('click', () => jump(-10));
+  document.querySelector('#fwd').addEventListener('click', () => jump(30));
+  const showLeft = () => (left.textContent = '-' + fmt(v.duration - v.currentTime));
+  for (const ev of ['loadedmetadata', 'timeupdate', 'seeked']) v.addEventListener(ev, showLeft);
+</script>
+</body>
+</html>
 ~~~
 
-1. [[function debounced]] مش arrow: عشان [[this]] جواها يبقى اللي نادى ([[obj.save()]] ← [[obj]]). الـ arrow مالهاش [[this]] بتاعها.
-2. [[callNow]]: «نفّذ دلوقتي» لو احنا في وضع [[leading]] **و** مفيش فترة سكوت شغالة. بنحسبها **قبل** ما نعمل timer جديد، وإلا [[timer]] هيبقى رقم دايمًا.
-3. [[clearTimeout(timer)]]: الغي القديم. [[clearTimeout(null)]] مبيعملش حاجة ومبيرميش، فمش محتاجين [[if]].
-4. [[setTimeout(() => {...}, ms)]]: الـ arrow هنا مقصودة: بتاخد [[this]] و [[args]] من [[debounced]].
-5. [[timer = null]] جوه الـ timer: الفترة خلصت، فأول نداء بعدها يتعامل كـ «أول مرة» تاني (مهم للـ leading).
-6. [[fn.apply(this, args)]]: نادي الأصلية بنفس الـ [[this]] ونفس الـ arguments كـ array. [[apply]] زي [[call]] بس بتاخد الـ arguments array.
-
-~~~text app.js
-  debounced.cancel = () => { clearTimeout(timer); timer = null; };
-  return debounced;
-}
+~~~text الناتج (Chrome 157، Playwright، lesson.webm مدته 5.98 ثانية)
+البداية:      #left = -0:05
+بعد 30 ↻:     #left = -0:00   currentTime = 5.975858
+بعد ↺ 10:     #left = -0:05   currentTime = 0
 ~~~
 
-الدوال objects، فينفع نعلّق عليها خاصية. [[cancel]] بتلغي النداء المستني، ودي اللي بتناديها لما الصفحة أو الـ component يتقفل.
+- **[[Math.min(Math.max(x, 0), v.duration)]]**: الـ clamp. المتصفح نفسه بيقص القيمة (الدرس اللي فات)، بس بنقصها بإيدنا عشان الكود يبقى واضح ومنعتمدش على سلوك ممكن يختلف.
+- **[[Number.isFinite(v.duration)]]**: قبل الـ metadata المدة [[NaN]]، و [[NaN]] في أي حساب بيطلّع [[NaN]]، و [[currentTime = NaN]] بيرمي [[TypeError]].
+- [[seeked]] في لستة الأحداث عشان الوقت الباقي يتحدث وانت واقف (من غير تشغيل مفيش [[timeupdate]] مستمر).
+- [[aria-label]] على الأزرار لأن «↺ 10» قارئ الشاشة هيقراها «سهم دائري عشرة».` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الزرار ده بيغيّر كلامه لما تدوس عليه. شغّل الفيديو لحد الآخر: الزرار لسه بيقول «وقّف»، ومحتاج تدوس مرتين عشان يشتغل تاني. صلّحه.
 
----
-
-## ٣. throttle سطر سطر
-
-~~~text app.js
-function throttle(fn, ms) {
-  let last = -Infinity, timer = null, lastArgs, lastThis;
+~~~html
+<video id="v" src="lesson.webm" muted width="320"></video>
+<button id="play" type="button">▶ شغّل</button>
+<script>
+  const v = document.querySelector('#v'), btn = document.querySelector('#play');
+  let playing = false;
+  btn.addEventListener('click', () => {
+    if (playing) { v.pause(); btn.textContent = '▶ شغّل'; }
+    else { v.play(); btn.textContent = '❚❚ وقّف'; }
+    playing = !playing;
+  });
+</script>
+~~~`, done: R`بعد ما الفيديو يخلص الزرار بيقول «شغّل» لوحده، وضغطة واحدة بتشغّله من الأول.`, sol: R`~~~html label-fix.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>الزرار</title></head>
+<body>
+<video id="v" src="lesson.webm" muted width="320"></video>
+<button id="play" type="button">▶ شغّل</button>
+<script>
+  const v = document.querySelector('#v'), btn = document.querySelector('#play');
+  btn.addEventListener('click', () => (v.paused || v.ended ? v.play().catch(() => {}) : v.pause()));
+  // الزرار بيعكس حالة الفيديو، أيًّا كان مين غيّرها
+  v.addEventListener('play', () => (btn.textContent = '❚❚ وقّف'));
+  v.addEventListener('pause', () => (btn.textContent = '▶ شغّل'));
+</script>
+</body>
+</html>
 ~~~
 
-- [[last]]: وقت آخر تنفيذ بالـ milliseconds. بيبدأ [[-Infinity]] (سالب ما لا نهاية) عشان أول نداء يتنفّذ فورًا: أي وقت ناقص [[-Infinity]] بـ [[Infinity]]، أكبر من أي [[ms]].
-- [[lastArgs]] و [[lastThis]]: آخر حاجة وصلت، عشان النداء المتحجز في آخر الفترة يتنفّذ بآخر قيمة مش بأول قيمة.
-
-~~~text app.js
-  return function (...args) {
-    lastArgs = args; lastThis = this;
-    const wait = ms - (Date.now() - last);
-    if (wait <= 0) { last = Date.now(); fn.apply(this, args); return; }
-    if (timer === null) timer = setTimeout(() => {
-      timer = null; last = Date.now(); fn.apply(lastThis, lastArgs);
-    }, wait);
-  };
-}
+~~~text الناتج (Chrome 157، Playwright: شغّل، اقفز لـ 5.9، استنى النهاية، دوس تاني)
+                    الكود البايظ         بعد التصليح
+بعد أول ضغطة:       ❚❚ وقّف              ❚❚ وقّف
+بعد ما خلص:         ❚❚ وقّف   ← غلط      ▶ شغّل
+الضغطة التانية:     ▶ شغّل والفيديو واقف   ❚❚ وقّف و paused=false
 ~~~
 
-1. [[Date.now() - last]]: عدّى قد إيه من آخر تنفيذ. [[wait]]: فاضل قد إيه لحد ما يبقى مسموح.
-2. [[wait <= 0]]: الفترة خلصت، نفّذ فورًا وسجّل الوقت.
-3. غير كده، لو مفيش نداء محجوز، احجز واحد بعد [[wait]] بالظبط. ولو فيه واحد محجوز خلاص، النداء ده بس بيحدّث [[lastArgs]].
-
----
-
-## ٤. التشغيل
-
-~~~text الناتج (Node 24)
-save 1
-move 1
-move 5
-search jav
+- **الباج:** متغيّر [[playing]] نسخة تانية من حالة الفيديو، والنسختين بيختلفوا أول ما الفيديو يتغيّر من غير الزرار: خلص لوحده، أو [[k]] من الكيبورد، أو أزرار شاشة القفل، أو [[play()]] اترفض.
+- **التصليح:** مفيش متغيّر. الضغطة بتسأل الفيديو نفسه ([[v.paused || v.ended]])، والزرار بيتغيّر من حدثي [[play]] و [[pause]] بس. ودي «مصدر واحد للحقيقة» (single source of truth).
+- [[catch(() => {})]] على [[play()]] عشان الرفض ميبقاش [[Uncaught]]. ولو اترفض، [[play]] مش هيتبعت والزرار هيفضل «شغّل»، وده الصح.` },
+            { lvl: 'تحدي', t: R`**ابني:** زوّد اختصارات المحترفين على المشغّل: [[.]] و [[,]] يقدّموا أو يرجّعوا **frame** واحد (الفيديو ٣٠ frame في الثانية) ويوقفوا الفيديو لو شغال، و [[>]] و [[<]] يغيّروا السرعة في السلم [[0.25 … 2]]. اعرض النتيجة في سطر [[role="status"]].`, done: R`٣ ضغطات [[.]] من الأول = frame 3 (0.100s)، و [[,]] = frame 2، و [[>]] مرتين من 1 = 1.5×، و [[<]] كتير = 0.25× ومبينزلش أقل.`, sol: R`~~~html keys.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>اختصارات</title></head>
+<body>
+<div id="player" tabindex="0" aria-label="مشغّل الفيديو، استخدم , و . للـ frames و < و > للسرعة">
+  <video id="v" src="lesson.webm" muted width="320"></video>
+  <p id="info" role="status"></p>
+</div>
+<script>
+  const v = document.querySelector('#v'), info = document.querySelector('#info');
+  const FPS = 30, RATES = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+  const show = (text) => (info.textContent = text);
+  document.querySelector('#player').addEventListener('keydown', (e) => {
+    if (e.key === '.' || e.key === ',') {
+      if (!v.paused) v.pause();                  // خطوة frame معناها بس وهو واقف
+      const step = (e.key === '.' ? 1 : -1) / FPS;
+      v.currentTime = Math.min(Math.max(v.currentTime + step, 0), v.duration);
+      show('frame: ' + Math.round(v.currentTime * FPS) + ' (' + v.currentTime.toFixed(3) + 's)');
+    } else if (e.key === '>' || e.key === '<') {
+      const i = RATES.indexOf(v.playbackRate);
+      const next = RATES[Math.min(Math.max((i === -1 ? 3 : i) + (e.key === '>' ? 1 : -1), 0), RATES.length - 1)];
+      v.playbackRate = next;
+      show('السرعة: ' + next + '×');
+    } else return;
+    e.preventDefault();
+  });
+</script>
+</body>
+</html>
 ~~~
 
-| السطر | اتطبع إمتى | ليه |
-|---|---|---|
-| [[save 1]] | فورًا، قبل أي timer | [[leading]]: أول نداء اتنفّذ، و [[save(2)]] جه وفترة السكوت شغالة فاتجاهل |
-| [[move 1]] | فورًا | [[last]] كان [[-Infinity]]، فـ [[wait]] سالب |
-| [[move 5]] | بعد حوالي 50ms | النداءات من 2 لـ 5 حجزت timer واحد، و [[lastArgs]] كان [[5]] ساعتها |
-| [[search jav]] | بعد حوالي 100ms | [[j]] و [[ja]] اتلغوا بـ [[clearTimeout]]، وفضل آخر واحد بس |
-
-جرّبت كمان الحالة اللي بتتسأل في الانترفيو: نسخة debounce بترجّع arrow وبتنادي [[fn(...a)]] على [[{ n: 7, f }]] طبعت [[undefined]] بدل 7، ونسخة من غير [[clearTimeout]] اتنادت ٣ مرات ونفّذت ٣ مرات.
-
----
-
-## ٥. اختبرهم من غير ما تستنى
-
-الاختبار اللي بيستنى 100ms حقيقية بطيء وبيفشل ساعات لو الجهاز مشغول. Node فيه fake timers جوه [[node:test]]:
-
-~~~text debounce.test.mjs
-import { test, mock } from "node:test";
-import assert from "node:assert/strict";
-test("debounce: آخر نداء بس", () => {
-  mock.timers.enable({ apis: ["setTimeout", "Date"] });
-  const calls = [];
-  const f = debounce((x) => calls.push(x), 100);
-  f(1); mock.timers.tick(60); f(2); mock.timers.tick(60);
-  assert.deepEqual(calls, []);
-  mock.timers.tick(40);
-  assert.deepEqual(calls, [2]);
-  mock.timers.reset();
-});
+~~~text الناتج (Chrome 157، Playwright بيدوس على #player)
+. . .     => frame: 3 (0.100s)
+,         => frame: 2 (0.067s)
+> >       => السرعة: 1.5×
+< × 6     => السرعة: 0.25×
 ~~~
 
-- [[mock.timers.enable]]: بيبدّل [[setTimeout]] و [[Date]] بنسخة مزيفة الوقت فيها مبيتحركش لوحده.
-- [[mock.timers.tick(60)]]: «حرّك الساعة 60ms»، وأي timer وقته جه بيتنفّذ فورًا.
-- بعد 60 + 60 = 120ms مفيش حاجة اتنفّذت، لأن [[f(2)]] عند 60 لغت الأول وبدأت عدّ جديد. بعد 40 كمان (100 من آخر نداء) [[calls]] بقت [[[2]]].
-
-~~~text الناتج (node --test، مع اختبار throttle واختبار this)
-✔ debounce: آخر نداء بس، بعد 100ms من آخر نداء (2.0846ms)
-✔ throttle: الأول فورًا والأخير في آخر الفترة (0.3279ms)
-✔ this بيوصل (0.9489ms)
-ℹ tests 3
-ℹ pass 3
-~~~
-
-الاختبار كله خلص في ٢ ملي ثانية مع إنه «بيستنى» 160ms. وفي Vitest نفس الفكرة: [[vi.useFakeTimers()]] و [[vi.advanceTimersByTime(100)]].
-
----
-
-## ٦. الأسئلة اللي بتيجي بعد الكود
-
-| السؤال | الإجابة المختصرة |
-|---|---|
-| ليه [[function]] مش arrow؟ | عشان [[this]] بتاع اللي نادى يوصل للأصلية بـ [[apply]] |
-| لو المستخدم فضل يكتب ١٠ ثواني؟ | debounce مش هينفّذ ولا مرة؛ الحل خيار [[maxWait]] (زي lodash) بينفّذ غصب عنه كل فترة |
-| throttle بـ [[requestAnimationFrame]]؟ | بدل رقم ثابت، نفّذ مرة كل frame: احجز بـ [[requestAnimationFrame]] لو مفيش حاجة محجوزة |
-| إزاي تستخدمه في React؟ | اعمله مرة واحدة بـ [[useMemo]] أو [[useRef]]، ونادي [[cancel()]] في الـ cleanup بتاع [[useEffect]] |
-| الدالة الأصلية بترجّع قيمة؟ | debounce مش بيرجّعها (النداء بيحصل بعدين)؛ لو محتاجها رجّع Promise |
-
----
-
-## الخلاصة
-
-| الدالة | بتحفظ إيه في الـ closure | القاعدة |
-|---|---|---|
-| debounce | [[timer]] واحد | كل نداء يلغي القديم ويبدأ عدّ جديد |
-| debounce بـ [[leading]] | [[timer]] كفترة سكوت | نفّذ لو مفيش فترة شغالة، وطوّلها مع كل نداء |
-| throttle | [[last]] و [[timer]] و [[lastArgs]] | نفّذ لو عدّى [[ms]]، وإلا احجز واحد بآخر قيمة |
-
-- رجّع [[function]] عادية ونادي [[fn.apply(this, args)]].
-- [[cancel()]] جزء من الإجابة، مش زيادة.
-- اختبرهم بـ fake timers، مش بـ [[await sleep(100)]].`,
-          lines: [
-            R`[[debounce]] بتاخد الدالة الأصلية، والمدة بالـ milliseconds، و object خيارات فيه [[leading]] (افتراضي [[false]]). الـ [[= {}]] الأخيرة بتخلّي النداء من غير خيارات ميقعش.`,
-            R`رقم الـ timer الحالي، أو [[null]] لو مفيش حاجة مستنية. عايش في الـ closure، فكل النداءات اللي جاية شايفة نفس المتغير.`,
-            R`الدالة اللي هترجع للمستخدم. [[function]] عادية مش arrow عشان [[this]] جواها يبقى اللي نادى، و [[...args]] بتلم كل الـ arguments في array.`,
-            R`في وضع [[leading]]، نفّذ دلوقتي لو مفيش فترة سكوت شغالة. بنحسبها قبل ما نعمل timer جديد، لأن بعده [[timer]] هيبقى رقم دايمًا.`,
-            R`الغي الـ timer القديم لو فيه. ده قلب الـ debounce: من غيره كل نداء هيتنفّذ متأخر بس، ومش هيتلغى حاجة.`,
-            R`ابدأ عدّ جديد. الـ arrow هنا مقصودة: بتاخد [[this]] و [[args]] من [[debounced]] اللي حواليها.`,
-            R`الفترة خلصت: رجّع [[timer]] لـ [[null]] عشان أول نداء بعد كده يتعامل كأنه أول مرة (مهم للـ leading).`,
-            R`في الوضع العادي (trailing) نفّذ الأصلية هنا، بآخر arguments و [[this]]. [[apply]] بتاخد الـ [[this]] والـ arguments كـ array.`,
-            R`قفلة الـ timer، والمدة [[ms]] اللي بيستناها.`,
-            R`في وضع [[leading]] التنفيذ بيحصل هنا فورًا، والـ timer اللي فوق بيشتغل بس كفترة سكوت.`,
-            R`نهاية [[debounced]].`,
-            R`[[cancel]] خاصية متعلّقة على الدالة نفسها (الدوال objects)، بتلغي أي نداء مستني. بتناديها لما الصفحة أو الـ component يتقفل.`,
-            R`رجّع الدالة الجديدة، وهي اللي هتستخدمها مكان الأصلية في الـ event listener.`,
-            R`نهاية [[debounce]].`,
-            R`[[throttle]]: نفّذ مرة بالكتير كل [[ms]].`,
-            R`[[last]] وقت آخر تنفيذ، وبيبدأ [[-Infinity]] عشان أول نداء يتنفّذ فورًا. [[timer]] للنداء المحجوز، و [[lastArgs]] و [[lastThis]] آخر حاجة وصلت.`,
-            R`الدالة اللي بترجع، [[function]] عادية برضه عشان [[this]].`,
-            R`احفظ آخر arguments وآخر [[this]] مع كل نداء، عشان النداء المحجوز ينفّذ بأحدث قيمة مش بأقدم واحدة.`,
-            R`[[wait]] = فاضل قد إيه لحد ما يبقى مسموح. [[Date.now() - last]] = عدّى قد إيه من آخر تنفيذ بالـ milliseconds.`,
-            R`لو الفترة خلصت ([[wait]] صفر أو سالب): سجّل الوقت، ونفّذ فورًا، واخرج بـ [[return]].`,
-            R`غير كده: لو مفيش نداء محجوز، احجز واحد بعد [[wait]] بالظبط. ولو فيه واحد محجوز، النداء ده كفاية إنه حدّث [[lastArgs]] فوق.`,
-            R`لما الحجز ييجي: فضّي [[timer]]، وسجّل الوقت، ونفّذ بآخر قيمة. كده آخر نداء عمره ما بيضيع.`,
-            R`قفلة الحجز، والمدة هي [[wait]] مش [[ms]]، عشان التنفيذ ييجي في آخر الفترة بالظبط.`,
-            R`نهاية الدالة اللي بترجع.`,
-            R`نهاية [[throttle]].`,
-            R`[[search]] نسخة debounced من دالة بتطبع، بمدة 100ms.`,
-            R`٣ نداءات ورا بعض: كل واحد بيلغي اللي قبله، فبعد 100ms من آخر واحد بيتطبع [[search jav]] بس.`,
-            R`[[save]] debounce بـ [[leading: true]]: أول نداء يتنفّذ فورًا.`,
-            R`[[save(1)]] بيطبع [[save 1]] فورًا، و [[save(2)]] جه وفترة السكوت شغالة فاتجاهل. ده اللي بيمنع زرار «احفظ» يبعت مرتين.`,
-            R`[[move]] نسخة throttled بمدة 50ms.`,
-            R`٥ نداءات في نفس اللحظة: الأول بيطبع [[move 1]] فورًا، والباقي بيحجزوا نداء واحد بيطبع [[move 5]] بعد 50ms. الناتج كله بالترتيب: [[save 1]] و [[move 1]] و [[move 5]] و [[search jav]].`,
-          ],
-          sol: R`[[flush]] بتشوف لو فيه timer مستني: تلغيه وتنفّذ الأصلية بآخر [[args]] و [[this]] (لازم تحفظهم في الـ closure زي [[lastArgs]] في الـ throttle)، وترجّع [[timer]] لـ [[null]]. [[search("x"); search.flush();]] بيطبع [[search x]] فورًا، ومبيطبعش حاجة تاني بعد 100ms لأن الـ timer اتلغى (جرّبتها في Node 24).
-
-[[{ trailing: false }]] في الـ throttle: لو [[trailing]] بـ [[false]] متحجزش timer خالص، فالنداءات اللي في النص بتضيع. بـ ٥ نداءات ورا بعض بيتطبع [[move 1]] بس. ده مناسب لزرار مش عايز تكرره، ومش مناسب للـ scroll لأن آخر مكان هيضيع.`,
-          solCode: R`function debounce(fn, ms) {
-  let timer = null, lastArgs, lastThis;
-  function debounced(...args) {
-    lastArgs = args; lastThis = this;
-    clearTimeout(timer);
-    timer = setTimeout(() => { timer = null; fn.apply(lastThis, lastArgs); }, ms);
-  }
-  debounced.cancel = () => { clearTimeout(timer); timer = null; };
-  debounced.flush = () => {
-    if (timer === null) return;
-    clearTimeout(timer); timer = null;
-    fn.apply(lastThis, lastArgs);
-  };
-  return debounced;
-}
-const search = debounce((q) => console.log("search", q), 100);
-search("x");
-search.flush(); // search x فورًا، ومفيش حاجة بعد 100ms`
-        },
-        {
-          cmd: "memoize",
-          title: "تحفظ نتيجة دالة عشان متتحسبش تاني بنفس المدخلات (memoize)",
-          desc: R`[[memoize(fn)]] بترجّع نسخة من [[fn]] بتفتكر: أول مرة تتنادى بمدخلات معينة بتحسب وتحفظ النتيجة في [[Map]]، وأي مرة بعد كده بنفس المدخلات بترجّع المحفوظ من غير ما تحسب. ده بيحوّل [[fib(50)]] من حاجة مبتخلصش لـ أقل من ملي ثانية.
-
-السؤال في الانترفيو مش بس «اكتبها»: هيسألك المفتاح بيتعمل إزاي لو فيه أكتر من argument، وليه [[cache.has]] مش [[if (cache.get(key))]]، وإيه اللي يحصل للميموري، وإزاي تعمل memoize لدالة async من غير ما تحفظ الفشل.`,
-          example: R`function memoize(fn, keyFn = (...args) => JSON.stringify(args)) {
-  const cache = new Map();
-  return function (...args) {
-    const key = keyFn(...args);
-    if (cache.has(key)) return cache.get(key);
-    const result = fn.apply(this, args);
-    cache.set(key, result);
-    return result;
-  };
-}
-let calls = 0;
-const square = memoize((n) => { calls++; return n * n; });
-console.log(square(4), square(4), square(5), calls); // 16 16 25 2
-const fib = memoize((n) => (n < 2 ? n : fib(n - 1) + fib(n - 2)));
-console.log(fib(50));                                 // 12586269025`,
-          try: R`ضيف خيار [[max]]: الـ cache ميشيلش أكتر من [[max]] نتيجة، ولما يتملي يمسح **أقدم واحدة اتستخدمت** (LRU). الـ [[Map]] بتحافظ على ترتيب الإضافة، فلما تقرا مفتاح امسحه وحطه تاني عشان يروح للآخر، والأقدم يبقى [[cache.keys().next().value]]. اكتب [[memoize]] الأساسية في المربع اللي تحت ودوس «شغّل واختبر».`,
-          ref: [
-            { t: "MDN: Memoization", url: "https://developer.mozilla.org/en-US/docs/Glossary/Memoization" },
-            { t: "MDN: Map", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map" },
-            { t: "MDN: Closures", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Closures" },
-          ],
-          pre: [
-            { to: "js/Map و Set", why: R`الـ cache [[Map]] و [[has]] بيفرّق بين «مش موجود» و «موجود وقيمته falsy»` },
-          ],
-          practice: [
-            { lvl: 'سريع', t: R`قارن وقيس: [[function slowFib(n) { return n < 2 ? n : slowFib(n - 1) + slowFib(n - 2); }]]. قيس بـ [[performance.now()]] تلات حاجات: [[slowFib(32)]]، و [[const wrapped = memoize(slowFib)]] ونداء [[wrapped(32)]] مرتين، و [[fib(32)]] بتاع الدرس.`, done: R`على جهازي (Node 24): [[slowFib(32)]] حوالي 21ms، و [[wrapped(32)]] أول مرة حوالي 22ms (مفيش أي فرق!) وتاني مرة 0.008ms، و [[fib(32)]] بتاع الدرس 0.1ms. وتقدر تشرح ليه: [[slowFib]] بتنادي نفسها مش [[wrapped]]، فالـ recursion جوه مبيعدّيش على الـ cache خالص؛ الـ memo بيفيد الـ recursion بس لو الدالة بتنادي النسخة الـ memoized.`, sol: R`~~~js memo.js
-function memoize(fn, keyFn = (...args) => JSON.stringify(args)) {
-  const cache = new Map();
-  return function (...args) {
-    const key = keyFn(...args);
-    if (cache.has(key)) return cache.get(key);
-    const result = fn.apply(this, args);
-    cache.set(key, result);
-    return result;
-  };
-}
-module.exports = { memoize };
-~~~
-
-~~~js fib-bench.js
-const { memoize } = require("./memo");   // memoize بتاع الدرس
-
-function slowFib(n) { return n < 2 ? n : slowFib(n - 1) + slowFib(n - 2); }
-const wrapped = memoize(slowFib);
-const fib = memoize((n) => (n < 2 ? n : fib(n - 1) + fib(n - 2)));   // بتنادي النسخة الـ memoized
-
-function time(label, f) {
-  const t = performance.now();
-  const r = f();
-  console.log(label.padEnd(18), (performance.now() - t).toFixed(3).padStart(8), "ms", r);
-}
-time("slowFib(32)", () => slowFib(32));
-time("wrapped(32) أول", () => wrapped(32));
-time("wrapped(32) تاني", () => wrapped(32));
-time("fib(32) الدرس", () => fib(32));
-~~~
-
-~~~text الناتج (node fib-bench.js، Node 24 على Windows)
-slowFib(32)          20.360 ms 2178309
-wrapped(32) أول      20.480 ms 2178309
-wrapped(32) تاني      0.048 ms 2178309
-fib(32) الدرس         0.078 ms 2178309
-~~~
-
-(تشغيلة تانية: 18.8 و 19.9 و 0.041 و 0.073. الأرقام بتتغير شوية بين الأجهزة والتشغيلات، بس الشكل ثابت.)
-
-**ليه [[wrapped(32)]] أول مرة نفس وقت [[slowFib(32)]] بالظبط:** [[memoize(slowFib)]] حطت cache **حوالين النداء الأولاني بس**. جوه [[slowFib]] السطر [[slowFib(n - 1) + slowFib(n - 2)]] بينادي الاسم [[slowFib]]، يعني الدالة الأصلية، مش [[wrapped]]. فالـ ٧ مليون نداء اللي جوه (7049155 بالظبط، عدّيتهم بعدّاد) محدش فيهم شاف الـ cache. الـ cache اتملى بقيمة واحدة بس ([[32]])، وده سبب إن تاني مرة 0.05ms.
-
-**ليه [[fib]] بتاع الدرس سريعة من أول مرة:** الدالة بتنادي [[fib]]، والاسم ده هو النسخة الـ memoized نفسها. فكل [[fib(k)]] بيتحسب مرة واحدة: ٣٣ حساب بدل ٧ مليون.
-
-**الانترفيور بيختبر إيه:** إنك فاهم إن الـ memoize بيغلّف النداء من برّه ومش بيغيّر جسم الدالة. **إجابة تتقال:** «الـ memo بيفيد الـ recursion بس لو الـ recursion بيعدّي على النسخة الـ memoized، يعني الدالة تنادي الاسم اللي متخزّن فيه الغلاف».
-
-**الغلطة الشائعة:** تقيس النداء التاني بس وتقول «الـ memo خلّاها أسرع ٤٠٠ مرة» وانت أصلًا مستفدتش حاجة في أول نداء.` },
-            { lvl: 'تطبيق', t: R`صلّح الكود البايظ: [[const bad = (fn) => { const c = {}; return (x) => c[x] || (c[x] = fn(x)); };]] فيه باج لما الدالة ترجّع [[0]] أو [[""]] أو [[false]]. وكمان نسخة بتعمل المفتاح [[args.join()]]: جرّب [[m(1, 2)]] و [[m("1,2")]].`, done: R`مع [[bad(() => 0)]] ونداء [[z(1)]] ٣ مرات، الدالة الأصلية بتتنادى ٣ مرات مش مرة (الـ [[0]] falsy فالـ [[||]] بيحسب تاني)، وبعد ما تستخدم [[Map]] و [[has]] بتتنادى مرة. و [[[1, 2].join()]] و [[["1,2"].join()]] الاتنين [["1,2"]] فالنداءين بياخدوا نفس النتيجة غلط، و [[JSON.stringify]] بيفرّق بينهم: الأول بيبقى [[[1,2]]] والتاني فيه علامات التنصيص حوالين [["1,2"]].`, sol: R`~~~js memo-bugs.js
-const bad = (fn) => { const c = {}; return (x) => c[x] || (c[x] = fn(x)); };
-
-let calls = 0;
-const z = bad(() => { calls++; return 0; });
-z(1); z(1); z(1);
-console.log("bad مع 0: الدالة اتنادت", calls, "مرات");
-
-const good = (fn) => {
-  const c = new Map();
-  return (x) => {
-    if (c.has(x)) return c.get(x);   // has بيفرّق بين «مش موجود» و «موجود وقيمته falsy»
-    const r = fn(x);
-    c.set(x, r);
-    return r;
-  };
-};
-calls = 0;
-const z2 = good(() => { calls++; return 0; });
-z2(1); z2(1); z2(1);
-console.log("good مع 0: الدالة اتنادت", calls, "مرة");
-
-// مفتاح بـ join
-const memoJoin = (fn) => { const c = new Map(); return (...a) => { const k = a.join(); if (!c.has(k)) c.set(k, fn(...a)); return c.get(k); }; };
-const describe = (...a) => a.length + " args: " + a.map((v) => typeof v).join("+");
-const m = memoJoin(describe);
-console.log(m(1, 2), "|", m("1,2"));
-console.log(JSON.stringify([1, 2]), JSON.stringify(["1,2"]));
-~~~
-
-~~~text الناتج (node memo-bugs.js)
-bad مع 0: الدالة اتنادت 3 مرات
-good مع 0: الدالة اتنادت 1 مرة
-2 args: number+number | 2 args: number+number
-[1,2] ["1,2"]
-~~~
-
-**الباج الأول: [[c[x] || ...]].** الـ [[||]] بيسأل «القيمة truthy؟» مش «القيمة موجودة؟». الدالة رجّعت [[0]]، فـ [[c[1]]] بقت 0، وكل نداء بعد كده شاف 0 falsy وحسب تاني. نفس الكلام مع [[""]] و [[false]] و [[null]] و [[NaN]]. التصليح: [[Map]] و [[has]]، لأن [[has]] بيرد على سؤال الوجود بس.
-
-**وليه [[Map]] مش object:** مفاتيح الـ object بتتحوّل strings، فـ [[c[1]]] و [[c["1"]]] نفس المكان. والـ object فيه مفاتيح موروثة: [[c["toString"]]] موجودة من الأول وهترجّع دالة كأنها في الـ cache.
-
-**الباج التاني: [[a.join()]].** [[[1, 2].join()]] و [[["1,2"].join()]] الاتنين [["1,2"]]. السطر التالت بيثبت: [[m("1,2")]] رجّعت نتيجة [[m(1, 2)]] المتخزّنة ([["2 args: number+number"]]) مع إنها arg واحد string، والمفروض [["1 args: string"]]. [[JSON.stringify]] بيحافظ على النوع والحدود (السطر الأخير): الأرقام من غير تنصيص، والـ string بتنصيص، فالمفتاحين مختلفين.
-
-**الانترفيور بيختبر إيه:** إنك عارف إن الـ cache لازم يفرّق بين «مفيش» و «فيه قيمة falsy»، وإن المفتاح لازم يبقى فريد. **إجابة تتقال:** «بستخدم Map و has بدل ||، ومفتاح JSON.stringify بدل join عشان الأنواع والفواصل؛ ولو الـ arg object واحد بستخدم الـ object نفسه مفتاح في Map أو WeakMap».` },
-            { lvl: 'تحدي', t: R`محاكاة: [[memoizeAsync(fn)]] لدالة بتجيب يوزر من API (اعملها [[async (id) => { hits++; if (id < 0) throw new Error("bad id"); return { id }; }]]). المطلوب: نداءين في نفس اللحظة لنفس [[id]] يعملوا request واحد بس (احفظ الـ Promise نفسه مش النتيجة)، ولو الـ Promise اترفض يتشال من الـ cache عشان المحاولة الجاية تجرّب تاني.`, done: R`[[await Promise.all([getUser(1), getUser(1)])]] بيرجّع نفس الـ object مرتين ([[a === b]] بـ [[true]]) و [[hits]] بـ 1. وبـ [[memoize]] بتاع الدرس زي ما هو، [[getUser(-1)]] مرتين بيرمي [[bad id]] مرتين بس [[hits]] بيزيد مرة واحدة (الفشل اتحفظ!). بعد ما تضيف [[.catch((e) => { cache.delete(key); throw e; })]] المحاولة التانية بتنادي الدالة تاني فعلًا.`, sol: R`~~~js memo-async.js
-const { memoize } = require("./memo");   // memoize بتاع الدرس
-
-let hits = 0;
-const fetchUser = async (id) => {
-  hits++;
-  await new Promise((r) => setTimeout(r, 20));      // كأنه request
-  if (id < 0) throw new Error("bad id");
-  return { id };
-};
-
-function memoizeAsync(fn) {
-  const cache = new Map();
-  return function (key) {
-    if (cache.has(key)) return cache.get(key);
-    const p = Promise.resolve()
-      .then(() => fn.call(this, key))
-      .catch((e) => { cache.delete(key); throw e; });   // الفشل ميتحفظش
-    cache.set(key, p);                                   // الـ Promise نفسه، قبل ما يخلص
-    return p;
-  };
-}
-
-async function tryTwice(label, getUser) {
-  hits = 0;
-  for (let k = 0; k < 2; k++) {
-    try { await getUser(-1); } catch (e) { console.log(label, "رمى:", e.message); }
-  }
-  console.log(label, "hits =", hits);
-}
-
-async function main() {
-  const getUser = memoizeAsync(fetchUser);
-  const [a, b] = await Promise.all([getUser(1), getUser(1)]);
-  console.log("a === b:", a === b, "hits =", hits);
-
-  await tryTwice("memoize الدرس", memoize(fetchUser));
-  await tryTwice("memoizeAsync", memoizeAsync(fetchUser));
-}
-main();
-~~~
-
-~~~text الناتج (node memo-async.js)
-a === b: true hits = 1
-memoize الدرس رمى: bad id
-memoize الدرس رمى: bad id
-memoize الدرس hits = 1
-memoizeAsync رمى: bad id
-memoizeAsync رمى: bad id
-memoizeAsync hits = 2
-~~~
-
-**ليه نخزّن الـ Promise مش النتيجة:** النداء التاني لـ [[getUser(1)]] حصل في نفس اللحظة، والأول لسه مستني الـ request (20ms). لو بنخزّن النتيجة بعد ما ترجع، الـ cache كان هيبقى فاضي ساعة النداء التاني فيعمل request تاني. لما بنعمل [[cache.set(key, p)]] **sync** قبل أي await، النداء التاني بيلاقي نفس الـ Promise ويستناه. والنتيجة: [[hits = 1]] والاتنين نفس الـ object ([[a === b]]). الفكرة دي اسمها request deduplication.
-
-**مشكلة [[memoize]] بتاع الدرس مع async:** هو كمان بيخزّن اللي الدالة رجّعته، واللي رجع Promise، فالـ dedup شغال. بس لما الـ Promise يترفض بيفضل في الـ cache مرفوض: المحاولة التانية رمت [[bad id]] من غير ما تنادي الدالة ([[hits = 1]]). لو النت كان قاطع لحظة، اليوزر ده هيفضل فاشل لحد ما الصفحة تتعمل refresh.
-
-**التصليح:** [[.catch((e) => { cache.delete(key); throw e; })]]: لو فشل امسح المفتاح و**ارمي تاني** عشان اللي نادى يعرف إنه فشل. في [[memoizeAsync]] المحاولة التانية نادت الدالة فعلًا ([[hits = 2]]).
-
-- **[[Promise.resolve().then(() => fn(...))]]:** لو [[fn]] رمت sync قبل ما ترجّع Promise، بيبقى رفض عادي ويتمسح من الـ cache برده.
-- **[[throw e]] جوه الـ catch:** من غيرها الـ catch هيحوّل الرفض لنجاح بقيمة [[undefined]]، واللي نادى هيفتكر إنه جاب يوزر.
-
-**الغلطة الشائعة:** [[const v = await fn(key); cache.set(key, v)]]: الـ cache بيتملا بعد ما الـ request يرجع، فأي نداءات في نفس الوقت بتعمل requests مكررة.` },
-          ],
-          flag: "script",
-          deep: {
-            why: "memoize بيختبر closures (الـ cache فاضل عايش)، و Map، والتفكير في المفتاح والميموري. وهي الفكرة اللي ورا useMemo و React.memo و reselect، وورا الـ dynamic programming في أسئلة الخوارزميات (fib و climbing stairs و coin change).",
-            how: R`الـ cache [[Map]] جوه closure: المفتاح بيتعمل من الـ arguments، والقيمة النتيجة. [[JSON.stringify(args)]] مفتاح كويس للأرقام والنصوص والـ objects البسيطة، و [[keyFn]] بتخلّي اللي بيستخدمها يختار مفتاح تاني (مثلًا [[(user) => user.id]]).
-
-[[cache.has(key)]] مش [[cache.get(key)]] عشان النتيجة ممكن تبقى [[0]] أو [[undefined]]. و [[fn.apply(this, args)]] عشان [[this]] يوصل.
-
-الـ recursion بيستفيد بس لو الدالة بتنادي النسخة الـ memoized ([[fib]] نفسها memoized هنا). [[fib(50)]] من غير memo محتاجة حوالي ٤٠ مليار نداء، ومعاه ٥١ حساب بس.
-
-الميموري: الـ cache بيكبر للأبد. الحلول: حد أقصى بـ LRU، أو [[WeakMap]] لو الـ argument object واحد (بيتمسح لما الـ object يتمسح)، أو مدة صلاحية.`,
-            when: R`دالة pure (نفس المدخلات دايمًا نفس الناتج ومن غير side effects)، وغالية، وبتتنادى بنفس المدخلات كتير: حسابات، وparsing، وفلترة لستة كبيرة بنفس الفلتر. متعملهاش لدالة بتقرا الوقت أو random أو state برّه، ولا لدالة رخيصة (الـ [[JSON.stringify]] نفسه ممكن يبقى أغلى من الحساب).`,
-            mistakes: R`[[if (cache.get(key))]] فالنتايج الـ falsy بتتحسب كل مرة. و [[args.join()]] أو [[String(args)]] كمفتاح فـ [[(1, 2)]] و [[("1,2")]] بيتلخبطوا. و [[JSON.stringify]] نفسه بيخلّي [[undefined]] و [[null]] نفس المفتاح ([[[undefined]]] و [[[null]]] الاتنين [["[null]"]])، وبيحترم ترتيب المفاتيح، فـ [[{ a: 1, b: 2 }]] و [[{ b: 2, a: 1 }]] مفتاحين مختلفين والنتيجة بتتحسب مرتين. و memoize لدالة async بتحفظ الـ Promise المرفوض. ونسيان إن الـ cache مبيتمسحش أبدًا.`
-          },
-          teach: R`## الفكرة في سطر
-
-[[memoize(fn)]] بترجّع دالة جديدة معاها كراسة ([[Map]]): قبل ما تحسب بتبص في الكراسة، ولو لقت الإجابة بترجّعها، ولو ملقتهاش بتحسب وتكتب. الكود اتشغّل على ويندوز 11 بـ Node 24.22.
-
----
-
-## ١. الدالة سطر سطر
-
-~~~text app.js
-function memoize(fn, keyFn = (...args) => JSON.stringify(args)) {
-  const cache = new Map();
-~~~
-
-- [[fn]]: الدالة الأصلية اللي عايزين نسرّعها.
-- [[keyFn]]: دالة بتحوّل الـ arguments لمفتاح واحد. القيمة الافتراضية [[JSON.stringify(args)]]: [[square(4)]] مفتاحها النص [["[4]"]]، و [[add(1, 2)]] مفتاحها [["[1,2]"]].
-- [[const cache = new Map()]]: الكراسة. متعرّفة **برّه** الدالة اللي بترجع، فبتفضل عايشة بين كل النداءات (closure، درس «closure» في المستوى ٢). وكل [[memoize(...)]] ليها كراسة لوحدها.
-
-~~~text app.js
-  return function (...args) {
-    const key = keyFn(...args);
-    if (cache.has(key)) return cache.get(key);
-    const result = fn.apply(this, args);
-    cache.set(key, result);
-    return result;
-  };
-}
-~~~
-
-1. [[function (...args)]]: [[function]] عادية عشان [[this]]، و [[...args]] بتلم الـ arguments في array.
-2. [[keyFn(...args)]]: اعمل المفتاح.
-3. [[cache.has(key)]]: المفتاح موجود؟ رجّع المحفوظ. لازم [[has]] مش [[get]]: لو النتيجة [[0]]، [[if (cache.get(key))]] هيشوفها false ويحسب تاني.
-4. [[fn.apply(this, args)]]: احسب بالدالة الأصلية بنفس [[this]] ونفس الـ arguments.
-5. [[cache.set(key, result)]] و [[return result]]: اكتب في الكراسة ورجّع.
-
----
-
-## ٢. التشغيل
-
-~~~text app.js
-let calls = 0;
-const square = memoize((n) => { calls++; return n * n; });
-console.log(square(4), square(4), square(5), calls);
-const fib = memoize((n) => (n < 2 ? n : fib(n - 1) + fib(n - 2)));
-console.log(fib(50));
-~~~
-
-~~~text الناتج (Node 24)
-16 16 25 2
-12586269025
-~~~
-
-- [[calls]] بـ 2 مش 3: [[square(4)]] التانية جت من الكراسة. [[calls]] بيتقري **بعد** ما الـ ٣ نداءات اتنفذوا لأن الـ arguments بتتحسب من الشمال لليمين قبل [[console.log]].
-- [[fib]] بتنادي [[fib]] نفسها، و [[fib]] هنا هي النسخة الـ memoized، فكل [[fib(k)]] بيتحسب مرة واحدة بس: ٥١ حساب لـ [[fib(50)]]. من غير memo، [[fib(50)]] بتنادي نفسها حوالي ٤٠ مليار مرة.
-
-### قيست الفرق
-
-~~~text الناتج (Node 24، ويندوز 11)
-slowFib(32) 21.0 ms
-memo fib(32) 0.096 ms
-memoize(slowFib)(32) first 22.3 ms
-second 0.008 ms
-~~~
-
-السطر التالت هو الفخ: [[memoize(slowFib)]] أول مرة بنفس بطء الأصلية، لأن [[slowFib]] جواها بتنادي [[slowFib]] الأصلية مش النسخة الـ memoized. الكراسة بتستفيد منها بس النداءات اللي **بتعدّي عليها**.
-
----
-
-## ٣. المفتاح: الحتة اللي بتتسأل عليها
-
-~~~text الناتج (node -e)
-[null] [null] 1,2 1,2
-~~~
-
-ده [[JSON.stringify([undefined])]] و [[JSON.stringify([null])]] و [[[1, 2].join()]] و [[["1,2"].join()]]:
-
-| المفتاح | المشكلة | الحل |
-|---|---|---|
-| [[args.join()]] أو [[String(args)]] | [[(1, 2)]] و [[("1,2")]] نفس المفتاح | [[JSON.stringify(args)]] بيحط علامات التنصيص |
-| [[JSON.stringify(args)]] | [[undefined]] و [[null]] نفس المفتاح، والدوال والـ Map بتتحوّل [[null]] أو [[{}]] | [[keyFn]] مخصوصة للحالة دي |
-| [[JSON.stringify]] لـ object كبير | تحويله لنص ممكن ياخد وقت أكتر من الحساب نفسه | [[keyFn]] بترجّع [[user.id]] بس |
-| object كـ مفتاح مباشرة | الـ [[Map]] بتقارن بالـ reference، فـ object جديد بنفس المحتوى مفتاح جديد | [[WeakMap]] لو ده المقصود (وبتتمسح لوحدها) |
-
----
-
-## ٤. الميموري و async
-
-الكراسة بتكبر للأبد: لو الدالة بتتنادى بمليون مدخل مختلف، فيه مليون نتيجة في الميموري (درس «memory leaks»). الحل الشائع LRU (Least Recently Used): حد أقصى، ولما تتملي امسح أقدم حاجة اتستخدمت. ده المطلوب في «جرّب».
-
-ومع دالة async، اللي بيتحفظ هو الـ Promise. ده كويس (نداءين في نفس اللحظة بيعملوا request واحد)، بس الـ Promise المرفوض بيتحفظ كمان:
-
-~~~text الناتج (Node 24)
-true 1
-bad id
-bad id 2
-~~~
-
-- [[true 1]]: [[getUser(1)]] مرتين في [[Promise.all]] رجّعوا نفس الـ object و [[hits]] بـ 1.
-- [[getUser(-1)]] مرتين: الاتنين رموا [[bad id]]، بس [[hits]] بقى 2 بس (1 للـ id 1 و 1 للـ -1)، يعني المحاولة التانية مجرّبتش تاني: الفشل اتحفظ. الحل [[.catch]] بتمسح المفتاح وترمي الـ error تاني (التمرين التالت).
-
----
-
-## الخلاصة
-
-| النقطة | ليه | اللي تقوله في الانترفيو |
-|---|---|---|
-| [[Map]] في closure | الكراسة تعيش بين النداءات | كل [[memoize]] ليها cache لوحدها |
-| [[has]] مش [[get]] | النتيجة ممكن تبقى [[0]] أو [[undefined]] | [[if (cache.get(k))]] بيحسب الـ falsy تاني |
-| [[JSON.stringify(args)]] | مفتاح لأكتر من argument | ومعاه [[keyFn]] للحالات الخاصة |
-| الـ recursion | لازم تنادي النسخة الـ memoized | [[memoize(slowFib)]] مبيسرّعش أول نداء |
-| الميموري و async | الكراسة مبتتمسحش، والفشل بيتحفظ | LRU، و [[cache.delete]] في الـ [[catch]] |`,
-          lines: [
-            R`[[memoize]] بتاخد الدالة الأصلية، ودالة اختيارية بتعمل المفتاح من الـ arguments. الافتراضي [[JSON.stringify(args)]]، فـ [[(1, 2)]] مفتاحها النص [["[1,2]"]].`,
-            R`الكراسة: [[Map]] من المفتاح للنتيجة. متعرّفة برّه الدالة اللي بترجع فبتفضل عايشة بين النداءات، وكل نداء لـ [[memoize]] بيعمل واحدة جديدة.`,
-            R`الدالة اللي بترجع وهتستخدمها بدل الأصلية. [[function]] عادية عشان [[this]]، و [[...args]] بتلم الـ arguments في array.`,
-            R`اعمل المفتاح من الـ arguments بالدالة اللي اتبعتت أو الافتراضية.`,
-            R`المفتاح موجود؟ رجّع النتيجة المحفوظة من غير حساب. [[has]] مش [[get]] عشان النتيجة لو [[0]] أو [[undefined]] متتحسبش كل مرة.`,
-            R`مش موجود: احسب بالدالة الأصلية بنفس [[this]] ونفس الـ arguments. [[apply]] بتاخد الـ arguments كـ array.`,
-            R`اكتب النتيجة في الكراسة عشان المرة الجاية.`,
-            R`رجّع النتيجة اللي اتحسبت لسه، وهي نفس اللي هيرجع من الكراسة في النداءات الجاية.`,
-            R`نهاية الدالة اللي بترجع.`,
-            R`نهاية [[memoize]].`,
-            R`عدّاد بيقول الدالة الأصلية اتنادت كام مرة فعلًا، عشان نشوف الكراسة بتشتغل.`,
-            R`[[square]] نسخة memoized من دالة بتزوّد العدّاد وترجّع المربّع.`,
-            R`[[square(4)]] الأولى بتحسب، والتانية من الكراسة، و [[square(5)]] مفتاح جديد فبتحسب. فـ [[calls]] بـ 2 مش 3، والناتج [[16 16 25 2]].`,
-            R`[[fib]] بتنادي [[fib]] نفسها، وهي هنا النسخة الـ memoized، فكل رقم بيتحسب مرة واحدة. لو [[fib]] كانت بتنادي نسخة مش memoized، الكراسة مكانتش هتفيد الـ recursion.`,
-            R`[[fib(50)]] بتخلص فورًا بـ ٥١ حساب. من غير memo كانت هتحتاج حوالي ٤٠ مليار نداء. والرقم [[12586269025]] أقل من [[Number.MAX_SAFE_INTEGER]] فمظبوط؛ بعد [[fib(78)]] الأرقام بتبدأ تبقى تقريبية ومحتاج [[BigInt]].`,
-          ],
-          sol: R`LRU بـ [[Map]]: لما تلاقي المفتاح، امسحه وحطه تاني ([[cache.delete(key); cache.set(key, value)]]) عشان يروح لآخر الترتيب. ولما تضيف جديد و [[cache.size]] عدّى [[max]]، امسح [[cache.keys().next().value]] (أول مفتاح = أقدم واحد اتستخدم).
-
-جرّبت بـ [[max: 2]]: [[f(1); f(2); f(1); f(3);]] بيمسح [[2]] مش [[1]] (لأن [[1]] اتستخدم تاني)، فـ [[f(1)]] بعدها من الكراسة و [[f(2)]] بتتحسب تاني، والـ [[calls]] بيزيد ٤ مرات بالظبط: 1 و 2 و 3 وبعدين 2 تاني.`,
-          solCode: R`function memoize(fn, { max = Infinity, keyFn = (...a) => JSON.stringify(a) } = {}) {
-  const cache = new Map();
-  return function (...args) {
-    const key = keyFn(...args);
-    if (cache.has(key)) {
-      const value = cache.get(key);
-      cache.delete(key); cache.set(key, value); // روح لآخر الترتيب
-      return value;
+- **frame = ١ ÷ ٣٠ ثانية** (0.0333). الـ [[HTMLMediaElement]] مبيعرفش الـ frame rate، فانت لازم تعرفه من الملف. في Chrome فيه [[video.requestVideoFrameCallback()]] بيدّيك [[mediaTime]] بتاع كل frame اتعرض لو محتاج دقة أكتر.
+- **[[RATES.indexOf]]**: بنمشي على سلم ثابت بدل [[+ 0.25]] عشان منوصلش لـ [[1.0000000002]] من جمع الكسور.
+- [[tabindex="0"]] على الـ [[div]] عشان ياخد focus ويستقبل [[keydown]]، و [[aria-label]] بيقول الاختصارات لقارئ الشاشة.
+- [[e.preventDefault()]] بس على المفاتيح اللي استخدمناها، عشان باقي المفاتيح (Tab مثلًا) تفضل شغالة.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك وابني:** من صفحة «Media Session API» على MDN: خلّي أزرار الوسائط في الكيبورد وشاشة القفل والإشعار تتحكم في بودكاست: العنوان واسم البرنامج، وتشغيل وإيقاف، ورجوع ١٠ وتقديم ٣٠، و [[seekto]]، والحلقة اللي قبل واللي بعد، وشريط التقدم ([[setPositionState]]). جرّب كمان action مش موجود واكتب الخطأ.`, done: R`كل الـ actions اتسجلت من غير خطأ، والـ action الغلط رمى [[TypeError]] اسمه فيه، و [[setPositionState]] بمكان أكبر من المدة رمى برده.`, sol: R`~~~html session.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>Media Session</title></head>
+<body>
+<audio id="a" src="lesson.webm" controls></audio>
+<pre id="out"></pre>
+<script>
+  const a = document.querySelector('#a'), out = document.querySelector('#out');
+  const log = (s) => (out.textContent += s + '\n');
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({ title: 'الحلقة ١٢: الـ Promises', artist: 'بودكاست كود بالعربي', album: 'الموسم ٢' });
+    const actions = {
+      play: () => a.play(),
+      pause: () => a.pause(),
+      seekbackward: (d) => (a.currentTime = Math.max(a.currentTime - (d.seekOffset || 10), 0)),
+      seekforward: (d) => (a.currentTime = Math.min(a.currentTime + (d.seekOffset || 30), a.duration)),
+      seekto: (d) => (a.currentTime = d.seekTime),
+      previoustrack: () => log('الحلقة اللي قبلها'),
+      nexttrack: () => log('الحلقة اللي بعدها'),
+      skipad: null,
+    };
+    for (const [name, fn] of Object.entries(actions)) {
+      try { navigator.mediaSession.setActionHandler(name, fn); log('اتسجّل: ' + name); }
+      catch (e) { log(name + ': ' + e.name + ': ' + e.message); }
     }
-    const result = fn.apply(this, args);
-    cache.set(key, result);
-    if (cache.size > max) cache.delete(cache.keys().next().value);
-    return result;
-  };
-}
-let calls = 0;
-const f = memoize((n) => { calls++; return n * 10; }, { max: 2 });
-f(1); f(2); f(1); f(3); // الكراسة: 1 و 3 (اتمسح 2)
-f(1); f(2);
-console.log(calls); // 4`,
-          check: {
-            lang: "js",
-            starter: R`function memoize(fn) {
-  // رجّع دالة بتفتكر النتايج
-}`,
-            tests: R`test("نفس المدخلات ← الأصلية بتتنادى مرة واحدة", () => {
-  let calls = 0;
-  const sq = memoize((n) => { calls++; return n * n; });
-  expect([sq(4), sq(4), sq(4), calls]).toEqual([16, 16, 16, 1]);
-});
-test("مدخلات مختلفة ← نتايج مختلفة", () => {
-  const sq = memoize((n) => n * n);
-  expect([sq(2), sq(3)]).toEqual([4, 9]);
-});
-test("النتيجة 0 أو undefined بتتحفظ برضه (has مش get)", () => {
-  let calls = 0;
-  const zero = memoize(() => { calls++; return 0; });
-  const none = memoize(() => { calls++; });
-  zero(1); zero(1); none(1); none(1);
-  expect(calls).toBe(2);
-});
-test("أكتر من argument: (1, 2) غير (2, 1) وغير (\"1,2\")", () => {
-  const f = memoize((...a) => a.length + ":" + a.join("-"));
-  expect([f(1, 2), f(2, 1), f("1,2")]).toEqual(["2:1-2", "2:2-1", "1:1,2"]);
-});
-test("this بيوصل للدالة الأصلية", () => {
-  const obj = { base: 10, add: memoize(function (n) { return this.base + n; }) };
-  expect(obj.add(5)).toBe(15);
-});
-test("fib recursive بالـ memo بيخلص فورًا", () => {
-  const fib = memoize((n) => (n < 2 ? n : fib(n - 1) + fib(n - 2)));
-  expect(fib(70)).toBe(190392490709135);
-});`,
-            solution: R`function memoize(fn, keyFn = (...args) => JSON.stringify(args)) {
-  const cache = new Map();
-  return function (...args) {
-    const key = keyFn(...args);
-    if (cache.has(key)) return cache.get(key);
-    const result = fn.apply(this, args);
-    cache.set(key, result);
-    return result;
-  };
-}`
-          }
-        },
-        {
-          cmd: "deepClone و structuredClone",
-          title: "تنسخ object نسخة عميقة: بإيدك بـ WeakMap ولا structuredClone",
-          desc: R`«اكتب deepClone» بيتسأل بعد deep equal على طول، وهو نفس الـ recursion بس بيبني بدل ما يقارن. المطلوب يتعامل مع Date و RegExp و Map و Set، ومع object بيشاور على نفسه (circular) من غير stack overflow، وده بيتحل بـ [[WeakMap]] بتفتكر كل object اتنسخ ونسخته.
-
-وفي الشغل الإجابة الأولى [[structuredClone(value)]]: مدمجة في المتصفح و Node، وبتعمل كل ده لوحدها. الانترفيو عايز يسمع الاتنين: إزاي تكتبها، وإيه اللي [[structuredClone]] مبتعملوش (الدوال، والـ class prototype)، وليه [[JSON.parse(JSON.stringify(x))]] مش نسخة.`,
-          example: R`function deepClone(value, seen = new WeakMap()) {
-  if (typeof value !== "object" || value === null) return value;
-  if (seen.has(value)) return seen.get(value);
-  if (value instanceof Date) return new Date(value.getTime());
-  if (value instanceof RegExp) return new RegExp(value.source, value.flags);
-  if (value instanceof Map) {
-    const out = new Map();
-    seen.set(value, out);
-    for (const [k, v] of value) out.set(k, deepClone(v, seen));
-    return out;
-  }
-  if (value instanceof Set) {
-    const out = new Set();
-    seen.set(value, out);
-    for (const v of value) out.add(deepClone(v, seen));
-    return out;
-  }
-  const out = Array.isArray(value) ? [] : Object.create(Object.getPrototypeOf(value));
-  seen.set(value, out);
-  for (const key of Object.keys(value)) out[key] = deepClone(value[key], seen);
-  return out;
-}
-const user = { name: "Sara", born: new Date(0), tags: new Set(["admin"]), scores: [1, [2, 3], 4] };
-user.self = user;
-const a = deepClone(user);
-const b = structuredClone(user);
-console.log(a !== user, a.self === a, b.self === b);                    // true true true
-console.log(a.born instanceof Date, a.tags.has("admin"), a.scores[1] !== user.scores[1]); // true true true
-class Point { constructor(x) { this.x = x; } double() { return this.x * 2; } }
-console.log(deepClone(new Point(3)).double(), structuredClone(new Point(3)) instanceof Point); // 6 false`,
-          try: R`جرّب [[structuredClone({ save() {} })]] واقرا الـ error، وبعدين نفس الـ object بـ [[deepClone]] بتاعك. وبعدين اعمل object فيه حتتين بيشاوروا على نفس الـ array ([[const shared = [1]; const o = { x: shared, y: shared };]]) واتأكد إن في النسخة [[c.x === c.y]] لسه [[true]]. اكتب [[deepClone]] في المربع اللي تحت ودوس «شغّل واختبر».`,
-          ref: [
-            { t: "MDN: Window.structuredClone()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/structuredClone" },
-            { t: "MDN: The structured clone algorithm", url: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm" },
-            { t: "MDN: WeakMap", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap" },
-            { t: "MDN: JSON.stringify()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify" },
-          ],
-          pre: [
-            { to: "js/WeakMap و WeakSet", why: R`الـ [[seen]] اللي بيمنع اللف للأبد على الـ circular هو [[WeakMap]]` },
-            { to: "js/JSON", why: R`الدرس بيقارن بـ [[JSON.parse(JSON.stringify(x))]] وبيوري هو بيبوّظ إيه` },
-          ],
-          practice: [
-            { lvl: 'سريع', t: R`اقرا وتوقّع: [[const o = { d: new Date(0), u: undefined, n: NaN, m: new Map([ [1, 2] ]) }; const o2 = JSON.parse(JSON.stringify(o)); console.log(o2, typeof o2.d);]]، وبعدين [[const c = {}; c.c = c; JSON.stringify(c);]]. اكتب الناتج على ورقة قبل ما تشغّل.`, done: R`الناتج في Node 24: [[{ d: '1970-01-01T00:00:00.000Z', n: null, m: {} } string]]: الـ Date بقت نص، و [[u]] اختفى خالص، و [[NaN]] بقى [[null]]، والـ Map بقت object فاضي. والتاني بيرمي [[TypeError]] رسالته بتبدأ بـ [[Converting circular structure to JSON]]. وتقدر تقول ٤ حاجات JSON بيبوّظها في النسخ.`, sol: R`**التوقع:** الـ Date تبقى نص، و [[u]] يختفي، و [[NaN]] يبقى [[null]]، والـ Map تبقى [[{}]]. والتاني TypeError.
-
-~~~js json-clone.js
-const o = { d: new Date(0), u: undefined, n: NaN, m: new Map([[1, 2]]) };
-const o2 = JSON.parse(JSON.stringify(o));
-console.log(o2, typeof o2.d);
-
-const c = {}; c.c = c;
-try { JSON.stringify(c); } catch (e) { console.log(e.name + ":", e.message); }
+    try { navigator.mediaSession.setActionHandler('nope', () => {}); } catch (e) { log('nope: ' + e.name + ': ' + e.message); }
+    // شريط التقدم في شاشة القفل
+    a.addEventListener('timeupdate', () => {
+      if (Number.isFinite(a.duration)) navigator.mediaSession.setPositionState({ duration: a.duration, playbackRate: a.playbackRate, position: a.currentTime });
+    });
+    a.addEventListener('loadedmetadata', () => {
+      try { navigator.mediaSession.setPositionState({ duration: a.duration, position: a.duration + 5 }); } catch (e) { log('position: ' + e.name + ': ' + e.message); }
+      log('metadata: ' + navigator.mediaSession.metadata.title + ' — playbackState=' + navigator.mediaSession.playbackState);
+    });
+  } else log('Media Session مش مدعوم هنا');
+</script>
+</body>
+</html>
 ~~~
 
-~~~text الناتج (node json-clone.js، Node 24)
-{ d: '1970-01-01T00:00:00.000Z', n: null, m: {} } string
-TypeError: Converting circular structure to JSON
-    --> starting at object with constructor 'Object'
-    --- property 'c' closes the circle
+~~~text الناتج (Chrome 157، Playwright)
+اتسجّل: play
+اتسجّل: pause
+اتسجّل: seekbackward
+اتسجّل: seekforward
+اتسجّل: seekto
+اتسجّل: previoustrack
+اتسجّل: nexttrack
+اتسجّل: skipad
+nope: TypeError: Failed to execute 'setActionHandler' on 'MediaSession': The provided value 'nope' is not a valid enum value of type MediaSessionAction.
+position: TypeError: Failed to execute 'setPositionState' on 'MediaSession': The provided position cannot be greater than the duration.
+metadata: الحلقة ١٢: الـ Promises — playbackState=none
 ~~~
 
-**الـ ٤ حاجات اللي JSON بوّظها، وليه:**
-
-| الحقل | بقى | السبب |
-|---|---|---|
-| [[d: new Date(0)]] | نص ISO | [[Date]] عنده [[toJSON()]] بيرجّع نص، و [[JSON.parse]] مبيعرفش إن النص ده كان تاريخ |
-| [[u: undefined]] | اختفى | JSON مفيهوش undefined، فـ stringify بيشيل الـ key كله |
-| [[n: NaN]] | [[null]] | JSON مفيهوش NaN ولا Infinity، فبيكتبهم null |
-| [[m: new Map(...)]] | [[{}]] | stringify بيكتب الـ own enumerable properties بس، والـ Map محتواها مش properties |
-
-وكمان (مش في التمرين): الدوال والـ Symbols بتختفي، والـ Set بتبقى [[{}]]، والـ class instance بيرجع object عادي من غير methods، و BigInt بيرمي TypeError.
-
-**الـ circular:** stringify بيمشي جوه الـ object، و [[c.c]] بيرجّعه لنفس الـ object، فبيكتشف الدايرة ويرمي بدل ما يلف للأبد. رسالة Node بتقولك الدايرة فين بالظبط ([[property 'c' closes the circle]])، ودي مفيدة لما تلاقيها في لوج حقيقي.
-
-**الانترفيور بيختبر إيه:** إنك مش هتقول «[[JSON.parse(JSON.stringify())]] بيعمل deep clone» وتسكت. **إجابة تتقال:** «بيشتغل للداتا البسيطة بس: بيحوّل Date لنص، ويشيل undefined والدوال، ويحوّل NaN لـ null و Map و Set لـ object فاضي، وبيقع على الـ circular؛ البديل الجاهز structuredClone».` },
-            { lvl: 'تطبيق', t: R`صلّح الكود البايظ: نسخة [[deepClone]] فيها [[seen.set(value, out)]] بعد اللفة على المفاتيح مش قبلها (يعني بعد ما ينسخ العيال). جرّبها على [[const o = { v: 1 }; o.self = o;]].`, done: R`قبل التصليح بترمي [[RangeError: Maximum call stack size exceeded]]: لما بتوصل لـ [[o.self]] الـ [[seen]] لسه فاضي، فبتبدأ تنسخ [[o]] من الأول للأبد. بعد ما تنقل [[seen.set]] قبل اللفة: [[c.self === c]] بـ [[true]]، وتقدر تشرح في سطر ليه لازم تسجّل النسخة **قبل** ما تنزل جوه.`, sol: R`~~~js seen-order.js
-function deepCloneBad(value, seen = new WeakMap()) {
-  if (typeof value !== "object" || value === null) return value;
-  if (seen.has(value)) return seen.get(value);
-  const out = Array.isArray(value) ? [] : {};
-  for (const key of Object.keys(value)) out[key] = deepCloneBad(value[key], seen);
-  seen.set(value, out);                       // متأخر: العيال اتنسخوا خلاص
-  return out;
-}
-function deepCloneFixed(value, seen = new WeakMap()) {
-  if (typeof value !== "object" || value === null) return value;
-  if (seen.has(value)) return seen.get(value);
-  const out = Array.isArray(value) ? [] : {};
-  seen.set(value, out);                       // سجّل النسخة الأول، وهي لسه فاضية
-  for (const key of Object.keys(value)) out[key] = deepCloneFixed(value[key], seen);
-  return out;
-}
-
-const o = { v: 1 }; o.self = o;
-try { deepCloneBad(o); } catch (e) { console.log("البايظ:", e.name + ":", e.message); }
-const c = deepCloneFixed(o);
-console.log("المصلّح:", c.self === c, c !== o, c.v);
-~~~
-
-~~~text الناتج (node seen-order.js)
-البايظ: RangeError: Maximum call stack size exceeded
-المصلّح: true true 1
-~~~
-
-(النسختين مختصرين للـ objects والـ arrays عشان الفرق يبان؛ في [[deepClone]] بتاع الدرس نفس القاعدة متطبقة في فرع الـ Map والـ Set والـ object.)
-
-**البايظ خطوة خطوة:** [[deepCloneBad(o)]] ← [[seen]] فاضي، فبيعمل [[out]] ويلف على المفاتيح ← يوصل لـ [[self]] وقيمته [[o]] نفسه ← بينادي [[deepCloneBad(o)]] تاني، و [[seen]] **لسه فاضي** لأن [[seen.set]] مستني اللفة تخلص ← نسخة جديدة ولفة جديدة ← ... لحد ما الـ call stack يتملي.
-
-**التصليح:** [[seen.set(value, out)]] قبل اللفة. لما نوصل لـ [[o.self]]، [[seen.has(o)]] بـ true، فبنرجّع [[out]] اللي لسه بنملاه، وده بالظبط اللي عايزينه: [[c.self]] بيشاور على [[c]] نفسه.
-
-**في سطر:** لازم تسجّل النسخة قبل ما تنزل جوه، لأن العيال ممكن يشاوروا على الأب، ولازم يلاقوا نسخته موجودة حتى لو لسه ناقصة.
-
-**ليه [[WeakMap]]:** مفاتيحه objects، ومبيمنعش الـ garbage collector إنه يمسحهم بعد ما النسخ يخلص.
-
-**الغلطة الشائعة:** تحط [[seen.set]] في الآخر «عشان النسخة تبقى كاملة». الكمال مش مهم هنا: الـ reference هو اللي بيتسجّل، وأي حاجة هتتضاف للـ object بعد كده هتبان من كل مكان بيشاور عليه.` },
-            { lvl: 'تحدي', t: R`قارن وقيس: array فيها ١٠٠ ألف object بالشكل [[{ id: i, name: "user" + i, tags: ["a", "b"], meta: { score: i % 7 } }]]. قيس بـ [[performance.now()]] الوقت بتاع [[deepClone]] و [[structuredClone]] و [[JSON.parse(JSON.stringify(x))]]، كل واحدة مرتين.`, done: R`عندي (Node 24، ويندوز 11) طلع [[deepClone]] حوالي 190–210ms، و [[structuredClone]] حوالي 205ms، و JSON حوالي 100–110ms. يعني JSON أسرع **للداتا البسيطة** دي، بس بيبوّظ Date و Map و undefined (التمرين الأول). كتبت الأرقام بتاعتك، وجملة إمتى تستخدم أنهي واحدة.`, sol: R`**[[clone.js]]:** [[deepClone]] من مثال الدرس زي ما هي، وفي آخره [[module.exports = { deepClone };]].
-
-~~~js bench.js
-const { deepClone } = require("./clone");
-const data = Array.from({ length: 100_000 }, (_, i) => ({ id: i, name: "user" + i, tags: ["a", "b"], meta: { score: i % 7 } }));
-
-const ways = {
-  deepClone: (x) => deepClone(x),
-  structuredClone: (x) => structuredClone(x),
-  JSON: (x) => JSON.parse(JSON.stringify(x)),
-};
-for (let round = 1; round <= 2; round++) {
-  for (const [name, f] of Object.entries(ways)) {
-    const t = performance.now();
-    const copy = f(data);
-    const ms = performance.now() - t;
-    console.log($__btمرة $__{round}  $__{name.padEnd(15)} $__{ms.toFixed(0).padStart(4)}ms  $__{copy[99_999].meta !== data[99_999].meta}$__bt);
-  }
-}
-~~~
-
-~~~text الناتج (node bench.js، Node 24 على Windows 11)
-مرة 1  deepClone        146ms  true
-مرة 1  structuredClone  158ms  true
-مرة 1  JSON              78ms  true
-مرة 2  deepClone        163ms  true
-مرة 2  structuredClone  149ms  true
-مرة 2  JSON             110ms  true
-~~~
-
-(تشغيلة تانية: 143 و 152 و 87، وبعدين 167 و 140 و 108. على جهاز تاني الأرقام هتختلف، بس الترتيب نفسه.)
-
-**القراية:**
-
-- **JSON الأسرع للداتا دي** (أرقام ونصوص و arrays و objects عادية بس). [[JSON.stringify]] و [[JSON.parse]] مكتوبين في C++ ومتظبطين جدًا للحالة دي بالذات.
-- **[[deepClone]] و [[structuredClone]] قريبين من بعض.** [[structuredClone]] بيعمل شغل أكتر: بيدعم Date و Map و Set و الـ circular و TypedArrays و Blob، وبيعمل serialize كامل (نفس اللي بيحصل في [[postMessage]] للـ Worker).
-- **العمود الأخير [[true]]:** اتأكدنا إن كل واحدة عملت نسخة عميقة فعلًا ([[meta]] مش نفس الـ object)، عشان المقارنة تبقى عادلة.
-- **ليه مرتين:** أول مرة فيها تسخين الـ JIT، والـ garbage collector ممكن يشتغل في أي مرة. الفرق بين المرتين نفسه (78 و 110 للـ JSON) بيوريك إن رقم واحد مش كفاية.
-
-**إمتى أنهي واحدة:**
-
-| الطريقة | استخدمها لما |
-|---|---|
-| [[structuredClone]] | الاختيار الافتراضي: فيه Date أو Map أو Set أو circular، أو مش متأكد من شكل الداتا |
-| JSON | الداتا JSON أصلًا (رد API) وعايز أسرع حاجة، أو هتبعتها على الشبكة على أي حال |
-| [[deepClone]] بإيدك | محتاج تحافظ على الـ prototype (class instance بالـ methods) أو تنسخ دوال، وده [[structuredClone]] مبيعملوش |
-
-**الغلطة الشائعة:** تقيس مرة واحدة على داتا صغيرة (١٠ objects) وتطلّع حكم. على الحجم ده كلهم تحت 1ms، والفرق بيبان بس في الداتا الكبيرة.` },
+- [[MediaMetadata]] هو اللي بيظهر في إشعار أندرويد وشاشة القفل ونافذة الوسائط في ويندوز. ممكن تزوّد [[artwork: [{ src, sizes, type }] ]].
+- كل handler بياخد object فيه تفاصيل: [[seekOffset]] في التقديم و [[seekTime]] في [[seekto]]. و [[null]] بيشيل الزرار ([[skipad]] هنا).
+- [[setPositionState]] بيرسم شريط التقدم في شاشة القفل، وبيرمي لو [[position > duration]]: امسكه أو اتأكد قبلها.
+- **اللي متقاسش:** ضغطة زرار وسائط حقيقية مش هتتعمل في Chrome headless، فالجزء ده من MDN. اللي اتقاس هو التسجيل والأخطاء.` },
           ],
           flag: "script",
           deep: {
-            why: "deepClone بيختبر recursion، والتفرقة بين الأنواع (Date و Map مش زي object عادي)، والمراجع الدائرية، وده نفس اللي بيحصل في state management (نسخة مستقلة قبل التعديل)، وفي إرسال الداتا لـ Web Worker أو [[postMessage]] (اللي بيستخدم نفس خوارزمية structuredClone).",
-            how: R`القيم البسيطة (primitives) بترجع زي ما هي لأنها مبتتغيرش. الـ objects بتتفصّل حسب النوع: Date بـ [[getTime()]]، و RegExp بـ [[source]] و [[flags]]، و Map و Set بلفة على العناصر، والـ arrays والـ objects بلفة على [[Object.keys]].
+            why: R`MDN بيقول سببين في منهجه: جمهورك ممكن يكون محتاج حاجة أزرار المتصفح مبتعملهاش، وبعض أزرار المتصفحات **مش سهلة بالكيبورد** (والتجربة بتختلف من متصفح لمتصفح، فلازم تختبر في كل واحد)، وعايز شكل واحد في كل المتصفحات يمشي مع تصميم موقعك. وفيه سبب تالت في الشغل: ميزات المنتج نفسه (فصول، سرعات، «كمّل من مكانك»، تحليلات، إعلانات) محتاجة واجهة بتاعتك.`,
+            how: R`المشغّل الخاص طبقتين: الفيديو نفسه (الحالة الحقيقية) والأزرار (عرض للحالة دي). الأزرار بتطلب ([[play()]] و [[currentTime = x]] و [[muted = true]])، والفيديو بيرد بأحداث، والأحداث بس هي اللي بتغيّر الواجهة. كده مستحيل الزرار يقول «وقّف» والفيديو واقف.
 
-الـ [[WeakMap]] اسمها [[seen]]: من الأصل للنسخة. قبل ما تنزل جوه أي object بتسجّل نسخته الفاضية، فلو قابلته تاني (circular أو حتتين بيشاوروا على نفس الحاجة) بترجّع نفس النسخة. [[WeakMap]] مش [[Map]] عشان المفاتيح متفضلش ماسكة الميموري بعد ما النسخ يخلص.
+شريط الوقت [[<input type="range">]]: [[max]] = [[duration]] بعد [[loadedmetadata]]، و [[value]] = [[currentTime]] مع كل [[timeupdate]]، و [[input]] (أثناء السحب) بيكتب [[currentTime]]. ومشكلة صغيرة: وانت بتسحب، [[timeupdate]] بيرجّع الـ thumb لمكانه القديم، فبنعمل علم [[dragging]] من [[pointerdown]] لـ [[pointerup]].
 
-[[Object.create(Object.getPrototypeOf(value))]] بتحافظ على الـ prototype، فالـ methods بتاعة الـ class بتشتغل في النسخة، وده فرق عن [[structuredClone]] اللي بترجّع object عادي. بس الـ class اللي فيها private fields ([[#x]]) النسخة مبيبقاش فيها الـ field، والـ methods اللي بتستخدمه بترمي TypeError.`,
-            when: R`في الشغل: [[structuredClone]] لأي داتا عادية (JSON-like و Date و Map و Set). [[deepClone]] بإيدك لو محتاج تحافظ على class instances أو تنسخ دوال (بالـ reference)، أو مكتبة زي [[lodash.cloneDeep]]. وفي React و Redux غالبًا مش محتاج deep clone خالص: نسخة سطحية للمستوى اللي بيتغير بس (درس «immutability»)، أو Immer.`,
-            mistakes: R`[[JSON.parse(JSON.stringify(x))]] كـ deep clone: Date بتبقى نص، و undefined بيختفي، و NaN بيبقى null، والـ Map بتبقى [[{}]]، والـ circular بيرمي. وتسجّل في [[seen]] بعد النسخ مش قبله فالـ circular يوقع. وتنسخ مفاتيح الـ Map كمان (غالبًا الـ key المفروض يفضل نفس الـ reference). وتفتكر إن [[structuredClone]] بتنسخ الدوال: بترمي [[DataCloneError]].`
+ملء الشاشة بيتطلب على **الغلاف** (الـ [[figure]]) مش على الفيديو، عشان أزرارك تبقى معاه، و CSS [[:fullscreen]] بيظبط الشكل. وصورة في صورة على الفيديو نفسه ([[requestPictureInPicture]] موجودة على [[HTMLVideoElement]] بس). الاتنين محتاجين ضغطة يوزر، والـ [[iframe]] محتاج إذن ([[allowfullscreen]]).`,
+            when: R`اعمله لما أزرار المتصفح مش كفاية فعلًا: منصة دروس، أو بودكاست، أو منتج ليه هوية بصرية، أو ميزة زي الفصول والسرعات المخصوصة. ولو مشروع صغير وأزرار المتصفح كفاية، سيبها: هي متاحة ومتختبرة ومجانية. ولو محتاج كتير (ترجمات بأشكال، HLS، إعلانات، تحليلات)، مكتبة زي Video.js أو Plyr أو Media Chrome أوفر من إنك تكتبه من الصفر، والدرس ده بيخليك تفهم هي بتعمل إيه وتصلّحها لما تقع.`,
+            mistakes: R`- [[<div onclick>]] بدل [[<button>]]: مبياخدش focus ولا بيشتغل بـ Enter ولا Space، وقارئ الشاشة مبيقولش إنه زرار.
+- الزرار بيتغيّر من الضغطة: بيبوظ أول ما الفيديو يخلص أو يتشغّل من مكان تاني (التمرين التالت).
+- [[aria-live]] على عداد الوقت: قارئ الشاشة هيقرا الوقت ٤ مرات في الثانية. الصح [[aria-valuetext]] على الـ range وإعلان واحد عند الإيقاف.
+- [[keydown]] على [[document]] بياخد المسافة والأسهم من أي [[input]] في الصفحة، واليوزر مش عارف يكتب مسافة في خانة البحث.
+- نسيت [[e.preventDefault()]] للمسافة: الفيديو يشتغل والصفحة تنزل لتحت في نفس الوقت.
+- [[requestFullscreen()]] على [[<video>]]: أزرارك بتختفي والمتصفح بيرسم أزراره هو.
+- زرار ملء الشاشة ظاهر جوه [[iframe]] مش مسموحله: بيرمي [[TypeError: Disallowed by permissions policy]] من غير ما اليوزر يفهم. اسأل [[document.fullscreenEnabled]] الأول.`,
           },
           teach: R`## الفكرة في سطر
 
-[[deepClone]] بتمشي على الـ object مستوى مستوى، وكل حاجة مش primitive بتعمل لها نسخة جديدة من نفس النوع. و [[seen]] دفتر بيفتكر «الأصل ده نسخته فين»، فالـ object اللي بيشاور على نفسه ميخلّيهاش تلف للأبد. الكود اتشغّل على ويندوز 11 بـ Node 24.22.
+فيديو من غير أزرار المتصفح، وأزرار من عندك بتكلّمه وبتسمع أحداثه. كل الناتج من Chrome 157 بـ Playwright على سيرفر [[node:http]] محلي، وفيديو التجربة اتسجّل في الـ lab نفسه.
 
 ---
 
-## ١. الدالة سطر سطر
+## ١. ليه تعمل مشغّل بنفسك؟
 
-~~~text app.js
-function deepClone(value, seen = new WeakMap()) {
-  if (typeof value !== "object" || value === null) return value;
-  if (seen.has(value)) return seen.get(value);
+| السبب | مثال |
+|---|---|
+| جمهورك محتاج حاجة مش موجودة | اختصارات زي YouTube، أو «قدّم ٣٠ ثانية» للبودكاست، أو سرعة ١.٧٥ |
+| أزرار المتصفح مش سهلة بالكيبورد في كل مكان | MDN بيذكر إن بعض الأزرار الافتراضية مش بتاخد focus كويس، والتجربة بتختلف بين المتصفحات |
+| شكل واحد في كل المتصفحات | Chrome و Firefox و Safari كل واحد بيرسم أزراره بشكل، وانت عايز ألوان موقعك |
+| ميزات المنتج | فصول، و«كمّل من مكانك»، وتحليلات «اتفرج قد إيه» |
+
+---
+
+## ١ب. الـ HTML: الأساس يشتغل من غير JavaScript
+
+~~~html
+<figure class="player" id="player">
+  <video id="video" controls preload="metadata" playsinline>
+    <source src="lesson.webm" type="video/webm">
+    <source src="lesson.mp4" type="video/mp4">
+    <p>المتصفح ده مش بيشغّل الفيديو. <a href="lesson.mp4">نزّله وشوفه على جهازك</a>.</p>
+  </video>
+  <div class="controls" id="controls" role="group" aria-label="التحكم في الفيديو" hidden>
+    <button id="play" type="button" aria-label="شغّل">▶</button>
+    <input id="seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="مكان التشغيل">
+    <span id="time">0:00 / 0:00</span>
+    ...
+  </div>
+</figure>
 ~~~
 
-1. [[seen = new WeakMap()]]: الدفتر، بيتعمل مرة واحدة في أول نداء، وبيتبعت لكل نداء جوه. [[WeakMap]] زي [[Map]] بس مفاتيحها objects بس، ومبتمنعش الـ object يتمسح من الميموري.
-2. أي حاجة مش object (رقم، نص، boolean، [[undefined]]، دالة) أو [[null]]: رجّعها زي ما هي. الـ primitives مبتتغيرش أصلًا، فمفيش داعي لنسخة. (الدالة [[typeof]] بتاعها [["function"]] فبترجع بنفس الـ reference.)
-3. [[seen.has(value)]]: نسخنا الـ object ده قبل كده؟ رجّع نفس النسخة. ده اللي بيحل الـ circular.
+- [[controls]] موجود، و [[.controls]] بتاعتنا [[hidden]]. أول سطرين في الـ script بيقلبوا ده: [[video.controls = false]] و [[controls.hidden = false]]. لو الـ script وقع، اليوزر عنده مشغّل المتصفح.
+- [[playsinline]]: على iPhone الفيديو من غيره بيفتح ملء الشاشة لوحده (من MDN).
+- [[role="group"]] و [[aria-label]]: قارئ الشاشة بيقول «التحكم في الفيديو، مجموعة» لما تدخلها.
+- **كل زرار [[<button type="button">]]**: بياخد focus، وبيشتغل بـ Enter و Space، وقارئ الشاشة بيقول «زرار». والأيقونات (▶ و ⛶) مش كلام، فـ [[aria-label]] هو الاسم.
 
-~~~text app.js
-  if (value instanceof Date) return new Date(value.getTime());
-  if (value instanceof RegExp) return new RegExp(value.source, value.flags);
+---
+
+## ٢. زرار التشغيل: الحالة من الأحداث
+
+~~~js
+function togglePlay() {
+  if (video.paused || video.ended) video.play().catch((e) => showError('التشغيل اترفض: ' + e.name));
+  else video.pause();
+}
+playBtn.addEventListener('click', togglePlay);
+video.addEventListener('click', togglePlay);
+video.addEventListener('play', () => { playBtn.textContent = '❚❚'; playBtn.setAttribute('aria-label', 'وقّف'); });
+video.addEventListener('pause', () => { playBtn.textContent = '▶'; playBtn.setAttribute('aria-label', 'شغّل'); });
 ~~~
 
-- Date: [[getTime()]] بيرجّع الوقت كرقم milliseconds، و [[new Date(رقم)]] بتعمل تاريخ جديد بنفس الوقت.
-- RegExp: [[source]] نص الـ pattern ([["x"]]) و [[flags]] الحروف ([["gi"]]). (نفس السبب اللي خلّى [[deepEqual]] يحتاجهم: [[Object.keys(/a/g)]] فاضية.)
+- الضغطة **بتطلب** بس. اللي بيغيّر شكل الزرار هو [[play]] و [[pause]]. فلو الفيديو خلص، أو اتشغّل بالكيبورد، أو من شاشة القفل، الزرار صح.
+- [[video.ended]] مع [[paused]]: بعد النهاية الاتنين [[true]]، والضغطة تبدأ من الأول.
+- الضغط على الفيديو نفسه بيشغّل ويوقف زي YouTube، بس الزرار لسه موجود للكيبورد.
 
-~~~text app.js
-  if (value instanceof Map) {
-    const out = new Map();
-    seen.set(value, out);
-    for (const [k, v] of value) out.set(k, deepClone(v, seen));
-    return out;
+---
+
+## ٣. شريط الوقت: [[<input type="range">]]
+
+~~~js
+let dragging = false;
+function showTime() {
+  if (!dragging) seek.value = video.currentTime;
+  time.textContent = fmt(video.currentTime) + ' / ' + fmt(video.duration);
+  seek.setAttribute('aria-valuetext', fmt(video.currentTime) + ' من ' + fmt(video.duration));
+}
+video.addEventListener('loadedmetadata', () => { seek.max = video.duration; showTime(); });
+video.addEventListener('timeupdate', showTime);
+seek.addEventListener('pointerdown', () => (dragging = true));
+seek.addEventListener('pointerup', () => (dragging = false));
+seek.addEventListener('input', () => { video.currentTime = Number(seek.value); showTime(); });
+~~~
+
+- [[max]] بيتظبط في [[loadedmetadata]] (قبله [[duration]] = [[NaN]]). و [[step="0.1"]] عشان السحب يبقى ناعم.
+- **[[dragging]]**: وانت ماسك الـ thumb، [[timeupdate]] كان هيرجّعه مكانه القديم كل ٢٥٠ ms. العلم ده بيوقف التحديث من الفيديو لحد ما تسيب.
+- **[[aria-valuetext]]**: من غيره قارئ الشاشة بيقول «12.4» (رقم الـ range). معاه بيقول «0:12 من 0:58».
+- [[Number(seek.value)]]: [[value]] نص دايمًا، و [[currentTime]] محتاج رقم.
+
+---
+
+## ٤. الوقت وقارئ الشاشة: إعلان واحد مش ٤ في الثانية
+
+~~~html
+<p class="sr-only" id="status" role="status"></p>
+~~~
+
+~~~js
+video.addEventListener('pause', () => {
+  status.textContent = (video.ended ? 'خلص' : 'اتوقف عند ') + (video.ended ? '' : fmt(video.currentTime));
+});
+video.addEventListener('waiting', () => (status.textContent = 'بيحمّل…'));
+~~~
+
+- [[role="status"]] = [[aria-live="polite"]]: قارئ الشاشة بيقرا النص لما يتغيّر، بعد ما يخلص الجملة اللي بيقولها.
+- **مش** على عداد الوقت نفسه: ده بيتغيّر ٤ مرات في الثانية، وقارئ الشاشة هيفضل يرغي. الإعلان بس على الأحداث المهمة: وقف عند كذا، وخلص، وبيحمّل.
+- [[.sr-only]] بيخفي السطر من الشاشة ويسيبه لقارئ الشاشة (درس «aria» في تاب HTML و CSS).
+
+---
+
+## ٥. الصوت والسرعة من [[volumechange]] و [[ratechange]]
+
+~~~js
+muteBtn.addEventListener('click', () => (video.muted = !video.muted));
+vol.addEventListener('input', () => { video.volume = Number(vol.value); video.muted = video.volume === 0; });
+video.addEventListener('volumechange', () => {
+  muteBtn.textContent = video.muted || video.volume === 0 ? '🔇' : '🔊';
+  muteBtn.setAttribute('aria-pressed', String(video.muted));
+  vol.value = video.muted ? 0 : video.volume;
+});
+rate.addEventListener('change', () => (video.playbackRate = Number(rate.value)));
+~~~
+
+- [[aria-pressed]] بيخلي زرار الكتم «toggle button»: قارئ الشاشة بيقول «مضغوط» أو «مش مضغوط».
+- الكتم مبيمسحش [[volume]]، فلما تفك الكتم الصوت بيرجع لمستواه.
+- السرعة [[<select>]] جاهز: بيشتغل بالكيبورد وبيقول القيمة لوحده.
+
+---
+
+## ٦. اختصارات الكيبورد
+
+| المفتاح | بيعمل | ملاحظة |
+|---|---|---|
+| [[k]] أو المسافة | شغّل/وقّف | المسافة بس لو الـ focus مش على زرار (الزرار بيشتغل بالمسافة لوحده) |
+| [[j]] و [[l]] | رجوع وتقديم ١٠ ثواني | زي YouTube |
+| [[←]] و [[→]] | رجوع وتقديم ٥ ثواني | حتى لو الـ focus على شريط الوقت (بدل خطوة 0.1) |
+| [[m]] | كتم | |
+| [[f]] | ملء الشاشة | لو مسموح |
+| [[0]] لـ [[9]] | يروح لـ ٠٪ لـ ٩٠٪ | |
+
+~~~js
+player.addEventListener('keydown', (e) => {
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+  const onField = e.target === vol || e.target === rate;
+  const k = e.key.toLowerCase();
+  const jump = (sec) => { video.currentTime = Math.min(Math.max(video.currentTime + sec, 0), video.duration || 0); };
+  if (k === 'k' || (k === ' ' && !e.target.matches('button, select'))) togglePlay();
+  else if (k === 'm') video.muted = !video.muted;
+  else if (!onField && k === 'arrowright') jump(5);
+  // ... j و l و f و الأرقام في الصفحة الكاملة تحت
+  else return;
+  e.preventDefault();
+});
+~~~
+
+- الـ listener على **المشغّل** ([[#player]]) مش على [[document]]: الاختصارات بتشتغل لما الـ focus جوه المشغّل بس، فخانة بحث في نفس الصفحة متتأثرش.
+- [[Ctrl]] و [[Alt]] و [[Meta]] بنسيبهم للمتصفح ([[Ctrl+L]] مثلًا).
+- **[[onField]]**: سهم على شريط الصوت أو قايمة السرعة يغيّرهم هم، فمناخدهوش. بس على شريط الوقت بناخده عشان نقفز ٥ ثواني بدل 0.1.
+- [[else return]] قبل [[preventDefault]]: أي مفتاح مش بتاعنا (Tab مثلًا) بيكمل عادي.
+
+~~~text الناتج (Chrome 157، Playwright على الصفحة الكاملة، lesson.webm مدته 5.98)
+click ▶ + 1.2s:  t=1.15 paused=false  play=وقّف
+k:               t=1.15 paused=true   status="اتوقف عند 0:01"
+ArrowRight:      t=5.98               (1.15 + 5 = 6.15 اتقص على المدة)
+5:               t=2.99               (50٪)
+j:               t=0.00               (2.99 − 10 اتقص على صفر)
+m:               muted=true
+focus على الشريط + ArrowRight:  t=5.00   (خمس ثواني، مش 0.1)
+Space على الشريط:               paused=false
+~~~
+
+---
+
+## ٧. ملء الشاشة: [[requestFullscreen()]]
+
+~~~js
+fsBtn.hidden = !document.fullscreenEnabled;
+fsBtn.addEventListener('click', () => {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else player.requestFullscreen().catch((e) => showError('ملء الشاشة: ' + e.message));
+});
+document.addEventListener('fullscreenchange', () => fsBtn.setAttribute('aria-label', document.fullscreenElement ? 'اخرج من ملء الشاشة' : 'ملء الشاشة'));
+~~~
+
+~~~css
+.player:fullscreen { max-width: none; display: flex; flex-direction: column; justify-content: center; }
+.player:fullscreen video { flex: 1; aspect-ratio: auto; }
+~~~
+
+~~~text الناتج (Chrome 157)
+ضغطة على ⛶:                    fullscreenElement = player   label = اخرج من ملء الشاشة
+f تاني:                         fullscreenElement = null     label = ملء الشاشة
+من سكربت الصفحة من غير ضغطة:    TypeError: Permissions check failed
+                                 Console: Failed to execute 'requestFullscreen' on 'Element': API can only be initiated by a user gesture.
+جوه iframe من غير allowfullscreen: fullscreenEnabled = false
+                                 TypeError: Disallowed by permissions policy
+~~~
+
+- على **[[player]]** (الـ [[figure]]) مش على [[video]]، عشان أزرارك تيجي معاه.
+- [[Esc]] بيخرج لوحده، و [[fullscreenchange]] بيتبعت في الحالتين، فالزرار دايمًا صح.
+- محتاج ضغطة يوزر، والـ [[iframe]] محتاج [[allowfullscreen]] (درس «iframe sandbox و allow»). عشان كده [[fullscreenEnabled]] الأول.
+
+---
+
+## ٨. صورة في صورة: [[requestPictureInPicture()]]
+
+~~~js
+pipBtn.hidden = !document.pictureInPictureEnabled;
+pipBtn.addEventListener('click', async () => {
+  try {
+    if (document.pictureInPictureElement) await document.exitPictureInPicture();
+    else await video.requestPictureInPicture();
+  } catch (e) { showError('صورة في صورة: ' + e.message); }
+});
+~~~
+
+~~~text الناتج (Chrome 157)
+ضغطة على ⧉:       pictureInPictureElement = video
+ضغطة تانية:        pictureInPictureElement = null
+من غير ضغطة:       NotAllowedError: Failed to execute 'requestPictureInPicture' on 'HTMLVideoElement': Must be handling a user gesture if there isn't already an element in Picture-in-Picture.
+على ملف صوت بس:    InvalidStateError: Failed to execute 'requestPictureInPicture' on 'HTMLVideoElement': The video element has no video track.
+~~~
+
+- موجودة على [[HTMLVideoElement]] بس، والفيديو لازم يبقى فيه صورة. وفيه حدثين [[enterpictureinpicture]] و [[leavepictureinpicture]].
+- Firefox مبيدعمش الـ API ده (من MDN)، بيحط زراره هو على الفيديو، وعشان كده [[pictureInPictureEnabled]] بيخفي الزرار هناك.
+
+---
+
+## ٩. المشغّل كامل (حي)
+
+نفس صفحة المشغّل، بس فيديو الدرس بيتعمل في الصفحة (الـ preview مفيهوش ملفات): canvas بيتحرك ٤ ثواني بيتسجّل بـ [[MediaRecorder]] (درس التسجيل). في مشروعك امسح [[makeDemoClip]] وحط الـ [[<source>]] اللي في قسم ١ب.
+
+~~~live 470 مشغّل الدرس
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مشغّل الدرس</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 16px; background: #f4f4f5; color: #18181b; }
+  .player { max-width: 640px; margin: 0; background: #000; border-radius: 10px; overflow: hidden; }
+  .player video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #000; }
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px; background: #18181b; color: #fff; direction: ltr; }
+  .controls button, .controls select { font: inherit; min-width: 44px; min-height: 44px; border: 0; border-radius: 6px; background: #3f3f46; color: #fff; cursor: pointer; }
+  .controls button:focus-visible, .controls input:focus-visible, .controls select:focus-visible { outline: 3px solid #facc15; outline-offset: 2px; }
+  #seek { flex: 1 1 160px; accent-color: #facc15; }
+  #vol { width: 80px; accent-color: #facc15; }
+  #time { font-variant-numeric: tabular-nums; min-width: 92px; text-align: center; }
+  .msg { margin: 0; padding: 8px; background: #7f1d1d; color: #fff; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .player:fullscreen { max-width: none; display: flex; flex-direction: column; justify-content: center; }
+  .player:fullscreen video { flex: 1; aspect-ratio: auto; }
+</style>
+</head>
+<body>
+<h1>الدرس ١: أول صفحة</h1>
+<p id="wait">بنجهّز فيديو تجربة (٤ ثواني)…</p>
+<figure class="player" id="player">
+  <video id="video" controls preload="metadata" playsinline>
+    <p>المتصفح ده مش بيشغّل الفيديو.</p>
+  </video>
+  <div class="controls" id="controls" role="group" aria-label="التحكم في الفيديو" hidden>
+    <button id="play" type="button" aria-label="شغّل">▶</button>
+    <input id="seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="مكان التشغيل">
+    <span id="time">0:00 / 0:00</span>
+    <button id="mute" type="button" aria-label="اكتم الصوت" aria-pressed="false">🔊</button>
+    <input id="vol" type="range" min="0" max="1" step="0.05" value="1" aria-label="مستوى الصوت">
+    <select id="rate" aria-label="سرعة التشغيل">
+      <option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option>
+    </select>
+    <button id="pip" type="button" aria-label="صورة في صورة">⧉</button>
+    <button id="fs" type="button" aria-label="ملء الشاشة">⛶</button>
+  </div>
+  <p class="msg" id="msg" role="alert" hidden></p>
+  <p class="sr-only" id="status" role="status"></p>
+</figure>
+<script>
+const player = document.querySelector('#player');
+const video = document.querySelector('#video');
+const $ = (id) => document.querySelector('#' + id);
+const [playBtn, seek, time, muteBtn, vol, rate, pipBtn, fsBtn, msg, status] =
+  ['play', 'seek', 'time', 'mute', 'vol', 'rate', 'pip', 'fs', 'msg', 'status'].map($);
+
+// 0. الـ preview مفيهوش ملفات: بنسجّل canvas بيتحرك ٤ ثواني ونستخدمه كفيديو
+async function makeDemoClip(sec) {
+  const c = document.createElement('canvas'); c.width = 320; c.height = 180;
+  const g = c.getContext('2d');
+  const type = ['video/mp4', 'video/webm'].find((t) => MediaRecorder.isTypeSupported(t));
+  const rec = new MediaRecorder(c.captureStream(30), { mimeType: type });
+  const chunks = []; rec.ondataavailable = (e) => chunks.push(e.data);
+  const t0 = performance.now();
+  const draw = () => {
+    const s = (performance.now() - t0) / 1000;
+    g.fillStyle = '#1e293b'; g.fillRect(0, 0, 320, 180);
+    g.fillStyle = '#facc15'; g.fillRect(20 + s * 60, 90, 36, 36);
+    g.fillStyle = '#fff'; g.font = 'bold 36px sans-serif'; g.fillText(s.toFixed(1), 200, 60);
+  };
+  const timer = setInterval(draw, 33); draw();
+  rec.start();
+  await new Promise((r) => setTimeout(r, sec * 1000));
+  rec.stop(); await new Promise((r) => (rec.onstop = r)); clearInterval(timer);
+  return URL.createObjectURL(new Blob(chunks, { type: rec.mimeType }));
+}
+makeDemoClip(4).then((url) => { video.src = url; document.querySelector('#wait').hidden = true; });
+
+// 1. JavaScript شغال: نشيل مشغّل المتصفح ونظهر بتاعنا
+video.controls = false;
+$('controls').hidden = false;
+
+// 2. الوقت: 75.4 => "1:15"، و NaN أو Infinity => "--:--"
+function fmt(s) {
+  if (!Number.isFinite(s)) return '--:--';
+  s = Math.floor(s);
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = String(s % 60).padStart(2, '0');
+  return h ? h + ':' + String(m).padStart(2, '0') + ':' + sec : m + ':' + sec;
+}
+let dragging = false;
+function showTime() {
+  if (!dragging) seek.value = video.currentTime;
+  time.textContent = fmt(video.currentTime) + ' / ' + fmt(video.duration);
+  seek.setAttribute('aria-valuetext', fmt(video.currentTime) + ' من ' + fmt(video.duration));
+}
+video.addEventListener('loadedmetadata', () => { seek.max = video.duration; showTime(); });
+video.addEventListener('durationchange', () => { if (Number.isFinite(video.duration)) seek.max = video.duration; showTime(); });
+video.addEventListener('timeupdate', showTime);
+
+// 3. تشغيل وإيقاف: الزرار بيتغيّر من الأحداث، مش من الضغطة
+function togglePlay() {
+  if (video.paused || video.ended) video.play().catch((e) => showError('التشغيل اترفض: ' + e.name));
+  else video.pause();
+}
+playBtn.addEventListener('click', togglePlay);
+video.addEventListener('click', togglePlay);
+video.addEventListener('play', () => { playBtn.textContent = '❚❚'; playBtn.setAttribute('aria-label', 'وقّف'); });
+video.addEventListener('pause', () => {
+  playBtn.textContent = '▶'; playBtn.setAttribute('aria-label', 'شغّل');
+  status.textContent = (video.ended ? 'خلص' : 'اتوقف عند ') + (video.ended ? '' : fmt(video.currentTime));
+});
+video.addEventListener('waiting', () => (status.textContent = 'بيحمّل…'));
+
+// 4. شريط الوقت: وانت بتسحب منحدّثوش من timeupdate
+seek.addEventListener('pointerdown', () => (dragging = true));
+seek.addEventListener('pointerup', () => (dragging = false));
+seek.addEventListener('input', () => { video.currentTime = Number(seek.value); showTime(); });
+
+// 5. الصوت والسرعة
+muteBtn.addEventListener('click', () => (video.muted = !video.muted));
+vol.addEventListener('input', () => { video.volume = Number(vol.value); video.muted = video.volume === 0; });
+video.addEventListener('volumechange', () => {
+  const off = video.muted || video.volume === 0;
+  muteBtn.textContent = off ? '🔇' : '🔊';
+  muteBtn.setAttribute('aria-pressed', String(video.muted));
+  muteBtn.setAttribute('aria-label', video.muted ? 'شغّل الصوت' : 'اكتم الصوت');
+  vol.value = video.muted ? 0 : video.volume;
+});
+rate.addEventListener('change', () => (video.playbackRate = Number(rate.value)));
+
+// 6. صورة في صورة وملء الشاشة: الزرار يظهر بس لو المتصفح يسمح
+pipBtn.hidden = !document.pictureInPictureEnabled;
+pipBtn.addEventListener('click', async () => {
+  try {
+    if (document.pictureInPictureElement) await document.exitPictureInPicture();
+    else await video.requestPictureInPicture();
+  } catch (e) { showError('صورة في صورة: ' + e.message); }
+});
+fsBtn.hidden = !document.fullscreenEnabled;
+fsBtn.addEventListener('click', () => {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else player.requestFullscreen().catch((e) => showError('ملء الشاشة: ' + e.message));
+});
+document.addEventListener('fullscreenchange', () => fsBtn.setAttribute('aria-label', document.fullscreenElement ? 'اخرج من ملء الشاشة' : 'ملء الشاشة'));
+
+// 7. الكيبورد: على المشغّل كله، وسيب الأسهم للـ range والـ select لما يبقى عليهم الـ focus
+player.addEventListener('keydown', (e) => {
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+  const onField = e.target === vol || e.target === rate;
+  const k = e.key.toLowerCase();
+  const jump = (sec) => { video.currentTime = Math.min(Math.max(video.currentTime + sec, 0), video.duration || 0); };
+  if (k === 'k' || (k === ' ' && !e.target.matches('button, select'))) togglePlay();
+  else if (k === 'm') video.muted = !video.muted;
+  else if (k === 'f' && document.fullscreenEnabled) fsBtn.click();
+  else if (k === 'j') jump(-10);
+  else if (k === 'l') jump(10);
+  else if (!onField && k === 'arrowright') jump(5);
+  else if (!onField && k === 'arrowleft') jump(-5);
+  else if (!onField && /^[0-9]$/.test(k) && Number.isFinite(video.duration)) video.currentTime = video.duration * Number(k) / 10;
+  else return;
+  e.preventDefault();
+});
+
+// 8. الأخطاء: error على الـ video (src واحد) أو على آخر source (لما كلهم يفشلوا)
+function showError(text) { msg.textContent = text; msg.hidden = false; }
+video.addEventListener('error', () => showError('الفيديو مش راضي يشتغل (' + video.error.code + ')'));
+const sources = video.querySelectorAll('source');
+if (sources.length) sources[sources.length - 1].addEventListener('error', () => showError('مفيش ولا صيغة من الفيديو اشتغلت. اتأكد من الملفات.'));
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** «بنجهّز فيديو تجربة» ٤ ثواني، وبعدين مربع أصفر بيتحرك ورقم بيعدّ، وتحته شريط أسود: تشغيل، وشريط الوقت، والوقت، والكتم، والصوت، والسرعة، وصورة في صورة. زرار ملء الشاشة مستخبي هنا عمدًا (قسم ٧).
+
+- **[[makeDemoClip(sec)]]:** canvas → [[captureStream(30)]] (stream فيديو ٣٠ frame في الثانية) → [[MediaRecorder]] → [[Blob]] → [[URL.createObjectURL]]. بيجرّب [[video/mp4]] الأول لأن Chrome بيسجّله بمدة صح، وبعدين [[video/webm]]. ومن غير timeslice في [[start()]] عشان المدة تتكتب (درس التسجيل بيشرح ليه).
+- **[[showError]] و [[error]]:** درس الأخطاء الجاي بيشرح ليه [[error]] على آخر [[<source>]] كمان.
+- اتقاس: Playwright على نفس الملف جوه [[iframe sandbox="allow-scripts allow-forms"]] (نفس الـ preview): المدة 4.000833، والأزرار والكيبورد وصورة في صورة شغالين، و [[fsHidden=true]].
+
+---
+
+## الخلاصة
+
+- [[controls]] في الـ HTML، و JavaScript يشيله ويظهر أزرارك: progressive enhancement.
+- [[<button>]] و [[aria-label]] و [[<input type="range">]] و [[aria-valuetext]]، وإعلان [[role="status"]] على الأحداث المهمة بس.
+- الواجهة من الأحداث مش من الضغطة. ومتغيّر [[playing]] جنب الفيديو = باج.
+- الكيبورد على المشغّل مش [[document]]، وسيب الأسهم للخانات اللي محتاجاها.
+- [[requestFullscreen]] على الغلاف بعد [[fullscreenEnabled]]، و [[requestPictureInPicture]] على الفيديو بعد [[pictureInPictureEnabled]]، والاتنين محتاجين ضغطة.`,
+          lines: [
+            R`بنجيب الفيديو. أي [[<video>]] أو [[<audio>]] ينفع لأن الـ API واحد.`,
+            R`بنجيب ٣ عناصر مرة واحدة: [[map]] على لستة selectors، والـ destructuring بيحط كل واحد في متغيّره.`,
+            R`JavaScript اشتغل، فبنشيل أزرار المتصفح. لو الـ script ده وقع، [[controls]] اللي في الـ HTML بيفضل شغال.`,
+            R`الزرار بيطلب بس: لو واقف أو خلص [[play()]] (ورفضه ممسوك)، وغير كده [[pause()]].`,
+            R`حدث [[play]] من الفيديو هو اللي بيغيّر اسم الزرار لـ «وقّف»، أيًّا كان مين شغّل.`,
+            R`وحدث [[pause]] بيرجّعه «شغّل»، حتى لو الفيديو وقف لوحده لأنه خلص.`,
+            R`أول ما المدة تتعرف بنحطها [[max]] لشريط الوقت.`,
+            R`مع كل [[timeupdate]] (حوالي ٤ مرات في الثانية) بنحرّك الشريط ونكتب الوقت بـ [[formatTime]] من الدرس اللي فات.`,
+            R`السحب على الشريط بيكتب [[currentTime]] (seek)، و [[Number]] لأن [[value]] نص.`,
+            R`ملء الشاشة على الغلاف ([[parentElement]]) مش الفيديو، عشان الأزرار تبقى ظاهرة معاه.`,
+          ],
+          ref: [
+            { t: "MDN Learn: Video and audio APIs", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Client-side_APIs/Video_and_audio_APIs" },
+            { t: "MDN: Video player styling basics", url: "https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Audio_and_video_delivery/Video_player_styling_basics" },
+            { t: "MDN: Fullscreen API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API" },
+            { t: "MDN: Element.requestFullscreen()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/requestFullscreen" },
+            { t: "MDN: Picture-in-Picture API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Picture-in-Picture_API" },
+            { t: "MDN: HTMLVideoElement.requestPictureInPicture()", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLVideoElement/requestPictureInPicture" },
+          ],
+          pre: [{ to: "js/HTMLMediaElement: play و pause و currentTime والصيغ", why: R`الـ API اللي الأزرار بتكلّمه والأحداث اللي بتسمعها` }, { to: "css/aria", why: R`[[aria-label]] و [[aria-pressed]] و [[role="status"]]` }, { to: "css/كيبورد وقارئ شاشة", why: R`إزاي تختبر المشغّل بالكيبورد بس وبقارئ شاشة` }],
+        },
+        {
+          cmd: "أخطاء الميديا: MediaError و source و MIME و Range",
+          title: "الفيديو مش راضي يشتغل: تعرف ليه من JavaScript إزاي، وتعرض بديل، وتصلّح السيرفر؟",
+          desc: R`لما ملف ميديا يفشل، المتصفح بيبعت حدث [[error]]. **مكانه بيفرق:** لو العنصر عليه [[src]]، الحدث على العنصر نفسه و [[element.error]] فيه [[MediaError]] بـ [[code]] و [[message]]. ولو بتستخدم [[<source>]]، كل [[<source>]] بيفشل بيبعت [[error]] على نفسه، و [[element.error]] بيفضل [[null]]، وفشل **آخر** واحد معناه «مفيش ولا ملف اشتغل».
+
+• [[MediaError.code]]: 1 اتلغى، 2 مشكلة شبكة، 3 الملف بايظ، 4 مش مدعوم أو مش موجود. و Chrome بيدّي 4 حتى لـ 404 و 503.
+• [[type]] على [[<source>]] بيخلي المتصفح يتخطى الصيغة اللي مبيعرفهاش من غير ما يحمّلها.
+• السيرفر لازم يدعم **Range** ([[206 Partial Content]])، وإلا التقديم في الفيديو مبيشتغلش.
+• الكلام اللي جوه [[<video>]] مش بيظهر لما الملفات تفشل: البديل بتعرضه انت من JavaScript.`,
+          example: R`// fallback.js: الفيديو فيه 3 <source>، ولو كلهم فشلوا نعرض رسالة ولينك
+const v = document.querySelector('video');
+const sources = [...v.querySelectorAll('source')];
+sources.forEach((s) => s.addEventListener('error', () => console.log('فشل:', s.getAttribute('src'))));
+sources.at(-1).addEventListener('error', () => {
+  v.replaceWith(Object.assign(document.createElement('p'), { textContent: 'الفيديو مش راضي يشتغل. نزّله من اللينك.' }));
+});
+v.addEventListener('error', () => console.log('MediaError', v.error.code, v.error.message));
+v.addEventListener('loadedmetadata', () => console.log('اشتغل:', v.currentSrc));`,
+          try: R`افتح «دكتور الميديا» الحي في آخر الشرح: ٦ حالات بتتجرب في متصفحك وبتكتب اللي حصل. قارن: الـ 404 والـ bytes البايظة رجعوا نفس الـ [[code]]؟ والصف اللي فيه [[<source>]] اتنين بايظين: [[a.error]] كان إيه؟ وبعدين اعمل فولدر فيه [[media-server.mjs]] اللي في قسم ٤ وملف MP4، وجرّب [[curl -I]] و [[curl -r 0-99]] عليه.`,
+          sol: R`~~~text الناتج (نفس الصفحة جوه iframe معزول زي الـ preview، Chrome 157)
+ملف سليم (WAV)                       اشتغل: duration=2 currentSrc=blob:…
+bytes بايظة بس النوع video/webm       error على العنصر: code=4 MEDIA_ERR_SRC_NOT_SUPPORTED — "PipelineStatus::DEMUXER_ERROR_COULD_NOT_OPEN: FFmpegDemuxer: open context failed"
+blob اتعمله revoke                    error على العنصر: code=4 MEDIA_ERR_SRC_NOT_SUPPORTED — "MEDIA_ELEMENT_ERROR: Media load rejected by URL safety check"
+src فاضي                              error على العنصر: code=4 MEDIA_ERR_SRC_NOT_SUPPORTED — "MEDIA_ELEMENT_ERROR: Empty src attribute"
+اتنين source الاتنين بايظين            error على آخر source، و a.error = null، و networkState = 3 (NETWORK_NO_SOURCE)
+source نوعه مش مدعوم، وبعده سليم        اشتغل: duration=2 currentSrc=blob:…
+~~~
+
+- الـ [[code]] **4** في كل الحالات تقريبًا، والفرق كله في [[message]]: [[DEMUXER_ERROR_COULD_NOT_OPEN]] يعني الـ bytes مش ميديا، و [[Empty src attribute]] واضحة. يعني [[code]] للبرنامج و [[message]] للّوج بتاعك (مش لليوزر، وبتختلف بين المتصفحات).
+- الـ blob اللي اتعمله revoke: في صفحة عادية الرسالة كانت [[MEDIA_ELEMENT_ERROR: Format error]]، وجوه الـ iframe المعزول [[Media load rejected by URL safety check]]: نفس الغلطة ورسالتين، فمتبنيش منطق على نص الرسالة.
+- مع [[<source>]]: [[a.error]] = [[null]]. لو بتشيك على [[a.error]] بس هتفتكر إن مفيش مشكلة.
+- [[type="video/x-nope"]] اتعدّى من غير طلب، والـ WAV اللي بعده اشتغل.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** الفيديو ده عليه [[src]] **و** جواه [[<source>]] سليم. [[gone.mp4]] مش موجود و [[lesson.mp4]] موجود. هيشتغل؟ وكام طلب هيروح للسيرفر؟ وأنهي [[error]] هيتبعت؟
+
+~~~html
+<video id="v" src="gone.mp4" controls>
+  <source src="lesson.webm" type="video/webm">
+  <source src="lesson.mp4" type="video/mp4">
+</video>
+~~~`, done: R`كتبت توقّعك، وعرفت إن الـ [[<source>]] اتجاهلوا خالص.`, sol: R`~~~text الناتج (Chrome 157، صفحة على سيرفر محلي، ولوج السيرفر)
+error على الفيديو: 4 MEDIA_ELEMENT_ERROR: Format error
+GET /d3/gone.mp4 → 404        (طلب واحد بس)
+~~~
+
+- **[[src]] على العنصر بيلغي الـ [[<source>]] اللي جواه**، حتى لو كانوا سليمين. المتصفح جرّب [[gone.mp4]] بس، فشل، وبعت [[error]] على الفيديو نفسه بـ [[MediaError]].
+- لاحظ إن الـ 404 طلعت **code 4** و [[Format error]] مش «network error»: Chrome بيعامل الرد اللي مش ميديا (صفحة 404) كصيغة مش مفهومة. وده نفس اللي حصل مع 503 من سيرفر مشغول.
+- الصح: يا [[src]] يا [[<source>]]، مش الاتنين.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** اكتب [[describeMediaError(err)]] اللي بتاخد [[video.error]] وترجّع جملة لليوزر بالعربي: 1 «التحميل اتلغى»، 2 «النت قطع أثناء التحميل»، 3 «الملف بايظ ومش عارف يتفك»، 4 «الملف مش موجود أو صيغته مش مدعومة»، وأي رقم تاني «خطأ مش معروف». ولو فيه [[message]] تتحط بين قوسين في الآخر، ولو [[err]] بـ [[null]] ترجّع «مفيش خطأ». جرّبها في المربع.`, done: R`الاختبارات عدّت، ومنهم [[null]] (وده اللي هتلاقيه مع [[<source>]]) والرقم الغريب.`, sol: R`~~~js
+function describeMediaError(err) {
+  if (!err) return 'مفيش خطأ';
+  const why = {
+    1: 'التحميل اتلغى',
+    2: 'النت قطع أثناء التحميل',
+    3: 'الملف بايظ ومش عارف يتفك',
+    4: 'الملف مش موجود أو صيغته مش مدعومة',
+  }[err.code] || 'خطأ مش معروف';
+  return why + (err.message ? ' (' + err.message + ')' : '');
+}
+console.log(describeMediaError({ code: 4, message: 'MEDIA_ELEMENT_ERROR: Format error' }));
+console.log(describeMediaError({ code: 2, message: '' }));
+console.log(describeMediaError(null));
+~~~
+
+~~~text الناتج (Node 24.22)
+الملف مش موجود أو صيغته مش مدعومة (MEDIA_ELEMENT_ERROR: Format error)
+النت قطع أثناء التحميل
+مفيش خطأ
+~~~
+
+- object بالأرقام كمفاتيح بدل [[switch]] طويل، و [[|| 'خطأ مش معروف']] للرقم اللي مش في اللستة.
+- [[if (!err)]] الأول: مع [[<source>]] الـ [[error]] بيبقى [[null]] (الدرس)، و [[err.code]] على [[null]] كان هيرمي [[TypeError]].
+- الأرقام ممكن تكتبها [[MediaError.MEDIA_ERR_NETWORK]] بدل [[2]] في كود المتصفح، بس الـ object هنا شغال في Node والمتصفح الاتنين.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ (سيرفر):** السيرفر ده بيقدّم الفيديو، والفيديو بيشتغل، بس أي تقديم في الشريط بيرجّع للأول. صلّحه بحيث يدعم Range، واثبت بـ [[curl -r 0-99]] وبـ [[seekable]] في المتصفح.
+
+~~~js
+// slow-seek-server.mjs: بيبعت الملف كله دايمًا، ومبيعرفش Range
+import { createServer } from 'node:http';
+import { createReadStream, statSync } from 'node:fs';
+const types = { '.html': 'text/html; charset=utf-8', '.mp4': 'video/mp4' };
+createServer((req, res) => {
+  const file = req.url === '/' ? 'index.html' : req.url.slice(1);
+  const type = types[file.slice(file.lastIndexOf('.'))];
+  if (!type) { res.writeHead(404); return res.end(); }
+  res.writeHead(200, { 'content-type': type, 'content-length': statSync(file).size });
+  createReadStream(file).pipe(res);
+}).listen(8792, () => console.log('http://localhost:8792'));
+~~~`, done: R`[[curl -r 0-99]] بيرجّع [[206]] و [[content-range: bytes 0-99/133477]]، و [[seekable]] في المتصفح بقت من 0 للمدة، و [[currentTime = 4]] بيفضل 4.`, sol: R`~~~js media-server.mjs
+// media-server.mjs: نفس السيرفر + Range (206 و 416 و Accept-Ranges)
+import { createServer } from 'node:http';
+import { createReadStream, statSync } from 'node:fs';
+const types = { '.html': 'text/html; charset=utf-8', '.mp4': 'video/mp4', '.webm': 'video/webm', '.mp3': 'audio/mpeg', '.vtt': 'text/vtt' };
+createServer((req, res) => {
+  const file = req.url === '/' ? 'index.html' : decodeURIComponent(req.url.slice(1));
+  const type = types[file.slice(file.lastIndexOf('.'))];
+  let size;
+  try { size = statSync(file).size; } catch { size = -1; }
+  if (!type || size < 0 || file.includes('..')) { res.writeHead(404); return res.end(); }
+  const m = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || '');
+  if (!m) {
+    res.writeHead(200, { 'content-type': type, 'content-length': size, 'accept-ranges': 'bytes' });
+    return createReadStream(file).pipe(res);
   }
+  // bytes=100-199 أو bytes=100- (للآخر) أو bytes=-500 (آخر 500 byte)
+  let start = m[1] === '' ? size - Number(m[2]) : Number(m[1]);
+  let end = m[1] !== '' && m[2] !== '' ? Math.min(Number(m[2]), size - 1) : size - 1;
+  if (start < 0) start = 0;
+  if (start >= size || start > end) {
+    res.writeHead(416, { 'content-range': 'bytes */' + size });
+    return res.end();
+  }
+  res.writeHead(206, {
+    'content-type': type,
+    'content-length': end - start + 1,
+    'content-range': 'bytes ' + start + '-' + end + '/' + size,
+    'accept-ranges': 'bytes',
+  });
+  console.log(req.method, req.url, req.headers.range, '→ 206', start + '-' + end);
+  createReadStream(file, { start, end }).pipe(res);
+}).listen(8792, () => console.log('http://localhost:8792'));
 ~~~
 
-- [[seen.set(value, out)]] **قبل** اللفة: لو قيمة جوه الـ Map بتشاور على الـ Map نفسها، هتلاقيها في الدفتر.
-- [[for (const [k, v] of value)]]: اللفة على Map بتدّي [[[key, value]]]، وبنفكّهم.
-- [[out.set(k, deepClone(v, seen))]]: المفتاح زي ما هو (نفس الـ reference، زي lodash)، والقيمة بتتنسخ.
-- الـ Set نفس الكلام بالظبط، بس عناصر من غير مفاتيح.
+~~~text الناتج (Chrome 157، نفس الفيديو MP4 مدته 6.02 ثانية، قبل وبعد)
+                          السيرفر القديم              بعد التصليح
+curl -r 0-99              HTTP/1.1 200 OK             HTTP/1.1 206 Partial Content
+                          content-length: 133477      content-range: bytes 0-99/133477
+                                                      content-length: 100
+                                                      accept-ranges: bytes
+duration                  3.39   ← غلط                6.02
+seekable                  0.00-0.00 (مفيش)            0.00-6.02
+currentTime = 4           رجع 0.00                    4.00
+لوج السيرفر               —                           GET /lesson.mp4 bytes=0- → 206 0-133476
+~~~
 
-~~~text app.js
-  const out = Array.isArray(value) ? [] : Object.create(Object.getPrototypeOf(value));
-  seen.set(value, out);
-  for (const key of Object.keys(value)) out[key] = deepClone(value[key], seen);
-  return out;
+- **[[Range: bytes=0-]]**: Chrome بيطلب كده من أول طلب. لو الرد [[200]] من غير [[Accept-Ranges]]، Chrome بيفهم إن السيرفر مبيعرفش يدّيه حتة من النص، فـ [[seekable]] بتبقى فاضية وأي seek بيرجع لـ 0.
+- **المدة نفسها طلعت غلط (3.39 بدل 6.02)** مع السيرفر القديم: Chrome محتاج يقرا أجزاء من آخر الـ MP4 عشان يعرف المدة بالظبط، ومن غير Range مقدرش.
+- **الـ ٣ أشكال للـ Range:** [[bytes=100-199]] (من لـ)، و [[bytes=100-]] (للآخر)، و [[bytes=-500]] (آخر 500 byte). والـ regex [[/^bytes=(\d*)-(\d*)$/]] بيمسك التلاتة.
+- **[[416]]** لو البداية بعد آخر الملف، ومعاه [[content-range: bytes */size]].
+- [[createReadStream(file, { start, end })]]: [[end]] **شاملة** (inclusive)، فطول الرد [[end - start + 1]].
+- [[file.includes('..')]]: من غيره [[/../../secret.txt]] كان ممكن يقرا ملفات برّه الفولدر (path traversal).
+- في الشغل الحقيقي nginx و Caddy وكل الـ CDNs بيعملوا Range لوحدهم. المشكلة بتظهر في سيرفر Node أو PHP كاتبه بإيدك بيقرا الملف ويبعته.` },
+            { lvl: 'تحدي', t: R`**ابني:** فيديو من سيرفر بيرد [[503]] أحيانًا. اكتب [[error]] handler بيعيد المحاولة لحد ٣ مرات بانتظار بيتضاعف (500 ثم 1000 ثم 2000 ms)، ويكمّل من نفس المكان، ويكتب لليوزر بيحصل إيه، ويستسلم برسالة واضحة بعد ٣.`, done: R`على سيرفر بيرد 503 أول مرتين: الرسالة بتقول «بنحاول تاني (1/3)» وبعدين «اشتغل بعد 2 محاولة»، ولوج السيرفر فيه 503 و 503 و 206.`, sol: R`~~~html retry.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>إعادة المحاولة</title></head>
+<body>
+<video id="v" src="/flaky/clip.webm" controls muted width="320"></video>
+<p id="msg" role="status"></p>
+<script>
+  const v = document.querySelector('#v'), msg = document.querySelector('#msg');
+  const MAX = 3;
+  let tries = 0, resumeAt = 0;
+  v.addEventListener('error', () => {
+    const code = v.error.code;
+    // 1 = اليوزر لغى، و 4 من غير ما نكون حمّلنا ولا مرة ممكن يبقى سيرفر مشغول (503 بيطلع Format error)
+    if (code === MediaError.MEDIA_ERR_ABORTED || tries >= MAX) {
+      msg.textContent = 'الفيديو مش راضي يشتغل بعد ' + tries + ' محاولات (' + v.error.message + ').';
+      return;
+    }
+    tries++;
+    resumeAt = v.currentTime;
+    const wait = 500 * 2 ** (tries - 1);            // 500 ثم 1000 ثم 2000 ms
+    msg.textContent = 'مشكلة في التحميل، بنحاول تاني (' + tries + '/' + MAX + ') بعد ' + wait + 'ms…';
+    setTimeout(() => { v.load(); }, wait);            // load() بيبدأ الطلب من جديد بنفس الـ src
+  });
+  v.addEventListener('loadedmetadata', () => {
+    if (resumeAt) v.currentTime = resumeAt;           // نكمّل من نفس المكان
+    msg.textContent = tries ? 'اشتغل بعد ' + tries + ' محاولة.' : 'اشتغل.';
+  });
+</script>
+</body>
+</html>
+~~~
+
+~~~text الناتج (Chrome 157، Playwright، سيرفر الـ lab بيرد 503 على أول طلبين)
+بعد 300ms:   مشكلة في التحميل، بنحاول تاني (1/3) بعد 500ms…
+بعد 3.3s:    اشتغل بعد 2 محاولة.
+لوج السيرفر:
+GET /flaky/clip.webm bytes=0- 503
+GET /flaky/clip.webm bytes=0- 503
+GET /flaky/clip.webm bytes=0- 206 bytes 0-145733/145734
+~~~
+
+- **[[v.load()]]** بيعيد اختيار الملف وتحميله بنفس الـ [[src]] من غير ما تكتبه تاني.
+- **[[resumeAt]]**: [[load()]] بيرجّع [[currentTime]] لـ 0، فبنحفظه قبلها ونرجعله في [[loadedmetadata]].
+- **[[500 * 2 ** (tries - 1)]]**: الـ [[**]] أس، فالانتظار ٥٠٠ ثم ١٠٠٠ ثم ٢٠٠٠ (exponential backoff)، عشان منضربش سيرفر مشغول أصلًا بطلبات ورا بعض.
+- **[[MEDIA_ERR_ABORTED]]** (1) منعيدش فيه: ده اليوزر أو كودك لغى التحميل.
+- **اللي اتقاس كمان:** سيرفر بيقطع الاتصال في نص الملف (بعد 90 KB) **بيدعم** Range: Chrome بعت طلب تاني لوحده [[bytes=90001-]] والفيديو كمّل للآخر من غير ما [[error]] يتبعت خالص. الـ Range مش بس للتقديم: هو اللي بيخلي المتصفح يكمّل بعد انقطاع.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** من صفحة «Media container formats» وصفحة «Common media types» على MDN، اكتب الـ MIME type الصح اللي السيرفر يبعته لـ: [[.mp4]] و [[.m4a]] و [[.webm]] و [[.ogg]] و [[.opus]] و [[.mp3]] و [[.wav]] و [[.flac]] و [[.vtt]] و [[.m3u8]] و [[.mpd]]. وبعدين جاوب: Chrome بيرفض الفيديو لو السيرفر بعته بنوع غلط؟ (جرّب بسيرفر بيبعت [[text/plain]]).`, done: R`جدول بالـ ١١ نوع، ورد على السؤال من تجربة.`, sol: R`| الامتداد | الـ MIME type |
+|---|---|
+| [[.mp4]] | [[video/mp4]] (و [[audio/mp4]] لو صوت بس) |
+| [[.m4a]] | [[audio/mp4]] |
+| [[.webm]] | [[video/webm]] (و [[audio/webm]] لو صوت بس) |
+| [[.ogg]] | [[audio/ogg]] (و [[.ogv]] [[video/ogg]]) |
+| [[.opus]] | [[audio/ogg]] غالبًا ([[audio/opus]] بيتستخدم كمان) |
+| [[.mp3]] | [[audio/mpeg]] |
+| [[.wav]] | [[audio/wav]] |
+| [[.flac]] | [[audio/flac]] |
+| [[.vtt]] | [[text/vtt]] (ملفات الترجمة، ولازم يبقى كده وإلا [[<track>]] مبيشتغلش، من MDN) |
+| [[.m3u8]] | [[application/vnd.apple.mpegurl]] (قايمة HLS) |
+| [[.mpd]] | [[application/dash+xml]] (قايمة DASH) |
+
+~~~text الناتج (Chrome 157، نفس clip.webm من سيرفر الـ lab بـ 3 headers مختلفة)
+content-type: video/webm                                 canplaythrough duration=5.975858
+content-type: text/plain                                 canplaythrough duration=5.975858
+content-type: text/plain + X-Content-Type-Options: nosniff  canplaythrough duration=5.975858
+~~~
+
+- **Chrome 157 شغّل الفيديو في التلات حالات**: بيبص على أول bytes من الملف (sniffing) وبيعرف إنه WebM، حتى مع [[nosniff]].
+- ده **مش** معناه إن النوع مش مهم: MDN بيقول السيرفر لازم يبعت النوع الصح، والمتصفحات التانية مش لازم تعمل زي Chrome (متقستش هنا)، و [[type]] على [[<source>]] هو اللي بيخلي المتصفح يتخطى صيغة من غير ما يحمّلها، والـ [[.vtt]] بالذات بيترفض بنوع غلط. ابعت النوع الصح ومتعتمدش على الـ sniffing.` },
+          ],
+          check: { lang: "js", starter: R`function describeMediaError(err) {
+  // 1 اتلغى، 2 شبكة، 3 بايظ، 4 مش مدعوم/مش موجود، و null => "مفيش خطأ"
+}`, tests: R`test("null من source", () => expect(describeMediaError(null)).toBe("مفيش خطأ"));
+test("4 ومعاه رسالة", () => expect(describeMediaError({ code: 4, message: "MEDIA_ELEMENT_ERROR: Format error" })).toBe("الملف مش موجود أو صيغته مش مدعومة (MEDIA_ELEMENT_ERROR: Format error)"));
+test("2 من غير رسالة", () => expect(describeMediaError({ code: 2, message: "" })).toBe("النت قطع أثناء التحميل"));
+test("3", () => expect(describeMediaError({ code: 3, message: "" })).toBe("الملف بايظ ومش عارف يتفك"));
+test("1", () => expect(describeMediaError({ code: 1 })).toBe("التحميل اتلغى"));
+test("رقم غريب", () => expect(describeMediaError({ code: 9, message: "x" })).toBe("خطأ مش معروف (x)"));`, solution: R`function describeMediaError(err) {
+  if (!err) return 'مفيش خطأ';
+  const why = { 1: 'التحميل اتلغى', 2: 'النت قطع أثناء التحميل', 3: 'الملف بايظ ومش عارف يتفك', 4: 'الملف مش موجود أو صيغته مش مدعومة' }[err.code] || 'خطأ مش معروف';
+  return why + (err.message ? ' (' + err.message + ')' : '');
+}` },
+          flag: "script",
+          deep: {
+            why: R`الميديا هي أكتر حاجة بتفشل بصمت في الويب: الملف صيغته مش مدعومة على iPhone، أو اسمه اتغيّر في الـ deploy، أو السيرفر مبيدعمش Range، أو CDN رجّع صفحة خطأ HTML. والمتصفح مبيعرضش لليوزر أي رسالة: مستطيل أسود وخلاص. فلو مكتبتش [[error]] handler، اليوزر بيمشي من غير ما حد يعرف، والـ support بيستقبل «الفيديو مش شغال» من غير تفاصيل. والـ outcome ده في منهج MDN: [[<source>]] لأكتر من صيغة، والـ MIME type الصح، والبديل لما الصيغة مش مدعومة.`,
+            how: R`لما العنصر يحتاج يختار ملف (resource selection): لو فيه [[src]]، بيجرّبه هو بس، ولو فشل بيحط [[element.error]] = [[MediaError]] ويبعت [[error]] على العنصر. لو مفيش [[src]]، بيمشي على الـ [[<source>]] بالترتيب: اللي [[type]] بتاعه [[canPlayType]] رد عليه [[""]] بيتعدّى من غير طلب، والباقي بيتطلب، ولو فشل بيتبعت [[error]] على الـ [[<source>]] ده (من غير تفاصيل) ويروح للي بعده. بعد آخر واحد، [[networkState]] بيبقى 3 ([[NETWORK_NO_SOURCE]]) و [[element.error]] بيفضل [[null]] (اتقاس).
+
+الطلب نفسه بيتبعت بـ [[Range: bytes=0-]]. السيرفر اللي بيدعمه بيرد [[206]] و [[Content-Range]] و [[Accept-Ranges: bytes]]، وبعدين أي seek لمكان مش متحمّل بيبقى طلب جديد بـ [[bytes=N-]] (نفس اللي حصل بعد قطع الاتصال). السيرفر اللي بيرد [[200]] دايمًا بيخلي [[seekable]] فاضية. ولو الرد مش ميديا خالص (404 أو 503 فيهم HTML أو نص)، Chrome بيحاول يفكه ويفشل فبيدّي code 4.`,
+            when: R`في كل مشغّل حقيقي: [[error]] على العنصر لو بتستخدم [[src]] (أو [[blob:]] من تسجيل)، و [[error]] على آخر [[<source>]] لو عندك صيغ، ورسالة وبديل (لينك تحميل، أو صورة، أو «جرّب متصفح تاني»). ولوج للـ [[code]] و [[message]] و [[currentSrc]] لسيرفرك عشان تعرف المشكلة فين. وإعادة محاولة لما المشكلة ممكن تكون مؤقتة (503، أو شبكة). وافحص السيرفر بـ [[curl -I]] و [[curl -r 0-99]] أول ما تحط فيديو على أي استضافة جديدة.`,
+            mistakes: R`- [[error]] على الـ [[<video>]] بس مع [[<source>]]: مش هيتبعت خالص (اتقاس)، والفيديو بيفشل وكودك ساكت.
+- تشيك [[video.error]] بعد فشل الـ [[<source>]]: [[null]]. اسأل [[networkState === 3]].
+- [[src]] و [[<source>]] مع بعض: الـ [[<source>]] بتتجاهل.
+- تكتب لليوزر [[error.message]]: رسايل زي [[PipelineStatus::DEMUXER_ERROR_COULD_NOT_OPEN]] بتختلف بين المتصفحات ومش مفهومة. اعرض جملة من الـ [[code]]، واكتب الـ [[message]] في اللوج.
+- تفتكر الكلام اللي جوه [[<video>]] هيظهر لما الملفات تفشل: ده للمتصفحات اللي مبتعرفش [[<video>]] أصلًا. اتقاس: [[getClientRects().length]] = 0 والملفات فاشلة.
+- سيرفر مبيدعمش Range: الفيديو بيشتغل والشريط مبيقدّمش، و MP4 مدته بتطلع غلط.
+- [[<source type="video/mp4">]] على ملف WebM: المتصفح بيصدّق الـ [[type]] وممكن يتخطى ملف كان هيشتغل.`,
+          },
+          teach: R`## الفكرة في سطر
+
+الفشل بيوصلك كحدث [[error]]، وانت اللي تقرر تعرض إيه. كل الناتج من Chrome 157 بـ Playwright على سيرفر [[node:http]] بتاع الـ lab: بيقدّم الملفات صح، وفيه مسارات بتغلط بقصد ([[/plain/]] نوع غلط، و [[/norange/]] من غير Range، و [[/flaky/]] بيرد 503 أول مرتين).
+
+---
+
+## ١. الـ [[error]] بيتبعت فين؟
+
+| الـ HTML | الـ [[error]] بيروح فين | [[element.error]] |
+|---|---|---|
+| [[<video src="x.mp4">]] | على الـ [[<video>]] نفسه | [[MediaError]] فيه [[code]] و [[message]] |
+| [[<video>]] وجواه [[<source>]] | على كل [[<source>]] بيفشل، بالترتيب | [[null]] طول الوقت |
+| الاتنين مع بعض | [[src]] بس بيتجرّب، والـ [[<source>]] بتتجاهل | زي أول صف |
+
+~~~text الناتج (Chrome 157: video فيه 3 source، الأول 404 والتاني bytes بايظة والتالت نوعه مش معروف)
+error على source رقم 1 (/missing.webm) video.error=null networkState=2
+error على source رقم 2 (/broken.wav) video.error=null networkState=3
+نهاية: networkState=3 (NETWORK_NO_SOURCE=3)
+~~~
+
+- التالت ([[type="video/x-nope"]]) **متطلبش خالص** ومبعتش [[error]]: [[canPlayType]] رد [[""]] فاتعدّى.
+- الـ [[error]] على الـ [[<source>]] مالوش تفاصيل: [[Event]] عادي. عشان تعرف مين فشل، اقرا [[getAttribute('src')]] من العنصر نفسه.
+- **«كله فشل» = [[error]] على آخر [[<source>]]**، أو [[networkState === HTMLMediaElement.NETWORK_NO_SOURCE]].
+
+---
+
+## ٢. [[MediaError]]: الكود والرسالة
+
+| [[code]] | الثابت | المعنى في الـ spec |
+|---|---|---|
+| 1 | [[MEDIA_ERR_ABORTED]] | التحميل اتلغى بطلب (اليوزر أو كودك) |
+| 2 | [[MEDIA_ERR_NETWORK]] | الشبكة فشلت بعد ما الملف اتعرف إنه ميديا |
+| 3 | [[MEDIA_ERR_DECODE]] | الملف اتعرف بس فيه حتة بايظة في الفك |
+| 4 | [[MEDIA_ERR_SRC_NOT_SUPPORTED]] | الملف مش مناسب: مش موجود، أو صيغة مش مدعومة، أو مش ميديا |
+
+~~~text الناتج (Chrome 157، src واحد على العنصر في كل سطر)
+/missing.webm (404)           code=4 message="MEDIA_ELEMENT_ERROR: Format error"
+/flaky/tone.wav (503)         code=4 message="MEDIA_ELEMENT_ERROR: Format error"
+/broken.wav (bytes عشوائية)    code=4 message="PipelineStatus::DEMUXER_ERROR_COULD_NOT_OPEN: FFmpegDemuxer: open context failed"
+/blank.html (صفحة HTML)       code=4 message="PipelineStatus::DEMUXER_ERROR_COULD_NOT_OPEN: FFmpegDemuxer: open context failed"
+src=""                         code=4 message="MEDIA_ELEMENT_ERROR: Empty src attribute"
+blob اتعمله revokeObjectURL    code=4 message="MEDIA_ELEMENT_ERROR: Format error"
+~~~
+
+- **كله 4.** حتى الـ 404 والـ 503 (اللي ممكن تتوقعهم 2)، لأن Chrome استلم رد مش ميديا وحاول يفكه. الـ 2 والـ 3 بيظهروا لما الملف اتعرف إنه ميديا وبعدين حاجة وقعت في النص.
+- **الرسالة مش API:** بتختلف بين المتصفحات، وحتى بين الصفحة العادية والـ iframe المعزول (الـ revoke طلع [[Media load rejected by URL safety check]] هناك). استخدمها في اللوج بس.
+
+---
+
+## ٣. الـ MIME type و [[type]] على [[<source>]]
+
+السيرفر بيبعت [[Content-Type]] مع كل ملف، والـ [[type]] على [[<source>]] بيقول للمتصفح «ده نوعه» **قبل** ما يطلب.
+
+~~~text الناتج (Chrome 157، نفس clip.webm بـ 3 headers)
+content-type: video/webm                                 canplaythrough duration=5.975858
+content-type: text/plain                                 canplaythrough duration=5.975858
+content-type: text/plain + X-Content-Type-Options: nosniff  canplaythrough duration=5.975858
+~~~
+
+- **Chrome 157 مبيرفضش الميديا بسبب [[Content-Type]] غلط:** بيقرا أول bytes من الملف ويعرف نوعه. ده اللي اتقاس على Chrome بس.
+- ومع كده ابعت النوع الصح دايمًا: MDN بيطلبه، ومتصفحات تانية مش مضطرة تعمل sniffing، و [[text/vtt]] للترجمة لازم يبقى صح.
+- [[type]] الغلط على [[<source>]] أخطر: لو كتبت [[type="video/x-nope"]] على ملف سليم، المتصفح مش هيطلبه أصلًا.
+- وحاجة شبه دي في درس «audio و source»: من غير [[type]]، المتصفح بيطلب كل ملف عشان يعرف.
+
+---
+
+## ٤. Range و [[206 Partial Content]]
+
+الفيديو مش بيتحمّل كله مرة واحدة. المتصفح بيطلب حتت: [[Range: bytes=0-]] في الأول، ولما تقدّم لمكان مش متحمّل [[Range: bytes=90001-]].
+
+~~~text لوج السيرفر (Chrome 157 بيحمّل وبيشغّل clip.webm)
+GET /clip.webm bytes=0- 206 bytes 0-145733/145734
+~~~
+
+السيرفر ده بيدعم Range (الـ lab بيستخدم نسخة منه فيها المسارات البايظة):
+
+~~~js media-server.mjs
+// media-server.mjs: نفس السيرفر + Range (206 و 416 و Accept-Ranges)
+import { createServer } from 'node:http';
+import { createReadStream, statSync } from 'node:fs';
+const types = { '.html': 'text/html; charset=utf-8', '.mp4': 'video/mp4', '.webm': 'video/webm', '.mp3': 'audio/mpeg', '.vtt': 'text/vtt' };
+createServer((req, res) => {
+  const file = req.url === '/' ? 'index.html' : decodeURIComponent(req.url.slice(1));
+  const type = types[file.slice(file.lastIndexOf('.'))];
+  let size;
+  try { size = statSync(file).size; } catch { size = -1; }
+  if (!type || size < 0 || file.includes('..')) { res.writeHead(404); return res.end(); }
+  const m = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || '');
+  if (!m) {
+    res.writeHead(200, { 'content-type': type, 'content-length': size, 'accept-ranges': 'bytes' });
+    return createReadStream(file).pipe(res);
+  }
+  // bytes=100-199 أو bytes=100- (للآخر) أو bytes=-500 (آخر 500 byte)
+  let start = m[1] === '' ? size - Number(m[2]) : Number(m[1]);
+  let end = m[1] !== '' && m[2] !== '' ? Math.min(Number(m[2]), size - 1) : size - 1;
+  if (start < 0) start = 0;
+  if (start >= size || start > end) {
+    res.writeHead(416, { 'content-range': 'bytes */' + size });
+    return res.end();
+  }
+  res.writeHead(206, {
+    'content-type': type,
+    'content-length': end - start + 1,
+    'content-range': 'bytes ' + start + '-' + end + '/' + size,
+    'accept-ranges': 'bytes',
+  });
+  console.log(req.method, req.url, req.headers.range, '→ 206', start + '-' + end);
+  createReadStream(file, { start, end }).pipe(res);
+}).listen(8792, () => console.log('http://localhost:8792'));
+~~~
+
+~~~bash
+node media-server.mjs
+curl -I http://localhost:8792/lesson.mp4
+curl -s -D - -o /dev/null -r 0-99 http://localhost:8792/lesson.mp4
+~~~
+
+~~~text الناتج (Git Bash على ويندوز، سيرفر الـ lab على clip.webm)
+HTTP/1.1 200 OK
+content-type: video/webm
+accept-ranges: bytes
+content-length: 145734
+
+HTTP/1.1 206 Partial Content
+content-type: video/webm
+accept-ranges: bytes
+content-range: bytes 0-99/145734
+content-length: 100
+~~~
+
+~~~text الناتج (نفس السيرفر: curl -r -500 و curl -r 999999-)
+HTTP/1.1 206 Partial Content
+content-range: bytes 145234-145733/145734
+content-length: 500
+
+HTTP/1.1 416 Range Not Satisfiable
+content-range: bytes */145734
+~~~
+
+- **[[curl -I]]**: [[HEAD]] request، الـ headers بس. اللي بتدوّر عليه [[accept-ranges: bytes]].
+- **[[curl -r 0-99]]** = [[Range: bytes=0-99]]، و [[-D -]] بيطبع الـ headers، و [[-o /dev/null]] بيرمي الـ body. على PowerShell نفس الأمر بـ [[curl.exe]] و [[-o NUL]].
+- **[[-r -500]]** آخر 500 byte: MP4 كتير بيبقى الـ index بتاعه في الآخر، والمتصفح بيطلبه كده.
+
+ومن غير Range:
+
+~~~text الناتج (Chrome 157، /norange/ بيرد 200 دايمًا)
+norange webm: duration=5.975858 seekable=0.00-0.00 → بعد currentTime=2: 0
+norange mp4:  duration=3.389458 seekable=0.00-0.00 → بعد currentTime=2: 0   (المدة الحقيقية 6.02)
+range mp4:    duration=6.016267 seekable=0.00-6.02 → بعد currentTime=2: 2
+~~~
+
+- [[seekable]] فاضية، وأي seek بيرجع لـ 0، والـ MP4 مدته طلعت غلط. ده الباج المشهور «الشريط مش بيقدّم» وأصله دايمًا السيرفر.
+- **وقطع الاتصال:** سيرفر قفل الاتصال بعد 90 KB من ملف 145 KB، و Chrome طلب [[bytes=90001-]] لوحده وكمّل الفيديو للآخر من غير [[error]]. Range = تقديم + استكمال بعد انقطاع.
+
+---
+
+## ٥. البديل (fallback) من JavaScript
+
+~~~html
+<video controls>
+  <source src="lesson.av1.webm" type='video/webm; codecs="av01.0.05M.08, opus"'>
+  <source src="lesson.webm" type="video/webm">
+  <source src="lesson.mp4" type="video/mp4">
+  <p>المتصفح ده مش بيعرف يشغّل فيديو. <a href="lesson.mp4">نزّل الفيديو</a>.</p>
+</video>
+~~~
+
+الـ [[<p>]] اللي جوه للمتصفحات اللي **مبتعرفش [[<video>]] أصلًا**. لو الملفات كلها فشلت في Chrome، الـ [[<p>]] مش بيظهر:
+
+~~~text الناتج (Chrome 157، الصفحة الكاملة في التمرين، وكل الـ 3 ملفات فاشلين)
+الـ p اللي جوه video ظاهرة؟ false
+فشل: lesson.av1.webm
+فشل: lesson.webm
+فشل: gone.mp4
+.fallback => الفيديو مش راضي يشتغل هنا. نزّله وشوفه على جهازك.
+~~~
+
+فالبديل الحقيقي من JavaScript، على آخر [[<source>]]:
+
+~~~js
+sources.at(-1).addEventListener('error', () => {
+  const box = document.createElement('p');
+  box.className = 'fallback';
+  box.innerHTML = 'الفيديو مش راضي يشتغل هنا. <a href="lesson.mp4" download>نزّله وشوفه على جهازك</a>.';
+  v.replaceWith(box);
+});
+~~~
+
+ولما الـ MP4 موجود (الـ AV1 مش موجود، والـ WebM بايظ)، لوج السيرفر بيوريك الترتيب:
+
+~~~text لوج السيرفر
+GET /d3/lesson.av1.webm bytes=0- 404
+GET /d3/lesson.webm bytes=0- 206 bytes 0-3999/4000
+GET /d3/lesson.mp4 bytes=0- 206 bytes 0-133476/133477
+اشتغل: lesson.mp4 — 6.02s
+~~~
+
+---
+
+## ٦. دكتور الميديا (حي)
+
+كل الحالات بتتعمل في الذاكرة (WAV سليم، و bytes عشوائية، و blob اتعمله revoke)، فبتشتغل جوه الـ preview:
+
+~~~live 380 دكتور الميديا
+<style>
+  body { font-family: system-ui, sans-serif; margin: 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  td, th { border: 1px solid #cbd5e1; padding: 6px; text-align: start; vertical-align: top; }
+  td:last-child { font-family: monospace; direction: ltr; text-align: left; }
+  .ok { background: #dcfce7; } .bad { background: #fee2e2; }
+</style>
+<p>كل صف ملف ميديا اتعمل في الذاكرة، والصفحة بتجرّبه وتكتب اللي المتصفح قاله:</p>
+<table>
+  <thead><tr><th>الحالة</th><th>اللي حصل</th></tr></thead>
+  <tbody id="rows"></tbody>
+</table>
+<script>
+  function makeWav(seconds) {
+    const rate = 8000, n = seconds * rate, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+    const str = (o, s) => [...s].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+    str(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); str(8, 'WAVE'); str(12, 'fmt ');
+    v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+    str(36, 'data'); v.setUint32(40, n * 2, true);
+    return new Blob([buf], { type: 'audio/wav' });
+  }
+  const NAMES = ['', 'MEDIA_ERR_ABORTED', 'MEDIA_ERR_NETWORK', 'MEDIA_ERR_DECODE', 'MEDIA_ERR_SRC_NOT_SUPPORTED'];
+  const good = URL.createObjectURL(makeWav(2));
+  const junk = URL.createObjectURL(new Blob([new Uint8Array(3000).map((_, i) => i * 37)], { type: 'video/webm' }));
+  const gone = URL.createObjectURL(makeWav(1)); URL.revokeObjectURL(gone);
+
+  // بيجرّب عنصر ويرجّع جملة: اشتغل ولا وقع وليه
+  function probe(setup) {
+    return new Promise((done) => {
+      const a = document.createElement('audio');
+      const sources = [];
+      a.addEventListener('loadedmetadata', () => done(['ok', 'اشتغل: duration=' + a.duration + ' currentSrc=' + (a.currentSrc.startsWith('blob:') ? 'blob:…' : a.currentSrc)]));
+      a.addEventListener('error', () => done(['bad', 'error على العنصر: code=' + a.error.code + ' ' + NAMES[a.error.code] + ' — "' + a.error.message + '"']));
+      setup(a, sources);
+      setTimeout(() => done(['bad', 'مفيش رد في ٣ ثواني: networkState=' + a.networkState]), 3000);
+      sources.forEach((s, i) => s.addEventListener('error', () => {
+        if (i === sources.length - 1) done(['bad', 'error على آخر source، و a.error = ' + a.error + '، و networkState = ' + a.networkState + ' (NETWORK_NO_SOURCE)']);
+      }));
+    });
+  }
+  const cases = [
+    ['ملف سليم (WAV)', (a) => (a.src = good)],
+    ['bytes بايظة بس النوع video/webm', (a) => (a.src = junk)],
+    ['blob اتعمله revoke', (a) => (a.src = gone)],
+    ['src فاضي', (a) => a.setAttribute('src', '')],
+    ['اتنين source الاتنين بايظين', (a, list) => {
+      for (const [src, type] of [[junk, 'video/webm'], [junk, 'audio/wav']]) { const s = document.createElement('source'); s.src = src; s.type = type; a.append(s); list.push(s); }
+    }],
+    ['source نوعه مش مدعوم، وبعده سليم', (a, list) => {
+      for (const [src, type] of [[junk, 'video/x-nope'], [good, 'audio/wav']]) { const s = document.createElement('source'); s.src = src; s.type = type; a.append(s); list.push(s); }
+    }],
+  ];
+  (async () => {
+    for (const [label, setup] of cases) {
+      const [cls, text] = await probe(setup);
+      const tr = document.createElement('tr'); tr.className = cls;
+      tr.innerHTML = '<td></td><td></td>'; tr.cells[0].textContent = label; tr.cells[1].textContent = text;
+      document.querySelector('#rows').append(tr);
+    }
+  })();
+</script>
+~~~
+
+- **[[probe(setup)]]** بترجّع Promise بيتحقق بأول حاجة تحصل: [[loadedmetadata]] (اشتغل)، أو [[error]] على العنصر، أو [[error]] على آخر [[<source>]]، أو ٣ ثواني من غير رد.
+- **الـ junk:** [[new Uint8Array(3000).map((_, i) => i * 37)]] أرقام ملهاش معنى، و [[type: 'video/webm']] كدب: المتصفح مش بيصدّق النوع وبيفشل في الفك.
+- **[[URL.revokeObjectURL(gone)]]** على طول بعد ما اتعمل: العنوان بقى ميت.
+- اتقاس جوه [[iframe sandbox="allow-scripts allow-forms"]] (نفس الـ preview) وفي صفحة عادية، والفرق الوحيد رسالة الـ revoke.
+
+---
+
+## الخلاصة
+
+- [[src]] = الخطأ على العنصر وفيه [[MediaError]]. و [[<source>]] = خطأ على كل [[<source>]] و [[element.error]] بـ [[null]]، وآخر واحد = كله فشل.
+- Chrome بيدّي code 4 لأي رد مش ميديا (404 و 503 كمان). الكود للبرنامج والرسالة للّوج.
+- الكلام اللي جوه [[<video>]] مش بديل للفشل: البديل من JavaScript.
+- السيرفر لازم يرد [[206]] على [[Range]]، وإلا مفيش تقديم والمدة ممكن تطلع غلط. افحص بـ [[curl -I]] و [[curl -r 0-99]].
+- ابعت الـ MIME الصح حتى لو Chrome بيسامح، و [[type]] على [[<source>]] لازم يبقى صح.`,
+          lines: [
+            R`بنجيب الفيديو اللي جواه الـ [[<source>]] التلاتة.`,
+            R`الـ spread جوه قوسين مربعين بيحوّل الـ [[NodeList]] لـ array عادية عشان نستخدم [[at(-1)]] و [[forEach]].`,
+            R`على كل [[<source>]] بنسمع [[error]] ونطبع اسم الملف اللي فشل، لأن الحدث نفسه مفيهوش تفاصيل.`,
+            R`[[at(-1)]] = آخر عنصر. فشله معناه إن المتصفح جرّب كل الملفات ومفيش ولا واحد اشتغل.`,
+            R`[[replaceWith]] بيحط [[<p>]] مكان الفيديو، و [[Object.assign]] بيعمل العنصر ويحط نصه في سطر واحد.`,
+            R`قفلة الـ listener.`,
+            R`ده للحالة التانية: لو الفيديو عليه [[src]] بدل [[<source>]]، الخطأ على العنصر وفيه [[code]] و [[message]].`,
+            R`[[currentSrc]] بيقولك أنهي ملف اتاخد فعلًا من التلاتة، ومفيد في اللوج.`,
+          ],
+          ref: [
+            { t: "MDN: MediaError", url: "https://developer.mozilla.org/en-US/docs/Web/API/MediaError" },
+            { t: "MDN: HTMLMediaElement error event", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/error_event" },
+            { t: "MDN: HTMLSourceElement", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLSourceElement" },
+            { t: "MDN: Audio and video delivery", url: "https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Audio_and_video_delivery" },
+            { t: "MDN: HTTP range requests", url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Range_requests" },
+            { t: "MDN: 206 Partial Content", url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/206" },
+            { t: "MDN: Media container formats", url: "https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Formats/Containers" },
+          ],
+          pre: [{ to: "js/HTMLMediaElement: play و pause و currentTime والصيغ", why: R`[[canPlayType]] و [[networkState]] والأحداث` }, { to: "css/audio و source", why: R`[[<source type>]] من ناحية HTML` }],
+        },
+        {
+          cmd: "getUserMedia: الكاميرا والميكروفون",
+          title: "إزاي تفتح كاميرا اليوزر والميكروفون من الصفحة، وتتعامل مع الرفض، وتقفلهم صح، وتصوّر صورة؟",
+          desc: R`[[navigator.mediaDevices.getUserMedia(constraints)]] بيطلب إذن الكاميرا أو الميكروفون، وبيرجّع Promise بـ [[MediaStream]]: stream حي فيه tracks (track فيديو و track صوت). بتعرضه في [[<video>]] بـ [[video.srcObject = stream]]، وبتقفله بـ [[track.stop()]] على كل track (وده اللي بيطفي نور الكاميرا).
+
+• الـ constraints: [[{ video: true, audio: true }]]، أو تفاصيل زي [[{ video: { width: { ideal: 1280 }, facingMode: 'user' } }]].
+• الرفض أخطاء بأسامي: [[NotAllowedError]] (رفض الإذن)، و [[NotFoundError]] (مفيش جهاز)، و [[NotReadableError]] (الجهاز مشغول)، و [[OverconstrainedError]] (مفيش جهاز بالمواصفات).
+• الصفحة لازم تبقى **secure context**: [[https://]] أو [[localhost]]. غير كده [[navigator.mediaDevices]] نفسها [[undefined]].
+• [[enumerateDevices()]] بيدّيك الأجهزة، والأسامي بتظهر بعد الإذن بس. والصورة: [[drawImage(video)]] على canvas وبعدين [[toBlob]].`,
+          example: R`// camera.js: افتح الكاميرا، اعرضها، صوّر، واقفل (صفحة على https أو localhost فيها <video id="live" muted playsinline>)
+const live = document.querySelector('#live');
+const stream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 } }, audio: false });
+live.srcObject = stream;
+await live.play();
+console.log(stream.getVideoTracks()[0].label, stream.getVideoTracks()[0].getSettings());
+const c = Object.assign(document.createElement('canvas'), { width: live.videoWidth, height: live.videoHeight });
+c.getContext('2d').drawImage(live, 0, 0);
+const photo = await new Promise((r) => c.toBlob(r, 'image/jpeg', 0.85));
+console.log(photo.type, photo.size);
+stream.getTracks().forEach((t) => t.stop());`,
+          try: R`انسخ صفحة «الكاميرا» اللي في آخر الشرح لملف [[cam.html]]، وشغّلها من سيرفر محلي (مثلًا [[media-server.mjs]] من درس الأخطاء بعد ما تزوّد [[.html]]، أو [[npx serve]]) وافتحها على [[http://localhost]]. دوس «افتح الكاميرا» واسمح، وبعدين «صوّر» و«اقفل»، وبص على نور الكاميرا. وبعدين اقفلها وافتحها تاني، والمرة دي **ارفض** الإذن: الرسالة قالت إيه؟ وفي الآخر افتح نفس الصفحة بالـ IP بتاع جهازك ([[http://192.168…]]) بدل [[localhost]].`,
+          sol: R`~~~text الناتج (Chrome 157، Playwright بكاميرا ومايك وهميين: --use-fake-device-for-media-stream)
+سمحت:          شغالة: fake_device_0 — 1280×720
+صوّر:           اتصورت: 1280×720، 13 KB (image/jpeg)
+اقفل:           الكاميرا اتقفلت، ونورها هيطفي.
+رفضت:          انت (أو المتصفح) رفضت الإذن. افتحه من علامة القفل جنب العنوان. (NotAllowedError: Permission denied)
+مفيش كاميرا:   مفيش كاميرا متوصلة بالجهاز. (NotFoundError: Requested device not found)
+http://lab.test (مش localhost):   isSecureContext=false  mediaDevices=undefined
+               TypeError: Cannot read properties of undefined (reading 'getUserMedia')
+~~~
+
+- **الكاميرا الحقيقية مش اتفتحت في الـ lab:** Chrome اتشغّل بكاميرا وهمية بترسم صورة متحركة ([[fake_device_0]]) وميكروفون بيطلّع صفارة. «مفيش كاميرا» اتعملت بـ [[--use-fake-device-for-media-stream=device-count=0]]، و«الرفض» بـ Chrome headless من غير [[--use-fake-ui-for-media-stream]] (بيرفض الطلب لوحده).
+- **نور الكاميرا:** مش هتعرف تقيسه من كود. اللي اتقاس إن [[track.readyState]] بقى [[ended]] و [[stream.active]] بقى [[false]]، وده اللي بيخلي المتصفح يطفي النور ويشيل علامة التسجيل من التاب (من MDN).
+- **IP بدل [[localhost]]:** الصفحة مبقتش secure context، فـ [[navigator.mediaDevices]] اختفت خالص والخطأ [[TypeError]] مش [[NotAllowedError]]. اتعمل بـ [[--host-resolver-rules]] بيوجّه اسم [[lab.test]] لنفس السيرفر.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** قبل ما اليوزر يدّي أي إذن، [[enumerateDevices()]] هيرجّع إيه على جهاز فيه كاميرا و ٣ مايكات و ٣ سماعات؟ كام عنصر؟ وفيهم أسامي؟ وبعد الإذن؟
+
+~~~js
+const list = await navigator.mediaDevices.enumerateDevices();
+console.log(list.map((d) => [d.kind, d.label, d.deviceId.slice(0, 8)]));
+~~~`, done: R`كتبت توقّعك للحالتين، وعرفت ليه المتصفح بيخبي.`, sol: R`~~~text الناتج (Chrome 157، أجهزة وهمية: كاميرا و 3 مايكات و 3 سماعات)
+قبل الإذن (permission = prompt):
+[["audioinput","",""],["videoinput","",""],["audiooutput","",""]]
+
+بعد الإذن (permission = granted):
+[["audioinput","Fake Default Audio Input","default"],["audioinput","Fake Audio Input 1","3ef09235"],["audioinput","Fake Audio Input 2","4b401bd0"],
+ ["videoinput","fake_device_0","3b809fd1"],["audiooutput","Fake Default Audio Output","default"],["audiooutput","Fake Audio Output 1","d34c7cf5"],["audiooutput","Fake Audio Output 2","859809f8"]]
+~~~
+
+- **قبل الإذن:** عنصر واحد بس لكل نوع، من غير اسم ولا [[deviceId]]. المتصفح بيقولك «فيه كاميرا» بس، عشان أي موقع ميعرفش أجهزتك بالاسم والعدد (fingerprinting: الأسامي والعدد بيميّزوا جهازك عن غيره).
+- **بعد الإذن:** كل الأجهزة بأساميها و [[deviceId]] ثابت للموقع ده، فتقدر تحفظه وتطلبه تاني بـ [[{ deviceId: { exact: id } }]].
+- عشان كده لستة «اختار الكاميرا» بتتملا **بعد** أول [[getUserMedia]] ناجح، مش قبله.` },
+            { lvl: 'تطبيق', t: R`**ابني:** زرار «اسمح بالميكروفون»، وبعد الإذن قايمة بكل المايكات بأساميها والمستخدم دلوقتي متعلّم عليه، واختيار واحد تاني من القايمة بيقفل القديم ويفتح الجديد. وحدّث القايمة لو جهاز اتوصل أو اتشال.`, done: R`بعد الإذن القايمة فيها كل المايكات و«الافتراضي» متعلّم، واختيار «Fake Audio Input 2» بيخلي السطر يقول اسمه والعلامة تنتقل عليه.`, sol: R`~~~html mics.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>اختار الميكروفون</title></head>
+<body>
+<button id="allow" type="button">اسمح بالميكروفون</button>
+<label>الميكروفون <select id="mics" disabled></select></label>
+<p id="now" role="status">لسه مفيش إذن.</p>
+<script>
+  const sel = document.querySelector('#mics'), now = document.querySelector('#now');
+  let stream = null;
+  async function useMic(deviceId) {
+    if (stream) stream.getTracks().forEach((t) => t.stop());     // اقفل القديم الأول
+    stream = await navigator.mediaDevices.getUserMedia({ audio: deviceId ? { deviceId: { exact: deviceId } } : true });
+    const track = stream.getAudioTracks()[0];
+    now.textContent = 'شغال: ' + track.label;
+    await fillList(track.getSettings().deviceId);
+  }
+  async function fillList(current) {
+    const mics = (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'audioinput');
+    sel.replaceChildren(...mics.map((d) => new Option(d.label, d.deviceId, false, d.deviceId === current)));
+    sel.disabled = false;
+  }
+  document.querySelector('#allow').addEventListener('click', () => useMic().catch((e) => (now.textContent = e.name + ': ' + e.message)));
+  sel.addEventListener('change', () => useMic(sel.value));
+  // جهاز اتشال أو اتوصل (سماعة بلوتوث مثلًا): حدّث اللستة
+  navigator.mediaDevices.addEventListener('devicechange', () => stream && fillList(stream.getAudioTracks()[0].getSettings().deviceId));
+</script>
+</body>
+</html>
+~~~
+
+~~~text الناتج (Chrome 157، Playwright، 3 مايكات وهمية)
+بعد الإذن:        شغال: Fake Default Audio Input
+القايمة:          Fake Default Audio Input ✓ | Fake Audio Input 1 | Fake Audio Input 2
+اختار رقم 2:      شغال: Fake Audio Input 2
+القايمة:          Fake Default Audio Input | Fake Audio Input 1 | Fake Audio Input 2 ✓
+~~~
+
+- **[[{ deviceId: { exact: id } }]]**: [[exact]] يعني «ده بالظبط أو ارفض». من غيرها ([[{ deviceId: id }]]) المتصفح بيعتبرها رغبة وممكن يدّيك جهاز تاني.
+- **اقفل القديم قبل الجديد:** من غير [[stop()]] المايك الأول هيفضل مفتوح ومحدش شايفه.
+- **[[getSettings().deviceId]]** بيقولك الجهاز اللي اتاخد فعلًا، وده اللي بنعلّم عليه في القايمة.
+- **[[devicechange]]** على [[navigator.mediaDevices]] بيتبعت لما سماعة بلوتوث تتوصل أو تتشال. متقاسش هنا (الأجهزة الوهمية مبتتغيرش)، ده من MDN.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** زرار «اقفل الكاميرا» ده بيخفي الصورة، بس نور الكاميرا فاضل منور وعلامة التسجيل لسه على التاب. ليه؟ وصلّحه.
+
+~~~js
+document.querySelector('#stop').addEventListener('click', () => {
+  live.srcObject = null;
+  live.hidden = true;
+});
+~~~`, done: R`بعد الضغط [[track.readyState]] = [[ended]] و [[stream.active]] = [[false]].`, sol: R`~~~js
+document.querySelector('#stop').addEventListener('click', () => {
+  stream.getTracks().forEach((t) => t.stop());   // ده اللي بيقفل الجهاز نفسه
+  live.srcObject = null;                          // وده بيفضّي الـ video بس
+  live.hidden = true;
+});
+~~~
+
+~~~text الناتج (Chrome 157، كاميرا وهمية)
+بعد srcObject = null بس:   track.readyState=live   stream.active=true    ← الكاميرا لسه شغالة
+بعد track.stop():          track.readyState=ended  stream.active=false
+~~~
+
+- [[srcObject = null]] بيفصل الـ stream عن **الـ video ده بس**. الـ stream نفسه لسه عايش، والكاميرا لسه بتصوّر، والنور منور.
+- الجهاز بيتقفل لما **كل** الـ tracks اللي بتستخدمه تتقفل بـ [[stop()]]. لو عملت [[clone()]] لـ track أو فتحت الكاميرا مرتين، لازم تقفل الكل.
+- و [[stop()]] **مبيبعتش** حدث [[ended]] على الـ track (اتقاس: [[ended event=false]]). الحدث ده للقفل اللي مش منك (اليوزر شال الكاميرا، أو سحب الإذن). فلو عايز تحدّث الواجهة، حدّثها في نفس دالة القفل.
+- وحط [[stopAll]] على [[pagehide]] كمان، عشان لو اليوزر قفل التاب أو راح صفحة تانية.` },
+            { lvl: 'تحدي', t: R`**أشكال على canvas:** صورة «سيلفي» مربعة من الكاميرا: اقص أكبر مربع من **نص** الصورة، واقلبها زي المراية (الكاميرا الأمامية بتبان معكوسة)، وصدّرها WebP. اطبع المقاس والحجم.`, done: R`من كاميرا 640×480 الصورة 480×480، والنوع [[image/webp]].`, sol: R`~~~js
+// live فيها stream من الكاميرا وشغالة
+const size = Math.min(live.videoWidth, live.videoHeight);
+const c = document.createElement('canvas');
+c.width = c.height = size;
+const g = c.getContext('2d');
+g.translate(size, 0);
+g.scale(-1, 1);
+g.drawImage(live,
+  (live.videoWidth - size) / 2, (live.videoHeight - size) / 2, size, size,   // المربع من نص الفيديو
+  0, 0, size, size);                                                          // على الـ canvas كله
+const blob = await new Promise((r) => c.toBlob(r, 'image/webp', 0.8));
+console.log('crop: video ' + live.videoWidth + 'x' + live.videoHeight + ' → canvas ' + c.width + 'x' + c.height + ' ' + blob.type + ' ' + blob.size + 'B');
+~~~
+
+~~~text الناتج (Chrome 157، كاميرا وهمية 640×480)
+crop: video 640x480 → canvas 480x480 image/webp 3228B
+~~~
+
+- **[[drawImage]] بـ ٩ arguments**: الصورة، وبعدين المستطيل اللي هتقص منه (x و y وعرض وطول)، وبعدين مكانه ومقاسه على الـ canvas. المربع بيبدأ من [[(640 - 480) / 2 = 80]] أفقيًا و [[0]] رأسيًا.
+- **المراية:** [[translate(size, 0)]] بينقل نقطة الأصل للحافة اليمين، و [[scale(-1, 1)]] بيقلب المحور الأفقي، فكل حاجة بتترسم بعدها معكوسة. لازم الترتيب ده، وإلا الصورة هتترسم برّه الـ canvas.
+- [[videoWidth]] و [[videoHeight]] هما مقاس الكاميرا الحقيقي، مش مقاس الـ [[<video>]] في الصفحة (CSS).
+- WebP بجودة 0.8 = 3 KB هنا، والـ JPEG في الشرح 13 KB لصورة 1280×720.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك واشرحها:** من صفحتي [[getUserMedia]] و Permissions API على MDN: إمتى [[navigator.permissions.query({ name: 'camera' })]] بيرجّع [[prompt]] و [[granted]] و [[denied]]؟ وليه تسأل عليه قبل ما تطلب الكاميرا؟ ولو [[denied]]، تقدر تطلب تاني من الكود؟`, done: R`إجابة فيها الـ ٣ حالات، وإمتى تسأل، وإن [[denied]] مبيتفكش من الكود.`, sol: R`~~~js
+const p = await navigator.permissions.query({ name: 'camera' });
+console.log('قبل:', p.state);
+try { await navigator.mediaDevices.getUserMedia({ video: true }); } catch (e) { console.log(e.name + ': ' + e.message); }
+console.log('بعد:', (await navigator.permissions.query({ name: 'camera' })).state);
+p.onchange = () => console.log('اتغيّر:', p.state);
+~~~
+
+~~~text الناتج (Chrome 157)
+الطلب اترفض:     قبل: prompt    NotAllowedError: Permission denied    بعد: denied
+الإذن موجود:      قبل: granted   (الكاميرا فتحت)                      بعد: granted
+~~~
+
+- **[[prompt]]**: لسه محدش سأل (أو اليوزر قفل النافذة من غير ما يختار). [[getUserMedia]] هيعرض نافذة الإذن.
+- **[[granted]]**: سمح قبل كده للموقع ده. الكاميرا هتفتح من غير نافذة.
+- **[[denied]]**: رفض. [[getUserMedia]] هيرمي [[NotAllowedError]] **على طول** من غير نافذة، ومفيش كود يرجّع النافذة: اليوزر لازم يغيّرها بنفسه من علامة القفل جنب العنوان. فاعرض شرح بالصور بدل زرار «اسمح» مبيعملش حاجة.
+- **ليه تسأل الأول؟** عشان متفاجئش اليوزر بنافذة إذن أول ما الصفحة تفتح: اعرض زرار «افتح الكاميرا» وشرح ليه محتاجها لو [[prompt]]، وافتح على طول لو [[granted]]. نفس فكرة درس «Notification و permissions».
+- [[onchange]] بيتبعت لو اليوزر غيّر الإذن من الإعدادات والصفحة مفتوحة.` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`الكاميرا والميكروفون من أخطر الصلاحيات (تجسس حرفيًا)، فالمتصفح حاططها ورا ٣ أقفال: صفحة secure، وإذن صريح من اليوزر لكل موقع، وعلامة ظاهرة (نور الكاميرا وأيقونة في التاب) طول ما الجهاز مفتوح. و [[getUserMedia]] هي الطريقة الوحيدة في الويب تعدّي الأقفال دي، وعليها مبني كل حاجة: مكالمات الفيديو (WebRTC)، وتسجيل رسالة صوتية، وتصوير بطاقة في فورم KYC، وقراءة QR code، وتطبيقات الفلاتر.`,
+            how: R`[[getUserMedia(constraints)]] بيشيك الأول إن الصفحة secure context (وإلا [[mediaDevices]] مش موجودة أصلًا)، وإن الـ Permissions Policy بتسمح (جوه [[iframe]] لازم [[allow="camera; microphone"]]، وإلا [[NotAllowedError]] أو [[SecurityError]] جوه الصفحات المعزولة)، وبعدين بيشوف الإذن: [[granted]] يكمّل، و [[denied]] يرمي على طول، و [[prompt]] يعرض النافذة. بعد الإذن بيدوّر على جهاز بيحقق الـ constraints: [[exact]] و [[min]] و [[max]] لازم تتحقق وإلا [[OverconstrainedError]] (و [[error.constraint]] فيه اسم الشرط)، و [[ideal]] أو القيمة العادية رغبة بياخد أقرب حاجة ليها. بعدين بيفتح الجهاز ويرجّع [[MediaStream]] فيه [[MediaStreamTrack]] لكل جهاز.
+
+الـ track ليه [[label]] و [[getSettings()]] (اللي اتاخد فعلًا) و [[getCapabilities()]] (أقصى ما الجهاز يقدر عليه) و [[applyConstraints()]] (تغيّر وهو شغال) و [[stop()]]. الـ [[<video>]] بياخد الـ stream كله بـ [[srcObject]] (مش [[src]]: مفيش URL)، و [[duration]] = [[Infinity]] لأنه بث حي.`,
+            when: R`لما الميزة محتاجة صورة أو صوت حي من اليوزر: مكالمة، أو تسجيل، أو تصوير مستند، أو QR، أو قياس مستوى الصوت. واطلبه **بعد** ضغطة اليوزر على حاجة واضحة («افتح الكاميرا»)، مش أول ما الصفحة تفتح: النافذة المفاجئة بتترفض كتير، والرفض [[denied]] صعب يتفك. واطلب أقل حاجة: [[audio: false]] لو مش محتاج صوت. ولو عايز صورة واحدة من ملف أو كاميرا الموبايل، [[<input type="file" accept="image/*" capture>]] أبسط ومش محتاج إذن ولا secure context (درس «input type=file»).`,
+            mistakes: R`- تفتح الصفحة بالـ IP على الشبكة ([[http://192.168.1.5]]): مش secure context، و [[navigator.mediaDevices]] [[undefined]]، والخطأ [[TypeError]] مش رسالة إذن. استخدم [[localhost]] أو https (حتى على الموبايل: tunnel أو شهادة محلية).
+- [[video.srcObject = null]] من غير [[track.stop()]]: الكاميرا والنور شغالين.
+- [[video.src = stream]]: غلط. الـ stream بيتحط في [[srcObject]].
+- تنسى [[muted]] و [[playsinline]] على الـ video: الصوت بيرجع في السماعة (صدى)، و iPhone بيفتح الفيديو ملء الشاشة.
+- [[{ video: { width: 4000 } }]] فاكره شرط: هو رغبة. و [[{ width: { exact: 4000 } }]] = [[OverconstrainedError]] و [[message]] فاضية (اتقاس)، والمفيد [[error.constraint]] ([[width]]).
+- تملا قايمة الأجهزة قبل الإذن: هتلاقي عنصر واحد من غير اسم.
+- [[getUserMedia({})]]: [[TypeError: Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested]].
+- تطلب [[ideal: 1280]] وفي نفس الصفحة stream تاني مفتوح بـ 640×480: اتقاس إن Chrome رجّع 640×480 (نفس الكاميرا بنفس الإعداد)، وفي صفحة لوحدها رجّع 1280×720.`,
+          },
+          teach: R`## الفكرة في سطر
+
+إذن من اليوزر ← [[MediaStream]] حي ← تعرضه أو تسجّله أو تصوّره ← تقفله. كل الناتج من Chrome 157 بـ Playwright على سيرفر [[node:http]] محلي، **بكاميرا ومايك وهميين** (Chrome بيرسمهم بنفسه)، مش كاميرا الجهاز الحقيقية.
+
+---
+
+## ١. Chrome بكاميرا وهمية: إزاي اتقاس
+
+~~~js
+// lab.mjs (Node + playwright-core): Chrome بأجهزة وهمية وإذن تلقائي
+const browser = await chromium.launch({
+  executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe',
+  args: ['--use-fake-device-for-media-stream', '--use-fake-ui-for-media-stream'],
+});
+~~~
+
+| الـ flag | بيعمل |
+|---|---|
+| [[--use-fake-device-for-media-stream]] | كاميرا بترسم صورة متحركة ([[fake_device_0]]) و ٣ مايكات بتطلّع صفارة، بدل أجهزتك |
+| [[--use-fake-device-for-media-stream=device-count=0]] | من غير كاميرا خالص، عشان تشوف [[NotFoundError]] |
+| [[--use-fake-ui-for-media-stream]] | بيقبل نافذة الإذن لوحده. من غيره Chrome headless بيرفض، وده اللي طلّع [[NotAllowedError]] |
+| [[--host-resolver-rules="MAP lab.test 127.0.0.1"]] | اسم [[lab.test]] بيروح للسيرفر المحلي، فالصفحة [[http://]] ومش [[localhost]]: مش secure |
+
+الطريقة دي هي اللي بتخليك تكتب اختبار آلي لصفحة كاميرا، والـ flags نفسها شغالة لو شغّلت [[chrome.exe]] بيها من الترمنال (من وثائق Chromium، الـ lab استخدمها من Playwright بس).
+
+---
+
+## ٢. [[getUserMedia]] والـ constraints
+
+~~~js
+const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+console.log(stream.active, stream.getTracks().map((t) => t.kind + ':' + t.label + ':' + t.readyState));
+~~~
+
+~~~text الناتج (Chrome 157، أجهزة وهمية)
+stream active=true tracks=audio:Fake Default Audio Input:live | video:fake_device_0:live
+settings={"aspectRatio":1.333,"deviceId":"3b809fd1…","frameRate":20,"height":480,"resizeMode":"none","width":640, …}
+caps width={"max":3840,"min":1} height={"max":2160,"min":1} frameRate={"max":20,"min":0} facingMode=[]
+audio settings={"autoGainControl":true,"channelCount":1,"echoCancellation":true,"noiseSuppression":true,"sampleRate":48000, …}
+~~~
+
+- [[getSettings()]]: اللي اتاخد فعلًا (640×480 و 20 frame في الثانية لما طلبنا [[video: true]] بس).
+- [[getCapabilities()]]: أقصى ما الجهاز يقدر عليه. [[facingMode=[] ]] لأن الكاميرا الوهمية مش «أمامية» ولا «خلفية».
+- المايك جاي بـ [[echoCancellation]] و [[noiseSuppression]] و [[autoGainControl]] شغالين: كويس للمكالمات، ووحش لتسجيل موسيقى (اقفلهم بـ [[{ audio: { echoCancellation: false } }]]).
+
+~~~text الناتج (Chrome 157، كل سطر طلب لوحده والـ stream الأول لسه مفتوح)
+{"video":{"width":{"ideal":1280},"height":{"ideal":720}}} => ok [640,480]
+{"video":{"width":{"exact":4000}}} => OverconstrainedError:  constraint=width
+{"video":{"deviceId":{"exact":"nope"}}} => OverconstrainedError:  constraint=deviceId
+{"video":{"facingMode":"environment"}} => ok [640,480]
+{"video":{"facingMode":{"exact":"environment"}}} => OverconstrainedError:  constraint=facingMode
+{} => TypeError: Failed to execute 'getUserMedia' on 'MediaDevices': At least one of audio and video must be requested
+applyConstraints({ width: 320, height: 240 }) => 320x240
+~~~
+
+| الشكل | معناه |
+|---|---|
+| [[width: 1280]] أو [[{ ideal: 1280 }]] | رغبة: أقرب حاجة ليها، ومبيرميش أبدًا |
+| [[{ exact: 4000 }]] و [[{ min: 720 }]] و [[{ max: 1920 }]] | شرط: لو مفيش، [[OverconstrainedError]] و [[error.constraint]] فيه اسمه |
+| [[facingMode: 'user']] و [['environment']] | الكاميرا الأمامية والخلفية في الموبايل |
+| [[deviceId: { exact: id }]] | جهاز معين من [[enumerateDevices]] |
+
+- **[[ideal: 1280]] رجع 640×480 هنا** لأن الكاميرا كانت مفتوحة بـ 640×480 في نفس الصفحة. نفس الطلب في صفحة لوحدها (صفحة الكاميرا في الآخر) رجع **1280×720**. الرغبة مش وعد.
+- [[OverconstrainedError]] رسالته **فاضية** في Chrome 157: اقرا [[e.constraint]].
+- [[applyConstraints]] بيغيّر المقاس والكاميرا شغالة، من غير إذن جديد.
+
+---
+
+## ٣. الأخطاء: كل واحد ومعناه
+
+~~~text الناتج (Chrome 157)
+رفض الإذن:                 NotAllowedError: Permission denied
+مفيش كاميرا:               NotFoundError: Requested device not found
+مفيش جهاز بالمواصفات:      OverconstrainedError: (فاضية) constraint=width
+صفحة مش secure:            TypeError: Cannot read properties of undefined (reading 'getUserMedia')
+iframe معزول (الـ preview): SecurityError: Invalid security origin
+                            Console: Permissions policy violation: camera is not allowed in this document.
+~~~
+
+| الخطأ | السبب | تقول لليوزر |
+|---|---|---|
+| [[NotAllowedError]] | رفض، أو رفض قبل كده ([[denied]])، أو [[iframe]] من غير [[allow="camera"]] | افتح الإذن من علامة القفل جنب العنوان |
+| [[NotFoundError]] | مفيش كاميرا أو مايك أصلًا | وصّل كاميرا |
+| [[NotReadableError]] | الجهاز موجود بس مشغول (برنامج تاني ماسكه) أو فيه مشكلة hardware | اقفل Zoom أو أي برنامج بيستخدم الكاميرا (من MDN، متقاسش) |
+| [[OverconstrainedError]] | شرط [[exact]] أو [[min]] مش متحقق | جرّب من غير الشرط |
+| [[SecurityError]] | الصفحة معزولة أو الـ policy مانعة | ده مكان مش مسموح فيه |
+| [[TypeError]] | مش secure context، أو طلب فاضي | افتح من https |
+
+---
+
+## ٤. secure context: [[https]] أو [[localhost]]
+
+~~~text الناتج (Chrome 157)
+http://127.0.0.1:8791   isSecureContext=true    mediaDevices=object
+http://lab.test:8791    isSecureContext=false   mediaDevices=undefined
+~~~
+
+نفس السيرفر ونفس الصفحة، والفرق الاسم بس: [[localhost]] و [[127.0.0.1]] متعتبرين secure حتى على [[http]]، وأي اسم أو IP تاني لأ. ففي التطوير على الموبايل محتاج https (tunnel أو شهادة محلية). وشيك الأول: [[if (!navigator.mediaDevices?.getUserMedia)]].
+
+---
+
+## ٥. [[enumerateDevices]]: الأسامي بعد الإذن
+
+~~~text الناتج (Chrome 157)
+قبل الإذن:   [["audioinput","",""],["videoinput","",""],["audiooutput","",""]]
+بعد الإذن:   audioinput:Fake Default Audio Input | audioinput:Fake Audio Input 1 | audioinput:Fake Audio Input 2 |
+             videoinput:fake_device_0 | audiooutput:Fake Default Audio Output | …
+~~~
+
+قبل الإذن عنصر واحد لكل نوع من غير اسم (الخصوصية)، وبعده كل حاجة. فـ «اختار الكاميرا» بتتملا بعد أول نجاح، والتمرين التاني بيبنيها.
+
+---
+
+## ٦. العرض، والصورة، والقفل
+
+~~~js
+live.srcObject = stream;
+await live.play();
+const c = document.createElement('canvas');
+c.width = live.videoWidth; c.height = live.videoHeight;
+c.getContext('2d').drawImage(live, 0, 0);
+c.toBlob((blob) => console.log(blob.type, blob.size), 'image/jpeg', 0.85);
+stream.getTracks().forEach((t) => t.stop());
+~~~
+
+~~~text الناتج (Chrome 157، كاميرا وهمية 640×480)
+video 640x480 duration=Infinity src=""
+photo pixel(10,10)=0,144,0,255 jpeg=image/jpeg 7395B png=11181B
+بعد stop: audio readyState=ended video readyState=ended stream.active=false ended event=false video paused=false
+~~~
+
+- **[[srcObject]] مش [[src]]**: الـ stream مش ملف وملوش URL، فـ [[src]] فاضي و [[duration]] = [[Infinity]].
+- **الصورة:** [[drawImage(video, 0, 0)]] بياخد الـ frame اللي ظاهر دلوقتي. الـ pixel الأخضر [[0,144,0]] هو خلفية الكاميرا الوهمية. JPEG بجودة 0.85 أصغر من PNG (7 KB مقابل 11 KB).
+- **القفل:** [[track.stop()]] لكل track. بعده [[readyState]] = [[ended]] و [[stream.active]] = [[false]]، والمتصفح بيطفي نور الكاميرا. لاحظ: [[ended event=false]] (الـ [[stop()]] منك مبيبعتش [[ended]])، و الـ [[<video>]] نفسه مبيقفش لوحده ([[paused=false]]) فاعمل [[srcObject = null]] كمان.
+
+---
+
+## ٧. صفحة الكاميرا كاملة (حي)
+
+الـ preview ده [[iframe]] معزول، والكاميرا ممنوعة فيه، فلما تدوس «افتح الكاميرا» **هتشوف رسالة حمرا** بالسبب الحقيقي. ده مقصود: الصفحة بتوريك إزاي تتعامل مع الرفض. انسخها وشغّلها من [[localhost]] عشان الكاميرا تفتح.
+
+~~~live 330 الكاميرا
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>الكاميرا</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 12px; }
+  .row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  button, select { font: inherit; min-height: 40px; padding: 0 12px; }
+  video, img { width: 100%; max-width: 320px; background: #111; border-radius: 8px; display: block; }
+  #msg { padding: 8px; border-radius: 6px; background: #f1f5f9; }
+  #msg.bad { background: #fee2e2; }
+</style>
+</head>
+<body>
+<div class="row">
+  <button id="start" type="button">افتح الكاميرا</button>
+  <button id="shot" type="button" disabled>صوّر</button>
+  <button id="stop" type="button" disabled>اقفل</button>
+  <select id="cams" aria-label="الكاميرا" hidden></select>
+</div>
+<p id="msg" role="status">الكاميرا مقفولة.</p>
+<video id="live" muted playsinline></video>
+<img id="photo" alt="آخر صورة" hidden>
+<script>
+const $ = (s) => document.querySelector(s);
+const live = $('#live'), msg = $('#msg'), cams = $('#cams');
+let stream = null;
+
+// رسالة مفهومة لكل خطأ من getUserMedia
+const REASONS = {
+  NotAllowedError: 'انت (أو المتصفح) رفضت الإذن. افتحه من علامة القفل جنب العنوان.',
+  NotFoundError: 'مفيش كاميرا متوصلة بالجهاز.',
+  NotReadableError: 'الكاميرا مشغولة في برنامج تاني (Zoom مثلًا).',
+  OverconstrainedError: 'مفيش كاميرا بالمواصفات المطلوبة.',
+  SecurityError: 'الصفحة دي مش مسموح لها بالكاميرا (iframe من غير allow="camera"، أو صفحة معزولة).',
+  TypeError: 'الطلب نفسه غلط، أو الصفحة مش https.',
+};
+function say(text, bad = false) { msg.textContent = text; msg.className = bad ? 'bad' : ''; }
+
+async function start(deviceId) {
+  if (!navigator.mediaDevices?.getUserMedia) return say('المتصفح هنا مش بيدّي كاميرا: الصفحة لازم تبقى https أو localhost.', true);
+  stopAll();
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: deviceId ? { deviceId: { exact: deviceId } } : { width: { ideal: 1280 }, height: { ideal: 720 } },
+      audio: false,
+    });
+  } catch (e) {
+    return say((REASONS[e.name] || 'حصل خطأ.') + ' (' + e.name + (e.message ? ': ' + e.message : '') + ')', true);
+  }
+  live.srcObject = stream;
+  await live.play();
+  const s = stream.getVideoTracks()[0].getSettings();
+  say('شغالة: ' + stream.getVideoTracks()[0].label + ' — ' + s.width + '×' + s.height);
+  $('#shot').disabled = $('#stop').disabled = false;
+  await listCams(s.deviceId);
+}
+
+// بعد الإذن بس الأسامي بتظهر
+async function listCams(current) {
+  const list = (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'videoinput');
+  cams.replaceChildren(...list.map((d, i) => new Option(d.label || 'كاميرا ' + (i + 1), d.deviceId, false, d.deviceId === current)));
+  cams.hidden = list.length < 2;
+}
+
+function stopAll() {
+  if (stream) stream.getTracks().forEach((t) => t.stop());
+  stream = null;
+  live.srcObject = null;
+  $('#shot').disabled = $('#stop').disabled = true;
+}
+
+function shot() {
+  const c = document.createElement('canvas');
+  c.width = live.videoWidth; c.height = live.videoHeight;
+  c.getContext('2d').drawImage(live, 0, 0);
+  c.toBlob((blob) => {
+    const img = $('#photo');
+    if (img.src) URL.revokeObjectURL(img.src);
+    img.src = URL.createObjectURL(blob); img.hidden = false;
+    say('اتصورت: ' + c.width + '×' + c.height + '، ' + Math.round(blob.size / 1024) + ' KB (' + blob.type + ')');
+  }, 'image/jpeg', 0.85);
+}
+
+$('#start').addEventListener('click', () => start());
+$('#stop').addEventListener('click', () => { stopAll(); say('الكاميرا اتقفلت، ونورها هيطفي.'); });
+$('#shot').addEventListener('click', shot);
+cams.addEventListener('change', () => start(cams.value));
+addEventListener('pagehide', stopAll);
+</script>
+</body>
+</html>
+~~~
+
+~~~text الناتج (نفس الصفحة جوه الـ preview المعزول، Chrome 157)
+الصفحة دي مش مسموح لها بالكاميرا (iframe من غير allow="camera"، أو صفحة معزولة). (SecurityError: Invalid security origin)
+~~~
+
+~~~text الناتج (نفس الصفحة من http://127.0.0.1، Chrome 157 بكاميرا وهمية)
+شغالة: fake_device_0 — 1280×720
+اتصورت: 1280×720، 13 KB (image/jpeg)
+الكاميرا اتقفلت، ونورها هيطفي.
+~~~
+
+- **[[REASONS]]**: رسالة لكل [[e.name]]، ومعاها الاسم والرسالة الأصلية بين قوسين عشان اللي بيساعد اليوزر يعرف.
+- **[[navigator.mediaDevices?.getUserMedia]]**: الـ [[?.]] (optional chaining) بيرجّع [[undefined]] بدل ما يرمي لو [[mediaDevices]] مش موجودة.
+- **[[start(deviceId)]]** بتقفل أي stream قديم الأول ([[stopAll()]])، فتغيير الكاميرا من القايمة مبيسيبش الأولى مفتوحة.
+- **[[listCams]]** بعد النجاح بس، والقايمة بتستخبى لو كاميرا واحدة.
+- **[[URL.revokeObjectURL(img.src)]]** قبل الصورة الجديدة: كل [[createObjectURL]] حاجز الـ Blob في الذاكرة لحد ما يتعمله revoke.
+- **[[pagehide]]**: لو اليوزر قفل التاب والكاميرا مفتوحة.
+
+---
+
+## الخلاصة
+
+- [[getUserMedia]] = إذن + secure context + Permissions Policy. والنتيجة [[MediaStream]] فيه tracks.
+- [[ideal]] رغبة و [[exact]] شرط ([[OverconstrainedError]] برسالة فاضية و [[e.constraint]]).
+- كل خطأ ليه اسم ورسالة لليوزر مختلفة، و [[denied]] مبيتفكش من الكود.
+- [[srcObject]] للعرض، و [[drawImage]] + [[toBlob]] للصورة، و [[track.stop()]] لكل track للقفل (والنور).
+- الأسامي في [[enumerateDevices]] بعد الإذن بس.`,
+          lines: [
+            R`بنجيب الـ [[<video>]] اللي هيعرض الكاميرا. لازم [[muted]] و [[playsinline]] عشان [[play()]] يعدّي ومفيش صدى.`,
+            R`بنطلب الكاميرا من غير صوت، ونفضّل عرض 1280. [[await]] بيستنى اليوزر يسمح، ولو رفض بيرمي [[NotAllowedError]].`,
+            R`الـ stream بيتحط في [[srcObject]] مش [[src]]، لأنه بث حي ملوش عنوان.`,
+            R`[[play()]] عشان الصورة تبدأ تتحرك. الـ video [[muted]] فالـ autoplay مش مشكلة.`,
+            R`اسم الكاميرا ([[label]]) والإعدادات اللي اتاخدت فعلًا: المقاس والـ frame rate و [[deviceId]].`,
+            R`canvas بنفس مقاس الكاميرا الحقيقي ([[videoWidth]] و [[videoHeight]])، مش مقاس العنصر في الصفحة.`,
+            R`[[drawImage]] بيرسم الـ frame اللي ظاهر دلوقتي من الفيديو على الـ canvas: ده «التصوير».`,
+            R`[[toBlob]] بيحوّل الرسمة لملف JPEG بجودة 85٪، ولأنه callback لفّيناه في Promise عشان [[await]].`,
+            R`بيطبع [[image/jpeg]] والحجم بالـ bytes. الـ Blob ده ينفع يترفع بـ [[fetch]] أو يتعرض بـ [[createObjectURL]].`,
+            R`القفل الحقيقي: [[stop()]] على كل track، وده اللي بيطفي نور الكاميرا.`,
+          ],
+          ref: [
+            { t: "MDN: MediaDevices.getUserMedia()", url: "https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia" },
+            { t: "MDN: MediaDevices.enumerateDevices()", url: "https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/enumerateDevices" },
+            { t: "MDN: Capabilities, constraints, and settings", url: "https://developer.mozilla.org/en-US/docs/Web/API/Media_Capture_and_Streams_API/Constraints" },
+            { t: "MDN: MediaStreamTrack.applyConstraints()", url: "https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack/applyConstraints" },
+            { t: "MDN: MediaStreamTrack.stop()", url: "https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack/stop" },
+            { t: "MDN: Taking still photos with getUserMedia()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Media_Capture_and_Streams_API/Taking_still_photos" },
+            { t: "MDN: MediaStream", url: "https://developer.mozilla.org/en-US/docs/Web/API/MediaStream" },
+          ],
+          pre: [{ to: "js/Notification و permissions", why: R`نفس فكرة الإذن: تسأل إمتى، وتعمل إيه لو اترفض` }, { to: "js/canvas: ارسم أشكال وحرّكها", why: R`[[drawImage]] و [[translate]] و [[scale]] للصورة والمراية` }, { to: "css/iframe sandbox و allow", why: R`ليه الكاميرا ممنوعة جوه [[iframe]] من غير [[allow="camera"]]` }],
+        },
+        {
+          cmd: "MediaRecorder: سجّل صوت وفيديو ونزّله",
+          title: "إزاي تسجّل صوت أو فيديو في المتصفح، وتحوّله ملف تشغّله وتنزّله أو ترفعه؟",
+          desc: R`[[MediaRecorder]] بياخد أي [[MediaStream]] (ميكروفون، كاميرا، canvas، صوت من Web Audio) ويحوّله لملف مضغوط. بتعمله [[new MediaRecorder(stream, { mimeType })]]، و [[start()]] و [[stop()]]، والملف بيوصلك حتت في حدث [[dataavailable]] ([[e.data]] = [[Blob]])، ولما يخلص بتجمعهم في [[new Blob(chunks, { type })]].
+
+• [[MediaRecorder.isTypeSupported(type)]] قبل ما تختار: Chrome بيسجّل WebM و MP4، و Safari MP4 (من MDN).
+• الحالة [[state]]: [[inactive]] و [[recording]] و [[paused]]، و [[pause()]] و [[resume()]].
+• الـ Blob ← [[URL.createObjectURL(blob)]] ← [[<audio src>]] للتشغيل، أو [[<a download>]] للتحميل، أو [[fetch]] للرفع.
+• [[start(1000)]] (حتة كل ثانية) بيخلي WebM يطلع **من غير مدة** ([[duration = Infinity]]) في Chrome 157، و [[start()]] من غير رقم بيكتبها.`,
+          example: R`// recorder.js: سجّل ٣ ثواني من الميكروفون وشغّلها ونزّلها (صفحة على localhost)
+const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+const type = ['audio/webm;codecs=opus', 'audio/mp4'].find((t) => MediaRecorder.isTypeSupported(t));
+const rec = new MediaRecorder(stream, { mimeType: type });
+const chunks = [];
+rec.addEventListener('dataavailable', (e) => chunks.push(e.data));
+rec.start();
+await new Promise((r) => setTimeout(r, 3000));
+rec.stop();
+await new Promise((r) => rec.addEventListener('stop', r, { once: true }));
+stream.getTracks().forEach((t) => t.stop());
+const blob = new Blob(chunks, { type: rec.mimeType });
+const url = URL.createObjectURL(blob);
+document.body.append(Object.assign(document.createElement('audio'), { controls: true, src: url }));
+document.body.append(Object.assign(document.createElement('a'), { href: url, download: 'note.webm', textContent: 'نزّل' }));`,
+          try: R`افتح المسجّل الحي في آخر الشرح، واختار «رسمة بتتحرك + نغمة» ودوس «سجّل»، واستنى ٣ ثواني و«وقّف». هتلاقي فيديو في اللستة بيشتغل. دوس «نزّل»: حصل تحميل؟ وبعدين اختار «الميكروفون» وسجّل: الرسالة قالت إيه؟ وبعدين انسخ الصفحة وشغّلها من [[localhost]] وكرّر الاتنين.`,
+          sol: R`~~~text الناتج (نفس الصفحة جوه الـ preview المعزول، Chrome 157، Playwright)
+سجّل:           بيسجّل (video/webm;codecs=vp9,opus)…
+وقّف:           اتسجّل 2.9 ثانية، 82 KB، video/webm;codecs=vp9,opus
+اللستة:         video بيشتغل، duration=1.567954 (تسجيل 1.5 ثانية في تجربة تانية)
+نزّل:           مفيش تحميل (Playwright مستقبلش أي download)
+الميكروفون:     مفيش إذن للجهاز: SecurityError: Invalid security origin
+~~~
+
+~~~text الناتج (نفس الصفحة من http://127.0.0.1، Chrome 157 بمايك وهمي)
+نزّل:           download event: recording-02-38-44.webm 35760 byte
+الميكروفون:     بيسجّل (audio/webm;codecs=opus)… ثم اتسجّل 2.5 ثانية، 31 KB، audio/webm;codecs=opus
+~~~
+
+- **التسجيل من canvas و Web Audio شغال جوه الـ preview**، لأنه مش محتاج أي إذن.
+- **التحميل مبيحصلش جوه الـ preview** ومن غير أي رسالة: الـ [[iframe]] عليه [[sandbox]] من غير [[allow-downloads]]، فالمتصفح بيتجاهل [[<a download>]]. من صفحة عادية اتنزّل الملف (35 KB).
+- **الميكروفون ممنوع جوه الـ preview** ([[SecurityError]] زي الكاميرا في الدرس اللي فات)، ومن [[localhost]] اشتغل وسجّل [[audio/webm;codecs=opus]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه اللي هيتطبع؟ وأنهي سطر هيرمي؟
+
+~~~js
+const rec = new MediaRecorder(stream);            // stream فيه صوت وصورة
+console.log(JSON.stringify(rec.mimeType), rec.state);
+try { rec.stop(); console.log('stop عدّى'); } catch (e) { console.log(e.name); }
+try { rec.pause(); } catch (e) { console.log(e.name + ': ' + e.message); }
+rec.start();
+console.log(rec.state, JSON.stringify(rec.mimeType));
+try { rec.start(); } catch (e) { console.log(e.name + ': ' + e.message); }
+rec.onstart = () => console.log('onstart:', rec.mimeType);
+~~~`, done: R`كتبت توقّعك لكل سطر، واتفاجئت بواحد على الأقل.`, sol: R`~~~text الناتج (Chrome 157، كاميرا ومايك وهميين)
+"" inactive
+stop عدّى
+InvalidStateError: Failed to execute 'pause' on 'MediaRecorder': The MediaRecorder's state is 'inactive'.
+recording ""
+InvalidStateError: Failed to execute 'start' on 'MediaRecorder': The MediaRecorder's state is 'recording'.
+onstart: video/webm;codecs=vp8,opus
+~~~
+
+- **[[mimeType]] فاضي** قبل [[start()]] وحتى **بعده على طول**: المتصفح بيختار الصيغة لما التسجيل يبدأ فعلًا، وبتبان في [[onstart]] (أو في [[e.data.type]]). فلو محتاج النوع، اقراه في [[stop]] أو من الـ Blob.
+- **[[stop()]] وهو [[inactive]] مبيرميش** في Chrome 157، بس [[pause()]] بيرمي. متعتمدش على ده: شيك [[rec.state !== 'inactive']] قبل [[stop()]] (المسجّل في الشرح بيعمل كده).
+- [[start()]] مرتين = [[InvalidStateError]]. زرار «سجّل» لازم يتقفل وانت بتسجّل.
+- من غير [[mimeType]] Chrome اختار [[video/webm;codecs=vp8,opus]].` },
+            { lvl: 'تطبيق', t: R`**ابني:** صفحة بتطبع جدول «المتصفح ده يقدر يسجّل إيه» لـ ١٥ نوع (WebM بـ VP8 و VP9 و AV1 و H.264، و MP4 بأنواعه، و [[audio/webm]] و [[audio/ogg]] و [[audio/mp4]] و [[audio/mpeg]] و [[audio/wav]])، ودالة [[pickType(kind)]] بترجّع أول نوع مدعوم من لستة الأفضلية لصوت أو فيديو.`, done: R`جدولك بيقول [[audio/mpeg]] و [[audio/wav]] بـ [[false]] على Chrome، و [[pickType('audio')]] بترجّع [[audio/webm;codecs=opus]].`, sol: R`~~~js
+const types = ['video/webm', 'video/webm;codecs=vp8,opus', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=av1,opus',
+  'video/webm;codecs=h264', 'video/mp4', 'video/mp4;codecs=avc1,mp4a.40.2', 'video/x-matroska;codecs=avc1',
+  'audio/webm', 'audio/webm;codecs=opus', 'audio/ogg;codecs=opus', 'audio/mp4', 'audio/mpeg', 'audio/wav'];
+console.log(types.map((t) => t + ' => ' + MediaRecorder.isTypeSupported(t)).join('\n'));
+function pickType(kind) {
+  const prefs = kind === 'audio'
+    ? ['audio/webm;codecs=opus', 'audio/mp4', 'audio/ogg;codecs=opus']
+    : ['video/webm;codecs=vp9,opus', 'video/webm', 'video/mp4'];
+  return prefs.find((t) => MediaRecorder.isTypeSupported(t)) || '';
+}
+console.log(pickType('audio'), pickType('video'));
+~~~
+
+~~~text الناتج (Chrome 157)
+video/webm => true
+video/webm;codecs=vp8,opus => true
+video/webm;codecs=vp9,opus => true
+video/webm;codecs=av1,opus => true
+video/webm;codecs=h264 => true
+video/mp4 => true
+video/mp4;codecs=avc1,mp4a.40.2 => true
+video/x-matroska;codecs=avc1 => true
+audio/webm => true
+audio/webm;codecs=opus => true
+audio/ogg;codecs=opus => false
+audio/mp4 => true
+audio/mpeg => false
+audio/wav => false
+audio/webm;codecs=opus video/webm;codecs=vp9,opus
+~~~
+
+- **[[audio/mpeg]] (MP3) و [[audio/wav]] مش بيتسجّلوا** في Chrome. لو محتاج MP3 لازم تحوّل بعد التسجيل (مكتبة WASM أو على السيرفر)، و WAV تعمله بإيدك من Web Audio (مشروع في الوحدة دي).
+- **[[audio/ogg]] [[false]]** على Chrome، بس Firefox بيسجّله (من MDN)، فخليه في الآخر في لستة الأفضلية.
+- **[[|| '']]**: لو مفيش ولا نوع، [[new MediaRecorder(stream, {})]] بيختار هو. ده أحسن من إنك ترمي.
+- Chrome 157 بقى بيسجّل MP4 كمان، وده مهم لأن Safari على iPhone مبيشغّلش WebM القديم كويس (من MDN). لو التسجيل هيتشاف على أجهزة Apple، جرّب [[video/mp4]] الأول.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** المسجّل ده بيبعت حتة كل ثانية عشان «ميضيعش حاجة لو التاب وقع». الملف بيشتغل، بس المشغّل بيكتب [[--:--]] للمدة، والشريط مبيتحركش. ليه؟ صلّحه بطريقتين.
+
+~~~js
+rec.start(1000);
+// ... بعد stop:
+const audio = new Audio(URL.createObjectURL(new Blob(chunks, { type: rec.mimeType })));
+audio.onloadedmetadata = () => console.log('المدة:', audio.duration);
+~~~`, done: R`عرفت إن المدة كانت [[Infinity]]، والطريقتين بيطلّعوا رقم حقيقي.`, sol: R`~~~text الناتج (Chrome 157، ٢ ثانية لكل سطر، مايك وكاميرا وهميين)
+video webm no slice    chunks=1 duration=1.947416  after fix=-
+video webm slice 500   chunks=4 duration=Infinity  after fix=1.953
+audio webm no slice    chunks=1 duration=1.92      after fix=-
+audio webm slice 500   chunks=4 duration=Infinity  after fix=1.92
+audio mp4 no slice     chunks=1 duration=1.941     after fix=-
+~~~
+
+**الطريقة الأولى (لو مش محتاج الحتت):** [[rec.start()]] من غير رقم. التسجيل بيوصل حتة واحدة في الآخر، والمدة بتتكتب.
+
+**الطريقة التانية (لو محتاج الحتت، للرفع أثناء التسجيل مثلًا):** خلّي المتصفح يعرف المدة بنفسه:
+
+~~~js
+async function fixDuration(media) {
+  if (media.readyState < 1) await new Promise((r) => media.addEventListener('loadedmetadata', r, { once: true }));
+  if (media.duration !== Infinity) return media.duration;
+  media.currentTime = 1e101;                                    // اقفز لمكان مستحيل
+  await new Promise((r) => media.addEventListener('durationchange', r, { once: true }));
+  media.currentTime = 0;                                        // ارجع للأول
+  return media.duration;
 }
 ~~~
 
-- [[? :]]: لو array ابدأ بـ [[[]]]، غير كده [[Object.create(proto)]]: object فاضي الـ prototype بتاعه نفس prototype الأصل، فلو الأصل [[new Point(3)]]، النسخة فيها [[double()]].
-- [[Object.keys(value)]]: المفاتيح بتاعة الـ object نفسه (في الـ array: [["0"]] و [["1"]]...).
-- كل قيمة بتتنسخ بنفس الدالة ونفس الدفتر.
+- **ليه [[Infinity]]؟** ملف WebM بيبدأ بـ header فيه المدة. مع [[start(1000)]] أول حتة اتبعتتلك بعد ثانية، والـ header بتاعها اتكتب قبل ما حد يعرف التسجيل هيبقى قد إيه، فبيقول «مش معروف». ومن غير timeslice، Chrome بيكتب الملف كله في الآخر فبيعرف المدة.
+- **[[currentTime = 1e101]]**: بيجبر المتصفح يقرا الملف للآخر عشان يلاقي المكان، فيعرف المدة ويبعت [[durationchange]]. ده حل منتشر للمشكلة دي، واتقاس هنا إنه بيطلّع 1.953.
+- MP4 من غير timeslice طلع بمدة صح كمان. ومع timeslice، MP4 في Chrome بيتقسم fragments (متقاسش هنا).` },
+            { lvl: 'تحدي', t: R`**ابني:** مسجّل بعداد: «سجّل» و «إيقاف مؤقت/كمّل» و «خلّص»، والعداد [[0:00 / 0:10]] بيعد وقت التسجيل بس (مش وقت الإيقاف المؤقت)، والتسجيل بيقف لوحده عند ١٠ ثواني، والرسالة في الآخر بتقول المدة والحجم.`, done: R`إيقاف مؤقت ثانية ونص = العداد واقف، والتسجيل وقف لوحده عند [[0:10]] بالرسالة «وقف لوحده عند الحد».`, sol: R`~~~html timer.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>تسجيل بعداد</title></head>
+<body>
+<button id="rec" type="button">سجّل</button>
+<button id="pause" type="button" disabled>إيقاف مؤقت</button>
+<button id="stop" type="button" disabled>خلّص</button>
+<p><span id="clock">0:00</span> / 0:10</p>
+<p id="msg" role="status"></p>
+<script>
+  const MAX = 10;                                     // أقصى مدة بالثواني
+  const $ = (s) => document.querySelector(s);
+  let rec, stream, recorded = 0, lastTick = 0, timer;
+  const fmt = (s) => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+  // بنعد وقت التسجيل بس: الـ tick بيزوّد الفرق من آخر مرة لو الحالة recording
+  function tick() {
+    const now = performance.now();
+    if (rec.state === 'recording') recorded += (now - lastTick) / 1000;
+    lastTick = now;
+    $('#clock').textContent = fmt(recorded);
+    if (recorded >= MAX) rec.stop();
+  }
+  $('#rec').addEventListener('click', async () => {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    rec = new MediaRecorder(stream);
+    const chunks = [];
+    rec.ondataavailable = (e) => chunks.push(e.data);
+    rec.onstop = () => {
+      clearInterval(timer); stream.getTracks().forEach((t) => t.stop());
+      const blob = new Blob(chunks, { type: rec.mimeType });
+      $('#msg').textContent = 'خلص: ' + recorded.toFixed(1) + ' ثانية تسجيل، ' + blob.size + ' byte' + (recorded >= MAX ? ' (وقف لوحده عند الحد)' : '');
+      $('#rec').disabled = false; $('#pause').disabled = $('#stop').disabled = true;
+    };
+    recorded = 0; lastTick = performance.now();
+    rec.start();
+    timer = setInterval(tick, 200);
+    $('#rec').disabled = true; $('#pause').disabled = $('#stop').disabled = false;
+  });
+  $('#pause').addEventListener('click', () => {
+    if (rec.state === 'recording') { rec.pause(); $('#pause').textContent = 'كمّل'; }
+    else if (rec.state === 'paused') { rec.resume(); $('#pause').textContent = 'إيقاف مؤقت'; }
+  });
+  $('#stop').addEventListener('click', () => rec.stop());
+</script>
+</body>
+</html>
+~~~
+
+~~~text الناتج (Chrome 157، Playwright: سجّل، ٢ ثانية، إيقاف مؤقت، استنى، كمّل)
+وقت الإيقاف المؤقت:    0:01  ثم بعد ثانية  0:01   (العداد واقف)
+بعد ما كمّل:           0:10
+الرسالة:               خلص: 10.0 ثانية تسجيل، 153688 byte (وقف لوحده عند الحد)
+~~~
+
+- **[[recorded += (now - lastTick) / 1000]] بس لو [[recording]]**: كل ٢٠٠ ms بنزوّد الفرق من آخر tick. وقت [[paused]] الفرق بيتحسب بس مبيتزادش. أدق من [[recorded += 0.2]] لأن الـ timers بتتأخر.
+- **العداد قال 0:01 بعد ٢ ثانية:** طلب المايك ([[getUserMedia]]) خد حوالي ثانية قبل [[start()]]. العداد بيعد من [[start()]] بس، وده الصح.
+- **[[rec.state]]** هو مصدر الحقيقة للزرار: [[recording]] ← [[pause()]]، و [[paused]] ← [[resume()]].
+- [[MediaRecorder]] نفسه بيعرف يوقف بالحجم مش بالوقت؟ لأ. لو عايز حد بالـ bytes، اجمع [[e.data.size]] مع [[start(1000)]] ووقّف لما توصل.` },
+            { lvl: 'تحدي', t: R`**ابني (سيرفر وصفحة):** سجّل ٣ ثواني وارفعهم لسيرفر [[node:http]] بـ [[fetch]] (الـ Blob هو الـ body مباشرة). السيرفر يقبل أنواع الصوت والفيديو بس، ويرفض أكبر من 20 MB، ويختار هو اسم الملف، ويرد [[201]] بالاسم والحجم.`, done: R`الصفحة كتبت «اترفع: note-….webm (40666 byte)»، والملف موجود في [[uploads/]] بنفس الحجم، وطلب بـ [[text/html]] رجع [[415]].`, sol: R`~~~js upload-server.mjs
+// upload-server.mjs: بيقدّم الصفحة، وبيستقبل التسجيل على POST /upload ويحفظه في uploads/
+import { createServer } from 'node:http';
+import { createWriteStream, mkdirSync, readFileSync } from 'node:fs';
+import { pipeline } from 'node:stream/promises';
+mkdirSync('uploads', { recursive: true });
+const MAX = 20 * 1024 * 1024;                       // 20 MB
+const EXT = { 'audio/webm': 'webm', 'video/webm': 'webm', 'audio/mp4': 'm4a', 'video/mp4': 'mp4', 'audio/ogg': 'ogg' };
+createServer(async (req, res) => {
+  if (req.method === 'GET' && (req.url === '/' || req.url === '/upload.html')) {
+    res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
+    return res.end(readFileSync('upload.html'));
+  }
+  if (req.method !== 'POST' || req.url !== '/upload') { res.writeHead(404); return res.end(); }
+  const type = (req.headers['content-type'] || '').split(';')[0];
+  const size = Number(req.headers['content-length'] || 0);
+  const send = (code, body) => { res.writeHead(code, { 'content-type': 'application/json' }); res.end(JSON.stringify(body)); };
+  if (!EXT[type]) return send(415, { error: 'النوع ده مش مقبول: ' + type });
+  if (size > MAX) return send(413, { error: 'الملف أكبر من 20 MB' });
+  const name = 'note-' + Date.now() + '.' + EXT[type];   // الاسم من السيرفر، مش من اليوزر
+  let bytes = 0;
+  req.on('data', (c) => (bytes += c.length));
+  await pipeline(req, createWriteStream('uploads/' + name));
+  console.log('اتحفظ', name, bytes, 'byte', type);
+  send(201, { saved: name, bytes, type });
+}).listen(8793, () => console.log('http://localhost:8793'));
+~~~
+
+~~~html upload.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>ارفع التسجيل</title></head>
+<body>
+<button id="rec" type="button">سجّل ٣ ثواني وارفع</button>
+<p id="msg" role="status"></p>
+<script>
+  const msg = document.querySelector('#msg');
+  async function recordSeconds(sec) {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const rec = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
+    const chunks = [];
+    rec.ondataavailable = (e) => chunks.push(e.data);
+    const done = new Promise((r) => (rec.onstop = r));
+    rec.start();
+    setTimeout(() => rec.stop(), sec * 1000);
+    await done;
+    stream.getTracks().forEach((t) => t.stop());
+    return new Blob(chunks, { type: rec.mimeType });
+  }
+  document.querySelector('#rec').addEventListener('click', async () => {
+    msg.textContent = 'بيسجّل…';
+    const blob = await recordSeconds(3);
+    msg.textContent = 'بيرفع ' + blob.size + ' byte…';
+    const res = await fetch('/upload', { method: 'POST', headers: { 'content-type': blob.type }, body: blob });
+    const data = await res.json();
+    msg.textContent = res.ok ? 'اترفع: ' + data.saved + ' (' + data.bytes + ' byte)' : 'السيرفر رفض (' + res.status + '): ' + data.error;
+  });
+</script>
+</body>
+</html>
+~~~
+
+~~~text الناتج (Chrome 157 بمايك وهمي، و node upload-server.mjs)
+الصفحة:            اترفع: note-1795230057589.webm (40666 byte)
+لوج السيرفر:       اتحفظ note-1795230057589.webm 40666 byte audio/webm
+ls uploads:        40666 note-1795230057589.webm
+POST بـ text/html:  415 {"error":"النوع ده مش مقبول: text/html"}
+~~~
+
+- **[[body: blob]]**: [[fetch]] بيبعت الـ bytes زي ما هي، و [[content-type]] من نوع الـ Blob. مفيش [[FormData]] ولا base64 (base64 بيكبّر الحجم الثلث).
+- **[[split(';')[0] ]]**: النوع جاي [[audio/webm;codecs=opus]]، والسيرفر بيقارن الجزء الأول بس.
+- **الاسم من السيرفر:** لو خدت الاسم من اليوزر، [[../../index.html]] ممكن يكتب فوق ملفات. [[Date.now()]] كفاية هنا، وفي الشغل [[crypto.randomUUID()]].
+- **[[pipeline(req, createWriteStream(...))]]**: بيكتب وهو بيستقبل من غير ما يشيل الملف كله في الذاكرة، وبيقفل الملف صح لو الاتصال وقع.
+- **[[content-length]]** بيتشيك قبل القراية. يوزر ممكن يكدب فيه، فلو عايز ضمان عدّ الـ bytes وانت بتكتب واقطع لو عدّوا الحد.` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`قبل [[MediaRecorder]] كان التسجيل في المتصفح محتاج Flash أو إنك تجمع العينات بنفسك من Web Audio وتكتب WAV ضخم. دلوقتي سطرين بيدّوك ملف مضغوط بـ Opus أو VP9 أو H.264 بالـ hardware. وعليه مبني: الرسايل الصوتية في الشات، وتسجيل الشاشة والكاميرا في أدوات الدعم والتعليم، وحفظ المكالمات، وتسجيل لعبة على canvas، ومقابلات الشغل المسجلة. والـ outcome في منهج MDN إنك تعرف الـ Media Stream Recording API بيتعمل لإيه.`,
+            how: R`[[new MediaRecorder(stream, options)]] بيربط encoder بالـ tracks: كل frame فيديو وكل عينة صوت بتدخل بتتضغط وتتحط في container (WebM أو MP4). [[start(timeslice)]] بيبدأ، والـ bytes المتجمعة بتطلعلك في [[dataavailable]]: كل [[timeslice]] ms لو حددته، أو مرة واحدة عند [[stop()]] أو [[requestData()]]. الترتيب في الآخر: آخر [[dataavailable]] ثم [[stop]]، فلما [[stop]] يتبعت الـ chunks كلها عندك.
+
+الـ chunks مش ملفات لوحدها: أول واحد فيه الـ header والباقي بيكمّلوه، فلازم تجمعهم بالترتيب في [[Blob]] واحد. [[URL.createObjectURL(blob)]] بيدّيك [[blob:http://…/uuid]] بيشاور على الـ Blob في الذاكرة، وبيفضل حاجزه لحد [[URL.revokeObjectURL]] أو لحد ما الصفحة تتقفل. ولو الـ tracks اتقفلت (اليوزر سحب الإذن أو انت عملت [[stop()]] على الـ track)، المسجّل بيقف لوحده ويبعت آخر داتا و [[stop]] (اتقاس).
+
+والـ stream ممكن ميبقاش من جهاز: [[canvas.captureStream(30)]] بيدّي track فيديو من canvas، و [[audioContext.createMediaStreamDestination().stream]] بيدّي track صوت من Web Audio. والاتنين مش محتاجين إذن.`,
+            when: R`أي حاجة اليوزر بيسجّلها: رسالة صوتية، أو فيديو تعريفي، أو تسجيل لعبة أو رسمة، أو كاميرا مراقبة صغيرة. استخدم [[start()]] من غير timeslice للتسجيلات القصيرة (المدة بتتكتب)، و [[start(1000)]] لو عايز ترفع وانت بتسجّل أو متخسرش التسجيل لو التاب وقع (وصلّح المدة بعدين). ولو محتاج صيغة معينة (MP3 أو WAV) أو تعديل (قص، دمج)، سجّل بالمتصفح وحوّل على السيرفر بـ ffmpeg.`,
+            mistakes: R`- تقرا [[rec.mimeType]] قبل [[start]] أو بعده على طول: فاضي في Chrome. اقراه في [[onstart]] أو [[stop]].
+- [[new Blob(chunks)]] من غير [[type]]: الـ Blob نوعه فاضي، وبعض المشغّلات والسيرفرات مش هتعرفه.
+- [[start(1000)]] وفاكر الملف هيبقى زي التاني: WebM من غير مدة ([[Infinity]]) والشريط مبيتحركش.
+- تقفل الميكروفون ([[track.stop()]]) قبل ما [[stop]] بتاع المسجّل يتبعت وفاكر إنك هتخسر الآخر: المسجّل بيقف لوحده ويبعت آخر داتا، بس الأنضف [[rec.stop()]] الأول وتقفل الـ tracks في [[onstop]].
+- تنسى [[revokeObjectURL]] في لستة تسجيلات: كل تسجيل محجوز في الذاكرة لحد ما الصفحة تتقفل.
+- [[<a download>]] جوه [[iframe]] من غير [[allow-downloads]]: مفيش تحميل ومفيش رسالة.
+- تفتكر [[audio/mpeg]] أو [[audio/wav]] بيتسجلوا: [[isTypeSupported]] بـ [[false]] على Chrome.`,
+          },
+          teach: R`## الفكرة في سطر
+
+stream ← [[MediaRecorder]] ← chunks ← [[Blob]] ← URL للتشغيل أو التحميل أو الرفع. كل الناتج من Chrome 157 بـ Playwright، بمايك وكاميرا وهميين (درس getUserMedia) أو canvas.
 
 ---
 
-## ٢. التشغيل
+## ١. إيه اللي يتسجّل: [[isTypeSupported]]
 
-~~~text الناتج (Node 24)
-true true true
-true true true
-6 false
+~~~text الناتج (Chrome 157)
+video/webm => true            video/webm;codecs=vp9,opus => true     video/webm;codecs=av1,opus => true
+video/webm;codecs=h264 => true    video/mp4 => true                  video/mp4;codecs=avc1,mp4a.40.2 => true
+audio/webm;codecs=opus => true    audio/mp4 => true                  audio/ogg;codecs=opus => false
+audio/mpeg => false               audio/wav => false
 ~~~
 
-| السطر | يعني إيه |
-|---|---|
-| [[a !== user]] | النسخة object جديد مش نفس الأصل |
-| [[a.self === a]] | الـ [[self]] في النسخة بيشاور على النسخة مش على الأصل، بفضل [[seen]] |
-| [[b.self === b]] | [[structuredClone]] بتعمل نفس الحكاية لوحدها |
-| [[a.born instanceof Date]] | الـ Date رجعت Date مش نص |
-| [[a.scores[1] !== user.scores[1]]] | الـ array اللي جوه array اتنسخت كمان، مش بس المستوى الأول |
-| [[6 false]] | [[deepClone]] حافظ على الـ class فـ [[double()]] اشتغلت، و [[structuredClone]] رجّعت object عادي مش [[Point]] |
+- WebM و MP4 الاتنين، و Opus للصوت. MP3 و WAV **لأ**.
+- لستة أفضلية و [[find]]: [[['audio/webm;codecs=opus', 'audio/mp4', 'audio/ogg;codecs=opus'].find((t) => MediaRecorder.isTypeSupported(t))]].
+- من غير [[mimeType]] خالص، Chrome اختار [[video/webm;codecs=vp8,opus]] (للصوت والصورة).
 
 ---
 
-## ٣. اللي [[structuredClone]] مبتعملوش
+## ٢. الحالة والأحداث بالترتيب
 
-~~~text الناتج (Node 24)
-DataCloneError save() {} could not be cloned.
-ok
+~~~js
+const rec = new MediaRecorder(stream);
+rec.onstart = () => log('start'); rec.onpause = () => log('pause'); rec.onresume = () => log('resume');
+rec.ondataavailable = (e) => log('data ' + e.data.size + 'B ' + e.data.type);
+rec.start(1000);
+// بعد 1.5s: pause، وبعد 0.7s: resume و requestData()، وبعد 0.8s: stop
 ~~~
 
-- [[structuredClone({ save() {} })]] بترمي [[DataCloneError]]: الدوال مبتتنسخش (ممكن تكون closure شايلة state مستحيل يتنقل).
-- [[deepClone]] بتاعنا بيرجّع نفس الدالة (السطر التاني: [[save()]] رجّعت [[ok]]). ده مقبول غالبًا، بس قوله: الدالة مشتركة مش منسوخة.
+~~~text الناتج (Chrome 157، كاميرا ومايك وهميين، الأرقام ms من البداية)
+default mimeType قبل start="" state=inactive videoBps=2500000 audioBps=128000
+بعد start: state=recording mimeType=""
+965 start
+1007 data 9937B video/webm;codecs=vp8,opus
+1501 pause
+2203 resume
+2203 data 47532B video/webm;codecs=vp8,opus
+2260 data 1B video/webm;codecs=vp8,opus
+3008 data 48271B video/webm;codecs=vp8,opus
+3008 stop
+~~~
 
-| | [[structuredClone]] | [[deepClone]] بإيدك | [[JSON.parse(JSON.stringify())]] |
+| الـ method | من حالة | لحالة | لو الحالة غلط |
 |---|---|---|---|
-| Date و RegExp و Map و Set | بتنسخهم صح | صح لو كتبتهم | بيبوّظهم (نص و [[{}]]) |
-| circular | شغال | شغال بـ [[seen]] | بيرمي [[TypeError]] |
-| الدوال | بترمي [[DataCloneError]] | بترجع نفس الدالة | بتختفي من غير ما تقول |
-| class instance | بترجع object عادي | بيحافظ على الـ prototype | object عادي |
-| [[undefined]] و [[NaN]] | بتحافظ عليهم | بيحافظ عليهم | الأول بيختفي والتاني بيبقى [[null]] |
+| [[start(timeslice?)]] | [[inactive]] | [[recording]] | [[InvalidStateError]] |
+| [[pause()]] | [[recording]] | [[paused]] | [[InvalidStateError]] |
+| [[resume()]] | [[paused]] | [[recording]] | [[InvalidStateError]] |
+| [[requestData()]] | [[recording]] أو [[paused]] | زي ما هي، وبيطلّع حتة دلوقتي | [[InvalidStateError]] |
+| [[stop()]] | أي حالة | [[inactive]]، وبعده آخر [[dataavailable]] ثم [[stop]] | مبيرميش في Chrome 157 |
+
+- [[start]] اتبعت بعد 965 ms من الإنشاء: الـ encoder محتاج وقت يجهز.
+- [[videoBitsPerSecond]] الافتراضي 2.5 Mbps و [[audioBitsPerSecond]] 128 kbps، وتقدر تغيّرهم في الـ options.
+- [[requestData()]] بعد [[resume]] طلّع حتة فيها اللي اتسجّل لحد اللحظة دي.
+- آخر [[data]] و [[stop]] في **نفس** الـ ms، والـ data الأول: لما [[onstop]] يشتغل الـ chunks كاملة.
 
 ---
 
-## ٤. قيست السرعة
+## ٣. الـ timeslice والمدة اللي بتضيع
 
-array فيها ١٠٠ ألف object بسيط (أرقام ونصوص و array صغيرة و object جوه)، مرتين:
-
-~~~text الناتج (Node 24، ويندوز 11)
-deepClone 212 ms
-structuredClone 208 ms
-JSON 98 ms
-deepClone 192 ms
-structuredClone 204 ms
-JSON 109 ms
+~~~text الناتج (Chrome 157، كل تسجيل ثانيتين)
+video webm no slice    chunks=1 duration=1.947416
+video webm slice 500   chunks=4 duration=Infinity  → بعد currentTime=1e101: 1.953
+audio webm no slice    chunks=1 duration=1.92
+audio webm slice 500   chunks=4 duration=Infinity  → بعد currentTime=1e101: 1.92
+audio mp4 no slice     chunks=1 duration=1.941
 ~~~
 
-JSON أسرع بحوالي الضعف **في الداتا البسيطة دي**، لأن الـ parser بتاعه متظبط جامد. بس ده مش سبب تستخدمه كنسخة: الجدول اللي فوق بيوضح هو بيبوّظ إيه. الإجابة اللي تقولها: «[[structuredClone]] افتراضيًا، وبإيدك لو محتاج prototype أو حاجة مخصوصة».
+- **من غير timeslice:** حتة واحدة والمدة مكتوبة. **مع timeslice:** WebM من غير مدة، والمشغّل بيعرض [[--:--]] والشريط مبيشتغلش.
+- **الحل لو محتاج الحتت:** [[currentTime = 1e101]] ثم استنى [[durationchange]] ثم [[currentTime = 0]] (التمرين التالت).
+- [[clip.webm]] اللي في درس [[HTMLMediaElement]] اتعمل الأول بـ [[start(500)]] وطلع [[duration=Infinity]]، فاتسجّل تاني من غير timeslice. الغلطة دي حصلت فعلًا وانا ببني الـ lab.
+
+---
+
+## ٤. Blob ← تشغيل وتحميل
+
+~~~js
+const blob = new Blob(chunks, { type: rec.mimeType });
+const url = URL.createObjectURL(blob);
+audio.src = url;
+link.href = url; link.download = 'voice-note.webm';
+// لما متحتاجهوش: URL.revokeObjectURL(url);
+~~~
+
+~~~text الناتج (Chrome 157)
+audio-only: chunks=1 size=16334 type=audio/webm;codecs=opus
+url=blob:http://127.0.0.1:8791/<uuid>
+recorded duration at loadedmetadata=1.92
+mp4: type=video/mp4;codecs=avc1,opus size=120679 duration=2.0039
+بعد revokeObjectURL: 4 MEDIA_ELEMENT_ERROR: Format error
+~~~
+
+- [[blob:]] URL مربوط بالصفحة دي بس، ومينفعش يتبعت لحد.
+- **بعد [[revokeObjectURL]]** أي عنصر جديد بيحاول يفتحه بيفشل بـ code 4 (درس الأخطاء). العنصر اللي كان فتحه قبل كده بيكمّل عادي، فـ revoke بعد ما المشغّل يحمّل أو لما تمسح التسجيل.
+- [[audio/webm;codecs=opus]] تانيتين = 16 KB (حوالي 64 kbps). و [[{ audioBitsPerSecond: 32000 }]] بيصغّره للنص لو صوت كلام بس.
+
+---
+
+## ٥. لما الـ track يتقفل وانت بتسجّل
+
+~~~text الناتج (Chrome 157: سجّل نص ثانية وبعدين track.stop() على المايك)
+track.stop أثناء التسجيل: state=inactive events=data 408,stop
+~~~
+
+المسجّل وقف لوحده، وبعت آخر داتا و [[stop]]. ده بيحصل كمان لو اليوزر سحب الإذن أو فصل المايك، فكود [[onstop]] لازم يشتغل صح في الحالة دي كمان (مش بس من زرارك).
+
+---
+
+## ٦. تسجيل من غير أجهزة: canvas و Web Audio
+
+~~~js
+const video = canvas.captureStream(30);                        // track فيديو من الـ canvas
+const ac = new AudioContext(), osc = ac.createOscillator(), out = ac.createMediaStreamDestination();
+osc.connect(out); osc.start();                                  // track صوت من Web Audio
+const stream = new MediaStream([...video.getVideoTracks(), ...out.stream.getAudioTracks()]);
+~~~
+
+- **[[canvas.captureStream(fps)]]**: كل مرة الـ canvas يترسم عليه، frame جديد في الـ track. ده اللي عمل فيديو التجربة في درس المشغّل.
+- **[[createMediaStreamDestination()]]**: بدل ما الصوت يروح للسماعة، بيروح لـ track (درس Web Audio الجاي).
+- **[[new MediaStream([...tracks])]]**: بتجمع tracks من أماكن مختلفة في stream واحد.
+- ولا واحد فيهم محتاج إذن، فالمسجّل ده بيشتغل جوه الـ preview المعزول.
+
+---
+
+## ٧. المسجّل كامل (حي)
+
+~~~live 470 مسجّل
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مسجّل</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 12px; }
+  .row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; align-items: center; }
+  button, select { font: inherit; min-height: 40px; padding: 0 12px; }
+  canvas { width: 240px; height: 135px; background: #1e293b; border-radius: 8px; display: block; }
+  #msg { padding: 8px; border-radius: 6px; background: #f1f5f9; margin: 8px 0; }
+  li { margin: 6px 0; }
+  li video { width: 200px; display: block; }
+</style>
+</head>
+<body>
+<div class="row">
+  <select id="from" aria-label="بتسجّل إيه">
+    <option value="canvas">رسمة بتتحرك + نغمة (من غير كاميرا)</option>
+    <option value="mic">الميكروفون</option>
+    <option value="cam">الكاميرا والميكروفون</option>
+  </select>
+  <button id="rec" type="button">سجّل</button>
+  <button id="stop" type="button" disabled>وقّف</button>
+</div>
+<canvas id="art" width="320" height="180"></canvas>
+<p id="msg" role="status">جاهز.</p>
+<ol id="list"></ol>
+<script>
+const $ = (s) => document.querySelector(s);
+const msg = $('#msg');
+let recorder = null, source = null, stopSource = () => {};
+
+// أول نوع المتصفح يقدر يسجّله
+function pickType(kind) {
+  const list = kind === 'audio' ? ['audio/webm;codecs=opus', 'audio/mp4', 'audio/ogg;codecs=opus'] : ['video/webm;codecs=vp9,opus', 'video/webm', 'video/mp4'];
+  return list.find((t) => MediaRecorder.isTypeSupported(t)) || '';
+}
+
+// مصدر من غير أجهزة: canvas بيتحرك + oscillator، الاتنين في MediaStream واحد
+function canvasSource() {
+  const c = $('#art'), g = c.getContext('2d'), t0 = performance.now();
+  const timer = setInterval(() => {
+    const s = (performance.now() - t0) / 1000;
+    g.fillStyle = '#1e293b'; g.fillRect(0, 0, 320, 180);
+    g.fillStyle = '#38bdf8'; g.beginPath(); g.arc(160 + Math.cos(s * 3) * 100, 90, 24, 0, 7); g.fill();
+    g.fillStyle = '#fff'; g.font = 'bold 28px sans-serif'; g.fillText(s.toFixed(1) + 's', 20, 40);
+  }, 33);
+  const ac = new AudioContext(), osc = ac.createOscillator(), gain = ac.createGain(), out = ac.createMediaStreamDestination();
+  osc.frequency.value = 330; gain.gain.value = 0.1; osc.connect(gain).connect(out); osc.start();
+  const stream = new MediaStream([...c.captureStream(30).getVideoTracks(), ...out.stream.getAudioTracks()]);
+  return { stream, stop: () => { clearInterval(timer); stream.getTracks().forEach((t) => t.stop()); ac.close(); } };
+}
+
+async function startRec() {
+  const from = $('#from').value;
+  try {
+    if (from === 'canvas') ({ stream: source, stop: stopSource } = canvasSource());
+    else {
+      source = await navigator.mediaDevices.getUserMedia({ audio: true, video: from === 'cam' });
+      stopSource = () => source.getTracks().forEach((t) => t.stop());
+    }
+  } catch (e) {
+    msg.textContent = 'مفيش إذن للجهاز: ' + e.name + (e.message ? ': ' + e.message : '');
+    return;
+  }
+  const mimeType = pickType(source.getVideoTracks().length ? 'video' : 'audio');
+  recorder = new MediaRecorder(source, mimeType ? { mimeType } : {});
+  const chunks = [];
+  const t0 = Date.now();
+  recorder.addEventListener('dataavailable', (e) => { if (e.data.size) chunks.push(e.data); });
+  recorder.addEventListener('stop', () => {
+    stopSource();
+    const blob = new Blob(chunks, { type: recorder.mimeType });
+    addToList(blob, (Date.now() - t0) / 1000);
+    $('#rec').disabled = false; $('#stop').disabled = true;
+  });
+  recorder.start();
+  msg.textContent = 'بيسجّل (' + (recorder.mimeType || 'النوع الافتراضي') + ')…';
+  $('#rec').disabled = true; $('#stop').disabled = false;
+}
+
+function addToList(blob, seconds) {
+  const url = URL.createObjectURL(blob);
+  const isVideo = blob.type.startsWith('video');
+  const ext = blob.type.includes('mp4') ? 'mp4' : 'webm';
+  const name = 'recording-' + new Date().toISOString().slice(11, 19).replaceAll(':', '-') + '.' + ext;
+  const li = document.createElement('li');
+  const player = document.createElement(isVideo ? 'video' : 'audio');
+  player.controls = true; player.src = url;
+  const a = document.createElement('a');
+  a.href = url; a.download = name; a.textContent = 'نزّل ' + name;
+  const del = document.createElement('button');
+  del.type = 'button'; del.textContent = 'امسح';
+  del.addEventListener('click', () => { URL.revokeObjectURL(url); li.remove(); });
+  li.append(player, a, ' ', del);
+  $('#list').append(li);
+  msg.textContent = 'اتسجّل ' + seconds.toFixed(1) + ' ثانية، ' + Math.round(blob.size / 1024) + ' KB، ' + blob.type;
+}
+
+$('#rec').addEventListener('click', startRec);
+$('#stop').addEventListener('click', () => recorder && recorder.state !== 'inactive' && recorder.stop());
+</script>
+</body>
+</html>
+~~~
+
+**هتشوف إيه:** قايمة تختار منها المصدر، و«سجّل» و«وقّف»، ومربع كحلي فيه دايرة بتلف وعداد. اختار «رسمة بتتحرك + نغمة» وسجّل: التسجيل بيظهر في اللستة بمشغّل ولينك «نزّل» وزرار «امسح». «الميكروفون» و «الكاميرا» هيقولوا [[SecurityError]] هنا، و«نزّل» مش هيعمل حاجة هنا (اتشرح في «جرّب»)، والاتنين شغالين من [[localhost]].
+
+- **[[pickType]]**: لستة أفضلية للصوت ولستة للفيديو، و [['']] لو مفيش.
+- **[[canvasSource()]]** بترجّع [[{ stream, stop }]]: الـ [[stop]] بيقفل الـ interval والـ tracks والـ [[AudioContext]] مع بعض، فمصدر الـ canvas ومصدر الميكروفون بيتقفلوا بنفس السطر [[stopSource()]].
+- **[[if (e.data.size)]]**: بنتجاهل الحتت الفاضية (Chrome بعت حتة 1 byte في الجدول فوق).
+- **[[addToList]]**: [[<video>]] أو [[<audio>]] حسب نوع الـ Blob، والامتداد من النوع، والاسم فيه الوقت.
+- **«امسح»** بيعمل [[revokeObjectURL]] ويشيل العنصر.
+- اتقاس: Playwright على الصفحة جوه الـ preview المعزول ومن [[localhost]] (الناتج في «جرّب»).
 
 ---
 
 ## الخلاصة
 
-| الخطوة | ليه | لو نسيتها |
-|---|---|---|
-| primitive ← رجّعه | مبيتغيرش أصلًا | ولا حاجة، بس لف مالوش لازمة |
-| [[seen.has]] أول حاجة | نفس الأصل ← نفس النسخة | الـ circular يوقّع بـ stack overflow |
-| [[seen.set]] قبل النزول جوه | العيال اللي بتشاور على الأب تلاقيه | نفس الـ stack overflow |
-| Date و RegExp و Map و Set لوحدهم | مالهمش مفاتيح عادية | نسخة فاضية من غير بيانات |
-| [[Object.create(proto)]] | الـ methods تفضل شغالة | النسخة object عادي |`,
+- [[isTypeSupported]] الأول، و Chrome بيسجّل WebM و MP4 بس (لا MP3 ولا WAV).
+- [[dataavailable]] بيجمع، و [[stop]] بيتبعت بعد آخر حتة، و [[new Blob(chunks, { type: rec.mimeType })]].
+- [[mimeType]] فاضي لحد [[onstart]]. و [[pause]] و [[start]] بيرموا في الحالة الغلط.
+- [[start(timeslice)]] = WebM من غير مدة. يا من غير timeslice، يا [[currentTime = 1e101]].
+- [[createObjectURL]] للتشغيل والتحميل، و [[revokeObjectURL]] لما تخلص، و [[fetch]] بالـ Blob مباشرة للرفع.`,
           lines: [
-            R`[[deepClone]] بتاخد القيمة، ودفتر [[seen]] (WeakMap من الأصل للنسخة) بيتعمل في أول نداء ويتبعت لكل النداءات اللي جوه.`,
-            R`أي حاجة مش object (رقم، نص، [[undefined]]، دالة) أو [[null]]: رجّعها زي ما هي. الـ primitives مبتتعدّلش فمش محتاجة نسخة، و [[null]] لازم لوحده لأن [[typeof null]] بـ [["object"]].`,
-            R`الـ object ده اتنسخ قبل كده؟ رجّع نفس النسخة. ده اللي بيخلّي object بيشاور على نفسه ميلفّش للأبد، وبيخلّي حتتين بيشاوروا على نفس الحاجة يفضلوا كده في النسخة.`,
-            R`Date: اعمل تاريخ جديد بنفس الوقت بالـ milliseconds. لو سبتها للفة المفاتيح تحت، هتطلع object فاضي لأن الـ Date مالهاش مفاتيح عادية.`,
-            R`RegExp: نفس الـ pattern ([[source]]) ونفس الـ flags ([[g]] و [[i]]...). برضه مالهاش مفاتيح عادية.`,
-            R`Map: محتاجة لفة خاصة على [[[key, value]]] بدل [[Object.keys]].`,
-            R`النسخة الجديدة، فاضية لسه.`,
-            R`سجّلها في الدفتر **قبل** ما تنزل جوه، عشان لو قيمة جوه بتشاور على الـ Map نفسها تلاقي النسخة.`,
-            R`لف على كل زوج: المفتاح زي ما هو (نفس الـ reference)، والقيمة بتتنسخ بنفس الدالة ونفس الدفتر.`,
-            R`رجّع نسخة الـ Map، وكل القيم اللي جواها بقت نسخ مستقلة عن الأصل.`,
-            R`نهاية فرع الـ Map.`,
-            R`Set: نفس فكرة الـ Map بس عناصر من غير مفاتيح.`,
-            R`Set جديدة فاضية هتبقى النسخة، وبنعملها قبل اللفة عشان نسجّلها في الدفتر.`,
-            R`سجّلها في الدفتر قبل اللفة، لنفس السبب.`,
-            R`كل عنصر بيتنسخ ويتضاف.`,
-            R`رجّع نسخة الـ Set بعد ما كل عنصر اتنسخ واتضاف بنفس الترتيب.`,
-            R`نهاية فرع الـ Set.`,
-            R`array أو object: لو array ابدأ بـ [[[]]]، غير كده object فاضي الـ prototype بتاعه زي الأصل، فلو الأصل instance من class الـ methods تفضل شغالة في النسخة.`,
-            R`سجّل النسخة في الدفتر قبل اللفة. لو السطر ده اتنقل بعد اللفة، object بيشاور على نفسه هيوقّع بـ [[RangeError: Maximum call stack size exceeded]].`,
-            R`لف على مفاتيح الأصل نفسه، وكل قيمة اتنسخت بنفس الدالة. في الـ array المفاتيح [["0"]] و [["1"]]...`,
-            R`رجّع الـ array أو الـ object الجديد، ولو ده أول نداء يبقى ده الناتج النهائي للنسخة كلها.`,
-            R`نهاية [[deepClone]].`,
-            R`object فيه نص و Date و Set و array جواها array: كل نوع بيعدّي على فرع مختلف.`,
-            R`[[self]] بيشاور على الـ object نفسه (circular). [[JSON.stringify(user)]] هنا هيرمي TypeError.`,
-            R`النسخة بالدالة اللي كتبناها: نداء واحد من برّه، والـ [[seen]] بيتعمل جواه لوحده.`,
-            R`النسخة بالدالة المدمجة في Node والمتصفح.`,
-            R`[[true true true]]: النسخة object جديد، و [[self]] في كل نسخة بيشاور على النسخة نفسها مش على الأصل.`,
-            R`[[true true true]]: الـ Date رجعت Date، والـ Set فيها [["admin"]]، والـ array اللي جوه اتنسخت كمان (مش نفس الـ reference).`,
-            R`class صغيرة فيها method، عشان نشوف مين بيحافظ على الـ prototype.`,
-            R`[[6 false]]: [[deepClone]] حافظ على [[Point]] فـ [[double()]] اشتغلت، و [[structuredClone]] رجّعت object عادي فـ [[instanceof Point]] بـ [[false]].`,
+            R`بنطلب المايك بس. الصفحة لازم تبقى على [[localhost]] أو https.`,
+            R`بنختار أول نوع المتصفح يقدر يسجّله: Opus في WebM لـ Chrome و Firefox، و MP4 لـ Safari.`,
+            R`المسجّل مربوط بالـ stream وبالنوع اللي اخترناه.`,
+            R`array فاضية هنجمع فيها حتت التسجيل.`,
+            R`كل حتة بتوصل في [[dataavailable]]، و [[e.data]] هو الـ [[Blob]] بتاعها.`,
+            R`[[start()]] من غير timeslice: حتة واحدة في الآخر والمدة بتتكتب في الملف.`,
+            R`بنستنى ٣ ثواني بـ Promise حوالين [[setTimeout]].`,
+            R`[[stop()]] بيوقف التسجيل، وبعده آخر [[dataavailable]] ثم [[stop]].`,
+            R`بنستنى حدث [[stop]] بالذات، عشان ساعتها كل الحتت وصلت.`,
+            R`بنقفل المايك نفسه: من غيرها علامة التسجيل تفضل على التاب.`,
+            R`بنجمع الحتت في ملف واحد بنوعه. [[rec.mimeType]] بعد التسجيل فيه النوع الحقيقي بالـ codecs.`,
+            R`عنوان [[blob:]] بيشاور على الملف في الذاكرة.`,
+            R`مشغّل صوت بـ [[controls]] على نفس العنوان عشان تسمع التسجيل.`,
+            R`لينك [[download]] بنفس العنوان: الضغط عليه بينزّل [[note.webm]] بدل ما يفتحه.`,
           ],
-          sol: R`[[structuredClone({ save() {} })]] بترمي [[DataCloneError]] ورسالتها في Node 24 [[save() {} could not be cloned.]]، و [[deepClone]] بيرجّع object فيه نفس الدالة، و [[c.save()]] بتشتغل.
-
-والـ shared: [[const shared = [1]; const o = { x: shared, y: shared }; const c = deepClone(o);]] بيدّي [[c.x === c.y]] بـ [[true]] و [[c.x !== shared]] بـ [[true]]: أول مرة [[shared]] اتنسخ واتسجّل في [[seen]]، وتاني مرة اتجاب من الدفتر. من غير [[seen]] كان هيبقى فيه نسختين مختلفتين، و [[c.x.push(2)]] مكانتش هتبان في [[c.y]] زي الأصل. [[structuredClone(o)]] بتعمل نفس الحكاية.`,
-          solCode: R`const shared = [1];
-const o = { x: shared, y: shared, save() { return "ok"; } };
-const c = deepClone(o);
-console.log(c.x === c.y, c.x !== shared, c.save()); // true true ok
-try {
-  structuredClone(o);
-} catch (e) {
-  console.log(e.name, e.message); // DataCloneError save() { return "ok"; } could not be cloned.
-}`,
-          check: {
-            lang: "js",
-            starter: R`function deepClone(value, seen = new WeakMap()) {
-  // رجّع نسخة عميقة
-}`,
-            tests: R`test("primitives بترجع زي ما هي", () => expect([deepClone(5), deepClone("x"), deepClone(null), deepClone(undefined)]).toEqual([5, "x", null, undefined]));
-test("objects و arrays متداخلة مستقلة عن الأصل", () => {
-  const src = { a: { b: [1, { c: 2 }] } };
-  const copy = deepClone(src);
-  copy.a.b[1].c = 99;
-  expect([src.a.b[1].c, copy !== src, copy.a.b !== src.a.b, Array.isArray(copy.a.b)]).toEqual([2, true, true, true]);
-});
-test("Date بتتنسخ Date جديدة بنفس الوقت", () => {
-  const d = new Date(5000), c = deepClone({ d }).d;
-  expect([c instanceof Date, c !== d, c.getTime()]).toEqual([true, true, 5000]);
-});
-test("RegExp بنفس الـ source والـ flags", () => {
-  const r = deepClone(/ab+/gi);
-  expect([r instanceof RegExp, r.source, r.flags]).toEqual([true, "ab+", "gi"]);
-});
-test("Map و Set بتتنسخ والقيم اللي جواها كمان", () => {
-  const inner = { n: 1 };
-  const m = deepClone(new Map([["k", inner]]));
-  const s = deepClone(new Set([1, 2]));
-  expect([m instanceof Map, m.get("k").n, m.get("k") !== inner, s instanceof Set, [...s]]).toEqual([true, 1, true, true, [1, 2]]);
-});
-test("circular: النسخة بتشاور على نفسها من غير stack overflow", () => {
-  const o = { v: 1 }; o.self = o;
-  const c = deepClone(o);
-  expect([c.self === c, c !== o]).toEqual([true, true]);
-});
-test("حتتين بيشاوروا على نفس الـ array ← نفس النسخة", () => {
-  const shared = [1];
-  const c = deepClone({ x: shared, y: shared });
-  expect([c.x === c.y, c.x !== shared]).toEqual([true, true]);
-});`,
-            solution: R`function deepClone(value, seen = new WeakMap()) {
-  if (typeof value !== "object" || value === null) return value;
-  if (seen.has(value)) return seen.get(value);
-  if (value instanceof Date) return new Date(value.getTime());
-  if (value instanceof RegExp) return new RegExp(value.source, value.flags);
-  if (value instanceof Map) {
-    const out = new Map();
-    seen.set(value, out);
-    for (const [k, v] of value) out.set(k, deepClone(v, seen));
-    return out;
-  }
-  if (value instanceof Set) {
-    const out = new Set();
-    seen.set(value, out);
-    for (const v of value) out.add(deepClone(v, seen));
-    return out;
-  }
-  const out = Array.isArray(value) ? [] : Object.create(Object.getPrototypeOf(value));
-  seen.set(value, out);
-  for (const key of Object.keys(value)) out[key] = deepClone(value[key], seen);
-  return out;
-}`
-          }
+          ref: [
+            { t: "MDN: MediaStream Recording API", url: "https://developer.mozilla.org/en-US/docs/Web/API/MediaStream_Recording_API" },
+            { t: "MDN: MediaRecorder", url: "https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder" },
+            { t: "MDN: MediaRecorder.isTypeSupported()", url: "https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder/isTypeSupported_static" },
+            { t: "MDN: MediaRecorder dataavailable event", url: "https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder/dataavailable_event" },
+            { t: "MDN: HTMLCanvasElement.captureStream()", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/captureStream" },
+            { t: "MDN: URL.createObjectURL()", url: "https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL_static" },
+          ],
+          pre: [{ to: "js/getUserMedia: الكاميرا والميكروفون", why: R`الـ stream اللي بنسجّله، والإذن والأخطاء` }, { to: "js/input type=file", why: R`[[Blob]] و [[URL.createObjectURL]] اتشرحوا هناك على الملفات` }],
         },
         {
-          cmd: "اتوقع الناتج",
-          title: "أسئلة «إيه الناتج؟» المشهورة (output questions)",
-          desc: R`أسئلة سريعة بتختبر coercion و this والـ sort والـ floating point. الطريقة: متخمنش، قول القاعدة بصوتك. [[+]] مع string بيلزق، والعمليات التانية ([[-]] و [[*]]) بتحوّل لأرقام. الـ arrays والـ objects بيتحوّلوا string ([[[]]] بقى [[""]]، و [[{}]] بقى [["[object Object]"]]). و [[sort()]] من غير دالة بيرتّب كنصوص. والـ arrow بتاخد this من الدالة اللي حواليها.
+          cmd: "Web Audio API: AudioContext و Oscillator و Analyser و MSE",
+          title: "إزاي تولّد صوت من غير ملفات، وتعدّله، وترسم موجته، وإيه هي Media Source Extensions؟",
+          desc: R`Web Audio API بيعاملك الصوت كـ **رسم بياني (graph) من nodes** موصّلين ببعض: مصدر (oscillator بيولّد نغمة، أو ملف، أو ميكروفون) ← معالجة (gain للصوت، فلتر، analyser) ← [[ctx.destination]] (السماعة). كله جوه [[AudioContext]] واحد.
 
-وفي آخر الشرح سؤالين ترتيب للـ event loop (setTimeout و then و await مع بعض)، وسؤال [[this]] فيه ٩ نداءات لنفس الدوال بأشكال مختلفة.`,
-          example: R`console.log([] + []);              // ""
-console.log([] + {});              // "[object Object]"
-console.log(1 + "2" - 1);          // 11
-console.log("5" * "2");            // 10
-console.log(typeof typeof 1);      // "string"
-console.log([1, 2, 3] + "");       // "1,2,3"
-console.log(0.1 * 3 === 0.3);      // false
-console.log([3, 20, 100].sort());  // [100, 20, 3]
-console.log(!!"false");            // true
-const obj = { name: "A", get() { return () => this.name; } };
-console.log(obj.get()());          // "A"`,
-          try: R`غطّي التعليقات، واكتب إجابتك لكل سطر، وبعدين شغّل. وبعدين حل سؤالين الترتيب (event loop) وسؤال [[this]] في آخر الشرح قبل ما تبص على الإجابة. وضيف ٣ أسئلة من عندك من الدروس اللي فاتت (hoisting و closures في loop من المستوى ٢، و microtasks من المستوى ٣).`,
-          ref: [
-            { t: "MDN: Equality (==)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Equality" },
-            { t: "MDN: Array.prototype.sort()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort" },
-            { t: "MDN: parseInt()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt" },
-            { t: "MDN: JavaScript execution model", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Execution_model" },
-          ],
-          pre: [
-            { to: "js/hoisting و TDZ", why: R`أسئلة [[typeof]] قبل التعريف و [[let]] في الـ TDZ` },
-            { to: "js/closures في loop", why: R`سؤال [[var]] مع [[setTimeout]] في loop` },
-          ],
+• [[new AudioContext()]] بيبدأ [[suspended]] لو مفيش ضغطة من اليوزر، و [[await ctx.resume()]] جوه ضغطة بيشغّله.
+• [[ctx.createOscillator()]] نغمة ([[sine]] و [[square]] و [[sawtooth]] و [[triangle]]) و [[frequency]] بالـ Hz، و [[start()]] و [[stop(when)]]، وكل oscillator بيشتغل **مرة واحدة**.
+• [[ctx.createGain()]] بيتحكم في العلو، و [[gain.setValueAtTime]] و [[linearRampToValueAtTime]] و [[exponentialRampToValueAtTime]] بيعملوا fade دقيق بساعة الصوت [[ctx.currentTime]].
+• [[ctx.createAnalyser()]] بيدّيك الموجة والترددات كأرقام ترسمها على canvas.
+• **Media Source Extensions (MSE)**: إنك تغذّي [[<video>]] بحتت فيديو انت بتجيبها بنفسك. ده اللي HLS و DASH (الـ streaming بجودة بتتغير) مبنيين عليه، وبتستخدمه من مكتبة زي hls.js.`,
+          example: R`// beep.js: نغمة ٤٤٠ Hz لمدة ٠.٣ ثانية بـ fade، من غير أي ملف (جوه ضغطة زرار)
+const ctx = new AudioContext();
+const osc = ctx.createOscillator();
+const gain = ctx.createGain();
+osc.type = 'sine';
+osc.frequency.value = 440;
+osc.connect(gain).connect(ctx.destination);
+const t = ctx.currentTime;
+gain.gain.setValueAtTime(0, t);
+gain.gain.linearRampToValueAtTime(0.3, t + 0.01);
+gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+osc.start(t);
+osc.stop(t + 0.3);
+osc.onended = () => console.log('خلص', ctx.state);`,
+          try: R`افتح البيانو الحي في آخر الشرح. قبل ما تدوس حاجة: السطر بيقول إيه عن الـ [[AudioContext]]؟ دوس على A (أو حرف [[h]] من الكيبورد) وبص على الموجة. غيّر الموجة لـ [[square]] ثم [[sawtooth]] ودوس نفس النغمة: الشكل والصوت اتغيروا إزاي؟ وبعدين دوس ٣ نغمات ورا بعض بسرعة: بيتداخلوا ولا الواحدة بتقطع اللي قبلها؟`,
+          sol: R`~~~text الناتج (نفس الصفحة جوه الـ preview المعزول، Chrome 157، Playwright)
+قبل أي ضغطة:     AudioContext: لسه متعملش (دوس على أي زرار)
+بعد ضغطة A:      AudioContext: running — 48000 Hz
+الموجة:           1287 pixel أزرق (خط الموجة) وهي بتلعب، و 758 بعد ما خلصت (خط مستقيم في النص)
+~~~
+
+- الـ [[AudioContext]] بيتعمل **مع أول ضغطة** مش لما الصفحة تفتح: لو اتعمل بدري هيبقى [[suspended]] (الشرح، قسم ١).
+- [[sine]] موجة ناعمة وصوت هادي، و [[square]] مربعة وصوت زي ألعاب زمان، و [[sawtooth]] سنان منشار وصوت حاد. الرسمة نفسها هي البيانات اللي [[getByteTimeDomainData]] رجّعها.
+- النغمات **بتتداخل**: كل ضغطة بتعمل oscillator و gain جداد، وكل واحد بيخلص لوحده بعد ٠.٨ ثانية. مفيش نغمة بتقطع التانية.
+- الـ preview المعزول بيسمح بـ Web Audio عادي بعد الضغطة (اتقاس).`,
           practice: [
-            { lvl: 'سريع', t: R`اتوقع على ورقة وبعدين شغّل: [[console.log(typeof NaN, [] == false, null >= 0, null == 0)]]، وبعدها [[console.log(1); setTimeout(() => console.log(2)); Promise.resolve().then(() => console.log(3)); queueMicrotask(() => console.log(4)); console.log(5);]].`, done: R`الأول بيطبع [[number true true false]]، والتاني بيطبع 1 و 5 و 3 و 4 و 2 بالترتيب ده، وتقدر تقول القاعدة ورا كل واحدة (مثلًا [[>=]] بيحوّل لرقم لكن [[==]] مع [[null]] ليه قاعدة لوحده).`, sol: R`**التوقع:** [[number true true false]]، وبعدين 1 و 5 و 3 و 4 و 2.
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** أنهي سطر هيرمي، وأنهي سطر هيعدّي بهدوء وهو غلط؟
 
-~~~js predict.js
-console.log(typeof NaN, [] == false, null >= 0, null == 0);
-
-console.log(1);
-setTimeout(() => console.log(2));
-Promise.resolve().then(() => console.log(3));
-queueMicrotask(() => console.log(4));
-console.log(5);
+~~~js
+const ctx = new AudioContext();               // جوه ضغطة
+const osc = ctx.createOscillator();
+osc.connect(ctx.destination);
+osc.start();
+try { osc.start(); } catch (e) { console.log(1, e.name + ': ' + e.message); }
+try { ctx.createGain().gain.exponentialRampToValueAtTime(0, ctx.currentTime + 1); } catch (e) { console.log(2, e.name + ': ' + e.message); }
+osc.frequency.value = 30000; console.log(3, osc.frequency.value);
+osc.type = 'nope'; console.log(4, osc.type);
+try { osc.type = 'custom'; } catch (e) { console.log(5, e.name); }
+osc.stop(); osc.stop(); console.log(6, 'stop مرتين عدّى');
+~~~`, done: R`عرفت التلاتة اللي بيرموا والتلاتة اللي بيعدّوا بصمت.`, sol: R`~~~text الناتج (Chrome 157)
+1 InvalidStateError: Failed to execute 'start' on 'AudioScheduledSourceNode': cannot call start more than once.
+2 RangeError: Failed to execute 'exponentialRampToValueAtTime' on 'AudioParam': The float target value provided (0) should not be in the range (-1.40130e-45, 1.40130e-45).
+3 24000
+4 sine
+5 InvalidStateError
+6 stop مرتين عدّى
+Console (تحذيرات): Oscillator.frequency.value 30000 outside nominal range [-24000, 24000]; value will be clamped.
+                   The provided value 'nope' is not a valid enum value of type OscillatorType.
 ~~~
 
-~~~text الناتج (node predict.js)
-number true true false
-1
-5
-3
-4
-2
+- **(1)** الـ oscillator **مبيتشغلش مرتين**. كل نغمة = oscillator جديد (رخيص جدًا، ده التصميم).
+- **(2)** الـ exponential ramp مبيوصلش لصفر (الأُس من صفر مستحيل). انزل لـ [[0.001]] (مش مسموع)، أو استخدم [[setTargetAtTime(0, …)]].
+- **(3)** 30000 اتقص لـ 24000 = نص الـ sample rate (48000 ÷ 2، حد Nyquist) مع تحذير في الـ Console بس.
+- **(4)** [[type = 'nope']] **اتجاهل بصمت** وفضل [[sine]]: الـ enums في Web IDL بتتجاهل القيمة الغلط ومبترميش. باج صعب تلاقيه لو كتبت [['sawtooh']].
+- **(5)** [['custom']] بيرمي لأنه محتاج [[setPeriodicWave()]] بموجة انت راسمها.
+- **(6)** [[stop()]] تاني مبيرميش في Chrome 157.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[beep(freq, ms)]] صوت إشعار من غير ملفات: fade in في ١٠ ms، وبعدين fade out exponential لحد آخر المدة، وكل نداء بيعمل nodes جديدة وبيفصلهم لما يخلصوا. واثبت شكل الصوت بالأرقام من غير سماعات: نفس الـ envelope في [[OfflineAudioContext]] واحسب الـ RMS في أجزاء الوقت.`, done: R`الـ RMS عالي في أول ٥٠ ms، وبيقع لـ 0.0155 عند ١٥٠–٢٠٠ ms، وصفر بعد ٣٠٠ ms.`, sol: R`~~~js
+let ctx;
+async function beep(freq = 880, ms = 300, volume = 0.3) {
+  ctx ??= new AudioContext();
+  if (ctx.state === 'suspended') await ctx.resume();
+  const t = ctx.currentTime, end = t + ms / 1000;
+  const osc = ctx.createOscillator(), env = ctx.createGain();
+  osc.frequency.value = freq;
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(volume, t + 0.01);
+  env.gain.exponentialRampToValueAtTime(0.001, end);
+  osc.connect(env).connect(ctx.destination);
+  osc.start(t); osc.stop(end);
+  osc.onended = () => { osc.disconnect(); env.disconnect(); };
+}
+
+// الاختبار: نفس الـ envelope (volume = 1) في OfflineAudioContext، ثانية واحدة 48000 عينة
+const off = new OfflineAudioContext(1, 48000, 48000);
+const o = off.createOscillator(), g = off.createGain();
+o.connect(g).connect(off.destination);
+g.gain.setValueAtTime(0, 0); g.gain.linearRampToValueAtTime(1, 0.01); g.gain.exponentialRampToValueAtTime(0.001, 0.3);
+o.start(0); o.stop(0.3);
+const d = (await off.startRendering()).getChannelData(0);
+const rms = (a, b) => { let s = 0; for (let i = a; i < b; i++) s += d[i] * d[i]; return Math.sqrt(s / (b - a)).toFixed(4); };
+console.log('0-10ms=' + rms(0, 480), '10-50ms=' + rms(480, 2400), '150-200ms=' + rms(7200, 9600), '280-300ms=' + rms(13440, 14400), '300-400ms=' + rms(14400, 19200));
 ~~~
 
-**السطر الأول، قاعدة لكل قيمة:**
-
-| التعبير | الناتج | القاعدة |
-|---|---|---|
-| [[typeof NaN]] | [["number"]] | NaN قيمة من نوع number معناها «حساب فشل» |
-| [[[] == false]] | [[true]] | [[==]] بين object و boolean: الـ boolean يبقى 0، والـ array تبقى primitive ([[""]]) وبعدين رقم 0، و 0 == 0 |
-| [[null >= 0]] | [[true]] | المقارنة [[>=]] بتحوّل لرقم، و [[Number(null)]] بـ 0، و 0 >= 0 |
-| [[null == 0]] | [[false]] | [[==]] مع null ليه قاعدة لوحده: null بيساوي null و undefined بس، ومبيتحوّلش لرقم |
-
-ده المثال الكلاسيكي إن [[null >= 0]] صح و [[null > 0]] غلط و [[null == 0]] غلط في نفس الوقت.
-
-**الجزء التاني (event loop):**
-
-1. الـ sync الأول بالترتيب: **1** و **5**.
-2. بعدين الـ microtasks كلها بترتيب تسجيلها: [[then]] اتسجّل قبل [[queueMicrotask]]، فـ **3** وبعدين **4**.
-3. وفي الآخر الـ macrotask: الـ [[setTimeout]] **2**، حتى إنه اتكتب الأول ومن غير وقت.
-
-**الانترفيور بيختبر إيه:** قاعدة [[==]] مع null، وإن [[then]] و [[queueMicrotask]] نفس الطابور. **إجابة تتقال:** «الـ relational operators بتحوّل لأرقام لكن == مع null مبيحوّلش؛ والـ sync الأول، وبعدين كل الـ microtasks بالترتيب، وبعدين الـ timers».` },
-            { lvl: 'تطبيق', t: R`صلّح الكود البايظ بطريقتين لكل واحد: [[for (var i = 0; i < 3; i++) setTimeout(() => console.log(i));]] (المفروض 0 1 2)، و [[["1", "7", "11"].map(parseInt)]] (المفروض 1 و 7 و 11).`, done: R`قبل التصليح الأول بيطبع 3 تلات مرات والتاني [[1, NaN, 3]]. بعده الأول بيطبع 0 و 1 و 2 (بـ [[let]] أو بـ IIFE)، والتاني 1 و 7 و 11 (بـ [[map(Number)]] أو [[map((s) => parseInt(s, 10))]])، وتقدر تشرح إن [[parseInt]] خد الـ index كـ radix.`, sol: R`~~~js fix.js
-// البايظ
-for (var i = 0; i < 3; i++) setTimeout(() => console.log("var:", i));
-console.log("parseInt:", ["1", "7", "11"].map(parseInt));
-
-// تصليح ١: let بيعمل i جديدة لكل لفة
-for (let j = 0; j < 3; j++) setTimeout(() => console.log("let:", j));
-// تصليح ٢: IIFE بتاخد نسخة من i في باراميتر
-for (var k = 0; k < 3; k++) ((n) => setTimeout(() => console.log("IIFE:", n)))(k);
-
-console.log("Number:", ["1", "7", "11"].map(Number));
-console.log("radix 10:", ["1", "7", "11"].map((s) => parseInt(s, 10)));
-console.log(parseInt("1", 0), parseInt("7", 1), parseInt("11", 2));
+~~~text الناتج (Chrome 157)
+0-10ms=0.4181 10-50ms=0.4704 150-200ms=0.0155 280-300ms=0.0009 300-400ms=0.0000
 ~~~
 
-~~~text الناتج (node fix.js)
-parseInt: [ 1, NaN, 3 ]
-Number: [ 1, 7, 11 ]
-radix 10: [ 1, 7, 11 ]
-1 NaN 3
-var: 3
-var: 3
-var: 3
-let: 0
-let: 1
-let: 2
-IIFE: 0
-IIFE: 1
-IIFE: 2
+- **[[OfflineAudioContext(channels, length, sampleRate)]]**: نفس الـ API بس بيحسب الصوت في الذاكرة أسرع من الوقت الحقيقي ومن غير سماعات، و [[startRendering()]] بيرجّع [[AudioBuffer]]. ده اللي بيخليك تختبر كود صوت بأرقام.
+- **الـ RMS** (جذر متوسط المربعات) = «علو» الحتة. موجة sine كاملة الـ RMS بتاعها 0.707، فـ 0.47 في ١٠–٥٠ ms معناه إن الـ fade out بدأ ينزل على طول. و 0.0009 قبل النهاية = مش مسموع، وده ليه [[0.001]] هدف كويس.
+- **من غير fade:** [[start]] و [[stop]] على طول بيعملوا «تكة» (click) في الأول والآخر، لأن الموجة بتقطع فجأة من قيمة لصفر.
+- **[[ctx ??= new AudioContext()]]**: [[??=]] بيعمل الـ context أول مرة بس. context واحد للصفحة كلها، مش واحد لكل beep (المتصفح بيحدد عددهم).` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** شغّل oscillator 440 Hz على [[AnalyserNode]] بـ [[fftSize]] 2048 ومرة 32768، ولاقي أعلى bin في [[getFloatFrequencyData]] وحوّله لـ Hz. ليه الرقم مش 440 بالظبط؟ وإيه التمن اللي بتدفعه في الـ fftSize الكبير؟`, done: R`عندك الرقمين (445.31 و 439.45 على 48000 Hz) وشرح لعرض الـ bin.`, sol: R`~~~js
+// جوه ضغطة: ctx = new AudioContext()
+for (const size of [2048, 32768]) {
+  const osc = ctx.createOscillator(), an = ctx.createAnalyser(), mute = ctx.createGain();
+  an.fftSize = size; mute.gain.value = 0; osc.frequency.value = 440;
+  osc.connect(an); an.connect(mute).connect(ctx.destination); osc.start();
+  await new Promise((r) => setTimeout(r, 1200));
+  const f = new Float32Array(an.frequencyBinCount); an.getFloatFrequencyData(f);
+  let bin = 0; f.forEach((v, i) => { if (v > f[bin]) bin = i; });
+  console.log('fftSize=' + size + ' bins=' + an.frequencyBinCount + ' width=' + (ctx.sampleRate / size).toFixed(3) + 'Hz peak bin=' + bin + ' => ' + (bin * ctx.sampleRate / size).toFixed(2) + 'Hz');
+  osc.stop();
+}
 ~~~
 
-(سطور الـ sync طبعت الأول، والـ timers في الآخر بترتيب تسجيلها.)
-
-**الأول: [[var]] في loop.** [[var]] ليها متغير **واحد** للدالة كلها. الـ ٣ arrows بيشاوروا على نفس [[i]]، ولما الـ timers اشتغلت كانت اللفة خلصت و [[i]] بقت 3.
-
-- **[[let]]:** الـ [[for]] مع [[let]] بيعمل binding جديد لكل لفة، فكل arrow شايفة [[j]] بتاعتها.
-- **IIFE:** دالة بتتنادى فورًا بـ [[k]]، والباراميتر [[n]] نسخة من القيمة ساعتها، والـ arrow اللي جوه بتقفل على [[n]]. ده الحل اللي كان قبل [[let]] (ES5).
-
-**التاني: [[map(parseInt)]].** [[map]] بتبعت **٣** arguments: (العنصر، الـ index، الـ array). و [[parseInt]] بتاخد (النص، الـ radix). فاللي حصل فعلًا هو السطر الأخير في الكود:
-
-| النداء | الناتج | ليه |
-|---|---|---|
-| [[parseInt("1", 0)]] | 1 | radix صفر معناه «خمّن»، فبقى 10 |
-| [[parseInt("7", 1)]] | NaN | مفيش نظام عد أساسه 1 (المسموح من 2 لـ 36) |
-| [[parseInt("11", 2)]] | 3 | "11" في الثنائي = 3 |
-
-- **[[map(Number)]]:** [[Number]] بتستخدم أول argument بس. (بس خد بالك: [[Number("12px")]] بـ NaN و [[parseInt("12px", 10)]] بـ 12.)
-- **[[map((s) => parseInt(s, 10))]]:** arrow بتبعت النص بس ومعاه radix صريح.
-
-**الانترفيور بيختبر إيه:** الـ closures مع [[var]] و [[let]]، وإنك عارف الـ callback بيتبعتله إيه بالظبط. **إجابة تتقال:** «var متغير واحد للدالة فالتلات callbacks شايفين آخر قيمة، و let بيعمل binding لكل لفة؛ و map بيبعت الـ index كـ argument تاني، و parseInt بيفهمه radix».` },
-            { lvl: 'تحدي', t: R`اشرحها: اكتب ٥ أسئلة «إيه الناتج؟» من عندك، كل واحد بيختبر قاعدة مختلفة من الوحدات اللي فاتت (hoisting و this و closures و microtasks و sort)، وكل سؤال معاه الإجابة والشرح في سطرين لزميل. ادّيهم لحد يحلهم.`, done: R`كل سؤال اتشغّل والناتج المكتوب صح، ومفيش سؤالين بيختبروا نفس القاعدة، والزميل حلّهم ولو غلط في واحد الشرح بتاعك وصّله للإجابة من غير ما تكلمه.`, sol: R`**نسخة نموذجية:** ٥ أسئلة، كل واحد قاعدة، كلهم في ملف واحد عشان تشغّلهم مرة واحدة (والرقم في أول كل سطر بيقولك السؤال).
-
-~~~js quiz5.js
-// ١. hoisting
-console.log("1:", typeof hoisted, typeof notYet);
-function hoisted() {}
-var notYet = () => {};
-
-// ٢. this
-const counter = { n: 1, inc() { return this.n + 1; } };
-const inc = counter.inc;
-try { console.log("2:", inc()); } catch (e) { console.log("2:", e.constructor.name); }
-
-// ٣. closures
-const fns = [];
-for (let i = 0; i < 3; i++) fns.push(() => i * 10);
-let x = 1;
-const getX = () => x;
-x = 2;
-console.log("3:", fns.map((f) => f()), getX());
-
-// ٤. microtasks
-setTimeout(() => console.log("4: timeout"));
-(async () => {
-  console.log("4: a");
-  await null;
-  console.log("4: b");
-})();
-Promise.resolve().then(() => console.log("4: c"));
-console.log("4: d");
-
-// ٥. sort
-console.log("5:", [10, 9, 1, 2].sort(), ["b", "a", "B"].sort());
+~~~text الناتج (Chrome 157، sampleRate 48000)
+fftSize=2048 bins=1024 width=23.438Hz peak bin=19 => 445.31Hz (-27.8 dB)
+fftSize=32768 bins=16384 width=1.465Hz peak bin=300 => 439.45Hz (-28.1 dB)
 ~~~
 
-~~~text الناتج (node quiz5.js)
-1: function undefined
-2: NaN
-3: [ 0, 10, 20 ] 2
-4: a
-4: d
-5: [ 1, 10, 2, 9 ] [ 'B', 'a', 'b' ]
-4: b
-4: c
-4: timeout
+- **الـ FFT بيقسم الترددات لصناديق (bins)** عرض كل واحد [[sampleRate / fftSize]]. مع 2048 الصندوق 23.4 Hz، فـ 440 وقعت في صندوق 19 اللي بيبدأ عند 445.3. ومع 32768 الصندوق 1.46 Hz، فبقت 439.45.
+- **التمن:** 32768 عينة = 0.68 ثانية من الصوت لازم تتجمع قبل الحساب، فالرسمة بتتأخر وبتبقى أبطأ في الرد. للـ visualizer بيبقى 2048 كفاية. ولـ tuner (مشروع في الوحدة) محتاج دقة، فبيستخدموا طرق تانية (autocorrelation) على الـ time domain بدل أعلى bin.
+- **[[mute]] gain بـ 0:** الـ analyser فضل جزء من الـ graph اللي رايح للسماعة، والـ gain الصفر بيخليك متسمعش النغمة وانت بتقيس.
+- [[frequencyBinCount]] دايمًا نص الـ [[fftSize]].` },
+            { lvl: 'تحدي', t: R`**ابني:** صوت «بيو» (تردد بينزل من 880 لـ 220 في ٠.٩ ثانية مع fade) يتعمل في [[OfflineAudioContext]] ويتحوّل **ملف WAV** تنزّله أو تشغّله في [[<audio>]]. اكتب الـ header بـ [[DataView]] بنفسك.`, done: R`الملف 44144 byte ([[44 + 22050 × 2]])، والـ [[<audio>]] بيقول [[duration=1]].`, sol: R`~~~js
+const off = new OfflineAudioContext(1, 22050, 22050);          // ثانية واحدة، 22050 عينة
+const o = off.createOscillator(), e = off.createGain();
+o.connect(e).connect(off.destination);
+e.gain.setValueAtTime(0, 0); e.gain.linearRampToValueAtTime(0.8, 0.02); e.gain.exponentialRampToValueAtTime(0.001, 0.9);
+o.frequency.setValueAtTime(880, 0); o.frequency.exponentialRampToValueAtTime(220, 0.9);
+o.start(); o.stop(1);
+const rendered = await off.startRendering();
+
+function toWav(ab) {
+  const data = ab.getChannelData(0), rate = ab.sampleRate, n = data.length;
+  const buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+  const str = (o, s) => [...s].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+  str(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); str(8, 'WAVE'); str(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  str(36, 'data'); v.setUint32(40, n * 2, true);
+  for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, Math.max(-1, Math.min(1, data[i])) * 0x7fff, true);
+  return new Blob([buf], { type: 'audio/wav' });
+}
+const wav = toWav(rendered);
+const a = new Audio(URL.createObjectURL(wav));
+a.onloadedmetadata = () => console.log('WAV: ' + wav.size + ' byte type=' + wav.type + ' duration=' + a.duration);
 ~~~
 
-**الإجابات والشرح لزميلك (سطرين لكل سؤال):**
+~~~text الناتج (Chrome 157)
+WAV: 44144 byte type=audio/wav duration=1 (rendered length=22050)
+~~~
 
-1. **hoisting:** [[function]] declaration بتطلع لفوق كاملة فـ [[typeof hoisted]] بـ "function". [[var notYet]] الاسم بس اللي طلع وقيمته undefined لحد ما السطر يتنفّذ، فـ "undefined".
-2. **this:** [[inc]] اتنسخت من الـ object ونتنادت لوحدها، فـ [[this]] مبقاش [[counter]]. في ملف CommonJS عادي [[this]] بقى [[globalThis]] و [[this.n]] undefined، و [[undefined + 1]] بـ NaN. (في ES module أو [["use strict"]] كان هيبقى TypeError، وعشان كده الـ try.)
-3. **closures:** كل arrow في الـ loop قفلت على [[i]] بتاعة لفتها ([[let]])، فـ 0 و 10 و 20. و [[getX]] بتقرا [[x]] **وقت النداء** مش وقت التعريف، فطلعت 2.
-4. **microtasks:** الـ async function بتشتغل sync لحد أول [[await]] فـ [[a]] الأول، وبعدين [[d]]. بعد ما الـ sync كله يخلص (حتى سطر السؤال ٥)، الـ microtasks بترتيب تسجيلها: [[b]] (اتسجّلت ساعة الـ await) وبعدين [[c]]، وفي الآخر الـ timeout.
-5. **sort:** من غير دالة مقارنة، [[sort]] بيحوّل كل حاجة لنص ويرتّب بالحروف: "10" قبل "2" لأن "1" قبل "2". والحروف الكابيتال قبل الصغيرة في Unicode، فـ "B" الأول. التصليح [[sort((a, b) => a - b)]] و [[localeCompare]].
+- **العينات [[Float32]] من -1 لـ 1**، والـ WAV 16-bit عايز أرقام صحيحة من -32768 لـ 32767، فبنضرب في [[0x7fff]] (32767). و [[Math.max(-1, Math.min(1, x))]] (clamp) عشان أي عينة عدّت الحد متلفّش لعلامة عكسية وتطلع «طقة».
+- **الـ header:** ٤٤ byte، كل الأرقام little-endian (الـ [[true]] في كل [[setUint32]])، ودرس «DataView» بيشرح كل خانة. [[36 + n * 2]] = حجم الملف ناقص أول ٨ bytes.
+- **[[exponentialRampToValueAtTime]] على [[frequency]]**: النزول بالأُس بيبان للودن منتظم (الأوكتاف = الضعف)، و linear كان هيبان إنه بيقع بسرعة في الآخر.
+- **22050 Hz** كفاية لصوت تنبيه (أعلى تردد 11025)، ونص حجم 44100. ده مشروع «مولّد أصوات التنبيه» في الوحدة.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** زميلك عايز يشغّل فيديو «بجودة بتتغير حسب النت» زي YouTube، وكاتب [[video.src = 'movie.m3u8']]. اكتبله: يعني إيه adaptive streaming، والفرق بين HLS و DASH، وليه [[src]] مش كفاية في كل المتصفحات، و MSE دورها إيه، ويستخدم إيه فعلًا. وقيس: [[MediaSource.isTypeSupported]] بيرد بإيه على [[application/vnd.apple.mpegurl]]؟`, done: R`شرح فيه الـ ٥ نقط، والرقم المتقاس.`, sol: R`~~~js
+for (const t of ['video/webm; codecs="vp9, opus"', 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"', 'video/webm', 'video/mp2t; codecs="avc1.42E01E"', 'application/vnd.apple.mpegurl'])
+  console.log('MediaSource.isTypeSupported(' + t + ') = ' + MediaSource.isTypeSupported(t));
+console.log(document.createElement('video').canPlayType('application/vnd.apple.mpegurl'), typeof window.ManagedMediaSource);
+~~~
 
-**ليه السؤال ٥ طبع قبل [[4: b]]:** الملف كله sync واحد، والـ microtasks بتستنى لحد ما يخلص. ده نفسه سؤال سادس كويس.
+~~~text الناتج (Chrome 157)
+MediaSource.isTypeSupported(video/webm; codecs="vp9, opus") = true
+MediaSource.isTypeSupported(video/mp4; codecs="avc1.42E01E, mp4a.40.2") = true
+MediaSource.isTypeSupported(video/webm) = false
+MediaSource.isTypeSupported(video/mp2t; codecs="avc1.42E01E") = true
+MediaSource.isTypeSupported(application/vnd.apple.mpegurl) = false
+maybe undefined
+~~~
 
-**قبل ما تدّيهم لحد:** شغّل كل سؤال وانسخ الناتج الحقيقي، متكتبش الإجابة من دماغك. وخلي كل سؤال يختبر قاعدة واحدة بس، عشان لو الزميل غلط تعرف هو مش فاهم إيه بالظبط.` },
+**الإجابة النموذجية:**
+
+1. **adaptive streaming:** الفيديو متقطع حتت صغيرة (٢–١٠ ثواني)، وكل حتة موجودة بكذا جودة (360p و 720p و 1080p). المشغّل بيقيس سرعة النت وبيختار جودة الحتة الجاية، فلو النت وقع الفيديو بيكمّل بجودة أقل بدل ما يقف.
+2. **HLS و DASH:** نفس الفكرة بـ «قايمة» بتوصف الحتت والجودات. HLS من Apple وقايمته [[.m3u8]]، و DASH معيار مفتوح وقايمته [[.mpd]] (XML).
+3. **ليه [[src]] مش كفاية:** Safari بيشغّل [[.m3u8]] في [[src]] بنفسه، و Chrome 157 للديسكتوب رد [["maybe"]] على [[canPlayType]] (يعني بدأ يدعمه)، بس متصفحات تانية لأ، و DASH محدش بيشغّله في [[src]] لوحده.
+4. **MSE:** الطريقة اللي JavaScript بيغذّي بيها [[<video>]] بالحتت بنفسه: بيقرا القايمة، ويختار الجودة، ويجيب الحتة بـ [[fetch]]، ويحطها في [[SourceBuffer]] بـ [[appendBuffer]]. لاحظ إن [[MediaSource.isTypeSupported]] بيرد على **صيغ الحتت** (MP4 و WebM و [[mp2t]])، مش على [[.m3u8]]: القايمة دي شغلة المكتبة.
+5. **يستخدم إيه:** hls.js أو Shaka Player أو dash.js، وهم مبنيين على MSE. الشكل المعتاد (من وثائق hls.js، مش متجرّب هنا لأن الـ lab مبينزّلش مكتبات): لو [[canPlayType('application/vnd.apple.mpegurl')]] حط [[src]] على طول، وإلا [[new Hls()]] و [[hls.loadSource(url)]] و [[hls.attachMedia(video)]]. و [[ManagedMediaSource]] ([[undefined]] في Chrome) هو نسخة Safari على iPhone اللي بتوفّر البطارية.` },
           ],
           flag: "script",
           deep: {
-            why: "الأسئلة دي بتتسأل كـ warm-up، والمقصود مش إنك تكون حافظ، المقصود تشرح القاعدة. الإجابة الصح من غير سبب بتتحسب نص درجة.",
-            how: R`القواعد اللي بتحل أغلبهم: [[+]] لو أي طرف string (بعد تحويل الـ objects لـ primitive) بيبقى لزق نصوص، وإلا جمع. [[1 + "2"]] بقت "12"، و [["12" - 1]] بقت 11. الـ array بتتحوّل بـ [[join(",")]]، والـ object العادي بـ [["[object Object]"]]. [[typeof]] دايمًا بيرجّع string، فـ typeof بتاعه "string". أي string مش فاضي truthy حتى "false". والـ arrow جوه method بتاخد this بتاعة الـ method، اللي هي obj.`,
-            when: R`بيتسألوا مع أسئلة hoisting ([[console.log(x); var x = 1]])، و closures في loop، وترتيب الـ event loop، و this في callbacks. كلهم في دروس فوق.`,
-            mistakes: R`تجاوب بسرعة من غير ما تقول القاعدة. وتفتكر إن [[{} + []]] في Console زي [[[] + {}]]: في أول السطر الـ [[{}]] ممكن يتفهم block فالناتج 0، فالأسئلة دي بتتكتب جوه console.log عشان تتجنب ده.`
+            why: R`[[<audio>]] بيشغّل ملف وخلاص. Web Audio بيدّيك الصوت نفسه كأرقام: تولّده (أصوات تنبيه وألعاب من غير ملفات)، وتعدّله (fade، وفلاتر، وصدى، و panning يمين وشمال)، وتحلله (visualizer، ومستوى الميكروفون، و tuner)، وتجدوله بدقة الـ sample (مترونوم وموسيقى). ولأن التوقيت بساعة الصوت مش [[setTimeout]]، النغمات بتنزل في ميعادها بالظبط حتى لو الصفحة مشغولة. و MSE نفس الفكرة للفيديو: JavaScript هو اللي بيقرر أنهي bytes تدخل المشغّل، وده اللي خلّى الـ streaming في الويب ممكن من غير plugins. الاتنين في منهج MDN كـ «APIs تعرف هي بتتعمل لإيه».`,
+            how: R`الـ [[AudioContext]] بيشغّل thread صوت لوحده بيحسب الـ graph في حتت صغيرة (128 عينة كل مرة، يعني 2.7 ms على 48000 Hz) ويبعتها للسماعة. كل node ليه inputs و outputs، و [[connect(node)]] بيوصّل الـ output بالـ input وبيرجّع الـ node التاني (عشان كده [[osc.connect(gain).connect(ctx.destination)]] بيشتغل في سطر واحد، واتقاس إنه بيرجّع نفس الـ gain).
+
+الخصائص زي [[gain]] و [[frequency]] مش أرقام عادية: [[AudioParam]] فيه [[value]] وجدول تغييرات بالوقت. [[setValueAtTime(v, t)]] يحط قيمة في لحظة، و [[linearRampToValueAtTime(v, t)]] يمشي بخط مستقيم لحد [[t]]، و [[exponentialRampToValueAtTime]] بمنحنى أُسّي (مبيوصلش لصفر)، و [[setTargetAtTime(v, t, τ)]] يقرّب من [[v]] بسرعة [[τ]] (اتقاس: بعد τ واحدة وصل 0.368 = 1/e). كله بـ [[ctx.currentTime]] (ثواني من بداية الـ context)، مش بـ [[performance.now()]].
+
+المصادر (oscillator و buffer source) «one-shot»: [[start(when)]] مرة و [[stop(when)]]، وبعدين [[ended]]، والـ garbage collector بيشيلهم. والـ [[AnalyserNode]] بيحتفظ بآخر [[fftSize]] عينة وبيحسب FFT لما تطلب. أما MSE: [[new MediaSource()]] و [[video.src = URL.createObjectURL(ms)]]، وفي [[sourceopen]] [[addSourceBuffer(type)]]، وكل [[appendBuffer(bytes)]] بيستنى [[updateend]] قبل اللي بعده، وفي الآخر [[endOfStream()]].`,
+            when: R`Web Audio: أصوات واجهة قصيرة (إشعار، نجاح، خطأ)، وألعاب، وآلات موسيقية ومترونوم، و visualizer لمشغّل، ومستوى الميكروفون قبل مكالمة، وتعديل صوت قبل التسجيل (gain أو فلتر قبل [[MediaRecorder]])، وتحليل ملف صوت ([[decodeAudioData]]). ومتستخدموش لتشغيل بودكاست أو أغنية طويلة: [[<audio>]] أوفر وبيدعم الـ streaming وشاشة القفل. MSE: لما عندك HLS أو DASH أو streaming خاص (live، أو فيديو مشفّر بـ EME)، ودايمًا من مكتبة. ولو فيديو عادي MP4، [[src]] كفاية.`,
+            mistakes: R`- تعمل [[AudioContext]] أول ما الصفحة تفتح: [[suspended]]، ومفيش صوت، ومفيش خطأ. اعمله أو [[resume()]] جوه ضغطة (اتقاس: الضغطة لوحدها من غير [[resume()]] مشغّلتهوش).
+- تعيد استخدام oscillator: [[InvalidStateError: … cannot call start more than once.]]
+- [[exponentialRampToValueAtTime(0, t)]]: [[RangeError]]. انزل لـ [[0.001]].
+- تغيّر [[gain.value]] على طول وهو بيشتغل: «تكة». استخدم [[setTargetAtTime]] أو ramp قصير.
+- [[osc.type = 'sawtooh']] (غلطة إملائية): مفيش خطأ، والموجة بتفضل [[sine]].
+- [[createMediaElementSource(audio)]] مرتين لنفس العنصر: [[InvalidStateError: … HTMLMediaElement already connected previously to a different MediaElementSourceNode.]] واعمله مرة واحدة، والعنصر بعدها صوته بيعدّي من الـ graph بس (لازم توصّله بالـ destination).
+- [[decodeAudioData(buf)]] وبعدين تستخدم [[buf]] تاني: اتقاس إن [[byteLength]] بقى 0 (detached، درس «ArrayBuffer: resize و transfer و detached»).
+- [[appendBuffer]] وانت لسه في [[updating]]: [[InvalidStateError: … This SourceBuffer is still processing an 'appendBuffer' or 'remove' operation.]] استنى [[updateend]].
+- تقطع ملف WebM في أي مكان وتديه لـ MSE: اتقاس إن نص الملف بالـ bytes عمل فجوة في [[buffered]]. الحتت لازم تبقى segments كاملة (القايمة والـ packager زي ffmpeg بيعملوها).`,
           },
           teach: R`## الفكرة في سطر
 
-١١ سطر كل واحد بيختبر قاعدة واحدة في اللغة. الطريقة: لكل سطر قول القاعدة الأول، وبعدين الناتج بيطلع لوحده.
-
-شغّلت المثال في Node 24. Node بيطبع الـ strings من غير علامات تنصيص، فالـ string الفاضي بيطلع سطر فاضي.
-
-~~~text الناتج (Node 24)
-
-[object Object]
-11
-10
-string
-1,2,3
-false
-[ 100, 20, 3 ]
-true
-A
-~~~
+nodes موصّلين ببعض جوه [[AudioContext]]: مصدر ← تعديل ← سماعة، والتوقيت بساعة الصوت. وفي الآخر MSE: تغذية [[<video>]] بحتت بنفسك. كل الناتج من Chrome 157 بـ Playwright.
 
 ---
 
-## ١. [[+]] مع arrays و objects
+## ١. [[AudioContext]] وسياسة الـ autoplay
 
-~~~text app.js
-console.log([] + []);
-console.log([] + {});
+~~~text الناتج (Chrome 157)
+صفحة بتعمل new AudioContext() أول ما تفتح:      AudioContext.state قبل الضغط: suspended
+بعد ضغطة حقيقية، من غير resume():               AudioContext.state بعد الضغط من غير resume: suspended
+بعد await ctx.resume() جوه الضغطة:              بعد resume: running
+context اتعمل جوه الضغطة نفسها:                 created inside click: running
+sampleRate=48000  baseLatency=0.0107 (10.7 ms)
 ~~~
 
-[[+]] مبيعرفش يجمع arrays، فبيحوّل الاتنين لـ primitive الأول. الـ array بتتحوّل بـ [[join(",")]]، والـ object العادي بيتحوّل للنص [["[object Object]"]]:
+- **الـ context اللي اتعمل بدري بيفضل [[suspended]]** حتى بعد ما اليوزر يدوس، لحد ما تنادي [[resume()]] بنفسك. فالنمط: [[if (ctx.state === 'suspended') await ctx.resume();]] في أول كل handler بيشغّل صوت.
+- أو اعمله أول مرة جوه الضغطة ([[ctx ??= new AudioContext()]])، وده اللي البيانو تحت بيعمله.
+- [[sampleRate]] 48000 عينة في الثانية (سماعات الجهاز). [[baseLatency]] التأخير بين الحساب والسماعة.
+- [[ctx.close()]] بيقفله خالص: [[state]] = [[closed]]، و [[resume()]] بعدها = [[InvalidStateError: Cannot resume a closed AudioContext.]]
 
-| القيمة | بقت | ليه |
+---
+
+## ٢. الـ graph: [[connect]]
+
+~~~js
+const osc = ctx.createOscillator();
+const gain = ctx.createGain();
+const analyser = ctx.createAnalyser();
+osc.connect(gain).connect(analyser).connect(ctx.destination);
+~~~
+
+~~~text الناتج (Chrome 157)
+osc defaults: type=sine frequency=440 detune=0 freq range=-24000..24000
+gain default=1
+analyser fftSize=2048 bins=1024 smoothing=0.8 minDb=-100 maxDb=-30
+connect returns gain? true
+~~~
+
+~~~text الشكل
+OscillatorNode  ──►  GainNode  ──►  AnalyserNode  ──►  destination (السماعة)
+  (بيولّد)         (العلو)          (بيقيس)
+~~~
+
+- [[connect]] بيرجّع الـ node اللي اتوصلتله، فالسلسلة في سطر واحد.
+- [[disconnect()]] بيفصل كل الـ outputs. وممكن node يتوصل لأكتر من node (فرع للسماعة وفرع للـ analyser).
+- الـ [[destination]] هو الوحيد اللي بيطلّع صوت. node مش متوصل بيه (مباشرة أو من خلال nodes تانية) = صوت مش مسموع.
+
+---
+
+## ٣. [[OscillatorNode]]: نغمة من غير ملف
+
+| [[type]] | شكل الموجة | الصوت |
 |---|---|---|
-| [[[]]] | [[""]] | [[join(",")]] على array فاضية بيدّي نص فاضي |
-| [[{}]] | [["[object Object]"]] | الـ object العادي بيستخدم [[toString]] الافتراضية |
-| [[[1, 2, 3]]] | [["1,2,3"]] | العناصر بينهم فاصلة من غير مسافات |
+| [[sine]] | منحنى ناعم | نقي وهادي، زي صفارة |
+| [[square]] | طالع نازل مربع | حاد ومليان، زي ألعاب الـ 8-bit |
+| [[sawtooth]] | سنان منشار | حاد جدًا، أساس أصوات السينثسايزر |
+| [[triangle]] | مثلثات | بين الـ sine والـ square |
 
-ولما واحد على الأقل يبقى string، [[+]] بيلزق: [[""]] + [[""]] = [[""]]، و [[""]] + [["[object Object]"]] = [["[object Object]"]]. جربت [[JSON.stringify([] + [])]] عشان أشوف الفاضي: طلع [[""]].
-
----
-
-## ٢. [[+]] قدام [[-]] و [[*]]
-
-~~~text app.js
-console.log(1 + "2" - 1);
-console.log("5" * "2");
-~~~
-
-السطر الأول من الشمال لليمين:
-
-1. [[1 + "2"]]: فيه string، فـ [[+]] بيلزق: [["12"]]. (جربت: [[12]].)
-2. [["12" - 1]]: [[-]] ملهاش معنى مع نصوص، فبتحوّل لأرقام: [[12 - 1 = 11]].
-
-[[*]] زي [[-]]: [["5" * "2"]] = [[10]] رقم.
+- [[frequency]] بالـ Hz: 440 = نوتة A، والدوبل 880 = نفس النوتة أعلى بأوكتاف. أقصاه نص الـ sample rate (24000 هنا).
+- [[detune]] بالـ cents (١٠٠ cent = نص تون): لتعديل صغير من غير ما تحسب Hz.
+- [[start(when)]] و [[stop(when)]] بثواني [[ctx.currentTime]]، و [[onended]] لما يخلص. ومرة واحدة بس: [[start()]] التاني = [[InvalidStateError]].
 
 ---
 
-## ٣. [[typeof typeof 1]]
+## ٤. [[GainNode]] و [[AudioParam]]: الـ envelope
 
-~~~text app.js
-console.log(typeof typeof 1);
+~~~js
+const t = ctx.currentTime;
+gain.gain.setValueAtTime(0, t);
+gain.gain.linearRampToValueAtTime(1, t + 0.01);        // attack: من 0 لـ 1 في 10 ms
+gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3); // release: لحد 0.001 عند 300 ms
 ~~~
 
-من جوه لبرّه:
+~~~text الناتج (Chrome 157، OfflineAudioContext، RMS لكل جزء من الوقت)
+envelope rms: 0-10ms=0.4181 10-50ms=0.4704 150-200ms=0.0155 280-300ms=0.0009 300-400ms=0.0000
+setTargetAtTime(0, 0.1, 0.05): t=0.1 → 1.000 t=0.15 → 0.368 t=0.25 → 0.050 t=0.35 → 0.0067
+~~~
 
-1. [[typeof 1]] = [["number"]]، وده **string**.
-2. [[typeof "number"]] = [["string"]].
+| الـ method | بيعمل |
+|---|---|
+| [[setValueAtTime(v, t)]] | القيمة تبقى [[v]] عند [[t]] بالظبط. نقطة بداية لأي ramp |
+| [[linearRampToValueAtTime(v, t)]] | خط مستقيم من القيمة اللي قبله لـ [[v]] عند [[t]] |
+| [[exponentialRampToValueAtTime(v, t)]] | منحنى أُسّي، بيبان للودن طبيعي. [[v]] مينفعش يبقى 0 ([[RangeError]]) |
+| [[setTargetAtTime(v, t, τ)]] | يبدأ عند [[t]] يقرّب من [[v]]: بعد τ يقطع ٦٣٪ من المسافة، وبعد 5τ تقريبًا وصل |
+| [[cancelScheduledValues(t)]] | يلغي أي تغيير متجدول بعد [[t]] (لو اليوزر داس تاني في النص) |
 
-[[typeof]] دايمًا بيرجّع string، فـ [[typeof typeof]] أي حاجة = [["string"]].
+- الـ envelope بيمنع «التكة»: الموجة بتبدأ وبتخلص من صفر بالتدريج.
+- [[setTargetAtTime]] بعد τ واحدة (0.05 ثانية) وصل 0.368 = 1/e، وبعد ٥ τ وصل 0.0067. مناسب لتغيير الصوت وانت بتحرّك slider (البيانو بيستخدمه).
 
 ---
 
-## ٤. array + [[""]]
+## ٥. [[AnalyserNode]]: الموجة والترددات كأرقام
 
-~~~text app.js
-console.log([1, 2, 3] + "");
+~~~js
+const data = new Uint8Array(analyser.fftSize);
+analyser.getByteTimeDomainData(data);                      // الموجة: 128 = صفر
+const freq = new Uint8Array(analyser.frequencyBinCount);
+analyser.getByteFrequencyData(freq);                       // قوة كل تردد من 0 لـ 255
 ~~~
 
-نفس قاعدة ١: [[join(",")]] = [["1,2,3"]]. ده بالظبط اللي بيحصل لما تحط array جوه template string.
+~~~text الناتج (Chrome 157، sine 440 Hz و gain 0.2)
+peak bin=19 value=212 => 445.3Hz (bin width 23.4375)
+time domain min..max=102..153
+~~~
+
+- **time domain:** آخر 2048 عينة كـ bytes، و 128 هو الصفر. gain 0.2 = الموجة من 102 لـ 153 (حوالي 128 ± 25).
+- **frequency:** FFT بيقسم الترددات لـ 1024 صندوق عرض كل واحد [[48000 / 2048]] = 23.4 Hz. الـ 440 بانت في صندوق 19. ولو محتاج دقة: [[fftSize]] أكبر (التمرين التالت).
+- و [[getFloatTimeDomainData]] و [[getFloatFrequencyData]] نفس الحاجة بـ [[Float32Array]] (القيم الحقيقية من -1 لـ 1 والـ dB).
+- الرسم: كل frame ([[requestAnimationFrame]]) اقرا الـ array وارسمها خط على canvas (البيانو تحت).
 
 ---
 
-## ٥. الأرقام العشرية
+## ٦. ملفات و [[<audio>]] جوه الـ graph
 
-~~~text app.js
-console.log(0.1 * 3 === 0.3);
+~~~js
+const buf = await ctx.decodeAudioData(await (await fetch('tone.wav')).arrayBuffer());
+const src = ctx.createBufferSource();
+src.buffer = buf; src.playbackRate.value = 2;
+src.connect(ctx.destination); src.start();
 ~~~
 
-الكمبيوتر بيخزّن الأرقام بالـ binary (base 2)، و [[0.1]] ملهاش تمثيل مظبوط فيه، زي ما [[1/3]] ملهاش تمثيل مظبوط بالعشري. فـ [[0.1 * 3]] طلعت:
-
-~~~text الناتج
-0.30000000000000004
+~~~text الناتج (Chrome 157)
+decodeAudioData(tone.wav): sampleRate=48000 duration=3 channels=1 length=144000 byteLength after=0
+broken: EncodingError: Unable to decode audio data
+BufferSource 3s بسرعة 2 خلص بعد 1.50s (ساعة الصوت)
+createMediaElementSource مرتين: InvalidStateError: Failed to execute 'createMediaElementSource' on 'AudioContext': HTMLMediaElement already connected previously to a different MediaElementSourceNode.
 ~~~
 
-مش [[0.3]]، فالمقارنة false. (الحل في الفلوس: اشتغل بالقروش كأرقام صحيحة.)
+- **[[decodeAudioData]]**: الملف كله بيتفك في الذاكرة كأرقام. الـ WAV كان 22050 Hz واتحوّل لـ 48000 (sample rate الـ context)، و 3 ثواني = 144000 عينة. والـ [[ArrayBuffer]] الأصلي اتنقل (detached، [[byteLength]] = 0).
+- **[[AudioBufferSourceNode]]**: بيشغّل الـ buffer ده، وهو كمان one-shot، بس الـ buffer نفسه تقدر تشغّله من sources كتير في نفس الوقت. مثالي لأصوات قصيرة بتتكرر (ألعاب).
+- **[[createMediaElementSource(audio)]]**: بيدخّل [[<audio>]] عادي في الـ graph (عشان visualizer لبودكاست مثلًا). مرة واحدة لكل عنصر.
+- **[[createMediaStreamSource(stream)]]**: نفس الحاجة للميكروفون (قياس المستوى)، و [[createMediaStreamDestination()]] العكس: الـ graph لـ stream تسجّله (درس التسجيل).
 
 ---
 
-## ٦. [[sort()]] من غير دالة
+## ٧. البيانو (حي)
 
-~~~text app.js
-console.log([3, 20, 100].sort());
+~~~live 360 بيانو صغير
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بيانو صغير</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 12px; }
+  .keys { display: flex; gap: 4px; direction: ltr; margin: 8px 0; }
+  .keys button { flex: 1; min-height: 90px; font: inherit; border: 1px solid #94a3b8; border-radius: 0 0 8px 8px; background: #fff; cursor: pointer; }
+  .keys button.on { background: #facc15; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  select, input { font: inherit; }
+  canvas { width: 100%; height: 120px; background: #0f172a; border-radius: 8px; display: block; margin-top: 8px; }
+  #state { font-family: monospace; direction: ltr; text-align: left; }
+</style>
+</head>
+<body>
+<div class="row">
+  <label>الموجة <select id="wave"><option>sine</option><option>square</option><option>sawtooth</option><option>triangle</option></select></label>
+  <label>الصوت <input id="vol" type="range" min="0" max="0.5" step="0.01" value="0.2"></label>
+</div>
+<div class="keys" id="keys"></div>
+<p id="state">AudioContext: لسه متعملش (دوس على أي زرار)</p>
+<canvas id="scope" width="600" height="120"></canvas>
+<script>
+const NOTES = [['C', 261.63, 'a'], ['D', 293.66, 's'], ['E', 329.63, 'd'], ['F', 349.23, 'f'], ['G', 392.0, 'g'], ['A', 440.0, 'h'], ['B', 493.88, 'j'], ['C5', 523.25, 'k']];
+let ac = null, master, analyser;
+const state = document.querySelector('#state');
+
+// الـ AudioContext بيتعمل مع أول ضغطة (سياسة الـ autoplay)
+async function audio() {
+  if (!ac) {
+    ac = new AudioContext();
+    master = ac.createGain();
+    analyser = ac.createAnalyser(); analyser.fftSize = 2048;
+    master.connect(analyser).connect(ac.destination);
+    master.gain.value = Number(document.querySelector('#vol').value);
+    draw();
+  }
+  if (ac.state === 'suspended') await ac.resume();
+  state.textContent = 'AudioContext: ' + ac.state + ' — ' + ac.sampleRate + ' Hz';
+  return ac;
+}
+
+// نغمة واحدة: oscillator جديد + gain للـ envelope، وبعدين بيتشالوا لوحدهم
+async function play(freq, btn) {
+  const ctx = await audio();
+  const osc = ctx.createOscillator(), env = ctx.createGain(), t = ctx.currentTime;
+  osc.type = document.querySelector('#wave').value;
+  osc.frequency.value = freq;
+  env.gain.setValueAtTime(0, t);
+  env.gain.linearRampToValueAtTime(1, t + 0.01);
+  env.gain.exponentialRampToValueAtTime(0.001, t + 0.8);
+  osc.connect(env).connect(master);
+  osc.start(t); osc.stop(t + 0.8);
+  osc.onended = () => { osc.disconnect(); env.disconnect(); };
+  btn.classList.add('on'); setTimeout(() => btn.classList.remove('on'), 150);
+}
+
+// رسم الموجة: AnalyserNode بيدّينا آخر 2048 عينة كل frame
+function draw() {
+  const c = document.querySelector('#scope'), g = c.getContext('2d');
+  const data = new Uint8Array(analyser.fftSize);
+  (function frame() {
+    analyser.getByteTimeDomainData(data);
+    g.fillStyle = '#0f172a'; g.fillRect(0, 0, c.width, c.height);
+    g.strokeStyle = '#38bdf8'; g.lineWidth = 2; g.beginPath();
+    for (let i = 0; i < data.length; i++) {
+      const x = (i / data.length) * c.width, y = (data[i] / 255) * c.height;
+      i ? g.lineTo(x, y) : g.moveTo(x, y);
+    }
+    g.stroke();
+    requestAnimationFrame(frame);
+  })();
+}
+
+const keys = document.querySelector('#keys');
+for (const [name, freq, key] of NOTES) {
+  const b = document.createElement('button');
+  b.type = 'button'; b.textContent = name + ' (' + key + ')'; b.dataset.key = key;
+  b.addEventListener('click', () => play(freq, b));
+  keys.append(b);
+}
+addEventListener('keydown', (e) => {
+  if (e.repeat || e.target.matches('input, select')) return;
+  const b = keys.querySelector('[data-key="' + e.key.toLowerCase() + '"]');
+  if (b) b.click();
+});
+document.querySelector('#vol').addEventListener('input', (e) => { if (master) master.gain.setTargetAtTime(Number(e.target.value), ac.currentTime, 0.02); });
+</script>
+</body>
+</html>
 ~~~
 
-[[sort()]] من غير compare function بتحوّل كل حاجة لـ string وترتّب حرف حرف زي القاموس: [["100"]] قبل [["20"]] لأن [["1"]] قبل [["2"]]، و [["20"]] قبل [["3"]]. جربت:
+**هتشوف إيه:** اختيار الموجة وشريط الصوت، و ٨ مفاتيح بيضا (C لـ C5) عليها حرف الكيبورد، وسطر حالة الـ context، ومستطيل كحلي فيه خط أزرق بيترسم عليه شكل الموجة وانت بتعزف.
 
-~~~text الناتج
-[ '100', '20', '3' ] true [ 3, 20, 100 ]
-~~~
-
-- ترتيب النصوص [[["100","20","3"]]] نفس الترتيب.
-- [["100" < "20"]] = true.
-- والحل: [[sort((a, b) => a - b)]] = [[[ 3, 20, 100 ]]]. الدالة بترجّع سالب لو [[a]] يتحط الأول.
+- **[[audio()]]** بتعمل الـ context والـ master gain والـ analyser **مرة واحدة** مع أول ضغطة، وبعدين [[resume()]] لو [[suspended]].
+- **[[play(freq, btn)]]**: كل نغمة oscillator و gain جداد، و envelope ٠.٨ ثانية، و [[onended]] بيعمل [[disconnect]]. ده ليه النغمات بتتداخل من غير ما تقطع بعض.
+- **[[draw()]]**: [[requestAnimationFrame]] بيقرا [[getByteTimeDomainData]] ويرسم 2048 نقطة كخط.
+- **الكيبورد:** [[e.repeat]] بيمنع التكرار لما تسيب صباعك على الزرار، و [[e.target.matches('input, select')]] بيسيب الحروف للخانات.
+- **[[setTargetAtTime]] على الـ master** وانت بتحرّك شريط الصوت: من غير «تكة».
 
 ---
 
-## ٧. [[!!"false"]]
+## ٨. Media Source Extensions: تغذّي [[<video>]] بنفسك
 
-~~~text app.js
-console.log(!!"false");
+لما الفيديو مش ملف واحد بتحطه في [[src]] (بث، أو جودة بتتغير)، JavaScript بيجيب الحتت ويحطها في المشغّل بنفسه:
+
+~~~js
+const ms = new MediaSource();
+video.src = URL.createObjectURL(ms);
+ms.addEventListener('sourceopen', async () => {
+  const sb = ms.addSourceBuffer('video/webm; codecs="vp9, opus"');
+  const data = await (await fetch('clip.webm')).arrayBuffer();
+  sb.appendBuffer(data);
+  await new Promise((r) => sb.addEventListener('updateend', r, { once: true }));
+  ms.endOfStream();
+  video.play();
+});
 ~~~
 
-- [[!]] بيحوّل لـ boolean ويعكس، و [[!!]] بيحوّل بس.
-- أي string مش فاضي truthy، مهما كان مكتوب فيه. جربت [[Boolean("")]] و [[Boolean("0")]] و [[Boolean(" ")]]: [[false true true]].
+~~~text الناتج (Chrome 157، clip.webm اتقسم بالـ bytes لنصين عمدًا)
+ms.readyState before sourceopen=closed url=blob:http://127.0.0.1:8791/<uuid>
+sourceopen: open
+addSourceBuffer('video/mp4; codecs="nope"') => NotSupportedError: Failed to execute 'addSourceBuffer' on 'MediaSource': The type provided ('video/mp4; codecs="nope"') is unsupported.
+after half: buffered=0.00-0.39 readyState=0
+appendBuffer وهو لسه updating => InvalidStateError: Failed to execute 'appendBuffer' on 'SourceBuffer': This SourceBuffer is still processing an 'appendBuffer' or 'remove' operation.
+after rest: buffered=0.00-0.39,0.73-3.98
+endOfStream: ended duration=4.031
+MSE play t=0.46
+~~~
+
+- **[[readyState]]**: [[closed]] ← [[open]] (بعد ما تتربط بالـ video، [[sourceopen]]) ← [[ended]] (بعد [[endOfStream()]]).
+- **[[appendBuffer]] async:** الـ [[SourceBuffer]] بيبقى [[updating]] لحد [[updateend]]، وأي append في النص ده بيرمي. المكتبات بتعمل طابور (queue).
+- **الفجوة [[0.39-0.73]]**: قسمنا الملف في نص الـ bytes، والنص ده كان في وسط «cluster» (حتة WebM)، فالحتة دي ضاعت. في الشغل الحقيقي الحتت بيقطعها packager على حدود صح (segments)، ومحدش بيقسم bytes بإيده.
+- **[[MediaSource.isTypeSupported]]** على صيغ الحتت: [[video/webm; codecs="vp9, opus"]] و MP4 و [[video/mp2t]] (HLS القديم) [[true]]، و [[application/vnd.apple.mpegurl]] [[false]] (القايمة مش صيغة حتت).
+- **HLS و DASH:** قايمة ([[.m3u8]] أو [[.mpd]]) بتوصف الحتت بكذا جودة، والمكتبة (hls.js أو dash.js أو Shaka) بتقرا القايمة وتقيس النت وتختار وتعمل [[appendBuffer]]. انت بتكتب ٣ سطور مكتبة، ودي الحاجة اللي MSE بيخليها ممكنة. التمرين الأخير بيشرحها.
+- [[MediaSource.canConstructInDedicatedWorker]] = [[true]] في Chrome 157: المكتبات بتقدر تشتغل في Worker (درس «Web Workers»). و [[ManagedMediaSource]] (Safari على iPhone) [[undefined]] هنا.
 
 ---
 
-## ٨. arrow جوه method
-
-~~~text app.js
-const obj = { name: "A", get() { return () => this.name; } };
-console.log(obj.get()());
-~~~
-
-1. [[get() { ... }]]: method عادية (اختصار [[get: function () {...}]]).
-2. [[obj.get()]]: اتنادت بنقطة على [[obj]]، فـ [[this]] جوه [[get]] = [[obj]]. ورجّعت arrow.
-3. الـ arrow معندهاش [[this]] بتاعها، بتاخده من [[get]]: يعني [[obj]].
-4. [[()]] التانية نادت الـ arrow: [[obj.name]] = [["A"]].
-
-جربت حالتين قريبين في ES module:
-
-~~~text الناتج
-undefined
-TypeError: Cannot read properties of undefined (reading 'name')
-~~~
-
-- لو جوه [[get]] رجّعنا [[function]] عادية بدل arrow، [[this]] جواها اتحدد ساعة ما اتنادت من غير نقطة، فبقى [[undefined]] (وكتبت [[this?.name]] فطلع [[undefined]]).
-- لو خدنا [[get]] نفسها في متغير وناديناها من غير [[obj.]]، [[this]] جوه [[get]] بقى [[undefined]]، والـ arrow ورثت [[undefined]] فوقعت.
-
-يعني الـ arrow مش «مربوطة بـ obj»، هي مربوطة بـ this بتاعة الدالة اللي حواليها **ساعة ما اتنادت**.
-
----
-
-## ٩. الـ solCode
-
-~~~text app.js
-console.log(typeof hoisted);
-var hoisted = 1;
-for (var i = 0; i < 3; i++) setTimeout(() => console.log("loop", i), 0);
-setTimeout(() => console.log("T"), 0);
-Promise.resolve().then(() => console.log("P"));
-console.log("S");
-~~~
-
-~~~text الناتج (Node 24)
-undefined
-S
-P
-loop 3
-loop 3
-loop 3
-T
-~~~
-
-- [[typeof hoisted]]: [[var]] بيتعرّف (hoisting) في أول الملف بقيمة [[undefined]]، والقيمة 1 بتتحط لما السطر يتنفذ.
-- [[var i]]: متغير واحد للّفة كلها. الـ ٣ timers بيشتغلوا بعد ما اللفة خلصت و [[i]] بقت 3. (بـ [[let]] كل لفة ليها [[i]] بتاعها فتطلع 0 1 2، وجربتها: [[loop 0]] و [[loop 1]] و [[loop 2]].)
-- الترتيب: الكود العادي الأول ([[S]])، وبعدين الـ microtasks (الـ [[then]]: [[P]])، وبعدين الـ timers بالترتيب اللي اتسجلوا بيه (الـ ٣ loops وبعدين [[T]]).
-
----
-
-## ١٠. فخ [[{} + []]]
-
-~~~text الناتج (node -p '{} + []')
-0
-~~~
-
-لما [[{}]] تبقى أول السطر، JS بتفهمها block فاضي مش object، فالباقي [[+[]]] = [[+""]] = [[0]]. وفي نص تعبير ([[console.log({} + [])]]) بتبقى object عادي. عشان كده كل الأسئلة فوق جوه [[console.log]].
-
----
-
-## ١١. event loop: اتوقع الترتيب
-
-ده أشهر سؤال ترتيب، وفيه كل الأنواع مرة واحدة:
-
-~~~text order.mjs
-console.log("1");
-setTimeout(() => console.log("2"), 0);
-Promise.resolve()
-  .then(() => { console.log("3"); setTimeout(() => console.log("4"), 0); })
-  .then(() => console.log("5"));
-queueMicrotask(() => console.log("6"));
-(async () => { console.log("7"); await null; console.log("8"); })();
-console.log("9");
-~~~
-
-اكتب إجابتك قبل ما تكمّل. القاعدة: الكود العادي كله الأول، وبعدين **كل** الـ microtasks (الـ [[then]] و [[queueMicrotask]] واللي بعد [[await]])، حتى اللي بتتضاف وهي بتشتغل، وبعدين timer واحد، وبعدين الـ microtasks تاني لو فيه، وهكذا (درس «microtasks و macrotasks»).
-
-~~~text الناتج (node order.mjs، Node 24)
-1 7 9 3 6 8 5 2 4
-~~~
-
-| الدور | اللي اتطبع | ليه |
-|---|---|---|
-| الكود العادي | [[1]] و [[7]] و [[9]] | الـ async function بتشتغل عادي لحد أول [[await]]، فـ [[7]] بيطلع قبل [[9]] |
-| طابور الـ microtasks | [[3]] و [[6]] و [[8]] | التلاتة اتحطوا في الطابور بالترتيب ده وقت الكود العادي |
-| microtask جديد | [[5]] | الـ [[then]] التانية مبتدخلش الطابور غير لما الأولى تخلص، فجت بعد [[8]] |
-| الـ timers | [[2]] وبعده [[4]] | [[2]] اتسجّل الأول، و [[4]] اتسجّل من جوه [[3]] |
-
-### سؤال تاني: [[await]] على async function
-
-~~~text order2.mjs
-async function a() { console.log("a1"); await b(); console.log("a2"); }
-async function b() { console.log("b"); }
-console.log("start");
-setTimeout(() => console.log("timeout"), 0);
-a();
-new Promise((resolve) => { console.log("executor"); resolve(); }).then(() => console.log("then"));
-console.log("end");
-~~~
-
-~~~text الناتج (Node 24)
-start a1 b executor end a2 then timeout
-~~~
-
-- [[b()]] بتتنفذ فورًا جوه [[a]] (مفيش [[await]] جوه [[b]])، فـ [[b]] بيطلع بعد [[a1]] على طول.
-- الدالة اللي بتتبعت لـ [[new Promise]] (اسمها executor) بتشتغل **فورًا** مش بعدين، فـ [[executor]] قبل [[end]].
-- [[a2]] قبل [[then]]: الاتنين microtasks، و [[await b()]] اتسجّل الأول. (حسب مدونة V8 عن «faster async functions»، في Node 10 وأقدم الـ [[await]] كان بياخد لفات زيادة و [[then]] كان بيطلع قبل [[a2]]؛ ده من الـ docs مش متجرّب هنا، فلو لقيت إجابة قديمة بالعكس ده السبب.)
-
----
-
-## ١٢. this: اتوقع الناتج
-
-~~~text this.mjs
-const o = {
-  name: "o",
-  regular() { return this?.name; },
-  arrow: () => typeof this,
-  inner() { return [1].map(function () { return this?.name; })[0]; },
-  innerArrow() { return [1].map(() => this.name)[0]; },
-};
-const f = o.regular;
-console.log(o.regular(), f(), o.arrow(), o.inner(), o.innerArrow());
-console.log(o.regular.call({ name: "c" }), f.bind({ name: "b" }).bind({ name: "b2" })());
-class User { name = "u"; greet() { return this.name; } hi = () => this.name; }
-const { greet, hi } = new User();
-console.log(hi());
-greet();
-~~~
-
-~~~text الناتج (node this.mjs، Node 24)
-o undefined undefined undefined o
-c b
-u
-TypeError: Cannot read properties of undefined (reading 'name')
-~~~
-
-القاعدة اللي بتحل كل ده: [[this]] في [[function]] عادية بيتحدد **ساعة النداء** من اللي قبل النقطة، والـ arrow مالهاش [[this]] بتاعها وبتاخده من المكان اللي اتكتبت فيه (درس «this» في المستوى ٢).
-
-| النداء | الناتج | ليه |
-|---|---|---|
-| [[o.regular()]] | [[o]] | اتنادت بنقطة على [[o]]، فـ [[this]] هو [[o]] |
-| [[f()]] | [[undefined]] | نفس الدالة بس من غير نقطة، وفي module (strict) [[this]] بيبقى [[undefined]]، و [[?.]] منعت الـ error |
-| [[o.arrow()]] | [[undefined]] | الـ arrow اتكتبت في أعلى الملف، و [[this]] في أعلى الـ ES module بـ [[undefined]]. في ملف CommonJS ([[.cjs]]) نفس السطر طلع [[object]] لأن [[this]] هناك [[module.exports]] |
-| [[o.inner()]] | [[undefined]] | الـ [[function]] اللي جوه [[map]] بتتنادى من [[map]] من غير object، فـ [[this]] جواها مش [[o]] |
-| [[o.innerArrow()]] | [[o]] | الـ arrow أخدت [[this]] من [[innerArrow]]، وهي اتنادت على [[o]] |
-| [[o.regular.call({ name: "c" })]] | [[c]] | [[call]] بتحدد [[this]] بإيدك للنداء ده |
-| [[bind]] مرتين | [[b]] | [[bind]] التانية ملهاش تأثير: الدالة المربوطة [[this]] بتاعها ثابت للأبد |
-| [[hi()]] بعد ما اتفكّت | [[u]] | class field بـ arrow: اتعملت في الـ constructor وأخدت [[this]] بتاع الـ instance |
-| [[greet()]] بعد ما اتفكّت | [[TypeError]] | method عادية اتفصلت عن الـ object، والـ class دايمًا strict، فـ [[this]] بـ [[undefined]] |
-
-السطر الأخير هو نفس باج [[onClick={this.handleClick}]] في React الـ class components، وحله إما [[bind]] في الـ constructor أو arrow كـ class field زي [[hi]].
-
----
 ## الخلاصة
 
-| القاعدة | المثال | الناتج |
-|---|---|---|
-| [[+]] مع أي string = لزق | [[1 + "2"]] | [["12"]] |
-| [[-]] و [[*]] = أرقام | [["12" - 1]] | [[11]] |
-| array ← [[join(",")]]، object ← [["[object Object]"]] | [[[] + {}]] | [["[object Object]"]] |
-| [[typeof]] بيرجّع string | [[typeof typeof 1]] | [["string"]] |
-| [[0.1]] مش مظبوطة بالـ binary | [[0.1 * 3 === 0.3]] | [[false]] |
-| [[sort()]] بترتّب كنصوص | [[[3, 20, 100].sort()]] | [[[100, 20, 3]]] |
-| أي string مش فاضي truthy | [[!!"false"]] | [[true]] |
-| arrow بتاخد this من اللي حواليها | [[obj.get()()]] | [["A"]] |
-| الكود العادي ← كل الـ microtasks ← timer | [[setTimeout]] و [[then]] و [[await]] | [[1 7 9 3 6 8 5 2 4]] |
-| [[this]] بيتحدد ساعة النداء من اللي قبل النقطة | [[const f = o.regular; f()]] | [[undefined]] في module |`,
+- context واحد للصفحة، يتعمل أو يتعمله [[resume()]] جوه ضغطة.
+- مصدر ← gain ← destination، و [[connect]] بيتسلسل. والمصادر one-shot: oscillator جديد لكل نغمة.
+- الـ envelope بـ [[AudioParam]] و [[ctx.currentTime]]، و exponential لـ [[0.001]] مش صفر.
+- [[AnalyserNode]] = الموجة والترددات كأرقام، والدقة [[sampleRate / fftSize]].
+- [[OfflineAudioContext]] بيحسب الصوت من غير سماعات: للاختبار وللتصدير WAV.
+- MSE = JavaScript بيغذّي [[<video>]] بـ [[appendBuffer]] بعد [[updateend]]، و HLS و DASH من مكتبة فوقه.`,
           lines: [
-            R`[[+]] مع arrays بيحوّلهم primitive الأول، والـ array الفاضية بتتحوّل لنص فاضي. نص فاضي + نص فاضي = [[""]]، مش array ولا [[0]].`,
-            R`الـ array بقت [[""]]، والـ object العادي بيتحوّل لنص بـ [[toString]] فيبقى الكلمتين [[object Object]] جوه قوسين مربعين، ولزقهم بيدّي النص ده. هتشوفه كتير لما تحط object جوه نص بالغلط.`,
-            R`[[+]] بيتنفذ من الشمال لليمين: [[1 + "2"]] فيها نص فبيلزق ويبقى [["12"]]. وبعدين [[-]] مالهاش معنى مع النصوص، فبتحوّل [["12"]] لرقم 12 وتطرح 1 = 11. [[+]] هي الوحيدة اللي بتفضّل النصوص.`,
-            R`[[*]] زي [[-]] و [[/]] شغالة على أرقام بس، فبتحوّل النصين لأرقام وتضرب = 10 كرقم. ولو أي نص منهم مش رقم زي [["a"]] الناتج [[NaN]].`,
-            R`[[typeof 1]] بيرجّع النص [["number"]]، و [[typeof]] على أي نص بيرجّع [["string"]]. فـ [[typeof typeof]] أي حاجة دايمًا [["string"]].`,
-            R`لما array تتلزق مع نص بتتحوّل نص بنفس طريقة [[join(",")]]: العناصر بينهم فاصلة من غير مسافات ولا أقواس. ده بيحصل كمان لو حطيت array جوه template string.`,
-            R`الأرقام العشرية متخزنة binary، و [[0.1]] مينفعش تتمثّل بالظبط، فـ [[0.1 * 3]] بتطلع [[0.30000000000000004]] ومش [[===]] لـ [[0.3]]. قارن بفرق صغير زي [[Math.abs(a - b) < Number.EPSILON]] أو اشتغل بالقروش كأرقام صحيحة.`,
-            R`[[sort()]] من غير دالة مقارنة بيحوّل العناصر نصوص ويرتّبها حرف حرف: [["100"]] قبل [["20"]] لأن [["1"]] قبل [["2"]]. وكمان بيعدّل الـ array نفسها. للأرقام اكتب [[sort((a, b) => a - b)]].`,
-            R`[[!!]] بتحوّل أي قيمة لـ boolean. النص [["false"]] مش فاضي، وأي نص مش فاضي truthy مهما كان مكتوب فيه، فالناتج [[true]]. خلي بالك منها لما تقرا قيم من query string أو [[localStorage]]، لأنها بتيجي نصوص.`,
-            R`[[get]] method عادية بترجّع arrow function. الـ arrow مالهاش [[this]] بتاعها، فبتاخد [[this]] من المكان اللي اتكتبت فيه، يعني [[this]] بتاع [[get]] وقت ما اتنادت.`,
-            R`[[obj.get()]] اتنادت كـ method على [[obj]] فـ [[this]] جواها [[obj]]، والـ arrow اللي رجعت شايلة نفس الـ [[this]]، والقوسين التانيين نادوها فطبعت [["A"]]. لو [[get]] نفسها كانت arrow، [[this]] كان هييجي من برّه الـ object والناتج مش هيبقى [["A"]].`,
+            R`الـ context: المكان اللي كل الـ nodes عايشين فيه. جوه ضغطة عشان يبدأ [[running]] مش [[suspended]].`,
+            R`مصدر بيولّد موجة. لسه مبيطلعش صوت لحد [[start]].`,
+            R`node للعلو: هنستخدمه للـ fade in والـ fade out.`,
+            R`[[sine]] أنعم موجة. التانيين [[square]] و [[sawtooth]] و [[triangle]].`,
+            R`440 Hz = نوتة A. ده [[AudioParam]] فينفع نتحكم فيه بالوقت كمان.`,
+            R`السلسلة: oscillator ← gain ← السماعة. [[connect]] بيرجّع الـ gain فبنكمّل عليه.`,
+            R`نحفظ «دلوقتي» بساعة الصوت، وكل المواعيد هتتحسب منها.`,
+            R`العلو صفر عند البداية بالظبط، عشان منسمعش «تكة».`,
+            R`نطلع لـ 0.3 في 10 ms: الـ attack.`,
+            R`ننزل بمنحنى أُسّي لـ 0.001 (مش مسموع) عند 300 ms. صفر هنا كان هيرمي [[RangeError]].`,
+            R`نشغّل الموجة في نفس اللحظة اللي الـ envelope بدأ فيها.`,
+            R`ونوقفها مع آخر الـ envelope. بعدها الـ oscillator ده خلص ومينفعش يشتغل تاني.`,
+            R`[[onended]] بيتبعت لما [[stop]] يحصل فعلًا، وبيطبع [[running]] لأن الـ context لسه شغال لأي صوت جاي.`,
           ],
-          sol: R`الناتج الحقيقي في Node: سطر فاضي (string فاضي)، [[[object Object]]]، [[11]]، [[10]]، [[string]]، [[1,2,3]]، [[false]]، [[[ 100, 20, 3 ]]]، [[true]]، [[A]]. (Node بيطبع الـ strings من غير quotes.) الأسباب في سطر: [[+]] مع object بيحوّله string، و [[-]] و [[*]] بيحوّلوا لأرقام، و typeof بترجّع string دايمًا، و sort من غير compare بترتّب كنصوص، و [["false"]] string مش فاضي فـ truthy، والـ arrow أخدت this من get.
-
-أمثلة للأسئلة اللي تضيفها: [[console.log(typeof x); var x = 1;]] بتطبع [[undefined]]، و [[for (var i = 0; i < 3; i++) setTimeout(() => console.log(i))]] بتطبع [[3 3 3]]، و [[setTimeout(() => console.log("T")); Promise.resolve().then(() => console.log("P")); console.log("S");]] بتطبع [[S P T]]. لو غلطت في أكتر من ٣ من العشرة الأصليين، ارجع لدروس «القيم والأنواع» قبل الانترفيو.`,
-          solCode: R`console.log(typeof hoisted); // undefined
-var hoisted = 1;
-for (var i = 0; i < 3; i++) setTimeout(() => console.log("loop", i), 0); // 3 3 3
-setTimeout(() => console.log("T"), 0);
-Promise.resolve().then(() => console.log("P"));
-console.log("S");
-// S ثم P ثم loop 3 ×3 ثم T`
-        }
-      ]
+          ref: [
+            { t: "MDN: Web Audio API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API" },
+            { t: "MDN: Using the Web Audio API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Using_Web_Audio_API" },
+            { t: "MDN: Web Audio API best practices", url: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Best_practices" },
+            { t: "MDN: Visualizations with Web Audio API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Visualizations_with_Web_Audio_API" },
+            { t: "MDN: OscillatorNode", url: "https://developer.mozilla.org/en-US/docs/Web/API/OscillatorNode" },
+            { t: "MDN: GainNode", url: "https://developer.mozilla.org/en-US/docs/Web/API/GainNode" },
+            { t: "MDN: AudioParam", url: "https://developer.mozilla.org/en-US/docs/Web/API/AudioParam" },
+            { t: "MDN: AnalyserNode", url: "https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode" },
+            { t: "MDN: AudioContext.resume()", url: "https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/resume" },
+            { t: "MDN: OfflineAudioContext", url: "https://developer.mozilla.org/en-US/docs/Web/API/OfflineAudioContext" },
+            { t: "MDN: BaseAudioContext.decodeAudioData()", url: "https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/decodeAudioData" },
+            { t: "MDN: Media Source Extensions API", url: "https://developer.mozilla.org/en-US/docs/Web/API/Media_Source_Extensions_API" },
+            { t: "MDN: Streaming audio and video", url: "https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Streaming" },
+          ],
+          pre: [{ to: "js/HTMLMediaElement: play و pause و currentTime والصيغ", why: R`سياسة الـ autoplay نفسها بتنطبق على [[AudioContext]]` }, { to: "js/DataView: getUint16 و setFloat32 و endianness", why: R`كتابة ملف WAV من العينات` }, { to: "js/ArrayBuffer: resize و transfer و detached", why: R`[[decodeAudioData]] بينقل الـ buffer` }],
+        },
+        // @@NEXT@@
+      ],
     }
 ]);

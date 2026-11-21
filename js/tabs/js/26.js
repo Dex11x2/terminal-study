@@ -1,4086 +1,2119 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "الـ event loop",
-      l: 3,
-      n: "JS بيشغّل حاجة واحدة في المرة، فإزاي بيعمل async؟ الـ call stack والـ queues والـ microtasks، وليه الصفحة بتتجمد",
+      t: R`regex كامل: الـ flags و exec و الـ syntax الباقي`,
+      l: 2,
+      n: "الـ regex literal ضد new RegExp وجدول خصايص الـ RegExp كلها، و exec من جوه (indices و lastIndex و matches بطول صفر)، والـ flags s و m و y و v بحالات من الشغل، والنقطة والحروف الحرفية، و \\k<name> والـ modifiers، والـ buffer boundaries اللي لسه مش في JS، ومشاريع: inspector و مصلّح تكرار و tokenizer و highlighter و فاحص لوج بـ tests",
       pre: [
-        { to: "js/callbacks و events: الـ async قبل Promise", why: R`الـ event loop هو اللي بيشغّل الـ callbacks دي، والوحدة بتشرح بيشغّلها إمتى وبأنهي ترتيب` },
-        { to: "js/Promise", why: R`[[then]] هو أشهر microtask، ومعظم أمثلة الترتيب فيها Promise` },
-        { to: "js/async و await", why: R`كل [[await]] بيرجّع للـ event loop، وده سبب ترتيب الطباعة في أمثلة الوحدة` },
-        { to: "js/addEventListener", why: R`تمارين الصفحات بتشوف الزرار والـ input بيستجيبوا ولا لأ وانت بتشغّل كود تقيل` },
+        { to: "js/regex: classes و quantifiers", why: R`الـ classes والـ quantifiers والـ anchors: الوحدة دي مبنية عليهم` },
+        { to: "js/groups و flags", why: R`الـ groups والـ named groups وأول تعارف بالـ flags وفخ [[lastIndex]] مع [[g]]` },
+        { to: "js/test و match و matchAll و replace", why: R`الـ string methods و [[RegExp.escape]]، وهنا بنشوف [[exec]] اللي تحتهم` },
+        { to: "js/إمتى regex غلط", why: R`ReDoS وإمتى تسيب الـ regex لـ parser` },
+        { to: "js/regex والعربي: Unicode properties", why: R`[[\p{...}]] والـ flag [[u]]، وهنا بنكمّل بالـ flag [[v]]` },
+        { to: "js/RegExp و Symbol.match و Symbol.replace: matcher بتاعك", why: R`الـ RegExp كـ object وإزاي الـ string methods بتسلّمه الشغل` },
       ],
+      goal: [
+        R`تختار بين [[/.../]] و [[new RegExp]] صح، وتكتب الـ backslash في النص من غير ما يضيع، وتقرا أي regex من خصايصه ([[source]] و [[flags]] و [[global]]…).`,
+        R`تستخدم [[exec]] بنفسك: تفهم كل خانة في الناتج ([[index]] و [[input]] و [[groups]] و [[indices]])، وتلف بـ [[g]] و [[lastIndex]] من غير loop لانهائي.`,
+        R`تستخدم [[s]] و [[m]] و [[y]] و [[v]] في حالات حقيقية: ملف INI، وإيميل، و tokenizer، وحروف عربي بس من غير الأرقام.`,
+        R`تعرف النقطة بتطابق إيه بالظبط، وأنهي حرف لازم [[\]] قبله وإمتى [[\]] نفسها بترمي.`,
+        R`تكتب [[\k<name>]] و [[(?i:...)]]، وتعرف إن [[\A]] و [[\z]] لسه مش في JS والبديل الصح.`,
+      ],
+      use: {
+        prog: R`الـ linters (ESLint) و الـ formatters و syntax highlighters (Prism و highlight.js) والـ template engines كلهم بيقطّعوا النص بـ [[exec]] و [[y]] بالظبط زي الـ tokenizer هنا. ومكتبات الـ validation (Zod و Yup) بتاخد [[RegExp]] وبتقرا [[source]] و [[flags]] بتوعه عشان تعرضه في رسالة الغلط.`,
+        work: R`فحص لوجات وتحديد السطر البايظ بالعمود، وتظليل كلمات البحث في نتايج، وتنضيف رسايل العملا قبل ما تتخزن، وقراية ملفات config بسيطة، وأدوات CLI بتاخد pattern من اليوزر.`,
+        cs: R`الـ lexer (أول مرحلة في أي compiler)، والفرق بين البحث في أي مكان والمطابقة من مكان ثابت (sticky)، والـ backreferences اللي بتخلّي الـ regex أقوى من «regular language» في نظرية الحسابات.`,
+      },
       projects: [
-        { lvl: 'صغير', t: R`اختبار «اتوقع الناتج»`, what: R`ملف فيه ٥ snippets بتخلط sync و then و setTimeout و await و queueMicrotask، ولكل واحد توقعك كـ array. سكربت بيشغّل كل snippet بـ [[log]] مخصوص بيحط الناتج في array، ويستنى بـ setTimeout لحد ما الكل يخلص، ويقارن. من درسي event loop و microtasks.`, done: R`لكل snippet بيطبع «صح» أو «غلط» ومعاه المتوقع والحقيقي، ومثال الدرس اللي ناتجه [[A F H C E G D B]] واحد منهم وبينجح، وsnippet غلطت فيه عمدًا بيطلع «غلط».`, sol: R`## الشكل النهائي
+        { lvl: 'صغير', t: R`regex inspector من الترمنال`, what: R`[[regex-info.mjs]] بياخد regex مكتوب بشكل [[/pattern/flags]] كـ argument، ويطبع جدول بكل خصايصه ([[source]] و [[flags]] و [[global]] و [[ignoreCase]] و [[multiline]] و [[dotAll]] و [[unicode]] و [[unicodeSets]] و [[hasIndices]] و [[sticky]] و [[lastIndex]] و [[toString]])، وبعدين يجرّبه على أي نصوص تانية تديهاله ويقول الـ match ومكانه. والـ regex البايظ بيطبع الـ SyntaxError بنصها ويخرج بـ exit code 1. من درسي «regex literal و new RegExp: خصايص الـ RegExp و toString» و «RegExp exec: الـ result array و indices و lastIndex».`, done: R`[[node regex-info.mjs '/(?<n>\d+) ?EGP/gi' "tea 15 egp"]] بيطبع الجدول ([[global]] و [[ignoreCase]] بـ true) وسطر [["15 egp" عند 4]]. و [['/(\d+/g']] بيطبع [[Unterminated group]] و [[exit=1]]، و [['/a/gg']] بيطبع [[Invalid flags]]، و [[abc]] من غير شرط بيطبع رسالة الشكل الصح.`, sol: R`**هتشوف إيه:** جدول بخصايص الـ regex، وتحته سطر لكل نص جرّبته:
 
-~~~text الناتج (node predict.js، Node 24)
-صح   مثال الدرس
-صح   timeout جوه then
-صح   microtask بيسجّل microtask
-صح   await لدالة async
-غلط  غلطت فيه عمدًا
-      المتوقع: x timeout then
-      الحقيقي: x then timeout
-4 من 5
+~~~text الناتج (Node 24.22، PowerShell)
+┌─────────────┬───────────────────────┐
+│ (index)     │ Values                │
+├─────────────┼───────────────────────┤
+│ source      │ '(?<n>\\d+) ?EGP'     │
+│ flags       │ 'gi'                  │
+│ global      │ true                  │
+│ ignoreCase  │ true                  │
+│ multiline   │ false                 │
+│ dotAll      │ false                 │
+│ unicode     │ false                 │
+│ unicodeSets │ false                 │
+│ hasIndices  │ false                 │
+│ sticky      │ false                 │
+│ lastIndex   │ 0                     │
+│ toString    │ '/(?<n>\\d+) ?EGP/gi' │
+└─────────────┴───────────────────────┘
+"tea 15 egp" → "15 egp" عند 4
+"free" → مفيش match
 ~~~
 
-## هتشوف إيه
+(الـ [[\\d]] في الجدول backslash واحد بس: [[console.table]] بيعرض النصوص بـ escape زي الكود.)
 
-سطر لكل snippet: «صح» لو توقعك طلع زي الحقيقي، و «غلط» ومعاها السطرين (المتوقع والحقيقي) لو لأ. مثال الدرس ([[A F H C E G D B]]) واحد منهم ونجح، والأخير غلطنا فيه عمدًا (حطينا timeout قبل then) فطلع «غلط».
+~~~js regex-info.mjs
+// regex-info.mjs: اكتب regex بشكل /.../flags وشوف كل خصايصه وجرّبه على نص
+const [, , literal, ...samples] = process.argv;
 
-## الكود
+export function parseLiteral(text) {
+  if (typeof text !== "string" || !text.startsWith("/")) {
+    throw new TypeError("اكتب الـ regex بالشكل ده: /pattern/flags");
+  }
+  const last = text.lastIndexOf("/");
+  if (last === 0) throw new TypeError("ناقص / الأخيرة");
+  return new RegExp(text.slice(1, last), text.slice(last + 1));
+}
 
-~~~js predict.js
-// كل snippet بياخد log ويكتب بيه بدل console.log، ومعاه توقعك
-const snippets = [
-  {
-    name: "مثال الدرس",
-    expected: ["A", "F", "H", "C", "E", "G", "D", "B"],
-    run(log) {
-      log("A");
-      setTimeout(() => log("B"), 0);
-      Promise.resolve().then(() => log("C")).then(() => log("D"));
-      queueMicrotask(() => log("E"));
-      (async () => { log("F"); await null; log("G"); })();
-      log("H");
-    },
-  },
-  {
-    name: "timeout جوه then",
-    expected: ["sync", "then", "t1", "t2"],
-    run(log) {
-      setTimeout(() => log("t1"), 0);
-      Promise.resolve().then(() => { log("then"); setTimeout(() => log("t2"), 0); });
-      log("sync");
-    },
-  },
-  {
-    name: "microtask بيسجّل microtask",
-    expected: ["m1", "m2", "m3", "timeout"],
-    run(log) {
-      setTimeout(() => log("timeout"), 0);
-      queueMicrotask(() => { log("m1"); queueMicrotask(() => { log("m2"); queueMicrotask(() => log("m3")); }); });
-    },
-  },
-  {
-    name: "await لدالة async",
-    expected: ["start", "1a", "2", "end", "1b"],
-    run(log) {
-      async function two() { log("2"); }
-      async function one() { log("1a"); await two(); log("1b"); }
-      log("start");
-      one();
-      log("end");
-    },
-  },
-  {
-    name: "غلطت فيه عمدًا",
-    expected: ["x", "timeout", "then"],
-    run(log) {
-      setTimeout(() => log("timeout"), 0);
-      Promise.resolve().then(() => log("then"));
-      log("x");
-    },
-  },
+export function describe(re) {
+  return {
+    source: re.source,
+    flags: re.flags || "(مفيش)",
+    global: re.global,
+    ignoreCase: re.ignoreCase,
+    multiline: re.multiline,
+    dotAll: re.dotAll,
+    unicode: re.unicode,
+    unicodeSets: re.unicodeSets,
+    hasIndices: re.hasIndices,
+    sticky: re.sticky,
+    lastIndex: re.lastIndex,
+    toString: re.toString(),
+  };
+}
+
+if (import.meta.main) {
+  try {
+    const re = parseLiteral(literal);
+    console.table(describe(re));
+    for (const s of samples) {
+      const m = new RegExp(re.source, re.flags.replace(/[gy]/g, "")).exec(s);
+      console.log(JSON.stringify(s), m ? "→ " + JSON.stringify(m[0]) + " عند " + m.index : "→ مفيش match");
+    }
+  } catch (e) {
+    console.error(e.name + ": " + e.message);
+    process.exitCode = 1;
+  }
+}
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- [[parseLiteral]]: الـ regex جاي من الترمنال **نص**، فبندوّر على **آخر** [[/]] بـ [[lastIndexOf]] (مش أول واحدة، عشان الـ pattern نفسه ممكن يبقى فيه [[\/]])، واللي قبلها pattern واللي بعدها flags، وبعدين [[new RegExp(pattern, flags)]]. أي pattern أو flags غلط بيرمي SyntaxError من الـ constructor نفسه، فمش محتاجين نفحص بإيدنا.
+- [[describe]]: كل خاصية getter على [[RegExp.prototype]] بتقرا من الـ regex، ما عدا [[lastIndex]] اللي خاصية عادية على الـ object نفسه.
+- التجربة على النصوص: بنعمل نسخة من غير [[g]] و [[y]] عشان [[exec]] يبدأ من الأول كل مرة ومايفتكرش [[lastIndex]] من النص اللي قبله.
+- [[import.meta.main]]: [[true]] لما الملف يتشغّل بـ node مباشرة (موجودة في Node 24)، فتقدر تستورد [[parseLiteral]] من ملف تاني من غير ما الجدول يتطبع.
+
+**غلطة حصلت وإحنا بنبنيه:** في Git Bash، [[node regex-info.mjs '/(\d+/g']] طلّع [[TypeError: اكتب الـ regex بالشكل ده]] بدل الـ SyntaxError. طبعنا [[process.argv[2]]] لقيناه [[C:/Program Files/Git/(/d+/g]]: Git Bash (MSYS) بيحوّل أي argument بيبدأ بـ [[/]] لمسار ويندوز. الحل: [[MSYS_NO_PATHCONV=1]] قبل الأمر، أو شغّله من PowerShell. ده بيحصل في Git Bash بس، مش في لينكس ولا ماك:
+
+~~~text الناتج (Git Bash مع MSYS_NO_PATHCONV=1)
+SyntaxError: Invalid regular expression: /(\d+/g: Unterminated group
+TypeError: اكتب الـ regex بالشكل ده: /pattern/flags
+SyntaxError: Invalid flags supplied to RegExp constructor 'gg'
+TypeError: ناقص / الأخيرة
+~~~
+
+السطور دي لـ [['/(\d+/g']] و [[abc]] و [['/a/gg']] و [['/x']] بالترتيب، وكلهم خرجوا بـ exit code 1.` },
+        { lvl: 'صغير', t: R`مصلّح الكلمات المتكررة`, what: R`[[dupes.mjs]] بيقرا ملف نص ويلاقي أي كلمة اتكتبت مرتين ورا بعض («ده ده» و «the The»)، ويطبع [[file:line:col]] لكل واحدة، ومع [[--fix]] بيصلّح الملف ويسيب أول نسخة. لازم يشتغل مع العربي (يعني من غير [[\b]] و [[\w]])، وميعتبرش [[then thenext]] تكرار، وميلزقش آخر سطر في أول اللي بعده. من دروس «named backreference و modifiers و buffer boundaries» و «RegExp exec: الـ result array و indices و lastIndex».`, done: R`على ملف فيه [[الطلب ده ده اتأخر]] و [[the The order]] و [[thenthen ok, then thenext]] وسطرين واحد آخره [[شاي]] واللي بعده أوله [[شاي]]: بيلاقي ٢ بس بأماكنهم، و [[--fix]] بيصلّحهم، وتشغيله تاني بيقول «مفيش تكرار».`, sol: R`**هتشوف إيه:** كل تكرار بمكانه، وبعد [[--fix]] الملف نضيف:
+
+~~~text الناتج (Node 24.22)
+notes.txt:1:7  «ده ده»
+notes.txt:2:1  «the The»
+لقيت 2
+اتصلّح الملف
+~~~
+
+~~~text notes.txt بعد --fix
+الطلب ده اتأخر
+the order is ready
+thenthen ok, then thenext
+آخر السطر شاي
+شاي أول السطر
+~~~
+
+~~~js dupes.mjs
+// dupes.mjs: يلاقي الكلمات المتكررة ورا بعض («ده ده» و «the The») ويصلّحها
+import { readFileSync, writeFileSync } from "node:fs";
+
+const DUP = /(?<!\p{L})(?<word>\p{L}+)[^\S\r\n]+\k<word>(?!\p{L})/giu;
+
+export function findDupes(text) {
+  const found = [];
+  text.split(/\r?\n/).forEach((line, i) => {
+    for (const m of line.matchAll(DUP)) {
+      found.push({ line: i + 1, col: m.index + 1, text: m[0] });
+    }
+  });
+  return found;
+}
+
+export function fixDupes(text) {
+  return text.replace(DUP, "$<word>");
+}
+
+if (import.meta.main) {
+  const [, , file, flag] = process.argv;
+  if (!file) {
+    console.error("الاستخدام: node dupes.mjs <file> [--fix]");
+    process.exit(2);
+  }
+  const text = readFileSync(file, "utf8");
+  const found = findDupes(text);
+  for (const d of found) console.log($__bt$__{file}:$__{d.line}:$__{d.col}  «$__{d.text}»$__bt);
+  console.log(found.length ? $__btلقيت $__{found.length}$__bt : "مفيش تكرار");
+  if (flag === "--fix" && found.length) {
+    writeFileSync(file, fixDupes(text));
+    console.log("اتصلّح الملف");
+  }
+}
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- [[(?<!\p{L})]]: lookbehind «قبلي مش حرف». ده بديل [[\b]] اللي بيفهم إنجليزي بس: [[\b]] بيشوف الحرف العربي «مش حرف كلمة»، فـ [["ده ده"]] مكانتش هتتلاقي خالص.
+- [[(?<word>\p{L}+)]]: كلمة بأي لغة، والـ group اسمه [[word]].
+- [[[^\S\r\n]+]]: مسافة أفقية بس (أي whitespace ما عدا السطر الجديد).
+- [[\k<word>]]: **نفس النص** اللي [[word]] مسكه، ومع [[i]] الحروف الكبيرة زي الصغيرة، فـ [[the The]] تكرار.
+- [[(?!\p{L})]]: بعدها مش حرف، فـ [[then thenext]] مش تكرار.
+- [[fixDupes]]: [[replace]] بـ [[$<word>]] بيحط أول نسخة بس مكان الاتنين.
+
+**غلطة حصلت وإحنا بنبنيه:** أول نسخة كان فيها [[\s+]] بين الكلمتين. [[findDupes]] كانت شغالة لأنها بتقسم سطر سطر، بس [[fixDupes]] بتشتغل على الملف كله، فـ [[شاي]] آخر سطر و [[شاي]] أول اللي بعده اتلزقوا في سطر واحد:
+
+~~~text الناتج بـ \s+ (قبل التصليح) ثم بـ [^\S\r\n]+
+"آخر السطر شاي أول السطر" "آخر السطر شاي\nشاي أول السطر"
+~~~
+
+[[\s]] بتشمل [[\n]]. الحل [[[^\S\r\n]]]: «مش (مش مسافة) ومش سطر جديد»، يعني مسافة أو tab بس.` },
+        { lvl: 'متوسط', t: R`tokenizer لمعادلة حسابية`, what: R`[[tokenize(src)]] بتقطّع [["12 + 3.5*(4-1)"]] لـ tokens كل واحد [[{ type, text, pos }]] (رقم، أو operator، أو قوس) بـ regex واحد فيه flag [[y]] و [[exec]] في loop. أي حرف مش مفهوم (زي [[%]]) بيرمي [[TokenError]] (subclass من SyntaxError) رسالته فيها المعادلة وعلامة [[^]] تحت الحرف بالظبط. والـ CLI بيطبع الـ tokens لكل معادلة تديهاله. من دروس «الـ flags s و m و y و v بحالات حقيقية» و «RegExp exec: الـ result array و indices و lastIndex».`, done: R`[["12 + 3.5*(4-1)"]] بيطلع ٩ tokens منهم [[num:3.5]]، و [["2^10"]] ٣ tokens، و [["7 % 2"]] بيطبع الرسالة والـ [[^]] تحت [[%]] (عمود 2) والـ exit code 1، والمسافات لوحدها أو النص الفاضي بيطبعوا سطر فاضي من غير error.`, sol: R`**هتشوف إيه:**
+
+~~~text الناتج (Node 24.22)
+num:12  op:+  num:3.5  op:*  paren:(  num:4  op:-  num:1  paren:)
+num:2  op:^  num:10
+حرف مش مفهوم «%» عند 2
+7 % 2
+  ^
+
+
+exit=1
+~~~
+
+(السطرين الفاضيين قبل [[exit=1]] لـ [["  "]] و [[""]]: مفيش tokens.)
+
+~~~js tokenize.mjs
+// tokenize.mjs: يقطّع معادلة حسابية لـ tokens بـ flag y و exec، ويشاور على الحرف الغلط
+const TOKEN = /(?<space>\s+)|(?<num>\d+(?:\.\d+)?)|(?<op>[-+*\/^])|(?<paren>[()])/y;
+
+export class TokenError extends SyntaxError {
+  name = "TokenError";
+  constructor(src, pos) {
+    super($__btحرف مش مفهوم «$__{src[pos]}» عند $__{pos}\n$__{src}\n$__{" ".repeat(pos)}^$__bt);
+    this.pos = pos;
+  }
+}
+
+export function tokenize(src) {
+  const tokens = [];
+  TOKEN.lastIndex = 0;
+  while (TOKEN.lastIndex < src.length) {
+    const start = TOKEN.lastIndex;
+    const m = TOKEN.exec(src);
+    if (!m) throw new TokenError(src, start);
+    const [type, text] = Object.entries(m.groups).find(([, v]) => v !== undefined);
+    if (type !== "space") tokens.push({ type, text, pos: start });
+  }
+  return tokens;
+}
+
+if (import.meta.main) {
+  for (const src of process.argv.slice(2)) {
+    try {
+      console.log(tokenize(src).map((t) => $__bt$__{t.type}:$__{t.text}$__bt).join("  "));
+    } catch (e) {
+      if (!(e instanceof TokenError)) throw e;
+      console.error(e.message);
+      process.exitCode = 1;
+    }
+  }
+}
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- [[TOKEN]]: ٤ بدايل بـ [[|]]، كل واحد named group: مسافات، ورقم (عشري اختياري بـ [[(?:\.\d+)?]])، و operator، وقوس. جوه [[[-+*\/^]]] الـ [[-]] في الأول عشان تبقى حرف مش range.
+- [[y]]: الـ match **لازم** يبدأ عند [[lastIndex]] بالظبط. فلو عند مكان معيّن مفيش token، [[exec]] بترجّع [[null]] بدل ما تدوّر لقدّام.
+- [[const start = TOKEN.lastIndex]] قبل [[exec]]: عشان لو فشل نعرف المكان (بعد الفشل [[lastIndex]] بيرجع 0).
+- [[Object.entries(m.groups).find(...)]]: الـ group اللي اتطابق هو الوحيد اللي قيمته مش [[undefined]]، واسمه هو نوع الـ token.
+- [[TOKEN.lastIndex = 0]] في أول الدالة: الـ regex متشارك بين النداءات، ولو نداء قبله وقع في النص ممكن يكون [[lastIndex]] مش صفر.
+- [[TokenError]]: [[name]] كـ class field عشان الرسالة تبدأ بـ [[TokenError]] مش [[SyntaxError]]، و [[pos]] للي عايز يعرض المكان بنفسه.
+
+**غلطة شفناها:** نسخة بـ [[g]] بدل [[y]] (عملناها بـ [[sed]] ونفس الكود):
+
+~~~text الناتج بـ g على "7 % 2"
+num:7  num:2
+~~~
+
+الـ [[%]] **اختفى من غير ولا error**: مع [[g]]، [[exec]] لما ملقاش token عند [[%]] دوّر لقدّام ولقى المسافة اللي بعدها، فاتنطّ. ده بالظبط ليه الـ tokenizers بتستخدم [[y]].` },
+        { lvl: 'متوسط', t: R`highlighter بيرسم تحت الـ matches`, what: R`[[highlight.mjs "<pattern>" <file> [flags]]] بيدوّر في الملف سطر سطر، ولكل match بيطبع سطر تحته فيه [[^]] تحت الـ match وأول حرف من اسم كل named group مكان بدايته، وفي الآخر عدد الـ matches والـ regex اللي اتستخدم. الـ flags [[g]] و [[d]] بيتضافوا لوحدهم من غير ما يتكرروا، والـ pattern البايظ بيطبع الـ SyntaxError ويخرج بـ 2. من دروس «RegExp exec: الـ result array و indices و lastIndex» و «regex literal و new RegExp: خصايص الـ RegExp و toString».`, done: R`على ملف ٣ سطور فيه [[A-17]] و [[b-3]] و [[C-120]]، الأمر [[node highlight.mjs '(?<letter>[A-Z])-(?<num>\d+)' orders.txt i]] بيرسم ٣ علامات تحت أماكنهم بالظبط، وبيقول [[3 match بـ /(?<letter>[A-Z])-(?<num>\d+)/dgi]]. و [['(']] بيطبع [[Unterminated group]] و [[exit=2]]، والـ flags [[gd]] مبتتكررش.`, sol: R`**هتشوف إيه:**
+
+~~~text الناتج (Node 24.22)
+  1 | order A-17 paid 250 EGP
+    |       l^n^
+  3 | order b-3 and order C-120
+    |       l^n
+    |                     l^n^^
+3 match بـ /(?<letter>[A-Z])-(?<num>\d+)/dgi
+Invalid regular expression: /(/dg: Unterminated group
+exit=2
+~~~
+
+السطر التاني ([[no code here]]) مش ظاهر لأنه مفيهوش match. و [[l]] تحت أول حرف في [[letter]]، و [[n]] تحت أول رقم في [[num]]، والـ [[^]] باقي الـ match.
+
+~~~js highlight.mjs
+// highlight.mjs: يدوّر بـ regex في ملف ويرسم تحت كل match وكل named group مكانهم بالظبط (flag d)
+import { readFileSync } from "node:fs";
+
+export function highlightLine(line, re) {
+  const out = [];
+  for (const m of line.matchAll(re)) {
+    const [start, end] = m.indices[0];
+    const marks = Array(line.length).fill(" ");
+    for (let i = start; i < end; i++) marks[i] = "^";
+    for (const [name, span] of Object.entries(m.indices.groups ?? {})) {
+      if (!span) continue;
+      marks[span[0]] = name[0];
+    }
+    out.push(marks.join("").trimEnd());
+  }
+  return out;
+}
+
+export function buildRegex(pattern, extra = "") {
+  const flags = new Set(["g", "d", ...extra]);
+  return new RegExp(pattern, [...flags].join(""));
+}
+
+if (import.meta.main) {
+  const [, , pattern, file, flags = ""] = process.argv;
+  if (!pattern || !file) {
+    console.error('الاستخدام: node highlight.mjs "<pattern>" <file> [flags]');
+    process.exit(2);
+  }
+  let re;
+  try { re = buildRegex(pattern, flags); }
+  catch (e) { console.error(e.message); process.exit(2); }
+  let total = 0;
+  readFileSync(file, "utf8").split(/\r?\n/).forEach((line, i) => {
+    const marks = highlightLine(line, re);
+    if (!marks.length) return;
+    total += marks.length;
+    console.log(String(i + 1).padStart(3) + " | " + line);
+    for (const mk of marks) console.log("    | " + mk);
+  });
+  console.log($__bt$__{total} match بـ $__{re}$__bt);
+}
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- [[buildRegex]]: [[new Set(["g", "d", ...extra])]] بيشيل التكرار، فلو اليوزر كتب [[gd]] الـ flags تفضل [[dg]] مش [[gddg]] (اللي كانت هترمي [[Invalid flags]]).
+- [[line.matchAll(re)]]: بيلف على كل الـ matches، وكل واحد معاه [[indices]] لأن فيه [[d]].
+- [[m.indices[0]]]: [[[start, end]]] بتاع الـ match كله، فبنحط [[^]] من [[start]] لـ [[end - 1]].
+- [[m.indices.groups]]: نفس الشكل لكل named group. لو group اختياري ومشاركش، مكانه [[undefined]]، عشان كده [[if (!span) continue]].
+- [[trimEnd()]]: يشيل المسافات اللي في آخر سطر العلامات.
+
+**حاجة اتعلمناها:** السطر العربي في الترمنال بيتعرض من اليمين للشمال، والـ [[^]] تحت مش هتيجي تحت الحرف الصح بالعين، مع إن الأرقام صح. لو هتستخدمه على نص عربي اطبع الأرقام ([[start]] و [[end]]) جنب العلامات، أو اعرض النتيجة في صفحة HTML بـ [[<mark>]].` },
+        { lvl: 'كبير', t: R`فاحص لوجات بيقولك فين السطر وقع`, what: R`أداة [[log-check]] بتقرا access log كل سطر فيه [[ts method path status ms ip]]، وتفك كل سطر سليم بـ regex واحد بـ named groups و flag [[d]]، والـ method بأي حالة حروف بـ modifier [[(?i:...)]] بس الباقي حساس. السطر البايظ بيتقال عليه **أنهي حقل** وقع **عند أنهي عمود** وعلامة [[^]] تحته (حقل حقل بـ [[y]]). وفي الآخر: عدد السليم والبايظ، وعدد كل status، والأبطأ. و [[--show]] بيرسم تحت كل سطر سليم مكان كل حقل. ومعاها ٦ اختبارات بـ [[node --test]] منها اختبار ReDoS. من الوحدة كلها.`, done: R`على لوج ٧ سطور (منهم سطر فاضي، و [[post]] صغيرة، و [[2O0]] بحرف O، وتاريخ من غير T، وكلمة زيادة في الآخر): ٣ سليم و ٣ بايظ، كل واحد بالحقل والعمود الصح، و [[{"200":1,"401":1,"500":1}]]، والأبطأ [[GET /api/orders 930ms]]، والـ exit code 1. و [[node --test]] بيقول [[pass 6]]، والملف المش موجود بيطبع [[ENOENT]] ويخرج بـ 2.`, ext: R`خلّي الحقول تتقري من ملف JSON بدل [[patterns.mjs]] عشان تدعم أكتر من شكل لوج، وزوّد [[--json]] يطبع التقرير JSON لأداة تانية، وخليها تقرا من [[stdin]] عشان تشتغل في pipe ([[tail -f access.log | log-check -]]).`, sol: R`**هتشوف إيه:** كل سطر سليم وتحته مكان حقوله، وكل سطر بايظ بالحقل والعمود، وملخص:
+
+~~~text الناتج (Node 24.22): node log-check.mjs access.log --show
+  2026-11-21T10:15:02Z GET /api/orders/17 200 35ms ip=10.0.0.7
+  t------------------- m-- p------------- s-- m-      i-------
+  2026-11-21T10:15:03Z post /api/login 401 120ms ip=10.0.0.9
+  t------------------- m--- p--------- s-- m--      i-------
+  2026-11-21T10:15:07Z GET /api/orders 500 930ms ip=10.0.0.3
+  t------------------- m-- p---------- s-- m--      i-------
+سطر 3: الحقل «status» بايظ عند العمود 44
+  2026-11-21T10:15:04Z GET /api/menu?lang=ar 2O0 8ms ip=10.0.0.7
+                                             ^
+سطر 4: الحقل «ts» بايظ عند العمود 1
+  2026-11-21 10:15:05 GET /api/orders 500 900ms ip=10.0.0.3
+  ^
+سطر 6: الحقل «end» بايظ عند العمود 64
+  2026-11-21T10:15:06Z DELETE /api/orders/17 204 15ms ip=10.0.0.7 extra
+                                                                 ^
+سليم: 3  بايظ: 3
+الـ status: {"200":1,"401":1,"500":1}
+الأبطأ: GET /api/orders 930ms
+exit=1
+~~~
+
+**الملفات:**
+
+~~~text شجرة الملفات
+log-check/
+  patterns.mjs      الحقول: اسم كل حقل والـ pattern بتاعه، والـ regex الكامل والخطوات
+  check.mjs         parseLine و locate و marks و analyze و formatBad
+  log-check.mjs     الـ CLI: يقرا الملف ويطبع التقرير والـ exit code
+  check.test.mjs    ٦ اختبارات بـ node:test
+  access.log        لوج تجربة
+~~~
+
+~~~text access.log
+2026-11-21T10:15:02Z GET /api/orders/17 200 35ms ip=10.0.0.7
+2026-11-21T10:15:03Z post /api/login 401 120ms ip=10.0.0.9
+2026-11-21T10:15:04Z GET /api/menu?lang=ar 2O0 8ms ip=10.0.0.7
+2026-11-21 10:15:05 GET /api/orders 500 900ms ip=10.0.0.3
+
+2026-11-21T10:15:06Z DELETE /api/orders/17 204 15ms ip=10.0.0.7 extra
+2026-11-21T10:15:07Z GET /api/orders 500 930ms ip=10.0.0.3
+~~~
+
+~~~js patterns.mjs
+// patterns.mjs: كل حقل في سطر اللوج: اسمه، والـ pattern بتاعه، والنص اللي بعده
+export const FIELDS = [
+  { name: "ts", src: String.raw$__bt\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$__bt, after: " " },
+  { name: "method", src: String.raw$__bt(?i:GET|POST|PUT|PATCH|DELETE)$__bt, after: " " },
+  { name: "path", src: String.raw$__bt\/[^\s?]*(?:\?\S*)?$__bt, after: " " },
+  { name: "status", src: String.raw$__bt[1-5]\d{2}$__bt, after: " " },
+  { name: "ms", src: String.raw$__bt\d+$__bt, after: "ms ip=" },
+  { name: "ip", src: String.raw$__bt(?:\d{1,3}\.){3}\d{1,3}$__bt, after: "" },
 ];
 
-const wait = ms => new Promise(r => setTimeout(r, ms));
-let right = 0;
-for (const s of snippets) {
-  const actual = [];
-  s.run(x => actual.push(x));
-  await wait(20); // timers بـ 0 كلها تكون خلصت
-  const ok = JSON.stringify(actual) === JSON.stringify(s.expected);
-  if (ok) right++;
-  console.log((ok ? "صح " : "غلط") + "  " + s.name);
-  if (!ok) {
-    console.log("      المتوقع:", s.expected.join(" "));
-    console.log("      الحقيقي:", actual.join(" "));
-  }
+// السطر كله: كل حقل named group، والـ d عشان نعرف مكان كل حقل
+export const LINE = new RegExp(
+  "^" + FIELDS.map((f) => $__bt(?<$__{f.name}>$__{f.src})$__{RegExp.escape(f.after)}$__bt).join("") + "$",
+  "d",
+);
+
+// حقل حقل بـ y: عشان نعرف السطر البايظ وقع عند أنهي حقل وأنهي عمود
+export const STEPS = FIELDS.map((f) => ({
+  name: f.name,
+  re: new RegExp($__bt(?:$__{f.src})$__{RegExp.escape(f.after)}$__bt, "y"),
+}));
+~~~
+
+~~~js check.mjs
+// check.mjs: يفك سطور اللوج، ويقول البايظ وقع فين، ويلخّص
+import { LINE, STEPS } from "./patterns.mjs";
+
+export function parseLine(line) {
+  const m = LINE.exec(line);
+  if (!m) return null;
+  const g = m.groups;
+  return { ts: g.ts, method: g.method.toUpperCase(), path: g.path, status: Number(g.status), ms: Number(g.ms), ip: g.ip, indices: m.indices.groups };
 }
-console.log(right + " من " + snippets.length);
-~~~
 
-~~~json package.json
-{ "type": "module" }
-~~~
-
-## كل حتة مهمة بتعمل إيه
-
-- **كل snippet ليه [[run(log)]]:** بدل [[console.log]]، الـ snippet بيكتب بـ [[log]] اللي بيحط في array، فنقدر نقارن الترتيب بعدين.
-- **[[await wait(20)]] بعد كل snippet:** الـ snippet بيسجّل timers و microtasks وبيرجع على طول. الـ microtasks بتخلص قبل أي timer، والـ timers بتاعة 0 بتخلص قبل timer الـ 20ms اللي احنا مستنيينه (اتسجّل بعدهم). فلما [[wait]] يخلص، كل حاجة اتطبعت.
-- **[[JSON.stringify(actual) === JSON.stringify(s.expected)]]:** مقارنة arrays بالقيم والترتيب. [[===]] على arrays لوحدها بتقارن الـ reference فهتطلع false دايمًا.
-- **snippet ورا التاني مش مع بعض:** الـ [[await]] جوه الـ [[for]] بيخلي كل واحد يخلص قبل اللي بعده، فالـ timers بتاعتهم متتلخبطش في نفس الـ array.
-- **[[await]] في أول مستوى:** شغال لأن [[package.json]] فيه [[{"type":"module"}]].
-
-## الغلطات اللي حصلت وإزاي اتصلحت
-
-- **جرّبنا نشيل [[await wait(20)]]:** أول سطرين في الناتج بقوا [[غلط  مثال الدرس]] و «الحقيقي: [[A F H]]». الـ array اتقارن على طول، وفيه السطور الـ sync بس، لأن الـ snippet بيرجع قبل ما الـ callbacks بتوعه تشتغل. وده نفس درس الوحدة: اللي جوه timer أو then بيحصل **بعد** ما الكود الحالي يخلص.`  },
-        { lvl: 'صغير', dir: "freeze-vs-chunks", t: R`زرار بيجمّد وزرار لأ`, what: R`صفحة فيها عدّاد بيزيد كل 100ms بـ setInterval، وزرار بيعمل [[while]] ثانيتين، وزرار بيعمل نفس الشغل على دفعات بـ setTimeout. من درس blocking و الـ main thread.`, done: R`الزرار الأول بيوقّف العدّاد ثانيتين وبعدها بيكمّل من غير ما يعوّض الأرقام اللي فاتت. مع التاني العدّاد بيفضل شغال. وتسجيل Performance في DevTools بيوري long task للأول بس.`, sol: R`## الشكل النهائي
-
-~~~live 260 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>بيجمّد ولا لأ</title>
-<style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
-  #counter { font-size: 40px; font-variant-numeric: tabular-nums; }
-  button { font: inherit; padding: 6px 12px; margin: 4px 4px 4px 0; }
-  #log { color: #555; font-size: 14px; white-space: pre-line; }
-</style>
-</head>
-<body>
-<div id="counter">0</div>
-<button id="freeze">شغل ثانيتين مرة واحدة</button>
-<button id="chunks">نفس الشغل على دفعات</button>
-<p id="log"></p>
-<script>
-  const counter = document.getElementById("counter");
-  const log = document.getElementById("log");
-  let n = 0;
-  setInterval(() => { counter.textContent = ++n; }, 100);
-
-  function say(msg) { log.textContent = msg + "\n" + log.textContent; }
-
-  // الـ long tasks: أي task أطول من 50ms المتصفح بيبلّغ عنها
-  if (PerformanceObserver.supportedEntryTypes.includes("longtask")) {
-    new PerformanceObserver(list => {
-      for (const e of list.getEntries()) say("long task: " + Math.round(e.duration) + "ms");
-    }).observe({ type: "longtask" });
+export function locate(line) {
+  let pos = 0;
+  for (const { name, re } of STEPS) {
+    re.lastIndex = pos;
+    if (!re.exec(line)) return { field: name, col: pos };
+    pos = re.lastIndex;
   }
+  return pos === line.length ? null : { field: "end", col: pos };
+}
 
-  document.getElementById("freeze").addEventListener("click", () => {
-    const before = n, s = performance.now();
-    while (performance.now() - s < 2000) {}
-    say("مرة واحدة: العدّاد كان " + before + " وبقى " + n + " بعد ثانيتين");
+export function marks(line, indices) {
+  const row = Array(line.length).fill(" ");
+  for (const [name, [start, end]] of Object.entries(indices)) {
+    for (let i = start; i < end; i++) row[i] = i === start ? name[0] : "-";
+  }
+  return row.join("").trimEnd();
+}
+
+export function analyze(text) {
+  const report = { ok: [], bad: [], byStatus: {}, slowest: null };
+  text.split(/\r?\n/).forEach((line, i) => {
+    if (line.trim() === "") return;
+    const rec = parseLine(line);
+    if (!rec) {
+      report.bad.push({ no: i + 1, line, ...(locate(line) ?? { field: "?", col: 0 }) });
+      return;
+    }
+    report.ok.push({ no: i + 1, line, ...rec });
+    report.byStatus[rec.status] = (report.byStatus[rec.status] ?? 0) + 1;
+    if (!report.slowest || rec.ms > report.slowest.ms) report.slowest = rec;
   });
-
-  document.getElementById("chunks").addEventListener("click", async () => {
-    const before = n, s = performance.now();
-    while (performance.now() - s < 2000) {
-      const c = performance.now();
-      while (performance.now() - c < 20) {} // دفعة 20ms
-      await new Promise(r => setTimeout(r, 0));
-    }
-    say("دفعات: العدّاد كان " + before + " وبقى " + n + " بعد ثانيتين");
-  });
-</script>
-</body>
-</html>
-~~~
-
-## هتشوف إيه
-
-عدّاد كبير بيزيد ١٠ مرات في الثانية، وزرارين. الأول بيوقّف العدّاد ثانيتين بالظبط وبعدها بيكمّل من غير ما يعوّض. التاني بيشتغل نفس المدة والعدّاد ماشي. وتحت لوج بيقول العدّاد كان كام وبقى كام، وأي long task المتصفح بلّغ عنها.
-
-## اتقاس (Chrome 158 بـ Playwright)
-
-~~~text الناتج: الـ log في الصفحة
-(ضغطنا «مرة واحدة» وبعدين «دفعات»، والـ log بيكتب الأحدث فوق)
-دفعات: العدّاد كان 13 وبقى 32 بعد ثانيتين
-long task: 2000ms
-مرة واحدة: العدّاد كان 5 وبقى 5 بعد ثانيتين
-~~~
-
-- **مرة واحدة:** العدّاد كان 5 وفضل 5 بعد ثانيتين، يعني ولا tick اتنفّذ. والمتصفح بلّغ عن long task طولها 2000ms.
-- **دفعات:** العدّاد زاد من 13 لـ 32 (١٩ مرة في ثانيتين، تقريبًا العشرين اللي المفروض)، ومفيش long task اتبلّغ عنها، لأن كل دفعة 20ms بس.
-- ونفس الكلام في DevTools: تاب Performance ← Record ← اضغط الزرار ← Stop: بيبان مستطيل أحمر (long task) للأول بس.
-
-## كل حتة مهمة بتعمل إيه
-
-- **[[setInterval(... , 100)]]:** العدّاد هو «مقياس» الـ main thread: لو وقف يبقى الـ thread مشغول.
-- **[[PerformanceObserver]] بـ [[type: "longtask"]]:** المتصفح بيبلّغ عن أي task أطول من 50ms ومدتها. [[supportedEntryTypes.includes]] عشان Firefox و Safari مش بيدعموه.
-- **الزرار الأول:** [[while (performance.now() - s < 2000) {}]] task واحدة ثانيتين.
-- **الزرار التاني:** نفس الثانيتين، بس مقسومين دفعات 20ms، وبين كل دفعة [[await new Promise(r => setTimeout(r, 0))]] بيرجّع للـ event loop، فالـ interval والرسم والضغطات بياخدوا دورهم.
-- **[[say]] بيكتب الأحدث فوق:** عشان كده «دفعات» ظاهرة فوق «مرة واحدة» في الناتج.
-
-## الغلطات اللي حصلت وإزاي اتصلحت
-
-- **التاب في الخلفية بيلخبط القياس:** أول تشغيل بـ Playwright كان التاب مش ظاهر، والمتصفح بيبطّأ الرسم والـ timers في التابات المخفية، فالأرقام كانت غريبة. القياس الصح والتاب قدام (في Playwright: [[page.bringToFront()]]). وده نفس اللي بيحصل عند اليوزر لما يسيب التاب ويروح لتاب تاني.`  },
-        { lvl: 'متوسط', dir: "chunked-progress", t: R`progress bar لمعالجة كبيرة`, what: R`معالجة ٢٠٠ ألف نص (مثلًا تعد الحروف العربي في كل واحد) على دفعات، و [[<progress>]] بيتحدث بعد كل دفعة، وزرار «إلغاء» بيوقّف في خلال دفعة واحدة، و «ابدأ» مبيشتغلش مرتين مع بعض. من دروس الوحدة ووحدة async.`, done: R`الـ bar بيوصل 100% والصفحة بتعمل scroll وانت مستني. الإلغاء بيوقّف ويطبع العدد اللي اتعالج. والنتيجة بعد ما يكمّل نفس نتيجة loop واحدة على نفس الداتا.`, sol: R`## الشكل النهائي
-
-~~~live 200 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>معالجة على دفعات</title>
-<style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
-  progress { width: 100%; height: 20px; }
-  button { font: inherit; padding: 6px 14px; margin: 6px 6px 6px 0; }
-  #out { white-space: pre-line; }
-</style>
-</head>
-<body>
-<progress id="bar" max="100" value="0"></progress>
-<p>
-  <button id="start">ابدأ</button>
-  <button id="cancel" disabled>إلغاء</button>
-</p>
-<p id="out" aria-live="polite"></p>
-<script>
-  const WORDS = ["مرحبا", "JavaScript", "event loop", "الدوال", "async"];
-  // ٢٠٠ ألف جملة، كل واحدة حوالي ١٥٠ حرف
-  const texts = Array.from({ length: 200000 }, (_, i) => (WORDS[i % 5] + " " + i + " ").repeat(10));
-  // الشغل لكل نص: نعدّ الكلمات العربي بـ Intl.Segmenter (أتقل بكتير من regex)
-  const ARABIC = /\p{Script=Arabic}/u;
-  const words = new Intl.Segmenter("ar", { granularity: "word" });
-  function countArabicWords(s) {
-    let n = 0;
-    for (const w of words.segment(s)) if (w.isWordLike && ARABIC.test(w.segment)) n++;
-    return n;
-  }
-
-  const bar = document.getElementById("bar");
-  const out = document.getElementById("out");
-  const startBtn = document.getElementById("start");
-  const cancelBtn = document.getElementById("cancel");
-  let controller = null;
-
-  const yieldToBrowser = () => globalThis.scheduler?.yield?.() ?? new Promise(r => setTimeout(r, 0));
-
-  async function processAll(items, signal, size = 2000) {
-    let total = 0;
-    for (let i = 0; i < items.length; i += size) {
-      if (signal.aborted) return { total, done: i, cancelled: true };
-      for (const s of items.slice(i, i + size)) total += countArabicWords(s);
-      bar.value = Math.round(((i + size) / items.length) * 100);
-      await yieldToBrowser();
-    }
-    return { total, done: items.length, cancelled: false };
-  }
-
-  startBtn.addEventListener("click", async () => {
-    if (controller) return;
-    controller = new AbortController();
-    startBtn.disabled = true;
-    cancelBtn.disabled = false;
-    bar.value = 0;
-    const t = performance.now();
-    const r = await processAll(texts, controller.signal);
-    const ms = Math.round(performance.now() - t);
-    out.textContent = r.cancelled
-      ? "اتلغى بعد " + r.done + " نص (" + ms + "ms)"
-      : "خلص: " + r.total + " كلمة عربي في " + r.done + " نص (" + ms + "ms)";
-    controller = null;
-    startBtn.disabled = false;
-    cancelBtn.disabled = true;
-  });
-
-  cancelBtn.addEventListener("click", () => controller?.abort());
-</script>
-</body>
-</html>
-~~~
-
-## هتشوف إيه
-
-progress bar بيتملي في حوالي ثانيتين، و «ابدأ» بيتقفل وهو شغال، و «إلغاء» بيوقّف في خلال دفعة. وفي الآخر عدد الكلمات العربي ووقت المعالجة.
-
-## اتقاس (Chrome 158 بـ Playwright، التاب قدام)
-
-~~~text الناتج
-loop واحدة على الـ main thread: 800000 كلمة في 1881ms (الصفحة واقفة طول الوقت ده)
-ابدأ، و requestAnimationFrame بيسجّل قيمة الـ bar في كل frame اترسم:
-   خلص: 800000 كلمة عربي في 200000 نص (1879ms) | frames اترسمت: 655 | قيم مختلفة للـ bar: 17
-ابدأ مرتين ورا بعض: اشتغلت مرة واحدة، وزرار ابدأ كان disabled وهو شغال
-ابدأ تاني، وبعد 500ms ضغطة ماوس حقيقية على «إلغاء»:
-   الضغطة اتنفّذت عند 530ms | اتلغى بعد 60000 نص (580ms)
-~~~
-
-- **النتيجة واحدة:** 800000 كلمة في الحالتين (loop واحدة ودفعات).
-- **الوقت تقريبًا واحد** (1881 مقابل 1879ms)، بس في الدفعات المتصفح رسم 655 frame وشاف الـ bar بـ 17 قيمة مختلفة، وفي الـ loop الواحدة الصفحة كانت واقفة.
-- **الإلغاء:** ضغطة ماوس حقيقية عند 500ms اتنفّذت عند 530ms (يعني بعد الدفعة اللي كانت شغالة بس)، والمعالجة وقفت بعد 60000 نص.
-
-## كل حتة مهمة بتعمل إيه
-
-- **[[countArabicWords]]:** الشغل لكل نص: [[Intl.Segmenter]] بيقسم الكلام لكلمات صح (العربي مبيتقسمش بالمسافات بس دايمًا)، و [[isWordLike]] بيشيل المسافات والعلامات، و [[/\p{Script=Arabic}/u]] بيشوف الكلمة عربي ولا لأ. اخترناه لأنه أتقل بكتير من regex لوحده، عشان التجربة تبان.
-- **[[processAll(items, signal, size = 2000)]]:** بيلف دفعات ٢٠٠٠ نص، وبعد كل دفعة بيحدّث الـ bar و **بيرجّع للمتصفح**.
-- **[[yieldToBrowser]]:** [[scheduler.yield()]] لو موجود (Chrome و Edge)، ولو لأ [[setTimeout(r, 0)]]. الاتنين بيسيبوا المتصفح يرسم ويستقبل الضغطات قبل الدفعة الجاية.
-- **[[AbortController]] و [[signal.aborted]]:** «إلغاء» بيعمل [[abort()]]، والـ loop بيسأل قبل كل دفعة، فبيقف في خلال دفعة واحدة ويرجّع لحد فين وصل.
-- **[[if (controller) return]] و [[startBtn.disabled]]:** «ابدأ» مبيشتغلش مرتين مع بعض. الزرار المقفول بيمنع الضغطة، والـ [[if]] بيحمي لو حد نادى الـ handler بطريقة تانية.
-
-## الغلطات اللي حصلت وإزاي اتصلحت
-
-- **الشغل كان خفيف أوي:** أول نسخة كانت بتعد الحروف العربي بـ regex بس، والـ ٢٠٠ ألف خلصوا في 20ms، فمفيش progress يتشاف ولا إلغاء يتجرّب. خلّينا كل نص أطول والعدّ بـ Intl.Segmenter فبقى حوالي ثانيتين.
-- **الـ regex من غير [[g]] عمدًا:** [[test]] على regex فيه [[g]] بيفتكر [[lastIndex]] (مطب درس groups و flags). هنا بالصدفة النتيجة طلعت واحدة (جرّبناها على نص صغير: 20 و 20) لأن الكلمات اللي أرقام بتفشل وترجّع [[lastIndex]] لصفر، بس ده حظ، فمفيش [[g]].`  },
-        { lvl: 'متوسط', t: R`محاكي event loop`, what: R`[[class Loop]] فيها طابورين ([[macro]] و [[micro]]) و methods [[log]] و [[timeout(fn)]] و [[then(fn)]]. [[run(program)]] بتشغّل الـ program sync، وبعدين تفضّي الـ micro كله، وبعدين تاخد macro واحد وتكرر. من درسي event loop و microtasks ووحدة الـ classes.`, done: R`نفس الـ program مرة بالمحاكي ومرة بالحقيقي (setTimeout و queueMicrotask) بيطلعوا نفس الترتيب في ٥ أمثلة على الأقل، منهم microtask بيسجّل microtask، و timeout جوه then، ومثال الدرس [[A F H C E G D B]].`, sol: R`## الشكل النهائي
-
-~~~text الناتج (node main.js، Node 24)
-✓ مثال الدرس (C و D سلسلة then)  محاكي: A F H C E G D B | حقيقي: A F H C E G D B
-✓ microtask بيسجّل microtask     محاكي: m1 m2 t | حقيقي: m1 m2 t
-✓ timeout جوه then               محاكي: sync then t1 t2 | حقيقي: sync then t1 t2
-✓ then جوه timeout               محاكي: t1 m t2 | حقيقي: t1 m t2
-✓ timeout جوه timeout            محاكي: A B C | حقيقي: A B C
-~~~
-
-## هتشوف إيه
-
-٥ برامج صغيرة، كل واحد اتشغّل مرة على المحاكي ومرة على الـ event loop الحقيقي (setTimeout و queueMicrotask)، والترتيب طلع واحد في الخمسة.
-
-## الكود
-
-~~~js loop.js
-// محاكي: طابورين، والقاعدة: sync ← فضّي الـ micro كله ← macro واحد ← كرر
-export class Loop {
-  macro = [];
-  micro = [];
-  out = [];
-  log = x => this.out.push(x);
-  timeout = fn => this.macro.push(fn);
-  then = fn => this.micro.push(fn);
-
-  run(program) {
-    program(this);
-    do {
-      while (this.micro.length) this.micro.shift()();
-      const task = this.macro.shift();
-      if (task) task();
-    } while (this.micro.length || this.macro.length);
-    return this.out;
-  }
+  return report;
 }
 
-// نفس الـ API بس على الـ event loop الحقيقي
-export function real(program) {
-  return new Promise(resolve => {
-    const out = [];
-    program({ log: x => out.push(x), timeout: fn => setTimeout(fn, 0), then: fn => queueMicrotask(fn) });
-    setTimeout(() => resolve(out), 30);
-  });
+export function formatBad(b) {
+  return $__btسطر $__{b.no}: الحقل «$__{b.field}» بايظ عند العمود $__{b.col + 1}\n  $__{b.line}\n  $__{" ".repeat(b.col)}^$__bt;
 }
 ~~~
 
-~~~js main.js
-import { Loop, real } from "./loop.js";
+~~~js log-check.mjs
+// log-check.mjs: node log-check.mjs <file> [--show]
+import { readFileSync } from "node:fs";
+import { analyze, formatBad, marks } from "./check.mjs";
 
-const programs = {
-  "مثال الدرس (C و D سلسلة then)": ({ log, timeout, then }) => {
-    log("A");
-    timeout(() => log("B"));
-    then(() => { log("C"); then(() => log("D")); });
-    then(() => log("E"));
-    log("F");
-    then(() => log("G"));
-    log("H");
-  },
-  "microtask بيسجّل microtask": ({ log, timeout, then }) => {
-    timeout(() => log("t"));
-    then(() => { log("m1"); then(() => log("m2")); });
-  },
-  "timeout جوه then": ({ log, timeout, then }) => {
-    timeout(() => log("t1"));
-    then(() => { log("then"); timeout(() => log("t2")); });
-    log("sync");
-  },
-  "then جوه timeout": ({ log, timeout, then }) => {
-    timeout(() => { log("t1"); then(() => log("m")); });
-    timeout(() => log("t2"));
-  },
-  "timeout جوه timeout": ({ log, timeout }) => {
-    timeout(() => { log("A"); timeout(() => log("C")); });
-    timeout(() => log("B"));
-  },
-};
-
-for (const [name, p] of Object.entries(programs)) {
-  const sim = new Loop().run(p);
-  const act = await real(p);
-  const same = sim.join(" ") === act.join(" ");
-  console.log((same ? "✓ " : "✗ ") + name.padEnd(30), "محاكي:", sim.join(" "), "| حقيقي:", act.join(" "));
+const [, , file, flag] = process.argv;
+if (!file) {
+  console.error("الاستخدام: node log-check.mjs <file> [--show]");
+  process.exit(2);
 }
-~~~
-
-~~~json package.json
-{ "type": "module" }
-~~~
-
-## كل حتة مهمة بتعمل إيه
-
-- **البرنامج function بياخد [[{ log, timeout, then }]]:** نفس البرنامج بيشتغل على أي «engine» بيدّيله الـ ٣ دوال دول. ده اللي بيخلي المقارنة عادلة.
-- **[[Loop.run]]:** بيشغّل البرنامج sync، وبعدين: فضّي **كل** الـ micro (حتى اللي بيتضاف وهو بيفضّي، لأن [[while (this.micro.length)]] بيبص على الطول كل لفة)، وبعدين macro **واحد**، وكرر لحد ما الطابورين يفضوا.
-- **[[real(program)]]:** نفس الـ API بـ [[setTimeout(fn, 0)]] و [[queueMicrotask(fn)]]، ويستنى 30ms ويرجّع اللي اتطبع.
-- **مثال الدرس:** المحاكي مفيهوش [[await]]، فـ [[await null]] اتكتبت [[then]] (ده اللي [[await]] بيعمله فعلًا: باقي الدالة بيبقى microtask)، و [[.then().then()]] اتكتبت [[then]] جوه [[then]]. وطلع [[A F H C E G D B]] زي الحقيقي.
-
-## الغلطات اللي حصلت وإزاي اتصلحت
-
-أول نسخة من [[run]] كانت كده:
-
-~~~js first.mjs
-class Loop {
-  macro = []; micro = []; out = [];
-  log = x => this.out.push(x); timeout = fn => this.macro.push(fn); then = fn => this.micro.push(fn);
-  run(p) {
-    p(this);
-    while (this.macro.length) {
-      while (this.micro.length) this.micro.shift()();
-      this.macro.shift()();
-    }
-    return this.out;
-  }
+let text;
+try {
+  text = readFileSync(file, "utf8");
+} catch (e) {
+  console.error($__btمش قادر أقرا $__{file}: $__{e.code}$__bt);
+  process.exit(2);
 }
-console.log(new Loop().run(({ log, timeout, then }) => { timeout(() => { log("t1"); then(() => log("m")); }); }).join(" ") || "(فاضي)");
-console.log(new Loop().run(({ log, then }) => { then(() => log("m1")); log("sync"); }).join(" "));
-~~~
-
-~~~text الناتج (node first.mjs)
-t1
-sync
-~~~
-
-البرنامج الأول كان المفروض يطبع [[t1 m]] وطبع [[t1]] بس، والتاني المفروض [[sync m1]] وطبع [[sync]] بس. الشرط [[while (this.macro.length)]] بيقف أول ما الـ macro يفضى، فالـ microtasks اللي آخر macro سجّلها (أو اللي اتسجّلت ومفيش macro أصلًا) بتضيع. الحل [[do ... while (micro.length || macro.length)]]: فضّي الـ micro الأول دايمًا، والـ loop يكمّل طول ما فيه أي حاجة في أي طابور.`  },
-        { lvl: 'كبير', dir: "csv-worker", t: R`Web Worker لـ CSV ضخم`, what: R`صفحة بتولّد (أو بتلزق في textarea) CSV فيه ٢٠٠ ألف سطر مبيعات، و Worker بيفكّه ويحسب إجمالي كل منتج، ويبعت [[{ type: "progress", done }]] كل ١٠ آلاف سطر و [[{ type: "result" }]] في الآخر. السطور البايظة بترجع في [[errors]] برقمها من غير ما يقع، وزرار إلغاء بيعمل [[terminate()]] ويعمل worker جديد، و [[worker.onerror]] بيعرض رسالة لو الـ worker نفسه وقع. من الوحدة دي ووحدات async والأخطاء والـ DOM.`, done: R`وانت المعالجة شغالة، الـ input بيكتب عادي والـ progress بيتحرك، و Performance مفيهوش long task على الـ main thread. CSV فيه ٣ سطور بايظة ← النتيجة سليمة و [[errors.length === 3]] بأرقامهم. الإلغاء في النص وبعدين ابدأ ← بيشتغل من الأول بنتيجة صح. والإجماليات زي اللي بتطلع لو حسبتها في الـ main thread.`, ext: R`زوّد [[<input type="file">]] يقرا CSV حقيقي من جهازك، وخلّي الـ worker يبعت الإجماليات كجدول متترتب، وزرار تصدير.`, sol: R`## الشكل النهائي
-
-~~~view 330 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مبيعات CSV</title>
-<style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
-  button, input { font: inherit; padding: 5px 10px; margin: 3px 3px 3px 0; }
-  progress { width: 100%; }
-  table { border-collapse: collapse; margin-top: 8px; }
-  td, th { border: 1px solid #ccc; padding: 3px 10px; }
-  td.n { direction: ltr; text-align: right; font-variant-numeric: tabular-nums; }
-  #msg { white-space: pre-line; }
-  .err { color: #b91c1c; }
-</style>
-</head>
-<body>
-<p>
-  <button id="start">ولّد ٢٠٠ ألف سطر واحسب</button>
-  <button id="cancel" disabled>إلغاء</button>
-</p>
-<input id="typing" placeholder="اكتب هنا وانت مستني" aria-label="جرّب الكتابة">
-<progress id="bar" max="200000" value="0"></progress>
-<p id="msg" aria-live="polite"></p>
-<table id="table"></table>
-<script type="text/plain" id="worker-src">
-// الحساب نفسه: من غير DOM ومن غير Worker، فبيتجرّب في Node
-const HEADER = "date,product,qty,price";
-
-function makeCSV(rows, badLines = []) {
-  const products = ["قلم", "كشكول", "شنطة", "آلة حاسبة"];
-  const lines = [HEADER];
-  for (let i = 0; i < rows; i++) {
-    lines.push($__bt2026-11-$__{String((i % 28) + 1).padStart(2, "0")},$__{products[i % 4]},$__{(i % 5) + 1},$__{(i % 7) + 10}.5$__bt);
-  }
-  for (const at of badLines) lines.splice(at, 0, "سطر,بايظ");
-  return lines.join("\n");
+const r = analyze(text);
+if (flag === "--show") {
+  for (const rec of r.ok) console.log("  " + rec.line + "\n  " + marks(rec.line, rec.indices));
 }
-
-// onProgress بيتنادى كل every سطر، و shouldStop بيتسأل قبل كل دفعة
-function totals(text, { every = 10000, onProgress = () => {}, shouldStop = () => false } = {}) {
-  const lines = text.split(/\r?\n/);
-  if (lines[0].trim() !== HEADER) throw new Error("أول سطر لازم يبقى: " + HEADER);
-  const byProduct = {};
-  const errors = [];
-  let rows = 0;
-  for (let i = 1; i < lines.length; i++) {
-    const line = lines[i];
-    if (line.trim() === "") continue;
-    const parts = line.split(",");
-    const qty = Number(parts[2]);
-    const price = Number(parts[3]);
-    if (parts.length !== 4 || !parts[1] || !Number.isInteger(qty) || qty <= 0 || !Number.isFinite(price)) {
-      errors.push({ line: i + 1, text: line });
-    } else {
-      byProduct[parts[1]] = Math.round(((byProduct[parts[1]] ?? 0) + qty * price) * 100) / 100;
-      rows++;
-    }
-    if (i % every === 0) {
-      onProgress(i);
-      if (shouldStop()) return null;
-    }
-  }
-  return { rows, byProduct, errors };
-}
-
-
-// النص بييجي جاهز (لزق أو ملف)، أو الـ worker بيولّده بنفسه عشان التوليد كمان ميبقاش على الـ main thread
-self.onmessage = (e) => {
-  const text = e.data.text ?? makeCSV(e.data.generate, e.data.bad);
-  try {
-    const result = totals(text, {
-      onProgress: (done) => self.postMessage({ type: "progress", done }),
-    });
-    self.postMessage({ type: "result", ...result });
-  } catch (err) {
-    self.postMessage({ type: "error", message: err.message });
-  }
-};
-</script>
-<script>
-  const bar = document.getElementById("bar");
-  const msg = document.getElementById("msg");
-  const startBtn = document.getElementById("start");
-  const cancelBtn = document.getElementById("cancel");
-  let worker = null;
-
-  function setBusy(busy) {
-    startBtn.disabled = busy;
-    cancelBtn.disabled = !busy;
-  }
-
-  function showResult(r, ms) {
-    msg.textContent = r.rows + " سطر سليم في " + ms + "ms، و " + r.errors.length + " سطر بايظ" +
-      (r.errors.length ? ": " + r.errors.map(e => "سطر " + e.line).join("، ") : "");
-    msg.className = r.errors.length ? "err" : "";
-    const table = document.getElementById("table");
-    table.replaceChildren();
-    for (const [product, total] of Object.entries(r.byProduct)) {
-      const tr = table.insertRow();
-      tr.insertCell().textContent = product;
-      const td = tr.insertCell();
-      td.className = "n";
-      td.textContent = total.toLocaleString("en-US");
-    }
-  }
-
-  function start() {
-    const t = performance.now();
-    worker = new Worker(URL.createObjectURL(new Blob([document.getElementById("worker-src").textContent], { type: "text/javascript" })));
-    worker.onmessage = (e) => {
-      if (e.data.type === "progress") bar.value = e.data.done;
-      if (e.data.type === "error") {
-        msg.textContent = "الملف فيه مشكلة: " + e.data.message;
-        msg.className = "err";
-        worker.terminate();
-        worker = null;
-        setBusy(false);
-      }
-      if (e.data.type === "result") {
-        bar.value = bar.max;
-        showResult(e.data, Math.round(performance.now() - t));
-        worker.terminate();
-        worker = null;
-        setBusy(false);
-      }
-    };
-    worker.onerror = (e) => {
-      msg.textContent = "الـ worker وقع: " + e.message;
-      msg.className = "err";
-      worker = null;
-      setBusy(false);
-    };
-    worker.postMessage({ generate: 200000, bad: [50, 120000, 199000] });
-    setBusy(true);
-    msg.textContent = "بيحسب...";
-  }
-
-  startBtn.addEventListener("click", () => { if (!worker) start(); });
-  cancelBtn.addEventListener("click", () => {
-    worker?.terminate();
-    worker = null;
-    bar.value = 0;
-    msg.textContent = "اتلغى";
-    setBusy(false);
-  });
-</script>
-</body>
-</html>
+for (const b of r.bad) console.log(formatBad(b));
+console.log($__btسليم: $__{r.ok.length}  بايظ: $__{r.bad.length}$__bt);
+console.log("الـ status:", JSON.stringify(r.byStatus));
+if (r.slowest) console.log($__btالأبطأ: $__{r.slowest.method} $__{r.slowest.path} $__{r.slowest.ms}ms$__bt);
+process.exitCode = r.bad.length ? 1 : 0;
 ~~~
 
-(الـ preview فوق نفس الصفحة بس الـ worker متحط جواها كـ Blob، لأن الـ preview مبيقراش ملفات جنبه. في مشروعك [[index.html]] و [[worker.js]] و [[csv.js]] ملفات منفصلة زي تحت.)
-
-## هتشوف إيه
-
-زرار بيولّد ٢٠٠ ألف سطر مبيعات ويحسبهم في Worker، و progress bar، و input تكتب فيه وانت مستني، وفي الآخر سطر بعدد السطور السليمة والبايظة بأرقامها، وجدول إجمالي كل منتج. و «إلغاء» بيقتل الـ worker.
-
-## الملفات وترتيب البناء
-
-~~~text الشجرة
-csv-worker/
-├── package.json   "type": "module" و npm test
-├── csv.js         makeCSV و totals: الحساب كله، من غير DOM
-├── worker.js      بيستورد csv.js ويبعت progress و result
-├── index.html     الصفحة: بتعمل Worker وتعرض
-└── test.js        6 اختبارات لـ csv.js في Node
-~~~
-
-اتبنى بالترتيب: [[csv.js]] واختباراته في Node الأول (الحساب صح من غير أي متصفح)، وبعدين [[worker.js]] حواليه، وبعدين الصفحة.
-
-~~~json package.json
-{
-  "name": "csv-worker",
-  "type": "module",
-  "scripts": {
-    "test": "node --test"
-  }
-}
-~~~
-
-~~~js csv.js
-// الحساب نفسه: من غير DOM ومن غير Worker، فبيتجرّب في Node
-export const HEADER = "date,product,qty,price";
-
-export function makeCSV(rows, badLines = []) {
-  const products = ["قلم", "كشكول", "شنطة", "آلة حاسبة"];
-  const lines = [HEADER];
-  for (let i = 0; i < rows; i++) {
-    lines.push($__bt2026-11-$__{String((i % 28) + 1).padStart(2, "0")},$__{products[i % 4]},$__{(i % 5) + 1},$__{(i % 7) + 10}.5$__bt);
-  }
-  for (const at of badLines) lines.splice(at, 0, "سطر,بايظ");
-  return lines.join("\n");
-}
-
-// onProgress بيتنادى كل every سطر، و shouldStop بيتسأل قبل كل دفعة
-export function totals(text, { every = 10000, onProgress = () => {}, shouldStop = () => false } = {}) {
-  const lines = text.split(/\r?\n/);
-  if (lines[0].trim() !== HEADER) throw new Error("أول سطر لازم يبقى: " + HEADER);
-  const byProduct = {};
-  const errors = [];
-  let rows = 0;
-  for (let i = 1; i < lines.length; i++) {
-    const line = lines[i];
-    if (line.trim() === "") continue;
-    const parts = line.split(",");
-    const qty = Number(parts[2]);
-    const price = Number(parts[3]);
-    if (parts.length !== 4 || !parts[1] || !Number.isInteger(qty) || qty <= 0 || !Number.isFinite(price)) {
-      errors.push({ line: i + 1, text: line });
-    } else {
-      byProduct[parts[1]] = Math.round(((byProduct[parts[1]] ?? 0) + qty * price) * 100) / 100;
-      rows++;
-    }
-    if (i % every === 0) {
-      onProgress(i);
-      if (shouldStop()) return null;
-    }
-  }
-  return { rows, byProduct, errors };
-}
-~~~
-
-~~~js worker.js
-import { totals, makeCSV } from "./csv.js";
-
-// النص بييجي جاهز (لزق أو ملف)، أو الـ worker بيولّده بنفسه عشان التوليد كمان ميبقاش على الـ main thread
-self.onmessage = (e) => {
-  const text = e.data.text ?? makeCSV(e.data.generate, e.data.bad);
-  try {
-    const result = totals(text, {
-      onProgress: (done) => self.postMessage({ type: "progress", done }),
-    });
-    self.postMessage({ type: "result", ...result });
-  } catch (err) {
-    self.postMessage({ type: "error", message: err.message });
-  }
-};
-~~~
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>مبيعات CSV</title>
-<style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
-  button, input { font: inherit; padding: 5px 10px; margin: 3px 3px 3px 0; }
-  progress { width: 100%; }
-  table { border-collapse: collapse; margin-top: 8px; }
-  td, th { border: 1px solid #ccc; padding: 3px 10px; }
-  td.n { direction: ltr; text-align: right; font-variant-numeric: tabular-nums; }
-  #msg { white-space: pre-line; }
-  .err { color: #b91c1c; }
-</style>
-</head>
-<body>
-<p>
-  <button id="start">ولّد ٢٠٠ ألف سطر واحسب</button>
-  <button id="cancel" disabled>إلغاء</button>
-</p>
-<input id="typing" placeholder="اكتب هنا وانت مستني" aria-label="جرّب الكتابة">
-<progress id="bar" max="200000" value="0"></progress>
-<p id="msg" aria-live="polite"></p>
-<table id="table"></table>
-<script type="module">
-  const bar = document.getElementById("bar");
-  const msg = document.getElementById("msg");
-  const startBtn = document.getElementById("start");
-  const cancelBtn = document.getElementById("cancel");
-  let worker = null;
-
-  function setBusy(busy) {
-    startBtn.disabled = busy;
-    cancelBtn.disabled = !busy;
-  }
-
-  function showResult(r, ms) {
-    msg.textContent = r.rows + " سطر سليم في " + ms + "ms، و " + r.errors.length + " سطر بايظ" +
-      (r.errors.length ? ": " + r.errors.map(e => "سطر " + e.line).join("، ") : "");
-    msg.className = r.errors.length ? "err" : "";
-    const table = document.getElementById("table");
-    table.replaceChildren();
-    for (const [product, total] of Object.entries(r.byProduct)) {
-      const tr = table.insertRow();
-      tr.insertCell().textContent = product;
-      const td = tr.insertCell();
-      td.className = "n";
-      td.textContent = total.toLocaleString("en-US");
-    }
-  }
-
-  function start() {
-    const t = performance.now();
-    worker = new Worker(new URL("./worker.js", import.meta.url), { type: "module" });
-    worker.onmessage = (e) => {
-      if (e.data.type === "progress") bar.value = e.data.done;
-      if (e.data.type === "error") {
-        msg.textContent = "الملف فيه مشكلة: " + e.data.message;
-        msg.className = "err";
-        worker.terminate();
-        worker = null;
-        setBusy(false);
-      }
-      if (e.data.type === "result") {
-        bar.value = bar.max;
-        showResult(e.data, Math.round(performance.now() - t));
-        worker.terminate();
-        worker = null;
-        setBusy(false);
-      }
-    };
-    worker.onerror = (e) => {
-      msg.textContent = "الـ worker وقع: " + e.message;
-      msg.className = "err";
-      worker = null;
-      setBusy(false);
-    };
-    worker.postMessage({ generate: 200000, bad: [50, 120000, 199000] });
-    setBusy(true);
-    msg.textContent = "بيحسب...";
-  }
-
-  startBtn.addEventListener("click", () => { if (!worker) start(); });
-  cancelBtn.addEventListener("click", () => {
-    worker?.terminate();
-    worker = null;
-    bar.value = 0;
-    msg.textContent = "اتلغى";
-    setBusy(false);
-  });
-</script>
-</body>
-</html>
-~~~
-
-~~~js test.js
+~~~js check.test.mjs
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { totals, makeCSV, HEADER } from "./csv.js";
+import { parseLine, locate, analyze, marks } from "./check.mjs";
 
-test("ملف صغير معروف: الإجماليات صح", () => {
-  const text = HEADER + "\n2026-11-01,قلم,2,10.5\n2026-11-02,قلم,1,10.5\n2026-11-02,شنطة,3,100\n";
-  assert.deepEqual(totals(text), { rows: 3, byProduct: { قلم: 31.5, شنطة: 300 }, errors: [] });
+const good = "2026-11-21T10:15:02Z GET /api/orders/17 200 35ms ip=10.0.0.7";
+
+test("سطر سليم بيتفك لحقوله", () => {
+  const r = parseLine(good);
+  assert.equal(r.method, "GET");
+  assert.equal(r.status, 200);
+  assert.equal(r.ms, 35);
+  assert.deepEqual(r.indices.path, [25, 39]);
 });
 
-test("٣ سطور بايظة بترجع بأرقامها من غير ما يقع", () => {
-  const r = totals(makeCSV(1000, [50, 500, 900]));
-  assert.equal(r.rows, 1000);
-  assert.deepEqual(r.errors.map(e => e.line), [51, 501, 901]);
+test("الـ method بأي حالة حروف، والباقي حساس", () => {
+  assert.equal(parseLine(good.replace("GET", "get")).method, "GET");
+  assert.equal(parseLine(good.replace("ip=", "IP=")), null);
 });
 
-test("qty مش رقم صحيح أو سالب أو سطر ناقص = غلط", () => {
-  const text = HEADER + "\nd,قلم,abc,1\nd,قلم,-2,1\nd,قلم,2\nd,,1,1\nd,قلم,1,x";
-  assert.equal(totals(text).errors.length, 5);
+test("locate بيقول الحقل والعمود", () => {
+  assert.deepEqual(locate(good.replace("200", "2O0")), { field: "status", col: 40 });
+  assert.deepEqual(locate(good.replace("GET", "FETCH")), { field: "method", col: 21 });
+  assert.deepEqual(locate(good + " extra"), { field: "end", col: good.length });
+  assert.equal(locate(good), null);
 });
 
-test("header غلط بيرمي", () => {
-  assert.throws(() => totals("a,b,c\n1,2,3"), /أول سطر/);
+test("analyze: العد والأبطأ والسطور الفاضية و CRLF", () => {
+  const text = [good, "", "2026-11-21T10:15:03Z POST /api/login 401 120ms ip=10.0.0.9", "garbage"].join("\r\n");
+  const r = analyze(text);
+  assert.equal(r.ok.length, 2);
+  assert.equal(r.bad.length, 1);
+  assert.equal(r.bad[0].no, 4);
+  assert.deepEqual(r.byStatus, { 200: 1, 401: 1 });
+  assert.equal(r.slowest.path, "/api/login");
 });
 
-test("progress كل 10000 سطر، والإلغاء بيوقف", () => {
-  const seen = [];
-  totals(makeCSV(50000), { onProgress: d => seen.push(d) });
-  assert.deepEqual(seen, [10000, 20000, 30000, 40000, 50000]);
-  let calls = 0;
-  assert.equal(totals(makeCSV(50000), { onProgress: () => calls++, shouldStop: () => calls >= 2 }), null);
-  assert.equal(calls, 2);
+test("marks بيرسم تحت كل حقل", () => {
+  const r = parseLine(good);
+  assert.equal(marks(good, r.indices).slice(0, 24), "t------------------- m--");
 });
 
-test("٢٠٠ ألف سطر: نفس النتيجة كل مرة وفي وقت معقول", () => {
-  const text = makeCSV(200000, [50, 120000, 199000]);
-  const t = performance.now();
-  const a = totals(text);
-  const ms = performance.now() - t;
-  assert.equal(a.rows, 200000);
-  assert.equal(a.errors.length, 3);
-  assert.deepEqual(totals(text), a);
-  console.log("  ٢٠٠ ألف سطر في", Math.round(ms), "ms على الـ thread ده");
+test("مفيش ReDoS: سطر طويل بايظ بيخلص بسرعة", () => {
+  const evil = "2026-11-21T10:15:02Z GET /" + "a".repeat(50000) + " 200 ";
+  const t0 = performance.now();
+  analyze(evil);
+  assert.ok(performance.now() - t0 < 200);
 });
 ~~~
 
-الصفحة لازم تتفتح من server ([[npx serve]] أو Live Server)، لأن module worker مبيشتغلش من [[file://]].
-
-## الاختبارات
-
-~~~text الناتج (npm test، Node 24)
-  ٢٠٠ ألف سطر في 89 ms على الـ thread ده
-✔ ملف صغير معروف: الإجماليات صح (1.8809ms)
-✔ ٣ سطور بايظة بترجع بأرقامها من غير ما يقع (1.6423ms)
-✔ qty مش رقم صحيح أو سالب أو سطر ناقص = غلط (0.1346ms)
-✔ header غلط بيرمي (0.3758ms)
-✔ progress كل 10000 سطر، والإلغاء بيوقف (67.7999ms)
-✔ ٢٠٠ ألف سطر: نفس النتيجة كل مرة وفي وقت معقول (245.1385ms)
+~~~text الناتج: node --test (آخر السطور)
+✔ locate بيقول الحقل والعمود (0.4619ms)
+✔ analyze: العد والأبطأ والسطور الفاضية و CRLF (0.3344ms)
+✔ marks بيرسم تحت كل حقل (0.2384ms)
+✔ مفيش ReDoS: سطر طويل بايظ بيخلص بسرعة (1.0968ms)
 ℹ tests 6
-ℹ suites 0
 ℹ pass 6
 ℹ fail 0
-ℹ cancelled 0
-ℹ skipped 0
-ℹ todo 0
-ℹ duration_ms 403.1732
 ~~~
 
-## اتقاس في الصفحة (Chrome 158 بـ Playwright)
+**ترتيب البناء:**
+
+1. **[[patterns.mjs]] الأول:** كل حقل [[{ name, src, after }]]، و [[src]] مكتوب بـ [[String.raw]] عشان [[\d]] متضيعش (درس «regex literal و new RegExp»). [[after]] النص الثابت اللي بعد الحقل، وبيعدّي على [[RegExp.escape]] عشان [[ms ip=]] أو أي رمز فيه يفضل حرفي.
+2. **[[LINE]]:** الحقول كلها named groups جنب بعض، بين [[^]] و [[$]]، والـ flag [[d]] بس. و [[(?i:GET|POST|...)]] modifier: الـ method بس مش حساس للحروف، فـ [[post]] بيعدّي و [[IP=]] لأ.
+3. **[[STEPS]]:** نفس الحقول، كل واحد regex لوحده بـ [[y]]. [[locate]] بتحط [[lastIndex]] مكان ما اللي قبله خلص، وأول حقل [[exec]] بتاعه يرجّع [[null]] هو اللي وقع، و [[pos]] هو العمود.
+4. **[[check.mjs]]:** [[parseLine]] بترجّع الحقول كأرقام ([[Number]]) ومعاها [[indices]]، و [[analyze]] بتلف على السطور بـ [[split(/\r?\n/)]] عشان ملفات ويندوز، وبتتجاهل الفاضي.
+5. **[[log-check.mjs]]:** exit code 2 للاستخدام الغلط والملف المش موجود، و 1 لو فيه سطر بايظ، و 0 لو كله سليم: عشان يتحط في سكربت أو CI.
+6. **الاختبارات:** حالة سليمة، و modifier، و [[locate]] بـ ٣ أشكال غلط، و CRLF، والرسم، و ReDoS (سطر ٥٠ ألف حرف خلص في 1ms).
+
+**غلطة حقيقية وإحنا بنبنيه:** لو ضفت [[g]] لـ [[LINE]] (عادة من [[matchAll]])، النتيجة بتبوظ في صمت:
+
+~~~text الناتج بـ "dg" بدل "d"
+سليم: 2  بايظ: 4
+الـ status: {"200":1,"500":1}
+~~~
+
+سطر [[post]] السليم اتحسب بايظ: [[exec]] الأولى نجحت وخلّت [[lastIndex]] في آخر السطر، والتانية بدأت من هناك على السطر اللي بعده ففشلت. نفس فخ [[g]] مع [[test]] في درس «groups و flags»، وعشان كده [[LINE]] من غير [[g]]، و [[STEPS]] بـ [[y]] وبنحط [[lastIndex]] بإيدنا.` },
+        { lvl: 'فكرة', t: R`قواعد تنضيف نص بالـ regex`, what: R`اختار نوع نص بتتعامل معاه (رسايل عملا، أو أسامي منتجات، أو تعليقات) واكتب له ملف قواعد: كل قاعدة اسم و regex وبيتبدّل بإيه، والدالة [[clean(text)]] بتعدّي النص على القواعد بالترتيب. استخدم على الأقل: [[\k<name>]]، و modifier، و lookbehind، و [[\p{...}]] مع [[u]] أو [[v]].`, done: R`كل قاعدة ليها مثال قبل وبعد، والقواعد مبتبوظش نص سليم (رقم ١٢ رقم مبيتخفاش، وكلمة فيها حرفين متكررين زي «كوود» متتلمسش)، والترتيب مكتوب ليه.`, ext: R`اعمل صفحة فيها textarea تكتب فيها الرسالة وتشوف كل قاعدة غيّرت إيه (diff)، أو زوّد لكل قاعدة اختبار بـ [[node --test]].`, sol: R`**نسخة نموذجية:** تنضيف رسايل العملا قبل ما تتخزن في السيستم:
+
+~~~text الناتج (Node 24.22)
+عايز الطلب بكرة، رقمي 01X-XXXX-5678 و CODE:SAVE20
+~~~
+
+ده ناتج [[clean("عاااايز   الطلـــب بكرة، رقمي 01012345678 و Code: SAVE20")]].
+
+~~~js clean.mjs
+// clean.mjs: قواعد تنضيف رسايل العملا قبل ما تتخزن، كل قاعدة regex واسم ومثال
+export const RULES = [
+  { name: "مسافات زيادة", re: /[^\S\r\n]{2,}/g, to: " " },
+  { name: "تطويل", re: /(?<=\p{Script=Arabic})ـ+/gu, to: "" },
+  { name: "تكرار حروف", re: /(?<ch>\p{L})\k<ch>{2,}/gu, to: "$<ch>" },
+  { name: "إخفاء موبايل", re: /(?<!\d)01[0125](?<mid>\d{4})(?<end>\d{4})(?!\d)/g, to: "01X-XXXX-$<end>" },
+  { name: "كود خصم بأي حالة", re: /\b(?i:code)[:\s]*(?<c>[A-Z0-9]{4,8})\b/g, to: "CODE:$<c>" },
+];
+
+export function clean(text) {
+  return RULES.reduce((t, r) => t.replace(r.re, r.to), text);
+}
+
+if (import.meta.main) {
+  const msg = "عاااايز   الطلـــب بكرة، رقمي 01012345678 و Code: SAVE20";
+  console.log(clean(msg));
+}
+~~~
+
+**ليه التصميم ده:**
+
+- كل قاعدة object فيه [[name]]: لو حاجة اتغيّرت غلط تعرف أنهي قاعدة. والـ [[reduce]] بيعدّي النص عليهم بالترتيب.
+- **مسافات زيادة** الأول: [[[^\S\r\n]{2,}]] مسافتين أو أكتر من غير ما يلمس السطور.
+- **التطويل** ([[ـ]]): [[(?<=\p{Script=Arabic})ـ+]] بعد حرف عربي بس.
+- **تكرار حروف**: [[(?<ch>\p{L})\k<ch>{2,}]] حرف وبعده نفس الحرف مرتين أو أكتر، فـ «عاااايز» بقت «عايز» و «كوود» (حرفين بس) متتلمسش.
+- **إخفاء الموبايل**: [[(?<!\d)]] و [[(?!\d)]] عشان رقم ١٢ خانة ميتقطعش منه موبايل.
+- **كود الخصم**: [[(?i:code)]] modifier: كلمة code بأي حالة، بس الكود نفسه [[[A-Z0-9]]] حساس. جرّبنا [[clean("كوود code:ab12 و 010123456789 و  ok")]] وطلع [[كوود code:ab12 و 010123456789 و ok]]: الكود الصغير مش كود، والرقم الطويل مش موبايل.
+
+**غلطة حصلت:** أول نسخة من قاعدة التطويل كانت [[/\p{Script=Arabic}\K?ـ+/gu]] (عادة من PCRE في PHP و grep -P)، والملف مشتغلش خالص:
 
 ~~~text الناتج
-200000 سطر سليم في 134ms، و 3 سطر بايظ: سطر 51، سطر 120001، سطر 199001
-قلم         2,024,993
-كشكول       2,024,993
-شنطة        2,025,004
-آلة حاسبة   2,024,991
-long tasks على الـ main thread وقت المعالجة: []
-حروف اتكتبت في الـ input بعد ابدأ: ظهرت عند 1 و 48 و 94ms (في وقتها)
-ابدأ ← إلغاء بعد 20ms: اتلغى | bar=0
-ابدأ تاني: 200000 سطر سليم في 125ms، و 3 سطر بايظ: سطر 51، سطر 120001، سطر 199001
-
-ونفس الحساب على الـ main thread للمقارنة (import لـ csv.js في نفس الصفحة):
-makeCSV: 43ms، totals: 67ms، long task اتسجّلت: [66]
-الإجماليات: قلم 2024993، كشكول 2024993، شنطة 2025004، آلة حاسبة 2024991 (نفس الأرقام)
+SyntaxError: Invalid regular expression: /\p{Script=Arabic}\K?ـ+/gu: Invalid escape
 ~~~
 
-- **مفيش long task على الـ main thread** وقت المعالجة، والحروف ظهرت في وقتها.
-- **نفس الحساب على الـ main thread** عمل long task 66ms (والتوليد 43ms كمان)، والإجماليات طلعت نفس الأرقام بالظبط.
-- الأرقام هنا صغيرة لأن الجهاز سريع؛ على موبايل ضعيف نفس الشغل بياخد أضعاف، وده بالظبط اللي الـ Worker بيحمي منه.
-
-## كل حتة مهمة بتعمل إيه
-
-- **[[csv.js]] من غير DOM:** نفس الملف بيشتغل في الـ worker وفي Node، فالاختبارات بتجرّب الحساب الحقيقي.
-- **[[totals(text, { every, onProgress, shouldStop })]]:** بيقسم السطور، ويتأكد من الـ header، وكل سطر بيتفحص (٤ حقول، والكمية رقم صحيح موجب، والسعر رقم)، والبايظ بيتحط في [[errors]] برقمه (الـ header سطر 1) ويكمّل. وكل [[every]] سطر بينادي [[onProgress]].
-- **[[Math.round(... * 100) / 100]]:** الأسعار فيها كسور ([[10.5]])، وجمع كسور كتير بيطلّع أرقام زي [[2024992.9999999]]، فبنقرّب لقرشين في كل خطوة.
-- **[[worker.js]]:** بيولّد الملف بنفسه لو جاله [[generate]]، أو ياخد [[text]] جاهز، ويبعت [[{ type: "progress" }]] و [[{ type: "result" }]]، ولو الحساب رمى (header غلط) بيبعت [[{ type: "error" }]] بدل ما يقع.
-- **[[new Worker(new URL("./worker.js", import.meta.url), { type: "module" })]]:** module worker عشان يقدر يعمل [[import]].
-- **[[worker.onerror]]:** لو الـ worker نفسه وقع (ملف مش موجود، أو syntax error)، الصفحة بتكتب رسالة وترجّع الزراير.
-- **الإلغاء = [[terminate()]] + worker جديد في المرة الجاية:** [[terminate]] بيقتل الـ thread فورًا حتى لو في نص loop، والـ worker المقتول مبيرجعش، فـ [[start()]] بتعمل واحد جديد كل مرة.
-
-## الغلطات اللي حصلت وإزاي اتصلحت
-
-- **التوليد كان في الصفحة:** أول نسخة كانت بتعمل [[makeCSV(200000)]] في الـ main thread وتبعت النص للـ worker. التوليد لوحده 43ms، وبعت نص ٨ ميجا لـ worker بيتنسخ (structured clone) وده كمان وقت على الـ main thread. فبقى الـ worker هو اللي بيولّد.
-- **أرقام السطور:** [[line: i + 1]] عشان رقم السطر يبقى زي ما بيتشاف في أي editor (الـ header سطر 1)، والاختبار التاني بيتأكد إن السطور البايظة طلعت 51 و 501 و 901.`  },
-        { lvl: 'فكرة', t: R`لاقي الـ long task في موقع حقيقي`, what: R`افتح موقع بتستخدمه (أو مشروع ليك)، وسجّل Performance وانت بتعمل حاجة تقيلة (فلتر، أو بحث، أو scroll)، ولاقي أطول task والدالة اللي عاملاها. لو المشروع بتاعك، صلّحها.`, done: R`عندك ملاحظة فيها مدة الـ task قبل وبعد، واسم الدالة المسؤولة، والطريقة اللي صلّحت بيها (دفعات، أو Worker، أو شغل أقل).`, ext: R`اكتب [[measure(name, fn)]] بتحذّر في الـ console لو أي دالة أخدت أكتر من 50ms، وحطها حوالين الدوال المشكوك فيها.`, sol: R`## نسخة نموذجية: صفحة فلتر منتجات بطيئة
-
-مفيش «موقع حقيقي» واحد نقيس عليه في الدرس، فعملنا صفحة شبه اللي بتقابلك في الشغل: input بيفلتر ٢٠ ألف منتج. فيها نسخة بطيئة (زي كود كتير موجود) ونسخة مصلّحة، و [[measure(name, fn)]] اللي في الـ ext.
-
-## الشكل النهائي
-
-~~~live 330 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>فلتر المنتجات</title>
-<style>
-  body { font: 15px/1.5 system-ui, sans-serif; margin: 16px; }
-  input { font: inherit; padding: 4px 8px; }
-  #list { height: 220px; overflow: auto; border: 1px solid #ccc; margin-top: 8px; }
-  #list div { padding: 2px 8px; border-bottom: 1px solid #eee; }
-  label { margin-inline-start: 10px; }
-</style>
-</head>
-<body>
-<input id="q" placeholder="فلتر..." aria-label="فلتر">
-<label><input type="checkbox" id="fast"> النسخة المصلّحة</label>
-<span id="count"></span>
-<div id="list"></div>
-<script>
-  // measure: أي دالة أطول من 50ms بتتحذّر في الـ console
-  function measure(name, fn) {
-    return function (...args) {
-      const t = performance.now();
-      const r = fn.apply(this, args);
-      const ms = performance.now() - t;
-      if (ms > 50) console.warn("⚠ " + name + " أخدت " + ms.toFixed(0) + "ms");
-      window.__last = { name, ms };
-      return r;
-    };
-  }
-
-  const products = Array.from({ length: 20000 }, (_, i) => ({ id: i, name: ["قلم", "كشكول", "شنطة", "مسطرة"][i % 4] + " " + i }));
-  const list = document.getElementById("list");
-  const count = document.getElementById("count");
-
-  // البطيء: بيرسم الـ ٢٠ ألف كلهم كعناصر، ومع كل عنصر بيقرا offsetHeight
-  const slowFilter = measure("slowFilter", (q) => {
-    list.innerHTML = "";
-    let shown = 0;
-    for (const p of products) {
-      if (!p.name.includes(q)) continue;
-      const div = document.createElement("div");
-      div.textContent = p.name;
-      list.append(div);
-      shown += div.offsetHeight > 0 ? 1 : 0;
-    }
-    count.textContent = shown + " نتيجة";
-  });
-
-  // المصلّح: فلتر الداتا الأول، وارسم أول 200 بس في fragment واحد من غير قراية layout
-  const fastFilter = measure("fastFilter", (q) => {
-    const hits = products.filter(p => p.name.includes(q));
-    const frag = document.createDocumentFragment();
-    for (const p of hits.slice(0, 200)) {
-      const div = document.createElement("div");
-      div.textContent = p.name;
-      frag.append(div);
-    }
-    list.replaceChildren(frag);
-    count.textContent = hits.length + " نتيجة" + (hits.length > 200 ? " (أول 200 ظاهرين)" : "");
-  });
-
-  document.getElementById("q").addEventListener("input", (e) => {
-    (document.getElementById("fast").checked ? fastFilter : slowFilter)(e.target.value);
-  });
-</script>
-</body>
-</html>
-~~~
-
-## الملاحظة (اللي المطلوب طالبها)
-
-~~~text اتقاس في Chrome 158 بـ Playwright
-البطيء  "ق":      4249ms | 5000 نتيجة
-البطيء  "قلم":    4802ms | 5000 نتيجة
-البطيء  "قلم 1":  1373ms | 2777 نتيجة
-المصلّح "ق":      3ms | 5000 نتيجة (أول 200 ظاهرين)
-المصلّح "قلم":    1ms | 5000 نتيجة (أول 200 ظاهرين)
-المصلّح "قلم 1":  1ms | 2777 نتيجة (أول 200 ظاهرين)
-
-الـ console:
-⚠ slowFilter أخدت 4249ms
-⚠ slowFilter أخدت 4802ms
-⚠ slowFilter أخدت 1373ms
-
-تفكيك البطيء ("ق"): append الـ 5000 عنصر من غير offsetHeight: 5ms، و layout واحدة في الآخر: 70ms
-~~~
-
-| | قبل | بعد |
-|---|---|---|
-| أطول task (حرف «ق») | 4249ms | 3ms |
-| الدالة المسؤولة | [[slowFilter]] | [[fastFilter]] |
-| الطريقة | | شغل أقل + مفيش قراية layout في الـ loop |
-
-## إزاي لقينا السبب
-
-1. **Performance في DevTools:** Record ← كتبنا حرف ← Stop. ظهرت task حمرا ٤ ثواني، وجواها مستطيلات بنفسجي صغيرة كتير جدًا اسمها **Layout** تحت [[slowFilter]].
-2. **[[measure]] حوالين الدالة:** [[⚠ slowFilter أخدت 4249ms]] في الـ console، فاتأكدنا مين.
-3. **فكّكناها:** بالـ append بس من غير [[offsetHeight]] الـ 5000 عنصر خدوا 5ms، و layout واحدة في الآخر 70ms. يعني الـ ٤ ثواني جت من **قراية [[offsetHeight]] بعد كل [[append]]**: كل قراية بتجبر المتصفح يحسب الـ layout من جديد لأن الصفحة اتغيرت (layout thrashing)، و ٥٠٠٠ مرة × حساب الصفحة كلها.
-
-## التصليح وليه
-
-- **[[products.filter]] الأول:** الفلترة على الداتا، مش على الـ DOM.
-- **أول ٢٠٠ بس:** محدش بيقرا ٥٠٠٠ سطر؛ والعدد الكلي بيتكتب. (ولو لازم الكل: virtual list بترسم اللي ظاهر بس.)
-- **[[DocumentFragment]] و [[replaceChildren]]:** كل العناصر بتدخل الصفحة مرة واحدة، فـ layout واحدة.
-- **مفيش [[offsetHeight]] جوه الـ loop:** لو محتاج تقرا مقاسات، اقرا الكل الأول وبعدين اكتب الكل.
-
-## [[measure(name, fn)]]
-
-بترجّع دالة بتلف الأصلية: بتاخد الوقت قبل وبعد بـ [[performance.now()]]، ولو أكتر من 50ms ([[long task]]) بتعمل [[console.warn]]. و [[fn.apply(this, args)]] عشان [[this]] والـ arguments يعدّوا زي ما هم، وبترجّع نتيجة الأصلية. حطها حوالين أي دالة مشكوك فيها وشيلها بعد ما تخلص.
-
-## لو المشروع بتاعك
-
-نفس الخطوات: سجّل، ولاقي أطول task، ودوّر جواها على Layout أو Recalculate Style متكررة (قراية مقاسات وسط كتابة)، أو Function Call طويلة (حساب تقيل: دفعات أو Worker). واكتب الرقمين قبل وبعد.`  },
+[[\K]] («انسى اللي فات من الـ match») مش موجودة في JS، ومع [[u]] أي escape مش معروف بيرمي. البديل في JS هو الـ lookbehind [[(?<=...)]].` },
       ],
       items: [
         {
-          cmd: "event loop",
-          title: "JS بـ thread واحد، فإزاي بيعمل كذا حاجة مع بعض؟",
-          desc: R`JavaScript بينفّذ الكود على thread واحد: حاجة واحدة في المرة، في call stack واحد. الحاجات اللي بتاخد وقت (timers و fetch و events و الملفات) مش JS اللي بيستناها، المتصفح أو Node هو اللي بيعملها برّه، ولما تخلص بيحط الـ callback بتاعها في طابور (queue).
+          cmd: "regex literal و new RegExp: خصايص الـ RegExp و toString",
+          title: "تكتب الـ regex بين / / ولا بـ new RegExp؟ وتقرا أي regex من خصايصه",
+          desc: R`فيه طريقتين تعمل بيهم regex: **regular expression literal** [[/(\d+) EGP/gi]] بيتعمل parse مع الملف كله، فلو غلط الملف مش بيشتغل خالص، وده الأحسن لما الـ pattern ثابت وانت بتكتب الكود. و [[new RegExp(pattern, flags)]] بيبني الـ regex من **نص** وقت التشغيل، فلو غلط بيرمي SyntaxError تقدر تمسكها، وده اللي بتستخدمه لما الـ pattern جاي من يوزر أو متركّب من حتت.
 
-الـ event loop لفّة بسيطة: لو الـ call stack فاضي، خد أول حاجة من الطابور وشغّلها. عشان كده [[setTimeout(fn, 0)]] مبيشتغلش فورًا: بيستنى الكود الحالي كله يخلص.`,
-          example: R`function a() { b(); }
-function b() { console.trace("الـ stack دلوقتي: b ← a ← global"); }
-a();
-setTimeout(() => console.log("3: timeout"), 0);
-fetch("https://example.com").then(() => console.log("4: fetch خلص"));
-console.log("1: آخر سطر sync");
-console.log("2: لسه sync");`,
-          try: R`افتح loupe (latentflip.com/loupe) أو أي visualizer للـ event loop وحط كود فيه setTimeout و console.log، وشوف الـ stack والـ queue بيتحركوا. وبعدين في DevTools حط breakpoint جوه [[b]] وبص على Call Stack على اليمين.`,
-          ref: [
-            { t: "MDN: JavaScript execution model", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Execution_model" },
-            { t: "MDN: Window.setTimeout()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout" },
-            { t: "MDN: Window.requestAnimationFrame()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame" },
-          ],
+الفخ في الطريقة التانية: الـ pattern جوه علامات تنصيص عادية، و [[\]] ليها معنى في النص نفسه قبل ما توصل للـ regex. فـ [["\d"]] بتبقى [["d"]]. الحل [[\\d]] أو [[String.raw]].
+
+وأي regex object فيه خصايص تقرا منها هو إيه: [[source]] (الـ pattern كنص) و [[flags]] (كل الـ flags) و boolean لكل flag ([[global]] و [[ignoreCase]] و [[multiline]] و [[dotAll]] و [[unicode]] و [[unicodeSets]] و [[hasIndices]] و [[sticky]])، و [[lastIndex]] (الخاصية الوحيدة اللي بتتغيّر)، و [[toString()]] اللي بترجّع [[/source/flags]].`,
+          example: R`// نفس الـ regex بـ ٣ طرق: literal، و new RegExp بنص عادي، و String.raw
+const lit = /(\d+)\s*EGP/gi;
+const built = new RegExp("(\\d+)\\s*EGP", "gi");
+const raw = new RegExp(String.raw$__bt(\d+)\s*EGP$__bt, "gi");
+console.log(lit.source, built.source === lit.source, raw.source === lit.source);
+const wrong = new RegExp("(\d+)\s*EGP", "gi");
+console.log(wrong.source, wrong.test("50 EGP"));
+// الـ properties: كلها getters على RegExp.prototype ما عدا lastIndex
+console.log(lit.flags, lit.global, lit.ignoreCase, lit.multiline, lit.dotAll, lit.sticky);
+console.log(lit.unicode, lit.unicodeSets, lit.hasIndices, lit.lastIndex, String(lit));
+const copy = new RegExp(lit, "dy");
+console.log(copy.flags, copy.source === lit.source, copy === lit);
+const word = "c++";
+console.log(new RegExp($__bt^$__{RegExp.escape(word)}$$__bt, "i").test("C++"));
+try { new RegExp("(\\d+"); } catch (e) { console.log(e.name + ": " + e.message); }`,
+          try: R`اكتب دالة [[flagNames(re)]] بترجّع array بأسامي الـ flags اللي شغالة في الـ regex بالترتيب ده: [[hasIndices]] و [[global]] و [[ignoreCase]] و [[multiline]] و [[dotAll]] و [[unicode]] و [[unicodeSets]] و [[sticky]]، من الخصايص مش من نص [[flags]]. يعني [[flagNames(/x/gi)]] بترجّع [[["global", "ignoreCase"]]]. حلها في المربع اللي تحت ودوس «شغّل واختبر».`,
+          sol: R`~~~js flag-names.mjs
+const NAMES = { d: "hasIndices", g: "global", i: "ignoreCase", m: "multiline", s: "dotAll", u: "unicode", v: "unicodeSets", y: "sticky" };
+function flagNames(re) {
+  return Object.values(NAMES).filter((name) => re[name]);
+}
+console.log(flagNames(/x/gi), flagNames(/x/dmsy), flagNames(/x/v), flagNames(/x/));
+~~~
+
+~~~text الناتج (Node 24.22)
+[ 'global', 'ignoreCase' ] [ 'hasIndices', 'multiline', 'dotAll', 'sticky' ] [ 'unicodeSets' ] []
+~~~
+
+- [[NAMES]] بيربط حرف كل flag باسم الخاصية بتاعته، ومترتّب بنفس ترتيب [[flags]] (d g i m s u v y).
+- [[re[name]]]: قراية خاصية باسم في متغير، زي [[re.global]] بالظبط.
+- [[filter]] بيسيب اللي قيمته [[true]] بس.`,
+          check: {
+            lang: "js",
+            starter: R`function flagNames(re) {
+  // رجّع أسامي الخصايص اللي قيمتها true
+}`,
+            tests: R`test("/x/gi", () => expect(flagNames(/x/gi)).toEqual(["global", "ignoreCase"]));
+test("الترتيب ثابت: /x/ysmd", () => expect(flagNames(/x/ysmd)).toEqual(["hasIndices", "multiline", "dotAll", "sticky"]));
+test("v لوحدها", () => expect(flagNames(/x/v)).toEqual(["unicodeSets"]));
+test("u لوحدها", () => expect(flagNames(/x/u)).toEqual(["unicode"]));
+test("من غير flags", () => expect(flagNames(/x/)).toEqual([]));
+test("regex من new RegExp", () => expect(flagNames(new RegExp("a", "ig"))).toEqual(["global", "ignoreCase"]));`,
+            solution: R`function flagNames(re) {
+  const NAMES = ["hasIndices", "global", "ignoreCase", "multiline", "dotAll", "unicode", "unicodeSets", "sticky"];
+  return NAMES.filter((name) => re[name]);
+}`
+          },
           practice: [
-            { lvl: 'سريع', t: R`صلّح الكود البايظ: زرار «احسب» بيعمل [[status.textContent = "جاري الحساب..."]] وبعدها على طول loop بيلف ٣ ثواني، وبعدين [[status.textContent = "خلص"]]. اليوزر عمره ما بيشوف «جاري». فسّر ليه وصلّحه.`, done: R`قبل التصليح النص بيفضل زي ما هو ٣ ثواني وبعدين يبقى «خلص» على طول: المتصفح مبيرسمش غير لما الـ call stack يفضى. بعد ما تأجل الشغل التقيل لحد بعد الرسم ([[requestAnimationFrame(() => setTimeout(heavy, 0))]]) «جاري الحساب...» بتظهر الأول.`, sol: R`**التفسير:** المتصفح بيرسم الشاشة **بين** الـ tasks، مش في نصها. الـ click handler task واحدة: بتغيّر النص، وبعدين الـ loop بيمسك الـ main thread ٣ ثواني، وبعدين بتغيّر النص تاني. أول فرصة رسم بتيجي بعد ما الـ handler يخلص، وساعتها النص «خلص» خلاص، فـ «جاري الحساب...» عمرها ما اترسمت.
-
-~~~live 190 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>جاري الحساب</title>
-<style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
-  button { font: inherit; padding: 6px 14px; margin-inline-end: 8px; }
-  #status { font-size: 22px; font-weight: 700; min-height: 1.5em; }
-  #log { color: #555; font-size: 14px; }
-</style>
-</head>
-<body>
-<button id="bad">احسب (البايظ)</button>
-<button id="good">احسب (المصلّح)</button>
-<p id="status">جاهز</p>
-<p id="log"></p>
-<script>
-  const status = document.getElementById("status");
-  const log = document.getElementById("log");
-
-  function heavy() {
-    const s = performance.now();
-    while (performance.now() - s < 3000) {}
-    status.textContent = "خلص";
-  }
-
-  // بيقيس أول فرصة رسم بعد الضغط: requestAnimationFrame بيشتغل قبل الرسم على طول
-  function measureFirstPaint(t0) {
-    requestAnimationFrame(() => {
-      log.textContent = "أول فرصة رسم بعد الضغط: " + Math.round(performance.now() - t0) + "ms";
-    });
-  }
-
-  document.getElementById("bad").addEventListener("click", () => {
-    const t0 = performance.now();
-    status.textContent = "جاري الحساب...";
-    measureFirstPaint(t0);
-    heavy();
-  });
-
-  document.getElementById("good").addEventListener("click", () => {
-    const t0 = performance.now();
-    status.textContent = "جاري الحساب...";
-    measureFirstPaint(t0);
-    requestAnimationFrame(() => setTimeout(heavy, 0));
-  });
-</script>
-</body>
-</html>
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const a = new RegExp("\d+\.\d+")]]. إيه اللي هيطبعه [[a.source]] و [[a.test("3.14")]] و [[a.test("dd.d")]]؟ وبعدين اكتبه صح بطريقتين.`, done: R`توقعت إن الـ source [[d+.d+]] وإن [["3.14"]] مش هيعدّي بس [["dd.d"]] هيعدّي، وكتبت النسختين [["\\d+\\.\\d+"]] و [[String.raw]] وطلعوا نفس الـ source.`, sol: R`~~~js p1.mjs
+const a = new RegExp("\d+\.\d+");
+console.log(a.source, a.test("3.14"), a.test("dd.d"));
+const b = new RegExp("\\d+\\.\\d+");
+const c = new RegExp(String.raw$__bt\d+\.\d+$__bt);
+console.log(b.source, b.test("3.14"), c.source === b.source);
 ~~~
 
-~~~text اللي اتقاس في Chrome 158 (Playwright)
-الزرار البايظ:   أول فرصة رسم بعد الضغط: 3000ms   (و «جاري الحساب...» عمرها ما ظهرت)
-الزرار المصلّح:  أول فرصة رسم بعد الضغط: 6ms      (و «جاري الحساب...» ظهرت ٣ ثواني، وبعدين «خلص»)
+~~~text الناتج (Node 24.22)
+d+.d+ false true
+\d+\.\d+ true true
 ~~~
 
-**القياس:** [[measureFirstPaint]] بتسجّل [[requestAnimationFrame]]، والـ callback ده بيشتغل قبل الرسم الجاي على طول. في البايظ أول فرصة كانت بعد **3001ms** (بعد الـ loop كله). في المصلّح بعد **6ms**، والـ loop لسه مبدأش.
-
-**التصليح سطر سطر:** [[requestAnimationFrame(() => setTimeout(heavy, 0))]]
-
-1. الـ handler بيغيّر النص ويخلص على طول، فالـ stack فضي.
-2. [[requestAnimationFrame]]: «قبل الرسم الجاي شغّل ده». جواه بنسجّل [[setTimeout(heavy, 0)]]: task جديدة **بعد** الـ frame ده.
-3. المتصفح بيرسم «جاري الحساب...».
-4. الـ task بتاعة [[heavy]] بتشتغل، والصفحة بتتجمد ٣ ثواني (بس اليوزر شايف إن فيه حاجة شغالة)، وبعدين «خلص».
-
-ليه مش [[setTimeout(heavy, 0)]] لوحدها؟ ساعات بتشتغل قبل الرسم (لو الـ frame الجاي لسه مجاش وقته)، فـ rAF الأول بيضمن إن فيه frame عدّى.
-
-**الغلطة الشائعة:** تفتكر إن [[textContent = ...]] بيرسم على طول. هو بيغيّر الـ DOM بس، والرسم بيستنى الـ stack يفضى. والتصليح الحقيقي للشغل التقيل هو دفعات أو Worker (الدرس الجاي)؛ ده بس بيخلي الرسالة تبان.`  },
-            { lvl: 'تطبيق', t: R`اقرا وتوقّع: [[setTimeout(() => { console.log("A"); setTimeout(() => console.log("C"), 0); }, 0); setTimeout(() => console.log("B"), 0);]]. اكتب الترتيب وبعدين شغّله.`, done: R`[[A B C]]: الـ C اتسجّل في الطابور وهو بيتنفّذ A، فبيقف ورا B اللي كان مستني من الأول. ولو كتبت [[A C B]] انت متخيّل إن الـ timer الجديد بيتنفّذ جوه اللي سجّله.`, sol: R`**التوقع:** [[A B C]].
-
-~~~js timers-order.js
-setTimeout(() => {
-  console.log("A");
-  setTimeout(() => console.log("C"), 0);
-}, 0);
-setTimeout(() => console.log("B"), 0);
+- في نص عادي [["\d"]] escape مش معروف، فالـ JavaScript بيرمي الـ [[\]] ويسيب [[d]]. و [["\."]] بتبقى [["."]]. فالـ regex اللي اتبنى [[d+.d+]]: «حرف d مرة أو أكتر، أي حرف، d مرة أو أكتر»، فـ [["dd.d"]] عدّت و [["3.14"]] لأ.
+- مفيش ولا error: الغلطة دي بتعدّي في صمت. عشان كده أول حاجة تعملها لما regex مبني بـ [[new RegExp]] مش شغال: اطبع [[re.source]].
+- [["\\d"]] في النص = [[\d]] في الـ regex. و [[String.raw$__bt...$__bt]] بيسيب كل [[\]] زي ما هي، فتكتب الـ pattern بنفس شكل الـ literal.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[function wordFinder(word) { return new RegExp("\b" + word + "\b", "i"); }]]. جرّب [[wordFinder("tea").test("Tea time")]] واطبع [[JSON.stringify(wordFinder("tea").source)]]. وبعدين جرّب الكلمة [["1.5"]] على [["x 105 y"]].`, done: R`عرفت إن [["\b"]] في النص بقت حرف backspace مش word boundary (الـ test رجّعت [[false]])، وصلّحتها بـ [[String.raw]]، وزوّدت [[RegExp.escape]] فبقت [[wordFinder("1.5")]] متطابقش [["105"]].`, sol: R`~~~js p3.mjs
+function wordFinderBad(word) { return new RegExp("\b" + word + "\b", "i"); }
+function wordFinder(word) { return new RegExp(String.raw$__bt\b$__bt + RegExp.escape(word) + String.raw$__bt\b$__bt, "i"); }
+console.log(JSON.stringify(wordFinderBad("tea").source), wordFinderBad("tea").test("Tea time"));
+console.log(wordFinder("tea").source, wordFinder("tea").test("Tea time"), wordFinder("tea").test("steam"));
+console.log(wordFinder("1.5").test("x 105 y"), wordFinder("1.5").test("x 1.5 y"));
 ~~~
 
-~~~text الناتج (node timers-order.js، Node 24)
-A
-B
-C
+~~~text الناتج (Node 24.22)
+"\btea\b" false
+\b\x74ea\b true false
+false true
 ~~~
 
-**بالترتيب:**
-
-1. الكود الـ sync بيسجّل timer الـ A وبعده timer الـ B. الطابور: [[A، B]].
-2. الـ stack فضي، فالـ event loop بياخد [[A]]: بيطبع A، و**جواه** بيسجّل timer الـ C. الطابور بقى: [[B، C]] (الـ C اتحط **في الآخر**).
-3. ياخد B ← يطبع B.
-4. ياخد C ← يطبع C.
-
-كل callback task لوحدها، والـ task مبتتقطعش عشان واحدة جديدة: الجديدة بتقف في آخر الطابور.
-
-**الغلطة الشائعة:** [[A C B]]، على أساس إن الـ C «جوه» A فهتتنفّذ معاها. [[setTimeout]] عمره ما بيشغّل حاجة جوه اللي سجّلته، حتى بـ 0.`  },
-            { lvl: 'تحدي', t: R`اشرحها بالـ stack: اكتب [[function count(n) { return n === 0 ? "done" : count(n - 1); }]] ونادي [[count(1e6)]]. وبعدين نسخة async: [[async function countA(n) { if (n === 0) return "done"; await null; return countA(n - 1); }]] و [[countA(1e5).then(console.log)]]. اكتب ٣ سطور لزميل بتشرح الفرق.`, done: R`الأولى بتقع بـ [[RangeError: Maximum call stack size exceeded]]. والتانية بتطبع [[done]] من غير ما تقع. والشرح فيه إن كل [[await]] بيرجّع للـ event loop والـ stack بيفضى قبل اللفة اللي بعدها، فالعمق مبيتجمعش.`, sol: R`~~~js stack-depth.js
-function count(n) {
-  return n === 0 ? "done" : count(n - 1);
+- [["\b"]] في نص JavaScript **escape معروف**: حرف backspace (كوده 8)، مش [[\]] و [[b]]. فالـ regex بقى «backspace ثم tea ثم backspace» ومفيش نص فيه كده. و [[JSON.stringify]] بيكتب حرف الـ backspace [[\b]]، فشكله زي الصح وهو غلط، وده اللي بيخلّي الباج ده صعب.
+- [[String.raw$__bt\b$__bt]] بيدّي حرفين حقيقيين: [[\]] و [[b]].
+- [[RegExp.escape(word)]]: الكلمة جاية من برّه، و [[.]] فيها كانت هتطابق أي حرف، فـ [["1.5"]] كانت هتلاقي [["105"]]. ([[\x74]] هو حرف t: [[RegExp.escape]] بتعمل كده لأول حرف، شرحناه في درس «test و match و matchAll و replace».)` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[withFlags(re, add, remove)]] بترجّع regex **جديد** بنفس الـ source والـ flags بعد ما تزوّد اللي في [[add]] وتشيل اللي في [[remove]]، ومتلمسش الأصلي ولا [[lastIndex]] بتاعه، وترمي TypeError مفهومة لو النتيجة فيها [[u]] و [[v]] مع بعض.`, done: R`[[withFlags(/(\d+) EGP/gi, "d", "g")]] بترجّع regex الـ flags بتاعه [[di]] و [[lastIndex]] صفر، والأصلي فضل [[gi]] و [[lastIndex]] بتاعه زي ما هو، و [[withFlags(/x/u, "v")]] بترمي رسالتك انت مش رسالة الـ engine.`, sol: R`~~~js p4.mjs
+function withFlags(re, add = "", remove = "") {
+  const flags = new Set(re.flags);
+  for (const f of remove) flags.delete(f);
+  for (const f of add) flags.add(f);
+  if (flags.has("u") && flags.has("v")) throw new TypeError("u و v مينفعوش مع بعض: اختار واحد");
+  return new RegExp(re.source, [...flags].join(""));
 }
-try {
-  console.log(count(1e6));
-} catch (err) {
-  console.log(err.name + ": " + err.message);
-}
-
-async function countA(n) {
-  if (n === 0) return "done";
-  await null;
-  return countA(n - 1);
-}
-const t = performance.now();
-countA(1e5).then(r => console.log(r, "بعد", Math.round(performance.now() - t), "ms"));
-console.log("السطر ده بيتطبع قبل done: countA مش بتوقف الـ stack");
+const base = /(\d+) EGP/gi;
+base.lastIndex = 7;
+const copy = withFlags(base, "d", "g");
+console.log(copy.flags, copy.lastIndex, base.lastIndex, copy.source === base.source);
+try { withFlags(/x/u, "v"); } catch (e) { console.log(e.name + ": " + e.message); }
+console.log(withFlags(/x/u, "v", "u").flags);
 ~~~
 
-~~~text الناتج (node stack-depth.js، Node 24)
-RangeError: Maximum call stack size exceeded
-السطر ده بيتطبع قبل done: countA مش بتوقف الـ stack
-done بعد 90 ms
+~~~text الناتج (Node 24.22)
+di 0 7 true
+TypeError: u و v مينفعوش مع بعض: اختار واحد
+v
 ~~~
 
-**الشرح لزميل في ٣ سطور (الإجابة النموذجية):**
+- [[new Set(re.flags)]]: النص [["gi"]] بيتفك لحروفه، والـ Set بيمنع التكرار، فـ [[add]] لـ flag موجود مبيعملش [["gg"]] (اللي كانت هترمي [[Invalid flags]]).
+- [[new RegExp(re.source, ...)]] بيعمل object جديد [[lastIndex]] بتاعه 0، فالأصلي مبيتأثرش.
+- كان ممكن [[new RegExp(re, flags)]] على طول (الـ constructor بياخد regex وبيستخدم الـ source بتاعه)، بس بناء الـ flags بإيدك هو اللي بيخليك تشيل وتزوّد.
+- لاحظ إن الـ flags بتطلع مترتبة [[di]] مش [[id]]: الـ getter [[flags]] بيرتّبهم دايمًا.` },
+            { lvl: 'سريع', t: R`**دوّر بنفسك:** من غير ما تجرّب، [[new RegExp("a", "yusmigd").flags]] هتطبع إيه؟ دوّر في صفحة MDN بتاعة [[RegExp.prototype.flags]] على الترتيب، وبعدين جرّب و [[String(new RegExp("a", "yvsmigd"))]] كمان.`, done: R`لقيت إن الترتيب ثابت مهما كتبتهم، وتوقعت [[dgimsuy]] و [[/a/dgimsvy]] وطلعوا كده.`, sol: R`~~~js p5.mjs
+console.log(new RegExp("a", "yusmigd").flags, String(new RegExp("a", "yvsmigd")));
+~~~
 
-> [[count(1e6)]] بتنادي نفسها مليون مرة **وهي لسه مخلصتش**، فكل نداء بيفضل frame على الـ call stack لحد ما الـ stack يتملي ويرمي [[RangeError]].
-> في [[countA]]، كل [[await null]] بيوقّف الدالة ويرجّع للـ event loop، فالـ stack بيفضى خالص قبل ما الباقي يكمّل كـ microtask.
-> يعني في أي لحظة فيه نداء واحد بس على الـ stack، فالعمق مبيتجمعش، والتمن إنها أبطأ (90ms لـ ١٠٠ ألف) لأن كل لفة بتعدّي على الـ event loop.
+~~~text الناتج (Node 24.22)
+dgimsuy /a/dgimsvy
+~~~
 
-والسطر اللي اتطبع **قبل** [[done]] بيأكد ده: [[countA(1e5)]] رجّعت Promise على طول، والكود اللي بعدها كمّل.
-
-**الغلطة الشائعة:** تفتكر إن [[async]] لوحدها بتحل المشكلة. لو شلت [[await null]]، كل النداءات بتحصل sync جوه بعض، والـ stack بيتملي برضه.`  },
+MDN بيقول إن [[flags]] بيتبني بقراية كل خاصية boolean بالترتيب: [[hasIndices]] (d) ثم [[global]] (g) ثم [[ignoreCase]] (i) ثم [[multiline]] (m) ثم [[dotAll]] (s) ثم [[unicode]] (u) ثم [[unicodeSets]] (v) ثم [[sticky]] (y)، يعني **أبجدي**. و [[toString()]] بيستخدم [[flags]]، فالترتيب في [[/a/dgimsvy]] نفسه. فايدتها: لو بتقارن regexين بالنص ([[String(a) === String(b)]]) الترتيب اللي اتكتبوا بيه مبيفرقش.` },
           ],
           flag: "script",
           deep: {
-            why: R`ده أشهر سؤال JS في الانترفيو للـ mid و senior: «اشرح الـ event loop». وفهمه بيفسّر كل حاجة غريبة في async: ليه الـ setTimeout بتتأخر، وليه loop تقيل بيجمّد الصفحة، وليه Promise بيشتغل قبل setTimeout.`,
-            how: R`الأجزاء: الـ call stack (الدوال اللي شغالة دلوقتي، فوق بعض)، والـ heap (الـ objects)، والـ Web APIs في المتصفح أو libuv في Node (اللي بيعملوا الشغل البطيء فعلًا، وأحيانًا على threads تانية)، والطوابير.
+            why: R`الـ regex في الشغل الحقيقي مش دايمًا ثابت: بحث بكلمة اليوزر، وقايمة كلمات ممنوعة من قاعدة بيانات، و pattern في ملف config، و Zod و ESLint بياخدوا regex ويعرضوه في رسالة. ولو مش فاهم إن [["\d"]] بتضيع في النص، أو إن [[lastIndex]] حالة متخزنة جوه الـ object، هتقضي ساعات على باج بيعدّي في صمت.`,
+            how: R`الـ **literal** [[/.../flags]] جزء من الـ grammar: الـ parser بيقراه مع الملف، فأي غلطة فيه SyntaxError **قبل ما أول سطر يشتغل**. وكل مرة الكود يعدّي على الـ literal بيتعمل object **جديد** ([[make() === make()]] بـ [[false]])، بس الـ pattern نفسه مبيتعملش له compile تاني.
 
-اللفة الواحدة في المتصفح تقريبًا: ١. خد task واحدة من طابور الـ tasks (macrotask) وشغّلها لحد ما الـ stack يفضى. ٢. شغّل كل الـ microtasks (Promises) لحد ما طابورها يفضى. ٣. لو جه وقت رسم الشاشة (حوالي كل 16ms على شاشة 60Hz)، شغّل [[requestAnimationFrame]] callbacks، واحسب الـ layout، وارسم. وارجع لـ ١.
+[[new RegExp(x, flags)]]: لو [[x]] نص، بيعمل parse وقت التشغيل. ولو [[x]] regex، بياخد [[source]] بتاعه، ولو بعت flags جديدة بتحل محل القديمة بالكامل (مش بتتضاف). و [[RegExp(x)]] من غير [[new]] بيرجّع نفس الـ object لو [[x]] regex ومفيش flags.
 
-يعني مفيش حاجة بتقطع الكود وهو شغال. أي دالة بتبدأ بتخلص للآخر (run-to-completion). وعشان كده مش محتاج locks زي اللغات اللي فيها threads.
+الخصايص كلها **getters على [[RegExp.prototype]]** (مش على الـ object)، فـ [[Object.getOwnPropertyNames(/a/)]] بيطلع [[[ 'lastIndex' ]]] بس، والكتابة فيهم بترمي في strict mode ([[TypeError: Cannot set property global of [object Object] which has only a getter]]). يعني الـ regex مبيتغيّرش بعد ما يتعمل، إلا [[lastIndex]].
 
-في Node الفكرة نفسها بس الطوابير مقسمة phases (timers ثم I/O ثم setImmediate...)، و [[process.nextTick]] بيشتغل قبل الـ Promises. التفاصيل في تاب «Node و npm» وتاب الانترفيو (concurrency vs parallelism).`,
-            when: "كل ما تشوف ترتيب تنفيذ غريب، أو صفحة بتهنّج، أو callback بيتأخر. وفي أي انترفيو فرونت أو Node.",
-            mistakes: R`تفتكر إن setTimeout بـ 1000 معناه بعد ثانية بالظبط: معناها «مش قبل ثانية»، ولو الـ stack مشغول هتتأخر. وتفتكر إن async معناه parallel: الكود بتاعك لسه على thread واحد، اللي بيحصل بالتوازي هو الـ I/O بس. وفي الانترفيو ارسم الـ stack والـ queue والـ microtask queue، واشرح مثال بالترتيب.`
+و [[source]] للـ regex الفاضي [[(?:)]] (عشان [[//]] تعليق)، و [[/]] جوه الـ pattern بتطلع [[\/]]، والسطر الجديد [[\n]]: [[source]] دايمًا نص ينفع يتحط بين [[/ /]] ويشتغل.`,
+            when: R`literal في ٩٠٪ من الحالات: الـ pattern ثابت، والغلط يبان أول ما تشغّل، والـ editor بيلوّنه. و [[new RegExp]] لما الـ pattern متركّب: كلمة يوزر (دايمًا مع [[RegExp.escape]])، أو حتت من config، أو نسخة من regex موجود بـ flags مختلفة. واقرا الخصايص في أي كود بياخد regex من برّه: مثلًا ارفض أي regex مفيهوش [[g]] قبل [[matchAll]]، أو اعمل نسخة من غير [[g]] قبل [[test]].`,
+            mistakes: R`[["\d"]] و [["\b"]] و [["\s"]] في نص عادي (الأولى والتالتة بيضيعوا الـ [[\]]، والتانية بتبقى حرف backspace). ونص يوزر في [[new RegExp]] من غير escape. ومقارنة regexين بـ [[===]] (دايمًا [[false]]: objects مختلفة) بدل [[String(a) === String(b)]]. وتفتكر [[new RegExp(re, "y")]] بيزوّد [[y]] على الـ flags القديمة: لأ، بيبدّلها. وتعدّل [[re.global = true]] وتستغرب إنه مبيتغيّرش.`
           },
-          teach: R`## المثال بيوريك إيه
+          teach: R`## الفكرة في سطر
 
-حاجتين: الـ **call stack** (مين بينادي مين دلوقتي)، وإن أي حاجة async بتستنى الكود المتزامن كله يخلص، حتى لو مستنية 0ms. اتشغّل بـ Node 24 على Windows كملف [[app.mjs]].
-
----
-
-## ١. الـ call stack: [[console.trace]]
-
-~~~text app.js
-function a() { b(); }
-function b() { console.trace("الـ stack دلوقتي: b ← a ← global"); }
-a();
-~~~
-
-- [[a]] بتنادي [[b]]، و [[b]] بتطبع الـ stack.
-- **الـ call stack** (كومة النداءات): قايمة الدوال اللي شغالة دلوقتي، فوق بعض. لما دالة تتنادى بتتحط فوق، ولما تخلص بتتشال. والـ JavaScript بيشتغل على اللي فوق خالص بس.
-- [[console.trace(رسالة)]]: بيطبع الرسالة ومعاها الـ stack اللي وصّلنا هنا.
-
-~~~text الناتج (أوله)
-Trace: الـ stack دلوقتي: b ← a ← global
-    at b (file:///C:/Users/ali/js/app.mjs:2:24)
-    at a (file:///C:/Users/ali/js/app.mjs:1:16)
-    at file:///C:/Users/ali/js/app.mjs:3:1
-    at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
-~~~
-
-اقراه من فوق لتحت = من الأحدث للأقدم:
-
-| السطر | معناه |
-|---|---|
-| [[at b (...app.mjs:2:24)]] | دلوقتي جوه b، السطر 2 العمود 24 (مكان [[console.trace]]) |
-| [[at a (...:1:16)]] | b اتنادت من a، السطر 1 العمود 16 |
-| [[at file:///...:3:1]] | و a اتنادت من الكود الـ global (برّه أي دالة)، السطر 3 |
-| [[at ModuleJob.run ...]] | وتحت ده كود Node الداخلي اللي شغّل الملف |
-
-و [[b]] لما تخلص بتتشال، وبعدها [[a]]، والـ stack يرجع للكود الـ global.
+الـ regex ليه شكلين في الكود: **literal** بين [[/ /]]، أو **object** بتبنيه بـ [[new RegExp]]. الاتنين بيطلّعوا نفس النوع ([[RegExp]])، والفرق إمتى الـ pattern بيتقري، ومين بيتعامل مع الـ [[\]]. وبعد ما يتعمل، كل حاجة عنه مكتوبة في خصايصه. كل الناتج هنا اتشغّل فعلًا على Node 24.22 (ويندوز).
 
 ---
 
-## ٢. ٤ رسايل: مين يطلع الأول؟
+## ١. regular expression literal: بيتقري مع الملف
 
-~~~text app.js
-setTimeout(() => console.log("3: timeout"), 0);
-fetch("https://example.com").then(() => console.log("4: fetch خلص"));
-console.log("1: آخر سطر sync");
-console.log("2: لسه sync");
+~~~js app.mjs
+const lit = /(\d+)\s*EGP/gi;
 ~~~
-
-- [[setTimeout(fn, 0)]]: «شغّل fn بعد 0ms». JavaScript مش هو اللي بيعدّ الوقت: بيسلّم الـ timer لـ Node (أو المتصفح) ويكمّل على طول. ولما الوقت يخلص، الـ callback بيتحط في **طابور** (queue).
-- [[fetch(...).then(fn)]]: الطلب بيتبعت على الشبكة برّه JavaScript، و [[fn]] هتتشغّل لما الرد ييجي.
-- السطرين الأخيرين **sync** (متزامنين): بيتنفّذوا فورًا بالترتيب.
-
-~~~text الناتج
-1: آخر سطر sync
-2: لسه sync
-3: timeout
-4: fetch خلص
-~~~
-
-### ليه بالترتيب ده؟
-
-الـ **event loop** لفّة بسيطة:
-
-1. شغّل الكود الحالي لحد ما الـ stack يفضى (ده اسمه run-to-completion: مفيش حاجة بتقطع دالة شغالة).
-2. لو الـ stack فاضي: خد أول callback من الطابور وشغّله.
-3. ارجع لـ ١.
-
-فـ 1 و 2 أولًا لأنهم في الكود اللي شغال دلوقتي. وبعدين الـ timeout، لأن 0ms خلصت بسرعة والـ callback بتاعه كان مستني في الطابور. والـ fetch آخر حاجة لأن الشبكة أبطأ (ممكن تسبق الـ timeout لو الرد جه أسرع، الاتنين async).
-
-> [[setTimeout(fn, 0)]] معناها «مش قبل 0ms، وبعد ما الـ stack يفضى»، مش «دلوقتي». ونفس الكلام لـ [[setTimeout(fn, 1000)]]: بعد ثانية **على الأقل**.
-
----
-
-## ٣. مين بيعمل الشغل البطيء؟
-
-| الجزء | دوره |
-|---|---|
-| الـ call stack | الكود اللي شغال دلوقتي، واحد بس في المرة |
-| الـ Web APIs (المتصفح) أو libuv (Node) | بيعملوا الـ timers والشبكة والملفات برّه JavaScript |
-| الطابور (queue) | callbacks جاهزة ومستنية دورها |
-| الـ event loop | لما الـ stack يفضى، ياخد من الطابور |
-
-يعني الـ JavaScript نفسه thread واحد، بس الانتظار نفسه مش عليه.
-
----
-
-## الخلاصة
-
-- الكود المتزامن كله بيخلص الأول، وبعدين الـ callbacks بالدور.
-- [[setTimeout(fn, 0)]] مش فوري.
-- [[console.trace]] (أو breakpoint في DevTools ← Call Stack) بيوريك مين نادى مين.
-- الدرس الجاي: ليه [[Promise.then]] بيسبق [[setTimeout]] حتى لو اتسجّل بعده.`,
-          lines: [
-            R`[[a]] بتنادي [[b]]، عشان نشوف الـ call stack: كل دالة بتتنادى بتتحط فوق اللي ناداها، وبتتشال لما ترجع.`,
-            R`[[console.trace]] بيطبع الرسالة ومعاها الـ call stack اللي فيه دلوقتي: [[b]] فوق، وتحتها [[a]]، وتحتهم الكود الأساسي. ده نفس اللي بتشوفه تحت أي error، ومفيد لما تحتاج تعرف «مين نادى الدالة دي».`,
-            R`[[a]] بتدخل الـ stack، وتنادي [[b]] فوقها، و [[b]] تطبع وتخرج، وبعدين [[a]] تخرج. كل ده متزامن: السطر اللي بعده مش هيبدأ غير لما الـ stack يرجع زي ما كان.`,
-            R`[[setTimeout]] بتسجّل الـ timer وترجع فورًا. بعد 0ms الـ callback بيتحط في طابور الـ tasks، بس مش هيتنفّذ غير لما الـ stack يفضى خالص، فهيطلع بعد السطرين المتزامنين اللي تحت مع إنه مكتوب قبلهم.`,
-            R`الطلب بيتبعت في الخلفية و [[fetch]] ترجّع Promise على طول من غير ما تستنى. الـ [[then]] هتشتغل لما الرد ييجي، يعني أكيد بعد كل الكود المتزامن، وغالبًا بعد الـ timeout كمان لأن الشبكة أبطأ من 0ms.`,
-            R`كود متزامن، فبيتطبع فورًا وقبل الـ timeout والـ fetch مع إنهم اتكتبوا قبله. الأرقام في الرسايل هي ترتيب الطباعة الحقيقي.`,
-            R`برضه متزامن فبيتطبع قبلهم. بعد السطر ده الـ stack بيفضى، ووقتها بس الـ event loop يبدأ ياخد من الطوابير.`,
-          ],
-          sol: R`في loupe هتشوف [[console.log]] تدخل الـ Call Stack وتخرج على طول، والـ [[setTimeout]] تدخل وتسيب الـ callback عند الـ Web APIs، وبعد الوقت يروح الـ Callback Queue، ومبيدخلش الـ stack غير لما يفضى. حتى لو الوقت 0.
-
-في DevTools لما الكود يقف عند الـ breakpoint جوه b، الـ Call Stack هيبقى [[b]] فوق، وتحتها [[a]]، وتحتها [[(anonymous)]] وده الكود الـ global. ونفس الترتيب بيطبعه [[console.trace]] في Node ([[at b]] ثم [[at a]]). والناتج كله: الـ trace، و [[1: آخر سطر sync]]، و [[2: لسه sync]]، وبعدين [[3: timeout]] (أو fetch قبلها لو خلصت أسرع، لأنهم الاتنين async). اللي بيتوقع [[3]] قبل [[1]] ده اللي محتاج الدرس ده.`
-        },
-        {
-          cmd: "microtasks و macrotasks",
-          title: "ليه Promise.then بيشتغل قبل setTimeout 0؟",
-          desc: R`فيه طابورين مش واحد. الـ macrotasks (أو tasks): setTimeout و setInterval و events و الـ I/O. والـ microtasks: [[.then]] و [[await]] و [[queueMicrotask]] و MutationObserver.
-
-القاعدة: بعد كل task، الـ event loop بيفضّي طابور الـ microtasks كله قبل ما ياخد task تانية. عشان كده أي Promise جاهز بيشتغل قبل أي setTimeout، حتى لو الـ setTimeout اتسجّل الأول.
-
-و [[await x]] معناه: الجزء اللي بعد الـ await في الدالة دي بقى microtask.`,
-          example: R`console.log("A");
-setTimeout(() => console.log("B"), 0);
-Promise.resolve()
-  .then(() => console.log("C"))
-  .then(() => console.log("D"));
-queueMicrotask(() => console.log("E"));
-(async () => {
-  console.log("F");
-  await null;
-  console.log("G");
-})();
-console.log("H");
-// الناتج: A F H C E G D B`,
-          try: R`اكتب الناتج على ورقة قبل ما تشغّل، وبعدين شغّله بـ [[node]]. وبعدين ضيف [[setTimeout(() => console.log("I"), 0)]] جوه أول then، وحاول تتوقع مكانه.`,
-          ref: [
-            { t: "MDN: Using microtasks (Microtask guide)", url: "https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide" },
-            { t: "MDN: Window.queueMicrotask()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/queueMicrotask" },
-            { t: "MDN: JavaScript execution model", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Execution_model" },
-            { t: "Node.js: The event loop, timers, and process.nextTick()", url: "https://nodejs.org/learn/asynchronous-work/event-loop-timers-and-nexttick" },
-          ],
-          practice: [
-            { lvl: 'سريع', t: R`اقرا وتوقّع: [[setTimeout(() => console.log("timeout"), 0); Promise.resolve().then(() => console.log("then")); console.log("sync");]]`, done: R`[[sync then timeout]]، حتى إن الـ setTimeout اتكتب الأول: الـ microtasks بتتفضّى كلها قبل أي task.`, sol: R`**التوقع:** [[sync then timeout]].
-
-~~~js micro-vs-macro.js
-setTimeout(() => console.log("timeout"), 0);
-Promise.resolve().then(() => console.log("then"));
-console.log("sync");
-~~~
-
-~~~text الناتج (node micro-vs-macro.js، Node 24)
-sync
-then
-timeout
-~~~
-
-1. السطر الأول بيسجّل الـ timeout في طابور الـ **tasks** (macrotasks).
-2. التاني: [[Promise.resolve()]] Promise خلصانة، فالـ [[then]] بيتحط في طابور الـ **microtasks** على طول.
-3. التالت بيطبع [[sync]]: الكود الـ sync دايمًا الأول.
-4. الـ stack فضي: الـ event loop بيفضّي **كل** الـ microtasks الأول ← [[then]].
-5. وبعدين task واحدة ← [[timeout]].
-
-**الغلطة الشائعة:** تفتكر إن اللي اتكتب الأول بيتنفّذ الأول، أو إن [[setTimeout(fn, 0)]] معناها «دلوقتي». صفر معناها «في أقرب task»، والـ microtasks دايمًا قبلها.`  },
-            { lvl: 'تطبيق', t: R`اشرحها بجدول: [[async function one() { console.log("1a"); await two(); console.log("1b"); }]] و [[async function two() { console.log("2"); }]] وبعدهم [[console.log("start"); one(); console.log("end");]]. اعمل جدول ٣ أعمدة (الـ stack، والـ microtasks، واللي اتطبع) واملاه بعد كل خطوة، وبعدين شغّل.`, done: R`الطباعة [[start 1a 2 end 1b]]، والجدول بيوضح إن [[two]] بتشتغل sync لحد آخرها، و [[1b]] بس هي اللي دخلت طابور الـ microtasks ساعة الـ await، وخرجت بعد ما [[end]] اتطبعت والـ stack فضي.`, sol: R`~~~js await-table.js
-async function one() {
-  console.log("1a");
-  await two();
-  console.log("1b");
-}
-async function two() {
-  console.log("2");
-}
-console.log("start");
-one();
-console.log("end");
-~~~
-
-~~~text الناتج (node await-table.js، Node 24)
-start
-1a
-2
-end
-1b
-~~~
-
-**الجدول (الإجابة النموذجية):**
-
-| الخطوة | الـ stack | الـ microtasks | اتطبع لحد دلوقتي |
-|---|---|---|---|
-| [[console.log("start")]] | global | فاضي | start |
-| [[one()]] بتبدأ | global ← one | فاضي | start 1a |
-| [[await two()]]: [[two]] بتتنادي الأول | global ← one ← two | فاضي | start 1a 2 |
-| [[two]] خلصت، و [[await]] بيوقّف [[one]] | global | باقي [[one]] (اللي هيطبع 1b) | start 1a 2 |
-| [[console.log("end")]] | global | باقي [[one]] | start 1a 2 end |
-| الـ global خلص، الـ stack فضي | باقي one | فاضي | start 1a 2 end 1b |
-
-**أهم نقطتين:**
-
-- [[two]] بتشتغل **sync** لحد آخرها: [[await two()]] بينادي [[two()]] عادي الأول، وبعدين يستنى الـ Promise اللي رجعت. عشان كده [[2]] قبل [[end]].
-- اللي بعد [[await]] بس ([[1b]]) هو اللي بيتحط في طابور الـ microtasks، وبيخرج لما الـ stack يفضى (بعد [[end]]).
-
-**الغلطة الشائعة:** تفتكر إن [[await]] بيوقّف البرنامج كله لحد ما [[two]] تخلص. هو بيوقّف الدالة اللي هو فيها بس، والـ caller بيكمّل.`  },
-            { lvl: 'تحدي', t: R`محاكاة وقارن: (١) microtask بيسجّل نفسه تاني ١٠٠ ألف مرة بـ [[queueMicrotask]]، وقبله [[setTimeout(() => console.log("timeout"), 0)]]: مين يطبع الأول؟ (٢) في Node: [[Promise.resolve().then(() => console.log("then")); process.nextTick(() => console.log("tick"));]] مرة في ملف [[.cjs]] ومرة في [[.mjs]].`, done: R`(١) رسالة الـ microtasks بتطلع بعد الـ ١٠٠ ألف لفة وبعدها بس [[timeout]]: microtasks مبتخلصش بتجوّع الطابور التاني كله (ولو لا نهائية الصفحة تقف). (٢) في الـ cjs [[tick]] وبعدين [[then]]، وفي الـ mjs العكس [[then]] وبعدين [[tick]]، لأن الـ ES module نفسه بيتنفّذ من جوه Promise فالـ microtasks بتخلص قبل ما Node يوصل لطابور nextTick.`, sol: R`**(١) microtask بيسجّل نفسه ١٠٠ ألف مرة:**
-
-~~~js starve.js
-setTimeout(() => console.log("timeout"), 0);
-let n = 0;
-const t = performance.now();
-function again() {
-  n++;
-  if (n < 100000) queueMicrotask(again);
-  else console.log("microtasks خلصت:", n, "لفة في", Math.round(performance.now() - t), "ms");
-}
-queueMicrotask(again);
-~~~
-
-~~~text الناتج (node starve.js، Node 24)
-microtasks خلصت: 100000 لفة في 9 ms
-timeout
-~~~
-
-الـ timeout اتسجّل الأول، بس طلع **آخر**. الـ event loop بيفضّي طابور الـ microtasks **لحد ما يبقى فاضي**، وكل microtask بيحط واحد جديد، فالطابور مفضيش غير بعد الـ ١٠٠ ألف. ولو الشرط كان مش موجود (تسجيل للأبد)، الـ timeout مكانش هيطلع خالص، وفي المتصفح الصفحة كانت هتقف من غير ما ترسم: ده الـ starvation (تجويع).
-
-**(٢) [[process.nextTick]] و [[then]] في ملفين:**
-
-~~~js order.cjs
-Promise.resolve().then(() => console.log("then"));
-process.nextTick(() => console.log("tick"));
-~~~
-
-~~~text الناتج (node order.cjs، Node 24)
-tick
-then
-~~~
-
-~~~js order.mjs
-Promise.resolve().then(() => console.log("then"));
-process.nextTick(() => console.log("tick"));
-~~~
-
-~~~text الناتج (node order.mjs، Node 24)
-then
-tick
-~~~
-
-نفس السطرين بالظبط، والترتيب اتعكس:
-
-- **في CommonJS ([[.cjs]]):** الملف بيتنفّذ كـ task عادية. لما يخلص، Node بيفضّي طابور [[nextTick]] **الأول**، وبعدين طابور الـ Promises. فـ [[tick]] قبل [[then]].
-- **في ES module ([[.mjs]]):** Node بيقيّم الـ module نفسه من جوه Promise (عشان الـ modules ممكن يبقى فيها top-level await). فالكود بتاعك بيتنفّذ وهو **جوه** microtask أصلًا، والـ [[then]] اللي سجّلته بيتنفّذ في نفس دورة الـ microtasks قبل ما Node يرجع لطابور [[nextTick]].
-
-**الدرس:** متبنيش كود على الترتيب بين [[nextTick]] والـ Promises. لو محتاج ترتيب، اربطهم ببعض صراحة ([[then]] جوه [[then]]، أو [[await]]).
-
-**الغلطة الشائعة:** تحفظ «nextTick دايمًا قبل then» من مقالة قديمة كانت كلها CommonJS.`  },
-          ],
-          flag: "script",
-          deep: {
-            why: "سؤال «رتّب الـ console.log» ده بيتسأل تقريبًا في كل انترفيو JS. وفي الشغل بيفسّر ليه الـ state مش متحدثة لما تقراها بعد await، وليه microtasks كتير ممكن تجمّد الصفحة زي loop تقيل.",
-            how: R`نمشي على المثال: الكود المتزامن الأول: A، ثم تسجيل B في طابور الـ tasks، ثم C في الـ microtasks، ثم E في الـ microtasks. الـ async function بتبدأ متزامن فبتطبع F، وأول await بيحط الباقي (G) في الـ microtasks ويرجع. ثم H.
-
-الـ stack فضي، فنفضّي الـ microtasks بالترتيب: C (ولما خلصت، D اتسجّلت في آخر الطابور)، ثم E، ثم G، ثم D. الطابور فضي. دلوقتي بس task واحدة: B.
-
-ليه الـ microtasks موجودة؟ عشان نتيجة الـ Promise تتعالج في أقرب وقت ممكن وبترتيب ثابت، قبل ما المتصفح يرسم أو يعالج events جديدة.
-
-الخطر: microtask بتعمل microtask بتعمل microtask... الطابور مش هيفضى أبدًا، والصفحة هتتجمد، لأن الرسم مبيحصلش غير بعد ما يفضى. setTimeout المتكرر مش بيعمل كده لأنه بيدي فرصة للرسم بين كل مرة.
-
-في Node: [[process.nextTick]] ليه طابور بيتفضّى قبل الـ Promises كمان، و [[setImmediate]] بيشتغل بعد مرحلة الـ I/O.`,
-            when: R`[[queueMicrotask]] لما عايز حاجة تشتغل بعد الكود الحالي بس قبل أي event أو رسم (نادرًا في كود التطبيقات). setTimeout 0 لما عايز تدي المتصفح فرصة يرسم ويستجيب الأول.`,
-            mistakes: R`تفتكر إن الترتيب حسب وقت التسجيل بس. وتنسى إن الجزء قبل أول await في async function متزامن (F اتطبعت قبل H). وتنسى إن كل then بتسجّل اللي بعدها لما تخلص بس (D جت بعد E و G).`
-          },
-          teach: R`## الفكرة
-
-فيه **طابورين** مش واحد:
-
-| الطابور | فيه إيه |
-|---|---|
-| macrotasks (أو tasks) | [[setTimeout]] و [[setInterval]] و events (ضغطة، كتابة) و I/O |
-| microtasks | [[.then]] و [[await]] و [[queueMicrotask]] |
-
-والقاعدة: بعد ما الكود اللي شغال يخلص، الـ event loop **بيفضّي طابور الـ microtasks كله** قبل ما ياخد macrotask واحدة. والمثال بيوريك ده بـ ٨ حروف. اتشغّل بـ Node 24 على Windows.
-
----
-
-## ١. المثال حتة حتة
-
-~~~text app.js
-console.log("A");
-setTimeout(() => console.log("B"), 0);
-Promise.resolve()
-  .then(() => console.log("C"))
-  .then(() => console.log("D"));
-queueMicrotask(() => console.log("E"));
-(async () => {
-  console.log("F");
-  await null;
-  console.log("G");
-})();
-console.log("H");
-~~~
-
-- [[Promise.resolve()]]: Promise **خلصان بالفعل** (resolved). فأول [[.then]] جاهزة تتسجّل microtask على طول.
-- [[.then(...).then(...)]]: التانية متسلسلة على Promise اللي الأولى بترجّعه، فمش هتتسجّل غير لما C **تخلص**.
-- [[queueMicrotask(fn)]]: بتحط fn في طابور الـ microtasks مباشرة.
-- [[(async () => { ... })()]]: async arrow function، والأقواس [[()]] في الآخر بتناديها على طول (IIFE). والـ async function بتشتغل **متزامن** لحد أول [[await]].
-- [[await null]]: أي [[await]]، حتى على حاجة مش Promise، بيوقف الدالة ويحط **باقيها** (هنا G) كـ microtask، ويرجع للي ناداها.
-
----
-
-## ٢. التتبّع خطوة بخطوة
-
-**المرحلة ١: الكود المتزامن**
-
-| السطر | يطبع | macrotasks | microtasks |
-|---|---|---|---|
-| [[console.log("A")]] | A | | |
-| [[setTimeout(B)]] | | B | |
-| [[.then(C)]] | | B | C |
-| [[queueMicrotask(E)]] | | B | C، E |
-| الـ async: [[console.log("F")]] | F | B | C، E |
-| [[await null]] | | B | C، E، G |
-| [[console.log("H")]] | H | B | C، E، G |
-
-الـ stack فضي. اتطبع لحد دلوقتي: A F H.
-
-**المرحلة ٢: فضّي الـ microtasks**
-
-| بيتنفّذ | يطبع | اللي حصل | microtasks بعدها |
-|---|---|---|---|
-| C | C | خلصت، فـ D اتسجّلت في **آخر** الطابور | E، G، D |
-| E | E | | G، D |
-| G | G | الـ async function خلصت | D |
-| D | D | | فاضي |
-
-**المرحلة ٣: macrotask واحدة**: B.
-
-~~~text الناتج
-A
-F
-H
-C
-E
-G
-D
-B
-~~~
-
----
-
-## ٣. التجربة: [[setTimeout]] جوه أول then
-
-غيّرنا أول then لـ [[.then(() => { console.log("C"); setTimeout(() => console.log("I"), 0); })]]:
-
-~~~text الناتج (على سطر واحد)
-A F H C E G D B I
-~~~
-
-I اتسجّلت في طابور الـ macrotasks **وقت ما C اشتغلت**، يعني بعد B اللي كانت هناك من المرحلة ١. والـ timers بتطلع بترتيب تسجيلها، فـ B الأول وبعدها I.
-
----
-
-## ٤. ليه ده يفرق في الشغل؟
-
-- أي [[await]] معناه إن الكود اللي بعده **مش** هيشتغل دلوقتي، حتى لو الـ Promise خلصان.
-- الـ microtasks كلها بتخلص قبل ما المتصفح يرسم. فلو microtask بتعمل microtask بتعمل microtask من غير نهاية، الصفحة هتتجمد زي loop تقيل.
-
----
-
-## ٥. event loop في Node: setImmediate و nextTick والمراحل
-
-Node عنده نفس الفكرة (كود متزامن، وبعدين microtasks، وبعدين task)، بس الـ tasks مقسومة على **مراحل** (phases) بترتيب ثابت، ومعاه طابورين زيادة: [[process.nextTick]] و [[setImmediate]]. الترتيب ده من وثائق Node («The Node.js Event Loop»):
-
-~~~text مراحل كل لفة (من وثائق Node)
-   ┌─> timers           setTimeout و setInterval اللي وقتهم جه
-   │   pending          callbacks متأجّلة من النظام (أخطاء TCP مثلًا)
-   │   poll             استنى I/O جديد (ملفات، شبكة) ونفّذ الـ callbacks بتاعته
-   │   check            setImmediate
-   └── close            زي socket.on("close")
-   وبين أي callback والتاني: nextTick الأول، وبعدين الـ Promises
-~~~
-
-### الأربعة مع بعض
-
-~~~text order.cjs
-setTimeout(() => console.log("timeout"), 0);
-setImmediate(() => console.log("immediate"));
-process.nextTick(() => console.log("nextTick"));
-Promise.resolve().then(() => console.log("promise"));
-console.log("sync");
-~~~
-
-~~~text الناتج (Node 24، order.cjs، ٦ مرات نفس النتيجة)
-sync nextTick promise timeout immediate
-~~~
-
-- [[process.nextTick(fn)]]: مش جزء من المراحل. طابور بيتفضّى **قبل** الـ Promises، بعد كل callback على طول. اسمه مضلّل: مش «الـ tick الجاي»، ده «حالًا بعد الكود ده».
-- [[setImmediate(fn)]]: بيشتغل في مرحلة **check**، يعني بعد ما الـ poll (I/O) يخلص في اللفة دي.
-
-### المفاجأة: نفس الكود في [[.mjs]]
-
-~~~text الناتج (Node 24، نفس الكود بالظبط في order.mjs، ٦ مرات)
-sync promise nextTick timeout immediate
-~~~
-
-الـ promise بقى **قبل** الـ nextTick. ليه؟ الـ ES module بيتنفّذ هو نفسه جوه Promise job، فلما الكود يخلص V8 بيكمّل يفضّي طابور الـ Promises اللي هو فيه أصلًا، وبعدين بس Node بيرجع يفضّي طابور الـ nextTick. يعني ترتيب «nextTick قبل promise» مضمون جوه callbacks، مش في أول تشغيل ملف ESM. ده سبب كافي إنك متبنيش كود على الترتيب بين الاتنين.
-
-### [[setTimeout(0)]] ولا [[setImmediate]]: مين الأول؟
-
-| فين | النتيجة (Node 24) | ليه |
-|---|---|---|
-| في أول الملف (main module) | مش ثابتة: ملف فيه السطرين دول بس، ٣٠ تشغيل: [[immediate]] الأول ٢٩ مرة و [[timeout]] مرة | الـ [[0]] بيبقى 1ms. لو اللفة الأولى وصلت مرحلة timers قبل ما الـ 1ms يعدّي، الـ timer بيستنى للفة الجاية |
-| جوه callback بتاع I/O ([[fs.readFile]]) | [[immediate timeout]] كل مرة (٥ من ٥) | إحنا في مرحلة poll، واللي بعدها على طول check، والـ timers في اللفة الجاية |
-
-~~~text io.mjs
-import { readFile } from "node:fs";
-readFile(import.meta.filename, () => {
-  setTimeout(() => console.log("timeout"), 0);
-  setImmediate(() => console.log("immediate"));
-});
-~~~
-
-فلو عايز «شغّل ده بعد الـ I/O اللي شغال دلوقتي» استخدم [[setImmediate]]، مش [[setTimeout(fn, 0)]].
-
-### nextTick ممكن يجوّع البرنامج
-
-~~~text starve.cjs
-let n = 0;
-setTimeout(() => console.log("timeout بعد", n, "nextTick"), 0);
-function again() { if (++n < 100000) process.nextTick(again); }
-process.nextTick(again);
-~~~
-
-~~~text الناتج (Node 24)
-timeout بعد 100000 nextTick
-~~~
-
-الـ timer مااشتغلش غير بعد الـ ١٠٠ ألف nextTick كلهم، لأن الطابور بيتفضّى كله قبل أي مرحلة. لو كان من غير حد، الـ I/O والـ timers عمرهم ما هيشتغلوا. نفس فكرة الـ microtasks في المتصفح. ولو عايز تقسّم شغل تقيل وتدّي الـ I/O فرصة، [[setImmediate]] هو الصح (درس «blocking و الـ main thread»).
-
-جوه timer كمان: [[timer 1]] وبعده الـ nextTick والـ promise بتوعه **قبل** [[timer 2]]، لأن الطابورين بيتفضّوا بعد كل callback مش بعد المرحلة كلها (من Node 11).
-
----
-
-## الخلاصة
-
-| الترتيب | مين |
-|---|---|
-| ١ | الكود المتزامن كله (ومنه أول جزء في أي async function لحد أول await) |
-| ٢ | كل الـ microtasks، والجديدة اللي بتتسجّل أثناءها بتتعمل كمان قبل أي macrotask |
-| ٣ | macrotask **واحدة**، وبعدها ارجع لـ ٢ |
-
-| في Node | بيشتغل إمتى |
-|---|---|
-| [[process.nextTick]] | بعد كل callback على طول، وقبل الـ Promises (غير أول تشغيل ملف ESM) |
-| [[setTimeout(fn, 0)]] | مرحلة timers، بعد 1ms على الأقل |
-| [[setImmediate]] | مرحلة check، بعد الـ I/O بتاع اللفة دي على طول |`,
-          lines: [
-            R`كود متزامن، فبيتطبع أول حاجة.`,
-            R`بتسجّل task (macrotask). حتى بـ 0ms مش هتشتغل غير بعد ما الكود المتزامن يخلص **وكمان** طابور الـ microtasks يفضى كله، فـ [[B]] هتبقى آخر حاجة.`,
-            R`Promise متحل خلاص، فأي [[then]] عليه هتتحط في طابور الـ microtasks على طول، بس متتنفّذش دلوقتي.`,
-            R`أول microtask في الطابور. هتتنفذ أول ما الكود المتزامن يخلص، قبل أي timer.`,
-            R`الـ [[then]] دي متعلقة بالـ Promise اللي راجع من [[then]] اللي قبلها، فمش هتدخل الطابور غير لما [[C]] تخلص. وقتها [[E]] و [[G]] يكونوا قدامها، فـ [[D]] تطلع بعدهم.`,
-            R`[[queueMicrotask]] بتحط دالة مباشرة في طابور الـ microtasks من غير Promise. اتسجّلت بعد [[C]] فهتتنفّذ بعدها.`,
-            R`async arrow function بتتنادى فورًا (IIFE). الـ async function بتبدأ تشتغل **متزامن** عادي لحد أول [[await]].`,
-            R`لسه قبل أي [[await]]، فـ [[F]] بتتطبع فورًا، قبل [[H]] اللي في الكود الأساسي.`,
-            R`أي [[await]] (حتى على قيمة مش Promise زي [[null]]) بيوقف الدالة ويرجّع للي ناداها، وباقي الدالة بيتحط microtask. فالكود الأساسي بيكمّل لـ [[H]].`,
-            R`باقي الدالة بعد الـ [[await]]: بيتنفّذ كـ microtask بعد [[C]] و [[E]] اللي اتسجّلوا قبله.`,
-            R`نهاية الدالة، و [[()]] بتناديها في نفس اللحظة.`,
-            R`آخر سطر متزامن. بعده الطابور بيتفضى: [[C]] و [[E]] و [[G]] و [[D]]، وبعدين الـ task [[B]]. الترتيب كله: [[A F H C E G D B]].`,
-          ],
-          sol: R`الناتج [[A F H C E G D B]]. الـ sync الأول (A و F و H، و F لأن الـ async function بتشتغل sync لحد أول await). بعدين كل الـ microtasks بالترتيب اللي اتسجلت بيه: C و E و G، وبعدها D لأنها اتسجلت لما C خلصت. وفي الآخر الـ macrotask: B.
-
-لما تضيف [[setTimeout(() => console.log("I"), 0)]] جوه أول then، I بتطلع بعد B: [[A F H C E G D B I]]. الـ timeout ده اتسجّل وقت ما C اتنفّذت، يعني بعد ما B كان في الطابور أصلًا، والـ timers بتطلع بترتيب تسجيلها. اللي بيحط I قبل D فاكر إن setTimeout بيقاطع الـ microtasks، وده الغلط.`
-        },
-        {
-          cmd: "blocking و الـ main thread",
-          title: "ليه الصفحة بتتجمد، وإزاي تشغّل حسابات تقيلة من غير تجميد",
-          desc: R`في المتصفح، نفس الـ thread اللي بيشغّل JS هو اللي بيرسم الصفحة ويستجيب للضغط والكتابة. أي كود متزامن بياخد وقت طويل (loop على مليون عنصر، أو JSON ضخم، أو sort كبير) بيجمّد كل ده. المتصفح بيعتبر أي task أطول من 50ms «long task»، وده بيبوظ مقياس INP في Core Web Vitals.
-
-الحلول: قسّم الشغل لدفعات وسيب المتصفح يتنفس بينهم، أو انقله لـ Web Worker على thread تاني خالص، أو اتأكد إن التعديلات البصرية في [[requestAnimationFrame]].`,
-          example: R`const start = Date.now();
-while (Date.now() - start < 2000) {}   // الصفحة متجمدة ثانيتين
-async function processInChunks(items, fn, size = 500) {
-  for (let i = 0; i < items.length; i += size) {
-    items.slice(i, i + size).forEach(fn);
-    await (globalThis.scheduler?.yield?.() ?? new Promise((r) => setTimeout(r, 0)));
-  }
-}
-const worker = new Worker(new URL("./sum.worker.js", import.meta.url), { type: "module" });
-worker.postMessage({ n: 1e9 });
-worker.onmessage = (e) => console.log("النتيجة:", e.data);
-// sum.worker.js: self.onmessage = (e) => { const { n } = e.data; let s = 0; for (let i = 0; i < n; i++) s += i; self.postMessage(s); };
-requestAnimationFrame(() => { document.body.style.opacity = "0.9"; });`,
-          try: R`في Console على أي صفحة شغّل أول سطرين، وحاول تعمل scroll أو تضغط زرار وانت مستني. وبعدين افتح تاب Performance في DevTools وسجّل وانت بتشغّله: هتشوف long task بالأحمر.`,
-          ref: [
-            { t: "MDN: Using Web Workers", url: "https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers" },
-            { t: "MDN: Worker.terminate()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Worker/terminate" },
-            { t: "MDN: PerformanceLongTaskTiming", url: "https://developer.mozilla.org/en-US/docs/Web/API/PerformanceLongTaskTiming" },
-            { t: "MDN: Window.setInterval()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/setInterval" },
-          ],
-          practice: [
-            { lvl: 'سريع', t: R`محاكاة في Node: [[setInterval]] بيطبع [["tick"]] والوقت من البداية كل 100ms، وبعدها على طول [[while]] بيلف ثانية كاملة ([[Date.now() - s < 1000]])، وبعد ما الـ while يخلص بـ 150ms وقّف الـ interval واطبع عدد الـ ticks.`, done: R`مفيش ولا tick وقت الـ while. بعدها tick واحد بس على طول (حوالي 1000ms) مش ١٠ ورا بعض بيعوّضوا، وإجمالي الـ ticks حوالي ٢ مش ١١: الـ timers مبتتراكمش، بتتأخر.`, sol: R`~~~js blocked-interval.js
-const start = Date.now();
-let ticks = 0;
-const id = setInterval(() => {
-  ticks++;
-  console.log("tick", ticks, "عند", Date.now() - start, "ms");
-}, 100);
-
-while (Date.now() - start < 1000) {}
-console.log("الـ while خلص عند", Date.now() - start, "ms");
-
-setTimeout(() => {
-  clearInterval(id);
-  console.log("إجمالي الـ ticks:", ticks, "(لو مكانش فيه while كان هيبقى حوالي 11)");
-}, 150);
-~~~
-
-~~~text الناتج (node blocked-interval.js، Node 24 على Windows)
-الـ while خلص عند 1000 ms
-tick 1 عند 1007 ms
-tick 2 عند 1121 ms
-إجمالي الـ ticks: 2 (لو مكانش فيه while كان هيبقى حوالي 11)
-~~~
-
-**اللي حصل:**
-
-- مفيش ولا tick وقت الـ [[while]]: الـ interval بيتنفّذ كـ task، والـ task مبتشتغلش غير لما الـ stack يفضى، والـ while ماسك الـ stack ثانية كاملة.
-- أول ما الـ while خلص (1000ms)، tick **واحد** بس على طول (1007ms)، مش ١٠ ورا بعض بيعوّضوا اللي فات. الـ timer مبيعدّش المرات اللي فاتته؛ هو بيقول «أنا جاهز» مرة، وبعدين بيتحسب ميعاده الجاي من جديد.
-- التاني بعدها بحوالي 100ms (1121ms)، وبعدين الـ [[setTimeout]] بتاع الـ 150ms وقّف كل حاجة. الإجمالي **2** بدل حوالي 11.
-
-**اللي بيتغيّر عندك:** الأرقام بالظبط (1007 و 1121) بتختلف كام ms حسب جهازك، لكن «tick واحد بعد الـ while وإجمالي ٢» ثابتين.
-
-**الغلطة الشائعة:** تعمل ساعة أو عدّاد بـ [[ticks++]] كل ثانية وتعتمد على العدد. لو الصفحة اتجمدت (أو التاب اتخبى والمتصفح بطّأ الـ timers)، العدّاد هيتأخر. احسب الوقت من [[Date.now() - start]] دايمًا.`  },
-            { lvl: 'تطبيق', t: R`قارن وقيس: array مليون رقم، و [[setInterval]] بيعد ticks كل 20ms. اجمعهم مرة بـ forEach واحدة، ومرة بـ [[processInChunks]] بتاعة الدرس بـ size [[10000]]، واطبع عدد الـ ticks اللي حصلت وقت المعالجة والمجموع في كل مرة.`, done: R`مع الـ forEach الواحدة الـ ticks اللي جواها صفر. مع الـ chunks فيه ticks اتنفّذت في النص لأن كل دفعة بتسيب الـ event loop يتنفس، والمعالجة نفسها بتاخد وقت أطول (على Windows كتير: كل [[setTimeout(r, 0)]] بيستنى حوالي 15ms، فـ ١٠٠ دفعة قربت من ثانية ونص). والمجموع واحد في الحالتين ([[499999500000]]).`, sol: R`~~~js chunks-vs-foreach.js
-async function processInChunks(items, fn, size = 500) {
-  for (let i = 0; i < items.length; i += size) {
-    items.slice(i, i + size).forEach(fn);
-    await (globalThis.scheduler?.yield?.() ?? new Promise((r) => setTimeout(r, 0)));
-  }
-}
-
-const nums = Array.from({ length: 1_000_000 }, (_, i) => i);
-
-async function measure(label, work) {
-  let ticks = 0;
-  const id = setInterval(() => ticks++, 20);
-  let sum = 0;
-  const t = performance.now();
-  await work(x => { sum += x; });
-  const ms = Math.round(performance.now() - t);
-  clearInterval(id);
-  console.log(label.padEnd(22), "ticks:", String(ticks).padStart(3), "| المجموع:", sum, "| الوقت:", ms, "ms");
-}
-
-await measure("forEach واحدة", async add => nums.forEach(add));
-await measure("chunks بـ 10000", add => processInChunks(nums, add, 10000));
-~~~
-
-(الملف ده [[.js]] جنب [[package.json]] فيه [[{"type":"module"}]] عشان الـ [[await]] اللي برّه أي دالة.)
-
-~~~text الناتج (node chunks-vs-foreach.js، Node 24 على Windows)
-forEach واحدة          ticks:   0 | المجموع: 499999500000 | الوقت: 15 ms
-chunks بـ 10000        ticks:  46 | المجموع: 499999500000 | الوقت: 1463 ms
-~~~
-
-**اللي اتقاس:**
-
-- **forEach واحدة:** صفر ticks. المليون عملية خلصت في task واحدة (15ms)، والـ interval مكانش ليه فرصة.
-- **chunks بـ 10000:** ١٠٠ دفعة، وبعد كل دفعة [[await new Promise(r => setTimeout(r, 0))]] بيرجّع للـ event loop، فالـ interval اتنفّذ 46 مرة في النص.
-- **المجموع واحد** في الحالتين: [[499999500000]].
-- **بس الوقت:** 1463ms بدل 15ms! ده مش «أطول شوية». كل [[setTimeout(r, 0)]] على Windows بيستنى حوالي 15ms (دقة الـ timer في النظام)، و ١٠٠ دفعة × ~15ms = حوالي ١.٥ ثانية. على Linux أو Mac الـ setTimeout(0) أسرع بكتير، والرقم بيبقى أقل.
-- [[globalThis.scheduler?.yield?.()]] مش موجود في Node، فالـ [[??]] نزل على الـ setTimeout. في Chrome، [[scheduler.yield()]] موجود وأسرع لأنه مش بيستنى timer.
-
-**الخلاصة:** الدفعات بتخلي الصفحة تتنفس، والتمن وقت أطول، وكل ما الدفعة أكبر الوقت الضايع أقل (بس كل دفعة بتمسك الـ thread أطول). ١٠٠٠٠ هنا معقولة: كل دفعة أقل من 1ms.
-
-**الغلطة الشائعة:** [[size = 1]] أو دفعات صغيرة جدًا: مليون setTimeout = ساعات على Windows.`  },
-            { lvl: 'تحدي', t: R`ابني صفحة فيها input وزرار «احسب» بيجمع من 0 لـ [[1e9]]: مرة الحساب في الـ main thread، ومرة في Web Worker زي الدرس. اكتب في الـ input وانت مستني. وزوّد زرار «إلغاء» بيعمل [[worker.terminate()]] ويعمل worker جديد للمرة الجاية.`, done: R`في الـ main thread الحروف اللي بتكتبها مبتظهرش لحد ما الحساب يخلص. في الـ Worker بتكتب عادي والنتيجة نفس الرقم. الإلغاء بيوقف الحساب ومفيش [[onmessage]] بيوصل بعده، و «احسب» بعدها بيشتغل تاني.`, sol: R`~~~live 190 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>Worker</title>
-<style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
-  button, input { font: inherit; padding: 5px 10px; margin: 4px 0; }
-  #out { font-weight: 700; direction: ltr; text-align: right; }
-</style>
-</head>
-<body>
-<input id="typing" placeholder="اكتب هنا وانت مستني" aria-label="اكتب هنا">
-<p>
-  <button id="main">احسب في الـ main thread</button>
-  <button id="work">احسب في Worker</button>
-  <button id="cancel">إلغاء</button>
-</p>
-<p id="out" aria-live="polite"></p>
-<script type="text/plain" id="worker-src">
-  self.onmessage = (e) => {
-    const { n } = e.data;
-    let s = 0;
-    for (let i = 0; i < n; i++) s += i;
-    self.postMessage(s);
-  };
-</script>
-<script>
-  const N = 1e9;
-  const out = document.getElementById("out");
-  // ملف الـ worker متحط في الصفحة نفسها كـ Blob عشان المثال يبقى ملف واحد
-  const workerURL = URL.createObjectURL(new Blob([document.getElementById("worker-src").textContent], { type: "text/javascript" }));
-  let worker = null;
-  let t0 = 0;
-
-  function newWorker() {
-    const w = new Worker(workerURL);
-    w.onmessage = (e) => {
-      out.textContent = "Worker: " + e.data + " في " + Math.round(performance.now() - t0) + "ms";
-      worker = null;
-    };
-    return w;
-  }
-
-  document.getElementById("main").addEventListener("click", () => {
-    t0 = performance.now();
-    let s = 0;
-    for (let i = 0; i < N; i++) s += i;
-    out.textContent = "main thread: " + s + " في " + Math.round(performance.now() - t0) + "ms";
-  });
-
-  document.getElementById("work").addEventListener("click", () => {
-    if (worker) return;
-    t0 = performance.now();
-    out.textContent = "بيحسب...";
-    worker = newWorker();
-    worker.postMessage({ n: N });
-  });
-
-  document.getElementById("cancel").addEventListener("click", () => {
-    if (!worker) return;
-    worker.terminate();
-    worker = null;
-    out.textContent = "اتلغى";
-  });
-</script>
-</body>
-</html>
-~~~
-
-~~~text اللي اتقاس في Chrome 158 (Playwright): كتبنا abc بعد الضغط بـ 100ms
-main thread:  الحروف ظهرت عند 785 و 873 و 966ms | main thread: 499999999067109000 في 727ms
-Worker:       الحروف ظهرت عند 163 و 259 و 352ms | Worker: 499999999067109000 في 690ms
-احسب ← إلغاء بعد 100ms ← استنينا 1.5 ثانية:  اتلغى
-احسب تاني:    Worker: 499999999067109000 في 691ms
-~~~
-
-**اللي اتقاس:**
-
-- **main thread:** الحساب خد 727ms، والحروف اللي اتكتبت في النص **ظهرت بعده** (785ms و 873 و 966). المتصفح خزّنها ورسمها لما الـ thread فضي.
-- **Worker:** الحساب خد 690ms على thread تاني، والحروف ظهرت في وقتها (163 و 259 و 352ms)، يعني بعد ما اتكتبت على طول.
-- **الإلغاء:** [[terminate()]] قتل الـ worker في النص، فمفيش [[onmessage]] وصل، والنص فضل «اتلغى». و «احسب» بعدها عمل worker جديد واشتغل.
-- **الرقم نفسه:** [[499999999067109000]] مش [[499999999500000000]] بالظبط، لأن المجموع عدّى [[Number.MAX_SAFE_INTEGER]]، فالكسور ضاعت (ده number مش BigInt).
-
-**كل حتة مهمة:**
-
-- **[[<script type="text/plain" id="worker-src">]]:** كود الـ worker في الصفحة نفسها كنص، و [[new Blob(...)]] و [[URL.createObjectURL]] بيعملوله URL، عشان المثال ملف واحد. في مشروع حقيقي بيبقى ملف [[sum.worker.js]] زي الدرس.
-- **[[const { n } = e.data]] قبل الـ loop:** [[e.data]] getter بيتنادى كل مرة. لو حطيته في شرط الـ loop ([[i < e.data.n]]) الحساب بياخد حوالي ٥٠ ثانية بدل 0.7 (قسناها: ١٠٠ مليون لفة 4127ms مقابل 76ms).
-- **[[if (worker) return]]:** «احسب» مبيشغّلش اتنين مع بعض.
-- **[[newWorker()]] كل مرة:** بعد [[terminate()]] الـ worker مبيرجعش يشتغل، فلازم واحد جديد.
-
-**الغلطة الشائعة:** تفتكر إن Worker بيخلي الحساب أسرع. الوقت تقريبًا هو هو (690 مقابل 727ms)؛ الفرق إن الصفحة مش واقفة.`  },
-          ],
-          flag: "script",
-          deep: {
-            why: "«الموقع بيهنّج لما أدوس على الزرار» مشكلة حقيقية بيحسها اليوزر أكتر من أي حاجة. و Google بيقيس الاستجابة (INP) كجزء من الـ SEO. وسؤال انترفيو: «إزاي تعالج ١٠٠ ألف صف من غير ما الصفحة تقف؟».",
-            how: R`طول ما فيه task شغالة، الـ event loop مش هيوصل لمرحلة الرسم ولا هيعالج الضغطات. فالحل يا إما تقصّر الـ tasks، يا إما تطلّعها برّه الـ main thread.
-
-التقسيم (chunking): كل دفعة task لوحدها، و [[setTimeout(r, 0)]] بينهم بيدي الـ event loop فرصة يرسم ويستجيب. و [[scheduler.yield()]] (موجود في Chrome و Edge ومتصفحات تانية بتلحق) بيعمل نفس الحاجة بس بيرجّعك في أول الطابور بدل آخره. الكود فوق بيستخدمه لو موجود.
-
-Web Worker: ملف JS بيشتغل على thread تاني، مالوش DOM ولا window. بتكلّمه بـ [[postMessage]]، والداتا بتتنسخ (structured clone، زي structuredClone) مش بتتشارك، إلا لو بعت ArrayBuffer كـ transferable. في Node فيه [[worker_threads]] بنفس الفكرة.
-
-[[requestAnimationFrame(fn)]] بيشغّل fn قبل الرسم الجاي بالظبط، فأي animation أو تعديل بصري فيه بيبقى ناعم ومتزامن مع الشاشة، ومبيشتغلش والتاب في الخلفية.
-
-وقبل أي حاجة من دول: قيس الأول بـ Performance tab، وغالبًا المشكلة الحقيقية حاجة أبسط (تاب HTML و CSS: layout thrashing، وتاب React للـ re-renders).`,
-            when: "Worker للحسابات التقيلة المستقلة (معالجة صور، parsing ملفات كبيرة، تشفير، بحث في داتا ضخمة). Chunking لما الشغل محتاج الـ DOM. rAF لأي animation بـ JS. و virtualization لليستات الطويلة جدًا.",
-            mistakes: R`تحط الشغل التقيل في Promise وتفتكر إنه بقى «في الخلفية»: الـ Promise مش thread، والكود جوه الـ executor بيشتغل متزامن على نفس الـ thread. وتعمل animation بـ setInterval. وتبعت objects ضخمة للـ worker كل شوية فالنسخ نفسه يبقى تقيل.`
-          },
-          teach: R`## المثال بيعمل إيه
-
-٤ أجزاء: loop بيجمّد الصفحة ثانيتين (المشكلة)، وبعدين ٣ حلول: تقسيم الشغل لدفعات، و Web Worker على thread تاني، و [[requestAnimationFrame]] للتعديلات البصرية.
-
-الكود ده للمتصفح: في Node بيقف عند سطر الـ Worker بـ [[ReferenceError: Worker is not defined]]. فشغّلناه في Chrome (headless، من صفحة على سيرفر محلي) ومعاه [[setInterval]] بيسجّل الوقت كل 100ms عشان نشوف الصفحة كانت شغالة ولا واقفة.
-
----
-
-## ١. التجميد
-
-~~~text app.js
-const start = Date.now();
-while (Date.now() - start < 2000) {}   // الصفحة متجمدة ثانيتين
-~~~
-
-- [[Date.now()]]: الوقت الحالي بالـ ms.
-- [[while (شرط) {}]]: طول ما الشرط true، لف. والجسم [[{}]] فاضي: الـ loop مش بيعمل حاجة غير إنه يسأل «عدّت ثانيتين؟» ملايين المرات.
-
-النتيجة: الـ main thread مشغول ثانيتين، فمفيش رسم ولا scroll ولا ضغط ولا timers. الـ [[setInterval]] اللي كان بيسجّل كل 100ms طلّع الأوقات دي (بالـ ms من فتح الصفحة):
-
-~~~text الناتج (أول التسجيلات)
-269, 383, 474, 2531, 2577, 2670, 2778, ...
-~~~
-
-كل 100ms تقريبًا، وبعدين **قفزة من 474 لـ 2531**: ٢ ثانية مفيش ولا تسجيل، لأن الـ timer مقدرش يشتغل والـ stack مشغول. وده بالظبط اللي اليوزر بيحسه: الصفحة «هنّجت».
-
-المتصفح بيعتبر أي task أطول من 50ms **long task**. وفي DevTools، تاب Performance، هتشوفها مستطيل عليه مثلث أحمر (ده من الـ docs ومن التجربة اليدوية في الـ «جرّب»).
-
----
-
-## ٢. الحل الأول: دفعات (chunking)
-
-~~~text app.js
-async function processInChunks(items, fn, size = 500) {
-  for (let i = 0; i < items.length; i += size) {
-    items.slice(i, i + size).forEach(fn);
-    await (globalThis.scheduler?.yield?.() ?? new Promise((r) => setTimeout(r, 0)));
-  }
-}
-~~~
-
-- [[async function]]: عشان نقدر نستخدم [[await]] جواها.
-- [[size = 500]]: قيمة افتراضية: ٥٠٠ عنصر في الدفعة.
-- [[i += size]]: [[i]] بيقفز ٥٠٠ كل لفة: 0، 500، 1000...
-- [[items.slice(i, i + size)]]: نسخة من العناصر من [[i]] لحد [[i + size]] (من غير الأخير). و [[.forEach(fn)]]: نادي fn على كل واحد.
-
-### السطر المهم: [[await (...)]]
-
-نفكّه من جوه لبرّه:
 
 | الحتة | معناها |
 |---|---|
-| [[globalThis]] | الـ object الـ global في أي بيئة ([[window]] في المتصفح) |
-| [[.scheduler?.]] | لو [[scheduler]] مش موجود، وقف ورجّع [[undefined]] من غير error |
-| [[.yield?.()]] | لو [[yield]] موجودة نادِيها، ولو لأ [[undefined]] |
-| [[??]] | لو اللي على الشمال [[undefined]] أو [[null]]، خد اللي على اليمين |
-| [[new Promise((r) => setTimeout(r, 0))]] | Promise بيخلص بعد setTimeout 0 |
+| [[/]] الأولى والأخيرة | حدود الـ literal، زي علامات التنصيص حوالين النص. مش جزء من الـ pattern |
+| [[(\d+)\s*EGP]] | الـ pattern: رقم أو أكتر (محفوظ في group)، مسافات اختيارية، وكلمة EGP |
+| [[gi]] | الـ flags بعد الـ [[/]] الأخيرة: كل الـ matches، ومن غير حساسية للحروف |
 
-يعني: استخدم [[scheduler.yield()]] لو المتصفح فيه (Chrome فيه: جرّبنا [[typeof scheduler.yield]] وطلع [[function]])، وإلا setTimeout 0. الاتنين معناهم «سيب المتصفح يرسم ويرد على اليوزر، وبعدين كمّل».
+الـ literal بيتعمل له parse **مع الملف كله**. جرّبنا ملف فيه [[console.log]] وبعده regex غلط:
 
-في Node مفيش [[scheduler]] فبيستخدم setTimeout. جرّبناها على ٢٠٠٠ رقم بتتجمع، ومعاها [[setTimeout]] اتسجّل قبلها:
+~~~js bad.mjs
+console.log("السطر ده مش هيتطبع");
+const bad = /(\d+/;
+~~~
 
 ~~~text الناتج
-timer اشتغل في النص، sum وقتها = 124750
-خلص: 1999000
+bad.mjs:2
+const bad = /(\d+/;
+            ^^^^^^
+
+SyntaxError: Invalid regular expression: /(\d+/: Unterminated group
 ~~~
 
-124750 = مجموع 0 لـ 499، يعني الـ timer لقى فرصة يشتغل **بعد أول دفعة** على طول، مش بعد ما الكل يخلص. وده نفس اللي بيحصل مع الضغطات والرسم في المتصفح.
+ولا سطر اشتغل، حتى الـ [[console.log]] اللي قبله. ده كويس: الغلطة بتبان أول ما تشغّل، مش بعد أسبوع في production.
 
 ---
 
-## ٣. الحل التاني: Web Worker
+## ٢. [[new RegExp]]: بيتقري وقت التشغيل، من نص
 
-~~~text app.js
-const worker = new Worker(new URL("./sum.worker.js", import.meta.url), { type: "module" });
-worker.postMessage({ n: 1e9 });
-worker.onmessage = (e) => console.log("النتيجة:", e.data);
+~~~js app.mjs
+const built = new RegExp("(\\d+)\\s*EGP", "gi");
+const raw = new RegExp(String.raw$__bt(\d+)\s*EGP$__bt, "gi");
+console.log(lit.source, built.source === lit.source, raw.source === lit.source);
 ~~~
 
-والملف التاني [[sum.worker.js]]:
-
-~~~text sum.worker.js
-self.onmessage = (e) => { const { n } = e.data; let s = 0; for (let i = 0; i < n; i++) s += i; self.postMessage(s); };
+~~~text الناتج
+(\d+)\s*EGP true true
 ~~~
 
-- [[new Worker(url, { type: "module" })]]: بيشغّل ملف JS على **thread تاني**. والـ worker مالوش DOM ولا [[window]].
-- [[new URL("./sum.worker.js", import.meta.url)]]: [[import.meta.url]] هو عنوان الملف الحالي، فالسطر ده بيقول «sum.worker.js اللي جنبي». (وده الشكل اللي Vite بيفهمه ويحزم الـ worker.)
-- [[postMessage({ n: 1e9 })]]: بيبعت رسالة للـ worker. [[1e9]] = 1 × 10 أس 9 = مليار. والـ object **بيتنسخ** مش بيتشارك.
-- جوه الـ worker: [[self]] هو الـ worker نفسه. لما رسالة توصل، [[e.data]] فيها الـ object، و [[const { n } = e.data]] بيطلّع الرقم في متغير **قبل** الـ loop، وبعدين بيجمع من 0 لمليار ويرجّع النتيجة بـ [[self.postMessage]].
-- [[worker.onmessage]]: لما الرد يرجع، [[e.data]] فيها الرقم.
+الـ pattern هنا **نص** (string) عادي، والنص في JavaScript عنده escapes بتاعته: [["\n"]] سطر جديد، و [["\\"]] backslash واحدة. فعشان الـ regex يستلم [[\d]] لازم تكتب في النص [[\\d]].
 
-~~~text الناتج (Console في Chrome)
-النتيجة: 499999999067109000
+و [[String.raw]] (tag قبل template literal) معناه «سيب كل [[\]] زي ما هي»، فتكتب الـ pattern بنفس شكل الـ literal بالظبط.
+
+### الغلطة اللي بتعدّي في صمت
+
+~~~js app.mjs
+const wrong = new RegExp("(\d+)\s*EGP", "gi");
+console.log(wrong.source, wrong.test("50 EGP"));
 ~~~
 
-في Chrome 158 الـ worker خلّص في حوالي 0.7 ثانية، **والصفحة كانت شغالة طول الوقت**.
+~~~text الناتج
+(d+)s*EGP false
+~~~
 
-> **ليه [[const { n } = e.data]] قبل الـ loop:** النسخة الأولى من الدرس كانت كاتبة [[i < e.data.n]] في شرط الـ loop، وخدت بين ٤٠ و ٥٥ ثانية. [[e.data]] مش متغير عادي: ده getter بتاع [[MessageEvent]] بيتنادى في كل لفة من المليار. قسناها في Chrome 158: ١٠٠ مليون لفة خدت 4127ms و [[e.data.n]] في الشرط، و 76ms لما الرقم اتحط في متغير الأول. والحلو إن طول الـ ٤٠ ثانية دول الـ setInterval في الصفحة سجّل 441 مرة، وأكبر فرق بين تسجيلين كان 115ms: حتى الشغل البطيء ده مجمّدش الصفحة لأنه على thread تاني.
+[["\d"]] في نص عادي مش escape معروف، فالـ JavaScript بيرمي الـ [[\]] ويسيب [[d]]. الـ regex بقى «حرف d، وحرف s»، ومفيش ولا error. **أول حاجة تعملها لما regex مبني بـ [[new RegExp]] مش شغال: اطبع [[source]].**
 
-> ليه الرقم مش 499999999500000000 بالظبط (المجموع الصح)؟ لأن أي number في JavaScript بيتحفظ دقيق لحد [[Number.MAX_SAFE_INTEGER]] = 9007199254740991 بس، والمجموع عدّى ده بكتير، فالكسور الصغيرة ضاعت. للأرقام دي استخدم [[BigInt]].
+### والـ pattern الغلط هنا بيرمي وقت التشغيل
+
+~~~js app.mjs
+try { new RegExp("(\\d+"); } catch (e) { console.log(e.name + ": " + e.message); }
+~~~
+
+~~~text الناتج
+SyntaxError: Invalid regular expression: /(\d+/: Unterminated group
+~~~
+
+نفس الرسالة، بس المرة دي **جوه try**، فتقدر تمسكها وتقول لليوزر «الـ pattern بتاعك غلط» بدل ما البرنامج يقع.
 
 ---
 
-## ٤. الحل التالت: [[requestAnimationFrame]]
+## ٣. خصايص الـ RegExp: الجدول كامل
 
-~~~text app.js
-requestAnimationFrame(() => { document.body.style.opacity = "0.9"; });
+~~~js app.mjs
+console.log(lit.flags, lit.global, lit.ignoreCase, lit.multiline, lit.dotAll, lit.sticky);
+console.log(lit.unicode, lit.unicodeSets, lit.hasIndices, lit.lastIndex, String(lit));
 ~~~
 
-[[requestAnimationFrame(fn)]] (اختصارها rAF): «شغّل fn قبل ما ترسم الشاشة الجاية». الشاشة 60Hz بترسم كل حوالي 16ms، فأي تعديل بصري جوه rAF بيبقى متزامن مع الرسم ومش بيتعمل مرتين في نفس الـ frame. وبعد التشغيل قرينا [[document.body.style.opacity]] وطلع [[0.9]].
+~~~text الناتج
+gi true true false false false
+false false false 0 /(\d+)\s*EGP/gi
+~~~
+
+| الخاصية | الـ flag | بترجّع إيه ومعناها |
+|---|---|---|
+| [[source]] | | الـ pattern كنص من غير [[/ /]] ومن غير flags. للـ regex الفاضي [[(?:)]] |
+| [[flags]] | | كل الـ flags كنص، مترتبين دايمًا [[dgimsuvy]] |
+| [[global]] | [[g]] | [[true]]: [[match]] و [[replace]] بيشتغلوا على كل الـ matches، و [[exec]] بيكمّل من [[lastIndex]] |
+| [[ignoreCase]] | [[i]] | [[true]]: الحروف الكبيرة زي الصغيرة |
+| [[multiline]] | [[m]] | [[true]]: [[^]] و [[$]] بيطابقوا أول وآخر **كل سطر** |
+| [[dotAll]] | [[s]] | [[true]]: النقطة بتطابق السطر الجديد كمان |
+| [[unicode]] | [[u]] | [[true]]: الـ emoji حرف واحد، و [[\p{...}]] شغالة، والـ escapes الغلط بترمي |
+| [[unicodeSets]] | [[v]] | [[true]]: زي [[u]] وزيادة طرح وتقاطع جوه [[[ ]]] (الدرس الجاي بعد الجاي) |
+| [[hasIndices]] | [[d]] | [[true]]: نتيجة [[exec]] فيها [[indices]] بأماكن كل group (الدرس الجاي) |
+| [[sticky]] | [[y]] | [[true]]: الـ match لازم يبدأ عند [[lastIndex]] بالظبط |
+| [[lastIndex]] | | رقم: هيدوّر منين المرة الجاية (مع [[g]] أو [[y]] بس). الوحيدة اللي بتتكتب |
+| [[toString()]] | | [["/" + source + "/" + flags]]: الشكل اللي تقدر تلزقه في كود |
+
+كلهم (ما عدا [[lastIndex]]) **getters** على [[RegExp.prototype]]: مش متخزنين على الـ object، وبيتحسبوا من الـ regex. عشان كده [[Object.getOwnPropertyNames(/a/g)]] بيطلّع [[[ 'lastIndex' ]]] بس، والكتابة فيهم ملهاش أثر:
+
+~~~text الناتج: re.global = false في .mjs (strict)
+TypeError: Cannot set property global of [object Object] which has only a getter
+~~~
+
+يعني الـ flags بتاعة regex **مبتتغيّرش بعد ما يتعمل**. عايز flags تانية؟ اعمل regex جديد.
 
 ---
 
-## ٥. scheduler.postTask و scheduler.yield (المتصفح)
+## ٤. نسخة بـ flags تانية
 
-الـ [[scheduler]] API في المتصفح بيدّيك تحكّم أدق من [[setTimeout]]: تحط task بأولوية، وتلغيها، وتعمل yield في نص شغل طويل. موجود في Chrome و Edge، ودعمه في Firefox و Safari بيختلف حسب النسخة (شوف جدول التوافق في MDN قبل ما تعتمد عليه، وخلي عندك fallback زي سطر الـ [[??]] فوق)، ومش موجود في Node. جرّبته في Chrome 156 (headless بـ playwright).
-
-### [[scheduler.postTask(fn, options)]]: task بأولوية
-
-~~~text index.html
-scheduler.postTask(() => console.log("background"), { priority: "background" });
-scheduler.postTask(() => console.log("user-visible (الافتراضي)"));
-scheduler.postTask(() => console.log("user-blocking"), { priority: "user-blocking" });
-setTimeout(() => console.log("setTimeout 0"), 0);
-const ctrl = new TaskController({ priority: "background" });
-scheduler.postTask(() => console.log("مش هتتطبع"), { signal: ctrl.signal }).catch((e) => console.log("اتلغت:", e.name));
-ctrl.abort();
-scheduler.postTask(() => 42, { delay: 50 }).then((v) => console.log("بعد delay:", v));
+~~~js app.mjs
+const copy = new RegExp(lit, "dy");
+console.log(copy.flags, copy.source === lit.source, copy === lit);
 ~~~
 
-~~~text الناتج (Chrome 156)
-اتلغت: AbortError
-user-blocking
-user-visible (الافتراضي)
-setTimeout 0
-background
-بعد delay: 42
+~~~text الناتج
+dy true false
 ~~~
 
-- [[priority]]: تلات مستويات: [["user-blocking"]] (حاجة اليوزر مستنيها حالًا، زي رد على ضغطة)، و [["user-visible"]] (الافتراضي)، و [["background"]] (لوج، أو analytics، أو prefetch). اتسجّلوا بالعكس وطلعوا بالأولوية.
-- [[setTimeout 0]] جه بعد الـ user-visible وقبل الـ background: يعني الـ background بيستنى لحد ما مفيش حاجة أهم.
-- [[postTask]] بترجّع Promise بقيمة الدالة ([[42]])، و [[delay]] بيأجّلها زي setTimeout.
-- [[TaskController]]: زي [[AbortController]] بس بيقدر كمان يغيّر الأولوية ([[ctrl.setPriority("user-blocking")]]). والـ abort بيرفض الـ Promise بـ [[AbortError]].
+لما تدّي [[new RegExp]] regex بدل نص، بياخد الـ [[source]] بتاعه. والـ flags اللي بتبعتها **بتحل محل** القديمة بالكامل: [[gi]] راحت و [[dy]] جت (مش [[dgiy]]). والنتيجة object جديد، و [[lastIndex]] بتاعه 0.
 
-### [[scheduler.yield()]]: استراحة في نص شغل طويل
+---
 
-ده اللي الـ chunking فوق بيستخدمه لو موجود. قارنته بـ [[setTimeout]]: نفس الشغل، ٢٠ دفعة كل واحدة 10ms، وقبل الشغل timer واحد:
+## ٥. pattern فيه كلام يوزر: [[RegExp.escape]]
 
-~~~text الناتج (Chrome 156)
-setTimeout : timer لقى فرصة بعد 10 ms
-setTimeout : خلص في 267 ms
-scheduler.yield : خلص في 200 ms
-scheduler.yield : timer لقى فرصة بعد 201 ms
+~~~js app.mjs
+const word = "c++";
+console.log(new RegExp($__bt^$__{RegExp.escape(word)}$$__bt, "i").test("C++"));
 ~~~
 
-- بـ setTimeout الشغل خد 267ms مش 200: المتصفح بيخلّي أي setTimeout متداخل أكتر من ٥ مرات يستنى 4ms على الأقل، فالـ ٢٠ استراحة ضاعوا فيهم حوالي 67ms.
-- بـ [[scheduler.yield()]] خلص في 200ms بالظبط: الكمّل بعد الـ yield بيدخل **قبل** الـ tasks العادية اللي بنفس الأولوية. عشان كده الـ timer استنى لآخر الشغل.
-- بس الاستراحة حقيقية: المتصفح بيقدر يرسم ويرد على ضغطات اليوزر بين الدفعات (وده الهدف، عشان رقم INP يبقى كويس)، حسب وثائق Chrome. يعني [[yield]] «اسمح للأهم يعدّي وارجعلي على طول»، و setTimeout «حطني في آخر الطابور».
+~~~text الناتج
+true
+~~~
+
+[[+]] في [["c++"]] ليها معنى في الـ regex. [[RegExp.escape]] (موجودة في Node 24 والمتصفحات الحديثة، وشرحها كامل في درس «test و match و matchAll و replace») بتحط [[\]] قبل أي حرف خاص، فالكلمة تتطابق حرفيًا. **أي نص جاي من برّه وداخل [[new RegExp]] لازم يعدّي عليها.**
 
 ---
 
 ## الخلاصة
 
-| المشكلة | الحل | إمتى |
-|---|---|---|
-| task واحدة طويلة | قسّمها دفعات و yield بينها | الشغل محتاج الـ DOM |
-| حساب تقيل مستقل | Web Worker | صور، ملفات كبيرة، تشفير |
-| تعديل بصري أو animation | [[requestAnimationFrame]] | أي حركة بـ JS |
-
-والـ Promise لوحده **مش** thread: كود تقيل جوه Promise بيجمّد الصفحة برضه.`,
+| عايز | استخدم |
+|---|---|
+| pattern ثابت | literal [[/.../flags]]: الغلط يبان أول ما تشغّل |
+| pattern متركّب أو من يوزر | [[new RegExp(String.raw$__bt...$__bt + RegExp.escape(x), flags)]] جوه try |
+| نفس الـ regex بـ flags تانية | [[new RegExp(re, "newflags")]]: الـ flags بتتبدّل مش بتتضاف |
+| تعرف regex فيه إيه | [[source]] و [[flags]] و [[global]] وأخواتهم، أو [[String(re)]] |
+| regex مش شغال من [[new RegExp]] | اطبع [[re.source]] الأول: غالبًا [[\]] ضاعت في النص |`,
           lines: [
-            R`بناخد الوقت الحالي بالملي ثانية عشان الـ loop اللي جاي يعرف عدّى قد إيه.`,
-            R`loop فاضي بيفضل يسأل عن الوقت لحد ما ثانيتين يعدّوا. طول الوقت ده الـ main thread مشغول: المتصفح مبيرسمش، والضغطات والـ scroll بتستنى، والـ timers بتتأخر. ده بالظبط اللي بيحصل مع أي حسبة تقيلة متزامنة.`,
-            R`الحل الأول: بدل ما نعالج array كبيرة مرة واحدة، نعالجها دفعات ([[size]] عنصر كل دفعة) ونريّح المتصفح بينهم. [[async]] عشان نقدر نستخدم [[await]] جواها.`,
-            R`كل لفة بتنقل [[i]] بحجم دفعة كاملة: 0 و 500 و 1000 وهكذا.`,
-            R`[[slice(i, i + size)]] بتاخد الدفعة الحالية بس (من غير ما تغيّر الأصل)، و [[forEach(fn)]] بتعالج كل عنصر فيها. الدفعة نفسها متزامنة، فخليها صغيرة كفاية إنها تخلص في ملي ثواني قليلة.`,
-            R`بنوقف لحظة نرجّع فيها السيطرة للمتصفح يرسم ويرد على اليوزر قبل الدفعة الجاية. لو [[scheduler.yield]] موجود (Chrome و Edge) بنستخدمه، وإلا [[?.]] بترجّع [[undefined]] و [[??]] بتاخد البديل: Promise بتتحل بعد [[setTimeout(r, 0)]].`,
-            R`نهاية الـ loop.`,
-            R`نهاية [[processInChunks]].`,
-            R`الحل التاني: Web Worker بيشغّل الملف [[sum.worker.js]] على thread تاني خالص، فالحسبة التقيلة مش بتلمس الـ main thread. [[new URL(..., import.meta.url)]] بتحسب مسار الملف بالنسبة للملف الحالي، و [[type: "module"]] عشان الـ worker يقدر يستخدم [[import]].`,
-            R`بنبعت الشغل للـ worker كرسالة. الـ data بتتنسخ (structured clone)، فالـ worker مش بيشوف متغيرات الصفحة، ومينفعش يلمس الـ DOM.`,
-            R`لما الـ worker يخلص ويعمل [[postMessage]]، الدالة دي بتتنادى والنتيجة في [[e.data]]. وطول ما هو بيحسب، الصفحة بتستجيب عادي.`,
-            R`[[requestAnimationFrame]] بتأجّل الدالة لحد قبل الرسمة الجاية بالظبط، فالتغيير يترسم مع الـ frame اللي جاي. ده المكان الصح للتعديلات البصرية والـ animations، بدل [[setTimeout]] اللي توقيته مش متزامن مع الرسم.`,
+            R`regex literal: الـ pattern بين [[/ /]] والـ flags [[gi]] بعدها. بيتعمل له parse مع الملف، فلو فيه غلطة الملف كله مش هيشتغل.`,
+            R`نفس الـ regex من **نص** بـ [[new RegExp]]: كل [[\]] في الـ regex بقت [[\\]] في النص، لأن النص نفسه بياكل واحدة.`,
+            R`نفس الـ regex بـ [[String.raw]]: الـ tag ده بيسيب كل [[\]] زي ما هي، فالـ pattern مكتوب بنفس شكل الـ literal.`,
+            R`[[source]] بيرجّع الـ pattern كنص، والتلاتة طلعوا نفس النص بالظبط: [[(\d+)\s*EGP true true]].`,
+            R`الغلطة الشايعة: [["\d"]] و [["\s"]] في نص عادي. الـ JavaScript بيرمي الـ [[\]] لأنه escape مش معروف في النصوص.`,
+            R`[[source]] طلع [[(d+)s*EGP]]، فالـ regex بيدوّر على حرف d وحرف s، و [[test]] رجّعت [[false]] من غير ولا error.`,
+            R`[[flags]] بيرجّع [["gi"]]، وكل flag ليه خاصية boolean: [[global]] و [[ignoreCase]] بـ [[true]]، و [[multiline]] و [[dotAll]] و [[sticky]] بـ [[false]].`,
+            R`باقي الخصايص: [[unicode]] و [[unicodeSets]] و [[hasIndices]] بـ [[false]]، و [[lastIndex]] صفر لأن مفيش بحث حصل، و [[String(lit)]] بيرجّع [[/(\d+)\s*EGP/gi]] زي ما اتكتب.`,
+            R`[[new RegExp(lit, "dy")]]: regex جديد بنفس الـ source، والـ flags الجديدة **بتحل محل** القديمة ([[gi]] راحت).`,
+            R`[[copy.flags]] بـ [[dy]]، والـ source زي الأصلي، و [[copy === lit]] بـ [[false]]: ده object تاني خالص.`,
+            R`كلمة جاية من يوزر وفيها [[+]]، وهو حرف ليه معنى في الـ regex («مرة أو أكتر»).`,
+            R`[[RegExp.escape]] بتحط [[\]] قبل كل حرف خاص، و [[^...$]] حوالين الكلمة، و [[i]] للحروف الكبيرة، فـ [["C++"]] اتطابقت: [[true]].`,
+            R`pattern ناقصه [[)]] من نص: [[new RegExp]] بيرمي SyntaxError **وقت التشغيل** جوه try، فاتمسكت واتطبعت بدل ما البرنامج يقع.`,
           ],
-          sol: R`وانت مستني الـ ٢ ثانية: الـ scroll مبيتحركش، والضغط على أي زرار مبيعملش حاجة، وحتى الـ hover. أول ما الـ loop تخلص كل اللي ضغطته بيتنفذ مرة واحدة، لأن الأحداث كانت واقفة في الطابور. الـ main thread مشغول، ومفيش حد يرسم أو يرد.
-
-في تاب Performance هتلاقي مستطيل طويل في الـ Main track عليه مثلث أحمر في الركن مكتوب [[Task]] بطول حوالي 2000ms، ولو عدّيت عليه هيقولك إنه long task (أي task أطول من 50ms). ده اللي بيبوّظ INP. لو ملقتهوش، اتأكد إنك دوست Record قبل ما تشغّل الكود ووقفت بعده.`
-        }
-      ]
-    },
-    {
-      t: "الأداء والذاكرة",
-      l: 3,
-      n: "debounce و throttle للأحداث الكتير، والـ memory leaks وإزاي تمنعها",
-      pre: [
-        { to: "js/closure", why: R`[[debounce]] و [[throttle]] closures: الـ timer محفوظ جوه الدالة اللي بترجع` },
-        { to: "js/call و apply و bind", why: R`[[fn.apply(this, args)]] هو اللي بيعدّي [[this]] والـ arguments للدالة الأصلية` },
-        { to: "js/Map و Set", why: R`الـ LRU cache مبني على إن [[Map]] بيحفظ ترتيب الإضافة` },
-        { to: "js/fetch و AbortController", why: R`البحث الحي بيلغي الطلب القديم، والـ widgets بتشيل كل listeners بـ [[AbortController]] واحد` },
-        { to: "js/WeakRef و FinalizationRegistry و resource management", why: R`درس الـ memory leaks بيكمّل عليه: إمتى الـ object بيتشال من الذاكرة وإمتى لأ` },
-      ],
-      projects: [
-        { lvl: 'صغير', dir: "debounced-search", t: R`بحث بـ debounce وعدّاد`, what: R`input بحث على لستة ١٠٠٠ اسم محلية، والفلترة بـ debounce 300ms، وجنبه عدّاد «اتنفّذ كام مرة» وعدّاد «اتكتب كام حرف». من درس debounce و throttle.`, done: R`كتابة كلمة ١٠ حروف بسرعة ← الحروف ١٠ والتنفيذ ١، والنتايج بتظهر بعد ما تقف بحوالي 300ms، ومسح الـ input بيرجّع اللستة كاملة.`, sol: R`## الشكل النهائي
-
-~~~live 330 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>بحث بـ debounce</title>
-<style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
-  input { font: inherit; padding: 5px 8px; width: 100%; box-sizing: border-box; }
-  .stats { display: flex; gap: 16px; color: #555; font-size: 14px; margin: 6px 0; }
-  ul { height: 200px; overflow: auto; border: 1px solid #ddd; margin: 0; padding: 4px 24px; }
-</style>
-</head>
-<body>
-<input id="q" type="search" placeholder="دوّر في ١٠٠٠ اسم..." aria-label="بحث">
-<div class="stats">
-  <span>حروف اتكتبت: <b id="typed">0</b></span>
-  <span>الفلترة اتنفّذت: <b id="runs">0</b></span>
-  <span>النتايج: <b id="count">0</b></span>
-</div>
-<ul id="list"></ul>
-<script>
-  const FIRST = ["سارة", "عمر", "ليلى", "يوسف", "مريم", "كريم", "نور", "آدم", "هنا", "زياد"];
-  const LAST = ["علي", "حسن", "سالم", "فؤاد", "نبيل", "رشدي", "منير", "شاكر", "عادل", "توفيق"];
-  const names = Array.from({ length: 1000 }, (_, i) => FIRST[i % 10] + " " + LAST[Math.floor(i / 10) % 10] + " " + (i + 1));
-
-  function debounce(fn, ms) {
-    let timer;
-    return function (...args) {
-      clearTimeout(timer);
-      timer = setTimeout(() => fn.apply(this, args), ms);
-    };
-  }
-
-  const list = document.getElementById("list");
-  let typed = 0, runs = 0;
-
-  function render(q) {
-    runs++;
-    document.getElementById("runs").textContent = runs;
-    const hits = q ? names.filter(n => n.includes(q.trim())) : names;
-    const frag = document.createDocumentFragment();
-    for (const n of hits.slice(0, 100)) {
-      const li = document.createElement("li");
-      li.textContent = n;
-      frag.append(li);
-    }
-    list.replaceChildren(frag);
-    document.getElementById("count").textContent = hits.length;
-  }
-
-  const search = debounce(render, 300);
-  document.getElementById("q").addEventListener("input", (e) => {
-    document.getElementById("typed").textContent = ++typed;
-    search(e.target.value);
-  });
-  render("");
-</script>
-</body>
-</html>
-~~~
-
-## هتشوف إيه
-
-خانة بحث، وتحتها ٣ أرقام: حروف اتكتبت، ومرات الفلترة، وعدد النتايج، وتحتهم لستة (أول ١٠٠). اكتب بسرعة: الحروف بتزيد والفلترة لأ، وبعد ما تقف بثلث ثانية النتايج بتتغير مرة واحدة.
-
-## اتقاس (Chrome 158 بـ Playwright)
-
-~~~text الناتج
-كتبنا «سارة علي » (9 حروف، حرف كل 40ms):
-   وقت الكتابة: حروف 9، الفلترة اتنفّذت 1 (اللي أول ما الصفحة فتحت)
-   بعد ما وقفنا: 9 حروف، الفلترة 2 (يعني مرة واحدة للكلمة كلها)، 10 نتيجة
-   النتايج ظهرت بعد آخر حرف بـ 312ms
-مسحنا الخانة: 1000 نتيجة
-~~~
-
-## كل حتة مهمة بتعمل إيه
-
-- **[[names]]:** ١٠٠٠ اسم متولّدين من ١٠ أسامي أولى × ١٠ عائلات + رقم، عشان القايمة محلية ومن غير API.
-- **[[debounce(render, 300)]] مرة واحدة:** والـ input handler بيزوّد عدّاد الحروف **على طول** (عشان ده مش تقيل)، وبيبعت للـ debounce. الفلترة بتحصل بعد 300ms من آخر حرف بس (312ms في القياس).
-- **[[render(q)]]:** بتزوّد عدّاد التنفيذ، و [[filter]] بـ [[includes]]، وبترسم أول ١٠٠ في [[DocumentFragment]] و [[replaceChildren]] (layout واحدة). والخانة الفاضية بترجّع الـ ١٠٠٠.
-- **[[render("")]] في الآخر:** اللستة بتظهر أول ما الصفحة تفتح، وده سبب إن عدّاد التنفيذ بيبدأ من 1.
-
-## الغلطات اللي حصلت وإزاي اتصلحت
-
-- **عدّاد الحروف في الـ handler مش جوه [[render]]:** لو اتحط جوه الدالة المتأجلة كان هيتعد مرة لكل فلترة، يعني نفس رقم التنفيذ، والمقارنة اللي المشروع طالبها تضيع. الحاجة الخفيفة اللي لازم تحصل مع كل حرف بتفضل في الـ handler نفسه، والتقيلة بس بتتأجل.
-- **الغلطة الشائعة:** [[debounce(render, 300)]] جوه الـ handler: كل حرف بيعمل debounce جديد بـ timer جديد، فمفيش حاجة بتتلغي والفلترة بتحصل مع كل حرف (زي تمرين debounce في Node).`  },
-        { lvl: 'صغير', dir: "pay-once", t: R`زرار ميتداسش مرتين`, what: R`زرار «ادفع» بيبعت طلب وهمي بياخد ثانيتين. امنع التكرار مرة بـ throttle ومرة بـ [[disabled]] لحد ما الطلب يخلص، وقارن. من درس debounce و throttle ووحدة async.`, done: R`٥ ضغطات ورا بعض ← طلب واحد في الطريقتين. بس لو الطلب أخد أطول من فترة الـ throttle، الـ throttle بيسمح بطلب تاني والـ disabled لأ، وكاتب ده في تعليق جنب الكود.`, sol: R`## الشكل النهائي
-
-~~~live 300 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>زرار الدفع</title>
-<style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
-  section { border: 1px solid #ccc; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; }
-  button { font: inherit; padding: 6px 18px; }
-  button:disabled { opacity: .6; }
-</style>
-</head>
-<body>
-<section>
-  <h3>throttle (ثانية)</h3>
-  <button id="t-pay">ادفع</button>
-  <p>طلبات اتبعتت: <b id="t-count">0</b></p>
-</section>
-<section>
-  <h3>disabled لحد ما الطلب يخلص</h3>
-  <button id="d-pay">ادفع</button>
-  <p>طلبات اتبعتت: <b id="d-count">0</b></p>
-</section>
-<script>
-  // طلب وهمي بياخد ثانيتين
-  const fakePay = () => new Promise(r => setTimeout(r, 2000));
-
-  function throttle(fn, ms) {
-    let last = 0;
-    return function (...args) {
-      const now = Date.now();
-      if (now - last < ms) return;
-      last = now;
-      fn.apply(this, args);
-    };
-  }
-
-  // (١) throttle: بيمنع الضغطات اللي في نفس الثانية، بس مش عارف الطلب خلص ولا لأ
-  let tCount = 0;
-  document.getElementById("t-pay").addEventListener("click", throttle(() => {
-    document.getElementById("t-count").textContent = ++tCount;
-    fakePay();
-  }, 1000));
-
-  // (٢) disabled: الزرار نفسه مقفول لحد ما الطلب يرجع، نجح أو فشل
-  let dCount = 0;
-  const dBtn = document.getElementById("d-pay");
-  dBtn.addEventListener("click", async () => {
-    if (dBtn.disabled) return;
-    dBtn.disabled = true;
-    dBtn.textContent = "بيدفع...";
-    document.getElementById("d-count").textContent = ++dCount;
-    try {
-      await fakePay();
-    } finally {
-      dBtn.disabled = false;
-      dBtn.textContent = "ادفع";
-    }
-  });
-</script>
-</body>
-</html>
-~~~
-
-## هتشوف إيه
-
-زرارين «ادفع»، كل واحد في صندوق وتحته عدد الطلبات اللي اتبعتت. الأول محمي بـ throttle ثانية، والتاني بيتقفل ويكتب «بيدفع...» لحد ما الطلب (ثانيتين) يرجع.
-
-## اتقاس (Chrome 158 بـ Playwright، ضغطات بـ [[click()]] من الـ console)
-
-~~~text الناتج
-٥ ضغطات على كل زرار في ربع ثانية: throttle=1 disabled=1
-ضغطة عند ~1.35 ثانية (الطلب الأول لسه مخلصش): throttle=2 disabled=1 | زرار disabled مقفول؟ true
-ضغطة بعد ما الطلب رجع (~2.4 ثانية): throttle=2 disabled=2
-~~~
-
-## المقارنة (التعليق اللي المطلوب طالبه)
-
-- **٥ ضغطات ورا بعض:** طلب واحد في الاتنين.
-- **الطلب بياخد ثانيتين والـ throttle ثانية:** عند 1.35 ثانية الـ throttle سمح بطلب **تاني** والأول لسه مرجعش، يعني دفع مرتين. الـ disabled رفض لأن الزرار لسه مقفول، ولما الطلب رجع (2.4 ثانية) بس سمح بالتاني.
-
-الـ throttle بيعرف **الوقت**، مش **حالة الطلب**. لأي عملية مينفعش تتكرر (دفع، إرسال فورم، حجز) الصح هو تقفل الزرار لحد ما العملية تخلص، ومعاها السيرفر نفسه يرفض التكرار (idempotency key). الـ throttle مكانه scroll و resize ونداءات API عادية.
-
-## كل حتة مهمة بتعمل إيه
-
-- **[[throttle(fn, 1000)]]:** نفس دالة الدرس: أول ضغطة تعدّي، وأي ضغطة في خلال ثانية بعدها تتجاهل.
-- **[[if (dBtn.disabled) return]]:** حماية زيادة: الزرار المقفول مبيبعتش click أصلًا، بس لو حد نادى الـ handler من كود تاني.
-- **[[try { await fakePay(); } finally { ... }]]:** الزرار بيرجع مفتوح في النجاح **والفشل** (درس try و finally). من غير [[finally]]، أول طلب يفشل يسيب الزرار مقفول للأبد.
-
-## الغلطات اللي حصلت وإزاي اتصلحت
-
-- **القياس بـ [[page.click]] في Playwright:** أول تجربة استخدمت ضغطات Playwright العادية، وكل ضغطة بتاخد وقت لحد ما Playwright يتأكد إن الزرار جاهز، فالتوقيت باظ وطلع disabled=2 كأنه فشل. القياس الصح بـ [[click()]] من جوه الصفحة بتوقيتات معروفة (٥ ضغطات كل 50ms، وبعدين عند 1.35 و 2.4 ثانية).`  },
-        { lvl: 'متوسط', dir: "live-search", t: R`بحث حي كامل`, what: R`input بيبحث في API بـ debounce 300ms، و AbortController للطلب القديم، و cache بـ LRU حده ٥٠ عشان نفس الكلمة متتطلبش تاني، و «بيحمّل» و «مفيش نتايج» ورسالة غلط. من دروس الوحدة ووحدة async.`, done: R`نفس الكلمة مرتين ← طلب واحد في Network. كتابة سريعة ← طلب واحد بعد ما تقف. حجم الـ cache مبيعدّيش ٥٠ بعد ١٠٠ كلمة مختلفة. والـ AbortError مبيظهرش كرسالة.`, sol: R`## الشكل النهائي
-
-~~~live 300 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>بحث حي</title>
-<style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
-  input { font: inherit; padding: 5px 8px; width: 100%; box-sizing: border-box; }
-  #state { color: #555; min-height: 1.6em; font-size: 14px; }
-  #state.err { color: #b91c1c; }
-  .stats { color: #555; font-size: 13px; }
-</style>
-</head>
-<body>
-<input id="q" type="search" placeholder="دوّر على منتج (اكتب error عشان تجرّب الغلط)" aria-label="بحث">
-<p id="state" aria-live="polite"></p>
-<ul id="results"></ul>
-<p class="stats">طلبات للـ API: <b id="reqs">0</b> · اتلغت: <b id="aborted">0</b> · من الـ cache: <b id="hits">0</b> · حجم الـ cache: <b id="size">0</b></p>
-<script>
-  // ---- API وهمي: بيرد بعد 600 لـ 900ms (أبطأ من الـ debounce عمدًا)، وبيحترم الـ AbortSignal زي fetch
-  const PRODUCTS = ["قلم رصاص", "قلم جاف", "كشكول ١٠٠ ورقة", "كشكول سلك", "شنطة ظهر", "شنطة لابتوب", "مسطرة", "آلة حاسبة", "ألوان خشب", "ألوان مائية"];
-  let reqs = 0;
-  function fakeApi(q, { signal }) {
-    reqs++;
-    document.getElementById("reqs").textContent = reqs;
-    return new Promise((resolve, reject) => {
-      const t = setTimeout(() => {
-        if (q.includes("error")) reject(new Error("السيرفر رجّع 500"));
-        else resolve(PRODUCTS.filter(p => p.includes(q)));
-      }, 600 + (q.length * 37) % 300);
-      signal.addEventListener("abort", () => {
-        clearTimeout(t);
-        reject(new DOMException("الطلب اتلغى", "AbortError"));
-      }, { once: true });
-    });
-  }
-
-  // ---- LRU
-  class LRU {
-    #map = new Map();
-    constructor(max) { this.max = max; }
-    get(k) {
-      if (!this.#map.has(k)) return undefined;
-      const v = this.#map.get(k);
-      this.#map.delete(k);
-      this.#map.set(k, v);
-      return v;
-    }
-    set(k, v) {
-      this.#map.delete(k);
-      this.#map.set(k, v);
-      if (this.#map.size > this.max) this.#map.delete(this.#map.keys().next().value);
-    }
-    get size() { return this.#map.size; }
-  }
-
-  function debounce(fn, ms) {
-    let timer;
-    return (...args) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => fn(...args), ms);
-    };
-  }
-
-  const cache = new LRU(50);
-  const state = document.getElementById("state");
-  const results = document.getElementById("results");
-  let controller = null;
-  let aborted = 0, hits = 0;
-
-  function show(list) {
-    results.replaceChildren(...list.map(p => Object.assign(document.createElement("li"), { textContent: p })));
-    state.className = "";
-    state.textContent = list.length ? list.length + " نتيجة" : "مفيش نتايج";
-  }
-
-  async function search(raw) {
-    const q = raw.trim();
-    controller?.abort();
-    if (!q) { results.replaceChildren(); state.textContent = ""; return; }
-    const cached = cache.get(q);
-    if (cached) {
-      document.getElementById("hits").textContent = ++hits;
-      return show(cached);
-    }
-    controller = new AbortController();
-    state.className = "";
-    state.textContent = "بيحمّل...";
-    try {
-      const list = await fakeApi(q, { signal: controller.signal });
-      cache.set(q, list);
-      document.getElementById("size").textContent = cache.size;
-      show(list);
-    } catch (err) {
-      if (err.name === "AbortError") {
-        document.getElementById("aborted").textContent = ++aborted;
-        return; // طلب قديم: مش غلط، مبنعرضش حاجة
-      }
-      results.replaceChildren();
-      state.className = "err";
-      state.textContent = "حصلت مشكلة: " + err.message + ". جرّب تاني.";
-    }
-  }
-
-  document.getElementById("q").addEventListener("input", debounce(e => search(e.target.value), 300));
-</script>
-</body>
-</html>
-~~~
-
-## هتشوف إيه
-
-خانة بحث في منتجات. وانت بتكتب مفيش حاجة، وبعد ما تقف «بيحمّل...» وبعدين النتايج أو «مفيش نتايج» أو رسالة حمرا. وتحت أرقام: طلبات الـ API، واللي اتلغى، واللي جه من الـ cache، وحجم الـ cache.
-
-## اتقاس (Chrome 158 بـ Playwright)
-
-~~~text الناتج
-كتبنا «قلم» بسرعة:            reqs=1 aborted=0 hits=0 size=1 | 2 نتيجة | قلم رصاص، قلم جاف
-نفس الكلمة تاني:               reqs=1 aborted=0 hits=1 size=1 | 2 نتيجة | قلم رصاص، قلم جاف
-«شنطة» والطلب طالع:            reqs=2 aborted=0 hits=1 size=1 | بيحمّل...
-كمّلنا «شنطة ظ» قبل ما يرجع:   reqs=3 aborted=1 hits=1 size=2 | 1 نتيجة | شنطة ظهر
-زرافة:                          reqs=4 aborted=1 hits=1 size=3 | مفيش نتايج
-error:                          reqs=5 aborted=1 hits=1 size=3 | حصلت مشكلة: السيرفر رجّع 500. جرّب تاني.
-بعد ١٠٠ كلمة مختلفة: حجم الـ cache = 50
-~~~
-
-- نفس الكلمة مرتين ← طلب واحد ([[hits=1]]).
-- كتابة سريعة ← طلب واحد بعد ما تقف.
-- كمّلنا كتابة والطلب طالع ← القديم اتلغى ([[aborted=1]]) ومظهرش كرسالة، والنتيجة بتاعة الكلمة الأخيرة بس.
-- ١٠٠ كلمة مختلفة ← الـ cache فضل 50.
-
-## كل حتة مهمة بتعمل إيه
-
-- **[[fakeApi(q, { signal })]]:** بيقلّد [[fetch]]: بيرد بعد 600 لـ 900ms، ولو الـ signal اتعمله abort بيرمي [[DOMException]] اسمه [[AbortError]] زي fetch بالظبط، ولو الكلمة فيها [[error]] بيرمي error عادي. تبدّله بـ [[fetch("/api/search?q=" + encodeURIComponent(q), { signal })]] في مشروع حقيقي.
-- **[[controller?.abort()]] في أول [[search]]:** أي طلب قديم لسه شغال بيتلغي قبل ما نبدأ الجديد. ده اللي بيمنع النتيجة القديمة توصل متأخر وتكتب فوق الجديدة (race condition).
-- **الـ cache الأول:** [[cache.get(q)]] قبل أي طلب، ولو موجود يتعرض على طول.
-- **[[LRU(50)]]:** نفس class تمرين الـ LRU: الحجم مبيعدّيش 50.
-- **[[err.name === "AbortError"]] ← [[return]]:** الإلغاء مش غلط، فمبنعرضش رسالة. أي error تاني بيظهر رسالة واضحة.
-- **[[show]] بـ [[textContent]]:** أسماء المنتجات بتتحط كنص.
-
-## الغلطات اللي حصلت وإزاي اتصلحت
-
-- **الـ API الوهمي كان أسرع من الـ debounce:** أول نسخة كانت بترد في 200–500ms، فالطلب كان بيخلص قبل ما الكتابة الجديدة تعدّي الـ 300ms، و [[aborted]] فضل 0 ومعرفناش نجرّب الإلغاء. خلّيناه أبطأ (600–900ms) زي سيرفر حقيقي على نت عادي، فظهر الإلغاء.
-- **ليه الـ [[if]] على [[err.name]] مهم:** من غيره، كل طلب اتلغى (زي اللي في سطر «كمّلنا شنطة ظ») كان هيوصل للـ catch ويكتب «حصلت مشكلة» لحظة قبل ما النتيجة الجديدة توصل.`  },
-        { lvl: 'متوسط', dir: "reading-progress", t: R`شريط تقدم القراية وزرار لفوق`, what: R`صفحة مقال طويل فوقها شريط بيوضح نسبة القراية، وزرار «لفوق» بيظهر بعد نص الصفحة. الـ scroll handler بـ throttle trailing (من تحدي الدرس) و [[{ passive: true }]]. من درس debounce و throttle.`, done: R`الـ handler بيتنفّذ أقل بكتير من عدد أحداث scroll (عدّادين في الـ console). لما توصل لآخر الصفحة الشريط بيقف على 100% بالظبط (ده اللي الـ throttle العادي بيفوّته). والزرار بيظهر ويختفي صح.`, sol: R`## الشكل النهائي
-
-~~~live 360 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>شريط القراية</title>
-<style>
-  body { font: 17px/1.9 system-ui, sans-serif; margin: 0; }
-  #bar { position: fixed; top: 0; inset-inline-start: 0; height: 5px; width: 0; background: #2563eb; }
-  main { max-width: 640px; margin: 0 auto; padding: 24px 16px; }
-  #top { position: fixed; bottom: 16px; inset-inline-end: 16px; font: inherit; padding: 6px 14px; border-radius: 20px; border: 1px solid #888; background: #fff; }
-  #top[hidden] { display: none; }
-  #stats { position: fixed; bottom: 16px; inset-inline-start: 16px; font-size: 12px; background: #fff; padding: 2px 6px; }
-</style>
-</head>
-<body>
-<div id="bar" role="progressbar" aria-label="نسبة القراية" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
-<main id="article"></main>
-<button id="top" hidden>لفوق ↑</button>
-<p id="stats">scroll: <b id="events">0</b> · handler: <b id="runs">0</b> · <b id="pct">0</b>%</p>
-<script>
-  // مقال طويل متولّد
-  const article = document.getElementById("article");
-  for (let i = 1; i <= 30; i++) {
-    const h = document.createElement("h2");
-    h.textContent = "الجزء " + i;
-    const p = document.createElement("p");
-    p.textContent = "ده كلام تجريبي عشان الصفحة تبقى طويلة كفاية. ".repeat(12);
-    article.append(h, p);
-  }
-
-  function throttleTrailing(fn, ms) {
-    let last = 0, timer = null;
-    return function (...args) {
-      const wait = ms - (Date.now() - last);
-      if (wait <= 0) {
-        last = Date.now();
-        fn.apply(this, args);
-      } else if (!timer) {
-        timer = setTimeout(() => {
-          timer = null;
-          last = Date.now();
-          fn.apply(this, args);
-        }, wait);
-      }
-    };
-  }
-
-  const bar = document.getElementById("bar");
-  const topBtn = document.getElementById("top");
-  let events = 0, runs = 0;
-
-  function update() {
-    runs++;
-    const max = document.documentElement.scrollHeight - innerHeight;
-    const pct = max > 0 ? Math.min(100, Math.round((scrollY / max) * 100)) : 100;
-    bar.style.width = pct + "%";
-    bar.setAttribute("aria-valuenow", pct);
-    topBtn.hidden = scrollY < max / 2;
-    document.getElementById("pct").textContent = pct;
-    document.getElementById("runs").textContent = runs;
-  }
-
-  const onScroll = throttleTrailing(update, 100);
-  addEventListener("scroll", () => {
-    document.getElementById("events").textContent = ++events;
-    onScroll();
-  }, { passive: true });
-  topBtn.addEventListener("click", () => scrollTo({ top: 0 }));
-  update();
-</script>
-</body>
-</html>
-~~~
-
-## هتشوف إيه
-
-مقال طويل، فوقه شريط أزرق رفيع بيتملي وانت بتنزل، ولما تعدّي نص الصفحة يظهر زرار «لفوق». وتحت عدّادين: أحداث الـ scroll، ومرات تنفيذ الـ handler.
-
-## اتقاس (Chrome 158 بـ Playwright، التاب قدام)
-
-~~~text الناتج
-scroll بـ scrollBy كل 16ms لحد آخر الصفحة (موبايل 400×700):
-   scroll events: 115 | handler: 19 (منهم واحد أول ما الصفحة فتحت) | 100% | عرض الشريط 100% | زرار لفوق ظاهر: true | scrollY 13716 من 13716
-بعد «لفوق»: scrollY 0 | 0% | الزرار ظاهر: false
-ونفس الـ scroll بـ throttle leading بس: handler 17 مرة، وآخر نسبة اتحسبت 99% وانت في آخر الصفحة
-~~~
-
-- **115 حدث scroll و 19 تنفيذ بس:** الـ throttle (100ms) قلّل الشغل حوالي ٦ مرات.
-- **الشريط وقف على 100% بالظبط** في آخر الصفحة، بفضل الـ trailing.
-- **الـ throttle العادي (leading بس)** على نفس الـ scroll: آخر حساب كان **99%** والشريط وقف قبل الآخر، لأن آخر حدث جه في نص فترة واتجاهل.
-
-## كل حتة مهمة بتعمل إيه
-
-- **[[throttleTrailing(update, 100)]]:** نسخة تحدي الدرس: لو الفترة خلصت ينفّذ على طول، ولو لأ يسجّل timer واحد لنهاية الفترة. والـ [[update]] بتقرا [[scrollY]] لحظة التنفيذ، فالتنفيذ الأخير دايمًا بآخر مكان.
-- **[[{ passive: true }]]:** بتقول للمتصفح «الـ handler ده مش هيعمل [[preventDefault]]»، فالمتصفح يعمل scroll على طول من غير ما يستنى الـ JavaScript. ده مهم على الموبايل.
-- **الحساب:** [[max = scrollHeight - innerHeight]] (أقصى scroll)، والنسبة [[scrollY / max]]، و [[Math.min(100, ...)]] عشان الـ bounce على الموبايل ممكن يدّي أكتر من 100.
-- **[[topBtn.hidden = scrollY < max / 2]]:** الزرار بيظهر بعد نص الصفحة.
-- **[[role="progressbar"]] و [[aria-valuenow]]:** قارئ الشاشة بيقرا النسبة.
-- **عدّاد الأحداث برّه الـ throttle:** عشان نقيس الفرق.
-
-## الغلطات اللي حصلت وإزاي اتصلحت
-
-- **القياس والتاب في الخلفية:** أول قياس طلّع 2 حدث scroll بس، و «لفوق» مكانتش بتحدّث النسبة. التاب كان مش ظاهر، والمتصفح مش بيرسم frames لتاب مخفي، والـ scroll events بتتبعت مع الـ frames. القياس الصح والتاب قدام ([[page.bringToFront()]] في Playwright، و 301 frame في الثانية بعدها).
-- **ملاحظة [[inset-inline-start]] و [[inset-inline-end]] في RTL:** الزرار متحط بـ [[inset-inline-end]] فبيظهر على الشمال في الصفحة العربي، والعدّاد على اليمين، فمبيغطوش على بعض.`  },
-        { lvl: 'كبير', dir: "widgets-dashboard", t: R`dashboard عايش طول اليوم`, what: R`صفحة فيها widgets بتتفتح وتتقفل (ساعة، وطقس وهمي بـ polling كل ٥ ثواني، وعدّاد كتابة). كل widget عنده [[mount()]] بيرجّع [[unmount]] بيشيل كل listener (AbortController) وكل interval ويلغي أي fetch شغال، والـ fetch بيعمل retry بـ backoff لو فشل، و cache الطقس LRU حده ٢٠، وكل mount و unmount بيتسجّل في لوج صغير على الصفحة. من الوحدة دي ووحدات async والأخطاء والـ DOM والـ closures.`, done: R`افتح وقفل كل widget ٥٠ مرة، وبعدين Heap snapshot Comparison: مفيش زيادة ثابتة ولا Detached elements بتزيد. [[getEventListeners(window)]] بعد ما الكل يتقفل مفيهوش listeners بتاعتك. مفيش طلب polling في Network بعد unmount. والنت المقطوع بيعمل retry وبعدين رسالة، مش loop لا نهائي.`, ext: R`خلّي الـ polling يقف لوحده لما التاب يتخبّى (درس visibilitychange في وحدة APIs المتصفح)، وزوّد صفحة «صحة» بتعرض عدد الـ listeners والـ intervals الشغالة دلوقتي.`, sol: R`## الشكل النهائي
-
-~~~view 400 الشكل النهائي
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dashboard</title>
-<style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
-  .bar { display: flex; flex-wrap: wrap; gap: 6px; }
-  button { font: inherit; padding: 4px 10px; }
-  button[aria-pressed="true"] { background: #dbeafe; }
-  #host { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 10px 0; }
-  .widget { border: 1px solid #ccc; border-radius: 8px; padding: 6px 10px; }
-  .widget h3 { margin: 0; font-size: 15px; }
-  #log { font: 12px/1.5 monospace; height: 120px; overflow: auto; background: #f6f6f6; padding: 6px; white-space: pre-wrap; }
-  label { margin-inline-start: 8px; }
-</style>
-</head>
-<body>
-<div class="bar">
-  <button data-w="clock" aria-pressed="false">الساعة</button>
-  <button data-w="weather" aria-pressed="false">الطقس</button>
-  <button data-w="typing" aria-pressed="false">عدّاد الكتابة</button>
-  <label><input type="checkbox" id="offline"> النت مقطوع (تجربة)</label>
-</div>
-<div id="host"></div>
-<div id="log" aria-label="اللوج"></div>
-<script>
-  // ---- lru.js
-  class LRU {
-    #map = new Map();
-    constructor(max) {
-      this.max = max;
-    }
-    get(key) {
-      if (!this.#map.has(key)) return undefined;
-      const value = this.#map.get(key);
-      this.#map.delete(key);
-      this.#map.set(key, value);
-      return value;
-    }
-    set(key, value) {
-      this.#map.delete(key);
-      this.#map.set(key, value);
-      if (this.#map.size > this.max) this.#map.delete(this.#map.keys().next().value);
-      return this;
-    }
-    get size() {
-      return this.#map.size;
-    }
-  }
-
-  // ---- retry.js
-  const realSleep = (ms, signal) => new Promise((resolve, reject) => {
-    const t = setTimeout(resolve, ms);
-    signal?.addEventListener("abort", () => { clearTimeout(t); reject(signal.reason); }, { once: true });
-  });
-
-  // بيجرّب fn لحد tries مرة، والانتظار بيتضاعف: base ثم 2×base ثم 4×base
-  async function retry(fn, { tries = 3, base = 500, signal, sleep = realSleep, onRetry = () => {} } = {}) {
-    let lastError;
-    for (let attempt = 1; attempt <= tries; attempt++) {
-      try {
-        return await fn(attempt);
-      } catch (err) {
-        if (err.name === "AbortError" || signal?.aborted) throw err;
-        lastError = err;
-        if (attempt < tries) {
-          const wait = base * 2 ** (attempt - 1);
-          onRetry(attempt, wait, err);
-          await sleep(wait, signal);
-        }
-      }
-    }
-    throw lastError;
-  }
-
-  // ---- lifecycle.js
-  // كل widget بياخد ctx فيه أدوات بتتنضف لوحدها: listeners و intervals و fetch
-  function mount(setup, { log = () => {}, name = "widget" } = {}) {
-    const controller = new AbortController();
-    const intervals = new Set();
-    const ctx = {
-      signal: controller.signal,
-      on(target, type, fn, opts = {}) {
-        target.addEventListener(type, fn, { ...opts, signal: controller.signal });
-      },
-      every(fn, ms) {
-        const id = setInterval(fn, ms);
-        intervals.add(id);
-        return id;
-      },
-      get active() {
-        return { intervals: intervals.size, aborted: controller.signal.aborted };
-      },
-    };
-    const cleanupExtra = setup(ctx) ?? (() => {});
-    log("mount " + name);
-    let done = false;
-    return function unmount() {
-      if (done) return;
-      done = true;
-      controller.abort(new DOMException(name + " اتقفل", "AbortError"));
-      for (const id of intervals) clearInterval(id);
-      intervals.clear();
-      cleanupExtra();
-      log("unmount " + name);
-    };
-  }
-
-  // ---- widgets.js
-  const weatherCache = new LRU(20);
-
-  function box(host, title) {
-    const el = document.createElement("section");
-    el.className = "widget";
-    const h = document.createElement("h3");
-    h.textContent = title;
-    const body = document.createElement("p");
-    el.append(h, body);
-    host.append(el);
-    return { el, body };
-  }
-
-  function clockWidget(host, opts) {
-    return mount((ctx) => {
-      const { el, body } = box(host, "الساعة");
-      const fmt = new Intl.DateTimeFormat("ar-EG", { timeStyle: "medium", timeZone: "Africa/Cairo" });
-      const tick = () => { body.textContent = fmt.format(new Date()); };
-      tick();
-      ctx.every(tick, 1000);
-      return () => el.remove();
-    }, { ...opts, name: "الساعة" });
-  }
-
-  function typingWidget(host, opts) {
-    return mount((ctx) => {
-      const { el, body } = box(host, "عدّاد الكتابة");
-      let keys = 0;
-      body.textContent = "اكتب أي حاجة في الصفحة: 0";
-      ctx.on(window, "keydown", () => { body.textContent = "اكتب أي حاجة في الصفحة: " + ++keys; });
-      return () => el.remove();
-    }, { ...opts, name: "عدّاد الكتابة" });
-  }
-
-  // api(city, { signal }) بترجّع Promise بالطقس (وهمي في الصفحة)
-  function weatherWidget(host, api, opts = {}) {
-    return mount((ctx) => {
-      const { el, body } = box(host, "الطقس");
-      const city = opts.city ?? "القاهرة";
-      async function load() {
-        const cached = weatherCache.get(city);
-        if (cached && Date.now() - cached.at < 4000) return show(cached.data);
-        body.textContent = "بيحمّل...";
-        try {
-          const data = await retry(() => api(city, { signal: ctx.signal }), {
-            tries: 3, base: 300, signal: ctx.signal,
-            onRetry: (n, wait) => opts.log?.("طقس: محاولة " + n + " فشلت، هيستنى " + wait + "ms"),
-          });
-          weatherCache.set(city, { at: Date.now(), data });
-          show(data);
-        } catch (err) {
-          if (err.name === "AbortError") return;
-          body.textContent = "مش قادر يجيب الطقس: " + err.message;
-        }
-      }
-      function show(d) { body.textContent = city + ": " + d.temp + "°"; }
-      load();
-      ctx.every(load, 5000);
-      return () => el.remove();
-    }, { ...opts, name: "الطقس" });
-  }
-
-  // ---- index.html
-
-  const host = document.getElementById("host");
-  const logEl = document.getElementById("log");
-  const log = (msg) => { logEl.textContent = new Date().toLocaleTimeString("en-GB") + " " + msg + "\n" + logEl.textContent; };
-
-  // API وهمي للطقس: بيحترم الـ signal، وبيفشل لو «النت مقطوع»
-  let apiCalls = 0;
-  function fakeWeatherApi(city, { signal }) {
-    apiCalls++;
-    return new Promise((resolve, reject) => {
-      const t = setTimeout(() => {
-        if (document.getElementById("offline").checked) reject(new Error("Failed to fetch"));
-        else resolve({ temp: 20 + (apiCalls % 7) });
-      }, 200);
-      signal.addEventListener("abort", () => { clearTimeout(t); reject(signal.reason); }, { once: true });
-    });
-  }
-
-  const factories = {
-    clock: () => clockWidget(host, { log }),
-    weather: () => weatherWidget(host, fakeWeatherApi, { log }),
-    typing: () => typingWidget(host, { log }),
-  };
-  const open = new Map();
-
-  document.querySelector(".bar").addEventListener("click", (e) => {
-    const name = e.target.dataset?.w;
-    if (!name) return;
-    if (open.has(name)) {
-      open.get(name)();
-      open.delete(name);
-    } else {
-      open.set(name, factories[name]());
-    }
-    e.target.setAttribute("aria-pressed", open.has(name));
-  });
-
-  window.__dash = { open, factories, apiCalls: () => apiCalls };
-</script>
-</body>
-</html>
-~~~
-
-(الـ preview نفس الصفحة بس الـ modules متحطين جواها، لأن الـ preview مبيقراش ملفات جنبه. في مشروعك الملفات منفصلة زي تحت.)
-
-## هتشوف إيه
-
-٣ زراير بيفتحوا ويقفلوا widgets: ساعة بتتحدث كل ثانية، وطقس وهمي بيتجاب كل ٥ ثواني، وعدّاد للحروف اللي بتكتبها في الصفحة. و checkbox «النت مقطوع» عشان تجرّب الـ retry، ولوج تحت فيه كل mount و unmount ومحاولة.
-
-## الملفات وترتيب البناء
-
-~~~text الشجرة
-widgets-dashboard/
-├── package.json    "type": "module" و npm test
-├── lru.js          LRU cache
-├── retry.js        retry بـ backoff، وبيحترم AbortSignal
-├── lifecycle.js    mount(setup): ctx.on و ctx.every و ctx.signal، و unmount بينضّف كله
-├── widgets.js      الساعة والطقس والكتابة، كل واحد mount
-├── index.html      الزراير واللوج والـ API الوهمي
-└── test.js         6 اختبارات (من غير متصفح)
-~~~
-
-اتبنى بالترتيب ده: [[lru.js]] و [[retry.js]] و [[lifecycle.js]] واختباراتهم في Node الأول، وبعدين الـ widgets فوقهم، وبعدين الصفحة.
-
-~~~json package.json
-{
-  "name": "widgets-dashboard",
-  "type": "module",
-  "scripts": {
-    "test": "node --test"
-  }
-}
-~~~
-
-~~~js lru.js
-export class LRU {
-  #map = new Map();
-  constructor(max) {
-    this.max = max;
-  }
-  get(key) {
-    if (!this.#map.has(key)) return undefined;
-    const value = this.#map.get(key);
-    this.#map.delete(key);
-    this.#map.set(key, value);
-    return value;
-  }
-  set(key, value) {
-    this.#map.delete(key);
-    this.#map.set(key, value);
-    if (this.#map.size > this.max) this.#map.delete(this.#map.keys().next().value);
-    return this;
-  }
-  get size() {
-    return this.#map.size;
-  }
-}
-~~~
-
-~~~js retry.js
-const realSleep = (ms, signal) => new Promise((resolve, reject) => {
-  const t = setTimeout(resolve, ms);
-  signal?.addEventListener("abort", () => { clearTimeout(t); reject(signal.reason); }, { once: true });
-});
-
-// بيجرّب fn لحد tries مرة، والانتظار بيتضاعف: base ثم 2×base ثم 4×base
-export async function retry(fn, { tries = 3, base = 500, signal, sleep = realSleep, onRetry = () => {} } = {}) {
-  let lastError;
-  for (let attempt = 1; attempt <= tries; attempt++) {
-    try {
-      return await fn(attempt);
-    } catch (err) {
-      if (err.name === "AbortError" || signal?.aborted) throw err;
-      lastError = err;
-      if (attempt < tries) {
-        const wait = base * 2 ** (attempt - 1);
-        onRetry(attempt, wait, err);
-        await sleep(wait, signal);
-      }
-    }
-  }
-  throw lastError;
-}
-~~~
-
-~~~js lifecycle.js
-// كل widget بياخد ctx فيه أدوات بتتنضف لوحدها: listeners و intervals و fetch
-export function mount(setup, { log = () => {}, name = "widget" } = {}) {
-  const controller = new AbortController();
-  const intervals = new Set();
-  const ctx = {
-    signal: controller.signal,
-    on(target, type, fn, opts = {}) {
-      target.addEventListener(type, fn, { ...opts, signal: controller.signal });
-    },
-    every(fn, ms) {
-      const id = setInterval(fn, ms);
-      intervals.add(id);
-      return id;
-    },
-    get active() {
-      return { intervals: intervals.size, aborted: controller.signal.aborted };
-    },
-  };
-  const cleanupExtra = setup(ctx) ?? (() => {});
-  log("mount " + name);
-  let done = false;
-  return function unmount() {
-    if (done) return;
-    done = true;
-    controller.abort(new DOMException(name + " اتقفل", "AbortError"));
-    for (const id of intervals) clearInterval(id);
-    intervals.clear();
-    cleanupExtra();
-    log("unmount " + name);
-  };
-}
-~~~
-
-~~~js widgets.js
-import { mount } from "./lifecycle.js";
-import { retry } from "./retry.js";
-import { LRU } from "./lru.js";
-
-export const weatherCache = new LRU(20);
-
-function box(host, title) {
-  const el = document.createElement("section");
-  el.className = "widget";
-  const h = document.createElement("h3");
-  h.textContent = title;
-  const body = document.createElement("p");
-  el.append(h, body);
-  host.append(el);
-  return { el, body };
-}
-
-export function clockWidget(host, opts) {
-  return mount((ctx) => {
-    const { el, body } = box(host, "الساعة");
-    const fmt = new Intl.DateTimeFormat("ar-EG", { timeStyle: "medium", timeZone: "Africa/Cairo" });
-    const tick = () => { body.textContent = fmt.format(new Date()); };
-    tick();
-    ctx.every(tick, 1000);
-    return () => el.remove();
-  }, { ...opts, name: "الساعة" });
-}
-
-export function typingWidget(host, opts) {
-  return mount((ctx) => {
-    const { el, body } = box(host, "عدّاد الكتابة");
-    let keys = 0;
-    body.textContent = "اكتب أي حاجة في الصفحة: 0";
-    ctx.on(window, "keydown", () => { body.textContent = "اكتب أي حاجة في الصفحة: " + ++keys; });
-    return () => el.remove();
-  }, { ...opts, name: "عدّاد الكتابة" });
-}
-
-// api(city, { signal }) بترجّع Promise بالطقس (وهمي في الصفحة)
-export function weatherWidget(host, api, opts = {}) {
-  return mount((ctx) => {
-    const { el, body } = box(host, "الطقس");
-    const city = opts.city ?? "القاهرة";
-    async function load() {
-      const cached = weatherCache.get(city);
-      if (cached && Date.now() - cached.at < 4000) return show(cached.data);
-      body.textContent = "بيحمّل...";
-      try {
-        const data = await retry(() => api(city, { signal: ctx.signal }), {
-          tries: 3, base: 300, signal: ctx.signal,
-          onRetry: (n, wait) => opts.log?.("طقس: محاولة " + n + " فشلت، هيستنى " + wait + "ms"),
-        });
-        weatherCache.set(city, { at: Date.now(), data });
-        show(data);
-      } catch (err) {
-        if (err.name === "AbortError") return;
-        body.textContent = "مش قادر يجيب الطقس: " + err.message;
-      }
-    }
-    function show(d) { body.textContent = city + ": " + d.temp + "°"; }
-    load();
-    ctx.every(load, 5000);
-    return () => el.remove();
-  }, { ...opts, name: "الطقس" });
-}
-~~~
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dashboard</title>
-<style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
-  .bar { display: flex; flex-wrap: wrap; gap: 6px; }
-  button { font: inherit; padding: 4px 10px; }
-  button[aria-pressed="true"] { background: #dbeafe; }
-  #host { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 10px 0; }
-  .widget { border: 1px solid #ccc; border-radius: 8px; padding: 6px 10px; }
-  .widget h3 { margin: 0; font-size: 15px; }
-  #log { font: 12px/1.5 monospace; height: 120px; overflow: auto; background: #f6f6f6; padding: 6px; white-space: pre-wrap; }
-  label { margin-inline-start: 8px; }
-</style>
-</head>
-<body>
-<div class="bar">
-  <button data-w="clock" aria-pressed="false">الساعة</button>
-  <button data-w="weather" aria-pressed="false">الطقس</button>
-  <button data-w="typing" aria-pressed="false">عدّاد الكتابة</button>
-  <label><input type="checkbox" id="offline"> النت مقطوع (تجربة)</label>
-</div>
-<div id="host"></div>
-<div id="log" aria-label="اللوج"></div>
-<script type="module">
-  import { clockWidget, weatherWidget, typingWidget } from "./widgets.js";
-
-  const host = document.getElementById("host");
-  const logEl = document.getElementById("log");
-  const log = (msg) => { logEl.textContent = new Date().toLocaleTimeString("en-GB") + " " + msg + "\n" + logEl.textContent; };
-
-  // API وهمي للطقس: بيحترم الـ signal، وبيفشل لو «النت مقطوع»
-  let apiCalls = 0;
-  function fakeWeatherApi(city, { signal }) {
-    apiCalls++;
-    return new Promise((resolve, reject) => {
-      const t = setTimeout(() => {
-        if (document.getElementById("offline").checked) reject(new Error("Failed to fetch"));
-        else resolve({ temp: 20 + (apiCalls % 7) });
-      }, 200);
-      signal.addEventListener("abort", () => { clearTimeout(t); reject(signal.reason); }, { once: true });
-    });
-  }
-
-  const factories = {
-    clock: () => clockWidget(host, { log }),
-    weather: () => weatherWidget(host, fakeWeatherApi, { log }),
-    typing: () => typingWidget(host, { log }),
-  };
-  const open = new Map();
-
-  document.querySelector(".bar").addEventListener("click", (e) => {
-    const name = e.target.dataset?.w;
-    if (!name) return;
-    if (open.has(name)) {
-      open.get(name)();
-      open.delete(name);
-    } else {
-      open.set(name, factories[name]());
-    }
-    e.target.setAttribute("aria-pressed", open.has(name));
-  });
-
-  window.__dash = { open, factories, apiCalls: () => apiCalls };
-</script>
-</body>
-</html>
-~~~
-
-~~~js test.js
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { LRU } from "./lru.js";
-import { retry } from "./retry.js";
-import { mount } from "./lifecycle.js";
-
-test("LRU: الحد 20 مبيتعدّاش، والمستخدم حديثًا بيفضل", () => {
-  const c = new LRU(20);
-  for (let i = 0; i < 100; i++) c.set("k" + i, i);
-  assert.equal(c.size, 20);
-  c.get("k80");
-  c.set("new", 1);
-  assert.equal(c.get("k80"), 80);
-  assert.equal(c.get("k81"), undefined);
-});
-
-test("retry: بيستنى 300 ثم 600 وبعدين ينجح", async () => {
-  const waits = [];
-  let calls = 0;
-  const r = await retry(async () => { if (++calls < 3) throw new Error("Failed to fetch"); return "ok"; },
-    { tries: 3, base: 300, sleep: async (ms) => { waits.push(ms); } });
-  assert.equal(r, "ok");
-  assert.deepEqual(waits, [300, 600]);
-});
-
-test("retry: بعد آخر محاولة بيرمي الغلط، مش loop لا نهائي", async () => {
-  let calls = 0;
-  await assert.rejects(retry(async () => { calls++; throw new Error("Failed to fetch"); }, { tries: 3, sleep: async () => {} }), /Failed to fetch/);
-  assert.equal(calls, 3);
-});
-
-test("retry: AbortError مبيتعادش", async () => {
-  let calls = 0;
-  const abortErr = Object.assign(new Error("x"), { name: "AbortError" });
-  await assert.rejects(retry(async () => { calls++; throw abortErr; }, { sleep: async () => {} }), (e) => e.name === "AbortError");
-  assert.equal(calls, 1);
-});
-
-test("mount/unmount ٥٠ مرة: مفيش listener ولا interval فاضل", async () => {
-  const target = new EventTarget();
-  let heard = 0, ticks = 0;
-  const logs = [];
-  for (let i = 0; i < 50; i++) {
-    const unmount = mount((ctx) => {
-      ctx.on(target, "ping", () => heard++);
-      ctx.every(() => ticks++, 10);
-    }, { log: (m) => logs.push(m), name: "w" });
-    unmount();
-    unmount(); // مرتين ميعملش مشكلة
-  }
-  target.dispatchEvent(new Event("ping"));
-  await new Promise((r) => setTimeout(r, 50));
-  assert.equal(heard, 0);
-  assert.equal(ticks, 0);
-  assert.equal(logs.length, 100);
-});
-
-test("unmount بيلغي الطلب الشغال (AbortError)", async () => {
-  let seen;
-  const unmount = mount((ctx) => {
-    seen = retry(() => new Promise((_, reject) => ctx.signal.addEventListener("abort", () => reject(ctx.signal.reason))), { signal: ctx.signal });
-  });
-  unmount();
-  await assert.rejects(seen, (e) => e.name === "AbortError");
-});
-~~~
-
-## الاختبارات
-
-~~~text الناتج (npm test، Node 24)
-✔ LRU: الحد 20 مبيتعدّاش، والمستخدم حديثًا بيفضل (0.8487ms)
-✔ retry: بيستنى 300 ثم 600 وبعدين ينجح (0.7721ms)
-✔ retry: بعد آخر محاولة بيرمي الغلط، مش loop لا نهائي (0.4831ms)
-✔ retry: AbortError مبيتعادش (0.1956ms)
-✔ mount/unmount ٥٠ مرة: مفيش listener ولا interval فاضل (52.1833ms)
-✔ unmount بيلغي الطلب الشغال (AbortError) (0.5022ms)
-ℹ tests 6
-ℹ suites 0
-ℹ pass 6
-ℹ fail 0
-ℹ cancelled 0
-ℹ skipped 0
-ℹ todo 0
-ℹ duration_ms 130.3513
-~~~
-
-## اتقاس في الصفحة (Chrome 158 بـ Playwright، الـ listeners و الـ heap بـ Chrome DevTools Protocol)
-
-~~~text الناتج
-كل widget اتفتح واتقفل ٥٠ مرة (١٥٠ mount و ١٥٠ unmount):
-index.html: heap قبل 1.10MB وبعد 1.16MB | keydown listeners قبل 0 وبعد 0 | طلبات الطقس بعد آخر unmount: 50 وبعد ٦ ثواني 50 | 0 widget | سطور اللوج: 300
-view.html:  heap قبل 1.09MB وبعد 1.14MB | keydown listeners قبل 0 وبعد 0 | طلبات الطقس بعد آخر unmount: 50 وبعد ٦ ثواني 50 | 0 widget | سطور اللوج: 300
-
-«النت مقطوع» وفتحنا الطقس:
-mount الطقس
-طقس: محاولة 1 فشلت، هيستنى 300ms
-طقس: محاولة 2 فشلت، هيستنى 600ms
-والـ widget كتب: مش قادر يجيب الطقس: Failed to fetch
-
-رجّعنا النت، وفتحنا الساعة وعدّاد الكتابة، وكتبنا حرفين، واستنينا ٥ ثواني ونص:
-الطقس: القاهرة: 24° | الساعة: ١٠:٤١:٤٧ ص | عدّاد الكتابة: اكتب أي حاجة في الصفحة: 2
-~~~
-
-- **١٥٠ mount و unmount:** keydown listeners على [[window]] رجعت 0، والـ heap بعد GC زاد 0.06MB بس (مش زيادة ثابتة مع كل فتح)، ومفيش widget فاضل.
-- **مفيش polling بعد unmount:** طلبات الطقس فضلت 50 بعد ٦ ثواني (أكتر من فترة الـ polling).
-- **النت مقطوع:** محاولة، واستنى 300، ومحاولة، واستنى 600، ومحاولة، وبعدين رسالة. مش loop لا نهائي.
-- في DevTools بنفسك: Memory ← Heap snapshot قبل وبعد الـ ٥٠ مرة ← Comparison، ودوّر على Detached: المفروض متلاقيش عناصر الـ widgets.
-
-## كل حتة مهمة بتعمل إيه
-
-- **[[mount(setup)]]:** بيعمل [[AbortController]] واحد و [[Set]] للـ intervals، ويدّي الـ widget [[ctx]]: [[ctx.on]] بيسجّل أي listener بالـ signal، و [[ctx.every]] بيسجّل الـ interval في الـ Set، و [[ctx.signal]] للطلبات. الـ widget مبيعرفش حاجة عن التنضيف.
-- **[[unmount]]:** [[abort()]] (بيشيل كل الـ listeners ويلغي كل الطلبات مرة واحدة)، و [[clearInterval]] لكل interval، وتنضيف الـ widget نفسه (شيل العنصر)، ولوج. و [[done]] بيخلي النداء التاني مبيعملش حاجة.
-- **[[retry]]:** بيجرّب لحد [[tries]]، والانتظار [[base * 2 ** (attempt - 1)]]: 300 ثم 600. **[[AbortError]] مبيتعادش**، والـ [[sleep]] نفسه بيتلغي لو الـ signal اتعمله abort. و [[sleep]] parameter عشان الاختبار يبعت sleep وهمي ميستناش.
-- **[[weatherCache]] = [[LRU(20)]]:** لكل مدينة آخر قراية ووقتها، ولو أحدث من ٤ ثواني تتعرض من غير طلب.
-
-## الغلطات اللي حصلت وإزاي اتصلحت
-
-**لو شلت سطر [[if (err.name === "AbortError" || signal?.aborted) throw err;]] من [[retry.js]]** (جرّبناها على نسخة):
-
-- اختبار «AbortError مبيتعادش» وقع: الطلب الملغي اتعاد ٣ مرات.
-- واختبار «unmount بيلغي الطلب الشغال» **علّق ومخلصش** لحد ما وقفناه بعد دقيقتين: الـ retry فضل يستنى ويعيد على signal ملغي من الأول، والطلب الجديد بيستنى abort مش هيحصل تاني.
-
-يعني من غير السطر ده، قفل widget وهو بيحمّل بيسيب شغل معلّق في الخلفية للأبد. وده نفس نوع الـ leak اللي الوحدة بتتكلم عنه، بس في Promises بدل listeners.`  },
-        { lvl: 'فكرة', t: R`قيس وصلّح صفحة بطيئة`, what: R`خد صفحة من مشاريعك فيها input أو scroll أو resize، وقيس عدد مرات تنفيذ الـ handlers والذاكرة بعد استخدام طويل، وصلّح أكبر مشكلة بـ debounce أو throttle أو cleanup.`, done: R`عندك رقمين قبل وبعد (عدد التنفيذات في ١٠ ثواني، أو حجم الـ heap بعد ٢٠ مرة)، والتصليح مبيغيّرش شكل الصفحة ولا سلوكها.`, ext: R`اكتب الأرقام في README المشروع مع screenshots من DevTools، عشان تبقى قصة تحكيها في انترفيو.`, sol: R`## نسخة نموذجية: صفحة طلبات فيها مشكلتين
-
-الصفحة شبه صفحات لوحات التحكم: بحث في ٣٠٠٠ طلب، وزرار «تفاصيل» بيفتح مودال. فيها checkbox بيبدّل بين الكود قبل وبعد التصليح، عشان الرقمين يتقاسوا على نفس الصفحة.
-
-## الشكل النهائي
-
-~~~live 300 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>صفحة الطلبات</title>
-<style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
-  input { font: inherit; padding: 4px 8px; }
-  dialog { border: 1px solid #888; border-radius: 8px; }
-  #rows div { padding: 1px 6px; border-bottom: 1px solid #eee; }
-  label { margin-inline-start: 10px; }
-</style>
-</head>
-<body>
-<input id="q" placeholder="دوّر في الطلبات" aria-label="دوّر">
-<button id="open">تفاصيل</button>
-<label><input type="checkbox" id="fixed"> النسخة المصلّحة</label>
-<p>الفلترة اتنفّذت: <b id="runs">0</b></p>
-<div id="rows"></div>
-<dialog id="dlg"><p>تفاصيل الطلب</p><button id="close">اقفل</button></dialog>
-<script>
-  const orders = Array.from({ length: 3000 }, (_, i) => "طلب رقم " + i + " · " + ["القاهرة", "الجيزة", "طنطا"][i % 3]);
-  const rows = document.getElementById("rows");
-  let runs = 0;
-  const fixed = () => document.getElementById("fixed").checked;
-
-  function filter(q) {
-    document.getElementById("runs").textContent = ++runs;
-    const frag = document.createDocumentFragment();
-    for (const o of orders.filter(o => o.includes(q)).slice(0, 50)) {
-      frag.append(Object.assign(document.createElement("div"), { textContent: o }));
-    }
-    rows.replaceChildren(frag);
-  }
-
-  function debounce(fn, ms) {
-    let t;
-    return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
-  }
-  const debounced = debounce(filter, 250);
-  document.getElementById("q").addEventListener("input", (e) => (fixed() ? debounced : filter)(e.target.value));
-
-  // المودال: البايظ بيسجّل listener على window كل مرة بيتفتح، وشايل داتا كبيرة في الـ closure
-  const dlg = document.getElementById("dlg");
-  let closeModal = null;
-  document.getElementById("open").addEventListener("click", () => {
-    const details = new Array(200000).fill("تفاصيل"); // داتا الطلب
-    const onKey = (e) => { if (e.key === "Escape") dlg.close(); details.length; };
-    if (fixed()) {
-      const controller = new AbortController();
-      addEventListener("keydown", onKey, { signal: controller.signal });
-      closeModal = () => { controller.abort(); dlg.close(); };
-    } else {
-      addEventListener("keydown", onKey);
-      closeModal = () => dlg.close();
-    }
-    dlg.showModal();
-  });
-  document.getElementById("close").addEventListener("click", () => closeModal());
-  filter("");
-</script>
-</body>
-</html>
-~~~
-
-## الرقمين قبل وبعد
-
-~~~text اتقاس في Chrome 158 بـ Playwright (الـ heap بعد GC، والـ listeners بـ DevTools Protocol)
-قبل التصليح: كتبنا 21 حرف ← الفلترة اتنفّذت 21 مرة | heap قبل المودال 2.0MB وبعد ٢٠ فتح وقفل 17.3MB | keydown listeners على window: 20
-بعد التصليح: كتبنا 20 حرف ← الفلترة اتنفّذت 1 مرة | heap قبل المودال 1.9MB وبعد ٢٠ فتح وقفل 2.7MB | keydown listeners على window: 0
-~~~
-
-| | قبل | بعد |
-|---|---|---|
-| مرات الفلترة لجملة واحدة | 21 | 1 |
-| الـ heap بعد ٢٠ فتح وقفل للمودال | 17.3MB | 2.7MB |
-| keydown listeners على [[window]] | 20 | 0 |
-
-(الجملة نفسها اتكتبت في المرتين؛ عدد الحروف في القراية الأولى طلع 21 والتانية 20، والمهم إن الفلترة كانت مرة لكل حرف قبل التصليح ومرة واحدة بعده.)
-
-## المشكلتين والتصليح
-
-1. **الفلترة مع كل حرف:** [[filter]] كانت بتتنادى على كل [[input]]. التصليح: [[debounce(filter, 250)]]. شكل الصفحة وسلوكها زي ما هم: نفس النتيجة، بعد ما تقف بربع ثانية.
-2. **المودال بيسرّب:** كل فتح كان بيسجّل [[keydown]] على [[window]] ومحدش بيشيله، والـ listener ده closure شايل [[details]] (array فيها ٢٠٠ ألف عنصر)، فكل فتح بيسيب حوالي 0.75MB عايشين. التصليح: [[AbortController]] لكل فتح و [[controller.abort()]] في القفل.
-
-## ليه التصميم ده للنسخة النموذجية
-
-- **قبل وبعد في نفس الصفحة بـ checkbox:** القياس عادل (نفس الداتا والمتصفح)، وسهل تعرضه في انترفيو: «دي الصفحة، ودوس هنا».
-- **القياس بأرقام مش إحساس:** عدد التنفيذ من عدّاد في الصفحة، والـ heap بعد [[collectGarbage]] (في DevTools: زرار الزبالة في Memory قبل الـ snapshot)، وعدد الـ listeners. والـ ext بيقول تكتبهم في README مع لقطات من DevTools.`  },
-      ],
-      items: [
-        {
-          cmd: "debounce و throttle",
-          title: "تقلل عدد مرات تنفيذ دالة بتتنادي كتير",
-          desc: R`أحداث زي [[input]] و [[scroll]] و [[resize]] بتتنادي عشرات المرات في الثانية. لو كل مرة بتبعت request أو تحسب layout، الصفحة هتتقل والسيرفر هيتضرب.
-
-debounce: استنى لحد ما الأحداث تقف فترة (مثلًا 300ms بعد آخر حرف)، ونفّذ مرة واحدة. مثالي للبحث وأنت بتكتب وحفظ الـ drafts.
-
-throttle: نفّذ مرة واحدة بالكتير كل فترة (مثلًا كل 200ms)، مهما الحدث اتكرر. مثالي للـ scroll والـ resize وتتبّع الماوس.`,
-          example: R`function debounce(fn, ms) {
-  let timer;
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, args), ms);
-  };
-}
-function throttle(fn, ms) {
-  let last = 0;
-  return function (...args) {
-    const now = Date.now();
-    if (now - last < ms) return;
-    last = now;
-    fn.apply(this, args);
-  };
-}
-const input = document.querySelector("#search");
-const search = debounce((q) => console.log("ابحث عن", q), 300);
-input.addEventListener("input", (e) => search(e.target.value));
-window.addEventListener("scroll", throttle(() => console.log(scrollY), 200), { passive: true });`,
-          try: R`حط counter بيعد مرات تنفيذ الـ callback الأصلي، واكتب كلمة ١٠ حروف بسرعة: من غير debounce ١٠ مرات، ومعاه مرة. وبعدين ضيف لـ debounce method اسمها [[cancel]] بتلغي الـ timer. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات مش بتستنى وقت حقيقي، بتبعت ساعة وهمية كـ argument تالت [[clock]] فيها [[setTimeout]] و [[clearTimeout]]، فاستخدم [[clock.setTimeout]] و [[clock.clearTimeout]]، وضيف [[cancel]].`,
           ref: [
-            { t: "MDN: Debounce (glossary)", url: "https://developer.mozilla.org/en-US/docs/Glossary/Debounce" },
-            { t: "MDN: Throttle (glossary)", url: "https://developer.mozilla.org/en-US/docs/Glossary/Throttle" },
-            { t: "MDN: Window.clearTimeout()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/clearTimeout" },
-            { t: "MDN: EventTarget.addEventListener() (passive)", url: "https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener" },
+            { t: "MDN: RegExp.prototype.source", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/source" },
+            { t: "MDN: RegExp.prototype.global", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/global" },
+            { t: "MDN: RegExp.prototype.ignoreCase", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/ignoreCase" },
+            { t: "MDN: RegExp.prototype.multiline", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/multiline" },
+            { t: "MDN: RegExp.prototype.dotAll", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/dotAll" },
+            { t: "MDN: RegExp.prototype.unicodeSets", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/unicodeSets" },
+            { t: "MDN: RegExp.prototype.hasIndices", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/hasIndices" },
+            { t: "MDN: RegExp.prototype.toString()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/toString" },
+            { t: "MDN: regular expression literals", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar#regular_expression_literals" },
+            { t: "MDN: RegExp() constructor", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/RegExp" },
+            { t: "MDN: RegExp.prototype.flags", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/flags" },
           ],
-          practice: [
-            { lvl: 'سريع', t: R`اقرا وتوقّع: في Node انسخ [[debounce]] من الدرس، واعمل [[const s = debounce((q) => console.log("ابحث عن", q), 100)]]، ونادي [[s(1)]] لحد [[s(5)]] في loop ورا بعض. كام سطر هيطبع وفيه إيه؟`, done: R`سطر واحد بس بعد حوالي 100ms: [[ابحث عن 5]]، آخر قيمة، والأربعة اللي قبلها اتلغوا.`, sol: R`**التوقع:** سطر واحد بعد حوالي 100ms فيه [[5]].
-
-~~~js debounce-loop.js
-function debounce(fn, ms) {
-  let timer;
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, args), ms);
-  };
-}
-
-const t = Date.now();
-const s = debounce(q => console.log("ابحث عن", q, "بعد", Date.now() - t, "ms"), 100);
-for (let i = 1; i <= 5; i++) s(i);
-console.log("الـ loop خلص");
-~~~
-
-~~~text الناتج (node debounce-loop.js، Node 24)
-الـ loop خلص
-ابحث عن 5 بعد 113 ms
-~~~
-
-**ليه سطر واحد:**
-
-1. [[s(1)]]: [[clearTimeout(timer)]] (مفيش حاجة)، وبعدين timer جديد بعد 100ms بـ [[args = [1]]].
-2. [[s(2)]] على طول: بيلغي timer الـ 1، ويعمل واحد جديد بـ 2.
-3. نفس الكلام لـ 3 و 4 و 5. آخر timer بس هو اللي فاضل، بـ [[5]].
-4. الـ loop خلص (اتطبع الأول)، وبعد 100ms (113ms فعليًا) الـ timer الأخير اشتغل.
-
-الـ [[timer]] متغير **جوه closure**: الـ ٥ نداءات بيشوفوا نفس المتغير، وده اللي بيخلي كل نداء يقدر يلغي اللي قبله.
-
-**الغلطة الشائعة:** تعمل [[debounce(fn, 100)]] **جوه** الـ handler أو الـ loop: كل نداء بيعمل debounce جديد بـ timer جديد، فمفيش حاجة بتتلغي، والـ ٥ بيتطبعوا.`  },
-            { lvl: 'تطبيق', t: R`ابني autosave: [[<textarea>]] بيبعت النص لـ [[saveDraft(text)]] وهمية (بتطبع وتزوّد عدّاد في الصفحة) بعد ثانية من آخر حرف بـ debounce، وجنبه «اتحفظ الساعة ...» بـ [[toLocaleTimeString]].`, done: R`وانت بتكتب مفيش ولا حفظ، وبعد ما تقف بثانية العدّاد بيزيد ١ والنص المحفوظ هو كل اللي كتبته لحد آخر حرف. ولو استخدمت arrow function كـ fn وجواها [[this]]، تعرف ليه الدرس كاتب [[fn.apply(this, args)]].`, sol: R`~~~live 220 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>حفظ تلقائي</title>
-<style>
-  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
-  textarea { font: inherit; width: 100%; box-sizing: border-box; height: 90px; }
-  #status { color: #15803d; font-size: 14px; }
-</style>
-</head>
-<body>
-<textarea id="draft" aria-label="المسودة"></textarea>
-<p id="status">لسه متحفظش</p>
-<p>مرات الحفظ: <b id="saves">0</b></p>
-<script>
-  function debounce(fn, ms) {
-    let timer;
-    return function (...args) {
-      clearTimeout(timer);
-      timer = setTimeout(() => fn.apply(this, args), ms);
-    };
-  }
-
-  let saves = 0;
-  let saved = "";
-  function saveDraft(text) {
-    saves++;
-    saved = text;
-    console.log("اتحفظ:", text);
-    document.getElementById("saves").textContent = saves;
-    document.getElementById("status").textContent = "اتحفظ الساعة " + new Date().toLocaleTimeString("ar-EG");
-  }
-
-  const autosave = debounce(saveDraft, 1000);
-  document.getElementById("draft").addEventListener("input", function () {
-    autosave(this.value);
-  });
-</script>
-</body>
-</html>
-~~~
-
-~~~text اللي اتقاس في Chrome 158 (Playwright)
-وانت بتكتب «مرحبا يا عالم» (حرف كل 60ms):  مرات الحفظ 0
-بعد ثانية من آخر حرف:  مرات الحفظ 1 | اتحفظ الساعة ١٠:٢٥:٠٥ ص | المحفوظ: مرحبا يا عالم
-~~~
-
-**كل حتة:**
-
-- [[debounce(saveDraft, 1000)]] **مرة واحدة** برّه الـ handler، والـ handler بينادي [[autosave(this.value)]] مع كل حرف. كل حرف بيلغي الـ timer اللي قبله، فالحفظ بيحصل بعد ثانية من **آخر** حرف بس.
-- [[saveDraft]]: بتزوّد العدّاد وتكتب الوقت بـ [[toLocaleTimeString("ar-EG")]]. ده حفظ وهمي، وفي الحقيقة بيبقى [[fetch]] أو [[localStorage]].
-- المحفوظ هو النص كله لحد آخر حرف لأن الـ handler بيبعت [[this.value]] (النص الكامل)، مش الحرف الجديد.
-
-**ليه [[fn.apply(this, args)]] في الـ debounce:** الـ handler هنا [[function]] عادية، فـ [[this]] جواه هو الـ textarea. الـ debounce بيرجّع [[function (...args)]] عادية، فـ [[this]] بيوصلها، و [[apply(this, args)]] بيعدّيه لـ [[fn]] مع الـ arguments. لو [[fn]] نفسها arrow function، الـ [[this]] اللي جواها بيبقى بتاع المكان اللي اتكتبت فيه، و [[apply]] مبيغيّروش. ولو الـ debounce كان بيعمل [[fn(...args)]] من غير apply، [[this]] جوه [[fn]] كان هيبقى [[undefined]] (في strict mode).
-
-**الغلطة الشائعة:** تعمل debounce بس تنسى «احفظ قبل ما اليوزر يقفل الصفحة»: لو كتب وقفل التاب قبل الثانية، آخر كلام بيضيع. التصليح الكامل بيزوّد [[pagehide]] أو [[visibilitychange]] يحفظ على طول.`  },
-            { lvl: 'تحدي', t: R`مسألة واكتب اختبار: الـ throttle اللي في الدرس leading بس، فآخر نداء في الفترة بيضيع (آخر مكان scroll مش بيتحسب). اكتب نسخة trailing: لو فيه نداء اتمنع، يتنفّذ في آخر الفترة بآخر arguments. واختبرها بنداءات في 0 و 50 و 100 و 150ms بـ throttle 200ms.`, done: R`النسخة القديمة بتنفّذ مرة واحدة بالـ argument الأول بس. الجديدة بتنفّذ مرتين: فورًا بالأول، وبعد حوالي 200ms بالرابع (الأخير)، ومفيش تنفيذ تالت.`, sol: R`~~~js throttle-trailing.js
-function throttle(fn, ms) {
-  let last = 0;
-  return function (...args) {
-    const now = Date.now();
-    if (now - last < ms) return;
-    last = now;
-    fn.apply(this, args);
-  };
-}
-
-function throttleTrailing(fn, ms) {
-  let last = 0;
-  let timer = null;
-  let pendingArgs = null;
-  return function (...args) {
-    const now = Date.now();
-    const wait = ms - (now - last);
-    if (wait <= 0) {
-      last = now;
-      fn.apply(this, args);
-    } else {
-      pendingArgs = args;
-      if (!timer) {
-        timer = setTimeout(() => {
-          timer = null;
-          last = Date.now();
-          fn.apply(this, pendingArgs);
-          pendingArgs = null;
-        }, wait);
-      }
-    }
-  };
-}
-
-function run(label, make) {
-  return new Promise(resolve => {
-    const t = Date.now();
-    const calls = [];
-    const f = make((x) => calls.push(x + " عند " + (Date.now() - t) + "ms"), 200);
-    for (const [at, x] of [[0, "أ"], [50, "ب"], [100, "ج"], [150, "د"]]) setTimeout(() => f(x), at);
-    setTimeout(() => {
-      console.log(label, "→", calls.length, "مرة:", calls.join("، "));
-      resolve(calls);
-    }, 600);
-  });
-}
-
-const oldCalls = await run("throttle القديم   ", throttle);
-const newCalls = await run("throttle trailing ", throttleTrailing);
-console.log("اختبار:", oldCalls.length === 1 && newCalls.length === 2 && newCalls[1].startsWith("د") ? "نجح" : "فشل");
-~~~
-
-(جنبه [[package.json]] فيه [[{"type":"module"}]] عشان [[await]] برّه الدوال.)
-
-~~~text الناتج (node throttle-trailing.js، Node 24)
-throttle القديم    → 1 مرة: أ عند 5ms
-throttle trailing  → 2 مرة: أ عند 38ms، د عند 266ms
-اختبار: نجح
-~~~
-
-**إزاي [[throttleTrailing]] بتشتغل:**
-
-- [[wait = ms - (now - last)]]: فاضل قد إيه على نهاية الفترة. لو صفر أو أقل، الفترة خلصت: نفّذ على طول وسجّل [[last]].
-- غير كده: احفظ آخر arguments في [[pendingArgs]] (كل نداء بيكتب فوق اللي قبله)، ولو مفيش timer، اعمل واحد بعد [[wait]] بالظبط.
-- لما الـ timer يشتغل: نفّذ بـ [[pendingArgs]] (آخر واحد، يعني «د»)، وسجّل [[last]] من جديد عشان الفترة الجاية تتحسب من هنا.
-
-**النتيجة:** النداءات في 0 و 50 و 100 و 150ms:
-
-- القديم: مرة واحدة بـ «أ»، والتلاتة الباقيين ضاعوا.
-- الجديد: «أ» فورًا، و «د» (الأخير) بعد ~200ms من الأولى، ومفيش تالت. الأرقام 38 و 266ms بدل 0 و 200 لأن [[setTimeout]] نفسه بيتأخر شوية على Windows، والمهم الفرق بينهم.
-
-**الاختبار:** آخر سطر بيتأكد من ٣ حاجات: القديم مرة، والجديد مرتين، والتانية بآخر argument.
-
-**الغلطة الشائعة:** تعمل الـ trailing بـ [[setTimeout(..., ms)]] بدل [[wait]]: الآخر بيتنفّذ بعد ms من **آخر نداء** مش من نهاية الفترة، وده بقى debounce مش throttle.`  },
-          ],
-          flag: "script",
-          deep: {
-            why: "بحث بيبعت request مع كل حرف = ١٠ requests لكلمة واحدة، والردود ممكن توصل بترتيب غلط. و scroll handler تقيل = scroll بيقطّع. والاتنين من أشهر أسئلة انترفيو الفرونت: «اكتب debounce بإيدك».",
-            how: R`debounce مبني على closure: [[timer]] متغير عايش بين النداءات. كل نداء بيلغي الـ timer القديم ويبدأ واحد جديد، فالتنفيذ الفعلي بيحصل بس لما يعدّي ms من غير نداء جديد. الشكل ده اسمه trailing (في الآخر). فيه نسخة leading بتنفّذ أول نداء على طول وتتجاهل الباقي لحد ما يهدى.
-
-throttle بيحفظ وقت آخر تنفيذ، ويتجاهل أي نداء قبل ما الفترة تعدّي. النسخة البسيطة دي ممكن تضيّع آخر نداء، والنسخ الكاملة (lodash) بتضمن تنفيذ أخير في الآخر.
-
-[[function (...args)]] مش arrow، و [[fn.apply(this, args)]]، عشان لو الدالة المتغلفة method محتاجة this، تفضل شغالة.
-
-للـ scroll والـ animation، [[requestAnimationFrame]] كـ throttle طبيعي (مرة لكل frame) غالبًا أحسن. وللبحث: debounce + AbortController (درس fetch) عشان الرد القديم ميكتبش فوق الجديد.
-
-في React لازم الدالة الـ debounced تتعمل مرة واحدة ([[useMemo]] أو [[useRef]])، وإلا كل render بيعمل واحدة جديدة بـ timer جديد.`,
-            when: "debounce: بحث، و autosave، و validation وانت بتكتب، و resize نهائي. throttle: scroll، و mousemove، و infinite scroll، و analytics events.",
-            mistakes: R`تعمل debounce جوه الـ handler نفسه ([[input.oninput = () => debounce(fn, 300)()]]) فكل مرة timer جديد ومفيش حاجة بتتلغي. وتنسى this و args. و debounce للزرار «ادفع»: الأحسن تعطّل الزرار. وفي الانترفيو: «الفرق بين debounce و throttle؟» بمثال لكل واحد.`
-          },
-          teach: R`## المثال بيعمل إيه
-
-بيكتب دالتين «بتغلّف» أي دالة تانية وترجّع نسخة منها بتتنفّذ مرات أقل: [[debounce]] (نفّذ مرة بعد ما الحدث يهدى) و [[throttle]] (نفّذ مرة بالكتير كل فترة). وبعدين بيربطهم بخانة بحث وبالـ scroll.
-
-الكود فيه [[document]] و [[window]]، فده للمتصفح. شغّلناه في Chrome (headless) على صفحة فيها [[<input id="search">]]، وكتبنا فيها وعملنا scroll أوتوماتيك.
-
-> المربع اللي تحت الدرس بيطلب نسخة من [[debounce]] بساعة وهمية و [[cancel]]. الشرح هنا للمثال والفكرة، والحل عليك.
-
----
-
-## ١. [[debounce]] سطر سطر
-
-~~~text app.js
-function debounce(fn, ms) {
-  let timer;
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, args), ms);
-  };
-}
-~~~
-
-- **[[debounce(fn, ms)]]**: بتاخد الدالة الأصلية والمدة، و**بترجّع دالة جديدة**. الدالة اللي بترجّع دالة اسمها higher-order function.
-- **[[let timer;]]**: متغير برّه الدالة اللي راجعة. كل مرة تنادي النسخة الجديدة، بتشوف **نفس** [[timer]]. ده اسمه **closure**: الدالة الداخلية فاكرة المتغيرات اللي اتعملت حواليها حتى بعد ما [[debounce]] نفسها خلصت.
-- **[[function (...args)]]**: [[...args]] (rest) بتلم أي arguments تتبعت في array. وهي [[function]] عادية مش arrow عشان يبقى ليها [[this]] بتاعها (تحت).
-- **[[clearTimeout(timer)]]**: الغي الـ timer اللي فات لو لسه مستني. (أول مرة [[timer]] = [[undefined]] و [[clearTimeout(undefined)]] مبتعملش حاجة.)
-- **[[timer = setTimeout(..., ms)]]**: ابدأ timer جديد واحفظ رقمه. [[setTimeout]] بترجّع رقم (id) بيتلغي بيه.
-- **[[fn.apply(this, args)]]**: نادي الدالة الأصلية، و [[apply]] بتسمح تحدد [[this]] وتبعت الـ arguments كـ array. والـ arrow [[() => ...]] حواليها مالهاش [[this]] خاص، فبتاخد [[this]] بتاع الـ function الخارجية.
-
-يعني كل نداء بيأجّل التنفيذ ms من جديد. التنفيذ بيحصل بس لما يعدّي ms **من غير** نداء جديد:
-
-~~~text نداءات كل 50ms و ms = 300
-j     ja    jav   ...   javascript   (هدوء 300ms)   ← fn("javascript")
-  ↑ كل نداء بيلغي الـ timer اللي قبله
-~~~
-
----
-
-## ٢. [[throttle]] سطر سطر
-
-~~~text app.js
-function throttle(fn, ms) {
-  let last = 0;
-  return function (...args) {
-    const now = Date.now();
-    if (now - last < ms) return;
-    last = now;
-    fn.apply(this, args);
-  };
-}
-~~~
-
-- [[last]]: وقت آخر تنفيذ (في الـ closure برضه). بيبدأ 0، فأول نداء دايمًا بيعدّي.
-- [[now - last < ms]]: لسه معدّاش ms من آخر تنفيذ؟ [[return]]: تجاهل النداء ده خالص.
-- غير كده: سجّل الوقت ونفّذ على طول.
-
-الفرق: debounce بيستنى الهدوء ويتنفّذ **في الآخر**. throttle بيتنفّذ **على طول** وبعدين يقفل الباب ms.
-
----
-
-## ٣. الربط بالصفحة
-
-~~~text app.js
-const input = document.querySelector("#search");
-const search = debounce((q) => console.log("ابحث عن", q), 300);
-input.addEventListener("input", (e) => search(e.target.value));
-window.addEventListener("scroll", throttle(() => console.log(scrollY), 200), { passive: true });
-~~~
-
-- [[document.querySelector("#search")]]: العنصر اللي [[id]] بتاعه search.
-- [[search]]: النسخة الـ debounced **اتعملت مرة واحدة** برّه الـ listener. ده أهم سطر: لو عملتها جوه الـ listener، كل حرف هيعمل closure جديد بـ [[timer]] جديد، ومفيش حاجة هتتلغي.
-- حدث [[input]]: بيحصل مع كل تغيير في الخانة، و [[e.target.value]] النص اللي فيها.
-- [[scrollY]]: المسافة اللي اتعمل لها scroll من فوق بالـ pixels.
-- [[{ passive: true }]]: وعد للمتصفح إن الـ listener مش هيعمل [[preventDefault()]]. في الـ scroll ملوش تأثير فعلي (الحدث ده مبيتلغيش أصلًا)، فايدته الحقيقية مع [[wheel]] و [[touchmove]].
-
-### اللي حصل في Chrome
-
-كتبنا [["javascript"]] حرف حرف، بين كل حرف والتاني 50ms، يعني ١٠ أحداث [[input]]:
-
-~~~text الناتج (Console)
-ابحث عن javascript
-~~~
-
-**مرة واحدة**، بالكلمة كاملة، بعد 300ms من آخر حرف.
-
-وبعدين عملنا ٢٠ scroll، كل واحد 100px وبينهم حوالي 30ms:
-
-~~~text الناتج (Console)
-100
-700
-1300
-1900
-~~~
-
-٤ مرات بس من ٢٠ حدث: كل 200ms مرة. ولاحظ إن الصفحة وصلت 2000 بس آخر رقم اتطبع 1900: النسخة البسيطة دي ممكن **تضيّع آخر نداء** لو جه جوه الـ 200ms. النسخ الكاملة (زي lodash) بتنفّذ مرة أخيرة في الآخر.
-
----
-
-## ٤. العدّاد (من الحل)
-
-الحل بيعمل loop بيبعت الـ ١٠ حروف لنسخة debounced كل 50ms، ويعدّ مرتين: كام مرة الحدث حصل ([[raw]])، وكام مرة الدالة الأصلية اتنفّذت فعلًا ([[calls]]). اتشغّل في Node 24:
-
-~~~text الناتج
-ابحث عن javascript
-{ raw: 10, calls: 1 }
-~~~
-
-١٠ أحداث، تنفيذ واحد.
-
----
-
-## الخلاصة
-
-| | debounce | throttle |
-|---|---|---|
-| بيتنفّذ إمتى | بعد ما النداءات تقف ms | أول نداء، وبعدين مرة كل ms بالكتير |
-| بيفتكر إيه في الـ closure | [[timer]] | [[last]] |
-| أمثلة | بحث وانت بتكتب، autosave | scroll، resize، mousemove |
-
-والنسخة الملفوفة تتعمل **مرة واحدة** برّه الـ handler، و [[fn.apply(this, args)]] عشان [[this]] والـ arguments يوصلوا زي ما هم.`,
-          lines: [
-            R`بتاخد الدالة الأصلية ([[fn]]) والمدة بالملي ثانية، وترجّع نسخة منها مبتشتغلش غير لما النداءات تبطّل لمدة [[ms]].`,
-            R`[[timer]] برّه الدالة اللي هترجع، فهو في الـ closure ومشترك بين كل نداءاتها. ده اللي بيخليها تفتكر الـ timer اللي فات عشان تلغيه.`,
-            R`بترجّع دالة جديدة بتاخد أي arguments في [[args]]. اتكتبت بـ [[function]] مش arrow عشان [[this]] بتاعتها تبقى بتاعة اللي ناداها (زي العنصر في event handler عادي)، ونعدّيها لـ [[fn]].`,
-            R`كل نداء جديد بيلغي الـ timer اللي فات، فالتنفيذ اللي كان مستني مبيحصلش. أول مرة [[timer]] بـ [[undefined]]، و [[clearTimeout(undefined)]] مبتعملش حاجة.`,
-            R`بيبدأ timer جديد، و [[fn]] هتتنادى بس لو عدّت [[ms]] من غير نداء تاني. الـ arrow جوه بتاخد [[this]] من الدالة اللي فوقها، و [[apply]] بتنادي [[fn]] بنفس [[this]] وبالـ arguments بتاعة **آخر** نداء.`,
-            R`نهاية الدالة اللي راجعة.`,
-            R`نهاية [[debounce]].`,
-            R`العكس تقريبًا: بدل ما تستنى لحد ما النداءات تبطّل، بتنفّذ مرة كل [[ms]] بالكتير وتتجاهل اللي بينهم.`,
-            R`وقت آخر تنفيذ، في الـ closure برضه. بادئ بـ 0 فأول نداء دايمًا بيتنفّذ.`,
-            R`الدالة الجديدة اللي هتتنادى مكان الأصلية، بـ [[function]] عشان [[this]] زي ما في debounce.`,
-            R`الوقت الحالي بالملي ثانية عشان نقارنه بآخر تنفيذ.`,
-            R`لو لسه معدّاش [[ms]] من آخر تنفيذ، بنخرج من غير ما نعمل حاجة. النداء ده بيضيع خالص (مش بيتأجّل)، فآخر نداء في السلسلة ممكن ميتنفّذش.`,
-            R`بنسجّل إن فيه تنفيذ حصل دلوقتي، فأي نداء في الـ [[ms]] الجاية هيتجاهل.`,
-            R`بننادي الأصلية فورًا بنفس [[this]] ونفس الـ arguments.`,
-            R`نهاية الدالة اللي راجعة.`,
-            R`نهاية [[throttle]].`,
-            R`بنجيب خانة البحث من الصفحة عشان نسمع لكتابة اليوزر فيها.`,
-            R`بنعمل نسخة debounced من البحث **مرة واحدة** برّه الـ handler. لو عملناها جوه الـ handler كل حرف هيعمل debounce جديد بـ [[timer]] جديد، فمفيش حاجة هتتلغي وكل حرف هيبحث.`,
-            R`كل حرف بيطلق [[input]] وينادي [[search]] بالنص الحالي، بس البحث الحقيقي بيحصل مرة واحدة بعد 300ms من آخر حرف. فكتابة [["laptop"]] بسرعة بتعمل بحث واحد بدل 6.`,
-            R`الـ scroll ممكن يطلق event عشرات المرات في الثانية، فالـ throttle بيخلي الدالة تشتغل مرة كل 200ms بالكتير. و [[passive: true]] بيقول للمتصفح إنك مش هتعمل [[preventDefault]]؛ مع [[scroll]] ملوش تأثير فعلي لأن الـ event ده مش cancelable أصلًا، وفايدته الحقيقية مع [[wheel]] و [[touchstart]] و [[touchmove]].`,
-          ],
-          sol: R`مع ١٠ حروف بسرعة: الـ counter بتاع الـ callback الأصلي بيعد 10، ونسخة debounce بتعد 1 بآخر قيمة ([["javascript"]] كاملة) بعد 300ms من آخر حرف. لو بتكتب ببطء (أكتر من 300ms بين الحروف) هتلاقيها اشتغلت أكتر من مرة، وده صح.
-
-[[cancel]] بتعمل [[clearTimeout(timer)]]، فلو ناديت [[search("x")]] وبعدين [[search.cancel()]] على طول، الـ callback مش هيشتغل خالص. مفيدة لما الـ component يتشال أو اليوزر يمسح الـ input. الغلطة الشائعة إنك تعمل debounce جوه الـ listener نفسه ([[input.addEventListener("input", (e) => debounce(fn, 300)(e.target.value))]]): كده بتعمل timer جديد في كل حرف، فمفيش debounce خالص.`,
-          solCode: R`function debounce(fn, ms) {
-  let timer;
-  function debounced(...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, args), ms);
-  }
-  debounced.cancel = () => clearTimeout(timer);
-  return debounced;
-}
-let raw = 0, calls = 0;
-const search = debounce((q) => { calls++; console.log("ابحث عن", q); }, 300);
-const word = "javascript";
-for (let i = 1; i <= word.length; i++) {
-  raw++;
-  search(word.slice(0, i));
-  await new Promise((r) => setTimeout(r, 50));
-}
-await new Promise((r) => setTimeout(r, 400));
-console.log({ raw, calls }); // { raw: 10, calls: 1 }`,
-          check: {
-            lang: "js",
-            starter: R`function debounce(fn, ms, clock = globalThis) {
-  let timer;
-  function debounced(...args) {
-    // clock.clearTimeout(timer) وبعدين timer = clock.setTimeout(...)
-  }
-  debounced.cancel = () => {};
-  return debounced;
-}`,
-            tests: R`function fakeClock() {
-  let now = 0, id = 0;
-  const timers = new Map();
-  return {
-    setTimeout(f, ms) { timers.set(++id, { at: now + ms, f }); return id; },
-    clearTimeout(t) { timers.delete(t); },
-    tick(ms) {
-      now += ms;
-      for (const [t, { at, f }] of [...timers].sort((a, b) => a[1].at - b[1].at)) if (at <= now) { timers.delete(t); f(); }
-    }
-  };
-}
-test("10 نداءات ورا بعض ← الـ fn بتتنادي مرة واحدة بآخر قيمة", () => {
-  const clock = fakeClock(), got = [];
-  const search = debounce((q) => got.push(q), 300, clock);
-  const word = "javascript";
-  for (let i = 1; i <= word.length; i++) { search(word.slice(0, i)); clock.tick(50); }
-  clock.tick(300);
-  expect(got).toEqual(["javascript"]);
-});
-test("قبل ما الـ ms تخلص مفيش نداء", () => {
-  const clock = fakeClock();
-  let calls = 0;
-  const f = debounce(() => calls++, 300, clock);
-  f();
-  clock.tick(299);
-  expect(calls).toBe(0);
-  clock.tick(1);
-  expect(calls).toBe(1);
-});
-test("نداءين بينهم أكتر من ms ← مرتين", () => {
-  const clock = fakeClock();
-  let calls = 0;
-  const f = debounce(() => calls++, 100, clock);
-  f(); clock.tick(150); f(); clock.tick(150);
-  expect(calls).toBe(2);
-});
-test("cancel بتلغي النداء اللي مستني", () => {
-  const clock = fakeClock();
-  let calls = 0;
-  const f = debounce(() => calls++, 100, clock);
-  f("x"); f.cancel(); clock.tick(500);
-  expect(calls).toBe(0);
-});
-test("بتعدّي الـ arguments و this", () => {
-  const clock = fakeClock();
-  const obj = { name: "Sara", hi: debounce(function (g) { obj.out = g + " " + this.name; }, 10, clock) };
-  obj.hi("Hi"); clock.tick(10);
-  expect(obj.out).toBe("Hi Sara");
-});`,
-            solution: R`function debounce(fn, ms, clock = globalThis) {
-  let timer;
-  function debounced(...args) {
-    clock.clearTimeout(timer);
-    timer = clock.setTimeout(() => fn.apply(this, args), ms);
-  }
-  debounced.cancel = () => clock.clearTimeout(timer);
-  return debounced;
-}`
-          }
+          pre: [{ to: "js/groups و flags", why: R`الـ flags نفسهم و [[lastIndex]]: هنا بنقراهم كخصايص` }, { to: "js/test و match و matchAll و replace", why: R`[[RegExp.escape]] وليه النص اللي جاي من برّه خطر` }],
         },
         {
-          cmd: "memory leaks",
-          title: "الذاكرة بتكبر ومبتنزلش: إيه اللي بيمسكها؟",
-          desc: R`JS فيه garbage collector: أي object محدش يقدر يوصله (من الـ globals أو الـ stack أو closures عايشة) بيتمسح لوحده. الـ memory leak معناه إنك سايب reference لحاجة مش محتاجها، فمبتتمسحش.
+          cmd: "RegExp exec: الـ result array و indices و lastIndex",
+          title: "exec من جوه: كل خانة في الناتج، والـ flag d، والـ loop بـ lastIndex من غير ما يلف للأبد",
+          desc: R`[[re.exec(str)]] هي الـ method الأساسية في الـ RegExp: [[test]] و [[match]] و [[matchAll]] و [[replace]] كلهم مبنيين عليها. بترجّع [[null]] لو مفيش match، أو array أول خانة فيها النص اللي اتطابق وبعده كل group بالترتيب، ومعاها خصايص: [[index]] (مكان الـ match)، و [[input]] (النص كله)، و [[groups]] (الـ named groups)، و [[indices]] لو الـ regex فيه flag [[d]] (أماكن البداية والنهاية لكل group).
 
-أشهر الأسباب: event listeners متشالتش، و setInterval متوقفش، و cache أو Map بيكبر للأبد، و closures شايلة objects ضخمة، وعناصر DOM اتشالت من الصفحة بس لسه في متغير.
-
-الحلول: شيل اللي ضفته (cleanup)، و [[AbortController]] لـ listeners كتير مرة واحدة، و [[WeakMap]] لداتا مربوطة بـ objects، وحد أقصى لأي cache.`,
-          example: R`const cache = new Map();
-function remember(key, value) { cache.set(key, value); }  // بيكبر للأبد: حط حد أقصى
-const meta = new WeakMap();
-function tag(el, info) { meta.set(el, info); }            // لما el يتمسح، info تتمسح معاه
-function startPolling() {
-  const id = setInterval(() => fetch("/api/ping"), 5000);
-  return () => clearInterval(id);
+من غير [[g]] أو [[y]]، [[exec]] بتدوّر من أول النص كل مرة. ومعاهم، بتبدأ من [[lastIndex]] وبتحركه لبعد الـ match، فتقدر تلف بيها على كل الـ matches. والفخ: match طوله صفر (زي [[\b]] أو [[x*]]) مبيحرّكش [[lastIndex]]، فالـ loop بيلف للأبد إلا لو زقيته بنفسك. [[matchAll]] بيعمل ده لوحده ومبيلمسش الـ regex بتاعك.`,
+          example: R`// exec من غير g: أول match بكل تفاصيله، ومع d أماكن كل group
+const line = "order #A-17 total 250 EGP";
+const re = /#(?<code>[A-Z])-(?<num>\d+)/d;
+const m = re.exec(line);
+console.log(m[0], m.index, m.groups.num, m.indices[0], m.indices.groups.num);
+console.log(re.exec("no order"), re.lastIndex, re.hasIndices);
+// exec مع g في loop: lastIndex بيتحرك لوحده
+const prices = /(\d+) EGP/g;
+const text = "tea 15 EGP, rice 40 EGP, oil 95 EGP";
+let hit;
+while ((hit = prices.exec(text)) !== null) {
+  console.log(hit[1], hit.index, prices.lastIndex);
 }
-const stopPolling = startPolling();
-stopPolling();
-const controller = new AbortController();
-window.addEventListener("resize", () => console.log(innerWidth), { signal: controller.signal });
-document.addEventListener("keydown", (e) => console.log(e.key), { signal: controller.signal });
-controller.abort();`,
-          try: R`في DevTools افتح Memory، وخد Heap snapshot، واعمل حاجة في الصفحة ١٠ مرات (افتح وقفل modal)، وخد snapshot تاني، واختار «Comparison». لو فيه objects بتزيد مع كل مرة ومبتقلش، عندك leak. دوّر على «Detached» عشان عناصر DOM اتشالت ولسه ممسوكة.`,
-          ref: [
-            { t: "MDN: Memory management", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Memory_management" },
-            { t: "MDN: WeakRef", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakRef" },
-            { t: "MDN: AbortController", url: "https://developer.mozilla.org/en-US/docs/Web/API/AbortController" },
-            { t: "Chrome DevTools: Fix memory problems", url: "https://developer.chrome.com/docs/devtools/memory-problems" },
-          ],
+console.log(prices.lastIndex);
+// matchAll: نفس النتيجة، ومن غير ما يلمس الـ regex بتاعك
+console.log([...text.matchAll(prices)].map((x) => x[1]), prices.lastIndex);
+// match بطول صفر: لازم تزق lastIndex بنفسك
+const edges = /\b/g;
+const spots = [];
+while ((hit = edges.exec("ab cd")) !== null) {
+  spots.push(hit.index);
+  if (hit[0] === "") edges.lastIndex++;
+}
+console.log(spots);`,
+          try: R`اكتب [[mark(str, re)]] بتحط [[[ ]]] حوالين كل match في النص باستخدام [[indices]] (flag [[d]])، من غير [[replace]]. جرّبها على [["tea 15 EGP, rice 40 egp"]] بـ [[/\d+ egp/i]]، وعلى نص مفيهوش أرقام.`,
+          sol: R`~~~js mark.mjs
+function mark(str, re) {
+  const hits = [...str.matchAll(new RegExp(re.source, "dg" + re.flags.replace(/[dg]/g, "")))];
+  let out = str;
+  for (const h of hits.reverse()) {
+    const [s, e] = h.indices[0];
+    out = out.slice(0, s) + "[" + out.slice(s, e) + "]" + out.slice(e);
+  }
+  return out;
+}
+console.log(mark("tea 15 EGP, rice 40 egp", /\d+ egp/i), mark("no prices", /\d+/));
+~~~
+
+~~~text الناتج (Node 24.22)
+tea [15 EGP], rice [40 egp] no prices
+~~~
+
+- نسخة من الـ regex فيها [[d]] و [[g]] أكيد (من غير ما نكررهم لو موجودين)، وباقي الـ flags زي ما هي ([[i]] هنا).
+- [[h.indices[0]]] بيدّي [[[start, end]]] بتاع الـ match كله.
+- بنلف **من الآخر للأول** ([[reverse]]): لو بدأنا من الأول، أول [[[]] هيزق كل الأماكن اللي بعده حرف لقدّام والـ indices تبقى غلط.`,
           practice: [
-            { lvl: 'سريع', t: R`قيس: شغّل [[node --expose-gc]] واطبع [[process.memoryUsage().heapUsed]] بالـ MB قبل ما تملا array بمليون object، وبعد، وبعد [[arr = null]] و [[gc()]]. وبعدين كرّر بس احفظ [[globalThis.keep = arr]] قبل الـ null.`, done: R`الرقم بيزيد عشرات الـ MB بعد الملا، ويرجع قريب من الأول بعد null و gc. ومع [[globalThis.keep]] مبينزلش: لسه فيه reference عايش، وده الـ leak بالظبط. اكتب الـ ٣ أرقام في كل مرة.`, sol: R`~~~js heap.js
-const mb = () => (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(1) + " MB";
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const re = /a/g]] وبعدها [[while ((m = re.exec("banana")) !== null) console.log(m.index, re.lastIndex)]]، وبعد الـ loop [[console.log(re.lastIndex)]]. اكتب الأرقام قبل ما تشغّل.`, done: R`كتبت ٣ سطور ([[1 2]] و [[3 4]] و [[5 6]]) وإن [[lastIndex]] بعد الـ loop صفر، وطلع كده.`, sol: R`~~~js p1.mjs
+const re = /a/g;
+let m;
+while ((m = re.exec("banana")) !== null) console.log(m.index, re.lastIndex);
+console.log("after:", re.lastIndex);
+~~~
 
-function round(keepIt) {
-  gc();
-  const before = mb();
-  let arr = Array.from({ length: 1_000_000 }, (_, i) => ({ id: i, name: "user" + i }));
-  const filled = mb();
-  if (keepIt) globalThis.keep = arr;
-  arr = null;
-  gc();
-  console.log(keepIt ? "مع globalThis.keep:" : "من غير reference:", "قبل", before, "| بعد الملا", filled, "| بعد null و gc", mb());
+~~~text الناتج (Node 24.22)
+1 2
+3 4
+5 6
+after: 0
+~~~
+
+[[banana]]: الـ a في 1 و 3 و 5. كل match طوله 1، فـ [[lastIndex]] = [[index + 1]]. والنداء الرابع بدأ من 6 (آخر النص) ملقاش، فرجّع [[null]] و**رجّع [[lastIndex]] لصفر**. ده اللي بيخلّي نفس الـ regex ينفع تلف بيه تاني على نص جديد، وده نفسه اللي بيعمل فخ [[test]] مع [[g]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[countRuns(text)]] المفروض ترجّع طول كل سلسلة x ورا بعض، فـ [["xxaxbxxx"]] تبقى [[[2, 1, 3]]]. الكود: [[const runs = /x*/g; while ((hit = runs.exec(text)) !== null) out.push(hit[0].length);]]. شغّله (حط حد للفات عشان ميعلّقش الجهاز) وصلّحه بطريقتين.`, done: R`شفت إن الـ loop بيلف للأبد عند [[a]]، وصلّحته مرة بزق [[lastIndex]] لما الـ match فاضي، ومرة بـ [[matchAll(/x+/g)]]، والاتنين طلّعوا [[[ 2, 1, 3 ]]].`, sol: R`~~~js p2.mjs
+function countRuns(text) {
+  const runs = /x*/g;
+  const out = [];
+  let hit;
+  while ((hit = runs.exec(text)) !== null) {
+    if (hit[0] === "") { runs.lastIndex++; continue; }
+    out.push(hit[0].length);
+  }
+  return out;
 }
-
-round(false);
-round(true);
+console.log(countRuns("xxaxbxxx"), [..."xxaxbxxx".matchAll(/x+/g)].map((h) => h[0].length));
 ~~~
 
-~~~text الناتج (node --expose-gc heap.js، Node 24 على Windows)
-من غير reference: قبل 3.9 MB | بعد الملا 81.9 MB | بعد null و gc 3.9 MB
-مع globalThis.keep: قبل 4.3 MB | بعد الملا 95.9 MB | بعد null و gc 80.5 MB
+~~~text الناتج (Node 24.22)
+[ 2, 1, 3 ] [ 2, 1, 3 ]
 ~~~
 
-**الأرقام:**
-
-- **من غير reference:** 3.9 ← 81.9 ← 3.9 MB. المليون object خدوا حوالي 78MB، وبعد [[arr = null]] و [[gc()]] رجعت زي الأول: مفيش حد شايل الـ array، فالـ GC مسحها.
-- **مع [[globalThis.keep]]:** 4.3 ← 95.9 ← **80.5** MB. [[arr = null]] شالت اسم واحد بس، و [[globalThis.keep]] لسه بيشاور على نفس الـ array، فالـ GC مقدرش يمسحها. ده الـ leak: reference عايش انت نسيته.
-
-**كل حتة:**
-
-- [[--expose-gc]]: flag بيدّيك [[gc()]] تشغّل الـ garbage collector بإيدك. في الكود العادي مفيش [[gc()]]، وده للقياس بس.
-- [[process.memoryUsage().heapUsed]]: الذاكرة المستخدمة فعلًا في الـ heap بالـ bytes، و [[/ 1024 / 1024]] بيحوّلها MB.
-- [[gc()]] قبل «قبل»: عشان نبدأ من نقطة نضيفة.
-
-**اللي بيتغيّر عندك:** الأرقام بالظبط بتختلف حسب نسخة Node والنظام، بس الشكل ثابت: بيرجع في الأولى ومبيرجعش في التانية.
-
-**الغلطة الشائعة:** تقيس من غير [[gc()]] فتشوف الرقم لسه عالي وتفتكر فيه leak، والـ GC بس لسه مجاش دوره.`  },
-            { lvl: 'تطبيق', t: R`محاكاة cache: [[class LRU]] بحد أقصى: [[get]] بترجّع القيمة وتخليها «الأحدث»، و [[set]] لو الحجم عدّى الحد تمسح الأقدم. استخدم إن [[Map]] بيحفظ ترتيب الإضافة: [[map.keys().next().value]] هو الأقدم.`, done: R`[[new LRU(2)]]، و [[set("a", 1)]] و [[set("b", 2)]] و [[get("a")]] و [[set("c", 3)]]: المفاتيح الباقية [[a]] و [[c]] (اتمسح b لأنه الأقدم استخدامًا)، و [[get("zz")]] بترجّع undefined من غير ما تضيف حاجة، والحجم عمره ما بيعدّي 2 حتى بعد ألف set.`, sol: R`~~~js lru.js
-class LRU {
-  #map = new Map();
-  constructor(max) {
-    this.max = max;
+- [[x*]] بتطابق **صفر** x كمان. عند [[a]] (مكان 2) الـ match فاضي [[""]] و [[lastIndex]] فضل 2، فالنداء الجاي بيلاقي نفس الـ match الفاضي في نفس المكان... للأبد.
+- التصليح الأول: لو [[hit[0] === ""]] زق [[lastIndex]] واحد وكمّل من غير ما تسجّل حاجة. (مع [[u]] أو [[v]] زق بحجم الحرف كله لو emoji، وده اللي [[matchAll]] بيعمله لوحده.)
+- التصليح التاني أحسن: [[x+]] مبيطابقش فاضي أصلًا، و [[matchAll]] بيتعامل مع أي match فاضي لوحده.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[allMatches(re, str)]] بترجّع array فيها [[{ text, index, groups }]] لكل match باستخدام [[exec]]، وتشتغل حتى لو الـ regex مفيهوش [[g]]، ومتغيّرش [[lastIndex]] بتاع الـ regex اللي اتبعت، ومتعلّقش مع [[/\b/]].`, done: R`[[allMatches(/(?<n>\d+) EGP/, "tea 15 EGP, rice 40 EGP")]] بترجّع اتنين بالـ groups بتاعتهم، والـ regex الأصلي [[lastIndex]] بتاعه 0 و [[global]] لسه [[false]]، و [[allMatches(/\b/, "ab cd")]] بترجّع الأماكن [[0, 2, 3, 5]].`, sol: R`~~~js p3.mjs
+function allMatches(re, str) {
+  const copy = new RegExp(re.source, re.flags.includes("g") ? re.flags : re.flags + "g");
+  const out = [];
+  let hit;
+  while ((hit = copy.exec(str)) !== null) {
+    out.push({ text: hit[0], index: hit.index, groups: hit.groups });
+    if (hit[0] === "") copy.lastIndex++;
   }
-  get(key) {
-    if (!this.#map.has(key)) return undefined;
-    const value = this.#map.get(key);
-    this.#map.delete(key);
-    this.#map.set(key, value);
-    return value;
-  }
-  set(key, value) {
-    this.#map.delete(key);
-    this.#map.set(key, value);
-    if (this.#map.size > this.max) {
-      const oldest = this.#map.keys().next().value;
-      this.#map.delete(oldest);
-    }
-    return this;
-  }
-  get size() {
-    return this.#map.size;
-  }
-  keys() {
-    return [...this.#map.keys()];
-  }
+  return out;
 }
-
-const c = new LRU(2);
-c.set("a", 1).set("b", 2);
-c.get("a");
-c.set("c", 3);
-console.log("المفاتيح:", c.keys());
-console.log("get(\"zz\"):", c.get("zz"), "| الحجم:", c.size);
-for (let i = 0; i < 1000; i++) c.set("k" + i, i);
-console.log("بعد ألف set:", c.size, c.keys());
+const price = /(?<n>\d+) EGP/;
+console.log(allMatches(price, "tea 15 EGP, rice 40 EGP"), price.lastIndex, price.global);
+console.log(allMatches(/\b/, "ab cd").map((h) => h.index));
 ~~~
 
-~~~text الناتج (node lru.js، Node 24)
-المفاتيح: [ 'a', 'c' ]
-get("zz"): undefined | الحجم: 2
-بعد ألف set: 2 [ 'k998', 'k999' ]
-~~~
-
-**إزاي بيشتغل:**
-
-- **[[Map]] بيحفظ ترتيب الإضافة:** أول مفتاح في [[keys()]] هو أقدم واحد اتضاف. ده كل اللي الـ LRU محتاجه.
-- **[[get]]:** لو موجود، امسحه وضيفه تاني، فيروح آخر الترتيب («الأحدث استخدامًا»). لو مش موجود: [[undefined]] من غير ما يضيف حاجة.
-- **[[set]]:** امسح المفتاح الأول (لو موجود، عشان يتنقل للآخر)، وضيف، ولو الحجم عدّى [[max]] امسح [[keys().next().value]] (الأقدم).
-- **[[#map]]:** private field، محدش من برّه يقدر يلعب في الترتيب.
-
-**التتبع:** [[set a]] ثم [[set b]] ← [[a، b]]. [[get a]] ← [[b، a]]. [[set c]] ← [[b، a، c]] والحجم 3 > 2، فاتمسح [[b]] ← [[a، c]]. وبعد ألف set فاضل آخر اتنين بس.
-
-**الغلطة الشائعة:** [[get]] من غير ما ينقل المفتاح للآخر: ده يبقى FIFO (أول داخل أول خارج) مش LRU، والمفتاح اللي بيتقري كل ثانية بيتمسح.`  },
-            { lvl: 'تحدي', t: R`صلّح الكود البايظ: widget فيه [[mount()]] بيعمل [[addEventListener("resize", ...)]] و [[addEventListener("keydown", ...)]] و [[setInterval]] كل ثانية، و [[unmount()]] بيشيل العنصر من الصفحة بس. اعمل mount و unmount ١٠٠ مرة، وبعدين صلّحه بـ [[AbortController]] و [[clearInterval]] واعمل نفس الحكاية.`, done: R`قبل التصليح [[getEventListeners(window).resize.length]] في Console بتاع Chrome بيدّي [[100]] و ١٠٠ interval شغالين. بعد التصليح ومعاهم mount أخيرة، بيدّي [[1]] وفيه interval واحد بس بيطبع. وفي Memory، snapshot قبل وبعد الـ ١٠٠ مرة مفيهوش زيادة ثابتة.`, sol: R`~~~live 170 index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<title>widget</title>
-<style>
-  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
-  button { font: inherit; padding: 4px 10px; margin: 2px; }
-  .widget { border: 1px solid #ccc; padding: 6px 10px; margin-top: 8px; }
-</style>
-</head>
-<body>
-<button id="leaky">mount/unmount البايظ ×100</button>
-<button id="fixed">mount/unmount المصلّح ×100</button>
-<p>ticks في آخر ثانية: <b id="ticks">0</b></p>
-<div id="host"></div>
-<script>
-  const host = document.getElementById("host");
-  let ticks = 0;
-
-  // البايظ: unmount بيشيل العنصر بس
-  function mountLeaky() {
-    const el = document.createElement("div");
-    el.className = "widget";
-    host.append(el);
-    window.addEventListener("resize", () => { el.textContent = innerWidth; });
-    window.addEventListener("keydown", (e) => { el.textContent = e.key; });
-    setInterval(() => { ticks++; el.textContent = new Date().toLocaleTimeString(); }, 1000);
-    return () => el.remove();
+~~~text الناتج (Node 24.22)
+[
+  {
+    text: '15 EGP',
+    index: 4,
+    groups: [Object: null prototype] { n: '15' }
+  },
+  {
+    text: '40 EGP',
+    index: 17,
+    groups: [Object: null prototype] { n: '40' }
   }
-
-  // المصلّح: كل listener على نفس الـ signal، والـ interval محفوظ
-  function mountFixed() {
-    const el = document.createElement("div");
-    el.className = "widget";
-    host.append(el);
-    const controller = new AbortController();
-    const { signal } = controller;
-    window.addEventListener("resize", () => { el.textContent = innerWidth; }, { signal });
-    window.addEventListener("keydown", (e) => { el.textContent = e.key; }, { signal });
-    const id = setInterval(() => { ticks++; el.textContent = new Date().toLocaleTimeString(); }, 1000);
-    return () => {
-      controller.abort();
-      clearInterval(id);
-      el.remove();
-    };
-  }
-
-  function cycle(mount) {
-    for (let i = 0; i < 100; i++) mount()();
-    mount(); // واحدة أخيرة فاضلة شغالة
-  }
-  document.getElementById("leaky").addEventListener("click", () => cycle(mountLeaky));
-  document.getElementById("fixed").addEventListener("click", () => cycle(mountFixed));
-
-  setInterval(() => { document.getElementById("ticks").textContent = ticks; ticks = 0; }, 1000);
-</script>
-</body>
-</html>
+] 0 false
+[ 0, 2, 3, 5 ]
 ~~~
 
-~~~text اللي اتقاس في Chrome 158 (Playwright، الـ listeners بـ DOMDebugger.getEventListeners)
-قبل أي حاجة:                       resize: 0, keydown: 0
-بعد البايظ ×100 + mount أخيرة:     resize: 101, keydown: 101 | ticks في ثانية: 101 | widgets في الصفحة: 1
-بعد المصلّح ×100 + mount أخيرة:    resize: 1, keydown: 1     | ticks في ثانية: 1   | widgets في الصفحة: 1
+- النسخة ([[copy]]): من غير [[g]]، [[exec]] كانت هترجّع أول match كل مرة والـ loop مش هيخلص. ونسخة جديدة معناها إن [[lastIndex]] بتاع الأصلي مبيتلمسش.
+- [[groups]] بيبقى [[undefined]] لو الـ regex مفيهوش named groups.
+- ده تقريبًا اللي [[matchAll]] بيعمله من جوه.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** نص فيه ١٠٠ ألف رقم ([["x 12 ".repeat(100000)]]). عدّ الأرقام بـ ٤ طرق: [[exec]] في loop، و [[matchAll]]، و [[match]] بـ [[g]]، و [[replace]] بدالة بتعدّ. قيس كل واحدة بـ [[performance.now()]] وشغّل مرتين.`, done: R`الأربعة طلّعوا 100000، والأرقام عندك في نفس الحدود (كام ms)، و [[replace]] الأبطأ لأنه بيبني نص جديد، وعرفت تختار على حسب المطلوب مش على السرعة.`, sol: R`~~~js p5.mjs
+const text = "x 12 ".repeat(100000);
+const t = (label, f) => { const s = performance.now(); const n = f(); console.log(label, n, (performance.now() - s).toFixed(1) + "ms"); };
+t("exec loop", () => { const r = /\d+/g; let n = 0; while (r.exec(text)) n++; return n; });
+t("matchAll ", () => { let n = 0; for (const _ of text.matchAll(/\d+/g)) n++; return n; });
+t("match g  ", () => text.match(/\d+/g).length);
+t("replace  ", () => { let n = 0; text.replace(/\d+/g, () => { n++; return ""; }); return n; });
 ~~~
 
-(القياس اتعمل بـ Chrome DevTools Protocol، وهو نفس اللي [[getEventListeners(window)]] بيعمله في Console بتاع DevTools. الـ 101 = الـ ١٠٠ دورة + الـ mount الأخيرة اللي سايبينها شغالة.)
+~~~text الناتج (Node 24.22، تشغيلين ورا بعض)
+exec loop 100000 6.8ms
+matchAll  100000 6.4ms
+match g   100000 6.8ms
+replace   100000 12.8ms
+exec loop 100000 6.9ms
+matchAll  100000 5.7ms
+match g   100000 7.3ms
+replace   100000 9.9ms
+~~~
 
-**البايظ:** [[unmount]] شال العنصر من الصفحة بس. الـ ٢ listeners على [[window]] والـ interval لسه عايشين، وكل واحد فيهم شايل closure فيه [[el]]، فالعنصر المشال نفسه مبيتمسحش من الذاكرة (Detached element). بعد ١٠٠ دورة: 101 listener من كل نوع، و 101 interval بيشتغلوا كل ثانية على عناصر مش ظاهرة.
-
-**المصلّح:**
-
-- [[const controller = new AbortController()]]: و [[{ signal }]] في كل [[addEventListener]].
-- [[controller.abort()]]: بيشيل **كل** الـ listeners اللي اتسجّلت بالـ signal ده مرة واحدة، من غير ما تحتاج تحفظ كل دالة عشان [[removeEventListener]].
-- [[clearInterval(id)]]: الـ interval مالوش signal، فلازم الـ id يتحفظ ويتلغي.
-- النتيجة: listener واحد من كل نوع (بتاع الـ mount الأخيرة) و tick واحد في الثانية.
-
-**الغلطة الشائعة:** تفتكر إن [[el.remove()]] بيمسح كل حاجة متعلقة بالعنصر. الـ listeners اللي على [[window]] و [[document]] والـ timers ملهمش علاقة بالعنصر، وهما اللي شايلينه.`  },
+- الـ ٣ الأوائل تقريبًا زي بعض (الفرق أقل من الفرق بين تشغيلين)، فاختار على حسب **اللي محتاجه**: [[match]] بـ [[g]] لو النصوص بس، و [[matchAll]] لو محتاج groups و [[index]]، و [[exec]] لو محتاج تتحكم في [[lastIndex]] (تقف، أو ترجع، أو [[y]]).
+- [[replace]] الأبطأ لأنه بيبني نص جديد بطول النص كله. متستخدمهوش للعد.` },
           ],
           flag: "script",
           deep: {
-            why: "في SPA الصفحة مبتعملش reload بالساعات، فأي leak صغير في كل navigation بيتراكم لحد ما التاب يتقل أو يقع. وفي Node، leak في سيرفر شغال أسابيع بيوصل لـ «JavaScript heap out of memory» (تاب «Node و npm»: الذاكرة).",
-            how: R`الـ GC في V8 بيستخدم mark-and-sweep: بيبدأ من الـ roots (الـ globals والـ stack) ويعلّم كل حاجة يقدر يوصلها، والباقي يتمسح. فالـ references الدائرية (a بيشاور على b و b على a) مش مشكلة لو محدش من برّه بيوصلهم. المشكلة دايمًا reference من حاجة عايشة.
+            why: R`أي حاجة بتلف على matches مبنية على [[exec]]: [[matchAll]] و [[replace]] و [[split]]، والـ tokenizers والـ syntax highlighters والـ linters. ولما تفهم [[lastIndex]] و [[indices]] تقدر تعمل حاجات [[match]] مبيعرفش يعملها: تقف في النص وتكمّل بعدين، وتعرف مكان كل group عشان ترسم تحته أو تلوّنه، وتقطّع نص حتة ورا حتة.`,
+            how: R`[[exec]] بتقرا [[lastIndex]] لو فيه [[g]] أو [[y]] (غير كده بتبدأ من 0 وبتتجاهله)، وبتجرّب تطابق من هناك. لو لقت: بتحط [[lastIndex]] = نهاية الـ match (مع [[g]] أو [[y]] بس)، وترجّع الـ array. لو ملقتش: [[lastIndex]] = 0 وترجّع [[null]].
 
-الـ listener على [[window]] أو [[document]] عايش طول الصفحة، والـ callback بتاعه closure شايل كل اللي حواليه. لو الـ component اتشال ومشلتش الـ listener، الـ component وكل داتته لسه ممسوكين. ده سبب cleanup function في useEffect (تاب React).
+الـ array: [[[0]]] الـ match كله، و [[[1]]] و [[[2]]]… الـ groups بترتيب الأقواس المفتوحة، والـ group اللي مشاركش قيمته [[undefined]]. و [[index]] و [[input]] و [[groups]] (object من غير prototype، أو [[undefined]] لو مفيش named groups).
 
-[[setInterval]] نفس الفكرة: المتصفح شايل الـ callback لحد clearInterval.
+مع [[d]] بيتضاف [[indices]]: array بنفس الشكل، كل خانة [[[start, end]]] (البداية داخلة والنهاية لأ، زي [[slice]])، و [[indices.groups]] بالأسامي. الـ group اللي مشاركش مكانه [[undefined]]. و [[d]] بتبطّأ الـ regex شوية لأن الـ engine بيبني arrays زيادة، فحطها لما تحتاجها بس.
 
-[[WeakMap]] مفاتيحها objects ومبتمنعش الـ GC يمسحها. لما المفتاح يتمسح، الـ entry كلها بتختفي. عشان كده مفيهاش size ولا تقدر تلف عليها. و [[WeakRef]] و [[FinalizationRegistry]] موجودين بس نادرًا بتحتاجهم ومش مضمون إمتى بيشتغلوا.
-
-[[{ signal }]] في addEventListener: أول ما تعمل [[abort()]] كل الـ listeners اللي بنفس الـ signal بتتشال مرة واحدة.`,
-            when: R`اسأل نفسك مع كل [[addEventListener]] و [[setInterval]] و [[subscribe]] و [[new WebSocket]]: «مين هيقفل ده وإمتى؟». و WeakMap لما تربط داتا بعناصر DOM أو objects مش بتاعتك.`,
-            mistakes: R`useEffect بيضيف listener أو interval من غير return cleanup. و cache global في سيرفر Node بمفاتيح من الـ requests من غير حد. و [[console.log]] لـ objects كبيرة في الإنتاج (DevTools بيمسكها). وفي الانترفيو: «إيه أسباب الـ memory leak في JS وإزاي تلاقيها؟».`
+[[matchAll]] بيعمل **نسخة** من الـ regex (بنفس [[lastIndex]] الحالي!) ويلف عليها، فالأصلي مبيتغيّرش. وبيزق [[lastIndex]] لوحده لو الـ match فاضي. ومن غير [[g]] بيرمي [[TypeError: String.prototype.matchAll called with a non-global RegExp argument]].`,
+            when: R`[[exec]] مع [[y]] في الـ tokenizers (تقرا حتة، تقرر، تكمّل)، ولما تحتاج تقف في نص الطريق. و [[matchAll]] في أي loop عادي على كل الـ matches (أوضح وأأمن). و [[d]] لما تحتاج **مكان** كل group: تظليل، أو علامة تحت حرف غلط، أو استبدال group واحد من غير ما تلمس الباقي.`,
+            mistakes: R`regex بـ [[g]] متشارك بين أكتر من مكان، فـ [[lastIndex]] من نداء بيأثر على التاني. و loop بـ [[exec]] على pattern ممكن يطابق فاضي ([[*]] أو [[?]] أو [[\b]] أو [[^]] مع [[m]]) من غير زق. و [[exec]] من غير [[g]] في [[while]] (نفس الـ match للأبد). وتفتكر [[matchAll]] بيبدأ من 0 دايمًا: بيبدأ من [[lastIndex]] الحالي للـ regex. وتقرا [[m.indices]] من غير [[d]] ([[undefined]]).`
           },
-          teach: R`## الفكرة
+          teach: R`## الفكرة في سطر
 
-الـ **garbage collector** (GC، «جامع الزبالة») بيمسح أي object محدش يقدر يوصله. فالـ leak مش «نسيت تمسح»، الـ leak إن **فيه حاجة لسه ماسكة** reference لحاجة مش محتاجها. والمثال ٤ أجزاء، كل جزء مصدر leak مشهور وعلاجه. الكود للمتصفح، فشغّلناه في Chrome (headless) على صفحة محلية.
+[[exec]] بتجاوب على سؤال واحد: «فيه match من المكان ده؟ لو أيوه، هو إيه بالظبط وفين؟». وكل الـ methods التانية بتنادي [[exec]] (أو حاجة زيها) من جوه. المثال ٤ حالات، وكل الناتج اتشغّل فعلًا على Node 24.22.
 
 ---
 
-## ١. [[Map]] بتكبر للأبد
+## ١. من غير [[g]]: أول match بكل تفاصيله
 
-~~~text app.js
-const cache = new Map();
-function remember(key, value) { cache.set(key, value); }  // بيكبر للأبد: حط حد أقصى
+~~~js app.mjs
+const line = "order #A-17 total 250 EGP";
+const re = /#(?<code>[A-Z])-(?<num>\d+)/d;
+const m = re.exec(line);
 ~~~
 
-[[Map]] بتحتفظ بكل key و value اتحطوا فيها لحد ما تمسحهم بإيدك ([[delete]] أو [[clear]]). و [[cache]] هنا [[const]] على مستوى الملف، يعني عايشة طول عمر الصفحة (أو السيرفر). فلو بتحط فيها حاجة مع كل request أو كل صفحة، الذاكرة بتزيد ومبتنزلش. العلاج: حد أقصى (لو [[cache.size]] عدّى رقم، امسح أقدم واحد)، أو مكتبة LRU cache.
+الـ regex: [[#]]، وحرف كابيتال اسمه [[code]]، وشرطة، ورقم اسمه [[num]]. والـ flag [[d]] (اسم خاصيته [[hasIndices]]) بيطلب أماكن كل group. لو طبعنا [[m]] كله:
 
----
-
-## ٢. [[WeakMap]]: داتا مربوطة بـ object
-
-~~~text app.js
-const meta = new WeakMap();
-function tag(el, info) { meta.set(el, info); }            // لما el يتمسح، info تتمسح معاه
+~~~text الناتج: console.log(m)
+[
+  '#A-17',
+  'A',
+  '17',
+  index: 6,
+  input: 'order #A-17 total 250 EGP',
+  groups: [Object: null prototype] { code: 'A', num: '17' },
+  indices: [
+    [ 6, 11 ],
+    [ 7, 8 ],
+    [ 9, 11 ],
+    groups: [Object: null prototype] { code: [Array], num: [Array] }
+  ]
+]
 ~~~
 
-[[WeakMap]] زي Map بفرق واحد: الـ key **مش بيمنع** الـ GC يمسح الـ object. فلو [[el]] (عنصر في الصفحة مثلًا) اتشال ومبقاش فيه حد ماسكه، الـ GC بيمسحه، والـ entry بتاعته في [[meta]] بتختفي معاه، و [[info]] كمان.
+| الخانة | فيها إيه هنا | معناها |
+|---|---|---|
+| [[m[0]]] | [['#A-17']] | الـ match كله |
+| [[m[1]]] و [[m[2]]] | [['A']] و [['17']] | الـ groups بترتيب أقواسها، نصوص دايمًا |
+| [[index]] | [[6]] | أول حرف في الـ match فين في النص (من 0) |
+| [[input]] | النص كله | النص اللي اتدوّر فيه، زي ما هو |
+| [[groups]] | [[{ code, num }]] | الـ named groups بأساميها، و [[undefined]] لو مفيش أسامي |
+| [[indices[0]]] | [[[6, 11]]] | بداية ونهاية الـ match، والنهاية مش داخلة زي [[slice]] |
+| [[indices[2]]] | [[[9, 11]]] | مكان group رقم 2 ([[17]]) |
+| [[indices.groups.num]] | [[[9, 11]]] | نفس المكان بالاسم |
 
-وده ليه تمن:
+~~~js app.mjs
+console.log(m[0], m.index, m.groups.num, m.indices[0], m.indices.groups.num);
+console.log(re.exec("no order"), re.lastIndex, re.hasIndices);
+~~~
 
-- الـ key لازم يبقى object: [[meta.set("x", 1)]] بترمي [[TypeError: Invalid value used as weak map key]].
-- مفيش [[size]] ولا تقدر تلف عليها: جرّبنا [[meta.size]] وطلع [[undefined]]. منطقي: عدد العناصر بيتغير لوحده لما الـ GC يشتغل.
+~~~text الناتج
+#A-17 6 17 [ 6, 11 ] [ 9, 11 ]
+null 0 true
+~~~
+
+لو مفيش match الناتج [[null]] (مش array فاضية)، فـ [[m[1]]] بعدها هترمي. و [[lastIndex]] فضل 0: من غير [[g]] أو [[y]] الـ [[exec]] مبتلمسوش. و [[hasIndices]] الخاصية اللي بتقول إن [[d]] موجود.
+
+> فايدة [[indices]]: [[line.slice(...m.indices.groups.num)]] بترجّع [['17']]. يعني تقدر تلوّن الـ group ده بالظبط في النص الأصلي، أو تحط علامة تحته، أو تبدّله لوحده.
 
 ---
 
-## ٣. [[setInterval]] من غير إيقاف
+## ٢. مع [[g]]: loop بـ [[lastIndex]]
 
-~~~text app.js
-function startPolling() {
-  const id = setInterval(() => fetch("/api/ping"), 5000);
-  return () => clearInterval(id);
+~~~js app.mjs
+const prices = /(\d+) EGP/g;
+const text = "tea 15 EGP, rice 40 EGP, oil 95 EGP";
+let hit;
+while ((hit = prices.exec(text)) !== null) {
+  console.log(hit[1], hit.index, prices.lastIndex);
 }
-const stopPolling = startPolling();
-stopPolling();
+console.log(prices.lastIndex);
 ~~~
 
-- [[setInterval(fn, 5000)]]: نادي fn كل 5 ثواني **للأبد**، وبترجّع رقم ([[id]]).
-- المتصفح شايل الـ callback ده (وكل اللي الـ closure بتاعه ماسكه) لحد ما حد ينادي [[clearInterval(id)]].
-- [[return () => clearInterval(id)]]: الدالة بترجّع **دالة إيقاف**. فاللي بيبدأ الحاجة بياخد في إيده طريقة قفلها. وده نفس شكل الـ cleanup في [[useEffect]] في React.
+- [[(hit = prices.exec(text)) !== null]]: بننادي ونحفظ الناتج ونفحصه في نفس الشرط. القوسين حوالين الـ [[=]] لازم.
+- مع [[g]]، كل نداء بيبدأ من [[lastIndex]] وبيحطه بعد الـ match.
 
-في Chrome جرّبنا نسخة من غير ما نوقّفها ١١ ثانية: السيرفر استقبل [[/api/ping]] مرتين (عند 5 و 10 ثواني). ومع [[stopPolling()]] على طول زي المثال: صفر طلبات.
+~~~text الناتج
+15 4 10
+40 17 23
+95 29 35
+0
+~~~
+
+| النداء | بدأ من | لقى عند [[index]] | [[lastIndex]] بعده |
+|---|---|---|---|
+| ١ | 0 | 4 ([[15 EGP]]) | 10 |
+| ٢ | 10 | 17 ([[40 EGP]]) | 23 |
+| ٣ | 23 | 29 ([[95 EGP]]) | 35 |
+| ٤ | 35 | مفيش: [[null]] | رجع **0** |
 
 ---
 
-## ٤. listeners كتير، سطر واحد يشيلهم: [[AbortController]]
+## ٣. [[matchAll]]: نفس الشغل ومن غير ما يلمس الـ regex
 
-~~~text app.js
-const controller = new AbortController();
-window.addEventListener("resize", () => console.log(innerWidth), { signal: controller.signal });
-document.addEventListener("keydown", (e) => console.log(e.key), { signal: controller.signal });
-controller.abort();
+~~~js app.mjs
+console.log([...text.matchAll(prices)].map((x) => x[1]), prices.lastIndex);
 ~~~
 
-- [[AbortController]]: object بيدّيك [[signal]] (إشارة) و [[abort()]] (اقفل). نفس اللي بتلغي بيه fetch.
-- [[addEventListener(event, fn, { signal })]]: الـ listener **مربوط** بالإشارة. أول ما تعمل [[abort()]]، كل الـ listeners اللي واخدين نفس الـ signal بيتشالوا مرة واحدة.
-- ليه ده مهم؟ الـ listener على [[window]] أو [[document]] عايش طول عمر الصفحة، والـ arrow function بتاعه closure ماسك كل اللي حواليه. لو الـ component اتقفل والـ listener فضل، كل داتته لسه ممسوكة. والطريقة القديمة ([[removeEventListener]]) محتاجة نفس الدالة بالظبط، فلازم تحفظها في متغير.
+~~~text الناتج
+[ '15', '40', '95' ] 0
+~~~
 
-جرّبنا في Chrome: ضغطنا [[a]] قبل [[abort()]] فاتطبع [[a]]، وبعدها ضغطنا [[b]] فمتطبعش حاجة:
+[[matchAll]] بيعمل **نسخة** من الـ regex ويلف عليها، فـ [[prices.lastIndex]] فضل 0. بس انتبه: النسخة بتبدأ من [[lastIndex]] **الحالي** للأصلي. جرّبنا [[g.lastIndex = 2]] قبل [[[..."1a2b3".matchAll(g)]]] بـ [[/\d/g]]:
 
-~~~text الناتج (Console)
-a
+~~~text الناتج
+[ '2', '3' ] 2
+~~~
+
+الـ [[1]] اتنط عليه. فلو الـ regex اتستخدم قبل كده بـ [[exec]] أو [[test]]، رجّع [[lastIndex = 0]] الأول.
+
+ومن غير [[g]]:
+
+~~~text الناتج: "1a2".matchAll(/\d/)
+TypeError: String.prototype.matchAll called with a non-global RegExp argument
 ~~~
 
 ---
 
-## ٥. WeakRef و FinalizationRegistry
+## ٤. match بطول صفر: الـ loop اللي مبيخلصش
 
-[[WeakMap]] بتربط داتا بـ object. [[WeakRef]] أبسط: «إشارة» لـ object **مبتمنعش** الـ garbage collector (GC) إنه يمسحه. و [[FinalizationRegistry]] بتقولك بعدين إن object اتمسح. الاتنين ES2021، في Node والمتصفحات.
-
-~~~text weak.mjs
-const registry = new FinalizationRegistry((label) => console.log("اتمسح من الذاكرة:", label));
-let big = { data: new Array(1e6).fill(7) };
-const ref = new WeakRef(big);
-registry.register(big, "big");
-console.log("قبل:", ref.deref()?.data.length);
-big = null;
-await new Promise((r) => setTimeout(r, 0));
-globalThis.gc();
-await new Promise((r) => setTimeout(r, 0));
-console.log("بعد gc:", ref.deref());
-~~~
-
-~~~powershell
-node --expose-gc weak.mjs
-~~~
-
-~~~text الناتج (Node 24)
-قبل: 1000000
-اتمسح من الذاكرة: big
-بعد gc: undefined
-~~~
-
-- [[new WeakRef(obj)]]: بتعمل الإشارة. و [[ref.deref()]]: بترجّع الـ object لو لسه عايش، أو [[undefined]] لو اتمسح. عشان كده [[?.]] بعدها دايمًا.
-- [[registry.register(obj, "big")]]: لما [[obj]] يتمسح، الـ callback هيتنادى بالقيمة التانية ([["big"]]). متبعتش الـ object نفسه كقيمة تانية، كده انت اللي ماسكه ومش هيتمسح أبدًا.
-- [[big = null]]: شيلنا آخر إشارة قوية. الـ [[WeakRef]] مبيتحسبش.
-- [[globalThis.gc()]]: بيشغّل الـ GC بالعافية، وموجود بس مع flag [[--expose-gc]] (للتجربة بس). من غيره: [[TypeError: globalThis.gc is not a function]].
-- الـ [[await]] قبل الـ gc مهم: الـ engine بيمسك أي object اتعمله [[deref()]] لحد آخر الـ task الحالية، فلازم نعدّي task.
-
-### استخدام حقيقي: cache مبيمسكش الحاجات بالعافية
-
-~~~text cache.mjs
-const cache = new Map();
-const registry = new FinalizationRegistry((key) => {
-  if (!cache.get(key)?.deref()) cache.delete(key);
-});
-function getImage(key) {
-  const hit = cache.get(key)?.deref();
-  if (hit) return hit;
-  const img = { key, pixels: new Uint8Array(5e6) };
-  cache.set(key, new WeakRef(img));
-  registry.register(img, key);
-  return img;
+~~~js app.mjs
+const edges = /\b/g;
+const spots = [];
+while ((hit = edges.exec("ab cd")) !== null) {
+  spots.push(hit.index);
+  if (hit[0] === "") edges.lastIndex++;
 }
+console.log(spots);
 ~~~
 
-~~~text الناتج (Node 24 بـ --expose-gc: بعد getImage مرتين، و a = null، و gc)
-true 1
-بعد gc: 0
+[[\b]] **مكان** مش حرف، فالـ match طوله صفر، و [[lastIndex]] بعده = [[index + 0]]: نفس المكان. من غير السطر [[edges.lastIndex++]] جرّبنا (بعد ما حطينا حد ٦ لفات):
+
+~~~text الناتج من غير الزق
+at 0 lastIndex 0
+at 0 lastIndex 0
+at 0 lastIndex 0
+at 0 lastIndex 0
+at 0 lastIndex 0
+at 0 lastIndex 0
 ~~~
 
-- نفس الـ key مرتين رجّع **نفس** الـ object ([[true]]) من غير ما يعمل 5MB تانيين.
-- لما محدش بقى ماسك الصورة، الـ GC مسحها، والـ registry شال الـ key من الـ Map، فالـ [[size]] بقى 0.
-- الـ [[if]] جوه الـ callback: لو نفس الـ key اتعمل له صورة جديدة قبل ما الـ callback ييجي، متمسحهاش.
+نفس المكان كل مرة، والبرنامج كان هيعلّق. ومع الزق:
 
-> **مش مضمون إمتى (ولا إذا كان) الـ callback هيتنادى.** الـ GC بيشتغل على مزاجه، وممكن البرنامج يقفل قبله. وثائق اللغة نفسها بتقول تجنّبهم لو تقدر. استخدمهم لـ cache أو تنضيف «لو حصل كويس»، عمرك ما تحط فيهم حاجة لازم تحصل (قفل ملف، حفظ داتا): دي محتاجة [[close()]] صريحة أو [[using]].
-
----
-
-## ٦. إزاي تلاقي leak: heap snapshot
-
-### في المتصفح (DevTools)
-
-ده من الـ docs ومن الـ «جرّب»، مش متشغّل أوتوماتيك هنا:
-
-1. DevTools ← تاب **Memory** ← **Heap snapshot** ← Take snapshot.
-2. اعمل الحاجة اللي شاكك فيها كذا مرة (افتح وقفل modal ١٠ مرات).
-3. دوس أيقونة الزبالة (Collect garbage)، وخد snapshot تاني.
-4. في الـ snapshot التاني اختار **Comparison**: أي نوع بيزيد بنفس عدد المرات وما بيقلش = leak.
-5. اكتب **Detached** في الفلتر: عناصر DOM اتشالت من الصفحة ولسه حد ماسكها، وتحت في **Retainers** هتلاقي مين.
-
-### heap snapshot في Node: node --inspect و writeHeapSnapshot
-
-نفس الـ DevTools بتفتح على برنامج Node:
-
-~~~powershell
-node --inspect server.js
+~~~text الناتج
+[ 0, 2, 3, 5 ]
 ~~~
 
-~~~text الناتج (Node 24)
-Debugger listening on ws://127.0.0.1:9229/f8949dca-483b-4bcf-8593-a1b230c3a8f0
-For help, see: https://nodejs.org/learn/getting-started/debugging
-~~~
-
-- [[--inspect]]: بيفتح بورت debugging على [[127.0.0.1:9229]] (محلي بس، متفتحوش على [[0.0.0.0]] في سيرفر: أي حد يوصله يقدر يشغّل كود).
-- افتح [[chrome://inspect]] في Chrome، وتحت Remote Target دوس **inspect**، وهيفتحلك DevTools فيه تاب Memory بنفس الخطوات اللي فوق (الخطوات دي من وثائق Node، اتشغّل منها هنا الـ flag بس).
-- [[--inspect-brk]]: نفس الكلام بس بيقف على أول سطر، عشان تلحق تفتح الـ DevTools قبل ما الكود يشتغل.
-
-ولو السيرفر في مكان مفيهوش Chrome، اكتب الـ snapshot لملف من الكود نفسه:
-
-~~~text leak.mjs
-import { writeHeapSnapshot } from "node:v8";
-const sessions = new Map();
-class Session { constructor(id) { this.id = id; this.buf = new Array(1000).fill(id); } }
-function onRequest(id) { sessions.set(id, new Session(id)); }
-for (let i = 0; i < 5000; i++) onRequest(i);
-console.log("heapUsed MB:", Math.round(process.memoryUsage().heapUsed / 1e6));
-console.log("snapshot:", writeHeapSnapshot());
-~~~
-
-~~~text الناتج (Node 24)
-heapUsed MB: 46
-snapshot: Heap.20261029.235508.20492.0.001.heapsnapshot
-~~~
-
-- [[process.memoryUsage().heapUsed]]: الذاكرة المستخدمة في الـ heap بالبايت. راقبها مع الوقت: لو بتزيد ومبتنزلش بعد ما الـ requests تخلص، فيه leak.
-- [[writeHeapSnapshot()]]: بيكتب ملف [[.heapsnapshot]] (هنا حوالي 6MB) في الفولدر الحالي ويرجّع اسمه. البرنامج بيقف لحظة وهو بيكتبه، وبياخد ذاكرة قد الـ heap تقريبًا، فمتعملوش كل دقيقة في production.
-- افتح الملف من DevTools ← Memory ← Load. عدّيت الـ objects اللي اسمها [[Session]] جوه الملف ده بسكربت صغير: **5000**، يعني كل session لسه في الذاكرة، والـ Retainers هيقولك إن اللي ماسكهم الـ [[sessions]] Map. ده نفس leak الجزء ١.
-- فيه كمان [[node --heapsnapshot-near-heap-limit=1 app.js]] بيكتب snapshot لوحده قبل ما البرنامج يقع بـ out of memory (من وثائق Node).
+الأماكن: قبل [[a]]، وبعد [[b]]، وقبل [[c]]، وبعد [[d]]. وده نفس اللي [[[..."ab cd".matchAll(/\b/g)]]] بيطلّعه لوحده.
 
 ---
 
 ## الخلاصة
 
-| مصدر الـ leak | العلاج |
+| عايز | استخدم |
 |---|---|
-| Map أو cache بيكبر | حد أقصى، أو WeakMap لو الـ key object |
-| [[setInterval]] أو subscription | دالة إيقاف ترجع مع البداية، وتتنادى في الـ cleanup |
-| listeners على window و document | [[{ signal }]] و [[abort()]]، أو removeEventListener |
-| عنصر DOM اتشال ولسه في متغير | امسح المتغير، أو WeakMap |
-| cache لحاجات تقيلة ممكن تتمسح | [[WeakRef]] و [[FinalizationRegistry]]، من غير ما تعتمد على إمتى |
-| مش عارف مين ماسك الذاكرة | heap snapshot: DevTools، أو [[node --inspect]]، أو [[writeHeapSnapshot()]] |
-
-والسؤال اللي تسأله مع كل حاجة بتبدأها: «مين هيقفل ده وإمتى؟».`,
+| أول match بتفاصيله | [[re.exec(str)]] من غير [[g]]: array أو [[null]] |
+| مكان كل group | flag [[d]] و [[m.indices]] و [[m.indices.groups]] |
+| كل الـ matches في loop عادي | [[for (const m of str.matchAll(re))]]، والـ regex لازم [[g]] |
+| تتحكم في المكان (تقف، تكمّل، [[y]]) | [[exec]] و [[lastIndex]] بإيدك |
+| pattern ممكن يطابق فاضي | زق [[lastIndex]] لما [[m[0] === ""]]، أو [[matchAll]] |`,
           lines: [
-            R`[[Map]] عادية بتمسك المفاتيح والقيم بقوة: طول ما [[cache]] نفسه موجود، أي حاجة جواه مش هتتمسح من الذاكرة.`,
-            R`كل نداء بيضيف عنصر ومحدش بيمسح. لو المفاتيح بتتغيّر (id لكل request مثلًا) الـ Map بتكبر للأبد والذاكرة تزيد لحد ما الصفحة أو السيرفر يتقل. الحل: حد أقصى ([[cache.size]]) وامسح الأقدم بـ [[delete]].`,
-            R`[[WeakMap]] المفاتيح فيها لازم objects، وبتمسكهم «بضعف»: وجود الـ object كمفتاح هنا مش بيمنع الـ garbage collector إنه يمسحه.`,
-            R`بنربط معلومات بعنصر DOM من غير ما نعدّل العنصر. لما العنصر يتشال من الصفحة ومفيش حد تاني ماسكه، هو و [[info]] بتاعته يتمسحوا لوحدهم. لو كانت [[Map]] عادية كانت هتفضل ماسكة العنصر المشال (detached) في الذاكرة.`,
-            R`بتبدأ request كل شوية (polling). أي [[setInterval]] من غير [[clearInterval]] بيفضل شغال حتى لو الصفحة أو الـ component اللي بدأه مبقاش موجود.`,
-            R`كل 5 ثواني [[fetch]] لـ [[/api/ping]]. و [[setInterval]] بترجّع [[id]] للـ timer ده، ومن غيره مفيش طريقة توقفه.`,
-            R`بترجّع دالة توقف الـ polling (closure فاكر [[id]]). نفس فكرة الـ unsubscribe: اللي بيبدأ حاجة يرجّع طريقة إيقافها، ودي اللي تتنادى في الـ cleanup زي الـ return بتاع useEffect.`,
-            R`نهاية [[startPolling]].`,
-            R`بنبدأ الـ polling ونحفظ دالة الإيقاف. لو مسكتش الدالة اللي راجعة، الـ interval هيفضل شغال ومش هتقدر توقفه.`,
-            R`بنوقف الـ interval لما مبقناش محتاجينه (مثلًا اليوزر خرج من الصفحة دي). ساعتها الـ callback وكل اللي ماسكه يقدروا يتمسحوا من الذاكرة.`,
-            R`controller واحد هنربط بيه كذا listener: [[controller.signal]] بيتبعت لكل listener، ولما نعمل [[abort()]] كلهم يتشالوا مرة واحدة.`,
-            R`listener على [[resize]] بيطبع العرض. الـ [[signal]] في الـ options بيربطه بالـ controller، فمش محتاجين نحتفظ بالدالة عشان [[removeEventListener]].`,
-            R`listener تاني على حدث مختلف وعنصر مختلف بنفس الـ [[signal]]. أي عدد listeners ممكن يتربطوا بنفس الـ controller.`,
-            R`سطر واحد بيشيل الـ listeners الاتنين. من غيره كنت محتاج [[removeEventListener]] لكل واحد بنفس الدالة بالظبط، والـ arrow functions هنا مش محفوظة في متغير، فمكنتش هتقدر تشيلها أصلًا.`,
+            R`النص اللي هندوّر فيه: طلب فيه كود [[#A-17]] ومبلغ.`,
+            R`[[#]] ثم حرف كابيتال في group اسمه [[code]] ثم شرطة ثم رقم في group اسمه [[num]]. الـ flag [[d]] بيخلّي [[exec]] ترجّع أماكن الـ groups كمان.`,
+            R`[[exec]] من غير [[g]]: بتدوّر من أول النص وترجّع أول match بكل تفاصيله في array، أو [[null]].`,
+            R`[[m[0]]] الـ match كله [[#A-17]]، و [[index]] بـ 6، و [[groups.num]] بـ [['17']] (نص)، و [[indices[0]]] بـ [[[6, 11]]] و [[indices.groups.num]] بـ [[[9, 11]]].`,
+            R`نص مفيهوش match: [[exec]] رجّعت [[null]]، و [[lastIndex]] فضل 0 لأن مفيش [[g]]، و [[hasIndices]] بـ [[true]] عشان الـ flag [[d]].`,
+            R`regex بـ [[g]]: كل [[exec]] بتكمّل من [[lastIndex]] اللي سابته اللي قبلها.`,
+            R`نص فيه ٣ أسعار هنلف عليهم.`,
+            R`متغير الـ match، متعرّف برّه الـ loop عشان الشرط يشوفه.`,
+            R`بننادي [[exec]] ونحفظ الناتج في [[hit]] ونقارنه بـ [[null]] في نفس الشرط: الـ loop بيقف أول ما مفيش match.`,
+            R`كل لفة بتطبع الرقم ([[hit[1]]]) ومكانه و [[lastIndex]] بعده: [[15 4 10]] ثم [[40 17 23]] ثم [[95 29 35]].`,
+            R`قفلة الـ loop.`,
+            R`بعد آخر نداء فاشل [[lastIndex]] رجع 0 لوحده، فالـ regex جاهز يلف من الأول.`,
+            R`[[matchAll]] بنفس الـ regex: نسخة بتلف لوحدها، والناتج [[[ '15', '40', '95' ]]]، و [[prices.lastIndex]] فضل 0.`,
+            R`[[\b]] مكان (حد كلمة) مش حرف، فكل match طوله صفر. ده النوع اللي بيعمل loop لانهائي.`,
+            R`array نجمع فيها الأماكن.`,
+            R`نفس شكل الـ loop اللي فوق بنفس المتغير [[hit]].`,
+            R`نحفظ مكان الـ match.`,
+            R`لو الـ match فاضي، [[lastIndex]] مش هيتحرك لوحده، فبنزقه خطوة. من غير السطر ده الـ loop بيلف في مكانه للأبد.`,
+            R`قفلة الـ loop.`,
+            R`الأماكن [[[ 0, 2, 3, 5 ]]]: أول وآخر كل كلمة من الكلمتين.`,
           ],
-          sol: R`صفحة سليمة: في الـ Comparison الـ [[# Delta]] حوالي صفر، أو بيزيد مرة وبعدين يثبت. صفحة فيها leak: رقم بيزيد بنفس النسبة مع كل مرة (فتحت 10 مرات فزاد 10 أو مضاعفاتها)، زي [[HTMLDivElement]] أو [[Detached HTMLDivElement]] أو closures بتاعة listeners.
+          ref: [
+            { t: "MDN: RegExp.prototype.exec()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec" },
+            { t: "MDN: RegExp.prototype.hasIndices", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/hasIndices" },
+            { t: "MDN: RegExp: lastIndex", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/lastIndex" },
+            { t: "MDN: String.prototype.matchAll()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/matchAll" },
+            { t: "ECMAScript: RegExpBuiltinExec", url: "https://tc39.es/ecma262/multipage/text-processing.html#sec-regexpbuiltinexec" },
+          ],
+          pre: ["js/groups و flags", { to: "js/test و match و matchAll و replace", why: R`[[matchAll]] و [[match]] من برّه، هنا بنشوف اللي تحتهم` }],
+        },
+        {
+          cmd: "الـ flags s و m و y و v بحالات حقيقية",
+          title: "إمتى تحتاج s و m و y و v في شغل حقيقي: ملف INI، وإيميل، و CSV، وحروف عربي بس",
+          desc: R`الـ flags الأربعة دول بيغيّروا **قواعد** الـ regex مش بس عدد الـ matches:
+• [[m]] (multiline): [[^]] و [[$]] بيطابقوا أول وآخر **كل سطر**. للملفات اللي كل سطر فيها record (INI و logs و .env).
+• [[s]] (dotAll): النقطة بتطابق السطر الجديد كمان. لما الحاجة اللي عايزها ممتدة على كذا سطر (جسم إيميل، block في ملف).
+• [[y]] (sticky): الـ match لازم يبدأ عند [[lastIndex]] بالظبط، من غير ما يدوّر لقدّام. أساس أي parser أو tokenizer: لو حاجة مش مفهومة تعرف مكانها بدل ما تتنط.
+• [[v]] (unicodeSets): كل اللي في [[u]] وزيادة: تقاطع [[&&]] وطرح [[--]] جوه [[[ ]]]، و classes جوه classes، و [[\q{...}]] لنصوص كاملة، و properties بتطابق نص كامل زي [[\p{RGI_Emoji}]]. وقواعده أشد: حروف زي [[(]] و [[-]] لازم [[\]] جوه الـ class.`,
+          example: R`// m: ^ و $ لكل سطر
+const ini = "[db]\nhost = localhost\nport = 5432\n[cache]\nttl = 60";
+console.log(ini.match(/^\w+(?= =)/gm), ini.match(/^\w+(?= =)/g));
+// s: النقطة بتعدّي السطر الجديد
+const mail = "Subject: hi\n\nline one\nline two\n-- \nSara";
+console.log(mail.match(/\n\n(.*)\n-- /)?.[1], JSON.stringify(mail.match(/\n\n(.*)\n-- /s)?.[1]));
+// y: كل match لازم يبدأ مكان ما اللي قبله خلص
+const cell = /\s*(?:"(?<q>[^"]*)"|(?<v>[^,]*))\s*(?:,|$)/y;
+const row = ' tea , "rice, white" ,40';
+const cells = [];
+let c;
+while (cell.lastIndex < row.length && (c = cell.exec(row))) cells.push(c.groups.q ?? c.groups.v.trim());
+console.log(cells);
+// v: تقاطع وطرح ونصوص جوه الـ class
+console.log(/[\p{Script=Arabic}&&\p{Nd}]/v.test("٣"), /[\p{Script=Arabic}&&\p{Nd}]/v.test("3"));
+console.log("سعر٣ و Price3".match(/[\p{L}--\p{ASCII}]+/gv));
+console.log("👍🏽 ok 🇪🇬".match(/\p{RGI_Emoji}/gv), /^[\q{EGP|USD|SAR}]$/v.test("USD"));
+console.log(/x/v.unicodeSets, /x/v.unicode, /x/s.dotAll, /x/m.multiline);`,
+          try: R`اكتب [[parseIni(text)]] بـ regex واحد فيه [[m]] و [[matchAll]]: سطر [[[section]]] بيفتح object جديد، وسطر [[key = value]] بيتحط في الـ section الحالي (أو في الأول لو قبل أي section)، والسطور التانية (تعليقات [[;]] أو فاضية) بتتجاهل، وملف بـ [[\r\n]] بيشتغل زي [[\n]].`,
+          sol: R`~~~js ini.mjs
+function parseIni(text) {
+  const out = {};
+  let section = out;
+  for (const m of text.matchAll(/^\s*(?:\[(?<sec>[^\]\r\n]+)\]|(?<key>[\w.-]+)\s*=\s*(?<val>.*?))\s*$/gm)) {
+    if (m.groups.sec) section = out[m.groups.sec.trim()] = {};
+    else section[m.groups.key] = m.groups.val;
+  }
+  return out;
+}
+console.log(parseIni("name = shop\n[db]\nhost = localhost\nport = 5432\n; comment\n[cache]\nttl = 60\r\n"));
+~~~
 
-لو كتبت «Detached» في خانة الفلتر ولقيت عناصر، دي عناصر اتشالت من الصفحة بس لسه فيه حاجة ماسكاها: listener على window مش اتشال، أو متغير أو Map شايلها، أو setInterval لسه شغال. افتح العنصر وبص في «Retainers» تحت، هتلاقي السلسلة لحد اللي ماسكه. وقبل الـ snapshot التاني دوس زرار الزبالة (Collect garbage) عشان متتلخبطش بحاجات لسه متمسحتش.`
-        }
-      ]
+~~~text الناتج (Node 24.22)
+{
+  name: 'shop',
+  db: { host: 'localhost', port: '5432' },
+  cache: { ttl: '60' }
+}
+~~~
+
+- [[m]]: [[^]] و [[$]] لكل سطر، فكل سطر match لوحده.
+- بديلين: [[\[(?<sec>...)\]]] أو [[key = val]]. و [[[^\]\r\n]+]] اسم الـ section من غير [[]]] ومن غير ما يعدّي السطر.
+- [[(?<val>.*?)\s*$]]: الـ [[?]] بتخلي القيمة lazy، فالمسافات في آخر السطر بتروح لـ [[\s*]] مش للقيمة. و [[\r]] بتاع ويندوز line terminator في JS: النقطة مبتاخدوش، و [[$]] مع [[m]] بتطابق قبله، فالقيمة بتطلع نضيفة من غير [[\r]].
+- [[; comment]] مبيطابقش ولا بديل فبيتجاهل لوحده.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب ناتج دول قبل التشغيل: [[/^\d+$/m.test("abc\n42")]] و [[/^\d+$/.test("abc\n42")]] و [[/a.c/s.test("a\nc")]] و [[/a.c/.test("a\nc")]] و [[/^c/m.test("a\r\nc")]].`, done: R`توقعت [[true false true false true]] وطلع كده، وتقدر تقول كل واحد بسبب أنهي flag.`, sol: R`~~~js p1.mjs
+console.log(/^\d+$/m.test("abc\n42"), /^\d+$/.test("abc\n42"), /a.c/s.test("a\nc"), /a.c/.test("a\nc"), /^c/m.test("a\r\nc"));
+~~~
+
+~~~text الناتج (Node 24.22)
+true false true false true
+~~~
+
+- الأول: مع [[m]] السطر التاني [[42]] لوحده بيطابق [[^\d+$]].
+- التاني: من غير [[m]] لازم النص **كله** أرقام، وهو فيه [[abc]].
+- التالت والرابع: [[s]] بس اللي بتخلي النقطة تاخد [[\n]].
+- الخامس: مع [[m]]، [[^]] بتطابق بعد أي line terminator، و [[\n]] واحد منهم، فـ [[c]] بعد [[\r\n]] أول سطر.` },
+            { lvl: 'تطبيق', t: R`**ابني:** regex بالـ flag [[v]] بيطابق **حروف عربي بس**: من غير الأرقام العربي (٣) ومن غير علامات الترقيم العربي (،). وبعدين regex تاني بيطابق حرف عربي واحد **ما عدا** [[ة]] و [[ى]] (عشان تعرف الكلمات اللي آخرها مش تاء مربوطة ولا ألف مقصورة).`, done: R`[["سعر ٣ قطع: ١٢٠ جنيه، ok".match(...)]] بيرجّع [[[ 'سعر', 'قطع', 'جنيه' ]]] من غير أرقام ولا فاصلة، والتاني بيقبل [[ب]] ويرفض [[ة]] و [[٣]].`, sol: R`~~~js p3.mjs
+const arabicLetter = /[\p{Script=Arabic}&&\p{L}]+/gv;
+console.log("سعر ٣ قطع: ١٢٠ جنيه، ok".match(arabicLetter));
+const noTaa = /[[\p{Script=Arabic}&&\p{L}]--[ةى]]/v;
+console.log(noTaa.test("ب"), noTaa.test("ة"), noTaa.test("٣"));
+~~~
+
+~~~text الناتج (Node 24.22)
+[ 'سعر', 'قطع', 'جنيه' ]
+true false false
+~~~
+
+- [[&&]] تقاطع: «حرف من الكتابة العربي **و** letter» = حروف بس. الأرقام العربي [[Script=Arabic]] بس مش [[L]]، والفاصلة [[،]] كمان.
+- [[--]] طرح، و [[[...]]] جوه [[[...]]] class متداخل (مسموح في [[v]] بس): «حروف عربي ناقص [[ة]] و [[ى]]».
+- من غير [[v]] الكلام ده كان محتاج lookahead أو قايمة حروف طويلة.` },
+            { lvl: 'تحدي', t: R`**ابني tokenizer:** [[parsePairs(src)]] بتقرا [['lang=ar; title="شاي بلبن"; qty=2']] لـ object، بـ regex واحد فيه [[y]]. القيمة يا بين علامات تنصيص (وفيها مسافات و [[;]])، يا كلمة. ولو حتة مش مفهومة ترمي SyntaxError فيها مكانها.`, done: R`المثال بيرجّع [[{ lang: 'ar', title: 'شاي بلبن', qty: '2' }]]، و [["lang=ar; ?? ; qty=2"]] بيرمي رسالة فيها [[عند 8]]، ومفيش حاجة بتتنط في صمت.`, sol: R`~~~js p4.mjs
+function parsePairs(src) {
+  const re = /\s*(?<key>\w+)\s*=\s*(?:"(?<q>[^"]*)"|(?<v>[^;\s]*))\s*(?:;|$)/y;
+  const out = {};
+  re.lastIndex = 0;
+  while (re.lastIndex < src.length) {
+    const at = re.lastIndex;
+    const m = re.exec(src);
+    if (!m) throw new SyntaxError($__btمش مفهوم عند $__{at}: «$__{src.slice(at, at + 10)}»$__bt);
+    out[m.groups.key] = m.groups.q ?? m.groups.v;
+  }
+  return out;
+}
+console.log(parsePairs('lang=ar; title="شاي بلبن"; qty=2'));
+try { parsePairs("lang=ar; ?? ; qty=2"); } catch (e) { console.log(e.name + ": " + e.message); }
+~~~
+
+~~~text الناتج (Node 24.22)
+{ lang: 'ar', title: 'شاي بلبن', qty: '2' }
+SyntaxError: مش مفهوم عند 8: « ?? ; qty=»
+~~~
+
+- كل لفة بتقرا زوج واحد كامل لحد [[;]] أو آخر النص، و [[y]] بتضمن إن الزوج الجاي بيبدأ بالظبط بعد اللي قبله.
+- [[(?:"(?<q>[^"]*)"|(?<v>[^;\s]*))]]: لو فيه تنصيص خد كل اللي جواه (حتى [[;]])، وإلا خد كلمة.
+- [[const at = re.lastIndex]] قبل [[exec]]: بعد الفشل [[lastIndex]] بيرجع 0، فلازم نحفظ المكان قبلها.
+- لو كان [[g]]: الـ [[??]] كان هيتنط عليه وتكمّل بـ [[qty]] من غير ما حد يعرف.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حد نقل regex الـ slug لـ [[v]] عشان «الأحدث»: [[new RegExp("^[a-z-]+$", "v")]]. شغّله واقرا الرسالة وصلّحه من غير ما ترجع لـ [[u]].`, done: R`شفت [[Invalid character class]]، وعرفت إن [[-]] في آخر الـ class لازمها [[\]] في [[v]]، والـ regex المصلّح بيقبل [["my-post"]] ويرفض [["My post"]].`, sol: R`~~~js p5.mjs
+try { new RegExp("^[a-z-]+$", "v"); } catch (e) { console.log(e.message); }
+const slug = /^[a-z0-9\-]+$/v;
+console.log(slug.test("my-post"), slug.test("My post"));
+~~~
+
+~~~text الناتج (Node 24.22)
+Invalid regular expression: /^[a-z-]+$/v: Invalid character class
+true false
+~~~
+
+في [[v]]، الـ [[-]] جوه الـ class ليها دور في [[--]] (طرح)، فالـ engine مبيخمنش: [[-]] لوحدها لازم [[\-]]. ونفس الحكاية لـ [[(]] و [[)]] و [[[]] و [[{]] و [[}]] و [[/]] و [[|]] جوه الـ class: في [[u]] مسموحين حرفيين، وفي [[v]] بيرموا [[Invalid character in character class]]. عشان كده [[v]] مش «u أحدث» تبدّله وخلاص: لازم تراجع كل class.` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`أغلب الـ regex في الشغل بيتكتب لسطر واحد، والمشاكل بتبدأ لما النص يبقى ملف: [[^]] اللي مبتطابقش غير أول الملف، والنقطة اللي بتقف عند أول سطر، والـ parser اللي بيتنط على حاجات غلط في صمت. والـ [[v]] بتحل حاجة كانت مستحيلة تقريبًا قبلها: «حروف عربي بس» أو «كل الـ emoji» في class واحدة مقروءة.`,
+            how: R`[[m]] بتغيّر معنى [[^]] و [[$]] بس: بيطابقوا كمان بعد/قبل أي line terminator ([[\n]] و [[\r]] و [[\u2028]] و [[\u2029]]). مبتغيّرش النقطة ولا أي حاجة تانية.
+
+[[s]] بتغيّر النقطة بس. قبلها الناس كانت بتكتب [[[^]]] (class فاضية منفية = أي حرف) أو [[[\s\S]]]. الاتنين لسه شغالين.
+
+[[y]]: [[exec]] بتجرّب تطابق **عند** [[lastIndex]] وبس. مع [[g]] كمان: [[y]] هي اللي بتكسب في البحث، و [[g]] بتأثر على [[match]] و [[replace]] (كل الـ matches ورا بعض من غير فراغات). و [[^]] مع [[y]] بتطابق أول النص بس (أو أول سطر مع [[m]]).
+
+[[v]]: الـ class بقت **set** من حروف **ونصوص**. [[&&]] تقاطع، و [[--]] طرح، ومينفعش تخلطهم في نفس المستوى من غير أقواس متداخلة. و [[\q{EGP|USD}]] نصوص كاملة جوه الـ class، ومع النفي [[[^...]]] مينفعش نص أطول من حرف: جرّبنا [[[^\q{ab}]]] ورمى [[Negated character class may contain strings]]، و [[[^\q{a|b}]]] (حروف لوحدها) اشتغل. و [[\p{RGI_Emoji}]] property بتطابق emoji كامل حتى لو مكوّن من كذا code point (زي [[👍🏽]] و [[🇪🇬]])، ومع [[u]] بترمي [[Invalid property name]]. [[v]] و [[u]] مع بعض SyntaxError.`,
+            when: R`[[m]]: ملفات كل سطر فيها record (logs و INI و .env و CSV بسيط) لما تعمل [[matchAll]] على الملف كله. [[s]]: blocks متعددة السطور (جسم رسالة، تعليق [[/* */]]، section). [[y]]: أي tokenizer أو parser صغير، وفي التحقق إن النص **كله** اتقري حتة ورا حتة. [[v]]: أي class فيها عربي أو emoji أو «كذا ناقص كذا»، وفي الكود الجديد بدل [[u]] (بعد ما تراجع الـ classes).`,
+            mistakes: R`تقسم ملف ويندوز بـ [[split("\n")]] وبعدين [[^\d+$]] من غير [[m]] على كل سطر: آخر كل سطر [[\r]] مستخبي، فجرّبنا [["12\r\n34\r\n".split("\n")]] وكلهم طلعوا [[false]]، و [[split(/\r?\n/)]] صلّحتها. (مع [[m]] على الملف كله مفيش مشكلة: [[\r]] line terminator في JS.) وتستخدم [[g]] في tokenizer فالحاجات الغلط تتنط. وتنسى [[lastIndex = 0]] قبل ما تبدأ نص جديد بـ regex [[y]] متشارك. وتنقل regex من [[u]] لـ [[v]] من غير ما تعمل escape لـ [[-]] و [[(]] جوه الـ classes. وتحط [[\p{RGI_Emoji}]] من غير [[v]].`
+          },
+          teach: R`## الفكرة في سطر
+
+كل flag من الأربعة بيحل مشكلة بتظهر لما النص يبقى **ملف** أو **لغة** مش كلمة. المثال ٤ حالات من الشغل. كل الناتج اتشغّل فعلًا على Node 24.22، والـ [[v]] اتجرّبت كمان على Chrome 157 وطلّعت نفس النتايج.
+
+---
+
+## ١. [[m]]: كل سطر لوحده
+
+~~~js app.mjs
+const ini = "[db]\nhost = localhost\nport = 5432\n[cache]\nttl = 60";
+console.log(ini.match(/^\w+(?= =)/gm), ini.match(/^\w+(?= =)/g));
+~~~
+
+الـ regex: من أول السطر ([[^]])، كلمة ([[\w+]])، وبعدها [[ =]] (lookahead: مش جزء من الـ match).
+
+~~~text الناتج
+[ 'host', 'port', 'ttl' ] null
+~~~
+
+- مع [[m]]: [[^]] بتطابق بعد كل [[\n]]، فكل سطر فيه key اتلقط.
+- من غير [[m]]: [[^]] أول الملف بس، وأول الملف [[[db]]] مش كلمة، فـ [[null]].
+
+> [[m]] مبتغيّرش غير [[^]] و [[$]]. النقطة لسه مبتطابقش [[\n]].
+
+---
+
+## ٢. [[s]]: النقطة بتعدّي السطور
+
+~~~js app.mjs
+const mail = "Subject: hi\n\nline one\nline two\n-- \nSara";
+console.log(mail.match(/\n\n(.*)\n-- /)?.[1], JSON.stringify(mail.match(/\n\n(.*)\n-- /s)?.[1]));
+~~~
+
+جسم الإيميل بين السطر الفاضي ([[\n\n]]) وخط التوقيع ([[\n-- ]]).
+
+~~~text الناتج
+undefined "line one\nline two"
+~~~
+
+- من غير [[s]]: [[(.*)]] وقفت عند أول [[\n]]، فمفيش match و [[?.[1]]] رجّعت [[undefined]].
+- مع [[s]]: النقطة خدت السطرين، و [[JSON.stringify]] بيورّينا الـ [[\n]] اللي جوه.
+
+قبل [[s]] كانوا بيكتبوا [[([^]*)]] بدل [[(.*)]]، وجرّبناها وطلّعت نفس النتيجة. هتشوفها في كود قديم.
+
+---
+
+## ٣. [[y]]: قراية CSV من غير ما حاجة تتنط
+
+~~~js app.mjs
+const cell = /\s*(?:"(?<q>[^"]*)"|(?<v>[^,]*))\s*(?:,|$)/y;
+const row = ' tea , "rice, white" ,40';
+const cells = [];
+let c;
+while (cell.lastIndex < row.length && (c = cell.exec(row))) cells.push(c.groups.q ?? c.groups.v.trim());
+console.log(cells);
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[\s*]] | مسافات قبل الخانة |
+| [["(?<q>[^"]*)"]] | خانة بين تنصيص: كل حاجة غير [["]]، حتى الفاصلة |
+| [[(?<v>[^,]*)]] | أو خانة عادية: كل حاجة لحد الفاصلة |
+| [[(?:,|$)]] | الخانة بتخلص بفاصلة أو آخر السطر |
+| [[y]] | الخانة الجاية لازم تبدأ **بالظبط** بعد اللي قبلها |
+
+~~~text الناتج
+[ 'tea', 'rice, white', '40' ]
+~~~
+
+[[cell.lastIndex < row.length]] بيقف لما السطر يخلص، و [[c.groups.q ?? ...]] بياخد اللي اتطابق من البديلين. الفاصلة جوه [["rice, white"]] مقسمتش الخانة. ولو السطر فيه حاجة الـ regex مش فاهمها، [[exec]] بترجّع [[null]] والـ loop بيقف **عندها**، بدل ما يتنط عليها زي [[g]] (المشروع «tokenizer لمعادلة حسابية» بيورّي الفرق بالأرقام).
+
+---
+
+## ٤. [[v]]: عمليات على الـ classes
+
+### تقاطع [[&&]]
+
+~~~js app.mjs
+console.log(/[\p{Script=Arabic}&&\p{Nd}]/v.test("٣"), /[\p{Script=Arabic}&&\p{Nd}]/v.test("3"));
+~~~
+
+~~~text الناتج
+true false
+~~~
+
+«حرف من الكتابة العربي **و** رقم» = الأرقام العربي المشرقية بس. [[3]] رقم بس مش عربي.
+
+### طرح [[--]]
+
+~~~js app.mjs
+console.log("سعر٣ و Price3".match(/[\p{L}--\p{ASCII}]+/gv));
+~~~
+
+~~~text الناتج
+[ 'سعر', 'و' ]
+~~~
+
+«أي حرف ناقص حروف ASCII» ([[\p{ASCII}]] أول ١٢٨ حرف: الإنجليزي والأرقام والرموز). [[Price]] اتشالت كلها، و [[٣]] رقم مش حرف أصلًا.
+
+### class جوه class
+
+الحاجة اللي بتطرحها ممكن تبقى class كاملة بين قوسين، وده اسمه **nested class** (مسموح في [[v]] بس). جرّبنا نطرح [[a-z]] بس بدل ASCII كلها:
+
+~~~js nested.mjs
+console.log("سعر٣ و Price3".match(/[\p{L}--[a-z]]+/gv));
+~~~
+
+~~~text الناتج
+[ 'سعر', 'و', 'P' ]
+~~~
+
+الـ [[P]] الكابيتال فضلت لأنها مش من [[a-z]]. يعني الطرح دقيق بالظبط زي ما كتبته.
+
+### نصوص كاملة: [[\p{RGI_Emoji}]] و [[\q{...}]]
+
+~~~js app.mjs
+console.log("👍🏽 ok 🇪🇬".match(/\p{RGI_Emoji}/gv), /^[\q{EGP|USD|SAR}]$/v.test("USD"));
+~~~
+
+~~~text الناتج
+[ '👍🏽', '🇪🇬' ] true
+~~~
+
+- [[👍🏽]] (إيد + لون بشرة) و [[🇪🇬]] (حرفين علم) كل واحد **كذا code point**. [[\p{RGI_Emoji}]] بتطابق الـ emoji كامل. وجرّبنا [[\p{Extended_Pictographic}]] بـ [[u]] على نفس النص: طلّعت [[[ '👍' ]]] بس، من غير لون البشرة ومن غير العلم.
+- [[\q{EGP|USD|SAR}]]: نصوص كاملة جوه الـ class. [[^[\q{...}]$]] بتقبل [["USD"]] وجرّبنا [["US"]] رجّعت [[false]].
+- [[\p{RGI_Emoji}]] مع [[u]] بترمي: [[Invalid regular expression: /\p{RGI_Emoji}/u: Invalid property name]].
+
+### [[v]] أشد من [[u]]
+
+جرّبنا ٤ classes كانت شغالة في [[u]]:
+
+| الـ class بـ [[v]] | النتيجة | التصليح |
+|---|---|---|
+| [[[(]]] | [[Invalid character in character class]] | [[[\(]]] |
+| [[[a-z-]]] | [[Invalid character class]] | [[[a-z\-]]] |
+| [[[{]]] | [[Invalid character in character class]] | [[[\{]]] |
+| [[[|]]] | [[Invalid character in character class]] | [[[\|]]] |
+
+### الخصايص
+
+~~~js app.mjs
+console.log(/x/v.unicodeSets, /x/v.unicode, /x/s.dotAll, /x/m.multiline);
+~~~
+
+~~~text الناتج
+true false true true
+~~~
+
+[[unicodeSets]] هي خاصية [[v]]، و [[unicode]] بتفضل [[false]] مع [[v]] رغم إن كل حاجة في [[u]] شغالة: الاتنين flags منفصلين ومينفعوش مع بعض.
+
+---
+
+## الخلاصة
+
+| الـ flag | الخاصية | بيغيّر إيه | استخدمه في |
+|---|---|---|---|
+| [[m]] | [[multiline]] | [[^]] و [[$]] لكل سطر | logs و INI و .env |
+| [[s]] | [[dotAll]] | النقطة بتاخد [[\n]] | blocks متعددة السطور |
+| [[y]] | [[sticky]] | الـ match من [[lastIndex]] بالظبط | tokenizers و parsers |
+| [[v]] | [[unicodeSets]] | [[&&]] و [[--]] و [[\q{}]] و properties النصوص | عربي و emoji و «كذا ناقص كذا» |`,
+          lines: [
+            R`نص ملف INI: ٥ سطور منهم سطرين sections وتلاتة [[key = value]].`,
+            R`[[^\w+(?= =)]] كلمة في أول سطر بعدها [[ =]]. مع [[m]] كل سطر بيتشاف لوحده فطلع [[[ 'host', 'port', 'ttl' ]]]، ومن غيره [[^]] أول الملف بس فـ [[null]].`,
+            R`إيميل: عنوان، سطر فاضي، جسم من سطرين، وخط توقيع [[-- ]].`,
+            R`[[(.*)]] بين السطر الفاضي والتوقيع: من غير [[s]] النقطة وقفت عند أول [[\n]] فمفيش match ([[undefined]])، ومع [[s]] خدت السطرين.`,
+            R`regex خانة CSV واحدة بـ [[y]]: يا نص بين تنصيص (فيه فاصلة عادي) يا أي حاجة لحد الفاصلة، وبعدها فاصلة أو آخر السطر.`,
+            R`سطر فيه مسافات حوالين الخانات، وخانة بين تنصيص جواها فاصلة.`,
+            R`array فاضية هنجمع فيها الخانات واحدة واحدة.`,
+            R`متغير الـ match، متعرّف برّه الـ loop عشان الشرط يحط فيه.`,
+            R`بنقرا خانة ورا خانة لحد آخر السطر، و [[??]] بتاخد البديل اللي اتطابق، و [[trim]] بتشيل المسافات من الخانة العادية.`,
+            R`التلات خانات: [[tea]] و [[rice, white]] كاملة و [[40]].`,
+            R`[[&&]] مع [[v]]: تقاطع، «عربي **و** رقم». [[٣]] بـ [[true]] و [[3]] بـ [[false]].`,
+            R`[[--]] طرح مع [[v]]: كل الحروف ([[\p{L}]]) ناقص حروف ASCII، فـ [[Price3]] اتشالت وطلع [[سعر]] و [[و]] بس.`,
+            R`[[\p{RGI_Emoji}]] بتطابق الـ emoji كامل حتى لو كذا code point، و [[\q{EGP|USD|SAR}]] نصوص كاملة جوه class.`,
+            R`[[unicodeSets]] خاصية [[v]] بـ [[true]] و [[unicode]] بـ [[false]] (flags منفصلين)، و [[dotAll]] و [[multiline]] خصايص [[s]] و [[m]].`,
+          ],
+          ref: [
+            { t: "MDN: RegExp.prototype.multiline", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/multiline" },
+            { t: "MDN: RegExp.prototype.dotAll", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/dotAll" },
+            { t: "MDN: RegExp.prototype.sticky", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/sticky" },
+            { t: "MDN: RegExp.prototype.unicodeSets", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/unicodeSets" },
+            { t: "MDN: Character class (v-mode)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Character_class" },
+          ],
+          pre: [{ to: "js/groups و flags", why: R`أول تعارف بالـ flags دول بمثال واحد لكل واحد` }, { to: "js/regex والعربي: Unicode properties", why: R`[[\p{Script=Arabic}]] و [[\p{Nd}]] و [[u]]، و [[v]] مبنية عليهم` }],
+        },
+        {
+          cmd: "الـ wildcard والـ literal characters: النقطة والحروف الحرفية",
+          title: "النقطة بتطابق إيه بالظبط؟ وأنهي حرف بيطابق نفسه وأنهي حرف لازم \\ قبله",
+          desc: R`**wildcard** هو اسم النقطة [[.]] في الـ regex: حرف واحد، أي حرف، **ما عدا** الـ line terminators الأربعة ([[\n]] و [[\r]] و [[\u2028]] و [[\u2029]]). مع [[s]] بتطابقهم كمان. ومن غير [[u]] بتطابق «نص emoji» (الـ emoji حرفين في UTF-16)، ومع [[u]] أو [[v]] الـ emoji كله.
+
+**literal character** هو أي حرف مش ليه معنى خاص: بيطابق نفسه بالظبط ([[a]] و [[ب]] و المسافة). والحروف اللي ليها معنى (اسمهم syntax characters) هم [[^ $ \ . * + ? ( ) [ ] { } |]]، و [[/]] جوه الـ literal بس: عشان تطابق واحد منهم حرفيًا حط [[\]] قبله. ومن غير [[u]] الـ engine متساهل ([[]]] و [[{]] لوحدهم بيطابقوا نفسهم، و [[\-]] و [[\q]] escapes مقبولة)، ومع [[u]] أو [[v]] نفس الحاجات دي بترمي SyntaxError.`,
+          example: R`// wildcard: النقطة بتطابق إيه وإيه لأ
+const chars = ["a", "ب", " ", "\t", "\n", "\r", "\u2028", "\u2029"];
+console.log(chars.map((ch) => /^.$/.test(ch)).join(" "));
+console.log(chars.map((ch) => /^.$/s.test(ch)).join(" "));
+console.log(/^.$/.test("😀"), /^.$/u.test("😀"), /^[^]$/.test("\n"));
+console.log("v1.2".replace(/./g, "*"), "v1.2".replace(/\./g, "*"), "v1.2".replace(/[.]/g, "*"));
+// literal characters: الحرف العادي بيطابق نفسه
+console.log(/كتاب/.test("الكتاب ده"), /cat/.test("concatenate"), /a b/.test("a  b"));
+// الحروف الخاصة: من غير \ بتغيّر المعنى أو بترمي
+console.log(/^1+1$/.test("1+1"), /^1\+1$/.test("1+1"), /^a|b$/.test("a|b"), /^a\|b$/.test("a|b"));
+try { new RegExp("price (EGP"); } catch (e) { console.log(e.message); }
+console.log(/a]b/.test("a]b"), /a{b/.test("a{b"));
+try { new RegExp("a]b", "u"); } catch (e) { console.log(e.message); }
+try { new RegExp("\\-", "u"); } catch (e) { console.log(e.message); }`,
+          try: R`regex لرقم نسخة زي [["1.2.7"]]: [[/^1.2.\d+$/]]. جرّبه على [["1.2.7"]] و [["1x2y7"]] و [["1.20.7"]]. ليه [["1x2y7"]] عدّت؟ صلّحه.`,
+          sol: R`~~~js version.mjs
+const bad = /^1.2.\d+$/;
+const good = /^1\.2\.\d+$/;
+for (const v of ["1.2.7", "1x2y7", "1.20.7"]) console.log(v, bad.test(v), good.test(v));
+~~~
+
+~~~text الناتج (Node 24.22)
+1.2.7 true true
+1x2y7 true false
+1.20.7 false false
+~~~
+
+النقطة من غير [[\]] wildcard: [[1.2.]] معناها «1 وأي حرف و 2 وأي حرف»، فـ [[x]] و [[y]] عدّوا. [[\.]] نقطة حرفية بس. و [[[.]]] كمان نقطة حرفية (جوه الـ class النقطة ملهاش معنى خاص).`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب ناتج دول قبل التشغيل: [["1.5".replace(/./g, "#")]] و [["1.5".replace(/\./g, "#")]] و [[JSON.stringify("a\nb".replace(/./g, "#"))]] و [[JSON.stringify("a\nb".replace(/./gs, "#"))]].`, done: R`كتبت [[###]] و [[1#5]] و [["#\n#"]] و [["###"]] وطلعوا كده.`, sol: R`~~~js p1.mjs
+console.log("1.5".replace(/./g, "#"), "1.5".replace(/\./g, "#"), JSON.stringify("a\nb".replace(/./g, "#")), JSON.stringify("a\nb".replace(/./gs, "#")));
+~~~
+
+~~~text الناتج (Node 24.22)
+### 1#5 "#\n#" "###"
+~~~
+
+- الأول: النقطة wildcard فكل حرف (حتى النقطة نفسها) بقى [[#]].
+- التاني: [[\.]] النقطة الحرفية بس.
+- التالت: [[\n]] اتساب لأن النقطة مبتطابقهوش.
+- الرابع: مع [[s]] السطر الجديد كمان بقى [[#]]، فـ ٣ حروف ٣ علامات.` },
+            { lvl: 'تطبيق', t: R`**ابني:** [[myEscape(s)]] بتحط [[\]] قبل كل syntax character ([[^ $ \ . * + ? ( ) [ ] { } | /]]) بـ loop على الحروف (من غير regex). وقارنها بـ [[RegExp.escape]] على [["1+1=2"]] و [["(a|b)"]] و [["c:/x"]] و [["سعر.قهوة"]]: كل نص لازم يطابق نفسه بالظبط بـ [[^...$]].`, done: R`الأربع نصوص بيطابقوا نفسهم بالنسختين، و [[myEscape("(a|b)")]] بترجّع [[\(a\|b\)]]، والعربي بيعدّي زي ما هو والنقطة بس اللي اتعمل لها escape.`, sol: R`~~~js p3.mjs
+const SYNTAX = new Set("^$\\.*+?()[]{}|/");
+const myEscape = (s) => [...s].map((ch) => (SYNTAX.has(ch) ? "\\" + ch : ch)).join("");
+for (const s of ["1+1=2", "(a|b)", "c:/x", "سعر.قهوة"]) {
+  const mine = new RegExp("^" + myEscape(s) + "$"), std = new RegExp("^" + RegExp.escape(s) + "$");
+  console.log(s, mine.source, mine.test(s), std.test(s));
+}
+~~~
+
+~~~text الناتج (Node 24.22)
+1+1=2 ^1\+1=2$ true true
+(a|b) ^\(a\|b\)$ true true
+c:/x ^c:\/x$ true true
+سعر.قهوة ^سعر\.قهوة$ true true
+~~~
+
+- [[new Set("^$\\.*+?()[]{}|/")]]: الـ Set من نص بياخد كل حرف لوحده. و [["\\"]] في النص backslash واحدة.
+- [[[...s]]]: بيقسم النص لحروف (code points)، فالعربي والـ emoji مبيتكسروش.
+- النسخة دي كفاية **برّه** الـ class. [[RegExp.escape]] بتعمل escape لحاجات زيادة ([[-]] والمسافة وأول حرف) عشان تبقى آمنة في أي مكان، حتى جوه [[[ ]]] ومع [[v]].` },
+            { lvl: 'تحدي', t: R`**قارن:** «أي حرف بما فيه السطر الجديد» ليها ٣ أشكال: [[.]] مع [[s]]، و [[[^]]]، و [[[\s\S]]]. جرّبهم مع وبدون [[u]] على [["😀\nب"]] بـ [[match(.../g)]]، وقول كام match في كل حالة وليه.`, done: R`عرفت إن من غير [[u]] الـ emoji بيطلع حتتين، وإن التلات أشكال مع [[u]] بيطلّعوا ٣ (emoji كامل، وسطر جديد، وب)، و [[.]] من غير [[s]] بتطلّع من غير [[\n]].`, sol: R`~~~js p4.mjs
+const s = "😀\nب";
+console.log(s.match(/./g), s.match(/./gs), s.match(/./gsu), s.match(/[^]/gu), s.match(/[\s\S]/gu).length);
+~~~
+
+~~~text الناتج (Node 24.22)
+[ '\ud83d', '\ude00', 'ب' ] [ '\ud83d', '\ude00', '\n', 'ب' ] [ '😀', '\n', 'ب' ] [ '😀', '\n', 'ب' ] 3
+~~~
+
+- [[/./g]]: من غير [[u]] الـ emoji اتقسم لـ surrogate pair (حتتين ملهمش معنى لوحدهم)، ومن غير [[s]] الـ [[\n]] اتساب.
+- [[/./gs]]: الـ [[\n]] دخل، والـ emoji لسه حتتين.
+- [[/./gsu]] و [[/[^]/gu]] و [[/[\s\S]/gu]]: ٣ matches صح. الـ ٣ أشكال زي بعض، و [[s]] أوضح في الكود الجديد.` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`أشهر باج regex في الدنيا نقطة من غير [[\]]: فحص إصدار، أو IP، أو دومين، أو اسم ملف [[.js]]، بيعدّي نصوص غلط وكل الاختبارات اللي فيها نقطة حقيقية بتنجح. والعكس: [[\]] زيادة قبل حرف عادي، أو [[]]] لوحده، بيعدّي من غير [[u]] ويرمي أول ما حد يضيف [[u]] أو [[v]] عشان العربي.`,
+            how: R`النقطة في الـ spec اسمها **wildcard**، وبتطابق أي حرف ما عدا الـ LineTerminator: [[\n]] (LF) و [[\r]] (CR) و [[\u2028]] (Line Separator) و [[\u2029]] (Paragraph Separator). التاب والمسافة والحروف العربي كلهم بيتطابقوا.
+
+الحرف «حرفي» لو مش syntax character: [[^ $ \ . * + ? ( ) [ ] { } |]]. جوه الـ literal كمان [[/]] لازم [[\/]] (وإلا بتقفل الـ literal)، بس في [[new RegExp("a/b")]] مش محتاجة. جوه [[[ ]]] أغلبهم حرفيين ما عدا [[]]] و [[\]] و [[^]] في الأول و [[-]] بين حرفين (ومع [[v]] كمان [[( ) [ { } / - |]]).
+
+من غير [[u]] الـ engine في **Annex B mode** (وضع التوافق مع الكود القديم): [[]]] و [[{]] و [[}]] لوحدهم حرفيين، و [[a{2]] (quantifier ناقص) حرفي، و [[\q]] أو [[\-]] (escape لحرف عادي) بيبقى الحرف نفسه. مع [[u]] أو [[v]] الحاجات دي SyntaxError: [[Lone quantifier brackets]] و [[Incomplete quantifier]] و [[Invalid escape]]. ده مقصود: عشان الغلط يبان بدل ما يتقري بمعنى تاني.`,
+            when: R`استخدم النقطة لما تقصد «أي حرف» فعلًا، وغالبًا في [[.*?]] بين حاجتين معروفين. لما تعرف الحروف المسموحة، class أدق وأسرع ([[[^"]*]] بدل [[.*?]] بين تنصيص). وأي نص ثابت فيه رمز (نسخة، IP، امتداد ملف، سعر بـ [[$]]) حط [[\]] قبل الرموز، وأي نص متغير عدّيه على [[RegExp.escape]].`,
+            mistakes: R`[[/\.js$/]] مكتوبة [[/.js$/]] فـ [["myjs"]] تعدّي. و [[^a|b$]] فاكرها «a أو b بالظبط» وهي «a في الأول **أو** b في الآخر» (جرّبناها على [["a|b"]] ورجّعت [[true]] للسبب الغلط)، والصح [[^(?:a|b)$]]. و [[.]] على نص فيه emoji من غير [[u]] بتقطع الـ emoji. و [[\-]] أو [[\_]] برّه الـ class مع [[u]]: [[Invalid escape]].`
+          },
+          teach: R`## الفكرة في سطر
+
+أي حرف في الـ pattern يا **بيطابق نفسه** (literal character)، يا **ليه معنى** (syntax character). والنقطة أشهر حرف ليه معنى: الـ **wildcard**. المثال بيقيس الاتنين حرف حرف. كل الناتج اتشغّل فعلًا على Node 24.22.
+
+---
+
+## ١. الـ wildcard: النقطة بتطابق إيه؟
+
+~~~js app.mjs
+const chars = ["a", "ب", " ", "\t", "\n", "\r", "\u2028", "\u2029"];
+console.log(chars.map((ch) => /^.$/.test(ch)).join(" "));
+console.log(chars.map((ch) => /^.$/s.test(ch)).join(" "));
+~~~
+
+[[/^.$/]] معناها «النص كله حرف واحد». جرّبناها على ٨ حروف:
+
+~~~text الناتج
+true true true true false false false false
+true true true true true true true true
+~~~
+
+| الحرف | اسمه | [[.]] | [[.]] مع [[s]] |
+|---|---|---|---|
+| [[a]] و [[ب]] | حروف عادية بأي لغة | ✓ | ✓ |
+| المسافة و [[\t]] | مسافة و tab، مش سطر جديد | ✓ | ✓ |
+| [[\n]] | Line Feed: السطر الجديد العادي | ✗ | ✓ |
+| [[\r]] | Carriage Return: نص سطر ويندوز الجديد [[\r\n]] | ✗ | ✓ |
+| [[\u2028]] و [[\u2029]] | Line و Paragraph Separator من Unicode | ✗ | ✓ |
+
+الأربعة اللي ✗ اسمهم **line terminators**، وهم نفسهم اللي [[^]] و [[$]] بيتعاملوا معاهم مع [[m]].
+
+### الـ emoji وعلامة [[u]]
+
+~~~js app.mjs
+console.log(/^.$/.test("😀"), /^.$/u.test("😀"), /^[^]$/.test("\n"));
+~~~
+
+~~~text الناتج
+false true true
+~~~
+
+- الـ emoji في UTF-16 حرفين (surrogate pair). من غير [[u]] النقطة بتاخد واحد بس فـ [[^.$]] فشلت. مع [[u]] الاتنين حرف واحد.
+- [[[^]]]: class فاضية منفية = «أي حرف» حتى [[\n]]. الشكل القديم قبل [[s]].
+
+### النقطة ضد النقطة الحرفية
+
+~~~js app.mjs
+console.log("v1.2".replace(/./g, "*"), "v1.2".replace(/\./g, "*"), "v1.2".replace(/[.]/g, "*"));
+~~~
+
+~~~text الناتج
+**** v1*2 v1*2
+~~~
+
+[[/./g]] بدّلت كل حرف. [[\.]] و [[[.]]] النقطة الحرفية بس: جوه [[[ ]]] النقطة ملهاش معنى خاص.
+
+---
+
+## ٢. literal characters: الحرف اللي بيطابق نفسه
+
+~~~js app.mjs
+console.log(/كتاب/.test("الكتاب ده"), /cat/.test("concatenate"), /a b/.test("a  b"));
+~~~
+
+~~~text الناتج
+true true false
+~~~
+
+- [[/كتاب/]]: ٤ حروف literal ورا بعض، بتطابق نفس الـ ٤ في أي مكان. «الكتاب» فيها «كتاب».
+- [[/cat/]] لقتها جوه «con**cat**enate»: الـ literal مبيعرفش حدود الكلمات (ده شغل [[\b]] أو lookaround).
+- [[/a b/]]: المسافة نفسها literal، **مسافة واحدة بالظبط**. [["a  b"]] فيها مسافتين ففشلت. (لو تقصد مسافة أو أكتر: [[a +b]] أو [[a\s+b]].)
+
+---
+
+## ٣. الحروف الخاصة: من غير [[\]] بتغيّر المعنى أو بترمي
+
+~~~js app.mjs
+console.log(/^1+1$/.test("1+1"), /^1\+1$/.test("1+1"), /^a|b$/.test("a|b"), /^a\|b$/.test("a|b"));
+~~~
+
+~~~text الناتج
+false true true true
+~~~
+
+- [[/^1+1$/]]: [[+]] هنا «1 مرة أو أكتر» مش حرف، فالـ regex بيطابق [["11"]] و [["111"]] مش [["1+1"]].
+- [[/^a|b$/]] رجّعت [[true]]، بس **للسبب الغلط**: [[|]] بتقسم الـ regex كله لـ «[[^a]]» **أو** «[[b$]]»، و [["a|b"]] بتبدأ بـ a. نفس الـ regex بيقبل [["abc"]] كمان.
+- [[\+]] و [[\|]]: الحرف نفسه.
+
+### الجدول: كل syntax character
+
+جرّبنا كل حرف لوحده في loop: حطيناه بين a و b في الـ regex مرة من غير [[\]] ومرة بيها (يعني [[^a?b$]] و [[^a\?b$]] للـ [[?]] مثلًا)، وجرّبنا الاتنين على النص اللي فيه الحرف نفسه حرفيًا ([["a?b"]]):
+
+| الحرف | من غير [[\]] | مع [[\]] | معناه لو من غير [[\]] |
+|---|---|---|---|
+| [[^]] و [[$]] | مبيطابقش | يطابق | أول وآخر النص (anchor) |
+| [[\]] | مبيطابقش | يطابق | بداية escape للحرف اللي بعده |
+| [[.]] | يطابق بالصدفة | يطابق | أي حرف، فبتطابق النقطة وأي حاجة تانية |
+| [[*]] و [[+]] و [[?]] | مبيطابقش | يطابق | quantifier على الحرف اللي قبله |
+| [[(]] و [[)]] | SyntaxError | يطابق | group: [[Unterminated group]] و [[Unmatched ')']] |
+| [[[]] | SyntaxError | يطابق | class: [[Unterminated character class]] |
+| [[]]] و [[{]] و [[}]] | يطابق (من غير [[u]] بس) | يطابق | حرفي في Annex B، و SyntaxError مع [[u]] |
+| [[|]] | يطابق بالصدفة | يطابق | «أو» بيقسم الـ regex كله |
+| [[/]] | يطابق في [[new RegExp]] | يطابق | بيقفل الـ literal لو كتبته بين [[/ /]] |
+
+**القاعدة العملية:** أي حرف من دول عايزه حرفي: [[\]] قبله. والحروف العادية (حروف وأرقام ومسافة) **متحطش** قبلها [[\]]: [[\d]] و [[\b]] و [[\s]] ليهم معنى، والباقي بيرمي مع [[u]].
+
+### الـ SyntaxError نفسها
+
+~~~js app.mjs
+try { new RegExp("price (EGP"); } catch (e) { console.log(e.message); }
+~~~
+
+~~~text الناتج
+Invalid regular expression: /price (EGP/: Unterminated group
+~~~
+
+---
+
+## ٤. [[u]] بيقفل باب التساهل
+
+~~~js app.mjs
+console.log(/a]b/.test("a]b"), /a{b/.test("a{b"));
+try { new RegExp("a]b", "u"); } catch (e) { console.log(e.message); }
+try { new RegExp("\\-", "u"); } catch (e) { console.log(e.message); }
+~~~
+
+~~~text الناتج
+true true
+Invalid regular expression: /a]b/u: Lone quantifier brackets
+Invalid regular expression: /\-/u: Invalid escape
+~~~
+
+من غير [[u]] الـ engine بيقرا [[]]] و [[{]] لوحدهم كحروف عادية، و [[\-]] كـ [[-]] (ده اسمه Annex B: قواعد متساهلة عشان كود قديم ميبوظش). مع [[u]] أو [[v]] كله ده SyntaxError. وجرّبنا كمان [[{]] لوحدها و [[}]] بنفس الرسالة، و [[a{2]] بـ [[Incomplete quantifier]]، و [[\q]] بـ [[Invalid escape]].
+
+**النتيجة:** لو هتضيف [[u]] لـ regex قديم (عشان العربي أو الـ emoji)، شغّله الأول: أي escape زيادة أو قوس لوحده هيبان.
+
+---
+
+## الخلاصة
+
+| عايز تطابق | اكتب |
+|---|---|
+| أي حرف ما عدا السطر الجديد | [[.]] |
+| أي حرف بما فيه السطر الجديد | [[.]] مع [[s]] (أو [[[^]]] أو [[[\s\S]]]) |
+| emoji كحرف واحد | [[.]] مع [[u]] أو [[v]] |
+| نقطة حرفية | [[\.]] أو [[[.]]] |
+| واحد من [[^ $ \ . * + ? ( ) [ ] { } | /]] | [[\]] قبله |
+| نص متغير جاي من برّه | [[RegExp.escape(text)]] |`,
+          lines: [
+            R`٨ حروف هنجرّبهم: حرفين عادي، ومسافة و tab، والأربع line terminators ([[\n]] و [[\r]] و [[\u2028]] و [[\u2029]]).`,
+            R`[[/^.$/]] «النص كله حرف واحد». أول ٤ [[true]] والأربعة الأخيرين [[false]]: النقطة مبتطابقش أي line terminator.`,
+            R`نفس الحروف مع [[s]] (dotAll): كلهم [[true]]، النقطة بقت تطابق السطر الجديد كمان.`,
+            R`الـ emoji حرفين في UTF-16: من غير [[u]] النقطة بتاخد نصه ([[false]])، ومع [[u]] بتاخده كله ([[true]]). و [[[^]]] أي حرف حتى [[\n]].`,
+            R`[[/./g]] بدّلت كل حرف بـ [[*]]، و [[\.]] و [[[.]]] النقطة الحرفية بس فطلع [[v1*2]] مرتين.`,
+            R`literal characters: [[كتاب]] اتلاقت جوه «الكتاب»، و [[cat]] جوه «concatenate»، و [[a b]] بمسافة واحدة فشلت على مسافتين.`,
+            R`[[1+1]] من غير [[\]] معناها «1 مرة أو أكتر ثم 1» ففشلت، و [[\+]] نجحت. و [[^a|b$]] نجحت بالصدفة لأن [[|]] قسمت الـ regex، و [[\|]] نجحت صح.`,
+            R`قوس مفتوح من غير قفلة في نص: [[new RegExp]] رمت [[Unterminated group]] واتمسكت.`,
+            R`من غير [[u]]: [[]]] و [[{]] لوحدهم بيطابقوا نفسهم (قواعد Annex B المتساهلة)، فالاتنين [[true]].`,
+            R`نفس [[a]b]] مع [[u]]: SyntaxError [[Lone quantifier brackets]]. التساهل اتقفل.`,
+            R`[[\-]] برّه الـ class مع [[u]]: [[Invalid escape]]. من غير [[u]] كانت هتبقى [[-]] عادي.`,
+          ],
+          ref: [
+            { t: "MDN: Wildcard: .", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Wildcard" },
+            { t: "MDN: Literal character", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Literal_character" },
+            { t: "MDN: Character escape", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Character_escape" },
+            { t: "ECMAScript: SyntaxCharacter", url: "https://tc39.es/ecma262/multipage/text-processing.html#prod-SyntaxCharacter" },
+          ],
+          pre: [{ to: "js/regex: classes و quantifiers", why: R`النقطة والـ quantifiers والـ anchors في أبسط صورهم` }, { to: "js/regex والعربي: Unicode properties", why: R`الـ escapes جوه الـ regex وإزاي [[u]] بيرمي على الغلط` }],
+        },
+        {
+          cmd: "named backreference و modifiers و buffer boundaries",
+          title: "\\k<name> بيرجع لنفس النص، و (?i:...) بيشغّل flag لحتة بس، و \\A و \\z مش في JS لسه",
+          desc: R`ده آخر حتة في الـ syntax:
+• **named backreference** [[\k<name>]]: «نفس النص بالظبط اللي الـ group اللي اسمه [[name]] مسكه». زي [[\1]] بس بالاسم، فمش بيبوظ لو زوّدت أقواس. للحاجات اللي لازم تتقفل بنفس اللي فتحها: تنصيص [["]] أو [[']]، و tag بنفس الاسم، وكلمة متكررة.
+• **modifiers** [[(?i:...)]] و [[(?-i:...)]] و [[(?ims-ims:...)]]: تشغّل أو تطفي flag من [[i]] و [[m]] و [[s]] **لجزء من الـ regex بس**. مثلًا اسم الـ method بأي حالة حروف، والـ path حساس. جديدة (Baseline «newly available»، يعني في آخر نسخ المتصفحات الرئيسية بس): شغالة في Node 24 و Chrome، وجرّبناها على الاتنين.
+• **buffer boundary assertions** [[\A]] (أول النص) و [[\z]] (آخره) و [[\Z]] (آخره أو قبل سطر جديد أخير): موجودين في PCRE و Python، و MDN كاتب لهم صفحة، بس **مش متطبقين** في Node 24.22 ولا Chrome 157: مع [[u]] بيرموا [[Invalid escape]]، ومن غير [[u]] [[\A]] بتطابق حرف [[A]] عادي. البديل: [[^]] و [[$]] **من غير** [[m]] هما بالظبط [[\A]] و [[\z]]، و [[\n?$]] بدل [[\Z]].`,
+          example: R`// named backreference: \k<name> = نفس النص اللي الـ group ده مسكه
+const quoted = /(?<q>["'])(?<body>.*?)\k<q>/g;
+console.log([...$__btsay "it's ok" and 'hi'$__bt.matchAll(quoted)].map((m) => m.groups.body));
+const dup = /(?<!\p{L})(?<w>\p{L}+)\s+\k<w>(?!\p{L})/giu;
+console.log("ده ده كلام the The end".replace(dup, "$<w>"));
+console.log(/\b(?<w>\w+)\s+\k<w>\b/giu.test("ده ده"));
+// modifiers: flag لجزء من الـ regex بس
+const cmd = /^(?i:get|post) \/api\/[a-z]+$/;
+console.log(cmd.test("GET /api/users"), cmd.test("get /api/users"), cmd.test("GET /API/users"));
+const code = /^(?-i:EG)-\d+$/i;
+console.log(code.test("EG-12"), code.test("eg-12"));
+try { new RegExp("(?g:a)"); } catch (e) { console.log(e.message); }
+// buffer boundaries \A و \z و \Z: مش موجودين في JS لسه
+console.log(/\Afoo/.test("Afoo"));
+try { new RegExp(String.raw$__bt\Afoo\z$__bt, "u"); } catch (e) { console.log(e.message); }
+console.log(/^foo$/.test("foo"), /^foo$/.test("foo\n"), /^foo\n?$/.test("foo\n"), /^foo$/m.test("x\nfoo"));`,
+          try: R`اكتب regex بـ [[\k<tag>]] بيلاقي tags متقفلة صح زي [[<b>bold</b>]] و [[<h2>title</h2>]] في نص، ويرفض [[<i>x</b>]] (اتقفلت بـ tag تاني). وخلي اسم الـ tag مش حساس للحروف، فـ [[<B>up</b>]] تتقبل.`,
+          sol: R`~~~js tags.mjs
+const pair = /<(?<tag>[a-z][a-z0-9]*)>(?<body>[^<]*)<\/\k<tag>>/gi;
+console.log([..."<b>bold</b> <i>x</b> <h2>title</h2> <B>up</b>".matchAll(pair)].map((m) => m.groups.tag + "=" + m.groups.body));
+~~~
+
+~~~text الناتج (Node 24.22)
+[ 'b=bold', 'h2=title', 'B=up' ]
+~~~
+
+- [[(?<tag>[a-z][a-z0-9]*)]]: اسم الـ tag، و [[\k<tag>]] في القفلة لازم يبقى **نفس** الاسم، فـ [[<i>x</b>]] اترفضت.
+- [[i]] بتأثر على الـ backreference كمان: [[B]] و [[b]] اتعتبروا نفس الاسم.
+- [[[^<]*]]: الجسم من غير tags جواه. ده تمرين على [[\k]]، مش parser HTML: لـ HTML حقيقي استخدم [[DOMParser]] (درس «إمتى regex غلط»).`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[/(?<a>x)\k<a>/.test("xx")]] و [[/(?<a>x)\k<a>/.test("xy")]] و [[/\k<a>/.test("k<a>")]]، وبعدين [[new RegExp("(?<a>x)\\k<a>|\\k<b>")]].`, done: R`توقعت [[true false true]] وإن الأخير SyntaxError، وعرفت ليه التالت [[true]].`, sol: R`~~~js p1.mjs
+console.log(/(?<a>x)\k<a>/.test("xx"), /(?<a>x)\k<a>/.test("xy"), /\k<a>/.test("k<a>"));
+try { new RegExp("(?<a>x)\\k<a>|\\k<b>"); } catch (e) { console.log(e.message); }
+~~~
+
+~~~text الناتج (Node 24.22)
+true false true
+Invalid regular expression: /(?<a>x)\k<a>|\k<b>/: Invalid named capture referenced
+~~~
+
+- التالت: regex **مفيهوش ولا named group** ومن غير [[u]]، فـ [[\k]] بتتقري حرف [[k]] عادي (Annex B)، و [[<a>]] حروف عادية. فبيطابق النص [["k<a>"]] حرفيًا!
+- الرابع: أول ما يبقى فيه named group واحد في الـ regex، أي [[\k<اسم>]] لازم يبقى اسم موجود، وإلا SyntaxError. ومع [[u]] لازم دايمًا.` },
+            { lvl: 'تطبيق', t: R`**ابني:** regex لـ header [[Content-Type]] بيقبل اسم الـ header بأي حالة حروف ([[Content-Type]] و [[CONTENT-TYPE]] و [[content-type]]) بس القيمة [[application/json]] لازم بالحروف الصغيرة، و [[; charset=utf-8]] اختياري. بـ modifier مش بـ [[i]] على الكل.`, done: R`السطرين الأولين بيعدّوا و [[content-type: Application/JSON]] بيترفض.`, sol: R`~~~js p3.mjs
+const header = /^(?i:content-type):\s*(?<type>application\/json)(?:;\s*charset=(?<cs>utf-8))?$/;
+for (const h of ["Content-Type: application/json", "CONTENT-TYPE: application/json; charset=utf-8", "content-type: Application/JSON"]) {
+  console.log(h, header.test(h));
+}
+~~~
+
+~~~text الناتج (Node 24.22)
+Content-Type: application/json true
+CONTENT-TYPE: application/json; charset=utf-8 true
+content-type: Application/JSON false
+~~~
+
+[[(?i:content-type)]] بيشغّل [[i]] جوه القوس بس. قبل الـ modifiers كنت هتكتب [[[Cc][Oo][Nn]...]] حرف حرف، أو [[i]] على الكل وتفحص القيمة لوحدها.` },
+            { lvl: 'تطبيق', t: R`**قارن:** في JS، [[$]] من غير [[m]] بتطابق قبل [[\n]] الأخير ولا لأ؟ جرّب [[/^total=\d+$/]] على [["total=40\n"]]، وبعدين [[/^total=\d+\n?$/]] على نفس النص وعلى [["total=40\n\n"]]، و [[/^total=\d+$/m]] على [["x\ntotal=40\ny"]].`, done: R`عرفت إن [[$]] في JS زي [[\z]] (آخر النص بالظبط)، مش زي [[$]] في Python و PCRE اللي بتسمح بسطر جديد أخير، وإن [[\n?$]] هو بديل [[\Z]].`, sol: R`~~~js p4.mjs
+const lines = "total=40\n";
+console.log(/^total=\d+$/.test(lines), /^total=\d+\n?$/.test(lines), /^total=\d+\n?$/.test("total=40\n\n"), /^total=\d+$/m.test("x\ntotal=40\ny"));
+~~~
+
+~~~text الناتج (Node 24.22)
+false true false true
+~~~
+
+| في JS | زي إيه في PCRE و Python |
+|---|---|
+| [[^]] من غير [[m]] | [[\A]]: أول النص بالظبط |
+| [[$]] من غير [[m]] | [[\z]]: آخر النص بالظبط، حتى لو فيه [[\n]] أخير |
+| [[\n?$]] من غير [[m]] | [[\Z]]: آخر النص أو قبل سطر جديد واحد أخير |
+| [[^]] و [[$]] مع [[m]] | [[^]] و [[$]] مع MULTILINE: أول وآخر كل سطر |
+
+فخ لو جاي من Python: [[re.match(r"^\d+$", "40\n")]] بتنجح هناك، و [[/^\d+$/.test("40\n")]] بتفشل هنا. اعمل [[trim()]] للـ input، أو [[\n?$]].` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** حد نقل regex من PHP: [[new RegExp(String.raw$__bt\Aabc\z$__bt, "u")]]. شغّله، وبعدين جرّبه من غير [[u]] على [["Aabcz"]] وعلى [["abc"]]، وصلّحه.`, done: R`شفت [[Invalid escape]] مع [[u]]، وإن من غير [[u]] الـ regex بقى يطابق [["Aabcz"]] (حروف A و z عادية!) ومش [["abc"]]، وصلّحته لـ [[/^abc$/u]].`, sol: R`~~~js p5.mjs
+try { new RegExp(String.raw$__bt\Aabc\z$__bt, "u"); } catch (e) { console.log(e.message); }
+console.log(new RegExp(String.raw$__bt\Aabc\z$__bt).test("Aabcz"), new RegExp(String.raw$__bt\Aabc\z$__bt).test("abc"));
+console.log(/^abc$/u.test("abc"), /^abc$/u.test("abc\n"), /^abc$/u.test("x\nabc"));
+~~~
+
+~~~text الناتج (Node 24.22)
+Invalid regular expression: /\Aabc\z/u: Invalid escape
+true false
+true false false
+~~~
+
+- مع [[u]]: SyntaxError واضحة، وده الأحسن: الغلط بان.
+- من غير [[u]]: الأخطر. [[\A]] و [[\z]] escapes مش معروفة، فـ Annex B بيقراهم حروف [[A]] و [[z]]، والـ regex بقى «A ثم abc ثم z» **من غير ولا error**.
+- [[/^abc$/u]] هو [[\Aabc\z]] بالظبط: [[^]] و [[$]] من غير [[m]].
+- وده سبب كفاية تحط [[u]] (أو [[v]]) في أي regex جديد.` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`[[\k<name>]] هو الطريقة الوحيدة في الـ regex تقول «نفس اللي فات» (مش «نفس الشكل»)، ومن غيرها [[["'].*?["']]] بتقفل [["...']] غلط. والـ modifiers بتحل مشكلة قديمة: جزء من النص مش حساس للحروف (اسم header، أمر، كلمة مفتاحية) والباقي حساس (قيمة، كود، ID). و [[\A]] و [[\z]] هتقابلهم في كود منقول من PHP أو Python أو Ruby، ولازم تعرف إنهم مش هيشتغلوا وإزاي يبوظوا في صمت.`,
+            how: R`[[\k<name>]] بيقارن بالنص اللي الـ group مسكه **في الـ match ده**، مش بالـ pattern. لو الـ group مشاركش (اختياري أو في بديل تاني)، الـ backreference بيطابق فاضي. ومع [[i]] المقارنة مش حساسة للحروف. ولو فيه named groups في الـ regex (أو فيه [[u]] أو [[v]])، [[\k<اسم>]] لاسم مش موجود SyntaxError. ومن ES2025 ينفع نفس الاسم في بديلين مختلفين ([[(?<y>\d{4})-\d\d|\d\d-(?<y>\d{4})]])، وجرّبناه على Node 24.22 و Chrome 157 وطلّع السنة من الشكلين.
+
+الـ modifier [[(?flags-flags:...)]] group من غير حفظ (زي [[(?:...)]]) بس بيغيّر flags جواه. المسموح [[i]] و [[m]] و [[s]] بس: [[(?g:a)]] بيرمي [[Invalid group]]، و [[(?u:a)]] كمان، و [[(?i-i:a)]] بيرمي [[Repeated flag in flag group]]. و [[(?m:^b)]] و [[(?s:.)]] اشتغلوا في تجربتنا.
+
+[[\A]] و [[\z]] و [[\Z]] في PCRE معناهم أول النص، وآخره، وآخره أو قبل [[\n]] أخير. في JS **مفيش** syntax ليهم (لسه اقتراح في TC39 ومش في الـ spec). من غير [[u]] أي escape لحرف عادي بيبقى الحرف نفسه، فـ [[\A]] = [[A]]. البديل: [[^]] و [[$]] من غير [[m]] (و [[$]] في JS عمرها ما بتسمح بـ [[\n]] أخير، يعني هي [[\z]] مش [[\Z]]).`,
+            when: R`[[\k<name>]]: تنصيص بيتقفل بنفسه، و tags، وكلمات متكررة، و delimiters زي [[--- ... ---]] أو heredoc. الـ modifiers: لما جزء صغير بس محتاج flag مختلف، خصوصًا [[(?i:...)]] لكلمات مفتاحية وسط قيم حساسة. و [[^]] و [[$]] من غير [[m]] في أي validation (ده [[\A]] و [[\z]] بتوعك).`,
+            mistakes: R`[[\b(?<w>\w+)\s+\k<w>\b]] على عربي: [[\b]] و [[\w]] إنجليزي بس فمبتلاقيش «ده ده» (جرّبناها: [[false]]). و [[\1]] بعد ما تزوّد group قبله فيتزحلق (استخدم الاسم). و [[\k<name>]] من غير named groups ومن غير [[u]] فبيطابق حرفيًا [[k<name>]]. ومودفاير بـ [[g]] أو [[u]] أو [[y]] (مش مسموحين). وكود فيه [[\A]] أو [[\z]] أو [[\K]] من PCRE من غير [[u]] فيبوظ في صمت.`
+          },
+          teach: R`## الفكرة في سطر
+
+٣ حاجات من الـ syntax لسه مشفناهاش: **رجوع لنفس النص** بالاسم، و**flag لحتة** من الـ regex، و anchors من لغات تانية **مش موجودة** عندنا. كل الناتج اتشغّل فعلًا على Node 24.22، والـ modifiers و [[\A]] اتجرّبوا كمان على Chrome 157 بنفس النتيجة.
+
+---
+
+## ١. named backreference: [[\k<name>]]
+
+### تنصيص بيتقفل بنفس اللي فتحه
+
+~~~js app.mjs
+const quoted = /(?<q>["'])(?<body>.*?)\k<q>/g;
+console.log([...$__btsay "it's ok" and 'hi'$__bt.matchAll(quoted)].map((m) => m.groups.body));
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[(?<q>["'])]] | علامة تنصيص (مزدوجة أو مفردة) في group اسمه [[q]] |
+| [[(?<body>.*?)]] | الكلام اللي جوه، lazy عشان يقف عند أول قفلة صح |
+| [[\k<q>]] | **نفس** العلامة اللي [[q]] مسكها، مش أي علامة |
+
+~~~text الناتج
+[ "it's ok", 'hi' ]
+~~~
+
+[["it's ok"]] اتفتحت بـ [["]] فالـ [[']] اللي جواها مقفلتهاش. لو كتبنا [[["'](.*?)["']]] بدل [[\k<q>]] كانت هتقف عند [[']] وتطلّع [["it"]].
+
+### كلمة متكررة بالعربي
+
+~~~js app.mjs
+const dup = /(?<!\p{L})(?<w>\p{L}+)\s+\k<w>(?!\p{L})/giu;
+console.log("ده ده كلام the The end".replace(dup, "$<w>"));
+console.log(/\b(?<w>\w+)\s+\k<w>\b/giu.test("ده ده"));
+~~~
+
+~~~text الناتج
+ده كلام the end
+false
+~~~
+
+- [[\k<w>]] مع [[i]]: [[The]] اتعتبرت زي [[the]].
+- [[$<w>]] في الاستبدال: أول نسخة بس.
+- السطر التاني: الشكل المشهور بـ [[\b]] و [[\w]] **فشل** على العربي، لأن الاتنين إنجليزي بس حتى مع [[u]]. عشان كده استخدمنا lookaround بـ [[\p{L}]] (المشروع «مصلّح الكلمات المتكررة» مبني على كده).
+
+---
+
+## ٢. modifiers: [[(?i:...)]] و [[(?-i:...)]]
+
+~~~js app.mjs
+const cmd = /^(?i:get|post) \/api\/[a-z]+$/;
+console.log(cmd.test("GET /api/users"), cmd.test("get /api/users"), cmd.test("GET /API/users"));
+~~~
+
+~~~text الناتج
+true true false
+~~~
+
+[[(?i:get|post)]]: group من غير حفظ، و [[i]] شغالة **جواه بس**. فالـ method بأي حالة، والـ path لازم صغير.
+
+~~~js app.mjs
+const code = /^(?-i:EG)-\d+$/i;
+console.log(code.test("EG-12"), code.test("eg-12"));
+~~~
+
+~~~text الناتج
+true false
+~~~
+
+العكس: [[i]] على الكل، و [[(?-i:EG)]] **بيطفيها** للـ [[EG]] بس. والشكل الكامل [[(?ims-ims:...)]]: اللي قبل [[-]] بيتشغّل واللي بعدها بيتطفي.
+
+### المسموح والممنوع
+
+~~~js app.mjs
+try { new RegExp("(?g:a)"); } catch (e) { console.log(e.message); }
+~~~
+
+~~~text الناتج
+Invalid regular expression: /(?g:a)/: Invalid group
+~~~
+
+| الـ modifier | النتيجة في Node 24.22 |
+|---|---|
+| [[(?i:a)]] و [[(?-i:a)]] | شغالين: بيشغّلوا أو يطفوا [[i]] جوه القوس |
+| [[(?m:^b)]] على [["a\nb"]] | [[true]]: [[^]] لكل سطر جوه الـ group بس |
+| [[(?s:.)]] بين a و b على [["a\nb"]] | [[true]]: النقطة خدت [[\n]] |
+| [[(?g:a)]] و [[(?u:a)]] | [[Invalid group]]: [[i]] و [[m]] و [[s]] بس المسموحين |
+| [[(?i-i:a)]] | [[Repeated flag in flag group]] |
+
+الـ modifiers Baseline «newly available»: موجودة في آخر نسخ المتصفحات الرئيسية، بس مش في القديمة. لو كودك لازم يشتغل على متصفحات قديمة، الـ regex هيرمي SyntaxError وقت التحميل.
+
+---
+
+## ٣. buffer boundary assertions: [[\A]] و [[\z]] و [[\Z]]
+
+دول في PCRE (PHP و grep -P) و Python و Ruby:
+
+| الـ assertion | معناه هناك |
+|---|---|
+| [[\A]] | أول النص بالظبط، حتى مع multiline |
+| [[\z]] | آخر النص بالظبط |
+| [[\Z]] | آخر النص، أو قبل سطر جديد أخير |
+
+MDN كاتب لهم صفحة، بس جرّبناهم:
+
+~~~js app.mjs
+console.log(/\Afoo/.test("Afoo"));
+try { new RegExp(String.raw$__bt\Afoo\z$__bt, "u"); } catch (e) { console.log(e.message); }
+~~~
+
+~~~text الناتج (Node 24.22، ونفس الرسالة في Chrome 157)
+true
+Invalid regular expression: /\Afoo\z/u: Invalid escape
+~~~
+
+- من غير [[u]]: [[\A]] بقت حرف [[A]] عادي، و [[/\Afoo/]] طابقت [["Afoo"]]. **أسوأ حالة**: مفيش error والمعنى اتغيّر.
+- مع [[u]]: SyntaxError. وجرّبنا [[\z]] و [[\Z]] لوحدهم ومع [[v]]: نفس الرسالة.
+
+### البديل اللي شغال النهارده
+
+~~~js app.mjs
+console.log(/^foo$/.test("foo"), /^foo$/.test("foo\n"), /^foo\n?$/.test("foo\n"), /^foo$/m.test("x\nfoo"));
+~~~
+
+~~~text الناتج
+true false true true
+~~~
+
+| عايز | في JS |
+|---|---|
+| [[\A]] | [[^]] من غير [[m]]: أول النص بس، مهما كان فيه سطور |
+| [[\z]] | [[$]] من غير [[m]]: في JS عمرها ما بتعدّي [[\n]] أخير ([["foo\n"]] فشلت) |
+| [[\Z]] | [[\n?$]] من غير [[m]]: سطر جديد واحد اختياري وبعده آخر النص |
+| أول وآخر كل سطر | [[^]] و [[$]] **مع** [[m]]، وده مش [[\A]] ولا [[\z]] |
+
+---
+
+## الخلاصة
+
+| الحاجة | اكتبها | خلي بالك |
+|---|---|---|
+| نفس النص اللي group مسكه | [[\k<name>]] | مع [[i]] مش حساس للحروف، والاسم لازم يبقى موجود |
+| flag لحتة | [[(?i:...)]] و [[(?-i:...)]] و [[(?ims-ims:...)]] | [[i]] و [[m]] و [[s]] بس، ومش في المتصفحات القديمة |
+| أول وآخر النص بالظبط | [[^...$]] من غير [[m]] | ده [[\A]] و [[\z]] بتوعنا |
+| [[\A]] و [[\z]] و [[\Z]] و [[\K]] من PCRE | مش موجودين | من غير [[u]] بيبقوا حروف عادية في صمت |`,
+          lines: [
+            R`[[(?<q>["'])]] بيمسك علامة التنصيص اللي فتحت، و [[\k<q>]] في الآخر لازم يبقى **نفس** العلامة، والكلام اللي بينهم في [[body]].`,
+            R`[[matchAll]] على جملة فيها تنصيصين: الأول [["..."]] وجواه [[']]، والتاني [['...']]. طلع [["it's ok"]] كاملة و [['hi']].`,
+            R`كلمة متكررة بأي لغة: [[\p{L}+]] كلمة، و [[\k<w>]] نفس الكلمة، والـ lookaround بدل [[\b]] عشان العربي، و [[i]] عشان [[The]] زي [[the]].`,
+            R`[[replace]] بـ [[$<w>]] بيسيب نسخة واحدة: [[ده كلام the end]].`,
+            R`الشكل المشهور بـ [[\b]] و [[\w]] على «ده ده» رجّع [[false]]: الاتنين بيفهموا إنجليزي بس حتى مع [[u]].`,
+            R`modifier [[(?i:get|post)]]: الـ method بأي حالة حروف، وباقي الـ regex (الـ path) حساس.`,
+            R`[[GET]] و [[get]] عدّوا، و [[/API/]] بالكابيتال فشلت لأن [[i]] جوه القوس بس: [[true true false]].`,
+            R`العكس: [[i]] على الـ regex كله، و [[(?-i:EG)]] بيطفيها للـ [[EG]] بس.`,
+            R`[[EG-12]] عدّت و [[eg-12]] فشلت: [[true false]].`,
+            R`[[g]] مش مسموحة في modifier ([[i]] و [[m]] و [[s]] بس)، فـ [[Invalid group]].`,
+            R`[[\A]] من غير [[u]]: escape مش معروف بيبقى الحرف نفسه، فـ [[/\Afoo/]] طابقت [["Afoo"]]. ده اللي بيحصل لكود منقول من PHP في صمت.`,
+            R`مع [[u]]: [[\A]] و [[\z]] SyntaxError [[Invalid escape]]: مش متطبقين في JS.`,
+            R`البديل: [[^foo$]] من غير [[m]] = [[\Afoo\z]]، فـ [["foo\n"]] فشلت. و [[\n?$]] = [[\Z]] فعدّت. ومع [[m]] لكل سطر.`,
+          ],
+          ref: [
+            { t: "MDN: Named backreference: \\k<name>", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Named_backreference" },
+            { t: "MDN: Modifier: (?ims-ims:...)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Modifier" },
+            { t: "MDN: Buffer boundary assertion", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Buffer_boundary_assertion" },
+            { t: "MDN: Input boundary assertion: ^, $", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Input_boundary_assertion" },
+          ],
+          pre: [{ to: "js/groups و flags", why: R`الـ named groups و [[\1]] اللي [[\k<name>]] بيكمّلها` }, { to: "js/test و match و matchAll و replace", why: R`[[$<name>]] في الاستبدال` }],
+        },
+      ],
     }
 ]);

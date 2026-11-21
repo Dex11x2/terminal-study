@@ -1,4493 +1,242 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "مشروع التخرّج: من الصفر لتطبيق منشور",
-      l: 3,
-      time: R`حوالي ٨ ساعات على كذا يوم: ساعة للخريطة، وحوالي ساعة ونص لكل خطوة من خطوات التطبيق الأربعة، والباقي للنشر والتمارين`,
+      t: "ابني ٣ مشاريع بإيدك",
+      l: 2,
+      time: R`حوالي ٦ ساعات للتلاتة (ساعتين لكل مشروع)، وكل واحد بيطلع شغّال لوحده`,
       goal: [
-        R`تعرف التاب كله كطريق: كل مرحلة فيها أنهي وحدات، وفي آخرها مشروع بيستخدم اللي اتعلمته لحد هناك بس، فتعرف انت واقف فين وفاضلك إيه.`,
-        R`تبني تطبيق حقيقي من فولدر فاضي: شاشات بـ hash routing، وحالة منفصلة عن الشاشة، وداتا من JSON API بـ loading و error وإعادة محاولة، وحفظ في [[localStorage]] بيستحمل الداتا البايظة.`,
-        R`تخلّي الفورم يتحقق من المدخلات ويقول الغلط جنب الخانة، والصفحة متتفتحش لـ XSS، وتشتغل بالكيبورد والـ screen reader.`,
-        R`تقسّم الكود لـ modules كل واحد ليه شغلة، وتختبر المنطق بـ Vitest والشاشة بـ jsdom، وتخلّي ESLint يمسك الغلطات قبلك.`,
-        R`تنشر التطبيق على GitHub Pages برابط شكله [[https://USER.github.io/REPO/]]، وتخلّي الاختبارات تقفل النشر لو فيه حاجة بايظة.`,
+        R`تبني تطبيق كامل من فولدر فاضي لحد ما يشتغل: HTML و CSS و JavaScript عادي، من غير فريمورك ومن غير مكتبة.`,
+        R`تتعامل مع الفلوس والتواريخ صح: قروش بدل كسور، و [[Intl]] للعرض، و [[timeZone: 'UTC']] عشان اليوم ميرجعش يوم.`,
+        R`تخلي الواجهة تكلّم سيرفر بأدب: [[debounce]] و [[AbortController]] وكاش، وتقيس بنفسك إنها بتبعت طلب واحد مش عشرة.`,
+        R`تقيس الوقت صح بـ [[performance.now()]] و [[requestAnimationFrame]]، وتتعامل مع العربي والإنجليزي في نفس الصفحة.`,
+        R`تختبر كل حتة من غير متصفح: المنطق في Node، والـ DOM في [[jsdom]]، والسيرفر بطلبات حقيقية.`,
       ],
       use: {
-        prog: R`ده آخر سلّمة في التاب: كل اللي اتعلمته (الأنواع، والمصفوفات، والـ DOM، والـ async، والـ modules، والاختبارات) بيشتغل مع بعض في تطبيق واحد. وده الفرق بين إنك «عارف JavaScript» وإنك «بتبني بيها».`,
-        work: R`أي شركة بتطلب «مشروع منشور على GitHub» في الـ CV. تطبيق صغير بس كامل (اختبارات، و lint، و CI، ورابط شغّال، و README) بيتقري في دقيقة وبيقول عنك أكتر من عشر مشاريع tutorial نصهم مش شغال.`,
-        cs: R`فصل الحالة عن العرض (state/view)، واتجاه اعتماد واحد بين الـ modules، والتحقق على الحدود (input و storage و network)، واختبار الوحدات قبل الواجهة: دي مبادئ هندسة برمجيات أقدم من الويب، والتطبيق ده بيطبّقها في حوالي ٣٠٠ سطر.`,
+        prog: R`التلات مشاريع دول بيجمعوا تقريبًا كل اللي في التاب: الحالة والرسم من «ابني تطبيق بإيدك»، والـ [[fetch]] من «مشروع: fetch محترم»، والـ closures والـ event loop والتواريخ و regex. المشروع هو المكان اللي الدروس دي بتقابل بعض فيه.`,
+        work: R`دي نفس الحاجات اللي بتتطلب في أول شغل frontend: فورم بيتحقق، وجدول بيتحسب، وبحث مش بيقتل السيرفر، وواجهة بتتعامل مع العربي. واللي عمل التلاتة بإيده بيعرف يقرا كود React اللي بيعمل نفس الحاجة.`,
+        cs: R`فصل المنطق عن العرض (المنطق يتجرّب لوحده)، والأرقام الصحيحة بدل الـ floating point، والـ race conditions في الطلبات، والفرق بين الوقت اللي بيتعدّ والوقت اللي بيتقاس.`,
       },
-      lab: R`mkdir recipe-book && cd recipe-book
-npm init -y
-npm install -D vitest jsdom eslint @eslint/js globals
-mkdir src data tests
-python -m http.server 8000   # على لينكس وماك: python3 -m http.server 8000`,
       pre: [
-        { to: "js/الـ DOM مش مكان الحالة", why: R`التطبيق كله مبني على حالة واحدة والشاشة بتترسم منها` },
-        { to: "js/innerHTML هي الباب", why: R`ليه الشاشات بتتبني بـ [[h()]] و text nodes مش [[innerHTML]]` },
-        { to: "js/شاشات من غير إعادة تحميل", why: R`الـ hash routing اللي الشاشات الأربعة ماشية بيه` },
-        { to: "js/قسّمه لملفات", why: R`تقسيم التطبيق لـ modules كل واحد ليه شغلة` },
-        { to: "js/مشروع — fetch مش بترمي على 404", why: R`[[res.ok]] والأخطاء اللي [[api.js]] بيترجمها` },
-        { to: "js/اختبار JS بـ Vitest", why: R`الـ ٤٣ اختبار مكتوبين بـ Vitest` },
+        { to: "js/innerHTML هي الباب", why: R`كل نص في التلات مشاريع بيدخل بـ [[textContent]] أو [[append]]، والدرس ده بيقول ليه` },
+        { to: "js/خلّي التطبيق يفتكر", why: R`[[load]] و [[save]] و [[VERSION]] وفحص الداتا المحفوظة البايظة` },
+        { to: "js/fetch و AbortController", why: R`مشروع البحث بيلغي الطلب القديم بـ [[AbortController]]` },
+        { to: "js/debounce و throttle", why: R`مشروع البحث بيكتب الـ debounce بإيده` },
+        { to: "js/UTC و Intl.DateTimeFormat", why: R`[[timeZone: 'UTC']] عشان التاريخ ميرجعش يوم` },
+        { to: "js/event delegation", why: R`مستمع واحد على الجدول والليستة بدل مستمع لكل زرار` },
       ],
+      lab: R`mkdir -p ~/lab/js-projects && cd ~/lab/js-projects && node --version   # محتاج Node 20.11 أو أحدث`,
       projects: [
-        { lvl: 'صغير', dir: "recipe-stats", t: R`صفحة «عن التطبيق» وشاشة إحصائيات`, what: R`زوّد شاشة [[#/stats]] بتعرض عدد الوصفات، ومتوسط الوقت، وأكتر تصنيف متكرر، وأسرع وصفة. كل الأرقام مشتقة من الحالة في دالة [[stats(recipes)]] جوه [[logic.js]]، ومفيش ولا رقم متخزن. من درس «مشروع التخرّج ٢: الشاشات والفورم».`, done: R`[[#/stats]] بتفتح من رابط مباشر في تبويب جديد، والرقم بيتغيّر لوحده بعد ما تضيف وصفة، و [[stats([])]] بترجّع أصفار من غير [[NaN]]، وفيه ٣ اختبارات Vitest للدالة بتعدّي.`, sol: R`~~~view 520 دفتر الوصفات بشاشة الإحصائيات (دوس «إحصائيات» فوق)
+        { lvl: 'صغير', dir: "typing-lenient", t: R`وضع متساهل في لعبة الكتابة`, what: R`في «لعبة سرعة الكتابة» ضيف checkbox «متساهل»: لو متعلّم، [[أ]] و [[إ]] و [[آ]] تتحسب [[ا]]، و [[ى]] تتحسب [[ي]]، و [[ة]] تتحسب [[ه]]. اعمل دالة [[normalize(ch)]] في [[game.js]] واستخدمها في [[marks]] و [[stats]] بس، من غير ما تغيّر النص الأصلي.`, done: R`لما تكتب [[اقرا]] مكان [[أقرأ]] والوضع متعلّم، الحروف كلها خضرا والدقة ١٠٠٪. ولما تشيل العلامة نفس الكتابة بتطلع حرفين أحمر. وأحسن نتيجة للوضعين متخزنة لوحدها.`, sol: R`~~~view 520 لعبة الكتابة بالوضع المتساهل
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>دفتر الوصفات</title>
-  <link rel="icon" href="data:,">
+  <title>سرعة الكتابة</title>
   <style>
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #1d1d1f; background: #faf7f2; }
-header { background: #7a3e12; }
-nav { display: flex; flex-wrap: wrap; gap: .25rem; max-width: 52rem; margin: 0 auto; padding: .5rem 1rem; }
-nav a { color: #fff; padding: .4rem .8rem; border-radius: 6px; text-decoration: none; }
-nav a[aria-current="page"] { background: #fff; color: #7a3e12; font-weight: 700; }
-main { max-width: 52rem; margin: 0 auto; padding: 1rem; }
-h1 { margin: .5rem 0 1rem; }
-h1:focus { outline: none; }
-:focus-visible { outline: 3px solid #1a73e8; outline-offset: 2px; }
-form[role="search"] { display: grid; grid-template-columns: 1fr; gap: .25rem; margin-bottom: .5rem; }
-@media (min-width: 640px) { form[role="search"] { grid-template-columns: auto 1fr auto auto; align-items: center; gap: .5rem; } }
-input, select, textarea, button { font: inherit; padding: .45rem .6rem; border: 1px solid #b9b1a6; border-radius: 6px; background: #fff; max-width: 100%; }
-button { cursor: pointer; background: #f1e6d8; }
-button[type="submit"] { background: #7a3e12; color: #fff; border-color: #7a3e12; }
-.cards { list-style: none; padding: 0; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-.card { background: #fff; border: 1px solid #e4dccf; border-radius: 10px; padding: .75rem 1rem; }
-.card h2 { font-size: 1.15rem; margin: 0; }
-.meta { color: #5c5348; margin: .25rem 0 .5rem; }
-.steps { white-space: pre-line; }
-.notice { background: #fff4ce; border: 1px solid #e0c060; padding: .5rem .75rem; border-radius: 6px; }
-[role="alert"] { background: #fde7e9; border: 1px solid #d93025; padding: .5rem .75rem; border-radius: 6px; }
-.field { display: grid; gap: .2rem; margin-bottom: .75rem; }
-.err { color: #b3261e; margin: 0; min-height: 1.2em; }
-[aria-invalid="true"] { border-color: #b3261e; border-width: 2px; }
-.stats { display: grid; grid-template-columns: max-content 1fr; gap: .5rem 1rem; background: #fff; border: 1px solid #e4dccf; border-radius: 10px; padding: 1rem; }
-.stats dt { font-weight: 700; }
-.stats dd { margin: 0; }
+body { font-family: system-ui, sans-serif; max-width: 44rem; margin: 2rem auto; padding: 0 1rem; }
+#text { font-size: 1.5rem; line-height: 2.4; padding: 1rem; background: #f4f4f4; border-radius: 8px; }
+#text .ok { color: #188038; }
+#text .bad { color: #fff; background: #d93025; }
+#text .cur { background: #fde293; }
+#input { width: 100%; font-size: 1.3rem; padding: .5rem; box-sizing: border-box; }
+.stats b { font-variant-numeric: tabular-nums; }
   </style>
 </head>
 <body>
-  <header>
-    <nav aria-label="الأقسام">
-      <a href="#/">الوصفات</a>
-      <a href="#/fav">المفضلة</a>
-      <a href="#/new">وصفة جديدة</a>
-      <a href="#/stats">إحصائيات</a>
-    </nav>
-  </header>
-  <main id="main"></main>
-  <noscript>التطبيق ده محتاج JavaScript يكون شغال.</noscript>
-<script type="module">
-// للعرض جوه الموقع بس: الصندوق ده iframe معزول (about:srcdoc)، فروابط # مبتمشيش لوحدها،
-// و history.replaceState بترمي SecurityError. السطور دي بتعمل نفس الحاجة بـ location.hash
-document.addEventListener('click', (e) => {
-  const a = e.target.closest('a[href^="#/"]');
-  if (a) { e.preventDefault(); location.hash = a.getAttribute('href'); }
-});
-const realReplace = history.replaceState.bind(history);
-history.replaceState = (state, title, url) => {
-  try { realReplace(state, title, url); } catch { location.hash = String(url).slice(String(url).indexOf('#')); }
-};
-const RECIPES = "[{\"id\":\"koshary\",\"title\":\"كشري\",\"minutes\":60,\"tags\":[\"مصري\",\"نباتي\"],\"ingredients\":[\"رز\",\"عدس بني\",\"مكرونة\",\"صلصة طماطم\",\"بصل مقرمش\"],\"steps\":\"اسلق العدس والرز مع بعض.\\nاسلق المكرونة لوحدها.\\nاعمل الصلصة بالطماطم والتوم والخل.\\nرص الطبق وفوقه البصل.\"},{\"id\":\"foul\",\"title\":\"فول مدمس\",\"minutes\":15,\"tags\":[\"فطار\",\"مصري\"],\"ingredients\":[\"فول مدمس\",\"زيت زيتون\",\"كمون\",\"ليمون\",\"ملح\"],\"steps\":\"سخّن الفول بمية قليلة.\\nاهرسه شوية.\\nضيف الزيت والكمون والليمون والملح.\"},{\"id\":\"shakshuka\",\"title\":\"شكشوكة\",\"minutes\":20,\"tags\":[\"فطار\"],\"ingredients\":[\"بيض\",\"طماطم\",\"فلفل\",\"بصل\",\"كمون\"],\"steps\":\"شوّح البصل والفلفل.\\nضيف الطماطم والكمون لحد ما تتسبك.\\nاكسر البيض فوقها وغطّيها.\"},{\"id\":\"salad\",\"title\":\"سلطة بلدي\",\"minutes\":10,\"tags\":[\"نباتي\"],\"ingredients\":[\"طماطم\",\"خيار\",\"بصل\",\"ليمون\",\"كمون\"],\"steps\":\"قطّع الخضار مكعبات صغيرة.\\nضيف الليمون والكمون والملح وقلّب.\"},{\"id\":\"roz-bel-laban\",\"title\":\"رز بلبن\",\"minutes\":40,\"tags\":[\"حلو\",\"مصري\"],\"ingredients\":[\"رز\",\"لبن\",\"سكر\",\"فانيليا\"],\"steps\":\"اسلق الرز في مية لحد ما يشربها.\\nضيف اللبن وقلّب على نار هادية.\\nضيف السكر والفانيليا وصبّه في طواجن.\"},{\"id\":\"basbousa\",\"title\":\"بسبوسة\",\"minutes\":50,\"tags\":[\"حلو\",\"مصري\"],\"ingredients\":[\"سميد\",\"زبادي\",\"سكر\",\"زبدة\",\"شربات\"],\"steps\":\"اخلط السميد والزبادي والسكر والزبدة.\\nافرده في صينية وقطّعه.\\nادخله الفرن وبعدين صب عليه الشربات.\"}]";
-const MAX_TITLE = 80;
-
-function isRecipe(r) {
-  return !!r && typeof r === 'object' && typeof r.id === 'string' && typeof r.title === 'string'
-    && Number.isFinite(r.minutes) && Array.isArray(r.ingredients) && Array.isArray(r.tags)
-    && typeof r.steps === 'string';
-}
-
-const toggleFav = (favs, id) => (favs.includes(id) ? favs.filter((f) => f !== id) : [...favs, id]);
-
-const toLatinDigits = (s) => String(s ?? '').replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
-
-function parseRoute(hash) {
-  const raw = String(hash ?? '').replace(/^#/, '') || '/';
-  const [path, qs = ''] = raw.split('?');
-  const query = Object.fromEntries(new URLSearchParams(qs));
-  const parts = path.split('/').filter(Boolean);
-  if (parts.length === 0) return { name: 'list', params: {}, query };
-  if (parts[0] === 'r' && parts.length === 2) return { name: 'recipe', params: { id: decodeURIComponent(parts[1]) }, query };
-  if (parts.length === 1 && ['new', 'fav', 'stats'].includes(parts[0])) return { name: parts[0], params: {}, query };
-  return { name: 'notfound', params: {}, query };
-}
-
-function filterRecipes(list, { q = '', tag = '' } = {}) {
-  const needle = q.trim().toLowerCase();
-  return list.filter((r) => (!tag || r.tags.includes(tag))
-    && (!needle || [r.title, ...r.ingredients].some((t) => t.toLowerCase().includes(needle))));
-}
-
-const allTags = (list) => [...new Set(list.flatMap((r) => r.tags))].sort((a, b) => a.localeCompare(b, 'ar'));
-
-// الإحصائيات مشتقة من اللستة في كل مرة، ومفيش رقم متخزن
-function stats(recipes) {
-  const count = recipes.length;
-  if (count === 0) return { count: 0, avgMinutes: 0, topTag: null, fastest: null };
-  const total = recipes.reduce((sum, r) => sum + r.minutes, 0);
-  const times = new Map();
-  for (const t of recipes.flatMap((r) => r.tags)) times.set(t, (times.get(t) ?? 0) + 1);
-  const topTag = [...times].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ar'))[0] ?? null;
-  const fastest = recipes.reduce((best, r) => (r.minutes < best.minutes ? r : best));
-  return {
-    count,
-    avgMinutes: Math.round(total / count * 10) / 10,
-    topTag: topTag && { name: topTag[0], times: topTag[1] },
-    fastest: { id: fastest.id, title: fastest.title, minutes: fastest.minutes },
-  };
-}
-
-function validateRecipe(input) {
-  const errors = {};
-  const title = String(input.title ?? '').trim();
-  const minutes = Number(toLatinDigits(input.minutes).trim() || NaN);
-  const ingredients = String(input.ingredients ?? '').split('\n').map((s) => s.trim()).filter(Boolean);
-  const steps = String(input.steps ?? '').trim();
-  const tags = [...new Set(String(input.tags ?? '').split(/[,،]/).map((s) => s.trim()).filter(Boolean))];
-  if (!title) errors.title = 'اكتب اسم الوصفة';
-  else if (title.length > MAX_TITLE) errors.title = $__btالاسم أطول من $__{MAX_TITLE} حرف$__bt;
-  if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) errors.minutes = 'الوقت بالدقايق، رقم صحيح من 1 لـ 1440';
-  if (ingredients.length < 2) errors.ingredients = 'اكتب مكوّنين على الأقل، كل واحد في سطر';
-  if (!steps) errors.steps = 'اكتب طريقة التحضير';
-  if (Object.keys(errors).length) return { ok: false, errors };
-  return { ok: true, value: { title, minutes, ingredients, steps, tags } };
-}
-
-function debounce(fn, ms) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
-  };
-}
-
-
-const KEY = 'recipe-book:v1';
-
-// مجرد قراية localStorage بترمي SecurityError لو التخزين مقفول (أو صفحة sandboxed)، فبنقراه جوه try
-function browserStorage() {
-  try { return globalThis.localStorage ?? null; } catch { return null; }
-}
-
-function load(storage = browserStorage()) {
-  let raw;
-  try { raw = storage.getItem(KEY); } catch { return { mine: [], favs: [], warning: 'المتصفح قافل التخزين، ومش هنفتكر حاجة' }; }
-  if (raw === null) return { mine: [], favs: [] };
-  try {
-    const data = JSON.parse(raw);
-    if (data?.version !== 1) throw new Error('نسخة مش معروفة: ' + data?.version);
-    const mine = Array.isArray(data.mine) ? data.mine.filter(isRecipe) : [];
-    const favs = Array.isArray(data.favs) ? data.favs.filter((f) => typeof f === 'string') : [];
-    return { mine, favs };
-  } catch (err) {
-    try { storage.setItem(KEY + ':broken', raw); } catch { /* مفيش مكان، مش مشكلة */ }
-    return { mine: [], favs: [], warning: 'الداتا المحفوظة كانت بايظة (' + err.message + ')، واتحفظت نسخة منها' };
-  }
-}
-
-function save({ mine, favs }, storage = browserStorage()) {
-  try {
-    storage.setItem(KEY, JSON.stringify({ version: 1, mine, favs }));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-
-function createStore(storage = browserStorage()) {
-  const saved = load(storage);
-  let state = {
-    recipes: [], mine: saved.mine, favs: saved.favs,
-    status: 'idle', error: '', notice: saved.warning ?? '',
-    route: { name: 'list', params: {}, query: {} },
-  };
-  const listeners = new Set();
-
-  function set(patch) {
-    const prev = state;
-    state = { ...state, ...patch };
-    if ((state.mine !== prev.mine || state.favs !== prev.favs) && !save(state, storage)) {
-      state = { ...state, notice: 'مقدرناش نحفظ: التخزين مليان أو مقفول' };
-    }
-    listeners.forEach((fn) => fn(state, prev));
-  }
-
-  return {
-    get: () => state,
-    subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn); },
-    setRoute: (route) => set({ route }),
-    loading: () => set({ status: 'loading', error: '' }),
-    loaded: (recipes) => set({ status: 'ready', recipes }),
-    failed: (message) => set({ status: 'error', error: message }),
-    toggleFav: (id) => set({ favs: toggleFav(state.favs, id) }),
-    addRecipe(input) {
-      const res = validateRecipe(input);
-      if (!res.ok) return res;
-      const recipe = { id: 'u-' + crypto.randomUUID(), ...res.value };
-      set({ mine: [recipe, ...state.mine] });
-      return { ok: true, recipe };
-    },
-  };
-}
-
-const allRecipes = (s) => [...s.mine, ...s.recipes];
-
-
-class HttpError extends Error {
-  constructor(status, url) {
-    super($__btHTTP $__{status} من $__{url}$__bt);
-    this.name = 'HttpError';
-    this.status = status;
-  }
-}
-
-class DataError extends Error {
-  name = 'DataError';
-}
-
-async function fetchJSON(url, { timeout = 8000, signal } = {}) {
-  const timer = AbortSignal.timeout(timeout);
-  const res = await fetch(url, { signal: signal ? AbortSignal.any([signal, timer]) : timer });
-  if (!res.ok) throw new HttpError(res.status, url);
-  return res.json();
-}
-
-async function loadRecipes(url, opts) {
-  const data = await fetchJSON(url, opts);
-  if (!Array.isArray(data)) throw new DataError('الرد مش لستة وصفات');
-  return data.filter(isRecipe);
-}
-
-function explain(err) {
-  if (err.name === 'TimeoutError') return 'السيرفر اتأخر في الرد. جرّب تاني.';
-  if (err instanceof HttpError) return err.status === 404 ? 'ملف الوصفات مش موجود (404).' : $__btالسيرفر رد بخطأ $__{err.status}. جرّب كمان شوية.$__bt;
-  if (err instanceof SyntaxError) return 'الرد وصل بس مش JSON سليم.';
-  if (err instanceof DataError) return 'الرد وصل بس شكله غلط.';
-  return 'مفيش اتصال. اتأكد من النت وجرّب تاني.';
-}
-
-
-function h(tag, attrs = {}, ...kids) {
-  const el = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k.startsWith('aria-')) el.setAttribute(k, String(v));
-    else if (v === true) el.setAttribute(k, '');
-    else if (v !== false && v != null) el.setAttribute(k, String(v));
-  }
-  el.append(...kids.flat().filter((k) => k != null && k !== false));
-  return el;
-}
-
-const TITLES = { list: 'الوصفات', fav: 'المفضلة', new: 'وصفة جديدة', stats: 'إحصائيات', notfound: 'الصفحة دي مش موجودة' };
-
-function view(s) {
-  const { name } = s.route;
-  const all = allRecipes(s);
-  const screen = name === 'recipe' ? recipeScreen(s, all) : { title: TITLES[name] ?? TITLES.notfound };
-  const nodes = screen.nodes
-    ?? (name === 'list' ? listScreen(s, screen.title, all)
-      : name === 'fav' ? listScreen(s, screen.title, all.filter((r) => s.favs.includes(r.id)))
-        : name === 'new' ? newScreen()
-          : name === 'stats' ? statsScreen(s, all)
-          : notFound(screen.title));
-  if (s.notice) nodes.unshift(h('p', { class: 'notice', role: 'status' }, s.notice));
-  return { title: screen.title + ' · دفتر الوصفات', nodes };
-}
-
-function listScreen(s, title, list) {
-  const { q = '', tag = '' } = s.route.query;
-  const shown = filterRecipes(list, { q, tag });
-  return [
-    h('h1', { tabindex: -1 }, title),
-    h('form', { role: 'search', 'data-form': 'search' },
-      h('label', { for: 'q' }, 'دوّر باسم أو مكوّن'),
-      h('input', { id: 'q', name: 'q', type: 'search', value: q, autocomplete: 'off' }),
-      h('label', { for: 'tag' }, 'التصنيف'),
-      h('select', { id: 'tag', name: 'tag' }, h('option', { value: '' }, 'الكل'),
-        allTags(list).map((t) => h('option', { value: t, selected: t === tag }, t)))),
-    status(s, shown.length),
-    h('ul', { class: 'cards' }, shown.map((r) => card(s, r))),
-  ];
-}
-
-function status(s, shown) {
-  if (s.status === 'loading' || s.status === 'idle') return h('p', { role: 'status' }, 'بنحمّل الوصفات…');
-  if (s.status === 'error') return h('div', { role: 'alert' }, h('p', {}, s.error),
-    h('button', { type: 'button', 'data-action': 'retry' }, 'جرّب تاني'));
-  return h('p', { role: 'status' }, shown === 0 ? 'مفيش وصفات بالبحث ده' : $__bt$__{shown} وصفة$__bt);
-}
-
-const favButton = (s, id) => {
-  const on = s.favs.includes(id);
-  return h('button', { type: 'button', id: 'fav-' + id, 'data-fav': id, 'aria-pressed': on }, on ? '★ في المفضلة' : '☆ للمفضلة');
+  <main>
+    <h1>سرعة الكتابة</h1>
+    <label>النص <select id="lang"><option value="ar">عربي</option><option value="en">English</option></select></label>
+    <label><input type="checkbox" id="lenient"> متساهل (أ و إ و آ = ا، و ى = ي، و ة = ه)</label>
+    <p id="text" aria-label="النص اللي هتكتبه"></p>
+    <input id="input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="اكتب هنا">
+    <p class="stats">
+      الوقت <b id="time">0.0</b> ث · السرعة <b id="wpm">0</b> WPM · الدقة <b id="acc">100%</b>
+    </p>
+    <p id="result" role="status"></p>
+    <p>أحسن نتيجة: <span id="best">—</span></p>
+    <button id="restart">نص جديد (Esc)</button>
+  </main>
+  <script type="module">
+const TEXTS = {
+  ar: [
+    'البرمجة مش حفظ أوامر. البرمجة إنك تفهم المشكلة كويس وبعدين تكتب أبسط حل يشتغل.',
+    'لما الكود يقع اقرا رسالة الخطأ للآخر قبل ما تدور على حل في أي مكان تاني.',
+    'اتعلم JavaScript خطوة خطوة وابني حاجة صغيرة كل يوم بدل ما تقرا من غير ما تجرب.',
+    'الكمبيوتر بيعمل اللي انت كاتبه بالظبط مش اللي انت قاصده وده أول درس في الشغلانة.',
+  ],
+  en: [
+    'Programming is not about typing fast. It is about thinking clearly and then typing.',
+    'Read the whole error message before you search for it. The answer is often right there.',
+    'Small apps you finish teach you more than big apps you only plan to build one day.',
+    'The computer does exactly what you wrote, not what you meant. That is the whole job.',
+  ],
 };
 
-const meta = (r) => h('p', { class: 'meta' }, r.minutes + ' دقيقة' + (r.tags.length ? ' · ' + r.tags.join('، ') : ''));
-
-function card(s, r) {
-  return h('li', { class: 'card' },
-    h('h2', {}, h('a', { href: '#/r/' + encodeURIComponent(r.id) }, r.title)),
-    meta(r), favButton(s, r.id));
+function pick(count, last) {
+  if (count < 2) return 0;
+  if (last < 0 || last >= count) return Math.floor(Math.random() * count);
+  const i = Math.floor(Math.random() * (count - 1));
+  return i >= last ? i + 1 : i;
 }
 
-function recipeScreen(s, all) {
-  const r = all.find((x) => x.id === s.route.params.id);
-  if (r) {
-    return { title: r.title, nodes: [
-      h('h1', { tabindex: -1 }, r.title), meta(r), favButton(s, r.id),
-      h('h2', {}, 'المكوّنات'), h('ul', {}, r.ingredients.map((i) => h('li', {}, i))),
-      h('h2', {}, 'الطريقة'), h('p', { class: 'steps' }, r.steps),
-      h('p', {}, h('a', { href: '#/' }, 'كل الوصفات')),
-    ] };
-  }
-  if (s.status === 'loading' || s.status === 'idle') return { title: 'بنحمّل', nodes: [h('h1', { tabindex: -1 }, 'بنحمّل الوصفة…')] };
-  if (s.status === 'error') return { title: 'حصل خطأ', nodes: [h('h1', { tabindex: -1 }, 'حصل خطأ'), status(s, 0)] };
-  return { title: 'الوصفة دي مش موجودة', nodes: notFound('الوصفة دي مش موجودة') };
+function isArabic(text) {
+  return /\p{Script=Arabic}/u.test(text);
 }
 
-function statsScreen(s, all) {
-  if (s.status === 'loading' || s.status === 'idle') return [h('h1', { tabindex: -1 }, 'إحصائيات'), status(s, 0)];
-  const st = stats(all);
-  const row = (label, value) => [h('dt', {}, label), h('dd', {}, value)];
-  return [
-    h('h1', { tabindex: -1 }, 'إحصائيات'),
-    status(s, all.length),
-    h('dl', { class: 'stats' },
-      row('عدد الوصفات', String(st.count)),
-      row('متوسط الوقت', st.avgMinutes + ' دقيقة'),
-      row('أكتر تصنيف', st.topTag ? st.topTag.name + ' (' + st.topTag.times + ' وصفات)' : 'مفيش تصنيفات'),
-      row('أسرع وصفة', st.fastest ? h('a', { href: '#/r/' + encodeURIComponent(st.fastest.id) }, st.fastest.title + ' · ' + st.fastest.minutes + ' دقيقة') : 'مفيش وصفات')),
-  ];
-}
+// الوضع المتساهل: الحروف دي بتتحسب زي بعض في المقارنة بس، والنص نفسه مبيتغيّرش
+const SAME = { 'أ': 'ا', 'إ': 'ا', 'آ': 'ا', 'ى': 'ي', 'ة': 'ه' };
+const normalize = (ch) => SAME[ch] ?? ch;
+const same = (a, b, lenient = false) => a === b || (lenient && normalize(a) === normalize(b));
 
-const notFound = (title) => [h('h1', { tabindex: -1 }, title), h('p', {}, h('a', { href: '#/' }, 'ارجع لكل الوصفات'))];
-
-function field(name, label, control) {
-  return h('div', { class: 'field' }, h('label', { for: name }, label), control, h('p', { id: name + '-err', class: 'err' }));
-}
-
-function newScreen() {
-  const a = (name) => ({ id: name, name, 'aria-describedby': name + '-err' });
-  return [
-    h('h1', { tabindex: -1 }, 'وصفة جديدة'),
-    h('form', { 'data-form': 'add', novalidate: true },
-      field('title', 'الاسم', h('input', { ...a('title'), required: true, maxlength: MAX_TITLE, autocomplete: 'off' })),
-      field('minutes', 'الوقت بالدقايق', h('input', { ...a('minutes'), required: true, inputmode: 'numeric' })),
-      field('ingredients', 'المكوّنات، كل واحد في سطر', h('textarea', { ...a('ingredients'), required: true, rows: 4 })),
-      field('steps', 'الطريقة', h('textarea', { ...a('steps'), required: true, rows: 4 })),
-      field('tags', 'التصنيفات، افصل بينهم بفاصلة', h('input', { ...a('tags'), autocomplete: 'off' })),
-      h('button', { type: 'submit' }, 'احفظ الوصفة')),
-  ];
-}
-
-function showErrors(form, errors) {
-  for (const el of form.querySelectorAll('[name]')) {
-    const msg = errors[el.name] ?? '';
-    form.querySelector('#' + el.name + '-err').textContent = msg;
-    if (msg) el.setAttribute('aria-invalid', 'true');
-    else el.removeAttribute('aria-invalid');
-  }
-  form.querySelector('[aria-invalid="true"]')?.focus();
-}
-
-
-const DATA_URL = 'data:application/json;charset=utf-8,' + encodeURIComponent(RECIPES);
-const store = createStore();
-const main = document.getElementById('main');
-let ctrl = null;
-
-function paint(s, prev) {
-  main.setAttribute('aria-busy', String(s.status === 'loading'));
-  const moved = prev.route.name !== s.route.name || prev.route.params.id !== s.route.params.id;
-  if (!moved && s.route.name === 'new') return;
-  const active = main.contains(document.activeElement) ? document.activeElement : null;
-  const keep = active?.id ? { id: active.id, pos: active.selectionStart } : null;
-  const { title, nodes } = view(s);
-  document.title = title;
-  main.replaceChildren(...nodes);
-  const here = '#/' + (s.route.name === 'list' ? '' : s.route.name);
-  for (const a of document.querySelectorAll('nav a')) {
-    if (a.getAttribute('href') === here) a.setAttribute('aria-current', 'page');
-    else a.removeAttribute('aria-current');
-  }
-  if (moved) main.querySelector('h1')?.focus();
-  else if (keep) {
-    const el = document.getElementById(keep.id);
-    el?.focus();
-    if (keep.pos != null) el?.setSelectionRange?.(keep.pos, keep.pos);
-  }
-}
-
-const search = debounce((form) => {
-  const p = new URLSearchParams();
-  for (const [k, v] of new FormData(form)) if (String(v).trim()) p.set(k, String(v));
-  const qs = String(p);
-  // من غير || '#/' لو الصفحة اتفتحت من غير # الـ ?q= كان هيروح للرابط نفسه مش للـ hash
-  const path = location.hash.split('?')[0] || '#/';
-  history.replaceState(null, '', path + (qs ? '?' + qs : ''));
-  store.setRoute(parseRoute(location.hash));
-}, 250);
-
-async function loadData() {
-  ctrl?.abort();
-  ctrl = new AbortController();
-  store.loading();
-  try {
-    store.loaded(await loadRecipes(DATA_URL, { signal: ctrl.signal }));
-  } catch (err) {
-    if (err.name !== 'AbortError') store.failed(explain(err));
-  }
-}
-
-main.addEventListener('input', (e) => {
-  const form = e.target.closest('[data-form="search"]');
-  if (form) search(form);
-});
-
-main.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (e.target.dataset.form === 'search') return search(e.target);
-  const res = store.addRecipe(Object.fromEntries(new FormData(e.target)));
-  if (!res.ok) return showErrors(e.target, res.errors);
-  location.hash = '#/r/' + encodeURIComponent(res.recipe.id);
-});
-
-main.addEventListener('click', (e) => {
-  const fav = e.target.closest('[data-fav]');
-  if (fav) store.toggleFav(fav.dataset.fav);
-  if (e.target.closest('[data-action="retry"]')) loadData();
-});
-
-window.addEventListener('hashchange', () => store.setRoute(parseRoute(location.hash)));
-store.subscribe(paint);
-store.setRoute(parseRoute(location.hash));
-loadData();
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** رابط جديد «إحصائيات» في الـ nav. الشاشة فيها ٤ أرقام: عدد الوصفات ٦، ومتوسط الوقت ٣٢.٥ دقيقة، وأكتر تصنيف «مصري (٤ وصفات)»، وأسرع وصفة «سلطة بلدي · ١٠ دقيقة» كرابط ليها. ضيف وصفة وارجع: الأرقام اتغيّرت لوحدها.
-
-## الملفات
-
-~~~text
-recipe-stats/
-├── index.html        + رابط «إحصائيات» في الـ nav
-├── style.css         + شكل الـ <dl>
-├── data/recipes.json زي الأساسية
-├── src/logic.js      + stats(recipes)، و stats في parseRoute
-├── src/view.js       + statsScreen
-├── src/storage.js  src/store.js  src/api.js  src/app.js   زي الأساسية
-└── tests/            الأربعة الأساسيين + stats.test.js
-~~~
-
-الملفات اللي مش مكتوبة هنا زي النسخة الأساسية بالظبط، وكودها كامل في حل تمرين «انشره بجد واعمل README» في درس «مشروع التخرّج ٤: الاختبارات والنشر». ابدأ من نسخة منها:
-
-~~~bash
-cp -r recipe-book recipe-stats
-cd recipe-stats
-~~~
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>دفتر الوصفات</title>
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./src/app.js"></script>
-</head>
-<body>
-  <header>
-    <nav aria-label="الأقسام">
-      <a href="#/">الوصفات</a>
-      <a href="#/fav">المفضلة</a>
-      <a href="#/new">وصفة جديدة</a>
-      <a href="#/stats">إحصائيات</a>
-    </nav>
-  </header>
-  <main id="main"></main>
-  <noscript>التطبيق ده محتاج JavaScript يكون شغال.</noscript>
-</body>
-</html>
-~~~
-
-~~~css style.css
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #1d1d1f; background: #faf7f2; }
-header { background: #7a3e12; }
-nav { display: flex; flex-wrap: wrap; gap: .25rem; max-width: 52rem; margin: 0 auto; padding: .5rem 1rem; }
-nav a { color: #fff; padding: .4rem .8rem; border-radius: 6px; text-decoration: none; }
-nav a[aria-current="page"] { background: #fff; color: #7a3e12; font-weight: 700; }
-main { max-width: 52rem; margin: 0 auto; padding: 1rem; }
-h1 { margin: .5rem 0 1rem; }
-h1:focus { outline: none; }
-:focus-visible { outline: 3px solid #1a73e8; outline-offset: 2px; }
-form[role="search"] { display: grid; grid-template-columns: 1fr; gap: .25rem; margin-bottom: .5rem; }
-@media (min-width: 640px) { form[role="search"] { grid-template-columns: auto 1fr auto auto; align-items: center; gap: .5rem; } }
-input, select, textarea, button { font: inherit; padding: .45rem .6rem; border: 1px solid #b9b1a6; border-radius: 6px; background: #fff; max-width: 100%; }
-button { cursor: pointer; background: #f1e6d8; }
-button[type="submit"] { background: #7a3e12; color: #fff; border-color: #7a3e12; }
-.cards { list-style: none; padding: 0; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-.card { background: #fff; border: 1px solid #e4dccf; border-radius: 10px; padding: .75rem 1rem; }
-.card h2 { font-size: 1.15rem; margin: 0; }
-.meta { color: #5c5348; margin: .25rem 0 .5rem; }
-.steps { white-space: pre-line; }
-.notice { background: #fff4ce; border: 1px solid #e0c060; padding: .5rem .75rem; border-radius: 6px; }
-[role="alert"] { background: #fde7e9; border: 1px solid #d93025; padding: .5rem .75rem; border-radius: 6px; }
-.field { display: grid; gap: .2rem; margin-bottom: .75rem; }
-.err { color: #b3261e; margin: 0; min-height: 1.2em; }
-[aria-invalid="true"] { border-color: #b3261e; border-width: 2px; }
-.stats { display: grid; grid-template-columns: max-content 1fr; gap: .5rem 1rem; background: #fff; border: 1px solid #e4dccf; border-radius: 10px; padding: 1rem; }
-.stats dt { font-weight: 700; }
-.stats dd { margin: 0; }
-~~~
-
-~~~js src/logic.js
-// src/logic.js — القواعد: مفيهوش document ولا fetch، فبيشتغل في Node والمتصفح
-export const MAX_TITLE = 80;
-
-export function isRecipe(r) {
-  return !!r && typeof r === 'object' && typeof r.id === 'string' && typeof r.title === 'string'
-    && Number.isFinite(r.minutes) && Array.isArray(r.ingredients) && Array.isArray(r.tags)
-    && typeof r.steps === 'string';
-}
-
-export const toggleFav = (favs, id) => (favs.includes(id) ? favs.filter((f) => f !== id) : [...favs, id]);
-
-export const toLatinDigits = (s) => String(s ?? '').replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
-
-export function parseRoute(hash) {
-  const raw = String(hash ?? '').replace(/^#/, '') || '/';
-  const [path, qs = ''] = raw.split('?');
-  const query = Object.fromEntries(new URLSearchParams(qs));
-  const parts = path.split('/').filter(Boolean);
-  if (parts.length === 0) return { name: 'list', params: {}, query };
-  if (parts[0] === 'r' && parts.length === 2) return { name: 'recipe', params: { id: decodeURIComponent(parts[1]) }, query };
-  if (parts.length === 1 && ['new', 'fav', 'stats'].includes(parts[0])) return { name: parts[0], params: {}, query };
-  return { name: 'notfound', params: {}, query };
-}
-
-export function filterRecipes(list, { q = '', tag = '' } = {}) {
-  const needle = q.trim().toLowerCase();
-  return list.filter((r) => (!tag || r.tags.includes(tag))
-    && (!needle || [r.title, ...r.ingredients].some((t) => t.toLowerCase().includes(needle))));
-}
-
-export const allTags = (list) => [...new Set(list.flatMap((r) => r.tags))].sort((a, b) => a.localeCompare(b, 'ar'));
-
-// الإحصائيات مشتقة من اللستة في كل مرة، ومفيش رقم متخزن
-export function stats(recipes) {
-  const count = recipes.length;
-  if (count === 0) return { count: 0, avgMinutes: 0, topTag: null, fastest: null };
-  const total = recipes.reduce((sum, r) => sum + r.minutes, 0);
-  const times = new Map();
-  for (const t of recipes.flatMap((r) => r.tags)) times.set(t, (times.get(t) ?? 0) + 1);
-  const topTag = [...times].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ar'))[0] ?? null;
-  const fastest = recipes.reduce((best, r) => (r.minutes < best.minutes ? r : best));
-  return {
-    count,
-    avgMinutes: Math.round(total / count * 10) / 10,
-    topTag: topTag && { name: topTag[0], times: topTag[1] },
-    fastest: { id: fastest.id, title: fastest.title, minutes: fastest.minutes },
-  };
-}
-
-export function validateRecipe(input) {
-  const errors = {};
-  const title = String(input.title ?? '').trim();
-  const minutes = Number(toLatinDigits(input.minutes).trim() || NaN);
-  const ingredients = String(input.ingredients ?? '').split('\n').map((s) => s.trim()).filter(Boolean);
-  const steps = String(input.steps ?? '').trim();
-  const tags = [...new Set(String(input.tags ?? '').split(/[,،]/).map((s) => s.trim()).filter(Boolean))];
-  if (!title) errors.title = 'اكتب اسم الوصفة';
-  else if (title.length > MAX_TITLE) errors.title = $__btالاسم أطول من $__{MAX_TITLE} حرف$__bt;
-  if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) errors.minutes = 'الوقت بالدقايق، رقم صحيح من 1 لـ 1440';
-  if (ingredients.length < 2) errors.ingredients = 'اكتب مكوّنين على الأقل، كل واحد في سطر';
-  if (!steps) errors.steps = 'اكتب طريقة التحضير';
-  if (Object.keys(errors).length) return { ok: false, errors };
-  return { ok: true, value: { title, minutes, ingredients, steps, tags } };
-}
-
-export function debounce(fn, ms) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
-  };
-}
-~~~
-
-~~~js src/view.js
-// src/view.js — الشاشات من الحالة. بيبني عناصر بس، ومبيغيّرش الحالة.
-import { filterRecipes, allTags, MAX_TITLE, stats } from './logic.js';
-import { allRecipes } from './store.js';
-
-export function h(tag, attrs = {}, ...kids) {
-  const el = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k.startsWith('aria-')) el.setAttribute(k, String(v));
-    else if (v === true) el.setAttribute(k, '');
-    else if (v !== false && v != null) el.setAttribute(k, String(v));
-  }
-  el.append(...kids.flat().filter((k) => k != null && k !== false));
-  return el;
-}
-
-const TITLES = { list: 'الوصفات', fav: 'المفضلة', new: 'وصفة جديدة', stats: 'إحصائيات', notfound: 'الصفحة دي مش موجودة' };
-
-export function view(s) {
-  const { name } = s.route;
-  const all = allRecipes(s);
-  const screen = name === 'recipe' ? recipeScreen(s, all) : { title: TITLES[name] ?? TITLES.notfound };
-  const nodes = screen.nodes
-    ?? (name === 'list' ? listScreen(s, screen.title, all)
-      : name === 'fav' ? listScreen(s, screen.title, all.filter((r) => s.favs.includes(r.id)))
-        : name === 'new' ? newScreen()
-          : name === 'stats' ? statsScreen(s, all)
-          : notFound(screen.title));
-  if (s.notice) nodes.unshift(h('p', { class: 'notice', role: 'status' }, s.notice));
-  return { title: screen.title + ' · دفتر الوصفات', nodes };
-}
-
-function listScreen(s, title, list) {
-  const { q = '', tag = '' } = s.route.query;
-  const shown = filterRecipes(list, { q, tag });
-  return [
-    h('h1', { tabindex: -1 }, title),
-    h('form', { role: 'search', 'data-form': 'search' },
-      h('label', { for: 'q' }, 'دوّر باسم أو مكوّن'),
-      h('input', { id: 'q', name: 'q', type: 'search', value: q, autocomplete: 'off' }),
-      h('label', { for: 'tag' }, 'التصنيف'),
-      h('select', { id: 'tag', name: 'tag' }, h('option', { value: '' }, 'الكل'),
-        allTags(list).map((t) => h('option', { value: t, selected: t === tag }, t)))),
-    status(s, shown.length),
-    h('ul', { class: 'cards' }, shown.map((r) => card(s, r))),
-  ];
-}
-
-function status(s, shown) {
-  if (s.status === 'loading' || s.status === 'idle') return h('p', { role: 'status' }, 'بنحمّل الوصفات…');
-  if (s.status === 'error') return h('div', { role: 'alert' }, h('p', {}, s.error),
-    h('button', { type: 'button', 'data-action': 'retry' }, 'جرّب تاني'));
-  return h('p', { role: 'status' }, shown === 0 ? 'مفيش وصفات بالبحث ده' : $__bt$__{shown} وصفة$__bt);
-}
-
-const favButton = (s, id) => {
-  const on = s.favs.includes(id);
-  return h('button', { type: 'button', id: 'fav-' + id, 'data-fav': id, 'aria-pressed': on }, on ? '★ في المفضلة' : '☆ للمفضلة');
-};
-
-const meta = (r) => h('p', { class: 'meta' }, r.minutes + ' دقيقة' + (r.tags.length ? ' · ' + r.tags.join('، ') : ''));
-
-function card(s, r) {
-  return h('li', { class: 'card' },
-    h('h2', {}, h('a', { href: '#/r/' + encodeURIComponent(r.id) }, r.title)),
-    meta(r), favButton(s, r.id));
-}
-
-function recipeScreen(s, all) {
-  const r = all.find((x) => x.id === s.route.params.id);
-  if (r) {
-    return { title: r.title, nodes: [
-      h('h1', { tabindex: -1 }, r.title), meta(r), favButton(s, r.id),
-      h('h2', {}, 'المكوّنات'), h('ul', {}, r.ingredients.map((i) => h('li', {}, i))),
-      h('h2', {}, 'الطريقة'), h('p', { class: 'steps' }, r.steps),
-      h('p', {}, h('a', { href: '#/' }, 'كل الوصفات')),
-    ] };
-  }
-  if (s.status === 'loading' || s.status === 'idle') return { title: 'بنحمّل', nodes: [h('h1', { tabindex: -1 }, 'بنحمّل الوصفة…')] };
-  if (s.status === 'error') return { title: 'حصل خطأ', nodes: [h('h1', { tabindex: -1 }, 'حصل خطأ'), status(s, 0)] };
-  return { title: 'الوصفة دي مش موجودة', nodes: notFound('الوصفة دي مش موجودة') };
-}
-
-function statsScreen(s, all) {
-  if (s.status === 'loading' || s.status === 'idle') return [h('h1', { tabindex: -1 }, 'إحصائيات'), status(s, 0)];
-  const st = stats(all);
-  const row = (label, value) => [h('dt', {}, label), h('dd', {}, value)];
-  return [
-    h('h1', { tabindex: -1 }, 'إحصائيات'),
-    status(s, all.length),
-    h('dl', { class: 'stats' },
-      row('عدد الوصفات', String(st.count)),
-      row('متوسط الوقت', st.avgMinutes + ' دقيقة'),
-      row('أكتر تصنيف', st.topTag ? st.topTag.name + ' (' + st.topTag.times + ' وصفات)' : 'مفيش تصنيفات'),
-      row('أسرع وصفة', st.fastest ? h('a', { href: '#/r/' + encodeURIComponent(st.fastest.id) }, st.fastest.title + ' · ' + st.fastest.minutes + ' دقيقة') : 'مفيش وصفات')),
-  ];
-}
-
-const notFound = (title) => [h('h1', { tabindex: -1 }, title), h('p', {}, h('a', { href: '#/' }, 'ارجع لكل الوصفات'))];
-
-function field(name, label, control) {
-  return h('div', { class: 'field' }, h('label', { for: name }, label), control, h('p', { id: name + '-err', class: 'err' }));
-}
-
-function newScreen() {
-  const a = (name) => ({ id: name, name, 'aria-describedby': name + '-err' });
-  return [
-    h('h1', { tabindex: -1 }, 'وصفة جديدة'),
-    h('form', { 'data-form': 'add', novalidate: true },
-      field('title', 'الاسم', h('input', { ...a('title'), required: true, maxlength: MAX_TITLE, autocomplete: 'off' })),
-      field('minutes', 'الوقت بالدقايق', h('input', { ...a('minutes'), required: true, inputmode: 'numeric' })),
-      field('ingredients', 'المكوّنات، كل واحد في سطر', h('textarea', { ...a('ingredients'), required: true, rows: 4 })),
-      field('steps', 'الطريقة', h('textarea', { ...a('steps'), required: true, rows: 4 })),
-      field('tags', 'التصنيفات، افصل بينهم بفاصلة', h('input', { ...a('tags'), autocomplete: 'off' })),
-      h('button', { type: 'submit' }, 'احفظ الوصفة')),
-  ];
-}
-
-export function showErrors(form, errors) {
-  for (const el of form.querySelectorAll('[name]')) {
-    const msg = errors[el.name] ?? '';
-    form.querySelector('#' + el.name + '-err').textContent = msg;
-    if (msg) el.setAttribute('aria-invalid', 'true');
-    else el.removeAttribute('aria-invalid');
-  }
-  form.querySelector('[aria-invalid="true"]')?.focus();
-}
-~~~
-
-## الأجزاء المهمة
-
-| الحتة | ليه |
-|---|---|
-| [[stats(recipes)]] في [[logic.js]] | دالة pure: بتاخد لستة وترجّع أرقام. مفيهاش [[document]]، فبتتختبر في Node، ومفيش أي رقم متخزن في الحالة |
-| [[if (count === 0) return ...]] | من غيرها [[total / count]] = [[0 / 0]] = [[NaN]]، و [[reduce]] من غير قيمة بداية على لستة فاضية بترمي [[TypeError: Reduce of empty array with no initial value]] |
-| [[Math.round(x * 10) / 10]] | رقم عشري واحد كـ **رقم** (32.5)، مش نص زي [[toFixed]] |
-| [[new Map]] للعدّ | كل تصنيف وعدد مرات ظهوره. وبعدين [[sort]] بالعدد، ولو تعادل بالترتيب العربي، فالنتيجة ثابتة مش حسب ترتيب الملف |
-| [[statsScreen(s, all)]] | بتاخد [[allRecipes(s)]]: الملف ووصفاتك مع بعض، فالإضافة بتغيّر الأرقام من غير ولا سطر زيادة |
-| «بنحمّل» قبل الأرقام | لو فتحت [[#/stats]] والداتا لسه مجاتش، منعرضش «٠ وصفات» كأنها حقيقة |
-| [[<dl>]] و [[<dt>]] و [[<dd>]] | قايمة «اسم: قيمة». الـ screen reader بيقراها أزواج |
-| [[['new', 'fav', 'stats'].includes(parts[0])]] | الشاشة الجديدة كلمة في لستة بدل شرط [[\|\|]] تالت |
-
-## الاختبارات
-
-~~~js tests/stats.test.js
-import { it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
-import { stats, parseRoute } from '../src/logic.js';
-
-const data = JSON.parse(readFileSync('data/recipes.json', 'utf8'));
-
-it('stats على الست وصفات', () => {
-  expect(stats(data)).toEqual({
-    count: 6, avgMinutes: 32.5,
-    topTag: { name: 'مصري', times: 4 },
-    fastest: { id: 'salad', title: 'سلطة بلدي', minutes: 10 },
+function marks(target, typed, lenient = false) {
+  return target.map((ch, i) => {
+    if (i === typed.length) return 'cur';
+    if (i > typed.length) return '';
+    return same(typed[i], ch, lenient) ? 'ok' : 'bad';
   });
-});
-
-it('stats([]) أصفار من غير NaN', () => {
-  expect(stats([])).toEqual({ count: 0, avgMinutes: 0, topTag: null, fastest: null });
-});
-
-it('وصفة من غير تصنيفات، والتعادل بيتحسم بالترتيب الأبجدي', () => {
-  const r = (id, minutes, tags) => ({ id, title: id, minutes, tags, ingredients: [], steps: '' });
-  expect(stats([r('a', 7, []), r('b', 20, ['فطار', 'حلو']), r('c', 7, [])])).toMatchObject({
-    avgMinutes: 11.3, topTag: { name: 'حلو', times: 1 }, fastest: { id: 'a' },
-  });
-  expect(parseRoute('#/stats').name).toBe('stats');
-});
-~~~
-
-~~~text الناتج: npm run check (ESLint 10.15، Vitest 5.1.1)
- Test Files  5 passed (5)
-      Tests  46 passed (46)
-~~~
-
-الـ ٤٣ الأساسيين + ٣ جداد. واختبار التعادل: «فطار» و «حلو» كل واحد مرة، والفايز «حلو» لأنها أول بالترتيب العربي، و [[11.3]] = (٧ + ٢٠ + ٧) ÷ ٣ = ١١.٣٣ متقرّبة.
-
-## اتجرّب في Chrome 158 (من سيرفر)
-
-~~~text الناتج
-#/stats في تبويب جديد (localStorage فاضي)
-  العنوان        إحصائيات · دفتر الوصفات
-  aria-current   page على رابط «إحصائيات»
-  الأرقام        6 | 32.5 دقيقة | مصري (4 وصفات) | سلطة بلدي · 10 دقيقة
-بعد إضافة «سلطة زبادي» وقتها «٥»
-  الأرقام        7 | 28.6 دقيقة | مصري (4 وصفات) | سلطة زبادي · 5 دقيقة
-scrollWidth/clientWidth   360/360   768/768   1280/1280
-pageerror      مفيش
-~~~
-
-(٣٢.٥ × ٦ = ١٩٥، وزائد ٥ = ٢٠٠، و ٢٠٠ ÷ ٧ = ٢٨.٥٧ ← 28.6.)
-
-## تشغّله إزاي
-
-~~~bash
-cd recipe-stats
-npm install
-npm run check
-python -m http.server 8000      # أو: npx --yes serve
-# وافتح http://localhost:8000/#/stats
-~~~
-
-## لو مشتغلش
-
-- **الشاشة بتقول «الصفحة دي مش موجودة»:** نسيت تزوّد [[stats]] في [[parseRoute]]. الـ router بيعرف الشاشات اللي في اللستة بس.
-- **[[NaN دقيقة]] على لستة فاضية:** القسمة حصلت قبل فحص الصفر. الفحص أول سطر.
-
-**الغلطة الشائعة:** تخزّن [[stats]] في الحالة وتحدّثها في [[addRecipe]]. هتشتغل لحد ما حد يضيف فعل جديد (مسح، أو تعديل) وينسى يحدّثها. الرقم المشتق بيتحسب وقت الرسم، دايمًا.` },
-        { lvl: 'صغير', dir: "recipe-undo", t: R`امسح وصفة وارجع فيها`, what: R`زرار «امسح» على الوصفات اللي انت ضفتها بس، وبعد المسح رسالة «اتمسحت — رجّعها» لمدة ٥ ثواني. [[removeRecipe(id)]] في [[store.js]] بتشيلها من [[mine]] ومن [[favs]] كمان، و [[undo()]] بترجّع الحالة اللي قبلها. من درس «مشروع التخرّج ١: الهيكل والحالة».`, done: R`المسح بيشيل الوصفة من القايمة ومن المفضلة ومن [[localStorage]]، و «رجّعها» في خلال ٥ ثواني بيرجّعها في نفس مكانها، والوصفات اللي جاية من الـ JSON مفيهاش زرار مسح، واختبار بيأكد إن [[favs]] مفيهاش id ميت بعد المسح.`, sol: R`~~~view 540 المسح ورجّعها (ضيف وصفة من «وصفة جديدة» الأول، وبعدين امسحها)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>دفتر الوصفات</title>
-  <link rel="icon" href="data:,">
-  <style>
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #1d1d1f; background: #faf7f2; }
-header { background: #7a3e12; }
-nav { display: flex; flex-wrap: wrap; gap: .25rem; max-width: 52rem; margin: 0 auto; padding: .5rem 1rem; }
-nav a { color: #fff; padding: .4rem .8rem; border-radius: 6px; text-decoration: none; }
-nav a[aria-current="page"] { background: #fff; color: #7a3e12; font-weight: 700; }
-main { max-width: 52rem; margin: 0 auto; padding: 1rem; }
-h1 { margin: .5rem 0 1rem; }
-h1:focus { outline: none; }
-:focus-visible { outline: 3px solid #1a73e8; outline-offset: 2px; }
-form[role="search"] { display: grid; grid-template-columns: 1fr; gap: .25rem; margin-bottom: .5rem; }
-@media (min-width: 640px) { form[role="search"] { grid-template-columns: auto 1fr auto auto; align-items: center; gap: .5rem; } }
-input, select, textarea, button { font: inherit; padding: .45rem .6rem; border: 1px solid #b9b1a6; border-radius: 6px; background: #fff; max-width: 100%; }
-button { cursor: pointer; background: #f1e6d8; }
-button[type="submit"] { background: #7a3e12; color: #fff; border-color: #7a3e12; }
-.cards { list-style: none; padding: 0; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-.card { background: #fff; border: 1px solid #e4dccf; border-radius: 10px; padding: .75rem 1rem; }
-.card h2 { font-size: 1.15rem; margin: 0; }
-.meta { color: #5c5348; margin: .25rem 0 .5rem; }
-.steps { white-space: pre-line; }
-.notice { background: #fff4ce; border: 1px solid #e0c060; padding: .5rem .75rem; border-radius: 6px; }
-[role="alert"] { background: #fde7e9; border: 1px solid #d93025; padding: .5rem .75rem; border-radius: 6px; }
-.field { display: grid; gap: .2rem; margin-bottom: .75rem; }
-.err { color: #b3261e; margin: 0; min-height: 1.2em; }
-[aria-invalid="true"] { border-color: #b3261e; border-width: 2px; }
-.danger { background: #fde7e9; border-color: #d93025; }
-.toast:empty { display: none; }
-.toast { position: fixed; inset-inline: 1rem; bottom: 1rem; max-width: 30rem; margin-inline: auto; background: #1d1d1f; color: #fff; padding: .6rem 1rem; border-radius: 8px; display: flex; gap: 1rem; align-items: center; justify-content: space-between; }
-.toast button { background: #fff; }
-  </style>
-</head>
-<body>
-  <header>
-    <nav aria-label="الأقسام">
-      <a href="#/">الوصفات</a>
-      <a href="#/fav">المفضلة</a>
-      <a href="#/new">وصفة جديدة</a>
-    </nav>
-  </header>
-  <main id="main"></main>
-  <div id="toast" class="toast" role="status"></div>
-  <noscript>التطبيق ده محتاج JavaScript يكون شغال.</noscript>
-<script type="module">
-// للعرض جوه الموقع بس: الصندوق ده iframe معزول (about:srcdoc)، فروابط # مبتمشيش لوحدها،
-// و history.replaceState بترمي SecurityError. السطور دي بتعمل نفس الحاجة بـ location.hash
-document.addEventListener('click', (e) => {
-  const a = e.target.closest('a[href^="#/"]');
-  if (a) { e.preventDefault(); location.hash = a.getAttribute('href'); }
-});
-const realReplace = history.replaceState.bind(history);
-history.replaceState = (state, title, url) => {
-  try { realReplace(state, title, url); } catch { location.hash = String(url).slice(String(url).indexOf('#')); }
-};
-const RECIPES = "[{\"id\":\"koshary\",\"title\":\"كشري\",\"minutes\":60,\"tags\":[\"مصري\",\"نباتي\"],\"ingredients\":[\"رز\",\"عدس بني\",\"مكرونة\",\"صلصة طماطم\",\"بصل مقرمش\"],\"steps\":\"اسلق العدس والرز مع بعض.\\nاسلق المكرونة لوحدها.\\nاعمل الصلصة بالطماطم والتوم والخل.\\nرص الطبق وفوقه البصل.\"},{\"id\":\"foul\",\"title\":\"فول مدمس\",\"minutes\":15,\"tags\":[\"فطار\",\"مصري\"],\"ingredients\":[\"فول مدمس\",\"زيت زيتون\",\"كمون\",\"ليمون\",\"ملح\"],\"steps\":\"سخّن الفول بمية قليلة.\\nاهرسه شوية.\\nضيف الزيت والكمون والليمون والملح.\"},{\"id\":\"shakshuka\",\"title\":\"شكشوكة\",\"minutes\":20,\"tags\":[\"فطار\"],\"ingredients\":[\"بيض\",\"طماطم\",\"فلفل\",\"بصل\",\"كمون\"],\"steps\":\"شوّح البصل والفلفل.\\nضيف الطماطم والكمون لحد ما تتسبك.\\nاكسر البيض فوقها وغطّيها.\"},{\"id\":\"salad\",\"title\":\"سلطة بلدي\",\"minutes\":10,\"tags\":[\"نباتي\"],\"ingredients\":[\"طماطم\",\"خيار\",\"بصل\",\"ليمون\",\"كمون\"],\"steps\":\"قطّع الخضار مكعبات صغيرة.\\nضيف الليمون والكمون والملح وقلّب.\"},{\"id\":\"roz-bel-laban\",\"title\":\"رز بلبن\",\"minutes\":40,\"tags\":[\"حلو\",\"مصري\"],\"ingredients\":[\"رز\",\"لبن\",\"سكر\",\"فانيليا\"],\"steps\":\"اسلق الرز في مية لحد ما يشربها.\\nضيف اللبن وقلّب على نار هادية.\\nضيف السكر والفانيليا وصبّه في طواجن.\"},{\"id\":\"basbousa\",\"title\":\"بسبوسة\",\"minutes\":50,\"tags\":[\"حلو\",\"مصري\"],\"ingredients\":[\"سميد\",\"زبادي\",\"سكر\",\"زبدة\",\"شربات\"],\"steps\":\"اخلط السميد والزبادي والسكر والزبدة.\\nافرده في صينية وقطّعه.\\nادخله الفرن وبعدين صب عليه الشربات.\"}]";
-const MAX_TITLE = 80;
-
-function isRecipe(r) {
-  return !!r && typeof r === 'object' && typeof r.id === 'string' && typeof r.title === 'string'
-    && Number.isFinite(r.minutes) && Array.isArray(r.ingredients) && Array.isArray(r.tags)
-    && typeof r.steps === 'string';
 }
 
-const toggleFav = (favs, id) => (favs.includes(id) ? favs.filter((f) => f !== id) : [...favs, id]);
-
-const toLatinDigits = (s) => String(s ?? '').replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
-
-function parseRoute(hash) {
-  const raw = String(hash ?? '').replace(/^#/, '') || '/';
-  const [path, qs = ''] = raw.split('?');
-  const query = Object.fromEntries(new URLSearchParams(qs));
-  const parts = path.split('/').filter(Boolean);
-  if (parts.length === 0) return { name: 'list', params: {}, query };
-  if (parts[0] === 'r' && parts.length === 2) return { name: 'recipe', params: { id: decodeURIComponent(parts[1]) }, query };
-  if (parts.length === 1 && (parts[0] === 'new' || parts[0] === 'fav')) return { name: parts[0], params: {}, query };
-  return { name: 'notfound', params: {}, query };
-}
-
-function filterRecipes(list, { q = '', tag = '' } = {}) {
-  const needle = q.trim().toLowerCase();
-  return list.filter((r) => (!tag || r.tags.includes(tag))
-    && (!needle || [r.title, ...r.ingredients].some((t) => t.toLowerCase().includes(needle))));
-}
-
-const allTags = (list) => [...new Set(list.flatMap((r) => r.tags))].sort((a, b) => a.localeCompare(b, 'ar'));
-
-function validateRecipe(input) {
-  const errors = {};
-  const title = String(input.title ?? '').trim();
-  const minutes = Number(toLatinDigits(input.minutes).trim() || NaN);
-  const ingredients = String(input.ingredients ?? '').split('\n').map((s) => s.trim()).filter(Boolean);
-  const steps = String(input.steps ?? '').trim();
-  const tags = [...new Set(String(input.tags ?? '').split(/[,،]/).map((s) => s.trim()).filter(Boolean))];
-  if (!title) errors.title = 'اكتب اسم الوصفة';
-  else if (title.length > MAX_TITLE) errors.title = $__btالاسم أطول من $__{MAX_TITLE} حرف$__bt;
-  if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) errors.minutes = 'الوقت بالدقايق، رقم صحيح من 1 لـ 1440';
-  if (ingredients.length < 2) errors.ingredients = 'اكتب مكوّنين على الأقل، كل واحد في سطر';
-  if (!steps) errors.steps = 'اكتب طريقة التحضير';
-  if (Object.keys(errors).length) return { ok: false, errors };
-  return { ok: true, value: { title, minutes, ingredients, steps, tags } };
-}
-
-function debounce(fn, ms) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
-  };
-}
-
-
-const KEY = 'recipe-book:v1';
-
-// مجرد قراية localStorage بترمي SecurityError لو التخزين مقفول (أو صفحة sandboxed)، فبنقراه جوه try
-function browserStorage() {
-  try { return globalThis.localStorage ?? null; } catch { return null; }
-}
-
-function load(storage = browserStorage()) {
-  let raw;
-  try { raw = storage.getItem(KEY); } catch { return { mine: [], favs: [], warning: 'المتصفح قافل التخزين، ومش هنفتكر حاجة' }; }
-  if (raw === null) return { mine: [], favs: [] };
-  try {
-    const data = JSON.parse(raw);
-    if (data?.version !== 1) throw new Error('نسخة مش معروفة: ' + data?.version);
-    const mine = Array.isArray(data.mine) ? data.mine.filter(isRecipe) : [];
-    const favs = Array.isArray(data.favs) ? data.favs.filter((f) => typeof f === 'string') : [];
-    return { mine, favs };
-  } catch (err) {
-    try { storage.setItem(KEY + ':broken', raw); } catch { /* مفيش مكان، مش مشكلة */ }
-    return { mine: [], favs: [], warning: 'الداتا المحفوظة كانت بايظة (' + err.message + ')، واتحفظت نسخة منها' };
-  }
-}
-
-function save({ mine, favs }, storage = browserStorage()) {
-  try {
-    storage.setItem(KEY, JSON.stringify({ version: 1, mine, favs }));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-
-function createStore(storage = browserStorage()) {
-  const saved = load(storage);
-  let state = {
-    recipes: [], mine: saved.mine, favs: saved.favs,
-    status: 'idle', error: '', notice: saved.warning ?? '',
-    route: { name: 'list', params: {}, query: {} },
-  };
-  const listeners = new Set();
-  const history = [];
-  const MAX_HISTORY = 20;
-
-  function set(patch) {
-    const prev = state;
-    state = { ...state, ...patch };
-    if ((state.mine !== prev.mine || state.favs !== prev.favs) && !save(state, storage)) {
-      state = { ...state, notice: 'مقدرناش نحفظ: التخزين مليان أو مقفول' };
-    }
-    listeners.forEach((fn) => fn(state, prev));
-  }
-
-  // قبل أي تغيير في mine أو favs: نحفظ الاتنين زي ما هما (reference بس، مفيش نسخ)
-  function remember() {
-    history.push({ mine: state.mine, favs: state.favs });
-    if (history.length > MAX_HISTORY) history.shift();
-  }
-
+function stats({ target, typed, keystrokes, mistakes }, ms, lenient = false) {
+  let correct = 0;
+  for (let i = 0; i < typed.length; i++) if (same(typed[i], target[i], lenient)) correct++;
+  const minutes = Math.max(ms, 1000) / 60000;
   return {
-    get: () => state,
-    subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn); },
-    setRoute: (route) => set({ route }),
-    loading: () => set({ status: 'loading', error: '' }),
-    loaded: (recipes) => set({ status: 'ready', recipes }),
-    failed: (message) => set({ status: 'error', error: message }),
-    toggleFav(id) {
-      remember();
-      set({ favs: toggleFav(state.favs, id) });
-    },
-    addRecipe(input) {
-      const res = validateRecipe(input);
-      if (!res.ok) return res;
-      const recipe = { id: 'u-' + crypto.randomUUID(), ...res.value };
-      remember();
-      set({ mine: [recipe, ...state.mine] });
-      return { ok: true, recipe };
-    },
-    removeRecipe(id) {
-      if (!state.mine.some((r) => r.id === id)) return false;
-      remember();
-      set({ mine: state.mine.filter((r) => r.id !== id), favs: state.favs.filter((f) => f !== id) });
-      return true;
-    },
-    undo() {
-      const last = history.pop();
-      if (!last) return false;
-      set(last);
-      return true;
-    },
-    canUndo: () => history.length > 0,
+    wpm: Math.round(correct / 5 / minutes),
+    accuracy: keystrokes ? Math.round((keystrokes - mistakes) / keystrokes * 100) : 100,
   };
 }
 
-const allRecipes = (s) => [...s.mine, ...s.recipes];
 
 
-class HttpError extends Error {
-  constructor(status, url) {
-    super($__btHTTP $__{status} من $__{url}$__bt);
-    this.name = 'HttpError';
-    this.status = status;
-  }
-}
 
-class DataError extends Error {
-  name = 'DataError';
-}
-
-async function fetchJSON(url, { timeout = 8000, signal } = {}) {
-  const timer = AbortSignal.timeout(timeout);
-  const res = await fetch(url, { signal: signal ? AbortSignal.any([signal, timer]) : timer });
-  if (!res.ok) throw new HttpError(res.status, url);
-  return res.json();
-}
-
-async function loadRecipes(url, opts) {
-  const data = await fetchJSON(url, opts);
-  if (!Array.isArray(data)) throw new DataError('الرد مش لستة وصفات');
-  return data.filter(isRecipe);
-}
-
-function explain(err) {
-  if (err.name === 'TimeoutError') return 'السيرفر اتأخر في الرد. جرّب تاني.';
-  if (err instanceof HttpError) return err.status === 404 ? 'ملف الوصفات مش موجود (404).' : $__btالسيرفر رد بخطأ $__{err.status}. جرّب كمان شوية.$__bt;
-  if (err instanceof SyntaxError) return 'الرد وصل بس مش JSON سليم.';
-  if (err instanceof DataError) return 'الرد وصل بس شكله غلط.';
-  return 'مفيش اتصال. اتأكد من النت وجرّب تاني.';
-}
-
-
-function h(tag, attrs = {}, ...kids) {
-  const el = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k.startsWith('aria-')) el.setAttribute(k, String(v));
-    else if (v === true) el.setAttribute(k, '');
-    else if (v !== false && v != null) el.setAttribute(k, String(v));
-  }
-  el.append(...kids.flat().filter((k) => k != null && k !== false));
-  return el;
-}
-
-const TITLES = { list: 'الوصفات', fav: 'المفضلة', new: 'وصفة جديدة', notfound: 'الصفحة دي مش موجودة' };
-
-function view(s) {
-  const { name } = s.route;
-  const all = allRecipes(s);
-  const screen = name === 'recipe' ? recipeScreen(s, all) : { title: TITLES[name] ?? TITLES.notfound };
-  const nodes = screen.nodes
-    ?? (name === 'list' ? listScreen(s, screen.title, all)
-      : name === 'fav' ? listScreen(s, screen.title, all.filter((r) => s.favs.includes(r.id)))
-        : name === 'new' ? newScreen()
-          : notFound(screen.title));
-  if (s.notice) nodes.unshift(h('p', { class: 'notice', role: 'status' }, s.notice));
-  return { title: screen.title + ' · دفتر الوصفات', nodes };
-}
-
-function listScreen(s, title, list) {
-  const { q = '', tag = '' } = s.route.query;
-  const shown = filterRecipes(list, { q, tag });
-  return [
-    h('h1', { tabindex: -1 }, title),
-    h('form', { role: 'search', 'data-form': 'search' },
-      h('label', { for: 'q' }, 'دوّر باسم أو مكوّن'),
-      h('input', { id: 'q', name: 'q', type: 'search', value: q, autocomplete: 'off' }),
-      h('label', { for: 'tag' }, 'التصنيف'),
-      h('select', { id: 'tag', name: 'tag' }, h('option', { value: '' }, 'الكل'),
-        allTags(list).map((t) => h('option', { value: t, selected: t === tag }, t)))),
-    status(s, shown.length),
-    h('ul', { class: 'cards' }, shown.map((r) => card(s, r))),
-  ];
-}
-
-function status(s, shown) {
-  if (s.status === 'loading' || s.status === 'idle') return h('p', { role: 'status' }, 'بنحمّل الوصفات…');
-  if (s.status === 'error') return h('div', { role: 'alert' }, h('p', {}, s.error),
-    h('button', { type: 'button', 'data-action': 'retry' }, 'جرّب تاني'));
-  return h('p', { role: 'status' }, shown === 0 ? 'مفيش وصفات بالبحث ده' : $__bt$__{shown} وصفة$__bt);
-}
-
-const favButton = (s, id) => {
-  const on = s.favs.includes(id);
-  return h('button', { type: 'button', id: 'fav-' + id, 'data-fav': id, 'aria-pressed': on }, on ? '★ في المفضلة' : '☆ للمفضلة');
-};
-
-const meta = (r) => h('p', { class: 'meta' }, r.minutes + ' دقيقة' + (r.tags.length ? ' · ' + r.tags.join('، ') : ''));
-
-// زرار المسح بيظهر على وصفاتك انت بس (اللي الـ id بتاعها بيبدأ بـ u-)
-const removeButton = (r) => (r.id.startsWith('u-')
-  ? h('button', { type: 'button', id: 'del-' + r.id, 'data-remove': r.id, class: 'danger' }, 'امسح «' + r.title + '»')
-  : null);
-
-function card(s, r) {
-  return h('li', { class: 'card' },
-    h('h2', {}, h('a', { href: '#/r/' + encodeURIComponent(r.id) }, r.title)),
-    meta(r), favButton(s, r.id), ' ', removeButton(r));
-}
-
-function recipeScreen(s, all) {
-  const r = all.find((x) => x.id === s.route.params.id);
-  if (r) {
-    return { title: r.title, nodes: [
-      h('h1', { tabindex: -1 }, r.title), meta(r), favButton(s, r.id), ' ', removeButton(r),
-      h('h2', {}, 'المكوّنات'), h('ul', {}, r.ingredients.map((i) => h('li', {}, i))),
-      h('h2', {}, 'الطريقة'), h('p', { class: 'steps' }, r.steps),
-      h('p', {}, h('a', { href: '#/' }, 'كل الوصفات')),
-    ] };
-  }
-  if (s.status === 'loading' || s.status === 'idle') return { title: 'بنحمّل', nodes: [h('h1', { tabindex: -1 }, 'بنحمّل الوصفة…')] };
-  if (s.status === 'error') return { title: 'حصل خطأ', nodes: [h('h1', { tabindex: -1 }, 'حصل خطأ'), status(s, 0)] };
-  return { title: 'الوصفة دي مش موجودة', nodes: notFound('الوصفة دي مش موجودة') };
-}
-
-const notFound = (title) => [h('h1', { tabindex: -1 }, title), h('p', {}, h('a', { href: '#/' }, 'ارجع لكل الوصفات'))];
-
-function field(name, label, control) {
-  return h('div', { class: 'field' }, h('label', { for: name }, label), control, h('p', { id: name + '-err', class: 'err' }));
-}
-
-function newScreen() {
-  const a = (name) => ({ id: name, name, 'aria-describedby': name + '-err' });
-  return [
-    h('h1', { tabindex: -1 }, 'وصفة جديدة'),
-    h('form', { 'data-form': 'add', novalidate: true },
-      field('title', 'الاسم', h('input', { ...a('title'), required: true, maxlength: MAX_TITLE, autocomplete: 'off' })),
-      field('minutes', 'الوقت بالدقايق', h('input', { ...a('minutes'), required: true, inputmode: 'numeric' })),
-      field('ingredients', 'المكوّنات، كل واحد في سطر', h('textarea', { ...a('ingredients'), required: true, rows: 4 })),
-      field('steps', 'الطريقة', h('textarea', { ...a('steps'), required: true, rows: 4 })),
-      field('tags', 'التصنيفات، افصل بينهم بفاصلة', h('input', { ...a('tags'), autocomplete: 'off' })),
-      h('button', { type: 'submit' }, 'احفظ الوصفة')),
-  ];
-}
-
-function showErrors(form, errors) {
-  for (const el of form.querySelectorAll('[name]')) {
-    const msg = errors[el.name] ?? '';
-    form.querySelector('#' + el.name + '-err').textContent = msg;
-    if (msg) el.setAttribute('aria-invalid', 'true');
-    else el.removeAttribute('aria-invalid');
-  }
-  form.querySelector('[aria-invalid="true"]')?.focus();
-}
-
-
-const DATA_URL = 'data:application/json;charset=utf-8,' + encodeURIComponent(RECIPES);
-const store = createStore();
-const main = document.getElementById('main');
-const toast = document.getElementById('toast');
-let toastTimer = 0;
-let ctrl = null;
-
-function paint(s, prev) {
-  main.setAttribute('aria-busy', String(s.status === 'loading'));
-  const moved = prev.route.name !== s.route.name || prev.route.params.id !== s.route.params.id;
-  if (!moved && s.route.name === 'new') return;
-  const active = main.contains(document.activeElement) ? document.activeElement : null;
-  const keep = active?.id ? { id: active.id, pos: active.selectionStart } : null;
-  const { title, nodes } = view(s);
-  document.title = title;
-  main.replaceChildren(...nodes);
-  const here = '#/' + (s.route.name === 'list' ? '' : s.route.name);
-  for (const a of document.querySelectorAll('nav a')) {
-    if (a.getAttribute('href') === here) a.setAttribute('aria-current', 'page');
-    else a.removeAttribute('aria-current');
-  }
-  if (moved) main.querySelector('h1')?.focus();
-  else if (keep) {
-    const el = document.getElementById(keep.id);
-    el?.focus();
-    if (keep.pos != null) el?.setSelectionRange?.(keep.pos, keep.pos);
-  }
-}
-
-const search = debounce((form) => {
-  const p = new URLSearchParams();
-  for (const [k, v] of new FormData(form)) if (String(v).trim()) p.set(k, String(v));
-  const qs = String(p);
-  // من غير || '#/' لو الصفحة اتفتحت من غير # الـ ?q= كان هيروح للرابط نفسه مش للـ hash
-  const path = location.hash.split('?')[0] || '#/';
-  history.replaceState(null, '', path + (qs ? '?' + qs : ''));
-  store.setRoute(parseRoute(location.hash));
-}, 250);
-
-async function loadData() {
-  ctrl?.abort();
-  ctrl = new AbortController();
-  store.loading();
-  try {
-    store.loaded(await loadRecipes(DATA_URL, { signal: ctrl.signal }));
-  } catch (err) {
-    if (err.name !== 'AbortError') store.failed(explain(err));
-  }
-}
-
-main.addEventListener('input', (e) => {
-  const form = e.target.closest('[data-form="search"]');
-  if (form) search(form);
-});
-
-main.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (e.target.dataset.form === 'search') return search(e.target);
-  const res = store.addRecipe(Object.fromEntries(new FormData(e.target)));
-  if (!res.ok) return showErrors(e.target, res.errors);
-  location.hash = '#/r/' + encodeURIComponent(res.recipe.id);
-});
-
-function hideToast() {
-  clearTimeout(toastTimer);
-  toast.replaceChildren();
-}
-
-// «اتمسحت — رجّعها» لمدة ٥ ثواني، والفوكس على الزرار عشان اللي بيستخدم الكيبورد يلحقه
-function showUndo(title) {
-  hideToast();
-  toast.append('اتمسحت «' + title + '» ', h('button', { type: 'button', id: 'undo', 'data-action': 'undo' }, 'رجّعها'));
-  toast.querySelector('#undo').focus();
-  toastTimer = setTimeout(hideToast, 5000);
-}
-
-let removedId = '';
-
-function removeRecipe(id) {
-  const recipe = store.get().mine.find((r) => r.id === id);
-  if (!recipe) return;
-  // من صفحة الوصفة: نروح للقايمة الأول (replaceState عشان Back ميرجّعش لوصفة ممسوحة)
-  if (store.get().route.name === 'recipe') {
-    history.replaceState(null, '', '#/');
-    store.setRoute(parseRoute(location.hash));
-  }
-  store.removeRecipe(id);
-  removedId = id;
-  showUndo(recipe.title);
-}
-
-toast.addEventListener('click', (e) => {
-  if (!e.target.closest('[data-action="undo"]')) return;
-  hideToast();
-  if (store.undo()) (document.getElementById('del-' + removedId) ?? main.querySelector('h1'))?.focus();
-});
-
-main.addEventListener('click', (e) => {
-  const fav = e.target.closest('[data-fav]');
-  if (fav) { hideToast(); store.toggleFav(fav.dataset.fav); }
-  const del = e.target.closest('[data-remove]');
-  if (del) removeRecipe(del.dataset.remove);
-  if (e.target.closest('[data-action="retry"]')) loadData();
-});
-
-window.addEventListener('hashchange', () => store.setRoute(parseRoute(location.hash)));
-store.subscribe(paint);
-store.setRoute(parseRoute(location.hash));
-loadData();
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** الوصفات اللي انت ضفتها بس عليها زرار أحمر «امسح «الاسم»». المسح بيشيلها من القايمة ومن المفضلة، وتحت بيظهر شريط «اتمسحت «طعمية» رجّعها» والفوكس على «رجّعها»، فـ Enter لوحدها بترجّعها في نفس مكانها. لو سبته ٥ ثواني بيختفي. (في الصندوق ده مفيش [[localStorage]]، فلازم تضيف وصفة الأول.)
-
-## الملفات
-
-~~~text
-recipe-undo/
-├── index.html      + <div id="toast" role="status">
-├── style.css       + .danger و .toast
-├── src/store.js    + history و removeRecipe و undo و canUndo (حل تمرين «ابني feature في الـ store بس»)
-├── src/view.js     + removeButton في الكارت وصفحة الوصفة
-├── src/app.js      + الشريط والمسح ورجّعها
-├── src/logic.js  src/storage.js  src/api.js  data/recipes.json   زي الأساسية
-└── tests/          الأربعة الأساسيين + undo.test.js + undo.dom.test.js
-~~~
-
-الملفات اللي مش مكتوبة هنا زي النسخة الأساسية بالظبط، وكودها كامل في حل تمرين «انشره بجد واعمل README» في درس «مشروع التخرّج ٤: الاختبارات والنشر». ابدأ من نسخة منها:
-
-~~~bash
-cp -r recipe-book recipe-undo
-cd recipe-undo
-~~~
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>دفتر الوصفات</title>
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./src/app.js"></script>
-</head>
-<body>
-  <header>
-    <nav aria-label="الأقسام">
-      <a href="#/">الوصفات</a>
-      <a href="#/fav">المفضلة</a>
-      <a href="#/new">وصفة جديدة</a>
-    </nav>
-  </header>
-  <main id="main"></main>
-  <div id="toast" class="toast" role="status"></div>
-  <noscript>التطبيق ده محتاج JavaScript يكون شغال.</noscript>
-</body>
-</html>
-~~~
-
-~~~css style.css
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #1d1d1f; background: #faf7f2; }
-header { background: #7a3e12; }
-nav { display: flex; flex-wrap: wrap; gap: .25rem; max-width: 52rem; margin: 0 auto; padding: .5rem 1rem; }
-nav a { color: #fff; padding: .4rem .8rem; border-radius: 6px; text-decoration: none; }
-nav a[aria-current="page"] { background: #fff; color: #7a3e12; font-weight: 700; }
-main { max-width: 52rem; margin: 0 auto; padding: 1rem; }
-h1 { margin: .5rem 0 1rem; }
-h1:focus { outline: none; }
-:focus-visible { outline: 3px solid #1a73e8; outline-offset: 2px; }
-form[role="search"] { display: grid; grid-template-columns: 1fr; gap: .25rem; margin-bottom: .5rem; }
-@media (min-width: 640px) { form[role="search"] { grid-template-columns: auto 1fr auto auto; align-items: center; gap: .5rem; } }
-input, select, textarea, button { font: inherit; padding: .45rem .6rem; border: 1px solid #b9b1a6; border-radius: 6px; background: #fff; max-width: 100%; }
-button { cursor: pointer; background: #f1e6d8; }
-button[type="submit"] { background: #7a3e12; color: #fff; border-color: #7a3e12; }
-.cards { list-style: none; padding: 0; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-.card { background: #fff; border: 1px solid #e4dccf; border-radius: 10px; padding: .75rem 1rem; }
-.card h2 { font-size: 1.15rem; margin: 0; }
-.meta { color: #5c5348; margin: .25rem 0 .5rem; }
-.steps { white-space: pre-line; }
-.notice { background: #fff4ce; border: 1px solid #e0c060; padding: .5rem .75rem; border-radius: 6px; }
-[role="alert"] { background: #fde7e9; border: 1px solid #d93025; padding: .5rem .75rem; border-radius: 6px; }
-.field { display: grid; gap: .2rem; margin-bottom: .75rem; }
-.err { color: #b3261e; margin: 0; min-height: 1.2em; }
-[aria-invalid="true"] { border-color: #b3261e; border-width: 2px; }
-.danger { background: #fde7e9; border-color: #d93025; }
-.toast:empty { display: none; }
-.toast { position: fixed; inset-inline: 1rem; bottom: 1rem; max-width: 30rem; margin-inline: auto; background: #1d1d1f; color: #fff; padding: .6rem 1rem; border-radius: 8px; display: flex; gap: 1rem; align-items: center; justify-content: space-between; }
-.toast button { background: #fff; }
-~~~
-
-~~~js src/store.js
-// src/store.js — الحالة. مصدر الحقيقة الوحيد، ومبيعرفش الـ DOM.
-import { validateRecipe, toggleFav } from './logic.js';
-import { load, save, browserStorage } from './storage.js';
-
-export function createStore(storage = browserStorage()) {
-  const saved = load(storage);
-  let state = {
-    recipes: [], mine: saved.mine, favs: saved.favs,
-    status: 'idle', error: '', notice: saved.warning ?? '',
-    route: { name: 'list', params: {}, query: {} },
-  };
-  const listeners = new Set();
-  const history = [];
-  const MAX_HISTORY = 20;
-
-  function set(patch) {
-    const prev = state;
-    state = { ...state, ...patch };
-    if ((state.mine !== prev.mine || state.favs !== prev.favs) && !save(state, storage)) {
-      state = { ...state, notice: 'مقدرناش نحفظ: التخزين مليان أو مقفول' };
-    }
-    listeners.forEach((fn) => fn(state, prev));
-  }
-
-  // قبل أي تغيير في mine أو favs: نحفظ الاتنين زي ما هما (reference بس، مفيش نسخ)
-  function remember() {
-    history.push({ mine: state.mine, favs: state.favs });
-    if (history.length > MAX_HISTORY) history.shift();
-  }
-
-  return {
-    get: () => state,
-    subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn); },
-    setRoute: (route) => set({ route }),
-    loading: () => set({ status: 'loading', error: '' }),
-    loaded: (recipes) => set({ status: 'ready', recipes }),
-    failed: (message) => set({ status: 'error', error: message }),
-    toggleFav(id) {
-      remember();
-      set({ favs: toggleFav(state.favs, id) });
-    },
-    addRecipe(input) {
-      const res = validateRecipe(input);
-      if (!res.ok) return res;
-      const recipe = { id: 'u-' + crypto.randomUUID(), ...res.value };
-      remember();
-      set({ mine: [recipe, ...state.mine] });
-      return { ok: true, recipe };
-    },
-    removeRecipe(id) {
-      if (!state.mine.some((r) => r.id === id)) return false;
-      remember();
-      set({ mine: state.mine.filter((r) => r.id !== id), favs: state.favs.filter((f) => f !== id) });
-      return true;
-    },
-    undo() {
-      const last = history.pop();
-      if (!last) return false;
-      set(last);
-      return true;
-    },
-    canUndo: () => history.length > 0,
-  };
-}
-
-export const allRecipes = (s) => [...s.mine, ...s.recipes];
-~~~
-
-~~~js src/view.js
-// src/view.js — الشاشات من الحالة. بيبني عناصر بس، ومبيغيّرش الحالة.
-import { filterRecipes, allTags, MAX_TITLE } from './logic.js';
-import { allRecipes } from './store.js';
-
-export function h(tag, attrs = {}, ...kids) {
-  const el = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k.startsWith('aria-')) el.setAttribute(k, String(v));
-    else if (v === true) el.setAttribute(k, '');
-    else if (v !== false && v != null) el.setAttribute(k, String(v));
-  }
-  el.append(...kids.flat().filter((k) => k != null && k !== false));
-  return el;
-}
-
-const TITLES = { list: 'الوصفات', fav: 'المفضلة', new: 'وصفة جديدة', notfound: 'الصفحة دي مش موجودة' };
-
-export function view(s) {
-  const { name } = s.route;
-  const all = allRecipes(s);
-  const screen = name === 'recipe' ? recipeScreen(s, all) : { title: TITLES[name] ?? TITLES.notfound };
-  const nodes = screen.nodes
-    ?? (name === 'list' ? listScreen(s, screen.title, all)
-      : name === 'fav' ? listScreen(s, screen.title, all.filter((r) => s.favs.includes(r.id)))
-        : name === 'new' ? newScreen()
-          : notFound(screen.title));
-  if (s.notice) nodes.unshift(h('p', { class: 'notice', role: 'status' }, s.notice));
-  return { title: screen.title + ' · دفتر الوصفات', nodes };
-}
-
-function listScreen(s, title, list) {
-  const { q = '', tag = '' } = s.route.query;
-  const shown = filterRecipes(list, { q, tag });
-  return [
-    h('h1', { tabindex: -1 }, title),
-    h('form', { role: 'search', 'data-form': 'search' },
-      h('label', { for: 'q' }, 'دوّر باسم أو مكوّن'),
-      h('input', { id: 'q', name: 'q', type: 'search', value: q, autocomplete: 'off' }),
-      h('label', { for: 'tag' }, 'التصنيف'),
-      h('select', { id: 'tag', name: 'tag' }, h('option', { value: '' }, 'الكل'),
-        allTags(list).map((t) => h('option', { value: t, selected: t === tag }, t)))),
-    status(s, shown.length),
-    h('ul', { class: 'cards' }, shown.map((r) => card(s, r))),
-  ];
-}
-
-function status(s, shown) {
-  if (s.status === 'loading' || s.status === 'idle') return h('p', { role: 'status' }, 'بنحمّل الوصفات…');
-  if (s.status === 'error') return h('div', { role: 'alert' }, h('p', {}, s.error),
-    h('button', { type: 'button', 'data-action': 'retry' }, 'جرّب تاني'));
-  return h('p', { role: 'status' }, shown === 0 ? 'مفيش وصفات بالبحث ده' : $__bt$__{shown} وصفة$__bt);
-}
-
-const favButton = (s, id) => {
-  const on = s.favs.includes(id);
-  return h('button', { type: 'button', id: 'fav-' + id, 'data-fav': id, 'aria-pressed': on }, on ? '★ في المفضلة' : '☆ للمفضلة');
-};
-
-const meta = (r) => h('p', { class: 'meta' }, r.minutes + ' دقيقة' + (r.tags.length ? ' · ' + r.tags.join('، ') : ''));
-
-// زرار المسح بيظهر على وصفاتك انت بس (اللي الـ id بتاعها بيبدأ بـ u-)
-const removeButton = (r) => (r.id.startsWith('u-')
-  ? h('button', { type: 'button', id: 'del-' + r.id, 'data-remove': r.id, class: 'danger' }, 'امسح «' + r.title + '»')
-  : null);
-
-function card(s, r) {
-  return h('li', { class: 'card' },
-    h('h2', {}, h('a', { href: '#/r/' + encodeURIComponent(r.id) }, r.title)),
-    meta(r), favButton(s, r.id), ' ', removeButton(r));
-}
-
-function recipeScreen(s, all) {
-  const r = all.find((x) => x.id === s.route.params.id);
-  if (r) {
-    return { title: r.title, nodes: [
-      h('h1', { tabindex: -1 }, r.title), meta(r), favButton(s, r.id), ' ', removeButton(r),
-      h('h2', {}, 'المكوّنات'), h('ul', {}, r.ingredients.map((i) => h('li', {}, i))),
-      h('h2', {}, 'الطريقة'), h('p', { class: 'steps' }, r.steps),
-      h('p', {}, h('a', { href: '#/' }, 'كل الوصفات')),
-    ] };
-  }
-  if (s.status === 'loading' || s.status === 'idle') return { title: 'بنحمّل', nodes: [h('h1', { tabindex: -1 }, 'بنحمّل الوصفة…')] };
-  if (s.status === 'error') return { title: 'حصل خطأ', nodes: [h('h1', { tabindex: -1 }, 'حصل خطأ'), status(s, 0)] };
-  return { title: 'الوصفة دي مش موجودة', nodes: notFound('الوصفة دي مش موجودة') };
-}
-
-const notFound = (title) => [h('h1', { tabindex: -1 }, title), h('p', {}, h('a', { href: '#/' }, 'ارجع لكل الوصفات'))];
-
-function field(name, label, control) {
-  return h('div', { class: 'field' }, h('label', { for: name }, label), control, h('p', { id: name + '-err', class: 'err' }));
-}
-
-function newScreen() {
-  const a = (name) => ({ id: name, name, 'aria-describedby': name + '-err' });
-  return [
-    h('h1', { tabindex: -1 }, 'وصفة جديدة'),
-    h('form', { 'data-form': 'add', novalidate: true },
-      field('title', 'الاسم', h('input', { ...a('title'), required: true, maxlength: MAX_TITLE, autocomplete: 'off' })),
-      field('minutes', 'الوقت بالدقايق', h('input', { ...a('minutes'), required: true, inputmode: 'numeric' })),
-      field('ingredients', 'المكوّنات، كل واحد في سطر', h('textarea', { ...a('ingredients'), required: true, rows: 4 })),
-      field('steps', 'الطريقة', h('textarea', { ...a('steps'), required: true, rows: 4 })),
-      field('tags', 'التصنيفات، افصل بينهم بفاصلة', h('input', { ...a('tags'), autocomplete: 'off' })),
-      h('button', { type: 'submit' }, 'احفظ الوصفة')),
-  ];
-}
-
-export function showErrors(form, errors) {
-  for (const el of form.querySelectorAll('[name]')) {
-    const msg = errors[el.name] ?? '';
-    form.querySelector('#' + el.name + '-err').textContent = msg;
-    if (msg) el.setAttribute('aria-invalid', 'true');
-    else el.removeAttribute('aria-invalid');
-  }
-  form.querySelector('[aria-invalid="true"]')?.focus();
-}
-~~~
-
-~~~js src/app.js
-// src/app.js — التوصيل: أحداث ← حالة ← شاشة. الوحيد اللي بيعرف الصفحة والحالة مع بعض.
-import { parseRoute, debounce } from './logic.js';
-import { createStore } from './store.js';
-import { loadRecipes, explain } from './api.js';
-import { view, showErrors, h } from './view.js';
-
-const DATA_URL = './data/recipes.json';
-const store = createStore();
-const main = document.getElementById('main');
-const toast = document.getElementById('toast');
-let toastTimer = 0;
-let ctrl = null;
-
-function paint(s, prev) {
-  main.setAttribute('aria-busy', String(s.status === 'loading'));
-  const moved = prev.route.name !== s.route.name || prev.route.params.id !== s.route.params.id;
-  if (!moved && s.route.name === 'new') return;
-  const active = main.contains(document.activeElement) ? document.activeElement : null;
-  const keep = active?.id ? { id: active.id, pos: active.selectionStart } : null;
-  const { title, nodes } = view(s);
-  document.title = title;
-  main.replaceChildren(...nodes);
-  const here = '#/' + (s.route.name === 'list' ? '' : s.route.name);
-  for (const a of document.querySelectorAll('nav a')) {
-    if (a.getAttribute('href') === here) a.setAttribute('aria-current', 'page');
-    else a.removeAttribute('aria-current');
-  }
-  if (moved) main.querySelector('h1')?.focus();
-  else if (keep) {
-    const el = document.getElementById(keep.id);
-    el?.focus();
-    if (keep.pos != null) el?.setSelectionRange?.(keep.pos, keep.pos);
-  }
-}
-
-const search = debounce((form) => {
-  const p = new URLSearchParams();
-  for (const [k, v] of new FormData(form)) if (String(v).trim()) p.set(k, String(v));
-  const qs = String(p);
-  // من غير || '#/' لو الصفحة اتفتحت من غير # الـ ?q= كان هيروح للرابط نفسه مش للـ hash
-  const path = location.hash.split('?')[0] || '#/';
-  history.replaceState(null, '', path + (qs ? '?' + qs : ''));
-  store.setRoute(parseRoute(location.hash));
-}, 250);
-
-async function loadData() {
-  ctrl?.abort();
-  ctrl = new AbortController();
-  store.loading();
-  try {
-    store.loaded(await loadRecipes(DATA_URL, { signal: ctrl.signal }));
-  } catch (err) {
-    if (err.name !== 'AbortError') store.failed(explain(err));
-  }
-}
-
-main.addEventListener('input', (e) => {
-  const form = e.target.closest('[data-form="search"]');
-  if (form) search(form);
-});
-
-main.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (e.target.dataset.form === 'search') return search(e.target);
-  const res = store.addRecipe(Object.fromEntries(new FormData(e.target)));
-  if (!res.ok) return showErrors(e.target, res.errors);
-  location.hash = '#/r/' + encodeURIComponent(res.recipe.id);
-});
-
-function hideToast() {
-  clearTimeout(toastTimer);
-  toast.replaceChildren();
-}
-
-// «اتمسحت — رجّعها» لمدة ٥ ثواني، والفوكس على الزرار عشان اللي بيستخدم الكيبورد يلحقه
-function showUndo(title) {
-  hideToast();
-  toast.append('اتمسحت «' + title + '» ', h('button', { type: 'button', id: 'undo', 'data-action': 'undo' }, 'رجّعها'));
-  toast.querySelector('#undo').focus();
-  toastTimer = setTimeout(hideToast, 5000);
-}
-
-let removedId = '';
-
-function removeRecipe(id) {
-  const recipe = store.get().mine.find((r) => r.id === id);
-  if (!recipe) return;
-  // من صفحة الوصفة: نروح للقايمة الأول (replaceState عشان Back ميرجّعش لوصفة ممسوحة)
-  if (store.get().route.name === 'recipe') {
-    history.replaceState(null, '', '#/');
-    store.setRoute(parseRoute(location.hash));
-  }
-  store.removeRecipe(id);
-  removedId = id;
-  showUndo(recipe.title);
-}
-
-toast.addEventListener('click', (e) => {
-  if (!e.target.closest('[data-action="undo"]')) return;
-  hideToast();
-  if (store.undo()) (document.getElementById('del-' + removedId) ?? main.querySelector('h1'))?.focus();
-});
-
-main.addEventListener('click', (e) => {
-  const fav = e.target.closest('[data-fav]');
-  if (fav) { hideToast(); store.toggleFav(fav.dataset.fav); }
-  const del = e.target.closest('[data-remove]');
-  if (del) removeRecipe(del.dataset.remove);
-  if (e.target.closest('[data-action="retry"]')) loadData();
-});
-
-window.addEventListener('hashchange', () => store.setRoute(parseRoute(location.hash)));
-store.subscribe(paint);
-store.setRoute(parseRoute(location.hash));
-loadData();
-~~~
-
-## الأجزاء المهمة
-
-| الحتة | ليه |
-|---|---|
-| [[r.id.startsWith('u-')]] | وصفات اليوزر بس اتعملت بـ [[u-]] قدام الـ id، فوصفات الملف مفيهاش زرار، و [[removeRecipe]] نفسها بترفضها لو حد نادى عليها |
-| [[removeRecipe]] في الـ store | بتشيل من [[mine]] و [[favs]] في [[set]] واحد، فمفيش مفضلة بتشاور على وصفة ميتة ولا حفظة نص |
-| [[undo()]] | بترجّع [[mine]] القديمة كلها (reference)، فالوصفة بترجع **في نفس مكانها** مش في الأول أو الآخر |
-| الشريط برّه [[<main>]] | [[paint]] بيمسح [[<main>]] مع كل تغيير، فلو الشريط جوه كان هيتمسح أول ما الوصفة تتشال |
-| [[role="status"]] على الشريط | الـ screen reader بيقرا «اتمسحت...» من غير ما الفوكس يتحرك |
-| الفوكس على «رجّعها» ثم على زرار مسح الوصفة | العنصر اللي كان ماسك الفوكس (زرار المسح) اتشال، فلازم نحطه في مكان له معنى، وبعد الرجوع بيرجع على نفس الزرار |
-| [[hideToast()]] مع أي toggle مفضلة | [[undo]] بترجّع **آخر** تغيير. لو حطيت حاجة في المفضلة بعد المسح، «رجّعها» كانت هترجّع المفضلة مش الوصفة، فالشريط بيقفل |
-| [[history.replaceState]] من صفحة الوصفة | بنروح للقايمة من غير خطوة في الـ history، فـ Back مبيوديش لوصفة ممسوحة |
-
-## الاختبارات
-
-~~~js tests/undo.test.js
-import { it, expect, vi } from 'vitest';
-import { createStore } from '../src/store.js';
-
-const KEY = 'recipe-book:v1';
-const fake = () => {
-  const m = new Map();
-  return { m, getItem: (k) => m.get(k) ?? null, setItem: vi.fn((k, v) => m.set(k, String(v))) };
-};
-const input = { title: 'طعمية', minutes: '25', ingredients: 'فول\nكزبرة', steps: 'اطحن واقلي' };
-
-it('المسح بيشيل الوصفة من mine ومن favs في حفظة واحدة', () => {
-  const s = fake();
-  const store = createStore(s);
-  const { recipe } = store.addRecipe(input);
-  store.toggleFav(recipe.id);
-  s.setItem.mockClear();
-  expect(store.removeRecipe(recipe.id)).toBe(true);
-  expect(store.get().mine).toEqual([]);
-  expect(store.get().favs).toEqual([]);
-  expect(s.setItem).toHaveBeenCalledTimes(1);
-  expect(JSON.parse(s.m.get(KEY))).toEqual({ version: 1, mine: [], favs: [] });
-});
-
-it('undo بيرجّع الوصفة والمفضلة الاتنين', () => {
-  const s = fake();
-  const store = createStore(s);
-  const { recipe } = store.addRecipe(input);
-  store.toggleFav(recipe.id);
-  store.removeRecipe(recipe.id);
-  expect(store.undo()).toBe(true);
-  expect(store.get().mine.map((r) => r.title)).toEqual(['طعمية']);
-  expect(store.get().favs).toEqual([recipe.id]);
-  expect(JSON.parse(s.m.get(KEY)).favs).toEqual([recipe.id]);
-});
-
-it('undo من غير تاريخ: false ومحدش اتبلّغ', () => {
-  const store = createStore(fake());
-  const fn = vi.fn();
-  store.subscribe(fn);
-  expect(store.undo()).toBe(false);
-  expect(fn).not.toHaveBeenCalled();
-});
-
-it('التاريخ ٢٠ خطوة بس', () => {
-  const store = createStore(fake());
-  for (let i = 0; i < 25; i++) store.toggleFav('r' + i);
-  let n = 0;
-  while (store.undo()) n++;
-  expect(n).toBe(20);
-  expect(store.get().favs).toEqual(['r0', 'r1', 'r2', 'r3', 'r4']);
-});
-
-it('مسح وصفة من الملف (مش بتاعتك) مبيعملش حاجة', () => {
-  const store = createStore(fake());
-  store.loaded([{ id: 'foul', title: 'فول', minutes: 15, ingredients: ['a', 'b'], tags: [], steps: '.' }]);
-  expect(store.removeRecipe('foul')).toBe(false);
-  expect(store.canUndo()).toBe(false);
-});
-~~~
-
-~~~js tests/undo.dom.test.js
-// @vitest-environment jsdom
-import { it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { readFileSync } from 'node:fs';
-
-const html = readFileSync('index.html', 'utf8');
-const data = readFileSync('data/recipes.json', 'utf8');
 const $ = (sel) => document.querySelector(sel);
-const $$ = (sel) => [...document.querySelectorAll(sel)];
-const titles = () => $$('.card h2').map((e) => e.textContent);
-
-async function start(hash = '#/') {
-  vi.resetModules();
-  // eslint-disable-next-line no-restricted-properties -- HTML بتاعنا من الملف، مش من يوزر
-  document.documentElement.innerHTML = html.replace(/<script[^>]*><\/script>/, '');
-  history.replaceState(null, '', '/' + hash);
-  vi.stubGlobal('fetch', vi.fn(async () => new Response(data)));
-  await import('../src/app.js');
-  await vi.waitFor(() => expect($('#main').getAttribute('aria-busy')).toBe('false'));
-}
-
-// وصفة محفوظة من قبل، ومعاها في المفضلة
-const mine = { id: 'u-1', title: 'طعمية', minutes: 25, ingredients: ['فول', 'كزبرة'], tags: [], steps: 'اقلي' };
-beforeEach(() => localStorage.setItem('recipe-book:v1', JSON.stringify({ version: 1, mine: [mine], favs: ['u-1', 'foul'] })));
-afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); localStorage.clear(); });
-
-it('زرار المسح على وصفاتك بس', async () => {
-  await start();
-  expect($$('[data-remove]').map((b) => b.dataset.remove)).toEqual(['u-1']);
-});
-
-it('المسح ورجّعها: نفس المكان، والمفضلة، والفوكس', async () => {
-  await start();
-  $('#del-u-1').click();
-  expect(titles()).not.toContain('طعمية');
-  expect($('#toast').textContent).toBe('اتمسحت «طعمية» رجّعها');
-  expect(document.activeElement.id).toBe('undo');
-  expect(JSON.parse(localStorage.getItem('recipe-book:v1')).favs).toEqual(['foul']);
-  $('#undo').click();
-  expect(titles()[0]).toBe('طعمية');
-  expect($('#toast').textContent).toBe('');
-  expect(document.activeElement.id).toBe('del-u-1');
-  expect(JSON.parse(localStorage.getItem('recipe-book:v1')).favs).toEqual(['u-1', 'foul']);
-});
-
-it('الرسالة بتختفي بعد ٥ ثواني', async () => {
-  await start();
-  vi.useFakeTimers();
-  $('#del-u-1').click();
-  vi.advanceTimersByTime(4999);
-  expect($('#undo')).not.toBeNull();
-  vi.advanceTimersByTime(1);
-  expect($('#undo')).toBeNull();
-});
-
-it('من صفحة الوصفة: بيرجع للقايمة والفوكس على رجّعها', async () => {
-  await start('#/r/u-1');
-  $('#del-u-1').click();
-  expect(location.hash).toBe('#/');
-  expect($('h1').textContent).toBe('الوصفات');
-  expect(document.activeElement.id).toBe('undo');
-});
-~~~
-
-~~~text الناتج: npm run check (ESLint 10.15، Vitest 5.1.1، jsdom 31)
- Test Files  6 passed (6)
-      Tests  52 passed (52)
-~~~
-
-الـ ٤٣ الأساسيين، و ٥ للـ store، و ٤ للشاشة. واختبار «[[favs]] مفيهاش id ميت» هو [[toEqual(['foul'])]] في المحفوظ بعد المسح.
-
-## اتجرّب في Chrome 158 (من سيرفر)
-
-~~~text الناتج
-أضفت «طعمية»، وحطيتها في المفضلة، ودوست «امسح» من صفحتها
-  الرابط            #/
-  الشريط            اتمسحت «طعمية» رجّعها
-  الفوكس            #undo
-  localStorage      {"version":1,"mine":[],"favs":[]}
-Enter على «رجّعها»
-  أول كارت          طعمية       والفوكس على del-u-…   والمفضلة فيها 1
-reload              طعمية لسه أول كارت
-امسح وسيبه          الشريط اختفى بعد 5.5 ثانية (الـ 5 ثواني + وقت Playwright في السؤال)
-scrollWidth/clientWidth   345/345   768/768   1280/1280
-pageerror           مفيش
-~~~
-
-## تشغّله إزاي
-
-~~~bash
-cd recipe-undo
-npm install
-npm run check
-python -m http.server 8000      # أو: npx --yes serve
-# وافتح http://localhost:8000
-~~~
-
-## الغلطة اللي حصلت
-
-أول نسخة كانت من صفحة الوصفة بتمسح الأول، وبعدين [[location.hash = '#/']]، وبعدين الشريط. في Chrome، والـ MutationObserver بيسجّل كل [[<h1>]] بيترسم:
-
-~~~text الناتج: النسخة الأولى، كليك «امسح» من #/r/u-1
-h1 اترسم       الوصفة دي مش موجودة  ←  الوصفات
-الفوكس بعدها    H1
-الشريط          اتمسحت «طعمية» رجّعها
-~~~
-
-مشكلتين: المسح عمل [[set]] والشاشة لسه [[recipe]]، فاترسمت «الوصفة دي مش موجودة» لحظة. وبعدين [[hashchange]] وصل (هو async، بعد ما الفوكس راح على «رجّعها»)، فـ [[paint]] شاف إن الشاشة اتغيّرت وحط الفوكس على [[<h1>]]. اللي بيستخدم الكيبورد كان هيدوس Enter ومفيش حاجة تحصل. ونفس الاختبار الرابع في jsdom وقع:
-
-~~~text الناتج: npx vitest run tests/undo.dom.test.js على النسخة الأولى
-   × من صفحة الوصفة: بيرجع للقايمة والفوكس على رجّعها 32ms
-AssertionError: expected 'الوصفة دي مش موجودة' to be 'الوصفات' // Object.is equality
-~~~
-
-التصليح: نغيّر الشاشة **الأول** بـ [[history.replaceState]] و [[store.setRoute]] (متزامن، من غير [[hashchange]])، وبعدين نمسح، وبعدين الشريط. بعدها الأربعة عدّوا.
-
-**الغلطة الشائعة:** تعمل «رجّعها» بإنك تحفظ الوصفة الممسوحة وتضيفها تاني بـ [[addRecipe]]. هترجع بـ id جديد (فالمفضلة القديمة مش هتلاقيها)، وفي أول اللستة مش مكانها.` },
-        { lvl: 'متوسط', dir: "recipe-edit", t: R`تعديل وصفة وتصدير واستيراد`, what: R`شاشة [[#/edit/ID]] بتفتح نفس الفورم متملي، والحفظ بيعدّي على [[validateRecipe]] زي الإضافة بالظبط. وزرار «صدّر» بينزّل [[recipes.json]] بوصفاتك بـ [[Blob]] و [[URL.createObjectURL]]، و «استورد» بيقرا ملف بـ [[input type=file]] وبيعدّي كل وصفة على [[isRecipe]]. من دروس «input type=file» و «مشروع التخرّج ٣: البيانات والأخطاء».`, done: R`تعديل الوقت لـ [[abc]] بيطلّع نفس رسالة الإضافة، والتصدير وبعده الاستيراد في متصفح تاني بيرجّع نفس الوصفات بالظبط، وملف فيه وصفة بايظة بيستورد السليم بس ويقول «اتجاهلنا ١»، وملف مش JSON بيطلّع رسالة ومبيوقعش التطبيق.`, sol: R`~~~view 560 التعديل والتصدير والاستيراد (ضيف وصفة، وبعدين «عدّل»)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>دفتر الوصفات</title>
-  <link rel="icon" href="data:,">
-  <style>
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #1d1d1f; background: #faf7f2; }
-header { background: #7a3e12; }
-nav { display: flex; flex-wrap: wrap; gap: .25rem; max-width: 52rem; margin: 0 auto; padding: .5rem 1rem; }
-nav a { color: #fff; padding: .4rem .8rem; border-radius: 6px; text-decoration: none; }
-nav a[aria-current="page"] { background: #fff; color: #7a3e12; font-weight: 700; }
-main { max-width: 52rem; margin: 0 auto; padding: 1rem; }
-h1 { margin: .5rem 0 1rem; }
-h1:focus { outline: none; }
-:focus-visible { outline: 3px solid #1a73e8; outline-offset: 2px; }
-form[role="search"] { display: grid; grid-template-columns: 1fr; gap: .25rem; margin-bottom: .5rem; }
-@media (min-width: 640px) { form[role="search"] { grid-template-columns: auto 1fr auto auto; align-items: center; gap: .5rem; } }
-input, select, textarea, button { font: inherit; padding: .45rem .6rem; border: 1px solid #b9b1a6; border-radius: 6px; background: #fff; max-width: 100%; }
-button { cursor: pointer; background: #f1e6d8; }
-button[type="submit"] { background: #7a3e12; color: #fff; border-color: #7a3e12; }
-.cards { list-style: none; padding: 0; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-.card { background: #fff; border: 1px solid #e4dccf; border-radius: 10px; padding: .75rem 1rem; }
-.card h2 { font-size: 1.15rem; margin: 0; }
-.meta { color: #5c5348; margin: .25rem 0 .5rem; }
-.steps { white-space: pre-line; }
-.notice { background: #fff4ce; border: 1px solid #e0c060; padding: .5rem .75rem; border-radius: 6px; }
-[role="alert"] { background: #fde7e9; border: 1px solid #d93025; padding: .5rem .75rem; border-radius: 6px; }
-.field { display: grid; gap: .2rem; margin-bottom: .75rem; }
-.err { color: #b3261e; margin: 0; min-height: 1.2em; }
-[aria-invalid="true"] { border-color: #b3261e; border-width: 2px; }
-.tools { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e4dccf; }
-.edit { margin-inline-start: .5rem; }
-.toast:empty { display: none; }
-.toast { position: fixed; inset-inline: 1rem; bottom: 1rem; max-width: 30rem; margin-inline: auto; background: #1d1d1f; color: #fff; padding: .6rem 1rem; border-radius: 8px; }
-  </style>
-</head>
-<body>
-  <header>
-    <nav aria-label="الأقسام">
-      <a href="#/">الوصفات</a>
-      <a href="#/fav">المفضلة</a>
-      <a href="#/new">وصفة جديدة</a>
-    </nav>
-  </header>
-  <main id="main"></main>
-  <div id="toast" class="toast" role="status"></div>
-  <noscript>التطبيق ده محتاج JavaScript يكون شغال.</noscript>
-<script type="module">
-// للعرض جوه الموقع بس: الصندوق ده iframe معزول (about:srcdoc)، فروابط # مبتمشيش لوحدها،
-// و history.replaceState بترمي SecurityError. السطور دي بتعمل نفس الحاجة بـ location.hash
-document.addEventListener('click', (e) => {
-  const a = e.target.closest('a[href^="#/"]');
-  if (a) { e.preventDefault(); location.hash = a.getAttribute('href'); }
-});
-const realReplace = history.replaceState.bind(history);
-history.replaceState = (state, title, url) => {
-  try { realReplace(state, title, url); } catch { location.hash = String(url).slice(String(url).indexOf('#')); }
-};
-const RECIPES = "[{\"id\":\"koshary\",\"title\":\"كشري\",\"minutes\":60,\"tags\":[\"مصري\",\"نباتي\"],\"ingredients\":[\"رز\",\"عدس بني\",\"مكرونة\",\"صلصة طماطم\",\"بصل مقرمش\"],\"steps\":\"اسلق العدس والرز مع بعض.\\nاسلق المكرونة لوحدها.\\nاعمل الصلصة بالطماطم والتوم والخل.\\nرص الطبق وفوقه البصل.\"},{\"id\":\"foul\",\"title\":\"فول مدمس\",\"minutes\":15,\"tags\":[\"فطار\",\"مصري\"],\"ingredients\":[\"فول مدمس\",\"زيت زيتون\",\"كمون\",\"ليمون\",\"ملح\"],\"steps\":\"سخّن الفول بمية قليلة.\\nاهرسه شوية.\\nضيف الزيت والكمون والليمون والملح.\"},{\"id\":\"shakshuka\",\"title\":\"شكشوكة\",\"minutes\":20,\"tags\":[\"فطار\"],\"ingredients\":[\"بيض\",\"طماطم\",\"فلفل\",\"بصل\",\"كمون\"],\"steps\":\"شوّح البصل والفلفل.\\nضيف الطماطم والكمون لحد ما تتسبك.\\nاكسر البيض فوقها وغطّيها.\"},{\"id\":\"salad\",\"title\":\"سلطة بلدي\",\"minutes\":10,\"tags\":[\"نباتي\"],\"ingredients\":[\"طماطم\",\"خيار\",\"بصل\",\"ليمون\",\"كمون\"],\"steps\":\"قطّع الخضار مكعبات صغيرة.\\nضيف الليمون والكمون والملح وقلّب.\"},{\"id\":\"roz-bel-laban\",\"title\":\"رز بلبن\",\"minutes\":40,\"tags\":[\"حلو\",\"مصري\"],\"ingredients\":[\"رز\",\"لبن\",\"سكر\",\"فانيليا\"],\"steps\":\"اسلق الرز في مية لحد ما يشربها.\\nضيف اللبن وقلّب على نار هادية.\\nضيف السكر والفانيليا وصبّه في طواجن.\"},{\"id\":\"basbousa\",\"title\":\"بسبوسة\",\"minutes\":50,\"tags\":[\"حلو\",\"مصري\"],\"ingredients\":[\"سميد\",\"زبادي\",\"سكر\",\"زبدة\",\"شربات\"],\"steps\":\"اخلط السميد والزبادي والسكر والزبدة.\\nافرده في صينية وقطّعه.\\nادخله الفرن وبعدين صب عليه الشربات.\"}]";
-const MAX_TITLE = 80;
-
-function isRecipe(r) {
-  return !!r && typeof r === 'object' && typeof r.id === 'string' && typeof r.title === 'string'
-    && Number.isFinite(r.minutes) && Array.isArray(r.ingredients) && Array.isArray(r.tags)
-    && typeof r.steps === 'string';
-}
-
-const toggleFav = (favs, id) => (favs.includes(id) ? favs.filter((f) => f !== id) : [...favs, id]);
-
-const toLatinDigits = (s) => String(s ?? '').replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
-
-function parseRoute(hash) {
-  const raw = String(hash ?? '').replace(/^#/, '') || '/';
-  const [path, qs = ''] = raw.split('?');
-  const query = Object.fromEntries(new URLSearchParams(qs));
-  const parts = path.split('/').filter(Boolean);
-  if (parts.length === 0) return { name: 'list', params: {}, query };
-  if (parts[0] === 'r' && parts.length === 2) return { name: 'recipe', params: { id: decodeURIComponent(parts[1]) }, query };
-  if (parts.length === 1 && (parts[0] === 'new' || parts[0] === 'fav')) return { name: parts[0], params: {}, query };
-  if (parts[0] === 'edit' && parts.length === 2) return { name: 'edit', params: { id: decodeURIComponent(parts[1]) }, query };
-  return { name: 'notfound', params: {}, query };
-}
-
-function filterRecipes(list, { q = '', tag = '' } = {}) {
-  const needle = q.trim().toLowerCase();
-  return list.filter((r) => (!tag || r.tags.includes(tag))
-    && (!needle || [r.title, ...r.ingredients].some((t) => t.toLowerCase().includes(needle))));
-}
-
-const allTags = (list) => [...new Set(list.flatMap((r) => r.tags))].sort((a, b) => a.localeCompare(b, 'ar'));
-
-function validateRecipe(input) {
-  const errors = {};
-  const title = String(input.title ?? '').trim();
-  const minutes = Number(toLatinDigits(input.minutes).trim() || NaN);
-  const ingredients = String(input.ingredients ?? '').split('\n').map((s) => s.trim()).filter(Boolean);
-  const steps = String(input.steps ?? '').trim();
-  const tags = [...new Set(String(input.tags ?? '').split(/[,،]/).map((s) => s.trim()).filter(Boolean))];
-  if (!title) errors.title = 'اكتب اسم الوصفة';
-  else if (title.length > MAX_TITLE) errors.title = $__btالاسم أطول من $__{MAX_TITLE} حرف$__bt;
-  if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) errors.minutes = 'الوقت بالدقايق، رقم صحيح من 1 لـ 1440';
-  if (ingredients.length < 2) errors.ingredients = 'اكتب مكوّنين على الأقل، كل واحد في سطر';
-  if (!steps) errors.steps = 'اكتب طريقة التحضير';
-  if (Object.keys(errors).length) return { ok: false, errors };
-  return { ok: true, value: { title, minutes, ingredients, steps, tags } };
-}
-
-// ملف استيراد: لستة وصفات. السليم اللي الـ id بتاعه مش موجود بيدخل، والباقي بيتعدّ
-function parseImport(text, takenIds = []) {
-  let data;
-  try { data = JSON.parse(text); } catch { return { ok: false, error: 'الملف ده مش JSON سليم' }; }
-  if (!Array.isArray(data)) return { ok: false, error: 'الملف مش لستة وصفات' };
-  const taken = new Set(takenIds);
-  const recipes = [];
-  for (const r of data) {
-    if (!isRecipe(r) || taken.has(r.id)) continue;
-    taken.add(r.id);
-    recipes.push({ id: r.id, title: r.title, minutes: r.minutes, ingredients: r.ingredients, steps: r.steps, tags: r.tags });
-  }
-  return { ok: true, recipes, skipped: data.length - recipes.length };
-}
-
-function debounce(fn, ms) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
-  };
-}
-
-
-const KEY = 'recipe-book:v1';
-
-// مجرد قراية localStorage بترمي SecurityError لو التخزين مقفول (أو صفحة sandboxed)، فبنقراه جوه try
-function browserStorage() {
-  try { return globalThis.localStorage ?? null; } catch { return null; }
-}
-
-function load(storage = browserStorage()) {
-  let raw;
-  try { raw = storage.getItem(KEY); } catch { return { mine: [], favs: [], warning: 'المتصفح قافل التخزين، ومش هنفتكر حاجة' }; }
-  if (raw === null) return { mine: [], favs: [] };
-  try {
-    const data = JSON.parse(raw);
-    if (data?.version !== 1) throw new Error('نسخة مش معروفة: ' + data?.version);
-    const mine = Array.isArray(data.mine) ? data.mine.filter(isRecipe) : [];
-    const favs = Array.isArray(data.favs) ? data.favs.filter((f) => typeof f === 'string') : [];
-    return { mine, favs };
-  } catch (err) {
-    try { storage.setItem(KEY + ':broken', raw); } catch { /* مفيش مكان، مش مشكلة */ }
-    return { mine: [], favs: [], warning: 'الداتا المحفوظة كانت بايظة (' + err.message + ')، واتحفظت نسخة منها' };
-  }
-}
-
-function save({ mine, favs }, storage = browserStorage()) {
-  try {
-    storage.setItem(KEY, JSON.stringify({ version: 1, mine, favs }));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-
-function createStore(storage = browserStorage()) {
-  const saved = load(storage);
-  let state = {
-    recipes: [], mine: saved.mine, favs: saved.favs,
-    status: 'idle', error: '', notice: saved.warning ?? '',
-    route: { name: 'list', params: {}, query: {} },
-  };
-  const listeners = new Set();
-
-  function set(patch) {
-    const prev = state;
-    state = { ...state, ...patch };
-    if ((state.mine !== prev.mine || state.favs !== prev.favs) && !save(state, storage)) {
-      state = { ...state, notice: 'مقدرناش نحفظ: التخزين مليان أو مقفول' };
-    }
-    listeners.forEach((fn) => fn(state, prev));
-  }
-
-  return {
-    get: () => state,
-    subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn); },
-    setRoute: (route) => set({ route }),
-    loading: () => set({ status: 'loading', error: '' }),
-    loaded: (recipes) => set({ status: 'ready', recipes }),
-    failed: (message) => set({ status: 'error', error: message }),
-    toggleFav: (id) => set({ favs: toggleFav(state.favs, id) }),
-    addRecipe(input) {
-      const res = validateRecipe(input);
-      if (!res.ok) return res;
-      const recipe = { id: 'u-' + crypto.randomUUID(), ...res.value };
-      set({ mine: [recipe, ...state.mine] });
-      return { ok: true, recipe };
-    },
-    // التعديل بيعدّي على نفس validateRecipe، والوصفة بتفضل في مكانها
-    updateRecipe(id, input) {
-      if (!state.mine.some((r) => r.id === id)) return { ok: false, errors: { title: 'الوصفة دي مش بتاعتك' } };
-      const res = validateRecipe(input);
-      if (!res.ok) return res;
-      const recipe = { id, ...res.value };
-      set({ mine: state.mine.map((r) => (r.id === id ? recipe : r)) });
-      return { ok: true, recipe };
-    },
-    importRecipes(list) {
-      if (list.length) set({ mine: [...list, ...state.mine] });
-    },
-  };
-}
-
-const allRecipes = (s) => [...s.mine, ...s.recipes];
-
-
-class HttpError extends Error {
-  constructor(status, url) {
-    super($__btHTTP $__{status} من $__{url}$__bt);
-    this.name = 'HttpError';
-    this.status = status;
-  }
-}
-
-class DataError extends Error {
-  name = 'DataError';
-}
-
-async function fetchJSON(url, { timeout = 8000, signal } = {}) {
-  const timer = AbortSignal.timeout(timeout);
-  const res = await fetch(url, { signal: signal ? AbortSignal.any([signal, timer]) : timer });
-  if (!res.ok) throw new HttpError(res.status, url);
-  return res.json();
-}
-
-async function loadRecipes(url, opts) {
-  const data = await fetchJSON(url, opts);
-  if (!Array.isArray(data)) throw new DataError('الرد مش لستة وصفات');
-  return data.filter(isRecipe);
-}
-
-function explain(err) {
-  if (err.name === 'TimeoutError') return 'السيرفر اتأخر في الرد. جرّب تاني.';
-  if (err instanceof HttpError) return err.status === 404 ? 'ملف الوصفات مش موجود (404).' : $__btالسيرفر رد بخطأ $__{err.status}. جرّب كمان شوية.$__bt;
-  if (err instanceof SyntaxError) return 'الرد وصل بس مش JSON سليم.';
-  if (err instanceof DataError) return 'الرد وصل بس شكله غلط.';
-  return 'مفيش اتصال. اتأكد من النت وجرّب تاني.';
-}
-
-
-function h(tag, attrs = {}, ...kids) {
-  const el = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k.startsWith('aria-')) el.setAttribute(k, String(v));
-    else if (v === true) el.setAttribute(k, '');
-    else if (v !== false && v != null) el.setAttribute(k, String(v));
-  }
-  el.append(...kids.flat().filter((k) => k != null && k !== false));
-  return el;
-}
-
-const TITLES = { list: 'الوصفات', fav: 'المفضلة', new: 'وصفة جديدة', notfound: 'الصفحة دي مش موجودة' };
-
-function view(s) {
-  const { name } = s.route;
-  const all = allRecipes(s);
-  const screen = name === 'recipe' ? recipeScreen(s, all)
-    : name === 'edit' ? editScreen(s)
-      : { title: TITLES[name] ?? TITLES.notfound };
-  const nodes = screen.nodes
-    ?? (name === 'list' ? listScreen(s, screen.title, all)
-      : name === 'fav' ? listScreen(s, screen.title, all.filter((r) => s.favs.includes(r.id)))
-        : name === 'new' ? newScreen()
-          : notFound(screen.title));
-  if (s.notice) nodes.unshift(h('p', { class: 'notice', role: 'status' }, s.notice));
-  return { title: screen.title + ' · دفتر الوصفات', nodes };
-}
-
-function listScreen(s, title, list) {
-  const { q = '', tag = '' } = s.route.query;
-  const shown = filterRecipes(list, { q, tag });
-  return [
-    h('h1', { tabindex: -1 }, title),
-    h('form', { role: 'search', 'data-form': 'search' },
-      h('label', { for: 'q' }, 'دوّر باسم أو مكوّن'),
-      h('input', { id: 'q', name: 'q', type: 'search', value: q, autocomplete: 'off' }),
-      h('label', { for: 'tag' }, 'التصنيف'),
-      h('select', { id: 'tag', name: 'tag' }, h('option', { value: '' }, 'الكل'),
-        allTags(list).map((t) => h('option', { value: t, selected: t === tag }, t)))),
-    status(s, shown.length),
-    h('ul', { class: 'cards' }, shown.map((r) => card(s, r))),
-    h('div', { class: 'tools' },
-      h('button', { type: 'button', 'data-action': 'export' }, 'صدّر وصفاتي'),
-      h('label', { for: 'import' }, 'استورد ملف وصفات'),
-      h('input', { id: 'import', type: 'file', accept: 'application/json,.json', 'data-action': 'import' })),
-  ];
-}
-
-function status(s, shown) {
-  if (s.status === 'loading' || s.status === 'idle') return h('p', { role: 'status' }, 'بنحمّل الوصفات…');
-  if (s.status === 'error') return h('div', { role: 'alert' }, h('p', {}, s.error),
-    h('button', { type: 'button', 'data-action': 'retry' }, 'جرّب تاني'));
-  return h('p', { role: 'status' }, shown === 0 ? 'مفيش وصفات بالبحث ده' : $__bt$__{shown} وصفة$__bt);
-}
-
-const favButton = (s, id) => {
-  const on = s.favs.includes(id);
-  return h('button', { type: 'button', id: 'fav-' + id, 'data-fav': id, 'aria-pressed': on }, on ? '★ في المفضلة' : '☆ للمفضلة');
-};
-
-const meta = (r) => h('p', { class: 'meta' }, r.minutes + ' دقيقة' + (r.tags.length ? ' · ' + r.tags.join('، ') : ''));
-
-function card(s, r) {
-  return h('li', { class: 'card' },
-    h('h2', {}, h('a', { href: '#/r/' + encodeURIComponent(r.id) }, r.title)),
-    meta(r), favButton(s, r.id), ' ', editLink(r));
-}
-
-function recipeScreen(s, all) {
-  const r = all.find((x) => x.id === s.route.params.id);
-  if (r) {
-    return { title: r.title, nodes: [
-      h('h1', { tabindex: -1 }, r.title), meta(r), favButton(s, r.id), ' ', editLink(r),
-      h('h2', {}, 'المكوّنات'), h('ul', {}, r.ingredients.map((i) => h('li', {}, i))),
-      h('h2', {}, 'الطريقة'), h('p', { class: 'steps' }, r.steps),
-      h('p', {}, h('a', { href: '#/' }, 'كل الوصفات')),
-    ] };
-  }
-  if (s.status === 'loading' || s.status === 'idle') return { title: 'بنحمّل', nodes: [h('h1', { tabindex: -1 }, 'بنحمّل الوصفة…')] };
-  if (s.status === 'error') return { title: 'حصل خطأ', nodes: [h('h1', { tabindex: -1 }, 'حصل خطأ'), status(s, 0)] };
-  return { title: 'الوصفة دي مش موجودة', nodes: notFound('الوصفة دي مش موجودة') };
-}
-
-const editLink = (r) => (r.id.startsWith('u-') ? h('a', { href: '#/edit/' + encodeURIComponent(r.id), class: 'edit' }, 'عدّل') : null);
-
-function editScreen(s) {
-  const r = s.mine.find((x) => x.id === s.route.params.id);
-  if (!r) return { title: 'مش موجودة', nodes: notFound('الوصفة دي مش موجودة أو مش بتاعتك') };
-  return { title: 'عدّل «' + r.title + '»', nodes: newScreen(r) };
-}
-
-const notFound = (title) => [h('h1', { tabindex: -1 }, title), h('p', {}, h('a', { href: '#/' }, 'ارجع لكل الوصفات'))];
-
-function field(name, label, control) {
-  return h('div', { class: 'field' }, h('label', { for: name }, label), control, h('p', { id: name + '-err', class: 'err' }));
-}
-
-// نفس الفورم للإضافة والتعديل: لو فيه وصفة، الخانات بتتملي منها
-function newScreen(r = null) {
-  const a = (name) => ({ id: name, name, 'aria-describedby': name + '-err' });
-  return [
-    h('h1', { tabindex: -1 }, r ? 'عدّل «' + r.title + '»' : 'وصفة جديدة'),
-    h('form', { 'data-form': r ? 'edit' : 'add', 'data-id': r?.id, novalidate: true },
-      field('title', 'الاسم', h('input', { ...a('title'), required: true, maxlength: MAX_TITLE, autocomplete: 'off', value: r?.title })),
-      field('minutes', 'الوقت بالدقايق', h('input', { ...a('minutes'), required: true, inputmode: 'numeric', value: r?.minutes })),
-      field('ingredients', 'المكوّنات، كل واحد في سطر', h('textarea', { ...a('ingredients'), required: true, rows: 4 }, r?.ingredients.join('\n'))),
-      field('steps', 'الطريقة', h('textarea', { ...a('steps'), required: true, rows: 4 }, r?.steps)),
-      field('tags', 'التصنيفات، افصل بينهم بفاصلة', h('input', { ...a('tags'), autocomplete: 'off', value: r?.tags.join('، ') })),
-      h('button', { type: 'submit' }, r ? 'احفظ التعديل' : 'احفظ الوصفة')),
-  ];
-}
-
-function showErrors(form, errors) {
-  for (const el of form.querySelectorAll('[name]')) {
-    const msg = errors[el.name] ?? '';
-    form.querySelector('#' + el.name + '-err').textContent = msg;
-    if (msg) el.setAttribute('aria-invalid', 'true');
-    else el.removeAttribute('aria-invalid');
-  }
-  form.querySelector('[aria-invalid="true"]')?.focus();
-}
-
-
-const DATA_URL = 'data:application/json;charset=utf-8,' + encodeURIComponent(RECIPES);
-const store = createStore();
-const main = document.getElementById('main');
-const toast = document.getElementById('toast');
-let toastTimer = 0;
-let ctrl = null;
-
-function paint(s, prev) {
-  main.setAttribute('aria-busy', String(s.status === 'loading'));
-  const moved = prev.route.name !== s.route.name || prev.route.params.id !== s.route.params.id;
-  if (!moved && (s.route.name === 'new' || s.route.name === 'edit')) return;
-  const active = main.contains(document.activeElement) ? document.activeElement : null;
-  const keep = active?.id ? { id: active.id, pos: active.selectionStart } : null;
-  const { title, nodes } = view(s);
-  document.title = title;
-  main.replaceChildren(...nodes);
-  const here = '#/' + (s.route.name === 'list' ? '' : s.route.name);
-  for (const a of document.querySelectorAll('nav a')) {
-    if (a.getAttribute('href') === here) a.setAttribute('aria-current', 'page');
-    else a.removeAttribute('aria-current');
-  }
-  if (moved) main.querySelector('h1')?.focus();
-  else if (keep) {
-    const el = document.getElementById(keep.id);
-    el?.focus();
-    if (keep.pos != null) el?.setSelectionRange?.(keep.pos, keep.pos);
-  }
-}
-
-const search = debounce((form) => {
-  const p = new URLSearchParams();
-  for (const [k, v] of new FormData(form)) if (String(v).trim()) p.set(k, String(v));
-  const qs = String(p);
-  // من غير || '#/' لو الصفحة اتفتحت من غير # الـ ?q= كان هيروح للرابط نفسه مش للـ hash
-  const path = location.hash.split('?')[0] || '#/';
-  history.replaceState(null, '', path + (qs ? '?' + qs : ''));
-  store.setRoute(parseRoute(location.hash));
-}, 250);
-
-async function loadData() {
-  ctrl?.abort();
-  ctrl = new AbortController();
-  store.loading();
-  try {
-    store.loaded(await loadRecipes(DATA_URL, { signal: ctrl.signal }));
-  } catch (err) {
-    if (err.name !== 'AbortError') store.failed(explain(err));
-  }
-}
-
-main.addEventListener('input', (e) => {
-  const form = e.target.closest('[data-form="search"]');
-  if (form) search(form);
-});
-
-main.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (e.target.dataset.form === 'search') return search(e.target);
-  const input = Object.fromEntries(new FormData(e.target));
-  const res = e.target.dataset.form === 'edit' ? store.updateRecipe(e.target.dataset.id, input) : store.addRecipe(input);
-  if (!res.ok) return showErrors(e.target, res.errors);
-  location.hash = '#/r/' + encodeURIComponent(res.recipe.id);
-});
-
-function say(text) {
-  clearTimeout(toastTimer);
-  toast.textContent = text;
-  toastTimer = setTimeout(() => { toast.textContent = ''; }, 6000);
-}
-
-// صدّر: Blob فيه JSON، ورابط مؤقت بـ download بيخلّي المتصفح ينزّله كملف
-function exportMine() {
-  const blob = new Blob([JSON.stringify(store.get().mine, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = h('a', { href: url, download: 'recipes.json' });
-  document.body.append(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-  return blob;
-}
-
-async function importFile(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const res = parseImport(await file.text(), allRecipes(store.get()).map((r) => r.id));
-  input.value = '';
-  if (!res.ok) return say(res.error);
-  store.importRecipes(res.recipes);
-  say('اتضاف ' + res.recipes.length + (res.skipped ? '، واتجاهلنا ' + res.skipped : ''));
-}
-
-main.addEventListener('change', (e) => {
-  if (e.target.matches('[data-action="import"]')) importFile(e.target);
-});
-
-main.addEventListener('click', (e) => {
-  if (e.target.closest('[data-action="export"]')) exportMine();
-  const fav = e.target.closest('[data-fav]');
-  if (fav) store.toggleFav(fav.dataset.fav);
-  if (e.target.closest('[data-action="retry"]')) loadData();
-});
-
-window.addEventListener('hashchange', () => store.setRoute(parseRoute(location.hash)));
-store.subscribe(paint);
-store.setRoute(parseRoute(location.hash));
-loadData();
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** الوصفات اللي انت ضفتها عليها رابط «عدّل» بيفتح [[#/edit/ID]] بنفس الفورم متملي. وتحت القايمة زرار «صدّر وصفاتي» بينزّل [[recipes.json]]، وخانة «استورد ملف وصفات» بتقرا ملف وتقول تحت «اتضاف ٢» أو «اتضاف ١، واتجاهلنا ١» أو «الملف ده مش JSON سليم». (في الصندوق ده التعديل والاستيراد شغالين، بس «صدّر» مبينزّلش حاجة: اتقاس، ٠ downloads، لأن المتصفح مبيسمحش بالتنزيل من iframe معزول. على صفحتك من سيرفر بينزّل عادي.)
-
-## الملفات
-
-~~~text
-recipe-edit/
-├── index.html      + <div id="toast" role="status">
-├── style.css       + .tools و .edit و .toast
-├── src/logic.js    + edit في parseRoute، و parseImport
-├── src/store.js    + updateRecipe و importRecipes
-├── src/view.js     + editScreen، و newScreen(r) بقت للاتنين، ورابط «عدّل»، وأدوات التصدير
-├── src/app.js      + الحفظ للتعديل، و exportMine و importFile
-├── src/storage.js  src/api.js  data/recipes.json   زي الأساسية
-└── tests/          الأربعة الأساسيين + edit.test.js + edit.dom.test.js
-~~~
-
-الملفات اللي مش مكتوبة هنا زي النسخة الأساسية بالظبط، وكودها كامل في حل تمرين «انشره بجد واعمل README» في درس «مشروع التخرّج ٤: الاختبارات والنشر». ابدأ من نسخة منها:
-
-~~~bash
-cp -r recipe-book recipe-edit
-cd recipe-edit
-~~~
-
-~~~html index.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>دفتر الوصفات</title>
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./src/app.js"></script>
-</head>
-<body>
-  <header>
-    <nav aria-label="الأقسام">
-      <a href="#/">الوصفات</a>
-      <a href="#/fav">المفضلة</a>
-      <a href="#/new">وصفة جديدة</a>
-    </nav>
-  </header>
-  <main id="main"></main>
-  <div id="toast" class="toast" role="status"></div>
-  <noscript>التطبيق ده محتاج JavaScript يكون شغال.</noscript>
-</body>
-</html>
-~~~
-
-~~~css style.css
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #1d1d1f; background: #faf7f2; }
-header { background: #7a3e12; }
-nav { display: flex; flex-wrap: wrap; gap: .25rem; max-width: 52rem; margin: 0 auto; padding: .5rem 1rem; }
-nav a { color: #fff; padding: .4rem .8rem; border-radius: 6px; text-decoration: none; }
-nav a[aria-current="page"] { background: #fff; color: #7a3e12; font-weight: 700; }
-main { max-width: 52rem; margin: 0 auto; padding: 1rem; }
-h1 { margin: .5rem 0 1rem; }
-h1:focus { outline: none; }
-:focus-visible { outline: 3px solid #1a73e8; outline-offset: 2px; }
-form[role="search"] { display: grid; grid-template-columns: 1fr; gap: .25rem; margin-bottom: .5rem; }
-@media (min-width: 640px) { form[role="search"] { grid-template-columns: auto 1fr auto auto; align-items: center; gap: .5rem; } }
-input, select, textarea, button { font: inherit; padding: .45rem .6rem; border: 1px solid #b9b1a6; border-radius: 6px; background: #fff; max-width: 100%; }
-button { cursor: pointer; background: #f1e6d8; }
-button[type="submit"] { background: #7a3e12; color: #fff; border-color: #7a3e12; }
-.cards { list-style: none; padding: 0; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-.card { background: #fff; border: 1px solid #e4dccf; border-radius: 10px; padding: .75rem 1rem; }
-.card h2 { font-size: 1.15rem; margin: 0; }
-.meta { color: #5c5348; margin: .25rem 0 .5rem; }
-.steps { white-space: pre-line; }
-.notice { background: #fff4ce; border: 1px solid #e0c060; padding: .5rem .75rem; border-radius: 6px; }
-[role="alert"] { background: #fde7e9; border: 1px solid #d93025; padding: .5rem .75rem; border-radius: 6px; }
-.field { display: grid; gap: .2rem; margin-bottom: .75rem; }
-.err { color: #b3261e; margin: 0; min-height: 1.2em; }
-[aria-invalid="true"] { border-color: #b3261e; border-width: 2px; }
-.tools { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e4dccf; }
-.edit { margin-inline-start: .5rem; }
-.toast:empty { display: none; }
-.toast { position: fixed; inset-inline: 1rem; bottom: 1rem; max-width: 30rem; margin-inline: auto; background: #1d1d1f; color: #fff; padding: .6rem 1rem; border-radius: 8px; }
-~~~
-
-~~~js src/logic.js
-// src/logic.js — القواعد: مفيهوش document ولا fetch، فبيشتغل في Node والمتصفح
-export const MAX_TITLE = 80;
-
-export function isRecipe(r) {
-  return !!r && typeof r === 'object' && typeof r.id === 'string' && typeof r.title === 'string'
-    && Number.isFinite(r.minutes) && Array.isArray(r.ingredients) && Array.isArray(r.tags)
-    && typeof r.steps === 'string';
-}
-
-export const toggleFav = (favs, id) => (favs.includes(id) ? favs.filter((f) => f !== id) : [...favs, id]);
-
-export const toLatinDigits = (s) => String(s ?? '').replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
-
-export function parseRoute(hash) {
-  const raw = String(hash ?? '').replace(/^#/, '') || '/';
-  const [path, qs = ''] = raw.split('?');
-  const query = Object.fromEntries(new URLSearchParams(qs));
-  const parts = path.split('/').filter(Boolean);
-  if (parts.length === 0) return { name: 'list', params: {}, query };
-  if (parts[0] === 'r' && parts.length === 2) return { name: 'recipe', params: { id: decodeURIComponent(parts[1]) }, query };
-  if (parts.length === 1 && (parts[0] === 'new' || parts[0] === 'fav')) return { name: parts[0], params: {}, query };
-  if (parts[0] === 'edit' && parts.length === 2) return { name: 'edit', params: { id: decodeURIComponent(parts[1]) }, query };
-  return { name: 'notfound', params: {}, query };
-}
-
-export function filterRecipes(list, { q = '', tag = '' } = {}) {
-  const needle = q.trim().toLowerCase();
-  return list.filter((r) => (!tag || r.tags.includes(tag))
-    && (!needle || [r.title, ...r.ingredients].some((t) => t.toLowerCase().includes(needle))));
-}
-
-export const allTags = (list) => [...new Set(list.flatMap((r) => r.tags))].sort((a, b) => a.localeCompare(b, 'ar'));
-
-export function validateRecipe(input) {
-  const errors = {};
-  const title = String(input.title ?? '').trim();
-  const minutes = Number(toLatinDigits(input.minutes).trim() || NaN);
-  const ingredients = String(input.ingredients ?? '').split('\n').map((s) => s.trim()).filter(Boolean);
-  const steps = String(input.steps ?? '').trim();
-  const tags = [...new Set(String(input.tags ?? '').split(/[,،]/).map((s) => s.trim()).filter(Boolean))];
-  if (!title) errors.title = 'اكتب اسم الوصفة';
-  else if (title.length > MAX_TITLE) errors.title = $__btالاسم أطول من $__{MAX_TITLE} حرف$__bt;
-  if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) errors.minutes = 'الوقت بالدقايق، رقم صحيح من 1 لـ 1440';
-  if (ingredients.length < 2) errors.ingredients = 'اكتب مكوّنين على الأقل، كل واحد في سطر';
-  if (!steps) errors.steps = 'اكتب طريقة التحضير';
-  if (Object.keys(errors).length) return { ok: false, errors };
-  return { ok: true, value: { title, minutes, ingredients, steps, tags } };
-}
-
-// ملف استيراد: لستة وصفات. السليم اللي الـ id بتاعه مش موجود بيدخل، والباقي بيتعدّ
-export function parseImport(text, takenIds = []) {
-  let data;
-  try { data = JSON.parse(text); } catch { return { ok: false, error: 'الملف ده مش JSON سليم' }; }
-  if (!Array.isArray(data)) return { ok: false, error: 'الملف مش لستة وصفات' };
-  const taken = new Set(takenIds);
-  const recipes = [];
-  for (const r of data) {
-    if (!isRecipe(r) || taken.has(r.id)) continue;
-    taken.add(r.id);
-    recipes.push({ id: r.id, title: r.title, minutes: r.minutes, ingredients: r.ingredients, steps: r.steps, tags: r.tags });
-  }
-  return { ok: true, recipes, skipped: data.length - recipes.length };
-}
-
-export function debounce(fn, ms) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
-  };
-}
-~~~
-
-~~~js src/store.js
-// src/store.js — الحالة. مصدر الحقيقة الوحيد، ومبيعرفش الـ DOM.
-import { validateRecipe, toggleFav } from './logic.js';
-import { load, save, browserStorage } from './storage.js';
-
-export function createStore(storage = browserStorage()) {
-  const saved = load(storage);
-  let state = {
-    recipes: [], mine: saved.mine, favs: saved.favs,
-    status: 'idle', error: '', notice: saved.warning ?? '',
-    route: { name: 'list', params: {}, query: {} },
-  };
-  const listeners = new Set();
-
-  function set(patch) {
-    const prev = state;
-    state = { ...state, ...patch };
-    if ((state.mine !== prev.mine || state.favs !== prev.favs) && !save(state, storage)) {
-      state = { ...state, notice: 'مقدرناش نحفظ: التخزين مليان أو مقفول' };
-    }
-    listeners.forEach((fn) => fn(state, prev));
-  }
-
-  return {
-    get: () => state,
-    subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn); },
-    setRoute: (route) => set({ route }),
-    loading: () => set({ status: 'loading', error: '' }),
-    loaded: (recipes) => set({ status: 'ready', recipes }),
-    failed: (message) => set({ status: 'error', error: message }),
-    toggleFav: (id) => set({ favs: toggleFav(state.favs, id) }),
-    addRecipe(input) {
-      const res = validateRecipe(input);
-      if (!res.ok) return res;
-      const recipe = { id: 'u-' + crypto.randomUUID(), ...res.value };
-      set({ mine: [recipe, ...state.mine] });
-      return { ok: true, recipe };
-    },
-    // التعديل بيعدّي على نفس validateRecipe، والوصفة بتفضل في مكانها
-    updateRecipe(id, input) {
-      if (!state.mine.some((r) => r.id === id)) return { ok: false, errors: { title: 'الوصفة دي مش بتاعتك' } };
-      const res = validateRecipe(input);
-      if (!res.ok) return res;
-      const recipe = { id, ...res.value };
-      set({ mine: state.mine.map((r) => (r.id === id ? recipe : r)) });
-      return { ok: true, recipe };
-    },
-    importRecipes(list) {
-      if (list.length) set({ mine: [...list, ...state.mine] });
-    },
-  };
-}
-
-export const allRecipes = (s) => [...s.mine, ...s.recipes];
-~~~
-
-~~~js src/view.js
-// src/view.js — الشاشات من الحالة. بيبني عناصر بس، ومبيغيّرش الحالة.
-import { filterRecipes, allTags, MAX_TITLE } from './logic.js';
-import { allRecipes } from './store.js';
-
-export function h(tag, attrs = {}, ...kids) {
-  const el = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k.startsWith('aria-')) el.setAttribute(k, String(v));
-    else if (v === true) el.setAttribute(k, '');
-    else if (v !== false && v != null) el.setAttribute(k, String(v));
-  }
-  el.append(...kids.flat().filter((k) => k != null && k !== false));
-  return el;
-}
-
-const TITLES = { list: 'الوصفات', fav: 'المفضلة', new: 'وصفة جديدة', notfound: 'الصفحة دي مش موجودة' };
-
-export function view(s) {
-  const { name } = s.route;
-  const all = allRecipes(s);
-  const screen = name === 'recipe' ? recipeScreen(s, all)
-    : name === 'edit' ? editScreen(s)
-      : { title: TITLES[name] ?? TITLES.notfound };
-  const nodes = screen.nodes
-    ?? (name === 'list' ? listScreen(s, screen.title, all)
-      : name === 'fav' ? listScreen(s, screen.title, all.filter((r) => s.favs.includes(r.id)))
-        : name === 'new' ? newScreen()
-          : notFound(screen.title));
-  if (s.notice) nodes.unshift(h('p', { class: 'notice', role: 'status' }, s.notice));
-  return { title: screen.title + ' · دفتر الوصفات', nodes };
-}
-
-function listScreen(s, title, list) {
-  const { q = '', tag = '' } = s.route.query;
-  const shown = filterRecipes(list, { q, tag });
-  return [
-    h('h1', { tabindex: -1 }, title),
-    h('form', { role: 'search', 'data-form': 'search' },
-      h('label', { for: 'q' }, 'دوّر باسم أو مكوّن'),
-      h('input', { id: 'q', name: 'q', type: 'search', value: q, autocomplete: 'off' }),
-      h('label', { for: 'tag' }, 'التصنيف'),
-      h('select', { id: 'tag', name: 'tag' }, h('option', { value: '' }, 'الكل'),
-        allTags(list).map((t) => h('option', { value: t, selected: t === tag }, t)))),
-    status(s, shown.length),
-    h('ul', { class: 'cards' }, shown.map((r) => card(s, r))),
-    h('div', { class: 'tools' },
-      h('button', { type: 'button', 'data-action': 'export' }, 'صدّر وصفاتي'),
-      h('label', { for: 'import' }, 'استورد ملف وصفات'),
-      h('input', { id: 'import', type: 'file', accept: 'application/json,.json', 'data-action': 'import' })),
-  ];
-}
-
-function status(s, shown) {
-  if (s.status === 'loading' || s.status === 'idle') return h('p', { role: 'status' }, 'بنحمّل الوصفات…');
-  if (s.status === 'error') return h('div', { role: 'alert' }, h('p', {}, s.error),
-    h('button', { type: 'button', 'data-action': 'retry' }, 'جرّب تاني'));
-  return h('p', { role: 'status' }, shown === 0 ? 'مفيش وصفات بالبحث ده' : $__bt$__{shown} وصفة$__bt);
-}
-
-const favButton = (s, id) => {
-  const on = s.favs.includes(id);
-  return h('button', { type: 'button', id: 'fav-' + id, 'data-fav': id, 'aria-pressed': on }, on ? '★ في المفضلة' : '☆ للمفضلة');
-};
-
-const meta = (r) => h('p', { class: 'meta' }, r.minutes + ' دقيقة' + (r.tags.length ? ' · ' + r.tags.join('، ') : ''));
-
-function card(s, r) {
-  return h('li', { class: 'card' },
-    h('h2', {}, h('a', { href: '#/r/' + encodeURIComponent(r.id) }, r.title)),
-    meta(r), favButton(s, r.id), ' ', editLink(r));
-}
-
-function recipeScreen(s, all) {
-  const r = all.find((x) => x.id === s.route.params.id);
-  if (r) {
-    return { title: r.title, nodes: [
-      h('h1', { tabindex: -1 }, r.title), meta(r), favButton(s, r.id), ' ', editLink(r),
-      h('h2', {}, 'المكوّنات'), h('ul', {}, r.ingredients.map((i) => h('li', {}, i))),
-      h('h2', {}, 'الطريقة'), h('p', { class: 'steps' }, r.steps),
-      h('p', {}, h('a', { href: '#/' }, 'كل الوصفات')),
-    ] };
-  }
-  if (s.status === 'loading' || s.status === 'idle') return { title: 'بنحمّل', nodes: [h('h1', { tabindex: -1 }, 'بنحمّل الوصفة…')] };
-  if (s.status === 'error') return { title: 'حصل خطأ', nodes: [h('h1', { tabindex: -1 }, 'حصل خطأ'), status(s, 0)] };
-  return { title: 'الوصفة دي مش موجودة', nodes: notFound('الوصفة دي مش موجودة') };
-}
-
-const editLink = (r) => (r.id.startsWith('u-') ? h('a', { href: '#/edit/' + encodeURIComponent(r.id), class: 'edit' }, 'عدّل') : null);
-
-function editScreen(s) {
-  const r = s.mine.find((x) => x.id === s.route.params.id);
-  if (!r) return { title: 'مش موجودة', nodes: notFound('الوصفة دي مش موجودة أو مش بتاعتك') };
-  return { title: 'عدّل «' + r.title + '»', nodes: newScreen(r) };
-}
-
-const notFound = (title) => [h('h1', { tabindex: -1 }, title), h('p', {}, h('a', { href: '#/' }, 'ارجع لكل الوصفات'))];
-
-function field(name, label, control) {
-  return h('div', { class: 'field' }, h('label', { for: name }, label), control, h('p', { id: name + '-err', class: 'err' }));
-}
-
-// نفس الفورم للإضافة والتعديل: لو فيه وصفة، الخانات بتتملي منها
-function newScreen(r = null) {
-  const a = (name) => ({ id: name, name, 'aria-describedby': name + '-err' });
-  return [
-    h('h1', { tabindex: -1 }, r ? 'عدّل «' + r.title + '»' : 'وصفة جديدة'),
-    h('form', { 'data-form': r ? 'edit' : 'add', 'data-id': r?.id, novalidate: true },
-      field('title', 'الاسم', h('input', { ...a('title'), required: true, maxlength: MAX_TITLE, autocomplete: 'off', value: r?.title })),
-      field('minutes', 'الوقت بالدقايق', h('input', { ...a('minutes'), required: true, inputmode: 'numeric', value: r?.minutes })),
-      field('ingredients', 'المكوّنات، كل واحد في سطر', h('textarea', { ...a('ingredients'), required: true, rows: 4 }, r?.ingredients.join('\n'))),
-      field('steps', 'الطريقة', h('textarea', { ...a('steps'), required: true, rows: 4 }, r?.steps)),
-      field('tags', 'التصنيفات، افصل بينهم بفاصلة', h('input', { ...a('tags'), autocomplete: 'off', value: r?.tags.join('، ') })),
-      h('button', { type: 'submit' }, r ? 'احفظ التعديل' : 'احفظ الوصفة')),
-  ];
-}
-
-export function showErrors(form, errors) {
-  for (const el of form.querySelectorAll('[name]')) {
-    const msg = errors[el.name] ?? '';
-    form.querySelector('#' + el.name + '-err').textContent = msg;
-    if (msg) el.setAttribute('aria-invalid', 'true');
-    else el.removeAttribute('aria-invalid');
-  }
-  form.querySelector('[aria-invalid="true"]')?.focus();
-}
-~~~
-
-~~~js src/app.js
-// src/app.js — التوصيل: أحداث ← حالة ← شاشة. الوحيد اللي بيعرف الصفحة والحالة مع بعض.
-import { parseRoute, debounce, parseImport } from './logic.js';
-import { createStore, allRecipes } from './store.js';
-import { loadRecipes, explain } from './api.js';
-import { view, showErrors, h } from './view.js';
-
-const DATA_URL = './data/recipes.json';
-const store = createStore();
-const main = document.getElementById('main');
-const toast = document.getElementById('toast');
-let toastTimer = 0;
-let ctrl = null;
-
-function paint(s, prev) {
-  main.setAttribute('aria-busy', String(s.status === 'loading'));
-  const moved = prev.route.name !== s.route.name || prev.route.params.id !== s.route.params.id;
-  if (!moved && (s.route.name === 'new' || s.route.name === 'edit')) return;
-  const active = main.contains(document.activeElement) ? document.activeElement : null;
-  const keep = active?.id ? { id: active.id, pos: active.selectionStart } : null;
-  const { title, nodes } = view(s);
-  document.title = title;
-  main.replaceChildren(...nodes);
-  const here = '#/' + (s.route.name === 'list' ? '' : s.route.name);
-  for (const a of document.querySelectorAll('nav a')) {
-    if (a.getAttribute('href') === here) a.setAttribute('aria-current', 'page');
-    else a.removeAttribute('aria-current');
-  }
-  if (moved) main.querySelector('h1')?.focus();
-  else if (keep) {
-    const el = document.getElementById(keep.id);
-    el?.focus();
-    if (keep.pos != null) el?.setSelectionRange?.(keep.pos, keep.pos);
-  }
-}
-
-const search = debounce((form) => {
-  const p = new URLSearchParams();
-  for (const [k, v] of new FormData(form)) if (String(v).trim()) p.set(k, String(v));
-  const qs = String(p);
-  // من غير || '#/' لو الصفحة اتفتحت من غير # الـ ?q= كان هيروح للرابط نفسه مش للـ hash
-  const path = location.hash.split('?')[0] || '#/';
-  history.replaceState(null, '', path + (qs ? '?' + qs : ''));
-  store.setRoute(parseRoute(location.hash));
-}, 250);
-
-async function loadData() {
-  ctrl?.abort();
-  ctrl = new AbortController();
-  store.loading();
-  try {
-    store.loaded(await loadRecipes(DATA_URL, { signal: ctrl.signal }));
-  } catch (err) {
-    if (err.name !== 'AbortError') store.failed(explain(err));
-  }
-}
-
-main.addEventListener('input', (e) => {
-  const form = e.target.closest('[data-form="search"]');
-  if (form) search(form);
-});
-
-main.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (e.target.dataset.form === 'search') return search(e.target);
-  const input = Object.fromEntries(new FormData(e.target));
-  const res = e.target.dataset.form === 'edit' ? store.updateRecipe(e.target.dataset.id, input) : store.addRecipe(input);
-  if (!res.ok) return showErrors(e.target, res.errors);
-  location.hash = '#/r/' + encodeURIComponent(res.recipe.id);
-});
-
-function say(text) {
-  clearTimeout(toastTimer);
-  toast.textContent = text;
-  toastTimer = setTimeout(() => { toast.textContent = ''; }, 6000);
-}
-
-// صدّر: Blob فيه JSON، ورابط مؤقت بـ download بيخلّي المتصفح ينزّله كملف
-function exportMine() {
-  const blob = new Blob([JSON.stringify(store.get().mine, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = h('a', { href: url, download: 'recipes.json' });
-  document.body.append(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-  return blob;
-}
-
-async function importFile(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const res = parseImport(await file.text(), allRecipes(store.get()).map((r) => r.id));
-  input.value = '';
-  if (!res.ok) return say(res.error);
-  store.importRecipes(res.recipes);
-  say('اتضاف ' + res.recipes.length + (res.skipped ? '، واتجاهلنا ' + res.skipped : ''));
-}
-
-main.addEventListener('change', (e) => {
-  if (e.target.matches('[data-action="import"]')) importFile(e.target);
-});
-
-main.addEventListener('click', (e) => {
-  if (e.target.closest('[data-action="export"]')) exportMine();
-  const fav = e.target.closest('[data-fav]');
-  if (fav) store.toggleFav(fav.dataset.fav);
-  if (e.target.closest('[data-action="retry"]')) loadData();
-});
-
-window.addEventListener('hashchange', () => store.setRoute(parseRoute(location.hash)));
-store.subscribe(paint);
-store.setRoute(parseRoute(location.hash));
-loadData();
-~~~
-
-## الأجزاء المهمة
-
-| الحتة | ليه |
-|---|---|
-| [[newScreen(r = null)]] | فورم واحد للإضافة والتعديل. الفرق: [[data-form]] و [[data-id]] والقيم. فأي خانة جديدة بتتضاف مرة واحدة |
-| [[value: r?.title]] | [[?.]] بترجّع [[undefined]] في الإضافة، و [[h()]] مبتكتبش attribute قيمته [[undefined]] |
-| الـ textarea بالنص كـ child | [[<textarea>]] مالهاش [[value]] attribute، قيمتها هي النص اللي جواها |
-| [[updateRecipe]] بـ [[validateRecipe]] | نفس الدالة ونفس الرسايل بالظبط، و [[map]] بتحط الوصفة الجديدة **في نفس مكانها** |
-| [[(s.route.name === 'new' \|\| s.route.name === 'edit')]] في [[paint]] | نفس حماية الفورم من الدرس: الداتا لو وصلت وانت بتعدّل، اللي كتبته ميتمسحش |
-| [[Blob]] و [[URL.createObjectURL]] | بيعملوا «ملف» في الذاكرة ورابط مؤقت ليه، و [[download="recipes.json"]] بيخلّي الكليك ينزّل بدل ما يفتح |
-| [[revokeObjectURL]] بعد ثانية | الرابط المؤقت بيمسك الذاكرة لحد ما يتلغي |
-| [[file.text()]] | بترجّع Promise بالنص. أسهل من [[FileReader]] القديم |
-| [[parseImport]] في [[logic.js]] | دالة pure بتاخد **نص**، فبتتختبر من غير ملفات. وبتبني كل وصفة من جديد بالمفاتيح الستة بس، فأي مفتاح زيادة في الملف بيتشال |
-| [[taken]] فيها ids الملف ووصفاتك | ملف متصدّر مرتين ميضاعفش الوصفات، ووصفة بـ id [[koshary]] متغطيش على الأصلية |
-| [[input.value = '']] | من غيرها اختيار **نفس** الملف تاني مبيطلقش [[change]] |
-| الرسالة في [[#toast]] برّه [[<main>]] | الاستيراد بيغيّر [[mine]] فالقايمة بتترسم من جديد. لو الرسالة جوه [[<main>]] كانت هتتمسح في نفس اللحظة |
-
-## الاختبارات
-
-~~~js tests/edit.test.js
-import { it, expect } from 'vitest';
-import { parseImport } from '../src/logic.js';
-import { createStore } from '../src/store.js';
-
-const mem = () => { const m = new Map(); return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) }; };
-const r = (id, title) => ({ id, title, minutes: 10, ingredients: ['a', 'b'], steps: '.', tags: [] });
-const input = { title: 'طعمية', minutes: '25', ingredients: 'فول\nكزبرة', steps: 'اقلي', tags: '' };
-
-it('parseImport: السليم بس، والمتكرر والبايظ بيتعدّوا', () => {
-  const text = JSON.stringify([r('u-1', 'طعمية'), { id: 'u-2', title: 'ناقصة' }, r('koshary', 'كشري تاني'), r('u-3', 'عدس')]);
-  const res = parseImport(text, ['koshary']);
-  expect(res.recipes.map((x) => x.title)).toEqual(['طعمية', 'عدس']);
-  expect(res.skipped).toBe(2);
-});
-
-it('parseImport: مش JSON، ومش لستة', () => {
-  expect(parseImport('hello')).toEqual({ ok: false, error: 'الملف ده مش JSON سليم' });
-  expect(parseImport('{"a":1}')).toEqual({ ok: false, error: 'الملف مش لستة وصفات' });
-});
-
-it('parseImport بيشيل أي مفتاح زيادة', () => {
-  const res = parseImport(JSON.stringify([{ ...r('u-1', 'x'), onerror: 'alert(1)' }]));
-  expect(Object.keys(res.recipes[0])).toEqual(['id', 'title', 'minutes', 'ingredients', 'steps', 'tags']);
-});
-
-it('updateRecipe: نفس رسايل الإضافة، والوصفة في مكانها', () => {
-  const store = createStore(mem());
-  const a = store.addRecipe(input).recipe;
-  store.addRecipe({ ...input, title: 'عدس' });
-  const bad = store.updateRecipe(a.id, { ...input, minutes: 'abc' });
-  expect(bad.errors.minutes).toBe(store.addRecipe({ ...input, minutes: 'abc' }).errors.minutes);
-  store.updateRecipe(a.id, { ...input, title: 'طعمية بالسمسم' });
-  expect(store.get().mine.map((x) => x.title)).toEqual(['عدس', 'طعمية بالسمسم']);
-  expect(store.updateRecipe('koshary', input).ok).toBe(false);
-});
-~~~
-
-~~~js tests/edit.dom.test.js
-// @vitest-environment jsdom
-import { it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { readFileSync } from 'node:fs';
-
-const html = readFileSync('index.html', 'utf8');
-const data = readFileSync('data/recipes.json', 'utf8');
-const $ = (sel) => document.querySelector(sel);
-const mine = { id: 'u-1', title: 'طعمية', minutes: 25, ingredients: ['فول', 'كزبرة'], tags: ['فطار'], steps: 'اقلي' };
-
-async function start(hash = '#/') {
-  vi.resetModules();
-  // eslint-disable-next-line no-restricted-properties -- HTML بتاعنا من الملف، مش من يوزر
-  document.documentElement.innerHTML = html.replace(/<script[^>]*><\/script>/, '');
-  history.replaceState(null, '', '/' + hash);
-  vi.stubGlobal('fetch', vi.fn(async () => new Response(data)));
-  await import('../src/app.js');
-  await vi.waitFor(() => expect($('#main').getAttribute('aria-busy')).toBe('false'));
-}
-
-beforeEach(() => localStorage.setItem('recipe-book:v1', JSON.stringify({ version: 1, mine: [mine], favs: [] })));
-afterEach(() => { vi.unstubAllGlobals(); localStorage.clear(); });
-
-it('#/edit/u-1: الفورم متملي، و abc بيطلّع نفس رسالة الإضافة', async () => {
-  await start('#/edit/u-1');
-  expect($('#title').value).toBe('طعمية');
-  expect($('#ingredients').value).toBe('فول\nكزبرة');
-  expect($('#tags').value).toBe('فطار');
-  $('#minutes').value = 'abc';
-  $('form[data-form="edit"] button').click();
-  expect($('#minutes-err').textContent).toBe('الوقت بالدقايق، رقم صحيح من 1 لـ 1440');
-  $('#minutes').value = '٣٠';
-  $('form[data-form="edit"] button').click();
-  await vi.waitFor(() => expect($('h1').textContent).toBe('طعمية'));
-  expect($('.meta').textContent).toContain('30 دقيقة');
-});
-
-it('وصفة من الملف مفيهاش «عدّل»، ورابطها بيقول مش بتاعتك', async () => {
-  await start('#/edit/koshary');
-  expect($('h1').textContent).toBe('الوصفة دي مش موجودة أو مش بتاعتك');
-});
-
-it('استيراد ملف فيه وصفة بايظة، وملف مش JSON', async () => {
-  await start();
-  // الشاشة بتترسم من جديد بعد كل استيراد، فبنجيب الخانة الجديدة كل مرة
-  const pick = (text) => {
-    const input = $('#import');
-    Object.defineProperty(input, 'files', { value: [new File([text], 'r.json')], configurable: true });
-    input.dispatchEvent(new Event('change', { bubbles: true }));
-  };
-  pick(JSON.stringify([{ ...mine, id: 'u-9', title: 'عدس' }, { id: 'u-8' }]));
-  await vi.waitFor(() => expect($('#toast').textContent).toBe('اتضاف 1، واتجاهلنا 1'));
-  expect($('.card h2').textContent).toBe('عدس');
-  pick('not json');
-  await vi.waitFor(() => expect($('#toast').textContent).toBe('الملف ده مش JSON سليم'));
-});
-
-it('صدّر: ملف JSON فيه وصفاتك بالظبط', async () => {
-  let blob;
-  URL.createObjectURL = vi.fn((b) => { blob = b; return 'blob:x'; });
-  URL.revokeObjectURL = vi.fn();
-  await start();
-  $('[data-action="export"]').click();
-  expect(JSON.parse(await blob.text())).toEqual([mine]);
-});
-~~~
-
-~~~text الناتج: npm run check (ESLint 10.15، Vitest 5.1.1، jsdom 31)
- Test Files  6 passed (6)
-      Tests  51 passed (51)
-~~~
-
-## اتجرّب في Chrome 158 (من سيرفر، Playwright)
-
-~~~text الناتج
-أضفت «طعمية» (25) و «عدس أصفر» (٤٠)، وفتحت «عدّل» على «عدس أصفر»
-  الوقت abc             الوقت بالدقايق، رقم صحيح من 1 لـ 1440   ← نفس رسالة الإضافة
-  الوقت 35 واحفظ        عدس أصفر | 35 دقيقة · مصري، فطار
-«صدّر وصفاتي»           download: recipes.json
-متصفح تاني (browser context جديد، localStorage فاضي)
-  استورد recipes.json   اتضاف 2   والكروت: عدس أصفر، طعمية، كشري
-  mine هنا == mine هناك true   (نفس الـ ids والقيم بالظبط)
-  استورد notes.txt      الملف ده مش JSON سليم
-  استورد نفس الملف تاني  اتضاف 0، واتجاهلنا 2
-scrollWidth/clientWidth   345/345   768/768   1280/1280
-pageerror               مفيش
-~~~
-
-## تشغّله إزاي
-
-~~~bash
-cd recipe-edit
-npm install
-npm run check
-python -m http.server 8000      # أو: npx --yes serve
-# وافتح http://localhost:8000
-~~~
-
-## الغلطة اللي حصلت
-
-أول نسخة من اختبار الاستيراد كانت ماسكة الخانة في متغير ([[const input = $('#import')]]) وبتستخدمه مرتين. التاني وقع:
-
-~~~text الناتج
- FAIL  tests/edit.dom.test.js > استيراد ملف فيه وصفة بايظة، وملف مش JSON
-AssertionError: expected 'اتضاف 1، واتجاهلنا 1' to be 'الملف ده مش JSON سليم' // Object.is equality
-~~~
-
-الاستيراد الأول غيّر [[mine]]، فـ [[paint]] رسم القايمة من جديد بخانة [[#import]] **جديدة**، والقديمة اللي في المتغير بقت برّه الصفحة، فالـ [[change]] بتاعها موصلش لـ [[<main>]] أصلًا. التصليح في الاختبار: نجيب الخانة من الصفحة كل مرة. وده نفس اللي بيحصل في الكود الحقيقي لو مسكت عنصر جوه [[<main>]] في متغير: بعد أول رسمة بيبقى ميت، وعشان كده كل الأحداث بالـ delegation على [[<main>]].
-
-**الغلطة الشائعة:** تستورد اللي في الملف زي ما هو ([[store.importRecipes(JSON.parse(text))]]). أول ملف فيه وصفة ناقص فيها [[tags]] هيوقع الشاشة كلها عند [[r.tags.join]]، وملف فيه id متكرر هيعمل كارتين بنفس الـ id وزرار مفضلة بيقلب الاتنين.` },
-        { lvl: 'متوسط', dir: "recipe-mealdb", t: R`بيانات من API عام بدل الملف`, what: R`بدّل [[data/recipes.json]] بـ API عام بيدعم CORS (زي TheMealDB، وشكل الرد من وثايقه)، والبحث بيبعت طلب للسيرفر بـ debounce و [[AbortController]] بيلغي الطلب القديم، وطبقة [[toRecipe(apiMeal)]] بتحوّل شكل الـ API لشكل التطبيق عشان [[view.js]] ميتغيّرش. من دروس «fetch و AbortController» و «debounce و throttle» و «مشروع: بحث بـ debounce».`, done: R`كتابة «chicken» بسرعة بتطلّع طلب واحد في تبويب Network بدل ٧، والطلبات اللي اتلغت ظاهرة canceled، والنت المقفول بيطلّع «جرّب تاني» وبيشتغل لما يرجع، و [[store.js]] و [[api.js]] ما اتغيّروش، و [[view.js]] اتغيّر فيه سطر واحد بس (الـ API مفيهوش وقت التحضير، فالوقت بيتكتب «مش مكتوب»)، واختبار لـ [[toRecipe]] على رد حقيقي متسجّل في ملف.`, sol: R`~~~view 560 دفتر الوصفات من TheMealDB (محتاج نت: اكتب lentil أو chicken في البحث)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>دفتر الوصفات</title>
-  <link rel="icon" href="data:,">
-  <style>
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #1d1d1f; background: #faf7f2; }
-header { background: #7a3e12; }
-nav { display: flex; flex-wrap: wrap; gap: .25rem; max-width: 52rem; margin: 0 auto; padding: .5rem 1rem; }
-nav a { color: #fff; padding: .4rem .8rem; border-radius: 6px; text-decoration: none; }
-nav a[aria-current="page"] { background: #fff; color: #7a3e12; font-weight: 700; }
-main { max-width: 52rem; margin: 0 auto; padding: 1rem; }
-h1 { margin: .5rem 0 1rem; }
-h1:focus { outline: none; }
-:focus-visible { outline: 3px solid #1a73e8; outline-offset: 2px; }
-form[role="search"] { display: grid; grid-template-columns: 1fr; gap: .25rem; margin-bottom: .5rem; }
-@media (min-width: 640px) { form[role="search"] { grid-template-columns: auto 1fr auto auto; align-items: center; gap: .5rem; } }
-input, select, textarea, button { font: inherit; padding: .45rem .6rem; border: 1px solid #b9b1a6; border-radius: 6px; background: #fff; max-width: 100%; }
-button { cursor: pointer; background: #f1e6d8; }
-button[type="submit"] { background: #7a3e12; color: #fff; border-color: #7a3e12; }
-.cards { list-style: none; padding: 0; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-.card { background: #fff; border: 1px solid #e4dccf; border-radius: 10px; padding: .75rem 1rem; }
-.card h2 { font-size: 1.15rem; margin: 0; }
-.meta { color: #5c5348; margin: .25rem 0 .5rem; }
-.steps { white-space: pre-line; }
-.notice { background: #fff4ce; border: 1px solid #e0c060; padding: .5rem .75rem; border-radius: 6px; }
-[role="alert"] { background: #fde7e9; border: 1px solid #d93025; padding: .5rem .75rem; border-radius: 6px; }
-.field { display: grid; gap: .2rem; margin-bottom: .75rem; }
-.err { color: #b3261e; margin: 0; min-height: 1.2em; }
-[aria-invalid="true"] { border-color: #b3261e; border-width: 2px; }
-  </style>
-</head>
-<body>
-  <header>
-    <nav aria-label="الأقسام">
-      <a href="#/">الوصفات</a>
-      <a href="#/fav">المفضلة</a>
-      <a href="#/new">وصفة جديدة</a>
-    </nav>
-  </header>
-  <main id="main"></main>
-  <noscript>التطبيق ده محتاج JavaScript يكون شغال.</noscript>
-<script type="module">
-// للعرض جوه الموقع بس: الصندوق ده iframe معزول (about:srcdoc)، فروابط # مبتمشيش لوحدها،
-// و history.replaceState بترمي SecurityError. السطور دي بتعمل نفس الحاجة بـ location.hash
-document.addEventListener('click', (e) => {
-  const a = e.target.closest('a[href^="#/"]');
-  if (a) { e.preventDefault(); location.hash = a.getAttribute('href'); }
-});
-const realReplace = history.replaceState.bind(history);
-history.replaceState = (state, title, url) => {
-  try { realReplace(state, title, url); } catch { location.hash = String(url).slice(String(url).indexOf('#')); }
-};
-const MAX_TITLE = 80;
-
-function isRecipe(r) {
-  return !!r && typeof r === 'object' && typeof r.id === 'string' && typeof r.title === 'string'
-    && Number.isFinite(r.minutes) && Array.isArray(r.ingredients) && Array.isArray(r.tags)
-    && typeof r.steps === 'string';
-}
-
-const toggleFav = (favs, id) => (favs.includes(id) ? favs.filter((f) => f !== id) : [...favs, id]);
-
-const toLatinDigits = (s) => String(s ?? '').replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
-
-function parseRoute(hash) {
-  const raw = String(hash ?? '').replace(/^#/, '') || '/';
-  const [path, qs = ''] = raw.split('?');
-  const query = Object.fromEntries(new URLSearchParams(qs));
-  const parts = path.split('/').filter(Boolean);
-  if (parts.length === 0) return { name: 'list', params: {}, query };
-  if (parts[0] === 'r' && parts.length === 2) return { name: 'recipe', params: { id: decodeURIComponent(parts[1]) }, query };
-  if (parts.length === 1 && (parts[0] === 'new' || parts[0] === 'fav')) return { name: parts[0], params: {}, query };
-  return { name: 'notfound', params: {}, query };
-}
-
-function filterRecipes(list, { q = '', tag = '' } = {}) {
-  const needle = q.trim().toLowerCase();
-  return list.filter((r) => (!tag || r.tags.includes(tag))
-    && (!needle || [r.title, ...r.ingredients].some((t) => t.toLowerCase().includes(needle))));
-}
-
-const allTags = (list) => [...new Set(list.flatMap((r) => r.tags))].sort((a, b) => a.localeCompare(b, 'ar'));
-
-function validateRecipe(input) {
-  const errors = {};
-  const title = String(input.title ?? '').trim();
-  const minutes = Number(toLatinDigits(input.minutes).trim() || NaN);
-  const ingredients = String(input.ingredients ?? '').split('\n').map((s) => s.trim()).filter(Boolean);
-  const steps = String(input.steps ?? '').trim();
-  const tags = [...new Set(String(input.tags ?? '').split(/[,،]/).map((s) => s.trim()).filter(Boolean))];
-  if (!title) errors.title = 'اكتب اسم الوصفة';
-  else if (title.length > MAX_TITLE) errors.title = $__btالاسم أطول من $__{MAX_TITLE} حرف$__bt;
-  if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) errors.minutes = 'الوقت بالدقايق، رقم صحيح من 1 لـ 1440';
-  if (ingredients.length < 2) errors.ingredients = 'اكتب مكوّنين على الأقل، كل واحد في سطر';
-  if (!steps) errors.steps = 'اكتب طريقة التحضير';
-  if (Object.keys(errors).length) return { ok: false, errors };
-  return { ok: true, value: { title, minutes, ingredients, steps, tags } };
-}
-
-function debounce(fn, ms) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
-  };
-}
-
-
-const KEY = 'recipe-book:v1';
-
-// مجرد قراية localStorage بترمي SecurityError لو التخزين مقفول (أو صفحة sandboxed)، فبنقراه جوه try
-function browserStorage() {
-  try { return globalThis.localStorage ?? null; } catch { return null; }
-}
-
-function load(storage = browserStorage()) {
-  let raw;
-  try { raw = storage.getItem(KEY); } catch { return { mine: [], favs: [], warning: 'المتصفح قافل التخزين، ومش هنفتكر حاجة' }; }
-  if (raw === null) return { mine: [], favs: [] };
-  try {
-    const data = JSON.parse(raw);
-    if (data?.version !== 1) throw new Error('نسخة مش معروفة: ' + data?.version);
-    const mine = Array.isArray(data.mine) ? data.mine.filter(isRecipe) : [];
-    const favs = Array.isArray(data.favs) ? data.favs.filter((f) => typeof f === 'string') : [];
-    return { mine, favs };
-  } catch (err) {
-    try { storage.setItem(KEY + ':broken', raw); } catch { /* مفيش مكان، مش مشكلة */ }
-    return { mine: [], favs: [], warning: 'الداتا المحفوظة كانت بايظة (' + err.message + ')، واتحفظت نسخة منها' };
-  }
-}
-
-function save({ mine, favs }, storage = browserStorage()) {
-  try {
-    storage.setItem(KEY, JSON.stringify({ version: 1, mine, favs }));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-
-function createStore(storage = browserStorage()) {
-  const saved = load(storage);
-  let state = {
-    recipes: [], mine: saved.mine, favs: saved.favs,
-    status: 'idle', error: '', notice: saved.warning ?? '',
-    route: { name: 'list', params: {}, query: {} },
-  };
-  const listeners = new Set();
-
-  function set(patch) {
-    const prev = state;
-    state = { ...state, ...patch };
-    if ((state.mine !== prev.mine || state.favs !== prev.favs) && !save(state, storage)) {
-      state = { ...state, notice: 'مقدرناش نحفظ: التخزين مليان أو مقفول' };
-    }
-    listeners.forEach((fn) => fn(state, prev));
-  }
-
-  return {
-    get: () => state,
-    subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn); },
-    setRoute: (route) => set({ route }),
-    loading: () => set({ status: 'loading', error: '' }),
-    loaded: (recipes) => set({ status: 'ready', recipes }),
-    failed: (message) => set({ status: 'error', error: message }),
-    toggleFav: (id) => set({ favs: toggleFav(state.favs, id) }),
-    addRecipe(input) {
-      const res = validateRecipe(input);
-      if (!res.ok) return res;
-      const recipe = { id: 'u-' + crypto.randomUUID(), ...res.value };
-      set({ mine: [recipe, ...state.mine] });
-      return { ok: true, recipe };
-    },
-  };
-}
-
-const allRecipes = (s) => [...s.mine, ...s.recipes];
-
-
-class HttpError extends Error {
-  constructor(status, url) {
-    super($__btHTTP $__{status} من $__{url}$__bt);
-    this.name = 'HttpError';
-    this.status = status;
-  }
-}
-
-class DataError extends Error {
-  name = 'DataError';
-}
-
-async function fetchJSON(url, { timeout = 8000, signal } = {}) {
-  const timer = AbortSignal.timeout(timeout);
-  const res = await fetch(url, { signal: signal ? AbortSignal.any([signal, timer]) : timer });
-  if (!res.ok) throw new HttpError(res.status, url);
-  return res.json();
-}
-
-async function loadRecipes(url, opts) {
-  const data = await fetchJSON(url, opts);
-  if (!Array.isArray(data)) throw new DataError('الرد مش لستة وصفات');
-  return data.filter(isRecipe);
-}
-
-function explain(err) {
-  if (err.name === 'TimeoutError') return 'السيرفر اتأخر في الرد. جرّب تاني.';
-  if (err instanceof HttpError) return err.status === 404 ? 'ملف الوصفات مش موجود (404).' : $__btالسيرفر رد بخطأ $__{err.status}. جرّب كمان شوية.$__bt;
-  if (err instanceof SyntaxError) return 'الرد وصل بس مش JSON سليم.';
-  if (err instanceof DataError) return 'الرد وصل بس شكله غلط.';
-  return 'مفيش اتصال. اتأكد من النت وجرّب تاني.';
-}
-
-
-const API = 'https://www.themealdb.com/api/json/v1/1/';
-
-function toRecipe(meal) {
-  if (!meal || typeof meal.idMeal !== 'string') return null;
-  const ingredients = [];
-  for (let i = 1; i <= 20; i++) {
-    const name = String(meal['strIngredient' + i] ?? '').trim();
-    const amount = String(meal['strMeasure' + i] ?? '').trim();
-    if (name) ingredients.push(amount ? name + ' (' + amount + ')' : name);
-  }
-  return {
-    id: 'm-' + meal.idMeal,
-    title: String(meal.strMeal ?? '').trim(),
-    minutes: 0, // الـ API مفيهوش وقت التحضير
-    tags: [meal.strCategory, meal.strArea].filter((t) => typeof t === 'string' && t.trim()),
-    ingredients,
-    steps: String(meal.strInstructions ?? '').replace(/\r\n/g, '\n').trim(),
-  };
-}
-
-// الرد شكله { meals: [...] }، و { meals: null } لو مفيش نتايج
-function toList(data) {
-  if (!data || !('meals' in data)) throw new DataError('الرد مفيهوش meals');
-  return (data.meals ?? []).map(toRecipe).filter(isRecipe);
-}
-
-const searchMeals = async (q, opts) => toList(await fetchJSON(API + 'search.php?s=' + encodeURIComponent(q.trim()), opts));
-const lookupMeal = async (id, opts) => toList(await fetchJSON(API + 'lookup.php?i=' + encodeURIComponent(id), opts));
-
-
-function h(tag, attrs = {}, ...kids) {
-  const el = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k.startsWith('aria-')) el.setAttribute(k, String(v));
-    else if (v === true) el.setAttribute(k, '');
-    else if (v !== false && v != null) el.setAttribute(k, String(v));
-  }
-  el.append(...kids.flat().filter((k) => k != null && k !== false));
-  return el;
-}
-
-const TITLES = { list: 'الوصفات', fav: 'المفضلة', new: 'وصفة جديدة', notfound: 'الصفحة دي مش موجودة' };
-
-function view(s) {
-  const { name } = s.route;
-  const all = allRecipes(s);
-  const screen = name === 'recipe' ? recipeScreen(s, all) : { title: TITLES[name] ?? TITLES.notfound };
-  const nodes = screen.nodes
-    ?? (name === 'list' ? listScreen(s, screen.title, all)
-      : name === 'fav' ? listScreen(s, screen.title, all.filter((r) => s.favs.includes(r.id)))
-        : name === 'new' ? newScreen()
-          : notFound(screen.title));
-  if (s.notice) nodes.unshift(h('p', { class: 'notice', role: 'status' }, s.notice));
-  return { title: screen.title + ' · دفتر الوصفات', nodes };
-}
-
-function listScreen(s, title, list) {
-  const { q = '', tag = '' } = s.route.query;
-  const shown = filterRecipes(list, { q, tag });
-  return [
-    h('h1', { tabindex: -1 }, title),
-    h('form', { role: 'search', 'data-form': 'search' },
-      h('label', { for: 'q' }, 'دوّر باسم أو مكوّن'),
-      h('input', { id: 'q', name: 'q', type: 'search', value: q, autocomplete: 'off' }),
-      h('label', { for: 'tag' }, 'التصنيف'),
-      h('select', { id: 'tag', name: 'tag' }, h('option', { value: '' }, 'الكل'),
-        allTags(list).map((t) => h('option', { value: t, selected: t === tag }, t)))),
-    status(s, shown.length),
-    h('ul', { class: 'cards' }, shown.map((r) => card(s, r))),
-  ];
-}
-
-function status(s, shown) {
-  if (s.status === 'loading' || s.status === 'idle') return h('p', { role: 'status' }, 'بنحمّل الوصفات…');
-  if (s.status === 'error') return h('div', { role: 'alert' }, h('p', {}, s.error),
-    h('button', { type: 'button', 'data-action': 'retry' }, 'جرّب تاني'));
-  return h('p', { role: 'status' }, shown === 0 ? 'مفيش وصفات بالبحث ده' : $__bt$__{shown} وصفة$__bt);
-}
-
-const favButton = (s, id) => {
-  const on = s.favs.includes(id);
-  return h('button', { type: 'button', id: 'fav-' + id, 'data-fav': id, 'aria-pressed': on }, on ? '★ في المفضلة' : '☆ للمفضلة');
-};
-
-const meta = (r) => h('p', { class: 'meta' }, (r.minutes ? r.minutes + ' دقيقة' : 'الوقت مش مكتوب') + (r.tags.length ? ' · ' + r.tags.join('، ') : ''));
-
-function card(s, r) {
-  return h('li', { class: 'card' },
-    h('h2', {}, h('a', { href: '#/r/' + encodeURIComponent(r.id) }, r.title)),
-    meta(r), favButton(s, r.id));
-}
-
-function recipeScreen(s, all) {
-  const r = all.find((x) => x.id === s.route.params.id);
-  if (r) {
-    return { title: r.title, nodes: [
-      h('h1', { tabindex: -1 }, r.title), meta(r), favButton(s, r.id),
-      h('h2', {}, 'المكوّنات'), h('ul', {}, r.ingredients.map((i) => h('li', {}, i))),
-      h('h2', {}, 'الطريقة'), h('p', { class: 'steps' }, r.steps),
-      h('p', {}, h('a', { href: '#/' }, 'كل الوصفات')),
-    ] };
-  }
-  if (s.status === 'loading' || s.status === 'idle') return { title: 'بنحمّل', nodes: [h('h1', { tabindex: -1 }, 'بنحمّل الوصفة…')] };
-  if (s.status === 'error') return { title: 'حصل خطأ', nodes: [h('h1', { tabindex: -1 }, 'حصل خطأ'), status(s, 0)] };
-  return { title: 'الوصفة دي مش موجودة', nodes: notFound('الوصفة دي مش موجودة') };
-}
-
-const notFound = (title) => [h('h1', { tabindex: -1 }, title), h('p', {}, h('a', { href: '#/' }, 'ارجع لكل الوصفات'))];
-
-function field(name, label, control) {
-  return h('div', { class: 'field' }, h('label', { for: name }, label), control, h('p', { id: name + '-err', class: 'err' }));
-}
-
-function newScreen() {
-  const a = (name) => ({ id: name, name, 'aria-describedby': name + '-err' });
-  return [
-    h('h1', { tabindex: -1 }, 'وصفة جديدة'),
-    h('form', { 'data-form': 'add', novalidate: true },
-      field('title', 'الاسم', h('input', { ...a('title'), required: true, maxlength: MAX_TITLE, autocomplete: 'off' })),
-      field('minutes', 'الوقت بالدقايق', h('input', { ...a('minutes'), required: true, inputmode: 'numeric' })),
-      field('ingredients', 'المكوّنات، كل واحد في سطر', h('textarea', { ...a('ingredients'), required: true, rows: 4 })),
-      field('steps', 'الطريقة', h('textarea', { ...a('steps'), required: true, rows: 4 })),
-      field('tags', 'التصنيفات، افصل بينهم بفاصلة', h('input', { ...a('tags'), autocomplete: 'off' })),
-      h('button', { type: 'submit' }, 'احفظ الوصفة')),
-  ];
-}
-
-function showErrors(form, errors) {
-  for (const el of form.querySelectorAll('[name]')) {
-    const msg = errors[el.name] ?? '';
-    form.querySelector('#' + el.name + '-err').textContent = msg;
-    if (msg) el.setAttribute('aria-invalid', 'true');
-    else el.removeAttribute('aria-invalid');
-  }
-  form.querySelector('[aria-invalid="true"]')?.focus();
-}
-
-
-const store = createStore();
-const main = document.getElementById('main');
-let ctrl = null;
-let loadedKey = null;
-
-function paint(s, prev) {
-  main.setAttribute('aria-busy', String(s.status === 'loading'));
-  const moved = prev.route.name !== s.route.name || prev.route.params.id !== s.route.params.id;
-  if (!moved && s.route.name === 'new') return;
-  const active = main.contains(document.activeElement) ? document.activeElement : null;
-  const keep = active?.id ? { id: active.id, pos: active.selectionStart } : null;
-  const { title, nodes } = view(s);
-  document.title = title;
-  main.replaceChildren(...nodes);
-  const here = '#/' + (s.route.name === 'list' ? '' : s.route.name);
-  for (const a of document.querySelectorAll('nav a')) {
-    if (a.getAttribute('href') === here) a.setAttribute('aria-current', 'page');
-    else a.removeAttribute('aria-current');
-  }
-  if (moved) main.querySelector('h1')?.focus();
-  else if (keep) {
-    const el = document.getElementById(keep.id);
-    el?.focus();
-    if (keep.pos != null) el?.setSelectionRange?.(keep.pos, keep.pos);
-  }
-}
-
-const search = debounce((form) => {
-  const p = new URLSearchParams();
-  for (const [k, v] of new FormData(form)) if (String(v).trim()) p.set(k, String(v));
-  const qs = String(p);
-  // من غير || '#/' لو الصفحة اتفتحت من غير # الـ ?q= كان هيروح للرابط نفسه مش للـ hash
-  const path = location.hash.split('?')[0] || '#/';
-  history.replaceState(null, '', path + (qs ? '?' + qs : ''));
-  store.setRoute(parseRoute(location.hash));
-}, 250);
-
-// الشاشة محتاجة إيه من السيرفر؟ بحث بكلمة، أو وصفة واحدة لو اتفتحت من رابط ومش متحمّلة
-function wanted(s) {
-  const { name, params, query } = s.route;
-  if (name === 'recipe') {
-    if (allRecipes(s).some((r) => r.id === params.id)) return loadedKey;
-    return params.id.startsWith('m-') ? 'id:' + params.id.slice(2) : loadedKey;
-  }
-  return 'q:' + (query.q ?? '').trim();
-}
-
-async function loadData(key = wanted(store.get())) {
-  ctrl?.abort();
-  ctrl = new AbortController();
-  loadedKey = key;
-  store.loading();
-  try {
-    const at = key.indexOf(':');
-    const [kind, value] = [key.slice(0, at), key.slice(at + 1)];
-    const opts = { signal: ctrl.signal };
-    store.loaded(await (kind === 'id' ? lookupMeal(value, opts) : searchMeals(value, opts)));
-  } catch (err) {
-    if (err.name !== 'AbortError') store.failed(explain(err));
-  }
-}
-
-main.addEventListener('input', (e) => {
-  const form = e.target.closest('[data-form="search"]');
-  if (form) search(form);
-});
-
-main.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (e.target.dataset.form === 'search') return search(e.target);
-  const res = store.addRecipe(Object.fromEntries(new FormData(e.target)));
-  if (!res.ok) return showErrors(e.target, res.errors);
-  location.hash = '#/r/' + encodeURIComponent(res.recipe.id);
-});
-
-main.addEventListener('click', (e) => {
-  const fav = e.target.closest('[data-fav]');
-  if (fav) store.toggleFav(fav.dataset.fav);
-  if (e.target.closest('[data-action="retry"]')) loadData();
-});
-
-window.addEventListener('hashchange', () => store.setRoute(parseRoute(location.hash)));
-store.subscribe(paint);
-// بعد كل تغيير: لو الشاشة محتاجة داتا تانية غير اللي متحمّلة، اطلبها (بعد ما الرسم يخلص)
-store.subscribe((s) => {
-  const key = wanted(s);
-  if (key && key !== loadedKey) queueMicrotask(() => loadData(key));
-});
-store.setRoute(parseRoute(location.hash));
-</script>
-</body>
-</html>
-~~~
-
-**هتشوف إيه:** نفس التطبيق، بس الوصفات جاية من API عام (TheMealDB) مش من ملف. أول فتحة بتجيب ٢٥ وصفة، واكتب في البحث «lentil»: بعد ما توقف ربع ثانية بيروح طلب **واحد** للسيرفر وبيرجع ٤ وصفات. التصنيفات بقت نوع الأكلة وبلدها (Vegetarian، Moroccan)، والوقت مكتوب «الوقت مش مكتوب» لأن الـ API مفيهوش وقت تحضير أصلًا. (الصندوق ده بيكلّم الـ API بجد، فمحتاج نت.)
-
-**شكل الرد الحقيقي** ([[curl -s "https://www.themealdb.com/api/json/v1/1/search.php?s=lentil"]]، مختصر):
-
-~~~json رد search.php?s=lentil (أول وصفة، أول مكوّن)
-{"meals":[{"idMeal":"52869","strMeal":"Tahini Lentils","strCategory":"Vegetarian","strArea":"Moroccan",
-  "strInstructions":"In a jug, mix the tahini with the zest and juice of the lemon ...",
-  "strIngredient1":"Tahini","strMeasure1":"50g", ... "strIngredient20":""}]}
-~~~
-
-~~~text الناتج: الـ headers والحالات الطرفية (curl، ٢١ نوفمبر ٢٠٢٦)
-Content-Type: application/json
-Access-Control-Allow-Origin: *          ← CORS مسموح لأي موقع، فالمتصفح يقدر يكلّمه
-search.php?s=zzzzqq                      {"meals":null}     ← مفيش نتايج = null مش []
-lookup.php?i=1                           {"meals":null}
-search.php?s=                            25 وصفة
-كل وصفة                                 54 مفتاح، والمكوّنات في strIngredient1..20 و strMeasure1..20
-~~~
-
-## ليه طبقة تحويل، وليه الـ API ده؟
-
-| الاختيار | ليه هنا | إمتى البديل |
-|---|---|---|
-| [[toRecipe(meal)]] بتحوّل للشكل بتاعنا | [[view.js]] و [[store.js]] و [[isRecipe]] بيفضلوا بيتكلّموا عن «وصفة» بنفس الشكل، والـ API لو اتغيّر بنغيّر ملف واحد | لو الـ API بتاعك انت وتقدر تخليه يرجّع شكلك مباشرة |
-| TheMealDB | مجاني، ومفتاحه التجريبي [[1]] في الرابط نفسه، و CORS مفتوح | APIs فيها وقت وسعرات بس محتاجة مفتاح سري، والمفتاح السري ميتحطش في كود صفحة static (أي حد يقراه من DevTools) |
-| البحث على السيرفر | الـ API فيه وصفات كتير، مش هنحمّلهم كلهم ونفلتر عندنا | لما الداتا صغيرة (زي الملف) الفلترة عندك أسرع ومن غير شبكة |
-
-## الملفات
-
-~~~text
-recipe-mealdb/
-├── src/mealdb.js     جديد: API و toRecipe و searchMeals و lookupMeal
-├── src/app.js        loadData بقت بتطلب اللي الشاشة محتاجاه (بحث أو وصفة واحدة)
-├── src/view.js       سطر واحد: «الوقت مش مكتوب» لما minutes بصفر
-├── src/logic.js  src/storage.js  src/store.js  src/api.js  index.html  style.css   زي الأساسية
-├── data/             اتمسح: مفيش ملف وصفات
-└── tests/  logic.test.js  storage.test.js  api.test.js  mealdb.test.js  mealdb.dom.test.js
-            fixtures/lentil.json   الرد الحقيقي متسجّل
-~~~
-
-الملفات اللي مش مكتوبة هنا زي النسخة الأساسية بالظبط، وكودها كامل في حل تمرين «انشره بجد واعمل README» في درس «مشروع التخرّج ٤: الاختبارات والنشر». ابدأ من نسخة منها:
-
-~~~bash
-cp -r recipe-book recipe-mealdb
-cd recipe-mealdb
-rm -r data tests/app.dom.test.js
-mkdir tests/fixtures
-curl -s "https://www.themealdb.com/api/json/v1/1/search.php?s=lentil" -o tests/fixtures/lentil.json
-~~~
-
-[[app.dom.test.js]] اتشال لأنه مبني على الست وصفات بتوع الملف، و [[mealdb.dom.test.js]] بيختبر نفس الحاجات (الكروت، والخطأ، و «جرّب تاني»، والرابط المباشر) على الرد المتسجّل.
-
-~~~js src/mealdb.js
-// src/mealdb.js — طبقة التحويل: شكل TheMealDB ← شكل التطبيق. view.js و store.js ميعرفوش إن فيه API
-import { isRecipe } from './logic.js';
-import { fetchJSON, DataError } from './api.js';
-
-export const API = 'https://www.themealdb.com/api/json/v1/1/';
-
-export function toRecipe(meal) {
-  if (!meal || typeof meal.idMeal !== 'string') return null;
-  const ingredients = [];
-  for (let i = 1; i <= 20; i++) {
-    const name = String(meal['strIngredient' + i] ?? '').trim();
-    const amount = String(meal['strMeasure' + i] ?? '').trim();
-    if (name) ingredients.push(amount ? name + ' (' + amount + ')' : name);
-  }
-  return {
-    id: 'm-' + meal.idMeal,
-    title: String(meal.strMeal ?? '').trim(),
-    minutes: 0, // الـ API مفيهوش وقت التحضير
-    tags: [meal.strCategory, meal.strArea].filter((t) => typeof t === 'string' && t.trim()),
-    ingredients,
-    steps: String(meal.strInstructions ?? '').replace(/\r\n/g, '\n').trim(),
-  };
-}
-
-// الرد شكله { meals: [...] }، و { meals: null } لو مفيش نتايج
-function toList(data) {
-  if (!data || !('meals' in data)) throw new DataError('الرد مفيهوش meals');
-  return (data.meals ?? []).map(toRecipe).filter(isRecipe);
-}
-
-export const searchMeals = async (q, opts) => toList(await fetchJSON(API + 'search.php?s=' + encodeURIComponent(q.trim()), opts));
-export const lookupMeal = async (id, opts) => toList(await fetchJSON(API + 'lookup.php?i=' + encodeURIComponent(id), opts));
-~~~
-
-~~~js src/app.js
-// src/app.js — التوصيل: أحداث ← حالة ← شاشة. الوحيد اللي بيعرف الصفحة والحالة مع بعض.
-import { parseRoute, debounce } from './logic.js';
-import { createStore, allRecipes } from './store.js';
-import { explain } from './api.js';
-import { searchMeals, lookupMeal } from './mealdb.js';
-import { view, showErrors } from './view.js';
-
-const store = createStore();
-const main = document.getElementById('main');
-let ctrl = null;
-let loadedKey = null;
-
-function paint(s, prev) {
-  main.setAttribute('aria-busy', String(s.status === 'loading'));
-  const moved = prev.route.name !== s.route.name || prev.route.params.id !== s.route.params.id;
-  if (!moved && s.route.name === 'new') return;
-  const active = main.contains(document.activeElement) ? document.activeElement : null;
-  const keep = active?.id ? { id: active.id, pos: active.selectionStart } : null;
-  const { title, nodes } = view(s);
-  document.title = title;
-  main.replaceChildren(...nodes);
-  const here = '#/' + (s.route.name === 'list' ? '' : s.route.name);
-  for (const a of document.querySelectorAll('nav a')) {
-    if (a.getAttribute('href') === here) a.setAttribute('aria-current', 'page');
-    else a.removeAttribute('aria-current');
-  }
-  if (moved) main.querySelector('h1')?.focus();
-  else if (keep) {
-    const el = document.getElementById(keep.id);
-    el?.focus();
-    if (keep.pos != null) el?.setSelectionRange?.(keep.pos, keep.pos);
-  }
-}
-
-const search = debounce((form) => {
-  const p = new URLSearchParams();
-  for (const [k, v] of new FormData(form)) if (String(v).trim()) p.set(k, String(v));
-  const qs = String(p);
-  // من غير || '#/' لو الصفحة اتفتحت من غير # الـ ?q= كان هيروح للرابط نفسه مش للـ hash
-  const path = location.hash.split('?')[0] || '#/';
-  history.replaceState(null, '', path + (qs ? '?' + qs : ''));
-  store.setRoute(parseRoute(location.hash));
-}, 250);
-
-// الشاشة محتاجة إيه من السيرفر؟ بحث بكلمة، أو وصفة واحدة لو اتفتحت من رابط ومش متحمّلة
-function wanted(s) {
-  const { name, params, query } = s.route;
-  if (name === 'recipe') {
-    if (allRecipes(s).some((r) => r.id === params.id)) return loadedKey;
-    return params.id.startsWith('m-') ? 'id:' + params.id.slice(2) : loadedKey;
-  }
-  return 'q:' + (query.q ?? '').trim();
-}
-
-async function loadData(key = wanted(store.get())) {
-  ctrl?.abort();
-  ctrl = new AbortController();
-  loadedKey = key;
-  store.loading();
-  try {
-    const at = key.indexOf(':');
-    const [kind, value] = [key.slice(0, at), key.slice(at + 1)];
-    const opts = { signal: ctrl.signal };
-    store.loaded(await (kind === 'id' ? lookupMeal(value, opts) : searchMeals(value, opts)));
-  } catch (err) {
-    if (err.name !== 'AbortError') store.failed(explain(err));
-  }
-}
-
-main.addEventListener('input', (e) => {
-  const form = e.target.closest('[data-form="search"]');
-  if (form) search(form);
-});
-
-main.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (e.target.dataset.form === 'search') return search(e.target);
-  const res = store.addRecipe(Object.fromEntries(new FormData(e.target)));
-  if (!res.ok) return showErrors(e.target, res.errors);
-  location.hash = '#/r/' + encodeURIComponent(res.recipe.id);
-});
-
-main.addEventListener('click', (e) => {
-  const fav = e.target.closest('[data-fav]');
-  if (fav) store.toggleFav(fav.dataset.fav);
-  if (e.target.closest('[data-action="retry"]')) loadData();
-});
-
-window.addEventListener('hashchange', () => store.setRoute(parseRoute(location.hash)));
-store.subscribe(paint);
-// بعد كل تغيير: لو الشاشة محتاجة داتا تانية غير اللي متحمّلة، اطلبها (بعد ما الرسم يخلص)
-store.subscribe((s) => {
-  const key = wanted(s);
-  if (key && key !== loadedKey) queueMicrotask(() => loadData(key));
-});
-store.setRoute(parseRoute(location.hash));
-~~~
-
-~~~js src/view.js (السطر الوحيد اللي اتغيّر)
-const meta = (r) => h('p', { class: 'meta' }, (r.minutes ? r.minutes + ' دقيقة' : 'الوقت مش مكتوب') + (r.tags.length ? ' · ' + r.tags.join('، ') : ''));
-~~~
-
-## الأجزاء المهمة
-
-| الحتة | ليه |
-|---|---|
-| [[for (let i = 1; i <= 20; i++)]] | الـ API بيبعت المكوّنات في ٢٠ مفتاح منفصلين، والفاضي منهم [[""]] أو [[null]]. [[String(x ?? '')]] بيوحّد الاتنين لنص |
-| [[id: 'm-' + meal.idMeal]] | [[m-]] قدام الـ id عشان ميتلخبطش مع [[u-]] بتاع وصفاتك، وعشان [[wanted]] تعرف إن ده محتاج [[lookup.php]] |
-| [[data.meals ?? []]] | «مفيش نتايج» بيرجع [[null]]. من غير الـ [[??]] كان [[null.map]] هيرمي [[TypeError]] ويتعرض «مفيش اتصال» غلط |
-| [[!('meals' in data)]] | رد شكله غلط خالص ([[[]]] مثلًا) بيطلع [[DataError]] بجملته |
-| [[wanted(s)]] | «الشاشة محتاجة إيه؟» دالة واحدة: [[q:chicken]] أو [[id:52869]]. ولو الوصفة متحمّلة أصلًا (دوست على كارت) مفيش طلب |
-| subscriber تاني على الـ store | أي تغيير في الحالة (بحث، أو رابط) بيتقارن بـ [[loadedKey]]، فالبحث نفسه في [[app.js]] متغيّرش: الـ debounce بيغيّر الرابط، والرابط بيغيّر الطلب |
-| [[queueMicrotask]] | الطلب بيبدأ **بعد** ما كل المشتركين يخلصوا الرسمة الحالية، بدل [[set]] جوه [[set]] |
-| [[ctrl?.abort()]] في [[loadData]] | طلب «beef» لسه شغال وكتبت « stew»: القديم بيتلغي، فرده عمره ما يكتب فوق الجديد |
-| [[searchMeals]] بتستخدم [[fetchJSON]] من [[api.js]] | المهلة و [[res.ok]] و [[HttpError]] و [[explain]] كلهم شغالين من غير ولا سطر جديد |
-
-## الاختبارات
-
-~~~js tests/mealdb.test.js
-import { it, expect, vi, afterEach } from 'vitest';
-import { readFileSync } from 'node:fs';
-import { toRecipe, searchMeals } from '../src/mealdb.js';
-import { DataError } from '../src/api.js';
-
-// رد حقيقي من search.php?s=lentil، متسجّل في ملف عشان الاختبار ميحتاجش نت
-const recorded = JSON.parse(readFileSync('tests/fixtures/lentil.json', 'utf8'));
-afterEach(() => vi.unstubAllGlobals());
-
-it('toRecipe على رد حقيقي', () => {
-  const r = toRecipe(recorded.meals[0]);
-  expect(r).toMatchObject({ id: 'm-52869', title: 'Tahini Lentils', minutes: 0, tags: ['Vegetarian', 'Moroccan'] });
-  expect(r.ingredients[0]).toBe('Tahini (50g)');
-  expect(r.steps).not.toContain('\r');
-  expect(recorded.meals.map(toRecipe).map((x) => x.id)).toEqual(['m-52869', 'm-52784', 'm-52815', 'm-52816']);
-});
-
-it('toRecipe بيرفض اللي مفيهوش idMeal', () => {
-  expect(toRecipe({ strMeal: 'x' })).toBeNull();
-  expect(toRecipe(null)).toBeNull();
-});
-
-it('مفيش نتايج: meals بـ null بترجع لستة فاضية', async () => {
-  vi.stubGlobal('fetch', vi.fn(async () => new Response('{"meals":null}')));
-  expect(await searchMeals('zzzz')).toEqual([]);
-  expect(fetch.mock.calls[0][0]).toBe('https://www.themealdb.com/api/json/v1/1/search.php?s=zzzz');
-});
-
-it('رد شكله غلط: DataError', async () => {
-  vi.stubGlobal('fetch', vi.fn(async () => new Response('[]')));
-  await expect(searchMeals('x')).rejects.toBeInstanceOf(DataError);
-});
-~~~
-
-~~~js tests/mealdb.dom.test.js
-// @vitest-environment jsdom
-import { it, expect, vi, afterEach } from 'vitest';
-import { readFileSync } from 'node:fs';
-
-const html = readFileSync('index.html', 'utf8');
-const recorded = readFileSync('tests/fixtures/lentil.json', 'utf8');
-const $ = (sel) => document.querySelector(sel);
-const $$ = (sel) => [...document.querySelectorAll(sel)];
-const idle = () => vi.waitFor(() => expect($('#main').getAttribute('aria-busy')).toBe('false'), { timeout: 2000 });
-const urls = () => fetch.mock.calls.map((c) => c[0].split('/1/')[1]);
-
-async function start(hash, fetchImpl = vi.fn(async () => new Response(recorded))) {
-  vi.resetModules();
-  // eslint-disable-next-line no-restricted-properties -- HTML بتاعنا من الملف، مش من يوزر
-  document.documentElement.innerHTML = html.replace(/<script[^>]*><\/script>/, '');
-  history.replaceState(null, '', '/' + hash);
-  vi.stubGlobal('fetch', fetchImpl);
-  await import('../src/app.js');
-  await idle();
-}
-
-const type = (text) => {
-  const q = $('#q');
-  q.focus();
-  for (let i = 1; i <= text.length; i++) {
-    q.value = text.slice(0, i);
-    q.dispatchEvent(new Event('input', { bubbles: true }));
-  }
-};
-
-afterEach(() => { vi.unstubAllGlobals(); localStorage.clear(); });
-
-it('أول فتحة: بحث فاضي، والكروت من الـ API', async () => {
-  await start('#/');
-  expect(urls()).toEqual(['search.php?s=']);
-  expect($$('.card h2').map((e) => e.textContent)[0]).toBe('Tahini Lentils');
-  expect($('.card .meta').textContent).toBe('الوقت مش مكتوب · Vegetarian، Moroccan');
-});
-
-it('كتابة «chicken» بسرعة: طلب واحد بس', async () => {
-  await start('#/');
-  type('chicken');
-  await vi.waitFor(() => expect(fetch).toHaveBeenCalledTimes(2), { timeout: 2000 });
-  await idle();
-  expect(urls()).toEqual(['search.php?s=', 'search.php?s=chicken']);
-});
-
-it('بحث جديد بيلغي القديم', async () => {
-  const signals = [];
-  await start('#/', vi.fn((url, { signal }) => {
-    signals.push(signal);
-    if (url.endsWith('s=')) return Promise.resolve(new Response(recorded));
-    return new Promise((resolve, reject) => signal.addEventListener('abort', () => reject(signal.reason)));
+const box = $('#text');
+const input = $('#input');
+const lang = $('#lang');
+const lenient = $('#lenient');
+const BEST_KEY = 'typing-best';
+let game = null;
+
+function newGame() {
+  if (game) cancelAnimationFrame(game.raf);
+  const key = lang.value;
+  const index = pick(TEXTS[key].length, game?.lang === key ? game.index : -1);
+  const text = TEXTS[key][index];
+  game = { lang: key, index, target: Array.from(text), typed: [], keystrokes: 0, mistakes: 0, start: 0, raf: 0, done: false, lenient: lenient.checked };
+  const dir = isArabic(text) ? 'rtl' : 'ltr';
+  for (const node of [box, input]) { node.dir = dir; node.lang = key; }
+  box.replaceChildren(...game.target.map((ch) => {
+    const span = document.createElement('span');
+    span.textContent = ch;
+    return span;
   }));
-  type('lentil');
-  await vi.waitFor(() => expect(signals).toHaveLength(2), { timeout: 2000 });
-  type('chicken');
-  await vi.waitFor(() => expect(signals).toHaveLength(3), { timeout: 2000 });
-  expect(signals[1].aborted).toBe(true);
-  expect(signals[2].aborted).toBe(false);
-  expect($('[role="alert"]')).toBeNull();
-});
-
-it('رابط مباشر لوصفة: lookup بالـ id', async () => {
-  await start('#/r/m-52869');
-  expect(urls()).toEqual(['lookup.php?i=52869']);
-  expect($('h1').textContent).toBe('Tahini Lentils');
-});
-
-it('النت قاطع: الرسالة، وجرّب تاني بيجيب', async () => {
-  let n = 0;
-  await start('#/', vi.fn(async () => { if (++n === 1) throw new TypeError('Failed to fetch'); return new Response(recorded); }));
-  expect($('[role="alert"] p').textContent).toBe('مفيش اتصال. اتأكد من النت وجرّب تاني.');
-  $('[data-action="retry"]').click();
-  await vi.waitFor(() => expect($$('.card')).toHaveLength(4));
-});
-~~~
-
-~~~text الناتج: npm run check (ESLint 10.15، Vitest 5.1.1، jsdom 31)
- Test Files  5 passed (5)
-      Tests  42 passed (42)
-~~~
-
-(١٩ و ٨ و ٦ الأساسيين للمنطق والحفظ والشبكة، و ٤ للتحويل، و ٥ للشاشة.)
-
-## اتجرّب في Chrome 158 على الـ API الحقيقي (Playwright)
-
-~~~text الناتج: Network (الطلبات لـ themealdb بس)
-أول فتحة          req search.php?s=          200    ← 25 كارت
-كتابة chicken حرف حرف (40ms بين الحروف)
-                  req search.php?s=chicken   200    ← طلب واحد بدل 7، والرابط #/?q=chicken
-latency 1500ms (Network.emulateNetworkConditions)، «beef» ونص ثانية و « stew»
-                  req search.php?s=beef
-                  req search.php?s=beef%20stew
-                  canceled search.php?s=beef net::ERR_ABORTED      ← (canceled) في DevTools
-                  200 search.php?s=beef%20stew  ← Lemongrass beef stew with noodles، ومفيش رسالة خطأ
-Offline (context.setOffline)، والبحث fish
-                  failed search.php?s=fish net::ERR_INTERNET_DISCONNECTED
-                  الشاشة: مفيش اتصال. اتأكد من النت وجرّب تاني.
-Online و «جرّب تاني»
-                  200 search.php?s=fish        ← 20 كارت
-#/r/m-52802 في متصفح تاني (مفيش حاجة متحمّلة)
-                  lookup.php?i=52802 ← Fish pie | الوقت مش مكتوب · Seafood، British
-scrollWidth/clientWidth   345/345   753/753   1265/1265
-pageerror         مفيش
-~~~
-
-## تشغّله إزاي
-
-~~~bash
-cd recipe-mealdb
-npm install
-npm run check
-npx --yes serve -l 8000         # أو: python -m http.server 8000
-# وافتح http://localhost:8000
-~~~
-
-## الغلطة اللي حصلت
-
-أول نسخة من [[loadData]] كانت بتفصل المفتاح بـ [[key.slice(0, 2)]] و [[key.slice(2)]]. ده شغال مع [[q:chicken]] (حرف واحد و [[:]])، بس [[id:52869]] فيه حرفين قبل [[:]]:
-
-~~~text الناتج: npm run check
- FAIL  tests/mealdb.dom.test.js > رابط مباشر لوصفة: lookup بالـ id
-AssertionError: expected [ 'lookup.php?i=%3A52869' ] to deeply equal [ 'lookup.php?i=52869' ]
-~~~
-
-[[%3A]] هي [[:]] بعد [[encodeURIComponent]]. التصليح: [[key.indexOf(':')]] والقص عنده، فأي طول ينفع.
-
-## لو مشتغلش
-
-- **البحث ملهوش نتايج والشاشة قالت «مفيش اتصال»:** نسيت [[data.meals ?? []]]، فـ [[null.map]] رمت [[TypeError]] و [[explain]] افتكرتها شبكة. الـ API بيرجّع [[{"meals":null}]] مش لستة فاضية.
-- **البحث بيبعت طلب مع كل حرف:** الطلب في مستمع [[input]] مباشرة. خليه يتبع الرابط (اللي بيتغيّر بعد الـ debounce) زي هنا.
-- **المفضلة فيها وصفات API مش ظاهرة:** المفضلة بتعرض اللي متحمّل بس. التحسين: احفظ الوصفة نفسها (مش الـ id بس) في [[favs]].
-
-**الغلطة الشائعة:** تخلّي [[view.js]] يقرا [[meal.strMeal]] و [[meal.strIngredient1]] مباشرة. أول ما تغيّر الـ API (أو ترجع للملف) هتعيد كتابة كل الشاشات. الشكل اللي برّه بيتحوّل مرة واحدة على الباب.` },
-        { lvl: 'كبير', dir: "recipe-pwa", t: R`يشتغل من غير نت (PWA)`, what: R`خلّي التطبيق PWA: [[manifest.webmanifest]] وأيقونات، و service worker بيكاش الـ shell (cache first) والـ JSON (stale-while-revalidate)، وزرار «فيه نسخة جديدة، حدّث» لما الـ SW يتغيّر. والمسارات كلها relative عشان تشتغل تحت [[/REPO/]] على Pages. من وحدة «PWA و service worker» كلها ودروس الوحدة دي.`, done: R`بعد أول فتحة، DevTools ← Network ← Offline والتطبيق بيفتح وبيعرض الوصفات وبيضيف وبيحفظ. Lighthouse بيقول installable، والتطبيق بيتسطب على الموبايل من رابط Pages، ورفع نسخة جديدة بيطلّع زرار التحديث مرة واحدة بس، وكل اختبارات Vitest لسه بتعدّي في الـ CI.`, ext: R`زوّد مزامنة: الوصفات اللي اتضافت أوفلاين تتحفظ في IndexedDB وتترفع لما النت يرجع (Background Sync، أو عند [[online]] event)، ومعاها اختبار للحالة دي.`, sol: R`~~~view 540 دفتر الوصفات كـ PWA (الصندوق ده معزول، فالـ service worker مش بيشتغل فيه)
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>دفتر الوصفات</title>
-  <link rel="icon" href="data:,">
-  <meta name="theme-color" content="#7a3e12">
-  <style>
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #1d1d1f; background: #faf7f2; }
-header { background: #7a3e12; }
-nav { display: flex; flex-wrap: wrap; gap: .25rem; max-width: 52rem; margin: 0 auto; padding: .5rem 1rem; }
-nav a { color: #fff; padding: .4rem .8rem; border-radius: 6px; text-decoration: none; }
-nav a[aria-current="page"] { background: #fff; color: #7a3e12; font-weight: 700; }
-main { max-width: 52rem; margin: 0 auto; padding: 1rem; }
-h1 { margin: .5rem 0 1rem; }
-h1:focus { outline: none; }
-:focus-visible { outline: 3px solid #1a73e8; outline-offset: 2px; }
-form[role="search"] { display: grid; grid-template-columns: 1fr; gap: .25rem; margin-bottom: .5rem; }
-@media (min-width: 640px) { form[role="search"] { grid-template-columns: auto 1fr auto auto; align-items: center; gap: .5rem; } }
-input, select, textarea, button { font: inherit; padding: .45rem .6rem; border: 1px solid #b9b1a6; border-radius: 6px; background: #fff; max-width: 100%; }
-button { cursor: pointer; background: #f1e6d8; }
-button[type="submit"] { background: #7a3e12; color: #fff; border-color: #7a3e12; }
-.cards { list-style: none; padding: 0; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-.card { background: #fff; border: 1px solid #e4dccf; border-radius: 10px; padding: .75rem 1rem; }
-.card h2 { font-size: 1.15rem; margin: 0; }
-.meta { color: #5c5348; margin: .25rem 0 .5rem; }
-.steps { white-space: pre-line; }
-.notice { background: #fff4ce; border: 1px solid #e0c060; padding: .5rem .75rem; border-radius: 6px; }
-[role="alert"] { background: #fde7e9; border: 1px solid #d93025; padding: .5rem .75rem; border-radius: 6px; }
-.field { display: grid; gap: .2rem; margin-bottom: .75rem; }
-.err { color: #b3261e; margin: 0; min-height: 1.2em; }
-[aria-invalid="true"] { border-color: #b3261e; border-width: 2px; }
-#update:empty { display: none; }
-#update { max-width: 52rem; margin: .5rem auto 0; padding: 0 1rem; }
-#update button { background: #fff4ce; border-color: #e0c060; }
-  </style>
-</head>
-<body>
-  <header>
-    <nav aria-label="الأقسام">
-      <a href="#/">الوصفات</a>
-      <a href="#/fav">المفضلة</a>
-      <a href="#/new">وصفة جديدة</a>
-    </nav>
-  </header>
-  <div id="update" role="status"></div>
-  <main id="main"></main>
-  <noscript>التطبيق ده محتاج JavaScript يكون شغال.</noscript>
-<script type="module">
-// للعرض جوه الموقع بس: الصندوق ده iframe معزول (about:srcdoc)، فروابط # مبتمشيش لوحدها،
-// و history.replaceState بترمي SecurityError. السطور دي بتعمل نفس الحاجة بـ location.hash
-document.addEventListener('click', (e) => {
-  const a = e.target.closest('a[href^="#/"]');
-  if (a) { e.preventDefault(); location.hash = a.getAttribute('href'); }
-});
-const realReplace = history.replaceState.bind(history);
-history.replaceState = (state, title, url) => {
-  try { realReplace(state, title, url); } catch { location.hash = String(url).slice(String(url).indexOf('#')); }
-};
-const RECIPES = "[{\"id\":\"koshary\",\"title\":\"كشري\",\"minutes\":60,\"tags\":[\"مصري\",\"نباتي\"],\"ingredients\":[\"رز\",\"عدس بني\",\"مكرونة\",\"صلصة طماطم\",\"بصل مقرمش\"],\"steps\":\"اسلق العدس والرز مع بعض.\\nاسلق المكرونة لوحدها.\\nاعمل الصلصة بالطماطم والتوم والخل.\\nرص الطبق وفوقه البصل.\"},{\"id\":\"foul\",\"title\":\"فول مدمس\",\"minutes\":15,\"tags\":[\"فطار\",\"مصري\"],\"ingredients\":[\"فول مدمس\",\"زيت زيتون\",\"كمون\",\"ليمون\",\"ملح\"],\"steps\":\"سخّن الفول بمية قليلة.\\nاهرسه شوية.\\nضيف الزيت والكمون والليمون والملح.\"},{\"id\":\"shakshuka\",\"title\":\"شكشوكة\",\"minutes\":20,\"tags\":[\"فطار\"],\"ingredients\":[\"بيض\",\"طماطم\",\"فلفل\",\"بصل\",\"كمون\"],\"steps\":\"شوّح البصل والفلفل.\\nضيف الطماطم والكمون لحد ما تتسبك.\\nاكسر البيض فوقها وغطّيها.\"},{\"id\":\"salad\",\"title\":\"سلطة بلدي\",\"minutes\":10,\"tags\":[\"نباتي\"],\"ingredients\":[\"طماطم\",\"خيار\",\"بصل\",\"ليمون\",\"كمون\"],\"steps\":\"قطّع الخضار مكعبات صغيرة.\\nضيف الليمون والكمون والملح وقلّب.\"},{\"id\":\"roz-bel-laban\",\"title\":\"رز بلبن\",\"minutes\":40,\"tags\":[\"حلو\",\"مصري\"],\"ingredients\":[\"رز\",\"لبن\",\"سكر\",\"فانيليا\"],\"steps\":\"اسلق الرز في مية لحد ما يشربها.\\nضيف اللبن وقلّب على نار هادية.\\nضيف السكر والفانيليا وصبّه في طواجن.\"},{\"id\":\"basbousa\",\"title\":\"بسبوسة\",\"minutes\":50,\"tags\":[\"حلو\",\"مصري\"],\"ingredients\":[\"سميد\",\"زبادي\",\"سكر\",\"زبدة\",\"شربات\"],\"steps\":\"اخلط السميد والزبادي والسكر والزبدة.\\nافرده في صينية وقطّعه.\\nادخله الفرن وبعدين صب عليه الشربات.\"}]";
-const MAX_TITLE = 80;
-
-function isRecipe(r) {
-  return !!r && typeof r === 'object' && typeof r.id === 'string' && typeof r.title === 'string'
-    && Number.isFinite(r.minutes) && Array.isArray(r.ingredients) && Array.isArray(r.tags)
-    && typeof r.steps === 'string';
+  input.value = '';
+  input.maxLength = text.length;
+  input.disabled = false;
+  $('#result').textContent = '';
+  paint();
+  showStats(0);
+  showBest();
+  input.focus();
 }
 
-const toggleFav = (favs, id) => (favs.includes(id) ? favs.filter((f) => f !== id) : [...favs, id]);
-
-const toLatinDigits = (s) => String(s ?? '').replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
-
-function parseRoute(hash) {
-  const raw = String(hash ?? '').replace(/^#/, '') || '/';
-  const [path, qs = ''] = raw.split('?');
-  const query = Object.fromEntries(new URLSearchParams(qs));
-  const parts = path.split('/').filter(Boolean);
-  if (parts.length === 0) return { name: 'list', params: {}, query };
-  if (parts[0] === 'r' && parts.length === 2) return { name: 'recipe', params: { id: decodeURIComponent(parts[1]) }, query };
-  if (parts.length === 1 && (parts[0] === 'new' || parts[0] === 'fav')) return { name: parts[0], params: {}, query };
-  return { name: 'notfound', params: {}, query };
+function paint() {
+  const m = marks(game.target, game.typed, game.lenient);
+  box.querySelectorAll('span').forEach((span, i) => { span.className = m[i]; });
 }
 
-function filterRecipes(list, { q = '', tag = '' } = {}) {
-  const needle = q.trim().toLowerCase();
-  return list.filter((r) => (!tag || r.tags.includes(tag))
-    && (!needle || [r.title, ...r.ingredients].some((t) => t.toLowerCase().includes(needle))));
+function showStats(ms) {
+  const s = stats(game, ms, game.lenient);
+  $('#time').textContent = (ms / 1000).toFixed(1);
+  $('#wpm').textContent = s.wpm;
+  $('#acc').textContent = s.accuracy + '%';
+  return s;
 }
 
-const allTags = (list) => [...new Set(list.flatMap((r) => r.tags))].sort((a, b) => a.localeCompare(b, 'ar'));
-
-function validateRecipe(input) {
-  const errors = {};
-  const title = String(input.title ?? '').trim();
-  const minutes = Number(toLatinDigits(input.minutes).trim() || NaN);
-  const ingredients = String(input.ingredients ?? '').split('\n').map((s) => s.trim()).filter(Boolean);
-  const steps = String(input.steps ?? '').trim();
-  const tags = [...new Set(String(input.tags ?? '').split(/[,،]/).map((s) => s.trim()).filter(Boolean))];
-  if (!title) errors.title = 'اكتب اسم الوصفة';
-  else if (title.length > MAX_TITLE) errors.title = $__btالاسم أطول من $__{MAX_TITLE} حرف$__bt;
-  if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) errors.minutes = 'الوقت بالدقايق، رقم صحيح من 1 لـ 1440';
-  if (ingredients.length < 2) errors.ingredients = 'اكتب مكوّنين على الأقل، كل واحد في سطر';
-  if (!steps) errors.steps = 'اكتب طريقة التحضير';
-  if (Object.keys(errors).length) return { ok: false, errors };
-  return { ok: true, value: { title, minutes, ingredients, steps, tags } };
+function showBest() {
+  const b = loadBest()[bestKey()];
+  $('#best').textContent = b ? b.wpm + ' WPM بدقة ' + b.accuracy + '%' : '—';
 }
 
-function debounce(fn, ms) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
-  };
+function tick() {
+  showStats(performance.now() - game.start);
+  game.raf = requestAnimationFrame(tick);
 }
 
-
-const KEY = 'recipe-book:v1';
-
-// مجرد قراية localStorage بترمي SecurityError لو التخزين مقفول (أو صفحة sandboxed)، فبنقراه جوه try
-function browserStorage() {
-  try { return globalThis.localStorage ?? null; } catch { return null; }
-}
-
-function load(storage = browserStorage()) {
-  let raw;
-  try { raw = storage.getItem(KEY); } catch { return { mine: [], favs: [], warning: 'المتصفح قافل التخزين، ومش هنفتكر حاجة' }; }
-  if (raw === null) return { mine: [], favs: [] };
-  try {
-    const data = JSON.parse(raw);
-    if (data?.version !== 1) throw new Error('نسخة مش معروفة: ' + data?.version);
-    const mine = Array.isArray(data.mine) ? data.mine.filter(isRecipe) : [];
-    const favs = Array.isArray(data.favs) ? data.favs.filter((f) => typeof f === 'string') : [];
-    return { mine, favs };
-  } catch (err) {
-    try { storage.setItem(KEY + ':broken', raw); } catch { /* مفيش مكان، مش مشكلة */ }
-    return { mine: [], favs: [], warning: 'الداتا المحفوظة كانت بايظة (' + err.message + ')، واتحفظت نسخة منها' };
+input.addEventListener('input', () => {
+  if (game.done) return;
+  const typed = Array.from(input.value);
+  if (!game.start) {
+    game.start = performance.now();
+    game.raf = requestAnimationFrame(tick);
   }
-}
+  for (let i = game.typed.length; i < typed.length; i++) {
+    game.keystrokes++;
+    if (!same(typed[i], game.target[i], game.lenient)) game.mistakes++;
+  }
+  game.typed = typed;
+  paint();
+  if (typed.length >= game.target.length) finish();
+});
 
-function save({ mine, favs }, storage = browserStorage()) {
+input.addEventListener('paste', (e) => e.preventDefault());
+
+const KEYS = ['ar', 'en', 'ar-lenient', 'en-lenient'];
+const bestKey = () => game.lang + (game.lenient ? '-lenient' : '');
+
+function loadBest() {
+  const ok = (r) => r && Number.isFinite(r.wpm) && Number.isFinite(r.accuracy);
+  let data = null;
   try {
-    storage.setItem(KEY, JSON.stringify({ version: 1, mine, favs }));
-    return true;
+    data = JSON.parse(localStorage.getItem(BEST_KEY));
   } catch {
-    return false;
+    data = null;
   }
+  return Object.fromEntries(KEYS.map((k) => [k, ok(data?.[k]) ? data[k] : null]));
 }
 
-
-function createStore(storage = browserStorage()) {
-  const saved = load(storage);
-  let state = {
-    recipes: [], mine: saved.mine, favs: saved.favs,
-    status: 'idle', error: '', notice: saved.warning ?? '',
-    route: { name: 'list', params: {}, query: {} },
-  };
-  const listeners = new Set();
-
-  function set(patch) {
-    const prev = state;
-    state = { ...state, ...patch };
-    if ((state.mine !== prev.mine || state.favs !== prev.favs) && !save(state, storage)) {
-      state = { ...state, notice: 'مقدرناش نحفظ: التخزين مليان أو مقفول' };
-    }
-    listeners.forEach((fn) => fn(state, prev));
+function finish() {
+  game.done = true;
+  cancelAnimationFrame(game.raf);
+  input.disabled = true;
+  const s = showStats(performance.now() - game.start);
+  const best = loadBest();
+  const old = best[bestKey()];
+  const record = s.accuracy >= 90 && (!old || s.wpm > old.wpm);
+  if (record) {
+    best[bestKey()] = { wpm: s.wpm, accuracy: s.accuracy };
+    try { localStorage.setItem(BEST_KEY, JSON.stringify(best)); } catch {}
   }
-
-  return {
-    get: () => state,
-    subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn); },
-    setRoute: (route) => set({ route }),
-    loading: () => set({ status: 'loading', error: '' }),
-    loaded: (recipes) => set({ status: 'ready', recipes }),
-    failed: (message) => set({ status: 'error', error: message }),
-    toggleFav: (id) => set({ favs: toggleFav(state.favs, id) }),
-    addRecipe(input) {
-      const res = validateRecipe(input);
-      if (!res.ok) return res;
-      const recipe = { id: 'u-' + crypto.randomUUID(), ...res.value };
-      set({ mine: [recipe, ...state.mine] });
-      return { ok: true, recipe };
-    },
-  };
+  $('#result').textContent = (record ? 'رقم قياسي جديد! ' : 'خلصت. ') + s.wpm + ' WPM بدقة ' + s.accuracy + '%';
+  showBest();
 }
 
-const allRecipes = (s) => [...s.mine, ...s.recipes];
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') newGame(); });
+$('#restart').addEventListener('click', newGame);
+lang.addEventListener('change', newGame);
+lenient.addEventListener('change', newGame);
 
-
-class HttpError extends Error {
-  constructor(status, url) {
-    super($__btHTTP $__{status} من $__{url}$__bt);
-    this.name = 'HttpError';
-    this.status = status;
-  }
-}
-
-class DataError extends Error {
-  name = 'DataError';
-}
-
-async function fetchJSON(url, { timeout = 8000, signal } = {}) {
-  const timer = AbortSignal.timeout(timeout);
-  const res = await fetch(url, { signal: signal ? AbortSignal.any([signal, timer]) : timer });
-  if (!res.ok) throw new HttpError(res.status, url);
-  return res.json();
-}
-
-async function loadRecipes(url, opts) {
-  const data = await fetchJSON(url, opts);
-  if (!Array.isArray(data)) throw new DataError('الرد مش لستة وصفات');
-  return data.filter(isRecipe);
-}
-
-function explain(err) {
-  if (err.name === 'TimeoutError') return 'السيرفر اتأخر في الرد. جرّب تاني.';
-  if (err instanceof HttpError) return err.status === 404 ? 'ملف الوصفات مش موجود (404).' : $__btالسيرفر رد بخطأ $__{err.status}. جرّب كمان شوية.$__bt;
-  if (err instanceof SyntaxError) return 'الرد وصل بس مش JSON سليم.';
-  if (err instanceof DataError) return 'الرد وصل بس شكله غلط.';
-  return 'مفيش اتصال. اتأكد من النت وجرّب تاني.';
-}
-
-
-function h(tag, attrs = {}, ...kids) {
-  const el = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k.startsWith('aria-')) el.setAttribute(k, String(v));
-    else if (v === true) el.setAttribute(k, '');
-    else if (v !== false && v != null) el.setAttribute(k, String(v));
-  }
-  el.append(...kids.flat().filter((k) => k != null && k !== false));
-  return el;
-}
-
-const TITLES = { list: 'الوصفات', fav: 'المفضلة', new: 'وصفة جديدة', notfound: 'الصفحة دي مش موجودة' };
-
-function view(s) {
-  const { name } = s.route;
-  const all = allRecipes(s);
-  const screen = name === 'recipe' ? recipeScreen(s, all) : { title: TITLES[name] ?? TITLES.notfound };
-  const nodes = screen.nodes
-    ?? (name === 'list' ? listScreen(s, screen.title, all)
-      : name === 'fav' ? listScreen(s, screen.title, all.filter((r) => s.favs.includes(r.id)))
-        : name === 'new' ? newScreen()
-          : notFound(screen.title));
-  if (s.notice) nodes.unshift(h('p', { class: 'notice', role: 'status' }, s.notice));
-  return { title: screen.title + ' · دفتر الوصفات', nodes };
-}
-
-function listScreen(s, title, list) {
-  const { q = '', tag = '' } = s.route.query;
-  const shown = filterRecipes(list, { q, tag });
-  return [
-    h('h1', { tabindex: -1 }, title),
-    h('form', { role: 'search', 'data-form': 'search' },
-      h('label', { for: 'q' }, 'دوّر باسم أو مكوّن'),
-      h('input', { id: 'q', name: 'q', type: 'search', value: q, autocomplete: 'off' }),
-      h('label', { for: 'tag' }, 'التصنيف'),
-      h('select', { id: 'tag', name: 'tag' }, h('option', { value: '' }, 'الكل'),
-        allTags(list).map((t) => h('option', { value: t, selected: t === tag }, t)))),
-    status(s, shown.length),
-    h('ul', { class: 'cards' }, shown.map((r) => card(s, r))),
-  ];
-}
-
-function status(s, shown) {
-  if (s.status === 'loading' || s.status === 'idle') return h('p', { role: 'status' }, 'بنحمّل الوصفات…');
-  if (s.status === 'error') return h('div', { role: 'alert' }, h('p', {}, s.error),
-    h('button', { type: 'button', 'data-action': 'retry' }, 'جرّب تاني'));
-  return h('p', { role: 'status' }, shown === 0 ? 'مفيش وصفات بالبحث ده' : $__bt$__{shown} وصفة$__bt);
-}
-
-const favButton = (s, id) => {
-  const on = s.favs.includes(id);
-  return h('button', { type: 'button', id: 'fav-' + id, 'data-fav': id, 'aria-pressed': on }, on ? '★ في المفضلة' : '☆ للمفضلة');
-};
-
-const meta = (r) => h('p', { class: 'meta' }, r.minutes + ' دقيقة' + (r.tags.length ? ' · ' + r.tags.join('، ') : ''));
-
-function card(s, r) {
-  return h('li', { class: 'card' },
-    h('h2', {}, h('a', { href: '#/r/' + encodeURIComponent(r.id) }, r.title)),
-    meta(r), favButton(s, r.id));
-}
-
-function recipeScreen(s, all) {
-  const r = all.find((x) => x.id === s.route.params.id);
-  if (r) {
-    return { title: r.title, nodes: [
-      h('h1', { tabindex: -1 }, r.title), meta(r), favButton(s, r.id),
-      h('h2', {}, 'المكوّنات'), h('ul', {}, r.ingredients.map((i) => h('li', {}, i))),
-      h('h2', {}, 'الطريقة'), h('p', { class: 'steps' }, r.steps),
-      h('p', {}, h('a', { href: '#/' }, 'كل الوصفات')),
-    ] };
-  }
-  if (s.status === 'loading' || s.status === 'idle') return { title: 'بنحمّل', nodes: [h('h1', { tabindex: -1 }, 'بنحمّل الوصفة…')] };
-  if (s.status === 'error') return { title: 'حصل خطأ', nodes: [h('h1', { tabindex: -1 }, 'حصل خطأ'), status(s, 0)] };
-  return { title: 'الوصفة دي مش موجودة', nodes: notFound('الوصفة دي مش موجودة') };
-}
-
-const notFound = (title) => [h('h1', { tabindex: -1 }, title), h('p', {}, h('a', { href: '#/' }, 'ارجع لكل الوصفات'))];
-
-function field(name, label, control) {
-  return h('div', { class: 'field' }, h('label', { for: name }, label), control, h('p', { id: name + '-err', class: 'err' }));
-}
-
-function newScreen() {
-  const a = (name) => ({ id: name, name, 'aria-describedby': name + '-err' });
-  return [
-    h('h1', { tabindex: -1 }, 'وصفة جديدة'),
-    h('form', { 'data-form': 'add', novalidate: true },
-      field('title', 'الاسم', h('input', { ...a('title'), required: true, maxlength: MAX_TITLE, autocomplete: 'off' })),
-      field('minutes', 'الوقت بالدقايق', h('input', { ...a('minutes'), required: true, inputmode: 'numeric' })),
-      field('ingredients', 'المكوّنات، كل واحد في سطر', h('textarea', { ...a('ingredients'), required: true, rows: 4 })),
-      field('steps', 'الطريقة', h('textarea', { ...a('steps'), required: true, rows: 4 })),
-      field('tags', 'التصنيفات، افصل بينهم بفاصلة', h('input', { ...a('tags'), autocomplete: 'off' })),
-      h('button', { type: 'submit' }, 'احفظ الوصفة')),
-  ];
-}
-
-function showErrors(form, errors) {
-  for (const el of form.querySelectorAll('[name]')) {
-    const msg = errors[el.name] ?? '';
-    form.querySelector('#' + el.name + '-err').textContent = msg;
-    if (msg) el.setAttribute('aria-invalid', 'true');
-    else el.removeAttribute('aria-invalid');
-  }
-  form.querySelector('[aria-invalid="true"]')?.focus();
-}
-
-function registerSW(box) {
-  let sw;
-  try { sw = navigator.serviceWorker; } catch { return 'blocked'; } // صفحة sandboxed: قراية الـ property نفسها بترمي
-  if (!sw) return 'unsupported';
-
-  const offer = (worker) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.textContent = 'فيه نسخة جديدة، حدّث';
-    button.addEventListener('click', () => worker.postMessage('skipWaiting'));
-    box.replaceChildren(button);
-  };
-
-  sw.register('./sw.js').then((reg) => {
-    if (reg.waiting && sw.controller) offer(reg.waiting);
-    reg.addEventListener('updatefound', () => {
-      const worker = reg.installing;
-      worker.addEventListener('statechange', () => {
-        if (worker.state === 'installed' && sw.controller) offer(worker);
-      });
-    });
-  }).catch(() => { /* من غير SW التطبيق شغال عادي، بس مش أوفلاين */ });
-
-  // النسخة الجديدة مسكت الصفحة: reload مرة واحدة بس. وفي أول زيارة (مفيش controller قبلها)
-  // clients.claim() بتطلق controllerchange برضه، ودي مش نسخة جديدة فمفيش reload
-  const hadController = !!sw.controller;
-  let reloaded = false;
-  sw.addEventListener('controllerchange', () => {
-    if (!hadController || reloaded) return;
-    reloaded = true;
-    location.reload();
-  });
-  return 'registering';
-}
-
-
-const DATA_URL = 'data:application/json;charset=utf-8,' + encodeURIComponent(RECIPES);
-const store = createStore();
-const main = document.getElementById('main');
-let ctrl = null;
-
-function paint(s, prev) {
-  main.setAttribute('aria-busy', String(s.status === 'loading'));
-  const moved = prev.route.name !== s.route.name || prev.route.params.id !== s.route.params.id;
-  if (!moved && s.route.name === 'new') return;
-  const active = main.contains(document.activeElement) ? document.activeElement : null;
-  const keep = active?.id ? { id: active.id, pos: active.selectionStart } : null;
-  const { title, nodes } = view(s);
-  document.title = title;
-  main.replaceChildren(...nodes);
-  const here = '#/' + (s.route.name === 'list' ? '' : s.route.name);
-  for (const a of document.querySelectorAll('nav a')) {
-    if (a.getAttribute('href') === here) a.setAttribute('aria-current', 'page');
-    else a.removeAttribute('aria-current');
-  }
-  if (moved) main.querySelector('h1')?.focus();
-  else if (keep) {
-    const el = document.getElementById(keep.id);
-    el?.focus();
-    if (keep.pos != null) el?.setSelectionRange?.(keep.pos, keep.pos);
-  }
-}
-
-const search = debounce((form) => {
-  const p = new URLSearchParams();
-  for (const [k, v] of new FormData(form)) if (String(v).trim()) p.set(k, String(v));
-  const qs = String(p);
-  // من غير || '#/' لو الصفحة اتفتحت من غير # الـ ?q= كان هيروح للرابط نفسه مش للـ hash
-  const path = location.hash.split('?')[0] || '#/';
-  history.replaceState(null, '', path + (qs ? '?' + qs : ''));
-  store.setRoute(parseRoute(location.hash));
-}, 250);
-
-async function loadData() {
-  ctrl?.abort();
-  ctrl = new AbortController();
-  store.loading();
-  try {
-    store.loaded(await loadRecipes(DATA_URL, { signal: ctrl.signal }));
-  } catch (err) {
-    if (err.name !== 'AbortError') store.failed(explain(err));
-  }
-}
-
-main.addEventListener('input', (e) => {
-  const form = e.target.closest('[data-form="search"]');
-  if (form) search(form);
-});
-
-main.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (e.target.dataset.form === 'search') return search(e.target);
-  const res = store.addRecipe(Object.fromEntries(new FormData(e.target)));
-  if (!res.ok) return showErrors(e.target, res.errors);
-  location.hash = '#/r/' + encodeURIComponent(res.recipe.id);
-});
-
-main.addEventListener('click', (e) => {
-  const fav = e.target.closest('[data-fav]');
-  if (fav) store.toggleFav(fav.dataset.fav);
-  if (e.target.closest('[data-action="retry"]')) loadData();
-});
-
-window.addEventListener('hashchange', () => store.setRoute(parseRoute(location.hash)));
-store.subscribe(paint);
-store.setRoute(parseRoute(location.hash));
-loadData();
-registerSW(document.getElementById('update'));
+newGame();
 </script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** نفس التطبيق بالظبط، والفرق مش في الشكل: بعد أول فتحة من سيرفر، اقفل النت واعمل reload والتطبيق بيفتح بالست وصفات، وتضيف وصفة وتتحفظ. وفي Chrome بيظهر زرار «تثبيت» في شريط العنوان، ولما ترفع نسخة جديدة بيظهر فوق زرار «فيه نسخة جديدة، حدّث» مرة واحدة. (في الصندوق ده المتصفح بيمنع الـ service worker خالص: قراية [[navigator.serviceWorker]] نفسها بترمي [[SecurityError: Failed to read the 'serviceWorker' property from 'Navigator': Service worker is disabled because the context is sandboxed and lacks the 'allow-same-origin' flag.]]، و [[registerSW]] بتمسكها وبترجّع [[blocked]]، فالتطبيق شغّال عادي من غير أوفلاين.)
+## هتشوف إيه
 
-## الصورة الكبيرة
-
-~~~text
-أول زيارة:  الصفحة ──register──→ sw.js ──install──→ كاش shell-v1 (13 ملف) + كاش data (recipes.json)
-بعد كده:    الصفحة ──fetch──→ sw.js ──┬─ ملفات الصفحة  → cache first: من الكاش، ولو مش موجود من الشبكة
-                                     └─ data/*.json   → stale-while-revalidate: الكاش فورًا + الجديد في الخلفية
-نسخة جديدة: sw.js اتغيّر ─→ install (مستني) ─→ زرار «حدّث» ─→ postMessage('skipWaiting') ─→ activate ─→ reload مرة واحدة
-~~~
-
-## ليه الأدوات دي؟
-
-| الاختيار | البديل | ليه ده هنا | إمتى البديل |
-|---|---|---|---|
-| service worker مكتوب بإيدك (~٥٠ سطر) | Workbox (مكتبة جوجل) | ٢ استراتيجيات بس، وكل سطر مفهوم ومتختبر | لما تبقى عندك قواعد كاش كتير ومحتاج expiration و background sync جاهزين |
-| cache first للـ shell | network first | الملفات دي مبتتغيّرش غير مع نشر جديد، و [[VERSION]] هو اللي بيعلن النشر | صفحات بتتغيّر كل شوية (أخبار) |
-| stale-while-revalidate للداتا | cache first | الوصفات بتظهر فورًا، والجديد بيوصل في المرة الجاية | لو لازم الداتا تبقى أحدث حاجة دايمًا (رصيد، أسعار) يبقى network first |
-| زرار «حدّث» | [[skipWaiting()]] على طول في [[install]] | النسخة الجديدة متقلبش الصفحة واليوزر بيكتب في الفورم | تطبيق مفيهوش حالة تضيع |
-| أيقونات PNG من سكربت Node | أداة أونلاين أو Figma | من غير تسطيب ومن غير ملفات جاية من برّه | لما يبقى عندك لوجو حقيقي |
+علّم «متساهل» واكتب الجملة من غير همزات ومن غير تاء مربوطة ([[اوامر]] مكان [[أوامر]]، و [[المشكله]] مكان [[المشكلة]]): كل الحروف خضرا والدقة ١٠٠٪. وشيل العلامة واكتب نفس الكلام: الحروف دي حمرا. والنص اللي فوق **مبيتغيّرش** في الحالتين، و «أحسن نتيجة» لكل وضع لوحدها. (في الصندوق ده [[localStorage]] مقفول فأحسن نتيجة بتفضل «—».)
 
 ## الملفات
 
 ~~~text
-recipe-pwa/
-├── manifest.webmanifest    جديد: الاسم والألوان والأيقونات و start_url نسبي
-├── sw.js                   جديد: الكاش والاستراتيجيتين والتحديث
-├── make-icons.js           جديد: بيعمل الأيقونتين PNG بـ node:zlib
-├── icons/icon-192.png  icons/icon-512.png
-├── src/pwa.js              جديد: التسجيل وزرار «حدّث»
-├── index.html              + manifest و theme-color و <div id="update">
-├── src/app.js              + سطرين: import و registerSW
-├── style.css               + شكل زرار التحديث
-├── eslint.config.js        + globals للـ sw.js والسكربتات
-├── package.json            + test:sw و icons، و check بقى بيشغّلهم
-├── test-sw/sw.check.js     جديد: sw.js الحقيقي في node:vm بـ node --test
-├── tests/app.dom.test.js   سطر واحد اتعدّل (تحت في «الغلطة اللي حصلت»)
-└── src/logic.js  src/storage.js  src/store.js  src/api.js  src/view.js  data/   زي الأساسية
-~~~
-
-الملفات اللي مش مكتوبة هنا زي النسخة الأساسية بالظبط، وكودها كامل في حل تمرين «انشره بجد واعمل README» في درس «مشروع التخرّج ٤: الاختبارات والنشر». ابدأ من نسخة منها:
-
-~~~bash
-cp -r recipe-book recipe-pwa
-cd recipe-pwa
-~~~
-
-~~~json manifest.webmanifest
-{
-  "name": "دفتر الوصفات",
-  "short_name": "الوصفات",
-  "lang": "ar",
-  "dir": "rtl",
-  "start_url": "./",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#faf7f2",
-  "theme_color": "#7a3e12",
-  "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
-  ]
-}
-~~~
-
-~~~js sw.js
-// sw.js — الـ service worker. غيّر VERSION مع أي نشر فيه تغيير في ملفات الـ shell.
-const VERSION = 'v1';
-const SHELL_CACHE = 'shell-' + VERSION;
-const DATA_CACHE = 'data';
-const SHELL = [
-  './', './index.html', './style.css', './manifest.webmanifest',
-  './src/app.js', './src/logic.js', './src/storage.js', './src/store.js', './src/api.js', './src/view.js', './src/pwa.js',
-  './icons/icon-192.png', './icons/icon-512.png',
-];
-const DATA = ['./data/recipes.json'];
-
-self.addEventListener('install', (event) => {
-  event.waitUntil(Promise.all([
-    caches.open(SHELL_CACHE).then((cache) => cache.addAll(SHELL)),
-    caches.open(DATA_CACHE).then((cache) => cache.addAll(DATA)),
-  ]));
-});
-
-// النسخة الجديدة شغالة: امسح كاش الـ shell القديم، وامسك الصفحات المفتوحة
-self.addEventListener('activate', (event) => {
-  event.waitUntil(caches.keys()
-    .then((keys) => Promise.all(keys.filter((k) => k.startsWith('shell-') && k !== SHELL_CACHE).map((k) => caches.delete(k))))
-    .then(() => self.clients.claim()));
-});
-
-// الصفحة بتبعت 'skipWaiting' لما اليوزر يدوس «حدّث»
-self.addEventListener('message', (event) => {
-  if (event.data === 'skipWaiting') self.skipWaiting();
-});
-
-function strategy(request) {
-  const url = new URL(request.url);
-  if (request.method !== 'GET' || url.origin !== self.location.origin) return null;
-  return url.pathname.includes('/data/') && url.pathname.endsWith('.json') ? 'data' : 'shell';
-}
-
-// الـ shell: من الكاش الأول، ولو مش موجود من الشبكة
-async function cacheFirst(request) {
-  return (await caches.match(request, { ignoreSearch: true })) ?? fetch(request);
-}
-
-// الداتا: رد الكاش على طول، وفي نفس الوقت هات الجديد وحطه في الكاش للمرة الجاية
-async function staleWhileRevalidate(event) {
-  const cache = await caches.open(DATA_CACHE);
-  const hit = await cache.match(event.request);
-  const fresh = fetch(event.request).then((res) => {
-    if (res.ok) cache.put(event.request, res.clone());
-    return res;
-  });
-  if (!hit) return fresh;
-  event.waitUntil(fresh.catch(() => {}));
-  return hit;
-}
-
-self.addEventListener('fetch', (event) => {
-  const kind = strategy(event.request);
-  if (kind === 'data') event.respondWith(staleWhileRevalidate(event));
-  else if (kind === 'shell') event.respondWith(cacheFirst(event.request));
-});
-~~~
-
-~~~js src/pwa.js
-// src/pwa.js — تسجيل الـ service worker، وزرار «فيه نسخة جديدة، حدّث»
-export function registerSW(box) {
-  let sw;
-  try { sw = navigator.serviceWorker; } catch { return 'blocked'; } // صفحة sandboxed: قراية الـ property نفسها بترمي
-  if (!sw) return 'unsupported';
-
-  const offer = (worker) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.textContent = 'فيه نسخة جديدة، حدّث';
-    button.addEventListener('click', () => worker.postMessage('skipWaiting'));
-    box.replaceChildren(button);
-  };
-
-  sw.register('./sw.js').then((reg) => {
-    if (reg.waiting && sw.controller) offer(reg.waiting);
-    reg.addEventListener('updatefound', () => {
-      const worker = reg.installing;
-      worker.addEventListener('statechange', () => {
-        if (worker.state === 'installed' && sw.controller) offer(worker);
-      });
-    });
-  }).catch(() => { /* من غير SW التطبيق شغال عادي، بس مش أوفلاين */ });
-
-  // النسخة الجديدة مسكت الصفحة: reload مرة واحدة بس. وفي أول زيارة (مفيش controller قبلها)
-  // clients.claim() بتطلق controllerchange برضه، ودي مش نسخة جديدة فمفيش reload
-  const hadController = !!sw.controller;
-  let reloaded = false;
-  sw.addEventListener('controllerchange', () => {
-    if (!hadController || reloaded) return;
-    reloaded = true;
-    location.reload();
-  });
-  return 'registering';
-}
-~~~
-
-~~~js make-icons.js
-// make-icons.js — بيعمل icons/icon-192.png و icons/icon-512.png من غير أي مكتبة: node make-icons.js
-import { deflateSync } from 'node:zlib';
-import { writeFileSync, mkdirSync } from 'node:fs';
-
-const CRC = Array.from({ length: 256 }, (_, n) => {
-  let c = n;
-  for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
-  return c >>> 0;
-});
-const crc32 = (buf) => {
-  let c = 0xffffffff;
-  for (const b of buf) c = CRC[(c ^ b) & 0xff] ^ (c >>> 8);
-  return (c ^ 0xffffffff) >>> 0;
-};
-function chunk(type, data) {
-  const out = Buffer.alloc(12 + data.length);
-  out.writeUInt32BE(data.length, 0);
-  out.write(type, 4, 'ascii');
-  data.copy(out, 8);
-  out.writeUInt32BE(crc32(out.subarray(4, 8 + data.length)), 8 + data.length);
-  return out;
-}
-
-// خلفية بنّي، وطبق أبيض في النص، وجواه دايرة بنّي فاتح
-function icon(size) {
-  const rows = [];
-  const c = size / 2;
-  for (let y = 0; y < size; y++) {
-    const row = Buffer.alloc(1 + size * 4);
-    for (let x = 0; x < size; x++) {
-      const d = Math.hypot(x + 0.5 - c, y + 0.5 - c) / size;
-      const [r, g, b] = d < 0.14 ? [201, 140, 79] : d < 0.32 ? [255, 255, 255] : [122, 62, 18];
-      row.set([r, g, b, 255], 1 + x * 4);
-    }
-    rows.push(row);
-  }
-  const head = Buffer.alloc(13);
-  head.writeUInt32BE(size, 0);
-  head.writeUInt32BE(size, 4);
-  head.set([8, 6, 0, 0, 0], 8); // 8 bit، RGBA
-  return Buffer.concat([
-    Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
-    chunk('IHDR', head), chunk('IDAT', deflateSync(Buffer.concat(rows))), chunk('IEND', Buffer.alloc(0)),
-  ]);
-}
-
-mkdirSync('icons', { recursive: true });
-for (const size of [192, 512]) writeFileSync($__bticons/icon-$__{size}.png$__bt, icon(size));
-console.log('icons/icon-192.png icons/icon-512.png');
+typing-lenient/
+├── index.html      + checkbox «متساهل»
+├── style.css       زي الدرس
+├── texts.js        زي الدرس
+├── game.js         + normalize و same، و marks و stats بياخدوا lenient
+├── app.js          الوضع جوه game، وأحسن نتيجة بمفتاح لكل وضع
+└── lenient.test.mjs
 ~~~
 
 ~~~html index.html
@@ -4496,832 +245,575 @@ console.log('icons/icon-192.png icons/icon-512.png');
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>دفتر الوصفات</title>
-  <link rel="icon" href="./icons/icon-192.png">
-  <link rel="manifest" href="./manifest.webmanifest">
-  <meta name="theme-color" content="#7a3e12">
-  <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./src/app.js"></script>
+  <title>سرعة الكتابة</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <nav aria-label="الأقسام">
-      <a href="#/">الوصفات</a>
-      <a href="#/fav">المفضلة</a>
-      <a href="#/new">وصفة جديدة</a>
-    </nav>
-  </header>
-  <div id="update" role="status"></div>
-  <main id="main"></main>
-  <noscript>التطبيق ده محتاج JavaScript يكون شغال.</noscript>
+  <main>
+    <h1>سرعة الكتابة</h1>
+    <label>النص <select id="lang"><option value="ar">عربي</option><option value="en">English</option></select></label>
+    <label><input type="checkbox" id="lenient"> متساهل (أ و إ و آ = ا، و ى = ي، و ة = ه)</label>
+    <p id="text" aria-label="النص اللي هتكتبه"></p>
+    <input id="input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="اكتب هنا">
+    <p class="stats">
+      الوقت <b id="time">0.0</b> ث · السرعة <b id="wpm">0</b> WPM · الدقة <b id="acc">100%</b>
+    </p>
+    <p id="result" role="status"></p>
+    <p>أحسن نتيجة: <span id="best">—</span></p>
+    <button id="restart">نص جديد (Esc)</button>
+  </main>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
 ~~~
 
-~~~js src/app.js
-// src/app.js — التوصيل: أحداث ← حالة ← شاشة. الوحيد اللي بيعرف الصفحة والحالة مع بعض.
-import { parseRoute, debounce } from './logic.js';
-import { createStore } from './store.js';
-import { loadRecipes, explain } from './api.js';
-import { view, showErrors } from './view.js';
-import { registerSW } from './pwa.js';
-
-const DATA_URL = './data/recipes.json';
-const store = createStore();
-const main = document.getElementById('main');
-let ctrl = null;
-
-function paint(s, prev) {
-  main.setAttribute('aria-busy', String(s.status === 'loading'));
-  const moved = prev.route.name !== s.route.name || prev.route.params.id !== s.route.params.id;
-  if (!moved && s.route.name === 'new') return;
-  const active = main.contains(document.activeElement) ? document.activeElement : null;
-  const keep = active?.id ? { id: active.id, pos: active.selectionStart } : null;
-  const { title, nodes } = view(s);
-  document.title = title;
-  main.replaceChildren(...nodes);
-  const here = '#/' + (s.route.name === 'list' ? '' : s.route.name);
-  for (const a of document.querySelectorAll('nav a')) {
-    if (a.getAttribute('href') === here) a.setAttribute('aria-current', 'page');
-    else a.removeAttribute('aria-current');
-  }
-  if (moved) main.querySelector('h1')?.focus();
-  else if (keep) {
-    const el = document.getElementById(keep.id);
-    el?.focus();
-    if (keep.pos != null) el?.setSelectionRange?.(keep.pos, keep.pos);
-  }
-}
-
-const search = debounce((form) => {
-  const p = new URLSearchParams();
-  for (const [k, v] of new FormData(form)) if (String(v).trim()) p.set(k, String(v));
-  const qs = String(p);
-  // من غير || '#/' لو الصفحة اتفتحت من غير # الـ ?q= كان هيروح للرابط نفسه مش للـ hash
-  const path = location.hash.split('?')[0] || '#/';
-  history.replaceState(null, '', path + (qs ? '?' + qs : ''));
-  store.setRoute(parseRoute(location.hash));
-}, 250);
-
-async function loadData() {
-  ctrl?.abort();
-  ctrl = new AbortController();
-  store.loading();
-  try {
-    store.loaded(await loadRecipes(DATA_URL, { signal: ctrl.signal }));
-  } catch (err) {
-    if (err.name !== 'AbortError') store.failed(explain(err));
-  }
-}
-
-main.addEventListener('input', (e) => {
-  const form = e.target.closest('[data-form="search"]');
-  if (form) search(form);
-});
-
-main.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (e.target.dataset.form === 'search') return search(e.target);
-  const res = store.addRecipe(Object.fromEntries(new FormData(e.target)));
-  if (!res.ok) return showErrors(e.target, res.errors);
-  location.hash = '#/r/' + encodeURIComponent(res.recipe.id);
-});
-
-main.addEventListener('click', (e) => {
-  const fav = e.target.closest('[data-fav]');
-  if (fav) store.toggleFav(fav.dataset.fav);
-  if (e.target.closest('[data-action="retry"]')) loadData();
-});
-
-window.addEventListener('hashchange', () => store.setRoute(parseRoute(location.hash)));
-store.subscribe(paint);
-store.setRoute(parseRoute(location.hash));
-loadData();
-registerSW(document.getElementById('update'));
-~~~
-
 ~~~css style.css
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #1d1d1f; background: #faf7f2; }
-header { background: #7a3e12; }
-nav { display: flex; flex-wrap: wrap; gap: .25rem; max-width: 52rem; margin: 0 auto; padding: .5rem 1rem; }
-nav a { color: #fff; padding: .4rem .8rem; border-radius: 6px; text-decoration: none; }
-nav a[aria-current="page"] { background: #fff; color: #7a3e12; font-weight: 700; }
-main { max-width: 52rem; margin: 0 auto; padding: 1rem; }
-h1 { margin: .5rem 0 1rem; }
-h1:focus { outline: none; }
-:focus-visible { outline: 3px solid #1a73e8; outline-offset: 2px; }
-form[role="search"] { display: grid; grid-template-columns: 1fr; gap: .25rem; margin-bottom: .5rem; }
-@media (min-width: 640px) { form[role="search"] { grid-template-columns: auto 1fr auto auto; align-items: center; gap: .5rem; } }
-input, select, textarea, button { font: inherit; padding: .45rem .6rem; border: 1px solid #b9b1a6; border-radius: 6px; background: #fff; max-width: 100%; }
-button { cursor: pointer; background: #f1e6d8; }
-button[type="submit"] { background: #7a3e12; color: #fff; border-color: #7a3e12; }
-.cards { list-style: none; padding: 0; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-.card { background: #fff; border: 1px solid #e4dccf; border-radius: 10px; padding: .75rem 1rem; }
-.card h2 { font-size: 1.15rem; margin: 0; }
-.meta { color: #5c5348; margin: .25rem 0 .5rem; }
-.steps { white-space: pre-line; }
-.notice { background: #fff4ce; border: 1px solid #e0c060; padding: .5rem .75rem; border-radius: 6px; }
-[role="alert"] { background: #fde7e9; border: 1px solid #d93025; padding: .5rem .75rem; border-radius: 6px; }
-.field { display: grid; gap: .2rem; margin-bottom: .75rem; }
-.err { color: #b3261e; margin: 0; min-height: 1.2em; }
-[aria-invalid="true"] { border-color: #b3261e; border-width: 2px; }
-#update:empty { display: none; }
-#update { max-width: 52rem; margin: .5rem auto 0; padding: 0 1rem; }
-#update button { background: #fff4ce; border-color: #e0c060; }
+body { font-family: system-ui, sans-serif; max-width: 44rem; margin: 2rem auto; padding: 0 1rem; }
+#text { font-size: 1.5rem; line-height: 2.4; padding: 1rem; background: #f4f4f4; border-radius: 8px; }
+#text .ok { color: #188038; }
+#text .bad { color: #fff; background: #d93025; }
+#text .cur { background: #fde293; }
+#input { width: 100%; font-size: 1.3rem; padding: .5rem; box-sizing: border-box; }
+.stats b { font-variant-numeric: tabular-nums; }
 ~~~
 
-~~~js eslint.config.js
-import js from '@eslint/js';
-import globals from 'globals';
-
-export default [
-  { ignores: ['node_modules/', 'coverage/'] },
-  js.configs.recommended,
-  { files: ['src/**/*.js'], languageOptions: { globals: globals.browser } },
-  { files: ['tests/**/*.js'], languageOptions: { globals: { ...globals.browser, ...globals.node } } },
-  { files: ['sw.js'], languageOptions: { globals: globals.serviceworker } },
-  { files: ['make-icons.js', 'test-sw/**/*.js'], languageOptions: { globals: globals.node } },
-  {
-    rules: {
-      eqeqeq: ['error', 'always', { null: 'ignore' }],
-      'no-restricted-properties': ['error',
-        { property: 'innerHTML', message: 'استخدم h() أو textContent: innerHTML بيفتح باب XSS.' },
-        { property: 'outerHTML', message: 'نفس خطر innerHTML.' }],
-    },
-  },
-];
+~~~js texts.js
+export const TEXTS = {
+  ar: [
+    'البرمجة مش حفظ أوامر. البرمجة إنك تفهم المشكلة كويس وبعدين تكتب أبسط حل يشتغل.',
+    'لما الكود يقع اقرا رسالة الخطأ للآخر قبل ما تدور على حل في أي مكان تاني.',
+    'اتعلم JavaScript خطوة خطوة وابني حاجة صغيرة كل يوم بدل ما تقرا من غير ما تجرب.',
+    'الكمبيوتر بيعمل اللي انت كاتبه بالظبط مش اللي انت قاصده وده أول درس في الشغلانة.',
+  ],
+  en: [
+    'Programming is not about typing fast. It is about thinking clearly and then typing.',
+    'Read the whole error message before you search for it. The answer is often right there.',
+    'Small apps you finish teach you more than big apps you only plan to build one day.',
+    'The computer does exactly what you wrote, not what you meant. That is the whole job.',
+  ],
+};
 ~~~
 
-~~~json package.json
-{
-  "name": "recipe-book",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "lint": "eslint .",
-    "test": "vitest run",
-    "test:sw": "node --test test-sw/sw.check.js",
-    "icons": "node make-icons.js",
-    "check": "npm run lint && npm test && npm run test:sw"
-  },
-  "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "eslint": "^10.15.0",
-    "globals": "^17.14.0",
-    "jsdom": "^31.0.1",
-    "vitest": "^5.1.1"
-  }
+~~~js game.js
+export function pick(count, last) {
+  if (count < 2) return 0;
+  if (last < 0 || last >= count) return Math.floor(Math.random() * count);
+  const i = Math.floor(Math.random() * (count - 1));
+  return i >= last ? i + 1 : i;
 }
+
+export function isArabic(text) {
+  return /\p{Script=Arabic}/u.test(text);
+}
+
+// الوضع المتساهل: الحروف دي بتتحسب زي بعض في المقارنة بس، والنص نفسه مبيتغيّرش
+const SAME = { 'أ': 'ا', 'إ': 'ا', 'آ': 'ا', 'ى': 'ي', 'ة': 'ه' };
+export const normalize = (ch) => SAME[ch] ?? ch;
+export const same = (a, b, lenient = false) => a === b || (lenient && normalize(a) === normalize(b));
+
+export function marks(target, typed, lenient = false) {
+  return target.map((ch, i) => {
+    if (i === typed.length) return 'cur';
+    if (i > typed.length) return '';
+    return same(typed[i], ch, lenient) ? 'ok' : 'bad';
+  });
+}
+
+export function stats({ target, typed, keystrokes, mistakes }, ms, lenient = false) {
+  let correct = 0;
+  for (let i = 0; i < typed.length; i++) if (same(typed[i], target[i], lenient)) correct++;
+  const minutes = Math.max(ms, 1000) / 60000;
+  return {
+    wpm: Math.round(correct / 5 / minutes),
+    accuracy: keystrokes ? Math.round((keystrokes - mistakes) / keystrokes * 100) : 100,
+  };
+}
+~~~
+
+~~~js app.js
+import { TEXTS } from './texts.js';
+import { pick, isArabic, marks, stats, same } from './game.js';
+
+const $ = (sel) => document.querySelector(sel);
+const box = $('#text');
+const input = $('#input');
+const lang = $('#lang');
+const lenient = $('#lenient');
+const BEST_KEY = 'typing-best';
+let game = null;
+
+function newGame() {
+  if (game) cancelAnimationFrame(game.raf);
+  const key = lang.value;
+  const index = pick(TEXTS[key].length, game?.lang === key ? game.index : -1);
+  const text = TEXTS[key][index];
+  game = { lang: key, index, target: Array.from(text), typed: [], keystrokes: 0, mistakes: 0, start: 0, raf: 0, done: false, lenient: lenient.checked };
+  const dir = isArabic(text) ? 'rtl' : 'ltr';
+  for (const node of [box, input]) { node.dir = dir; node.lang = key; }
+  box.replaceChildren(...game.target.map((ch) => {
+    const span = document.createElement('span');
+    span.textContent = ch;
+    return span;
+  }));
+  input.value = '';
+  input.maxLength = text.length;
+  input.disabled = false;
+  $('#result').textContent = '';
+  paint();
+  showStats(0);
+  showBest();
+  input.focus();
+}
+
+function paint() {
+  const m = marks(game.target, game.typed, game.lenient);
+  box.querySelectorAll('span').forEach((span, i) => { span.className = m[i]; });
+}
+
+function showStats(ms) {
+  const s = stats(game, ms, game.lenient);
+  $('#time').textContent = (ms / 1000).toFixed(1);
+  $('#wpm').textContent = s.wpm;
+  $('#acc').textContent = s.accuracy + '%';
+  return s;
+}
+
+function showBest() {
+  const b = loadBest()[bestKey()];
+  $('#best').textContent = b ? b.wpm + ' WPM بدقة ' + b.accuracy + '%' : '—';
+}
+
+function tick() {
+  showStats(performance.now() - game.start);
+  game.raf = requestAnimationFrame(tick);
+}
+
+input.addEventListener('input', () => {
+  if (game.done) return;
+  const typed = Array.from(input.value);
+  if (!game.start) {
+    game.start = performance.now();
+    game.raf = requestAnimationFrame(tick);
+  }
+  for (let i = game.typed.length; i < typed.length; i++) {
+    game.keystrokes++;
+    if (!same(typed[i], game.target[i], game.lenient)) game.mistakes++;
+  }
+  game.typed = typed;
+  paint();
+  if (typed.length >= game.target.length) finish();
+});
+
+input.addEventListener('paste', (e) => e.preventDefault());
+
+const KEYS = ['ar', 'en', 'ar-lenient', 'en-lenient'];
+const bestKey = () => game.lang + (game.lenient ? '-lenient' : '');
+
+function loadBest() {
+  const ok = (r) => r && Number.isFinite(r.wpm) && Number.isFinite(r.accuracy);
+  let data = null;
+  try {
+    data = JSON.parse(localStorage.getItem(BEST_KEY));
+  } catch {
+    data = null;
+  }
+  return Object.fromEntries(KEYS.map((k) => [k, ok(data?.[k]) ? data[k] : null]));
+}
+
+function finish() {
+  game.done = true;
+  cancelAnimationFrame(game.raf);
+  input.disabled = true;
+  const s = showStats(performance.now() - game.start);
+  const best = loadBest();
+  const old = best[bestKey()];
+  const record = s.accuracy >= 90 && (!old || s.wpm > old.wpm);
+  if (record) {
+    best[bestKey()] = { wpm: s.wpm, accuracy: s.accuracy };
+    try { localStorage.setItem(BEST_KEY, JSON.stringify(best)); } catch {}
+  }
+  $('#result').textContent = (record ? 'رقم قياسي جديد! ' : 'خلصت. ') + s.wpm + ' WPM بدقة ' + s.accuracy + '%';
+  showBest();
+}
+
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') newGame(); });
+$('#restart').addEventListener('click', newGame);
+lang.addEventListener('change', newGame);
+lenient.addEventListener('change', newGame);
+
+newGame();
 ~~~
 
 ## الأجزاء المهمة
 
 | الحتة | ليه |
 |---|---|
-| [[start_url: "./"]] و [[scope: "./"]] | نسبي للـ manifest، فعلى Pages بيبقى [[/recipe-book/]] لوحده. لو كتبت [[/]] التطبيق المتثبّت هيفتح [[USER.github.io/]] |
-| كل مسارات [[SHELL]] بـ [[./]] | نسبية لمكان [[sw.js]]، فنفس الملف شغال على [[localhost:8000/]] وعلى [[/recipe-book/]] |
-| [[ignoreSearch: true]] | [[/recipe-book/?utm=x]] بيلاقي [[./]] في الكاش. والـ hash ([[#/fav]]) مبيوصلش الـ SW أصلًا |
-| [[recipes.json]] بيتكاش في [[install]] | من غيره، أول زيارة بتجيب الداتا **قبل** ما الـ SW يمسك الصفحة، فأول reload أوفلاين كان هيقول «مفيش اتصال» |
-| [[event.waitUntil(fresh.catch(...))]] | الـ SW ميتقفلش قبل ما التحديث في الخلفية يخلص، والفشل (أوفلاين) مبيطلعش error |
-| مسح [[shell-*]] القديم في [[activate]] بس | لو مسحته في [[install]] والنسخة القديمة لسه شغالة، الصفحة المفتوحة هتطلب ملف مش لاقياه |
-| [[url.origin !== self.location.origin]] | طلبات لدومين تاني (API، خطوط) بتعدّي من غير ما الـ SW يلمسها |
-| [[hadController]] | أول زيارة [[clients.claim()]] بتطلق [[controllerchange]]، ودي مش نسخة جديدة. من غير الشرط ده الصفحة كانت بتعمل reload لوحدها أول مرة (تحت) |
-| [[reloaded]] | [[controllerchange]] ممكن يتطلق أكتر من مرة، فالـ reload مرة واحدة بس |
-| [[try { sw = navigator.serviceWorker }]] | نفس فكرة [[browserStorage()]]: في صفحة sandboxed قراية الـ property نفسها بترمي |
+| [[SAME]] و [[normalize(ch)]] | جدول بالحروف الخمسة بس: أي حرف تاني بيرجع زي ما هو. object مش [[if]] كتير، فحرف جديد = خانة جديدة |
+| [[same(a, b, lenient)]] | المقارنة الوحيدة في اللعبة كلها. صارمة لو [[lenient]] بـ [[false]]، والتوحيد بيحصل للطرفين (اللي اتكتب واللي في النص) |
+| [[marks]] و [[stats]] بـ [[lenient = false]] افتراضي | أي كود قديم بينادي [[marks(target, typed)]] بيفضل صارم زي ما كان |
+| [[lenient: lenient.checked]] جوه [[game]] | الوضع بيتقرر أول الجولة ويفضل ثابت. وتغيير العلامة = [[newGame]] |
+| [[bestKey()]] | [[ar]] أو [[ar-lenient]] أو [[en]] أو [[en-lenient]]: أربع أرقام قياسية منفصلة، والقديم ([[{ ar, en }]]) لسه بيتقري |
+| [[loadBest]] بـ [[Object.fromEntries(KEYS.map(...))]] | نفس الفحص ([[Number.isFinite]]) لكل مفتاح من الأربعة |
+
+**الكود مبيلمسش النص الأصلي:** [[game.target]] فيه [[أوامر]] زي ما هي، والـ spans بتعرضها كده. التوحيد بيحصل جوه المقارنة بس.
 
 ## الاختبارات
 
-**[[node --test]] على [[sw.js]] الحقيقي:** الملف بيتقري كنص ويتشغّل في [[node:vm]] جوه object فيه [[self]] و [[caches]] و [[fetch]] مزيّفين. [[Request]] و [[Response]] الحقيقيين موجودين في Node 24، فالكاش المزيّف بيخزّن ردود حقيقية.
-
-~~~js test-sw/sw.check.js
-// test-sw/sw.check.js — بيشغّل sw.js الحقيقي جوه node:vm، بـ caches و fetch مزيّفين: node --test test-sw/sw.check.js
+~~~js lenient.test.mjs
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import vm from 'node:vm';
+import { normalize, same, marks, stats } from './game.js';
 
-const ORIGIN = 'https://user.github.io';
-const BASE = ORIGIN + '/recipe-book/';
-const code = readFileSync(new URL('../sw.js', import.meta.url), 'utf8');
-
-function boot({ online = true } = {}) {
-  const stores = new Map();
-  const key = (r) => new URL(typeof r === 'string' ? r : r.url, BASE).href;
-  const open = async (name) => {
-    if (!stores.has(name)) stores.set(name, new Map());
-    const m = stores.get(name);
-    return {
-      match: async (r, { ignoreSearch } = {}) => m.get(ignoreSearch ? key(r).split('?')[0] : key(r))?.clone(),
-      put: async (r, res) => { m.set(key(r), res); },
-      addAll: async (list) => { for (const u of list) m.set(key(u), await net(new Request(key(u)))); },
-    };
-  };
-  const caches = {
-    open, keys: async () => [...stores.keys()],
-    delete: async (n) => stores.delete(n),
-    match: async (r, o) => { for (const n of stores.keys()) { const hit = await (await open(n)).match(r, o); if (hit) return hit; } },
-  };
-  const calls = [];
-  const env = { online, body: 'v1' };
-  async function net(req) {
-    calls.push(new URL(req.url).pathname);
-    if (!env.online) throw new TypeError('Failed to fetch');
-    return new Response(env.body + ' ' + new URL(req.url).pathname);
-  }
-  const handlers = {};
-  const self = {
-    location: new URL(BASE + 'sw.js'),
-    addEventListener: (type, fn) => { handlers[type] = fn; },
-    skipWaiting: () => { self.skipped = true; },
-    clients: { claim: async () => { self.claimed = true; } },
-  };
-  vm.runInNewContext(code, { self, caches, fetch: net, URL, Request, Response, Promise, console });
-  const fire = async (type, extra = {}) => {
-    const waits = [];
-    let response;
-    handlers[type]({ ...extra, waitUntil: (p) => waits.push(p), respondWith: (p) => { response = p; } });
-    const res = await response;
-    await Promise.all(waits);
-    return res;
-  };
-  const get = (path) => fire('fetch', { request: new Request(BASE + path) });
-  return { self, stores, calls, env, fire, get };
-}
-
-test('install بيحط الـ shell كله والداتا في الكاش', async () => {
-  const sw = boot();
-  await sw.fire('install');
-  assert.equal(sw.stores.get('shell-v1').size, 13);
-  assert.ok(sw.stores.get('data').has(BASE + 'data/recipes.json'));
+test('normalize بيوحّد الحروف الخمسة بس', () => {
+  assert.deepEqual(['أ', 'إ', 'آ', 'ى', 'ة', 'ا', 'ب', 'a'].map(normalize), ['ا', 'ا', 'ا', 'ي', 'ه', 'ا', 'ب', 'a']);
 });
 
-test('الـ shell من الكاش والنت مقطوع، و ?query متفرقش', async () => {
-  const sw = boot();
-  await sw.fire('install');
-  sw.env.online = false;
-  const res = await sw.get('?utm=x');
-  assert.equal(await res.text(), 'v1 /recipe-book/');
+test('same: صارم من غير lenient', () => {
+  assert.equal(same('ا', 'أ'), false);
+  assert.equal(same('ا', 'أ', true), true);
+  assert.equal(same('ب', 'ت', true), false);
 });
 
-test('الداتا: الكاش على طول، والجديد بيتحفظ للمرة الجاية', async () => {
-  const sw = boot();
-  await sw.fire('install');
-  sw.env.body = 'v2';
-  assert.equal(await (await sw.get('data/recipes.json')).text(), 'v1 /recipe-book/data/recipes.json');
-  assert.equal(await (await sw.get('data/recipes.json')).text(), 'v2 /recipe-book/data/recipes.json');
+test('«اقرا» مكان «أقرأ»: كله أخضر في المتساهل، وحرفين أحمر في العادي', () => {
+  const target = Array.from('أقرأ');
+  const typed = Array.from('اقرا');
+  assert.deepEqual(marks(target, typed, true), ['ok', 'ok', 'ok', 'ok']);
+  assert.deepEqual(marks(target, typed), ['bad', 'ok', 'ok', 'bad']);
 });
 
-test('الداتا مش في الكاش والنت مقطوع: الخطأ بيوصل للصفحة', async () => {
-  const sw = boot({ online: false });
-  await assert.rejects(sw.get('data/recipes.json'), { name: 'TypeError' });
-});
-
-test('activate بيمسح الـ shell القديم بس ويمسك الصفحات', async () => {
-  const sw = boot();
-  sw.stores.set('shell-v0', new Map());
-  sw.stores.set('data', new Map());
-  await sw.fire('activate');
-  assert.deepEqual([...sw.stores.keys()], ['data']);
-  assert.equal(sw.self.claimed, true);
-});
-
-test('رسالة skipWaiting، والطلبات لدومين تاني مبيلمسهاش', async () => {
-  const sw = boot();
-  await sw.fire('message', { data: 'skipWaiting' });
-  assert.equal(sw.self.skipped, true);
-  const res = await sw.fire('fetch', { request: new Request('https://www.themealdb.com/api/json/v1/1/search.php?s=') });
-  assert.equal(res, undefined);
-  assert.deepEqual(sw.calls, []);
+test('stats بيعدّ الصح بنفس القاعدة', () => {
+  const g = { target: Array.from('مدرسةمدرسة'), typed: Array.from('مدرسهمدرسه'), keystrokes: 10, mistakes: 0 };
+  assert.equal(stats(g, 6000, true).wpm, 20);
+  assert.equal(stats(g, 6000).wpm, 16);
 });
 ~~~
 
-~~~text الناتج: node --test test-sw/sw.check.js (Node 24.22)
-✔ install بيحط الـ shell كله والداتا في الكاش (26.1145ms)
-✔ الـ shell من الكاش والنت مقطوع، و ?query متفرقش (3.7343ms)
-✔ الداتا: الكاش على طول، والجديد بيتحفظ للمرة الجاية (2.3694ms)
-✔ الداتا مش في الكاش والنت مقطوع: الخطأ بيوصل للصفحة (1.3816ms)
-✔ activate بيمسح الـ shell القديم بس ويمسك الصفحات (1.2205ms)
-✔ رسالة skipWaiting، والطلبات لدومين تاني مبيلمسهاش (0.8395ms)
-ℹ tests 6
-ℹ pass 6
+~~~text الناتج: node --test lenient.test.mjs (Node 24.22، ٢١ نوفمبر ٢٠٢٦)
+✔ normalize بيوحّد الحروف الخمسة بس (1.1231ms)
+✔ same: صارم من غير lenient (0.7996ms)
+✔ «اقرا» مكان «أقرأ»: كله أخضر في المتساهل، وحرفين أحمر في العادي (0.2002ms)
+✔ stats بيعدّ الصح بنفس القاعدة (0.1808ms)
+ℹ pass 4
 ℹ fail 0
 ~~~
 
-الاسم [[.check.js]] مش [[.test.js]] عن قصد: Vitest بيلم أي [[*.test.js]]، وكان هيحاول يشغّل الملف ده كاختبار Vitest. وبالاسم ده [[node --test]] بيشغّله بالمسار الصريح بس.
+## اتجرّب في Chrome 158 (من سيرفر)
 
-~~~text الناتج: npm run check (ESLint 10.15، Vitest 5.1.1، node --test)
- Test Files  4 passed (4)
-      Tests  43 passed (43)
-ℹ tests 6
-ℹ pass 6
-~~~
-
-## اتجرّب في Chrome 158 (Playwright، سيرفر تحت /recipe-pwa/ زي Pages)
+سكربت Playwright اختار «البرمجة مش حفظ أوامر...» وكتبها من غير همزات ومن غير ة، مرة بالعلامة ومرة من غيرها:
 
 ~~~text الناتج
-أول زيارة               load events: 1      caches: shell-v1 = 13 ملف، data = 1
-Page.getAppManifest     errors: []
-Page.getInstallabilityErrors   in-incognito     ← السبب الوحيد: Playwright بيفتح profile مؤقت زي التصفح الخفي
-setOffline(true) + reload     6 كروت، «6 وصفة»
-أوفلاين: إضافة «طعمية» + reload     h1 طعمية، والرابط #/r/u…   (localStorage شغال من غير نت)
-أوفلاين: #/fav          h1 المفضلة
-sw.js بقى VERSION 'v2' على السيرفر + reload
-                        #update: «فيه نسخة جديدة، حدّث» (زرار واحد)
-كليك «حدّث»            load events: 3 (reload واحد بس)، الزرار اختفى، caches: data و shell-v2
-reload كمان مرة         مفيش زرار
-scrollWidth/clientWidth 345/345   753/753   1265/1265
-pageerror               مفيش
+متساهل | أحمر: 0 | الدقة: 100% | رقم قياسي جديد! 435 WPM بدقة 100% | أحسن نتيجة: 435 WPM بدقة 100%
+عادي   | أحمر: 6 | الدقة: 92% | رقم قياسي جديد! 418 WPM بدقة 92% | أحسن نتيجة: 418 WPM بدقة 92%
+المحفوظ: {"ar":{"wpm":418,"accuracy":92},"en":null,"ar-lenient":{"wpm":435,"accuracy":100},"en-lenient":null}
+النص بعد الجولة لسه: البرمجة مش حفظ أوامر. | errors: 0
 ~~~
 
-**عن Lighthouse:** المطلوب قال «Lighthouse بيقول installable». Lighthouse 12 شال فئة PWA خالص (من وثايق Lighthouse)، فالـ 13.6 اللي اتجرّب هنا مفيهوش الفحص ده. البديل اللي اتعمل: DevTools ← Application ← Manifest بيعرض نفس الأخطاء اللي [[Page.getInstallabilityErrors]] بيرجّعها، والوحيد كان [[in-incognito]] (بسبب الـ profile المؤقت). والتثبيت من رابط Pages على الموبايل خطواته من وثايق Chrome: قايمة النقط التلاتة ← «Add to Home screen» أو «Install app».
+الستة الحمر في العادي: ة في «البرمجة» مرتين و «المشكلة»، والهمزة في «أوامر» و «إنك» و «أبسط». والرقمين القياسيين اتحفظوا كل واحد في مفتاحه.
 
-## تشغّله إزاي
+## الغلطة اللي حصلت
 
-~~~bash
-cd recipe-pwa
-npm install
-npm run icons        # icons/icon-192.png icons/icon-512.png
-npm run check
-npx --yes serve -l 8000         # أو: python -m http.server 8000
-# افتح http://localhost:8000 (الـ SW محتاج https أو localhost)
-# DevTools ← Application ← Service workers تشوفه، و Network ← Offline تجرّب
+المطلوب قال «استخدمها في [[marks]] و [[stats]]». عملت كده بالظبط الأول، والحروف بقت كلها خضرا، **بس الدقة قالت ٩٢٪**:
+
+~~~text الناتج (نسخة فيها marks و stats بس)
+متساهل | أحمر: 0 | الدقة: 92% | رقم قياسي جديد! 428 WPM بدقة 92%
 ~~~
 
-ولو غيّرت أي ملف في الـ shell: غيّر [[VERSION]] في [[sw.js]] (مثلًا [[v2]]) قبل النشر، وإلا الناس هتفضل على الملفات القديمة من الكاش.
+الدقة مش من [[stats]] لوحدها: [[game.mistakes]] بيتعدّ في مستمع [[input]] في [[app.js]] بـ [[typed[i] !== game.target[i]]]، وده فضل صارم. التصليح: نفس [[same(...)]] هناك كمان. القاعدة: لو فيه «مقارنة» واحدة في التطبيق، تبقى دالة واحدة وكل حتة تناديها.
 
-## الغلطات اللي حصلت
-
-**١. الصفحة عملت reload لوحدها في أول زيارة.** أول نسخة من [[pwa.js]] كانت بتعمل reload مع أي [[controllerchange]]. في أول زيارة الـ SW اتسطب، و [[clients.claim()]] مسك الصفحة، وده نفسه [[controllerchange]]:
-
-~~~text الناتج: Playwright، أول زيارة لـ #/new بالنسخة الأولى
-load events: 2
-Error: page.evaluate: Execution context was destroyed, most likely because of a navigation
-~~~
-
-يعني اللي فتح الفورم أول مرة وبدأ يكتب، الصفحة اتعملها reload تحت إيده. التصليح: [[hadController]]: نعمل reload بس لو الصفحة كان ليها controller **قبل** كده (يعني ده تحديث). بعدها: load events: 1.
-
-**٢. اختبار قديم وقع:**
-
-~~~text الناتج: npm run check
- FAIL  tests/app.dom.test.js > القايمة: ٦ كروت والعدد والعنوان
-AssertionError: expected '' to be '6 وصفة' // Object.is equality
-~~~
-
-الاختبار كان بيدوّر على أول [[[role="status"]]] في الصفحة، و [[<div id="update" role="status">]] الجديد (فاضي) بقى قبل [[<main>]]. التصليح في الاختبار: [[$('#main [role="status"]')]]. والدرس: selector في اختبار يبقى محدد بمكانه، مش «أول حاجة بالشكل ده».
-
-**لو مشتغلش:**
-
-- **الـ SW مش بيتسجّل والصفحة فاضية:** فاتح الملف بـ [[file://]]. المتصفح مبيشغّلش modules ولا service workers من [[file://]] (من وثائق MDN: الـ SW محتاج https أو localhost). شغّل سيرفر.
-- **أوفلاين: «مفيش اتصال» بعد أول زيارة:** الداتا مش في الكاش. اتأكد إن [[DATA]] بيتكاش في [[install]]، وشوف DevTools ← Application ← Cache storage.
-- **التعديلات مش ظاهرة بعد النشر:** نسيت تغيّر [[VERSION]]، أو الـ SW الجديد مستني. DevTools ← Application ← Service workers ← «Update on reload» وانت بتطوّر.
-
-**الغلطة الشائعة:** [[self.skipWaiting()]] جوه [[install]] على طول عشان «التحديث يبقى أسرع». الصفحة المفتوحة هتبدأ تاخد ملفات من الكاش الجديد وهي شغالة بالـ JavaScript القديم، واليوزر اللي في نص فورم ممكن يخسر اللي كتبه. الزرار بيخلّيه هو اللي يقرر.` },
-        { lvl: 'كبير', dir: "recipe-server", t: R`backend حقيقي ومستخدمين`, what: R`سيرفر Node بـ Express (تاب node وتاب «Backend بـ Node») فيه [[GET /api/recipes]] و [[POST /api/recipes]] بيستعمل نفس [[validateRecipe]] من [[logic.js]] على السيرفر (نفس الملف، مش نسخة)، وقاعدة بيانات SQLite أو Postgres، وتسجيل دخول بحيث كل واحد يشوف وصفاته ومفضلته. الواجهة بتفضل زي ما هي وبيتغيّر [[api.js]] بس.`, done: R`[[POST]] بداتا غلط بيرجّع 400 وفيه نفس رسايل الأخطاء اللي في الفورم، ومستخدمين اتنين على متصفحين مختلفين كل واحد شايف وصفاته بس، والسيرفر لو وقع الواجهة بتطلّع «جرّب تاني» ومبتضيّعش اللي في الفورم، واختبارات API بـ supertest أو [[node --test]] بتعدّي في الـ CI.`, ext: R`انشر السيرفر على VPS أو خدمة زي Render بـ Docker (تاب docker وتاب VPS)، وخلّي الواجهة على Pages بتكلّمه، واضبط CORS على رابط Pages بس مش [[*]].`, sol: R`~~~view 420 صفحة الدخول (الشكل بس: في الصندوق ده مفيش سيرفر، فالزرارين هيقولوا «السيرفر مش بيرد»)
+**الغلطة الشائعة:** تعمل [[normalize]] على النص نفسه قبل العرض ([[TEXTS.ar.map(normalize...)]]): الألوان هتشتغل، بس اليوزر هيشوف «اوامر» مكتوبة غلط فوق، وده عكس الفكرة: النص صح، والتساهل في الحكم على كتابتك بس.` },
+        { lvl: 'صغير', dir: "search-slash", t: R`اختصار [[/]] للبحث`, what: R`في «بحث بيستنى انت تخلص» خلي زرار [[/]] في أي حتة في الصفحة يحط المؤشر في خانة البحث، إلا لو انت أصلًا بتكتب في خانة تانية. ومن «addEventListener» و [[document.activeElement]].`, done: R`لما تدوس [[/]] والصفحة فاضية المؤشر بيروح للبحث والحرف مش بيتكتب فيها. ولو انت جوه خانة تانية الـ [[/]] بيتكتب عادي.`, sol: R`~~~view 460 البحث باختصار /
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>دخول · دفتر الوصفات</title>
-  <link rel="icon" href="data:,">
+  <title>دوّر على method</title>
   <style>
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #1d1d1f; background: #faf7f2; }
-header { background: #7a3e12; }
-nav { display: flex; flex-wrap: wrap; gap: .25rem; max-width: 52rem; margin: 0 auto; padding: .5rem 1rem; }
-nav a { color: #fff; padding: .4rem .8rem; border-radius: 6px; text-decoration: none; }
-nav a[aria-current="page"] { background: #fff; color: #7a3e12; font-weight: 700; }
-main { max-width: 52rem; margin: 0 auto; padding: 1rem; }
-h1 { margin: .5rem 0 1rem; }
-h1:focus { outline: none; }
-:focus-visible { outline: 3px solid #1a73e8; outline-offset: 2px; }
-form[role="search"] { display: grid; grid-template-columns: 1fr; gap: .25rem; margin-bottom: .5rem; }
-@media (min-width: 640px) { form[role="search"] { grid-template-columns: auto 1fr auto auto; align-items: center; gap: .5rem; } }
-input, select, textarea, button { font: inherit; padding: .45rem .6rem; border: 1px solid #b9b1a6; border-radius: 6px; background: #fff; max-width: 100%; }
-button { cursor: pointer; background: #f1e6d8; }
-button[type="submit"] { background: #7a3e12; color: #fff; border-color: #7a3e12; }
-.cards { list-style: none; padding: 0; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-.card { background: #fff; border: 1px solid #e4dccf; border-radius: 10px; padding: .75rem 1rem; }
-.card h2 { font-size: 1.15rem; margin: 0; }
-.meta { color: #5c5348; margin: .25rem 0 .5rem; }
-.steps { white-space: pre-line; }
-.notice { background: #fff4ce; border: 1px solid #e0c060; padding: .5rem .75rem; border-radius: 6px; }
-[role="alert"] { background: #fde7e9; border: 1px solid #d93025; padding: .5rem .75rem; border-radius: 6px; }
-.field { display: grid; gap: .2rem; margin-bottom: .75rem; }
-.err { color: #b3261e; margin: 0; min-height: 1.2em; }
-[aria-invalid="true"] { border-color: #b3261e; border-width: 2px; }
-.toast:empty { display: none; }
-.toast { position: fixed; inset-inline: 1rem; bottom: 1rem; max-width: 30rem; margin-inline: auto; background: #1d1d1f; color: #fff; padding: .6rem 1rem; border-radius: 8px; }
-#login button { margin-inline-end: .5rem; }
+body { font-family: system-ui, sans-serif; max-width: 34rem; margin: 2rem auto; padding: 0 1rem; }
+input { width: 100%; font-size: 1.1rem; padding: .5rem; box-sizing: border-box; }
+#results { list-style: none; padding: 0; margin: 0; max-height: 18rem; overflow: auto; }
+#results li { padding: .35rem .5rem; cursor: pointer; }
+#results li[aria-selected="true"] { background: #1a73e8; color: #fff; }
+#results[aria-busy="true"] { opacity: .5; }
+small { opacity: .7; margin-inline-start: .5rem; }
+[data-phase="error"] { color: #b00020; }
   </style>
 </head>
 <body>
-  <main id="main">
-    <h1>دفتر الوصفات</h1>
-    <form id="login" novalidate>
-      <div class="field">
-        <label for="name">الاسم</label>
-        <input id="name" name="name" autocomplete="username" required>
-      </div>
-      <div class="field">
-        <label for="password">الباسورد (8 حروف على الأقل)</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" required minlength="8">
-      </div>
-      <p id="msg" class="err" role="alert"></p>
-      <button type="submit" name="action" value="login">دخول</button>
-      <button type="submit" name="action" value="signup">حساب جديد</button>
-    </form>
+  <main>
+    <h1>دوّر على method في JavaScript</h1>
+    <label for="q">اسم الـ method <kbd>/</kbd></label>
+    <input id="q" dir="ltr" autocomplete="off" spellcheck="false"
+           role="combobox" aria-controls="results" aria-expanded="false" aria-autocomplete="list">
+    <p id="status" role="status"></p>
+    <ul id="results" role="listbox" dir="ltr"></ul>
+    <p>اخترت: <output id="picked">—</output></p>
+    <label>ملاحظة على اختيارك <input id="note" dir="auto"></label>
   </main>
-<script type="module">
-// src/login.js — صفحة الدخول: الزرارين بيبعتوا نفس الفورم لـ endpoint مختلف
-const form = document.getElementById('login');
-const msg = document.getElementById('msg');
+  <script type="module">
+// المعاينة بس: مفيش سيرفر جوه الصندوق ده، فـ fetch بيدوّر في نفس داتا server.js وبيتأخر زيه (٢٠٠ لـ ٦٠٠ms)
+const DATA = [["at","Array.prototype"],["concat","Array.prototype"],["copyWithin","Array.prototype"],["fill","Array.prototype"],["find","Array.prototype"],["findIndex","Array.prototype"],["findLast","Array.prototype"],["findLastIndex","Array.prototype"],["lastIndexOf","Array.prototype"],["pop","Array.prototype"],["push","Array.prototype"],["reverse","Array.prototype"],["shift","Array.prototype"],["unshift","Array.prototype"],["slice","Array.prototype"],["sort","Array.prototype"],["splice","Array.prototype"],["includes","Array.prototype"],["indexOf","Array.prototype"],["join","Array.prototype"],["keys","Array.prototype"],["entries","Array.prototype"],["values","Array.prototype"],["forEach","Array.prototype"],["filter","Array.prototype"],["flat","Array.prototype"],["flatMap","Array.prototype"],["map","Array.prototype"],["every","Array.prototype"],["some","Array.prototype"],["reduce","Array.prototype"],["reduceRight","Array.prototype"],["toReversed","Array.prototype"],["toSorted","Array.prototype"],["toSpliced","Array.prototype"],["with","Array.prototype"],["toLocaleString","Array.prototype"],["toString","Array.prototype"],["anchor","String.prototype"],["at","String.prototype"],["big","String.prototype"],["blink","String.prototype"],["bold","String.prototype"],["charAt","String.prototype"],["charCodeAt","String.prototype"],["codePointAt","String.prototype"],["concat","String.prototype"],["endsWith","String.prototype"],["fontcolor","String.prototype"],["fontsize","String.prototype"],["fixed","String.prototype"],["includes","String.prototype"],["indexOf","String.prototype"],["isWellFormed","String.prototype"],["italics","String.prototype"],["lastIndexOf","String.prototype"],["link","String.prototype"],["localeCompare","String.prototype"],["match","String.prototype"],["matchAll","String.prototype"],["normalize","String.prototype"],["padEnd","String.prototype"],["padStart","String.prototype"],["repeat","String.prototype"],["replace","String.prototype"],["replaceAll","String.prototype"],["search","String.prototype"],["slice","String.prototype"],["small","String.prototype"],["split","String.prototype"],["strike","String.prototype"],["sub","String.prototype"],["substr","String.prototype"],["substring","String.prototype"],["sup","String.prototype"],["startsWith","String.prototype"],["toString","String.prototype"],["toWellFormed","String.prototype"],["trim","String.prototype"],["trimStart","String.prototype"],["trimLeft","String.prototype"],["trimEnd","String.prototype"],["trimRight","String.prototype"],["toLocaleLowerCase","String.prototype"],["toLocaleUpperCase","String.prototype"],["toLowerCase","String.prototype"],["toUpperCase","String.prototype"],["valueOf","String.prototype"],["assign","Object"],["getOwnPropertyDescriptor","Object"],["getOwnPropertyDescriptors","Object"],["getOwnPropertyNames","Object"],["getOwnPropertySymbols","Object"],["hasOwn","Object"],["is","Object"],["preventExtensions","Object"],["seal","Object"],["create","Object"],["defineProperties","Object"],["defineProperty","Object"],["freeze","Object"],["getPrototypeOf","Object"],["setPrototypeOf","Object"],["isExtensible","Object"],["isFrozen","Object"],["isSealed","Object"],["keys","Object"],["entries","Object"],["fromEntries","Object"],["values","Object"],["groupBy","Object"],["abs","Math"],["acos","Math"],["acosh","Math"],["asin","Math"],["asinh","Math"],["atan","Math"],["atanh","Math"],["atan2","Math"],["ceil","Math"],["cbrt","Math"],["expm1","Math"],["clz32","Math"],["cos","Math"],["cosh","Math"],["exp","Math"],["floor","Math"],["fround","Math"],["hypot","Math"],["imul","Math"],["log","Math"],["log1p","Math"],["log2","Math"],["log10","Math"],["max","Math"],["min","Math"],["pow","Math"],["random","Math"],["round","Math"],["sign","Math"],["sin","Math"],["sinh","Math"],["sqrt","Math"],["tan","Math"],["tanh","Math"],["trunc","Math"],["f16round","Math"],["all","Promise"],["allSettled","Promise"],["any","Promise"],["race","Promise"],["resolve","Promise"],["reject","Promise"],["withResolvers","Promise"],["try","Promise"],["isFinite","Number"],["isInteger","Number"],["isNaN","Number"],["isSafeInteger","Number"],["parseFloat","Number"],["parseInt","Number"],["parse","JSON"],["stringify","JSON"],["rawJSON","JSON"],["isRawJSON","JSON"],["isArray","Array"],["from","Array"],["fromAsync","Array"],["of","Array"],["get","Map.prototype"],["set","Map.prototype"],["has","Map.prototype"],["delete","Map.prototype"],["clear","Map.prototype"],["entries","Map.prototype"],["forEach","Map.prototype"],["keys","Map.prototype"],["values","Map.prototype"],["has","Set.prototype"],["add","Set.prototype"],["delete","Set.prototype"],["difference","Set.prototype"],["clear","Set.prototype"],["entries","Set.prototype"],["forEach","Set.prototype"],["intersection","Set.prototype"],["isSubsetOf","Set.prototype"],["isSupersetOf","Set.prototype"],["isDisjointFrom","Set.prototype"],["symmetricDifference","Set.prototype"],["union","Set.prototype"],["values","Set.prototype"],["keys","Set.prototype"]].map(([name, owner], i) => ({ id: i + 1, name, owner }));
+window.fetch = (url, { signal } = {}) => new Promise((resolve, reject) => {
+  const q = new URL(url).searchParams.get('q') ?? '';
+  const t = setTimeout(() => {
+    if (q === '500') return resolve(new Response('boom', { status: 500 }));
+    const hits = DATA.filter(d => d.name.toLowerCase().includes(q)).slice(0, 20);
+    resolve(new Response(JSON.stringify(hits), { headers: { 'content-type': 'application/json' } }));
+  }, 200 + Math.random() * 400);
+  signal?.addEventListener('abort', () => { clearTimeout(t); reject(new DOMException('This operation was aborted', 'AbortError')); });
+});
+// والصفحة هنا عنوانها about:srcdoc، و new URL('/api/search', location.href) بيرمي عليه، فبنديله عنوان وهمي
+const RealURL = URL;
+window.URL = class extends RealURL {
+  constructor(u, base) { super(u, base === 'about:srcdoc' ? 'http://preview.local/' : base); }
+};
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const action = e.submitter?.value === 'signup' ? 'signup' : 'login';
-  const { name, password } = Object.fromEntries(new FormData(form));
-  msg.textContent = '';
-  try {
-    const res = await fetch('./api/' + action, {
-      method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name, password }),
-    });
-    if (res.ok) return location.replace('./');
-    msg.textContent = (await res.json()).error;
-  } catch {
-    msg.textContent = 'السيرفر مش بيرد. جرّب تاني.';
+function debounce(fn, ms) {
+  let timer;
+  const wrapped = (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), ms);
+  };
+  wrapped.cancel = () => clearTimeout(timer);
+  return wrapped;
+}
+
+
+
+const input = document.querySelector('#q');
+const list = document.querySelector('#results');
+const status = document.querySelector('#status');
+const picked = document.querySelector('#picked');
+
+const opts = new URLSearchParams(location.search);
+const WAIT = opts.has('nodebounce') ? 0 : 300;
+const ABORT = !opts.has('noabort');
+
+const ui = { phase: 'idle', q: '', data: [], error: '', active: -1, busy: false };
+const cache = new Map();
+const CACHE_MAX = 50;
+const stats = { sent: 0, aborted: 0, fromCache: 0 };
+window.searchStats = stats;
+let controller = null;
+
+function set(patch) {
+  Object.assign(ui, patch);
+  render();
+}
+
+function highlight(text, q) {
+  const at = text.toLowerCase().indexOf(q);
+  if (!q || at < 0) return [text];
+  const mark = document.createElement('mark');
+  mark.textContent = text.slice(at, at + q.length);
+  return [text.slice(0, at), mark, text.slice(at + q.length)];
+}
+
+function option(d, i) {
+  const li = document.createElement('li');
+  li.id = 'opt-' + i;
+  li.setAttribute('role', 'option');
+  li.setAttribute('aria-selected', String(i === ui.active));
+  const owner = document.createElement('small');
+  owner.textContent = d.owner;
+  li.append(...highlight(d.name, ui.q), owner);
+  return li;
+}
+
+function render() {
+  const messages = {
+    idle: '',
+    short: 'اكتب حرفين على الأقل',
+    loading: 'بيدوّر على «' + ui.q + '»…',
+    ok: ui.data.length + ' نتيجة لـ «' + ui.q + '»',
+    empty: 'مفيش نتايج لـ «' + ui.q + '»',
+    error: 'حصلت مشكلة: ' + ui.error + '. اكتب تاني عشان تعيد المحاولة.',
+  };
+  status.textContent = messages[ui.phase];
+  status.dataset.phase = ui.phase;
+  list.replaceChildren(...ui.data.map(option));
+  list.setAttribute('aria-busy', String(ui.busy));
+  input.setAttribute('aria-expanded', String(ui.data.length > 0));
+  if (ui.active >= 0) {
+    input.setAttribute('aria-activedescendant', 'opt-' + ui.active);
+    document.getElementById('opt-' + ui.active).scrollIntoView({ block: 'nearest' });
+  } else input.removeAttribute('aria-activedescendant');
+}
+
+function remember(q, data) {
+  cache.delete(q);
+  cache.set(q, data);
+  if (cache.size > CACHE_MAX) cache.delete(cache.keys().next().value);
+}
+
+async function search(raw) {
+  const q = raw.trim().toLowerCase();
+  if (ABORT && controller) {
+    if (!controller.signal.aborted) stats.aborted++;
+    controller.abort();
   }
+  if (q.length < 2) return set({ phase: q ? 'short' : 'idle', q, data: [], active: -1, busy: false });
+  if (cache.has(q)) {
+    stats.fromCache++;
+    const data = cache.get(q);
+    return set({ phase: data.length ? 'ok' : 'empty', q, data, active: -1, busy: false });
+  }
+  controller = new AbortController();
+  const { signal } = controller;
+  set({ phase: 'loading', q, busy: true });
+  try {
+    const url = new URL('/api/search', location.href);
+    url.searchParams.set('q', q);
+    stats.sent++;
+    const res = await fetch(url, { signal });
+    if (!res.ok) throw new Error('السيرفر رد بـ ' + res.status);
+    const data = await res.json();
+    remember(q, data);
+    set({ phase: data.length ? 'ok' : 'empty', q, data, active: -1, busy: false });
+  } catch (e) {
+    if (e.name === 'AbortError') return;
+    set({ phase: 'error', q, data: [], error: e.message, active: -1, busy: false });
+  }
+}
+
+const debouncedSearch = debounce(search, WAIT);
+input.addEventListener('input', () => debouncedSearch(input.value));
+
+function choose(i) {
+  const d = ui.data[i];
+  if (!d) return;
+  picked.textContent = d.owner + '.' + d.name;
+  input.value = d.name;
+  debouncedSearch.cancel();
+  controller?.abort();
+  set({ phase: 'idle', data: [], active: -1, busy: false });
+}
+
+input.addEventListener('keydown', (e) => {
+  const n = ui.data.length;
+  if (e.key === 'ArrowDown' && n) {
+    e.preventDefault();
+    set({ active: (ui.active + 1) % n });
+  } else if (e.key === 'ArrowUp' && n) {
+    e.preventDefault();
+    set({ active: ui.active <= 0 ? n - 1 : ui.active - 1 });
+  } else if (e.key === 'Enter' && ui.active >= 0) {
+    e.preventDefault();
+    choose(ui.active);
+  } else if (e.key === 'Escape') {
+    debouncedSearch.cancel();
+    controller?.abort();
+    set({ phase: 'idle', data: [], active: -1, busy: false });
+  }
+});
+
+list.addEventListener('mousedown', (e) => {
+  const li = e.target.closest('li');
+  if (li) choose(Number(li.id.slice(4)));
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key !== '/' && e.code !== 'Slash') return;
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const el = document.activeElement;
+  if (el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName))) return;
+  e.preventDefault();
+  input.focus();
+  input.select();
 });
 </script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** لما تفتح [[http://localhost:8000]] من غير دخول، الصفحة بتوديك [[login.html]]: اسم وباسورد وزرارين «دخول» و «حساب جديد». بعد الدخول نفس التطبيق اللي تعرفه بالظبط، بس وصفاتك ومفضلتك محفوظين على السيرفر في SQLite مش في [[localStorage]]: تفتحهم من أي متصفح بنفس الحساب، وحساب تاني مبيشوفهمش. وفي الـ nav رابط «خروج».
+## هتشوف إيه
 
-## الصورة الكبيرة
+دوس في أي حتة فاضية في الصفحة (العنوان مثلًا) وبعدين [[/]]: المؤشر بيروح لخانة البحث والـ [[/]] مش بتتكتب فيها، ولو فيها كلمة قديمة بتتعلّم كلها فتكتب فوقها. ولو انت جوه خانة البحث أو خانة «ملاحظة»، الـ [[/]] بتتكتب عادي. ([[<kbd>/</kbd>]] جنب العنوان بيقول لليوزر إن الاختصار موجود.)
 
-~~~text
-المتصفح                                   server/server.js (node:http)                  server/data.db (node:sqlite)
-login.html ──POST /api/signup أو login──→ scrypt للباسورد، جلسة جديدة ──────────────→ users، sessions
-           ←──── Set-Cookie: sid=…; HttpOnly; SameSite=Lax
-index.html ──GET /api/state (والكوكي)────→ مين صاحب الجلسة؟ ─────────────────────────→ state (json لكل يوزر)
-store.set ──→ remote.setItem ──PUT /api/state──→ كل وصفة على validateRecipe (نفس ملف الواجهة) → state
-           ──GET data/recipes.json──────→ ملف ثابت زي الأول
-~~~
-
-## ليه الأدوات دي؟
-
-| الاختيار | البديل | ليه ده هنا | إمتى البديل |
-|---|---|---|---|
-| [[node:http]] | Express | ٥ endpoints بس، وكل سطر في الـ routing قدامك. Express بيوفّر الـ router والـ middleware و [[res.json]] | لما الـ endpoints تكتر ومحتاج middleware (لوج، CORS، rate limit) |
-| [[node:sqlite]] (موجود في Node 24، SQLite 3.53) | Postgres | ملف واحد، من غير سيرفر داتا ولا تسطيب | أكتر من سيرفر بيكتبوا في نفس الوقت، أو مستخدمين كتير |
-| كوكي جلسة [[HttpOnly]] | JWT في [[localStorage]] | JavaScript الصفحة مبيقدرش يقرا الكوكي ([[document.cookie]] طلع فاضي)، فـ XSS مبيسرقش الجلسة، والمسح من السيرفر بيقفلها على طول | API بيكلّمه موبايل أو سيرفرات تانية |
-| [[scrypt]] من [[node:crypto]] | bcrypt أو argon2 | موجود في Node من غير تسطيب، ومصمم يبقى بطيء ومكلّف في الذاكرة عشان التخمين يبقى غالي | argon2 لو تقدر تسطّب مكتبات native |
-| حالة كاملة لكل يوزر (JSON) | جدول للوصفات وجدول للمفضلة | الواجهة بتحفظ [[{ mine, favs }]] زي ما كانت بالظبط، فـ [[store.js]] و [[view.js]] ما اتغيّروش | لما تحتاج بحث أو ترتيب على السيرفر، أو وصفات مشتركة بين ناس |
+> **المعاينة هنا من غير سيرفر:** أول سطور في الكود سكربت صغير بيحط [[fetch]] وهمي بيدوّر في نفس داتا [[server.js]] وبيتأخر زيه، وبيظبط [[URL]] لأن عنوان الصفحة جوه الصندوق [[about:srcdoc]] و [[new URL('/api/search', location.href)]] بيرمي عليه ([[Failed to construct 'URL': Invalid URL]]، ده اللي طلع في أول تجربة). في الحقيقة انت بتشغّل [[node server.js]] ومفيش الكلام ده.
 
 ## الملفات
 
 ~~~text
-recipe-server/
-├── server/server.js        جديد: السيرفر كله (الملفات والـ API والقاعدة)
-├── server/server.check.js  جديد: ٨ اختبارات بـ node --test
-├── login.html  src/login.js   جديد: صفحة الدخول
-├── src/remote.js           جديد: storage بـ getItem و setItem فوق /api/state
-├── src/app.js              + بياخد الـ storage من السيرفر، ولو مفيش دخول يروح login.html
-├── index.html              + رابط «خروج» و <div id="toast">
-├── style.css  eslint.config.js  package.json  .gitignore   + سطور قليلة
-├── src/logic.js  src/storage.js  src/store.js  src/api.js  src/view.js  data/   زي الأساسية
-└── tests/  logic.test.js  storage.test.js  api.test.js   (app.dom.test.js اتشال: مبني على localStorage)
+search-slash/
+├── gen-data.cjs   بيعمل data.json (مرة واحدة)
+├── server.js      زي الدرس
+├── debounce.js    زي الدرس
+├── index.html     + <kbd>/</kbd> وخانة ملاحظة
+├── style.css      زي الدرس
+└── app.js         + مستمع keydown على document
 ~~~
-
-الملفات اللي مش مكتوبة هنا زي النسخة الأساسية بالظبط، وكودها كامل في حل تمرين «انشره بجد واعمل README» في درس «مشروع التخرّج ٤: الاختبارات والنشر». ابدأ من نسخة منها:
 
 ~~~bash
-cp -r recipe-book recipe-server
-cd recipe-server
-mkdir server
-rm tests/app.dom.test.js
+node gen-data.cjs        # بيكتب data.json (193 method)
+node server.js           # http://localhost:8000
 ~~~
 
-~~~js server/server.js
-// server/server.js — سيرفر الوصفات: node:http و node:sqlite، من غير أي مكتبة. node server/server.js
-import { createServer } from 'node:http';
-import { DatabaseSync } from 'node:sqlite';
-import { readFile } from 'node:fs/promises';
-import { randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
-import { join, extname, normalize, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { validateRecipe, isRecipe } from '../src/logic.js'; // نفس ملف الواجهة، مش نسخة
-
-const ROOT = fileURLToPath(new URL('..', import.meta.url));
-const PUBLIC = ['/index.html', '/login.html', '/style.css'];
-const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json' };
-const WEEK = 7 * 24 * 3600;
-
-export function openDb(file = join(ROOT, 'server', 'data.db')) {
-  const db = new DatabaseSync(file);
-  db.exec($__bt
-    CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT UNIQUE NOT NULL, salt TEXT NOT NULL, hash TEXT NOT NULL);
-    CREATE TABLE IF NOT EXISTS sessions (token TEXT PRIMARY KEY, user_id INTEGER NOT NULL, expires INTEGER NOT NULL);
-    CREATE TABLE IF NOT EXISTS state (user_id INTEGER PRIMARY KEY, json TEXT NOT NULL);
-  $__bt);
-  return db;
-}
-
-const hashOf = (password, salt) => scryptSync(password, salt, 32).toString('hex');
-
-// الوصفة اللي جاية من برّه بتعدّي على نفس قواعد الفورم بالظبط
-function checkRecipe(r) {
-  if (!isRecipe(r)) return { title: 'شكل الوصفة غلط' };
-  const res = validateRecipe({ ...r, minutes: String(r.minutes), ingredients: r.ingredients.join('\n'), tags: r.tags.join('،') });
-  return res.ok ? null : res.errors;
-}
-
-export function makeServer(db) {
-  const q = {
-    userByName: db.prepare('SELECT * FROM users WHERE name = ?'),
-    addUser: db.prepare('INSERT INTO users (name, salt, hash) VALUES (?, ?, ?)'),
-    addSession: db.prepare('INSERT INTO sessions (token, user_id, expires) VALUES (?, ?, ?)'),
-    session: db.prepare('SELECT user_id FROM sessions WHERE token = ? AND expires > ?'),
-    dropSession: db.prepare('DELETE FROM sessions WHERE token = ?'),
-    getState: db.prepare('SELECT json FROM state WHERE user_id = ?'),
-    putState: db.prepare('INSERT INTO state (user_id, json) VALUES (?, ?) ON CONFLICT(user_id) DO UPDATE SET json = excluded.json'),
-  };
-  const now = () => Math.floor(Date.now() / 1000);
-  const send = (res, status, body, headers = {}) => {
-    res.writeHead(status, { 'content-type': 'application/json; charset=utf-8', ...headers });
-    res.end(JSON.stringify(body));
-  };
-  const token = (req) => /(?:^|;\s*)sid=([\w-]+)/.exec(req.headers.cookie ?? '')?.[1];
-  const userOf = (req) => q.session.get(token(req) ?? '', now())?.user_id ?? null;
-  const cookie = (value, maxAge) => $__btsid=$__{value}; HttpOnly; SameSite=Lax; Path=/; Max-Age=$__{maxAge}$__bt;
-  const startSession = (res, userId, status, body) => {
-    const t = randomBytes(32).toString('base64url');
-    q.addSession.run(t, userId, now() + WEEK);
-    send(res, status, body, { 'set-cookie': cookie(t, WEEK) });
-  };
-  const readJson = async (req) => {
-    let text = '';
-    for await (const part of req) { text += part; if (text.length > 1e6) throw new Error('كبير'); }
-    return JSON.parse(text || 'null');
-  };
-  const loadState = (userId) => JSON.parse(q.getState.get(userId)?.json ?? '{"mine":[],"favs":[]}');
-
-  async function api(req, res, path) {
-    const route = req.method + ' ' + path;
-    if (route === 'GET /api/logout') {
-      q.dropSession.run(token(req) ?? '');
-      res.writeHead(303, { location: '../login.html', 'set-cookie': cookie('', 0) });
-      return res.end();
-    }
-    const body = req.method === 'GET' ? null : await readJson(req);
-    if (route === 'POST /api/signup' || route === 'POST /api/login') {
-      const name = String(body?.name ?? '').trim();
-      const password = String(body?.password ?? '');
-      if (!/^[\p{L}\p{N}_.-]{3,30}$/u.test(name)) return send(res, 400, { error: 'الاسم من 3 لـ 30 حرف أو رقم' });
-      if (password.length < 8) return send(res, 400, { error: 'الباسورد 8 حروف على الأقل' });
-      const user = q.userByName.get(name);
-      if (route === 'POST /api/signup') {
-        if (user) return send(res, 409, { error: 'الاسم ده متسجّل قبل كده' });
-        const salt = randomBytes(16).toString('hex');
-        const { lastInsertRowid } = q.addUser.run(name, salt, hashOf(password, salt));
-        return startSession(res, Number(lastInsertRowid), 201, { name });
-      }
-      const ok = user && timingSafeEqual(Buffer.from(user.hash, 'hex'), Buffer.from(hashOf(password, user.salt), 'hex'));
-      if (!ok) return send(res, 401, { error: 'الاسم أو الباسورد غلط' });
-      return startSession(res, user.id, 200, { name });
-    }
-    const userId = userOf(req);
-    if (!userId) return send(res, 401, { error: 'سجّل دخول الأول' });
-    if (route === 'GET /api/state') return send(res, 200, loadState(userId));
-    if (route === 'PUT /api/state') {
-      const mine = Array.isArray(body?.mine) ? body.mine : null;
-      const favs = Array.isArray(body?.favs) && body.favs.every((f) => typeof f === 'string') ? body.favs : null;
-      if (!mine || !favs) return send(res, 400, { error: 'لازم mine و favs' });
-      for (const r of mine) {
-        const errors = checkRecipe(r);
-        if (errors) return send(res, 400, { error: 'وصفة غلط', errors });
-      }
-      q.putState.run(userId, JSON.stringify({ mine, favs }));
-      return send(res, 200, { ok: true });
-    }
-    if (route === 'POST /api/recipes') {
-      const v = validateRecipe(body ?? {});
-      if (!v.ok) return send(res, 400, { errors: v.errors });
-      const state = loadState(userId);
-      const recipe = { id: 'u-' + randomBytes(8).toString('hex'), ...v.value };
-      q.putState.run(userId, JSON.stringify({ ...state, mine: [recipe, ...state.mine] }));
-      return send(res, 201, recipe);
-    }
-    return send(res, 404, { error: 'مفيش حاجة هنا' });
+~~~js gen-data.cjs
+const owners = { 'Array.prototype': Array.prototype, 'String.prototype': String.prototype, Object, Math, Promise, Number, JSON, Array, 'Map.prototype': Map.prototype, 'Set.prototype': Set.prototype };
+const out = [];
+for (const [o, obj] of Object.entries(owners))
+  for (const n of Object.getOwnPropertyNames(obj)) {
+    if (['constructor', 'length', 'name', 'prototype', 'size'].includes(n) || /^[A-Z_0-9]+$/.test(n) || n.startsWith('__')) continue;
+    const d = Object.getOwnPropertyDescriptor(obj, n);
+    if (typeof d.value !== 'function') continue;
+    out.push({ id: out.length + 1, name: n, owner: o });
   }
-
-  async function file(req, res, path) {
-    if (path === '/') path = '/index.html';
-    const safe = normalize(path).replace(/\\/g, '/');
-    if (!PUBLIC.includes(safe) && !/^\/(src|data)\/[\w.-]+\.(js|json)$/.test(safe)) return send(res, 404, { error: 'مش موجود' });
-    try {
-      const body = await readFile(join(ROOT, safe));
-      res.writeHead(200, { 'content-type': TYPES[extname(safe)] });
-      res.end(body);
-    } catch {
-      send(res, 404, { error: 'مش موجود' });
-    }
-  }
-
-  return createServer(async (req, res) => {
-    const path = decodeURIComponent(new URL(req.url, 'http://x').pathname);
-    try {
-      if (path.startsWith('/api/')) await api(req, res, path);
-      else await file(req, res, path);
-    } catch (err) {
-      console.error(new Date().toISOString(), req.method, path, err.message);
-      if (!res.headersSent) send(res, err instanceof SyntaxError ? 400 : 500, { error: err instanceof SyntaxError ? 'JSON غلط' : 'حصل خطأ في السيرفر' });
-    }
-  });
-}
-
-// اتشغّل مباشرة (node server/server.js)، مش import من الاختبار
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const port = Number(process.env.PORT ?? 8000);
-  makeServer(openDb()).listen(port, () => console.log('http://localhost:' + port));
-}
+require('fs').writeFileSync('data.json', '[\n' + out.map(d => JSON.stringify(d)).join(',\n') + '\n]\n');
 ~~~
 
-~~~js src/remote.js
-// src/remote.js — storage فوق السيرفر، بنفس getItem و setItem اللي الـ store مستنيهم، فـ store.js ميتغيّرش
-export async function remoteStorage(url, onFail) {
-  const res = await fetch(url);
-  if (res.status === 401) return null;
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  const { mine, favs } = await res.json();
-  let cache = JSON.stringify({ version: 1, mine, favs });
-  return {
-    getItem: () => cache,
-    setItem(key, value) {
-      if (key.endsWith(':broken')) return;
-      cache = value;
-      const { mine, favs } = JSON.parse(value);
-      fetch(url, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ mine, favs }) })
-        .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); })
-        .catch(onFail);
-    },
-  };
+~~~js server.js
+import http from 'node:http';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
+const PORT = Number(process.env.PORT) || 8000;
+const ROOT = import.meta.dirname;
+const DATA = JSON.parse(await fs.readFile(path.join(ROOT, 'data.json'), 'utf8'));
+const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json' };
+let count = 0;
+
+async function api(url, res) {
+  const q = (url.searchParams.get('q') ?? '').trim().toLowerCase();
+  const n = ++count;
+  console.log($__bt#$__{n} q=$__{q}$__bt);
+  res.on('close', () => { if (!res.writableFinished) console.log($__bt#$__{n} اتلغى من المتصفح$__bt); });
+  await new Promise(r => setTimeout(r, 200 + Math.random() * 400));
+  if (res.destroyed) return;
+  if (q === '500') { res.writeHead(500); return res.end('boom'); }
+  const hits = DATA.filter(d => d.name.toLowerCase().includes(q)).slice(0, 20);
+  res.writeHead(200, { 'content-type': 'application/json; charset=utf-8' });
+  res.end(JSON.stringify(hits));
 }
 
-// لو السيرفر مش بيرد وقت الفتح: نشتغل في الذاكرة ونقول
-export function memoryStorage() {
-  const m = new Map();
-  return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) };
-}
-~~~
-
-~~~html login.html
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>دخول · دفتر الوصفات</title>
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./src/login.js"></script>
-</head>
-<body>
-  <main id="main">
-    <h1>دفتر الوصفات</h1>
-    <form id="login" novalidate>
-      <div class="field">
-        <label for="name">الاسم</label>
-        <input id="name" name="name" autocomplete="username" required>
-      </div>
-      <div class="field">
-        <label for="password">الباسورد (8 حروف على الأقل)</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" required minlength="8">
-      </div>
-      <p id="msg" class="err" role="alert"></p>
-      <button type="submit" name="action" value="login">دخول</button>
-      <button type="submit" name="action" value="signup">حساب جديد</button>
-    </form>
-  </main>
-</body>
-</html>
-~~~
-
-~~~js src/login.js
-// src/login.js — صفحة الدخول: الزرارين بيبعتوا نفس الفورم لـ endpoint مختلف
-const form = document.getElementById('login');
-const msg = document.getElementById('msg');
-
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const action = e.submitter?.value === 'signup' ? 'signup' : 'login';
-  const { name, password } = Object.fromEntries(new FormData(form));
-  msg.textContent = '';
+const server = http.createServer(async (req, res) => {
+  const url = new URL(req.url, 'http://localhost');
+  if (url.pathname === '/api/search') return api(url, res);
+  const file = path.join(ROOT, url.pathname === '/' ? 'index.html' : url.pathname);
+  if (!file.startsWith(ROOT + path.sep)) { res.writeHead(403); return res.end(); }
   try {
-    const res = await fetch('./api/' + action, {
-      method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name, password }),
-    });
-    if (res.ok) return location.replace('./');
-    msg.textContent = (await res.json()).error;
+    const body = await fs.readFile(file);
+    res.writeHead(200, { 'content-type': (TYPES[path.extname(file)] ?? 'application/octet-stream') + '; charset=utf-8' });
+    res.end(body);
   } catch {
-    msg.textContent = 'السيرفر مش بيرد. جرّب تاني.';
+    res.writeHead(404);
+    res.end('not found');
   }
 });
+
+server.listen(PORT, () => console.log($__bthttp://localhost:$__{PORT}$__bt));
 ~~~
 
-~~~js src/app.js
-// src/app.js — التوصيل: أحداث ← حالة ← شاشة. الوحيد اللي بيعرف الصفحة والحالة مع بعض.
-import { parseRoute, debounce } from './logic.js';
-import { createStore } from './store.js';
-import { loadRecipes, explain } from './api.js';
-import { view, showErrors } from './view.js';
-import { remoteStorage, memoryStorage } from './remote.js';
-
-const DATA_URL = './data/recipes.json';
-const main = document.getElementById('main');
-const toast = document.getElementById('toast');
-const say = (text) => { toast.textContent = text; };
-
-// الحفظ على السيرفر بدل localStorage. ومن غير دخول: صفحة الدخول
-let storage;
-try {
-  storage = await remoteStorage('./api/state', () => say('مقدرناش نحفظ على السيرفر. التغيير الجاي هيحاول تاني.'));
-  if (storage === null) location.replace('./login.html');
-} catch {
-  say('السيرفر مش بيرد: التغييرات مش هتتحفظ لحد ما ترجع تفتح الصفحة.');
+~~~js debounce.js
+export function debounce(fn, ms) {
+  let timer;
+  const wrapped = (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), ms);
+  };
+  wrapped.cancel = () => clearTimeout(timer);
+  return wrapped;
 }
-const store = createStore(storage ?? memoryStorage());
-let ctrl = null;
-
-function paint(s, prev) {
-  main.setAttribute('aria-busy', String(s.status === 'loading'));
-  const moved = prev.route.name !== s.route.name || prev.route.params.id !== s.route.params.id;
-  if (!moved && s.route.name === 'new') return;
-  const active = main.contains(document.activeElement) ? document.activeElement : null;
-  const keep = active?.id ? { id: active.id, pos: active.selectionStart } : null;
-  const { title, nodes } = view(s);
-  document.title = title;
-  main.replaceChildren(...nodes);
-  const here = '#/' + (s.route.name === 'list' ? '' : s.route.name);
-  for (const a of document.querySelectorAll('nav a')) {
-    if (a.getAttribute('href') === here) a.setAttribute('aria-current', 'page');
-    else a.removeAttribute('aria-current');
-  }
-  if (moved) main.querySelector('h1')?.focus();
-  else if (keep) {
-    const el = document.getElementById(keep.id);
-    el?.focus();
-    if (keep.pos != null) el?.setSelectionRange?.(keep.pos, keep.pos);
-  }
-}
-
-const search = debounce((form) => {
-  const p = new URLSearchParams();
-  for (const [k, v] of new FormData(form)) if (String(v).trim()) p.set(k, String(v));
-  const qs = String(p);
-  // من غير || '#/' لو الصفحة اتفتحت من غير # الـ ?q= كان هيروح للرابط نفسه مش للـ hash
-  const path = location.hash.split('?')[0] || '#/';
-  history.replaceState(null, '', path + (qs ? '?' + qs : ''));
-  store.setRoute(parseRoute(location.hash));
-}, 250);
-
-async function loadData() {
-  ctrl?.abort();
-  ctrl = new AbortController();
-  store.loading();
-  try {
-    store.loaded(await loadRecipes(DATA_URL, { signal: ctrl.signal }));
-  } catch (err) {
-    if (err.name !== 'AbortError') store.failed(explain(err));
-  }
-}
-
-main.addEventListener('input', (e) => {
-  const form = e.target.closest('[data-form="search"]');
-  if (form) search(form);
-});
-
-main.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (e.target.dataset.form === 'search') return search(e.target);
-  const res = store.addRecipe(Object.fromEntries(new FormData(e.target)));
-  if (!res.ok) return showErrors(e.target, res.errors);
-  location.hash = '#/r/' + encodeURIComponent(res.recipe.id);
-});
-
-main.addEventListener('click', (e) => {
-  const fav = e.target.closest('[data-fav]');
-  if (fav) store.toggleFav(fav.dataset.fav);
-  if (e.target.closest('[data-action="retry"]')) loadData();
-});
-
-window.addEventListener('hashchange', () => store.setRoute(parseRoute(location.hash)));
-store.subscribe(paint);
-store.setRoute(parseRoute(location.hash));
-loadData();
 ~~~
 
 ~~~html index.html
@@ -5330,1470 +822,4442 @@ loadData();
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>دفتر الوصفات</title>
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./src/app.js"></script>
+  <title>دوّر على method</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <nav aria-label="الأقسام">
-      <a href="#/">الوصفات</a>
-      <a href="#/fav">المفضلة</a>
-      <a href="#/new">وصفة جديدة</a>
-      <a href="./api/logout">خروج</a>
-    </nav>
-  </header>
-  <main id="main"></main>
-  <div id="toast" class="toast" role="status"></div>
-  <noscript>التطبيق ده محتاج JavaScript يكون شغال.</noscript>
+  <main>
+    <h1>دوّر على method في JavaScript</h1>
+    <label for="q">اسم الـ method <kbd>/</kbd></label>
+    <input id="q" dir="ltr" autocomplete="off" spellcheck="false"
+           role="combobox" aria-controls="results" aria-expanded="false" aria-autocomplete="list">
+    <p id="status" role="status"></p>
+    <ul id="results" role="listbox" dir="ltr"></ul>
+    <p>اخترت: <output id="picked">—</output></p>
+    <label>ملاحظة على اختيارك <input id="note" dir="auto"></label>
+  </main>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
 ~~~
 
 ~~~css style.css
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #1d1d1f; background: #faf7f2; }
-header { background: #7a3e12; }
-nav { display: flex; flex-wrap: wrap; gap: .25rem; max-width: 52rem; margin: 0 auto; padding: .5rem 1rem; }
-nav a { color: #fff; padding: .4rem .8rem; border-radius: 6px; text-decoration: none; }
-nav a[aria-current="page"] { background: #fff; color: #7a3e12; font-weight: 700; }
-main { max-width: 52rem; margin: 0 auto; padding: 1rem; }
-h1 { margin: .5rem 0 1rem; }
-h1:focus { outline: none; }
-:focus-visible { outline: 3px solid #1a73e8; outline-offset: 2px; }
-form[role="search"] { display: grid; grid-template-columns: 1fr; gap: .25rem; margin-bottom: .5rem; }
-@media (min-width: 640px) { form[role="search"] { grid-template-columns: auto 1fr auto auto; align-items: center; gap: .5rem; } }
-input, select, textarea, button { font: inherit; padding: .45rem .6rem; border: 1px solid #b9b1a6; border-radius: 6px; background: #fff; max-width: 100%; }
-button { cursor: pointer; background: #f1e6d8; }
-button[type="submit"] { background: #7a3e12; color: #fff; border-color: #7a3e12; }
-.cards { list-style: none; padding: 0; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-.card { background: #fff; border: 1px solid #e4dccf; border-radius: 10px; padding: .75rem 1rem; }
-.card h2 { font-size: 1.15rem; margin: 0; }
-.meta { color: #5c5348; margin: .25rem 0 .5rem; }
-.steps { white-space: pre-line; }
-.notice { background: #fff4ce; border: 1px solid #e0c060; padding: .5rem .75rem; border-radius: 6px; }
-[role="alert"] { background: #fde7e9; border: 1px solid #d93025; padding: .5rem .75rem; border-radius: 6px; }
-.field { display: grid; gap: .2rem; margin-bottom: .75rem; }
-.err { color: #b3261e; margin: 0; min-height: 1.2em; }
-[aria-invalid="true"] { border-color: #b3261e; border-width: 2px; }
-.toast:empty { display: none; }
-.toast { position: fixed; inset-inline: 1rem; bottom: 1rem; max-width: 30rem; margin-inline: auto; background: #1d1d1f; color: #fff; padding: .6rem 1rem; border-radius: 8px; }
-#login button { margin-inline-end: .5rem; }
+body { font-family: system-ui, sans-serif; max-width: 34rem; margin: 2rem auto; padding: 0 1rem; }
+input { width: 100%; font-size: 1.1rem; padding: .5rem; box-sizing: border-box; }
+#results { list-style: none; padding: 0; margin: 0; max-height: 18rem; overflow: auto; }
+#results li { padding: .35rem .5rem; cursor: pointer; }
+#results li[aria-selected="true"] { background: #1a73e8; color: #fff; }
+#results[aria-busy="true"] { opacity: .5; }
+small { opacity: .7; margin-inline-start: .5rem; }
+[data-phase="error"] { color: #b00020; }
 ~~~
 
-~~~js eslint.config.js
-import js from '@eslint/js';
-import globals from 'globals';
+~~~js app.js
+import { debounce } from './debounce.js';
 
-export default [
-  { ignores: ['node_modules/', 'coverage/'] },
-  js.configs.recommended,
-  { files: ['src/**/*.js'], languageOptions: { globals: globals.browser } },
-  { files: ['tests/**/*.js'], languageOptions: { globals: { ...globals.browser, ...globals.node } } },
-  { files: ['server/**/*.js'], languageOptions: { globals: globals.node } },
-  {
-    rules: {
-      eqeqeq: ['error', 'always', { null: 'ignore' }],
-      'no-restricted-properties': ['error',
-        { property: 'innerHTML', message: 'استخدم h() أو textContent: innerHTML بيفتح باب XSS.' },
-        { property: 'outerHTML', message: 'نفس خطر innerHTML.' }],
-    },
-  },
-];
-~~~
+const input = document.querySelector('#q');
+const list = document.querySelector('#results');
+const status = document.querySelector('#status');
+const picked = document.querySelector('#picked');
 
-~~~json package.json
-{
-  "name": "recipe-book",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "lint": "eslint .",
-    "test": "vitest run",
-    "start": "node server/server.js",
-    "test:server": "node --test server/server.check.js",
-    "check": "npm run lint && npm test && npm run test:server"
-  },
-  "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "eslint": "^10.15.0",
-    "globals": "^17.14.0",
-    "jsdom": "^31.0.1",
-    "vitest": "^5.1.1"
-  }
-}
-~~~
+const opts = new URLSearchParams(location.search);
+const WAIT = opts.has('nodebounce') ? 0 : 300;
+const ABORT = !opts.has('noabort');
 
-~~~text .gitignore
-node_modules/
-coverage/
-server/data.db
-~~~
+const ui = { phase: 'idle', q: '', data: [], error: '', active: -1, busy: false };
+const cache = new Map();
+const CACHE_MAX = 50;
+const stats = { sent: 0, aborted: 0, fromCache: 0 };
+window.searchStats = stats;
+let controller = null;
 
-## الأجزاء المهمة
-
-| الحتة | ليه |
-|---|---|
-| [[import { validateRecipe, isRecipe } from '../src/logic.js']] | السيرفر بيستورد **نفس الملف** اللي الفورم بيستخدمه. قاعدة جديدة في [[logic.js]] بتشتغل في المكانين، ورسايل 400 هي هي رسايل الفورم (الاختبار بيقارنهم بـ [[deepEqual]]) |
-| [[checkRecipe]] | الوصفة اللي في [[PUT /api/state]] متخزنة كأرقام ولستات، فبنرجّعها لشكل الفورم ([[String(minutes)]] و [[join('\n')]]) ونعدّيها على نفس التحقق |
-| [[scryptSync(password, salt, 32)]] و salt عشوائي لكل يوزر | الباسورد عمره ما بيتخزن. ويوزرين بنفس الباسورد ليهم hash مختلف |
-| [[timingSafeEqual]] | المقارنة بتاخد نفس الوقت مهما كان أول حرف غلط فين، فمحدش يخمّن الـ hash من وقت الرد |
-| [[randomBytes(32).toString('base64url')]] | توكن الجلسة ٣٢ بايت عشوائي (٤٣ حرف)، مستحيل يتخمّن |
-| [[HttpOnly; SameSite=Lax; Path=/]] | JavaScript ميشوفوش، والمتصفح مبيبعتوش مع POST جاي من موقع تاني (CSRF) |
-| [[db.prepare(... ?)]] | القيم بتتبعت منفصلة عن الـ SQL، فاسم زي [[x'; DROP TABLE users;--]] بيتخزن كنص. عمرك ما تبني SQL بـ [[+]] |
-| [[PUBLIC]] و regex للـ [[src]] و [[data]] | السيرفر بيقدّم ملفات معيّنة بس، فـ [[/server/server.js]] و [[/server/data.db]] بيرجعوا 404 |
-| [[catch]] واحد حوالين كل request | JSON بايظ ← 400 «JSON غلط»، وأي حاجة تانية ← 500 بجملة عامة، والتفاصيل في اللوج بالوقت. السيرفر عمره ما يقع من طلب واحد |
-| [[remoteStorage]] بنفس [[getItem]] و [[setItem]] | الـ store اتعمل من الأول بـ storage بيتبعت كـ parameter (درس «مشروع التخرّج ١»)، فبدّلناه من غير ما نلمس [[store.js]] |
-| [[await]] في أول [[app.js]] | top-level await في module: الصفحة بتستنى الحالة من السيرفر قبل أول رسمة |
-| [[setItem]] بيبعت الحالة كلها | لو الحفظ فشل (السيرفر واقع)، التغيير الجاي بيبعت كل حاجة تاني، فمفيش حاجة بتضيع طول ما الصفحة مفتوحة |
-
-## الاختبارات
-
-~~~js server/server.check.js
-// server/server.check.js — node --test server/server.check.js (قاعدة في الذاكرة وبورت عشوائي)
-import { test, before, after } from 'node:test';
-import assert from 'node:assert/strict';
-import { makeServer, openDb } from './server.js';
-import { validateRecipe } from '../src/logic.js';
-
-let server, base;
-before(async () => {
-  server = makeServer(openDb(':memory:'));
-  await new Promise((r) => server.listen(0, '127.0.0.1', r));
-  base = 'http://127.0.0.1:' + server.address().port;
-});
-after(() => server.close());
-
-const call = (path, { method = 'GET', body, sid } = {}) => fetch(base + path, {
-  method, redirect: 'manual',
-  headers: { 'content-type': 'application/json', ...(sid ? { cookie: 'sid=' + sid } : {}) },
-  body: body === undefined ? undefined : JSON.stringify(body),
-});
-const sidOf = (res) => /sid=([\w-]+)/.exec(res.headers.get('set-cookie'))[1];
-const good = { title: 'طعمية', minutes: '٢٥', ingredients: 'فول\nكزبرة', steps: 'اطحن واقلي', tags: '' };
-
-test('حساب جديد: كوكي HttpOnly، والاسم المتكرر 409', async () => {
-  const res = await call('/api/signup', { method: 'POST', body: { name: 'sara', password: 'secret-123' } });
-  assert.equal(res.status, 201);
-  assert.match(res.headers.get('set-cookie'), /^sid=[\w-]{43}; HttpOnly; SameSite=Lax; Path=\/; Max-Age=604800$/);
-  const again = await call('/api/signup', { method: 'POST', body: { name: 'sara', password: 'other-123' } });
-  assert.equal(again.status, 409);
-});
-
-test('دخول بباسورد غلط 401، وصح 200', async () => {
-  assert.equal((await call('/api/login', { method: 'POST', body: { name: 'sara', password: 'wrong-pass' } })).status, 401);
-  assert.equal((await call('/api/login', { method: 'POST', body: { name: 'sara', password: 'secret-123' } })).status, 200);
-});
-
-test('من غير دخول: 401', async () => {
-  const res = await call('/api/state');
-  assert.equal(res.status, 401);
-  assert.deepEqual(await res.json(), { error: 'سجّل دخول الأول' });
-});
-
-test('POST بداتا غلط: 400 وفيه نفس رسايل الفورم', async () => {
-  const sid = sidOf(await call('/api/login', { method: 'POST', body: { name: 'sara', password: 'secret-123' } }));
-  const bad = { ...good, title: '', minutes: 'abc' };
-  const res = await call('/api/recipes', { method: 'POST', body: bad, sid });
-  assert.equal(res.status, 400);
-  assert.deepEqual((await res.json()).errors, validateRecipe(bad).errors);
-});
-
-test('كل واحد شايف وصفاته بس', async () => {
-  const sara = sidOf(await call('/api/login', { method: 'POST', body: { name: 'sara', password: 'secret-123' } }));
-  const omar = sidOf(await call('/api/signup', { method: 'POST', body: { name: 'omar', password: 'omar-pass-1' } }));
-  const made = await (await call('/api/recipes', { method: 'POST', body: good, sid: sara })).json();
-  assert.equal(made.minutes, 25);
-  assert.deepEqual((await (await call('/api/state', { sid: sara })).json()).mine.map((r) => r.title), ['طعمية']);
-  assert.deepEqual(await (await call('/api/state', { sid: omar })).json(), { mine: [], favs: [] });
-});
-
-test('PUT state: الوصفة البايظة بترجع 400، والسليمة بتتحفظ', async () => {
-  const sid = sidOf(await call('/api/signup', { method: 'POST', body: { name: 'mona', password: 'mona-pass-1' } }));
-  const r = { id: 'u-1', title: 'عدس', minutes: 0, ingredients: ['عدس', 'مية'], tags: [], steps: 'اسلق' };
-  const bad = await call('/api/state', { method: 'PUT', body: { mine: [r], favs: [] }, sid });
-  assert.equal(bad.status, 400);
-  assert.ok((await bad.json()).errors.minutes);
-  const ok = await call('/api/state', { method: 'PUT', body: { mine: [{ ...r, minutes: 30 }], favs: ['u-1'] }, sid });
-  assert.equal(ok.status, 200);
-  assert.deepEqual((await (await call('/api/state', { sid })).json()).favs, ['u-1']);
-});
-
-test('ملفات السيرفر والقاعدة مش بتتقري من برّه، و JSON غلط 400', async () => {
-  assert.equal((await call('/server/server.js')).status, 404);
-  assert.equal((await call('/server/data.db')).status, 404);
-  assert.equal((await call('/src/../server/server.js')).status, 404);
-  assert.equal((await call('/src/logic.js')).status, 200);
-  const res = await fetch(base + '/api/login', { method: 'POST', body: '{oops' });
-  assert.equal(res.status, 400);
-});
-
-test('خروج: الجلسة بتتمسح', async () => {
-  const sid = sidOf(await call('/api/login', { method: 'POST', body: { name: 'sara', password: 'secret-123' } }));
-  const out = await call('/api/logout', { sid });
-  assert.equal(out.status, 303);
-  assert.equal((await call('/api/state', { sid })).status, 401);
-});
-~~~
-
-~~~text الناتج: npm run check (ESLint 10.15، Vitest 5.1.1، node --test على Node 24.22)
-      Tests  33 passed (33)
-✔ حساب جديد: كوكي HttpOnly، والاسم المتكرر 409 (61.2738ms)
-✔ دخول بباسورد غلط 401، وصح 200 (74.7765ms)
-✔ من غير دخول: 401 (4.3159ms)
-✔ POST بداتا غلط: 400 وفيه نفس رسايل الفورم (43.5168ms)
-✔ كل واحد شايف وصفاته بس (75.8297ms)
-✔ PUT state: الوصفة البايظة بترجع 400، والسليمة بتتحفظ (36.7345ms)
-✔ ملفات السيرفر والقاعدة مش بتتقري من برّه، و JSON غلط 400 (5.6022ms)
-✔ خروج: الجلسة بتتمسح (37.2179ms)
-ℹ tests 8
-ℹ pass 8
-ℹ fail 0
-~~~
-
-[[openDb(':memory:')]] قاعدة في الذاكرة بتتمسح مع الاختبار، و [[listen(0)]] بورت فاضي عشوائي، فالاختبار ميضربش في سيرفر شغّال عندك. والـ ٣٣ هما اختبارات المنطق والحفظ والشبكة الأساسيين. (وقت [[scrypt]] هو اللي مخلّي اختبارات الدخول ٦٠–٧٥ms.)
-
-## اتجرّب في Chrome 158 (Playwright، اتنين browser contexts = متصفحين)
-
-~~~text الناتج
-http://127.0.0.1:8904/ من غير دخول      ← اتنقل لـ /login.html
-حساب «sara» بباسورد 123                 الباسورد 8 حروف على الأقل
-حساب «sara» بـ secret-123               ← التطبيق، ٦ كروت
-أضافت «طعمية» وحطتها في المفضلة، reload   h1 طعمية، والنجمة aria-pressed="true"
-المتصفح التاني: sara بباسورد غلط        الاسم أو الباسورد غلط
-المتصفح التاني: حساب «omar»             6 كروت (كشري، فول مدمس…) ومفيش طعمية
-الكوكي                                   sid، httpOnly: true، sameSite: Lax
-document.cookie في الصفحة               "" ← JavaScript مش شايفه
-السيرفر واقع (كل /api و /data بيرجعوا connection refused) وانت في الفورم:
-  «احفظ»                                الوصفة اتفتحت «عدس»، وتحت: مقدرناش نحفظ على السيرفر. التغيير الجاي هيحاول تاني.
-  «جرّب تاني» على الداتا                 مفيش اتصال. اتأكد من النت وجرّب تاني.
-السيرفر رجع و «جرّب تاني»               8 كروت (الست + طعمية + عدس اللي في الذاكرة)
-scrollWidth/clientWidth                  345/345   768/768   1280/1280
-pageerror                                مفيش
-~~~
-
-## تشغّله إزاي
-
-~~~bash
-cd recipe-server
-npm install
-npm run check
-npm start                 # http://localhost:8000 ، أو: PORT=3000 npm start
-~~~
-
-على ويندوز PowerShell: [[$env:PORT=3000; npm start]]. والقاعدة بتتعمل لوحدها في [[server/data.db]] أول مرة، وهي في [[.gitignore]] عشان باسوردات الناس (حتى الـ hash) متترفعش.
-
-**وليه مش GitHub Pages؟** Pages بتقدّم ملفات ثابتة بس، ومبتشغّلش Node. السيرفر محتاج مكان بيشغّل process (VPS أو خدمة زي Render بـ Docker، ده الامتداد [[ext]] اللي فوق).
-
-## لو مشتغلش
-
-- **دخلت بس الصفحة رجّعتك لـ [[login.html]]:** الكوكي مبيتبعتش. الكوكي مربوط بالـ host (من وثائق MDN عن الـ cookies)، فلو عملت الدخول على [[localhost]] وفتحت [[127.0.0.1]] هتبقى من غير جلسة. افتح نفس الرابط.
-- **400 «وصفة غلط» بعد ما عدّلت [[logic.js]]:** وصفات قديمة في القاعدة مبقتش بتعدّي القاعدة الجديدة. القواعد اللي بتتشد محتاجة migration للداتا القديمة.
-- **[[Error: listen EADDRINUSE: address already in use :::8904]]** (اتشاف فعلًا لما شغّلت السيرفر مرتين على بورت 8904): فيه نسخة تانية شغالة. اقفلها، أو [[PORT=3001 npm start]].
-
-**الغلطة الشائعة:** تتحقق في الواجهة بس. أي حد يقدر يبعت [[fetch('/api/recipes', ...)]] من الـ Console بأي داتا، فالسيرفر هو البوابة الحقيقية، والفورم مجرد راحة لليوزر. وعشان كده نفس [[validateRecipe]] على الناحيتين.` },
-        { lvl: 'فكرة', t: R`انقله لـ TypeScript ولفريمورك`, what: R`خد نفس التطبيق واعمله مرتين: مرة بـ TypeScript (تاب ts): [[type Recipe]] و [[type State]] و [[strict: true]]، وخلّي [[isRecipe]] type guard. ومرة بـ React أو Vue: [[store.js]] و [[logic.js]] و [[storage.js]] و [[api.js]] يتنقلوا زي ما هما، و [[view.js]] بس اللي يتكتب components. وبعدها فكرة جديدة بنفس الهيكل: دفتر مذاكرة، أو متابعة تمارين جيم، أو مصاريف بيت مشتركة لأكتر من شخص.`, done: R`نسخة TS بتعدّي [[tsc --noEmit]] من غير ولا [[any]]، ونسخة الفريمورك فيها نفس المميزات ونفس اختبارات المنطق بتعدّي من غير تعديل، وكاتب جدول: كل حتة في النسخة اليدوية بقت إيه، وعدد السطور قبل وبعد.`, ext: R`اعمل نسخة multi-user حقيقية: كذا شخص على نفس الدفتر في نفس الوقت، والتغييرات بتوصل للباقيين بـ WebSocket أو SSE (درس «WebSocket و SSE»)، ولو اتنين عدّلوا نفس الوصفة آخر واحد مش بيمسح شغل الأول من غير ما يتقاله.`, sol: R`**النسخة النموذجية اللي اتعملت:** نص TypeScript بس، على الـ ٣ ملفات اللي فيها القواعد والحالة ([[logic]] و [[storage]] و [[store]])، لأن دول ٧٠٪ من التطبيق ومن الاختبارات، وهما اللي هيتنقلوا زي ما هما لأي فريمورك بعدين. ونص الفريمورك تحت كخطة بالجدول، من غير كود متجرّب.
-
-**ليه البداية دي؟** TypeScript بيمسك الغلط في الحتة اللي ملهاش شاشة تشوفها بعينك: شكل الحالة وشكل الوصفة. والفريمورك بيغيّر [[view.js]] و [[app.js]] بس، فلو عملته الأول هتنقل قواعد مش متأكد من أنواعها لملفات أكتر.
-
-## اللي هتشوفه
-
-مفيش شكل جديد: الصفحة هي هي. الفرق إن [[tsc]] بيقف لو حد كتب حاجة غلط قبل ما الكود يشتغل:
-
-~~~text الناتج: tsc على ملف فيه ٣ غلطات بقصد (TypeScript 7.0.2)
-src/oops.ts(4,40): error TS2322: Type 'string' is not assignable to type 'number'.
-src/oops.ts(5,18): error TS2339: Property 'push' does not exist on type 'readonly string[]'.
-src/oops.ts(7,13): error TS18046: 'raw' is of type 'unknown'.
-~~~
-
-~~~ts src/oops.ts (الملف اللي اتجرّب واتمسح)
-import { createStore } from './store.ts';
-import { isRecipe } from './logic.ts';
-const store = createStore(null);
-store.loaded([{ id: 'x', title: 'فول', minutes: '15', ingredients: [], tags: [], steps: '' }]);
-store.get().favs.push('foul');
-const raw: unknown = JSON.parse('{}');
-console.log(raw.title, isRecipe(raw) ? raw.title.trim() : '');
-~~~
-
-- سطر ٤: [[minutes: '15']] نص مكان رقم، وده بالظبط اللي [[isRecipe]] كانت بتمسكه وقت التشغيل.
-- سطر ٥: [[push]] على المفضلة. الحالة [[Readonly]] و [[readonly string[]]]، فالباج اللي في تمرين «اقرا وتوقّع» (الحفظ مبيحصلش) بقى مستحيل يتكتب.
-- سطر ٧: [[raw.title]] على [[unknown]] ممنوع، بس [[raw.title.trim()]] بعد [[isRecipe(raw) ?]] عدّى: ده الـ type guard.
-
-## الملفات
-
-~~~text
-recipe-ts/
-├── tsconfig.json      strict، و noEmit، و allowImportingTsExtensions
-├── src/logic.ts       الأنواع (Recipe و Route و Checked) والقواعد
-├── src/storage.ts     KV و Saved
-├── src/store.ts       State و Status و AddResult
-└── tests/logic.test.js  tests/storage.test.js   نفس الاختبارات، اتغيّر امتداد الـ import بس (.js ← .ts)
-~~~
-
-~~~json tsconfig.json
-{
-  "compilerOptions": {
-    "target": "es2022",
-    "module": "nodenext",
-    "strict": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "lib": ["es2022", "dom"],
-    "types": []
-  },
-  "include": ["src/**/*.ts"]
-}
-~~~
-
-~~~ts src/logic.ts
-// src/logic.ts — نفس القواعد، بأنواع. مفيهوش document ولا fetch.
-export type Recipe = {
-  id: string;
-  title: string;
-  minutes: number;
-  ingredients: string[];
-  tags: string[];
-  steps: string;
-};
-export type RouteName = 'list' | 'fav' | 'new' | 'recipe' | 'notfound';
-export type Route = { name: RouteName; params: { id?: string }; query: Record<string, string> };
-export type RecipeInput = Partial<Record<'title' | 'minutes' | 'ingredients' | 'steps' | 'tags', unknown>>;
-export type Errors = Partial<Record<'title' | 'minutes' | 'ingredients' | 'steps', string>>;
-export type Checked = { ok: true; value: Omit<Recipe, 'id'> } | { ok: false; errors: Errors };
-
-export const MAX_TITLE = 80;
-
-const isStrings = (x: unknown): x is string[] => Array.isArray(x) && x.every((s) => typeof s === 'string');
-
-// type guard: لو رجّعت true، TypeScript بيعامل r كـ Recipe بعدها
-export function isRecipe(r: unknown): r is Recipe {
-  if (typeof r !== 'object' || r === null) return false;
-  const o = r as Record<string, unknown>;
-  return typeof o.id === 'string' && typeof o.title === 'string' && typeof o.minutes === 'number'
-    && Number.isFinite(o.minutes) && isStrings(o.ingredients) && isStrings(o.tags) && typeof o.steps === 'string';
+function set(patch) {
+  Object.assign(ui, patch);
+  render();
 }
 
-export const toggleFav = (favs: readonly string[], id: string): string[] =>
-  (favs.includes(id) ? favs.filter((f) => f !== id) : [...favs, id]);
-
-export const toLatinDigits = (s: unknown): string => String(s ?? '').replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
-
-export function parseRoute(hash: string | null | undefined): Route {
-  const raw = String(hash ?? '').replace(/^#/, '') || '/';
-  const [path, qs = ''] = raw.split('?');
-  const query = Object.fromEntries(new URLSearchParams(qs));
-  const parts = path.split('/').filter(Boolean);
-  if (parts.length === 0) return { name: 'list', params: {}, query };
-  if (parts[0] === 'r' && parts.length === 2) return { name: 'recipe', params: { id: decodeURIComponent(parts[1]) }, query };
-  if (parts.length === 1 && (parts[0] === 'new' || parts[0] === 'fav')) return { name: parts[0], params: {}, query };
-  return { name: 'notfound', params: {}, query };
+function highlight(text, q) {
+  const at = text.toLowerCase().indexOf(q);
+  if (!q || at < 0) return [text];
+  const mark = document.createElement('mark');
+  mark.textContent = text.slice(at, at + q.length);
+  return [text.slice(0, at), mark, text.slice(at + q.length)];
 }
 
-export function filterRecipes<T extends Pick<Recipe, 'title' | 'ingredients' | 'tags'>>(list: T[], { q = '', tag = '' } = {}): T[] {
-  const needle = q.trim().toLowerCase();
-  return list.filter((r) => (!tag || r.tags.includes(tag))
-    && (!needle || [r.title, ...r.ingredients].some((t) => t.toLowerCase().includes(needle))));
+function option(d, i) {
+  const li = document.createElement('li');
+  li.id = 'opt-' + i;
+  li.setAttribute('role', 'option');
+  li.setAttribute('aria-selected', String(i === ui.active));
+  const owner = document.createElement('small');
+  owner.textContent = d.owner;
+  li.append(...highlight(d.name, ui.q), owner);
+  return li;
 }
 
-export const allTags = (list: Pick<Recipe, 'tags'>[]): string[] =>
-  [...new Set(list.flatMap((r) => r.tags))].sort((a, b) => a.localeCompare(b, 'ar'));
-
-export function validateRecipe(input: RecipeInput): Checked {
-  const errors: Errors = {};
-  const title = String(input.title ?? '').trim();
-  const minutes = Number(toLatinDigits(input.minutes).trim() || NaN);
-  const ingredients = String(input.ingredients ?? '').split('\n').map((s) => s.trim()).filter(Boolean);
-  const steps = String(input.steps ?? '').trim();
-  const tags = [...new Set(String(input.tags ?? '').split(/[,،]/).map((s) => s.trim()).filter(Boolean))];
-  if (!title) errors.title = 'اكتب اسم الوصفة';
-  else if (title.length > MAX_TITLE) errors.title = $__btالاسم أطول من $__{MAX_TITLE} حرف$__bt;
-  if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) errors.minutes = 'الوقت بالدقايق، رقم صحيح من 1 لـ 1440';
-  if (ingredients.length < 2) errors.ingredients = 'اكتب مكوّنين على الأقل، كل واحد في سطر';
-  if (!steps) errors.steps = 'اكتب طريقة التحضير';
-  if (Object.keys(errors).length) return { ok: false, errors };
-  return { ok: true, value: { title, minutes, ingredients, steps, tags } };
-}
-
-export function debounce<A extends unknown[]>(fn: (...args: A) => void, ms: number): (...args: A) => void {
-  let t: ReturnType<typeof setTimeout> | undefined;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
+function render() {
+  const messages = {
+    idle: '',
+    short: 'اكتب حرفين على الأقل',
+    loading: 'بيدوّر على «' + ui.q + '»…',
+    ok: ui.data.length + ' نتيجة لـ «' + ui.q + '»',
+    empty: 'مفيش نتايج لـ «' + ui.q + '»',
+    error: 'حصلت مشكلة: ' + ui.error + '. اكتب تاني عشان تعيد المحاولة.',
   };
-}
-~~~
-
-~~~ts src/storage.ts
-// src/storage.ts — نفس الحفظ اللي ميقعش، والـ storage بقى interface بأقل حاجة محتاجينها
-import { isRecipe, type Recipe } from './logic.ts';
-
-export type KV = Pick<Storage, 'getItem' | 'setItem'>;
-export type Saved = { mine: Recipe[]; favs: string[]; warning?: string };
-
-export const KEY = 'recipe-book:v1';
-
-export function browserStorage(): KV | null {
-  try { return globalThis.localStorage ?? null; } catch { return null; }
+  status.textContent = messages[ui.phase];
+  status.dataset.phase = ui.phase;
+  list.replaceChildren(...ui.data.map(option));
+  list.setAttribute('aria-busy', String(ui.busy));
+  input.setAttribute('aria-expanded', String(ui.data.length > 0));
+  if (ui.active >= 0) {
+    input.setAttribute('aria-activedescendant', 'opt-' + ui.active);
+    document.getElementById('opt-' + ui.active).scrollIntoView({ block: 'nearest' });
+  } else input.removeAttribute('aria-activedescendant');
 }
 
-export function load(storage: KV | null = browserStorage()): Saved {
-  let raw: string | null;
-  try { raw = storage!.getItem(KEY); } catch { return { mine: [], favs: [], warning: 'المتصفح قافل التخزين، ومش هنفتكر حاجة' }; }
-  if (raw === null) return { mine: [], favs: [] };
+function remember(q, data) {
+  cache.delete(q);
+  cache.set(q, data);
+  if (cache.size > CACHE_MAX) cache.delete(cache.keys().next().value);
+}
+
+async function search(raw) {
+  const q = raw.trim().toLowerCase();
+  if (ABORT && controller) {
+    if (!controller.signal.aborted) stats.aborted++;
+    controller.abort();
+  }
+  if (q.length < 2) return set({ phase: q ? 'short' : 'idle', q, data: [], active: -1, busy: false });
+  if (cache.has(q)) {
+    stats.fromCache++;
+    const data = cache.get(q);
+    return set({ phase: data.length ? 'ok' : 'empty', q, data, active: -1, busy: false });
+  }
+  controller = new AbortController();
+  const { signal } = controller;
+  set({ phase: 'loading', q, busy: true });
   try {
-    const data: unknown = JSON.parse(raw);
-    const d = (typeof data === 'object' && data !== null ? data : {}) as Record<string, unknown>;
-    if (d.version !== 1) throw new Error('نسخة مش معروفة: ' + String(d.version));
-    const mine = Array.isArray(d.mine) ? d.mine.filter(isRecipe) : [];
-    const favs = Array.isArray(d.favs) ? d.favs.filter((f): f is string => typeof f === 'string') : [];
-    return { mine, favs };
-  } catch (err) {
-    try { storage!.setItem(KEY + ':broken', raw); } catch { /* مفيش مكان، مش مشكلة */ }
-    return { mine: [], favs: [], warning: 'الداتا المحفوظة كانت بايظة (' + (err as Error).message + ')، واتحفظت نسخة منها' };
+    const url = new URL('/api/search', location.href);
+    url.searchParams.set('q', q);
+    stats.sent++;
+    const res = await fetch(url, { signal });
+    if (!res.ok) throw new Error('السيرفر رد بـ ' + res.status);
+    const data = await res.json();
+    remember(q, data);
+    set({ phase: data.length ? 'ok' : 'empty', q, data, active: -1, busy: false });
+  } catch (e) {
+    if (e.name === 'AbortError') return;
+    set({ phase: 'error', q, data: [], error: e.message, active: -1, busy: false });
   }
 }
 
-export function save({ mine, favs }: Pick<Saved, 'mine' | 'favs'>, storage: KV | null = browserStorage()): boolean {
-  try {
-    storage!.setItem(KEY, JSON.stringify({ version: 1, mine, favs }));
-    return true;
-  } catch {
-    return false;
+const debouncedSearch = debounce(search, WAIT);
+input.addEventListener('input', () => debouncedSearch(input.value));
+
+function choose(i) {
+  const d = ui.data[i];
+  if (!d) return;
+  picked.textContent = d.owner + '.' + d.name;
+  input.value = d.name;
+  debouncedSearch.cancel();
+  controller?.abort();
+  set({ phase: 'idle', data: [], active: -1, busy: false });
+}
+
+input.addEventListener('keydown', (e) => {
+  const n = ui.data.length;
+  if (e.key === 'ArrowDown' && n) {
+    e.preventDefault();
+    set({ active: (ui.active + 1) % n });
+  } else if (e.key === 'ArrowUp' && n) {
+    e.preventDefault();
+    set({ active: ui.active <= 0 ? n - 1 : ui.active - 1 });
+  } else if (e.key === 'Enter' && ui.active >= 0) {
+    e.preventDefault();
+    choose(ui.active);
+  } else if (e.key === 'Escape') {
+    debouncedSearch.cancel();
+    controller?.abort();
+    set({ phase: 'idle', data: [], active: -1, busy: false });
   }
-}
-~~~
-
-~~~ts src/store.ts
-// src/store.ts — الحالة بنوعها. أي حد يحاول يكتب status: 'done' أو ينسى route، tsc بيقف.
-import { validateRecipe, toggleFav, type Recipe, type Route, type RecipeInput, type Errors } from './logic.ts';
-import { load, save, browserStorage, type KV } from './storage.ts';
-
-export type Status = 'idle' | 'loading' | 'ready' | 'error';
-export type State = Readonly<{
-  recipes: readonly Recipe[]; mine: readonly Recipe[]; favs: readonly string[];
-  status: Status; error: string; notice: string; route: Route;
-}>;
-type Listener = (state: State, prev: State) => void;
-export type AddResult = { ok: true; recipe: Recipe } | { ok: false; errors: Errors };
-
-export function createStore(storage: KV | null = browserStorage()) {
-  const saved = load(storage);
-  let state: State = {
-    recipes: [], mine: saved.mine, favs: saved.favs,
-    status: 'idle', error: '', notice: saved.warning ?? '',
-    route: { name: 'list', params: {}, query: {} },
-  };
-  const listeners = new Set<Listener>();
-
-  function set(patch: Partial<State>): void {
-    const prev = state;
-    state = { ...state, ...patch };
-    if ((state.mine !== prev.mine || state.favs !== prev.favs) && !save({ mine: [...state.mine], favs: [...state.favs] }, storage)) {
-      state = { ...state, notice: 'مقدرناش نحفظ: التخزين مليان أو مقفول' };
-    }
-    listeners.forEach((fn) => fn(state, prev));
-  }
-
-  return {
-    get: (): State => state,
-    subscribe(fn: Listener): () => boolean { listeners.add(fn); return () => listeners.delete(fn); },
-    setRoute: (route: Route) => set({ route }),
-    loading: () => set({ status: 'loading', error: '' }),
-    loaded: (recipes: Recipe[]) => set({ status: 'ready', recipes }),
-    failed: (message: string) => set({ status: 'error', error: message }),
-    toggleFav: (id: string) => set({ favs: toggleFav(state.favs, id) }),
-    addRecipe(input: RecipeInput): AddResult {
-      const res = validateRecipe(input);
-      if (!res.ok) return res;
-      const recipe: Recipe = { id: 'u-' + crypto.randomUUID(), ...res.value };
-      set({ mine: [recipe, ...state.mine] });
-      return { ok: true, recipe };
-    },
-  };
-}
-
-export type Store = ReturnType<typeof createStore>;
-export const allRecipes = (s: State): Recipe[] => [...s.mine, ...s.recipes];
-~~~
-
-## الأجزاء المهمة
-
-| الحتة | ليه |
-|---|---|
-| [[r is Recipe]] | type guard: نفس [[isRecipe]] اللي كانت بتحرس البيانات اللي جاية من برّه، بس دلوقتي TypeScript كمان بيعرف النتيجة |
-| [[unknown]] مش [[any]] | الداتا اللي من [[JSON.parse]] أو [[localStorage]] لازم تتفحص قبل أي استخدام. [[grep -c any]] على الـ ٣ ملفات طلّع ٠ |
-| [[Checked]] و [[AddResult]] | union بـ [[ok: true]] أو [[ok: false]]، فـ [[res.value]] مش متاحة غير بعد [[if (!res.ok) return]] |
-| [[Readonly]] و [[readonly Recipe[]]] | الحالة متتعدّلش في مكانها. الكود اللي بيعمل مصفوفة جديدة ([[toggleFav]]) بيعدّي، والـ [[push]] لأ |
-| [[storage!.getItem]] | [[!]] معناها «أنا عارف إنه مش null». هنا مقصودة: لو [[null]] النداء بيرمي جوه [[try]]، وده التصرف المطلوب |
-| [[type Store = ReturnType<typeof createStore>]] | نوع الـ store بيتولّد من الدالة نفسها، فأي فعل جديد بيدخل في النوع لوحده |
-| [[allowImportingTsExtensions]] و [[noEmit]] | الملفات بتستورد بعض بـ [[.ts]]، وده بيشتغل في Node 24 مباشرة (type stripping) وفي Vitest، و [[tsc]] بيفحص بس |
-
-## اتقاس
-
-~~~text الناتج
-tsc -p .                         exit 0 (TypeScript 7.0.2، strict)
-grep -c any src/*.ts             0 0 0
-npx vitest run                   Tests 27 passed (27)    ← ١٩ منطق و ٨ حفظ، نفس الاختبارات
-node -e "import('./src/logic.ts')..."   Node 24.22 بيشغّل .ts من غير build:
-  parseRoute('#/r/foul')         { name: 'recipe', params: { id: 'foul' }, query: {} }
-عدد السطور (من غير الفاضي)      logic 47 ← 65   storage 30 ← 32   store 37 ← 45
-~~~
-
-الزيادة كلها تعريفات أنواع، ومفيش ولا سطر منطق اتغيّر.
-
-## تشغّله إزاي
-
-~~~bash
-cp -r recipe-book recipe-ts
-cd recipe-ts
-npm install -D typescript
-# ابدّل src/logic.js و storage.js و store.js بالـ .ts اللي فوق، وحط tsconfig.json
-npx tsc -p .
-npx vitest run
-~~~
-
-والصفحة نفسها في المتصفح محتاجة JavaScript: يا إما [[tsc]] بـ [[outDir]] و [[rewriteRelativeImportExtensions]] (بيحوّل [[./logic.ts]] لـ [[./logic.js]] وقت البناء)، يا إما Vite اللي بيعمل ده لوحده. ده من وثايق TypeScript، ومتجرّبش هنا لأن النسخة دي فحص أنواع بس.
-
-## نص الفريمورك (خطة، مش كود متجرّب)
-
-| في النسخة اليدوية | في React | في Vue |
-|---|---|---|
-| [[logic.ts]] و [[storage.ts]] و [[store.ts]] | زي ما هما | زي ما هما |
-| [[store.subscribe(paint)]] | [[useSyncExternalStore(store.subscribe, store.get)]] | [[shallowRef]] بيتحدّث في [[subscribe]] |
-| [[view.js]] و [[h()]] | components بـ JSX، والنص بيتحط text زي [[h()]] | [[template]] بـ [[{{ }}]] |
-| [[paint]] والفوكس | [[useEffect]] على تغيير الشاشة | [[watch]] على [[route]] |
-| [[hashchange]] و [[parseRoute]] | زي ما هي، أو React Router بـ HashRouter | زي ما هي، أو Vue Router بـ createWebHashHistory |
-
-الشرط اللي بيقول إن النقل نجح: نفس [[tests/logic.test.js]] و [[tests/storage.test.js]] يعدّوا من غير تعديل، لأن الملفات اللي بيختبروها ما اتلمستش.
-
-## الفكرة الجديدة بنفس الهيكل
-
-«مصاريف بيت مشتركة»: [[Recipe]] بقت [[Expense]] ([[amount]] و [[paidBy]] و [[split]])، و [[validateRecipe]] بقت [[validateExpense]] بنفس الشكل [[{ ok, errors }]]، و [[stats]] بتحسب مين مديون لمين. نفس الـ store ونفس [[storage.ts]] ونفس الـ router، والجديد كله في [[logic.ts]] و [[view]].
-
-**الغلطة الشائعة:** تحط [[as Recipe]] على [[JSON.parse(...)]] عشان tsc يسكت. ده بيقول لـ TypeScript «صدّقني» من غير أي فحص، فالداتا البايظة بتعدّي زي ما كانت من غير TypeScript. الـ type guard بيفحص بجد.` },
-      ],
-      n: R`آخر وحدة في التاب: خريطة بالمراحل الست ومشروع في آخر كل مرحلة، وبعدها مشروع التخرّج «دفتر الوصفات» بيتبني قدامك من فولدر فاضي في ٤ خطوات لحد ما يتنشر على GitHub Pages. ٢٩٧ سطر كود (من غير السطور الفاضية) في ٦ modules، و ٤٣ اختبار Vitest بيعدّوا، و ESLint نضيف، وكل ناتج مكتوب هنا اتشغّل فعلًا في Node 24 و Vitest 5 و jsdom و Chromium`,
-      items: [
-        {
-          cmd: "خريطة مشاريع JS",
-          ref: [
-            { t: "MDN: JavaScript Guide", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide" },
-            { t: "MDN: Learn web development", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development" },
-          ],
-          title: "التاب كله طريق واحد: ٦ مراحل، وفي آخر كل مرحلة مشروع",
-          learn: R`تشوف التاب كله كطريق من ٦ مراحل، وتعرف كل مرحلة فيها أنهي وحدات ومشروعها إيه، وتحدد انت واقف فين.`,
-          out: R`ترتيب مذاكرة واضح، وست مشاريع كل واحد بيستخدم اللي اتعلمته لحد مرحلته بس، وطريقة تعرف بيها إنك خلصت مرحلة.`,
-          use: {
-            prog: R`اللي بيذاكر لغة من غير مشاريع بيفتكر إنه فاهم لحد ما يقعد قدام فولدر فاضي. المشروع في آخر كل مرحلة هو الامتحان الحقيقي: لو عرفت تبنيه من غير ما تبص، المرحلة خلصت.`,
-            work: R`في أول شغل حد هيقولك «ابني الشاشة دي». مش هيقولك «استخدم reduce». فالمهارة اللي بتتقاس هي إنك تختار الأدوات بنفسك من اللي تعرفه، ودي اللي المشاريع دي بتدرّبها.`,
-            cs: R`المنهج المتدرّج (scaffolding): كل مشروع بيقف على اللي قبله بس، فلو وقعت في مرحلة بتعرف ترجع لأنهي وحدة بالظبط بدل ما تبدأ من الأول.`,
-          },
-          desc: R`التاب ده فيه أكتر من ٣٠ وحدة. الدرس ده بيرتّبهم في **٦ مراحل**، ولكل مرحلة مشروع في آخرها بيستخدم **اللي اتعلمته لحد هناك بس**، وفي الآخر مشروع التخرّج (باقي الوحدة دي).
-
-| المرحلة | الوحدات (بأساميها في التاب) | المشروع |
-|---|---|---|
-| ١. الأساسيات | «أساسيات البرمجة» و «القيم والأنواع» و «المتغيرات والنصوص» و «الدوال» | تقرير درجات في الـ console |
-| ٢. المصفوفات والـ objects | «المصفوفات» و «الـ objects» و «من مشكلة لكود» و «scope و closures» و «الأخطاء» | نظام مكتبة في الذاكرة |
-| ٣. الـ DOM | «الـ DOM» و «ابني تطبيق بإيدك» (أول ٤ دروس) | قايمة مهام بفلاتر |
-| ٤. async و fetch | «async: الـ Promises و await» و «الـ event loop» و «الأداء والذاكرة» و «مشروع: fetch محترم» | بحث GitHub بـ debounce وإلغاء |
-| ٥. classes و modules و patterns | «this» و «prototypes و classes» و «modules» و «Patterns» و آخر درسين في «ابني تطبيق بإيدك» | تطبيق modules فيه الحالة منفصلة عن العرض |
-| ٦. الأدوات والاختبارات | «أدوات المحترف في JS» (درسي «ESLint و Prettier» و «اختبار JS بـ Vitest») و «توصل للإجابة بنفسك في JavaScript» | نفس تطبيق ٥ بـ lint واختبارات و CI |
-
-**القاعدة:** متبدأش مشروع مرحلة قبل ما تخلص وحداتها، ومتستخدمش فيه حاجة من مرحلة بعدها. لو المشروع محتاج حاجة مش في مرحلته، ده معناه إن المشروع كبير على المرحلة دي، مش إنك تقفز.
-
-والمثال تحت هو مشروع المرحلة الأولى نفسه: لو عرفت تكتبه من غير ما تبص، انت خلصت الأساسيات.`,
-          example: R`// report.js — مشروع المرحلة ١: متغيرات و if و loops ودوال بس
-const names = ['منى', 'كريم', 'سلمى', 'عمر'];
-const scores = [91, 48, 75, 60];
-
-function grade(score) {
-  if (score >= 85) return 'ممتاز';
-  if (score >= 65) return 'جيد';
-  if (score >= 50) return 'مقبول';
-  return 'راسب';
-}
-
-let sum = 0;
-let passed = 0;
-for (let i = 0; i < scores.length; i++) {
-  sum += scores[i];
-  if (scores[i] >= 50) passed++;
-  console.log(names[i].padEnd(6) + String(scores[i]).padStart(4) + '  ' + grade(scores[i]));
-}
-console.log('المتوسط: ' + (sum / scores.length).toFixed(1) + ' | نجح ' + passed + ' من ' + scores.length);`,
-          lines: [
-            R`مصفوفة الأسامي. في المرحلة الأولى بنستخدم المصفوفة كلستة بنمشي عليها بالـ index بس، من غير [[map]] ولا [[filter]] (دول مرحلة ٢).`,
-            R`مصفوفة الدرجات بنفس الترتيب: الدرجة اللي في المكان [[i]] بتاعة الاسم اللي في نفس المكان. ولو الترتيب اتلخبط التقرير هيطلع غلط من غير أي error، ودي ليه في المرحلة الجاية بنحوّلهم لـ objects.`,
-            R`دالة [[grade]] بتاخد درجة واحدة وترجّع التقدير. فصلناها في دالة عشان نقدر نجربها لوحدها ونغيّر الحدود في مكان واحد.`,
-            R`أول شرط: ٨٥ أو أكتر يبقى ممتاز. و [[return]] بتخرج من الدالة على طول، فمش محتاجين [[else]] بعدها.`,
-            R`لو وصلنا هنا يبقى الدرجة أقل من ٨٥ أكيد، فبنسأل عن ٦٥ بس. ترتيب الشروط من الأكبر للأصغر هو اللي بيخلي ده صح.`,
-            R`من ٥٠ لحد ٦٤ مقبول. والـ ٥٠ نفسها مقبول عشان [[>=]] مش [[>]]، ودي الحالة الطرفية اللي لازم تجربها.`,
-            R`أي حاجة فاضلة أقل من ٥٠ يبقى راسب. السطر ده بيضمن إن الدالة دايمًا بترجّع نص، عمرها ما ترجّع [[undefined]].`,
-            R`قفلة الدالة [[grade]].`,
-            R`عدّاد المجموع بيبدأ من صفر. [[let]] مش [[const]] لأنه هيتغيّر جوه الـ loop.`,
-            R`عدّاد الناجحين بيبدأ من صفر برضه، وهيزيد واحد مع كل درجة ٥٠ أو أكتر.`,
-            R`loop على كل الدرجات بالـ index من صفر لحد قبل [[scores.length]]. لو كتبت [[<=]] هتقرا عنصر مش موجود ويتجمع [[undefined]] فالمجموع يبقى [[NaN]].`,
-            R`[[+=]] بتزوّد الدرجة الحالية على المجموع، وده نفس [[sum = sum + scores[i]]] بس أقصر.`,
-            R`لو الدرجة ناجحة نزوّد العدّاد بـ [[++]]. ومن غير أقواس [[{}]] عشان الـ if ليها سطر واحد بس.`,
-            R`بنطبع سطر لكل طالب: [[padEnd(6)]] بتكمّل الاسم بمسافات لحد ٦ حروف، و [[padStart(4)]] بتحط مسافات قبل الرقم، فالأعمدة تتصف تحت بعض. و [[String()]] لأن [[padStart]] للنصوص بس.`,
-            R`قفلة الـ loop.`,
-            R`سطر الملخص: المتوسط بـ [[toFixed(1)]] عشان رقم عشري واحد ([[68.5]] مش [[68.5000001]])، وعدد الناجحين من الكل. ولو المصفوفة فاضية القسمة على صفر هتطلّع [[NaN]]، ودي اول حالة طرفية تصلّحها في التمرين.`,
-          ],
-          try: R`اعمل جدول فيه المراحل الست، وقدام كل مرحلة اكتب: الوحدات اللي خلصتها، ومشروعها (اتعمل ولا لأ). وبعدين اكتب [[report.js]] من الذاكرة في ١٥ دقيقة من غير ما تبص فوق، وشغّله بـ [[node report.js]]. لو طلع زي الناتج اللي في الشرح، المرحلة الأولى خلصت.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع (اعرف انت فين):** الكود ده من مراحل ٢ و ٤. اكتب الناتج بالترتيب قبل ما تشغّله: [[const make = () => { let n = 0; return () => ++n; };]] وبعده [[const next = make();]] وبعده [[const list = [3, 8, 1, 6].filter((x) => x > 2).map((x) => x * next());]] وبعده [[console.log(list, list.reduce((a, b) => a + b, 0));]] وبعدهم [[setTimeout(() => console.log('timeout'));]] و [[Promise.resolve().then(() => console.log('promise'));]] و [[console.log('sync');]].`, done: R`كتبت الناتج قبل التشغيل، وطلع [[[ 3, 16, 18 ] 37]] وبعده [[sync]] وبعده [[promise]] وبعده [[timeout]]. لو غلطت في السطر الأول ارجع لـ «closure» و «map و filter و reduce» (مرحلة ٢)، ولو غلطت في ترتيب التلاتة الأخيرين ارجع لـ «microtasks و macrotasks» (مرحلة ٤).`, sol: R`**الحل:** حط الكود كله في ملف [[predict.js]] وشغّله بعد ما تكتب توقعك:
-
-~~~js predict.js
-const make = () => { let n = 0; return () => ++n; };
-const next = make();
-const list = [3, 8, 1, 6].filter((x) => x > 2).map((x) => x * next());
-console.log(list, list.reduce((a, b) => a + b, 0));
-setTimeout(() => console.log('timeout'));
-Promise.resolve().then(() => console.log('promise'));
-console.log('sync');
-~~~
-
-~~~text الناتج: node predict.js (Node 24.22)
-[ 3, 16, 18 ] 37
-sync
-promise
-timeout
-~~~
-
-**ليه السطر الأول كده (مرحلة ٢):**
-
-| الخطوة | الناتج |
-|---|---|
-| [[filter((x) => x > 2)]] | [[[3, 8, 6]]]: الـ [[1]] بس اللي اتشال |
-| [[map((x) => x * next())]] | [[next()]] بترجّع 1 ثم 2 ثم 3، لأن [[n]] عايش جوه الـ closure بين النداءات |
-| النتيجة | [[3×1]] و [[8×2]] و [[6×3]] = [[[3, 16, 18]]] |
-| [[reduce((a, b) => a + b, 0)]] | 3 + 16 + 18 = 37 |
-
-**وليه الترتيب sync ثم promise ثم timeout (مرحلة ٤):** الكود العادي بيخلص كله الأول، فـ [[sync]] قبل أي callback. وبعدين الـ event loop بيفضّي طابور الـ microtasks (الـ [[then]]) **قبل** أي macrotask زي [[setTimeout]]، حتى لو المدة صفر.
-
-**الغلطة الشائعة:** تفتكر إن [[++n]] بتبدأ من صفر مع كل عنصر، فتكتب [[[3, 8, 6]]]. ده كان هيحصل لو كتبت [[make()()]] جوه الـ map (closure جديد كل مرة)، بس هنا [[next]] اتعمل **مرة واحدة**. والغلطة التانية: تحط [[timeout]] قبل [[promise]] عشان «اتكتب الأول».
-
-**تقرا نتيجتك إزاي:** السطر الأول غلط = ارجع لـ «closure» و «map و filter و reduce». الترتيب غلط = ارجع لـ «microtasks و macrotasks». الاتنين صح = عدّيت التمرين ده، والمرحلة التانية والرابعة باقيلهم مشروعهم.` },
-            { lvl: 'تطبيق', t: R`**ابني حاجة (اختبار الـ ٣٠ دقيقة):** من غير ما تفتح أي درس، ابني مشروع المرحلة اللي انت فاكر إنك خلصتها، بالمواصفات اللي في الشرح بالظبط، وشغّل الـ stopwatch. مش مسموح تستخدم حاجة من مرحلة بعدها.`, done: R`المشروع بيعدّي كل بنود «تعرف إنك خلصت لما» بتاعته في أقل من ٣٠ دقيقة. لو عدّى، علّم المرحلة خلصت وابدأ اللي بعدها. لو معدّاش، اكتب أول حاجة وقفت عندها، ودوّر عليها بـ [[node tools/lesson.js find]] أو بحث الموقع، وارجع للوحدة دي بس مش للمرحلة كلها.`, sol: R`**نسخة نموذجية:** مشروع المرحلة التانية «نظام مكتبة في الذاكرة»، لأن ده أول مشروع فيه objects و [[Map]] و JSON مع بعض، وأكتر واحد الناس بتفتكر إنها خلصته. اتكتب من غير ما أبص في أي درس، وفيه أدوات المرحلة الأولى والتانية بس (مفيش [[document]] ولا [[fetch]] ولا [[class]]).
-
-~~~js library.js
-// library.js — مشروع المرحلة ٢: objects و Map و filter و find و JSON، من غير DOM ولا fetch
-const state = {
-  books: [
-    { id: 1, title: 'Clean Code', author: 'Robert Martin', copies: 1 },
-    { id: 2, title: 'رجال في الشمس', author: 'غسان كنفاني', copies: 2 },
-  ],
-  members: new Map([['m1', { name: 'منى', loans: [] }], ['m2', { name: 'كريم', loans: [] }]]),
-};
-
-function borrow(memberId, bookId) {
-  const member = state.members.get(memberId);
-  if (!member) return { ok: false, reason: 'العضو ده مش موجود' };
-  const book = state.books.find((b) => b.id === bookId);
-  if (!book) return { ok: false, reason: 'الكتاب ده مش موجود' };
-  if (book.copies === 0) return { ok: false, reason: 'كل نسخ «' + book.title + '» مستعارة' };
-  book.copies--;
-  member.loans.push(bookId);
-  return { ok: true };
-}
-
-function giveBack(memberId, bookId) {
-  const member = state.members.get(memberId);
-  if (!member || !member.loans.includes(bookId)) return { ok: false, reason: 'الكتاب ده مش مستعار عند العضو ده' };
-  member.loans = member.loans.filter((id) => id !== bookId);
-  state.books.find((b) => b.id === bookId).copies++;
-  return { ok: true };
-}
-
-const clean = (s) => s.trim().toLowerCase().replace(/\s+/g, ' ');
-const search = (text) => state.books.filter((b) => clean(b.title + ' ' + b.author).includes(clean(text)));
-
-function report() {
-  return [...state.members.values()]
-    .filter((m) => m.loans.length > 0)
-    .map((m) => m.name + ': ' + m.loans.map((id) => state.books.find((b) => b.id === id).title).join('، '));
-}
-
-// الحفظ: Map مش بيتحوّل JSON لوحده، فبنحوّله لمصفوفة أزواج ونرجّعه
-const toJSON = () => JSON.stringify({ books: state.books, members: [...state.members] });
-const fromJSON = (text) => { const d = JSON.parse(text); return { books: d.books, members: new Map(d.members) }; };
-
-console.log(borrow('m1', 1));
-console.log(borrow('m2', 1));
-console.log(borrow('m9', 2));
-console.log(borrow('m2', 2));
-console.log(search('  CLEAN   code ').map((b) => b.title), search('كنفاني').length);
-console.log(report());
-const copy = fromJSON(toJSON());
-console.log(copy.members.get('m1').loans, copy.books[0].copies, toJSON() === JSON.stringify({ books: copy.books, members: [...copy.members] }));
-console.log(giveBack('m1', 1), giveBack('m1', 1), state.books[0].copies);
-~~~
-
-~~~text الناتج: node library.js (Node 24.22)
-{ ok: true }
-{ ok: false, reason: 'كل نسخ «Clean Code» مستعارة' }
-{ ok: false, reason: 'العضو ده مش موجود' }
-{ ok: true }
-[ 'Clean Code' ] 1
-[ 'منى: Clean Code', 'كريم: رجال في الشمس' ]
-[ 1 ] 0 true
-{ ok: true } { ok: false, reason: 'الكتاب ده مش مستعار عند العضو ده' } 1
-~~~
-
-**كل بند من «تعرف إنك خلصت لما» واتقاس إزاي:**
-
-| البند | السطر في الناتج |
-|---|---|
-| كتاب نسخه خلصت بيرجّع [[ok: false]] وسبب بالعربي | التاني: «كل نسخ «Clean Code» مستعارة» |
-| عضو مش موجود | التالت: «العضو ده مش موجود» |
-| البحث مش حساس للحالة ولا للمسافات | [[search('  CLEAN   code ')]] لقى الكتاب، لأن [[clean]] بتعمل [[trim]] و [[toLowerCase]] وبتحوّل أي مسافات ورا بعض لمسافة واحدة |
-| [[report()]] بيقول مين مستعير إيه | السطر السادس |
-| الحالة بعد JSON زي ما هي | [[true]] في السطر السابع |
-
-**الأجزاء المهمة:**
-
-- **[[{ ok, reason }]] بدل [[throw]]:** كتاب خلصان مش «خطأ»، دي نتيجة متوقعة واللي بينادي لازم يتعامل معاها. و [[throw]] بيتساب للحاجات اللي مكانتش متوقعة.
-- **[[Map]] للأعضاء:** البحث بالـ id بـ [[get]] مباشرة بدل [[find]] على مصفوفة.
-- **[[Map]] و JSON:** [[JSON.stringify(new Map(...))]] بيطلّع [[{}]] فاضي، فبنحوّلها لمصفوفة أزواج بـ [[[...state.members]]] وبنرجّعها بـ [[new Map(d.members)]].
-- **الترتيب جوه [[borrow]]:** الشروط كلها الأول وبعدين التعديل. لو نقصت النسخ قبل ما تتأكد من العضو، العضو الغلط هيبوّظ العدد.
-
-**الغلطة الشائعة:** تحط [[giveBack]] من غير ما تتأكد إن الكتاب مستعار فعلًا، فإرجاع نفس الكتاب مرتين بيزوّد النسخ لـ ٢ وهي أصلًا ١. السطر الأخير بيوريك إن الإرجاع التاني اترفض والنسخ فضلت [[1]].
-
-**وقت التنفيذ:** حوالي ٢٠ دقيقة. لو انت عدّيت الـ ٣٠ في أي مشروع، اكتب أول حاجة وقفت عندها وارجع لوحدتها بس.` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[report.js]] بيطبع [[المتوسط: NaN]] لما المصفوفات فاضية، وبيطبع تقرير غلط من غير ما يقول لما عدد الأسامي مش زي عدد الدرجات. صلّح الحالتين من غير ما تستخدم حاجة من بعد المرحلة الأولى، وبعدين اكتب نفس التقرير بأدوات المرحلة التانية ([[map]] و [[reduce]] ومصفوفة objects) وقارن.`, done: R`المصفوفات الفاضية بتطبع «مفيش درجات» بدل [[NaN]]، و ٣ أسامي مع ٤ درجات بيطبع «عدد الأسامي مش زي عدد الدرجات» ويقف، و ٥٠ بالظبط بتطلع مقبول و ٤٩ راسب. والنسخة التانية بتطلّع نفس الناتج حرف بحرف وفيها مصفوفة واحدة بس من [[{ name, score }]].`, sol: R`**الحل الأول (المرحلة الأولى بس):** حوّلنا التقرير لدالة [[report(names, scores)]] عشان نجربها على كذا حالة، وحطينا الحالتين الطرفيتين **قبل** الـ loop:
-
-~~~js report.js
-// report.js — المرحلة ١ بعد التصليح: متغيرات و if و loops ودوال بس
-function grade(score) {
-  if (score >= 85) return 'ممتاز';
-  if (score >= 65) return 'جيد';
-  if (score >= 50) return 'مقبول';
-  return 'راسب';
-}
-
-function report(names, scores) {
-  if (names.length !== scores.length) {
-    console.log('عدد الأسامي مش زي عدد الدرجات');
-    return;
-  }
-  if (scores.length === 0) {
-    console.log('مفيش درجات');
-    return;
-  }
-  let sum = 0;
-  let passed = 0;
-  for (let i = 0; i < scores.length; i++) {
-    sum += scores[i];
-    if (scores[i] >= 50) passed++;
-    console.log(names[i].padEnd(6) + String(scores[i]).padStart(4) + '  ' + grade(scores[i]));
-  }
-  console.log('المتوسط: ' + (sum / scores.length).toFixed(1) + ' | نجح ' + passed + ' من ' + scores.length);
-}
-
-report(['منى', 'كريم', 'سلمى', 'عمر'], [91, 48, 75, 60]);
-report([], []);
-report(['منى', 'كريم', 'سلمى'], [91, 48, 75, 60]);
-report(['حد', 'تاني'], [50, 49]);
-~~~
-
-~~~text الناتج: node report.js (Node 24.22)
-منى     91  ممتاز
-كريم    48  راسب
-سلمى    75  جيد
-عمر     60  مقبول
-المتوسط: 68.5 | نجح 3 من 4
-مفيش درجات
-عدد الأسامي مش زي عدد الدرجات
-حد      50  مقبول
-تاني    49  راسب
-المتوسط: 49.5 | نجح 1 من 2
-~~~
-
-- **ليه فحص الأطوال الأول؟** لو [[names]] أقصر، [[names[i]]] بتبقى [[undefined]] و [[undefined.padEnd]] بترمي [[TypeError]]. ولو أطول، التقرير بيطلع ناقص من غير ما حد يقول. في الحالتين لازم نقف قبل ما نطبع أي سطر.
-- **ليه [[return]]؟** عشان الدالة تخرج على طول، فمنحتاجش [[else]] كبيرة حوالين باقي الكود.
-- **الـ ٥٠ والـ ٤٩:** الحالة الأخيرة بتأكد إن [[>=]] صح: ٥٠ مقبول و ٤٩ راسب، ونجح ١ من ٢.
-
-**الحل التاني (أدوات المرحلة التانية):** مصفوفة واحدة من [[{ name, score }]]، فمستحيل الأسامي والدرجات يبقوا بعدد مختلف أصلًا، والفحص ده اختفى لوحده:
-
-~~~js report2.js
-// report2.js — نفس التقرير بأدوات المرحلة ٢: مصفوفة objects و map و filter و reduce
-const students = [
-  { name: 'منى', score: 91 }, { name: 'كريم', score: 48 }, { name: 'سلمى', score: 75 }, { name: 'عمر', score: 60 },
-];
-const grade = (s) => (s >= 85 ? 'ممتاز' : s >= 65 ? 'جيد' : s >= 50 ? 'مقبول' : 'راسب');
-
-function report(list) {
-  if (list.length === 0) return console.log('مفيش درجات');
-  list.map(({ name, score }) => name.padEnd(6) + String(score).padStart(4) + '  ' + grade(score)).forEach((line) => console.log(line));
-  const sum = list.reduce((acc, s) => acc + s.score, 0);
-  const passed = list.filter((s) => s.score >= 50).length;
-  console.log('المتوسط: ' + (sum / list.length).toFixed(1) + ' | نجح ' + passed + ' من ' + list.length);
-}
-
-report(students);
-report([]);
-~~~
-
-~~~text الناتج: node report2.js
-منى     91  ممتاز
-كريم    48  راسب
-سلمى    75  جيد
-عمر     60  مقبول
-المتوسط: 68.5 | نجح 3 من 4
-مفيش درجات
-~~~
-
-وقارنتهم حرف بحرف: [[node report.js | head -5 > a.txt]] و [[node report2.js | head -5 > b.txt]] وبعدين [[cmp a.txt b.txt]] مطبعش أي فرق.
-
-**المقارنة:**
-
-| | المرحلة ١ | المرحلة ٢ |
-|---|---|---|
-| شكل الداتا | مصفوفتين لازم يفضلوا متطابقين | مصفوفة objects: الاسم والدرجة مع بعض |
-| عدد مختلف | محتاج فحص بإيدك | مستحيل يحصل |
-| المجموع والناجحين | متغيرين بيتغيّروا جوه loop | [[reduce]] و [[filter]]: كل قيمة في سطر بإسمها |
-
-**الغلطة الشائعة:** تصلّح [[NaN]] بـ [[(sum / scores.length) || 0]]، فالمصفوفة الفاضية تطبع «المتوسط: 0.0 | نجح 0 من 0». ده مش صح: مفيش متوسط أصلًا. القرار الصح إنك تقول «مفيش درجات» وتقف.` },
-          ],
-          deep: {
-            why: R`أصعب حاجة في تعلّم لغة مش الدروس، هي إنك متعرفش «خلصت ولا لأ». الامتحانات بتقيس الحفظ، والمشروع بيقيس إنك تختار الأداة الصح من غير ما حد يقولك اسمها. وعشان كده كل مرحلة ليها مشروع واحد بشروط تتقاس، وبتعدّيه من غير ما تبص.`,
-            how: R`**المشاريع الست بالتفصيل:**
-
-**١. تقرير درجات في الـ console** (الأساسيات). ملف [[report.js]] فيه أسامي ودرجات، ودالة [[grade]]، و loop بتطبع جدول وبعده المتوسط وعدد الناجحين.
-تعرف إنك خلصت لما: الناتج زي اللي في الشرح بالظبط، والدرجة ٥٠ مقبول و ٤٩ راسب، والمصفوفة الفاضية بتطبع «مفيش درجات» مش [[NaN]].
-
-**٢. نظام مكتبة في الذاكرة** (المصفوفات والـ objects). [[books]] مصفوفة objects فيها [[{ id, title, author, copies }]]، و [[members]] في [[Map]]، ودوال [[borrow(memberId, bookId)]] و [[giveBack]] و [[search(text)]] و [[report()]]، وكل دالة بترجّع [[{ ok, reason }]] بدل ما ترمي، و [[JSON.stringify]] للحفظ و [[JSON.parse]] للرجوع.
-تعرف إنك خلصت لما: استعارة كتاب نسخه خلصت بترجّع [[ok: false]] وسبب بالعربي، وعضو مش موجود نفس الكلام، والبحث مش حساس لحالة الحروف ولا للمسافات، و [[report()]] بيقول مين مستعير إيه، والحالة بعد [[JSON.parse(JSON.stringify(state))]] زي ما هي، ومفيش ولا [[document]] في الملف.
-
-**٣. قايمة مهام بفلاتر** (الـ DOM). فورم بيضيف مهمة، وكل مهمة ليها checkbox وزرار مسح، وتلات أزرار فلتر (الكل، والفاضلة، والخلصانة)، وعدّاد «فاضل ٣». الحالة مصفوفة واحدة، و [[render()]] بترسم منها، والأحداث بـ event delegation، والنص بـ [[textContent]]، والحفظ في [[localStorage]].
-تعرف إنك خلصت لما: مهمة اسمها [[<img src=x onerror=alert(1)>]] بتظهر كنص، والعدّاد صح بعد أي مسح، والفلتر بيفضل بعد reload، و [[localStorage]] بايظ بيفتح قايمة فاضية مش صفحة بيضا.
-
-**٤. بحث GitHub بـ debounce وإلغاء** (async و fetch). خانة بحث بتنادي [[https://api.github.com/search/users?q=]] بعد ما توقف كتابة ٣٠٠ms، و [[AbortController]] بيلغي الطلب القديم لو كتبت تاني، وحالات loading و empty و error وزرار «جرّب تاني»، و 403 أو 429 (الـ rate limit، حسب وثايق GitHub) ليهم رسالة لوحدهم.
-تعرف إنك خلصت لما: كتابة اسم من ٨ حروف بسرعة بتبعت طلب واحد (Network)، والرد القديم عمره ما يكتب فوق الجديد، والنت المقفول بيطلّع رسالة مش صفحة فاضية، و [[res.ok]] متشيّك قبل [[res.json()]].
-
-**٥. تطبيق modules فيه الحالة منفصلة عن العرض** (classes و modules و patterns). مثلًا flashcards للمذاكرة: [[store.js]] فيه [[subscribe]] (زي EventEmitter)، و [[Deck]] class فيها [[next()]] و [[mark(ok)]]، و [[view.js]] بيرسم بس، و [[app.js]] بيوصّل، وشاشات بـ hash.
-تعرف إنك خلصت لما: [[grep document src/store.js]] مبيلاقيش حاجة، ومفيش ملفين بيستوردوا بعض، وتقدر تشغّل [[store.js]] في Node وتطبع الحالة، والرابط [[#/deck/2]] بيفتح نفس الشاشة في تبويب جديد.
-
-**٦. نفس تطبيق ٥ بـ ESLint و Vitest و CI** (الأدوات والاختبارات). [[eslint.config.js]] بـ [[recommended]] وقاعدة بتمنع [[innerHTML]]، و ١٠ اختبارات على الأقل للـ store والمنطق، و workflow على GitHub Actions بيشغّل الاتنين مع كل push.
-تعرف إنك خلصت لما: [[npm run lint]] و [[npm test]] أخضر، ولما تبوّظ شرط بقصد اختبار واحد بيقع ورسالته بتقولك فين، والـ PR اللي فيه [[innerHTML]] بيقع في الـ CI.
-
-**وبعد الست مراحل:** مشروع التخرّج (الدروس الجاية) بيجمعهم كلهم.`,
-            when: R`اقرا الدرس ده أول ما تدخل التاب عشان تعرف الطريق، وارجعله في آخر كل مرحلة عشان تعمل مشروعها، ولما تحس إنك تايه أو بتذاكر حاجة مش وقتها.`,
-            mistakes: R`إنك تقفز لـ React قبل المرحلة ٣ (هتحفظ JSX من غير ما تفهم الـ DOM اللي تحته). إنك تعمل مشروع المرحلة وانت بتنقل من الدرس (ده تمرين، مش امتحان). إنك تستخدم في مشروع مرحلة حاجة من مرحلة بعدها، فمتعرفش انت فاهم مرحلتك ولا لأ. إنك تعيد المرحلة كلها لما توقع في حتة واحدة بدل ما ترجع للوحدة دي بس. وإنك تعدّي «تعرف إنك خلصت لما» بالإحساس من غير ما تجرّب كل بند.`,
-          },
-          teach: R`## الطريق في سطر
-
-الأساسيات ← المصفوفات والـ objects ← الـ DOM ← async و fetch ← modules و patterns ← الأدوات والاختبارات ← **مشروع التخرّج**.
-
-كل سهم فيه مشروع لازم يعدّي قبل ما تكمل.
-
----
-
-## ١. ترتيب المذاكرة بالوحدات
-
-ده الترتيب اللي كل وحدة فيه بتعتمد على اللي قبلها بس. الأسامي هي أسامي الوحدات في التاب بالظبط، فدوّر عليها في البحث.
-
-| # | الوحدة | المرحلة |
-|---|---|---|
-| 1 | «أساسيات البرمجة» | ١ — البرنامج والشروط والـ loops و ١٥ تمرين |
-| 2 | «القيم والأنواع» | ١ — [[typeof]] و [[===]] و truthy و [[NaN]] |
-| 3 | «المتغيرات والنصوص» | ١ — [[let]] و [[const]] و template literals و string methods |
-| 4 | «الدوال» | ١ — arrow و default و rest و higher-order |
-| 5 | «توصل للإجابة بنفسك في JavaScript» | ١ — الـ console ورسايل الخطأ، بدري عشان تساعدك في كل اللي جاي |
-| 6 | «بنك تمارين بالكود» (أشكال ومسائل) | ١ و ٢ — «أشكال بالـ loops» و «مسائل نصوص» و «مسائل أرقام» و «مسائل مصفوفات»، حل منها وانت ماشي |
-| 7 | «المصفوفات» | ٢ — [[map]] و [[filter]] و [[reduce]] و [[sort]] |
-| 8 | «الـ objects» | ٢ — destructuring و reference و [[Map]] و [[Set]] و JSON |
-| 9 | «scope و closures» | ٢ — مين شايف مين، والدالة اللي بتفتكر |
-| 10 | «الأخطاء» | ٢ — [[try]] و [[catch]] و custom errors |
-| 11 | «من مشكلة لكود» | ٢ — من جملة لتوقيع دالة، ولما تعلق |
-| 12 | «regex» و «التواريخ والوقت» | ٢ — تتذاكر لما تحتاجها، مش شرط قبل مشروع ٢ |
-| 13 | «الـ DOM» | ٣ — querySelector والأحداث والـ delegation والفورم |
-| 14 | «ابني تطبيق بإيدك» (أول ٤ دروس) | ٣ — الحالة والرسم والـ XSS والحفظ والتحقق |
-| 15 | «ابني ٣ مشاريع بإيدك» و «بنك تمارين بالكود» (الصفحات) | ٣ — «مشروع: expense tracker» و «صفحة: آلة حاسبة» و «صفحة: فورم تسجيل بالتحقق» |
-| 16 | «async: الـ Promises و await» | ٤ — Promise و await و [[Promise.all]] و [[AbortController]] |
-| 17 | «الـ event loop» و «الأداء والذاكرة» | ٤ — ليه الكود بيستنى، و debounce |
-| 18 | «مشروع: fetch محترم» و «ابني ٣ مشاريع بإيدك» | ٤ — المهلة والإلغاء وإعادة المحاولة، و «مشروع: بحث بـ debounce» و «مشروع: لعبة كتابة» |
-| 19 | «this» و «prototypes و classes» | ٥ — [[class]] و [[extends]] و [[bind]] |
-| 20 | «modules» | ٥ — [[import]] و [[export]] و ESM |
-| 21 | «Patterns» | ٥ — EventEmitter و immutability و generators |
-| 22 | «ابني تطبيق بإيدك» (آخر درسين) | ٥ — الشاشات بالـ hash والتقسيم لملفات |
-| 23 | «APIs المتصفح» و «JS في المتصفح بعمق» | ٥ — Observers والملفات و pushState و WebSocket |
-| 24 | «أدوات المحترف في JS» | ٦ — درسي «ESLint و Prettier» و «اختبار JS بـ Vitest» |
-| 25 | **«مشروع التخرّج: من الصفر لتطبيق منشور»** | التخرّج — الوحدة دي |
-| 26 | «PWA و service worker» و «Web Components» و «WebAssembly» | بعد التخرّج — امتدادات |
-| 27 | «أسئلة انترفيو» | قبل التقديم على شغل |
-
-> «PWA» و «Web Components» و «WebAssembly» مكانهم بعد التخرّج مش قبله: مشروع التخرّج مش محتاجهم، وأول مشروع كبير في سلّمة الوحدة دي («يشتغل من غير نت») هو اللي بيستخدم الـ PWA.
-
----
-
-## ٢. مشروع المرحلة الأولى: اتشغّل فعلًا
-
-~~~bash
-node report.js
-~~~
-
-~~~text اتشغّل فعلًا · Node 24.22
-منى     91  ممتاز
-كريم    48  راسب
-سلمى    75  جيد
-عمر     60  مقبول
-المتوسط: 68.5 | نجح 3 من 4
-~~~
-
-**ليه 68.5؟** (91 + 48 + 75 + 60) = 274، وعلى 4 = 68.5 بالظبط، و [[toFixed(1)]] بتطبعها بعشري واحد.
-
-**وليه الأعمدة متصفّة؟** [[padEnd(6)]] بتكمّل كل اسم لحد ٦ حروف بمسافات، و [[padStart(4)]] بتحط الدرجة في آخر ٤ خانات. بس خد بالك: الترمنال بيعدّ الحروف مش عرضها، فلو اسم فيه تشكيل الأعمدة هتتزحلق.
-
----
-
-## ٣. مواصفات المشاريع الست
-
-| المرحلة | المشروع | بيستخدم من التاب | ممنوع فيه |
-|---|---|---|---|
-| ١ | تقرير درجات | متغيرات و [[if]] و [[for]] ودوال ونصوص | [[map]] و objects و DOM |
-| ٢ | مكتبة في الذاكرة | objects و [[Map]] و [[filter]] و [[find]] و [[try]] و JSON | DOM و [[fetch]] |
-| ٣ | مهام بفلاتر | [[querySelector]] والأحداث والـ delegation و [[textContent]] و [[localStorage]] | [[fetch]] و modules |
-| ٤ | بحث GitHub | [[fetch]] و [[await]] و [[AbortController]] و debounce | classes و modules |
-| ٥ | flashcards بـ modules | [[class]] و [[import]] و store و hash routing | مكتبات و frameworks |
-| ٦ | نفس ٥ باختبارات | ESLint و Vitest و GitHub Actions | ميزات جديدة: الهدف الجودة مش الكمية |
-
-والشرح الكامل لكل مشروع وشروط «تعرف إنك خلصت لما» في «الشرح العميق» تحت.
-
----
-
-## ٤. إزاي تعرف انت فين
-
-جاوب على التلات أسئلة دول بصراحة:
-
-1. **تقدر تكتب [[report.js]] من الذاكرة؟** لأ = ابدأ من مرحلة ١.
-2. **تقدر تتوقع ناتج التمرين الأول تحت من غير ما تشغّله؟** السطر الأول غلط = مرحلة ٢. ترتيب [[sync]] و [[promise]] و [[timeout]] غلط = مرحلة ٤.
-3. **تقدر تبني مشروع مرحلة في ٣٠ دقيقة من غير ما تبص؟** آخر مرحلة عدّيتها = مرحلتك.
-
-~~~text اتشغّل فعلًا · Node 24.22 (ناتج تمرين «اقرا وتوقّع»)
-[ 3, 16, 18 ] 37
-sync
-promise
-timeout
-~~~
-
-**ليه 16 و 18؟** [[filter]] بتسيب [[3]] و [[8]] و [[6]] (الـ [[1]] اتشال)، و [[next()]] بترجّع 1 ثم 2 ثم 3 لأن الـ closure فاكر [[n]] بين النداءات، فالناتج [[3×1]] و [[8×2]] و [[6×3]]. **وليه promise قبل timeout؟** الـ microtask (الـ Promise) بيخلص قبل أي macrotask ([[setTimeout]]) حتى لو المدة صفر.
-
----
-
-## ٥. قواعد الطريق
-
-- **مشروع لكل مرحلة**، ومتكملش غير لما «تعرف إنك خلصت لما» تعدّي بند بند.
-- **اللي اتعلمته لحد هنا بس.** لو محتاج حاجة من بعد، المشروع أكبر من مرحلته.
-- **وقعت في حتة؟ ارجع للوحدة دي بس.** مش للمرحلة كلها.
-- **التمارين وانت ماشي:** «بنك تمارين بالكود» مش آخر التاب، حل منه بعد كل وحدة.
-
----
-
-## الخلاصة
-
-- ٦ مراحل، وكل مرحلة ليها مشروع واحد بشروط تتقاس.
-- الترتيب فوق هو ترتيب الاعتماد: كل وحدة محتاجة اللي قبلها بس.
-- المشروع بيتعمل من غير ما تبص، وإلا يبقى تمرين مش امتحان.
-- وفي الآخر مشروع التخرّج: «دفتر الوصفات» في الأربع دروس الجاية.`,
-          sol: R`الناتج الحقيقي من [[node report.js]] على Node 24.22، والتقرير بعد تصليح الحالتين في التمرين التالت. والاتنين اتشغّلوا فعلًا.`,
-          solCode: R`// node report.js
-// منى     91  ممتاز
-// كريم    48  راسب
-// سلمى    75  جيد
-// عمر     60  مقبول
-// المتوسط: 68.5 | نجح 3 من 4
-
-// تصليح الحالتين (من غير أي حاجة من مرحلة ٢):
-if (names.length !== scores.length) {
-  console.log('عدد الأسامي مش زي عدد الدرجات');
-} else if (scores.length === 0) {
-  console.log('مفيش درجات');
-} else {
-  // نفس الـ loop وسطر الملخص زي ما هما
-}`
-        },
-        {
-          cmd: "مشروع التخرّج ١: الهيكل والحالة",
-          ref: [
-            { t: "MDN: JavaScript modules", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules" },
-            { t: "MDN: Window.localStorage", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage" },
-            { t: "MDN: Crypto.randomUUID()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID" },
-            { t: "npm Docs: package.json", url: "https://docs.npmjs.com/cli/v11/configuring-npm/package-json/" },
-          ],
-          pre: [
-            { to: "js/import و export", why: R`[[store.js]] و [[logic.js]] و [[storage.js]] modules بيستوردوا بعض` },
-            { to: "js/closure", why: R`[[createStore]] بترجّع دوال فاكرة [[state]] و [[listeners]]` },
-            { to: "js/Web Storage: localStorage و sessionStorage", why: R`الحفظ اللي [[storage.js]] بيحميه` },
-          ],
-          title: "دفتر وصفات من فولدر فاضي: الفولدرات، وشكل الحالة، والـ store",
-          learn: R`تبدأ مشروع من فولدر فاضي صح: [[package.json]] بـ ESM، وفولدرات بشغلة واضحة، وشكل حالة مكتوب قبل أي شاشة، و store واحد هو اللي بيغيّرها وبيحفظها.`,
-          out: R`هيكل «دفتر الوصفات» كامل، و [[store.js]] بيشتغل في Node من غير متصفح، وحفظ بيستحمل الداتا البايظة والتخزين المقفول.`,
-          use: {
-            prog: R`أغلب المشاريع اللي بتتلخبط بتتلخبط في أول ساعة: الحالة متوزعة في الـ DOM وفي متغيرات عامة. لما تكتب شكل الحالة الأول، كل شاشة بعد كده بتبقى «ارسم الحالة دي».`,
-            work: R`أول PR في أي مشروع جديد في الشغل هو الهيكل: الفولدرات والـ scripts وطبقة البيانات. واللي بيراجعه بيسأل «الحالة فين؟ ومين يغيّرها؟» قبل ما يبص على أي شكل.`,
-            cs: R`single source of truth، و immutability (كل تغيير بيعمل object جديد)، و observer pattern ([[subscribe]])، و dependency injection بسيط (الـ storage بيتبعت كـ parameter عشان يتبدّل في الاختبار).`,
-          },
-          desc: R`هنبني **«دفتر الوصفات»**: تطبيق بيعرض وصفات من ملف JSON، وتدوّر فيها بالاسم أو بالمكوّن، وتفلتر بالتصنيف، وتحط اللي عاجبك في المفضلة، وتضيف وصفاتك انت بفورم بيتحقق. وكل ده بيفتكر بعد reload، ومنشور على رابط.
-
-الدرس ده أول خطوة من أربعة: **الهيكل والحالة**، من غير ولا شاشة.
-
-~~~text شكل المشروع في الآخر
-recipe-book/
-  index.html          الصفحة: nav و <main> فاضي
-  style.css
-  data/recipes.json   الـ API بتاعنا: JSON ثابت
-  src/logic.js        القواعد: بحث، تحقق، routing   (مفيهوش document)
-  src/storage.js      localStorage بأمان               (مفيهوش document)
-  src/store.js        الحالة والتغييرات                (مفيهوش document)
-  src/api.js          fetch والأخطاء                   (الدرس ٣)
-  src/view.js         الشاشات من الحالة                (الدرس ٢)
-  src/app.js          التوصيل: أحداث ← حالة ← شاشة
-  tests/              Vitest                           (الدرس ٤)
-~~~
-
-**ليه الحالة الأول؟** لأن كل شاشة هتبقى «ارسم الـ object ده». ولو الـ object واضح، الشاشات بتتكتب في دقايق، ولو مش واضح هتلاقي نفسك بتقرا من الـ DOM عشان تعرف انت فين (الغلطة اللي درس «الـ DOM مش مكان الحالة» بيشرحها).
-
-**والقاعدة:** [[store.js]] هو الوحيد اللي بيغيّر الحالة، ومبيعرفش حاجة عن الصفحة. فتقدر تشغّله في Node وتختبره من غير متصفح، وده اللي هنعمله في آخر الدرس.`,
-          example: R`// src/store.js — الحالة. مصدر الحقيقة الوحيد، ومبيعرفش الـ DOM.
-import { validateRecipe, toggleFav } from './logic.js';
-import { load, save, browserStorage } from './storage.js';
-
-export function createStore(storage = browserStorage()) {
-  const saved = load(storage);
-  let state = {
-    recipes: [], mine: saved.mine, favs: saved.favs,
-    status: 'idle', error: '', notice: saved.warning ?? '',
-    route: { name: 'list', params: {}, query: {} },
-  };
-  const listeners = new Set();
-
-  function set(patch) {
-    const prev = state;
-    state = { ...state, ...patch };
-    if ((state.mine !== prev.mine || state.favs !== prev.favs) && !save(state, storage)) {
-      state = { ...state, notice: 'مقدرناش نحفظ: التخزين مليان أو مقفول' };
-    }
-    listeners.forEach((fn) => fn(state, prev));
-  }
-
-  return {
-    get: () => state,
-    subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn); },
-    setRoute: (route) => set({ route }),
-    loading: () => set({ status: 'loading', error: '' }),
-    loaded: (recipes) => set({ status: 'ready', recipes }),
-    failed: (message) => set({ status: 'error', error: message }),
-    toggleFav: (id) => set({ favs: toggleFav(state.favs, id) }),
-    addRecipe(input) {
-      const res = validateRecipe(input);
-      if (!res.ok) return res;
-      const recipe = { id: 'u-' + crypto.randomUUID(), ...res.value };
-      set({ mine: [recipe, ...state.mine] });
-      return { ok: true, recipe };
-    },
-  };
-}
-
-export const allRecipes = (s) => [...s.mine, ...s.recipes];`,
-          lines: [
-            R`بنستورد من [[logic.js]] دالتين pure: [[validateRecipe]] بتفحص الفورم، و [[toggleFav]] بترجّع مصفوفة مفضلة جديدة. الاتنين مبيلمسوش أي حاجة برّه، فالـ store بيعتمد على قواعد متختبرة لوحدها.`,
-            R`وبنستورد [[load]] و [[save]] و [[browserStorage]] من [[storage.js]]. الـ store مبيكلّمش [[localStorage]] بنفسه أبدًا، فلو غيّرت طريقة الحفظ (IndexedDB مثلًا) الملف ده ميتغيّرش.`,
-            R`[[createStore]] دالة بترجّع store جديد بدل ما يبقى فيه store واحد عام في الملف. والـ parameter [[storage]] قيمته الافتراضية [[browserStorage()]]: بترجّع [[localStorage]] في المتصفح، أو [[null]] لو مجرد قرايته رمت (التخزين مقفول)، وفي الاختبار بنبعت storage مزيّف. ودي dependency injection في أبسط صورها. **وده تصليح باج حقيقي:** النسخة الأولى كانت [[storage = globalThis.localStorage]]، والقيمة الافتراضية بتتحسب **برّه** أي [[try]]، فلما التخزين مقفول [[createStore()]] نفسها رمت [[SecurityError]] والصفحة فضلت فاضية.`,
-            R`أول حاجة بنقرا المحفوظ. [[load]] عمرها ما بترمي: لو الداتا بايظة أو التخزين مقفول بترجّع مصفوفات فاضية ومعاها [[warning]].`,
-            R`شكل الحالة كله في object واحد، والسطور الجاية هي «العقد» اللي كل الشاشات هتقرا منه.`,
-            R`[[recipes]] الوصفات اللي جاية من الـ JSON (فاضية لحد ما تتحمّل)، و [[mine]] الوصفات اللي اليوزر ضافها، و [[favs]] مصفوفة ids المفضلة. والاتنين الأخيرين بس اللي بيتحفظوا.`,
-            R`[[status]] واحدة من أربعة: [[idle]] و [[loading]] و [[ready]] و [[error]]، و [[error]] نص الرسالة، و [[notice]] تحذير زي «الداتا كانت بايظة». و [[??]] بتاخد [[warning]] لو موجودة وإلا نص فاضي (مش [[||]] عشان النص الفاضي قيمة صح).`,
-            R`[[route]] الشاشة الحالية: اسمها، و [[params]] زي id الوصفة، و [[query]] زي البحث والتصنيف. الرابط هيتحوّل للـ object ده في الدرس الجاي.`,
-            R`قفلة الحالة الابتدائية. ولاحظ إن مفيش ولا قيمة مشتقة (عدد الوصفات، أو قايمة التصنيفات): دول بيتحسبوا وقت الرسم.`,
-            R`المشتركين في [[Set]]: الدوال اللي عايزة تعرف لما الحالة تتغيّر. [[Set]] عشان نفس الدالة متتسجّلش مرتين، والشيل منها سهل.`,
-            R`[[set]] هي **المكان الوحيد** اللي الحالة بتتغيّر فيه، ومش متصدّرة. أي ملف برّه بيغيّر عن طريق الأفعال اللي تحت بس.`,
-            R`بنحتفظ بالحالة القديمة عشان نقارن ونبعتها للمشتركين، فالشاشة تعرف «الشاشة اتغيّرت ولا البحث بس».`,
-            R`بنعمل object جديد فيه القديم وفوقه التغيير بـ spread. ده immutability: القديم ما اتلمسش، فـ [[prev !== state]] دايمًا صح بعد أي تغيير.`,
-            R`بنحفظ بس لو [[mine]] أو [[favs]] اتغيّروا (مقارنة reference، رخيصة جدًا)، مش مع كل حرف بحث أو كل loading. ولو [[save]] رجّعت [[false]] (التخزين مليان أو مقفول) بندخل الشرط.`,
-            R`بنسجّل رسالة في [[notice]] عشان الشاشة تقول لليوزر إن الحفظ فشل بدل ما يكتشف بعد reload إن شغله راح.`,
-            R`قفلة شرط الحفظ.`,
-            R`بنبلّغ كل مشترك بالحالة الجديدة والقديمة. الـ store مش عارف مين سامع ولا هيعمل إيه، وده اللي بيخليه ميعرفش الـ DOM.`,
-            R`قفلة [[set]].`,
-            R`الـ store اللي بيرجع: object فيه القراية والاشتراك والأفعال بس. مفيش طريقة توصل لـ [[state]] وتغيّرها من برّه.`,
-            R`[[get]] بترجّع الحالة الحالية للقراية. ولو حد عدّل فيها مباشرة ([[get().favs.push(...)]]) هيكسر القاعدة، وعشان كده الأفعال كلها بتعمل مصفوفات جديدة.`,
-            R`[[subscribe]] بتضيف دالة وترجّع دالة تانية بتلغي الاشتراك. من غير الإلغاء، أي جزء من الشاشة اتشال هيفضل يتنادى ويمسك ذاكرة.`,
-            R`فعل تغيير الشاشة: الـ router هينادي ده مع كل تغيير في الرابط.`,
-            R`فعل بداية التحميل: [[status]] بقت [[loading]] والرسالة القديمة اتمسحت، عشان زرار «جرّب تاني» ميفضلش ظاهر وهو بيحمّل.`,
-            R`فعل التحميل نجح: الوصفات اتحطت والحالة [[ready]].`,
-            R`فعل التحميل فشل: بناخد **رسالة جاهزة للعرض** مش [[Error]]، لأن ترجمة الخطأ لجملة شغلة [[api.js]] (الدرس ٣).`,
-            R`المفضلة: [[toggleFav]] بترجّع مصفوفة جديدة (تضيف لو مش موجود وتشيل لو موجود)، فالمقارنة في [[set]] بتشوف التغيير وبتحفظ.`,
-            R`إضافة وصفة: الفعل الوحيد اللي بيرجّع نتيجة، عشان الفورم يعرف يعرض الأخطاء.`,
-            R`بنفحص المدخلات الخام زي ما جات من الفورم (نصوص). التحقق بيحصل هنا جوه الـ store، فمستحيل وصفة غلط تدخل الحالة من أي طريق.`,
-            R`لو فيه أخطاء بنرجّعها زي ما هي ([[{ ok: false, errors }]]) **من غير ما ننادي [[set]]**، فالحالة ما اتغيّرتش ومفيش مشترك اتبلّغ.`,
-            R`بنعمل id فريد بـ [[crypto.randomUUID()]] وقدامه [[u-]] عشان نفرق وصفات اليوزر عن وصفات الملف. و [[randomUUID]] محتاجة secure context: [[https]] أو [[localhost]]، و GitHub Pages [[https]] فمفيش مشكلة.`,
-            R`الوصفة الجديدة أول المصفوفة، في مصفوفة جديدة مش [[push]]، و [[set]] هتحفظها وتبلّغ.`,
-            R`بنرجّع الوصفة نفسها عشان [[app.js]] يروح لصفحتها بالـ id.`,
-            R`قفلة [[addRecipe]].`,
-            R`قفلة الـ object اللي بيرجع.`,
-            R`قفلة [[createStore]].`,
-            R`selector: دالة بتشتق «كل الوصفات» من الحالة (بتاعتي الأول وبعدها اللي في الملف). مشتقة ومش متخزنة، فعمرها ما تبقى قديمة.`,
-          ],
-          try: R`اعمل الفولدر والملفات التلاتة ([[logic.js]] و [[storage.js]] و [[store.js]]) من الشرح، وبعدين اعمل [[try-store.mjs]] اللي في الشرح وشغّله بـ [[node try-store.mjs]]. لازم يطلّع نفس السطور الستة، وأهمها إن الإضافة الفاضية ما بلّغتش حد (العدّاد فضل 3).`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في [[try-store.mjs]]، لو شلت سطر [[off()]]، السطر الأخير هيطبع [[n]] بكام؟ ولو بدّلت [[toggleFav]] في [[logic.js]] بـ [[favs.push(id); return favs;]]، [[localStorage]] هيبقى فيه إيه بعد أول toggle؟ اكتب توقعك وبعدين شغّل.`, done: R`عرفت إن [[n]] هيبقى 4 من غير [[off()]]، وإن نسخة [[push]] بترجّع **نفس** المصفوفة فـ [[state.favs !== prev.favs]] بتبقى [[false]] والحفظ مبيحصلش: [[saved]] بيطبع [[undefined]] رغم إن [[get().favs]] فيها [[foul]]. وكاتب في سطر ليه immutability هنا مش ذوق.`, sol: R`**التوقع الأول (من غير [[off()]]):** الاشتراك لسه شغّال، فالـ toggle الأخير بيبلّغ المشترك مرة رابعة: [[n]] = 4.
-
-~~~text الناتج: node try-store.mjs بعد ما شلت سطر off() (Node 24.22)
-4 ready → ready | favs: []
-after off, n = 4 favs = []
-~~~
-
-**التوقع التاني (نسخة [[push]]):** بدّل السطر في [[src/logic.js]] بده:
-
-~~~js src/logic.js (النسخة البايظة بقصد)
-export const toggleFav = (favs, id) => { favs.push(id); return favs; };
-~~~
-
-~~~text الناتج: node try-store.mjs بالنسخة البايظة
-1 idle → loading | favs: []
-2 loading → ready | favs: []
-3 ready → ready | favs: [ 'foul' ]
-saved: undefined
-bad: false [ 'title', 'minutes', 'ingredients', 'steps' ] notified? 3
-after off, n = 3 favs = [ 'foul', 'foul' ]
-~~~
-
-**اقرا الناتج:**
-
-- **[[favs: [ 'foul' ]]] بس [[saved: undefined]]:** [[push]] عدّلت **نفس** المصفوفة ورجّعتها، فجوه [[set]] بقى [[state.favs === prev.favs]]، وشرط الحفظ [[state.favs !== prev.favs]] قال «مفيش تغيير». الشاشة كانت هتعرض النجمة، و reload يرجّعها فاضية.
-- **[[[ 'foul', 'foul' ]]] في الآخر:** [[push]] مبتشيلش، فالـ toggle بطّل toggle خالص.
-- والحاجة الأخبث: [[prev.favs]] نفسها اتغيّرت (نفس المصفوفة)، فأي مشترك بيقارن القديم بالجديد هيشوفهم واحد.
-
-**ليه immutability هنا مش ذوق (السطر المطلوب):** الـ store بيعرف «حصل تغيير» بمقارنة reference، فأي تعديل في المكان بيعدّي من غير حفظ ومن غير ما الرسم يعرف.
-
-**الغلطة الشائعة:** تصلّح الحفظ بإنك تشيل الشرط وتحفظ مع كل [[set]]. الحفظ هيشتغل، بس هتكتب في الديسك مع كل حرف بحث وكل تحميل، والباج الأصلي (مصفوفة بتتغيّر في مكانها) لسه موجود. التصليح الصح: [[toggleFav]] ترجّع مصفوفة جديدة زي ما هي في الدرس.` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** في [[tests/store.test.js]] اعمل storage مزيّف بـ [[Map]] واختبر: (١) [[addRecipe]] بمدخلات غلط مبيغيّرش الحالة ومبيبلّغش، (٢) [[toggleFav]] مرتين بيرجّع المفضلة فاضية والمحفوظ فاضي، (٣) store جديد على نفس الـ storage بيقرا المفضلة القديمة.`, done: R`[[npx vitest run tests/store.test.js]] بيطلّع ٣ اختبارات خضرا. ولما تشيل [[if (!res.ok) return res;]] من [[addRecipe]] بقصد، اختبار (١) بيقع ورسالته فيها [[ok]]. ومفيش في الاختبار ولا [[document]] ولا [[window]].`, sol: R`**الحل:** ملف اختبار فيه storage مزيّف فوق [[Map]]، والـ [[m]] متصدّر جواه عشان نقرا المحفوظ بعينينا.
-
-~~~js tests/store.test.js
-import { it, expect, vi } from 'vitest';
-import { createStore } from '../src/store.js';
-
-const fake = () => {
-  const m = new Map();
-  return { m, getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) };
-};
-const KEY = 'recipe-book:v1';
-
-it('مدخلات غلط: الحالة زي ما هي ومحدش اتبلّغ', () => {
-  const store = createStore(fake());
-  const fn = vi.fn();
-  store.subscribe(fn);
-  const before = store.get();
-  const res = store.addRecipe({ title: '', minutes: 'abc' });
-  expect(res).toMatchObject({ ok: false, errors: { title: expect.any(String), minutes: expect.any(String) } });
-  expect(store.get()).toBe(before);
-  expect(fn).not.toHaveBeenCalled();
 });
 
-it('toggleFav مرتين: المفضلة فاضية والمحفوظ فاضي', () => {
-  const s = fake();
-  const store = createStore(s);
-  store.toggleFav('foul');
-  expect(JSON.parse(s.m.get(KEY)).favs).toEqual(['foul']);
-  store.toggleFav('foul');
-  expect(store.get().favs).toEqual([]);
-  expect(JSON.parse(s.m.get(KEY)).favs).toEqual([]);
+list.addEventListener('mousedown', (e) => {
+  const li = e.target.closest('li');
+  if (li) choose(Number(li.id.slice(4)));
 });
 
-it('store جديد على نفس الـ storage بيقرا المفضلة القديمة', () => {
-  const s = fake();
-  createStore(s).toggleFav('koshary');
-  expect(createStore(s).get().favs).toEqual(['koshary']);
+document.addEventListener('keydown', (e) => {
+  if (e.key !== '/' && e.code !== 'Slash') return;
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const el = document.activeElement;
+  if (el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName))) return;
+  e.preventDefault();
+  input.focus();
+  input.select();
 });
 ~~~
 
-~~~text الناتج: npx vitest run tests/store.test.js (Vitest 5.1.1 على Node 24.22)
- Test Files  1 passed (1)
-      Tests  3 passed (3)
-   Duration  270ms
-~~~
-
-**كل اختبار بيمسك إيه:**
-
-| الاختبار | السطر المهم | بيمسك إيه |
-|---|---|---|
-| مدخلات غلط | [[expect(store.get()).toBe(before)]] | [[toBe]] بتقارن reference: لو أي [[set]] حصل هيبقى فيه object جديد |
-| | [[expect(fn).not.toHaveBeenCalled()]] | [[vi.fn()]] مشترك مزيّف بيسجّل كل نداء |
-| toggle مرتين | [[JSON.parse(s.m.get(KEY)).favs]] | المحفوظ نفسه، مش الحالة بس: الاتنين لازم يتفقوا |
-| store جديد | [[createStore(s)]] مرتين على نفس [[s]] | ده «reload» من غير متصفح |
-
-**بوّظه بقصد:** شيل [[if (!res.ok) return res;]] من [[addRecipe]]:
-
-~~~text الناتج: نفس الأمر بعد ما شلت السطر
- FAIL  tests/store.test.js > مدخلات غلط: الحالة زي ما هي ومحدش اتبلّغ
-AssertionError: expected { ok: true, …(1) } to match object { ok: false, errors: { …(2) } }
-(2 matching properties omitted from actual)
-
-- Expected
-+ Received
-
-  {
--   "errors": {
--     "minutes": Any<String>,
--     "title": Any<String>,
--   },
--   "ok": false,
-+   "ok": true,
-  }
-~~~
-
-الرسالة فيها [[ok]] زي ما المطلوب قال: من غير الحارس، [[res.value]] بقت [[undefined]] و [[{ id, ...undefined }]] عمل وصفة فيها [[id]] بس، ودخلت [[mine]] واتحفظت، والفورم اتقاله [[ok: true]]. وده اللي كان هيبوّظ الشاشة بعدين ([[r.tags.join]] على [[undefined]]). رجّع السطر وكله أخضر.
-
-**[[grep -c "document\|window" tests/store.test.js]] طلّع 0:** الاختبار شغّال في Node من غير DOM خالص.
-
-**الغلطة الشائعة:** تستخدم الـ [[localStorage]] الحقيقي في الاختبار. في Node مش موجود، وحتى في jsdom كل اختبار هيسيب داتا للي بعده. الـ storage المزيّف بيتعمل جديد في كل اختبار.` },
-            { lvl: 'تحدي', t: R`**ابني feature في الـ store بس:** [[removeRecipe(id)]] بتمسح وصفة من [[mine]] **ومن** [[favs]] في نفس الـ [[set]]، و [[undo()]] بترجّع آخر حالة قبل آخر تغيير في [[mine]] أو [[favs]] (خزّن القديمة في مصفوفة [[history]] جوه [[createStore]]، وحدّها بـ ٢٠).`, done: R`إضافة وصفة وتفضيلها ومسحها: [[mine]] فاضية و [[favs]] فاضية و [[localStorage]] متطابق في نداء [[setItem]] واحد بس للمسح. و [[undo()]] بترجّع الوصفة والمفضلة الاتنين، و [[undo()]] من غير تاريخ مبتعملش حاجة ومبترميش، و ٢٥ تغيير بيسيبوا ٢٠ بس في التاريخ، و [[view.js]] ما اتلمسش.`, sol: R`**الحل:** كل التغيير في [[src/store.js]]: مصفوفة [[history]] جوه [[createStore]]، ودالة [[remember()]] بتتنادى قبل أي فعل بيغيّر [[mine]] أو [[favs]]، وفعلين جداد. الملف كامل:
-
-~~~js src/store.js
-// src/store.js — الحالة. مصدر الحقيقة الوحيد، ومبيعرفش الـ DOM.
-import { validateRecipe, toggleFav } from './logic.js';
-import { load, save, browserStorage } from './storage.js';
-
-export function createStore(storage = browserStorage()) {
-  const saved = load(storage);
-  let state = {
-    recipes: [], mine: saved.mine, favs: saved.favs,
-    status: 'idle', error: '', notice: saved.warning ?? '',
-    route: { name: 'list', params: {}, query: {} },
-  };
-  const listeners = new Set();
-  const history = [];
-  const MAX_HISTORY = 20;
-
-  function set(patch) {
-    const prev = state;
-    state = { ...state, ...patch };
-    if ((state.mine !== prev.mine || state.favs !== prev.favs) && !save(state, storage)) {
-      state = { ...state, notice: 'مقدرناش نحفظ: التخزين مليان أو مقفول' };
-    }
-    listeners.forEach((fn) => fn(state, prev));
-  }
-
-  // قبل أي تغيير في mine أو favs: نحفظ الاتنين زي ما هما (reference بس، مفيش نسخ)
-  function remember() {
-    history.push({ mine: state.mine, favs: state.favs });
-    if (history.length > MAX_HISTORY) history.shift();
-  }
-
-  return {
-    get: () => state,
-    subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn); },
-    setRoute: (route) => set({ route }),
-    loading: () => set({ status: 'loading', error: '' }),
-    loaded: (recipes) => set({ status: 'ready', recipes }),
-    failed: (message) => set({ status: 'error', error: message }),
-    toggleFav(id) {
-      remember();
-      set({ favs: toggleFav(state.favs, id) });
-    },
-    addRecipe(input) {
-      const res = validateRecipe(input);
-      if (!res.ok) return res;
-      const recipe = { id: 'u-' + crypto.randomUUID(), ...res.value };
-      remember();
-      set({ mine: [recipe, ...state.mine] });
-      return { ok: true, recipe };
-    },
-    removeRecipe(id) {
-      if (!state.mine.some((r) => r.id === id)) return false;
-      remember();
-      set({ mine: state.mine.filter((r) => r.id !== id), favs: state.favs.filter((f) => f !== id) });
-      return true;
-    },
-    undo() {
-      const last = history.pop();
-      if (!last) return false;
-      set(last);
-      return true;
-    },
-    canUndo: () => history.length > 0,
-  };
-}
-
-export const allRecipes = (s) => [...s.mine, ...s.recipes];
-~~~
-
-**الأجزاء المهمة:**
-
-| الحتة | ليه كده |
-|---|---|
-| [[history]] جوه [[createStore]] | كل store ليه تاريخه، ومحدش برّه يقدر يلمسه (closure) |
-| [[remember()]] بتحفظ [[{ mine, favs }]] بالـ reference | المصفوفات مبتتغيّرش في مكانها أبدًا (immutability)، فالـ reference القديم **هو** الحالة القديمة. مفيش نسخ ولا [[structuredClone]] |
-| [[history.shift()]] لما تعدّي ٢٠ | بيرمي أقدم خطوة، فالذاكرة محدودة مهما اليوزر عمل |
-| [[removeRecipe]] بـ [[set]] واحد فيه الاتنين | [[mine]] و [[favs]] بيتغيّروا مع بعض، فـ [[set]] بتحفظ **مرة واحدة**، ومفيش لحظة فيها مفضلة بتشاور على وصفة ميتة |
-| [[some]] قبل المسح | وصفات الملف مش في [[mine]] أصلًا، فمسحها بيرجّع [[false]] ومبيسجّلش خطوة فاضية في التاريخ |
-| [[undo()]] بـ [[set(last)]] | نفس الباب الوحيد: الحفظ والتبليغ بيحصلوا لوحدهم |
-| [[canUndo]] | الشاشة تعرف تخفي زرار «رجّعها» من غير ما تعرف [[history]] |
-
-**الاختبارات:**
-
-~~~js tests/undo.test.js
-import { it, expect, vi } from 'vitest';
-import { createStore } from '../src/store.js';
-
-const KEY = 'recipe-book:v1';
-const fake = () => {
-  const m = new Map();
-  return { m, getItem: (k) => m.get(k) ?? null, setItem: vi.fn((k, v) => m.set(k, String(v))) };
-};
-const input = { title: 'طعمية', minutes: '25', ingredients: 'فول\nكزبرة', steps: 'اطحن واقلي' };
-
-it('المسح بيشيل الوصفة من mine ومن favs في حفظة واحدة', () => {
-  const s = fake();
-  const store = createStore(s);
-  const { recipe } = store.addRecipe(input);
-  store.toggleFav(recipe.id);
-  s.setItem.mockClear();
-  expect(store.removeRecipe(recipe.id)).toBe(true);
-  expect(store.get().mine).toEqual([]);
-  expect(store.get().favs).toEqual([]);
-  expect(s.setItem).toHaveBeenCalledTimes(1);
-  expect(JSON.parse(s.m.get(KEY))).toEqual({ version: 1, mine: [], favs: [] });
-});
-
-it('undo بيرجّع الوصفة والمفضلة الاتنين', () => {
-  const s = fake();
-  const store = createStore(s);
-  const { recipe } = store.addRecipe(input);
-  store.toggleFav(recipe.id);
-  store.removeRecipe(recipe.id);
-  expect(store.undo()).toBe(true);
-  expect(store.get().mine.map((r) => r.title)).toEqual(['طعمية']);
-  expect(store.get().favs).toEqual([recipe.id]);
-  expect(JSON.parse(s.m.get(KEY)).favs).toEqual([recipe.id]);
-});
-
-it('undo من غير تاريخ: false ومحدش اتبلّغ', () => {
-  const store = createStore(fake());
-  const fn = vi.fn();
-  store.subscribe(fn);
-  expect(store.undo()).toBe(false);
-  expect(fn).not.toHaveBeenCalled();
-});
-
-it('التاريخ ٢٠ خطوة بس', () => {
-  const store = createStore(fake());
-  for (let i = 0; i < 25; i++) store.toggleFav('r' + i);
-  let n = 0;
-  while (store.undo()) n++;
-  expect(n).toBe(20);
-  expect(store.get().favs).toEqual(['r0', 'r1', 'r2', 'r3', 'r4']);
-});
-
-it('مسح وصفة من الملف (مش بتاعتك) مبيعملش حاجة', () => {
-  const store = createStore(fake());
-  store.loaded([{ id: 'foul', title: 'فول', minutes: 15, ingredients: ['a', 'b'], tags: [], steps: '.' }]);
-  expect(store.removeRecipe('foul')).toBe(false);
-  expect(store.canUndo()).toBe(false);
-});
-~~~
-
-~~~text الناتج: npx vitest run (Vitest 5.1.1)
- Test Files  5 passed (5)
-      Tests  48 passed (48)
-   Duration  2.38s
-~~~
-
-الـ ٤٣ القدام لسه بيعدّوا، و [[view.js]] ما اتلمسش. و [[s.setItem]] هنا [[vi.fn]] ملفوفة على الكتابة الحقيقية، فـ [[toHaveBeenCalledTimes(1)]] بيعدّ نداءات الحفظ بعد [[mockClear()]]. واختبار الـ ٢٠: ٢٥ toggle لـ ٢٥ وصفة مختلفة، و [[undo]] اشتغل ٢٠ مرة بس، والمفضلة فضل فيها أول ٥ (اللي التاريخ بتاعهم اترمى).
-
-**الغلطة الشائعة:** تخزّن في التاريخ الحالة **الجديدة** بعد [[set]] بدل القديمة قبلها، فأول [[undo]] مبيعملش حاجة. أو تخلّي [[undo]] نفسها تنادي [[remember()]]، فـ undo ورا undo يرجعوا لبعض في دايرة.` },
-          ],
-          deep: {
-            why: R`الحالة في مكان واحد وبتتغيّر من باب واحد معناها إن أي باج «الرقم غلط» أو «اتحفظ ناقص» ليه مكان واحد تدوّر فيه: [[set]]. ولما الـ store مبيعرفش الصفحة، تقدر تختبر ٩٠٪ من التطبيق في Node في أقل من ثانية، من غير ما تفتح متصفح ولا تدوس زرار.`,
-            how: R`**ليه الحفظ جوه [[set]] مش في كل فعل؟** عشان مستحيل تضيف فعل جديد وتنسى تحفظ. الشرط [[state.mine !== prev.mine]] بيقارن reference بس (رخيص جدًا)، وده شغال لأن كل فعل بيعمل مصفوفة جديدة. لو حد كتب [[state.mine.push(x)]] المقارنة هتقول «نفس الحاجة» والحفظ مش هيحصل، وده اللي التمرين الأول بيوريهولك بعينك.
-
-**ليه [[storage]] parameter؟** في المتصفح الافتراضي [[localStorage]]. في Node 24 من غير flags [[localStorage]] مش موجود أصلًا ([[typeof]] بيقول [[undefined]])، فـ [[createStore()]] من غير parameter بتعدّي على [[catch]] وبتشتغل بحالة فاضية وتحذير:
-
-~~~text اتشغّل فعلًا · Node 24.22
-"المتصفح قافل التخزين، ومش هنفتكر حاجة"
-undefined
-~~~
-
-وفي المتصفح فيه حالة أصعب: لما اليوزر قافل الـ cookies والـ site data، أو الصفحة جوه iframe معزول ([[sandbox]] من غير [[allow-same-origin]]، زي صندوق العرض الحي في الموقع ده)، **مجرد قراية** [[localStorage]] بترمي، قبل أي [[getItem]]:
-
-~~~text اتشغّل فعلًا · Chromium (Playwright)، iframe بـ sandbox="allow-scripts allow-forms"
-SecurityError: Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.
-~~~
-
-النسخة الأولى من التطبيق كانت [[createStore(storage = globalThis.localStorage)]]، والقيمة الافتراضية بتتحسب وقت النداء **برّه** أي [[try]]، فالخطأ ده طلع من [[createStore()]] نفسها و [[<main>]] فضل فاضي. وعشان كده [[browserStorage()]] بتقرا الـ property جوه [[try]] وترجّع [[null]]، و [[load(null)]] بتقع في الـ [[catch]] بتاعها وترجّع التحذير. بعد التصليح نفس الـ iframe فتح بالست وصفات، وفوقهم «المتصفح قافل التخزين، ومش هنفتكر حاجة»، والمفضلة اشتغلت في الذاكرة ومعاها «مقدرناش نحفظ: التخزين مليان أو مقفول».
-
-**وليه [[addRecipe]] بترجّع [[{ ok, errors }]] بدل ما ترمي؟** لأن مدخلات غلط في فورم مش «خطأ استثنائي»، دي حاجة متوقعة بتحصل كل يوم. [[throw]] بيتساب للحاجات اللي مكانتش متوقعة (زي الشبكة).
-
-**وحاجة مش في الـ store:** القيم المشتقة. عدد الوصفات، وقايمة التصنيفات، ونتيجة البحث، و«الوصفة دي في المفضلة؟» كلهم بيتحسبوا في [[view.js]] من الحالة. لو خزّنت [[filtered]] جنب [[recipes]]، أول ما تضيف وصفة هتلاقي القايمة مش متحدّثة.`,
-            when: R`في أي تطبيق واجهة فيه أكتر من شاشة أو حاجة بتتحفظ. ولما التطبيق يكبر لدرجة إن الـ store الواحد بقى فيه حاجات مش مترابطة (وصفات ومستخدمين وإعدادات)، قسّمه لكذا store بنفس الشكل، أو انقل لمكتبة زي Zustand أو Redux اللي بتعمل نفس الحاجة بالظبط.`,
-            mistakes: R`تعدّل الحالة في مكانها ([[push]] أو [[state.x = y]]) فالحفظ والرسم ميحسوش. تخزّن قيمة مشتقة جنب الأصل. تخلي الـ store يستورد [[view.js]] (دورة استيراد، والـ store بقى يعرف الصفحة). تحفظ مع كل تغيير حتى البحث فتكتب في الديسك مع كل حرف. تنسى إن [[load]] لازم متقعش أبدًا، فأول داتا بايظة بتدّي صفحة بيضا. وتستخدم [[crypto.randomUUID]] على [[http]] لسيرفر مش localhost فيرمي.`,
-          },
-          teach: R`## هنبني إيه
-
-**«دفتر الوصفات»**، تطبيق صغير بس كامل:
-
-- **٤ شاشات** بالرابط: كل الوصفات [[#/]]، ووصفة [[#/r/foul]]، والمفضلة [[#/fav]]، ووصفة جديدة [[#/new]]، و «مش موجودة» لأي رابط تاني.
-- **بحث** بالاسم أو المكوّن، و**فلتر** بالتصنيف، والاتنين في الرابط.
-- **داتا** من [[data/recipes.json]] بـ loading و error و «جرّب تاني».
-- **مفضلة** و**وصفاتك** بتتحفظ، وبتستحمل الداتا البايظة.
-- **فورم** بيتحقق، ورسايل الغلط جنب الخانة، ومفيش XSS.
-- **ESLint** و **Vitest**، ومنشور على **GitHub Pages**.
-
-والأربع دروس: (١) الهيكل والحالة ← (٢) الشاشات والفورم ← (٣) البيانات والأخطاء ← (٤) الاختبارات والنشر. كل درس بيخلص والتطبيق شغّال لحد خطوته.
-
----
-
-## ١. الفولدر من الصفر
-
-~~~bash
-mkdir recipe-book
-cd recipe-book
-npm init -y
-npm install -D vitest jsdom eslint @eslint/js globals
-mkdir src data tests
-~~~
-
-| الأمر | بيعمل إيه وليه |
-|---|---|
-| [[npm init -y]] | بيعمل [[package.json]] بالقيم الافتراضية من غير ما يسألك أسئلة، و [[-y]] اختصار «yes لكل حاجة» |
-| [[npm install -D]] | بيسطّب في [[node_modules]] جوه المشروع بس، و [[-D]] بيكتبهم في [[devDependencies]] لأنهم أدوات تطوير مش جزء من الصفحة اللي هتتنشر |
-| [[vitest]] و [[jsdom]] | الاختبارات، و DOM مزيّف عشان نختبر الشاشات في Node (الدرس ٤) |
-| [[eslint]] و [[@eslint/js]] و [[globals]] | فحص الكود، والقواعد الموصى بيها، وأسامي المتغيرات العامة بتاعة المتصفح زي [[document]] |
-
-~~~text اتشغّل فعلًا · npm 11.19 على ويندوز ١١
-found 0 vulnerabilities
-vitest/5.0.5   eslint v10.13.0   jsdom 30.1.3   @eslint/js 10.0.1   globals 17.13.0
-~~~
-
-> **مفيش أي تسطيب global.** كل حاجة جوه المشروع، فأي حد يعمل [[npm install]] ياخد نفس النسخ بالظبط من [[package-lock.json]].
-
-وبعدين عدّل [[package.json]]:
-
-~~~json
-{
-  "name": "recipe-book",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "lint": "eslint .",
-    "test": "vitest run",
-    "check": "npm run lint && npm test"
-  }
-}
-~~~
+## الجزء الجديد (آخر ٩ سطور في [[app.js]])
 
 | السطر | ليه |
 |---|---|
-| [[private]] | بيمنع [[npm publish]] بالغلط، لأن ده تطبيق مش مكتبة |
-| [[type: module]] | بيخلي Node يفهم [[import]]/[[export]] في ملفات [[.js]] زي المتصفح بالظبط، فنفس الملف يشتغل في الاتنين |
-| [[vitest run]] | يشغّل الاختبارات مرة ويخلص. من غير [[run]] بيفضل يراقب الملفات (watch)، وده كويس وانت بتكتب بس مش في الـ CI |
-| [[check]] | الاتنين ورا بعض، و [[&&]] معناها «التاني يشتغل بس لو الأول نجح» |
+| مستمع على [[document]] | الاختصار شغّال من أي حتة في الصفحة، فالحدث لازم يتمسك فوق كل العناصر (الحدث بيطلع لحد [[document]]) |
+| [[e.key !== '/' && e.code !== 'Slash']] | [[e.key]] الحرف اللي طلع، و [[e.code]] مكان الزرار على الكيبورد. على الكيبورد العربي نفس الزرار بيطلّع «ظ» بس [[code]] لسه [[Slash]] (من MDN: [[code]] بيوصف الزرار الفعلي مش الحرف). كده الاختصار شغّال في اللغتين |
+| [[ctrlKey]] و [[metaKey]] و [[altKey]] | [[Ctrl+/]] اختصار المتصفح أو أدوات تانية، منلمسهوش |
+| [[document.activeElement]] | العنصر اللي عليه الـ focus دلوقتي. لو [[INPUT]] أو [[TEXTAREA]] أو [[SELECT]] أو [[contenteditable]]، اليوزر بيكتب فسيب الـ [[/]] تتكتب |
+| [[e.preventDefault()]] | من غيره الـ [[/]] بتتكتب جوه خانة البحث بعد ما الـ focus يروحلها، لأن [[keydown]] بيحصل **قبل** ما الحرف يتكتب |
+| [[input.select()]] | الكلمة القديمة بتتعلّم، فأول حرف يمسحها. ده سلوك GitHub و YouTube بالظبط |
+
+## اتجرّب في Chrome 158 (سيرفر على 8884، ٢١ نوفمبر ٢٠٢٦)
+
+~~~text الناتج: node p2.cjs (Playwright)
+/ والصفحة فاضية                 focus: q     q: ""      note: ""
+/ جوه خانة البحث (بعد map)      focus: q     q: "map/"
+/ جوه الملاحظة                  focus: note  note: "a/b"
+/ تاني من برّه                   focus: q     المتعلّم: "map/"
+Ctrl+/                           focus: BODY  (محصلش حاجة)
+كيبورد عربي (key ظ، code Slash)  prevented: true  focus: q
+pageerror: ولا واحد
+~~~
+
+السطر الأخير اتعمل بحدث [[KeyboardEvent]] مصنوع ([[key: 'ظ', code: 'Slash']])، لأن Playwright بيكتب بالكيبورد الإنجليزي. الحدث المصنوع بيختبر المنطق (هل [[preventDefault]] اتنده والـ focus راح) ومبيكتبش حروف.
+
+**الغلطة الشائعة:** [[keyup]] بدل [[keydown]]: الحرف بيكون اتكتب خلاص في الخانة اللي كان عليها الـ focus، و [[preventDefault]] متأخر. وغلطة تانية: تفحص [[e.target]] بس بدل [[document.activeElement]]: لو الـ focus على [[<button>]] الحدث جاي منه، وده مش «بيكتب» فالاختصار المفروض يشتغل، و [[activeElement]] بالـ [[tagName]] بيفرّق صح.` },
+        { lvl: 'متوسط', dir: "expense-budget", t: R`ميزانية لكل تصنيف`, what: R`في «متتبّع مصاريف» ضيف ميزانية شهرية لكل تصنيف (مثلًا أكل ٣٠٠٠). جنب كل تصنيف في «حسب التصنيف» اعرض شريط [[<progress>]] والنسبة، ولو عدّى ٨٠٪ يبقى برتقاني، ولو عدّى ١٠٠٪ أحمر. الميزانيات بتتحفظ مع المصاريف، فزوّد [[VERSION]] لـ ٢ واكتب تحويل من النسخة ١ زي ما «خلّي التطبيق يفتكر» شرح.`, done: R`لو عندك داتا محفوظة بالنسخة ١ وفتحت النسخة الجديدة، المصاريف كلها لسه موجودة والميزانيات فاضية. والنسبة بتتحسب من الشهر الحالي بس، وبتتغيّر فورًا لما تضيف أو تمسح بند.`, sol: R`~~~view 700 المصاريف بميزانية لكل تصنيف
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>مصاريفي</title>
+  <style>
+body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 2rem auto; padding: 0 1rem; }
+form { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: end; }
+.err { color: #b00020; display: block; min-height: 1em; }
+[aria-invalid="true"] { border: 2px solid #b00020; }
+table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+th, td { padding: .35rem .5rem; border-bottom: 1px solid #ddd; text-align: start; }
+#status { color: #b00020; }
+progress { width: 8rem; vertical-align: middle; accent-color: #188038; }
+progress.warn { accent-color: #e37400; }
+progress.over { accent-color: #c5221f; }
+[data-level="warn"] { color: #b06000; }
+[data-level="over"] { color: #c5221f; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>مصاريفي</h1>
+    <form id="form" novalidate>
+      <label>المبلغ <input name="amount" inputmode="decimal" autocomplete="off"></label>
+      <small class="err" data-for="amount"></small>
+      <label>التصنيف <select name="cat"></select></label>
+      <small class="err" data-for="cat"></small>
+      <label>التاريخ <input name="date" type="date"></label>
+      <small class="err" data-for="date"></small>
+      <label>ملاحظة <input name="note" maxlength="80"></label>
+      <button id="submit">ضيف</button>
+      <button type="button" id="cancel" hidden>إلغاء التعديل</button>
+    </form>
+    <p id="status" role="status"></p>
+    <table>
+      <thead><tr><th>التاريخ</th><th>التصنيف</th><th>المبلغ</th><th>ملاحظة</th><th></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p id="empty">لسه مفيش مصاريف.</p>
+    <section>
+      <h2>حسب التصنيف</h2>
+      <ul id="by-cat"></ul>
+      <form id="budget-form" novalidate>
+        <label>ميزانية شهرية لـ <select name="cat"></select></label>
+        <input name="amount" inputmode="decimal" autocomplete="off" aria-label="المبلغ">
+        <button>احفظ الميزانية</button>
+        <small class="err" id="budget-err"></small>
+      </form>
+    </section>
+    <section><h2>حسب الشهر</h2><ul id="by-month"></ul></section>
+    <button id="export">نزّل CSV</button>
+  </main>
+  <script type="module">
+const CATS = { food: 'أكل', transport: 'مواصلات', bills: 'فواتير', fun: 'خروج', other: 'تاني' };
+const KEY = 'expenses';
+const VERSION = 2;
+
+function parseAmount(input) {
+  const raw = String(input ?? '').trim()
+    .replace(/[٠-٩]/g, d => d.charCodeAt(0) - 0x660).replace('٫', '.');
+  const amount = Number(raw);
+  if (!/^\d+(\.\d{1,2})?$/.test(raw)) return { error: 'اكتب مبلغ بالأرقام، وبحد أقصى قرشين بعد العلامة' };
+  if (amount <= 0 || amount > 1_000_000) return { error: 'المبلغ لازم يبقى أكبر من صفر ومش أكتر من مليون' };
+  return { cents: Math.round(amount * 100) };
+}
+
+function validate(input) {
+  const errors = {};
+  const amount = parseAmount(input.amount);
+  if (amount.error) errors.amount = amount.error;
+  if (!Object.hasOwn(CATS, input.cat)) errors.cat = 'اختار تصنيف من اللستة';
+  if (!isRealDate(input.date)) errors.date = 'التاريخ مش صحيح';
+  const note = String(input.note ?? '').trim().slice(0, 80);
+  if (Object.keys(errors).length) return { ok: false, errors };
+  return { ok: true, value: { cents: amount.cents, cat: input.cat, date: input.date, note } };
+}
+
+function isRealDate(s) {
+  if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(s + 'T00:00:00Z');
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+}
+
+function totalsBy(items, keyOf) {
+  const out = new Map();
+  for (const it of items) out.set(keyOf(it), (out.get(keyOf(it)) ?? 0) + it.cents);
+  return [...out].sort((a, b) => b[1] - a[1]);
+}
+
+// spent و budget بالقروش. level: ok لحد ٨٠٪، و warn فوقها، و over فوق ١٠٠٪
+function budgetStatus(spent, budget) {
+  const pct = Math.round(spent / budget * 100);
+  return { pct, level: pct > 100 ? 'over' : pct > 80 ? 'warn' : 'ok' };
+}
+
+function toCSV(items) {
+  const cell = (v) => {
+    let s = String(v);
+    if (/^[=+\-@]/.test(s)) s = "'" + s;
+    return /[",\n]/.test(s) ? '"' + s.replaceAll('"', '""') + '"' : s;
+  };
+  const rows = [['date', 'category', 'amount', 'note']];
+  for (const it of items) rows.push([it.date, CATS[it.cat], (it.cents / 100).toFixed(2), it.note]);
+  return '\uFEFF' + rows.map(r => r.map(cell).join(',')).join('\r\n');
+}
+
+const EMPTY = () => ({ items: [], budgets: {} });
+
+function cleanItems(items) {
+  if (!Array.isArray(items)) return [];
+  return items.filter(it => it && typeof it.id === 'string'
+    && Number.isInteger(it.cents) && it.cents > 0
+    && Object.hasOwn(CATS, it.cat) && isRealDate(it.date)
+    && typeof it.note === 'string');
+}
+
+function cleanBudgets(budgets) {
+  const out = {};
+  if (!budgets || typeof budgets !== 'object') return out;
+  for (const [cat, cents] of Object.entries(budgets)) {
+    if (Object.hasOwn(CATS, cat) && Number.isInteger(cents) && cents > 0) out[cat] = cents;
+  }
+  return out;
+}
+
+// v1: { version: 1, items }  →  v2: { version: 2, items, budgets }
+function migrate(data) {
+  if (data?.version === 1) return { version: 2, items: data.items, budgets: {} };
+  return data;
+}
+
+function load(storage) {
+  let raw;
+  try { raw = storage.getItem(KEY); } catch { return EMPTY(); }
+  if (!raw) return EMPTY();
+  let data;
+  try { data = migrate(JSON.parse(raw)); } catch { return EMPTY(); }
+  if (data?.version !== VERSION) return EMPTY();
+  return { items: cleanItems(data.items), budgets: cleanBudgets(data.budgets) };
+}
+
+function save(storage, items, budgets) {
+  try { storage.setItem(KEY, JSON.stringify({ version: VERSION, items, budgets })); return true; }
+  catch { return false; }
+}
+
+
+
+const money = new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' });
+const day = new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium', timeZone: 'UTC' });
+const monthName = new Intl.DateTimeFormat('ar-EG', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const asDate = (s) => new Date(s + 'T00:00:00Z');
+const today = () => new Date().toLocaleDateString('en-CA');
+
+const store = (() => { try { return localStorage; } catch { return null; } })();
+const saved = load(store);
+const state = { items: saved.items, budgets: saved.budgets, editing: null };
+const $ = (sel) => document.querySelector(sel);
+const form = $('#form');
+const f = form.elements;
+
+const bf = $('#budget-form').elements;
+for (const [key, label] of Object.entries(CATS)) {
+  f.cat.append(new Option(label, key));
+  bf.cat.append(new Option(label, key));
+}
+f.date.value = today();
+
+function el(tag, text, data = {}) {
+  const node = document.createElement(tag);
+  node.textContent = text;
+  Object.assign(node.dataset, data);
+  return node;
+}
+
+function row(it) {
+  const tr = document.createElement('tr');
+  const cells = [day.format(asDate(it.date)), CATS[it.cat], money.format(it.cents / 100), it.note];
+  tr.append(...cells.map(text => el('td', text)));
+  const actions = el('td', '');
+  actions.append(el('button', 'عدّل', { act: 'edit', id: it.id }), el('button', 'امسح', { act: 'del', id: it.id }));
+  tr.append(actions);
+  return tr;
+}
+
+function categoryRows() {
+  const all = new Map(totalsBy(state.items, it => it.cat));
+  const month = today().slice(0, 7);
+  const thisMonth = new Map(totalsBy(state.items.filter(it => it.date.startsWith(month)), it => it.cat));
+  const cats = Object.keys(CATS).filter(k => all.has(k) || state.budgets[k]);
+  cats.sort((a, b) => (all.get(b) ?? 0) - (all.get(a) ?? 0));
+  return cats.map((k) => {
+    const li = el('li', CATS[k] + ': ' + money.format((all.get(k) ?? 0) / 100));
+    const budget = state.budgets[k];
+    if (budget) {
+      const spent = thisMonth.get(k) ?? 0;
+      const { pct, level } = budgetStatus(spent, budget);
+      const bar = document.createElement('progress');
+      bar.max = budget;
+      bar.value = Math.min(spent, budget);
+      bar.className = level;
+      const label = 'الشهر ده ' + money.format(spent / 100) + ' من ' + money.format(budget / 100);
+      bar.setAttribute('aria-label', label);
+      li.append(' · ' + label + ' ', bar, el('span', ' ' + pct.toLocaleString('ar-EG') + '٪', { level }));
+    }
+    return li;
+  });
+}
+
+function render() {
+  const newest = state.items.toSorted((a, b) => b.date.localeCompare(a.date));
+  $('#rows').replaceChildren(...newest.map(row));
+  $('#empty').hidden = state.items.length > 0;
+  $('#by-cat').replaceChildren(...categoryRows());
+  const byMonth = totalsBy(state.items, it => it.date.slice(0, 7)).sort((a, b) => b[0].localeCompare(a[0]));
+  $('#by-month').replaceChildren(...byMonth.map(([k, c]) => el('li', monthName.format(asDate(k + '-01')) + ': ' + money.format(c / 100))));
+  $('#export').disabled = state.items.length === 0;
+  $('#submit').textContent = state.editing ? 'احفظ التعديل' : 'ضيف';
+  $('#cancel').hidden = !state.editing;
+}
+
+function commit() {
+  $('#status').textContent = save(store, state.items, state.budgets) ? '' : 'مقدرناش نحفظ: التغييرات هتروح لما تقفل الصفحة';
+  render();
+}
+
+function showErrors(errors) {
+  for (const small of form.querySelectorAll('.err')) {
+    const name = small.dataset.for;
+    small.textContent = errors[name] ?? '';
+    f[name].setAttribute('aria-invalid', String(name in errors));
+  }
+}
+
+function clearForm() {
+  state.editing = null;
+  f.amount.value = '';
+  f.note.value = '';
+  showErrors({});
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const result = validate(Object.fromEntries(new FormData(form)));
+  showErrors(result.errors ?? {});
+  if (!result.ok) return form.querySelector('[aria-invalid="true"]').focus();
+  if (state.editing) {
+    state.items = state.items.map(it => it.id === state.editing ? { ...result.value, id: it.id } : it);
+  } else {
+    state.items.push({ ...result.value, id: crypto.randomUUID() });
+  }
+  clearForm();
+  commit();
+  f.amount.focus();
+});
+
+$('#rows').addEventListener('click', (e) => {
+  const { act, id } = e.target.dataset;
+  const it = state.items.find(x => x.id === id);
+  if (!it) return;
+  if (act === 'del' && confirm('تمسح ' + money.format(it.cents / 100) + '؟')) {
+    state.items = state.items.filter(x => x.id !== id);
+    if (state.editing === id) clearForm();
+    commit();
+  }
+  if (act === 'edit') {
+    state.editing = id;
+    f.amount.value = (it.cents / 100).toFixed(2);
+    f.cat.value = it.cat;
+    f.date.value = it.date;
+    f.note.value = it.note;
+    render();
+    f.amount.focus();
+  }
+});
+
+$('#cancel').addEventListener('click', () => { clearForm(); render(); });
+
+$('#budget-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const amount = parseAmount(bf.amount.value);
+  $('#budget-err').textContent = amount.error ?? '';
+  if (amount.error) return bf.amount.focus();
+  state.budgets = { ...state.budgets, [bf.cat.value]: amount.cents };
+  bf.amount.value = '';
+  commit();
+});
+
+$('#export').addEventListener('click', () => {
+  const blob = new Blob([toCSV(state.items)], { type: 'text/csv;charset=utf-8' });
+  const a = el('a', '');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'expenses-' + today() + '.csv';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 0);
+});
+
+// المعاينة بس: localStorage مقفول جوه الصندوق ده، فبنبدأ ببنود في الشهر الحالي وميزانيتين
+if (!store) {
+  const m = today().slice(0, 7);
+  state.items = [
+    { id: 'd1', cents: 120000, cat: 'food', date: m + '-03', note: 'سوبرماركت' },
+    { id: 'd2', cents: 30000, cat: 'transport', date: m + '-04', note: 'مترو' },
+    { id: 'd3', cents: 90000, cat: 'food', date: '2026-10-20', note: 'الشهر اللي فات' },
+    { id: 'd4', cents: 55000, cat: 'fun', date: m + '-06', note: 'سينما' },
+  ];
+  state.budgets = { food: 150000, fun: 50000, transport: 100000 };
+}
+render();
+</script>
+</body>
+</html>
+~~~
+
+## هتشوف إيه
+
+تحت «حسب التصنيف» فيه فورم صغير: تختار تصنيف وتكتب ميزانيته الشهرية. جنب أي تصنيف ليه ميزانية بيظهر: مصروف **الشهر الحالي** بس، وشريط [[<progress>]]، والنسبة. لحد ٨٠٪ أخضر، وفوقها برتقاني، وفوق ١٠٠٪ أحمر والنسبة بخط تقيل. ولما تضيف أو تمسح بند الشريط بيتحرك على طول. (في المعاينة دي فيه بنود تجربة في الشهر الحالي، والحفظ مقفول فهتشوف «مقدرناش نحفظ» لو ضفت حاجة.)
+
+## الملفات
+
+~~~text
+expense-budget/
+├── index.html        + فورم الميزانية جوه «حسب التصنيف»
+├── style.css         + ألوان الشريط
+├── expenses.js       VERSION 2، و parseAmount، و budgetStatus، و migrate
+├── app.js            state.budgets، و categoryRows، و مستمع فورم الميزانية
+└── budget.test.mjs   اختبارات المنطق بـ node --test
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>مصاريفي</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>مصاريفي</h1>
+    <form id="form" novalidate>
+      <label>المبلغ <input name="amount" inputmode="decimal" autocomplete="off"></label>
+      <small class="err" data-for="amount"></small>
+      <label>التصنيف <select name="cat"></select></label>
+      <small class="err" data-for="cat"></small>
+      <label>التاريخ <input name="date" type="date"></label>
+      <small class="err" data-for="date"></small>
+      <label>ملاحظة <input name="note" maxlength="80"></label>
+      <button id="submit">ضيف</button>
+      <button type="button" id="cancel" hidden>إلغاء التعديل</button>
+    </form>
+    <p id="status" role="status"></p>
+    <table>
+      <thead><tr><th>التاريخ</th><th>التصنيف</th><th>المبلغ</th><th>ملاحظة</th><th></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p id="empty">لسه مفيش مصاريف.</p>
+    <section>
+      <h2>حسب التصنيف</h2>
+      <ul id="by-cat"></ul>
+      <form id="budget-form" novalidate>
+        <label>ميزانية شهرية لـ <select name="cat"></select></label>
+        <input name="amount" inputmode="decimal" autocomplete="off" aria-label="المبلغ">
+        <button>احفظ الميزانية</button>
+        <small class="err" id="budget-err"></small>
+      </form>
+    </section>
+    <section><h2>حسب الشهر</h2><ul id="by-month"></ul></section>
+    <button id="export">نزّل CSV</button>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
+~~~
+
+~~~css style.css
+body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 2rem auto; padding: 0 1rem; }
+form { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: end; }
+.err { color: #b00020; display: block; min-height: 1em; }
+[aria-invalid="true"] { border: 2px solid #b00020; }
+table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+th, td { padding: .35rem .5rem; border-bottom: 1px solid #ddd; text-align: start; }
+#status { color: #b00020; }
+progress { width: 8rem; vertical-align: middle; accent-color: #188038; }
+progress.warn { accent-color: #e37400; }
+progress.over { accent-color: #c5221f; }
+[data-level="warn"] { color: #b06000; }
+[data-level="over"] { color: #c5221f; font-weight: 700; }
+~~~
+
+~~~js expenses.js
+export const CATS = { food: 'أكل', transport: 'مواصلات', bills: 'فواتير', fun: 'خروج', other: 'تاني' };
+const KEY = 'expenses';
+const VERSION = 2;
+
+export function parseAmount(input) {
+  const raw = String(input ?? '').trim()
+    .replace(/[٠-٩]/g, d => d.charCodeAt(0) - 0x660).replace('٫', '.');
+  const amount = Number(raw);
+  if (!/^\d+(\.\d{1,2})?$/.test(raw)) return { error: 'اكتب مبلغ بالأرقام، وبحد أقصى قرشين بعد العلامة' };
+  if (amount <= 0 || amount > 1_000_000) return { error: 'المبلغ لازم يبقى أكبر من صفر ومش أكتر من مليون' };
+  return { cents: Math.round(amount * 100) };
+}
+
+export function validate(input) {
+  const errors = {};
+  const amount = parseAmount(input.amount);
+  if (amount.error) errors.amount = amount.error;
+  if (!Object.hasOwn(CATS, input.cat)) errors.cat = 'اختار تصنيف من اللستة';
+  if (!isRealDate(input.date)) errors.date = 'التاريخ مش صحيح';
+  const note = String(input.note ?? '').trim().slice(0, 80);
+  if (Object.keys(errors).length) return { ok: false, errors };
+  return { ok: true, value: { cents: amount.cents, cat: input.cat, date: input.date, note } };
+}
+
+export function isRealDate(s) {
+  if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(s + 'T00:00:00Z');
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+}
+
+export function totalsBy(items, keyOf) {
+  const out = new Map();
+  for (const it of items) out.set(keyOf(it), (out.get(keyOf(it)) ?? 0) + it.cents);
+  return [...out].sort((a, b) => b[1] - a[1]);
+}
+
+// spent و budget بالقروش. level: ok لحد ٨٠٪، و warn فوقها، و over فوق ١٠٠٪
+export function budgetStatus(spent, budget) {
+  const pct = Math.round(spent / budget * 100);
+  return { pct, level: pct > 100 ? 'over' : pct > 80 ? 'warn' : 'ok' };
+}
+
+export function toCSV(items) {
+  const cell = (v) => {
+    let s = String(v);
+    if (/^[=+\-@]/.test(s)) s = "'" + s;
+    return /[",\n]/.test(s) ? '"' + s.replaceAll('"', '""') + '"' : s;
+  };
+  const rows = [['date', 'category', 'amount', 'note']];
+  for (const it of items) rows.push([it.date, CATS[it.cat], (it.cents / 100).toFixed(2), it.note]);
+  return '\uFEFF' + rows.map(r => r.map(cell).join(',')).join('\r\n');
+}
+
+const EMPTY = () => ({ items: [], budgets: {} });
+
+function cleanItems(items) {
+  if (!Array.isArray(items)) return [];
+  return items.filter(it => it && typeof it.id === 'string'
+    && Number.isInteger(it.cents) && it.cents > 0
+    && Object.hasOwn(CATS, it.cat) && isRealDate(it.date)
+    && typeof it.note === 'string');
+}
+
+function cleanBudgets(budgets) {
+  const out = {};
+  if (!budgets || typeof budgets !== 'object') return out;
+  for (const [cat, cents] of Object.entries(budgets)) {
+    if (Object.hasOwn(CATS, cat) && Number.isInteger(cents) && cents > 0) out[cat] = cents;
+  }
+  return out;
+}
+
+// v1: { version: 1, items }  →  v2: { version: 2, items, budgets }
+function migrate(data) {
+  if (data?.version === 1) return { version: 2, items: data.items, budgets: {} };
+  return data;
+}
+
+export function load(storage) {
+  let raw;
+  try { raw = storage.getItem(KEY); } catch { return EMPTY(); }
+  if (!raw) return EMPTY();
+  let data;
+  try { data = migrate(JSON.parse(raw)); } catch { return EMPTY(); }
+  if (data?.version !== VERSION) return EMPTY();
+  return { items: cleanItems(data.items), budgets: cleanBudgets(data.budgets) };
+}
+
+export function save(storage, items, budgets) {
+  try { storage.setItem(KEY, JSON.stringify({ version: VERSION, items, budgets })); return true; }
+  catch { return false; }
+}
+~~~
+
+~~~js app.js
+import { CATS, validate, parseAmount, totalsBy, budgetStatus, toCSV, load, save } from './expenses.js';
+
+const money = new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' });
+const day = new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium', timeZone: 'UTC' });
+const monthName = new Intl.DateTimeFormat('ar-EG', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const asDate = (s) => new Date(s + 'T00:00:00Z');
+const today = () => new Date().toLocaleDateString('en-CA');
+
+const store = (() => { try { return localStorage; } catch { return null; } })();
+const saved = load(store);
+const state = { items: saved.items, budgets: saved.budgets, editing: null };
+const $ = (sel) => document.querySelector(sel);
+const form = $('#form');
+const f = form.elements;
+
+const bf = $('#budget-form').elements;
+for (const [key, label] of Object.entries(CATS)) {
+  f.cat.append(new Option(label, key));
+  bf.cat.append(new Option(label, key));
+}
+f.date.value = today();
+
+function el(tag, text, data = {}) {
+  const node = document.createElement(tag);
+  node.textContent = text;
+  Object.assign(node.dataset, data);
+  return node;
+}
+
+function row(it) {
+  const tr = document.createElement('tr');
+  const cells = [day.format(asDate(it.date)), CATS[it.cat], money.format(it.cents / 100), it.note];
+  tr.append(...cells.map(text => el('td', text)));
+  const actions = el('td', '');
+  actions.append(el('button', 'عدّل', { act: 'edit', id: it.id }), el('button', 'امسح', { act: 'del', id: it.id }));
+  tr.append(actions);
+  return tr;
+}
+
+function categoryRows() {
+  const all = new Map(totalsBy(state.items, it => it.cat));
+  const month = today().slice(0, 7);
+  const thisMonth = new Map(totalsBy(state.items.filter(it => it.date.startsWith(month)), it => it.cat));
+  const cats = Object.keys(CATS).filter(k => all.has(k) || state.budgets[k]);
+  cats.sort((a, b) => (all.get(b) ?? 0) - (all.get(a) ?? 0));
+  return cats.map((k) => {
+    const li = el('li', CATS[k] + ': ' + money.format((all.get(k) ?? 0) / 100));
+    const budget = state.budgets[k];
+    if (budget) {
+      const spent = thisMonth.get(k) ?? 0;
+      const { pct, level } = budgetStatus(spent, budget);
+      const bar = document.createElement('progress');
+      bar.max = budget;
+      bar.value = Math.min(spent, budget);
+      bar.className = level;
+      const label = 'الشهر ده ' + money.format(spent / 100) + ' من ' + money.format(budget / 100);
+      bar.setAttribute('aria-label', label);
+      li.append(' · ' + label + ' ', bar, el('span', ' ' + pct.toLocaleString('ar-EG') + '٪', { level }));
+    }
+    return li;
+  });
+}
+
+function render() {
+  const newest = state.items.toSorted((a, b) => b.date.localeCompare(a.date));
+  $('#rows').replaceChildren(...newest.map(row));
+  $('#empty').hidden = state.items.length > 0;
+  $('#by-cat').replaceChildren(...categoryRows());
+  const byMonth = totalsBy(state.items, it => it.date.slice(0, 7)).sort((a, b) => b[0].localeCompare(a[0]));
+  $('#by-month').replaceChildren(...byMonth.map(([k, c]) => el('li', monthName.format(asDate(k + '-01')) + ': ' + money.format(c / 100))));
+  $('#export').disabled = state.items.length === 0;
+  $('#submit').textContent = state.editing ? 'احفظ التعديل' : 'ضيف';
+  $('#cancel').hidden = !state.editing;
+}
+
+function commit() {
+  $('#status').textContent = save(store, state.items, state.budgets) ? '' : 'مقدرناش نحفظ: التغييرات هتروح لما تقفل الصفحة';
+  render();
+}
+
+function showErrors(errors) {
+  for (const small of form.querySelectorAll('.err')) {
+    const name = small.dataset.for;
+    small.textContent = errors[name] ?? '';
+    f[name].setAttribute('aria-invalid', String(name in errors));
+  }
+}
+
+function clearForm() {
+  state.editing = null;
+  f.amount.value = '';
+  f.note.value = '';
+  showErrors({});
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const result = validate(Object.fromEntries(new FormData(form)));
+  showErrors(result.errors ?? {});
+  if (!result.ok) return form.querySelector('[aria-invalid="true"]').focus();
+  if (state.editing) {
+    state.items = state.items.map(it => it.id === state.editing ? { ...result.value, id: it.id } : it);
+  } else {
+    state.items.push({ ...result.value, id: crypto.randomUUID() });
+  }
+  clearForm();
+  commit();
+  f.amount.focus();
+});
+
+$('#rows').addEventListener('click', (e) => {
+  const { act, id } = e.target.dataset;
+  const it = state.items.find(x => x.id === id);
+  if (!it) return;
+  if (act === 'del' && confirm('تمسح ' + money.format(it.cents / 100) + '؟')) {
+    state.items = state.items.filter(x => x.id !== id);
+    if (state.editing === id) clearForm();
+    commit();
+  }
+  if (act === 'edit') {
+    state.editing = id;
+    f.amount.value = (it.cents / 100).toFixed(2);
+    f.cat.value = it.cat;
+    f.date.value = it.date;
+    f.note.value = it.note;
+    render();
+    f.amount.focus();
+  }
+});
+
+$('#cancel').addEventListener('click', () => { clearForm(); render(); });
+
+$('#budget-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const amount = parseAmount(bf.amount.value);
+  $('#budget-err').textContent = amount.error ?? '';
+  if (amount.error) return bf.amount.focus();
+  state.budgets = { ...state.budgets, [bf.cat.value]: amount.cents };
+  bf.amount.value = '';
+  commit();
+});
+
+$('#export').addEventListener('click', () => {
+  const blob = new Blob([toCSV(state.items)], { type: 'text/csv;charset=utf-8' });
+  const a = el('a', '');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'expenses-' + today() + '.csv';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 0);
+});
+
+render();
+~~~
+
+## الأجزاء المهمة
+
+**شكل الداتا المحفوظة:**
+
+~~~text
+النسخة ١:  { "version": 1, "items": [...] }
+النسخة ٢:  { "version": 2, "items": [...], "budgets": { "food": 150000 } }
+~~~
+
+الميزانية بالقروش زي المصاريف، ومفتاحها التصنيف الإنجليزي.
+
+| الحتة | ليه |
+|---|---|
+| [[migrate(data)]] | بتحوّل النسخة ١ لـ ٢ **وهي بتقرا**: نفس [[items]] و [[budgets: {}]]. وبعدها الفحص العادي ([[version !== VERSION]]) بيشتغل على الشكل الجديد. نسخة ٣ بعدين = سطر [[if]] جديد في [[migrate]] |
+| [[cleanBudgets]] | زي فحص البنود: التصنيف من اللستة بـ [[hasOwn]]، والقيمة رقم صحيح موجب. ميزانية بايظة بتتشال لوحدها والباقي يعيش |
+| [[parseAmount]] | اتفصلت من [[validate]] عشان فورم الميزانية يستخدم **نفس** قاعدة المبلغ: الأرقام العربي، وقرشين بالكتير، وأكبر من صفر |
+| [[budgetStatus(spent, budget)]] | دالة خالصة: النسبة والمستوى. [[> 80]] مش [[>= 80]]: ٨٠٪ بالظبط لسه أخضر، زي ما المطلوب قال «لو عدّى ٨٠٪» |
+| [[thisMonth]] في [[categoryRows]] | البنود اللي تاريخها بيبدأ بـ [[today().slice(0, 7)]] بس. الشهر نص زي [[2026-11]]، فمفيش [[Date]] ولا timezone |
+| [[bar.value = Math.min(spent, budget)]] | [[<progress>]] بيقف عند [[max]] كده كده، بس الرقم الحقيقي (١١٠٪) مكتوب جنبه |
+| [[accent-color]] | اللون اللي المتصفح بيرسم بيه الشريط، من غير ما تعيد رسمه بـ CSS طويل. اتقاس: [[getComputedStyle(bar).accentColor]] = [[rgb(227, 116, 0)]] على [[.warn]] |
+| [[aria-label]] على الشريط | قارئ الشاشة بيقول «الشهر ده ١٬٢٠٠ من ١٬٥٠٠» بدل «progress bar ٨٠٪» من غير سياق |
+| [[state.budgets = { ...state.budgets, [cat]: cents }]] | object جديد بالتصنيف ده متغيّر، و [[commit]] بيحفظ ويرسم: نفس الطريق الوحيد لأي تغيير |
+
+## الاختبارات
+
+~~~js budget.test.mjs
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { load, save, budgetStatus, parseAmount } from './expenses.js';
+
+const memory = (init) => {
+  const m = new Map(init ? [['expenses', init]] : []);
+  return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)), raw: () => m.get('expenses') };
+};
+const item = { id: 'a', cents: 4550, cat: 'food', date: '2026-11-05', note: 'فطار' };
+
+test('داتا النسخة ١ بتفتح: المصاريف موجودة والميزانيات فاضية', () => {
+  const st = memory(JSON.stringify({ version: 1, items: [item] }));
+  assert.deepEqual(load(st), { items: [item], budgets: {} });
+});
+
+test('أول save بعد التحويل بيكتب النسخة ٢', () => {
+  const st = memory(JSON.stringify({ version: 1, items: [item] }));
+  const { items, budgets } = load(st);
+  save(st, items, { ...budgets, food: 300000 });
+  assert.deepEqual(JSON.parse(st.raw()), { version: 2, items: [item], budgets: { food: 300000 } });
+  assert.deepEqual(load(st).budgets, { food: 300000 });
+});
+
+test('ميزانيات بايظة بتتشال والسليمة تعيش', () => {
+  const st = memory(JSON.stringify({ version: 2, items: [], budgets: { food: 300000, toString: 5, fun: -1, bills: '100', other: 1.5 } }));
+  assert.deepEqual(load(st).budgets, { food: 300000 });
+});
+
+test('نسخة مش معروفة أو JSON بايظ = فاضي', () => {
+  assert.deepEqual(load(memory('{"version":3,"items":[]}')), { items: [], budgets: {} });
+  assert.deepEqual(load(memory('{"version":2,')), { items: [], budgets: {} });
+});
+
+test('budgetStatus: ٨٠٪ لسه ok، وبعدها warn، وبعد ١٠٠ over', () => {
+  assert.deepEqual(budgetStatus(240000, 300000), { pct: 80, level: 'ok' });
+  assert.deepEqual(budgetStatus(249000, 300000), { pct: 83, level: 'warn' });
+  assert.deepEqual(budgetStatus(300000, 300000), { pct: 100, level: 'warn' });
+  assert.deepEqual(budgetStatus(310000, 300000), { pct: 103, level: 'over' });
+});
+
+test('parseAmount بيقبل العربي ويرفض الغلط', () => {
+  assert.deepEqual(parseAmount('٣٠٠٠'), { cents: 300000 });
+  assert.ok(parseAmount('0').error);
+  assert.ok(parseAmount('3k').error);
+});
+~~~
+
+~~~text الناتج: node --test budget.test.mjs (Node 24.22، ٢١ نوفمبر ٢٠٢٦)
+✔ داتا النسخة ١ بتفتح: المصاريف موجودة والميزانيات فاضية (2.7828ms)
+✔ أول save بعد التحويل بيكتب النسخة ٢ (0.305ms)
+✔ ميزانيات بايظة بتتشال والسليمة تعيش (0.1552ms)
+✔ نسخة مش معروفة أو JSON بايظ = فاضي (0.1665ms)
+✔ budgetStatus: ٨٠٪ لسه ok، وبعدها warn، وبعد ١٠٠ over (0.1636ms)
+✔ parseAmount بيقبل العربي ويرفض الغلط (0.2878ms)
+ℹ pass 6
+ℹ fail 0
+~~~
+
+## اتجرّب في Chrome 158: التحويل من النسخة القديمة بجد
+
+[[expense/]] (نسخة الدرس) و [[expense-budget/]] على نفس السيرفر يعني نفس الـ origin ونفس [[localStorage]]. ضفت ٣ بنود بالقديمة (١٢٠٠ أكل في نوفمبر، و ٩٠٠ أكل في أكتوبر، و ٣٠٠ مواصلات في نوفمبر)، وبعدين فتحت الجديدة:
+
+~~~text الناتج: node p3.cjs (Playwright)
+المحفوظ بالقديمة: version 1
+فتحت الجديدة:      3 صفوف | أكل: ٢٬١٠٠٫٠٠ | مواصلات: ٣٠٠٫٠٠      (مفيش ميزانيات)
+ميزانية أكل ١٥٠٠:  الشهر ده ١٬٢٠٠٫٠٠ من ١٬٥٠٠٫٠٠  ٨٠٪   [progress .ok   accent=rgb(24, 128, 56)]
++ ١٠٠ أكل:         الشهر ده ١٬٣٠٠٫٠٠ من ١٬٥٠٠٫٠٠  ٨٧٪   [progress .warn accent=rgb(227, 116, 0)]
++ ٢٥٠ أكل:         الشهر ده ١٬٥٥٠٫٠٠ من ١٬٥٠٠٫٠٠  ١٠٣٪  [progress .over accent=rgb(197, 34, 31)]
+مسحت الـ ٢٥٠:      الشهر ده ١٬٣٠٠٫٠٠ من ١٬٥٠٠٫٠٠  ٨٧٪   [.warn]
+ميزانية «abc»:     اكتب مبلغ بالأرقام، وبحد أقصى قرشين بعد العلامة
+reload:            ٨٧٪ زي ما هي
+المحفوظ دلوقتي:    version 2، و 4 بنود، و budgets { food: 150000 }
+pageerror: ولا واحد
+~~~
+
+(اختصرت الأسطر وشلت «ج.م.». الناتج الحقيقي فيه العملة.) الـ ٩٠٠ بتوع أكتوبر داخلين في «أكل: ٢٬١٠٠» (الإجمالي) ومش داخلين في «الشهر ده»: دي بالظبط الحاجة اللي المشروع طلبها.
+
+## الغلطة اللي حصلت
+
+غيّرت [[load]] ترجّع [[{ items, budgets }]] بدل array، وفتحت الصفحة بـ [[app.js]] القديم:
+
+~~~text الناتج (pageerror)
+state.items.toSorted is not a function
+~~~
+
+[[state.items]] بقت object. أي تغيير في شكل اللي دالة بترجّعه لازم يتغيّر في كل اللي بينادوها في نفس الـ commit، وده سبب إن [[app.js]] اتغيّر هنا في نفس الخطوة ([[const saved = load(store)]]).
+
+**الغلطة الشائعة:** تزوّد [[budgets]] للداتا من غير ما تغيّر [[VERSION]]: الكود الجديد هيقرا داتا قديمة مفيهاش [[budgets]] ويقع على [[undefined]] في مكان ما، والكود القديم (لو حد فاتح تاب قديمة) هيكتب فوق الجديد ويمسح الميزانيات. أو تحوّل وانت **بتكتب** بدل ما تحوّل وانت **بتقرا**: لو اليوزر فتح ومكتبش حاجة، الداتا فضلت قديمة، وده صح، بس الكود لازم يفهمها برضه.` },
+        { lvl: 'متوسط', dir: "expense-import", t: R`استيراد CSV`, what: R`ضيف زرار «استورد» بيقرا ملف بـ [[<input type="file">]] (درس «input type=file»)، ويفك نفس الـ CSV اللي التطبيق بيصدّره: الـ BOM في الأول، والخانات اللي بين علامتين تنصيص، و [[""]] جواها. وكل صف يعدّي على [[validate]] نفسها، والصف البايظ ميتضافش.`, done: R`تصدّر، وتمسح كل حاجة، وتستورد نفس الملف: الإجماليات بالظبط زي الأول. ولو عدّلت صف في الملف وخليت المبلغ [[abc]]، التطبيق بيقول «صف ٣: المبلغ مش صحيح» ويضيف الباقي.`, sol: R`~~~view 640 المصاريف باستيراد CSV
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>مصاريفي</title>
+  <style>
+body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 2rem auto; padding: 0 1rem; }
+form { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: end; }
+.err { color: #b00020; display: block; min-height: 1em; }
+[aria-invalid="true"] { border: 2px solid #b00020; }
+table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+th, td { padding: .35rem .5rem; border-bottom: 1px solid #ddd; text-align: start; }
+#status { color: #b00020; }
+#import-report { white-space: pre-line; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>مصاريفي</h1>
+    <form id="form" novalidate>
+      <label>المبلغ <input name="amount" inputmode="decimal" autocomplete="off"></label>
+      <small class="err" data-for="amount"></small>
+      <label>التصنيف <select name="cat"></select></label>
+      <small class="err" data-for="cat"></small>
+      <label>التاريخ <input name="date" type="date"></label>
+      <small class="err" data-for="date"></small>
+      <label>ملاحظة <input name="note" maxlength="80"></label>
+      <button id="submit">ضيف</button>
+      <button type="button" id="cancel" hidden>إلغاء التعديل</button>
+    </form>
+    <p id="status" role="status"></p>
+    <table>
+      <thead><tr><th>التاريخ</th><th>التصنيف</th><th>المبلغ</th><th>ملاحظة</th><th></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p id="empty">لسه مفيش مصاريف.</p>
+    <section><h2>حسب التصنيف</h2><ul id="by-cat"></ul></section>
+    <section><h2>حسب الشهر</h2><ul id="by-month"></ul></section>
+    <button id="export">نزّل CSV</button>
+    <label>استورد CSV <input type="file" id="import" accept=".csv,text/csv"></label>
+    <p id="import-report" role="status"></p>
+  </main>
+  <script type="module">
+const CATS = { food: 'أكل', transport: 'مواصلات', bills: 'فواتير', fun: 'خروج', other: 'تاني' };
+const KEY = 'expenses';
+const VERSION = 1;
+
+function validate(input) {
+  const errors = {};
+  const raw = String(input.amount ?? '').trim()
+    .replace(/[٠-٩]/g, d => d.charCodeAt(0) - 0x660).replace('٫', '.');
+  const amount = Number(raw);
+  if (!/^\d+(\.\d{1,2})?$/.test(raw)) errors.amount = 'اكتب مبلغ بالأرقام، وبحد أقصى قرشين بعد العلامة';
+  else if (amount <= 0 || amount > 1_000_000) errors.amount = 'المبلغ لازم يبقى أكبر من صفر ومش أكتر من مليون';
+  if (!Object.hasOwn(CATS, input.cat)) errors.cat = 'اختار تصنيف من اللستة';
+  if (!isRealDate(input.date)) errors.date = 'التاريخ مش صحيح';
+  const note = String(input.note ?? '').trim().slice(0, 80);
+  if (Object.keys(errors).length) return { ok: false, errors };
+  return { ok: true, value: { cents: Math.round(amount * 100), cat: input.cat, date: input.date, note } };
+}
+
+function isRealDate(s) {
+  if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(s + 'T00:00:00Z');
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+}
+
+function totalsBy(items, keyOf) {
+  const out = new Map();
+  for (const it of items) out.set(keyOf(it), (out.get(keyOf(it)) ?? 0) + it.cents);
+  return [...out].sort((a, b) => b[1] - a[1]);
+}
+
+function toCSV(items) {
+  const cell = (v) => {
+    let s = String(v);
+    if (/^[=+\-@]/.test(s)) s = "'" + s;
+    return /[",\n]/.test(s) ? '"' + s.replaceAll('"', '""') + '"' : s;
+  };
+  const rows = [['date', 'category', 'amount', 'note']];
+  for (const it of items) rows.push([it.date, CATS[it.cat], (it.cents / 100).toFixed(2), it.note]);
+  return '\uFEFF' + rows.map(r => r.map(cell).join(',')).join('\r\n');
+}
+
+function load(storage) {
+  let raw;
+  try { raw = storage.getItem(KEY); } catch { return []; }
+  if (!raw) return [];
+  let data;
+  try { data = JSON.parse(raw); } catch { return []; }
+  if (data?.version !== VERSION || !Array.isArray(data.items)) return [];
+  return data.items.filter(it => it && typeof it.id === 'string'
+    && Number.isInteger(it.cents) && it.cents > 0
+    && Object.hasOwn(CATS, it.cat) && isRealDate(it.date)
+    && typeof it.note === 'string');
+}
+
+function save(storage, items) {
+  try { storage.setItem(KEY, JSON.stringify({ version: VERSION, items })); return true; }
+  catch { return false; }
+}
+
+// RFC 4180: الخانات بفاصلة، والخانة اللي فيها فاصلة أو " أو سطر جديد بين علامتين، و "" جواها = "
+function parseCSV(text) {
+  const rows = [];
+  let row = [], cell = '', quoted = false;
+  const s = text.replace(/^\uFEFF/, '');
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (quoted) {
+      if (ch === '"' && s[i + 1] === '"') { cell += '"'; i++; }
+      else if (ch === '"') quoted = false;
+      else cell += ch;
+    } else if (ch === '"') quoted = true;
+    else if (ch === ',') { row.push(cell); cell = ''; }
+    else if (ch === '\n' || ch === '\r') {
+      if (ch === '\r' && s[i + 1] === '\n') i++;
+      row.push(cell); rows.push(row); row = []; cell = '';
+    } else cell += ch;
+  }
+  if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+
+const CAT_BY_NAME = Object.fromEntries(Object.entries(CATS).map(([k, v]) => [v, k]));
+const ROW_ERRORS = { amount: 'المبلغ مش صحيح', cat: 'التصنيف مش معروف', date: 'التاريخ مش صحيح' };
+
+// عكس toCSV: بيرجّع البنود السليمة، ورسالة لكل صف بايظ برقمه في الملف (العناوين = صف ١)
+function fromCSV(text) {
+  const [header, ...rows] = parseCSV(text);
+  if (header?.join(',') !== 'date,category,amount,note') {
+    return { items: [], errors: ['الملف ده مش من التطبيق: أول سطر لازم date,category,amount,note'] };
+  }
+  const items = [], errors = [];
+  rows.forEach((cells, i) => {
+    if (cells.length === 1 && cells[0] === '') return;
+    const [date, catName, amount, note = ''] = cells;
+    const input = { date, cat: CAT_BY_NAME[catName] ?? catName, amount, note: note.replace(/^'(?=[=+\-@])/, '') };
+    const result = validate(input);
+    if (result.ok) items.push(result.value);
+    else {
+      const field = Object.keys(result.errors)[0];
+      errors.push('صف ' + (i + 2).toLocaleString('ar-EG') + ': ' + ROW_ERRORS[field] + ' («' + (input[field] ?? '') + '»)');
+    }
+  });
+  return { items, errors };
+}
+
+
+
+const money = new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' });
+const day = new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium', timeZone: 'UTC' });
+const monthName = new Intl.DateTimeFormat('ar-EG', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const asDate = (s) => new Date(s + 'T00:00:00Z');
+const today = () => new Date().toLocaleDateString('en-CA');
+
+const store = (() => { try { return localStorage; } catch { return null; } })();
+const state = { items: load(store), editing: null };
+const $ = (sel) => document.querySelector(sel);
+const form = $('#form');
+const f = form.elements;
+
+for (const [key, label] of Object.entries(CATS)) f.cat.append(new Option(label, key));
+f.date.value = today();
+
+function el(tag, text, data = {}) {
+  const node = document.createElement(tag);
+  node.textContent = text;
+  Object.assign(node.dataset, data);
+  return node;
+}
+
+function row(it) {
+  const tr = document.createElement('tr');
+  const cells = [day.format(asDate(it.date)), CATS[it.cat], money.format(it.cents / 100), it.note];
+  tr.append(...cells.map(text => el('td', text)));
+  const actions = el('td', '');
+  actions.append(el('button', 'عدّل', { act: 'edit', id: it.id }), el('button', 'امسح', { act: 'del', id: it.id }));
+  tr.append(actions);
+  return tr;
+}
+
+function render() {
+  const newest = state.items.toSorted((a, b) => b.date.localeCompare(a.date));
+  $('#rows').replaceChildren(...newest.map(row));
+  $('#empty').hidden = state.items.length > 0;
+  const byCat = totalsBy(state.items, it => it.cat);
+  $('#by-cat').replaceChildren(...byCat.map(([k, c]) => el('li', CATS[k] + ': ' + money.format(c / 100))));
+  const byMonth = totalsBy(state.items, it => it.date.slice(0, 7)).sort((a, b) => b[0].localeCompare(a[0]));
+  $('#by-month').replaceChildren(...byMonth.map(([k, c]) => el('li', monthName.format(asDate(k + '-01')) + ': ' + money.format(c / 100))));
+  $('#export').disabled = state.items.length === 0;
+  $('#submit').textContent = state.editing ? 'احفظ التعديل' : 'ضيف';
+  $('#cancel').hidden = !state.editing;
+}
+
+function commit() {
+  $('#status').textContent = save(store, state.items) ? '' : 'مقدرناش نحفظ: التغييرات هتروح لما تقفل الصفحة';
+  render();
+}
+
+function showErrors(errors) {
+  for (const small of form.querySelectorAll('.err')) {
+    const name = small.dataset.for;
+    small.textContent = errors[name] ?? '';
+    f[name].setAttribute('aria-invalid', String(name in errors));
+  }
+}
+
+function clearForm() {
+  state.editing = null;
+  f.amount.value = '';
+  f.note.value = '';
+  showErrors({});
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const result = validate(Object.fromEntries(new FormData(form)));
+  showErrors(result.errors ?? {});
+  if (!result.ok) return form.querySelector('[aria-invalid="true"]').focus();
+  if (state.editing) {
+    state.items = state.items.map(it => it.id === state.editing ? { ...result.value, id: it.id } : it);
+  } else {
+    state.items.push({ ...result.value, id: crypto.randomUUID() });
+  }
+  clearForm();
+  commit();
+  f.amount.focus();
+});
+
+$('#rows').addEventListener('click', (e) => {
+  const { act, id } = e.target.dataset;
+  const it = state.items.find(x => x.id === id);
+  if (!it) return;
+  if (act === 'del' && confirm('تمسح ' + money.format(it.cents / 100) + '؟')) {
+    state.items = state.items.filter(x => x.id !== id);
+    if (state.editing === id) clearForm();
+    commit();
+  }
+  if (act === 'edit') {
+    state.editing = id;
+    f.amount.value = (it.cents / 100).toFixed(2);
+    f.cat.value = it.cat;
+    f.date.value = it.date;
+    f.note.value = it.note;
+    render();
+    f.amount.focus();
+  }
+});
+
+$('#cancel').addEventListener('click', () => { clearForm(); render(); });
+
+$('#export').addEventListener('click', () => {
+  const blob = new Blob([toCSV(state.items)], { type: 'text/csv;charset=utf-8' });
+  const a = el('a', '');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'expenses-' + today() + '.csv';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 0);
+});
+
+$('#import').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const { items, errors } = fromCSV(await file.text());
+  for (const it of items) state.items.push({ ...it, id: crypto.randomUUID() });
+  e.target.value = '';
+  commit();
+  const added = 'اتضاف ' + items.length.toLocaleString('ar-EG') + ' بند من «' + file.name + '».';
+  $('#import-report').textContent = [added, ...errors].join('\n');
+});
+
+// المعاينة بس: localStorage مقفول جوه الصندوق ده، فبنبدأ ببنود تجربة (في المتصفح عندك الداتا بتاعتك)
+if (!store) state.items = [
+  { id: 'd1', cents: 4550, cat: 'food', date: '2026-10-05', note: 'فطار' },
+  { id: 'd2', cents: 3000, cat: 'transport', date: '2026-10-06', note: 'مترو, وتاكسي' },
+  { id: 'd3', cents: 120000, cat: 'bills', date: '2026-09-28', note: 'كهربا' },
+  { id: 'd4', cents: 2500, cat: 'food', date: '2026-09-30', note: 'غدا' },
+];
+render();
+</script>
+</body>
+</html>
+~~~
+
+## هتشوف إيه
+
+تحت «نزّل CSV» فيه «استورد CSV». تختار ملف نزّلته من التطبيق: البنود بتتضاف للجدول، وتحت الزرار سطر «اتضاف ٤ بند من «الاسم.csv»»، وتحته سطر لكل صف بايظ برقمه في الملف («صف ٣: المبلغ مش صحيح («abc»)»)، والصف ده بس اللي مبيتضافش. (المعاينة دي فيها بنود تجربة، والحفظ مقفول فيها.)
+
+## الملفات
+
+~~~text
+expense-import/
+├── index.html        + input type=file و #import-report
+├── style.css         + white-space للتقرير
+├── expenses.js       + parseCSV و fromCSV
+├── app.js            + مستمع change على #import
+└── import.test.mjs   رايح جاي بـ node --test
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>مصاريفي</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>مصاريفي</h1>
+    <form id="form" novalidate>
+      <label>المبلغ <input name="amount" inputmode="decimal" autocomplete="off"></label>
+      <small class="err" data-for="amount"></small>
+      <label>التصنيف <select name="cat"></select></label>
+      <small class="err" data-for="cat"></small>
+      <label>التاريخ <input name="date" type="date"></label>
+      <small class="err" data-for="date"></small>
+      <label>ملاحظة <input name="note" maxlength="80"></label>
+      <button id="submit">ضيف</button>
+      <button type="button" id="cancel" hidden>إلغاء التعديل</button>
+    </form>
+    <p id="status" role="status"></p>
+    <table>
+      <thead><tr><th>التاريخ</th><th>التصنيف</th><th>المبلغ</th><th>ملاحظة</th><th></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p id="empty">لسه مفيش مصاريف.</p>
+    <section><h2>حسب التصنيف</h2><ul id="by-cat"></ul></section>
+    <section><h2>حسب الشهر</h2><ul id="by-month"></ul></section>
+    <button id="export">نزّل CSV</button>
+    <label>استورد CSV <input type="file" id="import" accept=".csv,text/csv"></label>
+    <p id="import-report" role="status"></p>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
+~~~
+
+~~~css style.css
+body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 2rem auto; padding: 0 1rem; }
+form { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: end; }
+.err { color: #b00020; display: block; min-height: 1em; }
+[aria-invalid="true"] { border: 2px solid #b00020; }
+table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+th, td { padding: .35rem .5rem; border-bottom: 1px solid #ddd; text-align: start; }
+#status { color: #b00020; }
+#import-report { white-space: pre-line; }
+~~~
+
+~~~js expenses.js
+export const CATS = { food: 'أكل', transport: 'مواصلات', bills: 'فواتير', fun: 'خروج', other: 'تاني' };
+const KEY = 'expenses';
+const VERSION = 1;
+
+export function validate(input) {
+  const errors = {};
+  const raw = String(input.amount ?? '').trim()
+    .replace(/[٠-٩]/g, d => d.charCodeAt(0) - 0x660).replace('٫', '.');
+  const amount = Number(raw);
+  if (!/^\d+(\.\d{1,2})?$/.test(raw)) errors.amount = 'اكتب مبلغ بالأرقام، وبحد أقصى قرشين بعد العلامة';
+  else if (amount <= 0 || amount > 1_000_000) errors.amount = 'المبلغ لازم يبقى أكبر من صفر ومش أكتر من مليون';
+  if (!Object.hasOwn(CATS, input.cat)) errors.cat = 'اختار تصنيف من اللستة';
+  if (!isRealDate(input.date)) errors.date = 'التاريخ مش صحيح';
+  const note = String(input.note ?? '').trim().slice(0, 80);
+  if (Object.keys(errors).length) return { ok: false, errors };
+  return { ok: true, value: { cents: Math.round(amount * 100), cat: input.cat, date: input.date, note } };
+}
+
+export function isRealDate(s) {
+  if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(s + 'T00:00:00Z');
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+}
+
+export function totalsBy(items, keyOf) {
+  const out = new Map();
+  for (const it of items) out.set(keyOf(it), (out.get(keyOf(it)) ?? 0) + it.cents);
+  return [...out].sort((a, b) => b[1] - a[1]);
+}
+
+export function toCSV(items) {
+  const cell = (v) => {
+    let s = String(v);
+    if (/^[=+\-@]/.test(s)) s = "'" + s;
+    return /[",\n]/.test(s) ? '"' + s.replaceAll('"', '""') + '"' : s;
+  };
+  const rows = [['date', 'category', 'amount', 'note']];
+  for (const it of items) rows.push([it.date, CATS[it.cat], (it.cents / 100).toFixed(2), it.note]);
+  return '\uFEFF' + rows.map(r => r.map(cell).join(',')).join('\r\n');
+}
+
+export function load(storage) {
+  let raw;
+  try { raw = storage.getItem(KEY); } catch { return []; }
+  if (!raw) return [];
+  let data;
+  try { data = JSON.parse(raw); } catch { return []; }
+  if (data?.version !== VERSION || !Array.isArray(data.items)) return [];
+  return data.items.filter(it => it && typeof it.id === 'string'
+    && Number.isInteger(it.cents) && it.cents > 0
+    && Object.hasOwn(CATS, it.cat) && isRealDate(it.date)
+    && typeof it.note === 'string');
+}
+
+export function save(storage, items) {
+  try { storage.setItem(KEY, JSON.stringify({ version: VERSION, items })); return true; }
+  catch { return false; }
+}
+
+// RFC 4180: الخانات بفاصلة، والخانة اللي فيها فاصلة أو " أو سطر جديد بين علامتين، و "" جواها = "
+export function parseCSV(text) {
+  const rows = [];
+  let row = [], cell = '', quoted = false;
+  const s = text.replace(/^\uFEFF/, '');
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (quoted) {
+      if (ch === '"' && s[i + 1] === '"') { cell += '"'; i++; }
+      else if (ch === '"') quoted = false;
+      else cell += ch;
+    } else if (ch === '"') quoted = true;
+    else if (ch === ',') { row.push(cell); cell = ''; }
+    else if (ch === '\n' || ch === '\r') {
+      if (ch === '\r' && s[i + 1] === '\n') i++;
+      row.push(cell); rows.push(row); row = []; cell = '';
+    } else cell += ch;
+  }
+  if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+
+const CAT_BY_NAME = Object.fromEntries(Object.entries(CATS).map(([k, v]) => [v, k]));
+const ROW_ERRORS = { amount: 'المبلغ مش صحيح', cat: 'التصنيف مش معروف', date: 'التاريخ مش صحيح' };
+
+// عكس toCSV: بيرجّع البنود السليمة، ورسالة لكل صف بايظ برقمه في الملف (العناوين = صف ١)
+export function fromCSV(text) {
+  const [header, ...rows] = parseCSV(text);
+  if (header?.join(',') !== 'date,category,amount,note') {
+    return { items: [], errors: ['الملف ده مش من التطبيق: أول سطر لازم date,category,amount,note'] };
+  }
+  const items = [], errors = [];
+  rows.forEach((cells, i) => {
+    if (cells.length === 1 && cells[0] === '') return;
+    const [date, catName, amount, note = ''] = cells;
+    const input = { date, cat: CAT_BY_NAME[catName] ?? catName, amount, note: note.replace(/^'(?=[=+\-@])/, '') };
+    const result = validate(input);
+    if (result.ok) items.push(result.value);
+    else {
+      const field = Object.keys(result.errors)[0];
+      errors.push('صف ' + (i + 2).toLocaleString('ar-EG') + ': ' + ROW_ERRORS[field] + ' («' + (input[field] ?? '') + '»)');
+    }
+  });
+  return { items, errors };
+}
+~~~
+
+~~~js app.js
+import { CATS, validate, totalsBy, toCSV, fromCSV, load, save } from './expenses.js';
+
+const money = new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' });
+const day = new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium', timeZone: 'UTC' });
+const monthName = new Intl.DateTimeFormat('ar-EG', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const asDate = (s) => new Date(s + 'T00:00:00Z');
+const today = () => new Date().toLocaleDateString('en-CA');
+
+const store = (() => { try { return localStorage; } catch { return null; } })();
+const state = { items: load(store), editing: null };
+const $ = (sel) => document.querySelector(sel);
+const form = $('#form');
+const f = form.elements;
+
+for (const [key, label] of Object.entries(CATS)) f.cat.append(new Option(label, key));
+f.date.value = today();
+
+function el(tag, text, data = {}) {
+  const node = document.createElement(tag);
+  node.textContent = text;
+  Object.assign(node.dataset, data);
+  return node;
+}
+
+function row(it) {
+  const tr = document.createElement('tr');
+  const cells = [day.format(asDate(it.date)), CATS[it.cat], money.format(it.cents / 100), it.note];
+  tr.append(...cells.map(text => el('td', text)));
+  const actions = el('td', '');
+  actions.append(el('button', 'عدّل', { act: 'edit', id: it.id }), el('button', 'امسح', { act: 'del', id: it.id }));
+  tr.append(actions);
+  return tr;
+}
+
+function render() {
+  const newest = state.items.toSorted((a, b) => b.date.localeCompare(a.date));
+  $('#rows').replaceChildren(...newest.map(row));
+  $('#empty').hidden = state.items.length > 0;
+  const byCat = totalsBy(state.items, it => it.cat);
+  $('#by-cat').replaceChildren(...byCat.map(([k, c]) => el('li', CATS[k] + ': ' + money.format(c / 100))));
+  const byMonth = totalsBy(state.items, it => it.date.slice(0, 7)).sort((a, b) => b[0].localeCompare(a[0]));
+  $('#by-month').replaceChildren(...byMonth.map(([k, c]) => el('li', monthName.format(asDate(k + '-01')) + ': ' + money.format(c / 100))));
+  $('#export').disabled = state.items.length === 0;
+  $('#submit').textContent = state.editing ? 'احفظ التعديل' : 'ضيف';
+  $('#cancel').hidden = !state.editing;
+}
+
+function commit() {
+  $('#status').textContent = save(store, state.items) ? '' : 'مقدرناش نحفظ: التغييرات هتروح لما تقفل الصفحة';
+  render();
+}
+
+function showErrors(errors) {
+  for (const small of form.querySelectorAll('.err')) {
+    const name = small.dataset.for;
+    small.textContent = errors[name] ?? '';
+    f[name].setAttribute('aria-invalid', String(name in errors));
+  }
+}
+
+function clearForm() {
+  state.editing = null;
+  f.amount.value = '';
+  f.note.value = '';
+  showErrors({});
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const result = validate(Object.fromEntries(new FormData(form)));
+  showErrors(result.errors ?? {});
+  if (!result.ok) return form.querySelector('[aria-invalid="true"]').focus();
+  if (state.editing) {
+    state.items = state.items.map(it => it.id === state.editing ? { ...result.value, id: it.id } : it);
+  } else {
+    state.items.push({ ...result.value, id: crypto.randomUUID() });
+  }
+  clearForm();
+  commit();
+  f.amount.focus();
+});
+
+$('#rows').addEventListener('click', (e) => {
+  const { act, id } = e.target.dataset;
+  const it = state.items.find(x => x.id === id);
+  if (!it) return;
+  if (act === 'del' && confirm('تمسح ' + money.format(it.cents / 100) + '؟')) {
+    state.items = state.items.filter(x => x.id !== id);
+    if (state.editing === id) clearForm();
+    commit();
+  }
+  if (act === 'edit') {
+    state.editing = id;
+    f.amount.value = (it.cents / 100).toFixed(2);
+    f.cat.value = it.cat;
+    f.date.value = it.date;
+    f.note.value = it.note;
+    render();
+    f.amount.focus();
+  }
+});
+
+$('#cancel').addEventListener('click', () => { clearForm(); render(); });
+
+$('#export').addEventListener('click', () => {
+  const blob = new Blob([toCSV(state.items)], { type: 'text/csv;charset=utf-8' });
+  const a = el('a', '');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'expenses-' + today() + '.csv';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 0);
+});
+
+$('#import').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const { items, errors } = fromCSV(await file.text());
+  for (const it of items) state.items.push({ ...it, id: crypto.randomUUID() });
+  e.target.value = '';
+  commit();
+  const added = 'اتضاف ' + items.length.toLocaleString('ar-EG') + ' بند من «' + file.name + '».';
+  $('#import-report').textContent = [added, ...errors].join('\n');
+});
+
+render();
+~~~
+
+## [[parseCSV]]: حرف حرف بحالة واحدة
+
+مينفعش [[text.split('\n').map(l => l.split(','))]]: «مترو, وتاكسي» فيها فاصلة، والملاحظة ممكن يبقى فيها سطر جديد. فبنمشي على النص حرف حرف ومعانا [[quoted]]: احنا جوه علامتين تنصيص ولا لأ.
+
+| الحرف | برّه العلامتين | جوه العلامتين |
+|---|---|---|
+| [["]] | ابدأ خانة متقفلة | لو بعده [["]] تاني: ده [["]] جوه النص ([[""]] → [["]]). غير كده: اقفل |
+| [[,]] | خانة خلصت | جزء من النص |
+| [[\r\n]] أو [[\n]] | صف خلص | جزء من النص |
+| أي حاجة تانية | جزء من الخانة | جزء من الخانة |
+
+- [[replace(/^\uFEFF/, '')]]: الـ BOM اللي [[toCSV]] حطه عشان Excel، بيتشال قبل أي حاجة. من غيره أول عنوان بيبقى [[\uFEFFdate]] والملف بيترفض.
+- آخر سطر من غير [[\n]] بيتحط في الآخر ([[if (cell !== '' || row.length)]]).
+
+## [[fromCSV]]: كل صف من [[validate]] نفسها
+
+| الحتة | ليه |
+|---|---|
+| فحص العناوين | ملف من برنامج تاني بأعمدة مختلفة بيترفض كله برسالة واضحة، بدل ما يتقري غلط |
+| [[CAT_BY_NAME]] | الملف فيه «أكل» (العربي)، والتخزين [[food]]. الـ object المعكوس بيرجّعه. اسم مش معروف بيعدّي زي ما هو، و [[validate]] بترفضه |
+| [[note.replace(/^'(?=[=+\-@])/, '')]] | [[toCSV]] بيحط [[']] قبل أي خانة بتبدأ بـ [[=]] عشان Excel ميشغّلهاش. هنا بنشيله، فملاحظة [[=1+1]] بترجع زي ما كانت |
+| [[validate(input)]] | نفس الدالة اللي الفورم بيستخدمها: الملف مش أوثق من اليوزر. صف فيه [[toString]] أو ٣٠ فبراير بيترفض بنفس القاعدة |
+| [[i + 2]] | رقم الصف **في الملف**: العناوين صف ١، وأول بند صف ٢. ده الرقم اللي اليوزر هيشوفه لو فتح الملف في Excel |
+| [[crypto.randomUUID()]] في [[app.js]] | كل بند مستورد بياخد [[id]] جديد. الملف أصلًا مفيهوش [[id]] |
+| [[e.target.value = '']] | من غيره، اختيار نفس الملف مرتين ورا بعض مبيطلّعش [[change]] تاني |
+
+## الاختبارات
+
+~~~js import.test.mjs
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { toCSV, fromCSV, parseCSV } from './expenses.js';
+
+const items = [
+  { id: 'a', cents: 5000, cat: 'food', date: '2026-10-05', note: 'فطار وقهوة' },
+  { id: 'b', cents: 3000, cat: 'transport', date: '2026-10-06', note: 'مترو, وتاكسي' },
+  { id: 'c', cents: 1999, cat: 'fun', date: '2026-10-07', note: 'قال "حلو"' },
+  { id: 'd', cents: 100, cat: 'other', date: '2026-10-08', note: '=1+1' },
+  { id: 'e', cents: 120000, cat: 'bills', date: '2026-09-28', note: 'سطرين\nفي ملاحظة' },
+];
+const strip = ({ id, ...rest }) => rest;
+
+test('parseCSV: BOM وعلامات تنصيص و "" و CRLF', () => {
+  assert.deepEqual(parseCSV('\uFEFFa,b\r\n"x, y","قال ""حلو"""\r\n'), [['a', 'b'], ['x, y', 'قال "حلو"']]);
+});
+
+test('صدّر واستورد: نفس البنود بالظبط (من غير id)', () => {
+  const { items: back, errors } = fromCSV(toCSV(items));
+  assert.deepEqual(errors, []);
+  assert.deepEqual(back, items.map(strip));
+});
+
+test('صف بايظ ميتضافش، ورسالته برقم الصف في الملف', () => {
+  const csv = toCSV(items).replace('2026-10-06,مواصلات,30.00', '2026-10-06,مواصلات,abc');
+  const { items: back, errors } = fromCSV(csv);
+  assert.equal(back.length, 4);
+  assert.deepEqual(errors, ['صف ٣: المبلغ مش صحيح («abc»)']);
+});
+
+test('ملف مش من التطبيق', () => {
+  assert.equal(fromCSV('name,price\nx,1').errors.length, 1);
+});
+~~~
+
+~~~text الناتج: node --test import.test.mjs (Node 24.22، ٢١ نوفمبر ٢٠٢٦)
+✔ parseCSV: BOM وعلامات تنصيص و "" و CRLF (1.8061ms)
+✔ صدّر واستورد: نفس البنود بالظبط (من غير id) (1.4399ms)
+✔ صف بايظ ميتضافش، ورسالته برقم الصف في الملف (12.7878ms)
+✔ ملف مش من التطبيق (0.189ms)
+ℹ pass 4
+ℹ fail 0
+~~~
+
+اختبار «صدّر واستورد» فيه أصعب ٤ ملاحظات: فاصلة، و [["]]، و [[=1+1]]، وسطر جديد. ولما شلت سطر الـ [[']] من [[fromCSV]] عشان أتأكد إنه بيمسك حاجة:
+
+~~~text الناتج
+✖ صدّر واستورد: نفس البنود بالظبط (من غير id) (2.7678ms)
+  + actual - expected
+  +     note: "'=1+1"
+  -     note: '=1+1'
+~~~
+
+## اتجرّب في Chrome 158 (سيرفر، ونزّلت الملف بجد)
+
+٤ بنود، و «نزّل CSV» (Playwright استلم التنزيل)، وامسح الأربعة، واستورد نفس الملف. وبعدين نسخة من الملف فيها [[abc]] مكان [[30.00]]:
+
+~~~text الناتج: node p4.cjs
+الملف:        expenses-2026-11-21.csv   أول ٣ بايتات: ef bb bf
+قبل:          فواتير ١٬٢٠٠٫٠٠ / أكل ٤٥٫٥٠ / مواصلات ٣٠٫٠٠ / خروج ١٩٫٩٩ / أكتوبر ٩٥٫٤٩ / سبتمبر ١٬٢٠٠٫٠٠
+بعد المسح:    «لسه مفيش مصاريف» ظاهرة
+بعد الاستيراد: نفس السطر بالظبط   same: true
+التقرير:       اتضاف ٤ بند من «expenses-2026-11-21.csv».
+الملف البايظ: اتضاف ٣ بند من «expenses-2026-11-21-bad.csv».
+               صف ٣: المبلغ مش صحيح («abc»)
+الصفوف:        3
+pageerror:     ولا واحد
+~~~
+
+(«ج.م.» اتشالت من السطور عشان تقصر.) [[same: true]] هو مقارنة نص الإجماليات قبل وبعد حرف بحرف.
+
+**الغلطة الشائعة:** تستورد بـ [[split(',')]] وتجرّب على ملف «نضيف» فيشتغل، وأول ملاحظة فيها فاصلة تزحلق كل الأعمدة اللي بعدها: التاريخ في خانة التصنيف والمبلغ «وتاكسي». وغلطة تانية: تضيف البنود المستوردة من غير [[validate]] لأن «الملف طالع من التطبيق نفسه»: أي حد يقدر يعدّله في Excel قبل ما يستورده.` },
+        { lvl: 'كبير', dir: "expense-server", t: R`مصاريف بسيرفر حقيقي`, what: R`انقل الحفظ من [[localStorage]] لسيرفر Node زي [[server.js]] بتاع مشروع البحث: [[GET]] و [[POST]] و [[PUT]] و [[DELETE]] على [[/api/expenses]]، والداتا في ملف JSON بيتكتب في ملف مؤقت وبعدين [[rename]] عشان ميتقطعش. السيرفر بيستخدم [[validate]] نفسها (نفس الملف بيتستورد في الاتنين). والواجهة بتستخدم [[request()]] من «مشروع: fetch محترم» بمهلة وإعادة محاولة، وبتعمل optimistic update: البند بيظهر على طول، ولو السيرفر رفض بيرجع زي ما كان ويظهر الخطأ. والسيرفر بيكتب لوج سطر لكل طلب. وفيه اختبارات بـ [[node --test]].`, done: R`تقفل السيرفر وانت بتضيف بند: البند بيختفي ورسالة «مقدرناش نحفظ» بتظهر، ومفيش بند متكرر لما السيرفر يرجع. و [[curl -X POST]] بمبلغ سالب بيرجّع 400 برسالة [[validate]] نفسها. والاختبارات بتعدّي، والسيرفر بيتقفل ويتفتح والداتا موجودة.`, ext: R`ضيف يوزرز (كل واحد يشوف مصاريفه بس)، وبعدها انقل الملف لـ SQLite أو PostgreSQL (تاب «SQL و Prisma»)، وحطه على VPS ورا Nginx.`, sol: R`~~~view 700 المصاريف بسيرفر (معاينة بسيرفر وهمي)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>مصاريفي</title>
+  <style>
+body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 2rem auto; padding: 0 1rem; }
+form { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: end; }
+.err { color: #b00020; display: block; min-height: 1em; }
+[aria-invalid="true"] { border: 2px solid #b00020; }
+table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+th, td { padding: .35rem .5rem; border-bottom: 1px solid #ddd; text-align: start; }
+#status { color: #b00020; }
+.pending td { opacity: .55; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>مصاريفي</h1>
+    <form id="form" novalidate>
+      <label>المبلغ <input name="amount" inputmode="decimal" autocomplete="off"></label>
+      <small class="err" data-for="amount"></small>
+      <label>التصنيف <select name="cat"></select></label>
+      <small class="err" data-for="cat"></small>
+      <label>التاريخ <input name="date" type="date"></label>
+      <small class="err" data-for="date"></small>
+      <label>ملاحظة <input name="note" maxlength="80"></label>
+      <button id="submit">ضيف</button>
+      <button type="button" id="cancel" hidden>إلغاء التعديل</button>
+    </form>
+    <p id="status" role="status"></p>
+    <table>
+      <thead><tr><th>التاريخ</th><th>التصنيف</th><th>المبلغ</th><th>ملاحظة</th><th></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p id="empty">لسه مفيش مصاريف.</p>
+    <section><h2>حسب التصنيف</h2><ul id="by-cat"></ul></section>
+    <section><h2>حسب الشهر</h2><ul id="by-month"></ul></section>
+    <button id="export">نزّل CSV</button>
+  </main>
+  <script type="module">
+// المعاينة بس: مفيش Node جوه الصندوق ده، فـ fetch بيكلّم «سيرفر» وهمي في الذاكرة بنفس قواعد server.js
+// والمربع اللي فوق بيقفله، عشان تشوف الـ optimistic update بيرجع إزاي
+const fakeDb = [
+  { id: 'd1', cents: 4550, cat: 'food', date: '2026-11-05', note: 'فطار' },
+  { id: 'd2', cents: 120000, cat: 'bills', date: '2026-10-28', note: 'كهربا' },
+];
+const down = document.createElement('label');
+down.innerHTML = '<input type="checkbox" id="fake-down"> السيرفر الوهمي مقفول';
+down.style.cssText = 'display:block;padding:.4rem;background:#fff3cd;margin-bottom:.5rem';
+document.body.prepend(down);
+const reply = (status, data) => new Response(data === null ? null : JSON.stringify(data), { status, headers: { 'content-type': 'application/json' } });
+window.fetch = (url, { method = 'GET', body } = {}) => new Promise((resolve, reject) => setTimeout(() => {
+  if (document.querySelector('#fake-down').checked) return reject(new TypeError('Failed to fetch'));
+  const id = String(url).split('/')[3];
+  const input = body ? JSON.parse(body) : null;
+  const i = fakeDb.findIndex((it) => it.id === (id ?? input?.id));
+  if (method === 'GET') return resolve(reply(200, fakeDb));
+  if (method === 'DELETE') { if (i < 0) return resolve(reply(404, { error: 'البند مش موجود' })); fakeDb.splice(i, 1); return resolve(reply(204, null)); }
+  const result = validate(input);
+  if (!result.ok) return resolve(reply(400, { errors: result.errors }));
+  if (method === 'POST' && i >= 0) return resolve(reply(200, fakeDb[i]));
+  const item = { ...result.value, id: id ?? input.id };
+  if (method === 'POST') fakeDb.push(item); else fakeDb[i] = item;
+  resolve(reply(method === 'POST' ? 201 : 200, item));
+}, 150));
+
+const CATS = { food: 'أكل', transport: 'مواصلات', bills: 'فواتير', fun: 'خروج', other: 'تاني' };
+const KEY = 'expenses';
+const VERSION = 1;
+
+function validate(input) {
+  const errors = {};
+  const raw = String(input.amount ?? '').trim()
+    .replace(/[٠-٩]/g, d => d.charCodeAt(0) - 0x660).replace('٫', '.');
+  const amount = Number(raw);
+  if (!/^\d+(\.\d{1,2})?$/.test(raw)) errors.amount = 'اكتب مبلغ بالأرقام، وبحد أقصى قرشين بعد العلامة';
+  else if (amount <= 0 || amount > 1_000_000) errors.amount = 'المبلغ لازم يبقى أكبر من صفر ومش أكتر من مليون';
+  if (!Object.hasOwn(CATS, input.cat)) errors.cat = 'اختار تصنيف من اللستة';
+  if (!isRealDate(input.date)) errors.date = 'التاريخ مش صحيح';
+  const note = String(input.note ?? '').trim().slice(0, 80);
+  if (Object.keys(errors).length) return { ok: false, errors };
+  return { ok: true, value: { cents: Math.round(amount * 100), cat: input.cat, date: input.date, note } };
+}
+
+function isRealDate(s) {
+  if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(s + 'T00:00:00Z');
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+}
+
+function totalsBy(items, keyOf) {
+  const out = new Map();
+  for (const it of items) out.set(keyOf(it), (out.get(keyOf(it)) ?? 0) + it.cents);
+  return [...out].sort((a, b) => b[1] - a[1]);
+}
+
+function toCSV(items) {
+  const cell = (v) => {
+    let s = String(v);
+    if (/^[=+\-@]/.test(s)) s = "'" + s;
+    return /[",\n]/.test(s) ? '"' + s.replaceAll('"', '""') + '"' : s;
+  };
+  const rows = [['date', 'category', 'amount', 'note']];
+  for (const it of items) rows.push([it.date, CATS[it.cat], (it.cents / 100).toFixed(2), it.note]);
+  return '\uFEFF' + rows.map(r => r.map(cell).join(',')).join('\r\n');
+}
+
+function load(storage) {
+  let raw;
+  try { raw = storage.getItem(KEY); } catch { return []; }
+  if (!raw) return [];
+  let data;
+  try { data = JSON.parse(raw); } catch { return []; }
+  if (data?.version !== VERSION || !Array.isArray(data.items)) return [];
+  return data.items.filter(it => it && typeof it.id === 'string'
+    && Number.isInteger(it.cents) && it.cents > 0
+    && Object.hasOwn(CATS, it.cat) && isRealDate(it.date)
+    && typeof it.note === 'string');
+}
+
+function save(storage, items) {
+  try { storage.setItem(KEY, JSON.stringify({ version: VERSION, items })); return true; }
+  catch { return false; }
+}
+
+// request.js: غلاف fetch بتاع الوحدة كلها (مهلة، وإلغاء، وإعادة ذكية، وأخطاء ليها نوع)
+class HttpError extends Error {
+  constructor(response, body) {
+    super($__btHTTP $__{response.status} $__{response.statusText} على $__{response.url}$__bt);
+    this.name = 'HttpError';
+    this.status = response.status;
+    this.url = response.url;
+    this.body = body;
+  }
+}
+
+class NetworkError extends Error {
+  constructor(cause) {
+    super($__btفشل الاتصال: $__{cause?.code ?? cause?.message ?? 'سبب مش معروف'}$__bt);
+    this.name = 'NetworkError';
+    this.cause = cause;
+  }
+}
+
+const RETRY_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
+const SECONDS = /^\d+$/;
+const HTTP_DATE = /^[A-Z][a-z]{2}, \d{2} [A-Z][a-z]{2} \d{4} \d{2}:\d{2}:\d{2} GMT$/;
+
+function backoff(attempt, { base = 300, cap = 10_000, retryAfter = null, maxRetryAfter = 60_000 } = {}) {
+  if (retryAfter != null) {
+    const ms = retryAfter * 1000;
+    return ms <= maxRetryAfter ? ms : null;
+  }
+  const exp = Math.min(base * 2 ** attempt, cap);
+  return Math.round(exp / 2 + Math.random() * (exp / 2));
+}
+
+function parseRetryAfter(res) {
+  const raw = res.headers.get('retry-after');
+  if (!raw) return null;
+  if (SECONDS.test(raw)) return Number(raw);
+  if (!HTTP_DATE.test(raw)) return null;
+  const when = Date.parse(raw);
+  return Number.isNaN(when) ? null : Math.max(0, (when - Date.now()) / 1000);
+}
+
+const sleep = (ms, signal) => new Promise((resolve, reject) => {
+  signal?.throwIfAborted();
+  const t = setTimeout(resolve, ms);
+  signal?.addEventListener('abort', () => { clearTimeout(t); reject(signal.reason); }, { once: true });
+});
+
+async function readBody(res) {
+  const text = await res.text();
+  if (!(res.headers.get('content-type') ?? '').includes('json')) return text;
+  try { return JSON.parse(text); } catch { return text; }
+}
+
+async function request(url, {
+  timeout = 5000, retries = 2, base = 300, maxRetryAfter = 60_000,
+  signal: outer, onRetry, fetchImpl = fetch, ...init
+} = {}) {
+  let lastError;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    outer?.throwIfAborted();
+    const timer = AbortSignal.timeout(timeout);
+    const signal = outer ? AbortSignal.any([outer, timer]) : timer;
+    let res = null;
+    try {
+      res = await fetchImpl(url, { ...init, signal });
+    } catch (e) {
+      if (outer?.aborted) throw outer.reason;
+      lastError = e.name === 'TimeoutError' ? e : new NetworkError(e.cause ?? e);
+    }
+    if (res) {
+      if (res.ok) return res;
+      lastError = new HttpError(res, await readBody(res));
+      if (!RETRY_STATUS.has(res.status)) throw lastError;
+    }
+    if (attempt === retries) break;
+    const retryAfter = res ? parseRetryAfter(res) : null;
+    const wait = backoff(attempt, { base, retryAfter, maxRetryAfter });
+    if (wait == null) { lastError.retryAfter = retryAfter; break; }
+    onRetry?.({ attempt, status: res?.status, error: lastError, wait });
+    await sleep(wait, outer);
+  }
+  throw lastError;
+}
+
+async function json(url, options) {
+  const res = await request(url, options);
+  return res.json();
+}
+
+// api.js: كل كلام الواجهة مع السيرفر هنا، فوق request() بتاع «مشروع: fetch محترم»
+
+
+const OPTIONS = { timeout: 4000, retries: 2 };
+const send = (method, path, body) => request(path, {
+  ...OPTIONS,
+  method,
+  headers: body ? { 'content-type': 'application/json' } : {},
+  body: body ? JSON.stringify(body) : undefined,
+});
+
+const listExpenses = async () => (await send('GET', '/api/expenses')).json();
+const createExpense = async (input) => (await send('POST', '/api/expenses', input)).json();
+const updateExpense = async (id, input) => (await send('PUT', '/api/expenses/' + id, input)).json();
+const deleteExpense = (id) => send('DELETE', '/api/expenses/' + id);
+
+// رسالة لليوزر من أي خطأ: رسايل validate من السيرفر لو موجودة، وغير كده سبب عام
+function reason(e) {
+  if (e.name === 'HttpError' && e.body?.errors) return Object.values(e.body.errors).join('، ');
+  if (e.name === 'HttpError') return 'السيرفر رد بـ ' + e.status;
+  return 'السيرفر مش بيرد';
+}
+
+
+
+
+const money = new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' });
+const day = new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium', timeZone: 'UTC' });
+const monthName = new Intl.DateTimeFormat('ar-EG', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const asDate = (s) => new Date(s + 'T00:00:00Z');
+const today = () => new Date().toLocaleDateString('en-CA');
+
+const state = { items: [], editing: null, pending: new Set() };
+const $ = (sel) => document.querySelector(sel);
+const form = $('#form');
+const f = form.elements;
+
+for (const [key, label] of Object.entries(CATS)) f.cat.append(new Option(label, key));
+f.date.value = today();
+
+function el(tag, text, data = {}) {
+  const node = document.createElement(tag);
+  node.textContent = text;
+  Object.assign(node.dataset, data);
+  return node;
+}
+
+function row(it) {
+  const tr = document.createElement('tr');
+  const cells = [day.format(asDate(it.date)), CATS[it.cat], money.format(it.cents / 100), it.note];
+  tr.append(...cells.map(text => el('td', text)));
+  const actions = el('td', '');
+  actions.append(el('button', 'عدّل', { act: 'edit', id: it.id }), el('button', 'امسح', { act: 'del', id: it.id }));
+  tr.append(actions);
+  if (state.pending.has(it.id)) tr.className = 'pending';
+  return tr;
+}
+
+function render() {
+  const newest = state.items.toSorted((a, b) => b.date.localeCompare(a.date));
+  $('#rows').replaceChildren(...newest.map(row));
+  $('#empty').hidden = state.items.length > 0;
+  const byCat = totalsBy(state.items, it => it.cat);
+  $('#by-cat').replaceChildren(...byCat.map(([k, c]) => el('li', CATS[k] + ': ' + money.format(c / 100))));
+  const byMonth = totalsBy(state.items, it => it.date.slice(0, 7)).sort((a, b) => b[0].localeCompare(a[0]));
+  $('#by-month').replaceChildren(...byMonth.map(([k, c]) => el('li', monthName.format(asDate(k + '-01')) + ': ' + money.format(c / 100))));
+  $('#export').disabled = state.items.length === 0;
+  $('#submit').textContent = state.editing ? 'احفظ التعديل' : 'ضيف';
+  $('#cancel').hidden = !state.editing;
+}
+
+const say = (text) => { $('#status').textContent = text; };
+
+// optimistic: غيّر الشاشة على طول، وابعت، ولو السيرفر رفض رجّع اللي كان
+async function optimistic(change, send, undo) {
+  change();
+  render();
+  try {
+    await send();
+    say('');
+  } catch (e) {
+    undo();
+    say('مقدرناش نحفظ: ' + reason(e) + '. رجّعنا اللي كان.');
+  }
+  render();
+}
+
+function showErrors(errors) {
+  for (const small of form.querySelectorAll('.err')) {
+    const name = small.dataset.for;
+    small.textContent = errors[name] ?? '';
+    f[name].setAttribute('aria-invalid', String(name in errors));
+  }
+}
+
+function clearForm() {
+  state.editing = null;
+  f.amount.value = '';
+  f.note.value = '';
+  showErrors({});
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const input = Object.fromEntries(new FormData(form));
+  const result = validate(input);
+  showErrors(result.errors ?? {});
+  if (!result.ok) return form.querySelector('[aria-invalid="true"]').focus();
+  const editing = state.editing;
+  clearForm();
+  f.amount.focus();
+  if (editing) {
+    const old = state.items.find(it => it.id === editing);
+    optimistic(
+      () => { state.items = state.items.map(it => it.id === editing ? { ...result.value, id: editing } : it); },
+      () => updateExpense(editing, input),
+      () => { state.items = state.items.map(it => it.id === editing ? old : it); },
+    );
+  } else {
+    const item = { ...result.value, id: crypto.randomUUID() };
+    optimistic(
+      () => { state.items = [...state.items, item]; state.pending.add(item.id); },
+      () => createExpense({ ...input, id: item.id }).finally(() => state.pending.delete(item.id)),
+      () => { state.items = state.items.filter(it => it.id !== item.id); },
+    );
+  }
+});
+
+$('#rows').addEventListener('click', (e) => {
+  const { act, id } = e.target.dataset;
+  const it = state.items.find(x => x.id === id);
+  if (!it) return;
+  if (act === 'del' && confirm('تمسح ' + money.format(it.cents / 100) + '؟')) {
+    if (state.editing === id) clearForm();
+    const before = state.items;
+    optimistic(
+      () => { state.items = state.items.filter(x => x.id !== id); },
+      () => deleteExpense(id),
+      () => { state.items = before; },
+    );
+  }
+  if (act === 'edit') {
+    state.editing = id;
+    f.amount.value = (it.cents / 100).toFixed(2);
+    f.cat.value = it.cat;
+    f.date.value = it.date;
+    f.note.value = it.note;
+    render();
+    f.amount.focus();
+  }
+});
+
+$('#cancel').addEventListener('click', () => { clearForm(); render(); });
+
+$('#export').addEventListener('click', () => {
+  const blob = new Blob([toCSV(state.items)], { type: 'text/csv;charset=utf-8' });
+  const a = el('a', '');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'expenses-' + today() + '.csv';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 0);
+});
+
+say('بيحمّل…');
+render();
+try {
+  state.items = await listExpenses();
+  say('');
+} catch (e) {
+  say('مقدرناش نجيب المصاريف: ' + reason(e) + '. اعمل reload لما السيرفر يرجع.');
+}
+render();
+</script>
+</body>
+</html>
+~~~
+
+## هتشوف إيه
+
+نفس متتبّع المصاريف، بس الداتا على السيرفر مش في المتصفح. ضيف بند: بيظهر **على طول** باهت شوية (لسه بيتحفظ)، وبعد لحظة لونه بيرجع. علّم «السيرفر الوهمي مقفول» فوق وضيف بند تاني: بيظهر، وبعد أقل من ثانية بيختفي ورسالة «مقدرناش نحفظ: السيرفر مش بيرد. رجّعنا اللي كان.» بتظهر. ونفس الكلام في التعديل والمسح.
+
+> المعاينة دي من غير Node: أول سطور في الكود «سيرفر» وهمي في الذاكرة بنفس قواعد [[server.js]] (بيستخدم [[validate]] نفسها)، ومربع يقفله. على جهازك انت بتشغّل [[node server.js]] الحقيقي اللي تحت.
+
+## الصورة الكبيرة
+
+~~~text
+المتصفح                                         Node
+┌─────────────────────────────┐   fetch     ┌──────────────────────────────┐
+│ app.js   الحالة والرسم      │ ──────────▶ │ server.js                    │
+│   │  optimistic update      │   JSON      │   GET/POST/PUT/DELETE        │
+│ api.js   مسارات الـ API     │ ◀────────── │   validate (نفس الملف)        │
+│   │                         │             │   لوج سطر لكل طلب            │
+│ request.js مهلة وإعادة      │             │        │                     │
+│ expenses.js validate        │             │ data/expenses.json  (tmp ثم rename) │
+└─────────────────────────────┘             └──────────────────────────────┘
+~~~
+
+## ليه الأدوات دي تحديدًا؟
+
+| الحاجة | اخترنا | البدايل | ليه هنا | إمتى البديل |
+|---|---|---|---|---|
+| السيرفر | [[node:http]] من غير مكتبات | Express، Fastify | ٤ مسارات بس، وكل سطر قدامك (نفس [[server.js]] بتاع مشروع البحث) | لما المسارات تكتر أو تحتاج middleware (تاب «Node و Express») |
+| التخزين | ملف JSON | SQLite، PostgreSQL | يوزر واحد وكام مية بند. الملف بيتقري ويتكتب كله في ملي ثانية | يوزرز كتير بيكتبوا مع بعض، أو بحث وفلترة على آلاف البنود (الـ ext) |
+| الكتابة | ملف [[.tmp]] ثم [[rename]] | [[writeFile]] على الملف نفسه | [[rename]] على نفس الديسك بيبدّل الملف مرة واحدة، فلو البرنامج وقع في نص الكتابة الملف القديم سليم | قاعدة بيانات بتعمل ده لوحدها |
+| التحقق | [[expenses.js]] نفسه في الاتنين | تحقق في الواجهة بس، أو مكتبة زي Zod | قاعدة واحدة في مكان واحد: الفورم والسيرفر مستحيل يختلفوا | لما الأشكال تكتر (Zod أو JSON Schema) |
+| الشبكة | [[request()]] من «مشروع: fetch محترم» | [[fetch]] عادي | مهلة وإعادة وأخطاء ليها نوع جاهزين ومتجرّبين | — |
+| الاختبار | [[node --test]] | Vitest | منطق Node من غير build، ومفيش باكدجات خالص | لو المشروع فيه Vite |
+
+## الملفات
+
+~~~text
+expense-server/
+├── server.js          السيرفر و API (والملفات الثابتة)
+├── server.test.mjs    ١٠ اختبارات بسيرفر حقيقي على بورت عشوائي
+├── expenses.js        زي الدرس: validate و totalsBy و toCSV (السيرفر بيستورده كمان)
+├── request.js         زي «مشروع: fetch محترم»
+├── api.js             مسارات الـ API ورسالة الخطأ لليوزر
+├── app.js             الحالة والرسم والـ optimistic update
+├── index.html         زي الدرس
+├── style.css          زي الدرس + .pending
+└── data/expenses.json بيتعمل لوحده أول ما تضيف بند
+~~~
+
+~~~bash
+node server.js            # http://localhost:8000
+node --test               # بيلاقي server.test.mjs لوحده
+~~~
+
+## ترتيب البناء
+
+1. **[[server.js]] و الـ API الأول، واختبار بـ curl:**
+
+~~~text الناتج: curl (السيرفر على 8885، ٢١ نوفمبر ٢٠٢٦)
+$ curl http://localhost:8885/api/expenses
+[]
+$ curl -i -X POST http://localhost:8885/api/expenses -H 'content-type: application/json' -d '{"id":"x1","amount":"-5","cat":"food","date":"2026-11-21"}'
+HTTP/1.1 400 Bad Request
+{"errors":{"amount":"اكتب مبلغ بالأرقام، وبحد أقصى قرشين بعد العلامة"}}
+$ curl -i -X POST ... -d '{"id":"x1","amount":"45.5","cat":"food","date":"2026-11-21","note":"فطار"}'
+HTTP/1.1 201 Created
+{"cents":4550,"cat":"food","date":"2026-11-21","note":"فطار","id":"x1"}
+$ (نفس الطلب تاني)
+HTTP/1.1 200 OK
+$ curl -X POST http://localhost:8885/api/expenses -d 'not json'
+{"error":"الـ body لازم JSON"}
+~~~
+
+~~~text اللوج في الترمنال
+http://localhost:8885
+GET /api/expenses 200 2ms
+POST /api/expenses 400 1ms
+POST /api/expenses 201 2ms
+POST /api/expenses 200 0ms
+POST /api/expenses 400 0ms
+~~~
+
+المبلغ السالب رجع **نفس رسالة [[validate]]** اللي الفورم بيطلّعها. والطلب المكرر بنفس الـ [[id]] رجع [[200]] بالبند الموجود من غير ما يضيف.
+
+2. **الاختبارات** (تحت).
+3. **[[api.js]]** فوق [[request()]].
+4. **[[app.js]]**: نفس اللي في الدرس، والحفظ بقى optimistic.
+5. **التجربة في Chrome** بسيرفر بيتقفل ويتفتح.
+
+## الكود
+
+~~~js server.js
+// server.js: الملفات الثابتة + /api/expenses، والداتا في ملف JSON بيتكتب كله مرة واحدة
+import http from 'node:http';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { validate } from './expenses.js';
+
+const ROOT = import.meta.dirname;
+const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json' };
+const ID = /^[\w-]{1,64}$/;
+
+export async function createServer({ dataFile = path.join(ROOT, 'data', 'expenses.json'), log = console.log } = {}) {
+  let items = await readData(dataFile, log);
+  let writing = Promise.resolve();
+
+  async function persist() {
+    const tmp = dataFile + '.tmp';
+    const json = JSON.stringify({ version: 1, items }, null, 1);
+    writing = writing.catch(() => {}).then(async () => {
+      await fs.mkdir(path.dirname(dataFile), { recursive: true });
+      await fs.writeFile(tmp, json);
+      await fs.rename(tmp, dataFile);
+    });
+    return writing;
+  }
+
+  async function api(req, url) {
+    const [, , , id] = url.pathname.split('/');
+    if (id !== undefined && !ID.test(id)) return [400, { error: 'id مش صحيح' }];
+    if (req.method === 'GET' && !id) return [200, items];
+
+    if (req.method === 'DELETE' && id) {
+      const before = items.length;
+      items = items.filter((it) => it.id !== id);
+      if (items.length === before) return [404, { error: 'البند مش موجود' }];
+      await persist();
+      return [204, null];
+    }
+
+    if ((req.method === 'POST' && !id) || (req.method === 'PUT' && id)) {
+      const body = await readBody(req);
+      if (body === undefined) return [400, { error: 'الـ body لازم JSON' }];
+      const result = validate(body);
+      if (!result.ok) return [400, { errors: result.errors }];
+      if (req.method === 'POST') {
+        if (typeof body.id !== 'string' || !ID.test(body.id)) return [400, { error: 'id مش صحيح' }];
+        const old = items.find((it) => it.id === body.id);
+        if (old) return [200, old];
+        const item = { ...result.value, id: body.id };
+        items = [...items, item];
+        await persist();
+        return [201, item];
+      }
+      const i = items.findIndex((it) => it.id === id);
+      if (i < 0) return [404, { error: 'البند مش موجود' }];
+      const item = { ...result.value, id };
+      items = items.with(i, item);
+      await persist();
+      return [200, item];
+    }
+    return [405, { error: 'مش مسموح' }];
+  }
+
+  const server = http.createServer(async (req, res) => {
+    const t0 = performance.now();
+    const url = new URL(req.url, 'http://localhost');
+    let status = 500;
+    try {
+      if (url.pathname === '/api/expenses' || url.pathname.startsWith('/api/expenses/')) {
+        const [code, data] = await api(req, url);
+        status = code;
+        res.writeHead(code, data === null ? {} : { 'content-type': 'application/json; charset=utf-8' });
+        res.end(data === null ? undefined : JSON.stringify(data));
+      } else {
+        status = await serveFile(url.pathname, res);
+      }
+    } catch (e) {
+      log('خطأ:', e.message);
+      if (!res.headersSent) res.writeHead(500, { 'content-type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ error: 'حصلت مشكلة في السيرفر' }));
+    }
+    log($__bt$__{req.method} $__{url.pathname} $__{status} $__{Math.round(performance.now() - t0)}ms$__bt);
+  });
+  return server;
+}
+
+async function readData(file, log) {
+  try {
+    const data = JSON.parse(await fs.readFile(file, 'utf8'));
+    if (data?.version === 1 && Array.isArray(data.items)) return data.items;
+    log('شكل الملف مش معروف، هبدأ فاضي');
+  } catch (e) {
+    if (e.code !== 'ENOENT') log('مقدرتش أقرا الداتا، هبدأ فاضي:', e.message);
+  }
+  return [];
+}
+
+async function readBody(req) {
+  let raw = '';
+  for await (const chunk of req) {
+    raw += chunk;
+    if (raw.length > 10_000) return undefined;
+  }
+  try {
+    const data = JSON.parse(raw);
+    return data && typeof data === 'object' ? data : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+async function serveFile(pathname, res) {
+  const file = path.join(ROOT, pathname === '/' ? 'index.html' : pathname);
+  if (!file.startsWith(ROOT + path.sep) || file.includes(path.sep + 'data' + path.sep)) {
+    res.writeHead(403);
+    res.end();
+    return 403;
+  }
+  try {
+    const body = await fs.readFile(file);
+    res.writeHead(200, { 'content-type': (TYPES[path.extname(file)] ?? 'application/octet-stream') + '; charset=utf-8' });
+    res.end(body);
+    return 200;
+  } catch {
+    res.writeHead(404);
+    res.end('not found');
+    return 404;
+  }
+}
+
+if (process.argv[1] === import.meta.filename) {
+  const PORT = Number(process.env.PORT) || 8000;
+  const server = await createServer();
+  server.listen(PORT, () => console.log($__bthttp://localhost:$__{PORT}$__bt));
+}
+~~~
+
+| الحتة | ليه |
+|---|---|
+| [[createServer({ dataFile, log })]] بترجّع السيرفر من غير [[listen]] | الاختبار بيعمل سيرفر بملف مؤقت وبورت عشوائي ([[listen(0)]]) ولوج في array، والتشغيل العادي آخر الملف |
+| [[process.argv[1] === import.meta.filename]] | السطور دي بتشتغل بس لو انت شغّلت [[node server.js]]، مش لما الاختبار يستورده |
+| [[persist()]] | بيكتب [[.tmp]] وبعدين [[rename]]. و [[writing]] سلسلة Promises: طلبين ورا بعض مبيكتبوش في نفس الملف في نفس اللحظة. و [[.catch(() => {})]] قبل [[.then]] عشان كتابة فشلت متوقّفش كل اللي بعدها |
+| [[validate(body)]] | نفس [[import]] اللي في الواجهة. والـ 400 بيرجع [[errors]] بنفس المفاتيح ([[amount]] و [[cat]] و [[date]]) |
+| [[POST]] بـ [[id]] من الواجهة | لو نفس الـ [[id]] موجود، يرجّع الموجود ([[200]]) بدل ما يضيف. ده اللي بيمنع التكرار لما الرد يضيع والطلب يتعاد (شوف تحت) |
+| [[ID = /^[\w-]{1,64}$/]] | الـ [[id]] بيتحط في الملف وفي المسار، فشكله محدود |
+| [[readBody]] بحد ١٠ آلاف حرف | طلب كبير بالغلط أو عن قصد مبيملاش الذاكرة |
+| [[items.with(i, item)]] | array جديد بالعنصر ده متغيّر (immutable، Node 20+) |
+| [[readData]] | ملف مش موجود = أول مرة. ملف بايظ = يبدأ فاضي ويكتب سطر في اللوج، والسيرفر مبيقعش |
+| [[data]] ممنوع في [[serveFile]] | من غير السطر ده [[/data/expenses.json]] كان بيتقري من المتصفح |
+| [[log(method path status ms)]] | سطر لكل طلب، حتى اللي فشل (الـ [[try]] حواليه) |
+
+~~~js api.js
+// api.js: كل كلام الواجهة مع السيرفر هنا، فوق request() بتاع «مشروع: fetch محترم»
+import { request } from './request.js';
+
+const OPTIONS = { timeout: 4000, retries: 2 };
+const send = (method, path, body) => request(path, {
+  ...OPTIONS,
+  method,
+  headers: body ? { 'content-type': 'application/json' } : {},
+  body: body ? JSON.stringify(body) : undefined,
+});
+
+export const listExpenses = async () => (await send('GET', '/api/expenses')).json();
+export const createExpense = async (input) => (await send('POST', '/api/expenses', input)).json();
+export const updateExpense = async (id, input) => (await send('PUT', '/api/expenses/' + id, input)).json();
+export const deleteExpense = (id) => send('DELETE', '/api/expenses/' + id);
+
+// رسالة لليوزر من أي خطأ: رسايل validate من السيرفر لو موجودة، وغير كده سبب عام
+export function reason(e) {
+  if (e.name === 'HttpError' && e.body?.errors) return Object.values(e.body.errors).join('، ');
+  if (e.name === 'HttpError') return 'السيرفر رد بـ ' + e.status;
+  return 'السيرفر مش بيرد';
+}
+~~~
+
+~~~js app.js
+import { CATS, validate, totalsBy, toCSV } from './expenses.js';
+import { listExpenses, createExpense, updateExpense, deleteExpense, reason } from './api.js';
+
+const money = new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' });
+const day = new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium', timeZone: 'UTC' });
+const monthName = new Intl.DateTimeFormat('ar-EG', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const asDate = (s) => new Date(s + 'T00:00:00Z');
+const today = () => new Date().toLocaleDateString('en-CA');
+
+const state = { items: [], editing: null, pending: new Set() };
+const $ = (sel) => document.querySelector(sel);
+const form = $('#form');
+const f = form.elements;
+
+for (const [key, label] of Object.entries(CATS)) f.cat.append(new Option(label, key));
+f.date.value = today();
+
+function el(tag, text, data = {}) {
+  const node = document.createElement(tag);
+  node.textContent = text;
+  Object.assign(node.dataset, data);
+  return node;
+}
+
+function row(it) {
+  const tr = document.createElement('tr');
+  const cells = [day.format(asDate(it.date)), CATS[it.cat], money.format(it.cents / 100), it.note];
+  tr.append(...cells.map(text => el('td', text)));
+  const actions = el('td', '');
+  actions.append(el('button', 'عدّل', { act: 'edit', id: it.id }), el('button', 'امسح', { act: 'del', id: it.id }));
+  tr.append(actions);
+  if (state.pending.has(it.id)) tr.className = 'pending';
+  return tr;
+}
+
+function render() {
+  const newest = state.items.toSorted((a, b) => b.date.localeCompare(a.date));
+  $('#rows').replaceChildren(...newest.map(row));
+  $('#empty').hidden = state.items.length > 0;
+  const byCat = totalsBy(state.items, it => it.cat);
+  $('#by-cat').replaceChildren(...byCat.map(([k, c]) => el('li', CATS[k] + ': ' + money.format(c / 100))));
+  const byMonth = totalsBy(state.items, it => it.date.slice(0, 7)).sort((a, b) => b[0].localeCompare(a[0]));
+  $('#by-month').replaceChildren(...byMonth.map(([k, c]) => el('li', monthName.format(asDate(k + '-01')) + ': ' + money.format(c / 100))));
+  $('#export').disabled = state.items.length === 0;
+  $('#submit').textContent = state.editing ? 'احفظ التعديل' : 'ضيف';
+  $('#cancel').hidden = !state.editing;
+}
+
+const say = (text) => { $('#status').textContent = text; };
+
+// optimistic: غيّر الشاشة على طول، وابعت، ولو السيرفر رفض رجّع اللي كان
+async function optimistic(change, send, undo) {
+  change();
+  render();
+  try {
+    await send();
+    say('');
+  } catch (e) {
+    undo();
+    say('مقدرناش نحفظ: ' + reason(e) + '. رجّعنا اللي كان.');
+  }
+  render();
+}
+
+function showErrors(errors) {
+  for (const small of form.querySelectorAll('.err')) {
+    const name = small.dataset.for;
+    small.textContent = errors[name] ?? '';
+    f[name].setAttribute('aria-invalid', String(name in errors));
+  }
+}
+
+function clearForm() {
+  state.editing = null;
+  f.amount.value = '';
+  f.note.value = '';
+  showErrors({});
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const input = Object.fromEntries(new FormData(form));
+  const result = validate(input);
+  showErrors(result.errors ?? {});
+  if (!result.ok) return form.querySelector('[aria-invalid="true"]').focus();
+  const editing = state.editing;
+  clearForm();
+  f.amount.focus();
+  if (editing) {
+    const old = state.items.find(it => it.id === editing);
+    optimistic(
+      () => { state.items = state.items.map(it => it.id === editing ? { ...result.value, id: editing } : it); },
+      () => updateExpense(editing, input),
+      () => { state.items = state.items.map(it => it.id === editing ? old : it); },
+    );
+  } else {
+    const item = { ...result.value, id: crypto.randomUUID() };
+    optimistic(
+      () => { state.items = [...state.items, item]; state.pending.add(item.id); },
+      () => createExpense({ ...input, id: item.id }).finally(() => state.pending.delete(item.id)),
+      () => { state.items = state.items.filter(it => it.id !== item.id); },
+    );
+  }
+});
+
+$('#rows').addEventListener('click', (e) => {
+  const { act, id } = e.target.dataset;
+  const it = state.items.find(x => x.id === id);
+  if (!it) return;
+  if (act === 'del' && confirm('تمسح ' + money.format(it.cents / 100) + '؟')) {
+    if (state.editing === id) clearForm();
+    const before = state.items;
+    optimistic(
+      () => { state.items = state.items.filter(x => x.id !== id); },
+      () => deleteExpense(id),
+      () => { state.items = before; },
+    );
+  }
+  if (act === 'edit') {
+    state.editing = id;
+    f.amount.value = (it.cents / 100).toFixed(2);
+    f.cat.value = it.cat;
+    f.date.value = it.date;
+    f.note.value = it.note;
+    render();
+    f.amount.focus();
+  }
+});
+
+$('#cancel').addEventListener('click', () => { clearForm(); render(); });
+
+$('#export').addEventListener('click', () => {
+  const blob = new Blob([toCSV(state.items)], { type: 'text/csv;charset=utf-8' });
+  const a = el('a', '');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'expenses-' + today() + '.csv';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 0);
+});
+
+say('بيحمّل…');
+render();
+try {
+  state.items = await listExpenses();
+  say('');
+} catch (e) {
+  say('مقدرناش نجيب المصاريف: ' + reason(e) + '. اعمل reload لما السيرفر يرجع.');
+}
+render();
+~~~
+
+**[[optimistic(change, send, undo)]]** هي الفكرة كلها في ١٢ سطر: غيّر الحالة وارسم (اليوزر شاف التغيير)، وابعت، ولو فشل نفّذ [[undo]] وارسم تاني ورسالة. وكل عملية (إضافة وتعديل ومسح) بتبعت التلات حاجات بتوعها:
+
+| العملية | [[change]] | [[undo]] |
+|---|---|---|
+| إضافة | البند في الآخر، و [[pending]] | شيله بالـ [[id]] |
+| تعديل | بدّله بالجديد | رجّع [[old]] اللي اتحفظ قبل التعديل |
+| مسح | شيله | رجّع [[before]] (الـ array كلها زي ما كانت، فبيرجع في مكانه) |
+
+و [[state.pending]] ([[Set]] بالـ ids اللي لسه بتتحفظ) بيخلي الصف باهت ([[.pending td { opacity: .55 }]]) لحد ما السيرفر يرد.
+
+~~~js expenses.js
+export const CATS = { food: 'أكل', transport: 'مواصلات', bills: 'فواتير', fun: 'خروج', other: 'تاني' };
+const KEY = 'expenses';
+const VERSION = 1;
+
+export function validate(input) {
+  const errors = {};
+  const raw = String(input.amount ?? '').trim()
+    .replace(/[٠-٩]/g, d => d.charCodeAt(0) - 0x660).replace('٫', '.');
+  const amount = Number(raw);
+  if (!/^\d+(\.\d{1,2})?$/.test(raw)) errors.amount = 'اكتب مبلغ بالأرقام، وبحد أقصى قرشين بعد العلامة';
+  else if (amount <= 0 || amount > 1_000_000) errors.amount = 'المبلغ لازم يبقى أكبر من صفر ومش أكتر من مليون';
+  if (!Object.hasOwn(CATS, input.cat)) errors.cat = 'اختار تصنيف من اللستة';
+  if (!isRealDate(input.date)) errors.date = 'التاريخ مش صحيح';
+  const note = String(input.note ?? '').trim().slice(0, 80);
+  if (Object.keys(errors).length) return { ok: false, errors };
+  return { ok: true, value: { cents: Math.round(amount * 100), cat: input.cat, date: input.date, note } };
+}
+
+export function isRealDate(s) {
+  if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(s + 'T00:00:00Z');
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+}
+
+export function totalsBy(items, keyOf) {
+  const out = new Map();
+  for (const it of items) out.set(keyOf(it), (out.get(keyOf(it)) ?? 0) + it.cents);
+  return [...out].sort((a, b) => b[1] - a[1]);
+}
+
+export function toCSV(items) {
+  const cell = (v) => {
+    let s = String(v);
+    if (/^[=+\-@]/.test(s)) s = "'" + s;
+    return /[",\n]/.test(s) ? '"' + s.replaceAll('"', '""') + '"' : s;
+  };
+  const rows = [['date', 'category', 'amount', 'note']];
+  for (const it of items) rows.push([it.date, CATS[it.cat], (it.cents / 100).toFixed(2), it.note]);
+  return '\uFEFF' + rows.map(r => r.map(cell).join(',')).join('\r\n');
+}
+
+export function load(storage) {
+  let raw;
+  try { raw = storage.getItem(KEY); } catch { return []; }
+  if (!raw) return [];
+  let data;
+  try { data = JSON.parse(raw); } catch { return []; }
+  if (data?.version !== VERSION || !Array.isArray(data.items)) return [];
+  return data.items.filter(it => it && typeof it.id === 'string'
+    && Number.isInteger(it.cents) && it.cents > 0
+    && Object.hasOwn(CATS, it.cat) && isRealDate(it.date)
+    && typeof it.note === 'string');
+}
+
+export function save(storage, items) {
+  try { storage.setItem(KEY, JSON.stringify({ version: VERSION, items })); return true; }
+  catch { return false; }
+}
+~~~
+
+~~~js request.js
+// request.js: غلاف fetch بتاع الوحدة كلها (مهلة، وإلغاء، وإعادة ذكية، وأخطاء ليها نوع)
+export class HttpError extends Error {
+  constructor(response, body) {
+    super($__btHTTP $__{response.status} $__{response.statusText} على $__{response.url}$__bt);
+    this.name = 'HttpError';
+    this.status = response.status;
+    this.url = response.url;
+    this.body = body;
+  }
+}
+
+export class NetworkError extends Error {
+  constructor(cause) {
+    super($__btفشل الاتصال: $__{cause?.code ?? cause?.message ?? 'سبب مش معروف'}$__bt);
+    this.name = 'NetworkError';
+    this.cause = cause;
+  }
+}
+
+const RETRY_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
+const SECONDS = /^\d+$/;
+const HTTP_DATE = /^[A-Z][a-z]{2}, \d{2} [A-Z][a-z]{2} \d{4} \d{2}:\d{2}:\d{2} GMT$/;
+
+export function backoff(attempt, { base = 300, cap = 10_000, retryAfter = null, maxRetryAfter = 60_000 } = {}) {
+  if (retryAfter != null) {
+    const ms = retryAfter * 1000;
+    return ms <= maxRetryAfter ? ms : null;
+  }
+  const exp = Math.min(base * 2 ** attempt, cap);
+  return Math.round(exp / 2 + Math.random() * (exp / 2));
+}
+
+export function parseRetryAfter(res) {
+  const raw = res.headers.get('retry-after');
+  if (!raw) return null;
+  if (SECONDS.test(raw)) return Number(raw);
+  if (!HTTP_DATE.test(raw)) return null;
+  const when = Date.parse(raw);
+  return Number.isNaN(when) ? null : Math.max(0, (when - Date.now()) / 1000);
+}
+
+const sleep = (ms, signal) => new Promise((resolve, reject) => {
+  signal?.throwIfAborted();
+  const t = setTimeout(resolve, ms);
+  signal?.addEventListener('abort', () => { clearTimeout(t); reject(signal.reason); }, { once: true });
+});
+
+async function readBody(res) {
+  const text = await res.text();
+  if (!(res.headers.get('content-type') ?? '').includes('json')) return text;
+  try { return JSON.parse(text); } catch { return text; }
+}
+
+export async function request(url, {
+  timeout = 5000, retries = 2, base = 300, maxRetryAfter = 60_000,
+  signal: outer, onRetry, fetchImpl = fetch, ...init
+} = {}) {
+  let lastError;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    outer?.throwIfAborted();
+    const timer = AbortSignal.timeout(timeout);
+    const signal = outer ? AbortSignal.any([outer, timer]) : timer;
+    let res = null;
+    try {
+      res = await fetchImpl(url, { ...init, signal });
+    } catch (e) {
+      if (outer?.aborted) throw outer.reason;
+      lastError = e.name === 'TimeoutError' ? e : new NetworkError(e.cause ?? e);
+    }
+    if (res) {
+      if (res.ok) return res;
+      lastError = new HttpError(res, await readBody(res));
+      if (!RETRY_STATUS.has(res.status)) throw lastError;
+    }
+    if (attempt === retries) break;
+    const retryAfter = res ? parseRetryAfter(res) : null;
+    const wait = backoff(attempt, { base, retryAfter, maxRetryAfter });
+    if (wait == null) { lastError.retryAfter = retryAfter; break; }
+    onRetry?.({ attempt, status: res?.status, error: lastError, wait });
+    await sleep(wait, outer);
+  }
+  throw lastError;
+}
+
+export async function json(url, options) {
+  const res = await request(url, options);
+  return res.json();
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>مصاريفي</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>مصاريفي</h1>
+    <form id="form" novalidate>
+      <label>المبلغ <input name="amount" inputmode="decimal" autocomplete="off"></label>
+      <small class="err" data-for="amount"></small>
+      <label>التصنيف <select name="cat"></select></label>
+      <small class="err" data-for="cat"></small>
+      <label>التاريخ <input name="date" type="date"></label>
+      <small class="err" data-for="date"></small>
+      <label>ملاحظة <input name="note" maxlength="80"></label>
+      <button id="submit">ضيف</button>
+      <button type="button" id="cancel" hidden>إلغاء التعديل</button>
+    </form>
+    <p id="status" role="status"></p>
+    <table>
+      <thead><tr><th>التاريخ</th><th>التصنيف</th><th>المبلغ</th><th>ملاحظة</th><th></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p id="empty">لسه مفيش مصاريف.</p>
+    <section><h2>حسب التصنيف</h2><ul id="by-cat"></ul></section>
+    <section><h2>حسب الشهر</h2><ul id="by-month"></ul></section>
+    <button id="export">نزّل CSV</button>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
+~~~
+
+~~~css style.css
+body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 2rem auto; padding: 0 1rem; }
+form { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: end; }
+.err { color: #b00020; display: block; min-height: 1em; }
+[aria-invalid="true"] { border: 2px solid #b00020; }
+table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+th, td { padding: .35rem .5rem; border-bottom: 1px solid #ddd; text-align: start; }
+#status { color: #b00020; }
+.pending td { opacity: .55; }
+~~~
+
+## الاختبارات
+
+~~~js server.test.mjs
+import { test, before, after } from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import { createServer } from './server.js';
+
+const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'expenses-'));
+const dataFile = path.join(dir, 'expenses.json');
+const logs = [];
+let server, base;
+
+async function start() {
+  server = await createServer({ dataFile, log: (...a) => logs.push(a.join(' ')) });
+  await new Promise((r) => server.listen(0, r));
+  base = $__bthttp://localhost:$__{server.address().port}/api/expenses$__bt;
+}
+const stop = () => new Promise((r) => server.close(r));
+const call = async (method, url, body) => {
+  const res = await fetch(url, { method, headers: { 'content-type': 'application/json' }, body: body && JSON.stringify(body) });
+  return { status: res.status, data: res.status === 204 ? null : await res.json() };
+};
+const food = { id: 'a1', amount: '45.5', cat: 'food', date: '2026-11-05', note: 'فطار' };
+
+before(start);
+after(async () => { await stop(); await fs.rm(dir, { recursive: true }); });
+
+test('GET أول مرة = فاضي', async () => {
+  assert.deepEqual(await call('GET', base), { status: 200, data: [] });
+});
+
+test('POST سليم = 201 والقروش اتحسبت على السيرفر', async () => {
+  const r = await call('POST', base, food);
+  assert.equal(r.status, 201);
+  assert.deepEqual(r.data, { cents: 4550, cat: 'food', date: '2026-11-05', note: 'فطار', id: 'a1' });
+});
+
+test('POST بنفس الـ id تاني = نفس البند، من غير تكرار', async () => {
+  const r = await call('POST', base, food);
+  assert.equal(r.status, 200);
+  assert.equal((await call('GET', base)).data.length, 1);
+});
+
+test('مبلغ سالب = 400 برسالة validate نفسها', async () => {
+  const r = await call('POST', base, { ...food, id: 'a2', amount: '-5' });
+  assert.equal(r.status, 400);
+  assert.deepEqual(r.data, { errors: { amount: 'اكتب مبلغ بالأرقام، وبحد أقصى قرشين بعد العلامة' } });
+});
+
+test('body مش JSON = 400', async () => {
+  const res = await fetch(base, { method: 'POST', body: 'not json' });
+  assert.equal(res.status, 400);
+});
+
+test('PUT بيعدّل، و PUT على id مش موجود = 404', async () => {
+  const r = await call('PUT', base + '/a1', { ...food, amount: '50' });
+  assert.deepEqual([r.status, r.data.cents], [200, 5000]);
+  assert.equal((await call('PUT', base + '/nope', food)).status, 404);
+});
+
+test('الداتا بتفضل بعد ما السيرفر يتقفل ويتفتح، ومفيش ملف .tmp فاضل', async () => {
+  await call('POST', base, { ...food, id: 'b1', amount: '30', cat: 'transport' });
+  await stop();
+  await start();
+  const r = await call('GET', base);
+  assert.deepEqual(r.data.map((it) => [it.id, it.cents]), [['a1', 5000], ['b1', 3000]]);
+  assert.deepEqual(await fs.readdir(dir), ['expenses.json']);
+});
+
+test('DELETE = 204، والتاني = 404', async () => {
+  assert.equal((await call('DELETE', base + '/b1')).status, 204);
+  assert.equal((await call('DELETE', base + '/b1')).status, 404);
+});
+
+test('ملف داتا بايظ: السيرفر بيفتح فاضي ومبيقعش', async () => {
+  await stop();
+  await fs.writeFile(dataFile, '{"version":1,"items":[');
+  await start();
+  assert.deepEqual((await call('GET', base)).data, []);
+  assert.ok(logs.some((l) => l.startsWith('مقدرتش أقرا الداتا')));
+});
+
+test('كل طلب ليه سطر لوج', () => {
+  assert.ok(logs.some((l) => /^POST \/api\/expenses 201 \d+ms$/.test(l)));
+  assert.ok(logs.some((l) => /^DELETE \/api\/expenses\/b1 404 \d+ms$/.test(l)));
+});
+~~~
+
+~~~text الناتج: node --test server.test.mjs (Node 24.22)
+✔ GET أول مرة = فاضي (36.9195ms)
+✔ POST سليم = 201 والقروش اتحسبت على السيرفر (7.7588ms)
+✔ POST بنفس الـ id تاني = نفس البند، من غير تكرار (3.8586ms)
+✔ مبلغ سالب = 400 برسالة validate نفسها (2.2039ms)
+✔ body مش JSON = 400 (3.3379ms)
+✔ PUT بيعدّل، و PUT على id مش موجود = 404 (5.0406ms)
+✔ الداتا بتفضل بعد ما السيرفر يتقفل ويتفتح، ومفيش ملف .tmp فاضل (11.8363ms)
+✔ DELETE = 204، والتاني = 404 (4.4883ms)
+✔ ملف داتا بايظ: السيرفر بيفتح فاضي ومبيقعش (5.91ms)
+✔ كل طلب ليه سطر لوج (0.9221ms)
+ℹ tests 10
+ℹ pass 10
+ℹ fail 0
+ℹ duration_ms 176.3064
+~~~
+
+## اتجرّب في Chrome 158: السيرفر بيتقفل وانت بتضيف
+
+سكربت Playwright شغّل السيرفر جوه نفسه (بـ [[createServer]]) عشان يقفله ويفتحه في اللحظة اللي عايزها:
+
+~~~text الناتج: node p5.mjs
+ضفت فطار               | فطار |
+السيرفر مقفول، على طول | فطار,مترو(pending)
+بعد 851ms              | فطار | مقدرناش نحفظ: السيرفر مش بيرد. رجّعنا اللي كان.
+السيرفر رجع + reload   | فطار
+مسحت فطار              |  |
+log: GET /api/expenses 200 0ms / POST /api/expenses 201 5ms / GET /api/expenses 200 0ms / DELETE /api/expenses/99f254d9-... 204 3ms
+pageerror: ولا واحد
+~~~
+
+«مترو» ظهر على طول باهت، و [[request()]] حاول ٣ مرات ([[retries: 2]]) في ٨٥١ms، وبعدين رجع. ولما السيرفر رجع مفيش «مترو» متكرر ولا متسجّل: الطلب عمره ما وصل.
+
+## الغلطة اللي كانت هتحصل: الرد اللي بيضيع
+
+[[request()]] بيعيد أي طلب فشل في الشبكة، حتى [[POST]]. طب لو السيرفر **حفظ** والرد هو اللي ضاع في السكة؟ جرّبتها بـ [[fetch]] بيوصّل الطلب للسيرفر وبعدين بيرمي [[TypeError]] أول مرة، على نسخة من السيرفر **هو** اللي بيعمل الـ [[id]] ([[body.id = crypto.randomUUID()]]، الطريقة المعتادة):
+
+~~~text الناتج
+السيرفر بيعمل الـ id: ضغطة واحدة = 2 بند: مترو و مترو
+~~~
+
+ضغطة واحدة، بندين. وبنفس التجربة على [[server.js]] اللي فوق (الـ [[id]] جاي من الواجهة، والطلب المكرر بيرجّع الموجود): **بند واحد**. ده اسمه idempotency: نفس الطلب مرتين = نفس النتيجة، وده اللي بيخلي الإعادة آمنة.
+
+## الأمان والأداء
+
+- **التحقق على السيرفر مش اختياري:** الـ curl بالمبلغ السالب عدّى من غير فورم خالص.
+- **مفيش تخزين لنص HTML:** كل العرض [[textContent]] زي الدرس، والسيرفر بيرجّع JSON بس.
+- **المسارات محمية:** [[..]] برّه الفولدر و [[data/]] نفسه = 403.
+- **الأداء:** كل كتابة بتكتب الملف كله. ١٠٠٠ بند ≈ ١٠٠ كيلوبايت، وده لسه ملي ثواني. لو وصل لعشرات الآلاف أو أكتر من يوزر، ده وقت SQLite.
+
+## بعد ما يخلص
+
+- **يوزرز:** كل يوزر ملفه أو جدوله، و session أو توكن (تاب «Node و Express»). وده وقت قاعدة بيانات.
+- **التكلفة لو اتنشر:** VPS صغير (أرخص خطة عند أي مزوّد، بضع دولارات في الشهر) بيشيل ده لمئات اليوزرز، ورا Nginx بـ HTTPS (الـ ext).
+- **خليه بتاعك:** زوّد «حسب الشهر» بفلتر، أو ميزانيات (المشروع «ميزانية لكل تصنيف») على السيرفر.
+
+**الغلطة الشائعة:** optimistic update من غير [[undo]]: البند بيفضل على الشاشة واليوزر فاكره اتحفظ، وبعد reload بيختفي. أو [[undo]] بيعمل reload للداتا كلها من السيرفر: لو السيرفر واقع، الـ reload نفسه هيفشل والشاشة تفضى.` },
+        { lvl: 'كبير', dir: "code-coach", t: R`مدرّب كتابة للكود`, what: R`لعبة كتابة نصوصها سطور كود حقيقية: هات أسامي الـ methods من [[data.json]] بتاع مشروع البحث، واعمل منها سطور زي [[arr.toSorted((a, b) => a - b)]]. الاتجاه دايمًا [[ltr]] حتى لو الصفحة عربي. سجّل كل جولة (الوقت، و WPM، والدقة، وأكتر ٣ حروف غلطت فيهم) في [[IndexedDB]] (درس «IndexedDB و BroadcastChannel»)، واعرض صفحة «تقدّمي» فيها آخر ٣٠ جولة، وبحث في الجولات القديمة بـ [[debounce]].`, done: R`بعد ١٠ جولات، الصفحة بتعرض الـ ١٠ ومتوسطهم، والحروف اللي بتغلط فيها أكتر (غالبًا [[(]] و [[{]] و [[=>]]) ليها رقم. والداتا بتفضل بعد ما تقفل المتصفح. ولو مسحت قاعدة البيانات من DevTools التطبيق بيفتح عادي من غير ولا error.`, ext: R`ضيف وضع «حروفك الضعيفة»: النص بيتولّد من الحروف اللي بتغلط فيها أكتر. وخليه PWA بيشتغل من غير نت (تاب «PWA و service worker»).`, sol: R`~~~view 620 مدرّب كتابة الكود
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>مدرّب كتابة الكود</title>
+  <style>
+body { font-family: system-ui, sans-serif; max-width: 50rem; margin: 2rem auto; padding: 0 1rem; }
+#text { font: 1.2rem/2 ui-monospace, Consolas, monospace; padding: 1rem; background: #f4f4f4; border-radius: 8px; }
+#text .ok { color: #188038; }
+#text .bad { color: #fff; background: #d93025; }
+#text .cur { background: #fde293; }
+#input { width: 100%; font: 1.1rem ui-monospace, Consolas, monospace; padding: .5rem; box-sizing: border-box; }
+.stats b { font-variant-numeric: tabular-nums; }
+table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: .9rem; }
+th, td { padding: .3rem .4rem; border-bottom: 1px solid #ddd; text-align: start; }
+td code { direction: ltr; unicode-bidi: isolate; }
+#storage { color: #b06000; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>مدرّب كتابة الكود</h1>
+    <nav><a href="#play">العب</a> · <a href="#progress">تقدّمي</a></nav>
+    <p id="storage" role="status"></p>
+    <section id="play">
+      <p id="text" dir="ltr" lang="en" aria-label="الكود اللي هتكتبه"></p>
+      <input id="input" dir="ltr" lang="en" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="اكتب هنا">
+      <p class="stats">الوقت <b id="time">0.0</b> ث · السرعة <b id="wpm">0</b> WPM · الدقة <b id="acc">100%</b></p>
+      <p id="result" role="status"></p>
+      <button id="restart">سطور جديدة (Esc)</button>
+    </section>
+    <section id="progress" hidden>
+      <h2>تقدّمي</h2>
+      <p id="summary"></p>
+      <label>دوّر في الجولات <input id="q" dir="ltr" autocomplete="off"></label>
+      <table>
+        <thead><tr><th>إمتى</th><th>WPM</th><th>الدقة</th><th>غلطت في</th><th>الكود</th></tr></thead>
+        <tbody id="rounds"></tbody>
+      </table>
+    </section>
+  </main>
+  <script type="module">
+// المعاينة بس: مفيش ملفات جنب الصفحة دي، فـ fetch('data.json') بيرجّع نفس الـ ١٩٣ method من هنا
+const METHODS = [["at","Array.prototype"],["concat","Array.prototype"],["copyWithin","Array.prototype"],["fill","Array.prototype"],["find","Array.prototype"],["findIndex","Array.prototype"],["findLast","Array.prototype"],["findLastIndex","Array.prototype"],["lastIndexOf","Array.prototype"],["pop","Array.prototype"],["push","Array.prototype"],["reverse","Array.prototype"],["shift","Array.prototype"],["unshift","Array.prototype"],["slice","Array.prototype"],["sort","Array.prototype"],["splice","Array.prototype"],["includes","Array.prototype"],["indexOf","Array.prototype"],["join","Array.prototype"],["keys","Array.prototype"],["entries","Array.prototype"],["values","Array.prototype"],["forEach","Array.prototype"],["filter","Array.prototype"],["flat","Array.prototype"],["flatMap","Array.prototype"],["map","Array.prototype"],["every","Array.prototype"],["some","Array.prototype"],["reduce","Array.prototype"],["reduceRight","Array.prototype"],["toReversed","Array.prototype"],["toSorted","Array.prototype"],["toSpliced","Array.prototype"],["with","Array.prototype"],["toLocaleString","Array.prototype"],["toString","Array.prototype"],["anchor","String.prototype"],["at","String.prototype"],["big","String.prototype"],["blink","String.prototype"],["bold","String.prototype"],["charAt","String.prototype"],["charCodeAt","String.prototype"],["codePointAt","String.prototype"],["concat","String.prototype"],["endsWith","String.prototype"],["fontcolor","String.prototype"],["fontsize","String.prototype"],["fixed","String.prototype"],["includes","String.prototype"],["indexOf","String.prototype"],["isWellFormed","String.prototype"],["italics","String.prototype"],["lastIndexOf","String.prototype"],["link","String.prototype"],["localeCompare","String.prototype"],["match","String.prototype"],["matchAll","String.prototype"],["normalize","String.prototype"],["padEnd","String.prototype"],["padStart","String.prototype"],["repeat","String.prototype"],["replace","String.prototype"],["replaceAll","String.prototype"],["search","String.prototype"],["slice","String.prototype"],["small","String.prototype"],["split","String.prototype"],["strike","String.prototype"],["sub","String.prototype"],["substr","String.prototype"],["substring","String.prototype"],["sup","String.prototype"],["startsWith","String.prototype"],["toString","String.prototype"],["toWellFormed","String.prototype"],["trim","String.prototype"],["trimStart","String.prototype"],["trimLeft","String.prototype"],["trimEnd","String.prototype"],["trimRight","String.prototype"],["toLocaleLowerCase","String.prototype"],["toLocaleUpperCase","String.prototype"],["toLowerCase","String.prototype"],["toUpperCase","String.prototype"],["valueOf","String.prototype"],["assign","Object"],["getOwnPropertyDescriptor","Object"],["getOwnPropertyDescriptors","Object"],["getOwnPropertyNames","Object"],["getOwnPropertySymbols","Object"],["hasOwn","Object"],["is","Object"],["preventExtensions","Object"],["seal","Object"],["create","Object"],["defineProperties","Object"],["defineProperty","Object"],["freeze","Object"],["getPrototypeOf","Object"],["setPrototypeOf","Object"],["isExtensible","Object"],["isFrozen","Object"],["isSealed","Object"],["keys","Object"],["entries","Object"],["fromEntries","Object"],["values","Object"],["groupBy","Object"],["abs","Math"],["acos","Math"],["acosh","Math"],["asin","Math"],["asinh","Math"],["atan","Math"],["atanh","Math"],["atan2","Math"],["ceil","Math"],["cbrt","Math"],["expm1","Math"],["clz32","Math"],["cos","Math"],["cosh","Math"],["exp","Math"],["floor","Math"],["fround","Math"],["hypot","Math"],["imul","Math"],["log","Math"],["log1p","Math"],["log2","Math"],["log10","Math"],["max","Math"],["min","Math"],["pow","Math"],["random","Math"],["round","Math"],["sign","Math"],["sin","Math"],["sinh","Math"],["sqrt","Math"],["tan","Math"],["tanh","Math"],["trunc","Math"],["f16round","Math"],["all","Promise"],["allSettled","Promise"],["any","Promise"],["race","Promise"],["resolve","Promise"],["reject","Promise"],["withResolvers","Promise"],["try","Promise"],["isFinite","Number"],["isInteger","Number"],["isNaN","Number"],["isSafeInteger","Number"],["parseFloat","Number"],["parseInt","Number"],["parse","JSON"],["stringify","JSON"],["rawJSON","JSON"],["isRawJSON","JSON"],["isArray","Array"],["from","Array"],["fromAsync","Array"],["of","Array"],["get","Map.prototype"],["set","Map.prototype"],["has","Map.prototype"],["delete","Map.prototype"],["clear","Map.prototype"],["entries","Map.prototype"],["forEach","Map.prototype"],["keys","Map.prototype"],["values","Map.prototype"],["has","Set.prototype"],["add","Set.prototype"],["delete","Set.prototype"],["difference","Set.prototype"],["clear","Set.prototype"],["entries","Set.prototype"],["forEach","Set.prototype"],["intersection","Set.prototype"],["isSubsetOf","Set.prototype"],["isSupersetOf","Set.prototype"],["isDisjointFrom","Set.prototype"],["symmetricDifference","Set.prototype"],["union","Set.prototype"],["values","Set.prototype"],["keys","Set.prototype"]].map(([name, owner], i) => ({ id: i + 1, name, owner }));
+window.fetch = async () => new Response(JSON.stringify(METHODS));
+
+function pick(count, last) {
+  if (count < 2) return 0;
+  if (last < 0 || last >= count) return Math.floor(Math.random() * count);
+  const i = Math.floor(Math.random() * (count - 1));
+  return i >= last ? i + 1 : i;
+}
+
+function isArabic(text) {
+  return /\p{Script=Arabic}/u.test(text);
+}
+
+function marks(target, typed) {
+  return target.map((ch, i) => {
+    if (i === typed.length) return 'cur';
+    if (i > typed.length) return '';
+    return typed[i] === ch ? 'ok' : 'bad';
+  });
+}
+
+function stats({ target, typed, keystrokes, mistakes }, ms) {
+  let correct = 0;
+  for (let i = 0; i < typed.length; i++) if (typed[i] === target[i]) correct++;
+  const minutes = Math.max(ms, 1000) / 60000;
+  return {
+    wpm: Math.round(correct / 5 / minutes),
+    accuracy: keystrokes ? Math.round((keystrokes - mistakes) / keystrokes * 100) : 100,
+  };
+}
+
+// code-lines.js: سطور كود حقيقية الشكل من أسامي الـ methods اللي في data.json (من غير DOM)
+const TEMPLATES = {
+  'Array.prototype': (n) => $__btconst out = items.$__{n}((x) => x * 2);$__bt,
+  'String.prototype': (n) => $__btconst s = name.$__{n}('a');$__bt,
+  Object: (n) => $__btconst keys = Object.$__{n}({ a: 1, b: 2 });$__bt,
+  Math: (n) => $__btconst v = Math.$__{n}(9, 4);$__bt,
+  Promise: (n) => $__btconst all = await Promise.$__{n}([p1, p2]);$__bt,
+  Number: (n) => $__btif (Number.$__{n}(x)) count++;$__bt,
+  JSON: (n) => $__btconst data = JSON.$__{n}(text);$__bt,
+  Array: (n) => $__btconst list = Array.$__{n}({ length: 3 });$__bt,
+  'Map.prototype': (n) => $__btcache.$__{n}(key);$__bt,
+  'Set.prototype': (n) => $__btseen.$__{n}(id);$__bt,
+};
+
+const toLine = ({ name, owner }) => (TEMPLATES[owner] ?? ((n) => $__bt$__{owner}.$__{n}();$__bt))(name);
+
+// count سطور مختلفة، و random بتتبعت عشان الاختبار يثبّتها
+function makeText(methods, count = 3, random = Math.random) {
+  const pool = [...methods];
+  const lines = [];
+  while (lines.length < count && pool.length) {
+    const [m] = pool.splice(Math.floor(random() * pool.length), 1);
+    lines.push(toLine(m));
+  }
+  return lines.join(' ');
+}
+
+// أكتر الحروف غلط من كل الجولات: [[حرف, عدد], ...]
+function topMisses(rounds, n = 3) {
+  const all = new Map();
+  for (const r of rounds) for (const [ch, k] of Object.entries(r.misses)) all.set(ch, (all.get(ch) ?? 0) + k);
+  return [...all].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, n);
+}
+
+function average(rounds) {
+  if (!rounds.length) return { wpm: 0, accuracy: 0 };
+  const sum = (k) => rounds.reduce((s, r) => s + r[k], 0);
+  return { wpm: Math.round(sum('wpm') / rounds.length), accuracy: Math.round(sum('accuracy') / rounds.length) };
+}
+
+function matches(round, q) {
+  const query = q.trim().toLowerCase();
+  return !query || round.text.toLowerCase().includes(query);
+}
+
+// db.js: الجولات في IndexedDB، ولو IndexedDB مش متاح (وضع خاص، أو صندوق معزول) بتتحفظ في الذاكرة
+const NAME = 'code-coach';
+const STORE = 'rounds';
+
+function open() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(NAME, 1);
+    req.onupgradeneeded = () => {
+      const store = req.result.createObjectStore(STORE, { keyPath: 'id', autoIncrement: true });
+      store.createIndex('at', 'at');
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+const done = (req) => new Promise((resolve, reject) => {
+  req.onsuccess = () => resolve(req.result);
+  req.onerror = () => reject(req.error);
+});
+
+async function openRounds() {
+  let db;
+  try {
+    db = await open();
+  } catch (e) {
+    const memory = [];
+    return {
+      persistent: false,
+      reason: e?.name ?? 'Error',
+      add: async (round) => { memory.push({ ...round, id: memory.length + 1 }); },
+      last: async (n) => memory.slice(-n).reverse(),
+    };
+  }
+  return {
+    persistent: true,
+    add: (round) => done(db.transaction(STORE, 'readwrite').objectStore(STORE).add(round)),
+    // آخر n جولة، الأحدث الأول: cursor بالعكس على index الوقت
+    last: (n) => new Promise((resolve, reject) => {
+      const out = [];
+      const req = db.transaction(STORE).objectStore(STORE).index('at').openCursor(null, 'prev');
+      req.onsuccess = () => {
+        const cursor = req.result;
+        if (!cursor || out.length === n) return resolve(out);
+        out.push(cursor.value);
+        cursor.continue();
+      };
+      req.onerror = () => reject(req.error);
+    }),
+  };
+}
+
+function debounce(fn, ms) {
+  let timer;
+  const wrapped = (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), ms);
+  };
+  wrapped.cancel = () => clearTimeout(timer);
+  return wrapped;
+}
+
+
+
+
+
+
+const $ = (sel) => document.querySelector(sel);
+const box = $('#text');
+const input = $('#input');
+const when = new Intl.DateTimeFormat('ar-EG', { dateStyle: 'short', timeStyle: 'short' });
+const show = (ch) => (ch === ' ' ? 'مسافة' : ch);
+let methods = [];
+let rounds = null;
+let game = null;
+
+function newGame() {
+  if (game) cancelAnimationFrame(game.raf);
+  const text = makeText(methods, 3);
+  game = { text, target: Array.from(text), typed: [], keystrokes: 0, mistakes: 0, misses: new Map(), start: 0, raf: 0, done: false };
+  box.replaceChildren(...game.target.map((ch) => {
+    const span = document.createElement('span');
+    span.textContent = ch;
+    return span;
+  }));
+  input.value = '';
+  input.maxLength = game.target.length;
+  input.disabled = false;
+  $('#result').textContent = '';
+  paint();
+  showStats(0);
+  input.focus();
+}
+
+function paint() {
+  const m = marks(game.target, game.typed);
+  box.querySelectorAll('span').forEach((span, i) => { span.className = m[i]; });
+}
+
+function showStats(ms) {
+  const s = stats(game, ms);
+  $('#time').textContent = (ms / 1000).toFixed(1);
+  $('#wpm').textContent = s.wpm;
+  $('#acc').textContent = s.accuracy + '%';
+  return s;
+}
+
+function tick() {
+  showStats(performance.now() - game.start);
+  game.raf = requestAnimationFrame(tick);
+}
+
+input.addEventListener('input', () => {
+  if (game.done) return;
+  const typed = Array.from(input.value);
+  if (!game.start) {
+    game.start = performance.now();
+    game.raf = requestAnimationFrame(tick);
+  }
+  for (let i = game.typed.length; i < typed.length; i++) {
+    game.keystrokes++;
+    if (typed[i] !== game.target[i]) {
+      game.mistakes++;
+      game.misses.set(game.target[i], (game.misses.get(game.target[i]) ?? 0) + 1);
+    }
+  }
+  game.typed = typed;
+  paint();
+  if (typed.length >= game.target.length) finish();
+});
+input.addEventListener('paste', (e) => e.preventDefault());
+
+async function finish() {
+  game.done = true;
+  cancelAnimationFrame(game.raf);
+  input.disabled = true;
+  const ms = performance.now() - game.start;
+  const s = showStats(ms);
+  const round = { at: Date.now(), ms: Math.round(ms), wpm: s.wpm, accuracy: s.accuracy, text: game.text, misses: Object.fromEntries(game.misses) };
+  const top = topMisses([round]).map(([ch, n]) => show(ch) + ' ×' + n).join('، ');
+  $('#result').textContent = 'خلصت: ' + s.wpm + ' WPM بدقة ' + s.accuracy + '%' + (top ? '. غلطت في: ' + top : '');
+  try {
+    await rounds.add(round);
+  } catch (e) {
+    $('#storage').textContent = 'الجولة دي متحفظتش: ' + e.name;
+  }
+}
+
+function row(r) {
+  const tr = document.createElement('tr');
+  const code = document.createElement('code');
+  code.textContent = r.text.length > 40 ? r.text.slice(0, 40) + '…' : r.text;
+  const cells = [when.format(r.at), r.wpm, r.accuracy + '%', topMisses([r]).map(([ch, n]) => show(ch) + '×' + n).join(' ')];
+  for (const text of cells) {
+    const td = document.createElement('td');
+    td.textContent = text;
+    tr.append(td);
+  }
+  const td = document.createElement('td');
+  td.append(code);
+  tr.append(td);
+  return tr;
+}
+
+async function renderProgress() {
+  const last = await rounds.last(30);
+  const shown = last.filter((r) => matches(r, $('#q').value));
+  const avg = average(last);
+  const top = topMisses(last).map(([ch, n]) => '«' + show(ch) + '» ' + n).join('، ');
+  $('#summary').textContent = last.length
+    ? 'آخر ' + last.length + ' جولة: متوسط ' + avg.wpm + ' WPM بدقة ' + avg.accuracy + '%. أكتر حروف غلطت فيها: ' + (top || 'مفيش')
+    : 'لسه مفيش جولات.';
+  $('#rounds').replaceChildren(...shown.map(row));
+}
+
+function route() {
+  const progress = location.hash === '#progress';
+  $('#play').hidden = progress;
+  $('#progress').hidden = !progress;
+  if (progress) renderProgress();
+  else if (game && !game.done) input.focus();
+}
+
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('#play').hidden) newGame(); });
+$('#restart').addEventListener('click', newGame);
+$('#q').addEventListener('input', debounce(renderProgress, 250));
+addEventListener('hashchange', route);
+// الروابط بتغيّر الـ hash بس، و route بترسم الشاشة (بالكود عشان تشتغل كمان جوه صفحات معزولة بتعترض روابط #)
+document.querySelector('nav').addEventListener('click', (e) => {
+  const a = e.target.closest('a');
+  if (!a) return;
+  e.preventDefault();
+  location.hash = a.getAttribute('href');
+});
+
+rounds = await openRounds();
+if (!rounds.persistent) $('#storage').textContent = 'الجولات مش هتتحفظ بعد ما تقفل الصفحة (' + rounds.reason + ').';
+methods = await (await fetch('data.json')).json();
+newGame();
+route();
+</script>
+</body>
+</html>
+~~~
+
+## هتشوف إيه
+
+٣ سطور كود حقيقية الشكل (زي [[const out = items.toSorted((x) => x * 2);]])، مكتوبة من الشمال لليمين جوه صفحة عربي. بتكتبها والحروف بتتلوّن زي لعبة الكتابة، ولما تخلص بيقولك السرعة والدقة والحروف اللي غلطت فيها. و «تقدّمي» فيها آخر ٣٠ جولة ومتوسطهم وأكتر حروف بتغلط فيها من كل الجولات، وخانة بحث في الكود بتاع الجولات القديمة. (في الصندوق ده IndexedDB مقفول، فهتشوف تحت العنوان «الجولات مش هتتحفظ بعد ما تقفل الصفحة (SecurityError)» والجولات بتتحفظ في الذاكرة بس.)
+
+## الصورة الكبيرة
+
+~~~text
+data.json (من مشروع البحث) ─▶ code-lines.js ─▶ نص الجولة (٣ سطور)
+                                                 │
+input ─▶ app.js: marks و stats (game.js) والغلطات في Map
+                                                 │ آخر الجولة
+                                                 ▼
+                         db.js ─▶ IndexedDB (أو الذاكرة لو مقفول)
+                                                 │
+#progress ◀── last(30) ── average و topMisses و matches (بـ debounce)
+~~~
+
+## ليه الأدوات دي تحديدًا؟
+
+| الحاجة | اخترنا | البديل | ليه هنا |
+|---|---|---|---|
+| التخزين | IndexedDB | [[localStorage]] | جولات بتكتر كل يوم، و IndexedDB بيخزن objects من غير [[JSON.stringify]] للكل مع كل جولة، وفيه index على الوقت فـ «آخر ٣٠» من غير ما تقرا الكل. [[localStorage]] كفاية لرقم قياسي واحد زي اللعبة الأصلية |
+| الصفحتين | [[#play]] و [[#progress]] بالـ hash | صفحتين HTML، أو router | صفحة واحدة والحالة (الـ DB المفتوح والجولة) بتفضل، والـ hash بيخلي «تقدّمي» ليها رابط |
+| البحث | [[debounce]] بتاع مشروع البحث | فلترة مع كل حرف | كل بحث بيقرا من IndexedDB، فـ ٢٥٠ms بعد آخر حرف أوفر من قراية مع كل حرف |
+| المنطق | [[game.js]] زي ما هو + [[code-lines.js]] | — | [[marks]] و [[stats]] متجرّبين خلاص، والجديد في ملف من غير DOM بيتختبر في Node |
+
+## الملفات
+
+~~~text
+code-coach/
+├── data.json        انسخه من مشروع البحث (gen-data.cjs بيعمله)
+├── index.html       الصفحتين، والنص والخانة dir="ltr"
+├── style.css
+├── game.js          زي لعبة الكتابة بالظبط
+├── code-lines.js    سطور الكود، و topMisses و average و matches
+├── db.js            IndexedDB أو الذاكرة
+├── debounce.js      زي مشروع البحث
+├── app.js           اللعبة والتقدّم والتنقل
+└── coach.test.mjs   اختبارات code-lines.js بـ node --test
+~~~
+
+~~~bash
+cp ../search/data.json .
+python3 -m http.server 8000     # أو server.js بتاع مشروع البحث
+node --test coach.test.mjs
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>مدرّب كتابة الكود</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>مدرّب كتابة الكود</h1>
+    <nav><a href="#play">العب</a> · <a href="#progress">تقدّمي</a></nav>
+    <p id="storage" role="status"></p>
+    <section id="play">
+      <p id="text" dir="ltr" lang="en" aria-label="الكود اللي هتكتبه"></p>
+      <input id="input" dir="ltr" lang="en" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="اكتب هنا">
+      <p class="stats">الوقت <b id="time">0.0</b> ث · السرعة <b id="wpm">0</b> WPM · الدقة <b id="acc">100%</b></p>
+      <p id="result" role="status"></p>
+      <button id="restart">سطور جديدة (Esc)</button>
+    </section>
+    <section id="progress" hidden>
+      <h2>تقدّمي</h2>
+      <p id="summary"></p>
+      <label>دوّر في الجولات <input id="q" dir="ltr" autocomplete="off"></label>
+      <table>
+        <thead><tr><th>إمتى</th><th>WPM</th><th>الدقة</th><th>غلطت في</th><th>الكود</th></tr></thead>
+        <tbody id="rounds"></tbody>
+      </table>
+    </section>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
+~~~
+
+~~~css style.css
+body { font-family: system-ui, sans-serif; max-width: 50rem; margin: 2rem auto; padding: 0 1rem; }
+#text { font: 1.2rem/2 ui-monospace, Consolas, monospace; padding: 1rem; background: #f4f4f4; border-radius: 8px; }
+#text .ok { color: #188038; }
+#text .bad { color: #fff; background: #d93025; }
+#text .cur { background: #fde293; }
+#input { width: 100%; font: 1.1rem ui-monospace, Consolas, monospace; padding: .5rem; box-sizing: border-box; }
+.stats b { font-variant-numeric: tabular-nums; }
+table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: .9rem; }
+th, td { padding: .3rem .4rem; border-bottom: 1px solid #ddd; text-align: start; }
+td code { direction: ltr; unicode-bidi: isolate; }
+#storage { color: #b06000; }
+~~~
+
+~~~js code-lines.js
+// code-lines.js: سطور كود حقيقية الشكل من أسامي الـ methods اللي في data.json (من غير DOM)
+const TEMPLATES = {
+  'Array.prototype': (n) => $__btconst out = items.$__{n}((x) => x * 2);$__bt,
+  'String.prototype': (n) => $__btconst s = name.$__{n}('a');$__bt,
+  Object: (n) => $__btconst keys = Object.$__{n}({ a: 1, b: 2 });$__bt,
+  Math: (n) => $__btconst v = Math.$__{n}(9, 4);$__bt,
+  Promise: (n) => $__btconst all = await Promise.$__{n}([p1, p2]);$__bt,
+  Number: (n) => $__btif (Number.$__{n}(x)) count++;$__bt,
+  JSON: (n) => $__btconst data = JSON.$__{n}(text);$__bt,
+  Array: (n) => $__btconst list = Array.$__{n}({ length: 3 });$__bt,
+  'Map.prototype': (n) => $__btcache.$__{n}(key);$__bt,
+  'Set.prototype': (n) => $__btseen.$__{n}(id);$__bt,
+};
+
+export const toLine = ({ name, owner }) => (TEMPLATES[owner] ?? ((n) => $__bt$__{owner}.$__{n}();$__bt))(name);
+
+// count سطور مختلفة، و random بتتبعت عشان الاختبار يثبّتها
+export function makeText(methods, count = 3, random = Math.random) {
+  const pool = [...methods];
+  const lines = [];
+  while (lines.length < count && pool.length) {
+    const [m] = pool.splice(Math.floor(random() * pool.length), 1);
+    lines.push(toLine(m));
+  }
+  return lines.join(' ');
+}
+
+// أكتر الحروف غلط من كل الجولات: [[حرف, عدد], ...]
+export function topMisses(rounds, n = 3) {
+  const all = new Map();
+  for (const r of rounds) for (const [ch, k] of Object.entries(r.misses)) all.set(ch, (all.get(ch) ?? 0) + k);
+  return [...all].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, n);
+}
+
+export function average(rounds) {
+  if (!rounds.length) return { wpm: 0, accuracy: 0 };
+  const sum = (k) => rounds.reduce((s, r) => s + r[k], 0);
+  return { wpm: Math.round(sum('wpm') / rounds.length), accuracy: Math.round(sum('accuracy') / rounds.length) };
+}
+
+export function matches(round, q) {
+  const query = q.trim().toLowerCase();
+  return !query || round.text.toLowerCase().includes(query);
+}
+~~~
+
+~~~js db.js
+// db.js: الجولات في IndexedDB، ولو IndexedDB مش متاح (وضع خاص، أو صندوق معزول) بتتحفظ في الذاكرة
+const NAME = 'code-coach';
+const STORE = 'rounds';
+
+function open() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(NAME, 1);
+    req.onupgradeneeded = () => {
+      const store = req.result.createObjectStore(STORE, { keyPath: 'id', autoIncrement: true });
+      store.createIndex('at', 'at');
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+const done = (req) => new Promise((resolve, reject) => {
+  req.onsuccess = () => resolve(req.result);
+  req.onerror = () => reject(req.error);
+});
+
+export async function openRounds() {
+  let db;
+  try {
+    db = await open();
+  } catch (e) {
+    const memory = [];
+    return {
+      persistent: false,
+      reason: e?.name ?? 'Error',
+      add: async (round) => { memory.push({ ...round, id: memory.length + 1 }); },
+      last: async (n) => memory.slice(-n).reverse(),
+    };
+  }
+  return {
+    persistent: true,
+    add: (round) => done(db.transaction(STORE, 'readwrite').objectStore(STORE).add(round)),
+    // آخر n جولة، الأحدث الأول: cursor بالعكس على index الوقت
+    last: (n) => new Promise((resolve, reject) => {
+      const out = [];
+      const req = db.transaction(STORE).objectStore(STORE).index('at').openCursor(null, 'prev');
+      req.onsuccess = () => {
+        const cursor = req.result;
+        if (!cursor || out.length === n) return resolve(out);
+        out.push(cursor.value);
+        cursor.continue();
+      };
+      req.onerror = () => reject(req.error);
+    }),
+  };
+}
+~~~
+
+~~~js app.js
+import { marks, stats } from './game.js';
+import { makeText, topMisses, average, matches } from './code-lines.js';
+import { openRounds } from './db.js';
+import { debounce } from './debounce.js';
+
+const $ = (sel) => document.querySelector(sel);
+const box = $('#text');
+const input = $('#input');
+const when = new Intl.DateTimeFormat('ar-EG', { dateStyle: 'short', timeStyle: 'short' });
+const show = (ch) => (ch === ' ' ? 'مسافة' : ch);
+let methods = [];
+let rounds = null;
+let game = null;
+
+function newGame() {
+  if (game) cancelAnimationFrame(game.raf);
+  const text = makeText(methods, 3);
+  game = { text, target: Array.from(text), typed: [], keystrokes: 0, mistakes: 0, misses: new Map(), start: 0, raf: 0, done: false };
+  box.replaceChildren(...game.target.map((ch) => {
+    const span = document.createElement('span');
+    span.textContent = ch;
+    return span;
+  }));
+  input.value = '';
+  input.maxLength = game.target.length;
+  input.disabled = false;
+  $('#result').textContent = '';
+  paint();
+  showStats(0);
+  input.focus();
+}
+
+function paint() {
+  const m = marks(game.target, game.typed);
+  box.querySelectorAll('span').forEach((span, i) => { span.className = m[i]; });
+}
+
+function showStats(ms) {
+  const s = stats(game, ms);
+  $('#time').textContent = (ms / 1000).toFixed(1);
+  $('#wpm').textContent = s.wpm;
+  $('#acc').textContent = s.accuracy + '%';
+  return s;
+}
+
+function tick() {
+  showStats(performance.now() - game.start);
+  game.raf = requestAnimationFrame(tick);
+}
+
+input.addEventListener('input', () => {
+  if (game.done) return;
+  const typed = Array.from(input.value);
+  if (!game.start) {
+    game.start = performance.now();
+    game.raf = requestAnimationFrame(tick);
+  }
+  for (let i = game.typed.length; i < typed.length; i++) {
+    game.keystrokes++;
+    if (typed[i] !== game.target[i]) {
+      game.mistakes++;
+      game.misses.set(game.target[i], (game.misses.get(game.target[i]) ?? 0) + 1);
+    }
+  }
+  game.typed = typed;
+  paint();
+  if (typed.length >= game.target.length) finish();
+});
+input.addEventListener('paste', (e) => e.preventDefault());
+
+async function finish() {
+  game.done = true;
+  cancelAnimationFrame(game.raf);
+  input.disabled = true;
+  const ms = performance.now() - game.start;
+  const s = showStats(ms);
+  const round = { at: Date.now(), ms: Math.round(ms), wpm: s.wpm, accuracy: s.accuracy, text: game.text, misses: Object.fromEntries(game.misses) };
+  const top = topMisses([round]).map(([ch, n]) => show(ch) + ' ×' + n).join('، ');
+  $('#result').textContent = 'خلصت: ' + s.wpm + ' WPM بدقة ' + s.accuracy + '%' + (top ? '. غلطت في: ' + top : '');
+  try {
+    await rounds.add(round);
+  } catch (e) {
+    $('#storage').textContent = 'الجولة دي متحفظتش: ' + e.name;
+  }
+}
+
+function row(r) {
+  const tr = document.createElement('tr');
+  const code = document.createElement('code');
+  code.textContent = r.text.length > 40 ? r.text.slice(0, 40) + '…' : r.text;
+  const cells = [when.format(r.at), r.wpm, r.accuracy + '%', topMisses([r]).map(([ch, n]) => show(ch) + '×' + n).join(' ')];
+  for (const text of cells) {
+    const td = document.createElement('td');
+    td.textContent = text;
+    tr.append(td);
+  }
+  const td = document.createElement('td');
+  td.append(code);
+  tr.append(td);
+  return tr;
+}
+
+async function renderProgress() {
+  const last = await rounds.last(30);
+  const shown = last.filter((r) => matches(r, $('#q').value));
+  const avg = average(last);
+  const top = topMisses(last).map(([ch, n]) => '«' + show(ch) + '» ' + n).join('، ');
+  $('#summary').textContent = last.length
+    ? 'آخر ' + last.length + ' جولة: متوسط ' + avg.wpm + ' WPM بدقة ' + avg.accuracy + '%. أكتر حروف غلطت فيها: ' + (top || 'مفيش')
+    : 'لسه مفيش جولات.';
+  $('#rounds').replaceChildren(...shown.map(row));
+}
+
+function route() {
+  const progress = location.hash === '#progress';
+  $('#play').hidden = progress;
+  $('#progress').hidden = !progress;
+  if (progress) renderProgress();
+  else if (game && !game.done) input.focus();
+}
+
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('#play').hidden) newGame(); });
+$('#restart').addEventListener('click', newGame);
+$('#q').addEventListener('input', debounce(renderProgress, 250));
+addEventListener('hashchange', route);
+// الروابط بتغيّر الـ hash بس، و route بترسم الشاشة (بالكود عشان تشتغل كمان جوه صفحات معزولة بتعترض روابط #)
+document.querySelector('nav').addEventListener('click', (e) => {
+  const a = e.target.closest('a');
+  if (!a) return;
+  e.preventDefault();
+  location.hash = a.getAttribute('href');
+});
+
+rounds = await openRounds();
+if (!rounds.persistent) $('#storage').textContent = 'الجولات مش هتتحفظ بعد ما تقفل الصفحة (' + rounds.reason + ').';
+methods = await (await fetch('data.json')).json();
+newGame();
+route();
+~~~
+
+~~~js game.js
+export function pick(count, last) {
+  if (count < 2) return 0;
+  if (last < 0 || last >= count) return Math.floor(Math.random() * count);
+  const i = Math.floor(Math.random() * (count - 1));
+  return i >= last ? i + 1 : i;
+}
+
+export function isArabic(text) {
+  return /\p{Script=Arabic}/u.test(text);
+}
+
+export function marks(target, typed) {
+  return target.map((ch, i) => {
+    if (i === typed.length) return 'cur';
+    if (i > typed.length) return '';
+    return typed[i] === ch ? 'ok' : 'bad';
+  });
+}
+
+export function stats({ target, typed, keystrokes, mistakes }, ms) {
+  let correct = 0;
+  for (let i = 0; i < typed.length; i++) if (typed[i] === target[i]) correct++;
+  const minutes = Math.max(ms, 1000) / 60000;
+  return {
+    wpm: Math.round(correct / 5 / minutes),
+    accuracy: keystrokes ? Math.round((keystrokes - mistakes) / keystrokes * 100) : 100,
+  };
+}
+~~~
+
+~~~js debounce.js
+export function debounce(fn, ms) {
+  let timer;
+  const wrapped = (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), ms);
+  };
+  wrapped.cancel = () => clearTimeout(timer);
+  return wrapped;
+}
+~~~
+
+## الأجزاء المهمة
+
+**الاتجاه:** [[dir="ltr"]] و [[lang="en"]] على [[#text]] و [[#input]] في الـ HTML نفسه، مش من الكود: الكود دايمًا شمال ليمين. واتقاس: [[#text]] اتجاهه [[ltr]] والصفحة [[rtl]]. وفي جدول التقدّم [[unicode-bidi: isolate]] على [[<code>]] عشان الأقواس متتقلبش جوه خانة عربي.
+
+**[[code-lines.js]]:**
+
+- [[TEMPLATES]] قالب لكل «صاحب»: method على array بتاخد دالة، و method على [[Math]] بتاخد أرقام. فالسطور شكلها كود حقيقي وفيها الحروف اللي بتتغلط فعلًا ([[(]] و [[=>]] و [[{]]).
+- [[makeText(methods, count, random)]]: [[random]] بيتبعت، فالاختبار بيثبّته ([[() => 0]]) ويطلع نفس النص كل مرة. و [[splice]] بيشيل الـ method اللي اتاختار، فالسطور مبتتكررش في نفس الجولة.
+- [[topMisses(rounds)]]: بيجمع [[misses]] من كل الجولات في [[Map]] واحدة ويرتّب. ولو عددين زي بعض، بالحرف ([[localeCompare]])، عشان الترتيب يبقى ثابت والاختبار ميبقاش مرة يعدّي ومرة لأ.
+
+**[[db.js]]:**
+
+- [[indexedDB.open(NAME, 1)]] و [[onupgradeneeded]]: أول مرة (أو بعد ما حد مسح القاعدة) الـ store بيتعمل من جديد بـ [[autoIncrement]] و index على [[at]]. عشان كده مسح القاعدة من DevTools مبيبوّظش حاجة.
+- [[openCursor(null, 'prev')]] على الـ index: بيمشي من الأحدث للأقدم، ويقف أول ما يجمع [[n]]. مش بيقرا الجولات كلها.
+- لو [[open]] رمت (وضع خاص في بعض المتصفحات، أو صندوق معزول زي اللي فوق): نفس الـ API بس في array في الذاكرة، و [[persistent: false]] بيخلي الصفحة تقول لليوزر.
+
+**[[app.js]]:**
+
+- [[game.misses]]: نفس فكرة تمرين «أكتر ٣ حروف» في لعبة الكتابة، والجولة بتتحفظ بـ [[Object.fromEntries(game.misses)]] لأن IndexedDB بيخزن objects عادية.
+- [[renderProgress]] بتقرا [[last(30)]] كل مرة، فالصفحة دايمًا من القاعدة مش من نسخة قديمة في الذاكرة.
+- [[route()]] بيقرا [[location.hash]] ويخفي ويظهر الـ sections. و [[hashchange]] بيناديه، والزرار «Back» في المتصفح بيرجّعك.
+
+## الاختبارات
+
+~~~js coach.test.mjs
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { toLine, makeText, topMisses, average, matches } from './code-lines.js';
+
+const methods = JSON.parse(await readFile(new URL('./data.json', import.meta.url), 'utf8'));
+
+test('كل method بيطلع سطر كود فيه اسمه، وكله ASCII (فـ ltr دايمًا)', () => {
+  for (const m of methods) {
+    const line = toLine(m);
+    assert.ok(line.includes(m.name + '('), line);
+    assert.match(line, /^[\x20-\x7e]+$/);
+  }
+  assert.equal(toLine({ name: 'toSorted', owner: 'Array.prototype' }), 'const out = items.toSorted((x) => x * 2);');
+});
+
+test('makeText: ٣ سطور مختلفة، ونفس الـ random = نفس النص', () => {
+  const fixed = () => 0;
+  const t = makeText(methods, 3, fixed);
+  assert.equal(t, makeText(methods, 3, fixed));
+  assert.equal(new Set(t.split('; ')).size, 3);
+  assert.equal(makeText(methods.slice(0, 2), 5).split(';').length - 1, 2);
+});
+
+const r = (wpm, accuracy, misses, text = 'x') => ({ wpm, accuracy, misses, text });
+
+test('topMisses بيجمع من كل الجولات ويرتّب', () => {
+  const rounds = [r(40, 90, { '(': 3, '{': 1 }), r(50, 95, { '(': 2, '=': 2 }), r(45, 92, { '{': 2 })];
+  assert.deepEqual(topMisses(rounds), [['(', 5], ['{', 3], ['=', 2]]);
+  assert.deepEqual(topMisses([]), []);
+});
+
+test('average', () => {
+  assert.deepEqual(average([r(40, 90, {}), r(51, 95, {})]), { wpm: 46, accuracy: 93 });
+  assert.deepEqual(average([]), { wpm: 0, accuracy: 0 });
+});
+
+test('matches: البحث في الكود من غير حساسية للحروف', () => {
+  const x = r(1, 1, {}, 'const out = items.toSorted((x) => x * 2);');
+  assert.equal(matches(x, 'TOSORTED'), true);
+  assert.equal(matches(x, '  '), true);
+  assert.equal(matches(x, 'flatMap'), false);
+});
+~~~
+
+~~~text الناتج: node --test coach.test.mjs (Node 24.22، ٢١ نوفمبر ٢٠٢٦)
+✔ كل method بيطلع سطر كود فيه اسمه، وكله ASCII (فـ ltr دايمًا) (2.9252ms)
+✔ makeText: ٣ سطور مختلفة، ونفس الـ random = نفس النص (0.5904ms)
+✔ topMisses بيجمع من كل الجولات ويرتّب (2.1609ms)
+✔ average (0.6891ms)
+✔ matches: البحث في الكود من غير حساسية للحروف (0.4565ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 285.997
+~~~
+
+## اتجرّب في Chrome 158: ١٠ جولات، وقفل المتصفح، ومسح القاعدة
+
+سكربت Playwright بـ profile حقيقي (عشان IndexedDB يفضل بعد ما المتصفح يتقفل): ١٠ جولات، وفي كل جولة أول حرفين من [[(]] و [[{]] و [[=]] بيتكتبوا غلط ويتصلّحوا. وبعدين «تقدّمي»، وبحث، وقفل وفتح، ومسح القاعدة بـ [[indexedDB.deleteDatabase]] (نفس زرار «Delete database» في DevTools > Application):
+
+~~~text الناتج: node p6.cjs
+الاتجاه:          #text ltr (محسوب ltr)، والصفحة rtl
+أول جولة:         seen.isSubsetOf(id); const all = await Promise.reject([p1, p2]); const s = name.toLocaleUpperCase('a');
+النتيجة:          خلصت: 842 WPM بدقة 98%. غلطت في: ( ×1، = ×1
+تقدّمي:           آخر 10 جولة: متوسط 927 WPM بدقة 98%. أكتر حروف غلطت فيها: «(» 12، «=» 8
+الصفوف:           10
+بحث isSubsetOf:   على طول 10 صفوف (الـ debounce لسه مستني)، وبعد 400ms: 2
+بعد قفل المتصفح:  10
+deleteDatabase:   deleted
+بعد المسح:        لسه مفيش جولات.   ورسالة التخزين: فاضية (IndexedDB اتعمل من جديد)
+pageerror:        ولا واحد
+~~~
+
+الـ WPM أرقام سكربت (أسرع من أي حد). والمهم: «(» و «=» ليهم رقم في «أكتر حروف غلطت فيها»، والبحث رجّع الجولتين اللي فيهم [[isSubsetOf]] بس.
+
+## الغلطة اللي حصلت
+
+أول نسخة كان التنقل لينكات عادية ([[<a href="#progress">]]) من غير أي كود. في المتصفح اشتغلت. في المعاينة اللي فوق، الضغط على «تقدّمي» **معملش حاجة**: صندوق المعاينة في الموقع ده بيعترض أي رابط [[#]] ويعمل scroll للعنصر بداله، والعنصر مخفي. قست الاتنين بنفس مساعد الموقع:
+
+~~~text الناتج
+من غير المستمع:  progressHidden: true   hash: ""
+بالمستمع:       progressHidden: false  hash: "#progress"
+~~~
+
+المستمع على [[nav]] بيعمل [[preventDefault]] ويغيّر [[location.hash]] بنفسه، فـ [[hashchange]] بيحصل في الحالتين. الدرس: لو صفحتك هتتعرض جوه صفحة تانية (iframe، أو widget)، اللينكات اللي بتعتمد على سلوك المتصفح الافتراضي ممكن تتعترض.
+
+**الغلطة الشائعة:** تحفظ الجولات في [[localStorage]] كـ array واحدة: كل جولة جديدة = تقرا الكل وتكتب الكل، وبعد شهور [[QuotaExceededError]]. أو تفتح IndexedDB من غير [[onupgradeneeded]] كامل: أول ما حد يمسح القاعدة، الصفحة بتفتح والـ store مش موجود وأول [[transaction]] على الـ store بترمي [[NotFoundError]] (ده من وثائق MDN لـ [[IDBDatabase.transaction()]]، مش متجرّب هنا).` },
+        { lvl: 'فكرة', dir: "flashcards", t: R`تطبيقك انت بالتلات مهارات`, what: R`اختار مشكلة حقيقية عندك أو عند حد تعرفه: مذاكرة بالـ flashcards، أو متابعة تمارين الجيم، أو حسابات محل صغير، أو جدول مواعيد. التطبيق لازم يستخدم التلات حاجات اللي اتبنوا هنا: حالة بتتحفظ وبتستحمل الداتا البايظة وبتتصدّر (المصاريف)، وبحث بـ [[debounce]] وكاش (البحث)، ووقت متقاس بـ [[performance.now()]] (اللعبة). انت اللي بتحدد الشاشات.`, done: R`حد غيرك استخدمه أسبوع من غير ما تشرحله. وفيه README فيه صورة وطريقة التشغيل، و [[npm test]] بيعدّي، والمنطق كله في ملفات من غير DOM.`, ext: R`انشره على GitHub Pages، واكتب في الـ README اتنين قرارات أخدتهم وليه (زي «القروش مش كسور»). ده اللي بيتسأل عليه في الانترفيو.`, sol: R`~~~view 560 كروت المذاكرة (نسخة نموذجية)
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>كروت المذاكرة</title>
+  <style>
+body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1rem; }
+.study { padding: 1rem; background: #f4f4f4; border-radius: 8px; text-align: center; }
+#question { font-size: 1.4rem; font-weight: 700; }
+#answer { font-size: 1.2rem; color: #188038; }
+form { display: flex; flex-wrap: wrap; gap: .5rem; align-items: end; margin: 1rem 0; }
+.err, #status { color: #b00020; }
+small { opacity: .75; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>كروت المذاكرة</h1>
+    <p id="status" role="status"></p>
+    <section class="study">
+      <p id="question"></p>
+      <p id="answer" hidden></p>
+      <button id="reveal">اظهر الإجابة</button>
+      <p id="judge" hidden>
+        <button data-correct="yes">عرفتها</button>
+        <button data-correct="no">معرفتهاش</button>
+      </p>
+      <p id="last"></p>
+    </section>
+    <form id="add" novalidate>
+      <label>السؤال <input name="front" maxlength="200" dir="auto"></label>
+      <label>الإجابة <input name="back" maxlength="500" dir="auto"></label>
+      <button>ضيف كارت</button>
+      <small id="add-err" class="err"></small>
+    </form>
+    <section>
+      <label>دوّر <input id="q" dir="auto" autocomplete="off"></label>
+      <p id="count"></p>
+      <ul id="list"></ul>
+      <button id="export">نزّل الكروت JSON</button>
+    </section>
+  </main>
+  <script type="module">
+// cards.js: كل منطق الكروت من غير DOM: التحقق، والحفظ، والمراجعة، والبحث بكاش
+const KEY = 'flashcards';
+const VERSION = 1;
+const MAX_BOX = 5;
+
+function validateCard(input) {
+  const front = String(input.front ?? '').trim();
+  const back = String(input.back ?? '').trim();
+  const errors = {};
+  if (!front || front.length > 200) errors.front = 'السؤال لازم من ١ لـ ٢٠٠ حرف';
+  if (!back || back.length > 500) errors.back = 'الإجابة لازم من ١ لـ ٥٠٠ حرف';
+  if (Object.keys(errors).length) return { ok: false, errors };
+  return { ok: true, value: { front, back, box: 1, seen: 0, right: 0, totalMs: 0 } };
+}
+
+const isCard = (c) => c && typeof c.id === 'string' && typeof c.front === 'string' && typeof c.back === 'string'
+  && [c.box, c.seen, c.right, c.totalMs].every(Number.isInteger)
+  && c.box >= 1 && c.box <= MAX_BOX && c.right <= c.seen;
+
+function load(storage) {
+  let raw;
+  try { raw = storage.getItem(KEY); } catch { return { cards: [], broken: null }; }
+  if (!raw) return { cards: [], broken: null };
+  try {
+    const data = JSON.parse(raw);
+    if (data?.version === VERSION && Array.isArray(data.cards)) return { cards: data.cards.filter(isCard), broken: null };
+  } catch { /* بايظ: تحت */ }
+  return { cards: [], broken: raw };
+}
+
+function save(storage, cards) {
+  try { storage.setItem(KEY, JSON.stringify({ version: VERSION, cards })); return true; } catch { return false; }
+}
+
+// Leitner: صح = الصندوق اللي بعده، غلط = الصندوق الأول. والوقت بالـ ms من performance.now
+function review(card, correct, ms) {
+  return {
+    ...card,
+    box: correct ? Math.min(card.box + 1, MAX_BOX) : 1,
+    seen: card.seen + 1,
+    right: card.right + (correct ? 1 : 0),
+    totalMs: card.totalMs + Math.round(ms),
+  };
+}
+
+// الكارت الجاي: أقل صندوق، ولو اتساووا اللي اتشاف أقل. و skip عشان نفس الكارت ميتكررش ورا بعض
+function nextCard(cards, skipId = null) {
+  const pool = cards.length > 1 ? cards.filter((c) => c.id !== skipId) : cards;
+  return pool.toSorted((a, b) => a.box - b.box || a.seen - b.seen)[0] ?? null;
+}
+
+const avgSeconds = (c) => (c.seen ? Math.round(c.totalMs / c.seen / 100) / 10 : null);
+
+// بحث بكاش: نفس الكلمة على نفس الكروت = نفس النتيجة من غير ما تلف تاني. أي تعديل في الكروت بيعمل كاش جديد
+function createSearch(cards, max = 50) {
+  const cache = new Map();
+  const stats = { computed: 0, cached: 0 };
+  function search(q) {
+    const query = q.trim().toLowerCase();
+    if (cache.has(query)) {
+      stats.cached++;
+      const hit = cache.get(query);
+      cache.delete(query);
+      cache.set(query, hit);
+      return hit;
+    }
+    stats.computed++;
+    const hits = query ? cards.filter((c) => (c.front + ' ' + c.back).toLowerCase().includes(query)) : cards;
+    cache.set(query, hits);
+    if (cache.size > max) cache.delete(cache.keys().next().value);
+    return hits;
+  }
+  return { search, stats };
+}
+
+const toJSON = (cards) => JSON.stringify({ version: VERSION, cards }, null, 2);
+
+function debounce(fn, ms) {
+  let timer;
+  const wrapped = (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), ms);
+  };
+  wrapped.cancel = () => clearTimeout(timer);
+  return wrapped;
+}
+
+
+
+
+const $ = (sel) => document.querySelector(sel);
+const store = (() => { try { return localStorage; } catch { return null; } })();
+const loaded = load(store);
+const state = { cards: loaded.cards, current: null, shownAt: 0 };
+let finder = createSearch(state.cards);
+
+// الداتا البايظة متتمسحش: نسخة منها قبل أول save يكتب فوقها
+if (loaded.broken) {
+  try { store.setItem('flashcards:broken', loaded.broken); } catch { /* مفيش تخزين أصلًا */ }
+  $('#status').textContent = 'الكروت المحفوظة كانت بايظة: نسخة منها في flashcards:broken، والتطبيق بدأ فاضي.';
+}
+
+function commit() {
+  finder = createSearch(state.cards);
+  if (!save(store, state.cards)) $('#status').textContent = 'مقدرناش نحفظ: الكروت هتروح لما تقفل الصفحة.';
+  renderList();
+}
+
+function el(tag, text) {
+  const node = document.createElement(tag);
+  node.textContent = text;
+  return node;
+}
+
+function renderList() {
+  const hits = finder.search($('#q').value);
+  $('#list').replaceChildren(...hits.map((c) => {
+    const li = el('li', c.front + ' ← ' + c.back);
+    const avg = avgSeconds(c);
+    li.append(el('small', ' · صندوق ' + c.box + (avg === null ? '' : ' · ' + c.right + '/' + c.seen + ' صح · متوسط ' + avg + ' ث')));
+    return li;
+  }));
+  $('#count').textContent = hits.length + ' من ' + state.cards.length + ' كارت';
+}
+
+function showNext() {
+  state.current = nextCard(state.cards, state.current?.id);
+  $('#answer').hidden = true;
+  $('#judge').hidden = true;
+  $('#reveal').hidden = !state.current;
+  $('#question').textContent = state.current ? state.current.front : 'ضيف كروت الأول.';
+  state.shownAt = performance.now();
+}
+
+$('#reveal').addEventListener('click', () => {
+  $('#answer').textContent = state.current.back;
+  $('#answer').hidden = false;
+  $('#judge').hidden = false;
+  $('#reveal').hidden = true;
+});
+
+$('#judge').addEventListener('click', (e) => {
+  const correct = e.target.dataset.correct;
+  if (correct === undefined) return;
+  const ms = performance.now() - state.shownAt;
+  state.cards = state.cards.map((c) => (c.id === state.current.id ? review(c, correct === 'yes', ms) : c));
+  commit();
+  $('#last').textContent = 'آخر كارت: ' + (ms / 1000).toFixed(1) + ' ث';
+  showNext();
+});
+
+$('#add').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const result = validateCard(Object.fromEntries(new FormData(e.target)));
+  $('#add-err').textContent = result.ok ? '' : Object.values(result.errors).join('، ');
+  if (!result.ok) return;
+  state.cards = [...state.cards, { ...result.value, id: crypto.randomUUID() }];
+  e.target.reset();
+  commit();
+  if (!state.current) showNext();
+});
+
+$('#q').addEventListener('input', debounce(renderList, 250));
+
+$('#export').addEventListener('click', () => {
+  const a = el('a', '');
+  a.href = URL.createObjectURL(new Blob([toJSON(state.cards)], { type: 'application/json' }));
+  a.download = 'flashcards.json';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 0);
+});
+
+window.searchStats = () => finder.stats;
+// المعاينة بس: localStorage مقفول جوه الصندوق ده، فبنبدأ بـ ٣ كروت تجربة
+if (!store) state.cards = [['map', 'بيرجّع array جديد بنفس الطول'], ['filter', 'بيرجّع العناصر اللي الشرط بتاعها true'], ['reduce', 'بيجمع الـ array في قيمة واحدة']]
+  .map(([front, back], i) => ({ id: 'd' + i, front, back, box: 1, seen: 0, right: 0, totalMs: 0 }));
+finder = createSearch(state.cards);
+
+renderList();
+showNext();
+</script>
+</body>
+</html>
+~~~
+
+## النسخة النموذجية: كروت مذاكرة
+
+ده **حل واحد** من حلول كتير: المشكلة اللي اخترتها «مذاكرة بالـ flashcards». تكتب سؤال وإجابة، وتذاكر: الكارت بيظهر، تدوس «اظهر الإجابة»، وبعدين «عرفتها» أو «معرفتهاش». الكارت اللي بتعرفه بيطلع صندوق، فبيظهر أقل (طريقة Leitner). وتحت لستة الكروت ببحث، وجنب كل كارت صندوقه وكام مرة عرفته ومتوسط وقتك فيه. (في المعاينة فيه ٣ كروت تجربة، والحفظ مقفول فهتشوف «مقدرناش نحفظ».)
+
+## التلات مهارات، اتحطت فين
+
+| المهارة | من مشروع | هنا |
+|---|---|---|
+| حالة بتتحفظ وبتستحمل الداتا البايظة وبتتصدّر | المصاريف | [[load]] بيفحص كل كارت بـ [[isCard]]، والبايظ متتمسحش: نسخة في [[flashcards:broken]]. وزرار «نزّل الكروت JSON» |
+| بحث بـ [[debounce]] وكاش | البحث | [[debounce(renderList, 250)]]، و [[createSearch]] فيها [[Map]] LRU زي [[remember]]، وبتتعمل من جديد مع أي تعديل في الكروت |
+| وقت متقاس بـ [[performance.now()]] | اللعبة | [[state.shownAt]] لحظة ظهور الكارت، والفرق لحظة الحكم بيتجمع في [[totalMs]] |
+
+## ليه التصميم ده
+
+- **المنطق كله في [[cards.js]] من غير DOM** (التحقق والحفظ والمراجعة والاختيار والبحث)، فـ [[npm test]] بيجرّبه في ثانية. و [[app.js]] بيوصّل بس.
+- **[[review]] و [[nextCard]] دوال خالصة:** [[review(card, correct, ms)]] بترجّع كارت جديد، والوقت بيتبعت كرقم. فالاختبار بيقول [[1500.4]] ms وبيتأكد من [[1500]] من غير ما يستنى.
+- **الكاش بيتعمل من جديد مع أي تعديل** ([[finder = createSearch(state.cards)]] في [[commit]]) بدل ما ينضّف خانات. أبسط، ومستحيل يعرض نتيجة قديمة بعد إضافة كارت (المشكلة اللي اتكتبت في درس البحث).
+- **[[nextCard(cards, skipId)]]** مبيرجّعش نفس الكارت مرتين ورا بعض، إلا لو مفيش غيره.
+
+## الملفات
+
+~~~text
+flashcards/
+├── package.json     "test": "node --test"
+├── README.md        الصورة والتشغيل وقرارين
+├── index.html
+├── style.css
+├── cards.js         المنطق كله
+├── debounce.js      زي مشروع البحث
+├── app.js
+└── cards.test.mjs
+~~~
+
+~~~json package.json
+{
+  "name": "flashcards",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>كروت المذاكرة</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>كروت المذاكرة</h1>
+    <p id="status" role="status"></p>
+    <section class="study">
+      <p id="question"></p>
+      <p id="answer" hidden></p>
+      <button id="reveal">اظهر الإجابة</button>
+      <p id="judge" hidden>
+        <button data-correct="yes">عرفتها</button>
+        <button data-correct="no">معرفتهاش</button>
+      </p>
+      <p id="last"></p>
+    </section>
+    <form id="add" novalidate>
+      <label>السؤال <input name="front" maxlength="200" dir="auto"></label>
+      <label>الإجابة <input name="back" maxlength="500" dir="auto"></label>
+      <button>ضيف كارت</button>
+      <small id="add-err" class="err"></small>
+    </form>
+    <section>
+      <label>دوّر <input id="q" dir="auto" autocomplete="off"></label>
+      <p id="count"></p>
+      <ul id="list"></ul>
+      <button id="export">نزّل الكروت JSON</button>
+    </section>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
+~~~
+
+~~~css style.css
+body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1rem; }
+.study { padding: 1rem; background: #f4f4f4; border-radius: 8px; text-align: center; }
+#question { font-size: 1.4rem; font-weight: 700; }
+#answer { font-size: 1.2rem; color: #188038; }
+form { display: flex; flex-wrap: wrap; gap: .5rem; align-items: end; margin: 1rem 0; }
+.err, #status { color: #b00020; }
+small { opacity: .75; }
+~~~
+
+~~~js cards.js
+// cards.js: كل منطق الكروت من غير DOM: التحقق، والحفظ، والمراجعة، والبحث بكاش
+const KEY = 'flashcards';
+const VERSION = 1;
+const MAX_BOX = 5;
+
+export function validateCard(input) {
+  const front = String(input.front ?? '').trim();
+  const back = String(input.back ?? '').trim();
+  const errors = {};
+  if (!front || front.length > 200) errors.front = 'السؤال لازم من ١ لـ ٢٠٠ حرف';
+  if (!back || back.length > 500) errors.back = 'الإجابة لازم من ١ لـ ٥٠٠ حرف';
+  if (Object.keys(errors).length) return { ok: false, errors };
+  return { ok: true, value: { front, back, box: 1, seen: 0, right: 0, totalMs: 0 } };
+}
+
+const isCard = (c) => c && typeof c.id === 'string' && typeof c.front === 'string' && typeof c.back === 'string'
+  && [c.box, c.seen, c.right, c.totalMs].every(Number.isInteger)
+  && c.box >= 1 && c.box <= MAX_BOX && c.right <= c.seen;
+
+export function load(storage) {
+  let raw;
+  try { raw = storage.getItem(KEY); } catch { return { cards: [], broken: null }; }
+  if (!raw) return { cards: [], broken: null };
+  try {
+    const data = JSON.parse(raw);
+    if (data?.version === VERSION && Array.isArray(data.cards)) return { cards: data.cards.filter(isCard), broken: null };
+  } catch { /* بايظ: تحت */ }
+  return { cards: [], broken: raw };
+}
+
+export function save(storage, cards) {
+  try { storage.setItem(KEY, JSON.stringify({ version: VERSION, cards })); return true; } catch { return false; }
+}
+
+// Leitner: صح = الصندوق اللي بعده، غلط = الصندوق الأول. والوقت بالـ ms من performance.now
+export function review(card, correct, ms) {
+  return {
+    ...card,
+    box: correct ? Math.min(card.box + 1, MAX_BOX) : 1,
+    seen: card.seen + 1,
+    right: card.right + (correct ? 1 : 0),
+    totalMs: card.totalMs + Math.round(ms),
+  };
+}
+
+// الكارت الجاي: أقل صندوق، ولو اتساووا اللي اتشاف أقل. و skip عشان نفس الكارت ميتكررش ورا بعض
+export function nextCard(cards, skipId = null) {
+  const pool = cards.length > 1 ? cards.filter((c) => c.id !== skipId) : cards;
+  return pool.toSorted((a, b) => a.box - b.box || a.seen - b.seen)[0] ?? null;
+}
+
+export const avgSeconds = (c) => (c.seen ? Math.round(c.totalMs / c.seen / 100) / 10 : null);
+
+// بحث بكاش: نفس الكلمة على نفس الكروت = نفس النتيجة من غير ما تلف تاني. أي تعديل في الكروت بيعمل كاش جديد
+export function createSearch(cards, max = 50) {
+  const cache = new Map();
+  const stats = { computed: 0, cached: 0 };
+  function search(q) {
+    const query = q.trim().toLowerCase();
+    if (cache.has(query)) {
+      stats.cached++;
+      const hit = cache.get(query);
+      cache.delete(query);
+      cache.set(query, hit);
+      return hit;
+    }
+    stats.computed++;
+    const hits = query ? cards.filter((c) => (c.front + ' ' + c.back).toLowerCase().includes(query)) : cards;
+    cache.set(query, hits);
+    if (cache.size > max) cache.delete(cache.keys().next().value);
+    return hits;
+  }
+  return { search, stats };
+}
+
+export const toJSON = (cards) => JSON.stringify({ version: VERSION, cards }, null, 2);
+~~~
+
+~~~js app.js
+import { validateCard, load, save, review, nextCard, avgSeconds, createSearch, toJSON } from './cards.js';
+import { debounce } from './debounce.js';
+
+const $ = (sel) => document.querySelector(sel);
+const store = (() => { try { return localStorage; } catch { return null; } })();
+const loaded = load(store);
+const state = { cards: loaded.cards, current: null, shownAt: 0 };
+let finder = createSearch(state.cards);
+
+// الداتا البايظة متتمسحش: نسخة منها قبل أول save يكتب فوقها
+if (loaded.broken) {
+  try { store.setItem('flashcards:broken', loaded.broken); } catch { /* مفيش تخزين أصلًا */ }
+  $('#status').textContent = 'الكروت المحفوظة كانت بايظة: نسخة منها في flashcards:broken، والتطبيق بدأ فاضي.';
+}
+
+function commit() {
+  finder = createSearch(state.cards);
+  if (!save(store, state.cards)) $('#status').textContent = 'مقدرناش نحفظ: الكروت هتروح لما تقفل الصفحة.';
+  renderList();
+}
+
+function el(tag, text) {
+  const node = document.createElement(tag);
+  node.textContent = text;
+  return node;
+}
+
+function renderList() {
+  const hits = finder.search($('#q').value);
+  $('#list').replaceChildren(...hits.map((c) => {
+    const li = el('li', c.front + ' ← ' + c.back);
+    const avg = avgSeconds(c);
+    li.append(el('small', ' · صندوق ' + c.box + (avg === null ? '' : ' · ' + c.right + '/' + c.seen + ' صح · متوسط ' + avg + ' ث')));
+    return li;
+  }));
+  $('#count').textContent = hits.length + ' من ' + state.cards.length + ' كارت';
+}
+
+function showNext() {
+  state.current = nextCard(state.cards, state.current?.id);
+  $('#answer').hidden = true;
+  $('#judge').hidden = true;
+  $('#reveal').hidden = !state.current;
+  $('#question').textContent = state.current ? state.current.front : 'ضيف كروت الأول.';
+  state.shownAt = performance.now();
+}
+
+$('#reveal').addEventListener('click', () => {
+  $('#answer').textContent = state.current.back;
+  $('#answer').hidden = false;
+  $('#judge').hidden = false;
+  $('#reveal').hidden = true;
+});
+
+$('#judge').addEventListener('click', (e) => {
+  const correct = e.target.dataset.correct;
+  if (correct === undefined) return;
+  const ms = performance.now() - state.shownAt;
+  state.cards = state.cards.map((c) => (c.id === state.current.id ? review(c, correct === 'yes', ms) : c));
+  commit();
+  $('#last').textContent = 'آخر كارت: ' + (ms / 1000).toFixed(1) + ' ث';
+  showNext();
+});
+
+$('#add').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const result = validateCard(Object.fromEntries(new FormData(e.target)));
+  $('#add-err').textContent = result.ok ? '' : Object.values(result.errors).join('، ');
+  if (!result.ok) return;
+  state.cards = [...state.cards, { ...result.value, id: crypto.randomUUID() }];
+  e.target.reset();
+  commit();
+  if (!state.current) showNext();
+});
+
+$('#q').addEventListener('input', debounce(renderList, 250));
+
+$('#export').addEventListener('click', () => {
+  const a = el('a', '');
+  a.href = URL.createObjectURL(new Blob([toJSON(state.cards)], { type: 'application/json' }));
+  a.download = 'flashcards.json';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 0);
+});
+
+window.searchStats = () => finder.stats;
+renderList();
+showNext();
+~~~
+
+~~~js debounce.js
+export function debounce(fn, ms) {
+  let timer;
+  const wrapped = (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), ms);
+  };
+  wrapped.cancel = () => clearTimeout(timer);
+  return wrapped;
+}
+~~~
+
+~~~js cards.test.mjs
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { validateCard, load, save, review, nextCard, avgSeconds, createSearch } from './cards.js';
+
+const memory = (raw) => { const m = new Map(raw ? [['flashcards', raw]] : []); return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) }; };
+const card = (id, front, box = 1, seen = 0) => ({ id, front, back: 'x', box, seen, right: 0, totalMs: 0 });
+
+test('validateCard بيرفض الفاضي ويشيل المسافات', () => {
+  assert.deepEqual(validateCard({ front: '  map  ', back: 'بيرجّع array جديد' }).value.front, 'map');
+  assert.deepEqual(Object.keys(validateCard({ front: ' ', back: '' }).errors), ['front', 'back']);
+});
+
+test('load: داتا بايظة بترجع فاضي ومعاها النص الخام عشان يتحفظ', () => {
+  assert.deepEqual(load(memory('{"version":1,"cards":[')), { cards: [], broken: '{"version":1,"cards":[' });
+  const st = memory();
+  save(st, [card('a', 'map'), { id: 'b', front: 'x', back: 'y', box: 9, seen: 0, right: 0, totalMs: 0 }]);
+  assert.deepEqual(load(st).cards.map((c) => c.id), ['a']);
+  assert.deepEqual(load(null), { cards: [], broken: null });
+});
+
+test('review: صح بيطلّع صندوق (لحد ٥)، وغلط بيرجّع للأول، والوقت بيتجمع', () => {
+  let c = card('a', 'map');
+  c = review(c, true, 1500.4);
+  assert.deepEqual([c.box, c.seen, c.right, c.totalMs], [2, 1, 1, 1500]);
+  c = review({ ...c, box: 5 }, true, 500);
+  assert.equal(c.box, 5);
+  c = review(c, false, 2000);
+  assert.deepEqual([c.box, c.seen, c.right, avgSeconds(c)], [1, 3, 2, 1.3]);
+});
+
+test('nextCard: أقل صندوق، ومبيكررش نفس الكارت ورا بعض', () => {
+  const cards = [card('a', 'map', 2), card('b', 'filter', 1, 3), card('c', 'reduce', 1, 0)];
+  assert.equal(nextCard(cards).id, 'c');
+  assert.equal(nextCard(cards, 'c').id, 'b');
+  assert.equal(nextCard([card('a', 'map')], 'a').id, 'a');
+  assert.equal(nextCard([]), null);
+});
+
+test('createSearch: الكلمة المتكررة من الكاش', () => {
+  const { search, stats } = createSearch([card('a', 'Array.map'), card('b', 'filter')]);
+  assert.equal(search('MAP').length, 1);
+  assert.equal(search(' map ').length, 1);
+  assert.equal(search('').length, 2);
+  assert.deepEqual(stats, { computed: 2, cached: 1 });
+});
+~~~
+
+~~~md README.md
+# كروت المذاكرة
+
+تطبيق صفحة واحدة: تكتب كروت (سؤال وإجابة)، وتذاكرها بطريقة Leitner (اللي بتعرفه بيظهر أقل)، والتطبيق بيقيس بتاخد كام ثانية في كل كارت.
+
+## التشغيل
+
+$__bt$__bt$__btbash
+python3 -m http.server 8000   # وافتح http://localhost:8000
+npm test                      # node --test على cards.js
+$__bt$__bt$__bt
+
+## قرارين أخدتهم وليه
+
+1. **الوقت بـ $__btperformance.now()$__bt مش $__btDate.now()$__bt:** الوقت من لحظة ما الكارت ظهر لحد ما دست «عرفتها»، ومبيتأثرش لو ساعة الجهاز اتغيّرت وانت بتذاكر.
+2. **الداتا البايظة متتمسحش:** لو الحفظ بايظ، نسخة منه بتتحفظ في $__btflashcards:broken$__bt قبل ما التطبيق يبدأ فاضي، فممكن ترجّعها بإيدك.
+~~~
+
+## اتقاس
+
+~~~text الناتج: npm test (Node 24.22، ٢١ نوفمبر ٢٠٢٦)
+> test
+> node --test
+✔ validateCard بيرفض الفاضي ويشيل المسافات (1.4113ms)
+✔ load: داتا بايظة بترجع فاضي ومعاها النص الخام عشان يتحفظ (0.5356ms)
+✔ review: صح بيطلّع صندوق (لحد ٥)، وغلط بيرجّع للأول، والوقت بيتجمع (0.2893ms)
+✔ nextCard: أقل صندوق، ومبيكررش نفس الكارت ورا بعض (0.2171ms)
+✔ createSearch: الكلمة المتكررة من الكاش (0.2716ms)
+ℹ tests 5
+ℹ pass 5
+ℹ fail 0
+~~~
+
+وفي Chrome 158 (من سيرفر): ٣ كروت، ومذاكرتهم باستنا ١.٢ و ٠.٦ و ٢.٥ ثانية بين «اظهر» والحكم، وبحث، و reload، وداتا بايظة:
+
+~~~text الناتج: node p7.cjs (Playwright)
+أول كارت:      map
+الأوقات:       آخر كارت: 1.3 ث / 0.6 ث / 2.6 ث
+اللستة:        map · صندوق 2 · 1/1 صح · متوسط 1.3 ث
+               filter · صندوق 1 · 0/1 صح · متوسط 0.6 ث
+               reduce · صندوق 2 · 1/1 صح · متوسط 2.6 ث
+بحث «arr»:     على طول «3 من 3 كارت»، وبعد 400ms «2 من 3 كارت»
+searchStats:   { computed: 2, cached: 2 }   (بعد ما فضّيت الخانة ورجعت لـ arr)
+reload:        3 من 3 كارت
+داتا بايظة:    الكروت المحفوظة كانت بايظة: نسخة منها في flashcards:broken، والتطبيق بدأ فاضي.
+               flashcards:broken = {"version":1,"cards":[
+pageerror:     ولا واحد
+~~~
+
+الأوقات أكتر من الاستنا بـ ~٠.١ ثانية: الوقت بيبدأ من ظهور الكارت مش من «اظهر الإجابة»، والضغطات نفسها بتاخد وقت. و «arr» طلّعت ٢ لأن البحث في السؤال **والإجابة** («array» في إجابة map و reduce).
+
+**المطلوب في المشروع:** «حد غيرك استخدمه أسبوع» ده انت اللي هتعمله، ومش متقاس هنا. اللي اتقاس: [[npm test]] بيعدّي، والمنطق في ملف من غير DOM، والـ README فيه التشغيل وقرارين.
+
+**الغلطة الشائعة في المشروع ده:** تبني الشاشات الأول وتحط المنطق جوه مستمعات الأحداث، وبعدين تكتشف إن مفيش حاجة تتختبر من غير متصفح. ابدأ بـ [[cards.js]] واختباراته، زي ما مشروع المصاريف بدأ بـ [[expenses.js]].` },
+      ],
+      n: R`تلات تطبيقات حقيقية من فولدر فاضي: متتبّع مصاريف بيحسب ويصدّر CSV، وبحث بيستنى لحد ما تخلص كتابة، ولعبة سرعة كتابة بالعربي والإنجليزي. كل سطر فيهم اتشغّل: المنطق في Node 24.22، والصفحة في jsdom 30.1، واللعبة كمان في Chrome 156. والأرقام اللي في الشرح اتقاست`,
+      items: [
+        {
+          cmd: "مشروع: expense tracker",
+          title: "متتبّع مصاريف",
+          learn: R`تبني متتبّع مصاريف كامل: إضافة وتعديل ومسح، وإجمالي لكل تصنيف ولكل شهر، وحفظ، وتصدير CSV.`,
+          out: R`تطبيق شغّال في ٤ ملفات (٢١٦ سطر)، والمنطق بتاعه بيتجرّب في Node من غير متصفح.`,
+          use: {
+            prog: R`أي تطبيق فيه فلوس بيقع في نفس الفخاخ: [[19.99 * 100]] مش بيطلع [[1999]]، والتاريخ بيرجع يوم في بلد تانية، والـ CSV بيتفتح في Excel حروف ملخبطة. المشروع ده بيوريك الفخ وبعدين الحل.`,
+            work: R`«التقرير الشهري مش مطابق» و «الملف اللي نزل من الموقع عربيه بايظ» — شكويين بيوصلوا لأي فريق frontend. والاتنين ليهم سطر حل واحد هنا.`,
+            cs: R`الأرقام الصحيحة (integers) بدل الـ floating point في الفلوس، والـ aggregation بـ [[Map]] (نفس فكرة [[GROUP BY]] في SQL)، والهروب (escaping) في الـ CSV.`,
+          },
+          desc: R`هنبني متتبّع مصاريف من فولدر فاضي: تضيف مصروف بمبلغ وتصنيف وتاريخ، وتعدّله وتمسحه، والتطبيق بيحسب إجمالي لكل تصنيف ولكل شهر، وبيفتكر بعد الـ reload، وبينزّل ملف CSV.
+
+ده تكملة لـ «ابني تطبيق بإيدك»: هناك اتعلمت إن الحالة مصدر الحقيقة، وإن [[innerHTML]] باب XSS، وإن المحفوظ ممكن يكون بايظ. هنا هنستخدم الكلام ده في تطبيق أكبر، وهنزوّد عليه الحاجات اللي بتظهر لما التطبيق يتعامل مع **فلوس وتواريخ** بجد:
+
+• المبلغ بيتخزن **قروش** (رقم صحيح)، لأن [[19.99 * 100]] بيطلع [[1998.9999999999998]].
+• التاريخ بيتعرض بـ [[Intl.DateTimeFormat]] و [[timeZone: 'UTC']]، لأن من غيرها [[2026-10-01]] بيظهر ٣٠ سبتمبر في نيويورك (اتجرّب).
+• التحقق بيرفض [[1e3]] و [[toString]] كتصنيف و [[2026-02-30]]، وبيقبل الأرقام العربي [[١٢]].
+• الـ CSV فيه BOM عشان Excel يقرا العربي، وبيهرب الفاصلة وعلامة التنصيص والـ formula.
+
+| الملف | فيه إيه | السطور |
+|---|---|---|
+| [[index.html]] | الفورم والجدول والإجماليات | ٣٥ |
+| [[style.css]] | شكل بسيط ولون الخطأ | ٧ |
+| [[expenses.js]] | المنطق كله من غير DOM: التحقق والإجماليات والـ CSV والحفظ | ٥٩ |
+| [[app.js]] | الحالة والرسم والأحداث | ١١٥ |`,
+          example: R`// expenses.js — المنطق كله من غير DOM: يتجرّب في Node
+export const CATS = { food: 'أكل', transport: 'مواصلات', bills: 'فواتير', fun: 'خروج', other: 'تاني' };
+const KEY = 'expenses';
+const VERSION = 1;
+
+export function validate(input) {
+  const errors = {};
+  const raw = String(input.amount ?? '').trim()
+    .replace(/[٠-٩]/g, d => d.charCodeAt(0) - 0x660).replace('٫', '.');
+  const amount = Number(raw);
+  if (!/^\d+(\.\d{1,2})?$/.test(raw)) errors.amount = 'اكتب مبلغ بالأرقام، وبحد أقصى قرشين بعد العلامة';
+  else if (amount <= 0 || amount > 1_000_000) errors.amount = 'المبلغ لازم يبقى أكبر من صفر ومش أكتر من مليون';
+  if (!Object.hasOwn(CATS, input.cat)) errors.cat = 'اختار تصنيف من اللستة';
+  if (!isRealDate(input.date)) errors.date = 'التاريخ مش صحيح';
+  const note = String(input.note ?? '').trim().slice(0, 80);
+  if (Object.keys(errors).length) return { ok: false, errors };
+  return { ok: true, value: { cents: Math.round(amount * 100), cat: input.cat, date: input.date, note } };
+}
+
+export function isRealDate(s) {
+  if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(s + 'T00:00:00Z');
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+}
+
+export function totalsBy(items, keyOf) {
+  const out = new Map();
+  for (const it of items) out.set(keyOf(it), (out.get(keyOf(it)) ?? 0) + it.cents);
+  return [...out].sort((a, b) => b[1] - a[1]);
+}
+
+export function toCSV(items) {
+  const cell = (v) => {
+    let s = String(v);
+    if (/^[=+\-@]/.test(s)) s = "'" + s;
+    return /[",\n]/.test(s) ? '"' + s.replaceAll('"', '""') + '"' : s;
+  };
+  const rows = [['date', 'category', 'amount', 'note']];
+  for (const it of items) rows.push([it.date, CATS[it.cat], (it.cents / 100).toFixed(2), it.note]);
+  return '\uFEFF' + rows.map(r => r.map(cell).join(',')).join('\r\n');
+}
+
+export function load(storage) {
+  let raw;
+  try { raw = storage.getItem(KEY); } catch { return []; }
+  if (!raw) return [];
+  let data;
+  try { data = JSON.parse(raw); } catch { return []; }
+  if (data?.version !== VERSION || !Array.isArray(data.items)) return [];
+  return data.items.filter(it => it && typeof it.id === 'string'
+    && Number.isInteger(it.cents) && it.cents > 0
+    && Object.hasOwn(CATS, it.cat) && isRealDate(it.date)
+    && typeof it.note === 'string');
+}
+
+export function save(storage, items) {
+  try { storage.setItem(KEY, JSON.stringify({ version: VERSION, items })); return true; }
+  catch { return false; }
+}`,
+          lines: [
+            R`التصنيفات المسموحة: المفتاح بالإنجليزي هو اللي بيتخزن ([[food]])، والقيمة العربي هي اللي بتتعرض ([[أكل]]). كده لو غيّرت اسم «أكل» لـ «أكل وشرب» بعدين، الداتا المحفوظة متتأثرش. و [[export]] عشان [[app.js]] يستورده ويملا منه الـ [[<select>]].`,
+            R`اسم المفتاح اللي كل المصاريف بتتحفظ تحته في [[localStorage]]. ثابت في مكان واحد عشان القراية والكتابة ميختلفوش في حرف.`,
+            R`رقم نسخة شكل الداتا المحفوظة، زي اللي في «خلّي التطبيق يفتكر». لو غيّرت شكل البند بعدين (مثلًا ضفت ميزانية)، تزوّده وتكتب تحويل بدل ما الكود الجديد يقرا الشكل القديم غلط.`,
+            R`[[validate]] بتاخد اللي اليوزر كتبه (نصوص من الفورم) وبترجّع حاجة من اتنين: [[{ ok: true, value }]] جاهز يتخزن، أو [[{ ok: false, errors }]] فيه رسالة لكل خانة غلط. ومبتلمسش الـ DOM خالص، فتتجرّب في Node.`,
+            R`object فاضي هنحط فيه رسالة لكل خانة فيها مشكلة، والمفتاح هو [[name]] الخانة ([[amount]] أو [[cat]] أو [[date]]) عشان [[app.js]] يعرف يحط كل رسالة جنب خانتها.`,
+            R`بنحوّل المبلغ لنص الأول ([[?? '']] بيحمي من [[undefined]] لو الخانة مش موجودة)، و [[trim()]] بيشيل المسافات من الأول والآخر لأن «٤٥ » بمسافة في الآخر مش غلطة اليوزر.`,
+            R`**الأرقام العربي**: لوحة المفاتيح العربي بتكتب [[١٢]] مش [[12]]، و [[Number('١٢')]] بيطلع [[NaN]] (اتجرّب). فالـ regex [[ [٠-٩] ]] بيمسك كل رقم عربي، و [[charCodeAt(0) - 0x660]] بيحوّله لرقمه (كود [[٠]] هو [[0x660]])، و [[٫]] (الفاصلة العشرية العربي) بتبقى نقطة.`,
+            R`[[Number]] بيحوّل النص لرقم. بنحسبه هنا بس **مش بنثق فيه لوحده**: [[Number('')]] بيطلع [[0]] و [[Number('1e3')]] بيطلع [[1000]] و [[Number('0x10')]] بيطلع [[16]] (كلهم اتجرّبوا). عشان كده الفحص اللي بعده regex على النص نفسه.`,
+            R`الـ regex بيقول شكل المبلغ المقبول بالظبط: أرقام ([[\d+]])، وبعدها اختياري نقطة وواحد أو اتنين أرقام ([[(\.\d{1,2})?]]). و [[^]] و [[$]] بيجبروه يطابق النص **كله** مش حتة منه. فـ [['']] و [[1e3]] و [[12.345]] و [[-5]] كلهم بيترفضوا برسالة واحدة واضحة.`,
+            R`[[else if]] عشان لو الشكل غلط أصلًا ميتفحصش الحجم. والحد [[0]] بيرفض «٠» و «٠.٠٠»، والمليون حد معقول بيمسك غلطة زي إنك تكتب المبلغ مرتين ورا بعض. و [[1_000_000]] نفس [[1000000]]؛ الـ [[_]] بيخلي الرقم يتقري بس.`,
+            R`[[Object.hasOwn]] بيسأل: المفتاح ده موجود في الـ object نفسه؟ **مش** [[in]]: لأن [[('toString' in CATS)]] بيطلع [[true]] (جاية من الـ prototype)، فحد يعدّل الـ HTML ويبعت [[cat=toString]] كان هيعدّي. ده اتجرّب: [[in]] قال [[true]] و [[hasOwn]] قال [[false]].`,
+            R`التاريخ بيتفحص بدالة لوحدها تحت، لأن الفحص محتاج كذا خطوة ومحتاجينه تاني في [[load]].`,
+            R`الملاحظة اختيارية: بنحوّلها نص، ونشيل المسافات، ونقصّها على ٨٠ حرف بـ [[slice(0, 80)]] حتى لو حد شال [[maxlength]] من الـ HTML. الحد اللي في الـ HTML راحة لليوزر، والحد اللي هنا هو الحماية.`,
+            R`لو فيه ولا خطأ، نرجّع كل الأخطاء مرة واحدة (مش أول واحد بس)، عشان اليوزر يصلّح كل الخانات في محاولة واحدة.`,
+            R`كل حاجة سليمة: نرجّع البند بالشكل اللي هيتخزن. [[Math.round(amount * 100)]] بيحوّل الجنيه لقروش **رقم صحيح**: [[19.99 * 100]] بيطلع [[1998.9999999999998]] و [[Math.round]] بيرجّعه [[1999]] (اتجرّب). ومن هنا ورايح كل الحسابات على أرقام صحيحة، فالجمع عمره ما يطلع كسور غريبة.`,
+            R`قفلة [[validate]].`,
+            R`[[isRealDate]] بترد بـ [[true]] لو النص تاريخ موجود فعلًا في الشكل [[YYYY-MM-DD]] اللي [[<input type="date">]] بيرجّعه.`,
+            R`أول فحص على الشكل: لازم يكون نص، و ٤ أرقام وشرطة واتنين وشرطة واتنين. ده بيرفض [[undefined]] و [[5/10/2026]] و [[2026-1-5]] قبل ما نوصل لـ [[Date]] اللي بتقبل أشكال كتير بطرق مختلفة.`,
+            R`بنعمل [[Date]] من النص ونزوّد [[T00:00:00Z]]: الـ [[Z]] معناها UTC صريح، عشان النتيجة متتأثرش بالمنطقة الزمنية للجهاز (درس «Date ومطبّاته»).`,
+            R`**الفحص بالرجوع**: بنحوّل التاريخ لنص تاني ونقارن بالأصل. ده لازم لأن [[new Date('2026-02-30')]] **مش** بيقول غلط، بيعدّيها لـ ٢ مارس (اتجرّب: [[2026-03-02T00:00:00.000Z]]). فلو النص اللي رجع مختلف، اليوم ده مش موجود. و [[isNaN(getTime())]] بيمسك حاجات زي [[2026-13-45]] اللي بتطلع Invalid Date.`,
+            R`قفلة [[isRealDate]].`,
+            R`[[totalsBy]] دالة واحدة لكل أنواع الإجماليات: بتاخد البنود ودالة [[keyOf]] بتقول «البند ده يتجمع تحت إيه». للتصنيف بنبعت [[it => it.cat]]، وللشهر [[it => it.date.slice(0, 7)]] (يعني [[2026-10]]). ده نفس [[GROUP BY]] في SQL.`,
+            R`[[Map]] فاضية: المفتاح هو التصنيف أو الشهر، والقيمة مجموع القروش. [[Map]] أحسن من object هنا لأنها بتحافظ على ترتيب الإضافة ومفيهاش مفاتيح موروثة زي [[toString]] (درس «Map و Set»).`,
+            R`لكل بند: هات المجموع اللي فات للمفتاح ده ([[?? 0]] لو أول مرة)، وزوّد عليه قروش البند، واكتبه تاني. ولأن القروش أرقام صحيحة، المجموع صحيح بالظبط مهما كان عدد البنود.`,
+            R`[[ [...out] ]] بيحوّل الـ [[Map]] لمصفوفة أزواج [[ [مفتاح, مجموع] ]]، و [[sort]] بيرتّبها من الأكبر للأصغر ([[b[1] - a[1] ]]). الناتج الحقيقي: [[ [ ['bills', 120000], ['food', 7050], … ] ]].`,
+            R`قفلة [[totalsBy]].`,
+            R`[[toCSV]] بتحوّل البنود لنص CSV جاهز يتنزّل كملف، ويتفتح في Excel أو Google Sheets.`,
+            R`[[cell]] دالة صغيرة جوه [[toCSV]] بتجهّز خانة واحدة: بتهرب أي حاجة ممكن تبوّظ شكل الملف أو تتنفّذ في Excel.`,
+            R`بنحوّل القيمة لنص الأول، عشان الأرقام والنصوص يتعاملوا بنفس الطريقة. و [[let]] لأننا هنعدّل [[s]] في السطر اللي بعده.`,
+            R`**حماية من CSV injection**: Excel بيعتبر أي خانة بتبدأ بـ [[=]] أو [[+]] أو [[-]] أو [[@]] معادلة وبينفّذها. ملاحظة زي [[=HYPERLINK(...)]] ممكن تبقى لينك خبيث. فبنحط [[']] قبلها، و Excel بيعرضها نص. (الـ [[\-]] جوه الأقواس عشان الشرطة متتفهمش range.)`,
+            R`لو الخانة فيها علامة تنصيص أو فاصلة أو سطر جديد، لازم تتحط بين علامتين تنصيص، وأي [["]] جواها تبقى [[""]]. ده قانون الـ CSV (RFC 4180). من غيره «مترو, وتاكسي» هتتقسم خانتين وكل الأعمدة اللي بعدها تتزحلق.`,
+            R`قفلة [[cell]].`,
+            R`أول صف هو أسامي الأعمدة بالإنجليزي، عشان أي برنامج أو سكربت يقرا الملف بعدين يلاقي أسامي ثابتة.`,
+            R`لكل بند صف: التاريخ زي ما هو، واسم التصنيف بالعربي، والمبلغ بالجنيه بـ [[toFixed(2)]] (يعني [[45.50]] مش [[45.5]])، والملاحظة. **من غير** [[Intl]] هنا: الملف للبرامج، و [[٤٥٫٥٠ ج.م.]] Excel مش هيفهمه رقم.`,
+            R`[['\uFEFF']] هو الـ BOM (Byte Order Mark): ٣ بايتات [[ef bb bf]] في أول الملف بتقول لـ Excel «ده UTF-8». من غيرها Excel على ويندوز بيفتح العربي حروف ملخبطة. وبعدها كل صف خاناته بفاصلة، والصفوف بـ [[\r\n]] اللي الـ RFC بيطلبها.`,
+            R`قفلة [[toCSV]].`,
+            R`[[load]] بتقرا المصاريف المحفوظة، ومعمولة إنها **عمرها ما ترمي**. أسوأ حالة بترجّع مصفوفة فاضية والتطبيق يفتح. نفس طريقة «خلّي التطبيق يفتكر» بالظبط، بس بفحص أشد لكل بند. و [[storage]] بتتبعت كـ parameter عشان نعرف نجرّبها في Node بـ object وهمي.`,
+            R`متغير النص الخام، متعرّف برّه الـ [[try]] لأن [[let]] جوه البلوك مش بيبان برّاه.`,
+            R`[[getItem]] جوه [[try]] لوحدها، لأنها بترمي لما بيانات المواقع مقفولة. ولما [[app.js]] بيبعت [[null]] (لأن [[localStorage]] نفسها رمت) [[null.getItem]] بترمي [[TypeError]] جوه نفس الـ [[try]]، فالحالتين بيرجّعوا [[ [] ]].`,
+            R`أول زيارة: مفيش حاجة محفوظة و [[getItem]] رجّعت [[null]]، فنبدأ فاضي.`,
+            R`متغير للداتا بعد التحويل، متعرّف برّه الـ [[try]] لنفس السبب.`,
+            R`[[JSON.parse]] بترمي على النص البايظ. الرسالة الحقيقية لنص اتقطع في النص: [[SyntaxError: Unexpected end of JSON input]]. فبنمسكها ونرجّع فاضي بدل ما الصفحة تقع.`,
+            R`[[?.]] بيحمي لو الـ JSON كان [[null]] صريح. ولو النسخة مختلفة أو [[items]] مش مصفوفة، الشكل مش اللي احنا عارفينه فمنقراهوش.`,
+            R`**كل بند بيتفحص لوحده** بـ [[filter]]: البند البايظ بيتشال والباقي يعيش. ولازم يكون object و [[id]] بتاعه نص.`,
+            R`القروش لازم رقم **صحيح** موجب. [[Number.isInteger]] بيرفض [[10.5]] وبيرفض [['100']] النص كمان، وده اتجرّب: بند فيه [[cents: '100']] اتشال.`,
+            R`التصنيف لازم من اللستة (بـ [[hasOwn]] تاني، مش [[in]])، والتاريخ لازم حقيقي بنفس [[isRealDate]] اللي الفورم بيستخدمها. فداتا اتعدّلت بإيد في DevTools ميعدّيش منها حاجة الفورم كان هيرفضها.`,
+            R`والملاحظة لازم نص، وده آخر شرط في الـ [[filter]]. القوس الأخير بيقفل الـ [[filter]] والـ [[return]].`,
+            R`قفلة [[load]].`,
+            R`[[save]] بتكتب كل البنود مع رقم النسخة، وبترجّع [[true]] أو [[false]] بدل ما ترمي. كده [[app.js]] يقرر يقول لليوزر إيه.`,
+            R`[[JSON.stringify]] بيحوّل الـ object لنص، و [[setItem]] بتكتبه. ممكن ترمي [[QuotaExceededError]] لو المساحة (حوالي ٥ ميجا) خلصت، أو [[TypeError]] لو [[storage]] كانت [[null]]. الحالتين اتجرّبوا ورجّعوا [[false]].`,
+            R`[[catch]] من غير متغير (مش محتاجين الخطأ نفسه، بس إنه حصل) بترجّع [[false]]، و [[app.js]] بيكتب «مقدرناش نحفظ» في [[#status]].`,
+            R`قفلة [[save]].`,
+          ],
+          teach: R`## ٠. هنبني إيه
+
+تطبيق صفحة واحدة: فورم فوق، وجدول المصاريف تحته، وإجماليات، وزرار تنزيل.
+
+~~~text الشكل النهائي (اتشغّل في jsdom، والأرقام والتواريخ حقيقية)
+المبلغ [______]  التصنيف [أكل ▾]  التاريخ [2026-10-29]  ملاحظة [____]  [ضيف]
+
+التاريخ        التصنيف   المبلغ             ملاحظة
+٠٦‏/١٠‏/٢٠٢٦    مواصلات   ‏٣٠٫٠٠ ج.م.‏         مترو
+٠٥‏/١٠‏/٢٠٢٦    أكل       ‏٤٥٫٥٠ ج.م.‏         فطار          [عدّل] [امسح]
+٢٨‏/٠٩‏/٢٠٢٦    فواتير    ‏١٬٢٠٠٫٠٠ ج.م.‏       كهربا
+
+حسب التصنيف: فواتير ١٬٢٠٠٫٠٠ · أكل ٤٥٫٥٠ · مواصلات ٣٠٫٠٠
+حسب الشهر:   أكتوبر ٢٠٢٦ ٧٥٫٥٠ · سبتمبر ٢٠٢٦ ١٬٢٠٠٫٠٠
+[نزّل CSV]
+~~~
+
+### الملفات
+
+~~~text
+expense/
+├── index.html     الفورم والجدول (٣٥ سطر)
+├── style.css      الشكل (٧ سطور)
+├── expenses.js    المنطق من غير DOM (٥٩ سطر)  ← بيتجرّب في Node
+└── app.js         الحالة والرسم والأحداث (١١٥ سطر)
+~~~
+
+**ليه المنطق في ملف لوحده؟** عشان [[expenses.js]] مفيهوش ولا [[document]]. فتقدر تشغّله في Node وتجرّب ١٠ مدخلات غلط في ثانية، من غير ما تفتح متصفح وتكتب في الفورم ١٠ مرات. ده نفس الاتجاه اللي في «قسّمه لملفات»: [[app.js]] بيستورد من [[expenses.js]]، والعكس لأ.
+
+### هتشغّله إزاي
+
+الملفات بتستخدم [[import]] (يعني [[<script type="module">]])، والمتصفح **مش بيشغّل modules من [[file://]]** (ده من وثائق MDN). فمحتاج سيرفر صغير:
+
+~~~bash
+mkdir -p ~/lab/js-projects/expense && cd ~/lab/js-projects/expense
+python3 -m http.server 8000      # أو: npx serve
+# وافتح http://localhost:8000
+~~~
 
 ---
 
-## ٢. الصفحة: [[index.html]]
+## ١. index.html
 
 ~~~html
 <!doctype html>
@@ -6801,3763 +5265,3187 @@ vitest/5.0.5   eslint v10.13.0   jsdom 30.1.3   @eslint/js 10.0.1   globals 17.1
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>دفتر الوصفات</title>
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./src/app.js"></script>
+  <title>مصاريفي</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <nav aria-label="الأقسام">
-      <a href="#/">الوصفات</a>
-      <a href="#/fav">المفضلة</a>
-      <a href="#/new">وصفة جديدة</a>
-    </nav>
-  </header>
-  <main id="main"></main>
-  <noscript>التطبيق ده محتاج JavaScript يكون شغال.</noscript>
+  <main>
+    <h1>مصاريفي</h1>
+    <form id="form" novalidate>
+      <label>المبلغ <input name="amount" inputmode="decimal" autocomplete="off"></label>
+      <small class="err" data-for="amount"></small>
+      <label>التصنيف <select name="cat"></select></label>
+      <small class="err" data-for="cat"></small>
+      <label>التاريخ <input name="date" type="date"></label>
+      <small class="err" data-for="date"></small>
+      <label>ملاحظة <input name="note" maxlength="80"></label>
+      <button id="submit">ضيف</button>
+      <button type="button" id="cancel" hidden>إلغاء التعديل</button>
+    </form>
+    <p id="status" role="status"></p>
+    <table>
+      <thead><tr><th>التاريخ</th><th>التصنيف</th><th>المبلغ</th><th>ملاحظة</th><th></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p id="empty">لسه مفيش مصاريف.</p>
+    <section><h2>حسب التصنيف</h2><ul id="by-cat"></ul></section>
+    <section><h2>حسب الشهر</h2><ul id="by-month"></ul></section>
+    <button id="export">نزّل CSV</button>
+  </main>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
 ~~~
 
-- [[lang="ar"]] عشان الـ screen reader ينطق عربي، و [[dir="rtl"]] للاتجاه.
-- [[<main>]] فاضي: كل الشاشات هتترسم جواه من JavaScript.
-- [[type="module"]] بيدّي [[import]]، و [[defer]] تلقائي (بيستنى الـ HTML يخلص)، و strict mode.
-- [[href="./..."]] **relative**، ودي هتفرق جدًا وقت النشر على GitHub Pages (الدرس ٤).
-- [[<link rel="icon" href="data:,">]] أيقونة فاضية: من غيرها Chromium طلب [[/favicon.ico]] وطلّع في الـ console [[Failed to load resource ... 404]] (اتشاف فعلًا).
+الحاجات اللي ليها سبب:
 
----
-
-## ٣. شكل الحالة قبل أي كود
-
-| المفتاح | فيه إيه | بيتحفظ؟ |
-|---|---|---|
-| [[recipes]] | الوصفات اللي جاية من [[data/recipes.json]] | لأ، بتتجاب من جديد مع كل فتحة |
-| [[mine]] | الوصفات اللي اليوزر ضافها بالفورم | أيوه، في [[localStorage]] |
-| [[favs]] | ids المفضلة، زي مصفوفة فيها [[foul]] و [[u-...]] | أيوه، في [[localStorage]] |
-| [[status]] | [[idle]] أو [[loading]] أو [[ready]] أو [[error]] | لأ، حالة الشبكة دلوقتي |
-| [[error]] | جملة الخطأ الجاهزة للعرض | لأ |
-| [[notice]] | تحذير زي «الداتا كانت بايظة» | لأ |
-| [[route]] | الشاشة: [[name]] و [[params]] و [[query]] | لأ، الرابط نفسه هو المكان اللي بيفتكرها |
-
-> **مفيش هنا** عدد الوصفات، ولا التصنيفات، ولا نتيجة البحث. دول **بيتحسبوا** من الحالة وقت الرسم.
-
----
-
-## ٤. [[logic.js]]: شكل الوصفة الصح
-
-~~~js src/logic.js (أول جزء)
-export function isRecipe(r) {
-  return !!r && typeof r === 'object' && typeof r.id === 'string' && typeof r.title === 'string'
-    && Number.isFinite(r.minutes) && Array.isArray(r.ingredients) && Array.isArray(r.tags)
-    && typeof r.steps === 'string';
-}
-
-export const toggleFav = (favs, id) => (favs.includes(id) ? favs.filter((f) => f !== id) : [...favs, id]);
-~~~
-
-[[isRecipe]] هي «الحارس»: أي وصفة جاية من برّه (الملف، أو [[localStorage]]، أو API بعدين) بتعدّي عليها. و [[!!r]] بيحوّل أي قيمة لـ [[true]]/[[false]] فـ [[null]] و [[undefined]] بيقعوا من أول شرط، و [[Number.isFinite]] بترفض [[NaN]] و [[Infinity]] والنصوص (عكس [[isFinite]] القديمة اللي بتحوّل النص لرقم الأول).
-
-و [[toggleFav]] بترجّع **مصفوفة جديدة** في الحالتين: [[filter]] للشيل، و spread [[...favs]] وبعده [[id]] في مصفوفة جديدة للإضافة.
-
----
-
-## ٥. [[storage.js]]: الحفظ اللي ميقعش
-
-~~~js src/storage.js
-import { isRecipe } from './logic.js';
-
-export const KEY = 'recipe-book:v1';
-
-export function browserStorage() {
-  try { return globalThis.localStorage ?? null; } catch { return null; }
-}
-
-export function load(storage = browserStorage()) {
-  let raw;
-  try { raw = storage.getItem(KEY); } catch { return { mine: [], favs: [], warning: 'المتصفح قافل التخزين، ومش هنفتكر حاجة' }; }
-  if (raw === null) return { mine: [], favs: [] };
-  try {
-    const data = JSON.parse(raw);
-    if (data?.version !== 1) throw new Error('نسخة مش معروفة: ' + data?.version);
-    const mine = Array.isArray(data.mine) ? data.mine.filter(isRecipe) : [];
-    const favs = Array.isArray(data.favs) ? data.favs.filter((f) => typeof f === 'string') : [];
-    return { mine, favs };
-  } catch (err) {
-    try { storage.setItem(KEY + ':broken', raw); } catch { /* مفيش مكان، مش مشكلة */ }
-    return { mine: [], favs: [], warning: 'الداتا المحفوظة كانت بايظة (' + err.message + ')، واتحفظت نسخة منها' };
-  }
-}
-
-export function save({ mine, favs }, storage = browserStorage()) {
-  try {
-    storage.setItem(KEY, JSON.stringify({ version: 1, mine, favs }));
-    return true;
-  } catch {
-    return false;
-  }
-}
-~~~
-
-| اللي ممكن يحصل | [[load]] بترجّع إيه |
+| الحتة | ليه |
 |---|---|
-| أول مرة، مفيش حاجة محفوظة | مصفوفات فاضية من غير تحذير، لأن [[getItem]] رجّعت [[null]] |
-| قراية [[localStorage]] نفسها رمت (تخزين مقفول) | [[browserStorage()]] رجّعت [[null]]، و [[null.getItem]] رمت جوه الـ [[try]]: فاضي ومعاه «المتصفح قافل التخزين» |
-| JSON بايظ (قوس ناقص) | فاضي، وتحذير فيه رسالة [[JSON.parse]]، ونسخة في [[:broken]] |
-| [[version]] غير 1، أو [[null]] | نفس اللي فوق: الـ [[throw]] بيودّي على نفس الـ [[catch]] |
-| وصفة واحدة بايظة وسط سليمين | السليمين بس، لأن [[filter(isRecipe)]] بتشيل البايظة لوحدها |
+| [[dir="rtl"]] | الصفحة كلها من اليمين، والجدول بيبدأ من اليمين لوحده |
+| [[novalidate]] | بيقفل رسايل المتصفح الجاهزة، عشان رسايلنا احنا هي اللي تظهر بالعربي وجنب الخانة |
+| [[inputmode="decimal"]] | على الموبايل بيفتح كيبورد أرقام فيها علامة عشرية. **مش** [[type="number"]]: ده بيرجّع [['']] لأي حاجة مش فاهمها، فمش هتعرف اليوزر كتب إيه عشان تقوله الغلط فين |
+| [[type="date"]] | المتصفح بيعرض نتيجة، والقيمة دايمًا [[YYYY-MM-DD]] مهما كانت لغة الجهاز |
+| [[data-for="amount"]] | الـ [[<small>]] ده مكان رسالة خطأ خانة [[amount]]. الكود بيلف على كل [[.err]] ويقرا [[data-for]] |
+| [[role="status"]] | قارئ الشاشة بيقرا أي نص جديد فيه من غير ما اليوزر يتحرك |
+| [[type="button"]] على الإلغاء | أي [[<button>]] جوه فورم نوعه الافتراضي [[submit]]، فمن غيرها زرار الإلغاء كان هيضيف البند |
+| [[type="module"]] | بيسمح بـ [[import]]، وبيتأجّل لحد ما الـ HTML يخلص (زي [[defer]]، درس «defer و async و module») |
 
-**ليه [[version]]؟** لو غيّرت شكل المحفوظ بعدين (مثلًا [[favs]] بقت objects)، النسخة القديمة عند الناس متتقريش غلط: بترجع لحالة فاضية آمنة، أو تكتب migration من 1 لـ 2.
+والـ CSS (٧ سطور): لون الخطأ، والخانة الغلط بإطار أحمر من [[aria-invalid]]، والجدول.
 
-**وليه نسخة [[:broken]]؟** عشان مسح شغل اليوزر من غير ما تسيب أثر قسوة. النسخة دي تقدر ترجّع منها بإيدك من DevTools. وهي نفسها جوه [[try]] لأن التخزين ممكن يكون مليان.
-
-**وليه [[let raw;]] من غير [[= null]]؟** ESLint 10 مسكها: [[The value assigned to 'raw' is not used in subsequent statements  no-useless-assignment]] (اتشاف فعلًا)، لأن السطر اللي بعده بيكتب فوقها في كل الحالات.
-
----
-
-## ٦. [[store.js]]: المثال اللي فوق
-
-الفكرة في ٣ قواعد:
-
-1. **[[set]] هي الباب الوحيد**، ومش متصدّرة.
-2. **كل تغيير object جديد**، فالمقارنة بالـ reference بتكفي.
-3. **الحفظ والتبليغ جوه [[set]]**، فمحدش يقدر ينساهم.
-
----
-
-## ٧. شغّله في Node من غير متصفح
-
-~~~js try-store.mjs
-import { createStore } from './src/store.js';
-const m = new Map();
-const mem = { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) };
-const store = createStore(mem);
-let n = 0;
-const off = store.subscribe((s, prev) => console.log(++n, prev.status, '→', s.status, '| favs:', s.favs));
-store.loading();
-store.loaded([{ id: 'foul', title: 'فول', minutes: 15, tags: [], ingredients: ['فول', 'زيت'], steps: '..' }]);
-store.toggleFav('foul');
-console.log('saved:', m.get('recipe-book:v1'));
-const bad = store.addRecipe({ title: '', minutes: 'abc' });
-console.log('bad:', bad.ok, Object.keys(bad.errors), 'notified?', n);
-off();
-store.toggleFav('foul');
-console.log('after off, n =', n, 'favs =', store.get().favs);
+~~~css style.css
+body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 2rem auto; padding: 0 1rem; }
+form { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: end; }
+.err { color: #b00020; display: block; min-height: 1em; }
+[aria-invalid="true"] { border: 2px solid #b00020; }
+table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+th, td { padding: .35rem .5rem; border-bottom: 1px solid #ddd; text-align: start; }
+#status { color: #b00020; }
 ~~~
 
-~~~text اتشغّل فعلًا · node try-store.mjs على Node 24.22
-1 idle → loading | favs: []
-2 loading → ready | favs: []
-3 ready → ready | favs: [ 'foul' ]
-saved: {"version":1,"mine":[],"favs":["foul"]}
-bad: false [ 'title', 'minutes', 'ingredients', 'steps' ] notified? 3
-after off, n = 3 favs = []
+---
+
+## ٢. الفلوس: ليه قروش؟
+
+~~~js
+console.log(0.1 + 0.2);
+console.log(19.99 * 100, Math.round(19.99 * 100));
+console.log(1.005 * 100);
 ~~~
 
-اقرا الناتج سطر سطر:
+~~~text اتشغّل فعلًا · Node 24.22
+0.30000000000000004
+1998.9999999999998 1999
+100.49999999999999
+~~~
 
-- **١ و ٢:** كل فعل بيبلّغ، والمشترك شايف القديم والجديد.
-- **٣:** المفضلة اتغيّرت، و **اتحفظت لوحدها** (السطر اللي بعده).
-- **[[bad]]:** الإضافة الغلط رجّعت الأربع أخطاء مرة واحدة، و [[n]] **فضل 3**: الحالة ما اتغيّرتش فمحدش اتبلّغ.
-- **الأخير:** بعد [[off()]] الـ toggle حصل ([[favs]] فاضية) بس المشترك متبلّغش.
+الأرقام في JavaScript **floating point** (درس «number و NaN»): الكمبيوتر بيخزن [[0.1]] كقيمة قريبة جدًا مش بالظبط. ولو جمعت ١٠٠ مصروف بكسور، الإجمالي ممكن يطلع [[1234.5600000000002]].
 
-وده كله **من غير ولا سطر DOM**.
+**الحل:** حوّل لقروش **مرة واحدة** وانت داخل ([[Math.round(amount * 100)]])، واحسب كل حاجة على أرقام صحيحة، ورجّع لجنيه **وانت بتعرض بس** ([[cents / 100]]).
+
+> البنوك وStripe وكل نظام فلوس بيعمل كده: المبلغ بيتخزن بأصغر وحدة (قرش، سنت) كرقم صحيح.
 
 ---
 
-## ٨. اتجاه الاعتماد
+## ٣. التحقق: [[validate]]
 
-~~~text
-app.js ──→ store.js ──→ storage.js ──→ logic.js
-   │           └──────────────────────→ logic.js
-   ├──→ view.js ──→ logic.js و store.js (allRecipes بس)
-   └──→ api.js ──→ logic.js
+الكود في المثال. وده اللي بترجّعه لمدخلات حقيقية:
+
+~~~js test-logic.mjs
+import { validate } from './expenses.js';
+const cases = [
+  { amount: '45.5', cat: 'food', date: '2026-10-05' },
+  { amount: '', cat: 'food', date: '2026-10-05' },
+  { amount: '0', cat: 'food', date: '2026-10-05' },
+  { amount: '12.345', cat: 'food', date: '2026-10-05' },
+  { amount: '1e3', cat: 'food', date: '2026-10-05' },
+  { amount: '١٢', cat: 'food', date: '2026-10-05' },
+  { amount: '20', cat: 'toString', date: '2026-10-05' },
+  { amount: '20', cat: 'food', date: '2026-02-30' },
+];
+for (const c of cases) console.log(JSON.stringify(c.amount), c.cat, c.date, '->', JSON.stringify(validate(c)));
 ~~~
 
-[[logic.js]] تحت الكل ومبيعرفش حد. و [[app.js]] فوق الكل وهو الوحيد اللي بيعرف الصفحة والحالة مع بعض. **ومفيش سهم راجع لفوق.**
+~~~text اتشغّل فعلًا · node test-logic.mjs
+"45.5"   food     -> {"ok":true,"value":{"cents":4550,"cat":"food","date":"2026-10-05","note":""}}
+""       food     -> {"ok":false,"errors":{"amount":"اكتب مبلغ بالأرقام، وبحد أقصى قرشين بعد العلامة"}}
+"0"      food     -> {"ok":false,"errors":{"amount":"المبلغ لازم يبقى أكبر من صفر ومش أكتر من مليون"}}
+"12.345" food     -> {"ok":false,"errors":{"amount":"اكتب مبلغ بالأرقام، وبحد أقصى قرشين بعد العلامة"}}
+"1e3"    food     -> {"ok":false,"errors":{"amount":"اكتب مبلغ بالأرقام، وبحد أقصى قرشين بعد العلامة"}}
+"١٢"     food     -> {"ok":true,"value":{"cents":1200,...}}
+"20"     toString -> {"ok":false,"errors":{"cat":"اختار تصنيف من اللستة"}}
+"20"     food 2026-02-30 -> {"ok":false,"errors":{"date":"التاريخ مش صحيح"}}
+~~~
+
+### الأربع مفاجآت اللي طلعت وانا بجرّب
+
+| المدخل | الطريقة الساذجة بتعمل إيه | اتجرّب |
+|---|---|---|
+| مبلغ فاضي | [[Number('')]] بيطلع [[0]]، يعني «مصروف بصفر» بيتضاف | [[0]] |
+| [[1e3]] | [[Number]] بيفهمها ألف، واليوزر ممكن يكون كتب «1» و «e» بالغلط | [[1000]] |
+| [[١٢]] بالكيبورد العربي | [[Number]] مش بيفهمها خالص | [[NaN]] |
+| تصنيف [[toString]] | [[('toString' in CATS)]] بيقول موجود، لأنه جاي من الـ prototype | [[true]] |
+| [[2026-02-30]] | [[new Date]] مش بيرفضه، بيعدّيه لـ ٢ مارس | [[2026-03-02]] |
+
+**الدرس:** متسألش [[Number]] «ده رقم؟». اسأل regex «ده **الشكل** اللي أنا عايزه؟»، وبعدين حوّل.
 
 ---
+
+## ٤. الإجماليات: [[totalsBy]]
+
+~~~js
+const items = [
+  { id: 'a', cents: 4550,   cat: 'food',      date: '2026-10-05', note: '' },
+  { id: 'b', cents: 3000,   cat: 'transport', date: '2026-10-06', note: '' },
+  { id: 'c', cents: 120000, cat: 'bills',     date: '2026-09-28', note: '' },
+  { id: 'd', cents: 2500,   cat: 'food',      date: '2026-09-30', note: '' },
+];
+console.log(totalsBy(items, it => it.cat));
+console.log(totalsBy(items, it => it.date.slice(0, 7)));
+~~~
+
+~~~text اتشغّل فعلًا
+[ [ 'bills', 120000 ], [ 'food', 7050 ], [ 'transport', 3000 ] ]
+[ [ '2026-09', 122500 ], [ '2026-10', 7550 ] ]
+~~~
+
+دالة واحدة لأي تجميع. **ليه [[slice(0, 7)]] للشهر؟** لأن التاريخ متخزن نص [[2026-10-05]]، وأول ٧ حروف هي السنة والشهر. ومن غير [[new Date]] خالص، فمفيش منطقة زمنية تلعب في الموضوع.
+
+وفي [[app.js]] الشهور بتترتب بالتاريخ مش بالمبلغ: [[.sort((a, b) => b[0].localeCompare(a[0]))]]. ده شغّال لأن [[2026-10]] أكبر من [[2026-09]] كنص، وده سبب إن الشكل [[YYYY-MM]] مفيد.
+
+---
+
+## ٥. العرض بـ [[Intl]]: والتاريخ اللي بيرجع يوم
+
+~~~js
+const money = new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' });
+money.format(45.5);        // '‏٤٥٫٥٠ ج.م.‏'
+money.format(1234567.891); // '‏١٬٢٣٤٬٥٦٧٫٨٩ ج.م.‏'
+~~~
+
+[[Intl.NumberFormat]] بيحط الأرقام العربي، والفاصلة العشرية العربي [[٫]]، وفاصل الآلاف [[٬]]، والعملة، وبيقرّب لقرشين. ولو عايز أرقام إنجليزي: [[en-EG]] بيطلع [[EGP 45.50]] (اتجرّب).
+
+### المصيدة
+
+~~~js tz.mjs
+const d = new Date('2026-10-01');
+console.log(new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium' }).format(d));
+console.log(new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium', timeZone: 'UTC' }).format(d));
+~~~
+
+~~~text اتشغّل فعلًا · PowerShell: $env:TZ='America/New_York'; node tz.mjs
+٣٠‏/٠٩‏/٢٠٢٦      ← من غير timeZone: اليوم رجع يوم
+٠١‏/١٠‏/٢٠٢٦      ← مع timeZone: 'UTC'
+~~~
+
+**ليه؟** [[new Date('2026-10-01')]] (تاريخ من غير ساعة) بيتفهم **منتصف الليل UTC**. ونيويورك ورا UTC بأربع ساعات، فالساعة هناك ٨ بالليل يوم ٣٠. في مصر (قدام UTC) المشكلة مش بتبان، **وبتبان عند أول يوزر برّه**. (وفي Git Bash على ويندوز متغير [[TZ]] مكانش بيوصل لـ Node، فاستخدمت PowerShell.)
+
+**الحل:** التاريخ اتعمل UTC، فاعرضه UTC. وده اللي في [[app.js]]:
+
+~~~js
+const day = new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium', timeZone: 'UTC' });
+const monthName = new Intl.DateTimeFormat('ar-EG', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const asDate = (s) => new Date(s + 'T00:00:00Z');
+monthName.format(asDate('2026-10-01'));   // 'أكتوبر ٢٠٢٦'
+~~~
+
+وتاريخ النهارده للفورم بيتعمل بـ [[new Date().toLocaleDateString('en-CA')]]: الـ locale الكندي بيكتب [[YYYY-MM-DD]] **بتوقيت الجهاز**. أما [[toISOString().slice(0, 10)]] فبيرجّع تاريخ UTC، وده في مصر بعد نص الليل بساعتين أو تلاتة بيبقى «امبارح». (التفاصيل في «UTC و Intl.DateTimeFormat».)
+
+---
+
+## ٦. الحفظ: [[load]] و [[save]]
+
+نفس فكرة «خلّي التطبيق يفتكر»، واتجرّبت بـ storage وهمي في Node:
+
+~~~js
+const mem = new Map();
+const st = { getItem: k => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, String(v)) };
+~~~
+
+~~~text اتشغّل فعلًا
+أول زيارة                                  -> []
+احفظ ٤ بنود واقرا                          -> 4 بنود
+'{"version":1,"items":['   (JSON مقطوع)    -> []
+بند سليم + null + cents: 10.5 + شهر 13 + تصنيف hack + نص  -> [ 'a' ]
+getItem بترمي SecurityError                -> []
+setItem بترمي QuotaExceededError           -> save رجّعت false
+~~~
+
+**ومصيدة ملاحظتهاش غير وانا بجرّب:** لو [[load]] لقت الداتا بايظة ورجّعت [[ [] ]]، أول [[save]] بعدها **بتكتب فوقها**. يعني البايظ اتمسح للأبد. في تطبيق بجد، خد نسخة من النص الخام الأول ([[setItem(KEY + ':broken', raw)]]) قبل ما ترجّع فاضي. سايبها كتمرين.
+
+---
+
+## ٧. app.js: الحالة والرسم
+
+~~~js app.js — أوله
+import { CATS, validate, totalsBy, toCSV, load, save } from './expenses.js';
+
+const money = new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' });
+const day = new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium', timeZone: 'UTC' });
+const monthName = new Intl.DateTimeFormat('ar-EG', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const asDate = (s) => new Date(s + 'T00:00:00Z');
+const today = () => new Date().toLocaleDateString('en-CA');
+
+const store = (() => { try { return localStorage; } catch { return null; } })();
+const state = { items: load(store), editing: null };
+const $ = (sel) => document.querySelector(sel);
+const form = $('#form');
+const f = form.elements;
+
+for (const [key, label] of Object.entries(CATS)) f.cat.append(new Option(label, key));
+f.date.value = today();
+~~~
+
+- **الـ formatters بتتعمل مرة واحدة** برّه أي دالة. عمل [[Intl.NumberFormat]] جديد مع كل صف أبطأ بكتير من استخدام واحد موجود.
+- **[[store]]**: في بعض المتصفحات مجرد **قراية** [[localStorage]] بترمي لما الكوكيز مقفولة. فبنقراها جوه [[try]] مرة واحدة، ولو رمت [[store]] بتبقى [[null]] و [[load]] و [[save]] بيتعاملوا.
+- **[[state]]** فيها حاجتين بس: البنود، و [[editing]] (الـ [[id]] اللي بيتعدّل دلوقتي أو [[null]]). أي حاجة تانية (الإجماليات، العدد، فاضي ولا لأ) **بتتحسب** في الرسم.
+- **[[form.elements]]** مش [[form.cat]] على طول. الاتنين شغالين في المتصفح، بس [[form.elements]] مفيش فيه تصادم مع خصايص الفورم نفسه ([[form.method]] و [[form.action]])، **و jsdom مش بيدعم [[form.cat]] خالص**: أول تشغيل وقع بـ [[TypeError: Cannot read properties of undefined (reading 'append')]].
+- [[new Option(label, key)]] بيعمل [[<option>]] النص بتاعه العربي والقيمة الإنجليزي، من غير HTML نصي.
+
+### الرسم من غير [[innerHTML]]
+
+~~~js
+function el(tag, text, data = {}) {
+  const node = document.createElement(tag);
+  node.textContent = text;
+  Object.assign(node.dataset, data);
+  return node;
+}
+
+function row(it) {
+  const tr = document.createElement('tr');
+  const cells = [day.format(asDate(it.date)), CATS[it.cat], money.format(it.cents / 100), it.note];
+  tr.append(...cells.map(text => el('td', text)));
+  const actions = el('td', '');
+  actions.append(el('button', 'عدّل', { act: 'edit', id: it.id }), el('button', 'امسح', { act: 'del', id: it.id }));
+  tr.append(actions);
+  return tr;
+}
+
+function render() {
+  const newest = state.items.toSorted((a, b) => b.date.localeCompare(a.date));
+  $('#rows').replaceChildren(...newest.map(row));
+  $('#empty').hidden = state.items.length > 0;
+  const byCat = totalsBy(state.items, it => it.cat);
+  $('#by-cat').replaceChildren(...byCat.map(([k, c]) => el('li', CATS[k] + ': ' + money.format(c / 100))));
+  const byMonth = totalsBy(state.items, it => it.date.slice(0, 7)).sort((a, b) => b[0].localeCompare(a[0]));
+  $('#by-month').replaceChildren(...byMonth.map(([k, c]) => el('li', monthName.format(asDate(k + '-01')) + ': ' + money.format(c / 100))));
+  $('#export').disabled = state.items.length === 0;
+  $('#submit').textContent = state.editing ? 'احفظ التعديل' : 'ضيف';
+  $('#cancel').hidden = !state.editing;
+}
+~~~
+
+| الحتة | ليه |
+|---|---|
+| [[el()]] | دالة صغيرة بتعمل عنصر بنص و [[data-*]]. كل النصوص بتدخل بـ [[textContent]]، فالملاحظة اللي فيها [[<img onerror>]] بتتعرض **حروف** (درس «innerHTML هي الباب») |
+| [[Object.assign(node.dataset, data)]] | [[{ act: 'edit', id }]] بيبقى [[data-act="edit" data-id="..."]] على الزرار |
+| [[toSorted]] | بيرجّع **نسخة** مترتبة، ومبيغيّرش [[state.items]] (درس «sort و toSorted») |
+| [[localeCompare]] | مقارنة نصوص. [[b]] قبل [[a]] يعني الأحدث فوق |
+| [[replaceChildren(...)]] | بيشيل كل اللي جوه ويحط الجديد في خطوة. من غير [[innerHTML = '']] |
+| [[hidden]] | خاصية HTML بتخفي العنصر. الرسالة «لسه مفيش» ظاهرة لما مفيش بنود بس |
+| [[disabled]] على التنزيل | ملف CSV فيه عناوين بس ملوش لازمة |
+
+اتجرّب: ضفت ملاحظة [[<img src=x onerror=alert(1)>]] وعدّيت على الصفحة: [[img elements: 0]]، والملاحظة ظاهرة زي ما اتكتبت بالظبط.
+
+---
+
+## ٨. الإضافة والتعديل والمسح
+
+~~~js
+function commit() {
+  $('#status').textContent = save(store, state.items) ? '' : 'مقدرناش نحفظ: التغييرات هتروح لما تقفل الصفحة';
+  render();
+}
+
+function showErrors(errors) {
+  for (const small of form.querySelectorAll('.err')) {
+    const name = small.dataset.for;
+    small.textContent = errors[name] ?? '';
+    f[name].setAttribute('aria-invalid', String(name in errors));
+  }
+}
+
+function clearForm() {
+  state.editing = null;
+  f.amount.value = '';
+  f.note.value = '';
+  showErrors({});
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const result = validate(Object.fromEntries(new FormData(form)));
+  showErrors(result.errors ?? {});
+  if (!result.ok) return form.querySelector('[aria-invalid="true"]').focus();
+  if (state.editing) {
+    state.items = state.items.map(it => it.id === state.editing ? { ...result.value, id: it.id } : it);
+  } else {
+    state.items.push({ ...result.value, id: crypto.randomUUID() });
+  }
+  clearForm();
+  commit();
+  f.amount.focus();
+});
+~~~
+
+- **[[commit]]** هي الطريق الوحيد لأي تغيير: احفظ وبعدين ارسم. ولو الحفظ فشل اليوزر بيعرف بدل ما يكتشف بعد reload إن شغله راح.
+- **[[Object.fromEntries(new FormData(form))]]** بيحوّل الفورم لـ object [[{ amount, cat, date, note }]] في سطر (درس «FormData و URLSearchParams»).
+- **[[aria-invalid]]** بيقول لقارئ الشاشة إن الخانة غلط، والـ CSS بيلوّنها بيه ([[ [aria-invalid="true"] ]]). و **[[focus()]]** بيودّي اليوزر لأول خانة غلط.
+- **التعديل والإضافة نفس الفورم**: لو [[state.editing]] فيها [[id]]، [[map]] بيبدّل البند ده بس ويحافظ على الـ [[id]] القديم. غير كده [[crypto.randomUUID()]] بيدّي [[id]] جديد.
+- [[clearForm]] بيفضّي المبلغ والملاحظة بس، **ويسيب التصنيف والتاريخ**: اللي بيدخل ٥ مصاريف من نفس اليوم مش عايز يختار التاريخ ٥ مرات.
+
+### الأزرار اللي جوه الجدول: مستمع واحد
+
+~~~js
+$('#rows').addEventListener('click', (e) => {
+  const { act, id } = e.target.dataset;
+  const it = state.items.find(x => x.id === id);
+  if (!it) return;
+  if (act === 'del' && confirm('تمسح ' + money.format(it.cents / 100) + '؟')) {
+    state.items = state.items.filter(x => x.id !== id);
+    if (state.editing === id) clearForm();
+    commit();
+  }
+  if (act === 'edit') {
+    state.editing = id;
+    f.amount.value = (it.cents / 100).toFixed(2);
+    f.cat.value = it.cat;
+    f.date.value = it.date;
+    f.note.value = it.note;
+    render();
+    f.amount.focus();
+  }
+});
+
+$('#cancel').addEventListener('click', () => { clearForm(); render(); });
+~~~
+
+الصفوف بتتشال وتتعمل مع كل [[render]]، فالمستمع على [[#rows]] اللي مبيتشالش (درس «event delegation»). و [[if (!it) return]] بيحمي من ضغطة على خانة عادية ([[dataset]] بتاعها فاضي). **ومسح البند اللي بتعدّله** بيقفل وضع التعديل، وإلا كنت هتحفظ تعديل لبند مش موجود.
+
+### اتشغّل فعلًا (jsdom، نفس الملفات)
+
+~~~text node test-dom.mjs
+-- بعد ٣ إضافات
+    ٠٦‏/١٠‏/٢٠٢٦ | مواصلات | ‏٣٠٫٠٠ ج.م.‏ | <img src=x onerror=alert(1)>
+    ٠٥‏/١٠‏/٢٠٢٦ | أكل | ‏٤٥٫٥٠ ج.م.‏ | فطار
+    ٢٨‏/٠٩‏/٢٠٢٦ | فواتير | ‏١٬٢٠٠٫٠٠ ج.م.‏ | كهربا
+    month: أكتوبر ٢٠٢٦: ‏٧٥٫٥٠ ج.م.‏  /  سبتمبر ٢٠٢٦: ‏١٬٢٠٠٫٠٠ ج.م.‏
+-- مبلغ 12.345 وتاريخ 2026-02-30
+    errors = اكتب مبلغ بالأرقام، وبحد أقصى قرشين بعد العلامة | · | التاريخ مش صحيح
+    aria-invalid: amount=true cat=false date=true   focused: amount   rows still: 3
+-- عدّل «فطار»: الخانة = 45.50 · الزرار = احفظ التعديل · الإلغاء ظاهر
+-- كتبت ٥٠ (أرقام عربي) واحفظ
+    ٠٥‏/١٠‏/٢٠٢٦ | أكل | ‏٥٠٫٠٠ ج.م.‏ | فطار وقهوة
+    month: أكتوبر ٢٠٢٦: ‏٨٠٫٠٠ ج.م.‏
+-- امسح «كهربا»
+    month: أكتوبر ٢٠٢٦: ‏٨٠٫٠٠ ج.م.‏     (سبتمبر اختفى لوحده)
+-- reload                         -> نفس البندين
+-- reload بـ JSON مقطوع            -> فاضي، و «لسه مفيش مصاريف» ظاهرة
+-- reload ببند سليم + ٢ بايظين     -> البند السليم بس
+~~~
+
+---
+
+## ٩. التنزيل: CSV
+
+~~~js
+$('#export').addEventListener('click', () => {
+  const blob = new Blob([toCSV(state.items)], { type: 'text/csv;charset=utf-8' });
+  const a = el('a', '');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'expenses-' + today() + '.csv';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 0);
+});
+~~~
+
+- [[Blob]] ملف في الذاكرة. [[URL.createObjectURL]] بيدّيله عنوان مؤقت [[blob:...]].
+- [[a.download]] بيخلي الضغطة **تنزّل** بدل ما تفتح، وبالاسم ده.
+- [[a.click()]] بيضغط على لينك مش متضاف للصفحة أصلًا. وده شغّال في المتصفحات الحالية.
+- [[revokeObjectURL]] بيفضّي الذاكرة. في [[setTimeout]] عشان التنزيل ياخد فرصته يبدأ الأول.
+
+وآخر سطر في [[app.js]] كله، تحت كل المستمعات: [[render();]]. ده أول رسم للبنود اللي [[load]] رجّعتها؛ من غيره الصفحة بتفتح فاضية لحد أول إضافة حتى لو فيه داتا محفوظة (اتجرّب لما جمّعت الملفات من الشرح).
+
+### الملف اللي طلع
+
+~~~text اتشغّل فعلًا · node test-csv.mjs
+\ufeffdate,category,amount,note
+2026-10-05,أكل,50.00,فطار وقهوة
+2026-10-06,مواصلات,30.00,"مترو, وتاكسي"
+2026-10-07,خروج,19.99,"قال ""حلو"""
+2026-10-08,تاني,1.00,'=1+1
+first bytes: ef bb bf 64 61 74
+~~~
+
+وعشان أتأكد إن برنامج تاني بيقراه صح، فتحته بـ PowerShell:
+
+~~~text اتشغّل فعلًا · Import-Csv out.csv
+date       category amount note
+----       -------- ------ ----
+2026-10-05 أكل      50.00  فطار وقهوة
+2026-10-06 مواصلات  30.00  مترو, وتاكسي
+2026-10-07 خروج     19.99  قال "حلو"
+2026-10-08 تاني     1.00   '=1+1
+~~~
+
+الفاصلة جوه «مترو, وتاكسي» فضلت جوه الخانة، وعلامات التنصيص رجعت زي ما اتكتبت، و [[=1+1]] متنفذتش.
+
+---
+
+## ١٠. اتشغّل على إيه
+
+| إيه | على إيه |
+|---|---|
+| [[expenses.js]] | Node 24.22 مباشرة: ٩ مدخلات للتحقق، و ٦ حالات حفظ، والـ CSV |
+| [[app.js]] و [[index.html]] | jsdom 30.1.3 (متسطّب محلي في فولدر التجربة)، بنفس الملفات من غير تعديل |
+| الـ CSV | اتقرا بـ [[Import-Csv]] في PowerShell 7 |
+| الـ timezone | [[$env:TZ='America/New_York']] في PowerShell |
+
+**ومش متجرّب:** فتح الملف في Excel نفسه (الـ BOM ده المعروف في وثائق Microsoft)، والتنزيل الفعلي (jsdom مفيهوش [[URL.createObjectURL]]).
+
+---
+
+## ملخص الخطوات
+
+| # | الخطوة | الفخ اللي بتقفله |
+|---|---|---|
+| ١ | الفورم بـ [[novalidate]] و [[inputmode]] | رسايل المتصفح الإنجليزي، و [[type="number"]] اللي بيخبّي الغلط |
+| ٢ | قروش بدل جنيه | [[19.99 * 100]] = [[1998.999…]] |
+| ٣ | [[validate]] بـ regex و [[hasOwn]] | [[Number('')]] = 0، و [[toString]]، و ٣٠ فبراير |
+| ٤ | [[totalsBy]] بـ [[Map]] | كود تجميع مكرر لكل نوع إجمالي |
+| ٥ | [[Intl]] مع [[timeZone: 'UTC']] | اليوم بيرجع يوم برّه مصر |
+| ٦ | [[load]] بتفحص كل بند | بند بايظ بيوقّع التطبيق |
+| ٧ | [[textContent]] بس | XSS من الملاحظة |
+| ٨ | مستمع واحد على الجدول | أزرار بتفقد مستمعيها بعد كل رسمة |
+| ٩ | CSV فيه BOM وهروب | عربي ملخبط، وأعمدة متزحلقة، و formula injection |
 
 ## الخلاصة
 
-- الحالة object واحد، مكتوب قبل أي شاشة.
-- [[set]] الباب الوحيد: بتعمل object جديد، وبتحفظ لو المحفوظ اتغيّر، وبتبلّغ.
-- [[load]] عمرها ما تقع: فاضي + تحذير + نسخة من البايظ.
-- الأفعال بترجّع [[{ ok, errors }]] للمدخلات الغلط ومبتغيّرش الحالة.
-- الـ store اشتغل في Node، يعني جاهز للاختبار.`,
-          sol: R`ناتج [[node try-store.mjs]] الحقيقي على Node 24.22 والملفات التلاتة اللي بيعتمد عليها. الحل الكامل لتمرين «اكتب اختبار» موجود في الدرس الرابع ([[tests/storage.test.js]] فيه اختبار store بنفس الفكرة).`,
-          solCode: R`// node try-store.mjs
-// 1 idle → loading | favs: []
-// 2 loading → ready | favs: []
-// 3 ready → ready | favs: [ 'foul' ]
-// saved: {"version":1,"mine":[],"favs":["foul"]}
-// bad: false [ 'title', 'minutes', 'ingredients', 'steps' ] notified? 3
-// after off, n = 3 favs = []
-
-// tests/store.test.js — حل تمرين «اكتب اختبار» (مختصر)
-import { it, expect, vi } from 'vitest';
-import { createStore } from '../src/store.js';
-const fake = () => { const m = new Map(); return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) }; };
-
-it('مدخلات غلط: الحالة زي ما هي ومحدش اتبلّغ', () => {
-  const store = createStore(fake());
-  const fn = vi.fn();
-  store.subscribe(fn);
-  const before = store.get();
-  expect(store.addRecipe({ title: '' }).ok).toBe(false);
-  expect(store.get()).toBe(before);
-  expect(fn).not.toHaveBeenCalled();
-});`
-        },
-        {
-          cmd: "مشروع التخرّج ٢: الشاشات والفورم",
-          ref: [
-            { t: "MDN: Window hashchange event", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/hashchange_event" },
-            { t: "MDN: History.replaceState()", url: "https://developer.mozilla.org/en-US/docs/Web/API/History/replaceState" },
-            { t: "MDN: Element.replaceChildren()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/replaceChildren" },
-            { t: "MDN: Document.activeElement", url: "https://developer.mozilla.org/en-US/docs/Web/API/Document/activeElement" },
-            { t: "MDN: aria-pressed", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-pressed" },
-            { t: "MDN: aria-describedby", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-describedby" },
-            { t: "MDN: URLSearchParams", url: "https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams" },
-          ],
-          pre: [
-            { to: "js/debounce و throttle", why: R`البحث بيستنى ٢٥٠ms بعد آخر حرف` },
-            { to: "js/FormData و URLSearchParams", why: R`الفورم بيتقري بـ [[FormData]] والبحث بيتكتب في الرابط بـ [[URLSearchParams]]` },
-            { to: "js/pushState و popstate", why: R`ليه hash مش [[pushState]] على GitHub Pages` },
-          ],
-          title: "٤ شاشات بالرابط، وفورم بيتحقق، ومفيش innerHTML، والفوكس في مكانه",
-          learn: R`تعمل شاشات بـ hash routing، وتبني الـ DOM من الحالة بدالة [[h()]] آمنة من غير [[innerHTML]]، وتتحقق من الفورم وتعرض الغلط جنب الخانة، وتخلّي التطبيق يشتغل بالكيبورد والـ screen reader.`,
-          out: R`التطبيق بقى بيتشاف ويتستخدم: قايمة وبحث وفلتر ومفضلة وصفحة وصفة وفورم إضافة، وكل شاشة ليها رابط بيتفتح في تبويب جديد.`,
-          use: {
-            prog: R`الـ router و [[render]] من الحالة هما قلب أي SPA. React Router و Vue Router بيعملوا نفس [[parseRoute]] اللي هنا بس بمميزات أكتر. ولما تكون كتبتها بإيدك، هتعرف ليه الفوكس بيضيع أو ليه الرابط مبيفتحش الصفحة الصح.`,
-            work: R`أشهر ٣ شكاوي في أي واجهة: «الرابط مبيفتحش نفس الصفحة»، و«الفورم مسح اللي كتبته»، و«مش عارف أستخدمه بالكيبورد». التلاتة اتمسكوا هنا باختبارات، واتنين منهم اتمسكوا كباجات حقيقية وانا ببني التطبيق.`,
-            cs: R`الرابط كحالة قابلة للمشاركة (URL as state)، والعرض كدالة من الحالة (view = f(state))، والتحقق على الحدود (validate at the boundary)، والـ accessibility tree اللي المتصفح بيبنيه جنب الـ DOM.`,
-          },
-          desc: R`الدرس ده بيحوّل الـ store لشاشات. أربع حاجات:
-
-1. **الرابط هو الشاشة.** [[parseRoute('#/r/foul')]] بترجّع [[{ name: 'recipe', params: { id: 'foul' } }]]، والـ store بيتغيّر مع [[hashchange]].
-2. **[[h()]] بتبني الـ DOM من غير [[innerHTML]].** أي نص بيتحط كـ text node، فاسم وصفة زي [[<img src=x onerror=...>]] بيظهر كحروف ومبيتنفذش.
-3. **[[paint]] بترسم من الحالة** وبتحط الفوكس صح: على العنوان لما الشاشة تتغيّر، وعلى نفس الخانة لما البحث بس اللي اتغيّر.
-4. **الفورم بيتحقق** بـ [[validateRecipe]] (نفس الدالة اللي الـ store بيستخدمها)، والغلط بيظهر جنب الخانة ومربوط بيها بـ [[aria-describedby]].
-
-**ليه hash مش [[pushState]]؟** الرابط [[#/r/foul]] الجزء اللي بعد [[#]] عمره ما بيوصل للسيرفر، فأي سيرفر static (و GitHub Pages) بيرجّع [[index.html]] وخلاص. أما [[/r/foul]] بـ [[pushState]] فلو اليوزر عمل reload، السيرفر بيدوّر على ملف اسمه [[r/foul]] ويرجّع 404، والحل محتاج إعداد سيرفر أو حيلة [[404.html]] (درس «pushState و popstate»).
-
-**وباجين حقيقيين** طلعوا من الاختبارات وانا ببني ده: [[aria-pressed]] كان بيتكتب فاضي بدل [[true]]، والمسافة في آخر البحث كانت بتتمسح وانت بتكتب. الاتنين مكتوبين في الشرح بالناتج.`,
-          example: R`// src/app.js (جزء الشاشات) — كل تغيير في الحالة بيرسم، والفوكس بيروح مكانه الصح.
-function paint(s, prev) {
-  main.setAttribute('aria-busy', String(s.status === 'loading'));
-  const moved = prev.route.name !== s.route.name || prev.route.params.id !== s.route.params.id;
-  if (!moved && s.route.name === 'new') return;
-  const active = main.contains(document.activeElement) ? document.activeElement : null;
-  const keep = active?.id ? { id: active.id, pos: active.selectionStart } : null;
-  const { title, nodes } = view(s);
-  document.title = title;
-  main.replaceChildren(...nodes);
-  const here = '#/' + (s.route.name === 'list' ? '' : s.route.name);
-  for (const a of document.querySelectorAll('nav a')) {
-    if (a.getAttribute('href') === here) a.setAttribute('aria-current', 'page');
-    else a.removeAttribute('aria-current');
-  }
-  if (moved) main.querySelector('h1')?.focus();
-  else if (keep) {
-    const el = document.getElementById(keep.id);
-    el?.focus();
-    if (keep.pos != null) el?.setSelectionRange?.(keep.pos, keep.pos);
-  }
-}
-
-main.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (e.target.dataset.form === 'search') return search(e.target);
-  const res = store.addRecipe(Object.fromEntries(new FormData(e.target)));
-  if (!res.ok) return showErrors(e.target, res.errors);
-  location.hash = '#/r/' + encodeURIComponent(res.recipe.id);
-});
-
-window.addEventListener('hashchange', () => store.setRoute(parseRoute(location.hash)));
-store.subscribe(paint);
-store.setRoute(parseRoute(location.hash));`,
-          lines: [
-            R`[[paint]] هي المشترك الوحيد في الـ store: بتتنادى مع كل تغيير، وبتاخد الحالة الجديدة [[s]] والقديمة [[prev]] عشان تقارن.`,
-            R`[[aria-busy]] على [[<main>]] بيقول للـ screen reader «المحتوى ده بيتحمّل، استنى». ولازم [[String()]] لأن القيمة لازم تبقى النص [[true]] أو [[false]]، والاختبارات بتستنى عليه برضه.`,
-            R`[[moved]] يعني الشاشة نفسها اتغيّرت (اسم تاني أو وصفة تانية)، مش مجرد البحث أو حالة التحميل. القرار ده هو اللي بيحدد الفوكس يروح فين تحت.`,
-            R`**تصليح باج حقيقي:** لو انت في الفورم والداتا وصلت أو المفضلة اتغيّرت، الرسم من جديد كان بيعمل فورم جديد فاضي ويمسح اللي كتبته. الفورم بيمسك قيمه بنفسه، فمنرسمهوش تاني طول ما انت فيه. (الاختبار اللي مسكه في الدرس ٤.)`,
-            R`بنشوف مين ماسك الفوكس دلوقتي، بس لو جوه [[<main>]] (لو في الـ nav سيبه). [[document.activeElement]] هو العنصر اللي الكيبورد بيكتب فيه.`,
-            R`بنفتكر الـ id بتاعه ومكان المؤشر [[selectionStart]] (رقم الحرف). لأن [[replaceChildren]] هيمسح العنصر ده ويعمل واحد جديد، فلازم نرجّع الفوكس للجديد بنفس الـ id.`,
-            R`[[view(s)]] بترجّع العنوان والعناصر الجاهزة. الدالة دي مبتلمسش الصفحة، بتبني عناصر في الذاكرة بس، فالرسم كله بيحصل في السطرين الجايين.`,
-            R`عنوان التبويب بيتغيّر مع كل شاشة («المفضلة · دفتر الوصفات»). الـ screen reader بيقراه، والـ history بتاع المتصفح بيعرضه.`,
-            R`[[replaceChildren]] بتشيل كل اللي في [[<main>]] وتحط الجديد في خطوة واحدة. أسرع وأأمن من [[innerHTML = '']] وبعده [[append]]، ومفيش أي HTML بيتفسر.`,
-            R`بنحسب رابط الشاشة الحالية: شاشة [[list]] رابطها [[#/]]، والباقي [[#/fav]] و [[#/new]].`,
-            R`بنلف على روابط الـ nav عشان نعلّم الحالي.`,
-            R`الرابط الحالي ياخد [[aria-current="page"]]، والـ screen reader بيقول «الصفحة الحالية». **ولازم تبقى [[page]]**: لو كتبتها فاضية ([[aria-current=""]]) معناها في المواصفة [[false]].`,
-            R`الباقيين بيتشال منهم، عشان ميفضلش أكتر من رابط «حالي».`,
-            R`قفلة الـ loop.`,
-            R`لو الشاشة اتغيّرت، الفوكس يروح على [[<h1>]] (عليه [[tabindex="-1"]] عشان يقبل الفوكس من الكود ومن غير ما يبقى في ترتيب Tab). كده اللي بيستخدم screen reader يسمع عنوان الشاشة الجديدة، واللي بيستخدم الكيبورد يبدأ من أولها بدل ما يفضل في الـ nav.`,
-            R`لو الشاشة هي هي (بحث أو تحميل أو مفضلة)، نرجّع الفوكس لنفس العنصر اللي كان ماسكه.`,
-            R`بنجيب العنصر الجديد بنفس الـ id. ده سبب إن زرار المفضلة ليه [[id="fav-ID"]]: من غيره الضغط عليه كان بيرمي الفوكس على [[<body>]].`,
-            R`[[?.]] (optional chaining) معناها «لو موجود»: لو العنصر اختفى من الشاشة الجديدة منقعش.`,
-            R`بنرجّع المؤشر لنفس مكانه. [[setSelectionRange?.]] لأن الزرار و [[<select>]] معندهمش الدالة دي، فالـ [[?.]] بتعدّيها من غير error.`,
-            R`قفلة [[else if]].`,
-            R`قفلة [[paint]].`,
-            R`مستمع [[submit]] واحد على [[<main>]] (event delegation) بيخدم الفورمين: البحث والإضافة، لأن الاتنين بيتولدوا من جديد مع كل رسمة ومينفعش نحط مستمع عليهم مباشرة.`,
-            R`بنمنع الفورم يبعت ويعمل reload، وإلا الصفحة كلها هتتحمّل من الأول.`,
-            R`Enter في خانة البحث بيبعت فورم البحث، فبننفذ البحث (المؤجّل بـ debounce) ونخرج بـ [[return]].`,
-            R`[[Object.fromEntries(new FormData(form))]] بيحوّل كل خانات الفورم لـ object بأسامي الخانات ([[title]] و [[minutes]]...)، وبنبعته خام للـ store. التحقق مش هنا، جوه [[addRecipe]].`,
-            R`لو التحقق فشل، [[showErrors]] بتكتب الرسايل جنب الخانات وبتحط الفوكس على أول غلط. والحالة ما اتغيّرتش، والقيم اللي كتبتها فضلت في مكانها.`,
-            R`لو نجح، بنروح لصفحة الوصفة الجديدة. [[encodeURIComponent]] عشان أي id فيه رموز ميبوّظش الرابط. وتغيير [[location.hash]] بيضيف خطوة في الـ history (Back بيرجّعك للفورم) وبيطلق [[hashchange]].`,
-            R`قفلة مستمع [[submit]].`,
-            R`**الـ router كله في سطر:** كل ما الـ hash يتغيّر (رابط، أو Back، أو كتابة في شريط العنوان)، نحوّله لـ object ونحطه في الحالة. والرسم بيحصل لوحده من الاشتراك.`,
-            R`بنسجّل [[paint]] كمشترك، فأي فعل في الـ store بيرسم.`,
-            R`أول رسمة: بنقرا الرابط اللي الصفحة اتفتحت بيه، عشان رابط زي [[#/fav]] في تبويب جديد يفتح المفضلة على طول.`,
-          ],
-          try: R`افتح التطبيق بسيرفر ([[python -m http.server 8000]] وبعدين [[http://localhost:8000/#/fav]]) واتأكد إن المفضلة اتفتحت على طول. بعدين امشي في التطبيق كله بالكيبورد بس: Tab و Shift+Tab و Enter و Space. ضيف وصفة، وحطها في المفضلة، وارجع بـ Alt+← (Back). لو في أي خطوة مش عارف الفوكس فين، ده باج.`,
+- الفلوس **قروش رقم صحيح**، والتحويل لجنيه وقت العرض بس.
+- متثقش في [[Number]]: افحص **شكل** النص بـ regex الأول.
+- [[Object.hasOwn]] مش [[in]] لما تفحص مفتاح جاي من برّه.
+- تاريخ اتعمل UTC يتعرض UTC.
+- المنطق في ملف من غير DOM، فيتجرّب في ثانية.`,
+          try: R`ابني التطبيق من الأربع ملفات، وشغّله بـ [[python3 -m http.server 8000]]. ضيف ٣ مصاريف في شهرين مختلفين، وواحد منهم ملاحظته «مترو, وتاكسي». عدّل واحد، وامسح واحد، واعمل reload. وبعدين نزّل الـ CSV وافتحه في Excel أو Google Sheets. وآخر حاجة: افتح DevTools، وفي Console اكتب [[localStorage.setItem('expenses', '{"version":1,"items":[')]] واعمل reload.`,
           practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** النسخة الأولى من [[h()]] كان فيها [[el.setAttribute(k, v === true ? '' : String(v));]] بعد [[if (v === false || v == null) continue;]]. زرار المفضلة اتعمل بـ [[{ 'aria-pressed': true }]]. افتح DevTools ← Elements، وشوف الزرار في المفضلة ومش في المفضلة: الـ attribute مكتوب إزاي في الحالتين؟ وليه ده غلط للـ screen reader؟ صلّحه.`, done: R`لقيت إن [[true]] بتتكتب [[aria-pressed=""]] (والمواصفة بتعتبر الفاضي [[false]])، وإن [[false]] بتشيل الـ attribute خالص فالزرار بطّل «toggle button». وبعد التصليح (أي مفتاح بيبدأ بـ [[aria-]] يتكتب [[String(v)]] دايمًا) الزرار بيبقى [[aria-pressed="true"]] أو [[aria-pressed="false"]]، و [[required: true]] لسه بيتكتب فاضي.`, sol: R`**اللي هتشوفه في Elements بالنسخة الأولى:**
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** من غير ما تشغّل، اكتب [[validate]] هترجّع إيه لكل واحد: [[{ amount: ' 7 ', cat: 'fun', date: '2026-12-31' }]] و [[{ amount: '7.', cat: 'fun', date: '2026-12-31' }]] و [[{ amount: '٧٫٥', cat: 'fun', date: '2026-12-31' }]] و [[{ amount: '7', cat: 'constructor', date: '2026-12-31' }]] و [[{ amount: '7', cat: 'fun', date: '2026-11-31' }]]. وبعدين شغّلهم في Node.`, done: R`كتبت توقعك قبل التشغيل، والتلاتة الأولانيين: مقبول بـ [[700]] قرش، ومرفوض (النقطة من غير أرقام بعدها)، ومقبول بـ [[750]]. والاتنين الأخرانيين مرفوضين: [[constructor]] زي [[toString]] بالظبط، و ٣١ نوفمبر مش موجود. وتقدر تقول لكل غلطة في توقعك السطر اللي في [[validate]] كان سببها.`, sol: R`**التوقّع، سطر سطر في [[validate]]:**
 
-~~~text Chromium (Playwright): outerHTML بالنسخة القديمة من h()
-<button type="button" id="old-on" aria-pressed="">★ في المفضلة</button>
-<button type="button" id="old-off">☆ للمفضلة</button>
-<input id="old-in" required="">
+| المدخل | النتيجة | السطر اللي قرر |
+|---|---|---|
+| [[' 7 ']] | مقبول، [[700]] قرش | [[trim()]] شال المسافتين قبل الـ regex |
+| [['7.']] | مرفوض (المبلغ) | [[(\.\d{1,2})?]]: لو فيه نقطة لازم بعدها رقم أو اتنين، و [[$]] بيجبر النص كله يطابق |
+| [['٧٫٥']] | مقبول، [[750]] قرش | [[charCodeAt(0) - 0x660]] حوّل [[٧]] و [[٥]]، و [[replace('٫', '.')]] حوّل الفاصلة العربي |
+| تصنيف [[constructor]] | مرفوض (التصنيف) | [[Object.hasOwn]]: [[constructor]] جاي من الـ prototype زي [[toString]] |
+| [[2026-11-31]] | مرفوض (التاريخ) | الفحص بالرجوع في [[isRealDate]]: [[Date]] بيعدّيه لـ ١ ديسمبر |
+
+**الملف** (جنب [[expenses.js]] بتاع الدرس):
+
+~~~js predict.mjs
+import { validate } from './expenses.js';
+const cases = [
+  { amount: ' 7 ', cat: 'fun', date: '2026-12-31' },
+  { amount: '7.', cat: 'fun', date: '2026-12-31' },
+  { amount: '٧٫٥', cat: 'fun', date: '2026-12-31' },
+  { amount: '7', cat: 'constructor', date: '2026-12-31' },
+  { amount: '7', cat: 'fun', date: '2026-11-31' },
+];
+for (const c of cases) console.log(JSON.stringify(c.amount).padEnd(6), c.cat.padEnd(12), c.date, '->', JSON.stringify(validate(c)));
+console.log('constructor' in { a: 1 }, Object.hasOwn({ a: 1 }, 'constructor'), new Date('2026-11-31T00:00:00Z').toISOString());
 ~~~
 
-- **في المفضلة:** [[aria-pressed=""]]. القيمة الفاضية في مواصفة ARIA مش من القيم المسموحة ([[true]] و [[false]] و [[mixed]])، فبتتعامل كأنها مش موجودة، يعني الزرار مش «مضغوط».
-- **مش في المفضلة:** الـ attribute **اتشال خالص** لأن [[false]] دخلت [[continue]]. يعني الزرار بطّل toggle button أصلًا، والـ screen reader بيقول «زرار» بس.
-
-وده اللي شجرة الـ accessibility في Chromium شافته فعلًا ([[locator.ariaSnapshot()]] في Playwright):
-
-~~~text الناتج: ariaSnapshot قبل وبعد
-قبل  - button "★ في المفضلة"              ← مفيش [pressed] رغم إنه في المفضلة
-قبل  - button "☆ للمفضلة"
-بعد  - button "★ في المفضلة" [pressed]
-بعد  - button "☆ للمفضلة"
+~~~text الناتج: node predict.mjs (Node 24.22)
+" 7 "  fun          2026-12-31 -> {"ok":true,"value":{"cents":700,"cat":"fun","date":"2026-12-31","note":""}}
+"7."   fun          2026-12-31 -> {"ok":false,"errors":{"amount":"اكتب مبلغ بالأرقام، وبحد أقصى قرشين بعد العلامة"}}
+"٧٫٥"  fun          2026-12-31 -> {"ok":true,"value":{"cents":750,"cat":"fun","date":"2026-12-31","note":""}}
+"7"    constructor  2026-12-31 -> {"ok":false,"errors":{"cat":"اختار تصنيف من اللستة"}}
+"7"    fun          2026-11-31 -> {"ok":false,"errors":{"date":"التاريخ مش صحيح"}}
+true false 2026-12-01T00:00:00.000Z
 ~~~
 
-**التصليح:** أي مفتاح بيبدأ بـ [[aria-]] بيتكتب نص دايمًا، والـ attributes المنطقية بتاعة HTML بس هي اللي بتتكتب فاضية أو بتتشال:
+السطر الأخير بيوري السبب ورا التلاتة الصعبين: [[in]] قال [[true]] لـ [[constructor]] على object فاضي تقريبًا، و [[hasOwn]] قال [[false]]، و ٣١ نوفمبر بقى [[2026-12-01]] من غير أي error. فـ [[isRealDate]] بتقارن النص اللي رجع بالأصل ([[2026-12-01]] ≠ [[2026-11-31]]) وترفض.
 
-~~~js src/view.js
-export function h(tag, attrs = {}, ...kids) {
-  const el = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k.startsWith('aria-')) el.setAttribute(k, String(v));
-    else if (v === true) el.setAttribute(k, '');
-    else if (v !== false && v != null) el.setAttribute(k, String(v));
-  }
-  el.append(...kids.flat().filter((k) => k != null && k !== false));
-  return el;
-}
-~~~
+**الغلطة الشائعة:** تتوقّع [['7.']] يعدّي لأن [[Number('7.')]] = [[7]]. صح، بس [[validate]] مبتسألش [[Number]]، بتسأل الـ regex عن **الشكل**. وغلطة تانية: تفتكر [[٧٫٥]] هيترفض لأن «الأرقام عربي»: السطر اللي بيحوّلها بيشتغل قبل الـ regex.`},
+            { lvl: 'تطبيق', t: R`**ابني حاجة:** ضيف [[<select id="month">]] فوق الجدول فيه «كل الشهور» وكل شهر فيه مصاريف (من [[totalsBy]] نفسها). لما تختار شهر، الجدول وإجمالي التصنيفات بيعرضوا الشهر ده بس، و «حسب الشهر» يفضل يعرض كل الشهور. الفلتر جزء من [[state]] ومش بيتحفظ.`, done: R`تختار أكتوبر: الجدول فيه بنود أكتوبر بس، ومجموع «حسب التصنيف» = رقم أكتوبر في «حسب الشهر» بالظبط. وتضيف بند في سبتمبر والفلتر على أكتوبر: البند مش ظاهر في الجدول بس سبتمبر زاد في «حسب الشهر». ومفيش ولا [[innerHTML]] اتضاف.`, sol: R`**الشكل:** جرّب القايمة «الشهر» في الصفحة دي. هي نفس الملفات متجمّعة في صفحة واحدة عشان تشتغل هنا:
 
-~~~text الناتج: outerHTML بعد التصليح
-<button type="button" id="new-on" aria-pressed="true">★ في المفضلة</button>
-<button type="button" id="new-off" aria-pressed="false">☆ للمفضلة</button>
-<input id="new-in" required="">
-~~~
-
-[[required: true]] لسه بيتكتب [[required=""]]، وده صح: في HTML وجود الـ attribute المنطقي هو المعنى، والقيمة متفرقش.
-
-**ليه ترتيب الشروط مهم:** لو حطيت [[v === true]] الأول، [[aria-pressed: true]] هيدخل فيه ويتكتب فاضي تاني. شرط [[aria-]] لازم يسبق.
-
-**الغلطة الشائعة:** تصلّح بإنك تكتب [[{ 'aria-pressed': String(on) }]] في كل مكان بدل ما تصلّح [[h()]]. هتنفع في الزرار ده، وأول زرار جديد حد هيكتبه بـ [[true]] هيرجع الباج. التصليح مكانه في الدالة اللي الكل بيعدّي عليها، والاختبار [[expect($('#fav-foul').getAttribute('aria-pressed')).toBe('true')]] في [[tests/app.dom.test.js]] بيمنعه يرجع.` },
-            { lvl: 'تطبيق', t: R`**ابني شاشة:** [[#/tag/NAME]] بتعرض الوصفات اللي فيها التصنيف ده بس، وكل تصنيف في الكارت بقى رابط ليها. زوّد الحالة في [[parseRoute]] (و [[decodeURIComponent]] للعربي)، واستخدم [[listScreen]] زي ما هي بعنوان «تصنيف: NAME».`, done: R`[[parseRoute('#/tag/%D9%85%D8%B5%D8%B1%D9%8A')]] بترجّع [[name: 'tag']] و [[params.tag]] بالعربي، والرابط ده في تبويب جديد بيعرض ٤ وصفات من الـ ٦، والتصنيف اللي مش موجود بيعرض «مفيش وصفات بالبحث ده» مش صفحة فاضية، و [[document.title]] بيبدأ بـ «تصنيف»، واختبار جديد لـ [[parseRoute]] بيعدّي.`, sol: R`~~~view 560 دفتر الوصفات وفيه شاشة التصنيف (دوس على أي تصنيف في كارت)
+~~~view 620 متتبّع المصاريف بفلتر الشهر
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>دفتر الوصفات</title>
-  <link rel="icon" href="data:,">
+  <title>مصاريفي</title>
   <style>
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #1d1d1f; background: #faf7f2; }
-header { background: #7a3e12; }
-nav { display: flex; flex-wrap: wrap; gap: .25rem; max-width: 52rem; margin: 0 auto; padding: .5rem 1rem; }
-nav a { color: #fff; padding: .4rem .8rem; border-radius: 6px; text-decoration: none; }
-nav a[aria-current="page"] { background: #fff; color: #7a3e12; font-weight: 700; }
-main { max-width: 52rem; margin: 0 auto; padding: 1rem; }
-h1 { margin: .5rem 0 1rem; }
-h1:focus { outline: none; }
-:focus-visible { outline: 3px solid #1a73e8; outline-offset: 2px; }
-form[role="search"] { display: grid; grid-template-columns: 1fr; gap: .25rem; margin-bottom: .5rem; }
-@media (min-width: 640px) { form[role="search"] { grid-template-columns: auto 1fr auto auto; align-items: center; gap: .5rem; } }
-input, select, textarea, button { font: inherit; padding: .45rem .6rem; border: 1px solid #b9b1a6; border-radius: 6px; background: #fff; max-width: 100%; }
-button { cursor: pointer; background: #f1e6d8; }
-button[type="submit"] { background: #7a3e12; color: #fff; border-color: #7a3e12; }
-.cards { list-style: none; padding: 0; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-.card { background: #fff; border: 1px solid #e4dccf; border-radius: 10px; padding: .75rem 1rem; }
-.card h2 { font-size: 1.15rem; margin: 0; }
-.meta { color: #5c5348; margin: .25rem 0 .5rem; }
-.steps { white-space: pre-line; }
-.notice { background: #fff4ce; border: 1px solid #e0c060; padding: .5rem .75rem; border-radius: 6px; }
-[role="alert"] { background: #fde7e9; border: 1px solid #d93025; padding: .5rem .75rem; border-radius: 6px; }
-.field { display: grid; gap: .2rem; margin-bottom: .75rem; }
-.err { color: #b3261e; margin: 0; min-height: 1.2em; }
-[aria-invalid="true"] { border-color: #b3261e; border-width: 2px; }
+body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 2rem auto; padding: 0 1rem; }
+form { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: end; }
+.err { color: #b00020; display: block; min-height: 1em; }
+[aria-invalid="true"] { border: 2px solid #b00020; }
+table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+th, td { padding: .35rem .5rem; border-bottom: 1px solid #ddd; text-align: start; }
+#status { color: #b00020; }
   </style>
 </head>
 <body>
-  <header>
-    <nav aria-label="الأقسام">
-      <a href="#/">الوصفات</a>
-      <a href="#/fav">المفضلة</a>
-      <a href="#/new">وصفة جديدة</a>
-    </nav>
-  </header>
-  <main id="main"></main>
-  <noscript>التطبيق ده محتاج JavaScript يكون شغال.</noscript>
-<script type="module">
-// للعرض جوه الموقع بس: الصندوق ده iframe معزول (about:srcdoc)، فروابط # مبتمشيش لوحدها،
-// و history.replaceState بترمي SecurityError. السطور دي بتعمل نفس الحاجة بـ location.hash
-document.addEventListener('click', (e) => {
-  const a = e.target.closest('a[href^="#/"]');
-  if (a) { e.preventDefault(); location.hash = a.getAttribute('href'); }
-});
-const realReplace = history.replaceState.bind(history);
-history.replaceState = (state, title, url) => {
-  try { realReplace(state, title, url); } catch { location.hash = String(url).slice(String(url).indexOf('#')); }
-};
-const RECIPES = "[{\"id\":\"koshary\",\"title\":\"كشري\",\"minutes\":60,\"tags\":[\"مصري\",\"نباتي\"],\"ingredients\":[\"رز\",\"عدس بني\",\"مكرونة\",\"صلصة طماطم\",\"بصل مقرمش\"],\"steps\":\"اسلق العدس والرز مع بعض.\\nاسلق المكرونة لوحدها.\\nاعمل الصلصة بالطماطم والتوم والخل.\\nرص الطبق وفوقه البصل.\"},{\"id\":\"foul\",\"title\":\"فول مدمس\",\"minutes\":15,\"tags\":[\"فطار\",\"مصري\"],\"ingredients\":[\"فول مدمس\",\"زيت زيتون\",\"كمون\",\"ليمون\",\"ملح\"],\"steps\":\"سخّن الفول بمية قليلة.\\nاهرسه شوية.\\nضيف الزيت والكمون والليمون والملح.\"},{\"id\":\"shakshuka\",\"title\":\"شكشوكة\",\"minutes\":20,\"tags\":[\"فطار\"],\"ingredients\":[\"بيض\",\"طماطم\",\"فلفل\",\"بصل\",\"كمون\"],\"steps\":\"شوّح البصل والفلفل.\\nضيف الطماطم والكمون لحد ما تتسبك.\\nاكسر البيض فوقها وغطّيها.\"},{\"id\":\"salad\",\"title\":\"سلطة بلدي\",\"minutes\":10,\"tags\":[\"نباتي\"],\"ingredients\":[\"طماطم\",\"خيار\",\"بصل\",\"ليمون\",\"كمون\"],\"steps\":\"قطّع الخضار مكعبات صغيرة.\\nضيف الليمون والكمون والملح وقلّب.\"},{\"id\":\"roz-bel-laban\",\"title\":\"رز بلبن\",\"minutes\":40,\"tags\":[\"حلو\",\"مصري\"],\"ingredients\":[\"رز\",\"لبن\",\"سكر\",\"فانيليا\"],\"steps\":\"اسلق الرز في مية لحد ما يشربها.\\nضيف اللبن وقلّب على نار هادية.\\nضيف السكر والفانيليا وصبّه في طواجن.\"},{\"id\":\"basbousa\",\"title\":\"بسبوسة\",\"minutes\":50,\"tags\":[\"حلو\",\"مصري\"],\"ingredients\":[\"سميد\",\"زبادي\",\"سكر\",\"زبدة\",\"شربات\"],\"steps\":\"اخلط السميد والزبادي والسكر والزبدة.\\nافرده في صينية وقطّعه.\\nادخله الفرن وبعدين صب عليه الشربات.\"}]";
-const MAX_TITLE = 80;
+  <main>
+    <h1>مصاريفي</h1>
+    <form id="form" novalidate>
+      <label>المبلغ <input name="amount" inputmode="decimal" autocomplete="off"></label>
+      <small class="err" data-for="amount"></small>
+      <label>التصنيف <select name="cat"></select></label>
+      <small class="err" data-for="cat"></small>
+      <label>التاريخ <input name="date" type="date"></label>
+      <small class="err" data-for="date"></small>
+      <label>ملاحظة <input name="note" maxlength="80"></label>
+      <button id="submit">ضيف</button>
+      <button type="button" id="cancel" hidden>إلغاء التعديل</button>
+    </form>
+    <p id="status" role="status"></p>
+    <label>الشهر <select id="month"></select></label>
+    <table>
+      <thead><tr><th>التاريخ</th><th>التصنيف</th><th>المبلغ</th><th>ملاحظة</th><th></th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p id="empty">لسه مفيش مصاريف.</p>
+    <section><h2>حسب التصنيف</h2><ul id="by-cat"></ul></section>
+    <section><h2>حسب الشهر</h2><ul id="by-month"></ul></section>
+    <button id="export">نزّل CSV</button>
+  </main>
+  <script type="module">
+const CATS = { food: 'أكل', transport: 'مواصلات', bills: 'فواتير', fun: 'خروج', other: 'تاني' };
+const KEY = 'expenses';
+const VERSION = 1;
 
-function isRecipe(r) {
-  return !!r && typeof r === 'object' && typeof r.id === 'string' && typeof r.title === 'string'
-    && Number.isFinite(r.minutes) && Array.isArray(r.ingredients) && Array.isArray(r.tags)
-    && typeof r.steps === 'string';
-}
-
-const toggleFav = (favs, id) => (favs.includes(id) ? favs.filter((f) => f !== id) : [...favs, id]);
-
-const toLatinDigits = (s) => String(s ?? '').replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
-
-function parseRoute(hash) {
-  const raw = String(hash ?? '').replace(/^#/, '') || '/';
-  const [path, qs = ''] = raw.split('?');
-  const query = Object.fromEntries(new URLSearchParams(qs));
-  const parts = path.split('/').filter(Boolean);
-  if (parts.length === 0) return { name: 'list', params: {}, query };
-  if (parts[0] === 'r' && parts.length === 2) return { name: 'recipe', params: { id: decodeURIComponent(parts[1]) }, query };
-  if (parts.length === 1 && (parts[0] === 'new' || parts[0] === 'fav')) return { name: parts[0], params: {}, query };
-  if (parts[0] === 'tag' && parts.length === 2) return { name: 'tag', params: { tag: decodeURIComponent(parts[1]) }, query };
-  return { name: 'notfound', params: {}, query };
-}
-
-function filterRecipes(list, { q = '', tag = '' } = {}) {
-  const needle = q.trim().toLowerCase();
-  return list.filter((r) => (!tag || r.tags.includes(tag))
-    && (!needle || [r.title, ...r.ingredients].some((t) => t.toLowerCase().includes(needle))));
-}
-
-const allTags = (list) => [...new Set(list.flatMap((r) => r.tags))].sort((a, b) => a.localeCompare(b, 'ar'));
-
-function validateRecipe(input) {
+function validate(input) {
   const errors = {};
-  const title = String(input.title ?? '').trim();
-  const minutes = Number(toLatinDigits(input.minutes).trim() || NaN);
-  const ingredients = String(input.ingredients ?? '').split('\n').map((s) => s.trim()).filter(Boolean);
-  const steps = String(input.steps ?? '').trim();
-  const tags = [...new Set(String(input.tags ?? '').split(/[,،]/).map((s) => s.trim()).filter(Boolean))];
-  if (!title) errors.title = 'اكتب اسم الوصفة';
-  else if (title.length > MAX_TITLE) errors.title = $__btالاسم أطول من $__{MAX_TITLE} حرف$__bt;
-  if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) errors.minutes = 'الوقت بالدقايق، رقم صحيح من 1 لـ 1440';
-  if (ingredients.length < 2) errors.ingredients = 'اكتب مكوّنين على الأقل، كل واحد في سطر';
-  if (!steps) errors.steps = 'اكتب طريقة التحضير';
+  const raw = String(input.amount ?? '').trim()
+    .replace(/[٠-٩]/g, d => d.charCodeAt(0) - 0x660).replace('٫', '.');
+  const amount = Number(raw);
+  if (!/^\d+(\.\d{1,2})?$/.test(raw)) errors.amount = 'اكتب مبلغ بالأرقام، وبحد أقصى قرشين بعد العلامة';
+  else if (amount <= 0 || amount > 1_000_000) errors.amount = 'المبلغ لازم يبقى أكبر من صفر ومش أكتر من مليون';
+  if (!Object.hasOwn(CATS, input.cat)) errors.cat = 'اختار تصنيف من اللستة';
+  if (!isRealDate(input.date)) errors.date = 'التاريخ مش صحيح';
+  const note = String(input.note ?? '').trim().slice(0, 80);
   if (Object.keys(errors).length) return { ok: false, errors };
-  return { ok: true, value: { title, minutes, ingredients, steps, tags } };
+  return { ok: true, value: { cents: Math.round(amount * 100), cat: input.cat, date: input.date, note } };
 }
 
-function debounce(fn, ms) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
+function isRealDate(s) {
+  if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(s + 'T00:00:00Z');
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+}
+
+function totalsBy(items, keyOf) {
+  const out = new Map();
+  for (const it of items) out.set(keyOf(it), (out.get(keyOf(it)) ?? 0) + it.cents);
+  return [...out].sort((a, b) => b[1] - a[1]);
+}
+
+function toCSV(items) {
+  const cell = (v) => {
+    let s = String(v);
+    if (/^[=+\-@]/.test(s)) s = "'" + s;
+    return /[",\n]/.test(s) ? '"' + s.replaceAll('"', '""') + '"' : s;
   };
+  const rows = [['date', 'category', 'amount', 'note']];
+  for (const it of items) rows.push([it.date, CATS[it.cat], (it.cents / 100).toFixed(2), it.note]);
+  return '\uFEFF' + rows.map(r => r.map(cell).join(',')).join('\r\n');
 }
 
-
-const KEY = 'recipe-book:v1';
-
-// مجرد قراية localStorage بترمي SecurityError لو التخزين مقفول (أو صفحة sandboxed)، فبنقراه جوه try
-function browserStorage() {
-  try { return globalThis.localStorage ?? null; } catch { return null; }
-}
-
-function load(storage = browserStorage()) {
+function load(storage) {
   let raw;
-  try { raw = storage.getItem(KEY); } catch { return { mine: [], favs: [], warning: 'المتصفح قافل التخزين، ومش هنفتكر حاجة' }; }
-  if (raw === null) return { mine: [], favs: [] };
-  try {
-    const data = JSON.parse(raw);
-    if (data?.version !== 1) throw new Error('نسخة مش معروفة: ' + data?.version);
-    const mine = Array.isArray(data.mine) ? data.mine.filter(isRecipe) : [];
-    const favs = Array.isArray(data.favs) ? data.favs.filter((f) => typeof f === 'string') : [];
-    return { mine, favs };
-  } catch (err) {
-    try { storage.setItem(KEY + ':broken', raw); } catch { /* مفيش مكان، مش مشكلة */ }
-    return { mine: [], favs: [], warning: 'الداتا المحفوظة كانت بايظة (' + err.message + ')، واتحفظت نسخة منها' };
-  }
+  try { raw = storage.getItem(KEY); } catch { return []; }
+  if (!raw) return [];
+  let data;
+  try { data = JSON.parse(raw); } catch { return []; }
+  if (data?.version !== VERSION || !Array.isArray(data.items)) return [];
+  return data.items.filter(it => it && typeof it.id === 'string'
+    && Number.isInteger(it.cents) && it.cents > 0
+    && Object.hasOwn(CATS, it.cat) && isRealDate(it.date)
+    && typeof it.note === 'string');
 }
 
-function save({ mine, favs }, storage = browserStorage()) {
-  try {
-    storage.setItem(KEY, JSON.stringify({ version: 1, mine, favs }));
-    return true;
-  } catch {
-    return false;
-  }
+function save(storage, items) {
+  try { storage.setItem(KEY, JSON.stringify({ version: VERSION, items })); return true; }
+  catch { return false; }
 }
 
 
-function createStore(storage = browserStorage()) {
-  const saved = load(storage);
-  let state = {
-    recipes: [], mine: saved.mine, favs: saved.favs,
-    status: 'idle', error: '', notice: saved.warning ?? '',
-    route: { name: 'list', params: {}, query: {} },
-  };
-  const listeners = new Set();
 
-  function set(patch) {
-    const prev = state;
-    state = { ...state, ...patch };
-    if ((state.mine !== prev.mine || state.favs !== prev.favs) && !save(state, storage)) {
-      state = { ...state, notice: 'مقدرناش نحفظ: التخزين مليان أو مقفول' };
-    }
-    listeners.forEach((fn) => fn(state, prev));
-  }
+const money = new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' });
+const day = new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium', timeZone: 'UTC' });
+const monthName = new Intl.DateTimeFormat('ar-EG', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const asDate = (s) => new Date(s + 'T00:00:00Z');
+const today = () => new Date().toLocaleDateString('en-CA');
 
-  return {
-    get: () => state,
-    subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn); },
-    setRoute: (route) => set({ route }),
-    loading: () => set({ status: 'loading', error: '' }),
-    loaded: (recipes) => set({ status: 'ready', recipes }),
-    failed: (message) => set({ status: 'error', error: message }),
-    toggleFav: (id) => set({ favs: toggleFav(state.favs, id) }),
-    addRecipe(input) {
-      const res = validateRecipe(input);
-      if (!res.ok) return res;
-      const recipe = { id: 'u-' + crypto.randomUUID(), ...res.value };
-      set({ mine: [recipe, ...state.mine] });
-      return { ok: true, recipe };
-    },
-  };
+const store = (() => { try { return localStorage; } catch { return null; } })();
+const state = { items: load(store), editing: null, month: '' };
+const $ = (sel) => document.querySelector(sel);
+const form = $('#form');
+const f = form.elements;
+
+for (const [key, label] of Object.entries(CATS)) f.cat.append(new Option(label, key));
+f.date.value = today();
+
+function el(tag, text, data = {}) {
+  const node = document.createElement(tag);
+  node.textContent = text;
+  Object.assign(node.dataset, data);
+  return node;
 }
 
-const allRecipes = (s) => [...s.mine, ...s.recipes];
-
-
-class HttpError extends Error {
-  constructor(status, url) {
-    super($__btHTTP $__{status} من $__{url}$__bt);
-    this.name = 'HttpError';
-    this.status = status;
-  }
+function row(it) {
+  const tr = document.createElement('tr');
+  const cells = [day.format(asDate(it.date)), CATS[it.cat], money.format(it.cents / 100), it.note];
+  tr.append(...cells.map(text => el('td', text)));
+  const actions = el('td', '');
+  actions.append(el('button', 'عدّل', { act: 'edit', id: it.id }), el('button', 'امسح', { act: 'del', id: it.id }));
+  tr.append(actions);
+  return tr;
 }
 
-class DataError extends Error {
-  name = 'DataError';
+function render() {
+  const byMonth = totalsBy(state.items, it => it.date.slice(0, 7)).sort((a, b) => b[0].localeCompare(a[0]));
+  if (state.month && !byMonth.some(([k]) => k === state.month)) state.month = '';
+  $('#month').replaceChildren(new Option('كل الشهور', ''),
+    ...byMonth.map(([k]) => new Option(monthName.format(asDate(k + '-01')), k)));
+  $('#month').value = state.month;
+  const shown = state.month ? state.items.filter(it => it.date.startsWith(state.month)) : state.items;
+  const newest = shown.toSorted((a, b) => b.date.localeCompare(a.date));
+  $('#rows').replaceChildren(...newest.map(row));
+  $('#empty').hidden = state.items.length > 0;
+  const byCat = totalsBy(shown, it => it.cat);
+  $('#by-cat').replaceChildren(...byCat.map(([k, c]) => el('li', CATS[k] + ': ' + money.format(c / 100))));
+  $('#by-month').replaceChildren(...byMonth.map(([k, c]) => el('li', monthName.format(asDate(k + '-01')) + ': ' + money.format(c / 100))));
+  $('#export').disabled = state.items.length === 0;
+  $('#submit').textContent = state.editing ? 'احفظ التعديل' : 'ضيف';
+  $('#cancel').hidden = !state.editing;
 }
 
-async function fetchJSON(url, { timeout = 8000, signal } = {}) {
-  const timer = AbortSignal.timeout(timeout);
-  const res = await fetch(url, { signal: signal ? AbortSignal.any([signal, timer]) : timer });
-  if (!res.ok) throw new HttpError(res.status, url);
-  return res.json();
-}
-
-async function loadRecipes(url, opts) {
-  const data = await fetchJSON(url, opts);
-  if (!Array.isArray(data)) throw new DataError('الرد مش لستة وصفات');
-  return data.filter(isRecipe);
-}
-
-function explain(err) {
-  if (err.name === 'TimeoutError') return 'السيرفر اتأخر في الرد. جرّب تاني.';
-  if (err instanceof HttpError) return err.status === 404 ? 'ملف الوصفات مش موجود (404).' : $__btالسيرفر رد بخطأ $__{err.status}. جرّب كمان شوية.$__bt;
-  if (err instanceof SyntaxError) return 'الرد وصل بس مش JSON سليم.';
-  if (err instanceof DataError) return 'الرد وصل بس شكله غلط.';
-  return 'مفيش اتصال. اتأكد من النت وجرّب تاني.';
-}
-
-
-function h(tag, attrs = {}, ...kids) {
-  const el = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k.startsWith('aria-')) el.setAttribute(k, String(v));
-    else if (v === true) el.setAttribute(k, '');
-    else if (v !== false && v != null) el.setAttribute(k, String(v));
-  }
-  el.append(...kids.flat().filter((k) => k != null && k !== false));
-  return el;
-}
-
-const TITLES = { list: 'الوصفات', fav: 'المفضلة', new: 'وصفة جديدة', notfound: 'الصفحة دي مش موجودة' };
-
-function view(s) {
-  const { name } = s.route;
-  const all = allRecipes(s);
-  const screen = name === 'recipe' ? recipeScreen(s, all)
-    : name === 'tag' ? { title: 'تصنيف: ' + s.route.params.tag }
-      : { title: TITLES[name] ?? TITLES.notfound };
-  const nodes = screen.nodes
-    ?? (name === 'list' ? listScreen(s, screen.title, all)
-      : name === 'fav' ? listScreen(s, screen.title, all.filter((r) => s.favs.includes(r.id)))
-        : name === 'tag' ? listScreen(s, screen.title, all.filter((r) => r.tags.includes(s.route.params.tag)))
-        : name === 'new' ? newScreen()
-          : notFound(screen.title));
-  if (s.notice) nodes.unshift(h('p', { class: 'notice', role: 'status' }, s.notice));
-  return { title: screen.title + ' · دفتر الوصفات', nodes };
-}
-
-function listScreen(s, title, list) {
-  const { q = '', tag = '' } = s.route.query;
-  const shown = filterRecipes(list, { q, tag });
-  return [
-    h('h1', { tabindex: -1 }, title),
-    h('form', { role: 'search', 'data-form': 'search' },
-      h('label', { for: 'q' }, 'دوّر باسم أو مكوّن'),
-      h('input', { id: 'q', name: 'q', type: 'search', value: q, autocomplete: 'off' }),
-      h('label', { for: 'tag' }, 'التصنيف'),
-      h('select', { id: 'tag', name: 'tag' }, h('option', { value: '' }, 'الكل'),
-        allTags(list).map((t) => h('option', { value: t, selected: t === tag }, t)))),
-    status(s, shown.length),
-    h('ul', { class: 'cards' }, shown.map((r) => card(s, r))),
-  ];
-}
-
-function status(s, shown) {
-  if (s.status === 'loading' || s.status === 'idle') return h('p', { role: 'status' }, 'بنحمّل الوصفات…');
-  if (s.status === 'error') return h('div', { role: 'alert' }, h('p', {}, s.error),
-    h('button', { type: 'button', 'data-action': 'retry' }, 'جرّب تاني'));
-  return h('p', { role: 'status' }, shown === 0 ? 'مفيش وصفات بالبحث ده' : $__bt$__{shown} وصفة$__bt);
-}
-
-const favButton = (s, id) => {
-  const on = s.favs.includes(id);
-  return h('button', { type: 'button', id: 'fav-' + id, 'data-fav': id, 'aria-pressed': on }, on ? '★ في المفضلة' : '☆ للمفضلة');
-};
-
-const meta = (r) => h('p', { class: 'meta' }, r.minutes + ' دقيقة',
-  r.tags.flatMap((t, i) => [i ? '، ' : ' · ', h('a', { href: '#/tag/' + encodeURIComponent(t) }, t)]));
-
-function card(s, r) {
-  return h('li', { class: 'card' },
-    h('h2', {}, h('a', { href: '#/r/' + encodeURIComponent(r.id) }, r.title)),
-    meta(r), favButton(s, r.id));
-}
-
-function recipeScreen(s, all) {
-  const r = all.find((x) => x.id === s.route.params.id);
-  if (r) {
-    return { title: r.title, nodes: [
-      h('h1', { tabindex: -1 }, r.title), meta(r), favButton(s, r.id),
-      h('h2', {}, 'المكوّنات'), h('ul', {}, r.ingredients.map((i) => h('li', {}, i))),
-      h('h2', {}, 'الطريقة'), h('p', { class: 'steps' }, r.steps),
-      h('p', {}, h('a', { href: '#/' }, 'كل الوصفات')),
-    ] };
-  }
-  if (s.status === 'loading' || s.status === 'idle') return { title: 'بنحمّل', nodes: [h('h1', { tabindex: -1 }, 'بنحمّل الوصفة…')] };
-  if (s.status === 'error') return { title: 'حصل خطأ', nodes: [h('h1', { tabindex: -1 }, 'حصل خطأ'), status(s, 0)] };
-  return { title: 'الوصفة دي مش موجودة', nodes: notFound('الوصفة دي مش موجودة') };
-}
-
-const notFound = (title) => [h('h1', { tabindex: -1 }, title), h('p', {}, h('a', { href: '#/' }, 'ارجع لكل الوصفات'))];
-
-function field(name, label, control) {
-  return h('div', { class: 'field' }, h('label', { for: name }, label), control, h('p', { id: name + '-err', class: 'err' }));
-}
-
-function newScreen() {
-  const a = (name) => ({ id: name, name, 'aria-describedby': name + '-err' });
-  return [
-    h('h1', { tabindex: -1 }, 'وصفة جديدة'),
-    h('form', { 'data-form': 'add', novalidate: true },
-      field('title', 'الاسم', h('input', { ...a('title'), required: true, maxlength: MAX_TITLE, autocomplete: 'off' })),
-      field('minutes', 'الوقت بالدقايق', h('input', { ...a('minutes'), required: true, inputmode: 'numeric' })),
-      field('ingredients', 'المكوّنات، كل واحد في سطر', h('textarea', { ...a('ingredients'), required: true, rows: 4 })),
-      field('steps', 'الطريقة', h('textarea', { ...a('steps'), required: true, rows: 4 })),
-      field('tags', 'التصنيفات، افصل بينهم بفاصلة', h('input', { ...a('tags'), autocomplete: 'off' })),
-      h('button', { type: 'submit' }, 'احفظ الوصفة')),
-  ];
-}
-
-function showErrors(form, errors) {
-  for (const el of form.querySelectorAll('[name]')) {
-    const msg = errors[el.name] ?? '';
-    form.querySelector('#' + el.name + '-err').textContent = msg;
-    if (msg) el.setAttribute('aria-invalid', 'true');
-    else el.removeAttribute('aria-invalid');
-  }
-  form.querySelector('[aria-invalid="true"]')?.focus();
-}
-
-
-const DATA_URL = 'data:application/json;charset=utf-8,' + encodeURIComponent(RECIPES);
-const store = createStore();
-const main = document.getElementById('main');
-let ctrl = null;
-
-function paint(s, prev) {
-  main.setAttribute('aria-busy', String(s.status === 'loading'));
-  const moved = prev.route.name !== s.route.name || prev.route.params.id !== s.route.params.id;
-  if (!moved && s.route.name === 'new') return;
-  const active = main.contains(document.activeElement) ? document.activeElement : null;
-  const keep = active?.id ? { id: active.id, pos: active.selectionStart } : null;
-  const { title, nodes } = view(s);
-  document.title = title;
-  main.replaceChildren(...nodes);
-  const here = '#/' + (s.route.name === 'list' ? '' : s.route.name);
-  for (const a of document.querySelectorAll('nav a')) {
-    if (a.getAttribute('href') === here) a.setAttribute('aria-current', 'page');
-    else a.removeAttribute('aria-current');
-  }
-  if (moved) main.querySelector('h1')?.focus();
-  else if (keep) {
-    const el = document.getElementById(keep.id);
-    el?.focus();
-    if (keep.pos != null) el?.setSelectionRange?.(keep.pos, keep.pos);
-  }
-}
-
-const search = debounce((form) => {
-  const p = new URLSearchParams();
-  for (const [k, v] of new FormData(form)) if (String(v).trim()) p.set(k, String(v));
-  const qs = String(p);
-  // من غير || '#/' لو الصفحة اتفتحت من غير # الـ ?q= كان هيروح للرابط نفسه مش للـ hash
-  const path = location.hash.split('?')[0] || '#/';
-  history.replaceState(null, '', path + (qs ? '?' + qs : ''));
-  store.setRoute(parseRoute(location.hash));
-}, 250);
-
-async function loadData() {
-  ctrl?.abort();
-  ctrl = new AbortController();
-  store.loading();
-  try {
-    store.loaded(await loadRecipes(DATA_URL, { signal: ctrl.signal }));
-  } catch (err) {
-    if (err.name !== 'AbortError') store.failed(explain(err));
-  }
-}
-
-main.addEventListener('input', (e) => {
-  const form = e.target.closest('[data-form="search"]');
-  if (form) search(form);
+$('#month').addEventListener('change', (e) => {
+  state.month = e.target.value;
+  render();
 });
 
-main.addEventListener('submit', (e) => {
+function commit() {
+  $('#status').textContent = save(store, state.items) ? '' : 'مقدرناش نحفظ: التغييرات هتروح لما تقفل الصفحة';
+  render();
+}
+
+function showErrors(errors) {
+  for (const small of form.querySelectorAll('.err')) {
+    const name = small.dataset.for;
+    small.textContent = errors[name] ?? '';
+    f[name].setAttribute('aria-invalid', String(name in errors));
+  }
+}
+
+function clearForm() {
+  state.editing = null;
+  f.amount.value = '';
+  f.note.value = '';
+  showErrors({});
+}
+
+form.addEventListener('submit', (e) => {
   e.preventDefault();
-  if (e.target.dataset.form === 'search') return search(e.target);
-  const res = store.addRecipe(Object.fromEntries(new FormData(e.target)));
-  if (!res.ok) return showErrors(e.target, res.errors);
-  location.hash = '#/r/' + encodeURIComponent(res.recipe.id);
+  const result = validate(Object.fromEntries(new FormData(form)));
+  showErrors(result.errors ?? {});
+  if (!result.ok) return form.querySelector('[aria-invalid="true"]').focus();
+  if (state.editing) {
+    state.items = state.items.map(it => it.id === state.editing ? { ...result.value, id: it.id } : it);
+  } else {
+    state.items.push({ ...result.value, id: crypto.randomUUID() });
+  }
+  clearForm();
+  commit();
+  f.amount.focus();
 });
 
-main.addEventListener('click', (e) => {
-  const fav = e.target.closest('[data-fav]');
-  if (fav) store.toggleFav(fav.dataset.fav);
-  if (e.target.closest('[data-action="retry"]')) loadData();
+$('#rows').addEventListener('click', (e) => {
+  const { act, id } = e.target.dataset;
+  const it = state.items.find(x => x.id === id);
+  if (!it) return;
+  if (act === 'del' && confirm('تمسح ' + money.format(it.cents / 100) + '؟')) {
+    state.items = state.items.filter(x => x.id !== id);
+    if (state.editing === id) clearForm();
+    commit();
+  }
+  if (act === 'edit') {
+    state.editing = id;
+    f.amount.value = (it.cents / 100).toFixed(2);
+    f.cat.value = it.cat;
+    f.date.value = it.date;
+    f.note.value = it.note;
+    render();
+    f.amount.focus();
+  }
 });
 
-window.addEventListener('hashchange', () => store.setRoute(parseRoute(location.hash)));
-store.subscribe(paint);
-store.setRoute(parseRoute(location.hash));
-loadData();
+$('#cancel').addEventListener('click', () => { clearForm(); render(); });
+
+$('#export').addEventListener('click', () => {
+  const blob = new Blob([toCSV(state.items)], { type: 'text/csv;charset=utf-8' });
+  const a = el('a', '');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'expenses-' + today() + '.csv';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 0);
+});
+
+// المعاينة بس: localStorage مقفول جوه الصندوق ده، فبنبدأ ببنود تجربة (في المتصفح عندك الداتا بتاعتك)
+if (!store) state.items = [
+  { id: 'd1', cents: 4550, cat: 'food', date: '2026-10-05', note: 'فطار' },
+  { id: 'd2', cents: 3000, cat: 'transport', date: '2026-10-06', note: 'مترو, وتاكسي' },
+  { id: 'd3', cents: 120000, cat: 'bills', date: '2026-09-28', note: 'كهربا' },
+  { id: 'd4', cents: 2500, cat: 'food', date: '2026-09-30', note: 'غدا' },
+];
+render();
 </script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** كل كارت تحت وقته بقى فيه التصنيفات كروابط. دوس على «حلو»: الشاشة بقت «تصنيف: حلو» وفيها «رز بلبن» و «بسبوسة» بس. (الـ preview ده صفحة واحدة فيها كل الملفات، ومعاها سطور في أولها للعرض جوه الموقع بس، شرحها تحت.)
+> **ليه البنود دي موجودة لوحدها؟** الصندوق ده معزول ومقفول عليه [[localStorage]]، فـ [[store]] بقت [[null]]، والمعاينة بتبدأ ببنود تجربة (السطور اللي بتبدأ بتعليق «المعاينة بس» في آخر الكود). ولو ضفت بند هتشوف «مقدرناش نحفظ»: ده نفس الـ fallback اللي في الدرس شغال. و «امسح» مش هيعمل حاجة هنا لأن [[confirm()]] مقفول في الصندوق ده بيرجّع [[false]]. في المتصفح عندك (من سيرفر) الاتنين شغالين عادي.
 
-**التغيير في ٣ أماكن:**
+## اللي اتغيّر
 
-**١. [[src/logic.js]]: سطر في [[parseRoute]] قبل [[notfound]]:**
+**[[index.html]]:** سطر واحد تحت [[#status]]:
 
-~~~js src/logic.js
-export function parseRoute(hash) {
-  const raw = String(hash ?? '').replace(/^#/, '') || '/';
-  const [path, qs = ''] = raw.split('?');
-  const query = Object.fromEntries(new URLSearchParams(qs));
-  const parts = path.split('/').filter(Boolean);
-  if (parts.length === 0) return { name: 'list', params: {}, query };
-  if (parts[0] === 'r' && parts.length === 2) return { name: 'recipe', params: { id: decodeURIComponent(parts[1]) }, query };
-  if (parts.length === 1 && (parts[0] === 'new' || parts[0] === 'fav')) return { name: parts[0], params: {}, query };
-  if (parts[0] === 'tag' && parts.length === 2) return { name: 'tag', params: { tag: decodeURIComponent(parts[1]) }, query };
-  return { name: 'notfound', params: {}, query };
+~~~html
+<label>الشهر <select id="month"></select></label>
+~~~
+
+**[[app.js]]:** [[state]] فيها [[month]]، و [[render]] اتغيّرت، ومستمع جديد. [[expenses.js]] و [[style.css]] زي ما هم. الملف كامل:
+
+~~~js app.js
+import { CATS, validate, totalsBy, toCSV, load, save } from './expenses.js';
+
+const money = new Intl.NumberFormat('ar-EG', { style: 'currency', currency: 'EGP' });
+const day = new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium', timeZone: 'UTC' });
+const monthName = new Intl.DateTimeFormat('ar-EG', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const asDate = (s) => new Date(s + 'T00:00:00Z');
+const today = () => new Date().toLocaleDateString('en-CA');
+
+const store = (() => { try { return localStorage; } catch { return null; } })();
+const state = { items: load(store), editing: null, month: '' };
+const $ = (sel) => document.querySelector(sel);
+const form = $('#form');
+const f = form.elements;
+
+for (const [key, label] of Object.entries(CATS)) f.cat.append(new Option(label, key));
+f.date.value = today();
+
+function el(tag, text, data = {}) {
+  const node = document.createElement(tag);
+  node.textContent = text;
+  Object.assign(node.dataset, data);
+  return node;
 }
-~~~
 
-[[decodeURIComponent]] بتحوّل [[%D9%85%D8%B5%D8%B1%D9%8A]] لـ «مصري». و [[parts.length === 2]] بيخلّي [[#/tag]] لوحدها أو [[#/tag/a/b]] يروحوا «مش موجودة».
-
-**٢. [[src/view.js]]: الشاشة والعنوان:**
-
-~~~js src/view.js
-export function view(s) {
-  const { name } = s.route;
-  const all = allRecipes(s);
-  const screen = name === 'recipe' ? recipeScreen(s, all)
-    : name === 'tag' ? { title: 'تصنيف: ' + s.route.params.tag }
-      : { title: TITLES[name] ?? TITLES.notfound };
-  const nodes = screen.nodes
-    ?? (name === 'list' ? listScreen(s, screen.title, all)
-      : name === 'fav' ? listScreen(s, screen.title, all.filter((r) => s.favs.includes(r.id)))
-        : name === 'tag' ? listScreen(s, screen.title, all.filter((r) => r.tags.includes(s.route.params.tag)))
-        : name === 'new' ? newScreen()
-          : notFound(screen.title));
-  if (s.notice) nodes.unshift(h('p', { class: 'notice', role: 'status' }, s.notice));
-  return { title: screen.title + ' · دفتر الوصفات', nodes };
+function row(it) {
+  const tr = document.createElement('tr');
+  const cells = [day.format(asDate(it.date)), CATS[it.cat], money.format(it.cents / 100), it.note];
+  tr.append(...cells.map(text => el('td', text)));
+  const actions = el('td', '');
+  actions.append(el('button', 'عدّل', { act: 'edit', id: it.id }), el('button', 'امسح', { act: 'del', id: it.id }));
+  tr.append(actions);
+  return tr;
 }
-~~~
 
-شاشة التصنيف هي **نفس** [[listScreen]] بلستة متفلترة، زي المفضلة بالظبط، فالبحث والعدد والكروت والفوكس كلهم شغالين ببلاش. والعنوان بيتبني من الـ params، فـ [[document.title]] بيبقى «تصنيف: مصري · دفتر الوصفات».
+function render() {
+  const byMonth = totalsBy(state.items, it => it.date.slice(0, 7)).sort((a, b) => b[0].localeCompare(a[0]));
+  if (state.month && !byMonth.some(([k]) => k === state.month)) state.month = '';
+  $('#month').replaceChildren(new Option('كل الشهور', ''),
+    ...byMonth.map(([k]) => new Option(monthName.format(asDate(k + '-01')), k)));
+  $('#month').value = state.month;
+  const shown = state.month ? state.items.filter(it => it.date.startsWith(state.month)) : state.items;
+  const newest = shown.toSorted((a, b) => b.date.localeCompare(a.date));
+  $('#rows').replaceChildren(...newest.map(row));
+  $('#empty').hidden = state.items.length > 0;
+  const byCat = totalsBy(shown, it => it.cat);
+  $('#by-cat').replaceChildren(...byCat.map(([k, c]) => el('li', CATS[k] + ': ' + money.format(c / 100))));
+  $('#by-month').replaceChildren(...byMonth.map(([k, c]) => el('li', monthName.format(asDate(k + '-01')) + ': ' + money.format(c / 100))));
+  $('#export').disabled = state.items.length === 0;
+  $('#submit').textContent = state.editing ? 'احفظ التعديل' : 'ضيف';
+  $('#cancel').hidden = !state.editing;
+}
 
-**٣. [[src/view.js]]: كل تصنيف في الكارت رابط:**
-
-~~~js src/view.js
-const meta = (r) => h('p', { class: 'meta' }, r.minutes + ' دقيقة',
-  r.tags.flatMap((t, i) => [i ? '، ' : ' · ', h('a', { href: '#/tag/' + encodeURIComponent(t) }, t)]));
-~~~
-
-[[flatMap]] بترجّع لكل تصنيف عنصرين (فاصل ورابط) في مصفوفة واحدة مسطّحة، و [[h()]] بتحطهم ورا بعض. والـ [[href]] مبني بإيدنا بـ [[encodeURIComponent]]، فتصنيف فيه [[?]] أو [[#]] ميكسرش الرابط، وعمره ما بيبقى نص اليوزر مباشرة.
-
-**الاختبار:**
-
-~~~js tests/logic.test.js
-it('#/tag بالعربي', () => {
-  expect(parseRoute('#/tag/%D9%85%D8%B5%D8%B1%D9%8A')).toEqual({ name: 'tag', params: { tag: 'مصري' }, query: {} });
+$('#month').addEventListener('change', (e) => {
+  state.month = e.target.value;
+  render();
 });
+
+function commit() {
+  $('#status').textContent = save(store, state.items) ? '' : 'مقدرناش نحفظ: التغييرات هتروح لما تقفل الصفحة';
+  render();
+}
+
+function showErrors(errors) {
+  for (const small of form.querySelectorAll('.err')) {
+    const name = small.dataset.for;
+    small.textContent = errors[name] ?? '';
+    f[name].setAttribute('aria-invalid', String(name in errors));
+  }
+}
+
+function clearForm() {
+  state.editing = null;
+  f.amount.value = '';
+  f.note.value = '';
+  showErrors({});
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const result = validate(Object.fromEntries(new FormData(form)));
+  showErrors(result.errors ?? {});
+  if (!result.ok) return form.querySelector('[aria-invalid="true"]').focus();
+  if (state.editing) {
+    state.items = state.items.map(it => it.id === state.editing ? { ...result.value, id: it.id } : it);
+  } else {
+    state.items.push({ ...result.value, id: crypto.randomUUID() });
+  }
+  clearForm();
+  commit();
+  f.amount.focus();
+});
+
+$('#rows').addEventListener('click', (e) => {
+  const { act, id } = e.target.dataset;
+  const it = state.items.find(x => x.id === id);
+  if (!it) return;
+  if (act === 'del' && confirm('تمسح ' + money.format(it.cents / 100) + '؟')) {
+    state.items = state.items.filter(x => x.id !== id);
+    if (state.editing === id) clearForm();
+    commit();
+  }
+  if (act === 'edit') {
+    state.editing = id;
+    f.amount.value = (it.cents / 100).toFixed(2);
+    f.cat.value = it.cat;
+    f.date.value = it.date;
+    f.note.value = it.note;
+    render();
+    f.amount.focus();
+  }
+});
+
+$('#cancel').addEventListener('click', () => { clearForm(); render(); });
+
+$('#export').addEventListener('click', () => {
+  const blob = new Blob([toCSV(state.items)], { type: 'text/csv;charset=utf-8' });
+  const a = el('a', '');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'expenses-' + today() + '.csv';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 0);
+});
+
+render();
 ~~~
 
-~~~text الناتج: npm run check (ESLint 10.15 و Vitest 5.1.1)
-      Tests  44 passed (44)
+## [[render]] سطر سطر
+
+| السطر | ليه |
+|---|---|
+| [[byMonth]] بقت أول حاجة | محتاجينها للقايمة **و** لـ «حسب الشهر»، فتتحسب مرة. ومن [[totalsBy]] نفسها زي ما التمرين طلب |
+| [[if (state.month && !byMonth.some(...))]] | لو مسحت آخر بند في الشهر المختار، الشهر اختفى من القايمة، فالفلتر يرجع «كل الشهور» بدل جدول فاضي من غير سبب |
+| [[replaceChildren(new Option('كل الشهور', ''), ...)]] | القايمة بتتبني من جديد مع كل رسمة، فشهر جديد بيظهر أول ما تضيف فيه بند. و [[new Option]] من غير HTML نصي |
+| [[$('#month').value = state.month]] | بعد ما الـ options اتعملت من جديد، الاختيار لازم يترجع، وإلا القايمة بترجع لأول option لوحدها |
+| [[shown]] | البنود اللي هتتعرض. [[startsWith('2026-10')]] على النص، من غير [[Date]] خالص فمفيش timezone |
+| الجدول و [[byCat]] من [[shown]] | الشهر المختار بس |
+| [[byMonth]] من [[state.items]] | «حسب الشهر» يفضل يعرض الكل، زي ما التمرين طلب |
+
+و [[state.month]] **مش** بيتحفظ: [[save]] بتحفظ [[state.items]] بس، فبعد الـ reload الفلتر بيرجع «كل الشهور».
+
+## اتجرّب في Chrome (سيرفر محلي، و localStorage شغال)
+
+ضفت ٣ بنود (٤٥.٥ أكل و ٣٠ مواصلات في أكتوبر، و ١٢٠٠ فواتير في سبتمبر)، وبعدين بند ٩٩ «سينما» في سبتمبر والفلتر على أكتوبر:
+
+~~~text الناتج (Chrome عن طريق Playwright)
+الكل:      الصفوف مترو,فطار,كهربا
+           حسب التصنيف: فواتير ١٬٢٠٠٫٠٠ / أكل ٤٥٫٥٠ / مواصلات ٣٠٫٠٠
+أكتوبر:    الصفوف مترو,فطار
+           حسب التصنيف: أكل ٤٥٫٥٠ / مواصلات ٣٠٫٠٠          ← ٧٥٫٥٠
+           حسب الشهر:   أكتوبر ٧٥٫٥٠ / سبتمبر ١٬٢٠٠٫٠٠
+سينما في سبتمبر والفلتر على أكتوبر:
+           الصفوف مترو,فطار     (سينما مش ظاهرة)
+           حسب الشهر:   أكتوبر ٧٥٫٥٠ / سبتمبر ١٬٢٩٩٫٠٠    ← سبتمبر زاد
+           القايمة لسه: 2026-10
+reload:    القايمة: «كل الشهور»   الصفوف مترو,فطار,كهربا,سينما
 ~~~
 
-**اتجرّب في Chromium (Playwright، من سيرفر محلي):**
+(المبالغ اتكتبت هنا من غير «ج.م.» عشان السطر يقصر، والناتج الحقيقي فيه العملة.) مجموع «حسب التصنيف» على أكتوبر = ٤٥٫٥٠ + ٣٠ = ٧٥٫٥٠ = رقم أكتوبر في «حسب الشهر» بالظبط. و [[grep -c innerHTML app.js]] = [[0]].
+
+**الغلطة اللي وقعت فيها:** أول ما جمّعت ملفات الدرس، الصفحة فتحت فاضية حتى بعد ما ضفت داتا في [[localStorage]]، لأن المقتطفات في الشرح مفيهاش أول نداء لـ [[render()]] في آخر [[app.js]]. السطر الأخير في الملف فوق هو اللي بيرسم أول مرة.
+
+**الغلطة الشائعة:** تفلتر [[state.items]] نفسها ([[state.items = state.items.filter(...)]]): الفلتر هيشتغل، وأول [[save]] بعده هيمسح كل الشهور التانية من التخزين. الفلتر **عرض** بس، فبيتعمل في متغير جديد ([[shown]]) جوه [[render]].` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** النسخة دي «شغّالة» بس فيها ٣ باجات: [[if (!(input.cat in CATS)) errors.cat = '...']] و [[const value = { cents: Number(raw) * 100, ... }]] و [[day.format(new Date(it.date))]] مع [[day]] من غير [[timeZone]]. لكل باج: اكتب مدخل أو موقف بيكشفه في Node، وشغّله قبل وبعد التصليح.`, done: R`عندك ٣ أسطر Node بتطبع الغلط قبل التصليح: تصنيف [[toString]] بيعدّي، و [[19.99]] بيتخزن [[1998.9999999999998]]، و [[2026-10-01]] بيتعرض ٣٠/٩ مع [[$env:TZ='America/New_York']]. وبعد التصليح نفس الأسطر بتطبع الصح.`, sol: R`**النسخة البايظة** = [[expenses.js]] بتاع الدرس بسطرين متغيّرين:
+
+~~~js bugs/expenses-buggy.js (السطرين اللي اتغيّروا بس)
+  if (!(input.cat in CATS)) errors.cat = 'اختار تصنيف من اللستة';
+  return { ok: true, value: { cents: Number(raw) * 100, cat: input.cat, date: input.date, note } };
+~~~
+
+والباج التالت في العرض مش في [[expenses.js]]: [[day]] من غير [[timeZone]].
+
+**سكربت واحد بيكشف التلاتة**، وبياخد الملف من سطر الأوامر عشان نشغّله على النسختين:
+
+~~~js bugs/expose.mjs
+const file = process.argv[2] ?? '../expenses.js';
+const { validate } = await import(file);
+const dayBuggy = new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium' });
+const dayFixed = new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium', timeZone: 'UTC' });
+const show = file.includes('buggy') ? dayBuggy : dayFixed;
+
+console.log('1) toString:', JSON.stringify(validate({ amount: '5', cat: 'toString', date: '2026-10-01' })));
+console.log('2) 19.99   :', validate({ amount: '19.99', cat: 'food', date: '2026-10-01' }).value.cents);
+console.log('3) 2026-10-01:', show.format(new Date('2026-10-01')));
+~~~
+
+~~~powershell
+cd bugs
+$env:TZ = 'America/New_York'
+node expose.mjs ./expenses-buggy.js
+node expose.mjs ../expenses.js
+~~~
+
+~~~text الناتج (PowerShell 7 و Node 24.22)
+--- buggy
+1) toString: {"ok":true,"value":{"cents":500,"cat":"toString","date":"2026-10-01","note":""}}
+2) 19.99   : 1998.9999999999998
+3) 2026-10-01: ٣٠‏/٠٩‏/٢٠٢٦
+--- fixed
+1) toString: {"ok":false,"errors":{"cat":"اختار تصنيف من اللستة"}}
+2) 19.99   : 1999
+3) 2026-10-01: ٠١‏/١٠‏/٢٠٢٦
+~~~
+
+(سطري [[--- buggy]] و [[--- fixed]] من [[echo]] قبل كل تشغيل.) في Git Bash على ويندوز [[TZ=...]] مبيوصلش لـ Node، عشان كده PowerShell.
+
+**التصليحات:**
+
+| الباج | التصليح | ليه |
+|---|---|---|
+| [[input.cat in CATS]] | [[Object.hasOwn(CATS, input.cat)]] | [[in]] بيدوّر في الـ prototype كمان، و [[toString]] موجودة على كل object |
+| [[Number(raw) * 100]] | [[Math.round(amount * 100)]] | الضرب في floating point بيطلّع كسور، و [[Math.round]] بيرجّعها رقم صحيح |
+| [[day]] من غير [[timeZone]] | [[timeZone: 'UTC']] | [[new Date('2026-10-01')]] = نص الليل **UTC**، ونيويورك ورا بأربع ساعات فبقى ٣٠ سبتمبر |
+
+**وليه دول باجات مش تفاصيل؟** حفظت البندين البايظين بـ [[save]] وقريتهم بـ [[load]] (اللي فيها الفحص الصح):
 
 ~~~text الناتج
-#/tag/%D9%85%D8%B5%D8%B1%D9%8A في تبويب جديد
-  العنوان   تصنيف: مصري · دفتر الوصفات
-  الكروت    كشري، فول مدمس، رز بلبن، بسبوسة      (4 وصفة)
-كليك على «نباتي» في كارت
-  الكروت    كشري، سلطة بلدي
-#/tag/%D8%B3%D9%85%D9%83 (سمك، مش موجود)
-  الـ status  مفيش وصفات بالبحث ده
-pageerror   مفيش
+بعد الـ reload: 0 بند من 2
+العمود بيعرض: function toString() { [native code] }
 ~~~
 
-**لو مشتغلش:**
+البند بتاع [[19.99]] اختفى بعد الـ reload لأن [[Number.isInteger(1998.9999999999998)]] = [[false]]، وبند [[toString]] اختفى لأن [[load]] بتفحص بـ [[hasOwn]]. واليوزر شافهم الاتنين قبل الـ reload، وعمود التصنيف كان مكتوب فيه كود الدالة نفسها. يعني الفورم بيقبل حاجة الحفظ بيرفضها: الشغل بيضيع من غير رسالة.
 
-- **[[npm run lint]] وقع بـ [[error 'console' is not defined no-undef]] في [[try-store.mjs]]:** ده ملف التجربة من درس «مشروع التخرّج ١» لسه في فولدر المشروع، و [[eslint.config.js]] مدّي globals للـ [[src]] و [[tests]] بس. امسحه (أو انقله برّه المشروع) بعد ما تخلص تجربته.
-- **الكارت طلع فيه الكلام من غير روابط:** لو استخدمت [[r.tags.map]] بدل [[flatMap]]، الناتج مصفوفة جوه مصفوفة، و [[kids.flat()]] في [[h()]] بتسطّح مستوى واحد بس.
-
-**السطور اللي في أول الـ preview بس:** صندوق العرض في الموقع iframe معزول ([[sandbox]] على [[about:srcdoc]])، ومبيمشيش على روابط [[#]] لوحده، و [[history.replaceState]] بترمي فيه [[SecurityError: Failed to execute 'replaceState' on 'History': A history state object with URL ... cannot be created in a document with origin 'null' and URL 'about:srcdoc']] (اتشاف فعلًا وانت بتكتب في البحث). فالـ preview فيه listener بيغيّر [[location.hash]] بإيده، ونسخة من [[replaceState]] لو رمت بتغيّر [[location.hash]] بدلها. في التطبيق الحقيقي من سيرفر مش محتاجه.
-
-**الغلطة الشائعة:** تعمل شاشة تصنيف جديدة كاملة بكود نسخ ولزق من [[listScreen]]، فأي تعديل في القايمة (البحث، أو العدد) لازم يتعمل مرتين.` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك وقيس:** شغّل Lighthouse (DevTools ← Lighthouse ← Accessibility) على [[#/]] و [[#/new]]، واقرا كل تحذير في MDN أو صفحة web.dev اللي Lighthouse بيربطها. وبعدين جرّب الصفحة بـ screen reader حقيقي (NVDA على ويندوز، أو VoiceOver على الماك بـ Cmd+F5): ضيف وصفة غلط وشوف بيقول إيه.`, done: R`الدرجة ٩٥ أو أكتر في الشاشتين، وكل تحذير فاضل مكتوب جنبه ليه مش هتصلحه. والـ screen reader بيقول اسم الخانة ورسالة الغلط بتاعتها لما الفوكس يروحلها (من [[aria-describedby]])، وبيقول «الصفحة الحالية» على رابط الـ nav، وبيقول عدد الوصفات بعد البحث من غير ما تحرّك الفوكس ([[role="status"]]).`, sol: R`**الحل اتعمل كده:** شغّلت Lighthouse 13.6 من الترمنال على Chrome 158 (نفس اللي في DevTools ← Lighthouse، بس بيطلّع JSON يتقري)، على التطبيق من سيرفر محلي:
-
-~~~bash
-python -m http.server 8000
-npm install lighthouse          # في فولدر تجارب، مش جوه المشروع
-npx lighthouse "http://127.0.0.1:8000/#/" --only-categories=accessibility --output=json --output-path=./r.json --chrome-flags="--headless=new" --quiet
-node -e "const r=require('./r.json'); console.log(r.categories.accessibility.score*100)"
-~~~
-
-~~~text الناتج (Lighthouse 13.6.0)
-#/      100
-#/new   100
-~~~
-
-ومفيش ولا audit فاضل أحمر في الشاشتين، فمفيش تحذير محتاج سبب. الـ ١٠٠ دي مش صدفة: كل خانة ليها [[<label for>]]، والأزرار [[<button>]]، و [[lang]] و [[<title>]] موجودين، والألوان متباينة.
-
-**بس Lighthouse مش كفاية.** هو بيفحص قواعد تتقاس أوتوماتيك (حوالي ثلثها)، ومبيعرفش «الفوكس راح فين بعد الحفظ» ولا «الرسالة اتقريت ولا لأ». فبصيت على اللي الـ screen reader هيقراه فعلًا: شجرة الـ accessibility اللي Chrome بيبنيها (DevTools ← Elements ← Accessibility، أو [[Accessibility.getPartialAXTree]] من Playwright):
-
-~~~text الناتج: الخانة اللي ماسكة الفوكس بعد «احفظ» بالاسم بس (Chromium)
-active       #minutes
-role         textbox
-name         الوقت بالدقايق
-description  الوقت بالدقايق، رقم صحيح من 1 لـ 1440
-invalid      true
-required     true
-~~~
-
-| اللي في الشجرة (والقارئ بيبني كلامه منه) | جاي منين |
-|---|---|
-| الاسم «الوقت بالدقايق»، ومطلوب، وغير صالح | [[<label for="minutes">]] و [[required]] و [[aria-invalid="true"]] |
-| الوصف «الوقت بالدقايق، رقم صحيح من 1 لـ 1440» | الـ description من [[aria-describedby="minutes-err"]] |
-| الصفحة الحالية على رابط الـ nav | [[aria-current="page"]] (الاختبار [[expect(...getAttribute('aria-current')).toBe('page')]]) |
-| «3 وصفة» بتتقري بعد البحث من غير ما الفوكس يتحرك | [[<p role="status">]]، و Chrome بيدّيه [[live: polite]] تلقائي |
-
-**NVDA و VoiceOver:** محتاجين حد يسمع بودانه، فمتجرّبوش هنا. الخطوات من وثايقهم: NVDA (ويندوز، ببلاش من nvaccess.org) بيشتغل بـ Ctrl+Alt+N، و Tab بينقل بين الخانات وبيقرا الاسم والوصف. VoiceOver على الماك بـ Cmd+F5. ونص اللي هيتقال بيختلف شوية بين القارئين، بس **المكوّنات** هي اللي فوق: اسم، ودور، وحالة، ووصف.
-
-**الغلطة الشائعة:** تفتكر إن ١٠٠ في Lighthouse معناها «accessible». صفحة كل خاناتها ليها label بس الفوكس بيقع على [[<body>]] بعد كل رسمة هتاخد ١٠٠ برضه، والكيبورد فيها مكسور. الفحص الأوتوماتيك أول خطوة، والكيبورد بإيدك والشجرة هما الباقي.` },
+**الغلطة الشائعة:** تصلّح [[Number(raw) * 100]] بـ [[toFixed(2)]]: ده بيرجّع **نص** ([['1999.00']])، و [[Number.isInteger('1999.00')]] برضه [[false]]. وتختبر الـ timezone على جهازك في مصر وتقول «مفيش مشكلة»: التاريخ بيبان صح هنا وبيبوظ عند أول يوزر برّه.`},
+          ],
+          ref: [
+            { t: "MDN: Window.localStorage", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage" },
+            { t: "MDN: FormData", url: "https://developer.mozilla.org/en-US/docs/Web/API/FormData" },
+            { t: "MDN: Intl.NumberFormat", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat" },
+            { t: "MDN: Intl.DateTimeFormat", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat" },
+            { t: "MDN: Object.hasOwn()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwn" },
+            { t: "MDN: Crypto.randomUUID()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID" },
+            { t: "MDN: Blob", url: "https://developer.mozilla.org/en-US/docs/Web/API/Blob" },
+            { t: "MDN: URL.createObjectURL()", url: "https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL_static" },
+          ],
+          pre: [
+            { to: "js/FormData و URLSearchParams", why: R`[[Object.fromEntries(new FormData(form))]] بيحوّل الفورم لـ object في سطر` },
+            { to: "js/Intl.NumberFormat", why: R`عرض القروش كجنيه بالعملة والأرقام العربي` },
           ],
           deep: {
-            why: R`الشاشة لو بتترسم من الحالة، فالرابط والحالة والشاشة مستحيل يختلفوا. والـ accessibility مش «ميزة إضافية»: هي الفرق بين صفحة شغالة لكل الناس وصفحة شغالة للي ماسك ماوس بس. وأغلبها ببلاش لو استخدمت العناصر الصح ([[button]] و [[label]] و [[form]]) من الأول.`,
-            how: R`**[[parseRoute]] بالتفصيل:**
+            why: R`لأن تطبيق المصاريف **صغير كفاية** إنك تخلصه في يوم، و**حقيقي كفاية** إنه يقع في كل الفخاخ اللي بتقابلها في أي نظام فيه فلوس: الكسور، والتواريخ، والمدخلات الغريبة، والداتا المحفوظة البايظة، والتصدير لبرنامج تاني. كل فخ منهم اتشاف هنا بتشغيل حقيقي مش بالكلام.`,
+            how: R`**الترتيب اللي بنيت بيه، وتقدر تمشي عليه في أي تطبيق:**
 
-~~~js src/logic.js
-export function parseRoute(hash) {
-  const raw = String(hash ?? '').replace(/^#/, '') || '/';
-  const [path, qs = ''] = raw.split('?');
-  const query = Object.fromEntries(new URLSearchParams(qs));
-  const parts = path.split('/').filter(Boolean);
-  if (parts.length === 0) return { name: 'list', params: {}, query };
-  if (parts[0] === 'r' && parts.length === 2) return { name: 'recipe', params: { id: decodeURIComponent(parts[1]) }, query };
-  if (parts.length === 1 && (parts[0] === 'new' || parts[0] === 'fav')) return { name: parts[0], params: {}, query };
-  return { name: 'notfound', params: {}, query };
-}
-~~~
+1. **المنطق الأول، من غير DOM.** [[expenses.js]] اتكتب واتجرّب في Node بـ ٩ مدخلات قبل ما يبقى فيه HTML أصلًا. لما بتلاقي باج في [[validate]]، بتصلّحه وتشغّل السكربت تاني في ثانية.
+2. **شكل الداتا المحفوظة بيتقرر بدري:** [[{ id, cents, cat, date, note }]]. قروش رقم صحيح، والتصنيف مفتاح إنجليزي، والتاريخ نص [[YYYY-MM-DD]]. كل قرار منهم بيشيل فئة باجات كاملة: الكسور، وتغيير أسامي التصنيفات، والـ timezone.
+3. **الـ HTML بعدين**، وكل خانة ليها [[name]] بنفس اسم الحقل، عشان [[FormData]] يطلّع الـ object جاهز.
+4. **[[app.js]] بيوصّل بس:** بيقرا الفورم، ويسأل [[validate]]، ويغيّر [[state]]، وينادي [[commit]]. مفيش فيه ولا قاعدة عن «المبلغ الصح شكله إيه».
+5. **التجربة في jsdom** بنفس الملفات، بـ [[requestSubmit()]] و [[click()]] زي اليوزر بالظبط.
 
-[[replace(/^#/, '')]] بيشيل الـ [[#]] من الأول بس، و [[|| '/']] بيخلّي الـ hash الفاضي (أول فتحة من غير [[#]]) يبقى الصفحة الرئيسية. و [[split('?')]] بيفصل المسار عن البحث، و [[URLSearchParams]] بيفك [[%D9%81]] والـ [[+]] لوحده، و [[filter(Boolean)]] بيشيل الأجزاء الفاضية فـ [[#/fav/]] زي [[#/fav]].
-
-~~~text اتشغّل فعلًا · Node 24.22
-parseRoute('#/r/foul')                       → { name: 'recipe', params: { id: 'foul' }, query: {} }
-parseRoute('#/?q=%D9%81%D9%88%D9%84&tag=x')  → { name: 'list', params: {}, query: { q: 'فول', tag: 'x' } }
-parseRoute('#main')                          → { name: 'notfound', params: {}, query: {} }
-~~~
-
-**السطر الأخير ده فخ حقيقي:** «skip link» العادي [[<a href="#main">]] في تطبيق hash routing بيغيّر الـ hash لـ [[#main]] فيوديك لـ «مش موجودة». وعشان كده التطبيق مفيهوش skip link، وبدلها الفوكس بيروح على [[<h1>]] مع كل شاشة.
-
-**ليه [[h()]] مش [[innerHTML]]؟** [[el.append('<b>x</b>')]] بيعمل text node فيه الحروف دي حرفيًا، مش عنصر [[<b>]]. فمفيش طريقة نص يتحوّل لـ HTML. وفي Chromium حقيقي اتجرّب: وصفة اسمها [[<img src=x onerror="window.hacked=1">]] اتحفظت واتعرضت في [[<h1>]] كحروف، و [[document.querySelector('#main img')]] رجّعت [[null]]، و [[window.hacked]] فضل [[undefined]].
-
-**بس خد بالك من [[setAttribute]]:** [[h('a', { href: userText })]] لو النص [[javascript:alert(1)]] الرابط هينفذ كود لما حد يدوس. عشان كده الـ [[href]] الوحيد هنا مبني بإيدنا: [[#/r/]] وبعده [[encodeURIComponent(id)]]، عمره ما بيبقى نص من اليوزر مباشرة.
-
-**الفورم:** [[novalidate]] بيقفل رسايل المتصفح الافتراضية (اللي شكلها مختلف في كل متصفح ومبتتكتبش بالمصري)، بس [[required]] فضلت عشان الـ screen reader يقول «مطلوب». والتحقق الحقيقي في [[validateRecipe]]، وهي نفسها اللي الـ store بيستخدمها، فمفيش قاعدة مكتوبة مرتين.`,
-            when: R`hash routing لأي تطبيق static منشور على GitHub Pages أو أي استضافة ملفات من غير إعدادات. [[pushState]] لما يبقى عندك سيرفر بيرجّع [[index.html]] لكل المسارات (أو فريمورك زي Next.js). و [[h()]] ده كفاية لتطبيق بالحجم ده؛ لما الشاشات تبقى عشرات ومحتاجة تحديث جزئي سريع، ده وقت React أو Vue أو [[lit-html]].`,
-            mistakes: R`[[innerHTML]] بنص من اليوزر أو من API. [[<div onclick>]] بدل [[<button>]] (مبيتداسش بالكيبورد ومبيتقريش زرار). خانة من غير [[<label for>]] (الـ placeholder مش label). رسالة غلط مش مربوطة بالخانة. [[aria-current=""]] أو [[aria-pressed=""]] فاضيين. رسم كل حاجة من جديد وانت في الفورم فيتمسح. [[trim()]] على قيمة البحث قبل ما ترجعها للخانة فالمسافة تختفي وانت بتكتب. [[pushState]] على GitHub Pages من غير حيلة [[404.html]]. وskip link بـ [[#main]] في تطبيق hash.`,
+**والعرض منفصل عن التخزين في كل حتة:** [[cents]] بيتخزن و [[money.format(cents / 100)]] بيتعرض، و [[food]] بيتخزن و [[CATS.food]] بيتعرض، و [[2026-10-05]] بيتخزن و [[day.format]] بيتعرض. ولو غيّرت لغة العرض بكره، مفيش بند محفوظ هيتغيّر.`,
+            when: R`أي مرة التطبيق فيه أرقام بتتجمع (فلوس، نقط، أوزان)، أو تواريخ بتتعرض، أو داتا بتتصدّر. ونفس البنية (منطق من غير DOM + [[app.js]] بيوصّل) تنفع لأي تطبيق فورم وجدول: حجوزات، أو مخزن، أو درجات طلبة.`,
+            mistakes: R`تخزين الجنيه كسور وجمعه ([[0.1 + 0.2]]). [[Number(x)]] من غير فحص شكل ([[Number('')]] بيبقى [[0]]). [[in]] بدل [[Object.hasOwn]]. [[new Date('2026-10-01')]] بتتعرض من غير [[timeZone: 'UTC']]. تخزين النص المنسّق ([[٤٥٫٥٠ ج.م.]]) بدل الرقم. CSV من غير BOM ومن غير هروب للفاصلة. و [[innerHTML]] عشان «الملاحظة قصيرة».`
           },
-          teach: R`## الشاشات من الحالة
+          sol: R`اللي هتشوفه لو مشيت على «جرّب» بالظبط (نفس الخطوات اتشغّلت في jsdom، والـ CSV اتقرا بـ [[Import-Csv]]):`,
+          solCode: R`// بعد ٣ مصاريف (٤٥.٥ أكل ٥/١٠، و ٣٠ مواصلات ٦/١٠ «مترو, وتاكسي»، و ١٢٠٠ فواتير ٢٨/٩):
+//   حسب التصنيف: فواتير: ‏١٬٢٠٠٫٠٠ ج.م.‏  /  أكل: ‏٤٥٫٥٠ ج.م.‏  /  مواصلات: ‏٣٠٫٠٠ ج.م.‏
+//   حسب الشهر:   أكتوبر ٢٠٢٦: ‏٧٥٫٥٠ ج.م.‏  /  سبتمبر ٢٠٢٦: ‏١٬٢٠٠٫٠٠ ج.م.‏
+// عدّل الأكل لـ ٥٠ وامسح الفواتير:
+//   حسب الشهر:   أكتوبر ٢٠٢٦: ‏٨٠٫٠٠ ج.م.‏      (سبتمبر اختفى)
+// reload: نفس البندين.
+// الـ CSV (أول ٣ بايتات ef bb bf):
+//   date,category,amount,note
+//   2026-10-05,أكل,50.00,
+//   2026-10-06,مواصلات,30.00,"مترو, وتاكسي"
+// بعد setItem بـ JSON مقطوع و reload:
+//   الجدول فاضي، و «لسه مفيش مصاريف.» ظاهرة، وزرار CSV مقفول، ومفيش error في الـ Console.
+//   (وأول بند تضيفه بعدها بيكتب فوق النص البايظ — شوف ٦ في الشرح.)`
+        },
+        {
+          cmd: "مشروع: بحث بـ debounce",
+          title: "بحث بيستنى انت تخلص",
+          learn: R`تبني خانة بحث بتكلّم سيرفر: بتستنى لحد ما تخلص كتابة، وبتلغي الطلب القديم، وبتفتكر اللي دوّرت عليه، وبتتحرك بالكيبورد.`,
+          out: R`كتابة [[startsWith]] بسرعة (١٠ حروف) بتبعت طلب **واحد** بدل ٩، والنتيجة اللي على الشاشة دايمًا بتاعة آخر حاجة كتبتها.`,
+          use: {
+            prog: R`أي خانة بحث أو autocomplete في أي موقع فيها التلات حاجات دول: debounce عشان متضربش السيرفر مع كل حرف، وإلغاء عشان الرد القديم ميكتبش فوق الجديد، وكاش عشان الرجوع لكلمة قديمة يبقى فوري.`,
+            work: R`«البحث بيعرض نتايج غلط ساعات» — باج مشهور ومش بيتكرر عندك على الـ localhost لأن الشبكة سريعة. هنا هتشوفه بعينك بتأخير عشوائي، وهتقيس هو بيحصل كام مرة من ٢٠.`,
+            cs: R`الـ race condition (ردين بيوصلوا بترتيب غير اللي اتبعتوا بيه)، والـ closure اللي ماسك الـ timer في [[debounce]]، و LRU cache بسيط بـ [[Map]].`,
+          },
+          desc: R`هنبني خانة بحث عن methods في JavaScript، بتكلّم سيرفر Node صغير على جهازك: بتستنى ٣٠٠ ميلي ثانية بعد آخر حرف قبل ما تبعت، وبتلغي أي طلب قديم لسه مردّش، وبتفتكر النتايج اللي جاتلها قبل كده، وبتتحرك فيها بالأسهم و Enter.
+
+والسيرفر بيتأخر عن قصد (من ٢٠٠ لـ ٦٠٠ ميلي ثانية عشوائي) وبيكتب في الترمنال كل طلب بيوصله، عشان **تشوف بعينك** الفرق:
+
+| الطريقة | كتابة [[startsWith]] بسرعة (حرف كل ١٢٠ms) | اتقاس |
+|---|---|---|
+| من غير debounce | ٩ طلبات (الحرف الأول لوحده مش بيتبعت)، و ٨ منهم اتلغوا | ٩ |
+| مع debounce ٣٠٠ms | طلب واحد بعد آخر حرف بـ ٣٠٠ms | ١ |
+| من غير debounce ومن غير إلغاء | ٩ طلبات، وفي ٣ لـ ٥ مرات من ٢٠ الشاشة عرضت نتايج كلمة **قديمة** | ٣–٥ / ٢٠ |
+
+الدروس اللي بنستخدمها: «debounce و throttle» (هنكتبه بإيدنا هنا)، و «fetch و AbortController»، و «closure»، و «event delegation»، و «Map و Set».
+
+| الملف | فيه إيه | السطور |
+|---|---|---|
+| [[data.json]] | ١٩٣ method حقيقي من Node (اسم وصاحبه) | ١٩٥ |
+| [[server.js]] | بيقدّم الملفات، و [[/api/search]] بتأخير وعدّاد | ٤٠ |
+| [[debounce.js]] | الـ debounce بإيدك | ١٠ |
+| [[index.html]] و [[style.css]] | الخانة والليستة | ٢٩ |
+| [[app.js]] | الحالة والرسم والبحث والكيبورد | ١٣١ |`,
+          example: R`// app.js (الجزء المهم): debounce، وإلغاء الطلب القديم، والكاش
+import { debounce } from './debounce.js';
+
+const cache = new Map();
+const CACHE_MAX = 50;
+let controller = null;
+
+function remember(q, data) {
+  cache.delete(q);
+  cache.set(q, data);
+  if (cache.size > CACHE_MAX) cache.delete(cache.keys().next().value);
+}
+
+async function search(raw) {
+  const q = raw.trim().toLowerCase();
+  controller?.abort();
+  if (q.length < 2) return set({ phase: q ? 'short' : 'idle', q, data: [], active: -1, busy: false });
+  if (cache.has(q)) {
+    const data = cache.get(q);
+    return set({ phase: data.length ? 'ok' : 'empty', q, data, active: -1, busy: false });
+  }
+  controller = new AbortController();
+  const { signal } = controller;
+  set({ phase: 'loading', q, busy: true });
+  try {
+    const url = new URL('/api/search', location.href);
+    url.searchParams.set('q', q);
+    const res = await fetch(url, { signal });
+    if (!res.ok) throw new Error('السيرفر رد بـ ' + res.status);
+    const data = await res.json();
+    remember(q, data);
+    set({ phase: data.length ? 'ok' : 'empty', q, data, active: -1, busy: false });
+  } catch (e) {
+    if (e.name === 'AbortError') return;
+    set({ phase: 'error', q, data: [], error: e.message, active: -1, busy: false });
+  }
+}
+
+const debouncedSearch = debounce(search, 300);
+input.addEventListener('input', () => debouncedSearch(input.value));`,
+          lines: [
+            R`بنستورد [[debounce]] من ملفها. هي في ملف لوحدها عشان تتجرّب في Node بـ [[node --test]] من غير صفحة (التمرين التالت).`,
+            R`الكاش: [[Map]] المفتاح فيها الكلمة اللي اتدوّر عليها ([[map]])، والقيمة النتايج اللي رجعت. [[Map]] مش object عشان بتحافظ على ترتيب الإضافة، وده اللي هنشيل بيه الأقدم.`,
+            R`أقصى عدد كلمات في الكاش. من غيره، اليوزر اللي فاتح الصفحة طول اليوم بيدوّر على مئات الكلمات والذاكرة بتكبر من غير حد (درس «memory leaks»).`,
+            R`الـ [[AbortController]] بتاع **آخر** طلب اتبعت. متعرّف برّه [[search]] عشان كل نداء جديد يلاقي اللي قبله ويلغيه. [[null]] في الأول لأن لسه مفيش طلب.`,
+            R`[[remember]] بتحط نتيجة في الكاش، وبتشيل الأقدم لو الكاش اتملى.`,
+            R`بنمسح المفتاح الأول لو موجود، عشان لما نحطه تاني يروح **آخر** الترتيب. كده الكلمة اللي اتدوّر عليها من شوية عمرها ما تبقى «الأقدم».`,
+            R`نحط الكلمة ونتايجها. [[set]] على مفتاح جديد بيحطه في آخر الـ [[Map]].`,
+            R`لو عدّينا الحد، [[cache.keys().next().value]] بيدّينا **أول** مفتاح (الأقدم، لأن [[Map]] بتمشي بترتيب الإضافة) ونمسحه. ده LRU بسيط (Least Recently Used) في ٣ سطور.`,
+            R`قفلة [[remember]].`,
+            R`[[search]] هي اللي بتتنادي بعد ما اليوزر يبطّل كتابة. [[async]] عشان جواها [[await]] على [[fetch]]، و [[raw]] هو النص زي ما هو في الخانة.`,
+            R`بنوحّد الكلمة: [[trim]] بيشيل المسافات، و [[toLowerCase]] عشان [[Map]] و [[map]] يبقوا نفس البحث ونفس مفتاح الكاش. من غيره [[ map]] بمسافة كانت هتبعت طلب جديد لنفس النتيجة.`,
+            R`**إلغاء الطلب اللي قبله** لو لسه شغّال. [[?.]] لأن أول مرة [[controller]] بـ [[null]]. ولازم يحصل **قبل** أي [[return]]: حتى لو الكلمة الجديدة قصيرة أو في الكاش، الرد القديم لو وصل بعدين هيكتب فوقها. والرد اللي اتلغى بيرمي [[AbortError]] في الـ [[await]] بتاعه.`,
+            R`أقل من حرفين: منبعتش. حرف واحد زي [[s]] بيطابق نص الداتا، وده بطء وملوش فايدة. لو الخانة فاضية الحالة [[idle]] (مفيش رسالة)، ولو فيها حرف واحد [[short]] (رسالة «اكتب حرفين على الأقل»). و [[set]] بتغيّر الحالة وترسم.`,
+            R`الكلمة دي اتدوّر عليها قبل كده؟ يبقى مفيش طلب خالص.`,
+            R`نجيب النتايج المحفوظة من الـ [[Map]]. هي نفس المصفوفة اللي السيرفر رجّعها أول مرة، من غير نسخ.`,
+            R`ونعرضها على طول بنفس شكل الرد الجديد. ولو كانت مصفوفة فاضية الحالة [[empty]] مش [[ok]]: الكاش بيفتكر «مفيش نتايج» كمان، فكتابة [[zzzz]] تاني مش بتبعت طلب.`,
+            R`قفلة الـ [[if]] بتاع الكاش.`,
+            R`[[AbortController]] جديد لكل طلب. الـ controller بيتلغي **مرة واحدة** بس، فمينفعش نستخدم واحد لكل الطلبات.`,
+            R`[[signal]] هو اللي بيتبعت لـ [[fetch]]. وماسكينه في متغير محلي عشان لو [[controller]] اتغيّر في نداء تاني، الطلب ده لسه عارف الـ signal بتاعه هو.`,
+            R`حالة التحميل: الرسالة بتبقى «بيدوّر على «startswith»…»، و [[busy: true]] بيخلي الليستة القديمة باهتة ([[aria-busy]] في الـ CSS) **من غير ما تختفي**، عشان الشاشة متنطّش مع كل حرف.`,
+            R`كل اللي ممكن يرمي جوه [[try]]: الشبكة، والسيرفر، والـ JSON، والإلغاء.`,
+            R`بنبني العنوان بـ [[new URL]] جنب عنوان الصفحة. [[location.href]] بيخليه يشتغل على أي بورت، وفي jsdom كمان (هناك [[fetch]] بتاع Node مش بيقبل عنوان نسبي).`,
+            R`[[searchParams.set]] بيعمل encoding للكلمة لوحده: [[a&b]] بتبقى [[a%26b]] مش parameter تاني، والعربي والمسافات بيتبعتوا صح. لو لزقت النص بإيدك في العنوان، كلمة فيها [[&]] أو [[#]] هتبوّظ الطلب.`,
+            R`[[fetch]] مع [[signal]]: لو حد نادى [[abort()]] قبل ما الرد يكمل، الـ [[await]] ده بيرمي [[AbortError]]. الرسالة في Node بنصها: [[This operation was aborted]] (اتجرّب). والسيرفر بيشوف الاتصال اتقفل، وبيطبع «اتلغى من المتصفح».`,
+            R`[[fetch]] **مش بترمي** على 500 أو 404 (درس «مشروع — fetch مش بترمي على 404»). فبنفحص [[res.ok]] بنفسنا ونرمي خطأ فيه الرقم، عشان يروح للـ [[catch]] ويظهر كحالة خطأ.`,
+            R`[[res.json()]] بيقرا الرد ويحوّله. هو كمان [[await]] لأن الرد بيوصل حتة حتة، وهو كمان ممكن يرمي [[AbortError]] لو الإلغاء حصل في النص.`,
+            R`النتيجة سليمة: تتحفظ في الكاش. الأخطاء **مش** بتتحفظ، عشان المحاولة الجاية تجرّب تاني فعلًا.`,
+            R`نعرض النتايج: [[ok]] لو فيه، [[empty]] لو المصفوفة فاضية. و [[active: -1]] يعني مفيش اختيار بالأسهم لسه، و [[busy: false]] بيرجّع الليستة لونها.`,
+            R`أي خطأ وصل هنا: شبكة، أو 500، أو JSON بايظ، أو إلغاء.`,
+            R`**الإلغاء مش خطأ.** ده احنا اللي لغيناه لأن فيه كلمة أحدث. لو عرضنا رسالة خطأ هنا، كل حرف سريع كان هيعمل رسالة حمرا تظهر وتختفي. فبنرجع ساكتين.`,
+            R`أي خطأ تاني يظهر لليوزر بنصه: [[السيرفر رد بـ 500]]، أو [[fetch failed]] لو السيرفر مقفول (ده نص Node، و Chrome بيقول [[Failed to fetch]] حسب وثائق MDN). والنتايج القديمة بتتشال عشان متتفهمش إنها بتاعة الكلمة دي.`,
+            R`قفلة الـ [[catch]].`,
+            R`قفلة [[search]].`,
+            R`نسخة من [[search]] متغلّفة بـ debounce ٣٠٠ms: كل نداء بيلغي الـ timer اللي قبله ويبدأ من جديد، فـ [[search]] نفسها بتتنادي بس لما يعدّي ٣٠٠ms من غير ولا حرف. ٣٠٠ أطول من الفرق بين حرفين عند أي حد بيكتب بسرعة (١٢٠ لـ ٢٠٠ms)، وأقصر من إن اليوزر يحس إنه مستني.`,
+            R`مع كل حرف (حدث [[input]] مش [[keyup]]: [[input]] بيمسك اللزق والمسح بالماوس والكيبورد العربي) بننادي النسخة المتأجّلة بالنص الحالي. والحروف اللي في النص بتلغي بعض.`,
+          ],
+          teach: R`## ٠. هنبني إيه
+
+~~~text الشكل (اتشغّل في jsdom، والنتيجة حقيقية من data.json)
+دوّر على method في JavaScript
+اسم الـ method
+[ to                    ]
+19 نتيجة لـ «to»
+  ▸ toReversed      Array.prototype      ← متعلّم بالسهم
+    toSorted        Array.prototype
+    toSpliced       Array.prototype
+    toLocaleString  Array.prototype
+    ...
+اخترت: Array.prototype.toReversed
+~~~
+
+### الملفات
 
 ~~~text
-hashchange ──→ parseRoute ──→ store.setRoute ──→ paint ──→ view(s) ──→ <main>
-   ↑                                                                  │
-   └──── رابط أو Back أو location.hash = ...  ◄──── كليك ─────────────┘
+search/
+├── data.json      ١٩٣ method حقيقي
+├── server.js      سيرفر Node من غير مكتبات (٤٠ سطر)
+├── debounce.js    ١٠ سطور
+├── index.html
+├── style.css
+└── app.js         ١٣١ سطر
 ~~~
+
+**ليه سيرفر محلي مش API عام؟** عشان تتحكم في التأخير وتشوف كل طلب بيوصل في الترمنال. الـ API العام سريع ومش بيقولك وصله كام طلب، فالباج مش هيبان.
 
 ---
 
-## ١. [[h()]]: تبني DOM من غير [[innerHTML]]
+## ١. الداتا
 
-~~~js src/view.js
-export function h(tag, attrs = {}, ...kids) {
-  const el = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k.startsWith('aria-')) el.setAttribute(k, String(v));
-    else if (v === true) el.setAttribute(k, '');
-    else if (v !== false && v != null) el.setAttribute(k, String(v));
+بدل ما نألّف داتا، طلّعتها من Node نفسه: كل الـ functions اللي على [[Array.prototype]] و [[String.prototype]] و [[Object]] و [[Math]] و [[Promise]] و [[Number]] و [[JSON]] و [[Map.prototype]] و [[Set.prototype]]:
+
+~~~js gen-data.cjs
+const owners = { 'Array.prototype': Array.prototype, 'String.prototype': String.prototype, Object, Math, Promise, Number, JSON, Array, 'Map.prototype': Map.prototype, 'Set.prototype': Set.prototype };
+const out = [];
+for (const [o, obj] of Object.entries(owners))
+  for (const n of Object.getOwnPropertyNames(obj)) {
+    if (['constructor', 'length', 'name', 'prototype', 'size'].includes(n) || /^[A-Z_0-9]+$/.test(n) || n.startsWith('__')) continue;
+    const d = Object.getOwnPropertyDescriptor(obj, n);
+    if (typeof d.value !== 'function') continue;
+    out.push({ id: out.length + 1, name: n, owner: o });
   }
-  el.append(...kids.flat().filter((k) => k != null && k !== false));
-  return el;
+require('fs').writeFileSync('data.json', '[\n' + out.map(d => JSON.stringify(d)).join(',\n') + '\n]\n');
+~~~
+
+~~~text اتشغّل فعلًا · Node 24.22
+193 method
+[
+{"id":1,"name":"at","owner":"Array.prototype"},
+{"id":2,"name":"concat","owner":"Array.prototype"},
+~~~
+
+**مفاجأة وانا بكتبه:** أول نسخة كانت بتقرا [[obj[n] ]] على طول، ووقعت بـ [[TypeError: Method get Map.prototype.size called on incompatible receiver #<Map>]]. لأن [[size]] getter، وقرايته على [[Map.prototype]] نفسه (مش على Map حقيقية) بترمي. الحل [[Object.getOwnPropertyDescriptor]]: بيقرا **وصف** الخاصية من غير ما يشغّل الـ getter.
+
+---
+
+## ٢. السيرفر
+
+~~~js server.js
+import http from 'node:http';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
+const PORT = Number(process.env.PORT) || 8000;
+const ROOT = import.meta.dirname;
+const DATA = JSON.parse(await fs.readFile(path.join(ROOT, 'data.json'), 'utf8'));
+const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json' };
+let count = 0;
+
+async function api(url, res) {
+  const q = (url.searchParams.get('q') ?? '').trim().toLowerCase();
+  const n = ++count;
+  console.log($__bt#$__{n} q=$__{q}$__bt);
+  res.on('close', () => { if (!res.writableFinished) console.log($__bt#$__{n} اتلغى من المتصفح$__bt); });
+  await new Promise(r => setTimeout(r, 200 + Math.random() * 400));
+  if (res.destroyed) return;
+  if (q === '500') { res.writeHead(500); return res.end('boom'); }
+  const hits = DATA.filter(d => d.name.toLowerCase().includes(q)).slice(0, 20);
+  res.writeHead(200, { 'content-type': 'application/json; charset=utf-8' });
+  res.end(JSON.stringify(hits));
 }
+
+const server = http.createServer(async (req, res) => {
+  const url = new URL(req.url, 'http://localhost');
+  if (url.pathname === '/api/search') return api(url, res);
+  const file = path.join(ROOT, url.pathname === '/' ? 'index.html' : url.pathname);
+  if (!file.startsWith(ROOT + path.sep)) { res.writeHead(403); return res.end(); }
+  try {
+    const body = await fs.readFile(file);
+    res.writeHead(200, { 'content-type': (TYPES[path.extname(file)] ?? 'application/octet-stream') + '; charset=utf-8' });
+    res.end(body);
+  } catch {
+    res.writeHead(404);
+    res.end('not found');
+  }
+});
+
+server.listen(PORT, () => console.log($__bthttp://localhost:$__{PORT}$__bt));
 ~~~
 
 | الحتة | بتعمل إيه |
 |---|---|
-| [[document.createElement(tag)]] | بيعمل عنصر فاضي في الذاكرة، لسه مش في الصفحة |
-| [[k.startsWith('aria-')]] | ARIA لازم [[true]] أو [[false]] كنص، فبنكتبها زي ما هي دايمًا |
-| [[v === true]] | attribute منطقي زي [[required]] و [[novalidate]]: وجوده هو المعنى، فبيتكتب فاضي |
-| [[v !== false && v != null]] | [[false]] و [[null]] و [[undefined]] معناها «متحطوش خالص» |
-| [[kids.flat()]] | عشان تقدر تبعت مصفوفة عناصر (نتيجة [[map]]) جنب عناصر عادية |
-| [[el.append(...)]] | النص بيتحط **text node** مش HTML، ودي اللي بتقفل الـ XSS |
+| [[import.meta.dirname]] | فولدر الملف نفسه (Node 20.11 وأحدث)، عشان السيرفر يلاقي ملفاته مهما شغّلته منين |
+| [[await]] في أول الملف | top-level await: مسموح في ES modules، فالداتا بتتقرا مرة واحدة قبل ما السيرفر يفتح |
+| [[++count]] | رقم لكل طلب، عشان تقرا اللوج وتعرف مين اتلغى |
+| [[res.on('close')]] مع [[writableFinished]] | لو الاتصال اتقفل **قبل** ما نكمّل الرد، يبقى المتصفح لغاه. ده اللي بيطبع «اتلغى» |
+| [[setTimeout]] عشوائي | الشبكة الحقيقية: كل طلب بياخد وقت مختلف، فالردود ممكن توصل بغير ترتيبها |
+| [[res.destroyed]] | الطلب اتلغى وإحنا مستنيين، فمنكتبش رد لاتصال مقفول |
+| [[q === '500']] | باب نجرّب منه حالة الخطأ: اكتب [[500]] في الخانة |
+| [[slice(0, 20)]] | أقصى ٢٠ نتيجة. الليستة الطويلة محدش بيقراها، والرد بيبقى أصغر |
+| [[file.startsWith(ROOT + path.sep)]] | حماية من [[/../../secret]]: لو المسار طلع برّه الفولدر يبقى 403 |
 
-### باج حقيقي اتمسك هنا
-
-أول نسخة كانت السطرين دول بس:
-
-~~~js
-if (v === false || v == null) continue;
-el.setAttribute(k, v === true ? '' : String(v));
-~~~
-
-~~~text اتشغّل فعلًا · Vitest 5.0.5 + jsdom
-FAIL  tests/app.dom.test.js > المفضلة: الزرار بيتقلب، والفوكس بيفضل عليه، والحفظ بيعيش بعد reload
-AssertionError: expected '' to be 'true' // Object.is equality
-~~~
-
-يعني [[aria-pressed: true]] اتكتبت [[aria-pressed=""]]، والفاضي في ARIA معناه [[false]]. والأسوأ: [[aria-pressed: false]] كانت بتشيل الـ attribute خالص، فالـ screen reader مبقاش شايفه زرار toggle أصلًا. **القاعدة:** الـ attributes المنطقية في HTML ([[required]]) غير قيم ARIA ([[aria-pressed]]).
-
----
-
-## ٢. الشاشات: [[view(s)]]
-
-~~~js src/view.js (القايمة)
-function listScreen(s, title, list) {
-  const { q = '', tag = '' } = s.route.query;
-  const shown = filterRecipes(list, { q, tag });
-  return [
-    h('h1', { tabindex: -1 }, title),
-    h('form', { role: 'search', 'data-form': 'search' },
-      h('label', { for: 'q' }, 'دوّر باسم أو مكوّن'),
-      h('input', { id: 'q', name: 'q', type: 'search', value: q, autocomplete: 'off' }),
-      h('label', { for: 'tag' }, 'التصنيف'),
-      h('select', { id: 'tag', name: 'tag' }, h('option', { value: '' }, 'الكل'),
-        allTags(list).map((t) => h('option', { value: t, selected: t === tag }, t)))),
-    status(s, shown.length),
-    h('ul', { class: 'cards' }, shown.map((r) => card(s, r))),
-  ];
-}
-
-function status(s, shown) {
-  if (s.status === 'loading') return h('p', { role: 'status' }, 'بنحمّل الوصفات…');
-  if (s.status === 'error') return h('div', { role: 'alert' }, h('p', {}, s.error),
-    h('button', { type: 'button', 'data-action': 'retry' }, 'جرّب تاني'));
-  return h('p', { role: 'status' }, shown === 0 ? 'مفيش وصفات بالبحث ده' : $__bt$__{shown} وصفة$__bt);
-}
-~~~
-
-- البحث والتصنيف **جايين من الرابط** ([[s.route.query]])، والنتيجة **مشتقة** بـ [[filterRecipes]] في كل رسمة.
-- [[role="search"]] بيعمل landmark: الـ screen reader يقدر يقفز للبحث مباشرة.
-- [[role="status"]] (live region) بيخلّي «3 وصفة» تتقري لوحدها بعد البحث من غير ما الفوكس يتحرك، و [[role="alert"]] للخطأ بيتقري فورًا.
-- وشاشة [[fav]] هي **نفس** [[listScreen]] بلستة متفلترة: [[all.filter((r) => s.favs.includes(r.id))]].
-
-و [[view(s)]] بتختار الشاشة بالاسم: [[list]] و [[fav]] و [[recipe]] و [[new]]، وأي حاجة تانية «الصفحة دي مش موجودة». ولو فتحت [[#/r/foul]] والداتا لسه بتتحمّل، بتعرض «بنحمّل» مش «مش موجودة».
-
----
-
-## ٣. البحث: debounce والرابط من غير ما تملا الـ history
-
-~~~js src/app.js
-const search = debounce((form) => {
-  const p = new URLSearchParams();
-  for (const [k, v] of new FormData(form)) if (String(v).trim()) p.set(k, String(v));
-  const qs = String(p);
-  // من غير || '#/' لو الصفحة اتفتحت من غير # الـ ?q= كان هيروح للرابط نفسه مش للـ hash
-  const path = location.hash.split('?')[0] || '#/';
-  history.replaceState(null, '', path + (qs ? '?' + qs : ''));
-  store.setRoute(parseRoute(location.hash));
-}, 250);
-
-main.addEventListener('input', (e) => {
-  const form = e.target.closest('[data-form="search"]');
-  if (form) search(form);
-});
-~~~
-
-- **[[debounce]]** (درس «debounce و throttle»): كتابة «عدس» حرف حرف = نداء **واحد** بعد ما تقف ٢٥٠ms.
-- **[[replaceState]] مش [[location.hash = ...]]**: بيغيّر الرابط **من غير** ما يزوّد خطوة في الـ history، فـ Back بيرجّعك للشاشة اللي قبل، مش لكل حرف كتبته. وعشان [[replaceState]] مبيطلقش [[hashchange]]، بننادي [[setRoute]] بإيدنا.
-- [[if (String(v).trim())]] بيشيل الخانات الفاضية من الرابط، فالرابط يفضل [[#/?q=...]] مش [[#/?q=&tag=]].
-
-### باج حقيقي تاني
-
-أول نسخة كانت بتكتب [[p.set(k, String(v).trim())]]. والخانة بتترسم من الرابط، فلما تكتب «فول » وتقف، المسافة اتشالت قبل ما تكمّل «مدمس»:
-
-~~~text اتشغّل فعلًا · Vitest 5.0.5 + jsdom
-× المسافة اللي في آخر البحث متضيعش وانت بتكتب
-Expected: "فول "
-Received: "فول"
-~~~
-
-التصليح: الرابط ياخد القيمة زي ما هي، و [[filterRecipes]] هي اللي بتعمل [[trim]] وقت المقارنة. وفي Chromium بعد التصليح:
-
-~~~text اتشغّل فعلًا · Chromium (Playwright)، كتابة «كمون » في البحث
-location.hash        #/?q=%D9%83%D9%85%D9%88%D9%86+
-قيمة الخانة          "كمون "        ← المسافة فضلت
-الكروت               فول مدمس، شكشوكة، سلطة بلدي
-الفوكس               على #q
-~~~
-
-### باج تالت: الصفحة مفتوحة من غير [[#]]
-
-أول نسخة كانت [[history.replaceState(null, '', location.hash.split('?')[0] + ...)]]. لو الصفحة اتفتحت من [[https://USER.github.io/recipe-book/]] (من غير [[#]]، وده أشهر رابط هيتبعت)، [[location.hash]] بيبقى نص فاضي، فالرابط الجديد بقى [[?q=...]] لوحده: ده بيغيّر الـ query string الحقيقي للصفحة مش الـ hash، و [[parseRoute(location.hash)]] فضلت شايفة بحث فاضي:
-
-~~~text اتشغّل فعلًا · Chromium، فتح /recipe-book/ من غير # وكتابة «كمون»
-الرابط      http://127.0.0.1:8903/recipe-book/?q=%D9%83%D9%85%D9%88%D9%86
-location.hash  ""
-الكروت      6 وصفة        ← البحث مشتغلش خالص
-~~~
-
-اختبارات jsdom كلها كانت بتفتح بـ [[#/]] فمحدش شافه. التصليح: [[const path = location.hash.split('?')[0] || '#/';]]، واختبار المسافة بقى يفتح الصفحة من غير [[#]] ويتأكد إن الرابط بقى [[#/?q=...]].
-
----
-
-## ٤. الفورم: التحقق ورسايل الغلط
-
-~~~js src/logic.js
-export function validateRecipe(input) {
-  const errors = {};
-  const title = String(input.title ?? '').trim();
-  const minutes = Number(toLatinDigits(input.minutes).trim() || NaN);
-  const ingredients = String(input.ingredients ?? '').split('\n').map((s) => s.trim()).filter(Boolean);
-  const steps = String(input.steps ?? '').trim();
-  const tags = [...new Set(String(input.tags ?? '').split(/[,،]/).map((s) => s.trim()).filter(Boolean))];
-  if (!title) errors.title = 'اكتب اسم الوصفة';
-  else if (title.length > MAX_TITLE) errors.title = $__btالاسم أطول من $__{MAX_TITLE} حرف$__bt;
-  if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) errors.minutes = 'الوقت بالدقايق، رقم صحيح من 1 لـ 1440';
-  if (ingredients.length < 2) errors.ingredients = 'اكتب مكوّنين على الأقل، كل واحد في سطر';
-  if (!steps) errors.steps = 'اكتب طريقة التحضير';
-  if (Object.keys(errors).length) return { ok: false, errors };
-  return { ok: true, value: { title, minutes, ingredients, steps, tags } };
-}
-~~~
-
-| القاعدة | ليه بالشكل ده |
-|---|---|
-| [[toLatinDigits]] | اليوزر المصري هيكتب «٢٥» بالكيبورد العربي، و [[Number('٢٥')]] بترجّع [[NaN]] |
-| [[trim() \|\| NaN]] | [[Number('')]] و [[Number(' ')]] بيرجّعوا **صفر** مش [[NaN]]، فالخانة الفاضية كانت هتعدّي كرقم |
-| [[Number.isInteger]] | بترفض [[2.5]] و [[NaN]]، والحد الأعلى ١٤٤٠ (يوم كامل) بيمنع أرقام زي ٩٩٩٩٩٩ |
-| [[split('\n')]] و [[filter(Boolean)]] | كل مكوّن في سطر، والسطور الفاضية بتتشال |
-| [[split(/[,،]/)]] | الفاصلة الإنجليزي والعربي الاتنين، و [[new Set]] بيشيل التصنيف المتكرر |
-| كل الأخطاء مرة واحدة | اليوزر يشوف الأربع غلطات مع بعض، مش واحدة واحدة مع كل ضغطة |
-
-~~~text اتشغّل فعلًا · Node 24.22
-Number('')  Number(' ')  Number('٢٥')  Number('1e2')  Number('25px')
-0           0            NaN           100            NaN
-~~~
-
-> [[1e2]] بتعدّي كـ ١٠٠ دقيقة. ده مقبول هنا، بس لو عايز أرقام بس اختبرها بـ [[/^\d+$/]] الأول.
-
-~~~js src/view.js
-export function showErrors(form, errors) {
-  for (const el of form.querySelectorAll('[name]')) {
-    const msg = errors[el.name] ?? '';
-    form.querySelector('#' + el.name + '-err').textContent = msg;
-    if (msg) el.setAttribute('aria-invalid', 'true');
-    else el.removeAttribute('aria-invalid');
-  }
-  form.querySelector('[aria-invalid="true"]')?.focus();
-}
-~~~
-
-كل خانة اتعملت بـ [[aria-describedby="title-err"]]، فلما الفوكس يروحلها الـ screen reader بيقول اسمها **وبعده** رسالة الغلط. و [[aria-invalid="true"]] بيقول «القيمة دي غلط»، والـ CSS بيلوّنها بالـ attribute selector على [[aria-invalid]] نفسه بدل class منفصلة. والفوكس على **أول** غلط عشان اليوزر يبدأ يصلّح على طول.
-
-وليه مش بنرسم الفورم من جديد بالأخطاء؟ لأن الرسم كان هيمسح اللي كتبته. [[showErrors]] بتغيّر رسايل الغلط بس، والقيم فضلت.
-
----
-
-## ٥. اتشغّل فعلًا في Chromium
-
-~~~text Chromium (Playwright) · http://127.0.0.1:8731/#/
-العنوان             الوصفات · دفتر الوصفات
-الـ status          6 وصفة
-زرار المفضلة         button "☆ للمفضلة"
-بعد location.hash = '#/new'
-  الفوكس            H1: وصفة جديدة
-بعد إضافة وصفة اسمها <img src=x onerror="window.hacked=1"> ووقتها «١٢»
-  الرابط            #/r/u-b9…
-  <h1>              <img src=x onerror="window.hacked=1">   ← كحروف
-  img في الصفحة     false
-  window.hacked     undefined
-history.back()      #/new
+~~~text اتشغّل فعلًا
+$ PORT=8133 node server.js
+http://localhost:8133
+$ curl "http://localhost:8133/api/search?q=map"
+[{"id":27,"name":"flatMap","owner":"Array.prototype"},{"id":28,"name":"map","owner":"Array.prototype"}]
 ~~~
 
 ---
 
-## ٦. الـ accessibility في جدول
+## ٣. index.html
 
-| الحاجة | اتعملت إزاي |
-|---|---|
-| لغة واتجاه | [[lang="ar"]] و [[dir="rtl"]] على [[<html>]] |
-| كل خانة ليها اسم | [[<label for="id">]]، مش placeholder |
-| رسالة الغلط مربوطة | [[aria-describedby]] و [[aria-invalid="true"]] |
-| الأزرار أزرار | [[<button type="button">]]، فـ Enter و Space شغالين لوحدهم |
-| زرار toggle | [[aria-pressed="true"]] أو [[aria-pressed="false"]]، دايمًا نص |
-| الصفحة الحالية | [[aria-current="page"]] على رابط الـ nav |
-| تغيير الشاشة | الفوكس على [[<h1 tabindex="-1">]] والعنوان بيتغيّر |
-| نتايج البحث | [[role="status"]] بيتقري من غير ما الفوكس يتحرك |
-| الفوكس باين | [[:focus-visible]] بإطار ٣px في [[style.css]] |
-
----
-
-## الخلاصة
-
-- الرابط هو الشاشة: [[hashchange]] ← [[parseRoute]] ← الحالة ← الرسم.
-- [[h()]] بتحط النص text node، فمفيش XSS. و [[href]] من اليوزر خطر برضه.
-- ARIA قيمها نص [[true]]/[[false]]؛ الفاضي معناه [[false]].
-- الفوكس: على العنوان لو الشاشة اتغيّرت، وعلى نفس الخانة لو لأ.
-- [[replaceState]] للبحث، و [[location.hash]] للتنقّل.
-- الفورم بيتحقق بنفس دالة الـ store، ومبيترسمش تاني وانت فيه.`,
-          sol: R`اللي في الشرح اتشغّل فعلًا: الباجين في Vitest 5.0.5 مع jsdom، والتنقّل والـ XSS في Chromium من خلال Playwright، و [[parseRoute]] و [[Number]] في Node 24.22. وحل التمرين التاني ([[#/tag/NAME]]) تحت.`,
-          solCode: R`// logic.js — سطر جديد في parseRoute قبل notfound
-if (parts[0] === 'tag' && parts.length === 2) return { name: 'tag', params: { tag: decodeURIComponent(parts[1]) }, query };
-
-// view.js — الكارت: كل تصنيف رابط
-h('span', { class: 'meta' }, r.minutes + ' دقيقة · ',
-  r.tags.map((t) => h('a', { href: '#/tag/' + encodeURIComponent(t) }, t)));
-
-// view.js — جوه view(s)، وفي TITLES زوّد  tag: 'تصنيف'
-: name === 'tag' ? listScreen(s, 'تصنيف: ' + s.route.params.tag, all.filter((r) => r.tags.includes(s.route.params.tag)))
-
-// tests/logic.test.js
-it('#/tag بالعربي', () => {
-  expect(parseRoute('#/tag/%D9%85%D8%B5%D8%B1%D9%8A')).toEqual({ name: 'tag', params: { tag: 'مصري' }, query: {} });
-});`
-        },
-        {
-          cmd: "مشروع التخرّج ٣: البيانات والأخطاء",
-          ref: [
-            { t: "MDN: Window.fetch()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/fetch" },
-            { t: "MDN: Response.ok", url: "https://developer.mozilla.org/en-US/docs/Web/API/Response/ok" },
-            { t: "MDN: AbortSignal.timeout()", url: "https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal/timeout_static" },
-            { t: "MDN: AbortSignal.any()", url: "https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal/any_static" },
-            { t: "MDN: Error", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error" },
-            { t: "MDN: Storage quotas and eviction criteria", url: "https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria" },
-          ],
-          pre: [
-            { to: "js/fetch و AbortController", why: R`المهلة والإلغاء في [[fetchJSON]] و [[loadData]]` },
-            { to: "js/custom errors و cause", why: R`[[HttpError]] و [[DataError]] classes بتورث من [[Error]]` },
-            { to: "js/مشروع — المهلة والإلغاء", why: R`[[AbortSignal.timeout]] و [[AbortSignal.any]] مع بعض` },
-          ],
-          title: "الداتا من JSON API: تحميل، وخطأ بجملة مفهومة، و«جرّب تاني»، وداتا بايظة متوقعش التطبيق",
-          learn: R`تجيب داتا من JSON API بـ [[fetch]] صح: تشيّك [[res.ok]]، وتحط مهلة، وتلغي الطلب القديم، وتفحص شكل الرد، وتترجم كل نوع خطأ لجملة اليوزر يفهمها، ومعاها زرار «جرّب تاني».`,
-          out: R`التطبيق بيعرض «بنحمّل»، وبعدها الوصفات أو رسالة خطأ بزرار، وبيفضل شغّال لو الملف ناقص أو الرد مش JSON أو النت قاطع أو [[localStorage]] فيه زبالة.`,
-          use: {
-            prog: R`كل تطبيق بيكلّم سيرفر، وكل سيرفر بيقع أحيانًا. الفرق بين تطبيق محترف وتطبيق هاوي مش في الحالة اللي كل حاجة فيها شغالة، في الخمس حالات اللي حاجة فيها وقعت.`,
-            work: R`«الصفحة فاضية ومفيش أي رسالة» أشهر بلاغ باجات في الواجهات، وسببه دايمًا [[fetch]] من غير [[res.ok]] أو [[catch]] بيبلع الخطأ. والـ QA في أي شركة بيقفل النت ويرجّعه أول حاجة.`,
-            cs: R`أنواع الفشل في الأنظمة الموزّعة (شبكة، ومهلة، ورد غلط، وسيرفر واقع)، والتحقق على الحدود (أي داتا جاية من برّه متتصدّقش)، والإلغاء (cancellation) عشان الرد القديم ميكتبش فوق الجديد.`,
-          },
-          desc: R`الوصفات جاية من [[data/recipes.json]]. ده **API حقيقي** من ناحية الكود: [[fetch]] بيطلب URL ويستلم JSON، بالظبط زي ما هيعمل مع أي سيرفر بعدين. والفرق إنه شغّال على GitHub Pages من غير backend.
-
-[[api.js]] فيه تلات حاجات:
-
-1. **[[fetchJSON]]**: [[fetch]] بمهلة، وبيرمي لو [[res.ok]] بـ [[false]] (لأن [[fetch]] **مبيرميش** على 404 ولا 500، درس «مشروع — fetch مش بترمي على 404»).
-2. **[[loadRecipes]]**: بيتأكد إن الرد مصفوفة، وبيعدّي كل وصفة على [[isRecipe]] ويسيب السليم بس.
-3. **[[explain]]**: بيحوّل أي خطأ لجملة بالمصري. الـ store بيخزّن **الجملة** مش الـ [[Error]].
-
-و [[app.js]] فيه [[loadData]]: بتلغي أي طلب شغّال، وبتقول [[loading]]، وبتستنى، وبتقول [[loaded]] أو [[failed]]. وزرار «جرّب تاني» بينادي نفس الدالة.
-
-**اتشغّل فعلًا** على سيرفر محلي في Node 24.22: الملف السليم رجّع ٦ وصفات، و 404 و HTML مكان JSON والسيرفر المقفول والمهلة والإلغاء كل واحد طلّع اسم خطأ مختلف وجملة مختلفة (الجدول في الشرح).`,
-          example: R`// src/api.js — الكلام مع السيرفر. بيرمي على أي رد مش سليم، وبيترجم الخطأ لجملة.
-import { isRecipe } from './logic.js';
-
-export class HttpError extends Error {
-  constructor(status, url) {
-    super($__btHTTP $__{status} من $__{url}$__bt);
-    this.name = 'HttpError';
-    this.status = status;
-  }
-}
-
-export class DataError extends Error {
-  name = 'DataError';
-}
-
-export async function fetchJSON(url, { timeout = 8000, signal } = {}) {
-  const timer = AbortSignal.timeout(timeout);
-  const res = await fetch(url, { signal: signal ? AbortSignal.any([signal, timer]) : timer });
-  if (!res.ok) throw new HttpError(res.status, url);
-  return res.json();
-}
-
-export async function loadRecipes(url, opts) {
-  const data = await fetchJSON(url, opts);
-  if (!Array.isArray(data)) throw new DataError('الرد مش لستة وصفات');
-  return data.filter(isRecipe);
-}
-
-export function explain(err) {
-  if (err.name === 'TimeoutError') return 'السيرفر اتأخر في الرد. جرّب تاني.';
-  if (err instanceof HttpError) return err.status === 404 ? 'ملف الوصفات مش موجود (404).' : $__btالسيرفر رد بخطأ $__{err.status}. جرّب كمان شوية.$__bt;
-  if (err instanceof SyntaxError) return 'الرد وصل بس مش JSON سليم.';
-  if (err instanceof DataError) return 'الرد وصل بس شكله غلط.';
-  return 'مفيش اتصال. اتأكد من النت وجرّب تاني.';
-}`,
-          lines: [
-            R`[[api.js]] بيستورد [[isRecipe]] بس من [[logic.js]]، عشان يفحص كل وصفة جاية من الشبكة بنفس القاعدة اللي بتفحص المحفوظ في [[localStorage]].`,
-            R`class خطأ خاص بردود HTTP الغلط، بيورث من [[Error]] فبياخد [[message]] و [[stack]] ببلاش (درس «custom errors و cause»).`,
-            R`الـ constructor بياخد رقم الحالة (404 أو 500) والرابط، عشان اللي يمسك الخطأ يعرف حصل إيه وفين.`,
-            R`[[super]] بينادي constructor بتاع [[Error]] بالرسالة. الرسالة دي للمبرمج في الـ console، مش لليوزر (اليوزر بيشوف جملة [[explain]]).`,
-            R`[[name]] بيظهر في أول سطر الـ stack ([[HttpError: HTTP 404 ...]]) بدل [[Error]]، وده بيفرق جدًا وانت بتقرا اللوج.`,
-            R`بنخزّن [[status]] كرقم عشان [[explain]] تقرر الجملة: 404 غير 503.`,
-            R`قفلة الـ constructor.`,
-            R`قفلة [[HttpError]].`,
-            R`خطأ تاني للرد اللي وصل JSON سليم بس **شكله** غلط (object بدل مصفوفة). نوع لوحده عشان [[explain]] تفرّقه عن «مش JSON أصلًا».`,
-            R`[[name]] هنا class field (بيتكتب على كل object جديد) بدل constructor كامل، لأننا مش محتاجين حاجة غير الاسم. أقصر بس نفس النتيجة.`,
-            R`قفلة [[DataError]].`,
-            R`[[fetchJSON]] بتاخد الرابط و options فيها [[timeout]] (افتراضي ٨ ثواني) و [[signal]] اختياري من برّه. والـ [[= {}]] في الآخر عشان النداء من غير options ميقعش في الـ destructuring.`,
-            R`[[AbortSignal.timeout(ms)]] بيعمل signal بيتلغي لوحده بعد المدة، بخطأ اسمه [[TimeoutError]]. من غيره [[fetch]] ممكن يستنى دقايق على شبكة واقعة، واليوزر شايف «بنحمّل» للأبد.`,
-            R`لو اللي نادانا بعت [[signal]] (عشان يلغي بنفسه)، [[AbortSignal.any]] بيجمعه مع المهلة: أيهما يحصل الأول بيلغي الطلب. و [[await]] بتستنى الـ headers بس، مش الـ body.`,
-            R`**أهم سطر في الملف:** [[fetch]] بيعتبر 404 و 500 «نجاح» لأن السيرفر رد. [[res.ok]] بتبقى [[true]] بس من 200 لـ 299، فلو مش كده بنرمي [[HttpError]] بإيدنا.`,
-            R`[[res.json()]] بتقرا الـ body وتحوّله. لو الـ body مش JSON (صفحة HTML مثلًا) بترمي [[SyntaxError]]، واحنا سايبينها تطلع زي ما هي لأن [[explain]] بتفهمها.`,
-            R`قفلة [[fetchJSON]].`,
-            R`[[loadRecipes]] هي اللي التطبيق بيناديها: طبقة فوق [[fetchJSON]] فيها معرفة بشكل الوصفات.`,
-            R`بنجيب الـ JSON. أي خطأ في الشبكة أو الحالة أو الـ parse بيطلع من هنا لوحده لـ [[loadData]].`,
-            R`لو الرد مش مصفوفة ([[{"recipes": []}]] مثلًا، لو حد غيّر شكل الـ API)، بنرمي [[DataError]] بدل ما [[filter]] تقع بـ [[TypeError: data.filter is not a function]] مالهاش معنى.`,
-            R`بنرجّع الوصفات السليمة بس. وصفة ناقص فيها [[minutes]] بتتشال بهدوء بدل ما تبوّظ الشاشة كلها لما [[view.js]] يحاول يقرا [[r.tags.join]].`,
-            R`قفلة [[loadRecipes]].`,
-            R`[[explain]] بتحوّل الخطأ لجملة. مكانها هنا جنب الأخطاء نفسها، مش في [[view.js]]: الشاشة بتعرض نص وخلاص، ومتعرفش أنواع الأخطاء.`,
-            R`المهلة: [[AbortSignal.timeout]] بيرمي [[DOMException]] اسمه [[TimeoutError]]، فبنشيّك على الاسم (مفيش class نعمل عليها [[instanceof]] بسهولة في كل البيئات).`,
-            R`[[instanceof HttpError]] لأي حالة مش 2xx: 404 ليها جملة لوحدها (الملف مش موجود، مش هتتصلّح بإعادة المحاولة)، والباقي (500 و 503) جملة «جرّب كمان شوية» ومعاها الرقم.`,
-            R`[[SyntaxError]] جاية من [[res.json()]]: السيرفر رد بس بحاجة مش JSON. أشهر سبب على GitHub Pages: الرابط غلط وانت فاكره صح، بس لو السيرفر بيرجّع صفحة HTML بـ 200 بدل 404.`,
-            R`[[DataError]] بتاعتنا: JSON سليم بشكل غلط.`,
-            R`أي حاجة تانية (أشهرها [[TypeError]] اللي [[fetch]] بيرميها لما مفيش شبكة: [[fetch failed]] في Node و [[Failed to fetch]] في Chrome) بتبقى «مفيش اتصال». ده الافتراضي الآمن.`,
-            R`قفلة [[explain]].`,
-          ],
-          try: R`شغّل التطبيق بسيرفر، وافتح DevTools ← Network، واعمل الحاجات دي واحدة واحدة وشوف الرسالة: (١) اختار «Offline» من قايمة الـ throttling واعمل reload، وبعدين رجّعه «No throttling» ودوس «جرّب تاني». (٢) غيّر اسم [[data/recipes.json]] مؤقتًا واعمل reload. (٣) اكتب في الـ console [[localStorage.setItem('recipe-book:v1', '{oops')]] واعمل reload. التطبيق لازم ميطلّعش صفحة بيضا ولا مرة.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** لكل حالة من دول، اكتب [[err.name]] وجملة [[explain]] قبل ما تشغّل [[try-api.mjs]] اللي في الشرح: الملف سليم، و [[data/nope.json]]، و [[index.html]] مكان الـ JSON، وبورت مقفول [[127.0.0.1:9]]، و [[timeout: 1]]، و [[ctrl.abort()]] على طول بعد الطلب.`, done: R`توقعاتك الستة مكتوبة، وطلعت: [[6 وصفة]]، و [[HttpError]]، و [[SyntaxError]]، و [[TypeError]]، و [[TimeoutError]]، و [[AbortError]]، وكل واحدة جملتها زي الجدول. ولو غلطت في واحدة كاتب السبب (مثلًا ليه HTML بيدّي [[SyntaxError]] مش [[HttpError]]: السيرفر رد 200).`, sol: R`**الحل:** نفس [[try-api.mjs]] اللي في الشرح، وزوّدت على سطر الـ abort جملة [[explain]] عشان نشوفها هي كمان. السيرفر: [[python -m http.server 8903]] على الفولدر اللي فوق المشروع.
-
-~~~js try-api.mjs
-import { loadRecipes, explain } from './src/api.js';
-const base = 'http://127.0.0.1:8903/recipe-book/';
-for (const [label, url, opts] of [
-  ['سليم', base + 'data/recipes.json'],
-  ['404', base + 'data/nope.json'],
-  ['مش JSON', base + 'index.html'],
-  ['مفيش سيرفر', 'http://127.0.0.1:9/x.json'],
-  ['مهلة 1ms', base + 'data/recipes.json', { timeout: 1 }],
-]) {
-  try {
-    const list = await loadRecipes(url, opts);
-    console.log(label.padEnd(10), '→', list.length, 'وصفة');
-  } catch (err) {
-    console.log(label.padEnd(10), '→', err.name.padEnd(13), '|', explain(err));
-  }
-}
-const ctrl = new AbortController();
-const p = loadRecipes(base + 'data/recipes.json', { signal: ctrl.signal });
-ctrl.abort();
-const e = await p.catch((err) => err);
-console.log('abort      →', e.name.padEnd(13), '|', explain(e));
-~~~
-
-~~~text الناتج: node try-api.mjs (Node 24.22)
-سليم       → 6 وصفة
-404        → HttpError     | ملف الوصفات مش موجود (404).
-مش JSON    → SyntaxError   | الرد وصل بس مش JSON سليم.
-مفيش سيرفر → TypeError     | مفيش اتصال. اتأكد من النت وجرّب تاني.
-مهلة 1ms   → TimeoutError  | السيرفر اتأخر في الرد. جرّب تاني.
-abort      → AbortError    | مفيش اتصال. اتأكد من النت وجرّب تاني.
-~~~
-
-**ليه كل واحدة كده:**
-
-| الحالة | ليه الاسم ده |
-|---|---|
-| [[data/nope.json]] | السيرفر رد 404، و [[fetch]] مبيرميش، فـ [[res.ok]] بـ [[false]] و [[fetchJSON]] هي اللي رمت [[HttpError]] |
-| [[index.html]] | السيرفر رد **200** بصفحة HTML، فـ [[res.ok]] عدّت، و [[res.json()]] هي اللي وقعت على [[<]] أول حرف: [[SyntaxError]] مش [[HttpError]] |
-| [[127.0.0.1:9]] | مفيش حد سامع على البورت، فـ [[fetch]] نفسه رمى [[TypeError]] (رسالته في Node [[fetch failed]]) |
-| [[timeout: 1]] | [[AbortSignal.timeout(1)]] خلص قبل الرد، والخطأ اسمه [[TimeoutError]] مش [[AbortError]] |
-| [[ctrl.abort()]] | احنا اللي لغينا، والاسم [[AbortError]] |
-
-**ملاحظة من السطر الأخير:** [[explain]] مبتعرفش [[AbortError]]، فبتقع في الافتراضي «مفيش اتصال». ده مش باج في [[explain]]: الإلغاء مش المفروض يوصلها أصلًا. وعشان كده [[loadData]] في [[app.js]] بتعمل [[if (err.name !== 'AbortError')]] **قبل** ما تنادي [[explain]]. لو شلت الشرط ده، كل مرة تدوس «جرّب تاني» وطلب قديم لسه شغّال، اليوزر هيشوف «مفيش اتصال» لثانية من غير سبب.
-
-**الغلطة الشائعة:** تتوقع [[HttpError]] لـ [[index.html]] لأن «ده مش ملف الوصفات». السيرفر مبيعرفش انت عايز إيه، هو رجّع الملف اللي طلبته بنجاح. وده نفس اللي بيحصل على استضافات بترجّع صفحة «مش موجود» بـ 200 بدل 404.` },
-            { lvl: 'تطبيق', t: R`**محاكاة:** في DevTools ← Network اختار «Slow 4G» (أو اعمل throttling مخصوص ٣٠٠٠ms)، واعمل reload، ودوس «جرّب تاني» مرتين ورا بعض بسرعة لو ظهر (أو نادي [[loadData]] مرتين). عايز تتأكد إن طلب واحد بس هو اللي بيكمّل وإن الرد القديم عمره ما يكتب فوق الجديد.`, done: R`في تبويب Network الطلبات القديمة مكتوب جنبها [[(canceled)]] وواحد بس [[200]]، والشاشة مبتعرضش خطأ على الطلب الملغي (لأن [[AbortError]] بيتسكت في [[loadData]])، و «بنحمّل» بتختفي مرة واحدة. ولما تشيل [[ctrl?.abort();]] بقصد، الطلبين بيكمّلوا وكاتب إيه اللي اتغيّر.`, sol: R`**الحل:** عشان التجربة تتكرر بنفس الأرقام كل مرة، بدل Slow 4G عملت سيرفر صغير بيأخّر ملف الوصفات ٢ ثانية، وأول طلب بيرجّعله 503 عشان زرار «جرّب تاني» يظهر:
-
-~~~js slow.mjs
-// slow static server: first recipes.json per folder → 503, later ones → 200 after 2s; logs every request and aborted ones
-import { createServer } from 'node:http';
-import { readFile } from 'node:fs/promises';
-import { join, extname } from 'node:path';
-const root = process.argv[2]; const port = +process.argv[3];
-const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json' };
-const count = new Map();
-createServer(async (req, res) => {
-  const path = decodeURIComponent(new URL(req.url, 'http://x').pathname);
-  const file = join(root, path.endsWith('/') ? path + 'index.html' : path);
-  if (path.endsWith('/index.html') || path.endsWith('/')) count.delete(path.split('/')[1]);
-  if (path.endsWith('/data/recipes.json')) {
-    const key = path.split('/')[1]; const i = (count.get(key) ?? 0) + 1; count.set(key, i);
-    if (i === 1) { res.writeHead(503); res.end('down'); console.log(key, '#1 → 503'); return; }
-    let gone = false; req.on('close', () => { if (!res.writableEnded) { gone = true; console.log(key, '#' + i, 'aborted by the browser'); } });
-    await new Promise((r) => setTimeout(r, 2000));
-    if (gone) return;
-    res.writeHead(200, { 'content-type': types['.json'] }); res.end(await readFile(file)); console.log(key, '#' + i, '→ 200'); return;
-  }
-  try { const body = await readFile(file); res.writeHead(200, { 'content-type': types[extname(file)] ?? 'application/octet-stream' }); res.end(body); }
-  catch { res.writeHead(404); res.end('nope'); }
-}).listen(port, '127.0.0.1', () => console.log('slow server on', port));
-~~~
-
-~~~bash
-node slow.mjs . 8904
-# وافتح http://127.0.0.1:8904/recipe-book/
-~~~
-
-وبعد ما ظهرت رسالة 503 والزرار، دوست «جرّب تاني» مرتين ورا بعض في نفس اللحظة (من الـ Console: كليك على الزرار، وكليك على زرار تاني فيه [[data-action="retry"]]، لأن الأول بيختفي أول ما «بنحمّل» تظهر).
-
-~~~text الناتج: التطبيق زي ما هو (Chromium، Playwright)
-Network:  recipes.json 503  ←  recipes.json (canceled) net::ERR_ABORTED  ←  recipes.json 200
-السيرفر:  #1 → 503   #2 aborted by the browser   #3 → 200
-الشاشة:  بنحمّل الوصفات… | busy=true   ←   6 وصفة | busy=false
-~~~
-
-- الطلب التاني اتلغى، وفي DevTools ← Network بيبان **(canceled)** والسيرفر نفسه حس إن الاتصال اتقفل.
-- مفيش رسالة خطأ ظهرت على الطلب الملغي: الـ [[AbortError]] اتسكت في [[loadData]].
-- «بنحمّل» ظهرت مرة واحدة واختفت مرة واحدة، والكروت ٦.
-
-**وبعد ما شلت [[ctrl?.abort();]] بقصد** (نسخة تانية من [[app.js]]):
-
-~~~text الناتج: من غير ctrl?.abort()
-0.2s response 503
-2.0s response 200     ← الشاشة: 6 وصفة
-4.0s response 200     ← الشاشة اترسمت تاني: 6 وصفة
-السيرفر:  #1 → 503   #2 → 200   #3 → 200
-~~~
-
-**إيه اللي اتغيّر:** الطلبين كمّلوا، والسيرفر اشتغل مرتين، والشاشة اترسمت مرتين. والتاني جه بعد **٤ ثواني** مش ٢: Chrome مبيبعتش طلبين GET لنفس الرابط في نفس الوقت، بيخلّي التاني يستنى الأول يخلص (قفل الكاش)، وبعدين يبعته. هنا الردين نفس الداتا فمحدش لاحظ. بس لو الطلبين مختلفين (بحث «فول» وبعده «كشري»)، الرد اللي يوصل **آخر** هو اللي بيفضل على الشاشة، حتى لو كان القديم. والإلغاء بيمنع ده: الرد القديم مبيوصلش أصلًا.
-
-**الغلطة الشائعة:** تفتكر إن «الرد التاني نفس الأول فمش مشكلة». ده صح هنا بالصدفة. الـ [[abort]] مش عشان الداتا، عشان **الترتيب**: آخر حاجة طلبتها هي اللي لازم تظهر.` },
-            { lvl: 'تحدي', t: R`**ابني feature:** إعادة محاولة أوتوماتيك قبل ما تظهر رسالة الخطأ: [[withRetry(fn, { tries: 3, base: 300 })]] في [[api.js]] بتعيد بعد ٣٠٠ وبعدين ٦٠٠ms (exponential backoff، درس «مشروع — إعادة المحاولة الذكية»)، **بس** على 5xx والمهلة ومفيش شبكة، **مش** على 404 ولا [[SyntaxError]] ولا [[AbortError]]. واكتبلها اختبار بـ [[vi.useFakeTimers()]].`, done: R`fetch مزيّف بيرجّع 503 مرتين وبعدين 200: [[loadRecipes]] بترجّع الوصفات و [[fetch]] اتنادى ٣ مرات. و 404: مرة واحدة بس ورسالة على طول. و [[AbortError]] في النص بيوقّف المحاولات. والاختبار بيخلص في أقل من ١٠٠ms لأن الـ timers مزيّفة، والـ UI ما اتغيّرش.`, sol: R`**الحل:** دالة في آخر [[src/api.js]]:
-
-~~~js src/api.js (في الآخر)
-// إعادة المحاولة: بس على الأخطاء اللي ممكن تروح لوحدها (السيرفر مشغول، أو مهلة، أو الشبكة)
-const retryable = (err) => err.name === 'TimeoutError'
-  || (err instanceof HttpError && err.status >= 500)
-  || err instanceof TypeError;
-
-export async function withRetry(fn, { tries = 3, base = 300 } = {}) {
-  for (let i = 1; ; i++) {
-    try {
-      return await fn();
-    } catch (err) {
-      if (i >= tries || !retryable(err)) throw err;
-      await new Promise((r) => setTimeout(r, base * 2 ** (i - 1)));
-    }
-  }
-}
-~~~
-
-و [[loadData]] في [[src/app.js]] بقت بتلف التحميل بيها:
-
-~~~js src/app.js (جوه loadData)
-    const { signal } = ctrl;
-    store.loaded(await withRetry(() => loadRecipes(DATA_URL, { signal })));
-~~~
-
-**الأجزاء المهمة:**
-
-| الحتة | ليه |
-|---|---|
-| [[retryable]] | 5xx والمهلة و [[TypeError]] (مفيش شبكة) ممكن يروحوا لوحدهم. أما 404 و [[SyntaxError]] فالمحاولة التانية هترجع نفس الحاجة بالظبط |
-| [[AbortError]] مش في اللستة | ده [[DOMException]] مش [[TypeError]]، فبيطلع على طول: احنا اللي لغينا |
-| [[base * 2 ** (i - 1)]] | [[**]] هي الأس: [[2 ** 0]] = 1 و [[2 ** 1]] = 2، فالانتظار ٣٠٠ ثم ٦٠٠ |
-| [[for (let i = 1; ; i++)]] | loop من غير شرط نهاية: بتخرج بـ [[return]] لو نجح، أو [[throw]] لو خلصت المحاولات أو الخطأ مش ليه أمل |
-| [[const { signal } = ctrl]] | بناخد الـ signal بتاع **الطلب ده** قبل الانتظار، فلو [[loadData]] اتنادت تاني و [[ctrl]] اتغيّر، المحاولات القديمة لسه مربوطة بالـ signal القديم الملغي |
-
-**الاختبارات:**
-
-~~~js tests/retry.test.js
-import { it, expect, vi, afterEach } from 'vitest';
-import { loadRecipes, withRetry } from '../src/api.js';
-
-const replies = (...list) => {
-  let i = 0;
-  vi.stubGlobal('fetch', vi.fn(async () => {
-    const r = list[Math.min(i++, list.length - 1)];
-    if (r instanceof Error) throw r;
-    return new Response(r.body ?? '[]', { status: r.status ?? 200 });
-  }));
-};
-
-afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
-
-it('503 مرتين وبعدين 200: ٣ محاولات والوصفات رجعت', async () => {
-  vi.useFakeTimers();
-  replies({ status: 503 }, { status: 503 }, { body: '[]' });
-  const p = withRetry(() => loadRecipes('/r.json'));
-  await vi.runAllTimersAsync();
-  expect(await p).toEqual([]);
-  expect(fetch).toHaveBeenCalledTimes(3);
-});
-
-it('الانتظار ٣٠٠ وبعدين ٦٠٠', async () => {
-  vi.useFakeTimers();
-  replies({ status: 503 }, { status: 503 }, { body: '[]' });
-  const p = withRetry(() => loadRecipes('/r.json'));
-  await vi.advanceTimersByTimeAsync(299);
-  expect(fetch).toHaveBeenCalledTimes(1);
-  await vi.advanceTimersByTimeAsync(1);
-  expect(fetch).toHaveBeenCalledTimes(2);
-  await vi.advanceTimersByTimeAsync(599);
-  expect(fetch).toHaveBeenCalledTimes(2);
-  await vi.advanceTimersByTimeAsync(1);
-  expect(fetch).toHaveBeenCalledTimes(3);
-  await p;
-});
-
-it('404: مرة واحدة بس', async () => {
-  replies({ status: 404 });
-  await expect(withRetry(() => loadRecipes('/r.json'))).rejects.toMatchObject({ name: 'HttpError', status: 404 });
-  expect(fetch).toHaveBeenCalledTimes(1);
-});
-
-it('SyntaxError: مرة واحدة بس', async () => {
-  replies({ body: '<html>' });
-  await expect(withRetry(() => loadRecipes('/r.json'))).rejects.toBeInstanceOf(SyntaxError);
-  expect(fetch).toHaveBeenCalledTimes(1);
-});
-
-it('AbortError في النص بيوقّف المحاولات', async () => {
-  vi.useFakeTimers();
-  replies({ status: 503 }, new DOMException('stop', 'AbortError'), { body: '[]' });
-  const p = withRetry(() => loadRecipes('/r.json')).catch((e) => e);
-  await vi.runAllTimersAsync();
-  expect((await p).name).toBe('AbortError');
-  expect(fetch).toHaveBeenCalledTimes(2);
-});
-
-it('مفيش شبكة ٣ مرات: آخر خطأ بيطلع', async () => {
-  vi.useFakeTimers();
-  replies(new TypeError('fetch failed'));
-  const p = withRetry(() => loadRecipes('/r.json')).catch((e) => e);
-  await vi.runAllTimersAsync();
-  expect((await p).message).toBe('fetch failed');
-  expect(fetch).toHaveBeenCalledTimes(3);
-});
-~~~
-
-~~~text الناتج: npx vitest run tests/retry.test.js --reporter=verbose (Vitest 5.1.1)
- ✓ tests/retry.test.js > 503 مرتين وبعدين 200: ٣ محاولات والوصفات رجعت 28ms
- ✓ tests/retry.test.js > الانتظار ٣٠٠ وبعدين ٦٠٠ 2ms
- ✓ tests/retry.test.js > 404: مرة واحدة بس 1ms
- ✓ tests/retry.test.js > SyntaxError: مرة واحدة بس 1ms
- ✓ tests/retry.test.js > AbortError في النص بيوقّف المحاولات 1ms
- ✓ tests/retry.test.js > مفيش شبكة ٣ مرات: آخر خطأ بيطلع 1ms
-      Tests  6 passed (6)
-   Duration  264ms
-~~~
-
-أطول اختبار ٢٨ms رغم إن الانتظار الحقيقي ٩٠٠ms: [[vi.runAllTimersAsync()]] بيقدّم الوقت المزيّف لحد ما كل الـ timers تخلص، وبيستنى الـ Promises اللي بينهم. واختبار «٣٠٠ وبعدين ٦٠٠» بيقدّم الوقت ميلي ثانية ميلي ثانية عند الحدود عشان يثبت المدد نفسها مش العدد بس.
-
-**الغلطة اللي حصلت:** بعد التعديل، [[npm run check]] وقع في اختبار قديم:
-
-~~~text الناتج
- FAIL  tests/app.dom.test.js > الشبكة وقعت: رسالة وزرار، وجرّب تاني بيجيب الداتا
-TypeError: Cannot read properties of null (reading 'textContent')
-~~~
-
-الاختبار كان بيرجّع 503 **مرة واحدة** ويستنى رسالة الخطأ، ودلوقتي التطبيق بيعيد لوحده وبينجح، فمفيش [[role="alert"]] أصلًا. ده سلوك جديد صح، مش باج: الاختبار اتعدّل يرجّع 503 تلات مرات (كل المحاولات)، وبعدها الرابعة (من الزرار) 200، و [[toHaveBeenCalledTimes(4)]]. و [[idle()]] بقى يستنى لحد ٣ ثواني بدل ثانية، لأن التلات محاولات بالـ timers الحقيقية بياخدوا حوالي ٩٠٠ms. بعدها [[npm run check]]: ٤٩ اختبار عدّوا. الشاشة نفسها ([[view.js]]) ما اتغيّرتش.
-
-**الغلطة الشائعة:** تعيد المحاولة على أي خطأ. 404 هيستنى ٩٠٠ms من غير فايدة قبل ما يقول «مش موجود»، و [[AbortError]] هيرجّع الطلب اللي انت لسه لاغيه.` },
-          ],
-          deep: {
-            why: R`الداتا اللي جاية من برّه (الشبكة، أو التخزين، أو ملف) هي أكتر حاجة بتكسر التطبيقات، لأنها الحاجة الوحيدة اللي انت مش كاتبها. فالقاعدة: **افحصها على الحدود** (أول ما توصل)، وحوّل كل فشل لحالة معروفة ([[error]] بجملة) بدل استثناء طاير. كده الشاشة عندها ٤ حالات بس ترسمها، مش عدد لا نهائي من الأشكال الغلط.`,
-            how: R`**[[loadData]] في [[app.js]]:**
-
-~~~js src/app.js
-async function loadData() {
-  ctrl?.abort();
-  ctrl = new AbortController();
-  store.loading();
-  try {
-    store.loaded(await loadRecipes(DATA_URL, { signal: ctrl.signal }));
-  } catch (err) {
-    if (err.name !== 'AbortError') store.failed(explain(err));
-  }
-}
-~~~
-
-[[ctrl?.abort()]] بيلغي أي طلب لسه شغّال قبل ما يبدأ واحد جديد، فلو دوست «جرّب تاني» وانت لسه بتحمّل، الرد القديم ميوصلش متأخر ويكتب فوق الجديد. و [[AbortError]] بيتسكت لأن **احنا** اللي لغيناه، مش خطأ.
-
-**و [[DATA_URL]] لازم relative:** [[./data/recipes.json]] مش [[/data/recipes.json]]. على GitHub Pages المشروع بيتنشر تحت [[/REPO/]]، والـ [[/]] في الأول معناها «من أول الدومين»:
-
-~~~text اتشغّل فعلًا · سيرفر محلي على الفولدر الأب (نفس شكل Pages)
-/recipe-book/                    200
-/recipe-book/data/recipes.json   200
-/data/recipes.json               404   ← المسار المطلق بيدوّر برّه المشروع
-~~~
-
-**والـ [[localStorage]] البايظ في Chromium حقيقي:**
-
-~~~text اتشغّل فعلًا · Chromium (Playwright)
-localStorage.setItem('recipe-book:v1', '{"version":1,"mine":[{"id":')  ثم reload
-.notice              الداتا المحفوظة كانت بايظة (Unexpected end of JSON input)، واتحفظت نسخة منها
-role                 status
-:broken              {"version":1,"mine":[{"id":
-aria-busy            false
-~~~
-
-التحذير هيفضل يظهر مع كل فتحة لحد أول حفظ (لأن المفتاح لسه فيه نفس النص البايظ). لو عايز يظهر مرة واحدة، امسح المفتاح بعد ما تاخد النسخة.
-
-**ليه الرسالة جملة مش [[err.message]]؟** [[err.message]] بيقول [[fetch failed]] أو [[Unexpected token '<'...]]: صح للمبرمج وملهوش معنى لليوزر، وساعات فيه رابط داخلي مش عايز تعرضه. فاعرض [[explain(err)]]، واطبع [[err]] نفسه في الـ console أو اللوج.`,
-            when: R`أي [[fetch]] في أي تطبيق. ولو الـ API بتاعك فيه أكتر من endpoint، [[fetchJSON]] بتفضل هي هي و [[loadRecipes]] بتبقى دالة لكل نوع داتا. ولما التطبيق يكبر (كاش، وإعادة جلب لما ترجع للتبويب، وطلبات متوازية)، ده وقت مكتبة زي TanStack Query اللي بتعمل نفس الحالات الأربعة دي ومعاها الكاش.`,
-            mistakes: R`[[fetch]] من غير [[res.ok]] فالـ 404 يتعرض كأنه داتا. [[catch]] فاضي بيبلع الخطأ فالصفحة تفضل فاضية. عرض [[err.message]] لليوزر. مفيش مهلة فـ «بنحمّل» للأبد. مفيش إلغاء فالرد القديم يكتب فوق الجديد. اعتبار [[AbortError]] خطأ وعرض رسالة لحاجة انت اللي لغيتها. تصديق شكل الرد من غير فحص. مسار مطلق [[/data/...]] بيشتغل على [[localhost:8000]] وبيقع على Pages. وزرار «جرّب تاني» بيشتغل والطلب لسه شغّال.`,
-          },
-          teach: R`## الحالات الأربعة
-
-~~~text
-idle ──→ loading ──→ ready
-            │
-            └──→ error ──(جرّب تاني)──→ loading
-~~~
-
-الشاشة بترسم الحالة من [[s.status]]: «بنحمّل الوصفات…» بـ [[role="status"]]، أو القايمة، أو رسالة بـ [[role="alert"]] وتحتها زرار «جرّب تاني» بـ [[data-action="retry"]]. ومستمع الكليك الواحد على [[<main>]] بيلاقيه:
-
-~~~js src/app.js
-main.addEventListener('click', (e) => {
-  const fav = e.target.closest('[data-fav]');
-  if (fav) store.toggleFav(fav.dataset.fav);
-  if (e.target.closest('[data-action="retry"]')) loadData();
-});
-~~~
-
-[[closest]] بيدوّر من العنصر اللي اتداس عليه لفوق لحد ما يلاقي واحد بالـ selector ده، فلو الزرار جواه أيقونة أو [[<span>]] الكليك بيوصل برضه.
-
----
-
-## ١. الـ «API»: ملف JSON
-
-~~~json data/recipes.json (أول وصفة من ٦)
-[
-  { "id": "koshary", "title": "كشري", "minutes": 60, "tags": ["مصري", "نباتي"],
-    "ingredients": ["رز", "عدس بني", "مكرونة", "صلصة طماطم", "بصل مقرمش"],
-    "steps": "اسلق العدس والرز مع بعض.\nاسلق المكرونة لوحدها.\n..." }
-]
-~~~
-
-| الحقل | النوع | ليه |
-|---|---|---|
-| [[id]] | نص | ثابت ومش بيتغيّر، عشان المفضلة والرابط [[#/r/koshary]] يفضلوا شغالين |
-| [[minutes]] | رقم | رقم مش نص، عشان الترتيب والمقارنة. و [[isRecipe]] بترفض النص |
-| [[tags]] و [[ingredients]] | مصفوفة نصوص | عشان البحث والفلتر من غير [[split]] |
-| [[steps]] | نص فيه [[\n]] | بيتعرض بـ [[white-space: pre-line]] في الـ CSS، فالسطور تفضل سطور من غير HTML |
-
----
-
-## ٢. كل شكل فشل وجملته
-
-~~~js try-api.mjs (سيرفر محلي: python -m http.server)
-import { loadRecipes, explain } from './src/api.js';
-const base = 'http://127.0.0.1:8731/';
-for (const [label, url, opts] of [
-  ['سليم', base + 'data/recipes.json'],
-  ['404', base + 'data/nope.json'],
-  ['مش JSON', base + 'index.html'],
-  ['مفيش سيرفر', 'http://127.0.0.1:9/x.json'],
-  ['مهلة 1ms', base + 'data/recipes.json', { timeout: 1 }],
-]) {
-  try {
-    const list = await loadRecipes(url, opts);
-    console.log(label.padEnd(10), '→', list.length, 'وصفة');
-  } catch (err) {
-    console.log(label.padEnd(10), '→', err.name.padEnd(13), '|', explain(err));
-  }
-}
-const ctrl = new AbortController();
-const p = loadRecipes(base + 'data/recipes.json', { signal: ctrl.signal });
-ctrl.abort();
-console.log('abort      →', await p.catch((e) => e.name));
-~~~
-
-~~~text اتشغّل فعلًا · Node 24.22
-سليم       → 6 وصفة
-404        → HttpError     | ملف الوصفات مش موجود (404).
-مش JSON    → SyntaxError   | الرد وصل بس مش JSON سليم.
-مفيش سيرفر → TypeError     | مفيش اتصال. اتأكد من النت وجرّب تاني.
-مهلة 1ms   → TimeoutError  | السيرفر اتأخر في الرد. جرّب تاني.
-abort      → AbortError
-~~~
-
-| الخطأ | جاي منين | يتعمل إيه |
-|---|---|---|
-| [[HttpError]] 404 | السيرفر رد بس الملف مش موجود | رسالة ثابتة، وإعادة المحاولة مش هتفرق |
-| [[HttpError]] 5xx | السيرفر نفسه وقع أو مشغول | «جرّب كمان شوية»، وده المكان الوحيد اللي إعادة المحاولة الأوتوماتيك ليها معنى فيه |
-| [[SyntaxError]] | [[res.json()]] على HTML أو نص | غالبًا الرابط غلط أو السيرفر بيرجّع صفحة خطأ بـ 200 |
-| [[DataError]] | JSON سليم بشكل غير المتوقع | حد غيّر الـ API، والفحص مسكه قبل الشاشة |
-| [[TypeError]] | [[fetch]] نفسه: مفيش شبكة، أو DNS، أو CORS | «مفيش اتصال». وفي Node رسالته [[fetch failed]] |
-| [[TimeoutError]] | [[AbortSignal.timeout]] خلص | «اتأخر»، وزرار المحاولة |
-| [[AbortError]] | احنا لغيناه بـ [[ctrl.abort()]] | **ولا حاجة**: مش خطأ |
-
-> **CORS** بيطلع برضه [[TypeError]] من غير تفاصيل في الكود (التفاصيل في الـ console بس)، لأن المتصفح مش عايز يقول لصفحة غريبة ليه طلبها اترفض. ملف JSON على نفس الموقع مفيهوش CORS أصلًا.
-
----
-
-## ٣. «جرّب تاني» في jsdom
-
-~~~js tests/app.dom.test.js
-it('الشبكة وقعت: رسالة وزرار، وجرّب تاني بيجيب الداتا', async () => {
-  let calls = 0;
-  const fetchImpl = vi.fn(async () => (++calls === 1 ? new Response('oops', { status: 503 }) : new Response(data)));
-  await start({ fetchImpl });
-  expect($('[role="alert"] p').textContent).toBe('السيرفر رد بخطأ 503. جرّب كمان شوية.');
-  $('[data-action="retry"]').click();
-  await vi.waitFor(() => expect($$('.card').length).toBe(6));
-  expect(fetchImpl).toHaveBeenCalledTimes(2);
-});
-~~~
-
-~~~text اتشغّل فعلًا · Vitest 5.0.5
-✓ tests/app.dom.test.js > الشبكة وقعت: رسالة وزرار، وجرّب تاني بيجيب الداتا
-✓ tests/app.dom.test.js > localStorage بايظ: التطبيق بيفتح وبيقول
-✓ tests/app.dom.test.js > رابط وصفة مش موجودة
-~~~
-
-أول طلب رجّع 503، فالشاشة عرضت الجملة والزرار. الكليك نادى [[loadData]] تاني، والطلب التاني رجّع الداتا، فالكروت الست ظهروا. و [[fetch]] اتنادى **مرتين بالظبط**.
-
----
-
-## ٤. [[localStorage]] البايظ: الحد التاني
-
-نفس فكرة الشبكة: داتا جاية من برّه. والفرق إنها «برّه» في نفس المتصفح: اليوزر، أو إضافة، أو نسخة قديمة من التطبيق كتبت شكل تاني.
-
-~~~text اتشغّل فعلًا · Vitest 5.0.5 (tests/storage.test.js)
-✓ أول مرة: فاضي من غير تحذير
-✓ داتا بايظة (قوس ناقص): فاضي وتحذير ونسخة احتياطي
-✓ داتا بايظة (نسخة غلط): فاضي وتحذير ونسخة احتياطي
-✓ داتا بايظة (null): فاضي وتحذير ونسخة احتياطي
-✓ بيشيل البند البايظ ويسيب السليم
-✓ التخزين المليان: save بيرجّع false من غير ما يرمي
-✓ المتصفح قافل التخزين خالص: getItem نفسها بترمي
-✓ الـ store بيحفظ لما المفضلة تتغيّر، والمحفوظ بيرجع في store جديد
-~~~
-
-والتخزين المليان معمول بـ [[DOMException]] اسمه [[QuotaExceededError]]، وده الخطأ اللي المتصفح بيرميه فعلًا لما [[localStorage]] يعدّي حدّه (حوالي ٥ ميجا في أغلب المتصفحات، من الـ docs).
-
----
-
-## ٥. ترتيب الحاجات في [[app.js]] وقت الفتح
-
-~~~js src/app.js (آخر ٤ سطور)
-window.addEventListener('hashchange', () => store.setRoute(parseRoute(location.hash)));
-store.subscribe(paint);
-store.setRoute(parseRoute(location.hash));
-loadData();
-~~~
-
-1. الـ store اتعمل وقرا المحفوظ (أو رجع فاضي بتحذير).
-2. أول رسمة بالرابط اللي الصفحة اتفتحت بيه، والقايمة فاضية.
-3. [[loadData]] → «بنحمّل» → الوصفات أو الخطأ.
-
-فلو فتحت [[#/r/foul]] مباشرة، الشاشة بتقول «بنحمّل» لحد ما الداتا توصل، وبعدها الوصفة. ولو الداتا وصلت ومفيش وصفة بالـ id ده: «الوصفة دي مش موجودة».
-
----
-
-## الخلاصة
-
-- [[fetch]] مبيرميش على 404: [[res.ok]] دايمًا.
-- مهلة بـ [[AbortSignal.timeout]]، وإلغاء بـ [[AbortController]]، ويتجمعوا بـ [[AbortSignal.any]].
-- افحص شكل الرد ([[Array.isArray]] و [[isRecipe]]) قبل ما يوصل الحالة.
-- كل خطأ ليه جملة، و [[AbortError]] مش خطأ.
-- المسارات relative ([[./data/...]]) عشان Pages.
-- [[localStorage]] داتا من برّه برضه: فاضي + تحذير + نسخة.`,
-          sol: R`ناتج [[try-api.mjs]] الحقيقي على سيرفر محلي ([[python -m http.server]]) في Node 24.22، و [[localStorage]] البايظ في Chromium من خلال Playwright، و «جرّب تاني» في Vitest 5 مع jsdom. حالة «Offline» في DevTools اتعملت في الكود بـ [[fetch]] مزيّف بيرمي [[TypeError]] (نفس اللي المتصفح بيرميه)، وتجربة الـ throttling في التمرين التاني للقارئ يعملها في DevTools. وحل التمرين التالت تحت.`,
-          solCode: R`// api.js — إعادة محاولة على الأخطاء اللي ليها أمل بس
-const retryable = (err) => err.name === 'TimeoutError'
-  || (err instanceof HttpError && err.status >= 500)
-  || (err instanceof TypeError);
-
-export async function withRetry(fn, { tries = 3, base = 300 } = {}) {
-  for (let i = 1; ; i++) {
-    try {
-      return await fn();
-    } catch (err) {
-      if (i >= tries || !retryable(err)) throw err;
-      await new Promise((r) => setTimeout(r, base * 2 ** (i - 1)));   // 300 ثم 600
-    }
-  }
-}
-
-// app.js
-store.loaded(await withRetry(() => loadRecipes(DATA_URL, { signal: ctrl.signal })));
-
-// tests/api.test.js
-it('503 مرتين وبعدين 200', async () => {
-  vi.useFakeTimers();
-  let n = 0;
-  vi.stubGlobal('fetch', vi.fn(async () => (++n < 3 ? new Response('x', { status: 503 }) : new Response('[]'))));
-  const p = withRetry(() => loadRecipes('/r.json'));
-  await vi.runAllTimersAsync();
-  expect(await p).toEqual([]);
-  expect(fetch).toHaveBeenCalledTimes(3);
-  vi.useRealTimers();
-});`
-        },
-        {
-          cmd: "مشروع التخرّج ٤: الاختبارات والنشر",
-          ref: [
-            { t: "GitHub Docs: Configuring a publishing source for your GitHub Pages site", url: "https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site" },
-            { t: "GitHub Docs: Using custom workflows with GitHub Pages", url: "https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages" },
-            { t: "Node.js: Test runner (node:test)", url: "https://nodejs.org/api/test.html" },
-            { t: "MDN: Using Service Workers", url: "https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers" },
-          ],
-          pre: [
-            { to: "js/اختبار JS بـ Vitest", why: R`[[describe]] و [[it]] و [[expect]] و [[vi]] اللي الاختبارات مكتوبة بيهم` },
-            { to: "js/ESLint و Prettier", why: R`الـ flat config والقواعد اللي بتمنع [[innerHTML]]` },
-          ],
-          title: "٤٣ اختبار Vitest و ESLint نضيف، وبعدين GitHub Pages برابط حقيقي",
-          learn: R`تختبر المنطق بـ Vitest، والشاشة كلها بـ jsdom من غير متصفح، وتقرا رسالة الاختبار الواقع، وتخلّي ESLint يمنع [[innerHTML]]، وتنشر على GitHub Pages والاختبارات بتقفل النشر لو فيه حاجة بايظة.`,
-          out: R`[[npm run check]] أخضر (lint و ٤٣ اختبار في حوالي ٢ ثانية)، و repo فيه ١٨ ملف من غير [[node_modules]]، و workflow بيختبر وينشر على [[https://USER.github.io/recipe-book/]].`,
-          use: {
-            prog: R`الاختبار هو اللي بيخليك تغيّر الكود من غير خوف. الباجين اللي في الدرس ٢ (الـ aria والمسافة) ومسح الفورم في الدرس ٢ برضه اتمسكوا كلهم باختبارات قبل ما أي يوزر يشوفهم، ومش هيرجعوا تاني من غير ما اختبار يقع.`,
-            work: R`أي repo في شركة فيه [[npm test]] و [[npm run lint]] بيشتغلوا في الـ CI على كل PR، ومحدش بيعمل merge والـ CI أحمر. ومشروع portfolio فيه نفس الحاجة بيقول للي بيراجع «ده بيشتغل زي الفرق الحقيقية».`,
-            cs: R`هرم الاختبارات (unit كتير ورخيصة، وintegration أقل، وE2E قليلة)، والتحليل الساكن (static analysis) اللي بيمسك غلطات من غير ما الكود يشتغل، والـ continuous delivery: كل commit على main بيعدّي نفس البوابة قبل ما يتنشر.`,
-          },
-          desc: R`آخر خطوة: **اثبت إنه شغّال، وانشره.**
-
-**الاختبارات (٤٣ في ٤ ملفات):**
-
-| الملف | بيختبر | البيئة |
-|---|---|---|
-| [[tests/logic.test.js]] | الـ routing والبحث والتحقق والمفضلة و debounce (١٩ اختبار) | Node، من غير DOM |
-| [[tests/storage.test.js]] | الحفظ والداتا البايظة والتخزين المليان والمقفول (٨) | Node، و storage مزيّف بـ [[Map]] |
-| [[tests/api.test.js]] | كل شكل فشل للشبكة (٦) | Node، و [[fetch]] مزيّف بـ [[vi.stubGlobal]] |
-| [[tests/app.dom.test.js]] | التطبيق كله: الشاشات والبحث والفورم والـ XSS والفوكس (١٠) | jsdom: DOM مزيّف جوه Node |
-
-**ESLint** بـ [[recommended]]، وقاعدة بتمنع [[innerHTML]] و [[outerHTML]] في الكود كله، و [[eqeqeq]].
-
-**النشر:** GitHub Pages بطريقتين: الأسهل (من الـ branch على طول) والأصح (workflow بيشغّل [[npm run check]] الأول، ولو وقع مبينشرش). والرابط شكله [[https://USER.github.io/REPO/]].
-
-> النشر الفعلي على GitHub محتاج حساب و repo، فخطوات Pages والـ workflow هنا **من وثايق GitHub** (Pages و Actions)، وأرقام نسخ الـ actions زي اللي في درس «مشروع ١: النشر والـ README» في تاب المشاريع. اللي اتجرّب هنا: الاختبارات و ESLint، والـ workflow اتقرا كـ YAML سليم، والمسارات تحت فولدر فرعي على سيرفر محلي بنفس شكل Pages، و [[git init]] و [[.gitignore]] في repo محلي.`,
-          example: R`// tests/logic.test.js — قواعد التطبيق من غير متصفح (نسخة مختصرة من الملف).
-import { describe, it, expect, vi } from 'vitest';
-import { parseRoute, validateRecipe, toggleFav, debounce } from '../src/logic.js';
-
-describe('parseRoute', () => {
-  it.each([
-    ['', 'list'], ['#/', 'list'], ['#/fav', 'fav'], ['#/new', 'new'], ['#/r/foul', 'recipe'], ['#/x/y/z', 'notfound'],
-  ])('%s → %s', (hash, name) => expect(parseRoute(hash).name).toBe(name));
-});
-
-describe('validateRecipe', () => {
-  const good = { title: ' طعمية ', minutes: '٢٥', ingredients: 'فول\n\nكزبرة', steps: 'اطحن واقلي', tags: 'فطار، مصري, فطار' };
-  it('بيقبل الأرقام العربي وبينضّف المدخلات', () => {
-    expect(validateRecipe(good)).toEqual({ ok: true, value: {
-      title: 'طعمية', minutes: 25, ingredients: ['فول', 'كزبرة'], steps: 'اطحن واقلي', tags: ['فطار', 'مصري'] } });
-  });
-  it.each(['', '0', '-5', '2.5', 'abc', '1441'])('بيرفض الوقت %j', (minutes) => {
-    expect(validateRecipe({ ...good, minutes })).toMatchObject({ ok: false, errors: { minutes: expect.any(String) } });
-  });
-});
-
-it('toggleFav مبيعدّلش المصفوفة الأصلية', () => {
-  const favs = ['foul'];
-  expect(toggleFav(favs, 'koshary')).toEqual(['foul', 'koshary']);
-  expect(favs).toEqual(['foul']);
-});
-
-it('debounce بينادي مرة واحدة بآخر قيمة', () => {
-  vi.useFakeTimers();
-  const fn = vi.fn();
-  const d = debounce(fn, 250);
-  d('ف'); d('فو'); d('فول');
-  vi.advanceTimersByTime(249);
-  expect(fn).not.toHaveBeenCalled();
-  vi.advanceTimersByTime(1);
-  expect(fn).toHaveBeenCalledExactlyOnceWith('فول');
-  vi.useRealTimers();
-});`,
-          lines: [
-            R`من [[vitest]] بنستورد: [[describe]] (مجموعة اختبارات ليها اسم)، و [[it]] (اختبار واحد)، و [[expect]] (التأكيد)، و [[vi]] (أدوات التزييف: دوال وتايمرز). الاستيراد صريح بدل globals، فـ ESLint عارف الأسامي دي جاية منين.`,
-            R`بنستورد من [[logic.js]] مباشرة. الملف ده مفيهوش [[document]] ولا [[fetch]]، فالاختبار بيشتغل في Node في ميلي ثواني من غير أي إعداد.`,
-            R`مجموعة اختبارات [[parseRoute]]. الاسم بيظهر في الناتج قبل اسم كل اختبار، فلما حاجة تقع تعرف من أنهي جزء.`,
-            R`[[it.each]] بياخد جدول حالات ويعمل اختبار لكل صف. أحسن من ست اختبارات متكررة، ولو زوّدت شاشة بتزوّد صف واحد.`,
-            R`كل صف: الـ hash، واسم الشاشة المتوقع. والحالات مختارة عشان تغطي الطرف: الفاضي خالص، و [[#/]]، وكل شاشة، ومسار بتلات أجزاء مش موجود.`,
-            R`اسم الاختبار [[%s → %s]] بيتملى من الصف ([[#/fav → fav]])، والدالة بتاخد الصف كـ parameters. و [[toBe]] للمقارنة بـ [[Object.is]]، مناسبة للنصوص.`,
-            R`قفلة مجموعة [[parseRoute]].`,
-            R`مجموعة [[validateRecipe]]: أهم دالة في التطبيق، لأنها البوابة الوحيدة اللي الوصفات بتعدّي منها للحالة.`,
-            R`مدخلات «سليمة بس وسخة» زي اللي الفورم بيبعتها فعلًا: مسافات حوالين الاسم، ورقم عربي، وسطر فاضي بين المكوّنات، وفاصلة عربي وإنجليزي، وتصنيف متكرر. و [[\n]] هنا جوه نص JS عادي فهي سطر جديد بجد.`,
-            R`أول اختبار: المدخلات دي لازم تعدّي **وتتنضّف**.`,
-            R`[[toEqual]] مقارنة عميقة: بتقارن كل مفتاح وكل عنصر في المصفوفات، مش الـ reference. فلو حاجة واحدة اختلفت (التصنيف المتكرر ما اتشالش مثلًا) الاختبار بيقع ويوريك الفرق بالظبط.`,
-            R`الشكل المتوقع: الاسم من غير مسافات، و [[25]] رقم مش [[٢٥]] نص، والسطر الفاضي اتشال، و [[فطار]] مرة واحدة. ده «العقد» بتاع الدالة مكتوب ككود.`,
-            R`قفلة الاختبار.`,
-            R`ست قيم غلط للوقت: فاضي (لأن [[Number('')]] صفر)، وصفر، وسالب، وكسر، وحروف، وأكبر من يوم. و [[%j]] بيطبع القيمة JSON في اسم الاختبار فتشوف [[""]] مش مسافة فاضية.`,
-            R`[[toMatchObject]] بتشيّك على **جزء** من الـ object: [[ok]] بـ [[false]] وفيه [[errors.minutes]] من أي نص ([[expect.any(String)]]). اخترناها بدل [[.errors.minutes]] مباشرة عشان لو الدالة غلطت ورجّعت [[ok: true]]، رسالة الفشل تقول «توقعت ok: false ولقيت true» مش [[Cannot read properties of undefined]] (الاتنين اتجرّبوا، الشرح فيه الناتجين).`,
-            R`قفلة الـ [[it.each]].`,
-            R`قفلة مجموعة [[validateRecipe]].`,
-            R`[[it]] برّه أي [[describe]] شغال عادي. الاختبار ده بيتأكد من immutability، اللي الـ store معتمد عليها في قرار الحفظ.`,
-            R`مصفوفة أصلية فيها عنصر واحد.`,
-            R`الإضافة بترجّع مصفوفة فيها الاتنين.`,
-            R`**والأهم:** الأصلية ما اتغيّرتش. لو حد بدّل [[toggleFav]] بـ [[push]]، السطر ده بيقع، وده بالظبط الباج اللي كان هيوقّف الحفظ في الـ store.`,
-            R`قفلة الاختبار.`,
-            R`اختبار [[debounce]] من غير ما نستنى ربع ثانية بجد.`,
-            R`[[vi.useFakeTimers()]] بتبدّل [[setTimeout]] و [[clearTimeout]] بنسخة مزيّفة الوقت فيها مبيمشيش غير لما انت تقول. فالاختبار بيخلص في ٣ ميلي ثانية.`,
-            R`[[vi.fn()]] دالة مزيّفة (spy) بتسجّل كل نداء وال parameters بتاعته، عشان نسأل بعدين «اتنادت كام مرة وبإيه».`,
-            R`نلف الـ spy بـ [[debounce]] بمدة ٢٥٠ms، زي البحث في التطبيق بالظبط.`,
-            R`ننادي تلات مرات ورا بعض، زي حد بيكتب «فول» حرف حرف.`,
-            R`نقدّم الوقت المزيّف ٢٤٩ms، يعني قبل المدة بميلي ثانية.`,
-            R`لسه محدش اتنادى: [[not.toHaveBeenCalled]]. لو [[debounce]] بايظة وبتنادي مع كل حرف، السطر ده بيقع.`,
-            R`ميلي ثانية كمان، فالمدة خلصت من آخر نداء.`,
-            R`اتنادت **مرة واحدة بالظبط** و **بآخر قيمة**. [[toHaveBeenCalledExactlyOnceWith]] بتشيّك الاتنين في سطر واحد.`,
-            R`نرجّع التايمرز الحقيقية، وإلا أي اختبار بعده في نفس الملف بيستخدم [[setTimeout]] هيفضل مستني للأبد.`,
-            R`قفلة الاختبار.`,
-          ],
-          try: R`شغّل [[npx vitest]] من غير [[run]] (هيفضل يراقب الملفات)، وافتح [[src/logic.js]] وغيّر [[minutes < 1]] لـ [[minutes < 0]] واحفظ. الاختبار [[بيرفض الوقت "0"]] لازم يقع لوحده في ثانية، ورسالته فيها [[ok: true]]. رجّعها واحفظ: كله أخضر. وبعدين اكتب في أي ملف في [[src]] سطر [[el.innerHTML = location.hash]] وشغّل [[npm run lint]].`,
-          practice: [
-            { lvl: 'سريع', t: R`**اكتب اختبار:** [[allTags]] في [[logic.js]] بترجّع التصنيفات من غير تكرار ومترتبة بـ [[localeCompare(b, 'ar')]]. اكتب اختبار بمدخلات فيها تصنيف متكرر في وصفتين، ووصفة من غير تصنيفات، وتصنيف إنجليزي جنب العربي، ولستة فاضية.`, done: R`الاختبار بيعدّي، والناتج للست وصفات اللي في [[data/recipes.json]] هو [[حلو]] و [[فطار]] و [[مصري]] و [[نباتي]] بالترتيب ده، واللستة الفاضية بترجّع مصفوفة فاضية مش error. ولما تشيل [[new Set]] بقصد، الاختبار بيقع ورسالته بتوري التصنيف المتكرر.`, sol: R`**الحل:** [[allTags]] نفسها في [[src/logic.js]] سطر واحد:
-
-~~~js src/logic.js
-export const allTags = (list) => [...new Set(list.flatMap((r) => r.tags))].sort((a, b) => a.localeCompare(b, 'ar'));
-~~~
-
-[[flatMap]] بتجمع تصنيفات كل الوصفات في مصفوفة واحدة (والوصفة اللي من غير تصنيفات بتدّي [[[]]] فمبتزوّدش حاجة)، و [[new Set]] بيشيل المتكرر، و [[...]] بيرجّعه مصفوفة، و [[localeCompare(b, 'ar')]] بيرتّب بقواعد العربي.
-
-~~~js tests/tags.test.js
-import { it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
-import { allTags } from '../src/logic.js';
-
-it('allTags: من غير تكرار، ومترتبة، والفاضي مبيبوّظش', () => {
-  const list = [
-    { tags: ['مصري', 'فطار'] }, { tags: ['فطار'] }, { tags: [] }, { tags: ['vegan', 'حلو'] },
-  ];
-  expect(allTags(list)).toEqual(['حلو', 'فطار', 'مصري', 'vegan']);
-});
-
-it('allTags على لستة فاضية', () => {
-  expect(allTags([])).toEqual([]);
-});
-
-it('allTags على الداتا الحقيقية', () => {
-  const data = JSON.parse(readFileSync('data/recipes.json', 'utf8'));
-  expect(allTags(data)).toEqual(['حلو', 'فطار', 'مصري', 'نباتي']);
-});
-~~~
-
-~~~text الناتج: npx vitest run tests/tags.test.js (Vitest 5.1.1)
-      Tests  3 passed (3)
-~~~
-
-**بوّظه بقصد:** شيل [[new Set]] من السطر:
-
-~~~text الناتج: بعد ما شلت new Set
- FAIL  tests/tags.test.js > allTags: من غير تكرار، ومترتبة، والفاضي مبيبوّظش
-AssertionError: expected [ 'حلو', 'فطار', 'فطار', 'مصري', …(1) ] to deeply equal [ 'حلو', 'فطار', 'مصري', 'vegan' ]
-
-- Expected
-+ Received
-
-  [
-    "حلو",
-    "فطار",
-+   "فطار",
-    "مصري",
-    "vegan",
-  ]
-~~~
-
-الـ [[+]] بيشاور على «فطار» التانية بالظبط: دي المتكررة. رجّع [[new Set]] وكله أخضر.
-
-**ليه الإنجليزي آخر؟** في ترتيب [[ar]] الحروف العربي بتيجي قبل اللاتيني. اتجرّب في Node: [[['vegan', 'حلو', 'Zaatar', 'فطار'].sort((a, b) => a.localeCompare(b, 'ar'))]] طلّع [[[ 'حلو', 'فطار', 'vegan', 'Zaatar' ]]]. ومن غير [[localeCompare]] ([[sort()]] لوحدها) الترتيب بيبقى برقم الحرف في Unicode، وده بيصادف إنه صح في الحروف دي، بس بيغلط مع الحروف الكبيرة والصغيرة والتشكيل.
-
-**الغلطة الشائعة:** تكتب الاختبار على الداتا الحقيقية بس. لو حد ضاف وصفة للملف بكرة، الاختبار هيقع من غير ما الدالة تتغيّر. عشان كده الاختبار الأول بيبني لستته بإيده، والتالت بس هو اللي على الملف.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ (من الاختبار):** شيل سطر [[if (!moved && s.route.name === 'new') return;]] من [[paint]] وشغّل [[npx vitest run tests/app.dom.test.js]]. اقرا رسالة الاختبار اللي وقع، واشرح في ٣ سطور إيه اللي حصل لليوزر، وبعدين رجّعه.`, done: R`الاختبار [[الداتا وصلت وانت بتكتب في الفورم: اللي كتبته ميضيعش]] وقع وقال المتوقع [[طعمية]] واللي جه فاضي، ومعاه اختبار «الفورم الغلط» (المتوقع [[H1]] واللي جه [[BODY]])، والتمانية التانيين عدّوا. وشرحك فيه إن وصول الداتا عمل [[set]] فـ [[paint]] رسم فورم جديد فاضي، وإن ده بيحصل بس على النت البطيء فكان صعب يتلاحظ بالإيد. وبعد ما رجّعته الـ ١٠ عدّوا.`, sol: R`**اللي حصل لما شلت السطر:**
-
-~~~bash
-npx vitest run tests/app.dom.test.js
-~~~
-
-~~~text الناتج: Vitest 5.1.1 + jsdom 31 من غير سطر الحماية
- ❯ tests/app.dom.test.js (10 tests | 2 failed) 647ms
-   × الفورم الغلط: الرسايل جنب الخانات والفوكس على أول غلط 11ms
-   × الداتا وصلت وانت بتكتب في الفورم: اللي كتبته ميضيعش 61ms
-
- FAIL  tests/app.dom.test.js > الفورم الغلط: الرسايل جنب الخانات والفوكس على أول غلط
-AssertionError: expected 'BODY' to be 'H1' // Object.is equality
- ❯ tests/app.dom.test.js:60:42
-
- FAIL  tests/app.dom.test.js > الداتا وصلت وانت بتكتب في الفورم: اللي كتبته ميضيعش
-AssertionError: expected '' to be 'طعمية' // Object.is equality
-
-- Expected
-+ Received
-
-- طعمية
- ❯ tests/app.dom.test.js:125:29
-~~~
-
-وقع **اختبارين** مش واحد، والتمانية التانيين عدّوا.
-
-**الشرح في ٣ سطور (المطلوب):**
-
-1. وصول الداتا بينادي [[store.loaded()]]، و [[set]] بتبلّغ [[paint]]، وانت لسه على [[#/new]].
-2. من غير السطر ده، [[paint]] بترسم الشاشة من جديد، يعني فورم **جديد فاضي** مكان اللي كنت بتكتب فيه، والفوكس بيقع على [[<body>]] لأن العنصر اللي كان ماسكه اتشال.
-3. على جهازك الملف بيتحمّل في ميلي ثواني قبل ما تلحق تكتب حرف، فمش هتشوفها أبدًا بإيدك. على نت بطيء اليوزر بيكتب، والداتا توصل، واللي كتبه يختفي.
-
-**وليه وقع اختبار الفوكس كمان؟** هو بيفتح [[#/new]] ويستنى التحميل يخلص ([[aria-busy="false"]]) وبعدين يسأل الفوكس فين. الرسمة التانية (بعد الداتا) شالت الـ [[<h1>]] اللي كان ماسك الفوكس وحطت واحد جديد، و [[moved]] بـ [[false]] فمحدش رجّع الفوكس. يعني نفس الباج من ناحية تانية: اللي بيستخدم الكيبورد كان هيلاقي نفسه في أول الصفحة.
-
-**رجّعته:**
-
-~~~js src/app.js (جوه paint)
-  if (!moved && s.route.name === 'new') return;
-~~~
-
-~~~text الناتج: npx vitest run tests/app.dom.test.js
-      Tests  10 passed (10)
-~~~
-
-**الغلطة الشائعة:** تصلّح بإنك تحفظ قيم الفورم وترجّعها بعد كل رسمة. هتشتغل للنصوص، بس هتضيّع مكان المؤشر والـ undo بتاع الخانة ورسايل الغلط. الأبسط: الشاشة اللي بتمسك حالتها بنفسها (الفورم) متترسمش تاني طول ما انت فيها.` },
-            { lvl: 'تحدي', t: R`**انشره بجد واعمل README:** اعمل repo عام على GitHub، وارفع المشروع، وفعّل Pages بالطريقة التانية (GitHub Actions)، وافتح الرابط من الموبايل. وبعدين اكتب [[README.md]] فيه: جملة التطبيق بيعمل إيه، والرابط، وصورة من الموبايل، وإزاي تشغّله ([[npm install]] و [[npm run check]] وسيرفر)، وقرارات التصميم (ليه hash، وليه مفيش innerHTML، وفين الحالة)، و «اللي اتعلمته».`, done: R`الرابط [[https://USER.github.io/recipe-book/]] بيفتح من الموبايل، و [[#/fav]] و [[#/r/foul]] بيفتحوا مباشرة من رابط في تبويب جديد، و push فيه اختبار واقع بقصد بيخلّي الـ job بتاع [[test]] أحمر والـ [[deploy]] مبيشتغلش والموقع فاضل على النسخة القديمة. و Lighthouse على الرابط الحقيقي: Accessibility ٩٥ أو أكتر، والـ README فيه الست حاجات.`, sol: R`~~~view 560 دفتر الوصفات: التطبيق اللي بيتنشر
+~~~html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>دفتر الوصفات</title>
-  <link rel="icon" href="data:,">
+  <title>دوّر على method</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>دوّر على method في JavaScript</h1>
+    <label for="q">اسم الـ method</label>
+    <input id="q" dir="ltr" autocomplete="off" spellcheck="false"
+           role="combobox" aria-controls="results" aria-expanded="false" aria-autocomplete="list">
+    <p id="status" role="status"></p>
+    <ul id="results" role="listbox" dir="ltr"></ul>
+    <p>اخترت: <output id="picked">—</output></p>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
+~~~
+
+- **[[dir="ltr"]] على الخانة والليستة بس**: الصفحة عربي، بس أسامي الـ methods إنجليزي. من غيره [[toString]] بيتكتب من اليمين والمؤشر بيتلخبط.
+- **[[role="combobox"]] و [[role="listbox"]]**: قارئ الشاشة بيفهم إن دي خانة بحث ليها اقتراحات. و [[aria-expanded]] بتتغيّر من الكود لما فيه نتايج.
+- **[[autocomplete="off"]]**: من غيره المتصفح بيفتح اقتراحاته هو فوق اقتراحاتنا.
+
+~~~css style.css
+body { font-family: system-ui, sans-serif; max-width: 34rem; margin: 2rem auto; padding: 0 1rem; }
+input { width: 100%; font-size: 1.1rem; padding: .5rem; box-sizing: border-box; }
+#results { list-style: none; padding: 0; margin: 0; max-height: 18rem; overflow: auto; }
+#results li { padding: .35rem .5rem; cursor: pointer; }
+#results li[aria-selected="true"] { background: #1a73e8; color: #fff; }
+#results[aria-busy="true"] { opacity: .5; }
+small { opacity: .7; margin-inline-start: .5rem; }
+[data-phase="error"] { color: #b00020; }
+~~~
+
+الـ CSS بيقرا حالة الصفحة من الـ attributes ([[aria-selected]] و [[aria-busy]] و [[data-phase]])، فالكود مش محتاج يضيف ويشيل classes.
+
+---
+
+## ٤. debounce بإيدك
+
+~~~js debounce.js
+export function debounce(fn, ms) {
+  let timer;
+  const wrapped = (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), ms);
+  };
+  wrapped.cancel = () => clearTimeout(timer);
+  return wrapped;
+}
+~~~
+
+- **[[let timer]]** متعرّف جوه [[debounce]] وبيستخدمه [[wrapped]]: ده **closure** (درس «closure»). كل نسخة من [[debounce]] ليها [[timer]] بتاعها لوحدها.
+- **[[clearTimeout(timer)]]** بيلغي النداء اللي كان مستني. ده السطر اللي بيعمل الفكرة كلها: كل حرف جديد بيلغي اللي قبله.
+- **[[setTimeout(() => fn(...args), ms)]]** بيستنى من الأول. و [[...args]] بيعدّي آخر قيمة بس، لأن اللي قبلها اتلغوا.
+- **[[wrapped.cancel]]**: الدوال في JavaScript objects، فنقدر نحط عليها خاصية. هنستخدمها في Escape.
+
+### شوفه بيشتغل
+
+~~~js try-debounce.mjs
+import { debounce } from './debounce.js';
+const t0 = performance.now();
+const ms = () => String(Math.round(performance.now() - t0)).padStart(5) + 'ms';
+const search = debounce((q) => console.log(ms(), 'search:', q), 300);
+let text = '';
+for (const ch of 'startsWith') {
+  text += ch;
+  console.log(ms(), 'key  :', text);
+  search(text);
+  await new Promise(r => setTimeout(r, 120));
+}
+~~~
+
+~~~text اتشغّل فعلًا · node try-debounce.mjs
+    0ms key  : s
+  123ms key  : st
+  248ms key  : sta
+  ...
+  998ms key  : startsWit
+ 1123ms key  : startsWith
+ 1435ms search: startsWith
+~~~
+
+١٠ نداءات، و [[search]] اتنادت **مرة واحدة** بعد آخر حرف بـ ٣١٢ms (٣٠٠ + الوقت اللي الـ timer بياخده). وقبل كده ولا مرة، لأن كل حرف جه قبل ما الـ ٣٠٠ تخلص.
+
+**ليه مش throttle؟** الـ throttle بينفّذ مرة كل X ms **وانت بتكتب**، فالكلمة دي (١٠ حروف في ١.١ ثانية) كانت هتبعت حوالي ٤ طلبات (بالحساب، مش متقاس). ده كويس للـ scroll. للبحث احنا عايزين **آخر** كلمة بس، فـ debounce. (المقارنة في «debounce و throttle».)
+
+---
+
+## ٥. الحالة والرسم
+
+~~~js app.js — أوله
+import { debounce } from './debounce.js';
+
+const input = document.querySelector('#q');
+const list = document.querySelector('#results');
+const status = document.querySelector('#status');
+const picked = document.querySelector('#picked');
+
+const opts = new URLSearchParams(location.search);
+const WAIT = opts.has('nodebounce') ? 0 : 300;
+const ABORT = !opts.has('noabort');
+
+const ui = { phase: 'idle', q: '', data: [], error: '', active: -1, busy: false };
+const cache = new Map();
+const CACHE_MAX = 50;
+const stats = { sent: 0, aborted: 0, fromCache: 0 };
+window.searchStats = stats;
+let controller = null;
+
+function set(patch) {
+  Object.assign(ui, patch);
+  render();
+}
+~~~
+
+- **[[?nodebounce]] و [[?noabort]]**: مفاتيح للتجربة بس. افتح [[http://localhost:8000/?nodebounce]] وقارن بنفسك. (في الملف الكامل [[search]] فيها [[if (ABORT)]] قبل الإلغاء، و [[stats.sent++]] و [[stats.aborted++]] و [[stats.fromCache++]]. شلتهم من المثال عشان يبقى أوضح.)
+- **[[window.searchStats]]**: اكتبها في الـ Console وانت بتجرّب، هتلاقي العدادات.
+- **[[ui]]** هي الحالة كلها في object واحد، و **[[set]]** الطريق الوحيد لتغييرها (بيدمج اللي اتبعت وبيرسم). نفس فكرة «الـ DOM مش مكان الحالة».
+
+### الحالات الخمسة
+
+| [[phase]] | إمتى | الرسالة |
+|---|---|---|
+| [[idle]] | الخانة فاضية، أو بعد Escape أو الاختيار | مفيش |
+| [[short]] | حرف واحد | اكتب حرفين على الأقل |
+| [[loading]] | طلب لسه شغّال | بيدوّر على «…» والنتايج القديمة باهتة |
+| [[ok]] | فيه نتايج | ١٩ نتيجة لـ «to» |
+| [[empty]] | الرد مصفوفة فاضية | مفيش نتايج لـ «zzzz» |
+| [[error]] | الشبكة أو السيرفر | حصلت مشكلة: … اكتب تاني عشان تعيد المحاولة |
+
+**ليه الرسالة فيها الكلمة؟** أول نسخة كانت بتقول «1 نتيجة» بس. ولما جرّبت من غير إلغاء، الشاشة كانت بتعرض نتايج [[startswit]] والخانة فيها [[startsWith]]، **والاتنين ليهم نفس النتيجة**، فالغلط مكانش باين. لما الرسالة بقت «1 نتيجة لـ «startswit»» الباج ظهر.
+
+~~~js
+function highlight(text, q) {
+  const at = text.toLowerCase().indexOf(q);
+  if (!q || at < 0) return [text];
+  const mark = document.createElement('mark');
+  mark.textContent = text.slice(at, at + q.length);
+  return [text.slice(0, at), mark, text.slice(at + q.length)];
+}
+
+function option(d, i) {
+  const li = document.createElement('li');
+  li.id = 'opt-' + i;
+  li.setAttribute('role', 'option');
+  li.setAttribute('aria-selected', String(i === ui.active));
+  const owner = document.createElement('small');
+  owner.textContent = d.owner;
+  li.append(...highlight(d.name, ui.q), owner);
+  return li;
+}
+~~~
+
+**تعليم الحروف من غير [[innerHTML]]:** الطريقة المشهورة [[name.replace(q, '<mark>' + q + '</mark>')]] مع [[innerHTML]] هي بالظبط باب XSS (درس «innerHTML هي الباب»): الكلمة جاية من اليوزر. هنا [[highlight]] بترجّع **مصفوفة**: نص، وعنصر [[<mark>]] نصه بـ [[textContent]]، ونص. و [[append]] لما ياخد نص بيعمله text node، يعني حروف مش HTML.
+
+اتجرّب: كتبت [[<img src=x onerror=alert(1)>]] في الخانة: الرسالة «مفيش نتايج لـ «<img src=x onerror=alert(1)>»» و [[img count 0]].
+
+~~~js
+function render() {
+  const messages = {
+    idle: '',
+    short: 'اكتب حرفين على الأقل',
+    loading: 'بيدوّر على «' + ui.q + '»…',
+    ok: ui.data.length + ' نتيجة لـ «' + ui.q + '»',
+    empty: 'مفيش نتايج لـ «' + ui.q + '»',
+    error: 'حصلت مشكلة: ' + ui.error + '. اكتب تاني عشان تعيد المحاولة.',
+  };
+  status.textContent = messages[ui.phase];
+  status.dataset.phase = ui.phase;
+  list.replaceChildren(...ui.data.map(option));
+  list.setAttribute('aria-busy', String(ui.busy));
+  input.setAttribute('aria-expanded', String(ui.data.length > 0));
+  if (ui.active >= 0) {
+    input.setAttribute('aria-activedescendant', 'opt-' + ui.active);
+    document.getElementById('opt-' + ui.active).scrollIntoView({ block: 'nearest' });
+  } else input.removeAttribute('aria-activedescendant');
+}
+~~~
+
+- object الرسايل بيخلي كل حالة ليها رسالة في مكان واحد. حالة جديدة = سطر جديد.
+- [[aria-activedescendant]] بيقول لقارئ الشاشة «الاختيار دلوقتي العنصر ده» **والمؤشر لسه في الخانة**. فاليوزر يكمّل كتابة عادي.
+- [[scrollIntoView({ block: 'nearest' })]] بيحرّك الليستة بس لو الاختيار برّه الجزء الظاهر. (jsdom مفيهوش layout فالدالة دي مش موجودة فيه أصلًا، فحطيت بدالها دالة فاضية في التجربة.)
+
+---
+
+## ٦. البحث نفسه
+
+الكود في المثال. **الترتيب في [[search]] مهم:**
+
+~~~text
+١. وحّد الكلمة          trim + toLowerCase
+٢. الغي الطلب القديم     قبل أي return
+٣. قصيرة؟                 short / idle
+٤. في الكاش؟              اعرض على طول، من غير طلب
+٥. طلب جديد               controller جديد + loading
+٦. الرد                   ok / empty + احفظ في الكاش
+٧. الخطأ                  AbortError = سكوت، غيره = error
+~~~
+
+**ليه الإلغاء قبل الكاش؟** لو كتبت [[startsWith]] (طلب شغّال) ومسحت ورجعت لـ [[map]] (في الكاش)، الكاش هيعرض [[map]] على طول. ولو مالغيتش، رد [[startsWith]] يوصل بعدها بـ ٢٠٠ms ويكتب فوق [[map]]. ده اتشاف وانا بحرّك سطر الإلغاء تحت.
+
+---
+
+## ٧. القياس: طلب واحد مش عشرة
+
+التجربة: صفحة jsdom بنفس [[app.js]] و [[index.html]]، و [[fetch]] حقيقي لسيرفر حقيقي على البورت 8123، وبنكتب [[startsWith]] حرف حرف بـ [[input.value += ch]] و [[dispatchEvent(new Event('input'))]]، وبنعدّ السطور اللي السيرفر طبعها.
+
+~~~text اتشغّل فعلًا · node test.mjs
+-- debounce 300ms, حرف كل 120ms   (١٠ حروف في 1243ms)
+   stats {"sent":1,"aborted":0,"fromCache":0}
+   السيرفر: #1 q=startswith
+
+-- debounce 300ms, حرف كل 200ms
+   stats {"sent":1,"aborted":0,"fromCache":0}
+   السيرفر: #2 q=startswith
+
+-- debounce 300ms, حرف كل 350ms   (كتابة بطيئة)
+   stats {"sent":9,"aborted":5,"fromCache":0}
+   السيرفر: #3 q=st  #4 q=sta  #5 q=star  #5 اتلغى من المتصفح  #6 q=start  #6 اتلغى ... #11 q=startswith
+
+-- ?nodebounce, حرف كل 120ms
+   stats {"sent":9,"aborted":8,"fromCache":0}
+   السيرفر: #12 q=st  #12 اتلغى من المتصفح  #13 q=sta  #13 اتلغى ... #20 q=startswith
+~~~
+
+| الموقف | طلبات | اتلغت | ليه |
+|---|---|---|---|
+| debounce، كتابة سريعة | **١** | ٠ | ولا فرق بين حرفين وصل ٣٠٠ms |
+| debounce، حرف كل ٣٥٠ms | ٩ | ٥ | كل فرق أكبر من ٣٠٠، فكل حرف بقى «آخر حرف». والسيرفر بيتأخر لحد ٦٠٠، فطلبات كتير لسه شغالة لما اللي بعدها اتبعت |
+| من غير debounce | ٩ | ٨ | حرف = طلب (إلا الحرف الأول). والإلغاء أنقذ الشاشة، بس السيرفر استلم ٩ |
+
+**يعني الـ debounce مش رقم سحري:** هو بيراهن إن الفرق بين حرفين أقل من ٣٠٠ms. اللي بيكتب ببطء بيبعت طلب مع كل حرف، وده **مقبول**: هو كده كده مستني.
+
+---
+
+## ٨. ليه الإلغاء لازم حتى مع الـ debounce
+
+~~~text اتشغّل فعلًا · ?nodebounce&noabort ، ٢٠ مرة
+-- 5/20 runs ended showing results of an older query
+   { '1 نتيجة لـ «startswith»': 15, '1 نتيجة لـ «startswit»': 5 }
+~~~
+
+واتعادت ٣ مرات: **٣ و ٤ و ٥ من ٢٠**. الطلبات اتبعتت بالترتيب، بس السيرفر بيتأخر عشوائي، فرد [[startswit]] وصل **بعد** رد [[startswith]] وكتب فوقه.
+
+~~~text
+الوقت ──────────────────────────────────────────────▶
+طلب startswit   ├──────────────────── 560ms ─────────┤ ← وصل الأخير، فكسب
+طلب startswith         ├──── 230ms ────┤
+~~~
+
+والـ debounce لوحده مش بيقفل الباب ده: اكتب كلمة، واستنى ٣٥٠ms، وكمّل حرف. دلوقتي فيه طلبين شغالين. **الـ debounce بيقلّل الطلبات، والإلغاء بيضمن الترتيب.** محتاج الاتنين.
+
+---
+
+## ٩. الكاش
+
+~~~text اتشغّل فعلًا
+-- map:                {"status":"2 نتيجة لـ «map»","results":["flatMap","map"]}   sent:1 fromCache:0
+-- فضّيت الخانة:        {"status":"","results":[]}
+-- حرف واحد «m»:        {"status":"اكتب حرفين على الأقل","results":[]}
+-- map تاني:            {"status":"2 نتيجة لـ «map»", ...}   sent:1 fromCache:1   السيرفر: سطر واحد بس
+-- zzzz:                {"status":"مفيش نتايج لـ «zzzz»","results":[]}
+~~~
+
+**والمشكلة اللي الكاش بيعملها:** لو الداتا على السيرفر بتتغيّر (منتجات بتتضاف)، الكاش بيعرض نتيجة قديمة لحد ما تعمل reload. هنا الداتا ثابتة فمفيش مشكلة. في تطبيق بجد حط وقت لكل نتيجة ([[{ data, at: Date.now() }]]) وارمي اللي عدّى عليه دقيقة.
+
+---
+
+## ١٠. الكيبورد
+
+~~~js
+input.addEventListener('keydown', (e) => {
+  const n = ui.data.length;
+  if (e.key === 'ArrowDown' && n) {
+    e.preventDefault();
+    set({ active: (ui.active + 1) % n });
+  } else if (e.key === 'ArrowUp' && n) {
+    e.preventDefault();
+    set({ active: ui.active <= 0 ? n - 1 : ui.active - 1 });
+  } else if (e.key === 'Enter' && ui.active >= 0) {
+    e.preventDefault();
+    choose(ui.active);
+  } else if (e.key === 'Escape') {
+    debouncedSearch.cancel();
+    controller?.abort();
+    set({ phase: 'idle', data: [], active: -1, busy: false });
+  }
+});
+
+list.addEventListener('mousedown', (e) => {
+  const li = e.target.closest('li');
+  if (li) choose(Number(li.id.slice(4)));
+});
+~~~
+
+| الحتة | ليه |
+|---|---|
+| [[preventDefault()]] على الأسهم | من غيره السهم بيحرّك المؤشر لأول أو آخر الكلمة جوه الخانة |
+| [[(ui.active + 1) % n]] | بعد آخر واحد يرجع للأول. الـ [[%]] باقي القسمة |
+| [[ui.active <= 0 ? n - 1 : ...]] | السهم لفوق من «مفيش اختيار» أو من الأول يروح للآخر |
+| Escape | بيلغي الـ timer **والطلب**، وإلا النتايج هترجع تظهر بعد ٣٠٠ms من غير ما حد طلبها |
+| [[mousedown]] مش [[click]] | الـ [[click]] بيحصل بعد [[blur]] الخانة. لو فيه كود بيقفل الليستة عند الـ blur، الليستة هتختفي قبل ما الـ click يوصل |
+
+**باج اتمسك:** أول نسخة كانت [[(ui.active - 1 + n) % n]] للسهم لفوق، زي السهم لتحت. شكلها صح، بس من «مفيش اختيار» ([[-1]]) بتدّي [[n - 2]]: يعني قبل الأخير. اتجرّب بـ ١٩ نتيجة: راحت [[opt-17]]. والنسخة الحالية راحت [[opt-18]].
+
+~~~text اتشغّل فعلًا
+-- to: 19 نتيجة لـ «to»   toReversed,toSorted,toSpliced,toLocaleString,toString,...
+   ArrowUp من غير اختيار  -> opt-18
+   ArrowDown              -> opt-0  toReversed
+   Enter                  -> اخترت: Array.prototype.toReversed   الخانة: toReversed   الليستة: 0
+~~~
+
+---
+
+## ١١. الأخطاء
+
+~~~text اتشغّل فعلًا
+-- كتبت 500:              حصلت مشكلة: السيرفر رد بـ 500. اكتب تاني عشان تعيد المحاولة.   phase=error
+-- قفلت السيرفر وكتبت:    حصلت مشكلة: fetch failed. اكتب تاني عشان تعيد المحاولة.
+~~~
+
+[[fetch failed]] هو نص Node. في Chrome نفس الموقف بيطلع [[TypeError: Failed to fetch]] (من وثائق MDN، مش متجرّب هنا). وفي الحالتين النوع [[TypeError]]، فمتعتمدش على النص لو عايز تفرّق، اعتمد على [[e.name]].
+
+---
+
+## ١٢. اتشغّل على إيه
+
+| إيه | على إيه |
+|---|---|
+| [[server.js]] | Node 24.22، و [[curl]] |
+| [[app.js]] كله | jsdom 30.1.3 + [[fetch]] بتاع Node لسيرفر حقيقي على 8123 |
+| [[debounce.js]] | Node لوحده، وبـ [[node --test]] و [[mock.timers]] (التمرين التالت) |
+| أرقام الطلبات | من لوج السيرفر نفسه، مش من الكود اللي بيعدّ |
+
+## ملخص الخطوات
+
+| # | الخطوة | بتمنع إيه |
+|---|---|---|
+| ١ | سيرفر بتأخير عشوائي ولوج | الباج مستخبي لأن الـ localhost سريع |
+| ٢ | [[debounce]] بـ closure و [[clearTimeout]] | طلب مع كل حرف |
+| ٣ | [[AbortController]] قبل أي [[return]] | رد قديم يكتب فوق الجديد |
+| ٤ | [[AbortError]] = سكوت | رسايل خطأ بتنطّ مع الكتابة |
+| ٥ | [[Map]] كـ LRU | طلب مكرر لنفس الكلمة، وذاكرة بتكبر |
+| ٦ | [[highlight]] بـ [[textContent]] | XSS من خانة البحث |
+| ٧ | الأسهم و [[aria-activedescendant]] | بحث مش بيتستخدم من غير ماوس |
+
+## الخلاصة
+
+- الـ debounce **بيقلّل** الطلبات، والإلغاء **بيضمن** إن آخر كلمة هي اللي على الشاشة. الاتنين مع بعض.
+- الإلغاء مش خطأ: اتعامل مع [[AbortError]] بسكوت.
+- اكتب الكلمة في رسالة الحالة: الباجات اللي النتيجة فيها شبه بعض بتبان.
+- قيس من السيرفر، مش من الكود اللي انت كاتبه.`,
+          try: R`ابني الستة ملفات وشغّل [[node server.js]]. افتح [[http://localhost:8000]] و DevTools على تاب Network، واكتب [[startsWith]] بسرعة: عدّ الطلبات في Network وفي الترمنال. وبعدين افتح [[http://localhost:8000/?nodebounce]] واكتبها تاني. وجرّب: [[500]]، و [[zzzz]]، والأسهم و Enter، و Escape وانت بتكتب. وآخر حاجة: اكتب [[map]]، وامسح، واكتب [[map]] تاني، وبص في Console على [[searchStats]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**قارن وقيس:** في Chrome افتح DevTools، و Network، واختار «Slow 4G» من قايمة الـ throttling. اكتب [[includes]] بسرعة ٣ مرات: مرة عادي، ومرة بـ [[?nodebounce]]، ومرة بـ [[?nodebounce&noabort]]. سجّل لكل مرة: عدد الطلبات، وكام واحد مكتوب جنبه [[(canceled)]]، والنتيجة النهائية بتاعة أنهي كلمة.`, done: R`عندك جدول فيه ٣ صفوف بالأرقام اللي شفتها. العادي فيه طلب واحد، و [[?nodebounce]] فيه طلب لكل حرف من التاني وكلهم [[(canceled)]] إلا الأخير، و [[?nodebounce&noabort]] مفيش ولا [[(canceled)]]. وتقدر تشرح الفرق في جملة لكل صف.`, sol: R`**الجدول اللي طلع** (Chrome 158، و [[server.js]] على 8882، و [[includes]] حرف كل ١٢٠ms، والشبكة متبطّأة، ٢١ نوفمبر ٢٠٢٦):
+
+| الصفحة | الطلبات | [[(canceled)]] | النتيجة النهائية |
+|---|---|---|---|
+| عادي | ١ ([[includes]]) | ٠ | «2 نتيجة لـ «includes»» |
+| [[?nodebounce]] | ٧ ([[in]] لحد [[includes]]) | ٦ (كلهم إلا [[includes]]) | «2 نتيجة لـ «includes»» |
+| [[?nodebounce&noabort]] | ٧ | ٠ | «2 نتيجة لـ «includes»» |
+
+**جملة لكل صف:**
+
+- **عادي:** ولا فرق بين حرفين وصل ٣٠٠ms، فالـ debounce بعت آخر كلمة بس.
+- **[[?nodebounce]]:** كل حرف من التاني طلب ([[i]] لوحدها أقل من حرفين فمبتتبعتش)، وكل طلب جديد بيلغي اللي قبله، فـ DevTools بيكتب [[(canceled)]] جنب الستة الأولانيين. السيرفر استلمهم برضه.
+- **[[?nodebounce&noabort]]:** نفس الـ ٧ طلبات ومحدش اتلغى، فكل الردود وصلت وكل واحد رسم فوق اللي قبله.
+
+**اتقاس إزاي:** بدل ما أعدّ بعيني في تاب Network، سكربت Playwright بيفتح Chrome، ويبطّأ الشبكة بنفس الأداة اللي DevTools بيستخدمها (CDP: [[Network.emulateNetworkConditions]])، ويعدّ الطلبات من حدث [[request]] والملغية من [[requestfailed]] (ده اللي DevTools بيكتب جنبه [[(canceled)]]):
+
+~~~js s1.cjs
+const { chromium } = require('playwright-core');
+(async () => {
+  const browser = await chromium.launch({ channel: 'chrome' });
+  const out = [];
+  for (const qs of ['', '?nodebounce', '?nodebounce&noabort']) {
+    const page = await browser.newPage();
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('Network.enable');
+    await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: 562.5, downloadThroughput: 180000, uploadThroughput: 84375 });
+    await page.goto('http://localhost:8882/' + qs);
+    const reqs = [], failed = [];
+    page.on('request', r => { if (r.url().includes('/api/search')) reqs.push(new URL(r.url()).searchParams.get('q')); });
+    page.on('requestfailed', r => { if (r.url().includes('/api/search')) failed.push(new URL(r.url()).searchParams.get('q')); });
+    await page.click('#q');
+    await page.keyboard.type('includes', { delay: 120 });
+    await page.waitForTimeout(5000);
+    out.push({ mode: qs || 'عادي', requests: reqs.length, sent: reqs.join(','), canceled: failed.length, canceledQ: failed.join(','), shown: await page.textContent('#status') });
+    await page.close();
+  }
+  console.log(JSON.stringify(out, null, 1));
+  await browser.close();
+})();
+~~~
+
+~~~bash
+npm i -D playwright-core      # من غير تنزيل متصفح: بيستخدم Chrome اللي على الجهاز
+node s1.cjs
+~~~
+
+(الأرقام [[latency: 562.5]] وسرعة ١٨٠ كيلوبايت/ث اختياري للتبطيء، وقايمة DevTools ممكن تكون أرقامها مختلفة شوية. اللي يهمنا العدد والترتيب.)
+
+## المفاجأة: التبطيء خبّى الباج
+
+الصف التالت المفروض يوري الشاشة بتعرض كلمة **قديمة** ساعات. فعدت [[?nodebounce&noabort]] ٢٠ مرة، مرة بالتبطيء ومرة من غيره (السيرفر نفسه بيتأخر عشوائي من ٢٠٠ لـ ٦٠٠ms في الحالتين):
+
+~~~text الناتج: ٢٠ مرة لكل واحد، واتعادوا مرتين
+بالتبطيء:     { '2 نتيجة لـ «includes»': 20 }
+بالتبطيء:     { '2 نتيجة لـ «includes»': 20 }
+من غير:       { '2 نتيجة لـ «includes»': 18, '2 نتيجة لـ «include»': 2 }
+من غير:       { '2 نتيجة لـ «includes»': 12, '2 نتيجة لـ «include»': 7, '2 نتيجة لـ «includ»': 1 }
+~~~
+
+**صفر من ٤٠ بالتبطيء، و ١٠ من ٤٠ من غيره.** التفسير الأقرب (من القياس، مش من وثائق Chrome): التبطيء بتاع المتصفح بيعدّي الردود في طابور على «خط» واحد بطيء، فبيوصلوا بنفس ترتيب الطلبات تقريبًا، والسباق مبيحصلش. في الحقيقة كل طلب بياخد طريق ووقت مختلف. **يعني تجربة الـ race condition بـ Slow 4G بس ممكن تقولك «مفيش مشكلة» والمشكلة موجودة.** عشان كده السيرفر في الدرس بيتأخر عشوائي بنفسه.
+
+**الغلطة الشائعة:** تعدّ الطلبات من لوج الكود بتاعك ([[searchStats]]) بس. الكود بيعدّ اللي **هو** بعته، و Network أو لوج السيرفر بيعدّوا اللي **وصل**. والـ [[(canceled)]] معناها المتصفح بطّل يستنى الرد، مش إن السيرفر ماشتغلش: لوج السيرفر بيكتب «اتلغى من المتصفح» بعد ما الطلب وصله.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** غيّر سطر السهم لفوق لـ [[set({ active: (ui.active - 1 + n) % n })]]، وشيل [[debouncedSearch.cancel()]] من Escape. لاقي الباجين بالتجربة في المتصفح (من غير ما تبص على الكود الأصلي)، واكتب لكل واحد خطوات تكرّره، وبعدين صلّحهم.`, done: R`كاتب خطوتين بيكرّروا كل باج: (١) اكتب [[to]] واستنى، ودوس سهم لفوق: الاختيار بيروح على قبل الأخير مش الأخير. (٢) اكتب [[fil]] ودوس Escape على طول: الليستة بترجع تظهر لوحدها بعد أقل من ثانية. وبعد التصليح الخطوتين بيدّوا الصح.`, sol: R`**الكود البايظ** (السطرين بس، والباقي زي [[app.js]] الكامل):
+
+~~~js app.js (البايظ)
+  } else if (e.key === 'ArrowUp' && n) {
+    e.preventDefault();
+    set({ active: (ui.active - 1 + n) % n });
+  } else if (e.key === 'Enter' && ui.active >= 0) {
+    e.preventDefault();
+    choose(ui.active);
+  } else if (e.key === 'Escape') {
+    controller?.abort();
+    set({ phase: 'idle', data: [], active: -1, busy: false });
+  }
+~~~
+
+**خطوات تكرار الباجات** (اتعملت في Chrome 158 بسكربت Playwright على نسخة بايظة على بورت 8883 والسليمة على 8882، ٢١ نوفمبر ٢٠٢٦):
+
+1. اكتب [[to]] واستنى النتايج (١٩ نتيجة)، من غير ما تدوس سهم لتحت، ودوس **سهم لفوق**: الاختيار المفروض يروح لآخر واحد ([[opt-18]]).
+2. فضّي الخانة، واكتب [[fil]] بسرعة ودوس **Escape** على طول قبل ما النتايج تيجي، واستنى ثانية ونص.
+
+~~~text الناتج
+بايظ  | to: 19 نتيجة، ArrowUp -> opt-17 | fil + Esc: بعدها على طول 0 عنصر، وبعد 1.5 ث 2 عنصر «2 نتيجة لـ «fil»»
+مصلّح | to: 19 نتيجة، ArrowUp -> opt-18 | fil + Esc: بعدها على طول 0 عنصر، وبعد 1.5 ث 0 عنصر «»
+~~~
+
+**باج ١: السهم لفوق.** [[(ui.active - 1 + n) % n]] صح لو فيه اختيار. بس من غير اختيار [[ui.active]] = [[-1]]: [[(-1 - 1 + 19) % 19]] = [[17]]، يعني **قبل** الأخير. الـ [[+ n]] معمولة عشان السالب، و [[-1]] نفسه سالب زيادة. التصليح:
+
+~~~js
+set({ active: ui.active <= 0 ? n - 1 : ui.active - 1 });
+~~~
+
+من [[-1]] أو من الأول ([[0]]) يروح للأخير، وغير كده واحد لفوق.
+
+**باج ٢: Escape والليستة اللي بترجع.** Escape لغى الطلب الشغّال ([[controller?.abort()]])، بس **الـ timer بتاع الـ debounce لسه مستني**: [[fil]] اتكتبت من أقل من ٣٠٠ms، فبعد Escape بشوية [[search('fil')]] اتنادت وعملت طلب جديد ورسمت النتايج. اليوزر قفل الليستة وهي رجعت لوحدها. التصليح سطر:
+
+~~~js
+  } else if (e.key === 'Escape') {
+    debouncedSearch.cancel();
+    controller?.abort();
+    set({ phase: 'idle', data: [], active: -1, busy: false });
+  }
+~~~
+
+[[cancel]] بيلغي الـ timer (المستقبل)، و [[abort]] بيلغي الطلب (الحاضر). محتاج الاتنين، زي ما [[choose]] بتعمل.
+
+**ليه الباجين دول بيعدّوا من التجربة العادية؟** الأول بيظهر بس لو السهم **لفوق** كان أول سهم، ومعظم الناس بتبدأ بلتحت. والتاني بيظهر بس لو Escape جه في أول ٣٠٠ms بعد آخر حرف. الاتنين محتاجين خطوات مكتوبة بالظبط عشان حد تاني يشوفهم.
+
+**الغلطة الشائعة:** تصلّح الباج التاني بإنك تخلي [[render]] متعرضش نتايج لو «Escape اتداس من شوية» (flag). ده بيعالج العَرَض: الطلب لسه بيتبعت والسيرفر لسه بيشتغل. الصح تمنع الطلب نفسه من الأول.`},
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** ملف [[debounce.test.mjs]] بـ [[node:test]] و [[mock.timers.enable({ apis: ['setTimeout'] })]]: نادي الـ debounce ١٠ مرات وبين كل مرة [[mock.timers.tick(100)]]، واتأكد إن الدالة اتنادت مرة واحدة بس بآخر قيمة. واختبار تاني لـ [[cancel]]. وبعدين اكسر [[debounce.js]] (شيل [[clearTimeout]]) وشوف الاختبار بيقع.`, done: R`[[node --test debounce.test.mjs]] بيطبع [[pass 2]] و [[fail 0]] في أقل من ١٠٠ms (من غير ما يستنى ٣ ثواني فعلًا). ولما شلت [[clearTimeout]] الاتنين وقعوا، والأول قال [[actual: 8]] و [[expected: 0]] (ده اللي طلع لما اتجرّب).`, sol: R`**الملف** (جنب [[debounce.js]] بتاع الدرس، ومن غير ولا باكدج):
+
+~~~js debounce.test.mjs
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { debounce } from './debounce.js';
+
+test('١٠ نداءات بينهم 100ms = نداء واحد بآخر قيمة', (t) => {
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  const fn = t.mock.fn();
+  const search = debounce(fn, 300);
+  for (let i = 1; i <= 10; i++) {
+    search('q' + i);
+    t.mock.timers.tick(100);
+  }
+  assert.equal(fn.mock.callCount(), 0);
+  t.mock.timers.tick(200);
+  assert.equal(fn.mock.callCount(), 1);
+  assert.deepEqual(fn.mock.calls[0].arguments, ['q10']);
+});
+
+test('cancel بيلغي النداء اللي مستني', (t) => {
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  const fn = t.mock.fn();
+  const search = debounce(fn, 300);
+  search('m');
+  t.mock.timers.tick(100);
+  search('ma');
+  t.mock.timers.tick(250);
+  search.cancel();
+  t.mock.timers.tick(1000);
+  assert.equal(fn.mock.callCount(), 0);
+});
+~~~
+
+~~~bash
+node --test debounce.test.mjs
+~~~
+
+~~~text الناتج (Node 24.22، ٢١ نوفمبر ٢٠٢٦)
+✔ ١٠ نداءات بينهم 100ms = نداء واحد بآخر قيمة (1.9582ms)
+✔ cancel بيلغي النداء اللي مستني (0.7574ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 74.4153
+~~~
+
+الاختبارين «استنوا» ١٠٠٠ و ١٣٥٠ ms، والملف كله خلص في ٧٤ms.
+
+**إزاي شغال:**
+
+- **[[t.mock.timers.enable({ apis: ['setTimeout'] })]]:** من هنا [[setTimeout]] (جوه [[debounce]] كمان) مبيشتغلش بالساعة. الـ timers بتستنى لحد ما انت تحرّك الوقت بإيدك. و [[t.mock]] بيرجّع كل حاجة لأصلها لوحده لما الاختبار يخلص.
+- **[[t.mock.timers.tick(100)]]:** «عدّى ١٠٠ms». أي timer ميعاده جه بيتنفّذ **دلوقتي**، بشكل متزامن.
+- **[[t.mock.fn()]]:** دالة بتسجّل نداءاتها: [[fn.mock.callCount()]] العدد، و [[fn.mock.calls[0].arguments]] الـ arguments بتاعة أول نداء.
+- **الـ loop:** ١٠ نداءات وبين كل نداء ١٠٠ms، يعني ولا مرة الـ ٣٠٠ خلصت، فـ [[callCount]] = [[0]] بعد الـ loop. بعد ١٠٠ كمان من آخر نداء (الـ loop عمل [[tick(100)]] بعده) + [[tick(200)]] = ٣٠٠، فالنداء الوحيد حصل بـ [[q10]].
+- **[[cancel]]:** نداءين ([[m]] ثم [[ma]]) وبعدين [[cancel]] قبل ما الـ ٣٠٠ تخلص، و [[tick(1000)]] يثبت إن مفيش حاجة اتنادت **ولا** حتى الأولاني.
+
+**اكسر [[debounce.js]]:** شلت [[clearTimeout(timer);]] من جوه [[wrapped]] بس (اللي في [[cancel]] فضل):
+
+~~~text الناتج
+✖ ١٠ نداءات بينهم 100ms = نداء واحد بآخر قيمة (1.9685ms)
+✖ cancel بيلغي النداء اللي مستني (0.9201ms)
+ℹ pass 0
+ℹ fail 2
+
+test at debounce.test.mjs:5:1
+  8 !== 0
+    actual: 8,
+    expected: 0,
+
+test at debounce.test.mjs:19:1
+  1 !== 0
+    actual: 1,
+    expected: 0,
+~~~
+
+**ليه [[8]]؟** من غير [[clearTimeout]] كل نداء بيسيب timer شغّال. بعد ١٠ نداءات × ١٠٠ms = ١٠٠٠ms، الـ timers بتاعة أول ٨ نداءات (اللي اتعملوا عند ٠ و ١٠٠ ... ٧٠٠) ميعادها (٣٠٠ لـ ١٠٠٠) جه، فـ [[fn]] اتنادت ٨ مرات بـ [[q1]] لحد [[q8]]. **و [[1]] في التاني:** [[cancel]] لغى آخر timer بس ([[ma]])، والـ timer بتاع [[m]] فضل وطلع.
+
+**الغلطة اللي وقعت فيها:** أول نسخة من اختبار [[cancel]] كان فيها نداء واحد بس قبل [[cancel]]. لما كسرت [[debounce.js]] الاختبار ده **عدّى**: مع نداء واحد مفيش timer قديم يتلغي أصلًا، فـ [[clearTimeout]] اللي في [[wrapped]] مبيفرقش. الاختبار ضعيف لو مبيقعش لما الكود يبوظ، فزوّدت النداء التاني.
+
+**الغلطة الشائعة:** تنسى [[enable]] وتكتب [[await new Promise(r => setTimeout(r, 1000))]] في الاختبار: هيشتغل، بس الملف هياخد ثواني، ولو الجهاز بطيء الـ timing هيتلخبط ويقع ساعات بس (flaky).` },
+          ],
+          ref: [
+            { t: "MDN: Element: input event", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/input_event" },
+            { t: "MDN: Window.setTimeout()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout" },
+            { t: "MDN: AbortController", url: "https://developer.mozilla.org/en-US/docs/Web/API/AbortController" },
+            { t: "MDN: URLSearchParams", url: "https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams" },
+            { t: "MDN: KeyboardEvent.key", url: "https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key" },
+            { t: "MDN: Element.scrollIntoView()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView" },
+            { t: "MDN: ARIA combobox role", url: "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/combobox_role" },
+          ],
+          pre: [
+            { to: "js/closure", why: R`الـ [[timer]] جوه [[debounce]] متغير closure، وكل نسخة ليها واحد` },
+            { to: "js/Map و Set", why: R`الكاش [[Map]] بترتيب الإضافة، وده اللي بيخلي LRU في ٣ سطور` },
+          ],
+          deep: {
+            why: R`لأن خانة البحث أصغر حتة في أي موقع، وفيها أكتر باجات async في الويب كله: طلبات كتير، وردود بترتيب عشوائي، وإلغاء، وكاش، وحالات تحميل وخطأ. ولو فهمتها هنا بإيدك، [[useDeferredValue]] في React و [[TanStack Query]] بيبقوا اختصارات لحاجة انت عارفها.`,
+            how: R`**الفكرة في ٣ طبقات، وكل طبقة بتحل مشكلة مختلفة:**
+
+1. **[[debounce]] بيقرر إمتى تسأل.** closure ماسك timer، وكل حرف بيلغيه ويبدأ من جديد. النتيجة: [[search]] بتتنادي بعد ٣٠٠ms من آخر حرف. اتقاس: ١٠ حروف = نداء واحد بعد 312ms من آخرهم.
+2. **[[AbortController]] بيقرر مين يكسب.** كل طلب ليه controller، وأول حاجة في [[search]] إنها تلغي اللي قبله. والطلب الملغي بيرمي [[AbortError]] في الـ [[await]] بتاعه، فمبيوصلش لـ [[set]] أبدًا. اتقاس: من غيره ٣–٥ من ٢٠ مرة الشاشة غلط.
+3. **الكاش بيقرر لو محتاج تسأل أصلًا.** [[Map]] بالكلمة، والأقدم بيتشال لما تعدّي ٥٠.
+
+**والحالة واحدة:** [[ui.phase]] فيها واحدة من ستة، و [[render]] بيرسم منها الرسالة والليستة والـ attributes. فمفيش موقف تبقى فيه الرسالة «بيدوّر» والليستة فيها نتايج خطأ.
+
+**وفي React نفس الكلام بالظبط:** [[useEffect]] بيعمل [[AbortController]] ويرجّع [[() => controller.abort()]] كـ cleanup، و [[setTimeout]] جوه نفس الـ effect هو الـ debounce. الشكل اتغيّر والتلات طبقات زي ما هم.`,
+            when: R`أي خانة بتكلّم سيرفر مع الكتابة: البحث، والـ autocomplete، و «الاسم ده متاح؟» في التسجيل، والفلاتر اللي بتحدّث النتايج. والإلغاء لوحده (من غير debounce) لأي طلب ممكن يتطلب تاني قبل ما يخلص: تغيير صفحة، أو تاب، أو فلتر.`,
+            mistakes: R`debounce من غير إلغاء (الترتيب لسه ممكن يتلخبط). إلغاء بعد [[return]] الكاش مش قبله. عرض [[AbortError]] كرسالة خطأ. [[keyup]] بدل [[input]] (مش بيمسك اللزق). عنوان باللزق ([['?q=' + q]]) بدل [[searchParams]]. [[innerHTML]] عشان تعلّم الحروف. كاش من غير حد. وتجربة على localhost من غير تأخير، فالباج ميبانش.`
+          },
+          sol: R`ده اللي طلع في التجربة الآلية بنفس الخطوات (jsdom + سيرفر حقيقي)، وفي المتصفح هتشوف نفس الأعداد في Network:`,
+          solCode: R`// startsWith بسرعة، عادي:
+//   الترمنال:  #1 q=startswith
+//   searchStats: {"sent":1,"aborted":0,"fromCache":0}
+//   الشاشة:   1 نتيجة لـ «startswith»   startsWith  String.prototype
+//
+// نفس الكلمة على /?nodebounce:
+//   الترمنال:  #2 q=st  #2 اتلغى من المتصفح  #3 q=sta  #3 اتلغى من المتصفح ... #10 q=startswith
+//   searchStats: {"sent":9,"aborted":8,"fromCache":0}
+//
+// 500   -> حصلت مشكلة: السيرفر رد بـ 500. اكتب تاني عشان تعيد المحاولة.
+// zzzz  -> مفيش نتايج لـ «zzzz»
+// to + ArrowDown + Enter -> اخترت: Array.prototype.toReversed
+// Escape وانت بتكتب -> الليستة فاضية، ومفيش طلب بيتبعت بعدها
+// map، امسح، map -> searchStats.fromCache زاد 1، والترمنال مطبعش سطر جديد`
+        },
+        {
+          cmd: "مشروع: لعبة كتابة",
+          title: "لعبة سرعة الكتابة",
+          learn: R`تبني لعبة سرعة كتابة: نص عشوائي، وكل حرف بيتلوّن وانت بتكتب، ووقت وسرعة ودقة حيين، وأحسن نتيجة بتتحفظ، والنص العربي والإنجليزي كل واحد في اتجاهه.`,
+          out: R`لعبة شغّالة في ٥ ملفات (١٨٠ سطر)، والوقت فيها مظبوط حتى لو الصفحة علّقت ثانية.`,
+          use: {
+            prog: R`أي حاجة فيها وقت حي (عدّاد، تايمر، رسم متحرك، لعبة) بتقع في نفس الفخ: إنك **تعدّ** الوقت بدل ما **تقيسه**. وأي حاجة فيها نص عربي بتقع في الاتجاه وتقطيع الحروف.`,
+            work: R`اختبارات الكتابة، ومؤقّت الامتحان أونلاين، ومؤقّت الطبخ، وشريط تقدّم الرفع: كلهم وقت حي على الشاشة. و «العدّاد بيقدّم/بيأخّر» شكوى حقيقية سببها [[setInterval]].`,
+            cs: R`الفرق بين clock time و counted ticks، و Unicode (code units و code points و graphemes)، والـ bidi algorithm اللي بيرتّب العربي والإنجليزي في سطر واحد.`,
+          },
+          desc: R`هنبني لعبة: النص بيظهر، وانت بتكتب في خانة تحته، وكل حرف بيبقى أخضر لو صح وأحمر لو غلط، والوقت والسرعة (WPM) والدقة بيتحدّثوا وانت بتكتب، ولما تخلص النتيجة بتتقارن بأحسن نتيجة ليك المحفوظة. وفيه نصوص عربي ونصوص إنجليزي، وكل واحد بيتعرض في اتجاهه.
+
+**الحاجات اللي اتعلمتها وانا ببنيها (كلها اتجرّبت):**
+
+• الوقت **بيتقاس** بـ [[performance.now()]] مش **بيتعدّ** بـ [[setInterval]]: لما الصفحة علّقت ٧٠٠ms، العدّاد قال 2100ms والوقت الحقيقي كان 3015ms.
+• [[requestAnimationFrame]] للرسم بس، والحساب من وقت البداية.
+• [[Array.from(text)]] مش [[text.split('')]]: [[split]] بيقسم الإيموجي نصّين.
+• Chrome 156 بيوصّل الحروف العربي حتى لو كل حرف في [[<span>]] لون مختلف، **بس** [[display: inline-block]] بيقطّعها.
+• أول نسخة من «اختار نص عشوائي غير اللي فات» عمرها ما كانت بتختار النص الأخير.
+
+| الملف | فيه إيه | السطور |
+|---|---|---|
+| [[texts.js]] | النصوص العربي والإنجليزي | ١٥ |
+| [[game.js]] | الحسابات من غير DOM: الاختيار والتلوين و WPM والدقة | ٢٩ |
+| [[index.html]] و [[style.css]] | الصفحة وألوان الحروف | ٣١ |
+| [[app.js]] | اللعبة: الحالة والوقت والأحداث والحفظ | ١٠٥ |`,
+          example: R`// game.js — حسابات اللعبة من غير DOM
+export function pick(count, last) {
+  if (count < 2) return 0;
+  if (last < 0 || last >= count) return Math.floor(Math.random() * count);
+  const i = Math.floor(Math.random() * (count - 1));
+  return i >= last ? i + 1 : i;
+}
+
+export function isArabic(text) {
+  return /\p{Script=Arabic}/u.test(text);
+}
+
+export function marks(target, typed) {
+  return target.map((ch, i) => {
+    if (i === typed.length) return 'cur';
+    if (i > typed.length) return '';
+    return typed[i] === ch ? 'ok' : 'bad';
+  });
+}
+
+export function stats({ target, typed, keystrokes, mistakes }, ms) {
+  let correct = 0;
+  for (let i = 0; i < typed.length; i++) if (typed[i] === target[i]) correct++;
+  const minutes = Math.max(ms, 1000) / 60000;
+  return {
+    wpm: Math.round(correct / 5 / minutes),
+    accuracy: keystrokes ? Math.round((keystrokes - mistakes) / keystrokes * 100) : 100,
+  };
+}
+
+// app.js — الوقت والكتابة
+function tick() {
+  showStats(performance.now() - game.start);
+  game.raf = requestAnimationFrame(tick);
+}
+
+input.addEventListener('input', () => {
+  if (game.done) return;
+  const typed = Array.from(input.value);
+  if (!game.start) {
+    game.start = performance.now();
+    game.raf = requestAnimationFrame(tick);
+  }
+  for (let i = game.typed.length; i < typed.length; i++) {
+    game.keystrokes++;
+    if (typed[i] !== game.target[i]) game.mistakes++;
+  }
+  game.typed = typed;
+  paint();
+  if (typed.length >= game.target.length) finish();
+});`,
+          lines: [
+            R`[[pick]] بتختار رقم نص عشوائي **غير** النص اللي لسه لاعبه ([[last]])، عشان Esc ميجيبش نفس النص تاني. [[count]] عدد النصوص.`,
+            R`لو فيه نص واحد بس، مفيش اختيار: رجّع [[0]]. من غير السطر ده [[pick(1, 0)]] كانت بترجّع [[1]]، يعني نص **مش موجود** (اتجرّب).`,
+            R`أول لعبة ([[last]] بـ [[-1]]) أو [[last]] غلط: أي نص من الكل. [[Math.random()]] بيدّي رقم من ٠ لأقل من ١، و [[* count]] و [[Math.floor]] بيحوّلوه لـ [[0]] أو [[1]] أو ... [[count - 1]].`,
+            R`**الحيلة:** اختار من [[count - 1]] بس (يعني من غير خانة واحدة)، وبعدين «فوّت» اللي فات. لو عندك ٤ نصوص وآخرهم [[2]]، بنختار من [[0]] و [[1]] و [[2]]...`,
+            R`... ولو الرقم اللي طلع [[>=]] اللي فات بنزوّده واحد، فالـ [[2]] بتبقى [[3]]. كده النتيجة [[0]] أو [[1]] أو [[3]]، **بنفس الاحتمال**، ومن غير loop بيعيد لحد ما يطلع رقم مختلف. اتجرّب ١٠,٠٠٠ مرة: [[ [2509, 2448, 2520, 2523] ]] تقريبًا متساويين، والتكرار [[0]].`,
+            R`قفلة [[pick]].`,
+            R`[[isArabic]] بترد بـ [[true]] لو النص فيه أي حرف عربي، عشان نحدد اتجاهه.`,
+            R`[[\p{Script=Arabic}]] بيطابق أي حرف من «الكتابة العربي» في Unicode، والـ [[u]] في الآخر لازم عشان [[\p]] يشتغل. اتجرّب: [[JavaScript]] بـ [[false]]، و [[اتعلم JavaScript]] بـ [[true]]، و [[١٢٣]] بـ [[true]]، **والفاصلة العربي [[،]] بـ [[false]]** لأن Unicode بيعتبرها «مشتركة» (Common) مش عربي.`,
+            R`قفلة [[isArabic]].`,
+            R`[[marks]] بتقول لكل حرف في النص لونه إيه، من غير ما تلمس الـ DOM: [[target]] حروف النص، و [[typed]] الحروف اللي اتكتبت.`,
+            R`[[map]] على حروف النص: لكل حرف [[ch]] ورقمه [[i]] بنرجّع اسم class.`,
+            R`الحرف اللي عليه الدور (أول حرف لسه متكتبش) بياخد [[cur]] (خلفية صفرا)، عشان اليوزر يعرف هو فين.`,
+            R`الحروف اللي بعده لسه متكتبتش: من غير لون ([['']]).`,
+            R`أي حرف اتكتب: [[ok]] (أخضر) لو زي النص، و [[bad]] (أحمر) لو غيره. والمقارنة حرف بحرف، فلو نسيت حرف في النص كل اللي بعده بيبقى أحمر، وده بالظبط اللي بيحصل في أي لعبة كتابة.`,
+            R`قفلة الـ [[map]].`,
+            R`قفلة [[marks]]. الناتج الحقيقي لـ [[marks(Array.from('cat sat'), Array.from('cas'))]]: [[ok,ok,bad,cur,,,]].`,
+            R`[[stats]] بتحسب السرعة والدقة من حالة اللعبة والوقت اللي عدّى بالميلي ثانية. بتاخد الحالة كلها بـ destructuring (بتاخد اللي محتاجاه بس من الـ object).`,
+            R`عدّاد الحروف اللي في مكانها صح، بيبدأ من صفر في كل حساب. [[let]] لأننا هنزوّده جوه الـ loop.`,
+            R`بنعدّ الحروف اللي في مكانها صح. السرعة بتتحسب من الصح بس: اللي يكتب بسرعة وغلط ميكسبش.`,
+            R`الوقت بالدقايق. و [[Math.max(ms, 1000)]] **حد أدنى ثانية**: من غيره، حرف واحد صح بعد 150ms بيطلع [[80]] WPM (اتحسب)، والرقم بيقفز بشكل مجنون أول ما تبدأ. معاه بيطلع [[12]].`,
+            R`بنرجّع object فيه الرقمين، الاتنين مقرّبين لأرقام صحيحة للعرض.`,
+            R`**WPM (Words Per Minute):** المعيار في كل اختبارات الكتابة إن «الكلمة» = ٥ حروف بالمسافات، مهما كان طول الكلمات الحقيقي. فالحروف الصح ÷ ٥ ÷ الدقايق. ٢٥٠ حرف صح في دقيقة = [[50]] WPM (اتجرّب). والعربي كلماته أطول شوية، بس بنستخدم نفس المعيار عشان الرقم يتقارن.`,
+            R`**الدقة:** من كل ضغطة حرف، كام كانت صح **وقت ما اتكتبت**. يعني لو غلطت ومسحت وصلّحت، الغلطة لسه محسوبة. و [[keystrokes ?]] بيحمي من القسمة على صفر قبل أول حرف (بترجّع [[100]]). ٢٦٠ ضغطة منهم ١٠ غلط = [[96]]٪.`,
+            R`قفلة الـ object.`,
+            R`قفلة [[stats]].`,
+            R`[[tick]] بتتنادي مع كل فريم الشاشة بترسمه (حوالي ٦٠ مرة في الثانية) طول ما اللعبة شغالة، وبتحدّث الوقت والسرعة.`,
+            R`**الوقت بيتحسب من البداية** في كل فريم: [[performance.now() - game.start]]. مش بنزوّد ١٦ms كل مرة. فلو المتصفح فوّت فريمات (الصفحة علّقت، أو التاب في الخلفية)، أول فريم بعدها بيعرض الوقت الصح على طول.`,
+            R`[[requestAnimationFrame(tick)]] بيقول للمتصفح «نادي [[tick]] قبل الرسمة الجاية». وبيرجّع رقم بنحفظه في [[game.raf]] عشان نقدر نلغيه بـ [[cancelAnimationFrame]] لما اللعبة تخلص أو تبدأ من جديد. والمتصفح بيوقّفه لوحده لما التاب مش ظاهر (ده من وثائق MDN)، وده سبب تاني إن الوقت لازم يتقاس مش يتعدّ.`,
+            R`قفلة [[tick]].`,
+            R`بنسمع لـ [[input]] مش [[keydown]]: [[input]] بيقولك **النص بقى إيه** بعد أي تغيير، سواء كيبورد عربي أو إنجليزي، أو مسح، أو كيبورد الموبايل اللي بيصحّح. أما [[keydown]] فبيقولك «الزرار اتداس»، و [[e.key]] على الموبايل وفي الـ IME ساعات بيبقى [[Unidentified]] أو [[Process]] (ده من الوثائق).`,
+            R`لو اللعبة خلصت، أي كتابة متتحسبش. (الخانة كمان [[disabled]]، بس ده حماية زيادة.)`,
+            R`**[[Array.from]] مش [[split('')]]:** [[split]] بيقسم على UTF-16 code units، فإيموجي زي 👍 بيبقى حتتين. اتجرّب: [[split]] على [[👍ok]] بيدّي [[4]]، و [[Array.from]] بيدّي [[3]]. النصوص هنا مفيهاش إيموجي، بس اللي بيلعب ممكن يكتب واحد بالغلط، والمقارنة لازم تفضل حرف قصاد حرف.`,
+            R`أول حرف اتكتب؟ الوقت بيبدأ **دلوقتي** مش لما الصفحة فتحت. كده اللي بيقرا النص الأول ميتحسبش عليه.`,
+            R`وقت البداية. [[performance.now()]] بالميلي ثانية من وقت فتح الصفحة، وبكسور (زي [[1243.7]])، و**مبيرجعش لورا** لو حد غيّر ساعة الجهاز. [[Date.now()]] بيتغيّر لو الساعة اتظبطت وانت بتلعب.`,
+            R`أول نداء لـ [[tick]]، ومن هنا هي بتنادي نفسها.`,
+            R`قفلة الـ [[if]].`,
+            R`بنعدّ الحروف **الجديدة** بس: من آخر طول كان عندنا لحد الطول الجديد. لو مسحت حرف، الطول قل والـ loop مش بيلف خالص، فالمسح مش بيتحسب ضغطة.`,
+            R`كل حرف جديد اتضاف بيتعدّ ضغطة، صح كان ولا غلط، وده المقام بتاع الدقة.`,
+            R`ولو الحرف الجديد مش زي النص في مكانه = غلطة. ودي **مبتتمسحش** لو صلّحت بعدين، وده الفرق بين الدقة و «كام حرف أحمر دلوقتي».`,
+            R`قفلة الـ [[for]].`,
+            R`نحفظ الحروف الحالية عشان المرة الجاية نعرف إيه الجديد.`,
+            R`[[paint]] بتنادي [[marks]] وبتحط الـ class على كل [[<span>]]. بتتنادي مع الكتابة بس، مش مع كل فريم: اللون مبيتغيّرش غير لما تكتب.`,
+            R`وصلت لطول النص؟ اللعبة خلصت حتى لو فيه غلط (زي معظم ألعاب الكتابة). [[finish]] بتوقّف الوقت وتقارن بأحسن نتيجة. والخانة عليها [[maxLength]] بطول النص، فمش هتكتب أكتر منه.`,
+            R`قفلة المستمع.`,
+          ],
+          teach: R`## ٠. هنبني إيه
+
+~~~text الشكل (لقطة حقيقية من Chrome 156 بعد ما كتبت ٢٤ حرف وغلطت في واحد)
+سرعة الكتابة
+النص [عربي ▾]
+┌──────────────────────────────────────────────────────┐
+│  لما الكود يقع اقرا رسالة الخطأ للآخر قبل ما تدور على حل  │
+│  في أي مكان تاني.                                    │
+│  ─────────────────────                               │
+│  أخضر، والـ «ق» أحمر، والمسافة اللي بعد «رسالة» صفرا  │
+└──────────────────────────────────────────────────────┘
+[ لما الكود يقع افرا رسالة                              ]
+الوقت 1.1 ث · السرعة 256 WPM · الدقة 96%
+أحسن نتيجة: —
+[نص جديد (Esc)]
+~~~
+
+### الملفات
+
+~~~text
+typing/
+├── texts.js     النصوص (١٥ سطر)
+├── game.js      الحسابات من غير DOM (٢٩ سطر)  ← بيتجرّب في Node
+├── index.html
+├── style.css
+└── app.js       اللعبة (١٠٥ سطر)
+~~~
+
+وبيشتغل بنفس الطريقة: [[python3 -m http.server 8000]] أو [[server.js]] بتاع مشروع البحث.
+
+---
+
+## ١. النصوص
+
+~~~js texts.js
+export const TEXTS = {
+  ar: [
+    'البرمجة مش حفظ أوامر. البرمجة إنك تفهم المشكلة كويس وبعدين تكتب أبسط حل يشتغل.',
+    'لما الكود يقع اقرا رسالة الخطأ للآخر قبل ما تدور على حل في أي مكان تاني.',
+    'اتعلم JavaScript خطوة خطوة وابني حاجة صغيرة كل يوم بدل ما تقرا من غير ما تجرب.',
+    'الكمبيوتر بيعمل اللي انت كاتبه بالظبط مش اللي انت قاصده وده أول درس في الشغلانة.',
+  ],
+  en: [
+    'Programming is not about typing fast. It is about thinking clearly and then typing.',
+    'Read the whole error message before you search for it. The answer is often right there.',
+    'Small apps you finish teach you more than big apps you only plan to build one day.',
+    'The computer does exactly what you wrote, not what you meant. That is the whole job.',
+  ],
+};
+~~~
+
+**ليه من غير تشكيل؟** التشكيل في Unicode حرف لوحده:
+
+~~~text اتشغّل فعلًا · Node
+Array.from('مُبرمج')   ->  [ 'م', 'ُ', 'ب', 'ر', 'م', 'ج' ]     ← ٦ مش ٥
+~~~
+
+فالـ [[span]] بتاع الضمة هيبقى لوحده، واليوزر لازم يكتب الضمة كضغطة منفصلة. ممكن تتعمل (بـ [[Intl.Segmenter]] اللي بيقسم على «الحرف زي ما العين شايفاه»)، بس ده مشروع لوحده. وفيه نص فيه [[JavaScript]] جوه جملة عربي، عشان نشوف الاتجاهين في سطر واحد.
+
+---
+
+## ٢. index.html و style.css
+
+~~~html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>سرعة الكتابة</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>سرعة الكتابة</h1>
+    <label>النص <select id="lang"><option value="ar">عربي</option><option value="en">English</option></select></label>
+    <p id="text" aria-label="النص اللي هتكتبه"></p>
+    <input id="input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="اكتب هنا">
+    <p class="stats">
+      الوقت <b id="time">0.0</b> ث · السرعة <b id="wpm">0</b> WPM · الدقة <b id="acc">100%</b>
+    </p>
+    <p id="result" role="status"></p>
+    <p>أحسن نتيجة: <span id="best">—</span></p>
+    <button id="restart">نص جديد (Esc)</button>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
+~~~
+
+[[autocorrect]] و [[autocapitalize]] و [[spellcheck]] بـ [[off]]: من غيرهم كيبورد الموبايل بيصلّح الكلمة أو يكبّر أول حرف، واللعبة تحسبها غلطة انت ماعملتهاش.
+
+~~~css style.css
+body { font-family: system-ui, sans-serif; max-width: 44rem; margin: 2rem auto; padding: 0 1rem; }
+#text { font-size: 1.5rem; line-height: 2.4; padding: 1rem; background: #f4f4f4; border-radius: 8px; }
+#text .ok { color: #188038; }
+#text .bad { color: #fff; background: #d93025; }
+#text .cur { background: #fde293; }
+#input { width: 100%; font-size: 1.3rem; padding: .5rem; box-sizing: border-box; }
+.stats b { font-variant-numeric: tabular-nums; }
+~~~
+
+[[tabular-nums]] بيخلي كل الأرقام بنفس العرض، فالسطر مبيترعشش لما الوقت يتغيّر من [[1.1]] لـ [[1.8]].
+
+### الحروف العربي و [[<span>]] لكل حرف: اتقاست في Chrome
+
+كل حرف في [[<span>]] لوحده عشان نلوّنه. **السؤال:** الحروف العربي هتفضل موصولة ولا هتتقطّع؟ قست عرض كلمة [[البرمجة]] بـ [[getBoundingClientRect()]] في Chrome 156 (حجم 24px):
+
+| الشكل | العرض | موصولة؟ |
+|---|---|---|
+| الكلمة نص واحد | 70.15px | أيوه |
+| كل حرف في [[<span>]] | 70.20px | أيوه، نفس العرض |
+| كل حرف بلون مختلف | 70.20px | أيوه |
+| حرف بخلفية صفرا | 70.20px | أيوه |
+| كل حرف عليه [[padding: 0 1px]] | 86.20px | أيوه، بس فيه فراغات |
+| الحروف مفصولة بـ ZWNJ (منفصلة عن قصد) | 92.19px | لأ، وده شكل الحروف المنفصلة |
+
+وفي لقطة الشاشة: الألوان والخلفية و [[font-weight]] كلهم سابوها موصولة، **و [[display: inline-block]] على حرف واحد قطّعه**: الـ «ر» اتكتبت منفصلة. يعني لو حبيت تعمل مؤشر بيتحرك بـ [[transform]] على الحرف الحالي (والـ [[transform]] محتاج [[inline-block]])، العربي هيتكسر. خلّي المؤشر خلفية.
+
+> ده Chrome 156. في متصفحات تانية أو نسخ أقدم ممكن السلوك يختلف (ده مش متجرّب هنا)، فجرّب في المتصفح اللي يهمّك.
+
+---
+
+## ٣. game.js
+
+الكود في المثال. واتجرّب في Node:
+
+~~~js test-game.mjs
+import { pick, isArabic, marks, stats } from './game.js';
+const counts = [0, 0, 0, 0]; let last = 2, repeats = 0;
+for (let k = 0; k < 10000; k++) { const i = pick(4, last); counts[i]++; if (i === last) repeats++; last = i; }
+console.log('pick 10000x:', counts, 'repeats:', repeats);
+console.log(marks(Array.from('cat sat'), Array.from('cas')).join(','));
+const x = Array.from('x'.repeat(250));
+console.log(stats({ target: x, typed: x, keystrokes: 260, mistakes: 10 }, 60000));
+~~~
+
+~~~text اتشغّل فعلًا · Node 24.22
+pick 10000x: [ 2509, 2448, 2520, 2523 ] repeats: 0
+ok,ok,bad,cur,,,
+{ wpm: 50, accuracy: 96 }
+~~~
+
+### الباج اللي الاختبار ده مسكه
+
+أول نسخة من [[pick]] كانت كده:
+
+~~~js pick — النسخة الأولى
+export function pick(count, last) {
+  if (count < 2) return 0;
+  const i = Math.floor(Math.random() * (count - 1));
+  return i >= last && last >= 0 ? i + 1 : i;
+}
+~~~
+
+~~~text اتشغّل فعلًا
+first pick (last=-1):  0 0 1 2 2 1 1 1
+~~~
+
+**ولا مرة [[3]].** في أول لعبة [[last]] بـ [[-1]]، فالاختيار من [[count - 1]] بس ومفيش «تفويت»، يعني النص الأخير عمره ما بيطلع في أول لعبة. والتصليح الأولاني (شلت [[count < 2]]) كسر حاجة تانية: [[pick(1, 0)]] رجّعت [[1]]. **الاتنين اتمسكوا بتشغيل مش بقراية.**
+
+~~~text بعد التصليح · ١٠,٠٠٠ مرة لكل واحد
+pick(4, 2):   [ 2509, 2448, 2520, 2523 ]  repeats: 0
+pick(4, -1):  [ 2509, 2577, 2480, 2434 ]
+pick(1, 0):   0
+~~~
+
+---
+
+## ٤. app.js: لعبة جديدة
+
+~~~js app.js — أوله
+import { TEXTS } from './texts.js';
+import { pick, isArabic, marks, stats } from './game.js';
+
+const $ = (sel) => document.querySelector(sel);
+const box = $('#text');
+const input = $('#input');
+const lang = $('#lang');
+const BEST_KEY = 'typing-best';
+let game = null;
+
+function newGame() {
+  if (game) cancelAnimationFrame(game.raf);
+  const key = lang.value;
+  const index = pick(TEXTS[key].length, game?.lang === key ? game.index : -1);
+  const text = TEXTS[key][index];
+  game = { lang: key, index, target: Array.from(text), typed: [], keystrokes: 0, mistakes: 0, start: 0, raf: 0, done: false };
+  const dir = isArabic(text) ? 'rtl' : 'ltr';
+  for (const node of [box, input]) { node.dir = dir; node.lang = key; }
+  box.replaceChildren(...game.target.map((ch) => {
+    const span = document.createElement('span');
+    span.textContent = ch;
+    return span;
+  }));
+  input.value = '';
+  input.maxLength = text.length;
+  input.disabled = false;
+  $('#result').textContent = '';
+  paint();
+  showStats(0);
+  showBest();
+  input.focus();
+}
+~~~
+
+| السطر | ليه |
+|---|---|
+| [[cancelAnimationFrame(game.raf)]] | لو بدأت من جديد في نص اللعبة، الـ [[tick]] القديمة لازم تقف. من غيره فيه حلقتين بيكتبوا في نفس الأرقام |
+| [[game?.lang === key ? game.index : -1]] | «متكررش» معناها في نفس اللغة بس. لو غيّرت اللغة، أي نص |
+| [[game = { ... }]] | object جديد كل لعبة، مش تصفير خانة خانة. مستحيل تنسى خانة من اللعبة اللي فاتت |
+| [[node.dir = dir]] | الاتجاه **على النص والخانة الاتنين**. لو الخانة فضلت [[rtl]] والنص إنجليزي، المؤشر بيبدأ من اليمين والكتابة بتبان معكوسة وانت بتكتب |
+| [[node.lang = key]] | بيقول للمتصفح اللغة: بيختار خط مناسب، وقارئ الشاشة بينطق صح |
+| [[span.textContent = ch]] | كل حرف [[<span>]]، بالنص الآمن |
+| [[input.maxLength]] | مبتقدرش تكتب أطول من النص |
+| [[input.focus()]] | تقدر تبدأ كتابة على طول بعد Esc من غير ماوس |
+
+**والنص اللي فيه [[JavaScript]]:** الـ spans بترتيب الكتابة (logical order)، والمتصفح بيرتّبهم على الشاشة بالـ bidi algorithm. فالـ J على الشمال والـ t على اليمين جوه الكلمة، والتلوين ماشي صح لأن [[marks]] بتقارن بالترتيب المنطقي مش بالمكان على الشاشة.
+
+---
+
+## ٥. الكتابة: [[input]] مش [[keydown]]
+
+الكود في المثال. وكمان:
+
+~~~js
+input.addEventListener('paste', (e) => e.preventDefault());
+~~~
+
+اللزق ممنوع، وإلا أي حد يلزق النص ويطلع ١٠٠٠٠ WPM.
+
+~~~text اتشغّل فعلًا · jsdom 30.1.3
+-- كتبت أول حرفين صح، وبعدين x
+   الألوان: ok,ok,bad,cur      الدقة: 67%       (٣ ضغطات، واحدة غلط)
+-- مسحت الـ x وكمّلت صح لآخر النص (حرف كل 40ms)
+   live {"i":25,"time":"1.2","wpm":"251","acc":"96%"}
+   live {"i":50,"time":"2.4","wpm":"253","acc":"98%"}
+   live {"i":75,"time":"3.6","wpm":"254","acc":"99%"}
+   final: 3.6 ث · 258 WPM · 99%   الخانة مقفولة: true
+~~~
+
+**الأرقام دي منطقية؟** ٧٨ حرف صح في ٣.٦ ثانية = ٧٨ ÷ ٥ ÷ ٠.٠٦ دقيقة = ٢٦٠. طلعت [[258]] لأن الوقت الحقيقي أكتر من [[3.6]] شوية. و ٧٩ ضغطة (٧٨ حرف والـ x) منهم واحدة غلط = ٩٨.٧٪ ← [[99%]]. والغلطة **فضلت محسوبة** بعد ما صلّحتها.
+
+---
+
+## ٦. الوقت: يتقاس، ميتعدّش
+
+الطريقة اللي بتيجي في البال الأول:
+
+~~~js
+let elapsed = 0;
+setInterval(() => { elapsed += 100; show(elapsed); }, 100);
+~~~
+
+دي بتفترض إن الـ callback بيتنادي كل 100ms **بالظبط**. وده مش حقيقي: لو الـ main thread مشغول (درس «blocking و الـ main thread»)، النداءات بتتأخر أو بتتجمع.
+
+~~~js drift.mjs
+const t0 = performance.now();
+let counted = 0;
+const id = setInterval(() => { counted += 100; }, 100);
+setTimeout(() => { const end = performance.now() + 700; while (performance.now() < end); }, 500);
+setTimeout(() => {
+  clearInterval(id);
+  console.log('setInterval counted:', counted, 'ms   performance.now():', Math.round(performance.now() - t0), 'ms');
+}, 3000);
+~~~
+
+~~~text اتشغّل فعلًا · node drift.mjs
+setInterval counted: 2100 ms   performance.now(): 3015 ms
+~~~
+
+الصفحة علّقت ٧٠٠ms، **والعدّاد خسر ٩١٥ms**: النداءات اللي كانت المفروض تحصل وقت التعليق مرجعتش. في لعبة، ده يخلي WPM أعلى من الحقيقي.
+
+**والحل اللي في اللعبة:** خزّن وقت البداية مرة، واحسب الفرق كل مرة بتعرض:
+
+| | بيعدّ (setInterval) | بيقيس (performance.now) |
+|---|---|---|
+| الصفحة علّقت | بيخسر الوقت ده | أول فريم بعدها مظبوط |
+| التاب في الخلفية | بيبطّأ (المتصفح بيخنق الـ timers) | لما ترجع، مظبوط |
+| بيتحدّث كام مرة | كل ما تحدد | [[requestAnimationFrame]]: مع كل رسمة، مش أكتر |
+| لو الساعة اتغيّرت | مش فارق | [[performance.now]] مش بيتأثر، و [[Date.now]] بيتأثر |
+
+و [[requestAnimationFrame]] مش هو اللي بيقيس، هو **بس بيقول إمتى ترسم**: مرة قبل كل frame، فمش بنحدّث الرقم ٢٠٠ مرة في الثانية والشاشة بترسم ٦٠.
+
+اتجرّب في Chrome: كتبت ٢٤ حرف في ١.١ ثانية والسرعة [[256]]. وسبتها من غير ما أكتب: بعد ١٢.٢ ثانية الوقت كان لسه بيعدّ والسرعة نزلت لـ [[23]] لوحدها، لأن [[tick]] بتحسب من نفس الحروف على وقت أطول.
+
+---
+
+## ٧. النهاية وأحسن نتيجة
+
+~~~js
+function loadBest() {
+  const ok = (r) => r && Number.isFinite(r.wpm) && Number.isFinite(r.accuracy);
+  try {
+    const data = JSON.parse(localStorage.getItem(BEST_KEY));
+    return { ar: ok(data?.ar) ? data.ar : null, en: ok(data?.en) ? data.en : null };
+  } catch {
+    return { ar: null, en: null };
+  }
+}
+
+function finish() {
+  game.done = true;
+  cancelAnimationFrame(game.raf);
+  input.disabled = true;
+  const s = showStats(performance.now() - game.start);
+  const best = loadBest();
+  const old = best[game.lang];
+  const record = s.accuracy >= 90 && (!old || s.wpm > old.wpm);
+  if (record) {
+    best[game.lang] = { wpm: s.wpm, accuracy: s.accuracy };
+    try { localStorage.setItem(BEST_KEY, JSON.stringify(best)); } catch {}
+  }
+  $('#result').textContent = (record ? 'رقم قياسي جديد! ' : 'خلصت. ') + s.wpm + ' WPM بدقة ' + s.accuracy + '%';
+  showBest();
+}
+~~~
+
+- **أحسن نتيجة لكل لغة لوحدها**: سرعتك بالعربي غير بالإنجليزي، ومقارنتهم ببعض ملهاش معنى.
+- **[[s.accuracy >= 90]]**: من غيرها حد يضرب على الكيبورد عشوائي بسرعة ياخد رقم قياسي. اتجرّب: جولة بدقة [[67%]] و [[261]] WPM **متسجلتش**، والرقم القديم ([[258]] بدقة [[99%]]) فضل.
+- **[[loadBest]] بتفحص كل رقم بـ [[Number.isFinite]]**: [[JSON.parse(null)]] بيرجّع [[null]] (أول زيارة) و [[data?.ar]] بيحميه. و [[Number.isFinite('999')]] بـ [[false]]، فحد يكتب [[{"ar":{"wpm":"999"}}]] بإيده ميطلعش رقم قياسي نصّي.
+- **[[try]] حوالين القراية والكتابة**: نفس سبب «خلّي التطبيق يفتكر».
+
+~~~text اتشغّل فعلًا · jsdom
+-- المحفوظ بعد الجولة:      {"ar":{"wpm":258,"accuracy":99},"en":null}
+-- JSON مقطوع:              أحسن نتيجة: —
+-- wpm نص ("999"):          أحسن نتيجة: —
+~~~
+
+---
+
+## ٨. من الأول: Esc والزرار واللغة
+
+~~~js
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') newGame(); });
+$('#restart').addEventListener('click', newGame);
+lang.addEventListener('change', newGame);
+
+newGame();
+~~~
+
+Esc على [[document]] مش على الخانة، لأن الخانة بتبقى [[disabled]] بعد النهاية ومبتستقبلش أحداث.
+
+~~~text اتشغّل فعلًا · jsdom
+-- الوقت بعد النهاية بـ 300ms:  نفس الرقم (الـ tick وقفت)
+-- بعد Esc:   0.0 ث · 0 WPM · 100%   نص مختلف: true   الخانة مفتوحة: true
+-- English:   dir ltr ltr   أحسن نتيجة: —   «Read the whole error message before...»
+~~~
+
+---
+
+## ٩. اتشغّل على إيه
+
+| إيه | على إيه |
+|---|---|
+| [[game.js]] | Node 24.22: [[pick]] ١٠,٠٠٠ مرة، و [[marks]] و [[stats]] بأرقام معروفة |
+| [[app.js]] كله | jsdom 30.1.3 بـ [[pretendToBeVisual: true]] (من غيرها مفيش [[requestAnimationFrame]] في jsdom) |
+| الحروف العربي في spans | Chrome 156: قياس عرض، ولقطة شاشة |
+| اللعبة نفسها | Chrome 156: كتبت جملة عربي فيها غلطة، والألوان والوقت والسرعة اتحدّثوا |
+| [[setInterval]] ضد [[performance.now]] | Node |
+
+## ملخص الخطوات
+
+| # | الخطوة | بتمنع إيه |
+|---|---|---|
+| ١ | نصوص من غير تشكيل، و [[Array.from]] | إيموجي متقسوم، وحروف تشكيل لوحدها |
+| ٢ | [[<span>]] لكل حرف بألوان وخلفية بس | حروف عربي متقطعة ([[inline-block]]) |
+| ٣ | [[pick]] بـ «تفويت» | نفس النص مرتين، أو نص عمره ما بيطلع |
+| ٤ | [[dir]] و [[lang]] على النص **والخانة** | كتابة معكوسة في الخانة |
+| ٥ | [[input]] مش [[keydown]]، واللزق ممنوع | كيبورد الموبايل، والغش |
+| ٦ | الوقت = [[performance.now() - start]] | عدّاد بيقدّم لما الصفحة تعلّق |
+| ٧ | أحسن نتيجة بدقة ٩٠٪ وبفحص | أرقام قياسية بالضرب العشوائي أو بداتا متعدّلة |
+| ٨ | [[cancelAnimationFrame]] في كل بداية ونهاية | حلقتين شغالين على نفس الأرقام |
+
+## الخلاصة
+
+- **قيس الوقت، متعدّهوش.** خزّن البداية، واطرح.
+- [[requestAnimationFrame]] بيقول إمتى ترسم، مش الوقت كام.
+- [[Array.from(text)]] للحروف، و [[dir]] على كل عنصر فيه نص.
+- اختبر العشوائي بتشغيله آلاف المرات: الباج اللي بيحصل «ساعات» مبيبانش بالعين.`,
+          try: R`ابني الخمس ملفات وشغّلهم بسيرفر. العب جولة بالعربي وغلط عن قصد في حرفين وصلّحهم: الحروف بقت حمرا وبعدين خضرا، والدقة فضلت أقل من ١٠٠٪؟ دوس Esc في النص وشوف الوقت رجع صفر. غيّر لـ English وشوف الخانة بقت تكتب من الشمال. واستنى في نص جولة من غير ما تكتب ١٠ ثواني وراقب السرعة. وآخر حاجة: افتح DevTools وفي Console اكتب [[localStorage.setItem('typing-best', '{"ar":{"wpm":999}}')]] واعمل reload.`,
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** من غير ما تشغّل، اكتب ناتج كل سطر: [[Array.from('سلام').length]] و [['🙂🙂'.split('').length]] و [[Array.from('🙂🙂').length]] و [[stats({ target: ['a','b'], typed: ['a','x'], keystrokes: 2, mistakes: 1 }, 500)]] و [[marks(['a','b','c'], [])]]. وبعدين شغّلهم في Node.`, done: R`كاتب توقعاتك قبل التشغيل، والنتايج: [[4]] و [[4]] و [[2]]، و [[{ wpm: 12, accuracy: 50 }]] (الثانية الأدنى شغالة: نص ثانية اتحسبت ثانية)، و [[ ['cur', '', ''] ]]. ولكل توقع غلط تقدر تقول السطر اللي في [[game.js]] كان سببه.`, sol: R`**التوقّع وسببه:**
+
+| السطر | الناتج | ليه |
+|---|---|---|
+| [[Array.from('سلام').length]] | [[4]] | ٤ حروف عربي، وكل واحد code point واحد |
+| [['🙂🙂'.split('').length]] | [[4]] | [[split('')]] بيقسم على UTF-16 code units، والإيموجي ده اتنين (surrogate pair) |
+| [[Array.from('🙂🙂').length]] | [[2]] | [[Array.from]] بيمشي بالـ iterator بتاع النص، وده بيمشي code point code point |
+| [[stats(..., 500)]] | [[{ wpm: 12, accuracy: 50 }]] | حرف واحد صح ([[a]])، و [[Math.max(500, 1000)]] = ثانية: ١ ÷ ٥ ÷ (١÷٦٠) = [[12]]. والدقة (٢ − ١) ÷ ٢ = [[50]] |
+| [[marks(['a','b','c'], [])]] | [[['cur', '', '']]] | أول حرف هو الدور ([[i === typed.length]] = [[0]])، والباقي لسه |
+
+~~~js predict.mjs
+import { marks, stats } from './game.js';
+console.log(Array.from('سلام').length);
+console.log('🙂🙂'.split('').length);
+console.log(Array.from('🙂🙂').length);
+console.log(stats({ target: ['a', 'b'], typed: ['a', 'x'], keystrokes: 2, mistakes: 1 }, 500));
+console.log(marks(['a', 'b', 'c'], []));
+~~~
+
+~~~text الناتج: node predict.mjs (Node 24.22)
+4
+4
+2
+{ wpm: 12, accuracy: 50 }
+[ 'cur', '', '' ]
+~~~
+
+**أكتر توقع بيغلط:** الـ WPM. اللي بيحسب ٥٠٠ms زي ما هي بيطلع [[24]] (١ ÷ ٥ ÷ (٠.٥÷٦٠)). السطر اللي بيعمل الفرق في [[stats]] هو [[Math.max(ms, 1000)]]: أقل من ثانية بتتحسب ثانية، عشان الرقم ميقفزش في أول الجولة.
+
+**والتاني:** [['🙂🙂'.split('')]] = [[4]] **مش** [[2]]. لو اللعبة استخدمت [[split]]، الإيموجي كان هيبقى [[<span>]] لنص حرف (شكلين بايظين)، والمقارنة كانت هتتحسب غلطتين. و [[سلام]] مش فارقة معاها: الحروف العربي كلها جوه الـ BMP، فـ [[split]] و [[Array.from]] بيدّوا نفس الرقم.`},
+            { lvl: 'تطبيق', t: R`**ابني حاجة:** بعد ما الجولة تخلص، اعرض «أكتر ٣ حروف غلطت فيهم» وعدد مرات كل واحد. اعدّ الغلطات في [[Map]] جوه نفس الـ loop اللي بيعدّ [[mistakes]] (المفتاح الحرف اللي **كان المفروض** يتكتب)، واعرضهم بـ [[textContent]]. والمسافة تتعرض كلمة «مسافة» مش فراغ.`, done: R`في جولة غلطت فيها ٣ مرات في [[ة]] ومرة في المسافة، النتيجة بتقول «ة: ٣، مسافة: ١». وجولة من غير ولا غلطة بتقول «مفيش غلطات». وبعد Esc الـ [[Map]] بتبدأ فاضية (هي جزء من [[game]]).`, sol: R`**الشكل:** العب جولة هنا وغلط عن قصد في كام حرف (وصلّحهم أو لأ)، وبص على السطر اللي تحت النتيجة:
+
+~~~view 520 لعبة الكتابة بأكتر ٣ حروف غلطت فيهم
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>سرعة الكتابة</title>
   <style>
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #1d1d1f; background: #faf7f2; }
-header { background: #7a3e12; }
-nav { display: flex; flex-wrap: wrap; gap: .25rem; max-width: 52rem; margin: 0 auto; padding: .5rem 1rem; }
-nav a { color: #fff; padding: .4rem .8rem; border-radius: 6px; text-decoration: none; }
-nav a[aria-current="page"] { background: #fff; color: #7a3e12; font-weight: 700; }
-main { max-width: 52rem; margin: 0 auto; padding: 1rem; }
-h1 { margin: .5rem 0 1rem; }
-h1:focus { outline: none; }
-:focus-visible { outline: 3px solid #1a73e8; outline-offset: 2px; }
-form[role="search"] { display: grid; grid-template-columns: 1fr; gap: .25rem; margin-bottom: .5rem; }
-@media (min-width: 640px) { form[role="search"] { grid-template-columns: auto 1fr auto auto; align-items: center; gap: .5rem; } }
-input, select, textarea, button { font: inherit; padding: .45rem .6rem; border: 1px solid #b9b1a6; border-radius: 6px; background: #fff; max-width: 100%; }
-button { cursor: pointer; background: #f1e6d8; }
-button[type="submit"] { background: #7a3e12; color: #fff; border-color: #7a3e12; }
-.cards { list-style: none; padding: 0; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-.card { background: #fff; border: 1px solid #e4dccf; border-radius: 10px; padding: .75rem 1rem; }
-.card h2 { font-size: 1.15rem; margin: 0; }
-.meta { color: #5c5348; margin: .25rem 0 .5rem; }
-.steps { white-space: pre-line; }
-.notice { background: #fff4ce; border: 1px solid #e0c060; padding: .5rem .75rem; border-radius: 6px; }
-[role="alert"] { background: #fde7e9; border: 1px solid #d93025; padding: .5rem .75rem; border-radius: 6px; }
-.field { display: grid; gap: .2rem; margin-bottom: .75rem; }
-.err { color: #b3261e; margin: 0; min-height: 1.2em; }
-[aria-invalid="true"] { border-color: #b3261e; border-width: 2px; }
+body { font-family: system-ui, sans-serif; max-width: 44rem; margin: 2rem auto; padding: 0 1rem; }
+#text { font-size: 1.5rem; line-height: 2.4; padding: 1rem; background: #f4f4f4; border-radius: 8px; }
+#text .ok { color: #188038; }
+#text .bad { color: #fff; background: #d93025; }
+#text .cur { background: #fde293; }
+#input { width: 100%; font-size: 1.3rem; padding: .5rem; box-sizing: border-box; }
+.stats b { font-variant-numeric: tabular-nums; }
   </style>
 </head>
 <body>
-  <header>
-    <nav aria-label="الأقسام">
-      <a href="#/">الوصفات</a>
-      <a href="#/fav">المفضلة</a>
-      <a href="#/new">وصفة جديدة</a>
-    </nav>
-  </header>
-  <main id="main"></main>
-  <noscript>التطبيق ده محتاج JavaScript يكون شغال.</noscript>
-<script type="module">
-// للعرض جوه الموقع بس: الصندوق ده iframe معزول (about:srcdoc)، فروابط # مبتمشيش لوحدها،
-// و history.replaceState بترمي SecurityError. السطور دي بتعمل نفس الحاجة بـ location.hash
-document.addEventListener('click', (e) => {
-  const a = e.target.closest('a[href^="#/"]');
-  if (a) { e.preventDefault(); location.hash = a.getAttribute('href'); }
-});
-const realReplace = history.replaceState.bind(history);
-history.replaceState = (state, title, url) => {
-  try { realReplace(state, title, url); } catch { location.hash = String(url).slice(String(url).indexOf('#')); }
+  <main>
+    <h1>سرعة الكتابة</h1>
+    <label>النص <select id="lang"><option value="ar">عربي</option><option value="en">English</option></select></label>
+    <p id="text" aria-label="النص اللي هتكتبه"></p>
+    <input id="input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="اكتب هنا">
+    <p class="stats">
+      الوقت <b id="time">0.0</b> ث · السرعة <b id="wpm">0</b> WPM · الدقة <b id="acc">100%</b>
+    </p>
+    <p id="result" role="status"></p>
+    <p id="misses"></p>
+    <p>أحسن نتيجة: <span id="best">—</span></p>
+    <button id="restart">نص جديد (Esc)</button>
+  </main>
+  <script type="module">
+const TEXTS = {
+  ar: [
+    'البرمجة مش حفظ أوامر. البرمجة إنك تفهم المشكلة كويس وبعدين تكتب أبسط حل يشتغل.',
+    'لما الكود يقع اقرا رسالة الخطأ للآخر قبل ما تدور على حل في أي مكان تاني.',
+    'اتعلم JavaScript خطوة خطوة وابني حاجة صغيرة كل يوم بدل ما تقرا من غير ما تجرب.',
+    'الكمبيوتر بيعمل اللي انت كاتبه بالظبط مش اللي انت قاصده وده أول درس في الشغلانة.',
+  ],
+  en: [
+    'Programming is not about typing fast. It is about thinking clearly and then typing.',
+    'Read the whole error message before you search for it. The answer is often right there.',
+    'Small apps you finish teach you more than big apps you only plan to build one day.',
+    'The computer does exactly what you wrote, not what you meant. That is the whole job.',
+  ],
 };
-const RECIPES = "[{\"id\":\"koshary\",\"title\":\"كشري\",\"minutes\":60,\"tags\":[\"مصري\",\"نباتي\"],\"ingredients\":[\"رز\",\"عدس بني\",\"مكرونة\",\"صلصة طماطم\",\"بصل مقرمش\"],\"steps\":\"اسلق العدس والرز مع بعض.\\nاسلق المكرونة لوحدها.\\nاعمل الصلصة بالطماطم والتوم والخل.\\nرص الطبق وفوقه البصل.\"},{\"id\":\"foul\",\"title\":\"فول مدمس\",\"minutes\":15,\"tags\":[\"فطار\",\"مصري\"],\"ingredients\":[\"فول مدمس\",\"زيت زيتون\",\"كمون\",\"ليمون\",\"ملح\"],\"steps\":\"سخّن الفول بمية قليلة.\\nاهرسه شوية.\\nضيف الزيت والكمون والليمون والملح.\"},{\"id\":\"shakshuka\",\"title\":\"شكشوكة\",\"minutes\":20,\"tags\":[\"فطار\"],\"ingredients\":[\"بيض\",\"طماطم\",\"فلفل\",\"بصل\",\"كمون\"],\"steps\":\"شوّح البصل والفلفل.\\nضيف الطماطم والكمون لحد ما تتسبك.\\nاكسر البيض فوقها وغطّيها.\"},{\"id\":\"salad\",\"title\":\"سلطة بلدي\",\"minutes\":10,\"tags\":[\"نباتي\"],\"ingredients\":[\"طماطم\",\"خيار\",\"بصل\",\"ليمون\",\"كمون\"],\"steps\":\"قطّع الخضار مكعبات صغيرة.\\nضيف الليمون والكمون والملح وقلّب.\"},{\"id\":\"roz-bel-laban\",\"title\":\"رز بلبن\",\"minutes\":40,\"tags\":[\"حلو\",\"مصري\"],\"ingredients\":[\"رز\",\"لبن\",\"سكر\",\"فانيليا\"],\"steps\":\"اسلق الرز في مية لحد ما يشربها.\\nضيف اللبن وقلّب على نار هادية.\\nضيف السكر والفانيليا وصبّه في طواجن.\"},{\"id\":\"basbousa\",\"title\":\"بسبوسة\",\"minutes\":50,\"tags\":[\"حلو\",\"مصري\"],\"ingredients\":[\"سميد\",\"زبادي\",\"سكر\",\"زبدة\",\"شربات\"],\"steps\":\"اخلط السميد والزبادي والسكر والزبدة.\\nافرده في صينية وقطّعه.\\nادخله الفرن وبعدين صب عليه الشربات.\"}]";
-const MAX_TITLE = 80;
 
-function isRecipe(r) {
-  return !!r && typeof r === 'object' && typeof r.id === 'string' && typeof r.title === 'string'
-    && Number.isFinite(r.minutes) && Array.isArray(r.ingredients) && Array.isArray(r.tags)
-    && typeof r.steps === 'string';
+function pick(count, last) {
+  if (count < 2) return 0;
+  if (last < 0 || last >= count) return Math.floor(Math.random() * count);
+  const i = Math.floor(Math.random() * (count - 1));
+  return i >= last ? i + 1 : i;
 }
 
-const toggleFav = (favs, id) => (favs.includes(id) ? favs.filter((f) => f !== id) : [...favs, id]);
-
-const toLatinDigits = (s) => String(s ?? '').replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
-
-function parseRoute(hash) {
-  const raw = String(hash ?? '').replace(/^#/, '') || '/';
-  const [path, qs = ''] = raw.split('?');
-  const query = Object.fromEntries(new URLSearchParams(qs));
-  const parts = path.split('/').filter(Boolean);
-  if (parts.length === 0) return { name: 'list', params: {}, query };
-  if (parts[0] === 'r' && parts.length === 2) return { name: 'recipe', params: { id: decodeURIComponent(parts[1]) }, query };
-  if (parts.length === 1 && (parts[0] === 'new' || parts[0] === 'fav')) return { name: parts[0], params: {}, query };
-  return { name: 'notfound', params: {}, query };
+function isArabic(text) {
+  return /\p{Script=Arabic}/u.test(text);
 }
 
-function filterRecipes(list, { q = '', tag = '' } = {}) {
-  const needle = q.trim().toLowerCase();
-  return list.filter((r) => (!tag || r.tags.includes(tag))
-    && (!needle || [r.title, ...r.ingredients].some((t) => t.toLowerCase().includes(needle))));
+function marks(target, typed) {
+  return target.map((ch, i) => {
+    if (i === typed.length) return 'cur';
+    if (i > typed.length) return '';
+    return typed[i] === ch ? 'ok' : 'bad';
+  });
 }
 
-const allTags = (list) => [...new Set(list.flatMap((r) => r.tags))].sort((a, b) => a.localeCompare(b, 'ar'));
-
-function validateRecipe(input) {
-  const errors = {};
-  const title = String(input.title ?? '').trim();
-  const minutes = Number(toLatinDigits(input.minutes).trim() || NaN);
-  const ingredients = String(input.ingredients ?? '').split('\n').map((s) => s.trim()).filter(Boolean);
-  const steps = String(input.steps ?? '').trim();
-  const tags = [...new Set(String(input.tags ?? '').split(/[,،]/).map((s) => s.trim()).filter(Boolean))];
-  if (!title) errors.title = 'اكتب اسم الوصفة';
-  else if (title.length > MAX_TITLE) errors.title = $__btالاسم أطول من $__{MAX_TITLE} حرف$__bt;
-  if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) errors.minutes = 'الوقت بالدقايق، رقم صحيح من 1 لـ 1440';
-  if (ingredients.length < 2) errors.ingredients = 'اكتب مكوّنين على الأقل، كل واحد في سطر';
-  if (!steps) errors.steps = 'اكتب طريقة التحضير';
-  if (Object.keys(errors).length) return { ok: false, errors };
-  return { ok: true, value: { title, minutes, ingredients, steps, tags } };
-}
-
-function debounce(fn, ms) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
-  };
-}
-
-
-const KEY = 'recipe-book:v1';
-
-// مجرد قراية localStorage بترمي SecurityError لو التخزين مقفول (أو صفحة sandboxed)، فبنقراه جوه try
-function browserStorage() {
-  try { return globalThis.localStorage ?? null; } catch { return null; }
-}
-
-function load(storage = browserStorage()) {
-  let raw;
-  try { raw = storage.getItem(KEY); } catch { return { mine: [], favs: [], warning: 'المتصفح قافل التخزين، ومش هنفتكر حاجة' }; }
-  if (raw === null) return { mine: [], favs: [] };
-  try {
-    const data = JSON.parse(raw);
-    if (data?.version !== 1) throw new Error('نسخة مش معروفة: ' + data?.version);
-    const mine = Array.isArray(data.mine) ? data.mine.filter(isRecipe) : [];
-    const favs = Array.isArray(data.favs) ? data.favs.filter((f) => typeof f === 'string') : [];
-    return { mine, favs };
-  } catch (err) {
-    try { storage.setItem(KEY + ':broken', raw); } catch { /* مفيش مكان، مش مشكلة */ }
-    return { mine: [], favs: [], warning: 'الداتا المحفوظة كانت بايظة (' + err.message + ')، واتحفظت نسخة منها' };
-  }
-}
-
-function save({ mine, favs }, storage = browserStorage()) {
-  try {
-    storage.setItem(KEY, JSON.stringify({ version: 1, mine, favs }));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-
-function createStore(storage = browserStorage()) {
-  const saved = load(storage);
-  let state = {
-    recipes: [], mine: saved.mine, favs: saved.favs,
-    status: 'idle', error: '', notice: saved.warning ?? '',
-    route: { name: 'list', params: {}, query: {} },
-  };
-  const listeners = new Set();
-
-  function set(patch) {
-    const prev = state;
-    state = { ...state, ...patch };
-    if ((state.mine !== prev.mine || state.favs !== prev.favs) && !save(state, storage)) {
-      state = { ...state, notice: 'مقدرناش نحفظ: التخزين مليان أو مقفول' };
-    }
-    listeners.forEach((fn) => fn(state, prev));
-  }
-
+function stats({ target, typed, keystrokes, mistakes }, ms) {
+  let correct = 0;
+  for (let i = 0; i < typed.length; i++) if (typed[i] === target[i]) correct++;
+  const minutes = Math.max(ms, 1000) / 60000;
   return {
-    get: () => state,
-    subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn); },
-    setRoute: (route) => set({ route }),
-    loading: () => set({ status: 'loading', error: '' }),
-    loaded: (recipes) => set({ status: 'ready', recipes }),
-    failed: (message) => set({ status: 'error', error: message }),
-    toggleFav: (id) => set({ favs: toggleFav(state.favs, id) }),
-    addRecipe(input) {
-      const res = validateRecipe(input);
-      if (!res.ok) return res;
-      const recipe = { id: 'u-' + crypto.randomUUID(), ...res.value };
-      set({ mine: [recipe, ...state.mine] });
-      return { ok: true, recipe };
-    },
+    wpm: Math.round(correct / 5 / minutes),
+    accuracy: keystrokes ? Math.round((keystrokes - mistakes) / keystrokes * 100) : 100,
   };
 }
 
-const allRecipes = (s) => [...s.mine, ...s.recipes];
 
 
-class HttpError extends Error {
-  constructor(status, url) {
-    super($__btHTTP $__{status} من $__{url}$__bt);
-    this.name = 'HttpError';
-    this.status = status;
+
+const $ = (sel) => document.querySelector(sel);
+const box = $('#text');
+const input = $('#input');
+const lang = $('#lang');
+const BEST_KEY = 'typing-best';
+let game = null;
+
+function newGame() {
+  if (game) cancelAnimationFrame(game.raf);
+  const key = lang.value;
+  const index = pick(TEXTS[key].length, game?.lang === key ? game.index : -1);
+  const text = TEXTS[key][index];
+  game = { lang: key, index, target: Array.from(text), typed: [], keystrokes: 0, mistakes: 0, misses: new Map(), start: 0, raf: 0, done: false };
+  const dir = isArabic(text) ? 'rtl' : 'ltr';
+  for (const node of [box, input]) { node.dir = dir; node.lang = key; }
+  box.replaceChildren(...game.target.map((ch) => {
+    const span = document.createElement('span');
+    span.textContent = ch;
+    return span;
+  }));
+  input.value = '';
+  input.maxLength = text.length;
+  input.disabled = false;
+  $('#result').textContent = '';
+  $('#misses').textContent = '';
+  paint();
+  showStats(0);
+  showBest();
+  input.focus();
+}
+
+function paint() {
+  const m = marks(game.target, game.typed);
+  box.querySelectorAll('span').forEach((span, i) => { span.className = m[i]; });
+}
+
+function showStats(ms) {
+  const s = stats(game, ms);
+  $('#time').textContent = (ms / 1000).toFixed(1);
+  $('#wpm').textContent = s.wpm;
+  $('#acc').textContent = s.accuracy + '%';
+  return s;
+}
+
+function showBest() {
+  const b = loadBest()[game.lang];
+  $('#best').textContent = b ? b.wpm + ' WPM بدقة ' + b.accuracy + '%' : '—';
+}
+
+function tick() {
+  showStats(performance.now() - game.start);
+  game.raf = requestAnimationFrame(tick);
+}
+
+input.addEventListener('input', () => {
+  if (game.done) return;
+  const typed = Array.from(input.value);
+  if (!game.start) {
+    game.start = performance.now();
+    game.raf = requestAnimationFrame(tick);
   }
-}
-
-class DataError extends Error {
-  name = 'DataError';
-}
-
-async function fetchJSON(url, { timeout = 8000, signal } = {}) {
-  const timer = AbortSignal.timeout(timeout);
-  const res = await fetch(url, { signal: signal ? AbortSignal.any([signal, timer]) : timer });
-  if (!res.ok) throw new HttpError(res.status, url);
-  return res.json();
-}
-
-async function loadRecipes(url, opts) {
-  const data = await fetchJSON(url, opts);
-  if (!Array.isArray(data)) throw new DataError('الرد مش لستة وصفات');
-  return data.filter(isRecipe);
-}
-
-function explain(err) {
-  if (err.name === 'TimeoutError') return 'السيرفر اتأخر في الرد. جرّب تاني.';
-  if (err instanceof HttpError) return err.status === 404 ? 'ملف الوصفات مش موجود (404).' : $__btالسيرفر رد بخطأ $__{err.status}. جرّب كمان شوية.$__bt;
-  if (err instanceof SyntaxError) return 'الرد وصل بس مش JSON سليم.';
-  if (err instanceof DataError) return 'الرد وصل بس شكله غلط.';
-  return 'مفيش اتصال. اتأكد من النت وجرّب تاني.';
-}
-
-
-function h(tag, attrs = {}, ...kids) {
-  const el = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k.startsWith('aria-')) el.setAttribute(k, String(v));
-    else if (v === true) el.setAttribute(k, '');
-    else if (v !== false && v != null) el.setAttribute(k, String(v));
+  for (let i = game.typed.length; i < typed.length; i++) {
+    game.keystrokes++;
+    if (typed[i] !== game.target[i]) {
+      game.mistakes++;
+      const ch = game.target[i];
+      game.misses.set(ch, (game.misses.get(ch) ?? 0) + 1);
+    }
   }
-  el.append(...kids.flat().filter((k) => k != null && k !== false));
-  return el;
-}
+  game.typed = typed;
+  paint();
+  if (typed.length >= game.target.length) finish();
+});
 
-const TITLES = { list: 'الوصفات', fav: 'المفضلة', new: 'وصفة جديدة', notfound: 'الصفحة دي مش موجودة' };
+input.addEventListener('paste', (e) => e.preventDefault());
 
-function view(s) {
-  const { name } = s.route;
-  const all = allRecipes(s);
-  const screen = name === 'recipe' ? recipeScreen(s, all) : { title: TITLES[name] ?? TITLES.notfound };
-  const nodes = screen.nodes
-    ?? (name === 'list' ? listScreen(s, screen.title, all)
-      : name === 'fav' ? listScreen(s, screen.title, all.filter((r) => s.favs.includes(r.id)))
-        : name === 'new' ? newScreen()
-          : notFound(screen.title));
-  if (s.notice) nodes.unshift(h('p', { class: 'notice', role: 'status' }, s.notice));
-  return { title: screen.title + ' · دفتر الوصفات', nodes };
-}
-
-function listScreen(s, title, list) {
-  const { q = '', tag = '' } = s.route.query;
-  const shown = filterRecipes(list, { q, tag });
-  return [
-    h('h1', { tabindex: -1 }, title),
-    h('form', { role: 'search', 'data-form': 'search' },
-      h('label', { for: 'q' }, 'دوّر باسم أو مكوّن'),
-      h('input', { id: 'q', name: 'q', type: 'search', value: q, autocomplete: 'off' }),
-      h('label', { for: 'tag' }, 'التصنيف'),
-      h('select', { id: 'tag', name: 'tag' }, h('option', { value: '' }, 'الكل'),
-        allTags(list).map((t) => h('option', { value: t, selected: t === tag }, t)))),
-    status(s, shown.length),
-    h('ul', { class: 'cards' }, shown.map((r) => card(s, r))),
-  ];
-}
-
-function status(s, shown) {
-  if (s.status === 'loading' || s.status === 'idle') return h('p', { role: 'status' }, 'بنحمّل الوصفات…');
-  if (s.status === 'error') return h('div', { role: 'alert' }, h('p', {}, s.error),
-    h('button', { type: 'button', 'data-action': 'retry' }, 'جرّب تاني'));
-  return h('p', { role: 'status' }, shown === 0 ? 'مفيش وصفات بالبحث ده' : $__bt$__{shown} وصفة$__bt);
-}
-
-const favButton = (s, id) => {
-  const on = s.favs.includes(id);
-  return h('button', { type: 'button', id: 'fav-' + id, 'data-fav': id, 'aria-pressed': on }, on ? '★ في المفضلة' : '☆ للمفضلة');
-};
-
-const meta = (r) => h('p', { class: 'meta' }, r.minutes + ' دقيقة' + (r.tags.length ? ' · ' + r.tags.join('، ') : ''));
-
-function card(s, r) {
-  return h('li', { class: 'card' },
-    h('h2', {}, h('a', { href: '#/r/' + encodeURIComponent(r.id) }, r.title)),
-    meta(r), favButton(s, r.id));
-}
-
-function recipeScreen(s, all) {
-  const r = all.find((x) => x.id === s.route.params.id);
-  if (r) {
-    return { title: r.title, nodes: [
-      h('h1', { tabindex: -1 }, r.title), meta(r), favButton(s, r.id),
-      h('h2', {}, 'المكوّنات'), h('ul', {}, r.ingredients.map((i) => h('li', {}, i))),
-      h('h2', {}, 'الطريقة'), h('p', { class: 'steps' }, r.steps),
-      h('p', {}, h('a', { href: '#/' }, 'كل الوصفات')),
-    ] };
-  }
-  if (s.status === 'loading' || s.status === 'idle') return { title: 'بنحمّل', nodes: [h('h1', { tabindex: -1 }, 'بنحمّل الوصفة…')] };
-  if (s.status === 'error') return { title: 'حصل خطأ', nodes: [h('h1', { tabindex: -1 }, 'حصل خطأ'), status(s, 0)] };
-  return { title: 'الوصفة دي مش موجودة', nodes: notFound('الوصفة دي مش موجودة') };
-}
-
-const notFound = (title) => [h('h1', { tabindex: -1 }, title), h('p', {}, h('a', { href: '#/' }, 'ارجع لكل الوصفات'))];
-
-function field(name, label, control) {
-  return h('div', { class: 'field' }, h('label', { for: name }, label), control, h('p', { id: name + '-err', class: 'err' }));
-}
-
-function newScreen() {
-  const a = (name) => ({ id: name, name, 'aria-describedby': name + '-err' });
-  return [
-    h('h1', { tabindex: -1 }, 'وصفة جديدة'),
-    h('form', { 'data-form': 'add', novalidate: true },
-      field('title', 'الاسم', h('input', { ...a('title'), required: true, maxlength: MAX_TITLE, autocomplete: 'off' })),
-      field('minutes', 'الوقت بالدقايق', h('input', { ...a('minutes'), required: true, inputmode: 'numeric' })),
-      field('ingredients', 'المكوّنات، كل واحد في سطر', h('textarea', { ...a('ingredients'), required: true, rows: 4 })),
-      field('steps', 'الطريقة', h('textarea', { ...a('steps'), required: true, rows: 4 })),
-      field('tags', 'التصنيفات، افصل بينهم بفاصلة', h('input', { ...a('tags'), autocomplete: 'off' })),
-      h('button', { type: 'submit' }, 'احفظ الوصفة')),
-  ];
-}
-
-function showErrors(form, errors) {
-  for (const el of form.querySelectorAll('[name]')) {
-    const msg = errors[el.name] ?? '';
-    form.querySelector('#' + el.name + '-err').textContent = msg;
-    if (msg) el.setAttribute('aria-invalid', 'true');
-    else el.removeAttribute('aria-invalid');
-  }
-  form.querySelector('[aria-invalid="true"]')?.focus();
-}
-
-
-const DATA_URL = 'data:application/json;charset=utf-8,' + encodeURIComponent(RECIPES);
-const store = createStore();
-const main = document.getElementById('main');
-let ctrl = null;
-
-function paint(s, prev) {
-  main.setAttribute('aria-busy', String(s.status === 'loading'));
-  const moved = prev.route.name !== s.route.name || prev.route.params.id !== s.route.params.id;
-  if (!moved && s.route.name === 'new') return;
-  const active = main.contains(document.activeElement) ? document.activeElement : null;
-  const keep = active?.id ? { id: active.id, pos: active.selectionStart } : null;
-  const { title, nodes } = view(s);
-  document.title = title;
-  main.replaceChildren(...nodes);
-  const here = '#/' + (s.route.name === 'list' ? '' : s.route.name);
-  for (const a of document.querySelectorAll('nav a')) {
-    if (a.getAttribute('href') === here) a.setAttribute('aria-current', 'page');
-    else a.removeAttribute('aria-current');
-  }
-  if (moved) main.querySelector('h1')?.focus();
-  else if (keep) {
-    const el = document.getElementById(keep.id);
-    el?.focus();
-    if (keep.pos != null) el?.setSelectionRange?.(keep.pos, keep.pos);
-  }
-}
-
-const search = debounce((form) => {
-  const p = new URLSearchParams();
-  for (const [k, v] of new FormData(form)) if (String(v).trim()) p.set(k, String(v));
-  const qs = String(p);
-  // من غير || '#/' لو الصفحة اتفتحت من غير # الـ ?q= كان هيروح للرابط نفسه مش للـ hash
-  const path = location.hash.split('?')[0] || '#/';
-  history.replaceState(null, '', path + (qs ? '?' + qs : ''));
-  store.setRoute(parseRoute(location.hash));
-}, 250);
-
-async function loadData() {
-  ctrl?.abort();
-  ctrl = new AbortController();
-  store.loading();
+function loadBest() {
+  const ok = (r) => r && Number.isFinite(r.wpm) && Number.isFinite(r.accuracy);
   try {
-    store.loaded(await loadRecipes(DATA_URL, { signal: ctrl.signal }));
-  } catch (err) {
-    if (err.name !== 'AbortError') store.failed(explain(err));
+    const data = JSON.parse(localStorage.getItem(BEST_KEY));
+    return { ar: ok(data?.ar) ? data.ar : null, en: ok(data?.en) ? data.en : null };
+  } catch {
+    return { ar: null, en: null };
   }
 }
 
-main.addEventListener('input', (e) => {
-  const form = e.target.closest('[data-form="search"]');
-  if (form) search(form);
-});
+function finish() {
+  game.done = true;
+  cancelAnimationFrame(game.raf);
+  input.disabled = true;
+  const s = showStats(performance.now() - game.start);
+  const best = loadBest();
+  const old = best[game.lang];
+  const record = s.accuracy >= 90 && (!old || s.wpm > old.wpm);
+  if (record) {
+    best[game.lang] = { wpm: s.wpm, accuracy: s.accuracy };
+    try { localStorage.setItem(BEST_KEY, JSON.stringify(best)); } catch {}
+  }
+  $('#result').textContent = (record ? 'رقم قياسي جديد! ' : 'خلصت. ') + s.wpm + ' WPM بدقة ' + s.accuracy + '%';
+  $('#misses').textContent = topMisses(game.misses);
+  showBest();
+}
 
-main.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (e.target.dataset.form === 'search') return search(e.target);
-  const res = store.addRecipe(Object.fromEntries(new FormData(e.target)));
-  if (!res.ok) return showErrors(e.target, res.errors);
-  location.hash = '#/r/' + encodeURIComponent(res.recipe.id);
-});
+function topMisses(misses) {
+  if (misses.size === 0) return 'مفيش غلطات';
+  const top = [...misses].sort((a, b) => b[1] - a[1]).slice(0, 3);
+  return 'أكتر حروف غلطت فيها: ' + top
+    .map(([ch, n]) => (ch === ' ' ? 'مسافة' : ch) + ': ' + n.toLocaleString('ar-EG'))
+    .join('، ');
+}
 
-main.addEventListener('click', (e) => {
-  const fav = e.target.closest('[data-fav]');
-  if (fav) store.toggleFav(fav.dataset.fav);
-  if (e.target.closest('[data-action="retry"]')) loadData();
-});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') newGame(); });
+$('#restart').addEventListener('click', newGame);
+lang.addEventListener('change', newGame);
 
-window.addEventListener('hashchange', () => store.setRoute(parseRoute(location.hash)));
-store.subscribe(paint);
-store.setRoute(parseRoute(location.hash));
-loadData();
+newGame();
 </script>
 </body>
 </html>
 ~~~
 
-**هتشوف إيه:** ده التطبيق كامل في صفحة واحدة (الصندوق ده معزول ومفيهوش [[localStorage]]، فهتشوف فوق «المتصفح قافل التخزين، ومش هنفتكر حاجة»، والمفضلة والإضافة بيشتغلوا لحد ما تقفل الصفحة). على الرابط الحقيقي التحذير ده مش بيظهر والحفظ شغّال.
+> الصندوق ده معزول و [[localStorage]] مقفول فيه، فـ «أحسن نتيجة» هتفضل «—» حتى لو قال «رقم قياسي جديد» ([[loadBest]] و [[setItem]] جوه [[try]] فمفيش error). في المتصفح عندك من سيرفر بتتحفظ عادي.
 
-ده الحل الكامل للمشروع كله: كل ملف في الـ repo بكوده، و README، وأوامر git لحد الـ push، والـ workflow. وده كمان «النسخة الأساسية» اللي مشاريع الوحدة بتبني عليها.
+## اللي اتغيّر
 
-## الملفات
+**[[index.html]]:** سطر تحت [[#result]]:
 
-~~~text
-recipe-book/
-├── .github/workflows/pages.yml   الاختبارات وبعدين النشر
-├── .gitattributes                 نهايات السطور LF على كل الأجهزة
-├── .gitignore                     node_modules و coverage
-├── README.md
-├── docs/mobile.png                صورة الموبايل اللي في الـ README
-├── data/recipes.json              ٦ وصفات
-├── eslint.config.js
-├── index.html
-├── package.json و package-lock.json
-├── style.css
-├── src/  logic.js  storage.js  store.js  api.js  view.js  app.js
-└── tests/  logic.test.js  storage.test.js  api.test.js  app.dom.test.js
+~~~html
+<p id="misses"></p>
 ~~~
 
-~~~html index.html
+**[[app.js]]** كامل ([[game.js]] و [[texts.js]] و [[style.css]] زي الدرس):
+
+~~~js app.js
+import { TEXTS } from './texts.js';
+import { pick, isArabic, marks, stats } from './game.js';
+
+const $ = (sel) => document.querySelector(sel);
+const box = $('#text');
+const input = $('#input');
+const lang = $('#lang');
+const BEST_KEY = 'typing-best';
+let game = null;
+
+function newGame() {
+  if (game) cancelAnimationFrame(game.raf);
+  const key = lang.value;
+  const index = pick(TEXTS[key].length, game?.lang === key ? game.index : -1);
+  const text = TEXTS[key][index];
+  game = { lang: key, index, target: Array.from(text), typed: [], keystrokes: 0, mistakes: 0, misses: new Map(), start: 0, raf: 0, done: false };
+  const dir = isArabic(text) ? 'rtl' : 'ltr';
+  for (const node of [box, input]) { node.dir = dir; node.lang = key; }
+  box.replaceChildren(...game.target.map((ch) => {
+    const span = document.createElement('span');
+    span.textContent = ch;
+    return span;
+  }));
+  input.value = '';
+  input.maxLength = text.length;
+  input.disabled = false;
+  $('#result').textContent = '';
+  $('#misses').textContent = '';
+  paint();
+  showStats(0);
+  showBest();
+  input.focus();
+}
+
+function paint() {
+  const m = marks(game.target, game.typed);
+  box.querySelectorAll('span').forEach((span, i) => { span.className = m[i]; });
+}
+
+function showStats(ms) {
+  const s = stats(game, ms);
+  $('#time').textContent = (ms / 1000).toFixed(1);
+  $('#wpm').textContent = s.wpm;
+  $('#acc').textContent = s.accuracy + '%';
+  return s;
+}
+
+function showBest() {
+  const b = loadBest()[game.lang];
+  $('#best').textContent = b ? b.wpm + ' WPM بدقة ' + b.accuracy + '%' : '—';
+}
+
+function tick() {
+  showStats(performance.now() - game.start);
+  game.raf = requestAnimationFrame(tick);
+}
+
+input.addEventListener('input', () => {
+  if (game.done) return;
+  const typed = Array.from(input.value);
+  if (!game.start) {
+    game.start = performance.now();
+    game.raf = requestAnimationFrame(tick);
+  }
+  for (let i = game.typed.length; i < typed.length; i++) {
+    game.keystrokes++;
+    if (typed[i] !== game.target[i]) {
+      game.mistakes++;
+      const ch = game.target[i];
+      game.misses.set(ch, (game.misses.get(ch) ?? 0) + 1);
+    }
+  }
+  game.typed = typed;
+  paint();
+  if (typed.length >= game.target.length) finish();
+});
+
+input.addEventListener('paste', (e) => e.preventDefault());
+
+function loadBest() {
+  const ok = (r) => r && Number.isFinite(r.wpm) && Number.isFinite(r.accuracy);
+  try {
+    const data = JSON.parse(localStorage.getItem(BEST_KEY));
+    return { ar: ok(data?.ar) ? data.ar : null, en: ok(data?.en) ? data.en : null };
+  } catch {
+    return { ar: null, en: null };
+  }
+}
+
+function finish() {
+  game.done = true;
+  cancelAnimationFrame(game.raf);
+  input.disabled = true;
+  const s = showStats(performance.now() - game.start);
+  const best = loadBest();
+  const old = best[game.lang];
+  const record = s.accuracy >= 90 && (!old || s.wpm > old.wpm);
+  if (record) {
+    best[game.lang] = { wpm: s.wpm, accuracy: s.accuracy };
+    try { localStorage.setItem(BEST_KEY, JSON.stringify(best)); } catch {}
+  }
+  $('#result').textContent = (record ? 'رقم قياسي جديد! ' : 'خلصت. ') + s.wpm + ' WPM بدقة ' + s.accuracy + '%';
+  $('#misses').textContent = topMisses(game.misses);
+  showBest();
+}
+
+function topMisses(misses) {
+  if (misses.size === 0) return 'مفيش غلطات';
+  const top = [...misses].sort((a, b) => b[1] - a[1]).slice(0, 3);
+  return 'أكتر حروف غلطت فيها: ' + top
+    .map(([ch, n]) => (ch === ' ' ? 'مسافة' : ch) + ': ' + n.toLocaleString('ar-EG'))
+    .join('، ');
+}
+
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') newGame(); });
+$('#restart').addEventListener('click', newGame);
+lang.addEventListener('change', newGame);
+
+newGame();
+~~~
+
+| الحتة | ليه |
+|---|---|
+| [[misses: new Map()]] جوه [[game]] | جزء من حالة الجولة، فـ [[newGame]] بتعمل [[Map]] جديدة مع الـ [[game]] الجديد. مفيش حاجة تتصفّر بإيدك |
+| جوه نفس الـ [[if]] بتاع [[mistakes++]] | نفس اللحظة اللي الغلطة بتتحسب فيها، فالرقمين مستحيل يختلفوا |
+| المفتاح [[game.target[i] ]] | الحرف اللي **كان المفروض** يتكتب، مش اللي اتكتب. «غلطت في ة» معناها «لما جه دور الـ ة كتبت حاجة تانية» |
+| [[ [...misses].sort((a, b) => b[1] - a[1]).slice(0, 3) ]] | الـ [[Map]] لـ array أزواج، ترتيب بالعدد من الأكبر، وأول ٣ |
+| [[ch === ' ' ? 'مسافة' : ch]] | المسافة لو اتعرضت زي ما هي هتبقى «: ١» من غير حاجة قبلها |
+| [[toLocaleString('ar-EG')]] | [[3]] بتبقى [[٣]] زي باقي الصفحة |
+| [[textContent]] | الحرف جاي من النص، بس برضه مفيش [[innerHTML]] |
+
+## اتجرّب في Chrome 158 (من سيرفر، ٢١ نوفمبر ٢٠٢٦)
+
+سكربت Playwright اختار نص فيه ٣ «ة» على الأقل، وكتبه حرف حرف: أول ٣ «ة» اتكتبوا «ه» ومسحهم وكتب الصح، وأول مسافة اتكتبت «x» واتمسحت. وبعدين Esc، وجولة تانية من غير ولا غلطة:
+
+~~~text الناتج
+النص:    البرمجة مش حفظ أوامر. البرمجة إنك تفهم المشكلة كويس وبعدين تكتب أبسط حل يشتغل.
+النتيجة: رقم قياسي جديد! 936 WPM بدقة 95%
+الغلطات: أكتر حروف غلطت فيها: ة: ٣، مسافة: ١
+بعد Esc: (السطر فاضي)
+جولة من غير غلط: مفيش غلطات
+pageerror: ولا واحد
+~~~
+
+الـ ٩٣٦ WPM لأن السكربت بيكتب أسرع من أي حد. والدقة ٩٥٪ رغم إن النص اتصلّح كله: ٧٨ حرف + ٤ غلطات = ٨٢ ضغطة، و (٨٢ − ٤) ÷ ٨٢ = ٩٥٪. والغلطات **فضلت محسوبة** بعد المسح، زي [[mistakes]] بالظبط.
+
+**الغلطة الشائعة:** تعدّ الغلطات في [[finish]] بإنك تقارن [[typed]] بـ [[target]] في الآخر. الحروف اللي اتصلّحت هتبان صح ومش هتتعدّ، فجولة زي اللي فوق هتقول «مفيش غلطات». وغلطة تانية: [[misses]] كمتغير برّه [[game]] ([[const misses = new Map()]] فوق): بعد Esc الغلطات القديمة بتفضل وتتجمع على الجولة الجديدة.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** اعمل نسخة من اللعبة الوقت فيها بـ [[setInterval(() => elapsed += 100, 100)]] بدل [[performance.now()]]. في الاتنين، ضيف زرار بيعمل busy loop ٧٠٠ms ([[while (performance.now() < end);]]). العب جولة، ودوس الزرار في نصها، وقارن الوقت اللي اللعبة عرضته بوقت حقيقي من ساعة الموبايل.`, done: R`عندك رقمين لكل نسخة. نسخة [[setInterval]] الوقت فيها أقل من الحقيقي بحوالي ٧٠٠ms أو أكتر، والسرعة أعلى بنسبة باينة. ونسخة [[performance.now()]] فرقها عن ساعة الموبايل أقل من ربع ثانية. وكاتب جملة تشرح ليه.`, sol: R`**جرّبها بنفسك هنا:** اختار «setInterval» من قايمة «الوقت»، واكتب نص الجملة، ودوس «علّق الصفحة ٧٠٠ms»، وكمّل. وبعدين نفس الحكاية بـ «performance.now»:
+
+~~~view 560 الساعتين جنب بعض
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>دفتر الوصفات</title>
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./src/app.js"></script>
+  <title>سرعة الكتابة</title>
+  <style>
+body { font-family: system-ui, sans-serif; max-width: 44rem; margin: 2rem auto; padding: 0 1rem; }
+#text { font-size: 1.5rem; line-height: 2.4; padding: 1rem; background: #f4f4f4; border-radius: 8px; }
+#text .ok { color: #188038; }
+#text .bad { color: #fff; background: #d93025; }
+#text .cur { background: #fde293; }
+#input { width: 100%; font-size: 1.3rem; padding: .5rem; box-sizing: border-box; }
+.stats b { font-variant-numeric: tabular-nums; }
+  </style>
 </head>
 <body>
-  <header>
-    <nav aria-label="الأقسام">
-      <a href="#/">الوصفات</a>
-      <a href="#/fav">المفضلة</a>
-      <a href="#/new">وصفة جديدة</a>
-    </nav>
-  </header>
-  <main id="main"></main>
-  <noscript>التطبيق ده محتاج JavaScript يكون شغال.</noscript>
+  <main>
+    <h1>سرعة الكتابة</h1>
+    <label>النص <select id="lang"><option value="ar">عربي</option><option value="en">English</option></select></label>
+    <label>الوقت <select id="clock"><option value="measure">performance.now (بيقيس)</option><option value="interval">setInterval (بيعدّ)</option></select></label>
+    <p id="text" aria-label="النص اللي هتكتبه"></p>
+    <input id="input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="اكتب هنا">
+    <p class="stats">
+      الوقت <b id="time">0.0</b> ث · السرعة <b id="wpm">0</b> WPM · الدقة <b id="acc">100%</b>
+    </p>
+    <p id="result" role="status"></p>
+    <p>أحسن نتيجة: <span id="best">—</span></p>
+    <button id="restart">نص جديد (Esc)</button>
+    <button id="freeze">علّق الصفحة ٧٠٠ms</button>
+  </main>
+  <script type="module">
+const TEXTS = {
+  ar: [
+    'البرمجة مش حفظ أوامر. البرمجة إنك تفهم المشكلة كويس وبعدين تكتب أبسط حل يشتغل.',
+    'لما الكود يقع اقرا رسالة الخطأ للآخر قبل ما تدور على حل في أي مكان تاني.',
+    'اتعلم JavaScript خطوة خطوة وابني حاجة صغيرة كل يوم بدل ما تقرا من غير ما تجرب.',
+    'الكمبيوتر بيعمل اللي انت كاتبه بالظبط مش اللي انت قاصده وده أول درس في الشغلانة.',
+  ],
+  en: [
+    'Programming is not about typing fast. It is about thinking clearly and then typing.',
+    'Read the whole error message before you search for it. The answer is often right there.',
+    'Small apps you finish teach you more than big apps you only plan to build one day.',
+    'The computer does exactly what you wrote, not what you meant. That is the whole job.',
+  ],
+};
+
+function pick(count, last) {
+  if (count < 2) return 0;
+  if (last < 0 || last >= count) return Math.floor(Math.random() * count);
+  const i = Math.floor(Math.random() * (count - 1));
+  return i >= last ? i + 1 : i;
+}
+
+function isArabic(text) {
+  return /\p{Script=Arabic}/u.test(text);
+}
+
+function marks(target, typed) {
+  return target.map((ch, i) => {
+    if (i === typed.length) return 'cur';
+    if (i > typed.length) return '';
+    return typed[i] === ch ? 'ok' : 'bad';
+  });
+}
+
+function stats({ target, typed, keystrokes, mistakes }, ms) {
+  let correct = 0;
+  for (let i = 0; i < typed.length; i++) if (typed[i] === target[i]) correct++;
+  const minutes = Math.max(ms, 1000) / 60000;
+  return {
+    wpm: Math.round(correct / 5 / minutes),
+    accuracy: keystrokes ? Math.round((keystrokes - mistakes) / keystrokes * 100) : 100,
+  };
+}
+
+
+
+
+const $ = (sel) => document.querySelector(sel);
+const box = $('#text');
+const input = $('#input');
+const lang = $('#lang');
+const BEST_KEY = 'typing-best';
+let game = null;
+const clock = $('#clock');
+
+function newGame() {
+  if (game) { cancelAnimationFrame(game.raf); clearInterval(game.timer); }
+  const key = lang.value;
+  const index = pick(TEXTS[key].length, game?.lang === key ? game.index : -1);
+  const text = TEXTS[key][index];
+  game = { lang: key, index, target: Array.from(text), typed: [], keystrokes: 0, mistakes: 0, start: 0, raf: 0, timer: 0, elapsed: 0, done: false };
+  const dir = isArabic(text) ? 'rtl' : 'ltr';
+  for (const node of [box, input]) { node.dir = dir; node.lang = key; }
+  box.replaceChildren(...game.target.map((ch) => {
+    const span = document.createElement('span');
+    span.textContent = ch;
+    return span;
+  }));
+  input.value = '';
+  input.maxLength = text.length;
+  input.disabled = false;
+  $('#result').textContent = '';
+  paint();
+  showStats(0);
+  showBest();
+  input.focus();
+}
+
+function paint() {
+  const m = marks(game.target, game.typed);
+  box.querySelectorAll('span').forEach((span, i) => { span.className = m[i]; });
+}
+
+function showStats(ms) {
+  const s = stats(game, ms);
+  $('#time').textContent = (ms / 1000).toFixed(1);
+  $('#wpm').textContent = s.wpm;
+  $('#acc').textContent = s.accuracy + '%';
+  return s;
+}
+
+function showBest() {
+  const b = loadBest()[game.lang];
+  $('#best').textContent = b ? b.wpm + ' WPM بدقة ' + b.accuracy + '%' : '—';
+}
+
+function tick() {
+  showStats(performance.now() - game.start);
+  game.raf = requestAnimationFrame(tick);
+}
+
+input.addEventListener('input', () => {
+  if (game.done) return;
+  const typed = Array.from(input.value);
+  if (!game.start) {
+    game.start = performance.now();
+    if (clock.value === 'interval') {
+      game.timer = setInterval(() => { game.elapsed += 100; showStats(game.elapsed); }, 100);
+    } else game.raf = requestAnimationFrame(tick);
+  }
+  for (let i = game.typed.length; i < typed.length; i++) {
+    game.keystrokes++;
+    if (typed[i] !== game.target[i]) game.mistakes++;
+  }
+  game.typed = typed;
+  paint();
+  if (typed.length >= game.target.length) finish();
+});
+
+input.addEventListener('paste', (e) => e.preventDefault());
+
+function loadBest() {
+  const ok = (r) => r && Number.isFinite(r.wpm) && Number.isFinite(r.accuracy);
+  try {
+    const data = JSON.parse(localStorage.getItem(BEST_KEY));
+    return { ar: ok(data?.ar) ? data.ar : null, en: ok(data?.en) ? data.en : null };
+  } catch {
+    return { ar: null, en: null };
+  }
+}
+
+function finish() {
+  game.done = true;
+  cancelAnimationFrame(game.raf);
+  clearInterval(game.timer);
+  input.disabled = true;
+  const s = showStats(clock.value === 'interval' ? game.elapsed : performance.now() - game.start);
+  const best = loadBest();
+  const old = best[game.lang];
+  const record = s.accuracy >= 90 && (!old || s.wpm > old.wpm);
+  if (record) {
+    best[game.lang] = { wpm: s.wpm, accuracy: s.accuracy };
+    try { localStorage.setItem(BEST_KEY, JSON.stringify(best)); } catch {}
+  }
+  $('#result').textContent = (record ? 'رقم قياسي جديد! ' : 'خلصت. ') + s.wpm + ' WPM بدقة ' + s.accuracy + '%';
+  showBest();
+}
+
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') newGame(); });
+$('#restart').addEventListener('click', newGame);
+lang.addEventListener('change', newGame);
+clock.addEventListener('change', newGame);
+
+$('#freeze').addEventListener('click', () => {
+  const end = performance.now() + 700;
+  while (performance.now() < end);
+  input.focus();
+});
+
+newGame();
+</script>
 </body>
 </html>
 ~~~
 
-~~~css style.css
-* { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; line-height: 1.6; color: #1d1d1f; background: #faf7f2; }
-header { background: #7a3e12; }
-nav { display: flex; flex-wrap: wrap; gap: .25rem; max-width: 52rem; margin: 0 auto; padding: .5rem 1rem; }
-nav a { color: #fff; padding: .4rem .8rem; border-radius: 6px; text-decoration: none; }
-nav a[aria-current="page"] { background: #fff; color: #7a3e12; font-weight: 700; }
-main { max-width: 52rem; margin: 0 auto; padding: 1rem; }
-h1 { margin: .5rem 0 1rem; }
-h1:focus { outline: none; }
-:focus-visible { outline: 3px solid #1a73e8; outline-offset: 2px; }
-form[role="search"] { display: grid; grid-template-columns: 1fr; gap: .25rem; margin-bottom: .5rem; }
-@media (min-width: 640px) { form[role="search"] { grid-template-columns: auto 1fr auto auto; align-items: center; gap: .5rem; } }
-input, select, textarea, button { font: inherit; padding: .45rem .6rem; border: 1px solid #b9b1a6; border-radius: 6px; background: #fff; max-width: 100%; }
-button { cursor: pointer; background: #f1e6d8; }
-button[type="submit"] { background: #7a3e12; color: #fff; border-color: #7a3e12; }
-.cards { list-style: none; padding: 0; display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); }
-.card { background: #fff; border: 1px solid #e4dccf; border-radius: 10px; padding: .75rem 1rem; }
-.card h2 { font-size: 1.15rem; margin: 0; }
-.meta { color: #5c5348; margin: .25rem 0 .5rem; }
-.steps { white-space: pre-line; }
-.notice { background: #fff4ce; border: 1px solid #e0c060; padding: .5rem .75rem; border-radius: 6px; }
-[role="alert"] { background: #fde7e9; border: 1px solid #d93025; padding: .5rem .75rem; border-radius: 6px; }
-.field { display: grid; gap: .2rem; margin-bottom: .75rem; }
-.err { color: #b3261e; margin: 0; min-height: 1.2em; }
-[aria-invalid="true"] { border-color: #b3261e; border-width: 2px; }
+## النتيجة
+
+جولة بالإنجليزي، حرف كل ٤٠ms، والزرار في النص بالظبط. «الساعة الحقيقية» من [[Date.now()]] في سكربت Playwright برّه الصفحة (بدل ساعة الموبايل، وأدق منها). Chrome 158، ٢١ نوفمبر ٢٠٢٦، مرتين لكل واحدة:
+
+~~~text الناتج: node t3.cjs
+setInterval    | اللعبة: 4.1 ث، 255 WPM | الساعة الحقيقية: 4.79 ث (218 WPM) | الفرق 0.69 ث
+performance.now | اللعبة: 4.5 ث، 219 WPM | الساعة الحقيقية: 4.54 ث (217 WPM) | الفرق 0.04 ث
+setInterval    | اللعبة: 3.8 ث، 259 WPM | الساعة الحقيقية: 4.54 ث (217 WPM) | الفرق 0.74 ث
+performance.now | اللعبة: 4.6 ث، 218 WPM | الساعة الحقيقية: 4.61 ث (216 WPM) | الفرق 0.01 ث
 ~~~
 
-~~~json data/recipes.json
-[
-  { "id": "koshary", "title": "كشري", "minutes": 60, "tags": ["مصري", "نباتي"],
-    "ingredients": ["رز", "عدس بني", "مكرونة", "صلصة طماطم", "بصل مقرمش"],
-    "steps": "اسلق العدس والرز مع بعض.\nاسلق المكرونة لوحدها.\nاعمل الصلصة بالطماطم والتوم والخل.\nرص الطبق وفوقه البصل." },
-  { "id": "foul", "title": "فول مدمس", "minutes": 15, "tags": ["فطار", "مصري"],
-    "ingredients": ["فول مدمس", "زيت زيتون", "كمون", "ليمون", "ملح"],
-    "steps": "سخّن الفول بمية قليلة.\nاهرسه شوية.\nضيف الزيت والكمون والليمون والملح." },
-  { "id": "shakshuka", "title": "شكشوكة", "minutes": 20, "tags": ["فطار"],
-    "ingredients": ["بيض", "طماطم", "فلفل", "بصل", "كمون"],
-    "steps": "شوّح البصل والفلفل.\nضيف الطماطم والكمون لحد ما تتسبك.\nاكسر البيض فوقها وغطّيها." },
-  { "id": "salad", "title": "سلطة بلدي", "minutes": 10, "tags": ["نباتي"],
-    "ingredients": ["طماطم", "خيار", "بصل", "ليمون", "كمون"],
-    "steps": "قطّع الخضار مكعبات صغيرة.\nضيف الليمون والكمون والملح وقلّب." },
-  { "id": "roz-bel-laban", "title": "رز بلبن", "minutes": 40, "tags": ["حلو", "مصري"],
-    "ingredients": ["رز", "لبن", "سكر", "فانيليا"],
-    "steps": "اسلق الرز في مية لحد ما يشربها.\nضيف اللبن وقلّب على نار هادية.\nضيف السكر والفانيليا وصبّه في طواجن." },
-  { "id": "basbousa", "title": "بسبوسة", "minutes": 50, "tags": ["حلو", "مصري"],
-    "ingredients": ["سميد", "زبادي", "سكر", "زبدة", "شربات"],
-    "steps": "اخلط السميد والزبادي والسكر والزبدة.\nافرده في صينية وقطّعه.\nادخله الفرن وبعدين صب عليه الشربات." }
-]
+| | الفرق عن الحقيقي | السرعة اللي اتعرضت | الحقيقية |
+|---|---|---|---|
+| [[setInterval]] | ٠.٦٩ و ٠.٧٤ ث **ناقصين** | ٢٥٥ و ٢٥٩ | ~٢١٧ |
+| [[performance.now()]] | ٠.٠١ لـ ٠.٠٤ ث | ٢١٨ و ٢١٩ | ~٢١٧ |
+
+**ليه في جملة:** [[setInterval]] **بيعدّ** النداءات، والنداءات اللي كان ميعادها وقت التعليق مبتتنادّاش متأخرة كلها، فالـ ٧٠٠ms ضاعوا من العدّاد. و [[performance.now()]] **بيقيس** الفرق بين لحظتين، فالتعليق اتحسب لوحده. والسرعة في نسخة [[setInterval]] أعلى بـ ~١٧٪ لأن نفس الحروف اتقسمت على وقت أقل. (والفرق الصغير في نسخة [[performance.now]] هو وقت ما بين ضغطة السكربت وأول [[input]].)
+
+## اللي اتغيّر عن اللعبة
+
+**[[index.html]]:** قايمة تختار الساعة، وزرار التعليق:
+
+~~~html
+<label>الوقت <select id="clock"><option value="measure">performance.now (بيقيس)</option><option value="interval">setInterval (بيعدّ)</option></select></label>
+<button id="freeze">علّق الصفحة ٧٠٠ms</button>
 ~~~
 
-~~~js src/logic.js
-// src/logic.js — القواعد: مفيهوش document ولا fetch، فبيشتغل في Node والمتصفح
-export const MAX_TITLE = 80;
+**[[app.js]]** كامل:
 
-export function isRecipe(r) {
-  return !!r && typeof r === 'object' && typeof r.id === 'string' && typeof r.title === 'string'
-    && Number.isFinite(r.minutes) && Array.isArray(r.ingredients) && Array.isArray(r.tags)
-    && typeof r.steps === 'string';
-}
+~~~js app.js
+import { TEXTS } from './texts.js';
+import { pick, isArabic, marks, stats } from './game.js';
 
-export const toggleFav = (favs, id) => (favs.includes(id) ? favs.filter((f) => f !== id) : [...favs, id]);
-
-export const toLatinDigits = (s) => String(s ?? '').replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
-
-export function parseRoute(hash) {
-  const raw = String(hash ?? '').replace(/^#/, '') || '/';
-  const [path, qs = ''] = raw.split('?');
-  const query = Object.fromEntries(new URLSearchParams(qs));
-  const parts = path.split('/').filter(Boolean);
-  if (parts.length === 0) return { name: 'list', params: {}, query };
-  if (parts[0] === 'r' && parts.length === 2) return { name: 'recipe', params: { id: decodeURIComponent(parts[1]) }, query };
-  if (parts.length === 1 && (parts[0] === 'new' || parts[0] === 'fav')) return { name: parts[0], params: {}, query };
-  return { name: 'notfound', params: {}, query };
-}
-
-export function filterRecipes(list, { q = '', tag = '' } = {}) {
-  const needle = q.trim().toLowerCase();
-  return list.filter((r) => (!tag || r.tags.includes(tag))
-    && (!needle || [r.title, ...r.ingredients].some((t) => t.toLowerCase().includes(needle))));
-}
-
-export const allTags = (list) => [...new Set(list.flatMap((r) => r.tags))].sort((a, b) => a.localeCompare(b, 'ar'));
-
-export function validateRecipe(input) {
-  const errors = {};
-  const title = String(input.title ?? '').trim();
-  const minutes = Number(toLatinDigits(input.minutes).trim() || NaN);
-  const ingredients = String(input.ingredients ?? '').split('\n').map((s) => s.trim()).filter(Boolean);
-  const steps = String(input.steps ?? '').trim();
-  const tags = [...new Set(String(input.tags ?? '').split(/[,،]/).map((s) => s.trim()).filter(Boolean))];
-  if (!title) errors.title = 'اكتب اسم الوصفة';
-  else if (title.length > MAX_TITLE) errors.title = $__btالاسم أطول من $__{MAX_TITLE} حرف$__bt;
-  if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) errors.minutes = 'الوقت بالدقايق، رقم صحيح من 1 لـ 1440';
-  if (ingredients.length < 2) errors.ingredients = 'اكتب مكوّنين على الأقل، كل واحد في سطر';
-  if (!steps) errors.steps = 'اكتب طريقة التحضير';
-  if (Object.keys(errors).length) return { ok: false, errors };
-  return { ok: true, value: { title, minutes, ingredients, steps, tags } };
-}
-
-export function debounce(fn, ms) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
-  };
-}
-~~~
-
-~~~js src/storage.js
-// src/storage.js — localStorage بأمان: load عمرها ما بترمي، و save بترجّع true أو false
-import { isRecipe } from './logic.js';
-
-export const KEY = 'recipe-book:v1';
-
-// مجرد قراية localStorage بترمي SecurityError لو التخزين مقفول (أو صفحة sandboxed)، فبنقراه جوه try
-export function browserStorage() {
-  try { return globalThis.localStorage ?? null; } catch { return null; }
-}
-
-export function load(storage = browserStorage()) {
-  let raw;
-  try { raw = storage.getItem(KEY); } catch { return { mine: [], favs: [], warning: 'المتصفح قافل التخزين، ومش هنفتكر حاجة' }; }
-  if (raw === null) return { mine: [], favs: [] };
-  try {
-    const data = JSON.parse(raw);
-    if (data?.version !== 1) throw new Error('نسخة مش معروفة: ' + data?.version);
-    const mine = Array.isArray(data.mine) ? data.mine.filter(isRecipe) : [];
-    const favs = Array.isArray(data.favs) ? data.favs.filter((f) => typeof f === 'string') : [];
-    return { mine, favs };
-  } catch (err) {
-    try { storage.setItem(KEY + ':broken', raw); } catch { /* مفيش مكان، مش مشكلة */ }
-    return { mine: [], favs: [], warning: 'الداتا المحفوظة كانت بايظة (' + err.message + ')، واتحفظت نسخة منها' };
-  }
-}
-
-export function save({ mine, favs }, storage = browserStorage()) {
-  try {
-    storage.setItem(KEY, JSON.stringify({ version: 1, mine, favs }));
-    return true;
-  } catch {
-    return false;
-  }
-}
-~~~
-
-~~~js src/store.js
-// src/store.js — الحالة. مصدر الحقيقة الوحيد، ومبيعرفش الـ DOM.
-import { validateRecipe, toggleFav } from './logic.js';
-import { load, save, browserStorage } from './storage.js';
-
-export function createStore(storage = browserStorage()) {
-  const saved = load(storage);
-  let state = {
-    recipes: [], mine: saved.mine, favs: saved.favs,
-    status: 'idle', error: '', notice: saved.warning ?? '',
-    route: { name: 'list', params: {}, query: {} },
-  };
-  const listeners = new Set();
-
-  function set(patch) {
-    const prev = state;
-    state = { ...state, ...patch };
-    if ((state.mine !== prev.mine || state.favs !== prev.favs) && !save(state, storage)) {
-      state = { ...state, notice: 'مقدرناش نحفظ: التخزين مليان أو مقفول' };
-    }
-    listeners.forEach((fn) => fn(state, prev));
-  }
-
-  return {
-    get: () => state,
-    subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn); },
-    setRoute: (route) => set({ route }),
-    loading: () => set({ status: 'loading', error: '' }),
-    loaded: (recipes) => set({ status: 'ready', recipes }),
-    failed: (message) => set({ status: 'error', error: message }),
-    toggleFav: (id) => set({ favs: toggleFav(state.favs, id) }),
-    addRecipe(input) {
-      const res = validateRecipe(input);
-      if (!res.ok) return res;
-      const recipe = { id: 'u-' + crypto.randomUUID(), ...res.value };
-      set({ mine: [recipe, ...state.mine] });
-      return { ok: true, recipe };
-    },
-  };
-}
-
-export const allRecipes = (s) => [...s.mine, ...s.recipes];
-~~~
-
-~~~js src/api.js
-// src/api.js — الكلام مع السيرفر. بيرمي على أي رد مش سليم، وبيترجم الخطأ لجملة.
-import { isRecipe } from './logic.js';
-
-export class HttpError extends Error {
-  constructor(status, url) {
-    super($__btHTTP $__{status} من $__{url}$__bt);
-    this.name = 'HttpError';
-    this.status = status;
-  }
-}
-
-export class DataError extends Error {
-  name = 'DataError';
-}
-
-export async function fetchJSON(url, { timeout = 8000, signal } = {}) {
-  const timer = AbortSignal.timeout(timeout);
-  const res = await fetch(url, { signal: signal ? AbortSignal.any([signal, timer]) : timer });
-  if (!res.ok) throw new HttpError(res.status, url);
-  return res.json();
-}
-
-export async function loadRecipes(url, opts) {
-  const data = await fetchJSON(url, opts);
-  if (!Array.isArray(data)) throw new DataError('الرد مش لستة وصفات');
-  return data.filter(isRecipe);
-}
-
-export function explain(err) {
-  if (err.name === 'TimeoutError') return 'السيرفر اتأخر في الرد. جرّب تاني.';
-  if (err instanceof HttpError) return err.status === 404 ? 'ملف الوصفات مش موجود (404).' : $__btالسيرفر رد بخطأ $__{err.status}. جرّب كمان شوية.$__bt;
-  if (err instanceof SyntaxError) return 'الرد وصل بس مش JSON سليم.';
-  if (err instanceof DataError) return 'الرد وصل بس شكله غلط.';
-  return 'مفيش اتصال. اتأكد من النت وجرّب تاني.';
-}
-~~~
-
-~~~js src/view.js
-// src/view.js — الشاشات من الحالة. بيبني عناصر بس، ومبيغيّرش الحالة.
-import { filterRecipes, allTags, MAX_TITLE } from './logic.js';
-import { allRecipes } from './store.js';
-
-export function h(tag, attrs = {}, ...kids) {
-  const el = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k.startsWith('aria-')) el.setAttribute(k, String(v));
-    else if (v === true) el.setAttribute(k, '');
-    else if (v !== false && v != null) el.setAttribute(k, String(v));
-  }
-  el.append(...kids.flat().filter((k) => k != null && k !== false));
-  return el;
-}
-
-const TITLES = { list: 'الوصفات', fav: 'المفضلة', new: 'وصفة جديدة', notfound: 'الصفحة دي مش موجودة' };
-
-export function view(s) {
-  const { name } = s.route;
-  const all = allRecipes(s);
-  const screen = name === 'recipe' ? recipeScreen(s, all) : { title: TITLES[name] ?? TITLES.notfound };
-  const nodes = screen.nodes
-    ?? (name === 'list' ? listScreen(s, screen.title, all)
-      : name === 'fav' ? listScreen(s, screen.title, all.filter((r) => s.favs.includes(r.id)))
-        : name === 'new' ? newScreen()
-          : notFound(screen.title));
-  if (s.notice) nodes.unshift(h('p', { class: 'notice', role: 'status' }, s.notice));
-  return { title: screen.title + ' · دفتر الوصفات', nodes };
-}
-
-function listScreen(s, title, list) {
-  const { q = '', tag = '' } = s.route.query;
-  const shown = filterRecipes(list, { q, tag });
-  return [
-    h('h1', { tabindex: -1 }, title),
-    h('form', { role: 'search', 'data-form': 'search' },
-      h('label', { for: 'q' }, 'دوّر باسم أو مكوّن'),
-      h('input', { id: 'q', name: 'q', type: 'search', value: q, autocomplete: 'off' }),
-      h('label', { for: 'tag' }, 'التصنيف'),
-      h('select', { id: 'tag', name: 'tag' }, h('option', { value: '' }, 'الكل'),
-        allTags(list).map((t) => h('option', { value: t, selected: t === tag }, t)))),
-    status(s, shown.length),
-    h('ul', { class: 'cards' }, shown.map((r) => card(s, r))),
-  ];
-}
-
-function status(s, shown) {
-  if (s.status === 'loading' || s.status === 'idle') return h('p', { role: 'status' }, 'بنحمّل الوصفات…');
-  if (s.status === 'error') return h('div', { role: 'alert' }, h('p', {}, s.error),
-    h('button', { type: 'button', 'data-action': 'retry' }, 'جرّب تاني'));
-  return h('p', { role: 'status' }, shown === 0 ? 'مفيش وصفات بالبحث ده' : $__bt$__{shown} وصفة$__bt);
-}
-
-const favButton = (s, id) => {
-  const on = s.favs.includes(id);
-  return h('button', { type: 'button', id: 'fav-' + id, 'data-fav': id, 'aria-pressed': on }, on ? '★ في المفضلة' : '☆ للمفضلة');
-};
-
-const meta = (r) => h('p', { class: 'meta' }, r.minutes + ' دقيقة' + (r.tags.length ? ' · ' + r.tags.join('، ') : ''));
-
-function card(s, r) {
-  return h('li', { class: 'card' },
-    h('h2', {}, h('a', { href: '#/r/' + encodeURIComponent(r.id) }, r.title)),
-    meta(r), favButton(s, r.id));
-}
-
-function recipeScreen(s, all) {
-  const r = all.find((x) => x.id === s.route.params.id);
-  if (r) {
-    return { title: r.title, nodes: [
-      h('h1', { tabindex: -1 }, r.title), meta(r), favButton(s, r.id),
-      h('h2', {}, 'المكوّنات'), h('ul', {}, r.ingredients.map((i) => h('li', {}, i))),
-      h('h2', {}, 'الطريقة'), h('p', { class: 'steps' }, r.steps),
-      h('p', {}, h('a', { href: '#/' }, 'كل الوصفات')),
-    ] };
-  }
-  if (s.status === 'loading' || s.status === 'idle') return { title: 'بنحمّل', nodes: [h('h1', { tabindex: -1 }, 'بنحمّل الوصفة…')] };
-  if (s.status === 'error') return { title: 'حصل خطأ', nodes: [h('h1', { tabindex: -1 }, 'حصل خطأ'), status(s, 0)] };
-  return { title: 'الوصفة دي مش موجودة', nodes: notFound('الوصفة دي مش موجودة') };
-}
-
-const notFound = (title) => [h('h1', { tabindex: -1 }, title), h('p', {}, h('a', { href: '#/' }, 'ارجع لكل الوصفات'))];
-
-function field(name, label, control) {
-  return h('div', { class: 'field' }, h('label', { for: name }, label), control, h('p', { id: name + '-err', class: 'err' }));
-}
-
-function newScreen() {
-  const a = (name) => ({ id: name, name, 'aria-describedby': name + '-err' });
-  return [
-    h('h1', { tabindex: -1 }, 'وصفة جديدة'),
-    h('form', { 'data-form': 'add', novalidate: true },
-      field('title', 'الاسم', h('input', { ...a('title'), required: true, maxlength: MAX_TITLE, autocomplete: 'off' })),
-      field('minutes', 'الوقت بالدقايق', h('input', { ...a('minutes'), required: true, inputmode: 'numeric' })),
-      field('ingredients', 'المكوّنات، كل واحد في سطر', h('textarea', { ...a('ingredients'), required: true, rows: 4 })),
-      field('steps', 'الطريقة', h('textarea', { ...a('steps'), required: true, rows: 4 })),
-      field('tags', 'التصنيفات، افصل بينهم بفاصلة', h('input', { ...a('tags'), autocomplete: 'off' })),
-      h('button', { type: 'submit' }, 'احفظ الوصفة')),
-  ];
-}
-
-export function showErrors(form, errors) {
-  for (const el of form.querySelectorAll('[name]')) {
-    const msg = errors[el.name] ?? '';
-    form.querySelector('#' + el.name + '-err').textContent = msg;
-    if (msg) el.setAttribute('aria-invalid', 'true');
-    else el.removeAttribute('aria-invalid');
-  }
-  form.querySelector('[aria-invalid="true"]')?.focus();
-}
-~~~
-
-~~~js src/app.js
-// src/app.js — التوصيل: أحداث ← حالة ← شاشة. الوحيد اللي بيعرف الصفحة والحالة مع بعض.
-import { parseRoute, debounce } from './logic.js';
-import { createStore } from './store.js';
-import { loadRecipes, explain } from './api.js';
-import { view, showErrors } from './view.js';
-
-const DATA_URL = './data/recipes.json';
-const store = createStore();
-const main = document.getElementById('main');
-let ctrl = null;
-
-function paint(s, prev) {
-  main.setAttribute('aria-busy', String(s.status === 'loading'));
-  const moved = prev.route.name !== s.route.name || prev.route.params.id !== s.route.params.id;
-  if (!moved && s.route.name === 'new') return;
-  const active = main.contains(document.activeElement) ? document.activeElement : null;
-  const keep = active?.id ? { id: active.id, pos: active.selectionStart } : null;
-  const { title, nodes } = view(s);
-  document.title = title;
-  main.replaceChildren(...nodes);
-  const here = '#/' + (s.route.name === 'list' ? '' : s.route.name);
-  for (const a of document.querySelectorAll('nav a')) {
-    if (a.getAttribute('href') === here) a.setAttribute('aria-current', 'page');
-    else a.removeAttribute('aria-current');
-  }
-  if (moved) main.querySelector('h1')?.focus();
-  else if (keep) {
-    const el = document.getElementById(keep.id);
-    el?.focus();
-    if (keep.pos != null) el?.setSelectionRange?.(keep.pos, keep.pos);
-  }
-}
-
-const search = debounce((form) => {
-  const p = new URLSearchParams();
-  for (const [k, v] of new FormData(form)) if (String(v).trim()) p.set(k, String(v));
-  const qs = String(p);
-  // من غير || '#/' لو الصفحة اتفتحت من غير # الـ ?q= كان هيروح للرابط نفسه مش للـ hash
-  const path = location.hash.split('?')[0] || '#/';
-  history.replaceState(null, '', path + (qs ? '?' + qs : ''));
-  store.setRoute(parseRoute(location.hash));
-}, 250);
-
-async function loadData() {
-  ctrl?.abort();
-  ctrl = new AbortController();
-  store.loading();
-  try {
-    store.loaded(await loadRecipes(DATA_URL, { signal: ctrl.signal }));
-  } catch (err) {
-    if (err.name !== 'AbortError') store.failed(explain(err));
-  }
-}
-
-main.addEventListener('input', (e) => {
-  const form = e.target.closest('[data-form="search"]');
-  if (form) search(form);
-});
-
-main.addEventListener('submit', (e) => {
-  e.preventDefault();
-  if (e.target.dataset.form === 'search') return search(e.target);
-  const res = store.addRecipe(Object.fromEntries(new FormData(e.target)));
-  if (!res.ok) return showErrors(e.target, res.errors);
-  location.hash = '#/r/' + encodeURIComponent(res.recipe.id);
-});
-
-main.addEventListener('click', (e) => {
-  const fav = e.target.closest('[data-fav]');
-  if (fav) store.toggleFav(fav.dataset.fav);
-  if (e.target.closest('[data-action="retry"]')) loadData();
-});
-
-window.addEventListener('hashchange', () => store.setRoute(parseRoute(location.hash)));
-store.subscribe(paint);
-store.setRoute(parseRoute(location.hash));
-loadData();
-~~~
-
-**ملاحظة على [[storage.js]]:** [[browserStorage()]] هي التصليح اللي في درس «مشروع التخرّج ١»: مجرد قراية [[localStorage]] بترمي [[SecurityError]] لما التخزين مقفول، فبتتقري جوه [[try]].
-
-~~~json package.json
-{
-  "name": "recipe-book",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "lint": "eslint .",
-    "test": "vitest run",
-    "check": "npm run lint && npm test"
-  },
-  "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "eslint": "^10.15.0",
-    "globals": "^17.14.0",
-    "jsdom": "^31.0.1",
-    "vitest": "^5.1.1"
-  }
-}
-~~~
-
-~~~js eslint.config.js
-import js from '@eslint/js';
-import globals from 'globals';
-
-export default [
-  { ignores: ['node_modules/', 'coverage/'] },
-  js.configs.recommended,
-  { files: ['src/**/*.js'], languageOptions: { globals: globals.browser } },
-  { files: ['tests/**/*.js'], languageOptions: { globals: { ...globals.browser, ...globals.node } } },
-  {
-    rules: {
-      eqeqeq: ['error', 'always', { null: 'ignore' }],
-      'no-restricted-properties': ['error',
-        { property: 'innerHTML', message: 'استخدم h() أو textContent: innerHTML بيفتح باب XSS.' },
-        { property: 'outerHTML', message: 'نفس خطر innerHTML.' }],
-    },
-  },
-];
-~~~
-
-~~~js tests/logic.test.js
-import { describe, it, expect, vi } from 'vitest';
-import { parseRoute, filterRecipes, validateRecipe, toggleFav, debounce, isRecipe } from '../src/logic.js';
-
-describe('parseRoute', () => {
-  it.each([
-    ['', 'list'], ['#/', 'list'], ['#/fav', 'fav'], ['#/new', 'new'], ['#/r/foul', 'recipe'], ['#/x/y/z', 'notfound'],
-  ])('%s → %s', (hash, name) => expect(parseRoute(hash).name).toBe(name));
-  it('بيفك العربي في الـ id والـ query', () => {
-    expect(parseRoute('#/r/%D9%81%D9%88%D9%84?q=%D9%83%D9%85%D9%88%D9%86+')).toEqual({ name: 'recipe', params: { id: 'فول' }, query: { q: 'كمون ' } });
-  });
-});
-
-describe('filterRecipes', () => {
-  const list = [
-    { id: 'a', title: 'فول مدمس', ingredients: ['فول', 'كمون'], tags: ['فطار'] },
-    { id: 'b', title: 'كشري', ingredients: ['رز', 'عدس'], tags: ['مصري'] },
-  ];
-  it('بيدوّر في الاسم والمكوّنات، ويتجاهل المسافات', () => {
-    expect(filterRecipes(list, { q: '  كمون ' }).map((r) => r.id)).toEqual(['a']);
-    expect(filterRecipes(list, { q: 'كشري', tag: 'فطار' })).toEqual([]);
-  });
-  it('من غير بحث بيرجّع الكل', () => expect(filterRecipes(list)).toHaveLength(2));
-});
-
-describe('validateRecipe', () => {
-  const good = { title: ' طعمية ', minutes: '٢٥', ingredients: 'فول\n\nكزبرة', steps: 'اطحن واقلي', tags: 'فطار، مصري, فطار' };
-  it('بيقبل الأرقام العربي وبينضّف المدخلات', () => {
-    expect(validateRecipe(good)).toEqual({ ok: true, value: {
-      title: 'طعمية', minutes: 25, ingredients: ['فول', 'كزبرة'], steps: 'اطحن واقلي', tags: ['فطار', 'مصري'] } });
-  });
-  it.each(['', '0', '-5', '2.5', 'abc', '1441'])('بيرفض الوقت %j', (minutes) => {
-    expect(validateRecipe({ ...good, minutes })).toMatchObject({ ok: false, errors: { minutes: expect.any(String) } });
-  });
-});
-
-it('isRecipe بترفض الناقص والنص مكان الرقم', () => {
-  expect(isRecipe({ id: 'x', title: 'x', minutes: '5', ingredients: [], tags: [], steps: '' })).toBe(false);
-  expect(isRecipe(null)).toBe(false);
-});
-
-it('toggleFav مبيعدّلش المصفوفة الأصلية', () => {
-  const favs = ['foul'];
-  expect(toggleFav(favs, 'koshary')).toEqual(['foul', 'koshary']);
-  expect(favs).toEqual(['foul']);
-});
-
-it('debounce بينادي مرة واحدة بآخر قيمة', () => {
-  vi.useFakeTimers();
-  const fn = vi.fn();
-  const d = debounce(fn, 250);
-  d('ف'); d('فو'); d('فول');
-  vi.advanceTimersByTime(249);
-  expect(fn).not.toHaveBeenCalled();
-  vi.advanceTimersByTime(1);
-  expect(fn).toHaveBeenCalledExactlyOnceWith('فول');
-  vi.useRealTimers();
-});
-~~~
-
-~~~js tests/storage.test.js
-import { it, expect } from 'vitest';
-import { load, save, KEY } from '../src/storage.js';
-import { createStore } from '../src/store.js';
-
-const fake = (init = {}) => {
-  const m = new Map(Object.entries(init));
-  return { m, getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) };
-};
-const ok = { id: 'u-1', title: 'طعمية', minutes: 25, ingredients: ['فول', 'كزبرة'], tags: [], steps: 'اقلي' };
-
-it('أول مرة: فاضي من غير تحذير', () => {
-  expect(load(fake())).toEqual({ mine: [], favs: [] });
-});
-
-it.each([
-  ['قوس ناقص', '{"version":1,"mine":[{"id":'],
-  ['نسخة غلط', '{"version":7}'],
-  ['null', 'null'],
-])('داتا بايظة (%s): فاضي وتحذير ونسخة احتياطي', (_, raw) => {
-  const s = fake({ [KEY]: raw });
-  const res = load(s);
-  expect(res).toMatchObject({ mine: [], favs: [], warning: expect.stringContaining('بايظة') });
-  expect(s.m.get(KEY + ':broken')).toBe(raw);
-});
-
-it('بيشيل البند البايظ ويسيب السليم', () => {
-  const s = fake({ [KEY]: JSON.stringify({ version: 1, mine: [ok, { id: 2 }], favs: ['foul', 5] }) });
-  expect(load(s)).toEqual({ mine: [ok], favs: ['foul'] });
-});
-
-it('التخزين المليان: save بيرجّع false من غير ما يرمي', () => {
-  const full = { getItem: () => null, setItem: () => { throw new DOMException('full', 'QuotaExceededError'); } };
-  expect(save({ mine: [], favs: [] }, full)).toBe(false);
-});
-
-it('المتصفح قافل التخزين خالص: getItem نفسها بترمي', () => {
-  const blocked = { getItem: () => { throw new DOMException('denied', 'SecurityError'); } };
-  expect(load(blocked)).toMatchObject({ mine: [], favs: [], warning: expect.stringContaining('قافل') });
-});
-
-it('الـ store بيحفظ لما المفضلة تتغيّر، والمحفوظ بيرجع في store جديد', () => {
-  const s = fake();
-  createStore(s).toggleFav('foul');
-  expect(createStore(s).get().favs).toEqual(['foul']);
-});
-~~~
-
-~~~js tests/api.test.js
-import { it, expect, vi, afterEach } from 'vitest';
-import { loadRecipes, explain, HttpError, DataError } from '../src/api.js';
-
-const r = { id: 'foul', title: 'فول', minutes: 15, ingredients: ['فول', 'زيت'], tags: [], steps: '..' };
-const reply = (body, status = 200) => vi.stubGlobal('fetch', vi.fn(async () => new Response(body, { status })));
-const fail = async () => loadRecipes('/data.json').catch((e) => e);
-
-afterEach(() => vi.unstubAllGlobals());
-
-it('رد سليم: الوصفات السليمة بس', async () => {
-  reply(JSON.stringify([r, { id: 'bad' }]));
-  expect(await loadRecipes('/data.json')).toEqual([r]);
-});
-
-it('404: HttpError وجملته', async () => {
-  reply('not found', 404);
-  const err = await fail();
-  expect(err).toBeInstanceOf(HttpError);
-  expect(explain(err)).toBe('ملف الوصفات مش موجود (404).');
-});
-
-it('503: الرقم في الجملة', async () => {
-  reply('down', 503);
-  expect(explain(await fail())).toBe('السيرفر رد بخطأ 503. جرّب كمان شوية.');
-});
-
-it('HTML مكان JSON: SyntaxError', async () => {
-  reply('<!doctype html><p>hi');
-  const err = await fail();
-  expect(err).toBeInstanceOf(SyntaxError);
-  expect(explain(err)).toBe('الرد وصل بس مش JSON سليم.');
-});
-
-it('JSON بشكل غلط: DataError', async () => {
-  reply('{"recipes": []}');
-  const err = await fail();
-  expect(err).toBeInstanceOf(DataError);
-  expect(explain(err)).toBe('الرد وصل بس شكله غلط.');
-});
-
-it('مفيش شبكة: TypeError ← مفيش اتصال', async () => {
-  vi.stubGlobal('fetch', vi.fn(async () => { throw new TypeError('fetch failed'); }));
-  expect(explain(await fail())).toBe('مفيش اتصال. اتأكد من النت وجرّب تاني.');
-});
-~~~
-
-~~~js tests/app.dom.test.js
-// @vitest-environment jsdom
-import { it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { readFileSync } from 'node:fs';
-
-const html = readFileSync('index.html', 'utf8');
-const data = readFileSync('data/recipes.json', 'utf8');
 const $ = (sel) => document.querySelector(sel);
-const $$ = (sel) => [...document.querySelectorAll(sel)];
-const idle = () => vi.waitFor(() => expect($('#main').getAttribute('aria-busy')).toBe('false'));
+const box = $('#text');
+const input = $('#input');
+const lang = $('#lang');
+const BEST_KEY = 'typing-best';
+let game = null;
+const clock = $('#clock');
 
-async function start({ hash = '#/', fetchImpl } = {}) {
-  vi.resetModules();
-  // eslint-disable-next-line no-restricted-properties -- HTML بتاعنا من الملف، مش من يوزر
-  document.documentElement.innerHTML = html.replace(/<script[^>]*><\/script>/, '');
-  history.replaceState(null, '', '/' + hash);
-  vi.stubGlobal('fetch', fetchImpl ?? vi.fn(async () => new Response(data)));
-  await import('../src/app.js');
-  await idle();
+function newGame() {
+  if (game) { cancelAnimationFrame(game.raf); clearInterval(game.timer); }
+  const key = lang.value;
+  const index = pick(TEXTS[key].length, game?.lang === key ? game.index : -1);
+  const text = TEXTS[key][index];
+  game = { lang: key, index, target: Array.from(text), typed: [], keystrokes: 0, mistakes: 0, start: 0, raf: 0, timer: 0, elapsed: 0, done: false };
+  const dir = isArabic(text) ? 'rtl' : 'ltr';
+  for (const node of [box, input]) { node.dir = dir; node.lang = key; }
+  box.replaceChildren(...game.target.map((ch) => {
+    const span = document.createElement('span');
+    span.textContent = ch;
+    return span;
+  }));
+  input.value = '';
+  input.maxLength = text.length;
+  input.disabled = false;
+  $('#result').textContent = '';
+  paint();
+  showStats(0);
+  showBest();
+  input.focus();
 }
 
-const go = async (hash) => {
-  location.hash = hash;
-  await vi.waitFor(() => expect(location.hash).toBe(hash));
-  window.dispatchEvent(new HashChangeEvent('hashchange'));
-};
+function paint() {
+  const m = marks(game.target, game.typed);
+  box.querySelectorAll('span').forEach((span, i) => { span.className = m[i]; });
+}
 
-beforeEach(() => localStorage.clear());
-afterEach(() => vi.unstubAllGlobals());
+function showStats(ms) {
+  const s = stats(game, ms);
+  $('#time').textContent = (ms / 1000).toFixed(1);
+  $('#wpm').textContent = s.wpm;
+  $('#acc').textContent = s.accuracy + '%';
+  return s;
+}
 
-it('القايمة: ٦ كروت والعدد والعنوان', async () => {
-  await start();
-  expect($$('.card')).toHaveLength(6);
-  expect($('[role="status"]').textContent).toBe('6 وصفة');
-  expect(document.title).toBe('الوصفات · دفتر الوصفات');
-  expect($('nav a[href="#/"]').getAttribute('aria-current')).toBe('page');
+function showBest() {
+  const b = loadBest()[game.lang];
+  $('#best').textContent = b ? b.wpm + ' WPM بدقة ' + b.accuracy + '%' : '—';
+}
+
+function tick() {
+  showStats(performance.now() - game.start);
+  game.raf = requestAnimationFrame(tick);
+}
+
+input.addEventListener('input', () => {
+  if (game.done) return;
+  const typed = Array.from(input.value);
+  if (!game.start) {
+    game.start = performance.now();
+    if (clock.value === 'interval') {
+      game.timer = setInterval(() => { game.elapsed += 100; showStats(game.elapsed); }, 100);
+    } else game.raf = requestAnimationFrame(tick);
+  }
+  for (let i = game.typed.length; i < typed.length; i++) {
+    game.keystrokes++;
+    if (typed[i] !== game.target[i]) game.mistakes++;
+  }
+  game.typed = typed;
+  paint();
+  if (typed.length >= game.target.length) finish();
 });
 
-it('المسافة اللي في آخر البحث متضيعش وانت بتكتب (والصفحة مفتوحة من غير #)', async () => {
-  await start({ hash: '' });
-  const q = $('#q');
-  q.focus();
-  q.value = 'كمون ';
-  q.dispatchEvent(new Event('input', { bubbles: true }));
-  await vi.waitFor(() => expect($$('.card')).toHaveLength(3));
-  expect($('#q').value).toBe('كمون ');
-  expect(document.activeElement.id).toBe('q');
-  expect(location.hash).toBe('#/?q=%D9%83%D9%85%D9%88%D9%86+');
+input.addEventListener('paste', (e) => e.preventDefault());
+
+function loadBest() {
+  const ok = (r) => r && Number.isFinite(r.wpm) && Number.isFinite(r.accuracy);
+  try {
+    const data = JSON.parse(localStorage.getItem(BEST_KEY));
+    return { ar: ok(data?.ar) ? data.ar : null, en: ok(data?.en) ? data.en : null };
+  } catch {
+    return { ar: null, en: null };
+  }
+}
+
+function finish() {
+  game.done = true;
+  cancelAnimationFrame(game.raf);
+  clearInterval(game.timer);
+  input.disabled = true;
+  const s = showStats(clock.value === 'interval' ? game.elapsed : performance.now() - game.start);
+  const best = loadBest();
+  const old = best[game.lang];
+  const record = s.accuracy >= 90 && (!old || s.wpm > old.wpm);
+  if (record) {
+    best[game.lang] = { wpm: s.wpm, accuracy: s.accuracy };
+    try { localStorage.setItem(BEST_KEY, JSON.stringify(best)); } catch {}
+  }
+  $('#result').textContent = (record ? 'رقم قياسي جديد! ' : 'خلصت. ') + s.wpm + ' WPM بدقة ' + s.accuracy + '%';
+  showBest();
+}
+
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') newGame(); });
+$('#restart').addEventListener('click', newGame);
+lang.addEventListener('change', newGame);
+clock.addEventListener('change', newGame);
+
+$('#freeze').addEventListener('click', () => {
+  const end = performance.now() + 700;
+  while (performance.now() < end);
+  input.focus();
 });
 
-it('المفضلة: الزرار بيتقلب، والفوكس بيفضل عليه، والحفظ بيعيش بعد reload', async () => {
-  await start();
-  $('#fav-foul').click();
-  expect($('#fav-foul').getAttribute('aria-pressed')).toBe('true');
-  expect($('#fav-koshary').getAttribute('aria-pressed')).toBe('false');
-  await start({ hash: '#/fav' });
-  expect($$('.card h2').map((e) => e.textContent)).toEqual(['فول مدمس']);
-});
-
-it('الفورم الغلط: الرسايل جنب الخانات والفوكس على أول غلط', async () => {
-  await start({ hash: '#/new' });
-  expect(document.activeElement.tagName).toBe('H1');
-  $('#title').value = 'طعمية';
-  $('form[data-form="add"] button').click();
-  expect($('#minutes').getAttribute('aria-invalid')).toBe('true');
-  expect($('#minutes-err').textContent).toBe('الوقت بالدقايق، رقم صحيح من 1 لـ 1440');
-  expect($('#title').hasAttribute('aria-invalid')).toBe(false);
-  expect(document.activeElement.id).toBe('minutes');
-  expect($('#title').value).toBe('طعمية');
-});
-
-it('وصفة اسمها HTML بتتعرض كنص (مفيش XSS)', async () => {
-  await start({ hash: '#/new' });
-  $('#title').value = '<img src=x onerror="window.hacked=1">';
-  $('#minutes').value = '١٢';
-  $('#ingredients').value = 'فول\nزيت';
-  $('#steps').value = 'سخّن';
-  $('form[data-form="add"] button').click();
-  await vi.waitFor(() => expect($('h1').textContent).toBe('<img src=x onerror="window.hacked=1">'));
-  expect($('#main img')).toBeNull();
-  expect(window.hacked).toBeUndefined();
-});
-
-it('الشبكة وقعت: رسالة وزرار، وجرّب تاني بيجيب الداتا', async () => {
-  let calls = 0;
-  const fetchImpl = vi.fn(async () => (++calls === 1 ? new Response('oops', { status: 503 }) : new Response(data)));
-  await start({ fetchImpl });
-  expect($('[role="alert"] p').textContent).toBe('السيرفر رد بخطأ 503. جرّب كمان شوية.');
-  $('[data-action="retry"]').click();
-  await vi.waitFor(() => expect($$('.card')).toHaveLength(6));
-  expect(fetchImpl).toHaveBeenCalledTimes(2);
-});
-
-it('localStorage بايظ: التطبيق بيفتح وبيقول', async () => {
-  localStorage.setItem('recipe-book:v1', '{oops');
-  await start();
-  expect($('.notice').textContent).toContain('الداتا المحفوظة كانت بايظة');
-  expect($$('.card')).toHaveLength(6);
-});
-
-it('رابط وصفة مش موجودة', async () => {
-  await start({ hash: '#/r/nope' });
-  expect($('h1').textContent).toBe('الوصفة دي مش موجودة');
-});
-
-it('رابط مباشر لوصفة بيفتحها، و Back بيرجع', async () => {
-  await start({ hash: '#/r/foul' });
-  expect($('h1').textContent).toBe('فول مدمس');
-  expect($$('.steps')[0].textContent).toContain('الكمون');
-  await go('#/fav');
-  expect($('nav a[href="#/fav"]').getAttribute('aria-current')).toBe('page');
-  expect(document.activeElement.tagName).toBe('H1');
-});
-
-it('الداتا وصلت وانت بتكتب في الفورم: اللي كتبته ميضيعش', async () => {
-  let release;
-  const slow = vi.fn(() => new Promise((r) => { release = () => r(new Response(data)); }));
-  vi.resetModules();
-  // eslint-disable-next-line no-restricted-properties -- HTML بتاعنا من الملف، مش من يوزر
-  document.documentElement.innerHTML = html.replace(/<script[^>]*><\/script>/, '');
-  history.replaceState(null, '', '/#/new');
-  vi.stubGlobal('fetch', slow);
-  await import('../src/app.js');
-  $('#title').value = 'طعمية';
-  release();
-  await idle();
-  expect($('#title').value).toBe('طعمية');
-});
+newGame();
 ~~~
 
-~~~text .gitignore
-node_modules/
-coverage/
-~~~
-
-~~~text .gitattributes
-* text=auto eol=lf
-~~~
-
-~~~yaml .github/workflows/pages.yml
-name: test and deploy
-on:
-  push:
-    branches: [main]
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-concurrency:
-  group: pages
-  cancel-in-progress: true
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24
-      - run: npm ci
-      - run: npm run check
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: $__{{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v7
-      - run: mkdir _site && cp -r index.html style.css src data _site/
-      - uses: actions/configure-pages@v6
-      - uses: actions/upload-pages-artifact@v5
-        with:
-          path: _site
-      - id: deployment
-        uses: actions/deploy-pages@v5
-~~~
-
-~~~markdown README.md
-# دفتر الوصفات
-
-تطبيق ويب صغير تدوّر فيه على وصفات بالاسم أو المكوّن، وتحط اللي عاجبك في المفضلة، وتضيف وصفاتك بفورم بيتحقق. كل ده بيفتكر بعد reload، ومن غير أي مكتبة.
-
-**الرابط:** https://USER.github.io/recipe-book/
-
-![شكل التطبيق على موبايل عرضه 360px](docs/mobile.png)
-
-## تشغّله إزاي
-
-$__bt$__bt$__btbash
-npm install          # أدوات التطوير بس: Vitest و jsdom و ESLint
-npm run check        # ESLint و 43 اختبار
-python -m http.server 8000   # وافتح http://localhost:8000
-$__bt$__bt$__bt
-
-لازم سيرفر: الملفات $__bttype="module"$__bt والمتصفح مبيشغّلش modules من $__btfile://$__bt.
-
-## قرارات التصميم
-
-- **hash routing** ($__bt#/r/foul$__bt): الجزء اللي بعد $__bt#$__bt مبيوصلش السيرفر، فـ GitHub Pages بيرجّع $__btindex.html$__bt لأي شاشة وأي reload. $__btpushState$__bt كان هيحتاج إعداد سيرفر.
-- **مفيش $__btinnerHTML$__bt:** كل الشاشات بتتبني بـ $__bth()$__bt اللي بتحط النص text node، و ESLint بيمنع $__btinnerHTML$__bt في الكود كله. وصفة اسمها $__bt<img onerror=...>$__bt بتظهر كحروف.
-- **الحالة في مكان واحد:** $__btsrc/store.js$__bt هو الوحيد اللي بيغيّرها ($__btset$__bt)، وبيحفظ $__btmine$__bt و $__btfavs$__bt بس، والشاشات بتترسم منها. $__btstore.js$__bt و $__btlogic.js$__bt و $__btstorage.js$__bt مفيهمش $__btdocument$__bt، فبيتختبروا في Node.
-- **الداتا من برّه متتصدّقش:** الـ JSON والـ $__btlocalStorage$__bt بيعدّوا على $__btisRecipe$__bt، وأي خطأ شبكة بيتحوّل لجملة وزرار «جرّب تاني».
-
-## الملفات
-
-| الملف | شغلته |
+| الحتة | بتعمل إيه |
 |---|---|
-| $__btsrc/logic.js$__bt | القواعد: البحث والتحقق والـ routing |
-| $__btsrc/storage.js$__bt | الحفظ اللي ميقعش |
-| $__btsrc/store.js$__bt | الحالة والأفعال |
-| $__btsrc/api.js$__bt | $__btfetch$__bt والأخطاء |
-| $__btsrc/view.js$__bt | الشاشات من الحالة |
-| $__btsrc/app.js$__bt | التوصيل |
+| [[timer]] و [[elapsed]] في [[game]] | النسخة اللي بتعدّ: [[elapsed += 100]] كل نداء |
+| [[clearInterval(game.timer)]] في [[newGame]] و [[finish]] | زي [[cancelAnimationFrame]]: من غيره العدّاد القديم بيفضل يكتب في الأرقام بعد Esc |
+| [[clock.value === 'interval' ? game.elapsed : ...]] في [[finish]] | النتيجة النهائية من نفس الساعة اللي كانت بتتعرض |
+| [[while (performance.now() < end);]] | busy loop: الـ main thread مشغول ٧٠٠ms، فمفيش timers ولا رسم ولا كتابة (درس «blocking و الـ main thread») |
+| [[input.focus()]] بعد التعليق | الضغطة على الزرار خدت الـ focus من الخانة، فبنرجّعه عشان الكتابة تكمّل |
+| [[clock.addEventListener('change', newGame)]] | تغيير الساعة في نص جولة = جولة جديدة، عشان متتقارنش ساعتين في جولة واحدة |
 
-## اللي اتعلمته
+## السكربت اللي قاس
 
-- الاختبار هو اللي مسك أصعب باجين: الفورم اللي بيتمسح لما الداتا توصل، و $__btaria-pressed$__bt اللي كان بيتكتب فاضي.
-- القيمة الافتراضية لـ parameter بتتحسب برّه أي $__bttry$__bt: $__btcreateStore(storage = localStorage)$__bt كانت بتوقع الصفحة لما التخزين مقفول.
-- $__btfetch$__bt مبيرميش على 404، والإلغاء ($__btAbortController$__bt) مش خطأ.
+~~~js t3.cjs
+const { chromium } = require('playwright-core');
+(async () => {
+  const browser = await chromium.launch({ channel: 'chrome' });
+  for (let run = 1; run <= 2; run++) for (const q of ['?clock=interval', '']) {
+    const page = await browser.newPage();
+    await page.goto('http://localhost:8881/typing-clock/');
+    await page.selectOption('#clock', q ? 'interval' : 'measure');
+    await page.selectOption('#lang', 'en');
+    const text = await page.$$eval('#text span', (s) => s.map((x) => x.textContent).join(''));
+    const half = Math.floor(text.length / 2);
+    await page.click('#input');
+    const t0 = Date.now();
+    await page.keyboard.type(text.slice(0, half), { delay: 40 });
+    await page.click('#freeze');
+    await page.keyboard.type(text.slice(half), { delay: 40 });
+    const wall = Date.now() - t0;
+    const shown = await page.textContent('#time');
+    const wpm = await page.textContent('#wpm');
+    const chars = Array.from(text).length;
+    const realWpm = Math.round(chars / 5 / (wall / 60000));
+    console.log($__bt$__{(q ? 'setInterval   ' : 'performance.now')} | اللعبة: $__{shown} ث، $__{wpm} WPM | الساعة الحقيقية: $__{(wall / 1000).toFixed(2)} ث ($__{realWpm} WPM) | الفرق $__{(wall / 1000 - Number(shown)).toFixed(2)} ث$__bt);
+    await page.close();
+  }
+  await browser.close();
+})();
 ~~~
 
-## الصورة اللي في الـ README
+**الغلطة اللي وقعت فيها:** أول نسخة كانت بتختار الساعة من الـ URL ([[?clock=interval]]). اشتغلت من السيرفر، بس في المعاينة اللي فوق الصفحة مالهاش URL فكانت دايمًا [[performance.now]]. القايمة حلّت الاتنين، وبقت أوضح لليوزر كمان.
 
-اتاخدت من Chromium بعرض ٣٦٠ (موبايل) بـ Playwright: [[page.setViewportSize({ width: 360, height: 740 })]] وبعدين [[page.screenshot({ path: 'docs/mobile.png' })]]. وبإيدك: DevTools ← زرار الموبايل (Ctrl+Shift+M) ← اختار 360 ← من قايمة النقط التلاتة «Capture screenshot».
-
-## اتقاس قبل النشر
-
-~~~text الناتج: npm run check (ESLint 10.15، Vitest 5.1.1، jsdom 31 على Node 24.22)
-> eslint .
-> vitest run
- Test Files  4 passed (4)
-      Tests  43 passed (43)
-   Duration  1.89s (environment 50%, tests 36%, transform 9%, import 3%, worker 1%)
-~~~
-
-~~~text الناتج: Lighthouse 13.6 (Accessibility) على سيرفر محلي
-#/      100
-#/new   100
-~~~
-
-~~~text الناتج: scrollWidth/clientWidth في Chromium (مفيش scroll بالعرض لو الرقمين متساويين)
-360   #/ 345/345    #/r/koshary 360/360    #/new 345/345
-768   #/ 768/768    #/r/koshary 768/768    #/new 753/753
-1280  #/ 1280/1280  #/r/koshary 1280/1280  #/new 1265/1265
-~~~
-
-(الـ ١٥ بيكسل الناقصين في بعض الشاشات هما الـ scrollbar الرأسي، مش scroll بالعرض.)
-
-## git: من الفولدر للـ push
-
-على GitHub الـ remote بيبقى [[https://github.com/USER/recipe-book.git]]. هنا اتجرّب بالظبط بنفس الأوامر بس على **repo فاضي على نفس الجهاز** ([[git init --bare]])، لأنه بيتصرف زي GitHub من ناحية git: بيستقبل push ومنه تعمل clone.
-
-~~~bash
-git init -b main
-git config user.name "Sara Dev"
-git config user.email "sara@example.com"
-git add .
-git status --short
-git commit -m "first version"
-git init --bare -b main ../recipe-book.git
-git remote add origin ../recipe-book.git
-git push -u origin main
-git clone ../recipe-book.git ../check
-~~~
-
-~~~text الناتج: git 2.56 على ويندوز ١١
-Initialized empty Git repository in .../git-lab/recipe-book/.git/
-A  .gitattributes
-A  .github/workflows/pages.yml
-A  .gitignore
-A  README.md
-A  data/recipes.json
-A  docs/mobile.png
-A  eslint.config.js
-A  index.html
-A  package-lock.json
-A  package.json
-A  src/api.js
-A  src/app.js
-A  src/logic.js
-A  src/storage.js
-A  src/store.js
-A  src/view.js
-A  style.css
-A  tests/api.test.js
-A  tests/app.dom.test.js
-A  tests/logic.test.js
-A  tests/storage.test.js
-d85ce69 first version
-Initialized empty Git repository in .../git-lab/recipe-book.git/
-To ../recipe-book.git
- * [new branch]      main -> main
-branch 'main' set up to track 'origin/main'.
-~~~
-
-| الأمر | بيعمل إيه |
-|---|---|
-| [[git config user.name]] و [[user.email]] | الاسم اللي هيتكتب على الـ commit. من غير [[--global]] بيتحفظ للـ repo ده بس |
-| [[git status --short]] | [[A]] = اتضاف للـ commit الجاي. ٢١ ملف ومفيش [[node_modules]] لأنه في [[.gitignore]] |
-| [[git init --bare]] | repo من غير فولدر شغل، بس الـ history. ده شكل اللي على GitHub بالظبط |
-| [[git push -u origin main]] | بيرفع [[main]]، و [[-u]] بيربطه بـ [[origin/main]] فبعد كده [[git push]] لوحدها تكفي |
-| [[git clone ../recipe-book.git ../check]] | نسخة جديدة من اللي اترفع، عشان نتأكد إن مفيش ملف ناقص |
-
-**جرّبت الـ CI بإيدي على النسخة دي** (نفس خطوات job الـ [[test]] في الـ workflow):
-
-~~~text الناتج: جوه ../check
-npm ci           → added 141 packages, and audited 142 packages in 4s
-npm run check    → Test Files 4 passed (4) | Tests 43 passed (43)
-mkdir _site && cp -r index.html style.css src data _site/
-_site/data/recipes.json  _site/index.html  _site/src/(6 ملفات)  _site/style.css
-~~~
-
-**وجرّبت إن الاختبار الواقع بيقفل النشر:** غيّرت [[minutes < 1]] لـ [[minutes < 0]] وعملت commit و push:
-
-~~~text الناتج: npm run check على الـ commit البايظ
- FAIL  tests/logic.test.js > validateRecipe > بيرفض الوقت "0"
-      Tests  1 failed | 42 passed (43)
-npm run check exit code: 1
-~~~
-
-كود الخروج ١ هو اللي بيخلّي job الـ [[test]] على GitHub أحمر، و [[needs: test]] بيمنع [[deploy]] يبدأ، فالموقع بيفضل على النسخة القديمة (ده من وثايق GitHub Actions). والتصليح:
-
-~~~bash
-git revert --no-edit HEAD
-git push
-~~~
-
-~~~text الناتج
-[main 1f1168a] Revert "break minutes check"
-   fdc9ddc..1f1168a  main -> main
-~~~
-
-[[git revert]] بيعمل commit جديد بيلغي القديم بدل ما يمسح الـ history، فالـ push عادي من غير [[--force]].
-
-## على GitHub نفسه (من وثايق GitHub، محتاج حسابك)
-
-1. github.com ← **New repository** ← الاسم [[recipe-book]]، **Public**، من غير README (عندك واحد).
-2. [[git remote set-url origin https://github.com/USER/recipe-book.git]] وبعدين [[git push -u origin main]].
-3. الـ repo ← **Settings** ← **Pages** ← Build and deployment ← Source: **GitHub Actions**.
-4. تبويب **Actions**: الـ workflow «test and deploy» بيشتغل لوحده مع الـ push. لما الاتنين يخضروا، الرابط بيظهر في job الـ deploy وفي صفحة Pages: [[https://USER.github.io/recipe-book/]].
-5. افتح الرابط من الموبايل، وجرّب [[https://USER.github.io/recipe-book/#/fav]] في تبويب جديد.
-
-## لو مشتغلش
-
-- **[[npm run lint]] وقع بـ [[error 'console' is not defined no-undef]] في [[try-store.mjs]]:** ملفات التجربة من الدروس لسه في الفولدر. امسحها قبل الـ commit (اتشاف فعلًا).
-- **[[git push]] اترفض:** عملت الـ repo على GitHub **ومعاه** README، فالـ remote فيه commit مش عندك. اتجرّب بـ repo فاضي تاني فيه commit «Initial commit»:
-
-~~~text الناتج: git push على remote فيه commit مش عندك
- ! [rejected]        main -> main (fetch first)
-error: failed to push some refs to '../remote2.git'
-hint: Updates were rejected because the remote contains work that you do not
-hint: have locally.
-~~~
-
-  الحل: اعمل الـ repo على GitHub فاضي، أو [[git pull --rebase origin main]] الأول وبعدين push.
-- **الصفحة على Pages بيضا والـ Console فيه 404 لـ [[/src/app.js]]:** فيه مسار بيبدأ بـ [[/]]. كل المسارات [[./]].
-- **[[warning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it]]** (اتشاف فعلًا في repo من غير [[.gitattributes]]): ده [[core.autocrlf]] على ويندوز. [[.gitattributes]] اللي فيه [[* text=auto eol=lf]] بيوحّد نهايات السطور.
-- **Pages مش ظاهرة في Settings:** الـ repo private على الخطة المجانية (من وثايق GitHub Pages).
-
-**الغلطة الشائعة:** ترفع [[node_modules]] (حوالي ٨٠ ميجا وآلاف الملفات) أو تنسى [[package-lock.json]]. الأول بيتقّل الـ repo، والتاني بيخلّي [[npm ci]] في الـ CI يقع. اتجرّب في فولدر فيه [[package.json]] بس:
-
-~~~text الناتج: npm ci من غير package-lock.json
-npm error code EUSAGE
-npm error
-npm error The $__btnpm ci$__bt command can only install with an existing package-lock.json or
-npm error npm-shrinkwrap.json with lockfileVersion >= 1.
-~~~` },
+**الغلطة الشائعة:** تعدّ بـ [[setInterval]] كل ١٠ms «عشان الدقة». المشكلة مش في الفترة: أي فترة بتخسر الوقت اللي الصفحة مشغولة فيه، والفترة الصغيرة بتزوّد الشغل على الـ main thread كمان.` },
+          ],
+          ref: [
+            { t: "MDN: Performance.now()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Performance/now" },
+            { t: "MDN: Window.requestAnimationFrame()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame" },
+            { t: "MDN: Element: input event", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/input_event" },
+            { t: "MDN: Element: keydown event", url: "https://developer.mozilla.org/en-US/docs/Web/API/Element/keydown_event" },
+            { t: "MDN: KeyboardEvent.key", url: "https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key" },
+            { t: "MDN: Array.from()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from" },
+            { t: "MDN: Window.localStorage", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage" },
+          ],
+          pre: [
+            { to: "js/string و UTF-16: length و codePointAt", why: R`ليه [[split('')]] بيقسم الإيموجي و [[Array.from]] لأ` },
+            { to: "js/blocking و الـ main thread", why: R`ليه [[setInterval]] بيخسر الوقت لما الصفحة تعلّق` },
           ],
           deep: {
-            why: R`من غير اختبارات، كل تعديل بعد كده محتاج تجرّب التطبيق كله بإيدك، وده مبيحصلش، فالباجات بترجع. الـ ٤٣ اختبار دول بيشتغلوا في ٢ ثانية مع كل حفظ ومع كل push. والنشر بيحوّل المشروع من «فولدر على جهازي» لرابط أي حد يفتحه، وده اللي بيتحسب في الـ portfolio.`,
-            how: R`**اختبار الشاشة كلها في jsdom:**
+            why: R`لأن لعبة الكتابة فيها ٣ حاجات صعبة في مكان صغير: **وقت حي** لازم يبقى صح، و**نص عربي** لازم يفضل موصول ومتلوّن حرف حرف، و**مدخلات** بتيجي من كيبوردات مختلفة. وكل واحدة فيهم ليها فخ مبيبانش غير لما تشغّل: العدّاد بيقدّم، والحروف بتتقطّع، والعشوائي عمره ما بيختار الأخير.`,
+            how: R`**الدورة الكاملة لجولة واحدة:**
 
-~~~js tests/app.dom.test.js (الأول)
-// @vitest-environment jsdom
-import { it, expect, vi, beforeEach } from 'vitest';
-import { readFileSync } from 'node:fs';
+1. **[[newGame]]**: [[pick]] بيختار نص، و [[Array.from]] بيقسمه حروف، وكل حرف [[<span>]]. و [[dir]] و [[lang]] بيتحطوا على النص والخانة.
+2. **أول حرف**: [[game.start = performance.now()]] و [[requestAnimationFrame(tick)]]. الوقت بيبدأ من هنا، مش من فتح الصفحة.
+3. **كل حرف** (حدث [[input]]): الحروف الجديدة بس بتتعدّ ضغطات، واللي مش زي النص بيتعدّ غلطة ومبيتمسحش. وبعدين [[paint]] بتلوّن من [[marks]].
+4. **كل frame** ([[tick]]): [[stats(game, performance.now() - game.start)]] بتحسب WPM من الحروف الصح والدقة من الضغطات، وبتكتبهم. والحساب دايمًا من البداية.
+5. **آخر حرف**: [[finish]] بتلغي الـ frame الجاي، وتقفل الخانة، وتقارن بأحسن نتيجة لنفس اللغة لو الدقة ٩٠٪ أو أكتر.
+6. **Esc**: [[cancelAnimationFrame]] و [[game]] جديد خالص.
 
-const html = readFileSync('index.html', 'utf8');
-const data = readFileSync('data/recipes.json', 'utf8');
-
-async function start({ hash = '#/', fetchImpl } = {}) {
-  vi.resetModules();
-  // eslint-disable-next-line no-restricted-properties -- HTML بتاعنا من الملف، مش من يوزر
-  document.documentElement.innerHTML = html.replace(/<script[^>]*><\/script>/, '');
-  history.replaceState(null, '', '/' + hash);
-  vi.stubGlobal('fetch', fetchImpl ?? vi.fn(async () => new Response(data)));
-  await import('../src/app.js');
-  await vi.waitFor(() => expect($('#main').getAttribute('aria-busy')).toBe('false'));
-}
-
-beforeEach(() => localStorage.clear());
-~~~
-
-- [[// @vitest-environment jsdom]] في أول سطر بيخلّي الملف ده بس يشتغل في DOM مزيّف، والباقي في Node العادي (أسرع).
-- [[vi.resetModules()]] و [[await import('../src/app.js')]] بيشغّلوا [[app.js]] من الأول في كل اختبار، كأنها صفحة جديدة.
-- بنشيل سطر [[<script>]] من الـ HTML لأن احنا اللي هنستورد [[app.js]] بإيدنا.
-- [[vi.waitFor]] بيعيد التأكيد لحد ما يعدّي (افتراضي لحد ثانية)، وبنستنى [[aria-busy="false"]]: نفس الإشارة اللي الـ screen reader بيستناها.
-- **مفاجأة اتشافت:** أول نسخة كانت [[readFileSync(new URL('../index.html', import.meta.url))]] ووقعت بـ [[TypeError: The URL must be of scheme file]]، لأن في بيئة jsdom الـ [[URL]] العام بتاع jsdom مش بتاع Node. الحل اسم الملف من فولدر المشروع.
-
-**ESLint:**
-
-~~~js eslint.config.js
-import js from '@eslint/js';
-import globals from 'globals';
-
-export default [
-  { ignores: ['node_modules/', 'coverage/'] },
-  js.configs.recommended,
-  { files: ['src/**/*.js'], languageOptions: { globals: globals.browser } },
-  { files: ['tests/**/*.js'], languageOptions: { globals: { ...globals.browser, ...globals.node } } },
-  {
-    rules: {
-      eqeqeq: ['error', 'always', { null: 'ignore' }],
-      'no-restricted-properties': ['error',
-        { property: 'innerHTML', message: 'استخدم h() أو textContent: innerHTML بيفتح باب XSS.' },
-        { property: 'outerHTML', message: 'نفس خطر innerHTML.' }],
-    },
-  },
-];
-~~~
-
-ده «flat config» (ESLint 9 و 10): مصفوفة objects، كل واحد بيطبّق على الملفات اللي في [[files]] (أو الكل لو مفيش). [[globals.browser]] بيعرّف [[document]] و [[window]] للـ [[src]] بس، فلو حد كتب [[document]] في ملف Node هيتقاله [[no-undef]]. و [[{ null: 'ignore' }]] بتسمح بـ [[x == null]] (اختصار مشهور لـ «null أو undefined») وبتمنع أي [[==]] تاني.
-
-**الطريقتين للنشر:**
-
-| | من الـ branch | GitHub Actions |
-|---|---|---|
-| الإعداد | Settings ← Pages ← Source: «Deploy from a branch» ← [[main]] و [[/ (root)]] | Settings ← Pages ← Source: «GitHub Actions»، وملف [[.github/workflows/pages.yml]] |
-| الاختبارات | مبتشتغلش قبل النشر، أي push بيتنشر | job الـ [[test]] لازم يعدّي الأول ([[needs: test]]) |
-| اللي بيترفع | الـ repo كله زي ما هو (من غير [[node_modules]] لأنه مش في git) | فولدر [[_site]] بس: الصفحة و [[src]] و [[data]]، من غير الاختبارات |
-| Jekyll | GitHub بيعدّي الملفات على Jekyll، والفولدرات اللي بتبدأ بـ [[_]] بتتشال إلا لو فيه ملف [[.nojekyll]] | مفيش Jekyll، اللي في الـ artifact بيتنشر زي ما هو |
-| مناسبة لـ | أول مرة، أو تجربة سريعة | أي مشروع فيه اختبارات، وده اللي في الـ portfolio |`,
-            when: R`اختبارات المنطق من أول دالة (رخيصة وسريعة). اختبار jsdom لكل مسار مهم لليوزر (إضافة، وبحث، وخطأ، وبيانات بايظة). ولما التطبيق يبقى فيه CSS بيأثر على السلوك أو أكتر من متصفح، زوّد اختبارات E2E بـ Playwright في متصفح حقيقي (درس «playwright screenshot» وتاب المشاريع). و Pages لأي واجهة static؛ ولما يبقى فيه backend، Pages بتفضل للواجهة والسيرفر في مكان تاني.`,
-            mistakes: R`[[vitest]] من غير [[run]] في الـ CI فالـ job يفضل مستني للأبد. اختبار بيختبر التنفيذ مش السلوك (مثلًا عدد مرات [[render]]) فيقع مع أي refactor. [[expect(x.errors.minutes)]] اللي بيقع بـ TypeError مالوش معنى بدل diff واضح. نسيان [[vi.useRealTimers()]] فاختبار بعده يعلّق. نسيان [[vi.unstubAllGlobals()]] فـ [[fetch]] المزيّف يتسرّب لاختبار تاني. رفع [[node_modules]]. مسارات بتبدأ بـ [[/]]. اسم ملف [[App.js]] والـ import [[./app.js]]: على ويندوز شغال وعلى Pages (Linux) 404. والـ repo private على الخطة المجانية فـ Pages متتفعّلش.`,
+**والفصل:** [[game.js]] مفيهوش [[document]] ولا [[performance]]: بياخد الوقت كرقم. عشان كده اتجرّب بأرقام ثابتة ([[60000]] ms = دقيقة بالظبط) وطلّع [[50]] WPM اللي حسبناه بإيدنا. لو كان بيقرا الوقت بنفسه، مكناش هنعرف نختبره.`,
+            when: R`أي حاجة فيها وقت بيتعرض وهو ماشي: تايمر امتحان، و pomodoro، و stopwatch، ولعبة، وشريط تقدّم مبني على الوقت. ونفس فكرة الـ spans لأي تعليم على نص: تصحيح إملاء، أو مقارنة نسختين من نص، أو كاريوكي.`,
+            mistakes: R`[[setInterval]] بيزوّد عدّاد بدل ما تقيس من البداية. [[Date.now()]] بدل [[performance.now()]]. [[split('')]] على نص ممكن يبقى فيه إيموجي. [[inline-block]] على حروف عربي. [[dir]] على النص بس والخانة لأ. [[keydown]] و [[e.key]] بدل [[input]]. حساب الدقة من الحروف الحمرا دلوقتي (المسح بيخفي الغلط). ونسيان [[cancelAnimationFrame]] فيبقى فيه حلقتين بعد Esc.`
           },
-          teach: R`## ١. شغّل الاختبارات
-
-~~~bash
-npx vitest run tests/logic.test.js --reporter=verbose
-~~~
-
-~~~text اتشغّل فعلًا · Vitest 5.0.5 على Node 24.22
- ✓ tests/logic.test.js > parseRoute >  → list 2ms
- ✓ tests/logic.test.js > parseRoute > #/ → list 0ms
- ✓ tests/logic.test.js > parseRoute > #/fav → fav 0ms
- ✓ tests/logic.test.js > parseRoute > #/new → new 0ms
- ✓ tests/logic.test.js > parseRoute > #/r/foul → recipe 0ms
- ✓ tests/logic.test.js > parseRoute > #/x/y/z → notfound 0ms
- ✓ tests/logic.test.js > parseRoute > بيفك العربي في الـ id والـ query 0ms
- ✓ tests/logic.test.js > filterRecipes > بيدوّر في الاسم والمكوّنات، ويتجاهل المسافات 1ms
- ✓ tests/logic.test.js > filterRecipes > من غير بحث بيرجّع الكل 1ms
- ✓ tests/logic.test.js > validateRecipe > بيقبل الأرقام العربي وبينضّف المدخلات 0ms
- ✓ tests/logic.test.js > validateRecipe > بيرفض الوقت "" 0ms
- ...
- ✓ tests/logic.test.js > debounce بينادي مرة واحدة بآخر قيمة 3ms
-
- Test Files  1 passed (1)
-      Tests  19 passed (19)
-   Duration  163ms
-~~~
-
-| الأمر | بيعمل إيه |
-|---|---|
-| [[npx vitest]] | وضع المراقبة: بيعيد الاختبارات المتأثرة مع كل حفظ. ده اللي بتشتغل بيه وانت بتكتب |
-| [[npx vitest run]] | مرة واحدة ويخرج بكود 0 أو 1. ده اللي في [[npm test]] وفي الـ CI |
-| [[--reporter=verbose]] | سطر لكل اختبار بدل ملخص لكل ملف، مفيد وانت بتتعلم أو بتدوّر على اختبار بطيء |
-| [[npx vitest run tests/api.test.js]] | ملف واحد بس. وممكن جزء من الاسم: [[npx vitest run storage]] |
-| [[-t "debounce"]] | الاختبارات اللي اسمها فيه الكلمة دي بس |
-
-والتطبيق كله:
-
-~~~text اتشغّل فعلًا · npm run check
-> eslint .
-> vitest run
- Test Files  4 passed (4)
-      Tests  43 passed (43)
-   Duration  1.80s (environment 59%, tests 33%, import 4%, transform 2%, worker 1%)
-~~~
-
-**ليه environment ٥٩٪؟** تحميل jsdom نفسه (DOM كامل مكتوب بـ JavaScript) أبطأ من الاختبارات. وعشان كده ملف واحد بس فيه [[// @vitest-environment jsdom]]، والتلاتة التانيين Node عادي.
-
----
-
-## ٢. اقرا الاختبار الواقع
-
-بوّظت [[minutes < 1]] لـ [[minutes < 0]] بقصد. أول نسخة من الاختبار كانت [[expect(validateRecipe(...).errors.minutes).toBeTruthy()]]:
-
-~~~text اتشغّل فعلًا · النسخة الأولى من الاختبار
- FAIL  tests/logic.test.js > validateRecipe > بيرفض الوقت "0"
-TypeError: Cannot read properties of undefined (reading 'minutes')
-~~~
-
-صح إنه وقع، بس الرسالة بتقول «فيه [[undefined]]» ومش بتقول إيه اللي غلط. بعد ما بقت [[toMatchObject]]:
-
-~~~text اتشغّل فعلًا · النسخة الحالية
- FAIL  tests/logic.test.js > validateRecipe > بيرفض الوقت "0"
-AssertionError: expected { ok: true, value: { …(5) } } to match object { ok: false, …(1) }
-
-- Expected
-+ Received
-
-  {
--   "errors": {
--     "minutes": Any<String>,
--   },
--   "ok": false,
-+   "ok": true,
-  }
-~~~
-
-دلوقتي الرسالة نفسها بتقول: «الصفر عدّى كوقت سليم». و [[-]] اللي كان متوقع و [[+]] اللي جه. **القاعدة:** اكتب التأكيد بحيث فشله يشرح نفسه.
-
----
-
-## ٣. التزييف: [[fetch]] و [[localStorage]] و الوقت
-
-| الحاجة | بتتزيّف إزاي | ليه |
-|---|---|---|
-| [[localStorage]] | object فيه [[getItem]] و [[setItem]] فوق [[Map]]، بيتبعت لـ [[load]] و [[createStore]] | عشان نجرّب «مليان» و «مقفول» بـ [[throw]]، وده مستحيل تعمله بالـ localStorage الحقيقي بسهولة |
-| [[fetch]] | [[vi.stubGlobal('fetch', vi.fn(async () => new Response(body, { status })))]] | [[Response]] الحقيقية موجودة في Node 18+، فـ [[res.ok]] و [[res.json()]] بيتصرفوا زي المتصفح بالظبط |
-| الوقت | [[vi.useFakeTimers()]] و [[vi.advanceTimersByTime(ms)]] | debounce والمهلة من غير ما نستنى بجد |
-| الشبكة الواقعة | [[fetch]] مزيّف بيرمي [[TypeError('fetch failed')]] | نفس الخطأ اللي Node بيرميه فعلًا لما البورت مقفول |
-
-و [[afterEach(() => vi.unstubAllGlobals())]] في [[api.test.js]] بيرجّع [[fetch]] الأصلي بعد كل اختبار.
-
----
-
-## ٤. الاختبار اللي مسك مسح الفورم
-
-~~~js tests/app.dom.test.js
-it('الداتا وصلت وانت بتكتب في الفورم: اللي كتبته ميضيعش', async () => {
-  let release;
-  const slow = vi.fn(() => new Promise((r) => { release = () => r(new Response(data)); }));
-  // ... نفس start بس بـ fetch مش بيرد غير لما نقول
-  $('#title').value = 'طعمية';
-  release();
-  await vi.waitFor(() => expect($('#main').getAttribute('aria-busy')).toBe('false'));
-  expect($('#title').value).toBe('طعمية');
-});
-~~~
-
-[[release]] بتخلّينا نتحكم امتى الرد يوصل: نكتب في الفورم **الأول**، وبعدين الداتا توصل. اتجرّب الاختبار ده بسطر [[if (!moved && s.route.name === 'new') return;]] وبدونه: من غيره وقع (المتوقع [[طعمية]] واللي جه فاضي)، ومعاه عدّى. وده باج مكانش هيبان على جهازك أبدًا لأن الملف المحلي بيتحمّل في ميلي ثواني.
-
----
-
-## ٥. ESLint اتشغّل فعلًا
-
-~~~text اتشغّل فعلًا · ESLint 10.13 على ملف فيه ٣ غلطات بقصد
-src/bad.js
-  2:1   error  'innerHTML' is restricted from being used. استخدم h() أو textContent: innerHTML بيفتح باب XSS  no-restricted-properties
-  3:8   error  Expected '===' and instead saw '=='                                                            eqeqeq
-  3:26  error  'unknownVar' is not defined                                                                    no-undef
-
-✖ 3 problems (3 errors, 0 warnings)
-~~~
-
-[[2:1]] يعني سطر ٢ عمود ١، وآخر كلمة اسم القاعدة (تقدر تدوّر عليها في [[eslint.org/docs/rules]]). **وأول تشغيل على الكود الحقيقي** مسك حاجة مكنتش واخد بالي منها: [[let raw = null;]] في [[storage.js]] قيمة مبتتقريش ([[no-useless-assignment]]، جديدة في الـ recommended)، فبقت [[let raw;]].
-
-ولو محتاج [[innerHTML]] فعلًا في مكان آمن (الاختبار اللي بيحط HTML بتاعنا)، اكتب سبب جنب التعطيل:
-
-~~~js
-// eslint-disable-next-line no-restricted-properties -- HTML بتاعنا من الملف، مش من يوزر
-~~~
-
----
-
-## ٦. git: اللي يترفع واللي لأ
-
-~~~text .gitignore
-node_modules/
-coverage/
-~~~
-
-~~~bash
-git init -b main
-git add .
-git status --short
-git commit -m "first version"
-~~~
-
-~~~text اتشغّل فعلًا · git على ويندوز ١١ (repo محلي في فولدر مؤقت)
-A  .github/workflows/pages.yml
-A  .gitignore
-A  data/recipes.json
-A  eslint.config.js
-A  index.html
-A  package-lock.json
-A  package.json
-A  src/api.js   src/app.js   src/logic.js   src/storage.js   src/store.js   src/view.js
-A  style.css
-A  tests/api.test.js   tests/app.dom.test.js   tests/logic.test.js   tests/storage.test.js
-~~~
-
-١٨ ملف، و [[node_modules]] (٨٠ ميجا على الجهاز) مش منهم. و [[package-lock.json]] **لازم** يترفع: هو اللي بيخلّي [[npm ci]] في الـ CI يسطّب نفس النسخ بالظبط. ولو ظهرلك [[LF will be replaced by CRLF]] على ويندوز، ده إعداد git عندك ([[core.autocrlf]])، وملف [[.gitattributes]] فيه [[* text=auto eol=lf]] بيوحّدها.
-
-وبعدين اعمل repo فاضي على GitHub (من الموقع: New repository، عام، من غير README) وارفع:
-
-~~~bash
-git remote add origin https://github.com/USER/recipe-book.git
-git push -u origin main
-~~~
-
----
-
-## ٧. GitHub Pages: الطريقة الأسهل
-
-1. الـ repo ← **Settings** ← **Pages**.
-2. **Build and deployment** ← Source: **Deploy from a branch**.
-3. Branch: **main**، والفولدر **/ (root)** ← **Save**.
-4. استنى دقيقة أو اتنين، وتبويب **Actions** هيظهر فيه workflow اسمه «pages build and deployment». لما يخضر، الرابط بيظهر فوق في صفحة Pages.
-
-**شكل الرابط:**
-
-| اسم الـ repo | الرابط |
-|---|---|
-| [[recipe-book]] (project site) | [[https://USER.github.io/recipe-book/]]، والصفحة تحت فولدر باسم الـ repo |
-| [[USER.github.io]] (user site) | [[https://USER.github.io/]] على طول، repo واحد بس بالاسم ده لكل حساب |
-
-> الكلام ده من وثايق GitHub Pages. على الخطة المجانية Pages بتشتغل للـ repos العامة بس.
-
----
-
-## ٨. الطريقة الأصح: الاختبارات بتقفل النشر
-
-~~~yaml .github/workflows/pages.yml
-name: test and deploy
-on:
-  push:
-    branches: [main]
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-concurrency:
-  group: pages
-  cancel-in-progress: true
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24
-      - run: npm ci
-      - run: npm run check
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: $__{{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v7
-      - run: mkdir _site && cp -r index.html style.css src data _site/
-      - uses: actions/configure-pages@v6
-      - uses: actions/upload-pages-artifact@v5
-        with:
-          path: _site
-      - id: deployment
-        uses: actions/deploy-pages@v5
-~~~
-
-| الجزء | ليه |
-|---|---|
-| [[permissions]] | [[pages: write]] و [[id-token: write]] دول اللي [[deploy-pages]] محتاجهم عشان ينشر من غير token انت تحطه |
-| [[concurrency]] | لو عملت push مرتين ورا بعض، النشر القديم بيتلغي بدل ما الاتنين يتسابقوا |
-| [[npm ci]] | زي [[npm install]] بس بيلتزم بـ [[package-lock.json]] بالظبط وبيقع لو مختلفين، وأسرع في الـ CI |
-| [[needs: test]] | الـ deploy مش بيبدأ غير لما الـ test ينجح. اختبار واقع = الموقع فاضل على النسخة القديمة |
-| [[mkdir _site]] و [[cp]] | بننشر الصفحة وملفاتها بس، مش الاختبارات ولا الـ config |
-| [[upload-pages-artifact]] و [[deploy-pages]] | بيرفعوا الفولدر وينشروه، والرابط بيطلع في [[page_url]] |
-
-وفي Settings ← Pages خلّي Source **GitHub Actions** بدل الـ branch. الملف ده اتقرا كـ YAML سليم (فيه job اسمه [[test]] و job اسمه [[deploy]])، والتشغيل نفسه على GitHub من الوثايق.
-
----
-
-## ٩. فخاخ Pages، اتجرّبت محليًا بنفس الشكل
-
-~~~text اتشغّل فعلًا · python -m http.server على الفولدر الأب، فالتطبيق تحت /recipe-book/ زي Pages
-/recipe-book/                    200
-/recipe-book/data/recipes.json   200
-/data/recipes.json               404    ← مسار بيبدأ بـ / بيطلع برّه المشروع
-/recipe-book/src/App.js          200    ← على ويندوز بس! الديسك مش حساس لحالة الحروف
-~~~
-
-| الفخ | العلاج |
-|---|---|
-| مسار بيبدأ بـ [[/]] | كل المسارات [[./]]: في [[index.html]] وفي [[DATA_URL]] |
-| [[App.js]] و [[import './app.js']] | على ويندوز وماك شغال، على Pages (Linux) 404. خلّي كل الأسامي حروف صغيرة |
-| [[pushState]] و reload | Pages بترجّع 404 للمسار. التطبيق ده بيستخدم hash فمفيش المشكلة دي |
-| فولدر بيبدأ بـ [[_]] | مع «Deploy from a branch» بيتشال (Jekyll) إلا مع ملف [[.nojekyll]] |
-| الكاش | بعد النشر ممكن تشوف النسخة القديمة دقايق. Ctrl+Shift+R أو افتح في نافذة خاصة |
-
----
-
-## الخلاصة
-
-- [[npm run check]] = lint + ٤٣ اختبار في ٢ ثانية، ونفس الأمر في الـ CI.
-- المنطق في Node، والشاشة في jsdom، والـ E2E في متصفح حقيقي لما تحتاج.
-- التأكيد اللي بيشرح نفسه ([[toMatchObject]]) أحسن من اللي بيقع بـ TypeError.
-- ESLint بيمنع [[innerHTML]]، والتعطيل بسبب مكتوب بس.
-- Pages: الرابط [[https://USER.github.io/REPO/]]، والمسارات relative، والأسامي حروف صغيرة.
-- الـ workflow: test الأول، و deploy بـ [[needs: test]].`,
-          sol: R`الاختبارات والـ lint اتشغّلوا فعلًا (Vitest 5.0.5 و ESLint 10.13 و jsdom 30 على Node 24.22): ٤ ملفات و ٤٣ اختبار. والـ workflow اتقرا كـ YAML سليم، و [[git init]] و [[.gitignore]] اتجرّبوا في repo محلي، والمسارات تحت فولدر فرعي اتجرّبت على سيرفر محلي. أما خطوات GitHub Pages والـ workflow على GitHub نفسه فـ **من وثايق GitHub** (Pages و Actions)، لأن النشر الحقيقي محتاج حساب ومتعملش هنا. وحل التمرين الأول تحت.`,
-          solCode: R`// tests/logic.test.js — حل تمرين allTags
-import { allTags } from '../src/logic.js';
-import { readFileSync } from 'node:fs';
-
-it('allTags: من غير تكرار ومترتبة بالعربي', () => {
-  const list = [
-    { tags: ['مصري', 'فطار'] }, { tags: ['فطار'] }, { tags: [] }, { tags: ['vegan', 'حلو'] },
-  ];
-  expect(allTags(list)).toEqual(['حلو', 'فطار', 'مصري', 'vegan']);
-  expect(allTags([])).toEqual([]);
-});
-
-it('allTags على الداتا الحقيقية', () => {
-  const data = JSON.parse(readFileSync('data/recipes.json', 'utf8'));
-  expect(allTags(data)).toEqual(['حلو', 'فطار', 'مصري', 'نباتي']);
-});`
-        }
-    ]
-  }
+          sol: R`ده اللي طلع لما الخطوات دي اتعملت (الجزء الأول في Chrome 156، والباقي في jsdom بنفس الملفات):`,
+          solCode: R`// جولة عربي بغلطتين اتصلّحوا:
+//   الحرفين بقوا أحمر وبعدين أخضر، والدقة في الآخر أقل من 100% (على نص ٧٨ حرف: ٨٠ ضغطة منهم ٢ غلط = 98%)، لأن الغلطات مبتتمسحش
+// Esc في النص:
+//   0.0 ث · 0 WPM · 100%   ونص تاني (مش نفس النص أبدًا)
+// English:
+//   الخانة والنص dir="ltr"، والمؤشر بيبدأ من الشمال
+// ١٠ ثواني من غير كتابة في نص الجولة:
+//   الوقت بيعدّ، والسرعة بتنزل لوحدها (في Chrome: 256 بعد 1.1 ث، و 23 بعد 12.2 ث)
+// localStorage.setItem('typing-best', '{"ar":{"wpm":999}}') و reload:
+//   أحسن نتيجة: —     (مفيش accuracy، فـ loadBest رفضته)
+//   ولما تخلص جولة بدقة 90% أو أكتر، بتتسجل وبتكتب فوق القيمة البايظة`
+        },
+      ],
+    }
 ]);

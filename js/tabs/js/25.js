@@ -1,2119 +1,2822 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: R`regex كامل: الـ flags و exec و الـ syntax الباقي`,
+      t: "regex",
       l: 2,
-      n: "الـ regex literal ضد new RegExp وجدول خصايص الـ RegExp كلها، و exec من جوه (indices و lastIndex و matches بطول صفر)، والـ flags s و m و y و v بحالات من الشغل، والنقطة والحروف الحرفية، و \\k<name> والـ modifiers، والـ buffer boundaries اللي لسه مش في JS، ومشاريع: inspector و مصلّح تكرار و tokenizer و highlighter و فاحص لوج بـ tests",
+      n: "تدوّر وتتحقق وتستبدل بـ patterns: classes و quantifiers و anchors و groups و flags، والعربي، وإمتى regex غلط",
       pre: [
-        { to: "js/regex: classes و quantifiers", why: R`الـ classes والـ quantifiers والـ anchors: الوحدة دي مبنية عليهم` },
-        { to: "js/groups و flags", why: R`الـ groups والـ named groups وأول تعارف بالـ flags وفخ [[lastIndex]] مع [[g]]` },
-        { to: "js/test و match و matchAll و replace", why: R`الـ string methods و [[RegExp.escape]]، وهنا بنشوف [[exec]] اللي تحتهم` },
-        { to: "js/إمتى regex غلط", why: R`ReDoS وإمتى تسيب الـ regex لـ parser` },
-        { to: "js/regex والعربي: Unicode properties", why: R`[[\p{...}]] والـ flag [[u]]، وهنا بنكمّل بالـ flag [[v]]` },
-        { to: "js/RegExp و Symbol.match و Symbol.replace: matcher بتاعك", why: R`الـ RegExp كـ object وإزاي الـ string methods بتسلّمه الشغل` },
+        { to: "js/string methods", why: R`[[match]] و [[replace]] و [[split]] كلهم string methods، والـ regex بيديهم قوة زيادة` },
+        { to: "js/escape sequences و String.raw", why: R`الـ backslash في [[\d]] و [[new RegExp("\\d")]] هو نفس فكرة الـ escape في النصوص` },
+        { to: "js/regex والعربي: Unicode properties", why: R`[[\p{L}]] و [[\p{Nd}]] مع [[u]] هما اللي بيخلّوا الـ regex يفهم العربي في التمارين` },
+        { to: "js/textContent و classList", why: R`مشاريع الوحدة بتعرض النتايج في صفحة، ولازم نص اليوزر يتحط كنص مش HTML` },
       ],
-      goal: [
-        R`تختار بين [[/.../]] و [[new RegExp]] صح، وتكتب الـ backslash في النص من غير ما يضيع، وتقرا أي regex من خصايصه ([[source]] و [[flags]] و [[global]]…).`,
-        R`تستخدم [[exec]] بنفسك: تفهم كل خانة في الناتج ([[index]] و [[input]] و [[groups]] و [[indices]])، وتلف بـ [[g]] و [[lastIndex]] من غير loop لانهائي.`,
-        R`تستخدم [[s]] و [[m]] و [[y]] و [[v]] في حالات حقيقية: ملف INI، وإيميل، و tokenizer، وحروف عربي بس من غير الأرقام.`,
-        R`تعرف النقطة بتطابق إيه بالظبط، وأنهي حرف لازم [[\]] قبله وإمتى [[\]] نفسها بترمي.`,
-        R`تكتب [[\k<name>]] و [[(?i:...)]]، وتعرف إن [[\A]] و [[\z]] لسه مش في JS والبديل الصح.`,
-      ],
-      use: {
-        prog: R`الـ linters (ESLint) و الـ formatters و syntax highlighters (Prism و highlight.js) والـ template engines كلهم بيقطّعوا النص بـ [[exec]] و [[y]] بالظبط زي الـ tokenizer هنا. ومكتبات الـ validation (Zod و Yup) بتاخد [[RegExp]] وبتقرا [[source]] و [[flags]] بتوعه عشان تعرضه في رسالة الغلط.`,
-        work: R`فحص لوجات وتحديد السطر البايظ بالعمود، وتظليل كلمات البحث في نتايج، وتنضيف رسايل العملا قبل ما تتخزن، وقراية ملفات config بسيطة، وأدوات CLI بتاخد pattern من اليوزر.`,
-        cs: R`الـ lexer (أول مرحلة في أي compiler)، والفرق بين البحث في أي مكان والمطابقة من مكان ثابت (sticky)، والـ backreferences اللي بتخلّي الـ regex أقوى من «regular language» في نظرية الحسابات.`,
-      },
       projects: [
-        { lvl: 'صغير', t: R`regex inspector من الترمنال`, what: R`[[regex-info.mjs]] بياخد regex مكتوب بشكل [[/pattern/flags]] كـ argument، ويطبع جدول بكل خصايصه ([[source]] و [[flags]] و [[global]] و [[ignoreCase]] و [[multiline]] و [[dotAll]] و [[unicode]] و [[unicodeSets]] و [[hasIndices]] و [[sticky]] و [[lastIndex]] و [[toString]])، وبعدين يجرّبه على أي نصوص تانية تديهاله ويقول الـ match ومكانه. والـ regex البايظ بيطبع الـ SyntaxError بنصها ويخرج بـ exit code 1. من درسي «regex literal و new RegExp: خصايص الـ RegExp و toString» و «RegExp exec: الـ result array و indices و lastIndex».`, done: R`[[node regex-info.mjs '/(?<n>\d+) ?EGP/gi' "tea 15 egp"]] بيطبع الجدول ([[global]] و [[ignoreCase]] بـ true) وسطر [["15 egp" عند 4]]. و [['/(\d+/g']] بيطبع [[Unterminated group]] و [[exit=1]]، و [['/a/gg']] بيطبع [[Invalid flags]]، و [[abc]] من غير شرط بيطبع رسالة الشكل الصح.`, sol: R`**هتشوف إيه:** جدول بخصايص الـ regex، وتحته سطر لكل نص جرّبته:
+        { lvl: 'صغير', t: R`تنضيف أرقام الموبايل`, what: R`[[normalizePhone(s)]] بتقبل [["+20 10 1234 5678"]] و [["0020101234 5678"]] و [["010-1234-5678"]] والأرقام العربي [["٠١٠١٢٣٤٥٦٧٨"]]، وترجّع [["01012345678"]] أو [[null]]. من درسي classes و replace.`, done: R`الأربع أشكال دول بيرجّعوا [["01012345678"]]، و [["0131234567"]] ← null، و [[""]] ← null. والفحص الأخير بـ [[^]] و [[$]]: شيلهم وشوف رقم أطول بيعدّي.`, sol: R`## الشكل النهائي
 
-~~~text الناتج (Node 24.22، PowerShell)
-┌─────────────┬───────────────────────┐
-│ (index)     │ Values                │
-├─────────────┼───────────────────────┤
-│ source      │ '(?<n>\\d+) ?EGP'     │
-│ flags       │ 'gi'                  │
-│ global      │ true                  │
-│ ignoreCase  │ true                  │
-│ multiline   │ false                 │
-│ dotAll      │ false                 │
-│ unicode     │ false                 │
-│ unicodeSets │ false                 │
-│ hasIndices  │ false                 │
-│ sticky      │ false                 │
-│ lastIndex   │ 0                     │
-│ toString    │ '/(?<n>\\d+) ?EGP/gi' │
-└─────────────┴───────────────────────┘
-"tea 15 egp" → "15 egp" عند 4
-"free" → مفيش match
+~~~text الناتج (node main.js، Node 24)
+"+20 10 1234 5678"   → 01012345678
+"0020101234 5678"    → 01012345678
+"010-1234-5678"      → 01012345678
+"٠١٠١٢٣٤٥٦٧٨"        → 01012345678
+"(012) 3456-7890"    → 01234567890
+"0131234567"         → null
+""                   → null
+"010123456789"       → null
+"+2001012345678x"    → null
+من غير ^ و $: true true
 ~~~
 
-(الـ [[\\d]] في الجدول backslash واحد بس: [[console.table]] بيعرض النصوص بـ escape زي الكود.)
+## هتشوف إيه
 
-~~~js regex-info.mjs
-// regex-info.mjs: اكتب regex بشكل /.../flags وشوف كل خصايصه وجرّبه على نص
-const [, , literal, ...samples] = process.argv;
+الأربع أشكال اللي في المطلوب (ومعاهم [["(012) 3456-7890"]]) بقوا رقم واحد نضيف من ١١ رقم، والأرقام الغلط والفاضي [[null]]. وآخر سطر بيوري ليه [[^]] و [[$]] لازمين.
 
-export function parseLiteral(text) {
-  if (typeof text !== "string" || !text.startsWith("/")) {
-    throw new TypeError("اكتب الـ regex بالشكل ده: /pattern/flags");
-  }
-  const last = text.lastIndexOf("/");
-  if (last === 0) throw new TypeError("ناقص / الأخيرة");
-  return new RegExp(text.slice(1, last), text.slice(last + 1));
-}
+## الكود
 
-export function describe(re) {
-  return {
-    source: re.source,
-    flags: re.flags || "(مفيش)",
-    global: re.global,
-    ignoreCase: re.ignoreCase,
-    multiline: re.multiline,
-    dotAll: re.dotAll,
-    unicode: re.unicode,
-    unicodeSets: re.unicodeSets,
-    hasIndices: re.hasIndices,
-    sticky: re.sticky,
-    lastIndex: re.lastIndex,
-    toString: re.toString(),
-  };
-}
-
-if (import.meta.main) {
-  try {
-    const re = parseLiteral(literal);
-    console.table(describe(re));
-    for (const s of samples) {
-      const m = new RegExp(re.source, re.flags.replace(/[gy]/g, "")).exec(s);
-      console.log(JSON.stringify(s), m ? "→ " + JSON.stringify(m[0]) + " عند " + m.index : "→ مفيش match");
-    }
-  } catch (e) {
-    console.error(e.name + ": " + e.message);
-    process.exitCode = 1;
-  }
-}
-~~~
-
-**كل حتة بتعمل إيه:**
-
-- [[parseLiteral]]: الـ regex جاي من الترمنال **نص**، فبندوّر على **آخر** [[/]] بـ [[lastIndexOf]] (مش أول واحدة، عشان الـ pattern نفسه ممكن يبقى فيه [[\/]])، واللي قبلها pattern واللي بعدها flags، وبعدين [[new RegExp(pattern, flags)]]. أي pattern أو flags غلط بيرمي SyntaxError من الـ constructor نفسه، فمش محتاجين نفحص بإيدنا.
-- [[describe]]: كل خاصية getter على [[RegExp.prototype]] بتقرا من الـ regex، ما عدا [[lastIndex]] اللي خاصية عادية على الـ object نفسه.
-- التجربة على النصوص: بنعمل نسخة من غير [[g]] و [[y]] عشان [[exec]] يبدأ من الأول كل مرة ومايفتكرش [[lastIndex]] من النص اللي قبله.
-- [[import.meta.main]]: [[true]] لما الملف يتشغّل بـ node مباشرة (موجودة في Node 24)، فتقدر تستورد [[parseLiteral]] من ملف تاني من غير ما الجدول يتطبع.
-
-**غلطة حصلت وإحنا بنبنيه:** في Git Bash، [[node regex-info.mjs '/(\d+/g']] طلّع [[TypeError: اكتب الـ regex بالشكل ده]] بدل الـ SyntaxError. طبعنا [[process.argv[2]]] لقيناه [[C:/Program Files/Git/(/d+/g]]: Git Bash (MSYS) بيحوّل أي argument بيبدأ بـ [[/]] لمسار ويندوز. الحل: [[MSYS_NO_PATHCONV=1]] قبل الأمر، أو شغّله من PowerShell. ده بيحصل في Git Bash بس، مش في لينكس ولا ماك:
-
-~~~text الناتج (Git Bash مع MSYS_NO_PATHCONV=1)
-SyntaxError: Invalid regular expression: /(\d+/g: Unterminated group
-TypeError: اكتب الـ regex بالشكل ده: /pattern/flags
-SyntaxError: Invalid flags supplied to RegExp constructor 'gg'
-TypeError: ناقص / الأخيرة
-~~~
-
-السطور دي لـ [['/(\d+/g']] و [[abc]] و [['/a/gg']] و [['/x']] بالترتيب، وكلهم خرجوا بـ exit code 1.` },
-        { lvl: 'صغير', t: R`مصلّح الكلمات المتكررة`, what: R`[[dupes.mjs]] بيقرا ملف نص ويلاقي أي كلمة اتكتبت مرتين ورا بعض («ده ده» و «the The»)، ويطبع [[file:line:col]] لكل واحدة، ومع [[--fix]] بيصلّح الملف ويسيب أول نسخة. لازم يشتغل مع العربي (يعني من غير [[\b]] و [[\w]])، وميعتبرش [[then thenext]] تكرار، وميلزقش آخر سطر في أول اللي بعده. من دروس «named backreference و modifiers و buffer boundaries» و «RegExp exec: الـ result array و indices و lastIndex».`, done: R`على ملف فيه [[الطلب ده ده اتأخر]] و [[the The order]] و [[thenthen ok, then thenext]] وسطرين واحد آخره [[شاي]] واللي بعده أوله [[شاي]]: بيلاقي ٢ بس بأماكنهم، و [[--fix]] بيصلّحهم، وتشغيله تاني بيقول «مفيش تكرار».`, sol: R`**هتشوف إيه:** كل تكرار بمكانه، وبعد [[--fix]] الملف نضيف:
-
-~~~text الناتج (Node 24.22)
-notes.txt:1:7  «ده ده»
-notes.txt:2:1  «the The»
-لقيت 2
-اتصلّح الملف
-~~~
-
-~~~text notes.txt بعد --fix
-الطلب ده اتأخر
-the order is ready
-thenthen ok, then thenext
-آخر السطر شاي
-شاي أول السطر
-~~~
-
-~~~js dupes.mjs
-// dupes.mjs: يلاقي الكلمات المتكررة ورا بعض («ده ده» و «the The») ويصلّحها
-import { readFileSync, writeFileSync } from "node:fs";
-
-const DUP = /(?<!\p{L})(?<word>\p{L}+)[^\S\r\n]+\k<word>(?!\p{L})/giu;
-
-export function findDupes(text) {
-  const found = [];
-  text.split(/\r?\n/).forEach((line, i) => {
-    for (const m of line.matchAll(DUP)) {
-      found.push({ line: i + 1, col: m.index + 1, text: m[0] });
-    }
+~~~js phone.js
+// أي رقم عربي أو فارسي -> إنجليزي: \p{Nd} وبعدين نحسب قيمته من أول رقم في نفس الـ block
+function toLatinDigits(s) {
+  return s.replace(/\p{Nd}/gu, d => {
+    const code = d.codePointAt(0);
+    if (code >= 0x660 && code <= 0x669) return String(code - 0x660); // ٠-٩
+    if (code >= 0x6f0 && code <= 0x6f9) return String(code - 0x6f0); // ۰-۹
+    return d;
   });
-  return found;
 }
 
-export function fixDupes(text) {
-  return text.replace(DUP, "$<word>");
-}
-
-if (import.meta.main) {
-  const [, , file, flag] = process.argv;
-  if (!file) {
-    console.error("الاستخدام: node dupes.mjs <file> [--fix]");
-    process.exit(2);
-  }
-  const text = readFileSync(file, "utf8");
-  const found = findDupes(text);
-  for (const d of found) console.log($__bt$__{file}:$__{d.line}:$__{d.col}  «$__{d.text}»$__bt);
-  console.log(found.length ? $__btلقيت $__{found.length}$__bt : "مفيش تكرار");
-  if (flag === "--fix" && found.length) {
-    writeFileSync(file, fixDupes(text));
-    console.log("اتصلّح الملف");
-  }
+export function normalizePhone(s) {
+  if (typeof s !== "string") return null;
+  let digits = toLatinDigits(s).replace(/[\s\-().]/g, "");
+  digits = digits.replace(/^(?:\+|00)20/, "0");
+  return /^01[0125]\d{8}$/.test(digits) ? digits : null;
 }
 ~~~
 
-**كل حتة بتعمل إيه:**
+~~~js main.js
+import { normalizePhone } from "./phone.js";
 
-- [[(?<!\p{L})]]: lookbehind «قبلي مش حرف». ده بديل [[\b]] اللي بيفهم إنجليزي بس: [[\b]] بيشوف الحرف العربي «مش حرف كلمة»، فـ [["ده ده"]] مكانتش هتتلاقي خالص.
-- [[(?<word>\p{L}+)]]: كلمة بأي لغة، والـ group اسمه [[word]].
-- [[[^\S\r\n]+]]: مسافة أفقية بس (أي whitespace ما عدا السطر الجديد).
-- [[\k<word>]]: **نفس النص** اللي [[word]] مسكه، ومع [[i]] الحروف الكبيرة زي الصغيرة، فـ [[the The]] تكرار.
-- [[(?!\p{L})]]: بعدها مش حرف، فـ [[then thenext]] مش تكرار.
-- [[fixDupes]]: [[replace]] بـ [[$<word>]] بيحط أول نسخة بس مكان الاتنين.
-
-**غلطة حصلت وإحنا بنبنيه:** أول نسخة كان فيها [[\s+]] بين الكلمتين. [[findDupes]] كانت شغالة لأنها بتقسم سطر سطر، بس [[fixDupes]] بتشتغل على الملف كله، فـ [[شاي]] آخر سطر و [[شاي]] أول اللي بعده اتلزقوا في سطر واحد:
-
-~~~text الناتج بـ \s+ (قبل التصليح) ثم بـ [^\S\r\n]+
-"آخر السطر شاي أول السطر" "آخر السطر شاي\nشاي أول السطر"
-~~~
-
-[[\s]] بتشمل [[\n]]. الحل [[[^\S\r\n]]]: «مش (مش مسافة) ومش سطر جديد»، يعني مسافة أو tab بس.` },
-        { lvl: 'متوسط', t: R`tokenizer لمعادلة حسابية`, what: R`[[tokenize(src)]] بتقطّع [["12 + 3.5*(4-1)"]] لـ tokens كل واحد [[{ type, text, pos }]] (رقم، أو operator، أو قوس) بـ regex واحد فيه flag [[y]] و [[exec]] في loop. أي حرف مش مفهوم (زي [[%]]) بيرمي [[TokenError]] (subclass من SyntaxError) رسالته فيها المعادلة وعلامة [[^]] تحت الحرف بالظبط. والـ CLI بيطبع الـ tokens لكل معادلة تديهاله. من دروس «الـ flags s و m و y و v بحالات حقيقية» و «RegExp exec: الـ result array و indices و lastIndex».`, done: R`[["12 + 3.5*(4-1)"]] بيطلع ٩ tokens منهم [[num:3.5]]، و [["2^10"]] ٣ tokens، و [["7 % 2"]] بيطبع الرسالة والـ [[^]] تحت [[%]] (عمود 2) والـ exit code 1، والمسافات لوحدها أو النص الفاضي بيطبعوا سطر فاضي من غير error.`, sol: R`**هتشوف إيه:**
-
-~~~text الناتج (Node 24.22)
-num:12  op:+  num:3.5  op:*  paren:(  num:4  op:-  num:1  paren:)
-num:2  op:^  num:10
-حرف مش مفهوم «%» عند 2
-7 % 2
-  ^
-
-
-exit=1
-~~~
-
-(السطرين الفاضيين قبل [[exit=1]] لـ [["  "]] و [[""]]: مفيش tokens.)
-
-~~~js tokenize.mjs
-// tokenize.mjs: يقطّع معادلة حسابية لـ tokens بـ flag y و exec، ويشاور على الحرف الغلط
-const TOKEN = /(?<space>\s+)|(?<num>\d+(?:\.\d+)?)|(?<op>[-+*\/^])|(?<paren>[()])/y;
-
-export class TokenError extends SyntaxError {
-  name = "TokenError";
-  constructor(src, pos) {
-    super($__btحرف مش مفهوم «$__{src[pos]}» عند $__{pos}\n$__{src}\n$__{" ".repeat(pos)}^$__bt);
-    this.pos = pos;
-  }
+const inputs = ["+20 10 1234 5678", "0020101234 5678", "010-1234-5678", "٠١٠١٢٣٤٥٦٧٨", "(012) 3456-7890", "0131234567", "", "010123456789", "+2001012345678x"];
+for (const s of inputs) {
+  console.log(JSON.stringify(s).padEnd(20), "→", normalizePhone(s));
 }
 
-export function tokenize(src) {
-  const tokens = [];
-  TOKEN.lastIndex = 0;
-  while (TOKEN.lastIndex < src.length) {
-    const start = TOKEN.lastIndex;
-    const m = TOKEN.exec(src);
-    if (!m) throw new TokenError(src, start);
-    const [type, text] = Object.entries(m.groups).find(([, v]) => v !== undefined);
-    if (type !== "space") tokens.push({ type, text, pos: start });
-  }
-  return tokens;
-}
+// من غير ^ و $: الرقم الأطول بيعدّي
+const loose = /01[0125]\d{8}/;
+console.log("من غير ^ و $:", loose.test("010123456789"), loose.test("x01012345678y"));
+~~~
 
-if (import.meta.main) {
-  for (const src of process.argv.slice(2)) {
-    try {
-      console.log(tokenize(src).map((t) => $__bt$__{t.type}:$__{t.text}$__bt).join("  "));
-    } catch (e) {
-      if (!(e instanceof TokenError)) throw e;
-      console.error(e.message);
-      process.exitCode = 1;
+~~~json package.json
+{ "type": "module" }
+~~~
+
+## كل حتة مهمة بتعمل إيه
+
+- **[[toLatinDigits]]:** [[/\p{Nd}/gu]] بيمسك أي رقم في Unicode، والدالة بتحسب قيمته من كوده: [[٠]] كودها [[0x660]]، فـ [[code - 0x660]] بيدّي الرقم. ونفس الكلام للأرقام الفارسي ([[۰]] = [[0x6f0]]).
+- **[[replace(/[\s\-().]/g, "")]]:** بيشيل المسافات والشرط والأقواس والنقط. الـ [[-]] جوه الأقواس عليها [[\]] عشان متتفهمش range.
+- **[[replace(/^(?:\+|00)20/, "0")]]:** كود مصر في الأول بس ([[^]])، بـ [[+]] أو [[00]]، بيتبدّل بـ [[0]]. [[(?:...)]] تجميع من غير group. و [[\+]] لأن [[+]] لوحدها quantifier.
+- **[[/^01[0125]\d{8}$/]]:** الفحص الأخير على النص **كله**: [[010123456789]] (١٢ رقم) و [["+2001012345678x"]] اترفضوا. من غير [[^]] و [[$]] الاتنين كانوا عدّوا (آخر سطر).
+- **[[typeof s !== "string"]]:** [[normalizePhone(undefined)]] ترجّع null بدل ما تقع على [[.replace]].
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **أول نسخة كانت [[s.replace(/\D/g, "")]]** (شيل أي حاجة مش رقم). [["+2001012345678x"]] بقت [[2001012345678]]، والـ [[x]] اختفت في السكوت. والأرقام العربي اتشالت كلها لأن [[\D]] من غير [[u]] بيعتبرها «مش رقم». الحل: نشيل الفواصل المعروفة بس، ونحوّل العربي الأول، وأي حرف تاني يخلي الفحص يفشل.
+- **[[^\+20]] لوحدها:** [["0020..."]] مكانتش بتتشال. اتصلحت بـ [[(?:\+|00)]].`  },
+        { lvl: 'صغير', dir: "search-highlighter", t: R`مظلّل نتايج البحث`, what: R`صفحة فيها مقال و input، الكلمات اللي بتطابق بتتحط في [[<mark>]] من غير حساسية للحروف، والـ query بيتعمله escape، وجنب الـ input «لقيت X مرة». من درسي إمتى regex غلط و replace.`, done: R`كتابة [[c++]] أو [[(]] مبتكسرش الصفحة، والعدد صح، والكلمة بحروف كبيرة بتتظلل، ولما الـ input يفضى المقال بيرجع زي الأول بالظبط من غير [[<mark>]] فاضل.`, sol: R`## الشكل النهائي
+
+~~~live 330 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دوّر في المقال</title>
+<style>
+  body { font: 16px/1.8 system-ui, sans-serif; margin: 16px; max-width: 620px; }
+  .bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  input { font: inherit; padding: 4px 8px; }
+  #count { color: #555; }
+  mark { background: #fde047; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <input id="q" type="search" aria-label="دوّر في المقال" placeholder="دوّر...">
+  <span id="count" aria-live="polite"></span>
+</div>
+<article id="article">
+  <h2>ليه تتعلم JavaScript؟</h2>
+  <p>JavaScript هي لغة المتصفح، و javascript نفسها بتشتغل على السيرفر بـ Node. لو بتحب C++ أو Java هتلاقي الـ syntax قريب.</p>
+  <p>ابدأ بالأساسيات (المتغيرات والدوال)، وبعدين الـ DOM، وبعدين async. وكل يوم اكتب كود: ده أهم من أي كورس.</p>
+</article>
+<script>
+  const article = document.getElementById("article");
+  const count = document.getElementById("count");
+  const originalHTML = article.innerHTML;
+  const escapeRegex = s => (RegExp.escape ? RegExp.escape(s) : s.replace(/[.*+?^$__{}()|[\]\\]/g, "\\$&"));
+
+  // بيلف على عقد النص بس، فالـ tags نفسها عمرها ما بتتلمس
+  function highlight(query) {
+    article.innerHTML = originalHTML;
+    if (!query.trim()) { count.textContent = ""; return; }
+    const re = new RegExp(escapeRegex(query), "gi");
+    const walker = document.createTreeWalker(article, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    let total = 0;
+    for (const node of nodes) {
+      const text = node.nodeValue;
+      const matches = [...text.matchAll(re)];
+      if (matches.length === 0) continue;
+      total += matches.length;
+      const frag = document.createDocumentFragment();
+      let last = 0;
+      for (const m of matches) {
+        frag.append(text.slice(last, m.index));
+        const mark = document.createElement("mark");
+        mark.textContent = m[0];
+        frag.append(mark);
+        last = m.index + m[0].length;
+      }
+      frag.append(text.slice(last));
+      node.replaceWith(frag);
     }
+    count.textContent = "لقيت " + total + " مرة";
   }
-}
+
+  document.getElementById("q").addEventListener("input", e => highlight(e.target.value));
+</script>
+</body>
+</html>
 ~~~
 
-**كل حتة بتعمل إيه:**
+## هتشوف إيه
 
-- [[TOKEN]]: ٤ بدايل بـ [[|]]، كل واحد named group: مسافات، ورقم (عشري اختياري بـ [[(?:\.\d+)?]])، و operator، وقوس. جوه [[[-+*\/^]]] الـ [[-]] في الأول عشان تبقى حرف مش range.
-- [[y]]: الـ match **لازم** يبدأ عند [[lastIndex]] بالظبط. فلو عند مكان معيّن مفيش token، [[exec]] بترجّع [[null]] بدل ما تدوّر لقدّام.
-- [[const start = TOKEN.lastIndex]] قبل [[exec]]: عشان لو فشل نعرف المكان (بعد الفشل [[lastIndex]] بيرجع 0).
-- [[Object.entries(m.groups).find(...)]]: الـ group اللي اتطابق هو الوحيد اللي قيمته مش [[undefined]]، واسمه هو نوع الـ token.
-- [[TOKEN.lastIndex = 0]] في أول الدالة: الـ regex متشارك بين النداءات، ولو نداء قبله وقع في النص ممكن يكون [[lastIndex]] مش صفر.
-- [[TokenError]]: [[name]] كـ class field عشان الرسالة تبدأ بـ [[TokenError]] مش [[SyntaxError]]، و [[pos]] للي عايز يعرض المكان بنفسه.
+خانة بحث فوق مقال. اكتب [[javascript]]: الـ ٣ أماكن (العنوان والفقرة) بيتظللوا بالأصفر حتى لو مكتوبة [[JavaScript]]، وجنب الخانة «لقيت 3 مرة». امسح الخانة: المقال بيرجع زي الأول.
 
-**غلطة شفناها:** نسخة بـ [[g]] بدل [[y]] (عملناها بـ [[sed]] ونفس الكود):
-
-~~~text الناتج بـ g على "7 % 2"
-num:7  num:2
-~~~
-
-الـ [[%]] **اختفى من غير ولا error**: مع [[g]]، [[exec]] لما ملقاش token عند [[%]] دوّر لقدّام ولقى المسافة اللي بعدها، فاتنطّ. ده بالظبط ليه الـ tokenizers بتستخدم [[y]].` },
-        { lvl: 'متوسط', t: R`highlighter بيرسم تحت الـ matches`, what: R`[[highlight.mjs "<pattern>" <file> [flags]]] بيدوّر في الملف سطر سطر، ولكل match بيطبع سطر تحته فيه [[^]] تحت الـ match وأول حرف من اسم كل named group مكان بدايته، وفي الآخر عدد الـ matches والـ regex اللي اتستخدم. الـ flags [[g]] و [[d]] بيتضافوا لوحدهم من غير ما يتكرروا، والـ pattern البايظ بيطبع الـ SyntaxError ويخرج بـ 2. من دروس «RegExp exec: الـ result array و indices و lastIndex» و «regex literal و new RegExp: خصايص الـ RegExp و toString».`, done: R`على ملف ٣ سطور فيه [[A-17]] و [[b-3]] و [[C-120]]، الأمر [[node highlight.mjs '(?<letter>[A-Z])-(?<num>\d+)' orders.txt i]] بيرسم ٣ علامات تحت أماكنهم بالظبط، وبيقول [[3 match بـ /(?<letter>[A-Z])-(?<num>\d+)/dgi]]. و [['(']] بيطبع [[Unterminated group]] و [[exit=2]]، والـ flags [[gd]] مبتتكررش.`, sol: R`**هتشوف إيه:**
-
-~~~text الناتج (Node 24.22)
-  1 | order A-17 paid 250 EGP
-    |       l^n^
-  3 | order b-3 and order C-120
-    |       l^n
-    |                     l^n^^
-3 match بـ /(?<letter>[A-Z])-(?<num>\d+)/dgi
-Invalid regular expression: /(/dg: Unterminated group
-exit=2
-~~~
-
-السطر التاني ([[no code here]]) مش ظاهر لأنه مفيهوش match. و [[l]] تحت أول حرف في [[letter]]، و [[n]] تحت أول رقم في [[num]]، والـ [[^]] باقي الـ match.
-
-~~~js highlight.mjs
-// highlight.mjs: يدوّر بـ regex في ملف ويرسم تحت كل match وكل named group مكانهم بالظبط (flag d)
-import { readFileSync } from "node:fs";
-
-export function highlightLine(line, re) {
-  const out = [];
-  for (const m of line.matchAll(re)) {
-    const [start, end] = m.indices[0];
-    const marks = Array(line.length).fill(" ");
-    for (let i = start; i < end; i++) marks[i] = "^";
-    for (const [name, span] of Object.entries(m.indices.groups ?? {})) {
-      if (!span) continue;
-      marks[span[0]] = name[0];
-    }
-    out.push(marks.join("").trimEnd());
-  }
-  return out;
-}
-
-export function buildRegex(pattern, extra = "") {
-  const flags = new Set(["g", "d", ...extra]);
-  return new RegExp(pattern, [...flags].join(""));
-}
-
-if (import.meta.main) {
-  const [, , pattern, file, flags = ""] = process.argv;
-  if (!pattern || !file) {
-    console.error('الاستخدام: node highlight.mjs "<pattern>" <file> [flags]');
-    process.exit(2);
-  }
-  let re;
-  try { re = buildRegex(pattern, flags); }
-  catch (e) { console.error(e.message); process.exit(2); }
-  let total = 0;
-  readFileSync(file, "utf8").split(/\r?\n/).forEach((line, i) => {
-    const marks = highlightLine(line, re);
-    if (!marks.length) return;
-    total += marks.length;
-    console.log(String(i + 1).padStart(3) + " | " + line);
-    for (const mk of marks) console.log("    | " + mk);
-  });
-  console.log($__bt$__{total} match بـ $__{re}$__bt);
-}
-~~~
-
-**كل حتة بتعمل إيه:**
-
-- [[buildRegex]]: [[new Set(["g", "d", ...extra])]] بيشيل التكرار، فلو اليوزر كتب [[gd]] الـ flags تفضل [[dg]] مش [[gddg]] (اللي كانت هترمي [[Invalid flags]]).
-- [[line.matchAll(re)]]: بيلف على كل الـ matches، وكل واحد معاه [[indices]] لأن فيه [[d]].
-- [[m.indices[0]]]: [[[start, end]]] بتاع الـ match كله، فبنحط [[^]] من [[start]] لـ [[end - 1]].
-- [[m.indices.groups]]: نفس الشكل لكل named group. لو group اختياري ومشاركش، مكانه [[undefined]]، عشان كده [[if (!span) continue]].
-- [[trimEnd()]]: يشيل المسافات اللي في آخر سطر العلامات.
-
-**حاجة اتعلمناها:** السطر العربي في الترمنال بيتعرض من اليمين للشمال، والـ [[^]] تحت مش هتيجي تحت الحرف الصح بالعين، مع إن الأرقام صح. لو هتستخدمه على نص عربي اطبع الأرقام ([[start]] و [[end]]) جنب العلامات، أو اعرض النتيجة في صفحة HTML بـ [[<mark>]].` },
-        { lvl: 'كبير', t: R`فاحص لوجات بيقولك فين السطر وقع`, what: R`أداة [[log-check]] بتقرا access log كل سطر فيه [[ts method path status ms ip]]، وتفك كل سطر سليم بـ regex واحد بـ named groups و flag [[d]]، والـ method بأي حالة حروف بـ modifier [[(?i:...)]] بس الباقي حساس. السطر البايظ بيتقال عليه **أنهي حقل** وقع **عند أنهي عمود** وعلامة [[^]] تحته (حقل حقل بـ [[y]]). وفي الآخر: عدد السليم والبايظ، وعدد كل status، والأبطأ. و [[--show]] بيرسم تحت كل سطر سليم مكان كل حقل. ومعاها ٦ اختبارات بـ [[node --test]] منها اختبار ReDoS. من الوحدة كلها.`, done: R`على لوج ٧ سطور (منهم سطر فاضي، و [[post]] صغيرة، و [[2O0]] بحرف O، وتاريخ من غير T، وكلمة زيادة في الآخر): ٣ سليم و ٣ بايظ، كل واحد بالحقل والعمود الصح، و [[{"200":1,"401":1,"500":1}]]، والأبطأ [[GET /api/orders 930ms]]، والـ exit code 1. و [[node --test]] بيقول [[pass 6]]، والملف المش موجود بيطبع [[ENOENT]] ويخرج بـ 2.`, ext: R`خلّي الحقول تتقري من ملف JSON بدل [[patterns.mjs]] عشان تدعم أكتر من شكل لوج، وزوّد [[--json]] يطبع التقرير JSON لأداة تانية، وخليها تقرا من [[stdin]] عشان تشتغل في pipe ([[tail -f access.log | log-check -]]).`, sol: R`**هتشوف إيه:** كل سطر سليم وتحته مكان حقوله، وكل سطر بايظ بالحقل والعمود، وملخص:
-
-~~~text الناتج (Node 24.22): node log-check.mjs access.log --show
-  2026-11-21T10:15:02Z GET /api/orders/17 200 35ms ip=10.0.0.7
-  t------------------- m-- p------------- s-- m-      i-------
-  2026-11-21T10:15:03Z post /api/login 401 120ms ip=10.0.0.9
-  t------------------- m--- p--------- s-- m--      i-------
-  2026-11-21T10:15:07Z GET /api/orders 500 930ms ip=10.0.0.3
-  t------------------- m-- p---------- s-- m--      i-------
-سطر 3: الحقل «status» بايظ عند العمود 44
-  2026-11-21T10:15:04Z GET /api/menu?lang=ar 2O0 8ms ip=10.0.0.7
-                                             ^
-سطر 4: الحقل «ts» بايظ عند العمود 1
-  2026-11-21 10:15:05 GET /api/orders 500 900ms ip=10.0.0.3
-  ^
-سطر 6: الحقل «end» بايظ عند العمود 64
-  2026-11-21T10:15:06Z DELETE /api/orders/17 204 15ms ip=10.0.0.7 extra
-                                                                 ^
-سليم: 3  بايظ: 3
-الـ status: {"200":1,"401":1,"500":1}
-الأبطأ: GET /api/orders 930ms
-exit=1
-~~~
-
-**الملفات:**
-
-~~~text شجرة الملفات
-log-check/
-  patterns.mjs      الحقول: اسم كل حقل والـ pattern بتاعه، والـ regex الكامل والخطوات
-  check.mjs         parseLine و locate و marks و analyze و formatBad
-  log-check.mjs     الـ CLI: يقرا الملف ويطبع التقرير والـ exit code
-  check.test.mjs    ٦ اختبارات بـ node:test
-  access.log        لوج تجربة
-~~~
-
-~~~text access.log
-2026-11-21T10:15:02Z GET /api/orders/17 200 35ms ip=10.0.0.7
-2026-11-21T10:15:03Z post /api/login 401 120ms ip=10.0.0.9
-2026-11-21T10:15:04Z GET /api/menu?lang=ar 2O0 8ms ip=10.0.0.7
-2026-11-21 10:15:05 GET /api/orders 500 900ms ip=10.0.0.3
-
-2026-11-21T10:15:06Z DELETE /api/orders/17 204 15ms ip=10.0.0.7 extra
-2026-11-21T10:15:07Z GET /api/orders 500 930ms ip=10.0.0.3
-~~~
-
-~~~js patterns.mjs
-// patterns.mjs: كل حقل في سطر اللوج: اسمه، والـ pattern بتاعه، والنص اللي بعده
-export const FIELDS = [
-  { name: "ts", src: String.raw$__bt\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$__bt, after: " " },
-  { name: "method", src: String.raw$__bt(?i:GET|POST|PUT|PATCH|DELETE)$__bt, after: " " },
-  { name: "path", src: String.raw$__bt\/[^\s?]*(?:\?\S*)?$__bt, after: " " },
-  { name: "status", src: String.raw$__bt[1-5]\d{2}$__bt, after: " " },
-  { name: "ms", src: String.raw$__bt\d+$__bt, after: "ms ip=" },
-  { name: "ip", src: String.raw$__bt(?:\d{1,3}\.){3}\d{1,3}$__bt, after: "" },
-];
-
-// السطر كله: كل حقل named group، والـ d عشان نعرف مكان كل حقل
-export const LINE = new RegExp(
-  "^" + FIELDS.map((f) => $__bt(?<$__{f.name}>$__{f.src})$__{RegExp.escape(f.after)}$__bt).join("") + "$",
-  "d",
-);
-
-// حقل حقل بـ y: عشان نعرف السطر البايظ وقع عند أنهي حقل وأنهي عمود
-export const STEPS = FIELDS.map((f) => ({
-  name: f.name,
-  re: new RegExp($__bt(?:$__{f.src})$__{RegExp.escape(f.after)}$__bt, "y"),
-}));
-~~~
-
-~~~js check.mjs
-// check.mjs: يفك سطور اللوج، ويقول البايظ وقع فين، ويلخّص
-import { LINE, STEPS } from "./patterns.mjs";
-
-export function parseLine(line) {
-  const m = LINE.exec(line);
-  if (!m) return null;
-  const g = m.groups;
-  return { ts: g.ts, method: g.method.toUpperCase(), path: g.path, status: Number(g.status), ms: Number(g.ms), ip: g.ip, indices: m.indices.groups };
-}
-
-export function locate(line) {
-  let pos = 0;
-  for (const { name, re } of STEPS) {
-    re.lastIndex = pos;
-    if (!re.exec(line)) return { field: name, col: pos };
-    pos = re.lastIndex;
-  }
-  return pos === line.length ? null : { field: "end", col: pos };
-}
-
-export function marks(line, indices) {
-  const row = Array(line.length).fill(" ");
-  for (const [name, [start, end]] of Object.entries(indices)) {
-    for (let i = start; i < end; i++) row[i] = i === start ? name[0] : "-";
-  }
-  return row.join("").trimEnd();
-}
-
-export function analyze(text) {
-  const report = { ok: [], bad: [], byStatus: {}, slowest: null };
-  text.split(/\r?\n/).forEach((line, i) => {
-    if (line.trim() === "") return;
-    const rec = parseLine(line);
-    if (!rec) {
-      report.bad.push({ no: i + 1, line, ...(locate(line) ?? { field: "?", col: 0 }) });
-      return;
-    }
-    report.ok.push({ no: i + 1, line, ...rec });
-    report.byStatus[rec.status] = (report.byStatus[rec.status] ?? 0) + 1;
-    if (!report.slowest || rec.ms > report.slowest.ms) report.slowest = rec;
-  });
-  return report;
-}
-
-export function formatBad(b) {
-  return $__btسطر $__{b.no}: الحقل «$__{b.field}» بايظ عند العمود $__{b.col + 1}\n  $__{b.line}\n  $__{" ".repeat(b.col)}^$__bt;
-}
-~~~
-
-~~~js log-check.mjs
-// log-check.mjs: node log-check.mjs <file> [--show]
-import { readFileSync } from "node:fs";
-import { analyze, formatBad, marks } from "./check.mjs";
-
-const [, , file, flag] = process.argv;
-if (!file) {
-  console.error("الاستخدام: node log-check.mjs <file> [--show]");
-  process.exit(2);
-}
-let text;
-try {
-  text = readFileSync(file, "utf8");
-} catch (e) {
-  console.error($__btمش قادر أقرا $__{file}: $__{e.code}$__bt);
-  process.exit(2);
-}
-const r = analyze(text);
-if (flag === "--show") {
-  for (const rec of r.ok) console.log("  " + rec.line + "\n  " + marks(rec.line, rec.indices));
-}
-for (const b of r.bad) console.log(formatBad(b));
-console.log($__btسليم: $__{r.ok.length}  بايظ: $__{r.bad.length}$__bt);
-console.log("الـ status:", JSON.stringify(r.byStatus));
-if (r.slowest) console.log($__btالأبطأ: $__{r.slowest.method} $__{r.slowest.path} $__{r.slowest.ms}ms$__bt);
-process.exitCode = r.bad.length ? 1 : 0;
-~~~
-
-~~~js check.test.mjs
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { parseLine, locate, analyze, marks } from "./check.mjs";
-
-const good = "2026-11-21T10:15:02Z GET /api/orders/17 200 35ms ip=10.0.0.7";
-
-test("سطر سليم بيتفك لحقوله", () => {
-  const r = parseLine(good);
-  assert.equal(r.method, "GET");
-  assert.equal(r.status, 200);
-  assert.equal(r.ms, 35);
-  assert.deepEqual(r.indices.path, [25, 39]);
-});
-
-test("الـ method بأي حالة حروف، والباقي حساس", () => {
-  assert.equal(parseLine(good.replace("GET", "get")).method, "GET");
-  assert.equal(parseLine(good.replace("ip=", "IP=")), null);
-});
-
-test("locate بيقول الحقل والعمود", () => {
-  assert.deepEqual(locate(good.replace("200", "2O0")), { field: "status", col: 40 });
-  assert.deepEqual(locate(good.replace("GET", "FETCH")), { field: "method", col: 21 });
-  assert.deepEqual(locate(good + " extra"), { field: "end", col: good.length });
-  assert.equal(locate(good), null);
-});
-
-test("analyze: العد والأبطأ والسطور الفاضية و CRLF", () => {
-  const text = [good, "", "2026-11-21T10:15:03Z POST /api/login 401 120ms ip=10.0.0.9", "garbage"].join("\r\n");
-  const r = analyze(text);
-  assert.equal(r.ok.length, 2);
-  assert.equal(r.bad.length, 1);
-  assert.equal(r.bad[0].no, 4);
-  assert.deepEqual(r.byStatus, { 200: 1, 401: 1 });
-  assert.equal(r.slowest.path, "/api/login");
-});
-
-test("marks بيرسم تحت كل حقل", () => {
-  const r = parseLine(good);
-  assert.equal(marks(good, r.indices).slice(0, 24), "t------------------- m--");
-});
-
-test("مفيش ReDoS: سطر طويل بايظ بيخلص بسرعة", () => {
-  const evil = "2026-11-21T10:15:02Z GET /" + "a".repeat(50000) + " 200 ";
-  const t0 = performance.now();
-  analyze(evil);
-  assert.ok(performance.now() - t0 < 200);
-});
-~~~
-
-~~~text الناتج: node --test (آخر السطور)
-✔ locate بيقول الحقل والعمود (0.4619ms)
-✔ analyze: العد والأبطأ والسطور الفاضية و CRLF (0.3344ms)
-✔ marks بيرسم تحت كل حقل (0.2384ms)
-✔ مفيش ReDoS: سطر طويل بايظ بيخلص بسرعة (1.0968ms)
-ℹ tests 6
-ℹ pass 6
-ℹ fail 0
-~~~
-
-**ترتيب البناء:**
-
-1. **[[patterns.mjs]] الأول:** كل حقل [[{ name, src, after }]]، و [[src]] مكتوب بـ [[String.raw]] عشان [[\d]] متضيعش (درس «regex literal و new RegExp»). [[after]] النص الثابت اللي بعد الحقل، وبيعدّي على [[RegExp.escape]] عشان [[ms ip=]] أو أي رمز فيه يفضل حرفي.
-2. **[[LINE]]:** الحقول كلها named groups جنب بعض، بين [[^]] و [[$]]، والـ flag [[d]] بس. و [[(?i:GET|POST|...)]] modifier: الـ method بس مش حساس للحروف، فـ [[post]] بيعدّي و [[IP=]] لأ.
-3. **[[STEPS]]:** نفس الحقول، كل واحد regex لوحده بـ [[y]]. [[locate]] بتحط [[lastIndex]] مكان ما اللي قبله خلص، وأول حقل [[exec]] بتاعه يرجّع [[null]] هو اللي وقع، و [[pos]] هو العمود.
-4. **[[check.mjs]]:** [[parseLine]] بترجّع الحقول كأرقام ([[Number]]) ومعاها [[indices]]، و [[analyze]] بتلف على السطور بـ [[split(/\r?\n/)]] عشان ملفات ويندوز، وبتتجاهل الفاضي.
-5. **[[log-check.mjs]]:** exit code 2 للاستخدام الغلط والملف المش موجود، و 1 لو فيه سطر بايظ، و 0 لو كله سليم: عشان يتحط في سكربت أو CI.
-6. **الاختبارات:** حالة سليمة، و modifier، و [[locate]] بـ ٣ أشكال غلط، و CRLF، والرسم، و ReDoS (سطر ٥٠ ألف حرف خلص في 1ms).
-
-**غلطة حقيقية وإحنا بنبنيه:** لو ضفت [[g]] لـ [[LINE]] (عادة من [[matchAll]])، النتيجة بتبوظ في صمت:
-
-~~~text الناتج بـ "dg" بدل "d"
-سليم: 2  بايظ: 4
-الـ status: {"200":1,"500":1}
-~~~
-
-سطر [[post]] السليم اتحسب بايظ: [[exec]] الأولى نجحت وخلّت [[lastIndex]] في آخر السطر، والتانية بدأت من هناك على السطر اللي بعده ففشلت. نفس فخ [[g]] مع [[test]] في درس «groups و flags»، وعشان كده [[LINE]] من غير [[g]]، و [[STEPS]] بـ [[y]] وبنحط [[lastIndex]] بإيدنا.` },
-        { lvl: 'فكرة', t: R`قواعد تنضيف نص بالـ regex`, what: R`اختار نوع نص بتتعامل معاه (رسايل عملا، أو أسامي منتجات، أو تعليقات) واكتب له ملف قواعد: كل قاعدة اسم و regex وبيتبدّل بإيه، والدالة [[clean(text)]] بتعدّي النص على القواعد بالترتيب. استخدم على الأقل: [[\k<name>]]، و modifier، و lookbehind، و [[\p{...}]] مع [[u]] أو [[v]].`, done: R`كل قاعدة ليها مثال قبل وبعد، والقواعد مبتبوظش نص سليم (رقم ١٢ رقم مبيتخفاش، وكلمة فيها حرفين متكررين زي «كوود» متتلمسش)، والترتيب مكتوب ليه.`, ext: R`اعمل صفحة فيها textarea تكتب فيها الرسالة وتشوف كل قاعدة غيّرت إيه (diff)، أو زوّد لكل قاعدة اختبار بـ [[node --test]].`, sol: R`**نسخة نموذجية:** تنضيف رسايل العملا قبل ما تتخزن في السيستم:
-
-~~~text الناتج (Node 24.22)
-عايز الطلب بكرة، رقمي 01X-XXXX-5678 و CODE:SAVE20
-~~~
-
-ده ناتج [[clean("عاااايز   الطلـــب بكرة، رقمي 01012345678 و Code: SAVE20")]].
-
-~~~js clean.mjs
-// clean.mjs: قواعد تنضيف رسايل العملا قبل ما تتخزن، كل قاعدة regex واسم ومثال
-export const RULES = [
-  { name: "مسافات زيادة", re: /[^\S\r\n]{2,}/g, to: " " },
-  { name: "تطويل", re: /(?<=\p{Script=Arabic})ـ+/gu, to: "" },
-  { name: "تكرار حروف", re: /(?<ch>\p{L})\k<ch>{2,}/gu, to: "$<ch>" },
-  { name: "إخفاء موبايل", re: /(?<!\d)01[0125](?<mid>\d{4})(?<end>\d{4})(?!\d)/g, to: "01X-XXXX-$<end>" },
-  { name: "كود خصم بأي حالة", re: /\b(?i:code)[:\s]*(?<c>[A-Z0-9]{4,8})\b/g, to: "CODE:$<c>" },
-];
-
-export function clean(text) {
-  return RULES.reduce((t, r) => t.replace(r.re, r.to), text);
-}
-
-if (import.meta.main) {
-  const msg = "عاااايز   الطلـــب بكرة، رقمي 01012345678 و Code: SAVE20";
-  console.log(clean(msg));
-}
-~~~
-
-**ليه التصميم ده:**
-
-- كل قاعدة object فيه [[name]]: لو حاجة اتغيّرت غلط تعرف أنهي قاعدة. والـ [[reduce]] بيعدّي النص عليهم بالترتيب.
-- **مسافات زيادة** الأول: [[[^\S\r\n]{2,}]] مسافتين أو أكتر من غير ما يلمس السطور.
-- **التطويل** ([[ـ]]): [[(?<=\p{Script=Arabic})ـ+]] بعد حرف عربي بس.
-- **تكرار حروف**: [[(?<ch>\p{L})\k<ch>{2,}]] حرف وبعده نفس الحرف مرتين أو أكتر، فـ «عاااايز» بقت «عايز» و «كوود» (حرفين بس) متتلمسش.
-- **إخفاء الموبايل**: [[(?<!\d)]] و [[(?!\d)]] عشان رقم ١٢ خانة ميتقطعش منه موبايل.
-- **كود الخصم**: [[(?i:code)]] modifier: كلمة code بأي حالة، بس الكود نفسه [[[A-Z0-9]]] حساس. جرّبنا [[clean("كوود code:ab12 و 010123456789 و  ok")]] وطلع [[كوود code:ab12 و 010123456789 و ok]]: الكود الصغير مش كود، والرقم الطويل مش موبايل.
-
-**غلطة حصلت:** أول نسخة من قاعدة التطويل كانت [[/\p{Script=Arabic}\K?ـ+/gu]] (عادة من PCRE في PHP و grep -P)، والملف مشتغلش خالص:
+## اتقاس (Chrome 158 بـ Playwright)
 
 ~~~text الناتج
-SyntaxError: Invalid regular expression: /\p{Script=Arabic}\K?ـ+/gu: Invalid escape
+javascript → لقيت 3 مرة | marks: JavaScript,JavaScript,javascript
+c++        → لقيت 1 مرة | marks: C++
+(          → لقيت 1 مرة | marks: (
+الـ        → لقيت 2 مرة | marks: الـ,الـ
+مش موجودة  → لقيت 0 مرة
+فاضي: نفس الـ HTML الأصلي؟ true | marks: 0 | count: ""
 ~~~
 
-[[\K]] («انسى اللي فات من الـ match») مش موجودة في JS، ومع [[u]] أي escape مش معروف بيرمي. البديل في JS هو الـ lookbehind [[(?<=...)]].` },
+[[c++]] و [[(]] مكسروش الصفحة، والعنوان [[<h2>]] اتظلل جواه من غير ما يبوظ، والخانة الفاضية رجّعت الـ HTML الأصلي بالظبط (المقارنة بـ [[===]] طلعت true).
+
+## كل حتة مهمة بتعمل إيه
+
+- **[[originalHTML]] محفوظ أول ما الصفحة تفتح:** كل بحث بيبدأ من النسخة الأصلية، فمفيش [[<mark>]] قديم بيفضل من البحث اللي قبله.
+- **[[escapeRegex]]:** [[RegExp.escape]] لو المتصفح فيه، ولو لأ [[replace]] بيحط [[\]] قبل كل رمز ليه معنى. من غيره [[c++]] بيرمي SyntaxError.
+- **[[new RegExp(..., "gi")]]:** [[g]] لكل الأماكن (و [[matchAll]] لازمها [[g]])، و [[i]] من غير حساسية للحروف.
+- **[[createTreeWalker(article, NodeFilter.SHOW_TEXT)]]:** بيلف على عقد **النص** بس. لو عملنا [[replace]] على [[innerHTML]]، البحث عن [[h2]] أو [[p]] كان هيظلل جوه الـ tags نفسها ويبوّظ الصفحة.
+- **بنجمع العقد في array الأول:** لأننا هنبدّلها، والـ walker بيتلخبط لو العقد اتغيّرت وهو ماشي.
+- **[[DocumentFragment]] و [[replaceWith]]:** كل عقدة نص بتتبدّل بـ: نص قبل الـ match، و [[<mark>]] فيه الـ match بـ [[textContent]]، ونص بعده.
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **أول نسخة:** [[article.innerHTML = originalHTML.replace(re, "<mark>$&</mark>")]]. البحث عن [[p]] ظلل حرف [[p]] جوه [[<p>]] نفسها فبقت [[<<mark>p</mark>>]] والفقرات اختفت (عدد [[<p>]] في الصفحة بقى 0 بدل 2، قسناها في Chrome). اتصلحت بالـ TreeWalker.
+- **الخانة فيها مسافة بس:** [[" "]] كانت بتظلل كل المسافات وتعدّ عشرات المرات (٤٥ في المقال ده، ومنهم مسافات الـ indentation اللي بين الـ tags). اتصلحت بـ [[query.trim()]].`  },
+        { lvl: 'متوسط', dir: "log-analyzer", t: R`محلل لوج سيرفر`, what: R`[[analyze(logText)]] بتفك كل سطر بـ named groups (method و path و status و ms) و matchAll، وترجّع عدد كل status، ومتوسط الـ ms، وأبطأ ٣ endpoints، وعدد السطور اللي مش مفهومة (من غير ما تقع عليها). وصفحة فيها textarea تلزق فيها اللوج وجدول بالنتيجة. من دروس groups و matchAll.`, done: R`على لوج ١٠ سطور منهم سطرين بايظين: ٨ مفهومين و ٢ مش مفهومين، والأرقام زي العد بإيدك، والـ path اللي فيه query زي [[/api/x?id=1]] بيتحسب صح، واللوج الفاضي بيدّي جدول فاضي مش NaN.`, sol: R`## الشكل النهائي
+
+~~~live 520 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>محلل اللوج</title>
+<style>
+  body { font: 15px/1.6 system-ui, sans-serif; margin: 16px; }
+  textarea { width: 100%; box-sizing: border-box; height: 150px; font: 13px/1.5 monospace; direction: ltr; }
+  table { border-collapse: collapse; margin: 8px 0 16px; }
+  th, td { border: 1px solid #ccc; padding: 3px 10px; text-align: start; }
+  td.n { direction: ltr; text-align: right; font-variant-numeric: tabular-nums; }
+  h3 { margin: 12px 0 0; font-size: 16px; }
+</style>
+</head>
+<body>
+<label for="log">الصق اللوج هنا:</label>
+<textarea id="log">GET /api/products 200 120ms
+GET /api/products?id=1 200 95ms
+POST /api/orders 201 340ms
+GET /api/users 404 12ms
+broken line here
+GET /api/products 200 110ms
+DELETE /api/orders/7 500 980ms
+PUT /api/users/3 200 210ms
+GET /health 200 3ms
+POST /api/login</textarea>
+<div id="out"></div>
+<script>
+  const LINE = /^(?<method>GET|POST|PUT|PATCH|DELETE) (?<path>\S+) (?<status>\d{3}) (?<ms>\d+)ms$/gm;
+
+  function analyze(logText) {
+    const lines = logText.split(/\r?\n/).filter(l => l.trim() !== "");
+    const statuses = {};
+    const byPath = {};
+    let parsed = 0, totalMs = 0;
+    for (const m of logText.replace(/\r/g, "").matchAll(LINE)) {
+      const { method, path, status } = m.groups;
+      const ms = Number(m.groups.ms);
+      parsed++;
+      totalMs += ms;
+      statuses[status] = (statuses[status] ?? 0) + 1;
+      const key = method + " " + path.split("?")[0];
+      byPath[key] = Math.max(byPath[key] ?? 0, ms);
+    }
+    const slowest = Object.entries(byPath).sort((a, b) => b[1] - a[1]).slice(0, 3);
+    return { parsed, unparsed: lines.length - parsed, statuses, avgMs: parsed ? Math.round(totalMs / parsed) : 0, slowest };
+  }
+
+  function table(title, rows) {
+    const h = document.createElement("h3");
+    h.textContent = title;
+    const t = document.createElement("table");
+    for (const [k, v] of rows) {
+      const tr = t.insertRow();
+      tr.insertCell().textContent = k;
+      const td = tr.insertCell();
+      td.className = "n";
+      td.textContent = v;
+    }
+    return [h, t];
+  }
+
+  function render() {
+    const r = analyze(document.getElementById("log").value);
+    document.getElementById("out").replaceChildren(
+      ...table("الملخص", [["سطور مفهومة", r.parsed], ["سطور مش مفهومة", r.unparsed], ["متوسط الوقت", r.avgMs + "ms"]]),
+      ...table("كل status", Object.entries(r.statuses)),
+      ...table("أبطأ ٣ endpoints", r.slowest.map(([k, v]) => [k, v + "ms"])),
+    );
+  }
+  document.getElementById("log").addEventListener("input", render);
+  render();
+</script>
+</body>
+</html>
+~~~
+
+## هتشوف إيه
+
+textarea فيها لوج ١٠ سطور جاهز، وتحتها ٣ جداول بتتحدث وانت بتكتب: ملخص، وعدد كل status، وأبطأ ٣ endpoints.
+
+## اتقاس (Chrome 158 بـ Playwright)
+
+~~~text الناتج: الجداول على اللوج اللي في الصفحة
+الملخص
+سطور مفهومة       8
+سطور مش مفهومة    2
+متوسط الوقت       234ms
+كل status
+200   5
+201   1
+404   1
+500   1
+أبطأ ٣ endpoints
+DELETE /api/orders/7   980ms
+POST /api/orders       340ms
+PUT /api/users/3       210ms
+
+analyze("") → {"parsed":0,"unparsed":0,"statuses":{},"avgMs":0,"slowest":[]}
+~~~
+
+اتأكدنا بالعد بإيدنا: ٨ سطور سليمة (السطر [[broken line here]] و [[POST /api/login]] من غير status ووقت مش مفهومين)، والمتوسط (120+95+340+12+110+980+210+3) / 8 = 233.75 ≈ 234. و [[/api/products?id=1]] اتحسب مع [[/api/products]] من غير الـ query.
+
+## كل حتة مهمة بتعمل إيه
+
+- **الـ regex بـ named groups:** [[(?<method>GET|POST|PUT|PATCH|DELETE)]] و [[(?<path>\S+)]] (أي حاجة مش مسافة) و [[(?<status>\d{3})]] و [[(?<ms>\d+)ms]]. و [[^]] و [[$]] مع flag [[m]] معناهم أول وآخر **كل سطر**، فـ [[matchAll]] على النص كله بيلاقي السطور السليمة بس، والبايظ بيتعدّى من غير error.
+- **[[replace(/\r/g, "")]]:** لوج من Windows، من غيرها [[$]] مكانش هيتطابق قبل [[\r]].
+- **[[unparsed = lines.length - parsed]]:** عدد السطور الغير فاضية ناقص اللي اتفهم.
+- **[[path.split("?")[0]]]:** الـ endpoint من غير query، عشان [[?id=1]] و [[?id=2]] يتحسبوا endpoint واحد.
+- **[[byPath[key] = Math.max(...)]]:** أبطأ وقت لكل endpoint، وبعدين [[sort]] تنازلي و [[slice(0, 3)]].
+- **[[parsed ? ... : 0]]:** اللوج الفاضي بيدّي متوسط 0 مش [[NaN]] (القسمة على صفر).
+- **[[insertRow]] و [[insertCell]] و [[textContent]]:** الجداول بتتبني من غير [[innerHTML]]، فلو اللوج فيه [[<script>]] في الـ path بيظهر كنص.
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **من غير flag [[m]]:** [[^]] و [[$]] كانوا أول وآخر النص كله، فـ [[matchAll]] على لوج سطرين رجّع 0 matches، ومع [[m]] رجّع 2 (اتجرّبت في Node 24). ده الفرق اللي flag [[m]] بيعمله.
+- **[[\S+]] للـ path كان [[.+]]:** [[.+]] greedy أكلت [[200 120]] مع الـ path والـ regex رجع يدوّر (backtrack) لحد ما لقى الأرقام. اشتغل، بس بخطوات رجوع كتير على كل سطر. [[\S+]] بتقف عند أول مسافة.`  },
+        { lvl: 'متوسط', dir: "mini-markdown", t: R`Markdown صغير لـ HTML`, what: R`[[md(text)]] بتحوّل [[**bold**]] و [[*italic*]] وسطر بيبدأ بـ [[# ]] لعنوان، واللينكات [[[نص](url)]]. الأول escape للـ HTML ([[&]] و [[<]] و [[>]]) وبعدين الـ regex، والـ url لازم يبدأ بـ [[https://]] أو [[/]]. وصفحة فيها textarea وpreview حي. من دروس groups و replace.`, done: R`[["**مهم** و *مايل*"]] ← [[<strong>مهم</strong> و <em>مايل</em>]]. [[<script>]] في النص بيظهر كنص. لينك [[javascript:alert(1)]] مبيتحولش لينك. و [[**]] من غير قفلة بتفضل نجوم زي ما هي.`, sol: R`## الشكل النهائي
+
+~~~live 330 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Markdown صغير</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  textarea { font: 14px/1.5 monospace; width: 100%; box-sizing: border-box; height: 180px; }
+  #preview { border: 1px dashed #aaa; padding: 8px 12px; min-height: 160px; }
+  #preview h1 { font-size: 22px; margin: 4px 0; }
+</style>
+</head>
+<body>
+<div class="cols">
+  <textarea id="src" aria-label="Markdown"># أهلا
+
+**مهم** و *مايل* و [الكورس](/js) و [موقع](https://site.example)
+&lt;script&gt;alert(1)&lt;/script&gt;
+[فخ](javascript:alert(1)) و **من غير قفلة</textarea>
+  <div id="preview"></div>
+</div>
+<script>
+  const ESC = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" };
+  const escapeHTML = s => s.replace(/[&<>"]/g, c => ESC[c]);
+
+  function md(text) {
+    return escapeHTML(text)
+      .split(/\r?\n/)
+      .map(line => {
+        const h = line.match(/^# (.+)$/);
+        if (h) return "<h1>" + inline(h[1]) + "</h1>";
+        return line.trim() ? "<p>" + inline(line) + "</p>" : "";
+      })
+      .join("\n");
+  }
+
+  function inline(s) {
+    return s
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\*(.+?)\*/g, "<em>$1</em>")
+      .replace(/\[([^\]]+)\]\(((?:https:\/\/|\/)[^\s)]*)\)/g, '<a href="$2">$1</a>');
+  }
+
+  const src = document.getElementById("src");
+  const preview = document.getElementById("preview");
+  const render = () => { preview.innerHTML = md(src.value); };
+  src.addEventListener("input", render);
+  render();
+</script>
+</body>
+</html>
+~~~
+
+## هتشوف إيه
+
+عمودين (واحد تحت التاني على الموبايل): Markdown على الشمال وانت بتكتب، والـ preview على اليمين بيتحدث مع كل حرف. النص الجاهز فيه كل الحالات الصعبة: script، ولينك [[javascript:]]، ونجمتين من غير قفلة.
+
+## اتقاس (Chrome 158 بـ Playwright)
+
+~~~text الناتج: الـ HTML اللي اتولّد في الـ preview
+<h1>أهلا</h1>
+
+<p><strong>مهم</strong> و <em>مايل</em> و <a href="/js">الكورس</a> و <a href="https://site.example">موقع</a></p>
+<p>&lt;script&gt;alert(1)&lt;/script&gt;</p>
+<p>[فخ](javascript:alert(1)) و **من غير قفلة</p>
+
+عناصر script في الـ preview: 0، واللينكات: /js https://site.example
+~~~
+
+و [[md("**مهم** و *مايل*")]] من الـ console طلّعت [[<p><strong>مهم</strong> و <em>مايل</em></p>]] زي المطلوب.
+
+## كل حتة مهمة بتعمل إيه
+
+- **[[escapeHTML]] الأول:** قبل أي regex، كل [[<]] و [[>]] و [[&]] و [["]] بقت entities. فالـ [[<script>]] بقى نص، وأي HTML بنولّده بعد كده هو اللي احنا كاتبينه بس.
+- **سطر سطر بـ [[split(/\r?\n/)]]:** [[/^# (.+)$/]] بيشوف لو السطر عنوان، ولو لأ فقرة [[<p>]]، والسطور الفاضية بتتشال.
+- **[[/\*\*(.+?)\*\*/g]] قبل [[/\*(.+?)\*/g]]:** الترتيب مهم: لو الـ italic اشتغل الأول، [[**مهم**]] كانت هتبقى [[<em></em>مهم<em></em>]]. و [[.+?]] lazy عشان [[**أ** و **ب**]] تبقى bold مرتين مش bold واحد من أول نجمة لآخر نجمة. والنجمتين من غير قفلة مفيش ليهم match ففضلوا زي ما هم.
+- **اللينك:** آخر [[replace]] في [[inline]]: نص بين قوسين مربعين، وبعده URL بين قوسين عاديين **لازم** يبدأ بـ [[https://]] أو [[/]] (الجزء [[(?:https://|/)]] في الـ regex). [[javascript:alert(1)]] مبيبدأش بيهم فمبيتحولش (المتصفح كان هينفّذه لو اتضغط). و [[$1]] و [[$2]] في نص الاستبدال هنا آمنين لأن القيم دي اتعملها escape خلاص.
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **الـ escape بعد الـ regex في أول نسخة:** كل [[<strong>]] ظهر كنص على الشاشة. الحل: escape الأول وبعدين الـ regex.
+- **اللينك كان [[\((.+?)\)]] من غير فحص البداية:** [[javascript:alert(1)]] اتحوّل لينك. الحل: allowlist للبداية بدل ما تحاول تمنع [[javascript:]] بالاسم (فيه [[JavaScript:]] و [[java&#09;script:]] وغيرهم).
+- **[[(1)]] جوه الـ URL:** [[[^\s)]*]] بيقف عند أول [[)]]، فـ URL فيه قوس هيتقطع. ده حد معروف في الـ regex البسيط، والـ parser الحقيقي ([[marked]] مثلًا) بيعدّ الأقواس.`  },
+        { lvl: 'كبير', dir: "signup-validators", t: R`validator لفورم تسجيل`, what: R`module [[validators.js]] فيه دوال للـ username والموبايل والباسورد والكود البريدي، كل واحدة بترجّع رسالة غلط بالعربي أو null. الفورم بيعرض الغلط تحت كل حقل وانت بتكتب، والإرسال بيرمي ValidationError فيه كل الحقول. وكل pattern متجرّب ضد ReDoS بـ input طويل ([[repeat(10000)]]) في [[test.js]] بيقيس الوقت. من الوحدة دي ووحدات الأخطاء والـ modules والـ DOM.`, done: R`test.js فيه ٣ أمثلة صح و ٣ غلط لكل حقل وكلهم بينجحوا، وأي pattern ياخد أكتر من 50ms على الـ input الطويل بيطبع تحذير (ومفيش ولا واحد). الأرقام العربي مقبولة في الموبايل. والفورم مبيتبعتش وفيه غلط، والرسايل بتختفي أول ما الحقل يتصلّح.`, ext: R`خلّي نفس [[validators.js]] يشتغل في المتصفح وفي سيرفر Node من غير تعديل، وزوّد فحص «الـ username متاخد» بـ fetch و debounce.`, sol: R`## الشكل النهائي
+
+~~~view 470 الشكل النهائي
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تسجيل حساب</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; max-width: 420px; }
+  label { display: block; margin-top: 10px; font-weight: 600; }
+  input { font: inherit; width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #888; border-radius: 6px; }
+  input[aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
+  .err { color: #b91c1c; font-size: 14px; min-height: 1.4em; margin: 2px 0 0; }
+  button { font: inherit; margin-top: 14px; padding: 8px 20px; }
+  #done { color: #15803d; }
+</style>
+</head>
+<body>
+<form id="signup" novalidate>
+  <label for="username">اسم المستخدم</label>
+  <input id="username" name="username" autocomplete="username" aria-describedby="username-err">
+  <p class="err" id="username-err"></p>
+  <label for="phone">الموبايل</label>
+  <input id="phone" name="phone" inputmode="tel" autocomplete="tel" aria-describedby="phone-err">
+  <p class="err" id="phone-err"></p>
+  <label for="password">الباسورد</label>
+  <input id="password" name="password" type="password" autocomplete="new-password" aria-describedby="password-err">
+  <p class="err" id="password-err"></p>
+  <label for="postal">الكود البريدي</label>
+  <input id="postal" name="postal" inputmode="numeric" aria-describedby="postal-err">
+  <p class="err" id="postal-err"></p>
+  <button>سجّل</button>
+  <p id="done" aria-live="polite"></p>
+</form>
+<script>
+  class ValidationError extends Error {
+    constructor(fields) {
+      super("البيانات فيها غلط");
+      this.name = "ValidationError";
+      this.fields = fields;
+    }
+  }
+
+  const toLatin = s => s.replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 0x660));
+
+  const PATTERNS = {
+    username: /^[a-z][a-z0-9_]{2,19}$/,
+    phone: /^01[0125]\d{8}$/,
+    postal: /^\d{5}$/,
+    lower: /[a-z]/,
+    upper: /[A-Z]/,
+    digit: /\p{Nd}/u,
+  };
+
+  function username(v) {
+    if (!v) return "اسم المستخدم مطلوب";
+    return PATTERNS.username.test(v) ? null : "من ٣ لـ ٢٠ حرف: حروف إنجليزي صغيرة وأرقام و _، ويبدأ بحرف";
+  }
+
+  function phone(v) {
+    if (!v) return "الموبايل مطلوب";
+    const digits = toLatin(v).replace(/[\s-]/g, "");
+    return PATTERNS.phone.test(digits) ? null : "موبايل مصري ١١ رقم بيبدأ بـ 010 أو 011 أو 012 أو 015";
+  }
+
+  function password(v) {
+    if (!v || v.length < 8) return "الباسورد ٨ حروف على الأقل";
+    if (v.length > 128) return "الباسورد طويل أوي";
+    const missing = [];
+    if (!PATTERNS.lower.test(v)) missing.push("حرف صغير");
+    if (!PATTERNS.upper.test(v)) missing.push("حرف كبير");
+    if (!PATTERNS.digit.test(v)) missing.push("رقم");
+    return missing.length ? "ناقصه: " + missing.join(" و ") : null;
+  }
+
+  function postal(v) {
+    if (!v) return "الكود البريدي مطلوب";
+    return PATTERNS.postal.test(toLatin(v.trim())) ? null : "الكود البريدي ٥ أرقام";
+  }
+
+  const VALIDATORS = { username, phone, password, postal };
+
+  function validateAll(data) {
+    const fields = {};
+    for (const [name, check] of Object.entries(VALIDATORS)) {
+      const msg = check(data[name] ?? "");
+      if (msg) fields[name] = msg;
+    }
+    if (Object.keys(fields).length) throw new ValidationError(fields);
+    return true;
+  }
+
+
+  const form = document.getElementById("signup");
+  const touched = new Set();
+
+  function showField(name, msg) {
+    form.elements[name].setAttribute("aria-invalid", msg ? "true" : "false");
+    document.getElementById(name + "-err").textContent = msg ?? "";
+  }
+
+  form.addEventListener("input", e => {
+    const name = e.target.name;
+    touched.add(name);
+    showField(name, VALIDATORS[name](e.target.value));
+    document.getElementById("done").textContent = "";
+  });
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
+    try {
+      validateAll(data);
+      for (const name of Object.keys(VALIDATORS)) showField(name, null);
+      document.getElementById("done").textContent = "اتسجّل (تجربة: مفيش سيرفر)";
+    } catch (err) {
+      if (!(err instanceof ValidationError)) throw err;
+      for (const name of Object.keys(VALIDATORS)) showField(name, err.fields[name]);
+      form.elements[Object.keys(err.fields)[0]].focus();
+    }
+  });
+</script>
+</body>
+</html>
+~~~
+
+(الـ preview فوق نفس الصفحة بس [[validators.js]] متحط جواها، لأن الـ preview مبيقراش ملفات جنبه. في مشروعك هي [[index.html]] بتعمل import زي تحت.)
+
+## الملفات
+
+~~~text الشجرة
+signup-validators/
+├── package.json     "type": "module" و npm test
+├── validators.js    الدوال والـ patterns و ValidationError (المتصفح و Node)
+├── index.html       الفورم: <script type="module"> بيستورد validators.js
+└── test.js          ٣ صح و ٣ غلط لكل حقل، و validateAll، وفحص ReDoS
+~~~
+
+اتبنى بالترتيب ده: [[validators.js]] والاختبارات بتاعته في Node الأول (من غير متصفح خالص)، وبعدين الفورم فوقه.
+
+~~~json package.json
+{
+  "name": "signup-validators",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
+~~~
+
+~~~js validators.js
+// نفس الملف بيشتغل في المتصفح (<script type="module">) وفي Node (import)
+export class ValidationError extends Error {
+  constructor(fields) {
+    super("البيانات فيها غلط");
+    this.name = "ValidationError";
+    this.fields = fields;
+  }
+}
+
+const toLatin = s => s.replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 0x660));
+
+export const PATTERNS = {
+  username: /^[a-z][a-z0-9_]{2,19}$/,
+  phone: /^01[0125]\d{8}$/,
+  postal: /^\d{5}$/,
+  lower: /[a-z]/,
+  upper: /[A-Z]/,
+  digit: /\p{Nd}/u,
+};
+
+export function username(v) {
+  if (!v) return "اسم المستخدم مطلوب";
+  return PATTERNS.username.test(v) ? null : "من ٣ لـ ٢٠ حرف: حروف إنجليزي صغيرة وأرقام و _، ويبدأ بحرف";
+}
+
+export function phone(v) {
+  if (!v) return "الموبايل مطلوب";
+  const digits = toLatin(v).replace(/[\s-]/g, "");
+  return PATTERNS.phone.test(digits) ? null : "موبايل مصري ١١ رقم بيبدأ بـ 010 أو 011 أو 012 أو 015";
+}
+
+export function password(v) {
+  if (!v || v.length < 8) return "الباسورد ٨ حروف على الأقل";
+  if (v.length > 128) return "الباسورد طويل أوي";
+  const missing = [];
+  if (!PATTERNS.lower.test(v)) missing.push("حرف صغير");
+  if (!PATTERNS.upper.test(v)) missing.push("حرف كبير");
+  if (!PATTERNS.digit.test(v)) missing.push("رقم");
+  return missing.length ? "ناقصه: " + missing.join(" و ") : null;
+}
+
+export function postal(v) {
+  if (!v) return "الكود البريدي مطلوب";
+  return PATTERNS.postal.test(toLatin(v.trim())) ? null : "الكود البريدي ٥ أرقام";
+}
+
+export const VALIDATORS = { username, phone, password, postal };
+
+export function validateAll(data) {
+  const fields = {};
+  for (const [name, check] of Object.entries(VALIDATORS)) {
+    const msg = check(data[name] ?? "");
+    if (msg) fields[name] = msg;
+  }
+  if (Object.keys(fields).length) throw new ValidationError(fields);
+  return true;
+}
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تسجيل حساب</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; max-width: 420px; }
+  label { display: block; margin-top: 10px; font-weight: 600; }
+  input { font: inherit; width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #888; border-radius: 6px; }
+  input[aria-invalid="true"] { border-color: #b91c1c; background: #fef2f2; }
+  .err { color: #b91c1c; font-size: 14px; min-height: 1.4em; margin: 2px 0 0; }
+  button { font: inherit; margin-top: 14px; padding: 8px 20px; }
+  #done { color: #15803d; }
+</style>
+</head>
+<body>
+<form id="signup" novalidate>
+  <label for="username">اسم المستخدم</label>
+  <input id="username" name="username" autocomplete="username" aria-describedby="username-err">
+  <p class="err" id="username-err"></p>
+  <label for="phone">الموبايل</label>
+  <input id="phone" name="phone" inputmode="tel" autocomplete="tel" aria-describedby="phone-err">
+  <p class="err" id="phone-err"></p>
+  <label for="password">الباسورد</label>
+  <input id="password" name="password" type="password" autocomplete="new-password" aria-describedby="password-err">
+  <p class="err" id="password-err"></p>
+  <label for="postal">الكود البريدي</label>
+  <input id="postal" name="postal" inputmode="numeric" aria-describedby="postal-err">
+  <p class="err" id="postal-err"></p>
+  <button>سجّل</button>
+  <p id="done" aria-live="polite"></p>
+</form>
+<script type="module">
+  import { VALIDATORS, validateAll, ValidationError } from "./validators.js";
+
+  const form = document.getElementById("signup");
+  const touched = new Set();
+
+  function showField(name, msg) {
+    form.elements[name].setAttribute("aria-invalid", msg ? "true" : "false");
+    document.getElementById(name + "-err").textContent = msg ?? "";
+  }
+
+  form.addEventListener("input", e => {
+    const name = e.target.name;
+    touched.add(name);
+    showField(name, VALIDATORS[name](e.target.value));
+    document.getElementById("done").textContent = "";
+  });
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
+    try {
+      validateAll(data);
+      for (const name of Object.keys(VALIDATORS)) showField(name, null);
+      document.getElementById("done").textContent = "اتسجّل (تجربة: مفيش سيرفر)";
+    } catch (err) {
+      if (!(err instanceof ValidationError)) throw err;
+      for (const name of Object.keys(VALIDATORS)) showField(name, err.fields[name]);
+      form.elements[Object.keys(err.fields)[0]].focus();
+    }
+  });
+</script>
+</body>
+</html>
+~~~
+
+~~~js test.js
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { username, phone, password, postal, validateAll, ValidationError, PATTERNS } from "./validators.js";
+
+const cases = {
+  username: [username, ["sara_99", "ali", "omar2026"], ["Sara", "9lives", "a b"]],
+  phone: [phone, ["01012345678", "015 1234 5678", "٠١٢٣٤٥٦٧٨٩٠"], ["0131234567", "01312345678", "+201012345678"]],
+  password: [password, ["Passw0rd", "Abcdefg١", "xY7xxxxx"], ["short1A", "password1", "PASSWORD1"]],
+  postal: [postal, ["11511", "٢١٥٣٢", " 12345 "], ["1234", "123456", "12a45"]],
+};
+
+for (const [name, [fn, good, bad]] of Object.entries(cases)) {
+  test(name + ": ٣ صح و ٣ غلط", () => {
+    for (const v of good) assert.equal(fn(v), null, "المفروض يعدّي: " + v);
+    for (const v of bad) assert.equal(typeof fn(v), "string", "المفروض يترفض: " + v);
+  });
+}
+
+test("validateAll بيرمي ValidationError فيه كل الحقول الغلط", () => {
+  assert.throws(() => validateAll({ username: "x", phone: "1", password: "", postal: "11511" }), err => {
+    assert.ok(err instanceof ValidationError);
+    assert.deepEqual(Object.keys(err.fields), ["username", "phone", "password"]);
+    return true;
+  });
+  assert.equal(validateAll({ username: "sara_99", phone: "01012345678", password: "Passw0rd", postal: "11511" }), true);
+});
+
+test("ReDoS: كل pattern على input طويل أقل من 50ms", () => {
+  const evil = ["a".repeat(10000) + "!", "0".repeat(10000), "_".repeat(10000) + " "];
+  for (const [name, re] of Object.entries(PATTERNS)) {
+    for (const s of evil) {
+      const t = performance.now();
+      re.test(s);
+      const ms = performance.now() - t;
+      if (ms > 50) console.log("تحذير:", name, ms.toFixed(1) + "ms");
+      assert.ok(ms < 50, name + " أخد " + ms.toFixed(1) + "ms");
+    }
+  }
+});
+~~~
+
+الصفحة لازم تتفتح من server (مثلًا [[npx serve]] أو Live Server في VS Code)، لأن [[import]] مبيشتغلش من [[file://]].
+
+## الاختبارات
+
+~~~text الناتج (npm test، Node 24)
+✔ username: ٣ صح و ٣ غلط (1.2931ms)
+✔ phone: ٣ صح و ٣ غلط (0.2797ms)
+✔ password: ٣ صح و ٣ غلط (0.3176ms)
+✔ postal: ٣ صح و ٣ غلط (0.1862ms)
+✔ validateAll بيرمي ValidationError فيه كل الحقول الغلط (0.9733ms)
+✔ ReDoS: كل pattern على input طويل أقل من 50ms (0.8556ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 84.0868
+~~~
+
+## اتقاس في الصفحة (Chrome 158 بـ Playwright)
+
+~~~text الناتج
+ضغطت سجّل والفورم فاضي:
+username: اسم المستخدم مطلوب
+phone: الموبايل مطلوب
+password: الباسورد ٨ حروف على الأقل
+postal: الكود البريدي مطلوب
+الـ focus راح على: username
+
+وانا بكتب (Sara و ٠١٠١٢٣٤٥٦٧٨ و password1 و 1151):
+username: من ٣ لـ ٢٠ حرف: حروف إنجليزي صغيرة وأرقام و _، ويبدأ بحرف
+phone: —
+password: ناقصه: حرف كبير
+postal: الكود البريدي ٥ أرقام
+
+بعد التصليح وسجّل:
+username: —   phone: —   password: —   postal: —
+اتسجّل (تجربة: مفيش سيرفر)
+~~~
+
+## كل حتة مهمة بتعمل إيه
+
+- **كل validator بيرجّع رسالة أو [[null]]:** شكل واحد للأربعة، فالفورم و [[validateAll]] بيلفوا عليهم في [[VALIDATORS]] من غير [[if]] لكل حقل.
+- **[[PATTERNS]] متصدّرة:** عشان الاختبار يجرّب كل regex على input طويل.
+- **[[username]]:** [[/^[a-z][a-z0-9_]{2,19}$/]]: أول حرف، وبعده ٢ لـ ١٩، فالطول من ٣ لـ ٢٠. ومفيش quantifier جوه quantifier.
+- **[[phone]]:** [[toLatin]] بيحوّل [[٠-٩]] (الـ range من [[٠]] لـ [[٩]] في Unicode متتالي) وبعدين نفس regex المشروع الصغير.
+- **[[password]]:** طول الأول ([[length]] مش regex)، وحد أقصى ١٢٨، وبعدين ٣ regex صغيرين، ورسالة بالناقص بس.
+- **[[validateAll]]:** بيجمع كل الحقول الغلط في [[fields]] ويرمي **error واحد**، فاليوزر يشوف كل الغلطات مرة واحدة.
+- **في الفورم:** [[input]] على الفورم كله (event delegation) بيفحص الحقل اللي اتغيّر بس، و [[aria-invalid]] و [[aria-describedby]] بيخلّوا قارئ الشاشة يقرا الرسالة. والـ submit بيعمل [[focus]] على أول حقل غلط.
+- **فحص ReDoS:** ٣ نصوص طول كل واحد ١٠ آلاف (حروف وآخرها [[!]]، وأصفار، و [[_]] وآخرها مسافة) على كل pattern، وأي واحد ياخد أكتر من 50ms بيطبع تحذير ويفشّل الاختبار. كلهم خلصوا في أقل من 1ms.
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+**أول pattern لاسم المستخدم** كان [[/^([a-z0-9]+_?)+$/]] (كلمات بينها [[_]] اختيارية). بيشتغل على كل الأمثلة، بس:
+
+~~~js redos-demo.js
+// الـ pattern اللي كان في أول نسخة لاسم المستخدم
+const first = /^([a-z0-9]+_?)+$/;
+const now = /^[a-z][a-z0-9_]{2,19}$/;
+for (const n of [20, 24, 28]) {
+  const s = "a".repeat(n) + "!";
+  let t = performance.now();
+  first.test(s);
+  const a = performance.now() - t;
+  t = performance.now();
+  now.test(s);
+  const b = performance.now() - t;
+  console.log("n=" + n, "أول نسخة:", a.toFixed(1) + "ms", "| النسخة الحالية:", b.toFixed(2) + "ms");
+}
+~~~
+
+~~~text الناتج (node redos-demo.js، Node 24 على Windows)
+n=20 أول نسخة: 63.0ms | النسخة الحالية: 0.04ms
+n=24 أول نسخة: 94.5ms | النسخة الحالية: 0.08ms
+n=28 أول نسخة: 1478.0ms | النسخة الحالية: 0.00ms
+~~~
+
+٢٨ حرف وعلامة تعجب = أكتر من ثانية والصفحة واقفة. ده نفس الـ quantifier جوه quantifier بتاع درس «إمتى regex غلط». البديل بيحدد الطول ومش بيدّي طريقتين لنفس الحروف.
+
+**ومن غير [[aria-invalid="false"]]** الحقل اللي اتصلّح كان بيفضل أحمر لحد الضغط على سجّل، فـ [[showField]] بتكتب الحالتين.`  },
+        { lvl: 'فكرة', t: R`استخرج من نص طويل`, what: R`أداة بتاخد نص طويل (لوج، أو شات متصدّر، أو كود) وتطلّع منه حاجات: لينكات، أو أرقام موبايل، أو تواريخ، أو أكتر كلمة اتكررت. انت اللي تختار.`, done: R`كل pattern في ملف لوحده معاه أمثلة صح وغلط، ومفيش regex لـ HTML أو JSON (parser بداله)، والأداة بتتعامل صح مع العربي.`, ext: R`اعرض النتايج في جدول وزوّد تصدير CSV، أو حوّلها CLI بـ Node بتقرا ملف.`, sol: R`## نسخة نموذجية: أداة بتطلّع البيانات من شات متصدّر
+
+اخترنا ملف شات (زي اللي بيتصدّر من أي تطبيق محادثة) لأنه فيه كل حاجة: لينكات، وأرقام موبايل بالعربي والإنجليزي، وتواريخ، وكلام عربي فيه تشكيل.
+
+## الشكل النهائي
+
+~~~text chat.txt
+[2026-11-20 10:01] سلمى: الميعاد 2026-11-21 الساعة ١٠، اللينك https://meet.example/abc-123.
+[2026-11-20 10:03] كريم: تمام، ولو اتأخرت كلّموني على ٠١٠١٢٣٤٥٦٧٨ أو 0155 123 4567
+[2026-11-20 10:04] سلمى: الكود في https://git.example/team/app?tab=files، و الكود لازم يتراجع قبل الميعاد
+[2026-11-20 10:05] ندى: الكُود جاهز من 2026-11-19، وفيه رقم غلط 0101234567 ومتاريخ غلط 2026-13-40
+~~~
+
+~~~text الناتج (node extract.js chat.txt، Node 24)
+لينكات: [
+  'https://meet.example/abc-123',
+  'https://git.example/team/app?tab=files'
+]
+موبايلات: [ '01012345678', '0155 123 4567' ]
+تواريخ: [ '2026-11-20', '2026-11-21', '2026-11-19' ]
+أكتر ٣ كلمات: [ [ 'الكود', 3 ], [ 'سلمى', 2 ], [ 'الميعاد', 2 ] ]
+~~~
+
+## الملفات
+
+~~~text الشجرة
+extractor/
+├── package.json
+├── patterns/
+│   ├── links.js     كل ملف: name و re وأمثلة good و bad
+│   ├── phones.js    (و prepare: يحوّل الأرقام العربي قبل الـ regex)
+│   ├── dates.js
+│   └── words.js
+├── check.js         بيجرّب كل pattern على أمثلته
+├── extract.js       CLI: node extract.js file.txt
+└── chat.txt         ملف للتجربة
+~~~
+
+~~~json package.json
+{ "type": "module", "scripts": { "check": "node check.js" } }
+~~~
+
+~~~js patterns/links.js
+export default {
+  name: "لينكات",
+  re: /\bhttps?:\/\/[^\s<>"'()]+[^\s<>"'().,،!?؟:;]/gu,
+  good: ["شوف https://shop.example/p?id=7 كده", "http://a.example/x."],
+  bad: ["ftp://a.example", "https://"],
+};
+~~~
+
+~~~js patterns/phones.js
+// الأرقام العربي بتتحوّل إنجليزي الأول، وبعدين الـ regex بأرقام إنجليزي بس
+const toLatin = s => s.replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 0x660));
+
+export default {
+  name: "موبايلات",
+  prepare: toLatin,
+  re: /(?<!\d)(?:\+20|0020|0)?1[0125](?:[\s-]?\d){8}(?!\d)/g,
+  good: ["كلمني 01012345678", "0155 123 4567", "+201012345678 ده رقمي", "٠١٠١٢٣٤٥٦٧٨"],
+  bad: ["0101234567", "12345678901234"],
+};
+~~~
+
+~~~js patterns/dates.js
+export default {
+  name: "تواريخ ISO",
+  re: /\b\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])\b/g,
+  good: ["الميعاد 2026-11-21 الصبح", "من 2026-01-31"],
+  bad: ["2026-13-01", "2026-1-5"],
+};
+~~~
+
+~~~js patterns/words.js
+export default {
+  name: "كلمات",
+  re: /[\p{L}\p{M}]+/gu,
+  good: ["الْكود", "hello"],
+  bad: ["123", "!!!"],
+};
+~~~
+
+~~~js check.js
+import { readdir } from "node:fs/promises";
+
+// كل pattern لازم يمسك أمثلته الصح ويسيب الغلط
+let failed = 0;
+for (const file of await readdir(new URL("./patterns/", import.meta.url))) {
+  const before = failed;
+  const { default: p } = await import("./patterns/" + file);
+  const prep = p.prepare ?? (s => s);
+  for (const s of p.good) if (!(prep(s).match(p.re) ?? []).length) { failed++; console.log("✗", p.name, "مسكش:", s); }
+  for (const s of p.bad) if ((prep(s).match(p.re) ?? []).length) { failed++; console.log("✗", p.name, "مسك غلط:", s); }
+  console.log(failed === before ? "✓" : "✗", p.name, p.good.length + p.bad.length, "مثال");
+}
+process.exitCode = failed ? 1 : 0;
+~~~
+
+~~~js extract.js
+import { readFile } from "node:fs/promises";
+import links from "./patterns/links.js";
+import phones from "./patterns/phones.js";
+import dates from "./patterns/dates.js";
+import words from "./patterns/words.js";
+
+const file = process.argv[2];
+if (!file) {
+  console.error("الاستخدام: node extract.js chat.txt");
+  process.exit(1);
+}
+const text = await readFile(file, "utf8");
+
+const unique = ({ re, prepare = s => s }) => [...new Set(prepare(text).match(re) ?? [])];
+const STOP = new Set(["في", "من", "و", "على", "ده", "دي", "انا", "مش", "لو"]);
+
+console.log("لينكات:", unique(links));
+console.log("موبايلات:", unique(phones));
+console.log("تواريخ:", unique(dates));
+
+// أكتر كلمة: من غير اللينكات، وبعد ما نشيل التشكيل
+const counts = new Map();
+for (const w of text.replace(links.re, " ").match(words.re) ?? []) {
+  const key = w.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+  if (key.length < 2 || STOP.has(key)) continue;
+  counts.set(key, (counts.get(key) ?? 0) + 1);
+}
+console.log("أكتر ٣ كلمات:", [...counts].sort((a, b) => b[1] - a[1]).slice(0, 3));
+~~~
+
+~~~text الناتج (node check.js)
+✓ تواريخ ISO 4 مثال
+✓ لينكات 4 مثال
+✓ موبايلات 6 مثال
+✓ كلمات 4 مثال
+exit=0
+~~~
+
+~~~text الناتج (node extract.js من غير ملف)
+الاستخدام: node extract.js chat.txt
+exit=1
+~~~
+
+## ليه التصميم ده
+
+- **كل pattern في ملف ومعاه أمثلته:** زي ما المطلوب قال. [[check.js]] بيقرا الفولدر كله بـ [[readdir]] و [[import()]]، فأي pattern جديد بيتفحص لوحده، و [[process.exitCode = 1]] لو أي مثال فشل (ينفع في CI).
+- **اللينك:** [[https?:\/\/]] وبعده أي حاجة مش مسافة أو علامة HTML، و **آخر حرف** مش علامة ترقيم ([[.]] و [[،]] و [[؟]]...). عشان كده [[https://meet.example/abc-123.]] طلع من غير النقطة اللي في آخر الجملة.
+- **الموبايل:** [[(?<!\d)]] و [[(?!\d)]] (lookbehind و lookahead) بيقولوا «مفيش رقم قبله ولا بعده»، فـ [[0101234567]] (١٠ أرقام) اترفض ومفيش رقم بيتقطع من نص أطول. و [[(?:[\s-]?\d){8}]] بيسمح بمسافة أو شَرطة قبل أي رقم، فـ [[0155 123 4567]] اتمسك.
+- **التاريخ:** الشهر [[(?:0[1-9]|1[0-2])]] واليوم [[(?:0[1-9]|[12]\d|3[01])]]، فـ [[2026-13-40]] اترفض. (ده فحص شكل بس؛ [[2026-02-30]] هيعدّي، والفحص الكامل بـ [[parseISODate]] من وحدة التواريخ.)
+- **الكلمات:** [[[\p{L}\p{M}]+]]: حروف وعلامات تشكيل ([[\p{M}]]) مع بعض، وبعدين [[normalize("NFD")]] وشيل [[\p{M}]]، فـ [[الكُود]] و [[الكود]] اتحسبوا كلمة واحدة (٣ مرات). واللينكات بتتشال قبل العد.
+- **مفيش regex لـ HTML أو JSON:** الأداة بتقرا نص عادي. لو الملف JSON (تصدير تاني) يبقى [[JSON.parse]] الأول وبعدين الـ regex على حقل النص بس.
+
+## الغلطات اللي حصلت وإزاي اتصلحت
+
+- **أول تشغيل لـ [[check.js]]:** [[✗ موبايلات مسكش: ٠١٠١٢٣٤٥٦٧٨]]. الـ regex فيه [[0]] و [[1]] حرفيًا، والأرقام العربي حروف تانية خالص. الحل كان [[prepare]]: نحوّل النص لأرقام إنجليزي قبل الـ regex، بدل regex فيه [[[0٠]]] في كل مكان.
+- **[[0155 123 4567]] مكانش بيتمسك:** النسخة الأولى كانت [[\d{4}[\s-]?\d{4}]]، يعني المسافة بعد ٤ أرقام بس. لما زوّدناه للأمثلة [[check.js]] فشل، فبقت [[(?:[\s-]?\d){8}]].
+- **«أكتر كلمة» طلعت [[https]]:** كان بيعد حروف اللينكات. اتصلحت بـ [[text.replace(links.re, " ")]] قبل العد.`  },
       ],
       items: [
         {
-          cmd: "regex literal و new RegExp: خصايص الـ RegExp و toString",
-          title: "تكتب الـ regex بين / / ولا بـ new RegExp؟ وتقرا أي regex من خصايصه",
-          desc: R`فيه طريقتين تعمل بيهم regex: **regular expression literal** [[/(\d+) EGP/gi]] بيتعمل parse مع الملف كله، فلو غلط الملف مش بيشتغل خالص، وده الأحسن لما الـ pattern ثابت وانت بتكتب الكود. و [[new RegExp(pattern, flags)]] بيبني الـ regex من **نص** وقت التشغيل، فلو غلط بيرمي SyntaxError تقدر تمسكها، وده اللي بتستخدمه لما الـ pattern جاي من يوزر أو متركّب من حتت.
+          cmd: "regex: classes و quantifiers",
+          title: "تكتب pattern إزاي؟ (classes و quantifiers و anchors)",
+          desc: R`الـ regex (regular expression) نص بيوصف شكل نصوص: «01 وبعدها رقم من 0 أو 1 أو 2 أو 5 وبعدها ٨ أرقام». بيتكتب بين [[/ /]] و [[pattern.test(text)]] بترجّع true أو false.
 
-الفخ في الطريقة التانية: الـ pattern جوه علامات تنصيص عادية، و [[\]] ليها معنى في النص نفسه قبل ما توصل للـ regex. فـ [["\d"]] بتبقى [["d"]]. الحل [[\\d]] أو [[String.raw]].
+الـ classes (نوع الحرف): [[\d]] رقم، و [[\w]] حرف إنجليزي أو رقم أو [[_]]، و [[\s]] مسافة أو tab أو سطر جديد، و [[.]] أي حرف غير السطر الجديد. والكابيتال عكسهم ([[\D]] أي حاجة مش رقم). و [[[abc]]] واحد من دول، و [[[a-z]]] مدى، و [[[^0-9]]] أي حاجة غير دول.
 
-وأي regex object فيه خصايص تقرا منها هو إيه: [[source]] (الـ pattern كنص) و [[flags]] (كل الـ flags) و boolean لكل flag ([[global]] و [[ignoreCase]] و [[multiline]] و [[dotAll]] و [[unicode]] و [[unicodeSets]] و [[hasIndices]] و [[sticky]])، و [[lastIndex]] (الخاصية الوحيدة اللي بتتغيّر)، و [[toString()]] اللي بترجّع [[/source/flags]].`,
-          example: R`// نفس الـ regex بـ ٣ طرق: literal، و new RegExp بنص عادي، و String.raw
-const lit = /(\d+)\s*EGP/gi;
-const built = new RegExp("(\\d+)\\s*EGP", "gi");
-const raw = new RegExp(String.raw$__bt(\d+)\s*EGP$__bt, "gi");
-console.log(lit.source, built.source === lit.source, raw.source === lit.source);
-const wrong = new RegExp("(\d+)\s*EGP", "gi");
-console.log(wrong.source, wrong.test("50 EGP"));
-// الـ properties: كلها getters على RegExp.prototype ما عدا lastIndex
-console.log(lit.flags, lit.global, lit.ignoreCase, lit.multiline, lit.dotAll, lit.sticky);
-console.log(lit.unicode, lit.unicodeSets, lit.hasIndices, lit.lastIndex, String(lit));
-const copy = new RegExp(lit, "dy");
-console.log(copy.flags, copy.source === lit.source, copy === lit);
-const word = "c++";
-console.log(new RegExp($__bt^$__{RegExp.escape(word)}$$__bt, "i").test("C++"));
-try { new RegExp("(\\d+"); } catch (e) { console.log(e.name + ": " + e.message); }`,
-          try: R`اكتب دالة [[flagNames(re)]] بترجّع array بأسامي الـ flags اللي شغالة في الـ regex بالترتيب ده: [[hasIndices]] و [[global]] و [[ignoreCase]] و [[multiline]] و [[dotAll]] و [[unicode]] و [[unicodeSets]] و [[sticky]]، من الخصايص مش من نص [[flags]]. يعني [[flagNames(/x/gi)]] بترجّع [[["global", "ignoreCase"]]]. حلها في المربع اللي تحت ودوس «شغّل واختبر».`,
-          sol: R`~~~js flag-names.mjs
-const NAMES = { d: "hasIndices", g: "global", i: "ignoreCase", m: "multiline", s: "dotAll", u: "unicode", v: "unicodeSets", y: "sticky" };
-function flagNames(re) {
-  return Object.values(NAMES).filter((name) => re[name]);
-}
-console.log(flagNames(/x/gi), flagNames(/x/dmsy), flagNames(/x/v), flagNames(/x/));
-~~~
+الـ quantifiers (كام مرة): [[?]] صفر أو مرة، و [[*]] صفر أو أكتر، و [[+]] مرة أو أكتر، و [[{8}]] ٨ بالظبط، و [[{2,}]] ٢ أو أكتر، و [[{2,5}]] من ٢ لـ ٥. ولو حطيت [[?]] بعدهم ([[*?]] و [[+?]]) بيبقوا lazy: ياخدوا أقل حاجة ممكنة بدل أكبر حاجة.
 
-~~~text الناتج (Node 24.22)
-[ 'global', 'ignoreCase' ] [ 'hasIndices', 'multiline', 'dotAll', 'sticky' ] [ 'unicodeSets' ] []
-~~~
-
-- [[NAMES]] بيربط حرف كل flag باسم الخاصية بتاعته، ومترتّب بنفس ترتيب [[flags]] (d g i m s u v y).
-- [[re[name]]]: قراية خاصية باسم في متغير، زي [[re.global]] بالظبط.
-- [[filter]] بيسيب اللي قيمته [[true]] بس.`,
-          check: {
-            lang: "js",
-            starter: R`function flagNames(re) {
-  // رجّع أسامي الخصايص اللي قيمتها true
-}`,
-            tests: R`test("/x/gi", () => expect(flagNames(/x/gi)).toEqual(["global", "ignoreCase"]));
-test("الترتيب ثابت: /x/ysmd", () => expect(flagNames(/x/ysmd)).toEqual(["hasIndices", "multiline", "dotAll", "sticky"]));
-test("v لوحدها", () => expect(flagNames(/x/v)).toEqual(["unicodeSets"]));
-test("u لوحدها", () => expect(flagNames(/x/u)).toEqual(["unicode"]));
-test("من غير flags", () => expect(flagNames(/x/)).toEqual([]));
-test("regex من new RegExp", () => expect(flagNames(new RegExp("a", "ig"))).toEqual(["global", "ignoreCase"]));`,
-            solution: R`function flagNames(re) {
-  const NAMES = ["hasIndices", "global", "ignoreCase", "multiline", "dotAll", "unicode", "unicodeSets", "sticky"];
-  return NAMES.filter((name) => re[name]);
-}`
-          },
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const a = new RegExp("\d+\.\d+")]]. إيه اللي هيطبعه [[a.source]] و [[a.test("3.14")]] و [[a.test("dd.d")]]؟ وبعدين اكتبه صح بطريقتين.`, done: R`توقعت إن الـ source [[d+.d+]] وإن [["3.14"]] مش هيعدّي بس [["dd.d"]] هيعدّي، وكتبت النسختين [["\\d+\\.\\d+"]] و [[String.raw]] وطلعوا نفس الـ source.`, sol: R`~~~js p1.mjs
-const a = new RegExp("\d+\.\d+");
-console.log(a.source, a.test("3.14"), a.test("dd.d"));
-const b = new RegExp("\\d+\\.\\d+");
-const c = new RegExp(String.raw$__bt\d+\.\d+$__bt);
-console.log(b.source, b.test("3.14"), c.source === b.source);
-~~~
-
-~~~text الناتج (Node 24.22)
-d+.d+ false true
-\d+\.\d+ true true
-~~~
-
-- في نص عادي [["\d"]] escape مش معروف، فالـ JavaScript بيرمي الـ [[\]] ويسيب [[d]]. و [["\."]] بتبقى [["."]]. فالـ regex اللي اتبنى [[d+.d+]]: «حرف d مرة أو أكتر، أي حرف، d مرة أو أكتر»، فـ [["dd.d"]] عدّت و [["3.14"]] لأ.
-- مفيش ولا error: الغلطة دي بتعدّي في صمت. عشان كده أول حاجة تعملها لما regex مبني بـ [[new RegExp]] مش شغال: اطبع [[re.source]].
-- [["\\d"]] في النص = [[\d]] في الـ regex. و [[String.raw$__bt...$__bt]] بيسيب كل [[\]] زي ما هي، فتكتب الـ pattern بنفس شكل الـ literal.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[function wordFinder(word) { return new RegExp("\b" + word + "\b", "i"); }]]. جرّب [[wordFinder("tea").test("Tea time")]] واطبع [[JSON.stringify(wordFinder("tea").source)]]. وبعدين جرّب الكلمة [["1.5"]] على [["x 105 y"]].`, done: R`عرفت إن [["\b"]] في النص بقت حرف backspace مش word boundary (الـ test رجّعت [[false]])، وصلّحتها بـ [[String.raw]]، وزوّدت [[RegExp.escape]] فبقت [[wordFinder("1.5")]] متطابقش [["105"]].`, sol: R`~~~js p3.mjs
-function wordFinderBad(word) { return new RegExp("\b" + word + "\b", "i"); }
-function wordFinder(word) { return new RegExp(String.raw$__bt\b$__bt + RegExp.escape(word) + String.raw$__bt\b$__bt, "i"); }
-console.log(JSON.stringify(wordFinderBad("tea").source), wordFinderBad("tea").test("Tea time"));
-console.log(wordFinder("tea").source, wordFinder("tea").test("Tea time"), wordFinder("tea").test("steam"));
-console.log(wordFinder("1.5").test("x 105 y"), wordFinder("1.5").test("x 1.5 y"));
-~~~
-
-~~~text الناتج (Node 24.22)
-"\btea\b" false
-\b\x74ea\b true false
-false true
-~~~
-
-- [["\b"]] في نص JavaScript **escape معروف**: حرف backspace (كوده 8)، مش [[\]] و [[b]]. فالـ regex بقى «backspace ثم tea ثم backspace» ومفيش نص فيه كده. و [[JSON.stringify]] بيكتب حرف الـ backspace [[\b]]، فشكله زي الصح وهو غلط، وده اللي بيخلّي الباج ده صعب.
-- [[String.raw$__bt\b$__bt]] بيدّي حرفين حقيقيين: [[\]] و [[b]].
-- [[RegExp.escape(word)]]: الكلمة جاية من برّه، و [[.]] فيها كانت هتطابق أي حرف، فـ [["1.5"]] كانت هتلاقي [["105"]]. ([[\x74]] هو حرف t: [[RegExp.escape]] بتعمل كده لأول حرف، شرحناه في درس «test و match و matchAll و replace».)` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[withFlags(re, add, remove)]] بترجّع regex **جديد** بنفس الـ source والـ flags بعد ما تزوّد اللي في [[add]] وتشيل اللي في [[remove]]، ومتلمسش الأصلي ولا [[lastIndex]] بتاعه، وترمي TypeError مفهومة لو النتيجة فيها [[u]] و [[v]] مع بعض.`, done: R`[[withFlags(/(\d+) EGP/gi, "d", "g")]] بترجّع regex الـ flags بتاعه [[di]] و [[lastIndex]] صفر، والأصلي فضل [[gi]] و [[lastIndex]] بتاعه زي ما هو، و [[withFlags(/x/u, "v")]] بترمي رسالتك انت مش رسالة الـ engine.`, sol: R`~~~js p4.mjs
-function withFlags(re, add = "", remove = "") {
-  const flags = new Set(re.flags);
-  for (const f of remove) flags.delete(f);
-  for (const f of add) flags.add(f);
-  if (flags.has("u") && flags.has("v")) throw new TypeError("u و v مينفعوش مع بعض: اختار واحد");
-  return new RegExp(re.source, [...flags].join(""));
-}
-const base = /(\d+) EGP/gi;
-base.lastIndex = 7;
-const copy = withFlags(base, "d", "g");
-console.log(copy.flags, copy.lastIndex, base.lastIndex, copy.source === base.source);
-try { withFlags(/x/u, "v"); } catch (e) { console.log(e.name + ": " + e.message); }
-console.log(withFlags(/x/u, "v", "u").flags);
-~~~
-
-~~~text الناتج (Node 24.22)
-di 0 7 true
-TypeError: u و v مينفعوش مع بعض: اختار واحد
-v
-~~~
-
-- [[new Set(re.flags)]]: النص [["gi"]] بيتفك لحروفه، والـ Set بيمنع التكرار، فـ [[add]] لـ flag موجود مبيعملش [["gg"]] (اللي كانت هترمي [[Invalid flags]]).
-- [[new RegExp(re.source, ...)]] بيعمل object جديد [[lastIndex]] بتاعه 0، فالأصلي مبيتأثرش.
-- كان ممكن [[new RegExp(re, flags)]] على طول (الـ constructor بياخد regex وبيستخدم الـ source بتاعه)، بس بناء الـ flags بإيدك هو اللي بيخليك تشيل وتزوّد.
-- لاحظ إن الـ flags بتطلع مترتبة [[di]] مش [[id]]: الـ getter [[flags]] بيرتّبهم دايمًا.` },
-            { lvl: 'سريع', t: R`**دوّر بنفسك:** من غير ما تجرّب، [[new RegExp("a", "yusmigd").flags]] هتطبع إيه؟ دوّر في صفحة MDN بتاعة [[RegExp.prototype.flags]] على الترتيب، وبعدين جرّب و [[String(new RegExp("a", "yvsmigd"))]] كمان.`, done: R`لقيت إن الترتيب ثابت مهما كتبتهم، وتوقعت [[dgimsuy]] و [[/a/dgimsvy]] وطلعوا كده.`, sol: R`~~~js p5.mjs
-console.log(new RegExp("a", "yusmigd").flags, String(new RegExp("a", "yvsmigd")));
-~~~
-
-~~~text الناتج (Node 24.22)
-dgimsuy /a/dgimsvy
-~~~
-
-MDN بيقول إن [[flags]] بيتبني بقراية كل خاصية boolean بالترتيب: [[hasIndices]] (d) ثم [[global]] (g) ثم [[ignoreCase]] (i) ثم [[multiline]] (m) ثم [[dotAll]] (s) ثم [[unicode]] (u) ثم [[unicodeSets]] (v) ثم [[sticky]] (y)، يعني **أبجدي**. و [[toString()]] بيستخدم [[flags]]، فالترتيب في [[/a/dgimsvy]] نفسه. فايدتها: لو بتقارن regexين بالنص ([[String(a) === String(b)]]) الترتيب اللي اتكتبوا بيه مبيفرقش.` },
+الـ anchors (مكان مش حرف): [[^]] أول النص، و [[$]] آخره، و [[\b]] حدود كلمة. من غير [[^...$]]، الـ test بتدوّر على الـ pattern في أي حتة في النص.`,
+          example: R`const phone = /^01[0125]\d{8}$/;
+console.log(phone.test("01012345678"), phone.test("0101234567"), phone.test("01312345678"));
+console.log(/colou?r/.test("color"), /\bcat\b/.test("concat"), /\bcat\b/.test("a cat!"));
+console.log("a1 b22 c333".match(/\d+/g), "a1 b22".match(/\d{2,}/g));
+console.log("<b>x</b><b>y</b>".match(/<b>.*<\/b>/)[0]);
+console.log("<b>x</b><b>y</b>".match(/<b>.*?<\/b>/)[0]);
+const slug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+console.log(slug.test("my-first-post"), slug.test("My--post"));
+console.log("١٢٣ و 45".match(/\d+/g), "١٢٣ و 45".match(/\p{Nd}+/gu));
+console.log("سعر القهوة 45 جنيه".match(/\p{Script=Arabic}+/gu));`,
+          try: R`اكتب regex لـ: (١) كود بريدي مصري ٥ أرقام بالظبط، (٢) username من ٣ لـ ١٦ حرف إنجليزي صغير أو رقم أو [[_]] ولازم يبدأ بحرف، (٣) لون hex زي [[#fff]] أو [[#1F2430]]. جرّب كل واحد على ٣ أمثلة صح و ٣ غلط. وبعدين شيل [[^]] و [[$]] من الـ phone وجرّب [[phone.test("x010123456789999")]].`,
+          ref: [
+            { t: "MDN: Regular expressions (guide)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions" },
+            { t: "MDN: Character classes", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions/Character_classes" },
+            { t: "MDN: Quantifiers", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions/Quantifiers" },
+            { t: "MDN: RegExp.prototype.test()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/test" },
           ],
-          flag: "script",
-          deep: {
-            why: R`الـ regex في الشغل الحقيقي مش دايمًا ثابت: بحث بكلمة اليوزر، وقايمة كلمات ممنوعة من قاعدة بيانات، و pattern في ملف config، و Zod و ESLint بياخدوا regex ويعرضوه في رسالة. ولو مش فاهم إن [["\d"]] بتضيع في النص، أو إن [[lastIndex]] حالة متخزنة جوه الـ object، هتقضي ساعات على باج بيعدّي في صمت.`,
-            how: R`الـ **literal** [[/.../flags]] جزء من الـ grammar: الـ parser بيقراه مع الملف، فأي غلطة فيه SyntaxError **قبل ما أول سطر يشتغل**. وكل مرة الكود يعدّي على الـ literal بيتعمل object **جديد** ([[make() === make()]] بـ [[false]])، بس الـ pattern نفسه مبيتعملش له compile تاني.
-
-[[new RegExp(x, flags)]]: لو [[x]] نص، بيعمل parse وقت التشغيل. ولو [[x]] regex، بياخد [[source]] بتاعه، ولو بعت flags جديدة بتحل محل القديمة بالكامل (مش بتتضاف). و [[RegExp(x)]] من غير [[new]] بيرجّع نفس الـ object لو [[x]] regex ومفيش flags.
-
-الخصايص كلها **getters على [[RegExp.prototype]]** (مش على الـ object)، فـ [[Object.getOwnPropertyNames(/a/)]] بيطلع [[[ 'lastIndex' ]]] بس، والكتابة فيهم بترمي في strict mode ([[TypeError: Cannot set property global of [object Object] which has only a getter]]). يعني الـ regex مبيتغيّرش بعد ما يتعمل، إلا [[lastIndex]].
-
-و [[source]] للـ regex الفاضي [[(?:)]] (عشان [[//]] تعليق)، و [[/]] جوه الـ pattern بتطلع [[\/]]، والسطر الجديد [[\n]]: [[source]] دايمًا نص ينفع يتحط بين [[/ /]] ويشتغل.`,
-            when: R`literal في ٩٠٪ من الحالات: الـ pattern ثابت، والغلط يبان أول ما تشغّل، والـ editor بيلوّنه. و [[new RegExp]] لما الـ pattern متركّب: كلمة يوزر (دايمًا مع [[RegExp.escape]])، أو حتت من config، أو نسخة من regex موجود بـ flags مختلفة. واقرا الخصايص في أي كود بياخد regex من برّه: مثلًا ارفض أي regex مفيهوش [[g]] قبل [[matchAll]]، أو اعمل نسخة من غير [[g]] قبل [[test]].`,
-            mistakes: R`[["\d"]] و [["\b"]] و [["\s"]] في نص عادي (الأولى والتالتة بيضيعوا الـ [[\]]، والتانية بتبقى حرف backspace). ونص يوزر في [[new RegExp]] من غير escape. ومقارنة regexين بـ [[===]] (دايمًا [[false]]: objects مختلفة) بدل [[String(a) === String(b)]]. وتفتكر [[new RegExp(re, "y")]] بيزوّد [[y]] على الـ flags القديمة: لأ، بيبدّلها. وتعدّل [[re.global = true]] وتستغرب إنه مبيتغيّرش.`
-          },
-          teach: R`## الفكرة في سطر
-
-الـ regex ليه شكلين في الكود: **literal** بين [[/ /]]، أو **object** بتبنيه بـ [[new RegExp]]. الاتنين بيطلّعوا نفس النوع ([[RegExp]])، والفرق إمتى الـ pattern بيتقري، ومين بيتعامل مع الـ [[\]]. وبعد ما يتعمل، كل حاجة عنه مكتوبة في خصايصه. كل الناتج هنا اتشغّل فعلًا على Node 24.22 (ويندوز).
-
----
-
-## ١. regular expression literal: بيتقري مع الملف
-
-~~~js app.mjs
-const lit = /(\d+)\s*EGP/gi;
+          practice: [
+            { lvl: 'سريع', t: R`**ابني:** [[<input id="pin" inputmode="numeric">]] لـ PIN من ٤ أرقام، ومع كل [[input]] event الحدود تبقى خضرا لو [[/^\d{4}$/.test(value)]] وحمرا لو لأ. جرّب [[1234]] و [[12345]] و [[12a4]] والأرقام العربي [[١٢٣٤]].`, done: R`[[1234]] بس اللي أخضر، والتلاتة التانيين أحمر، ومنهم [[١٢٣٤]] لأن [[\d]] من غير [[u]] إنجليزي بس. ولو عايز تقبل العربي: [[/^\p{Nd}{4}$/u]] وبعدها حوّلهم لأرقام إنجليزي قبل ما تبعت.`, sol: R`~~~live 170 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>PIN</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
+  input { font: 24px monospace; width: 6ch; padding: 4px 8px; border: 3px solid #999; border-radius: 6px; direction: ltr; }
+  input.ok { border-color: #15803d; }
+  input.bad { border-color: #b91c1c; }
+</style>
+</head>
+<body>
+<label for="pin">الـ PIN (٤ أرقام)</label><br>
+<input id="pin" inputmode="numeric" autocomplete="off">
+<p id="msg" aria-live="polite"></p>
+<script>
+  const PIN = /^\d{4}$/;
+  const input = document.getElementById("pin");
+  const msg = document.getElementById("msg");
+  input.addEventListener("input", () => {
+    const ok = PIN.test(input.value);
+    input.classList.toggle("ok", ok);
+    input.classList.toggle("bad", !ok);
+    msg.textContent = ok ? "تمام" : "لازم ٤ أرقام إنجليزي بالظبط";
+  });
+</script>
+</body>
+</html>
 ~~~
+
+~~~text اللي اتعرض في Chrome 158 (Playwright)، بعد ما كتبنا كل قيمة
+1234   → ok   حدود rgb(21, 128, 61)  | تمام
+12345  → bad  حدود rgb(185, 28, 28)  | لازم ٤ أرقام إنجليزي بالظبط
+12a4   → bad  حدود rgb(185, 28, 28)  | لازم ٤ أرقام إنجليزي بالظبط
+١٢٣٤   → bad  حدود rgb(185, 28, 28)  | لازم ٤ أرقام إنجليزي بالظبط
+~~~
+
+ونفس الـ regex في Node، ومعاه النسخة اللي بتقبل الأرقام العربي:
+
+~~~js pin.js
+const pin = /^\d{4}$/;
+const pinAnyDigits = /^\p{Nd}{4}$/u;
+for (const value of ["1234", "12345", "12a4", "١٢٣٤"]) {
+  console.log(value.padEnd(6), pin.test(value), pinAnyDigits.test(value));
+}
+~~~
+
+~~~text الناتج (node pin.js، Node 24)
+1234   true true
+12345  false false
+12a4   false false
+١٢٣٤   false true
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- [[/^\d{4}$/]]: [[^]] أول النص، و [[\d]] رقم، و [[{4}]] بالظبط ٤ مرات، و [[$]] آخر النص. يعني النص **كله** ٤ أرقام.
+- [[input]] event: بيشتغل مع كل حرف (ومع اللصق كمان)، و [[classList.toggle("ok", ok)]] بيحط الكلاس لو [[ok]] بـ true ويشيله لو false.
+- [[١٢٣٤]] أحمر: [[\d]] من غير flag [[u]] (ومعاه كمان) معناها [[[0-9]]] بس. عشان تقبل العربي: [[\p{Nd}]] (أي رقم عشري في Unicode) مع [[u]]، والعمود التالت في ناتج Node بيوريها بتقبل [[١٢٣٤]]. وبعدها حوّلها لأرقام إنجليزي قبل ما تبعتها.
+- [[inputmode="numeric"]]: بيفتح كيبورد الأرقام على الموبايل، بس مبيمنعش الحروف، فالفحص لازم.
+
+**الغلطة الشائعة:** تنسى [[^]] و [[$]]، فـ [[/\d{4}/]] بيقبل [[12345]] و [[ab1234]] لأنه لقى ٤ أرقام في النص. وغلطة تانية: [[type="number"]] للـ PIN، بيشيل الأصفار اللي في الأول ([[0123]] تبقى 123).`  },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب ناتج دول قبل التشغيل: [[/colou?r/.test("color")]] و [[/^a.c$/.test("a\nc")]] و [[/\bcat\b/.test("concat")]] و [[/[^0-9]/.test("123")]] و [["aaa".match(/a+?/)[0]]].`, done: R`توقعت وطلع true و false و false و false و [["a"]]. وتقدر تقول ليه: [[?]] بتخلي الحرف اختياري، و [[.]] مبتطابقش سطر جديد، و [[\b]] حدود كلمة، و [[^]] جوه الأقواس نفي، و [[+?]] بتاخد أقل حاجة.`, sol: R`**التوقع:** true، false، false، false، [["a"]].
+
+~~~js predict.js
+console.log(/colou?r/.test("color"));
+console.log(/^a.c$/.test("a\nc"));
+console.log(/\bcat\b/.test("concat"));
+console.log(/[^0-9]/.test("123"));
+console.log("aaa".match(/a+?/)[0]);
+console.log("aaa".match(/a+/)[0], /^a.c$/s.test("a\nc"));
+~~~
+
+~~~text الناتج (node predict.js، Node 24)
+true
+false
+false
+false
+a
+aaa true
+~~~
+
+**ليه، سطر سطر:**
+
+1. [[/colou?r/]]: [[?]] بعد [[u]] بتخليها اختيارية (صفر أو مرة)، فـ [["color"]] و [["colour"]] الاتنين بيعدّوا: **true**.
+2. [[/^a.c$/]] على [["a\nc"]]: [[.]] أي حرف **ما عدا** السطر الجديد (وإخواته [[\r]])، فـ **false**. ومع flag [[s]] (آخر سطر) [[.]] بتطابق السطر الجديد: true.
+3. [[/\bcat\b/]] على [["concat"]]: [[\b]] حدود كلمة (بين حرف وحاجة مش حرف). [[cat]] هنا آخر الكلمة بس قبلها [[n]] حرف، فمفيش حد في الأول: **false**.
+4. [[/[^0-9]/]] على [["123"]]: [[^]] **جوه** الأقواس معناها «أي حرف مش من دول». مفيش حرف مش رقم: **false**. (و [[^]] برّه الأقواس معناها أول النص، نفس الرمز بمعنيين.)
+5. [["aaa".match(/a+?/)[0]]]: [[+]] لوحدها greedy بتاخد أكتر حاجة ([["aaa"]] في آخر سطر)، و [[+?]] lazy بتاخد أقل حاجة تكفي: حرف واحد **[["a"]]**.
+
+**الغلطة الشائعة:** تخلط بين [[^]] جوه الأقواس وبرّه، أو تفتكر إن [[.]] بتطابق كل حاجة. لو بتدوّر في نص فيه سطور، خلي بالك من [[.]] وفكّر في [[s]].`  },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** regex لوقت 24 ساعة [["HH:MM"]] (من [["00:00"]] لـ [["23:59"]]، والساعة رقمين). قبل ما تكتبه، اعمل array فيها ١٠ حالات [[[input, expected]]] منهم [["23:59"]] و [["00:00"]] و [["24:00"]] و [["9:05"]] و [["12:60"]] و [[" 12:30"]]، و loop بيطبع أي حالة فشلت.`, done: R`الـ loop مبيطبعش ولا حالة فاشلة: [["23:59"]] و [["00:00"]] مقبولين، و [["24:00"]] و [["9:05"]] و [["12:60"]] و [[" 12:30"]] مرفوضين. ولو [["24:00"]] عدّى يبقى [[\d{2}]] للساعة مش كفاية، ولو [[" 12:30"]] عدّى يبقى ناسي [[^]].`, sol: R`~~~js time24.js
+const time24 = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+const cases = [
+  ["23:59", true],
+  ["00:00", true],
+  ["09:05", true],
+  ["12:30", true],
+  ["24:00", false],
+  ["9:05", false],
+  ["12:60", false],
+  [" 12:30", false],
+  ["12:30 ", false],
+  ["1230", false],
+];
+
+let failed = 0;
+for (const [input, expected] of cases) {
+  const got = time24.test(input);
+  if (got !== expected) {
+    failed++;
+    console.log("فشل:", JSON.stringify(input), "متوقع", expected, "طلع", got);
+  }
+}
+console.log(cases.length + " حالات، " + failed + " فشلوا");
+
+// نفس الحالات على نسخة ناقصة: \d{2} للساعة ومن غير ^
+const weak = /\d{2}:[0-5]\d$/;
+for (const [input, expected] of cases) {
+  if (weak.test(input) !== expected) console.log("النسخة الناقصة غلطت في:", JSON.stringify(input));
+}
+~~~
+
+~~~text الناتج (node time24.js، Node 24)
+10 حالات، 0 فشلوا
+النسخة الناقصة غلطت في: "24:00"
+النسخة الناقصة غلطت في: " 12:30"
+~~~
+
+**الـ regex حتة حتة:**
 
 | الحتة | معناها |
 |---|---|
-| [[/]] الأولى والأخيرة | حدود الـ literal، زي علامات التنصيص حوالين النص. مش جزء من الـ pattern |
-| [[(\d+)\s*EGP]] | الـ pattern: رقم أو أكتر (محفوظ في group)، مسافات اختيارية، وكلمة EGP |
-| [[gi]] | الـ flags بعد الـ [[/]] الأخيرة: كل الـ matches، ومن غير حساسية للحروف |
+| [[^]] | أول النص (عشان [[" 12:30"]] يترفض) |
+| [[([01]\d\|2[0-3])]] | الساعة: إما [[0]] أو [[1]] وبعدها أي رقم (00 لـ 19)، أو [[2]] وبعدها 0 لـ 3 (20 لـ 23) |
+| [[:]] | النقطتين حرفيًا |
+| [[[0-5]\d]] | الدقايق: رقم من 0 لـ 5 وبعده أي رقم (00 لـ 59) |
+| [[$]] | آخر النص |
 
-الـ literal بيتعمل له parse **مع الملف كله**. جرّبنا ملف فيه [[console.log]] وبعده regex غلط:
+**ليه الاختبار قبل الـ regex:** الـ array هو «المواصفات». كتبناها الأول، وبعدين الـ loop بيطبع أي حالة فشلت، فأي تعديل على الـ regex بيتجرّب على الـ ١٠ حالات في ثانية. السطر الأول في الناتج: ولا حالة فشلت.
 
-~~~js bad.mjs
-console.log("السطر ده مش هيتطبع");
-const bad = /(\d+/;
+**والنسخة الناقصة** ([[/\d{2}:[0-5]\d$/]] من غير [[^]]) غلطت في حالتين بالظبط زي ما الـ done قال: [["24:00"]] عدّت لأن [[\d{2}]] بيقبل 24، و [[" 12:30"]] عدّت لأن مفيش [[^]].
+
+**الغلطة الشائعة:** [[/^[0-2][0-9]:[0-5][0-9]$/]]: بيقبل [["29:00"]]. الساعة مش «رقمين أولهم 0 لـ 2»، هي حالتين، وده اللي الـ [[|]] جوه الـ group بيعمله.`  },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** فحص موبايل مصري [[/01[0125]\d{8}/.test(phone)]]. جرّبه على [["abc010123456789xyz"]] وعلى [["01312345678"]].`, done: R`قبل التصليح الأول بيعدّي (true) لأن الـ regex لقى ١١ رقم في النص وسط الزبالة. بعد [[^]] و [[$]]: الأول false، و [["01012345678"]] true، و [["01312345678"]] false.`, sol: R`~~~js phone-fix.js
+const buggy = /01[0125]\d{8}/;
+const fixed = /^01[0125]\d{8}$/;
+for (const phone of ["abc010123456789xyz", "01012345678", "01312345678"]) {
+  console.log(phone.padEnd(19), "قبل:", buggy.test(phone), " بعد:", fixed.test(phone));
+}
+console.log("abc010123456789xyz".match(buggy)[0]);
 ~~~
 
-~~~text الناتج
-bad.mjs:2
-const bad = /(\d+/;
-            ^^^^^^
-
-SyntaxError: Invalid regular expression: /(\d+/: Unterminated group
+~~~text الناتج (node phone-fix.js، Node 24)
+abc010123456789xyz  قبل: true  بعد: false
+01012345678         قبل: true  بعد: true
+01312345678         قبل: false  بعد: false
+01012345678
 ~~~
 
-ولا سطر اشتغل، حتى الـ [[console.log]] اللي قبله. ده كويس: الغلطة بتبان أول ما تشغّل، مش بعد أسبوع في production.
+**السبب:** [[test]] بيدوّر على الـ pattern **في أي مكان** في النص. [["abc010123456789xyz"]] جواه [[01012345678]] (آخر سطر في الناتج: ده اللي الـ regex لقاه)، فالنص كله عدّى وهو مش رقم موبايل أصلًا.
+
+**التصليح:** [[^]] في الأول و [[$]] في الآخر: النص من أوله لآخره لازم يبقى الـ pattern ده بالظبط.
+
+- [[01]]: أول رقمين.
+- [[[0125]]]: الشبكة: 0 أو 1 أو 2 أو 5. عشان كده [[01312345678]] اترفض قبل وبعد.
+- [[\d{8}]]: ٨ أرقام كمان، فالإجمالي ١١.
+
+**الغلطة الشائعة:** تصلّحها بـ [[\b]] بدل [[^]] و [[$]]: [[/\b01[0125]\d{8}\b/]] بيرفض الحالة دي بس بيقبل [["رقمي 01012345678 ده"]]، وده مش اللي عايزه في فحص خانة. للفحص [[^...$]]، وللبحث جوه نص [[\b]] أو lookaround.`  },
+            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[checkPassword(p)]] بترجّع array بالقواعد الناقصة بالعربي، وكل قاعدة regex لوحدها (مش pattern واحد عملاق): ٨ حروف على الأقل، ورقم (عربي أو إنجليزي)، وحرف إنجليزي كبير، ورمز (أي حاجة مش حرف ولا رقم).`, done: R`[[checkPassword("Passw0rd!")]] ← array فاضي. [[checkPassword("password")]] ← ٣ قواعد (رقم وكبير ورمز). [[checkPassword("Pass١٢٣٤!")]] ← فاضي، يعني الرقم بـ [[\p{Nd}]] مع [[u]] والرمز مبيعدّش الأرقام العربي رموز. و [[checkPassword("")]] ← الأربع قواعد.`, sol: R`~~~js check-password.js
+const RULES = [
+  [/.{8,}/u, "٨ حروف على الأقل"],
+  [/\p{Nd}/u, "رقم واحد على الأقل"],
+  [/[A-Z]/, "حرف إنجليزي كبير"],
+  [/[^\p{L}\p{N}]/u, "رمز زي ! أو @"],
+];
+
+function checkPassword(p) {
+  return RULES.filter(([re]) => !re.test(p)).map(([, msg]) => msg);
+}
+
+for (const p of ["Passw0rd!", "password", "Pass١٢٣٤!", ""]) {
+  console.log(JSON.stringify(p).padEnd(12), checkPassword(p));
+}
+~~~
+
+~~~text الناتج (node check-password.js، Node 24)
+"Passw0rd!"  []
+"password"   [ 'رقم واحد على الأقل', 'حرف إنجليزي كبير', 'رمز زي ! أو @' ]
+"Pass١٢٣٤!"  []
+""           [
+  '٨ حروف على الأقل',
+  'رقم واحد على الأقل',
+  'حرف إنجليزي كبير',
+  'رمز زي ! أو @'
+]
+~~~
+
+**كل قاعدة:**
+
+| الـ regex | بيتأكد من |
+|---|---|
+| [[/.{8,}/u]] | ٨ حروف أو أكتر. و [[u]] عشان الإيموجي يتحسب حرف واحد مش اتنين |
+| [[/\p{Nd}/u]] | رقم من أي نظام: [[0-9]] و [[٠-٩]] |
+| [[/[A-Z]/]] | حرف إنجليزي كبير |
+| [[/[^\p{L}\p{N}]/u]] | حرف مش حرف ([[\p{L}]]) ومش رقم ([[\p{N}]]): يعني رمز. الأرقام العربي جوه [[\p{N}]] فمبتتحسبش رموز |
+
+- [[RULES.filter(([re]) => !re.test(p))]]: القواعد اللي **فشلت**. و [[([re])]] destructuring بياخد أول عنصر في الزوج.
+- [[.map(([, msg]) => msg)]]: الفاصلة الأولى بتسيب العنصر الأول، وبتاخد الرسالة.
+- [["Pass١٢٣٤!"]] عدّت: [[١٢٣٤]] اتحسبت رقم بـ [[\p{Nd}]]، ومتحسبتش رمز.
+
+**ليه regex لكل قاعدة مش واحد عملاق:** pattern زي [[/^(?=.*\d)(?=.*[A-Z])(?=.*\W).{8,}$/]] بيقول «لأ» بس، ومش بيقول أنهي قاعدة ناقصة. وكل قاعدة لوحدها سهل تتقري وتتغيّر.
+
+**الغلطة الشائعة:** [[\W]] للرمز: من غير [[u]] الحروف العربي نفسها بتتحسب [[\W]] (مش [[\w]])، فباسورد زي [["كلمةسر1A"]] هيعدّي على إنه فيه رمز.`  }
+          ],
+          flag: "script",
+          deep: {
+            why: "هتحتاجه أكتر ما تتخيل: تحقق من رقم موبايل و slug و كود خصم، و [[.regex()]] في Zod (تاب TypeScript)، وتقطيع logs، و find & replace في VS Code (Alt+R بيشغّل regex)، و [[grep -E]] و [[sed]] في الترمنال (تاب bash). نفس الـ syntax تقريبًا في كل حتة.",
+            how: R`الـ engine بيمشي على النص حرف حرف ويحاول يطابق الـ pattern من كل مكان. [[+]] و [[*]] greedy: بياخدوا أكبر حاجة ممكنة وبعدين يرجعوا لورا لو اللي بعدهم مش مطابق. عشان كده [[<b>.*<\/b>]] أكلت من أول [[<b>]] لآخر [[</b>]]، و [[.*?]] وقفت عند أول واحد.
+
+[[\d]] في JS بيطابق [[0-9]] بس، مش الأرقام العربية المشرقية (١٢٣). عشان تدعم العربي استخدم Unicode property escapes مع flag [[u]]: [[\p{Nd}]] أي رقم في أي لغة، و [[\p{L}]] أي حرف، و [[\p{Script=Arabic}]] حروف عربي. و [[\w]] و [[\b]] كمان إنجليزي بس، فـ [[\bقهوة\b]] مش هتشتغل زي ما متوقع.
+
+الحروف اللي ليها معنى ([[. * + ? ^ $ ( ) [ ] { } | \ /]]) لو عايزها حرفيًا حط قبلها [[\]]: [[\.]] نقطة، و [[<\/b>]] عشان [[/]] بتقفل الـ regex. وجوه [[[...]]] أغلبهم بيبقوا حرفيين.
+
+[[(?:...)]] group من غير ما يتحفظ (الدرس الجاي)، هنا بيخلي [[-[a-z0-9]+]] يتكرر كوحدة. فالـ slug: كلمة، وبعدين صفر أو أكتر من (شرطة + كلمة)، فمفيش شرطتين ورا بعض ولا شرطة في الأول أو الآخر.`,
+            when: R`تحقق من شكل نص قصير (phone و slug و postal code)، وتدوّر أو تستبدل في نصوص، وتقطّع سطور logs. ولو الـ pattern بقى أطول من سطر، أو محتاج «فهم» (HTML، JSON، URL، تواريخ)، استخدم parser (آخر درس في القسم).`,
+            mistakes: R`تنسى [[^]] و [[$]] في التحقق فـ [["abc01012345678xyz"]] تعدّي. و [[.]] وانت عايز نقطة حرفية. و [[\d]] مع أرقام عربي من الموبايل (كيبورد عربي بيكتب ١٢٣): طبّع الأرقام الأول أو استخدم [[\p{Nd}]]. و [[[A-z]]] (فيها رموز بين Z و a). و [[.*]] greedy في نص فيه أكتر من match.`
+          },
+          teach: R`## الفكرة
+
+الـ regex بيوصف **شكل** نص، مش نص بعينه. والمثال ٥ تجارب: رقم موبايل، وكلمة بحدودها، وأرقام كتير، و greedy ضد lazy، و slug، والعربي. الناتج كله من Node 24 على Windows.
+
+قبل أي حاجة: الـ regex في JavaScript بيتكتب بين شرطتين [[/.../]]، والشرطتين مش جزء منه، زي علامتين التنصيص حوالين النص.
 
 ---
 
-## ٢. [[new RegExp]]: بيتقري وقت التشغيل، من نص
+## ١. رقم موبايل مصري
 
-~~~js app.mjs
-const built = new RegExp("(\\d+)\\s*EGP", "gi");
-const raw = new RegExp(String.raw$__bt(\d+)\s*EGP$__bt, "gi");
-console.log(lit.source, built.source === lit.source, raw.source === lit.source);
+~~~text app.js
+const phone = /^01[0125]\d{8}$/;
+console.log(phone.test("01012345678"), phone.test("0101234567"), phone.test("01312345678"));
 ~~~
 
-~~~text الناتج
-(\d+)\s*EGP true true
-~~~
+نفك الـ pattern حتة حتة من الشمال لليمين، بنفس ترتيب ما الـ engine بيقراه:
 
-الـ pattern هنا **نص** (string) عادي، والنص في JavaScript عنده escapes بتاعته: [["\n"]] سطر جديد، و [["\\"]] backslash واحدة. فعشان الـ regex يستلم [[\d]] لازم تكتب في النص [[\\d]].
-
-و [[String.raw]] (tag قبل template literal) معناه «سيب كل [[\]] زي ما هي»، فتكتب الـ pattern بنفس شكل الـ literal بالظبط.
-
-### الغلطة اللي بتعدّي في صمت
-
-~~~js app.mjs
-const wrong = new RegExp("(\d+)\s*EGP", "gi");
-console.log(wrong.source, wrong.test("50 EGP"));
-~~~
-
-~~~text الناتج
-(d+)s*EGP false
-~~~
-
-[["\d"]] في نص عادي مش escape معروف، فالـ JavaScript بيرمي الـ [[\]] ويسيب [[d]]. الـ regex بقى «حرف d، وحرف s»، ومفيش ولا error. **أول حاجة تعملها لما regex مبني بـ [[new RegExp]] مش شغال: اطبع [[source]].**
-
-### والـ pattern الغلط هنا بيرمي وقت التشغيل
-
-~~~js app.mjs
-try { new RegExp("(\\d+"); } catch (e) { console.log(e.name + ": " + e.message); }
-~~~
-
-~~~text الناتج
-SyntaxError: Invalid regular expression: /(\d+/: Unterminated group
-~~~
-
-نفس الرسالة، بس المرة دي **جوه try**، فتقدر تمسكها وتقول لليوزر «الـ pattern بتاعك غلط» بدل ما البرنامج يقع.
-
----
-
-## ٣. خصايص الـ RegExp: الجدول كامل
-
-~~~js app.mjs
-console.log(lit.flags, lit.global, lit.ignoreCase, lit.multiline, lit.dotAll, lit.sticky);
-console.log(lit.unicode, lit.unicodeSets, lit.hasIndices, lit.lastIndex, String(lit));
-~~~
-
-~~~text الناتج
-gi true true false false false
-false false false 0 /(\d+)\s*EGP/gi
-~~~
-
-| الخاصية | الـ flag | بترجّع إيه ومعناها |
+| الحتة | نوعها | معناها |
 |---|---|---|
-| [[source]] | | الـ pattern كنص من غير [[/ /]] ومن غير flags. للـ regex الفاضي [[(?:)]] |
-| [[flags]] | | كل الـ flags كنص، مترتبين دايمًا [[dgimsuvy]] |
-| [[global]] | [[g]] | [[true]]: [[match]] و [[replace]] بيشتغلوا على كل الـ matches، و [[exec]] بيكمّل من [[lastIndex]] |
-| [[ignoreCase]] | [[i]] | [[true]]: الحروف الكبيرة زي الصغيرة |
-| [[multiline]] | [[m]] | [[true]]: [[^]] و [[$]] بيطابقوا أول وآخر **كل سطر** |
-| [[dotAll]] | [[s]] | [[true]]: النقطة بتطابق السطر الجديد كمان |
-| [[unicode]] | [[u]] | [[true]]: الـ emoji حرف واحد، و [[\p{...}]] شغالة، والـ escapes الغلط بترمي |
-| [[unicodeSets]] | [[v]] | [[true]]: زي [[u]] وزيادة طرح وتقاطع جوه [[[ ]]] (الدرس الجاي بعد الجاي) |
-| [[hasIndices]] | [[d]] | [[true]]: نتيجة [[exec]] فيها [[indices]] بأماكن كل group (الدرس الجاي) |
-| [[sticky]] | [[y]] | [[true]]: الـ match لازم يبدأ عند [[lastIndex]] بالظبط |
-| [[lastIndex]] | | رقم: هيدوّر منين المرة الجاية (مع [[g]] أو [[y]] بس). الوحيدة اللي بتتكتب |
-| [[toString()]] | | [["/" + source + "/" + flags]]: الشكل اللي تقدر تلزقه في كود |
+| [[^]] | anchor | لازم نكون في أول النص |
+| [[01]] | حروف عادية | الحرفين 0 و 1 بالظبط |
+| [[[0125]]] | class | حرف واحد بس، يا 0 يا 1 يا 2 يا 5 (فودافون وإتصالات وأورنج و WE) |
+| [[\d]] | class | رقم واحد من 0 لـ 9 (d = digit) |
+| [[{8}]] | quantifier | اللي قبله يتكرر ٨ مرات بالظبط |
+| [[$]] | anchor | لازم نكون في آخر النص |
 
-كلهم (ما عدا [[lastIndex]]) **getters** على [[RegExp.prototype]]: مش متخزنين على الـ object، وبيتحسبوا من الـ regex. عشان كده [[Object.getOwnPropertyNames(/a/g)]] بيطلّع [[[ 'lastIndex' ]]] بس، والكتابة فيهم ملهاش أثر:
-
-~~~text الناتج: re.global = false في .mjs (strict)
-TypeError: Cannot set property global of [object Object] which has only a getter
-~~~
-
-يعني الـ flags بتاعة regex **مبتتغيّرش بعد ما يتعمل**. عايز flags تانية؟ اعمل regex جديد.
-
----
-
-## ٤. نسخة بـ flags تانية
-
-~~~js app.mjs
-const copy = new RegExp(lit, "dy");
-console.log(copy.flags, copy.source === lit.source, copy === lit);
-~~~
+و [[phone.test(text)]] بيسأل: «النص ده ماشي على الـ pattern؟» ويرجّع [[true]] أو [[false]].
 
 ~~~text الناتج
-dy true false
+true false false
 ~~~
 
-لما تدّي [[new RegExp]] regex بدل نص، بياخد الـ [[source]] بتاعه. والـ flags اللي بتبعتها **بتحل محل** القديمة بالكامل: [[gi]] راحت و [[dy]] جت (مش [[dgiy]]). والنتيجة object جديد، و [[lastIndex]] بتاعه 0.
+- [["01012345678"]]: 01 ثم 0 ثم ٨ أرقام. صح.
+- [["0101234567"]]: بعد [[010]] فيه ٧ أرقام بس، و [[{8}]] عايزة ٨.
+- [["01312345678"]]: 3 مش من [[[0125]]].
 
----
+### ليه [[^]] و [[$]] مهمين؟
 
-## ٥. pattern فيه كلام يوزر: [[RegExp.escape]]
+من غيرهم، [[test]] بتدوّر على الـ pattern **في أي حتة** جوه النص. جرّبنا في الحل:
 
-~~~js app.mjs
-const word = "c++";
-console.log(new RegExp($__bt^$__{RegExp.escape(word)}$$__bt, "i").test("C++"));
+~~~text app.js
+console.log(/01[0125]\d{8}/.test("x010123456789999"));
 ~~~
 
 ~~~text الناتج
 true
 ~~~
 
-[[+]] في [["c++"]] ليها معنى في الـ regex. [[RegExp.escape]] (موجودة في Node 24 والمتصفحات الحديثة، وشرحها كامل في درس «test و match و matchAll و replace») بتحط [[\]] قبل أي حرف خاص، فالكلمة تتطابق حرفيًا. **أي نص جاي من برّه وداخل [[new RegExp]] لازم يعدّي عليها.**
+لقى [["01012345678"]] في النص وقال true، رغم إن النص كله زبالة. فأي regex للتحقق (validation) لازم يبقى [[^...$]].
+
+---
+
+## ٢. [[?]] و [[\b]]
+
+~~~text app.js
+console.log(/colou?r/.test("color"), /\bcat\b/.test("concat"), /\bcat\b/.test("a cat!"));
+~~~
+
+- [[u?]]: الـ [[?]] بعد حرف معناها «الحرف ده مرة أو مفيش». فـ [[colou?r]] بتقبل color و colour.
+- [[\b]]: (b = boundary) **مكان** مش حرف: الحد بين حرف كلمة ([[\w]]) وحاجة مش حرف كلمة (مسافة أو علامة أو أول/آخر النص).
+
+~~~text الناتج
+true false true
+~~~
+
+في [["concat"]] الـ cat موجودة بس قبلها n، فمفيش حد كلمة: false. وفي [["a cat!"]] قبلها مسافة وبعدها [[!]]: true.
+
+---
+
+## ٣. [[+]] و [[{2,}]] و flag [[g]]
+
+~~~text app.js
+console.log("a1 b22 c333".match(/\d+/g), "a1 b22".match(/\d{2,}/g));
+~~~
+
+- [[\d+]]: [[+]] = «مرة أو أكتر»، يعني سلسلة أرقام ورا بعض.
+- [[g]] بعد الشرطة الأخيرة اسمه **flag** (global): هات **كل** الـ matches مش أول واحد بس. ومع [[str.match(re)]] بيرجّع array بالنصوص.
+- [[{2,}]]: «٢ أو أكتر». (و [[{2,5}]] من ٢ لـ ٥.)
+
+~~~text الناتج
+[ '1', '22', '333' ] [ '22' ]
+~~~
+
+في التاني الـ [[1]] لوحده اترمى لأنه رقم واحد.
+
+---
+
+## ٤. greedy ضد lazy
+
+~~~text app.js
+console.log("<b>x</b><b>y</b>".match(/<b>.*<\/b>/)[0]);
+console.log("<b>x</b><b>y</b>".match(/<b>.*?<\/b>/)[0]);
+~~~
+
+- [[.]]: أي حرف (غير السطر الجديد). و [[.*]]: أي حاجة، أي عدد من المرات (حتى صفر).
+- [[<\/b>]]: الـ [[/]] لوحدها كانت هتقفل الـ regex، فقبلها [[\]] (escape) عشان تبقى حرف عادي.
+- [[match]] من غير [[g]] بيرجّع array أولها ([[[0]]]) النص اللي اتطابق.
+
+~~~text الناتج
+<b>x</b><b>y</b>
+<b>x</b>
+~~~
+
+[[.*]] **greedy** (طمّاع): بياكل لحد آخر النص، وبعدين يرجع لورا حرف حرف لحد ما يلاقي [[</b>]]، فبيقف عند **آخر** واحدة. ولما تحط [[?]] بعده ([[.*?]]) بيبقى **lazy** (كسول): ياخد أقل حاجة ممكنة، فبيقف عند **أول** [[</b>]].
+
+---
+
+## ٥. slug
+
+~~~text app.js
+const slug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+console.log(slug.test("my-first-post"), slug.test("My--post"));
+~~~
+
+slug هو الجزء اللي في اللينك زي [[my-first-post]].
+
+| الحتة | معناها |
+|---|---|
+| [[^[a-z0-9]+]] | من الأول: حرف صغير أو رقم، مرة أو أكتر (كلمة أولى) |
+| [[(?:-[a-z0-9]+)]] | group: شرطة وبعدها كلمة |
+| [[*]] بعد الـ group | الـ group كله يتكرر صفر مرة أو أكتر |
+| [[$]] | لحد الآخر |
+
+[[[a-z]]] **مدى** (range): أي حرف من a لـ z. والأقواس [[(?:...)]] بتجمّع حتة عشان الـ [[*]] يتطبّق عليها كلها، و [[?:]] معناها «متحفظش اللي اتطابق» (الدرس الجاي).
+
+~~~text الناتج
+true false
+~~~
+
+[["My--post"]] فيها M كابيتال، وشرطتين ورا بعض (كل شرطة لازم بعدها كلمة).
+
+---
+
+## ٦. الأرقام والحروف العربي
+
+~~~text app.js
+console.log("١٢٣ و 45".match(/\d+/g), "١٢٣ و 45".match(/\p{Nd}+/gu));
+console.log("سعر القهوة 45 جنيه".match(/\p{Script=Arabic}+/gu));
+~~~
+
+- [[\d]] في JavaScript = [[[0-9]]] بس. الأرقام المشرقية (١٢٣) مش منها.
+- [[\p{...}]] اسمها **Unicode property escape**: «أي حرف ليه الخاصية دي في Unicode». [[\p{Nd}]] = أي رقم عشري في أي لغة (N = Number، d = decimal digit). و [[\p{Script=Arabic}]] = أي حرف من الكتابة العربي.
+- **فخ التشكيل:** علامات التشكيل (الفتحة والشدة والتنوين) مش «Arabic» في Unicode، دي Script=Inherited. فـ [["مُحَمَّد أهلًا".match(/\p{Script=Arabic}+/gu)]] بيطلع [[[ 'م', 'ح', 'م', 'د', 'أهل', 'ا' ]]]: الكلمة اتقطّعت عند كل علامة. لو النص ممكن يبقى متشكّل استخدم [[\p{scx=Arabic}+]] (Script_Extensions، بتضم العلامات اللي بتتكتب مع العربي) أو [[[\p{L}\p{M}]+]]، والاتنين بيطلّعوا [[[ 'مُحَمَّد', 'أهلًا' ]]] (اتجرّب على Node 24). التفاصيل في درس «regex والعربي: Unicode properties».
+- [[u]] flag (unicode): لازم عشان [[\p{...}]] تتفهم. وهنا معاها [[g]]: الـ flags بتتكتب جنب بعض.
+
+~~~text الناتج
+[ '45' ] [ '١٢٣', '45' ]
+[ 'سعر', 'القهوة', 'جنيه' ]
+~~~
+
+---
+
+## ٧. الحل (solCode)
+
+~~~text app.js
+const postal = /^\d{5}$/;
+const username = /^[a-z][a-z0-9_]{2,15}$/;
+const hex = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
+console.log(["11511", "1151", "115111"].map((s) => postal.test(s)));
+console.log(["sara_99", "9sara", "ab", "a".repeat(16), "a".repeat(17)].map((s) => username.test(s)));
+console.log(["#fff", "#1F2430", "#ffff", "fff"].map((s) => hex.test(s)));
+console.log(/01[0125]\d{8}/.test("x010123456789999"));
+~~~
+
+- [[postal]]: ٥ أرقام بالظبط من الأول للآخر.
+- [[username]]: [[[a-z]]] حرف أول واحد، وبعده [[[a-z0-9_]{2,15}]] من ٢ لـ ١٥. المجموع من ٣ لـ ١٦.
+- [[hex]]: [[#]] وبعدها group فيها بديلين يفصل بينهم [[|]] (يعني «أو»): ٣ أو ٦ من [[[0-9a-f]]]. و [[i]] flag = مش حساس للكابيتال، فـ [[1F2430]] بيعدّي.
+- [[.map((s) => re.test(s))]]: بيجرّب الـ regex على كل نص ويرجّع array بالنتايج. و [["a".repeat(16)]] = ١٦ حرف a.
+
+~~~text الناتج
+[ true, false, false ]
+[ true, false, false, true, false ]
+[ true, true, false, false ]
+true
+~~~
+
+[["9sara"]] بتبدأ برقم، و [["ab"]] حرفين بس، و ١٧ حرف أكتر من اللازم. و [["#ffff"]] ٤ حروف (لا ٣ ولا ٦)، و [["fff"]] من غير [[#]].
 
 ---
 
 ## الخلاصة
 
-| عايز | استخدم |
-|---|---|
-| pattern ثابت | literal [[/.../flags]]: الغلط يبان أول ما تشغّل |
-| pattern متركّب أو من يوزر | [[new RegExp(String.raw$__bt...$__bt + RegExp.escape(x), flags)]] جوه try |
-| نفس الـ regex بـ flags تانية | [[new RegExp(re, "newflags")]]: الـ flags بتتبدّل مش بتتضاف |
-| تعرف regex فيه إيه | [[source]] و [[flags]] و [[global]] وأخواتهم، أو [[String(re)]] |
-| regex مش شغال من [[new RegExp]] | اطبع [[re.source]] الأول: غالبًا [[\]] ضاعت في النص |`,
+| النوع | أمثلة | معناه |
+|---|---|---|
+| class | [[\d]] [[\w]] [[\s]] [[.]] [[[abc]]] [[[^0-9]]] [[\p{L}]] | حرف واحد من نوع معيّن |
+| quantifier | [[?]] [[*]] [[+]] [[{8}]] [[{2,}]] [[{2,5}]] | اللي قبله يتكرر كام مرة |
+| lazy | [[*?]] [[+?]] | أقل تكرار ممكن |
+| anchor | [[^]] [[$]] [[\b]] | مكان، مش حرف |
+| flag | [[g]] [[i]] [[u]] | بيغيّر طريقة البحث |
+
+وأي regex للتحقق: [[^...$]] دايمًا.`,
           lines: [
-            R`regex literal: الـ pattern بين [[/ /]] والـ flags [[gi]] بعدها. بيتعمل له parse مع الملف، فلو فيه غلطة الملف كله مش هيشتغل.`,
-            R`نفس الـ regex من **نص** بـ [[new RegExp]]: كل [[\]] في الـ regex بقت [[\\]] في النص، لأن النص نفسه بياكل واحدة.`,
-            R`نفس الـ regex بـ [[String.raw]]: الـ tag ده بيسيب كل [[\]] زي ما هي، فالـ pattern مكتوب بنفس شكل الـ literal.`,
-            R`[[source]] بيرجّع الـ pattern كنص، والتلاتة طلعوا نفس النص بالظبط: [[(\d+)\s*EGP true true]].`,
-            R`الغلطة الشايعة: [["\d"]] و [["\s"]] في نص عادي. الـ JavaScript بيرمي الـ [[\]] لأنه escape مش معروف في النصوص.`,
-            R`[[source]] طلع [[(d+)s*EGP]]، فالـ regex بيدوّر على حرف d وحرف s، و [[test]] رجّعت [[false]] من غير ولا error.`,
-            R`[[flags]] بيرجّع [["gi"]]، وكل flag ليه خاصية boolean: [[global]] و [[ignoreCase]] بـ [[true]]، و [[multiline]] و [[dotAll]] و [[sticky]] بـ [[false]].`,
-            R`باقي الخصايص: [[unicode]] و [[unicodeSets]] و [[hasIndices]] بـ [[false]]، و [[lastIndex]] صفر لأن مفيش بحث حصل، و [[String(lit)]] بيرجّع [[/(\d+)\s*EGP/gi]] زي ما اتكتب.`,
-            R`[[new RegExp(lit, "dy")]]: regex جديد بنفس الـ source، والـ flags الجديدة **بتحل محل** القديمة ([[gi]] راحت).`,
-            R`[[copy.flags]] بـ [[dy]]، والـ source زي الأصلي، و [[copy === lit]] بـ [[false]]: ده object تاني خالص.`,
-            R`كلمة جاية من يوزر وفيها [[+]]، وهو حرف ليه معنى في الـ regex («مرة أو أكتر»).`,
-            R`[[RegExp.escape]] بتحط [[\]] قبل كل حرف خاص، و [[^...$]] حوالين الكلمة، و [[i]] للحروف الكبيرة، فـ [["C++"]] اتطابقت: [[true]].`,
-            R`pattern ناقصه [[)]] من نص: [[new RegExp]] بيرمي SyntaxError **وقت التشغيل** جوه try، فاتمسكت واتطبعت بدل ما البرنامج يقع.`,
+            R`regex لموبايل مصري: [[^]] و [[$]] بيجبروا النص **كله** يطابق مش جزء منه، وبعدها [[01]] حرفيًا، وبعدها حرف واحد من اللي بين الأقواس المربعة (0 أو 1 أو 2 أو 5)، و [[\d{8}]] تمن أرقام بالظبط. من غير [[^]] و [[$]] نص زي [["x01012345678y"]] كان هيعدّي.`,
+            R`[[test]] بترجّع [[true]] أو [[false]] بس. الأول صح (11 رقم)، والتاني [[false]] لأنه 10 أرقام فـ [[\d{8}]] مش متحققة لحد [[$]]، والتالت [[false]] لأن [[3]] بعد [[01]] مش من الحروف المسموحة.`,
+            R`[[?]] بعد حرف بتخليه اختياري (مرة أو صفر)، فـ [[colou?r]] بتقبل [[color]] و [[colour]]. و [[\b]] حدود كلمة: [[cat]] لازم تبقى كلمة لوحدها، فـ [["concat"]] بترجّع [[false]] (الـ cat في آخر كلمة أكبر) و [["a cat!"]] بترجّع [[true]].`,
+            R`[[\d+]] يعني رقم أو أكتر ورا بعض، والـ flag [[g]] بيخلي [[match]] يرجّع **كل** الـ matches كـ array من strings: [[1]] و [[22]] و [[333]]. و [[\d{2,}]] يعني رقمين أو أكتر، فـ [[1]] مبيعدّيش ويطلع [[22]] بس. من غير [[g]] كان هيرجّع أول match بس بتفاصيله.`,
+            R`[[.*]] greedy: بتاكل أكتر حاجة ممكنة وبعدين ترجع لورا لحد ما تلاقي [[</b>]]، فالـ match امتد لآخر [[</b>]] في النص وطلع [[<b>x</b><b>y</b>]] كله، مش أول tag بس. و [[\/]] لأن [[/]] لوحدها بتقفل الـ regex.`,
+            R`[[?]] بعد [[*]] بتخليها lazy: تاخد أقل حاجة ممكنة، فبتقف عند أول [[</b>]] ويطلع [[<b>x</b>]] بس. ده الحل المعتاد لما الـ greedy ياخد أكتر من اللازم.`,
+            R`slug بتاع URL: كلمة من حروف صغيرة وأرقام، وبعدها صفر أو أكتر من «شرطة وبعدها كلمة». الـ [[(?:...)]] group مبيحفظش الـ match، موجود بس عشان [[*]] تكرر الشرطة والكلمة مع بعض، فمفيش شرطتين ورا بعض ولا شرطة في الأول أو الآخر.`,
+            R`[[my-first-post]] بترجّع [[true]]. و [[My--post]] بترجّع [[false]] لسببين: [[M]] كبيرة ومش من الحروف المسموحة، والشرطتين ورا بعض لأن بعد كل شرطة لازم حرف أو رقم.`,
+            R`[[\d]] في JS بتطابق الأرقام الإنجليزي (0 لـ 9) بس، فالأرقام العربي [[١٢٣]] اتجاهلت وطلع [[45]] بس. أما [[\p{Nd}]] (أي رقم عشري في Unicode) مع الـ flag [[u]] فلقت الاتنين. لو بتفحص input من يوزر عربي، [[\d]] لوحدها هترفض أرقامه.`,
+            R`[[\p{Script=Arabic}+]] بتطابق حروف عربي ورا بعض، فطلّعت الكلمات العربي بس ([[سعر]] و [[القهوة]] و [[جنيه]]) وسابت [[45]] والمسافات. والـ [[\p{...}]] محتاجة الـ flag [[u]]: من غيره [[\p]] بتتفهم حرف [[p]] عادي، ولما جرّبتها رجّعت [[null]].`,
           ],
-          ref: [
-            { t: "MDN: RegExp.prototype.source", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/source" },
-            { t: "MDN: RegExp.prototype.global", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/global" },
-            { t: "MDN: RegExp.prototype.ignoreCase", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/ignoreCase" },
-            { t: "MDN: RegExp.prototype.multiline", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/multiline" },
-            { t: "MDN: RegExp.prototype.dotAll", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/dotAll" },
-            { t: "MDN: RegExp.prototype.unicodeSets", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/unicodeSets" },
-            { t: "MDN: RegExp.prototype.hasIndices", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/hasIndices" },
-            { t: "MDN: RegExp.prototype.toString()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/toString" },
-            { t: "MDN: regular expression literals", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar#regular_expression_literals" },
-            { t: "MDN: RegExp() constructor", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/RegExp" },
-            { t: "MDN: RegExp.prototype.flags", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/flags" },
-          ],
-          pre: [{ to: "js/groups و flags", why: R`الـ flags نفسهم و [[lastIndex]]: هنا بنقراهم كخصايص` }, { to: "js/test و match و matchAll و replace", why: R`[[RegExp.escape]] وليه النص اللي جاي من برّه خطر` }],
+          sol: R`الكود البريدي: [[/^\d{5}$/]] (أو [[/^\p{Nd}{5}$/u]] لو هتقبل أرقام عربي). الـ username: [[/^[a-z][a-z0-9_]{2,15}$/]]: حرف واحد وبعده من ٢ لـ ١٥، فالمجموع من ٣ لـ ١٦. الغلطة الشائعة [[{3,16}]] بعد الحرف الأول فيبقى المجموع لـ ١٧. الـ hex: [[/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i]]، و [[i]] عشان الحروف الكبيرة، والـ [[|]] جوه group عشان «٣ أو ٦» (من غيرها [[{3,6}]] كانت هتقبل ٤ و ٥).
+
+ومن غير anchors [[phone.test("x010123456789999")]] بـ true: لقى [["01012345678"]] في النص وخلاص. ده ليه أي regex للتحقق لازم يبقى [[^...$]].`,
+          solCode: R`const postal = /^\d{5}$/;
+const username = /^[a-z][a-z0-9_]{2,15}$/;
+const hex = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
+console.log(["11511", "1151", "115111"].map((s) => postal.test(s)));
+console.log(["sara_99", "9sara", "ab", "a".repeat(16), "a".repeat(17)].map((s) => username.test(s)));
+console.log(["#fff", "#1F2430", "#ffff", "fff"].map((s) => hex.test(s)));
+console.log(/01[0125]\d{8}/.test("x010123456789999"));`
         },
         {
-          cmd: "RegExp exec: الـ result array و indices و lastIndex",
-          title: "exec من جوه: كل خانة في الناتج، والـ flag d، والـ loop بـ lastIndex من غير ما يلف للأبد",
-          desc: R`[[re.exec(str)]] هي الـ method الأساسية في الـ RegExp: [[test]] و [[match]] و [[matchAll]] و [[replace]] كلهم مبنيين عليها. بترجّع [[null]] لو مفيش match، أو array أول خانة فيها النص اللي اتطابق وبعده كل group بالترتيب، ومعاها خصايص: [[index]] (مكان الـ match)، و [[input]] (النص كله)، و [[groups]] (الـ named groups)، و [[indices]] لو الـ regex فيه flag [[d]] (أماكن البداية والنهاية لكل group).
+          cmd: "groups و flags",
+          title: "تمسك أجزاء من الـ match إزاي؟ (groups و named groups و flags)",
+          desc: R`الأقواس [[( )]] بتعمل group: بتجمّع جزء عشان quantifier يتطبق عليه كله، وبتحفظ اللي اتطابق فيه عشان تقراه بعدين ([[m[1]]] و [[m[2]]]). و [[(?<year>...)]] named group: تقراه بالاسم [[m.groups.year]] بدل الرقم، وده أوضح بكتير. و [[(?:...)]] group بيجمّع بس من غير ما يحفظ.
 
-من غير [[g]] أو [[y]]، [[exec]] بتدوّر من أول النص كل مرة. ومعاهم، بتبدأ من [[lastIndex]] وبتحركه لبعد الـ match، فتقدر تلف بيها على كل الـ matches. والفخ: match طوله صفر (زي [[\b]] أو [[x*]]) مبيحرّكش [[lastIndex]]، فالـ loop بيلف للأبد إلا لو زقيته بنفسك. [[matchAll]] بيعمل ده لوحده ومبيلمسش الـ regex بتاعك.`,
-          example: R`// exec من غير g: أول match بكل تفاصيله، ومع d أماكن كل group
-const line = "order #A-17 total 250 EGP";
-const re = /#(?<code>[A-Z])-(?<num>\d+)/d;
-const m = re.exec(line);
-console.log(m[0], m.index, m.groups.num, m.indices[0], m.indices.groups.num);
-console.log(re.exec("no order"), re.lastIndex, re.hasIndices);
-// exec مع g في loop: lastIndex بيتحرك لوحده
-const prices = /(\d+) EGP/g;
-const text = "tea 15 EGP, rice 40 EGP, oil 95 EGP";
-let hit;
-while ((hit = prices.exec(text)) !== null) {
-  console.log(hit[1], hit.index, prices.lastIndex);
-}
-console.log(prices.lastIndex);
-// matchAll: نفس النتيجة، ومن غير ما يلمس الـ regex بتاعك
-console.log([...text.matchAll(prices)].map((x) => x[1]), prices.lastIndex);
-// match بطول صفر: لازم تزق lastIndex بنفسك
-const edges = /\b/g;
-const spots = [];
-while ((hit = edges.exec("ab cd")) !== null) {
-  spots.push(hit.index);
-  if (hit[0] === "") edges.lastIndex++;
-}
-console.log(spots);`,
-          try: R`اكتب [[mark(str, re)]] بتحط [[[ ]]] حوالين كل match في النص باستخدام [[indices]] (flag [[d]])، من غير [[replace]]. جرّبها على [["tea 15 EGP, rice 40 egp"]] بـ [[/\d+ egp/i]]، وعلى نص مفيهوش أرقام.`,
-          sol: R`~~~js mark.mjs
-function mark(str, re) {
-  const hits = [...str.matchAll(new RegExp(re.source, "dg" + re.flags.replace(/[dg]/g, "")))];
-  let out = str;
-  for (const h of hits.reverse()) {
-    const [s, e] = h.indices[0];
-    out = out.slice(0, s) + "[" + out.slice(s, e) + "]" + out.slice(e);
-  }
-  return out;
-}
-console.log(mark("tea 15 EGP, rice 40 egp", /\d+ egp/i), mark("no prices", /\d+/));
-~~~
+والـ flags بعد [[/]] الأخيرة: [[g]] (global: كل الـ matches مش أول واحد)، و [[i]] (مش حساس للحروف الكبيرة)، و [[m]] (multiline: [[^]] و [[$]] لكل سطر)، و [[s]] (dotAll: [[.]] تطابق السطر الجديد كمان)، و [[u]] (unicode: emoji صح و [[\p{...}]])، و [[y]] (sticky: لازم يطابق من [[lastIndex]] بالظبط)، و [[v]] (الأحدث، بديل u بـ set operations جوه [[[...]]]، مدعوم في كل المتصفحات الحديثة و Node 20+).
 
-~~~text الناتج (Node 24.22)
-tea [15 EGP], rice [40 egp] no prices
-~~~
-
-- نسخة من الـ regex فيها [[d]] و [[g]] أكيد (من غير ما نكررهم لو موجودين)، وباقي الـ flags زي ما هي ([[i]] هنا).
-- [[h.indices[0]]] بيدّي [[[start, end]]] بتاع الـ match كله.
-- بنلف **من الآخر للأول** ([[reverse]]): لو بدأنا من الأول، أول [[[]] هيزق كل الأماكن اللي بعده حرف لقدّام والـ indices تبقى غلط.`,
+و [[(?=...)]] lookahead: «بعده كذا» من غير ما ياخده، و [[(?<=...)]] lookbehind: «قبله كذا».`,
+          example: R`const re = /(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/;
+const m = "الطلب اتعمل 2026-09-29 الصبح".match(re);
+console.log(m[0], m[1], m.groups.month, m.index);
+console.log(/^b/m.test("a\nb"), /^b/.test("a\nb"), /a.b/.test("a\nb"), /a.b/s.test("a\nb"));
+console.log(/hello/i.test("HeLLo"), /(\w)\1/.test("hello"), /(?:ab)+/.exec("ababx")[0]);
+const g = /o/g;
+console.log(g.test("foo"), g.lastIndex, g.test("foo"), g.test("foo"));
+const sticky = /\d+/y;
+sticky.lastIndex = 4;
+console.log(sticky.exec("abc 42")?.[0], /\d+/y.exec("abc 42"));
+console.log("😀".length, /^.$/.test("😀"), /^.$/u.test("😀"));
+console.log(/[\p{L}--\p{Ll}]/v.test("A"), /[\p{L}--\p{Ll}]/v.test("a"), /[\p{L}--\p{Ll}]/v.test("ع"));
+console.log("price: 100 EGP".match(/\d+(?= EGP)/)[0], "$50 €30".match(/(?<=€)\d+/)[0]);`,
+          try: R`اكتب regex بـ named groups يفك [["Sara Ahmed <sara@example.com>"]] لـ [[name]] و [[email]]. وبعدين اعمل bug الـ [[g]] بإيدك: [[const re = /\d/g]] وفلتر [[["1", "2", "3"].filter((s) => re.test(s))]]. الناتج المتوقع كل الـ ٣، طلع كام؟ وليه؟ اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[parseContact(str)]] بترجّع [[{ name, email }]] من الـ named groups، أو null لو النص مش بالشكل ده.`,
+          ref: [
+            { t: "MDN: Groups and backreferences", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions/Groups_and_backreferences" },
+            { t: "MDN: Assertions (lookahead وحدود الكلمة)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions/Assertions" },
+            { t: "MDN: RegExp.prototype.flags", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/flags" },
+            { t: "MDN: RegExp: lastIndex", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/lastIndex" },
+          ],
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const re = /a/g]] وبعدها [[while ((m = re.exec("banana")) !== null) console.log(m.index, re.lastIndex)]]، وبعد الـ loop [[console.log(re.lastIndex)]]. اكتب الأرقام قبل ما تشغّل.`, done: R`كتبت ٣ سطور ([[1 2]] و [[3 4]] و [[5 6]]) وإن [[lastIndex]] بعد الـ loop صفر، وطلع كده.`, sol: R`~~~js p1.mjs
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [["2026-09-29".match(/(\d+)-(\d+)-(\d+)/).slice(1)]] هيطبع إيه؟ وبعدين اكتبها بـ named groups وفكّها بـ [[const { year, month, day } = m.groups]] واطبع [[typeof month]].`, done: R`الأولى [[[ '2026', '09', '29' ]]]: من غير الـ [[m[0]]] اللي هو الـ match كله. والـ named groups بتدّي نفس القيم بأساميها، و [[typeof month]] بيطلع [["string"]]: الـ regex دايمًا بيرجّع نصوص، فحوّل بـ Number قبل أي حساب.`, sol: R`**التوقع:** [[[ '2026', '09', '29' ]]].
+
+~~~js groups.js
+console.log("2026-09-29".match(/(\d+)-(\d+)-(\d+)/).slice(1));
+
+const m = "2026-09-29".match(/(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/);
+const { year, month, day } = m.groups;
+console.log(year, month, day, typeof month);
+console.log(Number(month) + 1, month + 1);
+~~~
+
+~~~text الناتج (node groups.js، Node 24)
+[ '2026', '09', '29' ]
+2026 09 29 string
+10 091
+~~~
+
+- [[match]] من غير [[g]] بيرجّع array: [[m[0]]] الـ match كله ([["2026-09-29"]])، و [[m[1]]] و [[m[2]]] و [[m[3]]] اللي جوه كل قوس. [[.slice(1)]] بيشيل العنصر الأول.
+- [[(?<year>\d{4})]]: named group. نفس القوس، بس ليه اسم، وبيتحط في [[m.groups.year]].
+- [[const { year, month, day } = m.groups]]: object destructuring، ٣ متغيرات من ٣ خصايص.
+- [[typeof month]] بـ [["string"]]: الـ regex بيقطع من نص، فبيرجّع نصوص. آخر سطر بيوري الفرق: [[Number(month) + 1]] = 10، و [[month + 1]] = [["091"]] (لزق نصوص).
+
+**الغلطة الشائعة:** تحسب على القيم اللي راجعة من الـ regex على طول ([[month + 1]] أو [[year > 2025]] اللي بتشتغل بالصدفة لأن [[>]] بيحوّل). حوّل بـ [[Number]] أول ما تطلّعها.`  },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const re = /a/g;]] وبعدها [[re.test("a")]] مرتين ورا بعض في فحص فورم. اطبع الناتجين و [[re.lastIndex]].`, done: R`طلع true وبعدين false و lastIndex بـ 0 (المرة التانية بدأت من 1 وملقتش). الـ flag [[g]] بيخلي الـ regex يفتكر مكانه، فشيله من أي regex بتعمل بيه [[test]] بس، والفحص بيرجع true كل مرة.`, sol: R`~~~js lastindex.js
 const re = /a/g;
-let m;
-while ((m = re.exec("banana")) !== null) console.log(m.index, re.lastIndex);
-console.log("after:", re.lastIndex);
+console.log(re.test("a"), re.lastIndex);
+console.log(re.test("a"), re.lastIndex);
+console.log(re.test("a"), re.lastIndex);
+
+const fixed = /a/;
+console.log(fixed.test("a"), fixed.test("a"), fixed.test("a"));
 ~~~
 
-~~~text الناتج (Node 24.22)
-1 2
-3 4
-5 6
-after: 0
+~~~text الناتج (node lastindex.js، Node 24)
+true 1
+false 0
+true 1
+true true true
 ~~~
 
-[[banana]]: الـ a في 1 و 3 و 5. كل match طوله 1، فـ [[lastIndex]] = [[index + 1]]. والنداء الرابع بدأ من 6 (آخر النص) ملقاش، فرجّع [[null]] و**رجّع [[lastIndex]] لصفر**. ده اللي بيخلّي نفس الـ regex ينفع تلف بيه تاني على نص جديد، وده نفسه اللي بيعمل فخ [[test]] مع [[g]].` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[countRuns(text)]] المفروض ترجّع طول كل سلسلة x ورا بعض، فـ [["xxaxbxxx"]] تبقى [[[2, 1, 3]]]. الكود: [[const runs = /x*/g; while ((hit = runs.exec(text)) !== null) out.push(hit[0].length);]]. شغّله (حط حد للفات عشان ميعلّقش الجهاز) وصلّحه بطريقتين.`, done: R`شفت إن الـ loop بيلف للأبد عند [[a]]، وصلّحته مرة بزق [[lastIndex]] لما الـ match فاضي، ومرة بـ [[matchAll(/x+/g)]]، والاتنين طلّعوا [[[ 2, 1, 3 ]]].`, sol: R`~~~js p2.mjs
-function countRuns(text) {
-  const runs = /x*/g;
-  const out = [];
-  let hit;
-  while ((hit = runs.exec(text)) !== null) {
-    if (hit[0] === "") { runs.lastIndex++; continue; }
-    out.push(hit[0].length);
+**اللي بيحصل:**
+
+1. أول [[test]]: لقى [["a"]] عند index 0، والـ flag [[g]] بيخلي الـ regex يحفظ «أكمّل منين المرة الجاية» في [[lastIndex]]: **1**.
+2. تاني [[test]] على نفس النص: بيبدأ من index 1، والنص طوله 1، فمفيش: **false**، و [[lastIndex]] بيرجع **0**.
+3. التالت: بدأ من 0 تاني فـ **true**. يعني الفحص بيطلع صح ثم غلط ثم صح، بالتبادل.
+
+في فورم، ده معناه إن اليوزر يكتب نفس القيمة مرتين ويتقاله مرة «سليم» ومرة «غلط».
+
+**التصليح:** شيل [[g]]: [[/a/]] مبيستخدمش [[lastIndex]] مع [[test]]، فآخر سطر: true التلات مرات. الـ [[g]] مكانه مع [[matchAll]] و [[replace]] و [[match]] لما عايز كل النتايج.
+
+**الغلطة الشائعة:** تعمل regex بـ [[g]] كـ constant برّه الدالة وتستخدمه في [[test]] جوه loop أو handler: الباج بيظهر بس في المرة التانية، فصعب تمسكه.`  },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** اكتب [[parseEnv(text)]] بتحوّل محتوى ملف [[.env]] لـ object: كل سطر [[KEY=value]] (ومسموح مسافات حوالين [[=]])، والسطور اللي بتبدأ بـ [[#]] أو الفاضية تتجاهل. استخدم named groups [[key]] و [[val]] على كل سطر.`, done: R`[[parseEnv("PORT=3000\n# x\nDEBUG = true")]] بترجّع [[{ PORT: "3000", DEBUG: "true" }]]. سطر زي [[=oops]] مبيتضافش، وقيمة فيها [[=]] زي [[URL=a=b]] بتفضل [["a=b"]] كاملة، والملف اللي سطوره [[\r\n]] (من Windows) بيدّي نفس النتيجة: لو قسّمت بـ [["\n"]] بس، [[.]] مبيطابقش [[\r]] فكل سطر بيضيع، والحل [[split(/\r?\n/)]].`, sol: R`~~~js parse-env.js
+const LINE = /^\s*(?<key>[A-Za-z_][A-Za-z0-9_]*)\s*=\s*(?<val>.*?)\s*$/;
+
+function parseEnv(text) {
+  const out = {};
+  for (const line of text.split(/\r?\n/)) {
+    if (line.trim() === "" || line.trimStart().startsWith("#")) continue;
+    const m = line.match(LINE);
+    if (m) out[m.groups.key] = m.groups.val;
   }
   return out;
 }
-console.log(countRuns("xxaxbxxx"), [..."xxaxbxxx".matchAll(/x+/g)].map((h) => h[0].length));
-~~~
 
-~~~text الناتج (Node 24.22)
-[ 2, 1, 3 ] [ 2, 1, 3 ]
-~~~
+console.log(parseEnv("PORT=3000\n# x\nDEBUG = true"));
+console.log(parseEnv("=oops\nURL=a=b\n\nNAME= Sara Ali "));
+console.log(parseEnv("PORT=3000\r\nDEBUG=true\r\n"));
 
-- [[x*]] بتطابق **صفر** x كمان. عند [[a]] (مكان 2) الـ match فاضي [[""]] و [[lastIndex]] فضل 2، فالنداء الجاي بيلاقي نفس الـ match الفاضي في نفس المكان... للأبد.
-- التصليح الأول: لو [[hit[0] === ""]] زق [[lastIndex]] واحد وكمّل من غير ما تسجّل حاجة. (مع [[u]] أو [[v]] زق بحجم الحرف كله لو emoji، وده اللي [[matchAll]] بيعمله لوحده.)
-- التصليح التاني أحسن: [[x+]] مبيطابقش فاضي أصلًا، و [[matchAll]] بيتعامل مع أي match فاضي لوحده.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[allMatches(re, str)]] بترجّع array فيها [[{ text, index, groups }]] لكل match باستخدام [[exec]]، وتشتغل حتى لو الـ regex مفيهوش [[g]]، ومتغيّرش [[lastIndex]] بتاع الـ regex اللي اتبعت، ومتعلّقش مع [[/\b/]].`, done: R`[[allMatches(/(?<n>\d+) EGP/, "tea 15 EGP, rice 40 EGP")]] بترجّع اتنين بالـ groups بتاعتهم، والـ regex الأصلي [[lastIndex]] بتاعه 0 و [[global]] لسه [[false]]، و [[allMatches(/\b/, "ab cd")]] بترجّع الأماكن [[0, 2, 3, 5]].`, sol: R`~~~js p3.mjs
-function allMatches(re, str) {
-  const copy = new RegExp(re.source, re.flags.includes("g") ? re.flags : re.flags + "g");
-  const out = [];
-  let hit;
-  while ((hit = copy.exec(str)) !== null) {
-    out.push({ text: hit[0], index: hit.index, groups: hit.groups });
-    if (hit[0] === "") copy.lastIndex++;
-  }
-  return out;
+// الغلطة: split("\n") بس على ملف Windows
+const broken = {};
+for (const line of "PORT=3000\r\nDEBUG=true\r\n".split("\n")) {
+  const m = line.match(/^(?<key>\w+)=(?<val>.*)$/);
+  if (m) broken[m.groups.key] = m.groups.val;
 }
-const price = /(?<n>\d+) EGP/;
-console.log(allMatches(price, "tea 15 EGP, rice 40 EGP"), price.lastIndex, price.global);
-console.log(allMatches(/\b/, "ab cd").map((h) => h.index));
+console.log("split(\"\\n\") بس:", broken);
 ~~~
 
-~~~text الناتج (Node 24.22)
-[
-  {
-    text: '15 EGP',
-    index: 4,
-    groups: [Object: null prototype] { n: '15' }
-  },
-  {
-    text: '40 EGP',
-    index: 17,
-    groups: [Object: null prototype] { n: '40' }
-  }
-] 0 false
-[ 0, 2, 3, 5 ]
+~~~text الناتج (node parse-env.js، Node 24)
+{ PORT: '3000', DEBUG: 'true' }
+{ URL: 'a=b', NAME: 'Sara Ali' }
+{ PORT: '3000', DEBUG: 'true' }
+split("\n") بس: {}
 ~~~
 
-- النسخة ([[copy]]): من غير [[g]]، [[exec]] كانت هترجّع أول match كل مرة والـ loop مش هيخلص. ونسخة جديدة معناها إن [[lastIndex]] بتاع الأصلي مبيتلمسش.
-- [[groups]] بيبقى [[undefined]] لو الـ regex مفيهوش named groups.
-- ده تقريبًا اللي [[matchAll]] بيعمله من جوه.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** نص فيه ١٠٠ ألف رقم ([["x 12 ".repeat(100000)]]). عدّ الأرقام بـ ٤ طرق: [[exec]] في loop، و [[matchAll]]، و [[match]] بـ [[g]]، و [[replace]] بدالة بتعدّ. قيس كل واحدة بـ [[performance.now()]] وشغّل مرتين.`, done: R`الأربعة طلّعوا 100000، والأرقام عندك في نفس الحدود (كام ms)، و [[replace]] الأبطأ لأنه بيبني نص جديد، وعرفت تختار على حسب المطلوب مش على السرعة.`, sol: R`~~~js p5.mjs
-const text = "x 12 ".repeat(100000);
-const t = (label, f) => { const s = performance.now(); const n = f(); console.log(label, n, (performance.now() - s).toFixed(1) + "ms"); };
-t("exec loop", () => { const r = /\d+/g; let n = 0; while (r.exec(text)) n++; return n; });
-t("matchAll ", () => { let n = 0; for (const _ of text.matchAll(/\d+/g)) n++; return n; });
-t("match g  ", () => text.match(/\d+/g).length);
-t("replace  ", () => { let n = 0; text.replace(/\d+/g, () => { n++; return ""; }); return n; });
+**الـ regex حتة حتة:**
+
+- [[^\s*]]: مسافات اختيارية في أول السطر.
+- [[(?<key>[A-Za-z_][A-Za-z0-9_]*)]]: اسم المتغير: حرف أو [[_]] وبعده حروف وأرقام. ده اللي بيرفض [[=oops]] (مفيش اسم قبل [[=]]).
+- [[\s*=\s*]]: الـ [[=]] ومسافات اختيارية حواليها، عشان [[DEBUG = true]].
+- [[(?<val>.*?)]]: القيمة، lazy عشان متاكلش المسافات اللي في الآخر.
+- [[\s*$]]: مسافات في الآخر وبعدين آخر السطر.
+
+و [[URL=a=b]]؟ الـ key مبيقبلش [[=]]، فأول [[=]] بس هي اللي بتتطابق مع [[\s*=\s*]]، والباقي [["a=b"]] كله بيدخل في [[val]].
+
+- **[[split(/\r?\n/)]]:** ملف من Windows سطوره بتخلص بـ [[\r\n]]. [[\r?]] بتشيل الـ [[\r]] لو موجودة، فالسطر التالت في الناتج نفس الأول.
+- **السطور الفاضية والتعليقات:** بتتجاهل قبل الـ regex بـ [[trim()]] و [[startsWith("#")]].
+
+**الغلطة اللي في آخر الناتج:** [[split("\n")]] بس على ملف Windows: كل سطر بيفضل آخره [[\r]]، و [[.]] مبتطابقش [[\r]]، فـ [[.*$]] مبيوصلش لآخر السطر، والنتيجة object فاضي من غير أي error.`  },
+            { lvl: 'تطبيق', t: R`**refactor:** [[const m = s.match(/(\d+)-(\d+)-(\d+)/); const out = m[3] + "/" + m[2] + "/" + m[1];]]. خليها named groups ومتغيرات بأسامي، من غير ما الناتج يتغيّر.`, done: R`الاتنين بيطبعوا [[29/09/2026]] لـ [["2026-09-29"]]، والجديدة مفيهاش ولا رقم [[m[1]]] و [[m[3]]]، فلو زوّدت group في النص الكود مش هيبوظ.`, sol: R`~~~js refactor-date.js
+const s = "2026-09-29";
+
+// قبل
+const m1 = s.match(/(\d+)-(\d+)-(\d+)/);
+const out1 = m1[3] + "/" + m1[2] + "/" + m1[1];
+
+// بعد
+const { year, month, day } = s.match(/(?<year>\d+)-(?<month>\d+)-(?<day>\d+)/).groups;
+const out2 = $__bt$__{day}/$__{month}/$__{year}$__bt;
+
+console.log(out1, out2, out1 === out2);
+
+// ولو زوّدنا group للوقت في الأول: القديمة باظت والجديدة لأ
+const t = "10:30 2026-09-29";
+const m3 = t.match(/(\d+):(\d+) (\d+)-(\d+)-(\d+)/);
+console.log("القديمة بنفس الأرقام:", m3[3] + "/" + m3[2] + "/" + m3[1]);
+const g = t.match(/(\d+):(\d+) (?<year>\d+)-(?<month>\d+)-(?<day>\d+)/).groups;
+console.log("الجديدة:", $__bt$__{g.day}/$__{g.month}/$__{g.year}$__bt);
 ~~~
 
-~~~text الناتج (Node 24.22، تشغيلين ورا بعض)
-exec loop 100000 6.8ms
-matchAll  100000 6.4ms
-match g   100000 6.8ms
-replace   100000 12.8ms
-exec loop 100000 6.9ms
-matchAll  100000 5.7ms
-match g   100000 7.3ms
-replace   100000 9.9ms
+~~~text الناتج (node refactor-date.js، Node 24)
+29/09/2026 29/09/2026 true
+القديمة بنفس الأرقام: 2026/30/10
+الجديدة: 29/09/2026
 ~~~
 
-- الـ ٣ الأوائل تقريبًا زي بعض (الفرق أقل من الفرق بين تشغيلين)، فاختار على حسب **اللي محتاجه**: [[match]] بـ [[g]] لو النصوص بس، و [[matchAll]] لو محتاج groups و [[index]]، و [[exec]] لو محتاج تتحكم في [[lastIndex]] (تقف، أو ترجع، أو [[y]]).
-- [[replace]] الأبطأ لأنه بيبني نص جديد بطول النص كله. متستخدمهوش للعد.` },
+- **قبل:** [[m[3]]] و [[m[2]]] و [[m[1]]] أرقام لازم تعدّ الأقواس عشان تفهمها.
+- **بعد:** [[(?<year>...)]] وأخواتها، و [[.groups]] بيتفك لـ ٣ متغيرات بأساميها، والناتج بـ template literal: [[29/09/2026]] زي الأول بالظبط (السطر الأول: [[true]]).
+- **ليه ده أحسن:** آخر جزء في الكود زوّد group للوقت في أول الـ pattern. النسخة القديمة بنفس الأرقام طلعت [[2026/30/10]] (الأرقام اتزحلقت)، والجديدة فضلت [[29/09/2026]] لأن الأسامي مبتتزحلقش.
+
+**الغلطة الشائعة:** تعمل الـ refactor وتغيّر الناتج من غير ما تاخد بالك. عشان كده طبعنا القديم والجديد جنب بعض وقارنّاهم بـ [[===]] قبل ما نشيل القديم.`  },
+            { lvl: 'تحدي', t: R`**مسألة:** اكتب [[addCommas(str)]] بتحط فاصلة كل ٣ أرقام من اليمين بـ replace واحد و lookahead (من غير loops)، واستخدمها على [["Total: 1234567 EGP"]].`, done: R`[["1234567"]] ← [["1,234,567"]]، و [["999"]] ← [["999"]]، و [["1000"]] ← [["1,000"]]، و [["Total: 1234567 EGP"]] ← [["Total: 1,234,567 EGP"]]. وقارن بـ [[(1234567).toLocaleString("en-US")]] اللي بيدّي نفس الناتج: في الشغل الحقيقي استخدم Intl للأرقام، والـ regex للنصوص اللي فيها أرقام.`, sol: R`~~~js add-commas.js
+function addCommas(str) {
+  return str.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+for (const s of ["1234567", "999", "1000", "Total: 1234567 EGP", "12.5 و 1500000"]) {
+  console.log(JSON.stringify(s).padEnd(22), "→", addCommas(s));
+}
+console.log((1234567).toLocaleString("en-US"));
+~~~
+
+~~~text الناتج (node add-commas.js، Node 24)
+"1234567"              → 1,234,567
+"999"                  → 999
+"1000"                 → 1,000
+"Total: 1234567 EGP"   → Total: 1,234,567 EGP
+"12.5 و 1500000"       → 12.5 و 1,500,000
+1,234,567
+~~~
+
+**الـ regex [[/\B(?=(\d{3})+(?!\d))/g]] بيدوّر على أماكن مش حروف:**
+
+- [[\B]]: مكان **مش** حد كلمة، يعني بين رقمين. ده بيمنع فاصلة في أول الرقم ([[,123]]).
+- [[(?=...)]]: lookahead: «اللي بعد المكان ده لازم يبقى كذا»، من غير ما ياكله. فالـ replace بيحط [[","]] في المكان ومش بيمسح حاجة.
+- [[(\d{3})+]]: مجموعات من ٣ أرقام، مرة أو أكتر.
+- [[(?!\d)]]: وبعدها مفيش رقم: يعني المجموعات دي لحد آخر الرقم بالظبط.
+
+فالمكان بين [[1]] و [[234567]] بيتطابق (بعده ٦ أرقام = مجموعتين)، والمكان بين [[12]] و [[34567]] لأ (٥ أرقام). و [[g]] بيلاقي كل الأماكن.
+
+**الحالة اللي ممكن تغلط فيها:** [["12.5"]] فضلت زي ما هي، بس رقم عشري طويل زي [["1234.5678"]] الـ regex هيحط فاصلة في الكسر كمان ([[1,234.5,678]]). عشان كده للأرقام نفسها [[toLocaleString("en-US")]] (آخر سطر) هو الصح، والـ regex للنصوص اللي جواها أرقام صحيحة.`  }
           ],
           flag: "script",
           deep: {
-            why: R`أي حاجة بتلف على matches مبنية على [[exec]]: [[matchAll]] و [[replace]] و [[split]]، والـ tokenizers والـ syntax highlighters والـ linters. ولما تفهم [[lastIndex]] و [[indices]] تقدر تعمل حاجات [[match]] مبيعرفش يعملها: تقف في النص وتكمّل بعدين، وتعرف مكان كل group عشان ترسم تحته أو تلوّنه، وتقطّع نص حتة ورا حتة.`,
-            how: R`[[exec]] بتقرا [[lastIndex]] لو فيه [[g]] أو [[y]] (غير كده بتبدأ من 0 وبتتجاهله)، وبتجرّب تطابق من هناك. لو لقت: بتحط [[lastIndex]] = نهاية الـ match (مع [[g]] أو [[y]] بس)، وترجّع الـ array. لو ملقتش: [[lastIndex]] = 0 وترجّع [[null]].
+            why: "التحقق بـ test بيقولك «الشكل صح» بس. أغلب الشغل الحقيقي «هات لي الجزء ده»: السنة من تاريخ، والـ status من سطر log، والإيميل من نص. والـ groups هي اللي بتعمل كده، والـ named groups بتخلي الكود يتقري بعد ٦ شهور.",
+            how: R`[[match]] من غير g بيرجّع array: [[m[0]]] الـ match كله، و [[m[1]]] أول group، و [[m.groups]] الـ named، و [[m.index]] مكانه في النص. ولو مفيش match بيرجّع [[null]] (مش array فاضية)، فلازم تفحص قبل ما تقرا.
 
-الـ array: [[[0]]] الـ match كله، و [[[1]]] و [[[2]]]… الـ groups بترتيب الأقواس المفتوحة، والـ group اللي مشاركش قيمته [[undefined]]. و [[index]] و [[input]] و [[groups]] (object من غير prototype، أو [[undefined]] لو مفيش named groups).
+[[\1]] back-reference: «نفس اللي اتطابق في group 1»، فـ [[(\w)\1]] حرف متكرر ورا بعض (ll في hello).
 
-مع [[d]] بيتضاف [[indices]]: array بنفس الشكل، كل خانة [[[start, end]]] (البداية داخلة والنهاية لأ، زي [[slice]])، و [[indices.groups]] بالأسامي. الـ group اللي مشاركش مكانه [[undefined]]. و [[d]] بتبطّأ الـ regex شوية لأن الـ engine بيبني arrays زيادة، فحطها لما تحتاجها بس.
+فخ الـ g: الـ regex اللي فيه [[g]] أو [[y]] عنده [[lastIndex]] بيتحفظ بين النداءات. [[test]] الأولى لقت o عند 1 وخلّت [[lastIndex = 2]]، والتانية بدأت من 2 ولقت o تانية، والتالتة بدأت من 3 وملقتش فرجعت false ورجّعت lastIndex لـ 0. فلو regex بـ g متخزّن في متغير واستخدمته في test جوه loop أو filter، النتيجة بتتبادل true و false. متحطش g مع test.
 
-[[matchAll]] بيعمل **نسخة** من الـ regex (بنفس [[lastIndex]] الحالي!) ويلف عليها، فالأصلي مبيتغيّرش. وبيزق [[lastIndex]] لوحده لو الـ match فاضي. ومن غير [[g]] بيرمي [[TypeError: String.prototype.matchAll called with a non-global RegExp argument]].`,
-            when: R`[[exec]] مع [[y]] في الـ tokenizers (تقرا حتة، تقرر، تكمّل)، ولما تحتاج تقف في نص الطريق. و [[matchAll]] في أي loop عادي على كل الـ matches (أوضح وأأمن). و [[d]] لما تحتاج **مكان** كل group: تظليل، أو علامة تحت حرف غلط، أو استبدال group واحد من غير ما تلمس الباقي.`,
-            mistakes: R`regex بـ [[g]] متشارك بين أكتر من مكان، فـ [[lastIndex]] من نداء بيأثر على التاني. و loop بـ [[exec]] على pattern ممكن يطابق فاضي ([[*]] أو [[?]] أو [[\b]] أو [[^]] مع [[m]]) من غير زق. و [[exec]] من غير [[g]] في [[while]] (نفس الـ match للأبد). وتفتكر [[matchAll]] بيبدأ من 0 دايمًا: بيبدأ من [[lastIndex]] الحالي للـ regex. وتقرا [[m.indices]] من غير [[d]] ([[undefined]]).`
+[[y]] (sticky) بيطابق من lastIndex بالظبط وبس، مفيدة للـ tokenizers. و [[u]] بيخلي الـ emoji (اللي هو ٢ UTF-16 code units، عشان كده [[length]] بـ 2) حرف واحد. و [[v]] بيضيف طرح وتقاطع جوه الـ class: [[[\p{L}--\p{Ll}]]] «أي حرف ما عدا الحروف الصغيرة» (فـ A و ع يعدّوا و a لأ). v و u مينفعش مع بعض.
+
+الـ lookaround مش بياكل حروف: [[\d+(?= EGP)]] رجّع [[100]] من غير [[" EGP"]].`,
+            when: R`named groups في أي regex فيه أكتر من group. و [[i]] في التحقق من حاجات مش حساسة (hex، أوامر). و [[m]] مع النصوص متعددة السطور (logs). و [[u]] أو [[v]] دايمًا لو فيه عربي أو emoji.`,
+            mistakes: R`[[g]] مع [[test]] أو [[exec]] على regex متشارك. و [[m[1]]] على null لما مفيش match. وتنسى [[u]] مع [[\p{...}]]: مفيش error، بس من غير u الـ [[\p{L}]] بتتقري حرفيًا «p{L}»، فـ [[/\p{L}+/.test("سعر")]] بترجّع false في صمت. وتعد الـ groups غلط بعد ما تضيف قوس في النص فالأرقام تتزحلق (named groups بتحل ده). وفي الانترفيو: «ليه test بترجع نتيجة مختلفة كل مرة؟» الإجابة: lastIndex مع g.`
           },
-          teach: R`## الفكرة في سطر
+          teach: R`## المثال بيعمل إيه
 
-[[exec]] بتجاوب على سؤال واحد: «فيه match من المكان ده؟ لو أيوه، هو إيه بالظبط وفين؟». وكل الـ methods التانية بتنادي [[exec]] (أو حاجة زيها) من جوه. المثال ٤ حالات، وكل الناتج اتشغّل فعلًا على Node 24.22.
+الدرس اللي فات كان «النص ماشي على الشكل ولا لأ». هنا بنمسك **أجزاء** من النص بالأقواس (groups)، ونغيّر طريقة البحث بالـ flags. المثال ١٣ سطر، كل سطر فكرة. الناتج كله من Node 24 على Windows.
 
 ---
 
-## ١. من غير [[g]]: أول match بكل تفاصيله
+## ١. named groups: [[(?<name>...)]]
 
-~~~js app.mjs
-const line = "order #A-17 total 250 EGP";
-const re = /#(?<code>[A-Z])-(?<num>\d+)/d;
-const m = re.exec(line);
+~~~text app.js
+const re = /(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/;
+const m = "الطلب اتعمل 2026-09-29 الصبح".match(re);
+console.log(m[0], m[1], m.groups.month, m.index);
 ~~~
 
-الـ regex: [[#]]، وحرف كابيتال اسمه [[code]]، وشرطة، ورقم اسمه [[num]]. والـ flag [[d]] (اسم خاصيته [[hasIndices]]) بيطلب أماكن كل group. لو طبعنا [[m]] كله:
+الـ pattern: ٤ أرقام، شرطة، رقمين، شرطة، رقمين. وكل جزء جوه أقواس شكلها [[(?<اسم>...)]]:
 
-~~~text الناتج: console.log(m)
+- الأقواس [[( )]] لوحدها = **capturing group**: بتحفظ اللي اتطابق جواها.
+- [[?<year>]] في أولها بتدّي الـ group اسم. فتقدر تقراه بالاسم أو بالرقم.
+
+و [[str.match(re)]] من غير [[g]] بيرجّع array فيها تفاصيل أول match. جرّبنا نطبعها كلها على نص أقصر ([["x 2026-09-29"]]):
+
+~~~text الناتج
 [
-  '#A-17',
-  'A',
-  '17',
-  index: 6,
-  input: 'order #A-17 total 250 EGP',
-  groups: [Object: null prototype] { code: 'A', num: '17' },
-  indices: [
-    [ 6, 11 ],
-    [ 7, 8 ],
-    [ 9, 11 ],
-    groups: [Object: null prototype] { code: [Array], num: [Array] }
-  ]
+  '2026-09-29',
+  '2026',
+  '09',
+  '29',
+  index: 2,
+  input: 'x 2026-09-29',
+  groups: [Object: null prototype] { year: '2026', month: '09', day: '29' }
 ]
 ~~~
 
-| الخانة | فيها إيه هنا | معناها |
-|---|---|---|
-| [[m[0]]] | [['#A-17']] | الـ match كله |
-| [[m[1]]] و [[m[2]]] | [['A']] و [['17']] | الـ groups بترتيب أقواسها، نصوص دايمًا |
-| [[index]] | [[6]] | أول حرف في الـ match فين في النص (من 0) |
-| [[input]] | النص كله | النص اللي اتدوّر فيه، زي ما هو |
-| [[groups]] | [[{ code, num }]] | الـ named groups بأساميها، و [[undefined]] لو مفيش أسامي |
-| [[indices[0]]] | [[[6, 11]]] | بداية ونهاية الـ match، والنهاية مش داخلة زي [[slice]] |
-| [[indices[2]]] | [[[9, 11]]] | مكان group رقم 2 ([[17]]) |
-| [[indices.groups.num]] | [[[9, 11]]] | نفس المكان بالاسم |
+| الحتة | فيها إيه |
+|---|---|
+| [[m[0]]] | الـ match كله |
+| [[m[1]]] و [[m[2]]] و [[m[3]]] | الـ groups بالترتيب (من أول قوس مفتوح) |
+| [[m.groups]] | الـ named groups كـ object |
+| [[m.index]] | مكان أول حرف في الـ match جوه النص (من 0) |
+| [[m.input]] | النص الأصلي |
 
-~~~js app.mjs
-console.log(m[0], m.index, m.groups.num, m.indices[0], m.indices.groups.num);
-console.log(re.exec("no order"), re.lastIndex, re.hasIndices);
-~~~
+([[null prototype]] معناها object فاضي من غير methods موروثة، عادي تقرا منه بالاسم.)
+
+ونرجع للمثال:
 
 ~~~text الناتج
-#A-17 6 17 [ 6, 11 ] [ 9, 11 ]
-null 0 true
+2026-09-29 2026 09 12
 ~~~
 
-لو مفيش match الناتج [[null]] (مش array فاضية)، فـ [[m[1]]] بعدها هترمي. و [[lastIndex]] فضل 0: من غير [[g]] أو [[y]] الـ [[exec]] مبتلمسوش. و [[hasIndices]] الخاصية اللي بتقول إن [[d]] موجود.
+[[m.index]] = 12 لأن قبل التاريخ [["الطلب اتعمل "]]: ٥ حروف + مسافة + ٥ + مسافة = 12.
 
-> فايدة [[indices]]: [[line.slice(...m.indices.groups.num)]] بترجّع [['17']]. يعني تقدر تلوّن الـ group ده بالظبط في النص الأصلي، أو تحط علامة تحته، أو تبدّله لوحده.
+> لو مفيش match، [[match]] بترجّع [[null]] مش array فاضية: [["hello".match(/z/)]] طلع [[null]]. فـ [[m[1]]] هنا هترمي TypeError، لازم تفحص [[if (m)]] الأول.
 
 ---
 
-## ٢. مع [[g]]: loop بـ [[lastIndex]]
+## ٢. flags [[m]] و [[s]]
 
-~~~js app.mjs
-const prices = /(\d+) EGP/g;
-const text = "tea 15 EGP, rice 40 EGP, oil 95 EGP";
-let hit;
-while ((hit = prices.exec(text)) !== null) {
-  console.log(hit[1], hit.index, prices.lastIndex);
-}
-console.log(prices.lastIndex);
+~~~text app.js
+console.log(/^b/m.test("a\nb"), /^b/.test("a\nb"), /a.b/.test("a\nb"), /a.b/s.test("a\nb"));
 ~~~
 
-- [[(hit = prices.exec(text)) !== null]]: بننادي ونحفظ الناتج ونفحصه في نفس الشرط. القوسين حوالين الـ [[=]] لازم.
-- مع [[g]]، كل نداء بيبدأ من [[lastIndex]] وبيحطه بعد الـ match.
+النص [["a\nb"]] سطرين: [[\n]] حرف السطر الجديد.
+
+| الـ regex | الناتج | ليه |
+|---|---|---|
+| [[/^b/m]] | true | [[m]] (multiline): [[^]] بتطابق أول **كل سطر**، و b أول السطر التاني |
+| [[/^b/]] | false | من غير m: [[^]] أول النص كله بس، وهو a |
+| [[/a.b/]] | false | [[.]] مش بتطابق السطر الجديد |
+| [[/a.b/s]] | true | [[s]] (dotAll): [[.]] بتطابق أي حرف حتى [[\n]] |
 
 ~~~text الناتج
-15 4 10
-40 17 23
-95 29 35
+true false false true
+~~~
+
+---
+
+## ٣. [[i]] و back-reference و [[(?:)]]
+
+~~~text app.js
+console.log(/hello/i.test("HeLLo"), /(\w)\1/.test("hello"), /(?:ab)+/.exec("ababx")[0]);
+~~~
+
+- [[i]] (ignore case): الكابيتال زي الصغير.
+- [[(\w)\1]]: [[(\w)]] بيمسك حرف، و [[\1]] معناها «نفس الحرف اللي group 1 مسكه بالظبط». يعني حرف متكرر ورا بعض. في hello: [[ll]].
+- [[(?:ab)+]]: [[(?:...)]] group **من غير حفظ** (non-capturing): بيجمّع [[ab]] عشان [[+]] يكرّرها كوحدة. و [[exec]] نفس [[match]] بس method على الـ regex نفسه: [[re.exec(str)]].
+
+~~~text الناتج
+true true abab
+~~~
+
+لو كتبتها [[(ab)+]] الـ match برضه [[abab]]، بس الـ array هيبقى فيها group زيادة ([['abab', 'ab']]). [[?:]] بتوفّر ده لما مش محتاجه.
+
+---
+
+## ٤. فخ [[g]] مع [[test]]: [[lastIndex]]
+
+~~~text app.js
+const g = /o/g;
+console.log(g.test("foo"), g.lastIndex, g.test("foo"), g.test("foo"));
+~~~
+
+الـ regex اللي فيه [[g]] (أو [[y]]) عنده خانة اسمها [[lastIndex]]: «هبدأ أدوّر من الحرف رقم كام المرة الجاية». وهي **بتتحفظ على الـ regex نفسه** بين النداءات. تتبّعنا ٤ نداءات على [["foo"]] (f في 0، و o في 1 و 2):
+
+| النداء | بدأ من | لقى | [[lastIndex]] بعده |
+|---|---|---|---|
+| ١ | 0 | o عند 1: true | 2 |
+| ٢ | 2 | o عند 2: true | 3 |
+| ٣ | 3 | مفيش: false | رجع 0 |
+| ٤ | 0 | true | 2 |
+
+~~~text الناتج
+true 2 true false
+~~~
+
+نفس النص، ونتايج مختلفة. ولو regex بـ g في متغير واستخدمته في [[filter]] أو loop، هيحصل كده بالظبط (الحل تحت).
+
+---
+
+## ٥. [[y]] (sticky)
+
+~~~text app.js
+const sticky = /\d+/y;
+sticky.lastIndex = 4;
+console.log(sticky.exec("abc 42")?.[0], /\d+/y.exec("abc 42"));
+~~~
+
+[[y]] معناها «لازم الـ match **يبدأ** عند [[lastIndex]] بالظبط، متدوّرش بعده».
+
+- حطينا [[lastIndex = 4]]: الحرف رقم 4 في [["abc 42"]] هو 4، فلقى [["42"]].
+- [[?.[0]]]: [[?.]] اسمها optional chaining: لو اللي قبلها [[null]] رجّع [[undefined]] بدل ما ترمي error، ولو مش null خد [[[0]]].
+- التاني regex جديد [[lastIndex]] بتاعه 0، والحرف 0 هو a مش رقم، فـ [[null]].
+
+~~~text الناتج
+42 null
+~~~
+
+الـ [[y]] بتتستخدم في الـ tokenizers: كود بيقطّع نص لأجزاء ورا بعض من غير ما يقفز.
+
+---
+
+## ٦. [[u]] والـ emoji
+
+~~~text app.js
+console.log("😀".length, /^.$/.test("😀"), /^.$/u.test("😀"));
+~~~
+
+النصوص في JavaScript متخزّنة UTF-16: وحدات كل واحدة 16 bit. الـ emoji ده محتاج **وحدتين** (اسمهم surrogate pair)، فـ [[length]] بيقول 2.
+
+~~~text الناتج
+2 false true
+~~~
+
+من غير [[u]]، [[.]] بتشوف «حرفين» فـ [[^.$]] (حرف واحد بس) فشلت. ومع [[u]] الـ engine بيفهم إن دول حرف واحد.
+
+---
+
+## ٧. [[v]]: طرح جوه الـ class
+
+~~~text app.js
+console.log(/[\p{L}--\p{Ll}]/v.test("A"), /[\p{L}--\p{Ll}]/v.test("a"), /[\p{L}--\p{Ll}]/v.test("ع"));
+~~~
+
+- [[\p{L}]]: أي حرف (L = Letter) في أي لغة. و [[\p{Ll}]]: حرف صغير (Ll = Lowercase letter).
+- [[--]] جوه [[[ ]]] مع flag [[v]]: **طرح**. يعني «أي حرف ما عدا الصغير».
+
+~~~text الناتج
+true false true
+~~~
+
+A كابيتال فعدّى، و a صغير فاتشال، و ع ملوش صغير وكبير أصلًا فمش من [[\p{Ll}]] وعدّى.
+
+و [[v]] بديل [[u]] (فيها كل حاجة في u وزيادة)، ومينفعوش مع بعض. جرّبنا [[new RegExp("x", "uv")]]:
+
+~~~text الناتج
+SyntaxError: Invalid flags supplied to RegExp constructor 'uv'
+~~~
+
+---
+
+## ٨. lookahead و lookbehind
+
+~~~text app.js
+console.log("price: 100 EGP".match(/\d+(?= EGP)/)[0], "$50 €30".match(/(?<=€)\d+/)[0]);
+~~~
+
+- [[(?= EGP)]] **lookahead**: «لازم بعدي يبقى [[" EGP"]]»، بس من غير ما ياخدها في الـ match.
+- [[(?<=€)]] **lookbehind**: «لازم قبلي يبقى €». فـ [[50]] اللي قبلها [[$]] اتجاهلت.
+
+~~~text الناتج
+100 30
+~~~
+
+الاتنين بيتسموا lookaround: بيبصوا من غير ما ياكلوا حروف.
+
+---
+
+## ٩. فخ [[g]] في [[filter]] (من الحل)
+
+~~~text app.js
+const withG = /\d/g;
+console.log(["1", "2", "3"].filter((s) => withG.test(s)));
+const noG = /\d/;
+console.log(["1", "2", "3"].filter((s) => noG.test(s)));
+~~~
+
+~~~text الناتج
+[ '1', '3' ]
+[ '1', '2', '3' ]
+~~~
+
+مع [[g]]: أول test لقت 1 وخلّت [[lastIndex = 1]]. التانية على [["2"]] (حرف واحد) بدأت من 1، يعني بعد آخر النص، ففشلت ورجّعت [[lastIndex]] لـ 0. التالتة نجحت. فالـ [["2"]] وقعت من غير سبب. ومن غير [[g]] مفيش [[lastIndex]] بيتحفظ، فكله صح.
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| [[( )]] | group بيتحفظ: [[m[1]]] |
+| [[(?<name>...)]] | group باسم: [[m.groups.name]] |
+| [[(?:...)]] | تجميع من غير حفظ |
+| [[\1]] | نفس اللي group 1 مسكه |
+| [[(?=...)]] و [[(?<=...)]] | بعده / قبله كذا، من غير ما ياخده |
+| [[g]] [[i]] [[m]] [[s]] [[u]] [[v]] [[y]] | كله، مش حساس، كل سطر، النقطة تاخد السطر الجديد، unicode، unicode + طرح، من lastIndex بالظبط |
+
+ومتحطش [[g]] على regex بتستخدمه مع [[test]] أكتر من مرة.`,
+          lines: [
+            R`regex لتاريخ بشكل [[YYYY-MM-DD]]. كل [[(?<name>...)]] اسمه named group: بيمسك الجزء ده ويحفظه باسم، فبدل ما تفتكر «الشهر هو group رقم ٢» تكتب [[groups.month]].`,
+            R`[[match]] من غير [[g]] بيرجّع أول match بس، بس بكل تفاصيله: النص كله، وكل group، و [[groups]]، و [[index]]. ولو مفيش match بيرجّع [[null]]، فلازم تتأكد قبل ما تكمّل وإلا السطر اللي بعده يرمي TypeError.`,
+            R`العنصر صفر هو النص اللي طابق كله ([[2026-09-29]])، والعنصر 1 أول group ([[2026]])، و [[m.groups.month]] الشهر بالاسم ([[09]] كـ string مش رقم)، و [[m.index]] مكان بداية الـ match في النص ([[12]]).`,
+            R`من غير flags [[^]] معناها بداية النص كله، و [[.]] أي حرف ما عدا السطر الجديد. الـ [[m]] (multiline) بتخلي [[^]] و [[$]] لكل سطر، فـ [[b]] في أول السطر التاني اتلاقت، والـ [[s]] (dotAll) بتخلي [[.]] تطابق [[\n]] كمان. فالناتج [[true false false true]].`,
+            R`[[i]] بتتجاهل الكبير والصغير. و [[(\w)\1]] يعني حرف وبعده نفس الحرف تاني ([[\1]] بترجع لأول group)، فلقت [[ll]] في hello. و [[(?:ab)+]] بيكرر [[ab]] كوحدة من غير ما يحفظها، فطابق [[abab]] ووقف قبل [[x]].`,
+            R`regex بـ [[g]] متحفوظ في متغير. الـ regex ده object ليه حالة: [[lastIndex]] بيفتكر وقف فين آخر مرة، وده اللي هيعمل الفخ في السطر الجاي.`,
+            R`أول [[test]] لقى [[o]] عند index 1 فـ [[lastIndex]] بقى 2. التاني بدأ من 2 ولقى [[o]] التانية ([[lastIndex]] بقى 3). التالت بدأ من 3 وملقاش فرجّع [[false]] (ورجّع [[lastIndex]] لـ 0). نفس النص ونفس الـ regex ونتايج مختلفة، فمتستخدمش [[g]] مع [[test]] على regex متشارك.`,
+            R`الـ flag [[y]] (sticky): الـ match لازم يبدأ **بالظبط** عند [[lastIndex]]، مش أي مكان بعده. مفيد في الـ tokenizers اللي بتقرا النص حتة ورا حتة.`,
+            R`بنقول للـ regex يبدأ من index 4، وده مكان [[4]] في [["abc 42"]] (بعد [["abc "]]).`,
+            R`الأول لقى [[42]] لأنه بدأ من 4 والرقم هناك بالظبط. التاني regex جديد [[lastIndex]] بتاعه 0، وعند 0 فيه [[a]] مش رقم، و [[y]] ممنوع يدوّر لقدّام، فرجّع [[null]]. والـ [[?.]] بتمنع TypeError لو [[exec]] رجّعت [[null]].`,
+            R`الـ emoji ده بيتخزن في JS كاتنين code units (UTF-16)، فـ [[length]] بترجّع [[2]]. ومن غير [[u]] الـ [[.]] بتطابق code unit واحد فـ [[^.$]] بتفشل، ومع [[u]] بتتعامل مع الـ emoji كحرف واحد. لو بتعد حروف أو بتقطع نص فيه emoji، استخدم [[u]].`,
+            R`الـ flag [[v]] (أحدث من [[u]]) بيسمح بعمليات على الـ classes: [[\p{L}--\p{Ll}]] يعني «أي حرف ناقص الحروف الصغيرة». فـ [[A]] بترجّع [[true]]، و [[a]] بترجّع [[false]]، و [[ع]] بترجّع [[true]] لأن العربي مفيهوش كبير وصغير أصلًا فمش من [[Ll]].`,
+            R`[[(?= EGP)]] lookahead: «لازم بعدي [[ EGP]]» من غير ما ياخدها في الـ match، فطلع [[100]] من غير العملة. و [[(?<=€)]] lookbehind: «لازم قبلي [[€]]»، فطلع [[30]] وساب [[50]] لأن قبلها [[$]].`,
+          ],
+          sol: R`الـ regex: [[/^(?<name>.+?)\s*<(?<email>[^>]+)>$/]]، و [[m.groups]] بـ [[{ name: "Sara Ahmed", email: "sara@example.com" }]]. الـ [[+?]] lazy عشان الاسم ميبلعش المسافة، و [[[^>]+]] «أي حاجة غير >» أحسن وأسرع من [[.+?]] جوه الأقواس.
+
+فخ الـ g: [[filter]] بترجّع [[["1", "3"]]] مش الـ ٣. أول test لقت 1 وخلّت lastIndex = 1، التانية على "2" بدأت من index 1 (بعد آخر النص) ففشلت ورجّعت lastIndex لـ 0، والتالتة نجحت. الحل: شيل g، أو اعمل الـ regex جوه الـ callback.`,
+          solCode: R`const contact = /^(?<name>.+?)\s*<(?<email>[^>]+)>$/;
+console.log("Sara Ahmed <sara@example.com>".match(contact).groups);
+const withG = /\d/g;
+console.log(["1", "2", "3"].filter((s) => withG.test(s)));
+const noG = /\d/;
+console.log(["1", "2", "3"].filter((s) => noG.test(s)));`,
+          check: {
+            lang: "js",
+            starter: R`function parseContact(str) {
+  const m = str.match(/(.+) <(.+)>/);
+  return m ? { name: m[1], email: m[2] } : null;
+}`,
+            tests: R`test("'Sara Ahmed <sara@example.com>'", () => expect(parseContact("Sara Ahmed <sara@example.com>")).toEqual({ name: "Sara Ahmed", email: "sara@example.com" }));
+test("الاسم ميبلعش المسافة: 'Ali   <ali@x.io>' ← name 'Ali'", () => expect(parseContact("Ali   <ali@x.io>")).toEqual({ name: "Ali", email: "ali@x.io" }));
+test("من غير مسافة: 'Mona<m@x.io>'", () => expect(parseContact("Mona<m@x.io>")).toEqual({ name: "Mona", email: "m@x.io" }));
+test("من غير <> ← null", () => expect(parseContact("sara@example.com")).toBe(null));
+test("كلام بعد الـ > ← null (^ و $)", () => expect(parseContact("Sara <s@x.io> extra")).toBe(null));`,
+            solution: R`function parseContact(str) {
+  const m = str.match(/^(?<name>.+?)\s*<(?<email>[^>]+)>$/);
+  return m ? { name: m.groups.name, email: m.groups.email } : null;
+}`
+          }
+        },
+        {
+          cmd: "test و match و matchAll و replace",
+          title: "تدوّر وتستبدل إزاي؟ (test و match و matchAll و replace)",
+          desc: R`[[re.test(str)]]: فيه match ولا لأ (boolean). [[str.match(re)]]: من غير g أول match بالتفاصيل والـ groups، ومع g array نصوص بس (من غير groups). [[str.matchAll(re)]]: لازم g، وبترجّع كل الـ matches بالتفاصيل كل واحد بالـ groups بتاعته، فتلف عليها بـ for...of. [[str.replace(re, x)]]: بتستبدل، ومع g كل الـ matches.
+
+في نص الاستبدال: [[$1]] و [[$2]] الـ groups بالرقم، و [[$<name>]] بالاسم، و [[$&]] الـ match كله. ولو محتاج منطق، ابعت دالة: بتاخد الـ match والـ groups وترجّع النص الجديد.
+
+و [[split]] بتقبل regex كمان، و [[replaceAll]] بنص عادي بتستبدل الكل من غير regex خالص.`,
+          example: R`const log = "GET /api/users 200 12ms\nPOST /api/login 401 8ms\nGET /api/orders 500 230ms";
+const re = /^(?<method>[A-Z]+) (?<path>\S+) (?<status>\d{3}) (?<ms>\d+)ms$/gm;
+for (const m of log.matchAll(re)) {
+  const { method, path, status, ms } = m.groups;
+  if (Number(status) >= 400) console.log(method, path, status, ms);
+}
+console.log(log.match(/\b\d{3}\b(?= )/g));
+console.log("2026-09-29".replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1"));
+console.log("2026-09-29".replace(/(?<y>\d+)-(?<m>\d+)-(?<d>\d+)/, "$<d>/$<m>/$<y>"));
+console.log("hello big world".replace(/\b\w/g, (ch) => ch.toUpperCase()));
+console.log("a.b.c".replaceAll(".", "/"), "a-b_c  d".split(/[-_\s]+/));
+const userInput = "1+1";
+const safe = userInput.replace(/[.*+?^$__{}()|[\]\\]/g, "\\$&");
+console.log(safe, new RegExp(safe).test("1+1=2"));`,
+          try: R`اكتب [[slugify(title)]]: [["  Hello, World! JS 2026  "]] ← [["hello-world-js-2026"]] (حروف صغيرة، وأي حاجة مش حرف أو رقم تبقى شرطة، ومفيش شرطات مكررة ولا في الأطراف). وبعدين اكتب [[maskPhone]] بـ replace ودالة: [["01012345678"]] ← [["010*****678"]]. وبعدين من الـ log اللي فوق اطبع متوسط الـ ms لكل الطلبات. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[slugify]] و [[maskPhone]] و [[avgMs(log)]] (متوسط الـ ms من الـ log).`,
+          ref: [
+            { t: "MDN: String.prototype.match()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/match" },
+            { t: "MDN: String.prototype.matchAll()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/matchAll" },
+            { t: "MDN: String.prototype.replace()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace" },
+            { t: "MDN: String.prototype.replaceAll()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replaceAll" },
+          ],
+          practice: [
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه الفرق بين [["a1b22".match(/\d+/g)]] و [["a1b22".match(/\d+/)]] و [["x".match(/\d/)]]؟ وبعدين جرّب [["x".match(/\d/).length]].`, done: R`الأولى [[[ '1', '22' ]]]، والتانية array فيها [['1']] ومعاها [[index: 1]]، والتالتة [[null]] مش array فاضي، فـ [[.length]] بترمي [[TypeError: Cannot read properties of null (reading 'length')]]. والحل [[(str.match(re) ?? []).length]].`, sol: R`~~~js match-kinds.js
+console.log("a1b22".match(/\d+/g));
+console.log("a1b22".match(/\d+/));
+console.log("x".match(/\d/));
+try {
+  console.log("x".match(/\d/).length);
+} catch (err) {
+  console.log(err.name + ": " + err.message);
+}
+console.log(("x".match(/\d/g) ?? []).length);
+~~~
+
+~~~text الناتج (node match-kinds.js، Node 24)
+[ '1', '22' ]
+[ '1', index: 1, input: 'a1b22', groups: undefined ]
+null
+TypeError: Cannot read properties of null (reading 'length')
 0
 ~~~
 
-| النداء | بدأ من | لقى عند [[index]] | [[lastIndex]] بعده |
-|---|---|---|---|
-| ١ | 0 | 4 ([[15 EGP]]) | 10 |
-| ٢ | 10 | 17 ([[40 EGP]]) | 23 |
-| ٣ | 23 | 29 ([[95 EGP]]) | 35 |
-| ٤ | 35 | مفيش: [[null]] | رجع **0** |
+- [[match(/\d+/g)]]: مع [[g]] بيرجّع array بكل الـ matches كنصوص بس: [[[ '1', '22' ]]].
+- [[match(/\d+/)]]: من غير [[g]] بيرجّع **أول** match، ومعاه تفاصيل: [[index]] (مكانه)، و [[input]] (النص كله)، و [[groups]].
+- [["x".match(/\d/)]]: مفيش ولا match ← **[[null]]**، مش array فاضي.
+- [[.length]] على [[null]] بيرمي [[TypeError]]، ودي أشهر رسالة في كود الـ regex.
+- [[(... ?? []).length]]: لو [[null]] خد array فاضي، فالعدد 0.
+
+**الغلطة الشائعة:** [[str.match(/x/g).length]] على طول عشان «تعد». بيشتغل في كل اختباراتك لأنك دايمًا بتجرّب نص فيه x، وبيقع عند أول يوزر نصه مفيهوش.`  },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[[..."a1".matchAll(/\d/)] ]] و [["a-b-c".replace("-", "_")]]. شغّل الاتنين.`, done: R`الأول بيرمي [[TypeError: String.prototype.matchAll called with a non-global RegExp argument]] (لازم [[g]]). والتاني بيرجّع [["a_b-c"]] (أول واحدة بس). بعد [[/\d/g]] و [[replaceAll("-", "_")]]: [[["1"]]] و [["a_b_c"]].`, sol: R`~~~js matchall-replace.js
+try {
+  console.log([..."a1".matchAll(/\d/)]);
+} catch (err) {
+  console.log(err.name + ": " + err.message);
+}
+console.log("a-b-c".replace("-", "_"));
+
+console.log([..."a1".matchAll(/\d/g)].map(m => m[0]));
+console.log("a-b-c".replaceAll("-", "_"), "a-b-c".replace(/-/g, "_"));
+~~~
+
+~~~text الناتج (node matchall-replace.js، Node 24)
+TypeError: String.prototype.matchAll called with a non-global RegExp argument
+a_b-c
+[ '1' ]
+a_b_c a_b_c
+~~~
+
+- **[[matchAll]] من غير [[g]]:** بيرمي [[TypeError]] على طول. ده مقصود في المواصفات: [[matchAll]] معناها «كل»، و regex من غير [[g]] معناه «أول واحد بس»، فالتعارض بيترمي error بدل ما يرجّع حاجة غلط.
+- **[[replace("-", "_")]] بنص:** النص بيتبدّل **أول مرة بس**: [["a_b-c"]].
+- **التصليح:** [[/\d/g]] لـ matchAll، و [[replaceAll("-", "_")]] أو [[replace(/-/g, "_")]] للكل (آخر سطر: الاتنين [["a_b_c"]]).
+
+**الغلطة الشائعة:** [[replaceAll(/-/, "_")]] بـ regex من غير [[g]]: نفس قاعدة matchAll، بيرمي [[TypeError: String.prototype.replaceAll called with a non-global RegExp argument]] (جرّبناها في Node 24).`  },
+            { lvl: 'تطبيق', t: R`**ابني:** [[<textarea>]] لبوست وتحته [[<div id="preview">]]. مع كل كتابة، [[linkify(text)]] بتحوّل كل هاشتاج ([[#]] وبعدها حرف وبعدها حروف أو أرقام أو [[_]]، بـ [[\p{L}]] و [[\p{N}]] و [[u]]) للينك [[/tag/NAME]]. اعمل escape للـ HTML الأول، والاسم في الـ href بـ [[encodeURIComponent]].`, done: R`[["بحب #جافاسكريبت و #JS_2026 مش #"]] بيظهر فيها لينكين بس ([[#]] لوحدها مش هاشتاج)، والـ href بتاع العربي بيبدأ بـ [[/tag/%D8%AC]]. وكتابة [[<b>hi</b>]] بتظهر كنص مش bold.`, sol: R`~~~live 170 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>هاشتاجات</title>
+<style>
+  body { font: 16px/1.6 system-ui, sans-serif; margin: 16px; }
+  textarea { font: inherit; width: 100%; box-sizing: border-box; height: 70px; }
+  #preview { border: 1px dashed #aaa; padding: 8px; min-height: 2em; margin-top: 8px; white-space: pre-wrap; }
+  #preview a { color: #1d4ed8; }
+</style>
+</head>
+<body>
+<textarea id="post" aria-label="البوست">بحب #جافاسكريبت و #JS_2026 مش #</textarea>
+<div id="preview"></div>
+<script>
+  const ESC = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+  const escapeHTML = s => s.replace(/[&<>"']/g, c => ESC[c]);
+  const HASHTAG = /#(\p{L}[\p{L}\p{N}_]*)/gu;
+
+  function linkify(text) {
+    return escapeHTML(text).replace(HASHTAG, (all, name) => $__bt<a href="/tag/$__{encodeURIComponent(name)}">$__{all}</a>$__bt);
+  }
+
+  const post = document.getElementById("post");
+  const preview = document.getElementById("preview");
+  const render = () => { preview.innerHTML = linkify(post.value); };
+  post.addEventListener("input", render);
+  render();
+</script>
+</body>
+</html>
+~~~
+
+~~~text اللي اتعرض في Chrome 158 (Playwright)
+النص الأولاني: لينكين
+#جافاسكريبت → /tag/%D8%AC%D8%A7%D9%81%D8%A7%D8%B3%D9%83%D8%B1%D9%8A%D8%A8%D8%AA
+#JS_2026 → /tag/JS_2026
+
+بعد ما كتبت <b>hi</b> #تجربة:
+النص اللي ظاهر: <b>hi</b> #تجربة | عناصر <b>: 0 | لينكات: 1
+~~~
+
+ونفس [[linkify]] في Node عشان تشوف الـ HTML الطالع:
+
+~~~js linkify.js
+const escapeHTML = s => s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+function linkify(text) {
+  return escapeHTML(text).replace(/#(\p{L}[\p{L}\p{N}_]*)/gu, (all, name) => $__bt<a href="/tag/$__{encodeURIComponent(name)}">$__{all}</a>$__bt);
+}
+
+console.log(linkify("بحب #جافاسكريبت و #JS_2026 مش #"));
+console.log(linkify("<b>hi</b> #تجربة"));
+console.log(linkify("#2026 مش هاشتاج"));
+~~~
+
+~~~text الناتج (node linkify.js، Node 24)
+بحب <a href="/tag/%D8%AC%D8%A7%D9%81%D8%A7%D8%B3%D9%83%D8%B1%D9%8A%D8%A8%D8%AA">#جافاسكريبت</a> و <a href="/tag/JS_2026">#JS_2026</a> مش #
+&lt;b&gt;hi&lt;/b&gt; <a href="/tag/%D8%AA%D8%AC%D8%B1%D8%A8%D8%A9">#تجربة</a>
+#2026 مش هاشتاج
+~~~
+
+**الترتيب مهم: escape الأول وبعدين الـ regex.**
+
+1. [[escapeHTML]]: كل [[<]] و [[>]] و [[&]] والعلامات بتتحوّل لـ entities، فـ [[<b>hi</b>]] بتظهر كنص (عناصر [[<b>]] في الـ preview: 0).
+2. [[/#(\p{L}[\p{L}\p{N}_]*)/gu]]: [[#]] وبعدها **حرف** ([[\p{L}]] أي حرف في أي لغة)، وبعده حروف أو أرقام أو [[_]]. فـ [[#]] لوحدها و [[#2026]] (بتبدأ برقم) مش هاشتاج.
+3. الدالة في [[replace]]: [[all]] = الـ match كله ([[#جافاسكريبت]])، و [[name]] = الـ group ([[جافاسكريبت]]). اللينك بيتبني بيهم.
+4. [[encodeURIComponent(name)]]: الحروف العربي في URL لازم تتحوّل لـ bytes بـ [[%]]، فالـ href بقى [[/tag/%D8%AC...]].
+
+**ليه الـ escape قبل:** لو عملت الـ regex الأول وبعدين escape، الـ [[<a href>]] اللي انت عامله هيتعمله escape ويظهر كنص. ولو معملتش escape خالص، أي حد يكتب [[<img src=x onerror=...>]] في بوست هيشغّل كود عند كل اللي بيشوفه.
+
+**الغلطة الشائعة:** [[\w]] بدل [[\p{L}]]: [[\w]] حروف إنجليزي بس، فـ [[#جافاسكريبت]] مش هتتحوّل لينك.`  },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** لوج فيه سطور زي [[login sara@shop.example ok]] و [[fail omar@mail.example]] و [[login x@@bad]]. طلّع كل إيميل بـ matchAll و named groups [[user]] و [[domain]]، وعدّ كام إيميل لكل domain.`, done: R`على ٤ سطور (منهم واحد بايظ) بيرجّع [[{ 'shop.example': 2, 'mail.example': 1 }]]، والسطر [[x@@bad]] مبيتحسبش. وكل match فيه [[m.groups.user]] و [[m.index]] مكانه في النص.`, sol: R`~~~js emails.js
+const log = $__btlogin sara@shop.example ok
+fail omar@mail.example
+login x@@bad
+login ali@shop.example ok$__bt;
+
+const EMAIL = /(?<user>[\w.+-]+)@(?<domain>[\w-]+(?:\.[\w-]+)+)/g;
+
+const perDomain = {};
+for (const m of log.matchAll(EMAIL)) {
+  console.log(m.groups.user.padEnd(5), m.groups.domain.padEnd(13), "index:", m.index);
+  perDomain[m.groups.domain] = (perDomain[m.groups.domain] ?? 0) + 1;
+}
+console.log(perDomain);
+~~~
+
+~~~text الناتج (node emails.js، Node 24)
+sara  shop.example  index: 6
+omar  mail.example  index: 32
+ali   shop.example  index: 69
+{ 'shop.example': 2, 'mail.example': 1 }
+~~~
+
+**الـ regex:**
+
+- [[(?<user>[\w.+-]+)]]: اسم اليوزر: حروف وأرقام و [[_]] و [[.]] و [[+]] و [[-]]، حرف واحد على الأقل.
+- [[@]]: واحدة بس.
+- [[(?<domain>[\w-]+(?:\.[\w-]+)+)]]: جزء، وبعده مرة أو أكتر [[.]] وجزء. [[(?:...)]] قوس للتجميع بس من غير ما يبقى group في النتيجة.
+- [[x@@bad]]: بعد أول [[@]] جاي [[@]] تاني، والـ domain لازم يبدأ بحرف، فمفيش match. ولو الـ [[x]] اتقرت user مع [["@bad"]]، [[bad]] مفيهوش [[.]] فبرضه مفيش.
+
+**[[matchAll]]:** بيرجّع iterator، كل عنصر match كامل فيه [[groups]] و [[index]] (مكانه في النص: 6 و 32 و 69). والعد بنفس فكرة [[counts[k] ?? 0]].
+
+**ملحوظة:** ده regex «كويس كفاية» لاستخراج من لوج، مش فحص صحة إيميل. الإيميل الحقيقي ليه قواعد أوسع، والفحص الوحيد المضمون إنك تبعتله رسالة.
+
+**الغلطة الشائعة:** [[match(EMAIL)]] بـ [[g]] بيرجّع النصوص بس من غير [[groups]]، فتقطع الـ domain بـ [[split("@")]] تاني. [[matchAll]] بيدّيك الاتنين.`  },
+            { lvl: 'تحدي', t: R`**مسألة:** أمان: اكتب [[fill(template, data)]] بتبدّل [[{{name}}]] بقيمتها من data بـ replace ودالة، والمفتاح اللي مش موجود يفضل زي ما هو. وبعدين جرّب قيمة فيها [[$&]] مرة بالدالة ومرة لو كنت بعت نص استبدال عادي بدل الدالة.`, done: R`[[fill("أهلا {{name}}، عندك {{count}} رسالة {{x}}", { name: "سارة", count: 3 })]] ← [[أهلا سارة، عندك 3 رسالة {{x}}]]. والقيمة [["$&"]] بالدالة بتطلع [[$&]] زي ما هي، أما كنص استبدال بتتفهم «الـ match كله» فبيطلع [[{{a}}]] تاني: داتا اليوزر دايمًا بالدالة.`, sol: R`~~~js fill.js
+function fill(template, data) {
+  return template.replace(/\{\{(\w+)\}\}/g, (all, key) => (Object.hasOwn(data, key) ? String(data[key]) : all));
+}
+
+console.log(fill("أهلا {{name}}، عندك {{count}} رسالة {{x}}", { name: "سارة", count: 3 }));
+
+const evil = { a: "$&" };
+console.log("بالدالة:      ", fill("{{a}}", evil));
+console.log("بنص استبدال:  ", "{{a}}".replace(/\{\{(\w+)\}\}/g, evil.a));
+console.log("$1 كنص:        ", "{{a}}".replace(/\{\{(\w+)\}\}/g, "[$1]"));
+~~~
+
+~~~text الناتج (node fill.js، Node 24)
+أهلا سارة، عندك 3 رسالة {{x}}
+بالدالة:       $&
+بنص استبدال:   {{a}}
+$1 كنص:         [a]
+~~~
+
+- [[/\{\{(\w+)\}\}/g]]: [[{{]] و [[}}]] بـ backslash لأن الأقواس المعووجة ليها معنى في regex ([[{3}]])، وجوه اسم المفتاح كـ group.
+- الدالة [[(all, key) => ...]]: بتتنادي لكل match. لو المفتاح موجود في [[data]] نفسها ([[Object.hasOwn]]) بترجّع القيمة كنص، ولو لأ بترجّع [[all]] (الـ match زي ما هو)، فـ [[{{x}}]] فضلت.
+- **[["$&"]] بالدالة:** اللي الدالة بترجّعه بيتحط **حرفيًا**، فطلع [[$&]].
+- **[["$&"]] كنص استبدال:** في النص التاني لـ replace، [[$&]] معناها «الـ match كله»، و [[$1]] «أول group». فطلع [[{{a}}]] تاني، وآخر سطر بيوري [[$1]] بقت [[a]].
+
+يعني لو داتا يوزر فيها [[$]] (سعر زي [["$5"]] أو باسورد) واتبعتت كنص استبدال، هتتغيّر من غير ما حد يحس. **داتا اليوزر دايمًا من دالة.**
+
+**الغلطة الشائعة:** [[key in data]] بدل [[Object.hasOwn]]: [[{{toString}}]] هتتبدّل بـ [["function toString() { [native code] }"]].`  }
+          ],
+          flag: "script",
+          deep: {
+            why: "ده الاستخدام اليومي: تقطّع logs، وتعمل slug، وتخفي بيانات حساسة قبل ما تطبعها (masking)، وتعيد ترتيب تاريخ، وتنظّف input. ومعرفة أنهي method ترجّع إيه بتوفّر عليك «undefined is not iterable» كتير.",
+            how: R`[[matchAll]] بترجّع iterator (مش array)، كل عنصر فيه نفس تفاصيل [[match]] من غير g. فهي الطريقة الحديثة لـ «كل الـ matches بالـ groups» بدل loop الـ [[exec]] القديم. ولازم الـ regex فيه g وإلا ترمي TypeError. وبما إن [[m]] موجودة، [[^]] و [[$]] بيطابقوا أول وآخر كل سطر.
+
+[[match]] مع g بيرمي الـ groups وبيرجّع النصوص بس: [[['200', '401', '500']]]. و [[\b\d{3}\b(?= )]]: ٣ أرقام كلمة لوحدها وبعدها مسافة، فـ 230 (بعدها ms) مدخلتش.
+
+الدالة في replace بتاخد [[(match, g1, g2, ..., offset, string, groups)]]. في المثال بتاخد أول حرف كل كلمة وترجعه كابيتال.
+
+آخر سطرين: لو هتبني regex من input اليوزر ([[new RegExp(text)]])، أي [[+]] أو [[.]] أو [[(]] هيبقى ليه معنى، وممكن حد يدخّل pattern يوقّع السيرفر (آخر درس). فلازم تعمل escape لكل الحروف الخاصة: [[$&]] في الاستبدال معناها «الحرف اللي اتطابق»، فكل حرف خاص بيبقى [[\]] + نفسه. وفيه [[RegExp.escape(text)]] الجديدة (ES2025) بتعمل ده، مدعومة في المتصفحات الحديثة و Node 24+، بس مش في Node 22.`,
+            when: R`matchAll: استخراج كل الحاجات بتفاصيلها (logs، hashtags، mentions). replace بدالة: تحويلات فيها منطق. split بـ regex: فواصل متعددة. replaceAll بنص: استبدال حرفي من غير regex.`,
+            mistakes: R`[[str.replace("a", "b")]] بنص عادي بتستبدل أول واحد بس: استخدم replaceAll. و [[matchAll]] من غير g. و [[match]] بـ g وتتوقع groups. و [[$]] في نص الاستبدال وانت عايزه حرفي (اكتب [[$$]]). و [[new RegExp(userInput)]] من غير escape. و [[new RegExp("\d+")]] بـ backslash واحد: في الـ string بيبقى [["d+"]]، لازم [["\\d+"]].`
+          },
+          teach: R`## المثال بيعمل إيه
+
+بياخد ٣ سطور log ويطلّع منهم الطلبات اللي فشلت، وبعدين يجرّب كل طريقة استبدال: بالرقم، وبالاسم، وبدالة، ونص عادي، وفي الآخر بيحمي نص جاي من اليوزر قبل ما يحوّله regex. الناتج كله من Node 24 على Windows.
+
+> المربع اللي تحت الدرس بيطلب [[slugify]] و [[maskPhone]] و [[avgMs]]. الشرح هنا بيفك المثال والأدوات اللي هتحتاجها، والحل نفسه عليك.
 
 ---
 
-## ٣. [[matchAll]]: نفس الشغل ومن غير ما يلمس الـ regex
+## ١. الـ log والـ regex
 
-~~~js app.mjs
-console.log([...text.matchAll(prices)].map((x) => x[1]), prices.lastIndex);
+~~~text app.js
+const log = "GET /api/users 200 12ms\nPOST /api/login 401 8ms\nGET /api/orders 500 230ms";
+const re = /^(?<method>[A-Z]+) (?<path>\S+) (?<status>\d{3}) (?<ms>\d+)ms$/gm;
 ~~~
+
+الـ log نص واحد فيه ٣ سطور مفصولين بـ [[\n]]. وكل سطر شكله: method، مسافة، path، مسافة، status، مسافة، وقت بالـ ms.
+
+| الحتة | بتمسك | من السطر الأول |
+|---|---|---|
+| [[^]] | أول السطر (بسبب [[m]]) | |
+| [[(?<method>[A-Z]+)]] | حروف كابيتال | [[GET]] |
+| مسافة | المسافة نفسها | |
+| [[(?<path>\S+)]] | أي حاجة مش مسافة ([[\S]] عكس [[\s]]) | [[/api/users]] |
+| [[(?<status>\d{3})]] | ٣ أرقام | [[200]] |
+| [[(?<ms>\d+)ms]] | أرقام وبعدها الحرفين ms | [[12]] |
+| [[$]] | آخر السطر | |
+
+والـ flags: [[g]] عشان نلاقي كل السطور، و [[m]] عشان [[^]] و [[$]] يبقوا لكل سطر مش للنص كله.
+
+---
+
+## ٢. [[matchAll]]: كل match بتفاصيله
+
+~~~text app.js
+for (const m of log.matchAll(re)) {
+  const { method, path, status, ms } = m.groups;
+  if (Number(status) >= 400) console.log(method, path, status, ms);
+}
+~~~
+
+- [[log.matchAll(re)]]: بترجّع **iterator** (حاجة بتلف عليها بـ [[for...of]] أو تفردها بـ [[[...x]]])، مش array. كل عنصر فيه نفس اللي [[match]] من غير g بترجّعه: [[[0]]] و [[groups]] و [[index]].
+- [[const { method, path, status, ms } = m.groups]]: **destructuring**: بيطلّع ٤ متغيرات من الـ object مرة واحدة بنفس الأسامي.
+- [[Number(status)]]: الـ groups دايمًا **نصوص**، فبنحوّل لرقم قبل المقارنة بـ [[>=]].
+
+لما فردناها ([[[...log.matchAll(re)]]]) لقينا 3 matches، وأول واحد:
 
 ~~~text الناتج
-[ '15', '40', '95' ] 0
+3 GET /api/users 200 12ms | {"method":"GET","path":"/api/users","status":"200","ms":"12"} 24
 ~~~
 
-[[matchAll]] بيعمل **نسخة** من الـ regex ويلف عليها، فـ [[prices.lastIndex]] فضل 0. بس انتبه: النسخة بتبدأ من [[lastIndex]] **الحالي** للأصلي. جرّبنا [[g.lastIndex = 2]] قبل [[[..."1a2b3".matchAll(g)]]] بـ [[/\d/g]]:
+و [[index]] بتاع التاني 24: السطر الأول ٢٣ حرف + [[\n]].
+
+وناتج المثال (الـ status 400 أو أكتر بس):
 
 ~~~text الناتج
-[ '2', '3' ] 2
+POST /api/login 401 8
+GET /api/orders 500 230
 ~~~
 
-الـ [[1]] اتنط عليه. فلو الـ regex اتستخدم قبل كده بـ [[exec]] أو [[test]]، رجّع [[lastIndex = 0]] الأول.
+ولو نسيت [[g]]:
 
-ومن غير [[g]]:
-
-~~~text الناتج: "1a2".matchAll(/\d/)
+~~~text الناتج لـ "a1".matchAll(/\d/)
 TypeError: String.prototype.matchAll called with a non-global RegExp argument
 ~~~
 
 ---
 
-## ٤. match بطول صفر: الـ loop اللي مبيخلصش
+## ٣. [[match]] مع [[g]]: نصوص بس
 
-~~~js app.mjs
-const edges = /\b/g;
-const spots = [];
-while ((hit = edges.exec("ab cd")) !== null) {
-  spots.push(hit.index);
-  if (hit[0] === "") edges.lastIndex++;
-}
-console.log(spots);
+~~~text app.js
+console.log(log.match(/\b\d{3}\b(?= )/g));
 ~~~
 
-[[\b]] **مكان** مش حرف، فالـ match طوله صفر، و [[lastIndex]] بعده = [[index + 0]]: نفس المكان. من غير السطر [[edges.lastIndex++]] جرّبنا (بعد ما حطينا حد ٦ لفات):
-
-~~~text الناتج من غير الزق
-at 0 lastIndex 0
-at 0 lastIndex 0
-at 0 lastIndex 0
-at 0 lastIndex 0
-at 0 lastIndex 0
-at 0 lastIndex 0
-~~~
-
-نفس المكان كل مرة، والبرنامج كان هيعلّق. ومع الزق:
+[[\b\d{3}\b]]: ٣ أرقام لوحدهم ككلمة، و [[(?= )]]: بعدهم مسافة (lookahead، الدرس اللي فات).
 
 ~~~text الناتج
-[ 0, 2, 3, 5 ]
+[ '200', '401', '500' ]
 ~~~
 
-الأماكن: قبل [[a]]، وبعد [[b]]، وقبل [[c]]، وبعد [[d]]. وده نفس اللي [[[..."ab cd".matchAll(/\b/g)]]] بيطلّعه لوحده.
+[[230]] مدخلتش: بعدها [[ms]] مش مسافة. ولاحظ إن مع [[g]] الـ [[match]] بيرجّع النصوص وخلاص، من غير groups ولا index. عشان كده [[matchAll]] موجودة.
 
 ---
 
-## الخلاصة
+## ٤. [[replace]] بـ [[$1]] و [[$<name>]]
 
-| عايز | استخدم |
+~~~text app.js
+console.log("2026-09-29".replace(/(\d+)-(\d+)-(\d+)/, "$3/$2/$1"));
+console.log("2026-09-29".replace(/(?<y>\d+)-(?<m>\d+)-(?<d>\d+)/, "$<d>/$<m>/$<y>"));
+~~~
+
+[[str.replace(re, نص)]]: بيستبدل الـ match بالنص التاني. وجوه نص الاستبدال رموز خاصة:
+
+| الرمز | معناه |
 |---|---|
-| أول match بتفاصيله | [[re.exec(str)]] من غير [[g]]: array أو [[null]] |
-| مكان كل group | flag [[d]] و [[m.indices]] و [[m.indices.groups]] |
-| كل الـ matches في loop عادي | [[for (const m of str.matchAll(re))]]، والـ regex لازم [[g]] |
-| تتحكم في المكان (تقف، تكمّل، [[y]]) | [[exec]] و [[lastIndex]] بإيدك |
-| pattern ممكن يطابق فاضي | زق [[lastIndex]] لما [[m[0] === ""]]، أو [[matchAll]] |`,
-          lines: [
-            R`النص اللي هندوّر فيه: طلب فيه كود [[#A-17]] ومبلغ.`,
-            R`[[#]] ثم حرف كابيتال في group اسمه [[code]] ثم شرطة ثم رقم في group اسمه [[num]]. الـ flag [[d]] بيخلّي [[exec]] ترجّع أماكن الـ groups كمان.`,
-            R`[[exec]] من غير [[g]]: بتدوّر من أول النص وترجّع أول match بكل تفاصيله في array، أو [[null]].`,
-            R`[[m[0]]] الـ match كله [[#A-17]]، و [[index]] بـ 6، و [[groups.num]] بـ [['17']] (نص)، و [[indices[0]]] بـ [[[6, 11]]] و [[indices.groups.num]] بـ [[[9, 11]]].`,
-            R`نص مفيهوش match: [[exec]] رجّعت [[null]]، و [[lastIndex]] فضل 0 لأن مفيش [[g]]، و [[hasIndices]] بـ [[true]] عشان الـ flag [[d]].`,
-            R`regex بـ [[g]]: كل [[exec]] بتكمّل من [[lastIndex]] اللي سابته اللي قبلها.`,
-            R`نص فيه ٣ أسعار هنلف عليهم.`,
-            R`متغير الـ match، متعرّف برّه الـ loop عشان الشرط يشوفه.`,
-            R`بننادي [[exec]] ونحفظ الناتج في [[hit]] ونقارنه بـ [[null]] في نفس الشرط: الـ loop بيقف أول ما مفيش match.`,
-            R`كل لفة بتطبع الرقم ([[hit[1]]]) ومكانه و [[lastIndex]] بعده: [[15 4 10]] ثم [[40 17 23]] ثم [[95 29 35]].`,
-            R`قفلة الـ loop.`,
-            R`بعد آخر نداء فاشل [[lastIndex]] رجع 0 لوحده، فالـ regex جاهز يلف من الأول.`,
-            R`[[matchAll]] بنفس الـ regex: نسخة بتلف لوحدها، والناتج [[[ '15', '40', '95' ]]]، و [[prices.lastIndex]] فضل 0.`,
-            R`[[\b]] مكان (حد كلمة) مش حرف، فكل match طوله صفر. ده النوع اللي بيعمل loop لانهائي.`,
-            R`array نجمع فيها الأماكن.`,
-            R`نفس شكل الـ loop اللي فوق بنفس المتغير [[hit]].`,
-            R`نحفظ مكان الـ match.`,
-            R`لو الـ match فاضي، [[lastIndex]] مش هيتحرك لوحده، فبنزقه خطوة. من غير السطر ده الـ loop بيلف في مكانه للأبد.`,
-            R`قفلة الـ loop.`,
-            R`الأماكن [[[ 0, 2, 3, 5 ]]]: أول وآخر كل كلمة من الكلمتين.`,
-          ],
-          ref: [
-            { t: "MDN: RegExp.prototype.exec()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec" },
-            { t: "MDN: RegExp.prototype.hasIndices", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/hasIndices" },
-            { t: "MDN: RegExp: lastIndex", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/lastIndex" },
-            { t: "MDN: String.prototype.matchAll()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/matchAll" },
-            { t: "ECMAScript: RegExpBuiltinExec", url: "https://tc39.es/ecma262/multipage/text-processing.html#sec-regexpbuiltinexec" },
-          ],
-          pre: ["js/groups و flags", { to: "js/test و match و matchAll و replace", why: R`[[matchAll]] و [[match]] من برّه، هنا بنشوف اللي تحتهم` }],
-        },
-        {
-          cmd: "الـ flags s و m و y و v بحالات حقيقية",
-          title: "إمتى تحتاج s و m و y و v في شغل حقيقي: ملف INI، وإيميل، و CSV، وحروف عربي بس",
-          desc: R`الـ flags الأربعة دول بيغيّروا **قواعد** الـ regex مش بس عدد الـ matches:
-• [[m]] (multiline): [[^]] و [[$]] بيطابقوا أول وآخر **كل سطر**. للملفات اللي كل سطر فيها record (INI و logs و .env).
-• [[s]] (dotAll): النقطة بتطابق السطر الجديد كمان. لما الحاجة اللي عايزها ممتدة على كذا سطر (جسم إيميل، block في ملف).
-• [[y]] (sticky): الـ match لازم يبدأ عند [[lastIndex]] بالظبط، من غير ما يدوّر لقدّام. أساس أي parser أو tokenizer: لو حاجة مش مفهومة تعرف مكانها بدل ما تتنط.
-• [[v]] (unicodeSets): كل اللي في [[u]] وزيادة: تقاطع [[&&]] وطرح [[--]] جوه [[[ ]]]، و classes جوه classes، و [[\q{...}]] لنصوص كاملة، و properties بتطابق نص كامل زي [[\p{RGI_Emoji}]]. وقواعده أشد: حروف زي [[(]] و [[-]] لازم [[\]] جوه الـ class.`,
-          example: R`// m: ^ و $ لكل سطر
-const ini = "[db]\nhost = localhost\nport = 5432\n[cache]\nttl = 60";
-console.log(ini.match(/^\w+(?= =)/gm), ini.match(/^\w+(?= =)/g));
-// s: النقطة بتعدّي السطر الجديد
-const mail = "Subject: hi\n\nline one\nline two\n-- \nSara";
-console.log(mail.match(/\n\n(.*)\n-- /)?.[1], JSON.stringify(mail.match(/\n\n(.*)\n-- /s)?.[1]));
-// y: كل match لازم يبدأ مكان ما اللي قبله خلص
-const cell = /\s*(?:"(?<q>[^"]*)"|(?<v>[^,]*))\s*(?:,|$)/y;
-const row = ' tea , "rice, white" ,40';
-const cells = [];
-let c;
-while (cell.lastIndex < row.length && (c = cell.exec(row))) cells.push(c.groups.q ?? c.groups.v.trim());
-console.log(cells);
-// v: تقاطع وطرح ونصوص جوه الـ class
-console.log(/[\p{Script=Arabic}&&\p{Nd}]/v.test("٣"), /[\p{Script=Arabic}&&\p{Nd}]/v.test("3"));
-console.log("سعر٣ و Price3".match(/[\p{L}--\p{ASCII}]+/gv));
-console.log("👍🏽 ok 🇪🇬".match(/\p{RGI_Emoji}/gv), /^[\q{EGP|USD|SAR}]$/v.test("USD"));
-console.log(/x/v.unicodeSets, /x/v.unicode, /x/s.dotAll, /x/m.multiline);`,
-          try: R`اكتب [[parseIni(text)]] بـ regex واحد فيه [[m]] و [[matchAll]]: سطر [[[section]]] بيفتح object جديد، وسطر [[key = value]] بيتحط في الـ section الحالي (أو في الأول لو قبل أي section)، والسطور التانية (تعليقات [[;]] أو فاضية) بتتجاهل، وملف بـ [[\r\n]] بيشتغل زي [[\n]].`,
-          sol: R`~~~js ini.mjs
-function parseIni(text) {
-  const out = {};
-  let section = out;
-  for (const m of text.matchAll(/^\s*(?:\[(?<sec>[^\]\r\n]+)\]|(?<key>[\w.-]+)\s*=\s*(?<val>.*?))\s*$/gm)) {
-    if (m.groups.sec) section = out[m.groups.sec.trim()] = {};
-    else section[m.groups.key] = m.groups.val;
-  }
-  return out;
-}
-console.log(parseIni("name = shop\n[db]\nhost = localhost\nport = 5432\n; comment\n[cache]\nttl = 60\r\n"));
+| [[$1]] [[$2]] [[$3]] | group رقم 1 و 2 و 3 |
+| [[$<name>]] | الـ group اللي اسمه name |
+| [[$&]] | الـ match كله |
+| [[$$]] | علامة [[$]] حرفية |
+
+فـ [["$3/$2/$1"]] = اليوم/الشهر/السنة:
+
+~~~text الناتج
+29/09/2026
+29/09/2026
 ~~~
 
-~~~text الناتج (Node 24.22)
-{
-  name: 'shop',
-  db: { host: 'localhost', port: '5432' },
-  cache: { ttl: '60' }
-}
-~~~
-
-- [[m]]: [[^]] و [[$]] لكل سطر، فكل سطر match لوحده.
-- بديلين: [[\[(?<sec>...)\]]] أو [[key = val]]. و [[[^\]\r\n]+]] اسم الـ section من غير [[]]] ومن غير ما يعدّي السطر.
-- [[(?<val>.*?)\s*$]]: الـ [[?]] بتخلي القيمة lazy، فالمسافات في آخر السطر بتروح لـ [[\s*]] مش للقيمة. و [[\r]] بتاع ويندوز line terminator في JS: النقطة مبتاخدوش، و [[$]] مع [[m]] بتطابق قبله، فالقيمة بتطلع نضيفة من غير [[\r]].
-- [[; comment]] مبيطابقش ولا بديل فبيتجاهل لوحده.`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب ناتج دول قبل التشغيل: [[/^\d+$/m.test("abc\n42")]] و [[/^\d+$/.test("abc\n42")]] و [[/a.c/s.test("a\nc")]] و [[/a.c/.test("a\nc")]] و [[/^c/m.test("a\r\nc")]].`, done: R`توقعت [[true false true false true]] وطلع كده، وتقدر تقول كل واحد بسبب أنهي flag.`, sol: R`~~~js p1.mjs
-console.log(/^\d+$/m.test("abc\n42"), /^\d+$/.test("abc\n42"), /a.c/s.test("a\nc"), /a.c/.test("a\nc"), /^c/m.test("a\r\nc"));
-~~~
-
-~~~text الناتج (Node 24.22)
-true false true false true
-~~~
-
-- الأول: مع [[m]] السطر التاني [[42]] لوحده بيطابق [[^\d+$]].
-- التاني: من غير [[m]] لازم النص **كله** أرقام، وهو فيه [[abc]].
-- التالت والرابع: [[s]] بس اللي بتخلي النقطة تاخد [[\n]].
-- الخامس: مع [[m]]، [[^]] بتطابق بعد أي line terminator، و [[\n]] واحد منهم، فـ [[c]] بعد [[\r\n]] أول سطر.` },
-            { lvl: 'تطبيق', t: R`**ابني:** regex بالـ flag [[v]] بيطابق **حروف عربي بس**: من غير الأرقام العربي (٣) ومن غير علامات الترقيم العربي (،). وبعدين regex تاني بيطابق حرف عربي واحد **ما عدا** [[ة]] و [[ى]] (عشان تعرف الكلمات اللي آخرها مش تاء مربوطة ولا ألف مقصورة).`, done: R`[["سعر ٣ قطع: ١٢٠ جنيه، ok".match(...)]] بيرجّع [[[ 'سعر', 'قطع', 'جنيه' ]]] من غير أرقام ولا فاصلة، والتاني بيقبل [[ب]] ويرفض [[ة]] و [[٣]].`, sol: R`~~~js p3.mjs
-const arabicLetter = /[\p{Script=Arabic}&&\p{L}]+/gv;
-console.log("سعر ٣ قطع: ١٢٠ جنيه، ok".match(arabicLetter));
-const noTaa = /[[\p{Script=Arabic}&&\p{L}]--[ةى]]/v;
-console.log(noTaa.test("ب"), noTaa.test("ة"), noTaa.test("٣"));
-~~~
-
-~~~text الناتج (Node 24.22)
-[ 'سعر', 'قطع', 'جنيه' ]
-true false false
-~~~
-
-- [[&&]] تقاطع: «حرف من الكتابة العربي **و** letter» = حروف بس. الأرقام العربي [[Script=Arabic]] بس مش [[L]]، والفاصلة [[،]] كمان.
-- [[--]] طرح، و [[[...]]] جوه [[[...]]] class متداخل (مسموح في [[v]] بس): «حروف عربي ناقص [[ة]] و [[ى]]».
-- من غير [[v]] الكلام ده كان محتاج lookahead أو قايمة حروف طويلة.` },
-            { lvl: 'تحدي', t: R`**ابني tokenizer:** [[parsePairs(src)]] بتقرا [['lang=ar; title="شاي بلبن"; qty=2']] لـ object، بـ regex واحد فيه [[y]]. القيمة يا بين علامات تنصيص (وفيها مسافات و [[;]])، يا كلمة. ولو حتة مش مفهومة ترمي SyntaxError فيها مكانها.`, done: R`المثال بيرجّع [[{ lang: 'ar', title: 'شاي بلبن', qty: '2' }]]، و [["lang=ar; ?? ; qty=2"]] بيرمي رسالة فيها [[عند 8]]، ومفيش حاجة بتتنط في صمت.`, sol: R`~~~js p4.mjs
-function parsePairs(src) {
-  const re = /\s*(?<key>\w+)\s*=\s*(?:"(?<q>[^"]*)"|(?<v>[^;\s]*))\s*(?:;|$)/y;
-  const out = {};
-  re.lastIndex = 0;
-  while (re.lastIndex < src.length) {
-    const at = re.lastIndex;
-    const m = re.exec(src);
-    if (!m) throw new SyntaxError($__btمش مفهوم عند $__{at}: «$__{src.slice(at, at + 10)}»$__bt);
-    out[m.groups.key] = m.groups.q ?? m.groups.v;
-  }
-  return out;
-}
-console.log(parsePairs('lang=ar; title="شاي بلبن"; qty=2'));
-try { parsePairs("lang=ar; ?? ; qty=2"); } catch (e) { console.log(e.name + ": " + e.message); }
-~~~
-
-~~~text الناتج (Node 24.22)
-{ lang: 'ar', title: 'شاي بلبن', qty: '2' }
-SyntaxError: مش مفهوم عند 8: « ?? ; qty=»
-~~~
-
-- كل لفة بتقرا زوج واحد كامل لحد [[;]] أو آخر النص، و [[y]] بتضمن إن الزوج الجاي بيبدأ بالظبط بعد اللي قبله.
-- [[(?:"(?<q>[^"]*)"|(?<v>[^;\s]*))]]: لو فيه تنصيص خد كل اللي جواه (حتى [[;]])، وإلا خد كلمة.
-- [[const at = re.lastIndex]] قبل [[exec]]: بعد الفشل [[lastIndex]] بيرجع 0، فلازم نحفظ المكان قبلها.
-- لو كان [[g]]: الـ [[??]] كان هيتنط عليه وتكمّل بـ [[qty]] من غير ما حد يعرف.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** حد نقل regex الـ slug لـ [[v]] عشان «الأحدث»: [[new RegExp("^[a-z-]+$", "v")]]. شغّله واقرا الرسالة وصلّحه من غير ما ترجع لـ [[u]].`, done: R`شفت [[Invalid character class]]، وعرفت إن [[-]] في آخر الـ class لازمها [[\]] في [[v]]، والـ regex المصلّح بيقبل [["my-post"]] ويرفض [["My post"]].`, sol: R`~~~js p5.mjs
-try { new RegExp("^[a-z-]+$", "v"); } catch (e) { console.log(e.message); }
-const slug = /^[a-z0-9\-]+$/v;
-console.log(slug.test("my-post"), slug.test("My post"));
-~~~
-
-~~~text الناتج (Node 24.22)
-Invalid regular expression: /^[a-z-]+$/v: Invalid character class
-true false
-~~~
-
-في [[v]]، الـ [[-]] جوه الـ class ليها دور في [[--]] (طرح)، فالـ engine مبيخمنش: [[-]] لوحدها لازم [[\-]]. ونفس الحكاية لـ [[(]] و [[)]] و [[[]] و [[{]] و [[}]] و [[/]] و [[|]] جوه الـ class: في [[u]] مسموحين حرفيين، وفي [[v]] بيرموا [[Invalid character in character class]]. عشان كده [[v]] مش «u أحدث» تبدّله وخلاص: لازم تراجع كل class.` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`أغلب الـ regex في الشغل بيتكتب لسطر واحد، والمشاكل بتبدأ لما النص يبقى ملف: [[^]] اللي مبتطابقش غير أول الملف، والنقطة اللي بتقف عند أول سطر، والـ parser اللي بيتنط على حاجات غلط في صمت. والـ [[v]] بتحل حاجة كانت مستحيلة تقريبًا قبلها: «حروف عربي بس» أو «كل الـ emoji» في class واحدة مقروءة.`,
-            how: R`[[m]] بتغيّر معنى [[^]] و [[$]] بس: بيطابقوا كمان بعد/قبل أي line terminator ([[\n]] و [[\r]] و [[\u2028]] و [[\u2029]]). مبتغيّرش النقطة ولا أي حاجة تانية.
-
-[[s]] بتغيّر النقطة بس. قبلها الناس كانت بتكتب [[[^]]] (class فاضية منفية = أي حرف) أو [[[\s\S]]]. الاتنين لسه شغالين.
-
-[[y]]: [[exec]] بتجرّب تطابق **عند** [[lastIndex]] وبس. مع [[g]] كمان: [[y]] هي اللي بتكسب في البحث، و [[g]] بتأثر على [[match]] و [[replace]] (كل الـ matches ورا بعض من غير فراغات). و [[^]] مع [[y]] بتطابق أول النص بس (أو أول سطر مع [[m]]).
-
-[[v]]: الـ class بقت **set** من حروف **ونصوص**. [[&&]] تقاطع، و [[--]] طرح، ومينفعش تخلطهم في نفس المستوى من غير أقواس متداخلة. و [[\q{EGP|USD}]] نصوص كاملة جوه الـ class، ومع النفي [[[^...]]] مينفعش نص أطول من حرف: جرّبنا [[[^\q{ab}]]] ورمى [[Negated character class may contain strings]]، و [[[^\q{a|b}]]] (حروف لوحدها) اشتغل. و [[\p{RGI_Emoji}]] property بتطابق emoji كامل حتى لو مكوّن من كذا code point (زي [[👍🏽]] و [[🇪🇬]])، ومع [[u]] بترمي [[Invalid property name]]. [[v]] و [[u]] مع بعض SyntaxError.`,
-            when: R`[[m]]: ملفات كل سطر فيها record (logs و INI و .env و CSV بسيط) لما تعمل [[matchAll]] على الملف كله. [[s]]: blocks متعددة السطور (جسم رسالة، تعليق [[/* */]]، section). [[y]]: أي tokenizer أو parser صغير، وفي التحقق إن النص **كله** اتقري حتة ورا حتة. [[v]]: أي class فيها عربي أو emoji أو «كذا ناقص كذا»، وفي الكود الجديد بدل [[u]] (بعد ما تراجع الـ classes).`,
-            mistakes: R`تقسم ملف ويندوز بـ [[split("\n")]] وبعدين [[^\d+$]] من غير [[m]] على كل سطر: آخر كل سطر [[\r]] مستخبي، فجرّبنا [["12\r\n34\r\n".split("\n")]] وكلهم طلعوا [[false]]، و [[split(/\r?\n/)]] صلّحتها. (مع [[m]] على الملف كله مفيش مشكلة: [[\r]] line terminator في JS.) وتستخدم [[g]] في tokenizer فالحاجات الغلط تتنط. وتنسى [[lastIndex = 0]] قبل ما تبدأ نص جديد بـ regex [[y]] متشارك. وتنقل regex من [[u]] لـ [[v]] من غير ما تعمل escape لـ [[-]] و [[(]] جوه الـ classes. وتحط [[\p{RGI_Emoji}]] من غير [[v]].`
-          },
-          teach: R`## الفكرة في سطر
-
-كل flag من الأربعة بيحل مشكلة بتظهر لما النص يبقى **ملف** أو **لغة** مش كلمة. المثال ٤ حالات من الشغل. كل الناتج اتشغّل فعلًا على Node 24.22، والـ [[v]] اتجرّبت كمان على Chrome 157 وطلّعت نفس النتايج.
+نفس النتيجة، والتاني أوضح لأنك بتقرا [[$<d>]] وفاهم.
 
 ---
 
-## ١. [[m]]: كل سطر لوحده
+## ٥. [[replace]] بدالة
 
-~~~js app.mjs
-const ini = "[db]\nhost = localhost\nport = 5432\n[cache]\nttl = 60";
-console.log(ini.match(/^\w+(?= =)/gm), ini.match(/^\w+(?= =)/g));
+~~~text app.js
+console.log("hello big world".replace(/\b\w/g, (ch) => ch.toUpperCase()));
 ~~~
 
-الـ regex: من أول السطر ([[^]])، كلمة ([[\w+]])، وبعدها [[ =]] (lookahead: مش جزء من الـ match).
+[[\b\w]]: أول حرف بعد حد كلمة، يعني أول حرف في كل كلمة. ومع [[g]] كل الكلمات. وبدل نص، بعتنا **دالة**: [[replace]] بتناديها مع كل match، واللي ترجّعه بيتحط مكانه.
 
 ~~~text الناتج
-[ 'host', 'port', 'ttl' ] null
+Hello Big World
 ~~~
 
-- مع [[m]]: [[^]] بتطابق بعد كل [[\n]]، فكل سطر فيه key اتلقط.
-- من غير [[m]]: [[^]] أول الملف بس، وأول الملف [[[db]]] مش كلمة، فـ [[null]].
+الدالة بتاخد arguments بالترتيب ده: الـ match، وبعدين كل group، وبعدين المكان ([[offset]])، والنص الأصلي، والـ named groups لو فيه. جرّبنا:
 
-> [[m]] مبتغيّرش غير [[^]] و [[$]]. النقطة لسه مبتطابقش [[\n]].
-
----
-
-## ٢. [[s]]: النقطة بتعدّي السطور
-
-~~~js app.mjs
-const mail = "Subject: hi\n\nline one\nline two\n-- \nSara";
-console.log(mail.match(/\n\n(.*)\n-- /)?.[1], JSON.stringify(mail.match(/\n\n(.*)\n-- /s)?.[1]));
-~~~
-
-جسم الإيميل بين السطر الفاضي ([[\n\n]]) وخط التوقيع ([[\n-- ]]).
-
-~~~text الناتج
-undefined "line one\nline two"
-~~~
-
-- من غير [[s]]: [[(.*)]] وقفت عند أول [[\n]]، فمفيش match و [[?.[1]]] رجّعت [[undefined]].
-- مع [[s]]: النقطة خدت السطرين، و [[JSON.stringify]] بيورّينا الـ [[\n]] اللي جوه.
-
-قبل [[s]] كانوا بيكتبوا [[([^]*)]] بدل [[(.*)]]، وجرّبناها وطلّعت نفس النتيجة. هتشوفها في كود قديم.
-
----
-
-## ٣. [[y]]: قراية CSV من غير ما حاجة تتنط
-
-~~~js app.mjs
-const cell = /\s*(?:"(?<q>[^"]*)"|(?<v>[^,]*))\s*(?:,|$)/y;
-const row = ' tea , "rice, white" ,40';
-const cells = [];
-let c;
-while (cell.lastIndex < row.length && (c = cell.exec(row))) cells.push(c.groups.q ?? c.groups.v.trim());
-console.log(cells);
-~~~
-
-| الحتة | معناها |
-|---|---|
-| [[\s*]] | مسافات قبل الخانة |
-| [["(?<q>[^"]*)"]] | خانة بين تنصيص: كل حاجة غير [["]]، حتى الفاصلة |
-| [[(?<v>[^,]*)]] | أو خانة عادية: كل حاجة لحد الفاصلة |
-| [[(?:,|$)]] | الخانة بتخلص بفاصلة أو آخر السطر |
-| [[y]] | الخانة الجاية لازم تبدأ **بالظبط** بعد اللي قبلها |
-
-~~~text الناتج
-[ 'tea', 'rice, white', '40' ]
-~~~
-
-[[cell.lastIndex < row.length]] بيقف لما السطر يخلص، و [[c.groups.q ?? ...]] بياخد اللي اتطابق من البديلين. الفاصلة جوه [["rice, white"]] مقسمتش الخانة. ولو السطر فيه حاجة الـ regex مش فاهمها، [[exec]] بترجّع [[null]] والـ loop بيقف **عندها**، بدل ما يتنط عليها زي [[g]] (المشروع «tokenizer لمعادلة حسابية» بيورّي الفرق بالأرقام).
-
----
-
-## ٤. [[v]]: عمليات على الـ classes
-
-### تقاطع [[&&]]
-
-~~~js app.mjs
-console.log(/[\p{Script=Arabic}&&\p{Nd}]/v.test("٣"), /[\p{Script=Arabic}&&\p{Nd}]/v.test("3"));
-~~~
-
-~~~text الناتج
-true false
-~~~
-
-«حرف من الكتابة العربي **و** رقم» = الأرقام العربي المشرقية بس. [[3]] رقم بس مش عربي.
-
-### طرح [[--]]
-
-~~~js app.mjs
-console.log("سعر٣ و Price3".match(/[\p{L}--\p{ASCII}]+/gv));
-~~~
-
-~~~text الناتج
-[ 'سعر', 'و' ]
-~~~
-
-«أي حرف ناقص حروف ASCII» ([[\p{ASCII}]] أول ١٢٨ حرف: الإنجليزي والأرقام والرموز). [[Price]] اتشالت كلها، و [[٣]] رقم مش حرف أصلًا.
-
-### class جوه class
-
-الحاجة اللي بتطرحها ممكن تبقى class كاملة بين قوسين، وده اسمه **nested class** (مسموح في [[v]] بس). جرّبنا نطرح [[a-z]] بس بدل ASCII كلها:
-
-~~~js nested.mjs
-console.log("سعر٣ و Price3".match(/[\p{L}--[a-z]]+/gv));
-~~~
-
-~~~text الناتج
-[ 'سعر', 'و', 'P' ]
-~~~
-
-الـ [[P]] الكابيتال فضلت لأنها مش من [[a-z]]. يعني الطرح دقيق بالظبط زي ما كتبته.
-
-### نصوص كاملة: [[\p{RGI_Emoji}]] و [[\q{...}]]
-
-~~~js app.mjs
-console.log("👍🏽 ok 🇪🇬".match(/\p{RGI_Emoji}/gv), /^[\q{EGP|USD|SAR}]$/v.test("USD"));
-~~~
-
-~~~text الناتج
-[ '👍🏽', '🇪🇬' ] true
-~~~
-
-- [[👍🏽]] (إيد + لون بشرة) و [[🇪🇬]] (حرفين علم) كل واحد **كذا code point**. [[\p{RGI_Emoji}]] بتطابق الـ emoji كامل. وجرّبنا [[\p{Extended_Pictographic}]] بـ [[u]] على نفس النص: طلّعت [[[ '👍' ]]] بس، من غير لون البشرة ومن غير العلم.
-- [[\q{EGP|USD|SAR}]]: نصوص كاملة جوه الـ class. [[^[\q{...}]$]] بتقبل [["USD"]] وجرّبنا [["US"]] رجّعت [[false]].
-- [[\p{RGI_Emoji}]] مع [[u]] بترمي: [[Invalid regular expression: /\p{RGI_Emoji}/u: Invalid property name]].
-
-### [[v]] أشد من [[u]]
-
-جرّبنا ٤ classes كانت شغالة في [[u]]:
-
-| الـ class بـ [[v]] | النتيجة | التصليح |
-|---|---|---|
-| [[[(]]] | [[Invalid character in character class]] | [[[\(]]] |
-| [[[a-z-]]] | [[Invalid character class]] | [[[a-z\-]]] |
-| [[[{]]] | [[Invalid character in character class]] | [[[\{]]] |
-| [[[|]]] | [[Invalid character in character class]] | [[[\|]]] |
-
-### الخصايص
-
-~~~js app.mjs
-console.log(/x/v.unicodeSets, /x/v.unicode, /x/s.dotAll, /x/m.multiline);
-~~~
-
-~~~text الناتج
-true false true true
-~~~
-
-[[unicodeSets]] هي خاصية [[v]]، و [[unicode]] بتفضل [[false]] مع [[v]] رغم إن كل حاجة في [[u]] شغالة: الاتنين flags منفصلين ومينفعوش مع بعض.
-
----
-
-## الخلاصة
-
-| الـ flag | الخاصية | بيغيّر إيه | استخدمه في |
-|---|---|---|---|
-| [[m]] | [[multiline]] | [[^]] و [[$]] لكل سطر | logs و INI و .env |
-| [[s]] | [[dotAll]] | النقطة بتاخد [[\n]] | blocks متعددة السطور |
-| [[y]] | [[sticky]] | الـ match من [[lastIndex]] بالظبط | tokenizers و parsers |
-| [[v]] | [[unicodeSets]] | [[&&]] و [[--]] و [[\q{}]] و properties النصوص | عربي و emoji و «كذا ناقص كذا» |`,
-          lines: [
-            R`نص ملف INI: ٥ سطور منهم سطرين sections وتلاتة [[key = value]].`,
-            R`[[^\w+(?= =)]] كلمة في أول سطر بعدها [[ =]]. مع [[m]] كل سطر بيتشاف لوحده فطلع [[[ 'host', 'port', 'ttl' ]]]، ومن غيره [[^]] أول الملف بس فـ [[null]].`,
-            R`إيميل: عنوان، سطر فاضي، جسم من سطرين، وخط توقيع [[-- ]].`,
-            R`[[(.*)]] بين السطر الفاضي والتوقيع: من غير [[s]] النقطة وقفت عند أول [[\n]] فمفيش match ([[undefined]])، ومع [[s]] خدت السطرين.`,
-            R`regex خانة CSV واحدة بـ [[y]]: يا نص بين تنصيص (فيه فاصلة عادي) يا أي حاجة لحد الفاصلة، وبعدها فاصلة أو آخر السطر.`,
-            R`سطر فيه مسافات حوالين الخانات، وخانة بين تنصيص جواها فاصلة.`,
-            R`array فاضية هنجمع فيها الخانات واحدة واحدة.`,
-            R`متغير الـ match، متعرّف برّه الـ loop عشان الشرط يحط فيه.`,
-            R`بنقرا خانة ورا خانة لحد آخر السطر، و [[??]] بتاخد البديل اللي اتطابق، و [[trim]] بتشيل المسافات من الخانة العادية.`,
-            R`التلات خانات: [[tea]] و [[rice, white]] كاملة و [[40]].`,
-            R`[[&&]] مع [[v]]: تقاطع، «عربي **و** رقم». [[٣]] بـ [[true]] و [[3]] بـ [[false]].`,
-            R`[[--]] طرح مع [[v]]: كل الحروف ([[\p{L}]]) ناقص حروف ASCII، فـ [[Price3]] اتشالت وطلع [[سعر]] و [[و]] بس.`,
-            R`[[\p{RGI_Emoji}]] بتطابق الـ emoji كامل حتى لو كذا code point، و [[\q{EGP|USD|SAR}]] نصوص كاملة جوه class.`,
-            R`[[unicodeSets]] خاصية [[v]] بـ [[true]] و [[unicode]] بـ [[false]] (flags منفصلين)، و [[dotAll]] و [[multiline]] خصايص [[s]] و [[m]].`,
-          ],
-          ref: [
-            { t: "MDN: RegExp.prototype.multiline", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/multiline" },
-            { t: "MDN: RegExp.prototype.dotAll", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/dotAll" },
-            { t: "MDN: RegExp.prototype.sticky", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/sticky" },
-            { t: "MDN: RegExp.prototype.unicodeSets", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/unicodeSets" },
-            { t: "MDN: Character class (v-mode)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Character_class" },
-          ],
-          pre: [{ to: "js/groups و flags", why: R`أول تعارف بالـ flags دول بمثال واحد لكل واحد` }, { to: "js/regex والعربي: Unicode properties", why: R`[[\p{Script=Arabic}]] و [[\p{Nd}]] و [[u]]، و [[v]] مبنية عليهم` }],
-        },
-        {
-          cmd: "الـ wildcard والـ literal characters: النقطة والحروف الحرفية",
-          title: "النقطة بتطابق إيه بالظبط؟ وأنهي حرف بيطابق نفسه وأنهي حرف لازم \\ قبله",
-          desc: R`**wildcard** هو اسم النقطة [[.]] في الـ regex: حرف واحد، أي حرف، **ما عدا** الـ line terminators الأربعة ([[\n]] و [[\r]] و [[\u2028]] و [[\u2029]]). مع [[s]] بتطابقهم كمان. ومن غير [[u]] بتطابق «نص emoji» (الـ emoji حرفين في UTF-16)، ومع [[u]] أو [[v]] الـ emoji كله.
-
-**literal character** هو أي حرف مش ليه معنى خاص: بيطابق نفسه بالظبط ([[a]] و [[ب]] و المسافة). والحروف اللي ليها معنى (اسمهم syntax characters) هم [[^ $ \ . * + ? ( ) [ ] { } |]]، و [[/]] جوه الـ literal بس: عشان تطابق واحد منهم حرفيًا حط [[\]] قبله. ومن غير [[u]] الـ engine متساهل ([[]]] و [[{]] لوحدهم بيطابقوا نفسهم، و [[\-]] و [[\q]] escapes مقبولة)، ومع [[u]] أو [[v]] نفس الحاجات دي بترمي SyntaxError.`,
-          example: R`// wildcard: النقطة بتطابق إيه وإيه لأ
-const chars = ["a", "ب", " ", "\t", "\n", "\r", "\u2028", "\u2029"];
-console.log(chars.map((ch) => /^.$/.test(ch)).join(" "));
-console.log(chars.map((ch) => /^.$/s.test(ch)).join(" "));
-console.log(/^.$/.test("😀"), /^.$/u.test("😀"), /^[^]$/.test("\n"));
-console.log("v1.2".replace(/./g, "*"), "v1.2".replace(/\./g, "*"), "v1.2".replace(/[.]/g, "*"));
-// literal characters: الحرف العادي بيطابق نفسه
-console.log(/كتاب/.test("الكتاب ده"), /cat/.test("concatenate"), /a b/.test("a  b"));
-// الحروف الخاصة: من غير \ بتغيّر المعنى أو بترمي
-console.log(/^1+1$/.test("1+1"), /^1\+1$/.test("1+1"), /^a|b$/.test("a|b"), /^a\|b$/.test("a|b"));
-try { new RegExp("price (EGP"); } catch (e) { console.log(e.message); }
-console.log(/a]b/.test("a]b"), /a{b/.test("a{b"));
-try { new RegExp("a]b", "u"); } catch (e) { console.log(e.message); }
-try { new RegExp("\\-", "u"); } catch (e) { console.log(e.message); }`,
-          try: R`regex لرقم نسخة زي [["1.2.7"]]: [[/^1.2.\d+$/]]. جرّبه على [["1.2.7"]] و [["1x2y7"]] و [["1.20.7"]]. ليه [["1x2y7"]] عدّت؟ صلّحه.`,
-          sol: R`~~~js version.mjs
-const bad = /^1.2.\d+$/;
-const good = /^1\.2\.\d+$/;
-for (const v of ["1.2.7", "1x2y7", "1.20.7"]) console.log(v, bad.test(v), good.test(v));
-~~~
-
-~~~text الناتج (Node 24.22)
-1.2.7 true true
-1x2y7 true false
-1.20.7 false false
-~~~
-
-النقطة من غير [[\]] wildcard: [[1.2.]] معناها «1 وأي حرف و 2 وأي حرف»، فـ [[x]] و [[y]] عدّوا. [[\.]] نقطة حرفية بس. و [[[.]]] كمان نقطة حرفية (جوه الـ class النقطة ملهاش معنى خاص).`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب ناتج دول قبل التشغيل: [["1.5".replace(/./g, "#")]] و [["1.5".replace(/\./g, "#")]] و [[JSON.stringify("a\nb".replace(/./g, "#"))]] و [[JSON.stringify("a\nb".replace(/./gs, "#"))]].`, done: R`كتبت [[###]] و [[1#5]] و [["#\n#"]] و [["###"]] وطلعوا كده.`, sol: R`~~~js p1.mjs
-console.log("1.5".replace(/./g, "#"), "1.5".replace(/\./g, "#"), JSON.stringify("a\nb".replace(/./g, "#")), JSON.stringify("a\nb".replace(/./gs, "#")));
-~~~
-
-~~~text الناتج (Node 24.22)
-### 1#5 "#\n#" "###"
-~~~
-
-- الأول: النقطة wildcard فكل حرف (حتى النقطة نفسها) بقى [[#]].
-- التاني: [[\.]] النقطة الحرفية بس.
-- التالت: [[\n]] اتساب لأن النقطة مبتطابقهوش.
-- الرابع: مع [[s]] السطر الجديد كمان بقى [[#]]، فـ ٣ حروف ٣ علامات.` },
-            { lvl: 'تطبيق', t: R`**ابني:** [[myEscape(s)]] بتحط [[\]] قبل كل syntax character ([[^ $ \ . * + ? ( ) [ ] { } | /]]) بـ loop على الحروف (من غير regex). وقارنها بـ [[RegExp.escape]] على [["1+1=2"]] و [["(a|b)"]] و [["c:/x"]] و [["سعر.قهوة"]]: كل نص لازم يطابق نفسه بالظبط بـ [[^...$]].`, done: R`الأربع نصوص بيطابقوا نفسهم بالنسختين، و [[myEscape("(a|b)")]] بترجّع [[\(a\|b\)]]، والعربي بيعدّي زي ما هو والنقطة بس اللي اتعمل لها escape.`, sol: R`~~~js p3.mjs
-const SYNTAX = new Set("^$\\.*+?()[]{}|/");
-const myEscape = (s) => [...s].map((ch) => (SYNTAX.has(ch) ? "\\" + ch : ch)).join("");
-for (const s of ["1+1=2", "(a|b)", "c:/x", "سعر.قهوة"]) {
-  const mine = new RegExp("^" + myEscape(s) + "$"), std = new RegExp("^" + RegExp.escape(s) + "$");
-  console.log(s, mine.source, mine.test(s), std.test(s));
-}
-~~~
-
-~~~text الناتج (Node 24.22)
-1+1=2 ^1\+1=2$ true true
-(a|b) ^\(a\|b\)$ true true
-c:/x ^c:\/x$ true true
-سعر.قهوة ^سعر\.قهوة$ true true
-~~~
-
-- [[new Set("^$\\.*+?()[]{}|/")]]: الـ Set من نص بياخد كل حرف لوحده. و [["\\"]] في النص backslash واحدة.
-- [[[...s]]]: بيقسم النص لحروف (code points)، فالعربي والـ emoji مبيتكسروش.
-- النسخة دي كفاية **برّه** الـ class. [[RegExp.escape]] بتعمل escape لحاجات زيادة ([[-]] والمسافة وأول حرف) عشان تبقى آمنة في أي مكان، حتى جوه [[[ ]]] ومع [[v]].` },
-            { lvl: 'تحدي', t: R`**قارن:** «أي حرف بما فيه السطر الجديد» ليها ٣ أشكال: [[.]] مع [[s]]، و [[[^]]]، و [[[\s\S]]]. جرّبهم مع وبدون [[u]] على [["😀\nب"]] بـ [[match(.../g)]]، وقول كام match في كل حالة وليه.`, done: R`عرفت إن من غير [[u]] الـ emoji بيطلع حتتين، وإن التلات أشكال مع [[u]] بيطلّعوا ٣ (emoji كامل، وسطر جديد، وب)، و [[.]] من غير [[s]] بتطلّع من غير [[\n]].`, sol: R`~~~js p4.mjs
-const s = "😀\nب";
-console.log(s.match(/./g), s.match(/./gs), s.match(/./gsu), s.match(/[^]/gu), s.match(/[\s\S]/gu).length);
-~~~
-
-~~~text الناتج (Node 24.22)
-[ '\ud83d', '\ude00', 'ب' ] [ '\ud83d', '\ude00', '\n', 'ب' ] [ '😀', '\n', 'ب' ] [ '😀', '\n', 'ب' ] 3
-~~~
-
-- [[/./g]]: من غير [[u]] الـ emoji اتقسم لـ surrogate pair (حتتين ملهمش معنى لوحدهم)، ومن غير [[s]] الـ [[\n]] اتساب.
-- [[/./gs]]: الـ [[\n]] دخل، والـ emoji لسه حتتين.
-- [[/./gsu]] و [[/[^]/gu]] و [[/[\s\S]/gu]]: ٣ matches صح. الـ ٣ أشكال زي بعض، و [[s]] أوضح في الكود الجديد.` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`أشهر باج regex في الدنيا نقطة من غير [[\]]: فحص إصدار، أو IP، أو دومين، أو اسم ملف [[.js]]، بيعدّي نصوص غلط وكل الاختبارات اللي فيها نقطة حقيقية بتنجح. والعكس: [[\]] زيادة قبل حرف عادي، أو [[]]] لوحده، بيعدّي من غير [[u]] ويرمي أول ما حد يضيف [[u]] أو [[v]] عشان العربي.`,
-            how: R`النقطة في الـ spec اسمها **wildcard**، وبتطابق أي حرف ما عدا الـ LineTerminator: [[\n]] (LF) و [[\r]] (CR) و [[\u2028]] (Line Separator) و [[\u2029]] (Paragraph Separator). التاب والمسافة والحروف العربي كلهم بيتطابقوا.
-
-الحرف «حرفي» لو مش syntax character: [[^ $ \ . * + ? ( ) [ ] { } |]]. جوه الـ literal كمان [[/]] لازم [[\/]] (وإلا بتقفل الـ literal)، بس في [[new RegExp("a/b")]] مش محتاجة. جوه [[[ ]]] أغلبهم حرفيين ما عدا [[]]] و [[\]] و [[^]] في الأول و [[-]] بين حرفين (ومع [[v]] كمان [[( ) [ { } / - |]]).
-
-من غير [[u]] الـ engine في **Annex B mode** (وضع التوافق مع الكود القديم): [[]]] و [[{]] و [[}]] لوحدهم حرفيين، و [[a{2]] (quantifier ناقص) حرفي، و [[\q]] أو [[\-]] (escape لحرف عادي) بيبقى الحرف نفسه. مع [[u]] أو [[v]] الحاجات دي SyntaxError: [[Lone quantifier brackets]] و [[Incomplete quantifier]] و [[Invalid escape]]. ده مقصود: عشان الغلط يبان بدل ما يتقري بمعنى تاني.`,
-            when: R`استخدم النقطة لما تقصد «أي حرف» فعلًا، وغالبًا في [[.*?]] بين حاجتين معروفين. لما تعرف الحروف المسموحة، class أدق وأسرع ([[[^"]*]] بدل [[.*?]] بين تنصيص). وأي نص ثابت فيه رمز (نسخة، IP، امتداد ملف، سعر بـ [[$]]) حط [[\]] قبل الرموز، وأي نص متغير عدّيه على [[RegExp.escape]].`,
-            mistakes: R`[[/\.js$/]] مكتوبة [[/.js$/]] فـ [["myjs"]] تعدّي. و [[^a|b$]] فاكرها «a أو b بالظبط» وهي «a في الأول **أو** b في الآخر» (جرّبناها على [["a|b"]] ورجّعت [[true]] للسبب الغلط)، والصح [[^(?:a|b)$]]. و [[.]] على نص فيه emoji من غير [[u]] بتقطع الـ emoji. و [[\-]] أو [[\_]] برّه الـ class مع [[u]]: [[Invalid escape]].`
-          },
-          teach: R`## الفكرة في سطر
-
-أي حرف في الـ pattern يا **بيطابق نفسه** (literal character)، يا **ليه معنى** (syntax character). والنقطة أشهر حرف ليه معنى: الـ **wildcard**. المثال بيقيس الاتنين حرف حرف. كل الناتج اتشغّل فعلًا على Node 24.22.
-
----
-
-## ١. الـ wildcard: النقطة بتطابق إيه؟
-
-~~~js app.mjs
-const chars = ["a", "ب", " ", "\t", "\n", "\r", "\u2028", "\u2029"];
-console.log(chars.map((ch) => /^.$/.test(ch)).join(" "));
-console.log(chars.map((ch) => /^.$/s.test(ch)).join(" "));
-~~~
-
-[[/^.$/]] معناها «النص كله حرف واحد». جرّبناها على ٨ حروف:
-
-~~~text الناتج
-true true true true false false false false
-true true true true true true true true
-~~~
-
-| الحرف | اسمه | [[.]] | [[.]] مع [[s]] |
-|---|---|---|---|
-| [[a]] و [[ب]] | حروف عادية بأي لغة | ✓ | ✓ |
-| المسافة و [[\t]] | مسافة و tab، مش سطر جديد | ✓ | ✓ |
-| [[\n]] | Line Feed: السطر الجديد العادي | ✗ | ✓ |
-| [[\r]] | Carriage Return: نص سطر ويندوز الجديد [[\r\n]] | ✗ | ✓ |
-| [[\u2028]] و [[\u2029]] | Line و Paragraph Separator من Unicode | ✗ | ✓ |
-
-الأربعة اللي ✗ اسمهم **line terminators**، وهم نفسهم اللي [[^]] و [[$]] بيتعاملوا معاهم مع [[m]].
-
-### الـ emoji وعلامة [[u]]
-
-~~~js app.mjs
-console.log(/^.$/.test("😀"), /^.$/u.test("😀"), /^[^]$/.test("\n"));
-~~~
-
-~~~text الناتج
-false true true
-~~~
-
-- الـ emoji في UTF-16 حرفين (surrogate pair). من غير [[u]] النقطة بتاخد واحد بس فـ [[^.$]] فشلت. مع [[u]] الاتنين حرف واحد.
-- [[[^]]]: class فاضية منفية = «أي حرف» حتى [[\n]]. الشكل القديم قبل [[s]].
-
-### النقطة ضد النقطة الحرفية
-
-~~~js app.mjs
-console.log("v1.2".replace(/./g, "*"), "v1.2".replace(/\./g, "*"), "v1.2".replace(/[.]/g, "*"));
-~~~
-
-~~~text الناتج
-**** v1*2 v1*2
-~~~
-
-[[/./g]] بدّلت كل حرف. [[\.]] و [[[.]]] النقطة الحرفية بس: جوه [[[ ]]] النقطة ملهاش معنى خاص.
-
----
-
-## ٢. literal characters: الحرف اللي بيطابق نفسه
-
-~~~js app.mjs
-console.log(/كتاب/.test("الكتاب ده"), /cat/.test("concatenate"), /a b/.test("a  b"));
-~~~
-
-~~~text الناتج
-true true false
-~~~
-
-- [[/كتاب/]]: ٤ حروف literal ورا بعض، بتطابق نفس الـ ٤ في أي مكان. «الكتاب» فيها «كتاب».
-- [[/cat/]] لقتها جوه «con**cat**enate»: الـ literal مبيعرفش حدود الكلمات (ده شغل [[\b]] أو lookaround).
-- [[/a b/]]: المسافة نفسها literal، **مسافة واحدة بالظبط**. [["a  b"]] فيها مسافتين ففشلت. (لو تقصد مسافة أو أكتر: [[a +b]] أو [[a\s+b]].)
-
----
-
-## ٣. الحروف الخاصة: من غير [[\]] بتغيّر المعنى أو بترمي
-
-~~~js app.mjs
-console.log(/^1+1$/.test("1+1"), /^1\+1$/.test("1+1"), /^a|b$/.test("a|b"), /^a\|b$/.test("a|b"));
-~~~
-
-~~~text الناتج
-false true true true
-~~~
-
-- [[/^1+1$/]]: [[+]] هنا «1 مرة أو أكتر» مش حرف، فالـ regex بيطابق [["11"]] و [["111"]] مش [["1+1"]].
-- [[/^a|b$/]] رجّعت [[true]]، بس **للسبب الغلط**: [[|]] بتقسم الـ regex كله لـ «[[^a]]» **أو** «[[b$]]»، و [["a|b"]] بتبدأ بـ a. نفس الـ regex بيقبل [["abc"]] كمان.
-- [[\+]] و [[\|]]: الحرف نفسه.
-
-### الجدول: كل syntax character
-
-جرّبنا كل حرف لوحده في loop: حطيناه بين a و b في الـ regex مرة من غير [[\]] ومرة بيها (يعني [[^a?b$]] و [[^a\?b$]] للـ [[?]] مثلًا)، وجرّبنا الاتنين على النص اللي فيه الحرف نفسه حرفيًا ([["a?b"]]):
-
-| الحرف | من غير [[\]] | مع [[\]] | معناه لو من غير [[\]] |
-|---|---|---|---|
-| [[^]] و [[$]] | مبيطابقش | يطابق | أول وآخر النص (anchor) |
-| [[\]] | مبيطابقش | يطابق | بداية escape للحرف اللي بعده |
-| [[.]] | يطابق بالصدفة | يطابق | أي حرف، فبتطابق النقطة وأي حاجة تانية |
-| [[*]] و [[+]] و [[?]] | مبيطابقش | يطابق | quantifier على الحرف اللي قبله |
-| [[(]] و [[)]] | SyntaxError | يطابق | group: [[Unterminated group]] و [[Unmatched ')']] |
-| [[[]] | SyntaxError | يطابق | class: [[Unterminated character class]] |
-| [[]]] و [[{]] و [[}]] | يطابق (من غير [[u]] بس) | يطابق | حرفي في Annex B، و SyntaxError مع [[u]] |
-| [[|]] | يطابق بالصدفة | يطابق | «أو» بيقسم الـ regex كله |
-| [[/]] | يطابق في [[new RegExp]] | يطابق | بيقفل الـ literal لو كتبته بين [[/ /]] |
-
-**القاعدة العملية:** أي حرف من دول عايزه حرفي: [[\]] قبله. والحروف العادية (حروف وأرقام ومسافة) **متحطش** قبلها [[\]]: [[\d]] و [[\b]] و [[\s]] ليهم معنى، والباقي بيرمي مع [[u]].
-
-### الـ SyntaxError نفسها
-
-~~~js app.mjs
-try { new RegExp("price (EGP"); } catch (e) { console.log(e.message); }
-~~~
-
-~~~text الناتج
-Invalid regular expression: /price (EGP/: Unterminated group
+~~~text الناتج لـ "a1".replace(/(\d)/, (match, g1, offset, str) => JSON.stringify([match, g1, offset, str]))
+a["1","1",1,"a1"]
 ~~~
 
 ---
 
-## ٤. [[u]] بيقفل باب التساهل
+## ٦. [[replaceAll]] و [[split]]
 
-~~~js app.mjs
-console.log(/a]b/.test("a]b"), /a{b/.test("a{b"));
-try { new RegExp("a]b", "u"); } catch (e) { console.log(e.message); }
-try { new RegExp("\\-", "u"); } catch (e) { console.log(e.message); }
+~~~text app.js
+console.log("a.b.c".replaceAll(".", "/"), "a-b_c  d".split(/[-_\s]+/));
 ~~~
+
+- [[replaceAll(".", "/")]]: بنص عادي (مش regex)، فالنقطة نقطة حرفية، وكل النقط اتغيرت. ([[replace]] بنص عادي بيغيّر **أول واحدة بس**: [["a-b-c".replace("-", "+")]] طلّعت [[a+b-c]].)
+- [[split(/[-_\s]+/)]]: يقطّع عند أي سلسلة من شرطة أو [[_]] أو مسافات. والـ [[+]] بتخلي المسافتين فاصل واحد.
 
 ~~~text الناتج
-true true
-Invalid regular expression: /a]b/u: Lone quantifier brackets
-Invalid regular expression: /\-/u: Invalid escape
+a/b/c [ 'a', 'b', 'c', 'd' ]
 ~~~
-
-من غير [[u]] الـ engine بيقرا [[]]] و [[{]] لوحدهم كحروف عادية، و [[\-]] كـ [[-]] (ده اسمه Annex B: قواعد متساهلة عشان كود قديم ميبوظش). مع [[u]] أو [[v]] كله ده SyntaxError. وجرّبنا كمان [[{]] لوحدها و [[}]] بنفس الرسالة، و [[a{2]] بـ [[Incomplete quantifier]]، و [[\q]] بـ [[Invalid escape]].
-
-**النتيجة:** لو هتضيف [[u]] لـ regex قديم (عشان العربي أو الـ emoji)، شغّله الأول: أي escape زيادة أو قوس لوحده هيبان.
 
 ---
 
-## الخلاصة
+## ٧. regex من نص اليوزر: escape
 
-| عايز تطابق | اكتب |
-|---|---|
-| أي حرف ما عدا السطر الجديد | [[.]] |
-| أي حرف بما فيه السطر الجديد | [[.]] مع [[s]] (أو [[[^]]] أو [[[\s\S]]]) |
-| emoji كحرف واحد | [[.]] مع [[u]] أو [[v]] |
-| نقطة حرفية | [[\.]] أو [[[.]]] |
-| واحد من [[^ $ \ . * + ? ( ) [ ] { } | /]] | [[\]] قبله |
-| نص متغير جاي من برّه | [[RegExp.escape(text)]] |`,
-          lines: [
-            R`٨ حروف هنجرّبهم: حرفين عادي، ومسافة و tab، والأربع line terminators ([[\n]] و [[\r]] و [[\u2028]] و [[\u2029]]).`,
-            R`[[/^.$/]] «النص كله حرف واحد». أول ٤ [[true]] والأربعة الأخيرين [[false]]: النقطة مبتطابقش أي line terminator.`,
-            R`نفس الحروف مع [[s]] (dotAll): كلهم [[true]]، النقطة بقت تطابق السطر الجديد كمان.`,
-            R`الـ emoji حرفين في UTF-16: من غير [[u]] النقطة بتاخد نصه ([[false]])، ومع [[u]] بتاخده كله ([[true]]). و [[[^]]] أي حرف حتى [[\n]].`,
-            R`[[/./g]] بدّلت كل حرف بـ [[*]]، و [[\.]] و [[[.]]] النقطة الحرفية بس فطلع [[v1*2]] مرتين.`,
-            R`literal characters: [[كتاب]] اتلاقت جوه «الكتاب»، و [[cat]] جوه «concatenate»، و [[a b]] بمسافة واحدة فشلت على مسافتين.`,
-            R`[[1+1]] من غير [[\]] معناها «1 مرة أو أكتر ثم 1» ففشلت، و [[\+]] نجحت. و [[^a|b$]] نجحت بالصدفة لأن [[|]] قسمت الـ regex، و [[\|]] نجحت صح.`,
-            R`قوس مفتوح من غير قفلة في نص: [[new RegExp]] رمت [[Unterminated group]] واتمسكت.`,
-            R`من غير [[u]]: [[]]] و [[{]] لوحدهم بيطابقوا نفسهم (قواعد Annex B المتساهلة)، فالاتنين [[true]].`,
-            R`نفس [[a]b]] مع [[u]]: SyntaxError [[Lone quantifier brackets]]. التساهل اتقفل.`,
-            R`[[\-]] برّه الـ class مع [[u]]: [[Invalid escape]]. من غير [[u]] كانت هتبقى [[-]] عادي.`,
-          ],
-          ref: [
-            { t: "MDN: Wildcard: .", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Wildcard" },
-            { t: "MDN: Literal character", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Literal_character" },
-            { t: "MDN: Character escape", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Character_escape" },
-            { t: "ECMAScript: SyntaxCharacter", url: "https://tc39.es/ecma262/multipage/text-processing.html#prod-SyntaxCharacter" },
-          ],
-          pre: [{ to: "js/regex: classes و quantifiers", why: R`النقطة والـ quantifiers والـ anchors في أبسط صورهم` }, { to: "js/regex والعربي: Unicode properties", why: R`الـ escapes جوه الـ regex وإزاي [[u]] بيرمي على الغلط` }],
-        },
-        {
-          cmd: "named backreference و modifiers و buffer boundaries",
-          title: "\\k<name> بيرجع لنفس النص، و (?i:...) بيشغّل flag لحتة بس، و \\A و \\z مش في JS لسه",
-          desc: R`ده آخر حتة في الـ syntax:
-• **named backreference** [[\k<name>]]: «نفس النص بالظبط اللي الـ group اللي اسمه [[name]] مسكه». زي [[\1]] بس بالاسم، فمش بيبوظ لو زوّدت أقواس. للحاجات اللي لازم تتقفل بنفس اللي فتحها: تنصيص [["]] أو [[']]، و tag بنفس الاسم، وكلمة متكررة.
-• **modifiers** [[(?i:...)]] و [[(?-i:...)]] و [[(?ims-ims:...)]]: تشغّل أو تطفي flag من [[i]] و [[m]] و [[s]] **لجزء من الـ regex بس**. مثلًا اسم الـ method بأي حالة حروف، والـ path حساس. جديدة (Baseline «newly available»، يعني في آخر نسخ المتصفحات الرئيسية بس): شغالة في Node 24 و Chrome، وجرّبناها على الاتنين.
-• **buffer boundary assertions** [[\A]] (أول النص) و [[\z]] (آخره) و [[\Z]] (آخره أو قبل سطر جديد أخير): موجودين في PCRE و Python، و MDN كاتب لهم صفحة، بس **مش متطبقين** في Node 24.22 ولا Chrome 157: مع [[u]] بيرموا [[Invalid escape]]، ومن غير [[u]] [[\A]] بتطابق حرف [[A]] عادي. البديل: [[^]] و [[$]] **من غير** [[m]] هما بالظبط [[\A]] و [[\z]]، و [[\n?$]] بدل [[\Z]].`,
-          example: R`// named backreference: \k<name> = نفس النص اللي الـ group ده مسكه
-const quoted = /(?<q>["'])(?<body>.*?)\k<q>/g;
-console.log([...$__btsay "it's ok" and 'hi'$__bt.matchAll(quoted)].map((m) => m.groups.body));
-const dup = /(?<!\p{L})(?<w>\p{L}+)\s+\k<w>(?!\p{L})/giu;
-console.log("ده ده كلام the The end".replace(dup, "$<w>"));
-console.log(/\b(?<w>\w+)\s+\k<w>\b/giu.test("ده ده"));
-// modifiers: flag لجزء من الـ regex بس
-const cmd = /^(?i:get|post) \/api\/[a-z]+$/;
-console.log(cmd.test("GET /api/users"), cmd.test("get /api/users"), cmd.test("GET /API/users"));
-const code = /^(?-i:EG)-\d+$/i;
-console.log(code.test("EG-12"), code.test("eg-12"));
-try { new RegExp("(?g:a)"); } catch (e) { console.log(e.message); }
-// buffer boundaries \A و \z و \Z: مش موجودين في JS لسه
-console.log(/\Afoo/.test("Afoo"));
-try { new RegExp(String.raw$__bt\Afoo\z$__bt, "u"); } catch (e) { console.log(e.message); }
-console.log(/^foo$/.test("foo"), /^foo$/.test("foo\n"), /^foo\n?$/.test("foo\n"), /^foo$/m.test("x\nfoo"));`,
-          try: R`اكتب regex بـ [[\k<tag>]] بيلاقي tags متقفلة صح زي [[<b>bold</b>]] و [[<h2>title</h2>]] في نص، ويرفض [[<i>x</b>]] (اتقفلت بـ tag تاني). وخلي اسم الـ tag مش حساس للحروف، فـ [[<B>up</b>]] تتقبل.`,
-          sol: R`~~~js tags.mjs
-const pair = /<(?<tag>[a-z][a-z0-9]*)>(?<body>[^<]*)<\/\k<tag>>/gi;
-console.log([..."<b>bold</b> <i>x</b> <h2>title</h2> <B>up</b>".matchAll(pair)].map((m) => m.groups.tag + "=" + m.groups.body));
+~~~text app.js
+const userInput = "1+1";
+const safe = userInput.replace(/[.*+?^$__{}()|[\]\\]/g, "\\$&");
+console.log(safe, new RegExp(safe).test("1+1=2"));
 ~~~
 
-~~~text الناتج (Node 24.22)
-[ 'b=bold', 'h2=title', 'B=up' ]
+- [[new RegExp(نص)]]: بيعمل regex من string. مفيد لما الـ pattern مش معروف وانت بتكتب الكود (بحث بكلمة اليوزر).
+- المشكلة: [[+]] في [["1+1"]] ليها معنى في الـ regex («واحد أو أكتر»). ولو اليوزر كتب [["(a+"]] الـ regex نفسه هيبوظ:
+
+~~~text الناتج لـ new RegExp("(a+")
+SyntaxError: Invalid regular expression: /(a+/: Unterminated group
 ~~~
 
-- [[(?<tag>[a-z][a-z0-9]*)]]: اسم الـ tag، و [[\k<tag>]] في القفلة لازم يبقى **نفس** الاسم، فـ [[<i>x</b>]] اترفضت.
-- [[i]] بتأثر على الـ backreference كمان: [[B]] و [[b]] اتعتبروا نفس الاسم.
-- [[[^<]*]]: الجسم من غير tags جواه. ده تمرين على [[\k]]، مش parser HTML: لـ HTML حقيقي استخدم [[DOMParser]] (درس «إمتى regex غلط»).`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[/(?<a>x)\k<a>/.test("xx")]] و [[/(?<a>x)\k<a>/.test("xy")]] و [[/\k<a>/.test("k<a>")]]، وبعدين [[new RegExp("(?<a>x)\\k<a>|\\k<b>")]].`, done: R`توقعت [[true false true]] وإن الأخير SyntaxError، وعرفت ليه التالت [[true]].`, sol: R`~~~js p1.mjs
-console.log(/(?<a>x)\k<a>/.test("xx"), /(?<a>x)\k<a>/.test("xy"), /\k<a>/.test("k<a>"));
-try { new RegExp("(?<a>x)\\k<a>|\\k<b>"); } catch (e) { console.log(e.message); }
-~~~
-
-~~~text الناتج (Node 24.22)
-true false true
-Invalid regular expression: /(?<a>x)\k<a>|\k<b>/: Invalid named capture referenced
-~~~
-
-- التالت: regex **مفيهوش ولا named group** ومن غير [[u]]، فـ [[\k]] بتتقري حرف [[k]] عادي (Annex B)، و [[<a>]] حروف عادية. فبيطابق النص [["k<a>"]] حرفيًا!
-- الرابع: أول ما يبقى فيه named group واحد في الـ regex، أي [[\k<اسم>]] لازم يبقى اسم موجود، وإلا SyntaxError. ومع [[u]] لازم دايمًا.` },
-            { lvl: 'تطبيق', t: R`**ابني:** regex لـ header [[Content-Type]] بيقبل اسم الـ header بأي حالة حروف ([[Content-Type]] و [[CONTENT-TYPE]] و [[content-type]]) بس القيمة [[application/json]] لازم بالحروف الصغيرة، و [[; charset=utf-8]] اختياري. بـ modifier مش بـ [[i]] على الكل.`, done: R`السطرين الأولين بيعدّوا و [[content-type: Application/JSON]] بيترفض.`, sol: R`~~~js p3.mjs
-const header = /^(?i:content-type):\s*(?<type>application\/json)(?:;\s*charset=(?<cs>utf-8))?$/;
-for (const h of ["Content-Type: application/json", "CONTENT-TYPE: application/json; charset=utf-8", "content-type: Application/JSON"]) {
-  console.log(h, header.test(h));
-}
-~~~
-
-~~~text الناتج (Node 24.22)
-Content-Type: application/json true
-CONTENT-TYPE: application/json; charset=utf-8 true
-content-type: Application/JSON false
-~~~
-
-[[(?i:content-type)]] بيشغّل [[i]] جوه القوس بس. قبل الـ modifiers كنت هتكتب [[[Cc][Oo][Nn]...]] حرف حرف، أو [[i]] على الكل وتفحص القيمة لوحدها.` },
-            { lvl: 'تطبيق', t: R`**قارن:** في JS، [[$]] من غير [[m]] بتطابق قبل [[\n]] الأخير ولا لأ؟ جرّب [[/^total=\d+$/]] على [["total=40\n"]]، وبعدين [[/^total=\d+\n?$/]] على نفس النص وعلى [["total=40\n\n"]]، و [[/^total=\d+$/m]] على [["x\ntotal=40\ny"]].`, done: R`عرفت إن [[$]] في JS زي [[\z]] (آخر النص بالظبط)، مش زي [[$]] في Python و PCRE اللي بتسمح بسطر جديد أخير، وإن [[\n?$]] هو بديل [[\Z]].`, sol: R`~~~js p4.mjs
-const lines = "total=40\n";
-console.log(/^total=\d+$/.test(lines), /^total=\d+\n?$/.test(lines), /^total=\d+\n?$/.test("total=40\n\n"), /^total=\d+$/m.test("x\ntotal=40\ny"));
-~~~
-
-~~~text الناتج (Node 24.22)
-false true false true
-~~~
-
-| في JS | زي إيه في PCRE و Python |
-|---|---|
-| [[^]] من غير [[m]] | [[\A]]: أول النص بالظبط |
-| [[$]] من غير [[m]] | [[\z]]: آخر النص بالظبط، حتى لو فيه [[\n]] أخير |
-| [[\n?$]] من غير [[m]] | [[\Z]]: آخر النص أو قبل سطر جديد واحد أخير |
-| [[^]] و [[$]] مع [[m]] | [[^]] و [[$]] مع MULTILINE: أول وآخر كل سطر |
-
-فخ لو جاي من Python: [[re.match(r"^\d+$", "40\n")]] بتنجح هناك، و [[/^\d+$/.test("40\n")]] بتفشل هنا. اعمل [[trim()]] للـ input، أو [[\n?$]].` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** حد نقل regex من PHP: [[new RegExp(String.raw$__bt\Aabc\z$__bt, "u")]]. شغّله، وبعدين جرّبه من غير [[u]] على [["Aabcz"]] وعلى [["abc"]]، وصلّحه.`, done: R`شفت [[Invalid escape]] مع [[u]]، وإن من غير [[u]] الـ regex بقى يطابق [["Aabcz"]] (حروف A و z عادية!) ومش [["abc"]]، وصلّحته لـ [[/^abc$/u]].`, sol: R`~~~js p5.mjs
-try { new RegExp(String.raw$__bt\Aabc\z$__bt, "u"); } catch (e) { console.log(e.message); }
-console.log(new RegExp(String.raw$__bt\Aabc\z$__bt).test("Aabcz"), new RegExp(String.raw$__bt\Aabc\z$__bt).test("abc"));
-console.log(/^abc$/u.test("abc"), /^abc$/u.test("abc\n"), /^abc$/u.test("x\nabc"));
-~~~
-
-~~~text الناتج (Node 24.22)
-Invalid regular expression: /\Aabc\z/u: Invalid escape
-true false
-true false false
-~~~
-
-- مع [[u]]: SyntaxError واضحة، وده الأحسن: الغلط بان.
-- من غير [[u]]: الأخطر. [[\A]] و [[\z]] escapes مش معروفة، فـ Annex B بيقراهم حروف [[A]] و [[z]]، والـ regex بقى «A ثم abc ثم z» **من غير ولا error**.
-- [[/^abc$/u]] هو [[\Aabc\z]] بالظبط: [[^]] و [[$]] من غير [[m]].
-- وده سبب كفاية تحط [[u]] (أو [[v]]) في أي regex جديد.` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`[[\k<name>]] هو الطريقة الوحيدة في الـ regex تقول «نفس اللي فات» (مش «نفس الشكل»)، ومن غيرها [[["'].*?["']]] بتقفل [["...']] غلط. والـ modifiers بتحل مشكلة قديمة: جزء من النص مش حساس للحروف (اسم header، أمر، كلمة مفتاحية) والباقي حساس (قيمة، كود، ID). و [[\A]] و [[\z]] هتقابلهم في كود منقول من PHP أو Python أو Ruby، ولازم تعرف إنهم مش هيشتغلوا وإزاي يبوظوا في صمت.`,
-            how: R`[[\k<name>]] بيقارن بالنص اللي الـ group مسكه **في الـ match ده**، مش بالـ pattern. لو الـ group مشاركش (اختياري أو في بديل تاني)، الـ backreference بيطابق فاضي. ومع [[i]] المقارنة مش حساسة للحروف. ولو فيه named groups في الـ regex (أو فيه [[u]] أو [[v]])، [[\k<اسم>]] لاسم مش موجود SyntaxError. ومن ES2025 ينفع نفس الاسم في بديلين مختلفين ([[(?<y>\d{4})-\d\d|\d\d-(?<y>\d{4})]])، وجرّبناه على Node 24.22 و Chrome 157 وطلّع السنة من الشكلين.
-
-الـ modifier [[(?flags-flags:...)]] group من غير حفظ (زي [[(?:...)]]) بس بيغيّر flags جواه. المسموح [[i]] و [[m]] و [[s]] بس: [[(?g:a)]] بيرمي [[Invalid group]]، و [[(?u:a)]] كمان، و [[(?i-i:a)]] بيرمي [[Repeated flag in flag group]]. و [[(?m:^b)]] و [[(?s:.)]] اشتغلوا في تجربتنا.
-
-[[\A]] و [[\z]] و [[\Z]] في PCRE معناهم أول النص، وآخره، وآخره أو قبل [[\n]] أخير. في JS **مفيش** syntax ليهم (لسه اقتراح في TC39 ومش في الـ spec). من غير [[u]] أي escape لحرف عادي بيبقى الحرف نفسه، فـ [[\A]] = [[A]]. البديل: [[^]] و [[$]] من غير [[m]] (و [[$]] في JS عمرها ما بتسمح بـ [[\n]] أخير، يعني هي [[\z]] مش [[\Z]]).`,
-            when: R`[[\k<name>]]: تنصيص بيتقفل بنفسه، و tags، وكلمات متكررة، و delimiters زي [[--- ... ---]] أو heredoc. الـ modifiers: لما جزء صغير بس محتاج flag مختلف، خصوصًا [[(?i:...)]] لكلمات مفتاحية وسط قيم حساسة. و [[^]] و [[$]] من غير [[m]] في أي validation (ده [[\A]] و [[\z]] بتوعك).`,
-            mistakes: R`[[\b(?<w>\w+)\s+\k<w>\b]] على عربي: [[\b]] و [[\w]] إنجليزي بس فمبتلاقيش «ده ده» (جرّبناها: [[false]]). و [[\1]] بعد ما تزوّد group قبله فيتزحلق (استخدم الاسم). و [[\k<name>]] من غير named groups ومن غير [[u]] فبيطابق حرفيًا [[k<name>]]. ومودفاير بـ [[g]] أو [[u]] أو [[y]] (مش مسموحين). وكود فيه [[\A]] أو [[\z]] أو [[\K]] من PCRE من غير [[u]] فيبوظ في صمت.`
-          },
-          teach: R`## الفكرة في سطر
-
-٣ حاجات من الـ syntax لسه مشفناهاش: **رجوع لنفس النص** بالاسم، و**flag لحتة** من الـ regex، و anchors من لغات تانية **مش موجودة** عندنا. كل الناتج اتشغّل فعلًا على Node 24.22، والـ modifiers و [[\A]] اتجرّبوا كمان على Chrome 157 بنفس النتيجة.
-
----
-
-## ١. named backreference: [[\k<name>]]
-
-### تنصيص بيتقفل بنفس اللي فتحه
-
-~~~js app.mjs
-const quoted = /(?<q>["'])(?<body>.*?)\k<q>/g;
-console.log([...$__btsay "it's ok" and 'hi'$__bt.matchAll(quoted)].map((m) => m.groups.body));
-~~~
-
-| الحتة | معناها |
-|---|---|
-| [[(?<q>["'])]] | علامة تنصيص (مزدوجة أو مفردة) في group اسمه [[q]] |
-| [[(?<body>.*?)]] | الكلام اللي جوه، lazy عشان يقف عند أول قفلة صح |
-| [[\k<q>]] | **نفس** العلامة اللي [[q]] مسكها، مش أي علامة |
+- الحل: قبل كل حرف خاص حط [[\]]. الـ class [[[.*+?^$__{}()|[\]\\]]] فيها كل الحروف الخاصة (و [[\]]] و [[\\]] عشان [[]]] و [[\]] نفسهم)، و [["\\$&"]] = [[\]] + الحرف اللي اتطابق ([[$&]]).
 
 ~~~text الناتج
-[ "it's ok", 'hi' ]
+1\+1 true
 ~~~
 
-[["it's ok"]] اتفتحت بـ [["]] فالـ [[']] اللي جواها مقفلتهاش. لو كتبنا [[["'](.*?)["']]] بدل [[\k<q>]] كانت هتقف عند [[']] وتطلّع [["it"]].
+بقت [[1\+1]]، فبتدوّر على «1+1» حرفيًا.
 
-### كلمة متكررة بالعربي
+### RegExp.escape: الدالة الجاهزة (ES2025)
 
-~~~js app.mjs
-const dup = /(?<!\p{L})(?<w>\p{L}+)\s+\k<w>(?!\p{L})/giu;
-console.log("ده ده كلام the The end".replace(dup, "$<w>"));
-console.log(/\b(?<w>\w+)\s+\k<w>\b/giu.test("ده ده"));
+بدل ما تكتب الـ regex اللي فوق بإيدك، اللغة نفسها بقى فيها [[RegExp.escape(str)]]: بتاخد نص وترجّع نسخة آمنة تتحط جوه [[new RegExp]]. موجودة في Node 24 والمتصفحات الحديثة (Chrome 136 و Firefox 134 و Safari 18.2، من MDN)، ومش موجودة في Node 22. جرّبتها على Node 24:
+
+~~~text esc.mjs
+console.log(RegExp.escape("1+1"));
+console.log(RegExp.escape("price: $5.00 (sale)"));
+console.log(RegExp.escape("a-b/c"));
+console.log(RegExp.escape("قهوة.شاي"));
 ~~~
 
-~~~text الناتج
-ده كلام the end
+~~~text الناتج (Node 24)
+\x31\+1
+\x70rice\x3a\x20\$5\.00\x20\(sale\)
+\x61\x2db\/c
+قهوة\.شاي
+~~~
+
+شكلها غريب بس كله مقصود:
+
+- [[\+]] و [[\$]] و [[\.]] و [[\(]]: الحروف الخاصة بـ [[\]] قبلها، زي النسخة اليدوية.
+- [[\x31]] و [[\x70]] و [[\x61]]: **أول** حرف لو رقم أو حرف إنجليزي بيتكتب بالكود بتاعه (31 هو كود «1» بالـ hex). ليه؟ عشان لو لزقت النتيجة بعد حاجة زي [[\1]] (back-reference) أو [[\c]]، الحرف الأول ميتقريش جزء منها ويغيّر المعنى.
+- [[\x20]] للمسافة و [[\x3a]] لـ [[:]]: حروف ملهاش معنى دلوقتي، بس بتتعمل escape عشان تفضل آمنة في flag [[v]] و [[x]] (الأخير لسه مقترح).
+- [[\x2d]] للـ [[-]] و [[\/]] للـ [[/]].
+- العربي بيعدّي زي ما هو، والنقطة بس اتعمل لها escape.
+
+### الفرق اللي بيبان: جوه الأقواس المربعة
+
+النسخة اليدوية اللي فوق مبتعملش escape للـ [[-]]. برّه الأقواس المربعة ده مش مشكلة، بس لو حطيت النص **جوه** class:
+
+~~~text esc.mjs
+const oldEsc = (s) => s.replace(/[.*+?^$__{}()|[\]\\]/g, "\\$&");
+console.log(oldEsc("a-z"), new RegExp("[" + oldEsc("a-z") + "]").test("m"));
+console.log(new RegExp("[" + RegExp.escape("a-z") + "]").test("m"));
+~~~
+
+~~~text الناتج (Node 24)
+a-z true
 false
 ~~~
 
-- [[\k<w>]] مع [[i]]: [[The]] اتعتبرت زي [[the]].
-- [[$<w>]] في الاستبدال: أول نسخة بس.
-- السطر التاني: الشكل المشهور بـ [[\b]] و [[\w]] **فشل** على العربي، لأن الاتنين إنجليزي بس حتى مع [[u]]. عشان كده استخدمنا lookaround بـ [[\p{L}]] (المشروع «مصلّح الكلمات المتكررة» مبني على كده).
+النسخة اليدوية سابت [[a-z]] زي ما هي، فبقت **range** من a لـ z وطابقت «m» غلط. [[RegExp.escape]] حوّلت الـ [[-]] لـ [[\x2d]] فبقت تطابق الـ ٣ حروف «a» و «-» و «z» بس. يعني لو هتحط نص اليوزر جوه أقواس مربعة النسخة اليدوية محتاجة [[-]] زيادة في الـ class بتاعها.
 
----
+### كلمة كاملة من اليوزر
 
-## ٢. modifiers: [[(?i:...)]] و [[(?-i:...)]]
-
-~~~js app.mjs
-const cmd = /^(?i:get|post) \/api\/[a-z]+$/;
-console.log(cmd.test("GET /api/users"), cmd.test("get /api/users"), cmd.test("GET /API/users"));
+~~~text esc.mjs
+const word = "c++";
+const re = new RegExp($__bt(?<![\\w+])$__{RegExp.escape(word)}(?![\\w+])$__bt, "gi");
+console.log("I like C++ and c++11 and c++".replace(re, "[$&]"));
 ~~~
 
-~~~text الناتج
-true true false
+~~~text الناتج (Node 24)
+I like [C++] and c++11 and [c++]
 ~~~
 
-[[(?i:get|post)]]: group من غير حفظ، و [[i]] شغالة **جواه بس**. فالـ method بأي حالة، والـ path لازم صغير.
+- [[RegExp.escape(word)]] حوّلت [[c++]] لـ [[\x63\+\+]]، فالـ [[+]] بقت حرف عادي.
+- [[\b]] مكانش هينفع هنا: [[\b]] حدود بين حرف وغير حرف، و [[+]] مش «حرف»، فبعد [[c++]] مفيش [[\b]]. عشان كده استخدمنا lookbehind و lookahead (الجزء ٨ في درس «groups و flags»): «قبلها وبعدها مش حرف ولا +».
+- في template literal لازم [[\\w]] بـ backslash مزدوج، لأن النص نفسه بياكل واحدة.
 
-~~~js app.mjs
-const code = /^(?-i:EG)-\d+$/i;
-console.log(code.test("EG-12"), code.test("eg-12"));
+### لو الكود هيشتغل على Node قديم
+
+~~~text esc.mjs
+const esc = RegExp.escape ?? ((s) => s.replace(/[.*+?^$__{}()|[\]\\-]/g, "\\$&"));
 ~~~
 
-~~~text الناتج
-true false
-~~~
-
-العكس: [[i]] على الكل، و [[(?-i:EG)]] **بيطفيها** للـ [[EG]] بس. والشكل الكامل [[(?ims-ims:...)]]: اللي قبل [[-]] بيتشغّل واللي بعدها بيتطفي.
-
-### المسموح والممنوع
-
-~~~js app.mjs
-try { new RegExp("(?g:a)"); } catch (e) { console.log(e.message); }
-~~~
-
-~~~text الناتج
-Invalid regular expression: /(?g:a)/: Invalid group
-~~~
-
-| الـ modifier | النتيجة في Node 24.22 |
-|---|---|
-| [[(?i:a)]] و [[(?-i:a)]] | شغالين: بيشغّلوا أو يطفوا [[i]] جوه القوس |
-| [[(?m:^b)]] على [["a\nb"]] | [[true]]: [[^]] لكل سطر جوه الـ group بس |
-| [[(?s:.)]] بين a و b على [["a\nb"]] | [[true]]: النقطة خدت [[\n]] |
-| [[(?g:a)]] و [[(?u:a)]] | [[Invalid group]]: [[i]] و [[m]] و [[s]] بس المسموحين |
-| [[(?i-i:a)]] | [[Repeated flag in flag group]] |
-
-الـ modifiers Baseline «newly available»: موجودة في آخر نسخ المتصفحات الرئيسية، بس مش في القديمة. لو كودك لازم يشتغل على متصفحات قديمة، الـ regex هيرمي SyntaxError وقت التحميل.
-
----
-
-## ٣. buffer boundary assertions: [[\A]] و [[\z]] و [[\Z]]
-
-دول في PCRE (PHP و grep -P) و Python و Ruby:
-
-| الـ assertion | معناه هناك |
-|---|---|
-| [[\A]] | أول النص بالظبط، حتى مع multiline |
-| [[\z]] | آخر النص بالظبط |
-| [[\Z]] | آخر النص، أو قبل سطر جديد أخير |
-
-MDN كاتب لهم صفحة، بس جرّبناهم:
-
-~~~js app.mjs
-console.log(/\Afoo/.test("Afoo"));
-try { new RegExp(String.raw$__bt\Afoo\z$__bt, "u"); } catch (e) { console.log(e.message); }
-~~~
-
-~~~text الناتج (Node 24.22، ونفس الرسالة في Chrome 157)
-true
-Invalid regular expression: /\Afoo\z/u: Invalid escape
-~~~
-
-- من غير [[u]]: [[\A]] بقت حرف [[A]] عادي، و [[/\Afoo/]] طابقت [["Afoo"]]. **أسوأ حالة**: مفيش error والمعنى اتغيّر.
-- مع [[u]]: SyntaxError. وجرّبنا [[\z]] و [[\Z]] لوحدهم ومع [[v]]: نفس الرسالة.
-
-### البديل اللي شغال النهارده
-
-~~~js app.mjs
-console.log(/^foo$/.test("foo"), /^foo$/.test("foo\n"), /^foo\n?$/.test("foo\n"), /^foo$/m.test("x\nfoo"));
-~~~
-
-~~~text الناتج
-true false true true
-~~~
-
-| عايز | في JS |
-|---|---|
-| [[\A]] | [[^]] من غير [[m]]: أول النص بس، مهما كان فيه سطور |
-| [[\z]] | [[$]] من غير [[m]]: في JS عمرها ما بتعدّي [[\n]] أخير ([["foo\n"]] فشلت) |
-| [[\Z]] | [[\n?$]] من غير [[m]]: سطر جديد واحد اختياري وبعده آخر النص |
-| أول وآخر كل سطر | [[^]] و [[$]] **مع** [[m]]، وده مش [[\A]] ولا [[\z]] |
+[[??]] بتستخدم الجاهزة لو موجودة، وغير كده النسخة اليدوية (وزوّدنا فيها [[-]] في آخر الـ class). و [[RegExp.escape(5)]] بترمي [[TypeError: input argument must be a string]]، فحوّل الأرقام لنص الأول.
 
 ---
 
 ## الخلاصة
 
-| الحاجة | اكتبها | خلي بالك |
+| عايز | استخدم | بترجّع |
 |---|---|---|
-| نفس النص اللي group مسكه | [[\k<name>]] | مع [[i]] مش حساس للحروف، والاسم لازم يبقى موجود |
-| flag لحتة | [[(?i:...)]] و [[(?-i:...)]] و [[(?ims-ims:...)]] | [[i]] و [[m]] و [[s]] بس، ومش في المتصفحات القديمة |
-| أول وآخر النص بالظبط | [[^...$]] من غير [[m]] | ده [[\A]] و [[\z]] بتوعنا |
-| [[\A]] و [[\z]] و [[\Z]] و [[\K]] من PCRE | مش موجودين | من غير [[u]] بيبقوا حروف عادية في صمت |`,
+| فيه ولا لأ | [[re.test(str)]] | true / false |
+| أول match بتفاصيله | [[str.match(re)]] من غير g | array أو null |
+| كل الـ matches كنصوص | [[str.match(re)]] مع g | array نصوص أو null |
+| كل الـ matches بتفاصيلها | [[str.matchAll(re)]] (لازم g) | iterator |
+| تستبدل | [[str.replace(re, نص أو دالة)]] | نص جديد |
+| تستبدل نص حرفي في كل حتة | [[str.replaceAll(نص, نص)]] | نص جديد |
+| تقطّع بفواصل مختلفة | [[str.split(re)]] | array |
+| نص من اليوزر جوه regex | [[new RegExp(RegExp.escape(text))]] | regex بيدوّر على النص حرفيًا |
+
+والـ groups دايمًا نصوص: حوّلها بـ [[Number]] قبل ما تحسب.`,
           lines: [
-            R`[[(?<q>["'])]] بيمسك علامة التنصيص اللي فتحت، و [[\k<q>]] في الآخر لازم يبقى **نفس** العلامة، والكلام اللي بينهم في [[body]].`,
-            R`[[matchAll]] على جملة فيها تنصيصين: الأول [["..."]] وجواه [[']]، والتاني [['...']]. طلع [["it's ok"]] كاملة و [['hi']].`,
-            R`كلمة متكررة بأي لغة: [[\p{L}+]] كلمة، و [[\k<w>]] نفس الكلمة، والـ lookaround بدل [[\b]] عشان العربي، و [[i]] عشان [[The]] زي [[the]].`,
-            R`[[replace]] بـ [[$<w>]] بيسيب نسخة واحدة: [[ده كلام the end]].`,
-            R`الشكل المشهور بـ [[\b]] و [[\w]] على «ده ده» رجّع [[false]]: الاتنين بيفهموا إنجليزي بس حتى مع [[u]].`,
-            R`modifier [[(?i:get|post)]]: الـ method بأي حالة حروف، وباقي الـ regex (الـ path) حساس.`,
-            R`[[GET]] و [[get]] عدّوا، و [[/API/]] بالكابيتال فشلت لأن [[i]] جوه القوس بس: [[true true false]].`,
-            R`العكس: [[i]] على الـ regex كله، و [[(?-i:EG)]] بيطفيها للـ [[EG]] بس.`,
-            R`[[EG-12]] عدّت و [[eg-12]] فشلت: [[true false]].`,
-            R`[[g]] مش مسموحة في modifier ([[i]] و [[m]] و [[s]] بس)، فـ [[Invalid group]].`,
-            R`[[\A]] من غير [[u]]: escape مش معروف بيبقى الحرف نفسه، فـ [[/\Afoo/]] طابقت [["Afoo"]]. ده اللي بيحصل لكود منقول من PHP في صمت.`,
-            R`مع [[u]]: [[\A]] و [[\z]] SyntaxError [[Invalid escape]]: مش متطبقين في JS.`,
-            R`البديل: [[^foo$]] من غير [[m]] = [[\Afoo\z]]، فـ [["foo\n"]] فشلت. و [[\n?$]] = [[\Z]] فعدّت. ومع [[m]] لكل سطر.`,
+            R`3 سطور log في string واحدة مفصولة بـ [[\n]]: method و path و status code ووقت الرد. هنطلّع منها الطلبات اللي فشلت.`,
+            R`كل جزء في السطر ليه named group: [[method]] حروف كبيرة، و [[path]] أي حاجة من غير مسافات ([[\S+]])، و [[status]] 3 أرقام، و [[ms]] الرقم اللي قبل [[ms]]. الـ [[g]] عشان [[matchAll]] يلاقي كل السطور، والـ [[m]] عشان [[^]] و [[$]] تبقى لكل سطر بدل النص كله.`,
+            R`[[matchAll]] بترجّع iterator فيه كل match بتفاصيله كاملة ([[groups]] و [[index]])، على عكس [[match]] بـ [[g]] اللي بترجّع النصوص بس. ولازم الـ regex يكون بـ [[g]]، وإلا [[matchAll]] بترمي TypeError.`,
+            R`بنفك الـ [[groups]] في 4 متغيرات بأسمائهم. كل القيم دي strings، حتى [[status]] و [[ms]].`,
+            R`بنحوّل [[status]] لرقم ونطبع اللي 400 أو أكتر (أخطاء)، فيطلع [[POST /api/login 401 8]] و [[GET /api/orders 500 230]]. المقارنة من غير [[Number]] كانت هتشتغل هنا بالتحويل الضمني، بس [[Number]] بيوضّح النية.`,
+            R`نهاية الـ [[for...of]].`,
+            R`[[match]] مع [[g]] بترجّع array من النصوص بس: [[200]] و [[401]] و [[500]]. الـ [[\b]] من الناحيتين بتمنع إنه يمسك 3 أرقام من جوه حاجة أطول زي [[230ms]]، و [[(?= )]] بتتأكد إن بعده مسافة.`,
+            R`[[replace]] بيدوّر على التاريخ، وفي نص الاستبدال [[$1]] و [[$2]] و [[$3]] بيرجعوا للـ groups بالترتيب، فقلبنا الترتيب وطلع [[29/09/2026]]. ومن غير [[g]] بيستبدل أول match بس.`,
+            R`نفس الاستبدال بس بـ [[$<name>]]. أوضح لأنك بتقرا الأسماء بدل ما تعد الأقواس، ولو ضفت group جديد بعدين الأرقام مش هتتلخبط.`,
+            R`بدل نص، بنبعت دالة: [[replace]] بتناديها لكل match وبتحط اللي رجّعته مكانه. [[\b\w]] أول حرف في كل كلمة، والـ [[g]] عشان الكل مش أول واحد بس، فطلع [[Hello Big World]].`,
+            R`[[replaceAll]] بنص عادي بتستبدل **كل** مرة من غير regex، فمش محتاج تعمل escape للنقطة: [[a/b/c]]. و [[split]] بـ regex بتقسم على أي مجموعة من [[-]] أو [[_]] أو مسافات ورا بعض، فطلع [[a]] و [[b]] و [[c]] و [[d]] من غير عناصر فاضية.`,
+            R`نص جاي من اليوزر وعايزين ندوّر عليه حرفيًا. المشكلة إن [[+]] حرف خاص في الـ regex (يعني «مرة أو أكتر»)، فـ [[new RegExp("1+1")]] معناها «1 مرة أو أكتر وبعدها 1» ومش هتلاقي [["1+1=2"]] أصلًا.`,
+            R`بيحط backslash قبل أي حرف ليه معنى خاص في الـ regex، و [[$&]] في نص الاستبدال معناها «الحرف اللي اتلقى نفسه». فـ [["1+1"]] بقت [[1\+1]]. اعمل كده لأي نص من اليوزر قبل ما تبني منه regex، وإلا ممكن يكسر الـ regex أو يدّي اليوزر تحكم فيه.`,
+            R`بيطبع النص بعد الـ escape ([[1\+1]])، و [[new RegExp(safe)]] بقى يدوّر على [[1+1]] حرفيًا فلقاها: [[true]].`,
           ],
-          ref: [
-            { t: "MDN: Named backreference: \\k<name>", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Named_backreference" },
-            { t: "MDN: Modifier: (?ims-ims:...)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Modifier" },
-            { t: "MDN: Buffer boundary assertion", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Buffer_boundary_assertion" },
-            { t: "MDN: Input boundary assertion: ^, $", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Input_boundary_assertion" },
-          ],
-          pre: [{ to: "js/groups و flags", why: R`الـ named groups و [[\1]] اللي [[\k<name>]] بيكمّلها` }, { to: "js/test و match و matchAll و replace", why: R`[[$<name>]] في الاستبدال` }],
+          sol: R`[[slugify]]: [[title.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-+|-+$/g, "")]]. أول replace بيحوّل أي سلسلة حروف مش حرف ولا رقم (مسافات وفواصل وعلامات) لشرطة واحدة (بسبب الـ [[+]])، والتاني بيشيل الشرطات من الأطراف. استخدمنا [[\p{L}]] مش [[a-z]] عشان العناوين العربي متتمسحش. الناتج [["hello-world-js-2026"]]، وعنوان عربي زي [["أول درس في JS"]] بيطلع [["أول-درس-في-js"]].
+
+[[maskPhone]]: [[/^(\d{3})(\d+)(\d{3})$/]] ودالة ترجّع [[a + "*".repeat(mid.length) + c]]، فالناتج [["010*****678"]] وطوله زي الأصل.
+
+المتوسط: [[(12 + 8 + 230) / 3]] = 83.33. الغلطة الشائعة إنك تجمع [[m.groups.ms]] من غير Number فتلزق نصوص: [["0" + "12" + "8" + "230"]].`,
+          solCode: R`const slugify = (title) => title.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-+|-+$/g, "");
+console.log(slugify("  Hello, World! JS 2026  "), slugify("أول درس في JS"));
+const maskPhone = (p) => p.replace(/^(\d{3})(\d+)(\d{3})$/, (_, a, mid, c) => a + "*".repeat(mid.length) + c);
+console.log(maskPhone("01012345678"));
+const log = "GET /api/users 200 12ms\nPOST /api/login 401 8ms\nGET /api/orders 500 230ms";
+const times = [...log.matchAll(/(?<ms>\d+)ms$/gm)].map((m) => Number(m.groups.ms));
+console.log(times, (times.reduce((a, b) => a + b, 0) / times.length).toFixed(2));`,
+          check: {
+            lang: "js",
+            starter: R`const slugify = (title) => title.toLowerCase().replaceAll(" ", "-");
+const maskPhone = (p) => p;
+function avgMs(log) {
+  // matchAll على /(?<ms>\d+)ms$/gm وحوّل لـ Number قبل الجمع
+}`,
+            tests: R`test("slugify('  Hello, World! JS 2026  ') ← 'hello-world-js-2026'", () => expect(slugify("  Hello, World! JS 2026  ")).toBe("hello-world-js-2026"));
+test("العربي ميتمسحش: 'أول درس في JS' ← 'أول-درس-في-js'", () => expect(slugify("أول درس في JS")).toBe("أول-درس-في-js"));
+test("مفيش شرطات مكررة ولا في الأطراف: '--a  --  b--' ← 'a-b'", () => expect(slugify("--a  --  b--")).toBe("a-b"));
+test("maskPhone('01012345678') ← '010*****678' بنفس الطول", () => expect(maskPhone("01012345678")).toBe("010*****678"));
+test("avgMs للـ log اللي في المثال ← 83.33 تقريبًا (Number مش لزق نصوص)", () => {
+  const log = "GET /api/users 200 12ms\nPOST /api/login 401 8ms\nGET /api/orders 500 230ms";
+  expect(Math.round(avgMs(log) * 100) / 100).toBe(83.33);
+});`,
+            solution: R`const slugify = (title) => title.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-+|-+$/g, "");
+const maskPhone = (p) => p.replace(/^(\d{3})(\d+)(\d{3})$/, (_, a, mid, c) => a + "*".repeat(mid.length) + c);
+function avgMs(log) {
+  const times = [...log.matchAll(/(?<ms>\d+)ms$/gm)].map((m) => Number(m.groups.ms));
+  return times.reduce((a, b) => a + b, 0) / times.length;
+}`
+          }
         },
-      ],
+        {
+          cmd: "إمتى regex غلط",
+          title: "إمتى متستخدمش regex؟ (email و HTML و ReDoS)",
+          desc: R`regex أداة للأشكال البسيطة. ٣ أماكن هو فيها غلط:
+
+الإيميل: الـ regex «الكامل» حسب المواصفات صفحة كاملة ولسه بيغلط. اللي بيهمك إن الإيميل موجود وبتاع اليوزر، وده مفيش regex بيقوله. اعمل فحص بسيط ([[@]] ونقطة بعدها، أو [[type="email"]] أو [[z.email()]])، وابعت رسالة تأكيد.
+
+HTML و JSON و URLs: دي لغات متداخلة (tag جوه tag، و quotes، و comments)، و regex مبيعرفش يعد العمق. استخدم parser: [[DOMParser]] في المتصفح، و [[JSON.parse]]، و [[new URL()]] و [[URLSearchParams]].
+
+ReDoS (catastrophic backtracking): patterns فيها quantifier جوه quantifier زي [[(a+)+]] أو [[(\w+\s?)*]] ممكن تاخد وقت بيتضاعف مع كل حرف في input معيّن. ولأن Node thread واحد، request واحد بـ ٣٠ حرف ممكن يوقّف السيرفر كله.`,
+          example: R`const evil = /^(a+)+$/;
+const fixed = /^a+$/;
+for (const n of [20, 24, 26]) {
+  const input = "a".repeat(n) + "!";
+  const t0 = performance.now();
+  evil.test(input);
+  const t1 = performance.now();
+  fixed.test(input);
+  console.log(n, Math.round(t1 - t0) + "ms", (performance.now() - t1).toFixed(3) + "ms");
+}
+const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+console.log(email.test("sara@example.com"), email.test("sara@localhost"), email.test("a b@x.com"));
+console.log(new URL("https://shop.example/p?id=7&ref=fb").searchParams.get("id"));`,
+          try: R`شغّل المثال، وبعدين زوّد الـ n لـ 28 و 30 (خلي Ctrl+C جاهز). الوقت بيزيد إزاي مع كل حرفين؟ وبعدين في Console بتاع المتصفح: استخرج كل اللينكات من [['<p>اقرا <a href="/a">ده</a> و <a href="/b" class="x">ده</a></p>']] مرة بـ regex ومرة بـ DOMParser، وبعدين حط [[>]] جوه قيمة attribute وشوف مين فيهم بيبوظ.`,
+          ref: [
+            { t: "MDN: RegExp.escape()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/escape" },
+            { t: "MDN: URLSearchParams", url: "https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams" },
+            { t: "MDN: RegExp", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp" },
+            { t: "OWASP: Regular expression Denial of Service (ReDoS)", url: "https://community.owasp.org/attacks/Regular_expression_Denial_of_Service_-_ReDoS" },
+          ],
+          pre: [{ to: "js/FormData و URLSearchParams", why: R`أول تمرين بيبدّل regex بـ [[URLSearchParams]]، واتشرحت هناك` }],
+          practice: [
+            { lvl: 'سريع', t: R`refactor: الكود ده بيطلّع الـ id من URL بـ regex: [[url.match(/id=(\d+)/)[1]]]. اكتبه بـ [[new URL(url).searchParams]] وجرّب الاتنين على [["https://shop.example/p?id=7&tag=a&tag=b"]] وعلى [["https://shop.example/p?pid=9&id=7"]] وعلى URL مفيهوش id.`, done: R`في أول URL الاتنين بيدّوا [["7"]]. في التاني الـ regex بيدّي [["9"]] غلط (لقى [[id=9]] جوه [[pid=9]])، و [[get("id")]] بتدّي [["7"]]. والـ URL اللي مفيهوش id: الـ regex بيقع بـ TypeError، و [[get("id")]] بترجّع [[null]]. و [[getAll("tag")]] بتدّي [[[ 'a', 'b' ]]] اللي كانت محتاجة regex تاني.`, sol: R`~~~js url-params.js
+const urls = [
+  "https://shop.example/p?id=7&tag=a&tag=b",
+  "https://shop.example/p?pid=9&id=7",
+  "https://shop.example/p?tag=a",
+];
+
+for (const url of urls) {
+  let byRegex;
+  try {
+    byRegex = url.match(/id=(\d+)/)[1];
+  } catch (err) {
+    byRegex = err.name;
+  }
+  const params = new URL(url).searchParams;
+  console.log("regex:", String(byRegex).padEnd(9), "| get:", params.get("id"), "| getAll(tag):", params.getAll("tag"));
+}
+~~~
+
+~~~text الناتج (node url-params.js، Node 24)
+regex: 7         | get: 7 | getAll(tag): [ 'a', 'b' ]
+regex: 9         | get: 7 | getAll(tag): []
+regex: TypeError | get: null | getAll(tag): [ 'a' ]
+~~~
+
+**المقارنة:**
+
+| الـ URL | الـ regex | [[searchParams.get("id")]] |
+|---|---|---|
+| [[?id=7&tag=a&tag=b]] | 7 | 7 |
+| [[?pid=9&id=7]] | **9** غلط: لقى [[id=9]] جوه [[pid=9]] | 7 |
+| [[?tag=a]] | **TypeError**: [[match]] رجّع null | [[null]] |
+
+- [[new URL(url)]]: بيفك الـ URL لحتته (البروتوكول والـ host والـ path والـ query) بنفس قواعد المتصفح.
+- [[.searchParams]]: [[URLSearchParams]] فيه الـ query متفكك ومعمول له decode ([[%20]] بتبقى مسافة).
+- [[get("id")]]: أول قيمة للمفتاح ده بالظبط، أو [[null]].
+- [[getAll("tag")]]: كل القيم لنفس المفتاح: [[[ 'a', 'b' ]]].
+
+**الغلطة الشائعة:** تصلّح الـ regex بـ [[/[?&]id=(\d+)/]]. بيصلّح حالة [[pid]] بس، وبيفضل ناسي الـ decode، و [[#id=3]] في الـ hash، والـ URL اللي الـ id فيه مش أرقام. الـ parser بيعرف كل ده.`  },
+            { lvl: 'تطبيق', t: R`ابني: فقرة نص و input بحث، وكل ما تكتب الكلمة بتتحط في [[<mark>]] من غير حساسية للحروف ([[gi]]). جرّب تكتب [[c++]] من غير escape الأول، وبعدين بـ [[RegExp.escape]] (أو الـ replace اللي في درس replace).`, done: R`من غير escape بيقع بـ [[SyntaxError: Invalid regular expression: /c++/gi: Nothing to repeat]] والبحث بيقف. وبعده [["I love C++ and c++"]] بيظلل الاتنين. و [[RegExp.escape("c++")]] (Node 24 والمتصفحات الحديثة) بيطلع [[\x63\+\+]] مش [[c\+\+]]: بيهرّب أول حرف كمان وده سليم.`, sol: R`~~~live 150 index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>تظليل البحث</title>
+<style>
+  body { font: 16px/1.7 system-ui, sans-serif; margin: 16px; }
+  input { font: inherit; padding: 4px 8px; }
+  #text { direction: ltr; text-align: left; }
+  mark { background: #fde047; }
+</style>
+</head>
+<body>
+<input id="q" aria-label="دوّر" placeholder="دوّر...">
+<p id="text">I love C++ and c++. JavaScript (JS) is not Java.</p>
+<script>
+  const original = document.getElementById("text").textContent;
+  const textEl = document.getElementById("text");
+  const escapeRegex = s => (RegExp.escape ? RegExp.escape(s) : s.replace(/[.*+?^$__{}()|[\]\\]/g, "\\$&"));
+
+  function highlight(query) {
+    textEl.textContent = original;
+    if (!query) return;
+    const re = new RegExp(escapeRegex(query), "gi");
+    const parts = [];
+    let last = 0;
+    for (const m of original.matchAll(re)) {
+      parts.push(document.createTextNode(original.slice(last, m.index)));
+      const mark = document.createElement("mark");
+      mark.textContent = m[0];
+      parts.push(mark);
+      last = m.index + m[0].length;
+    }
+    parts.push(document.createTextNode(original.slice(last)));
+    textEl.replaceChildren(...parts);
+  }
+
+  document.getElementById("q").addEventListener("input", e => highlight(e.target.value));
+</script>
+</body>
+</html>
+~~~
+
+~~~text اللي اتعرض في Chrome 158 (Playwright)
+كتبت c++:  I love <mark>C++</mark> and <mark>c++</mark>. JavaScript (JS) is not Java.
+كتبت (:    1 mark ومفيش error
+مسحت:      I love C++ and c++. JavaScript (JS) is not Java.
+~~~
+
+ومن غير escape، ونفس الحاجة في Node:
+
+~~~js escape.js
+try {
+  new RegExp("c++", "gi");
+} catch (err) {
+  console.log(err.name + ": " + err.message);
+}
+console.log(RegExp.escape("c++"));
+
+const escapeRegex = s => s.replace(/[.*+?^$__{}()|[\]\\]/g, "\\$&");
+console.log(escapeRegex("c++"));
+
+const text = "I love C++ and c++";
+const re = new RegExp(RegExp.escape("c++"), "gi");
+console.log(text.replace(re, m => $__bt<mark>$__{m}</mark>$__bt));
+~~~
+
+~~~text الناتج (node escape.js، Node 24)
+SyntaxError: Invalid regular expression: /c++/gi: Nothing to repeat
+\x63\+\+
+c\+\+
+I love <mark>C++</mark> and <mark>c++</mark>
+~~~
+
+**اللي بيحصل:**
+
+- [[new RegExp("c++")]]: [[+]] في regex معناها «مرة أو أكتر»، و [[++]] ورا بعض مفيش قبلها حاجة تتكرر، فـ **SyntaxError: Nothing to repeat**. في الصفحة ده معناه إن الـ handler وقع والتظليل وقف عند أول حرف.
+- [[RegExp.escape("c++")]]: بيطلّع [[\x63\+\+]]: الـ [[+]] بقت [[\+]] (حرفيًا)، وأول حرف [[c]] اتكتب [[\x63]] (كوده بالـ hex). ده مقصود في المواصفات عشان النص يفضل آمن لو اتلزق بعد [[\]] أو جوه [[\c]]. الاتنين بيطابقوا نفس النص.
+- [[escapeRegex]] بإيدك: [[replace]] على كل رمز ليه معنى ويحط قبله [[\]] ([[$&]] هنا مقصودة: «الـ match نفسه»). دي البديل للمتصفحات القديمة، والصفحة بتختار [[RegExp.escape]] لو موجود.
+- [[gi]]: [[g]] كل الأماكن، و [[i]] من غير حساسية لحروف كبيرة وصغيرة، فاتظلل [[C++]] و [[c++]].
+- **التظليل بـ [[createElement("mark")]] و text nodes:** مش [[innerHTML]]، فلو حد كتب [[<img>]] في البحث مش هيتنفّذ.
+
+**الغلطة الشائعة:** تعمل escape للنص **بعد** ما تحطه في [[innerHTML]] أو تنسى الـ escape لأن «اليوزر هيكتب كلام عادي». أول واحد يدوّر على [[(]] أو [[?]] أو [[c++]] بيبوّظ الصفحة.`  },
+            { lvl: 'تحدي', t: R`قارن وقيس: [[/^(\w+\s?)*$/]] (كلمات بينها مسافة واحدة) فيه ReDoS. اكتب بديل بيقبل ويرفض نفس النصوص بالظبط من غير quantifier جوه quantifier غامض، وقارن الاتنين على ٨ نصوص (منهم [[""]] و [["a "]] و [["a  b"]] و [[" a"]])، وبعدين قيس الوقت على [["a".repeat(20) + "!"]] و 22 و 24.`, done: R`الاتنين بيدّوا نفس true/false في الـ ٨ نصوص ([[""]] و [["a "]] مقبولين، و [["a  b"]] و [[" a"]] مرفوضين). وعلى الـ input الطويل القديم وقته بيتضاعف حوالي ٤ مرات مع كل حرفين، والجديد بيخلص في أقل من 1ms حتى على ٣٠ حرف. اكتب الأرقام اللي قستها.`, sol: R`~~~js redos.js
+const bad = /^(\w+\s?)*$/;
+const good = /^(?:\w+(?: \w+)* ?)?$/;
+
+const samples = ["", "a ", "a  b", " a", "hello world", "a b c", "abc", "a b "];
+for (const s of samples) {
+  const b = bad.test(s), g = good.test(s);
+  console.log(JSON.stringify(s).padEnd(14), b, g + (b === g ? "" : "  ← مختلفين"));
+}
+
+function time(re, s) {
+  const t = performance.now();
+  re.test(s);
+  return (performance.now() - t).toFixed(1);
+}
+for (const n of [20, 22, 24, 26]) {
+  const s = "a".repeat(n) + "!";
+  console.log("n=" + n, "القديم:", time(bad, s), "ms", "| الجديد:", time(good, s), "ms");
+}
+console.log("الجديد على 30000 حرف:", time(good, "a".repeat(30000) + "!"), "ms");
+~~~
+
+~~~text الناتج (node redos.js، Node 24 على Windows)
+""             true true
+"a "           true true
+"a  b"         false false
+" a"           false false
+"hello world"  true true
+"a b c"        true true
+"abc"          true true
+"a b "         true true
+n=20 القديم: 5.8 ms | الجديد: 0.0 ms
+n=22 القديم: 23.2 ms | الجديد: 0.0 ms
+n=24 القديم: 98.6 ms | الجديد: 0.0 ms
+n=26 القديم: 415.6 ms | الجديد: 0.0 ms
+الجديد على 30000 حرف: 0.1 ms
+~~~
+
+**البديل:** [[/^(?:\w+(?: \w+)* ?)?$/]]
+
+- [[\w+]] كلمة، وبعدها [[(?: \w+)*]]: مسافة **واحدة** وكلمة، صفر مرة أو أكتر. كل مسافة لازم بعدها كلمة، فمفيش طريقتين لتقسيم نفس الحروف.
+- [[ ?]] في الآخر: مسافة اختيارية بعد آخر كلمة (عشان [["a "]] اتقبلت في الأصلي).
+- [[(...)?]] حوالين الكل: عشان [[""]] تتقبل زي الأصلي.
+
+**المقارنة:** نفس true/false في الـ ٨ نصوص (ولا سطر عليه «مختلفين»).
+
+**ليه القديم بيقع:** في [[(\w+\s?)*]] المسافة اختيارية، فـ [["aaaa"]] ممكن تتقسم [[a|a|a|a]] أو [[aa|aa]] أو [[aaaa]]... أو أي تقسيمة. ولما الآخر [["!"]] يفشّل الـ match، الـ engine بيجرّب **كل** التقسيمات قبل ما يقول لأ، وعددها بيتضاعف مع كل حرف. الأرقام اللي قسناها: كل حرفين زيادة الوقت بيتضرب حوالي ٤ مرات، وعلى ٣٠ حرف كان هيبقى ثواني. والجديد صفر تقريبًا حتى على ٣٠ ألف حرف.
+
+**اللي بيتغيّر:** الأرقام بالـ ms بتختلف حسب جهازك وحمله، بس **النسبة** (×٤ كل حرفين) هي اللي ثابتة، وهي اللي بتخلي input طوله ٤٠ حرف يوقّف سيرفر Node بالكامل.
+
+**الغلطة الشائعة:** تجرّب الـ regex على نصوص بتتطابق بس. الـ ReDoS بيظهر في النص اللي **قرب** يتطابق ووقع في الآخر، زي [["aaaa...!"]].`  },
+          ],
+          flag: "script",
+          deep: {
+            why: "أشهر outage بسبب regex: Cloudflare في يوليو 2019، سطر regex واحد في قواعد الـ WAF خلّى الـ CPU ١٠٠٪ على كل السيرفرات حوالي نص ساعة. و Stack Overflow وقع سنة 2016 بسبب regex بيشيل المسافات من آخر السطر. وفي Node الموضوع أخطر: الـ event loop واحد، فـ regex بطيء = السيرفر مبيردش على حد (قسم الـ event loop).",
+            how: R`الـ engine في JS (زي أغلب اللغات) backtracking: لو فشل بيرجع يجرّب طريقة تقسيم تانية. [[(a+)+]] على [["aaaa...!"]]: الـ a's ممكن تتقسم بين الـ [[+]] الداخلي والخارجي بعدد طرق بيتضاعف مع كل حرف (2^n تقريبًا)، وكلهم هيفشلوا عند [[!]]، والـ engine لازم يجرّبهم كلهم قبل ما يقول false. عشان كده الوقت بيتضاعف مع كل حرف زيادة، و [[/^a+$/]] اللي بتقبل نفس النصوص بالظبط بتخلص في أقل من ملّي ثانية.
+
+العلامات الخطر: quantifier جوه group عليه quantifier ([[(x+)+]] و [[(x*)*]] و [[(x+)*]])، أو بدائل بتتداخل ([[(a|a)+]] و [[(\w|\d)+]])، وبعدهم حاجة ممكن تفشل.
+
+الحماية: حدّد طول الـ input قبل الـ regex (إيميل أقصاه 254 حرف)، واكتب patterns من غير تداخل، وفيه ESLint plugin اسمه [[eslint-plugin-regexp]] بيكشف الـ backtracking الخطر، ولو الـ pattern نفسه جاي من يوزر (بحث متقدم) استخدم مكتبة [[re2]] (engine وقته خطي، مفيهوش backtracking بس كمان مفيهوش back-references ولا lookaround).
+
+الإيميل: الـ regex في المثال عملي: مفيش مسافات، و [[@]] واحدة، ونقطة في الدومين. [["sara@localhost"]] قانوني تقنيًا بس مش مفيد لموقع. والتأكيد الحقيقي لينك في إيميل.`,
+            when: R`regex: أشكال قصيرة ومسطحة (أرقام، أكواد، slugs، سطور logs ليها شكل ثابت). parser: أي حاجة فيها تداخل أو quoting أو escaping. مكتبة validation (Zod): إيميلات و URLs و UUIDs، لأنهم كتبوا الـ patterns وجرّبوها.`,
+            mistakes: R`regex إيميل من Stack Overflow طوله ٤٠٠ حرف ومحدش فاهمه. و HTML بـ regex (sanitize بالذات: استخدم DOMPurify، تاب الأمان). و [[new RegExp(req.query.q)]] على السيرفر (ReDoS و injection). ومفيش حد للطول. وفي الانترفيو: «إيه هو ReDoS وإزاي تحمي منه؟» الإجابة: backtracking بيتضاعف مع nested quantifiers، والحل patterns من غير تداخل + حد للطول + re2 للـ patterns اللي من برّه.`
+          },
+          teach: R`## المثال بيعمل إيه
+
+٣ تجارب: regex «شكله بريء» بيبطّأ بشكل مرعب مع كل حرف زيادة (ReDoS)، وفحص إيميل عملي، و URL بـ parser بدل regex. الناتج من Node 24 على Windows، والأوقات بتختلف من جهاز لجهاز.
+
+---
+
+## ١. الـ regex الخطر والآمن
+
+~~~text app.js
+const evil = /^(a+)+$/;
+const fixed = /^a+$/;
+~~~
+
+- [[evil]]: [[a+]] (a مرة أو أكتر) جوه group، والـ group نفسه عليه [[+]]. ده اسمه **nested quantifier**: quantifier جوه quantifier.
+- [[fixed]]: a مرة أو أكتر، من الأول للآخر.
+
+الاتنين بيقبلوا **نفس النصوص بالظبط** (a أو أكتر وبس). الفرق في طريقة البحث.
+
+---
+
+## ٢. القياس
+
+~~~text app.js
+for (const n of [20, 24, 26]) {
+  const input = "a".repeat(n) + "!";
+  const t0 = performance.now();
+  evil.test(input);
+  const t1 = performance.now();
+  fixed.test(input);
+  console.log(n, Math.round(t1 - t0) + "ms", (performance.now() - t1).toFixed(3) + "ms");
+}
+~~~
+
+- [[for (const n of [20, 24, 26])]]: نجرّب ٣ أطوال.
+- [["a".repeat(n) + "!"]]: n حرف a وفي الآخر [[!]]. الـ [[!]] هي اللي بتخلي الـ match **يفشل**، وده المهم: الـ regex بيتعب لما بيفشل، مش لما بينجح.
+- [[performance.now()]]: الوقت بالـ ms بكسور (أدق من [[Date.now()]]). نقيس قبل وبعد كل test.
+- [[Math.round(t1 - t0)]]: وقت الخطر مقرّب. و [[.toFixed(3)]]: وقت الآمن بـ ٣ أرقام بعد العلامة، لأنه صغير جدًا.
+
+~~~text الناتج (مرة من التشغيلات)
+20 57ms 0.038ms
+24 100ms 0.067ms
+26 417ms 0.013ms
+~~~
+
+وجرّبنا أطوال أكتر في تشغيل لوحده:
+
+~~~text الناتج
+20 58ms
+22 25ms
+24 97ms
+26 407ms
+28 1593ms
+~~~
+
+(أول قياس دايمًا أبطأ من المتوقع، لأن V8 بيجهّز الـ regex أول مرة.) من 22 لـ 28: كل **حرفين** زيادة الوقت تقريبًا **×4**، يعني كل حرف ×2. والآمن فضل أقل من عُشر ملّي ثانية.
+
+### ليه بيحصل كده؟
+
+الـ engine في JavaScript بيشتغل بـ **backtracking**: لو طريقة فشلت، يرجع يجرّب طريقة تانية. وفي [[(a+)+]] الـ a's ممكن تتقسم بين الـ [[+]] اللي جوه والـ [[+]] اللي برّه بطرق كتير جدًا. مثلًا [["aaa"]] ممكن تبقى:
+
+~~~text طرق تقسيم aaa بين المجموعات
+(aaa)
+(aa)(a)
+(a)(aa)
+(a)(a)(a)
+~~~
+
+٤ طرق لـ ٣ حروف، وكل حرف زيادة بيضاعفهم (2 أس n−1). ولما توصل لـ [[!]] وكل طريقة تفشل، الـ engine لازم يجرّبهم **كلهم** قبل ما يقول false. و [[/^a+$/]] مفيهاش غير طريقة واحدة، فتفشل على طول.
+
+### ليه ده خطر على سيرفر؟
+
+Node بيشغّل JavaScript على **thread واحد** (قسم الـ event loop الجاي). وطول ما الـ regex شغال، مفيش ولا request تاني بيترد. فاليوزر اللي يبعت ٣٠ حرف مختارين صح ممكن يوقّف السيرفر ثواني أو دقايق. ده اسمه **ReDoS**: Regular expression Denial of Service.
+
+---
+
+## ٣. فحص إيميل عملي
+
+~~~text app.js
+const email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+console.log(email.test("sara@example.com"), email.test("sara@localhost"), email.test("a b@x.com"));
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[[^\s@]+]] | حرف أو أكتر، أي حاجة **غير** مسافة و [[@]] ([[^]] في أول الـ class = «غير») |
+| [[@]] | @ واحدة |
+| [[[^\s@]+]] | اسم الدومين |
+| [[\.]] | نقطة حرفية ([[.]] لوحدها = أي حرف) |
+| [[[^\s@]+$]] | الامتداد لحد الآخر |
+
+~~~text الناتج
+true false false
+~~~
+
+[["sara@localhost"]] مفيهاش نقطة، و [["a b@x.com"]] فيها مسافة. والـ regex ده مش «كامل»، ومش محتاج يبقى: الفحص الحقيقي إنك تبعت إيميل تأكيد.
+
+---
+
+## ٤. URL بـ parser
+
+~~~text app.js
+console.log(new URL("https://shop.example/p?id=7&ref=fb").searchParams.get("id"));
+~~~
+
+- [[new URL(نص)]]: بيفك اللينك لأجزاء (البروتوكول، الدومين، الـ path، الـ query) بنفس قواعد المتصفح.
+- [[.searchParams]]: الجزء اللي بعد [[?]] كـ object، و [[.get("id")]] بيجيب قيمة واحدة.
+
+~~~text الناتج
+7
+~~~
+
+لاحظ إنها نص [["7"]] مش رقم.
+
+---
+
+## ٥. اللينكات من HTML: regex ضد DOMParser
+
+ده من الـ «جرّب»، واتشغّل في Chrome (headless). على HTML بسيط الاتنين جابوا [[["/a", "/b"]]]. وبعدين جرّبنا HTML فيه ٣ حاجات عادية جدًا: [[>]] جوه قيمة attribute، و href بـ single quotes، ولينك قديم جوه comment، ومسافات حوالين [[=]]:
+
+~~~text HTML التجربة
+<p><a title="1 > 0" href='/a'>ده</a> <!-- <a href="/old"> --> <a href = "/b">ده</a></p>
+~~~
+
+~~~text app.js
+const rx = (h) => [...h.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
+const dp = (h) => [...new DOMParser().parseFromString(h, "text/html").querySelectorAll("a")].map((a) => a.getAttribute("href"));
+~~~
+
+~~~text الناتج
+rx: ["/old"]
+dp: ["/a","/b"]
+~~~
+
+الـ regex جاب اللينك الوحيد **الغلط** (اللي جوه الـ comment) وفوّت الاتنين الصح. و [[DOMParser]] بيقرا الـ HTML بنفس الـ parser اللي المتصفح بيعرض بيه الصفحة، فجاب الصح.
+
+---
+
+## الخلاصة
+
+| الحالة | الأداة |
+|---|---|
+| شكل قصير ومسطح (رقم، كود، slug) | regex |
+| HTML | [[DOMParser]] (وللـ sanitize: DOMPurify) |
+| URL | [[new URL()]] و [[URLSearchParams]] |
+| JSON | [[JSON.parse]] |
+| إيميل | فحص بسيط + رسالة تأكيد (أو [[z.email()]]) |
+
+وعلامة الخطر في أي regex: quantifier جوه group عليه quantifier ([[(x+)+]] و [[(x*)*]])، وبعده حاجة ممكن تفشل.`,
+          lines: [
+            R`nested quantifier: [[+]] جوه group عليه [[+]] تاني. لو النص طويل وفي آخره حاجة تبوّظ الـ match، المحرك بيجرّب كل الطرق الممكنة لتقسيم الـ a's بين الاتنين قبل ما يقول «لأ»، وعددها بيتضاعف مع كل حرف (catastrophic backtracking، وده اللي بيعمل ReDoS).`,
+            R`بيقبل ويرفض نفس النصوص بالظبط زي [[evil]]، بس مفيش غير طريقة واحدة يطابق بيها، فلو فشل بيفشل بسرعة. الحل المعتاد: شيل التكرار المتداخل.`,
+            R`بنجرّب 3 أطوال قريبة من بعض، عشان نشوف الوقت بيزيد إزاي مع كل حرف زيادة.`,
+            R`[[n]] حرف [[a]] وفي الآخر [[!]]. الـ [[!]] هي اللي بتخلي [[$]] تفشل، فالمحرك يرجع يجرّب كل التقسيمات. من غيرها الاتنين كانوا هيطابقوا فورًا.`,
+            R`[[performance.now()]] بترجّع الوقت بالملي ثانية بكسور، أدق من [[Date.now()]] لقياس حاجة سريعة.`,
+            R`هنا الوقت كله بيروح: الـ regex الخطر بيفشل في الآخر، بس بعد ما يجرّب عدد ضخم من الاحتمالات. وطول ما هو شغال الـ main thread واقف، فلو ده سيرفر Node كل الطلبات التانية بتستنى.`,
+            R`نقطة نهاية قياس الخطر وبداية قياس الآمن.`,
+            R`نفس النص على الـ regex الآمن: بيفشل في خطوات قد عدد الحروف تقريبًا.`,
+            R`بيطبع الطول ووقت كل واحد. عندي: [[20 46ms]] و [[24 119ms]] و [[26 461ms]] للخطر، والآمن [[0.0x ms]] كل مرة. الوقت بيتضاعف تقريبًا مع كل حرف زيادة (28 حرف أخدت أكتر من ثانية)، فـ input طويل شوية من يوزر ممكن يوقف السيرفر.`,
+            R`نهاية الـ loop.`,
+            R`فحص إيميل عملي: حاجة من غير مسافة ولا [[@]]، وبعدها [[@]]، وبعدها domain فيه نقطة. مش بيغطي كل الإيميلات الصحيحة نظريًا ومش محتاج: الطريقة الوحيدة تتأكد إن الإيميل حقيقي إنك تبعتله رسالة تأكيد.`,
+            R`[[sara@example.com]] بترجّع [[true]]، و [[sara@localhost]] بترجّع [[false]] لأن الـ domain مفيهوش نقطة، و [[a b@x.com]] بترجّع [[false]] بسبب المسافة.`,
+            R`بدل regex لـ URL، [[new URL]] بيفهم الـ URL كله (حتى الـ encoding والـ [[&]]) و [[searchParams.get("id")]] بترجّع [["7"]]. لأي format معروف (URL و JSON و HTML و CSV) استخدم الـ parser بتاعه، الـ regex بيقع في الحالات الغريبة.`,
+          ],
+          sol: R`الأرقام بتختلف حسب جهازك، بس الشكل ثابت: كل حرف زيادة الوقت تقريبًا بيتضاعف (من 24 لـ 26 حوالي ٤ أضعاف). يعني 30 حوالي ٨ ثواني، و 40 ساعات. وطول الوقت ده الـ process واقف: لو ده سيرفر Node، ولا request تاني بيترد. والـ regex الآمن ثابت تقريبًا في كل الأطوال.
+
+اللينكات بـ regex: [[/href="([^"]+)"/g]] بيشتغل على المثال ده، بس بيبوظ لو الـ attribute بـ single quotes، أو فيه مسافة حوالين [[=]]، أو اللينك جوه comment، أو [[href]] مكتوب في نص عادي. و DOMParser: [[[...new DOMParser().parseFromString(html, "text/html").querySelectorAll("a")].map((a) => a.getAttribute("href"))]] بيرجّع [[["/a", "/b"]]] مهما كان شكل الـ HTML، لأنه نفس الـ parser اللي المتصفح بيعرض بيه الصفحة.`
+        }
+      ]
     }
 ]);
