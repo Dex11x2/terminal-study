@@ -9645,9 +9645,9 @@
   "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
  "js|Date ومطبّاته": {
-  "hash": "420f7d0af15c",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "7d626116dda2",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, Chrome 157 via Playwright for page drills"
  },
  "js|Date.UTC و Date.parse": {
   "hash": "df12e3103bb4",
@@ -9705,9 +9705,9 @@
   "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
  "js|EventEmitter": {
-  "hash": "edad18036e99",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "b8a70f5f86d1",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, Chrome 157 via Playwright for page drills"
  },
  "js|FormData و URLSearchParams": {
   "hash": "59277054c507",
@@ -9780,9 +9780,9 @@
   "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, and Chrome 157 for the Intl comparisons"
  },
  "js|Intl.RelativeTimeFormat": {
-  "hash": "19281fea86a0",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "7b15c1a26a52",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, Chrome 157 via Playwright for page drills"
  },
  "js|Intl.RelativeTimeFormat: formatToParts و resolvedOptions": {
   "hash": "f5abf5b00d87",
@@ -9945,9 +9945,9 @@
   "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
  "js|Strategy pattern": {
-  "hash": "2dd6d97e7f11",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "27243cef601b",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, Chrome 157 via Playwright for page drills"
  },
  "js|Streams": {
   "hash": "b89b921df023",
@@ -9970,9 +9970,9 @@
   "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
  "js|UTC و Intl.DateTimeFormat": {
-  "hash": "7df9a6a6bdef",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "54f0a26258cb",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, Chrome 157 via Playwright for page drills"
  },
  "js|Uint8Array: fromBase64 و toHex و TextEncoder": {
   "hash": "19caf3bcb32b",
@@ -10140,9 +10140,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|date-fns و dayjs و Temporal": {
-  "hash": "b1b57682a287",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "af96255125cb",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, Chrome 157 via Playwright for page drills"
  },
  "js|debounce و throttle": {
   "hash": "394491a151dd",
@@ -10295,9 +10295,9 @@
   "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|immutability": {
-  "hash": "2f13bfdd4350",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "14e499f679a1",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, Chrome 157 via Playwright for page drills"
  },
  "js|import و export": {
   "hash": "e25e2408e496",
@@ -10325,9 +10325,9 @@
   "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
  },
  "js|iterators و generators": {
-  "hash": "9f6c79084226",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "d7a710d5e741",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, Chrome 157 via Playwright for page drills"
  },
  "js|let و const و var": {
   "hash": "6666f34fe8b4",
@@ -10370,9 +10370,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|module pattern و IIFE": {
-  "hash": "f045b09629fb",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "75bf5ace187a",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 with TZ=Africa/Cairo and UTC, Chrome 157 via Playwright for page drills"
  },
  "js|named backreference و modifiers و buffer boundaries": {
   "hash": "b07b7da96ede",
