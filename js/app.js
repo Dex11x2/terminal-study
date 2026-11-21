@@ -279,6 +279,12 @@ function projStartHTML(p){
   // files inside subfolders (blog/index.html): the subfolders are made first
   const subs = [...new Set(files.filter(f => f.includes('/')).map(f => f.slice(0, f.lastIndexOf('/'))))];
   const d = p.dir, more = files.length > 1;
+  // the page's own .html/.js files (not prose, not vite/tsconfig): a module script, fetch or a service worker means it needs http://
+  const solTxt = String(p.sol || ''), code = [...solTxt.matchAll(/^~~~\w+[ \d]*?[\w.\/-]*\.(?:html|js|mjs)\s*$\n([\s\S]*?)^~~~/gm)].map(m => m[1]).join('\n');
+  const usesBuild = /npm run dev|npx vite|~~~json[^\n]*package\.json/.test(solTxt);
+  const needsServer = !usesBuild && /type=["']?module|\bfetch\(|serviceWorker/.test(code);
+  // a project with its own node:http server (an API, cookies): npx serve can't run that part, the solution's own command does
+  const ownServer = (solTxt.match(/node ([\w.\/-]*server[\w.-]*\.m?js)/) || [])[1];
   // cont: the project goes on inside a folder an earlier project (or the unit's lessons) already made
   const first = p.cont
     ? '**١. ادخل فولدر المشروع اللي عملته قبل كده.** المشروع ده بيكمّل على نفس الفولدر، فمتعملش فولدر جديد. افتح الترمنال في المكان اللي فيه [['+d+']] واكتب:\n\n'+
@@ -291,9 +297,18 @@ function projStartHTML(p){
     '**٢. افتح الفولدر في VS Code.** وانت لسه جوه الفولدر:\n\n~~~powershell\ncode .\n~~~\n\n'+
     'النقطة معناها «الفولدر اللي أنا فيه». لو طلعلك إن [[code]] مش متعرّف: افتح VS Code بإيدك، ومن القايمة File اختار Open Folder واختار [['+d+']].\n\n'+
     '**٣. اكتب الصفحة.** افتح [[index.html]] من العمود اللي على الشمال (أو الملف الجديد)، وفي الملف الفاضي اكتب علامة [[!]] ودوس Tab: VS Code هيكتبلك هيكل الصفحة. غيّر [[lang="en"]] لـ [[lang="ar" dir="rtl"]]، واكتب المطلوب جوه [[<body>]]، واحفظ بـ [[Ctrl+S]] (على الماك [[Cmd+S]]).\n\n'+
-    '**٤. شوفها في Chrome.** من الترمنال اللي جوه VS Code (من القايمة Terminal اختار New Terminal):\n\n'+
-    '~~~powershell\nstart index.html\n~~~\n\n~~~bash\nopen index.html       # الماك\nxdg-open index.html   # لينكس\n~~~\n\n'+
-    'الصفحة هتفتح في المتصفح الأساسي عندك. لو مش Chrome: اسحب [[index.html]] من VS Code وارميه على نافذة Chrome. **وبعد كل تعديل:** احفظ في VS Code، وارجع للمتصفح ودوس [[Ctrl+R]] عشان يقرا الملف من جديد.\n\n'+
+    (needsServer && ownServer
+      ? '**٤. شغّل السيرفر بتاع المشروع وشوفه في Chrome.** المشروع ده ليه سيرفر Node بتاعه (فيه API أو كوكيز)، فالدبل كليك على [[index.html]] مش هيشغّله، ولا سيرفر ملفات عادي. من الترمنال اللي جوه VS Code، وانت جوه الفولدر:\n\n'+
+        '~~~powershell\nnode '+ownServer+'\n~~~\n\n'+
+        'وافتح الرابط اللي السيرفر بيطبعه في Chrome (الأمر بالظبط والبورت في الحل تحت، قسم التشغيل). السيرفر بيفضل شغال لحد ما تدوس [[Ctrl+C]]، ولو غيّرت في ملف السيرفر نفسه اقفله وشغّله تاني. **وبعد كل تعديل في الصفحة:** احفظ، وارجع للمتصفح ودوس [[Ctrl+R]].\n\n'
+      : needsServer
+      // modules, fetch, JSON files and service workers don't work from file:// (blank page, CORS error in the Console)
+      ? '**٤. شغّله على سيرفر محلي وشوفه في Chrome.** المشروع ده فيه [[type="module"]] أو [[fetch]] أو ملف JSON أو service worker، ودول مبيشتغلوش لو فتحت [[index.html]] بالدبل كليك: العنوان بيبقى [[file:///...]]، والصفحة بتطلع فاضية أو ناقصة، و Console بيقول CORS. فشغّل سيرفر صغير من الترمنال اللي جوه VS Code (من القايمة Terminal اختار New Terminal)، وانت جوه الفولدر:\n\n'+
+        '~~~powershell\nnpx --yes serve\n~~~\n\n'+
+        'محتاج Node.js متسطّب ([[node -v]] يطبع رقم). أول مرة [[npx]] بينزّل الباكدج، وبعدها بيطبع [[Accepting connections at http://localhost:3000]]: افتح الرابط ده في Chrome. السيرفر بيفضل شغال طول ما الترمنال مفتوح، ولما تخلّص دوس [[Ctrl+C]]. لو البورت 3000 مشغول هو بيختار بورت تاني ويقولك عليه. **وبعد كل تعديل:** احفظ في VS Code، وارجع للمتصفح ودوس [[Ctrl+R]]، ولو التعديل مظهرش دوس [[Ctrl+Shift+R]] (بيتجاهل الكاش).\n\n'
+      : '**٤. شوفها في Chrome.** من الترمنال اللي جوه VS Code (من القايمة Terminal اختار New Terminal):\n\n'+
+        '~~~powershell\nstart index.html\n~~~\n\n~~~bash\nopen index.html       # الماك\nxdg-open index.html   # لينكس\n~~~\n\n'+
+        'الصفحة هتفتح في المتصفح الأساسي عندك. لو مش Chrome: اسحب [[index.html]] من VS Code وارميه على نافذة Chrome. **وبعد كل تعديل:** احفظ في VS Code، وارجع للمتصفح ودوس [[Ctrl+R]] عشان يقرا الملف من جديد.\n\n')+
     '**٥. افحصها زي المحترف.** في Chrome دوس [[F12]]: تاب Elements بيوريك الشجرة اللي المتصفح فهمها من كودك، و [[Ctrl+Shift+M]] بيوريك الصفحة على عرض موبايل (اختار 360). قارن اللي شايفه ببند «تعرف إنك خلصت» اللي تحت.\n\n'+
     '**٦. قارن بالحل.** بعد ما تخلّص نسختك، افتح زرار «الكود الكامل والشرح» تحت المشروع: هتلاقي الكود كامل والصفحة مرسومة، وزرار «عدّل وجرّب» بيخليك تغيّر في الحل وتشوف الفرق.\n\n'+
     '> محتاج تراجع؟ [[code .]] و Emmet في كورس VS Code، و Elements و Device Toolbar في كورس «المتصفح و DevTools».'
