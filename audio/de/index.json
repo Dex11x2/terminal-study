@@ -1,4 +1,28 @@
 {
+ "013cff9b.mp3": {
+  "text": "Am Samstag kaufe ich ein.",
+  "voice": "f",
+  "heard": "Am Samstag kaufe ich ein.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "018d15e8.mp3": {
+  "text": "Hast du am Samstag Zeit? Lernen wir zusammen?",
+  "voice": "f",
+  "heard": "hast du am Samstagzeit. Nähren wir zusammen.",
+  "score": 0.62,
+  "take": 2,
+  "ok": false
+ },
+ "01c63832.mp3": {
+  "text": "der Mittwoch, die Mittwoche",
+  "voice": "m",
+  "heard": "Der Mittwoch, die Mittwoche.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "01eec7b7.mp3": {
   "text": "Ich komme aus Ägypten.",
   "voice": "m",
@@ -11,11 +35,67 @@
   "heard": "Ich bin Koch von Beruf.",
   "ok": true
  },
+ "02bc2749.mp3": {
+  "text": "Wann hast du Geburtstag?",
+  "voice": "f",
+  "heard": "Wann hast du Geburtstag?",
+  "ok": true
+ },
+ "031ac8e1.mp3": {
+  "text": "Gehen wir ins Kino?",
+  "voice": "m",
+  "heard": "Gehen wir ins Kino.",
+  "ok": true
+ },
+ "038f4f76.mp3": {
+  "text": "schlafen",
+  "voice": "m",
+  "heard": "Schlafen",
+  "ok": true
+ },
  "03c50a8f.mp3": {
   "text": "Danke, sehr gut. Und Ihnen?",
   "voice": "m",
   "heard": "Danke, sehr gut. Und Ihnen?",
   "ok": true
+ },
+ "03f1581a.mp3": {
+  "text": "der Urlaub, die Urlaube",
+  "voice": "m",
+  "heard": "Der Urlaub, die Urlaube.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "050f37b3.mp3": {
+  "text": "heute Abend, morgen früh",
+  "voice": "m",
+  "heard": "Heute Abend, Morgen früh.",
+  "ok": true
+ },
+ "0538c084.mp3": {
+  "text": "Nach dem Essen gehe ich spazieren.",
+  "voice": "m",
+  "heard": "Nach dem Essen gehe ich spazieren.",
+  "ok": true
+ },
+ "05845fe8.mp3": {
+  "text": "Am Dienstag habe ich leider keine Zeit. Geht es am Mittwoch?",
+  "voice": "m",
+  "heard": "Am Dienstag habe ich leider keine Zeit. Geht es am Mittwoch.",
+  "ok": true
+ },
+ "061d5d63.mp3": {
+  "text": "Der Kurs fängt um acht an.",
+  "voice": "f",
+  "heard": "Der Kurs fängt um acht an.",
+  "ok": true
+ },
+ "06b821e0.mp3": {
+  "text": "Ich kaufe ein und koche. Am Abend sehe ich fern.",
+  "voice": "f",
+  "heard": "Ich kaufe einen und koche. Am Abend ziehe ich fern.",
+  "ok": false
  },
  "06d9bf93.mp3": {
   "text": "Ich spreche drei Sprachen.",
@@ -23,17 +103,23 @@
   "heard": "Ich spreche drei Sprachen.",
   "ok": true
  },
+ "06dfab88.mp3": {
+  "text": "der Monat, die Monate",
+  "voice": "m",
+  "heard": "Der Monat, die Monate.",
+  "ok": true
+ },
  "07621918.mp3": {
   "text": "Null, eins, fünf, sieben, zwei, acht, vier, sechs, eins, drei, null.",
   "voice": "f",
   "heard": "0, 1, 5, 7, 2, 8, 4, 6, 1, 3, 0.",
-  "ok": false
+  "ok": true
  },
  "09cc14ec.mp3": {
   "text": "einundzwanzig",
   "voice": "f",
   "heard": "21",
-  "ok": false
+  "ok": true
  },
  "0b2cad8e.mp3": {
   "text": "Super! Tschüss, bis morgen!",
@@ -63,7 +149,7 @@
   "text": "dreißig",
   "voice": "f",
   "heard": "30.",
-  "ok": false
+  "ok": true
  },
  "0c305ce2.mp3": {
   "text": "0157 2846 130.",
@@ -81,18 +167,32 @@
   "text": "einundzwanzig",
   "voice": "m",
   "heard": "21",
-  "ok": false
+  "ok": true
+ },
+ "0ddd4c1f.mp3": {
+  "text": "Um sieben fährt sie zur Arbeit.",
+  "voice": "m",
+  "heard": "Um sieben fährt sie zur Arbeit.",
+  "ok": true
  },
  "0e7cd2a9.mp3": {
   "text": "Ich bin zweiunddreißig Jahre alt.",
   "voice": "m",
   "heard": "Ich bin 32 Jahre alt.",
-  "ok": false
+  "ok": true
+ },
+ "10508094.mp3": {
+  "text": "Gestern war ich krank.",
+  "voice": "f",
+  "heard": "Gestern war ich krank.",
+  "ok": true
  },
  "10a71aab.mp3": {
   "text": "Ä, Ö, Ü, ß",
   "voice": "m",
-  "heard": "e, u, u, s, z",
+  "heard": "e, ö, b, s, z",
+  "score": 0,
+  "take": 0,
   "ok": false
  },
  "110dc6f1.mp3": {
@@ -101,10 +201,28 @@
   "heard": "War her.",
   "ok": false
  },
+ "11e2f039.mp3": {
+  "text": "Es ist zehn vor neun.",
+  "voice": "f",
+  "heard": "Es ist 10 vor 9.",
+  "ok": true
+ },
+ "11eefdb4.mp3": {
+  "text": "Der Kurs ist von neun bis zwölf.",
+  "voice": "m",
+  "heard": "Der Kurs ist von 9 bis 12.",
+  "ok": true
+ },
  "120cb225.mp3": {
   "text": "Langsam, bitte.",
   "voice": "m",
   "heard": "Langsam, bitte.",
+  "ok": true
+ },
+ "12479470.mp3": {
+  "text": "Gut, vielen Dank!",
+  "voice": "m",
+  "heard": "Gut, vielen Dank!",
   "ok": true
  },
  "129638e3.mp3": {
@@ -116,8 +234,22 @@
  "129d2583.mp3": {
   "text": "Ich bin Krankenschwester von Beruf. Ich arbeite in Wien.",
   "voice": "f",
-  "heard": "Ich bin Krankenschwister vom Beruf. Ich arbeite in Wien.",
+  "heard": "Ich bin Krankenschwister von Beruf. Ich arbeite in Wien.",
+  "score": 0.89,
+  "take": 2,
   "ok": false
+ },
+ "12f7824f.mp3": {
+  "text": "Am Mittwoch nur am Vormittag. Um zehn Uhr?",
+  "voice": "f",
+  "heard": "Am Mittwoch nur am Vormittag um 10 Uhr.",
+  "ok": true
+ },
+ "1329cd86.mp3": {
+  "text": "Am Dienstag arbeite ich von acht bis vier.",
+  "voice": "m",
+  "heard": "Am Dienstag arbeite ich von 8 bis 4.",
+  "ok": true
  },
  "13332bc0.mp3": {
   "text": "Können Sie das bitte buchstabieren?",
@@ -129,12 +261,24 @@
   "text": "dreizehn, dreißig, vierzehn, vierzig, sechzehn",
   "voice": "m",
   "heard": "13, 30, 14, 40, 16",
-  "ok": false
+  "ok": true
+ },
+ "13c82e69.mp3": {
+  "text": "Es ist Viertel nach acht.",
+  "voice": "m",
+  "heard": "Es ist viertel nach acht.",
+  "ok": true
  },
  "140f0e40.mp3": {
   "text": "Woher kommen Sie?",
   "voice": "m",
   "heard": "Woher kommen sie?",
+  "ok": true
+ },
+ "147b5167.mp3": {
+  "text": "Dann frühstücke ich.",
+  "voice": "m",
+  "heard": "Dann frühstücke ich.",
   "ok": true
  },
  "148bf1ed.mp3": {
@@ -143,10 +287,22 @@
   "heard": "Grüß Gott!",
   "ok": true
  },
+ "14912ebb.mp3": {
+  "text": "Im August habe ich Urlaub.",
+  "voice": "f",
+  "heard": "Im August habe ich Urlaub.",
+  "ok": true
+ },
  "14f8f050.mp3": {
   "text": "Ich komme aus der Schweiz. Ich spreche Französisch und Deutsch.",
   "voice": "m",
   "heard": "Ich komme aus der Schweiz, ich spreche Französisch und Deutsch.",
+  "ok": true
+ },
+ "1550219e.mp3": {
+  "text": "treffen",
+  "voice": "m",
+  "heard": "Treffen.",
   "ok": true
  },
  "15ae6e82.mp3": {
@@ -165,7 +321,7 @@
   "text": "sechzehn, siebzehn, sechzig, siebzig",
   "voice": "m",
   "heard": "16, 17, 60, 70",
-  "ok": false
+  "ok": true
  },
  "1634834c.mp3": {
   "text": "Tarek: Gern! Ich bin Tarek.",
@@ -182,8 +338,10 @@
  "175fb8fe.mp3": {
   "text": "Ich spreche Arabisch.",
   "voice": "f",
-  "heard": "Ich spreche arbeis",
-  "ok": false
+  "heard": "Ich spreche arabisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "18388212.mp3": {
   "text": "sprechen",
@@ -191,11 +349,31 @@
   "heard": "Sprechen.",
   "ok": true
  },
+ "1ab12715.mp3": {
+  "text": "Der Mai ist ein schöner Monat.",
+  "voice": "f",
+  "heard": "Der Mai ist ein schöner Monat.",
+  "ok": true
+ },
  "1aba13b8.mp3": {
   "text": "Kairo ist eine Stadt.",
   "voice": "f",
   "heard": "Cairo ist eine Stadt.",
+  "score": 0.75,
+  "take": 0,
   "ok": false
+ },
+ "1b71b81f.mp3": {
+  "text": "der Sommer, die Sommer",
+  "voice": "m",
+  "heard": "Der Sommer, die Sommer.",
+  "ok": true
+ },
+ "1b7fd0d1.mp3": {
+  "text": "Schade! Und am Sonntag?",
+  "voice": "m",
+  "heard": "Schade. Und am Sonntag?",
+  "ok": true
  },
  "1c683a6d.mp3": {
   "text": "Auf Wiedersehen, Herr Klein!",
@@ -215,6 +393,18 @@
   "heard": "Mein Name hat sechs Buchstaben.",
   "ok": true
  },
+ "1cfc5c02.mp3": {
+  "text": "der Abend, die Abende",
+  "voice": "m",
+  "heard": "Der Abend, die Abende.",
+  "ok": true
+ },
+ "1d3c1088.mp3": {
+  "text": "nie",
+  "voice": "m",
+  "heard": "Ja.",
+  "ok": false
+ },
  "1d464911.mp3": {
   "text": "Mein Familienname ist Khalil.",
   "voice": "f",
@@ -233,10 +423,48 @@
   "heard": "0157",
   "ok": false
  },
+ "1e837345.mp3": {
+  "text": "Vor dem Kurs trinke ich Kaffee.",
+  "voice": "m",
+  "heard": "Vor dem Kurs trinke ich Kaffee.",
+  "ok": true
+ },
+ "1efe970b.mp3": {
+  "text": "Der Film dauert zwei Stunden.",
+  "voice": "f",
+  "heard": "Der Film dauert zwei Stunden.",
+  "ok": true
+ },
  "20d08ee3.mp3": {
   "text": "Noch einmal, bitte. Langsam.",
   "voice": "m",
   "heard": "Noch einmal, bitte. Langsam.",
+  "ok": true
+ },
+ "212e9a56.mp3": {
+  "text": "Ich sehe nie fern.",
+  "voice": "m",
+  "heard": "Ich sehe nie fern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "21a2fe4e.mp3": {
+  "text": "Um sieben Uhr frühstücke ich.",
+  "voice": "f",
+  "heard": "um 7 Uhr frühstücke ich.",
+  "ok": true
+ },
+ "21b2b9c9.mp3": {
+  "text": "Hast du am Samstag Zeit?",
+  "voice": "f",
+  "heard": "Hast du am Sand stark Zeit.",
+  "ok": false
+ },
+ "22b68022.mp3": {
+  "text": "Am Montag habe ich um neun Uhr Deutschkurs.",
+  "voice": "m",
+  "heard": "Am Montag habe ich um 9 Uhr Deutschkurs.",
   "ok": true
  },
  "22ded7f4.mp3": {
@@ -245,10 +473,42 @@
   "heard": "Freut mich, Frau Khalil.",
   "ok": true
  },
+ "2328b61e.mp3": {
+  "text": "Der Zug kommt um vierzehn Uhr zwanzig.",
+  "voice": "f",
+  "heard": "Der Zug kommt um 14.20 Uhr.",
+  "ok": false
+ },
+ "241ed34b.mp3": {
+  "text": "Die Bäckerei ist von Montag bis Freitag geöffnet.",
+  "voice": "m",
+  "heard": "Die Bäckerei ist vom Montag bis Freitag geöffnet.",
+  "ok": false
+ },
  "243cb7c4.mp3": {
   "text": "Ich komme aus Ägypten.",
   "voice": "f",
   "heard": "Ich komme aus Ägypten.",
+  "ok": true
+ },
+ "24dbdb58.mp3": {
+  "text": "neunzehnhundertneunundneunzig",
+  "voice": "m",
+  "heard": "1999",
+  "ok": false
+ },
+ "24dfec12.mp3": {
+  "text": "Es ist acht Uhr.",
+  "voice": "f",
+  "heard": "Es stacht Uhr.",
+  "score": 0.67,
+  "take": 0,
+  "ok": false
+ },
+ "24faf51d.mp3": {
+  "text": "Ja, am Mittwoch um halb elf.",
+  "voice": "f",
+  "heard": "Ja, am Mittwoch um halb elf.",
   "ok": true
  },
  "25396544.mp3": {
@@ -281,6 +541,20 @@
   "heard": "Ich wohne in Wien. Wien ist schön.",
   "ok": true
  },
+ "27527534.mp3": {
+  "text": "Es ist Viertel vor neun.",
+  "voice": "m",
+  "heard": "Es ist Viertel von 9.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
+ "2866f97c.mp3": {
+  "text": "Am Wochenende schlafe ich lange.",
+  "voice": "f",
+  "heard": "Am Wochenende schlafe ich lange.",
+  "ok": true
+ },
  "29b6d511.mp3": {
   "text": "Guten Morgen! Wie geht es Ihnen?",
   "voice": "f",
@@ -303,6 +577,14 @@
   "text": "das Alphabet, die Alphabete",
   "voice": "m",
   "heard": "das Alphabet, die Alphabet.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
+ "2c562561.mp3": {
+  "text": "Der Deutschkurs beginnt am ersten September.",
+  "voice": "m",
+  "heard": "Der Deutschkurs beginnt am 1. September.",
   "ok": false
  },
  "2c622026.mp3": {
@@ -315,7 +597,7 @@
   "text": "achtundfünfzig",
   "voice": "m",
   "heard": "58",
-  "ok": false
+  "ok": true
  },
  "2ccfce0a.mp3": {
   "text": "Ich bin Studentin.",
@@ -329,10 +611,42 @@
   "heard": "Schlecht.",
   "ok": true
  },
+ "2f575510.mp3": {
+  "text": "Im Winter ist es kalt.",
+  "voice": "f",
+  "heard": "Im Winter ist es kalt.",
+  "ok": true
+ },
+ "2f7385f9.mp3": {
+  "text": "Liebe Frau Schmidt,",
+  "voice": "m",
+  "heard": "Liebe Frau Schmidt.",
+  "ok": true
+ },
+ "305a6137.mp3": {
+  "text": "Ja, gern! Um wie viel Uhr?",
+  "voice": "m",
+  "heard": "Ja, gern. Um wie viel Uhr?",
+  "ok": true
+ },
+ "30684813.mp3": {
+  "text": "vor",
+  "voice": "m",
+  "heard": "4.",
+  "ok": false
+ },
  "308aec00.mp3": {
   "text": "Auf Wiedersehen!",
   "voice": "m",
   "heard": "Auf Wiedersehen.",
+  "ok": true
+ },
+ "30bf1688.mp3": {
+  "text": "Es ist zehn vor neun.",
+  "voice": "m",
+  "heard": "Es ist 10 vor 9.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "30f798fa.mp3": {
@@ -341,16 +655,54 @@
   "heard": "Hunde.",
   "ok": false
  },
+ "31688a6d.mp3": {
+  "text": "pünktlich",
+  "voice": "m",
+  "heard": "pünktlich.",
+  "ok": true
+ },
+ "32227207.mp3": {
+  "text": "Wir treffen uns um acht.",
+  "voice": "f",
+  "heard": "Wir treffen uns um acht.",
+  "ok": true
+ },
  "32a258a2.mp3": {
   "text": "Ich bin Ingenieurin von Beruf.",
   "voice": "f",
   "heard": "Ich bin Engineering von Beruf.",
   "ok": false
  },
+ "3339d5dc.mp3": {
+  "text": "Um acht Uhr beginnt der Kurs.",
+  "voice": "m",
+  "heard": "Um 8 Uhr beginnt der Kurs.",
+  "ok": true
+ },
+ "335c1704.mp3": {
+  "text": "Die Apotheke ist bis 20 Uhr geöffnet.",
+  "voice": "f",
+  "heard": "Die Apotheke ist bis 20 Uhr geöffnet.",
+  "ok": true
+ },
+ "33ca4d7a.mp3": {
+  "text": "Es ist zwanzig Uhr fünfzehn.",
+  "voice": "m",
+  "heard": "Es ist 20 Uhr 15.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "33de9b6d.mp3": {
   "text": "Gute Nacht, Mama!",
   "voice": "f",
   "heard": "Gute Nacht, Mama.",
+  "ok": true
+ },
+ "349a6e03.mp3": {
+  "text": "Am Samstag ist sie von sieben bis dreizehn Uhr geöffnet.",
+  "voice": "m",
+  "heard": "Am Samstag ist sie von 7 bis 13 Uhr geöffnet.",
   "ok": true
  },
  "349b6f0d.mp3": {
@@ -359,10 +711,24 @@
   "heard": "Ich spreche Arabisch und Englisch.",
   "ok": true
  },
+ "349c2c28.mp3": {
+  "text": "Ich stehe um sieben Uhr auf.",
+  "voice": "m",
+  "heard": "Ich stehe um 7 Uhr auf.",
+  "ok": true
+ },
  "34f3535d.mp3": {
   "text": "Frau_Weber: Wir können uns duzen. Ich bin Anna.",
   "voice": "m",
   "heard": "Frau Weber, wir können uns duzen. Ich bin Anna.",
+  "ok": true
+ },
+ "35095719.mp3": {
+  "text": "Es ist Viertel vor elf.",
+  "voice": "m",
+  "heard": "Es ist Viertel vor elf.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "3509d893.mp3": {
@@ -370,6 +736,12 @@
   "voice": "f",
   "heard": "Hallo, Tarek.",
   "ok": true
+ },
+ "35b9ac13.mp3": {
+  "text": "dann",
+  "voice": "m",
+  "heard": "Done.",
+  "ok": false
  },
  "3630d5fa.mp3": {
   "text": "Und wie ist Ihre Telefonnummer?",
@@ -381,6 +753,20 @@
   "text": "Schön! Auf Wiedersehen, Herr Lang!",
   "voice": "m",
   "heard": "Schön. Auf Wiedersehen. Herr Lang.",
+  "ok": true
+ },
+ "3811a356.mp3": {
+  "text": "Der Film dauert zwei Stunden.",
+  "voice": "m",
+  "heard": "Der Film dauert zwei Stunden.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "381531ba.mp3": {
+  "text": "Am Abend rufe ich meine Familie an.",
+  "voice": "m",
+  "heard": "Am Abend rufe ich meine Familie an.",
   "ok": true
  },
  "381e3970.mp3": {
@@ -404,7 +790,9 @@
  "3a543cc2.mp3": {
   "text": "J, V, W, Z",
   "voice": "m",
-  "heard": "j4vz",
+  "heard": "JVVZ",
+  "score": 0,
+  "take": 0,
   "ok": false
  },
  "3b047c9c.mp3": {
@@ -417,7 +805,7 @@
   "text": "zwanzig, dreißig, vierzig, fünfzig",
   "voice": "m",
   "heard": "20, 30, 40, 50",
-  "ok": false
+  "ok": true
  },
  "3b569ca0.mp3": {
   "text": "Guten Tag! Wie geht es Ihnen?",
@@ -437,6 +825,24 @@
   "heard": "Ich komme aus Ägypten und wohne in Cairo.",
   "ok": false
  },
+ "3beabe36.mp3": {
+  "text": "Am Sonntag rufe ich am Abend meine Familie an.",
+  "voice": "m",
+  "heard": "Am Sonntag rufe ich am Abend meine Familie an.",
+  "ok": true
+ },
+ "3cb43500.mp3": {
+  "text": "früh",
+  "voice": "m",
+  "heard": "Früher.",
+  "ok": false
+ },
+ "3dfa9004.mp3": {
+  "text": "Um drei?",
+  "voice": "f",
+  "heard": "Um drei.",
+  "ok": true
+ },
  "3e0216cd.mp3": {
   "text": "Guten Morgen!",
   "voice": "f",
@@ -447,13 +853,29 @@
   "text": "Wie ist Ihr Familienname?",
   "voice": "f",
   "heard": "Wie ist der Familienname?",
+  "score": 0.75,
+  "take": 0,
   "ok": false
  },
  "40adacd4.mp3": {
   "text": "Ich bin Lehrer.",
   "voice": "f",
-  "heard": "Ich bin leer.",
-  "ok": false
+  "heard": "Ich bin Lehrer.",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
+ "4224606e.mp3": {
+  "text": "die Woche, die Wochen",
+  "voice": "m",
+  "heard": "Die Woche, die Wochen.",
+  "ok": true
+ },
+ "422c2d31.mp3": {
+  "text": "Ja, gern!",
+  "voice": "f",
+  "heard": "Ja, gern.",
+  "ok": true
  },
  "42794ed8.mp3": {
   "text": "ich, mich, Ihr Lehrer",
@@ -467,6 +889,12 @@
   "heard": "Ich spreche Arabisch, Englisch und ein bisschen Deutsch.",
   "ok": true
  },
+ "451bb007.mp3": {
+  "text": "Entschuldigung, wie spät ist es?",
+  "voice": "m",
+  "heard": "Entschuldigung, wie spät ist es?",
+  "ok": true
+ },
  "45d18b45.mp3": {
   "text": "Hallo, Mia! Wie geht's?",
   "voice": "f",
@@ -477,7 +905,21 @@
   "text": "Guten Tag, Frau Khalil!",
   "voice": "f",
   "heard": "Guten Tag, Frau Kalil.",
+  "score": 0.75,
+  "take": 0,
   "ok": false
+ },
+ "465fc3f3.mp3": {
+  "text": "Er schläft bis acht.",
+  "voice": "m",
+  "heard": "Er schläft bis acht.",
+  "ok": true
+ },
+ "46af4ead.mp3": {
+  "text": "leider kann ich am Montag nicht zum Kurs kommen. Ich habe einen Termin beim Arzt. Kann ich am Mittwoch kommen? Und was sind die Hausaufgaben?",
+  "voice": "m",
+  "heard": "Leider kann ich am Montag nicht zum Kurs kommen, ich habe einen Termin beim Arzt, kann ich am Mittwoch kommen und was sind die Hausaufgaben?",
+  "ok": true
  },
  "48e3cc5c.mp3": {
   "text": "Hallo, Lea! Es geht. Und dir?",
@@ -488,14 +930,16 @@
  "491bd80d.mp3": {
   "text": "Wo wohnst du?",
   "voice": "m",
-  "heard": "Wovon ist du?",
+  "heard": "Wo vonst du?",
+  "score": 0.67,
+  "take": 1,
   "ok": false
  },
  "49257292.mp3": {
   "text": "sechzig, siebzig, achtzig, neunzig, hundert",
   "voice": "m",
   "heard": "60, 70, 80, 90, 100",
-  "ok": false
+  "ok": true
  },
  "49938433.mp3": {
   "text": "Wie ist Ihre Nummer?",
@@ -509,6 +953,12 @@
   "heard": "Hallo, ich bin Ben und du? Wie heißt du?",
   "ok": true
  },
+ "4a9e9a9c.mp3": {
+  "text": "Ja, gut. Um elf Uhr.",
+  "voice": "f",
+  "heard": "Ja, gut. Um 11 Uhr.",
+  "ok": true
+ },
  "4aa317e6.mp3": {
   "text": "Gut, danke.",
   "voice": "f",
@@ -518,7 +968,15 @@
  "4b580d8b.mp3": {
   "text": "aus dem Sudan, im Sudan",
   "voice": "m",
-  "heard": "Aus den Sudan, in Sudan.",
+  "heard": "aus dem Sudan, im Sudan.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4c090733.mp3": {
+  "text": "Im Juli, am zweiten Juli.",
+  "voice": "f",
+  "heard": "Im Juli, am 2. Juli.",
   "ok": false
  },
  "4c5d1e49.mp3": {
@@ -539,16 +997,54 @@
   "heard": "Ich komme aus Ägypten, aus Cairo.",
   "ok": false
  },
+ "4ec70d1c.mp3": {
+  "text": "zweitausendfünfundzwanzig",
+  "voice": "m",
+  "heard": "2025",
+  "ok": false
+ },
+ "4f8b4668.mp3": {
+  "text": "frühstücken",
+  "voice": "m",
+  "heard": "Frühstücken",
+  "ok": true
+ },
+ "4f9370d2.mp3": {
+  "text": "Hast du am Samstag Zeit?",
+  "voice": "m",
+  "heard": "Hast du an Samstag Zeit?",
+  "ok": false
+ },
+ "4fbe0b7e.mp3": {
+  "text": "Wann hast du Geburtstag?",
+  "voice": "m",
+  "heard": "Wann hast du Geburtstag?",
+  "ok": true
+ },
+ "504226dd.mp3": {
+  "text": "das Datum, die Daten",
+  "voice": "m",
+  "heard": "Das Datum die Daten.",
+  "ok": true
+ },
  "508ab4ba.mp3": {
   "text": "Wie schreibt man das?",
   "voice": "m",
   "heard": "Wie schreibt man das?",
   "ok": true
  },
+ "5102a5d9.mp3": {
+  "text": "Hallo Karim, hier ist Mona. Hast du am Freitag Zeit? Wir gehen um sieben ins Kino. Kommst du mit?",
+  "voice": "f",
+  "heard": "Hallo Karim, hier ist Mona. Hast du am Freitag Zeit? Wir gehen um 7 Uhr ins Kino. Kommst du mit?",
+  "ok": false
+ },
  "51109832.mp3": {
   "text": "Danke schön.",
   "voice": "f",
   "heard": "Dankeschön.",
+  "score": 0,
+  "take": 0,
   "ok": false
  },
  "5117f05d.mp3": {
@@ -569,10 +1065,28 @@
   "heard": "Freut mich!",
   "ok": true
  },
+ "53e8c45e.mp3": {
+  "text": "Es ist fünf nach acht.",
+  "voice": "m",
+  "heard": "Es ist 5 nach 8.",
+  "ok": true
+ },
  "53fe4552.mp3": {
   "text": "Auf Wiedersehen! Bis bald!",
   "voice": "m",
   "heard": "Auf Wiedersehen. Bis bald.",
+  "ok": true
+ },
+ "5450ca14.mp3": {
+  "text": "Am Montag arbeite ich.",
+  "voice": "m",
+  "heard": "Am Montag arbeite ich.",
+  "ok": true
+ },
+ "548480b6.mp3": {
+  "text": "Am Abend kauft sie ein.",
+  "voice": "m",
+  "heard": "Am Abend kauft sie ein.",
   "ok": true
  },
  "56ab137a.mp3": {
@@ -581,11 +1095,19 @@
   "heard": "a, e, i, j, u, v, w, z.",
   "ok": true
  },
+ "56bbaa5e.mp3": {
+  "text": "Hallo, hier ist Anna. Ich habe am Samstag Geburtstag! Die Party ist um acht Uhr bei mir. Kommst du?",
+  "voice": "f",
+  "heard": "Hallo, hier ist Anna. Ich habe am Sandstack Geburtstag. Die Party ist um 8 Uhr bei mir. Kommst du.",
+  "ok": false
+ },
  "56dd29bd.mp3": {
   "text": "Die Zahl ist zwölf.",
   "voice": "f",
-  "heard": "Die Zeit ist zwölf.",
-  "ok": false
+  "heard": "Die Zahl ist zwölf.",
+  "score": 1,
+  "take": 1,
+  "ok": true
  },
  "56e8a381.mp3": {
   "text": "Guten Morgen, Frau Weber!",
@@ -596,7 +1118,9 @@
  "57d691e7.mp3": {
   "text": "Ich heiße Karim Mansour.",
   "voice": "m",
-  "heard": "Ich heiße Karimansur.",
+  "heard": "Ich heiße Karim Manso.",
+  "score": 0.75,
+  "take": 0,
   "ok": false
  },
  "58215e1f.mp3": {
@@ -629,11 +1153,31 @@
   "heard": "aus dem Irak, im Irak.",
   "ok": true
  },
+ "59baffe1.mp3": {
+  "text": "Ahmed",
+  "voice": "m",
+  "heard": "Amic.",
+  "ok": false
+ },
  "5a6003d8.mp3": {
   "text": "Mein Hobby ist Fußball.",
   "voice": "m",
   "heard": "Mein Hobby ist Fußball.",
   "ok": true
+ },
+ "5bd8e95e.mp3": {
+  "text": "Am Wochenende schlafe ich oft lange.",
+  "voice": "m",
+  "heard": "Am Wochenende schlafe ich oft lange.",
+  "ok": true
+ },
+ "5cac9099.mp3": {
+  "text": "Schade. Und am Sonntag?",
+  "voice": "f",
+  "heard": "und am Sonntag.",
+  "score": 0.75,
+  "take": 1,
+  "ok": false
  },
  "5f0de52f.mp3": {
   "text": "Ich bin 20 Jahre alt.",
@@ -653,16 +1197,40 @@
   "heard": "und Deutsch spricht sie ein bisschen.",
   "ok": true
  },
+ "60da6b45.mp3": {
+  "text": "Der Kurs ist am Dienstag und am Donnerstag von sechs bis acht.",
+  "voice": "f",
+  "heard": "Der Kurs ist am Dienstag und am Donnerstag von 6 bis 8.",
+  "ok": true
+ },
+ "60f05a65.mp3": {
+  "text": "leider",
+  "voice": "m",
+  "heard": "Leider!",
+  "ok": true
+ },
  "61236743.mp3": {
   "text": "dreizehn, vierzehn, fünfzehn, sechzehn",
   "voice": "m",
   "heard": "13, 14, 15, 16",
-  "ok": false
+  "ok": true
+ },
+ "61ac0d79.mp3": {
+  "text": "Dann gehe ich zur Arbeit.",
+  "voice": "f",
+  "heard": "dann gehe ich zur Arbeit.",
+  "ok": true
  },
  "63befcdd.mp3": {
   "text": "Können Sie das bitte buchstabieren?",
   "voice": "m",
   "heard": "Können Sie das bitte buchstabieren?",
+  "ok": true
+ },
+ "6414ecec.mp3": {
+  "text": "Ein Jahr hat zwölf Monate.",
+  "voice": "f",
+  "heard": "Ein Jahr hat zwölf Monate.",
   "ok": true
  },
  "64b82d43.mp3": {
@@ -677,11 +1245,25 @@
   "heard": "Meine Telefonnummer ist 0.763.402.080.950.",
   "ok": false
  },
+ "652162ef.mp3": {
+  "text": "Es ist halb drei.",
+  "voice": "m",
+  "heard": "Es ist halb drei.",
+  "ok": true
+ },
  "658d09ac.mp3": {
   "text": "Guten Tag! Mein Name ist Layla Farouk.",
   "voice": "f",
-  "heard": "Guten Tag. Mein Name ist Laila Faruk.",
+  "heard": "Guten Tag. Mein Name ist Leila Faruk.",
+  "score": 0.71,
+  "take": 0,
   "ok": false
+ },
+ "65f27c68.mp3": {
+  "text": "fernsehen",
+  "voice": "m",
+  "heard": "Fernsehen!",
+  "ok": true
  },
  "684726cb.mp3": {
   "text": "Hallo!",
@@ -692,7 +1274,21 @@
  "6867d828.mp3": {
   "text": "Das ist Sara.",
   "voice": "f",
-  "heard": "Das ist Sarah.",
+  "heard": "Das ist Sahel.",
+  "score": 0.67,
+  "take": 0,
+  "ok": false
+ },
+ "6877ab56.mp3": {
+  "text": "Der Kurs fängt an.",
+  "voice": "m",
+  "heard": "Der Kurs fängt an.",
+  "ok": true
+ },
+ "6906f4b7.mp3": {
+  "text": "Guten Tag, hier ist die Sprachschule Sonne. Der Deutschkurs beginnt nicht am ersten, sondern am achten September. Vielen Dank!",
+  "voice": "f",
+  "heard": "Guten Tag, hier ist die Sprachschule Sonne. Der Deutschkurs beginnt nicht am 1. sondern am 8. September. Vielen Dank.",
   "ok": false
  },
  "699ebf94.mp3": {
@@ -701,16 +1297,36 @@
   "heard": "Noch einmal, bitte.",
   "ok": true
  },
+ "69cc760d.mp3": {
+  "text": "Um zehn Uhr arbeite ich. Und am Donnerstag am Nachmittag?",
+  "voice": "m",
+  "heard": "und 10 Uhr arbeite ich, und am Donnerstag, am Nachmittag.",
+  "ok": false
+ },
+ "6a7e5096.mp3": {
+  "text": "Es ist Viertel nach zwei.",
+  "voice": "m",
+  "heard": "Es ist Viertel nach zwei.",
+  "ok": true
+ },
  "6b60713a.mp3": {
   "text": "Ich spreche ein bisschen Deutsch.",
   "voice": "f",
   "heard": "Ich spreche ein bisschen Deutsch.",
   "ok": true
  },
+ "6c038f29.mp3": {
+  "text": "dauern",
+  "voice": "m",
+  "heard": "dauern",
+  "ok": true
+ },
  "6c17ab8e.mp3": {
   "text": "Freut mich, Nadia! Das ist Sara.",
   "voice": "m",
-  "heard": "Freut mich Nadja, das ist Sarah.",
+  "heard": "Freut mich Nadia. Das ist Sarah.",
+  "score": 0.83,
+  "take": 1,
   "ok": false
  },
  "6c487fbb.mp3": {
@@ -719,16 +1335,38 @@
   "heard": "Ein bisschen.",
   "ok": true
  },
+ "6d11db3f.mp3": {
+  "text": "Am siebten Juli.",
+  "voice": "f",
+  "heard": "Am 7. Juli.",
+  "score": 0.67,
+  "take": 0,
+  "ok": false
+ },
  "6ddf21b5.mp3": {
   "text": "M, A, N, S, O, U, R",
   "voice": "m",
-  "heard": "n-a-n-s-g-u-r",
+  "heard": "n-a-n-s-o-u-r",
+  "score": 0,
+  "take": 0,
   "ok": false
+ },
+ "6de1a236.mp3": {
+  "text": "Gut, danke!",
+  "voice": "m",
+  "heard": "Gut, danke.",
+  "ok": true
  },
  "6de57b41.mp3": {
   "text": "Tschüss, bis bald!",
   "voice": "f",
   "heard": "Tschüss, bis bald!",
+  "ok": true
+ },
+ "6e2f10e8.mp3": {
+  "text": "Ich koche oft.",
+  "voice": "f",
+  "heard": "Ich koche oft.",
   "ok": true
  },
  "6ed0a158.mp3": {
@@ -740,7 +1378,9 @@
  "704b870f.mp3": {
   "text": "der Familienname, die Familiennamen",
   "voice": "m",
-  "heard": "Der Familienarme, die Familienarmen.",
+  "heard": "der Familienarme, die Familienarmen",
+  "score": 0.5,
+  "take": 0,
   "ok": false
  },
  "708d341e.mp3": {
@@ -749,10 +1389,28 @@
   "heard": "Wie heißt du?",
   "ok": true
  },
+ "70d44ec3.mp3": {
+  "text": "Meine Schwester steht um sechs Uhr auf.",
+  "voice": "m",
+  "heard": "Meine Schwester steht um 6 Uhr auf.",
+  "ok": true
+ },
  "70de0702.mp3": {
   "text": "Das ist Amina.",
   "voice": "m",
   "heard": "Das ist Amina.",
+  "ok": true
+ },
+ "71d39121.mp3": {
+  "text": "Wann stehst du auf?",
+  "voice": "m",
+  "heard": "Wann stehst du auf?",
+  "ok": true
+ },
+ "71e3a039.mp3": {
+  "text": "Morgen habe ich Zeit.",
+  "voice": "f",
+  "heard": "Morgen habe ich Zeit.",
   "ok": true
  },
  "71fe358d.mp3": {
@@ -767,17 +1425,23 @@
   "heard": "Guten Tag, Herr Braun.",
   "ok": true
  },
+ "7382f17d.mp3": {
+  "text": "Im Januar ist es kalt.",
+  "voice": "m",
+  "heard": "Im Januar ist es kalt.",
+  "ok": true
+ },
+ "738b6ddb.mp3": {
+  "text": "zweitausend",
+  "voice": "m",
+  "heard": "2000",
+  "ok": false
+ },
  "73f792a0.mp3": {
   "text": "Super! Und dir?",
   "voice": "f",
   "heard": "Super! Und dir!",
   "ok": true
- },
- "74d0b347.mp3": {
-  "text": "B, E, R, L, I, N",
-  "voice": "f",
-  "heard": "Das ist die Idee.",
-  "ok": false
  },
  "750dd745.mp3": {
   "text": "Ich bin 31 Jahre alt.",
@@ -803,6 +1467,18 @@
   "heard": "Woher kommen Sie?",
   "ok": true
  },
+ "759b6028.mp3": {
+  "text": "Mein Kurs fängt um neun Uhr an.",
+  "voice": "f",
+  "heard": "Mein Kurs fängt um 9 Uhr an.",
+  "ok": true
+ },
+ "75b61079.mp3": {
+  "text": "Sie fährt mit dem Bus.",
+  "voice": "m",
+  "heard": "Sie fährt mit dem Bus.",
+  "ok": true
+ },
  "7646c772.mp3": {
   "text": "Ich bin 29 Jahre alt.",
   "voice": "f",
@@ -815,11 +1491,25 @@
   "heard": "Wohnen",
   "ok": true
  },
+ "769aba6b.mp3": {
+  "text": "die Zeit, die Zeiten",
+  "voice": "m",
+  "heard": "Die Zeit, die Zeiten",
+  "ok": true
+ },
+ "77119f1c.mp3": {
+  "text": "Ich trinke immer Tee.",
+  "voice": "f",
+  "heard": "Ich trinke immer Tee.",
+  "ok": true
+ },
  "7776c81a.mp3": {
   "text": "Das ist Herr Braun.",
   "voice": "f",
-  "heard": "Das ist Herr Baran.",
-  "ok": false
+  "heard": "Das ist Herr Braun.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "777958cb.mp3": {
   "text": "Wie heißen Sie?",
@@ -831,6 +1521,14 @@
   "text": "sechzig, siebzehn, siebzig, neunzehn, neunzig",
   "voice": "m",
   "heard": "60, 17, 70, 19, 90",
+  "ok": true
+ },
+ "78748a29.mp3": {
+  "text": "Am Nachmittag kaufe ich ein.",
+  "voice": "f",
+  "heard": "An Nachmittag kaufe ich ein.",
+  "score": 0.75,
+  "take": 0,
   "ok": false
  },
  "78e1b387.mp3": {
@@ -839,10 +1537,10 @@
   "heard": "Gut, danke.",
   "ok": true
  },
- "7a98e50c.mp3": {
-  "text": "aus den USA, in den USA",
-  "voice": "m",
-  "heard": "aus den Wässer in den Wässer.",
+ "79cdffe7.mp3": {
+  "text": "Praxis Dr. Berger, guten Tag!",
+  "voice": "f",
+  "heard": "Praxis ihr! Berger, guten Tag!",
   "ok": false
  },
  "7abe346e.mp3": {
@@ -850,6 +1548,12 @@
   "voice": "m",
   "heard": "Ich suche Partner für Deutsch und Arabisch.",
   "ok": true
+ },
+ "7b1aa5db.mp3": {
+  "text": "oft",
+  "voice": "m",
+  "heard": "Off.",
+  "ok": false
  },
  "7b3aa327.mp3": {
   "text": "Land: Ich komme aus …",
@@ -861,12 +1565,26 @@
   "text": "siebzehn",
   "voice": "f",
   "heard": "17",
-  "ok": false
+  "ok": true
+ },
+ "7be24672.mp3": {
+  "text": "Dann haben Sie noch fünfzehn Minuten.",
+  "voice": "f",
+  "heard": "Dann haben sie noch 15 Minuten.",
+  "ok": true
  },
  "7be4054e.mp3": {
   "text": "ich bin, du bist, er ist, sie ist",
   "voice": "m",
   "heard": "Ich bin, du bist, er ist, sie ist.",
+  "ok": true
+ },
+ "7cc3962f.mp3": {
+  "text": "Wir lernen zusammen.",
+  "voice": "f",
+  "heard": "Wir lernen zusammen.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "7d92ef72.mp3": {
@@ -875,16 +1593,76 @@
   "heard": "Sprachen, ich spreche.",
   "ok": true
  },
+ "7e2b534b.mp3": {
+  "text": "Ich brauche einen Termin.",
+  "voice": "f",
+  "heard": "Ich brauche einen Termin.",
+  "ok": true
+ },
+ "7f47657e.mp3": {
+  "text": "geschlossen",
+  "voice": "m",
+  "heard": "geschlossen",
+  "ok": true
+ },
+ "7f5d7d1f.mp3": {
+  "text": "der Morgen, die Morgen",
+  "voice": "m",
+  "heard": "Der Morgen die Morgen.",
+  "ok": true
+ },
+ "7fc95450.mp3": {
+  "text": "haben",
+  "voice": "m",
+  "heard": "haben.",
+  "ok": true
+ },
+ "801052e0.mp3": {
+  "text": "Der Kurs dauert zwei Stunden.",
+  "voice": "f",
+  "heard": "Der Kurs dauert zwei Stunden.",
+  "ok": true
+ },
  "80cfe8b2.mp3": {
   "text": "aus der Türkei, in der Türkei",
   "voice": "m",
   "heard": "Aus der Türkei in der Türkei.",
   "ok": true
  },
+ "81874430.mp3": {
+  "text": "morgen",
+  "voice": "m",
+  "heard": "Morgen.",
+  "ok": true
+ },
  "81a62ff1.mp3": {
   "text": "Sie kommt aus dem Sudan.",
   "voice": "m",
   "heard": "Sie kommt aus dem Sudan.",
+  "ok": true
+ },
+ "81f8b266.mp3": {
+  "text": "Es ist halb sieben.",
+  "voice": "f",
+  "heard": "Es ist halb sieben.",
+  "ok": true
+ },
+ "8203a083.mp3": {
+  "text": "Der Kurs fängt um neun Uhr an.",
+  "voice": "m",
+  "heard": "Der Kurs fängt um neun Uhr an.",
+  "ok": true
+ },
+ "843f0eac.mp3": {
+  "text": "das Wochenende, die Wochenenden",
+  "voice": "m",
+  "heard": "Das Wochenende, die Wochenenden.",
+  "ok": true
+ },
+ "851a31b6.mp3": {
+  "text": "Sie frühstückt nie.",
+  "voice": "m",
+  "heard": "Sie frühstückt nie.",
   "ok": true
  },
  "86b43748.mp3": {
@@ -899,16 +1677,44 @@
   "heard": "Ägypten.",
   "ok": true
  },
+ "8758c4f6.mp3": {
+  "text": "Im Sommer habe ich Urlaub.",
+  "voice": "m",
+  "heard": "Im Sommer habe ich Urlaub.",
+  "ok": true
+ },
+ "886d7ab5.mp3": {
+  "text": "die Uhr, die Uhren",
+  "voice": "m",
+  "heard": "Die Uhr, die Uhren.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "891337a4.mp3": {
   "text": "Sehr gut, danke!",
   "voice": "m",
   "heard": "Sehr gut, danke.",
   "ok": true
  },
+ "895a50fe.mp3": {
+  "text": "Am vierzehnten März. Und du?",
+  "voice": "m",
+  "heard": "Am 14. März. Und du?",
+  "ok": false
+ },
  "89ca40c7.mp3": {
   "text": "Meine Telefonnummer ist 0176 3482 950.",
   "voice": "f",
   "heard": "Meine Telefonnummer ist 01763402 und 80950.",
+  "ok": false
+ },
+ "8b721180.mp3": {
+  "text": "Am Sonntag habe ich Zeit. Wann?",
+  "voice": "f",
+  "heard": "Am Sonntag habe ich Zeit.",
+  "score": 0.83,
+  "take": 1,
   "ok": false
  },
  "8bb54bf7.mp3": {
@@ -923,6 +1729,20 @@
   "heard": "Ich bin 24 Jahre alt.",
   "ok": true
  },
+ "8d5ce68f.mp3": {
+  "text": "Es ist Viertel vor neun.",
+  "voice": "f",
+  "heard": "Es ist vierte vor neun.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
+ "8ecd9b2c.mp3": {
+  "text": "Am Mittwoch habe ich Zeit.",
+  "voice": "f",
+  "heard": "Am Mittwoch habe ich Zeit.",
+  "ok": true
+ },
  "8efdb6d4.mp3": {
   "text": "A, B, C, D, E, F, G",
   "voice": "m",
@@ -934,6 +1754,14 @@
   "voice": "f",
   "heard": "Freut mich auch!",
   "ok": true
+ },
+ "8f8c4069.mp3": {
+  "text": "Sie isst um eins.",
+  "voice": "m",
+  "heard": "Sie ist um eins.",
+  "score": 0.67,
+  "take": 0,
+  "ok": false
  },
  "90d16d0b.mp3": {
   "text": "A, E, I, O, U",
@@ -953,11 +1781,11 @@
   "heard": "n-a-n-s-o-u-r",
   "ok": false
  },
- "92104921.mp3": {
-  "text": "W, E, B, E, R",
-  "voice": "f",
-  "heard": "DC, DC, DC, DC, DC, DC, DC, DC.",
-  "ok": false
+ "9252c62f.mp3": {
+  "text": "Ich arbeite am Montag von neun bis fünf.",
+  "voice": "m",
+  "heard": "Ich arbeite am Montag von 9 bis 5.",
+  "ok": true
  },
  "927ab60a.mp3": {
   "text": "Danke. Buchstabieren Sie bitte Ihren Namen.",
@@ -969,6 +1797,8 @@
   "text": "Das ist Sara.",
   "voice": "m",
   "heard": "Das ist Sarah.",
+  "score": 0.67,
+  "take": 0,
   "ok": false
  },
  "93d545af.mp3": {
@@ -983,6 +1813,18 @@
   "heard": "Wie ist Ihre Telefonnummer?",
   "ok": true
  },
+ "943c1699.mp3": {
+  "text": "Am Sonntag ist sie geschlossen.",
+  "voice": "m",
+  "heard": "Am Sonntag ist sie geschlossen.",
+  "ok": true
+ },
+ "954b71c8.mp3": {
+  "text": "das Viertel, die Viertel",
+  "voice": "m",
+  "heard": "Das Viertel, die Viertel.",
+  "ok": true
+ },
  "96699ff6.mp3": {
   "text": "Das ist …",
   "voice": "m",
@@ -993,6 +1835,12 @@
   "text": "Ich bin 27 Jahre alt.",
   "voice": "m",
   "heard": "Ich bin 27 Jahre alt.",
+  "ok": true
+ },
+ "9747f50f.mp3": {
+  "text": "Ich rufe meine Mutter an.",
+  "voice": "f",
+  "heard": "Ich rufe meine Mutter an.",
   "ok": true
  },
  "98a3cd49.mp3": {
@@ -1010,7 +1858,9 @@
  "9a814d55.mp3": {
   "text": "Jetzt wohnt sie in Leipzig.",
   "voice": "m",
-  "heard": "Jetzt wohnen sie in Lapli.",
+  "heard": "Jetzt wohnen sie in Leipzig.",
+  "score": 0.75,
+  "take": 0,
   "ok": false
  },
  "9b7a083d.mp3": {
@@ -1018,6 +1868,12 @@
   "voice": "f",
   "heard": "Hallo, Oma. Wie geht's?",
   "ok": false
+ },
+ "9b91fda0.mp3": {
+  "text": "Ich frühstücke um sieben Uhr.",
+  "voice": "f",
+  "heard": "Ich frühstücke um 7 Uhr.",
+  "ok": true
  },
  "9c2d7e4a.mp3": {
   "text": "wir sind, ihr seid, sie sind, Sie sind",
@@ -1029,7 +1885,7 @@
   "text": "siebenundvierzig",
   "voice": "m",
   "heard": "47.",
-  "ok": false
+  "ok": true
  },
  "9cf02ab4.mp3": {
   "text": "Wie alt sind Sie? Ich bin 31.",
@@ -1037,11 +1893,49 @@
   "heard": "Wie eizt sind Sie? Ich bin 31.",
   "ok": false
  },
+ "9d2e98f0.mp3": {
+  "text": "Wie spät ist es?",
+  "voice": "f",
+  "heard": "Wie spät ist es?",
+  "ok": true
+ },
+ "9d65c876.mp3": {
+  "text": "Kommst du mit?",
+  "voice": "f",
+  "heard": "Kommst du mit?",
+  "ok": true
+ },
+ "9d69c8c1.mp3": {
+  "text": "Es ist halb neun.",
+  "voice": "m",
+  "heard": "Es ist halb neun.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9d70540e.mp3": {
+  "text": "der Frühling, der Sommer, der Herbst, der Winter",
+  "voice": "m",
+  "heard": "Der Frühling, der Sommer, der Herbst, der Winter.",
+  "ok": true
+ },
+ "9da24a0e.mp3": {
+  "text": "Die Apotheke schließt um zwanzig Uhr.",
+  "voice": "f",
+  "heard": "Die Apotheke schließt um 20 Uhr.",
+  "ok": true
+ },
+ "9eac3e29.mp3": {
+  "text": "Der Kurs fängt um neun an.",
+  "voice": "f",
+  "heard": "Der Kurs fängt um 9 Uhr an.",
+  "ok": false
+ },
  "9f8737da.mp3": {
   "text": "siebzehn, achtzehn, neunzehn",
   "voice": "m",
   "heard": "17, 18, 19",
-  "ok": false
+  "ok": true
  },
  "9f88662b.mp3": {
   "text": "Frau Khalil, woher kommen Sie?",
@@ -1049,17 +1943,43 @@
   "heard": "Frau Kalil, woher kommen Sie?",
   "ok": false
  },
+ "9fca1356.mp3": {
+  "text": "Die Bibliothek ist ab Montag bis zwanzig Uhr geöffnet.",
+  "voice": "m",
+  "heard": "Die Bibliothek ist ab Montag bis 20 Uhr geöffnet.",
+  "ok": true
+ },
  "9fdeb205.mp3": {
   "text": "Hobby: Mein Hobby ist …",
   "voice": "m",
   "heard": "Hobby. Mein Hobby ist...",
   "ok": true
  },
+ "a00122e2.mp3": {
+  "text": "Dann sieht sie fern.",
+  "voice": "m",
+  "heard": "dann sieht sie fern.",
+  "ok": true
+ },
  "a027a210.mp3": {
   "text": "Guten Tag! Mein Name ist Yusuf Adel.",
   "voice": "m",
-  "heard": "Guten Tag, mein Name ist Tuzuf Adl.",
+  "heard": "Guten Tag, mein Name ist Josef Adel.",
+  "score": 0.86,
+  "take": 0,
   "ok": false
+ },
+ "a0a11656.mp3": {
+  "text": "Ich stehe um halb sieben auf. Dann frühstücke ich. Um acht fängt meine Arbeit an.",
+  "voice": "m",
+  "heard": "Ich stehe um halb sieben auf, dann frühstücke ich, um acht fände meine Arbeit an.",
+  "ok": false
+ },
+ "a0fbabe9.mp3": {
+  "text": "Januar, Februar, März, April",
+  "voice": "m",
+  "heard": "Januar, Februar, März, April",
+  "ok": true
  },
  "a105165c.mp3": {
   "text": "eins, zwei, drei, vier, fünf",
@@ -1073,10 +1993,36 @@
   "heard": "Deutsch.",
   "ok": true
  },
+ "a267892e.mp3": {
+  "text": "nach",
+  "voice": "m",
+  "heard": "Mach?",
+  "ok": false
+ },
+ "a29e2429.mp3": {
+  "text": "Um elf Uhr schlafe ich.",
+  "voice": "f",
+  "heard": "Um 11 Uhr schlafe ich.",
+  "ok": true
+ },
  "a30191ab.mp3": {
   "text": "Herr",
   "voice": "m",
   "heard": "Okay.",
+  "ok": false
+ },
+ "a39775db.mp3": {
+  "text": "Im Sommer ist es heiß.",
+  "voice": "f",
+  "heard": "Im Sommer ist es heiß.",
+  "ok": true
+ },
+ "a4e329a7.mp3": {
+  "text": "Es ist Viertel nach zwei.",
+  "voice": "f",
+  "heard": "Es ist vierte Nacht zwei.",
+  "score": 0.5,
+  "take": 0,
   "ok": false
  },
  "a55b9184.mp3": {
@@ -1085,22 +2031,96 @@
   "heard": "Ich heiße Nadia",
   "ok": true
  },
+ "a58441a2.mp3": {
+  "text": "Wir treffen uns um fünf vor halb acht.",
+  "voice": "m",
+  "heard": "Wir treffen uns um 5 vor halb acht.",
+  "ok": true
+ },
+ "a5947f15.mp3": {
+  "text": "heute, morgen, gestern",
+  "voice": "m",
+  "heard": "Heute, morgen, gestern.",
+  "ok": true
+ },
+ "a5b5b942.mp3": {
+  "text": "Geht es am Dienstag um zehn?",
+  "voice": "f",
+  "heard": "geht es am Dienstag um zehn.",
+  "ok": true
+ },
+ "a66fee20.mp3": {
+  "text": "W, E, B, E, R",
+  "voice": "m",
+  "heard": "We-b-e-r",
+  "score": 0,
+  "take": 0,
+  "ok": false
+ },
+ "a6932d01.mp3": {
+  "text": "Sie öffnet um halb sieben.",
+  "voice": "m",
+  "heard": "Sie öffnet um halb sieben.",
+  "ok": true
+ },
+ "a69f24b0.mp3": {
+  "text": "Am Morgen trinke ich Kaffee.",
+  "voice": "f",
+  "heard": "Am Morgen trinke ich Kaffee.",
+  "ok": true
+ },
+ "a6b382da.mp3": {
+  "text": "immer",
+  "voice": "m",
+  "heard": "Emma.",
+  "ok": false
+ },
+ "a708ddc7.mp3": {
+  "text": "krank",
+  "voice": "m",
+  "heard": "krank",
+  "ok": true
+ },
  "a7c8277f.mp3": {
   "text": "zweiunddreißig",
   "voice": "m",
   "heard": "32",
-  "ok": false
+  "ok": true
  },
  "a82c501d.mp3": {
   "text": "dreiundzwanzig",
   "voice": "m",
   "heard": "23",
-  "ok": false
+  "ok": true
  },
  "a835e2a6.mp3": {
   "text": "Guten Abend!",
   "voice": "m",
   "heard": "Guten Abend!",
+  "ok": true
+ },
+ "a89803c0.mp3": {
+  "text": "Ja, am Sonntag geht es. Um wie viel Uhr?",
+  "voice": "m",
+  "heard": "Ja, am Sonntag geht es. Um wie viel Uhr?",
+  "ok": true
+ },
+ "a8f3a886.mp3": {
+  "text": "Mai, Juni, Juli, August",
+  "voice": "m",
+  "heard": "Mai, Juni, Juli, August",
+  "ok": true
+ },
+ "a8f43b24.mp3": {
+  "text": "Heute ist Montag.",
+  "voice": "f",
+  "heard": "Heute ist Montag.",
+  "ok": true
+ },
+ "a99df3e9.mp3": {
+  "text": "September, Oktober, November, Dezember",
+  "voice": "m",
+  "heard": "September, Oktober, November, Dezember",
   "ok": true
  },
  "a9b8acc5.mp3": {
@@ -1112,8 +2132,10 @@
  "aa0a26ff.mp3": {
   "text": "Mein Vorname ist Nadia.",
   "voice": "f",
-  "heard": "Mein Vornamen ist Nadia.",
-  "ok": false
+  "heard": "Mein Vorname ist Nadia.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "aa40de6b.mp3": {
   "text": "Und wie ist Ihre Telefonnummer?",
@@ -1127,6 +2149,12 @@
   "heard": "Ich wohne in Hamburg.",
   "ok": true
  },
+ "aadab0a4.mp3": {
+  "text": "Leider habe ich keine Zeit.",
+  "voice": "f",
+  "heard": "Leider habe ich keine Zeit.",
+  "ok": true
+ },
  "aadb8a0f.mp3": {
   "text": "alt",
   "voice": "m",
@@ -1138,6 +2166,24 @@
   "voice": "f",
   "heard": "Das Alphabet hat 26 Buchstaben.",
   "ok": true
+ },
+ "acb5ce7f.mp3": {
+  "text": "die Entschuldigung, die Entschuldigungen",
+  "voice": "m",
+  "heard": "Die Entschuldigung, die Entschuldigungen.",
+  "ok": true
+ },
+ "ad2ee49f.mp3": {
+  "text": "Um wie viel Uhr?",
+  "voice": "m",
+  "heard": "Um wie viel Uhr?",
+  "ok": true
+ },
+ "ad35f099.mp3": {
+  "text": "Wie viel Uhr ist es?",
+  "voice": "m",
+  "heard": "Wie viel Uhr ist das?",
+  "ok": false
  },
  "ad58369e.mp3": {
   "text": "Mein Name ist Karim Mansour. Ich bin 24 Jahre alt. Ich komme aus Ägypten und wohne jetzt in Leipzig. Ich spreche Arabisch, Englisch und ein bisschen Deutsch. Ich bin Student. Mein Hobby ist Fußball.",
@@ -1163,10 +2209,24 @@
   "heard": "Die Zahl, die Zahlen.",
   "ok": true
  },
+ "aff0adac.mp3": {
+  "text": "gern",
+  "voice": "m",
+  "heard": "gern.",
+  "ok": true
+ },
+ "b04a5263.mp3": {
+  "text": "Guten Tag! Haben Sie am Freitag einen Termin?",
+  "voice": "f",
+  "heard": "Guten Tag, haben Sie am Freitag einen Termin.",
+  "ok": true
+ },
  "b1c04c21.mp3": {
   "text": "M wie München, A wie Aachen, N wie Nürnberg.",
   "voice": "m",
-  "heard": "ENVY München, ABI Aachen, ENVY Nürnberg",
+  "heard": "MV München, AV Aachen, MV Nürnberg",
+  "score": 0.33,
+  "take": 0,
   "ok": false
  },
  "b1e17059.mp3": {
@@ -1175,23 +2235,45 @@
   "heard": "Sie spricht Arabisch und Englisch.",
   "ok": true
  },
+ "b1eec099.mp3": {
+  "text": "Hallo Lisa, hier ist Paul. Wir treffen uns heute nicht um sieben, sondern um halb acht. Bis später!",
+  "voice": "m",
+  "heard": "Hallo Lisa, hier ist Paul. Wir treffen uns heute nicht um 7, sondern um halb 8. Bis später.",
+  "ok": true
+ },
+ "b2138cdd.mp3": {
+  "text": "mitkommen",
+  "voice": "m",
+  "heard": "Mitkommen!",
+  "ok": true
+ },
  "b2d33233.mp3": {
   "text": "Ich heiße Karim.",
   "voice": "f",
-  "heard": "Ich heiße Karin.",
-  "ok": false
+  "heard": "Ich heiße Karim.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "b30a08fc.mp3": {
   "text": "Danke, gut.",
   "voice": "f",
-  "heard": "Danke, Kurt.",
-  "ok": false
+  "heard": "Danke gut.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b3cfb5d8.mp3": {
+  "text": "Ab Februar habe ich einen Deutschkurs.",
+  "voice": "m",
+  "heard": "Ab Februar habe ich einen Deutschkurs.",
+  "ok": true
  },
  "b435f211.mp3": {
   "text": "Null, eins, sechs, null, vier, sieben, zwei, acht, eins, fünf.",
   "voice": "m",
   "heard": "0, 1, 6, 0, 4, 7, 2, 8, 1, 5.",
-  "ok": false
+  "ok": true
  },
  "b4be90cd.mp3": {
   "text": "jetzt",
@@ -1199,16 +2281,42 @@
   "heard": "Jetzt!",
   "ok": true
  },
+ "b51a3599.mp3": {
+  "text": "halb",
+  "voice": "m",
+  "heard": "HALP",
+  "ok": false
+ },
  "b5316e93.mp3": {
   "text": "Hallo, Sara!",
   "voice": "f",
   "heard": "Hallo Sarah!",
+  "score": 0.5,
+  "take": 0,
   "ok": false
+ },
+ "b5422214.mp3": {
+  "text": "einkaufen",
+  "voice": "m",
+  "heard": "Einkaufen",
+  "ok": true
  },
  "b551f521.mp3": {
   "text": "Sprechen Sie Englisch?",
   "voice": "m",
   "heard": "Sprechen Sie Englisch?",
+  "ok": true
+ },
+ "b5df4aa4.mp3": {
+  "text": "Im Sommer! Schön.",
+  "voice": "m",
+  "heard": "Im Sommer. Schön.",
+  "ok": true
+ },
+ "b781b3ee.mp3": {
+  "text": "Am Sonntag ist die Bäckerei geschlossen.",
+  "voice": "f",
+  "heard": "Am Sonntag ist die Bäckerei geschlossen.",
   "ok": true
  },
  "b78fc665.mp3": {
@@ -1229,6 +2337,18 @@
   "heard": "Ach, abisch!",
   "ok": false
  },
+ "b95bc8f3.mp3": {
+  "text": "Um acht Uhr? Der Film beginnt um halb neun.",
+  "voice": "m",
+  "heard": "Um 8 Uhr, der Film beginnt um halb neun.",
+  "ok": true
+ },
+ "ba638dc8.mp3": {
+  "text": "Freitag, Samstag, Sonntag",
+  "voice": "m",
+  "heard": "Freitag, Samstag, Sonntag.",
+  "ok": true
+ },
  "ba83529c.mp3": {
   "text": "Gute Nacht!",
   "voice": "m",
@@ -1247,6 +2367,24 @@
   "heard": "y, a, s, n, i, n",
   "ok": false
  },
+ "bb749617.mp3": {
+  "text": "Am Montag arbeite ich.",
+  "voice": "f",
+  "heard": "Am Montag arbeite ich.",
+  "ok": true
+ },
+ "bc757b73.mp3": {
+  "text": "Ab Montag arbeite ich um acht.",
+  "voice": "m",
+  "heard": "Ab Montag arbeite ich um acht.",
+  "ok": true
+ },
+ "bc76bc0f.mp3": {
+  "text": "Gestern war Sonntag.",
+  "voice": "f",
+  "heard": "Gestern war Sonntag.",
+  "ok": true
+ },
  "bc971624.mp3": {
   "text": "aus der Schweiz, in der Schweiz",
   "voice": "m",
@@ -1257,7 +2395,7 @@
   "text": "null, eins, sieben, sechs, vierunddreißig, zweiundachtzig",
   "voice": "m",
   "heard": "0, 1, 7, 6, 34, 82",
-  "ok": false
+  "ok": true
  },
  "bcdc42b2.mp3": {
   "text": "der Punkt, die Punkte",
@@ -1269,6 +2407,8 @@
   "text": "Hallo, wie geht's?",
   "voice": "f",
   "heard": "Hallo, wie geht es?",
+  "score": 0.75,
+  "take": 1,
   "ok": false
  },
  "be036f2d.mp3": {
@@ -1277,22 +2417,64 @@
   "heard": "Guten Tag. Bitte stellen Sie sich vor.",
   "ok": true
  },
+ "be3ea4cb.mp3": {
+  "text": "Ich bin neunzehnhundertachtundneunzig geboren.",
+  "voice": "m",
+  "heard": "Ich bin 1998 geboren.",
+  "ok": false
+ },
+ "bf62d7d5.mp3": {
+  "text": "Der Zug ist pünktlich.",
+  "voice": "f",
+  "heard": "Der Zug ist pünktlich.",
+  "ok": true
+ },
  "bfb28920.mp3": {
   "text": "O, P, Q, R, S, T, U",
   "voice": "m",
   "heard": "O-T-Q-R-S-T-U",
   "ok": false
  },
+ "c0354706.mp3": {
+  "text": "der Termin, die Termine",
+  "voice": "m",
+  "heard": "Determine die Termine.",
+  "score": 0.5,
+  "take": 0,
+  "ok": false
+ },
  "c04cc48f.mp3": {
   "text": "N, O, U, R, Punkt, S, A, I, D, at, M, A, I, L, Punkt, D, E",
   "voice": "m",
-  "heard": "n-u-u-r.s-a-d-d-a-n-a-d-l.de",
+  "heard": "N-U-U-R-Punkt-S-A-I-D-A-T-N-A-I-L-Punkt-D-V",
+  "score": 0.12,
+  "take": 1,
   "ok": false
+ },
+ "c05a53ad.mp3": {
+  "text": "Gut. Bis Freitag!",
+  "voice": "m",
+  "heard": "Gut, bis Freitag!",
+  "ok": true
  },
  "c1a92d51.mp3": {
   "text": "Tschüss! Bis morgen!",
   "voice": "f",
   "heard": "Tschüss! Bis morgen!",
+  "ok": true
+ },
+ "c1bf9f77.mp3": {
+  "text": "Ich hatte Fieber.",
+  "voice": "m",
+  "heard": "Ich hatte Fieber.",
+  "ok": true
+ },
+ "c1f9d5d0.mp3": {
+  "text": "aus den USA, in den USA",
+  "voice": "m",
+  "heard": "aus den USA in den USA.",
+  "score": 0.4,
+  "take": 0,
   "ok": true
  },
  "c1fed095.mp3": {
@@ -1307,6 +2489,38 @@
   "heard": "Alte, ich bin Jahre alt.",
   "ok": false
  },
+ "c2259c2b.mp3": {
+  "text": "Hallo Mama, ich bin es, Yusuf. Ich komme heute später nach Hause. Mein Kurs ist bis acht Uhr. Tschüss!",
+  "voice": "m",
+  "heard": "Hallo Mama, ich bin es, Yousuf. Ich komme heute später nach Hause. Mein Kurs ist bis 8 Uhr. Tschüss!",
+  "ok": false
+ },
+ "c22ff6b9.mp3": {
+  "text": "Ich stehe um halb sieben auf.",
+  "voice": "f",
+  "heard": "Ich stehe um halb sieben auf.",
+  "ok": true
+ },
+ "c239e320.mp3": {
+  "text": "J, E, N, A",
+  "voice": "m",
+  "heard": "j-e-n-a",
+  "score": 0,
+  "take": 0,
+  "ok": true
+ },
+ "c24d66bc.mp3": {
+  "text": "Am Samstag? Leider nicht. Ich arbeite.",
+  "voice": "m",
+  "heard": "An Samstag? Leider nicht. Ich arbeite.",
+  "ok": false
+ },
+ "c342c9b1.mp3": {
+  "text": "Hallo Herr Ali, hier ist die Praxis Dr. Berger. Ihr Termin am Montag geht leider nicht. Können Sie am Dienstag um zehn Uhr kommen? Bitte rufen Sie uns an. Danke!",
+  "voice": "f",
+  "heard": "Hallo Herr Ali, hier ist die Praxiste her. Wer her? Ihr Termin am Montag geht leider nicht. Können Sie am Dienstag um 10 Uhr kommen. Bitte rufen Sie uns an. Danke.",
+  "ok": false
+ },
  "c35adee0.mp3": {
   "text": "Mein Name ist Lang, Peter Lang. Woher kommen Sie?",
   "voice": "m",
@@ -1317,7 +2531,7 @@
   "text": "null",
   "voice": "m",
   "heard": "0",
-  "ok": false
+  "ok": true
  },
  "c3e95184.mp3": {
   "text": "Name: Ich heiße … / Mein Name ist …",
@@ -1325,11 +2539,13 @@
   "heard": "Name, ich heiße mein Name ist.",
   "ok": true
  },
- "c4743d61.mp3": {
-  "text": "J, E, N, A",
-  "voice": "f",
-  "heard": "dot.wna",
-  "ok": false
+ "c4758f12.mp3": {
+  "text": "der Geburtstag, die Geburtstage",
+  "voice": "m",
+  "heard": "Der Geburtstag, die Geburtstage.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "c4fef56e.mp3": {
   "text": "Hallo Jan! Ich bin Mona aus Kairo. Ich lerne Deutsch. Du lernst Arabisch, richtig?",
@@ -1337,17 +2553,43 @@
   "heard": "Hallo Jan. Ich bin Mona aus Cairo. Ich lerne Deutsch. Du lernst Arabisch, richtig?",
   "ok": false
  },
+ "c5a3a001.mp3": {
+  "text": "Am Abend sehe ich fern.",
+  "voice": "f",
+  "heard": "Am Abend sehe ich Fern.",
+  "ok": true
+ },
+ "c5f23d67.mp3": {
+  "text": "Am Freitag um elf Uhr?",
+  "voice": "m",
+  "heard": "Am Freitag um 11 Uhr",
+  "ok": true
+ },
  "c5ff5055.mp3": {
   "text": "Wie ist Ihre Hausnummer?",
   "voice": "m",
   "heard": "Wie ist Ihre Hausnummer?",
   "ok": true
  },
+ "c64076a6.mp3": {
+  "text": "Entschuldigung, ich bin zu spät.",
+  "voice": "f",
+  "heard": "Entschuldigung, ich bin zu spät.",
+  "ok": true
+ },
  "c6cc31a7.mp3": {
   "text": "Ich wohne in Mansoura.",
   "voice": "f",
-  "heard": "Ich wohne in Mansoa.",
+  "heard": "Ich wohne in mein Surat.",
+  "score": 0.75,
+  "take": 1,
   "ok": false
+ },
+ "c9158a4b.mp3": {
+  "text": "Montag, Dienstag, Mittwoch, Donnerstag",
+  "voice": "m",
+  "heard": "Montag, Dienstag, Mittwoch, Donnerstag",
+  "ok": true
  },
  "c91e8ee9.mp3": {
   "text": "Auch gut, danke.",
@@ -1365,12 +2607,36 @@
   "text": "null, eins, sieben, sechs, drei, vier, acht, zwei",
   "voice": "m",
   "heard": "0, 1, 7, 6, 3, 4, 8, 2",
+  "ok": true
+ },
+ "ca6331ed.mp3": {
+  "text": "geöffnet",
+  "voice": "m",
+  "heard": "Geöffnet.",
+  "ok": true
+ },
+ "ca672af9.mp3": {
+  "text": "Leider nicht. Ich arbeite. Und am Sonntag?",
+  "voice": "m",
+  "heard": "Leider nicht, ich arbeite. Und am Sonntag?",
+  "ok": true
+ },
+ "ca8456cc.mp3": {
+  "text": "Hallo Salma! Hast du am Samstag Zeit? Gehen wir ins Kino?",
+  "voice": "m",
+  "heard": "Hallo Salma, hast du an Samstag Zeit? Gehen wir ins Kino?",
   "ok": false
  },
  "cad23102.mp3": {
   "text": "Wie alt sind Sie?",
   "voice": "m",
   "heard": "Wie alt sind Sie?",
+  "ok": true
+ },
+ "cae9dae6.mp3": {
+  "text": "Ich hatte Fieber.",
+  "voice": "f",
+  "heard": "Ich hatte Fieber.",
   "ok": true
  },
  "caf20938.mp3": {
@@ -1388,7 +2654,21 @@
  "cb23de86.mp3": {
   "text": "Es geht.",
   "voice": "m",
-  "heard": "Bis geht!",
+  "heard": "Es geht.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "cb85f136.mp3": {
+  "text": "Danke! Der Bus kommt um halb drei.",
+  "voice": "m",
+  "heard": "Danke, der Bus kommt um halb 3.",
+  "ok": true
+ },
+ "cca9e6bb.mp3": {
+  "text": "Hallo Omar, hier ist Dana. Wir treffen uns morgen nicht um sechs, sondern um sieben. Ich habe bis halb sieben Kurs. Bis morgen!",
+  "voice": "m",
+  "heard": "Hallo Oma, hier ist Dana. Wir treffen uns morgen nicht um 6, sondern um 7. Ich habe bis halb 7 Kurs. Bis morgen.",
   "ok": false
  },
  "ccd62032.mp3": {
@@ -1397,16 +2677,42 @@
   "heard": "Mein Name ist Nadia Khalil.",
   "ok": true
  },
+ "cd106147.mp3": {
+  "text": "Am Samstag? Leider nicht. Ich arbeite.",
+  "voice": "f",
+  "heard": "Am Sandstark. Leider nicht, ich arbeite.",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
+ },
  "cd45fa94.mp3": {
   "text": "bitte",
   "voice": "m",
   "heard": "Bitte.",
   "ok": true
  },
+ "cd7567b8.mp3": {
+  "text": "Heute ist der zweite Mai.",
+  "voice": "f",
+  "heard": "Heute ist der zweite Mai.",
+  "ok": true
+ },
+ "cdb591e3.mp3": {
+  "text": "Lernen wir zusammen?",
+  "voice": "m",
+  "heard": "Lernen wir zusammen!",
+  "ok": true
+ },
  "cdbf669f.mp3": {
   "text": "Wie schreibt man das?",
   "voice": "f",
   "heard": "Wie schreibt man das?",
+  "ok": true
+ },
+ "cde8643a.mp3": {
+  "text": "Am Montag war der Kurs um neun.",
+  "voice": "m",
+  "heard": "Am Montag war der Kurs um 9.",
   "ok": true
  },
  "ce1f5829.mp3": {
@@ -1421,10 +2727,52 @@
   "heard": "Der Name, die Namen.",
   "ok": true
  },
+ "ce8e46a3.mp3": {
+  "text": "Heute Abend habe ich Zeit.",
+  "voice": "m",
+  "heard": "Heute Abend habe ich Zeit.",
+  "ok": true
+ },
+ "cf0968d3.mp3": {
+  "text": "Gestern war ich krank.",
+  "voice": "m",
+  "heard": "Gestern war ich krank.",
+  "ok": true
+ },
+ "cfd69d28.mp3": {
+  "text": "Ich komme in zehn Minuten.",
+  "voice": "f",
+  "heard": "Ich komme in zehn Minuten.",
+  "ok": true
+ },
  "d013e56a.mp3": {
   "text": "Ich spreche Arabisch, Englisch und ein bisschen Deutsch.",
   "voice": "m",
   "heard": "Ich spreche Arabisch, Englisch und ein bisschen Deutsch.",
+  "ok": true
+ },
+ "d12a9005.mp3": {
+  "text": "Es ist fünf nach acht.",
+  "voice": "f",
+  "heard": "Es ist fünf nach acht.",
+  "ok": true
+ },
+ "d250a30f.mp3": {
+  "text": "Am Sonntag ist das Geschäft geschlossen.",
+  "voice": "f",
+  "heard": "Am Sonntag ist das Geschäft geschlossen.",
+  "ok": true
+ },
+ "d2ff4e69.mp3": {
+  "text": "aufstehen",
+  "voice": "m",
+  "heard": "Aufstehen!",
+  "ok": true
+ },
+ "d3020965.mp3": {
+  "text": "Ich fahre für drei Wochen nach Ägypten.",
+  "voice": "m",
+  "heard": "Ich fahre für drei Wochen nach Ägypten.",
   "ok": true
  },
  "d32d253b.mp3": {
@@ -1439,11 +2787,29 @@
   "heard": "Das Land, die Länder.",
   "ok": true
  },
+ "d45cd15f.mp3": {
+  "text": "Der Kurs ist von neun bis zwölf.",
+  "voice": "f",
+  "heard": "Der Kurs ist von 9 bis 12.",
+  "ok": true
+ },
  "d4719eef.mp3": {
   "text": "ich spreche, du sprichst, er spricht",
   "voice": "m",
   "heard": "Ich spreche, du sprichst, er spricht.",
   "ok": true
+ },
+ "d47ef50c.mp3": {
+  "text": "Guten Tag! Ich brauche einen Termin.",
+  "voice": "m",
+  "heard": "Guten Tag, ich brauche einen Termin.",
+  "ok": true
+ },
+ "d4cf1c04.mp3": {
+  "text": "zusammen",
+  "voice": "m",
+  "heard": "Zusamm.",
+  "ok": false
  },
  "d4dfc67c.mp3": {
   "text": "Guten Morgen, Frau Weber!",
@@ -1457,16 +2823,38 @@
   "heard": "v, v, x, y, z.",
   "ok": false
  },
+ "d5048e0a.mp3": {
+  "text": "der Montag, die Montage",
+  "voice": "m",
+  "heard": "Der Montag, die Montage.",
+  "score": 1,
+  "take": 2,
+  "ok": true
+ },
+ "d5066e17.mp3": {
+  "text": "leider kann ich am Montag nicht zum Kurs kommen. Ich bin krank. Was sind die Hausaufgaben?",
+  "voice": "m",
+  "heard": "Leider kann ich am Montag nicht zum Kurs kommen. Ich bin krank. Was sind die Hausaufgaben?",
+  "ok": true
+ },
  "d5a33d37.mp3": {
   "text": "sein",
   "voice": "m",
   "heard": "Sonn",
   "ok": false
  },
+ "d5b3ef3b.mp3": {
+  "text": "Am Abend rufe ich meine Mutter an.",
+  "voice": "f",
+  "heard": "Am Abend rufe ich meine Mutter an.",
+  "ok": true
+ },
  "d5f2aa92.mp3": {
   "text": "Nour Punkt Said.",
   "voice": "f",
   "heard": "Nur Punkt Zeit.",
+  "score": 0.33,
+  "take": 0,
   "ok": false
  },
  "d627c992.mp3": {
@@ -1481,6 +2869,24 @@
   "heard": "Jetzt wohne ich in Köln.",
   "ok": true
  },
+ "d6f56940.mp3": {
+  "text": "Und am Nachmittag?",
+  "voice": "m",
+  "heard": "und am Nachmittag",
+  "ok": true
+ },
+ "d7211e6a.mp3": {
+  "text": "Er liest die Zeitung.",
+  "voice": "m",
+  "heard": "Er liest die Zeitung.",
+  "ok": true
+ },
+ "d81378bf.mp3": {
+  "text": "Ich stehe um sieben Uhr auf.",
+  "voice": "f",
+  "heard": "Ich stehe um 7 Uhr auf.",
+  "ok": true
+ },
  "d88dea1a.mp3": {
   "text": "Guten Abend! Ich bin der neue Nachbar.",
   "voice": "m",
@@ -1491,6 +2897,16 @@
   "text": "Freut mich, Frau Khalil!",
   "voice": "m",
   "heard": "Freut mich, Frau Kalil.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
+ "d97f2674.mp3": {
+  "text": "B, E, R, L, I, N",
+  "voice": "m",
+  "heard": "d-e-r-l-i-n",
+  "score": 0,
+  "take": 0,
   "ok": false
  },
  "db07fce7.mp3": {
@@ -1499,10 +2915,28 @@
   "heard": "Der Vorname, die Vornamen.",
   "ok": true
  },
+ "db35d937.mp3": {
+  "text": "spät",
+  "voice": "m",
+  "heard": "Spät.",
+  "ok": true
+ },
  "db7caff3.mp3": {
   "text": "Danke, gut. Und Ihnen?",
   "voice": "m",
   "heard": "Danke gut. Und Ihnen?",
+  "ok": true
+ },
+ "dc42e069.mp3": {
+  "text": "Welches Datum ist heute?",
+  "voice": "f",
+  "heard": "Welches Datum ist heute?",
+  "ok": true
+ },
+ "dc67714f.mp3": {
+  "text": "Gut! Wo treffen wir uns?",
+  "voice": "f",
+  "heard": "Gut, wo treffen wir uns?",
   "ok": true
  },
  "dc75b55e.mp3": {
@@ -1517,11 +2951,23 @@
   "heard": "Boah.",
   "ok": false
  },
+ "dd438437.mp3": {
+  "text": "anrufen",
+  "voice": "m",
+  "heard": "Anrufen",
+  "ok": true
+ },
  "ddc07a56.mp3": {
   "text": "Tschüss! Bis morgen!",
   "voice": "m",
   "heard": "Tschüss, bis morgen.",
   "ok": true
+ },
+ "de1f115d.mp3": {
+  "text": "Ich habe am dritten Oktober Geburtstag.",
+  "voice": "f",
+  "heard": "Ich habe am 3. Oktober Geburtstag.",
+  "ok": false
  },
  "de2826ac.mp3": {
   "text": "Ich lerne Deutsch.",
@@ -1544,7 +2990,9 @@
  "defc96a8.mp3": {
   "text": "H, I, J, K, L, M, N",
   "voice": "m",
-  "heard": "h-i-dj-k-l-n-n",
+  "heard": "H-I-J-K-L-N-N",
+  "score": 0,
+  "take": 0,
   "ok": false
  },
  "df83be68.mp3": {
@@ -1553,17 +3001,41 @@
   "heard": "Du.",
   "ok": false
  },
+ "e0795648.mp3": {
+  "text": "Ich frühstücke immer um sieben.",
+  "voice": "m",
+  "heard": "Ich frühstücke immer um sieben.",
+  "ok": true
+ },
+ "e0d21b74.mp3": {
+  "text": "Viele Grüße",
+  "voice": "m",
+  "heard": "Viele Grüße!",
+  "ok": true
+ },
+ "e0dc388b.mp3": {
+  "text": "Hast du heute Abend Zeit?",
+  "voice": "m",
+  "heard": "Hast du heute Abend Zeit?",
+  "ok": true
+ },
  "e15ce0dc.mp3": {
   "text": "Guten Abend! Mein Name ist Roth. Freut mich!",
   "voice": "f",
   "heard": "Guten Abend, mein Name ist Rod. Freut mich.",
   "ok": false
  },
+ "e18cfabe.mp3": {
+  "text": "Am Abend habe ich Zeit.",
+  "voice": "m",
+  "heard": "Am Abend habe ich Zeit.",
+  "ok": true
+ },
  "e196351f.mp3": {
   "text": "sieben, acht, neun, zehn, elf, zwölf",
   "voice": "m",
   "heard": "7 8 9 10 11 12",
-  "ok": false
+  "ok": true
  },
  "e1dca2ca.mp3": {
   "text": "Welche Sprachen sprichst du?",
@@ -1577,11 +3049,49 @@
   "heard": "Wie bitte? Noch einmal bitte.",
   "ok": true
  },
+ "e281a09c.mp3": {
+  "text": "Morgen früh habe ich einen Termin.",
+  "voice": "m",
+  "heard": "Morgen früh habe ich einen Termin.",
+  "ok": true
+ },
+ "e293243d.mp3": {
+  "text": "Entschuldigung, ich bin zu spät.",
+  "voice": "m",
+  "heard": "Entschuldigung, ich bin zu spät.",
+  "ok": true
+ },
  "e35a4837.mp3": {
   "text": "null, eins, zwei, drei, vier, fünf, sechs",
   "voice": "m",
   "heard": "0, 1, 2, 3, 4, 5, 6",
-  "ok": false
+  "ok": true
+ },
+ "e3da4df5.mp3": {
+  "text": "In der Nacht schlafe ich.",
+  "voice": "f",
+  "heard": "In der Nacht schlafe ich.",
+  "ok": true
+ },
+ "e4b8542d.mp3": {
+  "text": "Ich rauche nie.",
+  "voice": "f",
+  "heard": "Ich rauche nie.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "e4d63bb3.mp3": {
+  "text": "Es ist noch früh.",
+  "voice": "f",
+  "heard": "Es ist noch früh.",
+  "ok": true
+ },
+ "e543200d.mp3": {
+  "text": "Kommst du mit?",
+  "voice": "m",
+  "heard": "Kommst du mit?",
+  "ok": true
  },
  "e5b2a07e.mp3": {
   "text": "Ich spreche Arabisch und Englisch. Ich lerne Deutsch.",
@@ -1619,11 +3129,35 @@
   "heard": "Die Sprache, die Sprachen.",
   "ok": true
  },
+ "e8ede982.mp3": {
+  "text": "die Minute, die Minuten",
+  "voice": "m",
+  "heard": "Die Minute, die Minuten.",
+  "ok": true
+ },
+ "e964f4bb.mp3": {
+  "text": "Heute ist der erste Juni.",
+  "voice": "m",
+  "heard": "Heute ist der 1. Juni.",
+  "ok": false
+ },
+ "e99658c2.mp3": {
+  "text": "Ich brauche einen Termin.",
+  "voice": "m",
+  "heard": "Ich brauche einen Termin.",
+  "ok": true
+ },
  "ea67c434.mp3": {
   "text": "Ich komme aus Ägypten. Wohnen Sie schon lange hier?",
   "voice": "m",
   "heard": "Ich komme aus Ägypten. Wohnen Sie schon lange hier.",
   "ok": true
+ },
+ "eb6587e9.mp3": {
+  "text": "Ich stehe um sechs Uhr auf. Der Kurs fängt um acht an.",
+  "voice": "f",
+  "heard": "Ich stehe um 6 Uhr auf. Der Kurs fängt um 8 Uhr an.",
+  "ok": false
  },
  "ebb26ebb.mp3": {
   "text": "Mein Name ist Nadia Khalil.",
@@ -1634,13 +3168,29 @@
  "ebd61a53.mp3": {
   "text": "Wie alt sind Sie, Frau Khalil?",
   "voice": "m",
-  "heard": "Wieall sind Sie, Frau Kalil?",
+  "heard": "Wie alt sind Sie, Frau Kalil?",
+  "score": 0.83,
+  "take": 0,
   "ok": false
  },
  "ebe98991.mp3": {
   "text": "Ich wohne in Alexandria.",
   "voice": "m",
   "heard": "Ich wohne in Alexandria.",
+  "ok": true
+ },
+ "ebfe4257.mp3": {
+  "text": "Gut, um drei. Bis Sonntag!",
+  "voice": "m",
+  "heard": "Gut um drei. Bis Sonntag.",
+  "ok": true
+ },
+ "ed195f89.mp3": {
+  "text": "Der Kurs beginnt um halb neun.",
+  "voice": "f",
+  "heard": "Der Kurs beginnt um halb neun.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "ed27fd22.mp3": {
@@ -1658,7 +3208,15 @@
  "ee62704f.mp3": {
   "text": "Ich heiße Amr Nabil. Und Sie?",
   "voice": "m",
-  "heard": "Ich heiße Ammanabil und zieh",
+  "heard": "Ich heiße Amonabil und sie ...",
+  "score": 0.67,
+  "take": 0,
+  "ok": false
+ },
+ "ee79da75.mp3": {
+  "text": "Ihre Arbeit fängt um acht an.",
+  "voice": "m",
+  "heard": "Ihre Arbeit fängt um 8 Uhr an.",
   "ok": false
  },
  "ef54cb59.mp3": {
@@ -1667,16 +3225,42 @@
   "heard": "Ich heiße Rana Ibrahim.",
   "ok": true
  },
+ "ef5fe312.mp3": {
+  "text": "gestern",
+  "voice": "m",
+  "heard": "Gestern.",
+  "ok": true
+ },
  "ef67f96d.mp3": {
   "text": "Mein Hobby ist Fotografieren.",
   "voice": "f",
-  "heard": "Mein Ruby ist Fotografieren.",
-  "ok": false
+  "heard": "Mein Hobby ist Fotografieren.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "f0fa404d.mp3": {
   "text": "Bis morgen!",
   "voice": "m",
   "heard": "Bis morgen.",
+  "ok": true
+ },
+ "f1165943.mp3": {
+  "text": "Ich habe am vierzehnten März Geburtstag.",
+  "voice": "m",
+  "heard": "Ich habe am 14. März Geburtstag.",
+  "ok": false
+ },
+ "f11797d1.mp3": {
+  "text": "Ich fahre für drei Wochen nach Kairo.",
+  "voice": "f",
+  "heard": "Ich fahre für drei Wochen nach Cairo.",
+  "ok": false
+ },
+ "f178f3c5.mp3": {
+  "text": "Ich habe keine Zeit.",
+  "voice": "f",
+  "heard": "Ich habe keine Zeit.",
   "ok": true
  },
  "f2e24786.mp3": {
@@ -1685,11 +3269,17 @@
   "heard": "Noch einmal.",
   "ok": true
  },
+ "f2e644de.mp3": {
+  "text": "anfangen",
+  "voice": "m",
+  "heard": "Anfang!",
+  "ok": false
+ },
  "f4384599.mp3": {
   "text": "neunundneunzig",
   "voice": "m",
   "heard": "99",
-  "ok": false
+  "ok": true
  },
  "f5062a97.mp3": {
   "text": "Und wo wohnen Sie jetzt?",
@@ -1701,6 +3291,12 @@
   "text": "danke",
   "voice": "m",
   "heard": "Danke.",
+  "ok": true
+ },
+ "f60f7e86.mp3": {
+  "text": "der Sonntag, die Sonntage",
+  "voice": "m",
+  "heard": "Der Sonntag, die Sonntage.",
   "ok": true
  },
  "f70fe8de.mp3": {
@@ -1715,11 +3311,31 @@
   "heard": "Mein Hobby ist Lesen.",
   "ok": true
  },
+ "f7e37655.mp3": {
+  "text": "das Fieber",
+  "voice": "m",
+  "heard": "Das Fieber.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "fa7c29a7.mp3": {
+  "text": "Guten Tag! Haben Sie am Mittwoch einen Termin frei?",
+  "voice": "m",
+  "heard": "Guten Tag! Haben Sie am Mittwoch einen Termin frei?",
+  "ok": true
+ },
+ "fa801bd9.mp3": {
+  "text": "Super, bis Sonntag!",
+  "voice": "f",
+  "heard": "Super, bis Sonntag!",
+  "ok": true
+ },
  "fab2ca46.mp3": {
   "text": "Ich zähle bis hundert.",
   "voice": "f",
   "heard": "Ich zähle bis 100.",
-  "ok": false
+  "ok": true
  },
  "faf73f31.mp3": {
   "text": "Guten Abend! Wie geht es Ihnen?",
@@ -1739,16 +3355,70 @@
   "heard": "Buchstabieren Sie bitte Ihren Familien an.",
   "ok": false
  },
+ "fcb06818.mp3": {
+  "text": "die Nacht, die Nächte",
+  "voice": "m",
+  "heard": "Die Nacht, die Nächte",
+  "ok": true
+ },
+ "fcb905d4.mp3": {
+  "text": "Am Abend sehe ich fern.",
+  "voice": "m",
+  "heard": "Am Abend sehe ich hin.",
+  "ok": false
+ },
  "fd1faf78.mp3": {
   "text": "Bitte stellen Sie sich vor.",
   "voice": "m",
   "heard": "Bitte stellen Sie sich vor.",
   "ok": true
  },
+ "fdad9497.mp3": {
+  "text": "der Winter, die Winter",
+  "voice": "m",
+  "heard": "Der Winter, die Winter.",
+  "ok": true
+ },
+ "fe01e6c5.mp3": {
+  "text": "Der Kurs dauert zwei Stunden.",
+  "voice": "m",
+  "heard": "Der Kurs dauert zwei Stunden.",
+  "ok": true
+ },
+ "fe37fd7d.mp3": {
+  "text": "heute",
+  "voice": "m",
+  "heard": "Heute.",
+  "ok": true
+ },
+ "feae2b4e.mp3": {
+  "text": "die Stunde, die Stunden",
+  "voice": "m",
+  "heard": "Die Stunde, die Stunden.",
+  "ok": true
+ },
+ "ff612475.mp3": {
+  "text": "Ja, am Donnerstag um vier.",
+  "voice": "f",
+  "heard": "Ja, am Donnerstag um vier.",
+  "ok": true
+ },
+ "ffa97457.mp3": {
+  "text": "Wie spät ist es?",
+  "voice": "m",
+  "heard": "Wie spät ist es?",
+  "ok": true
+ },
  "ffcffe40.mp3": {
   "text": "Wie geht's?",
   "voice": "m",
   "heard": "Wie geht's?",
+  "ok": true
+ },
+ "ffef1dac.mp3": {
+  "text": "Am Bahnhof.",
+  "voice": "m",
+  "heard": "Am Bahnhof.",
   "ok": true
  }
 }

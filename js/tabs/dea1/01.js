@@ -672,11 +672,11 @@ Noch einmal, bitte. || مرة كمان.
 ## إملا: اسمع التهجّي واكتب الكلمة
 
 ~~~dictate
-f: B, E, R, L, I, N => Berlin
+B, E, R, L, I, N => Berlin
 S, A, L, A, H => Salah
-f: W, E, B, E, R => Weber
+W, E, B, E, R => Weber
 Y, A, S, M, I, N => Yasmin
-f: J, E, N, A => Jena
+J, E, N, A => Jena
 ~~~
 
 الصوت بيتهجّى حرف حرف، وإنت تكتب الكلمة كاملة (أول حرف كبير، لأنها أسامي).

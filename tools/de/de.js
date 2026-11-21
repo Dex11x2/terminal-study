@@ -1,5 +1,5 @@
 // The German course's checks and audio. Reads every German line of the language tabs (the ~~~de, ~~~words,
-// ~~~dictate and ~~~speak fences in js/tabs/dea1/), the same way js/lang.js reads them on the page.
+// ~~~dictate, ~~~speak and ~~~hear fences in js/tabs/dea1/), the same way js/lang.js reads them on the page.
 //   node tools/de/de.js list            every line, its voice and its audio file (and which files are missing)
 //   node tools/de/de.js audio           makes the missing mp3s with Piper in Docker, has whisper write each one back, and
 //                                       records what it heard in audio/de/index.json; prints every line whisper heard differently
@@ -23,7 +23,8 @@ function collect() {
     if (!fs.existsSync(dir)) continue;
     for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.js')).sort()) {
       const src = fs.readFileSync(path.join(dir, f), 'utf8');
-      for (const m of src.matchAll(/^[ \t]*~~~(de|words|dictate|speak)([^\n]*)\n([\s\S]*?)^[ \t]*~~~[ \t]*$/gm)) {
+      // a fence can close right before the template's backtick («~~~`,»): that line ends it too
+      for (const m of src.matchAll(/^[ \t]*~~~(de|words|dictate|speak|hear)([^\n]*)\n([\s\S]*?)^[ \t]*~~~[ \t]*(?:`.*)?$/gm)) {
         const kind = m[1], head = m[2].trim(), sp = deSpeakers(head), at = f + ':' + (src.slice(0, m.index).split('\n').length + 1);
         for (const raw of m[3].split('\n')) {
           const l = raw.trim();
@@ -33,7 +34,8 @@ function collect() {
             lines.push({ text: w, voice: 'm', at, kind });
             if (ex) lines.push({ text: ex, voice: 'f', at, kind });
           } else {
-            const x = deLine(l, kind === 'de' ? sp : {});
+            if (kind === 'hear' && (l.startsWith('? ') || l.startsWith('- '))) continue;   // questions and options have no sound
+            const x = deLine(l, kind === 'de' || kind === 'hear' ? sp : {});
             // a dictation line «S, A, L, A, H => Salah» sounds its left side; the right side is only the answer
             lines.push({ text: kind === 'dictate' ? x.de.split(' => ')[0] : x.de, voice: x.voice, at, kind });
           }
@@ -47,7 +49,18 @@ function collect() {
 const unique = lines => [...new Map(lines.map(l => [l.file, l])).values()];
 const readIndex = () => fs.existsSync(INDEX) ? JSON.parse(fs.readFileSync(INDEX, 'utf8')) : {};
 // what whisper wrote vs the line: case, punctuation and spacing don't count, and numbers it writes as digits are fine
-const norm = s => s.toLowerCase().normalize('NFC').replace(/[^\p{L}\p{N} ]/gu, ' ').replace(/\s+/g, ' ').trim();
+// whisper writes numbers as digits («dreizehn» -> «13»), so number words 0–99 become digits on both sides before comparing
+const UNITS = ['null', 'eins', 'zwei', 'drei', 'vier', 'fünf', 'sechs', 'sieben', 'acht', 'neun', 'zehn', 'elf', 'zwölf', 'dreizehn', 'vierzehn', 'fünfzehn', 'sechzehn', 'siebzehn', 'achtzehn', 'neunzehn'];
+const TENS = { zwanzig: 20, dreißig: 30, vierzig: 40, fünfzig: 50, sechzig: 60, siebzig: 70, achtzig: 80, neunzig: 90, hundert: 100 };
+const numWord = w => {
+  if (UNITS.includes(w)) return UNITS.indexOf(w);
+  if (w === 'ein' || w === 'eine') return null;
+  if (TENS[w]) return TENS[w];
+  const m = w.match(/^(ein|zwei|drei|vier|fünf|sechs|sieben|acht|neun)und(zwanzig|dreißig|vierzig|fünfzig|sechzig|siebzig|achtzig|neunzig)$/);
+  return m ? TENS[m[2]] + (m[1] === 'ein' ? 1 : UNITS.indexOf(m[1])) : null;
+};
+const norm = s => s.toLowerCase().normalize('NFC').replace(/[^\p{L}\p{N} ]/gu, ' ').replace(/\s+/g, ' ').trim()
+  .split(' ').map(w => { const n = numWord(w); return n === null ? w : String(n); }).join(' ');
 
 module.exports = { collect };
 
@@ -68,13 +81,17 @@ if (require.main === module) {
       console.log(`making ${todo.length} files…`);
       const res = JSON.parse(execFileSync('docker', ['run', '--rm', '-v', ROOT + ':/w', '-w', '/w', 'de-tools', 'python', 'tools/de/tts.py', '.cache/de/tts-jobs.json'],
         { encoding: 'utf8', maxBuffer: 64 << 20, env: { ...process.env, MSYS_NO_PATHCONV: '1' } }));
-      for (const r of res) { const l = todo.find(x => x.file === r.out); idx[path.basename(r.out)] = { text: l.text, voice: l.voice, heard: r.heard, ok: norm(r.heard) === norm(l.text) }; }
+      for (const r of res) { const l = todo.find(x => x.file === r.out); idx[path.basename(r.out)] = { text: l.text, voice: l.voice, heard: r.heard, score: r.score, take: r.take }; }
       const sorted = Object.fromEntries(Object.entries(idx).sort());
       fs.writeFileSync(INDEX, JSON.stringify(sorted, null, 1) + '\n');
     }
-    const bad = all.map(l => idx[path.basename(l.file)]).filter(r => r && !r.ok);
-    console.log(`${all.length} files; whisper heard ${all.length - bad.length} exactly, ${bad.length} differently:`);
-    for (const r of bad) console.log(`  ${r.voice} «${r.text}»  ->  «${r.heard}»`);
+    // the flags are worked out again on every run, so a change to norm() reaches the old files too
+    for (const r of Object.values(idx)) r.ok = norm(r.heard) === norm(r.text);
+    fs.writeFileSync(INDEX, JSON.stringify(Object.fromEntries(Object.entries(idx).sort()), null, 1) + '\n');
+    const rows = all.map(l => idx[path.basename(l.file)]).filter(Boolean), bad = rows.filter(r => !r.ok);
+    const weak = bad.filter(r => r.score !== undefined && r.score < 0.8);
+    console.log(`${all.length} files; whisper heard ${rows.length - bad.length} exactly, ${bad.length} differently, ${weak.length} of them with under 80% of the words (listen to those):`);
+    for (const r of bad.sort((a, b) => (a.score ?? 1) - (b.score ?? 1))) console.log(`  ${r.score ?? '-'} ${r.voice} «${r.text}»  ->  «${r.heard}»${r.take ? '  (take ' + (r.take + 1) + ')' : ''}`);
   }
   if (cmd === 'lt') {
     (async () => {

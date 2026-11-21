@@ -6,6 +6,8 @@
                                       core.js registers them, so they join «اختبرني» and «عليك مراجعة» like the lessons.
      ~~~dictate [title]               one sentence a line («f: text» for the woman's voice): the reader hears it, types it, and it is checked here.
                                       «S, A, L, A, H => Salah» plays the left side and expects the right one.
+     ~~~hear [Lena=f] [title]         listening like the exam: the sound, then «? question», then «- option» lines (« *» marks the right one);
+                                      the transcript stays closed until asked for. Several blocks in one fence.
      ~~~speak [title]                 lines to say: ▶ the model, then record yourself and play the two one after the other.
      ~~~yt <id> [title]               an Easy German video (youtube-nocookie), with the tasks written under it as the fence body.
      ~~~prompt [title]                a ready prompt for Claude or ChatGPT: the reader writes an answer, and one button copies prompt + answer.
@@ -18,7 +20,9 @@ function deHash(s){ let h = 0x811c9dc5; for (const ch of s){ h ^= ch.codePointAt
 /* a letter on its own («M, A, N», «A wie Aachen», «zwei S») is spoken by its German name: Piper read «A, B, C, D» as
    «a, w, c, d» (whisper heard it back that way, 22 Nov), so it gets the names written as words. The page still shows the letters. */
 const DE_LETTERS = {A:'Ah', B:'Beh', C:'Zeh', D:'Deh', E:'Eh', F:'Eff', G:'Geh', H:'Hah', I:'Ih', J:'Jott', K:'Kah', L:'Ell', M:'Emm', N:'Enn', O:'Oh', P:'Peh', Q:'Kuh', R:'Err', S:'Ess', T:'Teh', U:'Uh', V:'Fau', W:'Weh', X:'Iks', Y:'Üpsilon', Z:'Zett', 'Ä':'Äh', 'Ö':'Öh', 'Ü':'Üh', 'ß':'Eszett'};
-const deSpeech = s => s.replace(/(^|[\s,(])([A-ZÄÖÜß])(?=$|[\s,.)!?])/g, (_, p, l) => p+DE_LETTERS[l]);
+// and a short abbreviation in capitals («USA», «DW») is spelled: Piper read «USA» as a word («Wässer», 22 Nov)
+const deSpeech = s => s.replace(/(^|[\s,(])([A-ZÄÖÜ]{2,4})(?=$|[\s,.)!?])/g, (_, p, w) => p+[...w].map(l => DE_LETTERS[l]).join(' '))
+  .replace(/(^|[\s,(])([A-ZÄÖÜß])(?=$|[\s,.)!?])/g, (_, p, l) => p+DE_LETTERS[l]);
 const deFile = (text, v) => 'audio/de/'+deHash((v || 'm')+'|'+deSpeech(text))+'.mp3';
 /* «Lena: Hallo! || أهلًا» -> {who, voice, de, ar} with the speakers of the fence head (Lena=f) */
 function deLine(l, speakers){
@@ -81,6 +85,30 @@ function langFence(kind, lines, head){
     return box('de-yt', title, '<div class="yt-f"><iframe loading="lazy" title="'+esc(title)+'" allow="encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube-nocookie.com/embed/'+id+'?hl=de&amp;cc_lang_pref=de"></iframe></div>'+
       '<p class="de-note">مش ظاهر (من غير نت أو اتقفل)؟ <a href="'+link+'" target="_blank" rel="noopener">افتحه على YouTube</a>. الفيديو من قناة Easy German، مش من الموقع.</p>'+(lines.join('').trim() ? mdHTML(lines.join('\n')) : ''));
   }
+  if (kind === 'hear'){
+    // blocks: the sound (one or more lines, «f:»/«m:» or a speaker of the head), then «? question || عربي», then «- option» with « *» on the right one
+    const sp = deSpeakers(head), blocks = [];
+    let cur = null;
+    for (const raw of lines){
+      const l = raw.trim();
+      if (!l) continue;
+      if (l.startsWith('? ')){ if (cur) cur.qs.push({q: l.slice(2), opts: []}); continue; }
+      if (l.startsWith('- ') && cur && cur.qs.length){ const o = l.slice(2), ok = / \*$/.test(o); cur.qs[cur.qs.length-1].opts.push({t: o.replace(/ \*$/, ''), ok}); continue; }
+      if (!cur || cur.qs.length) blocks.push(cur = {say: [], qs: []});
+      cur.say.push(deLine(l, sp));
+    }
+    const items = blocks.map((b, bi) => {
+      const k = 'hear:'+deHash(b.say.map(x => x.de).join('|'));
+      const qs = b.qs.map((q, qi) => {
+        const [qt, qa] = q.q.split(' || ');
+        return '<div class="hq" data-k="'+esc(k+':'+qi)+'"><p class="hq-q"><span dir="ltr" lang="de">'+esc(qt)+'</span>'+(qa ? ' <span class="de-ar">'+fmt(qa)+'</span>' : '')+'</p>'+
+          q.opts.map(o => '<button type="button" class="hq-o" dir="ltr" lang="de" data-ok="'+(o.ok ? 1 : 0)+'">'+esc(o.t)+'</button>').join('')+'<span class="hq-r" role="status"></span></div>';
+      }).join('');
+      return '<li class="hear">'+b.say.map(x => sayBtns(x.de, x.voice)).join('')+' <span class="de-note">اسمع (مرتين لو عايز)، وبعدين جاوب</span>'+qs+
+        '<details class="hear-t"><summary>اظهر النص</summary><div dir="ltr" lang="de">'+b.say.map(x => '<p>'+(x.who ? '<b>'+esc(x.who.replace(/_/g, ' '))+':</b> ' : '')+esc(x.de)+'</p>').join('')+'</div></details></li>';
+    });
+    return box('de-hear', deTitle(head) || 'سمع: اسمع وجاوب', '<ol class="hear-l">'+items.join('')+'</ol>');
+  }
   if (kind === 'prompt'){
     const pk = 'pans:'+deHash(lines.join('\n')), saved = typeof store !== 'undefined' && store.get(pk) || '';
     return box('de-prompt', head || 'صحّحها بالذكاء الاصطناعي', '<p class="de-note">اكتب إجابتك هنا، ودوس «انسخ»: هيتنسخ الطلب ده ومعاه إجابتك، والصقه في Claude أو ChatGPT. إجابتك بتتحفظ على جهازك بس.</p>'+
@@ -90,7 +118,7 @@ function langFence(kind, lines, head){
   }
   return null;
 }
-const LANG_FENCES = ['de', 'words', 'dictate', 'speak', 'yt', 'prompt'];
+const LANG_FENCES = ['de', 'words', 'dictate', 'speak', 'hear', 'yt', 'prompt'];
 
 /* ---------- playing ---------- */
 let deAudio = null, deBtn = null;
@@ -169,6 +197,15 @@ if (typeof document !== 'undefined'){
     if (sb){ const s = sb.closest('.say'); deSay(s.dataset.de, s.dataset.v, sb.classList.contains('say-slow'), sb); return; }
     const tr = e.target.closest('.de-tr');
     if (tr){ const b = tr.closest('.de-box'), off = b.classList.toggle('no-tr'); tr.textContent = off ? 'اظهر الترجمة' : 'اخفي الترجمة'; return; }
+    const ho = e.target.closest('.hq-o');
+    if (ho){
+      const q = ho.closest('.hq'), ok = ho.dataset.ok === '1';
+      q.querySelectorAll('.hq-o').forEach(b => b.classList.remove('picked', 'right', 'wrong'));
+      ho.classList.add('picked', ok ? 'right' : 'wrong');
+      q.querySelector('.hq-r').textContent = ok ? '✓ صح' : '✗ لأ. اسمع تاني، وركّز في الكلمة اللي بتجاوب السؤال';
+      if (ok) store.set(q.dataset.k, '1');
+      return;
+    }
     const dg = e.target.closest('.dict-go');
     if (dg){ dictCheck(dg.closest('.dict')); return; }
     const rb = e.target.closest('.spk-rec');

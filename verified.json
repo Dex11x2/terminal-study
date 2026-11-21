@@ -5674,35 +5674,65 @@
   "date": "2026-11-05",
   "on": "PocketBase 0.40.4 + postgres:16-alpine in Docker; Supabase side docs: not run on a real project"
  },
- "dea1|Das Alphabet": {
-  "hash": "a6a9549eefd2",
+ "dea1|Am Montag um acht": {
+  "hash": "723e1b0b5b78",
   "date": "2026-11-21",
-  "on": "LanguageTool 6 (meyay image) على كل سطر ألماني، و Piper + whisper small على كل ملف صوت، و Chromium 400px (الإملا والكروت)"
+  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
+ },
+ "dea1|Das Alphabet": {
+  "hash": "e0140c6504be",
+  "date": "2026-11-21",
+  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
  },
  "dea1|Die Zahlen 0–100": {
   "hash": "eb813578781a",
   "date": "2026-11-21",
-  "on": "LanguageTool 6 (meyay image) على كل سطر ألماني، و Piper + whisper small على كل ملف صوت، و Chromium 400px (الإملا والكروت)"
+  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
  },
  "dea1|Hallo! Guten Tag!": {
   "hash": "081392c95eef",
   "date": "2026-11-21",
-  "on": "LanguageTool 6 (meyay image) على كل سطر ألماني، و Piper + whisper small على كل ملف صوت، و Chromium 400px (الإملا والكروت)"
+  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
+ },
+ "dea1|Hast du am Samstag Zeit?": {
+  "hash": "050dcdb9e4b3",
+  "date": "2026-11-21",
+  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
  },
  "dea1|Ich heiße …": {
   "hash": "3b6404f930c5",
   "date": "2026-11-21",
-  "on": "LanguageTool 6 (meyay image) على كل سطر ألماني، و Piper + whisper small على كل ملف صوت، و Chromium 400px (الإملا والكروت)"
+  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
  },
  "dea1|Ich komme aus …": {
   "hash": "8576f0e653a6",
   "date": "2026-11-21",
-  "on": "LanguageTool 6 (meyay image) على كل سطر ألماني، و Piper + whisper small على كل ملف صوت، و Chromium 400px (الإملا والكروت)"
+  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
+ },
+ "dea1|Ich stehe um sieben Uhr auf": {
+  "hash": "f045b7e9f3d4",
+  "date": "2026-11-21",
+  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
+ },
+ "dea1|Im Januar, im Sommer": {
+  "hash": "5d774512df0e",
+  "date": "2026-11-21",
+  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
+ },
+ "dea1|Prüfung: Hören Teil 3, Schreiben Teil 2": {
+  "hash": "b2619307f550",
+  "date": "2026-11-21",
+  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
  },
  "dea1|Prüfung: Sprechen Teil 1": {
   "hash": "c118d1766031",
   "date": "2026-11-21",
-  "on": "LanguageTool 6 (meyay image) على كل سطر ألماني، و Piper + whisper small على كل ملف صوت، و Chromium 400px (الإملا والكروت)"
+  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
+ },
+ "dea1|Wie spät ist es?": {
+  "hash": "f88f595f0866",
+  "date": "2026-11-21",
+  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
  },
  "diag|/health بيقول 200 والدخول بايظ": {
   "hash": "76dcafffbad3",
