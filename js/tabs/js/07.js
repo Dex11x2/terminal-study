@@ -4,13 +4,622 @@ MORE("js", [
       t: "المصفوفات",
       l: 1,
       n: "map و filter و reduce بدل اللوبات، و find و some، ومين بيعدّل الـ array ومين بيرجّع واحدة جديدة",
+      pre: [
+        { to: "js/for...of و for...in", why: R`اللف على عناصر الـ array واحد واحد، واللي [[map]] و [[filter]] بتعمله من غير loop` },
+        { to: "js/function و arrow", why: R`كل method في الوحدة بتاخد arrow function صغيرة زي [[(n) => n * 2]]` },
+        { to: "js/higher-order functions", why: R`[[map]] و [[filter]] و [[reduce]] و [[sort]] كلهم higher-order: بتبعتلهم دالة وهم ينادوها` },
+      ],
       projects: [
-        { lvl: 'صغير', t: R`لوحة طلبات اليوم`, what: R`array طلبات ([[{ id, total, status }]]): عدد كل status، وإجمالي المدفوع، ومتوسط الطلب، وأكبر طلب. كله بـ [[filter]] و [[map]] و [[reduce]] من غير for. من درس «map و filter و reduce».`, done: R`على طلبات الدرس (250 paid و 900 pending و 400 paid) إجمالي المدفوع 650 وأكبر طلب 900. ولو الـ array فاضية مفيش NaN ولا [[TypeError: Reduce of empty array with no initial value]].` },
-        { lvl: 'صغير', t: R`ترتيب الطلاب`, what: R`array طلاب ([[{ name, score }]]): رتّبهم بالدرجة تنازلي، واللي درجاتهم زي بعض بالاسم أبجدي، من غير ما تبوّظ الأصل. من درس «sort و toSorted».`, done: R`المترتب صح، والـ array الأصلية لسه بنفس ترتيبها (اطبعها بعد الترتيب واتأكد).` },
-        { lvl: 'متوسط', t: R`سلة مشتريات immutable`, what: R`[[addItem]] و [[removeItem]] و [[updateQty]] و [[cartTotal]]، كل دالة بترجّع سلة جديدة بـ spread و [[map]] و [[filter]] ومبتعدّلش القديمة. وإضافة منتج موجود بتزوّد الكمية. من وحدة «المصفوفات» و «default و rest و spread».`, done: R`لو عملت [[Object.freeze(cart)]] الأول كل الدوال لسه شغالة (لو دالة بتعمل push هتوقع بـ [[TypeError: Cannot add property ...]]). و [[updateQty(cart, id, 0)]] بتشيل المنتج، وإضافة نفس المنتج مرتين بتخلي الكمية 2 مش سطرين.` },
-        { lvl: 'متوسط', t: R`بحث وفلترة منتجات`, what: R`[[search(products, { q, min, max, inStock, sortBy, page })]]: بحث بالاسم من غير ما يفرق في الحروف الكبيرة ([[includes]])، ومدى سعر، والمتاح بس، وترتيب، وصفحة ٥ منتجات بـ [[slice]]. كل الـ options ليها defaults. من وحدة «المصفوفات» و «default و rest و spread» و «string methods».`, done: R`[[search(products)]] من غير options بيرجّع أول ٥، والبحث بـ [["MUG"]] بيلاقي "Mug"، والصفحة بعد الآخر بترجّع [[[]]]، والـ products الأصلية مبتتغيّرش.` },
-        { lvl: 'كبير', t: R`تقرير مبيعات من داتا API`, what: R`الصق JSON مبيعات (٢٠ عملية: id و product و qty و price و date زي [["2026-03-14"]]) في متغير، وفيهم ٣ بايظين (qty نص، price سالب، date ناقص). [[report(sales)]] بتفصل البايظ مع سببه، وتجمع الإجمالي لكل شهر (من [[date.slice(0, 7)]])، وأكتر ٣ منتجات بيعًا، وتعرض بـ [[console.table]]. واختبارات بـ [[check]]. من وحدة «المصفوفات» و «القيم والأنواع» و «الدوال».`, done: R`الـ ٣ البايظين ظاهرين في جدول لوحدهم بسبب كل واحد، والإجمالي الكلي = مجموع الشهور بالظبط (بالقروش)، والـ top 3 مترتبين تنازلي، و [[report([])]] بيطبع «مفيش مبيعات» من غير error، والـ sales الأصلية زي ما هي.`, ext: R`زوّد مقارنة كل شهر باللي قبله بالنسبة المئوية، وخلّيه يقبل فلتر بمدى تاريخ.` },
-        { lvl: 'فكرة', t: R`داتا من حياتك`, what: R`اختار لستة حقيقية عندك: مصاريف الشهر، أفلام اتفرجت عليها، ماتشات فريقك، ساعات مذاكرة. اكتبها array objects وطلّع منها ٥ أسئلة ليها إجابة بـ map و filter و reduce و sort و find.`, done: R`كل سؤال إجابته دالة لوحدها ورقمها مطابق لحسبتك بإيدك على الأقل في سؤالين.`, ext: R`اعرضها في صفحة HTML بعد وحدة الـ DOM، وزوّد رسم بسيط بالـ CSS.` }
+        { lvl: 'صغير', t: R`لوحة طلبات اليوم`, what: R`array طلبات ([[{ id, total, status }]]): عدد كل status، وإجمالي المدفوع، ومتوسط الطلب، وأكبر طلب. كله بـ [[filter]] و [[map]] و [[reduce]] من غير for. من درس «map و filter و reduce».`, done: R`على طلبات الدرس (250 paid و 900 pending و 400 paid) إجمالي المدفوع 650 وأكبر طلب 900. ولو الـ array فاضية مفيش NaN ولا [[TypeError: Reduce of empty array with no initial value]].`, sol: R`**هتشوف إيه:** دالة [[summarize(orders)]] بترجّع object فيه ٤ إجابات: عدد كل status، وإجمالي المدفوع، ومتوسط الطلب، وأكبر طلب. ومتجرّبة على طلبات الدرس، وعلى array فاضية، وعلى طلبات فيها status جديد.
+
+~~~js dashboard.js
+// لوحة طلبات اليوم: كله بـ filter و map و reduce من غير for
+function summarize(orders) {
+  const counts = orders.reduce((acc, o) => ({ ...acc, [o.status]: (acc[o.status] ?? 0) + 1 }), {});
+  const paidTotal = orders
+    .filter((o) => o.status === "paid")
+    .reduce((sum, o) => sum + o.total, 0);
+  const average = orders.length === 0 ? 0 : orders.reduce((sum, o) => sum + o.total, 0) / orders.length;
+  const biggest = orders.reduce((best, o) => (best === null || o.total > best.total ? o : best), null);
+  return { counts, paidTotal, average: Math.round(average * 100) / 100, biggest };
+}
+
+const orders = [
+  { id: 1, total: 250, status: "paid" },
+  { id: 2, total: 900, status: "pending" },
+  { id: 3, total: 400, status: "paid" },
+];
+console.log(summarize(orders));
+console.log(summarize([]));
+console.log(summarize([...orders, { id: 4, total: 75.5, status: "cancelled" }]));
+~~~
+
+~~~text الناتج: node dashboard.js
+{
+  counts: { paid: 2, pending: 1 },
+  paidTotal: 650,
+  average: 516.67,
+  biggest: { id: 2, total: 900, status: 'pending' }
+}
+{ counts: {}, paidTotal: 0, average: 0, biggest: null }
+{
+  counts: { paid: 2, pending: 1, cancelled: 1 },
+  paidTotal: 650,
+  average: 406.38,
+  biggest: { id: 2, total: 900, status: 'pending' }
+}
+~~~
+
+**كل سطر بيعمل إيه:**
+
+- **[[counts]]:** [[reduce]] بتبدأ من [[{}]]، وكل لفة بترجّع object جديد فيه كل اللي فات ([[...acc]]) والـ status ده متزوّد واحد. [[[o.status]]] بين أقواس مربعة = اسم المفتاح جاي من متغير، و [[acc[o.status] ?? 0]] = «لو أول مرة يبقى صفر». و status جديد زي [["cancelled"]] اتعدّ لوحده من غير ما نكتب اسمه في الكود.
+- **[[paidTotal]]:** [[filter]] للمدفوع، وبعدين [[reduce]] بتجمع من 0: 250 + 400 = 650.
+- **[[average]]:** المجموع على العدد، بس لو العدد صفر بنرجّع 0 قبل ما نقسم. و [[Math.round(x * 100) / 100]] تقريب لقرشين.
+- **[[biggest]]:** [[reduce]] قيمتها الأولية [[null]] («لسه ملقيناش حاجة»)، وكل لفة بتسيب الأكبر. على array فاضية بترجّع [[null]] بهدوء.
+
+**الغلطات اللي حصلت في أول محاولة** (جرّبتها على array فاضية):
+
+~~~js first-try.js
+const orders = [];
+console.log(Math.max(...orders.map((o) => o.total)));
+console.log(orders.reduce((s, o) => s + o.total, 0) / orders.length);
+try {
+  orders.reduce((best, o) => (o.total > best.total ? o : best));
+} catch (error) {
+  console.log(error.name + ": " + error.message);
+}
+~~~
+
+~~~text الناتج: node first-try.js
+-Infinity
+NaN
+TypeError: Reduce of empty array with no initial value
+~~~
+
+- [[Math.max(...[])]] بـ [[-Infinity]]: كانت هتظهر في اللوحة كإن أكبر طلب «سالب ما لا نهاية».
+- القسمة على [[orders.length]] وهو صفر: [[0 / 0]] بـ [[NaN]].
+- [[reduce]] من غير قيمة أولية على فاضية: [[TypeError]] بيوقّف الصفحة كلها.
+
+الإصلاح في الحل: قيمة أولية في كل [[reduce]] (0 أو [[null]] أو [[{}]])، وفحص [[length === 0]] قبل القسمة. وده بالظبط شرط الـ done: «لو الـ array فاضية مفيش NaN ولا TypeError».` },
+        { lvl: 'صغير', t: R`ترتيب الطلاب`, what: R`array طلاب ([[{ name, score }]]): رتّبهم بالدرجة تنازلي، واللي درجاتهم زي بعض بالاسم أبجدي، من غير ما تبوّظ الأصل. من درس «sort و toSorted».`, done: R`المترتب صح، والـ array الأصلية لسه بنفس ترتيبها (اطبعها بعد الترتيب واتأكد).`, sol: R`**هتشوف إيه:** جدول ترتيب من ٥ طلاب: المركز والاسم والدرجة، الأعلى الأول، واللي درجاتهم زي بعض مترتبين أبجدي. وتحته الـ array الأصلية بنفس ترتيبها القديم.
+
+~~~js students.js
+// ترتيب الطلاب: الدرجة تنازلي، واللي درجاتهم زي بعض بالاسم أبجدي
+const students = [
+  { name: "Omar", score: 88 },
+  { name: "Sara", score: 95 },
+  { name: "ali", score: 88 },
+  { name: "Mona", score: 70 },
+  { name: "Hana", score: 95 },
+];
+
+const byRank = (a, b) => b.score - a.score || a.name.localeCompare(b.name);
+const ranked = students.toSorted(byRank);
+
+ranked.forEach((s, i) => console.log($__bt$__{String(i + 1).padStart(2)}. $__{s.name.padEnd(5)} $__{s.score}$__bt));
+console.log("الأصل:", students.map((s) => s.name).join(", "));
+~~~
+
+~~~text الناتج: node students.js
+ 1. Hana  95
+ 2. Sara  95
+ 3. ali   88
+ 4. Omar  88
+ 5. Mona  70
+الأصل: Omar, Sara, ali, Mona, Hana
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- [[byRank]]: comparator واحد بمفتاحين. [[b.score - a.score]] الدرجة تنازلي، ولو طلع 0 (درجتين زي بعض) [[||]] بتروح لـ [[a.name.localeCompare(b.name)]] الاسم تصاعدي. Hana قبل Sara (الاتنين 95)، و ali قبل Omar (الاتنين 88).
+- [[toSorted]]: بترجّع array جديدة، فـ [[students]] فضلت Omar, Sara, ali... زي ما دخلت. سميت الـ comparator باسم ([[byRank]]) عشان يتقري ويتستخدم تاني.
+- [[String(i + 1).padStart(2)]] و [[padEnd(5)]]: الأرقام والأسامي في عواميد تحت بعض.
+
+**الغلطة اللي حصلت:** أول نسخة كانت بتقارن الأسامي بـ [[<]]:
+
+~~~js first-try.js
+const students = [
+  { name: "Omar", score: 88 },
+  { name: "ali", score: 88 },
+];
+const byRank = (a, b) => b.score - a.score || (a.name < b.name ? -1 : 1);
+console.log(students.toSorted(byRank).map((s) => s.name));
+~~~
+
+~~~text الناتج: node first-try.js
+[ 'Omar', 'ali' ]
+~~~
+
+Omar طلع قبل ali، لأن [[<]] بيقارن أكواد الحروف، وكل الحروف الكبيرة (O = 79) قبل كل الصغيرة (a = 97). [[localeCompare]] بترتّب زي القاموس، فـ ali قبل Omar زي ما البني آدم متوقع. واسم الطالب بيتكتب بأي شكل، فالمقارنة لازم متفرقش.` },
+        { lvl: 'متوسط', t: R`سلة مشتريات immutable`, what: R`[[addItem]] و [[removeItem]] و [[updateQty]] و [[cartTotal]]، كل دالة بترجّع سلة جديدة بـ spread و [[map]] و [[filter]] ومبتعدّلش القديمة. وإضافة منتج موجود بتزوّد الكمية. من وحدة «المصفوفات» و «default و rest و spread».`, done: R`لو عملت [[Object.freeze(cart)]] الأول كل الدوال لسه شغالة (لو دالة بتعمل push هتوقع بـ [[TypeError: Cannot add property ...]]). و [[updateQty(cart, id, 0)]] بتشيل المنتج، وإضافة نفس المنتج مرتين بتخلي الكمية 2 مش سطرين.`, sol: R`**هتشوف إيه:** سلسلة سلال ورا بعض (c1 لحد c5)، كل واحدة متجمّدة بـ [[Object.freeze]] وكل دالة اشتغلت عليها عادي: إضافة نفس المنتج مرتين بقت كمية 2 في سطر واحد، وتعديل الكمية لـ 0 شال المنتج، والسلال القديمة زي ما هي. وفي الآخر [[push]] على سلة متجمّدة وقع.
+
+~~~js cart.js
+"use strict";
+// سلة immutable: كل دالة بترجّع سلة جديدة ومبتلمسش القديمة
+
+function addItem(cart, product, qty = 1) {
+  const exists = cart.some((item) => item.id === product.id);
+  if (exists) {
+    return cart.map((item) => (item.id === product.id ? { ...item, qty: item.qty + qty } : item));
+  }
+  return [...cart, { ...product, qty }];
+}
+
+function removeItem(cart, id) {
+  return cart.filter((item) => item.id !== id);
+}
+
+function updateQty(cart, id, qty) {
+  if (qty <= 0) return removeItem(cart, id);
+  return cart.map((item) => (item.id === id ? { ...item, qty } : item));
+}
+
+function cartTotal(cart) {
+  const cents = cart.reduce((sum, item) => sum + Math.round(item.price * 100) * item.qty, 0);
+  return cents / 100;
+}
+
+const mug = { id: 1, name: "Mug", price: 120 };
+const tea = { id: 2, name: "Tea", price: 12.5 };
+
+const empty = Object.freeze([]);
+const c1 = Object.freeze(addItem(empty, mug));
+const c2 = Object.freeze(addItem(c1, mug));
+const c3 = Object.freeze(addItem(c2, tea, 3));
+const c4 = Object.freeze(updateQty(c3, 1, 5));
+const c5 = updateQty(c4, 2, 0);
+
+console.log("c2:", c2);
+console.log("c3:", c3, "الإجمالي", cartTotal(c3));
+console.log("c4 qty:", c4.map((i) => $__bt$__{i.name}×$__{i.qty}$__bt).join(" "), "| c3 لسه:", c3.map((i) => $__bt$__{i.name}×$__{i.qty}$__bt).join(" "));
+console.log("c5:", c5, "الإجمالي", cartTotal(c5));
+console.log("empty:", empty, "c1:", c1.length, "سطر");
+
+try {
+  c1.push(tea);
+} catch (error) {
+  console.log("push على سلة متجمّدة:", error.message);
+}
+~~~
+
+~~~text الناتج: node cart.js
+c2: [ { id: 1, name: 'Mug', price: 120, qty: 2 } ]
+c3: [
+  { id: 1, name: 'Mug', price: 120, qty: 2 },
+  { id: 2, name: 'Tea', price: 12.5, qty: 3 }
+] الإجمالي 277.5
+c4 qty: Mug×5 Tea×3 | c3 لسه: Mug×2 Tea×3
+c5: [ { id: 1, name: 'Mug', price: 120, qty: 5 } ] الإجمالي 600
+empty: [] c1: 1 سطر
+push على سلة متجمّدة: Cannot add property 1, object is not extensible
+~~~
+
+**كل دالة بتعمل إيه:**
+
+- **[[addItem]]:** [[some]] الأول: المنتج موجود؟ لو أيوه، [[map]] بترجّع array جديدة: العنصر ده object جديد بكمية أكبر ([[{ ...item, qty: item.qty + qty }]])، والباقي زي ما هو. لو لأ، [[[...cart, { ...product, qty }]]] array جديدة فيها القديم والجديد. و [[qty = 1]] default.
+- **[[removeItem]]:** [[filter]] بتسيب كل حاجة ما عدا الـ id ده.
+- **[[updateQty]]:** لو الكمية 0 أو أقل، بتستخدم [[removeItem]] بدل ما تسيب سطر كميته صفر. وإلا [[map]] زي [[addItem]].
+- **[[cartTotal]]:** [[reduce]] بالقروش ([[Math.round(price * 100)]]) عشان 12.5 × 3 تتجمع صح، والقسمة على 100 في الآخر.
+- **[[Object.freeze]] على كل سلة:** ده الاختبار نفسه. لو أي دالة عملت [[push]] أو [[cart[0].qty = ...]]، الملف [[use strict]] فهترمي [[TypeError]] على طول.
+
+**ليه c3 لسه [[Mug×2]] بعد ما عملنا c4:** [[updateQty]] عملت array جديدة و object جديد للـ Mug، والقديم ملمسناهوش. ده اللي بيخلي React يعرف إن الـ state اتغيّر (بيقارن الـ reference)، ويخليك تعمل «تراجع» بإنك ترجع للسلة اللي قبلها.
+
+**الغلطة اللي حصلت:** أول [[addItem]] كانت [[cart.push(...)]] و [[return cart]]:
+
+~~~js first-try.js
+"use strict";
+function addItem(cart, product) {
+  cart.push({ ...product, qty: 1 });
+  return cart;
+}
+const c1 = Object.freeze([]);
+try {
+  addItem(c1, { id: 1, name: "Mug", price: 120 });
+} catch (error) {
+  console.log(error.name + ": " + error.message);
+}
+~~~
+
+~~~text الناتج: node first-try.js
+TypeError: Cannot add property 0, object is not extensible
+~~~
+
+السلة المتجمّدة رفضت الإضافة، وده بالظبط اللي الـ done طالبه: الـ freeze بيكشف أي دالة بتعدّل. ولاحظ إن [[Object.freeze]] بيجمّد مستوى واحد (الـ array)، مش الـ objects اللي جواها. عشان كده [[map]] بـ [[{ ...item }]] مهم: لو كتبت [[item.qty += 1]] جوه الـ map مش هتوقع، بس هتعدّل السلة القديمة من غير ما تحس.` },
+        { lvl: 'متوسط', t: R`بحث وفلترة منتجات`, what: R`[[search(products, { q, min, max, inStock, sortBy, page })]]: بحث بالاسم من غير ما يفرق في الحروف الكبيرة ([[includes]])، ومدى سعر، والمتاح بس، وترتيب، وصفحة ٥ منتجات بـ [[slice]]. كل الـ options ليها defaults. من وحدة «المصفوفات» و «default و rest و spread» و «string methods».`, done: R`[[search(products)]] من غير options بيرجّع أول ٥، والبحث بـ [["MUG"]] بيلاقي "Mug"، والصفحة بعد الآخر بترجّع [[[]]]، والـ products الأصلية مبتتغيّرش.`, sol: R`**هتشوف إيه:** ٦ نداءات لنفس الدالة [[search]] بـ options مختلفة: من غير options خالص (أول ٥ بالاسم)، والصفحة التانية، وصفحة بعد الآخر (فاضية)، وبحث بحروف كبيرة، وبحث + المتاح بس + ترتيب بالسعر، ومدى سعر. وفي الآخر تأكيد إن الـ products الأصلية متغيّرتش.
+
+~~~js search.js
+// بحث وفلترة منتجات: كل الـ options ليها defaults، والـ products الأصلية مبتتغيّرش
+const PAGE_SIZE = 5;
+
+const sorters = {
+  name: (a, b) => a.name.localeCompare(b.name),
+  priceAsc: (a, b) => a.price - b.price,
+  priceDesc: (a, b) => b.price - a.price,
+};
+
+function search(products, { q = "", min = 0, max = Infinity, inStock = false, sortBy = "name", page = 1 } = {}) {
+  const needle = q.trim().toLowerCase();
+  const compare = sorters[sortBy] ?? sorters.name;
+  const start = (page - 1) * PAGE_SIZE;
+  return products
+    .filter((p) => p.name.toLowerCase().includes(needle))
+    .filter((p) => p.price >= min && p.price <= max)
+    .filter((p) => !inStock || p.stock > 0)
+    .toSorted(compare)
+    .slice(start, start + PAGE_SIZE);
+}
+
+const products = [
+  { name: "Mug", price: 120, stock: 4 },
+  { name: "Travel Mug", price: 240, stock: 0 },
+  { name: "Cap", price: 90, stock: 12 },
+  { name: "Notebook", price: 45, stock: 30 },
+  { name: "Pen", price: 15, stock: 100 },
+  { name: "Tote Bag", price: 150, stock: 7 },
+  { name: "Sticker", price: 10, stock: 0 },
+  { name: "Mug Set", price: 400, stock: 2 },
+];
+const snapshot = JSON.stringify(products);
+const names = (list) => list.map((p) => $__bt$__{p.name} $__{p.price}$__bt).join(" | ");
+
+console.log("1:", names(search(products)));
+console.log("2:", names(search(products, { page: 2 })));
+console.log("3:", names(search(products, { page: 3 })));
+console.log("4:", names(search(products, { q: "MUG" })));
+console.log("5:", names(search(products, { q: "mug", inStock: true, sortBy: "priceDesc" })));
+console.log("6:", names(search(products, { min: 40, max: 150, sortBy: "priceAsc" })));
+console.log("الأصل متغيّرش:", JSON.stringify(products) === snapshot);
+~~~
+
+~~~text الناتج: node search.js
+1: Cap 90 | Mug 120 | Mug Set 400 | Notebook 45 | Pen 15
+2: Sticker 10 | Tote Bag 150 | Travel Mug 240
+3: 
+4: Mug 120 | Mug Set 400 | Travel Mug 240
+5: Mug Set 400 | Mug 120
+6: Notebook 45 | Cap 90 | Mug 120 | Tote Bag 150
+الأصل متغيّرش: true
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- **الباراميتر التاني** [[{ q = "", min = 0, max = Infinity, inStock = false, sortBy = "name", page = 1 } = {}]]: object options بـ default لكل خانة، و [[= {}]] عشان [[search(products)]] من غير options تشتغل. [[max = Infinity]] يعني «مفيش حد أقصى» من غير ما نكتب if.
+- **[[q.trim().toLowerCase()]] و [[p.name.toLowerCase().includes(needle)]]:** الطرفين بحروف صغيرة، فـ [["MUG"]] لقت Mug و Mug Set و Travel Mug. و [[""]] (البحث الفاضي) بيتطابق مع أي نص، فمن غير [[q]] كل المنتجات بتعدّي.
+- **[[!inStock || p.stock > 0]]:** لو الفلتر مقفول ([[inStock]] false) الشرط true لكل منتج. لو مفتوح، المتاح بس.
+- **[[sorters[sortBy] ?? sorters.name]]:** object فيه الـ comparators بالاسم (زي آلة الحاسبة في الوحدة اللي فاتت)، ولو حد بعت sortBy مش معروف نرجع للاسم بدل ما نوقع.
+- **[[toSorted]] ثم [[slice(start, start + PAGE_SIZE)]]:** الترتيب **قبل** التقسيم لصفحات، وإلا كل صفحة هتبقى مترتبة لوحدها. و [[slice]] بعد الآخر بترجّع [[[]]] من غير error (السطر 3).
+- **[[JSON.stringify(products) === snapshot]]:** بنصوّر الداتا قبل وبعد ونقارن، أبسط طريقة نتأكد إن مفيش حاجة اتعدّلت.
+
+**الغلطات اللي حصلت:**
+
+~~~js first-try.js
+const products = ["Cap", "Mug", "Mug Set", "Notebook", "Pen", "Sticker", "Tote Bag", "Travel Mug"];
+const page = (list, n, size = 5) => list.slice(n * size, n * size + size);
+console.log(page(products, 1));
+console.log("Mug".includes("MUG"), "Mug".includes(""));
+~~~
+
+~~~text الناتج: node first-try.js
+[ 'Sticker', 'Tote Bag', 'Travel Mug' ]
+false true
+~~~
+
+- حسبت بداية الصفحة [[n * size]]، فـ [[page(products, 1)]] رجّعت التانية (Sticker...) والأولى ضاعت. الصفحات بتبدأ من 1 عند اليوزر ومن 0 في [[slice]]، فالصح [[(page - 1) * size]].
+- [["Mug".includes("MUG")]] بـ false: [[includes]] بيفرق في الحروف الكبيرة، عشان كده الطرفين [[toLowerCase]].
+- ملاحظة: [[filter(...).sort(...)]] كانت هتبقى آمنة هنا برضه، لأن [[filter]] بترجّع array جديدة و [[sort]] بتعدّلها هي مش الأصل. بس [[toSorted]] بتفضل صح حتى لو حد شال الـ filter بعدين.` },
+        { lvl: 'كبير', t: R`تقرير مبيعات من داتا API`, what: R`الصق JSON مبيعات (٢٠ عملية: id و product و qty و price و date زي [["2026-03-14"]]) في متغير، وفيهم ٣ بايظين (qty نص، price سالب، date ناقص). [[report(sales)]] بتفصل البايظ مع سببه، وتجمع الإجمالي لكل شهر (من [[date.slice(0, 7)]])، وأكتر ٣ منتجات بيعًا، وتعرض بـ [[console.table]]. واختبارات بـ [[check]]. من وحدة «المصفوفات» و «القيم والأنواع» و «الدوال».`, done: R`الـ ٣ البايظين ظاهرين في جدول لوحدهم بسبب كل واحد، والإجمالي الكلي = مجموع الشهور بالظبط (بالقروش)، والـ top 3 مترتبين تنازلي، و [[report([])]] بيطبع «مفيش مبيعات» من غير error، والـ sales الأصلية زي ما هي.`, ext: R`زوّد مقارنة كل شهر باللي قبله بالنسبة المئوية، وخلّيه يقبل فلتر بمدى تاريخ.`, sol: R`**هتشوف إيه:** ٣ جداول في الترمنال بـ [[console.table]]: العمليات البايظة وسبب كل واحدة، والإجمالي لكل شهر، وأكتر ٣ منتجات بيعًا بالكمية، وبعدهم الإجمالي الكلي. ونداء على array فاضية بيقول «مفيش مبيعات». ومعاه ٧ اختبارات بـ [[node --test]].
+
+~~~text شجرة الملفات
+sales-report/
+├── sales.js         الداتا: ٢٠ عملية زي ما رجعت من API (٣ بايظين)
+├── report.js        problem و analyze و report
+├── report.test.js   الاختبارات (node --test)
+└── run.js           بيطبع التقرير
+~~~
+
+**ترتيب البناء:** [[problem]] الأول (هي اللي بتقرر مين سليم)، وبعدين [[analyze]] اللي بترجّع أرقام بس من غير طباعة (عشان تتختبر)، وبعدين [[report]] اللي بتعرض، وآخر حاجة الاختبارات.
+
+~~~js sales.js
+// ٢٠ عملية بيع زي ما بترجع من API (فيهم ٣ بايظين عن قصد)
+module.exports = [
+  { id: 1, product: "Mug", qty: 2, price: 120, date: "2026-01-03" },
+  { id: 2, product: "Cap", qty: 1, price: 90, date: "2026-01-05" },
+  { id: 3, product: "Tea", qty: 6, price: 12.5, date: "2026-01-09" },
+  { id: 4, product: "Mug", qty: 1, price: 120, date: "2026-01-14" },
+  { id: 5, product: "Notebook", qty: 3, price: 45, date: "2026-01-20" },
+  { id: 6, product: "Tea", qty: "2", price: 12.5, date: "2026-01-22" },
+  { id: 7, product: "Pen", qty: 10, price: 15, date: "2026-02-01" },
+  { id: 8, product: "Mug", qty: 3, price: 120, date: "2026-02-04" },
+  { id: 9, product: "Cap", qty: 2, price: 90, date: "2026-02-08" },
+  { id: 10, product: "Tea", qty: 4, price: 12.5, date: "2026-02-11" },
+  { id: 11, product: "Tote Bag", qty: 1, price: 150, date: "2026-02-15" },
+  { id: 12, product: "Pen", qty: 5, price: 15, date: "2026-02-19" },
+  { id: 13, product: "Cap", qty: 1, price: -50, date: "2026-02-21" },
+  { id: 14, product: "Notebook", qty: 2, price: 45, date: "2026-02-27" },
+  { id: 15, product: "Tea", qty: 8, price: 12.5, date: "2026-03-02" },
+  { id: 16, product: "Mug", qty: 2, price: 120, date: "2026-03-06" },
+  { id: 17, product: "Pen", qty: 4, price: 15, date: "2026-03-10" },
+  { id: 18, product: "Tote Bag", qty: 2, price: 150, date: "" },
+  { id: 19, product: "Cap", qty: 3, price: 90, date: "2026-03-18" },
+  { id: 20, product: "Notebook", qty: 1, price: 45, date: "2026-03-25" },
+];
+~~~
+
+~~~js report.js
+"use strict";
+// تقرير مبيعات: يفصل البايظ بسببه، ويجمع كل شهر، ويطلّع أكتر ٣ منتجات بيعًا
+
+const DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+// سبب البوظان، أو null لو العملية سليمة
+function problem(sale) {
+  if (typeof sale.qty !== "number" || !Number.isInteger(sale.qty) || sale.qty <= 0) return $__btqty مش رقم صحيح موجب ($__{JSON.stringify(sale.qty)})$__bt;
+  if (typeof sale.price !== "number" || !(sale.price >= 0)) return $__btprice مش سليم ($__{JSON.stringify(sale.price)})$__bt;
+  if (typeof sale.date !== "string" || !DATE.test(sale.date)) return $__btdate ناقص أو مش بالشكل YYYY-MM-DD ($__{JSON.stringify(sale.date)})$__bt;
+  return null;
+}
+
+const cents = (sale) => Math.round(sale.price * 100) * sale.qty;
+
+function analyze(sales) {
+  const bad = sales.filter((s) => problem(s) !== null).map((s) => ({ id: s.id, reason: problem(s) }));
+  const good = sales.filter((s) => problem(s) === null);
+
+  const monthCents = good.reduce((acc, s) => {
+    const month = s.date.slice(0, 7);
+    return { ...acc, [month]: (acc[month] ?? 0) + cents(s) };
+  }, {});
+  const months = Object.entries(monthCents)
+    .toSorted(([a], [b]) => a.localeCompare(b))
+    .map(([month, c]) => ({ month, total: c / 100 }));
+
+  const qtyByProduct = good.reduce((acc, s) => ({ ...acc, [s.product]: (acc[s.product] ?? 0) + s.qty }), {});
+  const top = Object.entries(qtyByProduct)
+    .map(([product, qty]) => ({ product, qty }))
+    .toSorted((a, b) => b.qty - a.qty || a.product.localeCompare(b.product))
+    .slice(0, 3);
+
+  const grandTotal = good.reduce((sum, s) => sum + cents(s), 0) / 100;
+  return { bad, months, top, grandTotal, count: good.length };
+}
+
+function report(sales, { table = console.table, log = console.log } = {}) {
+  if (!Array.isArray(sales) || sales.length === 0) {
+    log("مفيش مبيعات");
+    return null;
+  }
+  const result = analyze(sales);
+  if (result.bad.length > 0) {
+    log($__btعمليات بايظة ($__{result.bad.length}):$__bt);
+    table(result.bad);
+  }
+  log($__btالإجمالي لكل شهر ($__{result.count} عملية سليمة):$__bt);
+  table(result.months);
+  log("أكتر ٣ منتجات بيعًا:");
+  table(result.top);
+  log($__btالإجمالي الكلي: $__{result.grandTotal}$__bt);
+  return result;
+}
+
+module.exports = { problem, analyze, report };
+~~~
+
+~~~js run.js
+const sales = require("./sales");
+const { report } = require("./report");
+
+report(sales);
+report([]);
+~~~
+
+~~~js report.test.js
+const test = require("node:test");
+const assert = require("node:assert");
+const sales = require("./sales");
+const { problem, analyze, report } = require("./report");
+
+const result = analyze(sales);
+
+test("الـ ٣ البايظين ظاهرين بسبب كل واحد", () => {
+  assert.deepStrictEqual(result.bad.map((b) => b.id), [6, 13, 18]);
+  assert.match(result.bad[0].reason, /^qty/);
+  assert.match(result.bad[1].reason, /^price/);
+  assert.match(result.bad[2].reason, /^date/);
+});
+
+test("الإجمالي الكلي = مجموع الشهور بالظبط", () => {
+  const sumMonths = result.months.reduce((s, m) => s + Math.round(m.total * 100), 0) / 100;
+  assert.strictEqual(result.grandTotal, sumMonths);
+  assert.strictEqual(result.count, 17);
+});
+
+test("الشهور مترتبة وأرقامها صح", () => {
+  assert.deepStrictEqual(result.months, [
+    { month: "2026-01", total: 660 },
+    { month: "2026-02", total: 1055 },
+    { month: "2026-03", total: 715 },
+  ]);
+});
+
+test("أكتر ٣ منتجات مترتبين تنازلي", () => {
+  assert.deepStrictEqual(result.top, [
+    { product: "Pen", qty: 19 },
+    { product: "Tea", qty: 18 },
+    { product: "Mug", qty: 8 },
+  ]);
+});
+
+test("report([]) بتقول «مفيش مبيعات» من غير error", () => {
+  const lines = [];
+  assert.strictEqual(report([], { log: (l) => lines.push(l) }), null);
+  assert.deepStrictEqual(lines, ["مفيش مبيعات"]);
+});
+
+test("الـ sales الأصلية متغيّرتش", () => {
+  const before = JSON.stringify(sales);
+  report(sales, { table: () => {}, log: () => {} });
+  assert.strictEqual(JSON.stringify(sales), before);
+});
+
+test("problem بيمسك الحالات الطرفية", () => {
+  assert.strictEqual(problem({ qty: 1, price: 0, date: "2026-01-01" }), null);
+  assert.match(problem({ qty: 1.5, price: 10, date: "2026-01-01" }), /^qty/);
+  assert.match(problem({ qty: 1, price: NaN, date: "2026-01-01" }), /^price/);
+  assert.match(problem({ qty: 1, price: 10 }), /^date/);
+});
+~~~
+
+~~~text الناتج: node run.js
+عمليات بايظة (3):
+┌─────────┬────┬──────────────────────────────────────────┐
+│ (index) │ id │ reason                                   │
+├─────────┼────┼──────────────────────────────────────────┤
+│ 0       │ 6  │ 'qty مش رقم صحيح موجب ("2")'             │
+│ 1       │ 13 │ 'price مش سليم (-50)'                    │
+│ 2       │ 18 │ 'date ناقص أو مش بالشكل YYYY-MM-DD ("")' │
+└─────────┴────┴──────────────────────────────────────────┘
+الإجمالي لكل شهر (17 عملية سليمة):
+┌─────────┬───────────┬───────┐
+│ (index) │ month     │ total │
+├─────────┼───────────┼───────┤
+│ 0       │ '2026-01' │ 660   │
+│ 1       │ '2026-02' │ 1055  │
+│ 2       │ '2026-03' │ 715   │
+└─────────┴───────────┴───────┘
+أكتر ٣ منتجات بيعًا:
+┌─────────┬─────────┬─────┐
+│ (index) │ product │ qty │
+├─────────┼─────────┼─────┤
+│ 0       │ 'Pen'   │ 19  │
+│ 1       │ 'Tea'   │ 18  │
+│ 2       │ 'Mug'   │ 8   │
+└─────────┴─────────┴─────┘
+الإجمالي الكلي: 2430
+مفيش مبيعات
+~~~
+
+~~~text الناتج: node --test
+✔ الـ ٣ البايظين ظاهرين بسبب كل واحد (1.3562ms)
+✔ الإجمالي الكلي = مجموع الشهور بالظبط (0.7134ms)
+✔ الشهور مترتبة وأرقامها صح (0.1526ms)
+✔ أكتر ٣ منتجات مترتبين تنازلي (0.1437ms)
+✔ report([]) بتقول «مفيش مبيعات» من غير error (0.1778ms)
+✔ الـ sales الأصلية متغيّرتش (0.2107ms)
+✔ problem بيمسك الحالات الطرفية (0.2723ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 86.5031
+~~~
+
+**أهم الحتت وليه كده:**
+
+| الحتة | بتعمل إيه | ليه |
+|---|---|---|
+| [[problem(sale)]] | بترجّع السبب كنص أو [[null]] | نفس الدالة بتفصل ([[filter]]) وبتكتب السبب ([[map]])، فالقاعدة مكتوبة مرة واحدة |
+| [[typeof sale.qty !== "number"]] | [["2"]] نص بيتحسب بايظ | لو حوّلناه بـ [[Number]] كنا هنخبّي إن الـ API بيبعت أنواع غلط |
+| [[!(sale.price >= 0)]] | سالب أو NaN أو مش رقم | [[NaN < 0]] بـ false، فلو كتبنا [[price < 0]] الـ NaN كان هيعدّي. [[NaN >= 0]] برضه false، فالنفي بيمسكه |
+| [[DATE.test(sale.date)]] | الشكل [[YYYY-MM-DD]] | [[""]] و [[undefined]] بيقعوا، والشهر بعدها [[slice(0, 7)]] مضمون |
+| [[cents(sale)]] | السعر بالقروش × الكمية | الإجمالي الكلي = مجموع الشهور بالظبط، من غير كسور [[0.1 + 0.2]] |
+| [[{ ...acc, [month]: ... }]] | object بيتجمع فيه كل شهر | نفس شكل [[counts]] في لوحة الطلبات |
+| [[Object.entries(...).toSorted(...)]] | الشهور مترتبة | ترتيب المفاتيح في الـ object مش وعد تعتمد عليه للعرض |
+| [[b.qty - a.qty \|\| a.product.localeCompare(b.product)]] | الكمية تنازلي، والتعادل بالاسم | الـ top 3 ثابت كل مرة حتى لو منتجين نفس الكمية |
+| [[report(sales, { table, log })]] | الطباعة دوال بتتبعت | الاختبار بيبعت دوال بتجمّع السطور بدل ما تطبع، فيتأكد من «مفيش مبيعات» |
+
+**الغلطة اللي حصلت وأنا ببنيه:** أول تشغيل للاختبارات وقع في الشهور:
+
+~~~text الناتج: node --test (أول مرة، مختصر)
+✖ الشهور مترتبة وأرقامها صح (1.1694ms)
+ℹ pass 6
+ℹ fail 1
+  +     total: 1055
+  -     total: 945
+~~~
+
+كنت حاسب فبراير بإيدي 945. رجعت عدّيت العمليات السليمة واحدة واحدة: 150 (Pen) + 360 (Mug) + 180 (Cap) + 50 (Tea) + 150 (Tote Bag) + 75 (Pen) + 90 (Notebook) = 1055، والعملية 13 (السعر السالب) مستبعدة. الكود كان صح والمتوقع اللي في الاختبار هو اللي غلط، فصلّحته لـ 1055. الدرس: الاختبار بيقارن رقمين، ولما يختلفوا ارجع للداتا نفسها قبل ما تعدّل الكود. ونفس الكلام في الـ top 3: كنت متوقع Tea الأول، والعدّ بيقول Pen بـ 19 (10 + 5 + 4) قبل Tea بـ 18 (6 + 4 + 8، من غير العملية 6 البايظة).` },
+        { lvl: 'فكرة', t: R`داتا من حياتك`, what: R`اختار لستة حقيقية عندك: مصاريف الشهر، أفلام اتفرجت عليها، ماتشات فريقك، ساعات مذاكرة. اكتبها array objects وطلّع منها ٥ أسئلة ليها إجابة بـ map و filter و reduce و sort و find.`, done: R`كل سؤال إجابته دالة لوحدها ورقمها مطابق لحسبتك بإيدك على الأقل في سؤالين.`, ext: R`اعرضها في صفحة HTML بعد وحدة الـ DOM، وزوّد رسم بسيط بالـ CSS.`, sol: R`**نسخة نموذجية:** مصاريف شهر (١٢ مصروف بالفئة والمبلغ واليوم)، و ٥ أسئلة كل واحد إجابته دالة: الإجمالي، وكل فئة أخدت كام، وأغلى ٣ مصاريف، وأول يوم الأكل عدّى فيه حد معين، وهل المواصلات عدّت حد.
+
+~~~js expenses.js
+// مصاريف شهر، و ٥ أسئلة كل سؤال إجابته دالة
+const expenses = [
+  { day: 1, what: "إيجار", category: "سكن", amount: 4500 },
+  { day: 2, what: "سوبر ماركت", category: "أكل", amount: 820 },
+  { day: 3, what: "مواصلات الأسبوع", category: "مواصلات", amount: 210 },
+  { day: 6, what: "فطار برّه", category: "أكل", amount: 150 },
+  { day: 9, what: "كهربا", category: "فواتير", amount: 380 },
+  { day: 10, what: "مواصلات الأسبوع", category: "مواصلات", amount: 230 },
+  { day: 14, what: "سوبر ماركت", category: "أكل", amount: 760 },
+  { day: 15, what: "نت", category: "فواتير", amount: 450 },
+  { day: 17, what: "مواصلات الأسبوع", category: "مواصلات", amount: 195 },
+  { day: 21, what: "عشا مع صحابي", category: "أكل", amount: 540 },
+  { day: 24, what: "مواصلات الأسبوع", category: "مواصلات", amount: 240 },
+  { day: 28, what: "سوبر ماركت", category: "أكل", amount: 690 },
+];
+
+// ١. صرفت كام في الشهر؟
+const total = (list) => list.reduce((sum, e) => sum + e.amount, 0);
+
+// ٢. كل فئة أخدت كام، من الأكبر للأصغر؟
+const byCategory = (list) =>
+  Object.entries(Object.groupBy(list, (e) => e.category))
+    .map(([category, items]) => ({ category, amount: total(items) }))
+    .toSorted((a, b) => b.amount - a.amount);
+
+// ٣. أغلى ٣ مصاريف (من غير الإيجار)؟
+const topThree = (list) =>
+  list.filter((e) => e.category !== "سكن").toSorted((a, b) => b.amount - a.amount).slice(0, 3).map((e) => $__bt$__{e.what} $__{e.amount}$__bt);
+
+// ٤. أول يوم الأكل عدّى فيه 1500 مجمّع؟
+function dayFoodPassed(list, limit) {
+  let running = 0;
+  const hit = list.find((e) => e.category === "أكل" && (running += e.amount) > limit);
+  return hit ? hit.day : null;
+}
+
+// ٥. فيه أسبوع المواصلات عدّت فيه 235؟ وكلها أقل من 300؟
+const transport = (list) => list.filter((e) => e.category === "مواصلات");
+const anyOver = (list, n) => transport(list).some((e) => e.amount > n);
+const allUnder = (list, n) => transport(list).every((e) => e.amount < n);
+
+console.log("١. الإجمالي:", total(expenses));
+console.table(byCategory(expenses));
+console.log("٣. أغلى ٣:", topThree(expenses));
+console.log("٤. الأكل عدّى 1500 يوم:", dayFoodPassed(expenses, 1500));
+console.log("٥. مواصلات فوق 235:", anyOver(expenses, 235), "| كلها تحت 300:", allUnder(expenses, 300));
+~~~
+
+~~~text الناتج: node expenses.js
+١. الإجمالي: 9165
+┌─────────┬───────────┬────────┐
+│ (index) │ category  │ amount │
+├─────────┼───────────┼────────┤
+│ 0       │ 'سكن'     │ 4500   │
+│ 1       │ 'أكل'     │ 2960   │
+│ 2       │ 'مواصلات' │ 875    │
+│ 3       │ 'فواتير'  │ 830    │
+└─────────┴───────────┴────────┘
+٣. أغلى ٣: [ 'سوبر ماركت 820', 'سوبر ماركت 760', 'سوبر ماركت 690' ]
+٤. الأكل عدّى 1500 يوم: 14
+٥. مواصلات فوق 235: true | كلها تحت 300: true
+~~~
+
+**ليه اخترت الأسئلة دي:** كل سؤال بيستخدم أداة مختلفة من الوحدة، فهي مراجعة للوحدة كلها على داتا تخصّك:
+
+| السؤال | الأداة | ليه هي |
+|---|---|---|
+| الإجمالي | [[reduce]] | لمّ لستة في رقم واحد |
+| كل فئة | [[Object.groupBy]] ثم [[map]] ثم [[toSorted]] | تقسيم، وبعدين حساب لكل مجموعة، وبعدين ترتيب |
+| أغلى ٣ | [[filter]] ثم [[toSorted]] ثم [[slice]] ثم [[map]] | شيل الإيجار (معروف ومش مفيد في السؤال)، رتّب، خد أول ٣، حوّلهم نص |
+| أول يوم عدّى الحد | [[find]] | محتاج **أول** واحد ونقف |
+| فيه / كلها | [[some]] و [[every]] | إجابة نعم/لا |
+
+**اتأكدت بإيدي في سؤالين:** الأكل = 820 + 150 + 760 + 540 + 690 = 2960 زي الجدول. وأول يوم الأكل عدّى 1500: يوم 2 بقى 820، ويوم 6 بقى 970، ويوم 14 بقى 1730، فيوم 14 زي ما الدالة قالت.
+
+**حاجة تاخد بالك منها:** [[dayFoodPassed]] بتزوّد [[running]] **جوه** شرط [[find]]. ده side effect جوه callback، ومسموح هنا لأن [[find]] بتمشي بالترتيب وبتقف عند أول true، والمتغير محلي جوه الدالة. بس لو نقلت نفس الفكرة لـ [[filter]] أو ناديت الدالة مرتين على نفس المتغير هتتلخبط. النسخة الأوضح لو حد تاني هيقرا الكود: loop عادي بـ [[for...of]] و [[break]].` }
       ],
       items: [
         {
@@ -533,12 +1142,192 @@ const revenue2 = orders
 const byStatus = Object.groupBy(orders, (o) => o.status);`,
           try: R`من نفس الـ orders اطلع: عدد الطلبات الـ pending، وأكبر total، و object شكله [[{ 1: 250, 2: 900, 3: 400 }]] بـ reduce. وبعدين اطبع [[byStatus]] وشوف شكله.`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[[1, 2, 3, 4].map(n => n * 10)]] و [[[1, 2, 3, 4].filter(n => n % 2 === 0)]].`, done: R`[[[10, 20, 30, 40]]] و [[[2, 4]]]، والأصل لسه [[[1, 2, 3, 4]]].` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const total = cart.reduce((s, item) => s + item.price);]] على [[[{ price: 10 }, { price: 20 }]]]. شغّلها، وجرّبها كمان على [[[]]].`, done: R`قبل التصليح بترجّع [["[object Object]20"]] (أول عنصر بقى الـ s وهو object)، وعلى [[[]]] بتوقع بـ [[TypeError: Reduce of empty array with no initial value]]. بعد ما تزوّد [[, 0]] كقيمة بداية: 30 و 0.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** منتجات جاية من API فيها [[{ name, price, inStock }]]: طلّع أسامي المتاح اللي أقل من 200، وإجمالي أسعار المتاح بس، في سلسلة filter و map و reduce.`, done: R`على Mug 120 متاح و Shirt 300 متاح و Cap 90 مش متاح: الأسامي [[["Mug"]]] والإجمالي 420.` },
-            { lvl: 'تطبيق', t: R`**أشكال:** من [[[3, 5, 2]]] اطبع bar chart أفقي: كل رقم سطر [[#]] بعدده، بـ [[map]] و [[repeat]] و [[join("\n")]] من غير ولا for.`, done: R`بيطبع [[###]] ثم [[#####]] ثم [[##]]. ولو زوّدت قبل كل سطر الرقم نفسه ([[n + " " + "#".repeat(n)]]) الشكل بيبقى زي تقرير.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** جمّع الطلبات حسب الـ status بـ reduce في object من الـ ids: [[{ paid: [1, 3], pending: [2] }]]، وبعدين قارن بـ [[Object.groupBy]].`, done: R`الـ reduce بيرجّع [[{ paid: [1, 3], pending: [2] }]]، و [[Object.groupBy(orders, o => o.status)]] بيجمع الـ objects كاملة مش الـ ids، و Node بيطبعه [[[Object: null prototype]]].` },
-            { lvl: 'تحدي', t: R`**refactor:** ده كود بـ for: [[const out = []; for (const p of products) { if (p.inStock) { out.push(p.name.toUpperCase()); } }]]. حوّله لسلسلة filter و map في سطر، وتأكد إن الناتج واحد على نفس البيانات.`, done: R`على Mug و Shirt متاحين و Cap مش متاح الاتنين بيرجّعوا [[["MUG", "SHIRT"]]]، و [[JSON.stringify]] بتاعهم واحد. ومفيش [[push]] ولا متغير بيتغيّر في النسخة الجديدة.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[[1, 2, 3, 4].map(n => n * 10)]] و [[[1, 2, 3, 4].filter(n => n % 2 === 0)]].`, done: R`[[[10, 20, 30, 40]]] و [[[2, 4]]]، والأصل لسه [[[1, 2, 3, 4]]].`, sol: R`~~~js predict.js
+const nums = [1, 2, 3, 4];
+console.log(nums.map((n) => n * 10));
+console.log(nums.filter((n) => n % 2 === 0));
+console.log(nums);
+~~~
+
+~~~text الناتج
+[ 10, 20, 30, 40 ]
+[ 2, 4 ]
+[ 1, 2, 3, 4 ]
+~~~
+
+**ليه:**
+
+- [[map]] بتنادي الدالة على **كل** عنصر، وبتحط اللي رجع في array جديدة بنفس الطول: ٤ عناصر دخلت، ٤ طلعوا مضروبين في 10.
+- [[filter]] بتنادي الدالة على كل عنصر، وبتاخد العنصر **نفسه** (مش ناتج الدالة) لو الدالة رجّعت true. [[n % 2 === 0]] باقي القسمة على 2 صفر، يعني زوجي: 2 و 4.
+- آخر سطر: [[nums]] زي ما هي. التلاتة ([[map]] و [[filter]] و [[reduce]]) مبيعدّلوش الأصل، بيرجّعوا قيمة جديدة.
+
+**الغلطة الشائعة:** تتوقع إن [[filter]] بترجّع [[[false, true, false, true]]]. دي اللي [[map]] كانت هترجّعه لو اديتها نفس الشرط. [[map]] = «حوّل كل واحد»، و [[filter]] = «سيب اللي ينفع بس».` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const total = cart.reduce((s, item) => s + item.price);]] على [[[{ price: 10 }, { price: 20 }]]]. شغّلها، وجرّبها كمان على [[[]]].`, done: R`قبل التصليح بترجّع [["[object Object]20"]] (أول عنصر بقى الـ s وهو object)، وعلى [[[]]] بتوقع بـ [[TypeError: Reduce of empty array with no initial value]]. بعد ما تزوّد [[, 0]] كقيمة بداية: 30 و 0.`, sol: R`الكود البايظ، على السلة وعلى array فاضية:
+
+~~~js total-broken.js
+const cart = [{ price: 10 }, { price: 20 }];
+const total = cart.reduce((s, item) => s + item.price);
+console.log(total, typeof total);
+try {
+  [].reduce((s, item) => s + item.price);
+} catch (error) {
+  console.log(error.name + ": " + error.message);
+}
+~~~
+
+~~~text الناتج
+[object Object]20 string
+TypeError: Reduce of empty array with no initial value
+~~~
+
+**اللي حصل:** من غير قيمة بداية، [[reduce]] بتاخد **أول عنصر** كبداية وتبدأ اللف من التاني. فأول لفة كانت [[s = { price: 10 }]] و [[item = { price: 20 }]]، و [[object + 20]] بيحوّل الـ object لنص [["[object Object]"]] ويلزق: نص مش رقم. وعلى array فاضية مفيش أول عنصر أصلًا، فبترمي TypeError.
+
+التصليح:
+
+~~~js total-fixed.js
+const cart = [{ price: 10 }, { price: 20 }];
+const sum = (items) => items.reduce((s, item) => s + item.price, 0);
+console.log(sum(cart), sum([]));
+~~~
+
+~~~text الناتج
+30 0
+~~~
+
+- [[, 0]] بعد الدالة: قيمة البداية. أول لفة [[s = 0]] و [[item]] أول منتج، فكل لفة رقم + رقم.
+- على [[[]]] مفيش لفات خالص، فـ [[reduce]] بترجّع القيمة الأولية 0 زي ما هي.
+
+**الغلطة الشائعة:** إن الكود القديم بيشتغل صح لو العناصر أرقام ([[[10, 20].reduce((s, n) => s + n)]] بـ 30)، فتتعوّد تشيل الـ 0. أول ما العناصر تبقى objects، أو الـ array تبقى فاضية، بيبوظ. القاعدة: اكتب القيمة الأولية دايمًا، ونوعها نفس نوع الناتج اللي عايزه (0 لمجموع، [[[]]] لـ array، [[{}]] لـ object).` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** منتجات جاية من API فيها [[{ name, price, inStock }]]: طلّع أسامي المتاح اللي أقل من 200، وإجمالي أسعار المتاح بس، في سلسلة filter و map و reduce.`, done: R`على Mug 120 متاح و Shirt 300 متاح و Cap 90 مش متاح: الأسامي [[["Mug"]]] والإجمالي 420.`, sol: R`~~~js products.js
+const products = [
+  { name: "Mug", price: 120, inStock: true },
+  { name: "Shirt", price: 300, inStock: true },
+  { name: "Cap", price: 90, inStock: false },
+];
+const cheapNames = products
+  .filter((p) => p.inStock && p.price < 200)
+  .map((p) => p.name);
+const stockTotal = products
+  .filter((p) => p.inStock)
+  .reduce((sum, p) => sum + p.price, 0);
+console.log(cheapNames, stockTotal);
+~~~
+
+~~~text الناتج
+[ 'Mug' ] 420
+~~~
+
+**كل سلسلة بتعمل إيه:**
+
+- **الأسامي:** [[filter]] بتسيب اللي متاح **و** أقل من 200 (Mug بس: Shirt غالي و Cap مش متاح)، وبعدين [[map]] بتحوّل كل object لاسمه. الترتيب ده مهم: نفلتر الأول على الـ objects الكاملة (لسه فيها السعر)، وبعدين نحوّل.
+- **الإجمالي:** [[filter]] للمتاح (Mug و Shirt)، وبعدين [[reduce]] بتجمع [[p.price]] من 0: 120 + 300 = 420.
+- كل خطوة بترجّع array جديدة، فالنقطة اللي في أول السطر اللي بعدها بتكمّل عليها. كتابة كل خطوة في سطر بيخلي السلسلة تتقري زي جملة.
+
+**الغلطة الشائعة:** تعمل [[map]] الأول ([[products.map((p) => p.name).filter(...)]]): بعد الـ map بقى عندك نصوص بس، فـ [[p.price]] جوه الـ filter بقت [[undefined]] والشرط [[undefined < 200]] false دايمًا، فالناتج [[[]]] من غير error. فلتر وانت لسه معاك الداتا كلها، وحوّل في الآخر.` },
+            { lvl: 'تطبيق', t: R`**أشكال:** من [[[3, 5, 2]]] اطبع bar chart أفقي: كل رقم سطر [[#]] بعدده، بـ [[map]] و [[repeat]] و [[join("\n")]] من غير ولا for.`, done: R`بيطبع [[###]] ثم [[#####]] ثم [[##]]. ولو زوّدت قبل كل سطر الرقم نفسه ([[n + " " + "#".repeat(n)]]) الشكل بيبقى زي تقرير.`, sol: R`~~~js bars.js
+const values = [3, 5, 2];
+console.log(values.map((n) => "#".repeat(n)).join("\n"));
+console.log(values.map((n) => n + " " + "#".repeat(n)).join("\n"));
+const sales = [["سبت", 4], ["أحد", 7], ["اتنين", 1]];
+console.log(sales.map(([day, n]) => day.padEnd(6) + "█".repeat(n) + " " + n).join("\n"));
+~~~
+
+~~~text الناتج
+###
+#####
+##
+3 ###
+5 #####
+2 ##
+سبت   ████ 4
+أحد   ███████ 7
+اتنين █ 1
+~~~
+
+**ليه:**
+
+- [[map((n) => "#".repeat(n))]]: كل رقم بيتحوّل لنص فيه [[#]] بعدده. [[repeat]] method على النصوص بتكرر النص n مرة (درس «string methods»). فالـ array بقت [[["###", "#####", "##"]]].
+- [[join("\n")]]: بتلزق السطور بـ newline بينهم، فـ [[console.log]] واحد بيطبع الشكل كله. [[\n]] جوه علامات التنصيص معناها «سطر جديد».
+- النسخة التانية بتزوّد الرقم قبل الشريط، زي تقرير.
+- النسخة التالتة على داتا حقيقية الشكل (مبيعات كل يوم): [[([day, n])]] بتفك كل زوج (درس «array destructuring و spread»)، و [[padEnd(6)]] بتخلي الأشرطة تبدأ من نفس العمود، و [[█]] شكله أحسن من [[#]].
+
+**الغلطة الشائعة:** تعمل [[values.map(...)]] وتنسى [[join]]، فتطبع الـ array نفسها: [[[ '###', '#####', '##' ]]] في سطر واحد بالأقواس والعلامات. [[map]] بترجّع array دايمًا، والـ [[join]] هو اللي بيحوّلها نص للعرض.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** جمّع الطلبات حسب الـ status بـ reduce في object من الـ ids: [[{ paid: [1, 3], pending: [2] }]]، وبعدين قارن بـ [[Object.groupBy]].`, done: R`الـ reduce بيرجّع [[{ paid: [1, 3], pending: [2] }]]، و [[Object.groupBy(orders, o => o.status)]] بيجمع الـ objects كاملة مش الـ ids، و Node بيطبعه [[[Object: null prototype]]].`, sol: R`~~~js group.js
+const orders = [
+  { id: 1, total: 250, status: "paid" },
+  { id: 2, total: 900, status: "pending" },
+  { id: 3, total: 400, status: "paid" },
+];
+const ids = orders.reduce((groups, o) => {
+  (groups[o.status] ??= []).push(o.id);
+  return groups;
+}, {});
+console.log(ids);
+
+const byStatus = Object.groupBy(orders, (o) => o.status);
+console.log(byStatus);
+console.log(Object.getPrototypeOf(byStatus), "toString" in byStatus, "toString" in ids);
+
+const idsFromGroup = Object.fromEntries(
+  Object.entries(byStatus).map(([status, list]) => [status, list.map((o) => o.id)])
+);
+console.log(idsFromGroup);
+~~~
+
+~~~text الناتج
+{ paid: [ 1, 3 ], pending: [ 2 ] }
+[Object: null prototype] {
+  paid: [
+    { id: 1, total: 250, status: 'paid' },
+    { id: 3, total: 400, status: 'paid' }
+  ],
+  pending: [ { id: 2, total: 900, status: 'pending' } ]
+}
+null false true
+{ paid: [ 1, 3 ], pending: [ 2 ] }
+~~~
+
+**ليه كل حتة:**
+
+- **الـ reduce:** البداية [[{}]] object فاضي. كل لفة: [[groups[o.status] ??= []]] معناها «لو المفتاح ده مالوش قيمة لسه، حط array فاضية»، وبيرجّع الـ array نفسها، فـ [[.push(o.id)]] على طول. وبعدين [[return groups]] عشان اللفة اللي بعدها تستلم نفس الـ object.
+- **[[Object.groupBy(orders, (o) => o.status)]]:** نفس التقسيم في سطر، بس بيحط **الـ objects كاملة** في كل مجموعة، مش اللي انت اخترته. ولو عايز الـ ids بس، حوّل بعد كده (آخر سطر: [[Object.entries]] و [[map]] و [[Object.fromEntries]]).
+- **[[[Object: null prototype]]]:** الـ object اللي راجع من [[groupBy]] ملوش prototype: [[Object.getPrototypeOf]] طلعت [[null]]، و [[toString]] مش موجودة فيه. ده مقصود: لو status اسمه [["constructor"]] أو [["toString"]] مش هيضرب في methods موروثة. الـ object بتاعك من الـ reduce فيه [[toString]] موروثة (طلعت true).
+
+**الغلطة الشائعة:** تنسى [[return groups]] في آخر الـ callback، فاللفة التانية بتستلم [[undefined]] وتقع بـ [[TypeError: Cannot read properties of undefined (reading 'pending')]] (جرّبتها). والتانية: تفتكر إن [[groupBy]] بترجّع Map أو array. هي object عادي (من غير prototype)، ولو عايز Map فيه [[Map.groupBy]] (وحدة «المصفوفات و Map و Set كاملين»).` },
+            { lvl: 'تحدي', t: R`**refactor:** ده كود بـ for: [[const out = []; for (const p of products) { if (p.inStock) { out.push(p.name.toUpperCase()); } }]]. حوّله لسلسلة filter و map في سطر، وتأكد إن الناتج واحد على نفس البيانات.`, done: R`على Mug و Shirt متاحين و Cap مش متاح الاتنين بيرجّعوا [[["MUG", "SHIRT"]]]، و [[JSON.stringify]] بتاعهم واحد. ومفيش [[push]] ولا متغير بيتغيّر في النسخة الجديدة.`, sol: R`~~~js refactor.js
+const products = [
+  { name: "Mug", inStock: true },
+  { name: "Cap", inStock: false },
+  { name: "Shirt", inStock: true },
+];
+const out = [];
+for (const p of products) {
+  if (p.inStock) {
+    out.push(p.name.toUpperCase());
+  }
+}
+const names = products.filter((p) => p.inStock).map((p) => p.name.toUpperCase());
+console.log(out, names);
+console.log(JSON.stringify(out) === JSON.stringify(names));
+~~~
+
+~~~text الناتج
+[ 'MUG', 'SHIRT' ] [ 'MUG', 'SHIRT' ]
+true
+~~~
+
+**إزاي اتحوّل:**
+
+| في الـ for | في السلسلة |
+|---|---|
+| [[if (p.inStock)]] | [[filter((p) => p.inStock)]]: الشرط نفسه بقى دالة |
+| [[out.push(p.name.toUpperCase())]] | [[map((p) => p.name.toUpperCase())]]: اللي بيتعمل لكل عنصر بقى دالة |
+| [[const out = []]] و [[push]] | مفيش: [[map]] هي اللي بتعمل الـ array |
+
+- الاتنين طلعوا [[[ 'MUG', 'SHIRT' ]]]، و [[JSON.stringify]] بتاعهم متساوي (true). مقارنة الـ arrays نفسها بـ [[===]] كانت هتطلع false لأنهم array تين مختلفتين حتى لو المحتوى واحد، فبنقارن النص.
+- النسخة الجديدة مفيهاش متغير بيتغيّر ([[out]] كانت بتكبر جوه الـ loop)، فمفيش حالة وسطانية تتلخبط فيها.
+
+**الغلطة الشائعة:** تعمل [[map]] الأول وتحط الشرط جواها: [[products.map((p) => p.inStock ? p.name.toUpperCase() : null)]]، فيطلع [[[ 'MUG', null, 'SHIRT' ]]]: [[map]] دايمًا بترجّع نفس الطول. الحذف شغلة [[filter]].` }
           ],
           flag: "script",
           deep: {
@@ -724,6 +1513,14 @@ console.log(pendingCount, maxTotal, totalsById);
             R`وبعدها [[reduce]] على طول بتجمع [[o.total]] من كل طلب، فاستغنينا عن الـ [[map]] لأن الدالة نفسها بتقرا الرقم من الـ object. النتيجة برضه [[650]].`,
             R`[[Object.groupBy]] بتقسّم الـ array لمجموعات حسب اللي الدالة بترجّعه: النتيجة object فيه مفتاح [[paid]] جواه array الطلبين، ومفتاح [[pending]] جواه طلب واحد. موجودة في Node 21 والمتصفحات الحديثة بس.`
           ],
+          ref: [
+            { t: "MDN: Array.prototype.map()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map" },
+            { t: "MDN: Array.prototype.filter()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter" },
+            { t: "MDN: Array.prototype.reduce()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce" },
+            { t: "MDN: Array.prototype.forEach()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach" },
+            { t: "MDN: Object.groupBy()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/groupBy" },
+          ],
+          pre: ["js/array literals و index و length", "js/higher-order functions"],
           sol: R`عدد الـ pending [[1]]، وأكبر total [[900]]، والـ object [[{ 1: 250, 2: 900, 3: 400 }]] (Node بيطبع المفاتيح بين quotes لأنها strings). و [[byStatus]] بيطبع [[[Object: null prototype] { paid: [ ...اتنين... ], pending: [ ...واحد... ] }]]: [[Object.groupBy]] بيرجّع object من غير prototype عشان مفتاح زي [["constructor"]] ميضربش.
 
 أشهر غلطة في الـ reduce إنك تنسى [[return acc]] جوه الـ callback، فتاني لفة الـ acc بيبقى undefined وتطلعلك [[TypeError: Cannot set properties of undefined]]. والتانية إنك تنسى القيمة الأولية [[{}]]، فأول acc يبقى أول order نفسه.`,
@@ -763,11 +1560,147 @@ users.every((u) => u.admin);         // false: مش كلهم
 [NaN].indexOf(NaN);                  // -1`,
           try: R`اكتب [[const user = users.find(...)]] على id مش موجود، وبعدين [[user.name]] واقرا الـ error. صلّحه بـ [[user?.name]]. وبعدين جرّب [[users.includes({ id: 1, name: "Sara", admin: true })]] وفكّر ليه false.`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** على [[[5, 12, 8]]]: [[find(n => n > 10)]] و [[findIndex(n => n > 10)]] و [[find(n => n > 100)]].`, done: R`12 و 1 و undefined.` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const roles = ["admin", "editor"]; if (roles.indexOf("admin")) console.log("أهلًا يا أدمن");]]. ليه الرسالة مبتظهرش؟`, done: R`[[roles.indexOf("admin")]] بترجّع 0 وده falsy، فالـ if مبتدخلش. بعد [[roles.includes("admin")]] الرسالة بتظهر، ولو [["admin"]] مش موجودة مبتظهرش.` },
-            { lvl: 'تطبيق', t: R`**ابني:** سلة: [[hasOutOfStock]] بـ some (فيه منتج stock بتاعه 0؟)، و [[allPaid]] بـ every على الطلبات.`, done: R`لو منتج واحد stock بتاعه 0 [[hasOutOfStock]] true، و [[[].every(...)]] على array فاضية بترجّع true (فكّر ليه ده ممكن يبقى bug).` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** [[users = [{ email: "Sara@Mail.com", name: "Sara" }, { email: "omar@mail.com", name: "Omar" }]]] واليوزر كتب [["sara@mail.com"]] في فورم الدخول. لاقيه بـ find.`, done: R`المقارنة العادية [[===]] بترجّع undefined، وبعد ما تصغّر الطرفين بـ [[toLowerCase()]] بترجّع object فيه Sara. وبتقول للمستخدم «مش موجود» لو find رجّعت undefined بدل ما توقع على [[.name]].` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[hasAll(perms, required)]] بترجّع true لو اليوزر عنده كل الصلاحيات المطلوبة. وجرّب [[[NaN].includes(NaN)]] و [[[NaN].indexOf(NaN)]].`, done: R`[[hasAll(["read", "write"], ["read"])]] true، و [[hasAll(["read"], ["read", "delete"])]] false. و includes بترجّع true و indexOf بترجّع -1.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** على [[[5, 12, 8]]]: [[find(n => n > 10)]] و [[findIndex(n => n > 10)]] و [[find(n => n > 100)]].`, done: R`12 و 1 و undefined.`, sol: R`~~~js predict.js
+const nums = [5, 12, 8];
+console.log(nums.find((n) => n > 10));
+console.log(nums.findIndex((n) => n > 10));
+console.log(nums.find((n) => n > 100));
+console.log(nums.findIndex((n) => n > 100));
+~~~
+
+~~~text الناتج
+12
+1
+undefined
+-1
+~~~
+
+**ليه:**
+
+- [[find]] بتلف من الأول وبتقف عند **أول** عنصر الشرط بتاعه true، وبترجّع العنصر نفسه: 12. والـ 8 عمرها ما اتسألت.
+- [[findIndex]] نفس اللف، بس بترجّع **المكان**: 12 عند index 1.
+- لو مفيش عنصر نافع: [[find]] بترجّع [[undefined]]، و [[findIndex]] بترجّع [[-1]] (زي [[indexOf]]).
+
+**الغلطة الشائعة:** تستخدم ناتج [[find]] على طول ([[nums.find(...).toFixed(2)]]). لو مفيش نتيجة هتقع بـ TypeError على [[undefined]]. افحص الأول، أو [[?.]] (الـ try بتاع الدرس). ولو العنصر نفسه ممكن يبقى [[undefined]] أو 0، اعتمد على [[findIndex]] عشان تفرّق بين «ملقتش» و «لقيت قيمة falsy».` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const roles = ["admin", "editor"]; if (roles.indexOf("admin")) console.log("أهلًا يا أدمن");]]. ليه الرسالة مبتظهرش؟`, done: R`[[roles.indexOf("admin")]] بترجّع 0 وده falsy، فالـ if مبتدخلش. بعد [[roles.includes("admin")]] الرسالة بتظهر، ولو [["admin"]] مش موجودة مبتظهرش.`, sol: R`~~~js roles.js
+const roles = ["admin", "editor"];
+console.log("indexOf:", roles.indexOf("admin"), Boolean(roles.indexOf("admin")));
+if (roles.indexOf("admin")) console.log("أهلًا يا أدمن (بـ indexOf)");
+if (roles.includes("admin")) console.log("أهلًا يا أدمن (بـ includes)");
+const guest = ["viewer"];
+console.log("indexOf في guest:", guest.indexOf("admin"), Boolean(guest.indexOf("admin")));
+if (guest.includes("admin")) console.log("مش هتتطبع");
+~~~
+
+~~~text الناتج
+indexOf: 0 false
+أهلًا يا أدمن (بـ includes)
+indexOf في guest: -1 true
+~~~
+
+**اللي حصل:**
+
+- [[roles.indexOf("admin")]] رجّعت 0، لأن [["admin"]] أول عنصر. والـ 0 falsy، فالـ if اعتبرتها «مش موجودة» والرسالة الأولى متطبعتش.
+- والعكس أسوأ: في [[guest]] مفيش admin، و [[indexOf]] رجّعت [[-1]]، و [[-1]] **truthy**. يعني لو كان الكود بـ [[indexOf]] كان هيرحّب بالضيف كإنه أدمن، ده باج أمان مش شكل بس.
+- [[includes]] بترجّع [[true]] أو [[false]] بس، فمفيش لبس: الرسالة ظهرت لـ roles ومظهرتش لـ guest.
+
+**الغلطة الشائعة:** إنك تصلّحها بـ [[indexOf(x) > 0]]: كده [["admin"]] اللي عند 0 لسه مش هتتحسب. لو محتاج [[indexOf]] لازم [[!== -1]]. ولو السؤال «موجود؟» بس، [[includes]] هي الإجابة.` },
+            { lvl: 'تطبيق', t: R`**ابني:** سلة: [[hasOutOfStock]] بـ some (فيه منتج stock بتاعه 0؟)، و [[allPaid]] بـ every على الطلبات.`, done: R`لو منتج واحد stock بتاعه 0 [[hasOutOfStock]] true، و [[[].every(...)]] على array فاضية بترجّع true (فكّر ليه ده ممكن يبقى bug).`, sol: R`~~~js checks.js
+const cart = [
+  { name: "Mug", stock: 4 },
+  { name: "Cap", stock: 0 },
+  { name: "Shirt", stock: 9 },
+];
+const orders = [
+  { id: 1, paid: true },
+  { id: 2, paid: false },
+];
+const hasOutOfStock = (items) => items.some((item) => item.stock === 0);
+const allPaid = (list) => list.every((o) => o.paid);
+
+console.log(hasOutOfStock(cart), hasOutOfStock(cart.filter((i) => i.stock > 0)));
+console.log(allPaid(orders), allPaid(orders.filter((o) => o.paid)));
+console.log("every على فاضية:", allPaid([]), "| some على فاضية:", hasOutOfStock([]));
+
+const canShip = (list) => list.length > 0 && allPaid(list);
+console.log("canShip([]):", canShip([]));
+~~~
+
+~~~text الناتج
+true false
+false true
+every على فاضية: true | some على فاضية: false
+canShip([]): false
+~~~
+
+**ليه:**
+
+- [[some((item) => item.stock === 0)]]: true أول ما يلاقي عنصر واحد بيحقق الشرط (Cap)، وبيقف من غير ما يكمّل. لما شلنا الخلصان بـ [[filter]] رجعت false.
+- [[every((o) => o.paid)]]: true لو **كلهم** بيحققوا الشرط، و false أول ما يلاقي واحد مش محققه (الطلب 2).
+- **على array فاضية:** [[every]] بترجّع true و [[some]] بترجّع false. منطقيًا «كل العناصر مدفوعة» صح لما مفيش عناصر أصلًا (مفيش عنصر يكسر القاعدة)، وده اسمه vacuous truth.
+
+**ليه ده ممكن يبقى bug:** تخيّل زرار «اشحن الطلبات» بيظهر لما [[allPaid(orders)]] true. اليوزر مفيش عنده طلبات خالص، والزرار ظاهر وبيحاول يشحن لستة فاضية. التصليح في [[canShip]]: [[list.length > 0 && allPaid(list)]]، ورجعت false للفاضية.
+
+**الغلطة الشائعة:** تكتب [[filter(...).length > 0]] بدل [[some]]. نفس النتيجة، بس [[filter]] بتلف على الـ array كلها وتعمل array جديدة، و [[some]] بتقف عند أول واحد.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** [[users = [{ email: "Sara@Mail.com", name: "Sara" }, { email: "omar@mail.com", name: "Omar" }]]] واليوزر كتب [["sara@mail.com"]] في فورم الدخول. لاقيه بـ find.`, done: R`المقارنة العادية [[===]] بترجّع undefined، وبعد ما تصغّر الطرفين بـ [[toLowerCase()]] بترجّع object فيه Sara. وبتقول للمستخدم «مش موجود» لو find رجّعت undefined بدل ما توقع على [[.name]].`, sol: R`~~~js login.js
+const users = [
+  { email: "Sara@Mail.com", name: "Sara" },
+  { email: "omar@mail.com", name: "Omar" },
+];
+function findUser(input) {
+  const wanted = input.trim().toLowerCase();
+  return users.find((u) => u.email.toLowerCase() === wanted);
+}
+const typed = "sara@mail.com";
+console.log(users.find((u) => u.email === typed));
+console.log(findUser(typed));
+console.log(findUser("  OMAR@mail.com "));
+
+for (const input of ["sara@mail.com", "nobody@mail.com"]) {
+  const user = findUser(input);
+  console.log(user ? $__btأهلًا يا $__{user.name}$__bt : $__btمفيش حساب بـ $__{input}$__bt);
+}
+~~~
+
+~~~text الناتج
+undefined
+{ email: 'Sara@Mail.com', name: 'Sara' }
+{ email: 'omar@mail.com', name: 'Omar' }
+أهلًا يا Sara
+مفيش حساب بـ nobody@mail.com
+~~~
+
+**ليه:**
+
+- أول سطر: [[u.email === typed]] رجّعت [[undefined]]، لأن [["Sara@Mail.com"]] و [["sara@mail.com"]] نصين مختلفين حرف حرف. [[===]] بتفرّق بين الحروف الكبيرة والصغيرة.
+- [[findUser]]: بنصغّر **الطرفين** بـ [[toLowerCase()]] قبل المقارنة، و [[trim()]] على اللي اليوزر كتبه عشان المسافات اللي بتتنسخ مع الإيميل. فـ [["  OMAR@mail.com "]] لقت Omar.
+- اللوب الأخير هو اللي في الواقع: [[find]] ممكن ترجّع [[undefined]]، فبنسأل [[user ?]] قبل ما نقرا [[user.name]]، وبنقول رسالة واضحة بدل ما نوقع.
+
+**الغلطة الشائعة:** تصغّر طرف واحد بس ([[u.email === typed.toLowerCase()]]): Sara مش هتتلاقي لأن الإيميل المتخزن نفسه فيه حروف كبيرة. والأحسن في الحقيقة إنك تخزّن الإيميل متصغّر من الأول وقت التسجيل، فالمقارنة تبقى بسيطة في كل حتة.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[hasAll(perms, required)]] بترجّع true لو اليوزر عنده كل الصلاحيات المطلوبة. وجرّب [[[NaN].includes(NaN)]] و [[[NaN].indexOf(NaN)]].`, done: R`[[hasAll(["read", "write"], ["read"])]] true، و [[hasAll(["read"], ["read", "delete"])]] false. و includes بترجّع true و indexOf بترجّع -1.`, sol: R`~~~js perms.js
+function hasAll(perms, required) {
+  return required.every((p) => perms.includes(p));
+}
+console.log(hasAll(["read", "write"], ["read"]));
+console.log(hasAll(["read"], ["read", "delete"]));
+console.log(hasAll(["read"], []));
+console.log([NaN].includes(NaN), [NaN].indexOf(NaN));
+~~~
+
+~~~text الناتج
+true
+false
+true
+true -1
+~~~
+
+**ليه:**
+
+- [[required.every((p) => perms.includes(p))]]: بنلف على **المطلوب** مش على اللي عند اليوزر، ونسأل عن كل صلاحية: «موجودة عنده؟». لو واحدة ناقصة ([["delete"]]) [[every]] بتقف وترجّع false.
+- [[hasAll(["read"], [])]] بـ true: مفيش صلاحيات مطلوبة، فـ [[every]] على فاضية true، وده المنطقي هنا (صفحة مش محتاجة صلاحيات يدخلها أي حد).
+- [[[NaN].includes(NaN)]] true و [[indexOf]] بـ [[-1]]: [[indexOf]] بيقارن بـ [[===]]، و [[NaN === NaN]] false. [[includes]] بيستخدم مقارنة اسمها SameValueZero بتعتبر NaN بيساوي NaN.
+
+**الغلطة الشائعة:** تلف على الاتجاه الغلط: [[perms.every((p) => required.includes(p))]]. دي بتسأل «كل اللي عند اليوزر مطلوب؟»، فيوزر عنده read و write وطالب read بس هيترفض (write مش في المطلوب). اسأل نفسك: مين اللي لازم **كله** يتحقق؟ هو ده اللي تعمل عليه [[every]].` }
           ],
           flag: "script",
           deep: {
@@ -919,6 +1852,16 @@ true false
             R`[[NaN]] مش بيساوي نفسه بـ [[===]]، بس [[includes]] بتستخدم مقارنة اسمها SameValueZero بتعتبر [[NaN]] زي [[NaN]]، فبترجّع [[true]].`,
             R`[[indexOf]] بتقارن بـ [[===]]، و [[NaN === NaN]] بـ [[false]]، فعمرها ما بتلاقيه وبترجّع [[-1]]. عشان كده لما بتسأل «موجود ولا لأ» استخدم [[includes]].`
           ],
+          ref: [
+            { t: "MDN: Array.prototype.find()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find" },
+            { t: "MDN: Array.prototype.findIndex()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex" },
+            { t: "MDN: Array.prototype.findLast()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findLast" },
+            { t: "MDN: Array.prototype.some()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some" },
+            { t: "MDN: Array.prototype.every()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every" },
+            { t: "MDN: Array.prototype.includes()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes" },
+            { t: "MDN: Optional chaining (?.)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining" },
+          ],
+          pre: ["js/map و filter و reduce"],
           sol: R`[[user.name]] على id مش موجود بتطلع [[TypeError: Cannot read properties of undefined (reading 'name')]]: find رجّعت undefined، ومفيش حاجة اسمها name جوه undefined. مع [[user?.name]] الناتج undefined من غير error. ولو عايز رسالة للمستخدم: [[user?.name ?? "مش موجود"]].
 
 [[users.includes({ id: 1, ... })]] بترجّع false حتى لو الخصايص نفسها: includes بتقارن بالـ reference (زي ===)، والـ object اللي كتبته في القوسين object جديد مختلف عن اللي في الـ array. لو عايز تدوّر بالمحتوى استخدم [[users.some((u) => u.id === 1)]].`
@@ -942,11 +1885,126 @@ products.toSorted((a, b) => a.price - b.price || a.name.localeCompare(b.name));
 prices.with(0, 999);                     // [999, 100, 200]`,
           try: R`رتّب [[products]] بالسعر تنازلي. وبعدين اعمل [[const x = prices.sort()]] واطبع [[prices]] و [[x === prices]]: هتلاقي sort عدّلت الأصل ورجّعت نفس الـ array.`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[[10, 1, 2].sort()]] وبعدين [[[10, 1, 2].sort((a, b) => a - b)]].`, done: R`[[[1, 10, 2]]] و [[[1, 2, 10]]].` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const scores = [40, 90, 70, 100, 60]; const top = scores.sort((a, b) => b - a).slice(0, 3);]] وبعدها اطبع [[scores]]. المطلوب scores تفضل زي ما دخلت.`, done: R`قبل التصليح scores بقت [[[100, 90, 70, 60, 40]]] (sort بتغيّر الأصل). بعد [[toSorted]]: top [[[100, 90, 70]]] و scores لسه [[[40, 90, 70, 100, 60]]].` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** رتّب منتجات بالسعر تصاعدي، واللي سعرهم زي بعض بالاسم ([[localeCompare]])، بـ toSorted.`, done: R`المنتجين اللي بنفس السعر مترتبين أبجدي، والـ array الأصلية بنفس ترتيبها القديم.` },
-            { lvl: 'تطبيق', t: R`**ابني:** لوحة ترتيب لعبة: [[{ n, p, t }]] (الاسم، والنقط، والوقت بالثواني). رتّب بالنقط تنازلي، ولو النقط زي بعض الأسرع الأول، واطبع [[1. Omar 95]] وهكذا.`, done: R`على Sara 90 في 120، و Omar 95 في 200، و Ali 90 في 100: بيطبع [[1. Omar 95]] ثم [[2. Ali 90]] ثم [[3. Sara 90]]. والـ comparator سطر واحد: [[b.p - a.p || a.t - b.t]].` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** رتّب [[["file10", "file2", "file1"]]] بـ [[sort()]] عادي، وبعدين بـ [[localeCompare(b, undefined, { numeric: true })]]. وجرّب [[["Sara", "omar", "Ali"]]] بالطريقتين.`, done: R`العادي [[["file1", "file10", "file2"]]] والـ numeric [[["file1", "file2", "file10"]]]. والأسامي: [[sort()]] بيحط "omar" في الآخر (الحروف الكبيرة الأول)، و [[localeCompare]] بيرتّب Ali ثم omar ثم Sara.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[[10, 1, 2].sort()]] وبعدين [[[10, 1, 2].sort((a, b) => a - b)]].`, done: R`[[[1, 10, 2]]] و [[[1, 2, 10]]].`, sol: R`~~~js predict.js
+console.log([10, 1, 2].sort());
+console.log([10, 1, 2].sort((a, b) => a - b));
+console.log([10, 1, 2].map(String).sort());
+~~~
+
+~~~text الناتج
+[ 1, 10, 2 ]
+[ 1, 2, 10 ]
+[ '1', '10', '2' ]
+~~~
+
+**ليه:**
+
+- [[sort()]] من غير دالة بتحوّل كل عنصر لنص وترتّب حرف حرف زي القاموس. [["10"]] و [["2"]]: أول حرف [["1"]] قبل [["2"]]، فـ 10 قبل 2. السطر التالت بيوريك نفس الترتيب بالظبط على النصوص.
+- [[sort((a, b) => a - b)]]: الدالة دي اسمها comparator، وبترجّع رقم: سالب يعني a قبل b، وموجب يعني b قبل a، وصفر يعني زي بعض. [[a - b]] بيطلع سالب لما a أصغر، فالأصغر الأول: تصاعدي.
+
+**الغلطة الشائعة:** تكتب comparator بيرجّع boolean: [[sort((a, b) => a > b)]]. الـ false بتتحسب 0 («زي بعض»)، فالترتيب بيطلع غلط أو صح بالصدفة حسب الـ array. جرّبتها في Node 24: [[[3, 1, 2].sort((a, b) => a > b)]] رجّعت [[[ 3, 1, 2 ]]] زي ما هي من غير أي ترتيب. الـ comparator لازم يرجّع رقم.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[const scores = [40, 90, 70, 100, 60]; const top = scores.sort((a, b) => b - a).slice(0, 3);]] وبعدها اطبع [[scores]]. المطلوب scores تفضل زي ما دخلت.`, done: R`قبل التصليح scores بقت [[[100, 90, 70, 60, 40]]] (sort بتغيّر الأصل). بعد [[toSorted]]: top [[[100, 90, 70]]] و scores لسه [[[40, 90, 70, 100, 60]]].`, sol: R`~~~js top.js
+const scores = [40, 90, 70, 100, 60];
+const top = scores.sort((a, b) => b - a).slice(0, 3);
+console.log("قبل التصليح:", top, scores);
+
+const scores2 = [40, 90, 70, 100, 60];
+const top2 = scores2.toSorted((a, b) => b - a).slice(0, 3);
+console.log("بعد التصليح:", top2, scores2);
+~~~
+
+~~~text الناتج
+قبل التصليح: [ 100, 90, 70 ] [ 100, 90, 70, 60, 40 ]
+بعد التصليح: [ 100, 90, 70 ] [ 40, 90, 70, 100, 60 ]
+~~~
+
+**اللي حصل:** [[top]] طلعت صح في المرتين، فالباج مستخبي. بس [[scores]] في النسخة الأولى اترتبت هي نفسها: [[sort]] بتعدّل الـ array الأصلية (mutating) وبترجّع نفس الـ array، و [[slice]] بعدها هي اللي عملت نسخة. فأي كود تاني بيعرض الدرجات بترتيب الطلاب اتبوظ.
+
+**التصليح:** [[toSorted]] (ES2023) نفس [[sort]] بالظبط بنفس الـ comparator، بس بترجّع array **جديدة** وتسيب الأصل. فـ [[scores2]] فضلت بترتيبها اللي دخلت بيه.
+
+- [[(a, b) => b - a]]: تنازلي (الأكبر الأول).
+- [[slice(0, 3)]]: أول ٣ من غير ما يعدّل.
+
+**الغلطة الشائعة:** تصلّحها بـ [[[...scores].sort(...)]]. دي شغالة برضه (نسخة الأول وبعدين رتّب)، وهتشوفها في كود قديم كتير. [[toSorted]] أوضح في النية، ومتاحة في Node 20+ وكل المتصفحات الحديثة.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** رتّب منتجات بالسعر تصاعدي، واللي سعرهم زي بعض بالاسم ([[localeCompare]])، بـ toSorted.`, done: R`المنتجين اللي بنفس السعر مترتبين أبجدي، والـ array الأصلية بنفس ترتيبها القديم.`, sol: R`~~~js by-price.js
+const products = [
+  { name: "Mug", price: 120 },
+  { name: "Cap", price: 90 },
+  { name: "Bag", price: 120 },
+  { name: "Pen", price: 15 },
+  { name: "Apron", price: 90 },
+];
+const sorted = products.toSorted((a, b) => a.price - b.price || a.name.localeCompare(b.name));
+console.log(sorted.map((p) => $__bt$__{p.price} $__{p.name}$__bt).join(" | "));
+console.log(products.map((p) => p.name).join(", "));
+~~~
+
+~~~text الناتج
+15 Pen | 90 Apron | 90 Cap | 120 Bag | 120 Mug
+Mug, Cap, Bag, Pen, Apron
+~~~
+
+**ليه:**
+
+- [[a.price - b.price]]: الترتيب الأساسي بالسعر تصاعدي.
+- [[|| a.name.localeCompare(b.name)]]: لو السعرين زي بعض الطرح بيطلع 0، والـ 0 falsy، فـ [[||]] بتروح للمقارنة التانية: الاسم. ولو السعرين مختلفين الطرح رقم مش صفر (truthy) فبيترجّع على طول ومحدش بيبص على الاسم.
+- [[localeCompare]] بترجّع سالب أو صفر أو موجب زي ما الـ comparator محتاج، وبتقارن النصوص حسب قواعد اللغة. فـ Apron قبل Cap (الاتنين 90)، و Bag قبل Mug (الاتنين 120).
+- آخر سطر: الـ [[products]] الأصلية بنفس ترتيبها (Mug, Cap, Bag...) لأننا استخدمنا [[toSorted]].
+
+**الغلطة الشائعة:** تعمل sort مرتين: الأول بالسعر وبعدين بالاسم. التاني بيبوّظ الأول (هيبقى مترتب بالاسم بس). الترتيب بأكتر من مفتاح بيبقى comparator واحد بـ [[||]]، المفتاح الأهم الأول.` },
+            { lvl: 'تطبيق', t: R`**ابني:** لوحة ترتيب لعبة: [[{ n, p, t }]] (الاسم، والنقط، والوقت بالثواني). رتّب بالنقط تنازلي، ولو النقط زي بعض الأسرع الأول، واطبع [[1. Omar 95]] وهكذا.`, done: R`على Sara 90 في 120، و Omar 95 في 200، و Ali 90 في 100: بيطبع [[1. Omar 95]] ثم [[2. Ali 90]] ثم [[3. Sara 90]]. والـ comparator سطر واحد: [[b.p - a.p || a.t - b.t]].`, sol: R`~~~js leaderboard.js
+const players = [
+  { n: "Sara", p: 90, t: 120 },
+  { n: "Omar", p: 95, t: 200 },
+  { n: "Ali", p: 90, t: 100 },
+];
+const board = players.toSorted((a, b) => b.p - a.p || a.t - b.t);
+board.forEach((pl, i) => console.log($__bt$__{i + 1}. $__{pl.n} $__{pl.p}$__bt));
+console.log(players.map((pl) => pl.n));
+~~~
+
+~~~text الناتج
+1. Omar 95
+2. Ali 90
+3. Sara 90
+[ 'Sara', 'Omar', 'Ali' ]
+~~~
+
+**ليه:**
+
+- [[b.p - a.p]]: النقط تنازلي (الأعلى الأول)، عشان كده b قبل a.
+- [[|| a.t - b.t]]: لو النقط زي بعض، الوقت **تصاعدي** (الأقل وقت = الأسرع الأول). Ali و Sara الاتنين 90، و Ali خلّص في 100 ثانية، فطلع قبل Sara.
+- [[forEach((pl, i) => ...)]]: الـ callback بياخد العنصر ومكانه، فـ [[i + 1]] هو المركز (الـ index بيبدأ من 0).
+- آخر سطر: [[players]] بترتيبها الأصلي، لأن اللوحة اتعملت بـ [[toSorted]].
+
+**الغلطة الشائعة:** تخلي الاتنين نفس الاتجاه ([[b.p - a.p || b.t - a.t]])، فالأبطأ يطلع الأول في التعادل. كل مفتاح ليه اتجاهه: «أكتر أحسن» يبقى [[b - a]]، و «أقل أحسن» يبقى [[a - b]].` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** رتّب [[["file10", "file2", "file1"]]] بـ [[sort()]] عادي، وبعدين بـ [[localeCompare(b, undefined, { numeric: true })]]. وجرّب [[["Sara", "omar", "Ali"]]] بالطريقتين.`, done: R`العادي [[["file1", "file10", "file2"]]] والـ numeric [[["file1", "file2", "file10"]]]. والأسامي: [[sort()]] بيحط "omar" في الآخر (الحروف الكبيرة الأول)، و [[localeCompare]] بيرتّب Ali ثم omar ثم Sara.`, sol: R`~~~js natural.js
+const files = ["file10", "file2", "file1"];
+console.log(files.toSorted());
+console.log(files.toSorted((a, b) => a.localeCompare(b, undefined, { numeric: true })));
+const names = ["Sara", "omar", "Ali"];
+console.log(names.toSorted());
+console.log(names.toSorted((a, b) => a.localeCompare(b)));
+const collator = new Intl.Collator(undefined, { numeric: true });
+console.log(["v1.10", "v1.9", "v1.2"].toSorted(collator.compare));
+~~~
+
+~~~text الناتج
+[ 'file1', 'file10', 'file2' ]
+[ 'file1', 'file2', 'file10' ]
+[ 'Ali', 'Sara', 'omar' ]
+[ 'Ali', 'omar', 'Sara' ]
+[ 'v1.2', 'v1.9', 'v1.10' ]
+~~~
+
+**ليه:**
+
+- **العادي:** [[toSorted()]] من غير comparator بيقارن الـ code units حرف حرف: [["file1"]] و [["file10"]] بيبدأوا زي بعض، و [["file2"]] بعدهم لأن [["2"]] بعد [["1"]]. والأسامي: كل الحروف الكبيرة (A-Z) قبل كل الصغيرة (a-z) في الجدول، فـ [["omar"]] راح الآخر.
+- **[[localeCompare(b, undefined, { numeric: true })]]:** [[undefined]] معناها «لغة الجهاز الافتراضية»، و [[numeric: true]] بيقرا الأرقام اللي جوه النص كأرقام، فـ 2 قبل 10. ده اللي اسمه natural sort، زي ما مستكشف الملفات بيرتّب.
+- **[[localeCompare]] للأسامي:** بيرتّب زي القاموس من غير ما يفرق كبير وصغير في الأول: Ali ثم omar ثم Sara.
+- **[[Intl.Collator]]:** نفس قواعد [[localeCompare]] بس بتتعمل مرة وتتستخدم كتير ([[collator.compare]] بتتبعت كـ comparator على طول). أسرع لما الـ array كبيرة، لأن الإعدادات مش بتتجهز مع كل مقارنة. وجرّبتها على أرقام نسخ: v1.2 ثم v1.9 ثم v1.10.
+
+**الغلطة الشائعة:** ترتّب أسامي اليوزرز بـ [[sort()]] العادي، فاللي كتب اسمه بحرف صغير يطلع آخر اللستة. أي نص هيشوفه بني آدم رتّبه بـ [[localeCompare]] أو [[Intl.Collator]].` }
           ],
           flag: "script",
           deep: {
@@ -1109,6 +2167,14 @@ products.toSorted((a, b) => a.price - b.price || a.name.localeCompare(b.name));
             R`ترتيب بأكتر من شرط: الأول بالسعر، ولو السعر واحد يبقى الفرق [[0]] وده falsy، فـ [[||]] بتروح للشرط التاني وترتّب بالاسم. فـ A بييجي قبل B.`,
             R`[[with]] بترجّع نسخة من الـ array فيها العنصر في المكان ده متغيّر، والأصل زي ما هو. هي البديل الـ immutable للتعديل المباشر بالـ index (اللي بيغيّر الأصل)، ولو الـ index برّه الـ array بترمي RangeError.`
           ],
+          ref: [
+            { t: "MDN: Array.prototype.sort()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort" },
+            { t: "MDN: Array.prototype.toSorted()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toSorted" },
+            { t: "MDN: Array.prototype.toReversed()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toReversed" },
+            { t: "MDN: Array.prototype.with()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/with" },
+            { t: "MDN: String.prototype.localeCompare()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/localeCompare" },
+          ],
+          pre: ["js/map و filter و reduce"],
           sol: R`[[products.toSorted((a, b) => b.price - a.price)]]: الأغلى الأول (خد بالك إن [[b - a]] تنازلي و [[a - b]] تصاعدي). ولو في المثال السعرين متساويين (50 و 50) الترتيب هيفضل زي ما هو، لأن sort في JS مضمون stable من ES2019.
 
 [[const x = prices.sort()]] وبعدها [[prices]] بتطبع [[[100, 200, 300]]] و [[x === prices]] بـ true: sort رتّبت الأصل مكانه ورجّعت نفس الـ array، مش نسخة. ولاحظ إن الأرقام هنا طلعت صح صدفة لأنهم نفس عدد الخانات، بس [[[300, 100, 1000].sort()]] هتطلع [[[100, 1000, 300]]] لأن من غير compare function الترتيب كنصوص.`
@@ -1133,11 +2199,143 @@ const rows = [[1, 2], [3, 4]];
 rows.flat();                               // [1, 2, 3, 4]`,
           try: R`اكتب دالة [[removeAt(arr, i)]] بترجّع array جديدة من غير العنصر رقم i، بـ spread و slice (من غير splice). وبعدين اعملها بـ [[toSpliced]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[removeAt]] (النسخة بتاعة spread و slice).`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const [first, , third] = ["a", "b", "c"];]] واطبع الاتنين.`, done: R`"a" و "c".` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** فك تاريخ جاي كنص: [[const [y, m, d] = "2026-10-29".split("-").map(Number);]].`, done: R`y بـ 2026 و m بـ 10 و d بـ 29، و [[typeof m]] "number" مش "string".` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[const [x = 5, y = 7] = [undefined, null];]] و [[const [p, ...rest] = "abc";]]. اكتب x و y و p و rest قبل التشغيل.`, done: R`توقعت وطلع x بـ 5 و y بـ null و p بـ [["a"]] و rest [[["b", "c"]]]. وعرفت إن الـ default بيشتغل مع undefined بس، وإن الـ string بتتفك حروف لأنها iterable.` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[const a = [ [1], [2] ]; const b = [...a]; b[0].push(9);]] واطبع [[a[0]]]. وبعدين صلّح بـ [[structuredClone]].`, done: R`قبل التصليح [[a[0]]] بقت [[[1, 9]]] (الـ spread نسخ الـ array من برا بس)، وبعد [[structuredClone(a)]] بتفضل [[[1]]].` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[rotate(arr, k)]] بتلف الـ array لليمين k خطوة بـ spread و slice، ومن غير ما تغيّر الأصل. خلي بالك من k أكبر من الطول ومن الـ array الفاضية.`, done: R`[[rotate([1, 2, 3, 4], 1)]] بترجّع [[[4, 1, 2, 3]]]، و [[rotate([1, 2, 3, 4], 5)]] نفس الناتج، و [[rotate([], 2)]] بترجّع [[[]]]، و [[rotate([1, 2], 0)]] بترجّع [[[1, 2]]] نسخة جديدة.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[const [first, , third] = ["a", "b", "c"];]] واطبع الاتنين.`, done: R`"a" و "c".`, sol: R`~~~js predict.js
+const [first, , third] = ["a", "b", "c"];
+console.log(first, third);
+const [x, y, z, w] = ["a", "b", "c"];
+console.log(w);
+~~~
+
+~~~text الناتج
+a c
+undefined
+~~~
+
+**ليه:**
+
+- الـ destructuring بياخد العناصر **بالترتيب**: أول اسم ← index 0، والتاني ← index 1...
+- المكان الفاضي بين الفاصلتين ([[, ,]]) معناه «اتخطى العنصر ده»، فـ [["b"]] اتساب و [[third]] خد [["c"]].
+- السطر التاني: [[w]] رابع اسم والـ array فيها ٣ بس، فبياخد [[undefined]] من غير error، زي [[arr[3]]] بالظبط.
+
+**الغلطة الشائعة:** تنسى فاصلة: [[const [first, third] = ["a", "b", "c"]]] بيخلي [[third]] = [["b"]]. الاسم مالوش أي علاقة بالمكان، الترتيب بس هو اللي بيحدد.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** فك تاريخ جاي كنص: [[const [y, m, d] = "2026-10-29".split("-").map(Number);]].`, done: R`y بـ 2026 و m بـ 10 و d بـ 29، و [[typeof m]] "number" مش "string".`, sol: R`~~~js date.js
+const [y, m, d] = "2026-10-29".split("-").map(Number);
+console.log(y, m, d, typeof m);
+const [y2, m2] = "2026-10-29".split("-");
+console.log(y2, m2, typeof m2, m2 + 1);
+console.log(new Date(y, m - 1, d).toDateString());
+~~~
+
+~~~text الناتج
+2026 10 29 number
+2026 10 string 101
+Thu Oct 29 2026
+~~~
+
+**ليه:**
+
+- [["2026-10-29".split("-")]] بترجّع ٣ **نصوص**: [[["2026", "10", "29"]]].
+- [[.map(Number)]] بتحوّل كل واحد لرقم ([[Number]] بتاخد أول argument بس، فمفيش مشكلة الـ index اللي بتحصل مع [[parseInt]]).
+- [[const [y, m, d] = ...]] بتفك الـ array الناتجة في ٣ متغيرات في سطر واحد، فـ [[typeof m]] بـ [["number"]].
+- السطر التاني من غير [[map(Number)]]: [[m2]] نص، و [[m2 + 1]] بقت [["101"]] (لزق) مش 11. ده الباج اللي التحويل بيمنعه.
+- [[new Date(y, m - 1, d)]]: الشهور في [[Date]] بتبدأ من 0 (يناير = 0)، فلازم [[m - 1]] (وحدة «التواريخ والوقت»).
+
+**الغلطة الشائعة:** تنسى إن [[split]] بيرجّع نصوص دايمًا، وتكمّل حساب عليها. [[*]] و [[-]] بيحوّلوا لوحدهم فبيخبّوا المشكلة، لحد ما [[+]] تلزق بدل ما تجمع.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** [[const [x = 5, y = 7] = [undefined, null];]] و [[const [p, ...rest] = "abc";]]. اكتب x و y و p و rest قبل التشغيل.`, done: R`توقعت وطلع x بـ 5 و y بـ null و p بـ [["a"]] و rest [[["b", "c"]]]. وعرفت إن الـ default بيشتغل مع undefined بس، وإن الـ string بتتفك حروف لأنها iterable.`, sol: R`~~~js predict.js
+const [x = 5, y = 7] = [undefined, null];
+console.log(x, y);
+const [p, ...rest] = "abc";
+console.log(p, rest);
+const [a = 1, b = a * 2] = [];
+console.log(a, b);
+~~~
+
+~~~text الناتج
+5 null
+a [ 'b', 'c' ]
+1 2
+~~~
+
+**ليه:**
+
+- [[x = 5]]: العنصر الأول [[undefined]]، فالـ default اشتغل: 5.
+- [[y = 7]]: العنصر التاني [[null]]، و [[null]] قيمة مش «مفيش»، فالـ default مشتغلش: [[null]]. نفس قاعدة الـ default parameters بالظبط (درس «default و rest و spread»).
+- [[const [p, ...rest] = "abc"]]: الـ destructuring بتاع الـ arrays بيشتغل على أي حاجة iterable، والنص iterable حرف حرف. فـ [[p]] = [["a"]] و [[...rest]] لمّت الباقي في array: [[[ 'b', 'c' ]]] (array حقيقية مش نص).
+- السطر التالت (زيادة): الـ default ممكن يستخدم متغير قبله: [[b = a * 2]] بقت 2.
+
+**الغلطة الشائعة:** تتوقع [[y]] بـ 7 لأن «null يعني مفيش». الـ defaults في JS (في الباراميترات والـ destructuring) بتشتغل مع [[undefined]] بس. لو الداتا ممكن يبقى فيها null، استخدم [[y ?? 7]] بعد التفكيك.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[const a = [ [1], [2] ]; const b = [...a]; b[0].push(9);]] واطبع [[a[0]]]. وبعدين صلّح بـ [[structuredClone]].`, done: R`قبل التصليح [[a[0]]] بقت [[[1, 9]]] (الـ spread نسخ الـ array من برا بس)، وبعد [[structuredClone(a)]] بتفضل [[[1]]].`, sol: R`~~~js copy.js
+const a = [[1], [2]];
+const b = [...a];
+b[0].push(9);
+console.log(a[0], b[0] === a[0]);
+
+const c = [[1], [2]];
+const d = structuredClone(c);
+d[0].push(9);
+console.log(c[0], d[0], d[0] === c[0]);
+
+const e = [[1], [2]];
+const f = e.map((inner) => [...inner]);
+f[0].push(9);
+console.log(e[0], f[0]);
+~~~
+
+~~~text الناتج
+[ 1, 9 ] true
+[ 1 ] [ 1, 9 ] false
+[ 1 ] [ 1, 9 ]
+~~~
+
+**ليه:**
+
+- [[[...a]]] بيعمل array **جديدة من برّه**، بس العناصر اللي جواها هي هي: الـ arrays الداخلية بتتنسخ بالـ reference. فـ [[b[0] === a[0]]] بـ true، و [[push(9)]] على [[b[0]]] غيّر [[a[0]]] كمان. ده اسمه shallow copy.
+- [[structuredClone(c)]]: نسخة عميقة (deep copy): بينسخ كل مستوى لحد آخره، فـ [[d[0]]] array تانية خالص ([[d[0] === c[0]]] بـ false)، والـ push مأثرش في [[c]]. موجودة في Node 17+ وكل المتصفحات الحديثة.
+- الحل التالت: [[e.map((inner) => [...inner])]] بينسخ مستويين بإيدك. كفاية لو انت عارف إن الداتا مستويين بس، ومش محتاج تنسخ كل حاجة.
+
+**الغلطة الشائعة:** تفتكر إن spread أو [[slice()]] أو [[Array.from]] بيعملوا نسخة كاملة. التلاتة shallow. ولو الـ array فيها objects ([[[{ qty: 1 }]]]) وعدّلت [[copy[0].qty]]، الأصل هيتعدّل. و [[structuredClone]] مبينسخش الدوال: بيرمي [[DataCloneError]] لو لقى دالة جوه الداتا.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[rotate(arr, k)]] بتلف الـ array لليمين k خطوة بـ spread و slice، ومن غير ما تغيّر الأصل. خلي بالك من k أكبر من الطول ومن الـ array الفاضية.`, done: R`[[rotate([1, 2, 3, 4], 1)]] بترجّع [[[4, 1, 2, 3]]]، و [[rotate([1, 2, 3, 4], 5)]] نفس الناتج، و [[rotate([], 2)]] بترجّع [[[]]]، و [[rotate([1, 2], 0)]] بترجّع [[[1, 2]]] نسخة جديدة.`, sol: R`~~~js rotate.js
+function rotate(arr, k) {
+  const n = arr.length;
+  if (n === 0) return [];
+  const cut = n - (k % n);
+  return [...arr.slice(cut), ...arr.slice(0, cut)];
+}
+const nums = [1, 2, 3, 4];
+console.log(rotate(nums, 1), rotate(nums, 5), rotate([], 2));
+const same = rotate([1, 2], 0);
+console.log(same, rotate(nums, 4), nums);
+const original = [1, 2];
+console.log(rotate(original, 0) === original);
+~~~
+
+~~~text الناتج
+[ 4, 1, 2, 3 ] [ 4, 1, 2, 3 ] []
+[ 1, 2 ] [ 1, 2, 3, 4 ] [ 1, 2, 3, 4 ]
+false
+~~~
+
+**ليه كل سطر:**
+
+- اللف لليمين خطوة = آخر عنصر ييجي الأول. يعني نقطع الـ array عند [[cut]]: اللي بعد القطع ييجي الأول، واللي قبله بعده.
+- [[k % n]]: ٥ خطوات على ٤ عناصر زي خطوة واحدة. فـ [[rotate(nums, 5)]] زي [[rotate(nums, 1)]]، و [[rotate(nums, 4)]] رجعت الترتيب الأصلي.
+- [[cut = n - (k % n)]]: لخطوة واحدة على ٤ عناصر القطع عند 3، فـ [[slice(3)]] = [[[4]]] و [[slice(0, 3)]] = [[[1, 2, 3]]].
+- [[[...a, ...b]]]: spread بيدمج القطعتين في array جديدة. و [[slice]] نفسها مبتعدّلش، فـ [[nums]] زي ما هي.
+- [[if (n === 0) return []]]: من غيرها [[k % 0]] بـ NaN. و [[k = 0]]: [[cut = n]] فالناتج نسخة كاملة، و [[=== original]] بـ false، يعني array جديدة فعلًا مش نفس الـ reference.
+
+**الغلطة اللي وقعت فيها:** أول نسخة كانت من غير [[%]]، باستخدام الـ index السالب في [[slice]]:
+
+~~~js rotate-bug.js
+// من غير % : الخطوات أكبر من الطول
+const rotateBug = (arr, k) => [...arr.slice(-k), ...arr.slice(0, -k)];
+console.log(rotateBug([1, 2, 3, 4], 1), rotateBug([1, 2, 3, 4], 5), rotateBug([1, 2, 3, 4], 0));
+~~~
+
+~~~text الناتج
+[ 4, 1, 2, 3 ] [ 1, 2, 3, 4 ] [ 1, 2, 3, 4 ]
+~~~
+
+[[k = 1]] طلعت صح، بس [[k = 5]] رجّعت الترتيب الأصلي: [[slice(-5)]] على ٤ عناصر بيرجّع الـ array كلها (السالب أكبر من الطول بيتقص للأول)، و [[slice(0, -5)]] بيرجّع [[[]]]. و [[k = 0]] طلعت صح **بالصدفة**: [[slice(-0)]] زي [[slice(0)]]. الـ [[%]] بيخلي الحسبة صح لأي k من غير ما تعتمد على صدف [[slice]].` }
           ],
           flag: "script",
           deep: {
@@ -1328,6 +2526,16 @@ rows.flat();                               // [1, 2, 3, 4]
             R`[[rows]] array جواها arrays (مصفوفة ٢ في ٢)، زي صفوف جدول.`,
             R`[[flat]] بتفك مستوى واحد من التداخل، فبقت array واحدة فيها ٤ أرقام. لو التداخل أعمق ابعتلها العمق، زي [[flat(2)]] أو [[flat(Infinity)]].`
           ],
+          ref: [
+            { t: "MDN: Destructuring", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring" },
+            { t: "MDN: Spread syntax (...)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax" },
+            { t: "MDN: Array.prototype.slice()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice" },
+            { t: "MDN: Array.prototype.toSpliced()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toSpliced" },
+            { t: "MDN: Array.prototype.flat()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat" },
+            { t: "MDN: Set", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set" },
+            { t: "MDN: structuredClone()", url: "https://developer.mozilla.org/en-US/docs/Web/API/Window/structuredClone" },
+          ],
+          pre: ["js/default و rest و spread", "js/array literals و index و length"],
           sol: R`[[removeAt(["a", "b", "c", "d"], 1)]] بترجّع [[["a", "c", "d"]]] والأصل زي ما هو. و [[arr.toSpliced(1, 1)]] بترجّع نفس الناتج في سطر واحد: هي splice بس من غير ما تعدّل الأصل.
 
 خلي بالك من index سالب: [[toSpliced(-1, 1)]] بتشيل آخر عنصر صح، لكن نسخة slice بتاعتك مع [[-1]] هتطلع array أطول من الأصل (لأن [[slice(0)]] بيرجّع كله). لو هتستخدم نسختك، افحص إن i بين 0 والطول.`,
