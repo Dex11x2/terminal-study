@@ -30,14 +30,1052 @@ TAB("js", {
       t: "أساسيات البرمجة",
       l: 1,
       n: "لو دي أول لغة ليك ابدأ هنا: برنامج يعني إيه، والشروط، والـ loops، وإزاي تحل مسألة وتلاقي الغلط في كودك، و١٥ تمرين بحلولهم",
+      pre: [
+        { to: "start/الترمنال والشيل", why: R`هتشغّل كل تمرين بـ [[node file.js]] في الترمنال، فلازم تعرف تفتحه وتكتب فيه أمر` },
+        { to: "start/المسار (path)", why: R`عشان تروح للفولدر اللي فيه ملفك بـ [[cd]] قبل ما تشغّله` },
+        { to: "start/VS Code", why: R`المحرر اللي هتكتب فيه الملفات، وفيه الـ debugger اللي في درس «debugger»` },
+        { to: "start/الكود واللغة", why: R`يعني إيه لغة برمجة وكود، قبل أول سطر JavaScript` },
+        { to: "start/الـ stack trace", why: R`الفكرة العامة لرسالة الخطأ، ودرس «اقرا الـ error» بيكمّلها في JavaScript` },
+        { to: "node/node -v", why: R`تتأكد إن Node متسطّب عندك قبل ما تشغّل أي ملف` },
+      ],
       projects: [
-        { lvl: 'صغير', t: R`فاتورة المحل`, what: R`ملف [[bill.js]] فيه سعر وكمية ٣ منتجات في متغيرات، وبيحسب الإجمالي والضريبة ١٤٪ والتوصيل: مجاني لو الإجمالي ٥٠٠ أو أكتر وإلا ٣٠ جنيه، وبيطبع الفاتورة سطر سطر. من دروس «المتغيرات والأنواع والعمليات» و «if و else if».`, done: R`لما الإجمالي ٣٠٠ الفاتورة بتطبع التوصيل ٣٠ والمطلوب ٣٧٢، ولما تغيّر الكميات لحد ما الإجمالي يعدّي ٥٠٠ سطر التوصيل بيقول «مجاني». وكل رقم فلوس متقرّب لقرشين بـ [[Math.round(x * 100) / 100]] فمفيش [[42.00000000000001]].` },
-        { lvl: 'صغير', t: R`خمّن الرقم`, what: R`في الـ Console: البرنامج بيختار رقم من 1 لـ 100 بـ [[Math.floor(Math.random() * 100) + 1]]، وبيسألك بـ [[prompt]] جوه [[while]] لحد ما تجيبه، ويقولك «أكبر» أو «أصغر»، ويعدّ المحاولات. من دروس «for و while» و «break و continue» و «&& و || و !».`, done: R`لما تجيب الرقم بيطبع عدد المحاولات ويقف. ولو دوست Cancel ([[prompt]] بيرجّع [[null]]) البرنامج بيخرج برسالة بدل ما يلف على طول. ولو كتبت حروف بيقولك «اكتب رقم» ومبيعدّهاش محاولة.` },
-        { lvl: 'متوسط', t: R`ATM من غير بنك`, what: R`رصيد في متغير، و loop فيها قايمة بـ [[prompt]]: ١ رصيد، ٢ إيداع، ٣ سحب، ٤ خروج، والاختيار بيتفرّع بـ [[switch]]. كل عملية دالة لوحدها ([[deposit(amount)]] و [[withdraw(amount)]]) بترجّع رسالة. من دروس «switch ولا object lookup» و «for و while» و «مقدمة الدوال function».`, done: R`إيداع ٥٠٠ وبعده سحب ٢٠٠ من رصيد ١٠٠٠ بيوصّل الرصيد لـ ١٣٠٠. السحب أكتر من الرصيد بيقول «الرصيد مش كفاية» والرصيد مبيتغيّرش، والمبلغ السالب أو الحروف أو الصفر بيترفضوا برسالة، و ٤ بيخرج من الـ loop.` },
-        { lvl: 'متوسط', t: R`تقرير درجات الفصل`, what: R`array درجات، ودوال صغيرة من التمارين: [[average]] و [[maxOf]] و [[minOf]] و [[countPassed]] (٥٠ أو أكتر)، وتوزيع التقديرات (ممتاز وجيد ومقبول وراسب) في object عدّاد زي [[charCount]]. والدالة الرئيسية [[report(scores)]] بتطبع كل ده. من دروس «تمرين maxOf» و «تمرين charCount» و «if و else if».`, done: R`[[report([90, 45, 72, 100, 58])]] بيطبع المتوسط 73 والأكبر 100 والأصغر 45 والناجحين 4. و [[report([])]] بيطبع «مفيش درجات» بدل NaN أو [[-Infinity]].` },
-        { lvl: 'كبير', t: R`مكتبة دوال ومعاها اختبارات`, what: R`ملف [[utils.js]] فيه ١٠ دوال من التمارين (sumTo و maxOf و reverse و isPrime و fibonacci و unique و secondLargest...)، وكل دالة بتتأكد من الـ input الأول (لو مش number أو string أو array زي ما هي مستنية، ترجّع [[null]]). وتحتهم دالة [[check(name, actual, expected)]] بتقارن وتطبع ✔ أو ✘ ومعاها المتوقع والفعلي، و ٣ اختبارات على الأقل لكل دالة منهم اختبار طرف (فاضي، صفر، سالب). من وحدة «أساسيات البرمجة» كلها، وخصوصًا «pseudocode» و «اقرا الـ error».`, done: R`[[node utils.js]] بيطبع سطر لكل اختبار وفي الآخر «30/30 عدّوا». لو بوّظت دالة بقصد (مثلًا [[<]] بدل [[<=]] في sumTo) السطر بتاعها بيبقى ✘ وفيه 4950 مقابل 5050، والباقي بيكمل عادي. و [[maxOf("abc")]] بترجّع [[null]] مش error.`, ext: R`زوّد لكل دالة تعليق فيه الـ pseudocode بتاعها، وخلي [[check]] تحسب الوقت بـ [[console.time]]، وزوّد دوال من عندك من مسائل الانترفيو.` },
-        { lvl: 'كبير', t: R`فاحص قوة الباسورد`, what: R`دالة [[strength(pw)]] بتلف على الحروف بـ for...of وبتعدّ الحروف الكبيرة والصغيرة والأرقام والرموز، وبترجّع object فيه [[score]] من 0 لـ 4 و [[level]] (ضعيف ومتوسط وقوي) و [[reasons]] array بالناقص بالعربي. والصفحة (أو الـ Console) بتسأل بـ [[prompt]] وتطبع النتيجة. من دروس «for...of و for...in» و «&& و || و !» و «if و else if» و «مقدمة الدوال function».`, done: R`[[strength("abc")]] بيرجّع ضعيف وفيه ٣ أسباب على الأقل (قصير، مفيش أرقام، مفيش حروف كبيرة...)، و [[strength("Abc12345!")]] بيرجّع قوي و reasons فاضية. والـ input الفاضي أو المسافات بس أو [[null]] (لما تدوس Cancel) بيرجعوا ضعيف من غير error.`, ext: R`زوّد قايمة باسوردات مشهورة ([[123456]] و [[password]]) أي واحد منهم يبقى ضعيف على طول، واطبع أطول جزء متكرر في الباسورد.` },
-        { lvl: 'فكرة', t: R`حاجة بتعملها بالآلة الحاسبة`, what: R`اختار حسبة بتعملها بإيدك كل شوية: تقسيم حساب الخروجة على الصحاب، ولا ساعات مذاكرتك في الأسبوع، ولا مصاريف الشهر، ولا جدول الأقساط. اكتب الـ pseudocode الأول، وبعدين حوّلها لبرنامج بدوال صغيرة، وجرّبه على أرقام حقيقية من حياتك.`, done: R`البرنامج بيطلّع نفس الرقم اللي حسبته بإيدك على ٣ أمثلة حقيقية، وفيه حالة طرف واحدة على الأقل اتعاملت معاها (حد مدفعش، يوم مفيهوش مذاكرة، قسط آخر شهر مختلف).`, ext: R`خلي الأرقام تيجي من [[prompt]] بدل ما تكون مكتوبة في الكود، وزوّد ملخص في الآخر (أكتر واحد دفع، أحسن يوم...).` }
+        { lvl: 'صغير', t: R`فاتورة المحل`, what: R`ملف [[bill.js]] فيه سعر وكمية ٣ منتجات في متغيرات، وبيحسب الإجمالي والضريبة ١٤٪ والتوصيل: مجاني لو الإجمالي ٥٠٠ أو أكتر وإلا ٣٠ جنيه، وبيطبع الفاتورة سطر سطر. من دروس «المتغيرات والأنواع والعمليات» و «if و else if».`, done: R`لما الإجمالي ٣٠٠ الفاتورة بتطبع التوصيل ٣٠ والمطلوب ٣٧٢، ولما تغيّر الكميات لحد ما الإجمالي يعدّي ٥٠٠ سطر التوصيل بيقول «مجاني». وكل رقم فلوس متقرّب لقرشين بـ [[Math.round(x * 100) / 100]] فمفيش [[42.00000000000001]].`, sol: R`**هتشوف إيه:** ملف واحد بيطبع فاتورة من ٧ سطور: كل منتج بسعره وكميته وإجماليه، وبعدين الإجمالي والضريبة والتوصيل والمطلوب. والكميات ممكن تغيّرها من سطر الأوامر من غير ما تفتح الملف.
+
+~~~text الناتج: node bill.js (الإجمالي 300)
+====== فاتورة ======
+تيشيرت: 100 × 1 = 100
+كوباية: 50 × 2 = 100
+كشكول: 25 × 4 = 100
+الإجمالي: 300
+الضريبة ١٤٪: 42
+التوصيل: 30
+المطلوب: 372
+~~~
+
+~~~text الناتج: node bill.js 2 3 6 (الإجمالي 500)
+====== فاتورة ======
+تيشيرت: 100 × 2 = 200
+كوباية: 50 × 3 = 150
+كشكول: 25 × 6 = 150
+الإجمالي: 500
+الضريبة ١٤٪: 70
+التوصيل: مجاني
+المطلوب: 570
+~~~
+
+~~~text الناتج: node bill.js 1 1 1 (ضريبة فيها كسر)
+====== فاتورة ======
+تيشيرت: 100 × 1 = 100
+كوباية: 50 × 1 = 50
+كشكول: 25 × 1 = 25
+الإجمالي: 175
+الضريبة ١٤٪: 24.5
+التوصيل: 30
+المطلوب: 229.5
+~~~
+
+**الكود:**
+
+~~~js bill.js
+// فاتورة المحل: ٣ منتجات، وضريبة ١٤٪، وتوصيل مجاني من ٥٠٠ جنيه
+// الكميات ممكن تيجي من سطر الأوامر: node bill.js 2 3 6
+const TAX_RATE = 0.14;
+const FREE_DELIVERY_FROM = 500;
+const DELIVERY_FEE = 30;
+
+const name1 = "تيشيرت", price1 = 100, qty1 = Number(process.argv[2] ?? 1);
+const name2 = "كوباية", price2 = 50, qty2 = Number(process.argv[3] ?? 2);
+const name3 = "كشكول", price3 = 25, qty3 = Number(process.argv[4] ?? 4);
+
+// تقريب لقرشين: 42.00000000000001 تبقى 42
+function money(x) {
+  return Math.round(x * 100) / 100;
+}
+
+const line1 = price1 * qty1;
+const line2 = price2 * qty2;
+const line3 = price3 * qty3;
+const subtotal = line1 + line2 + line3;
+const tax = money(subtotal * TAX_RATE);
+
+let delivery;
+if (subtotal >= FREE_DELIVERY_FROM) {
+  delivery = 0;
+} else {
+  delivery = DELIVERY_FEE;
+}
+const total = money(subtotal + tax + delivery);
+
+console.log("====== فاتورة ======");
+console.log(name1 + ": " + price1 + " × " + qty1 + " = " + line1);
+console.log(name2 + ": " + price2 + " × " + qty2 + " = " + line2);
+console.log(name3 + ": " + price3 + " × " + qty3 + " = " + line3);
+console.log("الإجمالي: " + subtotal);
+console.log("الضريبة ١٤٪: " + tax);
+console.log("التوصيل: " + (delivery === 0 ? "مجاني" : delivery));
+console.log("المطلوب: " + total);
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- **الثوابت فوق** ([[TAX_RATE]] و [[FREE_DELIVERY_FROM]] و [[DELIVERY_FEE]]): أي رقم «سياسة» في المحل ليه اسم. لو الضريبة بقت ١٥٪ أو التوصيل بقى ٤٠، بتغيّر سطر واحد. والأسامي بحروف كبيرة عرف متعارف عليه للثوابت.
+- **الكميات من سطر الأوامر:** [[process.argv]] array فيها كل اللي كتبته بعد [[node]]: [[process.argv[2]]] أول رقم بعد اسم الملف. ولو مكتبتش حاجة، [[?? 1]] بتحط القيمة الافتراضية. و [[Number(...)]] لأن أي حاجة من سطر الأوامر بتيجي نص (زي [[prompt]] بالظبط).
+- **[[money(x)]]:** دالة صغيرة بتقرّب لقرشين بـ [[Math.round(x * 100) / 100]]، فالمعادلة مكتوبة مرة واحدة.
+- **الحساب:** إجمالي كل سطر، وبعدين مجموعهم، وبعدين الضريبة على المجموع.
+- **التوصيل بـ [[if]]:** [[>=]] لأن المطلوب «٥٠٠ أو أكتر». التشغيل التاني بيأكد إن 500 بالظبط طلعت «مجاني».
+- **الطباعة:** [[(delivery === 0 ? "مجاني" : delivery)]] بيكتب كلمة بدل صفر.
+
+**الغلطات اللي حصلت وأنا ببنيه:**
+
+- **من غير تقريب** كانت الضريبة بتطلع كده:
+
+~~~text أول نسخة: الضريبة من غير money()
+====== فاتورة ======
+تيشيرت: 100 × 1 = 100
+كوباية: 50 × 2 = 100
+كشكول: 25 × 4 = 100
+الإجمالي: 300
+الضريبة ١٤٪: 42.00000000000001
+التوصيل: 30
+المطلوب: 372
+~~~
+
+[[300 * 0.14]] بقت [[42.00000000000001]] (نفس سبب [[0.1 + 0.2]]: الكسور بتتخزن قريبة مش بالظبط). والمطلوب طلع 372 بالصدفة بس. الحل: [[money()]] على الضريبة وعلى المطلوب.
+- **[[process.argv[2]]] من غير [[Number]]:** [["2" * 100]] بتشتغل (الضرب بيحوّل)، بس لو كنت جمعت كميات كانت هتتلزق. فحوّلتها لرقم من أول سطر.
+- **التوصيل على الإجمالي ولا على المطلوب؟** المطلوب قال «لو الإجمالي ٥٠٠»، فالشرط على [[subtotal]] (قبل الضريبة). لو حطيته على المطلوب بعد الضريبة، طلب بـ 450 (513 بالضريبة) كان هياخد توصيل مجاني وهو مش من حقه. اقرا المطلوب بالظبط وقرر، واكتب القرار في اسم المتغير.` },
+        { lvl: 'صغير', t: R`خمّن الرقم`, what: R`في الـ Console: البرنامج بيختار رقم من 1 لـ 100 بـ [[Math.floor(Math.random() * 100) + 1]]، وبيسألك بـ [[prompt]] جوه [[while]] لحد ما تجيبه، ويقولك «أكبر» أو «أصغر»، ويعدّ المحاولات. من دروس «for و while» و «break و continue» و «&& و || و !».`, done: R`لما تجيب الرقم بيطبع عدد المحاولات ويقف. ولو دوست Cancel ([[prompt]] بيرجّع [[null]]) البرنامج بيخرج برسالة بدل ما يلف على طول. ولو كتبت حروف بيقولك «اكتب رقم» ومبيعدّهاش محاولة.`, sol: R`**هتشوف إيه:** لعبة في الـ Console: نافذة [[prompt]] بتسألك رقم، وكل مرة بتقولك «أكبر» أو «أصغر» في نفس النافذة، وفي الـ Console بيتطبع سجل محاولاتك، ولما تجيبه بيقولك في كام محاولة. الحروف أو الأرقام برّه 1 لـ 100 مبتتحسبش محاولة، و Cancel بيخرج.
+
+شغّلته في Chrome (الـ Console على صفحة فاضية) مرتين. **المرة الأولى** كتبت في الـ prompt بالترتيب: [[abc]] ثم 50 ثم 25 ثم 37 ثم 43 ثم 46:
+
+~~~text الـ Console في Chrome (المرة الأولى)
+"abc" ← مش رقم من 1 لـ 100
+50 ← أصغر
+25 ← أكبر
+37 ← أكبر
+43 ← أكبر
+صح! الرقم 46 وجبته في 5 محاولات
+~~~
+
+والـ prompt نفسه كان بيتغيّر: «خمّن رقم من 1 لـ 100:» ثم «اكتب رقم من 1 لـ 100:» (بعد abc) ثم «أصغر من 50. خمّن تاني:» ثم «أكبر من 25. خمّن تاني:» وهكذا. لاحظ إن [[abc]] متعدّتش: ٦ ردود و ٥ محاولات.
+
+**المرة التانية** كتبت 200 ثم 70 وبعدين دوست Cancel:
+
+~~~text الـ Console في Chrome (المرة التانية)
+"200" ← مش رقم من 1 لـ 100
+70 ← أصغر
+خرجت من اللعبة. الرقم كان 23
+~~~
+
+**الكود** (انسخه في الـ Console واضغط Enter):
+
+~~~js guess.js
+// خمّن الرقم: انسخ الملف ده في الـ Console بتاع Chrome (F12) واضغط Enter
+const secret = Math.floor(Math.random() * 100) + 1;   // من 1 لـ 100
+let tries = 0;
+let message = "خمّن رقم من 1 لـ 100:";
+
+while (true) {
+  const answer = prompt(message);
+
+  if (answer === null) {                               // داس Cancel
+    console.log("خرجت من اللعبة. الرقم كان " + secret);
+    break;
+  }
+
+  const guess = Number(answer);
+  if (answer.trim() === "" || Number.isNaN(guess) || guess < 1 || guess > 100) {
+    message = "اكتب رقم من 1 لـ 100:";               // مبتتحسبش محاولة
+    console.log(JSON.stringify(answer) + " ← مش رقم من 1 لـ 100");
+    continue;
+  }
+
+  tries++;
+  if (guess === secret) {
+    console.log("صح! الرقم " + secret + " وجبته في " + tries + " محاولات");
+    break;
+  }
+
+  const hint = guess < secret ? "أكبر" : "أصغر";
+  console.log(guess + " ← " + hint);
+  message = hint + " من " + guess + ". خمّن تاني:";
+}
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- [[Math.floor(Math.random() * 100) + 1]]: [[Math.random()]] رقم من 0 لحد أقل من 1، × 100 يبقى من 0 لحد أقل من 100، و [[Math.floor]] يشيل الكسر (0 لـ 99)، و [[+ 1]] يخليه 1 لـ 100.
+- [[while (true)]]: loop مالهاش شرط وقوف في السطر الأول، لأننا مش عارفين هنلف كام مرة. بنخرج منها بـ [[break]] في حالتين: الإجابة الصح، أو Cancel.
+- [[answer === null]]: [[prompt]] بيرجّع [[null]] لما تدوس Cancel، ونص (حتى لو فاضي) لما تدوس OK. لازم نفحص [[null]] **الأول**، لأن [[null.trim()]] بيعمل error.
+- **فحص الرقم:** [[Number(answer)]]، وبعدين نرفض: النص الفاضي (لأن [[Number("")]] بـ 0 مش NaN)، و [[Number.isNaN(guess)]] (حروف)، وأي رقم برّه 1 لـ 100. و [[continue]] بترجع لأول الـ loop من غير ما [[tries++]] يحصل.
+- [[message]]: نص الـ prompt الجاي. بنحط فيه التلميح عشان يظهر في نفس النافذة اللي بتكتب فيها (الـ Console بيبقى ورا النافذة ومش باين).
+
+**الغلطات اللي حصلت وأنا ببنيه:**
+
+- أول نسخة كانت [[while (guess !== secret)]] و [[guess]] جاي من [[prompt]] على طول: الرقم جاي نص، و [["46" !== 46]] دايمًا [[true]]، فاللعبة **مكانتش بتخلص** حتى لما الرقم صح. الحل: [[Number(answer)]] قبل أي مقارنة.
+- النسخة اللي بعدها كانت بتعدّ [[abc]] محاولة لأن [[tries++]] كان قبل الفحص. نقلته بعد [[continue]].
+- ومن غير فحص [[null]]، Cancel كانت بتطلّع [[TypeError: Cannot read properties of null (reading 'trim')]] واللعبة تقف بـ error بدل رسالة.
+
+**ليه مش Node:** [[prompt]] جزء من المتصفح، و Node مفيهوش ([[ReferenceError: prompt is not defined]]). قراية input في Node محتاجة [[readline]] وده بيستخدم async اللي لسه مجاش، فالمشروع ده للـ Console.` },
+        { lvl: 'متوسط', t: R`ATM من غير بنك`, what: R`رصيد في متغير، و loop فيها قايمة بـ [[prompt]]: ١ رصيد، ٢ إيداع، ٣ سحب، ٤ خروج، والاختيار بيتفرّع بـ [[switch]]. كل عملية دالة لوحدها ([[deposit(amount)]] و [[withdraw(amount)]]) بترجّع رسالة. من دروس «switch ولا object lookup» و «for و while» و «مقدمة الدوال function».`, done: R`إيداع ٥٠٠ وبعده سحب ٢٠٠ من رصيد ١٠٠٠ بيوصّل الرصيد لـ ١٣٠٠. السحب أكتر من الرصيد بيقول «الرصيد مش كفاية» والرصيد مبيتغيّرش، والمبلغ السالب أو الحروف أو الصفر بيترفضوا برسالة، و ٤ بيخرج من الـ loop.`, sol: R`**هتشوف إيه:** قايمة في [[prompt]] (١ رصيد، ٢ إيداع، ٣ سحب، ٤ خروج) بتتكرر لحد ما تختار ٤ أو Cancel، والإيداع والسحب بيسألوا عن المبلغ في prompt تاني، ونتيجة كل عملية بتتطبع في الـ Console.
+
+شغّلته في Chrome على صفحة فاضية، والردود اللي كتبتها بالترتيب: 1، ثم 2 و 500، ثم 3 و 200، ثم 3 و 5000، ثم 2 و [[-50]]، ثم 3 و [[abc]]، ثم 2 و 0، ثم 9، ثم 1، ثم 4:
+
+~~~text الـ Console في Chrome
+[1] الرصيد: 1000
+[2] اتحط 500. الرصيد: 1500
+[3] اتسحب 200. الرصيد: 1300
+[3] الرصيد مش كفاية (الرصيد 1300)
+[2] مبلغ غلط: اكتب رقم أكبر من صفر
+[3] مبلغ غلط: اكتب رقم أكبر من صفر
+[2] مبلغ غلط: اكتب رقم أكبر من صفر
+[9] اختيار مش موجود: اكتب رقم من 1 لـ 4
+[1] الرصيد: 1300
+[4] مع السلامة
+~~~
+
+إيداع ٥٠٠ وسحب ٢٠٠ من ١٠٠٠ وصّلوا الرصيد ١٣٠٠، والسحب الكبير والمبالغ الغلط **مغيّروش الرصيد** (آخر استعلام لسه ١٣٠٠).
+
+**الكود** (انسخه في الـ Console واضغط Enter):
+
+~~~js atm.js
+// ATM من غير بنك: انسخ الملف ده في الـ Console بتاع Chrome (F12) واضغط Enter
+let balance = 1000;
+
+// بتحوّل اللي اليوزر كتبه لمبلغ، أو null لو مش مبلغ صحيح
+function readAmount(text) {
+  if (text === null || text.trim() === "") return null;
+  const amount = Number(text);
+  if (Number.isNaN(amount) || amount <= 0) return null;
+  return amount;
+}
+
+function deposit(amount) {
+  if (amount === null) return "مبلغ غلط: اكتب رقم أكبر من صفر";
+  balance += amount;
+  return "اتحط " + amount + ". الرصيد: " + balance;
+}
+
+function withdraw(amount) {
+  if (amount === null) return "مبلغ غلط: اكتب رقم أكبر من صفر";
+  if (amount > balance) return "الرصيد مش كفاية (الرصيد " + balance + ")";
+  balance -= amount;
+  return "اتسحب " + amount + ". الرصيد: " + balance;
+}
+
+const MENU = "1) الرصيد  2) إيداع  3) سحب  4) خروج";
+let running = true;
+while (running) {
+  const choice = prompt(MENU);
+  let msg;
+  switch (choice) {
+    case "1":
+      msg = "الرصيد: " + balance;
+      break;
+    case "2":
+      msg = deposit(readAmount(prompt("تودع كام؟")));
+      break;
+    case "3":
+      msg = withdraw(readAmount(prompt("تسحب كام؟")));
+      break;
+    case "4":
+    case null:                       // Cancel = خروج
+      msg = "مع السلامة";
+      running = false;
+      break;
+    default:
+      msg = "اختيار مش موجود: اكتب رقم من 1 لـ 4";
+  }
+  console.log("[" + choice + "] " + msg);
+}
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- [[readAmount(text)]]: كل فحص المبلغ في مكان واحد. بترجّع رقم صحيح أكبر من صفر، أو [[null]] لأي حاجة تانية (Cancel، فاضي، حروف، صفر، سالب). كده [[deposit]] و [[withdraw]] مش محتاجين يكرروا نفس الفحوص.
+- [[deposit]] و [[withdraw]] **بيرجّعوا رسالة** ومبيطبعوش. والقايمة هي اللي بتطبع. فلو عملت واجهة صفحة بعدين، نفس الدوال تشتغل.
+- [[withdraw]] بتفحص الرصيد **قبل** ما تخصم، فالرصيد عمره ما بيبقى سالب ولو لحظة.
+- [[switch (choice)]]: [[prompt]] بيرجّع **نص**، عشان كده [[case "1"]] بعلامات تنصيص. و [[case "4": case null:]] الاتنين بيخرجوا (Cancel كأنها خروج) بالـ fall-through.
+- [[let running = true]] و [[while (running)]]: الـ [[break]] جوه [[switch]] بيخرج من الـ switch بس مش من الـ loop، فاستخدمنا متغير بنقلبه [[false]] عشان الـ loop تقف.
+
+**الغلطات اللي حصلت وأنا ببنيه:**
+
+- كتبت [[case 1:]] بالرقم الأول، فكل اختيار كان بيروح لـ [[default]] («اختيار مش موجود»): [["1" === 1]] بـ [[false]] والـ switch بيقارن بـ [[===]].
+- حطيت [[break]] في [[case "4"]] على أساس إنه هيخرج من البرنامج، والقايمة فضلت تظهر. الـ break قفل الـ switch بس، والحل متغير [[running]].
+- من غير [[Number.isNaN]] في [[readAmount]]، إيداع [[abc]] كان بيخلي الرصيد [[NaN]]، وكل العمليات اللي بعدها تطلع [[NaN]] برضه. مبلغ واحد غلط كان بيبوّظ الحساب كله، عشان كده الفحص قبل أي تعديل على الرصيد.` },
+        { lvl: 'متوسط', t: R`تقرير درجات الفصل`, what: R`array درجات، ودوال صغيرة من التمارين: [[average]] و [[maxOf]] و [[minOf]] و [[countPassed]] (٥٠ أو أكتر)، وتوزيع التقديرات (ممتاز وجيد ومقبول وراسب) في object عدّاد زي [[charCount]]. والدالة الرئيسية [[report(scores)]] بتطبع كل ده. من دروس «تمرين maxOf» و «تمرين charCount» و «if و else if».`, done: R`[[report([90, 45, 72, 100, 58])]] بيطبع المتوسط 73 والأكبر 100 والأصغر 45 والناجحين 4. و [[report([])]] بيطبع «مفيش درجات» بدل NaN أو [[-Infinity]].`, sol: R`**هتشوف إيه:** تقرير من ٥ سطور لكل فصل: الدرجات، والمتوسط، والأكبر والأصغر، وعدد الناجحين، وتوزيع التقديرات بنجوم زي الـ histogram. والفصل الفاضي بيطبع «مفيش درجات» بس.
+
+~~~text الناتج: node report.js
+الدرجات: 90 و 45 و 72 و 100 و 58
+المتوسط: 73
+الأكبر: 100 | الأصغر: 45
+الناجحين: 4 من 5
+  ممتاز: 2 **
+  جيد: 1 *
+  مقبول: 1 *
+  راسب: 1 *
+---
+مفيش درجات
+---
+الدرجات: 49 و 50 و 64 و 65 و 84 و 85
+المتوسط: 66.17
+الأكبر: 85 | الأصغر: 49
+الناجحين: 5 من 6
+  ممتاز: 1 *
+  جيد: 2 **
+  مقبول: 2 **
+  راسب: 1 *
+~~~
+
+التقرير التالت معمول على **الحدود** بالظبط (49 و 50، و 64 و 65، و 84 و 85) عشان أتأكد إن كل درجة راحت للتقدير الصح.
+
+**الكود:**
+
+~~~js report.js
+// تقرير درجات الفصل: دوال صغيرة من التمارين، ودالة report بتجمعهم
+const PASS_MARK = 50;
+
+function sum(scores) {
+  let total = 0;
+  for (const s of scores) total += s;
+  return total;
+}
+
+function average(scores) {
+  return Math.round((sum(scores) / scores.length) * 100) / 100;
+}
+
+function maxOf(scores) {
+  let max = scores[0];
+  for (const s of scores) if (s > max) max = s;
+  return max;
+}
+
+function minOf(scores) {
+  let min = scores[0];
+  for (const s of scores) if (s < min) min = s;
+  return min;
+}
+
+function countPassed(scores) {
+  let count = 0;
+  for (const s of scores) if (s >= PASS_MARK) count++;
+  return count;
+}
+
+function gradeOf(score) {
+  if (score >= 85) return "ممتاز";
+  else if (score >= 65) return "جيد";
+  else if (score >= PASS_MARK) return "مقبول";
+  else return "راسب";
+}
+
+// عدّاد زي charCount، بس المفاتيح التقديرات، وكلها بتبدأ بصفر
+function gradeCounts(scores) {
+  const counts = { "ممتاز": 0, "جيد": 0, "مقبول": 0, "راسب": 0 };
+  for (const s of scores) counts[gradeOf(s)]++;
+  return counts;
+}
+
+function report(scores) {
+  if (scores.length === 0) {
+    console.log("مفيش درجات");
+    return;
+  }
+  console.log("الدرجات:", scores.join(" و "));
+  console.log("المتوسط:", average(scores));
+  console.log("الأكبر:", maxOf(scores), "| الأصغر:", minOf(scores));
+  console.log("الناجحين:", countPassed(scores), "من", scores.length);
+  const counts = gradeCounts(scores);
+  for (const grade in counts) {
+    console.log("  " + grade + ": " + counts[grade] + " " + "*".repeat(counts[grade]));
+  }
+}
+
+report([90, 45, 72, 100, 58]);
+console.log("---");
+report([]);
+console.log("---");
+report([49, 50, 64, 65, 84, 85]);
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- **دوال صغيرة من التمارين:** [[sum]] و [[maxOf]] و [[minOf]] و [[countPassed]] كل واحدة بتعمل حاجة واحدة وبترجّع رقم. [[average]] بتستخدم [[sum]] بدل ما تكرر اللفة، وبتقرّب لقرشين (66.17 مش 66.16666666666667).
+- **[[gradeOf(score)]]:** نفس [[grade]] من درس «if و else if»، والشروط من الأكبر للأصغر.
+- **[[gradeCounts]]:** عدّاد زي [[charCount]] بس المفاتيح هي التقديرات. بدأته بالأربعة **بصفر** عشان التقدير اللي محدش خده يظهر بـ 0 بدل ما يختفي من التقرير. و [[counts[gradeOf(s)]++]] بتزوّد عدّاد التقدير بتاع الدرجة دي.
+- **[[report]]:** الوحيدة اللي بتطبع. أول سطر فيها بيفحص الفاضي ويخرج بـ [[return]] قبل أي حساب.
+- [[scores.join(" و ")]]: بتلزق عناصر الـ array بالنص اللي بينهم.
+
+**الغلطات اللي حصلت وأنا ببنيه:** أول نسخة مكانش فيها فحص الفاضي، و [[report([])]] طلّعت كده:
+
+~~~text report([]) من غير فحص الفاضي
+الدرجات: 
+المتوسط: NaN
+الأكبر: undefined | الأصغر: undefined
+الناجحين: 0 من 0
+  ممتاز: 0 
+  جيد: 0 
+  مقبول: 0 
+  راسب: 0 
+-Infinity
+~~~
+
+- المتوسط [[NaN]] لأن [[0 / 0]].
+- الأكبر والأصغر [[undefined]] لأن [[scores[0]]] مش موجود.
+- والسطر الأخير بيوريك إن لو كنت استخدمت [[Math.max(...scores)]] بدل [[maxOf]] كان هيطلع [[-Infinity]]. (ده اللي المطلوب قال عليه.)
+
+الحل سطر [[if (scores.length === 0)]] في أول [[report]]: الحالة الفاضية بتتقفل مرة واحدة في الأول بدل ما كل دالة تتعامل معاها.` },
+        { lvl: 'كبير', t: R`مكتبة دوال ومعاها اختبارات`, what: R`ملف [[utils.js]] فيه ١٠ دوال من التمارين (sumTo و maxOf و reverse و isPrime و fibonacci و unique و secondLargest...)، وكل دالة بتتأكد من الـ input الأول (لو مش number أو string أو array زي ما هي مستنية، ترجّع [[null]]). وتحتهم دالة [[check(name, actual, expected)]] بتقارن وتطبع ✔ أو ✘ ومعاها المتوقع والفعلي، و ٣ اختبارات على الأقل لكل دالة منهم اختبار طرف (فاضي، صفر، سالب). من وحدة «أساسيات البرمجة» كلها، وخصوصًا «pseudocode» و «اقرا الـ error».`, done: R`[[node utils.js]] بيطبع سطر لكل اختبار وفي الآخر «30/30 عدّوا». لو بوّظت دالة بقصد (مثلًا [[<]] بدل [[<=]] في sumTo) السطر بتاعها بيبقى ✘ وفيه 4950 مقابل 5050، والباقي بيكمل عادي. و [[maxOf("abc")]] بترجّع [[null]] مش error.`, ext: R`زوّد لكل دالة تعليق فيه الـ pseudocode بتاعها، وخلي [[check]] تحسب الوقت بـ [[console.time]]، وزوّد دوال من عندك من مسائل الانترفيو.`, sol: R`**هتشوف إيه:** ملف [[utils.js]] فيه ١٠ دوال من تمارين الوحدة، وكل دالة بترجّع [[null]] لو الـ input من نوع غلط. ولما تشغّله بـ [[node utils.js]] بيشغّل ٣٠ اختبار (٣ لكل دالة، منهم حالة طرف) ويطبع ✔ أو ✘ لكل واحد، وفي الآخر العدد. وملف تاني [[utils.test.js]] بيختبر نفس الدوال بأداة الاختبار اللي جوه Node.
+
+**شجرة الملفات:**
+
+~~~text
+utils-lib/
+├── utils.js        ← الدوال العشرة + check + الـ ٣٠ اختبار
+└── utils.test.js   ← اختبارات node --test
+~~~
+
+**ترتيب البناء:** (١) كل دالة من التمرين بتاعها زي ما هي، (٢) سطر فحص النوع في أولها، (٣) [[check]]، (٤) ٣ اختبارات لكل دالة، (٥) [[module.exports]] وملف [[node --test]].
+
+~~~text الناتج: node utils.js
+✔ sumTo(100)
+✔ sumTo(0) طرف
+✔ sumTo(-3) سالب
+✔ countEvens عادي
+✔ countEvens فاضية
+✔ countEvens نصوص وسالب
+✔ maxOf عادي
+✔ maxOf سالب
+✔ maxOf("abc")
+✔ reverse عادي
+✔ reverse فاضي
+✔ reverse رقم
+✔ factorial(5)
+✔ factorial(0) طرف
+✔ factorial(2.5)
+✔ countVowels عادي
+✔ countVowels كبير
+✔ countVowels null
+✔ isPrime(97)
+✔ isPrime(25) مربع
+✔ isPrime(1) طرف
+✔ fibonacci(7)
+✔ fibonacci(0) فاضي
+✔ fibonacci("5")
+✔ unique عادي
+✔ unique فاضية
+✔ unique مش array
+✔ secondLargest عادي
+✔ secondLargest سالب
+✔ secondLargest عنصر واحد
+30/30 عدّوا
+~~~
+
+**وبعد ما بوّظت [[sumTo]] بقصد** ([[i < n]] بدل [[i <= n]]):
+
+~~~text الناتج: node utils.js (sumTo بايظة)
+✘ sumTo(100) | المتوقع: 5050 | الفعلي: 4950
+✔ sumTo(0) طرف
+✔ sumTo(-3) سالب
+✔ countEvens عادي
+✔ countEvens فاضية
+✔ countEvens نصوص وسالب
+✔ maxOf عادي
+✔ maxOf سالب
+✔ maxOf("abc")
+✔ reverse عادي
+✔ reverse فاضي
+✔ reverse رقم
+✔ factorial(5)
+✔ factorial(0) طرف
+✔ factorial(2.5)
+✔ countVowels عادي
+✔ countVowels كبير
+✔ countVowels null
+✔ isPrime(97)
+✔ isPrime(25) مربع
+✔ isPrime(1) طرف
+✔ fibonacci(7)
+✔ fibonacci(0) فاضي
+✔ fibonacci("5")
+✔ unique عادي
+✔ unique فاضية
+✔ unique مش array
+✔ secondLargest عادي
+✔ secondLargest سالب
+✔ secondLargest عنصر واحد
+29/30 عدّوا
+~~~
+
+سطر واحد بس بقى ✘ وفيه المتوقع والفعلي، والـ ٢٩ التانيين كمّلوا عادي.
+
+**وبأداة Node:**
+
+~~~text الناتج: node --test
+✔ sumTo (0.8107ms)
+✔ maxOf بيرجّع null لأي input غلط (0.1535ms)
+✔ reverse ومعاه إيموجي (0.13ms)
+✔ isPrime على المربعات والأطراف (0.1281ms)
+✔ fibonacci و unique بيرجّعوا arrays (0.695ms)
+✔ secondLargest (0.1432ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 80.3402
+~~~
+
+**الكود:**
+
+~~~js utils.js
+// مكتبة دوال من تمارين «أساسيات البرمجة»، وكل دالة بتفحص الـ input الأول:
+// لو النوع مش اللي مستنياه، بترجّع null بدل ما تعمل error أو ترجّع رقم غلط.
+
+const isNum = (x) => typeof x === "number" && Number.isFinite(x);
+const isWhole = (x) => Number.isInteger(x) && x >= 0;   // عدد صحيح مش سالب
+
+// ١. مجموع من 1 لـ n
+function sumTo(n) {
+  if (!isWhole(n)) return null;
+  let sum = 0;
+  for (let i = 1; i <= n; i++) sum += i;
+  return sum;
+}
+
+// ٢. عدد الزوجي
+function countEvens(arr) {
+  if (!Array.isArray(arr)) return null;
+  let count = 0;
+  for (const x of arr) if (isNum(x) && x % 2 === 0) count++;
+  return count;
+}
+
+// ٣. أكبر رقم (null للفاضية)
+function maxOf(arr) {
+  if (!Array.isArray(arr) || arr.length === 0) return null;
+  let max = arr[0];
+  for (const x of arr) if (x > max) max = x;
+  return max;
+}
+
+// ٤. قلب نص (بالحروف الحقيقية، فالإيموجي ميتكسرش)
+function reverse(str) {
+  if (typeof str !== "string") return null;
+  let out = "";
+  for (const ch of str) out = ch + out;
+  return out;
+}
+
+// ٥. factorial
+function factorial(n) {
+  if (!isWhole(n)) return null;
+  let result = 1;
+  for (let i = 2; i <= n; i++) result *= i;
+  return result;
+}
+
+// ٦. عدد حروف العلة
+function countVowels(str) {
+  if (typeof str !== "string") return null;
+  let count = 0;
+  for (const ch of str.toLowerCase()) if ("aeiou".includes(ch)) count++;
+  return count;
+}
+
+// ٧. أولي؟
+function isPrime(n) {
+  if (!Number.isInteger(n)) return null;
+  if (n < 2) return false;
+  for (let d = 2; d * d <= n; d++) if (n % d === 0) return false;
+  return true;
+}
+
+// ٨. أول n رقم Fibonacci
+function fibonacci(n) {
+  if (!isWhole(n)) return null;
+  const out = [];
+  let a = 0, b = 1;
+  for (let i = 0; i < n; i++) {
+    out.push(a);
+    [a, b] = [b, a + b];
+  }
+  return out;
+}
+
+// ٩. من غير تكرار، بترتيب أول ظهور
+function unique(arr) {
+  if (!Array.isArray(arr)) return null;
+  const out = [];
+  for (const x of arr) if (!out.includes(x)) out.push(x);
+  return out;
+}
+
+// ١٠. تاني أكبر رقم مختلف (undefined لو مفيش)
+function secondLargest(arr) {
+  if (!Array.isArray(arr)) return null;
+  let first = -Infinity, second = -Infinity;
+  for (const x of arr) {
+    if (x > first) {
+      second = first;
+      first = x;
+    } else if (x < first && x > second) {
+      second = x;
+    }
+  }
+  return second === -Infinity ? undefined : second;
+}
+
+// ---------- الاختبارات ----------
+let passed = 0, total = 0;
+
+// بتقارن بـ JSON.stringify عشان الـ arrays: [1, 2] === [1, 2] بـ false
+function check(name, actual, expected) {
+  total++;
+  const ok = JSON.stringify(actual) === JSON.stringify(expected);
+  if (ok) {
+    passed++;
+    console.log("✔ " + name);
+  } else {
+    console.log("✘ " + name + " | المتوقع: " + JSON.stringify(expected) + " | الفعلي: " + JSON.stringify(actual));
+  }
+}
+
+function runChecks() {
+  check("sumTo(100)", sumTo(100), 5050);
+  check("sumTo(0) طرف", sumTo(0), 0);
+  check("sumTo(-3) سالب", sumTo(-3), null);
+
+  check("countEvens عادي", countEvens([1, 2, 3, 4]), 2);
+  check("countEvens فاضية", countEvens([]), 0);
+  check("countEvens نصوص وسالب", countEvens([2, "4", -6]), 2);
+
+  check("maxOf عادي", maxOf([3, 9, 2]), 9);
+  check("maxOf سالب", maxOf([-5, -2, -9]), -2);
+  check("maxOf(\"abc\")", maxOf("abc"), null);
+
+  check("reverse عادي", reverse("Cairo"), "oriaC");
+  check("reverse فاضي", reverse(""), "");
+  check("reverse رقم", reverse(123), null);
+
+  check("factorial(5)", factorial(5), 120);
+  check("factorial(0) طرف", factorial(0), 1);
+  check("factorial(2.5)", factorial(2.5), null);
+
+  check("countVowels عادي", countVowels("Egypt"), 1);
+  check("countVowels كبير", countVowels("AEIOU"), 5);
+  check("countVowels null", countVowels(null), null);
+
+  check("isPrime(97)", isPrime(97), true);
+  check("isPrime(25) مربع", isPrime(25), false);
+  check("isPrime(1) طرف", isPrime(1), false);
+
+  check("fibonacci(7)", fibonacci(7), [0, 1, 1, 2, 3, 5, 8]);
+  check("fibonacci(0) فاضي", fibonacci(0), []);
+  check("fibonacci(\"5\")", fibonacci("5"), null);
+
+  check("unique عادي", unique(["a", "b", "a"]), ["a", "b"]);
+  check("unique فاضية", unique([]), []);
+  check("unique مش array", unique("aab"), null);
+
+  check("secondLargest عادي", secondLargest([3, 9, 9]), 3);
+  check("secondLargest سالب", secondLargest([-1, -2]), -2);
+  check("secondLargest عنصر واحد", secondLargest([1]), undefined);
+
+  console.log(passed + "/" + total + " عدّوا");
+}
+
+// الاختبارات بتشتغل لما تشغّل الملف نفسه (node utils.js)، مش لما ملف تاني يعمله require
+if (require.main === module) runChecks();
+
+module.exports = { sumTo, countEvens, maxOf, reverse, factorial, countVowels, isPrime, fibonacci, unique, secondLargest };
+~~~
+
+~~~js utils.test.js
+// نفس الحالات بأداة الاختبار اللي جوه Node: node --test
+const test = require("node:test");
+const assert = require("node:assert");
+const u = require("./utils.js");
+
+test("sumTo", () => {
+  assert.strictEqual(u.sumTo(100), 5050);
+  assert.strictEqual(u.sumTo(0), 0);
+  assert.strictEqual(u.sumTo(-3), null);
+});
+
+test("maxOf بيرجّع null لأي input غلط", () => {
+  assert.strictEqual(u.maxOf([-5, -2, -9]), -2);
+  assert.strictEqual(u.maxOf("abc"), null);
+  assert.strictEqual(u.maxOf([]), null);
+});
+
+test("reverse ومعاه إيموجي", () => {
+  assert.strictEqual(u.reverse("ab😀"), "😀ba");
+  assert.strictEqual(u.reverse(123), null);
+});
+
+test("isPrime على المربعات والأطراف", () => {
+  assert.strictEqual(u.isPrime(97), true);
+  assert.strictEqual(u.isPrime(25), false);
+  assert.strictEqual(u.isPrime(1), false);
+});
+
+test("fibonacci و unique بيرجّعوا arrays", () => {
+  assert.deepStrictEqual(u.fibonacci(7), [0, 1, 1, 2, 3, 5, 8]);
+  assert.deepStrictEqual(u.unique(["a", "b", "a"]), ["a", "b"]);
+});
+
+test("secondLargest", () => {
+  assert.strictEqual(u.secondLargest([3, 9, 9]), 3);
+  assert.strictEqual(u.secondLargest([5, 5]), undefined);
+});
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- **[[isNum]] و [[isWhole]]:** دالتين صغيرين للفحص بيتستخدموا في كذا دالة. [[Number.isFinite(x)]] بترفض [[NaN]] و [[Infinity]]، و [[Number.isInteger(x)]] بترفض الكسور ([[factorial(2.5)]] بقت [[null]]).
+- **سطر الفحص في أول كل دالة:** لو النوع غلط، [[return null]] على طول قبل أي حساب. [[Array.isArray]] هي الطريقة الصح تسأل «ده array؟» ([[typeof []]] بيقول [["object"]]).
+- **[[check(name, actual, expected)]]:** بتقارن وتعدّ. المقارنة بـ [[JSON.stringify]] (بتحوّل القيمة لنص) عشان الـ arrays: نصّين زي بعض يبقوا متساويين.
+- **[[require.main === module]]:** بيبقى [[true]] لما الملف ده هو اللي اتشغّل بـ [[node utils.js]]، و [[false]] لما ملف تاني عمله [[require]]. كده الاختبارات بتشتغل في الحالة الأولى بس، وملف [[node --test]] بياخد الدوال من غير ما يطبع الـ ٣٠ سطر.
+- **[[module.exports]]:** الدوال اللي ملف تاني يقدر ياخدها بـ [[require("./utils.js")]].
+- **[[node --test]]:** بيدوّر على الملفات اللي اسمها [[*.test.js]] ويشغّلها. [[test(name, fn)]] اختبار، و [[assert.strictEqual(a, b)]] بيقارن بـ [[===]]، و [[assert.deepStrictEqual]] بيقارن الـ arrays عنصر عنصر. لو أي assert وقع، الاختبار بيبقى ✖ ومعاه الفرق.
+
+**الغلطات اللي حصلت وأنا ببنيه:** أول نسخة من [[check]] كانت بتقارن بـ [[actual === expected]]:
+
+~~~text الناتج بمقارنة ===
+✔ sumTo(100)
+✔ sumTo(0) طرف
+✔ sumTo(-3) سالب
+✔ countEvens عادي
+✔ countEvens فاضية
+✔ countEvens نصوص وسالب
+✔ maxOf عادي
+✔ maxOf سالب
+✔ maxOf("abc")
+✔ reverse عادي
+✔ reverse فاضي
+✔ reverse رقم
+✔ factorial(5)
+✔ factorial(0) طرف
+✔ factorial(2.5)
+✔ countVowels عادي
+✔ countVowels كبير
+✔ countVowels null
+✔ isPrime(97)
+✔ isPrime(25) مربع
+✔ isPrime(1) طرف
+✘ fibonacci(7) | المتوقع: [0,1,1,2,3,5,8] | الفعلي: [0,1,1,2,3,5,8]
+✘ fibonacci(0) فاضي | المتوقع: [] | الفعلي: []
+✔ fibonacci("5")
+✘ unique عادي | المتوقع: ["a","b"] | الفعلي: ["a","b"]
+✘ unique فاضية | المتوقع: [] | الفعلي: []
+✔ unique مش array
+✔ secondLargest عادي
+✔ secondLargest سالب
+✔ secondLargest عنصر واحد
+26/30 عدّوا
+~~~
+
+٤ اختبارات وقعت والمتوقع والفعلي **شكلهم واحد**! لأن [[===]] على الـ arrays بتسأل «نفس الـ array في الذاكرة؟» مش «نفس العناصر؟» (زي تمرين [[uniqueById]]). الحل: [[JSON.stringify]] على الناحيتين. (حدوده: مبيفرقش بين بعض الحالات النادرة زي [[NaN]] و [[null]] جوه array، وعشان كده أداة Node عندها [[deepStrictEqual]].)` },
+        { lvl: 'كبير', t: R`فاحص قوة الباسورد`, what: R`دالة [[strength(pw)]] بتلف على الحروف بـ for...of وبتعدّ الحروف الكبيرة والصغيرة والأرقام والرموز، وبترجّع object فيه [[score]] من 0 لـ 4 و [[level]] (ضعيف ومتوسط وقوي) و [[reasons]] array بالناقص بالعربي. والصفحة (أو الـ Console) بتسأل بـ [[prompt]] وتطبع النتيجة. من دروس «for...of و for...in» و «&& و || و !» و «if و else if» و «مقدمة الدوال function».`, done: R`[[strength("abc")]] بيرجّع ضعيف وفيه ٣ أسباب على الأقل (قصير، مفيش أرقام، مفيش حروف كبيرة...)، و [[strength("Abc12345!")]] بيرجّع قوي و reasons فاضية. والـ input الفاضي أو المسافات بس أو [[null]] (لما تدوس Cancel) بيرجعوا ضعيف من غير error.`, ext: R`زوّد قايمة باسوردات مشهورة ([[123456]] و [[password]]) أي واحد منهم يبقى ضعيف على طول، واطبع أطول جزء متكرر في الباسورد.`, sol: R`**هتشوف إيه:** صفحة بتسألك باسورد بـ [[prompt]] وتكتب تحت العنوان قوته من ٤ والحاجات الناقصة بالعربي، ونفس الـ object كامل في الـ Console. والدالة نفسها في ملف لوحده عليه اختبارات بـ [[node --test]].
+
+**شجرة الملفات:**
+
+~~~text
+password-checker/
+├── strength.js        ← الدالة strength (بتشتغل في المتصفح وفي Node)
+├── index.html         ← الصفحة: prompt وعرض النتيجة
+├── demo.js            ← تجربة سريعة على ٨ باسوردات في Node
+└── strength.test.js   ← اختبارات node --test
+~~~
+
+**في Chrome:** فتحت [[index.html]] (من سيرفر محلي) ٣ مرات: كتبت [[abc]]، وبعدين [[Abc12345!]]، وبعدين دوست Cancel. اللي اتكتب في الصفحة:
+
+~~~text الصفحة في Chrome
+abc        ← القوة: ضعيف (0/4) | الناقص: قصير (أقل من 8 حروف)، مفيش حروف كبيرة، مفيش أرقام، مفيش رموز زي ! أو @
+Abc12345!  ← القوة: قوي (4/4)
+Cancel     ← القوة: ضعيف (0/4) | الناقص: الباسورد فاضي
+~~~
+
+وفي الـ Console كل مرة: [[{score: 0, level: 'ضعيف', reasons: Array(4)}]] ثم [[{score: 4, level: 'قوي', reasons: Array(0)}]] ثم [[{score: 0, level: 'ضعيف', reasons: Array(1)}]].
+
+**في Node:**
+
+~~~text الناتج: node demo.js
+"abc" ← {
+  score: 0,
+  level: 'ضعيف',
+  reasons: [
+    'قصير (أقل من 8 حروف)',
+    'مفيش حروف كبيرة',
+    'مفيش أرقام',
+    'مفيش رموز زي ! أو @'
+  ]
+}
+"Abc12345!" ← { score: 4, level: 'قوي', reasons: [] }
+"password" ← {
+  score: 1,
+  level: 'ضعيف',
+  reasons: [ 'مفيش حروف كبيرة', 'مفيش أرقام', 'مفيش رموز زي ! أو @' ]
+}
+"PASSWORD1" ← {
+  score: 2,
+  level: 'متوسط',
+  reasons: [ 'مفيش حروف صغيرة', 'مفيش رموز زي ! أو @' ]
+}
+"" ← { score: 0, level: 'ضعيف', reasons: [ 'الباسورد فاضي' ] }
+"   " ← { score: 0, level: 'ضعيف', reasons: [ 'الباسورد فاضي' ] }
+null ← { score: 0, level: 'ضعيف', reasons: [ 'الباسورد فاضي' ] }
+"كلمة سر 123!" ← { score: 3, level: 'متوسط', reasons: [ 'مفيش حروف كبيرة' ] }
+~~~
+
+~~~text الناتج: node --test
+✔ abc ضعيف وفيه ٣ أسباب على الأقل (0.8016ms)
+✔ Abc12345! قوي ومفيش أسباب (0.6244ms)
+✔ الفاضي والمسافات و null ضعيف من غير error (0.1299ms)
+✔ الحدود: 7 حروف قصير و 8 لأ (0.1214ms)
+✔ متوسط لما ناقص نوعين (0.6579ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 77.4655
+~~~
+
+**الكود:**
+
+~~~js strength.js
+// فاحص قوة الباسورد: بيعدّ أنواع الحروف وبيرجّع score و level و reasons
+const MIN_LENGTH = 8;
+
+function strength(pw) {
+  // Cancel في prompt بيرجّع null، وأي حاجة مش نص نعاملها كأنها فاضية
+  if (typeof pw !== "string" || pw.trim() === "") {
+    return { score: 0, level: "ضعيف", reasons: ["الباسورد فاضي"] };
+  }
+
+  let upper = 0, lower = 0, digits = 0, symbols = 0, length = 0;
+  for (const ch of pw) {
+    length++;                                   // for...of بتعدّ الإيموجي حرف واحد
+    if (ch >= "A" && ch <= "Z") upper++;
+    else if (ch >= "a" && ch <= "z") lower++;
+    else if (ch >= "0" && ch <= "9") digits++;
+    else if (ch !== " ") symbols++;
+  }
+
+  const reasons = [];
+  let score = 0;
+  if (length >= MIN_LENGTH) score++;
+  else reasons.push("قصير (أقل من " + MIN_LENGTH + " حروف)");
+  if (upper > 0 && lower > 0) score++;
+  else if (upper === 0) reasons.push("مفيش حروف كبيرة");
+  else reasons.push("مفيش حروف صغيرة");
+  if (digits > 0) score++;
+  else reasons.push("مفيش أرقام");
+  if (symbols > 0) score++;
+  else reasons.push("مفيش رموز زي ! أو @");
+
+  let level;
+  if (score <= 1) level = "ضعيف";
+  else if (score <= 3) level = "متوسط";
+  else level = "قوي";
+
+  return { score, level, reasons };
+}
+
+// عشان ملف الاختبار يقدر يعمل require (في المتصفح module مش موجود فالسطر ده بيتنط)
+if (typeof module !== "undefined") module.exports = { strength };
+~~~
+
+~~~html index.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <title>فاحص قوة الباسورد</title>
+</head>
+<body>
+  <h1>فاحص قوة الباسورد</h1>
+  <p id="result">افتح الـ Console (F12) لو عايز تشوف التفاصيل.</p>
+  <script src="strength.js"></script>
+  <script>
+    const pw = prompt("اكتب باسورد تجربة:");
+    const r = strength(pw);
+    let text = "القوة: " + r.level + " (" + r.score + "/4)";
+    if (r.reasons.length > 0) text += " | الناقص: " + r.reasons.join("، ");
+    document.getElementById("result").textContent = text;
+    console.log(r);
+  </script>
+</body>
+</html>
+~~~
+
+~~~js demo.js
+const { strength } = require("./strength.js");
+for (const pw of ["abc", "Abc12345!", "password", "PASSWORD1", "", "   ", null, "كلمة سر 123!"]) {
+  console.log(JSON.stringify(pw), "←", strength(pw));
+}
+~~~
+
+~~~js strength.test.js
+const test = require("node:test");
+const assert = require("node:assert");
+const { strength } = require("./strength.js");
+
+test("abc ضعيف وفيه ٣ أسباب على الأقل", () => {
+  const r = strength("abc");
+  assert.strictEqual(r.level, "ضعيف");
+  assert.ok(r.reasons.length >= 3);
+});
+
+test("Abc12345! قوي ومفيش أسباب", () => {
+  assert.deepStrictEqual(strength("Abc12345!"), { score: 4, level: "قوي", reasons: [] });
+});
+
+test("الفاضي والمسافات و null ضعيف من غير error", () => {
+  for (const pw of ["", "   ", null, undefined]) {
+    assert.strictEqual(strength(pw).level, "ضعيف");
+  }
+});
+
+test("الحدود: 7 حروف قصير و 8 لأ", () => {
+  assert.ok(strength("Ab1!xyz").reasons.includes("قصير (أقل من 8 حروف)"));
+  assert.ok(!strength("Ab1!xyzw").reasons.includes("قصير (أقل من 8 حروف)"));
+});
+
+test("متوسط لما ناقص نوعين", () => {
+  assert.strictEqual(strength("password").level, "ضعيف");
+  assert.strictEqual(strength("Password1").level, "متوسط");
+});
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- **أول سطر في [[strength]]:** أي حاجة مش نص ([[null]] من Cancel، أو [[undefined]]) أو نص مسافات بس، بترجع ضعيف بسبب واحد واضح. من غيره، [[null]] كانت هتعمل error في الـ [[for...of]].
+- **اللفة:** [[for...of]] على الحروف، وكل حرف بيتعدّ في نوع واحد بالمقارنة بين الحروف ([[ch >= "A" && ch <= "Z"]]). والرمز = أي حاجة مش حرف ولا رقم ولا مسافة. و [[length]] بنعدّه في نفس اللفة عشان الإيموجي يتحسب حرف واحد.
+- **الـ score:** ٤ نقط: الطول ٨ أو أكتر، وحروف كبيرة **وصغيرة** مع بعض، وأرقام، ورموز. وكل نقطة ناقصة بتزوّد سبب في [[reasons]].
+- **الـ level:** 0 و 1 ضعيف، 2 و 3 متوسط، 4 قوي.
+- **[[if (typeof module !== "undefined")]]:** في Node فيه حاجة اسمها [[module]]، فالدالة بتتصدّر لملف الاختبار. في المتصفح مش موجودة، فالسطر بيتنط من غير error. كده نفس الملف شغال في المكانين.
+- **[[index.html]]:** [[<script src="strength.js">]] بيحمّل الدالة الأول، وبعدها السكربت اللي بيسأل ويكتب في [[#result]].
+- **الاختبارات:** حالات المطلوب بالظبط (abc، و Abc12345!، والفاضي والمسافات و null)، وحد الطول (٧ حروف ضد ٨)، والمتوسط.
+
+**الغلطات اللي حصلت وأنا ببنيه:**
+
+- أول نسخة كانت بتعدّ المسافة رمز، فـ [["        "]] (٨ مسافات) كانت بتاخد نقطة الطول ونقطة الرموز وتطلع «متوسط»! الحل: [[pw.trim() === ""]] في الأول، و [[ch !== " "]] في شرط الرمز.
+- كنت حاطط سبب «مفيش حروف كبيرة» لما الكبيرة موجودة والصغيرة لأ ([["PASSWORD1"]])، فالرسالة كانت كدابة. قسمت الحالة: لو مفيش كبيرة قول كده، غير كده قول «مفيش حروف صغيرة».
+- **حاجة لسه موجودة وعارفها:** الحروف العربي ([["كلمة سر 123!"]] في demo) بتتعدّ رموز لأنها مش بين A و Z. هنا مش مشكلة كبيرة (بتزوّد التنوع)، بس لو عايز تعاملها صح محتاج regex بـ Unicode، وده في وحدة «النصوص بعمق».` },
+        { lvl: 'فكرة', t: R`حاجة بتعملها بالآلة الحاسبة`, what: R`اختار حسبة بتعملها بإيدك كل شوية: تقسيم حساب الخروجة على الصحاب، ولا ساعات مذاكرتك في الأسبوع، ولا مصاريف الشهر، ولا جدول الأقساط. اكتب الـ pseudocode الأول، وبعدين حوّلها لبرنامج بدوال صغيرة، وجرّبه على أرقام حقيقية من حياتك.`, done: R`البرنامج بيطلّع نفس الرقم اللي حسبته بإيدك على ٣ أمثلة حقيقية، وفيه حالة طرف واحدة على الأقل اتعاملت معاها (حد مدفعش، يوم مفيهوش مذاكرة، قسط آخر شهر مختلف).`, ext: R`خلي الأرقام تيجي من [[prompt]] بدل ما تكون مكتوبة في الكود، وزوّد ملخص في الآخر (أكتر واحد دفع، أحسن يوم...).`, sol: R`**نسخة نموذجية: تقسيم حساب الخروجة على الصحاب.** اخترتها لأنها حسبة بتتعمل بإيدك كتير وبتتغلط فيها: مين دفع كام، ونصيب كل واحد، ومين عليه لمين، والقروش اللي مبتتقسمش.
+
+**هتشوف إيه:** لكل خروجة، الإجمالي، وسطر لكل واحد فيه دفع كام ونصيبه كام وهل ليه فلوس ولا عليه، وفي الآخر مجموع الفروق (لازم يبقى صفر: اللي ليهم = اللي عليهم بالظبط).
+
+~~~text الناتج: node split.js
+الإجمالي: 450.00 جنيه على 3 أفراد
+  Omar: دفع 450.00، نصيبه 150.00 ← ليه 300.00
+  Sara: دفع 0.00، نصيبه 150.00 ← عليه 150.00
+  Ali: دفع 0.00، نصيبه 150.00 ← عليه 150.00
+  (مجموع الفروق: 0)
+الإجمالي: 300.00 جنيه على 4 أفراد
+  Mona: دفع 120.50، نصيبه 75.00 ← ليه 45.50
+  Hany: دفع 80.00، نصيبه 75.00 ← ليه 5.00
+  Nour: دفع 99.50، نصيبه 75.00 ← ليه 24.50
+  Karim: دفع 0.00، نصيبه 75.00 ← عليه 75.00
+  (مجموع الفروق: 0)
+الإجمالي: 100.00 جنيه على 3 أفراد
+  Youssef: دفع 100.00، نصيبه 33.34 ← ليه 66.66
+  Eman: دفع 0.00، نصيبه 33.33 ← عليه 33.33
+  Tarek: دفع 0.00، نصيبه 33.33 ← عليه 33.33
+  (مجموع الفروق: 0)
+~~~
+
+اتأكدت بإيدي من التلات أمثلة: ٤٥٠ ÷ ٣ = ١٥٠، و (١٢٠٫٥ + ٨٠ + ٩٩٫٥) = ٣٠٠ ÷ ٤ = ٧٥، و ١٠٠ ÷ ٣ = ٣٣٫٣٣ والقرش الزيادة على واحد.
+
+**الكود** (والـ pseudocode مكتوب فوقه كتعليقات، اتكتب الأول):
+
+~~~js split.js
+// تقسيم حساب الخروجة: كل واحد دفع كام، ونصيب كل واحد، ومين يدفع لمين
+// الـ pseudocode:
+// ١. حوّل كل المبالغ لقروش (أعداد صحيحة) عشان القسمة متطلعش كسور غريبة
+// ٢. الإجمالي = مجموع اللي اتدفع
+// ٣. النصيب = الإجمالي ÷ عدد الناس (من غير كسر)، والقروش اللي فاضلة تتوزع قرش قرش على أول الناس
+// ٤. لكل واحد: الفرق = اللي دفعه − نصيبه (موجب: له فلوس، سالب: عليه فلوس)
+// ٥. اطبع الملخص
+
+function toPiasters(pounds) {
+  return Math.round(pounds * 100);
+}
+
+function toPounds(piasters) {
+  return (piasters / 100).toFixed(2);
+}
+
+function shares(total, count) {
+  const base = Math.floor(total / count);
+  let extra = total - base * count;       // القروش اللي مبتتقسمش
+  const out = [];
+  for (let i = 0; i < count; i++) {
+    if (extra > 0) {
+      out.push(base + 1);
+      extra--;
+    } else {
+      out.push(base);
+    }
+  }
+  return out;
+}
+
+function splitBill(friends) {
+  let total = 0;
+  for (const f of friends) total += toPiasters(f.paid);
+  const each = shares(total, friends.length);
+
+  console.log("الإجمالي:", toPounds(total), "جنيه على", friends.length, "أفراد");
+  let check = 0;
+  for (let i = 0; i < friends.length; i++) {
+    const f = friends[i];
+    const diff = toPiasters(f.paid) - each[i];
+    check += diff;
+    let status;
+    if (diff > 0) status = "ليه " + toPounds(diff);
+    else if (diff < 0) status = "عليه " + toPounds(-diff);
+    else status = "خالص";
+    console.log("  " + f.name + ": دفع " + toPounds(toPiasters(f.paid)) + "، نصيبه " + toPounds(each[i]) + " ← " + status);
+  }
+  console.log("  (مجموع الفروق:", check + ")");
+}
+
+// ١. خروجة كافيه: واحد دفع كله
+splitBill([{ name: "Omar", paid: 450 }, { name: "Sara", paid: 0 }, { name: "Ali", paid: 0 }]);
+// ٢. كل واحد دفع جزء
+splitBill([{ name: "Mona", paid: 120.5 }, { name: "Hany", paid: 80 }, { name: "Nour", paid: 99.5 }, { name: "Karim", paid: 0 }]);
+// ٣. حالة طرفية: 100 على 3 (مبتتقسمش بالظبط)
+splitBill([{ name: "Youssef", paid: 100 }, { name: "Eman", paid: 0 }, { name: "Tarek", paid: 0 }]);
+~~~
+
+**ليه التصميم ده:**
+
+- **الحساب كله بالقروش:** [[toPiasters]] بتحوّل لعدد صحيح ([[Math.round(pounds * 100)]])، والحساب كله أعداد صحيحة، والتحويل لجنيه بيحصل في الطباعة بس ([[toPounds]]، و [[toFixed(2)]] بتكتب الرقم برقمين بعد العلامة دايمًا: [["75.00"]]).
+- **[[shares(total, count)]]:** النصيب الأساسي من غير كسر ([[Math.floor]])، والقروش الباقية بتتوزع قرش قرش على أول الناس. فمجموع الأنصبة = الإجمالي بالظبط، دايمًا.
+- **الفرق = اللي دفعه − نصيبه:** موجب يبقى «ليه»، وسالب «عليه». ومجموع الفروق بيتحسب في [[check]] كاختبار جوه البرنامج: لو طلع مش صفر يبقى فيه غلطة.
+- **دوال صغيرة** بدل حسبة واحدة طويلة: كل دالة اتجرّبت لوحدها، وزي ما الـ pseudocode قال بالظبط.
+
+**الحالة الطرفية اللي اتعاملت معاها:** ١٠٠ جنيه على ٣. أول نسخة كانت قسمة عادية وتقريب:
+
+~~~js naive.js
+// أول نسخة: قسمة عادية وتقريب لقرشين
+const share = Math.round((100 / 3) * 100) / 100;
+console.log(100 / 3, share, share * 3);
+~~~
+
+~~~text الناتج
+33.333333333333336 33.33 99.99
+~~~
+
+كل واحد نصيبه 33.33، ومجموعهم 99.99: **قرش ضايع** محدش دفعه. في خروجة صغيرة مش فارق، بس الطريقة غلط وفي أرقام أكبر أو ناس أكتر الفرق بيكبر. التوزيع بالقروش حلها: 33.34 + 33.33 + 33.33 = 100 بالظبط. وكمان حالة «حد مدفعش خالص» (Sara و Ali و Karim) شغالة من غير أي [[if]] خاص، لأن [[paid: 0]] رقم عادي.` }
       ],
       items: [
         {
@@ -65,12 +1103,171 @@ console.log("أهلًا " + name);
 console.log("الإجمالي:", total, "جنيه");`,
           try: R`افتح أي صفحة في المتصفح واضغط [[F12]] (أو كليك يمين ثم Inspect) واختار Console. اكتب [[console.log("Hello World")]] واضغط Enter. بعدين جرّب input حقيقي: اكتب [[const userName = prompt("اسمك إيه؟")]] واكتب اسمك في المربع، وبعدها [[console.log("أهلًا " + userName)]]. آخر حاجة: اعمل فولدر [[lab/js]] وجواه ملف [[hello.js]] فيه كود المثال، وشغّله من الترمنال وانت جوه الفولدر بـ [[node hello.js]].`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ملف فيه ٣ سطور: [[console.log(2 + 3)]] و [[console.log("2" + 3)]] و [[console.log("2 + 3")]]. اكتب على ورقة هيطبع إيه بالترتيب، وبعدين شغّله بـ [[node]].`, done: R`كتبت قبل التشغيل [[5]] ثم [[23]] ثم [[2 + 3]]، والتشغيل طلّع نفسهم بالظبط. وتقدر تقول ليه التالت اتطبع زي ما هو (جوه علامات تنصيص يبقى نص، مش حساب).` },
-            { lvl: 'سريع', t: R`**أشكال:** من غير loops (لسه مأخدناهاش)، اكتب ٤ سطور [[console.log]] تطبع مثلث نجوم: نجمة، ونجمتين، و ٣، و ٤. وبعدين عدّل السطور عشان يطلع مقلوب.`, done: R`أول تشغيل بيطبع [[*]] و [[**]] و [[***]] و [[****]] كل واحد في سطر، والتاني بيبدأ بـ [[****]] ويخلص بـ [[*]]. ولاحظت إن ترتيب السطور في الملف هو ترتيب الناتج.` },
-            { lvl: 'تطبيق', t: R`**ابني:** ملف [[receipt.js]] بيطبع إيصال صغير: ٣ سطور منتجات وسطر الإجمالي، وشغّله بـ [[node receipt.js]].`, done: R`بيطبع ٤ سطور بنفس الترتيب كل مرة، ولو غيّرت سعر في الملف وشغّلت تاني الرقم الجديد بيظهر.` },
-            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** شغّل [[node --help]] ودوّر على الخيار اللي بيشغّل كود صغير من سطر الأوامر ويطبع نتيجته من غير ما تعمل ملف.`, done: R`لقيت [[-p]] (أو [[--print]])، و [[node -p "2 + 3"]] بيطبع [[5]] على طول. وعرفت الفرق بينه وبين [[-e]]: [[-e]] بيشغّل بس، فلازم تكتب [[console.log]] بنفسك.` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** امسح القوس الأخير من [[console.log("hi")]] في الملف وشغّله بـ node، واقرا الرسالة قبل ما تصلّح.`, done: R`node بيطبع [[SyntaxError: missing ) after argument list]] ومعاها اسم الملف ورقم السطر، ومفيش ولا سطر من البرنامج اشتغل (حتى السطور اللي قبل الغلطة)، ولما ترجّع القوس بيشتغل عادي.` },
-            { lvl: 'تحدي', t: R`**اشرحها:** اكتب لزميل لسه بادئ ٣ سطور: الكود في الـ Console بيشتغل فين، وفي ملف بـ [[node file.js]] بيشتغل فين، والكود بيضيع ولا بيفضل في كل حالة.`, done: R`الـ ٣ سطور فيهم: الـ Console جوه المتصفح والكود بيضيع لما تقفل أو تعمل refresh، والملف بيشتغل بـ Node على جهازك ومحفوظ تشغّله تاني، وإن الاتنين نفس لغة JavaScript. وزميلك قدر يشغّل ملف بنفسه من الشرح ده.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** ملف فيه ٣ سطور: [[console.log(2 + 3)]] و [[console.log("2" + 3)]] و [[console.log("2 + 3")]]. اكتب على ورقة هيطبع إيه بالترتيب، وبعدين شغّله بـ [[node]].`, done: R`كتبت قبل التشغيل [[5]] ثم [[23]] ثم [[2 + 3]]، والتشغيل طلّع نفسهم بالظبط. وتقدر تقول ليه التالت اتطبع زي ما هو (جوه علامات تنصيص يبقى نص، مش حساب).`, sol: R`~~~js predict.js
+console.log(2 + 3);
+console.log("2" + 3);
+console.log("2 + 3");
+~~~
+
+~~~text الناتج: node predict.js
+5
+23
+2 + 3
+~~~
+
+**ليه كل سطر طلع كده:**
+
+- [[2 + 3]]: رقمين من غير علامات تنصيص، فـ [[+]] بتجمع: **5**.
+- [["2" + 3]]: الأول نص (جوه [[""]]) والتاني رقم. لما [[+]] تلاقي نص في أي ناحية بتلزق مش بتجمع، فالـ 3 بتتحوّل لنص [["3"]] وتتلزق جنب [["2"]]: **23**.
+- [["2 + 3"]]: كل الكلام جوه علامات التنصيص، يعني نص واحد. JavaScript مبتحسبش اللي جوه النص، بتطبعه زي ما هو بالمسافات: **2 + 3**.
+
+**الغلطة اللي ناس كتير بتقع فيها:** إنهم يكتبوا للسطر التاني 5 لأن «2 و 3 أرقام». بس [["2"]] مش رقم، ده نص شكله رقم. وده بالظبط اللي بيحصل لما رقم ييجي من فورم: بيوصل نص، و [[+]] بتلزق. الفرق بين النص والرقم هتشوفه بالتفصيل في الدرس الجاي.` },
+            { lvl: 'سريع', t: R`**أشكال:** من غير loops (لسه مأخدناهاش)، اكتب ٤ سطور [[console.log]] تطبع مثلث نجوم: نجمة، ونجمتين، و ٣، و ٤. وبعدين عدّل السطور عشان يطلع مقلوب.`, done: R`أول تشغيل بيطبع [[*]] و [[**]] و [[***]] و [[****]] كل واحد في سطر، والتاني بيبدأ بـ [[****]] ويخلص بـ [[*]]. ولاحظت إن ترتيب السطور في الملف هو ترتيب الناتج.`, sol: R`~~~js stars.js
+// المثلث العادي
+console.log("*");
+console.log("**");
+console.log("***");
+console.log("****");
+// المقلوب: نفس السطور بترتيب عكسي
+console.log("****");
+console.log("***");
+console.log("**");
+console.log("*");
+~~~
+
+~~~text الناتج: node stars.js
+*
+**
+***
+****
+****
+***
+**
+*
+~~~
+
+**ليه كده:**
+
+- كل [[console.log]] بيطبع اللي جوه القوسين وبعده سطر جديد، فكل سطر في الملف بقى سطر في الناتج.
+- النجوم جوه علامات تنصيص عشان هي نص نطبعه زي ما هو، مش حساب ([[*]] من غير تنصيص معناها ضرب).
+- المقلوب مفيهوش أي حاجة جديدة: نفس الأربع سطور بس بالترتيب العكسي. الكمبيوتر بينفّذ من فوق لتحت سطر سطر، فترتيب السطور في الملف هو ترتيب الناتج.
+
+**الغلطة الشائعة:** تنسى علامات التنصيص وتكتب [[console.log(*)]]، فيطلع [[SyntaxError: Unexpected token '*']] لأن [[*]] لوحدها عملية ضرب ناقصها رقمين. ولاحظ إن ٨ سطور لمثلثين كتير: ده بالظبط اللي الـ loops هتحلّه في درس «for و while» (سطرين بدل ٨ لأي مقاس).` },
+            { lvl: 'تطبيق', t: R`**ابني:** ملف [[receipt.js]] بيطبع إيصال صغير: ٣ سطور منتجات وسطر الإجمالي، وشغّله بـ [[node receipt.js]].`, done: R`بيطبع ٤ سطور بنفس الترتيب كل مرة، ولو غيّرت سعر في الملف وشغّلت تاني الرقم الجديد بيظهر.`, sol: R`~~~js receipt.js
+// إيصال صغير: ٣ منتجات وإجمالي
+const coffee = 45;
+const cake = 60;
+const water = 10;
+console.log("قهوة: " + coffee + " جنيه");
+console.log("كيكة: " + cake + " جنيه");
+console.log("مياه: " + water + " جنيه");
+console.log("الإجمالي: " + (coffee + cake + water) + " جنيه");
+~~~
+
+~~~text الناتج: node receipt.js
+قهوة: 45 جنيه
+كيكة: 60 جنيه
+مياه: 10 جنيه
+الإجمالي: 115 جنيه
+~~~
+
+وبعد ما غيّرت سعر الكيكة في الملف لـ 75 ([[const cake = 75;]]) وشغّلت تاني:
+
+~~~text الناتج: node receipt.js (بعد تغيير السعر)
+قهوة: 45 جنيه
+كيكة: 75 جنيه
+مياه: 10 جنيه
+الإجمالي: 130 جنيه
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- الأسعار في متغيرات ([[const coffee = 45;]]): اسم بيشيل قيمة. لما السعر يتغيّر بتعدّل سطر واحد، والإجمالي بيتحسب تاني لوحده.
+- [["قهوة: " + coffee + " جنيه"]]: بنلزق نص ورقم ونص في سطر واحد بـ [[+]].
+- [[(coffee + cake + water)]]: الأقواس هنا مهمة. من غيرها [["الإجمالي: " + coffee + cake + water]] هتلزق الأرقام جنب بعض وتطبع [[الإجمالي: 456010]]، لأن أول [[+]] قابلت نص فكل اللي بعدها بقى لزق. الأقواس بتخلي الجمع يحصل الأول وبعدين النتيجة تتلزق.
+
+**الغلطة الشائعة:** تكتب الإجمالي رقم ثابت بإيدك ([[console.log("الإجمالي: 115 جنيه")]]). يشتغل أول مرة، بس لما تغيّر سعر الكيكة الإجمالي يفضل 115 وهو غلط. خلي الكمبيوتر يحسب.` },
+            { lvl: 'تطبيق', t: R`**دوّر بنفسك:** شغّل [[node --help]] ودوّر على الخيار اللي بيشغّل كود صغير من سطر الأوامر ويطبع نتيجته من غير ما تعمل ملف.`, done: R`لقيت [[-p]] (أو [[--print]])، و [[node -p "2 + 3"]] بيطبع [[5]] على طول. وعرفت الفرق بينه وبين [[-e]]: [[-e]] بيشغّل بس، فلازم تكتب [[console.log]] بنفسك.`, sol: R`شغّلت [[node --help]] وهو بيطبع أكتر من ٢٠٠ سطر، فدوّرت جواه على السطرين اللي بيبدأوا بـ [[-p]] و [[-e]]. على ويندوز بـ [[findstr]] (وعلى لينكس والماك نفس الفكرة بـ [[grep]]):
+
+~~~powershell
+node --help | findstr /C:"  -p," /C:"  -e,"
+~~~
+
+~~~text الناتج (Node 24.22)
+  -e, --eval=...              evaluate script
+  -p, --print [...]           evaluate script and print result
+~~~
+
+وبعدين جرّبت الاتنين على نفس الحسبة:
+
+~~~powershell
+node -p "2 + 3"
+node -e "2 + 3"
+node -e "console.log(2 + 3)"
+~~~
+
+~~~text الناتج: node -p "2 + 3"
+5
+~~~
+
+[[node -e "2 + 3"]] مطبعش **ولا حاجة**: الترمنال رجع على طول من غير ناتج، ودي مش غلطة. وبعدين:
+
+~~~text الناتج: node -e "console.log(2 + 3)"
+5
+~~~
+
+**الإجابة:**
+
+- [[-p]] (أو [[--print]]): «evaluate script and print result»، يعني بيحسب الكود **ويطبع النتيجة** لوحده. مفيد كآلة حاسبة سريعة في الترمنال.
+- [[-e]] (أو [[--eval]]): بيشغّل الكود بس. النتيجة بتتحسب وتضيع، فلو عايز تشوفها لازم تكتب [[console.log]] بنفسك.
+- الاتنين مبيعملوش ملف: الكود مكتوب في سطر الأوامر نفسه بين علامات تنصيص.
+
+**الغلطة الشائعة:** تستخدم [[-e]] وتستنى ناتج، فتفتكر إن Node مش شغال. ولو الكود فيه علامات تنصيص جوه، خلي اللي برّه نوع واللي جوه نوع: [[node -p "'a' + 1"]].` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** امسح القوس الأخير من [[console.log("hi")]] في الملف وشغّله بـ node، واقرا الرسالة قبل ما تصلّح.`, done: R`node بيطبع [[SyntaxError: missing ) after argument list]] ومعاها اسم الملف ورقم السطر، ومفيش ولا سطر من البرنامج اشتغل (حتى السطور اللي قبل الغلطة)، ولما ترجّع القوس بيشتغل عادي.`, sol: R`الملف البايظ (سطر قبل الغلطة عشان نشوف هل هيتنفّذ):
+
+~~~js broken.js
+console.log("first line");
+console.log("hi"
+~~~
+
+~~~text الناتج: node broken.js
+C:\Users\ali\lab\js\broken.js:2
+console.log("hi"
+            ^^^^
+
+SyntaxError: missing ) after argument list
+    at wrapSafe (node:internal/modules/cjs/loader:1861:18)
+    at Module._compile (node:internal/modules/cjs/loader:1903:20)
+    at Object..js (node:internal/modules/cjs/loader:2060:10)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+
+Node.js v24.22.1
+~~~
+
+**اقرا الرسالة من فوق:**
+
+- [[...broken.js:2]]: الغلطة في الملف ده، **سطر 2**.
+- تحتها السطر نفسه، والسهم [[^^^^]] تحت [["hi"]]: هنا Node كان مستني [[)]] يقفل بيه الـ [[console.log(]] ومالقاهوش.
+- [[SyntaxError: missing ) after argument list]]: نوع الغلطة «Syntax» يعني الكود مكتوب غلط (زي جملة ناقصها نقطة)، والوصف بيقولك بالظبط الناقص: قوس [[)]] بعد الـ arguments.
+- السطور اللي بتبدأ بـ [[at ... node:internal]] دي جوه Node نفسه، مش كودك. متقلقش منها.
+- **أهم ملاحظة:** [[first line]] **متطبعتش**، مع إن سطر 1 سليم. Node بيقرا الملف كله ويتأكد إنه مكتوب صح **قبل** ما ينفّذ أي سطر، فأي SyntaxError بيوقف البرنامج كله من الأول.
+
+التصليح: رجّع القوس [[console.log("hi");]] وشغّل تاني، والناتج [[first line]] ثم [[hi]].
+
+**الغلطة الشائعة:** تدوّر على الغلطة في سطر 1 لأن «البرنامج مطبعش أول سطر». الرسالة قالتلك سطر 2، صدّقها.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** اكتب لزميل لسه بادئ ٣ سطور: الكود في الـ Console بيشتغل فين، وفي ملف بـ [[node file.js]] بيشتغل فين، والكود بيضيع ولا بيفضل في كل حالة.`, done: R`الـ ٣ سطور فيهم: الـ Console جوه المتصفح والكود بيضيع لما تقفل أو تعمل refresh، والملف بيشتغل بـ Node على جهازك ومحفوظ تشغّله تاني، وإن الاتنين نفس لغة JavaScript. وزميلك قدر يشغّل ملف بنفسه من الشرح ده.`, sol: R`**إجابة نموذجية (٣ سطور لزميل):**
+
+> ١. الكود اللي بتكتبه في الـ Console (F12 في Chrome) بيشتغل **جوه المتصفح**، في الصفحة المفتوحة. ينفع تجرّب فيه سطر بسرعة.
+> ٢. الكود اللي في ملف وبتشغّله بـ [[node file.js]] بيشتغل **على جهازك** برّه أي متصفح، بـ Node. اكتبه في VS Code، احفظه، واكتب في الترمنال [[node file.js]] وانت في نفس الفولدر.
+> ٣. كود الـ Console **بيضيع** لما تقفل التاب أو تعمل refresh، والملف **بيفضل محفوظ** وتشغّله تاني وقت ما تحب. والاتنين نفس لغة JavaScript، فنفس الكود بيشتغل في الحتتين (طالما مش بيستخدم حاجة خاصة بالمتصفح زي [[alert]]).
+
+**ليه الإجابة دي كاملة:** فيها المكان (متصفح ولا جهاز)، وإزاي تشغّل (F12 ولا [[node file.js]])، وهل الكود بيفضل، وإن اللغة واحدة. وزميلك يقدر يشغّل ملف من السطر التاني لوحده.
+
+**الغلطة الشائعة في الشرح:** إنك تقول «Node لغة تانية». Node مش لغة، هو برنامج بيشغّل JavaScript برّه المتصفح، زي ما Chrome بيشغّلها جوه الصفحة. ولو كتبت [[alert("hi")]] في ملف وشغّلته بـ node هيطلع [[ReferenceError: alert is not defined]]، لأن [[alert]] جزء من المتصفح مش من اللغة.` }
           ],
           flag: "script",
           deep: {
@@ -213,7 +1410,13 @@ node hello.js
 
 الـ prompt بيفتح مربع، ولو كتبت فيه Ali يطبع [[أهلًا Ali]]. ولو ضغطت Cancel بيطبع [[أهلًا null]]، لأن [[prompt]] بيرجّع [[null]] لما مفيش input. ده أول درس في التعامل مع input: متفترضش إن اليوزر هيكتب حاجة (هتتعامل مع ده في درس «if و else if»).
 
-ولو كتبت سطر [[const userName]] تاني في نفس الـ Console وطلعلك [[already been declared]]، اعمل refresh للصفحة وابدأ من الأول.`
+ولو كتبت سطر [[const userName]] تاني في نفس الـ Console وطلعلك [[already been declared]]، اعمل refresh للصفحة وابدأ من الأول.`,
+          ref: [
+            { t: "MDN: What is JavaScript?", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/What_is_JavaScript" },
+            { t: "MDN: console.log()", url: "https://developer.mozilla.org/en-US/docs/Web/API/console/log_static" },
+            { t: "Node.js: Introduction to Node.js", url: "https://nodejs.org/learn/getting-started/introduction-to-nodejs" },
+            { t: "Node.js: Command-line API (-e و -p)", url: "https://nodejs.org/api/cli.html" }
+          ]
         },
         {
           cmd: "المتغيرات والأنواع والعمليات",
@@ -251,11 +1454,156 @@ console.log("طلب كبير؟", isBigOrder);
 console.log(typeof shopName, typeof cartItems, typeof isBigOrder);`,
           try: R`في الـ Console ([[F12]]) اكتب سطر سطر: [[const price = 50]] وبعدين [[let qty = 2]] وبعدين [[price * qty]]. غيّر الكمية [[qty = 4]] واضرب تاني. بعدين حاول تغيّر السعر [[price = 60]] واقرا الـ error. وآخر حاجة قارن: [[price > 40]] و [["5" + 3]] و [["5" * 3]] و [[5 === "5"]].`,
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** اعمل [[const width = 7]] و [[const height = 4]] واطبع المساحة والمحيط.`, done: R`بيطبع 28 و 22.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب ناتج دول قبل ما تشغّل: [[console.log("5" + 3, "5" - 3, 5 / 2, 7 % 3, typeof "5")]]، وبعدها [[let x = 5; x += 2; x++; console.log(x)]].`, done: R`توقعت وطلع [[53 2 2.5 1 string]] وبعدها [[8]]. وتقدر تقول ليه [["5" + 3]] بقت نص (الـ [[+]] مع نص بتلزق) و [["5" - 3]] بقت رقم (الطرح بيحوّل النص لرقم).` },
-            { lvl: 'تطبيق', t: R`**ابني:** سلة: سعر 120 وكمية 3 وخصم 10٪. احسب الإجمالي قبل الخصم وقيمة الخصم والمطلوب، كل واحد في متغير باسم واضح.`, done: R`بيطبع 360 و 36 و 324، ولو غيّرت الكمية لـ 5 بيطبع 600 و 60 و 540 من غير ما تغيّر أي سطر تاني.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** السعر جاي من فورم كنص: [[const price = "100"; const shipping = 50; console.log(price + shipping)]]. شغّله، وصلّحه من غير ما تغيّر سطر السعر نفسه.`, done: R`قبل التصليح بيطبع [[10050]]، وبعد ما تكتب [[Number(price) + shipping]] بيطبع [[150]]. وعارف إن أي حاجة جاية من فورم أو [[prompt]] بتيجي نص.` },
-            { lvl: 'تحدي', t: R`**مسألة:** حوّل [[3725]] ثانية لساعات ودقايق وثواني بـ [[%]] والطرح والقسمة بس، واطبعها كده: [[1:2:5]].`, done: R`بيطبع [[1:2:5]]، ولو جرّبت 59 بيطبع [[0:0:59]]، ولو 3600 بيطبع [[1:0:0]].` }
+            { lvl: 'سريع', t: R`**مسألة:** اعمل [[const width = 7]] و [[const height = 4]] واطبع المساحة والمحيط.`, done: R`بيطبع 28 و 22.`, sol: R`~~~js rect.js
+const width = 7;
+const height = 4;
+const area = width * height;
+const perimeter = 2 * (width + height);
+console.log("المساحة:", area);
+console.log("المحيط:", perimeter);
+~~~
+
+~~~text الناتج: node rect.js
+المساحة: 28
+المحيط: 22
+~~~
+
+**ليه كده:**
+
+- [[const]] عشان الطول والعرض مش هيتغيّروا جوه البرنامج.
+- المساحة طول × عرض: [[7 * 4]] = 28.
+- المحيط مجموع الأربع أضلاع: [[2 * (width + height)]] = ٢ × ١١ = 22. الأقواس بتخلي الجمع يحصل الأول.
+- النتيجتين في متغيرين بأسامي واضحة ([[area]] و [[perimeter]]) بدل ما الحساب يتكتب جوه [[console.log]] على طول، فاللي يقرا يعرف كل رقم معناه إيه.
+
+**الغلطة الشائعة:** تكتب [[2 * width + height]] من غير أقواس، فيطلع 18 مش 22: الضرب بيتحسب قبل الجمع، فدي بقت (٢ × ٧) + ٤.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب ناتج دول قبل ما تشغّل: [[console.log("5" + 3, "5" - 3, 5 / 2, 7 % 3, typeof "5")]]، وبعدها [[let x = 5; x += 2; x++; console.log(x)]].`, done: R`توقعت وطلع [[53 2 2.5 1 string]] وبعدها [[8]]. وتقدر تقول ليه [["5" + 3]] بقت نص (الـ [[+]] مع نص بتلزق) و [["5" - 3]] بقت رقم (الطرح بيحوّل النص لرقم).`, sol: R`~~~js predict.js
+console.log("5" + 3, "5" - 3, 5 / 2, 7 % 3, typeof "5");
+let x = 5;
+x += 2;
+x++;
+console.log(x);
+~~~
+
+~~~text الناتج: node predict.js
+53 2 2.5 1 string
+8
+~~~
+
+**كل قيمة بالترتيب:**
+
+- [["5" + 3]] = [[53]]: الـ [[+]] لما تلاقي نص بتلزق، فالـ 3 بقت [["3"]] واتلزقت. الناتج نص.
+- [["5" - 3]] = [[2]]: الطرح ملوش معنى مع النصوص، فـ JavaScript بتحوّل [["5"]] لرقم وتطرح. الناتج رقم.
+- [[5 / 2]] = [[2.5]]: القسمة في JavaScript بتدّي كسور، مفيش «قسمة صحيحة» زي لغات تانية.
+- [[7 % 3]] = [[1]]: الـ [[%]] باقي القسمة. ٧ ÷ ٣ = ٢ والباقي ١.
+- [[typeof "5"]] = [[string]]: علامات التنصيص بتخليها نص مهما كان شكلها.
+- [[x]]: بدأت 5، و [[x += 2]] يعني [[x = x + 2]] فبقت 7، و [[x++]] بتزوّد واحد فبقت **8**.
+
+**الغلطة الشائعة:** تفتكر إن [[+]] و [[-]] بيتعاملوا مع النص بنفس الطريقة. الـ [[+]] بس هي اللي بتلزق، وباقي العمليات ([[-]] و [[*]] و [[/]] و [[%]]) بتحاول تحوّل لرقم.` },
+            { lvl: 'تطبيق', t: R`**ابني:** سلة: سعر 120 وكمية 3 وخصم 10٪. احسب الإجمالي قبل الخصم وقيمة الخصم والمطلوب، كل واحد في متغير باسم واضح.`, done: R`بيطبع 360 و 36 و 324، ولو غيّرت الكمية لـ 5 بيطبع 600 و 60 و 540 من غير ما تغيّر أي سطر تاني.`, sol: R`~~~js cart.js
+const price = 120;
+const qty = 3;
+const discountPercent = 10;
+
+const subtotal = price * qty;
+const discount = subtotal * discountPercent / 100;
+const toPay = subtotal - discount;
+
+console.log("قبل الخصم:", subtotal);
+console.log("الخصم:", discount);
+console.log("المطلوب:", toPay);
+~~~
+
+~~~text الناتج: node cart.js
+قبل الخصم: 360
+الخصم: 36
+المطلوب: 324
+~~~
+
+وبعد ما غيّرت سطر واحد بس ([[const qty = 5;]]):
+
+~~~text الناتج بعد الكمية 5
+قبل الخصم: 600
+الخصم: 60
+المطلوب: 540
+~~~
+
+**ليه كده:**
+
+- كل رقم ليه متغير باسم بيقول هو إيه: [[subtotal]] و [[discount]] و [[toPay]]. فلما تقرا [[subtotal - discount]] تفهمها من غير ما تحسب.
+- النسبة في متغير لوحدها ([[discountPercent]])، والخصم [[subtotal * discountPercent / 100]] = ٣٦٠ × ١٠ ÷ ١٠٠ = 36.
+- كل الحسابات مبنية على المتغيرات، فتغيير الكمية بيغيّر التلات أرقام لوحدهم (600 و 60 و 540).
+
+**الغلطة الشائعة:** تكتب الخصم [[360 * 0.1]] بالرقم مباشرة. يطلع صح مرة، بس لما الكمية تتغيّر لازم تفتكر تعدّل 360 بإيدك، وغالبًا هتنسى. وكمان [[discount]] اسم أوضح من [[d]] أو [[x]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** السعر جاي من فورم كنص: [[const price = "100"; const shipping = 50; console.log(price + shipping)]]. شغّله، وصلّحه من غير ما تغيّر سطر السعر نفسه.`, done: R`قبل التصليح بيطبع [[10050]]، وبعد ما تكتب [[Number(price) + shipping]] بيطبع [[150]]. وعارف إن أي حاجة جاية من فورم أو [[prompt]] بتيجي نص.`, sol: R`الكود البايظ:
+
+~~~js broken-price.js
+const price = "100";
+const shipping = 50;
+console.log(price + shipping);
+~~~
+
+~~~text الناتج قبل التصليح
+10050
+~~~
+
+الحل:
+
+~~~js fixed-price.js
+const price = "100";
+const shipping = 50;
+console.log(Number(price) + shipping);
+console.log(typeof price, typeof Number(price));
+~~~
+
+~~~text الناتج بعد التصليح
+150
+string number
+~~~
+
+**ليه:**
+
+- [[price]] نص ([["100"]] جوه علامات تنصيص) زي أي حاجة جاية من فورم. و [[+]] مع نص بتلزق، فـ [["100" + 50]] بقت [["10050"]]: رقم شكله صح بس غلط ١٠٠ مرة.
+- [[Number(price)]] بتحوّل النص لرقم وقت الحساب، من غير ما تغيّر سطر السعر. والسطر التاني بيأكد: [[price]] لسه [[string]]، و [[Number(price)]] بقى [[number]].
+
+**الغلطة الشائعة:** تحل المشكلة بإنك تشيل علامات التنصيص من سطر السعر. ده شغال هنا بس، لأن في البرنامج الحقيقي السعر جاي من فورم أو [[prompt]] وانت مش اللي بتكتبه. التحويل بـ [[Number()]] هو اللي بيفضل شغال.` },
+            { lvl: 'تحدي', t: R`**مسألة:** حوّل [[3725]] ثانية لساعات ودقايق وثواني بـ [[%]] والطرح والقسمة بس، واطبعها كده: [[1:2:5]].`, done: R`بيطبع [[1:2:5]]، ولو جرّبت 59 بيطبع [[0:0:59]]، ولو 3600 بيطبع [[1:0:0]].`, sol: R`~~~js clock.js
+const totalSeconds = 3725;
+
+const seconds = totalSeconds % 60;
+const totalMinutes = (totalSeconds - seconds) / 60;
+const minutes = totalMinutes % 60;
+const hours = (totalMinutes - minutes) / 60;
+
+console.log(hours + ":" + minutes + ":" + seconds);
+~~~
+
+~~~text الناتج: node clock.js
+1:2:5
+~~~
+
+وجرّبت القيمتين التانيين بتغيير أول سطر:
+
+~~~text totalSeconds = 59
+0:0:59
+~~~
+
+~~~text totalSeconds = 3600
+1:0:0
+~~~
+
+**خطوة خطوة على 3725:**
+
+| السطر | الحساب | القيمة |
+|---|---|---|
+| [[seconds]] | ٣٧٢٥ ٪ ٦٠ (الباقي بعد ما نشيل الدقايق الكاملة) | 5 |
+| [[totalMinutes]] | (٣٧٢٥ − ٥) ÷ ٦٠ | 62 |
+| [[minutes]] | ٦٢ ٪ ٦٠ | 2 |
+| [[hours]] | (٦٢ − ٢) ÷ ٦٠ | 1 |
+
+- الفكرة: [[%]] بتدّيك اللي «فاضل» بعد الوحدات الكاملة، والطرح قبل القسمة بيخلي القسمة تطلع رقم صحيح من غير كسور.
+- آخر سطر بيلزق الأرقام بـ [[":"]] بينهم.
+
+**الغلطة الشائعة:** تقسم على طول [[3725 / 60]] فيطلع [[62.083333333333336]] مش 62. القسمة في JavaScript بتدّي كسور، فلازم تشيل الباقي الأول (أو تستخدم [[Math.floor]] اللي هتيجي في درس «&& و || و !»).` }
           ],
           flag: "script",
           deep: {
@@ -402,7 +1750,13 @@ string number boolean
 [[طلب كبير؟ true]]
 [[string number boolean]]
 
-وفي الـ Console: [[price * qty]] بـ [[100]]، وبعد [[qty = 4]] بـ [[200]]. و [[price = 60]] بتطلّع بالأحمر [[Uncaught TypeError: Assignment to constant variable.]] والسعر بيفضل 50. و [[price > 40]] بـ [[true]]، و [["5" + 3]] بـ [['53']] (نص)، و [["5" * 3]] بـ [[15]] (رقم)، و [[5 === "5"]] بـ [[false]] لأن واحد رقم والتاني نص.`
+وفي الـ Console: [[price * qty]] بـ [[100]]، وبعد [[qty = 4]] بـ [[200]]. و [[price = 60]] بتطلّع بالأحمر [[Uncaught TypeError: Assignment to constant variable.]] والسعر بيفضل 50. و [[price > 40]] بـ [[true]]، و [["5" + 3]] بـ [['53']] (نص)، و [["5" * 3]] بـ [[15]] (رقم)، و [[5 === "5"]] بـ [[false]] لأن واحد رقم والتاني نص.`,
+          ref: [
+            { t: "MDN: Grammar and types", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Grammar_and_types" },
+            { t: "MDN: Expressions and operators", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_operators" },
+            { t: "MDN: typeof", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof" },
+            { t: "MDN: Number()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/Number" }
+          ]
         },
         {
           cmd: "if و else if",
@@ -428,11 +1782,163 @@ const label = score >= 50 ? "ناجح" : "راسب";
 console.log(label);`,
           try: R`اكتب دالة [[shipping(total, city)]] ترجّع مصاريف الشحن: لو الطلب 1000 أو أكتر يبقى 0، ولو المدينة "cairo" أو "giza" يبقى 30 (والحروف الكبيرة متفرقش: "Giza" زي "giza")، وغير كده 60. وبعدين اطبع رسالة بـ ternary: [["الشحن مجاني"]] لو 0، وإلا [["الشحن X جنيه"]]. جرّبها على (1200, "aswan") و (300, "giza") و (300, "aswan"). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[shipping]] و [[shippingText(cost)]] اللي بترجّع رسالة الـ ternary.`,
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** دالة [[grade(score)]]: من 85 ممتاز، ومن 65 جيد، ومن 50 مقبول، وغير كده راسب.`, done: R`[[grade(90)]] ممتاز، و [[grade(85)]] ممتاز (الحد نفسه)، و [[grade(50)]] مقبول، و [[grade(49)]] راسب.` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[function grade(s) { if (s >= 50) return "مقبول"; else if (s >= 85) return "ممتاز"; else return "راسب"; }]]. جرّب [[grade(90)]] وقول الغلط فين قبل ما تصلّح.`, done: R`قبل التصليح [[grade(90)]] بترجّع «مقبول» لأن أول شرط صح بيكسب والباقي مبيتشافش. بعد ما ترتّب الشروط من الأكبر للأصغر [[grade(90)]] «ممتاز» و [[grade(60)]] «مقبول» و [[grade(10)]] «راسب».` },
-            { lvl: 'تطبيق', t: R`**ابني:** فحص باسورد في فورم: [[checkPassword(pw)]] بترجّع «اكتب الباسورد» لو فاضي، و «قصير» لو أقل من 8 حروف ([[pw.length]])، وإلا «تمام».`, done: R`[[checkPassword("")]] بترجّع «اكتب الباسورد» مش «قصير»، و [[checkPassword("abc")]] «قصير»، و [[checkPassword("abcdefgh")]] «تمام».` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[ticketPrice(age, isStudent)]] والتذكرة 100: أقل من 6 سنين ببلاش، والطالب أو أقل من 18 بالنص، و 60 أو أكتر بـ 70، ولو فيه أكتر من خصم ياخد الأرخص. رتّب الشروط بنفسك.`, done: R`[[ticketPrice(4, false)]] 0، و [[ticketPrice(20, true)]] 50، و [[ticketPrice(65, false)]] 70، و [[ticketPrice(65, true)]] 50، و [[ticketPrice(30, false)]] 100.` },
-            { lvl: 'تحدي', t: R`**اكتب اختبار:** لـ [[grade]] اللي في أول تمرين اكتب ٦ سطور [[console.log(grade(85) === "ممتاز")]] على الحدود بالظبط: 85 و 84 و 65 و 64 و 50 و 49. وبعدين بوّظ الدالة بقصد (حط [[>]] بدل [[>=]] في شرط 85) وشغّل تاني.`, done: R`الـ ٦ سطور بيطبعوا [[true]] على الدالة السليمة، وبعد ما تبوّظها سطر الـ 85 بس بيطبع [[false]] والباقي [[true]]. كده عرفت إن اختبار الحدود هو اللي بيمسك الغلطة دي.` }
+            { lvl: 'سريع', t: R`**مسألة:** دالة [[grade(score)]]: من 85 ممتاز، ومن 65 جيد، ومن 50 مقبول، وغير كده راسب.`, done: R`[[grade(90)]] ممتاز، و [[grade(85)]] ممتاز (الحد نفسه)، و [[grade(50)]] مقبول، و [[grade(49)]] راسب.`, sol: R`~~~js grade.js
+function grade(score) {
+  if (score >= 85) return "ممتاز";
+  else if (score >= 65) return "جيد";
+  else if (score >= 50) return "مقبول";
+  else return "راسب";
+}
+console.log(grade(90), grade(85), grade(50), grade(49));
+~~~
+
+~~~text الناتج: node grade.js
+ممتاز ممتاز مقبول راسب
+~~~
+
+**ليه كده:**
+
+- الشروط مترتبة **من الأعلى للأقل**: أول شرط صح بيرجّع ([[return]]) والدالة بتخلص، فالباقي مبيتسألش.
+- [[>=]] مش [[>]]: «من 85» يعني 85 نفسها ممتاز. عشان كده [[grade(85)]] طلعت ممتاز.
+- [[grade(50)]] عدّت من شرط 85 وشرط 65 (الاتنين false) ووقفت عند [[score >= 50]].
+- الـ [[else]] الأخيرة بتمسك أي حاجة فاضلة، فمفيش رقم يعدّي من غير تقدير.
+
+**الغلطة الشائعة:** [[>]] بدل [[>=]]، فاللي جاب 85 بالظبط ياخد «جيد». الحدود هي اللي بتتغلط دايمًا، فجرّبها بالظبط (85 و 65 و 50) مش أرقام في النص زي 90.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[function grade(s) { if (s >= 50) return "مقبول"; else if (s >= 85) return "ممتاز"; else return "راسب"; }]]. جرّب [[grade(90)]] وقول الغلط فين قبل ما تصلّح.`, done: R`قبل التصليح [[grade(90)]] بترجّع «مقبول» لأن أول شرط صح بيكسب والباقي مبيتشافش. بعد ما ترتّب الشروط من الأكبر للأصغر [[grade(90)]] «ممتاز» و [[grade(60)]] «مقبول» و [[grade(10)]] «راسب».`, sol: R`الكود البايظ:
+
+~~~js grade-broken.js
+function grade(s) {
+  if (s >= 50) return "مقبول";
+  else if (s >= 85) return "ممتاز";
+  else return "راسب";
+}
+console.log(grade(90));
+~~~
+
+~~~text الناتج قبل التصليح
+مقبول
+~~~
+
+**الغلط فين:** 90 أكبر من أو تساوي 50، فأول شرط [[s >= 50]] طلع [[true]] والدالة رجّعت «مقبول» وخلصت. شرط 85 **عمره ما هيتوصل له**: أي رقم أكبر من 85 هو أصلًا أكبر من 50 فهيقف عند أول شرط.
+
+الحل: رتّب الشروط من الأكبر للأصغر:
+
+~~~js grade-fixed.js
+function grade(s) {
+  if (s >= 85) return "ممتاز";
+  else if (s >= 50) return "مقبول";
+  else return "راسب";
+}
+console.log(grade(90), grade(60), grade(10));
+~~~
+
+~~~text الناتج بعد التصليح
+ممتاز مقبول راسب
+~~~
+
+**القاعدة:** في سلسلة [[else if]]، أول شرط صح بيكسب. فالشرط الأضيق (85) لازم ييجي قبل الأوسع (50).
+
+**الغلطة الشائعة:** تحاول تصلّحها بإنك تزوّد شرط زي [[s >= 50 && s < 85]]. ده شغال بس بيطوّل الكود ويخلي كل شرط محتاج حدّين. الترتيب الصح بيغنيك عن ده.` },
+            { lvl: 'تطبيق', t: R`**ابني:** فحص باسورد في فورم: [[checkPassword(pw)]] بترجّع «اكتب الباسورد» لو فاضي، و «قصير» لو أقل من 8 حروف ([[pw.length]])، وإلا «تمام».`, done: R`[[checkPassword("")]] بترجّع «اكتب الباسورد» مش «قصير»، و [[checkPassword("abc")]] «قصير»، و [[checkPassword("abcdefgh")]] «تمام».`, sol: R`~~~js password.js
+function checkPassword(pw) {
+  if (pw === "") return "اكتب الباسورد";
+  else if (pw.length < 8) return "قصير";
+  else return "تمام";
+}
+console.log(checkPassword(""));
+console.log(checkPassword("abc"));
+console.log(checkPassword("abcdefgh"));
+~~~
+
+~~~text الناتج: node password.js
+اكتب الباسورد
+قصير
+تمام
+~~~
+
+**ليه الترتيب ده:**
+
+- الفاضي الأول: النص الفاضي [[""]] طوله 0، يعني هو كمان أقل من 8. لو حطّيت شرط [[pw.length < 8]] الأول، الفاضي هيطلع «قصير»، واليوزر اللي لسه مكتبش حاجة هيتقاله «قصير» وده مش مفهوم.
+- [[pw.length]] بتدّي عدد الحروف. [["abc"]] طولها 3 فهي «قصير»، و [["abcdefgh"]] طولها 8 بالظبط، و [[8 < 8]] بـ [[false]] فهي «تمام».
+
+**الغلطة الشائعة:** [[pw.length <= 8]] بدل [[< 8]]، فالباسورد اللي ٨ حروف بالظبط يترفض مع إن الشرط «أقل من 8». ارجع للمطلوب وجرّب الحد نفسه.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[ticketPrice(age, isStudent)]] والتذكرة 100: أقل من 6 سنين ببلاش، والطالب أو أقل من 18 بالنص، و 60 أو أكتر بـ 70، ولو فيه أكتر من خصم ياخد الأرخص. رتّب الشروط بنفسك.`, done: R`[[ticketPrice(4, false)]] 0، و [[ticketPrice(20, true)]] 50، و [[ticketPrice(65, false)]] 70، و [[ticketPrice(65, true)]] 50، و [[ticketPrice(30, false)]] 100.`, sol: R`~~~js ticket.js
+function ticketPrice(age, isStudent) {
+  if (age < 6) return 0;                     // ببلاش: أرخص حاجة، فتتفحص الأول
+  else if (isStudent || age < 18) return 50; // النص: أرخص من الـ 70
+  else if (age >= 60) return 70;
+  else return 100;
+}
+console.log(ticketPrice(4, false));
+console.log(ticketPrice(20, true));
+console.log(ticketPrice(65, false));
+console.log(ticketPrice(65, true));
+console.log(ticketPrice(30, false));
+~~~
+
+~~~text الناتج: node ticket.js
+0
+50
+70
+50
+100
+~~~
+
+**إزاي رتّبت الشروط:** «ياخد الأرخص» معناها: افحص الخصم الأرخص الأول، لأن أول شرط صح بيكسب.
+
+| الترتيب | الشرط | السعر |
+|---|---|---|
+| ١ | أقل من 6 | 0 |
+| ٢ | طالب أو أقل من 18 | 50 |
+| ٣ | 60 أو أكتر | 70 |
+| ٤ | غير كده | 100 |
+
+- [[ticketPrice(65, true)]]: عنده خصمين (كبير وطالب). شرط الطالب جه قبل شرط الـ 60، فخد 50 الأرخص.
+- [[isStudent || age < 18]]: [[||]] معناها «أو»، يكفي واحد منهم يبقى صح.
+
+**الغلطة الشائعة:** تحط [[age >= 60]] قبل شرط الطالب، فـ [[ticketPrice(65, true)]] ترجّع 70 والطالب الكبير يدفع أكتر من حقه. لو الخصومات بتتجمّع على نفس الشخص، رتّب من الأرخص للأغلى.` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** لـ [[grade]] اللي في أول تمرين اكتب ٦ سطور [[console.log(grade(85) === "ممتاز")]] على الحدود بالظبط: 85 و 84 و 65 و 64 و 50 و 49. وبعدين بوّظ الدالة بقصد (حط [[>]] بدل [[>=]] في شرط 85) وشغّل تاني.`, done: R`الـ ٦ سطور بيطبعوا [[true]] على الدالة السليمة، وبعد ما تبوّظها سطر الـ 85 بس بيطبع [[false]] والباقي [[true]]. كده عرفت إن اختبار الحدود هو اللي بيمسك الغلطة دي.`, sol: R`~~~js grade-test.js
+function grade(score) {
+  if (score >= 85) return "ممتاز";
+  else if (score >= 65) return "جيد";
+  else if (score >= 50) return "مقبول";
+  else return "راسب";
+}
+console.log(grade(85) === "ممتاز");
+console.log(grade(84) === "جيد");
+console.log(grade(65) === "جيد");
+console.log(grade(64) === "مقبول");
+console.log(grade(50) === "مقبول");
+console.log(grade(49) === "راسب");
+~~~
+
+~~~text الناتج على الدالة السليمة
+true
+true
+true
+true
+true
+true
+~~~
+
+وبعد ما بوّظتها بقصد ([[score > 85]] بدل [[score >= 85]]):
+
+~~~text الناتج بعد التبويظ
+false
+true
+true
+true
+true
+true
+~~~
+
+**ليه كده:**
+
+- كل سطر بيقارن الناتج بالمتوقع بـ [[===]]، فبيطبع [[true]] لو الدالة صح و [[false]] لو لأ. ده أبسط شكل للاختبار.
+- الأرقام المختارة هي **الحدود من الناحيتين**: 85 و 84، و 65 و 64، و 50 و 49. أي غلطة في [[>]] و [[>=]] بتبان عند الحد بالظبط.
+- بعد التبويظ، 85 بقت «جيد» فأول سطر بقى [[false]]، والخمسة التانيين لسه [[true]]: الاختبار وراك مكان الغلطة بالظبط.
+
+**الغلطة الشائعة:** تختبر بأرقام بعيدة عن الحدود (90 و 70 و 30). الأرقام دي كانت هتعدّي على الدالة البايظة كمان، فالاختبار كان هيقولك «كله تمام» وهو مش تمام.` }
           ],
           flag: "script",
           deep: {
@@ -636,7 +2142,12 @@ test("shippingText(0) و shippingText(30)", () => expect([shippingText(0), shipp
 function shippingText(cost) {
   return cost === 0 ? "الشحن مجاني" : $__btالشحن $__{cost} جنيه$__bt;
 }`
-          }
+          },
+          ref: [
+            { t: "MDN: if...else", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/if...else" },
+            { t: "MDN: Conditional (ternary) operator", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_operator" },
+            { t: "MDN: Control flow and error handling", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Control_flow_and_error_handling" }
+          ]
         },
         {
           cmd: "switch ولا object lookup",
@@ -663,11 +2174,201 @@ const actions = { add: (a, b) => a + b, sub: (a, b) => a - b };
 console.log(actions["sub"]?.(10, 4));`,
           try: R`امسح أول [[break]] (اللي بعد «أجازة») وشغّل الكود بـ [[day = "fri"]]: هيطبع إيه؟ وبعدين اكتب دالة [[httpMessage(code)]] ترجّع رسالة عربي لـ 200 و 201 و 400 و 401 و 404 و 500 مرة بـ switch ومرة بـ object، وخلي أي كود تاني يرجّع «حاجة غير متوقعة». اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[httpMessageSwitch]] بالـ switch و [[httpMessage]] بالـ object، والرسايل نفسها براحتك.`,
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** [[dayName(n)]] بـ switch: 0 الأحد لحد 6 السبت، و default «رقم غلط».`, done: R`[[dayName(5)]] الجمعة، و [[dayName(0)]] الأحد، و [[dayName(9)]] «رقم غلط».` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه اللي هيتطبع؟ [[switch (2) { case 1: console.log("a"); case 2: console.log("b"); case 3: console.log("c"); break; default: console.log("d"); }]]`, done: R`توقعت وطلع [[b]] وبعدها [[c]] بس. وتقدر تشرح إن [[case 2]] مفيهوش break فالتنفيذ «وقع» في [[case 3]] لحد أول break، و [[d]] متطبعتش.` },
-            { lvl: 'تطبيق', t: R`**ابني:** آلة حاسبة [[calc(a, op, b)]] بـ switch على [["+"]] و [["-"]] و [["*"]] و [["/"]]. القسمة على صفر ترجّع «مينفعش تقسم على صفر»، وأي op تاني «عملية مش معروفة».`, done: R`[[calc(6, "*", 7)]] 42، و [[calc(5, "/", 0)]] الرسالة مش [[Infinity]]، و [[calc(2, "^", 3)]] «عملية مش معروفة». ولو نسيت break في حالة هتلاقي الناتج غلط.` },
-            { lvl: 'تطبيق', t: R`**refactor:** اكتب [[planPrice(plan)]] بـ switch فيها ٤ حالات ([["free"]] 0، و [["basic"]] 50، و [["pro"]] 150، و [["team"]] 400) و default 0. وبعدين حوّلها لـ object [[PRICES]] وسطر واحد بـ [[Object.hasOwn]]، من غير ما الناتج يتغيّر.`, done: R`قبل وبعد: [[planPrice("pro")]] 150، و [[planPrice("team")]] 400، و [[planPrice("gold")]] 0، و [[planPrice("toString")]] 0. والدالة الجديدة سطرين بدل ١٢، وزيادة plan جديدة بقت سطر في الـ object بس.` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[shipping(city)]] بـ object [[{ cairo: 30, giza: 30, alex: 45 }]] وأي مدينة مش فيه بـ 60. جرّبها بـ [["toString"]] كاسم مدينة.`, done: R`الحل اللي بيقارن بـ [[undefined]] بيرجّع function مع [["toString"]] بدل رقم (لأن كل object وارث [[toString]]). بعد ما تصلّح بـ [[Object.hasOwn(rates, city)]]: [[shipping("alex")]] 45 و [[shipping("toString")]] 60.` }
+            { lvl: 'سريع', t: R`**مسألة:** [[dayName(n)]] بـ switch: 0 الأحد لحد 6 السبت، و default «رقم غلط».`, done: R`[[dayName(5)]] الجمعة، و [[dayName(0)]] الأحد، و [[dayName(9)]] «رقم غلط».`, sol: R`~~~js day.js
+function dayName(n) {
+  switch (n) {
+    case 0: return "الأحد";
+    case 1: return "الاتنين";
+    case 2: return "التلات";
+    case 3: return "الأربع";
+    case 4: return "الخميس";
+    case 5: return "الجمعة";
+    case 6: return "السبت";
+    default: return "رقم غلط";
+  }
+}
+console.log(dayName(5), dayName(0), dayName(9));
+~~~
+
+~~~text الناتج: node day.js
+الجمعة الأحد رقم غلط
+~~~
+
+**ليه كده:**
+
+- [[switch (n)]] بيقارن [[n]] بكل [[case]] بـ [[===]] (يعني لازم رقم مش نص: [[dayName("5")]] هتطلع «رقم غلط»).
+- كل [[case]] فيه [[return]]، فالدالة بتخرج على طول، ومش محتاجين [[break]]: الـ [[return]] بيوقف كل حاجة.
+- الـ [[default]] بيمسك أي رقم مش من 0 لـ 6، زي 9.
+
+**الغلطة الشائعة:** تكتب [[case "0":]] بعلامات تنصيص. ساعتها [[dayName(0)]] هتطلع «رقم غلط»، لأن الرقم 0 مش [[===]] النص [["0"]].` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه اللي هيتطبع؟ [[switch (2) { case 1: console.log("a"); case 2: console.log("b"); case 3: console.log("c"); break; default: console.log("d"); }]]`, done: R`توقعت وطلع [[b]] وبعدها [[c]] بس. وتقدر تشرح إن [[case 2]] مفيهوش break فالتنفيذ «وقع» في [[case 3]] لحد أول break، و [[d]] متطبعتش.`, sol: R`~~~js fall.js
+switch (2) {
+  case 1: console.log("a");
+  case 2: console.log("b");
+  case 3: console.log("c"); break;
+  default: console.log("d");
+}
+~~~
+
+~~~text الناتج: node fall.js
+b
+c
+~~~
+
+**خطوة خطوة:**
+
+1. [[switch (2)]] بيدوّر على أول [[case]] قيمته 2، فبيتنط [[case 1]] خالص ([[a]] متطبعتش).
+2. بيدخل [[case 2]] ويطبع [[b]]. مفيش [[break]]، فبيكمّل **على طول** في السطر اللي بعده من غير ما يسأل.
+3. بيطبع [[c]] (مع إن 2 مش 3)، ويلاقي [[break]] فيخرج من الـ switch كله.
+4. [[default]] متوصلش ليها، فـ [[d]] متطبعتش.
+
+ده اسمه **fall-through**: الـ case بيحدد **منين تبدأ** بس، والـ [[break]] هو اللي بيحدد **فين تقف**.
+
+**الغلطة الشائعة:** تتوقع [[b]] بس، على أساس إن كل case منفصل. ساعات الـ fall-through مقصود (زي [[case "fri": case "sat":]] في مثال الدرس)، بس لو مش قاصده لازم [[break]] أو [[return]] في آخر كل case.` },
+            { lvl: 'تطبيق', t: R`**ابني:** آلة حاسبة [[calc(a, op, b)]] بـ switch على [["+"]] و [["-"]] و [["*"]] و [["/"]]. القسمة على صفر ترجّع «مينفعش تقسم على صفر»، وأي op تاني «عملية مش معروفة».`, done: R`[[calc(6, "*", 7)]] 42، و [[calc(5, "/", 0)]] الرسالة مش [[Infinity]]، و [[calc(2, "^", 3)]] «عملية مش معروفة». ولو نسيت break في حالة هتلاقي الناتج غلط.`, sol: R`~~~js calc.js
+function calc(a, op, b) {
+  switch (op) {
+    case "+": return a + b;
+    case "-": return a - b;
+    case "*": return a * b;
+    case "/":
+      if (b === 0) return "مينفعش تقسم على صفر";
+      return a / b;
+    default:
+      return "عملية مش معروفة";
+  }
+}
+console.log(calc(6, "*", 7));
+console.log(calc(5, "/", 0));
+console.log(calc(2, "^", 3));
+console.log(calc(10, "-", 4), calc(9, "/", 2));
+~~~
+
+~~~text الناتج: node calc.js
+42
+مينفعش تقسم على صفر
+عملية مش معروفة
+6 4.5
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- [[switch (op)]]: بيقارن العملية بالنص [["+"]] و [["-"]] وهكذا.
+- في [[case "/"]] فيه [[if]] جوه الـ case: لو [[b]] صفر بنرجّع رسالة قبل ما نقسم. من غيرها [[5 / 0]] بتطلع [[Infinity]] من غير أي error، وده رقم ملوش معنى في آلة حاسبة.
+- [[default]] بيمسك أي عملية مش معروفة زي [["^"]].
+- كل case بيرجّع بـ [[return]]، فمفيش خطر إننا ننسى [[break]].
+
+**الغلطة الشائعة:** لو كتبتها بمتغير [[result]] و [[break]] ونسيت [[break]] في حالة، الناتج بيبقى غلط من غير أي error. جرّبت ده:
+
+~~~js calc-nobreak.js
+// نسخة بـ break بدل return، ونسينا break بعد "+"
+function calc(a, op, b) {
+  let result;
+  switch (op) {
+    case "+": result = a + b;
+    case "-": result = a - b; break;
+    default: result = "عملية مش معروفة";
+  }
+  return result;
+}
+console.log(calc(2, "+", 3));
+~~~
+
+~~~text الناتج
+-1
+~~~
+
+[[2 + 3]] طلعت -1: نفّذ [[result = 5]] ووقع في [[case "-"]] فكتب فوقها [[result = -1]]. عشان كده [[return]] في كل case أأمن.` },
+            { lvl: 'تطبيق', t: R`**refactor:** اكتب [[planPrice(plan)]] بـ switch فيها ٤ حالات ([["free"]] 0، و [["basic"]] 50، و [["pro"]] 150، و [["team"]] 400) و default 0. وبعدين حوّلها لـ object [[PRICES]] وسطر واحد بـ [[Object.hasOwn]]، من غير ما الناتج يتغيّر.`, done: R`قبل وبعد: [[planPrice("pro")]] 150، و [[planPrice("team")]] 400، و [[planPrice("gold")]] 0، و [[planPrice("toString")]] 0. والدالة الجديدة سطرين بدل ١٢، وزيادة plan جديدة بقت سطر في الـ object بس.`, sol: R`~~~js plan.js
+// قبل: switch
+function planPriceSwitch(plan) {
+  switch (plan) {
+    case "free":
+      return 0;
+    case "basic":
+      return 50;
+    case "pro":
+      return 150;
+    case "team":
+      return 400;
+    default:
+      return 0;
+  }
+}
+
+// بعد: object وسطر واحد
+const PRICES = { free: 0, basic: 50, pro: 150, team: 400 };
+function planPrice(plan) {
+  return Object.hasOwn(PRICES, plan) ? PRICES[plan] : 0;
+}
+
+console.log("pro", planPriceSwitch("pro"), planPrice("pro"));
+console.log("team", planPriceSwitch("team"), planPrice("team"));
+console.log("gold", planPriceSwitch("gold"), planPrice("gold"));
+console.log("toString", planPriceSwitch("toString"), planPrice("toString"));
+~~~
+
+~~~text الناتج: node plan.js (العمود التاني switch والتالت object)
+pro 150 150
+team 400 400
+gold 0 0
+toString 0 0
+~~~
+
+**ليه الـ object أحسن هنا:**
+
+- كل case في الـ switch كان بيعمل حاجة واحدة: يرجّع رقم. ده بالظبط اللي الـ object بيعمله: مفتاح ← قيمة. فالـ ١٢ سطر بقوا سطر بيانات وسطر منطق.
+- [[Object.hasOwn(PRICES, plan)]]: بتسأل «المفتاح ده مكتوب في الـ object بتاعي أنا؟». لو آه نرجّع [[PRICES[plan]]]، لو لأ نرجّع 0 زي الـ default.
+- زيادة plan جديدة بقت كلمة في سطر [[PRICES]]، من غير ما تلمس الدالة.
+
+**الغلطة الشائعة:** تكتب الدالة [[PRICES[plan] || 0]] من غير [[Object.hasOwn]]. جرّبتها:
+
+~~~js plan-bad.js
+const PRICES = { free: 0, basic: 50, pro: 150, team: 400 };
+const planPrice = (plan) => PRICES[plan] || 0;
+console.log(planPrice("toString"));
+~~~
+
+~~~text الناتج
+[Function: toString]
+~~~
+
+[["toString"]] رجّعت function مش 0! أي object عادي وارث حاجات زي [[toString]] من غير ما تكتبها، و [[PRICES["toString"]]] بيلاقيها. عشان كده الـ [[Object.hasOwn]] جزء من الحل مش زيادة.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[shipping(city)]] بـ object [[{ cairo: 30, giza: 30, alex: 45 }]] وأي مدينة مش فيه بـ 60. جرّبها بـ [["toString"]] كاسم مدينة.`, done: R`الحل اللي بيقارن بـ [[undefined]] بيرجّع function مع [["toString"]] بدل رقم (لأن كل object وارث [[toString]]). بعد ما تصلّح بـ [[Object.hasOwn(rates, city)]]: [[shipping("alex")]] 45 و [[shipping("toString")]] 60.`, sol: R`الكود البايظ (بيقارن بـ [[undefined]]):
+
+~~~js ship-broken.js
+const rates = { cairo: 30, giza: 30, alex: 45 };
+function shipping(city) {
+  return rates[city] !== undefined ? rates[city] : 60;
+}
+console.log(shipping("alex"), shipping("aswan"));
+console.log(shipping("toString"));
+~~~
+
+~~~text الناتج قبل التصليح
+45 60
+[Function: toString]
+~~~
+
+**الغلط:** [[rates["toString"]]] مش [[undefined]]، دي function وارثها كل object، فالشرط عدّى ورجّعها. لو الرقم ده اتجمع على سعر الطلب بعد كده هيطلع نص غريب أو [[NaN]].
+
+الحل:
+
+~~~js ship-fixed.js
+const rates = { cairo: 30, giza: 30, alex: 45 };
+function shipping(city) {
+  return Object.hasOwn(rates, city) ? rates[city] : 60;
+}
+console.log(shipping("alex"), shipping("aswan"), shipping("toString"));
+~~~
+
+~~~text الناتج بعد التصليح
+45 60 60
+~~~
+
+**ليه [[Object.hasOwn]]:** بتشوف المفاتيح اللي **انت** كتبتها في الـ object بس ([[cairo]] و [[giza]] و [[alex]])، ومبتشوفش اللي متورّث. فـ [["toString"]] بقت زي أي مدينة مش معروفة: 60.
+
+**الغلطة الشائعة:** تفتكر إن ده مستحيل يحصل لأن «مفيش مدينة اسمها toString». بس الاسم جاي من اليوزر أو من فورم، وأي حد يقدر يكتب أي حاجة. والكود اللي بيتعامل مع input لازم يبقى صح لكل الحالات مش للحالات العادية بس.` }
           ],
           flag: "script",
           deep: {
@@ -885,7 +2586,12 @@ test("'404' كـ string: الـ switch مش بيلاقيه (===) والـ object
 }
 const MESSAGES = { 200: "تمام", 201: "اتعمل", 400: "الطلب غلط", 401: "لازم تعمل login", 404: "مش موجود", 500: "السيرفر وقع" };
 const httpMessage = (code) => MESSAGES[code] ?? "حاجة غير متوقعة";`
-          }
+          },
+          ref: [
+            { t: "MDN: switch", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/switch" },
+            { t: "MDN: Object.hasOwn()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwn" },
+            { t: "MDN: Nullish coalescing operator (??)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing" }
+          ]
         },
         {
           cmd: "&& و || و !",
@@ -908,11 +2614,152 @@ console.log(Math.floor(Math.random() * 6) + 1);
 console.log("" || "ضيف", 0 || 10, 0 ?? 10);`,
           try: R`اكتب [[isLeap(year)]]: السنة كبيسة لو بتقبل القسمة على 4 ومش على 100، أو بتقبل القسمة على 400. جرّبها على 2024 و 1900 و 2000 و 2026. وبعدين اكتب [[randomInt(min, max)]] ترجّع رقم صحيح عشوائي من min لـ max شامل الاتنين، وشغّلها ألف مرة واتأكد إن min و max بيطلعوا. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[isLeap]] و [[randomInt]] (الاختبار بيناديها ألفين مرة).`,
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** [[canVote(age, hasId)]] بترجّع [[true]] لو السن 18 أو أكتر ومعاه بطاقة.`, done: R`[[canVote(20, true)]] true، و [[canVote(20, false)]] false، و [[canVote(17, true)]] false.` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[function isWeekend(day) { return day === "fri" || "sat"; }]]. جرّب [[isWeekend("mon")]] وفسّر الناتج قبل ما تصلّح.`, done: R`قبل التصليح [[isWeekend("mon")]] بترجّع [["sat"]] (قيمة truthy فـ if هتعدّيها كأنها true)، لأن [["sat"]] لوحدها مش مقارنة. بعد ما تكتب [[day === "fri" || day === "sat"]]: [[isWeekend("mon")]] false و [[isWeekend("sat")]] true.` },
-            { lvl: 'تطبيق', t: R`**ابني:** شحن مجاني في متجر: [[freeShipping(total, isMember, isBlocked)]] لو الطلب 500 أو أكتر أو اليوزر member، بشرط إنه مش blocked.`, done: R`[[(600, false, false)]] true، و [[(100, true, false)]] true، و [[(600, true, true)]] false، و [[(100, false, false)]] false.` },
-            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** خمّن قبل ما تشغّل: [[true || false && false]] و [[(true || false) && false]] و [[!true || true]] و [[Math.round(2.5)]] و [[Math.round(-2.5)]].`, done: R`الناتج بالترتيب: true و false و true و 3 و -2. وتقدر تقول ليه الأول true ([[&&]] بتتحسب قبل [[||]]) وليه [[-2.5]] بتتقرّب لـ -2 مش -3 (Math.round بتقرّب النص لفوق ناحية +Infinity).` },
-            { lvl: 'تحدي', t: R`**اكتب اختبار:** لـ [[freeShipping]] اللي في تمرين التطبيق، جرّب كل الـ ٨ تركيبات (الطلب 600 أو 100، و member أو لأ، و blocked أو لأ) بـ ٣ loops جوه بعض، واطبع كل تركيبة ونتيجتها.`, done: R`بيطبع ٨ سطور، منهم ٣ بس [[true]]: (600, false, false) و (600, true, false) و (100, true, false). وأي سطر فيه blocked بـ true نتيجته false مهما كان الباقي.` }
+            { lvl: 'سريع', t: R`**مسألة:** [[canVote(age, hasId)]] بترجّع [[true]] لو السن 18 أو أكتر ومعاه بطاقة.`, done: R`[[canVote(20, true)]] true، و [[canVote(20, false)]] false، و [[canVote(17, true)]] false.`, sol: R`~~~js vote.js
+function canVote(age, hasId) {
+  return age >= 18 && hasId;
+}
+console.log(canVote(20, true), canVote(20, false), canVote(17, true));
+~~~
+
+~~~text الناتج: node vote.js
+true false false
+~~~
+
+**ليه كده:**
+
+- [[&&]] معناها «و»: الاتنين لازم يبقوا صح. [[age >= 18]] شرط، و [[hasId]] أصلًا [[true]] أو [[false]]، فمش محتاجين [[hasId === true]].
+- الدالة بترجّع نتيجة الشرط على طول. مش محتاجين [[if (...) return true; else return false;]]: الشرط نفسه قيمته [[true]] أو [[false]].
+- [[canVote(17, true)]]: الأول [[false]]، فـ [[&&]] مبتبصّش على التاني أصلًا (ده الـ short-circuit) وبترجّع [[false]].
+
+**الغلطة الشائعة:** تكتب [[age > 18]]، فاللي عنده 18 بالظبط ميعرفش يصوّت. «18 أو أكتر» يعني [[>=]].` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[function isWeekend(day) { return day === "fri" || "sat"; }]]. جرّب [[isWeekend("mon")]] وفسّر الناتج قبل ما تصلّح.`, done: R`قبل التصليح [[isWeekend("mon")]] بترجّع [["sat"]] (قيمة truthy فـ if هتعدّيها كأنها true)، لأن [["sat"]] لوحدها مش مقارنة. بعد ما تكتب [[day === "fri" || day === "sat"]]: [[isWeekend("mon")]] false و [[isWeekend("sat")]] true.`, sol: R`الكود البايظ:
+
+~~~js weekend-broken.js
+function isWeekend(day) {
+  return day === "fri" || "sat";
+}
+console.log(isWeekend("mon"));
+if (isWeekend("mon")) console.log("الاتنين طلع أجازة!");
+~~~
+
+~~~text الناتج قبل التصليح
+sat
+الاتنين طلع أجازة!
+~~~
+
+**ليه طلع [["sat"]]:** JavaScript قرت السطر كده: [[(day === "fri") || ("sat")]]. أول حتة [[false]] (الاتنين مش جمعة)، فـ [[||]] رجّعت التانية زي ما هي: النص [["sat"]]. والنص اللي مش فاضي **truthy**، فالـ [[if]] اعتبرته صح والاتنين بقى أجازة!
+
+الحل: كل ناحية من [[||]] لازم تبقى مقارنة كاملة:
+
+~~~js weekend-fixed.js
+function isWeekend(day) {
+  return day === "fri" || day === "sat";
+}
+console.log(isWeekend("mon"), isWeekend("sat"), isWeekend("fri"));
+~~~
+
+~~~text الناتج بعد التصليح
+false true true
+~~~
+
+**الغلطة الشائعة:** الكلام العادي بيقول «لو اليوم جمعة أو سبت»، فبنكتبها زي ما بنتكلم. بس [[||]] مبتعرفش إن «سبت» تابعة لـ [[day ===]]، هي بتشوف قيمتين منفصلين. وخلي بالك إن [[||]] مبترجّعش [[true]] أو [[false]] دايمًا: بترجّع واحدة من القيمتين نفسهم.` },
+            { lvl: 'تطبيق', t: R`**ابني:** شحن مجاني في متجر: [[freeShipping(total, isMember, isBlocked)]] لو الطلب 500 أو أكتر أو اليوزر member، بشرط إنه مش blocked.`, done: R`[[(600, false, false)]] true، و [[(100, true, false)]] true، و [[(600, true, true)]] false، و [[(100, false, false)]] false.`, sol: R`~~~js ship.js
+function freeShipping(total, isMember, isBlocked) {
+  return (total >= 500 || isMember) && !isBlocked;
+}
+console.log(freeShipping(600, false, false));
+console.log(freeShipping(100, true, false));
+console.log(freeShipping(600, true, true));
+console.log(freeShipping(100, false, false));
+~~~
+
+~~~text الناتج: node ship.js
+true
+true
+false
+false
+~~~
+
+**فك الشرط:**
+
+- [[(total >= 500 || isMember)]]: «يستاهل» شحن مجاني بواحدة من الاتنين.
+- [[&& !isBlocked]]: وبشرط إنه مش محظور. الـ [[!]] بتقلب [[true]] لـ [[false]] والعكس.
+- الأقواس هنا **مش زينة**. جرّبت من غيرها:
+
+~~~js ship-noparen.js
+function freeShipping(total, isMember, isBlocked) {
+  return total >= 500 || isMember && !isBlocked;
+}
+console.log(freeShipping(600, true, true));
+~~~
+
+~~~text الناتج
+true
+~~~
+
+اليوزر المحظور خد شحن مجاني! لأن [[&&]] بتتحسب قبل [[||]]، فالسطر اتقري [[total >= 500 || (isMember && !isBlocked)]]: الطلب 600 لوحده كفاية والحظر اتفحص مع العضوية بس.
+
+**الغلطة الشائعة:** دي بالظبط. لما تخلط [[&&]] و [[||]] في شرط واحد، حط أقواس دايمًا حتى لو فاكر الترتيب، عشان اللي يقرا يفهم.` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** خمّن قبل ما تشغّل: [[true || false && false]] و [[(true || false) && false]] و [[!true || true]] و [[Math.round(2.5)]] و [[Math.round(-2.5)]].`, done: R`الناتج بالترتيب: true و false و true و 3 و -2. وتقدر تقول ليه الأول true ([[&&]] بتتحسب قبل [[||]]) وليه [[-2.5]] بتتقرّب لـ -2 مش -3 (Math.round بتقرّب النص لفوق ناحية +Infinity).`, sol: R`~~~js predict.js
+console.log(true || false && false);
+console.log((true || false) && false);
+console.log(!true || true);
+console.log(Math.round(2.5));
+console.log(Math.round(-2.5));
+~~~
+
+~~~text الناتج: node predict.js
+true
+false
+true
+3
+-2
+~~~
+
+**ليه:**
+
+- [[true || false && false]]: الـ [[&&]] الأول: [[false && false]] = [[false]]، وبعدين [[true || false]] = **true**.
+- [[(true || false) && false]]: الأقواس الأول = [[true]]، وبعدين [[true && false]] = **false**. نفس القيم، والأقواس غيّرت الناتج.
+- [[!true || true]]: الـ [[!]] أقوى من الاتنين، فـ [[!true]] = [[false]]، وبعدين [[false || true]] = **true**.
+- [[Math.round(2.5)]] = **3**: النص بيتقرّب لفوق.
+- [[Math.round(-2.5)]] = **-2** مش -3: «لفوق» يعني ناحية الأكبر (ناحية [[+Infinity]])، و -2 أكبر من -3.
+
+**الترتيب:** [[!]] الأول، وبعدين [[&&]]، وبعدين [[||]] (زي الضرب قبل الجمع).
+
+**الغلطة الشائعة:** تقرا السطر من الشمال لليمين ([[true || false]] الأول)، أو تفتكر إن [[Math.round]] بتبعد عن الصفر في السالب زي ما بنقرّب بإيدنا. لو محتاج تقريب «بعيد عن الصفر» للسالب، اكتبه بنفسك.` },
+            { lvl: 'تحدي', t: R`**اكتب اختبار:** لـ [[freeShipping]] اللي في تمرين التطبيق، جرّب كل الـ ٨ تركيبات (الطلب 600 أو 100، و member أو لأ، و blocked أو لأ) بـ ٣ loops جوه بعض، واطبع كل تركيبة ونتيجتها.`, done: R`بيطبع ٨ سطور، منهم ٣ بس [[true]]: (600, false, false) و (600, true, false) و (100, true, false). وأي سطر فيه blocked بـ true نتيجته false مهما كان الباقي.`, sol: R`~~~js ship-all.js
+function freeShipping(total, isMember, isBlocked) {
+  return (total >= 500 || isMember) && !isBlocked;
+}
+for (const total of [600, 100]) {
+  for (const isMember of [false, true]) {
+    for (const isBlocked of [false, true]) {
+      console.log(total, isMember, isBlocked, "→", freeShipping(total, isMember, isBlocked));
+    }
+  }
+}
+~~~
+
+~~~text الناتج: node ship-all.js
+600 false false → true
+600 false true → false
+600 true false → true
+600 true true → false
+100 false false → false
+100 false true → false
+100 true false → true
+100 true true → false
+~~~
+
+**ليه كده:**
+
+- [[for (const total of [600, 100])]]: بتلف على القيمتين واحدة واحدة (هتاخدها بالتفصيل في درس «for...of و for...in»). وكل loop جوه اللي قبلها، فالتركيبات كلها: ٢ × ٢ × ٢ = **٨ سطور**.
+- النتيجة: ٣ بس [[true]]، وكلهم [[isBlocked]] فيهم [[false]]. وأي سطر فيه [[isBlocked]] بـ [[true]] طلع [[false]] مهما كان الطلب أو العضوية: الـ [[&& !isBlocked]] شغالة صح.
+- السطر [[100 false false]] [[false]]: طلب صغير ومش member.
+
+**ليه ده اختبار أقوى من ٤ سطور:** لما الشرط فيه ٣ حاجات، الغلطات بتستخبى في التركيبات اللي محدش فكّر فيها. لو شغّلت نفس السكربت على نسخة الدالة اللي من غير أقواس (تمرين التطبيق)، السطر [[600 false true]] و [[600 true true]] هيطلعوا [[true]] وتشوف الغلطة على طول.
+
+**الغلطة الشائعة:** تختبر الحالات «الحلوة» بس (اللي المفروض تطلع [[true]]). الحالات اللي المفروض تترفض هي اللي بتمسك الباجز.` }
           ],
           flag: "script",
           deep: {
@@ -1154,7 +3001,14 @@ test("randomInt(1, 3): الطرفين بيطلعوا، وكل رقم حوالي 
 test("randomInt(5, 5) ← 5 دايمًا", () => expect(randomInt(5, 5)).toBe(5));`,
             solution: R`const isLeap = (y) => (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;`
-          }
+          },
+          ref: [
+            { t: "MDN: Logical AND (&&)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_AND" },
+            { t: "MDN: Logical OR (||)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_OR" },
+            { t: "MDN: Logical NOT (!)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_NOT" },
+            { t: "MDN: Operator precedence", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_precedence" },
+            { t: "MDN: Math.round()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round" }
+          ]
         },
         {
           cmd: "for و while",
@@ -1185,12 +3039,225 @@ do {
 console.log("طلع 7 بعد", tries, "محاولة");`,
           try: R`اطبع جدول ضرب ٧ ([[7 x 1 = 7]] لحد [[7 x 10 = 70]]) بـ for. وبعدين اجمع الأرقام من 1 لـ 100 بـ while (لازم يطلع 5050). وبعدين اكتب countdown من 10 لـ 1 وبعدها «انطلق!». وبعدين جرّب loop لا نهائي بقصد ([[while (true) {}]]) واقفله بـ Ctrl+C.`,
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** اطبع الأرقام الزوجية من 2 لـ 20 بـ for واحدة بتزيد 2 كل لفة.`, done: R`بيطلع 10 أرقام، أولهم 2 وآخرهم 20، ومفيش ولا رقم فردي.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[let n = 10; do { console.log(n); n++; } while (n < 5);]]. هيطبع كام سطر؟ وكام لو بدّلتها بـ [[while (n < 5) { ... }]] عادية؟`, done: R`توقعت وطلع: الـ do...while بتطبع [[10]] مرة واحدة (بتلف الأول وبعدين تسأل)، والـ while العادية مبتطبعش ولا سطر. وتقدر تقول إمتى ده بيفرق (قايمة لازم تظهر مرة على الأقل).` },
-            { lvl: 'تطبيق', t: R`**محاكاة:** حصّالة فيها 1000 جنيه بتزيد 10٪ كل سنة. بـ while احسب كام سنة لحد ما توصل 2000 أو أكتر.`, done: R`بيطبع 8 سنين (بعد 7 سنين المبلغ لسه حوالي 1948).` },
-            { lvl: 'تطبيق', t: R`**أشكال:** بـ loop جوه loop اطبع مثلث نجوم قايم بـ n = 4، وبعدين هرم في النص (مسافات قبل النجوم: [[" ".repeat(n - i) + "*".repeat(2 * i - 1)]]).`, done: R`المثلث ٤ سطور من [[*]] لـ [[****]]، والهرم ٤ سطور آخرها [[*******]] (٧ نجوم) وأولها ٣ مسافات ونجمة. ولو غيّرت n لـ 6 الشكلين بيكبروا من غير ما تلمس أي سطر تاني.` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[collatz(n)]]: لو n زوجي اقسمه على 2، ولو فردي خليه [[3 * n + 1]]، وعدّ الخطوات لحد ما يبقى 1.`, done: R`[[collatz(27)]] بترجّع 111، و [[collatz(1)]] بترجّع 0 (الـ while مبتلفش خالص)، و [[collatz(6)]] بترجّع 8.` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[let i = 0; while (i < 5) { console.log(i); }]]. متشغّلوش الأول: قول هيحصل إيه، وبعدين شغّله ووقّفه بـ Ctrl+C وصلّحه.`, done: R`عرفت قبل التشغيل إنه هيطبع [[0]] على طول من غير ما يقف (i مبتتغيّرش). وقفته بـ Ctrl+C، وبعد ما زوّدت [[i++]] جوه الـ loop بيطبع 0 لحد 4 ويقف.` }
+            { lvl: 'سريع', t: R`**مسألة:** اطبع الأرقام الزوجية من 2 لـ 20 بـ for واحدة بتزيد 2 كل لفة.`, done: R`بيطلع 10 أرقام، أولهم 2 وآخرهم 20، ومفيش ولا رقم فردي.`, sol: R`~~~js evens.js
+for (let i = 2; i <= 20; i += 2) {
+  console.log(i);
+}
+~~~
+
+~~~text الناتج: node evens.js
+2
+4
+6
+8
+10
+12
+14
+16
+18
+20
+~~~
+
+**فك الـ for:**
+
+- [[let i = 2]]: بنبدأ من أول رقم زوجي، مش من 1.
+- [[i <= 20]]: نكمّل طول ما [[i]] لسه مش أكبر من 20. الـ [[<=]] عشان 20 نفسها تتطبع.
+- [[i += 2]]: كل لفة نزوّد 2 بدل 1، فمش محتاجين نسأل «الرقم زوجي؟» خالص. ١٠ لفات بس بدل ٢٠.
+
+**الغلطة الشائعة:** [[i < 20]]، فالـ 20 متتطبعش وتطلع ٩ أرقام. أو تبدأ من [[i = 1]] مع [[i += 2]] فتطلع الأرقام الفردي كلها.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[let n = 10; do { console.log(n); n++; } while (n < 5);]]. هيطبع كام سطر؟ وكام لو بدّلتها بـ [[while (n < 5) { ... }]] عادية؟`, done: R`توقعت وطلع: الـ do...while بتطبع [[10]] مرة واحدة (بتلف الأول وبعدين تسأل)، والـ while العادية مبتطبعش ولا سطر. وتقدر تقول إمتى ده بيفرق (قايمة لازم تظهر مرة على الأقل).`, sol: R`جرّبت الاتنين في ملف واحد بنفس البداية (10) ونفس الشرط ([[< 5]]):
+
+~~~js dowhile.js
+let n = 10;
+do {
+  console.log("do...while:", n);
+  n++;
+} while (n < 5);
+
+let m = 10;
+while (m < 5) {
+  console.log("while:", m);
+  m++;
+}
+console.log("خلصنا");
+~~~
+
+~~~text الناتج: node dowhile.js
+do...while: 10
+خلصنا
+~~~
+
+**ليه:**
+
+- الـ [[do...while]] بتنفّذ الجسم **الأول** وبعدين تسأل الشرط. فطبعت 10 مرة، وبعدين سألت [[11 < 5]] لقته [[false]] فوقفت. يعني **سطر واحد**.
+- الـ [[while]] العادية بتسأل **الأول**: [[10 < 5]] [[false]]، فمدخلتش الجسم خالص. **صفر سطور** (ومفيش [[while:]] في الناتج).
+
+**إمتى ده بيفرق:** قايمة اختيارات لازم تظهر لليوزر مرة على الأقل قبل ما تعرف هو عايز يخرج ولا لأ. ده بالظبط شكل مشروع الـ ATM تحت.
+
+**الغلطة الشائعة:** تفتكر إن الاتنين نفس الحاجة وتختار أي واحدة. هما بيدّوا نفس الناتج بس لو الشرط صح من الأول، والفرق كله في حالة إن الشرط غلط من أول لفة.` },
+            { lvl: 'تطبيق', t: R`**محاكاة:** حصّالة فيها 1000 جنيه بتزيد 10٪ كل سنة. بـ while احسب كام سنة لحد ما توصل 2000 أو أكتر.`, done: R`بيطبع 8 سنين (بعد 7 سنين المبلغ لسه حوالي 1948).`, sol: R`~~~js savings.js
+let money = 1000;
+let years = 0;
+while (money < 2000) {
+  money = money * 1.1;
+  years++;
+  console.log("بعد", years, "سنين:", Math.round(money * 100) / 100);
+}
+console.log("محتاج", years, "سنين");
+~~~
+
+~~~text الناتج: node savings.js
+بعد 1 سنين: 1100
+بعد 2 سنين: 1210
+بعد 3 سنين: 1331
+بعد 4 سنين: 1464.1
+بعد 5 سنين: 1610.51
+بعد 6 سنين: 1771.56
+بعد 7 سنين: 1948.72
+بعد 8 سنين: 2143.59
+محتاج 8 سنين
+~~~
+
+**ليه [[while]] مش [[for]]:** إحنا مش عارفين هنلف كام مرة، ده بالظبط السؤال. الـ [[while]] بتلف طول ما الشرط صح، والعدّاد [[years]] بيعدّ اللفات.
+
+- [[money = money * 1.1]]: زيادة ١٠٪ يعني المبلغ × ١٫١ (المبلغ نفسه + عُشره).
+- [[years++]]: سنة كمان مع كل لفة.
+- السطر اللي جوه الـ loop بيطبع كل سنة عشان تتابع. بعد ٧ سنين المبلغ 1948.72 (لسه أقل من 2000)، وفي السنة التامنة عدّى: 2143.59، فالـ while وقفت والإجابة **8**.
+- [[Math.round(money * 100) / 100]] للعرض بس (يقرّب لقرشين)، والحساب نفسه شغال على القيمة الكاملة.
+
+**الغلطة الشائعة:** تكتب الشرط [[money <= 2000]]. هنا مش هيفرق، بس لو المبلغ وصل 2000 بالظبط هتلف لفة زيادة. وكمان لو نسيت [[years++]] الإجابة هتطلع 0.` },
+            { lvl: 'تطبيق', t: R`**أشكال:** بـ loop جوه loop اطبع مثلث نجوم قايم بـ n = 4، وبعدين هرم في النص (مسافات قبل النجوم: [[" ".repeat(n - i) + "*".repeat(2 * i - 1)]]).`, done: R`المثلث ٤ سطور من [[*]] لـ [[****]]، والهرم ٤ سطور آخرها [[*******]] (٧ نجوم) وأولها ٣ مسافات ونجمة. ولو غيّرت n لـ 6 الشكلين بيكبروا من غير ما تلمس أي سطر تاني.`, sol: R`~~~js shapes.js
+const n = 4;
+
+// المثلث: سطر i فيه i نجمة
+for (let i = 1; i <= n; i++) {
+  let row = "";
+  for (let j = 1; j <= i; j++) {
+    row += "*";
+  }
+  console.log(row);
+}
+
+// الهرم: مسافات قبل النجوم عشان يتوسّط
+for (let i = 1; i <= n; i++) {
+  console.log(" ".repeat(n - i) + "*".repeat(2 * i - 1));
+}
+~~~
+
+~~~text الناتج: node shapes.js
+*
+**
+***
+****
+   *
+  ***
+ *****
+*******
+~~~
+
+ولما غيّرت أول سطر لـ [[const n = 6;]] بس:
+
+~~~text الناتج: n = 6
+*
+**
+***
+****
+*****
+******
+     *
+    ***
+   *****
+  *******
+ *********
+***********
+~~~
+
+**المثلث (loop جوه loop):**
+
+- الـ loop اللي برّه بتلف على السطور: [[i]] من 1 لـ 4.
+- الـ loop اللي جوه بتبني سطر واحد: بتزوّد [[*]] على [[row]] عدد [[i]] مرات. فالسطر الأول نجمة، والرابع ٤.
+- [[let row = ""]] جوه الـ loop اللي برّه: كل سطر بيبدأ فاضي.
+
+**الهرم:** كل سطر = مسافات + نجوم:
+
+| السطر [[i]] | مسافات [[n - i]] | نجوم [[2 * i - 1]] |
+|---|---|---|
+| 1 | 3 | 1 |
+| 2 | 2 | 3 |
+| 3 | 1 | 5 |
+| 4 | 0 | 7 |
+
+[[" ".repeat(3)]] بتكرر المسافة ٣ مرات. المسافات بتقل واحد والنجوم بتزيد اتنين، فالشكل بيتوسّط.
+
+**الغلطة الشائعة:** [[let row = ""]] برّه الـ loop الكبيرة، فكل سطر بيكمّل على اللي قبله ويطلع ١، ٣، ٦، ١٠ نجوم. أو تكتب الأرقام بإيدك ([["   *"]]) بدل ما تحسبها من [[n]]، فلما [[n]] تتغيّر الشكل يبوظ.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[collatz(n)]]: لو n زوجي اقسمه على 2، ولو فردي خليه [[3 * n + 1]]، وعدّ الخطوات لحد ما يبقى 1.`, done: R`[[collatz(27)]] بترجّع 111، و [[collatz(1)]] بترجّع 0 (الـ while مبتلفش خالص)، و [[collatz(6)]] بترجّع 8.`, sol: R`~~~js collatz.js
+function collatz(n) {
+  let steps = 0;
+  while (n !== 1) {
+    if (n % 2 === 0) n = n / 2;
+    else n = 3 * n + 1;
+    steps++;
+  }
+  return steps;
+}
+console.log(collatz(27), collatz(1), collatz(6));
+~~~
+
+~~~text الناتج: node collatz.js
+111 0 8
+~~~
+
+**ليه كده:**
+
+- [[while (n !== 1)]]: مش عارفين هنلف كام مرة، فـ [[while]]. ونقف لما [[n]] توصل 1.
+- [[n % 2 === 0]]: باقي القسمة على 2 صفر يعني زوجي، فنقسم. غير كده فردي فـ [[3 * n + 1]].
+- [[steps++]] بعد كل خطوة.
+- [[collatz(1)]] بـ 0: الشرط [[1 !== 1]] [[false]] من الأول، فالـ while مدخلتش الجسم خالص.
+- [[collatz(6)]]: ٦ ← ٣ ← ١٠ ← ٥ ← ١٦ ← ٨ ← ٤ ← ٢ ← ١، يعني 8 خطوات.
+
+**الغلطة الشائعة:** تعدّ الأرقام بدل الخطوات (فتطلع 9 لـ 6 لأنك عدّيت الـ 6 نفسها). وكمان لو استخدمت [[do...while]] هنا، [[collatz(1)]] هتلف مرة وتدخل في 4 ← 2 ← 1 وترجّع 3 غلط.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** [[let i = 0; while (i < 5) { console.log(i); }]]. متشغّلوش الأول: قول هيحصل إيه، وبعدين شغّله ووقّفه بـ Ctrl+C وصلّحه.`, done: R`عرفت قبل التشغيل إنه هيطبع [[0]] على طول من غير ما يقف (i مبتتغيّرش). وقفته بـ Ctrl+C، وبعد ما زوّدت [[i++]] جوه الـ loop بيطبع 0 لحد 4 ويقف.`, sol: R`**قبل التشغيل:** [[i]] بتبدأ 0 ومفيش أي سطر بيغيّرها، فـ [[0 < 5]] هتفضل [[true]] للأبد. يعني هيطبع [[0]] على طول من غير ما يقف.
+
+~~~js infinite.js
+let i = 0;
+while (i < 5) {
+  console.log(i);
+}
+~~~
+
+شغّلته ووقّفته بـ Ctrl+C بعد ثانية تقريبًا. أول سطور الناتج (من غير الباقي):
+
+~~~text الناتج: node infinite.js (ووقّفته بـ Ctrl+C)
+0
+0
+0
+0
+...
+~~~
+
+في الثانية دي طبع حوالي ٣٢٠ ألف سطر [[0]] (عدّيتهم بتحويل الناتج لأمر بيعدّ السطور). الـ Ctrl+C بيبعت للبرنامج إشارة إنه يقف.
+
+الحل: زوّد [[i++]] جوه الـ loop:
+
+~~~js infinite-fixed.js
+let i = 0;
+while (i < 5) {
+  console.log(i);
+  i++;
+}
+~~~
+
+~~~text الناتج بعد التصليح
+0
+1
+2
+3
+4
+~~~
+
+**القاعدة:** أي [[while]] لازم يبقى جواها حاجة بتقرّب الشرط إنه يبقى [[false]]. الـ [[for]] بتحط ده في السطر الأول ([[i++]]) فصعب تنساه، وده سبب إنها أأمن لما تبقى عارف عدد اللفات.
+
+**الغلطة الشائعة:** تقفل الترمنال كله لما البرنامج ميقفش. Ctrl+C كفاية. ولو اللوب اللانهائية في صفحة في المتصفح، التاب هيعلّق ولازم تقفله من Task Manager بتاع Chrome (Shift+Esc).` }
           ],
           flag: "script",
           deep: {
@@ -1390,7 +3457,13 @@ while (i <= 100) {
 }
 console.log(sum);
 for (let n = 10; n >= 1; n--) console.log(n);
-console.log("انطلق!");`
+console.log("انطلق!");`,
+          ref: [
+            { t: "MDN: Loops and iteration", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Loops_and_iteration" },
+            { t: "MDN: for", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for" },
+            { t: "MDN: while", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/while" },
+            { t: "MDN: do...while", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/do...while" }
+          ]
         },
         {
           cmd: "for...of و for...in",
@@ -1411,11 +3484,164 @@ prices.forEach((p, i) => console.log(i, p));
 for (const i in prices) console.log(i, typeof i);`,
           try: R`اجمع [[prices]] بـ for...of. وبعدين دوّر على أول سعر أقل من 100 واطبعه ووقّف، مرة بـ for...of و [[break]]، ومرة جرّب بـ forEach واكتب فيها break: هيحصل إيه؟ وآخر حاجة: اطبع كل مفتاح وقيمة في [[{ city: "Cairo", zip: "11511" }]] بـ Object.entries.`,
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** اجمع [[[120, 80, 45]]] بـ for...of.`, done: R`بيطبع 245.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** سلة فيها ٣ objects زي [[{ name: "Mug", price: 120, qty: 2 }]]. بـ for...of اطبع سطر لكل منتج ([[Mug x2 = 240]]) وفي الآخر الإجمالي.`, done: R`بيطبع ٣ سطور وبعدهم الإجمالي، والإجمالي بيساوي مجموع الأرقام اللي في آخر السطور.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[const scores = { ali: 80, mona: 95 }; for (const s of scores) console.log(s);]]. شغّله واقرا الرسالة، وصلّحه بطريقتين.`, done: R`قبل التصليح: [[TypeError: scores is not iterable]]. والتصليح الأول [[for (const name in scores)]] بيطبع ali و mona، والتاني [[for (const [name, score] of Object.entries(scores))]] بيطبع الاسم والدرجة مع بعض.` },
-            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** لف بـ for...in على [[["a", "b"]]] واطبع [[typeof i]] و [[i + 1]].`, done: R`بيطبع string مرتين، و [[i + 1]] بيطلع "01" و "11" مش 1 و 2، لأن مفاتيح for...in نصوص. وتقدر تقول ليه for...of أو for العادية هي الصح مع الـ arrays.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** عدّ حروف [["hi😀"]] مرة بـ for...of ومرة بـ for عادية لحد [[.length]]. اطبع العددين.`, done: R`for...of بتعدّ 3 والـ for العادية بتعدّ 4. وتقدر تقول ليه: الإيموجي بياخد خانتين في [[.length]]، و for...of بتلف على الحروف الحقيقية. فلو بتعدّ حروف اسم أو رسالة استخدم for...of.` }
+            { lvl: 'سريع', t: R`**مسألة:** اجمع [[[120, 80, 45]]] بـ for...of.`, done: R`بيطبع 245.`, sol: R`~~~js sum.js
+const prices = [120, 80, 45];
+let sum = 0;
+for (const p of prices) {
+  sum += p;
+}
+console.log(sum);
+~~~
+
+~~~text الناتج: node sum.js
+245
+~~~
+
+**ليه كده:**
+
+- [[let sum = 0]] برّه الـ loop: بيبدأ صفر مرة واحدة، وكل لفة بتزوّد عليه.
+- [[for (const p of prices)]]: في كل لفة [[p]] بياخد عنصر من الـ array بالترتيب: 120 ثم 80 ثم 45. مش محتاجين [[i]] ولا [[prices[i]]].
+- [[const p]] مش [[let]]: كل لفة [[p]] متغير جديد، ومحدش بيغيّره جوه اللفة.
+- [[sum += p]] يعني [[sum = sum + p]]: ٠ ← ١٢٠ ← ٢٠٠ ← ٢٤٥.
+
+**الغلطة الشائعة:** تكتب [[let sum = 0]] **جوه** الـ loop، فكل لفة بتصفّره من الأول، وتحاول تطبعه برّه فيطلع [[ReferenceError: sum is not defined]] لأنه اتعرّف جوه بلوك الـ loop بس.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** سلة فيها ٣ objects زي [[{ name: "Mug", price: 120, qty: 2 }]]. بـ for...of اطبع سطر لكل منتج ([[Mug x2 = 240]]) وفي الآخر الإجمالي.`, done: R`بيطبع ٣ سطور وبعدهم الإجمالي، والإجمالي بيساوي مجموع الأرقام اللي في آخر السطور.`, sol: R`~~~js cart.js
+const cart = [
+  { name: "Mug", price: 120, qty: 2 },
+  { name: "Notebook", price: 45, qty: 3 },
+  { name: "Pen", price: 10, qty: 5 },
+];
+let total = 0;
+for (const item of cart) {
+  const line = item.price * item.qty;
+  console.log(item.name + " x" + item.qty + " = " + line);
+  total += line;
+}
+console.log("الإجمالي:", total);
+~~~
+
+~~~text الناتج: node cart.js
+Mug x2 = 240
+Notebook x3 = 135
+Pen x5 = 50
+الإجمالي: 425
+~~~
+
+**ليه كده:**
+
+- كل عنصر في [[cart]] object بتلات خصائص. في كل لفة [[item]] هو المنتج كله، و [[item.price]] و [[item.qty]] بيجيبوا الخصائص.
+- [[const line = item.price * item.qty]]: إجمالي السطر في متغير عشان نستخدمه مرتين: في الطباعة وفي الجمع. كده الرقم اللي بيتطبع هو هو اللي بيتجمع.
+- [[total += line]]: الإجمالي بيكبر مع كل منتج: ٢٤٠ + ١٣٥ + ٥٠ = 425، نفس مجموع آخر السطور.
+
+**الغلطة الشائعة:** تحسب [[item.price * item.qty]] مرة في الطباعة ومرة في الجمع. شغال، بس لو عدّلت واحدة (زي إنك تزوّد خصم) ونسيت التانية، الإيصال يقول رقم والإجمالي يقول رقم تاني.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** [[const scores = { ali: 80, mona: 95 }; for (const s of scores) console.log(s);]]. شغّله واقرا الرسالة، وصلّحه بطريقتين.`, done: R`قبل التصليح: [[TypeError: scores is not iterable]]. والتصليح الأول [[for (const name in scores)]] بيطبع ali و mona، والتاني [[for (const [name, score] of Object.entries(scores))]] بيطبع الاسم والدرجة مع بعض.`, sol: R`الكود البايظ:
+
+~~~js scores-broken.js
+const scores = { ali: 80, mona: 95 };
+for (const s of scores) console.log(s);
+~~~
+
+~~~text الناتج قبل التصليح
+C:\Users\ali\lab\js\scores-broken.js:2
+for (const s of scores) console.log(s);
+                ^
+
+TypeError: scores is not iterable
+    at Object.<anonymous> (C:\Users\ali\lab\js\scores-broken.js:2:17)
+    at Module._compile (node:internal/modules/cjs/loader:1929:14)
+    at Object..js (node:internal/modules/cjs/loader:2060:10)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+
+Node.js v24.22.1
+~~~
+
+**اقرا الرسالة:** [[TypeError: scores is not iterable]] يعني «[[scores]] مش حاجة ينفع تلف عليها بـ for...of». الـ [[for...of]] بتشتغل على حاجات ليها ترتيب زي الـ array والنص، والـ object العادي مش منهم. والسهم [[^]] تحت [[scores]] في سطر 2.
+
+الحل بطريقتين:
+
+~~~js scores-fixed.js
+const scores = { ali: 80, mona: 95 };
+
+// الطريقة الأولى: for...in بتلف على المفاتيح
+for (const name in scores) console.log(name);
+
+// الطريقة التانية: Object.entries بيحوّله لـ [مفتاح، قيمة]
+for (const [name, score] of Object.entries(scores)) console.log(name, score);
+~~~
+
+~~~text الناتج بعد التصليح
+ali
+mona
+ali 80
+mona 95
+~~~
+
+- [[for (const name in scores)]]: الـ [[for...in]] بتلف على **مفاتيح** الـ object: [["ali"]] ثم [["mona"]]. ولو عايز الدرجة: [[scores[name]]].
+- [[Object.entries(scores)]] بيحوّل الـ object لـ array من أزواج: [[[["ali", 80], ["mona", 95]]]]. والـ array دي ينفع نلف عليها بـ for...of، و [[[name, score]]] بيفك كل زوج لمتغيرين.
+
+**الغلطة الشائعة:** تحفظ «for...in للـ object و for...of للـ array» من غير ما تعرف ليه، فتبدّلهم. افتكرها كده: **of** = القيم اللي جوه حاجة ليها ترتيب، **in** = المفاتيح.` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** لف بـ for...in على [[["a", "b"]]] واطبع [[typeof i]] و [[i + 1]].`, done: R`بيطبع string مرتين، و [[i + 1]] بيطلع "01" و "11" مش 1 و 2، لأن مفاتيح for...in نصوص. وتقدر تقول ليه for...of أو for العادية هي الصح مع الـ arrays.`, sol: R`~~~js forin-array.js
+const letters = ["a", "b"];
+for (const i in letters) {
+  console.log(typeof i, i + 1);
+}
+for (let i = 0; i < letters.length; i++) {
+  console.log(typeof i, i + 1);
+}
+~~~
+
+~~~text الناتج: node forin-array.js
+string 01
+string 11
+number 1
+number 2
+~~~
+
+**ليه [[01]] و [[11]]:**
+
+- الـ [[for...in]] بتدّيك المفاتيح، ومفاتيح أي object في JavaScript **نصوص**، حتى في الـ array. فـ [[i]] هي [["0"]] و [["1"]] مش 0 و 1، و [[typeof i]] بيقول [[string]].
+- [["0" + 1]]: نص + رقم = لزق، فطلعت [["01"]]. ونفس الحكاية [["11"]].
+- في الـ [[for]] العادية [[i]] رقم ([[number]])، فـ [[i + 1]] بتجمع صح: 1 و 2.
+
+**ليه for...of أو for العادية هي الصح مع الـ arrays:** عايز القيم؟ [[for...of]]. عايز الرقم (index) عشان تحسب بيه؟ [[for]] العادية، و [[i]] رقم بجد. الـ [[for...in]] اتعملت للـ objects.
+
+**الغلطة الشائعة:** تلف بـ for...in على array وتعمل [[arr[i + 1]]] عشان تجيب العنصر اللي بعده، فتطلع [[arr["01"]]] = [[undefined]] من غير أي error.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** عدّ حروف [["hi😀"]] مرة بـ for...of ومرة بـ for عادية لحد [[.length]]. اطبع العددين.`, done: R`for...of بتعدّ 3 والـ for العادية بتعدّ 4. وتقدر تقول ليه: الإيموجي بياخد خانتين في [[.length]]، و for...of بتلف على الحروف الحقيقية. فلو بتعدّ حروف اسم أو رسالة استخدم for...of.`, sol: R`~~~js emoji.js
+const text = "hi😀";
+
+let countOf = 0;
+for (const ch of text) countOf++;
+
+let countFor = 0;
+for (let i = 0; i < text.length; i++) countFor++;
+
+console.log("for...of:", countOf);
+console.log("for عادية:", countFor, "| length:", text.length);
+for (let i = 0; i < text.length; i++) console.log(i, JSON.stringify(text[i]));
+~~~
+
+~~~text الناتج: node emoji.js
+for...of: 3
+for عادية: 4 | length: 4
+0 "h"
+1 "i"
+2 "\ud83d"
+3 "\ude00"
+~~~
+
+**ليه 3 و 4:**
+
+- [[text.length]] بيعدّ **وحدات UTF-16** مش حروف. الحروف الإنجليزي والعربي العادية كل حرف وحدة واحدة، بس الإيموجي [[😀]] بياخد **وحدتين** (اسمهم surrogate pair). فالطول 4.
+- الـ [[for]] العادية بتلف على الـ index من 0 لـ 3، فبتعدّ 4. والسطور الأخيرة بتوريك ليه: الخانة 2 والخانة 3 كل واحدة نص إيموجي مكسور ([["\ud83d"]] و [["\ude00"]])، ومينفعوش يتعرضوا لوحدهم.
+- الـ [[for...of]] على النص بتلف على الحروف الحقيقية (code points)، فالإيموجي حرف واحد: 3.
+
+**الخلاصة:** لو بتعدّ حروف اسم أو رسالة اليوزر كتبها (وممكن يكون فيها إيموجي)، استخدم [[for...of]]. التفاصيل الكاملة في وحدة «النصوص بعمق».
+
+**الغلطة الشائعة:** تعمل حد أقصى للرسالة بـ [[length]] («مسموح 10 حروف») فاليوزر اللي كتب ٥ إيموجي يترفض لأن طولهم 10.` }
           ],
           flag: "script",
           deep: {
@@ -1716,7 +3942,12 @@ for (const p of prices) {
   }
 }
 console.log(prices.find((p) => p < 100));
-for (const [k, v] of Object.entries({ city: "Cairo", zip: "11511" })) console.log(k, v);`
+for (const [k, v] of Object.entries({ city: "Cairo", zip: "11511" })) console.log(k, v);`,
+          ref: [
+            { t: "MDN: for...of", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of" },
+            { t: "MDN: for...in", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in" },
+            { t: "MDN: Object.entries()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries" }
+          ]
         },
         {
           cmd: "break و continue",
@@ -1745,11 +3976,154 @@ outer: for (let r = 0; r < 3; r++) {
 }`,
           try: R`قبل ما تشغّل: المجموع هيطلع كام؟ وهل الـ 120 اللي في الآخر هتتجمع؟ وبعدين اكتب loop من 1 لـ 50 تطبع الأرقام الفردية بس باستخدام continue، وتقف أول ما توصل لرقم بيقبل القسمة على 7 و 3 مع بعض.`,
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** في [[[3, 10, 14, 21]]] دوّر على أول رقم بيقبل القسمة على 7 واطبعه ووقّف بـ break.`, done: R`بيطبع 14 مرة واحدة بس، و 21 مبيتطبعش.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[for (let i = 1; i <= 5; i++) { if (i === 2) continue; if (i === 4) break; console.log(i); }]]. اكتب الناتج قبل ما تشغّل.`, done: R`توقعت وطلع [[1]] و [[3]] بس. 2 اتنطّت بـ continue، و 4 وقّفت الـ loop كلها فـ 5 متطبعتش.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** طلبات اليوم array فيها [[{ total, status }]]: اجمع الـ total ونطّ أي طلب status بتاعه [["cancelled"]] بـ continue.`, done: R`على [[{ total: 100, status: "paid" }]] و [[{ total: 50, status: "cancelled" }]] و [[{ total: 70, status: "paid" }]] المجموع 170.` },
-            { lvl: 'تحدي', t: R`**مسألة:** loop جوه loop من 1 لـ 9: دوّر على أول i و j بحيث [[i < j]] و [[i * j === 24]]، واطبعهم ووقّف اللوبتين الاتنين (دوّر على labeled break: [[outer:]]).`, done: R`بيطبع [[3 8]] سطر واحد بس، ومفيش [[4 6]] بعده.` },
-            { lvl: 'تحدي', t: R`**محاكاة:** ماكينة صرف رصيدها 600 وطابور سحب [[[200, 500, 300, 100, 50]]]. أي سحب أكبر من الرصيد اطبع «مرفوض» وكمّل بـ continue، ولما الرصيد يوصل صفر اطبع «الماكينة فضيت» ووقّف بـ break.`, done: R`بيطبع: 200 تمام (باقي 400)، و 500 مرفوض، و 300 تمام (باقي 100)، و 100 تمام (باقي 0) وبعدها «الماكينة فضيت». و 50 مبتتطبعش خالص لأن الـ break وقّف الطابور.` }
+            { lvl: 'سريع', t: R`**مسألة:** في [[[3, 10, 14, 21]]] دوّر على أول رقم بيقبل القسمة على 7 واطبعه ووقّف بـ break.`, done: R`بيطبع 14 مرة واحدة بس، و 21 مبيتطبعش.`, sol: R`~~~js first7.js
+const nums = [3, 10, 14, 21];
+for (const n of nums) {
+  if (n % 7 === 0) {
+    console.log(n);
+    break;
+  }
+}
+~~~
+
+~~~text الناتج: node first7.js
+14
+~~~
+
+**ليه كده:**
+
+- [[n % 7 === 0]]: باقي القسمة على 7 صفر يعني بيقبل القسمة.
+- أول ما لقينا 14 طبعناه و [[break]] خرّجتنا من الـ loop **كلها** على طول، فـ 21 (اللي بيقبل القسمة على 7 برضه) متشافش أصلًا.
+- 3 و 10 الشرط بتاعهم [[false]] فالـ loop كمّلت عادي.
+
+**الغلطة الشائعة:** تنسى [[break]] فيطبع 14 و 21. المطلوب «أول رقم»، والـ break هي اللي بتقول «لقيته، كفاية». ومن غيرها البرنامج بيكمّل يلف على باقي الـ array على الفاضي.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[for (let i = 1; i <= 5; i++) { if (i === 2) continue; if (i === 4) break; console.log(i); }]]. اكتب الناتج قبل ما تشغّل.`, done: R`توقعت وطلع [[1]] و [[3]] بس. 2 اتنطّت بـ continue، و 4 وقّفت الـ loop كلها فـ 5 متطبعتش.`, sol: R`~~~js predict.js
+for (let i = 1; i <= 5; i++) {
+  if (i === 2) continue;
+  if (i === 4) break;
+  console.log(i);
+}
+~~~
+
+~~~text الناتج: node predict.js
+1
+3
+~~~
+
+**لفة لفة:**
+
+| [[i]] | اللي حصل |
+|---|---|
+| 1 | الشرطين [[false]]، فاتطبع **1** |
+| 2 | [[continue]]: نطّ باقي اللفة دي (الطباعة) وراح على اللي بعدها |
+| 3 | الشرطين [[false]]، فاتطبع **3** |
+| 4 | [[break]]: خرج من الـ loop كلها قبل الطباعة |
+| 5 | مفيش لفة 5 أصلًا |
+
+**الفرق:** [[continue]] = «سيب اللفة دي وكمّل»، و [[break]] = «اقفل الـ loop خالص».
+
+**الغلطة الشائعة:** تكتب 4 في الناتج على أساس إن الـ break بيحصل «بعد» الطباعة. الـ break في سطر قبل [[console.log]]، فاللفة اتقفلت قبل ما توصل للطباعة.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** طلبات اليوم array فيها [[{ total, status }]]: اجمع الـ total ونطّ أي طلب status بتاعه [["cancelled"]] بـ continue.`, done: R`على [[{ total: 100, status: "paid" }]] و [[{ total: 50, status: "cancelled" }]] و [[{ total: 70, status: "paid" }]] المجموع 170.`, sol: R`~~~js orders.js
+const orders = [
+  { total: 100, status: "paid" },
+  { total: 50, status: "cancelled" },
+  { total: 70, status: "paid" },
+];
+let sum = 0;
+for (const order of orders) {
+  if (order.status === "cancelled") continue;
+  sum += order.total;
+}
+console.log("المجموع:", sum);
+~~~
+
+~~~text الناتج: node orders.js
+المجموع: 170
+~~~
+
+**ليه كده:**
+
+- [[if (order.status === "cancelled") continue;]]: لو الطلب ملغي، نطّ باقي اللفة (سطر الجمع) وروح على الطلب اللي بعده.
+- الطلبين المدفوعين اتجمعوا: ١٠٠ + ٧٠ = 170، والـ 50 الملغي اتنط.
+- الـ [[continue]] في أول اللفة بيخلي الكود اللي بعده «الحالة العادية» من غير ما يتحط جوه [[if]] كبيرة. ده اسمه guard: اخرج بدري من الحالة اللي مش عايزها.
+
+**الغلطة الشائعة:** تستخدم [[break]] بدل [[continue]]، فأول طلب ملغي يوقف الحساب كله ويطلع المجموع 100 بس. الطلب الملغي بيتنط، مش بيقفل اليوم.` },
+            { lvl: 'تحدي', t: R`**مسألة:** loop جوه loop من 1 لـ 9: دوّر على أول i و j بحيث [[i < j]] و [[i * j === 24]]، واطبعهم ووقّف اللوبتين الاتنين (دوّر على labeled break: [[outer:]]).`, done: R`بيطبع [[3 8]] سطر واحد بس، ومفيش [[4 6]] بعده.`, sol: R`~~~js pair.js
+outer: for (let i = 1; i <= 9; i++) {
+  for (let j = 1; j <= 9; j++) {
+    if (i < j && i * j === 24) {
+      console.log(i, j);
+      break outer;
+    }
+  }
+}
+~~~
+
+~~~text الناتج: node pair.js
+3 8
+~~~
+
+**ليه [[outer:]]:**
+
+- [[outer:]] اسم (label) حطيناه على الـ loop اللي برّه. و [[break outer]] معناها «اقفل الـ loop اللي اسمها outer»، فالاتنين بيقفلوا مع بعض.
+- [[break]] لوحدها بتقفل **أقرب** loop بس (اللي جوه). جرّبت ده:
+
+~~~js pair-plain.js
+for (let i = 1; i <= 9; i++) {
+  for (let j = 1; j <= 9; j++) {
+    if (i < j && i * j === 24) {
+      console.log(i, j);
+      break;
+    }
+  }
+}
+~~~
+
+~~~text الناتج من غير label
+3 8
+4 6
+~~~
+
+- الـ break قفلت loop الـ [[j]] بس، والـ loop اللي برّه كمّلت لـ [[i = 4]] ولقت [[4 6]] كمان. والمطلوب **أول** زوج بس.
+- [[i < j]] عشان منطبعش [[8 3]] (نفس الزوج مقلوب).
+
+**الغلطة الشائعة:** تفتكر إن break بتخرّجك من كل الـ loops. لو محتاج تقفل أكتر من loop، إما label، أو تحط الـ loops في دالة وتستخدم [[return]] (ودي غالبًا أوضح).` },
+            { lvl: 'تحدي', t: R`**محاكاة:** ماكينة صرف رصيدها 600 وطابور سحب [[[200, 500, 300, 100, 50]]]. أي سحب أكبر من الرصيد اطبع «مرفوض» وكمّل بـ continue، ولما الرصيد يوصل صفر اطبع «الماكينة فضيت» ووقّف بـ break.`, done: R`بيطبع: 200 تمام (باقي 400)، و 500 مرفوض، و 300 تمام (باقي 100)، و 100 تمام (باقي 0) وبعدها «الماكينة فضيت». و 50 مبتتطبعش خالص لأن الـ break وقّف الطابور.`, sol: R`~~~js atm.js
+let balance = 600;
+const queue = [200, 500, 300, 100, 50];
+for (const amount of queue) {
+  if (amount > balance) {
+    console.log(amount, "مرفوض");
+    continue;
+  }
+  balance -= amount;
+  console.log(amount, "تمام (باقي " + balance + ")");
+  if (balance === 0) {
+    console.log("الماكينة فضيت");
+    break;
+  }
+}
+~~~
+
+~~~text الناتج: node atm.js
+200 تمام (باقي 400)
+500 مرفوض
+300 تمام (باقي 100)
+100 تمام (باقي 0)
+الماكينة فضيت
+~~~
+
+**خطوة خطوة:**
+
+- 200 ≤ 600: اتصرف، والرصيد 400.
+- 500 > 400: «مرفوض»، و [[continue]] نطّت الخصم والطباعة وراحت على اللي بعده. الرصيد لسه 400.
+- 300: اتصرف، والرصيد 100.
+- 100: اتصرف، والرصيد 0، فالشرط [[balance === 0]] اتحقق: «الماكينة فضيت» و [[break]].
+- 50 **متطبعتش خالص**: الـ break قفلت الطابور قبل ما توصل لها.
+
+**ليه فحص الصفر بعد الخصم:** الماكينة بتفضى نتيجة سحب، فنسأل بعد ما نخصم على طول. لو حطّيت الفحص في أول اللفة، هيشتغل هنا (لفة الـ 50 هتلاقي الرصيد صفر وتقف)، بس لو آخر سحب في الطابور هو اللي فضّاها، مفيش لفة بعده، فـ «الماكينة فضيت» مش هتتطبع أبدًا.
+
+**الغلطة الشائعة:** تخصم قبل ما تفحص ([[balance -= amount]] الأول)، فالرصيد يبقى سالب في الـ 500 (-100) وبعدين ترجّعه. افحص الأول، وبعدين اخصم.` }
           ],
           flag: "script",
           deep: {
@@ -1919,7 +4293,12 @@ for (let n = 1; n <= 50; n++) {
     break;
   }
   console.log(n);
-}`
+}`,
+          ref: [
+            { t: "MDN: break", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/break" },
+            { t: "MDN: continue", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/continue" },
+            { t: "MDN: Labeled statement", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/label" }
+          ]
         },
         {
           cmd: "pseudocode",
@@ -1953,11 +4332,210 @@ const avg = sum / grades.length;
 console.log({ avg, max, passed });`,
           try: R`شغّل الكود على [[[]]] (ليستة فاضية): إيه اللي طلع؟ صلّحه. وبعدين حل المسألة دي بنفس الخطوات الخمسة، واكتب الـ pseudocode الأول كتعليقات: «الكلمة palindrome لو بتتقري من الآخر زي الأول، زي "level" و "racecar". اكتب [[isPalindrome(word)]] تتجاهل الحروف الكبيرة والمسافات».`,
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** اكتب pseudocode من ٣ لـ ٥ سطور كتعليقات لـ «متوسط ليستة أرقام»، وبعدين حوّل كل سطر لكود في [[average(nums)]].`, done: R`[[average([10, 20, 30])]] بترجّع 20، و [[average([])]] بترجّع 0 أو null حسب ما قررت في الـ pseudocode (مش NaN).` },
-            { lvl: 'سريع', t: R`**اشرحها:** اكتب pseudocode من ٥ سطور مترقّمة لـ «أرخص منتج في قايمة أسعار» بالعربي، لواحد مبيعرفش برمجة، واديه ورقة فيها [[30، 10، 20]] يمشي عليها بإيده.`, done: R`صاحبك مشي على السطور من غير ما يسألك، وطلّع 10. والـ pseudocode فيه خطوة «ابدأ بأول سعر» (مش صفر) وخطوة لقايمة فاضية.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** [[countWords(sentence)]] من غير split: لف على الحروف وعدّ كل مرة حرف مش مسافة جه بعد مسافة أو في الأول.`, done: R`[[countWords("  hello   world ")]] بترجّع 2، و [[countWords("")]] بترجّع 0، و [[countWords("one")]] بترجّع 1.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الـ pseudocode بيقول «١) total = 0 ٢) لكل رقم زوّده على total ٣) اقسم total على عدد الأرقام ٤) رجّع الناتج». والكود: [[function average(nums) { let total = 0; for (const n of nums) total += n; return total; }]]. قارن سطر بسطر ولاقي الخطوة الناقصة.`, done: R`قبل التصليح [[average([10, 20, 30])]] بترجّع 60. لقيت إن خطوة ٣ مش في الكود، وبعد ما تزوّد [[total / nums.length]] بترجّع 20. وعرفت إن المقارنة سطر بسطر بتلاقي الغلطة أسرع من القراية العامة.` },
-            { lvl: 'تحدي', t: R`**مسألة:** ضغط نص: [[compress("aaabcc")]] ترجّع [["a3b1c2"]]. اكتب الـ pseudocode الأول وامشي بيه على الورق على [["aab"]] قبل ما تكتب كود.`, done: R`[[compress("aaabcc")]] بترجّع "a3b1c2"، و [[compress("")]] بترجّع ""، و [[compress("z")]] بترجّع "z1". وآخر مجموعة حروف مش ضايعة (أشهر غلطة هنا).` }
+            { lvl: 'سريع', t: R`**مسألة:** اكتب pseudocode من ٣ لـ ٥ سطور كتعليقات لـ «متوسط ليستة أرقام»، وبعدين حوّل كل سطر لكود في [[average(nums)]].`, done: R`[[average([10, 20, 30])]] بترجّع 20، و [[average([])]] بترجّع 0 أو null حسب ما قررت في الـ pseudocode (مش NaN).`, sol: R`~~~js average.js
+// ١. لو الليستة فاضية: رجّع null (مفيش متوسط، ومش عايزين NaN)
+// ٢. total = 0
+// ٣. لكل رقم: زوّده على total
+// ٤. رجّع total ÷ عدد الأرقام
+function average(nums) {
+  if (nums.length === 0) return null;   // ١
+  let total = 0;                        // ٢
+  for (const n of nums) total += n;     // ٣
+  return total / nums.length;           // ٤
+}
+console.log(average([10, 20, 30]));
+console.log(average([]));
+console.log(average([7]));
+~~~
+
+~~~text الناتج: node average.js
+20
+null
+7
+~~~
+
+**ليه كده:**
+
+- الـ pseudocode اتكتب الأول كتعليقات، وكل سطر كود جنبه رقم الخطوة اللي بينفّذها. لو حاجة طلعت غلط، بتعرف أنهي خطوة.
+- **القرار في الخطوة ١:** الليستة الفاضية ملهاش متوسط، فاخترت [[null]] («مفيش قيمة»). اللي بيستخدم الدالة يقدر يسأل [[if (avg === null)]] ويكتب «مفيش درجات». لو رجّعت 0 كان هيبان كأن المتوسط صفر بجد.
+- من غير الخطوة ١، [[average([])]] كانت هترجّع [[0 / 0]] = [[NaN]]، و [[NaN]] بيبوّظ أي حساب بعده من غير ما يقولك.
+
+**الغلطة الشائعة:** تكتب الكود الأول وبعدين الـ pseudocode «عشان التمرين بيقول». الفايدة كلها إن الحالة الفاضية بتبان وانت بتكتب الخطوات بالكلام، قبل ما تبقى باج.` },
+            { lvl: 'سريع', t: R`**اشرحها:** اكتب pseudocode من ٥ سطور مترقّمة لـ «أرخص منتج في قايمة أسعار» بالعربي، لواحد مبيعرفش برمجة، واديه ورقة فيها [[30، 10، 20]] يمشي عليها بإيده.`, done: R`صاحبك مشي على السطور من غير ما يسألك، وطلّع 10. والـ pseudocode فيه خطوة «ابدأ بأول سعر» (مش صفر) وخطوة لقايمة فاضية.`, sol: R`**إجابة نموذجية (لواحد مبيعرفش برمجة):**
+
+> ١. لو الورقة مفيهاش أسعار، اكتب «مفيش منتجات» وخلّصت.
+> ٢. حط صباعك على **أول سعر**، واكتبه في خانة «الأرخص».
+> ٣. انزل للسعر اللي بعده.
+> ٤. لو السعر ده **أقل** من اللي في خانة «الأرخص»، امسح اللي في الخانة واكتب ده مكانه.
+> ٥. كرّر خطوة ٣ و ٤ لحد ما الأسعار تخلص. اللي في الخانة هو الأرخص.
+
+**صاحبك ماشي على [[30، 10، 20]]:**
+
+| الخطوة | السعر اللي عليه | خانة «الأرخص» |
+|---|---|---|
+| ٢ | 30 | 30 |
+| ٣ و ٤ | 10 (أقل من 30) | 10 |
+| ٣ و ٤ | 20 (مش أقل من 10) | 10 |
+| ٥ | خلصت | **10** |
+
+وعشان أتأكد إن الخطوات صح، حوّلتها لكود سطر بسطر:
+
+~~~js cheapest.js
+// نفس الـ pseudocode بتاع صاحبك، بس كود، عشان نتأكد إنه صح
+function cheapest(prices) {
+  if (prices.length === 0) return null;    // ١. لو الورقة فاضية: مفيش أرخص
+  let min = prices[0];                     // ٢. ابدأ بأول سعر
+  for (const p of prices) {                // ٣. امشي على باقي الأسعار واحد واحد
+    if (p < min) min = p;                  // ٤. لو السعر أقل من اللي معاك، خده بداله
+  }
+  return min;                              // ٥. اللي في إيدك في الآخر هو الأرخص
+}
+console.log(cheapest([30, 10, 20]));
+console.log(cheapest([]));
+~~~
+
+~~~text الناتج: node cheapest.js
+10
+null
+~~~
+
+**ليه «ابدأ بأول سعر» مش صفر:** لو الخانة بدأت بصفر، مفيش سعر هيبقى أقل منه، والإجابة هتطلع 0 وهو مش موجود في الورقة أصلًا. وده نفس الغلطة اللي في تمرين «maxOf» بعد كده.
+
+**الغلطة الشائعة في الشرح:** كلمات زي «لف» و «متغير» و «قارن». اللي مبيعرفش برمجة محتاج أفعال بإيده: «حط صباعك» و «امسح واكتب».` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[countWords(sentence)]] من غير split: لف على الحروف وعدّ كل مرة حرف مش مسافة جه بعد مسافة أو في الأول.`, done: R`[[countWords("  hello   world ")]] بترجّع 2، و [[countWords("")]] بترجّع 0، و [[countWords("one")]] بترجّع 1.`, sol: R`~~~js words.js
+// ١. count = 0
+// ٢. لكل حرف في الجملة (بالـ index):
+//    لو الحرف مش مسافة، والحرف اللي قبله مسافة أو مفيش قبله (أول الجملة): count++
+// ٣. رجّع count
+function countWords(sentence) {
+  let count = 0;
+  for (let i = 0; i < sentence.length; i++) {
+    const isStart = i === 0 || sentence[i - 1] === " ";
+    if (sentence[i] !== " " && isStart) count++;
+  }
+  return count;
+}
+console.log(countWords("  hello   world "));
+console.log(countWords(""));
+console.log(countWords("one"));
+console.log(countWords("a b c"));
+~~~
+
+~~~text الناتج: node words.js
+2
+0
+1
+3
+~~~
+
+**ليه كده:**
+
+- الكلمة بتبدأ عند حرف مش مسافة، **وقبله** مسافة أو هو أول الجملة. فبنعدّ البدايات بس، مش الحروف.
+- [[i === 0 || sentence[i - 1] === " "]]: أول حتة بتمسك أول الجملة. والـ [[||]] بتوقف عند أول [[true]]، فلما [[i]] بـ 0 مبنقراش [[sentence[-1]]] أصلًا.
+- [["  hello   world "]]: المسافات الكتير في الأول وفي النص وفي الآخر مبتتعدّش، لأن المسافة عمرها ما بتبقى بداية كلمة. الناتج 2.
+- [[""]]: الـ loop مبتلفش خالص، فـ 0.
+
+**الغلطة الشائعة:** تعدّ المسافات وتزوّد واحد ([[spaces + 1]]). ده بيشتغل على [["a b c"]] بس، وعلى [["  hello   world "]] هيطلع 7. والتانية: تكتب [[sentence[i - 1]]] من غير ما تفحص [[i === 0]]، وهي هنا بالصدفة بترجّع [[undefined]] ومش بتعمل error، بس الشرط بيبقى مش واضح.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الـ pseudocode بيقول «١) total = 0 ٢) لكل رقم زوّده على total ٣) اقسم total على عدد الأرقام ٤) رجّع الناتج». والكود: [[function average(nums) { let total = 0; for (const n of nums) total += n; return total; }]]. قارن سطر بسطر ولاقي الخطوة الناقصة.`, done: R`قبل التصليح [[average([10, 20, 30])]] بترجّع 60. لقيت إن خطوة ٣ مش في الكود، وبعد ما تزوّد [[total / nums.length]] بترجّع 20. وعرفت إن المقارنة سطر بسطر بتلاقي الغلطة أسرع من القراية العامة.`, sol: R`الكود البايظ والـ pseudocode جنبه كتعليقات:
+
+~~~js average-broken.js
+// ١) total = 0  ٢) لكل رقم زوّده على total  ٣) اقسم total على عدد الأرقام  ٤) رجّع الناتج
+function average(nums) {
+  let total = 0;                     // ١
+  for (const n of nums) total += n;  // ٢
+  return total;                      // ٤ ... وفين ٣؟
+}
+console.log(average([10, 20, 30]));
+~~~
+
+~~~text الناتج قبل التصليح
+60
+~~~
+
+**المقارنة سطر بسطر:**
+
+| الـ pseudocode | الكود |
+|---|---|
+| ١) total = 0 | [[let total = 0;]] ✓ |
+| ٢) لكل رقم زوّده | [[for (const n of nums) total += n;]] ✓ |
+| ٣) اقسم على العدد | **مش موجود** ✗ |
+| ٤) رجّع الناتج | [[return total;]] ✓ |
+
+الكود رجّع المجموع (60) مش المتوسط. الحل:
+
+~~~js average-fixed.js
+function average(nums) {
+  let total = 0;                     // ١
+  for (const n of nums) total += n;  // ٢
+  return total / nums.length;        // ٣ و ٤
+}
+console.log(average([10, 20, 30]));
+~~~
+
+~~~text الناتج بعد التصليح
+20
+~~~
+
+**ليه المقارنة سطر بسطر أسرع:** لما تقرا الكود «على بعضه» عقلك بيكمّل الناقص لوحده لأنك عارف المفروض يعمل إيه. لما تحط كل خطوة قدام سطرها، الخطوة اللي ملهاش سطر بتبان لوحدها.
+
+**الغلطة الشائعة:** تصلّح بإنك تقسم على 3 ([[total / 3]]) لأن المثال فيه ٣ أرقام. يطلع 20 هنا، بس أي ليستة طولها مختلف هتطلع غلط. القسمة على [[nums.length]].` },
+            { lvl: 'تحدي', t: R`**مسألة:** ضغط نص: [[compress("aaabcc")]] ترجّع [["a3b1c2"]]. اكتب الـ pseudocode الأول وامشي بيه على الورق على [["aab"]] قبل ما تكتب كود.`, done: R`[[compress("aaabcc")]] بترجّع "a3b1c2"، و [[compress("")]] بترجّع ""، و [[compress("z")]] بترجّع "z1". وآخر مجموعة حروف مش ضايعة (أشهر غلطة هنا).`, sol: R`**على الورق الأول** ([["aab"]]): current = a و count = 1. الحرف التاني a زيه: count = 2. الحرف التالت b مختلف: نكتب «a2» ونبدأ current = b و count = 1. الحروف خلصت... ولسه «b1» في إيدنا مكتبناهاش! ده اللي خلّى الخطوة ٤ تتكتب.
+
+~~~js compress.js
+// ١. لو النص فاضي: رجّع ""
+// ٢. current = أول حرف، count = 1، out = ""
+// ٣. لكل حرف من التاني للآخر:
+//    لو زي current: count++
+//    غير كده: زوّد current + count على out، وخلي current = الحرف ده و count = 1
+// ٤. بعد الـ loop: زوّد آخر مجموعة (current + count) على out   ← أشهر حتة بتتنسي
+// ٥. رجّع out
+function compress(str) {
+  if (str === "") return "";
+  let current = str[0];
+  let count = 1;
+  let out = "";
+  for (let i = 1; i < str.length; i++) {
+    if (str[i] === current) {
+      count++;
+    } else {
+      out += current + count;
+      current = str[i];
+      count = 1;
+    }
+  }
+  out += current + count;
+  return out;
+}
+console.log(compress("aaabcc"));
+console.log(JSON.stringify(compress("")));
+console.log(compress("z"));
+console.log(compress("aab"));
+~~~
+
+~~~text الناتج: node compress.js
+a3b1c2
+""
+z1
+a2b1
+~~~
+
+**كل حتة بتعمل إيه:**
+
+- [[current]] الحرف اللي بنعدّه دلوقتي، و [[count]] اتكرر كام مرة ورا بعض.
+- الـ loop بتبدأ من [[i = 1]] لأن أول حرف اتحط في [[current]] خلاص.
+- لما الحرف يتغيّر: المجموعة اللي فاتت خلصت، فنكتبها ([[out += current + count]]) ونبدأ عدّ جديد.
+- السطر اللي **بعد** الـ loop بيكتب آخر مجموعة، لأن مفيش حرف «مختلف» بعدها يخلّينا نكتبها جوه الـ loop.
+
+**الغلطة الشائعة:** نسيان آخر مجموعة. شيلت السطر اللي بعد الـ loop وشغّلت نفس الأربع حالات:
+
+~~~text الناتج من غير خطوة ٤
+a3b1
+""
+
+a2
+~~~
+
+[["aaabcc"]] بقت [["a3b1"]] و [["z"]] بقت نص فاضي: آخر مجموعة دايمًا ضايعة. والمشي على الورق على [["aab"]] كان هيمسكها قبل ما تكتب ولا سطر.` }
           ],
           flag: "script",
           deep: {
@@ -2161,7 +4739,11 @@ function isPalindrome(word) {
   const reversed = [...clean].reverse().join("");
   return clean === reversed;
 }
-console.log(isPalindrome("level"), isPalindrome("Race car"), isPalindrome("hello"));`
+console.log(isPalindrome("level"), isPalindrome("Race car"), isPalindrome("hello"));`,
+          ref: [
+            { t: "MDN: A first splash into JavaScript (Thinking like a programmer)", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/A_first_splash" },
+            { t: "Wikipedia: Pseudocode", url: "https://en.wikipedia.org/wiki/Pseudocode" }
+          ]
         },
         {
           cmd: "اقرا الـ error",
@@ -2183,11 +4765,213 @@ console.log(greet(1));
 console.log(greet(2));`,
           try: R`احفظه في [[err.js]] وشغّله. في الـ stack: أول سطر [[at]] بيشاور على أنهي دالة وأنهي سطر؟ ومين نادى مين؟ صلّحه بحيث [[greet(2)]] ترجّع «أهلًا يا ضيف». وبعدين اعمل ٣ أخطاء بقصد وشوف رسالة كل واحد: اكتب [[consle.log(1)]]، و [[greet.toUpper()]]، وامسح قوس [[}]] من آخر الدالة.`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في ملف اكتب [[const x = 1; x = 2;]] وشغّله بـ node.`, done: R`بيطلع [[TypeError: Assignment to constant variable.]] والسهم ورقم السطر بيشاوروا على [[x = 2]].` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** اكتب [[let user;]] وبعدها [[console.log(user.name);]]، واقرا الرسالة، وصلّح بإنك تدّي user قيمة.`, done: R`قبل التصليح: [[TypeError: Cannot read properties of undefined (reading 'name')]]، وتقدر تقول من الرسالة مين اللي كان undefined. وبعده بيطبع الاسم.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** ده stack من سيرفر: [[TypeError: Cannot read properties of undefined (reading 'price')]] وتحته [[at calcTotal (/app/src/cart.js:14:22)]] و [[at Array.map (<anonymous>)]] و [[at checkout (/app/src/orders.js:31:18)]] و [[at Layer.handle (/app/node_modules/express/lib/router/layer.js:95:5)]]. حدد تبدأ تدوّر فين.`, done: R`حددت [[cart.js]] سطر 14 عمود 22 (أول سطر من كودك)، وإن اللي كان undefined هو اللي قبل [[.price]]، وإن [[orders.js:31]] هو اللي نادى. وسطر [[node_modules]] و [[<anonymous>]] مش هتفتحهم.` },
-            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** ٣ دوال: [[a]] بتنادي [[b]] و [[b]] بتنادي [[c]] و [[c]] فيها [[throw new Error("boom")]]. شغّل واقرا الـ stack من فوق لتحت.`, done: R`أول سطر [[Error: boom]]، وبعده [[at c]] وبعده [[at b]] وبعده [[at a]] كل واحد برقم سطره. وتقدر تقول إن أول [[at]] هو مكان الغلطة وآخرهم هو اللي بدأ الحكاية.` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** افتح صفحة «JavaScript error reference» على MDN ولاقي صفحة [[ReferenceError: "x" is not defined]]. وبعدين اكتب كود يطلّع الرسالة دي بسببين مختلفين.`, done: R`لقيت الصفحة، وكتبت مثالين بيطلّعوا [[ReferenceError: total is not defined]]: واحد غلطة في الاسم (كتبت [[totl]] بدل [[total]] وهي اللي اتعرّفت)، وواحد متغير اتعرّف جوه دالة واستخدمته برّاها.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** في ملف اكتب [[const x = 1; x = 2;]] وشغّله بـ node.`, done: R`بيطلع [[TypeError: Assignment to constant variable.]] والسهم ورقم السطر بيشاوروا على [[x = 2]].`, sol: R`~~~js const.js
+const x = 1;
+x = 2;
+console.log(x);
+~~~
+
+~~~text الناتج: node const.js
+C:\Users\ali\lab\js\const.js:2
+x = 2;
+  ^
+
+TypeError: Assignment to constant variable.
+    at Object.<anonymous> (C:\Users\ali\lab\js\const.js:2:3)
+    at Module._compile (node:internal/modules/cjs/loader:1929:14)
+    at Object..js (node:internal/modules/cjs/loader:2060:10)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+
+Node.js v24.22.1
+~~~
+
+**اقرا الرسالة من فوق لتحت:**
+
+- [[...const.js:2]]: الملف، و **سطر 2**.
+- السطر نفسه [[x = 2;]] والسهم [[^]] تحت علامة [[=]]: هنا المشكلة بالظبط، في عملية الإسناد.
+- [[TypeError: Assignment to constant variable.]]: «إسناد لمتغير ثابت». [[x]] اتعرّف بـ [[const]]، و [[const]] معناها القيمة متتغيّرش بعد أول مرة.
+- [[at Object.<anonymous> (...const.js:2:3)]]: سطر 2 حرف 3 (الـ [[=]])، و [[<anonymous>]] يعني الكود ده برّه أي دالة. والسطور اللي فيها [[node:internal]] جوه Node نفسه، سيبها.
+- [[console.log(x)]] في سطر 3 متنفّذش: البرنامج وقف عند الـ error.
+
+التصليح حسب قصدك: لو [[x]] المفروض يتغيّر، اعمله [[let x = 1;]]. لو مش المفروض يتغيّر، شيل سطر [[x = 2]].
+
+**الغلطة الشائعة:** تغيّر كل [[const]] لـ [[let]] أول ما تشوف الرسالة دي. الـ [[const]] بيحميك: الرسالة بتقولك إن في سطر بيغيّر حاجة انت قلت إنها ثابتة، فاسأل الأول «هو ليه بيتغيّر؟».` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** اكتب [[let user;]] وبعدها [[console.log(user.name);]]، واقرا الرسالة، وصلّح بإنك تدّي user قيمة.`, done: R`قبل التصليح: [[TypeError: Cannot read properties of undefined (reading 'name')]]، وتقدر تقول من الرسالة مين اللي كان undefined. وبعده بيطبع الاسم.`, sol: R`الكود البايظ:
+
+~~~js user-broken.js
+let user;
+console.log(user.name);
+~~~
+
+~~~text الناتج قبل التصليح
+C:\Users\ali\lab\js\user-broken.js:2
+console.log(user.name);
+                 ^
+
+TypeError: Cannot read properties of undefined (reading 'name')
+    at Object.<anonymous> (C:\Users\ali\lab\js\user-broken.js:2:18)
+    at Module._compile (node:internal/modules/cjs/loader:1929:14)
+    at Object..js (node:internal/modules/cjs/loader:2060:10)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+
+Node.js v24.22.1
+~~~
+
+**مين اللي كان undefined:** الرسالة بتقول [[Cannot read properties of undefined (reading 'name')]]، يعني «حاولت أقرا [[name]] من حاجة قيمتها undefined». واللي قبل [[.name]] في السطر هو [[user]]. فـ [[user]] هو اللي undefined، مش [[name]]. والسهم تحت [[name]] بيقول «هنا وقعت».
+
+**ليه [[user]] undefined:** [[let user;]] من غير [[=]] بيعمل متغير قيمته [[undefined]] لحد ما تدّيله قيمة.
+
+الحل:
+
+~~~js user-fixed.js
+let user = { name: "Sara" };
+console.log(user.name);
+~~~
+
+~~~text الناتج بعد التصليح
+Sara
+~~~
+
+**الغلطة الشائعة:** تقرا الرسالة «name مش موجود» فتدوّر على [[name]]. الكلمة المهمة [[of undefined]]: المشكلة في اللي **قبل** النقطة. ولو السطر فيه [[a.b.c.name]] يبقى واحد من [[a.b.c]] هو اللي undefined، واطبعهم واحد واحد.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** ده stack من سيرفر: [[TypeError: Cannot read properties of undefined (reading 'price')]] وتحته [[at calcTotal (/app/src/cart.js:14:22)]] و [[at Array.map (<anonymous>)]] و [[at checkout (/app/src/orders.js:31:18)]] و [[at Layer.handle (/app/node_modules/express/lib/router/layer.js:95:5)]]. حدد تبدأ تدوّر فين.`, done: R`حددت [[cart.js]] سطر 14 عمود 22 (أول سطر من كودك)، وإن اللي كان undefined هو اللي قبل [[.price]]، وإن [[orders.js:31]] هو اللي نادى. وسطر [[node_modules]] و [[<anonymous>]] مش هتفتحهم.`, sol: R`**إجابة نموذجية:**
+
+~~~text الـ stack
+TypeError: Cannot read properties of undefined (reading 'price')
+    at calcTotal (/app/src/cart.js:14:22)
+    at Array.map (<anonymous>)
+    at checkout (/app/src/orders.js:31:18)
+    at Layer.handle (/app/node_modules/express/lib/router/layer.js:95:5)
+~~~
+
+| السطر | يعني إيه | هفتحه؟ |
+|---|---|---|
+| [[TypeError: ... (reading 'price')]] | حاجة undefined واتقري منها [[.price]] | ده السؤال |
+| [[at calcTotal (/app/src/cart.js:14:22)]] | أول سطر من **كودي**: دالة [[calcTotal]]، ملف [[cart.js]]، سطر 14، حرف 22 | **أبدأ هنا** |
+| [[at Array.map (<anonymous>)]] | الـ [[map]] بتاعة JavaScript هي اللي نادت [[calcTotal]] على كل عنصر | لأ، ده جوه اللغة |
+| [[at checkout (/app/src/orders.js:31:18)]] | الدالة اللي نادت [[map]]: [[orders.js]] سطر 31 | تاني حاجة، عشان أعرف الداتا جاية منين |
+| [[at Layer.handle (.../node_modules/express/...)]] | جوه مكتبة express | لأ، مش كودي |
+
+**الخطة:** أفتح [[cart.js]] سطر 14 وأبص على الحرف 22، هلاقي حاجة زي [[item.price]]. يبقى [[item]] (اللي قبل [[.price]]) كان undefined. وبما إن [[map]] هي اللي نادت، فغالبًا الـ array فيها عنصر فاضي أو ناقص. أروح [[orders.js:31]] وأطبع الـ array قبل الـ [[map]] عشان أشوف مين فيها undefined.
+
+**القاعدة:** الـ stack بيتقري من فوق: أول سطر فيه مسار ملف **من مشروعك** (مش [[node_modules]] ولا [[<anonymous>]] ولا [[node:internal]]) هو مكان الغلطة، واللي تحته بيقولك مين نادى.
+
+**الغلطة الشائعة:** تفتح [[layer.js]] في express لأنه آخر سطر أو لأنه «شكله مهم». الغلطة شبه دايمًا في كودك، والمكتبات المشهورة اتجرّبت من ملايين.` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** ٣ دوال: [[a]] بتنادي [[b]] و [[b]] بتنادي [[c]] و [[c]] فيها [[throw new Error("boom")]]. شغّل واقرا الـ stack من فوق لتحت.`, done: R`أول سطر [[Error: boom]]، وبعده [[at c]] وبعده [[at b]] وبعده [[at a]] كل واحد برقم سطره. وتقدر تقول إن أول [[at]] هو مكان الغلطة وآخرهم هو اللي بدأ الحكاية.`, sol: R`~~~js stack.js
+function c() {
+  throw new Error("boom");
+}
+function b() {
+  c();
+}
+function a() {
+  b();
+}
+a();
+~~~
+
+~~~text الناتج: node stack.js
+C:\Users\ali\lab\js\stack.js:2
+  throw new Error("boom");
+  ^
+
+Error: boom
+    at c (C:\Users\ali\lab\js\stack.js:2:9)
+    at b (C:\Users\ali\lab\js\stack.js:5:3)
+    at a (C:\Users\ali\lab\js\stack.js:8:3)
+    at Object.<anonymous> (C:\Users\ali\lab\js\stack.js:10:1)
+    at Module._compile (node:internal/modules/cjs/loader:1929:14)
+    at Object..js (node:internal/modules/cjs/loader:2060:10)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+
+Node.js v24.22.1
+~~~
+
+**من فوق لتحت:**
+
+- [[Error: boom]]: النوع والرسالة اللي كتبناها في [[throw new Error("boom")]].
+- [[at c (...stack.js:2:9)]]: **مكان الغلطة**: دالة [[c]] سطر 2، حيث الـ [[throw]].
+- [[at b (...stack.js:5:3)]]: مين نادى [[c]]: دالة [[b]] في سطر 5.
+- [[at a (...stack.js:8:3)]]: مين نادى [[b]]: دالة [[a]] في سطر 8.
+- [[at Object.<anonymous> (...stack.js:10:1)]]: مين بدأ الحكاية: السطر 10 [[a();]] اللي برّه أي دالة.
+
+يعني الـ stack هو «سلسلة النداءات» بالعكس: أول [[at]] هو آخر حاجة حصلت (الغلطة)، وآخر [[at]] من كودك هو أول حاجة (اللي بدأ). اسمه stack (كومة) لأن كل نداء بيتحط فوق اللي قبله، والـ error بيطبع الكومة من فوق.
+
+**الغلطة الشائعة:** تقرا الـ stack من تحت لفوق وتفتكر إن الغلطة في [[a]]. [[a]] و [[b]] سليمين، هما بس كانوا في الطريق. وخلي بالك إن الغلطة ممكن تكون في المعلومة اللي [[a]] بعتها، فساعات لازم تمشي لتحت عشان تعرف السبب، بس **المكان** دايمًا فوق.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** افتح صفحة «JavaScript error reference» على MDN ولاقي صفحة [[ReferenceError: "x" is not defined]]. وبعدين اكتب كود يطلّع الرسالة دي بسببين مختلفين.`, done: R`لقيت الصفحة، وكتبت مثالين بيطلّعوا [[ReferenceError: total is not defined]]: واحد غلطة في الاسم (كتبت [[totl]] بدل [[total]] وهي اللي اتعرّفت)، وواحد متغير اتعرّف جوه دالة واستخدمته برّاها.`, sol: R`**الصفحة:** في MDN، «JavaScript error reference» فيها قايمة بكل رسايل الأخطاء، ومنها صفحة [[ReferenceError: "x" is not defined]]. بتقول إن المتغير ده مش موجود في المكان اللي استخدمته فيه: إما متعرّفش خالص، أو اتعرّف بس مش «باين» (out of scope) في المكان ده، أو الاسم مكتوب غلط.
+
+**السبب الأول: الاسم مكتوب غلط في التعريف:**
+
+~~~js typo.js
+// الغلطة في سطر التعريف: اتكتب totl بدل total
+const totl = 250;
+console.log(total * 2);
+~~~
+
+~~~text الناتج: node typo.js
+C:\Users\ali\lab\js\typo.js:3
+console.log(total * 2);
+            ^
+
+ReferenceError: total is not defined
+    at Object.<anonymous> (C:\Users\ali\lab\js\typo.js:3:13)
+    at Module._compile (node:internal/modules/cjs/loader:1929:14)
+    at Object..js (node:internal/modules/cjs/loader:2060:10)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+
+Node.js v24.22.1
+~~~
+
+**السبب التاني: متغير اتعرّف جوه دالة واستخدمته برّاها:**
+
+~~~js scope.js
+function calc() {
+  const total = 250;
+  return total * 2;
+}
+console.log(calc());
+console.log(total);
+~~~
+
+~~~text الناتج: node scope.js
+500
+C:\Users\ali\lab\js\scope.js:6
+console.log(total);
+            ^
+
+ReferenceError: total is not defined
+    at Object.<anonymous> (C:\Users\ali\lab\js\scope.js:6:13)
+    at Module._compile (node:internal/modules/cjs/loader:1929:14)
+    at Object..js (node:internal/modules/cjs/loader:2060:10)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+
+Node.js v24.22.1
+~~~
+
+**الفرق بين الاتنين:**
+
+- في الأول [[total]] مش موجود في أي حتة (الموجود [[totl]])، فالتصليح تصحيح الاسم.
+- في التاني [[total]] موجود بس **جوه** [[calc]]: كل متغير بيتعرّف بـ [[const]] أو [[let]] جوه [[{ }]] بيعيش جوهم بس. لاحظ إن [[500]] اتطبعت الأول (نداء الدالة شغال) والـ error في سطر 6 بس. التصليح: استخدم القيمة اللي الدالة رجّعتها ([[const result = calc();]]) بدل ما توصل للمتغير اللي جواها.
+
+**الغلطة الشائعة:** «تصلّح» بإنك تعرّف [[total]] برّه بأي قيمة عشان الرسالة تختفي. الرسالة هتختفي والبرنامج هيطبع رقم غلط. افهم السبب الأول: اسم غلط ولا scope.` }
           ],
           flag: "script",
           deep: {
@@ -2361,7 +5145,13 @@ function greet(id) {
   return "أهلًا " + user.name.toUpperCase();
 }
 console.log(greet(1));
-console.log(greet(2));`
+console.log(greet(2));`,
+          ref: [
+            { t: "MDN: JavaScript error reference", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors" },
+            { t: "MDN: ReferenceError: \"x\" is not defined", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Not_defined" },
+            { t: "MDN: Error.prototype.stack", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/stack" },
+            { t: "MDN: What went wrong? Troubleshooting JavaScript", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/What_went_wrong" }
+          ]
         },
         {
           cmd: "debugger",
@@ -2383,11 +5173,325 @@ console.log(average([10, 20, 30]));
 console.table([{ i: 0, v: 10 }, { i: 1, v: 20 }]);`,
           try: R`المتوسط المفروض 20 بس بيطلع NaN. لاقي السبب بطريقتين: الأول حط [[console.log({ i, value: nums[i], sum })]] جوه الـ loop وشغّل. وبعدين امسحه وافتح المشروع في VS Code، واعمل breakpoint على سطر [[sum += nums[i]]]، وشغّل من JavaScript Debug Terminal، واضغط F10 (step over) كذا مرة وانت باصص على Variables. فيه غلطتين في سطر الـ for.`,
           practice: [
-            { lvl: 'سريع', t: R`**ابني:** اجمع [[[5, 10, 15]]] في loop وحط جواها [[console.log({ i, total })]].`, done: R`بيطبع ٣ objects، و total في آخر واحد 30، وتقدر تشوف قيمة i في كل لفة.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكود ده بيطلّع NaN: [[for (let i = 1; i <= arr.length; i++) sum += arr[i];]]. لاقي الغلطتين بـ breakpoint في VS Code، وصلّح.`, done: R`على [[[2, 4, 6]]] المجموع 12. وفي الـ Variables شفت [[arr[3]]] بقت undefined في آخر لفة، وإن أول عنصر كان بيتنط.` },
-            { lvl: 'تطبيق', t: R`**قارن وقيس:** [[let total = 0; for (let i = 1; i <= 1000; i++) { total += i; }]]. عايز تعرف أول i خلّت total يعدّي 5000. جرّب مرة بـ [[console.log]] جوه الـ loop، ومرة بـ conditional breakpoint على سطر [[total += i;]] (اكتب الـ loop على ٣ سطور، وكليك يمين على رقم السطر في VS Code أو DevTools) بالشرط [[total > 5000]].`, done: R`الـ console.log طلّع ١٠٠٠ سطر لازم تدوّر فيهم بعينك، والـ breakpoint وقف مرة واحدة عند [[i]] بـ 101 و [[total]] بـ 5050: يعني الـ breakpoint بيقف **قبل** ما السطر يتنفّذ، والعبور حصل في i = 100. وتقدر تقول إمتى كل طريقة أحسن.` },
-            { lvl: 'تحدي', t: R`**دوّر بنفسك:** حط [[debugger;]] جوه دالة في صفحة HTML، وافتح الصفحة مرة و DevTools مقفول ومرة مفتوح، واستخدم Step into و Watch على متغير.`, done: R`و DevTools مقفول الصفحة بتشتغل كأن السطر مش موجود، ولما يبقى مفتوح بتقف على [[debugger;]] بالظبط، والـ Watch بيتغيّر وانت بتعمل step.` },
-            { lvl: 'تحدي', t: R`**اشرحها:** اكتب لزميلك ٣ سطور: إمتى تستخدم [[console.log]]، وإمتى breakpoint، وإيه الفرق بين Step over و Step into، بمثال من كودك.`, done: R`الـ ٣ سطور فيهم: log لما عايز تشوف قيم كتير بسرعة أو في سيرفر، و breakpoint لما مش عارف الغلط فين وعايز توقف وتشوف كل المتغيرات، و Step into بيدخل جوه الدالة اللي بتتنادى و Step over بينفّذها مرة واحدة ويكمّل.` }
+            { lvl: 'سريع', t: R`**ابني:** اجمع [[[5, 10, 15]]] في loop وحط جواها [[console.log({ i, total })]].`, done: R`بيطبع ٣ objects، و total في آخر واحد 30، وتقدر تشوف قيمة i في كل لفة.`, sol: R`~~~js trace.js
+const nums = [5, 10, 15];
+let total = 0;
+for (let i = 0; i < nums.length; i++) {
+  total += nums[i];
+  console.log({ i, total });
+}
+~~~
+
+~~~text الناتج: node trace.js
+{ i: 0, total: 5 }
+{ i: 1, total: 15 }
+{ i: 2, total: 30 }
+~~~
+
+**ليه [[{ i, total }]] مش [[i, total]]:**
+
+- [[{ i, total }]] اختصار لـ [[{ i: i, total: total }]]: بيعمل object كل خاصية فيه اسمها اسم المتغير. فالناتج بيقولك **مين** بـ كام: [[i: 1, total: 15]]، مش رقمين جنب بعض ومش عارف مين مين.
+- الـ log جوه الـ loop **بعد** سطر الجمع، فبتشوف [[total]] بعد ما اتزوّد في كل لفة: ٥ ثم ١٥ ثم ٣٠.
+- آخر object فيه [[total: 30]]، وده المجموع.
+
+**الغلطة الشائعة:** تحط الـ log برّه الـ loop فتشوف 30 بس، ولو الرقم غلط مش هتعرف أنهي لفة بوّظته. الـ log جوه الـ loop بيوريك القصة كلها لفة لفة.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكود ده بيطلّع NaN: [[for (let i = 1; i <= arr.length; i++) sum += arr[i];]]. لاقي الغلطتين بـ breakpoint في VS Code، وصلّح.`, done: R`على [[[2, 4, 6]]] المجموع 12. وفي الـ Variables شفت [[arr[3]]] بقت undefined في آخر لفة، وإن أول عنصر كان بيتنط.`, sol: R`الكود البايظ:
+
+~~~js sum-broken.js
+const arr = [2, 4, 6];
+let sum = 0;
+for (let i = 1; i <= arr.length; i++) {
+  sum += arr[i];
+}
+console.log(sum);
+~~~
+
+~~~text الناتج قبل التصليح
+NaN
+~~~
+
+في VS Code: كليك على يسار رقم السطر 4 (نقطة حمرا = breakpoint)، و F5 ← Node.js، وكل ما يقف بص على [[i]] و [[arr[i]]] و [[sum]] في لوحة Variables، و F5 تاني يكمّل. عملت نفس الخطوات بالظبط في الترمنال بـ [[node inspect]] (نفس الـ debugger اللي VS Code بيستخدمه)، و [[exec]] بيطبع قيمة زي لوحة Variables:
+
+~~~text جلسة node inspect sum-broken.js
+debug> Break on start in sum-broken.js:1
+> 1 const arr = [2, 4, 6];
+  2 let sum = 0;
+  3 for (let i = 1; i <= arr.length; i++) {
+debug> sb(4)
+  1 const arr = [2, 4, 6];
+  2 let sum = 0;
+  3 for (let i = 1; i <= arr.length; i++) {
+> 4   sum += arr[i];
+  5 }
+  6 console.log(sum);
+  7 
+debug> cont
+debug> break in sum-broken.js:4
+  2 let sum = 0;
+  3 for (let i = 1; i <= arr.length; i++) {
+> 4   sum += arr[i];
+  5 }
+  6 console.log(sum);
+debug> exec [i, arr[i], sum]
+[ 1, 4, 0 ]
+debug> cont
+debug> break in sum-broken.js:4
+  2 let sum = 0;
+  3 for (let i = 1; i <= arr.length; i++) {
+> 4   sum += arr[i];
+  5 }
+  6 console.log(sum);
+debug> exec [i, arr[i], sum]
+[ 2, 6, 4 ]
+debug> cont
+debug> break in sum-broken.js:4
+  2 let sum = 0;
+  3 for (let i = 1; i <= arr.length; i++) {
+> 4   sum += arr[i];
+  5 }
+  6 console.log(sum);
+debug> exec [i, arr[i], sum]
+[ 3, 'undefined', 10 ]
+debug>
+~~~
+
+**اللي الـ breakpoint كشفه:**
+
+- أول وقفة: [[i]] بـ **1** و [[arr[i]]] بـ 4. يعني أول عنصر (الـ 2 اللي في index 0) **اتنط** خالص. دي الغلطة الأولى: [[i = 1]] بدل [[i = 0]].
+- آخر وقفة: [[i]] بـ **3** و [[arr[3]]] بـ [[undefined]] (الـ array فيها 0 و 1 و 2 بس). و [[10 + undefined]] = [[NaN]]. دي الغلطة التانية: [[<=]] بدل [[<]].
+
+الحل:
+
+~~~js sum-fixed.js
+const arr = [2, 4, 6];
+let sum = 0;
+for (let i = 0; i < arr.length; i++) {
+  sum += arr[i];
+}
+console.log(sum);
+~~~
+
+~~~text الناتج بعد التصليح
+12
+~~~
+
+**الغلطة الشائعة:** تصلّح واحدة بس. لو صلّحت [[<]] بس هيطلع 10 (من غير الـ 2)، ولو صلّحت [[i = 0]] بس هيفضل [[NaN]]. الـ index بيبدأ من 0 وآخره [[length - 1]]، فالشكل الثابت: [[for (let i = 0; i < arr.length; i++)]].` },
+            { lvl: 'تطبيق', t: R`**قارن وقيس:** [[let total = 0; for (let i = 1; i <= 1000; i++) { total += i; }]]. عايز تعرف أول i خلّت total يعدّي 5000. جرّب مرة بـ [[console.log]] جوه الـ loop، ومرة بـ conditional breakpoint على سطر [[total += i;]] (اكتب الـ loop على ٣ سطور، وكليك يمين على رقم السطر في VS Code أو DevTools) بالشرط [[total > 5000]].`, done: R`الـ console.log طلّع ١٠٠٠ سطر لازم تدوّر فيهم بعينك، والـ breakpoint وقف مرة واحدة عند [[i]] بـ 101 و [[total]] بـ 5050: يعني الـ breakpoint بيقف **قبل** ما السطر يتنفّذ، والعبور حصل في i = 100. وتقدر تقول إمتى كل طريقة أحسن.`, sol: R`**بـ [[console.log]] جوه الـ loop:**
+
+~~~js cross-log.js
+let total = 0;
+for (let i = 1; i <= 1000; i++) {
+  total += i;
+  console.log(i, total);
+}
+~~~
+
+الناتج ١٠٠٠ سطر. السطور حوالين العبور (من ٩٩ لـ ١٠٢):
+
+~~~text جزء من الناتج: node cross-log.js
+99 4950
+100 5050
+101 5151
+102 5253
+~~~
+
+لازم تدوّر بعينك في الألف سطر لحد ما تلاقي أول رقم فوق 5000.
+
+**بـ conditional breakpoint:** في VS Code كليك يمين على رقم السطر 3 ← Add Conditional Breakpoint ← [[total > 5000]] (وفي DevTools: كليك يمين على رقم السطر ← Add conditional breakpoint). عملت نفس الحاجة بـ [[node inspect]]، والأمر [[sb('cross.js', 3, 'total > 5000')]] معناه «breakpoint في سطر 3 بس لما الشرط يبقى صح»:
+
+~~~js cross.js
+let total = 0;
+for (let i = 1; i <= 1000; i++) {
+  total += i;
+}
+console.log(total);
+~~~
+
+~~~text جلسة node inspect cross.js
+debug> Break on start in cross.js:1
+> 1 let total = 0;
+  2 for (let i = 1; i <= 1000; i++) {
+  3   total += i;
+debug> sb('cross.js', 3, 'total > 5000')
+  1 let total = 0;
+  2 for (let i = 1; i <= 1000; i++) {
+> 3   total += i;
+  4 }
+  5 console.log(total);
+  6 
+debug> cont
+debug> break in cross.js:3
+  1 let total = 0;
+  2 for (let i = 1; i <= 1000; i++) {
+> 3   total += i;
+  4 }
+  5 console.log(total);
+debug> exec [i, total]
+[ 101, 5050 ]
+debug>
+~~~
+
+**ليه [[i]] بـ 101 مش 100:** الـ breakpoint بيقف **قبل** ما السطر يتنفّذ. لما [[i]] كانت 100، [[total]] قبل السطر كان 4950 (الشرط [[false]])، والسطر نفّذ وخلاه 5050. اللفة اللي بعدها ([[i]] = 101) الشرط بقى [[true]] فوقف. يعني العبور حصل في [[i = 100]]، وده نفس اللي الـ log قاله في سطر [[100 5050]].
+
+**إمتى كل واحدة:**
+
+| | [[console.log]] | conditional breakpoint |
+|---|---|---|
+| بتشوف إيه | قيمة أو اتنين في كل لفة | **كل** المتغيرات في اللحظة اللي تهمك |
+| الضوضاء | سطر لكل لفة (ألف هنا) | وقفة واحدة |
+| تعديل الكود | لازم تكتب وتمسح | من غير ما تلمس الكود |
+| ينفع في | أي مكان، وخصوصًا سيرفر شغال | وانت بتجرّب على جهازك |
+
+**الغلطة الشائعة:** breakpoint عادي من غير شرط على سطر جوه loop بتلف ١٠٠٠ مرة، فتدوس Continue ١٠٠ مرة لحد ما توصل. الشرط هو اللي بيخلي الـ breakpoint عملي جوه الـ loops.` },
+            { lvl: 'تحدي', t: R`**دوّر بنفسك:** حط [[debugger;]] جوه دالة في صفحة HTML، وافتح الصفحة مرة و DevTools مقفول ومرة مفتوح، واستخدم Step into و Watch على متغير.`, done: R`و DevTools مقفول الصفحة بتشتغل كأن السطر مش موجود، ولما يبقى مفتوح بتقف على [[debugger;]] بالظبط، والـ Watch بيتغيّر وانت بتعمل step.`, sol: R`**صفحة HTML فيها [[debugger;]]:**
+
+~~~html page.html
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title>debugger</title></head>
+<body>
+  <p id="out">...</p>
+  <script>
+    function addTax(price) {
+      const tax = price * 0.15;
+      return price + tax;
+    }
+    function checkout(prices) {
+      let total = 0;
+      for (const p of prices) {
+        debugger;
+        total += addTax(p);
+      }
+      return total;
+    }
+    document.getElementById("out").textContent = "الإجمالي: " + checkout([100, 200]);
+  </script>
+</body>
+</html>
+~~~
+
+**اللي بيحصل (من وثائق Chrome DevTools، وجرّبت نفس الكود في Node تحت):**
+
+- **DevTools مقفول:** الصفحة بتفتح عادي ويظهر «الإجمالي: 345». سطر [[debugger;]] بيتجاهل كأنه مش موجود، لأن مفيش debugger شغال يقف عنده.
+- **DevTools مفتوح (F12) وبعدين refresh:** الصفحة بتقف على [[debugger;]] بالظبط، والسطر متعلّم في تاب Sources، والصفحة لسه مكتوب فيها «...» لأن الكود موقف.
+- **Step into (F11)** على سطر [[total += addTax(p);]] بيدخلك **جوه** [[addTax]] وتشوف [[price]] و [[tax]]. و **Watch** (لوحة على اليمين، زرار +) تكتب فيها [[total]] فتفضل ظاهرة وقيمتها بتتحدّث مع كل step.
+
+**نفس الكود في Node:** [[node checkout.js]] من غير debugger بيطبع على طول ومبيقفش:
+
+~~~js checkout.js
+function addTax(price) {
+  const tax = price * 0.15;
+  return price + tax;
+}
+function checkout(prices) {
+  let total = 0;
+  for (const p of prices) {
+    debugger;
+    total += addTax(p);
+  }
+  return total;
+}
+console.log(checkout([100, 200]));
+~~~
+
+~~~text الناتج: node checkout.js
+345
+~~~
+
+ولما شغّلته بـ debugger ([[node inspect]]، زي DevTools مفتوح): [[cont]] وقف على [[debugger;]]، و [[step]] (Step into) دخل جوه [[addTax]]، و [[out]] رجّعني، و [[watch]] بقى بيطبع [[total]] و [[p]] مع كل وقفة:
+
+~~~text جلسة node inspect checkout.js
+debug> Break on start in checkout.js:13
+ 11   return total;
+ 12 }
+>13 console.log(checkout([100, 200]));
+ 14 
+debug> cont
+debug> break in checkout.js:8
+  6   let total = 0;
+  7   for (const p of prices) {
+> 8     debugger;
+  9     total += addTax(p);
+ 10   }
+debug> next
+debug> step in checkout.js:9
+  7   for (const p of prices) {
+  8     debugger;
+> 9     total += addTax(p);
+ 10   }
+ 11   return total;
+debug> step
+debug> step in checkout.js:2
+  1 function addTax(price) {
+> 2   const tax = price * 0.15;
+  3   return price + tax;
+  4 }
+debug> next
+debug> step in checkout.js:3
+  1 function addTax(price) {
+  2   const tax = price * 0.15;
+> 3   return price + tax;
+  4 }
+  5 function checkout(prices) {
+debug> exec [price, tax]
+[ 100, 15 ]
+debug> out
+debug> step in checkout.js:7
+  5 function checkout(prices) {
+  6   let total = 0;
+> 7   for (const p of prices) {
+  8     debugger;
+  9     total += addTax(p);
+debug> watch('total')
+debug> watch('p')
+debug> cont
+debug> break in checkout.js:8
+Watchers:
+  0: total = 115
+  1: p = 200
+
+  6   let total = 0;
+  7   for (const p of prices) {
+> 8     debugger;
+  9     total += addTax(p);
+ 10   }
+debug> next
+debug> step in checkout.js:9
+Watchers:
+  0: total = 115
+  1: p = 200
+
+  7   for (const p of prices) {
+  8     debugger;
+> 9     total += addTax(p);
+ 10   }
+ 11   return total;
+debug> next
+debug> step in checkout.js:7
+Watchers:
+  0: total = 345
+  1: p = 200
+
+  5 function checkout(prices) {
+  6   let total = 0;
+> 7   for (const p of prices) {
+  8     debugger;
+  9     total += addTax(p);
+debug>
+~~~
+
+لاحظ الـ Watchers: في اللفة التانية [[total]] كانت 115 و [[p]] بـ 200، وبعد سطر الجمع بقت 345.
+
+**الغلطة الشائعة:** تنسى [[debugger;]] في الكود وترفعه. للمستخدم العادي مش هيحصل حاجة (DevTools مقفول)، بس أي حد يفتح DevTools الصفحة هتقف في وشه. امسحه بعد ما تخلص.` },
+            { lvl: 'تحدي', t: R`**اشرحها:** اكتب لزميلك ٣ سطور: إمتى تستخدم [[console.log]]، وإمتى breakpoint، وإيه الفرق بين Step over و Step into، بمثال من كودك.`, done: R`الـ ٣ سطور فيهم: log لما عايز تشوف قيم كتير بسرعة أو في سيرفر، و breakpoint لما مش عارف الغلط فين وعايز توقف وتشوف كل المتغيرات، و Step into بيدخل جوه الدالة اللي بتتنادى و Step over بينفّذها مرة واحدة ويكمّل.`, sol: R`**إجابة نموذجية (٣ سطور لزميل):**
+
+> ١. **[[console.log]]** لما عايز تشوف قيمة أو اتنين بتتغيّر بسرعة، أو الكود شغال على سيرفر مينفعش توقفه. مثال: [[console.log({ i, total })]] جوه loop الجمع عشان أشوف المجموع لفة لفة.
+> ٢. **breakpoint** لما مش عارف الغلط فين أصلًا: البرنامج بيقف عند السطر وتشوف **كل** المتغيرات مرة واحدة من غير ما تعدّل الكود. مثال: في تمرين NaN وقفت على [[sum += arr[i]]] ولقيت [[arr[3]]] بـ [[undefined]].
+> ٣. **Step over** (F10) بينفّذ السطر كله، ولو فيه نداء دالة بينفّذها مرة واحدة ويقف على السطر اللي بعده. **Step into** (F11) بيدخل **جوه** الدالة اللي بتتنادى في السطر ده. مثال: على [[total += addTax(p)]]، Step over بيوديني للفة اللي بعدها، و Step into بيوديني لأول سطر في [[addTax]].
+
+**ليه الإجابة دي كاملة:** كل سطر فيه «إمتى» و «مثال حقيقي». والسطر التالت بيفرّق بين الاتنين بنفس السطر، فالفرق واضح.
+
+**الغلطة الشائعة في الشرح:** «breakpoint أحسن من console.log» على طول. الاتنين أدوات: الـ log أسرع لسؤال صغير ومعروف، والـ breakpoint أقوى لما مش عارف تسأل إيه.` }
           ],
           flag: "script",
           deep: {
@@ -2572,7 +5676,14 @@ console.log(average([10, 20, 30]), average([]));
   for (const n of nums) sum += n;
   return sum / nums.length;
 }
-console.log(average([10, 20, 30]), average([]));`
+console.log(average([10, 20, 30]), average([]));`,
+          ref: [
+            { t: "MDN: debugger", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/debugger" },
+            { t: "Chrome DevTools: Debug JavaScript", url: "https://developer.chrome.com/docs/devtools/javascript" },
+            { t: "VS Code: Node.js debugging", url: "https://code.visualstudio.com/docs/nodejs/nodejs-debugging" },
+            { t: "Node.js: Debugger (node inspect)", url: "https://nodejs.org/api/debugger.html" },
+            { t: "MDN: console.time()", url: "https://developer.mozilla.org/en-US/docs/Web/API/console/time_static" }
+          ]
         },
         {
           cmd: "مقدمة الدوال function",
@@ -2602,12 +5713,215 @@ console.log("الطلب الأول:", order1);
 console.log("الطلب التاني:", order2);`,
           try: R`في الـ Console ([[F12]]) اكتب [[function add(x, y) { return x + y; }]] واضغط Enter، وبعدين [[add(5, 7)]] و [[add(10, 20)]]. بعدين اكتب دالة من غير return: [[function greet(name) { console.log("أهلًا " + name); }]] وجرّب [[greet("Ali")]]، وبعدها [[const r = greet("Ali")]] و [[r]]. وآخر حاجة اكتب [[add]] من غير أقواس.`,
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** [[square(n)]] بترجّع n في نفسه.`, done: R`[[square(7)]] بترجّع 49، و [[square(-3)]] بترجّع 9.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[function greet(name) { return "Hi " + name; }]] وبعدها [[console.log(greet())]] و [[console.log(greet("Ali", "x"))]] و [[console.log(greet)]]. اكتب التلاتة قبل ما تشغّل.`, done: R`توقعت وطلع [[Hi undefined]] و [[Hi Ali]] و [[[Function: greet]]]. وعرفت: الـ parameter اللي مجاش بيبقى undefined، والزيادة بتتجاهل، و [[greet]] من غير أقواس هي الدالة نفسها مش نتيجتها.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** [[withVat(price)]] بترجّع السعر بالضريبة 14٪. اكتبها الأول [[price * 1.14]] وجرّب 100.`, done: R`الأول بترجّع 113.99999999999999. بعد ما تقرّب بـ [[Math.round(x * 100) / 100]]: [[withVat(100)]] بترجّع 114 و [[withVat(250)]] بترجّع 285.` },
-            { lvl: 'تطبيق', t: R`**refactor:** ملف بيحسب الإجمالي بالضريبة ٣ مرات بنفس المعادلة منسوخة: [[Math.round(120 * 1.14 * 100) / 100]] ومعاها 250 و 80. طلّع المعادلة لدالة [[withVat(price)]] واستخدمها في التلات أماكن.`, done: R`الناتج قبل وبعد هو هو: [[136.8]] و [[285]] و [[91.2]]. والمعادلة مكتوبة مرة واحدة، فلو الضريبة بقت ١٥٪ هتغيّر رقم واحد بس.` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** اكتب [[function double(n) { n * 2; }]] واطبع [[double(4) + 1]]. فسّر الناتج قبل ما تصلّح.`, done: R`قبل التصليح بيطبع NaN (الدالة بترجّع undefined و [[undefined + 1]] بـ NaN)، وبعد ما تزوّد return بيطبع 9.` },
-            { lvl: 'تحدي', t: R`**ابني:** ملف [[invoice.js]] فيه ٣ دوال صغيرة: [[lineTotal(price, qty)]] و [[discount(total)]] (١٠٪ لو الإجمالي أكتر من 1000) و [[printInvoice(items)]] اللي بتنادي التانيين وتطبع الفاتورة.`, done: R`على صنفين (500 × 2) و (100 × 1) الفاتورة بتطبع الإجمالي 1100 والخصم 110 والمطلوب 990، وعلى صنف واحد (200 × 1) الخصم 0. وكل دالة بترجّع قيمة (مش بتطبع) ما عدا printInvoice.` }
+            { lvl: 'سريع', t: R`**مسألة:** [[square(n)]] بترجّع n في نفسه.`, done: R`[[square(7)]] بترجّع 49، و [[square(-3)]] بترجّع 9.`, sol: R`~~~js square.js
+function square(n) {
+  return n * n;
+}
+console.log(square(7), square(-3));
+~~~
+
+~~~text الناتج: node square.js
+49 9
+~~~
+
+**ليه كده:**
+
+- [[function square(n)]]: دالة اسمها [[square]] بتاخد parameter واحد اسمه [[n]]. الـ [[n]] ده متغير جوه الدالة بياخد القيمة اللي اتبعتت في النداء.
+- [[return n * n;]]: بترجّع الناتج للي نادى. فـ [[square(7)]] «بتتحوّل» لـ 49 في المكان اللي اتكتبت فيه.
+- [[square(-3)]] = 9: سالب في سالب موجب.
+
+**الغلطة الشائعة:** تكتب [[console.log(n * n)]] جوه الدالة بدل [[return]]. هتشوف الرقم مطبوع، بس [[square(7) + 1]] هيطلع [[NaN]] لأن الدالة مرجّعتش حاجة. الدالة «بتحسب وترجّع»، واللي بره هو اللي يقرر يطبع ولا يكمّل حساب.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** [[function greet(name) { return "Hi " + name; }]] وبعدها [[console.log(greet())]] و [[console.log(greet("Ali", "x"))]] و [[console.log(greet)]]. اكتب التلاتة قبل ما تشغّل.`, done: R`توقعت وطلع [[Hi undefined]] و [[Hi Ali]] و [[[Function: greet]]]. وعرفت: الـ parameter اللي مجاش بيبقى undefined، والزيادة بتتجاهل، و [[greet]] من غير أقواس هي الدالة نفسها مش نتيجتها.`, sol: R`~~~js greet.js
+function greet(name) {
+  return "Hi " + name;
+}
+console.log(greet());
+console.log(greet("Ali", "x"));
+console.log(greet);
+~~~
+
+~~~text الناتج: node greet.js
+Hi undefined
+Hi Ali
+[Function: greet]
+~~~
+
+**كل سطر:**
+
+- [[greet()]]: مفيش argument، فـ [[name]] جوه الدالة قيمته [[undefined]]. و [["Hi " + undefined]] بيلزق الكلمة نفسها: [[Hi undefined]]. ومفيش أي error!
+- [[greet("Ali", "x")]]: الدالة ليها parameter واحد، فـ [["Ali"]] راح لـ [[name]] و [["x"]] الزيادة **اتجاهلت** من غير error.
+- [[greet]] من غير أقواس: ده مش نداء، دي **الدالة نفسها** كقيمة. Node بيطبعها [[[Function: greet]]].
+
+**الغلطة الشائعة:** تنسى الأقواس وتكتب [[console.log(greet)]] أو [[const msg = greet;]] وانت قاصد النتيجة، فتلاقي [[[Function: greet]]] بدل الكلام. الأقواس [[()]] هي اللي بتشغّل الدالة. وفي وحدة «الدوال» هتعرف تحط قيمة افتراضية ([[name = "ضيف"]]) عشان [[Hi undefined]] متطلعش.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[withVat(price)]] بترجّع السعر بالضريبة 14٪. اكتبها الأول [[price * 1.14]] وجرّب 100.`, done: R`الأول بترجّع 113.99999999999999. بعد ما تقرّب بـ [[Math.round(x * 100) / 100]]: [[withVat(100)]] بترجّع 114 و [[withVat(250)]] بترجّع 285.`, sol: R`الأول زي التمرين ما قال:
+
+~~~js vat-first.js
+function withVat(price) {
+  return price * 1.14;
+}
+console.log(withVat(100));
+~~~
+
+~~~text الناتج
+113.99999999999999
+~~~
+
+**ليه مش 114:** الكمبيوتر بيخزّن الأرقام بالـ binary، و 1.14 مينفعش تتكتب binary بالظبط (زي ما ١÷٣ مينفعش تتكتب عشري بالظبط: ٠٫٣٣٣...). فبيتخزن رقم قريب جدًا منها، والضرب طلّع الفرق ده.
+
+بعد التقريب لقرشين:
+
+~~~js vat.js
+function withVat(price) {
+  return Math.round(price * 1.14 * 100) / 100;
+}
+console.log(withVat(100), withVat(250));
+~~~
+
+~~~text الناتج بعد التقريب
+114 285
+~~~
+
+**فك [[Math.round(price * 1.14 * 100) / 100]]:**
+
+1. [[100 * 1.14]] = 113.99999999999999
+2. [[* 100]] = حوالي 11399.999999999998 (القروش)
+3. [[Math.round]] يقرّب لأقرب رقم صحيح: 11400
+4. [[/ 100]] يرجّعها جنيهات: 114
+
+**الغلطة الشائعة:** تفتكر إن JavaScript فيها باج وتحاول تصلّحها بإنك تطرح [[0.00000000000001]]. ده بيحصل في كل لغة بتستخدم نفس طريقة التخزين، والحل الصح: قرّب في الآخر، وللفلوس الجد احسب بالقروش أعداد صحيحة (وحدة «الأرقام بعمق»).` },
+            { lvl: 'تطبيق', t: R`**refactor:** ملف بيحسب الإجمالي بالضريبة ٣ مرات بنفس المعادلة منسوخة: [[Math.round(120 * 1.14 * 100) / 100]] ومعاها 250 و 80. طلّع المعادلة لدالة [[withVat(price)]] واستخدمها في التلات أماكن.`, done: R`الناتج قبل وبعد هو هو: [[136.8]] و [[285]] و [[91.2]]. والمعادلة مكتوبة مرة واحدة، فلو الضريبة بقت ١٥٪ هتغيّر رقم واحد بس.`, sol: R`**قبل:** نفس المعادلة منسوخة ٣ مرات:
+
+~~~js before.js
+console.log(Math.round(120 * 1.14 * 100) / 100);
+console.log(Math.round(250 * 1.14 * 100) / 100);
+console.log(Math.round(80 * 1.14 * 100) / 100);
+~~~
+
+~~~text الناتج قبل
+136.8
+285
+91.2
+~~~
+
+**بعد:**
+
+~~~js after.js
+const VAT = 1.14;
+
+function withVat(price) {
+  return Math.round(price * VAT * 100) / 100;
+}
+
+console.log(withVat(120));
+console.log(withVat(250));
+console.log(withVat(80));
+~~~
+
+~~~text الناتج بعد
+136.8
+285
+91.2
+~~~
+
+**اللي اتغيّر:**
+
+- المعادلة اتكتبت **مرة واحدة** جوه [[withVat]]، والتلات أماكن بقوا ينادوها بالسعر بس.
+- الضريبة نفسها بقت ثابت [[VAT]] في أول الملف. لو بقت ١٥٪ تغيّر [[1.14]] لـ [[1.15]] في سطر واحد، والتلات أسعار يتحسبوا صح.
+- الناتج قبل وبعد هو هو بالحرف: ده معنى refactor، الكود يبقى أحسن من غير ما النتيجة تتغيّر.
+- [[withVat(120)]] بتتقري «السعر بالضريبة»، و [[Math.round(120 * 1.14 * 100) / 100]] لازم تفكّها عشان تفهمها.
+
+**الغلطة الشائعة:** تغيّر الناتج وانت بتعمل refactor (مثلًا تقرّب لرقم صحيح بدل قرشين) ومتاخدش بالك. عشان كده شغّل قبل وبعد وقارن السطور.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** اكتب [[function double(n) { n * 2; }]] واطبع [[double(4) + 1]]. فسّر الناتج قبل ما تصلّح.`, done: R`قبل التصليح بيطبع NaN (الدالة بترجّع undefined و [[undefined + 1]] بـ NaN)، وبعد ما تزوّد return بيطبع 9.`, sol: R`الكود البايظ (زوّدت سطر يطبع الناتج لوحده عشان نشوف السبب):
+
+~~~js double-broken.js
+function double(n) {
+  n * 2;
+}
+console.log(double(4));
+console.log(double(4) + 1);
+~~~
+
+~~~text الناتج قبل التصليح
+undefined
+NaN
+~~~
+
+**ليه NaN:** [[n * 2]] اتحسبت جوه الدالة (8) **وضاعت**: مفيش [[return]] يرجّعها. وأي دالة بتخلص من غير [[return]] بترجّع [[undefined]]. فـ [[double(4) + 1]] بقت [[undefined + 1]]، والحساب مع [[undefined]] بيدّي [[NaN]] (Not a Number).
+
+الحل:
+
+~~~js double-fixed.js
+function double(n) {
+  return n * 2;
+}
+console.log(double(4) + 1);
+~~~
+
+~~~text الناتج بعد التصليح
+9
+~~~
+
+**الغلطة الشائعة:** تكتب [[return]] في سطر لوحده والقيمة في السطر اللي بعده:
+
+~~~js
+return
+  n * 2;
+~~~
+
+JavaScript بتحط [[;]] لوحدها بعد [[return]] الفاضية، فالدالة برضه بترجّع [[undefined]]. القيمة لازم تبدأ في نفس سطر [[return]].` },
+            { lvl: 'تحدي', t: R`**ابني:** ملف [[invoice.js]] فيه ٣ دوال صغيرة: [[lineTotal(price, qty)]] و [[discount(total)]] (١٠٪ لو الإجمالي أكتر من 1000) و [[printInvoice(items)]] اللي بتنادي التانيين وتطبع الفاتورة.`, done: R`على صنفين (500 × 2) و (100 × 1) الفاتورة بتطبع الإجمالي 1100 والخصم 110 والمطلوب 990، وعلى صنف واحد (200 × 1) الخصم 0. وكل دالة بترجّع قيمة (مش بتطبع) ما عدا printInvoice.`, sol: R`~~~js invoice.js
+function lineTotal(price, qty) {
+  return price * qty;
+}
+
+function discount(total) {
+  if (total > 1000) return total * 0.1;
+  return 0;
+}
+
+function printInvoice(items) {
+  let total = 0;
+  for (const item of items) {
+    const line = lineTotal(item.price, item.qty);
+    console.log(item.name + ": " + item.price + " × " + item.qty + " = " + line);
+    total += line;
+  }
+  const off = discount(total);
+  console.log("الإجمالي:", total);
+  console.log("الخصم:", off);
+  console.log("المطلوب:", total - off);
+}
+
+printInvoice([
+  { name: "سماعة", price: 500, qty: 2 },
+  { name: "كابل", price: 100, qty: 1 },
+]);
+console.log("---");
+printInvoice([{ name: "ماوس", price: 200, qty: 1 }]);
+~~~
+
+~~~text الناتج: node invoice.js
+سماعة: 500 × 2 = 1000
+كابل: 100 × 1 = 100
+الإجمالي: 1100
+الخصم: 110
+المطلوب: 990
+---
+ماوس: 200 × 1 = 200
+الإجمالي: 200
+الخصم: 0
+المطلوب: 200
+~~~
+
+**كل دالة شغلتها إيه:**
+
+- [[lineTotal(price, qty)]]: بترجّع إجمالي سطر واحد. مبتطبعش.
+- [[discount(total)]]: بترجّع قيمة الخصم: ١٠٪ لو الإجمالي **أكتر** من 1000، وإلا 0. على 1100 رجّعت 110، وعلى 200 رجّعت 0.
+- [[printInvoice(items)]]: الوحيدة اللي بتطبع. بتلف على الأصناف، وتنادي [[lineTotal]] لكل سطر، وتجمع، وبعدين تنادي [[discount]].
+
+**ليه الدوال الصغيرة بترجّع وما بتطبعش:** عشان تقدر تستخدمها في أي حتة: [[discount(1100)]] ممكن تتنادى في صفحة أو في اختبار أو في حساب تاني. لو كانت بتطبع، كانت هتطبع في كل مرة حتى لو مش عايز.
+
+**الغلطة الشائعة:** [[total >= 1000]] بدل [[> 1000]]. المطلوب «أكتر من 1000»، فطلب بـ 1000 بالظبط ملوش خصم. وكمان تحسب [[total * 0.9]] في [[discount]] فترجّع المطلوب مش الخصم، وبعدين تطرحها تاني من الإجمالي فيطلع رقم غلط. اسم الدالة بيقول هي بترجّع إيه بالظبط.` }
           ],
           flag: "script",
           deep: {
@@ -2768,7 +6082,12 @@ test("sayHello('Ali') ← 'Hello, Ali!'", () => expect(sayHello("Ali")).toBe("He
             solution: R`function sayHello(name) {
   return "Hello, " + name + "!";
 }`
-          }
+          },
+          ref: [
+            { t: "MDN: Functions (guide)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions" },
+            { t: "MDN: function declaration", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function" },
+            { t: "MDN: return", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/return" }
+          ]
         },
         {
           cmd: "تمارين أساسيات ١",
@@ -2802,11 +6121,154 @@ test("sayHello('Ali') ← 'Hello, Ali!'", () => expect(sayHello("Ali")).toBe("He
 }`,
           try: R`اكتب [[fizzBuzz(n)]] ترجّع array فيها النتيجة من 1 لـ n: [["Fizz"]] لمضاعفات 3، و [["Buzz"]] لمضاعفات 5، و [["FizzBuzz"]] للاتنين، وغير كده الرقم نفسه (number مش string). الفرق عن المثال إنها بترجّع النتيجة بدل ما تطبعها، وده اللي بيخلّي الكود يتختبر. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** لف من 1 لـ 30 بنفس شروط FizzBuzz، بس عدّ كام مرة طلعت «FizzBuzz» بدل ما تطبع.`, done: R`بيطبع 2 (للـ 15 والـ 30).` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[if (n % 3 === 0) out = "Fizz"; else if (n % 5 === 0) out = "Buzz"; else if (n % 15 === 0) out = "FizzBuzz";]]. جرّب 15 و 30 وقول الغلط فين.`, done: R`قبل التصليح 15 و 30 بيطلعوا "Fizz" لأن شرط 3 بيكسب الأول وشرط 15 عمره ما بيتوصل له. بعد ما تحط شرط 15 الأول: 15 "FizzBuzz" و 9 "Fizz" و 10 "Buzz" و 7 بيفضل 7.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** FizzBuzz بقاعدة تالتة: 7 تبقى Jazz. ابني النص بالإضافة ([[out += "Fizz"]]) بدل شرط لكل تركيبة.`, done: R`21 بتطلع "FizzJazz"، و 35 "BuzzJazz"، و 105 "FizzBuzzJazz"، و 8 بتفضل 8 (number).` },
-            { lvl: 'تطبيق', t: R`**أشكال:** [[box(n)]] بتطبع مربع مفرّغ: السطر الأول والأخير [[#]] كلهم، واللي في النص [[#]] في الأول والآخر ومسافات في النص.`, done: R`[[box(4)]] بيطبع [[####]] ثم [[#  #]] مرتين ثم [[####]]. و [[box(1)]] بيطبع [[#]] بس، و [[box(2)]] سطرين [[##]] من غير مسافات.` },
-            { lvl: 'تحدي', t: R`**مسألة:** من 1 لـ 100 عدّ كل نوع لوحده: Fizz بس، و Buzz بس، و FizzBuzz، والأرقام. وفكّر تتأكد من النتيجة إزاي من غير ما تعدّ بإيدك.`, done: R`Fizz 27، و Buzz 14، و FizzBuzz 6، والأرقام 53، ومجموعهم 100.` }
+            { lvl: 'سريع', t: R`**مسألة:** لف من 1 لـ 30 بنفس شروط FizzBuzz، بس عدّ كام مرة طلعت «FizzBuzz» بدل ما تطبع.`, done: R`بيطبع 2 (للـ 15 والـ 30).`, sol: R`~~~js count.js
+let count = 0;
+for (let n = 1; n <= 30; n++) {
+  if (n % 15 === 0) count++;
+}
+console.log(count);
+~~~
+
+~~~text الناتج: node count.js
+2
+~~~
+
+**ليه كده:**
+
+- «FizzBuzz» بتطلع لما الرقم يقبل القسمة على 3 **و** 5 مع بعض، يعني على 15. فشرط واحد كفاية: [[n % 15 === 0]].
+- بدل [[console.log]] بنزوّد عدّاد [[count++]]، ونطبعه **مرة واحدة** بعد الـ loop.
+- من 1 لـ 30 فيه 15 و 30 بس، فـ 2.
+
+**الغلطة الشائعة:** تطبع جوه الـ loop ([[console.log(count)]]) فيطلع ٣٠ سطر بدل رقم واحد. أو تكتب [[n % 3 === 0 || n % 5 === 0]] فتعدّ كل اللي فيهم Fizz أو Buzz (14 رقم).` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[if (n % 3 === 0) out = "Fizz"; else if (n % 5 === 0) out = "Buzz"; else if (n % 15 === 0) out = "FizzBuzz";]]. جرّب 15 و 30 وقول الغلط فين.`, done: R`قبل التصليح 15 و 30 بيطلعوا "Fizz" لأن شرط 3 بيكسب الأول وشرط 15 عمره ما بيتوصل له. بعد ما تحط شرط 15 الأول: 15 "FizzBuzz" و 9 "Fizz" و 10 "Buzz" و 7 بيفضل 7.`, sol: R`الكود البايظ في دالة عشان نجرّبه:
+
+~~~js order-broken.js
+function label(n) {
+  let out = n;
+  if (n % 3 === 0) out = "Fizz";
+  else if (n % 5 === 0) out = "Buzz";
+  else if (n % 15 === 0) out = "FizzBuzz";
+  return out;
+}
+console.log(label(15), label(30));
+~~~
+
+~~~text الناتج قبل التصليح
+Fizz Fizz
+~~~
+
+**الغلط فين:** 15 بتقبل القسمة على 3، فأول شرط [[n % 3 === 0]] [[true]] وخلاها "Fizz"، والـ [[else if]] اللي بعدها مبتتسألش. شرط 15 **عمره ما هيتوصل له**: أي رقم بيقبل القسمة على 15 بيقبل القسمة على 3، فهيقف عند أول شرط دايمًا.
+
+الحل: الشرط الأضيق (15) الأول:
+
+~~~js order-fixed.js
+function label(n) {
+  let out = n;
+  if (n % 15 === 0) out = "FizzBuzz";
+  else if (n % 3 === 0) out = "Fizz";
+  else if (n % 5 === 0) out = "Buzz";
+  return out;
+}
+console.log(label(15), label(30), label(9), label(10), label(7));
+~~~
+
+~~~text الناتج بعد التصليح
+FizzBuzz FizzBuzz Fizz Buzz 7
+~~~
+
+**القاعدة:** نفس غلطة [[grade]] في درس «if و else if»: في سلسلة [[else if]] الشرط الخاص قبل العام.
+
+**الغلطة الشائعة:** تجرّب بـ 9 و 10 بس (اللي شغالين في الكود البايظ كمان) وتقول «تمام». الرقم اللي بيكشف الغلطة هو اللي بيحقق أكتر من شرط: 15.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** FizzBuzz بقاعدة تالتة: 7 تبقى Jazz. ابني النص بالإضافة ([[out += "Fizz"]]) بدل شرط لكل تركيبة.`, done: R`21 بتطلع "FizzJazz"، و 35 "BuzzJazz"، و 105 "FizzBuzzJazz"، و 8 بتفضل 8 (number).`, sol: R`~~~js jazz.js
+function fizzBuzzJazz(n) {
+  let out = "";
+  if (n % 3 === 0) out += "Fizz";
+  if (n % 5 === 0) out += "Buzz";
+  if (n % 7 === 0) out += "Jazz";
+  return out === "" ? n : out;
+}
+console.log(fizzBuzzJazz(21), fizzBuzzJazz(35), fizzBuzzJazz(105), fizzBuzzJazz(8), typeof fizzBuzzJazz(8));
+~~~
+
+~~~text الناتج: node jazz.js
+FizzJazz BuzzJazz FizzBuzzJazz 8 number
+~~~
+
+**ليه الإضافة أحسن من شرط لكل تركيبة:**
+
+- ٣ قواعد يعني ٧ تركيبات (Fizz و Buzz و Jazz و FizzBuzz و FizzJazz و BuzzJazz و FizzBuzzJazz). لو كتبت شرط لكل واحدة، هيبقوا ٧ شروط لازم مترتبين صح. ولو زوّدت قاعدة رابعة يبقوا ١٥!
+- بالإضافة: ٣ شروط [[if]] **منفصلة** (مش [[else if]])، وكل واحد بيزوّد كلمته على [[out]]. 105 بتقبل القسمة على 3 و 5 و 7، فالتلاتة بيشتغلوا: "FizzBuzzJazz". والترتيب في النص هو ترتيب الشروط.
+- [[out === "" ? n : out]]: لو ولا قاعدة اشتغلت، النص فاضي، فنرجّع الرقم نفسه (number مش نص، زي ما [[typeof]] قالت).
+
+**الغلطة الشائعة:** تكتبها [[else if]] زي FizzBuzz العادية، فـ 21 تطلع "Fizz" بس لأن أول شرط كسب ووقف الباقي. هنا كل قاعدة مستقلة، فكل شرط لازم يتسأل.` },
+            { lvl: 'تطبيق', t: R`**أشكال:** [[box(n)]] بتطبع مربع مفرّغ: السطر الأول والأخير [[#]] كلهم، واللي في النص [[#]] في الأول والآخر ومسافات في النص.`, done: R`[[box(4)]] بيطبع [[####]] ثم [[#  #]] مرتين ثم [[####]]. و [[box(1)]] بيطبع [[#]] بس، و [[box(2)]] سطرين [[##]] من غير مسافات.`, sol: R`~~~js box.js
+function box(n) {
+  for (let row = 1; row <= n; row++) {
+    if (row === 1 || row === n) {
+      console.log("#".repeat(n));
+    } else {
+      console.log("#" + " ".repeat(n - 2) + "#");
+    }
+  }
+}
+box(4);
+console.log("---");
+box(1);
+console.log("---");
+box(2);
+~~~
+
+~~~text الناتج: node box.js
+####
+#  #
+#  #
+####
+---
+#
+---
+##
+##
+~~~
+
+**ليه كده:**
+
+- كل سطر واحد من نوعين: **حافة** (أول سطر أو آخر سطر) كلها [[#]]، أو **وسط**: [[#]] ثم مسافات ثم [[#]].
+- [[" ".repeat(n - 2)]]: عرض الصندوق [[n]]، ناقص الحرفين اللي على الطرفين.
+- [[box(1)]]: السطر الأول هو الأخير، فبيطبع [[#]] واحدة بس.
+- [[box(2)]]: السطرين حواف، فمفيش سطر وسط خالص، ومفيش [[repeat(0)]] بيتنادى أصلًا.
+
+**الغلطة الشائعة:** تكتب [["#" + " ".repeat(n - 2) + "#"]] لكل السطور وتحط الحواف لوحدها، فـ [[box(1)]] تنادي [[repeat(-1)]] وتطلع [[RangeError: Invalid count value: -1]]. شرط [[row === 1 || row === n]] بيحل الحالتين الطرفيتين من غير شروط زيادة.` },
+            { lvl: 'تحدي', t: R`**مسألة:** من 1 لـ 100 عدّ كل نوع لوحده: Fizz بس، و Buzz بس، و FizzBuzz، والأرقام. وفكّر تتأكد من النتيجة إزاي من غير ما تعدّ بإيدك.`, done: R`Fizz 27، و Buzz 14، و FizzBuzz 6، والأرقام 53، ومجموعهم 100.`, sol: R`~~~js kinds.js
+let fizz = 0, buzz = 0, fizzBuzz = 0, numbers = 0;
+for (let n = 1; n <= 100; n++) {
+  if (n % 15 === 0) fizzBuzz++;
+  else if (n % 3 === 0) fizz++;
+  else if (n % 5 === 0) buzz++;
+  else numbers++;
+}
+console.log({ fizz, buzz, fizzBuzz, numbers });
+console.log("المجموع:", fizz + buzz + fizzBuzz + numbers);
+// تأكيد بالحساب: مضاعفات 3 = 33، ومضاعفات 5 = 20، ومضاعفات 15 = 6
+console.log(Math.floor(100 / 3) - Math.floor(100 / 15), Math.floor(100 / 5) - Math.floor(100 / 15), Math.floor(100 / 15));
+~~~
+
+~~~text الناتج: node kinds.js
+{ fizz: 27, buzz: 14, fizzBuzz: 6, numbers: 53 }
+المجموع: 100
+27 14 6
+~~~
+
+**ليه كده:**
+
+- ٤ عدّادات، وكل رقم بيروح لواحد بس بفضل [[else if]] (والشرط الأضيق 15 الأول).
+- [[{ fizz, buzz, fizzBuzz, numbers }]] بيطبعهم بأساميهم.
+
+**إزاي تتأكد من غير ما تعدّ بإيدك (طريقتين):**
+
+1. **المجموع لازم 100:** كل رقم من 1 لـ 100 راح لعدّاد واحد بالظبط. لو المجموع طلع أكتر، يبقى رقم اتعدّ مرتين (يعني شيلت [[else]]).
+2. **حساب من غير loop:** مضاعفات 3 لحد 100 عددها [[Math.floor(100 / 3)]] = 33، ومنهم 6 مضاعفات 15. فـ Fizz بس = ٣٣ − ٦ = 27. ونفس الكلام Buzz بس = ٢٠ − ٦ = 14. آخر سطر في الناتج طلّع نفس الأرقام بطريقة مختلفة تمامًا، فالاتنين صح.
+
+**الغلطة الشائعة:** تعدّ Fizz بشرط [[n % 3 === 0]] لوحده (من غير else) فيطلع 33 مش 27، لأن الـ 15 و 30 وغيرهم اتعدّوا Fizz و FizzBuzz مع بعض.` }
           ],
           flag: "script",
           deep: {
@@ -2966,7 +6428,12 @@ test("fizzBuzz(0) ← [] (مفيش أرقام)", () => expect(fizzBuzz(0)).toEqu
   }
   return out;
 }`
-          }
+          },
+          ref: [
+            { t: "MDN: Remainder (%)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Remainder" },
+            { t: "MDN: for", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for" },
+            { t: "MDN: String.prototype.repeat()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/repeat" }
+          ]
         },
         {
           cmd: "تمرين sumTo",
@@ -2981,11 +6448,131 @@ for (let i = 1; i <= 30; i++) {
 console.log(count); // 10`,
           try: R`اكتب [[sumTo(n)]] بـ for loop و accumulator. وبعد ما الاختبارات تعدّي، اكتبها من غير loop بالمعادلة [[n * (n + 1) / 2]] وشغّل تاني. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
-            { lvl: 'سريع', t: R`**اكتب اختبار:** جرّب حلك على الأطراف: [[sumTo(10)]] و [[sumTo(1)]] و [[sumTo(0)]].`, done: R`55 و 1 و 0.` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[function sumTo(n) { let s = 0; for (let i = 1; i < n; i++) s += i; return s; }]]. جرّب [[sumTo(100)]] و [[sumTo(1)]].`, done: R`قبل التصليح [[sumTo(100)]] بترجّع 4950 و [[sumTo(1)]] بترجّع 0 (آخر رقم مش بيتجمع). بعد [[i <= n]]: 5050 و 1.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** [[sumRange(a, b)]]: مجموع الأرقام من a لـ b شامل الاتنين، ولو a أكبر من b بدّلهم.`, done: R`[[sumRange(3, 7)]] بترجّع 25، و [[sumRange(7, 3)]] بترجّع 25 برضه، و [[sumRange(5, 5)]] بترجّع 5.` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[sumMultiples(n)]]: مجموع كل الأرقام الأقل من n اللي بتقبل القسمة على 3 أو 5 (أول مسألة في Project Euler).`, done: R`[[sumMultiples(10)]] بترجّع 23 (3 و 5 و 6 و 9)، و [[sumMultiples(1000)]] بترجّع 233168. و 15 بتتجمع مرة واحدة بس.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** احسب المجموع من 1 لـ [[1e8]] مرة بالـ loop ومرة بالمعادلة [[n * (n + 1) / 2]]، وحط كل واحدة بين [[console.time]] و [[console.timeEnd]].`, done: R`الاتنين طلّعوا [[5000000050000000]]. الـ loop أخدت عشرات المللي ثواني (على جهاز عادي حوالي 70ms)، والمعادلة أقل من 0.1ms. وعرفت إن المعادلة وقتها ثابت مهما n كبرت، والـ loop بتكبر معاها.` }
+            { lvl: 'سريع', t: R`**اكتب اختبار:** جرّب حلك على الأطراف: [[sumTo(10)]] و [[sumTo(1)]] و [[sumTo(0)]].`, done: R`55 و 1 و 0.`, sol: R`~~~js edges.js
+function sumTo(n) {
+  let sum = 0;
+  for (let i = 1; i <= n; i++) sum += i;
+  return sum;
+}
+console.log(sumTo(10) === 55, sumTo(1) === 1, sumTo(0) === 0);
+console.log(sumTo(10), sumTo(1), sumTo(0));
+~~~
+
+~~~text الناتج: node edges.js
+true true true
+55 1 0
+~~~
+
+**ليه الأطراف دي بالذات:**
+
+- [[sumTo(10)]] = 55: حالة عادية تقدر تحسبها بإيدك (١ + ٢ + ... + ١٠).
+- [[sumTo(1)]] = 1: أصغر حالة فيها لفة واحدة. بتمسك غلطة [[i < n]] (اللي هترجّع 0).
+- [[sumTo(0)]] = 0: الـ loop مبتلفش خالص ([[1 <= 0]] [[false]] من الأول)، فالدالة بترجّع القيمة اللي بدأت بيها. بتمسك غلطة إنك تبدأ [[sum]] بـ 1 أو
+تنسى ترجّع حاجة.
+- السطر الأول بيقارن بـ [[===]] فيطبع [[true]] أو [[false]]: مش محتاج تفتكر الأرقام المتوقعة وانت بتبص على الناتج.
+
+**الغلطة الشائعة:** تختبر بـ [[sumTo(100)]] بس. لو الناتج طلع 4950 مش هتعرف هو صح ولا لأ من غير ما تحسب، والحالات الصغيرة بتكشف الغلطة على طول.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[function sumTo(n) { let s = 0; for (let i = 1; i < n; i++) s += i; return s; }]]. جرّب [[sumTo(100)]] و [[sumTo(1)]].`, done: R`قبل التصليح [[sumTo(100)]] بترجّع 4950 و [[sumTo(1)]] بترجّع 0 (آخر رقم مش بيتجمع). بعد [[i <= n]]: 5050 و 1.`, sol: R`الكود البايظ:
+
+~~~js broken.js
+function sumTo(n) {
+  let s = 0;
+  for (let i = 1; i < n; i++) s += i;
+  return s;
+}
+console.log(sumTo(100), sumTo(1));
+~~~
+
+~~~text الناتج قبل التصليح
+4950 0
+~~~
+
+**الغلط:** [[i < n]] بتوقف **قبل** [[n]]، فآخر رقم مبيتجمعش: [[sumTo(100)]] جمعت لحد 99 (4950 = 5050 − 100)، و [[sumTo(1)]] ملفّتش خالص. الفرق بين الصح والغلط بالظبط [[n]]: علامة إن آخر لفة ناقصة.
+
+الحل: [[i <= n]]:
+
+~~~text الناتج بعد التصليح
+5050 1
+~~~
+
+**الغلطة الشائعة:** تصلّح بإنك تزوّد [[n]] في الآخر ([[return s + n]]). ده بيطلّع أرقام صح، بس بيخبّي الغلطة الحقيقية في الـ loop. الـ off-by-one بيتصلّح في الشرط نفسه.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[sumRange(a, b)]]: مجموع الأرقام من a لـ b شامل الاتنين، ولو a أكبر من b بدّلهم.`, done: R`[[sumRange(3, 7)]] بترجّع 25، و [[sumRange(7, 3)]] بترجّع 25 برضه، و [[sumRange(5, 5)]] بترجّع 5.`, sol: R`~~~js range.js
+function sumRange(a, b) {
+  if (a > b) {
+    const tmp = a;
+    a = b;
+    b = tmp;
+  }
+  let sum = 0;
+  for (let i = a; i <= b; i++) sum += i;
+  return sum;
+}
+console.log(sumRange(3, 7), sumRange(7, 3), sumRange(5, 5));
+~~~
+
+~~~text الناتج: node range.js
+25 25 5
+~~~
+
+**ليه كده:**
+
+- لو [[a]] أكبر من [[b]] بنبدّلهم بمتغير مؤقت [[tmp]]: نحفظ [[a]] فيه، وبعدين [[a]] تاخد [[b]]، و [[b]] تاخد اللي في [[tmp]]. من غير [[tmp]]، أول سطر كان هيمسح قيمة [[a]] قبل ما نحطها في [[b]].
+- بعد التبديل الـ loop دايمًا من الصغير للكبير، و [[<=]] عشان الاتنين يتجمعوا.
+- [[sumRange(5, 5)]]: لفة واحدة، فـ 5.
+
+**الغلطة الشائعة:** متبدّلش، فـ [[sumRange(7, 3)]] ترجّع 0 (الـ loop مبتلفش لأن [[7 <= 3]] [[false]]). ولو فكرت تلف لورا ([[i--]]) هتحتاج loop تانية ونفس الكود مرتين.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[sumMultiples(n)]]: مجموع كل الأرقام الأقل من n اللي بتقبل القسمة على 3 أو 5 (أول مسألة في Project Euler).`, done: R`[[sumMultiples(10)]] بترجّع 23 (3 و 5 و 6 و 9)، و [[sumMultiples(1000)]] بترجّع 233168. و 15 بتتجمع مرة واحدة بس.`, sol: R`~~~js multiples.js
+function sumMultiples(n) {
+  let sum = 0;
+  for (let i = 1; i < n; i++) {
+    if (i % 3 === 0 || i % 5 === 0) sum += i;
+  }
+  return sum;
+}
+console.log(sumMultiples(10), sumMultiples(1000));
+~~~
+
+~~~text الناتج: node multiples.js
+23 233168
+~~~
+
+**ليه كده:**
+
+- [[i < n]] مش [[<=]]: المسألة بتقول «الأقل من n».
+- [[i % 3 === 0 || i % 5 === 0]]: شرط **واحد** بـ «أو». فالـ 15 (اللي بتقبل الاتنين) الشرط بتاعها [[true]] مرة واحدة، فبتتجمع مرة واحدة.
+- [[sumMultiples(10)]] = ٣ + ٥ + ٦ + ٩ = 23.
+
+**الغلطة الشائعة:** شرطين [[if]] منفصلين، واحد لـ 3 وواحد لـ 5، فالـ 15 والـ 30 وكل مضاعفات 15 يتجمعوا مرتين، و [[sumMultiples(1000)]] يطلع 266333 بدل 233168.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** احسب المجموع من 1 لـ [[1e8]] مرة بالـ loop ومرة بالمعادلة [[n * (n + 1) / 2]]، وحط كل واحدة بين [[console.time]] و [[console.timeEnd]].`, done: R`الاتنين طلّعوا [[5000000050000000]]. الـ loop أخدت عشرات المللي ثواني (على جهاز عادي حوالي 70ms)، والمعادلة أقل من 0.1ms. وعرفت إن المعادلة وقتها ثابت مهما n كبرت، والـ loop بتكبر معاها.`, sol: R`~~~js timing.js
+const n = 1e8;
+
+console.time("loop");
+let sum = 0;
+for (let i = 1; i <= n; i++) sum += i;
+console.timeEnd("loop");
+
+console.time("formula");
+const fast = n * (n + 1) / 2;
+console.timeEnd("formula");
+
+console.log(sum, fast, sum === fast);
+~~~
+
+~~~text الناتج: node timing.js (على جهازي)
+loop: 70.558ms
+formula: 0.004ms
+5000000050000000 5000000050000000 true
+~~~
+
+**القياس:**
+
+- [[console.time("loop")]] بيبدأ ساعة باسم، و [[console.timeEnd("loop")]] بيوقفها ويطبع الوقت. الاسم لازم يبقى هو هو في الاتنين.
+- الـ loop لفّت ١٠٠ مليون لفة في عشرات المللي ثواني. المعادلة عملية ضرب وجمع وقسمة: جزء من المللي ثانية.
+- الاتنين نفس الناتج ([[true]]).
+
+**ليه الفرق ده:** الـ loop وقتها **بيكبر مع n**: لو n اتضاعفت، الوقت بيتضاعف. والمعادلة وقتها **ثابت**: ٣ عمليات سواء n عشرة ولا مليار. ده اللي هتسمعه بعدين باسم O(n) و O(1).
+
+**الغلطة الشائعة:** تقيس مرة واحدة وتعتبر الرقم «سرعة الكود». الأرقام بتختلف من جهاز لجهاز ومن تشغيل لتشغيل (لو شغّلتها تاني الرقم هيتغيّر شوية). المهم الفرق بين الاتنين (آلاف المرات)، مش الرقم نفسه. وخلي بالك: المعادلة صح هنا لأن الأرقام لسه أقل من [[Number.MAX_SAFE_INTEGER]]، ولو n كبرت أوي الاتنين هيبدأوا يغلطوا.` }
           ],
           flag: "script",
           deep: {
@@ -3111,7 +6698,12 @@ test("sumTo(10000) ← 50005000", () => expect(sumTo(10000)).toBe(50005000));`,
   for (let i = 1; i <= n; i++) sum += i;
   return sum;
 }`
-          }
+          },
+          ref: [
+            { t: "MDN: for", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for" },
+            { t: "MDN: Addition assignment (+=)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Addition_assignment" },
+            { t: "MDN: console.time()", url: "https://developer.mozilla.org/en-US/docs/Web/API/console/time_static" }
+          ]
         },
         {
           cmd: "تمرين countEvens",
@@ -3127,11 +6719,145 @@ for (const t of temps) {
 console.log(sumPositive); // 67`,
           try: R`اكتب [[countEvens(arr)]] بـ for...of وعدّاد. فكّر قبل ما تشغّل: [[-2]] زوجي؟ و [[0]]؟ اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** اكتب [[countOdds(arr)]] بنفس فكرة العدّاد.`, done: R`[[countOdds([1, 2, 3, 4, 5])]] بترجّع 3، و [[countOdds([])]] بترجّع 0.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب ناتج [[-3 % 2]] و [[-4 % 2]] قبل التشغيل. وبعدين: لو [[countOdds]] شرطها [[x % 2 === 1]]، [[countOdds([-3, -1, 2])]] هترجّع كام؟`, done: R`طلع [[-1]] و [[-0]]، و [[countOdds([-3, -1, 2])]] رجّعت 0 مش 2، لأن باقي القسمة في JS بياخد إشارة الرقم. والتصليح [[x % 2 !== 0]] بيرجّع 2.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** في [[[250, 900, 400, 1200, 500]]] (إجماليات طلبات) عدّ الطلبات اللي أكبر من 500.`, done: R`بترجّع 2، والطلب اللي بـ 500 بالظبط مش محسوب.` },
-            { lvl: 'تطبيق', t: R`**أشكال:** اطبع رقعة شطرنج 4×4: الخانة [[#]] لو [[(row + col) % 2 === 0]] و [[.]] غير كده.`, done: R`بيطبع ٤ سطور: [[#.#.]] ثم [[.#.#]] ثم [[#.#.]] ثم [[.#.#]]. ولو غيّرت المقاس لـ 8 الرقعة بتكبر صح.` },
-            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** جرّب حلك على [[[2, "4", 2.5, -6, 0]]]، وبعدين خليه يعدّ الأرقام الصحيحة بس ([[typeof x === "number"]]).`, done: R`الحل العادي بيرجّع 4 لأن [["4" % 2]] بتتحسب 0 فالنص بيتعدّ. بعد التصليح بيرجّع 3 (2 و -6 و 0).` }
+            { lvl: 'سريع', t: R`**مسألة:** اكتب [[countOdds(arr)]] بنفس فكرة العدّاد.`, done: R`[[countOdds([1, 2, 3, 4, 5])]] بترجّع 3، و [[countOdds([])]] بترجّع 0.`, sol: R`~~~js odds.js
+function countOdds(arr) {
+  let count = 0;
+  for (const x of arr) if (x % 2 !== 0) count++;
+  return count;
+}
+console.log(countOdds([1, 2, 3, 4, 5]), countOdds([]));
+~~~
+
+~~~text الناتج: node odds.js
+3 0
+~~~
+
+**ليه كده:**
+
+- نفس نمط العدّاد بالظبط: [[count = 0]]، ولفة، و [[count++]] لما الشرط يتحقق، و [[return count]].
+- الشرط [[x % 2 !== 0]] («الباقي مش صفر») مش [[=== 1]]، عشان يشتغل مع السالب كمان (التمرين الجاي بيوريك ليه).
+- الـ array الفاضية: الـ loop مبتلفش، فبترجّع 0 اللي بدأنا بيه.
+
+**الغلطة الشائعة:** تكتب [[x % 2 === 1]]. شغالة على [[[1, 2, 3, 4, 5]]] بس بتغلط في الأرقام السالبة.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اكتب ناتج [[-3 % 2]] و [[-4 % 2]] قبل التشغيل. وبعدين: لو [[countOdds]] شرطها [[x % 2 === 1]]، [[countOdds([-3, -1, 2])]] هترجّع كام؟`, done: R`طلع [[-1]] و [[-0]]، و [[countOdds([-3, -1, 2])]] رجّعت 0 مش 2، لأن باقي القسمة في JS بياخد إشارة الرقم. والتصليح [[x % 2 !== 0]] بيرجّع 2.`, sol: R`~~~js negative.js
+console.log(-3 % 2, -4 % 2);
+
+function countOddsWrong(arr) {
+  let count = 0;
+  for (const x of arr) if (x % 2 === 1) count++;
+  return count;
+}
+function countOdds(arr) {
+  let count = 0;
+  for (const x of arr) if (x % 2 !== 0) count++;
+  return count;
+}
+console.log(countOddsWrong([-3, -1, 2]), countOdds([-3, -1, 2]));
+~~~
+
+~~~text الناتج: node negative.js
+-1 -0
+0 2
+~~~
+
+**ليه [[-1]] و [[-0]]:**
+
+- الـ [[%]] في JavaScript بياخد **إشارة الرقم الأولاني**: [[-3 % 2]] = -1 مش 1. (٣ ÷ ٢ = ١ والباقي ١، والإشارة سالبة).
+- [[-4 % 2]] = [[-0]]: صفر بإشارة سالبة. Node بيطبعه [[-0]]، بس [[-0 === 0]] بـ [[true]]، فأي شرط [[=== 0]] شغال عادي.
+- [[countOddsWrong([-3, -1, 2])]] = 0: الـ -3 والـ -1 الباقي بتاعهم [[-1]]، و [[-1 === 1]] [[false]]، فمتعدّوش.
+- [[x % 2 !== 0]] بتقبل [[1]] و [[-1]] الاتنين، فرجّعت 2.
+
+**الغلطة الشائعة:** تفتكر الباقي دايمًا موجب زي ما اتعلمت في المدرسة. في JavaScript افحص الزوجي بـ [[=== 0]] والفردي بـ [[!== 0]]، ومتقارنش بـ 1 أبدًا.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** في [[[250, 900, 400, 1200, 500]]] (إجماليات طلبات) عدّ الطلبات اللي أكبر من 500.`, done: R`بترجّع 2، والطلب اللي بـ 500 بالظبط مش محسوب.`, sol: R`~~~js orders.js
+const totals = [250, 900, 400, 1200, 500];
+let big = 0;
+for (const t of totals) {
+  if (t > 500) big++;
+}
+console.log(big);
+~~~
+
+~~~text الناتج: node orders.js
+2
+~~~
+
+**ليه كده:**
+
+- نفس نمط العدّاد، والشرط [[t > 500]]: 900 و 1200 بس.
+- الـ 500 بالظبط **مش** محسوبة: «أكبر من 500» يعني [[>]] مش [[>=]].
+
+**الغلطة الشائعة:** [[>=]] فيطلع 3. اقرا الكلمة بالظبط: «أكبر من» = [[>]]، و «500 أو أكتر» = [[>=]]. والفرق ده في شغل حقيقي ممكن يبقى خصم اتدّى لطلب مكانش يستحقه.` },
+            { lvl: 'تطبيق', t: R`**أشكال:** اطبع رقعة شطرنج 4×4: الخانة [[#]] لو [[(row + col) % 2 === 0]] و [[.]] غير كده.`, done: R`بيطبع ٤ سطور: [[#.#.]] ثم [[.#.#]] ثم [[#.#.]] ثم [[.#.#]]. ولو غيّرت المقاس لـ 8 الرقعة بتكبر صح.`, sol: R`~~~js board.js
+function board(size) {
+  for (let row = 0; row < size; row++) {
+    let line = "";
+    for (let col = 0; col < size; col++) {
+      line += (row + col) % 2 === 0 ? "#" : ".";
+    }
+    console.log(line);
+  }
+}
+board(4);
+console.log("---");
+board(8);
+~~~
+
+~~~text الناتج: node board.js
+#.#.
+.#.#
+#.#.
+.#.#
+---
+#.#.#.#.
+.#.#.#.#
+#.#.#.#.
+.#.#.#.#
+#.#.#.#.
+.#.#.#.#
+#.#.#.#.
+.#.#.#.#
+~~~
+
+**ليه [[(row + col) % 2]]:**
+
+- في الشطرنج الخانة بتتبادل لما تتحرك خطوة يمين **أو** خطوة تحت. ومجموع [[row + col]] بيتغيّر بواحد في الحالتين، فزوجيته بتتقلب.
+- [[row]] و [[col]] بيبدأوا من 0، فأول خانة (0 + 0 = 0 زوجي) بتبقى [[#]].
+- [[condition ? "#" : "."]]: الـ ternary بيختار حرف من اتنين في سطر واحد.
+- المقاس parameter، فـ [[board(8)]] طلعت ٨ × ٨ من غير أي تعديل.
+
+**الغلطة الشائعة:** تفكر في السطور الزوجي والفردي لوحدها ([[row % 2]]) فتطلع خطوط مش مربعات: كل سطر كله [[#]] أو كله [[.]]. الخانة بتعتمد على الاتنين مع بعض.` },
+            { lvl: 'تحدي', t: R`**صلّح الكود البايظ:** جرّب حلك على [[[2, "4", 2.5, -6, 0]]]، وبعدين خليه يعدّ الأرقام الصحيحة بس ([[typeof x === "number"]]).`, done: R`الحل العادي بيرجّع 4 لأن [["4" % 2]] بتتحسب 0 فالنص بيتعدّ. بعد التصليح بيرجّع 3 (2 و -6 و 0).`, sol: R`~~~js mixed.js
+function countEvens(arr) {
+  let count = 0;
+  for (const x of arr) if (x % 2 === 0) count++;
+  return count;
+}
+function countEvensSafe(arr) {
+  let count = 0;
+  for (const x of arr) {
+    if (typeof x === "number" && x % 2 === 0) count++;
+  }
+  return count;
+}
+const data = [2, "4", 2.5, -6, 0];
+console.log(countEvens(data), countEvensSafe(data));
+console.log("4" % 2, 2.5 % 2, -6 % 2);
+~~~
+
+~~~text الناتج: node mixed.js
+4 3
+0 0.5 -0
+~~~
+
+**ليه الحل العادي رجّع 4:**
+
+- [["4" % 2]] = 0: الـ [[%]] حوّل النص [["4"]] لرقم من غير ما يقولك، فالنص اتعدّ زوجي.
+- [[2.5 % 2]] = 0.5، فالـ 2.5 متعدّتش (صح). و [[-6 % 2]] = -0، و [[-0 === 0]] [[true]] فاتعدّت (صح).
+- فالعادي عدّ 2 و [["4"]] و -6 و 0 = 4.
+
+**التصليح:** [[typeof x === "number" && x % 2 === 0]]: لازم يبقى رقم بجد الأول، وبعدين زوجي. وبفضل الـ short-circuit في [[&&]]، لو مش رقم مش هيحسب [[%]] أصلًا. فبقى 3: (2 و -6 و 0).
+
+**الغلطة الشائعة:** تفتكر إن داتا جاية من فورم أو ملف هتبقى أرقام. غالبًا بتيجي نصوص، والعمليات اللي بتحوّل لوحدها ([[%]] و [[-]] و [[*]]) بتخبّي المشكلة بدل ما تعمل error. اسأل عن النوع صراحة.` }
           ],
           flag: "script",
           deep: {
@@ -3259,7 +6985,12 @@ test("١٠ آلاف رقم ← 5000", () => expect(countEvens(Array.from({ lengt
   for (const x of arr) if (x % 2 === 0) count++;
   return count;
 }`
-          }
+          },
+          ref: [
+            { t: "MDN: Remainder (%)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Remainder" },
+            { t: "MDN: Increment (++)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Increment" },
+            { t: "MDN: Conditional (ternary) operator", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_operator" }
+          ]
         },
         {
           cmd: "تمرين maxOf",
@@ -3275,11 +7006,132 @@ for (const w of words) {
 console.log(longest); // hello`,
           try: R`اكتب [[maxOf(arr)]] بنمط «أحسن واحد لحد دلوقتي». جرّب الأول تبدأ من 0 وشوف أنهي اختبار بيفشل وليه، وبعدين صلّحها. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** اكتب [[minOf(arr)]] بنفس النمط.`, done: R`[[minOf([7, 3, 9])]] بترجّع 3، و [[minOf([4])]] بترجّع 4.` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[function maxOf(arr) { let max = 0; for (const x of arr) if (x > max) max = x; return max; }]]. جرّبها على [[[-5, -2, -9]]].`, done: R`قبل التصليح بترجّع 0 (رقم مش موجود في الـ array أصلًا). بعد ما تبدأ بـ [[let max = arr[0]]] بترجّع -2، و [[maxOf([3, 7])]] 7.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** عندك منتجات زي [[{ name: "Mug", price: 120 }]]: رجّع **اسم** أغلى منتج، مش السعر.`, done: R`على Mug بـ 120 و Shirt بـ 300 و Cap بـ 90 بترجّع "Shirt".` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** اكتب ناتج [[Math.max()]] و [[Math.max(...[3, "10", 2])]] و [[Math.max(1, "a")]] قبل ما تشغّل.`, done: R`توقعت وطلع [[-Infinity]] و [[10]] و [[NaN]]. وعرفت إن Math.max بتحوّل النصوص لأرقام، وإن array فاضية بتدّيك [[-Infinity]] مش خطأ، فلازم تفحص الفاضية بنفسك.` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[indexOfMax(arr)]] بترجّع مكان أكبر رقم (أول مرة لو متكرر)، و -1 لو الـ array فاضية.`, done: R`[[indexOfMax([3, 9, 2, 9])]] بترجّع 1، و [[indexOfMax([-5, -2, -9])]] بترجّع 1، و [[indexOfMax([])]] بترجّع -1.` }
+            { lvl: 'سريع', t: R`**مسألة:** اكتب [[minOf(arr)]] بنفس النمط.`, done: R`[[minOf([7, 3, 9])]] بترجّع 3، و [[minOf([4])]] بترجّع 4.`, sol: R`~~~js min.js
+function minOf(arr) {
+  let min = arr[0];
+  for (const x of arr) if (x < min) min = x;
+  return min;
+}
+console.log(minOf([7, 3, 9]), minOf([4]));
+~~~
+
+~~~text الناتج: node min.js
+3 4
+~~~
+
+**ليه كده:**
+
+- نفس [[maxOf]] بالظبط بحاجتين اتقلبوا: اسم المتغير [[min]]، والمقارنة [[<]] بدل [[>]].
+- [[let min = arr[0]]]: نبدأ بعنصر **موجود فعلًا** في الـ array، مش رقم من عندنا.
+- [[minOf([4])]]: [[min]] بتبدأ 4، والـ loop بتقارن 4 بنفسها ([[4 < 4]] [[false]])، فترجّع 4.
+
+**الغلطة الشائعة:** تبدأ بـ [[let min = 0]]، فأي array كلها أرقام موجبة ترجّع 0 (مش موجود فيها). أو تبدأ بـ [[let min = 100]] على أساس «الأرقام مش هتعدّي 100»، لحد ما ييجي 150.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[function maxOf(arr) { let max = 0; for (const x of arr) if (x > max) max = x; return max; }]]. جرّبها على [[[-5, -2, -9]]].`, done: R`قبل التصليح بترجّع 0 (رقم مش موجود في الـ array أصلًا). بعد ما تبدأ بـ [[let max = arr[0]]] بترجّع -2، و [[maxOf([3, 7])]] 7.`, sol: R`الكود البايظ:
+
+~~~js broken.js
+function maxOf(arr) {
+  let max = 0;
+  for (const x of arr) if (x > max) max = x;
+  return max;
+}
+console.log(maxOf([-5, -2, -9]));
+~~~
+
+~~~text الناتج قبل التصليح
+0
+~~~
+
+**الغلط:** [[max]] بدأت بـ 0، وكل الأرقام سالبة فكلها أقل من 0. ولا مقارنة [[x > max]] طلعت [[true]]، فالدالة رجّعت 0: رقم **مش موجود** في الـ array أصلًا.
+
+الحل: ابدأ بأول عنصر:
+
+~~~js fixed.js
+function maxOf(arr) {
+  let max = arr[0];
+  for (const x of arr) if (x > max) max = x;
+  return max;
+}
+console.log(maxOf([-5, -2, -9]), maxOf([3, 7]));
+~~~
+
+~~~text الناتج بعد التصليح
+-2 7
+~~~
+
+**القاعدة:** القيمة اللي بتبدأ بيها في «الأكبر» و «الأصغر» لازم تبقى من الداتا نفسها ([[arr[0]]])، أو [[-Infinity]] للأكبر (أصغر من أي رقم).
+
+**الغلطة الشائعة:** تجرّب بأرقام موجبة بس ([[[3, 7]]]) فتعدّي على الدالة البايظة. السالب والفاضي هما الحالات اللي بتكشف نقطة البداية.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** عندك منتجات زي [[{ name: "Mug", price: 120 }]]: رجّع **اسم** أغلى منتج، مش السعر.`, done: R`على Mug بـ 120 و Shirt بـ 300 و Cap بـ 90 بترجّع "Shirt".`, sol: R`~~~js priciest.js
+function priciestName(products) {
+  let best = products[0];
+  for (const p of products) {
+    if (p.price > best.price) best = p;
+  }
+  return best.name;
+}
+const products = [
+  { name: "Mug", price: 120 },
+  { name: "Shirt", price: 300 },
+  { name: "Cap", price: 90 },
+];
+console.log(priciestName(products));
+~~~
+
+~~~text الناتج: node priciest.js
+Shirt
+~~~
+
+**ليه نحفظ المنتج كله مش السعر:**
+
+- [[best]] بيشيل الـ **object** كله ([[{ name, price }]])، والمقارنة بـ [[p.price > best.price]]. وفي الآخر نرجّع [[best.name]].
+- لو حفظنا السعر بس ([[let max = 0]] و [[max = p.price]])، في الآخر هنعرف إن أغلى سعر 300 بس منعرفش هو بتاع مين.
+
+**الغلطة الشائعة:** تحفظ متغيرين ([[maxPrice]] و [[maxName]]) وتنسى تحدّث واحد منهم في [[if]]، فيطلع الاسم بتاع منتج والسعر بتاع منتج تاني. حفظ الـ object كله بيخلي الاتنين دايمًا مع بعض.` },
+            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** اكتب ناتج [[Math.max()]] و [[Math.max(...[3, "10", 2])]] و [[Math.max(1, "a")]] قبل ما تشغّل.`, done: R`توقعت وطلع [[-Infinity]] و [[10]] و [[NaN]]. وعرفت إن Math.max بتحوّل النصوص لأرقام، وإن array فاضية بتدّيك [[-Infinity]] مش خطأ، فلازم تفحص الفاضية بنفسك.`, sol: R`~~~js mathmax.js
+console.log(Math.max());
+console.log(Math.max(...[3, "10", 2]));
+console.log(Math.max(1, "a"));
+~~~
+
+~~~text الناتج: node mathmax.js
+-Infinity
+10
+NaN
+~~~
+
+**ليه:**
+
+- [[Math.max()]] من غير أرقام = [[-Infinity]]: هي بتبدأ من أصغر قيمة ممكنة وبتقارن، فلو مفيش حاجة تقارنها، بترجّع البداية. **مش error**.
+- [[Math.max(...[3, "10", 2])]] = 10: الـ [[...]] بيفرد الـ array لأرقام منفصلة، و [[Math.max]] بتحوّل كل حاجة لرقم الأول، فـ [["10"]] بقت 10. (والناتج رقم 10 مش نص.)
+- [[Math.max(1, "a")]] = [[NaN]]: [["a"]] بقت [[NaN]]، وأي مقارنة فيها [[NaN]] بتبوّظ النتيجة كلها.
+
+**الدرس:** لو بتستخدم [[Math.max(...arr)]]، افحص الفاضية بنفسك ([[if (arr.length === 0)]])، وإلا [[-Infinity]] هتتطبع في صفحتك.
+
+**الغلطة الشائعة:** تفتكر إن [[Math.max()]] الفاضية بتعمل error فتسيبها من غير فحص.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[indexOfMax(arr)]] بترجّع مكان أكبر رقم (أول مرة لو متكرر)، و -1 لو الـ array فاضية.`, done: R`[[indexOfMax([3, 9, 2, 9])]] بترجّع 1، و [[indexOfMax([-5, -2, -9])]] بترجّع 1، و [[indexOfMax([])]] بترجّع -1.`, sol: R`~~~js indexmax.js
+function indexOfMax(arr) {
+  if (arr.length === 0) return -1;
+  let best = 0;
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] > arr[best]) best = i;
+  }
+  return best;
+}
+console.log(indexOfMax([3, 9, 2, 9]), indexOfMax([-5, -2, -9]), indexOfMax([]));
+~~~
+
+~~~text الناتج: node indexmax.js
+1 1 -1
+~~~
+
+**ليه كده:**
+
+- الفاضية الأول: مفيش مكان، فـ -1 (نفس اللي [[indexOf]] بترجّعه لما متلاقيش).
+- [[best]] بيشيل **الـ index** مش القيمة، والمقارنة [[arr[i] > arr[best]]].
+- الـ loop بـ [[for]] العادية (مش for...of) عشان محتاجين [[i]]، وبتبدأ من 1 لأن index 0 هو البداية.
+- **أول مرة لو متكرر:** [[>]] مش [[>=]]. في [[[3, 9, 2, 9]]]، لما وصلنا لـ 9 التانية (index 3)، [[9 > 9]] [[false]]، فـ [[best]] فضل 1.
+
+**الغلطة الشائعة:** [[>=]] فترجّع 3 (آخر مرة). أو تحفظ القيمة وتدوّر على مكانها بعدين بلفة تانية، وده شغال بس لفتين بدل لفة.` }
           ],
           flag: "script",
           deep: {
@@ -3394,7 +7246,12 @@ test("١٠٠ ألف رقم: نفس ناتج Math.max", () => {
   for (const x of arr) if (x > max) max = x;
   return max;
 }`
-          }
+          },
+          ref: [
+            { t: "MDN: Math.max()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/max" },
+            { t: "MDN: Spread syntax (...)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax" },
+            { t: "MDN: Infinity", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity" }
+          ]
         },
         {
           cmd: "تمرين reverse",
@@ -3410,11 +7267,144 @@ for (const ch of word) {
 console.log(doubled); // aabbcc`,
           try: R`اكتب [[reverse(str)]] بـ for...of. فكّر: لو كتبت [[out += ch]] هيطلع إيه؟ ولو [[out = ch + out]]؟ اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** اطبع حروف [["Cairo"]] من الآخر للأول بـ for بتعد لورا (من [[str.length - 1]] لـ 0).`, done: R`بيطبع o و r و i و a و C كل حرف في سطر، و C آخر واحد.` },
-            { lvl: 'سريع', t: R`**أشكال:** لـ [["Cairo"]] اطبع مثلث بيكبر حرف حرف: [[C]] ثم [[Ca]] لحد [[Cairo]]، وبعده مثلث بيصغر من الآخر [[o]] ثم [[or]] لحد [[oriaC]].`, done: R`بيطبع ١٠ سطور: ٥ من [[C]] لـ [[Cairo]]، و ٥ من [[o]] لـ [[oriaC]] (آخرهم هو [[reverse("Cairo")]]).` },
-            { lvl: 'تطبيق', t: R`**مسألة:** [[isPalindrome(word)]] باستخدام [[reverse]] اللي كتبتها، وبتتجاهل الحروف الكبيرة.`, done: R`[[isPalindrome("level")]] true، و [[isPalindrome("Level")]] true، و [[isPalindrome("hello")]] false.` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[reverseEachWord(str)]] بتعكس كل كلمة وتسيب ترتيب الكلمات زي ما هو، في loop واحدة ومن غير split.`, done: R`[[reverseEachWord("hello world")]] بترجّع "olleh dlrow"، و [[reverseEachWord("a")]] بترجّع "a"، وآخر كلمة مش ضايعة.` },
-            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** إيه ناتج [[JSON.stringify("ab😀".split("").reverse().join(""))]] و [[[..."ab😀"].reverse().join("")]]؟ خمّن وبعدين شغّل.`, done: R`الأولى طلّعت [["\ude00\ud83dba"]] (الإيموجي اتكسر لنصّين مقلوبين)، والتانية [[😀ba]] سليمة. وعرفت إن [[split("")]] بيقطع وحدات UTF-16 مش حروف، و [[[...str]]] بيقطع حروف.` }
+            { lvl: 'سريع', t: R`**مسألة:** اطبع حروف [["Cairo"]] من الآخر للأول بـ for بتعد لورا (من [[str.length - 1]] لـ 0).`, done: R`بيطبع o و r و i و a و C كل حرف في سطر، و C آخر واحد.`, sol: R`~~~js back.js
+const str = "Cairo";
+for (let i = str.length - 1; i >= 0; i--) {
+  console.log(str[i]);
+}
+~~~
+
+~~~text الناتج: node back.js
+o
+r
+i
+a
+C
+~~~
+
+**فك الـ for اللي بتعد لورا:**
+
+- [[let i = str.length - 1]]: آخر حرف مكانه 4 مش 5، لأن العدّ من 0 ([["Cairo"]] طولها 5 والأماكن 0 لـ 4).
+- [[i >= 0]]: نكمّل لحد ما نوصل لأول حرف (مكانه 0) **ونطبعه**.
+- [[i--]]: ننقص واحد كل لفة.
+- [[str[i]]] بيجيب الحرف اللي في المكان ده.
+
+**الغلطة الشائعة:** [[let i = str.length]] فأول لفة تطبع [[undefined]] (مفيش حرف في مكان 5). أو [[i > 0]] فالـ C متتطبعش. الحدّين دول بالظبط هما «off-by-one».` },
+            { lvl: 'سريع', t: R`**أشكال:** لـ [["Cairo"]] اطبع مثلث بيكبر حرف حرف: [[C]] ثم [[Ca]] لحد [[Cairo]]، وبعده مثلث بيصغر من الآخر [[o]] ثم [[or]] لحد [[oriaC]].`, done: R`بيطبع ١٠ سطور: ٥ من [[C]] لـ [[Cairo]]، و ٥ من [[o]] لـ [[oriaC]] (آخرهم هو [[reverse("Cairo")]]).`, sol: R`~~~js tri.js
+const word = "Cairo";
+
+// بيكبر من الأول: C ثم Ca ...
+let grow = "";
+for (const ch of word) {
+  grow += ch;
+  console.log(grow);
+}
+
+// بيكبر من الآخر: o ثم or ... (كل حرف جديد بيتحط في الآخر)
+let back = "";
+for (let i = word.length - 1; i >= 0; i--) {
+  back += word[i];
+  console.log(back);
+}
+~~~
+
+~~~text الناتج: node tri.js
+C
+Ca
+Cai
+Cair
+Cairo
+o
+or
+ori
+oria
+oriaC
+~~~
+
+**ليه كده:**
+
+- **المثلث الأول:** [[grow]] بيبدأ فاضي، وكل لفة بنزوّد الحرف الجاي **في آخره** ونطبع. فبيكبر حرف حرف: C، Ca، ...
+- **المثلث التاني:** بنلف من آخر حرف لأوله، وبنزوّد كل حرف في آخر [[back]]. فأول سطر [[o]]، وبعده [[or]] (الـ r جت بعد الـ o)، وآخر سطر [[oriaC]] اللي هو [["Cairo"]] مقلوبة.
+- كل سطر بيتطبع **جوه** الـ loop بعد ما يتزوّد عليه حرف، فبنشوف كل مرحلة.
+
+**الغلطة الشائعة:** تطبع برّه الـ loop فتشوف آخر سطر بس. أو في التاني تكتب [[back = word[i] + back]] (الحرف في الأول)، فيطلع [[o]] ثم [[ro]] ثم [[iro]]: ده آخر الكلمة بترتيبها العادي، مش مقلوب.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[isPalindrome(word)]] باستخدام [[reverse]] اللي كتبتها، وبتتجاهل الحروف الكبيرة.`, done: R`[[isPalindrome("level")]] true، و [[isPalindrome("Level")]] true، و [[isPalindrome("hello")]] false.`, sol: R`~~~js pal.js
+function reverse(str) {
+  let out = "";
+  for (const ch of str) out = ch + out;
+  return out;
+}
+function isPalindrome(word) {
+  const w = word.toLowerCase();
+  return w === reverse(w);
+}
+console.log(isPalindrome("level"), isPalindrome("Level"), isPalindrome("hello"));
+~~~
+
+~~~text الناتج: node pal.js
+true true false
+~~~
+
+**ليه كده:**
+
+- palindrome يعني الكلمة مقلوبة زي ما هي. فالفحص سطر واحد: [[w === reverse(w)]].
+- [[toLowerCase()]] **قبل** القلب والمقارنة: [["Level"]] بقت [["level"]]، فـ L الكبيرة في الأول بقت زي الـ l الصغيرة في الآخر.
+- بنستخدم [[reverse]] اللي كتبناها بدل ما نكتب القلب تاني: الدالة بتتكتب مرة وتتنادى في أي حتة.
+
+**الغلطة الشائعة:** تعمل [[toLowerCase]] على ناحية واحدة بس ([[word === reverse(word).toLowerCase()]]) فـ [["Level"]] تطلع [[false]]: الأصل لسه فيه L كبيرة.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[reverseEachWord(str)]] بتعكس كل كلمة وتسيب ترتيب الكلمات زي ما هو، في loop واحدة ومن غير split.`, done: R`[[reverseEachWord("hello world")]] بترجّع "olleh dlrow"، و [[reverseEachWord("a")]] بترجّع "a"، وآخر كلمة مش ضايعة.`, sol: R`~~~js words.js
+function reverseEachWord(str) {
+  let out = "";
+  let word = "";           // الكلمة اللي بنبنيها مقلوبة
+  for (const ch of str) {
+    if (ch === " ") {
+      out += word + " ";   // الكلمة خلصت: حطها وحط المسافة
+      word = "";
+    } else {
+      word = ch + word;    // كل حرف جديد في الأول، فالكلمة بتتقلب
+    }
+  }
+  return out + word;       // آخر كلمة ملهاش مسافة بعدها
+}
+console.log(reverseEachWord("hello world"));
+console.log(reverseEachWord("a"));
+console.log(reverseEachWord("I love JS"));
+~~~
+
+~~~text الناتج: node words.js
+olleh dlrow
+a
+I evol SJ
+~~~
+
+**الفكرة:**
+
+- [[word]] بيبني الكلمة الحالية **مقلوبة** وانت ماشي: كل حرف جديد بيتحط في الأول ([[ch + word]])، زي [[reverse]] بالظبط.
+- لما نقابل مسافة: الكلمة خلصت، فنحطها في [[out]] ومعاها المسافة، ونبدأ كلمة جديدة فاضية.
+- بعد الـ loop: آخر كلمة لسه في [[word]] لأن مفيش مسافة بعدها تخلّينا نحطها، فـ [[return out + word]].
+
+**الغلطة الشائعة:** تنسى آخر كلمة، فـ [["hello world"]] ترجّع [["olleh "]] و [["a"]] ترجّع نص فاضي. نفس غلطة «آخر مجموعة» في تمرين [[compress]]: أي حاجة بتتحط لما «يحصل تغيير» محتاجة سطر بعد الـ loop للمجموعة الأخيرة.` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع:** إيه ناتج [[JSON.stringify("ab😀".split("").reverse().join(""))]] و [[[..."ab😀"].reverse().join("")]]؟ خمّن وبعدين شغّل.`, done: R`الأولى طلّعت [["\ude00\ud83dba"]] (الإيموجي اتكسر لنصّين مقلوبين)، والتانية [[😀ba]] سليمة. وعرفت إن [[split("")]] بيقطع وحدات UTF-16 مش حروف، و [[[...str]]] بيقطع حروف.`, sol: R`~~~js emoji.js
+console.log(JSON.stringify("ab😀".split("").reverse().join("")));
+console.log([..."ab😀"].reverse().join(""));
+console.log("ab😀".split(""), [..."ab😀"]);
+~~~
+
+~~~text الناتج: node emoji.js
+"\ude00\ud83dba"
+😀ba
+[ 'a', 'b', '\ud83d', '\ude00' ] [ 'a', 'b', '😀' ]
+~~~
+
+**ليه الأولى اتكسرت:**
+
+- آخر سطر بيوريك السبب: [[split("")]] قطّع النص لـ **٤ حتت**: الإيموجي [[😀]] اتقسم لنصّين ([['\ud83d']] و [['\ude00']])، لأنه بياخد خانتين في UTF-16 (زي ما شفت في تمرين «hi😀» في درس for...of).
+- [[reverse()]] قلبت الحتت الأربعة، فالنصّين اتبدّلوا: [["\ude00\ud83d"]]، وده مش إيموجي، دي حتتين ملهمش معنى لوحدهم. [[JSON.stringify]] بيوريهم كـ escapes بدل ما يطبع حروف بايظة.
+- [[[..."ab😀"]]] بيقطّع **بالحروف الحقيقية** (زي for...of)، فالإيموجي حتة واحدة، والقلب سليم: [[😀ba]].
+
+**الخلاصة:** لما تقلب أو تقطّع نص ممكن يكون فيه إيموجي، استخدم [[[...str]]] أو [[for...of]] مش [[split("")]]. (ولسه فيه حالات أصعب، زي الإيموجي اللي من كذا حرف ملزوقين، هتشوفها في وحدة «النصوص بعمق».)
+
+**الغلطة الشائعة:** تجرّب القلب على نص إنجليزي بس وتفتكر إن [[split("").reverse().join("")]] صح دايمًا.` }
           ],
           flag: "script",
           deep: {
@@ -3525,7 +7515,12 @@ test("مرتين يرجّع الأصل", () => expect(reverse(reverse("JavaScrip
   for (const ch of str) out = ch + out;
   return out;
 }`
-          }
+          },
+          ref: [
+            { t: "MDN: for...of", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of" },
+            { t: "MDN: String: length", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/length" },
+            { t: "MDN: String.prototype.split()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split" }
+          ]
         },
         {
           cmd: "تمرين factorial",
@@ -3540,11 +7535,158 @@ for (let i = 0; i < 10; i++) {
 console.log(result); // 1024`,
           try: R`اكتب [[factorial(n)]] بـ loop. خمّن الأول: لو بدأت [[result]] من 0 إيه اللي هيطلع؟ وبعدين جرّب [[factorial(25)]] واطبعه: الرقم مظبوط؟ اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
-            { lvl: 'سريع', t: R`**اكتب اختبار:** جرّب حلك على 5 و 1 و 0.`, done: R`120 و 1 و 1. لو 0 طلعت 0 يبقى بدأت result من 0.` },
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** بالـ factorial العادية (number)، إيه ناتج [[factorial(170)]] و [[factorial(171)]]؟`, done: R`طلع [[7.257415615307994e+306]] و [[Infinity]]. وعرفت إن الـ number ليه حد (حوالي 1.8 × 10^308) وبعده بيبقى Infinity من غير أي error.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** عدد طرق اختيار r حاجات من n: [[nCr(n, r)]] بـ [[factorial]]: n! على (r! × (n−r)!).`, done: R`[[nCr(5, 2)]] بترجّع 10، و [[nCr(10, 3)]] بترجّع 120، و [[nCr(4, 4)]] بترجّع 1.` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** نسخة recursive: [[function fact(n) { return n * fact(n - 1); }]]. شغّل [[fact(5)]] واقرا الرسالة.`, done: R`قبل التصليح: [[RangeError: Maximum call stack size exceeded]] لأن الدالة بتنادي نفسها من غير ما تقف. بعد ما تزوّد [[if (n <= 1) return 1;]] في الأول: [[fact(5)]] 120 و [[fact(0)]] 1.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** اكتب [[factorialBig(n)]] بـ BigInt (الأرقام بـ [[n]] في الآخر زي [[1n]]) وقارنها بـ [[factorial(25)]] العادية.`, done: R`العادية بتطبع 1.5511210043330986e+25، و [[factorialBig(25n)]] بتطبع 15511210043330985984000000n بكل الأرقام.` }
+            { lvl: 'سريع', t: R`**اكتب اختبار:** جرّب حلك على 5 و 1 و 0.`, done: R`120 و 1 و 1. لو 0 طلعت 0 يبقى بدأت result من 0.`, sol: R`~~~js edges.js
+function factorial(n) {
+  let result = 1;
+  for (let i = 2; i <= n; i++) result *= i;
+  return result;
+}
+console.log(factorial(5), factorial(1), factorial(0));
+console.log(factorial(5) === 120, factorial(1) === 1, factorial(0) === 1);
+~~~
+
+~~~text الناتج: node edges.js
+120 1 1
+true true true
+~~~
+
+**ليه الأطراف دي:**
+
+- [[factorial(5)]] = ٥ × ٤ × ٣ × ٢ × ١ = 120: حالة عادية.
+- [[factorial(1)]] و [[factorial(0)]] = 1: الـ loop بتبدأ من [[i = 2]]، فمع 1 و 0 مبتلفش خالص، والدالة بترجّع البداية [[result = 1]]. و 0! = 1 في الرياضة (ضرب «ولا رقم» = 1، زي ما جمع «ولا رقم» = 0).
+
+**الغلطة الشائعة:** تبدأ [[result]] بـ 0 زي العدّاد. جرّبتها:
+
+~~~text الناتج لو result بدأت من 0
+0 0 0
+false false false
+~~~
+
+كله 0، لأن أي حاجة × 0 = 0. القاعدة: **الجمع يبدأ من 0، والضرب يبدأ من 1**.` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** بالـ factorial العادية (number)، إيه ناتج [[factorial(170)]] و [[factorial(171)]]؟`, done: R`طلع [[7.257415615307994e+306]] و [[Infinity]]. وعرفت إن الـ number ليه حد (حوالي 1.8 × 10^308) وبعده بيبقى Infinity من غير أي error.`, sol: R`~~~js limit.js
+function factorial(n) {
+  let result = 1;
+  for (let i = 2; i <= n; i++) result *= i;
+  return result;
+}
+console.log(factorial(170));
+console.log(factorial(171));
+console.log(Number.MAX_VALUE);
+~~~
+
+~~~text الناتج: node limit.js
+7.257415615307994e+306
+Infinity
+1.7976931348623157e+308
+~~~
+
+**ليه كده:**
+
+- [[7.257415615307994e+306]]: الرقم كبير أوي فبيتكتب بالـ e: يعني ٧٫٢٥ × ١٠ أس ٣٠٦. ولاحظ إنه **تقريبي**: الـ number بيحفظ حوالي ١٧ رقم مهم بس، والباقي أصفار تقريبًا.
+- [[factorial(171)]] = ١٧١ × ١٧٠!، والناتج أكبر من أكبر رقم الـ number يقدر يشيله ([[Number.MAX_VALUE]]، حوالي ١٫٨ × ١٠ أس ٣٠٨، آخر سطر). فبقى [[Infinity]].
+- **مفيش error!** البرنامج بيكمّل عادي بـ [[Infinity]]، وأي حساب بعدها هيطلع [[Infinity]] أو [[NaN]].
+
+**الغلطة الشائعة:** تستنى error لما الرقم يكبر. JavaScript مبتقولش، فلو الأرقام ممكن تكبر أوي افحص بنفسك ([[Number.isFinite(x)]]) أو استخدم BigInt (التمرين الأخير).` },
+            { lvl: 'تطبيق', t: R`**مسألة:** عدد طرق اختيار r حاجات من n: [[nCr(n, r)]] بـ [[factorial]]: n! على (r! × (n−r)!).`, done: R`[[nCr(5, 2)]] بترجّع 10، و [[nCr(10, 3)]] بترجّع 120، و [[nCr(4, 4)]] بترجّع 1.`, sol: R`~~~js ncr.js
+function factorial(n) {
+  let result = 1;
+  for (let i = 2; i <= n; i++) result *= i;
+  return result;
+}
+function nCr(n, r) {
+  return factorial(n) / (factorial(r) * factorial(n - r));
+}
+console.log(nCr(5, 2), nCr(10, 3), nCr(4, 4));
+~~~
+
+~~~text الناتج: node ncr.js
+10 120 1
+~~~
+
+**ليه كده:**
+
+- القانون مكتوب زي ما هو: n! ÷ (r! × (n−r)!). كل حتة نداء لـ [[factorial]] اللي كتبناها.
+- الأقواس حوالين المقام **ضرورية**: [[factorial(n) / factorial(r) * factorial(n - r)]] من غيرها بتتقري (n! ÷ r!) × (n−r)!، وده رقم تاني خالص.
+- [[nCr(5, 2)]] = ١٢٠ ÷ (٢ × ٦) = 10: عشر طرق تختار ٢ من ٥. و [[nCr(4, 4)]] = ٢٤ ÷ (٢٤ × ١) = 1: طريقة واحدة تاخد الكل (و 0! = 1 هي اللي خلت ده يشتغل).
+
+**الغلطة الشائعة:** تنسى الأقواس، فـ [[nCr(5, 2)]] تطلع ٣٦٠. وكمان: الطريقة دي بتحسب أرقام كبيرة جدًا في النص (100! مثلًا) فبتبوّظ مع n كبيرة حتى لو الإجابة صغيرة. ليها حل أذكى هتقابله بعدين.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** نسخة recursive: [[function fact(n) { return n * fact(n - 1); }]]. شغّل [[fact(5)]] واقرا الرسالة.`, done: R`قبل التصليح: [[RangeError: Maximum call stack size exceeded]] لأن الدالة بتنادي نفسها من غير ما تقف. بعد ما تزوّد [[if (n <= 1) return 1;]] في الأول: [[fact(5)]] 120 و [[fact(0)]] 1.`, sol: R`الكود البايظ:
+
+~~~js rec-broken.js
+function fact(n) {
+  return n * fact(n - 1);
+}
+console.log(fact(5));
+~~~
+
+~~~text الناتج قبل التصليح
+C:\Users\ali\lab\js\rec-broken.js:2
+  return n * fact(n - 1);
+  ^
+
+RangeError: Maximum call stack size exceeded
+    at fact (C:\Users\ali\lab\js\rec-broken.js:2:3)
+    at fact (C:\Users\ali\lab\js\rec-broken.js:2:14)
+    at fact (C:\Users\ali\lab\js\rec-broken.js:2:14)
+    at fact (C:\Users\ali\lab\js\rec-broken.js:2:14)
+    at fact (C:\Users\ali\lab\js\rec-broken.js:2:14)
+    at fact (C:\Users\ali\lab\js\rec-broken.js:2:14)
+    at fact (C:\Users\ali\lab\js\rec-broken.js:2:14)
+    at fact (C:\Users\ali\lab\js\rec-broken.js:2:14)
+    at fact (C:\Users\ali\lab\js\rec-broken.js:2:14)
+    at fact (C:\Users\ali\lab\js\rec-broken.js:2:14)
+
+Node.js v24.22.1
+~~~
+
+**ليه:** [[fact(5)]] بتنادي [[fact(4)]] اللي بتنادي [[fact(3)]] ... وبعد 0 تنادي [[fact(-1)]] و [[fact(-2)]] **للأبد**: مفيش سطر بيقول «كفاية». كل نداء بيتحط فوق اللي قبله في الـ call stack (نفس الـ stack اللي في درس «اقرا الـ error»، ولاحظ سطور [[at fact]] اللي بتتكرر)، والـ stack ليه حد، فلما اتملى طلع [[RangeError: Maximum call stack size exceeded]].
+
+الحل: حالة وقوف (base case) في الأول:
+
+~~~js rec-fixed.js
+function fact(n) {
+  if (n <= 1) return 1;
+  return n * fact(n - 1);
+}
+console.log(fact(5), fact(0));
+~~~
+
+~~~text الناتج بعد التصليح
+120 1
+~~~
+
+**القاعدة:** أي دالة بتنادي نفسها (recursion) لازم فيها حاجتين: حالة وقوف بترجّع من غير ما تنادي نفسها، وكل نداء يقرّب منها ([[n - 1]]).
+
+**الغلطة الشائعة:** [[if (n === 1) return 1;]]، فـ [[fact(0)]] تعدّي من الشرط وتنزل لـ -1 و -2 وترجع نفس الـ RangeError. [[n <= 1]] بتقفل كل الحالات اللي تحت.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** اكتب [[factorialBig(n)]] بـ BigInt (الأرقام بـ [[n]] في الآخر زي [[1n]]) وقارنها بـ [[factorial(25)]] العادية.`, done: R`العادية بتطبع 1.5511210043330986e+25، و [[factorialBig(25n)]] بتطبع 15511210043330985984000000n بكل الأرقام.`, sol: R`~~~js big.js
+function factorial(n) {
+  let result = 1;
+  for (let i = 2; i <= n; i++) result *= i;
+  return result;
+}
+function factorialBig(n) {
+  let result = 1n;
+  for (let i = 2n; i <= n; i++) result *= i;
+  return result;
+}
+console.log(factorial(25));
+console.log(factorialBig(25n));
+console.log(BigInt(factorial(25)));
+~~~
+
+~~~text الناتج: node big.js
+1.5511210043330986e+25
+15511210043330985984000000n
+15511210043330986055303168n
+~~~
+
+**ليه كده:**
+
+- [[factorialBig]] نفس الدالة بالظبط بس كل الأرقام BigInt: [[1n]] و [[2n]]، والـ argument [[25n]]. الـ BigInt بيشيل أي عدد صحيح مهما كبر بالظبط.
+- الـ number العادي طلّع [[1.5511210043330986e+25]]: أول ١٧ رقم بس صح والباقي ضايع.
+- آخر سطر بيوريك الخسارة: لو حوّلنا الـ number لـ BigInt عشان نشوف أرقامه كلها، يطلع [[15511210043330986055303168n]]، والصح [[15511210043330985984000000n]]. الفرق بيبدأ من الرقم السابع عشر.
+
+**الغلطة الشائعة:** تخلط الاتنين: [[1n * 2]] بيطلع [[TypeError: Cannot mix BigInt and other types, use explicit conversions]]. لو بدأت بـ BigInt، كل الأرقام في الحساب لازم تبقى BigInt (عشان كده [[let i = 2n]] مش [[2]]).` }
           ],
           flag: "script",
           deep: {
@@ -3675,7 +7817,13 @@ test("factorial(18) ← 6402373705728000 (آخر رقم دقيق تقريبًا)
   for (let i = 2; i <= n; i++) result *= i;
   return result;
 }`
-          }
+          },
+          ref: [
+            { t: "MDN: Recursion", url: "https://developer.mozilla.org/en-US/docs/Glossary/Recursion" },
+            { t: "MDN: RangeError: too much recursion", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Too_much_recursion" },
+            { t: "MDN: Number.MAX_VALUE", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_VALUE" },
+            { t: "MDN: BigInt", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt" }
+          ]
         },
         {
           cmd: "تمرين countVowels",
@@ -3691,11 +7839,133 @@ for (const ch of sentence) {
 console.log(spaces); // 4`,
           try: R`اكتب [[countVowels(str)]] بـ for...of و [[includes]]. خلّي بالك من الحروف الكبيرة: حوّل النص كله لـ lowercase مرة واحدة قبل الـ loop. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
-            { lvl: 'سريع', t: R`**اكتب اختبار:** جرّب حلك على [["Egypt"]] و [["AEIOU"]] و [[""]].`, done: R`1 (حرف E بس، و y مش منهم) و 5 و 0.` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[for (const ch of str) if ("aeiou".includes(ch)) count++;]]. جرّبها على [["AEIOU"]] و [["Egypt"]].`, done: R`قبل التصليح الاتنين بيرجّعوا 0 لأن [["aeiou"]] صغيرة بس. بعد [[ch.toLowerCase()]]: [["AEIOU"]] 5 و [["Egypt"]] 1.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** [[countConsonants(str)]]: الحروف الإنجليزي اللي مش vowels، ومن غير مسافات ولا أرقام (الحرف بين [["a"]] و [["z"]] بعد lowercase).`, done: R`[[countConsonants("Hello World 2026")]] بترجّع 7.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** أسماء مستخدمين [[["Omar", "Sara", "Ali", "Youssef", "Eman", "Nour"]]]: رجّع الأسماء اللي بتبدأ بحرف علة، بدالة [[isVowel(ch)]] صغيرة.`, done: R`بترجّع [[["Omar", "Ali", "Eman"]]] (3 أسماء)، و Youssef مش منهم لأن y مش حرف علة هنا.` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[vowelStats(str)]] بترجّع object فيه عدد كل حرف علة لوحده، والحروف اللي مجتش بـ 0.`, done: R`[[vowelStats("Programming is fun")]] بترجّع [[{ a: 1, e: 0, i: 2, o: 1, u: 1 }]].` }
+            { lvl: 'سريع', t: R`**اكتب اختبار:** جرّب حلك على [["Egypt"]] و [["AEIOU"]] و [[""]].`, done: R`1 (حرف E بس، و y مش منهم) و 5 و 0.`, sol: R`~~~js edges.js
+function countVowels(str) {
+  let count = 0;
+  for (const ch of str.toLowerCase()) if ("aeiou".includes(ch)) count++;
+  return count;
+}
+console.log(countVowels("Egypt"), countVowels("AEIOU"), countVowels(""));
+~~~
+
+~~~text الناتج: node edges.js
+1 5 0
+~~~
+
+**ليه الحالات دي:**
+
+- [["Egypt"]] = 1: الـ E بس. الـ y مش من [["aeiou"]] (في الإنجليزي ساعات بتتنطق زي vowel، بس الدالة بتعدّ الخمسة دول بالظبط). والـ E كبيرة، فبتختبر الـ [[toLowerCase]].
+- [["AEIOU"]] = 5: كلهم كبار، فلو الـ [[toLowerCase]] ناقصة هيطلع 0.
+- [[""]] = 0: الـ loop مبتلفش.
+
+**الغلطة الشائعة:** تختبر بكلمة كلها حروف صغيرة زي [["hello"]] بس، فمش هتعرف إن الدالة بتتجاهل الحروف الكبيرة.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[for (const ch of str) if ("aeiou".includes(ch)) count++;]]. جرّبها على [["AEIOU"]] و [["Egypt"]].`, done: R`قبل التصليح الاتنين بيرجّعوا 0 لأن [["aeiou"]] صغيرة بس. بعد [[ch.toLowerCase()]]: [["AEIOU"]] 5 و [["Egypt"]] 1.`, sol: R`الكود البايظ:
+
+~~~js broken.js
+function countVowels(str) {
+  let count = 0;
+  for (const ch of str) if ("aeiou".includes(ch)) count++;
+  return count;
+}
+console.log(countVowels("AEIOU"), countVowels("Egypt"));
+~~~
+
+~~~text الناتج قبل التصليح
+0 0
+~~~
+
+**الغلط:** [["aeiou"]] فيها حروف صغيرة بس، و [["aeiou".includes("A")]] [[false]]: المقارنة بتفرق بين الكبير والصغير. فالـ [["AEIOU"]] كلها متعدّتش، والـ E في [["Egypt"]] كمان.
+
+الحل: حوّل الحرف لصغير قبل السؤال:
+
+~~~js fixed.js
+function countVowels(str) {
+  let count = 0;
+  for (const ch of str) if ("aeiou".includes(ch.toLowerCase())) count++;
+  return count;
+}
+console.log(countVowels("AEIOU"), countVowels("Egypt"));
+~~~
+
+~~~text الناتج بعد التصليح
+5 1
+~~~
+
+**طريقتين صح:** [[ch.toLowerCase()]] لكل حرف (زي هنا)، أو [[str.toLowerCase()]] مرة واحدة قبل الـ loop (زي حل الدرس). التانية أبسط لأنها مرة واحدة.
+
+**الغلطة الشائعة:** تحل بإنك تكتب [["aeiouAEIOU"]]. شغالة، بس الـ toLowerCase أوضح وبتنفع لأي مقارنة نصوص تانية.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[countConsonants(str)]]: الحروف الإنجليزي اللي مش vowels، ومن غير مسافات ولا أرقام (الحرف بين [["a"]] و [["z"]] بعد lowercase).`, done: R`[[countConsonants("Hello World 2026")]] بترجّع 7.`, sol: R`~~~js consonants.js
+function countConsonants(str) {
+  let count = 0;
+  for (const ch of str.toLowerCase()) {
+    const isLetter = ch >= "a" && ch <= "z";
+    if (isLetter && !"aeiou".includes(ch)) count++;
+  }
+  return count;
+}
+console.log(countConsonants("Hello World 2026"));
+~~~
+
+~~~text الناتج: node consonants.js
+7
+~~~
+
+**ليه كده:**
+
+- [[ch >= "a" && ch <= "z"]]: النصوص بتتقارن بترتيب الحروف، فالحرف بين [["a"]] و [["z"]] يبقى حرف إنجليزي صغير. ده بيشيل المسافات والأرقام ([["2"]] ترتيبه قبل [["a"]]).
+- [[!"aeiou".includes(ch)]]: ومش vowel.
+- [["Hello World 2026"]]: H و l و l و W و r و l و d = 7. والـ e و o و o اتشالوا، والمسافتين والأرقام الأربعة كمان.
+
+**الغلطة الشائعة:** تعدّ «كل حاجة مش vowel»، فالمسافات والأرقام تتعدّ ويطلع 13. «مش vowel» مش معناها «consonant»: لازم الأول تتأكد إنه حرف.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** أسماء مستخدمين [[["Omar", "Sara", "Ali", "Youssef", "Eman", "Nour"]]]: رجّع الأسماء اللي بتبدأ بحرف علة، بدالة [[isVowel(ch)]] صغيرة.`, done: R`بترجّع [[["Omar", "Ali", "Eman"]]] (3 أسماء)، و Youssef مش منهم لأن y مش حرف علة هنا.`, sol: R`~~~js names.js
+function isVowel(ch) {
+  return "aeiou".includes(ch.toLowerCase());
+}
+const users = ["Omar", "Sara", "Ali", "Youssef", "Eman", "Nour"];
+const result = [];
+for (const name of users) {
+  if (isVowel(name[0])) result.push(name);
+}
+console.log(result);
+~~~
+
+~~~text الناتج: node names.js
+[ 'Omar', 'Ali', 'Eman' ]
+~~~
+
+**ليه كده:**
+
+- [[isVowel(ch)]] دالة صغيرة بتجاوب سؤال واحد. [[toLowerCase]] جواها عشان الأسماء بتبدأ بحرف كبير (O و A و E).
+- [[name[0]]]: أول حرف في الاسم.
+- [[result.push(name)]]: نزوّد الاسم على array النتيجة.
+- Youssef بيبدأ بـ Y، ومش من الخمسة، فمش منهم.
+
+**الغلطة الشائعة:** اسم فاضي [[""]] في الليستة: [[name[0]]] بيبقى [[undefined]]، و [[undefined.toLowerCase()]] بيعمل [[TypeError]]. وفخ تاني: [["aeiou".includes("")]] بـ [[true]] (النص الفاضي «موجود» في أي نص)، فلو حد بعت لـ [[isVowel]] نص فاضي هيرجع [[true]]. في داتا حقيقية افحص إن الاسم مش فاضي الأول.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[vowelStats(str)]] بترجّع object فيه عدد كل حرف علة لوحده، والحروف اللي مجتش بـ 0.`, done: R`[[vowelStats("Programming is fun")]] بترجّع [[{ a: 1, e: 0, i: 2, o: 1, u: 1 }]].`, sol: R`~~~js stats.js
+function vowelStats(str) {
+  const stats = { a: 0, e: 0, i: 0, o: 0, u: 0 };
+  for (const ch of str.toLowerCase()) {
+    if (Object.hasOwn(stats, ch)) stats[ch]++;
+  }
+  return stats;
+}
+console.log(vowelStats("Programming is fun"));
+console.log(vowelStats(""));
+~~~
+
+~~~text الناتج: node stats.js
+{ a: 1, e: 0, i: 2, o: 1, u: 1 }
+{ a: 0, e: 0, i: 0, o: 0, u: 0 }
+~~~
+
+**ليه كده:**
+
+- نبدأ الـ object بالخمسة **كلهم بصفر**. كده الحروف اللي مجتش بتظهر بـ 0 (المطلوب)، بدل ما تبقى مش موجودة.
+- [[Object.hasOwn(stats, ch)]]: لو الحرف مفتاح من مفاتيح [[stats]] يبقى vowel، فنزوّده. كده الـ object نفسه هو قايمة الحروف، ومش محتاجين [["aeiou"]] تاني.
+- [[stats[ch]++]]: بيزوّد العدّاد بتاع الحرف ده.
+- [["Programming is fun"]]: o واحدة، a واحدة، i اتنين (programm**i**ng و **i**s)، u واحدة، و e صفر.
+
+**الغلطة الشائعة:** تبدأ بـ [[{}]] فاضي وتزوّد بـ [[(stats[ch] ?? 0) + 1]] زي [[charCount]]. ده بيعدّ صح، بس [[e]] مش هتظهر خالص بدل ما تظهر بـ 0، والمطلوب قال الحروف اللي مجتش بـ 0.` }
           ],
           flag: "script",
           deep: {
@@ -3811,7 +8081,12 @@ test("'Hello World' ← 3 (المسافة مش حرف علة)", () => expect(cou
   for (const ch of str.toLowerCase()) if ("aeiou".includes(ch)) count++;
   return count;
 }`
-          }
+          },
+          ref: [
+            { t: "MDN: String.prototype.includes()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes" },
+            { t: "MDN: String.prototype.toLowerCase()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/toLowerCase" },
+            { t: "MDN: Object.hasOwn()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwn" }
+          ]
         },
         {
           cmd: "تمرين table",
@@ -3826,11 +8101,149 @@ for (let i = 1; i <= 3; i++) {
 console.log(lines); // ["1 squared = 1", "2 squared = 4", "3 squared = 9"]`,
           try: R`اكتب [[table(n)]] ترجّع array السطور، وبعدين اطبعها بـ [[console.log(table(7).join("\n"))]]. خلّي الشكل بالظبط [["7 x 3 = 21"]] بمسافة قبل وبعد x و =. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اطبع [[table(3)[11]]] و [[table(3)[0]]].`, done: R`"3 x 12 = 36" و "3 x 1 = 3".` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[for (let i = 0; i < 12; i++) rows.push(n + " x " + i + " = " + n * i);]]. اطبع أول وآخر سطر من [[table(3)]].`, done: R`قبل التصليح أول سطر [["3 x 0 = 0"]] وآخر سطر [["3 x 11 = 33"]]. بعد [[i = 1; i <= 12]]: أول سطر [["3 x 1 = 3"]] وآخر سطر [["3 x 12 = 36"]] والطول لسه 12.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** [[tableRange(n, from, to)]] نفس الشكل بس من from لـ to.`, done: R`[[tableRange(5, 3, 5)]] بترجّع [[["5 x 3 = 15", "5 x 4 = 20", "5 x 5 = 25"]]]، ولو from أكبر من to بترجّع array فاضية.` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** ٣ سطور [[console.log]] بتتأكد من [[table(7)]]: الطول 12، وأول عنصر [["7 x 1 = 7"]]، وآخر عنصر [["7 x 12 = 84"]]، كل واحد بيطبع true أو false.`, done: R`الـ ٣ سطور بيطبعوا [[true]]. ولو غيّرت [[<=]] لـ [[<]] في table، اختبار الطول والعنصر الأخير بيطبعوا [[false]].` },
-            { lvl: 'تحدي', t: R`**أشكال:** اطبع جدول الضرب كله من 1 لـ 9 كشبكة: ٩ سطور، وكل رقم واخد ٣ خانات بـ [[String(x).padStart(3)]] عشان العواميد تبقى على بعض.`, done: R`كل سطر طوله 27 حرف بالظبط، وآخر سطر بيخلص بـ [[ 81]]، والعواميد متراصة.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اطبع [[table(3)[11]]] و [[table(3)[0]]].`, done: R`"3 x 12 = 36" و "3 x 1 = 3".`, sol: R`~~~js predict.js
+function table(n) {
+  const out = [];
+  for (let i = 1; i <= 12; i++) out.push($__bt$__{n} x $__{i} = $__{n * i}$__bt);
+  return out;
+}
+console.log(table(3)[11]);
+console.log(table(3)[0]);
+console.log(table(3)[12]);
+~~~
+
+~~~text الناتج: node predict.js
+3 x 12 = 36
+3 x 1 = 3
+undefined
+~~~
+
+**ليه:**
+
+- [[table(3)]] بترجّع array فيها ١٢ نص، و [[[11]]] بعدها على طول بيجيب العنصر رقم 11 من الـ array اللي رجعت.
+- الـ index بيبدأ من 0، فـ [[[0]]] هو أول سطر ([["3 x 1 = 3"]])، و [[[11]]] هو الـ ١٢، يعني **آخر** سطر ([["3 x 12 = 36"]]).
+- زوّدت [[[12]]] عشان تشوف: مفيش عنصر رقم 12، فبيرجع [[undefined]] من غير error.
+
+**الغلطة الشائعة:** تتوقع إن [[[11]]] هو [["3 x 11 = 33"]] لأن «11». الـ index مكان في الـ array (يبدأ من 0)، والـ [[i]] اللي جوه الدالة بيبدأ من 1، فالاتنين بينهم فرق واحد دايمًا.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[for (let i = 0; i < 12; i++) rows.push(n + " x " + i + " = " + n * i);]]. اطبع أول وآخر سطر من [[table(3)]].`, done: R`قبل التصليح أول سطر [["3 x 0 = 0"]] وآخر سطر [["3 x 11 = 33"]]. بعد [[i = 1; i <= 12]]: أول سطر [["3 x 1 = 3"]] وآخر سطر [["3 x 12 = 36"]] والطول لسه 12.`, sol: R`الكود البايظ:
+
+~~~js broken.js
+function table(n) {
+  const rows = [];
+  for (let i = 0; i < 12; i++) rows.push(n + " x " + i + " = " + n * i);
+  return rows;
+}
+const t = table(3);
+console.log(t[0], "|", t[t.length - 1], "|", t.length);
+~~~
+
+~~~text الناتج قبل التصليح
+3 x 0 = 0 | 3 x 11 = 33 | 12
+~~~
+
+**الغلط:** الـ loop من 0 لـ 11، فالجدول بيبدأ بـ «3 x 0» ومفيش «3 x 12». الطول 12 صح، فاختبار الطول لوحده مكانش هيمسكها!
+
+الحل: [[let i = 1; i <= 12]]:
+
+~~~text الناتج بعد التصليح
+3 x 1 = 3 | 3 x 12 = 36 | 12
+~~~
+
+**القاعدة:** لما الـ loop عدّاد بيظهر للمستخدم (1 لـ 12)، ابدأ من 1 و [[<=]]. ولما بيلف على indexes array، ابدأ من 0 و [[<]]. الاتنين بيطلّعوا ١٢ لفة، والفرق في الأرقام نفسها.
+
+**الغلطة الشائعة:** تبص على الطول بس وتقول «١٢ سطر، تمام». لازم تبص على **أول** و **آخر** عنصر.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[tableRange(n, from, to)]] نفس الشكل بس من from لـ to.`, done: R`[[tableRange(5, 3, 5)]] بترجّع [[["5 x 3 = 15", "5 x 4 = 20", "5 x 5 = 25"]]]، ولو from أكبر من to بترجّع array فاضية.`, sol: R`~~~js range.js
+function tableRange(n, from, to) {
+  const rows = [];
+  for (let i = from; i <= to; i++) rows.push(n + " x " + i + " = " + n * i);
+  return rows;
+}
+console.log(tableRange(5, 3, 5));
+console.log(tableRange(5, 9, 2));
+~~~
+
+~~~text الناتج: node range.js
+[ '5 x 3 = 15', '5 x 4 = 20', '5 x 5 = 25' ]
+[]
+~~~
+
+**ليه كده:**
+
+- نفس [[table]] بالظبط، بس [[1]] و [[12]] بقوا parameters: [[from]] و [[to]].
+- [[tableRange(5, 9, 2)]]: [[9 <= 2]] [[false]] من أول لفة، فالـ loop مبتلفش، والـ array بتفضل فاضية [[[]]]. ده جه لوحده من غير أي [[if]].
+
+**الغلطة الشائعة:** تكتب [[if (from > to) return [];]] في الأول. مش غلط، بس مش محتاجه: الـ loop نفسها بتتعامل مع الحالة دي. وغلطة تانية: [[i < to]] فآخر سطر يضيع.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** ٣ سطور [[console.log]] بتتأكد من [[table(7)]]: الطول 12، وأول عنصر [["7 x 1 = 7"]]، وآخر عنصر [["7 x 12 = 84"]]، كل واحد بيطبع true أو false.`, done: R`الـ ٣ سطور بيطبعوا [[true]]. ولو غيّرت [[<=]] لـ [[<]] في table، اختبار الطول والعنصر الأخير بيطبعوا [[false]].`, sol: R`~~~js test.js
+function table(n) {
+  const out = [];
+  for (let i = 1; i <= 12; i++) out.push(n + " x " + i + " = " + n * i);
+  return out;
+}
+const t = table(7);
+console.log(t.length === 12);
+console.log(t[0] === "7 x 1 = 7");
+console.log(t[t.length - 1] === "7 x 12 = 84");
+~~~
+
+~~~text الناتج على الدالة السليمة
+true
+true
+true
+~~~
+
+وبعد ما غيّرت [[<=]] لـ [[<]] في [[table]]:
+
+~~~text الناتج بعد التبويظ
+false
+true
+false
+~~~
+
+**ليه كده:**
+
+- كل سطر مقارنة بـ [[===]] بتطبع [[true]] أو [[false]].
+- [[t[t.length - 1]]]: آخر عنصر في أي array، مهما كان طولها. أحسن من [[t[11]]] لأنه بيفضل صح لو الطول اتغيّر.
+- بعد التبويظ: الطول بقى 11 (أول سطر [[false]])، والأخير بقى «7 x 11 = 77» (تالت سطر [[false]])، والأول لسه صح. الاختبارات التلاتة مع بعض بيقولولك إيه اللي باظ بالظبط.
+
+**الغلطة الشائعة:** تكتب اختبار يطبع القيمة نفسها ([[console.log(t[0])]]) وتبص عليها بعينك. مع الوقت مش هتبص، والـ [[true]] و [[false]] بيقولولك على طول.` },
+            { lvl: 'تحدي', t: R`**أشكال:** اطبع جدول الضرب كله من 1 لـ 9 كشبكة: ٩ سطور، وكل رقم واخد ٣ خانات بـ [[String(x).padStart(3)]] عشان العواميد تبقى على بعض.`, done: R`كل سطر طوله 27 حرف بالظبط، وآخر سطر بيخلص بـ [[ 81]]، والعواميد متراصة.`, sol: R`~~~js grid.js
+for (let row = 1; row <= 9; row++) {
+  let line = "";
+  for (let col = 1; col <= 9; col++) {
+    line += String(row * col).padStart(3);
+  }
+  console.log(line);
+}
+~~~
+
+~~~text الناتج: node grid.js
+  1  2  3  4  5  6  7  8  9
+  2  4  6  8 10 12 14 16 18
+  3  6  9 12 15 18 21 24 27
+  4  8 12 16 20 24 28 32 36
+  5 10 15 20 25 30 35 40 45
+  6 12 18 24 30 36 42 48 54
+  7 14 21 28 35 42 49 56 63
+  8 16 24 32 40 48 56 64 72
+  9 18 27 36 45 54 63 72 81
+~~~
+
+**ليه العواميد متراصة:**
+
+- [[String(row * col)]] بيحوّل الرقم لنص، و [[padStart(3)]] بيزوّد مسافات **على الشمال** لحد ما الطول يبقى 3. فـ [[1]] بتبقى [["  1"]] و [[81]] بتبقى [[" 81"]]. كل خانة ٣ حروف بالظبط.
+- ٩ خانات × ٣ = 27 حرف لكل سطر. اتأكدت من آخر سطر:
+
+~~~js grid-len.js
+let line = "";
+for (let col = 1; col <= 9; col++) line += String(9 * col).padStart(3);
+console.log(JSON.stringify(line), line.length);
+~~~
+
+~~~text الناتج
+"  9 18 27 36 45 54 63 72 81" 27
+~~~
+
+**الغلطة الشائعة:** تكتب [[line += row * col + " "]] من غير padStart، فالأرقام اللي من خانة واحدة تزق العواميد ويبقى الجدول معووج. وكمان [[padStart]] بتشتغل على النصوص بس: [[(5).padStart(3)]] بيطلع [[TypeError: 5.padStart is not a function]]، عشان كده [[String()]] الأول.` }
           ],
           flag: "script",
           deep: {
@@ -3963,7 +8376,12 @@ test("كل السطور strings", () => expect(table(5).every(s => typeof s === 
   for (let i = 1; i <= 12; i++) out.push($__bt$__{n} x $__{i} = $__{n * i}$__bt);
   return out;
 }`
-          }
+          },
+          ref: [
+            { t: "MDN: Template literals", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals" },
+            { t: "MDN: Array.prototype.push()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push" },
+            { t: "MDN: String.prototype.padStart()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padStart" }
+          ]
         },
         {
           cmd: "تمارين أساسيات ٢",
@@ -3997,11 +8415,170 @@ for (let n = 1; n <= 50; n++) if (isPrime(n)) primes.push(n);
 console.log(primes.join(" "));`,
           try: R`اكتب [[isPalindrome(str)]] بمؤشرين [[i]] من الأول و [[j]] من الآخر، من غير [[reverse]]، وبتتجاهل الحروف الكبيرة والمسافات. اكتب الـ pseudocode كتعليقات قبل الدالة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
-            { lvl: 'سريع', t: R`**قارن وقيس:** زوّد عدّاد جوه loop المؤشرين في [[isPalindrome]] واطبعه لـ [["racecar"]].`, done: R`بيطبع 3 مقارنات بس (الحرف اللي في النص مش محتاج يتقارن).` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[isPalindrome]] بالمؤشرين بس بادئة بـ [[let j = str.length;]]. جرّبها على [["level"]].`, done: R`قبل التصليح بترجّع false على [["level"]] لأن أول مقارنة بين [["l"]] و [[str[5]]] اللي هي undefined. بعد [[str.length - 1]]: [["level"]] true و [["hello"]] false.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** خلّي [[isPalindrome]] تتجاهل أي حاجة مش حرف أو رقم (فواصل ونقط و :).`, done: R`[["A man, a plan, a canal: Panama"]] بترجّع true، و [["race a car"]] بترجّع false.` },
-            { lvl: 'تطبيق', t: R`**أشكال:** اطبع هرم أرقام palindrome بـ 4 سطور، كل سطر بيطلع للرقم وبيرجع، ومتوسّط بمسافات: [[1]] ثم [[121]] ثم [[12321]] ثم [[1234321]].`, done: R`بيطبع ٤ سطور، أولهم ٣ مسافات و [[1]] وآخرهم [[1234321]] من غير مسافات. وكل سطر لو عدّيته على [[isPalindrome]] بيرجّع true.` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[longestPalindrome(str)]]: أطول جزء palindrome جوه النص. فكرة: من كل حرف (ومن بين كل حرفين) وسّع لبرا طول ما الطرفين زي بعض.`, done: R`[["babad"]] بترجّع "bab" أو "aba" (الاتنين صح)، و [["cbbd"]] بترجّع "bb"، و [["a"]] بترجّع "a".` }
+            { lvl: 'سريع', t: R`**قارن وقيس:** زوّد عدّاد جوه loop المؤشرين في [[isPalindrome]] واطبعه لـ [["racecar"]].`, done: R`بيطبع 3 مقارنات بس (الحرف اللي في النص مش محتاج يتقارن).`, sol: R`~~~js count.js
+function isPalindrome(str) {
+  const s = str.toLowerCase().replaceAll(" ", "");
+  let comparisons = 0;
+  for (let i = 0, j = s.length - 1; i < j; i++, j--) {
+    comparisons++;
+    if (s[i] !== s[j]) {
+      console.log("مقارنات:", comparisons);
+      return false;
+    }
+  }
+  console.log("مقارنات:", comparisons);
+  return true;
+}
+console.log(isPalindrome("racecar"));
+console.log(isPalindrome("abba"));
+~~~
+
+~~~text الناتج: node count.js
+مقارنات: 3
+true
+مقارنات: 2
+true
+~~~
+
+**ليه 3 بس:**
+
+- [["racecar"]] ٧ حروف. المؤشرين بيتقارنوا: (r و r)، (a و a)، (c و c)، وبعدين [[i]] و [[j]] الاتنين بقوا 3 (الـ e اللي في النص)، و [[3 < 3]] [[false]] فالـ loop وقفت.
+- الحرف اللي في النص مش محتاج يتقارن بحد: هو قصاد نفسه.
+- في [["abba"]] (٤ حروف) مقارنتين بس. يعني عدد المقارنات = نص الطول تقريبًا، مش الطول كله.
+
+**ليه ده مهم:** الحل بـ [[reverse]] بيبني نص جديد بطول الكلمة كلها ويقارن كله. المؤشرين بيعملوا نص الشغل، وبيقفوا عند أول اختلاف ([["hello"]] مقارنة واحدة بس: h و o).
+
+**الغلطة الشائعة:** تحط [[comparisons++]] بعد الـ [[if]]، فالمقارنة اللي لقت الاختلاف متتعدّش.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[isPalindrome]] بالمؤشرين بس بادئة بـ [[let j = str.length;]]. جرّبها على [["level"]].`, done: R`قبل التصليح بترجّع false على [["level"]] لأن أول مقارنة بين [["l"]] و [[str[5]]] اللي هي undefined. بعد [[str.length - 1]]: [["level"]] true و [["hello"]] false.`, sol: R`الكود البايظ:
+
+~~~js broken.js
+function isPalindrome(str) {
+  let i = 0;
+  let j = str.length;
+  while (i < j) {
+    if (str[i] !== str[j]) return false;
+    i++;
+    j--;
+  }
+  return true;
+}
+console.log(isPalindrome("level"));
+~~~
+
+~~~text الناتج قبل التصليح
+false
+~~~
+
+**الغلط:** [[str.length]] بـ 5، بس آخر حرف مكانه 4. فأول مقارنة [[str[0]]] ([["l"]]) مع [[str[5]]] اللي هي [[undefined]]، و [["l" !== undefined]] [[true]]، فالدالة رجّعت [[false]] من أول خطوة، على كلمة palindrome!
+
+الحل: [[let j = str.length - 1;]]:
+
+~~~text الناتج بعد التصليح
+true
+false
+~~~
+
+**الغلطة الشائعة:** دي نفس غلطة [[i <= arr.length]] في درس debugger. أي مؤشر على **آخر** عنصر هو [[length - 1]]، والقراية برّه الحدود مبتعملش error، بترجّع [[undefined]] بهدوء والنتيجة تبوظ.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** خلّي [[isPalindrome]] تتجاهل أي حاجة مش حرف أو رقم (فواصل ونقط و :).`, done: R`[["A man, a plan, a canal: Panama"]] بترجّع true، و [["race a car"]] بترجّع false.`, sol: R`~~~js clean.js
+function isPalindrome(str) {
+  // ١. نضّف: خلي الحروف والأرقام بس، كلها صغيرة
+  let s = "";
+  for (const ch of str.toLowerCase()) {
+    const isLetter = ch >= "a" && ch <= "z";
+    const isDigit = ch >= "0" && ch <= "9";
+    if (isLetter || isDigit) s += ch;
+  }
+  // ٢. نفس المؤشرين
+  for (let i = 0, j = s.length - 1; i < j; i++, j--) {
+    if (s[i] !== s[j]) return false;
+  }
+  return true;
+}
+console.log(isPalindrome("A man, a plan, a canal: Panama"));
+console.log(isPalindrome("race a car"));
+console.log(isPalindrome("No 'x' in Nixon"));
+~~~
+
+~~~text الناتج: node clean.js
+true
+false
+true
+~~~
+
+**ليه كده:**
+
+- **خطوة التنضيف:** لفة على النص بحروف صغيرة، وكل حرف بين [["a"]] و [["z"]] أو بين [["0"]] و [["9"]] بيتزوّد على [[s]]. الفواصل والنقط والـ [[:]] والمسافات والـ [[']] كلها بتتشال. فـ [["A man, a plan, a canal: Panama"]] بقت [["amanaplanacanalpanama"]].
+- **خطوة الفحص:** نفس المؤشرين من غير أي تغيير. فصلنا «نضّف» عن «افحص»، فكل خطوة بسيطة.
+- [["race a car"]] بعد التنضيف [["raceacar"]]، ومقلوبها [["racaecar"]]: مش زي بعض.
+
+**الغلطة الشائعة:** تحاول تنط الرموز وانت بتحرّك المؤشرين ([[while]] جوه [[while]] لكل مؤشر). شغالة بس صعبة تكتبها صح من أول مرة. نضّف الأول، بعدين افحص.` },
+            { lvl: 'تطبيق', t: R`**أشكال:** اطبع هرم أرقام palindrome بـ 4 سطور، كل سطر بيطلع للرقم وبيرجع، ومتوسّط بمسافات: [[1]] ثم [[121]] ثم [[12321]] ثم [[1234321]].`, done: R`بيطبع ٤ سطور، أولهم ٣ مسافات و [[1]] وآخرهم [[1234321]] من غير مسافات. وكل سطر لو عدّيته على [[isPalindrome]] بيرجّع true.`, sol: R`~~~js pyramid.js
+function isPalindrome(str) {
+  for (let i = 0, j = str.length - 1; i < j; i++, j--) {
+    if (str[i] !== str[j]) return false;
+  }
+  return true;
+}
+const n = 4;
+for (let row = 1; row <= n; row++) {
+  let line = "";
+  for (let k = 1; k <= row; k++) line += k;      // طالع: 1 2 3 4
+  for (let k = row - 1; k >= 1; k--) line += k;  // نازل: 3 2 1
+  console.log(" ".repeat(n - row) + line, isPalindrome(line));
+}
+~~~
+
+~~~text الناتج: node pyramid.js
+   1 true
+  121 true
+ 12321 true
+1234321 true
+~~~
+
+**ليه كده:**
+
+- كل سطر حتتين: **طالع** من 1 لـ [[row]]، و **نازل** من [[row - 1]] لـ 1. في السطر 3: «123» + «21» = «12321».
+- [[line += k]]: [[k]] رقم بس [[line]] نص، فالـ [[+]] بتلزق.
+- [[" ".repeat(n - row)]]: مسافات على الشمال بتقل مع كل سطر، فالشكل بيتوسّط.
+- جنب كل سطر نتيجة [[isPalindrome(line)]]: كلهم [[true]]. ولاحظ إننا فحصنا [[line]] **من غير المسافات**، لأن المسافات في الأول بس ومش في الآخر.
+
+**الغلطة الشائعة:** الحتة النازلة تبدأ من [[row]] مش [[row - 1]]، فيطلع «1221» و «123321»: الرقم الكبير بيتكرر في النص.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[longestPalindrome(str)]]: أطول جزء palindrome جوه النص. فكرة: من كل حرف (ومن بين كل حرفين) وسّع لبرا طول ما الطرفين زي بعض.`, done: R`[["babad"]] بترجّع "bab" أو "aba" (الاتنين صح)، و [["cbbd"]] بترجّع "bb"، و [["a"]] بترجّع "a".`, sol: R`~~~js longest.js
+// من مركز (left, right) وسّع طول ما الطرفين زي بعض، ورجّع أطول جزء
+function expand(str, left, right) {
+  while (left >= 0 && right < str.length && str[left] === str[right]) {
+    left--;
+    right++;
+  }
+  return str.slice(left + 1, right);
+}
+function longestPalindrome(str) {
+  let best = "";
+  for (let i = 0; i < str.length; i++) {
+    const odd = expand(str, i, i);       // مركز حرف: "aba"
+    const even = expand(str, i, i + 1);  // مركز بين حرفين: "abba"
+    if (odd.length > best.length) best = odd;
+    if (even.length > best.length) best = even;
+  }
+  return best;
+}
+console.log(longestPalindrome("babad"), longestPalindrome("cbbd"), longestPalindrome("a"));
+console.log(longestPalindrome("forgeeksskeegfor"), JSON.stringify(longestPalindrome("")));
+~~~
+
+~~~text الناتج: node longest.js
+bab bb a
+geeksskeeg ""
+~~~
+
+**الفكرة:** أي palindrome ليه **مركز**، ومن المركز الطرفين زي بعض وانت بتبعد. فبدل ما نجرّب كل جزء في النص، نجرّب كل مركز ونوسّع.
+
+- [[expand(str, left, right)]]: طول ما الطرفين جوه النص ([[left >= 0]] و [[right < str.length]]) وزي بعض، وسّع خطوة على كل ناحية. لما يقف، الطرفين الحاليين **غلط** (أو برّه)، فالـ palindrome من [[left + 1]] لحد قبل [[right]].
+- [[str.slice(a, b)]] بترجّع الجزء من مكان [[a]] لحد قبل [[b]]. فـ [[slice(left + 1, right)]] هي اللي جوه بالظبط.
+- **نوعين مركز:** حرف ([[expand(str, i, i)]]) للـ palindrome الفردي زي «bab»، وبين حرفين ([[expand(str, i, i + 1)]]) للزوجي زي «bb». من غير التاني، [["cbbd"]] كانت هترجّع حرف واحد.
+- في [["babad"]] أول مركز طلّع «bab» وبعدين «aba» نفس الطول ومش أكبر ([[>]] مش [[>=]])، فـ «bab» فضلت. الاتنين صح زي ما التمرين قال.
+
+**الغلطة الشائعة:** تنسى المركز الزوجي، أو ترجّع [[slice(left, right + 1)]] (الطرفين اللي وقّفوا التوسيع)، فيطلع حرف زيادة على كل ناحية.` }
           ],
           flag: "script",
           deep: {
@@ -4154,7 +8731,12 @@ test("'ab' ← false", () => expect(isPalindrome("ab")).toBe(false));`,
   }
   return true;
 }`
-          }
+          },
+          ref: [
+            { t: "MDN: Comma operator", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comma_operator" },
+            { t: "MDN: String.prototype.replaceAll()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replaceAll" },
+            { t: "MDN: String.prototype.slice()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/slice" }
+          ]
         },
         {
           cmd: "تمرين isPrime",
@@ -4174,11 +8756,158 @@ test("'ab' ← false", () => expect(isPalindrome("ab")).toBe(false));`,
 console.log(divisors(36)); // [1, 2, 3, 4, 6, 9, 12, 18, 36]`,
           try: R`اكتب [[isPrime]] و [[primesUpTo]] و [[nextPrime]]، واستخدم [[isPrime]] جوه التانيين بدل ما تكرر الكود. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** بـ [[isPrime]] عدّ الأعداد الأولية من 1 لـ 100.`, done: R`بيطبع 25.` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** الشرط في isPrime مكتوب [[for (let d = 2; d < Math.sqrt(n); d++)]]. جرّب 9 و 25 و 7.`, done: R`قبل التصليح 9 و 25 بيرجّعوا true (الجذر نفسه مبيتجرّبش)، و 7 true. بعد [[d * d <= n]]: 9 و 25 false و 7 true.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** [[primeFactors(n)]] بترجّع العوامل الأولية مترتبة: اقسم على d طول ما بيقبل القسمة، وبعدين زوّد d.`, done: R`[[primeFactors(84)]] بترجّع [[[2, 2, 3, 7]]]، و [[primeFactors(97)]] بترجّع [[[97]]]، وحاصل ضرب العناصر دايمًا بيرجّع n.` },
-            { lvl: 'تطبيق', t: R`**أشكال:** اطبع الأرقام من 1 لـ 30 في ٥ سطور × ٦ خانات، والخانة [[*]] لو الرقم أولي و [[.]] لو لأ.`, done: R`بيطبع [[.**.*.]] ثم [[*...*.]] ٣ مرات ثم [[....*.]]. ولاحظت إن كل الأوليات بعد 3 في العمود الأول أو الخامس (يعني 6k−1 أو 6k+1).` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** قيس بـ [[console.time]] عدّ الأعداد الأولية لحد 100000 مرتين: مرة بالشرط [[d * d <= n]] ومرة بـ [[d < n]].`, done: R`الاتنين بيطلّعوا 9592، والتاني أبطأ بشكل واضح جدًا (من مللي ثواني لثواني)، وتقدر تقول ليه.` }
+            { lvl: 'سريع', t: R`**مسألة:** بـ [[isPrime]] عدّ الأعداد الأولية من 1 لـ 100.`, done: R`بيطبع 25.`, sol: R`~~~js count.js
+function isPrime(n) {
+  if (n < 2) return false;
+  for (let d = 2; d * d <= n; d++) if (n % d === 0) return false;
+  return true;
+}
+let count = 0;
+for (let n = 1; n <= 100; n++) if (isPrime(n)) count++;
+console.log(count);
+~~~
+
+~~~text الناتج: node count.js
+25
+~~~
+
+**ليه كده:**
+
+- نستخدم [[isPrime]] زي ما هي، ونعدّ بالعدّاد العادي. الدالة بتجاوب سؤال واحد («أولي؟»)، والـ loop بتسأل لكل رقم.
+- 1 مش أولي (أول سطر في [[isPrime]]: [[n < 2]])، فالعدّ من 1 لـ 100 هو هو من 2 لـ 100.
+- الـ ٢٥: 2 و 3 و 5 و 7 و ... و 97.
+
+**الغلطة الشائعة:** تعدّ الـ 1 أولي (لو شلت شرط [[n < 2]]) فيطلع 26. الأولي ليه قاسمين بالظبط: 1 ونفسه، والـ 1 ليه قاسم واحد بس.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** الشرط في isPrime مكتوب [[for (let d = 2; d < Math.sqrt(n); d++)]]. جرّب 9 و 25 و 7.`, done: R`قبل التصليح 9 و 25 بيرجّعوا true (الجذر نفسه مبيتجرّبش)، و 7 true. بعد [[d * d <= n]]: 9 و 25 false و 7 true.`, sol: R`الكود البايظ:
+
+~~~js broken.js
+function isPrime(n) {
+  if (n < 2) return false;
+  for (let d = 2; d < Math.sqrt(n); d++) if (n % d === 0) return false;
+  return true;
+}
+console.log(isPrime(9), isPrime(25), isPrime(7));
+~~~
+
+~~~text الناتج قبل التصليح
+true true true
+~~~
+
+**الغلط:** [[Math.sqrt(9)]] = 3، والشرط [[d < 3]] بيوقف عند [[d = 2]] بس. فالـ 3 (القاسم الوحيد لـ 9 بعد 1) **متجرّبتش**، والدالة قالت إن 9 أولي! ونفس الكلام 25: جذرها 5 والـ 5 متجرّبتش. أي مربع كامل لعدد أولي (49، 121...) هيعدّي.
+
+الحل: [[d * d <= n]]:
+
+~~~text الناتج بعد التصليح
+false false true
+~~~
+
+**ليه [[d * d <= n]] أحسن:** بيشمل الجذر نفسه (الـ [[=]])، ومن غير [[Math.sqrt]] وكسورها. لو [[n]] ليه قاسم أكبر من جذره، يبقى ليه قاسم تاني أصغر من جذره ([[36 = 4 × 9]])، فكفاية نجرّب لحد الجذر.
+
+**الغلطة الشائعة:** تجرّب بأرقام أولية بس (7 و 13) فتطلع صح. الأرقام اللي بتكشف الحد هي المربعات: 9 و 25 و 49.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[primeFactors(n)]] بترجّع العوامل الأولية مترتبة: اقسم على d طول ما بيقبل القسمة، وبعدين زوّد d.`, done: R`[[primeFactors(84)]] بترجّع [[[2, 2, 3, 7]]]، و [[primeFactors(97)]] بترجّع [[[97]]]، وحاصل ضرب العناصر دايمًا بيرجّع n.`, sol: R`~~~js factors.js
+function primeFactors(n) {
+  const factors = [];
+  let d = 2;
+  while (n > 1) {
+    while (n % d === 0) {
+      factors.push(d);
+      n = n / d;
+    }
+    d++;
+  }
+  return factors;
+}
+console.log(primeFactors(84), primeFactors(97), primeFactors(360));
+// تأكيد: حاصل الضرب يرجّع الرقم
+let product = 1;
+for (const f of primeFactors(360)) product *= f;
+console.log(product);
+~~~
+
+~~~text الناتج: node factors.js
+[ 2, 2, 3, 7 ] [ 97 ] [ 2, 2, 2, 3, 3, 5 ]
+360
+~~~
+
+**ليه كده:**
+
+- [[while (n % d === 0)]] **جوه** الـ loop الكبيرة: طول ما [[d]] بيقسم [[n]]، نحطه ونقسم. فـ 84 ← 2 (فاضل 42) ← 2 (فاضل 21)، والـ 2 مبقتش تقسم.
+- بعدين [[d++]]: 3 بتقسم 21 (فاضل 7)، و 4 و 5 و 6 لأ، و 7 بتقسم 7 (فاضل 1) فالـ loop الكبيرة وقفت.
+- مش محتاجين نسأل [[isPrime(d)]]: لما نوصل لـ 4، كل الـ 2 اتشالت خلاص، فمستحيل 4 تقسم. يعني أي [[d]] بيقسم هو أولي لوحده.
+- آخر سطر بيأكد: حاصل ضرب [[[2, 2, 2, 3, 3, 5]]] = 360.
+
+**الغلطة الشائعة:** [[if]] بدل [[while]] الجوانية، فكل عامل يتحط مرة واحدة: [[primeFactors(84)]] تطلع [[[2, 3, 7]]] (حاصل ضربها 42 مش 84).` },
+            { lvl: 'تطبيق', t: R`**أشكال:** اطبع الأرقام من 1 لـ 30 في ٥ سطور × ٦ خانات، والخانة [[*]] لو الرقم أولي و [[.]] لو لأ.`, done: R`بيطبع [[.**.*.]] ثم [[*...*.]] ٣ مرات ثم [[....*.]]. ولاحظت إن كل الأوليات بعد 3 في العمود الأول أو الخامس (يعني 6k−1 أو 6k+1).`, sol: R`~~~js grid.js
+function isPrime(n) {
+  if (n < 2) return false;
+  for (let d = 2; d * d <= n; d++) if (n % d === 0) return false;
+  return true;
+}
+for (let row = 0; row < 5; row++) {
+  let line = "";
+  for (let col = 1; col <= 6; col++) {
+    const n = row * 6 + col;
+    line += isPrime(n) ? "*" : ".";
+  }
+  console.log(line);
+}
+~~~
+
+~~~text الناتج: node grid.js
+.**.*.
+*...*.
+*...*.
+*...*.
+....*.
+~~~
+
+**ليه كده:**
+
+- [[row * 6 + col]]: السطر 0 فيه 1 لـ 6، والسطر 1 فيه 7 لـ 12، وهكذا. ده بيحوّل (سطر، عمود) لرقم.
+- [[isPrime(n) ? "*" : "."]]: نجمة للأولي.
+
+**الملاحظة:** بعد 2 و 3 (في السطر الأول)، كل النجوم في العمود الأول (7 و 13 و 19) أو الخامس (5 و 11 و 17 و 23 و 29). العمود الأول أرقام شكلها [[6k + 1]] والخامس [[6k − 1]]. والعكس مش صح: مش كل رقم في العمودين دول أولي (25 في العمود الأول ومكانها نقطة). العواميد التانية (2 و 3 و 4 و 6) أرقام بتقبل القسمة على 2 أو 3، فمستحيل تبقى أولية (إلا 2 و 3 نفسهم).
+
+**الغلطة الشائعة:** [[row * 6 + col]] مع [[col]] بادئ من 0، فالأرقام تبدأ من 0 والشكل يتزق خانة. لما العدّ يبدأ من 1، خلي واحد بس من الاتنين يبدأ من 1.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** قيس بـ [[console.time]] عدّ الأعداد الأولية لحد 100000 مرتين: مرة بالشرط [[d * d <= n]] ومرة بـ [[d < n]].`, done: R`الاتنين بيطلّعوا 9592، والتاني أبطأ بشكل واضح جدًا (من كام مللي ثانية لمئات المللي ثواني، يعني أكتر من ١٠٠ مرة)، وتقدر تقول ليه.`, sol: R`~~~js timing.js
+function isPrimeFast(n) {
+  if (n < 2) return false;
+  for (let d = 2; d * d <= n; d++) if (n % d === 0) return false;
+  return true;
+}
+function isPrimeSlow(n) {
+  if (n < 2) return false;
+  for (let d = 2; d < n; d++) if (n % d === 0) return false;
+  return true;
+}
+const LIMIT = 100000;
+
+console.time("d * d <= n");
+let fast = 0;
+for (let n = 1; n <= LIMIT; n++) if (isPrimeFast(n)) fast++;
+console.timeEnd("d * d <= n");
+
+console.time("d < n");
+let slow = 0;
+for (let n = 1; n <= LIMIT; n++) if (isPrimeSlow(n)) slow++;
+console.timeEnd("d < n");
+
+console.log(fast, slow);
+~~~
+
+~~~text الناتج: node timing.js (على جهازي)
+d * d <= n: 4.399ms
+d < n: 629.117ms
+9592 9592
+~~~
+
+**ليه الفرق ده كبير:**
+
+- الاتنين طلّعوا 9592 (نفس الإجابة).
+- رقم أولي زي 99991: [[d * d <= n]] بيجرّب لحد 316 بس (جذره). و [[d < n]] بيجرّب لحد 99990! يعني حوالي ٣٠٠ مرة شغل أكتر للرقم ده لوحده.
+- وكل ما الأرقام تكبر الفرق بيكبر: الجذر بيكبر أبطأ بكتير من الرقم نفسه.
+
+**الغلطة الشائعة:** تفتكر إن الحل البطيء «مش مشكلة» لأنه طلّع نفس الإجابة. على ١٠٠ ألف رقم الفرق كسور ثانية، بس لو بتفحص ملايين أو أرقام كبيرة، الحل البطيء بياخد دقايق والسريع لسه مللي ثواني. والرقم نفسه بيختلف من جهاز لجهاز، المهم النسبة بينهم.` }
           ],
           flag: "script",
           deep: {
@@ -4352,7 +9081,12 @@ function nextPrime(n) {
   while (!isPrime(x)) x++;
   return x;
 }`
-          }
+          },
+          ref: [
+            { t: "MDN: Math.sqrt()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/sqrt" },
+            { t: "MDN: Remainder (%)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Remainder" },
+            { t: "MDN: console.time()", url: "https://developer.mozilla.org/en-US/docs/Web/API/console/time_static" }
+          ]
         },
         {
           cmd: "تمرين fibonacci",
@@ -4369,11 +9103,151 @@ for (let i = 0; i < 6; i++) {
 console.log(seq.join(" ")); // 1 3 7 15 31 63`,
           try: R`اكتب [[fibonacci(n)]] بمتغيرين [[a]] و [[b]]، وحرّكهم كل لفة بـ [[[a, b] = [b, a + b]]]. جرّب الأطراف: n = 0 و 1 و 2. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اطبع [[fibonacci(7)]].`, done: R`[[[0, 1, 1, 2, 3, 5, 8]]].` },
-            { lvl: 'تطبيق', t: R`**مسألة:** دوّر على أول رقم Fibonacci أكبر من 1000 بـ while (من غير ما تعرف هو رقم كام).`, done: R`بيطبع 1597.` },
-            { lvl: 'تطبيق', t: R`**أشكال:** من [[fibonacci(7)]] من غير الصفر، اطبع كل رقم ومعاه نفس العدد نجوم: [[1 *]] و [[1 *]] و [[2 **]] لحد [[8 ********]].`, done: R`بيطبع ٦ سطور، وآخر سطر فيه ٨ نجوم. والشكل بيبيّن إن كل عمود تقريبًا ١.٦ مرة اللي قبله.` },
-            { lvl: 'تحدي', t: R`**مسألة:** كام رقم Fibonacci (من أول 0) أقل من أو بيساوي [[Number.MAX_SAFE_INTEGER]]؟ احسبها بـ BigInt عشان المقارنة متغلطش.`, done: R`79 رقم، وآخرهم 8944394323791464. والرقم اللي بعده (14472334024676221) أكبر من الحد، فالـ number العادي ممكن يغلط فيه.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** اكتب [[fibRec(n)]] بالـ recursion ([[n < 2 ? n : fibRec(n - 1) + fibRec(n - 2)]]) وعدّ كام مرة اتنادت لـ [[n = 35]]، وقيس وقتها جنب نسخة الـ loop.`, done: R`الاتنين طلّعوا [[9227465]]. الـ recursion اتنادت [[29860703]] مرة وأخدت حوالي 100ms، والـ loop أقل من 0.1ms. وعرفت إن السبب إنها بتحسب نفس الأرقام مرات كتير.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** اطبع [[fibonacci(7)]].`, done: R`[[[0, 1, 1, 2, 3, 5, 8]]].`, sol: R`~~~js seven.js
+function fibonacci(n) {
+  const out = [];
+  let a = 0, b = 1;
+  for (let i = 0; i < n; i++) {
+    out.push(a);
+    [a, b] = [b, a + b];
+  }
+  return out;
+}
+console.log(fibonacci(7));
+~~~
+
+~~~text الناتج: node seven.js
+[
+  0, 1, 1, 2,
+  3, 5, 8
+]
+~~~
+
+**ليه كده:**
+
+- كل رقم = مجموع الاتنين اللي قبله، وبنبدأ بـ 0 و 1.
+- [[a]] الرقم الحالي و [[b]] اللي بعده. كل لفة نحط [[a]] في النتيجة، وبعدين نزق خطوة: [[a]] تاخد [[b]]، و [[b]] تاخد مجموعهم.
+- [[[a, b] = [b, a + b]]]: الاتنين بيتحسبوا من القيم **القديمة** في نفس اللحظة. لو كتبتها سطرين ([[a = b; b = a + b;]])، التاني هيستخدم [[a]] الجديدة ويطلع غلط.
+- Node بيطبع الـ array على كذا سطر لما تبقى طويلة شوية. ده شكل الطباعة بس، والـ array هي [[[0, 1, 1, 2, 3, 5, 8]]].
+
+**الغلطة الشائعة:** تعدّ «7 أرقام» من 1 مش من 0، فتستنى [[13]] في الآخر. [[fibonacci(7)]] = أول ٧ أرقام، أولهم 0.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** دوّر على أول رقم Fibonacci أكبر من 1000 بـ while (من غير ما تعرف هو رقم كام).`, done: R`بيطبع 1597.`, sol: R`~~~js over1000.js
+let a = 0, b = 1;
+while (a <= 1000) {
+  [a, b] = [b, a + b];
+}
+console.log(a);
+~~~
+
+~~~text الناتج: node over1000.js
+1597
+~~~
+
+**ليه [[while]]:** مش عارفين هنلف كام مرة، عارفين بس إمتى نقف. فالشرط [[a <= 1000]]: طول ما الرقم الحالي لسه مش أكبر من 1000، اتحرّك خطوة. أول ما [[a]] يعدّي 1000، الشرط [[false]] والـ loop تقف، و [[a]] هو الإجابة.
+
+- الأرقام: ... 610 ثم 987 (لسه ≤ 1000) ثم **1597**.
+
+**الغلطة الشائعة:** [[a < 1000]] بدل [[<=]]. هنا مش هيفرق لأن 1000 مش رقم Fibonacci، بس لو السؤال كان «أكبر من 987» كان الشرط [[<]] هيوقف على 987 نفسها. اكتب الشرط عكس المطلوب بالظبط: «أكبر من 1000» ← لف طول ما [[a <= 1000]].` },
+            { lvl: 'تطبيق', t: R`**أشكال:** من [[fibonacci(7)]] من غير الصفر، اطبع كل رقم ومعاه نفس العدد نجوم: [[1 *]] و [[1 *]] و [[2 **]] لحد [[8 ********]].`, done: R`بيطبع ٦ سطور، وآخر سطر فيه ٨ نجوم. والشكل بيبيّن إن كل عمود تقريبًا ١.٦ مرة اللي قبله.`, sol: R`~~~js stars.js
+function fibonacci(n) {
+  const out = [];
+  let a = 0, b = 1;
+  for (let i = 0; i < n; i++) {
+    out.push(a);
+    [a, b] = [b, a + b];
+  }
+  return out;
+}
+for (const x of fibonacci(7)) {
+  if (x === 0) continue;
+  console.log(x + " " + "*".repeat(x));
+}
+~~~
+
+~~~text الناتج: node stars.js
+1 *
+1 *
+2 **
+3 ***
+5 *****
+8 ********
+~~~
+
+**ليه كده:**
+
+- [[for...of]] على نتيجة [[fibonacci(7)]]، و [[continue]] بتنط الـ 0 (مفيش نجوم لصفر).
+- [[x + " " + "*".repeat(x)]]: الرقم، ومسافة، ونجوم بعدده.
+- كل سطر تقريبًا ١٫٦ مرة اللي قبله (٨ ÷ ٥ = ١٫٦، و ٥ ÷ ٣ ≈ ١٫٦٧): ده الـ «golden ratio» اللي الأرقام دي بتقرّب منه.
+
+**الغلطة الشائعة:** تستخدم [[fibonacci(6)]] على أساس «٦ سطور» فتطلع ٥ سطور بس، لأن أول رقم صفر واتنط. الحل الأوضح: تاخد السبعة وتنط الصفر صراحة بـ [[continue]].` },
+            { lvl: 'تحدي', t: R`**مسألة:** كام رقم Fibonacci (من أول 0) أقل من أو بيساوي [[Number.MAX_SAFE_INTEGER]]؟ احسبها بـ BigInt عشان المقارنة متغلطش.`, done: R`79 رقم، وآخرهم 8944394323791464. والرقم اللي بعده (14472334024676221) أكبر من الحد، فالـ number العادي ممكن يغلط فيه.`, sol: R`~~~js safe.js
+const LIMIT = BigInt(Number.MAX_SAFE_INTEGER);
+let a = 0n, b = 1n;
+let count = 0;
+let last = 0n;
+while (a <= LIMIT) {
+  count++;
+  last = a;
+  [a, b] = [b, a + b];
+}
+console.log("العدد:", count);
+console.log("آخر واحد:", last);
+console.log("اللي بعده:", a);
+console.log("الحد:", Number.MAX_SAFE_INTEGER);
+~~~
+
+~~~text الناتج: node safe.js
+العدد: 79
+آخر واحد: 8944394323791464n
+اللي بعده: 14472334024676221n
+الحد: 9007199254740991
+~~~
+
+**ليه BigInt هنا:**
+
+- [[Number.MAX_SAFE_INTEGER]] (9007199254740991) أكبر رقم صحيح الـ number بيشيله **بالظبط**. بعده الأرقام بتتقرّب. فلو حسبنا بالـ number، الأرقام اللي جنب الحد ممكن تبقى متقرّبة والمقارنة نفسها تغلط.
+- بالـ BigInt ([[0n]] و [[1n]]) كل الأرقام بالظبط مهما كبرت. والحد نفسه اتحوّل لـ BigInt بـ [[BigInt(...)]] عشان نقارن BigInt بـ BigInt.
+- [[count]] بيعدّ كل رقم ≤ الحد، و [[last]] بيحفظ آخر واحد. لما [[a]] يعدّي الحد، الـ loop تقف.
+- 79 رقم (من أول 0)، وآخرهم 8944394323791464. واللي بعده 14472334024676221 أكبر من الحد.
+
+**الغلطة الشائعة:** تقارن [[a <= Number.MAX_SAFE_INTEGER]] و [[a]] BigInt: دي شغالة في JavaScript (المقارنة بين BigInt و number مسموحة)، بس الجمع [[a + 1]] مش مسموح. فالأأمن: كل الأرقام في الحساب BigInt.` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** اكتب [[fibRec(n)]] بالـ recursion ([[n < 2 ? n : fibRec(n - 1) + fibRec(n - 2)]]) وعدّ كام مرة اتنادت لـ [[n = 35]]، وقيس وقتها جنب نسخة الـ loop.`, done: R`الاتنين طلّعوا [[9227465]]. الـ recursion اتنادت [[29860703]] مرة وأخدت حوالي 100ms، والـ loop أقل من 0.1ms. وعرفت إن السبب إنها بتحسب نفس الأرقام مرات كتير.`, sol: R`~~~js rec.js
+let calls = 0;
+function fibRec(n) {
+  calls++;
+  return n < 2 ? n : fibRec(n - 1) + fibRec(n - 2);
+}
+function fibLoop(n) {
+  let a = 0, b = 1;
+  for (let i = 0; i < n; i++) [a, b] = [b, a + b];
+  return a;
+}
+
+console.time("recursion");
+const r = fibRec(35);
+console.timeEnd("recursion");
+
+console.time("loop");
+const l = fibLoop(35);
+console.timeEnd("loop");
+
+console.log(r, l, "نداءات:", calls);
+~~~
+
+~~~text الناتج: node rec.js (على جهازي)
+recursion: 94.177ms
+loop: 0.054ms
+9227465 9227465 نداءات: 29860703
+~~~
+
+**ليه ٣٠ مليون نداء:**
+
+- [[fibRec(35)]] بتنادي [[fibRec(34)]] و [[fibRec(33)]]. و [[fibRec(34)]] بتنادي [[fibRec(33)]] تاني و [[fibRec(32)]]... فـ [[fibRec(33)]] بتتحسب مرتين، و [[fibRec(32)]] ٣ مرات، و [[fibRec(2)]] ملايين المرات.
+- كل ما [[n]] تزيد واحد، النداءات بتتضاعف تقريبًا (١٫٦ مرة). فـ [[fibRec(40)]] أبطأ من [[fibRec(35)]] بحوالي ١١ مرة.
+- الـ loop بتحسب كل رقم **مرة واحدة**: ٣٥ لفة بس.
+- [[calls++]] في أول الدالة بيعدّ كل نداء، و [[calls]] متغير برّه الدالة عشان يفضل بين النداءات.
+
+**الغلطة الشائعة:** تفتكر إن الـ recursion «أشيك» فأحسن. هنا الكود قصير بس بيعيد نفس الشغل ملايين المرات. الحل لو عايز تفضل recursion: تحفظ الأرقام اللي حسبتها (memoization)، وده هيجي في وحدة الدوال.` }
           ],
           flag: "script",
           deep: {
@@ -4520,7 +9394,12 @@ test("الطول n بالظبط: fibonacci(50) فيها 50 رقم وآخرها 7
   }
   return out;
 }`
-          }
+          },
+          ref: [
+            { t: "MDN: Destructuring", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring" },
+            { t: "MDN: Number.MAX_SAFE_INTEGER", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER" },
+            { t: "MDN: BigInt", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt" }
+          ]
         },
         {
           cmd: "تمرين sumDigits",
@@ -4537,11 +9416,172 @@ while (n > 0) {
 console.log(digits); // 5`,
           try: R`اكتب [[sumDigits(n)]] بـ while و [[%]] و [[Math.floor]]. فكّر: لو n سالب زي [[-4096]]، الـ while هتلف كام مرة؟ اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
-            { lvl: 'سريع', t: R`**اكتب اختبار:** جرّب حلك على 999 و 7 و 0.`, done: R`27 و 7 و 0.` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[while (n > 0) { s += n % 10; n = n / 10; }]] من غير Math.floor. شغّلها على 123 واطبع s وعدد اللفات.`, done: R`قبل التصليح s طلع [[6.666666666666668]] بعد [[326]] لفة (n بقت كسور بتصغر لحد ما توصل صفر). بعد [[Math.floor(n / 10)]]: s بـ 6 في ٣ لفات.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** [[digitalRoot(n)]]: اجمع الأرقام تاني وتالت لحد ما يفضل رقم واحد، باستخدام [[sumDigits]].`, done: R`[[digitalRoot(4096)]] بترجّع 1 (19 ثم 10 ثم 1)، و [[digitalRoot(9875)]] بترجّع 2.` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[luhn(card)]]: فحص رقم الكارت (Luhn): من اليمين ضاعف كل رقم تاني، ولو طلع أكبر من 9 اطرح 9، واجمع الكل، والرقم سليم لو المجموع بيقبل القسمة على 10. شيل المسافات الأول.`, done: R`[[luhn("4539 1488 0343 6467")]] بترجّع true، ولو غيّرت آخر رقم لـ 8 بترجّع false.` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** اكتب نسخة بالنصوص [[String(n).split("").reduce((s, d) => s + Number(d), 0)]] وقارنها بنسخة الحساب على 9875 و -45.`, done: R`على 9875 الاتنين 29. على -45 نسخة النصوص بترجّع [[NaN]] (علامة [["-"]] بقت حرف)، ونسخة الحساب بترجّع 0 لو شرطها [[n > 0]]. التصليح في الاتنين: [[Math.abs(n)]] الأول، فيبقى الناتج 9.` }
+            { lvl: 'سريع', t: R`**اكتب اختبار:** جرّب حلك على 999 و 7 و 0.`, done: R`27 و 7 و 0.`, sol: R`~~~js edges.js
+function sumDigits(n) {
+  let sum = 0;
+  n = Math.abs(n);
+  while (n > 0) {
+    sum += n % 10;
+    n = Math.floor(n / 10);
+  }
+  return sum;
+}
+console.log(sumDigits(999), sumDigits(7), sumDigits(0));
+~~~
+
+~~~text الناتج: node edges.js
+27 7 0
+~~~
+
+**ليه الحالات دي:**
+
+- [[999]] = ٩ + ٩ + ٩ = 27: كل الأرقام زي بعض وأكبر رقم ممكن، فلو [[% 10]] أو القسمة فيها غلطة هتبان.
+- [[7]]: رقم واحد، لفة واحدة. بيتأكد إن الـ loop مبتنساش آخر رقم.
+- [[0]]: [[0 > 0]] [[false]]، فالـ loop مبتلفش، والمجموع 0 (صح).
+
+**الغلطة الشائعة:** تعتبر [[sumDigits(0)]] حالة غلط وتكتب لها [[if]] خاص. الـ loop بتتعامل معاها لوحدها، والمهم إنك تجرّبها عشان تتأكد.` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** [[while (n > 0) { s += n % 10; n = n / 10; }]] من غير Math.floor. شغّلها على 123 واطبع s وعدد اللفات.`, done: R`قبل التصليح s طلع [[6.666666666666668]] بعد [[326]] لفة (n بقت كسور بتصغر لحد ما توصل صفر). بعد [[Math.floor(n / 10)]]: s بـ 6 في ٣ لفات.`, sol: R`الكود البايظ (لوحده برّه الدالة، ومعاه عدّاد لفات):
+
+~~~js broken.js
+let n = 123;
+let s = 0;
+let loops = 0;
+while (n > 0) {
+  s += n % 10;
+  n = n / 10;
+  loops++;
+}
+console.log(s, loops);
+~~~
+
+~~~text الناتج قبل التصليح
+6.666666666666668 326
+~~~
+
+**ليه 326 لفة:** [[123 / 10]] = 12.3 مش 12. فـ [[n]] بقت كسور: 12.3 ثم 1.23 ثم 0.123 ثم 0.0123 ... وكل مرة بتصغر بس **لسه أكبر من صفر**. والـ [[% 10]] على الكسور بتجمع كسور ([[12.3 % 10]] = 2.3000000000000007). فضلت تلف لحد ما الرقم بقى صغير لدرجة إن الكمبيوتر اعتبره صفر، بعد 326 لفة، والمجموع طلع رقم ملوش معنى.
+
+الحل: [[Math.floor(n / 10)]] بيشيل الكسر، فـ 123 ← 12 ← 1 ← 0:
+
+~~~text الناتج بعد التصليح
+6 3
+~~~
+
+**الغلطة الشائعة:** تفتكر إن القسمة في JavaScript بتقطع الكسر لوحدها زي لغات تانية (C و Java مع الأعداد الصحيحة). هنا [[/]] دايمًا بتدّي كسور، و [[Math.floor]] هي اللي بتقطع.` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[digitalRoot(n)]]: اجمع الأرقام تاني وتالت لحد ما يفضل رقم واحد، باستخدام [[sumDigits]].`, done: R`[[digitalRoot(4096)]] بترجّع 1 (19 ثم 10 ثم 1)، و [[digitalRoot(9875)]] بترجّع 2.`, sol: R`~~~js root.js
+function sumDigits(n) {
+  let sum = 0;
+  n = Math.abs(n);
+  while (n > 0) {
+    sum += n % 10;
+    n = Math.floor(n / 10);
+  }
+  return sum;
+}
+function digitalRoot(n) {
+  while (n >= 10) {
+    n = sumDigits(n);
+    console.log("  ←", n);
+  }
+  return n;
+}
+console.log(digitalRoot(4096));
+console.log(digitalRoot(9875));
+~~~
+
+~~~text الناتج: node root.js
+  ← 19
+  ← 10
+  ← 1
+1
+  ← 29
+  ← 11
+  ← 2
+2
+~~~
+
+**ليه كده:**
+
+- [[while (n >= 10)]]: طول ما الرقم أكتر من خانة واحدة، اجمع أرقامه تاني. لما يبقى من 0 لـ 9، وقف.
+- بنستخدم [[sumDigits]] زي ما هي، وده اللي التمرين عايزه: دالة بتتبني على دالة.
+- السطر اللي فيه [[←]] بيوريك كل مرحلة: 4096 ← 19 ← 10 ← 1.
+
+**الغلطة الشائعة:** [[n > 10]] بدل [[>=]]، فالـ 10 نفسها تقف وترجّع 10 (خانتين). وفي [[4096]] بالذات، المرحلة الوسطانية كانت 10 بالظبط، فالغلطة دي كانت هتطلع 10 بدل 1.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[luhn(card)]]: فحص رقم الكارت (Luhn): من اليمين ضاعف كل رقم تاني، ولو طلع أكبر من 9 اطرح 9، واجمع الكل، والرقم سليم لو المجموع بيقبل القسمة على 10. شيل المسافات الأول.`, done: R`[[luhn("4539 1488 0343 6467")]] بترجّع true، ولو غيّرت آخر رقم لـ 8 بترجّع false.`, sol: R`~~~js luhn.js
+function luhn(card) {
+  // ١. شيل المسافات
+  let digits = "";
+  for (const ch of card) if (ch !== " ") digits += ch;
+  // ٢. من اليمين: ضاعف كل رقم تاني
+  let sum = 0;
+  let double = false;
+  for (let i = digits.length - 1; i >= 0; i--) {
+    let d = Number(digits[i]);
+    if (double) {
+      d *= 2;
+      if (d > 9) d -= 9;
+    }
+    sum += d;
+    double = !double;
+  }
+  // ٣. سليم لو المجموع بيقبل القسمة على 10
+  return sum % 10 === 0;
+}
+console.log(luhn("4539 1488 0343 6467"));
+console.log(luhn("4539 1488 0343 6468"));
+~~~
+
+~~~text الناتج: node luhn.js
+true
+false
+~~~
+
+**خطوة خطوة:**
+
+1. **التنضيف:** لفة تبني نص الأرقام من غير المسافات.
+2. **من اليمين:** [[i]] بيبدأ من آخر رقم. و [[double]] بيتقلب كل لفة ([[double = !double]])، فأول رقم من اليمين مبيتضاعفش، والتاني بيتضاعف، والتالت لأ...
+3. **ضاعف واطرح 9:** لو الضعف أكبر من 9 (زي ٧ × ٢ = ١٤)، اطرح 9 (١٤ − ٩ = ٥). ده نفس جمع رقمي ١٤ (١ + ٤ = ٥).
+4. [[Number(digits[i])]]: الحرف [["7"]] نص، فلازم يتحوّل لرقم قبل الضرب والجمع.
+5. لو المجموع آخره صفر، الرقم سليم. تغيير آخر رقم من 7 لـ 8 زوّد المجموع واحد، فبقى مش سليم.
+
+**ليه البنوك بتستخدمه:** بيمسك غلطة كتابة رقم واحد وأغلب حالات تبديل رقمين جنب بعض، قبل ما الطلب يروح للبنك أصلًا. (بيقول إن الرقم «شكله سليم» بس، مش إن الكارت موجود.)
+
+**الغلطة الشائعة:** تبدأ التضعيف من **الشمال**. في الكروت اللي طولها زوجي (١٦ رقم) ممكن تطلع صح بالصدفة، وفي الطول الفردي هتغلط. القاعدة «من اليمين».` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** اكتب نسخة بالنصوص [[String(n).split("").reduce((s, d) => s + Number(d), 0)]] وقارنها بنسخة الحساب على 9875 و -45.`, done: R`على 9875 الاتنين 29. على -45 نسخة النصوص بترجّع [[NaN]] (علامة [["-"]] بقت حرف)، ونسخة الحساب بترجّع 0 لو شرطها [[n > 0]]. التصليح في الاتنين: [[Math.abs(n)]] الأول، فيبقى الناتج 9.`, sol: R`~~~js compare.js
+function sumDigitsMath(n) {
+  let s = 0;
+  while (n > 0) {
+    s += n % 10;
+    n = Math.floor(n / 10);
+  }
+  return s;
+}
+function sumDigitsText(n) {
+  return String(n).split("").reduce((s, d) => s + Number(d), 0);
+}
+console.log(sumDigitsMath(9875), sumDigitsText(9875));
+console.log(sumDigitsMath(-45), sumDigitsText(-45));
+console.log(String(-45).split(""));
+// التصليح في الاتنين: Math.abs الأول
+console.log(sumDigitsMath(Math.abs(-45)), sumDigitsText(Math.abs(-45)));
+~~~
+
+~~~text الناتج: node compare.js
+29 29
+0 NaN
+[ '-', '4', '5' ]
+9 9
+~~~
+
+**ليه كده:**
+
+- على 9875 الاتنين 29، بس على -45 اختلفوا.
+- **نسخة النصوص** [[NaN]]: [[String(-45).split("")]] بيطلع [[['-', '4', '5']]]، و [[Number("-")]] = [[NaN]]، و [[NaN]] بيبوّظ الجمع كله.
+- **نسخة الحساب** 0: [[-45 > 0]] [[false]] من الأول، فالـ loop مبتلفش. مفيش error، بس الإجابة غلط **بهدوء**، ودي أخطر.
+- **التصليح:** [[Math.abs(n)]] الأول (القيمة من غير إشارة)، فالاتنين بقوا 9.
+
+**مين أحسن؟** الاتنين صح بعد التصليح. نسخة النصوص أقصر بس بتعمل نص و array جداد وبتعتمد على [[reduce]] (هتيجي في وحدة المصفوفات)، ونسخة الحساب بتشتغل على الرقم نفسه من غير تحويل. والأهم من الاختيار إنك تجرّب الاتنين على السالب.
+
+**الغلطة الشائعة:** تجرّب على أرقام موجبة بس. الرقم السالب (أو الكسر زي 12.5) هو اللي بيكشف الفرق بين الحلول.` }
           ],
           flag: "script",
           deep: {
@@ -4677,7 +9717,12 @@ test("sumDigits(999999999) ← 81", () => expect(sumDigits(999999999)).toBe(81))
   }
   return sum;
 }`
-          }
+          },
+          ref: [
+            { t: "MDN: Math.floor()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/floor" },
+            { t: "MDN: Math.abs()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/abs" },
+            { t: "Wikipedia: Luhn algorithm", url: "https://en.wikipedia.org/wiki/Luhn_algorithm" }
+          ]
         },
         {
           cmd: "تمرين charCount",
@@ -4693,11 +9738,143 @@ for (const name of votes) {
 console.log(tally); // { Sara: 3, Ali: 1, Omar: 1 }`,
           try: R`اكتب [[charCount(str)]] بـ object عدّاد. جرّب [[charCount("aA")]] وفكّر ليه طلعوا مفتاحين. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** جرّب [[charCount("hello")]].`, done: R`[[{ h: 1, e: 1, l: 2, o: 1 }]].` },
-            { lvl: 'تطبيق', t: R`**مسألة:** [[mostFrequent(str)]] بترجّع الحرف اللي اتكرر أكتر، بـ [[charCount]] ولفة على المفاتيح.`, done: R`[[mostFrequent("javascript")]] بترجّع "a"، و [[mostFrequent("banana")]] بترجّع "a" برضه، و [[mostFrequent("")]] بترجّع null.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** status codes من لوج سيرفر: [[["200", "404", "200", "500", "200"]]]. عدّهم بنفس فكرة charCount بس على عناصر الـ array.`, done: R`بترجّع [[{ '200': 3, '404': 1, '500': 1 }]]. وتقدر تقول من الناتج إن ٤٠٪ من الطلبات فشلت.` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[firstUnique(str)]]: أول حرف مش متكرر. لفّتين: واحدة تعدّ، والتانية تدوّر بالترتيب الأصلي.`, done: R`[[firstUnique("swiss")]] بترجّع "w"، و [[firstUnique("aabb")]] بترجّع null، و [[firstUnique("x")]] بترجّع "x".` },
-            { lvl: 'تحدي', t: R`**أشكال:** من [[charCount("hello")]] اطبع histogram: كل حرف ومعاه نجوم بعدد مرّاته، بترتيب أول ظهور.`, done: R`بيطبع ٤ سطور: [[h *]] و [[e *]] و [[l **]] و [[o *]]. ولو جرّبت [["banana"]] بيطبع [[b *]] و [[a ***]] و [[n **]].` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** جرّب [[charCount("hello")]].`, done: R`[[{ h: 1, e: 1, l: 2, o: 1 }]].`, sol: R`~~~js hello.js
+function charCount(str) {
+  const counts = {};
+  for (const ch of str) counts[ch] = (counts[ch] ?? 0) + 1;
+  return counts;
+}
+console.log(charCount("hello"));
+~~~
+
+~~~text الناتج: node hello.js
+{ h: 1, e: 1, l: 2, o: 1 }
+~~~
+
+**لفة لفة:**
+
+| الحرف | [[counts[ch] ?? 0]] | بعد [[+ 1]] |
+|---|---|---|
+| h | 0 (مش موجود) | [[{ h: 1 }]] |
+| e | 0 | [[{ h: 1, e: 1 }]] |
+| l | 0 | [[{ ..., l: 1 }]] |
+| l | 1 (موجود) | [[{ ..., l: 2 }]] |
+| o | 0 | [[{ ..., o: 1 }]] |
+
+- [[counts[ch] ?? 0]]: لو الحرف لسه مش في الـ object، قيمته [[undefined]]، و [[??]] بتحط 0 بدلها. فالسطر ده بيقول «العدد اللي فات، أو صفر لو أول مرة».
+- ترتيب المفاتيح في الناتج هو ترتيب أول ظهور.
+
+**الغلطة الشائعة:** [[counts[ch]++]] من غير [[?? 0]]: أول مرة [[undefined + 1]] = [[NaN]]، فكل الحروف تبقى [[NaN]].` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[mostFrequent(str)]] بترجّع الحرف اللي اتكرر أكتر، بـ [[charCount]] ولفة على المفاتيح.`, done: R`[[mostFrequent("javascript")]] بترجّع "a"، و [[mostFrequent("banana")]] بترجّع "a" برضه، و [[mostFrequent("")]] بترجّع null.`, sol: R`~~~js most.js
+function charCount(str) {
+  const counts = {};
+  for (const ch of str) counts[ch] = (counts[ch] ?? 0) + 1;
+  return counts;
+}
+function mostFrequent(str) {
+  const counts = charCount(str);
+  let best = null;
+  for (const ch in counts) {
+    if (best === null || counts[ch] > counts[best]) best = ch;
+  }
+  return best;
+}
+console.log(mostFrequent("javascript"), mostFrequent("banana"), mostFrequent(""));
+~~~
+
+~~~text الناتج: node most.js
+a a null
+~~~
+
+**ليه كده:**
+
+- [[charCount]] بتعمل الشغل الصعب، و [[mostFrequent]] بتلف على **المفاتيح** بـ [[for...in]] وتدوّر على أكبر عدد، زي [[maxOf]] بالظبط بس على الـ object.
+- [[best]] بيشيل **الحرف** نفسه، والمقارنة [[counts[ch] > counts[best]]].
+- [[best === null ||]]: أول حرف بياخد المكان على طول (بدل [[arr[0]]] في maxOf).
+- النص الفاضي: [[counts]] فاضي، فالـ loop مبتلفش، و [[best]] بيفضل [[null]].
+- [["banana"]]: a ٣ مرات، n مرتين، b مرة: a.
+
+**الغلطة الشائعة:** [[>=]] بدل [[>]]: لو فيه تعادل هتاخد **آخر** حرف بدل أوله. وفي [["javascript"]] مفيش تعادل على الأكبر، بس في [["abab"]] هيبان الفرق ([["a"]] ضد [["b"]]).` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** status codes من لوج سيرفر: [[["200", "404", "200", "500", "200"]]]. عدّهم بنفس فكرة charCount بس على عناصر الـ array.`, done: R`بترجّع [[{ '200': 3, '404': 1, '500': 1 }]]. وتقدر تقول من الناتج إن ٤٠٪ من الطلبات فشلت.`, sol: R`~~~js status.js
+function countItems(list) {
+  const counts = {};
+  for (const item of list) counts[item] = (counts[item] ?? 0) + 1;
+  return counts;
+}
+const codes = ["200", "404", "200", "500", "200"];
+const counts = countItems(codes);
+console.log(counts);
+const failed = codes.length - counts["200"];
+console.log("فشل:", failed, "من", codes.length, "=", (failed / codes.length) * 100 + "%");
+~~~
+
+~~~text الناتج: node status.js
+{ '200': 3, '404': 1, '500': 1 }
+فشل: 2 من 5 = 40%
+~~~
+
+**ليه كده:**
+
+- نفس [[charCount]] حرفيًا، بس [[for...of]] على **الـ array** بدل النص. فكرة «العدّاد في object» بتنفع لأي حاجة: حروف، كلمات، status codes، أسماء.
+- سمّيتها [[countItems]] لأنها مبقتش بتعدّ حروف.
+- اللي فشل = الكل − الـ 200: ٢ من ٥ = 40%.
+
+**ملاحظة على الترتيب:** المفاتيح [['200']] و [['404']] و [['500']] شكلها أرقام، والـ object بيرتّب المفاتيح اللي شكلها أرقام **تصاعدي** مش بترتيب أول ظهور. هنا الترتيبين زي بعض بالصدفة، بس لو أول كود كان [["500"]] برضه هيطلع [['200']] الأول.
+
+**الغلطة الشائعة:** تحوّل الأكواد لأرقام وتفتكر المفاتيح هتبقى أرقام. مفاتيح أي object نصوص دايمًا، فـ [[counts[200]]] و [[counts["200"]]] نفس الحاجة.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[firstUnique(str)]]: أول حرف مش متكرر. لفّتين: واحدة تعدّ، والتانية تدوّر بالترتيب الأصلي.`, done: R`[[firstUnique("swiss")]] بترجّع "w"، و [[firstUnique("aabb")]] بترجّع null، و [[firstUnique("x")]] بترجّع "x".`, sol: R`~~~js unique.js
+function firstUnique(str) {
+  const counts = {};
+  for (const ch of str) counts[ch] = (counts[ch] ?? 0) + 1;  // لفة ١: عدّ
+  for (const ch of str) if (counts[ch] === 1) return ch;     // لفة ٢: بالترتيب الأصلي
+  return null;
+}
+console.log(firstUnique("swiss"), firstUnique("aabb"), firstUnique("x"));
+~~~
+
+~~~text الناتج: node unique.js
+w null x
+~~~
+
+**ليه لفّتين:**
+
+- **اللفة الأولى** بتعدّ كل الحروف. لازم تخلص **كلها** الأول، لأنك مش هتعرف إن حرف مش متكرر غير لما تشوف النص كله. ([["swiss"]]: الـ s الأولى شكلها مش متكررة لحد ما توصل للتانية.)
+- **اللفة التانية** على **النص** (مش على الـ object): بتمشي بالترتيب الأصلي وترجّع أول حرف عدده 1. في [["swiss"]]: s (٣) لأ، w (١) آه.
+- لو مفيش ولا حرف عدده 1: الـ loop بتخلص وترجّع [[null]].
+
+**الغلطة الشائعة:** تعمل اللفة التانية على الـ object ([[for (const ch in counts)]]). هتشتغل هنا بالصدفة لأن الحروف مش أرقام، بس لو النص فيه أرقام ([["1a21"]]) ترتيب المفاتيح هيتغيّر وتطلع إجابة غلط.` },
+            { lvl: 'تحدي', t: R`**أشكال:** من [[charCount("hello")]] اطبع histogram: كل حرف ومعاه نجوم بعدد مرّاته، بترتيب أول ظهور.`, done: R`بيطبع ٤ سطور: [[h *]] و [[e *]] و [[l **]] و [[o *]]. ولو جرّبت [["banana"]] بيطبع [[b *]] و [[a ***]] و [[n **]].`, sol: R`~~~js hist.js
+function charCount(str) {
+  const counts = {};
+  for (const ch of str) counts[ch] = (counts[ch] ?? 0) + 1;
+  return counts;
+}
+function histogram(str) {
+  const counts = charCount(str);
+  for (const ch in counts) console.log(ch + " " + "*".repeat(counts[ch]));
+}
+histogram("hello");
+console.log("---");
+histogram("banana");
+~~~
+
+~~~text الناتج: node hist.js
+h *
+e *
+l **
+o *
+---
+b *
+a ***
+n **
+~~~
+
+**ليه كده:**
+
+- [[charCount]] بتعدّ، والـ [[for...in]] بتلف على الحروف بترتيب أول ظهور (h و e و l و o)، و [["*".repeat(counts[ch])]] بترسم العدد.
+- [["banana"]]: b أول حرف ظهر، بعده a، بعده n. فالترتيب b و a و n، مش أبجدي ولا حسب العدد.
+
+**الغلطة الشائعة:** تستنى نفس الترتيب لو النص فيه أرقام: [[histogram("3a1")]] هيطبع 1 و 3 الأول (المفاتيح اللي شكلها أرقام بتترتب تصاعدي قبل الباقي)، وبعدين a. لو الترتيب الأصلي مهم في داتا فيها أرقام، لف على النص نفسه زي التمرين اللي فات.` }
           ],
           flag: "script",
           deep: {
@@ -4831,7 +10008,12 @@ test("مفيش NaN: كل القيم أرقام", () => expect(Object.values(char
   for (const ch of str) counts[ch] = (counts[ch] ?? 0) + 1;
   return counts;
 }`
-          }
+          },
+          ref: [
+            { t: "MDN: Nullish coalescing operator (??)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing" },
+            { t: "MDN: Property accessors", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Property_accessors" },
+            { t: "MDN: for...in", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in" }
+          ]
         },
         {
           cmd: "تمرين unique",
@@ -4850,11 +10032,159 @@ for (const e of emails) {
 }`,
           try: R`اكتب [[unique(arr)]] بـ object [[seen]] و array جديدة. وبعد ما تعدّي، اكتبها في سطر بـ Set ([[[...new Set(arr)]]]) وقارن. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** جرّب [[unique(["a", "b", "a", "c", "b"])]].`, done: R`[[["a", "b", "c"]]] بنفس ترتيب أول ظهور.` },
-            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** إيميلات من فورم تسجيل: [[uniqueEmails(list)]] بتشيل التكرار من غير ما تفرق بين الحروف الكبيرة والصغيرة، وبتسيب أول نسخة زي ما اتكتبت.`, done: R`[[["Ali@x.com", "ali@x.com", "sara@x.com"]]] بترجّع [[["Ali@x.com", "sara@x.com"]]].` },
-            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** نفس [[unique]] بالـ includes على [[[{ id: 1, name: "Ali" }, { id: 1, name: "Ali" }, { id: 2, name: "Mona" }]]] بترجّع ٣ عناصر. ليه؟ واكتب [[uniqueById(list)]].`, done: R`فهمت إن كل [[{}]] object جديد فـ includes مش شايفهم زي بعض. [[uniqueById]] اللي بتحفظ الـ ids اللي شافتها بترجّع عنصرين: Ali و Mona.` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[common(a, b)]]: العناصر اللي في الاتنين من غير تكرار وبترتيب a.`, done: R`[[common([1, 2, 2, 3], [2, 3, 4])]] بترجّع [[[2, 3]]]، ولو مفيش حاجة مشتركة بترجّع [[[]]].` },
-            { lvl: 'تحدي', t: R`**قارن وقيس:** على 50000 رقم فيهم 20000 مختلف ([[Array.from({ length: 50000 }, (_, i) => i % 20000)]])، قيس unique بالـ includes و [[[...new Set(arr)]]] بـ console.time.`, done: R`الاتنين طلّعوا 20000 عنصر، والـ includes أخدت مئات المللي ثواني (حوالي 300ms) والـ Set حوالي 1.5ms. وعرفت إن includes بتلف على النتيجة كلها مع كل عنصر، والـ Set بتسأل مرة واحدة.` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** جرّب [[unique(["a", "b", "a", "c", "b"])]].`, done: R`[[["a", "b", "c"]]] بنفس ترتيب أول ظهور.`, sol: R`~~~js basic.js
+function unique(arr) {
+  const seen = {};
+  const out = [];
+  for (const x of arr) {
+    if (seen[x]) continue;
+    seen[x] = true;
+    out.push(x);
+  }
+  return out;
+}
+console.log(unique(["a", "b", "a", "c", "b"]));
+~~~
+
+~~~text الناتج: node basic.js
+[ 'a', 'b', 'c' ]
+~~~
+
+**لفة لفة:**
+
+- [["a"]]: [[seen.a]] مش موجود، فنحطه في [[seen]] وفي [[out]].
+- [["b"]]: نفس الكلام.
+- [["a"]] تاني: [[seen.a]] بـ [[true]]، فـ [[continue]] تنطها.
+- [["c"]] جديدة تتحط، و [["b"]] التانية تتنط.
+
+[[seen]] زي «دفتر»: بنكتب فيه كل حاجة شفناها، ونسأله قبل ما نضيف. والترتيب في [[out]] هو ترتيب **أول ظهور** لأننا بنضيف أول ما نشوف الحاجة لأول مرة.
+
+**الغلطة الشائعة:** تنسى [[seen[x] = true]]، فالدفتر يفضل فاضي وكل حاجة تتضاف، والـ array ترجع زي ما هي بالتكرار.` },
+            { lvl: 'تطبيق', t: R`**بيانات حقيقية:** إيميلات من فورم تسجيل: [[uniqueEmails(list)]] بتشيل التكرار من غير ما تفرق بين الحروف الكبيرة والصغيرة، وبتسيب أول نسخة زي ما اتكتبت.`, done: R`[[["Ali@x.com", "ali@x.com", "sara@x.com"]]] بترجّع [[["Ali@x.com", "sara@x.com"]]].`, sol: R`~~~js emails.js
+function uniqueEmails(list) {
+  const seen = {};
+  const out = [];
+  for (const email of list) {
+    const key = email.toLowerCase();   // المقارنة بالصغير
+    if (seen[key]) continue;
+    seen[key] = true;
+    out.push(email);                   // بس نحفظ زي ما اتكتب
+  }
+  return out;
+}
+console.log(uniqueEmails(["Ali@x.com", "ali@x.com", "sara@x.com"]));
+~~~
+
+~~~text الناتج: node emails.js
+[ 'Ali@x.com', 'sara@x.com' ]
+~~~
+
+**ليه كده:**
+
+- الفكرة كلها في الفرق بين **مفتاح المقارنة** و **اللي بنحفظه**: بنسأل الدفتر بـ [[email.toLowerCase()]]، فـ [["Ali@x.com"]] و [["ali@x.com"]] ليهم نفس المفتاح [["ali@x.com"]]. بس بنحط في النتيجة [[email]] الأصلي زي ما اليوزر كتبه.
+- أول نسخة ([["Ali@x.com"]]) هي اللي فضلت، والتانية اتنطت.
+
+**الغلطة الشائعة:** تحط [[key]] في [[out]] بدل [[email]]، فالنتيجة تبقى [[["ali@x.com", "sara@x.com"]]]: التكرار اتشال بس الإيميل اتغيّر عن اللي اليوزر كتبه. وفي الشغل الحقيقي ضيف [[trim()]] كمان، عشان [[" ali@x.com"]] بمسافة تتعرف إنها نفس الإيميل.` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** نفس [[unique]] بالـ includes على [[[{ id: 1, name: "Ali" }, { id: 1, name: "Ali" }, { id: 2, name: "Mona" }]]] بترجّع ٣ عناصر. ليه؟ واكتب [[uniqueById(list)]].`, done: R`فهمت إن كل [[{}]] object جديد فـ includes مش شايفهم زي بعض. [[uniqueById]] اللي بتحفظ الـ ids اللي شافتها بترجّع عنصرين: Ali و Mona.`, sol: R`~~~js byid.js
+function uniqueIncludes(arr) {
+  const out = [];
+  for (const x of arr) if (!out.includes(x)) out.push(x);
+  return out;
+}
+function uniqueById(list) {
+  const seenIds = {};
+  const out = [];
+  for (const item of list) {
+    if (seenIds[item.id]) continue;
+    seenIds[item.id] = true;
+    out.push(item);
+  }
+  return out;
+}
+const users = [{ id: 1, name: "Ali" }, { id: 1, name: "Ali" }, { id: 2, name: "Mona" }];
+console.log(uniqueIncludes(users).length);
+console.log({ id: 1 } === { id: 1 });
+console.log(uniqueById(users));
+~~~
+
+~~~text الناتج: node byid.js
+3
+false
+[ { id: 1, name: 'Ali' }, { id: 2, name: 'Mona' } ]
+~~~
+
+**ليه الـ includes رجّعت ٣:**
+
+- [[includes]] بتقارن بـ [[===]]. والـ [[===]] على الـ objects بتسأل «هو **نفس** الـ object؟» مش «شكلهم زي بعض؟». وكل [[{ }]] بيعمل object جديد في الذاكرة، فالـ Ali الأول والتاني اتنين مختلفين حتى لو نفس الخصايص. السطر التاني بيوضّحها: [[{ id: 1 } === { id: 1 }]] بـ [[false]].
+- (ونسخة [[unique]] بالـ [[seen]] أوحش هنا: [[seen[obj]]] بيحوّل أي object لنص [["[object Object]"]]، فكل الـ objects تبقى «زي بعض» ويفضل عنصر واحد بس.)
+
+**الحل:** نقارن بحاجة بتحدد العنصر وهي رقم أو نص: الـ [[id]]. [[uniqueById]] نفس فكرة الدفتر بس المفتاح [[item.id]]، وبنحفظ الـ object كله. فرجّعت Ali و Mona.
+
+**الغلطة الشائعة:** تقارن بالاسم بدل الـ id. اتنين اسمهم Ali ممكن يبقوا شخصين مختلفين، والـ id هو اللي معمول عشان يبقى فريد.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[common(a, b)]]: العناصر اللي في الاتنين من غير تكرار وبترتيب a.`, done: R`[[common([1, 2, 2, 3], [2, 3, 4])]] بترجّع [[[2, 3]]]، ولو مفيش حاجة مشتركة بترجّع [[[]]].`, sol: R`~~~js common.js
+function common(a, b) {
+  const inB = {};
+  for (const x of b) inB[x] = true;
+  const added = {};
+  const out = [];
+  for (const x of a) {
+    if (inB[x] && !added[x]) {
+      out.push(x);
+      added[x] = true;
+    }
+  }
+  return out;
+}
+console.log(common([1, 2, 2, 3], [2, 3, 4]));
+console.log(common([1, 2], [3, 4]));
+~~~
+
+~~~text الناتج: node common.js
+[ 2, 3 ]
+[]
+~~~
+
+**ليه كده:**
+
+- **دفتر [[inB]]:** كل عناصر [[b]] متعلّم عليها. كده سؤال «موجود في b؟» بقى [[inB[x]]] بدل لفة على [[b]] كلها كل مرة.
+- **دفتر [[added]]:** عشان التكرار. الـ 2 موجودة في [[a]] مرتين، فأول مرة تتضاف وتتعلّم، والتانية [[added[2]]] بـ [[true]] فتتنط.
+- اللفة الأساسية على [[a]]، فالنتيجة بترتيب [[a]].
+
+**الغلطة الشائعة:** دفتر واحد بس ([[inB]])، فالـ 2 تتضاف مرتين ويطلع [[[2, 2, 3]]]. أو تلف على [[b]] فالترتيب يبقى ترتيب [[b]].` },
+            { lvl: 'تحدي', t: R`**قارن وقيس:** على 50000 رقم فيهم 20000 مختلف ([[Array.from({ length: 50000 }, (_, i) => i % 20000)]])، قيس unique بالـ includes و [[[...new Set(arr)]]] بـ console.time.`, done: R`الاتنين طلّعوا 20000 عنصر، والـ includes أخدت مئات المللي ثواني (حوالي 300ms) والـ Set حوالي 1.5ms. وعرفت إن includes بتلف على النتيجة كلها مع كل عنصر، والـ Set بتسأل مرة واحدة.`, sol: R`~~~js timing.js
+const arr = Array.from({ length: 50000 }, (_, i) => i % 20000);
+
+function uniqueIncludes(list) {
+  const out = [];
+  for (const x of list) if (!out.includes(x)) out.push(x);
+  return out;
+}
+
+console.time("includes");
+const a = uniqueIncludes(arr);
+console.timeEnd("includes");
+
+console.time("Set");
+const b = [...new Set(arr)];
+console.timeEnd("Set");
+
+console.log(a.length, b.length);
+~~~
+
+~~~text الناتج: node timing.js (على جهازي)
+includes: 262.991ms
+Set: 1.635ms
+20000 20000
+~~~
+
+**ليه الفرق ده:**
+
+- [[Array.from({ length: 50000 }, (_, i) => i % 20000)]]: array من ٥٠ ألف رقم، كل رقم [[i % 20000]]، يعني 0 لـ 19999 وبعدين بيتكرروا. فيه ٢٠ ألف مختلف.
+- **[[includes]]:** مع كل عنصر بتلف على [[out]] كلها تدوّر. و [[out]] بتكبر لحد ٢٠ ألف، فالشغل كله حوالي ٥٠ ألف × آلاف المقارنات = مئات الملايين.
+- **[[Set]]:** بيسأل «موجود؟» في خطوة واحدة تقريبًا مهما كبر (زي الدفتر [[seen]]). فالشغل حوالي ٥٠ ألف خطوة بس.
+- الاتنين نفس النتيجة: 20000.
+
+**الغلطة الشائعة:** تجرّب على array صغيرة (١٠ عناصر) وتقول «مفيش فرق». الفرق بيظهر مع الحجم، وده اللي بيحصل في الشغل الحقيقي لما الداتا تكبر من ١٠٠ صف لـ ١٠٠ ألف. ونسخة [[seen]] اللي في الدرس سريعة زي الـ Set للأرقام والنصوص، لأنها نفس فكرة الدفتر.` }
           ],
           flag: "script",
           deep: {
@@ -4997,7 +10327,12 @@ test("١٠ آلاف عنصر فيهم 100 قيمة بس", () => expect(unique(Ar
   }
   return out;
 }`
-          }
+          },
+          ref: [
+            { t: "MDN: Array.prototype.includes()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes" },
+            { t: "MDN: Set", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set" },
+            { t: "MDN: Equality comparisons and sameness", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Equality_comparisons_and_sameness" }
+          ]
         },
         {
           cmd: "تمرين secondLargest",
@@ -5018,11 +10353,192 @@ for (const p of prices) {
 console.log(low, low2); // 15 30`,
           try: R`اكتب [[secondLargest(arr)]] بمتغيرين و loop واحدة. جرّب في دماغك [[[5, 9, 9, 7]]] خطوة خطوة قبل ما تشغّل. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** امشي بالقلم على [[[10, 5, 10]]] واكتب first و second بعد كل عنصر، وبعدين شغّل وقارن.`, done: R`بعد العناصر التلاتة: first 10 و second -Infinity، وبعدين first 10 و second 5، وبعدين زي ما هم. والدالة بترجّع 5.` },
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** حل «سهل»: [[arr.sort()[arr.length - 2]]]. جرّبه على [[[10, 9, 100]]].`, done: R`بيرجّع 100 مش 10، لأن [[sort()]] من غير دالة بترتّب كنصوص: [[[10, 100, 9]]]. والحل باللفة الواحدة بيرجّع 10 ومبيغيّرش الـ array الأصلية كمان.` },
-            { lvl: 'تطبيق', t: R`**مسألة:** [[secondSmallest(arr)]] بنفس الفكرة بالعكس (ابدأ من [[Infinity]]).`, done: R`[[secondSmallest([4, 1, 1, 3])]] بترجّع 3، و [[secondSmallest([2, 2])]] بترجّع undefined.` },
-            { lvl: 'تطبيق', t: R`**اكتب اختبار:** ٥ سطور [[console.log]] لـ [[secondLargest]] بيقارنوا الناتج بالمتوقع: [[[3, 9, 9]]] و [[[5, 5]]] و [[[-1, -2]]] و [[[1]]] و [[[]]].`, done: R`الـ ٥ بيطبعوا true على حلك: 3، و undefined، و -2، و undefined، و undefined. ولو حلك بيرجّع [[-Infinity]] لأي حالة، الاختبار مسكها وصلّحتها.` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[topThree(arr)]]: أكبر ٣ أرقام مختلفة في لفة واحدة بتلات متغيرات.`, done: R`[[topThree([5, 1, 9, 7, 9, 3])]] بترجّع [[[9, 7, 5]]]، و [[topThree([1, 2])]] بترجّع [[[2, 1]]] من غير [[-Infinity]].` }
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** امشي بالقلم على [[[10, 5, 10]]] واكتب first و second بعد كل عنصر، وبعدين شغّل وقارن.`, done: R`بعد العناصر التلاتة: first 10 و second -Infinity، وبعدين first 10 و second 5، وبعدين زي ما هم. والدالة بترجّع 5.`, sol: R`**على الورق الأول:**
+
+| العنصر | الحالة | first | second |
+|---|---|---|---|
+| (البداية) | | -Infinity | -Infinity |
+| 10 | أكبر من first: second تاخد القديم، و first تاخد 10 | 10 | -Infinity |
+| 5 | مش أكبر من first، بس أكبر من second | 10 | 5 |
+| 10 | **زي** first بالظبط: ولا شرط اتحقق | 10 | 5 |
+
+وبعدين شغّلت الدالة بسطر طباعة جوه الـ loop:
+
+~~~js walk.js
+function secondLargest(arr) {
+  let first = -Infinity, second = -Infinity;
+  for (const x of arr) {
+    if (x > first) {
+      second = first;
+      first = x;
+    } else if (x < first && x > second) {
+      second = x;
+    }
+    console.log("بعد", x, "← first:", first, "second:", second);
+  }
+  return second === -Infinity ? undefined : second;
+}
+console.log(secondLargest([10, 5, 10]));
+~~~
+
+~~~text الناتج: node walk.js
+بعد 10 ← first: 10 second: -Infinity
+بعد 5 ← first: 10 second: 5
+بعد 10 ← first: 10 second: 5
+5
+~~~
+
+**ليه الـ 10 التانية متغيّرتش حاجة:** الشرط التاني [[x < first]] (مش [[<=]]) معمول مخصوص عشان التكرار: 10 التانية مش «تاني أكبر»، دي نفس الأكبر. فـ second فضلت 5.
+
+**الغلطة الشائعة:** تكتب [[else if (x > second)]] من غير [[x < first]]، فالـ 10 التانية تبقى second، والدالة ترجّع 10 (اللي هي الأكبر مش التاني).` },
+            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** حل «سهل»: [[arr.sort()[arr.length - 2]]]. جرّبه على [[[10, 9, 100]]].`, done: R`بيرجّع 100 مش 10، لأن [[sort()]] من غير دالة بترتّب كنصوص: [[[10, 100, 9]]]. والحل باللفة الواحدة بيرجّع 10 ومبيغيّرش الـ array الأصلية كمان.`, sol: R`~~~js sortbug.js
+function secondLargest(arr) {
+  let first = -Infinity, second = -Infinity;
+  for (const x of arr) {
+    if (x > first) {
+      second = first;
+      first = x;
+    } else if (x < first && x > second) {
+      second = x;
+    }
+  }
+  return second === -Infinity ? undefined : second;
+}
+const arr = [10, 9, 100];
+console.log(secondLargest(arr), arr);
+console.log(arr.sort()[arr.length - 2]);
+console.log(arr);
+~~~
+
+~~~text الناتج: node sortbug.js
+10 [ 10, 9, 100 ]
+100
+[ 10, 100, 9 ]
+~~~
+
+**ليه 100:**
+
+- [[sort()]] من غير دالة بتحوّل كل حاجة **لنص** وترتّب أبجدي: [["10"]] و [["100"]] و [["9"]]. والـ [["9"]] آخر واحدة لأن الحرف 9 بعد الحرف 1. فالترتيب بقى [[[10, 100, 9]]]، والعنصر قبل الأخير 100.
+- **ومشكلة تانية:** [[sort()]] بتغيّر الـ array **الأصلية**. شوف آخر سطر: [[arr]] نفسها اتغيّرت لـ [[[10, 100, 9]]]. لو حد تاني في البرنامج بيستخدمها، هيلاقيها اتلخبطت.
+- الحل باللفة الواحدة رجّع 10 صح (أول سطر)، والـ array لسه زي ما هي.
+
+**الغلطة الشائعة:** تجرّب الحل «السهل» على أرقام من خانة واحدة ([[[3, 1, 2]]]) فيطلع صح، لأن الترتيب الأبجدي والرقمي واحد للأرقام من خانة واحدة. الأرقام اللي بخانات مختلفة هي اللي بتكشفه. (والترتيب الرقمي الصح [[sort((a, b) => a - b)]] هتاخده في وحدة المصفوفات.)` },
+            { lvl: 'تطبيق', t: R`**مسألة:** [[secondSmallest(arr)]] بنفس الفكرة بالعكس (ابدأ من [[Infinity]]).`, done: R`[[secondSmallest([4, 1, 1, 3])]] بترجّع 3، و [[secondSmallest([2, 2])]] بترجّع undefined.`, sol: R`~~~js smallest.js
+function secondSmallest(arr) {
+  let first = Infinity, second = Infinity;
+  for (const x of arr) {
+    if (x < first) {
+      second = first;
+      first = x;
+    } else if (x > first && x < second) {
+      second = x;
+    }
+  }
+  return second === Infinity ? undefined : second;
+}
+console.log(secondSmallest([4, 1, 1, 3]), secondSmallest([2, 2]));
+~~~
+
+~~~text الناتج: node smallest.js
+3 undefined
+~~~
+
+**اللي اتقلب عن secondLargest:**
+
+- البداية [[Infinity]] بدل [[-Infinity]]: أي رقم أصغر منها.
+- كل [[>]] بقت [[<]] والعكس: [[x < first]] و [[x > first && x < second]].
+- الفحص الأخير [[second === Infinity]] بدل [[-Infinity]].
+- [[[4, 1, 1, 3]]]: first بقت 1، والـ 1 التانية اتنطت (زي first)، و 3 بقت second (أصغر من 4 اللي كانت second).
+- [[[2, 2]]]: مفيش رقم تاني مختلف، فـ second فضلت [[Infinity]] ورجعت [[undefined]].
+
+**الغلطة الشائعة:** تقلب المقارنات وتنسى الفحص الأخير، فـ [[secondSmallest([2, 2])]] ترجّع [[Infinity]]، وده رقم حقيقي ممكن يتطبع أو يدخل في حساب.` },
+            { lvl: 'تطبيق', t: R`**اكتب اختبار:** ٥ سطور [[console.log]] لـ [[secondLargest]] بيقارنوا الناتج بالمتوقع: [[[3, 9, 9]]] و [[[5, 5]]] و [[[-1, -2]]] و [[[1]]] و [[[]]].`, done: R`الـ ٥ بيطبعوا true على حلك: 3، و undefined، و -2، و undefined، و undefined. ولو حلك بيرجّع [[-Infinity]] لأي حالة، الاختبار مسكها وصلّحتها.`, sol: R`~~~js tests.js
+function secondLargest(arr) {
+  let first = -Infinity, second = -Infinity;
+  for (const x of arr) {
+    if (x > first) {
+      second = first;
+      first = x;
+    } else if (x < first && x > second) {
+      second = x;
+    }
+  }
+  return second === -Infinity ? undefined : second;
+}
+console.log(secondLargest([3, 9, 9]) === 3);
+console.log(secondLargest([5, 5]) === undefined);
+console.log(secondLargest([-1, -2]) === -2);
+console.log(secondLargest([1]) === undefined);
+console.log(secondLargest([]) === undefined);
+~~~
+
+~~~text الناتج على الحل
+true
+true
+true
+true
+true
+~~~
+
+وجرّبت الاختبارات على نسخة ناقصها الفحص الأخير (بترجّع [[second]] على طول):
+
+~~~text الناتج على النسخة الناقصة
+true
+false
+true
+false
+false
+~~~
+
+**الحالات دي بتختبر إيه:**
+
+| الحالة | المتوقع | بتختبر |
+|---|---|---|
+| [[[3, 9, 9]]] | 3 | التكرار في الأكبر |
+| [[[5, 5]]] | undefined | مفيش رقم تاني مختلف |
+| [[[-1, -2]]] | -2 | السالب (لو البداية 0 بدل -Infinity هتغلط) |
+| [[[1]]] | undefined | عنصر واحد |
+| [[[]]] | undefined | فاضية |
+
+الاختبارات مسكت النسخة الناقصة في ٣ حالات: رجّعت [[-Infinity]] بدل [[undefined]].
+
+**الغلطة الشائعة:** تقارن بـ [[== undefined]] أو تطبع القيمة بس. [[=== undefined]] بتفرق بين [[undefined]] و [[null]] و [[-Infinity]]، ودي كلها قيم مختلفة اللي هيستخدم الدالة لازم يعرفها.` },
+            { lvl: 'تحدي', t: R`**مسألة:** [[topThree(arr)]]: أكبر ٣ أرقام مختلفة في لفة واحدة بتلات متغيرات.`, done: R`[[topThree([5, 1, 9, 7, 9, 3])]] بترجّع [[[9, 7, 5]]]، و [[topThree([1, 2])]] بترجّع [[[2, 1]]] من غير [[-Infinity]].`, sol: R`~~~js top3.js
+function topThree(arr) {
+  let a = -Infinity, b = -Infinity, c = -Infinity; // a الأكبر، b التاني، c التالت
+  for (const x of arr) {
+    if (x === a || x === b || x === c) continue;   // مختلفين بس
+    if (x > a) {
+      c = b; b = a; a = x;
+    } else if (x > b) {
+      c = b; b = x;
+    } else if (x > c) {
+      c = x;
+    }
+  }
+  const out = [];
+  for (const v of [a, b, c]) if (v !== -Infinity) out.push(v);
+  return out;
+}
+console.log(topThree([5, 1, 9, 7, 9, 3]));
+console.log(topThree([1, 2]));
+console.log(topThree([]));
+~~~
+
+~~~text الناتج: node top3.js
+[ 9, 7, 5 ]
+[ 2, 1 ]
+[]
+~~~
+
+**ليه كده:**
+
+- ٣ متغيرات: [[a]] الأكبر، و [[b]] التاني، و [[c]] التالت. كلهم بيبدأوا [[-Infinity]].
+- [[continue]] لو الرقم زي واحد منهم: عايزين أرقام **مختلفة** (الـ 9 التانية اتنطت).
+- لما رقم يدخل مكان، اللي تحته **بيتزق** لتحت: لو أكبر من [[a]]، القديم في [[b]] ينزل لـ [[c]]، و [[a]] القديم ينزل لـ [[b]]، والجديد ياخد [[a]]. الترتيب [[c = b; b = a; a = x;]] مهم: من تحت لفوق عشان محدش يتمسح قبل ما يتنقل.
+- في الآخر بنشيل أي [[-Infinity]] فاضل، فـ [[topThree([1, 2])]] بترجّع رقمين بس.
+
+**الغلطة الشائعة:** الزق بالترتيب الغلط ([[a = x; b = a;]])، فـ [[b]] تاخد [[x]] الجديدة بدل [[a]] القديمة والرقم القديم يضيع.` }
           ],
           flag: "script",
           deep: {
@@ -5170,7 +10686,12 @@ test("مفيش تاني: [5] و [2, 2, 2] و [] ← undefined (مش -Infinity)",
   }
   return second === -Infinity ? undefined : second;
 }`
-          }
+          },
+          ref: [
+            { t: "MDN: Array.prototype.sort()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort" },
+            { t: "MDN: Infinity", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity" },
+            { t: "MDN: Strict equality (===)", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Strict_equality" }
+          ]
         }
       ]
     }

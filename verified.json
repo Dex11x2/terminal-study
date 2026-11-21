@@ -9545,9 +9545,9 @@
   "on": "Node 24 Windows"
  },
  "js|&& و || و !": {
-  "hash": "62ffdf979d7a",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "de1b8ea8a2dd",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|++ و -- و += وأخواتها": {
   "hash": "b0968b3d6690",
@@ -9555,9 +9555,9 @@
   "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
  },
  "js|== و ===": {
-  "hash": "988fc1105448",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "e12c4a1ed815",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|Array: Array.of و fill و copyWithin": {
   "hash": "c0ba20d56f82",
@@ -10085,9 +10085,9 @@
   "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
  "js|break و continue": {
-  "hash": "a2927e21fdf5",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "2f0680c5c1a5",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|breakpoints و node --inspect و source maps": {
   "hash": "b7b3759e6d82",
@@ -10155,9 +10155,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|debugger": {
-  "hash": "13b7f6da39f1",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "b21402114a64",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|deep equal": {
   "hash": "ddfadebd76c5",
@@ -10240,14 +10240,14 @@
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|for و while": {
-  "hash": "4f689d5ebdf4",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "9a7e16e2730b",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|for...of و for...in": {
-  "hash": "510bb9cd1afb",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "0f6cdd83b3d4",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|form-associated و ElementInternals": {
   "hash": "9f83857424ac",
@@ -10290,9 +10290,9 @@
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|if و else if": {
-  "hash": "4395196b228a",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "d2fd5f87b47e",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|immutability": {
   "hash": "2f13bfdd4350",
@@ -10330,9 +10330,9 @@
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|let و const و var": {
-  "hash": "3dc24ea58031",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "6666f34fe8b4",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|library ولا framework: مين بينادي مين": {
   "hash": "9c3d7edfa76f",
@@ -10390,9 +10390,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|number و NaN": {
-  "hash": "a34507e1d1ba",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "a810fc5ad2e4",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|numeric literals و numeric separators": {
   "hash": "fdacdb70fb5a",
@@ -10425,9 +10425,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|primitives و objects": {
-  "hash": "869dd756edec",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "7176bb1f2c83",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|property descriptors: Object.defineProperty": {
   "hash": "a4cc11349c5b",
@@ -10440,9 +10440,9 @@
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|pseudocode": {
-  "hash": "1768679bdf71",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "1e753c4a9961",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|public class fields و static initialization blocks": {
   "hash": "7a627fb2656a",
@@ -10510,9 +10510,9 @@
   "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
  },
  "js|string methods": {
-  "hash": "7d75be6f2041",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "5e583802e1e5",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|string و UTF-16: length و codePointAt": {
   "hash": "c6173136c978",
@@ -10525,14 +10525,14 @@
   "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
  },
  "js|switch ولا object lookup": {
-  "hash": "9ab996fe5bab",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "90ab6f116426",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|template literals": {
-  "hash": "c1cc87ef5c91",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "585c92ca8de7",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|test و match و matchAll و replace": {
   "hash": "f2e725a4dc6a",
@@ -10555,9 +10555,9 @@
   "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
  },
  "js|truthy و falsy": {
-  "hash": "9378d9d793f4",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "c32853abefff",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|try و catch و finally": {
   "hash": "392d306e20ab",
@@ -10565,9 +10565,9 @@
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|typeof": {
-  "hash": "206ca5e3325a",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "a8f3c40a533a",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|valueOf و toString و Symbol.toPrimitive": {
   "hash": "4838e0d94ad3",
@@ -10660,9 +10660,9 @@
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
  "js|اقرا الـ error": {
-  "hash": "319171a67e6e",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "16d94e27f478",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|اقرا رسالة الخطأ في JavaScript": {
   "hash": "7c6e430708e7",
@@ -10705,9 +10705,9 @@
   "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
  "js|المتغيرات والأنواع والعمليات": {
-  "hash": "b4b2bd2f14f8",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "9563787faef7",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|تختار dependency وتفحصها: npm view و audit": {
   "hash": "9d47294b21a4",
@@ -10720,79 +10720,79 @@
   "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
  },
  "js|تمارين أساسيات ١": {
-  "hash": "9e0a25a48884",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "7fe31872a521",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|تمارين أساسيات ٢": {
-  "hash": "361f01d8b1ae",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "bcb5828f1218",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|تمرين charCount": {
-  "hash": "4d12d15cd802",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "7b5a6ed463dd",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|تمرين countEvens": {
-  "hash": "73f32ca644a3",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "c05811ecd5a5",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|تمرين countVowels": {
-  "hash": "4b0c3bf71dfe",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "fcd10703b186",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|تمرين factorial": {
-  "hash": "2505a211eae9",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "4f502558360c",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|تمرين fibonacci": {
-  "hash": "cc821e51f3b6",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "7bb070dec88a",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|تمرين isPrime": {
-  "hash": "283d06aae08e",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "8f7c4220bd44",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|تمرين maxOf": {
-  "hash": "1f92c48dcaa9",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "bc007dd52663",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|تمرين reverse": {
-  "hash": "191edca8dec4",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "997154a9173e",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|تمرين secondLargest": {
-  "hash": "4d8612807a53",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "59f3428a74ea",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|تمرين sumDigits": {
-  "hash": "ef81ef89e54f",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "66e0fb8a02ed",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|تمرين sumTo": {
-  "hash": "63cef30ccf09",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "4a59aa71c8b1",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|تمرين table": {
-  "hash": "7ab2e5ad11bb",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "f48c2f04482f",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|تمرين unique": {
-  "hash": "60a75029bd3b",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "d9203d119cb8",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|خريطة مشاريع JS": {
   "hash": "3b7abc47e724",
@@ -10950,9 +10950,9 @@
   "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
  },
  "js|مقدمة الدوال function": {
-  "hash": "1b335a7ade61",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "d23550ef342f",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|مكتبتك الصغيرة: API و exports و tests": {
   "hash": "67ab537a120a",
@@ -10970,9 +10970,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|يعني إيه برنامج": {
-  "hash": "6a14a3d828cb",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "cf53a1f6259f",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "kotlin|Activity و lifecycle": {
   "hash": "3d31db0d8175",
