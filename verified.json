@@ -10050,9 +10050,9 @@
   "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
  },
  "js|arrow و this": {
-  "hash": "8eb2896d6242",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "11dd8b4db53c",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (strict/sloppy labelled), Chrome 157 via Playwright for the page drills"
  },
  "js|async في loops": {
   "hash": "7906ca4e7d26",
@@ -10095,9 +10095,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|call و apply و bind": {
-  "hash": "9b8c23759356",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "882f1bbffefe",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (strict/sloppy labelled), Chrome 157 via Playwright for the page drills"
  },
  "js|callbacks و events: الـ async قبل Promise": {
   "hash": "7bb44ab8da52",
@@ -10110,19 +10110,19 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|class": {
-  "hash": "810dd00c3520",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "def04dad1545",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (strict/sloppy labelled), Chrome 157 via Playwright for the page drills"
  },
  "js|closure": {
-  "hash": "48553c9c9e8b",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "b25b87e2c209",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (strict/sloppy labelled), Chrome 157 via Playwright for the page drills"
  },
  "js|closures في loop": {
-  "hash": "38afce5a55db",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "9c9479764441",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (strict/sloppy labelled), Chrome 157 via Playwright for the page drills"
  },
  "js|curry": {
   "hash": "79e4243b8fc6",
@@ -10225,9 +10225,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|extends و super": {
-  "hash": "571e73efc029",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "e0e1b941be16",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (strict/sloppy labelled), Chrome 157 via Playwright for the page drills"
  },
  "js|fetch و AbortController": {
   "hash": "2bd89cba8f68",
@@ -10285,9 +10285,9 @@
   "on": "Windows, Node 24.22 (sols re-run), Chrome 157 via Playwright on a local node:http server for the DOM pages"
  },
  "js|hoisting و TDZ": {
-  "hash": "066e3dbdfd69",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "93f79065aeae",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (strict/sloppy labelled), Chrome 157 via Playwright for the page drills"
  },
  "js|if و else if": {
   "hash": "d2fd5f87b47e",
@@ -10435,9 +10435,9 @@
   "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
  },
  "js|prototype chain": {
-  "hash": "6b7b3915d035",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "b50f03e9c966",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (strict/sloppy labelled), Chrome 157 via Playwright for the page drills"
  },
  "js|pseudocode": {
   "hash": "1e753c4a9961",
@@ -10485,9 +10485,9 @@
   "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
  },
  "js|scope": {
-  "hash": "24c32339ab85",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "3717051237b3",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (strict/sloppy labelled), Chrome 157 via Playwright for the page drills"
  },
  "js|shadow DOM": {
   "hash": "fe335aa06c45",
@@ -10545,9 +10545,9 @@
   "on": "Windows, Node 24.22 (sols re-run), Chrome 157 via Playwright on a local node:http server for the DOM pages"
  },
  "js|this": {
-  "hash": "903a18b6fb79",
-  "date": "2026-11-03",
-  "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+  "hash": "bd3eb2f73fe1",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (strict/sloppy labelled), Chrome 157 via Playwright for the page drills"
  },
  "js|toUpperCase و toLocaleUpperCase": {
   "hash": "07ddb43a77b7",
