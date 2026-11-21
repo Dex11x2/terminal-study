@@ -1,1131 +1,1370 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "WebAssembly",
+      t: "Web Components",
       l: 3,
-      lab: R`mkdir -p ~/lab/wasm-as && cd ~/lab/wasm-as && npm i -D -E assemblyscript && npx asinit . -y  # فولدر جديد فاضي: من غير npm init -y قبلها`,
+      n: "عناصر HTML بتعملها بنفسك (<user-card>) من غير framework: custom elements و shadow DOM و slots، وإزاي تستخدمها جوه React و Vue، وتدخل الفورم بـ ElementInternals، وتظهر من غير flash بـ Declarative Shadow DOM و :defined",
       projects: [
-        { lvl: 'صغير', t: R`آلة حاسبة wasm من الترمنال`, what: R`[[calc.c]] فيه [[add]] و [[sub]] و [[mul]] و [[divi]] بـ [[EXPORT]] (درس «wasm من C»)، و [[calc.mjs]] بيقرا [[process.argv]] بالشكل [[node calc.mjs 6 x 7]] (استخدم [[x]] مش [[*]] عشان الشيل بيفك النجمة) وينادي الدالة الصح.`, done: R`[[node calc.mjs 6 x 7]] بيطبع [[42]]. والقسمة على صفر بتطبع رسالة واضحة وبتخرج بكود ١ لأن الغلاف فحص قبل النداء، ولو شلت الفحص wasm بيرمي [[RuntimeError: divide by zero]]. وعملية مش معروفة أو رقم مش رقم بيطبعوا طريقة الاستخدام.` },
-        { lvl: 'صغير', t: R`مكتبة نصوص بـ AssemblyScript`, what: R`[[reverse(s)]] و [[isPalindrome(s)]] و [[countWords(s)]] في [[assembly/index.ts]] (درس «AssemblyScript»)، وملف [[demo.mjs]] بيستوردهم من [[build/release.js]].`, done: R`[[reverse("abc")]] بترجّع [[cba]]، و [[isPalindrome("level")]] [[true]]، و [[reverse("")]] نص فاضي، و [[reverse(null)]] بترمي [[TypeError]] من الـ bindings بدل ما توقّع الـ wasm. وحجم [[release.wasm]] مكتوب في README.` },
-        { lvl: 'متوسط', t: R`صفحة تكبير حروف حيّة ومتينة`, what: R`صفحة فيها [[textarea]] ونتيجة وعداد (درس «WebAssembly في المتصفح»)، بتحمّل [[text.wasm]] بدالة [[loadWasm(url, imports)]] بتجرّب [[instantiateStreaming]] ولو رميت [[TypeError]] بتاع الـ MIME ترجع لـ [[arrayBuffer()]] + [[instantiate]]، وبتقطّع النص الطويل بـ [[encodeInto]].`, done: R`مع سيرفر بيبعت [[application/wasm]] مفيش تحذير، ومع [[application/octet-stream]] بيظهر [[console.warn]] مرة واحدة والصفحة شغالة. ولو الملف 404 بتظهر رسالة فيها الـ status بدل [[CompileError]] (يعني فحصت [[res.ok]] قبل الـ compile). ونص 10 آلاف حرف عربي وانجليزي بيرجع سليم.` },
-        { lvl: 'متوسط', t: R`تقرير: wasm ولا JS؟`, what: R`سكربت [[report.mjs]] بيقيس بـ [[bench]] (الوسيط بعد warm-up) تلات حاجات في JS وفي wasm: الأعداد الأولية، ونداء [[add]] ملايين المرات، و [[countWords]] بتاعة AssemblyScript على نص كبير. من دروس «wasm من C» و «AssemblyScript» و «wasm يستاهل إمتى».`, done: R`بيطبع جدول بالعمودين ونسبة الفرق لكل حالة، ونفس الناتج في JS و wasm (لو اختلفوا بيطبع تحذير)، واتشغّل مرتين والترتيب ما اتغيّرش، و README فيه رأيك بالأرقام.` },
-        { lvl: 'كبير', t: R`موديول wasm بغلاف JS متين`, what: R`[[wasm-math.mjs]] بيحمّل [[sum.wasm]] مرة واحدة بس (بيحفظ الـ Promise)، وبيعمل export لـ [[sumArray]] و [[maxOf]]: بيفحص المدخل (مصفوفة أرقام int32)، وبيقطّع أي مصفوفة أكبر من 1024 لحتت ويجمع نواتجها BigInt، وبيرمي error فيه المسار لو الـ [[.wasm]] مش موجود. ومعاه [[check.mjs]] بـ [[node:assert/strict]]. من الوحدة كلها ومن درس الأخطاء.`, done: R`[[node check.mjs]] بيعدّي على ٨ حالات على الأقل: مصفوفة فاضية، ورقم واحد، و 3000 رقم (نفس ناتج [[reduce]] في JS)، وسوالب، و [[1.5]] مرفوض، ونص مرفوض، ورقم أكبر من int32 مرفوض، وملف مش موجود رسالته فيها اسم الملف. والتحميل حصل مرة واحدة حتى لو ناديت الدالة ١٠٠ مرة، والسكربت بيشتغل مرتين ورا بعض بنفس الناتج.`, ext: R`زوّد نسخة بتشتغل في Web Worker عشان الصفحة متعلقش مع المصفوفات الكبيرة، وانشره كـ package صغير فيه README وأمثلة.` },
-        { lvl: 'فكرة', t: R`حاجة تستاهل wasm بجد`, what: R`اختار شغل تقيل حقيقي (فلتر صور، أو hash لملف كبير، أو ضغط، أو محاكاة فيزيا) واعمله في JS الأول، وبعدين في C أو AssemblyScript، وقيس قبل ما تقرر. انت اللي بتختار المشكلة وشكل الصفحة.`, done: R`فيه نسختين بنفس الناتج بالظبط، وجدول قياس فيه وقت النسخ للذاكرة، وقرار مكتوب في README: wasm كسب ولا لأ وبكام.`, ext: R`جرّب [[-msimd128]]، أو مكتبة C جاهزة معمولها compile، أو Rust بـ wasm-pack، وقارن الحجم والسرعة.` },
+        { lvl: 'صغير', t: R`[[<relative-time>]] زي GitHub`, what: R`[[<relative-time datetime="2026-10-29T10:00:00Z">]] بيكتب «قبل 3 دقائق» بـ [[Intl.RelativeTimeFormat("ar", { numeric: "auto" })]] (درس customElements.define)، وبيتحدّث كل دقيقة بـ [[setInterval]] بيتعمل في [[connectedCallback]] ويتمسح في [[disconnectedCallback]]، وبيسمع لتغيير [[datetime]].`, done: R`تاريخ من 3 دقايق بيطلع «قبل 3 دقائق» ومن يوم بيطلع «أمس»، وبعد دقيقة النص بيتغير لوحده، و [[setAttribute("datetime", ...)]] بيحدّثه على طول، و [[remove()]] بيوقّف الـ interval (عدّاد في الـ callback بيقف)، وتاريخ غلط بيكتب «تاريخ غلط» مش «Invalid Date».` },
+        { lvl: 'صغير', t: R`[[<toggle-switch>]] بالكيبورد`, what: R`مفتاح on/off بـ shadow DOM (درس ٢) و [[checked]] boolean بيعمل reflect (درس ٤): [[role="switch"]] و [[aria-checked]] و [[tabindex="0"]]، وبيتقلب بالضغط أو Space أو Enter، وبيبعت [[change]] event فيه [[detail.checked]].`, done: R`Tab بيوصله و Space بيقلبه، و [[el.checked = true]] بيحط attribute [[checked]] و [[removeAttribute("checked")]] بيرجّع [[el.checked]] بـ [[false]]، و [[aria-checked]] ماشي مع الحالة، والـ [[change]] بيتبعت مرة واحدة لكل تغيير من اليوزر ومبيتبعتش لما الكود يغيّر [[checked]].` },
+        { lvl: 'متوسط', t: R`[[<tab-group>]] بالـ slots`, what: R`[[<tab-group>]] جواه [[<button slot="tab">]] و [[<section slot="panel">]] بأي عدد (درس slots)، و [[slotchange]] بيربط كل تاب باللوحة بتاعته، والأسهم يمين وشمال بتتنقل بين التابات، والتاب النشط attribute [[selected]] (درس ٤)، و event [[tab-change]] بـ [[composed: true]].`, done: R`٣ تابات بيشتغلوا بالماوس والأسهم، وتزويد تاب رابع من Console بيشتغل من غير refresh، و [[selected="2"]] في الـ HTML بيفتح التالت، والـ CSS بتاع الصفحة مبيبوّظش شكل التابات، و listener على [[document]] بيستقبل [[tab-change]] بالـ index الصح.` },
+        { lvl: 'متوسط', t: R`design system صغير`, what: R`٣ components ([[<ui-button>]] و [[<ui-card>]] و [[<ui-badge>]]) بيشاركوا [[CSSStyleSheet]] واحد بـ [[adoptedStyleSheets]] (درس shadow DOM)، والألوان كلها CSS custom properties، و [[::part]] للأجزاء اللي مسموح تتغير، وصفحة demo فيها الـ light و dark بتغيير variables على [[:root]] بس.`, done: R`تغيير [[--ui-primary]] في [[:root]] بيغيّر الـ ٣ components مع بعض، و [[p { color: red }]] في الصفحة مبيأثرش جواهم، و [[ui-button::part(label)]] بيكبّر الخط، والـ dark mode بيتقلب بزرار واحد من غير ما يلمس أي component، والـ stylesheet اتعمل مرة واحدة بس (ابحث في الكود: [[new CSSStyleSheet]] مرة واحدة).` },
+        { lvl: 'كبير', t: R`[[<image-uploader>]] تستخدمه في أي framework`, what: R`component بيجمع الوحدة دي مع APIs المتصفح: input و drag and drop ومعاينة وفحص النوع بأول bytes والحجم، ورفع بـ progress وإلغاء. attributes [[accept]] و [[max-size]] و [[endpoint]] و [[multiple]]، و events [[upload-start]] و [[upload-done]] و [[upload-error]] بـ [[composed: true]]، و slots للنص والأيقونة، و [[revokeObjectURL]] و [[abort()]] لكل حاجة في [[disconnectedCallback]]. واستخدمه في صفحة HTML عادية، و React 19، و Vue.`, done: R`ملف أكبر من [[max-size]] أو نوعه غلط بيطلع [[upload-error]] فيه السبب ومبيتبعتش، والرفع على Slow 4G بيبين progress والإلغاء بيشتغل، وشيل العنصر من الصفحة في نص الرفع بيلغي الـ request (Network يأكد)، ونفس الـ component شغال في التلات أماكن والـ events بتوصل لـ state بتاع React و Vue، و تستات بـ [[node:test]] و jsdom بتتأكد من الـ attributes والـ events من غير متصفح.`, ext: R`خليه form-associated بـ [[attachInternals()]] عشان يتبعت مع الفورم، وزوّد crop للصورة، وانشره على npm بـ README وصفحة demo.` },
+        { lvl: 'فكرة', t: R`component تستخدمه في كل مشاريعك`, what: R`اختار حاجة بتعملها في كل مشروع (modal، أو toast، أو dropdown، أو date picker، أو rating) وابنيها Web Component واحد يشتغل مع أي framework: attributes للقيم البسيطة، و properties للمعقدة، و events للي بيحصل، و slots للمحتوى، و CSS variables للشكل.`, done: R`فيه صفحة demo فيها كل الحالات، وبيشتغل بالكيبورد بس، ومستخدم في مشروعين مختلفين على الأقل (واحد منهم React أو Vue)، و README بيشرح كل attribute و event بمثال.`, ext: R`اعمله بـ Lit وقارن حجم الكود والـ bundle بالنسخة اللي من غير مكتبة، وزوّد Declarative Shadow DOM عشان يترندر من السيرفر.` },
       ],
-      n: "كود C أو AssemblyScript بيتحول ملف .wasm يشتغل في المتصفح و Node، وبرا المتصفح بـ WASI: تعمله compile، وتحمّله من JS، وتعدّي داتا في الذاكرة، وتشغّله في Worker، وتعرف إمتى يستاهل",
       items: [
         {
-          cmd: "wasm من C",
-          title: "تحوّل C لـ .wasm بـ clang في Docker وتناديه من Node",
-          desc: R`[[clang --target=wasm32]] بيحوّل ملف C لـ [[.wasm]] صغير (المثال طلع 722 byte). الدوال اللي عليها [[export_name]] بتبقى دوال JavaScript، و [[memory]] (ذاكرة الـ wasm) بتبقى [[ArrayBuffer]] تقدر تقرا وتكتب فيه من JS.
+          cmd: "customElements.define",
+          title: "تعمل tag HTML جديد بـ customElements.define (custom elements)",
+          desc: R`[[customElements.define("user-card", UserCard)]] بيسجّل tag جديد، و [[UserCard]] class بيورث [[HTMLElement]]. من ساعتها أي [[<user-card>]] في الصفحة (حتى اللي كان موجود قبل التسجيل) بيبقى instance من الـ class ده.
 
-مش محتاج تسطّب compiler على جهازك: [[alpine]] + [[clang]] و [[lld]] جوه Docker. ولو أول مرة تشوف [[.wasm]]، ابدأ بدرس [[.wasm]] في تاب الملفات (البصمة والـ sections).`,
-          example: R`// sum.c: دوال C هتتحول WebAssembly
-#define EXPORT(name) __attribute__((export_name(name)))
-EXPORT("add")
-int add(int a, int b) { return a + b; }
-static int buffer[1024];
-EXPORT("buffer_ptr")
-int *buffer_ptr(void) { return buffer; }
-EXPORT("sum_array")
-long long sum_array(int *arr, int len) {
-  long long total = 0;
-  for (int i = 0; i < len; i++) total += arr[i];
-  return total;
-}
-EXPORT("count_primes")
-int count_primes(int limit) {
-  int count = 0;
-  for (int n = 2; n < limit; n++) {
-    int prime = 1;
-    for (int d = 2; d * d <= n; d++) {
-      if (n % d == 0) { prime = 0; break; }
-    }
-    count += prime;
+الـ class ليه lifecycle callbacks: [[connectedCallback]] لما يدخل الصفحة، و [[disconnectedCallback]] لما يتشال، و [[attributeChangedCallback]] لما attribute من اللي في [[observedAttributes]] يتغير. والاسم **لازم** فيه [[-]].`,
+          example: R`class UserCard extends HTMLElement {
+  static observedAttributes = ["name", "role"];
+  constructor() {
+    super();
+    console.log("constructor");
   }
-  return count;
-}`,
-          try: R`احفظ المثال [[sum.c]]، وفي نفس الفولدر شغّل:
-[[docker run --rm -v "$PWD:/src" -w /src alpine:3.22 sh -c "apk add --no-cache clang lld && clang --target=wasm32 -O2 -nostdlib -Wl,--no-entry -o sum.wasm sum.c"]]
-(في PowerShell بدّل [[$PWD]] بـ [[$__{PWD}]]). وبعدين اعمل [[run.mjs]] يحمّل [[sum.wasm]] ويطبع [[add(2, 3)]]، ويكتب [[[10, 20, 30, 40]]] في [[buffer_ptr()]] وينادي [[sum_array]]. إيه نوع الناتج؟`,
+  connectedCallback() {
+    console.log("connected");
+    this.render();
+  }
+  disconnectedCallback() {
+    console.log("disconnected");
+  }
+  attributeChangedCallback(name, oldValue, newValue) {
+    console.log($__btattribute $__{name}: $__{oldValue} -> $__{newValue}$__bt);
+    this.render();
+  }
+  render() {
+    const name = this.getAttribute("name") ?? "Guest";
+    const role = this.getAttribute("role") ?? "member";
+    this.textContent = $__bt$__{name} ($__{role})$__bt;
+  }
+}
+customElements.define("user-card", UserCard);`,
+          try: R`احفظ المثال [[user-card.js]]، واعمل صفحة فيها [[<user-card name="Sara" role="admin"></user-card>]] و [[<script type="module" src="user-card.js">]]. افتح Console: الترتيب إيه؟ وبعدين في الـ Console: [[document.querySelector("user-card").setAttribute("role", "owner")]]، وبعدين [[.remove()]]، وبعدين جرّب [[customElements.define("usercard", class extends HTMLElement {})]].`,
           practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** قبل ما تشغّل، اكتب في تعليق في [[run.mjs]] إيه اللي هيطبعه [[add(2147483647, 1)]]، وإيه [[typeof]] اللي هترجّعه [[sum_array]]. بعدين شغّل وقارن.`, done: R`كاتب توقعك قبل التشغيل، والناتج الحقيقي: [[add]] بترجّع [[-2147483648]] (الـ [[int]] لفّ من غير ولا error)، و [[typeof]] ناتج [[sum_array]] هو [[bigint]] لأن [[long long]] بيبقى BigInt في JS. ولو توقعك غلط، كاتب السبب في سطر.` },
-            { lvl: 'تطبيق', t: R`**مسألة بحالات طرفية:** زوّد على [[sum.c]] دالة [[max_array(int *arr, int len)]] بترجّع أكبر رقم، واكتب في JS غلاف [[maxOf(nums)]] بيكتب الأرقام في [[buffer_ptr()]] وينادي الدالة.`, done: R`[[maxOf([5, 99, -100, 3])]] بترجّع [[99]]، و [[maxOf([-7, -3, -9])]] بترجّع [[-3]] مش [[0]] (يعني بدأت من أول عنصر مش من صفر)، و [[maxOf([])]] بترمي error من JS قبل ما توصل للـ C.` },
-            { lvl: 'تحدي', t: R`**ابني غلاف متين:** [[sumArray(nums)]] بيرفض أكتر من 1024 رقم (حجم [[buffer]])، وأي رقم مش [[Number.isInteger]] أو برا حدود int32، وبيرجّع Number عادي لو الناتج أصغر من [[Number.MAX_SAFE_INTEGER]].`, done: R`1024 مرة [[2147483647]] بترجّع [[2199023254528]] (بيساوي [[2147483647n * 1024n]])، و 1025 رقم، و [[1.5]]، و [[2 ** 31]] كل واحد بيرمي error برسالة بتقول المشكلة فين، من غير ما يكتب حاجة في الذاكرة.` },
+            { lvl: 'سريع', t: R`اتوقع وبعدين شغّل جوه try/catch: [[customElements.define("usercard", class extends HTMLElement {})]]، وبعدها تعرّف [[user-x]] مرتين، وبعدها نفس الـ class بإسمين مختلفين.`, done: R`الأول بيرمي [[DOMException]] اسمها [[SyntaxError]] (الاسم لازم فيه [[-]])، والتاني والتالت بيرموا [[NotSupportedError]] (الاسم أو الـ class اتسجّلوا قبل كده)، وتقدر تقول إزاي تتجنب التاني في ملف ممكن يتحمّل مرتين ([[if (!customElements.get("user-x"))]]).` },
+            { lvl: 'تطبيق', t: R`ابني [[<copy-button text="npm i idb">]]: زرار بيكتب «انسخ»، والضغط بيعمل [[navigator.clipboard.writeText]] للـ [[text]]، ويكتب «اتنسخ ✓» لمدة ثانيتين ويرجع، ولو النسخ فشل يكتب «مقدرتش أنسخ».`, done: R`تضغط وتعمل paste في أي حتة فيطلع النص بالظبط، والزرار بيرجع «انسخ» بعد ثانيتين، والضغط مرتين بسرعة مبيخليش النص يرجع بدري (الـ timeout القديم اتلغى)، وتغيير [[text]] من Console بينسخ القيمة الجديدة.` },
+            { lvl: 'تحدي', t: R`صلّح باج الـ upgrade: الكود بيعمل [[el.name = "Sara"]] على [[<user-card>]] **قبل** [[customElements.define]] (السكربت اتحمّل متأخر)، والـ class فيه [[set name(v)]] بيرسم. الاسم مبيظهرش. صلّحها في [[connectedCallback]]، وخبّي العنصر لحد ما يتعرّف بـ [[user-card:not(:defined)]].`, done: R`قبل التصليح [[el.textContent]] فاضي و [[Object.hasOwn(el, "name")]] بـ [[true]] (الـ property العادية غطّت الـ setter)، وبعد التصليح (تقرا القيمة، و [[delete this.name]]، وتحطها تاني) بيرسم «Sara»، والصفحة مبيبانش فيها العنصر فاضي قبل التعريف، و [[customElements.whenDefined("user-card")]] بيتحل بعد [[define]].` },
           ],
           flag: "script",
           deep: {
-            why: R`عندك كود C أو C++ أو Rust موجود ومتجرّب (ضغط، تشفير، معالجة صور، parser) وعايز تستخدمه في المتصفح أو Node من غير ما تعيد كتابته. WebAssembly هو الطريقة: نفس الكود، ملف [[.wasm]] بيشتغل في أي مكان فيه JavaScript.`,
-            how: R`[[clang]] جزء من LLVM، و [[--target=wasm32]] يعني «اطلع كود WebAssembly 32-bit» بدل كود المعالج بتاعك. [[lld]] هو الـ linker ([[wasm-ld]]) اللي بيجمّع الناتج ملف واحد.
+            why: R`عايز component (كارت، زرار، date picker) يشتغل في أي صفحة: React أو Vue أو HTML عادي أو CMS، من غير ما تعيد كتابته لكل framework. Web Components جزء من المتصفح نفسه، فمش محتاجة مكتبة ولا build. Design systems كبيرة (زي Shoelace/Web Awesome و Material Web) مبنية كده.`,
+            how: R`[[customElements]] هو الـ registry (السجل) بتاع الصفحة. [[define(name, Class)]] بيربط الاسم بالـ class، والمتصفح بيعمل «upgrade» لكل [[<user-card>]] موجود: يشغّل الـ [[constructor]]، وبعدين [[attributeChangedCallback]] لكل attribute متابَع موجود، وبعدين [[connectedCallback]].
 
-[[-nostdlib]]: من غير مكتبة C القياسية (مفيش [[printf]] ولا [[malloc]]). عشان كده الكود بيستخدم array ثابت [[buffer]] بدل [[malloc]]. لو محتاج المكتبة القياسية استخدم WASI SDK أو Emscripten. [[-Wl,--no-entry]]: مفيش [[main]]، ده library. [[-O2]]: optimization.
+[[static observedAttributes]]: الـ attributes اللي عايز تتبلّغ بيها. أي attribute تاني (زي [[title]]) بيتغير من غير ما الـ callback يتنادى.
 
-[[__attribute__((export_name("add")))]]: الدالة دي تبان لـ JavaScript بالاسم ده. والـ [[#define EXPORT]] بس عشان نختصرها.
+[[super()]] لازم أول سطر في الـ constructor (عشان [[HTMLElement]] يتجهز). ومتقراش attributes ولا تضيف أولاد في الـ constructor: لو العنصر اتعمل بـ [[createElement]] لسه معندوش attributes. اعمل ده في [[connectedCallback]].
 
-الأنواع: [[int]] في wasm32 هو [[i32]] = number في JS. [[long long]] هو [[i64]]، و JS بيستلمه **BigInt** ([[100n]]). والـ pointer ([[int *]]) مجرد رقم: مكان (offset) جوه [[memory]]. JS بيكتب في الذاكرة بـ [[new Int32Array(memory.buffer, ptr, len)]] ويدّي الـ pointer للدالة.`,
-            when: R`كود native موجود عايز تشغّله في الويب، أو حسابات تقيلة على أرقام (درس [[wasm يستاهل إمتى]]). مش لكود عادي بيتعامل مع DOM أو JSON.`,
-            mistakes: R`تنسى [[lld]] فـ clang يقع بـ [[unable to execute command: Executable "wasm-ld" doesn't exist]]. وتنسى [[export_name]] فالدالة متبانش (أو يشيلها الـ optimizer). وتقارن ناتج [[long long]] بـ [[===]] مع number: [[100n === 100]] بـ false. وتكتب في الـ buffer أكتر من حجمه (1024 [[int]]): مفيش حماية، هتكتب فوق داتا تانية جوه الـ wasm.`
+الاسم لازم فيه [[-]] وحروف صغيرة: ده اللي بيفرّق الـ custom elements عن الـ tags الحقيقية (HTML عمره ما هيضيف tag فيه [[-]]). وكل اسم بيتسجّل مرة واحدة في الصفحة.`,
+            when: R`components لازم تشتغل في أكتر من framework أو في صفحات مش بتاعتك (widgets، embeds)، و design systems، وصفحات من غير build. لتطبيق React كامل جوه React، الـ components العادية أسهل.`,
+            mistakes: R`اسم من غير [[-]]: [[SyntaxError: ... is not a valid custom element name]]. وتسجّل نفس الاسم مرتين (ملف اتحمّل مرتين): [[NotSupportedError: ... has already been used with this registry]]. وتقرا [[getAttribute]] في الـ constructor. وتنسى [[observedAttributes]] فالـ callback عمره ما يتنادى. والصفحة بتظهر العنصر فاضي قبل التسجيل (FOUC): [[user-card:not(:defined) { visibility: hidden; }]].`
           },
-          teach: R`## من C لـ [[.wasm]] لـ JavaScript
+          teach: R`## الصفحة اللي اتجرّبت
 
-اتعمله compile بـ clang 20.1.8 جوه [[alpine:3.22]]، واتشغّل بـ Node 24.22 على ويندوز.
+اتجرّب في Chrome 156 headless (عن طريق playwright-core) وسيرفر static صغير على localhost.
+
+~~~text wc1.html
+<!doctype html>
+<style>user-card:not(:defined) { visibility: hidden; }</style>
+<user-card name="Sara" role="admin"></user-card>
+<script>console.log("before define:", document.querySelector("user-card").textContent === "" ? "empty" : "?", customElements.get("user-card"));</script>
+<script type="module" src="user-card.js"></script>
+~~~
+
+- [[<user-card>]] قبل التسجيل: المتصفح بيعتبره عنصر مجهول وفاضي، مش error.
+- [[:not(:defined)]]: CSS selector بيمسك الـ custom elements اللي لسه ماتسجّلتش، فمنظهرهاش فاضية.
+- [[customElements.get("user-card")]]: الـ class المسجّل بالاسم ده، أو [[undefined]].
 
 ---
 
-## ١. الـ compile
+## ١. [[class UserCard extends HTMLElement]]
 
-~~~bash
-docker run --rm -v "$PWD:/src" -w /src alpine:3.22 sh -c "apk add --no-cache clang lld && clang --target=wasm32 -O2 -nostdlib -Wl,--no-entry -o sum.wasm sum.c"
+- [[extends HTMLElement]]: الـ class بيورث كل حاجة في أي عنصر: [[getAttribute]] و [[textContent]] و [[addEventListener]] و [[remove()]].
+- [[static observedAttributes = ["name", "role"]]]: [[static]] يعني الخاصية على الـ class نفسه مش على كل instance. المتصفح بيقراها مرة وقت [[define]].
+
+---
+
+## ٢. الـ callbacks
+
+| الـ callback | بيتنادى إمتى |
+|---|---|
+| [[constructor()]] | العنصر اتعمل أو اتعمله upgrade |
+| [[connectedCallback()]] | دخل الـ document |
+| [[disconnectedCallback()]] | اتشال من الـ document |
+| [[attributeChangedCallback(name, old, new)]] | attribute متابَع اتغير (أو اتحط أول مرة) |
+
+- [[render()]]: دالة بتاعتنا مش من المتصفح. [[?? "Guest"]]: لو [[getAttribute]] رجّع [[null]] خد [["Guest"]].
+- [[this.textContent = ...]]: [[this]] هو العنصر نفسه.
+
+---
+
+## ٣. الترتيب الحقيقي
+
+~~~text Console
+before define: empty undefined
+constructor
+attribute name: null -> Sara
+attribute role: null -> admin
+connected
 ~~~
 
-| الحتة | معناها |
-|---|---|
-| [[-v "$PWD:/src" -w /src]] | الفولدر الحالي يبقى [[/src]] جوه الـ container ونشتغل فيه |
-| [[apk add --no-cache clang lld]] | سطّب الـ compiler والـ linker (جوه الـ container بس) |
-| [[--target=wasm32]] | اطلع WebAssembly 32-bit |
-| [[-O2]] | optimization |
-| [[-nostdlib]] | من غير مكتبة C القياسية |
-| [[-Wl,--no-entry]] | [[-Wl,]] = مرّر للـ linker. [[--no-entry]] = مفيش [[main]] |
-| [[-o sum.wasm]] | اسم الناتج |
+قبل التسجيل: العنصر فاضي و [[get]] رجّع [[undefined]]. وبعد [[define]]: upgrade → [[constructor]] → [[attributeChangedCallback]] لكل attribute موجود (القيمة القديمة [[null]]) → [[connectedCallback]].
+
+---
+
+## ٤. اللي حصل بعدها (من الـ Console)
 
 ~~~text الناتج
-Alpine clang version 20.1.8
--rwxr-xr-x    1 root     root           722 Oct 27 17:17 sum.wasm
+text: Sara (admin)
+card.setAttribute("role", "owner")    → attribute role: admin -> owner     text: Sara (owner)
+card.setAttribute("title", "x")       → (ولا حاجة: مش في observedAttributes)
+card.remove()                          → disconnected
 ~~~
 
-722 byte لـ ٤ دوال.
+### بـ [[createElement]]
+
+~~~text الناتج
+const c2 = document.createElement("user-card");   → constructor
+c2.setAttribute("name", "Ali");                    → attribute name: null -> Ali
+document.body.append(c2);                          → connected
+c2: Ali (member) | instanceof HTMLElement: true
+~~~
+
+لاحظ: الـ constructor اتنادى **قبل** أي attribute. لو كنت قريت [[getAttribute("name")]] في الـ constructor كان رجع [[null]].
 
 ---
 
-## ٢. الكود C سطر سطر
+## ٥. الأخطاء
 
-- [[// sum.c: ...]]: تعليق C (نفس [[//]] بتاع JS).
-- [[#define EXPORT(name) __attribute__((export_name(name)))]]: macro. أي [[EXPORT("add")]] بيتبدّل بالـ attribute الطويل اللي بيقول لـ clang «صدّر الدالة دي بالاسم ده».
-- [[int add(int a, int b)]]: دالة بترجّع [[int]] وبتاخد [[int]] اتنين.
-- [[static int buffer[1024];]]: array ثابت من 1024 [[int]] جوه ذاكرة الـ wasm (4096 byte). [[static]] = خاص بالملف ده.
-- [[int *buffer_ptr(void)]]: بترجّع **عنوان** الـ buffer ([[int *]] = pointer لـ int). JS محتاجه عشان يعرف يكتب فين.
-- [[long long sum_array(int *arr, int len)]]: بتاخد عنوان وطول، وبتجمع. [[long long]] = 64-bit عشان المجموع ميعدّيش.
-- [[count_primes]]: بتعدّ الأعداد الأولية تحت [[limit]] (للقياس في درس [[wasm يستاهل إمتى]]). [[d * d <= n]] = جرّب القسمة لحد الجذر بس.
-
----
-
-## ٣. [[run.mjs]]
-
-~~~text run.mjs
-import { readFile } from "node:fs/promises";
-
-const { instance } = await WebAssembly.instantiate(await readFile("sum.wasm"));
-const { add, buffer_ptr, sum_array, count_primes, memory } = instance.exports;
-
-console.log("exports:", Object.keys(instance.exports).join(", "));
-console.log("add(2, 3) =", add(2, 3));
-console.log("memory:", memory.buffer.byteLength / 1024, "KB");
-
-const ptr = buffer_ptr();
-const view = new Int32Array(memory.buffer, ptr, 1024);
-view.set([10, 20, 30, 40]);
-console.log("ptr =", ptr, "| sum_array =", sum_array(ptr, 4));
-console.log("count_primes(100) =", count_primes(100));
+~~~text الناتج
+SyntaxError: Failed to execute 'define' on 'CustomElementRegistry': "usercard" is not a valid custom element name
+NotSupportedError: Failed to execute 'define' on 'CustomElementRegistry': the name "user-card" has already been used with this registry
 ~~~
 
-~~~text node run.mjs
-exports: memory, add, buffer_ptr, sum_array, count_primes
-add(2, 3) = 5
-memory: 128 KB
-ptr = 1024 | sum_array = 100n
-count_primes(100) = 25
-~~~
-
-| السطر | معناه |
-|---|---|
-| [[exports: memory, ...]] | clang صدّر [[memory]] لوحده جنب الدوال |
-| [[memory: 128 KB]] | الذاكرة صفحتين، كل صفحة wasm = 64KB |
-| [[ptr = 1024]] | الـ buffer بيبدأ عند byte رقم 1024 جوه الذاكرة |
-| [[sum_array = 100n]] | [[10+20+30+40]]، و [[n]] لأن [[long long]] بيوصل BigInt |
-| [[count_primes(100) = 25]] | 2، 3، 5، ... 97: ٢٥ عدد أولي |
-
-- [[new Int32Array(memory.buffer, ptr, 1024)]]: «شوف الذاكرة من عند [[ptr]] كـ 1024 [[int]]». ده **view** مش نسخة: الكتابة فيه بتكتب في ذاكرة الـ wasm نفسها.
-- [[view.set([...])]]: اكتب الأرقام. وبعدين [[sum_array(ptr, 4)]] قرا من نفس المكان.
+و [[await customElements.whenDefined("user-card")]] بيستنى لحد ما الاسم يتسجّل (لو الكود اللي بيستخدمه اشتغل قبل ملف الـ component).
 
 ---
 
 ## الخلاصة
 
-| C | WebAssembly | JavaScript |
-|---|---|---|
-| [[int]] | [[i32]] | number |
-| [[long long]] | [[i64]] | **BigInt** |
-| [[int *]] (pointer) | [[i32]] (offset) | number = مكان في [[memory.buffer]] |
-| [[export_name("x")]] | export | [[instance.exports.x]] |
-
-النصوص والـ arrays مبتتبعتش مباشرة: تكتبها في [[memory]] وتبعت المكان والطول (درس [[WebAssembly في المتصفح]]).`,
+| الحاجة | معناها |
+|---|---|
+| [[customElements.define("x-y", Class)]] | سجّل tag، والاسم فيه [[-]] |
+| [[observedAttributes]] | الـ attributes اللي تتبلّغ بيها |
+| [[connectedCallback]] | المكان الصح للـ render والـ listeners |
+| [[disconnectedCallback]] | نضّف (timers، listeners على [[window]]) |
+| [[:not(:defined)]] | خبّي العنصر لحد ما يتسجّل |`,
           lines: [
-            R`[[#define]] بيعمل macro اسمه [[EXPORT]]: أي مكان تكتب فيه [[EXPORT("add")]] الـ preprocessor بيبدّله بالـ attribute [[export_name("add")]] قبل الـ compile. والـ attribute ده بيقول لـ clang «طلّع الدالة دي من الـ wasm بالاسم ده عشان JS يشوفها». من غيره الدالة بتفضل جوه الـ wasm ومش هتلاقيها في [[instance.exports]].`,
-            R`بيعلّم الدالة اللي تحته إنها تتصدّر باسم [[add]]. لازم ييجي قبل تعريف الدالة على طول، لأنه attribute بيتلزق في التعريف اللي بعده.`,
-            R`دالة بتجمع رقمين. [[int]] في wasm32 بيبقى [[i32]]، فـ JS بيبعت ويستقبل numbers عادية. ولو الناتج عدّى حدود الـ 32-bit (حوالي ٢.١ مليار) ده overflow ممنوع في C، وعمليًا في wasm بيلف للسالب بدل ما يكبر زي أرقام JS.`,
-            R`array ثابتة فيها ١٠٢٤ [[int]] (يعني 4096 byte) جوه ذاكرة الـ wasm. [[static]] معناها إنها موجودة طول عمر البرنامج ومش ظاهرة برّه الملف ده. هي المكان اللي JS هيكتب فيه الأرقام قبل ما يطلب جمعها، لأننا من غير مكتبة C مفيش [[malloc]].`,
-            R`بيصدّر الدالة اللي تحته باسم [[buffer_ptr]]، عشان JS يقدر يسأل «الـ buffer فين في الذاكرة؟».`,
-            R`بترجّع عنوان الـ buffer، والعنوان في wasm مجرد رقم: offset بالـ bytes من أول الذاكرة. JS بياخد الرقم ده ويعمل [[Int32Array]] على [[memory.buffer]] من المكان ده. JS ميقدرش يعرف المكان لوحده، لأن الـ compiler هو اللي بيحدده.`,
-            R`بيصدّر الدالة اللي تحته باسم [[sum_array]]، عشان JS يناديها بعد ما يكتب الأرقام في الـ buffer.`,
-            R`بتاخد عنوان أول عنصر وعدد العناصر، لأن C مبيعرفش طول الـ array من الـ pointer لوحده. وبترجّع [[long long]] (64-bit) عشان مجموع أرقام [[int]] كتير ممكن يعدّي حدود الـ 32-bit. والـ 64-bit بيوصل JS كـ [[BigInt]]، فهتشوف الناتج وفي آخره [[n]].`,
-            R`المجموع بيبدأ من صفر ونوعه 64-bit. لو كان [[int]] كان هيلف للسالب أول ما المجموع يعدّي ٢.١ مليار تقريبًا.`,
-            R`بيلف على العناصر من 0 لحد قبل [[len]] ويزوّد كل عنصر على [[total]]. ومفيش أي فحص للحدود: لو JS بعت [[len]] أكبر من الحقيقي، C هيقرا أي حاجة موجودة في الذاكرة بعد الـ buffer من غير error.`,
-            R`بيرجّع المجموع لـ JS. ولأن نوعه [[long long]] هيوصل [[BigInt]]، ولو عايزه number عادي حوّله بـ [[Number(...)]].`,
-            R`نهاية [[sum_array]].`,
-            R`بيصدّر الدالة اللي تحته باسم [[count_primes]]، ودي اللي هنقيس بيها سرعة wasm قدام JS في درس جاي.`,
-            R`بتعدّ الأعداد الأولية الأصغر من [[limit]]. شغل حسابي تقيل على أرقام بس، من غير ذاكرة ولا نصوص، فمناسب نشوف بيه wasm بيعمل إيه.`,
-            R`عدّاد الأعداد الأولية اللي لقيناها، بيبدأ من صفر.`,
-            R`بنجرّب كل رقم من 2 لحد قبل [[limit]]. البداية من 2 لأن 0 و 1 مش أوليين.`,
-            R`بنفترض إن الرقم أولي، واللفة اللي جاية هتحاول تثبت العكس. الكود مستخدم [[int]] كـ true/false: [[1]] أولي و [[0]] لأ، وده هيفيدنا تحت لما نجمعه على العدّاد.`,
-            R`بنجرّب القواسم من 2 لحد الجذر التربيعي بس ([[d * d <= n]]): لو الرقم ليه قاسم أكبر من الجذر، لازم يبقى ليه قاسم تاني أصغر منه كنا هنلاقيه قبل كده. ده بيوفّر شغل كتير قدام اللف لحد [[n]].`,
-            R`لو [[n]] بيقبل القسمة على [[d]] من غير باقي يبقى مش أولي: بنحط 0، و [[break]] تخرج من لفة القواسم على طول لأن مفيش داعي نكمّل.`,
-            R`نهاية لفة القواسم.`,
-            R`[[prime]] يا 1 يا 0، فبنزوّده على العدّاد على طول من غير [[if]]: الأولي بيزوّد واحد، والمش أولي بيزوّد صفر.`,
-            R`نهاية لفة الأرقام.`,
-            R`بيرجّع عدد الأعداد الأولية لـ JS كـ number عادي، لأن [[int]] = [[i32]].`,
-            R`نهاية [[count_primes]].`,
+            R`بنعرّف class بيورث [[HTMLElement]]، فالعنصر بتاعنا يبقى عنصر HTML حقيقي بكل خصايصه ([[getAttribute]] و [[textContent]] والـ events). من غير الوراثة دي المتصفح مش هيقدر يعمل منه عنصر.`,
+            R`[[observedAttributes]]: الـ attributes اللي عايزين المتصفح يبلّغنا لما تتغير. [[static]] لأن المتصفح بيقراها من الـ class نفسه مرة وقت [[define]]. أي attribute مش في الليستة بيتغير من غير ما [[attributeChangedCallback]] تتنادى.`,
+            R`الـ [[constructor]] بيتنادى لما العنصر يتعمل (من الـ HTML أو [[createElement]])، قبل ما يدخل الصفحة. متقراش attributes هنا: مع [[createElement]] لسه متحطتش، فـ [[getAttribute]] هترجّع [[null]].`,
+            R`[[super()]] بينادي constructor بتاع [[HTMLElement]]. لازم يبقى أول سطر: قبله [[this]] مش موجود، وأي استخدام ليه يرمي [[ReferenceError]].`,
+            R`سطر للتجربة: نشوف في الـ console إمتى الـ constructor اتنادى بالنسبة للـ callbacks التانية.`,
+            R`نهاية الـ [[constructor]].`,
+            R`[[connectedCallback]]: بيتنادى كل ما العنصر يدخل الصفحة. ده المكان الصح ترسم فيه وتبدأ timers. ولو العنصر اتنقل من مكان لمكان بيتنادى تاني، فخليه ميعملش حاجة مرتين.`,
+            R`سطر للتجربة: يبيّن إن connected بيتنادى بعد الـ constructor والـ attributes.`,
+            R`ارسم المحتوى أول ما العنصر يدخل الصفحة. الرسم في دالة لوحده لأننا هنحتاجه تاني لما attribute يتغير.`,
+            R`نهاية [[connectedCallback]].`,
+            R`[[disconnectedCallback]]: بيتنادى لما العنصر يتشال من الصفحة. هنا تنضّف أي حاجة بدأتها في connected (timers أو listeners على [[window]])، وإلا تفضل شغالة بعد ما العنصر اختفى.`,
+            R`سطر للتجربة: نتأكد إن الشيلة اتلقطت.`,
+            R`نهاية [[disconnectedCallback]].`,
+            R`[[attributeChangedCallback]]: بيتنادى لما attribute من اللي في [[observedAttributes]] يتغير، ومعاه اسمه وقيمته القديمة والجديدة. وبيتنادى كمان لكل attribute موجود في الـ HTML من الأول، قبل [[connectedCallback]].`,
+            R`اطبع اسم الـ attribute والقيمة القديمة والجديدة. أول مرة القيمة القديمة بتبقى [[null]] لأن الـ attribute مكانش موجود قبلها.`,
+            R`ارسم تاني عشان النص يعكس القيمة الجديدة على طول، من غير ما اللي غيّر الـ attribute يعمل حاجة زيادة.`,
+            R`نهاية [[attributeChangedCallback]].`,
+            R`[[render]] دالة بتاعتنا (مش من المتصفح): بتكتب المحتوى من الـ attributes الحالية. الـ callbacks الاتنين بينادوها، فالرسم مكتوب في مكان واحد.`,
+            R`اقرا [[name]]. [[getAttribute]] بترجّع [[null]] لو الـ attribute مش موجود، و [[??]] بتحط [[Guest]] بدلها. ([[??]] مش [[||]]: لو كتبت [[name=""]] النص الفاضي يفضل فاضي.)`,
+            R`اقرا [[role]] بنفس الطريقة، والافتراضي [[member]].`,
+            R`اكتب الاسم والدور كنص جوه العنصر. [[textContent]] مش [[innerHTML]]، فلو الاسم فيه [[<script>]] هيتعرض كنص ومش هيتنفّذ.`,
+            R`نهاية [[render]].`,
+            R`نهاية الـ class.`,
+            R`سجّل الـ tag [[user-card]] واربطه بالـ class: من اللحظة دي أي [[<user-card>]] في الصفحة (موجود أو هيتضاف) يبقى instance منه. الاسم لازم فيه [[-]] عشان ميتلخبطش مع tags الـ HTML الحالية أو اللي هتتضاف بعدين.`,
           ],
-          sol: R`الناتج الحقيقي ([[sum.wasm]] 722 byte، Node 24.22):
-[[add(2, 3) = 5]]
-[[ptr = 1024 | sum_array = 100n]]
-النوع [[bigint]]: الدالة بترجّع [[long long]] (يعني [[i64]] في wasm)، و JavaScript بيستلم [[i64]] كـ BigInt. لو عايزه number: [[Number(sum_array(ptr, 4))]]، أو خلّي الدالة ترجّع [[int]] أو [[double]].`
+          sol: R`الترتيب الحقيقي في Chrome 156:
+[[constructor]] ← [[attribute name: null -> Sara]] ← [[attribute role: null -> admin]] ← [[connected]].
+[[setAttribute("role", "owner")]] ← [[attribute role: admin -> owner]] والنص بقى [[Sara (owner)]].
+[[remove()]] ← [[disconnected]].
+[[define("usercard", ...)]] ← [[SyntaxError: ... "usercard" is not a valid custom element name]].`
         },
         {
-          cmd: "WebAssembly في المتصفح",
-          title: "تحمّل .wasm في المتصفح: instantiateStreaming و imports و نصوص في الذاكرة",
-          desc: R`في المتصفح: [[WebAssembly.instantiateStreaming(fetch("text.wasm"), imports)]] بينزّل ويعمل compile وهو بينزّل، والسيرفر **لازم** يبعته بـ [[Content-Type: application/wasm]]. و [[imports]] دوال JavaScript الـ wasm يقدر يناديها (الـ wasm ميقدرش يلمس [[console]] ولا الـ DOM لوحده).
+          cmd: "shadow DOM",
+          title: "shadow DOM: CSS جوه الـ component ميهربش ومحدش يدخله",
+          desc: R`[[this.attachShadow({ mode: "open" })]] بيدّي العنصر DOM خاص بيه (shadow root): الـ CSS اللي جواه مبيأثرش على الصفحة، و CSS الصفحة مبيدخلوش. فـ [[p { color: red }]] في الصفحة مش هيلوّن الـ [[<p>]] اللي جوه الـ component.
 
-والنصوص: wasm مبيعرفش غير أرقام. فبتحوّل النص bytes بـ [[TextEncoder]]، وتكتبه في [[memory]]، وتدّي الدالة الطول، وتقرا الناتج بـ [[TextDecoder]].`,
-          example: R`const imports = {
-  env: {
-    log_count: (n) => console.log($__btwasm changed $__{n} letters$__bt),
-  },
-};
-const { instance } = await WebAssembly.instantiateStreaming(fetch("text.wasm"), imports);
-const { memory, buf_ptr, upper } = instance.exports;
-function toUpper(text) {
-  const bytes = new TextEncoder().encode(text);
-  const ptr = buf_ptr();
-  new Uint8Array(memory.buffer, ptr, bytes.length).set(bytes);
-  const len = upper(bytes.length);
-  return new TextDecoder().decode(new Uint8Array(memory.buffer, ptr, len));
+الطرق الرسمية للتخصيص من بره: CSS custom properties ([[--tag-bg]]) بتعدّي جوه، و [[::part(name)]] لعناصر الـ component علّم عليها بـ [[part]]، و [[:host]] جوه بيستايل العنصر نفسه.`,
+          example: R`const sheet = new CSSStyleSheet();
+sheet.replaceSync($__bt
+  :host { display: inline-block; padding: 4px 8px; border-radius: 6px; background: var(--tag-bg, #eee); }
+  :host([sale]) { background: #fde68a; }
+  p { margin: 0; color: green; font-weight: bold; }
+$__bt);
+class PriceTag extends HTMLElement {
+  constructor() {
+    super();
+    const root = this.attachShadow({ mode: "open" });
+    root.adoptedStyleSheets = [sheet];
+    root.innerHTML = $__bt<p part="amount"></p>$__bt;
+  }
+  connectedCallback() {
+    this.shadowRoot.querySelector("p").textContent = $__bt$__{this.getAttribute("amount") ?? 0} EGP$__bt;
+  }
 }
-console.log(toUpper("hello wasm, مرحبا 123"));
-document.querySelector("#out").textContent = toUpper("from the browser");`,
-          try: R`اعمل [[text.c]] (في الشرح) واعمله compile زي درس [[wasm من C]]. حط [[text.wasm]] و [[main.js]] (المثال) و [[index.html]] فيه [[<p id="out">]] و [[<script type="module" src="main.js">]] على سيرفر محلي ([[npx serve]] أو Vite). افتح Console. وبعدين خلي السيرفر يبعت الـ [[.wasm]] بـ [[application/octet-stream]]: إيه اللي حصل؟`,
+customElements.define("price-tag", PriceTag);`,
+          try: R`احفظ المثال [[price-tag.js]]، واعمل صفحة فيها [[p { color: red; }]] و [[price-tag { --tag-bg: #dbeafe; }]] و [[price-tag::part(amount) { font-size: 20px; }]]، وفيها [[<p>]] عادي و [[<price-tag amount="250">]] و [[<price-tag amount="99" sale>]]. لون أنهي [[p]] أحمر؟ وجرّب [[document.querySelectorAll("p").length]] و [[getComputedStyle]] على الـ [[p]] اللي جوه.`,
           practice: [
-            { lvl: 'سريع', t: R`**صلّح الكود البايظ:** زميلك كتب [[const imports = { log_count: (n) => console.log(n) };]] والصفحة وقعت قبل ما تطبع حاجة. اقرا الـ error ولاقي الغلطة من غير ما تبص على المثال.`, done: R`لقيت إن الرسالة بتقول [[Import #0 "env": module is not an object or function]] (الدالة لازم تبقى جوه [[env]] زي ما الـ C طالبها)، وبعد التصليح الصفحة بتطبع عدد الحروف. وجرّبت كمان [[{ env: {} }]] وشفت [[LinkError]] فيها اسم [[log_count]].` },
-            { lvl: 'تطبيق', t: R`**ابني حتة صفحة:** خانة [[<input>]]، وتحتها [[<p id="out">]] و [[<span id="count">]]. مع كل حدث [[input]] اعرض [[toUpper(value)]] في [[out]]، وعدد الحروف اللي اتغيرت (من [[log_count]]) في [[count]].`, done: R`لما تكتب [[hello مرحبا]] الصفحة بتعرض [[HELLO مرحبا]] والعداد [[5]]، والعربي زي ما هو، والخانة الفاضية بتعرض نص فاضي والعداد [[0]]، والـ wasm بيتحمّل مرة واحدة بس مش مع كل حرف.` },
-            { lvl: 'تحدي', t: R`**مسألة:** [[toUpper]] بتبوّظ الذاكرة لو النص أكبر من 4096 byte. اكتب [[toUpperLong(text)]] بتقطّع النص بـ [[new TextEncoder().encodeInto(rest, view)]] (بترجّع [[read]] و [[written]] ومبتقسمش حرف في النص)، وتنادي [[upper]] على كل حتة.`, done: R`[[('مرحبا hello ').repeat(500)]] (8500 byte) بيرجع مساوي بالظبط لـ [[text.replace(/[a-z]/g, c => c.toUpperCase())]]، ومفيهوش ولا [[�]] (علامة الحرف المكسور)، والنص الفاضي بيرجع فاضي.` },
+            { lvl: 'سريع', t: R`اتوقع وبعدين جرّب: نفس [[PriceTag]] مرة بـ [[mode: "open"]] ومرة بـ [[mode: "closed"]]. إيه ناتج [[el.shadowRoot]] و [[document.querySelector("price-tag p")]] في كل مرة؟`, done: R`في الـ open [[el.shadowRoot]] بيرجّع ShadowRoot وفي الـ closed بيرجّع [[null]]، و [[querySelector]] من الـ document بيرجّع [[null]] في الحالتين (مبيدخلش جوه الـ shadow)، و [[el.shadowRoot.querySelector("p")]] بيلاقيه في الـ open بس.` },
+            { lvl: 'تطبيق', t: R`ابني theming لـ [[price-tag]]: [[--tag-bg]] و [[--tag-color]] و [[--tag-radius]] بقيم default جوه الـ component، وصفحة فيها زرار dark mode بيغيّر الـ variables على [[:root]] بس، و [[::part(amount)]] للخط.`, done: R`زرار الـ dark بيغيّر شكل كل الـ tags مع بعض، والـ tag من غير أي variable متعرّف بياخد الـ default، و [[p { color: red }]] في الصفحة مبيأثرش جوه، لكن [[font-family]] على [[body]] بيوصل جوه (الخصائص اللي بتتورث بتعدّي الـ shadow boundary).` },
+            { lvl: 'تحدي', t: R`اتوقع وصلّح: listener على [[document]] لـ [[click]]، واضغط على الـ [[<p>]] اللي جوه الـ shadow. اطبع [[e.target.tagName]] و [[e.composedPath().at(0).tagName]]. وبعدين ابعت من جوه [[new CustomEvent("price-click", { bubbles: true })]] وشوف الـ document بيستقبله ولا لأ.`, done: R`[[e.target.tagName]] بيطلع [[PRICE-TAG]] (retargeting) و [[composedPath().at(0)]] بيطلع [[P]]، والـ [[price-click]] مبيوصلش الـ document لحد ما تزوّد [[composed: true]]، وبعدها بيوصل، وتقدر تقول ليه الـ [[click]] العادي وصل من غير ما تعمل حاجة (الأحداث المدمجة composed).` },
           ],
           flag: "script",
           deep: {
-            why: R`الـ wasm معزول: مفيش [[console.log]] ولا [[fetch]] ولا DOM ولا نصوص. عشان يعمل حاجة مفيدة في صفحة لازم JavaScript يدّيله دوال (imports) ويتبادل معاه داتا عن طريق الذاكرة. ده الشغل اللي المكتبات زي [[wasm-bindgen]] (Rust) و Emscripten و AssemblyScript بتعمله لك، وفهمه بيخليك تعرف تصلّح لما يقع.`,
-            how: R`[[instantiateStreaming(response, imports)]]: بيبدأ compile للـ bytes وهي لسه جاية من الشبكة (أسرع من [[instantiate]] على [[arrayBuffer()]])، وعشان كده بيتأكد إن الـ [[Content-Type]] هو [[application/wasm]] وإلا بيرفض.
+            why: R`أي component بيتحط في صفحة مش بتاعتك بيواجه مشكلتين: CSS الصفحة بيبوّظه ([[p { color: red }]] أو [[* { box-sizing }]] أو reset)، و CSS بتاعه بيبوّظ الصفحة. الـ shadow DOM بيحل الاتنين من غير BEM ولا CSS modules.`,
+            how: R`[[attachShadow]] بيعمل shadow root متعلّق بالعنصر (الـ host). اللي جوه shadow root ليه scope لوحده: الـ selectors اللي جوه مبتشوفش بره والعكس، و [[document.querySelector]] مبيدخلوش. [[mode: "open"]] معناها [[el.shadowRoot]] متاح من بره (للأدوات والاختبارات)، و [["closed"]] بيرجّع [[null]].
 
-[[imports]]: object بالشكل [[{ module: { name: fn } }]]. في C الدالة متعرّفة بـ [[import_module("env")]] و [[import_name("log_count")]]، فلازم [[imports.env.log_count]] يكون موجود وإلا الـ instantiate يقع بـ [[LinkError]].
+اللي بيعدّي جوه: الخصائص اللي بتتورث (inherited) زي [[color]] و [[font-family]] بتتورث من الـ host عادي، والـ CSS custom properties ([[--x]]) كمان. فـ [[var(--tag-bg, #eee)]] بياخد القيمة من الصفحة أو [[#eee]].
 
-النصوص: [[TextEncoder().encode(text)]] بيرجّع [[Uint8Array]] بـ UTF-8. الحروف الإنجليزي byte واحد، و «مرحبا» كل حرف 2 bytes. الكود C بيكبّر [[a-z]] بس، فالعربي والأرقام بيعدّوا زي ما هم. [[TextDecoder().decode(bytes)]] بيرجّعهم نص.
+[[:host]] = العنصر نفسه من جوه، و [[:host([sale])]] = لو عليه attribute [[sale]]. وقواعد الصفحة على الـ host نفسه ([[price-tag { background: pink }]]) **بتكسب** على [[:host]]: الـ component بيحط افتراضي والصفحة تقدر تغيّره.
 
-[[memory.buffer]] ممكن يتغير لو الـ wasm كبّر ذاكرته ([[memory.grow]]): أي [[Uint8Array]] قديم بيبقى «detached» وطوله صفر. اعمل view جديد كل مرة زي المثال.`,
-            when: R`لما تكتب الـ glue code بإيدك لمكتبة صغيرة، أو تفهم مكتبة wasm بتقع. ولو بتستخدم Rust فـ [[wasm-bindgen]] بيكتب ده لوحده، ولو AssemblyScript فالـ bindings (الدرس الجاي).`,
-            mistakes: R`السيرفر بيبعت [[application/octet-stream]]: [[Incorrect response MIME type. Expected 'application/wasm']]. وتفتح [[index.html]] كملف ([[file://]]): [[fetch]] مش هيشتغل، لازم سيرفر. وتكتب نص أطول من الـ buffer (4096 byte في المثال) فتكتب فوق ذاكرة تانية. وتحتفظ بـ [[Uint8Array]] على [[memory.buffer]] بعد [[grow]].`
+[[CSSStyleSheet]] + [[replaceSync]] + [[adoptedStyleSheets]] (Constructable Stylesheets): الـ CSS بيتعمل parse مرة واحدة ويتشارك بين كل الـ instances، بدل [[<style>]] في كل واحد.`,
+            when: R`أي component هيتحط في صفحات تانية، أو design system. ولو component داخلي في تطبيقك والـ CSS بتاعك متحكم فيه، ممكن متحتاجش shadow DOM (وتستخدم الـ light DOM عادي).`,
+            mistakes: R`تحط [[<link rel="stylesheet">]] بتاع الموقع وتستغرب إنه مش بيأثر جوه. وفورمات جوه shadow DOM: [[<input>]] جوه shadow root مش بيتبعت مع [[<form>]] بره (محتاج form-associated custom elements و [[ElementInternals]]). و [[document.querySelector]] في الاختبارات مش لاقي العنصر: ادخل بـ [[el.shadowRoot.querySelector]] (و Playwright بيدخل الـ open shadow لوحده). و [[mode: "closed"]] فاكره حماية: مش أمان، بس بيصعّب الاختبار.`
           },
-          teach: R`## الـ C اللي اتعمله compile
+          teach: R`## الصفحة
 
-اتعمله compile بـ clang 20.1.8 في [[alpine:3.22]] (نفس أمر درس [[wasm من C]])، وطلع 633 byte. واتجرّب في Chrome 156 headless من سيرفر Node صغير على localhost.
+اتجرّب في Chrome 156 headless، والقيم من [[getComputedStyle]] (القيمة النهائية بعد كل الـ CSS).
 
-~~~text text.c
-// text.c: بياخد نص من JS، يكبّر حروفه، ويبلّغ JS بعدد الحروف اللي اتغيرت
-#define EXPORT(name) __attribute__((export_name(name)))
-#define IMPORT(name) __attribute__((import_module("env"), import_name(name)))
-
-IMPORT("log_count") void log_count(int changed);
-
-static unsigned char buf[4096];
-
-EXPORT("buf_ptr") unsigned char *buf_ptr(void) { return buf; }
-
-EXPORT("upper") int upper(int len) {
-  int changed = 0;
-  for (int i = 0; i < len; i++) {
-    if (buf[i] >= 'a' && buf[i] <= 'z') { buf[i] -= 32; changed++; }
-  }
-  log_count(changed);
-  return len;
-}
+~~~text wc2.html
+<style>
+  p { color: red; }
+  price-tag { --tag-bg: #dbeafe; }
+  price-tag::part(amount) { font-size: 20px; }
+</style>
+<p id="page-p">paragraph in the page</p>
+<price-tag amount="250"></price-tag>
+<price-tag amount="99" sale></price-tag>
 ~~~
-
-- [[IMPORT("log_count") void log_count(int changed);]]: دالة **من بره** (JavaScript)، في module اسمه [[env]]. الـ C بيناديها عادي.
-- [[unsigned char buf[4096]]]: 4096 byte للنص.
-- [[buf[i] -= 32]]: في ASCII الحرف الكبير أقل من الصغير بـ 32 ([[a]] = 97، [[A]] = 65).
 
 ---
 
-## ١. [[imports]]
+## ١. الـ stylesheet المشترك
 
-~~~text main.js
-const imports = {
-  env: {
-    log_count: (n) => console.log($__btwasm changed $__{n} letters$__bt),
-  },
-};
+~~~text price-tag.js
+const sheet = new CSSStyleSheet();
+sheet.replaceSync($__bt ... $__bt);
 ~~~
 
-[[env]] و [[log_count]] لازم نفس الأسامي اللي في [[import_module]] و [[import_name]].
+- [[new CSSStyleSheet()]]: stylesheet فاضي من JavaScript.
+- [[replaceSync(css)]]: حط فيه الـ CSS ده. بيتعمل مرة واحدة بره الـ class، فكل الـ [[price-tag]] بيشاوروا على نفس الـ object.
+- جوه الـ CSS:
+  - [[:host { ... background: var(--tag-bg, #eee); }]]: العنصر نفسه. [[var(--tag-bg, #eee)]] = قيمة المتغير لو موجود، وإلا [[#eee]].
+  - [[:host([sale])]]: العنصر لو عليه [[sale]].
+  - [[p { color: green }]]: الـ [[p]] اللي **جوه** الـ shadow root بس.
 
 ---
 
-## ٢. [[instantiateStreaming]]
+## ٢. الـ constructor
 
-~~~text main.js
-const { instance } = await WebAssembly.instantiateStreaming(fetch("text.wasm"), imports);
-const { memory, buf_ptr, upper } = instance.exports;
-~~~
+- [[this.attachShadow({ mode: "open" })]]: اعمل shadow root ورجّعه. ومن ساعتها [[this.shadowRoot]] بيشاور عليه.
+- [[root.adoptedStyleSheets = [sheet]]]: استخدم الـ stylesheet المشترك جوه.
+- [[root.innerHTML = $__bt<p part="amount"></p>$__bt]]: محتوى الـ shadow. [[part="amount"]] بيعلّم العنصر ده إن الصفحة مسموحلها تستايله بـ [[::part(amount)]].
 
-- [[fetch("text.wasm")]]: Promise لـ [[Response]]. [[instantiateStreaming]] بياخده مباشرة ويبدأ compile مع التنزيل.
-- [[await]] في أول الملف: شغال لأن [[<script type="module">]].
+و [[connectedCallback]] بيكتب [[250 EGP]] جوه الـ [[p]] اللي في الـ shadow.
 
 ---
 
-## ٣. [[toUpper(text)]]: نص رايح جاي
+## ٣. النتيجة
 
-1. [[new TextEncoder().encode(text)]]: النص ← bytes بـ UTF-8.
-2. [[buf_ptr()]]: مكان الـ buffer في ذاكرة الـ wasm.
-3. [[new Uint8Array(memory.buffer, ptr, bytes.length).set(bytes)]]: اكتب الـ bytes هناك.
-4. [[upper(bytes.length)]]: الـ wasm بيكبّر في مكانه، وبينادي [[log_count]].
-5. [[new TextDecoder().decode(new Uint8Array(memory.buffer, ptr, len))]]: اقرا الـ bytes ورجّعها نص.
-
-~~~text Console
-wasm changed 9 letters
-HELLO WASM, مرحبا 123
-wasm changed 14 letters
-~~~
-
-- [[9]]: [[hello]] (5) + [[wasm]] (4). العربي والأرقام والمسافات اتسابوا.
-- [[مرحبا]] رجعت سليمة: كل حرف عربي 2 bytes في UTF-8 وقيمهم أكبر من 127، فمش بين [[a]] و [[z]]، فالـ C ملمسهمش.
-- [[14]]: [[from the browser]] من غير المسافتين، والـ [[#out]] بقى فيه [[FROM THE BROWSER]].
-
----
-
-## ٤. الـ MIME غلط
-
-خليت السيرفر يبعت [[.wasm]] بـ [[application/octet-stream]]:
-
-~~~text Console
-[pageerror] Failed to execute 'compile' on 'WebAssembly': Incorrect response MIME type. Expected 'application/wasm'.
-~~~
-
-ولا سطر اتنفذ. الحل في السيرفر: [[mime.types]] بتاع Nginx (اتأكدت في [[nginx:alpine]] نسخة 1.31) فيه [[application/wasm wasm;]]، فلو بتستخدمه مع [[include mime.types;]] الـ MIME صح. ولو سيرفر تاني، اتأكد بـ [[curl -I]]. أو (أبطأ) [[WebAssembly.instantiate(await (await fetch(url)).arrayBuffer(), imports)]] مش بيهتم بالـ MIME.
-
----
-
-## ٥. [[memory.grow]]: ليه الـ view القديم بيبقى فاضي
-
-ذاكرة الـ wasm بتكبر بصفحات، كل صفحة 64KB. وبتكبر في حالتين: JS ينادي [[memory.grow(n)]]، أو الـ wasm نفسه يحتاج مكان (زي [[malloc]] في C أو [[new Uint8Array(n)]] في AssemblyScript). ولما تكبر، **الـ [[ArrayBuffer]] القديم بيتفصل (detached)** وبيتعمل واحد جديد أكبر. وأي [[Uint8Array]] كان عامله على القديم بيبقى طوله صفر.
-
-~~~js grow.mjs
-const memory = new WebAssembly.Memory({ initial: 1, maximum: 4 });
-const old = new Uint8Array(memory.buffer);
-old[0] = 42;
-console.log("قبل grow:", memory.buffer.byteLength, "| old.length =", old.length);
-const prev = memory.grow(1);
-console.log("grow رجّع:", prev, "| بعده:", memory.buffer.byteLength);
-console.log("old.length =", old.length, "| old[0] =", old[0], "| old.buffer.detached =", old.buffer.detached);
-const fresh = new Uint8Array(memory.buffer);
-console.log("fresh.length =", fresh.length, "| fresh[0] =", fresh[0]);
-try { memory.grow(10); } catch (e) { console.log(e.name + ":", e.message); }
-~~~
-
-~~~text node grow.mjs (Node 24.22.1)
-قبل grow: 65536 | old.length = 65536
-grow رجّع: 1 | بعده: 131072
-old.length = 0 | old[0] = undefined | old.buffer.detached = true
-fresh.length = 131072 | fresh[0] = 42
-RangeError: WebAssembly.Memory.grow(): Maximum memory size exceeded
+~~~text الناتج
+page p color: rgb(255, 0, 0)
+shadow p color: rgb(0, 128, 0) | font-size: 20px
+host bg: rgb(219, 234, 254) | sale bg: rgb(253, 230, 138)
+querySelectorAll('p') from document: 1
+a.textContent: '' | shadow text: '250 EGP'
+shadowRoot mode: open
 ~~~
 
 | السطر | معناه |
 |---|---|
-| [[new WebAssembly.Memory({ initial: 1, maximum: 4 })]] | ذاكرة بتبدأ صفحة واحدة (64KB) ومتعدّيش 4 صفحات. ده نفس اللي الـ wasm بيصدّره باسم [[memory]] |
-| [[memory.grow(1)]] | زوّد صفحة، وبيرجّع **عدد الصفحات القديم** (1) مش الجديد |
-| [[old.length = 0]] و [[detached = true]] | الـ view القديم بقى بيشاور على buffer اتفصل، فمفيش قراية ولا كتابة، ومن غير ولا error |
-| [[fresh[0] = 42]] | الداتا نفسها اتنقلت للـ buffer الجديد، اللي اتغيّر هو الـ view بس |
-| [[RangeError]] | طلبت أكتر من [[maximum]]، فـ [[grow]] رمى ومكبرتش |
+| [[page p]] أحمر | قاعدة الصفحة اشتغلت على [[p]] الصفحة |
+| [[shadow p]] أخضر | [[p { color: red }]] ماعدّاش جوه، و [[green]] بتاع الـ component هو اللي اشتغل |
+| [[font-size: 20px]] | [[::part(amount)]] من الصفحة عدّى، لأن الـ component سمح بـ [[part]] |
+| [[host bg]] أزرق فاتح | [[--tag-bg]] من الصفحة عدّى جوه [[var()]] |
+| [[sale bg]] أصفر | [[:host([sale])]] اشتغلت لأن العنصر عليه attribute اسمه [[sale]] |
+| [[querySelectorAll('p')]] = 1 | الـ document مش شايف الـ [[p]] اللي جوه الـ shadow |
+| [[textContent]] فاضي | النص في الـ shadow مش في العنصر نفسه |
 
-### والـ wasm بيكبّر لوحده
+[[rgb(219, 234, 254)]] هو [[#dbeafe]]: [[getComputedStyle]] بيرجّع الألوان دايمًا بصيغة [[rgb()]].
 
-نفس الحاجة بتحصل من جوه. دالة AssemblyScript بتعمل [[new Uint8Array(1_000_000)]] (درس «AssemblyScript»)، والذاكرة كبرت من غير ما JS يطلب:
+### مين يكسب؟
 
-~~~text node g.mjs (AssemblyScript 0.28.20)
-قبل: 65536 view.length = 65536
-بعد bigArray(1e6): 1114112 view.length = 0
+ضفت للصفحة [[price-tag { background: pink; font-family: monospace; }]]:
+
+~~~text الناتج
+host bg with outer rule: rgb(255, 192, 203) | inner font-family (inherited): monospace
 ~~~
 
-من 64KB لـ 1088KB (17 صفحة)، والـ view اللي اتعمل قبل النداء طوله بقى صفر. **وده بالظبط سبب إن [[toUpper]] في المثال بتعمل [[new Uint8Array(memory.buffer, ...)]] جديد كل مرة**، وسبب إن الـ bindings بتاعة AssemblyScript بتعمل [[new Uint16Array(memory.buffer)]] جوه كل [[__liftString]].
-
-> القاعدة: متخزّنش view على [[memory.buffer]] في متغير بيعيش طول البرنامج. اعمله وقت ما تحتاجه، أو افحص [[view.length === 0]] واعمله تاني.
+- قاعدة الصفحة على الـ host كسبت [[:host]]: الـ component بيدّي افتراضي، والصفحة تقدر تغيّره.
+- [[font-family]] بتتورث، فعدّت جوه الـ shadow عادي.
 
 ---
 
 ## الخلاصة
 
-| الحاجة | الطريقة |
+| من بره الـ component | بيعدّي جوه؟ |
 |---|---|
-| تحمّل في المتصفح | [[instantiateStreaming(fetch(url), imports)]] + [[application/wasm]] |
-| wasm ينادي JS | [[imports.env.name]] ↔ [[import_module("env"), import_name("name")]] |
-| نص من JS لـ wasm | [[TextEncoder]] ← اكتب في [[memory]] ← ابعت الطول |
-| نص من wasm لـ JS | [[Uint8Array(memory.buffer, ptr, len)]] ← [[TextDecoder]] |`,
+| [[p { color: red }]] (selector عادي) | لأ، الـ selectors بتاعة الصفحة مبتوصلش للعناصر اللي جوه الـ shadow |
+| خصائص بتتورث ([[color]] و [[font-family]] على الـ host) | آه، بتنزل من الـ host لولاده زي أي عنصر |
+| [[--custom-property]] | آه، وده الطريق الرسمي عشان الصفحة تغيّر ألوان الـ component |
+| [[::part(name)]] | آه، للعناصر اللي عليها [[part]] |
+| [[document.querySelector]] | لأ، ادخل بـ [[el.shadowRoot]] |`,
           lines: [
-            R`[[imports]] هو الـ object اللي بنديه للـ wasm وفيه دوال JavaScript يقدر يناديها. الـ wasm معزول: ميقدرش يطبع ولا يلمس الصفحة لوحده، فأي حاجة زي دي لازم تيجي من هنا.`,
-            R`المستوى الأول اسم الـ module، وهنا [[env]] لأن الـ C معرّف الدالة بـ [[import_module("env")]]. الاسم لازم يطابق بالظبط، وإلا الـ instantiate يقع بـ [[LinkError]].`,
-            R`الدالة نفسها، واسمها لازم يطابق [[import_name("log_count")]] في الـ C. الـ wasm بيناديها بعد ما يخلص ويبعتلها [[n]] = عدد الحروف اللي اتغيرت، فبتطبعه في الـ Console. ده الطريق الوحيد إن الـ wasm «يتكلم».`,
-            R`نهاية [[env]].`,
-            R`نهاية [[imports]].`,
-            R`[[fetch]] بيبدأ ينزّل الملف، و [[instantiateStreaming]] بيعمل compile للـ bytes **وهي لسه جاية** من الشبكة، وبعدين instance موصّل بالـ imports. ولازم السيرفر يبعت الملف بـ [[Content-Type: application/wasm]] وإلا بيرفض. و [[await]] هنا برّه أي دالة، فلازم الـ script يبقى [[type="module"]].`,
-            R`[[instance.exports]] فيه كل اللي الـ wasm صدّره: [[memory]] (ذاكرته كلها، والـ bytes بتاعتها في [[memory.buffer]])، و [[buf_ptr]] اللي بترجّع مكان الـ buffer، و [[upper]] اللي بتكبّر الحروف. أسامي الدوال جاية من [[export_name]] في الـ C.`,
-            R`دالة JavaScript عادية بتخبّي كل شغل الذاكرة: اللي بيستخدمها يدّيها نص وياخد نص من غير ما يعرف إن في wasm. ده نفس اللي المكتبات زي [[wasm-bindgen]] بتعمله لك.`,
-            R`الـ wasm مبيعرفش نصوص، بيعرف bytes بس. [[TextEncoder]] بيحوّل النص لـ [[Uint8Array]] بـ UTF-8: كل حرف إنجليزي byte واحد وكل حرف عربي 2 bytes، فطول الـ bytes مش دايمًا طول النص.`,
-            R`بنسأل الـ wasm «الـ buffer بتاعك فين؟» والرد رقم: offset بالـ bytes جوه الذاكرة. JS ميقدرش يخمّن المكان ده، الـ compiler هو اللي بيحدده.`,
-            R`بنعمل view بـ [[Uint8Array]] على ذاكرة الـ wasm من مكان الـ buffer وبطول الـ bytes، و [[set]] بتنسخهم فيه. ده view مش نسخة، فالكتابة بتوصل لذاكرة الـ wasm نفسها. ومحدش بيفحص الطول: نص أطول من الـ buffer (4096 byte) هيكتب فوق ذاكرة تانية.`,
-            R`بننادي [[upper]] بعدد الـ bytes بس لأنه عارف مكان الـ buffer. بيكبّر [[a-z]] في مكانها (العربي والأرقام بتعدّي زي ما هي)، وبينادي [[log_count]]، وبيرجّع الطول.`,
-            R`بنعمل view **جديد** على [[memory.buffer]] بدل ما نستخدم القديم، لأن لو الذاكرة كبرت أي view قديم بيبقى detached وطوله صفر. و [[TextDecoder]] بيحوّل الـ bytes لنص تاني.`,
-            R`نهاية [[toUpper]].`,
-            R`تجربة بنص فيه إنجليزي وعربي وأرقام: الحروف الإنجليزي بس اللي بتتكبّر، فتشوف [[HELLO WASM, مرحبا 123]]، وقبله سطر [[log_count]] بيقول إن ٩ حروف اتغيروا.`,
-            R`نفس الدالة بتكتب في الصفحة: [[textContent]] بيحط الناتج كنص عادي في العنصر [[#out]]. لازم العنصر يبقى موجود في الـ HTML، وإلا [[querySelector]] هترجّع [[null]] والسطر يرمي TypeError.`,
+            R`[[CSSStyleSheet]] جديد معمول بالـ JS (constructable stylesheet). بنعمله مرة واحدة برّه الـ class، فكل [[price-tag]] في الصفحة يستخدم نفس الـ object بدل ما كل واحد يعمل parse لنفس الـ CSS.`,
+            R`[[replaceSync]] بتحط الـ CSS ده جوه الـ stylesheet. السطر ده بيفتح template literal، فالـ CSS مكتوب على كذا سطر تحته.`,
+            R`[[:host]] = العنصر [[price-tag]] نفسه من جوه الـ shadow. الخلفية [[var(--tag-bg, #eee)]]: لو الصفحة عرّفت [[--tag-bg]] تاخده (الـ CSS variables بتعدّي جوه الـ shadow)، وإلا الرمادي الافتراضي. ده الطريق الرسمي للصفحة تغيّر اللون.`,
+            R`[[:host([sale])]]: لو العنصر نفسه عليه attribute [[sale]] (زي [[<price-tag sale>]]) الخلفية تبقى صفرا. كده الصفحة تغيّر الشكل بـ attribute من غير ما تلمس الـ CSS اللي جوه.`,
+            R`استايل للـ [[p]] اللي جوه الـ shadow بس. الـ [[p]] اللي في الصفحة مش هيتأثر، و CSS الصفحة (زي [[p { color: red; }]]) مش هيوصل للـ [[p]] ده. ده العزل اللي shadow DOM معمول عشانه.`,
+            R`نهاية الـ template literal بتاع الـ CSS وقفلة [[replaceSync]].`,
+            R`class العنصر، بيورث [[HTMLElement]] زي أي custom element.`,
+            R`الـ [[constructor]]: هنا بنعمل الـ shadow root مرة واحدة لكل عنصر.`,
+            R`[[super()]] لازم الأول قبل أي استخدام لـ [[this]].`,
+            R`[[attachShadow]] بتعمل شجرة DOM مستخبية جوه العنصر وبترجّعها. [[mode: "open"]] يعني الصفحة تقدر توصلها بـ [[el.shadowRoot]] (مفيد للتست والـ debugging)؛ مع [[closed]] بترجّع [[null]]. وبتتنادى مرة واحدة بس لكل عنصر، التانية بترمي error.`,
+            R`[[adoptedStyleSheets]]: ليستة الـ stylesheets اللي الـ shadow ده بيستخدمها. بنحط فيها الـ [[sheet]] المشترك، فالـ CSS يتطبّق جوه الـ shadow بس.`,
+            R`محتوى الـ shadow: [[p]] فاضي هنكتب فيه السعر. [[part="amount"]] بيفتح باب للصفحة تستايل العنصر ده بالذات بـ [[price-tag::part(amount)]]، وباقي الـ shadow يفضل مقفول.`,
+            R`نهاية الـ [[constructor]].`,
+            R`[[connectedCallback]]: لما العنصر يدخل الصفحة، ساعتها الـ attributes بتاعته موجودة ونقدر نقراها.`,
+            R`اكتب السعر جوه الـ [[p]] اللي في الـ shadow، من attribute [[amount]] أو 0. لازم [[this.shadowRoot.querySelector]] مش [[this.querySelector]]: التانية بتدوّر في أولاد العنصر العاديين (light DOM) ومش هتلاقي الـ [[p]].`,
+            R`نهاية [[connectedCallback]].`,
+            R`نهاية الـ class.`,
+            R`سجّل [[price-tag]] واربطه بالـ class، فأي [[<price-tag>]] في الصفحة يشتغل بالـ shadow والاستايل ده.`,
           ],
           sol: R`الناتج الحقيقي في Chrome 156:
-[[wasm changed 9 letters]]
-[[HELLO WASM, مرحبا 123]]
-[[wasm changed 14 letters]] والـ [[#out]] بقى [[FROM THE BROWSER]].
-
-ومع [[Content-Type: application/octet-stream]]:
-[[Failed to execute 'compile' on 'WebAssembly': Incorrect response MIME type. Expected 'application/wasm'.]]`
+[[p]] الصفحة: [[rgb(255, 0, 0)]] (أحمر). [[p]] اللي جوه: [[rgb(0, 128, 0)]] (أخضر) و [[font-size: 20px]] من [[::part]].
+خلفية الأول [[rgb(219, 234, 254)]] (من [[--tag-bg]])، والتاني [[rgb(253, 230, 138)]] (من [[:host([sale])]]).
+[[document.querySelectorAll("p").length]] = [[1]]: الـ document مش شايف اللي جوه الـ shadow.`
         },
         {
-          cmd: "AssemblyScript",
-          title: "AssemblyScript: تكتب wasm بشكل TypeScript",
-          desc: R`AssemblyScript لغة شكلها TypeScript بس بأنواع wasm ([[i32]] و [[f64]] و [[u8]]) وبتتحول [[.wasm]] بـ [[asc]]، من npm من غير Docker ولا compiler. والأهم: بتعمل ملف JS (bindings) بيحوّل النصوص والـ typed arrays لوحده، فتعمل [[import { greet } from "./build/release.js"]] وتنادي [[greet("Sara")]] عادي.
+          cmd: "slots",
+          title: "slots: المحتوى اللي جوه الـ tag يظهر في مكان تحدده",
+          desc: R`[[<slot>]] جوه الـ shadow DOM مكان فاضي بيتملي بالأولاد اللي اليوزر كتبهم جوه الـ tag. [[<slot name="title">]] بيتملي بالعنصر اللي عليه [[slot="title"]]، و [[<slot>]] من غير اسم بياخد الباقي. والمحتوى اللي جوه [[<slot>]] نفسه بيظهر لو مفيش حاجة اتحطت (fallback).
 
-اتجرّب بـ AssemblyScript 0.28.20.`,
-          example: R`// assembly/index.ts: AssemblyScript، شكله TypeScript بس بيتحول wasm
-export function add(a: i32, b: i32): i32 {
-  return a + b;
-}
-export function countPrimes(limit: i32): i32 {
-  let count = 0;
-  for (let n = 2; n < limit; n++) {
-    let prime = true;
-    for (let d = 2; d * d <= n; d++) {
-      if (n % d == 0) { prime = false; break; }
-    }
-    if (prime) count++;
+العناصر دي بتفضل في الـ light DOM (بتاعة الصفحة)، فـ CSS الصفحة بيأثر عليها، والـ component بيستايلها بـ [[::slotted()]].`,
+          example: R`class AppCard extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" }).innerHTML = $__bt
+      <style>
+        article { border: 1px solid #ccc; border-radius: 8px; padding: 12px; }
+        ::slotted(h3) { margin: 0 0 8px; color: navy; }
+        footer { color: gray; font-size: 12px; }
+      </style>
+      <article>
+        <slot name="title"><h3>No title</h3></slot>
+        <slot></slot>
+        <footer><slot name="footer">default footer</slot></footer>
+      </article>$__bt;
+    this.shadowRoot.querySelector("slot:not([name])").addEventListener("slotchange", (e) => {
+      console.log("slotchange: body has", e.target.assignedElements().length, "element(s)");
+    });
   }
-  return count;
 }
-export function greet(name: string): string {
-  return "Hello, " + name + "!";
-}
-export function sum(values: Float64Array): f64 {
-  let total = 0.0;
-  for (let i = 0; i < values.length; i++) total += values[i];
-  return total;
-}`,
-          try: R`في فولدر **جديد فاضي** (مش [[~/lab/jslab]] اللي عملت فيه [[npm init -y]] في وحدة تانية): [[npm i -D -E assemblyscript]] ثم [[npx asinit . -y]]، أو استخدم أوامر «جهّز معملك» تحت الوحدة. حط المثال في [[assembly/index.ts]] واعمل [[npm run asbuild]]. اعمل [[test.mjs]] بيعمل [[import { add, countPrimes, greet, sum } from "./build/release.js"]] ويناديهم، وجرّب [[add(2147483647, 1)]]. وبص على حجم [[build/release.wasm]] و [[build/release.js]].`,
+customElements.define("app-card", AppCard);`,
+          try: R`احفظ المثال [[app-card.js]] واعمل كارتين: الأول فيه [[<h3 slot="title">Order #42</h3>]] و [[<p>]] و [[<button>]]، والتاني فيه [[<p>]] بس. إيه اللي ظهر في التاني مكان العنوان والفوتر؟ وبعدين ضيف للتاني [[<span slot="footer">paid</span>]] من الـ Console، وضيف [[<p>]] جديد للأول: إمتى [[slotchange]] بيتنادى؟`,
           practice: [
-            { lvl: 'سريع', t: R`**مسألة:** [[export function countWords(s: string): i32]] بتعدّ الكلمات المفصولة بمسافة أو tab أو سطر جديد، من غير [[split]].`, done: R`[[countWords("  hello   world ")]] بترجّع [[2]]، و [[countWords("")]] بترجّع [[0]]، و [[countWords("واحد اتنين تلاتة")]] بترجّع [[3]].` },
-            { lvl: 'تطبيق', t: R`**اقرا وتوقّع:** اكتب توقعك لـ [[add("5", 2)]] و [[add(1.9, 1)]] و [[add(2147483647, 1)]]، وزوّد [[isEven(n: i32): bool]] وتوقّع [[typeof isEven(4)]]. بعدين شغّل.`, done: R`الناتج على AssemblyScript 0.28.20: [[7]] و [[2]] و [[-2147483648]] من غير ولا error (الـ bindings بتحوّل أي حاجة لـ i32)، و [[typeof isEven(4)]] هو [[boolean]]. وكاتب جنب كل واحدة توقعك كان صح ولا لأ.` },
-            { lvl: 'تحدي', t: R`**اكتب اختبار:** [[addSafe(a: i32, b: i32): i64]]، وغلاف JS [[safeAdd]] بيرفض أي حاجة مش [[Number.isInteger]]. واكتب [[test.mjs]] بـ [[node:assert/strict]] فيه ٦ حالات على الأقل للاتنين.`, done: R`[[node test.mjs]] بيعدّي من غير ولا error: [[addSafe(2147483647, 1)]] بترجّع [[2147483648n]] (BigInt)، و [[safeAdd("5", 2)]] و [[safeAdd(1.9, 1)]] بيرموا [[TypeError]]، ولو شلت الفحص من الغلاف الاختبار بيفشل.` },
+            { lvl: 'سريع', t: R`اتوقع: [[<app-card>]] جواه [[<h3 slot="title">]] و [[<p>]] كل واحد في سطر لوحده. الـ slot اللي من غير اسم: [[assignedNodes().length]] كام و [[assignedElements().length]] كام؟ وبعدين شغّل.`, done: R`[[assignedElements()]] بيرجّع 1 (الـ [[p]] بس)، و [[assignedNodes()]] بيرجّع أكتر (الـ text nodes بتاعة المسافات والسطور الجديدة بتتحسب، في الشكل ده 4)، والـ [[h3]] مش منهم لأنه راح للـ slot اللي اسمه [[title]].` },
+            { lvl: 'تطبيق', t: R`ابني [[<info-alert type="warning">]]: slot اسمه [[icon]] فيه fallback «⚠» (و «ℹ» لو [[type="info"]])، و slot عادي للرسالة، وزرار إغلاق جوه الـ shadow بيشيل العنصر ويبعت [[close]] event.`, done: R`alert من غير أيقونة بيظهر الـ fallback الصح حسب [[type]]، وأيقونة [[<span slot="icon">]] بتاعتك بتظهر مكانها، والإغلاق بيشيل العنصر والـ listener على العنصر بيستقبل [[close]]، والـ CSS بتاع الصفحة بيلوّن الرسالة (لأنها لسه في الـ light DOM).` },
+            { lvl: 'تحدي', t: R`ابني footer بيختفي لوحده: شيل الـ fallback من slot الـ [[footer]] في [[AppCard]]، وفي [[slotchange]] حط [[hidden]] على الـ [[<footer>]] لو [[assignedNodes({ flatten: true }).length]] بصفر. وجرّب تضيف وتشيل [[<span slot="footer">]] من Console.`, done: R`كارت من غير footer مفيهوش الخط الرمادي ولا المسافة بتاعته، وإضافة [[<span slot="footer">paid</span>]] بتظهره على طول، وشيلها بيخفيه تاني، و [[slotchange]] بيتنادى مع كل إضافة أو شيل للـ slot ده بس مش لما تغيّر نص جوه الـ span.` },
           ],
           flag: "script",
           deep: {
-            why: R`لو انت مطوّر JavaScript وعايز wasm لحتة حسابات، تعلّم C أو Rust كتير. AssemblyScript قريب من TypeScript اللي تعرفه، وبيتسطّب من npm، وبيكتب الـ glue code بتاع النصوص والـ arrays لوحده.`,
-            how: R`الأنواع مش أنواع TypeScript: [[number]] مش موجود، بدله [[i32]] (صحيح 32-bit) و [[i64]] و [[f32]] و [[f64]] (عشري 64-bit زي number في JS) و [[u8]] وغيرهم. [[string]] و [[Array]] و [[Float64Array]] موجودين، بس بيتخزّنوا في ذاكرة الـ wasm ومعاهم garbage collector صغير جوه الـ wasm (فالملف أكبر من C).
+            why: R`component زي كارت أو dialog أو layout محتاج ياخد محتوى من اللي بيستخدمه (عنوان، نص، أزرار) ويحطه في أماكن معينة جوه التصميم بتاعه. ده نفس فكرة [[children]] في React و [[<slot>]] في Vue (Vue أخدت الاسم والفكرة من هنا).`,
+            how: R`الأولاد اللي اليوزر كتبهم جوه [[<app-card>]] مش بيتنقلوا جوه الـ shadow: بيفضلوا أولاد العنصر في الـ light DOM، والمتصفح بس بيعرضهم (render) مكان الـ [[<slot>]] المناسب. عشان كده [[h3.parentNode === card]] و CSS الصفحة شغال عليهم.
 
-[[asc assembly/index.ts --target release]] بيقرا [[asconfig.json]]: [[optimizeLevel: 3]]، و [["bindings": "esm"]] = اعمل [[release.js]] كـ ES module. ملف الـ bindings بيحمّل الـ [[.wasm]] (بـ [[fetch]] في المتصفح أو [[readFile]] في Node)، ولكل دالة فيها string أو typed array بيعمل غلاف: يكتب الـ argument في الذاكرة ([[__lowerString]])، ينادي، ويقرا الناتج ([[__liftString]]). والدوال اللي أرقام بس بيصدّرها زي ما هي.
+كل عنصر عليه [[slot="x"]] بيروح لـ [[<slot name="x">]]. الباقي (من غير [[slot]]) بيروح للـ slot اللي من غير اسم، ولو مفيش، مش بيظهر. لو slot ماجلوش حاجة، المحتوى اللي جواه هو اللي بيظهر (fallback).
 
-[[==]] في AssemblyScript مقارنة عادية (مفيش coercion زي JS)، و [[i32]] بيعمل overflow زي C.`,
-            when: R`حسابات أرقام أو bytes (ضغط، hashing، معالجة صور، فيزيا) وانت مش عايز تكتب C أو Rust. لو عندك مكتبة C أو Rust جاهزة، استخدمها هي بدل ما تعيد كتابتها.`,
-            mistakes: R`تعمل [[npm init -y]] قبل [[asinit]] فيرفض بـ [[The "type" field in ./package.json is set to "commonjs"]] (npm 11 بيكتب الحقل ده): ابدأ في فولدر فاضي أو اعمل [[npm pkg set type=module]] الأول. وتفتكره TypeScript: [[number]] و [[any]] و union types و closures بتلقط متغيرات مش مدعومين أو ليهم شروط. وتعمل [[import]] للـ [[.wasm]] مباشرة بدل [[release.js]] فتلاقي [[greet]] بترجّع رقم (pointer) مش نص. وتنسى إن [[i32]] بيلف: [[add(2147483647, 1)]] = [[-2147483648]].`
+[[slot.assignedElements()]]: العناصر اللي اتحطت فيه. و [[slotchange]] event بيتنادى على الـ slot لما الليستة دي تتغير (وأول مرة كمان). و [[::slotted(h3)]]: من جوه الـ shadow، استايل للـ [[h3]] اللي اتحط في slot (العنصر نفسه بس، مش أولاده).`,
+            when: R`أي component بيغلّف محتوى: cards، و modals، و tabs، و layouts. ولو المحتوى داتا (array of items) مش HTML، مرّرها property (درس [[attributes و properties]]).`,
+            mistakes: R`تنسى [[slot="title"]] على العنصر فيروح للـ slot الافتراضي. وتحاول تستايل أولاد العنصر اللي في الـ slot بـ [[::slotted(div p)]]: مش شغال، [[::slotted]] بيمسك العنصر اللي في الـ slot مباشرة بس. وتدوّر على الـ [[h3]] في [[shadowRoot.querySelector]]: هو في الـ light DOM.`
           },
-          teach: R`## من [[npm i]] لـ [[import]]
+          teach: R`## الصفحة
 
-اتجرّب على ويندوز بـ AssemblyScript 0.28.20 و Node 24.22.
+اتجرّب في Chrome 156 headless.
+
+~~~text wc3.html
+<app-card id="c1">
+  <h3 slot="title">Order #42</h3>
+  <p>3 items, 250 EGP</p>
+  <button>Pay</button>
+</app-card>
+<app-card id="c2"><p>no title, no footer</p></app-card>
+~~~
 
 ---
 
-## ١. [[npx asinit . -y]]
+## ١. الـ template جوه الـ shadow
 
-بيعمل [[assembly/index.ts]] و [[asconfig.json]] وفولدر [[build]] ويضيف سكربتات:
-
-~~~text package.json (اللي اتضاف)
-"type": "module",
-"exports": { ".": { "import": "./build/release.js", "types": "./build/release.d.ts" } },
-"scripts": {
-  "asbuild:debug": "asc assembly/index.ts --target debug",
-  "asbuild:release": "asc assembly/index.ts --target release",
-  "asbuild": "npm run asbuild:debug && npm run asbuild:release"
-}
-~~~
-
-و [[asconfig.json]] فيه [[target]] اتنين: [[debug]] (من غير optimization، و source map) و [[release]] ([["optimizeLevel": 3]])، و [["bindings": "esm"]].
-
-### لو عملت [[npm init -y]] الأول: [[asinit]] بيرفض
-
-npm 11 (اتجرّب على 11.19.1) بيكتب [["type": "commonjs"]] في [[package.json]] لما تعمل [[npm init -y]]. و [[asinit]] محتاج ES modules، فبيرفض ومبيعملش ولا ملف:
-
-~~~text npm init -y ثم npm i -D -E assemblyscript ثم npx asinit . -y
-Error: The "type" field in ./package.json is set to "commonjs".
-       asinit requires the "type" field to be set to "module" (ES modules).
-~~~
-
-والفولدر فضل فيه [[node_modules]] و [[package.json]] و [[package-lock.json]] بس، من غير [[assembly]] ولا [[asconfig.json]].
-
-| الحل | الأمر | ليه بيشتغل |
-|---|---|---|
-| ابدأ في فولدر فاضي | [[npm i -D -E assemblyscript]] ثم [[npx asinit . -y]] | [[npm i]] لوحده بيعمل [[package.json]] فيه [[devDependencies]] بس من غير [[type]]، و [[asinit]] بيحط [["type": "module"]] بنفسه |
-| صلّح الفولدر الموجود | [[npm pkg set type=module]] ثم [[npx asinit . -y]] | بيغيّر الحقل لـ [[module]] قبل ما [[asinit]] يفحصه، واتجرّب وكمّل عادي |
-
-وتشغيل [[npx asinit . -y]] تاني على نفس الفولدر آمن: بيكتب [[Exists]] جنب كل ملف موجود ومبيمسحش [[assembly/index.ts]] بتاعك.
+- [[this.attachShadow({ mode: "open" }).innerHTML = ...]]: [[attachShadow]] بيرجّع الـ shadow root، فبنكتب فيه على طول.
+- [[<slot name="title"><h3>No title</h3></slot>]]: مكان للعنوان، ولو مفيش: [[No title]].
+- [[<slot></slot>]]: الـ slot الافتراضي: أي ابن من غير [[slot=]].
+- [[<slot name="footer">default footer</slot>]]: مكان للفوتر، وافتراضيًا [[default footer]].
+- [[::slotted(h3)]]: استايل للـ [[h3]] اللي اتحط في أي slot.
 
 ---
 
-## ٢. الكود
+## ٢. مين راح فين
 
-- [[add(a: i32, b: i32): i32]]: نفس شكل TypeScript، بس [[i32]] مكان [[number]].
-- [[countPrimes]]: نفس خوارزمية الـ C. [[let prime = true]] = [[bool]].
-- [[greet(name: string): string]]: نص داخل ونص خارج، و [[+]] بيلزق النصوص زي JS.
-- [[sum(values: Float64Array): f64]]: typed array داخل، و [[f64]] (زي number في JS) خارج.
+~~~text الناتج
+c1 -> title: H3 | (default): P,BUTTON | footer: fallback
+c2 -> title: fallback | (default): P | footer: fallback
+h3 color: rgb(0, 0, 128) | still in light DOM: true
+~~~
+
+| | [[title]] | الافتراضي | [[footer]] |
+|---|---|---|---|
+| [[c1]] | الـ [[h3]] | [[p]] و [[button]] | [[default footer]] |
+| [[c2]] | [[No title]] | [[p]] | [[default footer]] |
+
+- [[assignedElements()]] رجّع العناصر اللي في كل slot، و [[fallback]] (كلمة من سكربت الاختبار) يعني ليستة فاضية فالمحتوى الافتراضي ظهر.
+- [[rgb(0, 0, 128)]] = [[navy]]: [[::slotted(h3)]] اشتغل.
+- [[still in light DOM: true]]: [[h3.parentNode]] لسه هو [[c1]] نفسه. اتعرض جوه، بس مكانه في الشجرة متغيرش.
 
 ---
 
-## ٣. [[npm run asbuild]]
+## ٣. [[slotchange]]
 
-~~~text ls -l build
-debug.wasm      10335
-debug.wat       58771
-release.js       3475
-release.wasm     4700
-release.wat     38931
-release.d.ts      662
+~~~text الناتج (Console)
+slotchange: body has 2 element(s)
+slotchange: body has 1 element(s)
+slotchange: body has 3 element(s)
 ~~~
 
-- [[release.wasm]] 4.7KB (الـ C كان 722 byte): جواه runtime صغير للنصوص والـ arrays والذاكرة.
-- [[.wat]]: نفس الـ wasm بصيغة نصية تقدر تقراها (درس [[.wasm]] في تاب الملفات).
-- [[release.js]]: الـ bindings. و [[release.d.ts]]: الأنواع لـ TypeScript.
+| السطر | ليه |
+|---|---|
+| 2 | أول ما [[c1]] اتعمل: [[p]] و [[button]] |
+| 1 | [[c2]]: [[p]] |
+| 3 | ضفت [[<p>more</p>]] لـ [[c1]] بـ [[append]] |
 
----
+ولما ضفت [[<span slot="footer">paid</span>]] لـ [[c2]]: الفوتر بقى [[SPAN]] (بدل [[default footer]])، بس مفيش سطر [[slotchange]]، لأن الـ listener على الـ slot الافتراضي بس:
 
-## ٤. [[test.mjs]]
-
-~~~text test.mjs
-import { add, countPrimes, greet, sum } from "./build/release.js";
-console.log(add(2, 3));
-console.log(countPrimes(100));
-console.log(greet("Sara"));
-console.log(sum(new Float64Array([1.5, 2.5, 3])));
-console.log(add(2147483647, 1));
+~~~text الناتج
+c2 after append -> title: fallback | (default): P | footer: SPAN
 ~~~
 
-~~~text node test.mjs
-5
-25
-Hello, Sara!
-7
--2147483648
-~~~
-
-- [[Hello, Sara!]]: الـ bindings كتبت [["Sara"]] في الذاكرة، ونادت، وقرت الناتج. انت ماشفتش pointers خالص.
-- [[7]]: [[1.5 + 2.5 + 3]].
-- [[-2147483648]]: [[2147483647]] أكبر [[i32]]، و +1 لفّ للسالب (overflow). في JS العادي كان [[2147483648]].
-
-### جوه [[release.js]]
-
-~~~text release.js (جزء)
-greet(name) {
-  // assembly/index/greet(~lib/string/String) => ~lib/string/String
-  name = __lowerString(name) || __notnull();
-  return __liftString(exports.greet(name) >>> 0);
-},
-~~~
-
-- [[__lowerString(name)]]: اكتب النص في ذاكرة الـ wasm ورجّع مكانه.
-- [[exports.greet(ptr)]]: الدالة الحقيقية: pointer داخل، pointer خارج.
-- [[__liftString(...)]]: اقرا النص من الذاكرة. AssemblyScript بيخزّن النصوص UTF-16 (زي JS)، والطول مكتوب قبل النص بـ 4 bytes.
-- [[>>> 0]]: حوّل الرقم لـ unsigned 32-bit (الـ pointers مش سالبة).
-
-ده نفس اللي عملناه بإيدنا بـ [[TextEncoder]] في الدرس اللي فات.
+- [[querySelector("slot:not([name])")]]: الـ slot اللي ملوش [[name]].
+- [[e.target]]: الـ slot نفسه. [[assignedElements()]]: العناصر (مش النصوص) اللي فيه.
 
 ---
 
 ## الخلاصة
 
-| | C + clang | AssemblyScript |
-|---|---|---|
-| اللغة | C | شبه TypeScript |
-| التسطيب | Docker أو clang | [[npm i -D assemblyscript]] |
-| الحجم هنا | 722 byte | 4.7KB |
-| النصوص والـ arrays | بإيدك في [[memory]] | الـ bindings بتعملها |
-| أنواع الأرقام | [[int]] و [[long long]] و [[double]] | [[i32]] و [[i64]] و [[f64]] |`,
+| الحاجة | معناها |
+|---|---|
+| [[<slot>]] | الأولاد اللي من غير [[slot=]] |
+| [[<slot name="x">]] + [[slot="x"]] | عنصر في مكان معين |
+| محتوى جوه [[<slot>]] | fallback لو مفيش حاجة |
+| [[::slotted(sel)]] | استايل للعنصر اللي في الـ slot (مش أولاده) |
+| [[slotchange]] و [[assignedElements()]] | اعرف إيه اللي اتحط |
+
+العناصر في الـ slots بتفضل في الـ light DOM: CSS الصفحة شغال عليها، و [[document.querySelector]] بيلاقيها.`,
           lines: [
-            R`[[export]] بيخلي الدالة تطلع من الـ wasm، و [[i32]] نوع wasm حقيقي (رقم صحيح 32-bit) مش [[number]] بتاع TypeScript. الأنواع هنا مش اختيارية، لأن الـ compiler محتاجها عشان يطلّع تعليمات wasm.`,
-            R`جمع عادي بس على [[i32]]: لو الناتج عدّى حوالي ٢.١ مليار بيلف للسالب من غير error، مش بيبقى رقم أكبر زي JS.`,
-            R`نهاية [[add]].`,
-            R`نفس خوارزمية الأعداد الأولية اللي كتبناها في C بس بشكل TypeScript، عشان نقارن الاتنين. بتاخد [[limit]] وبترجّع العدد كـ [[i32]].`,
-            R`العدّاد. AssemblyScript بيستنتج من [[0]] إن نوعه [[i32]] (رقم صحيح)، مش زي JS اللي كل أرقامه عشرية 64-bit.`,
-            R`بنجرّب كل رقم من 2 لحد قبل [[limit]]، لأن 0 و 1 مش أوليين.`,
-            R`بنفترض إن الرقم أولي، واللفة اللي جاية هتحاول تثبت العكس. هنا بنستخدم [[true]] و [[false]] بجد لأن AssemblyScript عنده [[bool]]، مش 1 و 0 زي الـ C.`,
-            R`القواسم من 2 لحد الجذر التربيعي بس ([[d * d <= n]]): أي قاسم أكبر من الجذر ليه قاسم مقابل أصغر منه كنا هنلاقيه قبل كده.`,
-            R`لو [[n]] بيتقسم على [[d]] من غير باقي يبقى مش أولي، و [[break]] تخرج من لفة القواسم على طول. و [[==]] هنا على أرقام من نفس النوع، فمفيش تحويل أنواع زي [[==]] في JS.`,
-            R`نهاية لفة القواسم.`,
-            R`لو فضل [[prime]] بـ [[true]] بعد ما جرّبنا كل القواسم، يبقى أولي فنزوّد العدّاد واحد.`,
-            R`نهاية لفة الأرقام.`,
-            R`بيرجّع عدد الأعداد الأولية لـ JS كـ number عادي.`,
-            R`نهاية [[countPrimes]].`,
-            R`هنا الفرق الكبير عن C: [[string]] داخل و [[string]] خارج. الـ wasm نفسه مبيعرفش نصوص، فالـ bindings اللي [[asc]] بيعملها بتكتب النص في ذاكرة الـ wasm قبل النداء وتقراه بعده، وانت بتنادي [[greet("Sara")]] عادي.`,
-            R`لزق نصوص عادي زي TypeScript، والنص الجديد بيتعمل جوه ذاكرة الـ wasm. ده اللي في C كان محتاج buffer و [[TextEncoder]] و [[TextDecoder]] بإيدك.`,
-            R`نهاية [[greet]].`,
-            R`بتاخد [[Float64Array]] (array أرقام عشرية 64-bit) وبترجّع [[f64]] = number عادي في JS. والـ bindings بتنسخ الأرقام لذاكرة الـ wasm قبل النداء، فانت مش محتاج تكتب في [[memory]] بإيدك.`,
-            R`المجموع بيبدأ من [[0.0]]، والكتابة دي بتخلي AssemblyScript يستنتج النوع [[f64]]. لو كتبت [[0]] بس كان النوع هيبقى [[i32]] (رقم صحيح)، وده غلط لمجموع أرقام عشرية.`,
-            R`بيلف على كل الأرقام بالـ index ويزوّد كل واحد على [[total]]، بنفس شكل TypeScript العادي.`,
-            R`بيرجّع المجموع، والـ bindings بترجّعه لـ JS كـ number عادي.`,
-            R`نهاية [[sum]].`,
+            R`class الكارت، بيورث [[HTMLElement]]. فكرته: هيكل ثابت (إطار وعنوان وفوتر) والصفحة هي اللي تحط المحتوى جواه.`,
+            R`الـ [[constructor]]: هنعمل فيه الـ shadow والـ template مرة واحدة.`,
+            R`[[super()]] بينادي constructor بتاع [[HTMLElement]]، ولازم يبقى الأول قبل أي [[this]].`,
+            R`[[attachShadow]] بترجّع الـ shadow root، فبنكتب [[innerHTML]] عليه على طول في نفس السطر. والـ template literal بيبدأ هنا ويكمّل لحد [[</article>]].`,
+            R`[[<style>]] جوه الـ shadow: الاستايل ده بيطبّق على عناصر الـ shadow بس، ومش بيطلع للصفحة.`,
+            R`شكل الكارت: إطار رمادي وحواف مدوّرة ومسافة جوه. الـ [[article]] ده جوه الـ shadow، فأي [[article]] في الصفحة مش هيتأثر.`,
+            R`[[::slotted(h3)]]: استايل لأي [[h3]] الصفحة حطته في slot. العناصر دي فاضلة في الـ light DOM، فده الطريق من جوه الـ shadow تستايلها. بيمسك العنصر المحطوط نفسه بس، مش أولاده.`,
+            R`استايل الـ [[footer]] اللي جوه الـ shadow: رمادي وخط صغير.`,
+            R`نهاية الـ [[<style>]]، وبعده محتوى الكارت نفسه.`,
+            R`[[<article>]]: الإطار اللي فيه الأماكن التلاتة.`,
+            R`slot اسمه [[title]]: أي عنصر في الصفحة عليه [[slot="title"]] يتعرض هنا. والـ [[h3]] اللي جواه fallback بيظهر بس لو الصفحة محطتش عنوان.`,
+            R`الـ slot الافتراضي (من غير [[name]]): بياخد كل أولاد العنصر اللي مش عليهم [[slot]]، زي [[p]] و [[button]]. لو مفيش slot زي ده، الأولاد دول مش هيظهروا خالص.`,
+            R`slot اسمه [[footer]] جوه [[<footer>]]، فاللي الصفحة تحطه فيه ياخد استايل الفوتر. ولو محطتش حاجة، يظهر نص default footer.`,
+            R`نهاية [[<article>]] والـ template literal، فالـ [[innerHTML]] اتكتب.`,
+            R`هات الـ slot اللي ملوش [[name]] (الافتراضي) واسمع لـ [[slotchange]]: بيتنادى لما العناصر المتحطوطة فيه تتغير (ولد اتضاف أو اتشال)، وأول مرة يتحطوا كمان.`,
+            R`[[e.target]] هو الـ slot نفسه، و [[assignedElements()]] بترجّع العناصر اللي اتحطت فيه (من غير النصوص والمسافات). بنطبع عددهم عشان نشوف التغيير.`,
+            R`نهاية الـ [[slotchange]] listener.`,
+            R`نهاية الـ [[constructor]].`,
+            R`نهاية الـ class.`,
+            R`سجّل [[app-card]]، فأي [[<app-card>]] في الصفحة ياخد الهيكل ده وأولاده يتوزعوا على الـ slots.`,
           ],
-          sol: R`الناتج الحقيقي:
-[[5]] و [[25]] و [[Hello, Sara!]] و [[7]] و [[-2147483648]].
-[[build/release.wasm]] = 4700 byte، و [[build/release.js]] = 3475 byte. والـ [[-2147483648]] لأن [[i32]] لفّ (overflow) زي C، مش زي number في JS.`
+          sol: R`في التاني ظهر [[No title]] و [[default footer]] (الـ fallback). وبعد ما ضفت [[<span slot="footer">paid</span>]] الفوتر بقى [[paid]].
+
+[[slotchange]] اتنادى ٣ مرات: [[2]] (أول [[c1]])، و [[1]] (أول [[c2]])، و [[3]] (لما ضفت [[p]] لـ [[c1]]). إضافة الـ [[span]] لـ [[c2]] ماطلّعتش سطر لأن الـ listener على الـ slot الافتراضي بس، مش [[footer]].`
         },
         {
-          cmd: "WASI و node:wasi",
-          title: "WASI: wasm برا المتصفح، برنامج C بـ printf و fopen بيشتغل بـ node:wasi",
-          desc: R`WASI (WebAssembly System Interface) هو الطريقة اللي بيها ملف [[.wasm]] يطبع ويقرا ملفات ويشوف الـ arguments ومتغيرات البيئة **برا المتصفح**. البرنامج بيستورد دوال بأسماء معيارية ([[fd_write]] و [[path_open]] و [[args_get]]...) من module اسمه [[wasi_snapshot_preview1]]، وأي runtime بيدعم WASI بيدّيها له: Node بـ [[node:wasi]]، أو wasmtime، أو wasmer.
+          cmd: "attributes و properties",
+          title: "attributes ولا properties، والـ events من الـ component",
+          desc: R`الـ attribute نص في الـ HTML ([[value="3"]])، والـ property قيمة JavaScript على العنصر ([[el.value = 3]]، أو array، أو object). الـ component الكويس بيعمل getter/setter يربط الاتنين للقيم البسيطة (reflect)، والـ boolean بيبقى «الـ attribute موجود ولا لأ» مش قيمته، والداتا المعقدة property بس.
 
-والفرق المهم عن الـ native: البرنامج **مبيشوفش غير الفولدرات اللي انت تفتحهاله** ([[preopens]]). [[fopen("/data/../run.mjs")]] رجّع [[Capabilities insufficient]].
-
-اتعمله compile بـ clang 20.1.8 و [[wasi-sdk]] جوه [[alpine:3.22]]، واتشغّل على Node 24.22.1 على ويندوز. ولو أول مرة تعمل compile لـ C، ابدأ بدرس «wasm من C».`,
-          example: R`// run.mjs: بيشغّل wcat.wasm (برنامج C) بـ node:wasi
-import { readFile } from "node:fs/promises";
-import { WASI } from "node:wasi";
-import { argv } from "node:process";
-const wasi = new WASI({
-  version: "preview1",
-  args: ["wcat", ...argv.slice(2)],
-  env: { USER: "sara" },
-  preopens: { "/data": "./data" },
-});
-const wasm = await WebAssembly.compile(await readFile("wcat.wasm"));
-const instance = await WebAssembly.instantiate(wasm, wasi.getImportObject());
-const code = wasi.start(instance);
-console.log("exit code:", code);`,
-          lines: [
-            R`[[readFile]] من نسخة الـ promises في [[node:fs]]، عشان نقرا bytes ملف الـ [[.wasm]] من الديسك بـ [[await]].`,
-            R`[[WASI]] كلاس مدمج في Node (من غير تسطيب). هو اللي بيعمل الدوال اللي البرنامج مستنيها: [[fd_write]] للطباعة، و [[path_open]] لفتح ملف، و [[args_get]] للـ arguments. ولسه experimental، فـ Node بيطبع [[ExperimentalWarning]] أول ما تستورده.`,
-            R`[[argv]] هي الـ arguments اللي اتكتبت بعد [[node run.mjs]] في الترمنال، عشان نعدّيها للبرنامج C.`,
-            R`بنعمل بيئة WASI للبرنامج ده بس. كل حاجة البرنامج هيشوفها (arguments وبيئة وملفات) بتتحدد هنا، ومفيش حاجة تانية من جهازك بتوصله.`,
-            R`[[version]] إجباري: [["preview1"]] هي النسخة اللي clang و wasi-sdk بيطلّعوها (الـ imports اسمها [[wasi_snapshot_preview1]]). لو نسيته: [[The "options.version" property must be of type string. Received undefined]].`,
-            R`الـ arguments اللي البرنامج هيشوفها في [[argv]] بتاع C. أول عنصر اسم البرنامج (زي أي برنامج native)، وبعده اللي اتكتب في الترمنال، و [[...]] بيفرد [[argv.slice(2)]] (من غير [[node]] واسم الملف).`,
-            R`متغيرات البيئة. **مش بتتورّث** من جهازك: لو مكتبتهاش هنا، [[getenv("USER")]] في C هترجّع [[NULL]]. وده مقصود: البرنامج ميشوفش أسرار زي [[API_KEY]] اللي في بيئتك.`,
-            R`**الفولدرات المسموحة**. المفتاح [["/data"]] هو الاسم اللي البرنامج هيشوفه، والقيمة [["./data"]] هي الفولدر الحقيقي على جهازك. أي مسار برا [[/data]] مش موجود بالنسبة للبرنامج، وأي محاولة يطلع منه بـ [[..]] بترجع [[Capabilities insufficient]].`,
-            R`نهاية الإعدادات.`,
-            R`[[compile]] بيحوّل الـ bytes لـ [[WebAssembly.Module]] (كود جاهز من غير ذاكرة ولا imports). ممكن تعمله مرة وتشغّله كذا مرة أو تبعته لـ Worker.`,
-            R`[[getImportObject()]] بيرجّع [[{ wasi_snapshot_preview1: { fd_write, path_open, ... } }]]، وده بالظبط اللي البرنامج مستنيه. من غيره: [[Import #0 "wasi_snapshot_preview1": module is not an object or function]].`,
-            R`[[start]] بينادي [[_start]] اللي clang عمله (بيجهّز مكتبة C وينادي [[main]])، ويرجّع الرقم اللي [[main]] رجّعته: exit code. ومينفعش تناديه مرتين على نفس الـ instance: [[WASI instance has already started]].`,
-            R`بنطبع الـ exit code: [[0]] نجح، و [[2]] لو [[fopen]] فشل (من [[return 2]] في الـ C). وتقدر تمرره لـ [[process.exitCode]] لو السكربت نفسه جزء من pipeline.`,
-          ],
-          try: R`اعمل فولدر جديد فيه [[wcat.c]] (في الشرح) وفولدر [[data]] فيه [[note.txt]] بسطرين. اعمل compile بأمر Docker اللي في الشرح، وشغّل [[node run.mjs]]، وبعدين [[node run.mjs /data/note.txt]] و [[node run.mjs /data/../run.mjs]] و [[node run.mjs /etc/passwd]]. وبعدين خلّي [[preopens]] فاضي وشوف إيه اللي اتغيّر. (في Git Bash على ويندوز اكتب [[MSYS_NO_PATHCONV=1]] قبل [[node]]، وإلا [[/data]] بيتحول لـ [[C:/Program Files/Git/data]].)`,
-          practice: [
-            { lvl: 'سريع', t: R`**اقرا وتوقّع:** قبل ما تشغّل، اكتب السطر اللي [[perror]] هيطبعه والـ exit code لكل واحدة: [[/data/note.txt]]، و [[/data/missing.txt]]، و [[/data/../run.mjs]]، ونفس [[/data/note.txt]] بس و [[preopens: {}]].`, done: R`الناتج الحقيقي: الأولى طبعت السطرين و [[exit code: 0]]، والتانية [[fopen: No such file or directory]] و 2، والتالتة [[fopen: Capabilities insufficient]] و 2 (مش «مش موجود»: البرنامج حاول يطلع برا الفولدر)، والرابعة [[No such file or directory]] و 2 لأن [[/data]] نفسها مش موجودة بالنسبة له. وكاتب جنب كل واحدة توقعك.` },
-            { lvl: 'تطبيق', t: R`**ابني أداة:** [[wcount.c]] زي [[wc]]: بياخد اسم ملف ويطبع عدد السطور والكلمات والـ bytes، ومن غير ملف يطبع [[usage: wcount FILE]] على [[stderr]] ويرجّع 1. شغّله بـ [[node:wasi]] وخلّي [[stdout]] يروح لملف [[out.txt]] بـ [[openSync]] و خيار [[stdout]] في [[new WASI]].`, done: R`على [[note.txt]] (سطرين: «سطر أول من ملف حقيقي» و «second line») [[out.txt]] فيه [[2 7 49 /data/note.txt]] والـ exit code صفر، وعلى ملف مش موجود الترمنال طبع [[/data/nope.txt: No such file or directory]] و [[out.txt]] فاضي والـ exit code 1، ومن غير arguments طبع [[usage: wcount FILE]] و 1.` },
-            { lvl: 'تحدي', t: R`**اكتب غلاف متين واختباره:** [[runWasi(file, { args, env, dirs })]] بترجّع [[{ code }]] وبتعمل [[new WASI]] جديد كل نداء. ارمي error واضح لو الملف مش موجود، ولو الـ wasm مالوش [[_start]] (زي [[sum.wasm]] بتاع درس «wasm من C»)، واختبرها بـ [[node:assert/strict]].`, done: R`[[node test.mjs]] بيعدّي: [[wcat.wasm]] بيرجّع [[{ code: 0 }]] مرتين ورا بعض (مفيش [[WASI instance has already started]] لأن كل نداء بـ WASI جديد)، و [[sum.wasm]] بيرمي رسالتك انت بدل [[The "instance.exports._start" property must be of type function]]، والملف المش موجود رسالته فيها اسم الملف.` },
-          ],
-          flag: "script",
-          deep: {
-            why: R`الـ wasm لوحده مبيعرفش يعمل ولا حاجة برا ذاكرته: مفيش طباعة ولا ملفات ولا وقت. في المتصفح JavaScript بيدّيله دوال بإيده (درس «WebAssembly في المتصفح»). WASI بيوحّد الدوال دي، فنفس الـ [[.wasm]] يشتغل على Node و wasmtime و wasmer وجوه Docker وعلى أي نظام، وبرنامج C أو Rust عادي بـ [[printf]] و [[fopen]] يتعمله compile من غير ما تغيّر سطر.`,
-            how: R`**الـ compile:** [[--target=wasm32-wasi]] بيقول لـ clang يستخدم [[wasi-libc]] (مكتبة C مكتوبة فوق WASI) بدل [[-nostdlib]]. [[printf]] جوه wasi-libc بينادي [[fd_write]] على fd رقم 1 (stdout)، و [[fopen]] بينادي [[path_open]]. والناتج 33KB بدل 722 byte لأن فيه مكتبة C (printf لوحدها كبيرة).
-
-**الـ imports:** [[WebAssembly.Module.imports(wasm)]] على [[wcat.wasm]] طلّع ١٤ دالة كلها من [[wasi_snapshot_preview1]]: [[args_get]] و [[environ_get]] و [[fd_write]] و [[fd_read]] و [[path_open]] و [[proc_exit]] وغيرهم. والـ exports اتنين بس: [[memory]] و [[_start]].
-
-**الـ capabilities:** مفيش «افتح أي مسار». البرنامج بيستلم file descriptors جاهزة لكل فولدر في [[preopens]] (بـ [[fd_prestat_get]])، وكل [[path_open]] لازم يبقى جوه واحد منهم. عشان كده [[/data/../run.mjs]] رجعت [[Capabilities insufficient]] (اسمها [[ENOTCAPABLE]] في WASI) مش [[No such file]].
-
-**بس خد بالك:** docs بتاعة Node بتقول صراحة إن [[node:wasi]] **مش sandbox آمن** لكود مش واثق فيه: الحماية دي مش كاملة زي runtimes تانية. لكود من برا استخدم wasmtime أو عزل حقيقي (container).
-
-**Reactor ولا command:** البرنامج اللي فيه [[main]] اسمه command وبيتشغّل بـ [[wasi.start()]]. والمكتبة اللي من غير [[main]] (زي [[sum.wasm]]) اسمها reactor: بتعمل [[wasi.initialize(instance)]] لو محتاجة WASI، وبعدين تنادي الدوال عادي.
-
-**preview1 و preview2:** [[wasi_snapshot_preview1]] هي اللي شغالة في كل مكان النهارده. و WASI 0.2 (preview2) مبني على الـ Component Model وفيه sockets و HTTP، ومدعوم في wasmtime، و Node لسه بيدعم preview1 بس (من docs بتاعة Node و wasmtime).`,
-            when: R`نفس الأداة (parser، ضاغط، محوّل صور) محتاجها على كذا نظام من ملف واحد. أو plugins لبرنامجك بتشتغل معزولة (Envoy و Zed و Shopify Functions بيستخدموا wasm للسبب ده). أو تشغّل أداة C في سكربت Node من غير compiler على جهاز اليوزر. مش بديل لـ addon native لو محتاج سرعة الـ syscalls أو threads كاملة.`,
-            mistakes: R`تنسى [[version: "preview1"]] فيرمي [[ERR_INVALID_ARG_TYPE]]. تنسى [[getImportObject()]] فتاخد [[Import #0 "wasi_snapshot_preview1": module is not an object or function]]. تنادي [[start]] مرتين على نفس الـ instance ([[ERR_WASI_ALREADY_STARTED]]). تنادي [[start]] على reactor مالوش [[_start]]. تحط مسار فولدر في [[preopens]] مش موجود فيرمي [[UVWASI_ENOENT]] من [[new WASI]] نفسها. تفتكر إن البرنامج شايف متغيرات البيئة بتاعتك. وفي Git Bash على ويندوز، [[/data]] في الـ arguments بيتحول لمسار ويندوز لو مكتبتش [[MSYS_NO_PATHCONV=1]].`
-          },
-          teach: R`## نفس برنامج C، برا المتصفح
-
-في درس «wasm من C» عملنا compile بـ [[-nostdlib]]: من غير [[printf]] ولا [[fopen]]، والـ JS كان بيكتب في الذاكرة بإيده. هنا برنامج C **عادي** بمكتبة C كاملة، بيقرا arguments وبيئة وملف، وبيتشغّل بـ [[node:wasi]].
-
-كله اتشغّل فعلًا: clang 20.1.8 و wasi-sdk 25 جوه [[alpine:3.22]]، و Node 24.22.1 على ويندوز.
-
----
-
-## ١. البرنامج: [[wcat.c]]
-
-~~~text wcat.c
-// wcat.c: بيطبع ملف زي cat، C عادي بـ printf و fopen
-#include <stdio.h>
-#include <stdlib.h>
-int main(int argc, char **argv) {
-  const char *path = argc > 1 ? argv[1] : "/data/note.txt";
-  const char *user = getenv("USER");
-  printf("hi %s, reading %s\n", user ? user : "nobody", path);
-  FILE *f = fopen(path, "r");
-  if (!f) { perror("fopen"); return 2; }
-  char line[256];
-  while (fgets(line, sizeof line, f)) printf("| %s", line);
-  fclose(f);
-  return 0;
-}
-~~~
-
-- [[#include <stdio.h>]]: [[printf]] و [[fopen]] و [[fgets]] و [[perror]]. ده اللي مكنش موجود مع [[-nostdlib]].
-- [[argc > 1 ? argv[1] : "/data/note.txt"]]: لو اتبعت مسار خده، وإلا الملف الافتراضي.
-- [[getenv("USER")]]: متغير بيئة، وهيرجع [[NULL]] لو الـ runtime مدّاهوش.
-- [[perror("fopen")]]: بيطبع [[fopen: ]] وبعدها سبب آخر غلطة بالكلام (من [[errno]]).
-- [[return 2]]: الـ exit code لما الفتح يفشل.
-
----
-
-## ٢. الـ compile: [[wasm32-wasi]]
-
-~~~bash
-docker run --rm -v "$PWD:/src" -w /src alpine:3.22 sh -c "apk add --no-cache clang lld wasi-sdk && clang --target=wasm32-wasi -O2 -o wcat.wasm wcat.c"
-~~~
-
-| الحتة | معناها |
-|---|---|
-| [[wasi-sdk]] | باكدج في Alpine بيسطّب [[wasi-libc]] (مكتبة C فوق WASI) و [[wasi-compiler-rt]] |
-| [[--target=wasm32-wasi]] | wasm 32-bit بيستورد دوال WASI، ومعاه مكتبة C بدل [[-nostdlib]] |
-| من غير [[--no-entry]] | المرة دي فيه [[main]]، و clang بيعمل [[_start]] بينادي عليها |
-
-(في PowerShell بدّل [[$PWD]] بـ [[$__{PWD}]] زي درس «wasm من C». والتسطيب نزّل حوالي 500MB جوه الـ container ومش بيفضل على جهازك.)
-
-~~~text ls -l
--rwxr-xr-x    1 root     root         33577 wcat.wasm
-~~~
-
-33KB بدل 722 byte: جواه wasi-libc (و [[printf]] لوحدها كبيرة).
-
-### بيستورد إيه؟
-
-~~~js
-const m = await WebAssembly.compile(fs.readFileSync("wcat.wasm"));
-WebAssembly.Module.imports(m).map(i => i.module + "." + i.name);
-~~~
-
-~~~text الناتج (14 دالة)
-wasi_snapshot_preview1.args_get
-wasi_snapshot_preview1.args_sizes_get
-wasi_snapshot_preview1.environ_get
-wasi_snapshot_preview1.environ_sizes_get
-wasi_snapshot_preview1.fd_close
-wasi_snapshot_preview1.fd_fdstat_get
-wasi_snapshot_preview1.fd_fdstat_set_flags
-wasi_snapshot_preview1.fd_prestat_get
-wasi_snapshot_preview1.fd_prestat_dir_name
-wasi_snapshot_preview1.fd_read
-wasi_snapshot_preview1.fd_seek
-wasi_snapshot_preview1.fd_write
-wasi_snapshot_preview1.path_open
-wasi_snapshot_preview1.proc_exit
-exports: memory:memory, _start:function
-~~~
-
-| الدالة | جاية منين في الـ C |
-|---|---|
-| [[args_get]] و [[args_sizes_get]] | [[argc]] و [[argv]] اللي [[main]] بتستلمهم |
-| [[environ_get]] | [[getenv]]: بيقرا من [[env]] اللي في [[new WASI]] بس |
-| [[fd_write]] | [[printf]] بيكتب على fd 1 (stdout)، و [[perror]] على fd 2 (stderr) |
-| [[path_open]] و [[fd_read]] | [[fopen]] بيفتح، و [[fgets]] بيقرا سطر سطر |
-| [[fd_prestat_get]] | مكتبة C بتسأل بيه «إيه الفولدرات اللي اتفتحتلي؟» أول ما البرنامج يقوم |
-| [[proc_exit]] | الخروج بالـ exit code |
-
-ده **كل** اللي البرنامج يقدر يعمله في العالم: مفيش import تاني، فمفيش شبكة ولا تشغيل برامج.
-
----
-
-## ٣. التشغيل بـ [[node:wasi]]
-
-~~~text node run.mjs
-(node:46324) ExperimentalWarning: WASI is an experimental feature and might change at any time
-(Use $__btnode --trace-warnings ...$__bt to show where the warning was created)
-hi sara, reading /data/note.txt
-| سطر أول من ملف حقيقي
-| second line
-exit code: 0
-~~~
-
-- [[ExperimentalWarning]]: في Node 24 لسه experimental. [[node --no-warnings run.mjs]] بيخفيه، والرقم [[46324]] هو الـ PID وبيتغيّر كل مرة.
-- [[hi sara]]: [[getenv("USER")]] رجّعت القيمة اللي في [[env]] بتاعة [[new WASI]]، مش اسم اليوزر بتاع جهازك.
-- [[reading /data/note.txt]]: مفيش arguments، فالبرنامج خد المسار الافتراضي. و [[/data]] ده الاسم اللي في [[preopens]]، والملف الحقيقي [[./data/note.txt]] جنب [[run.mjs]].
-- العربي اتقرا واتطبع سليم: الملف UTF-8 والبرنامج بينقل bytes من غير ما يفهمها.
-- [[exit code: 0]]: اللي [[main]] رجّعته، و [[wasi.start]] رجّعهولنا.
-
----
-
-## ٤. الـ sandbox: [[preopens]]
-
-نفس [[wcat.wasm]] بمسارات مختلفة ([[node --no-warnings run.mjs PATH]]):
-
-~~~text
-== /data/note.txt
-hi sara, reading /data/note.txt
-| سطر أول من ملف حقيقي
-| second line
-exit code: 0
-== /data/../run.mjs
-hi sara, reading /data/../run.mjs
-fopen: Capabilities insufficient
-exit code: 2
-== /etc/passwd   (من هنا شلت سطر hi للاختصار)
-fopen: No such file or directory
-== C:/Windows/win.ini
-fopen: No such file or directory
-== /data/missing.txt
-fopen: No such file or directory
-~~~
-
-| المسار | النتيجة | ليه |
-|---|---|---|
-| [[/data/note.txt]] | اتقرا | جوه الفولدر اللي في [[preopens]] |
-| [[/data/../run.mjs]] | [[Capabilities insufficient]] | بيحاول يطلع برا [[/data]] بـ [[..]]، و WASI بيرفض (اسمها [[ENOTCAPABLE]]) |
-| [[/etc/passwd]] و [[C:/Windows/win.ini]] | [[No such file or directory]] | بالنسبة للبرنامج، مفيش أي مسار غير [[/data]] |
-
-ولما خليت [[preopens: {}]]، حتى [[/data/note.txt]] بقت [[No such file or directory]]. ولو كتبت فولدر مش موجود على جهازك ([[preopens: { "/data": "./nope" }]])، [[new WASI]] نفسها بترمي [[Error: UVWASI_ENOENT, uvwasi_init]] قبل ما البرنامج يبدأ.
-
-> **مهم:** docs بتاعة Node بتقول إن [[node:wasi]] مش sandbox كامل لكود مش واثق فيه. الـ preopens بتمنع الغلط العادي، بس لكود جاي من برا استخدم wasmtime أو container.
-
----
-
-## ٥. الأخطاء اللي هتقابلها (اتشغّلت كلها)
-
-| الغلطة | الرسالة | التصليح |
-|---|---|---|
-| [[new WASI({})]] | [[The "options.version" property must be of type string. Received undefined]] | زوّد [[version: "preview1"]] |
-| [[instantiate(wasm, {})]] | [[Import #0 "wasi_snapshot_preview1": module is not an object or function]] | ابعت [[wasi.getImportObject()]] |
-| [[start]] مرتين | [[ERR_WASI_ALREADY_STARTED]]: [[WASI instance has already started]] | اعمل [[new WASI]] و instance جديد لكل تشغيلة |
-| [[start]] على [[sum.wasm]] | [[The "instance.exports._start" property must be of type function. Received undefined]] | استخدم [[wasi.initialize(instance)]] |
-
-والأخيرة لأن [[sum.wasm]] مكتبة من غير [[main]] (اسمها reactor). ودي بتتنادى دوالها عادي، ولو محتاجة WASI بتعمل [[wasi.initialize(instance)]] بدل [[start]].
-
----
-
-## ٦. [[stdout]] لملف
-
-~~~js
-const out = openSync("out.txt", "w");
-const wasi = new WASI({ version: "preview1", args: ["wcount", "/data/note.txt"], preopens: { "/data": "./data" }, stdout: out });
-~~~
-
-[[stdout]] و [[stderr]] و [[stdin]] بياخدوا file descriptor. هنا [[printf]] جوه الـ C راح لـ [[out.txt]] بدل الترمنال (التمرين التاني).
-
----
-
-## ٧. برا Node
-
-نفس [[wcat.wasm]] بيشتغل على أي runtime بيدعم WASI preview1 من غير compile تاني (من docs بتاعة wasmtime):
-
-~~~bash
-wasmtime run --dir ./data::/data wcat.wasm /data/note.txt
-~~~
-
-[[--dir ./data::/data]] هي نفس فكرة [[preopens]]. و WASI 0.2 (preview2) الجديد فيه sockets و HTTP مبني على الـ Component Model، وشغال في wasmtime، و [[node:wasi]] لسه preview1 بس.
-
----
-
-## الخلاصة
-
-| | [[-nostdlib]] (درس «wasm من C») | WASI |
-|---|---|---|
-| مكتبة C | مفيش، كل حاجة بإيدك | [[wasi-libc]]: [[printf]] و [[fopen]] شغالين |
-| الحجم هنا | 722 byte | حوالي 33KB |
-| بيتشغّل إزاي | [[instance.exports.add(...)]] | [[wasi.start(instance)]] بينادي [[main]] |
-| الملفات | مفيش | جوه [[preopens]] بس |
-| يشتغل فين | أي مكان فيه JS | Node و wasmtime و wasmer وغيرهم |
-
-- [[version: "preview1"]] و [[getImportObject()]] إجباريين.
-- البيئة مش بتتورّث، والفولدرات لازم تتفتح بالاسم.
-- [[start]] مرة واحدة لكل instance.`,
-          sol: R`الناتج الحقيقي (Node 24.22.1، [[wcat.wasm]] 33577 byte):
-[[node run.mjs]] طبع [[hi sara, reading /data/note.txt]] والسطرين و [[exit code: 0]].
-[[/data/../run.mjs]]: [[fopen: Capabilities insufficient]] و [[exit code: 2]]، لأن البرنامج حاول يطلع برا الفولدر اللي اتفتحله.
-[[/etc/passwd]]: [[fopen: No such file or directory]]، لأن مفيش أي مسار بالنسبة له غير [[/data]].
-ومع [[preopens: {}]] حتى [[/data/note.txt]] بقت [[No such file or directory]]. وفي أول تشغيل Node طبع [[ExperimentalWarning: WASI is an experimental feature and might change at any time]].`
-        },
-        {
-          cmd: "wasm يستاهل إمتى",
-          title: "WebAssembly أسرع من JavaScript؟ قياس حقيقي",
-          desc: R`مش دايمًا. JavaScript في V8 بيتعمله JIT، فلوب أرقام بسيط بيبقى قريب من wasm جدًا. وكل نداء من JS لـ wasm ليه تمن، فدالة صغيرة بتتنادى ملايين المرات بتبقى **أبطأ** في wasm. الفرق الحقيقي بيظهر في الشغل الكبير على bytes و SIMD (عملية واحدة على كذا رقم مع بعض)، وفي إنك تستخدم مكتبة C أو Rust جاهزة.
-
-المثال بيقيس الحالتين الأولانيين على Node 24.`,
-          example: R`import { readFile } from "node:fs/promises";
-const { instance } = await WebAssembly.instantiate(await readFile("sum.wasm"));
-const wasm = instance.exports;
-function countPrimesJS(limit) {
-  let count = 0;
-  for (let n = 2; n < limit; n++) {
-    let prime = 1;
-    for (let d = 2; d * d <= n; d++) {
-      if (n % d === 0) { prime = 0; break; }
-    }
-    count += prime;
+ولما حاجة تحصل جوه بيبعت [[CustomEvent]] بـ [[detail]]، و [[bubbles: true]] عشان يطلع لفوق، و [[composed: true]] عشان يعدّي حدود الـ shadow DOM.`,
+          example: R`class StarRating extends HTMLElement {
+  static observedAttributes = ["value", "disabled"];
+  #labels = ["bad", "ok", "good", "great", "perfect"];
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    this.shadowRoot.addEventListener("click", (e) => {
+      const btn = e.target.closest("button");
+      if (!btn || this.disabled) return;
+      this.value = Number(btn.dataset.v);
+      this.dispatchEvent(new CustomEvent("rating-change", {
+        detail: { value: this.value },
+        bubbles: true,
+        composed: true,
+      }));
+    });
   }
-  return count;
+  get value() { return Number(this.getAttribute("value") ?? 0); }
+  set value(v) { this.setAttribute("value", String(v)); }
+  get disabled() { return this.hasAttribute("disabled"); }
+  set disabled(on) { this.toggleAttribute("disabled", Boolean(on)); }
+  get labels() { return this.#labels; }
+  set labels(list) { this.#labels = list; this.render(); }
+  attributeChangedCallback() { this.render(); }
+  connectedCallback() { this.render(); }
+  render() {
+    this.shadowRoot.innerHTML = this.#labels.map((label, i) =>
+      $__bt<button data-v="$__{i + 1}" title="$__{label}" $__{this.disabled ? "disabled" : ""}>$__{i < this.value ? "★" : "☆"}</button>$__bt
+    ).join("");
+  }
 }
-function time(label, fn) {
-  fn();
-  const t = performance.now();
-  const r = fn();
-  console.log(label.padEnd(26), String(r).padStart(9), (performance.now() - t).toFixed(1).padStart(7), "ms");
-}
-time("JS   countPrimes(5e6)", () => countPrimesJS(5_000_000));
-time("wasm count_primes(5e6)", () => wasm.count_primes(5_000_000));
-const jsAdd = (a, b) => (a + b) | 0;
-time("JS   add x 10M", () => { let s = 0; for (let i = 0; i < 1e7; i++) s = jsAdd(s, 1); return s; });
-time("wasm add x 10M", () => { let s = 0; for (let i = 0; i < 1e7; i++) s = wasm.add(s, 1); return s; });`,
-          try: R`خد [[sum.wasm]] من درس [[wasm من C]] وشغّل المثال [[bench.mjs]] مرتين بـ [[node bench.mjs]]. مين كسب في الأولية؟ وفي [[add]]؟ وبعدين قيس حاجة على bytes كبيرة (زي تفتيح 32MB «بكسلات») في JS وفي C عادي وفي C بـ [[-msimd128]].`,
+customElements.define("star-rating", StarRating);`,
+          try: R`احفظ المثال [[star-rating.js]] وحط [[<div id="box"><star-rating value="3"></star-rating></div>]]. من الـ Console: اقرا [[r.value]] ونوعه، واعمل [[r.value = 5]] وبص على الـ HTML، و [[r.disabled = true]]، و [[r.setAttribute("disabled", "false")]] واقرا [[r.disabled]]، و [[r.setAttribute("labels", "a,b,c")]] مقابل [[r.labels = ["no", "maybe", "yes"]]]. وحط listener على [[#box]] واضغط نجمة.`,
           practice: [
-            { lvl: 'سريع', t: R`**قارن وقيس:** زوّد في C دالة [[add_many(int n)]] بتعمل اللوب كلها جوه wasm ([[s = add(s, 1)]] عشر مليون مرة)، وقيسها بـ [[time]] اللي في المثال جنب ١٠ مليون نداء [[wasm.add]] من JS.`, done: R`عندك رقمين بالـ ms بعد الـ warm-up، والناتجين [[10000000]]، وكاتب جملة بتقول مين كسب وليه (كل نداء من JS لـ wasm ليه تمن).` },
-            { lvl: 'تطبيق', t: R`**refactor:** [[time(label, fn)]] بتقيس مرة واحدة بس. خليها [[bench(label, fn, runs = 7)]]: warm-up مرة، وبعدين ٧ قياسات، وتطبع الأقل والوسيط (median)، من غير ما تغيّر أي سطر في الدوال اللي بتتقاس.`, done: R`كل سطر بيطبع الاسم والناتج والأقل والوسيط، والـ warm-up مش داخل في الحساب، ولما تشغّل مرتين الوسيط بيبقى قريب أكتر من القياس الواحد القديم.` },
-            { lvl: 'تحدي', t: R`**اشرحها بأرقام:** في تلات حالات (تكبير حروف نص ١٠ حروف مرة واحدة، وفلتر على صورة 32MB، وجمع رقمين في لوب) قرر wasm يستاهل ولا لأ، وقيس الحالة التانية **ومعاها** وقت نسخ الـ bytes للـ [[memory]] ورجوعها.`, done: R`عندك جدول: لكل حالة قرارك وسببه في سطر، وللصورة ٣ أرقام (JS، و wasm من غير النسخ، و wasm بالنسخ رايح جاي)، وجملة بتقول القرار اتغيّر ولا لأ لما حسبت النسخ.` },
+            { lvl: 'سريع', t: R`ابني property [[size]] على [[star-rating]] بتعمل reflect لـ attribute [[size]] ([["s"]] أو [["m"]] أو [["l"]]) والـ default [["m"]]، والـ CSS جوه بـ [[:host([size="l"])]].`, done: R`[[r.size = "l"]] بيحط [[size="l"]] في الـ HTML والنجوم بتكبر، و [[r.removeAttribute("size")]] بيخلّي [[r.size]] يرجّع [["m"]]، و [[r.size = "xl"]] بيتجاهل القيمة وبيكتب warning وبيفضل على القديمة.` },
+            { lvl: 'تطبيق', t: R`اكتب اختبار بـ [[node:test]] و jsdom (custom elements شغالة فيه) لـ [[value]]: لازم يبقى رقم صحيح من 0 لعدد الـ labels، وأي حاجة برا كده تتقص للحد، و [[NaN]] تتجاهل. التستات الأول وبعدين التصليح في الـ setter.`, done: R`التستات بتقع على كود الدرس الأصلي، وبعد التصليح [[r.value = 9]] بيبقى 5 و [[r.value = -1]] بيبقى 0 و [[r.value = 2.7]] بيبقى 3 و [[r.value = "abc"]] مبيغيّرش القيمة، و [[node --test]] بيعدّي، والـ attribute في الـ HTML بيطابق الـ property في كل حالة.` },
+            { lvl: 'تحدي', t: R`ابني star-rating يتبعت مع الفورم: [[static formAssociated = true]] و [[this.#internals = this.attachInternals()]] و [[setFormValue(String(value))]] مع كل تغيير، و [[required]] بيعمل [[setValidity({ valueMissing: true }, "اختار تقييم")]] لما القيمة صفر. (jsdom مبيدعمش [[setFormValue]]، فجرّبه في المتصفح).`, done: R`[[new FormData(form).get("rating")]] بيرجّع [["4"]] بعد ما تختار 4 نجوم، والفورم اللي فيه [[required]] من غير تقييم مبيتبعتش وبيظهر «اختار تقييم»، و [[form.reset()]] بيرجّع النجوم صفر لو عملت [[formResetCallback]]، والـ rating بيظهر في [[form.elements]].` },
           ],
           flag: "script",
           deep: {
-            why: R`ناس كتير بتفتكر «wasm = أسرع»، فتنقل كود عادي لـ Rust/wasm وتتعب وفي الآخر مفيش فرق، أو يبقى أبطأ. القرار لازم يبقى بقياس على شغلك انت.`,
-            how: R`V8 بيراقب الكود الـ JS وهو شغال، ولو لاقى دالة سخنة بأنواع ثابتة (أرقام صحيحة دايمًا) بيعملها compile لكود معالج قريب من C. فلوب [[countPrimes]] بيتحول تقريبًا لنفس الكود اللي clang طلّعه.
+            why: R`الـ HTML مبيعرفش غير نصوص: [[<star-rating value="3">]] قيمته [["3"]] مش 3. والـ frameworks (React و Vue) بتمرّر arrays و objects. لو الـ component فاهم attributes بس، مستحيل تديله ليستة. ولو فاهم properties بس، مينفعش يتكتب في HTML عادي. والـ events هي الطريقة الوحيدة يقول بيها للصفحة «اليوزر عمل حاجة».`,
+            how: R`[[get value()]] / [[set value(v)]]: لما حد يكتب [[el.value = 5]] الـ setter بيكتبها attribute، و [[attributeChangedCallback]] بيعيد الرسم. فالمصدر واحد (الـ attribute) والاتنين متطابقين: ده اسمه reflect.
 
-النداء من JS لـ wasm بيعدّي «حدود»: تحويل الـ arguments، وتغيير الـ context. ده رخيص بس مش ببلاش، فلما الدالة نفسها تافهة ([[add]]) التمن ده بيبقى هو كل الوقت. وفي JS الـ JIT بيعمل inline لـ [[jsAdd]] (بيحط جسمها مكان النداء) فبتختفي.
+Boolean attributes في HTML: الوجود هو المعنى. [[disabled="false"]] لسه **disabled**، لأن [[hasAttribute]] بيسأل «موجود؟» مش «قيمته إيه؟». و [[toggleAttribute(name, force)]] بيحطه أو يشيله.
 
-wasm بيكسب: لما الشغل كتير جوه نداء واحد، وعلى bytes و typed arrays، ولما الـ compiler يقدر يستخدم SIMD (128-bit: 16 byte مع بعض في تعليمة واحدة)، ولما الأداء لازم يبقى ثابت (مفيش «JIT لسه ماسخنش» ولا deopt). وأكبر سبب عملي: كود C/C++/Rust موجود (SQLite و ffmpeg و image codecs و PGlite اللي الموقع ده بيستخدمه لتمارين SQL).`,
-            when: R`استخدمه: مكتبة native جاهزة، أو شغل تقيل على bytes/صور/صوت، أو SIMD، أو نفس الكود محتاجه في المتصفح والسيرفر والموبايل. متستخدموش: كود بيكلم DOM أو JSON أو الشبكة، أو دوال صغيرة بتتنادى كتير من JS.`,
-            mistakes: R`تقيس مرة واحدة من غير تسخين (أول تشغيل فيه compile). وتقيس دالة فاضية وتحكم. وتنسى إن تحويل الداتا (نصوص ← memory ← نصوص) بياكل الفرق. وتشحن wasm 2MB عشان توفّر 10ms: التنزيل والـ compile أغلى.`
+[[#labels]]: الـ [[#]] = private field، محدش يوصله من بره الـ class. و [[labels]] property بس من غير attribute: array مينفعش يبقى attribute من غير ما تعمل parse لنص.
+
+الـ events: [[dispatchEvent(new CustomEvent(name, { detail, bubbles, composed }))]]. [[bubbles]] = يطلع للأب وأبوه. [[composed]] = يعدّي من shadow root للـ document. لو بتعمل dispatch على [[this]] (الـ host) و الـ host نفسه في الـ document، [[bubbles]] كفاية. لكن لو الـ component نفسه جوه shadow root تاني (component جوه component)، من غير [[composed]] الـ event بيقف عند الـ shadow root ده. وعشان كده بنحطها دايمًا.`,
+            when: R`أي component هيتستخدم من framework أو بداتا مش نص. اعمل reflect للقيم البسيطة (string و number و boolean)، و property بس للـ arrays والـ objects، وevent لكل تغيير بيعمله اليوزر.`,
+            mistakes: R`[[disabled="false"]] وتستغرب إنه disabled. وتقرا [[getAttribute("value")]] وتقارنه برقم: نص. وتعمل reflect لـ object فيبقى [["[object Object]"]] في الـ HTML. وتنسى [[composed: true]] والـ component هيتحط جوه component تاني. واسم event بحروف كبيرة ([[ratingChange]]): بعض الـ frameworks بتحوّل الأسامي لحروف صغيرة، فخليه [[rating-change]].`
           },
-          teach: R`## القياس
+          teach: R`## الصفحة
 
-[[sum.wasm]] هو بتاع درس [[wasm من C]] (clang [[-O2]]). اتشغّل بـ Node 24.22 على ويندوز (Ryzen 9 5900HX)، مرتين.
+اتجرّب في Chrome 156 headless، والكود في الـ Console بتاع الصفحة.
+
+~~~text wc4.html
+<div id="box"><star-rating value="3"></star-rating></div>
+<script type="module" src="star-rating.js"></script>
+~~~
 
 ---
 
-## ١. [[time(label, fn)]]
+## ١. [[value]]: attribute ↔ property
 
-- [[fn();]] الأول: تسخين. أول نداء فيه compile و JIT، فمش بنحسبه.
-- [[performance.now()]] قبل وبعد التاني: الوقت بالـ ms بكسور.
-- [[padEnd(26)]] و [[padStart(9)]]: يكمّلوا بمسافات عشان الأعمدة تتصف.
+~~~text الناتج
+attr "3" -> property: 3 (number) | ★★★☆☆
+r.value = 5 -> attribute: "5" | ★★★★★
+~~~
 
-## ٢. الأعداد الأولية تحت ٥ مليون
-
-نفس الخوارزمية بالظبط في JS ([[countPrimesJS]]) و C ([[count_primes]]). [[5_000_000]]: الـ [[_]] بيفصل الأرقام للقراية بس.
-
-## ٣. [[add]] عشرة مليون مرة
-
-- [[(a + b) | 0]]: [[| 0]] بيحوّل الناتج لـ int 32-bit زي الـ C، عشان المقارنة تبقى عادلة.
-- كل لفة نداء واحد: من JS لـ JS، أو من JS لـ wasm.
+- [[get value()]]: [[getAttribute("value")]] نص أو [[null]]، و [[?? 0]] لو مش موجود، و [[Number()]] يحوّله. فـ [[r.value]] رقم.
+- [[set value(v)]]: [[setAttribute("value", String(v))]]: الـ property بتتكتب attribute.
+- الـ attribute اتغير ← [[attributeChangedCallback]] ← [[render()]]: النجوم اتحدّثت لوحدها.
 
 ---
 
-## النتيجة
+## ٢. [[disabled]]: boolean attribute
 
-~~~text node bench.mjs (المرة الأولى)
-JS   countPrimes(5e6)         348513  1089.2 ms
-wasm count_primes(5e6)        348513  1108.7 ms
-JS   add x 10M              10000000     4.0 ms
-wasm add x 10M              10000000    38.3 ms
+~~~text الناتج
+r.disabled = true -> outerHTML: <star-rating value="5" disabled=""></star-rating>
+setAttribute("disabled","false") -> r.disabled = true
 ~~~
 
-~~~text node bench.mjs (المرة التانية)
-JS   countPrimes(5e6)         348513  1164.5 ms
-wasm count_primes(5e6)        348513   985.4 ms
-JS   add x 10M              10000000     3.5 ms
-wasm add x 10M              10000000    31.2 ms
-~~~
-
-| | JS | wasm | مين كسب |
-|---|---|---|---|
-| الأولية (شغل كتير في نداء واحد) | 1089 / 1164 ms | 1109 / 985 ms | **تعادل تقريبًا** (الفرق بين التشغيلتين أكبر من الفرق بينهم) |
-| [[add]] × 10M (نداءات صغيرة) | 4.0 / 3.5 ms | 38.3 / 31.2 ms | **JS أسرع ~9 مرات** |
-
-[[348513]]: عدد الأعداد الأولية تحت 5 مليون، نفس الرقم في الاتنين (الكود صح).
+- [[toggleAttribute("disabled", true)]] حط [[disabled=""]]: القيمة فاضية، المهم إنه موجود.
+- [[setAttribute("disabled", "false")]] لسه **true**: [[hasAttribute]] بيسأل عن الوجود. زي [[<button disabled="false">]] في HTML: الزرار disabled. عشان تلغيه: [[removeAttribute("disabled")]] أو [[r.disabled = false]].
 
 ---
 
-## ٤. حالة wasm بيكسب فيها: bytes و SIMD
+## ٣. [[labels]]: property بس
 
-قست دالة بتفتّح صورة: بتزوّد 1 على كل byte في 32MB (بحد أقصى 255). نفس الكود C اتعمله compile مرتين: عادي، ومرة بـ [[-O3 -msimd128]] (SIMD: تعليمة واحدة على 16 byte). والذاكرة واحدة بين التلاتة.
-
-~~~text node bench2.mjs (مرتين)
-JS   brightness 32MB        36.2 ms      40.6 ms
-wasm brightness             23.2 ms      23.2 ms
-wasm+SIMD brightness         8.0 ms       7.9 ms
+~~~text الناتج
+setAttribute("labels","a,b,c") -> buttons: 5
+r.labels = [3 items] -> buttons: 3 | attribute labels: a,b,c
 ~~~
 
-| | الوقت | مقارنة بـ JS |
-|---|---|---|
-| JS ([[Uint8Array]]) | 36 لـ 41 ms | 1× |
-| wasm عادي | 23 ms | أسرع ~1.7× |
-| wasm + SIMD | 8 ms | **أسرع ~4.8×** |
-
-هنا wasm كسب: شغل كبير على bytes في نداء واحد، و SIMD بيعمل 16 byte مرة واحدة. والرقم ثابت بين التشغيلتين (JS اتذبذب).
+- الـ attribute [[labels]] ملوش أي معنى عند الـ component (مش في [[observedAttributes]] ومحدش بيقراه)، فالأزرار فضلت 5.
+- [[r.labels = [...]]]: الـ setter حط الـ array في [[#labels]] وعمل render: 3 أزرار.
+- والـ attribute القديم [[a,b,c]] فضل في الـ HTML زي ما هو ملوش لازمة.
 
 ---
 
-## ٥. wasm في Worker: الحساب التقيل من غير ما الصفحة تعلّق
+## ٤. الضغطة والـ event
 
-الأعداد الأولية تحت ٥ مليون بتاخد ثانية. وفي الثانية دي، **لو اتنادت على الـ main thread، مفيش أي حاجة تانية بتشتغل**: ولا timer، ولا click، ولا رسم. wasm مش بيحل ده، لأنه بيشتغل على نفس الـ thread اللي ناداه. الحل إنك تنقله لـ Worker (درس «blocking و الـ main thread» في وحدة الـ event loop).
-
-اتجرّب في Node بـ [[worker_threads]] و [[sum.wasm]] بتاع درس «wasm من C»:
-
-~~~js worker.mjs
-// worker.mjs: بيشغّل الـ wasm في thread لوحده
-import { parentPort } from "node:worker_threads";
-parentPort.on("message", async ({ module, limit }) => {
-  const instance = await WebAssembly.instantiate(module);
-  parentPort.postMessage(instance.exports.count_primes(limit));
-});
+~~~text الناتج
+box got rating-change: {"value":2} | target: STAR-RATING | composedPath[0]: STAR-RATING
+document click target: STAR-RATING
+after click: value=2 | ★★☆
 ~~~
 
-~~~js main.mjs
-import { readFile } from "node:fs/promises";
-import { Worker } from "node:worker_threads";
-const module = await WebAssembly.compile(await readFile("sum.wasm"));
-let ticks = 0;
-const timer = setInterval(() => ticks++, 100);
-const t = performance.now();
-const worker = new Worker(new URL("./worker.mjs", import.meta.url));
-worker.postMessage({ module, limit: 5_000_000 });
-worker.once("message", (count) => {
-  console.log("worker:", count, "|", Math.round(performance.now() - t), "ms | ticks:", ticks);
-  clearInterval(timer);
-  worker.terminate();
-});
+خطوات الـ click handler:
+
+1. [[e.target.closest("button")]]: أقرب [[button]] للمكان اللي اتضغط (أو هو نفسه). لو الضغطة بره الأزرار: [[null]].
+2. [[if (!btn || this.disabled) return]]: مفيش زرار أو الـ component disabled: متعملش حاجة.
+3. [[this.value = Number(btn.dataset.v)]]: [[dataset.v]] = قيمة [[data-v]] (نص). وده بيعدّي على الـ setter فبيتعمل reflect و render.
+4. [[dispatchEvent(new CustomEvent("rating-change", {...}))]]: [[detail]] الداتا اللي عايز تبعتها.
+
+- [[#box]] (الأب) استلم الـ event لأن [[bubbles: true]].
+- [[document click target: STAR-RATING]]: الـ click الأصلي حصل على [[button]] **جوه** الـ shadow، بس من بره الـ target بقى الـ host. ده اسمه retargeting: الصفحة مش بتشوف تفاصيل جوه الـ component.
+- النجوم 3 بس دلوقتي ([[★★☆]]) لأن [[labels]] بقت 3.
+
+### ليه [[composed: true]]؟
+
+حطيت [[<star-rating>]] جوه shadow root بتاع [[div]] تاني (component جوه component)، وبعت اتنين events من الـ star-rating:
+
+~~~text الناتج
+document got composed event, target=DIV
+shadow root got plain event
 ~~~
 
-~~~text node main.mjs (مرتين)، وبعدين نفس الحساب على الـ main thread (مرتين)
-worker: 348513 | 1187 ms | ticks: 10
-worker: 348513 | 1098 ms | ticks: 10
-main thread: 348513 | 1028 ms | ticks: 0
-main thread: 348513 | 1006 ms | ticks: 0
-~~~
-
-| السطر | معناه |
-|---|---|
-| [[ticks: 10]] مع الـ Worker | الـ timer اشتغل كل 100ms طول الحساب، يعني الـ main thread كان فاضي يرد على أي حاجة |
-| [[ticks: 0]] من غيره | الحساب حجز الـ thread ثانية كاملة، والـ timer ما اشتغلش ولا مرة |
-| الوقت | تقريبًا نفسه (حوالي ثانية)، والـ Worker بياخد شوية زيادة عشان يقوم. هو مش أسرع، هو **مش بيعلّق** |
-
-- [[WebAssembly.compile]] مرة واحدة في الـ main thread، وبعدين [[postMessage({ module })]]: الـ [[WebAssembly.Module]] بيتبعت لـ Worker من غير ما يتعمله compile تاني (structured clone بيدعمه).
-- [[instantiate(module)]] جوه الـ Worker: كل Worker لازم يعمل instance خاص بيه بذاكرة خاصة بيه. الذاكرة **مش** متشاركة إلا لو [[shared: true]] (تحت).
-- [[worker.terminate()]]: من غيرها البروسيس مش هيخرج لأن الـ Worker لسه شغال ومستني رسايل.
-
-### في المتصفح (من MDN)
-
-~~~js worker.js
-self.onmessage = async ({ data }) => {
-  const { instance } = await WebAssembly.instantiateStreaming(fetch("sum.wasm"));
-  self.postMessage(instance.exports.count_primes(data));
-};
-~~~
-
-~~~js main.js
-const worker = new Worker("worker.js", { type: "module" });
-worker.onmessage = (e) => (document.querySelector("#out").textContent = e.data);
-worker.postMessage(5_000_000);
-~~~
-
-نفس الفكرة: [[self]] مكان [[parentPort]]، و [[{ type: "module" }]] عشان [[import]] جوه الـ Worker. والـ Worker مالوش DOM، فالنتيجة بترجع بـ [[postMessage]] والـ main thread هو اللي بيكتبها في الصفحة.
-
-### وذاكرة مشتركة بين كذا Worker
-
-[[new WebAssembly.Memory({ initial: 1, maximum: 10, shared: true })]] بتعمل ذاكرة [[buffer]] بتاعها [[SharedArrayBuffer]]، فكذا Worker يشتغلوا على نفس الـ bytes. ده محتاج wasm اتعمله compile بـ threads ([[-pthread]] في Emscripten مثلًا)، وفي المتصفح الصفحة لازم تبقى cross-origin isolated (هيدرز [[Cross-Origin-Opener-Policy: same-origin]] و [[Cross-Origin-Embedder-Policy: require-corp]]). (من MDN، ماتجرّبش هنا.)
-
----
-
-## ٦. Rust و wasm-pack (من الـ docs، ماتجرّبش هنا)
-
-لو مكتبتك Rust، الطريق المعتاد هو [[wasm-pack]] و [[wasm-bindgen]]: نفس فكرة bindings بتاعة AssemblyScript (درس «AssemblyScript»)، بس لـ Rust.
-
-~~~text src/lib.rs
-use wasm_bindgen::prelude::*;
-
-#[wasm_bindgen]
-pub fn greet(name: &str) -> String {
-    format!("Hello, {}!", name)
-}
-~~~
-
-~~~bash
-cargo install wasm-pack
-wasm-pack build --target web
-~~~
-
-| الحتة | معناها |
-|---|---|
-| [[wasm_bindgen]] | العلامة اللي فوق الدالة في الكود: اعمل لها غلاف JS بيحوّل [[&str]] و [[String]] لنصوص JS، زي [[__lowerString]] و [[__liftString]] |
-| [[--target web]] | الناتج ES module للمتصفح. وفيه [[--target nodejs]] لـ Node، و [[--target bundler]] لـ Vite و webpack |
-| الناتج | فولدر [[pkg/]] فيه [[.wasm]] وملف JS و [[.d.ts]] و [[package.json]]، تعمله [[import]] أو تنشره على npm |
-
-وفي [[Cargo.toml]] لازم السطرين دول عشان Rust يطلّع wasm مكتبة:
-
-~~~text Cargo.toml
-[lib]
-crate-type = ["cdylib"]
-~~~
-
- ولـ WASI من غير JS خالص: [[rustup target add wasm32-wasip1]] و [[cargo build --target wasm32-wasip1]]، والناتج بيشتغل بـ [[node:wasi]] زي درس «WASI و node:wasi».
-
-| | C + clang | AssemblyScript | Rust + wasm-pack |
-|---|---|---|---|
-| النصوص | بإيدك في [[memory]] | الـ bindings | [[wasm-bindgen]] |
-| التسطيب | Docker أو clang | [[npm i]] | [[rustup]] و [[cargo]] |
-| بيستاهل لما | عندك كود C جاهز | انت مطوّر TS وعايز حتة سريعة | مكتبة Rust جاهزة، أو مشروع wasm كبير |
+- [[composed: true]]: عدّى لحد الـ document، والـ target بقى [[DIV]] (الـ host الخارجي، retargeting تاني).
+- من غير [[composed]]: وقف عند الـ shadow root اللي فيه، والـ document ماشافهوش.
 
 ---
 
 ## الخلاصة
 
-| الحالة | wasm يستاهل؟ |
-|---|---|
-| مكتبة C/C++/Rust جاهزة (SQLite، ffmpeg، codecs) | **آه**: ده أكبر سبب |
-| شغل كبير على bytes / صور / صوت، خصوصًا مع SIMD | آه (هنا 4.8×) |
-| لوب أرقام عادي | غالبًا لأ (تعادل) |
-| دوال صغيرة بتتنادى كتير من JS | لأ (هنا أبطأ 9×) |
-| DOM و JSON و الشبكة | لأ |
-
-قيس على شغلك انت، مع تسخين، وأكتر من مرة.`,
+| النوع | الطريقة | مثال |
+|---|---|---|
+| نص أو رقم | attribute ↔ property (reflect) | [[value]] |
+| boolean | الوجود: [[hasAttribute]] و [[toggleAttribute]] | [[disabled]] |
+| array أو object | property بس | [[labels]] |
+| حاجة حصلت | [[CustomEvent]] + [[detail]] + [[bubbles]] + [[composed]] | [[rating-change]] |`,
           lines: [
-            R`[[readFile]] من نسخة الـ promises في [[node:fs]]، عشان نقرا ملف الـ [[.wasm]] من الديسك بـ [[await]]. في Node بنقرا الـ bytes كلها الأول، وبعدين ندّيها لـ WebAssembly.`,
-            R`[[readFile]] بيرجّع Buffer فيه bytes الملف، و [[WebAssembly.instantiate]] بيعمل compile و instance مرة واحدة. مفيش imports هنا لأن [[sum.wasm]] مبيناديش أي دالة من JS. و [[await]] برّه أي دالة شغالة لأن الملف [[.mjs]] (ES module).`,
-            R`[[exports]] فيه الدوال اللي اتصدّرت من الـ C زي [[add]] و [[count_primes]]. بنحطه في اسم قصير عشان سطور القياس تحت.`,
-            R`نفس خوارزمية [[count_primes]] اللي في الـ C سطر بسطر، بـ JS. لازم الاتنين يعملوا نفس الشغل بالظبط، وإلا المقارنة ملهاش معنى.`,
-            R`العدّاد. V8 بيلاحظ إن الأرقام في اللوب ده صحيحة دايمًا فبيعمل لها كود محسّن، وده سبب إن JS بيقرّب من wasm هنا.`,
-            R`بنجرّب كل رقم من 2 لحد قبل [[limit]]، بنفس حدود لفة الـ C بالظبط.`,
-            R`بنفترض إنه أولي، وبنستخدم [[1]] و [[0]] مش [[true]] و [[false]] عشان نقلّد الـ C، ونقدر نجمعه على العدّاد تحت.`,
-            R`القواسم من 2 لحد الجذر التربيعي ([[d * d <= n]])، نفس الحيلة اللي بتوفّر معظم الشغل.`,
-            R`لو اتقسم من غير باقي يبقى مش أولي، و [[break]] تخرج من لفة القواسم. هنا [[===]] بدل [[==]] بتاع C، والنتيجة واحدة لأن الاتنين أرقام.`,
-            R`نهاية لفة القواسم.`,
-            R`بنزوّد [[prime]] (1 أو 0) على العدّاد من غير [[if]]، زي الـ C.`,
-            R`نهاية لفة الأرقام.`,
-            R`بنرجّع العدد، وده اللي بيتطبع جنب الوقت عشان نتأكد إن JS و wasm طلّعوا نفس الناتج.`,
-            R`نهاية [[countPrimesJS]].`,
-            R`دالة قياس صغيرة: بتاخد اسم يتطبع، ودالة فيها الشغل اللي هنقيسه.`,
-            R`تشغيل تسخين مش محسوب: أول مرة V8 بيشغّل الكود ببطء وبعدين بيعمله JIT، والـ wasm كمان ممكن يتعمله compile أحسن بعد أول استخدام. من غير التسخين هتقيس وقت الـ compile مش وقت الشغل.`,
-            R`[[performance.now()]] بترجّع الوقت بالـ milliseconds وبكسور، أدق من [[Date.now()]] اللي بالـ ms الصحيحة بس. ده لحظة البداية.`,
-            R`التشغيل اللي بنقيسه فعلًا، وبنحفظ الناتج في [[r]] عشان نطبعه. استخدام الناتج مهم: الـ JIT ممكن يشيل شغل نتيجته مش مستخدمة، والقياس يطلع أسرع من الحقيقة.`,
-            R`بيطبع سطر واحد: [[padEnd]] و [[padStart]] بيكمّلوا بمسافات عشان الأعمدة تبقى تحت بعض، و [[toFixed(1)]] بيقرّب الوقت لرقم عشري واحد. والطرح من [[t]] هو المدة.`,
-            R`نهاية [[time]].`,
-            R`بيقيس [[countPrimesJS]] على ٥ مليون. الـ [[_]] في [[5_000_000]] للقراية بس، و JavaScript بيتجاهلها.`,
-            R`نفس الشغل بـ wasm: نداء واحد بس من JS، وكل اللف جوه الـ wasm. هنا بيبان فرق السرعة الحقيقي بين الاتنين، وهو عادة صغير لأن JS متعمله JIT.`,
-            R`نسخة JS من [[add]]. الـ [[| 0]] بيحوّل الناتج لرقم صحيح 32-bit زي [[int]] في C، فالدالتين يعملوا نفس الحاجة بالظبط حتى لو الرقم كبر.`,
-            R`عشرة مليون نداء من JS لدالة JS صغيرة. V8 غالبًا بيدخّل [[jsAdd]] جوه اللوب نفسه (inlining)، فالنداء بيبقى شبه ببلاش.`,
-            R`نفس العشرة مليون نداء بس لـ [[wasm.add]]: كل نداء بيعدّي الحدود بين JS و wasm وليه تمن، فالنسخة دي غالبًا **أبطأ** مع إن الدالة نفسها أبسط حاجة. الدرس: wasm بيكسب في شغل كبير جوه نداء واحد، مش في دوال صغيرة بتتنادى ملايين المرات.`,
+            R`class عنصر التقييم بالنجوم، بيورث [[HTMLElement]]. هيبيّن الفرق بين attributes (نص في الـ HTML) و properties (أي قيمة JS على الـ object).`,
+            R`بنتابع [[value]] و [[disabled]] بس: لو أي واحد فيهم اتغير (من الـ HTML أو [[setAttribute]] أو الـ setters اللي تحت) [[attributeChangedCallback]] تتنادى فنرسم تاني.`,
+            R`private field ([[#]]): أسامي النجوم، ومحدش من برّه الـ class يوصله مباشرة. ده property بس من غير attribute، لأن array مينفعش يتحط في attribute من غير ما يتحوّل لنص. الافتراضي 5 أسامي، يعني 5 نجوم.`,
+            R`الـ [[constructor]]: shadow root ومستمع واحد للضغط.`,
+            R`[[super()]] لازم الأول قبل [[this]].`,
+            R`اعمل shadow root مفتوح؛ الأزرار هتترسم جواه في [[render]].`,
+            R`مستمع واحد على الـ shadow root كله بدل listener على كل زرار (event delegation). ليه؟ [[render]] بيعمل الأزرار من جديد كل مرة، فأي listener على زرار بعينه كان هيضيع مع كل رسم.`,
+            R`[[closest("button")]]: الضغطة ممكن تبقى على حاجة جوه الزرار، فبنطلع لأقرب [[button]]. ولو الضغطة بره أي زرار بترجّع [[null]].`,
+            R`مفيش زرار، أو العنصر [[disabled]]: اخرج ومتغيرش حاجة. ([[this.disabled]] هنا بينادي الـ getter اللي تحت.)`,
+            R`[[dataset.v]] رقم النجمة من [[data-v]] بس كنص، فـ [[Number]] بيحوّله. والكتابة في [[this.value]] بتعدّي على الـ setter اللي بيكتب الـ attribute، وده بيشغّل [[attributeChangedCallback]] فيرسم.`,
+            R`بلّغ الصفحة إن اليوزر غيّر التقييم بـ [[CustomEvent]] اسمه [[rating-change]]. الاسم حروف صغيرة وشرطة لأن بعض الـ frameworks بتحوّل أسامي الـ events لحروف صغيرة.`,
+            R`[[detail]]: الداتا اللي بتتبعت مع الـ event. اللي بيسمع بيقراها من [[e.detail.value]].`,
+            R`[[bubbles: true]]: الـ event يطلع من العنصر لأبوه وجدّه، فتقدر تسمعله على أي أب (زي [[document]]). من غيرها لازم الـ listener يبقى على العنصر نفسه.`,
+            R`[[composed: true]]: الـ event يعدّي حدود الـ shadow root. ضروري لو العنصر ده نفسه اتحط جوه shadow DOM بتاع component تاني، وإلا الـ event يقف عنده.`,
+            R`نهاية الـ options وقفلة [[CustomEvent]] و [[dispatchEvent]].`,
+            R`نهاية الـ click listener.`,
+            R`نهاية الـ [[constructor]].`,
+            R`getter لـ [[value]]: لما حد يقرا [[el.value]] بنرجّع الـ attribute كرقم. [[Number]] لأن [[getAttribute]] دايمًا بترجّع نص، و [[?? 0]] لو مفيش attribute.`,
+            R`setter لـ [[value]]: [[el.value = 3]] بتكتب [[value="3"]] على العنصر. ده اسمه reflect: الـ property والـ attribute دايمًا متطابقين، وتغيير الـ attribute بيشغّل الرسم.`,
+            R`getter لـ [[disabled]]: boolean attribute، المعنى في وجوده مش قيمته. [[hasAttribute]] بترجّع [[true]] حتى لو مكتوب [[disabled="false"]].`,
+            R`setter لـ [[disabled]]: [[toggleAttribute(name, force)]] بتحط الـ attribute لو [[force]] بـ [[true]] وتشيله لو [[false]]. و [[Boolean(on)]] بتحوّل أي قيمة ([[0]] أو نص فاضي مثلًا) لـ true أو false صريحة.`,
+            R`getter لـ [[labels]]: بيرجّع الـ array الخاص. مفيش attribute ليها، فالطريق الوحيد تقراها أو تغيّرها هو الـ property.`,
+            R`setter لـ [[labels]]: بيحفظ الـ array الجديد ويرسم على طول، لأن [[labels]] مش attribute ومش في [[observedAttributes]]، فمحدش هينادي [[attributeChangedCallback]] لوحده.`,
+            R`[[value]] أو [[disabled]] اتغيروا (بأي طريقة): ارسم من جديد. مش محتاجين الـ arguments لأن الرسم بيقرا كل حاجة من الأول.`,
+            R`أول ما العنصر يدخل الصفحة ارسم. من غيره، عنصر ملوش attributes متابَعة مش هيترسم خالص، لأن [[attributeChangedCallback]] مش هتتنادى.`,
+            R`[[render]]: بيبني الأزرار من الـ state الحالي.`,
+            R`استبدل محتوى الـ shadow كله بزرار لكل اسم في [[#labels]]. [[map]] بتدّي الاسم ورقمه [[i]] (بيبدأ من 0).`,
+            R`كل زرار: [[data-v]] رقم النجمة ([[i + 1]] عشان يبدأ من 1)، و [[title]] الاسم اللي يظهر لما تقف عليه، و [[disabled]] لو العنصر disabled، والنجمة مليانة ★ لو رقمها أقل من أو يساوي القيمة وإلا فاضية ☆.`,
+            R`[[map]] بترجّع array نصوص، و [[join("")]] بتلزقهم نص واحد. من غيرها [[innerHTML]] كان هيحوّل الـ array لنص بفواصل، فتظهر [[,]] بين النجوم.`,
+            R`نهاية [[render]].`,
+            R`نهاية الـ class.`,
+            R`سجّل [[star-rating]]. الدرس الجاي بيستخدمه من React و Vue.`,
           ],
-          sol: R`الناتج الحقيقي (Node 24.22، مرتين):
-الأولية: JS [[1089.2 ms]] و [[1164.5 ms]]، wasm [[1108.7 ms]] و [[985.4 ms]]: تعادل.
-[[add]] × 10M: JS [[4.0 ms]] و [[3.5 ms]]، wasm [[38.3 ms]] و [[31.2 ms]]: JS أسرع ~9 مرات بسبب تمن النداء.
-وتفتيح 32MB: JS حوالي 36 لـ 41 ms، و wasm عادي 23 ms، و wasm بـ [[-msimd128]] حوالي 8 ms.`
+          sol: R`الناتج الحقيقي في Chrome 156:
+[[r.value]] ← [[3]] ونوعه [[number]]. [[r.value = 5]] ← الـ HTML بقى [[value="5"]].
+[[r.disabled = true]] ← [[<star-rating value="5" disabled="">]]. و [[setAttribute("disabled", "false")]] ← [[r.disabled]] لسه [[true]].
+[[setAttribute("labels", "a,b,c")]] ← لسه 5 أزرار. [[r.labels = ["no", "maybe", "yes"]]] ← 3 أزرار.
+ضغطة النجمة التانية ← [[#box]] استلم [[rating-change]] و [[detail]] = [[{"value":2}]] و [[target]] = [[STAR-RATING]].`
+        },
+        {
+          cmd: "Web Components في React و Vue",
+          title: "تستخدم custom element جوه React 19 و Vue",
+          desc: R`React 19 بيدعم الـ custom elements كاملة: لو العنصر عنده property بنفس الاسم بيحطها property (فالـ arrays والـ objects بتوصل صح)، وإلا attribute، و [[onrating-change]] بيسمع لـ event اسمه [[rating-change]]. React 18 كان بيحوّل كل حاجة attribute نص، ومكانش بيسمع للـ custom events.
+
+Vue بيدعمها من زمان: [[:labels="labels"]] و [[@rating-change="..."]] شغالين، بس لازم تقول للـ compiler إن الـ tag ده مش component بتاع Vue: [[compilerOptions.isCustomElement]].`,
+          example: R`import { useState } from "react";
+import { createRoot } from "react-dom/client";
+import "./star-rating.js";
+function App() {
+  const [rating, setRating] = useState(4);
+  return (
+    <>
+      <star-rating
+        value={rating}
+        labels={["bad", "ok", "great"]}
+        onrating-change={(e) => setRating(e.detail.value)}
+      />
+      <p id="react-out">rating in React: {rating}</p>
+    </>
+  );
+}
+createRoot(document.querySelector("#root")).render(<App />);`,
+          try: R`خد [[star-rating.js]] من الدرس اللي فات، واعمل المثال بـ React 19 (Vite أو esbuild). اضغط النجمة التانية: الرقم في الـ [[<p>]] اتغير؟ وكام زرار ظهر؟ وبعدين نفس الكود بـ React 18: إيه اللي اتغير في الـ HTML؟ وفي Vue اكتب [[<star-rating :value="rating" :labels="labels" @rating-change="rating = $event.detail.value" />]].`,
+          practice: [
+            { lvl: 'سريع', t: R`اتوقع وبعدين جرّب في React 19: [[<star-rating onRatingChange={...} />]] مقابل [[onrating-change={...}]] لما العنصر بيبعت [[rating-change]].`, done: R`[[onrating-change]] بيشتغل و [[onRatingChange]] لأ: React 19 بيسمع لـ event اسمه بالظبط زي اللي بعد [[on]] ([[RatingChange]] بالحروف دي)، فلو عايز camelCase لازم العنصر يبعت event اسمه كده. ولو ابعت [[RatingChange]] من Console الـ handler التاني بيشتغل.` },
+            { lvl: 'تطبيق', t: R`صلّح التحذير في Vue: استخدم [[<star-rating>]] في Vite + Vue من غير config، وشوف Console، وبعدين زوّد [[compilerOptions.isCustomElement]] في [[vue()]] جوه [[vite.config]] بحيث أي tag فيه [[-]] ومش component بتاعك يتساب.`, done: R`قبل التصليح Console فيه [[Failed to resolve component: star-rating]]، وبعده التحذير بيختفي، و [[:labels]] بيوصل كـ array (٣ زراير مش ٥)، و [[@rating-change]] بيحدّث الـ ref، والـ components بتاعتك اللي فيها [[-]] (لو عندك) لسه شغالة.` },
+            { lvl: 'تحدي', t: R`صلّح باج ترتيب التحميل: في React 19 خلّي [[import "./star-rating.js"]] يحصل **بعد** [[createRoot().render()]] (مثلًا [[setTimeout(() => import("./star-rating.js"))]])، واعمل [[labels={["bad", "ok", "great"]}]]. عدّ الزراير وبص على الـ HTML، وبعدين صلّحها.`, done: R`قبل التصليح بيظهر ٥ زراير مش ٣، والـ HTML فيه [[labels="bad,ok,great"]] كنص (React لقى العنصر مش متعرّف فحطها attribute)، وبعد التصليح ([[import]] قبل الـ render، أو [[await customElements.whenDefined("star-rating")]] قبل [[createRoot]]) بيظهر ٣ ومفيش attribute اسمه [[labels]].` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`أغلب ما هتقابل Web Components هيبقى جوه تطبيق React أو Vue: design system الشركة، أو widget من طرف تالت (دفع، خرايط، chat). لازم تعرف تبعتلهم داتا وتسمع للـ events، والفروق بين النسخ بتعمل bugs غريبة (array بقى نص [["bad,ok,great"]]).`,
+            how: R`React 19: لما يرسم tag فيه [[-]]، لكل prop بيسأل «العنصر عنده property بالاسم ده؟» ([["labels" in el]]). لو آه بيعمل [[el.labels = value]]، وإلا [[setAttribute]]. والـ props اللي بتبدأ بـ [[on]] بتتحول [[addEventListener]] على اسم الـ event بعد [[on]] بالظبط ([[onrating-change]] ← [[rating-change]]). عشان كده الـ component لازم يتسجّل (يتعمل import) قبل الرسم.
+
+React 18 وأقدم: كل prop على custom element بيبقى attribute نص (فالـ array بقى [["bad,ok,great"]])، والـ events لازم [[ref]] و [[addEventListener]] بإيدك.
+
+Vue: الـ compiler لازم يعرف إن [[star-rating]] مش component. في Vite: [[vue({ template: { compilerOptions: { isCustomElement: (tag) => tag.includes("-") } } })]]. من غيرها بيحاول يعمل [[resolveComponent]] ويطلّع warning. و [[:prop]] بيحطها property لو العنصر عنده property بالاسم ده (زي React 19). و Vue كمان بيعمل Web Components: [[defineCustomElement]] بيحوّل component بتاع Vue لـ custom element يشتغل في أي صفحة.`,
+            when: R`design system مبني Web Components بيتستخدم في تطبيق React أو Vue، أو العكس: component بتاع Vue عايز تديه لفريق React (بـ [[defineCustomElement]]).`,
+            mistakes: R`React 18: تبعت array وتلاقيه نص في الـ attribute، أو [[onRatingChange]] ومحدش بينادي. React 19: [[onRatingChange]] بحروف كبيرة بيسمع لـ [[RatingChange]] مش [[rating-change]]، فاكتب اسم الـ event زي ما هو. Vue: تنسى [[isCustomElement]] مع SFC في Vite فيطلع [[Failed to resolve component]]. وتعمل import للـ component بعد ما React رسم فيتعامل كعنصر مجهول وقتها.`
+          },
+          teach: R`## React 19
+
+الـ bundle اتعمل بـ esbuild 0.28 (React 19.3.1)، واتجرّب في Chrome 156 headless. [[star-rating.js]] هو بتاع درس [[attributes و properties]].
+
+---
+
+## ١. الكود
+
+- [[import "./star-rating.js"]]: import من غير أسماء = شغّل الملف بس، فيسجّل [[<star-rating>]]. لازم قبل [[render]].
+- [[value={rating}]]: رقم. React شاف إن العنصر عنده property [[value]] (الـ getter/setter) فعمل [[el.value = 4]].
+- [[labels={["bad", "ok", "great"]}]]: array، و [[labels]] property، فوصل array.
+- [[onrating-change={(e) => setRating(e.detail.value)}]]: [[on]] + اسم الـ event بالظبط. [[e.detail.value]] الداتا اللي الـ component بعتها.
+- [[<>...</>]]: Fragment، أكتر من عنصر من غير div زيادة.
+
+## ٢. النتيجة
+
+~~~text الناتج (React 19.3.1)
+html: <star-rating value="4"></star-rating>
+buttons: 3 | value prop: 4
+rating in React: 2      (بعد الضغط على النجمة التانية)
+~~~
+
+- [[value="4"]] في الـ HTML: React حط الـ property، والـ setter عمل reflect.
+- 3 أزرار: الـ array وصل.
+- [[rating in React: 2]]: الـ event وصل و [[setRating]] اشتغل.
+
+## ٣. نفس الكود بـ React 18.3
+
+~~~text الناتج (React 18)
+html: <star-rating value="4" labels="bad,ok,great"></star-rating>
+buttons: 5 | value prop: 4
+rating in React: 4      (بعد نفس الضغطة)
+~~~
+
+- [[labels="bad,ok,great"]]: React 18 حوّل الـ array لنص وحطه attribute، والـ component مش بيقرا attribute اسمه [[labels]]، فـ 5 أزرار (الافتراضي).
+- [[rating in React: 4]]: [[onrating-change]] اتجاهل خالص.
+
+| | React 18 | React 19 |
+|---|---|---|
+| prop بسيط ([[value]]) | attribute نص | property لو موجودة |
+| array / object | attribute نص ([["bad,ok,great"]]) | property (الـ array نفسه) |
+| [[onxxx]] | متجاهل (محتاج ref و addEventListener) | [[addEventListener("xxx")]] |
+
+---
+
+## Vue 3.5
+
+~~~text vue-app.js (المهم)
+const app = createApp({
+  setup() {
+    const rating = ref(4);
+    const labels = ["bad", "ok", "great"];
+    return { rating, labels };
+  },
+  template: $__bt
+    <star-rating :value="rating" :labels="labels" @rating-change="rating = $event.detail.value" />
+    <p id="vue-out">rating in Vue: {{ rating }}</p>$__bt,
+});
+app.config.compilerOptions.isCustomElement = (tag) => tag.includes("-");
+app.mount("#app");
+~~~
+
+- [[:labels="labels"]]: الـ [[:]] = قيمة JavaScript مش نص. Vue شاف إن [[labels]] property على العنصر فحطها property.
+- [[@rating-change="..."]]: [[addEventListener("rating-change")]]، و [[$event]] هو الـ event نفسه.
+- [[isCustomElement]]: «أي tag فيه [[-]] اعتبره عنصر HTML، متدوّرش عليه كـ component».
+
+~~~text الناتج (Vue 3.5.44)
+html: <star-rating value="4"></star-rating>
+buttons: 3
+rating in Vue: 2
+~~~
+
+### من غير [[isCustomElement]]
+
+الـ compiler بيطلّع كود مختلف. جرّبته بـ [[@vue/compiler-dom]] على نفس الـ template:
+
+~~~text الناتج
+without isCustomElement: const _component_star_rating = _resolveComponent("star-rating") | return (_openBlock(), _createBlock(_component_star_rating, {
+with isCustomElement:    return (_openBlock(), _createElementBlock("star-rating", {
+~~~
+
+من غيره بيدوّر على component اسمه [[star-rating]]، ومش هيلاقيه:
+
+~~~text Console
+[Vue warn]: Failed to resolve component: star-rating
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement.
+~~~
+
+(في الـ template اللي بيتعمله compile في المتصفح، Vue بيسأل [[customElements.get(tag)]] لوحده فاشتغل من غير الإعداد. بس مع SFC في Vite، الـ compile بيحصل وقت الـ build ومحدش يعرف إيه المسجّل، فالإعداد لازم في [[vite.config]].)
+
+### Vue بيعمل Web Component
+
+~~~text vue-app.js
+const HelloBadge = defineCustomElement({
+  props: { name: String },
+  styles: ["span { color: purple; }"],
+  setup(props) {
+    return () => h("span", $__btHi $__{props.name} from a Vue-made element$__bt);
+  },
+});
+customElements.define("hello-badge", HelloBadge);
+~~~
+
+~~~text الناتج: hello-badge.shadowRoot.innerHTML
+<style>span { color: purple; }</style><span>Hi Sara from a Vue-made element</span>
+~~~
+
+component بتاع Vue بقى [[<hello-badge name="Sara">]] يشتغل في أي صفحة، بـ shadow DOM والـ styles جواه.
+
+---
+
+## الخلاصة
+
+| | React 19 | Vue 3 |
+|---|---|---|
+| تبعت array | [[labels={arr}]] | [[:labels="arr"]] |
+| تسمع لـ event | [[onrating-change={fn}]] | [[@rating-change="fn"]] |
+| إعداد | ولا حاجة | [[isCustomElement]] في الـ compiler |
+| تعمل Web Component | مكتبات بره React | [[defineCustomElement]] |
+
+وفي React 18 أو أقدم: [[ref]] و [[el.labels = ...]] و [[addEventListener]] بإيدك.`,
+          lines: [
+            R`[[useState]] من React عشان نحفظ التقييم في state، والـ component يترسم تاني لما يتغير.`,
+            R`[[createRoot]] من [[react-dom/client]]: بتربط React بعنصر في الصفحة وترسم فيه.`,
+            R`import من غير أسامي: بيشغّل الملف وبس، والملف بينادي [[customElements.define]]. لازم قبل الرسم، لأن React 19 بيسأل «العنصر عنده property بالاسم ده؟»، ولو العنصر لسه مش متسجّل مش هيلاقي [[labels]] فيبعتها attribute نص.`,
+            R`component اسمه [[App]]، فيه الـ custom element وسطر بيعرض القيمة.`,
+            R`state للتقييم بيبدأ بـ 4. و [[setRating]] هنستخدمها لما الـ component يبلّغنا بتغيير.`,
+            R`الـ JSX اللي [[App]] بيرسمه.`,
+            R`Fragment ([[<>]]): بيلم العنصرين من غير ما يضيف [[div]] زيادة في الصفحة، لأن الـ component لازم يرجّع حاجة واحدة.`,
+            R`الـ custom element نفسه. React بيعرف إنه custom element من الشرطة في الاسم، فبيتعامل مع الـ props بطريقة غير [[div]].`,
+            R`[[value]] رقم. React 19 لقى إن العنصر عنده property اسمها [[value]] (الـ getter/setter)، فعمل [[el.value = 4]] بدل [[setAttribute]]، والـ setter عمل reflect للـ attribute. React 18 كان بيحطه attribute نص على طول.`,
+            R`array: [[labels]] property على العنصر، فـ React 19 بيبعت الـ array نفسه وتظهر 3 نجوم. في React 18 كان بيبقى attribute نص [[bad,ok,great]] والعنصر مش بيقراه، فتفضل 5.`,
+            R`[[on]] + اسم الـ event بالظبط: React 19 بيسمع لـ event اسمه [[rating-change]]. لما اليوزر يضغط نجمة، [[e.detail.value]] فيها الرقم فنحدّث الـ state. لو كتبت [[onRatingChange]] هيسمع لـ [[RatingChange]] ومحدش بيبعته.`,
+            R`نهاية [[<star-rating>]] (self-closing: من غير أولاد).`,
+            R`سطر بيعرض القيمة اللي في state بتاع React، عشان نتأكد إن الـ event وصل وحدّثها.`,
+            R`نهاية الـ Fragment اللي لامم العنصرين.`,
+            R`نهاية الـ [[return]].`,
+            R`نهاية [[App]].`,
+            R`دوّر على [[#root]] في الصفحة، واعمل منه root لـ React، وارسم [[<App />]] جواه.`,
+          ],
+          sol: R`React 19.3.1: [[<star-rating value="4">]] و 3 أزرار، وبعد الضغطة [[rating in React: 2]].
+React 18.3: [[<star-rating value="4" labels="bad,ok,great">]] و 5 أزرار، والرقم فضل [[4]] (الـ event متجاهل).
+Vue 3.5.44 بالـ template ده و [[isCustomElement]]: 3 أزرار و [[rating in Vue: 2]].`
+        },
+        {
+          cmd: "form-associated و ElementInternals",
+          title: "component يدخل الفورم زي input حقيقي: قيمة، و required، و reset (ElementInternals)",
+          desc: R`الـ custom element العادي الفورم مش شايفه: [[new FormData(form)]] مبيلاقيش قيمته، و [[required]] عليه ملوش معنى، و [[form.reset()]] مبيرجّعوش. الحل سطرين: [[static formAssociated = true]] في الـ class، و [[this.attachInternals()]] اللي بيرجّع [[ElementInternals]]: object خاص بالـ component بيكلّم بيه الفورم.
+
+من [[ElementInternals]]: [[setFormValue(value)]] (القيمة اللي هتتبعت باسم الـ [[name]])، و [[setValidity(flags, message)]] (صالح ولا لأ، والرسالة)، و [[form]] و [[labels]]، و [[role]] و [[ariaValueNow]] لقارئ الشاشة من غير ما تحط attributes على العنصر، و [[states]] لـ [[:state()]] في CSS. ومعاهم callbacks: [[formResetCallback]] و [[formDisabledCallback]] و [[formAssociatedCallback]].
+
+ده اللي بيخلّي مكتبات زي Shoelace و Material Web تعمل [[<sl-input>]] يتبعت مع الفورم من غير [[<input type="hidden">]] مخبّي جنبه.`,
+          example: R`class StarRating extends HTMLElement {
+  static formAssociated = true;
+  #internals = this.attachInternals();
+  #value = 0;
+  connectedCallback() {
+    this.tabIndex = 0;
+    this.#internals.role = "slider";
+    this.#internals.ariaValueMax = "5";
+    this.addEventListener("click", () => (this.value = (this.#value % 5) + 1));
+    this.#sync();
+  }
+  get value() { return this.#value; }
+  set value(v) { this.#value = Number(v); this.#sync(); }
+  get form() { return this.#internals.form; }
+  get name() { return this.getAttribute("name"); }
+  formResetCallback() { this.value = 0; }
+  #sync() {
+    this.#internals.setFormValue(this.#value ? String(this.#value) : null);
+    if (this.hasAttribute("required") && !this.#value) this.#internals.setValidity({ valueMissing: true }, "اختار عدد النجوم");
+    else this.#internals.setValidity({});
+    this.#internals.ariaValueNow = String(this.#value);
+    this.textContent = "★".repeat(this.#value) + "☆".repeat(5 - this.#value);
+  }
+}
+customElements.define("star-rating", StarRating);
+const form = document.querySelector("form");
+const stars = form.querySelector("star-rating");
+console.log(form.checkValidity(), JSON.stringify([...new FormData(form)]));
+stars.click();
+stars.click();
+console.log(form.checkValidity(), JSON.stringify([...new FormData(form)]));
+form.reset();
+console.log(stars.value, JSON.stringify([...new FormData(form)]));`,
+          try: R`حط فوق الـ script ده الـ HTML: [[<form><label>تقييمك <star-rating name="rating" required></star-rating></label><input name="note" value="hi"><button>ابعت</button></form>]]، وفي الـ CSS [[star-rating:invalid { outline: 2px solid red; }]]. افتح الصفحة: الإطار الأحمر ظاهر؟ دوس «ابعت» من غير نجوم: الفورم اتبعت ولا لأ؟ وبعدين امسح سطر [[static formAssociated = true]] وشوف أول error في الـ Console.`,
+          practice: [
+            { lvl: 'سريع', t: R`صلّح الكود البايظ: component اسمه [[<color-pick>]] فيه [[static formAssociated = true]]، والـ constructor بيعمل [[this.attachInternals()]]، و [[connectedCallback]] بيعمل [[this.attachInternals()]] تاني عشان يحط القيمة. شغّله وانقل العنصر من مكان لمكان في الصفحة ([[append]] في div تاني)، واقرا الـ error وصلّحه.`, done: R`ظهر [[NotSupportedError]] برسالة فيها [[ElementInternals for the specified element was already attached.]] أول ما الـ [[connectedCallback]] اتنادى، وصلّحته بإن الـ internals تتعمل مرة واحدة في field ([[#internals = this.attachInternals()]]) وكل حتة تستخدمها، والنقل بين الأماكن بقى يشتغل من غير errors.` },
+            { lvl: 'تطبيق', t: R`ابني [[<tag-input name="tags">]]: بتكتب كلمة وتدوس Enter تبقى tag، وكل tag فيه ✕ يمسحه. القيمة اللي بتتبعت مع الفورم الـ tags كلها، كل واحد لوحده: اعمل [[FormData]] جوه الـ component وابعته لـ [[setFormValue]]، و [[min="1"]] بيخلّيه [[valueMissing]] لو فاضي، و [[formResetCallback]] بيفضّيه.`, done: R`بعد ٣ tags، [[new FormData(form).getAll("tags")]] بيرجّع الـ ٣ كلمات في array، و [[form.checkValidity()]] بـ [[false]] وهو فاضي و [[true]] بعد أول tag، و [[form.reset()]] بيفضّيه ويخلّي [[getAll]] array فاضية، والإيرور اللي بيظهر وانت بتبعت فاضي هو رسالتك انت.` },
+            { lvl: 'تحدي', t: R`اكتب اختبار: بـ playwright (أو في الـ Console لو مش متاح) اكتب ٦ تستات لـ [[star-rating]] بتاع الدرس: قيمة أول ما يفتح، وضغطة، و ٦ ضغطات بترجع لـ 1، و [[reset()]]، و [[required]] بيمنع [[submit]] (اسمع لـ [[invalid]] event)، و [[<fieldset disabled>]] حواليه بيخلّي [[formDisabledCallback]] يتنادى بـ [[true]]. وبعدين زوّد دعم الكيبورد (الأسهم) وخلّي التستات تمسكه.`, done: R`التستات الست بتعدّي، وتست الـ [[submit]] بيلاقي [[invalid]] event على [[STAR-RATING]] والفورم مااتبعتش، وبعد ضغطة واحدة [[submit]] اتبعت بـ [[rating=1]]، وتست الكيبورد بيفشل قبل ما تزوّد الأسهم وبيعدّي بعدها، و [[formDisabledCallback]] اتنادى بـ [[true]] ثم [[false]].` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`أي design system فيه inputs مخصوصة: تقييم بالنجوم، و date picker، و tags، و rich text. من غير form-associated، كل واحد محتاج [[<input type="hidden">]] بيتنسخ له القيمة بإيدك، والـ validation والـ reset والـ autofill كلهم بيتكتبوا من الأول وبيبوظوا. بالـ ElementInternals الـ component بيبقى input حقيقي: الفورم والـ CSS ([[:invalid]]) وقارئ الشاشة كلهم بيتعاملوا معاه زي [[<input>]].`,
+            how: R`[[static formAssociated = true]] بيقول للمتصفح «العنصر ده بيتبع الفورم اللي حواليه». و [[attachInternals()]] مسموحة مرة واحدة لكل عنصر، ولـ custom elements بس ([[NotSupportedError]] على [[div]]).
+
+[[setFormValue(v)]]: [[v]] نص أو [[File]] أو [[FormData]] (لأكتر من قيمة)، و [[null]] يعني «مفيش قيمة» فمش هيتبعت خالص (زي checkbox مش متعلّم). [[setValidity({ valueMissing: true }, msg)]] بيخلّيه invalid، و [[setValidity({})]] صالح. الـ flags نفس أسامي [[ValidityState]]: [[valueMissing]] و [[tooShort]] و [[patternMismatch]] و [[customError]]...
+
+الـ callbacks: [[formAssociatedCallback(form)]] لما يدخل فورم أو يخرج، و [[formDisabledCallback(disabled)]] لما [[<fieldset disabled>]] حواليه يتغير، و [[formResetCallback()]] مع [[form.reset()]]، و [[formStateRestoreCallback(state)]] لما المتصفح يرجّع القيمة (back أو autofill).
+
+[[internals.role]] و [[ariaValueNow]] (اسمها ARIA reflection) بيحطوا الدور والقيمة في شجرة الـ accessibility من غير attributes ظاهرة في الـ HTML يقدر حد من برّه يغيّرها. و [[internals.states.add("on")]] بيخلّي [[:state(on)]] في CSS تمسك.`,
+            when: R`أي component هيتحط جوه [[<form>]] وليه قيمة: تقييم، وتاريخ، وألوان، وtags، و rich text، و select مخصوص. ومش لزرار أو كارت أو حاجة عرض: دول مش محتاجين يتبعتوا مع الفورم.`,
+            mistakes: R`تنسى [[static formAssociated = true]] فـ [[setFormValue]] يرمي [[NotSupportedError: ... The target element is not a form-associated custom element.]] وتنادي [[attachInternals()]] في [[connectedCallback]] فتتنادى تاني لما العنصر يتنقل وترمي. وتعمل [[getter]] لـ [[value]] من غير ما تنادي [[setFormValue]] لما القيمة تتغير، فالفورم بيبعت القيمة القديمة. وتنسى [[formResetCallback]] فالـ [[reset]] بيرجّع كل الخانات إلا بتاعتك. وتنسى [[tabIndex]] فمحدش يقدر يوصله بالكيبورد. وتنسى إن [[name]] لازم attribute على العنصر عشان القيمة تتبعت باسم.`
+          },
+          teach: R`## الفكرة في سطر
+
+[[<star-rating name="rating" required>]] لازم يتصرف زي [[<input name="rating" required>]]: قيمته تتبعت مع الفورم، والفورم ميتبعتش لو هو فاضي، و [[reset]] يرجّعه صفر. المثال بيعمل ده بـ [[ElementInternals]] من غير أي [[<input type="hidden">]].
+
+اتشغّل في Chrome 156 headless (عن طريق playwright-core) بالـ HTML اللي في «جرّب» (فورم فيه [[star-rating]] و [[input]] اسمه [[note]] قيمته [[hi]]).
+
+---
+
+## ١. السطرين اللي بيدخّلوه الفورم
+
+~~~text app.js
+class StarRating extends HTMLElement {
+  static formAssociated = true;
+  #internals = this.attachInternals();
+  #value = 0;
+~~~
+
+- [[static formAssociated = true]]: [[static]] يعني على الـ class نفسه مش على كل عنصر. المتصفح بيقرا الخاصية دي وقت [[customElements.define]] ويقول «ده عنصر فورم».
+- [[#internals = this.attachInternals()]]: field خاص (الـ [[#]] من درس «EventEmitter»). [[attachInternals()]] بترجّع [[ElementInternals]]: الـ object اللي الـ component بيكلّم بيه الفورم والـ accessibility. بنحطه في [[#]] عشان محدش برّه يقدر يغيّر قيمة الفورم من ورا الـ component.
+- [[#value = 0]]: القيمة الحقيقية: عدد النجوم.
+
+جرّبت [[attachInternals()]] مرتين على نفس العنصر، وعلى [[div]]، وجرّبت [[setFormValue]] على component من غير [[formAssociated]]:
+
+~~~text الناتج (Chrome)
+NotSupportedError: Failed to execute 'attachInternals' on 'HTMLElement': ElementInternals for the specified element was already attached.
+NotSupportedError: Failed to execute 'attachInternals' on 'HTMLElement': Unable to attach ElementInternals to non-custom elements.
+NotSupportedError: Failed to execute 'setFormValue' on 'ElementInternals': The target element is not a form-associated custom element.
+~~~
+
+## ٢. [[connectedCallback]]: الكيبورد وقارئ الشاشة
+
+~~~text app.js
+  connectedCallback() {
+    this.tabIndex = 0;
+    this.#internals.role = "slider";
+    this.#internals.ariaValueMax = "5";
+    this.addEventListener("click", () => (this.value = (this.#value % 5) + 1));
+    this.#sync();
+  }
+~~~
+
+- [[tabIndex = 0]]: يخلّي العنصر يتوصله بـ Tab زي أي input.
+- [[#internals.role = "slider"]]: يقول لقارئ الشاشة «ده slider». ده اسمه ARIA reflection: نفس [[role="slider"]] بس من غير attribute ظاهر في الـ HTML يقدر حد يمسحه.
+- [[ariaValueMax = "5"]]: أقصى قيمة. من غيرها الـ slider كان بيتقري من 0 لـ 100 (شفت ده في شجرة الـ accessibility).
+- [[(this.#value % 5) + 1]]: [[%]] باقي القسمة: كل ضغطة بتزوّد نجمة، وبعد 5 بترجع 1 (0←1، 4←5، 5←1).
+- [[this.#sync()]]: يحدّث القيمة في الفورم والشكل أول مرة.
+
+دي شجرة الـ accessibility بعد ضغطة (من Chrome DevTools Protocol):
+
+~~~text الناتج
+slider "تقييمك" invalid="false" focusable=true valuemin=0 valuemax=5 value=1
+~~~
+
+الاسم [["تقييمك"]] جه من الـ [[<label>]] اللي حواليه لوحده: عناصر الفورم بس هي اللي الـ label بيتربط بيها، والـ [[formAssociated]] خلّاه منهم.
+
+## ٣. الـ getters والـ setters
+
+~~~text app.js
+  get value() { return this.#value; }
+  set value(v) { this.#value = Number(v); this.#sync(); }
+  get form() { return this.#internals.form; }
+  get name() { return this.getAttribute("name"); }
+~~~
+
+- [[value]]: بيقرا ويكتب [[#value]]، والكتابة بتنادي [[#sync]] عشان الفورم يعرف على طول. [[Number(v)]] عشان [[stars.value = "3"]] تشتغل.
+- [[form]]: الفورم اللي العنصر جواه. [[#internals.form]] بيعرفه لوحده (جرّبت: [[stars.form === form]] بـ [[true]]).
+- [[name]]: زي [[input.name]]. الـ [[name]] الحقيقي اللي بيتبعت هو الـ attribute، والـ getter ده للي بيكتب JS بس.
+
+## ٤. [[formResetCallback]]
+
+~~~text app.js
+  formResetCallback() { this.value = 0; }
+~~~
+
+المتصفح بيناديها لوحده لما [[form.reset()]] يحصل (أو زرار [[type="reset"]]). وفيه أخواتها:
+
+| الـ callback | بيتنادى إمتى |
+|---|---|
+| [[formResetCallback()]] | [[form.reset()]]: رجّع القيمة الأولانية |
+| [[formDisabledCallback(disabled)]] | [[<fieldset disabled>]] حواليه اتقفل أو اتفتح (جرّبتها: [[true]] ثم [[false]]) |
+| [[formAssociatedCallback(form)]] | العنصر دخل فورم أو خرج منه (جرّبتها: اتنادى بالـ [[FORM]]) |
+| [[formStateRestoreCallback(state)]] | المتصفح بيرجّع قيمة قديمة (Back، أو autofill)، من الـ docs |
+
+## ٥. [[#sync]]: القيمة والـ validation
+
+~~~text app.js
+  #sync() {
+    this.#internals.setFormValue(this.#value ? String(this.#value) : null);
+    if (this.hasAttribute("required") && !this.#value) this.#internals.setValidity({ valueMissing: true }, "اختار عدد النجوم");
+    else this.#internals.setValidity({});
+    this.#internals.ariaValueNow = String(this.#value);
+    this.textContent = "★".repeat(this.#value) + "☆".repeat(5 - this.#value);
+  }
+~~~
+
+- [[#sync()]]: method خاصة (نفس فكرة الـ [[#]]).
+- [[setFormValue(...)]]: دي القيمة اللي [[FormData]] هيشوفها باسم الـ [[name]]. لو صفر بنبعت [[null]] يعني «مفيش قيمة»، فمش هتتبعت خالص زي checkbox مش متعلّم.
+- [[setValidity({ valueMissing: true }, "اختار عدد النجوم")]]: «أنا invalid، والسبب إن القيمة ناقصة، والرسالة دي». الـ flags نفس أسامي [[input.validity]]: [[valueMissing]] و [[tooShort]] و [[rangeOverflow]] و [[customError]]...
+- [[setValidity({})]]: object فاضي يعني «مفيش مشاكل، أنا صالح».
+- [[ariaValueNow]]: القيمة الحالية لقارئ الشاشة.
+- [[textContent = "★".repeat(n) + "☆".repeat(5 - n)]]: [[repeat]] بتكرر النص n مرة: نجوم مليانة بالعدد، والباقي فاضية.
+
+## ٦. التشغيل
+
+~~~text app.js
+customElements.define("star-rating", StarRating);
+const form = document.querySelector("form");
+const stars = form.querySelector("star-rating");
+console.log(form.checkValidity(), JSON.stringify([...new FormData(form)]));
+stars.click();
+stars.click();
+console.log(form.checkValidity(), JSON.stringify([...new FormData(form)]));
+form.reset();
+console.log(stars.value, JSON.stringify([...new FormData(form)]));
+~~~
+
+~~~text الناتج (Chrome 156)
+false [["note","hi"]]
+true [["rating","2"],["note","hi"]]
+0 [["note","hi"]]
+~~~
+
+- [[[...new FormData(form)]]]: [[FormData]] بيلم كل قيم الفورم، و [[...]] بيحوّلها array من أزواج [[[name, value]]] عشان نطبعها.
+- **السطر الأول**: [[checkValidity()]] بـ [[false]] لأن [[required]] والقيمة صفر، و [[rating]] مش في الـ FormData (القيمة [[null]]).
+- **التاني**: بعد ضغطتين القيمة 2، فبقى صالح و [[rating]] بقى [["2"]] **قبل** [[note]]، بترتيب العناصر في الـ HTML زي أي input.
+- **التالت**: [[form.reset()]] نادى [[formResetCallback]] فرجع صفر واختفى من الـ FormData.
+
+### وكمان جرّبت
+
+- [[star-rating:invalid]] في الـ CSS مسكت العنصر وهو فاضي: [[stars.matches(":invalid")]] بـ [[true]].
+- [[form.requestSubmit()]] وهو فاضي: [[submit]] مااتعملش، وبدله [[invalid]] event اتبعت على [[STAR-RATING]]. وبعد ضغطة واحدة [[submit]] اتعمل بـ [[[["rating","1"],["note","hi"]]]].
+- [[this.#internals.states.add("on")]] خلّى [[x-t:state(on) { color: red }]] تشتغل (لونه طلع [[rgb(255, 0, 0)]]): كده تعمل حالات CSS خاصة بالـ component.
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| [[static formAssociated = true]] | العنصر ده بيتبع الفورم اللي حواليه زي input |
+| [[this.attachInternals()]] | مرة واحدة بس، وبترجّع [[ElementInternals]] |
+| [[setFormValue(v)]] | القيمة اللي هتتبعت، و [[null]] يعني متتبعتش |
+| [[setValidity(flags, msg)]] و [[setValidity({})]] | invalid بسبب ورسالة، أو صالح |
+| [[internals.role]] و [[ariaValueNow]] | الدور والقيمة لقارئ الشاشة من غير attributes |
+| [[formResetCallback]] و [[formDisabledCallback]] | الفورم اتعمله reset أو الـ fieldset اتقفل |
+
+- لازم [[name]] attribute عشان القيمة تتبعت باسم.
+- كل ما القيمة تتغير نادي [[setFormValue]] و [[setValidity]] مع بعض.
+- [[tabIndex = 0]] ودعم الكيبورد عليك انت، الـ internals مبتعملهمش.`,
+          lines: [
+            R`component اسمه [[StarRating]] بيورث [[HTMLElement]] زي أي custom element (درس «customElements.define»).`,
+            R`[[static]] على الـ class نفسه: بيقول للمتصفح وقت الـ [[define]] إن العنصر ده بيتبع الفورم زي [[<input>]]. من غيره [[setFormValue]] بترمي [[NotSupportedError]].`,
+            R`[[attachInternals()]] بترجّع [[ElementInternals]]: الـ object اللي الـ component بيكلّم بيه الفورم وقارئ الشاشة. مسموحة مرة واحدة بس، عشان كده في field بيتعمل مع العنصر، و [[#]] بتخليه خاص فمحدش برّه يغيّر قيمة الفورم.`,
+            R`عدد النجوم الحالي، خاص برضه. القيمة اللي الفورم بيشوفها بتيجي من هنا عن طريق [[#sync]].`,
+            R`بيتنادى لما العنصر يدخل الصفحة، فبنجهّز فيه الكيبورد وقارئ الشاشة والضغط.`,
+            R`[[tabIndex = 0]] بيخلّي العنصر ياخد focus بـ Tab زي أي input، وإلا اللي بيستخدم الكيبورد مش هيوصله.`,
+            R`بيقول لقارئ الشاشة إن ده [[slider]]، من غير attribute [[role]] ظاهر في الـ HTML (اسمها ARIA reflection). والاسم بييجي من الـ [[<label>]] اللي حواليه لوحده.`,
+            R`أقصى قيمة 5. من غيرها قارئ الشاشة كان بيقول إن المدى من 0 لـ 100، لأن ده الافتراضي للـ slider.`,
+            R`كل ضغطة بتزوّد نجمة، و [[% 5]] (باقي القسمة على 5) بيخلّيها ترجع 1 بعد 5. وبنكتب في [[this.value]] (الـ setter) مش في [[#value]] مباشرة، عشان الـ setter هو اللي بيبلّغ الفورم.`,
+            R`بنحدّث القيمة في الفورم والشكل من أول ما العنصر يظهر، عشان [[required]] يتحسب صح قبل أي ضغطة.`,
+            R`نهاية [[connectedCallback]].`,
+            R`القراية: [[stars.value]] بيرجّع عدد النجوم كرقم.`,
+            R`الكتابة: [[Number(v)]] عشان [[stars.value = "3"]] نص يشتغل برضه، وبعدها [[#sync]] يبلّغ الفورم ويرسم. أي كتابة من برّه أو من الضغط بتعدّي من هنا.`,
+            R`الفورم اللي العنصر جواه، زي [[input.form]]. [[#internals.form]] بيعرفه لوحده من مكان العنصر في الصفحة.`,
+            R`الاسم زي [[input.name]]. القيمة بتتبعت باسم الـ attribute [[name]]، والـ getter ده بس عشان الكود اللي بيقرا [[el.name]] يلاقيه.`,
+            R`المتصفح بيناديها لوحده مع [[form.reset()]] أو زرار [[type="reset"]]: بنرجّع صفر، والـ setter بيبلّغ الفورم.`,
+            R`method خاصة بتعمل كل اللي لازم يحصل لما القيمة تتغير، في مكان واحد.`,
+            R`القيمة اللي [[FormData]] هيشوفها باسم الـ [[name]]. صفر يعني [[null]]: «مفيش قيمة» فمش هتتبعت خالص، زي checkbox مش متعلّم.`,
+            R`لو عليه [[required]] والقيمة صفر: invalid بسبب [[valueMissing]] (نفس اسم [[input.validity.valueMissing]])، والرسالة اللي المتصفح هيعرضها لما الفورم يتبعت.`,
+            R`غير كده [[setValidity({})]]: object فاضي يعني «مفيش مشاكل». لازم تناديها صراحةً، وإلا العنصر يفضل invalid من آخر مرة.`,
+            R`القيمة الحالية لقارئ الشاشة، فبيقول «1 من 5» مثلًا.`,
+            R`الشكل: [[repeat]] بتكرر النجمة المليانة بعدد القيمة، والفاضية للباقي لحد 5.`,
+            R`نهاية [[#sync]].`,
+            R`نهاية الـ class.`,
+            R`بنسجّل الـ tag. المتصفح هنا بيقرا [[formAssociated]] ويربط أي [[<star-rating>]] بالفورم اللي حواليه.`,
+            R`الفورم من الـ HTML اللي في «جرّب».`,
+            R`الـ component جوه الفورم.`,
+            R`[[checkValidity()]] بـ [[false]] لأنه [[required]] وفاضي. و [[[...new FormData(form)]]] بيحوّل قيم الفورم لـ array من أزواج عشان نطبعها، و [[rating]] مش فيها لأن القيمة [[null]].`,
+            R`ضغطة: القيمة بقت 1.`,
+            R`ضغطة تانية: القيمة بقت 2.`,
+            R`دلوقتي [[true]]، و [[rating]] بقى [["2"]] في الـ FormData قبل [[note]] بترتيب العناصر في الـ HTML.`,
+            R`[[reset()]] بيرجّع كل خانات الفورم، وبينادي [[formResetCallback]] بتاعنا.`,
+            R`القيمة رجعت 0، و [[rating]] اختفى من الـ FormData تاني.`,
+          ],
+          sol: R`الناتج في Chrome 156: [[false [["note","hi"]]]] ثم [[true [["rating","2"],["note","hi"]]]] ثم [[0 [["note","hi"]]]]. الإطار الأحمر ظاهر وهو فاضي ([[:invalid]] مسكت)، ودوسة «ابعت» من غير نجوم مبعتتش الفورم: بدلها [[invalid]] event اتبعت على العنصر والمتصفح عرض «اختار عدد النجوم» (شكل الفقاعة نفسها من الـ docs، لأن الـ headless مبيرسمهاش).
+
+لما تمسح [[static formAssociated = true]]، أول [[setFormValue]] جوه [[#sync]] بيرمي: [[NotSupportedError: Failed to execute 'setFormValue' on 'ElementInternals': The target element is not a form-associated custom element.]] ([[attachInternals()]] نفسها بتنجح، بس مش بتربطه بالفورم).
+
+الدعم من الـ docs (MDN: ElementInternals): Chrome و Edge و Firefox، و Safari من 16.4.`
+        },
+        {
+          cmd: "Declarative Shadow DOM و :defined",
+          title: "الـ component يظهر صح من أول لحظة (من غير flash)، حتى قبل ما الـ JS يتحمّل",
+          desc: R`الـ custom element بيبقى عنصر فاضي مالوش شكل لحد ما الـ JS يتحمّل ويعمل [[customElements.define]]. على نت بطيء ده بيبان: الصفحة بتظهر بالنص الخام أو فاضية، وبعدين فجأة الـ component يترسم ويزق اللي تحته (flash وlayout shift).
+
+فيه حلّين بيكمّلوا بعض:
+
+• **Declarative Shadow DOM**: [[<template shadowrootmode="open">]] جوه العنصر في الـ HTML نفسه. الـ parser بيعمل الـ shadow root منه على طول، فالشكل والـ CSS الداخلي يظهروا قبل أي JS (وده اللي بيخلّي SSR للـ Web Components ممكن).
+• **[[:defined]] و [[customElements.whenDefined]]**: [[:not(:defined)]] في CSS بتمسك العنصر لحد ما يتسجّل، فتحجز له مكان أو تخفيه، و [[whenDefined("x-y")]] Promise بتتحل لما يتسجّل عشان الكود اللي محتاجه يستنى.`,
+          example: R`<style>
+  user-badge:not(:defined) { opacity: 0.5; pointer-events: none; }
+</style>
+<user-badge>
+  <template shadowrootmode="open">
+    <style>b { color: teal; }</style>
+    <b>★</b> <slot></slot>
+  </template>
+  سارة
+</user-badge>
+<script type="module">
+  const first = document.querySelector("user-badge");
+  console.log("قبل:", first.matches(":defined"), !!first.shadowRoot, getComputedStyle(first).opacity);
+  class UserBadge extends HTMLElement {
+    constructor() {
+      super();
+      if (!this.shadowRoot) this.attachShadow({ mode: "open" }).innerHTML = "<style>b { color: teal; }</style><b>★</b> <slot></slot>";
+      this.shadowRoot.querySelector("b").addEventListener("click", () => this.toggleAttribute("starred"));
+    }
+  }
+  customElements.whenDefined("user-badge").then(() => console.log("whenDefined اتحلّت"));
+  customElements.define("user-badge", UserBadge);
+  console.log("بعد:", first.matches(":defined"), getComputedStyle(first).opacity);
+  const extra = document.createElement("user-badge");
+  extra.textContent = "علي";
+  document.body.append(extra);
+  console.log("من JS:", extra.shadowRoot.innerHTML.length > 0);
+</script>`,
+          try: R`احفظ المثال كـ [[index.html]] وشغّله بـ [[npx serve]]. وبعدين خلّي الـ [[define]] يتأخر: لفّه في [[setTimeout(() => { ... }, 2000)]] واعمل refresh: النجمة واللون ظاهرين من الأول؟ والعنصر باهت لمدة ثانيتين؟ وبعدين امسح الـ [[<template>]] من الـ HTML (يعني من غير Declarative Shadow DOM) وجرّب تاني: إيه اللي بيظهر في الثانيتين؟ وأخيرًا شيل [[if (!this.shadowRoot)]] وخلّي [[attachShadow]] دايمًا: إيه اللي اتكسر؟`,
+          practice: [
+            { lvl: 'سريع', t: R`اقرا وتوقّع: [[div.innerHTML = '<x-y><template shadowrootmode="open"><b>hi</b></template></x-y>']] وبعدين [[div.firstChild.shadowRoot]]: هيرجّع إيه؟ ونفس الكلام بـ [[div.setHTMLUnsafe(...)]] بدل [[innerHTML]]؟ اكتب توقعك وبعدين شغّله في Console بتاع Chrome.`, done: R`[[innerHTML]] رجّع [[null]] والـ [[<template>]] فضل template عادي جوه العنصر، والـ Console طلّع تحذير فيه [[Use setHTMLUnsafe() or parseHTMLUnsafe() instead.]]، و [[setHTMLUnsafe]] رجّع shadow root فعلًا، وتقدر تقول ليه [[innerHTML]] مبيعملهاش (عشان الكود القديم ميتفاجئش).` },
+            { lvl: 'تطبيق', t: R`ابني [[<product-card>]] بيظهر صح على 3G: خلّي السيرفر (Node صغير أو حتى ملف HTML) يرجّع ٣ كروت كل واحد فيه [[<template shadowrootmode="open">]] بالصورة والاسم والسعر والـ CSS، وزرار «أضف للسلة» مبيشتغلش غير بعد الـ [[define]]. والكروت اللي بتتضاف بعدين من JS ([[createElement]]) بتعمل نفس الـ shadow بنفسها.`, done: R`في DevTools ← Network ← Slow 3G مع تعطيل كاش، الكروت بتبان بشكلها الكامل قبل ما ملف الـ JS يخلص تحميل، والزرار باهت ومبيستجبش بـ [[:not(:defined)]]، وبعد الـ [[define]] بيشتغل، و Lighthouse بيقول CLS قريب من 0، وكارت جديد من JS شكله زي القديم بالظبط.` },
+            { lvl: 'تحدي', t: R`قارن وقيس: نفس صفحة الـ ٣ كروت بطريقتين: (١) من غير DSD و [[product-card:not(:defined) { visibility: hidden }]]، و (٢) بـ DSD. قيس في Chrome DevTools ← Performance (أو Lighthouse) بـ Slow 3G: إمتى الكروت تظهر (FCP و LCP)، وكام CLS، واكتب جدول بالأرقام.`, done: R`عندك جدول فيه FCP و LCP و CLS للطريقتين من ٣ تشغيلات لكل واحدة، والـ DSD بيظهر الكروت قبل ما الـ JS يخلص (LCP أقل بفرق واضح على Slow 3G)، وكتبت جملة بالعيب: الـ HTML بقى أكبر لأن الـ CSS بيتكرر في كل كارت.` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`الـ Web Components من غير DSD كانت محتاجة JS عشان تتعرض خالص، فمكانتش بتنفع مع SSR ولا مع SEO ولا على نت بطيء: الصفحة بتفضل فاضية أو بتنط. DSD خلّى السيرفر يبعت الـ shadow DOM جاهز في الـ HTML، و [[:defined]] بيخلّيك تتحكم في الشكل في الفترة اللي قبل ما الـ JS يوصل.`,
+            how: R`الـ parser لما يلاقي [[<template shadowrootmode="open">]] كأول ولد لعنصر، بيعمل [[attachShadow]] للعنصر ويحط محتوى الـ template جوه الـ shadow root، والـ template نفسه بيختفي من الـ DOM (جرّبت: [[document.querySelectorAll("template").length]] بـ 0). ده بيحصل وقت الـ parsing بس: [[innerHTML]] مبيعملهوش، لازم [[setHTMLUnsafe]] أو [[Document.parseHTMLUnsafe]].
+
+لما الـ [[define]] يحصل بعدين، الـ constructor بيلاقي [[this.shadowRoot]] موجود فعلًا. لو ناديت [[attachShadow]] على عنصر عنده declarative shadow root، المتصفح بيرجّع **نفس** الـ root بس **فاضي** (جرّبتها: [[r === el.shadowRoot]] بـ [[true]] و [[innerHTML]] بـ [[""]]). عشان كده [[if (!this.shadowRoot)]].
+
+[[shadowrootmode="closed"]]: [[el.shadowRoot]] بـ [[null]] من برّه، والـ component يوصله من [[this.attachInternals().shadowRoot]] (جرّبت: رجّع المحتوى).
+
+[[:defined]] بتمسك أي عنصر HTML عادي، وأي custom element **بعد** ما اتسجّل. و [[customElements.whenDefined(name)]] بتتحل بالـ class لما الاسم يتسجّل، كـ microtask بعد الـ [[define]] (جرّبت: [[بعد:]] اتطبعت قبل [[whenDefined اتحلّت]]).`,
+            when: R`DSD: أي component بيترسم من السيرفر (Lit SSR، و Astro، و Enhance، أو HTML بتكتبه بإيدك) أو في صفحة السرعة فيها مهمة. و [[:not(:defined)]]: دايمًا تقريبًا، ولو بس عشان تحجز مكان ([[display: block; min-height]]) بدل ما الصفحة تنط. و [[whenDefined]]: لما كود محتاج methods العنصر (زي [[el.open()]]) وانت مش ضامن الـ script اتحمّل.`,
+            mistakes: R`[[attachShadow]] من غير ما تبص على [[this.shadowRoot]] فتمسح الـ DSD وتعمل flash بإيدك. وتحط الـ template بـ [[innerHTML]] وتستغرب إنه مااشتغلش. و [[:not(:defined) { display: none }]] على component عنده DSD: كده خبّيت الشكل اللي السيرفر تعب فيه. وتنادي methods على العنصر قبل الـ [[define]] (لسه [[HTMLElement]] عادي): [[el.open is not a function]]. وعنصر اتعمل بـ [[createElement]] قبل الـ [[define]] ومش في الصفحة مبيتعملوش upgrade لوحده (جرّبت: فضل [[HTMLElement]] لحد [[customElements.upgrade(el)]]).`
+          },
+          teach: R`## الفكرة في سطر
+
+[[<user-badge>]] جه من السيرفر جاهز بالـ shadow DOM بتاعه (النجمة واللون)، فبيظهر صح قبل الـ JS. لحد ما الـ JS يسجّله هو باهت ومبيستجبش ([[:not(:defined)]])، وبعد الـ [[define]] الـ class بيستخدم الـ shadow root الموجود بدل ما يعمل واحد جديد.
+
+اتشغّل في Chrome 156 headless (عن طريق playwright-core) من [[http://127.0.0.1]].
+
+---
+
+## ١. الـ CSS: قبل التسجيل
+
+~~~text index.html
+<style>
+  user-badge:not(:defined) { opacity: 0.5; pointer-events: none; }
+</style>
+~~~
+
+- [[:defined]]: pseudo-class بتمسك أي عنصر «متعرّف»: كل عناصر HTML العادية، وأي custom element **بعد** [[customElements.define]].
+- [[:not(:defined)]]: العكس: الـ custom element اللي لسه متسجّلش.
+- [[opacity: 0.5]]: باهت، عشان اليوزر يحس إنه لسه مش جاهز.
+- [[pointer-events: none]]: الضغط عليه مبيعملش حاجة، لأن الـ listeners لسه مااتحطتش.
+
+لو الـ component **مفيهوش** DSD (هيترسم من الـ JS بس)، الأحسن تحجز مكانه بدل ما تخفيه، عشان الصفحة متنطش لما يظهر:
+
+~~~text style.css
+product-card:not(:defined) { display: block; min-height: 320px; }
+~~~
+
+## ٢. الـ HTML: Declarative Shadow DOM
+
+~~~text index.html
+<user-badge>
+  <template shadowrootmode="open">
+    <style>b { color: teal; }</style>
+    <b>★</b> <slot></slot>
+  </template>
+  سارة
+</user-badge>
+~~~
+
+- [[<template shadowrootmode="open">]]: لما الـ parser يقابل template بالـ attribute ده كأول ولد لعنصر، بيعمل shadow root للعنصر ويحط جواه محتوى الـ template. [[open]] زي [[attachShadow({ mode: "open" })]]: الـ JS من برّه يقدر يوصل بـ [[el.shadowRoot]].
+- [[<style>b { color: teal; }</style>]]: CSS جوه الـ shadow، مقفول عليه زي درس «shadow DOM».
+- [[<slot></slot>]]: هنا هيظهر اللي جوه العنصر من برّه (درس «slots»).
+- [[سارة]]: ده الـ light DOM: محتوى عادي جوه [[<user-badge>]]، والـ slot بيعرضه.
+
+جرّبت وده قبل أي [[define]]:
+
+~~~text الناتج
+قبل: false true 0.5
+~~~
+
+يعني: لسه مش [[:defined]]، بس الـ [[shadowRoot]] **موجود فعلًا**، والـ CSS بتاع [[:not(:defined)]] شغّال (0.5). ولون النجمة جوه الـ shadow طلع [[rgb(0, 128, 128)]] (teal) من غير أي JS. والـ [[<template>]] نفسه اختفى: [[document.querySelectorAll("template").length]] بقى 0.
+
+### ليه مبيشتغلش مع [[innerHTML]]؟
+
+~~~text الناتج (Chrome)
+Found declarative shadowrootmode attribute on a template, but declarative Shadow DOM is not being parsed. Use setHTMLUnsafe() or parseHTMLUnsafe() instead.
+innerHTML: false
+setHTMLUnsafe: true
+~~~
+
+الـ DSD بيتعمل وقت تحميل الصفحة بس. لو بتحط HTML من JS، [[innerHTML]] بيسيب الـ template عادي (عشان الكود القديم ميتغيّرش سلوكه فجأة)، و [[el.setHTMLUnsafe(html)]] هي اللي بتفهم DSD. («Unsafe» لأنها مش بتنضّف الـ HTML زي [[innerHTML]] بالظبط: متحطش فيها حاجة من اليوزر من غير تنضيف، درس XSS في وحدة الـ DOM.)
+
+## ٣. الـ class: استخدم الموجود
+
+~~~text index.html
+  class UserBadge extends HTMLElement {
+    constructor() {
+      super();
+      if (!this.shadowRoot) this.attachShadow({ mode: "open" }).innerHTML = "<style>b { color: teal; }</style><b>★</b> <slot></slot>";
+      this.shadowRoot.querySelector("b").addEventListener("click", () => this.toggleAttribute("starred"));
+    }
+  }
+~~~
+
+- [[if (!this.shadowRoot)]]: لو العنصر جه من السيرفر بـ DSD، الـ shadow root موجود: متعملش واحد جديد. لو اتعمل من JS ([[createElement]])، مفيش: اعمله بنفس المحتوى.
+- [[attachShadow(...).innerHTML = "..."]]: [[attachShadow]] بترجّع الـ shadow root، فبنحط جواه المحتوى في نفس السطر.
+- [[this.shadowRoot.querySelector("b")]]: في الحالتين دلوقتي فيه shadow root، فبنحط الـ listener: الضغط على النجمة بيعمل [[toggleAttribute("starred")]] (يحط الـ attribute لو مش موجود ويشيله لو موجود). جرّبت: بعد ضغطة [[hasAttribute("starred")]] بـ [[true]].
+
+### ليه الـ [[if]] مهم؟
+
+جرّبت [[attachShadow]] على عنصر عنده declarative shadow root:
+
+~~~text الناتج
+attachShadow on DSD: true ""
+~~~
+
+رجّع **نفس** الـ root ([[true]])، بس **فاضي** ([[""]]): المتصفح مسح المحتوى اللي جه من السيرفر. يعني من غير الـ [[if]]، كل الشغل ده بيتمسح ويترسم تاني من JS: نفس الـ flash اللي كنا بنهرب منه.
+
+> لو الـ template [[shadowrootmode="closed"]]: [[el.shadowRoot]] بـ [[null]] حتى من جوه الـ class. الـ component يوصله بـ [[this.attachInternals().shadowRoot]] (جرّبتها: رجّع المحتوى).
+
+## ٤. [[whenDefined]] و [[define]]
+
+~~~text index.html
+  customElements.whenDefined("user-badge").then(() => console.log("whenDefined اتحلّت"));
+  customElements.define("user-badge", UserBadge);
+  console.log("بعد:", first.matches(":defined"), getComputedStyle(first).opacity);
+~~~
+
+- [[customElements.whenDefined(name)]]: Promise بتتحل لما الاسم ده يتسجّل (بالـ class نفسه). لو متسجّل خلاص، بتتحل على طول.
+- [[define]]: العنصر اللي في الصفحة بيتعمله **upgrade**: الـ constructor بيتنادى عليه، ويبقى [[:defined]].
+
+~~~text الناتج
+بعد: true 1
+~~~
+
+الـ CSS اتشال لوحده (opacity رجعت 1)، من غير ما نكتب أي سطر JS يشيل class.
+
+## ٥. عنصر جديد من JS
+
+~~~text index.html
+  const extra = document.createElement("user-badge");
+  extra.textContent = "علي";
+  document.body.append(extra);
+  console.log("من JS:", extra.shadowRoot.innerHTML.length > 0);
+~~~
+
+~~~text الناتج
+من JS: true
+~~~
+
+هنا مفيش DSD، فالـ [[if]] عمل [[attachShadow]] والمحتوى اتحط، ولون النجمة برضه teal. نفس الـ component بيشتغل في الحالتين.
+
+### الترتيب الكامل
+
+~~~text الناتج (Chrome 156)
+قبل: false true 0.5
+بعد: true 1
+من JS: true
+whenDefined اتحلّت
+~~~
+
+[[whenDefined]] اتحلّت **آخر حاجة**، مع إن الـ [[define]] كان قبل «بعد»: الـ [[.then]] بيشتغل microtask بعد ما الكود اللي شغّال يخلص (درس «microtasks و macrotasks»).
+
+### عنصر اتعمل قبل الـ define
+
+~~~text الناتج
+before define: HTMLElement
+after define, not in doc: HTMLElement
+after upgrade: LateEl
+~~~
+
+[[createElement("late-el")]] قبل الـ [[define]]، ومش متحط في الصفحة: الـ define مبيعملوش upgrade لوحده لأنه مش في الـ document، لحد ما تحطه في الصفحة أو تنادي [[customElements.upgrade(el)]].
+
+---
+
+## الخلاصة
+
+| الحاجة | بتعمل إيه |
+|---|---|
+| [[<template shadowrootmode="open">]] | shadow root جاهز من الـ HTML وقت التحميل، من غير JS |
+| [[if (!this.shadowRoot)]] | استخدم الـ root اللي جه من السيرفر، و [[attachShadow]] عليه بيفضّيه |
+| [[setHTMLUnsafe(html)]] | DSD من JS، لأن [[innerHTML]] بيتجاهله |
+| [[:not(:defined)]] | شكل العنصر قبل الـ [[define]]: باهت، أو مكان محجوز |
+| [[customElements.whenDefined(name)]] | Promise بتتحل لما الاسم يتسجّل |
+| [[customElements.upgrade(el)]] | upgrade لعنصر اتعمل قبل الـ define ومش في الصفحة |
+
+- DSD للشكل قبل الـ JS، و [[:defined]] للحالة لحد ما يبقى تفاعلي: الاتنين مع بعض.
+- متخبّيش بـ [[display: none]] component عنده DSD.
+- الدعم (من الـ docs، MDN): Chrome و Edge من 111، و Safari من 16.4، و Firefox من 123.`,
+          lines: [
+            R`CSS عادي للصفحة. لازم يكون في الـ [[<head>]] أو قبل العنصر، عشان يشتغل من أول ما الصفحة ترسم.`,
+            R`[[:not(:defined)]] بتمسك [[<user-badge>]] بس لحد ما الـ JS يعمل [[define]]: باهت ومبيستقبلش ضغطات، عشان اليوزر ميدوسش على حاجة لسه مبتشتغلش. وبعد الـ define القاعدة بتتشال لوحدها.`,
+            R`نهاية الـ [[<style>]] بتاع الصفحة. القاعدة دي بتفضل موجودة على طول، بس [[:not(:defined)]] هي اللي بتقرر تمسك العنصر ولا لأ.`,
+            R`العنصر نفسه في الـ HTML. المتصفح مش عارفه لسه، فبيعامله كعنصر عادي لحد الـ [[define]].`,
+            R`Declarative Shadow DOM: template كأول ولد بـ [[shadowrootmode="open"]] بيخلّي الـ parser يعمل shadow root للعنصر ويحط المحتوى ده جواه، قبل أي JS.`,
+            R`CSS جوه الـ shadow: بيلوّن الـ [[<b>]] اللي جوه بس، ومبيأثرش على أي [[<b>]] في الصفحة.`,
+            R`النجمة، وبعدها [[<slot>]]: المكان اللي هيظهر فيه المحتوى العادي اللي جوه [[<user-badge>]] (هنا «سارة»).`,
+            R`نهاية الـ template. بعد الـ parsing الـ template نفسه بيختفي من الـ DOM ويبقى shadow root.`,
+            R`المحتوى العادي (light DOM): الاسم اللي بيتعرض في الـ slot. ده بيفضل نص عادي في الصفحة، فمحركات البحث وقارئ الشاشة شايفينه.`,
+            R`نهاية [[<user-badge>]]. لحد هنا كل حاجة HTML بس: لو الـ JS اتأخر أو فشل، العنصر لسه ظاهر بالنجمة والاسم.`,
+            R`[[type="module"]]: بيتنفّذ بعد ما الصفحة كلها تتعمل parse (زي [[defer]])، فالعنصر والـ shadow بتاعه موجودين ساعتها.`,
+            R`بنمسك أول [[<user-badge>]] (اللي جه من الـ HTML).`,
+            R`قبل الـ [[define]]: [[matches(":defined")]] بـ [[false]]، والـ [[shadowRoot]] **موجود** بفضل الـ DSD، والـ opacity 0.5 من قاعدة [[:not(:defined)]]. الناتج: [[قبل: false true 0.5]].`,
+            R`الـ class بتاع الـ component.`,
+            R`الـ constructor بيتنادى لما الـ [[define]] يحصل (للعناصر اللي في الصفحة) أو مع [[createElement]] بعدها.`,
+            R`[[super()]] لازم أول سطر في constructor أي class بيورث، عشان [[HTMLElement]] يجهّز العنصر.`,
+            R`لو مفيش shadow root (العنصر اتعمل من JS)، اعمل واحد وحط فيه نفس المحتوى اللي في الـ template. ولو موجود من الـ DSD، سيبه: [[attachShadow]] عليه كان هيرجّعه فاضي ويمسح اللي السيرفر بعته.`,
+            R`في الحالتين فيه shadow root دلوقتي، فبنحط الـ listener على النجمة: كل ضغطة بتقلب attribute [[starred]] (موجود ← مش موجود والعكس). الـ JS بيضيف التفاعل بس، الشكل كان جاهز.`,
+            R`نهاية الـ constructor.`,
+            R`نهاية الـ class.`,
+            R`[[whenDefined]] Promise بتتحل لما [[user-badge]] يتسجّل. الكود اللي محتاج العنصر جاهز يستنى هنا. والـ [[then]] بيشتغل كـ microtask، فالسطر ده هيطبع **آخر حاجة**.`,
+            R`التسجيل: العنصر اللي في الصفحة بيتعمله upgrade على طول (الـ constructor بيتنادى عليه) ويبقى [[:defined]].`,
+            R`بعد الـ [[define]]: [[true]] والـ opacity رجعت 1 لوحدها لأن [[:not(:defined)]] مبقتش ماسكة. الناتج: [[بعد: true 1]].`,
+            R`عنصر تاني من JS. هنا مفيش DSD، فالـ constructor هيعمل الـ shadow بنفسه.`,
+            R`المحتوى العادي بتاعه، اللي هيظهر في الـ slot.`,
+            R`بنحطه في آخر الـ [[body]]. الـ shadow اتعمل خلاص في الـ constructor (وقت [[createElement]] لأن الاسم متسجّل)، فبيظهر بشكله على طول.`,
+            R`الـ shadow root اتعمل وفيه محتوى: [[من JS: true]]. يعني نفس الـ class شغّال للعنصر اللي جه من السيرفر واللي اتعمل من JS.`,
+            R`نهاية الـ [[<script>]]. ولأنه module، أي متغير جواه ([[first]] و [[extra]]) مش global ومش هيتلخبط مع scripts تانية.`,
+          ],
+          sol: R`الناتج في Chrome 156 بالترتيب: [[قبل: false true 0.5]] ثم [[بعد: true 1]] ثم [[من JS: true]] ثم [[whenDefined اتحلّت]]. ولون النجمة جوه الـ shadow [[rgb(0, 128, 128)]] قبل الـ define وبعده.
+
+مع [[setTimeout]] ثانيتين: النجمة واللون والاسم ظاهرين من أول لحظة (الـ DSD)، والعنصر باهت لمدة ثانيتين وبعدين بيبقى عادي. من غير الـ [[<template>]]: في الثانيتين بيظهر «سارة» بس كنص عادي باهت من غير نجمة، وبعدين النجمة تظهر فجأة (ده الـ flash). ولو شلت [[if (!this.shadowRoot)]]: [[attachShadow]] على الـ DSD بيرجّع الـ root فاضي، فالمحتوى بيتمسح ويترسم من الـ string اللي في الـ JS، والنتيجة شكلها واحد بس الشغل اللي السيرفر بعته اترمى، ولو المحتوى في الـ string مختلف عن الـ template هتشوف نط.
+
+(الشكل البصري في الثانيتين اتأكد بـ [[getComputedStyle]]؛ الإحساس بالـ flash نفسه على نت بطيء جرّبه بإيدك في DevTools.)`
         }
       ]
     }

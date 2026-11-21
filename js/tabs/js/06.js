@@ -14,6 +14,407 @@ MORE("js", [
       ],
       items: [
         {
+          cmd: "دوال جاهزة ودوال بتكتبها",
+          title: "الدوال في كل حتة: اللي جاية جاهزة مع اللغة والمتصفح و Node، واللي انت بتكتبها",
+          desc: R`أي حاجة بتكتب بعدها قوسين [[()]] عشان تشغّلها هي دالة (function): [[console.log("أهلا")]] و [[Math.max(3, 9)]] و [[alert("تم")]]. فيه دوال **جاهزة** (built-in) جاية مع اللغة نفسها أو مع البيئة اللي شغّالة فيها، ودوال **انت بتكتبها** بـ [[function]].
+
+الجاهزة جاية من ٣ أماكن:
+• **اللغة نفسها (ECMAScript):** [[Math.max]] و [[parseInt]] و [[JSON.parse]] و [[Array.prototype.map]] (اللي بتكتبها [[[1, 2].map(...)]]). موجودة في أي مكان JavaScript بيشتغل فيه.
+• **المتصفح (Web APIs):** [[alert]] و [[setTimeout]] و [[document.querySelector]] و [[fetch]]. موجودة في الصفحة.
+• **Node:** [[fs.readFileSync]] وغيرها. موجودة في Node بس.
+
+والفرق المهم: [[addVat]] من غير قوسين **اسم** الدالة (تقدر تحطه في متغير أو تبعته لدالة تانية)، و [[addVat(100)]] **نداء** بيشغّلها ويرجّع الناتج.`,
+          example: R`import { readFileSync } from "node:fs";
+console.log(Math.max(3, 9, 4));
+console.log(parseInt("42px", 10));
+console.log([1, 2, 3].map((n) => n * 2));
+console.log(JSON.parse('{"price": 120}').price);
+console.log(readFileSync("menu.txt", "utf8").split("\n")[0]);
+function addVat(price) {
+  return Math.round(price * 1.14);
+}
+console.log(addVat(100));
+console.log(String(Math.max));
+console.log(String(addVat));
+const vat = addVat;
+console.log(vat(200), vat === addVat);
+console.log(typeof addVat(100), typeof addVat);`,
+          try: R`اعمل ملف [[menu.txt]] فيه سطرين ([[شاي 10]] و [[قهوة 25]])، واحفظ المثال كـ [[builtins.mjs]] جنبه وشغّله بـ [[node builtins.mjs]]. وبعدين افتح Console في المتصفح (F12) واكتب [[String(alert)]] و [[String(document.querySelector)]]، وجرّب [[alert]] من غير قوسين و [[alert("تم")]] بقوسين، وقارن اللي حصل في المرتين.`,
+          sol: R`~~~text الناتج (Node 24.22 على Windows): node builtins.mjs
+9
+42
+[ 2, 4, 6 ]
+120
+شاي 10
+114
+function max() { [native code] }
+function addVat(price) {
+  return Math.round(price * 1.14);
+}
+228 true
+number function
+~~~
+
+~~~text الناتج (Chrome 157، Console)
+> String(alert)
+'function alert() { [native code] }'
+> String(document.querySelector)
+'function querySelector() { [native code] }'
+> alert
+ƒ alert() { [native code] }
+~~~
+
+- [[alert]] من غير قوسين: الـ Console بيوريك الدالة نفسها ومفيش رسالة بتطلع. [[alert("تم")]] بقوسين: الرسالة بتطلع فعلًا، لأن ده **نداء**.
+- [[[native code]]] معناها إن الدالة مكتوبة جوه المتصفح أو الـ engine نفسه (بـ C++ غالبًا)، فمفيش كود JavaScript يتعرض. ودالتك [[addVat]] بيظهر كودها زي ما كتبته بالظبط.`,
+          practice: [
+            { lvl: 'سريع', t: R`**صنّف:** حط كل دالة من دول في خانتها (اللغة، المتصفح، Node، انت كاتبها): [[Math.max]] و [[parseInt]] و [[[].map]] و [[JSON.parse]] و [[alert]] و [[setTimeout]] و [[document.querySelector]] و [[fetch]] و [[fs.readFileSync]] و [[addVat]].`, done: R`كل دالة في مكانها، وعارف إن [[setTimeout]] و [[fetch]] موجودين في Node كمان رغم إنهم Web APIs.`, sol: R`| الدالة | جاية منين | تلاقيها فين |
+|---|---|---|
+| [[Math.max]] و [[parseInt]] و [[[].map]] و [[JSON.parse]] | اللغة نفسها (ECMAScript) | أي مكان: المتصفح و Node و Deno و Bun |
+| [[alert]] و [[document.querySelector]] | المتصفح (Web APIs) | الصفحة بس. في Node [[typeof alert]] بيطلع [["undefined"]] |
+| [[setTimeout]] و [[fetch]] | المتصفح (Web APIs) | المتصفح، و Node عامل نسخته منهم بنفس الاسم والشكل |
+| [[fs.readFileSync]] | Node | Node بس، لأن المتصفح مبيقراش ملفات جهازك |
+| [[addVat]] | انت كاتبها | المكان اللي كتبتها فيه، أو اللي عملتلها [[import]] |
+
+**ليه ده مهم؟** لما دالة تقولك [[is not defined]] أول سؤال: هي جاية منين؟ لو من المتصفح وانت في Node (أو العكس) يبقى مش هتلاقيها مهما كتبت الاسم صح. جرّبنا في Node 24.22: [[typeof alert, typeof document]] طلعوا [[undefined undefined]].` },
+            { lvl: 'سريع', t: R`**اقرا وتوقّع:** إيه اللي هيتطبع؟ اكتب توقعك الأول وبعدين شغّل.
+~~~js predict.mjs
+const biggest = Math.max;
+console.log(typeof biggest);
+console.log(biggest(4, 11, 7));
+console.log(biggest());
+console.log(biggest === Math.max);
+console.log(typeof biggest(4, 11, 7));
+~~~`, done: R`توقعت الـ ٦ سطور قبل ما تشغّل، وفاهم ليه [[biggest()]] من غير أرقام بيرجّع [[-Infinity]].`, sol: R`~~~text الناتج (Node 24.22): node predict.mjs
+function
+11
+-Infinity
+true
+number
+~~~
+
+- [[const biggest = Math.max;]] من غير قوسين: بنحط **الدالة نفسها** في متغير تاني، مش ناتجها. فـ [[typeof biggest]] بيطلع [["function"]].
+- [[biggest(4, 11, 7)]] نداء عادي، زي [[Math.max(4, 11, 7)]] بالظبط.
+- [[biggest()]] من غير أرقام: [[Math.max]] بيبدأ من أصغر قيمة ممكنة ([[-Infinity]]) وبيقارن بيها كل رقم، ولو مفيش أرقام بيرجّعها زي ما هي.
+- [[biggest === Math.max]] بـ [[true]]: نفس الدالة، اسمين.
+- آخر سطر: [[typeof]] على **الناتج** (رقم) مش على الدالة.
+
+**الغلطة الشائعة:** تفتكر إن [[const biggest = Math.max]] بيشغّل حاجة. مفيش أي حاجة اتشغّلت لحد ما حطينا [[()]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الكود البايظ:** الكود ده المفروض يطبع «أهلا» بعد ثانية. شغّله في Node وشوف حصل إيه، وبعدين جرّبه في Console المتصفح، وصلّحه بطريقتين.
+~~~js timer-bug.mjs
+function sayHi() {
+  console.log("أهلا", new Date().toISOString().slice(11, 19));
+}
+console.log("start", new Date().toISOString().slice(11, 19));
+setTimeout(sayHi(), 1000);
+~~~`, done: R`في Node شفت [[TypeError]] بكود [[ERR_INVALID_ARG_TYPE]]، وفي المتصفح شفت «أهلا» طالعة **على طول** من غير ثانية، والتصليح بيطبعها بعد ثانية فعلًا.`, sol: R`~~~text الناتج (Node 24.22): node timer-bug.mjs
+start 02:13:56
+أهلا 02:13:56
+TypeError [ERR_INVALID_ARG_TYPE]: The "callback" argument must be of type function. Received undefined
+~~~
+
+**اللي حصل:** [[sayHi()]] بالقوسين **نادت** الدالة على طول (فـ «أهلا» طلعت في نفس الثانية)، والناتج بتاعها [[undefined]] (مفيهاش [[return]]) هو اللي اتبعت لـ [[setTimeout]]. Node بيرفض [[undefined]] بـ error. والمتصفح مبيرميش error (جرّبنا في Chrome 157: [[setTimeout(undefined, 10)]] رجّعت رقم عادي)، فالباج بيعدّي ساكت والرسالة بتطلع بدري.
+
+~~~js timer-fix.mjs
+function sayHi() {
+  console.log("أهلا", new Date().toISOString().slice(11, 19));
+}
+console.log("start", new Date().toISOString().slice(11, 19));
+setTimeout(sayHi, 1000);
+setTimeout(() => sayHi(), 1500);
+~~~
+
+~~~text الناتج (Node 24.22): node timer-fix.mjs
+start 02:13:56
+أهلا 02:13:57
+أهلا 02:13:58
+~~~
+
+- [[setTimeout(sayHi, 1000)]]: بنبعت **الدالة** نفسها، و [[setTimeout]] هي اللي هتناديها بعد ١٠٠٠ ملي ثانية.
+- [[setTimeout(() => sayHi(), 1500)]]: بنبعت دالة جديدة صغيرة جواها النداء. مفيدة لما تحتاج تبعت arguments ([[() => greet("منى")]]).
+- نفس الغلطة بالظبط في [[button.addEventListener("click", save())]]: [[save]] بتشتغل مرة واحدة وقت التحميل، والضغط مبيعملش حاجة.` },
+            { lvl: 'تطبيق', t: R`**ابني:** دالة [[isNative(fn)]] بترجّع [[true]] لو الدالة جاهزة ([[[native code]]] في [[toString]]) و [[false]] لو مكتوبة بـ JavaScript أو مش دالة أصلًا. جرّبها على ٩ حاجات منهم [[addVat.bind(null)]] و [[readFileSync]] و [[setTimeout]] في Node.`, done: R`الجدول بيطلع ٩ سطور، وانت لاحظت حالتين مش متوقعتين: [[bind]] بترجّع [[true]] لدالة انت كاتبها، و [[readFileSync]] و [[setTimeout]] بيرجّعوا [[false]] في Node.`, sol: R`~~~js is-native.mjs
+import { readFileSync } from "node:fs";
+function isNative(fn) {
+  if (typeof fn !== "function") return false;
+  const src = Function.prototype.toString.call(fn);
+  return /\{\s*\[native code\]\s*\}$/.test(src);
+}
+function addVat(price) {
+  return Math.round(price * 1.14);
+}
+const checks = {
+  "Math.max": Math.max,
+  parseInt,
+  "[].map": [].map,
+  "JSON.parse": JSON.parse,
+  addVat,
+  "addVat.bind(null)": addVat.bind(null),
+  readFileSync,
+  setTimeout,
+  "\"Math.max\" (نص)": "Math.max",
+};
+for (const [name, value] of Object.entries(checks)) {
+  console.log(name.padEnd(20), isNative(value));
+}
+~~~
+
+~~~text الناتج (Node 24.22): node is-native.mjs
+Math.max             true
+parseInt             true
+[].map               true
+JSON.parse           true
+addVat               false
+addVat.bind(null)    true
+readFileSync         false
+setTimeout           false
+"Math.max" (نص)      false
+~~~
+
+- [[Function.prototype.toString.call(fn)]] بدل [[fn.toString()]]: لو حد كتب [[toString]] بتاعته على الدالة مش هتتخدع.
+- الـ regex [[/\{\s*\[native code\]\s*\}$/]]: بيدوّر على [[{ [native code] }]] في **آخر** النص.
+- **مفاجأة ١:** [[addVat.bind(null)]] بترجّع [[function () { [native code] }]]. الـ bound function بيعملها الـ engine، فمش معنى [[native code]] إنها «جاهزة من اللغة».
+- **مفاجأة ٢:** في Node، [[readFileSync]] و [[setTimeout]] و [[fetch]] مكتوبين بـ JavaScript جوه Node نفسه، فـ [[String(setTimeout)]] بيطلع [[function setTimeout(callback, after, ...]] بكود حقيقي. وفي Chrome نفس [[setTimeout]] بيطلع [[function setTimeout() { [native code] }]].
+- **الخلاصة:** [[[native code]]] بيقولك «مش مكتوبة بـ JavaScript»، مش «جاهزة». السؤال الصح «جاية منين؟» إجابته في الوثائق (MDN أو وثائق Node)، مش في [[toString]].` },
+            { lvl: 'تحدي', t: R`**اقرا وتوقّع ثم صلّح:** الـ method دالة متخزنة في object. إيه اللي هيحصل لما تفصلها عنه؟ شغّل الكود في Node، وبعدين جرّب في Console المتصفح [[const pick = document.querySelector; pick("h1")]].
+~~~js methods.mjs
+const shop = {
+  name: "مطعم سُفرة",
+  greet() {
+    return $__btأهلا في $__{this.name}$__bt;
+  },
+};
+console.log(shop.greet());
+const greet = shop.greet;
+try {
+  console.log(greet());
+} catch (error) {
+  console.log(error.name + ": " + error.message);
+}
+const bound = shop.greet.bind(shop);
+console.log(bound());
+const wrapped = () => shop.greet();
+console.log(wrapped());
+const { log } = console;
+log("log لوحدها شغالة في Node");
+~~~`, done: R`شفت [[TypeError: Cannot read properties of undefined (reading 'name')]] في Node و [[TypeError: Illegal invocation]] في Chrome، وعرفت تصلّح الاتنين بـ [[bind]] أو بدالة صغيرة.`, sol: R`~~~text الناتج (Node 24.22): node methods.mjs
+أهلا في مطعم سُفرة
+TypeError: Cannot read properties of undefined (reading 'name')
+أهلا في مطعم سُفرة
+أهلا في مطعم سُفرة
+log لوحدها شغالة في Node
+~~~
+
+~~~text الناتج (Chrome 157، Console في صفحة فيها <h1>المنيو</h1>)
+> const pick = document.querySelector; pick("h1")
+Uncaught TypeError: Illegal invocation
+> const pick2 = document.querySelector.bind(document); pick2("h1").textContent
+'المنيو'
+> const pick3 = (s) => document.querySelector(s); pick3("title").textContent
+'مطعم سُفرة'
+~~~
+
+- [[shop.greet()]]: الـ method بتعرف الـ object بتاعها من اللي قبل النقطة، فـ [[this]] = [[shop]].
+- [[const greet = shop.greet; greet()]]: نفس الدالة، بس مفيش حاجة قبل النقطة وقت النداء، فـ [[this]] بقت [[undefined]] (الملف module، وده strict mode)، و [[this.name]] وقعت.
+- [[document.querySelector]] جاهزة من المتصفح بس نفس القاعدة: محتاجة [[document]] قبل النقطة، والمتصفح بيقولها بطريقته: [[Illegal invocation]].
+- التصليح: [[shop.greet.bind(shop)]] بترجّع دالة جديدة [[this]] بتاعها متثبتة، أو [[() => shop.greet()]] دالة صغيرة بتنادي بالنقطة.
+- [[const { log } = console]] اشتغلت في Node (وفي Chrome كمان جرّبناها)، لأن [[console.log]] متعملة بحيث متحتاجش [[this]]. متعتمدش على ده مع أي method تانية.
+
+التفاصيل الكاملة لـ [[this]] و [[bind]] في وحدة «this».` },
+          ],
+          flag: "script",
+          deep: {
+            why: R`انت بتنادي دوال من أول سطر كتبته: [[console.log]] دالة، و [[prompt]] دالة. ولما تعرف إن فيه دوال جاهزة كتير، تبطّل تكتب حاجة موجودة (زي أكبر رقم في list أو تحويل نص لرقم)، ولما تعرف هي جاية منين تعرف تدوّر عليها صح: MDN «JavaScript reference» للغة، و MDN «Web APIs» للمتصفح، ووثائق Node لـ Node. وأشهر باج للمبتدئين في الـ events والـ timers هو الفرق بين [[f]] و [[f()]].`,
+            how: R`أي دالة في JavaScript **قيمة** من نوع [["function"]]، سواء كانت جاهزة أو انت كاتبها. الدوال الجاهزة متعلّقة على objects موجودة من الأول: [[Math]] و [[JSON]] (من اللغة)، و [[window]] و [[document]] (من المتصفح)، و modules زي [[node:fs]] (من Node). و [[parseInt]] و [[alert]] متعلّقين على الـ global object نفسه ([[globalThis]])، فبتناديهم من غير اسم قبلهم.
+
+[[Array.prototype.map]] معناها: [[map]] متخزنة مرة واحدة في [[Array.prototype]]، وكل array بتوصلّها عن طريق الـ prototype. فلما تكتب [[[1, 2].map(...)]] انت بتنادي **method**: دالة متعلّقة على object.
+
+والقوسين [[()]] هما اللي بيشغّلوا: [[addVat]] = الدالة، و [[addVat(100)]] = شغّلها بـ 100 وهات الناتج. وده اللي بيخلي الـ callbacks ممكنة: تبعت [[addVat]] نفسها لـ [[map]] أو [[setTimeout]] وهم اللي ينادوها.`,
+            when: R`قبل ما تكتب دالة لحاجة عامة (أكبر رقم، ترتيب، تحويل نص لرقم، تنسيق تاريخ أو فلوس)، دوّر في MDN: غالبًا فيه دالة جاهزة ([[Math.max]] و [[toSorted]] و [[Number]] و [[Intl.NumberFormat]]). واكتب دالتك لما يكون فيه منطق خاص بمشروعك (الضريبة، الخصم، شروط الطلب). ولما تبعت دالة لـ [[setTimeout]] أو [[addEventListener]] أو [[map]]: ابعتها **من غير** قوسين.`,
+            mistakes: R`[[setTimeout(sayHi(), 1000)]] و [[addEventListener("click", save())]]: القوسين بيشغّلوها بدري. و [[parseInt("08")]] من غير الـ radix في كود قديم (اكتب [[parseInt(x, 10)]] دايمًا). وتفصل method عن الـ object بتاعها ([[const q = document.querySelector]]) فتقع بـ [[Illegal invocation]]. وتسمّي دالتك بنفس اسم دالة جاهزة ([[function alert() {}]]) فتغطي عليها. وتفتكر [[alert]] أو [[document]] جزء من JavaScript وتستغرب إنهم مش موجودين في Node.`
+          },
+          teach: R`## الفكرة في سطر
+
+كل سطر بيعمل حاجة في JavaScript تقريبًا فيه نداء دالة. بعضها جاهز (اللغة أو المتصفح أو Node كاتبينه)، وبعضها انت بتكتبه. المثال بيستخدم ٥ دوال جاهزة ودالة واحدة بتاعتك، وبعدين بيوريك الفرق بينهم من جوه. اتشغّل بـ Node 24.22 على Windows، والأجزاء الخاصة بالمتصفح في Chrome 157.
+
+---
+
+## ١. نداء دالة: الاسم والقوسين والـ arguments
+
+~~~text builtins.mjs
+console.log(Math.max(3, 9, 4));
+~~~
+
+نفكه من جوه لبرّه:
+
+| الحتة | معناها |
+|---|---|
+| [[Math]] | object جاهز في اللغة، شايل دوال الحساب كلها |
+| [[.max]] | النقطة معناها «هات اللي جوه»: دالة [[max]] اللي جوه [[Math]] |
+| [[(3, 9, 4)]] | القوسين **بيشغّلوا** الدالة، واللي جواهم اسمه arguments: القيم اللي بتبعتها |
+| [[console.log(...)]] | دالة جاهزة تانية بتطبع الناتج اللي رجع من [[Math.max]] |
+
+~~~text الناتج
+9
+~~~
+
+---
+
+## ٢. ٤ دوال جاهزة من اللغة نفسها
+
+~~~text builtins.mjs
+console.log(parseInt("42px", 10));
+console.log([1, 2, 3].map((n) => n * 2));
+console.log(JSON.parse('{"price": 120}').price);
+~~~
+
+- [[parseInt("42px", 10)]]: بتقرا الأرقام من أول النص لحد ما تلاقي حاجة مش رقم، فـ [["42px"]] تبقى [[42]]. التاني [[10]] اسمه radix: «اقرا بالعشري». جرّبنا [[parseInt("px42")]] طلعت [[NaN]] (أول حرف مش رقم)، و [[parseInt("0x1A")]] طلعت [[26]] (قرّاها hex).
+- [[[1, 2, 3].map(...)]]: [[map]] method على كل array، بتلف على العناصر وتنادي **دالتك** [[(n) => n * 2]] على كل واحد وترجّع array جديدة. يعني دالة جاهزة بتنادي دالة انت كاتبها.
+- [[JSON.parse(...)]]: بتحوّل نص JSON لـ object، و [[.price]] بتقرا منه السعر.
+
+~~~text الناتج
+42
+[ 2, 4, 6 ]
+120
+~~~
+
+---
+
+## ٣. دالة جاهزة من Node
+
+~~~text builtins.mjs
+import { readFileSync } from "node:fs";
+console.log(readFileSync("menu.txt", "utf8").split("\n")[0]);
+~~~
+
+- [[import { readFileSync } from "node:fs"]]: هات دالة [[readFileSync]] من module الملفات بتاع Node. [[node:]] في أول الاسم بيقول «module جاهز من Node، مش package من npm».
+- [[readFileSync("menu.txt", "utf8")]]: اقرا الملف كله كنص. Sync يعني البرنامج بيستنى لحد ما القراية تخلص.
+- [[.split("\n")[0]]]: قسّم النص على السطور وخد أول سطر.
+
+~~~text الناتج
+شاي 10
+~~~
+
+السطر ده **مش هيشتغل في المتصفح**: مفيش [[node:fs]] هناك، لأن الصفحة ممنوعة تقرا ملفات جهازك.
+
+---
+
+## ٤. دالة انت كاتبها
+
+~~~text builtins.mjs
+function addVat(price) {
+  return Math.round(price * 1.14);
+}
+console.log(addVat(100));
+~~~
+
+- [[function addVat(price)]]: بتعرّف دالة اسمها [[addVat]] بتاخد باراميتر [[price]].
+- [[Math.round(price * 1.14)]]: السعر + ١٤٪ ضريبة، ومقرّب لأقرب جنيه. وجوه دالتك نفسها بتستخدم دالة جاهزة ([[Math.round]])، وده العادي: دوالك مبنية على الجاهزة.
+
+~~~text الناتج
+114
+~~~
+
+**ليه [[Math.round]]؟** من غيرها [[100 * 1.14]] بيطلع [[113.99999999999999]] (جرّبناها)، لأن الأرقام العشرية في الكمبيوتر مش دقيقة ١٠٠٪ (درس «number و NaN»).
+
+---
+
+## ٥. تعرف الجاهزة من بتاعتك إزاي: [[toString]]
+
+~~~text builtins.mjs
+console.log(String(Math.max));
+console.log(String(addVat));
+~~~
+
+[[String(دالة)]] بيحوّل الدالة لنص (نفس [[fn.toString()]]):
+
+~~~text الناتج
+function max() { [native code] }
+function addVat(price) {
+  return Math.round(price * 1.14);
+}
+~~~
+
+- دالتك: الكود اللي كتبته بالحرف.
+- [[Math.max]]: [[{ [native code] }]]، يعني مكتوبة جوه الـ engine (V8 هنا) بلغة تانية، ومفيش JavaScript يتعرض.
+
+وفي Chrome 157 جرّبنا [[String(alert)]] و [[String(document.querySelector)]] و [[String(fetch)]]: الـ ٣ طلعوا [[[native code]]]. بس في Node، [[String(setTimeout)]] و [[String(fetch)]] بيطلّعوا كود JavaScript حقيقي، لأن Node كاتب حاجات كتير منه بـ JavaScript. فـ [[[native code]]] علامة على «مش مكتوبة بـ JavaScript»، مش على «جاهزة» (التمرين الرابع).
+
+---
+
+## ٦. [[f]] ولا [[f()]]: الدالة ولا ناتجها
+
+~~~text builtins.mjs
+const vat = addVat;
+console.log(vat(200), vat === addVat);
+console.log(typeof addVat(100), typeof addVat);
+~~~
+
+- [[const vat = addVat]] **من غير قوسين**: مفيش حاجة اتشغّلت. [[vat]] بقى اسم تاني لنفس الدالة.
+- [[vat(200)]] بيشغّلها: [[228]]. و [[vat === addVat]] بـ [[true]]: نفس الدالة بالظبط.
+- [[typeof addVat(100)]] بـ [["number"]] (الناتج)، و [[typeof addVat]] بـ [["function"]] (الدالة نفسها).
+
+~~~text الناتج
+228 true
+number function
+~~~
+
+ده اللي بيخليك تبعت دالة لدالة: [[setTimeout(sayHi, 1000)]] و [[button.addEventListener("click", save)]] و [[prices.map(addVat)]]. انت بتدّي الاسم، وهم اللي بيحطوا القوسين وقت ما يحبوا.
+
+---
+
+## ٧. الـ method: دالة على object
+
+| تكتبها كده | هي إيه | جاية منين |
+|---|---|---|
+| [[parseInt("7", 10)]] | دالة على الـ global object | اللغة |
+| [[Math.max(1, 2)]] | method على [[Math]] | اللغة |
+| [[[1, 2].map(f)]] | method جاية من [[Array.prototype]] | اللغة |
+| [[alert("تم")]] | دالة على [[window]] (الـ global في المتصفح) | المتصفح |
+| [[document.querySelector("h1")]] | method على [[document]] | المتصفح |
+| [[fs.readFileSync("a.txt")]] | دالة في module [[node:fs]] | Node |
+| [[shop.greet()]] | method انت كاتبها على object بتاعك | انت |
+
+الـ method بتعرف الـ object بتاعها من اللي **قبل النقطة** وقت النداء. لو فصلتها عنه ([[const q = document.querySelector]]) وناديتها لوحدها، بتقع (التمرين الخامس).
+
+---
+
+## الخلاصة
+
+| السؤال | الإجابة |
+|---|---|
+| دالة ولا لأ؟ | [[typeof x === "function"]]، ولو بتتنادي بـ [[()]] يبقى دالة |
+| جاهزة ولا بتاعتي؟ | بتاعتك: انت كاتب [[function]] أو [[=>]]. جاهزة: موجودة من غير ما تعرّفها |
+| جاهزة من مين؟ | MDN بيقولك فوق الصفحة: «JavaScript reference» (اللغة) ولا «Web APIs» (المتصفح)، ووثائق Node لـ Node |
+| [[f]] ولا [[f()]]؟ | [[f]] الدالة نفسها (تبعتها أو تخزّنها)، و [[f()]] شغّلها دلوقتي وهات الناتج |
+| [[[native code]]] معناها؟ | مكتوبة جوه الـ engine أو المتصفح مش بـ JavaScript، ومش دليل كافي إنها «جاهزة» |`,
+          lines: [
+            R`[[import]] بيجيب دالة [[readFileSync]] من module الملفات الجاهز في Node ([[node:fs]]). السطر ده في Node بس.`,
+            R`[[Math.max]] دالة جاهزة من اللغة بترجّع أكبر رقم من اللي بعتهم: [[9]].`,
+            R`[[parseInt]] جاهزة من اللغة: بتقرا الأرقام من أول النص وتقف عند [[px]]، فترجّع [[42]]. و [[10]] معناها عشري.`,
+            R`[[map]] method جاهزة على كل array، بتنادي الدالة اللي انت كاتبها على كل عنصر وترجّع array جديدة [[[ 2, 4, 6 ]]].`,
+            R`[[JSON.parse]] جاهزة من اللغة: بتحوّل نص JSON لـ object، و [[.price]] بتقرا منه [[120]].`,
+            R`[[readFileSync]] بتقرا [[menu.txt]] كنص، و [[split("\n")[0]]] بتاخد أول سطر منه: [[شاي 10]].`,
+            R`هنا بتعرّف دالة بتاعتك اسمها [[addVat]] بتاخد السعر في باراميتر اسمه [[price]].`,
+            R`بترجّع السعر + ١٤٪، ومقرّب بدالة جاهزة [[Math.round]] عشان الكسور العشرية متطلعش [[113.99999999999999]].`,
+            R`قفلة جسم الدالة. لحد هنا الدالة اتعرّفت بس، ولسه محدش ناداها.`,
+            R`أول نداء لدالتك بـ [[100]]، والناتج [[114]] بيتبعت لـ [[console.log]].`,
+            R`[[String(Math.max)]] بيحوّل الدالة الجاهزة لنص: [[function max() { [native code] }]]، لأنها مكتوبة جوه الـ engine.`,
+            R`نفس الحاجة على دالتك: بيطبع الكود اللي انت كاتبه بالحرف، وده الفرق اللي بيبان بين الاتنين.`,
+            R`[[addVat]] من غير قوسين: بنحط الدالة نفسها في متغير تاني [[vat]]، ومفيش حاجة اتشغّلت.`,
+            R`[[vat(200)]] نداء بيرجّع [[228]]، و [[vat === addVat]] بـ [[true]] لأنهم نفس الدالة باسمين.`,
+            R`[[typeof]] على الناتج بيطلع [[number]] وعلى الدالة نفسها [[function]]: الفرق بين [[f()]] و [[f]].`,
+          ],
+          ref: [
+            { t: "MDN Curriculum: JavaScript fundamentals (6.7 Functions)", url: "https://developer.mozilla.org/en-US/curriculum/core/javascript-fundamentals/" },
+            { t: "MDN: Functions — reusable blocks of code", url: "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/Functions" },
+            { t: "MDN: Standard built-in objects", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects" },
+            { t: "MDN: Web APIs", url: "https://developer.mozilla.org/en-US/docs/Web/API" },
+            { t: "Node.js: File system (fs)", url: "https://nodejs.org/api/fs.html" },
+            { t: "MDN: Function.prototype.toString()", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/toString" },
+          ],
+          pre: ["js/مقدمة الدوال function", { to: "js/JavaScript technologies overview: ECMAScript و Web APIs و Node", why: R`الطبقات التلاتة (اللغة والمتصفح و Node) بالتفصيل، لما توصل للمستوى ٣` }],
+        },
+        {
           cmd: "function و arrow",
           title: "الفرق بين function و arrow function",
           desc: R`فيه ٣ أشكال: function declaration ([[function add() {}]])، و function expression ([[const add = function () {}]])، و arrow function ([[const add = () => {}]]).

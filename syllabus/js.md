@@ -1,6 +1,6 @@
-# منهج JavaScript (js): 922 من 934 بند متغطي (98٪)
+# منهج JavaScript (js): 934 من 934 بند متغطي (100٪)
 
-اتبنى 2026-11-21 من: [MDN JavaScript reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference)، [ECMAScript (tc39.es/ecma262) و ECMA-402 (Intl)](https://tc39.es/ecma262/)، [@mdn/browser-compat-data](https://github.com/mdn/browser-compat-data/tree/main/javascript)، [web-features (Baseline)](https://github.com/web-platform-dx/web-features)، [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/). الكورس فيه 273 درس. الملف ده بيتولّد بـ `node tools/syllabus.js js --write`، متعدّلوش بإيدك.
+اتبنى 2026-11-21 من: [MDN JavaScript reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference)، [ECMAScript (tc39.es/ecma262) و ECMA-402 (Intl)](https://tc39.es/ecma262/)، [@mdn/browser-compat-data](https://github.com/mdn/browser-compat-data/tree/main/javascript)، [web-features (Baseline)](https://github.com/web-platform-dx/web-features)، [MDN Curriculum](https://developer.mozilla.org/en-US/curriculum/). الكورس فيه 286 درس. الملف ده بيتولّد بـ `node tools/syllabus.js js --write`، متعدّلوش بإيدك.
 
 | النوع | في المنهج | متغطي | مذكور من غير شرح | ناقص خالص | مستبعد بسبب |
 |---|---|---|---|---|---|
@@ -12,31 +12,7 @@
 | regex syntax | 19 | 19 | 0 | 0 | 0 |
 | مفاهيم (MDN Guide) | 35 | 35 | 0 | 0 | 13 |
 | رسايل الأخطاء | 0 | 0 | 0 | 0 | 131 |
-| مهارات (MDN Curriculum) | 109 | 97 | 0 | 12 | 0 |
-
-## مهارات (MDN Curriculum): ناقص 12
-
-**3. Web APIs › 3.1 Video and audio APIs**
-
-- `out:web-apis/3.1.1` General concepts: (3 نقطة فرعية) ← مفيش درس JS عن play/pause/seeking/duration/currentTime؛ الـ formats والـ codecs في css tab «audio و source» و«video و iframe» بس كـ HTML
-- `out:web-apis/3.1.2` Using the HTMLMediaElement API to build a basic custom media player: (3 نقطة فرعية) ← مفيش درس بيبني media player مخصص بـ HTMLMediaElement ولا بيشرح ليه (accessibility، شكل موحد)
-- `out:web-apis/3.1.3` Using media streams/getUserMedia() to capture video and audio from a local device. ← مفيش درس getUserMedia / MediaStream
-- `out:web-apis/3.1.4` Handling common errors related to media delivery: (3 نقطة فرعية) ← الـ source والـ MIME type والـ fallback متشرحين في css tab «audio و source»، مش في js
-- `out:web-apis/3.1.5` Understand the purpose of other video and audio APIs, including the Web Audio API, Media Stream Recording API, and Media Source Extensions API. ← مفيش درس لـ Web Audio و MediaRecorder و Media Source Extensions
-
-**6. JavaScript fundamentals › 6.7 Functions**
-
-- `out:javascript-fundamentals/6.7.2` Understand that functions are used everywhere in JavaScript and that some are built into the browser and some are user-defined. ← مفيش شرح صريح إن فيه دوال مدمجة (console.log و Math.*) ودوال بتكتبها انت
-
-**6. JavaScript fundamentals › 6.14 Libraries and frameworks**
-
-- `out:javascript-fundamentals/6.14.1` Understand what third-party code is — functionality written by someone else that you can use in your own project, so you don't have to write everything yourself. ← متغطي في start tab «المكتبة والفريمورك»، مش في js
-- `out:javascript-fundamentals/6.14.2` Why developers use third-party code: (3 نقطة فرعية) ← مفيش درس عن ليه المطورين بيستخدموا كود طرف تالت (الكفاءة، التوافق، الدعم)
-- `out:javascript-fundamentals/6.14.3` The difference between libraries and frameworks: (2 نقطة فرعية) ← الفرق بين library و framework في start tab «المكتبة والفريمورك»، مش في js
-- `out:javascript-fundamentals/6.14.4` Why should you use frameworks? (2 نقطة فرعية) ← مفيش درس عن ليه تستخدم framework (الوقت، متطلبات الوظايف)
-- `out:javascript-fundamentals/6.14.5` Why is a framework not always the right choice? A framework: (6 نقطة فرعية) ← مفيش درس عن سلبيات الـ frameworks (overkill، حجم التحميل، منحنى التعلم، التحديثات، accessibility)
-- `out:javascript-fundamentals/6.14.6` How to choose? A good library or framework must: (3 نقطة فرعية) ← مفيش درس عن معايير اختيار library/framework (الدعم، الصيانة، المجتمع)
-
+| مهارات (MDN Curriculum) | 109 | 109 | 0 | 0 | 0 |
 
 ## مستبعد أوتوماتيك (من حالة المرجع)
 

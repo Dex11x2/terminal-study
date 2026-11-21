@@ -9724,6 +9724,11 @@
   "date": "2026-11-21",
   "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
  },
+ "js|HTMLMediaElement: play و pause و currentTime والصيغ": {
+  "hash": "b04b49098047",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
+ },
  "js|IndexedDB و BroadcastChannel": {
   "hash": "7803c90be75f",
   "date": "2026-10-29",
@@ -9838,6 +9843,11 @@
   "hash": "329c42184bdb",
   "date": "2026-11-20",
   "on": "Windows, Node 24.22 (and Chrome 157 for sumPrecise and the browser notes)"
+ },
+ "js|MediaRecorder: سجّل صوت وفيديو ونزّله": {
+  "hash": "00057048051e",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
  },
  "js|MutationObserver": {
   "hash": "14d558ed74e9",
@@ -9988,6 +9998,11 @@
   "hash": "72e704e0648b",
   "date": "2026-11-21",
   "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
+ },
+ "js|Web Audio API: AudioContext و Oscillator و Analyser و MSE": {
+  "hash": "300300b6f319",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
  },
  "js|Web Components في React و Vue": {
   "hash": "3727f68bd278",
@@ -10249,6 +10264,11 @@
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
  },
+ "js|getUserMedia: الكاميرا والميكروفون": {
+  "hash": "d76b8a0ada34",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
+ },
  "js|groups و flags": {
   "hash": "12a0c90edd14",
   "date": "2026-11-03",
@@ -10313,6 +10333,11 @@
   "hash": "3dc24ea58031",
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+ },
+ "js|library ولا framework: مين بينادي مين": {
+  "hash": "9c3d7edfa76f",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
  },
  "js|manifest.webmanifest": {
   "hash": "6dc8107cb6de",
@@ -10584,10 +10609,20 @@
   "date": "2026-11-21",
   "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
  },
+ "js|أخطاء الميديا: MediaError و source و MIME و Range": {
+  "hash": "10177fa68598",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
+ },
  "js|أشكال بالـ loops": {
   "hash": "eeb33eff63f3",
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|إمتى framework غلط: الحجم والصيانة والـ accessibility": {
+  "hash": "25f5d9b64835",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
  },
  "js|إمتى regex غلط": {
   "hash": "5cb8b5cfd971",
@@ -10673,6 +10708,11 @@
   "hash": "b4b2bd2f14f8",
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+ },
+ "js|تختار dependency وتفحصها: npm view و audit": {
+  "hash": "9d47294b21a4",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
  },
  "js|تختار تخزين إيه: cookies و Storage و Cache و IndexedDB": {
   "hash": "240ba749f820",
@@ -10764,6 +10804,11 @@
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
+ "js|دوال جاهزة ودوال بتكتبها": {
+  "hash": "b1a077c101f0",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
+ },
  "js|دورة حياة الـ SW": {
   "hash": "a84a9b0d8a90",
   "date": "2026-10-29",
@@ -10804,10 +10849,20 @@
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
+ "js|كود غيرك: npm و CDN ونسخ ملف": {
+  "hash": "f03fd03d8254",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
+ },
  "js|لما تعلق: صغّر المشكلة": {
   "hash": "44221c6aee2e",
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+ },
+ "js|ليه frameworks: الحالة والشاشات والشغل": {
+  "hash": "8db82b60afae",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
  },
  "js|مسائل أرقام": {
   "hash": "799644c2ad64",
@@ -10889,10 +10944,20 @@
   "date": "2026-10-29",
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
+ "js|مشغّل فيديو خاص: أزرار و range وكيبورد": {
+  "hash": "15c27f610021",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
+ },
  "js|مقدمة الدوال function": {
   "hash": "1b335a7ade61",
   "date": "2026-11-03",
   "on": "drills only: done outputs run in Node 24.22 + headless Chrome for DOM"
+ },
+ "js|مكتبتك الصغيرة: API و exports و tests": {
+  "hash": "67ab537a120a",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
  },
  "js|من جملة لتوقيع دالة": {
   "hash": "9664232e6d5a",
