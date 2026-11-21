@@ -65,3 +65,22 @@ docker rm -f lt
 - **CEFR:** ملف الـ PDF (٢٧٨ صفحة) بيترص فيه رقم المستوى في نص مجموعة الجمل، فقراءته من الـ PDF طلّعت مقاييس ناقصة. ملف الـ Excel الرسمي فيه كل جملة بمقياسها ومستواها (وكمان بالألماني): ١٧٥ جملة A1، منها ١٠١ للغة المنطوقة والمكتوبة (الباقي لغة إشارة أو «No descriptors available»).
 - **مقارنة الكلمات بـ spaCy:** نص امتحان ÖSD و telc التجريبي طلّع ٤١٢ كلمة مش في قايمة Goethe، معظمها غلط في التصريف (spaCy قال «Minu» و «Antwortbog»)، أو أسامي أماكن، أو كلام الامتحان عن نفسه، أو كلمات مركّبة من كلمات A1 (والتلات امتحانات بيسمحوا بيها). اللي اتاخد بالإيد ٥٥ كلمة. يعني الأداة بتطلّع مرشحين، والقرار بالقراية.
 - **فخ في ملف kaikki:** أول `"word": "` في السطر ممكن يكون لكلمة مرتبطة (antonyms بتاعة Mann فيها Frau)، فـ Frau أخدت بيانات Mann. الكلمة نفسها هي اللي قبل `"lang": "German"` على طول.
+
+## صوت الدروس والفحص (الدفعة ٣، ٢٢ نوفمبر)
+
+```bash
+node tools/de/de.js list    # كل سطر ألماني في تاب dea1 وملف الصوت بتاعه (✗ = ناقص)
+node tools/de/de.js audio   # يعمل الناقص بـ Piper، و whisper يسمعه ويكتبه، والنتيجة في audio/de/index.json
+docker run -d --name lt -p 127.0.0.1:8010:8081 meyay/languagetool:latest
+node tools/de/de.js lt      # كل سطر على LanguageTool
+docker rm -f lt
+node tools/de/de.js prune --yes   # يمسح الملفات اللي مفيش سطر بيستخدمها
+```
+
+اسم الملف = hash للصوت + النص اللي بيتنطق (`deHash` في `js/lang.js`، ونفس الدالة بيستخدمها `de.js`)، فلو السطر اتغيّر بيتعمل ملف جديد، والقديم يتمسح بـ `prune`.
+
+**اللي اتقاس:**
+- **Piper مبيعرفش يتهجّى:** «A, B, C, D, E, F, G» رجعت من whisper «a, w, c, d, u, r, v». الحل في `js/lang.js` (`deSpeech`): أي حرف لوحده بيتنطق باسمه مكتوب كلمة («Emm, Ah, Enn»)، والصفحة بتعرض الحرف.
+- **thorsten-high بيقول «Ägypten» غلط** (whisper سمعها «Igbken» و «Ich hab' ihn»)، و thorsten-medium قالها صح، فالصوت الراجل بقى medium.
+- **whisper مش مقياس كامل:** بيكتب الأرقام أرقام («13, 14» بدل «dreizehn, vierzehn»)، وبيكتب الأسامي العربي بطريقته («Karimansor»)، والكلمة لوحدها بيخمّنها غلط كتير («bitte» ← «Tschüss»). فالاختلاف معناه «اسمعه»، مش «غلط أكيد».
+- **صاحب المشروع (٢٢ نوفمبر): الصوت «بوت».** هيتبدّل بموديل مجاني على الجهاز (Chatterbox Multilingual، MIT) على كارت الشاشة. Docker بيشوف الكارت: `docker run --rm --gpus all de-tools nvidia-smi` طلّع «NVIDIA GeForce RTX 3070 Laptop GPU, 8192 MiB».

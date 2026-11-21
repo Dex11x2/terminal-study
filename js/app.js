@@ -106,6 +106,8 @@ function mdHTML(t){
       const code = [];
       for (i++; i < src.length && !/^~~~\s*$/.test(src[i]); i++) code.push(src[i]);
       if (m[1] === 'live' || m[1] === 'view'){ out.push(liveHTML(code.join('\n'), m[2], m[1] === 'view')); continue; }
+      // German lines, word cards, dictation, speaking, videos and prompts (js/lang.js)
+      if (typeof LANG_FENCES !== 'undefined' && LANG_FENCES.includes(m[1])){ const h = langFence(m[1], code, m[2]); if (h !== null){ out.push(h); continue; } }
       const [k, name] = FENCE[m[1]] || [shell, m[1] === 'text' || !m[1] ? '' : m[1]];
       let box = termHTML(code.join('\n'), k, true, m[2] || name || 'الناتج').replace('class="term"', 'class="term os tcode"');
       // diagrams and outputs: every piece between 2+ spaces keeps its column (an Arabic run would otherwise flip the order of the pieces),
@@ -569,15 +571,15 @@ function unitFoot(cat, id){
   const lab = cat.lab ? '<div><h4 class="uf-h">جهّز معملك</h4><p class="uf-p">متتعلمش الأوامر الخطيرة على ملفاتك الحقيقية.</p>'+termHTML(cat.lab, shell, false, '')+'</div>' : '';
   // lvl: صغير/متوسط/كبير/فكرة, shown as a badge and kept in that order; done: how you know it works;
   // ext: ways to make it your own; a كبير project also says how to put it in your portfolio
-  const LV = {'صغير': 1, 'متوسط': 2, 'كبير': 3, 'فكرة': 4};
+  const LV = {'صغير': 1, 'متوسط': 2, 'كبير': 3, 'فكرة': 4}, lang = typeof LANG_TABS !== 'undefined' && LANG_TABS.includes(shell);
   const projs = cat.projects ? cat.projects.slice().sort((a, b) => (LV[a.lvl] || 2) - (LV[b.lvl] || 2)) : [];
-  const pr = cat.projects ? '<div class="projbox"><h4 class="uf-h">مشاريع القسم</h4><p class="uf-p">بعد ما تخلص الدروس، دي حاجات تبنيها بإيدك من اللي اتعلمته، من الصغير للكبير. و«فكرة» مشروع مفتوح: انت اللي بتقرر تفاصيله.</p><ol class="projlist">'+
+  const pr = cat.projects ? '<div class="projbox"><h4 class="uf-h">مشاريع القسم</h4><p class="uf-p">'+(lang ? 'بعد ما تخلص الدروس، دي مهام حقيقية تعملها بالألماني (تكتبها أو تقولها وتسجّلها)، من الصغير للكبير. و«فكرة» مهمة مفتوحة: انت اللي بتقرر تفاصيلها.' : 'بعد ما تخلص الدروس، دي حاجات تبنيها بإيدك من اللي اتعلمته، من الصغير للكبير. و«فكرة» مشروع مفتوح: انت اللي بتقرر تفاصيله.')+'</p><ol class="projlist">'+
     projs.map(p => '<li>'+(p.lvl?'<em class="lv lv'+(LV[p.lvl]||2)+'">'+esc(p.lvl)+'</em>':'')+'<b>'+fmt(p.t)+'</b>'+(p.what?'<span>'+(p.dir?'<b class="plbl">المطلوب:</b> ':'')+fmt(p.what)+'</span>':'')+
       projShowHTML(p)+projStartHTML(p)+
       (p.done?'<span class="pdone"><b>تعرف إنك خلصت لما:</b> '+fmt(p.done)+'</span>':'')+
       (p.ext?'<span class="pdone"><b>خليه بتاعك:</b> '+fmt(p.ext)+'</span>':'')+
-      solBox(p.sol, 'ابنيه الأول')+
-      (p.lvl==='كبير'||p.lvl==='فكرة'?'<span class="pfolio">ينفع يتحط في الـ portfolio: ارفعه repo على GitHub فيه README بيقول بيعمل إيه وإزاي يتشغّل، وصورة أو ناتج حقيقي.</span>':'')+
+      solBox(p.sol, lang ? 'اعمله الأول' : 'ابنيه الأول')+
+      (lang ? '' : p.lvl==='كبير'||p.lvl==='فكرة'?'<span class="pfolio">ينفع يتحط في الـ portfolio: ارفعه repo على GitHub فيه README بيقول بيعمل إيه وإزاي يتشغّل، وصورة أو ناتج حقيقي.</span>':'')+
       '</li>').join('')+'</ol></div>' : '';
   return '<div class="unit-two uf" id="'+id+'-foot">'+lab+pr+'</div>';
 }
@@ -828,7 +830,9 @@ function render(){
   document.body.classList.toggle('reading', !!openCmd);
   openCmd ? renderReader() : renderMap(q, rawQ);
   hashSet();
-  $('#labBox').innerHTML = termHTML(LAB[shell], shell, shell==='vps' || shell==='web' || shell==='os', shell==='vps' ? 'على جهازك' : shell==='web' || shell==='os' ? 'اختصارات' : '');
+  // a tab without a lab (the language tabs: nothing to set up) hides the box
+  $('#tabLab').hidden = LAB[shell] === undefined;
+  $('#labBox').innerHTML = LAB[shell] === undefined ? '' : termHTML(LAB[shell], shell, shell==='vps' || shell==='web' || shell==='os', shell==='vps' ? 'على جهازك' : shell==='web' || shell==='os' ? 'اختصارات' : '');
   $('#labTxt').textContent = LABTXT[shell] || LABDEF;
   updateProgress();
 }
@@ -938,10 +942,16 @@ function fcPick(){
   return fc.pool.find(x => x.key!==fc.last) || fc.pool[0];
 }
 const tabName = k => $('.sw[data-s="'+k+'"] .top b') ? $('.sw[data-s="'+k+'"] .top b').textContent : SHELLS[k].label;
-const cards = (tab, keep) => { const a = []; DATA[tab].forEach(cat => { if (!keep || keep(cat)) cat.items.forEach(([c,t,d,ex,tr,flag]) => a.push({key:tab+':'+c, tab, cat:cat.t, c, t, d, ex, flag})); }); return a; };
+const cards = (tab, keep) => {
+  const a = [];
+  DATA[tab].forEach(cat => { if (!keep || keep(cat)) cat.items.forEach(([c,t,d,ex,tr,flag]) => a.push({key:tab+':'+c, tab, cat:cat.t, c, t, d, ex, flag})); });
+  // a language tab's word cards (WORDS, from the ~~~words fences): the question is the Arabic, the answer the German word
+  (WORDS[tab] || []).forEach(w => { if (!keep || keep({t: w.cat, l: w.l})) a.push({key:tab+':w:'+w.w, tab, cat:w.cat, c:w.w, t:w.ar, d:'', ex:null, word:w}); });
+  return a;
+};
 const allCards = test => Object.keys(DATA).flatMap(k => cards(k).filter(x => test(x.key)));
 // a saved card still counts while its lesson exists; a tab that isn't loaded yet gets the benefit of the doubt
-const knownKey = key => { const i = key.indexOf(':'), t = key.slice(0, i), c = key.slice(i+1); return !!TAB_META[t] && (!tabLoaded[t] && TAB_FILES[t] ? true : DATA[t].some(x => x.items.some(it => it[0] === c))); };
+const knownKey = key => { const i = key.indexOf(':'), t = key.slice(0, i), c = key.slice(i+1); return !!TAB_META[t] && (!tabLoaded[t] && TAB_FILES[t] ? true : c.startsWith('w:') ? (WORDS[t] || []).some(w => w.w === c.slice(2)) : DATA[t].some(x => x.items.some(it => it[0] === c))); };
 // a card counts as "forgotten" while it was missed more often than recalled
 const isWeak = key => { const st = fcStats(key); return st.m > st.k; };
 const weakPool = () => allCards(isWeak);
@@ -966,7 +976,8 @@ function fcNext(){
   const st = fcStats(x.key), cross = fc.mode==='weak' || fc.mode==='due', N = AR(fc.pool.length);
   $('#fcMeta').textContent = fc.mode==='exam' ? 'امتحان المستوى '+AR(fc.exam)+' · سؤال '+AR(fc.n+1)+' من '+N : (cross ? tabName(x.tab)+' › ' : '') + x.cat + (st.m ? ' · نسيتها '+AR(st.m)+' مرة' : '');
   $('#fcQ').textContent = x.t || x.c;
-  $('#fcHint').textContent = x.tab==='glossary' ? 'إيه المصطلح ده، وبيعمل إيه؟' : 'إيه الأمر اللي بيعمل كده؟ قوله بصوت عالي أو اكتبه في دماغك، وبعدين اكشف.';
+  $('#fcHint').textContent = x.word ? 'قول الكلمة بالألماني بصوت عالي: بأداتها (der أو die أو das) وجمعها لو اسم، وبعدين اكشف واسمعها.'
+    : x.tab==='glossary' ? 'إيه المصطلح ده، وبيعمل إيه؟' : 'إيه الأمر اللي بيعمل كده؟ قوله بصوت عالي أو اكتبه في دماغك، وبعدين اكشف.';
   $('#fcAns').hidden = true; $('#fcShow').hidden = false; $('#fcKnow').hidden = $('#fcMiss').hidden = true;
   const keys = 'مسافة تكشف، و 1 عرفتها، و 2 لسه.';
   if (fc.mode==='exam') $('#fcStat').textContent = (fc.n ? 'عرفت '+AR(fc.ok)+' من '+AR(fc.n)+' لحد دلوقتي. ' : '')+'تنجح لو عرفت '+AR(Math.ceil(fc.pool.length*.8))+' من '+N+'. '+keys;
@@ -979,6 +990,10 @@ function fcNext(){
 }
 function fcReveal(){
   const x = fc.cur, sum = x.d ? x.d.split(/\n\s*\n/)[0] : '', sol = fc.mode==='exam' && SOL[x.tab+'|'+x.c];
+  if (x.word){
+    $('#fcAns').innerHTML = '<div class="fc-word" dir="ltr" lang="de">'+sayBtns(x.word.w, 'm')+' <span class="de-w">'+deArt(x.word.w)+'</span></div>'+
+      (x.word.ex ? '<div class="fc-word-ex" dir="ltr" lang="de">'+sayBtns(x.word.ex, 'f')+' '+esc(x.word.ex)+'</div>' : '')+'<p class="fc-word-from">من درس «'+esc(x.word.lesson)+'»</p>';
+  } else
   $('#fcAns').innerHTML = '<span class="name">'+esc(x.c)+'</span>'+(sum ? '<p>'+fmt(sum)+'</p>' : '')+(x.ex ? withTab(x.tab, () => termBlock(x.ex, x.c, x.flag)) : '')+
     (sol ? '<div class="fc-sol"><b>حل التجربة:</b>'+descHTML(sol.text)+'</div>' : '');
   $('#fcAns').hidden = false; $('#fcShow').hidden = true; $('#fcKnow').hidden = $('#fcMiss').hidden = false;

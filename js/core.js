@@ -11,6 +11,18 @@ const PRE = {};
 const REF = {};
 /* CI: runnable checks for tools/ci-run.js, [{os: ['ubuntu','macos','windows'], sh: 'bash'|'zsh'|'pwsh'|'powershell'|'cmd'|'node'|'python', run, expect: [...], code}] */
 const CI = {};
+/* WORDS: the word cards of a language tab, read from the ~~~words fences in teach (js/lang.js draws them):
+   WORDS[tab] = [{w: "der Name, die Namen", ar, ex, lesson, cat, l}]. They join «اختبرني» with the key tab:w:<w> */
+const WORDS = {};
+function wordsOf(key, cat, it){
+  for (const m of it.teach.matchAll(/^~~~words[^\n]*\n([\s\S]*?)^~~~[ \t]*$/gm))
+    for (const l of m[1].split('\n')) {
+      if (!l.trim()) continue;
+      const [w, ar, ex] = l.split(' | ').map(s => (s || '').trim());
+      const list = WORDS[key] = WORDS[key] || [];
+      if (!list.some(x => x.w === w)) list.push({w, ar, ex, lesson: it.cmd, cat: cat.t, l: cat.l});
+    }
+}
 const LEVEL_INFO = {
   "1": ["البداية", "تتحرك بين الفولدرات وتتعامل مع الملفات وتقراها بثقة"],
   "2": ["المتوسط", "توصّل الأوامر ببعض، وتدير الصلاحيات والعمليات والشبكة"],
@@ -46,7 +58,7 @@ function cats(key, list){
     cat.items = c.items.map(it => {
       const id = key+'|'+it.cmd;
       if (it.deep) DEEP[id] = it.deep;
-      if (it.teach) TEACH[id] = it.teach;
+      if (it.teach){ TEACH[id] = it.teach; if (it.teach.includes('~~~words')) wordsOf(key, cat, it); }
       if (it.lines) BREAK[id] = it.lines;
       if (it.sol) SOL[id] = {text: it.sol, code: it.solCode};
       if (it.mac) BASH_OS[it.cmd] = it.mac;

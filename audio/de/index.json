@@ -1,0 +1,1754 @@
+{
+ "01eec7b7.mp3": {
+  "text": "Ich komme aus Ägypten.",
+  "voice": "m",
+  "heard": "Ich komme aus Ägypten.",
+  "ok": true
+ },
+ "0296f737.mp3": {
+  "text": "Ich bin Koch von Beruf.",
+  "voice": "m",
+  "heard": "Ich bin Koch von Beruf.",
+  "ok": true
+ },
+ "03c50a8f.mp3": {
+  "text": "Danke, sehr gut. Und Ihnen?",
+  "voice": "m",
+  "heard": "Danke, sehr gut. Und Ihnen?",
+  "ok": true
+ },
+ "06d9bf93.mp3": {
+  "text": "Ich spreche drei Sprachen.",
+  "voice": "f",
+  "heard": "Ich spreche drei Sprachen.",
+  "ok": true
+ },
+ "07621918.mp3": {
+  "text": "Null, eins, fünf, sieben, zwei, acht, vier, sechs, eins, drei, null.",
+  "voice": "f",
+  "heard": "0, 1, 5, 7, 2, 8, 4, 6, 1, 3, 0.",
+  "ok": false
+ },
+ "09cc14ec.mp3": {
+  "text": "einundzwanzig",
+  "voice": "f",
+  "heard": "21",
+  "ok": false
+ },
+ "0b2cad8e.mp3": {
+  "text": "Super! Tschüss, bis morgen!",
+  "voice": "f",
+  "heard": "Super! Tschüss bis morgen!",
+  "ok": true
+ },
+ "0b8298b4.mp3": {
+  "text": "F wie Frankfurt, A wie Aachen, R wie Rostock, O wie Offenbach, U wie Unna, K wie Köln.",
+  "voice": "m",
+  "heard": "F wie Frankfurt, A wie Aachen, R wie Rostock, O wie Offenbach, U wie Unna, KW Köln.",
+  "ok": false
+ },
+ "0b9b9462.mp3": {
+  "text": "Mein Land ist Ägypten.",
+  "voice": "f",
+  "heard": "Mein Land ist die Ägypten.",
+  "ok": false
+ },
+ "0bbf2761.mp3": {
+  "text": "wir sprechen, ihr sprecht, sie sprechen",
+  "voice": "m",
+  "heard": "Wir sprechen, ihr sprecht, sie sprechen.",
+  "ok": true
+ },
+ "0c0c5d8c.mp3": {
+  "text": "dreißig",
+  "voice": "f",
+  "heard": "30.",
+  "ok": false
+ },
+ "0c305ce2.mp3": {
+  "text": "0157 2846 130.",
+  "voice": "f",
+  "heard": "0.572.846.130",
+  "ok": false
+ },
+ "0cd27793.mp3": {
+  "text": "Und das sind Yusuf und Lisa.",
+  "voice": "m",
+  "heard": "Und das sind Jusuf und Lisa.",
+  "ok": false
+ },
+ "0d341c9d.mp3": {
+  "text": "einundzwanzig",
+  "voice": "m",
+  "heard": "21",
+  "ok": false
+ },
+ "0e7cd2a9.mp3": {
+  "text": "Ich bin zweiunddreißig Jahre alt.",
+  "voice": "m",
+  "heard": "Ich bin 32 Jahre alt.",
+  "ok": false
+ },
+ "10a71aab.mp3": {
+  "text": "Ä, Ö, Ü, ß",
+  "voice": "m",
+  "heard": "e, u, u, s, z",
+  "ok": false
+ },
+ "110dc6f1.mp3": {
+  "text": "woher",
+  "voice": "m",
+  "heard": "War her.",
+  "ok": false
+ },
+ "120cb225.mp3": {
+  "text": "Langsam, bitte.",
+  "voice": "m",
+  "heard": "Langsam, bitte.",
+  "ok": true
+ },
+ "129638e3.mp3": {
+  "text": "Y, U, S, U, F.",
+  "voice": "m",
+  "heard": "y, u, s, u, f.",
+  "ok": true
+ },
+ "129d2583.mp3": {
+  "text": "Ich bin Krankenschwester von Beruf. Ich arbeite in Wien.",
+  "voice": "f",
+  "heard": "Ich bin Krankenschwister vom Beruf. Ich arbeite in Wien.",
+  "ok": false
+ },
+ "13332bc0.mp3": {
+  "text": "Können Sie das bitte buchstabieren?",
+  "voice": "f",
+  "heard": "Können Sie das bitte buchstabieren?",
+  "ok": true
+ },
+ "136bcc1f.mp3": {
+  "text": "dreizehn, dreißig, vierzehn, vierzig, sechzehn",
+  "voice": "m",
+  "heard": "13, 30, 14, 40, 16",
+  "ok": false
+ },
+ "140f0e40.mp3": {
+  "text": "Woher kommen Sie?",
+  "voice": "m",
+  "heard": "Woher kommen sie?",
+  "ok": true
+ },
+ "148bf1ed.mp3": {
+  "text": "Grüß Gott!",
+  "voice": "m",
+  "heard": "Grüß Gott!",
+  "ok": true
+ },
+ "14f8f050.mp3": {
+  "text": "Ich komme aus der Schweiz. Ich spreche Französisch und Deutsch.",
+  "voice": "m",
+  "heard": "Ich komme aus der Schweiz, ich spreche Französisch und Deutsch.",
+  "ok": true
+ },
+ "15ae6e82.mp3": {
+  "text": "Ich spreche Arabisch und Englisch.",
+  "voice": "f",
+  "heard": "Ich spreche Arabisch und Englisch.",
+  "ok": true
+ },
+ "15b107bc.mp3": {
+  "text": "Hallo! Ich heiße Mona.",
+  "voice": "m",
+  "heard": "Hallo, ich heiße Mona.",
+  "ok": true
+ },
+ "163085c2.mp3": {
+  "text": "sechzehn, siebzehn, sechzig, siebzig",
+  "voice": "m",
+  "heard": "16, 17, 60, 70",
+  "ok": false
+ },
+ "1634834c.mp3": {
+  "text": "Tarek: Gern! Ich bin Tarek.",
+  "voice": "m",
+  "heard": "Tarek, gern. Ich bin Tarek.",
+  "ok": true
+ },
+ "17309700.mp3": {
+  "text": "die Telefonnummer, die Telefonnummern",
+  "voice": "m",
+  "heard": "die Telefonnummer, die Telefonnummern.",
+  "ok": true
+ },
+ "175fb8fe.mp3": {
+  "text": "Ich spreche Arabisch.",
+  "voice": "f",
+  "heard": "Ich spreche arbeis",
+  "ok": false
+ },
+ "18388212.mp3": {
+  "text": "sprechen",
+  "voice": "m",
+  "heard": "Sprechen.",
+  "ok": true
+ },
+ "1aba13b8.mp3": {
+  "text": "Kairo ist eine Stadt.",
+  "voice": "f",
+  "heard": "Cairo ist eine Stadt.",
+  "ok": false
+ },
+ "1c683a6d.mp3": {
+  "text": "Auf Wiedersehen, Herr Klein!",
+  "voice": "f",
+  "heard": "Auf Wiedersehen, Herr Klein.",
+  "ok": true
+ },
+ "1cacf06d.mp3": {
+  "text": "Wohnort: Ich wohne in …",
+  "voice": "m",
+  "heard": "Wohnort. Ich wohne in.",
+  "ok": true
+ },
+ "1cb85dd9.mp3": {
+  "text": "Mein Name hat sechs Buchstaben.",
+  "voice": "f",
+  "heard": "Mein Name hat sechs Buchstaben.",
+  "ok": true
+ },
+ "1d464911.mp3": {
+  "text": "Mein Familienname ist Khalil.",
+  "voice": "f",
+  "heard": "Mein Familienname ist Khalil.",
+  "ok": true
+ },
+ "1de257e6.mp3": {
+  "text": "die Nummer, die Nummern",
+  "voice": "m",
+  "heard": "Die Nummer, die Nummern.",
+  "ok": true
+ },
+ "1de806e1.mp3": {
+  "text": "Null, eins, fünf, sieben.",
+  "voice": "f",
+  "heard": "0157",
+  "ok": false
+ },
+ "20d08ee3.mp3": {
+  "text": "Noch einmal, bitte. Langsam.",
+  "voice": "m",
+  "heard": "Noch einmal, bitte. Langsam.",
+  "ok": true
+ },
+ "22ded7f4.mp3": {
+  "text": "Freut mich, Frau Khalil!",
+  "voice": "f",
+  "heard": "Freut mich, Frau Khalil.",
+  "ok": true
+ },
+ "243cb7c4.mp3": {
+  "text": "Ich komme aus Ägypten.",
+  "voice": "f",
+  "heard": "Ich komme aus Ägypten.",
+  "ok": true
+ },
+ "25396544.mp3": {
+  "text": "Langsam, bitte.",
+  "voice": "f",
+  "heard": "Langsam bitte.",
+  "ok": true
+ },
+ "25c984bc.mp3": {
+  "text": "heißen",
+  "voice": "m",
+  "heard": "heißen",
+  "ok": true
+ },
+ "2627e92f.mp3": {
+  "text": "langsam",
+  "voice": "m",
+  "heard": "Langsam.",
+  "ok": true
+ },
+ "26a71822.mp3": {
+  "text": "Guten Tag!",
+  "voice": "m",
+  "heard": "Guten Tag!",
+  "ok": true
+ },
+ "2722b6ff.mp3": {
+  "text": "Ich wohne in Wien. Wien ist schön.",
+  "voice": "f",
+  "heard": "Ich wohne in Wien. Wien ist schön.",
+  "ok": true
+ },
+ "29b6d511.mp3": {
+  "text": "Guten Morgen! Wie geht es Ihnen?",
+  "voice": "f",
+  "heard": "Guten Morgen. Wie geht es Ihnen?",
+  "ok": true
+ },
+ "2a36c98c.mp3": {
+  "text": "Beruf: Ich bin … von Beruf.",
+  "voice": "m",
+  "heard": "Beruf, ich bin von Beruf.",
+  "ok": true
+ },
+ "2a94c673.mp3": {
+  "text": "S, A, L, A, H",
+  "voice": "m",
+  "heard": "S-A-L-A-H",
+  "ok": true
+ },
+ "2c085a0d.mp3": {
+  "text": "das Alphabet, die Alphabete",
+  "voice": "m",
+  "heard": "das Alphabet, die Alphabet.",
+  "ok": false
+ },
+ "2c622026.mp3": {
+  "text": "Jetzt wohne ich in Dresden.",
+  "voice": "m",
+  "heard": "Jetzt wohne ich in Dresden.",
+  "ok": true
+ },
+ "2c8c0617.mp3": {
+  "text": "achtundfünfzig",
+  "voice": "m",
+  "heard": "58",
+  "ok": false
+ },
+ "2ccfce0a.mp3": {
+  "text": "Ich bin Studentin.",
+  "voice": "f",
+  "heard": "Ich bin Studentin.",
+  "ok": true
+ },
+ "2f108d7c.mp3": {
+  "text": "Schlecht.",
+  "voice": "m",
+  "heard": "Schlecht.",
+  "ok": true
+ },
+ "308aec00.mp3": {
+  "text": "Auf Wiedersehen!",
+  "voice": "m",
+  "heard": "Auf Wiedersehen.",
+  "ok": true
+ },
+ "30f798fa.mp3": {
+  "text": "hundert",
+  "voice": "m",
+  "heard": "Hunde.",
+  "ok": false
+ },
+ "32a258a2.mp3": {
+  "text": "Ich bin Ingenieurin von Beruf.",
+  "voice": "f",
+  "heard": "Ich bin Engineering von Beruf.",
+  "ok": false
+ },
+ "33de9b6d.mp3": {
+  "text": "Gute Nacht, Mama!",
+  "voice": "f",
+  "heard": "Gute Nacht, Mama.",
+  "ok": true
+ },
+ "349b6f0d.mp3": {
+  "text": "Ich spreche Arabisch und Englisch.",
+  "voice": "m",
+  "heard": "Ich spreche Arabisch und Englisch.",
+  "ok": true
+ },
+ "34f3535d.mp3": {
+  "text": "Frau_Weber: Wir können uns duzen. Ich bin Anna.",
+  "voice": "m",
+  "heard": "Frau Weber, wir können uns duzen. Ich bin Anna.",
+  "ok": true
+ },
+ "3509d893.mp3": {
+  "text": "Hallo, Tarek!",
+  "voice": "f",
+  "heard": "Hallo, Tarek.",
+  "ok": true
+ },
+ "3630d5fa.mp3": {
+  "text": "Und wie ist Ihre Telefonnummer?",
+  "voice": "m",
+  "heard": "Und wie ist Ihre Telefonnummer?",
+  "ok": true
+ },
+ "37db9648.mp3": {
+  "text": "Schön! Auf Wiedersehen, Herr Lang!",
+  "voice": "m",
+  "heard": "Schön. Auf Wiedersehen. Herr Lang.",
+  "ok": true
+ },
+ "381e3970.mp3": {
+  "text": "heißen, Sie, wie, mein, Name",
+  "voice": "m",
+  "heard": "heißen sie wie mein Name.",
+  "ok": true
+ },
+ "3860e659.mp3": {
+  "text": "Mansour.",
+  "voice": "m",
+  "heard": "Mann, du ...",
+  "ok": false
+ },
+ "39fe6fd7.mp3": {
+  "text": "Englisch",
+  "voice": "m",
+  "heard": "Englisch.",
+  "ok": true
+ },
+ "3a543cc2.mp3": {
+  "text": "J, V, W, Z",
+  "voice": "m",
+  "heard": "j4vz",
+  "ok": false
+ },
+ "3b047c9c.mp3": {
+  "text": "Wie bitte?",
+  "voice": "m",
+  "heard": "Wie bitte?",
+  "ok": true
+ },
+ "3b27b1c3.mp3": {
+  "text": "zwanzig, dreißig, vierzig, fünfzig",
+  "voice": "m",
+  "heard": "20, 30, 40, 50",
+  "ok": false
+ },
+ "3b569ca0.mp3": {
+  "text": "Guten Tag! Wie geht es Ihnen?",
+  "voice": "m",
+  "heard": "Guten Tag. Wie geht es Ihnen?",
+  "ok": true
+ },
+ "3baf1590.mp3": {
+  "text": "Danke. Buchstabieren Sie bitte Ihren Vornamen.",
+  "voice": "f",
+  "heard": "Danke. Buchstabieren Sie bitte Ihren Vornamen.",
+  "ok": true
+ },
+ "3bdb1f9a.mp3": {
+  "text": "Ich komme aus Ägypten und wohne in Kairo.",
+  "voice": "m",
+  "heard": "Ich komme aus Ägypten und wohne in Cairo.",
+  "ok": false
+ },
+ "3e0216cd.mp3": {
+  "text": "Guten Morgen!",
+  "voice": "f",
+  "heard": "Guten Morgen!",
+  "ok": true
+ },
+ "3e92df1e.mp3": {
+  "text": "Wie ist Ihr Familienname?",
+  "voice": "f",
+  "heard": "Wie ist der Familienname?",
+  "ok": false
+ },
+ "40adacd4.mp3": {
+  "text": "Ich bin Lehrer.",
+  "voice": "f",
+  "heard": "Ich bin leer.",
+  "ok": false
+ },
+ "42794ed8.mp3": {
+  "text": "ich, mich, Ihr Lehrer",
+  "voice": "m",
+  "heard": "Ich mich, ihr Lehrer.",
+  "ok": true
+ },
+ "4357fcd9.mp3": {
+  "text": "Ich spreche Arabisch, Englisch und ein bisschen Deutsch.",
+  "voice": "f",
+  "heard": "Ich spreche Arabisch, Englisch und ein bisschen Deutsch.",
+  "ok": true
+ },
+ "45d18b45.mp3": {
+  "text": "Hallo, Mia! Wie geht's?",
+  "voice": "f",
+  "heard": "Hallo, Mia! Wie geht's?",
+  "ok": true
+ },
+ "464a4d6e.mp3": {
+  "text": "Guten Tag, Frau Khalil!",
+  "voice": "f",
+  "heard": "Guten Tag, Frau Kalil.",
+  "ok": false
+ },
+ "48e3cc5c.mp3": {
+  "text": "Hallo, Lea! Es geht. Und dir?",
+  "voice": "m",
+  "heard": "Hallo Lea, es geht und dir?",
+  "ok": true
+ },
+ "491bd80d.mp3": {
+  "text": "Wo wohnst du?",
+  "voice": "m",
+  "heard": "Wovon ist du?",
+  "ok": false
+ },
+ "49257292.mp3": {
+  "text": "sechzig, siebzig, achtzig, neunzig, hundert",
+  "voice": "m",
+  "heard": "60, 70, 80, 90, 100",
+  "ok": false
+ },
+ "49938433.mp3": {
+  "text": "Wie ist Ihre Nummer?",
+  "voice": "f",
+  "heard": "Wie ist Ihre Nummer?",
+  "ok": true
+ },
+ "4a5585ac.mp3": {
+  "text": "Hallo! Ich bin Ben. Und du? Wie heißt du?",
+  "voice": "m",
+  "heard": "Hallo, ich bin Ben und du? Wie heißt du?",
+  "ok": true
+ },
+ "4aa317e6.mp3": {
+  "text": "Gut, danke.",
+  "voice": "f",
+  "heard": "Gut, danke.",
+  "ok": true
+ },
+ "4b580d8b.mp3": {
+  "text": "aus dem Sudan, im Sudan",
+  "voice": "m",
+  "heard": "Aus den Sudan, in Sudan.",
+  "ok": false
+ },
+ "4c5d1e49.mp3": {
+  "text": "Wie geht es Ihnen?",
+  "voice": "f",
+  "heard": "Wie geht es Ihnen?",
+  "ok": true
+ },
+ "4cccd73e.mp3": {
+  "text": "Guten Morgen! Mein Name ist Braun. Ich bin Ihr Lehrer.",
+  "voice": "m",
+  "heard": "Guten Morgen. Mein Name ist Braun. Ich bin Ihr Lehrer.",
+  "ok": true
+ },
+ "4d2affc5.mp3": {
+  "text": "Ich komme aus Ägypten, aus Kairo.",
+  "voice": "f",
+  "heard": "Ich komme aus Ägypten, aus Cairo.",
+  "ok": false
+ },
+ "508ab4ba.mp3": {
+  "text": "Wie schreibt man das?",
+  "voice": "m",
+  "heard": "Wie schreibt man das?",
+  "ok": true
+ },
+ "51109832.mp3": {
+  "text": "Danke schön.",
+  "voice": "f",
+  "heard": "Dankeschön.",
+  "ok": false
+ },
+ "5117f05d.mp3": {
+  "text": "Ja, schon zehn Jahre.",
+  "voice": "m",
+  "heard": "Ja, schon zehn Jahre.",
+  "ok": true
+ },
+ "52a06e4f.mp3": {
+  "text": "schreiben",
+  "voice": "m",
+  "heard": "schreiten",
+  "ok": false
+ },
+ "52be1b9e.mp3": {
+  "text": "Freut mich!",
+  "voice": "m",
+  "heard": "Freut mich!",
+  "ok": true
+ },
+ "53fe4552.mp3": {
+  "text": "Auf Wiedersehen! Bis bald!",
+  "voice": "m",
+  "heard": "Auf Wiedersehen. Bis bald.",
+  "ok": true
+ },
+ "56ab137a.mp3": {
+  "text": "A, E, I, J, U, V, W, Z",
+  "voice": "m",
+  "heard": "a, e, i, j, u, v, w, z.",
+  "ok": true
+ },
+ "56dd29bd.mp3": {
+  "text": "Die Zahl ist zwölf.",
+  "voice": "f",
+  "heard": "Die Zeit ist zwölf.",
+  "ok": false
+ },
+ "56e8a381.mp3": {
+  "text": "Guten Morgen, Frau Weber!",
+  "voice": "m",
+  "heard": "Guten Morgen, Frau Weber.",
+  "ok": true
+ },
+ "57d691e7.mp3": {
+  "text": "Ich heiße Karim Mansour.",
+  "voice": "m",
+  "heard": "Ich heiße Karimansur.",
+  "ok": false
+ },
+ "58215e1f.mp3": {
+  "text": "Guten Abend! Willkommen! Wie heißen Sie?",
+  "voice": "m",
+  "heard": "Guten Abend. Willkommen. Wie heißen Sie?",
+  "ok": true
+ },
+ "590cf2c6.mp3": {
+  "text": "die Stadt, die Städte",
+  "voice": "m",
+  "heard": "Die Stadt, die Städte.",
+  "ok": true
+ },
+ "59123dd6.mp3": {
+  "text": "Wie geht es Ihnen?",
+  "voice": "m",
+  "heard": "Wie geht es Ihnen?",
+  "ok": true
+ },
+ "593ab4bf.mp3": {
+  "text": "Ich heiße Hana. Mein Familienname ist Mostafa.",
+  "voice": "f",
+  "heard": "Ich heiße Hannah. Mein Familienname ist Mostafa.",
+  "ok": false
+ },
+ "595a8fe1.mp3": {
+  "text": "aus dem Irak, im Irak",
+  "voice": "m",
+  "heard": "aus dem Irak, im Irak.",
+  "ok": true
+ },
+ "5a6003d8.mp3": {
+  "text": "Mein Hobby ist Fußball.",
+  "voice": "m",
+  "heard": "Mein Hobby ist Fußball.",
+  "ok": true
+ },
+ "5f0de52f.mp3": {
+  "text": "Ich bin 20 Jahre alt.",
+  "voice": "f",
+  "heard": "Ich bin 20 Jahre alt.",
+  "ok": true
+ },
+ "5f41eed2.mp3": {
+  "text": "Tschüss, bis morgen!",
+  "voice": "f",
+  "heard": "Tschüss, bis morgen!",
+  "ok": true
+ },
+ "60913eaa.mp3": {
+  "text": "Und Deutsch spricht sie ein bisschen.",
+  "voice": "m",
+  "heard": "und Deutsch spricht sie ein bisschen.",
+  "ok": true
+ },
+ "61236743.mp3": {
+  "text": "dreizehn, vierzehn, fünfzehn, sechzehn",
+  "voice": "m",
+  "heard": "13, 14, 15, 16",
+  "ok": false
+ },
+ "63befcdd.mp3": {
+  "text": "Können Sie das bitte buchstabieren?",
+  "voice": "m",
+  "heard": "Können Sie das bitte buchstabieren?",
+  "ok": true
+ },
+ "64b82d43.mp3": {
+  "text": "Tschüss!",
+  "voice": "m",
+  "heard": "Tschüss!",
+  "ok": true
+ },
+ "64ecda00.mp3": {
+  "text": "Meine Telefonnummer ist 0176 3482 950.",
+  "voice": "m",
+  "heard": "Meine Telefonnummer ist 0.763.402.080.950.",
+  "ok": false
+ },
+ "658d09ac.mp3": {
+  "text": "Guten Tag! Mein Name ist Layla Farouk.",
+  "voice": "f",
+  "heard": "Guten Tag. Mein Name ist Laila Faruk.",
+  "ok": false
+ },
+ "684726cb.mp3": {
+  "text": "Hallo!",
+  "voice": "m",
+  "heard": "Hallo.",
+  "ok": true
+ },
+ "6867d828.mp3": {
+  "text": "Das ist Sara.",
+  "voice": "f",
+  "heard": "Das ist Sarah.",
+  "ok": false
+ },
+ "699ebf94.mp3": {
+  "text": "Noch einmal, bitte.",
+  "voice": "m",
+  "heard": "Noch einmal, bitte.",
+  "ok": true
+ },
+ "6b60713a.mp3": {
+  "text": "Ich spreche ein bisschen Deutsch.",
+  "voice": "f",
+  "heard": "Ich spreche ein bisschen Deutsch.",
+  "ok": true
+ },
+ "6c17ab8e.mp3": {
+  "text": "Freut mich, Nadia! Das ist Sara.",
+  "voice": "m",
+  "heard": "Freut mich Nadja, das ist Sarah.",
+  "ok": false
+ },
+ "6c487fbb.mp3": {
+  "text": "ein bisschen",
+  "voice": "m",
+  "heard": "Ein bisschen.",
+  "ok": true
+ },
+ "6ddf21b5.mp3": {
+  "text": "M, A, N, S, O, U, R",
+  "voice": "m",
+  "heard": "n-a-n-s-g-u-r",
+  "ok": false
+ },
+ "6de57b41.mp3": {
+  "text": "Tschüss, bis bald!",
+  "voice": "f",
+  "heard": "Tschüss, bis bald!",
+  "ok": true
+ },
+ "6ed0a158.mp3": {
+  "text": "Danke! Bitte!",
+  "voice": "f",
+  "heard": "Danke. Bitte.",
+  "ok": true
+ },
+ "704b870f.mp3": {
+  "text": "der Familienname, die Familiennamen",
+  "voice": "m",
+  "heard": "Der Familienarme, die Familienarmen.",
+  "ok": false
+ },
+ "708d341e.mp3": {
+  "text": "Wie heißt du?",
+  "voice": "m",
+  "heard": "Wie heißt du?",
+  "ok": true
+ },
+ "70de0702.mp3": {
+  "text": "Das ist Amina.",
+  "voice": "m",
+  "heard": "Das ist Amina.",
+  "ok": true
+ },
+ "71fe358d.mp3": {
+  "text": "buchstabieren",
+  "voice": "m",
+  "heard": "Buch stabilen.",
+  "ok": false
+ },
+ "728d2208.mp3": {
+  "text": "Guten Tag, Herr Braun!",
+  "voice": "f",
+  "heard": "Guten Tag, Herr Braun.",
+  "ok": true
+ },
+ "73f792a0.mp3": {
+  "text": "Super! Und dir?",
+  "voice": "f",
+  "heard": "Super! Und dir!",
+  "ok": true
+ },
+ "74d0b347.mp3": {
+  "text": "B, E, R, L, I, N",
+  "voice": "f",
+  "heard": "Das ist die Idee.",
+  "ok": false
+ },
+ "750dd745.mp3": {
+  "text": "Ich bin 31 Jahre alt.",
+  "voice": "f",
+  "heard": "Ich bin 31 Jahre alt.",
+  "ok": true
+ },
+ "752796ea.mp3": {
+  "text": "Grüezi!",
+  "voice": "m",
+  "heard": "Grüezi!",
+  "ok": true
+ },
+ "7531ee55.mp3": {
+  "text": "der Buchstabe, die Buchstaben",
+  "voice": "m",
+  "heard": "Der Buchstabe, die Buchstaben.",
+  "ok": true
+ },
+ "75584ce9.mp3": {
+  "text": "Woher kommen Sie?",
+  "voice": "f",
+  "heard": "Woher kommen Sie?",
+  "ok": true
+ },
+ "7646c772.mp3": {
+  "text": "Ich bin 29 Jahre alt.",
+  "voice": "f",
+  "heard": "Ich bin 29 Jahre alt.",
+  "ok": true
+ },
+ "76852a6b.mp3": {
+  "text": "wohnen",
+  "voice": "m",
+  "heard": "Wohnen",
+  "ok": true
+ },
+ "7776c81a.mp3": {
+  "text": "Das ist Herr Braun.",
+  "voice": "f",
+  "heard": "Das ist Herr Baran.",
+  "ok": false
+ },
+ "777958cb.mp3": {
+  "text": "Wie heißen Sie?",
+  "voice": "m",
+  "heard": "Wie heißen Sie?",
+  "ok": true
+ },
+ "7853cd69.mp3": {
+  "text": "sechzig, siebzehn, siebzig, neunzehn, neunzig",
+  "voice": "m",
+  "heard": "60, 17, 70, 19, 90",
+  "ok": false
+ },
+ "78e1b387.mp3": {
+  "text": "Gut, danke.",
+  "voice": "m",
+  "heard": "Gut, danke.",
+  "ok": true
+ },
+ "7a98e50c.mp3": {
+  "text": "aus den USA, in den USA",
+  "voice": "m",
+  "heard": "aus den Wässer in den Wässer.",
+  "ok": false
+ },
+ "7abe346e.mp3": {
+  "text": "Ich suche Partner für Deutsch und Arabisch.",
+  "voice": "m",
+  "heard": "Ich suche Partner für Deutsch und Arabisch.",
+  "ok": true
+ },
+ "7b3aa327.mp3": {
+  "text": "Land: Ich komme aus …",
+  "voice": "m",
+  "heard": "Land, ich komme aus.",
+  "ok": true
+ },
+ "7b52410b.mp3": {
+  "text": "siebzehn",
+  "voice": "f",
+  "heard": "17",
+  "ok": false
+ },
+ "7be4054e.mp3": {
+  "text": "ich bin, du bist, er ist, sie ist",
+  "voice": "m",
+  "heard": "Ich bin, du bist, er ist, sie ist.",
+  "ok": true
+ },
+ "7d92ef72.mp3": {
+  "text": "Sprachen: Ich spreche …",
+  "voice": "m",
+  "heard": "Sprachen, ich spreche.",
+  "ok": true
+ },
+ "80cfe8b2.mp3": {
+  "text": "aus der Türkei, in der Türkei",
+  "voice": "m",
+  "heard": "Aus der Türkei in der Türkei.",
+  "ok": true
+ },
+ "81a62ff1.mp3": {
+  "text": "Sie kommt aus dem Sudan.",
+  "voice": "m",
+  "heard": "Sie kommt aus dem Sudan.",
+  "ok": true
+ },
+ "86b43748.mp3": {
+  "text": "Jetzt wohne ich in Hamburg.",
+  "voice": "f",
+  "heard": "Jetzt wohne ich in Hamburg.",
+  "ok": true
+ },
+ "87462573.mp3": {
+  "text": "Ägypten",
+  "voice": "m",
+  "heard": "Ägypten.",
+  "ok": true
+ },
+ "891337a4.mp3": {
+  "text": "Sehr gut, danke!",
+  "voice": "m",
+  "heard": "Sehr gut, danke.",
+  "ok": true
+ },
+ "89ca40c7.mp3": {
+  "text": "Meine Telefonnummer ist 0176 3482 950.",
+  "voice": "f",
+  "heard": "Meine Telefonnummer ist 01763402 und 80950.",
+  "ok": false
+ },
+ "8bb54bf7.mp3": {
+  "text": "Servus!",
+  "voice": "m",
+  "heard": "Servus.",
+  "ok": true
+ },
+ "8cb864eb.mp3": {
+  "text": "Ich bin 24 Jahre alt.",
+  "voice": "f",
+  "heard": "Ich bin 24 Jahre alt.",
+  "ok": true
+ },
+ "8efdb6d4.mp3": {
+  "text": "A, B, C, D, E, F, G",
+  "voice": "m",
+  "heard": "a, b, c, d, e, f, g",
+  "ok": true
+ },
+ "8f551ec4.mp3": {
+  "text": "Freut mich auch!",
+  "voice": "f",
+  "heard": "Freut mich auch!",
+  "ok": true
+ },
+ "90d16d0b.mp3": {
+  "text": "A, E, I, O, U",
+  "voice": "m",
+  "heard": "a, e, i, o, u.",
+  "ok": true
+ },
+ "90dd8de3.mp3": {
+  "text": "Ich komme aus Ägypten, aus Assiut.",
+  "voice": "m",
+  "heard": "Ich komme aus Ägypten, aus Asiut.",
+  "ok": false
+ },
+ "9141e701.mp3": {
+  "text": "M, A, N, S, O, U, R.",
+  "voice": "m",
+  "heard": "n-a-n-s-o-u-r",
+  "ok": false
+ },
+ "92104921.mp3": {
+  "text": "W, E, B, E, R",
+  "voice": "f",
+  "heard": "DC, DC, DC, DC, DC, DC, DC, DC.",
+  "ok": false
+ },
+ "927ab60a.mp3": {
+  "text": "Danke. Buchstabieren Sie bitte Ihren Namen.",
+  "voice": "m",
+  "heard": "Danke. Buchstabieren Sie bitte Ihren Namen.",
+  "ok": true
+ },
+ "9338a13d.mp3": {
+  "text": "Das ist Sara.",
+  "voice": "m",
+  "heard": "Das ist Sarah.",
+  "ok": false
+ },
+ "93d545af.mp3": {
+  "text": "Guten Tag, Herr Klein!",
+  "voice": "f",
+  "heard": "Guten Tag, Herr Klein.",
+  "ok": true
+ },
+ "93f3a0c3.mp3": {
+  "text": "Wie ist Ihre Telefonnummer?",
+  "voice": "m",
+  "heard": "Wie ist Ihre Telefonnummer?",
+  "ok": true
+ },
+ "96699ff6.mp3": {
+  "text": "Das ist …",
+  "voice": "m",
+  "heard": "Das ist...",
+  "ok": true
+ },
+ "97173bbd.mp3": {
+  "text": "Ich bin 27 Jahre alt.",
+  "voice": "m",
+  "heard": "Ich bin 27 Jahre alt.",
+  "ok": true
+ },
+ "98a3cd49.mp3": {
+  "text": "Wie alt bist du?",
+  "voice": "f",
+  "heard": "Wie alt bist du?",
+  "ok": true
+ },
+ "9a24813f.mp3": {
+  "text": "kommen",
+  "voice": "m",
+  "heard": "Komm'n!",
+  "ok": false
+ },
+ "9a814d55.mp3": {
+  "text": "Jetzt wohnt sie in Leipzig.",
+  "voice": "m",
+  "heard": "Jetzt wohnen sie in Lapli.",
+  "ok": false
+ },
+ "9b7a083d.mp3": {
+  "text": "Hallo, Omar! Wie geht's?",
+  "voice": "f",
+  "heard": "Hallo, Oma. Wie geht's?",
+  "ok": false
+ },
+ "9c2d7e4a.mp3": {
+  "text": "wir sind, ihr seid, sie sind, Sie sind",
+  "voice": "m",
+  "heard": "Wir sind, ihr seid, sie sind, sie sind.",
+  "ok": true
+ },
+ "9c863d73.mp3": {
+  "text": "siebenundvierzig",
+  "voice": "m",
+  "heard": "47.",
+  "ok": false
+ },
+ "9cf02ab4.mp3": {
+  "text": "Wie alt sind Sie? Ich bin 31.",
+  "voice": "f",
+  "heard": "Wie eizt sind Sie? Ich bin 31.",
+  "ok": false
+ },
+ "9f8737da.mp3": {
+  "text": "siebzehn, achtzehn, neunzehn",
+  "voice": "m",
+  "heard": "17, 18, 19",
+  "ok": false
+ },
+ "9f88662b.mp3": {
+  "text": "Frau Khalil, woher kommen Sie?",
+  "voice": "m",
+  "heard": "Frau Kalil, woher kommen Sie?",
+  "ok": false
+ },
+ "9fdeb205.mp3": {
+  "text": "Hobby: Mein Hobby ist …",
+  "voice": "m",
+  "heard": "Hobby. Mein Hobby ist...",
+  "ok": true
+ },
+ "a027a210.mp3": {
+  "text": "Guten Tag! Mein Name ist Yusuf Adel.",
+  "voice": "m",
+  "heard": "Guten Tag, mein Name ist Tuzuf Adl.",
+  "ok": false
+ },
+ "a105165c.mp3": {
+  "text": "eins, zwei, drei, vier, fünf",
+  "voice": "m",
+  "heard": "Eins, zwei, drei, vier, fünf.",
+  "ok": true
+ },
+ "a1092104.mp3": {
+  "text": "Deutsch",
+  "voice": "m",
+  "heard": "Deutsch.",
+  "ok": true
+ },
+ "a30191ab.mp3": {
+  "text": "Herr",
+  "voice": "m",
+  "heard": "Okay.",
+  "ok": false
+ },
+ "a55b9184.mp3": {
+  "text": "Ich heiße Nadia.",
+  "voice": "f",
+  "heard": "Ich heiße Nadia",
+  "ok": true
+ },
+ "a7c8277f.mp3": {
+  "text": "zweiunddreißig",
+  "voice": "m",
+  "heard": "32",
+  "ok": false
+ },
+ "a82c501d.mp3": {
+  "text": "dreiundzwanzig",
+  "voice": "m",
+  "heard": "23",
+  "ok": false
+ },
+ "a835e2a6.mp3": {
+  "text": "Guten Abend!",
+  "voice": "m",
+  "heard": "Guten Abend!",
+  "ok": true
+ },
+ "a9b8acc5.mp3": {
+  "text": "Ich wohne jetzt in Hamburg.",
+  "voice": "m",
+  "heard": "Ich wohle jetzt in Hamburg.",
+  "ok": false
+ },
+ "aa0a26ff.mp3": {
+  "text": "Mein Vorname ist Nadia.",
+  "voice": "f",
+  "heard": "Mein Vornamen ist Nadia.",
+  "ok": false
+ },
+ "aa40de6b.mp3": {
+  "text": "Und wie ist Ihre Telefonnummer?",
+  "voice": "f",
+  "heard": "Und wie ist Ihre Telefonnummer?",
+  "ok": true
+ },
+ "aad53859.mp3": {
+  "text": "Ich wohne in Hamburg.",
+  "voice": "f",
+  "heard": "Ich wohne in Hamburg.",
+  "ok": true
+ },
+ "aadb8a0f.mp3": {
+  "text": "alt",
+  "voice": "m",
+  "heard": "alt",
+  "ok": true
+ },
+ "ac0ae34a.mp3": {
+  "text": "Das Alphabet hat 26 Buchstaben.",
+  "voice": "f",
+  "heard": "Das Alphabet hat 26 Buchstaben.",
+  "ok": true
+ },
+ "ad58369e.mp3": {
+  "text": "Mein Name ist Karim Mansour. Ich bin 24 Jahre alt. Ich komme aus Ägypten und wohne jetzt in Leipzig. Ich spreche Arabisch, Englisch und ein bisschen Deutsch. Ich bin Student. Mein Hobby ist Fußball.",
+  "voice": "m",
+  "heard": "Mein Name ist Karim Manso, ich bin 24 Jahre alt, ich komme aus Ägypten und wohne jetzt in Leipzig. Ich spreche Arabisch, Englisch und ein bisschen Deutsch. Ich bin Student. Mein Hobby ist Fußball.",
+  "ok": false
+ },
+ "ae161446.mp3": {
+  "text": "Sprechen Sie Englisch?",
+  "voice": "f",
+  "heard": "Sprechen Sie Englisch.",
+  "ok": true
+ },
+ "af671b8f.mp3": {
+  "text": "Ich lerne Deutsch.",
+  "voice": "f",
+  "heard": "Ich lerne Deutsch.",
+  "ok": true
+ },
+ "af95d0fb.mp3": {
+  "text": "die Zahl, die Zahlen",
+  "voice": "m",
+  "heard": "Die Zahl, die Zahlen.",
+  "ok": true
+ },
+ "b1c04c21.mp3": {
+  "text": "M wie München, A wie Aachen, N wie Nürnberg.",
+  "voice": "m",
+  "heard": "ENVY München, ABI Aachen, ENVY Nürnberg",
+  "ok": false
+ },
+ "b1e17059.mp3": {
+  "text": "Sie spricht Arabisch und Englisch.",
+  "voice": "m",
+  "heard": "Sie spricht Arabisch und Englisch.",
+  "ok": true
+ },
+ "b2d33233.mp3": {
+  "text": "Ich heiße Karim.",
+  "voice": "f",
+  "heard": "Ich heiße Karin.",
+  "ok": false
+ },
+ "b30a08fc.mp3": {
+  "text": "Danke, gut.",
+  "voice": "f",
+  "heard": "Danke, Kurt.",
+  "ok": false
+ },
+ "b435f211.mp3": {
+  "text": "Null, eins, sechs, null, vier, sieben, zwei, acht, eins, fünf.",
+  "voice": "m",
+  "heard": "0, 1, 6, 0, 4, 7, 2, 8, 1, 5.",
+  "ok": false
+ },
+ "b4be90cd.mp3": {
+  "text": "jetzt",
+  "voice": "m",
+  "heard": "Jetzt!",
+  "ok": true
+ },
+ "b5316e93.mp3": {
+  "text": "Hallo, Sara!",
+  "voice": "f",
+  "heard": "Hallo Sarah!",
+  "ok": false
+ },
+ "b551f521.mp3": {
+  "text": "Sprechen Sie Englisch?",
+  "voice": "m",
+  "heard": "Sprechen Sie Englisch?",
+  "ok": true
+ },
+ "b78fc665.mp3": {
+  "text": "Mir geht es gut.",
+  "voice": "f",
+  "heard": "Mir geht es gut.",
+  "ok": true
+ },
+ "b8546655.mp3": {
+  "text": "Ich spreche Arabisch und ein bisschen Deutsch.",
+  "voice": "m",
+  "heard": "Ich spreche Arabisch und ein bisschen Deutsch.",
+  "ok": true
+ },
+ "b93dd8c3.mp3": {
+  "text": "Arabisch",
+  "voice": "m",
+  "heard": "Ach, abisch!",
+  "ok": false
+ },
+ "ba83529c.mp3": {
+  "text": "Gute Nacht!",
+  "voice": "m",
+  "heard": "Gute Nacht!",
+  "ok": true
+ },
+ "baee25c6.mp3": {
+  "text": "Ich bin 24 Jahre alt.",
+  "voice": "m",
+  "heard": "Ich bin 24 Jahre alt.",
+  "ok": true
+ },
+ "baff8eea.mp3": {
+  "text": "Y, A, S, M, I, N",
+  "voice": "m",
+  "heard": "y, a, s, n, i, n",
+  "ok": false
+ },
+ "bc971624.mp3": {
+  "text": "aus der Schweiz, in der Schweiz",
+  "voice": "m",
+  "heard": "Aus der Schweiz in der Schweiz.",
+  "ok": true
+ },
+ "bcb07f3c.mp3": {
+  "text": "null, eins, sieben, sechs, vierunddreißig, zweiundachtzig",
+  "voice": "m",
+  "heard": "0, 1, 7, 6, 34, 82",
+  "ok": false
+ },
+ "bcdc42b2.mp3": {
+  "text": "der Punkt, die Punkte",
+  "voice": "m",
+  "heard": "Der Punkt die Punkte.",
+  "ok": true
+ },
+ "bdb1071b.mp3": {
+  "text": "Hallo, wie geht's?",
+  "voice": "f",
+  "heard": "Hallo, wie geht es?",
+  "ok": false
+ },
+ "be036f2d.mp3": {
+  "text": "Guten Tag! Bitte stellen Sie sich vor.",
+  "voice": "f",
+  "heard": "Guten Tag. Bitte stellen Sie sich vor.",
+  "ok": true
+ },
+ "bfb28920.mp3": {
+  "text": "O, P, Q, R, S, T, U",
+  "voice": "m",
+  "heard": "O-T-Q-R-S-T-U",
+  "ok": false
+ },
+ "c04cc48f.mp3": {
+  "text": "N, O, U, R, Punkt, S, A, I, D, at, M, A, I, L, Punkt, D, E",
+  "voice": "m",
+  "heard": "n-u-u-r.s-a-d-d-a-n-a-d-l.de",
+  "ok": false
+ },
+ "c1a92d51.mp3": {
+  "text": "Tschüss! Bis morgen!",
+  "voice": "f",
+  "heard": "Tschüss! Bis morgen!",
+  "ok": true
+ },
+ "c1fed095.mp3": {
+  "text": "Guten Tag! Wie geht es Ihnen?",
+  "voice": "f",
+  "heard": "Guten Tag. Wie geht es Ihnen?",
+  "ok": true
+ },
+ "c2033616.mp3": {
+  "text": "Alter: Ich bin … Jahre alt.",
+  "voice": "m",
+  "heard": "Alte, ich bin Jahre alt.",
+  "ok": false
+ },
+ "c35adee0.mp3": {
+  "text": "Mein Name ist Lang, Peter Lang. Woher kommen Sie?",
+  "voice": "m",
+  "heard": "Mein Name ist Lang, Peter Lang. Woher kommen Sie?",
+  "ok": true
+ },
+ "c3c93de9.mp3": {
+  "text": "null",
+  "voice": "m",
+  "heard": "0",
+  "ok": false
+ },
+ "c3e95184.mp3": {
+  "text": "Name: Ich heiße … / Mein Name ist …",
+  "voice": "m",
+  "heard": "Name, ich heiße mein Name ist.",
+  "ok": true
+ },
+ "c4743d61.mp3": {
+  "text": "J, E, N, A",
+  "voice": "f",
+  "heard": "dot.wna",
+  "ok": false
+ },
+ "c4fef56e.mp3": {
+  "text": "Hallo Jan! Ich bin Mona aus Kairo. Ich lerne Deutsch. Du lernst Arabisch, richtig?",
+  "voice": "m",
+  "heard": "Hallo Jan. Ich bin Mona aus Cairo. Ich lerne Deutsch. Du lernst Arabisch, richtig?",
+  "ok": false
+ },
+ "c5ff5055.mp3": {
+  "text": "Wie ist Ihre Hausnummer?",
+  "voice": "m",
+  "heard": "Wie ist Ihre Hausnummer?",
+  "ok": true
+ },
+ "c6cc31a7.mp3": {
+  "text": "Ich wohne in Mansoura.",
+  "voice": "f",
+  "heard": "Ich wohne in Mansoa.",
+  "ok": false
+ },
+ "c91e8ee9.mp3": {
+  "text": "Auch gut, danke.",
+  "voice": "f",
+  "heard": "Auch gut, danke.",
+  "ok": true
+ },
+ "ca3202b1.mp3": {
+  "text": "und",
+  "voice": "m",
+  "heard": "und",
+  "ok": true
+ },
+ "ca418c8f.mp3": {
+  "text": "null, eins, sieben, sechs, drei, vier, acht, zwei",
+  "voice": "m",
+  "heard": "0, 1, 7, 6, 3, 4, 8, 2",
+  "ok": false
+ },
+ "cad23102.mp3": {
+  "text": "Wie alt sind Sie?",
+  "voice": "m",
+  "heard": "Wie alt sind Sie?",
+  "ok": true
+ },
+ "caf20938.mp3": {
+  "text": "Hallo, Mia! Wie geht's?",
+  "voice": "m",
+  "heard": "Hallo, Mia. Wie geht's?",
+  "ok": true
+ },
+ "cb0796c9.mp3": {
+  "text": "Noch einmal, bitte.",
+  "voice": "f",
+  "heard": "Noch einmal, bitte.",
+  "ok": true
+ },
+ "cb23de86.mp3": {
+  "text": "Es geht.",
+  "voice": "m",
+  "heard": "Bis geht!",
+  "ok": false
+ },
+ "ccd62032.mp3": {
+  "text": "Mein Name ist Nadia Khalil.",
+  "voice": "m",
+  "heard": "Mein Name ist Nadia Khalil.",
+  "ok": true
+ },
+ "cd45fa94.mp3": {
+  "text": "bitte",
+  "voice": "m",
+  "heard": "Bitte.",
+  "ok": true
+ },
+ "cdbf669f.mp3": {
+  "text": "Wie schreibt man das?",
+  "voice": "f",
+  "heard": "Wie schreibt man das?",
+  "ok": true
+ },
+ "ce1f5829.mp3": {
+  "text": "Ich heiße Nadia Khalil.",
+  "voice": "f",
+  "heard": "Ich heiße Nadia Khalil.",
+  "ok": true
+ },
+ "ce88dfc3.mp3": {
+  "text": "der Name, die Namen",
+  "voice": "m",
+  "heard": "Der Name, die Namen.",
+  "ok": true
+ },
+ "d013e56a.mp3": {
+  "text": "Ich spreche Arabisch, Englisch und ein bisschen Deutsch.",
+  "voice": "m",
+  "heard": "Ich spreche Arabisch, Englisch und ein bisschen Deutsch.",
+  "ok": true
+ },
+ "d32d253b.mp3": {
+  "text": "Ich wohne in Berlin.",
+  "voice": "f",
+  "heard": "Ich wohne in Berlin.",
+  "ok": true
+ },
+ "d3f176f6.mp3": {
+  "text": "das Land, die Länder",
+  "voice": "m",
+  "heard": "Das Land, die Länder.",
+  "ok": true
+ },
+ "d4719eef.mp3": {
+  "text": "ich spreche, du sprichst, er spricht",
+  "voice": "m",
+  "heard": "Ich spreche, du sprichst, er spricht.",
+  "ok": true
+ },
+ "d4dfc67c.mp3": {
+  "text": "Guten Morgen, Frau Weber!",
+  "voice": "f",
+  "heard": "Guten Morgen Frau Weber.",
+  "ok": true
+ },
+ "d4e598a7.mp3": {
+  "text": "V, W, X, Y, Z",
+  "voice": "m",
+  "heard": "v, v, x, y, z.",
+  "ok": false
+ },
+ "d5a33d37.mp3": {
+  "text": "sein",
+  "voice": "m",
+  "heard": "Sonn",
+  "ok": false
+ },
+ "d5f2aa92.mp3": {
+  "text": "Nour Punkt Said.",
+  "voice": "f",
+  "heard": "Nur Punkt Zeit.",
+  "ok": false
+ },
+ "d627c992.mp3": {
+  "text": "Mein Name ist Braun.",
+  "voice": "m",
+  "heard": "Mein Name ist Braun.",
+  "ok": true
+ },
+ "d6c8f625.mp3": {
+  "text": "Jetzt wohne ich in Köln.",
+  "voice": "f",
+  "heard": "Jetzt wohne ich in Köln.",
+  "ok": true
+ },
+ "d88dea1a.mp3": {
+  "text": "Guten Abend! Ich bin der neue Nachbar.",
+  "voice": "m",
+  "heard": "Guten Abend. Ich bin der neue Nachbar.",
+  "ok": true
+ },
+ "d8f1ad63.mp3": {
+  "text": "Freut mich, Frau Khalil!",
+  "voice": "m",
+  "heard": "Freut mich, Frau Kalil.",
+  "ok": false
+ },
+ "db07fce7.mp3": {
+  "text": "der Vorname, die Vornamen",
+  "voice": "m",
+  "heard": "Der Vorname, die Vornamen.",
+  "ok": true
+ },
+ "db7caff3.mp3": {
+  "text": "Danke, gut. Und Ihnen?",
+  "voice": "m",
+  "heard": "Danke gut. Und Ihnen?",
+  "ok": true
+ },
+ "dc75b55e.mp3": {
+  "text": "Frau",
+  "voice": "m",
+  "heard": "Komm.",
+  "ok": false
+ },
+ "dcdeee8a.mp3": {
+  "text": "wo",
+  "voice": "m",
+  "heard": "Boah.",
+  "ok": false
+ },
+ "ddc07a56.mp3": {
+  "text": "Tschüss! Bis morgen!",
+  "voice": "m",
+  "heard": "Tschüss, bis morgen.",
+  "ok": true
+ },
+ "de2826ac.mp3": {
+  "text": "Ich lerne Deutsch.",
+  "voice": "m",
+  "heard": "Ich lerne Deutsch.",
+  "ok": true
+ },
+ "de6c9891.mp3": {
+  "text": "das Jahr, die Jahre",
+  "voice": "m",
+  "heard": "Das Jahr die Jahre.",
+  "ok": true
+ },
+ "de95985b.mp3": {
+  "text": "Freut mich auch! Das ist Herr Braun, mein Lehrer.",
+  "voice": "m",
+  "heard": "Freut mich auch, das ist Herr Bron, mein Lehrer.",
+  "ok": false
+ },
+ "defc96a8.mp3": {
+  "text": "H, I, J, K, L, M, N",
+  "voice": "m",
+  "heard": "h-i-dj-k-l-n-n",
+  "ok": false
+ },
+ "df83be68.mp3": {
+  "text": "gut",
+  "voice": "m",
+  "heard": "Du.",
+  "ok": false
+ },
+ "e15ce0dc.mp3": {
+  "text": "Guten Abend! Mein Name ist Roth. Freut mich!",
+  "voice": "f",
+  "heard": "Guten Abend, mein Name ist Rod. Freut mich.",
+  "ok": false
+ },
+ "e196351f.mp3": {
+  "text": "sieben, acht, neun, zehn, elf, zwölf",
+  "voice": "m",
+  "heard": "7 8 9 10 11 12",
+  "ok": false
+ },
+ "e1dca2ca.mp3": {
+  "text": "Welche Sprachen sprichst du?",
+  "voice": "m",
+  "heard": "Welche Sprachen sprichst du?",
+  "ok": true
+ },
+ "e1e9da2f.mp3": {
+  "text": "Wie bitte? Noch einmal, bitte.",
+  "voice": "f",
+  "heard": "Wie bitte? Noch einmal bitte.",
+  "ok": true
+ },
+ "e35a4837.mp3": {
+  "text": "null, eins, zwei, drei, vier, fünf, sechs",
+  "voice": "m",
+  "heard": "0, 1, 2, 3, 4, 5, 6",
+  "ok": false
+ },
+ "e5b2a07e.mp3": {
+  "text": "Ich spreche Arabisch und Englisch. Ich lerne Deutsch.",
+  "voice": "f",
+  "heard": "Ich spreche arabisch und englisch. Ich lerne Deutsch.",
+  "ok": true
+ },
+ "e639c1da.mp3": {
+  "text": "Welche Sprachen sprechen Sie?",
+  "voice": "m",
+  "heard": "Welche Sprachen sprechen Sie?",
+  "ok": true
+ },
+ "e690206f.mp3": {
+  "text": "0176 3482 950: null, eins, sieben, sechs, drei, vier, acht, zwei, neun, fünf, null.",
+  "voice": "m",
+  "heard": "01763402 und 80950 0 1 7 6 3 4 8 2 9 5 0",
+  "ok": false
+ },
+ "e787f3c4.mp3": {
+  "text": "Danke.",
+  "voice": "f",
+  "heard": "Danke.",
+  "ok": true
+ },
+ "e80f6724.mp3": {
+  "text": "Wo wohnen Sie?",
+  "voice": "f",
+  "heard": "Wo wohnen sie?",
+  "ok": true
+ },
+ "e84d690e.mp3": {
+  "text": "die Sprache, die Sprachen",
+  "voice": "m",
+  "heard": "Die Sprache, die Sprachen.",
+  "ok": true
+ },
+ "ea67c434.mp3": {
+  "text": "Ich komme aus Ägypten. Wohnen Sie schon lange hier?",
+  "voice": "m",
+  "heard": "Ich komme aus Ägypten. Wohnen Sie schon lange hier.",
+  "ok": true
+ },
+ "ebb26ebb.mp3": {
+  "text": "Mein Name ist Nadia Khalil.",
+  "voice": "f",
+  "heard": "Mein Name ist Nadia Calille.",
+  "ok": false
+ },
+ "ebd61a53.mp3": {
+  "text": "Wie alt sind Sie, Frau Khalil?",
+  "voice": "m",
+  "heard": "Wieall sind Sie, Frau Kalil?",
+  "ok": false
+ },
+ "ebe98991.mp3": {
+  "text": "Ich wohne in Alexandria.",
+  "voice": "m",
+  "heard": "Ich wohne in Alexandria.",
+  "ok": true
+ },
+ "ed27fd22.mp3": {
+  "text": "Nicht so gut.",
+  "voice": "m",
+  "heard": "Nicht so gut.",
+  "ok": true
+ },
+ "ed8257df.mp3": {
+  "text": "Danke, gut. Und dir?",
+  "voice": "f",
+  "heard": "Danke gut. Und dir!",
+  "ok": true
+ },
+ "ee62704f.mp3": {
+  "text": "Ich heiße Amr Nabil. Und Sie?",
+  "voice": "m",
+  "heard": "Ich heiße Ammanabil und zieh",
+  "ok": false
+ },
+ "ef54cb59.mp3": {
+  "text": "Ich heiße Rana Ibrahim.",
+  "voice": "f",
+  "heard": "Ich heiße Rana Ibrahim.",
+  "ok": true
+ },
+ "ef67f96d.mp3": {
+  "text": "Mein Hobby ist Fotografieren.",
+  "voice": "f",
+  "heard": "Mein Ruby ist Fotografieren.",
+  "ok": false
+ },
+ "f0fa404d.mp3": {
+  "text": "Bis morgen!",
+  "voice": "m",
+  "heard": "Bis morgen.",
+  "ok": true
+ },
+ "f2e24786.mp3": {
+  "text": "noch einmal",
+  "voice": "m",
+  "heard": "Noch einmal.",
+  "ok": true
+ },
+ "f4384599.mp3": {
+  "text": "neunundneunzig",
+  "voice": "m",
+  "heard": "99",
+  "ok": false
+ },
+ "f5062a97.mp3": {
+  "text": "Und wo wohnen Sie jetzt?",
+  "voice": "m",
+  "heard": "Und wo wohnen sie jetzt?",
+  "ok": true
+ },
+ "f5511a0b.mp3": {
+  "text": "danke",
+  "voice": "m",
+  "heard": "Danke.",
+  "ok": true
+ },
+ "f70fe8de.mp3": {
+  "text": "Guten Abend! Ich heiße Karim.",
+  "voice": "m",
+  "heard": "Guten Abend, ich heiße Karin.",
+  "ok": false
+ },
+ "f78a6781.mp3": {
+  "text": "Mein Hobby ist Lesen.",
+  "voice": "f",
+  "heard": "Mein Hobby ist Lesen.",
+  "ok": true
+ },
+ "fab2ca46.mp3": {
+  "text": "Ich zähle bis hundert.",
+  "voice": "f",
+  "heard": "Ich zähle bis 100.",
+  "ok": false
+ },
+ "faf73f31.mp3": {
+  "text": "Guten Abend! Wie geht es Ihnen?",
+  "voice": "f",
+  "heard": "Guten Abend. Wie geht es Ihnen?",
+  "ok": true
+ },
+ "fbb20e88.mp3": {
+  "text": "Guten Morgen!",
+  "voice": "m",
+  "heard": "Guten Morgen.",
+  "ok": true
+ },
+ "fcae1fcc.mp3": {
+  "text": "Buchstabieren Sie bitte Ihren Familiennamen.",
+  "voice": "m",
+  "heard": "Buchstabieren Sie bitte Ihren Familien an.",
+  "ok": false
+ },
+ "fd1faf78.mp3": {
+  "text": "Bitte stellen Sie sich vor.",
+  "voice": "m",
+  "heard": "Bitte stellen Sie sich vor.",
+  "ok": true
+ },
+ "ffcffe40.mp3": {
+  "text": "Wie geht's?",
+  "voice": "m",
+  "heard": "Wie geht's?",
+  "ok": true
+ }
+}

@@ -928,3 +928,53 @@ body:not([data-shell="ps"]):not([data-shell="cmd"]):not([data-shell="zsh"]):not(
 .live-bar .hide-draw{margin-inline-start:6px;border-color:var(--accent);color:var(--accent);font-weight:600}
 .live.show{border-color:var(--accent)}
 .live.show .live-bar span:first-child{color:var(--accent);font-weight:600}
+/* ---------- language tabs (js/lang.js): German lines with sound, word cards, dictation, speaking, videos, prompts ---------- */
+:root{--a-dea1:#7a5c00;--art-der:#1d5fb4;--art-die:#b3261e;--art-das:#2a7048}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--a-dea1:#e3c35e;--art-der:#7fb0ef;--art-die:#f08a83;--art-das:#73cf98}}
+:root[data-theme="dark"]{--a-dea1:#e3c35e;--art-der:#7fb0ef;--art-die:#f08a83;--art-das:#73cf98}
+.de-box{margin:10px 0;border:1px solid var(--line);border-inline-start:4px solid var(--accent);border-radius:8px;padding:8px 12px;background:var(--surface);min-width:0}
+.de-h{font-weight:600;margin-bottom:6px}
+.de-note{color:var(--muted);font-size:.9em;margin:4px 0 8px}
+.de-lines{display:flex;flex-direction:column;gap:6px}
+.de-l{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px}
+.de-t{font-size:1.08em}
+.de-who{font-weight:600}
+.de-who-f .de-who{color:var(--art-die)}
+.de-who-m .de-who{color:var(--art-der)}
+.de-ar{flex-basis:100%;direction:rtl;text-align:right;color:var(--muted);font-size:.9em;padding-inline-start:4.2em}
+.no-tr .de-ar{display:none}
+.de-tr{margin-top:8px;font-size:.85em}
+.say{display:inline-flex;gap:2px;flex:none}
+.say-b{min-width:2.1em;min-height:2.1em;padding:0 .35em;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);cursor:pointer;line-height:1}
+.say-b.on{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+.say-slow{font-size:.85em}
+.art{font-weight:700}
+.art-der{color:var(--art-der)}.art-die{color:var(--art-die)}.art-das{color:var(--art-das)}
+.de-w{font-size:1.05em}
+.de-words td{vertical-align:middle}
+.dict-l,.spk-l{padding-inline-start:1.4em;display:flex;flex-direction:column;gap:10px}
+.dict{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.dict input{flex:1 1 14em;min-width:0;font-size:1.05em;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.dict-res{flex-basis:100%;font-size:.92em}
+.dict.ok input{border-color:var(--ok)}.dict.ok .dict-res{color:var(--ok)}
+.dict.no input{border-color:var(--danger)}.dict.no .dict-res{color:var(--danger)}
+.spk{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px}
+.spk-c{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px}
+.spk-rec.on{background:var(--danger);color:#fff;border-color:var(--danger)}
+.yt-f{position:relative;aspect-ratio:16/9;max-width:640px;background:#000;border-radius:6px;overflow:hidden}
+.yt-f iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.prompt-ans{width:100%;box-sizing:border-box;font-size:1em;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.prompt-t{white-space:pre-wrap;font-size:.85em;max-height:18em;overflow:auto}
+.prompt-copy{margin-top:6px}
+.fc-word{font-size:1.4em;display:flex;align-items:center;gap:8px;justify-content:center}
+.fc-word-ex{margin-top:8px;display:flex;align-items:center;gap:6px;justify-content:center}
+.fc-word-from{color:var(--muted);font-size:.85em;text-align:center}
+body[data-shell="dea1"]{--accent:var(--a-dea1);--t-bg:#1f1a0a;--t-fg:#f3ecd8;--t-pr:#e3c35e;--t-cm:#a39673;--t-bar:#2a2310}
+#tabLab[hidden]{display:none}
+.de-wl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.de-wi{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1.4fr);gap:4px 12px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.de-wi:first-child{border-top:0}
+.de-wd,.de-wx{display:flex;align-items:center;gap:6px;min-width:0;text-align:left}
+.de-wx span{color:var(--muted)}
+@media (max-width:640px){.de-wi{grid-template-columns:minmax(0,1fr)}.de-wa{padding-inline-start:4.6em}}
+.de-box .de-wl{padding:0;margin:0}.de-box .dict-l,.de-box .spk-l{padding-inline-start:1.2em}

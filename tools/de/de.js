@@ -1,0 +1,97 @@
+// The German course's checks and audio. Reads every German line of the language tabs (the ~~~de, ~~~words,
+// ~~~dictate and ~~~speak fences in js/tabs/dea1/), the same way js/lang.js reads them on the page.
+//   node tools/de/de.js list            every line, its voice and its audio file (and which files are missing)
+//   node tools/de/de.js audio           makes the missing mp3s with Piper in Docker, has whisper write each one back, and
+//                                       records what it heard in audio/de/index.json; prints every line whisper heard differently
+//   node tools/de/de.js lt              sends every line to LanguageTool (docker run -d --name lt -p 127.0.0.1:8010:8081 meyay/languagetool)
+//   node tools/de/de.js prune           lists mp3s no line uses any more (deletes them with --yes)
+// tools/check.js uses collect() so a line without its audio fails `npm run check`.
+const fs = require('fs'), path = require('path'), vm = require('vm'), { execFileSync } = require('child_process');
+const ROOT = path.join(__dirname, '..', '..');
+const TABS = ['dea1'];
+const AUDIO = path.join(ROOT, 'audio', 'de'), INDEX = path.join(AUDIO, 'index.json');
+
+// deHash, deLine, deSpeakers and deFile come from js/lang.js itself, so the file names can't drift apart
+const ctx = { console };
+vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'js', 'lang.js'), 'utf8') + '\n;this.L = {deHash, deLine, deSpeakers, deFile, deSpeech};', ctx);
+const { deLine, deSpeakers, deFile, deSpeech } = ctx.L;
+
+function collect() {
+  const lines = [];
+  for (const tab of TABS) {
+    const dir = path.join(ROOT, 'js', 'tabs', tab);
+    if (!fs.existsSync(dir)) continue;
+    for (const f of fs.readdirSync(dir).filter(f => f.endsWith('.js')).sort()) {
+      const src = fs.readFileSync(path.join(dir, f), 'utf8');
+      for (const m of src.matchAll(/^[ \t]*~~~(de|words|dictate|speak)([^\n]*)\n([\s\S]*?)^[ \t]*~~~[ \t]*$/gm)) {
+        const kind = m[1], head = m[2].trim(), sp = deSpeakers(head), at = f + ':' + (src.slice(0, m.index).split('\n').length + 1);
+        for (const raw of m[3].split('\n')) {
+          const l = raw.trim();
+          if (!l) continue;
+          if (kind === 'words') {
+            const [w, , ex] = l.split(' | ').map(s => (s || '').trim());
+            lines.push({ text: w, voice: 'm', at, kind });
+            if (ex) lines.push({ text: ex, voice: 'f', at, kind });
+          } else {
+            const x = deLine(l, kind === 'de' ? sp : {});
+            // a dictation line «S, A, L, A, H => Salah» sounds its left side; the right side is only the answer
+            lines.push({ text: kind === 'dictate' ? x.de.split(' => ')[0] : x.de, voice: x.voice, at, kind });
+          }
+        }
+      }
+    }
+  }
+  for (const l of lines) l.file = deFile(l.text, l.voice);
+  return lines;
+}
+const unique = lines => [...new Map(lines.map(l => [l.file, l])).values()];
+const readIndex = () => fs.existsSync(INDEX) ? JSON.parse(fs.readFileSync(INDEX, 'utf8')) : {};
+// what whisper wrote vs the line: case, punctuation and spacing don't count, and numbers it writes as digits are fine
+const norm = s => s.toLowerCase().normalize('NFC').replace(/[^\p{L}\p{N} ]/gu, ' ').replace(/\s+/g, ' ').trim();
+
+module.exports = { collect };
+
+if (require.main === module) {
+  const cmd = process.argv[2] || 'list';
+  const lines = collect(), all = unique(lines);
+  if (cmd === 'list') {
+    for (const l of all) console.log((fs.existsSync(path.join(ROOT, l.file)) ? '  ' : '✗ ') + l.voice + ' ' + path.basename(l.file) + '  ' + l.text);
+    console.log(`${lines.length} lines, ${all.length} audio files, ${all.filter(l => !fs.existsSync(path.join(ROOT, l.file))).length} missing`);
+  }
+  if (cmd === 'audio') {
+    fs.mkdirSync(AUDIO, { recursive: true });
+    const idx = readIndex(), todo = all.filter(l => !fs.existsSync(path.join(ROOT, l.file)));
+    if (todo.length) {
+      const jobs = path.join(ROOT, '.cache', 'de', 'tts-jobs.json');
+      fs.mkdirSync(path.dirname(jobs), { recursive: true });
+      fs.writeFileSync(jobs, JSON.stringify(todo.map(l => ({ text: deSpeech(l.text), voice: l.voice, out: l.file }))));
+      console.log(`making ${todo.length} files…`);
+      const res = JSON.parse(execFileSync('docker', ['run', '--rm', '-v', ROOT + ':/w', '-w', '/w', 'de-tools', 'python', 'tools/de/tts.py', '.cache/de/tts-jobs.json'],
+        { encoding: 'utf8', maxBuffer: 64 << 20, env: { ...process.env, MSYS_NO_PATHCONV: '1' } }));
+      for (const r of res) { const l = todo.find(x => x.file === r.out); idx[path.basename(r.out)] = { text: l.text, voice: l.voice, heard: r.heard, ok: norm(r.heard) === norm(l.text) }; }
+      const sorted = Object.fromEntries(Object.entries(idx).sort());
+      fs.writeFileSync(INDEX, JSON.stringify(sorted, null, 1) + '\n');
+    }
+    const bad = all.map(l => idx[path.basename(l.file)]).filter(r => r && !r.ok);
+    console.log(`${all.length} files; whisper heard ${all.length - bad.length} exactly, ${bad.length} differently:`);
+    for (const r of bad) console.log(`  ${r.voice} «${r.text}»  ->  «${r.heard}»`);
+  }
+  if (cmd === 'lt') {
+    (async () => {
+      let n = 0;
+      for (const l of all) {
+        const body = new URLSearchParams({ text: l.text, language: 'de-DE' });
+        const r = await (await fetch('http://127.0.0.1:8010/v2/check', { method: 'POST', body })).json();
+        for (const m of r.matches) { n++; console.log(`${l.at}  «${l.text}»\n    ${m.rule.id}: ${m.message}  -> ${m.replacements.slice(0, 3).map(x => x.value).join(' / ')}`); }
+      }
+      console.log(`${all.length} lines checked, ${n} LanguageTool matches`);
+    })();
+  }
+  if (cmd === 'prune') {
+    const used = new Set(all.map(l => path.basename(l.file)));
+    const extra = fs.existsSync(AUDIO) ? fs.readdirSync(AUDIO).filter(f => f.endsWith('.mp3') && !used.has(f)) : [];
+    for (const f of extra) { console.log(f); if (process.argv.includes('--yes')) fs.unlinkSync(path.join(AUDIO, f)); }
+    if (process.argv.includes('--yes')) { const idx = readIndex(); extra.forEach(f => delete idx[f]); fs.writeFileSync(INDEX, JSON.stringify(idx, null, 1) + '\n'); }
+    console.log(extra.length + ' unused');
+  }
+}
