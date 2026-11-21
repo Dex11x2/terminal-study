@@ -10835,9 +10835,9 @@
   "on": "Windows, Node 24.22 (sols re-run), Chrome 157 for the prompt projects, node inspect for the debugger drills"
  },
  "js|خريطة مشاريع JS": {
-  "hash": "3b7abc47e724",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "b34b688c0acd",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (the app's test suite), Chrome 158 via Playwright, git push to a local bare repo"
  },
  "js|خلّي التطبيق يفتكر": {
   "hash": "3cb177583aa5",
@@ -10930,24 +10930,24 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|مشروع التخرّج ١: الهيكل والحالة": {
-  "hash": "f363826d26c1",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "d28a116895a5",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (the app's test suite), Chrome 158 via Playwright, git push to a local bare repo"
  },
  "js|مشروع التخرّج ٢: الشاشات والفورم": {
-  "hash": "43e6dfbf866e",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "dad4ea624103",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (the app's test suite), Chrome 158 via Playwright, git push to a local bare repo"
  },
  "js|مشروع التخرّج ٣: البيانات والأخطاء": {
-  "hash": "c7dab67a6364",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "20885738c2e6",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (the app's test suite), Chrome 158 via Playwright, git push to a local bare repo"
  },
  "js|مشروع التخرّج ٤: الاختبارات والنشر": {
-  "hash": "8f431eae8c0b",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "eef383ec1dd3",
+  "date": "2026-11-21",
+  "on": "Windows, Node 24.22 (the app's test suite), Chrome 158 via Playwright, git push to a local bare repo"
  },
  "js|مشروع — CORS والكوكيز": {
   "hash": "85dded916f37",
