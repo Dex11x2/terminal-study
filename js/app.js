@@ -872,7 +872,8 @@ function setShell(s, cmd){
   shell = s;
   openCmd = cmd && DATA[s].some(c => c.items.some(it => it[0] === cmd)) ? cmd : null;
   document.body.dataset.shell = s;
-  document.querySelectorAll('.sw').forEach(b => b.setAttribute('aria-selected', b.dataset.s===s ? 'true':'false'));
+  // the reference cards sit in tablists (aria-selected); the path cards are plain buttons in a list (aria-current)
+  document.querySelectorAll('.sw').forEach(b => b.setAttribute(b.getAttribute('role')==='tab' ? 'aria-selected' : 'aria-current', b.dataset.s===s ? 'true':'false'));
   store.set('shell', s);
   render();
   // the two blocks under the lessons belong to the tab: the bash/PowerShell/CMD table to the terminal tabs,
