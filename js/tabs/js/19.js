@@ -4402,7 +4402,7 @@ console.log(a, ({}).toString(), (() => ({ a: 1 }))(), (() => { a: 1 })());
 |---|---|---|
 | [[const x = 1]] ثم [[(function () {})()]] | [[1(function () {})()]] | [[TypeError: 1 is not a function]] |
 | [[const t = 5]] ثم template literal [[.length]] | [[5$__bt...$__bt]] (tagged template) | [[TypeError: 5 is not a function]] |
-| [[const total = price * qty]] ثم [[(['SAVE10'] || []).forEach(...)]] | [[qty(...)]] | [[TypeError: qty is not a function]] |
+| [[const total = price * qty]] ثم [[(['SAVE10'] \|\| []).forEach(...)]] | [[qty(...)]] | [[TypeError: qty is not a function]] |
 
 ---
 
