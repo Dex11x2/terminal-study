@@ -9694,6 +9694,11 @@
   "date": "2026-11-21",
   "on": "Chrome 158 via playwright-core, Node 24.22, AssemblyScript 0.28.20, clang 22 (@yowasp/clang) for C to wasm"
  },
+ "js|DevTools للتلاتة: باج بيعدّي بين اللغات": {
+  "hash": "e6f3ae52b37f",
+  "date": "2026-11-21",
+  "on": "Chrome 158 via Playwright on local node:http servers, Node 24.22, axe for the projects"
+ },
  "js|ESLint و Prettier": {
   "hash": "2f7099ff52d3",
   "date": "2026-11-21",
@@ -10339,6 +10344,11 @@
   "date": "2026-11-21",
   "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
  },
+ "js|link و script: تربط الملفات التلاتة": {
+  "hash": "78b19bb67dee",
+  "date": "2026-11-21",
+  "on": "Chrome 158 via Playwright on local node:http servers, Node 24.22, axe for the projects"
+ },
  "js|manifest.webmanifest": {
   "hash": "680e01141515",
   "date": "2026-11-21",
@@ -10684,6 +10694,21 @@
   "date": "2026-11-21",
   "on": "Chrome 158 via Playwright on local node:http servers (geolocation/permission overrides), Node 24.22"
  },
+ "js|الجسر: classes و data و aria و CSS variables": {
+  "hash": "097fbd44d6cd",
+  "date": "2026-11-21",
+  "on": "Chrome 158 via Playwright on local node:http servers, Node 24.22, axe for the projects"
+ },
+ "js|الحالة ← الصفحة: state و render والثيم": {
+  "hash": "0720528d7aeb",
+  "date": "2026-11-21",
+  "on": "Chrome 158 via Playwright on local node:http servers, Node 24.22, axe for the projects"
+ },
+ "js|الحركة: CSS بيتحرك و JS بيقول إمتى": {
+  "hash": "4ad25519b361",
+  "date": "2026-11-21",
+  "on": "Chrome 158 via Playwright on local node:http servers, Node 24.22, axe for the projects"
+ },
  "js|الـ DOM مش مكان الحالة": {
   "hash": "f68befe1186f",
   "date": "2026-11-21",
@@ -10699,10 +10724,20 @@
   "date": "2026-11-21",
   "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
+ "js|الـ responsive من التلاتة: CSS الأول": {
+  "hash": "153872df2ffd",
+  "date": "2026-11-21",
+  "on": "Chrome 158 via Playwright on local node:http servers, Node 24.22, axe for the projects"
+ },
  "js|الـ wildcard والـ literal characters: النقطة والحروف الحرفية": {
   "hash": "8abc15798e9a",
   "date": "2026-11-21",
   "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
+ },
+ "js|الفورم من التلاتة: تحقق وإرسال": {
+  "hash": "4de6c0bd813a",
+  "date": "2026-11-21",
+  "on": "Chrome 158 via Playwright on local node:http servers, Node 24.22, axe for the projects"
  },
  "js|المتغيرات والأنواع والعمليات": {
   "hash": "9563787faef7",
@@ -10718,6 +10753,11 @@
   "hash": "240ba749f820",
   "date": "2026-11-21",
   "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
+ },
+ "js|تشغّل المشروع وتعرضه: سيرفر محلي ونشر": {
+  "hash": "2cffcfb4fc7b",
+  "date": "2026-11-21",
+  "on": "Chrome 158 via Playwright on local node:http servers, Node 24.22, axe for the projects"
  },
  "js|تمارين أساسيات ١": {
   "hash": "7fe31872a521",
@@ -10854,6 +10894,11 @@
   "date": "2026-11-21",
   "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
  },
+ "js|لما المشروع ميشتغلش: الأخطاء المشهورة": {
+  "hash": "5567bd43e94c",
+  "date": "2026-11-21",
+  "on": "Chrome 158 via Playwright on local node:http servers, Node 24.22, axe for the projects"
+ },
  "js|لما تعلق: صغّر المشكلة": {
   "hash": "89c2cb4fde94",
   "date": "2026-11-21",
@@ -10964,10 +11009,20 @@
   "date": "2026-11-21",
   "on": "Windows, Node 24.22 with local node:http servers, Chromium 158 for CORS and the pages"
  },
+ "js|مين بيعمل إيه: HTML و CSS و JS": {
+  "hash": "315886210031",
+  "date": "2026-11-21",
+  "on": "Chrome 158 via Playwright on local node:http servers, Node 24.22, axe for the projects"
+ },
  "js|نسخة جديدة، حدّث": {
   "hash": "d0fc2fb0a7df",
   "date": "2026-11-21",
   "on": "Chrome 157/158 via Playwright and raw DevTools Protocol on a local node:http server (localhost for service workers), Node 24.22"
+ },
+ "js|نفس الميزة بتلات طرق": {
+  "hash": "4fe395ec8e43",
+  "date": "2026-11-21",
+  "on": "Chrome 158 via Playwright on local node:http servers, Node 24.22, axe for the projects"
  },
  "js|يعني إيه برنامج": {
   "hash": "cf53a1f6259f",
