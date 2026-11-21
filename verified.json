@@ -9730,14 +9730,14 @@
   "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
  },
  "js|IndexedDB و BroadcastChannel": {
-  "hash": "7803c90be75f",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "f43ef77e7ffc",
+  "date": "2026-11-21",
+  "on": "Chrome 157/158 via Playwright and raw DevTools Protocol on a local node:http server (localhost for service workers), Node 24.22"
  },
  "js|IntersectionObserver": {
-  "hash": "3c9c842ec083",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "f20d95e9e0c6",
+  "date": "2026-11-21",
+  "on": "Chrome 157/158 via Playwright and raw DevTools Protocol on a local node:http server (localhost for service workers), Node 24.22"
  },
  "js|Intl.Collator: الترتيب و resolvedOptions": {
   "hash": "f8e6a4a7bbe5",
@@ -9850,14 +9850,14 @@
   "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
  },
  "js|MutationObserver": {
-  "hash": "14d558ed74e9",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "03819571c3e8",
+  "date": "2026-11-21",
+  "on": "Chrome 157/158 via Playwright and raw DevTools Protocol on a local node:http server (localhost for service workers), Node 24.22"
  },
  "js|Notification و permissions": {
-  "hash": "617f2d1ecfcb",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "6882dcca0c20",
+  "date": "2026-11-21",
+  "on": "Chrome 157/158 via Playwright and raw DevTools Protocol on a local node:http server (localhost for service workers), Node 24.22"
  },
  "js|Number: toFixed و toString و toLocaleString": {
   "hash": "d396d940d17b",
@@ -9930,9 +9930,9 @@
   "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
  },
  "js|ResizeObserver": {
-  "hash": "294a5b14da08",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "94efb2afdfde",
+  "date": "2026-11-21",
+  "on": "Chrome 157/158 via Playwright and raw DevTools Protocol on a local node:http server (localhost for service workers), Node 24.22"
  },
  "js|Set: كل الـ methods وجبر المجموعات": {
   "hash": "ea673965cec1",
@@ -10185,9 +10185,9 @@
   "on": "Windows, Node 24.22, and Chrome 157 / Playwright Chromium on a local node:http server for the browser lessons"
  },
  "js|drag and drop و progress": {
-  "hash": "e046f749db14",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "19b0fb095bc0",
+  "date": "2026-11-21",
+  "on": "Chrome 157/158 via Playwright and raw DevTools Protocol on a local node:http server (localhost for service workers), Node 24.22"
  },
  "js|dynamic import()": {
   "hash": "cebe800b9827",
@@ -10310,9 +10310,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|input type=file": {
-  "hash": "f9e408541197",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "5a8a3da15d1d",
+  "date": "2026-11-21",
+  "on": "Chrome 157/158 via Playwright and raw DevTools Protocol on a local node:http server (localhost for service workers), Node 24.22"
  },
  "js|isWellFormed و toWellFormed": {
   "hash": "c6783a35e077",
@@ -10340,9 +10340,9 @@
   "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
  },
  "js|manifest.webmanifest": {
-  "hash": "6dc8107cb6de",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "680e01141515",
+  "date": "2026-11-21",
+  "on": "Chrome 157/158 via Playwright and raw DevTools Protocol on a local node:http server (localhost for service workers), Node 24.22"
  },
  "js|map و filter و reduce": {
   "hash": "7b608a7ab2a5",
@@ -10450,14 +10450,14 @@
   "on": "Windows, Node 24.22 (--js-base-64 where noted), and Chrome 157 on a local node:http server with and without COOP/COEP"
  },
  "js|push و Background Sync": {
-  "hash": "9df545afff2d",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "9739b8415455",
+  "date": "2026-11-21",
+  "on": "Chrome 157/158 via Playwright and raw DevTools Protocol on a local node:http server (localhost for service workers), Node 24.22"
  },
  "js|pushState و popstate": {
-  "hash": "02b8aabd9531",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "12ccc782cf43",
+  "date": "2026-11-21",
+  "on": "Chrome 157/158 via Playwright and raw DevTools Protocol on a local node:http server (localhost for service workers), Node 24.22"
  },
  "js|querySelector": {
   "hash": "c3e04b3ee7c2",
@@ -10575,14 +10575,14 @@
   "on": "Windows, Node 24.22 (and Chrome 157 for getOrInsert)"
  },
  "js|visibilitychange و bfcache": {
-  "hash": "77cca2ac4062",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "d8733fe94cb7",
+  "date": "2026-11-21",
+  "on": "Chrome 157/158 via Playwright and raw DevTools Protocol on a local node:http server (localhost for service workers), Node 24.22"
  },
  "js|vite-plugin-pwa و Serwist": {
-  "hash": "14ec512f30bc",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "d0d6e59e5a50",
+  "date": "2026-11-21",
+  "on": "Chrome 157/158 via Playwright and raw DevTools Protocol on a local node:http server (localhost for service workers), Node 24.22"
  },
  "js|void: void 0 و fire-and-forget": {
   "hash": "c96689457af5",
@@ -10650,9 +10650,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|استراتيجيات الكاش": {
-  "hash": "68c83f9d2761",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "d34319dae4cd",
+  "date": "2026-11-21",
+  "on": "Chrome 157/158 via Playwright and raw DevTools Protocol on a local node:http server (localhost for service workers), Node 24.22"
  },
  "js|اعرض داتا من fetch": {
   "hash": "a120f33138f6",
@@ -10810,9 +10810,9 @@
   "on": "Windows, Node 24.22 and npm 11, and Chrome 157 with fake camera/mic on a local node:http server"
  },
  "js|دورة حياة الـ SW": {
-  "hash": "a84a9b0d8a90",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "8266a8fd2440",
+  "date": "2026-11-21",
+  "on": "Chrome 157/158 via Playwright and raw DevTools Protocol on a local node:http server (localhost for service workers), Node 24.22"
  },
  "js|شاشات من غير إعادة تحميل": {
   "hash": "fabfd78baf3c",
@@ -10965,9 +10965,9 @@
   "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
  },
  "js|نسخة جديدة، حدّث": {
-  "hash": "e396ac628ccd",
-  "date": "2026-10-29",
-  "on": "Node 24.22 و jsdom 30 في فولدرات مؤقتة، و Chrome 156 بـ Playwright على localhost للحاجات اللي بتتشاف في المتصفح (Clipboard و Geolocation و CORS و CSP و MutationObserver و ElementInternals و Notification و canvas)، و Vitest 5 و ESLint 10 و Vue 3.5 و ws 8.22 و clang/wasi-sdk في Docker. كل check solution بيعدّي. docs: شكل الإشعارات، و Firefox و Safari، و GitHub Pages deploy، و Rust/wasm-pack، و DevTools UI"
+  "hash": "d0fc2fb0a7df",
+  "date": "2026-11-21",
+  "on": "Chrome 157/158 via Playwright and raw DevTools Protocol on a local node:http server (localhost for service workers), Node 24.22"
  },
  "js|يعني إيه برنامج": {
   "hash": "cf53a1f6259f",
