@@ -986,3 +986,5 @@ body[data-shell="dea1"]{--accent:var(--a-dea1);--t-bg:#1f1a0a;--t-fg:#f3ecd8;--t
 .hq-o.wrong{border-color:var(--danger);color:var(--danger)}
 .hq-r{display:block;font-size:.9em;margin-top:2px}
 .hear-t summary{cursor:pointer;color:var(--muted);font-size:.9em}
+.read-t{border:1px solid var(--line);border-radius:8px;padding:10px 14px;background:var(--bg);text-align:left;overflow-wrap:anywhere}
+.read-t p{margin:3px 0}

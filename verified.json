@@ -5684,6 +5684,11 @@
   "date": "2026-11-21",
   "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
  },
+ "dea1|Das ist meine Mutter": {
+  "hash": "f68314a79dbf",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها)، و Chromium 400px (القراية والسمع والإملا)"
+ },
  "dea1|Die Rechnung, bitte!": {
   "hash": "df50ccd1c7d5",
   "date": "2026-11-22",
@@ -5699,10 +5704,20 @@
   "date": "2026-11-21",
   "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
  },
+ "dea1|Hast du Geschwister?": {
+  "hash": "2e569381e061",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها)، و Chromium 400px (القراية والسمع والإملا)"
+ },
  "dea1|Hast du am Samstag Zeit?": {
   "hash": "050dcdb9e4b3",
   "date": "2026-11-21",
   "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
+ },
+ "dea1|Herzlichen Glückwunsch!": {
+  "hash": "53236e7349ba",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها)، و Chromium 400px (القراية والسمع والإملا)"
  },
  "dea1|Ich esse gern Fisch": {
   "hash": "606619302570",
@@ -5739,6 +5754,11 @@
   "date": "2026-11-21",
   "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
  },
+ "dea1|Prüfung: Lesen Teil 1, Hören Teil 1": {
+  "hash": "029a394fcbad",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها)، و Chromium 400px (القراية والسمع والإملا)"
+ },
  "dea1|Prüfung: Sprechen Teil 1": {
   "hash": "c118d1766031",
   "date": "2026-11-21",
@@ -5749,10 +5769,20 @@
   "date": "2026-11-22",
   "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
  },
+ "dea1|Sein Bruder, ihre Schwester": {
+  "hash": "19938c6e500e",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها)، و Chromium 400px (القراية والسمع والإملا)"
+ },
  "dea1|Was kostet das?": {
   "hash": "524be2c11196",
   "date": "2026-11-22",
   "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
+ },
+ "dea1|Wie sieht sie aus?": {
+  "hash": "bc054e3d2ffb",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها)، و Chromium 400px (القراية والسمع والإملا)"
  },
  "dea1|Wie spät ist es?": {
   "hash": "f88f595f0866",

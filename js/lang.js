@@ -8,6 +8,8 @@
                                       «S, A, L, A, H => Salah» plays the left side and expects the right one.
      ~~~hear [Lena=f] [title]         listening like the exam: the sound, then «? question», then «- option» lines (« *» marks the right one);
                                       the transcript stays closed until asked for. Several blocks in one fence.
+     ~~~read [title]                  reading like the exam (a note, an e-mail): the text lines («text || عربي», the translation stays closed),
+                                      then «? statement» and «- option» lines like ~~~hear. No sound: reading is the skill. Several blocks.
      ~~~speak [title]                 lines to say: ▶ the model, then record yourself and play the two one after the other.
      ~~~yt <id> [title]               an Easy German video (youtube-nocookie), with the tasks written under it as the fence body.
      ~~~prompt [title]                a ready prompt for Claude or ChatGPT: the reader writes an answer, and one button copies prompt + answer.
@@ -109,6 +111,32 @@ function langFence(kind, lines, head){
     });
     return box('de-hear', deTitle(head) || 'سمع: اسمع وجاوب', '<ol class="hear-l">'+items.join('')+'</ol>');
   }
+  if (kind === 'read'){
+    // blocks: the text lines, then «? statement || عربي» and «- option» lines (« *» on the right one); a text line after questions starts the next text
+    const blocks = [];
+    let cur = null;
+    for (const raw of lines){
+      const l = raw.trim();
+      if (!l) continue;
+      if (l.startsWith('? ')){ if (cur) cur.qs.push({q: l.slice(2), opts: []}); continue; }
+      if (l.startsWith('- ') && cur && cur.qs.length){ const o = l.slice(2), ok = / \*$/.test(o); cur.qs[cur.qs.length-1].opts.push({t: o.replace(/ \*$/, ''), ok}); continue; }
+      if (!cur || cur.qs.length) blocks.push(cur = {text: [], qs: []});
+      const [de, ar] = l.split(' || ');
+      cur.text.push({de: de.trim(), ar: (ar || '').trim()});
+    }
+    const items = blocks.map(b => {
+      const k = 'read:'+deHash(b.text.map(x => x.de).join('|'));
+      const qs = b.qs.map((q, qi) => {
+        const [qt, qa] = q.q.split(' || ');
+        return '<div class="hq" data-k="'+esc(k+':'+qi)+'"><p class="hq-q"><span dir="ltr" lang="de">'+esc(qt)+'</span>'+(qa ? ' <span class="de-ar">'+fmt(qa)+'</span>' : '')+'</p>'+
+          q.opts.map(o => '<button type="button" class="hq-o" dir="ltr" lang="de" data-ok="'+(o.ok ? 1 : 0)+'">'+esc(o.t)+'</button>').join('')+'<span class="hq-r" role="status"></span></div>';
+      }).join('');
+      const tr = b.text.filter(x => x.ar);
+      return '<li class="hear read"><div class="read-t" dir="ltr" lang="de">'+b.text.map(x => '<p>'+esc(x.de)+'</p>').join('')+'</div>'+qs+
+        (tr.length ? '<details class="hear-t"><summary>اظهر الترجمة</summary>'+tr.map(x => '<p>'+fmt(x.ar)+'</p>').join('')+'</details>' : '')+'</li>';
+    });
+    return box('de-hear de-read', head || 'قراية: اقرا وجاوب', '<ol class="hear-l">'+items.join('')+'</ol>');
+  }
   if (kind === 'prompt'){
     const pk = 'pans:'+deHash(lines.join('\n')), saved = typeof store !== 'undefined' && store.get(pk) || '';
     return box('de-prompt', head || 'صحّحها بالذكاء الاصطناعي', '<p class="de-note">اكتب إجابتك هنا، ودوس «انسخ»: هيتنسخ الطلب ده ومعاه إجابتك، والصقه في Claude أو ChatGPT. إجابتك بتتحفظ على جهازك بس.</p>'+
@@ -118,7 +146,7 @@ function langFence(kind, lines, head){
   }
   return null;
 }
-const LANG_FENCES = ['de', 'words', 'dictate', 'speak', 'hear', 'yt', 'prompt'];
+const LANG_FENCES = ['de', 'words', 'dictate', 'speak', 'hear', 'read', 'yt', 'prompt'];
 
 /* ---------- playing ---------- */
 let deAudio = null, deBtn = null;
@@ -202,7 +230,7 @@ if (typeof document !== 'undefined'){
       const q = ho.closest('.hq'), ok = ho.dataset.ok === '1';
       q.querySelectorAll('.hq-o').forEach(b => b.classList.remove('picked', 'right', 'wrong'));
       ho.classList.add('picked', ok ? 'right' : 'wrong');
-      q.querySelector('.hq-r').textContent = ok ? '✓ صح' : '✗ لأ. اسمع تاني، وركّز في الكلمة اللي بتجاوب السؤال';
+      q.querySelector('.hq-r').textContent = ok ? '✓ صح' : q.closest('.read') ? '✗ لأ. ارجع للنص ودوّر على الجملة اللي بتتكلم عن ده' : '✗ لأ. اسمع تاني، وركّز في الكلمة اللي بتجاوب السؤال';
       if (ok) store.set(q.dataset.k, '1');
       return;
     }

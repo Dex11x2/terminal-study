@@ -87,6 +87,22 @@
   "heard": "Gehen wir ins Kino.",
   "ok": true
  },
+ "034d5e01.mp3": {
+  "text": "Das hier ist mein Bruder, und das sind meine Großeltern.",
+  "voice": "m",
+  "heard": "Das hier ist mein Bruder und das sind meine Großeltern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "036f77f2.mp3": {
+  "text": "Alles Gute und viel Glück für euch!",
+  "voice": "m",
+  "heard": "Alles Gute und viel Glück für Euch!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "038f4f76.mp3": {
   "text": "schlafen",
   "voice": "m",
@@ -97,6 +113,14 @@
   "text": "Danke, sehr gut. Und Ihnen?",
   "voice": "m",
   "heard": "Danke, sehr gut. Und Ihnen?",
+  "ok": true
+ },
+ "03de8657.mp3": {
+  "text": "Bitte antwortet bis Donnerstag.",
+  "voice": "m",
+  "heard": "Bitte antwortet bis Donnerstag.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "03f1581a.mp3": {
@@ -117,6 +141,14 @@
   "text": "Nach dem Essen gehe ich spazieren.",
   "voice": "m",
   "heard": "Nach dem Essen gehe ich spazieren.",
+  "ok": true
+ },
+ "0563f8cb.mp3": {
+  "text": "Möchtest du einen Kaffee?",
+  "voice": "m",
+  "heard": "Möchtest du einen Kaffee?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "05845fe8.mp3": {
@@ -173,6 +205,14 @@
   "heard": "Der Monat, die Monate.",
   "ok": true
  },
+ "0700d130.mp3": {
+  "text": "Das ist ihr Vater. Er ist sehr nett und lustig.",
+  "voice": "m",
+  "heard": "Das ist Ihr Vater. Er ist sehr nett und lustig.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "07566931.mp3": {
   "text": "Das kostet neunundneunzig Cent.",
   "voice": "m",
@@ -211,10 +251,34 @@
   "take": 0,
   "ok": true
  },
+ "07fb245a.mp3": {
+  "text": "Sie lädt ihre Freunde ein.",
+  "voice": "m",
+  "heard": "Sie lädt ihre Freunde ein.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "08427bdd.mp3": {
   "text": "das Ei, die Eier",
   "voice": "m",
   "heard": "Das Ei, die Eier.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "08cd971a.mp3": {
+  "text": "Hallo Sara! Ich habe heute Geburtstag! Am Freitag mache ich eine Party. Kommst du?",
+  "voice": "m",
+  "heard": "Hallo Sarah, ich habe heute Geburtstag. Am Freitag mache ich eine Party. Kommst du?",
+  "score": 0.93,
+  "take": 0,
+  "ok": false
+ },
+ "090ff6d8.mp3": {
+  "text": "Er ist ungefähr dreißig Jahre alt.",
+  "voice": "m",
+  "heard": "Er ist ungefähr 30 Jahre alt.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -245,6 +309,14 @@
   "text": "Der Apfel ist rot.",
   "voice": "f",
   "heard": "Der Apfel ist rot.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "0aa13aaa.mp3": {
+  "text": "Das ist mein Kollege Paul. Seine Frau heißt Eva, und ihre Tochter heißt Mia.",
+  "voice": "f",
+  "heard": "Das ist mein Kollege Paul. Seine Frau heißt Eva und ihre Tochter heißt Mia.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -321,6 +393,14 @@
   "heard": "21",
   "ok": true
  },
+ "0d39bcec.mp3": {
+  "text": "Hallo Mona! Herzlichen Glückwunsch zum Geburtstag!",
+  "voice": "m",
+  "heard": "Hallo Mona. Herzlichen Glückwunsch zum Geburtstag.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "0da5e3d8.mp3": {
   "text": "Nein, danke. Tschüss!",
   "voice": "m",
@@ -365,10 +445,26 @@
   "take": 0,
   "ok": true
  },
+ "0f38c34e.mp3": {
+  "text": "vielen Dank für die Einladung! Ich komme gern.",
+  "voice": "m",
+  "heard": "Vielen Dank für die Einladung. Ich komme gern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "0febe23e.mp3": {
   "text": "lecker",
   "voice": "m",
   "heard": "Lecker!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "1019bc7d.mp3": {
+  "text": "mitbringen",
+  "voice": "m",
+  "heard": "Mitbringen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -433,6 +529,14 @@
   "text": "Langsam, bitte.",
   "voice": "m",
   "heard": "Langsam, bitte.",
+  "ok": true
+ },
+ "121f6b5e.mp3": {
+  "text": "Wir feiern zu Hause.",
+  "voice": "m",
+  "heard": "Wir feiern zu Hause.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "12479470.mp3": {
@@ -533,6 +637,14 @@
   "heard": "Im August habe ich Urlaub.",
   "ok": true
  },
+ "14ccabcf.mp3": {
+  "text": "Und wer ist das hier?",
+  "voice": "f",
+  "heard": "Und wer ist das hier?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "14f8f050.mp3": {
   "text": "Ich komme aus der Schweiz. Ich spreche Französisch und Deutsch.",
   "voice": "m",
@@ -546,6 +658,14 @@
   "score": 0,
   "take": 0,
   "ok": false
+ },
+ "153b712c.mp3": {
+  "text": "freundlich",
+  "voice": "m",
+  "heard": "freundlich",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "1550219e.mp3": {
   "text": "treffen",
@@ -631,6 +751,14 @@
   "take": 0,
   "ok": true
  },
+ "176b055b.mp3": {
+  "text": "Sie ist fünf.",
+  "voice": "m",
+  "heard": "Sie ist fünf.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "17b2d285.mp3": {
   "text": "ein Viertelkilo Käse",
   "voice": "m",
@@ -669,6 +797,14 @@
   "take": 0,
   "ok": false
  },
+ "1898cc22.mp3": {
+  "text": "Mein Vater arbeitet viel.",
+  "voice": "f",
+  "heard": "Mein Vater arbeitet viel.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "18d22195.mp3": {
   "text": "billig",
   "voice": "m",
@@ -677,10 +813,26 @@
   "take": 0,
   "ok": true
  },
+ "18fe934f.mp3": {
+  "text": "Familienstand: verheiratet.",
+  "voice": "f",
+  "heard": "Familienstand verheiratet.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "191290df.mp3": {
   "text": "Ich trinke gern Kaffee.",
   "voice": "m",
   "heard": "Ich trinke gern Kaffee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "194b4c77.mp3": {
+  "text": "Er sieht gut aus.",
+  "voice": "m",
+  "heard": "Er sieht gut aus.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -697,6 +849,22 @@
   "text": "Ich esse Brot mit Käse.",
   "voice": "f",
   "heard": "Ich esse Brot mit Käse.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "1a07ae46.mp3": {
+  "text": "Das sind meine Eltern.",
+  "voice": "m",
+  "heard": "Das sind meine Eltern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "1a137f0b.mp3": {
+  "text": "Meine Großmutter ist achtzig.",
+  "voice": "f",
+  "heard": "Meine Großmutter ist 80.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -731,6 +899,22 @@
   "take": 0,
   "ok": false
  },
+ "1aeed38d.mp3": {
+  "text": "Meine Oma ist klein, aber sie ist sehr lustig. Alle lieben sie.",
+  "voice": "m",
+  "heard": "Meine Oma ist klein, aber sie ist sehr lustig. Alle lieben sie.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "1b048447.mp3": {
+  "text": "herzlichen Glückwunsch zur Hochzeit!",
+  "voice": "m",
+  "heard": "Herzlichen Glückwunsch zur Hochzeit!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "1b71b81f.mp3": {
   "text": "der Sommer, die Sommer",
   "voice": "m",
@@ -751,6 +935,14 @@
   "take": 0,
   "ok": true
  },
+ "1c53d56f.mp3": {
+  "text": "Viel Glück!",
+  "voice": "f",
+  "heard": "Viel Glück!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "1c683a6d.mp3": {
   "text": "Auf Wiedersehen, Herr Klein!",
   "voice": "f",
@@ -761,6 +953,14 @@
   "text": "Wohnort: Ich wohne in …",
   "voice": "m",
   "heard": "Wohnort. Ich wohne in.",
+  "ok": true
+ },
+ "1cb6ec83.mp3": {
+  "text": "Ich habe zwei Kinder, einen Sohn und eine Tochter. Mein Sohn ist acht, und meine Tochter ist vier.",
+  "voice": "m",
+  "heard": "Ich habe zwei Kinder, einen Sohn und eine Tochter. Mein Sohn ist acht und meine Tochter ist vier.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "1cb85dd9.mp3": {
@@ -829,6 +1029,14 @@
   "heard": "Vor dem Kurs trinke ich Kaffee.",
   "ok": true
  },
+ "1ec3695f.mp3": {
+  "text": "die Oma, die Omas",
+  "voice": "m",
+  "heard": "Die Oma, die Omas.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "1efe970b.mp3": {
   "text": "Der Film dauert zwei Stunden.",
   "voice": "f",
@@ -875,6 +1083,14 @@
   "take": 0,
   "ok": true
  },
+ "20c7de72.mp3": {
+  "text": "Ist das deine Familie?",
+  "voice": "f",
+  "heard": "Ist das deine Familie?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "20d08ee3.mp3": {
   "text": "Noch einmal, bitte. Langsam.",
   "voice": "m",
@@ -888,6 +1104,14 @@
   "score": 0.83,
   "take": 0,
   "ok": false
+ },
+ "212ab02c.mp3": {
+  "text": "Kennst du meinen Bruder?",
+  "voice": "f",
+  "heard": "Kennst du meinen Bruder?",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "212e9a56.mp3": {
   "text": "Ich sehe nie fern.",
@@ -967,10 +1191,26 @@
   "take": 1,
   "ok": true
  },
+ "23961183.mp3": {
+  "text": "Das ist meine Familie.",
+  "voice": "m",
+  "heard": "Das ist meine Familie.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "23a32646.mp3": {
   "text": "Ich hätte gern ein Kilo Tomaten.",
   "voice": "m",
   "heard": "Ich hätte gern ein Kilo Tomaten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "240242aa.mp3": {
+  "text": "Ja, das ist ein Foto von meiner Hochzeit.",
+  "voice": "m",
+  "heard": "Ja, das ist ein Foto von meiner Hochzeit.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1003,6 +1243,14 @@
   "take": 0,
   "ok": true
  },
+ "247e6847.mp3": {
+  "text": "groß",
+  "voice": "m",
+  "heard": "Groß?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "24dbdb58.mp3": {
   "text": "neunzehnhundertneunundneunzig",
   "voice": "m",
@@ -1030,6 +1278,14 @@
   "voice": "f",
   "heard": "Ja, am Mittwoch um halb elf.",
   "ok": true
+ },
+ "25006185.mp3": {
+  "text": "Euer Karim",
+  "voice": "m",
+  "heard": "Euer Karin",
+  "score": 0.5,
+  "take": 0,
+  "ok": false
  },
  "25396544.mp3": {
   "text": "Langsam, bitte.",
@@ -1095,6 +1351,14 @@
   "take": 1,
   "ok": true
  },
+ "2710bfaf.mp3": {
+  "text": "Und ihre Jacke ist rot. Du findest sie sicher!",
+  "voice": "f",
+  "heard": "und ihre Jacke ist rot. Du findest sie sicher.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2722b6ff.mp3": {
   "text": "Ich wohne in Wien. Wien ist schön.",
   "voice": "f",
@@ -1108,6 +1372,14 @@
   "score": 0.75,
   "take": 0,
   "ok": false
+ },
+ "27a42c22.mp3": {
+  "text": "Hast du Geschwister?",
+  "voice": "m",
+  "heard": "Hast du Geschwister?",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "27f22d3c.mp3": {
   "text": "empfehlen",
@@ -1127,6 +1399,22 @@
   "text": "Dann nehme ich ein Stück.",
   "voice": "m",
   "heard": "Dann nehme ich ein Stück.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "289300a0.mp3": {
+  "text": "Liebe Freunde,",
+  "voice": "m",
+  "heard": "Liebe Freunde!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "28a0fed5.mp3": {
+  "text": "klein",
+  "voice": "m",
+  "heard": "Klein",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1161,6 +1449,14 @@
   "take": 0,
   "ok": true
  },
+ "2a13086b.mp3": {
+  "text": "lieben",
+  "voice": "m",
+  "heard": "Lieben!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2a36c98c.mp3": {
   "text": "Beruf: Ich bin … von Beruf.",
   "voice": "m",
@@ -1185,6 +1481,14 @@
   "text": "Ich habe noch Tomaten und Käse.",
   "voice": "m",
   "heard": "Ich habe noch Tomaten und Käse.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2b96cf0d.mp3": {
+  "text": "Mein Kollege heißt Jonas.",
+  "voice": "f",
+  "heard": "Mein Kollege heißt Jonas.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1253,6 +1557,14 @@
   "take": 0,
   "ok": true
  },
+ "2dc25aa9.mp3": {
+  "text": "Ich liebe meine Familie.",
+  "voice": "f",
+  "heard": "Ich liebe meine Familie.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2df44b6b.mp3": {
   "text": "der Kuchen, die Kuchen",
   "voice": "m",
@@ -1261,10 +1573,34 @@
   "take": 0,
   "ok": true
  },
+ "2e019040.mp3": {
+  "text": "eure Mona",
+  "voice": "m",
+  "heard": "Eure Mona",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2e3e840c.mp3": {
   "text": "Bitte schön.",
   "voice": "m",
   "heard": "Bitte schön.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2eda97c7.mp3": {
+  "text": "Nein danke, keinen Kaffee. Ich trinke lieber einen Tee.",
+  "voice": "f",
+  "heard": "Nein, Danke, keinen Kaffee. Ich trinke lieber einen Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2ef67db8.mp3": {
+  "text": "Wie alt sind deine Geschwister?",
+  "voice": "m",
+  "heard": "Wie alt sind deine Geschwister?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1287,6 +1623,22 @@
   "heard": "Liebe Frau Schmidt.",
   "ok": true
  },
+ "2f969d8d.mp3": {
+  "text": "Mein Opa ist sehr lustig.",
+  "voice": "m",
+  "heard": "Mein Opa ist sehr lustig.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2fdaebef.mp3": {
+  "text": "der Sohn, die Söhne",
+  "voice": "m",
+  "heard": "Der Sohn, die Söhne.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "3053a6b0.mp3": {
   "text": "Zusammen oder getrennt?",
   "voice": "m",
@@ -1306,6 +1658,14 @@
   "voice": "m",
   "heard": "4.",
   "ok": false
+ },
+ "307143ac.mp3": {
+  "text": "Nein, meinen Bruder besuche ich im Mai. Am Wochenende besuche ich meine Eltern.",
+  "voice": "f",
+  "heard": "Nein, meinen Bruder besuche ich im Mai, am Wochenende besuche ich meine Eltern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "308aec00.mp3": {
   "text": "Auf Wiedersehen!",
@@ -1335,6 +1695,14 @@
   "take": 0,
   "ok": true
  },
+ "315505b7.mp3": {
+  "text": "Sie ist sehr groß. Ihre Haare sind kurz und schwarz.",
+  "voice": "f",
+  "heard": "Sie ist sehr groß. Ihre Haare sind kurz und spaz.",
+  "score": 0.9,
+  "take": 0,
+  "ok": false
+ },
  "3162f46e.mp3": {
   "text": "Oh, das tut mir leid! Ich bringe Ihnen einen neuen Fisch.",
   "voice": "f",
@@ -1357,6 +1725,14 @@
   "take": 0,
   "ok": true
  },
+ "318e278e.mp3": {
+  "text": "Meine Eltern wohnen in Kairo.",
+  "voice": "m",
+  "heard": "Meine Eltern wohnen in Cairo.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
  "319282aa.mp3": {
   "text": "Ich hätte gern einen Tee.",
   "voice": "m",
@@ -1377,6 +1753,14 @@
   "text": "Wir treffen uns um acht.",
   "voice": "f",
   "heard": "Wir treffen uns um acht.",
+  "ok": true
+ },
+ "327f8051.mp3": {
+  "text": "Meine Schwester heiratet im Mai. Die Hochzeit ist in Berlin, und wir feiern in einem Restaurant.",
+  "voice": "f",
+  "heard": "Meine Schwester heiratet im Mai. Die Hochzeit ist in Berlin und wir feiern in einem Restaurant.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "3281f812.mp3": {
@@ -1401,10 +1785,26 @@
   "heard": "Ich bin Engineering von Beruf.",
   "ok": false
  },
+ "32be6f2b.mp3": {
+  "text": "Mein Vater ist Arzt.",
+  "voice": "f",
+  "heard": "Mein Vater ist Arzt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "3339d5dc.mp3": {
   "text": "Um acht Uhr beginnt der Kurs.",
   "voice": "m",
   "heard": "Um 8 Uhr beginnt der Kurs.",
+  "ok": true
+ },
+ "333b19a6.mp3": {
+  "text": "Ihre Eltern leben in Köln.",
+  "voice": "m",
+  "heard": "Ihre Eltern leben in Köln.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "335c1704.mp3": {
@@ -1419,6 +1819,14 @@
   "heard": "Nehmen?",
   "score": 1,
   "take": 1,
+  "ok": true
+ },
+ "33919219.mp3": {
+  "text": "Das ist meine Frau.",
+  "voice": "f",
+  "heard": "Das ist meine Frau.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "33ca4d7a.mp3": {
@@ -1443,6 +1851,14 @@
   "take": 0,
   "ok": true
  },
+ "345a2b3b.mp3": {
+  "text": "Das ist Annas Bruder.",
+  "voice": "m",
+  "heard": "Das ist Annas Brugge.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
  "349a6e03.mp3": {
   "text": "Am Samstag ist sie von sieben bis dreizehn Uhr geöffnet.",
   "voice": "m",
@@ -1460,6 +1876,14 @@
   "voice": "m",
   "heard": "Ich stehe um 7 Uhr auf.",
   "ok": true
+ },
+ "34cf44ef.mp3": {
+  "text": "Tim und Sara besuchen am Sonntag Oma und Opa.",
+  "voice": "m",
+  "heard": "Tim und Sarah besuchen am Sonntag Oma und Opa.",
+  "score": 0.89,
+  "take": 0,
+  "ok": false
  },
  "34f3535d.mp3": {
   "text": "Frau_Weber: Wir können uns duzen. Ich bin Anna.",
@@ -1497,6 +1921,14 @@
   "take": 1,
   "ok": true
  },
+ "359ab070.mp3": {
+  "text": "Er hat keine Geschwister.",
+  "voice": "m",
+  "heard": "Er hat keine Geschwister.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "359ecf33.mp3": {
   "text": "Noch etwas?",
   "voice": "m",
@@ -1532,6 +1964,14 @@
   "voice": "m",
   "heard": "Und wie ist Ihre Telefonnummer?",
   "ok": true
+ },
+ "364ec2be.mp3": {
+  "text": "heiraten",
+  "voice": "m",
+  "heard": "Heilrappen!",
+  "score": 0,
+  "take": 0,
+  "ok": false
  },
  "36f04e13.mp3": {
   "text": "Gib mir bitte das Salz! Hier, bitte.",
@@ -1609,6 +2049,14 @@
   "heard": "Am Abend rufe ich meine Familie an.",
   "ok": true
  },
+ "3819496d.mp3": {
+  "text": "Wir haben keine Kinder.",
+  "voice": "m",
+  "heard": "Wir haben keine Kinder.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "381e3970.mp3": {
   "text": "heißen, Sie, wie, mein, Name",
   "voice": "m",
@@ -1625,6 +2073,14 @@
   "text": "Gehst du oft ins Restaurant? Nein, nur am Wochenende.",
   "voice": "m",
   "heard": "Gehst du oft ins Restaurant? Nein, nur am Wochenende.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "392544b0.mp3": {
+  "text": "Sie ist neunzehn. Sie ist sehr nett und lustig.",
+  "voice": "f",
+  "heard": "Sie ist 19. Sie ist sehr nett und lustig.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1658,6 +2114,14 @@
   "voice": "m",
   "heard": "Englisch.",
   "ok": true
+ },
+ "3a467aed.mp3": {
+  "text": "Meine Schwester ist geschieden.",
+  "voice": "m",
+  "heard": "Meine Schwester ist geschieben.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
  },
  "3a543cc2.mp3": {
   "text": "J, V, W, Z",
@@ -1707,6 +2171,14 @@
   "text": "Guten Tag! Wie geht es Ihnen?",
   "voice": "m",
   "heard": "Guten Tag. Wie geht es Ihnen?",
+  "ok": true
+ },
+ "3b58269a.mp3": {
+  "text": "der Familienstand",
+  "voice": "m",
+  "heard": "Der Familienstand.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "3b611eb3.mp3": {
@@ -1785,6 +2257,14 @@
   "heard": "Guten Morgen!",
   "ok": true
  },
+ "3e51098a.mp3": {
+  "text": "Herzliche Grüße aus Kairo!",
+  "voice": "f",
+  "heard": "Herzliche Grüße aus Cairo.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
  "3e600f5e.mp3": {
   "text": "Der Kuchen ist sehr gut.",
   "voice": "f",
@@ -1817,6 +2297,30 @@
   "take": 0,
   "ok": true
  },
+ "3f27c605.mp3": {
+  "text": "Am Sonntag besuche ich meinen Vater.",
+  "voice": "m",
+  "heard": "Am Sonntag besuche ich meinen Vater.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "3f298fc2.mp3": {
+  "text": "Ihr Bruder wohnt in Köln.",
+  "voice": "f",
+  "heard": "Ihr Bruder wohnt in Köln.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "3f6f9f69.mp3": {
+  "text": "Mein Bruder wohnt allein.",
+  "voice": "f",
+  "heard": "Mein Bruder wohnt allein.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "3fa5fcf6.mp3": {
   "text": "Ich habe kein Geld mehr.",
   "voice": "f",
@@ -1833,10 +2337,26 @@
   "take": 0,
   "ok": true
  },
+ "40198445.mp3": {
+  "text": "der Glückwunsch, die Glückwünsche",
+  "voice": "m",
+  "heard": "Der Glückwunsch, die Glückwünsche.",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "404bd9b8.mp3": {
   "text": "Ich möchte einen Kaffee, bitte.",
   "voice": "m",
   "heard": "Ich möchte einen Kaffee, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "40930f29.mp3": {
+  "text": "Hast du Kinder?",
+  "voice": "m",
+  "heard": "Hast du Kinder?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1849,6 +2369,14 @@
   "take": 1,
   "ok": true
  },
+ "410cd6e3.mp3": {
+  "text": "Die Leute hier sind sehr nett.",
+  "voice": "f",
+  "heard": "Die Leute hier sind sehr nett.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "413c875a.mp3": {
   "text": "Bar, bitte. Hier sind zwanzig Euro.",
   "voice": "m",
@@ -1857,10 +2385,26 @@
   "take": 0,
   "ok": true
  },
+ "4144e243.mp3": {
+  "text": "die Hochzeit, die Hochzeiten",
+  "voice": "m",
+  "heard": "Die Hochzeit, die Hochzeiten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4174d8a7.mp3": {
   "text": "Am Kiosk gibt es Zeitungen.",
   "voice": "f",
   "heard": "Am Kiosk gibt es Zeitungen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "41c295af.mp3": {
+  "text": "Wir lieben unseren Opa.",
+  "voice": "m",
+  "heard": "Wir lieben unseren Opa.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1877,6 +2421,14 @@
   "heard": "Ja, gern.",
   "ok": true
  },
+ "42398ac5.mp3": {
+  "text": "die Geschwister (Plural)",
+  "voice": "m",
+  "heard": "Die Geschwister plural.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "425eb485.mp3": {
   "text": "Die Kleidung ist hier billig.",
   "voice": "f",
@@ -1891,12 +2443,28 @@
   "heard": "Ich mich, ihr Lehrer.",
   "ok": true
  },
+ "428bb1f5.mp3": {
+  "text": "Ich habe keine Geschwister.",
+  "voice": "f",
+  "heard": "Ich habe keine Geschwister.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "428ee64f.mp3": {
   "text": "das Mittagessen: Zum Mittagessen esse ich Reis.",
   "voice": "m",
   "heard": "Das Mittagessen. Zum Mittagessen esse ich Reis.",
   "score": 1,
   "take": 0,
+  "ok": true
+ },
+ "42f6a246.mp3": {
+  "text": "Wann beginnt die Party? Um acht?",
+  "voice": "f",
+  "heard": "Wann beginnt die Party? Um 8.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "43025923.mp3": {
@@ -1925,6 +2493,22 @@
   "text": "Ich esse gern Fisch.",
   "voice": "m",
   "heard": "Ich esse gern Fisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "43a377d1.mp3": {
+  "text": "Ich lade dich zu meiner Party ein.",
+  "voice": "m",
+  "heard": "Ich lade dich zu meiner Party ein.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "444873b9.mp3": {
+  "text": "Ich bin noch ledig.",
+  "voice": "f",
+  "heard": "Ich bin noch ledig.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1959,6 +2543,22 @@
   "take": 0,
   "ok": true
  },
+ "45824f74.mp3": {
+  "text": "Nein, ich bin ledig.",
+  "voice": "m",
+  "heard": "Nein, ich bin ledig.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "45b2aa52.mp3": {
+  "text": "Das ist meine Frau Dina.",
+  "voice": "m",
+  "heard": "Das ist meine Frau Dina.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "45d18b45.mp3": {
   "text": "Hallo, Mia! Wie geht's?",
   "voice": "f",
@@ -1970,6 +2570,22 @@
   "voice": "f",
   "heard": "Guten Tag, Frau Kalil.",
   "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
+ "4656e350.mp3": {
+  "text": "Meine Schwester ist verheiratet.",
+  "voice": "f",
+  "heard": "Meine Schwester ist verheiratet.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "465c8abb.mp3": {
+  "text": "Meine Schwester Hanna holt dich am Bahnhof ab.",
+  "voice": "f",
+  "heard": "Meine Schwester Hannah holte ich am Bahnhof ab.",
+  "score": 0.62,
   "take": 0,
   "ok": false
  },
@@ -2009,6 +2625,30 @@
   "take": 0,
   "ok": true
  },
+ "477cc7f5.mp3": {
+  "text": "Die Hochzeit ist im Juni.",
+  "voice": "f",
+  "heard": "Die Hochzeit ist im Juni.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "47dc2a8f.mp3": {
+  "text": "der Bekannte, die Bekannten",
+  "voice": "m",
+  "heard": "Der Bekannte, die Bekannten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "483e9744.mp3": {
+  "text": "Das ist mein Bruder Karim. Und das sind meine Schwestern.",
+  "voice": "m",
+  "heard": "Das ist mein Bruder Karin. Und das sind meine Schwestern.",
+  "score": 0.9,
+  "take": 0,
+  "ok": false
+ },
  "48d47f81.mp3": {
   "text": "Isst du gern Fisch?",
   "voice": "f",
@@ -2035,6 +2675,14 @@
   "text": "sechzig, siebzig, achtzig, neunzig, hundert",
   "voice": "m",
   "heard": "60, 70, 80, 90, 100",
+  "ok": true
+ },
+ "496eff36.mp3": {
+  "text": "Am Sonntag besuche ich meine Eltern.",
+  "voice": "f",
+  "heard": "Am Sonntag besuche ich meine Eltern.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "49938433.mp3": {
@@ -2064,6 +2712,14 @@
   "voice": "m",
   "heard": "Hallo, ich bin Ben und du? Wie heißt du?",
   "ok": true
+ },
+ "4a76d9f9.mp3": {
+  "text": "Das ist ihre Schwester Mariam. Sie ist zwölf.",
+  "voice": "m",
+  "heard": "Das ist ihre Schwester Maria, sie ist zwölf.",
+  "score": 0.86,
+  "take": 0,
+  "ok": false
  },
  "4a9e9a9c.mp3": {
   "text": "Ja, gut. Um elf Uhr.",
@@ -2125,10 +2781,34 @@
   "take": 0,
   "ok": true
  },
+ "4b6efa16.mp3": {
+  "text": "Liebe Mona, vielen Dank für die Einladung! Ich komme gern und bringe einen Salat mit. Bis Samstag! Deine Lea",
+  "voice": "m",
+  "heard": "Liebe Mona, vielen Dank für die Einladung. Ich komme gerne und bringe einen Salat mit. Bis Samstag. Geile Leer.",
+  "score": 0.84,
+  "take": 0,
+  "ok": false
+ },
+ "4b7cf427.mp3": {
+  "text": "Wer ist das?",
+  "voice": "m",
+  "heard": "Wer ist das?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4bb1dfc4.mp3": {
   "text": "Ich möchte einen Kaffee.",
   "voice": "m",
   "heard": "Ich möchte einen Kaffee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4bd1bf04.mp3": {
+  "text": "lustig",
+  "voice": "m",
+  "heard": "Lustig!",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2138,6 +2818,14 @@
   "voice": "f",
   "heard": "Im Juli, am 2. Juli.",
   "ok": false
+ },
+ "4c2b684f.mp3": {
+  "text": "das Baby, die Babys",
+  "voice": "m",
+  "heard": "Das Baby, die Babys.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "4c5d1e49.mp3": {
   "text": "Wie geht es Ihnen?",
@@ -2149,6 +2837,22 @@
   "text": "Guten Morgen! Mein Name ist Braun. Ich bin Ihr Lehrer.",
   "voice": "m",
   "heard": "Guten Morgen. Mein Name ist Braun. Ich bin Ihr Lehrer.",
+  "ok": true
+ },
+ "4ce5a17d.mp3": {
+  "text": "Tim, hast du Geschwister?",
+  "voice": "f",
+  "heard": "Tim, hast du Geschwister?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4cedcde8.mp3": {
+  "text": "Und wer ist die Frau links?",
+  "voice": "f",
+  "heard": "Und wer ist die Frau links?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "4d04418d.mp3": {
@@ -2164,6 +2868,14 @@
   "voice": "f",
   "heard": "Ich komme aus Ägypten, aus Cairo.",
   "ok": false
+ },
+ "4dd7b0ef.mp3": {
+  "text": "herzlich",
+  "voice": "m",
+  "heard": "Herzlich!",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "4e0279f5.mp3": {
   "text": "Das ist ein Ei. Ich nehme ein Ei.",
@@ -2253,6 +2965,14 @@
   "take": 0,
   "ok": true
  },
+ "503ebabd.mp3": {
+  "text": "Leider habe ich am Samstag keine Zeit.",
+  "voice": "m",
+  "heard": "Leider habe ich am Samstag keine Zeit.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "504226dd.mp3": {
   "text": "das Datum, die Daten",
   "voice": "m",
@@ -2301,6 +3021,22 @@
   "heard": "Ja, schon zehn Jahre.",
   "ok": true
  },
+ "5126247e.mp3": {
+  "text": "Mein Bruder ist einunddreißig. Er ist verheiratet, aber er hat noch keine Kinder.",
+  "voice": "m",
+  "heard": "Mein Bruder ist 31. Er ist verheiratet, aber er hat noch keine Kinder.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "519c3fb6.mp3": {
+  "text": "Sie ist sehr schön! Und wer ist der Mann?",
+  "voice": "f",
+  "heard": "Sie ist sehr schön. Und wer ist der Mann?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "51a26de2.mp3": {
   "text": "das Obst",
   "voice": "m",
@@ -2315,6 +3051,22 @@
   "heard": "Ich möchte zwei Brötchen, bitte.",
   "score": 1,
   "take": 0,
+  "ok": true
+ },
+ "5204be7f.mp3": {
+  "text": "Seine Haare sind kurz.",
+  "voice": "m",
+  "heard": "Seine Haare sind kurz.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5212df1d.mp3": {
+  "text": "Sie sieht jung aus.",
+  "voice": "m",
+  "heard": "Sie sieht jung aus.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "524388b6.mp3": {
@@ -2343,6 +3095,14 @@
   "text": "Freut mich!",
   "voice": "m",
   "heard": "Freut mich!",
+  "ok": true
+ },
+ "535a0c08.mp3": {
+  "text": "Herzlichen Glückwunsch zum Geburtstag!",
+  "voice": "m",
+  "heard": "Herzlichen Glückwunsch zum Geburtstag!",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "53e8c45e.mp3": {
@@ -2383,6 +3143,14 @@
   "text": "Am Abend kauft sie ein.",
   "voice": "m",
   "heard": "Am Abend kauft sie ein.",
+  "ok": true
+ },
+ "54876093.mp3": {
+  "text": "Das ist Mona. Ihre Mutter heißt Salma.",
+  "voice": "m",
+  "heard": "Das ist Mona, ihre Mutter heißt Salma.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "54921f49.mp3": {
@@ -2433,6 +3201,22 @@
   "text": "Guten Morgen, Frau Weber!",
   "voice": "m",
   "heard": "Guten Morgen, Frau Weber.",
+  "ok": true
+ },
+ "56fadf53.mp3": {
+  "text": "Mein Bruder ist ruhig.",
+  "voice": "f",
+  "heard": "Mein Bruder ist ruhig.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "570e46bb.mp3": {
+  "text": "die Ehefrau, die Ehefrauen",
+  "voice": "m",
+  "heard": "Die Ehefrau, die Ehefrauen.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "57714fc9.mp3": {
@@ -2505,6 +3289,22 @@
   "take": 0,
   "ok": true
  },
+ "58d7a266.mp3": {
+  "text": "Das ist ein Freund von mir.",
+  "voice": "f",
+  "heard": "Das ist ein Freund von mir.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "58f675be.mp3": {
+  "text": "Wir wohnen alle zusammen.",
+  "voice": "f",
+  "heard": "Wir wohnen alle zusammen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "590cf2c6.mp3": {
   "text": "die Stadt, die Städte",
   "voice": "m",
@@ -2543,6 +3343,14 @@
   "heard": "Amic.",
   "ok": false
  },
+ "59bcd04c.mp3": {
+  "text": "der Großvater, die Großväter",
+  "voice": "m",
+  "heard": "Der Großvater die Großväter",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "59ff3758.mp3": {
   "text": "Die Jacke kostet heute nicht neunundfünfzig, sondern neununddreißig Euro.",
   "voice": "m",
@@ -2579,10 +3387,34 @@
   "heard": "Am Wochenende schlafe ich oft lange.",
   "ok": true
  },
+ "5bdd1cce.mp3": {
+  "text": "Wie alt bist du?",
+  "voice": "m",
+  "heard": "Wie alt bist du?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5be99e22.mp3": {
+  "text": "Am Samstag besuche ich meinen Bruder. Am Sonntag kommen seine Kinder zu uns.",
+  "voice": "m",
+  "heard": "Am Samstag besuche ich meinen Bruder. Am Sonntag kommen seine Kinder zu uns.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "5c02315b.mp3": {
   "text": "Ich trinke Kaffee mit Milch.",
   "voice": "f",
   "heard": "Ich trinke Kaffee mit Milch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5c0ce7f4.mp3": {
+  "text": "Ihre Haare sind lang.",
+  "voice": "f",
+  "heard": "Ihre Haare sind lang.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2610,6 +3442,38 @@
   "score": 0.75,
   "take": 1,
   "ok": false
+ },
+ "5cb697e3.mp3": {
+  "text": "Mein Bruder ist sehr groß. Seine Haare sind schwarz und kurz.",
+  "voice": "f",
+  "heard": "Mein Bruder ist sehr groß. Seine Haare sind schwarz und kurz.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5cbcfe60.mp3": {
+  "text": "lang",
+  "voice": "m",
+  "heard": "Lang",
+  "score": 1,
+  "take": 2,
+  "ok": true
+ },
+ "5d183f64.mp3": {
+  "text": "Liebe Mona,",
+  "voice": "m",
+  "heard": "Liebe Mona",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5d1edf5f.mp3": {
+  "text": "Wie alt sind deine Kinder?",
+  "voice": "m",
+  "heard": "Wie alt sind deine Kinder?",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "5d318e4b.mp3": {
   "text": "Haben Sie Brot?",
@@ -2643,6 +3507,22 @@
   "take": 0,
   "ok": true
  },
+ "5ddc3d9b.mp3": {
+  "text": "Sie besucht ihre Eltern.",
+  "voice": "m",
+  "heard": "Sie besucht ihre Eltern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5ea2961d.mp3": {
+  "text": "das Kind, die Kinder",
+  "voice": "m",
+  "heard": "Das Kind, die Kinder.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "5f0de52f.mp3": {
   "text": "Ich bin 20 Jahre alt.",
   "voice": "f",
@@ -2671,10 +3551,34 @@
   "heard": "Tschüss, bis morgen!",
   "ok": true
  },
+ "5f6a2058.mp3": {
+  "text": "Meine Schwester heiratet bald.",
+  "voice": "f",
+  "heard": "Meine Schwester heiratet bald.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "5f9ff4d1.mp3": {
   "text": "Ich esse nicht gern Fleisch.",
   "voice": "f",
   "heard": "Ich esse nicht gern Fleisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5fc7cc86.mp3": {
+  "text": "Meine Haare sind kurz.",
+  "voice": "f",
+  "heard": "Meine Haare sind kurz.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "603bf130.mp3": {
+  "text": "Meine Tochter ist fünf.",
+  "voice": "f",
+  "heard": "Meine Tochter ist fünf.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2693,6 +3597,14 @@
   "heard": "und Deutsch spricht sie ein bisschen.",
   "ok": true
  },
+ "60938955.mp3": {
+  "text": "Wo wohnen deine Eltern? In Hamburg?",
+  "voice": "m",
+  "heard": "Wo wohnen deine Eltern? In Hamburg.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "60da6b45.mp3": {
   "text": "Der Kurs ist am Dienstag und am Donnerstag von sechs bis acht.",
   "voice": "f",
@@ -2709,6 +3621,22 @@
   "text": "dreizehn, vierzehn, fünfzehn, sechzehn",
   "voice": "m",
   "heard": "13, 14, 15, 16",
+  "ok": true
+ },
+ "614bfc80.mp3": {
+  "text": "Das ist mein Sohn.",
+  "voice": "f",
+  "heard": "Das ist mein Sohn.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "615fa1e6.mp3": {
+  "text": "Nein, heute nicht. Er kommt am Mittwoch. Am Freitag kommt meine Schwester.",
+  "voice": "f",
+  "heard": "Nein, heute nicht. Er kommt am Mittwoch. Am Freitag kommt meine Schwester.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "61ac0d79.mp3": {
@@ -2763,6 +3691,14 @@
   "heard": "Können Sie das bitte buchstabieren?",
   "ok": true
  },
+ "6403e8a9.mp3": {
+  "text": "Die Kinder sind sehr lieb.",
+  "voice": "m",
+  "heard": "Die Kinder sind sehr lieb.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "6414ecec.mp3": {
   "text": "Ein Jahr hat zwölf Monate.",
   "voice": "f",
@@ -2781,10 +3717,26 @@
   "heard": "Meine Telefonnummer ist 0.763.402.080.950.",
   "ok": false
  },
+ "650bc3d8.mp3": {
+  "text": "Vielen Dank für die Einladung!",
+  "voice": "f",
+  "heard": "Vielen Dank für die Einladung.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "652162ef.mp3": {
   "text": "Es ist halb drei.",
   "voice": "m",
   "heard": "Es ist halb drei.",
+  "ok": true
+ },
+ "6586522f.mp3": {
+  "text": "Das Baby schläft.",
+  "voice": "f",
+  "heard": "Das Baby schläft.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "658d09ac.mp3": {
@@ -2794,6 +3746,30 @@
   "score": 0.71,
   "take": 0,
   "ok": false
+ },
+ "65958935.mp3": {
+  "text": "Wir feiern zu Hause.",
+  "voice": "f",
+  "heard": "Wir feiern zu Hause.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "65a0d979.mp3": {
+  "text": "Mein Bruder ist sehr nett und lustig.",
+  "voice": "m",
+  "heard": "Mein Bruder ist sehr nett und lustig.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "65df3217.mp3": {
+  "text": "Er spielt Fußball.",
+  "voice": "m",
+  "heard": "Er spielt Fußball.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "65e2ca7b.mp3": {
   "text": "Sie möchte einen Tee.",
@@ -2807,6 +3783,14 @@
   "text": "fernsehen",
   "voice": "m",
   "heard": "Fernsehen!",
+  "ok": true
+ },
+ "674d5a78.mp3": {
+  "text": "leben",
+  "voice": "m",
+  "heard": "Leben.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "682fe431.mp3": {
@@ -2917,6 +3901,14 @@
   "take": 0,
   "ok": true
  },
+ "6ab62262.mp3": {
+  "text": "Mein Opa wohnt bei uns.",
+  "voice": "f",
+  "heard": "Mein Opa wohnt bei uns.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "6aeac802.mp3": {
   "text": "Tut mir leid, ich habe kein Salz.",
   "voice": "m",
@@ -2983,6 +3975,14 @@
   "take": 0,
   "ok": true
  },
+ "6ca409d0.mp3": {
+  "text": "Bist du schon verheiratet?",
+  "voice": "m",
+  "heard": "Bist du schon verheiratet?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "6cfe9b3c.mp3": {
   "text": "anderthalb Kilo Kartoffeln",
   "voice": "m",
@@ -2998,6 +3998,14 @@
   "score": 0.67,
   "take": 0,
   "ok": false
+ },
+ "6d257448.mp3": {
+  "text": "das Mädchen, die Mädchen",
+  "voice": "m",
+  "heard": "Das Mädchen, die Mädchen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "6d41f136.mp3": {
   "text": "Zum Mitnehmen, bitte. Was kostet der Kuchen?",
@@ -3015,12 +4023,28 @@
   "take": 0,
   "ok": false
  },
+ "6d880cea.mp3": {
+  "text": "Er ist nicht sehr groß, aber er ist schnell.",
+  "voice": "m",
+  "heard": "Er ist nicht sehr groß, aber er ist schnell.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "6d97b545.mp3": {
   "text": "Ich esse gern Hähnchen mit Reis.",
   "voice": "m",
   "heard": "Ich esse gern Hähnchen mit Reis.",
   "score": 1,
   "take": 0,
+  "ok": true
+ },
+ "6da7cdd6.mp3": {
+  "text": "Wir feiern am Samstag.",
+  "voice": "f",
+  "heard": "Wir feiern am Samstag.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "6ddf21b5.mp3": {
@@ -3073,11 +4097,43 @@
   "take": 0,
   "ok": true
  },
+ "6eb3cec3.mp3": {
+  "text": "die Frau, die Frauen",
+  "voice": "m",
+  "heard": "Die Frau, die Frauen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6ebf8115.mp3": {
+  "text": "Viele Grüße aus Berlin!",
+  "voice": "f",
+  "heard": "Viele Grüße aus Berlin.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "6ed0a158.mp3": {
   "text": "Danke! Bitte!",
   "voice": "f",
   "heard": "Danke. Bitte.",
   "ok": true
+ },
+ "6ef52c37.mp3": {
+  "text": "Das ist Peters Vater.",
+  "voice": "m",
+  "heard": "Das ist Peters Vater.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6fb660a4.mp3": {
+  "text": "Hallo! Ich heiße Omar und ich bin vierundzwanzig Jahre alt.",
+  "voice": "m",
+  "heard": "Hallo, ich heiße Oma und ich bin 24 Jahre alt.",
+  "score": 0.89,
+  "take": 0,
+  "ok": false
  },
  "6fe02276.mp3": {
   "text": "der Hunger",
@@ -3086,6 +4142,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "7004d659.mp3": {
+  "text": "Karims Frau kommt aus Alexandria.",
+  "voice": "m",
+  "heard": "Karins Frau kommt aus Alexandria.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
  },
  "7004f545.mp3": {
   "text": "Guten Morgen! Ich möchte drei Brötchen und einen Kaffee, bitte.",
@@ -3203,6 +4267,14 @@
   "heard": "Super! Und dir!",
   "ok": true
  },
+ "73ff13d3.mp3": {
+  "text": "feiern",
+  "voice": "m",
+  "heard": "Feiern!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7448c4cb.mp3": {
   "text": "das Frühstück",
   "voice": "m",
@@ -3215,6 +4287,14 @@
   "text": "Ich bin 31 Jahre alt.",
   "voice": "f",
   "heard": "Ich bin 31 Jahre alt.",
+  "ok": true
+ },
+ "751257ba.mp3": {
+  "text": "Super, danke! Wie sieht sie aus?",
+  "voice": "m",
+  "heard": "Super, danke. Wie sieht sie aus?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "752796ea.mp3": {
@@ -3231,10 +4311,26 @@
   "take": 0,
   "ok": true
  },
+ "7530598f.mp3": {
+  "text": "Wir haben drei Kinder.",
+  "voice": "m",
+  "heard": "Wir haben drei Kinder.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7531ee55.mp3": {
   "text": "der Buchstabe, die Buchstaben",
   "voice": "m",
   "heard": "Der Buchstabe, die Buchstaben.",
+  "ok": true
+ },
+ "753b36c9.mp3": {
+  "text": "Sie ist meine Freundin.",
+  "voice": "f",
+  "heard": "Sie ist meine Freundin.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "753b7d65.mp3": {
@@ -3244,6 +4340,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "7550a16f.mp3": {
+  "text": "ruhig",
+  "voice": "m",
+  "heard": "Oig!",
+  "score": 0,
+  "take": 0,
+  "ok": false
  },
  "75584ce9.mp3": {
   "text": "Woher kommen Sie?",
@@ -3261,6 +4365,14 @@
   "text": "Sie fährt mit dem Bus.",
   "voice": "m",
   "heard": "Sie fährt mit dem Bus.",
+  "ok": true
+ },
+ "75c68914.mp3": {
+  "text": "Meine Mutter ist Lehrerin.",
+  "voice": "m",
+  "heard": "Meine Mutter ist Lehrerin.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "761082a2.mp3": {
@@ -3285,6 +4397,14 @@
   "heard": "Ich bin 29 Jahre alt.",
   "ok": true
  },
+ "76622062.mp3": {
+  "text": "Nein, um halb acht. Aber komm ruhig später.",
+  "voice": "m",
+  "heard": "Nein, um halb acht. Aber komm rück später.",
+  "score": 0.86,
+  "take": 0,
+  "ok": false
+ },
  "76852a6b.mp3": {
   "text": "wohnen",
   "voice": "m",
@@ -3305,10 +4425,34 @@
   "take": 0,
   "ok": true
  },
+ "76c221ac.mp3": {
+  "text": "Seine Ehefrau heißt Dina.",
+  "voice": "f",
+  "heard": "Seine Ehefrau heißt Dina.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "76f9bca3.mp3": {
+  "text": "Seine Schwester heißt Lisa. Ihr Partner kommt aus Spanien.",
+  "voice": "f",
+  "heard": "Seine Schwester heißt dieser. Ihr Partner kommt aus Spanien.",
+  "score": 0.89,
+  "take": 0,
+  "ok": false
+ },
  "77119f1c.mp3": {
   "text": "Ich trinke immer Tee.",
   "voice": "f",
   "heard": "Ich trinke immer Tee.",
+  "ok": true
+ },
+ "772a9204.mp3": {
+  "text": "Meine Geschwister kommen auch.",
+  "voice": "m",
+  "heard": "Meine Geschwister kommen auch.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "7776c81a.mp3": {
@@ -3332,6 +4476,38 @@
   "score": 0,
   "take": 0,
   "ok": false
+ },
+ "77ba28e6.mp3": {
+  "text": "Wir besuchen unsere Großeltern.",
+  "voice": "m",
+  "heard": "Wir besuchen unsere Großeltern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "77dd22b8.mp3": {
+  "text": "Mein Vater heißt Ali. Er ist fünfundfünfzig.",
+  "voice": "m",
+  "heard": "Mein Vater heißt Ali. Er ist 55.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "780aa7bf.mp3": {
+  "text": "Mein Vater ist Ingenieur.",
+  "voice": "m",
+  "heard": "Mein Vater ist Ingenieur.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "7816ed3f.mp3": {
+  "text": "kennen",
+  "voice": "m",
+  "heard": "Kennen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "7853cd69.mp3": {
   "text": "sechzig, siebzehn, siebzig, neunzehn, neunzig",
@@ -3359,6 +4535,22 @@
   "text": "Ich esse Brot mit Käse und trinke Tee.",
   "voice": "m",
   "heard": "Ich esse Brot mit Käse und trinke Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "78bbe822.mp3": {
+  "text": "der Vater, die Väter",
+  "voice": "m",
+  "heard": "Der Vater, die Väter.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "78c376eb.mp3": {
+  "text": "die Mutter, die Mütter",
+  "voice": "m",
+  "heard": "Die Mutter, die Mütter.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3392,6 +4584,14 @@
   "score": 0.75,
   "take": 0,
   "ok": false
+ },
+ "798851e7.mp3": {
+  "text": "Gut, danke! Und unsere Großmutter wohnt jetzt auch dort.",
+  "voice": "f",
+  "heard": "Gut, danke. Und unsere Großmutter wohnt jetzt auch dort.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "79cdffe7.mp3": {
   "text": "Praxis Dr. Berger, guten Tag!",
@@ -3431,10 +4631,26 @@
   "take": 0,
   "ok": true
  },
+ "7a9b5584.mp3": {
+  "text": "der Opa, die Opas",
+  "voice": "m",
+  "heard": "der Opa, die Opas.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7abe346e.mp3": {
   "text": "Ich suche Partner für Deutsch und Arabisch.",
   "voice": "m",
   "heard": "Ich suche Partner für Deutsch und Arabisch.",
+  "ok": true
+ },
+ "7ac71566.mp3": {
+  "text": "Das ist mein Opa. Er ist achtzig.",
+  "voice": "m",
+  "heard": "Das ist mein Opa. Er ist 80.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "7b1196d1.mp3": {
@@ -3487,6 +4703,22 @@
   "take": 0,
   "ok": true
  },
+ "7ba14705.mp3": {
+  "text": "Ich habe einen Bruder und eine Schwester.",
+  "voice": "m",
+  "heard": "Ich habe einen Bruder und eine Schwester.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "7bc28415.mp3": {
+  "text": "Wie alt bist du jetzt?",
+  "voice": "m",
+  "heard": "Wie alt bist du jetzt?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7be24672.mp3": {
   "text": "Dann haben Sie noch fünfzehn Minuten.",
   "voice": "f",
@@ -3507,6 +4739,14 @@
   "take": 0,
   "ok": true
  },
+ "7c7fe456.mp3": {
+  "text": "Ja, ich habe einen Bruder und zwei Schwestern. Und du, Paul?",
+  "voice": "f",
+  "heard": "Ja, ich habe einen Bruder und zwei Schwestern und du Paul.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7ca01fa3.mp3": {
   "text": "Das ist zu teuer!",
   "voice": "m",
@@ -3519,6 +4759,22 @@
   "text": "Wir lernen zusammen.",
   "voice": "f",
   "heard": "Wir lernen zusammen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "7d1e5f9c.mp3": {
+  "text": "Meine Mutter heißt Salma.",
+  "voice": "m",
+  "heard": "Meine Mutter heißt Salma.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "7d48efed.mp3": {
+  "text": "Ich komme gern.",
+  "voice": "m",
+  "heard": "Ich komme gern.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3543,6 +4799,14 @@
   "heard": "Ich brauche einen Termin.",
   "ok": true
  },
+ "7e3128c6.mp3": {
+  "text": "Und wie geht es euren Eltern?",
+  "voice": "m",
+  "heard": "Und wie geht es euren Eltern?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7e417bd3.mp3": {
   "text": "Das Hähnchen und das Wasser: fünfzehn Euro sechzig.",
   "voice": "m",
@@ -3550,6 +4814,14 @@
   "score": 0.83,
   "take": 0,
   "ok": false
+ },
+ "7ee6fcb4.mp3": {
+  "text": "Nein, meine Eltern wohnen in München. Mein Bruder wohnt in Hamburg.",
+  "voice": "f",
+  "heard": "Nein, meine Eltern wohnen in München, mein Bruder wohnt in Hamburg.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "7f1eda5f.mp3": {
   "text": "die Milch",
@@ -3569,6 +4841,14 @@
   "text": "der Morgen, die Morgen",
   "voice": "m",
   "heard": "Der Morgen die Morgen.",
+  "ok": true
+ },
+ "7f883cb6.mp3": {
+  "text": "Die Party ist um acht Uhr bei mir zu Hause.",
+  "voice": "m",
+  "heard": "Die Party ist um 8 Uhr bei mir zu Hause.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "7f88dd70.mp3": {
@@ -3593,6 +4873,14 @@
   "heard": "haben.",
   "ok": true
  },
+ "7fdd2c51.mp3": {
+  "text": "Die Leute sind nett.",
+  "voice": "f",
+  "heard": "Die Leute sind nett.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "801052e0.mp3": {
   "text": "Der Kurs dauert zwei Stunden.",
   "voice": "f",
@@ -3607,10 +4895,42 @@
   "take": 0,
   "ok": false
  },
+ "80a542c5.mp3": {
+  "text": "Das ist mein Vater. Und das ist meine Mutter.",
+  "voice": "m",
+  "heard": "Das ist mein Vater. Und das ist meine Mutter.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "80cfe8b2.mp3": {
   "text": "aus der Türkei, in der Türkei",
   "voice": "m",
   "heard": "Aus der Türkei in der Türkei.",
+  "ok": true
+ },
+ "80e64bc4.mp3": {
+  "text": "das Auge, die Augen",
+  "voice": "m",
+  "heard": "Das Auge, die Augen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "80f7f4b3.mp3": {
+  "text": "die Partnerin, die Partnerinnen",
+  "voice": "m",
+  "heard": "die Partnerin, die Partnerinnen",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "814f6b3e.mp3": {
+  "text": "Ich bin ledig.",
+  "voice": "m",
+  "heard": "Ich bin ledig.",
+  "score": 1,
+  "take": 2,
   "ok": true
  },
  "81874430.mp3": {
@@ -3633,6 +4953,14 @@
   "take": 0,
   "ok": true
  },
+ "81e9d6bd.mp3": {
+  "text": "Kennst du Karim? Seine Schwester ist meine Kollegin.",
+  "voice": "f",
+  "heard": "Kennst du Karin? Seine Schwester ist meine Kollegin.",
+  "score": 0.88,
+  "take": 0,
+  "ok": false
+ },
  "81f8b266.mp3": {
   "text": "Es ist halb sieben.",
   "voice": "f",
@@ -3653,10 +4981,34 @@
   "take": 0,
   "ok": true
  },
+ "8326c834.mp3": {
+  "text": "Mein Opa ist sehr lustig.",
+  "voice": "f",
+  "heard": "Mein Opa ist sehr lustig.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8378fa5b.mp3": {
+  "text": "Und deine Schwestern?",
+  "voice": "m",
+  "heard": "und deine Schwestern",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "83cb0554.mp3": {
   "text": "Heute im Angebot: Bananen, nicht ein Euro neunundsiebzig, sondern nur ein Euro neunundzwanzig.",
   "voice": "f",
   "heard": "Heute im Angebot Bananen nicht ein Euro 79, sondern nur ein Euro 29.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "84013c42.mp3": {
+  "text": "Julia hat zwei Brüder.",
+  "voice": "m",
+  "heard": "Julia hat zwei Brüder.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3683,6 +5035,14 @@
   "take": 0,
   "ok": true
  },
+ "84dbc601.mp3": {
+  "text": "Seine Partnerin ist Ärztin.",
+  "voice": "f",
+  "heard": "Seine Partnerin ist Ärztin.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "851a31b6.mp3": {
   "text": "Sie frühstückt nie.",
   "voice": "m",
@@ -3704,6 +5064,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "8619cbdf.mp3": {
+  "text": "Das ist mein Bruder Karim. Er ist fünfundzwanzig.",
+  "voice": "m",
+  "heard": "Das ist mein Bruder Karin. Er ist 25.",
+  "score": 0.86,
+  "take": 0,
+  "ok": false
  },
  "86328dfe.mp3": {
   "text": "brauchen",
@@ -3735,6 +5103,14 @@
   "take": 0,
   "ok": true
  },
+ "872f8d8c.mp3": {
+  "text": "Mein Vater ist sehr nett.",
+  "voice": "m",
+  "heard": "Mein Vater ist sehr nett.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "87462573.mp3": {
   "text": "Ägypten",
   "voice": "m",
@@ -3755,6 +5131,22 @@
   "take": 0,
   "ok": true
  },
+ "8818d90c.mp3": {
+  "text": "Hast du Kinder?",
+  "voice": "f",
+  "heard": "Hast du Kinder?",
+  "score": 1,
+  "take": 2,
+  "ok": true
+ },
+ "88231b75.mp3": {
+  "text": "die Party, die Partys",
+  "voice": "m",
+  "heard": "Die Partys, die Partys.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
  "8828ef8d.mp3": {
   "text": "Wir haben keinen Reis mehr.",
   "voice": "m",
@@ -3762,6 +5154,22 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "8862a53a.mp3": {
+  "text": "Das ist mein Mann.",
+  "voice": "f",
+  "heard": "Das ist mein Mann.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8866b833.mp3": {
+  "text": "Die Hochzeit ist in Kairo.",
+  "voice": "m",
+  "heard": "Die Hochzeit ist in Cairo.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
  },
  "886d7ab5.mp3": {
   "text": "die Uhr, die Uhren",
@@ -3799,6 +5207,14 @@
   "take": 0,
   "ok": false
  },
+ "8991219a.mp3": {
+  "text": "Und das ist meine Schwester Hana. Sie ist siebzehn.",
+  "voice": "m",
+  "heard": "Und das ist meine Schwester Hannah. Sie ist 17.",
+  "score": 0.88,
+  "take": 0,
+  "ok": false
+ },
  "89a0341a.mp3": {
   "text": "Das ist zu teuer.",
   "voice": "m",
@@ -3820,6 +5236,14 @@
   "voice": "f",
   "heard": "Meine Telefonnummer ist 01763402 und 80950.",
   "ok": false
+ },
+ "8a588cb4.mp3": {
+  "text": "Am Freitag essen wir alle zusammen.",
+  "voice": "m",
+  "heard": "Am Freitag essen wir alle zusammen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "8a9d1198.mp3": {
   "text": "der Fisch, die Fische",
@@ -3859,10 +5283,26 @@
   "heard": "Servus.",
   "ok": true
  },
+ "8be2730d.mp3": {
+  "text": "Die Familie fährt am Samstag.",
+  "voice": "m",
+  "heard": "Die Familie fährt an Samstag.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
  "8c29f280.mp3": {
   "text": "Es gibt keinen Kuchen mehr.",
   "voice": "m",
   "heard": "Es gibt keinen Kuchen mehr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8c3aeb8e.mp3": {
+  "text": "Ihre Brüder wohnen in München.",
+  "voice": "m",
+  "heard": "Ihre Brüder wohnen in München.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3905,6 +5345,30 @@
   "take": 0,
   "ok": true
  },
+ "8d7e851f.mp3": {
+  "text": "Und wie alt ist sie?",
+  "voice": "m",
+  "heard": "Und wie alt ist sie?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8dabc739.mp3": {
+  "text": "Alles Gute und viel Glück!",
+  "voice": "m",
+  "heard": "Alles Gute und viel Glück!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8e4ed244.mp3": {
+  "text": "Mein Bruder ist zwanzig.",
+  "voice": "f",
+  "heard": "Mein Bruder ist 20.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "8ecd9b2c.mp3": {
   "text": "Am Mittwoch habe ich Zeit.",
   "voice": "f",
@@ -3939,10 +5403,26 @@
   "take": 0,
   "ok": false
  },
+ "8f8efd3f.mp3": {
+  "text": "der Ehemann, die Ehemänner",
+  "voice": "m",
+  "heard": "der immann die imene",
+  "score": 0.5,
+  "take": 0,
+  "ok": false
+ },
  "8f94ddd6.mp3": {
   "text": "Danke. Haben Sie auch Fisch?",
   "voice": "f",
   "heard": "Danke, haben Sie auch Fisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "90679c91.mp3": {
+  "text": "Sie sind noch jung. Sie gehen noch zur Schule.",
+  "voice": "f",
+  "heard": "Sie sind noch jung. Sie gehen noch zur Schule.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3965,6 +5445,14 @@
   "heard": "n-a-n-s-o-u-r",
   "ok": false
  },
+ "91670877.mp3": {
+  "text": "Ja, zwei Brüder und eine Schwester.",
+  "voice": "m",
+  "heard": "Ja, zwei Brüder und eine Schwester.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "92401ee6.mp3": {
   "text": "Die Suppe und die Cola. Hier sind zehn Euro. Stimmt so.",
   "voice": "f",
@@ -3985,6 +5473,30 @@
   "heard": "Danke. Buchstabieren Sie bitte Ihren Namen.",
   "ok": true
  },
+ "929ea28f.mp3": {
+  "text": "Danke schön, Omar! Schön, dass du da bist.",
+  "voice": "f",
+  "heard": "Danke schön, Oma. Schön, dass du da bist.",
+  "score": 0.88,
+  "take": 0,
+  "ok": false
+ },
+ "92c804c6.mp3": {
+  "text": "Du siehst müde aus.",
+  "voice": "m",
+  "heard": "Du siehst müde aus.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9303906f.mp3": {
+  "text": "Ich bringe einen Kuchen mit.",
+  "voice": "f",
+  "heard": "Ich brine einen Kuchen mit.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
  "9338a13d.mp3": {
   "text": "Das ist Sara.",
   "voice": "m",
@@ -3992,6 +5504,14 @@
   "score": 0.67,
   "take": 0,
   "ok": false
+ },
+ "936797eb.mp3": {
+  "text": "Ich habe einen Bruder und zwei Schwestern.",
+  "voice": "m",
+  "heard": "Ich habe einen Bruder und zwei Schwestern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "93c76713.mp3": {
   "text": "Was kosten die Tomaten?",
@@ -4021,10 +5541,34 @@
   "take": 0,
   "ok": true
  },
+ "942ef1bc.mp3": {
+  "text": "gratulieren",
+  "voice": "m",
+  "heard": "Gratulieren!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "943c1699.mp3": {
   "text": "Am Sonntag ist sie geschlossen.",
   "voice": "m",
   "heard": "Am Sonntag ist sie geschlossen.",
+  "ok": true
+ },
+ "9497033b.mp3": {
+  "text": "Das Mädchen ist sechs Jahre alt.",
+  "voice": "f",
+  "heard": "Das Mädchen ist sechs Jahre alt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "94b45d79.mp3": {
+  "text": "allein",
+  "voice": "m",
+  "heard": "Allein!",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "94e744c5.mp3": {
@@ -4087,6 +5631,22 @@
   "heard": "Das ist...",
   "ok": true
  },
+ "96829f37.mp3": {
+  "text": "die Tochter, die Töchter",
+  "voice": "m",
+  "heard": "Die Tochter, die Töchter.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "96cd8b5e.mp3": {
+  "text": "Ja, das ist meine Familie.",
+  "voice": "m",
+  "heard": "Ja, das ist meine Familie.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "97173bbd.mp3": {
   "text": "Ich bin 27 Jahre alt.",
   "voice": "m",
@@ -4107,10 +5667,26 @@
   "heard": "Ich rufe meine Mutter an.",
   "ok": true
  },
+ "97af66b4.mp3": {
+  "text": "Ich bringe einen Kuchen mit.",
+  "voice": "m",
+  "heard": "Ich bringe einen Kuchen mit.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "97d3498b.mp3": {
   "text": "das Restaurant, die Restaurants",
   "voice": "m",
   "heard": "Das Restaurant, die Restaurants.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9861af40.mp3": {
+  "text": "tanzen",
+  "voice": "m",
+  "heard": "Tanzen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4129,10 +5705,34 @@
   "take": 0,
   "ok": false
  },
+ "98bc8197.mp3": {
+  "text": "Ich habe keine Geschwister. Wie alt ist dein Bruder?",
+  "voice": "m",
+  "heard": "Ich habe keine Geschwister. Wie alt ist dein Bruder?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "98c12232.mp3": {
+  "text": "Sie sind drei und sieben.",
+  "voice": "m",
+  "heard": "Sie sind 3 und 7.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "98d1586a.mp3": {
   "text": "Die Rechnung, bitte!",
   "voice": "f",
   "heard": "Die Rechnung, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "98f7d71a.mp3": {
+  "text": "schön",
+  "voice": "m",
+  "heard": "Schön.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4151,6 +5751,14 @@
   "heard": "Komm'n!",
   "ok": false
  },
+ "9a6a6669.mp3": {
+  "text": "Hast du Geschwister?",
+  "voice": "f",
+  "heard": "Hast du Geschwister?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9a814d55.mp3": {
   "text": "Jetzt wohnt sie in Leipzig.",
   "voice": "m",
@@ -4158,6 +5766,14 @@
   "score": 0.75,
   "take": 0,
   "ok": false
+ },
+ "9b4ac4ef.mp3": {
+  "text": "Meine Oma ist ruhig und lieb.",
+  "voice": "m",
+  "heard": "Meine Oma ist ruhig und lieb.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "9b7a083d.mp3": {
   "text": "Hallo, Omar! Wie geht's?",
@@ -4169,6 +5785,14 @@
   "text": "Ich frühstücke um sieben Uhr.",
   "voice": "f",
   "heard": "Ich frühstücke um 7 Uhr.",
+  "ok": true
+ },
+ "9ba42391.mp3": {
+  "text": "Oma kocht Fisch.",
+  "voice": "m",
+  "heard": "Oma kocht Fisch.",
+  "score": 1,
+  "take": 2,
   "ok": true
  },
  "9bb96c3d.mp3": {
@@ -4279,6 +5903,22 @@
   "heard": "Der Frühling, der Sommer, der Herbst, der Winter.",
   "ok": true
  },
+ "9d7f14d1.mp3": {
+  "text": "Das ist Tim, ein Freund von mir.",
+  "voice": "m",
+  "heard": "Das ist Tim, ein Freund von mir.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9d87efb9.mp3": {
+  "text": "Wo wohnen deine Eltern?",
+  "voice": "m",
+  "heard": "Wo wohnen deine Eltern?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9da24a0e.mp3": {
   "text": "Die Apotheke schließt um zwanzig Uhr.",
   "voice": "f",
@@ -4305,6 +5945,22 @@
   "text": "Achtzehn, bitte.",
   "voice": "m",
   "heard": "18, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9e397692.mp3": {
+  "text": "Seine Haare sind kurz und schwarz.",
+  "voice": "m",
+  "heard": "Seine Haare sind kurz und schwarz.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9e460d1f.mp3": {
+  "text": "Er ist ruhig und sehr freundlich.",
+  "voice": "m",
+  "heard": "Er ist ruhig und sehr freundlich.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4371,6 +6027,14 @@
   "heard": "Hobby. Mein Hobby ist...",
   "ok": true
  },
+ "9febfcf5.mp3": {
+  "text": "Hast du auch noch einen Bruder?",
+  "voice": "f",
+  "heard": "Hast du auch noch einen Bruder?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9ff71f8d.mp3": {
   "text": "der Supermarkt, die Supermärkte",
   "voice": "m",
@@ -4383,6 +6047,14 @@
   "text": "Dann sieht sie fern.",
   "voice": "m",
   "heard": "dann sieht sie fern.",
+  "ok": true
+ },
+ "a021f03a.mp3": {
+  "text": "Sind das deine Eltern?",
+  "voice": "m",
+  "heard": "Sind das deine Eltern?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "a027a210.mp3": {
@@ -4433,6 +6105,14 @@
   "heard": "Deutsch.",
   "ok": true
  },
+ "a1288c50.mp3": {
+  "text": "Das ist meine Oma. Sie ist fünfundsiebzig.",
+  "voice": "m",
+  "heard": "Das ist meine Oma. Sie ist 75.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a15c1c64.mp3": {
   "text": "Ich trinke lieber Tee.",
   "voice": "m",
@@ -4461,11 +6141,43 @@
   "heard": "Um 11 Uhr schlafe ich.",
   "ok": true
  },
+ "a2efcddd.mp3": {
+  "text": "das Geschenk, die Geschenke",
+  "voice": "m",
+  "heard": "Das Geschenk, die Geschenke.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a30191ab.mp3": {
   "text": "Herr",
   "voice": "m",
   "heard": "Okay.",
   "ok": false
+ },
+ "a3558e6e.mp3": {
+  "text": "Ich habe einen Sohn und eine Tochter.",
+  "voice": "m",
+  "heard": "Ich habe einen Sohn und eine Tochter.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a36852a6.mp3": {
+  "text": "Ich habe keine Geschwister, aber ich habe drei Kinder.",
+  "voice": "f",
+  "heard": "Ich habe keine Geschwister, aber ich habe drei Kinder.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a3761d3c.mp3": {
+  "text": "Danke für die Einladung! Ich komme gern. Ich bringe einen Kuchen mit.",
+  "voice": "m",
+  "heard": "Danke für die Einladung. Ich komme gern. Ich bringe einen Kuchen mit.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "a3930cf0.mp3": {
   "text": "Die Milch ist da hinten rechts, und die Eier sind links.",
@@ -4479,6 +6191,22 @@
   "text": "Im Sommer ist es heiß.",
   "voice": "f",
   "heard": "Im Sommer ist es heiß.",
+  "ok": true
+ },
+ "a3d1ae96.mp3": {
+  "text": "Wie sieht dein Bruder aus?",
+  "voice": "m",
+  "heard": "Wie sieht dein Bruder aus?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a4020839.mp3": {
+  "text": "die Eltern (Plural)",
+  "voice": "m",
+  "heard": "die Eltern plural",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "a490c29c.mp3": {
@@ -4561,6 +6289,14 @@
   "take": 0,
   "ok": true
  },
+ "a653a580.mp3": {
+  "text": "Kommt dein Bruder heute?",
+  "voice": "m",
+  "heard": "Kommt dein Bruder heute?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a66fee20.mp3": {
   "text": "W, E, B, E, R",
   "voice": "m",
@@ -4583,6 +6319,14 @@
   "heard": "Sie öffnet um halb sieben.",
   "ok": true
  },
+ "a69ee390.mp3": {
+  "text": "Wie sieht deine Schwester aus?",
+  "voice": "f",
+  "heard": "Wie sieht deine Schwester aus?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a69f24b0.mp3": {
   "text": "Am Morgen trinke ich Kaffee.",
   "voice": "f",
@@ -4594,6 +6338,14 @@
   "voice": "m",
   "heard": "Emma.",
   "ok": false
+ },
+ "a705de46.mp3": {
+  "text": "am Samstag habe ich Geburtstag und ich mache eine Party.",
+  "voice": "m",
+  "heard": "Am Samstag habe ich Geburtstag und ich mache eine Party.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "a708ddc7.mp3": {
   "text": "krank",
@@ -4616,6 +6368,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "a7921e5d.mp3": {
+  "text": "Leider habe ich am Samstag keine Zeit. Meine Schwester heiratet.",
+  "voice": "m",
+  "heard": "Leider habe ich am Samstag keine Zeit. Meine Schwester herratet.",
+  "score": 0.9,
+  "take": 0,
+  "ok": false
  },
  "a7c16dc5.mp3": {
   "text": "Ein Kilo kostet zwei Euro fünfzig.",
@@ -4681,6 +6441,14 @@
   "heard": "Ich wohle jetzt in Hamburg.",
   "ok": false
  },
+ "a9c4b898.mp3": {
+  "text": "Meine Oma heißt Fatma.",
+  "voice": "f",
+  "heard": "Beine Oma heißt Fatma.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
  "aa0a26ff.mp3": {
   "text": "Mein Vorname ist Nadia.",
   "voice": "f",
@@ -4693,6 +6461,14 @@
   "text": "Und wie ist Ihre Telefonnummer?",
   "voice": "f",
   "heard": "Und wie ist Ihre Telefonnummer?",
+  "ok": true
+ },
+ "aaa47c4e.mp3": {
+  "text": "Seine Augen sind blau.",
+  "voice": "m",
+  "heard": "Seine Augen sind blau.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "aad53859.mp3": {
@@ -4713,10 +6489,26 @@
   "heard": "alt",
   "ok": true
  },
+ "ab4c46fe.mp3": {
+  "text": "Wie alt ist dein Sohn?",
+  "voice": "f",
+  "heard": "Wie alt ist dein Sohn?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "ab977bd2.mp3": {
   "text": "Ich habe Hunger.",
   "voice": "f",
   "heard": "Ich habe Hunger.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "abada272.mp3": {
+  "text": "Ist Ihr Sohn schon in der Schule?",
+  "voice": "f",
+  "heard": "ist ihr Sohn schon in der Schule.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4825,6 +6617,14 @@
   "heard": "Die Zahl, die Zahlen.",
   "ok": true
  },
+ "afecae1f.mp3": {
+  "text": "Das ist mein Vater, und das ist meine Mutter.",
+  "voice": "m",
+  "heard": "Das ist mein Vater und das ist meine Mutter.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "aff0adac.mp3": {
   "text": "gern",
   "voice": "m",
@@ -4835,6 +6635,30 @@
   "text": "Guten Tag! Haben Sie am Freitag einen Termin?",
   "voice": "f",
   "heard": "Guten Tag, haben Sie am Freitag einen Termin.",
+  "ok": true
+ },
+ "b0beb336.mp3": {
+  "text": "Meine Großeltern leben in Assuan.",
+  "voice": "f",
+  "heard": "Meine Großeltern leben in Assuan.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b0db22d3.mp3": {
+  "text": "das Glück",
+  "voice": "m",
+  "heard": "Das Glück!",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
+ "b126e6c8.mp3": {
+  "text": "Danke, gleichfalls!",
+  "voice": "m",
+  "heard": "Danke, gleichfalls.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "b1a4a88d.mp3": {
@@ -4871,6 +6695,30 @@
   "heard": "Mitkommen!",
   "ok": true
  },
+ "b275c83b.mp3": {
+  "text": "Herzlichen Glückwunsch!",
+  "voice": "f",
+  "heard": "Herzlichen Glückwunsch!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b28827bd.mp3": {
+  "text": "Ich lade dich ein.",
+  "voice": "f",
+  "heard": "Ich lade dich an.",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
+ "b28c8584.mp3": {
+  "text": "die Leute (Plural)",
+  "voice": "m",
+  "heard": "Die Leute plural.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b2d33233.mp3": {
   "text": "Ich heiße Karim.",
   "voice": "f",
@@ -4891,6 +6739,14 @@
   "text": "Ja, hier. Und die Schuhe hier kosten nur dreißig Euro.",
   "voice": "f",
   "heard": "Ja, hier und die Schuhe hier kosten nur 30 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b3ae8f72.mp3": {
+  "text": "Ich bin jetzt dreißig.",
+  "voice": "f",
+  "heard": "Ich bin jetzt 30.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4925,6 +6781,14 @@
   "take": 0,
   "ok": true
  },
+ "b3eef77c.mp3": {
+  "text": "Danke schön!",
+  "voice": "m",
+  "heard": "Dankeschön.",
+  "score": 0,
+  "take": 0,
+  "ok": false
+ },
  "b435f211.mp3": {
   "text": "Null, eins, sechs, null, vier, sieben, zwei, acht, eins, fünf.",
   "voice": "m",
@@ -4945,11 +6809,27 @@
   "heard": "Jetzt!",
   "ok": true
  },
+ "b4c2b36d.mp3": {
+  "text": "ledig",
+  "voice": "m",
+  "heard": "LEADY",
+  "score": 0,
+  "take": 0,
+  "ok": false
+ },
  "b51a3599.mp3": {
   "text": "halb",
   "voice": "m",
   "heard": "HALP",
   "ok": false
+ },
+ "b5257e8e.mp3": {
+  "text": "einladen",
+  "voice": "m",
+  "heard": "Einladen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "b5316e93.mp3": {
   "text": "Hallo, Sara!",
@@ -4977,10 +6857,34 @@
   "heard": "Im Sommer. Schön.",
   "ok": true
  },
+ "b65aa7a9.mp3": {
+  "text": "Er ist dreiundzwanzig Jahre alt.",
+  "voice": "m",
+  "heard": "Er ist 23 Jahre alt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b67e5847.mp3": {
+  "text": "Wir tanzen und essen viel.",
+  "voice": "m",
+  "heard": "Wir tanzen und essen viel.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b682dc18.mp3": {
   "text": "die Karte, die Karten",
   "voice": "m",
   "heard": "die Karte, die Karten",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b6c672db.mp3": {
+  "text": "Deine Familie ist sehr groß!",
+  "voice": "f",
+  "heard": "Deine Familie ist sehr groß.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4993,6 +6897,14 @@
   "take": 0,
   "ok": false
  },
+ "b77b2189.mp3": {
+  "text": "danke für die Einladung!",
+  "voice": "m",
+  "heard": "Danke für die Einladung.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b781b3ee.mp3": {
   "text": "Am Sonntag ist die Bäckerei geschlossen.",
   "voice": "f",
@@ -5003,6 +6915,30 @@
   "text": "Mir geht es gut.",
   "voice": "f",
   "heard": "Mir geht es gut.",
+  "ok": true
+ },
+ "b792b7c7.mp3": {
+  "text": "Meine Oma ist klein.",
+  "voice": "f",
+  "heard": "Meine Oma ist klein.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b7a4906f.mp3": {
+  "text": "Ihre Haare sind sehr lang!",
+  "voice": "f",
+  "heard": "Ihre Haare sind sehr lang.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b80443f6.mp3": {
+  "text": "Gut, dann zwei Stück, bitte.",
+  "voice": "f",
+  "heard": "Gut, dann zwei Stück bitte.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "b80fe1c5.mp3": {
@@ -5027,6 +6963,22 @@
   "take": 0,
   "ok": true
  },
+ "b8e7f5aa.mp3": {
+  "text": "Herzlichen Glückwunsch!",
+  "voice": "m",
+  "heard": "Herzlichen Glückwunsch!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b9294cd6.mp3": {
+  "text": "Mein Opa trinkt gern Tee.",
+  "voice": "f",
+  "heard": "Mein Opa trinkt gern Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b92e2f5b.mp3": {
   "text": "Zahlen Sie zusammen?",
   "voice": "f",
@@ -5045,6 +6997,14 @@
   "text": "Um acht Uhr? Der Film beginnt um halb neun.",
   "voice": "m",
   "heard": "Um 8 Uhr, der Film beginnt um halb neun.",
+  "ok": true
+ },
+ "b99101d4.mp3": {
+  "text": "Wie alt ist deine Tochter jetzt?",
+  "voice": "m",
+  "heard": "Wie alt ist deine Tochter jetzt?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "b9cd54b7.mp3": {
@@ -5103,6 +7063,14 @@
   "take": 0,
   "ok": true
  },
+ "bb204076.mp3": {
+  "text": "aussehen",
+  "voice": "m",
+  "heard": "Aussehen!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "bb2377fb.mp3": {
   "text": "heiß",
   "voice": "m",
@@ -5124,6 +7092,22 @@
   "voice": "f",
   "heard": "Am Montag arbeite ich.",
   "ok": true
+ },
+ "bb7fc034.mp3": {
+  "text": "Ist das dein Vater?",
+  "voice": "f",
+  "heard": "Ist das dein Vater?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "bb8c580a.mp3": {
+  "text": "Meine Schwester heißt Hana.",
+  "voice": "f",
+  "heard": "Meine Schwester heißt Hannah.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
  },
  "bbbd0a83.mp3": {
   "text": "Der Preis ist gut.",
@@ -5149,6 +7133,22 @@
   "take": 0,
   "ok": true
  },
+ "bbd6a958.mp3": {
+  "text": "Nein, er ist erst vier. Er geht in den Kindergarten.",
+  "voice": "m",
+  "heard": "Nein, er ist erst vier. Er geht in den Kindergarten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "bc05becf.mp3": {
+  "text": "Wie alt ist deine Tochter?",
+  "voice": "m",
+  "heard": "Wie alt ist deine Tochter?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "bc757b73.mp3": {
   "text": "Ab Montag arbeite ich um acht.",
   "voice": "m",
@@ -5165,6 +7165,14 @@
   "text": "aus der Schweiz, in der Schweiz",
   "voice": "m",
   "heard": "Aus der Schweiz in der Schweiz.",
+  "ok": true
+ },
+ "bc9d81fb.mp3": {
+  "text": "Wir tanzen gern.",
+  "voice": "f",
+  "heard": "Wir tanzen gern.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "bcb07f3c.mp3": {
@@ -5259,6 +7267,14 @@
   "heard": "O-T-Q-R-S-T-U",
   "ok": false
  },
+ "bfea41ed.mp3": {
+  "text": "Deine Eltern sind sehr nett.",
+  "voice": "f",
+  "heard": "Deine Eltern sind sehr nett.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c0354706.mp3": {
   "text": "der Termin, die Termine",
   "voice": "m",
@@ -5313,10 +7329,26 @@
   "take": 0,
   "ok": true
  },
+ "c1774bf5.mp3": {
+  "text": "besuchen",
+  "voice": "m",
+  "heard": "Besuchen!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c1a92d51.mp3": {
   "text": "Tschüss! Bis morgen!",
   "voice": "f",
   "heard": "Tschüss! Bis morgen!",
+  "ok": true
+ },
+ "c1b8df42.mp3": {
+  "text": "Entschuldigung, was kostet der Kuchen?",
+  "voice": "f",
+  "heard": "Entschuldigung, was kostet der Kuchen?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "c1bf9f77.mp3": {
@@ -5387,6 +7419,22 @@
   "take": 0,
   "ok": true
  },
+ "c278a668.mp3": {
+  "text": "Vielen Dank, das ist lieb von dir!",
+  "voice": "m",
+  "heard": "Vielen Dank, das ist Lieb von dir.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c2eb8c15.mp3": {
+  "text": "Sind Sie verheiratet?",
+  "voice": "m",
+  "heard": "Sind Sie verheiratet?",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "c2f9bf06.mp3": {
   "text": "nicht",
   "voice": "m",
@@ -5409,6 +7457,14 @@
   "take": 0,
   "ok": true
  },
+ "c3511cc7.mp3": {
+  "text": "Was machst du am Wochenende? Besuchst du deinen Bruder?",
+  "voice": "m",
+  "heard": "Was machst du am Wochenende? Besuchst du deinen Bruder?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c35adee0.mp3": {
   "text": "Mein Name ist Lang, Peter Lang. Woher kommen Sie?",
   "voice": "m",
@@ -5419,6 +7475,14 @@
   "text": "Guten Abend! Ein Tisch für zwei?",
   "voice": "m",
   "heard": "Guten Abend. Ein Tisch für zwei?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c3ac3bc8.mp3": {
+  "text": "Das ist Tim, ein Freund von mir. Mein Freund heißt Jan. Er wohnt in Wien.",
+  "voice": "f",
+  "heard": "Das ist Tim, ein Freund von mir. Mein Freund heißt Jan. Er wohnt in Wien.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5451,10 +7515,26 @@
   "take": 0,
   "ok": false
  },
+ "c42cb257.mp3": {
+  "text": "Das Geschenk ist für dich.",
+  "voice": "f",
+  "heard": "Das Geschenk ist für dich.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c4758f12.mp3": {
   "text": "der Geburtstag, die Geburtstage",
   "voice": "m",
   "heard": "Der Geburtstag, die Geburtstage.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c4eb884a.mp3": {
+  "text": "Ist das deine Schwester?",
+  "voice": "m",
+  "heard": "Ist das deine Schwester?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5465,10 +7545,42 @@
   "heard": "Hallo Jan. Ich bin Mona aus Cairo. Ich lerne Deutsch. Du lernst Arabisch, richtig?",
   "ok": false
  },
+ "c55beb89.mp3": {
+  "text": "Ich gratuliere dir!",
+  "voice": "f",
+  "heard": "Ich gratuliere dir.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c56435f1.mp3": {
+  "text": "Mein Bruder ist sehr groß.",
+  "voice": "f",
+  "heard": "Mein Bruder ist sehr groß.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c58e9441.mp3": {
+  "text": "Ich wohne noch bei meinen Eltern.",
+  "voice": "m",
+  "heard": "Ich wohne noch bei meinen Eltern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c5a3a001.mp3": {
   "text": "Am Abend sehe ich fern.",
   "voice": "f",
   "heard": "Am Abend sehe ich Fern.",
+  "ok": true
+ },
+ "c5cecf8a.mp3": {
+  "text": "die Schwester, die Schwestern",
+  "voice": "m",
+  "heard": "Die Schwester, die Schwestern.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "c5e98141.mp3": {
@@ -5513,6 +7625,22 @@
   "take": 1,
   "ok": false
  },
+ "c6f41e67.mp3": {
+  "text": "Ist das dein Bruder?",
+  "voice": "m",
+  "heard": "Ist das dein Bruder?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c76ba9cc.mp3": {
+  "text": "Mein Kind ist drei Jahre alt.",
+  "voice": "m",
+  "heard": "Mein Kind ist drei Jahre alt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c77ae207.mp3": {
   "text": "Kann ich mit Karte zahlen?",
   "voice": "f",
@@ -5521,10 +7649,34 @@
   "take": 2,
   "ok": false
  },
+ "c86097a5.mp3": {
+  "text": "Meine Tochter ist sieben Jahre alt.",
+  "voice": "f",
+  "heard": "Meine Tochter ist sieben Jahre alt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c883b783.mp3": {
+  "text": "Wir haben einen Jungen und ein Mädchen.",
+  "voice": "f",
+  "heard": "Wir haben einen Jungen und ein Mädchen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c8ded199.mp3": {
   "text": "Brot haben wir leider nicht mehr. Aber wir haben noch Brötchen.",
   "voice": "f",
   "heard": "Brot haben wir leider nicht mehr, aber wir haben noch Brötchen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c9009b66.mp3": {
+  "text": "der Bruder, die Brüder",
+  "voice": "m",
+  "heard": "Der Bruder, die Brüder.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5557,6 +7709,14 @@
   "take": 0,
   "ok": false
  },
+ "c95ba982.mp3": {
+  "text": "Das sind meine Geschwister.",
+  "voice": "m",
+  "heard": "Das sind meine Geschwister.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c9ab6187.mp3": {
   "text": "Es gibt heute Fisch.",
   "voice": "f",
@@ -5573,6 +7733,14 @@
   "take": 0,
   "ok": false
  },
+ "ca2e5bc5.mp3": {
+  "text": "Er ist dreiundzwanzig. Er ist verheiratet und hat ein Kind.",
+  "voice": "f",
+  "heard": "Er ist 23. Er ist verheiratet und hat ein Kind.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "ca3202b1.mp3": {
   "text": "und",
   "voice": "m",
@@ -5583,6 +7751,14 @@
   "text": "null, eins, sieben, sechs, drei, vier, acht, zwei",
   "voice": "m",
   "heard": "0, 1, 7, 6, 3, 4, 8, 2",
+  "ok": true
+ },
+ "ca49315d.mp3": {
+  "text": "der Gruß, die Grüße",
+  "voice": "m",
+  "heard": "Der Gruß die Grüße.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "ca6331ed.mp3": {
@@ -5607,6 +7783,14 @@
   "text": "Wie alt sind Sie?",
   "voice": "m",
   "heard": "Wie alt sind Sie?",
+  "ok": true
+ },
+ "cadac397.mp3": {
+  "text": "Er ist ein Bekannter von mir.",
+  "voice": "f",
+  "heard": "Er ist ein Bekannter von mir.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "cae9dae6.mp3": {
@@ -5685,6 +7869,22 @@
   "heard": "Mein Name ist Nadia Khalil.",
   "ok": true
  },
+ "cce50cba.mp3": {
+  "text": "Mein Ehemann arbeitet in Köln.",
+  "voice": "f",
+  "heard": "Mein Ehemann arbeitet in Köln.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "cce91810.mp3": {
+  "text": "Das ist der Bruder von Anna.",
+  "voice": "m",
+  "heard": "Das ist der Bruder von Anna.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "cd106147.mp3": {
   "text": "Am Samstag? Leider nicht. Ich arbeite.",
   "voice": "f",
@@ -5703,6 +7903,14 @@
   "text": "Heute ist der zweite Mai.",
   "voice": "f",
   "heard": "Heute ist der zweite Mai.",
+  "ok": true
+ },
+ "cd8bf422.mp3": {
+  "text": "Jonas ist mein Kollege. Seine Familie wohnt in Hamburg.",
+  "voice": "f",
+  "heard": "Jonas ist mein Kollege. Seine Familie wohnt in Hamburg.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "cdb591e3.mp3": {
@@ -5741,6 +7949,14 @@
   "text": "Der Laden ist klein.",
   "voice": "f",
   "heard": "Der Laden ist klein.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ce34546e.mp3": {
+  "text": "Liebe Lena, lieber Max,",
+  "voice": "m",
+  "heard": "Liebe Lena, lieber Max.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5793,6 +8009,22 @@
   "text": "Gestern war ich krank.",
   "voice": "m",
   "heard": "Gestern war ich krank.",
+  "ok": true
+ },
+ "cf1b6d94.mp3": {
+  "text": "kurz",
+  "voice": "m",
+  "heard": "Kurz.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "cf3d47eb.mp3": {
+  "text": "Mein Bruder ist lustig.",
+  "voice": "m",
+  "heard": "Mein Bruder ist lustig.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "cfb7cc46.mp3": {
@@ -5853,11 +8085,35 @@
   "take": 0,
   "ok": true
  },
+ "d1e95e27.mp3": {
+  "text": "der Partner, die Partner",
+  "voice": "m",
+  "heard": "Der Partner, die Partner.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "d23db279.mp3": {
+  "text": "die Freundin, die Freundinnen",
+  "voice": "m",
+  "heard": "Die Freundinnen, die Freundinnen.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
  "d250a30f.mp3": {
   "text": "Am Sonntag ist das Geschäft geschlossen.",
   "voice": "f",
   "heard": "Am Sonntag ist das Geschäft geschlossen.",
   "ok": true
+ },
+ "d2daeb45.mp3": {
+  "text": "deine Lea",
+  "voice": "m",
+  "heard": "Deine Lia.",
+  "score": 0.5,
+  "take": 1,
+  "ok": false
  },
  "d2ff4e69.mp3": {
   "text": "aufstehen",
@@ -5884,6 +8140,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "d37ea33d.mp3": {
+  "text": "Ein Stück kostet zwei Euro achtzig.",
+  "voice": "m",
+  "heard": "Ein Stück kostet 2,80 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
  },
  "d3f176f6.mp3": {
   "text": "das Land, die Länder",
@@ -5923,6 +8187,14 @@
   "heard": "Zusamm.",
   "ok": false
  },
+ "d4d6ef5a.mp3": {
+  "text": "Sie ist groß, und ihre Haare sind kurz.",
+  "voice": "m",
+  "heard": "Sie ist groß und ihre Haare sind kurz.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d4dfc67c.mp3": {
   "text": "Guten Morgen, Frau Weber!",
   "voice": "f",
@@ -5957,6 +8229,14 @@
   "heard": "Leider kann ich am Montag nicht zum Kurs kommen. Ich bin krank. Was sind die Hausaufgaben?",
   "ok": true
  },
+ "d561866b.mp3": {
+  "text": "Meine Eltern sind noch jung.",
+  "voice": "f",
+  "heard": "Meine Eltern sind noch jung.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d5a33d37.mp3": {
   "text": "sein",
   "voice": "m",
@@ -5977,6 +8257,14 @@
   "take": 0,
   "ok": false
  },
+ "d61708cd.mp3": {
+  "text": "Das ist meine Mutter.",
+  "voice": "m",
+  "heard": "Das ist meine Mutter.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d627c992.mp3": {
   "text": "Mein Name ist Braun.",
   "voice": "m",
@@ -5987,6 +8275,14 @@
   "text": "Die Milch ist im Kühlschrank.",
   "voice": "f",
   "heard": "Die Milch ist im Kühlschrank.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "d67cd83a.mp3": {
+  "text": "Wer ist das auf dem Foto?",
+  "voice": "f",
+  "heard": "Wer ist das auf dem Foto?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -6003,6 +8299,14 @@
   "text": "Jetzt wohne ich in Köln.",
   "voice": "f",
   "heard": "Jetzt wohne ich in Köln.",
+  "ok": true
+ },
+ "d6d55889.mp3": {
+  "text": "Meine Mutter heißt Rana.",
+  "voice": "f",
+  "heard": "Meine Mutter heißt Rana.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "d6d91da1.mp3": {
@@ -6023,6 +8327,14 @@
   "text": "Er liest die Zeitung.",
   "voice": "m",
   "heard": "Er liest die Zeitung.",
+  "ok": true
+ },
+ "d7e86544.mp3": {
+  "text": "Seine Schwester heißt Mona.",
+  "voice": "m",
+  "heard": "Seine Schwester heißt Mona.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "d7f0409a.mp3": {
@@ -6055,10 +8367,26 @@
   "take": 0,
   "ok": true
  },
+ "d84870c7.mp3": {
+  "text": "der Mann, die Männer",
+  "voice": "m",
+  "heard": "der Mann die Männer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d88dea1a.mp3": {
   "text": "Guten Abend! Ich bin der neue Nachbar.",
   "voice": "m",
   "heard": "Guten Abend. Ich bin der neue Nachbar.",
+  "ok": true
+ },
+ "d8ef5bc3.mp3": {
+  "text": "Meine Kollegin ist freundlich.",
+  "voice": "m",
+  "heard": "Meine Kollegin ist freundlich.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "d8f1ad63.mp3": {
@@ -6077,6 +8405,14 @@
   "take": 1,
   "ok": true
  },
+ "d91a86ed.mp3": {
+  "text": "Ich besuche meinen Vater.",
+  "voice": "m",
+  "heard": "Ich besuche meinen Vater.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d97f2674.mp3": {
   "text": "B, E, R, L, I, N",
   "voice": "m",
@@ -6084,6 +8420,14 @@
   "score": 0,
   "take": 0,
   "ok": false
+ },
+ "d9be5d36.mp3": {
+  "text": "Ich wünsche dir alles Gute zum Geburtstag!",
+  "voice": "m",
+  "heard": "Ich wünsche dir alles Gute zum Geburtstag.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "d9e4f2c0.mp3": {
   "text": "Ich esse gern Fisch und Reis. Und du?",
@@ -6107,10 +8451,42 @@
   "heard": "Der Vorname, die Vornamen.",
   "ok": true
  },
+ "db1e7a45.mp3": {
+  "text": "verheiratet",
+  "voice": "m",
+  "heard": "verheiratet",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "db2142b7.mp3": {
+  "text": "Das ist meine Familie. Links ist mein Vater, und rechts ist meine Mutter.",
+  "voice": "f",
+  "heard": "Das ist meine Familie. Links ist mein Vater und rechts ist meine Mutter.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "db35d937.mp3": {
   "text": "spät",
   "voice": "m",
   "heard": "Spät.",
+  "ok": true
+ },
+ "db40c0cf.mp3": {
+  "text": "Und ihre Kinder sprechen Deutsch und Spanisch.",
+  "voice": "f",
+  "heard": "und ihre Kinder sprechen Deutsch und Spanisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "db68fe15.mp3": {
+  "text": "Ihr Partner kommt aus Spanien.",
+  "voice": "f",
+  "heard": "Ihr Partner kommt aus Spanien.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "db7caff3.mp3": {
@@ -6118,6 +8494,30 @@
   "voice": "m",
   "heard": "Danke gut. Und Ihnen?",
   "ok": true
+ },
+ "dbace00d.mp3": {
+  "text": "Meine Großeltern wohnen bei uns.",
+  "voice": "f",
+  "heard": "Meine Großeltern wohnen bei uns.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "dbb5c310.mp3": {
+  "text": "Meine Eltern sind noch jung.",
+  "voice": "m",
+  "heard": "Meine Eltern sind noch jung.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "dc0d5999.mp3": {
+  "text": "nett",
+  "voice": "m",
+  "heard": "nö",
+  "score": 0,
+  "take": 0,
+  "ok": false
  },
  "dc21050e.mp3": {
   "text": "Siebzehn, bitte.",
@@ -6131,6 +8531,14 @@
   "text": "Welches Datum ist heute?",
   "voice": "f",
   "heard": "Welches Datum ist heute?",
+  "ok": true
+ },
+ "dc663849.mp3": {
+  "text": "Meine Familie ist groß.",
+  "voice": "f",
+  "heard": "Meine Familie ist groß.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "dc67714f.mp3": {
@@ -6165,6 +8573,22 @@
   "heard": "Anrufen",
   "ok": true
  },
+ "dd7d0dc9.mp3": {
+  "text": "Meine Familie ist sehr klein.",
+  "voice": "f",
+  "heard": "Meine Familie ist sehr klein.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "dd864d47.mp3": {
+  "text": "die Großmutter, die Großmütter",
+  "voice": "m",
+  "heard": "Die Großmutter, die Großmütter.",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "ddc07a56.mp3": {
   "text": "Tschüss! Bis morgen!",
   "voice": "m",
@@ -6189,6 +8613,14 @@
   "text": "Ich lerne Deutsch.",
   "voice": "m",
   "heard": "Ich lerne Deutsch.",
+  "ok": true
+ },
+ "de51669e.mp3": {
+  "text": "Sie ist jetzt sieben. Ihr Bruder ist schon zehn.",
+  "voice": "f",
+  "heard": "Sie ist jetzt sieben. Ihr Bruder ist schon zehn.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "de6c9891.mp3": {
@@ -6265,6 +8697,14 @@
   "heard": "Du.",
   "ok": false
  },
+ "e010b988.mp3": {
+  "text": "Mein Großvater liest gern.",
+  "voice": "f",
+  "heard": "Mein Großvater liest gern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e02fc253.mp3": {
   "text": "das Café, die Cafés",
   "voice": "m",
@@ -6279,6 +8719,14 @@
   "heard": "Ich frühstücke immer um sieben.",
   "ok": true
  },
+ "e098cbfe.mp3": {
+  "text": "Seine Haare sind nicht lang.",
+  "voice": "f",
+  "heard": "Seine Haare sind nicht lang.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e0d21b74.mp3": {
   "text": "Viele Grüße",
   "voice": "m",
@@ -6289,6 +8737,14 @@
   "text": "Hast du heute Abend Zeit?",
   "voice": "m",
   "heard": "Hast du heute Abend Zeit?",
+  "ok": true
+ },
+ "e132eb9f.mp3": {
+  "text": "Seine Augen sind braun.",
+  "voice": "f",
+  "heard": "Seine Augen sind braun.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "e1491f75.mp3": {
@@ -6324,6 +8780,14 @@
   "voice": "m",
   "heard": "7 8 9 10 11 12",
   "ok": true
+ },
+ "e1c1b40c.mp3": {
+  "text": "Das ist Mona. Ihr Bruder heißt Omar.",
+  "voice": "m",
+  "heard": "Das ist Mona. Ihr Bruder heißt Oma.",
+  "score": 0.86,
+  "take": 0,
+  "ok": false
  },
  "e1dca2ca.mp3": {
   "text": "Welche Sprachen sprichst du?",
@@ -6370,6 +8834,30 @@
   "voice": "m",
   "heard": "0, 1, 2, 3, 4, 5, 6",
   "ok": true
+ },
+ "e3847556.mp3": {
+  "text": "Liebe Mona, danke für die Einladung! Leider habe ich am Samstag keine Zeit. Ich wünsche dir alles Gute zum Geburtstag! Lea",
+  "voice": "m",
+  "heard": "Liebe Mona, danke für die Einladung. Leider habe ich am Samstag keine Zeit. Ich wünsche dir alles Gute zum Geburtstag, lehe.",
+  "score": 0.95,
+  "take": 0,
+  "ok": false
+ },
+ "e3b80e03.mp3": {
+  "text": "Wie alt ist dein Bruder?",
+  "voice": "m",
+  "heard": "Wie alt ist dein Bruder?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "e3c070c7.mp3": {
+  "text": "Das ist Omar. Seine Schwester heißt Mona.",
+  "voice": "m",
+  "heard": "Das ist Oma. Seine Schwester heißt Mona.",
+  "score": 0.86,
+  "take": 0,
+  "ok": false
  },
  "e3da4df5.mp3": {
   "text": "In der Nacht schlafe ich.",
@@ -6419,6 +8907,14 @@
   "heard": "Ich spreche arabisch und englisch. Ich lerne Deutsch.",
   "ok": true
  },
+ "e5bc3e3d.mp3": {
+  "text": "Wie sieht er aus?",
+  "voice": "m",
+  "heard": "Wie sieht er aus?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e5e786d7.mp3": {
   "text": "Ja, sehr gut!",
   "voice": "f",
@@ -6439,10 +8935,34 @@
   "heard": "01763402 und 80950 0 1 7 6 3 4 8 2 9 5 0",
   "ok": false
  },
+ "e6ea6258.mp3": {
+  "text": "die Familie, die Familien",
+  "voice": "m",
+  "heard": "Die Familie, die Familien.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "e7036761.mp3": {
+  "text": "der Junge, die Jungen",
+  "voice": "m",
+  "heard": "Der Junge, die Jung.",
+  "score": 0.75,
+  "take": 2,
+  "ok": false
+ },
  "e787f3c4.mp3": {
   "text": "Danke.",
   "voice": "f",
   "heard": "Danke.",
+  "ok": true
+ },
+ "e7d9a220.mp3": {
+  "text": "Und das Mädchen?",
+  "voice": "f",
+  "heard": "und das Mädchen.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "e80f6724.mp3": {
@@ -6503,10 +9023,34 @@
   "heard": "Die Minute, die Minuten.",
   "ok": true
  },
+ "e8f4c198.mp3": {
+  "text": "Hier, das Geschenk ist für dich.",
+  "voice": "m",
+  "heard": "Hier das Geschenk ist für dich.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e8fcdfd5.mp3": {
   "text": "Das ist ein Apfel. Das ist kein Apfel.",
   "voice": "m",
   "heard": "Das ist ein Apfel. Das ist kein Apfel.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "e9036644.mp3": {
+  "text": "Nein, keinen Bruder. Aber Anna ist verheiratet. Ihr Mann ist wie ein Bruder für mich.",
+  "voice": "m",
+  "heard": "Nein, keinen Bruder, aber Anna ist verheiratet, ihr Mann ist ihr ein Bruder für mich.",
+  "score": 0.93,
+  "take": 0,
+  "ok": false
+ },
+ "e91b3237.mp3": {
+  "text": "Meine Schwester ist klein.",
+  "voice": "m",
+  "heard": "Meine Schwester ist klein.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -6537,6 +9081,22 @@
   "heard": "das Mittagessen",
   "score": 1,
   "take": 2,
+  "ok": true
+ },
+ "e9ed908b.mp3": {
+  "text": "Das ist Omar. Sein Vater heißt Ali.",
+  "voice": "m",
+  "heard": "Das ist Oma. Sein Vater heißt Ali.",
+  "score": 0.86,
+  "take": 0,
+  "ok": false
+ },
+ "ea2eb745.mp3": {
+  "text": "Ich habe einen Bruder.",
+  "voice": "m",
+  "heard": "Ich habe einen Bruder.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "ea67c434.mp3": {
@@ -6597,6 +9157,14 @@
   "take": 0,
   "ok": false
  },
+ "ebe718b6.mp3": {
+  "text": "Ihre Haare sind lang und braun.",
+  "voice": "m",
+  "heard": "Ihre Haare sind lang und braun.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "ebe98991.mp3": {
   "text": "Ich wohne in Alexandria.",
   "voice": "m",
@@ -6607,6 +9175,30 @@
   "text": "Gut, um drei. Bis Sonntag!",
   "voice": "m",
   "heard": "Gut um drei. Bis Sonntag.",
+  "ok": true
+ },
+ "ec07e084.mp3": {
+  "text": "Meine Schwester studiert in Berlin.",
+  "voice": "f",
+  "heard": "Meine Schwester studiert in Berlin.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ec0cc276.mp3": {
+  "text": "Seine Augen sind braun.",
+  "voice": "m",
+  "heard": "Seine Augen sind braun.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ec3c47fc.mp3": {
+  "text": "die Großeltern (Plural)",
+  "voice": "m",
+  "heard": "Die Großeltern plural",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "ec5ec2bf.mp3": {
@@ -6621,6 +9213,14 @@
   "text": "Der Kaffee ist nicht gut.",
   "voice": "m",
   "heard": "Der Kaffee ist nicht gut.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ecbf0326.mp3": {
+  "text": "Deine Schwester ist sehr schön.",
+  "voice": "f",
+  "heard": "Deine Schwester ist sehr schön.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -6655,11 +9255,43 @@
   "heard": "Nicht so gut.",
   "ok": true
  },
+ "ed645d46.mp3": {
+  "text": "Ist das Ihre Tochter?",
+  "voice": "m",
+  "heard": "Ist das Ihre Tochter?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "ed8257df.mp3": {
   "text": "Danke, gut. Und dir?",
   "voice": "f",
   "heard": "Danke gut. Und dir!",
   "ok": true
+ },
+ "eda33c60.mp3": {
+  "text": "Ist das dein Sohn? — Nein, das ist mein Bruder. Mein Sohn ist noch ein Baby.",
+  "voice": "f",
+  "heard": "Ist das dein Sohn? Nein, das ist mein Bruder. Mein Sohn ist noch ein Baby.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "eda378c9.mp3": {
+  "text": "Ich freue mich auf eure Hochzeit! Bis Samstag!",
+  "voice": "m",
+  "heard": "Ich freue mich auf eure Hochzeit. Bis Samstag.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "edf39887.mp3": {
+  "text": "Dein Omar",
+  "voice": "m",
+  "heard": "Dein Oma",
+  "score": 0.5,
+  "take": 0,
+  "ok": false
  },
  "ee0e3333.mp3": {
   "text": "Hier ist die Speisekarte. Was möchten Sie trinken?",
@@ -6751,6 +9383,14 @@
   "take": 0,
   "ok": true
  },
+ "ef93f3d1.mp3": {
+  "text": "Wir haben zwei Kinder.",
+  "voice": "f",
+  "heard": "Wir haben zwei Kinder.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "efab2a12.mp3": {
   "text": "Sechs Eier kosten zwei Euro neunundvierzig.",
   "voice": "m",
@@ -6759,10 +9399,26 @@
   "take": 0,
   "ok": false
  },
+ "f04cafd7.mp3": {
+  "text": "Wir laden euch zum Essen ein.",
+  "voice": "m",
+  "heard": "Wir laden euch zum Essen ein.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f0b1fc77.mp3": {
   "text": "Ein Glas Wasser, bitte!",
   "voice": "m",
   "heard": "Ein Glas Wasser, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f0d76d5f.mp3": {
+  "text": "Oh, vielen Dank! Das ist aber lieb von dir!",
+  "voice": "f",
+  "heard": "Oh, vielen Dank, das ist aber lieb von dir.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -6807,6 +9463,14 @@
   "take": 0,
   "ok": true
  },
+ "f22946c2.mp3": {
+  "text": "Mein Bruder ist groß.",
+  "voice": "m",
+  "heard": "Mein Bruder ist groß.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f23719f2.mp3": {
   "text": "kochen",
   "voice": "m",
@@ -6835,12 +9499,28 @@
   "take": 0,
   "ok": true
  },
+ "f3252b4a.mp3": {
+  "text": "der Freund, die Freunde",
+  "voice": "m",
+  "heard": "Der Freund, die Freunde.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f3671970.mp3": {
   "text": "Kann ich mit Karte zahlen?",
   "voice": "m",
   "heard": "Kann ich mit Karte zahlen?",
   "score": 1,
   "take": 0,
+  "ok": true
+ },
+ "f3839937.mp3": {
+  "text": "Die Party ist am Samstag.",
+  "voice": "f",
+  "heard": "Die Party ist am Samstag.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "f3f30e34.mp3": {
@@ -6865,6 +9545,14 @@
   "heard": "99",
   "ok": true
  },
+ "f4d1ef50.mp3": {
+  "text": "Ich bin nicht verheiratet.",
+  "voice": "m",
+  "heard": "Ich bin nicht verheiratet.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f5003a22.mp3": {
   "text": "Das Mittagessen ist um zwölf.",
   "voice": "f",
@@ -6883,6 +9571,30 @@
   "text": "danke",
   "voice": "m",
   "heard": "Danke.",
+  "ok": true
+ },
+ "f586fc5d.mp3": {
+  "text": "Ist das deine Mutter auf dem Foto?",
+  "voice": "m",
+  "heard": "Ist das deine Mutter auf dem Foto?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f5e4cdf1.mp3": {
+  "text": "Meine Mutter kocht sehr gut.",
+  "voice": "f",
+  "heard": "Meine Mutter kocht sehr gut.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f6002f07.mp3": {
+  "text": "Wie sieht deine Schwester aus?",
+  "voice": "m",
+  "heard": "Wie sieht deine Schwester aus?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "f606b992.mp3": {
@@ -6907,11 +9619,35 @@
   "take": 0,
   "ok": true
  },
+ "f618983d.mp3": {
+  "text": "Bis Samstag!",
+  "voice": "m",
+  "heard": "Bis Samstag!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f6bd3e82.mp3": {
+  "text": "jung",
+  "voice": "m",
+  "heard": "Jung.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f70fe8de.mp3": {
   "text": "Guten Abend! Ich heiße Karim.",
   "voice": "m",
   "heard": "Guten Abend, ich heiße Karin.",
   "ok": false
+ },
+ "f70feffd.mp3": {
+  "text": "der Kollege, die Kollegen",
+  "voice": "m",
+  "heard": "der Kollege, die Kollegen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "f73191b0.mp3": {
   "text": "Ich hätte gern ein halbes Kilo Käse und einen Liter Milch.",
@@ -6925,6 +9661,14 @@
   "text": "Mein Hobby ist Lesen.",
   "voice": "f",
   "heard": "Mein Hobby ist Lesen.",
+  "ok": true
+ },
+ "f79a27ee.mp3": {
+  "text": "Nein, das ist meine Oma. Meine Mutter ist hier links.",
+  "voice": "f",
+  "heard": "Nein, das ist meine Oma. Meine Mutter ist hier links.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "f7ca718e.mp3": {
@@ -6958,6 +9702,38 @@
   "score": 1,
   "take": 0,
   "ok": false
+ },
+ "f907248d.mp3": {
+  "text": "das Haar, die Haare",
+  "voice": "m",
+  "heard": "Das Haar, die Haare.",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
+ "f94c3753.mp3": {
+  "text": "Meine Eltern wohnen in Kairo.",
+  "voice": "f",
+  "heard": "Meine Eltern wohnen in Cairo.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
+ "f96d127b.mp3": {
+  "text": "Wie heißt dein Sohn?",
+  "voice": "m",
+  "heard": "Wie heißt dein Sohn?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "fa50214e.mp3": {
+  "text": "Die Lehrerin ist freundlich.",
+  "voice": "f",
+  "heard": "Die Lehrerin ist freundlich.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "fa7c29a7.mp3": {
   "text": "Guten Tag! Haben Sie am Mittwoch einen Termin frei?",
@@ -7015,6 +9791,14 @@
   "take": 0,
   "ok": true
  },
+ "fb3cbf51.mp3": {
+  "text": "Ich bin dreißig Jahre alt.",
+  "voice": "m",
+  "heard": "Ich bin 30 Jahre alt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "fb906f1c.mp3": {
   "text": "Was kostet das?",
   "voice": "m",
@@ -7035,6 +9819,14 @@
   "text": "Guten Morgen!",
   "voice": "m",
   "heard": "Guten Morgen.",
+  "ok": true
+ },
+ "fbd956ed.mp3": {
+  "text": "Mein Bruder heiratet im Juni.",
+  "voice": "m",
+  "heard": "Mein Bruder heiratet im Juni.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "fc090c6f.mp3": {
@@ -7070,6 +9862,14 @@
   "voice": "m",
   "heard": "Am Abend sehe ich hin.",
   "ok": false
+ },
+ "fce0964d.mp3": {
+  "text": "Kennst du seinen Bruder?",
+  "voice": "m",
+  "heard": "Kennst du seinen Bruder?",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "fcf1ca99.mp3": {
   "text": "Das schmeckt sehr gut.",
@@ -7109,6 +9909,14 @@
   "take": 0,
   "ok": true
  },
+ "fda8babd.mp3": {
+  "text": "Ja, ich habe zwei Schwestern. Anna ist fünfundzwanzig und Lena ist neunzehn.",
+  "voice": "m",
+  "heard": "Ja, ich habe zwei Schwestern. Anna ist 25 und Lena ist 19.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "fdad9497.mp3": {
   "text": "der Winter, die Winter",
   "voice": "m",
@@ -7139,6 +9947,22 @@
   "text": "die Stunde, die Stunden",
   "voice": "m",
   "heard": "Die Stunde, die Stunden.",
+  "ok": true
+ },
+ "feb28959.mp3": {
+  "text": "die Einladung, die Einladungen",
+  "voice": "m",
+  "heard": "Die Einladung, die Einladungen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ff02e23f.mp3": {
+  "text": "Ja, ich bin verheiratet.",
+  "voice": "m",
+  "heard": "Ja, ich bin verheiratet.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "ff612475.mp3": {

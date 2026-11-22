@@ -1,9 +1,10 @@
 // The German course's checks and audio. Reads every German line of the language tabs (the ~~~de, ~~~words,
-// ~~~dictate, ~~~speak and ~~~hear fences in js/tabs/dea1/), the same way js/lang.js reads them on the page.
+// ~~~dictate, ~~~speak, ~~~hear and ~~~read fences in js/tabs/dea1/), the same way js/lang.js reads them on the page.
+// Lines with no sound (the questions and options of ~~~hear, every line of ~~~read) come back with audio: false: lt checks them, audio skips them.
 //   node tools/de/de.js list            every line, its voice and its audio file (and which files are missing)
 //   node tools/de/de.js audio           makes the missing mp3s with Piper in Docker, has whisper write each one back, and
 //                                       records what it heard in audio/de/index.json; prints every line whisper heard differently
-//   node tools/de/de.js lt              sends every line to LanguageTool (docker run -d --name lt -p 127.0.0.1:8010:8081 meyay/languagetool)
+//   node tools/de/de.js lt [04.js]      sends every line (or one file's lines) to LanguageTool (docker run -d --name lt -p 127.0.0.1:8010:8081 meyay/languagetool)
 //   node tools/de/de.js prune           lists mp3s no line uses any more (deletes them with --yes)
 // tools/check.js uses collect() so a line without its audio fails `npm run check`.
 const fs = require('fs'), path = require('path'), vm = require('vm'), { execFileSync } = require('child_process');
@@ -34,7 +35,12 @@ function collect() {
             lines.push({ text: w, voice: 'm', at, kind });
             if (ex) lines.push({ text: ex, voice: 'f', at, kind });
           } else {
-            if (kind === 'hear' && (l.startsWith('? ') || l.startsWith('- '))) continue;   // questions and options have no sound
+            // questions and options have no sound, and neither has a reading text; their German still goes to LanguageTool
+            if (kind === 'read' || (kind === 'hear' && (l.startsWith('? ') || l.startsWith('- ')))) {
+              const t = l.replace(/^[?-] /, '').split(' || ')[0].replace(/ \*$/, '').trim();
+              if (t) lines.push({ text: t, voice: '', at, kind, audio: false });
+              continue;
+            }
             const x = deLine(l, kind === 'de' || kind === 'hear' ? sp : {});
             // a dictation line «S, A, L, A, H => Salah» sounds its left side; the right side is only the answer
             lines.push({ text: kind === 'dictate' ? x.de.split(' => ')[0] : x.de, voice: x.voice, at, kind });
@@ -43,7 +49,7 @@ function collect() {
       }
     }
   }
-  for (const l of lines) l.file = deFile(l.text, l.voice);
+  for (const l of lines) if (l.audio !== false) l.file = deFile(l.text, l.voice);
   return lines;
 }
 const unique = lines => [...new Map(lines.map(l => [l.file, l])).values()];
@@ -62,11 +68,13 @@ const numWord = w => {
 const norm = s => s.toLowerCase().normalize('NFC').replace(/[^\p{L}\p{N} ]/gu, ' ').replace(/\s+/g, ' ').trim()
   .split(' ').map(w => { const n = numWord(w); return n === null ? w : String(n); }).join(' ');
 
-module.exports = { collect };
+// the lines that need an mp3 (check.js, list, audio, prune)
+const sounded = () => collect().filter(l => l.audio !== false);
+module.exports = { collect, sounded };
 
 if (require.main === module) {
   const cmd = process.argv[2] || 'list';
-  const lines = collect(), all = unique(lines);
+  const every = collect(), lines = every.filter(l => l.audio !== false), all = unique(lines);
   if (cmd === 'list') {
     for (const l of all) console.log((fs.existsSync(path.join(ROOT, l.file)) ? '  ' : '✗ ') + l.voice + ' ' + path.basename(l.file) + '  ' + l.text);
     console.log(`${lines.length} lines, ${all.length} audio files, ${all.filter(l => !fs.existsSync(path.join(ROOT, l.file))).length} missing`);
@@ -96,12 +104,14 @@ if (require.main === module) {
   if (cmd === 'lt') {
     (async () => {
       let n = 0;
-      for (const l of all) {
+      // «lt 04.js» checks one file's lines only (a new unit), the whole course takes about 12 minutes
+      const only = process.argv[3], texts = [...new Map(every.filter(l => !only || l.at.startsWith(only + ':')).map(l => [l.text, l])).values()];
+      for (const l of texts) {
         const body = new URLSearchParams({ text: l.text, language: 'de-DE' });
         const r = await (await fetch('http://127.0.0.1:8010/v2/check', { method: 'POST', body })).json();
         for (const m of r.matches) { n++; console.log(`${l.at}  «${l.text}»\n    ${m.rule.id}: ${m.message}  -> ${m.replacements.slice(0, 3).map(x => x.value).join(' / ')}`); }
       }
-      console.log(`${all.length} lines checked, ${n} LanguageTool matches`);
+      console.log(`${texts.length} lines checked, ${n} LanguageTool matches`);
     })();
   }
   if (cmd === 'prune') {

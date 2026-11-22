@@ -161,8 +161,8 @@ if (DATA.glossary) DATA.glossary.forEach(cat => cat.items.forEach(it => {
   if (m[2] && !DATA[tab].some(c => c.items.some(x => x[0] === m[2]))) err(`glossary › ${it[0]}`, `المرجع بيشاور على درس مش موجود: «${ref}»`);
 }));
 
-// language tabs: every German line (~~~de, ~~~words, ~~~dictate, ~~~speak) needs its mp3 (node tools/de/de.js audio)
-for (const l of require('./de/de.js').collect())
+// language tabs: every spoken German line (~~~de, ~~~words, ~~~dictate, ~~~speak, the sound of ~~~hear) needs its mp3 (node tools/de/de.js audio)
+for (const l of require('./de/de.js').sounded())
   if (!fs.existsSync(path.join(ROOT, l.file))) err(`${l.at}`, `مفيش صوت للسطر «${l.text}» (${l.file}): شغّل node tools/de/de.js audio`);
 CMP.forEach((r, i) => { if (r.length !== 4) err(`CMP صف ${i + 1}`, 'لازم ٤ خانات: المهمة و bash و PowerShell و CMD'); });
 MISSIONS.forEach((m, i) => { if (!m.t || !m.d || !m.s) err(`تحدي ${i + 1}`, 'ناقصه t أو d أو s'); });
