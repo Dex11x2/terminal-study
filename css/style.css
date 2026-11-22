@@ -988,3 +988,151 @@ body[data-shell="dea1"]{--accent:var(--a-dea1);--t-bg:#1f1a0a;--t-fg:#f3ecd8;--t
 .hear-t summary{cursor:pointer;color:var(--muted);font-size:.9em}
 .read-t{border:1px solid var(--line);border-radius:8px;padding:10px 14px;background:var(--bg);text-align:left;overflow-wrap:anywhere}
 .read-t p{margin:3px 0}
+
+/* ===== the language courses (body.lang): a textbook, not a terminal =====
+   Lexend for the German (Readex Pro, the Arabic face, is built on it, so the two read as one family), warm paper,
+   navy ink, a thin black-red-gold rule on units and lessons, one colour per kind of material, lessons as cards. */
+:root{--de:"Lexend","Readex Pro",system-ui,sans-serif;--lg-paper:#fbf8f1;--lg-card:#ffffff;--lg-ink:#1b2540;--lg-line:#e7e0d2;--lg-soft:#f3eee3;
+  --k-de:#2c4a7c;--k-words:#0f766e;--k-hear:#6d28d9;--k-read:#8a5a00;--k-dictate:#b4233c;--k-speak:#c2410c;--k-yt:#b91c1c;--k-prompt:#475569;
+  --flag:linear-gradient(90deg,#141414 0 33.4%,#c8102e 33.4% 66.7%,#f2b705 66.7%)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--lg-paper:#16181d;--lg-card:#1f2229;--lg-ink:#e8eaf0;--lg-line:#353a45;--lg-soft:#262a33;
+  --k-de:#8fb3f0;--k-words:#5eead4;--k-hear:#c4b5fd;--k-read:#e3c35e;--k-dictate:#fb8aa0;--k-speak:#fdba74;--k-yt:#fca5a5;--k-prompt:#cbd5e1;
+  --flag:linear-gradient(90deg,#3a3a3a 0 33.4%,#e0475d 33.4% 66.7%,#f2c94c 66.7%)}}
+:root[data-theme="dark"]{--lg-paper:#16181d;--lg-card:#1f2229;--lg-ink:#e8eaf0;--lg-line:#353a45;--lg-soft:#262a33;
+  --k-de:#8fb3f0;--k-words:#5eead4;--k-hear:#c4b5fd;--k-read:#e3c35e;--k-dictate:#fb8aa0;--k-speak:#fdba74;--k-yt:#fca5a5;--k-prompt:#cbd5e1;
+  --flag:linear-gradient(90deg,#3a3a3a 0 33.4%,#e0475d 33.4% 66.7%,#f2c94c 66.7%)}
+body.lang{background:var(--lg-paper);--line:var(--lg-line)}
+body.lang [lang="de"],body.lang .de-t,body.lang .de-w,body.lang .read-t,body.lang .hq-o,body.lang .dict input,body.lang .prompt-ans{font-family:var(--de)}
+/* a German word inside Arabic text is a quiet chip in the text face, not monospace code */
+body.lang .reader code,body.lang section.cat code,body.lang .goal code,body.lang #fc code{font-family:var(--de);font-size:.95em;font-weight:500;background:var(--lg-soft);color:var(--lg-ink);border-radius:6px;padding:0 7px;border-bottom:1px solid var(--lg-line)}
+body.lang .foot-code{display:none}
+.foot-lang{display:none}
+body.lang .foot-lang{display:block}
+/* the level and the unit: the flag rule on top, «الوحدة ١» above the unit's name */
+body.lang #list{counter-reset:unit}
+body.lang .lvl{border-top:0;padding-top:22px;position:relative}
+body.lang .lvl::before{content:"";position:absolute;top:0;inset-inline:0;height:4px;border-radius:2px;background:var(--flag)}
+body.lang .lvl h2{color:var(--lg-ink)}
+body.lang section.cat{counter-increment:unit;background:var(--lg-card);border:1px solid var(--lg-line);border-radius:14px;padding:22px 22px 18px;margin-top:26px;position:relative;overflow:hidden}
+body.lang section.cat::before{content:"";position:absolute;top:0;inset-inline:0;height:4px;background:var(--flag)}
+body.lang section.cat>h3{flex-wrap:wrap;color:var(--lg-ink);font-size:24px}
+body.lang section.cat>h3::before{content:"الوحدة " counter(unit,arabic-indic);flex-basis:100%;font-size:13px;font-weight:600;color:var(--accent)}
+body.lang section.cat>h3 small{font-size:13.5px}
+@media (max-width:600px){body.lang section.cat{padding:20px 14px 14px}}
+/* lessons as cards */
+.lcards{list-style:none;margin:14px 0 6px;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.lcard{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"n de" "n t" "n sk";gap:2px 12px;align-items:start;padding:12px 14px;border:1px solid var(--lg-line);border-radius:12px;background:var(--lg-paper);cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.lcard:hover,.lcard:focus-visible{border-color:var(--accent);box-shadow:0 6px 18px -12px rgba(20,24,32,.35);outline:none}
+.lc-n{grid-area:n;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;background:var(--lg-soft);color:var(--lg-ink);border:2px solid var(--lg-line)}
+.lcard.is-done .lc-n{background:var(--ok);border-color:var(--ok);color:#fff}
+.lc-de{grid-area:de;font-family:var(--de);font-weight:600;font-size:17px;color:var(--lg-ink);text-align:left;overflow-wrap:anywhere}
+.lc-t{grid-area:t;color:var(--muted);font-size:14.5px;line-height:1.6}
+.lcard .skills{grid-area:sk;margin-top:6px}
+body.todo .lcard.is-done{display:none}
+/* what a lesson trains: small pills in the kind colour */
+.skills{display:flex;flex-wrap:wrap;gap:5px}
+.sk{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;line-height:1.5;padding:1px 9px 1px 8px;border-radius:999px;color:var(--k);background:color-mix(in srgb,var(--k) 11%,transparent);font-weight:500;white-space:nowrap}
+.sk .li{width:14px;height:14px}
+.sk-words{--k:var(--k-words)}.sk-hear{--k:var(--k-hear)}.sk-read{--k:var(--k-read)}.sk-dictate{--k:var(--k-dictate)}.sk-speak{--k:var(--k-speak)}.sk-yt{--k:var(--k-yt)}
+/* the lesson page */
+body.lang article.cmd{background:var(--lg-card);border:1px solid var(--lg-line);border-radius:14px;padding:0 22px 18px;position:relative;overflow:hidden}
+body.lang article.cmd::before{content:"";display:block;height:4px;margin:0 -22px 18px;background:var(--flag)}
+@media (max-width:600px){body.lang article.cmd{padding:0 14px 14px}body.lang article.cmd::before{margin:0 -14px 14px}}
+body.lang .cmd-h{flex-direction:column;align-items:flex-start;gap:2px;margin-bottom:8px}
+body.lang .cmd-h .lnum{font-size:13px;font-weight:600;color:var(--accent)}
+body.lang .cmd-h .name{font-family:var(--de);font-weight:600;font-size:clamp(22px,4.6vw,30px);line-height:1.3;color:var(--lg-ink);align-self:stretch;text-align:left}
+body.lang .cmd-h .title{font-size:17px;color:var(--muted);font-weight:500}
+body.lang article.cmd>.skills{margin:2px 0 12px}
+body.lang .teach>summary{color:var(--lg-ink)}
+body.lang .teach h4{color:var(--lg-ink);font-size:19px;padding-inline-start:12px;border-inline-start:4px solid var(--accent);margin-top:26px}
+body.lang .try{background:var(--lg-soft);border:0;border-radius:10px;padding:12px 14px}
+body.lang .try .lbl{color:var(--lg-ink)}
+body.lang .try .done{font-weight:600}
+/* every box of material: the kind colour on its edge and in its label */
+.de-say{--k:var(--k-de)}.de-words{--k:var(--k-words)}.de-dict{--k:var(--k-dictate)}.de-speak{--k:var(--k-speak)}.de-hear{--k:var(--k-hear)}.de-read{--k:var(--k-read)}.de-yt{--k:var(--k-yt)}.de-prompt{--k:var(--k-prompt)}
+.de-box{border-inline-start-color:var(--k,var(--accent))}
+.de-h{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
+.de-h:empty{display:none}
+.de-k{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--k);background:color-mix(in srgb,var(--k) 11%,transparent);padding:1px 10px 1px 9px;border-radius:999px}
+.de-k .li{width:15px;height:15px}
+.de-ttl{font-weight:600}
+body.lang .de-box{border-radius:12px;background:var(--lg-card);padding:10px 14px;border-color:var(--lg-line);border-inline-start-color:var(--k)}
+body.lang .reader table th{background:var(--lg-soft);color:var(--lg-ink)}
+/* the practice button stands out from the review tools */
+.pr-btn{border-style:solid;background:var(--accent);color:#fff;font-weight:600}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pr-btn{color:#111}}
+:root[data-theme="dark"] .pr-btn{color:#111}
+
+/* ===== «تمرّن»: the practice games dialog ===== */
+#pr{width:min(560px,100vw);max-width:100vw;height:min(760px,100dvh);max-height:100dvh;border:0;border-radius:18px;padding:0;background:var(--lg-paper);color:var(--ink);box-shadow:0 30px 80px -30px rgba(0,0,0,.5);flex-direction:column}
+#pr[open]{display:flex}
+#pr::backdrop{background:rgba(10,14,20,.6)}
+@media (max-width:600px){#pr{width:100vw;height:100dvh;border-radius:0}}
+.pr-top{display:flex;align-items:center;gap:12px;padding:14px 16px 10px}
+.pr-x{all:unset;cursor:pointer;font-size:20px;line-height:1;color:var(--muted);padding:4px 6px;border-radius:6px}
+.pr-x:focus-visible{outline:2px solid var(--accent)}
+.pr-bar{flex:1;height:12px;border-radius:999px;background:var(--lg-soft);overflow:hidden}
+.pr-bar[hidden]{visibility:hidden;display:block}
+.pr-bar i{display:block;height:100%;width:0;background:var(--ok);border-radius:999px;transition:width .35s}
+.pr-xp{font-weight:700;color:var(--accent);font-size:14px;min-width:60px;text-align:end}
+.pr-body{flex:1;overflow:auto;padding:8px 22px 16px}
+.pr-body h2{font-size:24px;margin:6px 0 14px;color:var(--lg-ink)}
+.pr-h3{font-size:16px;margin:18px 0 6px}
+.pr-note,.pr-tip{color:var(--muted);font-size:14.5px}
+.pr-tip{margin:0;text-align:center}
+.pr-warn{color:var(--danger);margin:0 0 8px;font-size:14px}
+.pr-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 14px}
+.pr-stats div{background:var(--lg-card);border:1px solid var(--lg-line);border-radius:12px;padding:10px;text-align:center}
+.pr-stats b{display:block;font-size:22px;color:var(--lg-ink)}
+.pr-stats span{font-size:12.5px;color:var(--muted)}
+.pr-units{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.pr-units label{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;background:var(--lg-card);border:1px solid var(--lg-line);border-radius:10px;padding:8px 12px;cursor:pointer}
+.pr-units input{width:18px;height:18px;accent-color:var(--accent)}
+.pr-un{font-weight:600;flex:1}
+.pr-units em{font-style:normal;font-size:12.5px;color:var(--muted);flex-basis:100%;padding-inline-start:28px}
+.pr-ask{font-size:15px;color:var(--muted);font-weight:600;margin:6px 0 10px}
+.pr-ar{font-size:22px;font-weight:600;color:var(--lg-ink);margin:4px 0 16px;line-height:1.6}
+.pr-de{display:flex;align-items:center;justify-content:center;gap:10px;font-family:var(--de);font-size:28px;font-weight:600;color:var(--lg-ink);margin:8px 0 18px;direction:ltr}
+.pr-sent{font-family:var(--de);font-size:21px;line-height:1.8;text-align:left;background:var(--lg-card);border:1px solid var(--lg-line);border-radius:12px;padding:12px 16px;margin-bottom:8px}
+.pr-blank{display:inline-block;min-width:3.2em;border-bottom:3px solid var(--accent);color:var(--accent);text-align:center}
+.pr-say{all:unset;cursor:pointer;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:20px;background:var(--accent);color:#fff;box-shadow:0 4px 0 color-mix(in srgb,var(--accent) 60%,#000)}
+.pr-say:active{transform:translateY(2px);box-shadow:0 2px 0 color-mix(in srgb,var(--accent) 60%,#000)}
+.pr-opts{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:480px){.pr-opts{grid-template-columns:1fr 1fr}}
+.pr-opts.pr-arts{grid-template-columns:repeat(3,1fr)}
+.pr-o,.pr-m,.pr-tile{all:unset;cursor:pointer;box-sizing:border-box;text-align:center;background:var(--lg-card);border:2px solid var(--lg-line);border-bottom-width:4px;border-radius:14px;padding:12px 14px;font-size:17px;line-height:1.5;color:var(--ink);transition:border-color .12s,background .12s}
+.pr-o:hover,.pr-m:hover,.pr-tile:hover{border-color:var(--accent)}
+.pr-o:focus-visible,.pr-m:focus-visible,.pr-tile:focus-visible,.pr-go:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.pr-o.right,.pr-m.done{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--lg-card))}
+.pr-o.wrong,.pr-m.bad{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,var(--lg-card))}
+.pr-o:disabled{cursor:default}
+.pr-m.sel{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--lg-card))}
+.pr-m.done{opacity:.55}
+.pr-arts .pr-o{font-family:var(--de);font-weight:700;font-size:22px}
+.pr-arts .art-der{color:var(--art-der)}.pr-arts .art-die{color:var(--art-die)}.pr-arts .art-das{color:var(--art-das)}
+.pr-in{all:unset;box-sizing:border-box;width:100%;font-family:var(--de);font-size:21px;padding:12px 14px;border:2px solid var(--lg-line);border-radius:12px;background:var(--lg-card);color:var(--ink);text-align:left}
+.pr-in:focus{border-color:var(--accent)}
+.pr-line{min-height:58px;border-bottom:2px solid var(--lg-line);display:flex;flex-wrap:wrap;gap:8px;padding:8px 0;margin-bottom:14px;align-content:flex-start}
+.pr-tiles{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.pr-tile{padding:8px 14px;font-family:var(--de);font-size:18px}
+.pr-match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pr-match>div{display:flex;flex-direction:column;gap:8px}
+.pr-m{font-size:15.5px;padding:10px}
+.pr-foot{padding:12px 16px 16px;border-top:1px solid var(--lg-line);display:flex;flex-direction:column;gap:10px;background:var(--lg-paper)}
+.pr-go{all:unset;cursor:pointer;box-sizing:border-box;text-align:center;width:100%;padding:13px;border-radius:14px;font-weight:700;font-size:17px;background:var(--ok);color:#fff;box-shadow:0 4px 0 color-mix(in srgb,var(--ok) 60%,#000)}
+.pr-go:active{transform:translateY(2px);box-shadow:0 2px 0 color-mix(in srgb,var(--ok) 60%,#000)}
+.pr-go.pr-sec{background:var(--lg-card);color:var(--ink);border:2px solid var(--lg-line);box-shadow:none}
+.pr-res{border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;gap:2px}
+.pr-res.ok{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
+.pr-res.no{background:color-mix(in srgb,var(--danger) 13%,transparent);color:var(--danger)}
+.pr-res span{font-family:var(--de);font-size:18px;color:var(--ink)}
+.pr-res small{color:var(--ink);font-size:13.5px}
+.pr-miss{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.pr-miss li{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;background:var(--lg-card);border:1px solid var(--lg-line);border-radius:10px;padding:8px 12px}
+.pr-miss li>span:first-child{display:inline-flex;align-items:center;gap:8px;font-family:var(--de);font-weight:600}
+.pr-miss .pr-say{width:34px;height:34px;font-size:15px;box-shadow:none}
+/* a ~~~text block in a language lesson (a schedule, an ad, a form) is a printed sheet, not a terminal */
+body.lang{--t-bg:var(--lg-soft);--t-fg:var(--lg-ink);--t-pr:var(--accent);--t-cm:var(--muted);--t-bar:var(--lg-soft)}
+body.lang .term{border:1px solid var(--lg-line);box-shadow:none}
+body.lang .term .copy{display:none}
+body.lang .term-bar{font-family:var(--de);font-weight:600;border-bottom:1px dashed var(--lg-line)}

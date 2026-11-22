@@ -41,8 +41,40 @@ const sayBtns = (de, v) => '<span class="say" data-de="'+esc(de)+'" data-v="'+v+
 /* the article in colour (der blue, die red, das green, as most German textbooks do), so the gender is seen as well as read */
 const deArt = s => esc(s).replace(/(^|, )(der|die|das)\b/g, (_, p, a) => p+'<b class="art art-'+a+'">'+a+'</b>');
 
+/* line icons (24px, stroke = currentColor) for the kinds of material, so a lesson reads as its skills at a glance */
+const LANG_ICON = {
+  de: 'M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 21l1.9-5.2A8.4 8.4 0 1 1 21 11.5z',
+  words: 'M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2zM22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z',
+  dictate: 'M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z',
+  speak: 'M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2M12 19v3',
+  hear: 'M3 18v-6a9 9 0 0 1 18 0v6M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z',
+  read: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h8',
+  yt: 'M5 3l14 9-14 9z',
+  prompt: 'M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z',
+  play: 'M6 12h4M8 10v4M15 13h.01M18 11h.01M17.3 5H6.7a4 4 0 0 0-4 3.6L2 15a3 3 0 0 0 5.2 2.1L9 15h6l1.8 2.1A3 3 0 0 0 22 15l-.7-6.4A4 4 0 0 0 17.3 5z'
+};
+const langIcon = k => '<svg class="li" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="'+LANG_ICON[k]+'"/></svg>';
+const LANG_KIND = {de: 'حوار وجمل', words: 'كلمات', dictate: 'إملا', speak: 'اتكلم', hear: 'سمع', read: 'قراية', yt: 'فيديو', prompt: 'صحّح بالـ AI'};
+/* what a lesson trains, counted from its teach: [[kind, n, label]] for the strip under the lesson's title and the lesson cards */
+function langSkills(t){
+  if (!t) return [];
+  const n = {words: 0, hear: 0, dictate: 0, speak: 0, read: 0, yt: 0};
+  for (const m of t.matchAll(/^~~~(words|hear|dictate|speak|read|yt)[^\n]*\n([\s\S]*?)^~~~[ \t]*$/gm)){
+    const ls = m[2].split('\n').map(l => l.trim()).filter(Boolean);
+    if (m[1] === 'hear' || m[1] === 'read') n[m[1]] += ls.filter(l => l.startsWith('? ')).length;
+    else if (m[1] === 'yt') n.yt++;
+    else n[m[1]] += ls.length;
+  }
+  // Arabic counting: 3 to 10 take the plural (٥ كلمات), 1, 2 and 11 up the singular (١٢ كلمة)
+  const cnt = (x, one, many) => AR(x)+' '+(x >= 3 && x <= 10 ? many : one);
+  const L = {words: x => cnt(x, 'كلمة', 'كلمات'), hear: x => cnt(x, 'سؤال سمع', 'أسئلة سمع'), read: x => cnt(x, 'سؤال قراية', 'أسئلة قراية'),
+    dictate: x => cnt(x, 'جملة إملا', 'جمل إملا'), speak: x => cnt(x, 'جملة نطق', 'جمل نطق'), yt: () => 'فيديو'};
+  return Object.keys(L).filter(k => n[k]).map(k => [k, n[k], L[k](n[k])]);
+}
+const skillsHTML = t => { const s = langSkills(t); return s.length ? '<div class="skills">'+s.map(([k, , l]) => '<span class="sk sk-'+k+'">'+langIcon(k)+l+'</span>').join('')+'</div>' : ''; };
 function langFence(kind, lines, head){
-  const box = (cls, title, body) => '<div class="de-box '+cls+'">'+(title ? '<div class="de-h">'+esc(title)+'</div>' : '')+body+'</div>';
+  // every box says what kind of material it is (icon + name), then its own title if it has one
+  const box = (cls, title, body) => '<div class="de-box '+cls+'"><div class="de-h">'+(LANG_KIND[kind] ? '<span class="de-k">'+langIcon(kind)+LANG_KIND[kind]+'</span>' : '')+(title ? '<span class="de-ttl">'+esc(title)+'</span>' : '')+'</div>'+body+'</div>';
   if (kind === 'de'){
     const sp = deSpeakers(head), rows = lines.filter(l => l.trim()).map(l => {
       const x = deLine(l, sp);
@@ -58,7 +90,7 @@ function langFence(kind, lines, head){
       return '<li class="de-wi"><div class="de-wd" dir="ltr" lang="de">'+sayBtns(w, 'm')+' <span class="de-w">'+deArt(w)+'</span></div><div class="de-wa">'+fmt(ar)+'</div>'+
         (ex ? '<div class="de-wx" dir="ltr" lang="de">'+sayBtns(ex, 'f')+' <span>'+esc(ex)+'</span></div>' : '')+'</li>';
     });
-    return box('de-words', head || 'الكلمات', '<ul class="de-wl">'+rows.join('')+'</ul>'+
+    return box('de-words', head || '', '<ul class="de-wl">'+rows.join('')+'</ul>'+
       '<p class="de-note">الكلمات دي دخلت «اختبرني» و «عليك مراجعة»: السؤال بالعربي، وإنت تقول الكلمة بأداتها وجمعها.</p>');
   }
   if (kind === 'dictate'){
@@ -70,7 +102,7 @@ function langFence(kind, lines, head){
         '<input type="text" dir="ltr" lang="de" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="اكتب الجملة '+(i+1)+' اللي سمعتها">'+
         '<button type="button" class="dict-go">صحّح</button><div class="dict-res" role="status">'+(ok ? '✓ حلّيتها قبل كده' : '')+'</div></li>';
     });
-    return box('de-dict', head || 'إملا: اسمع واكتب', '<p class="de-note">اسمع الجملة (مرة أو مرتين، والسلحفاة أبطأ)، واكتبها بالظبط. الحروف الكبيرة بتفرق في الألماني. مفيش ä في كيبوردك؟ اكتب ae (و oe و ue و ss)، وهتتقبل مع تنبيه.</p><ol class="dict-l">'+items.join('')+'</ol>');
+    return box('de-dict', head || 'اسمع واكتب', '<p class="de-note">اسمع الجملة (مرة أو مرتين، والسلحفاة أبطأ)، واكتبها بالظبط. الحروف الكبيرة بتفرق في الألماني. مفيش ä في كيبوردك؟ اكتب ae (و oe و ue و ss)، وهتتقبل مع تنبيه.</p><ol class="dict-l">'+items.join('')+'</ol>');
   }
   if (kind === 'speak'){
     const items = lines.filter(l => l.trim()).map(l => {
@@ -78,7 +110,7 @@ function langFence(kind, lines, head){
       return '<li class="spk" data-de="'+esc(x.de)+'">'+sayBtns(x.de, x.voice)+'<span class="de-t" lang="de" dir="ltr">'+esc(x.de)+'</span>'+(x.ar ? '<span class="de-ar">'+fmt(x.ar)+'</span>' : '')+
         '<span class="spk-c"><button type="button" class="spk-rec">🎙 سجّل صوتك</button><button type="button" class="spk-me" hidden>▶ صوتك</button><button type="button" class="spk-both" hidden>قارن: الأصل ثم إنت</button></span></li>';
     });
-    return box('de-speak', head || 'قول بصوتك', '<p class="de-note">اسمع الأصل، وسجّل نفسك وإنت بتقولها، واسمع الاتنين ورا بعض. التسجيل بيفضل على جهازك ومش بيتبعت لأي حتة، وبيتمسح لما تقفل الصفحة.</p><ol class="spk-l">'+items.join('')+'</ol>');
+    return box('de-speak', head || '', '<p class="de-note">اسمع الأصل، وسجّل نفسك وإنت بتقولها، واسمع الاتنين ورا بعض. التسجيل بيفضل على جهازك ومش بيتبعت لأي حتة، وبيتمسح لما تقفل الصفحة.</p><ol class="spk-l">'+items.join('')+'</ol>');
   }
   if (kind === 'yt'){
     const [id, ...t] = head.split(/\s+/), title = t.join(' ') || 'فيديو';
@@ -109,7 +141,7 @@ function langFence(kind, lines, head){
       return '<li class="hear">'+b.say.map(x => sayBtns(x.de, x.voice)).join('')+' <span class="de-note">اسمع (مرتين لو عايز)، وبعدين جاوب</span>'+qs+
         '<details class="hear-t"><summary>اظهر النص</summary><div dir="ltr" lang="de">'+b.say.map(x => '<p>'+(x.who ? '<b>'+esc(x.who.replace(/_/g, ' '))+':</b> ' : '')+esc(x.de)+'</p>').join('')+'</div></details></li>';
     });
-    return box('de-hear', deTitle(head) || 'سمع: اسمع وجاوب', '<ol class="hear-l">'+items.join('')+'</ol>');
+    return box('de-hear', deTitle(head) || 'اسمع وجاوب', '<ol class="hear-l">'+items.join('')+'</ol>');
   }
   if (kind === 'read'){
     // blocks: the text lines, then «? statement || عربي» and «- option» lines (« *» on the right one); a text line after questions starts the next text
@@ -135,11 +167,11 @@ function langFence(kind, lines, head){
       return '<li class="hear read"><div class="read-t" dir="ltr" lang="de">'+b.text.map(x => '<p>'+esc(x.de)+'</p>').join('')+'</div>'+qs+
         (tr.length ? '<details class="hear-t"><summary>اظهر الترجمة</summary>'+tr.map(x => '<p>'+fmt(x.ar)+'</p>').join('')+'</details>' : '')+'</li>';
     });
-    return box('de-hear de-read', head || 'قراية: اقرا وجاوب', '<ol class="hear-l">'+items.join('')+'</ol>');
+    return box('de-hear de-read', head || 'اقرا وجاوب', '<ol class="hear-l">'+items.join('')+'</ol>');
   }
   if (kind === 'prompt'){
     const pk = 'pans:'+deHash(lines.join('\n')), saved = typeof store !== 'undefined' && store.get(pk) || '';
-    return box('de-prompt', head || 'صحّحها بالذكاء الاصطناعي', '<p class="de-note">اكتب إجابتك هنا، ودوس «انسخ»: هيتنسخ الطلب ده ومعاه إجابتك، والصقه في Claude أو ChatGPT. إجابتك بتتحفظ على جهازك بس.</p>'+
+    return box('de-prompt', head || '', '<p class="de-note">اكتب إجابتك هنا، ودوس «انسخ»: هيتنسخ الطلب ده ومعاه إجابتك، والصقه في Claude أو ChatGPT. إجابتك بتتحفظ على جهازك بس.</p>'+
       '<textarea class="prompt-ans" dir="ltr" lang="de" rows="5" aria-label="إجابتك بالألماني" data-k="'+pk+'">'+esc(saved)+'</textarea>'+
       '<details class="prompt-d"><summary>الطلب اللي هيتنسخ</summary><pre class="prompt-t" dir="ltr">'+esc(lines.join('\n'))+'</pre></details>'+
       '<button type="button" class="prompt-copy">انسخ الطلب مع إجابتك</button>');

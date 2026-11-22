@@ -20,7 +20,7 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;600;700;800&family=Readex+Pro:wght@300..700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;600;700;800&family=Lexend:wght@400;500;600;700&family=Readex+Pro:wght@300..700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-shell="bash">
@@ -243,7 +243,7 @@
     <div class="row">
       <button type="button" class="homebtn" id="homeBtn">▸ كل المواضيع</button>
       <label class="search"><span aria-hidden="true">⌕</span><input id="q" type="search" placeholder="دوّر على أمر أو شرح… مثلًا grep أو بورت" aria-label="بحث في الأوامر"><kbd>/</kbd></label>
-      <div class="prog"><span id="shellName">bash</span>: جربت <b id="doneN">0</b> من <span id="allN">0</span></div>
+      <div class="prog"><span id="shellName">bash</span>: <span id="progVerb">جربت</span> <b id="doneN">0</b> من <span id="allN">0</span></div>
     </div>
     <div class="meter"><i id="meter"></i></div>
     <div class="lvls" role="group" aria-label="المستوى">
@@ -251,6 +251,7 @@
       <button type="button" class="lv" data-l="1" aria-pressed="false">١ البداية</button>
       <button type="button" class="lv" data-l="2" aria-pressed="false">٢ المتوسط</button>
       <button type="button" class="lv" data-l="3" aria-pressed="false">٣ المتقدم</button>
+      <button type="button" class="quiz-btn pr-btn" id="prBtn" hidden title="ألعاب على كلمات وجمل الدروس اللي خلّصتها: تختار المعنى، وتكتب الكلمة، و der/die/das، وتكمّل الجملة وترتّبها">تمرّن</button>
       <button type="button" class="quiz-btn" id="fcBtn" title="بطاقات من التاب والمستوى اللي انت فيهم: اللي ميعاد مراجعتها جه بتظهر الأول، واللي بتنساها بتتكرر أكتر">اختبرني</button>
       <button type="button" class="quiz-btn" id="examBtn" hidden title="١٠ أسئلة عشوائية من المستوى ده. لو عرفت ٨ المستوى بيتعلّم عليه">امتحان المستوى</button>
       <button type="button" class="quiz-btn" id="todoBtn" aria-pressed="false" title="بيخبّي الأوامر اللي علّمت عليها «جربتها»">اللي فاضل بس</button>
@@ -295,7 +296,8 @@
 </div>
 
 <footer class="wrap">
-  لما تنسى أي أمر: <code>man grep</code> في bash، <code>Get-Help Copy-Item -Examples</code> في PowerShell، و <code>xcopy /?</code> في CMD.
+  <span class="foot-code">لما تنسى أي أمر: <code>man grep</code> في bash، <code>Get-Help Copy-Item -Examples</code> في PowerShell، و <code>xcopy /?</code> في CMD.</span>
+  <span class="foot-lang">لما تنسى كلمة: دوّر عليها فوق، أو افتح «تمرّن» واتمرّن على كلمات الدروس اللي خلّصتها. وكل جملة ألماني ليها صوت، فاسمعها قبل ما تقولها.</span>
   <p>تقدمك وملاحظاتك محفوظين في المتصفح ده بس. خد نسخة منهم عشان متضيعش لو مسحت بيانات المتصفح أو غيّرت الجهاز.</p>
   <div class="tools">
     <button type="button" class="quiz-btn" id="exportBtn">نزّل نسخة من تقدمي</button>
@@ -1092,5 +1094,6 @@
 <script src="js/meta.js"></script>
 <script src="js/lang.js"></script>
 <script src="js/app.js"></script>
+<script src="js/practice.js"></script>
 </body>
 </html>

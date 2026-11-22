@@ -68,8 +68,10 @@ function termHTML(code, shell, script, label, prOverride){
 let shell = 'bash';
 const lvInfo = l => (LEVEL_TAB[shell] && LEVEL_TAB[shell][l]) || LEVEL_INFO[l];
 const LESSON_TABS = ['start','vue','pydata','web','sec','glossary','real','os','tools','vscode','js','ts','css','react','next','api','data','pyapi','php','flutter','ai','arch','interview','dsa','sweng','apis','cloud','projects','career','english','dotnet','angular','spring','rn','speak','cpp','kotlin','swift','go','symbols','files','net','re'];
+/* the language courses (German now, English later) get their own look, words and practice games: body.lang */
+const isLang = s => typeof LANG_TABS !== 'undefined' && LANG_TABS.includes(s);
 function countLabel(n){
-  const lesson = LESSON_TABS.includes(shell);
+  const lesson = LESSON_TABS.includes(shell) || isLang(shell);
   if (shell==='glossary') return n + ' مصطلح';
   if (n===1) return lesson ? 'درس واحد' : 'أمر واحد';
   if (n===2) return lesson ? 'درسين' : 'أمرين';
@@ -460,12 +462,15 @@ function articleHTML(it){
   const [c, t, d, ex, tr, flag] = it;
   const key = 'done:'+shell+':'+c;
   const done = store.get(key) === '1';
+  const lang = isLang(shell), cat = lang && catOf(c), nth = cat ? cat.items.findIndex(x => x[0] === c) + 1 : 0;
   return '<article class="cmd'+(done?' is-done':'')+'" data-c="'+esc(c)+'">'+
-    '<div class="cmd-h"><span class="name">'+esc(c)+'</span>'+(t?'<span class="title">'+esc(t)+'</span>':'')+(/\bdanger\b/.test(flag||'')?'<span class="tag-danger">خطر: اقرا الشرح قبل ما تنفّذ</span>':'')+osBadge(c)+'</div>'+
+    // a language lesson: «الدرس ٢ من ٦», the German sentence it is named after, the Arabic title, and what it trains
+    '<div class="cmd-h">'+(lang ? '<span class="lnum">الدرس '+AR(nth)+' من '+AR(cat.items.length)+'</span>' : '')+'<span class="name"'+(lang ? ' lang="de"' : '')+'>'+esc(c)+'</span>'+(t?'<span class="title">'+esc(t)+'</span>':'')+(/\bdanger\b/.test(flag||'')?'<span class="tag-danger">خطر: اقرا الشرح قبل ما تنفّذ</span>':'')+osBadge(c)+'</div>'+
+    (lang && typeof skillsHTML === 'function' ? skillsHTML(TEACH[shell+'|'+c]) : '')+
     preHTML(typeof PRE !== 'undefined' && PRE[shell+'|'+c])+nameHTML(c)+(d?descHTML(d):'')+teachHTML(c)+deepHTML(c)+useHTML(c)+osNote(c)+
     (ex ? termBlock(ex, c, flag)+exShowHTML(ex) : '')+breakHTML(c, ex)+
     '<button type="button" class="reveal">اكشف الإجابة</button>'+
-    '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+labHint(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+
+    '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':lang?'دورك':'جرّب')+'</span><p>'+fmt(tr)+labHint(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> '+(lang?'خلّصت الدرس (كلماته تدخل «تمرّن»)':'جربتها')+'</label></div>'+
     practiceHTML(c)+chkHTML(c)+solHTML(c)+noteHTML(c)+refHTML(c)+reportHTML(c, t)+
   '</article>';
 }
@@ -585,6 +590,13 @@ function unitFoot(cat, id){
 }
 /* a category's lessons as a compact table: the whole row opens the lesson */
 function mapTable(cat, items){
+  // a language unit's lessons are cards: number, the German sentence, the Arabic title, what it trains, and a tick when done
+  if (isLang(shell)) return '<ol class="lcards">'+items.map(it => {
+    const [c, t] = it, n = cat.items.indexOf(it) + 1, d = store.get('done:'+shell+':'+c)==='1';
+    const sk = typeof langSkills === 'function' ? langSkills(TEACH[shell+'|'+c]).map(([k, , l]) => '<span class="sk sk-'+k+'">'+langIcon(k)+l+'</span>').join('') : '';
+    return '<li class="lcard'+(d?' is-done':'')+'" data-open="'+esc(c)+'" tabindex="0" role="link"><span class="lc-n">'+(d ? '✓' : AR(n))+'</span>'+
+      '<span class="lc-de" lang="de" dir="ltr">'+esc(c)+'</span><span class="lc-t">'+esc(t || '')+'</span>'+(sk ? '<span class="skills">'+sk+'</span>' : '')+'</li>';
+  }).join('')+'</ol>';
   const out = items.some(it => (CARD[shell+'|'+it[0]] || {}).out);
   let h = '<table class="map"><thead><tr><th>#</th><th>الدرس</th><th>هتتعلم إيه</th>'+(out?'<th>النتيجة العملية</th>':'')+'</tr></thead><tbody>';
   items.forEach(it => {
@@ -616,7 +628,7 @@ function renderMap(q, rawQ){
     const id = shell+'-c'+cat.i;
     chips += '<button class="chip" type="button" data-t="'+id+'">'+esc(cat.t)+'</button>';
     html += '<section class="cat" id="'+id+'"><h3>'+esc(cat.t)+'<small>'+countLabel(cat.items.length)+(cat.time?' · '+esc(cat.time):'')+'</small></h3>'+
-      (cat.n?'<p class="cat-note">'+esc(cat.n)+'</p>':'')+preHTML(cat.pre)+unitHead(cat)+
+      (cat.n?'<p class="cat-note">'+fmt(cat.n)+'</p>':'')+preHTML(cat.pre)+unitHead(cat)+
       mapTable(cat, items)+(q?'':unitFoot(cat, id))+'</section>';
   });
   if (!shown){
@@ -765,7 +777,7 @@ function hashSet(){
 }
 /* home = the cards alone; a tab = its own page, with no cards above it to scroll past */
 let atHome = false;
-function setHome(on){ atHome = on; document.body.classList.toggle('home', on); }
+function setHome(on){ atHome = on; document.body.classList.toggle('home', on); if (on) document.body.classList.remove('lang'); }
 function goHome(){
   openCmd = null;
   setHome(true);
@@ -862,6 +874,7 @@ function updateProgress(){
   let total = 0, done = 0;
   DATA[shell].filter(c => !level || c.l === level).forEach(c => c.items.forEach(it => { total++; if (store.get('done:'+shell+':'+it[0])==='1') done++; }));
   $('#doneN').textContent = AR(done);
+  $('#progVerb').textContent = isLang(shell) ? 'خلّصت' : 'جربت';
   $('#allN').textContent = AR(total);
   $('#shellName').textContent = ({web:'المتصفح', sec:'أمان الموقع', start:'ابدأ من هنا', docker:'Docker', node:'Node و npm', pg:'PostgreSQL', diag:'التشخيص', gha:'GitHub Actions', wsl:'WSL', nginx:'Nginx', sshc:'ssh config', glossary:'القاموس', symbols:'الرموز', files:'الملفات وامتداداتها'}[shell] || SHELLS[shell].label) + (level ? ' المستوى '+AR(level) : '');
   $('#meter').style.width = (total ? done/total*100 : 0)+'%';
@@ -876,6 +889,13 @@ function setShell(s, cmd){
   shell = s;
   openCmd = cmd && DATA[s].some(c => c.items.some(it => it[0] === cmd)) ? cmd : null;
   document.body.dataset.shell = s;
+  // a language course reads as a course, not a terminal: its own look (body.lang), words in the search box, and the practice button
+  const lang = isLang(s);
+  document.body.classList.toggle('lang', lang);
+  $('#q').placeholder = lang ? 'دوّر على كلمة أو درس… مثلًا Familie أو العيلة' : 'دوّر على أمر أو شرح… مثلًا grep أو بورت';
+  $('#q').setAttribute('aria-label', lang ? 'بحث في الدروس' : 'بحث في الأوامر');
+  $('#prBtn').hidden = !lang;
+  $('#quizBtn').hidden = lang;
   // the reference cards sit in tablists (aria-selected); the path cards are plain buttons in a list (aria-current)
   document.querySelectorAll('.sw').forEach(b => b.setAttribute(b.getAttribute('role')==='tab' ? 'aria-selected' : 'aria-current', b.dataset.s===s ? 'true':'false'));
   store.set('shell', s);
@@ -1229,7 +1249,7 @@ $('#q').addEventListener('input', () => {
 });
 document.addEventListener('keydown', e => {
   const inField = /^(TEXTAREA|INPUT|SELECT)$/.test(document.activeElement.tagName);
-  if (e.key === 'Enter' && e.target.matches && e.target.matches('tr[data-open]')){ e.preventDefault(); openLesson(e.target.dataset.open); return; }
+  if (e.key === 'Enter' && e.target.matches && e.target.matches('tr[data-open], li.lcard[data-open]')){ e.preventDefault(); openLesson(e.target.dataset.open); return; }
   if (openCmd && !inField && !$('#fc').open && !$('#outline').open){
     // the page is RTL, so the right arrow is the lesson before this one
     const b = e.key === 'ArrowLeft' ? $('#list .pg-b.nx') : e.key === 'ArrowRight' ? $('#list .pg-b.pv') : null;
@@ -1252,6 +1272,7 @@ document.addEventListener('click', e => {
   const nb = e.target.closest('.note-btn');
   if (nb){ const ta = nb.nextElementSibling, on = !ta.classList.contains('open'); ta.classList.toggle('open', on); nb.setAttribute('aria-expanded', on ? 'true' : 'false'); if (on) ta.focus(); return; }
   if (e.target.closest('#fcBtn')){ fcOpen(); return; }
+  if (e.target.closest('#prBtn')){ prOpen(shell); return; }
   if (e.target.closest('#weakBtn')){ fcOpen('weak'); return; }
   if (e.target.closest('#dueBtn')){ fcOpen('due'); return; }
   if (e.target.closest('#examBtn')){ examOpen(level); return; }
