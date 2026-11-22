@@ -5709,6 +5709,11 @@
   "date": "2026-11-22",
   "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها أو اتنقلت لصوت الراجل)، و Chromium 400px"
  },
+ "dea1|Eine Fahrkarte nach Hamburg, bitte": {
+  "hash": "79b349c6a7a4",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها أو اتنقلت لصوت الراجل)، و Chromium 400px"
+ },
  "dea1|Hallo! Guten Tag!": {
   "hash": "081392c95eef",
   "date": "2026-11-21",
@@ -5748,6 +5753,11 @@
   "hash": "606619302570",
   "date": "2026-11-22",
   "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
+ },
+ "dea1|Ich fahre mit dem Bus": {
+  "hash": "8d4d39116870",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها أو اتنقلت لصوت الراجل)، و Chromium 400px"
  },
  "dea1|Ich heiße …": {
   "hash": "3b6404f930c5",
@@ -5801,6 +5811,11 @@
  },
  "dea1|Prüfung: Hören Teil 1, Lesen Teil 3, Sprechen Teil 3": {
   "hash": "036ae872f014",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها أو اتنقلت لصوت الراجل)، و Chromium 400px"
+ },
+ "dea1|Prüfung: Hören Teil 2, Lesen Teil 2, Schreiben Teil 1": {
+  "hash": "c1d0f23c78d5",
   "date": "2026-11-22",
   "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها أو اتنقلت لصوت الراجل)، و Chromium 400px"
  },
@@ -5869,6 +5884,16 @@
   "date": "2026-11-22",
   "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها)، و Chromium 400px (القراية والسمع والإملا)"
  },
+ "dea1|Wie ist das Wetter?": {
+  "hash": "f411159a6c6a",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها أو اتنقلت لصوت الراجل)، و Chromium 400px"
+ },
+ "dea1|Wie komme ich zum Bahnhof?": {
+  "hash": "b6c0c14510c7",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها أو اتنقلت لصوت الراجل)، و Chromium 400px"
+ },
  "dea1|Wie sieht sie aus?": {
   "hash": "bc054e3d2ffb",
   "date": "2026-11-22",
@@ -5883,6 +5908,11 @@
   "hash": "d3064682ea82",
   "date": "2026-11-22",
   "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
+ },
+ "dea1|Wohin gehst du? Ins Kino": {
+  "hash": "b72c3b85e310",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها أو اتنقلت لصوت الراجل)، و Chromium 400px"
  },
  "diag|/health بيقول 200 والدخول بايظ": {
   "hash": "76dcafffbad3",

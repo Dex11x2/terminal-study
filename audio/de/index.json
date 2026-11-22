@@ -1,4 +1,12 @@
 {
+ "005ddb2b.mp3": {
+  "text": "Wir fahren im Sommer nicht nach Spanien. Wir fahren in die Türkei, ans Meer.",
+  "voice": "f",
+  "heard": "Wir fahren im Sommer nicht nach Spanien, wir fahren in die Türkei ans Meer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "007a65da.mp3": {
   "text": "Ja, natürlich. Können Sie morgen um fünf Uhr kommen?",
   "voice": "m",
@@ -71,6 +79,14 @@
   "take": 0,
   "ok": true
  },
+ "01c9e010.mp3": {
+  "text": "Im Frühling ist es oft warm und es regnet.",
+  "voice": "m",
+  "heard": "Im Frühling ist es oft warm und es regnet.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "01e8e029.mp3": {
   "text": "Ich trinke keinen Wein.",
   "voice": "f",
@@ -97,6 +113,14 @@
   "text": "Karim, Vorsicht! Der Boden ist nass!",
   "voice": "m",
   "heard": "Karim, Vorsicht, der Boden ist nass.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "02587992.mp3": {
+  "text": "Hält der Zug in Hannover?",
+  "voice": "m",
+  "heard": "Hält der Zug in Hannover?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -151,10 +175,26 @@
   "take": 0,
   "ok": true
  },
+ "035842e5.mp3": {
+  "text": "Nehmen wir ein Taxi?",
+  "voice": "f",
+  "heard": "Nehmen wir ein Taxi.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "036f77f2.mp3": {
   "text": "Alles Gute und viel Glück für euch!",
   "voice": "m",
   "heard": "Alles Gute und viel Glück für Euch!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "037b814d.mp3": {
+  "text": "Dann gehe ich zu Fuß in die Altstadt.",
+  "voice": "m",
+  "heard": "Dann gehe ich zu Fuß in die Altstadt.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -251,6 +291,22 @@
   "take": 0,
   "ok": true
  },
+ "04fb6e03.mp3": {
+  "text": "Gut. Ab wann gibt es Frühstück?",
+  "voice": "m",
+  "heard": "Gut. Ab wann gibt es Frühstück?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "04fc85ec.mp3": {
+  "text": "Wie komme ich zum Flughafen?",
+  "voice": "f",
+  "heard": "Wie komme ich zum Flughafen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "050f37b3.mp3": {
   "text": "heute Abend, morgen früh",
   "voice": "m",
@@ -261,6 +317,14 @@
   "text": "Nach dem Essen gehe ich spazieren.",
   "voice": "m",
   "heard": "Nach dem Essen gehe ich spazieren.",
+  "ok": true
+ },
+ "054c5b58.mp3": {
+  "text": "Ich bin gerade im Park. Danach gehe ich in die Stadt.",
+  "voice": "m",
+  "heard": "Ich bin gerade im Park. Danach gehe ich in die Stadt.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "0563f8cb.mp3": {
@@ -308,6 +372,14 @@
   "score": 0.94,
   "take": 0,
   "ok": false
+ },
+ "05da991d.mp3": {
+  "text": "Mit der U-Bahn brauche ich vierzig Minuten, mit dem Fahrrad nur zwanzig.",
+  "voice": "m",
+  "heard": "Mit der U-Bahn brauche ich 40 Minuten mit dem Fahrrad nur 20.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "05f404b7.mp3": {
   "text": "Die Suppe ist heiß.",
@@ -483,6 +555,14 @@
   "take": 0,
   "ok": false
  },
+ "08dc4844.mp3": {
+  "text": "Was für ein Wetter! Es regnet schon wieder.",
+  "voice": "f",
+  "heard": "Was für ein Wetter. Es regnet schon wieder.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "08e85c18.mp3": {
   "text": "Nehmen Sie zehn Tropfen.",
   "voice": "f",
@@ -503,6 +583,14 @@
   "text": "Kannst du mir helfen?",
   "voice": "m",
   "heard": "Kannst du mir helfen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "09512f24.mp3": {
+  "text": "der Park, die Parks",
+  "voice": "m",
+  "heard": "der Park, die Parks",
   "score": 1,
   "take": 0,
   "ok": true
@@ -593,10 +681,26 @@
   "take": 0,
   "ok": true
  },
+ "0b1a94cd.mp3": {
+  "text": "Gehen Sie geradeaus.",
+  "voice": "m",
+  "heard": "Gehen Sie gerade aus.",
+  "score": 0.67,
+  "take": 0,
+  "ok": false
+ },
  "0b2cad8e.mp3": {
   "text": "Super! Tschüss, bis morgen!",
   "voice": "f",
   "heard": "Super! Tschüss bis morgen!",
+  "ok": true
+ },
+ "0b3f0ccd.mp3": {
+  "text": "Es regnet heute.",
+  "voice": "f",
+  "heard": "Es regnet heute.",
+  "score": 1,
+  "take": 2,
   "ok": true
  },
  "0b5864b8.mp3": {
@@ -633,6 +737,14 @@
   "take": 0,
   "ok": true
  },
+ "0bcdebd4.mp3": {
+  "text": "Ich komme gerade vom Arzt. Jetzt gehe ich zur Apotheke und dann nach Hause.",
+  "voice": "m",
+  "heard": "Ich komme gerade vom Arzt. Jetzt gehe ich zur Apotheke und dann nach Hause.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "0bdd77c4.mp3": {
   "text": "Ich nehme ein halbes Kilo.",
   "voice": "f",
@@ -649,11 +761,27 @@
   "take": 2,
   "ok": false
  },
+ "0c08e973.mp3": {
+  "text": "Entschuldigung, ist hier noch frei?",
+  "voice": "m",
+  "heard": "Entschuldigung, ist hier noch frei?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "0c0c5d8c.mp3": {
   "text": "dreißig",
   "voice": "f",
   "heard": "30.",
   "ok": true
+ },
+ "0c11405b.mp3": {
+  "text": "Der See ist sehr schön.",
+  "voice": "f",
+  "heard": "der sie ist sehr schön.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
  },
  "0c305ce2.mp3": {
   "text": "0157 2846 130.",
@@ -755,6 +883,14 @@
   "take": 0,
   "ok": true
  },
+ "0d16cb2b.mp3": {
+  "text": "der Schalter, die Schalter",
+  "voice": "m",
+  "heard": "Der Schalter, die Schalter.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "0d1c894c.mp3": {
   "text": "Wir haben keinen Reis mehr.",
   "voice": "f",
@@ -839,6 +975,14 @@
   "take": 0,
   "ok": true
  },
+ "0e4f1232.mp3": {
+  "text": "Liebe Fahrgäste, wegen Bauarbeiten fährt die U-Bahn heute nur bis zum Hauptbahnhof. Bitte steigen Sie dort in den Bus um.",
+  "voice": "f",
+  "heard": "Liebe Fahrgäste, wegen Bauarbeiten fährt die U-Bahn heute nur bis zum Hauptbahnhof. Bitte steigen Sie dort in den Bus um.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "0e7cd2a9.mp3": {
   "text": "Ich bin zweiunddreißig Jahre alt.",
   "voice": "m",
@@ -873,6 +1017,14 @@
   "text": "vielen Dank für die Einladung! Ich komme gern.",
   "voice": "m",
   "heard": "Vielen Dank für die Einladung. Ich komme gern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "0f59c8c4.mp3": {
+  "text": "Es regnet, und es ist kalt.",
+  "voice": "m",
+  "heard": "Es regnet und es ist kalt.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -976,6 +1128,14 @@
   "voice": "m",
   "heard": "War her.",
   "ok": false
+ },
+ "111fecaf.mp3": {
+  "text": "die Abfahrt, die Abfahrten",
+  "voice": "m",
+  "heard": "Die Abfahrt, die Abfahrten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "11256c80.mp3": {
   "text": "Und ich hätte gern das Hähnchen mit Kartoffeln.",
@@ -1087,6 +1247,14 @@
   "take": 0,
   "ok": true
  },
+ "12df5811.mp3": {
+  "text": "Ich gehe nach Hause.",
+  "voice": "m",
+  "heard": "Ich gehe nach Hause.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "12f7824f.mp3": {
   "text": "Am Mittwoch nur am Vormittag. Um zehn Uhr?",
   "voice": "f",
@@ -1119,6 +1287,14 @@
   "text": "Können Sie das bitte buchstabieren?",
   "voice": "f",
   "heard": "Können Sie das bitte buchstabieren?",
+  "ok": true
+ },
+ "133cc080.mp3": {
+  "text": "Können Sie mir das auf der Karte zeigen?",
+  "voice": "m",
+  "heard": "Können Sie mir das auf der Karte zeigen?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "1359f81a.mp3": {
@@ -1187,6 +1363,14 @@
   "take": 0,
   "ok": true
  },
+ "1475531f.mp3": {
+  "text": "Einmal hin und zurück, bitte.",
+  "voice": "m",
+  "heard": "Einmal hin und zurück, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "147b5167.mp3": {
   "text": "Dann frühstücke ich.",
   "voice": "m",
@@ -1213,6 +1397,14 @@
   "heard": "Im August habe ich Urlaub.",
   "ok": true
  },
+ "14b99b53.mp3": {
+  "text": "Wie ist das Wetter?",
+  "voice": "m",
+  "heard": "Wie ist das Wetter?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "14ccabcf.mp3": {
   "text": "Und wer ist das hier?",
   "voice": "f",
@@ -1227,11 +1419,35 @@
   "heard": "Ich komme aus der Schweiz, ich spreche Französisch und Deutsch.",
   "ok": true
  },
+ "14fb783a.mp3": {
+  "text": "Ja, bitte. / Nein, leider besetzt.",
+  "voice": "m",
+  "heard": "Ja, bitte. Nein, leider besetzt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "15165766.mp3": {
+  "text": "das Ausland",
+  "voice": "m",
+  "heard": "Das Ausland.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "151c6319.mp3": {
   "text": "bar",
   "voice": "m",
   "heard": "Pa!",
   "score": 0,
+  "take": 0,
+  "ok": false
+ },
+ "152e22a9.mp3": {
+  "text": "Normalerweise fahre ich mit dem Auto zur Arbeit. Aber heute nehme ich den Bus, mein Auto ist kaputt.",
+  "voice": "f",
+  "heard": "Nur malerweise fahre ich mit dem Auto zur Arbeit. Aber heute nehme ich den Bus, mein Auto ist kaputt.",
+  "score": 0.94,
   "take": 0,
   "ok": false
  },
@@ -1297,6 +1513,22 @@
   "text": "das Zimmer, die Zimmer",
   "voice": "m",
   "heard": "Das Zimmer, die Zimmer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "160bd210.mp3": {
+  "text": "Ich gehe jetzt nach Hause.",
+  "voice": "m",
+  "heard": "Ich gehe jetzt nach Hause.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "16110370.mp3": {
+  "text": "Wie lange brauchst du zur Arbeit?",
+  "voice": "m",
+  "heard": "Wie lange brauchst du zur Arbeit?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1391,6 +1623,14 @@
   "take": 0,
   "ok": true
  },
+ "17d0795c.mp3": {
+  "text": "Muss ich umsteigen?",
+  "voice": "m",
+  "heard": "Muss ich umsteigen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "17d69009.mp3": {
   "text": "Mein Auto steht von neun bis zwölf Uhr vor dem Haus.",
   "voice": "m",
@@ -1406,6 +1646,14 @@
   "score": 1,
   "take": 1,
   "ok": false
+ },
+ "17f49cdb.mp3": {
+  "text": "Gute Reise!",
+  "voice": "f",
+  "heard": "Gute Reise!",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "181b4956.mp3": {
   "text": "Hier ist die Praxis Doktor Wolf. Ihre Krankmeldung ist fertig. Sie können sie heute bis achtzehn Uhr abholen.",
@@ -1436,6 +1684,14 @@
   "score": 0.88,
   "take": 0,
   "ok": false
+ },
+ "188cfbe1.mp3": {
+  "text": "Ich muss einmal umsteigen.",
+  "voice": "m",
+  "heard": "Ich muss einmal umsteigen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "1898cc22.mp3": {
   "text": "Mein Vater arbeitet viel.",
@@ -1469,10 +1725,26 @@
   "take": 0,
   "ok": true
  },
+ "18fb8445.mp3": {
+  "text": "Ägypten ist ein schönes Land.",
+  "voice": "f",
+  "heard": "Ägypten ist ein schönes Land.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "18fe934f.mp3": {
   "text": "Familienstand: verheiratet.",
   "voice": "f",
   "heard": "Familienstand verheiratet.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "190e77ed.mp3": {
+  "text": "Ich fahre nach Berlin.",
+  "voice": "f",
+  "heard": "Ich fahre nach Berlin.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1516,6 +1788,14 @@
   "score": 0.8,
   "take": 0,
   "ok": false
+ },
+ "19b02a5e.mp3": {
+  "text": "Die Bank ist an der Ecke.",
+  "voice": "m",
+  "heard": "Die Bank ist an der Ecke.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "19d1b098.mp3": {
   "text": "Kaffee. Und du?",
@@ -1607,6 +1887,22 @@
   "text": "herzlichen Glückwunsch zur Hochzeit!",
   "voice": "m",
   "heard": "Herzlichen Glückwunsch zur Hochzeit!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "1b34703d.mp3": {
+  "text": "Wir fliegen im Sommer nach Kairo.",
+  "voice": "m",
+  "heard": "Wir fliegen im Sommer nach Cairo.",
+  "score": 0.83,
+  "take": 1,
+  "ok": false
+ },
+ "1b38000b.mp3": {
+  "text": "Hast du ein Ticket?",
+  "voice": "f",
+  "heard": "Hast du ein Ticket?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1713,6 +2009,14 @@
   "heard": "Mein Name hat sechs Buchstaben.",
   "ok": true
  },
+ "1cc2b425.mp3": {
+  "text": "Das Flugzeug ist pünktlich.",
+  "voice": "f",
+  "heard": "Das Flugzeug ist pünktlich.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "1cc959c3.mp3": {
   "text": "Ja, ich gehe dreimal in der Woche schwimmen.",
   "voice": "m",
@@ -1733,6 +2037,14 @@
   "text": "der Abend, die Abende",
   "voice": "m",
   "heard": "Der Abend, die Abende.",
+  "ok": true
+ },
+ "1d2a5be9.mp3": {
+  "text": "wohin",
+  "voice": "m",
+  "heard": "wohin?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "1d350931.mp3": {
@@ -1993,6 +2305,14 @@
   "take": 0,
   "ok": false
  },
+ "211c1f2a.mp3": {
+  "text": "das Doppelzimmer, die Doppelzimmer",
+  "voice": "m",
+  "heard": "das Doppelzimmer, die Doppelzimmer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "212ab02c.mp3": {
   "text": "Kennst du meinen Bruder?",
   "voice": "f",
@@ -2205,6 +2525,14 @@
   "heard": "Die Bäckerei ist vom Montag bis Freitag geöffnet.",
   "ok": false
  },
+ "242d6a69.mp3": {
+  "text": "Morgen soll die Sonne scheinen.",
+  "voice": "f",
+  "heard": "Morgen soll die Sonne schannen.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
  "243cb7c4.mp3": {
   "text": "Ich komme aus Ägypten.",
   "voice": "f",
@@ -2256,6 +2584,14 @@
   "score": 0.67,
   "take": 0,
   "ok": false
+ },
+ "24edab4e.mp3": {
+  "text": "Er kommt aus der Türkei.",
+  "voice": "m",
+  "heard": "Er kommt aus der Türkei.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "24f0c91f.mp3": {
   "text": "Ich esse ein Ei.",
@@ -2313,6 +2649,14 @@
   "text": "das Schlafzimmer, die Schlafzimmer",
   "voice": "m",
   "heard": "Das Schlafzimmer, die Schlafzimmer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2554da69.mp3": {
+  "text": "Nein, das ist ganz nah.",
+  "voice": "m",
+  "heard": "Nein, das ist ganz nah.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2399,6 +2743,14 @@
   "take": 0,
   "ok": true
  },
+ "26e3100a.mp3": {
+  "text": "der Automat, die Automaten",
+  "voice": "m",
+  "heard": "der Automat die Automaten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "26f15c22.mp3": {
   "text": "das Öl",
   "voice": "m",
@@ -2411,6 +2763,14 @@
   "text": "Und ihre Jacke ist rot. Du findest sie sicher!",
   "voice": "f",
   "heard": "und ihre Jacke ist rot. Du findest sie sicher.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "27192100.mp3": {
+  "text": "aussteigen",
+  "voice": "m",
+  "heard": "Aussteigen",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2461,6 +2821,14 @@
   "take": 0,
   "ok": true
  },
+ "27e25061.mp3": {
+  "text": "Ich fahre mit dem Zug.",
+  "voice": "f",
+  "heard": "Ich fahre mit dem Zug.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "27f22d3c.mp3": {
   "text": "empfehlen",
   "voice": "m",
@@ -2485,6 +2853,14 @@
   "take": 0,
   "ok": true
  },
+ "2821f3ec.mp3": {
+  "text": "das Fahrrad, die Fahrräder",
+  "voice": "m",
+  "heard": "Das Fahrrad, die Fahrräder.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "285d3c18.mp3": {
   "text": "Ich arbeite acht Stunden.",
   "voice": "f",
@@ -2503,6 +2879,14 @@
   "text": "Dann nehme ich ein Stück.",
   "voice": "m",
   "heard": "Dann nehme ich ein Stück.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "286e50a4.mp3": {
+  "text": "Entschuldigung, noch einmal, bitte.",
+  "voice": "m",
+  "heard": "Entschuldigung, noch einmal bitte.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2539,6 +2923,14 @@
   "take": 0,
   "ok": true
  },
+ "28c18aa5.mp3": {
+  "text": "der See, die Seen",
+  "voice": "m",
+  "heard": "Der See, die sehen.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
  "28e9a44b.mp3": {
   "text": "willkommen",
   "voice": "m",
@@ -2551,6 +2943,14 @@
   "text": "Gib mir bitte das Buch!",
   "voice": "f",
   "heard": "Gib mir bitte das Buch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "29058270.mp3": {
+  "text": "Von sieben bis zehn Uhr. Wie ist Ihr Name, bitte?",
+  "voice": "f",
+  "heard": "von 7 bis 10 Uhr. Wie ist Ihr Name, bitte?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2601,6 +3001,14 @@
   "take": 0,
   "ok": true
  },
+ "29d3acbc.mp3": {
+  "text": "Wie komme ich zum Hotel?",
+  "voice": "f",
+  "heard": "Wie komme ich zum Hotel?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "29d8aad7.mp3": {
   "text": "Was ist passiert? Ist er verletzt?",
   "voice": "m",
@@ -2645,6 +3053,14 @@
   "text": "Beruf: Ich bin … von Beruf.",
   "voice": "m",
   "heard": "Beruf, ich bin von Beruf.",
+  "ok": true
+ },
+ "2a4995f6.mp3": {
+  "text": "Wir haben leider nur noch ein Einzelzimmer frei. Das Doppelzimmer ist erst ab Freitag frei.",
+  "voice": "m",
+  "heard": "Wir haben leider nur noch ein Einzelzimmer frei. Das Doppelzimmer ist erst ab Freitag frei.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "2a5027ee.mp3": {
@@ -2721,6 +3137,14 @@
   "text": "arbeiten",
   "voice": "m",
   "heard": "Arbeiten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2bea88f3.mp3": {
+  "text": "Gehen Sie über die Straße.",
+  "voice": "m",
+  "heard": "Gehen Sie über die Straße.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2821,10 +3245,34 @@
   "take": 0,
   "ok": true
  },
+ "2d406371.mp3": {
+  "text": "Information zum Regionalexpress nach Koblenz. Der Zug hat heute zwanzig Minuten Verspätung.",
+  "voice": "m",
+  "heard": "Information zum Regionalexpress nach Koblenz. Der Zug hat heute 20 Minuten für Spätung.",
+  "score": 0.91,
+  "take": 0,
+  "ok": false
+ },
  "2d4ab711.mp3": {
   "text": "Es gibt leider keinen Aufzug.",
   "voice": "m",
   "heard": "Es gibt leider keinen Aufzug.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2d87f7eb.mp3": {
+  "text": "Dreißig Grad im Oktober? Toll!",
+  "voice": "f",
+  "heard": "30 Grad im Oktober. Toll!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2d90c041.mp3": {
+  "text": "Ich brauche vierzig Minuten. Ich muss einmal umsteigen.",
+  "voice": "m",
+  "heard": "Ich brauche 40 Minuten. Ich muss einmal umsteigen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2873,6 +3321,14 @@
   "text": "Bitte schön.",
   "voice": "m",
   "heard": "Bitte schön.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2e4a4873.mp3": {
+  "text": "Mein Hotel ist im Zentrum, direkt am Hafen.",
+  "voice": "m",
+  "heard": "Mein Hotel ist im Zentrum direkt am Hafen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2999,6 +3455,14 @@
   "take": 0,
   "ok": true
  },
+ "30389b37.mp3": {
+  "text": "Wir gehen zu Fuß.",
+  "voice": "f",
+  "heard": "Wir gehen zu Fuß.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "3053a6b0.mp3": {
   "text": "Zusammen oder getrennt?",
   "voice": "m",
@@ -3041,6 +3505,14 @@
   "take": 0,
   "ok": true
  },
+ "309b3ed9.mp3": {
+  "text": "Der Bahnhof? Das ist zu weit zu Fuß. Nehmen Sie den Bus Nummer zwölf.",
+  "voice": "m",
+  "heard": "Der Bahnhof, das ist zu weit zu Fuß. Nehmen Sie den Bus Nr. 12.",
+  "score": 0.92,
+  "take": 0,
+  "ok": false
+ },
  "30bf1688.mp3": {
   "text": "Es ist zehn vor neun.",
   "voice": "m",
@@ -3048,6 +3520,22 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "30dd0402.mp3": {
+  "text": "reisen",
+  "voice": "m",
+  "heard": "Reisen",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "30dff28d.mp3": {
+  "text": "die Straßenbahn, die Straßenbahnen",
+  "voice": "m",
+  "heard": "die Straßenbahnen",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
  },
  "30e33142.mp3": {
   "text": "Ich arbeite Teilzeit, nur zwanzig Stunden. Aber ich verdiene genug.",
@@ -3091,6 +3579,14 @@
   "text": "pünktlich",
   "voice": "m",
   "heard": "pünktlich.",
+  "ok": true
+ },
+ "317190ed.mp3": {
+  "text": "Nur fünfzehn Minuten. Und im Winter fahre ich mit dem Bus.",
+  "voice": "f",
+  "heard": "nur 15 Minuten. Und im Winter fahre ich mit dem Bus.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "318c1c25.mp3": {
@@ -3137,6 +3633,14 @@
   "text": "Wir treffen uns um acht.",
   "voice": "f",
   "heard": "Wir treffen uns um acht.",
+  "ok": true
+ },
+ "325fa5cb.mp3": {
+  "text": "Am Freitag fahre ich mit dem Bus zu meiner Schwester.",
+  "voice": "m",
+  "heard": "Am Freitag fahre ich mit dem Bus zu meiner Schwester.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "3262df39.mp3": {
@@ -3189,6 +3693,14 @@
   "text": "Mein Vater ist Arzt.",
   "voice": "f",
   "heard": "Mein Vater ist Arzt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "32d0332a.mp3": {
+  "text": "die Ankunft, die Ankünfte",
+  "voice": "m",
+  "heard": "Die Ankunft, die Ankünfte.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3338,6 +3850,14 @@
   "score": 0.89,
   "take": 0,
   "ok": false
+ },
+ "34986ea2.mp3": {
+  "text": "fliegen",
+  "voice": "m",
+  "heard": "Fliegen",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "349a6e03.mp3": {
   "text": "Am Samstag ist sie von sieben bis dreizehn Uhr geöffnet.",
@@ -3533,6 +4053,14 @@
   "take": 0,
   "ok": false
  },
+ "3654e1e4.mp3": {
+  "text": "Was kostet eine Fahrkarte nach Bonn?",
+  "voice": "m",
+  "heard": "Was kostet eine Fahrkarte nach Bonn?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "36c5a3a5.mp3": {
   "text": "Ah, okay. Und wo muss ich den Müll hinbringen?",
   "voice": "m",
@@ -3605,6 +4133,14 @@
   "take": 0,
   "ok": true
  },
+ "37802e30.mp3": {
+  "text": "Gehen Sie hier geradeaus bis zur Ampel.",
+  "voice": "f",
+  "heard": "Gehen Sie hier geradeaus bis zur Ampel.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "378e928c.mp3": {
   "text": "die Kasse, die Kassen",
   "voice": "m",
@@ -3617,6 +4153,14 @@
   "text": "Ich arbeite bei einer Firma in Köln.",
   "voice": "m",
   "heard": "Ich arbeite bei einer Firma in Köln.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "37a0b1b7.mp3": {
+  "text": "das Taxi, die Taxis",
+  "voice": "m",
+  "heard": "Das Taxi, die Taxis.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3687,6 +4231,22 @@
   "take": 0,
   "ok": true
  },
+ "3830a04b.mp3": {
+  "text": "Woher kommst du?",
+  "voice": "f",
+  "heard": "Woher kommst du?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "38446eb7.mp3": {
+  "text": "Ich mag keinen Regen.",
+  "voice": "f",
+  "heard": "Ich mag keinen Regen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "3860e659.mp3": {
   "text": "Mansour.",
   "voice": "m",
@@ -3713,6 +4273,14 @@
   "text": "Meine Kollegen sind nett.",
   "voice": "m",
   "heard": "Meine Kollegen sind nett.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "39169081.mp3": {
+  "text": "Können Sie das bitte langsam sagen?",
+  "voice": "m",
+  "heard": "Können Sie das bitte langsam sagen?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3787,6 +4355,14 @@
   "take": 0,
   "ok": false
  },
+ "3a4dfb76.mp3": {
+  "text": "Wir fahren im Sommer ans Meer.",
+  "voice": "m",
+  "heard": "Wir fahren in Sommer ans Meer.",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
+ },
  "3a543cc2.mp3": {
   "text": "J, V, W, Z",
   "voice": "m",
@@ -3824,6 +4400,14 @@
   "score": 0.8,
   "take": 0,
   "ok": false
+ },
+ "3b14e123.mp3": {
+  "text": "Ich fahre gern Fahrrad.",
+  "voice": "f",
+  "heard": "Ich fahre gern Fahrrad.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "3b16a757.mp3": {
   "text": "Danke schön! Und Sie?",
@@ -3893,6 +4477,14 @@
   "take": 0,
   "ok": true
  },
+ "3b80d05a.mp3": {
+  "text": "Ich bin in der Stadt. Ich kaufe Schuhe.",
+  "voice": "f",
+  "heard": "Ich bin in der Stadt. Ich kaufe Schuhe.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "3baf1590.mp3": {
   "text": "Danke. Buchstabieren Sie bitte Ihren Vornamen.",
   "voice": "f",
@@ -3933,6 +4525,14 @@
   "heard": "Früher.",
   "ok": false
  },
+ "3d41f8cc.mp3": {
+  "text": "Wie kommst du zur Arbeit?",
+  "voice": "m",
+  "heard": "Wie kommst du zur Arbeit?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "3d64dbf4.mp3": {
   "text": "Kein Problem. Kann ich Ihnen helfen?",
   "voice": "f",
@@ -3953,6 +4553,14 @@
   "text": "Mein Kopf tut weh.",
   "voice": "f",
   "heard": "Mein Kopf tut weh.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "3d8be12e.mp3": {
+  "text": "Am Montag fahre ich mit der U-Bahn zur Arbeit.",
+  "voice": "m",
+  "heard": "Am Montag fahre ich mit der U-Bahn zur Arbeit.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4005,6 +4613,14 @@
   "text": "Der Kuchen ist sehr gut.",
   "voice": "f",
   "heard": "Der Kuchen ist sehr gut.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "3e69b6d7.mp3": {
+  "text": "Wir gehen ins Kino.",
+  "voice": "f",
+  "heard": "Wir gehen ins Kino.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4097,10 +4713,26 @@
   "take": 0,
   "ok": true
  },
+ "3f58dfa4.mp3": {
+  "text": "die Haltestelle, die Haltestellen",
+  "voice": "m",
+  "heard": "Die Haltestelle, die Haltestellen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "3f6f9f69.mp3": {
   "text": "Mein Bruder wohnt allein.",
   "voice": "f",
   "heard": "Mein Bruder wohnt allein.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "3f868efa.mp3": {
+  "text": "die Reise, die Reisen",
+  "voice": "m",
+  "heard": "Die Reise, die Reisen",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4209,6 +4841,14 @@
   "take": 1,
   "ok": true
  },
+ "40fe4ae3.mp3": {
+  "text": "Der Zug fährt um acht Uhr.",
+  "voice": "f",
+  "heard": "Der Zug fährt um 8 Uhr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "410cd6e3.mp3": {
   "text": "Die Leute hier sind sehr nett.",
   "voice": "f",
@@ -4273,6 +4913,14 @@
   "take": 0,
   "ok": true
  },
+ "420f684c.mp3": {
+  "text": "Wann kommen wir an?",
+  "voice": "f",
+  "heard": "Wann kommen wir an?",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "4224606e.mp3": {
   "text": "die Woche, die Wochen",
   "voice": "m",
@@ -4305,6 +4953,14 @@
   "text": "die Möbel (Plural)",
   "voice": "m",
   "heard": "Die Möbel Plural",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "42545e8b.mp3": {
+  "text": "Der Park ist sehr groß.",
+  "voice": "f",
+  "heard": "Der Park ist sehr groß.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4351,6 +5007,14 @@
   "text": "Wie hoch sind die Nebenkosten?",
   "voice": "f",
   "heard": "Wie hoch sind die Nebenkosten?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "42bf379d.mp3": {
+  "text": "Der Wind ist stark.",
+  "voice": "f",
+  "heard": "Der Wind ist stark.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4433,6 +5097,14 @@
   "take": 0,
   "ok": true
  },
+ "43a09fd1.mp3": {
+  "text": "der Bahnhof, die Bahnhöfe",
+  "voice": "m",
+  "heard": "der Bahnhof die Bahnhöfe",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "43a377d1.mp3": {
   "text": "Ich lade dich zu meiner Party ein.",
   "voice": "m",
@@ -4485,6 +5157,14 @@
   "text": "Am Montag hat Karim Frühschicht.",
   "voice": "m",
   "heard": "Am Montag hat Karim Frühschicht.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "449f3db2.mp3": {
+  "text": "Am Abend gehe ich ins Kino.",
+  "voice": "m",
+  "heard": "Am Abend gehe ich ins Kino.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4553,6 +5233,14 @@
   "text": "Ich rufe wegen der Anzeige an. Ist die Stelle noch frei?",
   "voice": "m",
   "heard": "Ich rufe wegen der Anzeige an. Ist die Stelle noch frei?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "46363bea.mp3": {
+  "text": "der Wind, die Winde",
+  "voice": "m",
+  "heard": "Der Wind, die Winde.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4657,10 +5345,42 @@
   "heard": "Leider kann ich am Montag nicht zum Kurs kommen, ich habe einen Termin beim Arzt, kann ich am Mittwoch kommen und was sind die Hausaufgaben?",
   "ok": true
  },
+ "46df1008.mp3": {
+  "text": "Nein, nur zehn Minuten zu Fuß.",
+  "voice": "f",
+  "heard": "Nein, nur 10 Minuten zu Fuß.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "46e15edf.mp3": {
+  "text": "der Pass, die Pässe",
+  "voice": "m",
+  "heard": "Der pass die pässe.",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "46e5d127.mp3": {
   "text": "Du bist krank! Geh nach Hause und trink viel Tee.",
   "voice": "f",
   "heard": "Du bist krank. Geh nach Hause und trink viel Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "470b542e.mp3": {
+  "text": "Mein Koffer ist zu schwer.",
+  "voice": "f",
+  "heard": "Mein Koffer ist zu spär.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
+ "476edbc4.mp3": {
+  "text": "Das Hotel war direkt am Meer.",
+  "voice": "m",
+  "heard": "Das Hotel war direkt am Meer.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4713,6 +5433,14 @@
   "take": 0,
   "ok": false
  },
+ "4844f671.mp3": {
+  "text": "Was kostet das Zimmer pro Nacht?",
+  "voice": "m",
+  "heard": "Was kostet das Zimmer pro Nacht?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4886ced9.mp3": {
   "text": "Ja, Sie sollen eine Woche zu Hause bleiben und viel trinken. Ich schreibe Sie krank.",
   "voice": "m",
@@ -4761,6 +5489,14 @@
   "text": "Ich habe seit drei Tagen Husten.",
   "voice": "m",
   "heard": "Ich habe seit drei Tagen husten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4968de44.mp3": {
+  "text": "Ich gehe zu Fuß.",
+  "voice": "m",
+  "heard": "Ich gehe zu Fuß.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4843,6 +5579,14 @@
   "take": 0,
   "ok": true
  },
+ "4a52c1ff.mp3": {
+  "text": "Der Zug fährt von Gleis acht.",
+  "voice": "f",
+  "heard": "Der Zug fährt vom Gleis 8.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
  "4a5585ac.mp3": {
   "text": "Hallo! Ich bin Ben. Und du? Wie heißt du?",
   "voice": "m",
@@ -4889,6 +5633,14 @@
   "text": "Er arbeitet im Krankenhaus.",
   "voice": "f",
   "heard": "Er arbeitet im Krankenhaus.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4aafb5ea.mp3": {
+  "text": "Die Sonne scheint.",
+  "voice": "f",
+  "heard": "Die Sonne scheint.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4961,6 +5713,22 @@
   "text": "aus dem Sudan, im Sudan",
   "voice": "m",
   "heard": "aus dem Sudan, im Sudan.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4b655a9a.mp3": {
+  "text": "Die Post ist gegenüber.",
+  "voice": "f",
+  "heard": "Die Post ist gegenüber.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4b6900c6.mp3": {
+  "text": "Die Post ist an der Ecke.",
+  "voice": "m",
+  "heard": "Die Post ist an der Ecke.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5133,10 +5901,26 @@
   "take": 0,
   "ok": true
  },
+ "4dd419a7.mp3": {
+  "text": "das Ticket, die Tickets",
+  "voice": "m",
+  "heard": "Das Ticket, die Tickets.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4dd7b0ef.mp3": {
   "text": "herzlich",
   "voice": "m",
   "heard": "Herzlich!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4de6e347.mp3": {
+  "text": "das Wetter",
+  "voice": "m",
+  "heard": "Das Wetter.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5148,6 +5932,14 @@
   "score": 1,
   "take": 0,
   "ok": false
+ },
+ "4e517d3e.mp3": {
+  "text": "Wohin gehst du?",
+  "voice": "m",
+  "heard": "wohin gehst du?",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "4e615644.mp3": {
   "text": "Man muss den Müll trennen.",
@@ -5199,6 +5991,14 @@
   "text": "aufpassen",
   "voice": "m",
   "heard": "Aufpassen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4f1d6ed4.mp3": {
+  "text": "Nehmen Sie die erste Straße links.",
+  "voice": "m",
+  "heard": "Nehmen Sie die erste Straße links.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5262,6 +6062,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "4fadc001.mp3": {
+  "text": "warm",
+  "voice": "m",
+  "heard": "Wann?",
+  "score": 0,
+  "take": 0,
+  "ok": false
  },
  "4fae9448.mp3": {
   "text": "Für hier oder zum Mitnehmen?",
@@ -5337,6 +6145,14 @@
   "heard": "Wie schreibt man das?",
   "ok": true
  },
+ "50951f42.mp3": {
+  "text": "Ist das weit?",
+  "voice": "m",
+  "heard": "Ist das weit?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "5102a5d9.mp3": {
   "text": "Hallo Karim, hier ist Mona. Hast du am Freitag Zeit? Wir gehen um sieben ins Kino. Kommst du mit?",
   "voice": "f",
@@ -5377,6 +6193,14 @@
   "text": "arbeitslos",
   "voice": "m",
   "heard": "Arbeitslos!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "51771f49.mp3": {
+  "text": "Eine Fahrkarte nach Hamburg, bitte.",
+  "voice": "m",
+  "heard": "Eine Fahrkarte nach Hamburg, bitte.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5453,6 +6277,14 @@
   "take": 0,
   "ok": true
  },
+ "529505d2.mp3": {
+  "text": "Die Fahrt dauert eine Stunde.",
+  "voice": "m",
+  "heard": "Die Fahrt dauert eine Stunde.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "52a06e4f.mp3": {
   "text": "schreiben",
   "voice": "m",
@@ -5479,6 +6311,22 @@
   "text": "Freut mich!",
   "voice": "m",
   "heard": "Freut mich!",
+  "ok": true
+ },
+ "52ebbd8e.mp3": {
+  "text": "Um elf Uhr zwanzig. Sie müssen in Hannover umsteigen.",
+  "voice": "m",
+  "heard": "Um 11.20 Uhr. Sie müssen in Hannover umsteigen.",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
+ "52ffd460.mp3": {
+  "text": "Wir fahren ans Meer.",
+  "voice": "f",
+  "heard": "Wir fahren ans Meer.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "533b558d.mp3": {
@@ -5557,6 +6405,14 @@
   "take": 0,
   "ok": true
  },
+ "542afa02.mp3": {
+  "text": "das Einzelzimmer, die Einzelzimmer",
+  "voice": "m",
+  "heard": "Das Einzelzimmer, die Einzelzimmer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "543ccedc.mp3": {
   "text": "Zahlen Sie bar oder mit Karte?",
   "voice": "m",
@@ -5625,6 +6481,14 @@
   "take": 0,
   "ok": true
  },
+ "552f0ead.mp3": {
+  "text": "Danach esse ich in einem Restaurant am Rhein.",
+  "voice": "m",
+  "heard": "Danach esse ich in einem Restaurant am Rhein.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "557f8dfe.mp3": {
   "text": "Nein, wir haben keinen Fisch. Und Hähnchen gibt es heute auch nicht mehr.",
   "voice": "m",
@@ -5637,6 +6501,22 @@
   "text": "Ist die Wohnung noch frei?",
   "voice": "f",
   "heard": "ist die Wohnung noch frei.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "566f1316.mp3": {
+  "text": "Einfach oder hin und zurück?",
+  "voice": "m",
+  "heard": "Einfach oder hin und zurück.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "567c0fa5.mp3": {
+  "text": "Die Fahrt dauert drei Stunden.",
+  "voice": "m",
+  "heard": "Die Fahrt dauert drei Stunden.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5869,11 +6749,27 @@
   "heard": "Wie geht es Ihnen?",
   "ok": true
  },
+ "5936717d.mp3": {
+  "text": "Gehen Sie nach rechts.",
+  "voice": "m",
+  "heard": "Gehen Sie nach rechts.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "593ab4bf.mp3": {
   "text": "Ich heiße Hana. Mein Familienname ist Mostafa.",
   "voice": "f",
   "heard": "Ich heiße Hannah. Mein Familienname ist Mostafa.",
   "ok": false
+ },
+ "593e03fe.mp3": {
+  "text": "Ich fahre mit der U-Bahn.",
+  "voice": "m",
+  "heard": "Ich fahre mit der U-Bahn.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "595a5207.mp3": {
   "text": "Die Wohnung ist im Erdgeschoss.",
@@ -5893,6 +6789,14 @@
   "text": "Der Deutschkurs beginnt im Mai.",
   "voice": "f",
   "heard": "Der Deutschkurs beginnt im Mai.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "597ba9df.mp3": {
+  "text": "Die Abfahrt ist um zehn Uhr.",
+  "voice": "f",
+  "heard": "Die Abfahrt ist um 10 Uhr.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5973,6 +6877,14 @@
   "take": 0,
   "ok": true
  },
+ "5b1acf95.mp3": {
+  "text": "einsteigen",
+  "voice": "m",
+  "heard": "Einsteigen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "5b1b1570.mp3": {
   "text": "Ich habe seit gestern Bauchschmerzen. Kopfschmerzen habe ich nicht.",
   "voice": "m",
@@ -6009,6 +6921,22 @@
   "text": "Und haben Sie auch etwas gegen Husten?",
   "voice": "f",
   "heard": "und haben sie auch etwas gegen Husten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5bbeab88.mp3": {
+  "text": "fahren",
+  "voice": "m",
+  "heard": "fahren.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5bc6c8eb.mp3": {
+  "text": "Eine Fahrkarte nach Bonn, bitte.",
+  "voice": "f",
+  "heard": "Eine Fahrkarte nach Bonn, bitte.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -6311,6 +7239,14 @@
   "take": 0,
   "ok": true
  },
+ "5f85fb4e.mp3": {
+  "text": "Die Ankunft ist um zwölf Uhr.",
+  "voice": "f",
+  "heard": "Die Ankunft ist um 12 Uhr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "5f9ff4d1.mp3": {
   "text": "Ich esse nicht gern Fleisch.",
   "voice": "f",
@@ -6409,6 +7345,14 @@
   "heard": "Leider!",
   "ok": true
  },
+ "610799c0.mp3": {
+  "text": "der Weg, die Wege",
+  "voice": "m",
+  "heard": "der Weg die Wege.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "61236743.mp3": {
   "text": "dreizehn, vierzehn, fünfzehn, sechzehn",
   "voice": "m",
@@ -6438,6 +7382,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "614ead5c.mp3": {
+  "text": "Ja, aber im Sommer ist es zu heiß. Über vierzig Grad!",
+  "voice": "m",
+  "heard": "Ja, aber in Sommer ist es zu heiß, über 40 Grad.",
+  "score": 0.9,
+  "take": 0,
+  "ok": false
  },
  "615b8051.mp3": {
   "text": "Das Handy liegt nicht auf dem Tisch. Es liegt auf dem Sofa.",
@@ -6557,6 +7509,14 @@
   "take": 0,
   "ok": true
  },
+ "62c51f9a.mp3": {
+  "text": "Das Hotel ist am Meer.",
+  "voice": "f",
+  "heard": "Das Hotel ist am Meer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "62dfabc1.mp3": {
   "text": "Es gibt keinen Aufzug.",
   "voice": "f",
@@ -6589,6 +7549,14 @@
   "take": 0,
   "ok": true
  },
+ "63297f66.mp3": {
+  "text": "Wir fahren mit dem Auto nach Bonn.",
+  "voice": "m",
+  "heard": "Wir fahren mit dem Auto nach Bonn.",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "6341198c.mp3": {
   "text": "Meine Mutter arbeitet in einer Schule.",
   "voice": "f",
@@ -6609,6 +7577,22 @@
   "text": "Können Sie das bitte buchstabieren?",
   "voice": "m",
   "heard": "Können Sie das bitte buchstabieren?",
+  "ok": true
+ },
+ "63d9603e.mp3": {
+  "text": "Wie komme ich zum Bahnhof?",
+  "voice": "f",
+  "heard": "Wie komme ich zum Bahnhof?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "63de373b.mp3": {
+  "text": "Links oder rechts?",
+  "voice": "m",
+  "heard": "Links oder rechts?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "6403e8a9.mp3": {
@@ -6632,6 +7616,14 @@
   "score": 0.5,
   "take": 0,
   "ok": false
+ },
+ "64339422.mp3": {
+  "text": "Wir nehmen ein Doppelzimmer.",
+  "voice": "f",
+  "heard": "Wir nehmen ein Doppelzimmer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "649949b9.mp3": {
   "text": "Machen Sie bitte den Mund auf und sagen Sie „Aaah“.",
@@ -6785,6 +7777,14 @@
   "take": 0,
   "ok": true
  },
+ "666bd817.mp3": {
+  "text": "die Halbpension",
+  "voice": "m",
+  "heard": "die Halbpension.",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "6696d7ab.mp3": {
   "text": "Das ist eine Vollzeitstelle.",
   "voice": "m",
@@ -6793,10 +7793,26 @@
   "take": 0,
   "ok": true
  },
+ "66af7faa.mp3": {
+  "text": "Gehen Sie geradeaus bis zur Ampel. Dann nach rechts. Die Post ist neben dem Supermarkt.",
+  "voice": "f",
+  "heard": "Gehen Sie geradeaus bis zur Ampel. Deiner rechts. Die Post ist neben dem Supermarkt.",
+  "score": 0.87,
+  "take": 0,
+  "ok": false
+ },
  "66c0b1e4.mp3": {
   "text": "das Fenster, die Fenster",
   "voice": "m",
   "heard": "Das Fenster, die Fenster.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "67302d92.mp3": {
+  "text": "der Regen",
+  "voice": "m",
+  "heard": "Der Regen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -6837,6 +7853,14 @@
   "text": "Ich esse auch weniger Zucker und mehr Gemüse. Ich schlafe jetzt viel besser.",
   "voice": "m",
   "heard": "Ich esse auch weniger Zucker und mehr Gemüse. Ich schlafe jetzt viel besser.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "681baf4a.mp3": {
+  "text": "Das Wetter ist leider nicht so gut. Es regnet viel und es ist kalt.",
+  "voice": "m",
+  "heard": "Das Wetter ist leider nicht so gut. Es regnet viel und es ist kalt.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -7015,6 +8039,22 @@
   "take": 0,
   "ok": true
  },
+ "69d76cfe.mp3": {
+  "text": "Wir fliegen nicht. Wir fahren mit dem Zug nach Wien. Das dauert acht Stunden.",
+  "voice": "f",
+  "heard": "Wir fliehen nicht. Wir fahren mit dem Zug nach Wien. Das dauert acht Stunden.",
+  "score": 0.92,
+  "take": 0,
+  "ok": false
+ },
+ "69f030af.mp3": {
+  "text": "gehen",
+  "voice": "m",
+  "heard": "Ring",
+  "score": 0,
+  "take": 0,
+  "ok": false
+ },
  "6a19548f.mp3": {
   "text": "das Paket, die Pakete",
   "voice": "m",
@@ -7027,6 +8067,14 @@
   "text": "Die Küche ist sehr hell.",
   "voice": "f",
   "heard": "Die Küche ist sehr hell.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6a3d8553.mp3": {
+  "text": "Ich gehe jetzt nach Hause.",
+  "voice": "f",
+  "heard": "Ich gehe jetzt nach Hause.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -7093,6 +8141,14 @@
   "take": 0,
   "ok": true
  },
+ "6b120a2a.mp3": {
+  "text": "Die Passagiere des Fluges LH 340 nach Kairo werden gebeten, zu Gate B zwölf zu kommen.",
+  "voice": "m",
+  "heard": "Die Passagiere des Fluges LH340 nach Cairo werden gebeten, zu Garde B12 zu kommen.",
+  "score": 0.67,
+  "take": 0,
+  "ok": false
+ },
  "6b5aca3e.mp3": {
   "text": "der Laden, die Läden",
   "voice": "m",
@@ -7136,6 +8192,14 @@
   "score": 0.83,
   "take": 1,
   "ok": false
+ },
+ "6c1b64ba.mp3": {
+  "text": "Dann nehmen Sie die zweite Straße links.",
+  "voice": "m",
+  "heard": "Dann nehmen Sie die zweite Straße links.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "6c1fd35b.mp3": {
   "text": "Tut dir der Bauch weh?",
@@ -7182,6 +8246,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "6cdbca43.mp3": {
+  "text": "Ein Doppelzimmer, bitte. Für zwei Nächte.",
+  "voice": "m",
+  "heard": "Ein Doppelzimmer, bitte, für zwei Nichte.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
  },
  "6ce2e080.mp3": {
   "text": "Das Wohnzimmer ist groß.",
@@ -7423,6 +8495,14 @@
   "take": 0,
   "ok": true
  },
+ "6f383e62.mp3": {
+  "text": "ich bin jetzt in Hamburg. Ich bin mit dem Zug gefahren.",
+  "voice": "m",
+  "heard": "Ich bin jetzt in Hamburg. Ich bin mit dem Zug gefahren.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "6f48cd47.mp3": {
   "text": "Gestern war ich sehr krank. Heute geht es mir besser, aber am besten bleibe ich noch einen Tag zu Hause.",
   "voice": "f",
@@ -7487,6 +8567,14 @@
   "take": 0,
   "ok": true
  },
+ "6fd0eadb.mp3": {
+  "text": "Es regnet schon wieder.",
+  "voice": "f",
+  "heard": "Es regnet schon wieder.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "6fdbd81d.mp3": {
   "text": "Ich wohne im Erdgeschoss. Ich kann Ihnen gern helfen.",
   "voice": "m",
@@ -7534,6 +8622,14 @@
   "score": 0.5,
   "take": 0,
   "ok": false
+ },
+ "706d3c33.mp3": {
+  "text": "abfahren",
+  "voice": "m",
+  "heard": "Abfahren.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "708d341e.mp3": {
   "text": "Wie heißt du?",
@@ -7593,6 +8689,14 @@
   "take": 0,
   "ok": true
  },
+ "71ba2728.mp3": {
+  "text": "ankommen",
+  "voice": "m",
+  "heard": "Ankommen!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "71d39121.mp3": {
   "text": "Wann stehst du auf?",
   "voice": "m",
@@ -7605,6 +8709,14 @@
   "heard": "Morgen habe ich Zeit.",
   "ok": true
  },
+ "71f968dd.mp3": {
+  "text": "Wie lange dauert die Fahrt?",
+  "voice": "m",
+  "heard": "Wie lange dauert die Fahrt?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "71fe358d.mp3": {
   "text": "buchstabieren",
   "voice": "m",
@@ -7615,6 +8727,22 @@
   "text": "Haben Sie einen Termin?",
   "voice": "f",
   "heard": "Haben Sie einen Termin?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "7222cef4.mp3": {
+  "text": "Der Regionalexpress nach Bonn fällt heute aus. Bitte nehmen Sie die S-Bahn.",
+  "voice": "m",
+  "heard": "Der Regionalexpress nach Bonn fällt heute aus. Bitte nehmen Sie die S-Bahn.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "72379865.mp3": {
+  "text": "Wohin gehst du? Ins Kino.",
+  "voice": "m",
+  "heard": "Wohin gehst du? Ins Kino.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -7657,10 +8785,26 @@
   "take": 0,
   "ok": false
  },
+ "728e9309.mp3": {
+  "text": "Von welchem Gleis fährt der Zug?",
+  "voice": "f",
+  "heard": "Von welchen Gleis fährt der Zug?",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
+ },
  "73041648.mp3": {
   "text": "die Suppe, die Suppen",
   "voice": "m",
   "heard": "Die Suppe, die Suppen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "73059ac0.mp3": {
+  "text": "Wie ist das Wetter heute?",
+  "voice": "m",
+  "heard": "Wie ist das Wetter heute?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -7739,6 +8883,14 @@
   "take": 0,
   "ok": true
  },
+ "7405b9f3.mp3": {
+  "text": "die S-Bahn, die S-Bahnen",
+  "voice": "m",
+  "heard": "Die S-Bahn, die S-Bahnen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7414ab55.mp3": {
   "text": "Nimm die Tropfen vor dem Frühstück und vor dem Schlafen.",
   "voice": "m",
@@ -7762,6 +8914,14 @@
   "score": 0.86,
   "take": 0,
   "ok": false
+ },
+ "74c6776f.mp3": {
+  "text": "Ich nehme die U-Bahn.",
+  "voice": "f",
+  "heard": "Ich nehme die U-Bahn.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "74ddf5b4.mp3": {
   "text": "Kennst du einen guten Zahnarzt?",
@@ -7911,6 +9071,14 @@
   "take": 0,
   "ok": true
  },
+ "75d526fc.mp3": {
+  "text": "Es sind fünfundzwanzig Grad.",
+  "voice": "f",
+  "heard": "Es sind 25 Grad.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7604553c.mp3": {
   "text": "Arbeitest du gern im Team?",
   "voice": "m",
@@ -8039,6 +9207,14 @@
   "take": 0,
   "ok": true
  },
+ "7763e438.mp3": {
+  "text": "die Post",
+  "voice": "m",
+  "heard": "Die Post.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7776c81a.mp3": {
   "text": "Das ist Herr Braun.",
   "voice": "f",
@@ -8163,6 +9339,14 @@
   "take": 0,
   "ok": true
  },
+ "78bc6ef1.mp3": {
+  "text": "Gehen Sie geradeaus bis zur Ampel.",
+  "voice": "m",
+  "heard": "Gehen Sie geradeaus bis zur Ampel.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "78c376eb.mp3": {
   "text": "die Mutter, die Mütter",
   "voice": "m",
@@ -8252,6 +9436,14 @@
   "voice": "f",
   "heard": "Das macht 7,90 Euro, bitte.",
   "score": 1,
+  "take": 0,
+  "ok": false
+ },
+ "79dee865.mp3": {
+  "text": "Information für alle Fahrgäste: Der Zug nach Dresden fährt heute nicht von Gleis vier, sondern von Gleis neun.",
+  "voice": "f",
+  "heard": "Informationen für alle Fahrgäste. Der Zug nach Dressen fährt heute nicht von Gleis 4, sondern von Gleis 9.",
+  "score": 0.88,
   "take": 0,
   "ok": false
  },
@@ -8451,6 +9643,14 @@
   "take": 0,
   "ok": true
  },
+ "7d18a0e0.mp3": {
+  "text": "Ich kenne den Weg nicht.",
+  "voice": "f",
+  "heard": "Ich kenne den Weg nicht.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7d1e5f9c.mp3": {
   "text": "Meine Mutter heißt Salma.",
   "voice": "m",
@@ -8458,6 +9658,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "7d2207a5.mp3": {
+  "text": "Wir fliegen nach Kairo.",
+  "voice": "f",
+  "heard": "Wir fliegen nach Cairo.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
  },
  "7d2476b2.mp3": {
   "text": "Ruf einen Krankenwagen!",
@@ -8485,6 +9693,14 @@
   "text": "Was hast du am Wochenende gemacht?",
   "voice": "m",
   "heard": "Was hast du am Wochenende gemacht?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "7dfd34b9.mp3": {
+  "text": "Wie komme ich zum Bahnhof?",
+  "voice": "m",
+  "heard": "Wie komme ich zum Bahnhof?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -8551,6 +9767,14 @@
   "take": 0,
   "ok": false
  },
+ "7edda733.mp3": {
+  "text": "An der Ampel gehen Sie nach links.",
+  "voice": "f",
+  "heard": "An der Ampel gehen Sie nach links.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7ee6fcb4.mp3": {
   "text": "Nein, meine Eltern wohnen in München. Mein Bruder wohnt in Hamburg.",
   "voice": "f",
@@ -8603,6 +9827,14 @@
   "take": 0,
   "ok": true
  },
+ "7f9d0d2d.mp3": {
+  "text": "das Gleis, die Gleise",
+  "voice": "m",
+  "heard": "das Gleis die Gleise",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7fa7b7ff.mp3": {
   "text": "Ich brauche Tomaten.",
   "voice": "f",
@@ -8631,6 +9863,14 @@
   "heard": "Der Kurs dauert zwei Stunden.",
   "ok": true
  },
+ "80262daf.mp3": {
+  "text": "Wir fahren nach Berlin.",
+  "voice": "f",
+  "heard": "Wir fahren nach Berlin.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "806cb96f.mp3": {
   "text": "Wie war die Arbeit?",
   "voice": "m",
@@ -8651,6 +9891,22 @@
   "text": "Das ist mein Vater. Und das ist meine Mutter.",
   "voice": "m",
   "heard": "Das ist mein Vater. Und das ist meine Mutter.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "80c39205.mp3": {
+  "text": "Ich bin mit dem Zug gefahren.",
+  "voice": "m",
+  "heard": "Ich bin mit dem Zug gefahren.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "80c4f5e1.mp3": {
+  "text": "geradeaus",
+  "voice": "m",
+  "heard": "Geradeaus.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -8765,6 +10021,14 @@
   "take": 0,
   "ok": true
  },
+ "82781955.mp3": {
+  "text": "Wann komme ich in Berlin an?",
+  "voice": "f",
+  "heard": "Wann komme ich in Berlin an?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "828a897f.mp3": {
   "text": "Die Kinder spielen im Hof.",
   "voice": "f",
@@ -8809,6 +10073,14 @@
   "text": "Und deine Schwestern?",
   "voice": "m",
   "heard": "und deine Schwestern",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "838ac947.mp3": {
+  "text": "Das dauert zwanzig Minuten.",
+  "voice": "m",
+  "heard": "Das dauert 20 Minuten.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -8859,6 +10131,14 @@
   "heard": "Das Wochenende, die Wochenenden.",
   "ok": true
  },
+ "844fb5d6.mp3": {
+  "text": "ohne",
+  "voice": "m",
+  "heard": "ohne",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "8479ed53.mp3": {
   "text": "Das ist eine Suppe. Ich möchte eine Suppe.",
   "voice": "m",
@@ -8879,6 +10159,14 @@
   "text": "Seine Partnerin ist Ärztin.",
   "voice": "f",
   "heard": "Seine Partnerin ist Ärztin.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "84e0158c.mp3": {
+  "text": "Das Hotel ist rechts.",
+  "voice": "f",
+  "heard": "Das Hotel ist rechts.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -8981,6 +10269,14 @@
   "text": "Und am Sonntag?",
   "voice": "f",
   "heard": "Und am Sonntag.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "869abb78.mp3": {
+  "text": "Gehen wir ins Kino?",
+  "voice": "f",
+  "heard": "Gehen wir ins Kino.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -9131,6 +10427,14 @@
   "take": 0,
   "ok": true
  },
+ "88d0c57a.mp3": {
+  "text": "Ich brauche ein Einzelzimmer.",
+  "voice": "f",
+  "heard": "Ich brauche ein Einzelzimmer.",
+  "score": 1,
+  "take": 2,
+  "ok": true
+ },
  "88f54273.mp3": {
   "text": "Die Praxis von Doktor Klein ist hier.",
   "voice": "f",
@@ -9166,6 +10470,14 @@
   "voice": "m",
   "heard": "Am 14. März. Und du?",
   "ok": false
+ },
+ "896af83d.mp3": {
+  "text": "Ich fahre mit dem Bus.",
+  "voice": "f",
+  "heard": "Ich fahre mit dem Bus.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "8978c4a8.mp3": {
   "text": "Die Tomaten zwei Euro fünfzig, die Äpfel ein Euro fünfzig. Das macht vier Euro.",
@@ -9281,6 +10593,14 @@
   "text": "Die Wohnung ist ab sofort frei.",
   "voice": "f",
   "heard": "Die Wohnung ist ab sofort frei.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8b155232.mp3": {
+  "text": "Wie lange brauchst du?",
+  "voice": "m",
+  "heard": "Wie lange brauchst du?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -9403,6 +10723,22 @@
   "take": 0,
   "ok": true
  },
+ "8c878a2f.mp3": {
+  "text": "die U-Bahn, die U-Bahnen",
+  "voice": "m",
+  "heard": "Die U-Bahn, die U-Bahnen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8c8ed91b.mp3": {
+  "text": "die Sonne",
+  "voice": "m",
+  "heard": "Die Sonne.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "8ca7c65a.mp3": {
   "text": "der Balkon, die Balkone",
   "voice": "m",
@@ -9465,6 +10801,14 @@
   "take": 0,
   "ok": true
  },
+ "8d6e0c8a.mp3": {
+  "text": "Ich fahre mit dem Bus.",
+  "voice": "m",
+  "heard": "Ich fahre mit dem Bus.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "8d7e851f.mp3": {
   "text": "Und wie alt ist sie?",
   "voice": "m",
@@ -9477,6 +10821,14 @@
   "text": "Alles Gute und viel Glück!",
   "voice": "m",
   "heard": "Alles Gute und viel Glück!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8e210190.mp3": {
+  "text": "Um sechzehn Uhr zehn.",
+  "voice": "m",
+  "heard": "Um 16 Uhr 10.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -10145,10 +11497,26 @@
   "take": 0,
   "ok": true
  },
+ "9918ca34.mp3": {
+  "text": "Am Dienstag fahre ich mit dem Fahrrad zum Deutschkurs.",
+  "voice": "m",
+  "heard": "Am Dienstag fahre ich mit dem Fahrrad zum Deutschkurs.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9922a403.mp3": {
   "text": "Der Schlüssel liegt im Schrank.",
   "voice": "m",
   "heard": "Der Schlüssel liegt im Schrank.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9982cab8.mp3": {
+  "text": "Im Sommer ist es heiß und die Sonne scheint.",
+  "voice": "m",
+  "heard": "Im Sommer ist es heiß und die Sonne scheint.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -10173,6 +11541,14 @@
   "text": "Ab sechs Uhr habe ich Feierabend.",
   "voice": "m",
   "heard": "Ab 6 Uhr habe ich Feierabend.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9a211d28.mp3": {
+  "text": "Bist du heute zu Hause?",
+  "voice": "m",
+  "heard": "Bist du heute zu Hause?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -10207,10 +11583,42 @@
   "take": 0,
   "ok": false
  },
+ "9ab544e2.mp3": {
+  "text": "Im Herbst ist es windig.",
+  "voice": "m",
+  "heard": "Im Herbst ist es windig.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9abf0e33.mp3": {
+  "text": "Ich brauche ein Doppelzimmer.",
+  "voice": "f",
+  "heard": "Ich brauche ein Doppelzimmer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9ae22161.mp3": {
+  "text": "Wie ist das Wetter heute?",
+  "voice": "f",
+  "heard": "Wie ist das Wetter heute?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9ae3bdc0.mp3": {
   "text": "Sie studiert Medizin.",
   "voice": "f",
   "heard": "Sie studiert Medizin.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9aff643f.mp3": {
+  "text": "Ich fahre mit der U-Bahn.",
+  "voice": "f",
+  "heard": "Ich fahre mit der U-Bahn.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -10243,6 +11651,14 @@
   "text": "Meine Oma ist ruhig und lieb.",
   "voice": "m",
   "heard": "Meine Oma ist ruhig und lieb.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9b65bf84.mp3": {
+  "text": "Die Haltestelle ist da vorne.",
+  "voice": "m",
+  "heard": "Die Haltestelle ist da vorne.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -10291,6 +11707,14 @@
   "take": 0,
   "ok": true
  },
+ "9bd2a45a.mp3": {
+  "text": "Zuerst gehe ich zum Dom. Er ist direkt am Bahnhof.",
+  "voice": "m",
+  "heard": "Zuerst gehe ich zum Dom. Er ist direkt am Bahnhof.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9c18a2a6.mp3": {
   "text": "Entschuldigung, wo finde ich Reis?",
   "voice": "m",
@@ -10305,6 +11729,14 @@
   "heard": "Wir sind, ihr seid, sie sind, sie sind.",
   "ok": true
  },
+ "9c407d87.mp3": {
+  "text": "Gehen Sie nach links.",
+  "voice": "m",
+  "heard": "Gehen Sie nach links.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9c5cba40.mp3": {
   "text": "Rufen Sie mich an!",
   "voice": "m",
@@ -10317,6 +11749,14 @@
   "text": "siebenundvierzig",
   "voice": "m",
   "heard": "47.",
+  "ok": true
+ },
+ "9ca4c4a2.mp3": {
+  "text": "München liegt im Süden.",
+  "voice": "m",
+  "heard": "München liegt im Süden.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "9cd06375.mp3": {
@@ -10356,6 +11796,14 @@
   "voice": "f",
   "heard": "Wie eizt sind Sie? Ich bin 31.",
   "ok": false
+ },
+ "9cf56c89.mp3": {
+  "text": "Von Gleis acht. Gute Reise!",
+  "voice": "m",
+  "heard": "Von Gleis 8. Gute Reise!",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "9cf62123.mp3": {
   "text": "der Stuhl, die Stühle",
@@ -10415,6 +11863,14 @@
   "heard": "Der Frühling, der Sommer, der Herbst, der Winter.",
   "ok": true
  },
+ "9d779200.mp3": {
+  "text": "Bleib zu Hause!",
+  "voice": "m",
+  "heard": "Bleib zu Hause.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9d7ef366.mp3": {
   "text": "Hier darf man nicht parken.",
   "voice": "m",
@@ -10449,6 +11905,14 @@
   "text": "kaufen",
   "voice": "m",
   "heard": "kaufen",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9dd0e70a.mp3": {
+  "text": "Berlin liegt im Osten.",
+  "voice": "m",
+  "heard": "Berlin liegt im Osten.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -10514,6 +11978,14 @@
   "voice": "f",
   "heard": "Der Kurs fängt um 9 Uhr an.",
   "ok": false
+ },
+ "9eb27eb3.mp3": {
+  "text": "regnen",
+  "voice": "m",
+  "heard": "Regnen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "9eb7a378.mp3": {
   "text": "Mein Sohn wird bald fünf.",
@@ -10633,6 +12105,22 @@
   "take": 0,
   "ok": true
  },
+ "a06d583a.mp3": {
+  "text": "Wie viel Verspätung hat der Zug?",
+  "voice": "m",
+  "heard": "Wie viel Verspätung hat der Zug?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a08e27db.mp3": {
+  "text": "das Auto, die Autos",
+  "voice": "m",
+  "heard": "Das Auto, die Autos.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a0a11656.mp3": {
   "text": "Ich stehe um halb sieben auf. Dann frühstücke ich. Um acht fängt meine Arbeit an.",
   "voice": "m",
@@ -10689,10 +12177,26 @@
   "take": 0,
   "ok": false
  },
+ "a14e232e.mp3": {
+  "text": "Gut. Eine Fahrkarte, bitte. Einfach.",
+  "voice": "f",
+  "heard": "Gut. Eine Fahrkarte bitte. Einfach.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a15c1c64.mp3": {
   "text": "Ich trinke lieber Tee.",
   "voice": "m",
   "heard": "Ich trinke lieber Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a173eaee.mp3": {
+  "text": "mit",
+  "voice": "m",
+  "heard": "Mit",
   "score": 1,
   "take": 0,
   "ok": true
@@ -10733,6 +12237,14 @@
   "text": "mieten",
   "voice": "m",
   "heard": "mieten",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a24e087b.mp3": {
+  "text": "Im Museum bleibe ich zwei Stunden.",
+  "voice": "m",
+  "heard": "Im Museum bleibe ich zwei Stunden.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -10787,6 +12299,14 @@
   "heard": "Okay.",
   "ok": false
  },
+ "a3027254.mp3": {
+  "text": "Meine Eltern wohnen in einem Dorf.",
+  "voice": "f",
+  "heard": "Meine Eltern wohnen in einem Dorf.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a3199eaa.mp3": {
   "text": "Man darf im Haus nicht rauchen.",
   "voice": "m",
@@ -10794,6 +12314,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "a338a8ba.mp3": {
+  "text": "Das ist zu weit. Nehmen Sie lieber den Bus.",
+  "voice": "m",
+  "heard": "Das ist zu weit. Nähnen Sie lieber den Bus.",
+  "score": 0.89,
+  "take": 0,
+  "ok": false
  },
  "a34a096b.mp3": {
   "text": "Wie viele Stunden sind es pro Woche?",
@@ -10889,10 +12417,26 @@
   "take": 1,
   "ok": true
  },
+ "a403ca3d.mp3": {
+  "text": "Nehmen Sie die erste Straße links. Das Hotel ist gleich an der Ecke.",
+  "voice": "f",
+  "heard": "Nehmen Sie die erste Straße links. Das Hotel ist gleich an der Ecke.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a41a7c76.mp3": {
   "text": "Nehmen Sie Medikamente?",
   "voice": "f",
   "heard": "Nehmen Sie Medikamente.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a42a2fa7.mp3": {
+  "text": "Der Zug fährt von Gleis drei.",
+  "voice": "f",
+  "heard": "Der Zug fährt von Gleis 3.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -10985,6 +12529,14 @@
   "text": "heute, morgen, gestern",
   "voice": "m",
   "heard": "Heute, morgen, gestern.",
+  "ok": true
+ },
+ "a5a33fc3.mp3": {
+  "text": "Ist das weit?",
+  "voice": "f",
+  "heard": "Ist das weit?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "a5b15d7c.mp3": {
@@ -11113,6 +12665,22 @@
   "take": 0,
   "ok": true
  },
+ "a7401fb4.mp3": {
+  "text": "Die Post ist gegenüber der Bank.",
+  "voice": "m",
+  "heard": "Die Post ist gegenüber der Bank.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a7727ea3.mp3": {
+  "text": "Gern! Aber zuerst fahre ich nach Hause.",
+  "voice": "f",
+  "heard": "gern, aber zuerst fahre ich nach Hause.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a78b6dda.mp3": {
   "text": "ausfüllen",
   "voice": "m",
@@ -11141,6 +12709,14 @@
   "text": "zweiunddreißig",
   "voice": "m",
   "heard": "32",
+  "ok": true
+ },
+ "a7ee5a3a.mp3": {
+  "text": "Der Supermarkt ist auf der rechten Seite, neben der Bank.",
+  "voice": "m",
+  "heard": "Der Supermarkt ist auf der rechten Seite neben der Bank.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "a82c501d.mp3": {
@@ -11401,6 +12977,14 @@
   "take": 0,
   "ok": true
  },
+ "ab978c6e.mp3": {
+  "text": "Das sind nur fünf Minuten zu Fuß.",
+  "voice": "m",
+  "heard": "Das sind nur fünf Minuten zu Fuß.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "abada272.mp3": {
   "text": "Ist Ihr Sohn schon in der Schule?",
   "voice": "f",
@@ -11461,6 +13045,14 @@
   "heard": "Die Entschuldigung, die Entschuldigungen.",
   "ok": true
  },
+ "acfdf923.mp3": {
+  "text": "die Bank, die Banken",
+  "voice": "m",
+  "heard": "Die Bank, die Banken.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "ad2c3b4b.mp3": {
   "text": "Hier muss alles in Ordnung sein.",
   "voice": "f",
@@ -11499,6 +13091,14 @@
   "text": "Ab zweiundzwanzig Uhr muss man leise sein.",
   "voice": "m",
   "heard": "Ab 22 Uhr muss man leise sein.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ada56909.mp3": {
+  "text": "Sie fährt mit der Straßenbahn.",
+  "voice": "m",
+  "heard": "Sie fährt mit der Straßenbahn.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -11549,6 +13149,14 @@
   "take": 0,
   "ok": true
  },
+ "ae892d7b.mp3": {
+  "text": "Am Samstag fahre ich mit dem Zug nach Bonn.",
+  "voice": "m",
+  "heard": "Am Sonntag fahre ich mit dem Zug nach Bonn.",
+  "score": 0.89,
+  "take": 0,
+  "ok": false
+ },
  "ae9bf0ca.mp3": {
   "text": "Ja, sehr gut, danke!",
   "voice": "f",
@@ -11577,6 +13185,14 @@
   "text": "Der Reis ist links.",
   "voice": "f",
   "heard": "Der Reis ist links.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "af1bfd71.mp3": {
+  "text": "Dann nehmen Sie die zweite Straße rechts. Der Bahnhof ist dann direkt vor Ihnen.",
+  "voice": "f",
+  "heard": "Dann nehmen Sie die zweite Straße rechts. Der Bahnhof ist dann direkt vor Ihnen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -11645,6 +13261,22 @@
   "text": "Ja, gern.",
   "voice": "m",
   "heard": "Ja, gern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "afbc84de.mp3": {
+  "text": "Das kostet neunundachtzig Euro.",
+  "voice": "m",
+  "heard": "Das kostet 89 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "afcd26cf.mp3": {
+  "text": "der Bus, die Busse",
+  "voice": "m",
+  "heard": "Der Bus, die Busse.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -11887,6 +13519,14 @@
   "take": 0,
   "ok": true
  },
+ "b31b8a2a.mp3": {
+  "text": "Gehen Sie geradeaus.",
+  "voice": "f",
+  "heard": "gehen Sie gerade aus.",
+  "score": 0.67,
+  "take": 0,
+  "ok": false
+ },
  "b340b8bc.mp3": {
   "text": "Ja, hier. Und die Schuhe hier kosten nur dreißig Euro.",
   "voice": "f",
@@ -11981,6 +13621,14 @@
   "take": 0,
   "ok": true
  },
+ "b41dc46e.mp3": {
+  "text": "Wir fahren mit dem Auto.",
+  "voice": "f",
+  "heard": "Wir fahren mit dem Auto.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b435f211.mp3": {
   "text": "Null, eins, sechs, null, vier, sieben, zwei, acht, eins, fünf.",
   "voice": "m",
@@ -11999,6 +13647,14 @@
   "text": "Noch einen Kaffee, bitte.",
   "voice": "f",
   "heard": "Noch einen Kaffee, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b4a5d12d.mp3": {
+  "text": "Ja, das geht. Das kostet neunzig Euro pro Nacht mit Frühstück.",
+  "voice": "f",
+  "heard": "Ja, das geht. Das kostet 90 Euro pro Nacht mit Frühstück.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -12105,6 +13761,14 @@
   "take": 0,
   "ok": true
  },
+ "b672f9a1.mp3": {
+  "text": "Am Samstag fahre ich mit dem Zug von Bonn nach Köln.",
+  "voice": "m",
+  "heard": "Am Samstag fahre ich mit dem Zug von Bonn nach Köln.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b67e5847.mp3": {
   "text": "Wir tanzen und essen viel.",
   "voice": "m",
@@ -12145,6 +13809,14 @@
   "take": 0,
   "ok": true
  },
+ "b6cfc98f.mp3": {
+  "text": "der Koffer, die Koffer",
+  "voice": "m",
+  "heard": "Der Koffer, die Koffer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b6dd8477.mp3": {
   "text": "Gib mir bitte das Salz!",
   "voice": "m",
@@ -12152,6 +13824,14 @@
   "score": 0.8,
   "take": 0,
   "ok": false
+ },
+ "b70d3719.mp3": {
+  "text": "das Meer, die Meere",
+  "voice": "m",
+  "heard": "Das Meer, die Meere.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "b767aa26.mp3": {
   "text": "Mein Bruder ist Fahrer.",
@@ -12241,6 +13921,14 @@
   "text": "Ich hätte gern ein Kilo Äpfel.",
   "voice": "m",
   "heard": "Ich hätte gern ein Kilo Äpfel.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b81296a0.mp3": {
+  "text": "Hallo Nora! Wo bist du gerade?",
+  "voice": "f",
+  "heard": "Hallo Nora, wo bist du gerade?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -12335,10 +14023,34 @@
   "heard": "Um 8 Uhr, der Film beginnt um halb neun.",
   "ok": true
  },
+ "b984a2fd.mp3": {
+  "text": "das Flugzeug, die Flugzeuge",
+  "voice": "m",
+  "heard": "Das Flugzeug, die Flugzeuge.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b9870c96.mp3": {
+  "text": "Köln liegt im Westen.",
+  "voice": "m",
+  "heard": "Köln liegt im Westen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b99101d4.mp3": {
   "text": "Wie alt ist deine Tochter jetzt?",
   "voice": "m",
   "heard": "Wie alt ist deine Tochter jetzt?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b9b60512.mp3": {
+  "text": "Kommst du heute nach Hause?",
+  "voice": "m",
+  "heard": "Kommst du heute nach Hause?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -12415,6 +14127,14 @@
   "text": "Ich bin 24 Jahre alt.",
   "voice": "m",
   "heard": "Ich bin 24 Jahre alt.",
+  "ok": true
+ },
+ "baf70dad.mp3": {
+  "text": "Die Sonne scheint.",
+  "voice": "m",
+  "heard": "Die Sonne scheint.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "baff8eea.mp3": {
@@ -12587,6 +14307,30 @@
   "heard": "Der Punkt die Punkte.",
   "ok": true
  },
+ "bd1bd1bd.mp3": {
+  "text": "Im Sommer war ich in Alexandria.",
+  "voice": "m",
+  "heard": "Im Sommer war ich in Alexandria.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "bd291318.mp3": {
+  "text": "Im Winter schneit es manchmal.",
+  "voice": "m",
+  "heard": "Im Winter schneit es manchmal.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "bd2c92f4.mp3": {
+  "text": "Gestern habe ich eine Schifffahrt gemacht. Das war super!",
+  "voice": "m",
+  "heard": "Gestern habe ich eine Schifffahrt gemacht. Das war super.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "bd65ec0e.mp3": {
   "text": "Welche Farbe möchten Sie?",
   "voice": "f",
@@ -12670,6 +14414,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "bed59b38.mp3": {
+  "text": "Und jetzt das Wetter: Heute ist es im Norden bewölkt, im Süden scheint die Sonne. Es sind bis zu zwanzig Grad.",
+  "voice": "f",
+  "heard": "Und jetzt das Wetter. Heute ist es in Norden bewölkt, im Süden scheint die Sonne. Es sind bis zu 20 Grad.",
+  "score": 1,
+  "take": 0,
+  "ok": false
  },
  "bf0e8085.mp3": {
   "text": "Meine Füße tun weh.",
@@ -12865,6 +14617,14 @@
   "take": 0,
   "ok": true
  },
+ "c17db8cb.mp3": {
+  "text": "Um zwölf Uhr fahre ich mit der Straßenbahn zum Schokoladenmuseum.",
+  "voice": "m",
+  "heard": "Um 12 Uhr fahre ich mit der Straßenbahn zum Schokoladenmuseum.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c1a92d51.mp3": {
   "text": "Tschüss! Bis morgen!",
   "voice": "f",
@@ -12943,6 +14703,14 @@
   "text": "das Fleisch",
   "voice": "m",
   "heard": "das Fleisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c26dc29e.mp3": {
+  "text": "Ich bin zu Hause.",
+  "voice": "m",
+  "heard": "Ich bin zu Hause.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -13099,6 +14867,14 @@
   "take": 0,
   "ok": true
  },
+ "c48276c7.mp3": {
+  "text": "Liebe Lea,",
+  "voice": "m",
+  "heard": "Liebe Lea!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c484ab76.mp3": {
   "text": "Kommen Sie am Mittwoch oder am Donnerstag?",
   "voice": "f",
@@ -13153,6 +14929,22 @@
   "take": 0,
   "ok": true
  },
+ "c56a2608.mp3": {
+  "text": "Vielen Dank!",
+  "voice": "m",
+  "heard": "Vielen Dank!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c57a1f85.mp3": {
+  "text": "Der Markt ist auf dem Marktplatz.",
+  "voice": "f",
+  "heard": "Der Markt ist auf dem Marktplatz.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c58e9441.mp3": {
   "text": "Ich wohne noch bei meinen Eltern.",
   "voice": "m",
@@ -13179,6 +14971,14 @@
   "text": "Meine Wohnung hat zwei Zimmer, eine Küche und ein Bad. Sie ist im dritten Stock.",
   "voice": "f",
   "heard": "Meine Wohnung hat zwei Zimmer, eine Küche und ein Bad. Sie ist im dritten Stock.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c5e7373b.mp3": {
+  "text": "Ich gehe ins Kino.",
+  "voice": "f",
+  "heard": "Ich gehe ins Kino.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -13281,6 +15081,14 @@
   "take": 2,
   "ok": false
  },
+ "c81b1828.mp3": {
+  "text": "Der Zug fährt um neun Uhr zehn ab und kommt um neun Uhr dreißig an.",
+  "voice": "m",
+  "heard": "Der Zug fährt um 9 Uhr 10 ab und kommt um 9 Uhr 30 an.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c86097a5.mp3": {
   "text": "Meine Tochter ist sieben Jahre alt.",
   "voice": "f",
@@ -13304,6 +15112,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "c8ba275d.mp3": {
+  "text": "Ein Einzelzimmer oder ein Doppelzimmer?",
+  "voice": "f",
+  "heard": "in Einzelzimmer oder in Doppelzimmer.",
+  "score": 1,
+  "take": 2,
+  "ok": false
  },
  "c8cf04f6.mp3": {
   "text": "Spricht der Arzt auch Englisch?",
@@ -13385,6 +15201,14 @@
   "text": "Es gibt heute Fisch.",
   "voice": "f",
   "heard": "Es gibt heute Fisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c9cb7296.mp3": {
+  "text": "Ich bin im Kino.",
+  "voice": "m",
+  "heard": "Ich bin im Kino.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -13475,6 +15299,22 @@
   "heard": "Hallo Salma, hast du an Samstag Zeit? Gehen wir ins Kino?",
   "ok": false
  },
+ "caa43d31.mp3": {
+  "text": "Dann gehen Sie links.",
+  "voice": "f",
+  "heard": "Dann gehen Sie links.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "cabf1361.mp3": {
+  "text": "Guten Tag! Ich möchte nach Berlin fahren. Wann fährt der nächste Zug?",
+  "voice": "f",
+  "heard": "Guten Tag. Ich möchte nach Berlin fahren. Wann fährt der nächste Zug?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "cad23102.mp3": {
   "text": "Wie alt sind Sie?",
   "voice": "m",
@@ -13495,10 +15335,26 @@
   "heard": "Ich hatte Fieber.",
   "ok": true
  },
+ "caeaa3ae.mp3": {
+  "text": "der Flughafen, die Flughäfen",
+  "voice": "m",
+  "heard": "Der Flughafen, die Flughäfen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "caf20938.mp3": {
   "text": "Hallo, Mia! Wie geht's?",
   "voice": "m",
   "heard": "Hallo, Mia. Wie geht's?",
+  "ok": true
+ },
+ "caf98093.mp3": {
+  "text": "Okay. Wir treffen uns um acht vor dem Kino.",
+  "voice": "f",
+  "heard": "Okay, wir treffen uns um acht vor dem Kino.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "cb0796c9.mp3": {
@@ -13561,6 +15417,14 @@
   "heard": "Danke, der Bus kommt um halb 3.",
   "ok": true
  },
+ "cb98a481.mp3": {
+  "text": "Der Schalter ist geschlossen.",
+  "voice": "m",
+  "heard": "Der Schalter ist geschlossen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "cb9a007b.mp3": {
   "text": "die Rechnung, die Rechnungen",
   "voice": "m",
@@ -13598,6 +15462,14 @@
   "voice": "m",
   "heard": "Hallo Oma, hier ist Dana. Wir treffen uns morgen nicht um 6, sondern um 7. Ich habe bis halb 7 Kurs. Bis morgen.",
   "ok": false
+ },
+ "ccb24272.mp3": {
+  "text": "Am Sonntag fahre ich wieder nach Hause.",
+  "voice": "m",
+  "heard": "Am Sonntag fahre ich wieder nach Hause.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "ccb2feb7.mp3": {
   "text": "Mir geht es heute besser.",
@@ -13677,6 +15549,14 @@
   "heard": "Wie schreibt man das?",
   "ok": true
  },
+ "cdbf6f6d.mp3": {
+  "text": "der Zug, die Züge",
+  "voice": "m",
+  "heard": "Der Zug die Züge.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "cde8643a.mp3": {
   "text": "Am Montag war der Kurs um neun.",
   "voice": "m",
@@ -13701,6 +15581,14 @@
   "text": "Der Laden ist klein.",
   "voice": "f",
   "heard": "Der Laden ist klein.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ce2c43dc.mp3": {
+  "text": "Ich komme vom Arzt.",
+  "voice": "m",
+  "heard": "Ich komme vom Arzt.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -13811,6 +15699,14 @@
   "take": 0,
   "ok": true
  },
+ "cf576abd.mp3": {
+  "text": "Im Sommer ist es sehr heiß.",
+  "voice": "f",
+  "heard": "Im Sommer ist es sehr heiß.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "cfb55520.mp3": {
   "text": "Jede Woche muss eine Familie die Treppe putzen.",
   "voice": "m",
@@ -13837,6 +15733,14 @@
   "text": "Wann kann ich kommen?",
   "voice": "m",
   "heard": "Wann kann ich kommen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "cfecff6b.mp3": {
+  "text": "das Kino, die Kinos",
+  "voice": "m",
+  "heard": "Das Kino, die Kinos.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -13879,6 +15783,22 @@
   "take": 0,
   "ok": true
  },
+ "d0c9a4b6.mp3": {
+  "text": "Achtung an Gleis drei: Der Intercity nach Frankfurt hat heute fünfzehn Minuten Verspätung.",
+  "voice": "f",
+  "heard": "Achtung an Gleis 3. Der Intercity nach Frankfurt hat heute 15 Minuten Verspätung.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "d0f29032.mp3": {
+  "text": "Haben Sie ein Doppelzimmer frei?",
+  "voice": "m",
+  "heard": "Haben Sie ein Doppelzimmer frei?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d12a9005.mp3": {
   "text": "Es ist fünf nach acht.",
   "voice": "f",
@@ -13892,6 +15812,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "d13bb46a.mp3": {
+  "text": "Das Zimmer ist mit Halbpension.",
+  "voice": "f",
+  "heard": "Das Zimmer ist mit Hype-Pension.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
  },
  "d1623db8.mp3": {
   "text": "Das Wasser ist kalt.",
@@ -13909,6 +15837,14 @@
   "take": 0,
   "ok": true
  },
+ "d1a6fdea.mp3": {
+  "text": "die Straße, die Straßen",
+  "voice": "m",
+  "heard": "die Straße, die Straßen",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d1c9fbba.mp3": {
   "text": "Vor oder nach dem Essen?",
   "voice": "m",
@@ -13921,6 +15857,14 @@
   "text": "der Partner, die Partner",
   "voice": "m",
   "heard": "Der Partner, die Partner.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "d1f4c2dc.mp3": {
+  "text": "Morgen soll die Sonne scheinen.",
+  "voice": "m",
+  "heard": "Morgen soll die Sonne scheinen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -13955,6 +15899,14 @@
   "take": 0,
   "ok": true
  },
+ "d2d7c22a.mp3": {
+  "text": "Die S-Bahn fährt zum Flughafen.",
+  "voice": "f",
+  "heard": "die S-Bahn fährt zum Flughafen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d2daeb45.mp3": {
   "text": "deine Lea",
   "voice": "m",
@@ -13973,6 +15925,14 @@
   "text": "Ich fahre für drei Wochen nach Ägypten.",
   "voice": "m",
   "heard": "Ich fahre für drei Wochen nach Ägypten.",
+  "ok": true
+ },
+ "d318dc85.mp3": {
+  "text": "Die S-Bahn zum Flughafen fällt heute aus. Bitte nehmen Sie den Bus.",
+  "voice": "f",
+  "heard": "Die S-Bahn zum Flughafen fällt heute aus. Bitte nehmen Sie den Bus.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "d32d253b.mp3": {
@@ -14017,6 +15977,14 @@
   "text": "das Land, die Länder",
   "voice": "m",
   "heard": "Das Land, die Länder.",
+  "ok": true
+ },
+ "d4016cb4.mp3": {
+  "text": "Achtung an Gleis fünf: Der ICE nach München fährt heute von Gleis sieben ab.",
+  "voice": "f",
+  "heard": "Achtung an Gleis 5, der ICE nach München fährt, heute von Gleis 7 ab.",
+  "score": 0.79,
+  "take": 0,
   "ok": true
  },
  "d42e3fd5.mp3": {
@@ -14153,6 +16121,14 @@
   "take": 0,
   "ok": true
  },
+ "d5ddd9fe.mp3": {
+  "text": "Und was machst du heute Abend?",
+  "voice": "f",
+  "heard": "Und was machst du heute Abend?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d5f0f735.mp3": {
   "text": "Wie geht es Ihrem Sohn?",
   "voice": "m",
@@ -14181,6 +16157,14 @@
   "text": "Das ist meine Mutter.",
   "voice": "m",
   "heard": "Das ist meine Mutter.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "d625b79e.mp3": {
+  "text": "Es sind nur fünf Minuten zu Fuß.",
+  "voice": "m",
+  "heard": "Es sind nur fünf Minuten zu Fuß.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -14281,6 +16265,22 @@
   "heard": "Er liest die Zeitung.",
   "ok": true
  },
+ "d754e116.mp3": {
+  "text": "Das Zimmer kostet achtzig Euro pro Nacht. Das Frühstück kostet zehn Euro extra.",
+  "voice": "f",
+  "heard": "Das Zimmer kostet 80 Euro pro Nacht. Das Frühstück kostet 10 Euro extra.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "d7694047.mp3": {
+  "text": "zu Hause",
+  "voice": "m",
+  "heard": "Zuhause.",
+  "score": 0,
+  "take": 0,
+  "ok": false
+ },
  "d7b72e05.mp3": {
   "text": "der Sport",
   "voice": "m",
@@ -14367,6 +16367,14 @@
   "take": 0,
   "ok": true
  },
+ "d8555ec2.mp3": {
+  "text": "die Fahrkarte, die Fahrkarten",
+  "voice": "m",
+  "heard": "Die Fahrkarte, die Fahrkarten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d8698ce5.mp3": {
   "text": "die Lehrerin, die Lehrerinnen",
   "voice": "m",
@@ -14379,6 +16387,14 @@
   "text": "Guten Abend! Ich bin der neue Nachbar.",
   "voice": "m",
   "heard": "Guten Abend. Ich bin der neue Nachbar.",
+  "ok": true
+ },
+ "d8c123b4.mp3": {
+  "text": "nach Hause",
+  "voice": "m",
+  "heard": "nach Hause.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "d8c6daa1.mp3": {
@@ -14527,6 +16543,22 @@
   "heard": "Danke gut. Und Ihnen?",
   "ok": true
  },
+ "db92d608.mp3": {
+  "text": "Ich fahre ohne Auto.",
+  "voice": "f",
+  "heard": "Ich fahre ohne Auto.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "db93ef6b.mp3": {
+  "text": "Die Stadt ist sehr schön.",
+  "voice": "f",
+  "heard": "Die Stadt ist sehr schön.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "dbace00d.mp3": {
   "text": "Meine Großeltern wohnen bei uns.",
   "voice": "f",
@@ -14577,6 +16609,14 @@
   "text": "Wie viele Tage Urlaub hast du?",
   "voice": "m",
   "heard": "Wie viele Tage urlaub hast du?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "dc553f50.mp3": {
+  "text": "An der Ampel gehen Sie nach rechts.",
+  "voice": "m",
+  "heard": "An der Ampel gehen Sie nach rechts.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -14638,6 +16678,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "dd19ed1b.mp3": {
+  "text": "Guten Tag! Haben Sie vom zehnten bis zum zwölften Mai ein Zimmer frei?",
+  "voice": "m",
+  "heard": "Guten Tag! Haben Sie vom 10. bis zum 12. Mai ein Zimmer frei?",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
  },
  "dd438437.mp3": {
   "text": "anrufen",
@@ -14927,6 +16975,14 @@
   "heard": "Am Abend habe ich Zeit.",
   "ok": true
  },
+ "e18d24f1.mp3": {
+  "text": "Ja, und es ist so kalt. In Kairo ist es jetzt dreißig Grad.",
+  "voice": "m",
+  "heard": "Ja, und es ist so kalt. In Cairo ist es jetzt 30 Grad.",
+  "score": 0.92,
+  "take": 0,
+  "ok": false
+ },
  "e196351f.mp3": {
   "text": "sieben, acht, neun, zehn, elf, zwölf",
   "voice": "m",
@@ -14976,6 +17032,14 @@
   "score": 1,
   "take": 1,
   "ok": true
+ },
+ "e26f6f23.mp3": {
+  "text": "Wegen eines Unfalls fährt die Straßenbahn Linie drei heute nicht. Bitte nehmen Sie die Linie fünf.",
+  "voice": "m",
+  "heard": "Wegen eines Unfalls fährt die Straßenbahnlinie 3 heute nicht. Bitte nennen Sie die Linie 5.",
+  "score": 0.86,
+  "take": 0,
+  "ok": false
  },
  "e281a09c.mp3": {
   "text": "Morgen früh habe ich einen Termin.",
@@ -15049,10 +17113,26 @@
   "take": 0,
   "ok": true
  },
+ "e4be5919.mp3": {
+  "text": "Wir machen Urlaub in Spanien.",
+  "voice": "f",
+  "heard": "Wir machen Urlaub in Spanien.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e4d63bb3.mp3": {
   "text": "Es ist noch früh.",
   "voice": "f",
   "heard": "Es ist noch früh.",
+  "ok": true
+ },
+ "e4e80dc5.mp3": {
+  "text": "Heute ist es warm.",
+  "voice": "f",
+  "heard": "Heute ist es warm.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "e543200d.mp3": {
@@ -15207,11 +17287,35 @@
   "take": 2,
   "ok": false
  },
+ "e74037ca.mp3": {
+  "text": "Wir haben viel Fisch gegessen.",
+  "voice": "m",
+  "heard": "Wir haben viel Fisch gegessen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e787f3c4.mp3": {
   "text": "Danke.",
   "voice": "f",
   "heard": "Danke.",
   "ok": true
+ },
+ "e79167b5.mp3": {
+  "text": "Ich fahre mit dem Fahrrad. Das ist schneller.",
+  "voice": "f",
+  "heard": "Ich fahre mit dem Fahrrad. Das ist schneller.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "e7a5ef2e.mp3": {
+  "text": "der Grad, die Grade",
+  "voice": "m",
+  "heard": "der Grad, die Grate.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
  },
  "e7a5f71a.mp3": {
   "text": "schlecht",
@@ -15267,6 +17371,14 @@
   "take": 0,
   "ok": true
  },
+ "e8444669.mp3": {
+  "text": "Entschuldigung, wie komme ich zum Bahnhof?",
+  "voice": "m",
+  "heard": "Entschuldigung, wie komme ich zum Bahnhof?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e84d690e.mp3": {
   "text": "die Sprache, die Sprachen",
   "voice": "m",
@@ -15280,6 +17392,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "e85e1c57.mp3": {
+  "text": "Gehen Sie aus dem Haus und dann nach links.",
+  "voice": "m",
+  "heard": "Gehen Sie aus dem Haus und danach links.",
+  "score": 0.78,
+  "take": 0,
+  "ok": false
  },
  "e8ac865b.mp3": {
   "text": "die Hausordnung, die Hausordnungen",
@@ -15411,6 +17531,14 @@
   "take": 0,
   "ok": false
  },
+ "e9f2d783.mp3": {
+  "text": "Die Fahrt dauert eine Stunde.",
+  "voice": "f",
+  "heard": "Die Fahrt dauert eine Stunde.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "ea202ca2.mp3": {
   "text": "Herzlich willkommen!",
   "voice": "f",
@@ -15438,6 +17566,14 @@
   "voice": "m",
   "heard": "der Krankenwagen die Krankenwagen",
   "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "eabe0710.mp3": {
+  "text": "Der ICE fährt um acht Uhr ab.",
+  "voice": "m",
+  "heard": "Der ICE fährt um 8 Uhr ab.",
+  "score": 0.62,
   "take": 0,
   "ok": true
  },
@@ -15569,6 +17705,14 @@
   "take": 0,
   "ok": true
  },
+ "ec17cafe.mp3": {
+  "text": "Ich brauche zwanzig Minuten.",
+  "voice": "m",
+  "heard": "Ich brauche 20 Minuten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "ec38c2b5.mp3": {
   "text": "Ja, sie hängt unten an der Tür. Von zweiundzwanzig bis sechs Uhr muss man leise sein.",
   "voice": "f",
@@ -15597,6 +17741,14 @@
   "text": "Die Schuhe sind neu.",
   "voice": "f",
   "heard": "Die Schuhe sind neu.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ec718d2d.mp3": {
+  "text": "Ich arbeite im Ausland.",
+  "voice": "f",
+  "heard": "Ich arbeite im Ausland.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -15638,6 +17790,14 @@
   "voice": "f",
   "heard": "Was ist du zum Frühstück?",
   "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
+ "ed0dfa3a.mp3": {
+  "text": "Bitte schnell einsteigen!",
+  "voice": "f",
+  "heard": "Bitte schnell ansteigen.",
+  "score": 0.67,
   "take": 0,
   "ok": false
  },
@@ -15685,6 +17845,14 @@
   "take": 0,
   "ok": true
  },
+ "ed8f9dce.mp3": {
+  "text": "Hotel am See, guten Tag!",
+  "voice": "f",
+  "heard": "Hotel am See, guten Tag!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "eda33c60.mp3": {
   "text": "Ist das dein Sohn? — Nein, das ist mein Bruder. Mein Sohn ist noch ein Baby.",
   "voice": "f",
@@ -15697,6 +17865,14 @@
   "text": "Ich freue mich auf eure Hochzeit! Bis Samstag!",
   "voice": "m",
   "heard": "Ich freue mich auf eure Hochzeit. Bis Samstag.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "edb18d65.mp3": {
+  "text": "Mit der U-Bahn. Und du?",
+  "voice": "m",
+  "heard": "Mit der U-Bahn. Und du?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -15729,6 +17905,14 @@
   "text": "Die Arbeit ist anstrengend.",
   "voice": "m",
   "heard": "Die Arbeit ist anstrengend.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ee0de790.mp3": {
+  "text": "Ich gehe ins Kino. Kommst du mit?",
+  "voice": "f",
+  "heard": "Ich gehe ins Kino. Kommst du mit?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -15811,6 +17995,14 @@
   "take": 0,
   "ok": true
  },
+ "ef0809c2.mp3": {
+  "text": "Das Wetter soll sonnig sein, zwanzig Grad.",
+  "voice": "m",
+  "heard": "Das Wetter soll so nicht sein, 20 Grad.",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
+ },
  "ef1287b4.mp3": {
   "text": "Die Küche ist unten.",
   "voice": "f",
@@ -15871,10 +18063,26 @@
   "take": 0,
   "ok": true
  },
+ "ef88952d.mp3": {
+  "text": "Ich komme gerade aus dem Kino.",
+  "voice": "m",
+  "heard": "Ich komme gerade aus dem Kino.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "ef93f3d1.mp3": {
   "text": "Wir haben zwei Kinder.",
   "voice": "f",
   "heard": "Wir haben zwei Kinder.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "efa22baf.mp3": {
+  "text": "Wohin fährst du?",
+  "voice": "f",
+  "heard": "wohin fährst du?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -16031,10 +18239,26 @@
   "take": 0,
   "ok": true
  },
+ "f27ca124.mp3": {
+  "text": "Ich reise sehr gern.",
+  "voice": "m",
+  "heard": "Ich reise sehr gern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f2a1b39d.mp3": {
   "text": "Ich war krank.",
   "voice": "m",
   "heard": "Ich war krank.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f2b07f25.mp3": {
+  "text": "Der Zug fährt gleich ab.",
+  "voice": "f",
+  "heard": "Der Zug fährt gleich ab.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -16205,6 +18429,14 @@
   "heard": "Danke.",
   "ok": true
  },
+ "f562b0f9.mp3": {
+  "text": "Kauf die Fahrkarte am Automaten.",
+  "voice": "m",
+  "heard": "Kauf die Fahrkarte am Automaten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f586fc5d.mp3": {
   "text": "Ist das deine Mutter auf dem Foto?",
   "voice": "m",
@@ -16229,6 +18461,14 @@
   "take": 0,
   "ok": false
  },
+ "f5b237ff.mp3": {
+  "text": "Die Straßenbahn ist voll.",
+  "voice": "f",
+  "heard": "Die Straßenbahn ist voll.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f5b8bbf2.mp3": {
   "text": "Ich gehe oft spazieren.",
   "voice": "f",
@@ -16241,6 +18481,14 @@
   "text": "Meine Mutter kocht sehr gut.",
   "voice": "f",
   "heard": "Meine Mutter kocht sehr gut.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f5fd9fa5.mp3": {
+  "text": "Das Wetter war super, jeden Tag dreißig Grad.",
+  "voice": "m",
+  "heard": "Das Wetter war super, jeden Tag 30 Grad.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -16455,10 +18703,26 @@
   "take": 0,
   "ok": true
  },
+ "f87df57f.mp3": {
+  "text": "Um zweiundzwanzig Uhr fahre ich zurück nach Bonn.",
+  "voice": "m",
+  "heard": "Um 22 Uhr fahre ich zurück nach Bonn.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f88ad549.mp3": {
   "text": "Mein Hausarzt ist sehr nett. Die Praxis ist in der Bergstraße.",
   "voice": "m",
   "heard": "Mein Hausarzt ist sehr nett. Die Praxis ist in der Bergstraße.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f8913fb5.mp3": {
+  "text": "Ich steige hier aus.",
+  "voice": "f",
+  "heard": "Ich steige hier aus.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -16495,6 +18759,14 @@
   "take": 0,
   "ok": true
  },
+ "f8c2ba02.mp3": {
+  "text": "Von welchem Gleis fährt der Zug?",
+  "voice": "m",
+  "heard": "Von welchen Gleis fährt der Zug?",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
+ },
  "f8c79c7b.mp3": {
   "text": "Das Sofa steht im Wohnzimmer.",
   "voice": "m",
@@ -16519,10 +18791,26 @@
   "take": 0,
   "ok": false
  },
+ "f958d52a.mp3": {
+  "text": "Ich wohne in der Goethestraße.",
+  "voice": "f",
+  "heard": "Ich wohne in der Güttestrasse.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
  "f96d127b.mp3": {
   "text": "Wie heißt dein Sohn?",
   "voice": "m",
   "heard": "Wie heißt dein Sohn?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f9c7074a.mp3": {
+  "text": "das Dorf, die Dörfer",
+  "voice": "m",
+  "heard": "Das Dorf, die Dörfer.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -16579,6 +18867,14 @@
   "take": 0,
   "ok": true
  },
+ "faa0a63b.mp3": {
+  "text": "Vergiss deinen Pass nicht!",
+  "voice": "f",
+  "heard": "Vergiss deinen Pass nicht.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "faabe17f.mp3": {
   "text": "Hallo Sami! Wie geht es dir? Du siehst müde aus.",
   "voice": "f",
@@ -16600,6 +18896,14 @@
   "score": 1,
   "take": 0,
   "ok": false
+ },
+ "face0691.mp3": {
+  "text": "weit",
+  "voice": "m",
+  "heard": "Weit?",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "fadb954d.mp3": {
   "text": "Die Rechnung, bitte!",
@@ -16631,6 +18935,14 @@
   "take": 0,
   "ok": true
  },
+ "fb452acb.mp3": {
+  "text": "das Hotel, die Hotels",
+  "voice": "m",
+  "heard": "Das Hotel, die Hotels.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "fb71b0d8.mp3": {
   "text": "Er ist Student in Berlin.",
   "voice": "f",
@@ -16643,6 +18955,14 @@
   "text": "Was kostet das?",
   "voice": "m",
   "heard": "Was kostet das?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "fb9296c7.mp3": {
+  "text": "In der Altstadt trinke ich einen Kaffee.",
+  "voice": "m",
+  "heard": "In der Altstadt trinke ich einen Kaffee.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -16697,6 +19017,14 @@
   "text": "Unser Supermarkt ist am Sonntag geschlossen. Von Montag bis Samstag sind wir von acht bis zweiundzwanzig Uhr für Sie da.",
   "voice": "m",
   "heard": "Unser Supermarkt ist am Sonntag geschlossen. Von Montag bis Samstag sind wir von 8 bis 22 Uhr für Sie da.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "fc54f36d.mp3": {
+  "text": "Wie kommst du zur Arbeit?",
+  "voice": "f",
+  "heard": "Wie kommst du zur Arbeit?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -16789,6 +19117,14 @@
   "take": 0,
   "ok": true
  },
+ "fd709151.mp3": {
+  "text": "Hamburg liegt im Norden.",
+  "voice": "m",
+  "heard": "Hamburg liegt im Norden.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "fda8babd.mp3": {
   "text": "Ja, ich habe zwei Schwestern. Anna ist fünfundzwanzig und Lena ist neunzehn.",
   "voice": "m",
@@ -16871,6 +19207,14 @@
   "take": 0,
   "ok": true
  },
+ "fe967527.mp3": {
+  "text": "Am Mittwoch gehe ich zu Fuß zum Supermarkt.",
+  "voice": "m",
+  "heard": "Am Mittwoch gehe ich zur Fuß zum Supermarkt.",
+  "score": 0.88,
+  "take": 0,
+  "ok": false
+ },
  "fe9c0343.mp3": {
   "text": "der Lehrer, die Lehrer",
   "voice": "m",
@@ -16878,6 +19222,14 @@
   "score": 1,
   "take": 2,
   "ok": true
+ },
+ "fe9c5027.mp3": {
+  "text": "dein Omar",
+  "voice": "m",
+  "heard": "Dein Oma",
+  "score": 0.5,
+  "take": 0,
+  "ok": false
  },
  "feae2b4e.mp3": {
   "text": "die Stunde, die Stunden",
