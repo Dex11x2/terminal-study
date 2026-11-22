@@ -23,6 +23,14 @@
   "take": 0,
   "ok": true
  },
+ "00e7f687.mp3": {
+  "text": "Machen Sie bitte den Mund auf.",
+  "voice": "f",
+  "heard": "Machen Sie bitte den Mund auf.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "012ae091.mp3": {
   "text": "Guten Tag! Mein Name ist Sara Ali. Ist die Wohnung noch frei?",
   "voice": "f",
@@ -127,6 +135,14 @@
   "take": 0,
   "ok": true
  },
+ "034a10a3.mp3": {
+  "text": "Ich trinke oft Wasser.",
+  "voice": "m",
+  "heard": "Ich trinke oft Wasser.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "034d5e01.mp3": {
   "text": "Das hier ist mein Bruder, und das sind meine Großeltern.",
   "voice": "m",
@@ -179,10 +195,26 @@
   "take": 0,
   "ok": true
  },
+ "03ec8501.mp3": {
+  "text": "Nach dem Essen, mit einem Glas Wasser. Und nehmen Sie sie bitte für sieben Tage.",
+  "voice": "m",
+  "heard": "Nach dem Essen mit einem Glas Wasser und nehmen Sie sie bitte für sieben Tage.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "03f1581a.mp3": {
   "text": "der Urlaub, die Urlaube",
   "voice": "m",
   "heard": "Der Urlaub, die Urlaube.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "0409f46c.mp3": {
+  "text": "Ich muss den Termin leider absagen.",
+  "voice": "m",
+  "heard": "Ich muss den Termin leider absagen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -193,6 +225,14 @@
   "heard": "Unten",
   "score": 1,
   "take": 1,
+  "ok": true
+ },
+ "04c6b8d1.mp3": {
+  "text": "Kennst du einen guten Zahnarzt?",
+  "voice": "m",
+  "heard": "Kennst du einen guten Zahnarzt?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "04d339ad.mp3": {
@@ -231,6 +271,14 @@
   "take": 0,
   "ok": true
  },
+ "05695615.mp3": {
+  "text": "Nehmen Sie die Tabletten morgens und abends.",
+  "voice": "f",
+  "heard": "Nehmen Sie die Tabletten morgens und abends.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "0571783e.mp3": {
   "text": "Sofort!",
   "voice": "m",
@@ -252,6 +300,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "05d6385d.mp3": {
+  "text": "Praxis Doktor Klein. Leider ist der Doktor heute nicht da. Rufen Sie bitte morgen ab acht Uhr wieder an.",
+  "voice": "f",
+  "heard": "Praxisdoktor Klein. Leider ist der Doktor heute nicht da. Rufen Sie bitte morgen ab 8 Uhr wieder an.",
+  "score": 0.94,
+  "take": 0,
+  "ok": false
  },
  "05f404b7.mp3": {
   "text": "Die Suppe ist heiß.",
@@ -305,6 +361,14 @@
   "text": "Das ist ihr Vater. Er ist sehr nett und lustig.",
   "voice": "m",
   "heard": "Das ist Ihr Vater. Er ist sehr nett und lustig.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "072ab6f2.mp3": {
+  "text": "Zeigen Sie mir bitte den Arm.",
+  "voice": "m",
+  "heard": "Zeigen Sie mir bitte den Arm.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -363,6 +427,14 @@
   "take": 0,
   "ok": true
  },
+ "07c36f3c.mp3": {
+  "text": "Ich habe hier ein Rezept.",
+  "voice": "m",
+  "heard": "Ich habe hier ein Rezept.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "07f597a3.mp3": {
   "text": "Frau Klein, von der Buchhaltung.",
   "voice": "f",
@@ -395,6 +467,14 @@
   "take": 0,
   "ok": true
  },
+ "08767374.mp3": {
+  "text": "Machen Sie bitte den Mund auf.",
+  "voice": "m",
+  "heard": "Machen Sie bitte den Mund auf.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "08cd971a.mp3": {
   "text": "Hallo Sara! Ich habe heute Geburtstag! Am Freitag mache ich eine Party. Kommst du?",
   "voice": "m",
@@ -402,6 +482,14 @@
   "score": 0.93,
   "take": 0,
   "ok": false
+ },
+ "08e85c18.mp3": {
+  "text": "Nehmen Sie zehn Tropfen.",
+  "voice": "f",
+  "heard": "Nehmen Sie zehn Tropfen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "090ff6d8.mp3": {
   "text": "Er ist ungefähr dreißig Jahre alt.",
@@ -418,6 +506,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "09861c0c.mp3": {
+  "text": "die Versichertenkarte, die Versichertenkarten",
+  "voice": "m",
+  "heard": "die versicherten Karte, die versicherten Karten.",
+  "score": 0.5,
+  "take": 0,
+  "ok": false
  },
  "098ff816.mp3": {
   "text": "Neunundvierzig Euro. Welche Größe haben Sie?",
@@ -457,6 +553,14 @@
   "take": 2,
   "ok": true
  },
+ "0a43f60f.mp3": {
+  "text": "Was haben Sie denn?",
+  "voice": "f",
+  "heard": "Was haben Sie denn?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "0a64574b.mp3": {
   "text": "Der Apfel ist rot.",
   "voice": "f",
@@ -469,6 +573,14 @@
   "text": "Das ist mein Kollege Paul. Seine Frau heißt Eva, und ihre Tochter heißt Mia.",
   "voice": "f",
   "heard": "Das ist mein Kollege Paul. Seine Frau heißt Eva und ihre Tochter heißt Mia.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "0aa1e8e1.mp3": {
+  "text": "Was fehlt Ihnen?",
+  "voice": "m",
+  "heard": "Was fehlt Ihnen?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -549,6 +661,14 @@
   "heard": "0.572.846.130",
   "ok": false
  },
+ "0c406143.mp3": {
+  "text": "Ihr Hals ist sehr rot. Sie haben eine Grippe.",
+  "voice": "m",
+  "heard": "Ihr Hals ist sehr rot. Sie haben eine Krippe.",
+  "score": 0.89,
+  "take": 0,
+  "ok": false
+ },
  "0c4a5fe9.mp3": {
   "text": "Ich will als Mechaniker arbeiten.",
   "voice": "m",
@@ -589,6 +709,14 @@
   "take": 0,
   "ok": true
  },
+ "0caeff14.mp3": {
+  "text": "Ich muss den Termin absagen.",
+  "voice": "f",
+  "heard": "Ich muss den Termin absagen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "0cbddc07.mp3": {
   "text": "Ich rufe wegen der Anzeige an.",
   "voice": "m",
@@ -601,6 +729,14 @@
   "text": "Und das sind Yusuf und Lisa.",
   "voice": "m",
   "heard": "Und das sind Jusuf und Lisa.",
+  "ok": false
+ },
+ "0cf1de78.mp3": {
+  "text": "besser",
+  "voice": "m",
+  "heard": "Besach!",
+  "score": 0,
+  "take": 0,
   "ok": false
  },
  "0d13b0fd.mp3": {
@@ -713,6 +849,14 @@
   "text": "Wann gehst du einkaufen?",
   "voice": "m",
   "heard": "Wann gehst du einkaufen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "0ecb81e1.mp3": {
+  "text": "Nein, immer nach dem Essen.",
+  "voice": "f",
+  "heard": "Nein, immer nach dem Essen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -841,6 +985,22 @@
   "take": 0,
   "ok": true
  },
+ "11773a2e.mp3": {
+  "text": "Waschen Sie oft die Hände!",
+  "voice": "f",
+  "heard": "Waschen Sie oft die Hände.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "1195e381.mp3": {
+  "text": "Wie geht es dir?",
+  "voice": "m",
+  "heard": "Wie geht es dir?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "11bbb898.mp3": {
   "text": "Die Wohnung hat drei Zimmer.",
   "voice": "f",
@@ -853,6 +1013,14 @@
   "text": "Es ist zehn vor neun.",
   "voice": "f",
   "heard": "Es ist 10 vor 9.",
+  "ok": true
+ },
+ "11e3662e.mp3": {
+  "text": "Kein Problem. Geht es am Donnerstag um zehn Uhr?",
+  "voice": "m",
+  "heard": "Kein Problem. Geht es am Donnerstag um 10 Uhr?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "11eefdb4.mp3": {
@@ -883,6 +1051,14 @@
   "take": 0,
   "ok": true
  },
+ "12448202.mp3": {
+  "text": "Ich habe starke Schmerzen.",
+  "voice": "f",
+  "heard": "Ich habe starke Schmerzen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "12479470.mp3": {
   "text": "Gut, vielen Dank!",
   "voice": "m",
@@ -902,6 +1078,14 @@
   "score": 0.89,
   "take": 2,
   "ok": false
+ },
+ "12d6b432.mp3": {
+  "text": "Ich brauche bitte einen Termin.",
+  "voice": "m",
+  "heard": "Ich brauche bitte einen Termin.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "12f7824f.mp3": {
   "text": "Am Mittwoch nur am Vormittag. Um zehn Uhr?",
@@ -1269,6 +1453,14 @@
   "take": 0,
   "ok": true
  },
+ "18c2bcda.mp3": {
+  "text": "Hier, bitte.",
+  "voice": "m",
+  "heard": "Hier bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "18d22195.mp3": {
   "text": "billig",
   "voice": "m",
@@ -1301,6 +1493,14 @@
   "take": 0,
   "ok": true
  },
+ "192cd274.mp3": {
+  "text": "Das Ohr tut mir weh.",
+  "voice": "m",
+  "heard": "Das Ort tut mir weh.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
  "194b4c77.mp3": {
   "text": "Er sieht gut aus.",
   "voice": "m",
@@ -1308,6 +1508,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "198c4ea7.mp3": {
+  "text": "Der Rücken tut mir weh.",
+  "voice": "m",
+  "heard": "Der Rücken tut weh.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
  },
  "19d1b098.mp3": {
   "text": "Kaffee. Und du?",
@@ -1379,6 +1587,14 @@
   "take": 0,
   "ok": false
  },
+ "1ac97862.mp3": {
+  "text": "Ich habe Bauchschmerzen.",
+  "voice": "m",
+  "heard": "Ich habe Bauchschmerzen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "1aeed38d.mp3": {
   "text": "Meine Oma ist klein, aber sie ist sehr lustig. Alle lieben sie.",
   "voice": "m",
@@ -1423,6 +1639,14 @@
   "take": 0,
   "ok": true
  },
+ "1c520837.mp3": {
+  "text": "Vor dem Schlafen trinke ich einen Tee.",
+  "voice": "m",
+  "heard": "Vor dem Schlafen trinke ich einen Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "1c53d56f.mp3": {
   "text": "Viel Glück!",
   "voice": "f",
@@ -1438,6 +1662,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "1c5be60e.mp3": {
+  "text": "Wann haben Sie Zeit? Am Montag um neun?",
+  "voice": "f",
+  "heard": "Wann haben Sie Zeit? Am Montag, um 9 Uhr.",
+  "score": 1,
+  "take": 0,
+  "ok": false
  },
  "1c683a6d.mp3": {
   "text": "Auf Wiedersehen, Herr Klein!",
@@ -1479,6 +1711,14 @@
   "text": "Mein Name hat sechs Buchstaben.",
   "voice": "f",
   "heard": "Mein Name hat sechs Buchstaben.",
+  "ok": true
+ },
+ "1cc959c3.mp3": {
+  "text": "Ja, ich gehe dreimal in der Woche schwimmen.",
+  "voice": "m",
+  "heard": "Ja, ich gehe dreimal in der Woche schwimmen.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "1cf1d59b.mp3": {
@@ -1539,6 +1779,22 @@
   "take": 0,
   "ok": false
  },
+ "1dd52007.mp3": {
+  "text": "In der Bergstraße zwölf, in Köln. Ein Mann ist auf der Treppe gefallen.",
+  "voice": "f",
+  "heard": "in der Bergstraße 12 in Köln. Ein Mann ist auf der Treppe gefallen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "1dd85787.mp3": {
+  "text": "Ich soll drei Tage im Bett bleiben.",
+  "voice": "m",
+  "heard": "Ich soll drei Tage im Bett bleiben.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "1de257e6.mp3": {
   "text": "die Nummer, die Nummern",
   "voice": "m",
@@ -1549,6 +1805,22 @@
   "text": "Null, eins, fünf, sieben.",
   "voice": "f",
   "heard": "0157",
+  "ok": false
+ },
+ "1e1b1041.mp3": {
+  "text": "Sie haben eine Grippe. Sie sollen fünf Tage zu Hause bleiben und viel Tee trinken.",
+  "voice": "f",
+  "heard": "Sie haben eine Grippe. Sie sollen fünf Tage zu Hause bleiben und viel Tee trinken.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "1e3348ca.mp3": {
+  "text": "fehlen",
+  "voice": "m",
+  "heard": "Vielen Dank.",
+  "score": 0,
+  "take": 0,
   "ok": false
  },
  "1e4c27ae.mp3": {
@@ -1615,6 +1887,14 @@
   "text": "Das ist ein Kaffee. Ich möchte einen Kaffee.",
   "voice": "m",
   "heard": "Das ist ein Kaffee. Ich möchte einen Kaffee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "1f511ab4.mp3": {
+  "text": "Wie oft machst du Sport?",
+  "voice": "m",
+  "heard": "Wie oft machst du Sport?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1729,10 +2009,26 @@
   "take": 0,
   "ok": true
  },
+ "2143b97d.mp3": {
+  "text": "Ich bin erkältet.",
+  "voice": "f",
+  "heard": "Ich bin erkältet.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "21458571.mp3": {
   "text": "der Kunde, die Kunden",
   "voice": "m",
   "heard": "Der Kunde, die Kunden.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "214af835.mp3": {
+  "text": "Ja, ein bisschen. Und mein Hals tut weh.",
+  "voice": "m",
+  "heard": "Ja, ein bisschen. Und mein Hals tut weh.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1757,6 +2053,14 @@
   "take": 0,
   "ok": true
  },
+ "21cb8df6.mp3": {
+  "text": "Nimm dreimal am Tag eine Tablette nach dem Essen, eine Woche lang.",
+  "voice": "m",
+  "heard": "Nimm dreimal am Tag eine Tablette nach dem Essen, eine Woche lang.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "22074b27.mp3": {
   "text": "Ja, ich bin nur Lehrerin. Das ist genug Arbeit!",
   "voice": "f",
@@ -1772,6 +2076,14 @@
   "score": 0.91,
   "take": 0,
   "ok": false
+ },
+ "229c361a.mp3": {
+  "text": "Sie haben eine Grippe.",
+  "voice": "f",
+  "heard": "Sie haben eine Grippe.",
+  "score": 1,
+  "take": 1,
+  "ok": true
  },
  "22b04606.mp3": {
   "text": "die Ecke, die Ecken",
@@ -1819,6 +2131,14 @@
   "text": "Frau Lang, können Sie mir bitte helfen? Mein Paket ist sehr schwer.",
   "voice": "m",
   "heard": "Frau Lang, können Sie mir bitte helfen? Mein Paket ist sehr schwer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "236ed03b.mp3": {
+  "text": "Ja, das mache ich. Danke!",
+  "voice": "m",
+  "heard": "Ja, das mache ich. Danke.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1899,6 +2219,14 @@
   "take": 0,
   "ok": true
  },
+ "245d07cc.mp3": {
+  "text": "Ich esse mehr Obst und weniger Zucker.",
+  "voice": "m",
+  "heard": "Ich esse mehr Obst und weniger Zucker.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2479b959.mp3": {
   "text": "Das Büro ist im ersten Stock.",
   "voice": "f",
@@ -1937,6 +2265,14 @@
   "take": 0,
   "ok": true
  },
+ "24f6cad2.mp3": {
+  "text": "die Schmerzen (Plural)",
+  "voice": "m",
+  "heard": "Die Schmerzen plural.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "24faf51d.mp3": {
   "text": "Ja, am Mittwoch um halb elf.",
   "voice": "f",
@@ -1958,6 +2294,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "251925a1.mp3": {
+  "text": "Ich habe Fieber und Husten.",
+  "voice": "m",
+  "heard": "Ich habe Fiebe und Husten.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
  },
  "25396544.mp3": {
   "text": "Langsam, bitte.",
@@ -2163,6 +2507,14 @@
   "take": 0,
   "ok": true
  },
+ "28900d8a.mp3": {
+  "text": "Ich fahre für zwei Wochen nach Ägypten.",
+  "voice": "m",
+  "heard": "Ich fahre für zwei Wochen nach Ägypten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "289300a0.mp3": {
   "text": "Liebe Freunde,",
   "voice": "m",
@@ -2249,6 +2601,14 @@
   "take": 0,
   "ok": true
  },
+ "29d8aad7.mp3": {
+  "text": "Was ist passiert? Ist er verletzt?",
+  "voice": "m",
+  "heard": "Was ist passiert, ist ja verletzt.",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
+ },
  "29dfa2f6.mp3": {
   "text": "Wo finde ich Reis?",
   "voice": "m",
@@ -2287,6 +2647,14 @@
   "heard": "Beruf, ich bin von Beruf.",
   "ok": true
  },
+ "2a5027ee.mp3": {
+  "text": "Mein Hals tut weh.",
+  "voice": "m",
+  "heard": "Mein Hals tut weh.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2a6e81e0.mp3": {
   "text": "Ich nehme ein Brötchen.",
   "voice": "f",
@@ -2295,10 +2663,26 @@
   "take": 0,
   "ok": true
  },
+ "2a7513a4.mp3": {
+  "text": "Es geht mir schon besser.",
+  "voice": "f",
+  "heard": "Es geht mir schon besser.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2a94c673.mp3": {
   "text": "S, A, L, A, H",
   "voice": "m",
   "heard": "S-A-L-A-H",
+  "ok": true
+ },
+ "2a967734.mp3": {
+  "text": "Ich brauche Hilfe!",
+  "voice": "f",
+  "heard": "Ich brauche Hilfe.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "2ab82a5e.mp3": {
@@ -2445,6 +2829,14 @@
   "take": 0,
   "ok": true
  },
+ "2da5f536.mp3": {
+  "text": "Ein Kind ist vom Fahrrad gefallen.",
+  "voice": "m",
+  "heard": "Ein Kind ist vom Fahrrad gefallen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2dc25aa9.mp3": {
   "text": "Ich liebe meine Familie.",
   "voice": "f",
@@ -2497,6 +2889,14 @@
   "text": "Darum lerne ich jeden Tag Deutsch.",
   "voice": "m",
   "heard": "Darum lerne ich jeden Tag Deutsch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2eca605c.mp3": {
+  "text": "Geht es auch am Nachmittag?",
+  "voice": "m",
+  "heard": "Geht es auch am Nachmittag?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2793,6 +3193,14 @@
   "take": 0,
   "ok": true
  },
+ "330c9d3e.mp3": {
+  "text": "Gute Besserung!",
+  "voice": "m",
+  "heard": "Gute Besserung!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "333479ad.mp3": {
   "text": "Die Miete ist sechshundertzwanzig Euro.",
   "voice": "m",
@@ -2815,10 +3223,26 @@
   "take": 0,
   "ok": true
  },
+ "333ed34a.mp3": {
+  "text": "Nehmen Sie die Tropfen vor dem Frühstück.",
+  "voice": "m",
+  "heard": "Nehmen Sie die Tropfen vor dem Frühstück.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "335c1704.mp3": {
   "text": "Die Apotheke ist bis 20 Uhr geöffnet.",
   "voice": "f",
   "heard": "Die Apotheke ist bis 20 Uhr geöffnet.",
+  "ok": true
+ },
+ "335f0c90.mp3": {
+  "text": "Ihre Versichertenkarte, bitte.",
+  "voice": "f",
+  "heard": "Ihre Versichertenkarte, bitte.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "33689ee9.mp3": {
@@ -2890,6 +3314,22 @@
   "score": 0.75,
   "take": 0,
   "ok": false
+ },
+ "3467d812.mp3": {
+  "text": "Die Apotheke ist neben der Praxis.",
+  "voice": "f",
+  "heard": "Die Apotheke ist neben der Praxis.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "3486e07c.mp3": {
+  "text": "Ja, das passt. Danke!",
+  "voice": "m",
+  "heard": "Ja, das passt. Danke.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "3489cbf8.mp3": {
   "text": "Nicht so teuer. Aber die Straße ist ein bisschen laut.",
@@ -2977,6 +3417,22 @@
   "take": 1,
   "ok": true
  },
+ "35352ab0.mp3": {
+  "text": "Ich soll mehr Wasser trinken.",
+  "voice": "m",
+  "heard": "Ich soll mehr Wasser trinken.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "357448d2.mp3": {
+  "text": "Bitte warten Sie draußen.",
+  "voice": "m",
+  "heard": "Bitte warten Sie draußen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "359ab070.mp3": {
   "text": "Er hat keine Geschwister.",
   "voice": "m",
@@ -3023,6 +3479,14 @@
   "take": 0,
   "ok": true
  },
+ "3601e29b.mp3": {
+  "text": "Hallo, hier ist Lea Schmidt. Ich kann morgen leider nicht kommen. Ich muss meinen Termin absagen.",
+  "voice": "f",
+  "heard": "Heilo, hier ist der Schmet. Ich kann morgen leider nicht kommen. Ich muss meinen Termin absagen.",
+  "score": 0.81,
+  "take": 0,
+  "ok": false
+ },
  "36131b4f.mp3": {
   "text": "lieber",
   "voice": "m",
@@ -3039,10 +3503,26 @@
   "take": 0,
   "ok": true
  },
+ "3625b1bd.mp3": {
+  "text": "der Fuß, die Füße",
+  "voice": "m",
+  "heard": "Der Fuß, die Füße.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "3630d5fa.mp3": {
   "text": "Und wie ist Ihre Telefonnummer?",
   "voice": "m",
   "heard": "Und wie ist Ihre Telefonnummer?",
+  "ok": true
+ },
+ "364a6af2.mp3": {
+  "text": "Nehmen Sie die Tropfen täglich.",
+  "voice": "f",
+  "heard": "Nehmen Sie die Tropfen täglich.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "364ec2be.mp3": {
@@ -3089,6 +3569,14 @@
   "text": "die Lampe, die Lampen",
   "voice": "m",
   "heard": "Die Lampe. Die Lampen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "3758414d.mp3": {
+  "text": "Haben Sie etwas gegen Kopfschmerzen?",
+  "voice": "m",
+  "heard": "Haben sie etwas gegen Kopfschmerzen?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3315,6 +3803,14 @@
   "take": 0,
   "ok": true
  },
+ "3ac0daf2.mp3": {
+  "text": "Mona Adel. Meine Nummer ist null eins sieben sechs, eins zwei drei vier fünf sechs sieben.",
+  "voice": "f",
+  "heard": "Monadel, meine Nummer ist 01761234567",
+  "score": 0.6,
+  "take": 0,
+  "ok": false
+ },
  "3b047c9c.mp3": {
   "text": "Wie bitte?",
   "voice": "m",
@@ -3445,6 +3941,22 @@
   "take": 0,
   "ok": true
  },
+ "3d76b2ea.mp3": {
+  "text": "Nein, ich bin neu in Köln.",
+  "voice": "f",
+  "heard": "Nein, ich bin neu in Köln.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "3d7dc8d7.mp3": {
+  "text": "Mein Kopf tut weh.",
+  "voice": "f",
+  "heard": "Mein Kopf tut weh.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "3d9acb2d.mp3": {
   "text": "Der Salat kostet sieben Euro achtzig.",
   "voice": "m",
@@ -3457,6 +3969,14 @@
   "text": "Der Käse ist gut. Ich nehme ihn.",
   "voice": "m",
   "heard": "Der Käse ist gut. Ich nehme ihn.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "3dca747b.mp3": {
+  "text": "Wie oft machst du Sport? Zweimal in der Woche.",
+  "voice": "m",
+  "heard": "Wie oft machst du Sport? Zweimal in der Woche.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3537,6 +4057,14 @@
   "take": 0,
   "ok": true
  },
+ "3f180fb4.mp3": {
+  "text": "Sie dürfen eine Woche keinen Sport machen. Aber Sie sollen jeden Tag spazieren gehen.",
+  "voice": "f",
+  "heard": "Sie dürfen eine Woche kann Sport machen, aber sie sollen jeden Tag spazieren gehen.",
+  "score": 0.93,
+  "take": 0,
+  "ok": false
+ },
  "3f1c069d.mp3": {
   "text": "die Nachbarin, die Nachbarinnen",
   "voice": "m",
@@ -3549,6 +4077,14 @@
   "text": "Am Sonntag besuche ich meinen Vater.",
   "voice": "m",
   "heard": "Am Sonntag besuche ich meinen Vater.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "3f28699a.mp3": {
+  "text": "Seit gestern habe ich Fieber.",
+  "voice": "m",
+  "heard": "Seit gestern habe ich Fieber.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3705,6 +4241,14 @@
   "take": 0,
   "ok": true
  },
+ "41aef0e6.mp3": {
+  "text": "gegen",
+  "voice": "m",
+  "heard": "liegen.",
+  "score": 0,
+  "take": 0,
+  "ok": false
+ },
  "41c295af.mp3": {
   "text": "Wir lieben unseren Opa.",
   "voice": "m",
@@ -3739,6 +4283,14 @@
   "text": "Ja, gern!",
   "voice": "f",
   "heard": "Ja, gern.",
+  "ok": true
+ },
+ "42357240.mp3": {
+  "text": "die Polizei",
+  "voice": "m",
+  "heard": "Die Polizei.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "42398ac5.mp3": {
@@ -3889,6 +4441,22 @@
   "take": 0,
   "ok": true
  },
+ "43f30ac9.mp3": {
+  "text": "Praxis Doktor Klein, guten Tag!",
+  "voice": "m",
+  "heard": "Praxis Dr. Klein. Guten Tag.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
+ "4441346a.mp3": {
+  "text": "Am besten schläfst du acht Stunden.",
+  "voice": "m",
+  "heard": "Am besten schließt du acht Stunden.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
  "444873b9.mp3": {
   "text": "Ich bin noch ledig.",
   "voice": "f",
@@ -3959,6 +4527,14 @@
   "take": 0,
   "ok": true
  },
+ "45ac2b8d.mp3": {
+  "text": "Hier ist meine Versichertenkarte.",
+  "voice": "m",
+  "heard": "Hier ist meine Versicherheit im Karte.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
  "45b2aa52.mp3": {
   "text": "Das ist meine Frau Dina.",
   "voice": "m",
@@ -3977,6 +4553,14 @@
   "text": "Ich rufe wegen der Anzeige an. Ist die Stelle noch frei?",
   "voice": "m",
   "heard": "Ich rufe wegen der Anzeige an. Ist die Stelle noch frei?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4638c221.mp3": {
+  "text": "Trink viel Tee und schlaf gut!",
+  "voice": "m",
+  "heard": "Trink viel Tee und schlaf gut.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4073,6 +4657,14 @@
   "heard": "Leider kann ich am Montag nicht zum Kurs kommen, ich habe einen Termin beim Arzt, kann ich am Mittwoch kommen und was sind die Hausaufgaben?",
   "ok": true
  },
+ "46e5d127.mp3": {
+  "text": "Du bist krank! Geh nach Hause und trink viel Tee.",
+  "voice": "f",
+  "heard": "Du bist krank. Geh nach Hause und trink viel Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4776796c.mp3": {
   "text": "Sonst noch etwas?",
   "voice": "m",
@@ -4089,10 +4681,26 @@
   "take": 0,
   "ok": true
  },
+ "4790edf0.mp3": {
+  "text": "Donnerstag ist gut.",
+  "voice": "f",
+  "heard": "Donnerstag ist gut.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "47dc2a8f.mp3": {
   "text": "der Bekannte, die Bekannten",
   "voice": "m",
   "heard": "Der Bekannte, die Bekannten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "47e71268.mp3": {
+  "text": "Mir geht es nicht gut.",
+  "voice": "m",
+  "heard": "Mir geht es nicht gut.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4104,6 +4712,14 @@
   "score": 0.9,
   "take": 0,
   "ok": false
+ },
+ "4886ced9.mp3": {
+  "text": "Ja, Sie sollen eine Woche zu Hause bleiben und viel trinken. Ich schreibe Sie krank.",
+  "voice": "m",
+  "heard": "Ja, sie sollen eine Woche zu Hause bleiben und viel trinken. Ich schreibe sie krank.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "48d47f81.mp3": {
   "text": "Isst du gern Fisch?",
@@ -4119,6 +4735,14 @@
   "heard": "Hallo Lea, es geht und dir?",
   "ok": true
  },
+ "49176773.mp3": {
+  "text": "Der Krankenwagen kommt. Bleiben Sie bei dem Mann.",
+  "voice": "m",
+  "heard": "Der Krankenwagen kommt, leiden Sie bei dem Mann.",
+  "score": 0.88,
+  "take": 0,
+  "ok": false
+ },
  "491bd80d.mp3": {
   "text": "Wo wohnst du?",
   "voice": "m",
@@ -4131,6 +4755,14 @@
   "text": "sechzig, siebzig, achtzig, neunzig, hundert",
   "voice": "m",
   "heard": "60, 70, 80, 90, 100",
+  "ok": true
+ },
+ "494e8ce1.mp3": {
+  "text": "Ich habe seit drei Tagen Husten.",
+  "voice": "m",
+  "heard": "Ich habe seit drei Tagen husten.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "496eff36.mp3": {
@@ -4159,6 +4791,22 @@
   "text": "Zusammen oder getrennt?",
   "voice": "f",
   "heard": "zusammen oder getrennt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "49ef16e0.mp3": {
+  "text": "Das ist ein Notfall!",
+  "voice": "f",
+  "heard": "Das ist ein Notfall.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "49fdcdc1.mp3": {
+  "text": "Der Arzt sagt, ich soll keinen Sport machen.",
+  "voice": "m",
+  "heard": "Der Arzt sagt, ich soll keinen Sport machen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4201,6 +4849,14 @@
   "heard": "Hallo, ich bin Ben und du? Wie heißt du?",
   "ok": true
  },
+ "4a703742.mp3": {
+  "text": "Die Praxis ist am Mittwochnachmittag zu.",
+  "voice": "f",
+  "heard": "Die Praxis ist am Mittwoch nachmittag zu.",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
+ },
  "4a76d9f9.mp3": {
   "text": "Das ist ihre Schwester Mariam. Sie ist zwölf.",
   "voice": "m",
@@ -4237,6 +4893,14 @@
   "take": 0,
   "ok": true
  },
+ "4ab2f14c.mp3": {
+  "text": "Ja, sein Bein tut sehr weh. Er kann nicht aufstehen.",
+  "voice": "f",
+  "heard": "Ja, sein Bein tut sehr weh. Er kann nicht aufstehen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4acdbbac.mp3": {
   "text": "Ein Stück Kuchen, bitte.",
   "voice": "f",
@@ -4269,6 +4933,14 @@
   "take": 0,
   "ok": true
  },
+ "4b1800c3.mp3": {
+  "text": "Du siehst gut aus! Machst du jetzt Sport?",
+  "voice": "f",
+  "heard": "Du siehst gut aus. Machst du jetzt Sport.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4b3b038b.mp3": {
   "text": "Am Abend essen wir zu Abend.",
   "voice": "m",
@@ -4276,6 +4948,14 @@
   "score": 0.83,
   "take": 0,
   "ok": false
+ },
+ "4b5667ca.mp3": {
+  "text": "Hilfe! Das ist ein Notfall!",
+  "voice": "m",
+  "heard": "Hilfe, das ist ein Notfall.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "4b580d8b.mp3": {
   "text": "aus dem Sudan, im Sudan",
@@ -4313,6 +4993,14 @@
   "text": "Ich möchte einen Kaffee.",
   "voice": "m",
   "heard": "Ich möchte einen Kaffee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4bce547d.mp3": {
+  "text": "Mach morgens und abends die Salbe auf den Rücken.",
+  "voice": "m",
+  "heard": "Mach morgens und abends die Salbe auf den Rücken.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4433,6 +5121,14 @@
   "text": "Pass auf!",
   "voice": "m",
   "heard": "Pass auf!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4d893be4.mp3": {
+  "text": "Ich lerne seit einem Monat Deutsch.",
+  "voice": "m",
+  "heard": "Ich lerne seit einem Monat Deutsch.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4597,6 +5293,14 @@
   "take": 0,
   "ok": true
  },
+ "4fc716c3.mp3": {
+  "text": "Das Knie blutet sehr.",
+  "voice": "m",
+  "heard": "Das Knie blutet sehr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4fd89160.mp3": {
   "text": "Zum Abendessen gibt es Fisch.",
   "voice": "f",
@@ -4673,6 +5377,14 @@
   "text": "arbeitslos",
   "voice": "m",
   "heard": "Arbeitslos!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5183d5a6.mp3": {
+  "text": "Ja, diesen Saft. Zweimal täglich einen Löffel, vor dem Schlafen.",
+  "voice": "m",
+  "heard": "Ja, diesen Saft. Zweimal täglich einen Löffel vor dem Schlafen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4769,10 +5481,26 @@
   "heard": "Freut mich!",
   "ok": true
  },
+ "533b558d.mp3": {
+  "text": "Wie lange soll ich die Tabletten nehmen?",
+  "voice": "m",
+  "heard": "Wie lange soll ich die Tabletten nehmen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "535a0c08.mp3": {
   "text": "Herzlichen Glückwunsch zum Geburtstag!",
   "voice": "m",
   "heard": "Herzlichen Glückwunsch zum Geburtstag!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "53644dff.mp3": {
+  "text": "Ich bin krank.",
+  "voice": "f",
+  "heard": "Ich bin krank.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4811,6 +5539,22 @@
   "text": "Auf Wiedersehen! Bis bald!",
   "voice": "m",
   "heard": "Auf Wiedersehen. Bis bald.",
+  "ok": true
+ },
+ "540f1f55.mp3": {
+  "text": "Montag geht leider nicht. Geht es am Dienstag?",
+  "voice": "m",
+  "heard": "Montag geht leider nicht. Geht es am Dienstag?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "541ec531.mp3": {
+  "text": "Danke, mir geht es schon besser. Morgen komme ich wieder zur Arbeit.",
+  "voice": "m",
+  "heard": "Danke, mir geht es schon besser. Morgen komme ich wieder zur Arbeit.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "543ccedc.mp3": {
@@ -4857,10 +5601,26 @@
   "take": 0,
   "ok": true
  },
+ "5488bec9.mp3": {
+  "text": "Vor oder nach dem Essen?",
+  "voice": "f",
+  "heard": "vor oder nach dem Essen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "54921f49.mp3": {
   "text": "Ich esse gern Obst, aber Fleisch esse ich nicht gern.",
   "voice": "f",
   "heard": "Ich esse gern Obst, aber Fleisch esse ich nicht gern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "54e37fdb.mp3": {
+  "text": "Gleich hier links, neben der Bank. Die Apotheke am Bahnhof ist heute geschlossen.",
+  "voice": "f",
+  "heard": "Gleich hier links neben der Bank. Die Apotheke am Bahnhof ist heute geschlossen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4917,6 +5677,14 @@
   "take": 1,
   "ok": true
  },
+ "56e58052.mp3": {
+  "text": "krankschreiben",
+  "voice": "m",
+  "heard": "Krankschreiben!",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "56e8a381.mp3": {
   "text": "Guten Morgen, Frau Weber!",
   "voice": "m",
@@ -4963,6 +5731,14 @@
   "take": 0,
   "ok": false
  },
+ "57896b6d.mp3": {
+  "text": "der Zahnarzt, die Zahnärzte",
+  "voice": "m",
+  "heard": "Der Zahnarzt die Zahnärzte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "5795d115.mp3": {
   "text": "Nimm bitte nicht den Aufzug. Er ist kaputt. Nimm die Treppe.",
   "voice": "m",
@@ -4975,6 +5751,14 @@
   "text": "Am Montag ziehen wir aus. Unsere neue Wohnung ist in der Bergstraße.",
   "voice": "f",
   "heard": "Am Montag ziehen wir aus. Unsere neue Wohnung ist in der Bergstraße.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "57a35709.mp3": {
+  "text": "Ich habe seit gestern Fieber.",
+  "voice": "f",
+  "heard": "Ich habe seit gestern Fieber.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5151,6 +5935,14 @@
   "take": 0,
   "ok": true
  },
+ "5a23b07b.mp3": {
+  "text": "Bringen Sie bitte Ihre Versichertenkarte mit.",
+  "voice": "m",
+  "heard": "Bringen Sie bitte Ihre versicherten Karte mit.",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
+ },
  "5a280b1f.mp3": {
   "text": "rechts",
   "voice": "m",
@@ -5165,10 +5957,26 @@
   "heard": "Mein Hobby ist Fußball.",
   "ok": true
  },
+ "5a730eda.mp3": {
+  "text": "Nehmen Sie die Tablette nach dem Essen.",
+  "voice": "f",
+  "heard": "Nehmen Sie die Tablette nach dem Essen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "5aa90bad.mp3": {
   "text": "Ich bin nach Hause gefahren.",
   "voice": "m",
   "heard": "Ich bin nach Hause gefahren.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5b1b1570.mp3": {
+  "text": "Ich habe seit gestern Bauchschmerzen. Kopfschmerzen habe ich nicht.",
+  "voice": "m",
+  "heard": "Ich habe seit gestern Bauchschmerzen, Kopfschmerzen habe ich nicht.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5185,6 +5993,22 @@
   "text": "Wir möchten bitte zahlen.",
   "voice": "f",
   "heard": "Wir möchten bitte zahlen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5ba02b31.mp3": {
+  "text": "Sie sollen viel trinken.",
+  "voice": "m",
+  "heard": "Sie sollen viel trinken.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5ba9e008.mp3": {
+  "text": "Und haben Sie auch etwas gegen Husten?",
+  "voice": "f",
+  "heard": "und haben sie auch etwas gegen Husten.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5247,6 +6071,14 @@
   "text": "Man muss die Haustür schließen.",
   "voice": "m",
   "heard": "Man muss die Haustür schließen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5ca180d6.mp3": {
+  "text": "Bitte warten Sie im Wartezimmer.",
+  "voice": "f",
+  "heard": "Bitte warten Sie im Wartezimmer.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5449,6 +6281,14 @@
   "take": 0,
   "ok": true
  },
+ "5f2d75b6.mp3": {
+  "text": "Bleiben Sie im Bett.",
+  "voice": "f",
+  "heard": "Bleiben Sie im Bett!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "5f34966f.mp3": {
   "text": "Isst du gern Obst? Ja, ich esse gern Bananen.",
   "voice": "m",
@@ -5475,6 +6315,22 @@
   "text": "Ich esse nicht gern Fleisch.",
   "voice": "f",
   "heard": "Ich esse nicht gern Fleisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5fa4a6ae.mp3": {
+  "text": "Ihr Termin ist am Dienstag um fünfzehn Uhr. Bitte bringen Sie Ihre Versichertenkarte mit.",
+  "voice": "m",
+  "heard": "Ihr Termin ist am Dienstag um 15 Uhr. Bitte bringen Sie Ihre versicherten Karte mit.",
+  "score": 0.92,
+  "take": 0,
+  "ok": false
+ },
+ "5fb3e4cb.mp3": {
+  "text": "der Rücken, die Rücken",
+  "voice": "m",
+  "heard": "Der Rücken die Rücken.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5607,6 +6463,14 @@
   "take": 0,
   "ok": true
  },
+ "61784bab.mp3": {
+  "text": "am besten",
+  "voice": "m",
+  "heard": "Am besten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "619a2ac2.mp3": {
   "text": "Rauchen ist hier verboten.",
   "voice": "f",
@@ -5673,6 +6537,14 @@
   "text": "Das ist verschieden. Diese Woche habe ich Frühschicht, von sechs bis zwei.",
   "voice": "m",
   "heard": "Das ist verschieden. Diese Woche habe ich Frühschicht von 6 bis 2.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6279212d.mp3": {
+  "text": "das Bein, die Beine",
+  "voice": "m",
+  "heard": "das Bein die Beine",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5752,6 +6624,22 @@
   "voice": "f",
   "heard": "Ein Jahr hat zwölf Monate.",
   "ok": true
+ },
+ "64158b51.mp3": {
+  "text": "die Grippe",
+  "voice": "m",
+  "heard": "Die Krippe.",
+  "score": 0.5,
+  "take": 0,
+  "ok": false
+ },
+ "649949b9.mp3": {
+  "text": "Machen Sie bitte den Mund auf und sagen Sie „Aaah“.",
+  "voice": "m",
+  "heard": "Machen sie bitte den Mund auf und sagen sie A.",
+  "score": 0.9,
+  "take": 0,
+  "ok": false
  },
  "64abcf26.mp3": {
   "text": "Ich verstehe das nicht.",
@@ -5913,6 +6801,14 @@
   "take": 0,
   "ok": true
  },
+ "673c3645.mp3": {
+  "text": "Ich wohne seit zwei Jahren in Köln.",
+  "voice": "m",
+  "heard": "Ich wohne seit zwei Jahren in Köln.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "674d5a78.mp3": {
   "text": "leben",
   "voice": "m",
@@ -5921,10 +6817,26 @@
   "take": 0,
   "ok": true
  },
+ "67a0387d.mp3": {
+  "text": "Mir geht es nicht gut. Ich habe Kopfschmerzen.",
+  "voice": "m",
+  "heard": "Mir geht es nicht gut, ich habe Kopfschmerzen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "67cc85f5.mp3": {
   "text": "Ich danke Ihnen.",
   "voice": "m",
   "heard": "Ich danke Ihnen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "67efe093.mp3": {
+  "text": "Ich esse auch weniger Zucker und mehr Gemüse. Ich schlafe jetzt viel besser.",
+  "voice": "m",
+  "heard": "Ich esse auch weniger Zucker und mehr Gemüse. Ich schlafe jetzt viel besser.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -6059,6 +6971,14 @@
   "take": 0,
   "ok": true
  },
+ "6950e7c9.mp3": {
+  "text": "Manchmal trinke ich Kaffee.",
+  "voice": "f",
+  "heard": "Manchmal trinke ich Kaffee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "69687e44.mp3": {
   "text": "passieren",
   "voice": "m",
@@ -6073,11 +6993,27 @@
   "heard": "Noch einmal, bitte.",
   "ok": true
  },
+ "69ca873e.mp3": {
+  "text": "der Husten",
+  "voice": "m",
+  "heard": "Der Husten",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "69cc760d.mp3": {
   "text": "Um zehn Uhr arbeite ich. Und am Donnerstag am Nachmittag?",
   "voice": "m",
   "heard": "und 10 Uhr arbeite ich, und am Donnerstag, am Nachmittag.",
   "ok": false
+ },
+ "69d028ac.mp3": {
+  "text": "Ich habe seit gestern Fieber.",
+  "voice": "m",
+  "heard": "Ich habe seit gestern Fieber.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "6a19548f.mp3": {
   "text": "das Paket, die Pakete",
@@ -6201,6 +7137,14 @@
   "take": 1,
   "ok": false
  },
+ "6c1fd35b.mp3": {
+  "text": "Tut dir der Bauch weh?",
+  "voice": "m",
+  "heard": "Tut dir der Bauch weh!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "6c3ef393.mp3": {
   "text": "Was ist passiert?",
   "voice": "m",
@@ -6319,6 +7263,14 @@
   "take": 0,
   "ok": true
  },
+ "6d88c7ff.mp3": {
+  "text": "der Zahn, die Zähne",
+  "voice": "m",
+  "heard": "der Zahn, die Zähne.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "6d97b545.mp3": {
   "text": "Ich esse gern Hähnchen mit Reis.",
   "voice": "m",
@@ -6355,10 +7307,26 @@
   "heard": "Tschüss, bis bald!",
   "ok": true
  },
+ "6defc4ac.mp3": {
+  "text": "Danke, mir geht es schon viel besser.",
+  "voice": "m",
+  "heard": "Danke, mir geht es schon viel besser.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "6df8dcfa.mp3": {
   "text": "Ich nehme das Hähnchen mit Reis.",
   "voice": "m",
   "heard": "Ich nehme das Hähnchen mit Reis.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6e07ed8f.mp3": {
+  "text": "Ich mache zweimal in der Woche Yoga, aber ich gehe nie joggen.",
+  "voice": "f",
+  "heard": "Ich mache zweimal in der Woche Yoga, aber ich gehe nie joggen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -6401,6 +7369,14 @@
   "take": 0,
   "ok": true
  },
+ "6e8fb88b.mp3": {
+  "text": "wehtun",
+  "voice": "m",
+  "heard": "Wehtun",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "6eadee5f.mp3": {
   "text": "Gestern habe ich nicht gearbeitet. Ich war beim Arzt und bin dann zu Hause geblieben.",
   "voice": "m",
@@ -6435,6 +7411,22 @@
   "text": "Das ist Peters Vater.",
   "voice": "m",
   "heard": "Das ist Peters Vater.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6f12fe6b.mp3": {
+  "text": "Ja, am Dienstag um halb zehn.",
+  "voice": "f",
+  "heard": "Ja, am Dienstag um halb zehn.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6f48cd47.mp3": {
+  "text": "Gestern war ich sehr krank. Heute geht es mir besser, aber am besten bleibe ich noch einen Tag zu Hause.",
+  "voice": "f",
+  "heard": "Gestern war ich sehr krank. Heute geht es mir besser, aber am besten bleibe ich noch einen Tag zu Hause.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -6577,6 +7569,22 @@
   "take": 0,
   "ok": true
  },
+ "715d9fb7.mp3": {
+  "text": "Mir geht es besser.",
+  "voice": "f",
+  "heard": "Mir geht es besser.",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
+ "71846309.mp3": {
+  "text": "Soll ich zu Hause bleiben?",
+  "voice": "m",
+  "heard": "Soll ich zu Hause bleiben?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "71b9ab6d.mp3": {
   "text": "Ich kann gut mit Kindern arbeiten.",
   "voice": "m",
@@ -6602,6 +7610,14 @@
   "voice": "m",
   "heard": "Buch stabilen.",
   "ok": false
+ },
+ "7216d5ef.mp3": {
+  "text": "Haben Sie einen Termin?",
+  "voice": "f",
+  "heard": "Haben Sie einen Termin?",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "723855bd.mp3": {
   "text": "Der Garten ist schön.",
@@ -6657,6 +7673,22 @@
   "take": 0,
   "ok": true
  },
+ "7343eb1c.mp3": {
+  "text": "Dreimal am Tag eine Tablette.",
+  "voice": "m",
+  "heard": "Dreimal am Tag eine Tablette.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "73486546.mp3": {
+  "text": "Ich bin für drei Tage krankgeschrieben.",
+  "voice": "m",
+  "heard": "Ich bin für drei Tage krankgeschrieben.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "734db387.mp3": {
   "text": "Eine Flasche Wasser, bitte.",
   "voice": "f",
@@ -6707,6 +7739,14 @@
   "take": 0,
   "ok": true
  },
+ "7414ab55.mp3": {
+  "text": "Nimm die Tropfen vor dem Frühstück und vor dem Schlafen.",
+  "voice": "m",
+  "heard": "Nimm die Tropfen vor dem Frühstück und vor dem Schlafen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7448c4cb.mp3": {
   "text": "das Frühstück",
   "voice": "m",
@@ -6722,6 +7762,14 @@
   "score": 0.86,
   "take": 0,
   "ok": false
+ },
+ "74ddf5b4.mp3": {
+  "text": "Kennst du einen guten Zahnarzt?",
+  "voice": "f",
+  "heard": "Kennst du einen guten Zahnarzt?",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "74dfd019.mp3": {
   "text": "verboten",
@@ -6901,6 +7949,14 @@
   "heard": "Ich bin 29 Jahre alt.",
   "ok": true
  },
+ "76561542.mp3": {
+  "text": "Wo tut es weh?",
+  "voice": "m",
+  "heard": "Wo tut es weh?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "76622062.mp3": {
   "text": "Nein, um halb acht. Aber komm ruhig später.",
   "voice": "m",
@@ -6971,6 +8027,14 @@
   "text": "Meine Geschwister kommen auch.",
   "voice": "m",
   "heard": "Meine Geschwister kommen auch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "772e1100.mp3": {
+  "text": "Ruf schnell einen Krankenwagen!",
+  "voice": "m",
+  "heard": "Ruf schnell einen Krankenwagen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -7129,6 +8193,14 @@
   "take": 0,
   "ok": true
  },
+ "791c8e84.mp3": {
+  "text": "Nehmen Sie die Tabletten nach dem Essen.",
+  "voice": "f",
+  "heard": "Nehmen Sie die Tabletten nach dem Essen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "791fe41b.mp3": {
   "text": "Was können Sie empfehlen?",
   "voice": "m",
@@ -7157,6 +8229,14 @@
   "text": "Gut, danke! Und unsere Großmutter wohnt jetzt auch dort.",
   "voice": "f",
   "heard": "Gut, danke. Und unsere Großmutter wohnt jetzt auch dort.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "79bfb893.mp3": {
+  "text": "Ich esse weniger Fleisch.",
+  "voice": "m",
+  "heard": "Ich esse weniger Fleisch.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -7203,6 +8283,14 @@
   "text": "der Opa, die Opas",
   "voice": "m",
   "heard": "der Opa, die Opas.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "7aa2ee7f.mp3": {
+  "text": "Ich muss den Termin absagen.",
+  "voice": "m",
+  "heard": "Ich muss den Termin absagen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -7307,6 +8395,14 @@
   "heard": "Ich bin, du bist, er ist, sie ist.",
   "ok": true
  },
+ "7c3fd705.mp3": {
+  "text": "Seit wann haben Sie das?",
+  "voice": "m",
+  "heard": "Seit wann haben Sie das?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7c3fe609.mp3": {
   "text": "Sonst noch etwas?",
   "voice": "f",
@@ -7339,6 +8435,14 @@
   "take": 0,
   "ok": true
  },
+ "7cbb9812.mp3": {
+  "text": "die Hand, die Hände",
+  "voice": "m",
+  "heard": "Die Hand, die Hände.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7cc3962f.mp3": {
   "text": "Wir lernen zusammen.",
   "voice": "f",
@@ -7351,6 +8455,14 @@
   "text": "Meine Mutter heißt Salma.",
   "voice": "m",
   "heard": "Meine Mutter heißt Salma.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "7d2476b2.mp3": {
+  "text": "Ruf einen Krankenwagen!",
+  "voice": "f",
+  "heard": "Ruf einen Krankenwagen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -7431,12 +8543,28 @@
   "take": 0,
   "ok": true
  },
+ "7ec86366.mp3": {
+  "text": "Ich habe seit zwei Wochen Rückenschmerzen, aber seit gestern ist es schlimmer.",
+  "voice": "f",
+  "heard": "Ich habe seit zwei Wochen Rücken schmatzen, aber seit gestern ist es schlimmer.",
+  "score": 0.91,
+  "take": 0,
+  "ok": false
+ },
  "7ee6fcb4.mp3": {
   "text": "Nein, meine Eltern wohnen in München. Mein Bruder wohnt in Hamburg.",
   "voice": "f",
   "heard": "Nein, meine Eltern wohnen in München, mein Bruder wohnt in Hamburg.",
   "score": 1,
   "take": 0,
+  "ok": true
+ },
+ "7ee8f157.mp3": {
+  "text": "Ich habe hohes Fieber.",
+  "voice": "f",
+  "heard": "Ich habe hohes Fieber.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "7f1eda5f.mp3": {
@@ -7541,6 +8669,14 @@
   "take": 0,
   "ok": true
  },
+ "80e7df60.mp3": {
+  "text": "Soll ich morgen wiederkommen?",
+  "voice": "m",
+  "heard": "Soll ich morgen wiederkommen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "80f7f4b3.mp3": {
   "text": "die Partnerin, die Partnerinnen",
   "voice": "m",
@@ -7567,6 +8703,14 @@
   "text": "Sie kommt aus dem Sudan.",
   "voice": "m",
   "heard": "Sie kommt aus dem Sudan.",
+  "ok": true
+ },
+ "81de9497.mp3": {
+  "text": "Ich habe Zahnschmerzen.",
+  "voice": "f",
+  "heard": "Ich habe Zahnschmerzen.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "81e43a17.mp3": {
@@ -7597,6 +8741,14 @@
   "heard": "Der Kurs fängt um neun Uhr an.",
   "ok": true
  },
+ "823552a2.mp3": {
+  "text": "Waren Sie schon einmal bei uns?",
+  "voice": "m",
+  "heard": "Waren Sie schon einmal bei uns?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "823cba68.mp3": {
   "text": "die Anzeige, die Anzeigen",
   "voice": "m",
@@ -7625,6 +8777,14 @@
   "text": "Ja, am Freitag um fünf. Bis dann!",
   "voice": "m",
   "heard": "Ja, am Freitag um fünf. Bis dann.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "82bdc57d.mp3": {
+  "text": "das Medikament, die Medikamente",
+  "voice": "m",
+  "heard": "das Medikament, die Medikamente.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -7723,10 +8883,34 @@
   "take": 0,
   "ok": true
  },
+ "84e6e51a.mp3": {
+  "text": "die Hilfe",
+  "voice": "m",
+  "heard": "Die Hilfe.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "84ed6c89.mp3": {
+  "text": "Ich habe Halsschmerzen. Fieber habe ich nicht, aber ich habe Husten.",
+  "voice": "m",
+  "heard": "Ich habe Halsschmerzen, Fieber habe ich nicht, aber ich habe Husten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "851a31b6.mp3": {
   "text": "Sie frühstückt nie.",
   "voice": "m",
   "heard": "Sie frühstückt nie.",
+  "ok": true
+ },
+ "8520ef1c.mp3": {
+  "text": "Mit Rezept zahlen Sie fünf Euro. Gute Besserung!",
+  "voice": "m",
+  "heard": "Mit Rezept zahlen Sie 5 Euro. Gute Besserung!",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "853437e2.mp3": {
@@ -7859,6 +9043,14 @@
   "take": 0,
   "ok": true
  },
+ "88052db2.mp3": {
+  "text": "Ich frühstücke immer.",
+  "voice": "m",
+  "heard": "Ich frühstücke immer.",
+  "score": 1,
+  "take": 2,
+  "ok": true
+ },
  "8818d90c.mp3": {
   "text": "Hast du Kinder?",
   "voice": "f",
@@ -7939,6 +9131,14 @@
   "take": 0,
   "ok": true
  },
+ "88f54273.mp3": {
+  "text": "Die Praxis von Doktor Klein ist hier.",
+  "voice": "f",
+  "heard": "Die Praxis von Dr. Klein ist hier.",
+  "score": 0.86,
+  "take": 0,
+  "ok": false
+ },
  "891337a4.mp3": {
   "text": "Sehr gut, danke!",
   "voice": "m",
@@ -7949,6 +9149,14 @@
   "text": "getrennt",
   "voice": "m",
   "heard": "getrennt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8944579b.mp3": {
+  "text": "Guten Tag, hier ist Mona Adel. Ich brauche bitte einen Termin.",
+  "voice": "f",
+  "heard": "Guten Tag, hier ist Mona Adel. Ich brauche bitte einen Termin.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -7966,6 +9174,14 @@
   "score": 1,
   "take": 0,
   "ok": false
+ },
+ "898942cf.mp3": {
+  "text": "Nehmen Sie die Tabletten zweimal am Tag, morgens und abends, nach dem Essen.",
+  "voice": "m",
+  "heard": "Nehmen Sie die Tabletten zweimal am Tag, morgens und abends nach dem Essen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "8991219a.mp3": {
   "text": "Und das ist meine Schwester Hana. Sie ist siebzehn.",
@@ -8013,6 +9229,14 @@
   "take": 0,
   "ok": false
  },
+ "8a2989d9.mp3": {
+  "text": "Am besten bleibst du im Bett.",
+  "voice": "f",
+  "heard": "Am besten bleibst du im Bett.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "8a588cb4.mp3": {
   "text": "Am Freitag essen wir alle zusammen.",
   "voice": "m",
@@ -8045,6 +9269,14 @@
   "take": 0,
   "ok": true
  },
+ "8af24ef9.mp3": {
+  "text": "Toll! Ich habe nie Zeit für Sport.",
+  "voice": "f",
+  "heard": "Toll, ich habe nie Zeit für Sport.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "8b0c4715.mp3": {
   "text": "Die Wohnung ist ab sofort frei.",
   "voice": "f",
@@ -8073,6 +9305,14 @@
   "text": "die Jacke, die Jacken",
   "voice": "m",
   "heard": "Die Jacke, die Jacken.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8b7031a2.mp3": {
+  "text": "Ich schreibe Sie krank.",
+  "voice": "f",
+  "heard": "Ich schreibe sie krank.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -8115,6 +9355,14 @@
   "heard": "Servus.",
   "ok": true
  },
+ "8be11e42.mp3": {
+  "text": "Die Polizei kommt sofort.",
+  "voice": "f",
+  "heard": "Die Polizei kommt sofort.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "8be2730d.mp3": {
   "text": "Die Familie fährt am Samstag.",
   "voice": "m",
@@ -8135,6 +9383,14 @@
   "text": "Es gibt keinen Kuchen mehr.",
   "voice": "m",
   "heard": "Es gibt keinen Kuchen mehr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8c2f6c95.mp3": {
+  "text": "Vor dem Schlafen lese ich.",
+  "voice": "f",
+  "heard": "Vor dem Schlafen lese ich.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -8225,6 +9481,22 @@
   "take": 0,
   "ok": true
  },
+ "8e43edec.mp3": {
+  "text": "Mein Name ist Karim Hassan.",
+  "voice": "m",
+  "heard": "Mein Name ist Karim Hassan.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8e47013a.mp3": {
+  "text": "Atmen Sie tief ein.",
+  "voice": "m",
+  "heard": "Atmen Sie tief ein.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "8e4ed244.mp3": {
   "text": "Mein Bruder ist zwanzig.",
   "voice": "f",
@@ -8261,6 +9533,14 @@
   "heard": "a, b, c, d, e, f, g",
   "ok": true
  },
+ "8f54bf6e.mp3": {
+  "text": "die Tablette, die Tabletten",
+  "voice": "m",
+  "heard": "Die Tablette, die Tabletten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "8f551ec4.mp3": {
   "text": "Freut mich auch!",
   "voice": "f",
@@ -8291,10 +9571,26 @@
   "take": 0,
   "ok": true
  },
+ "8ffdc6ba.mp3": {
+  "text": "Der Rücken tut mir weh.",
+  "voice": "f",
+  "heard": "Der Rücken tut mir weh.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "90679c91.mp3": {
   "text": "Sie sind noch jung. Sie gehen noch zur Schule.",
   "voice": "f",
   "heard": "Sie sind noch jung. Sie gehen noch zur Schule.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "90806d91.mp3": {
+  "text": "Seit vier Tagen. Seit gestern habe ich auch Fieber.",
+  "voice": "m",
+  "heard": "Seit vier Tagen. Seit gestern habe ich auch Fieber.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -8357,6 +9653,14 @@
   "take": 0,
   "ok": true
  },
+ "91a4794a.mp3": {
+  "text": "Haben Sie etwas gegen Husten?",
+  "voice": "f",
+  "heard": "Haben Sie etwas gegen Husten?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "91e1e81a.mp3": {
   "text": "Die Küche ist neu.",
   "voice": "f",
@@ -8377,6 +9681,14 @@
   "text": "Ich arbeite am Montag von neun bis fünf.",
   "voice": "m",
   "heard": "Ich arbeite am Montag von 9 bis 5.",
+  "ok": true
+ },
+ "925fbd5f.mp3": {
+  "text": "Das ist ein Notfall!",
+  "voice": "m",
+  "heard": "Das ist ein Notfall.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "927ab60a.mp3": {
@@ -8449,6 +9761,14 @@
   "take": 0,
   "ok": false
  },
+ "933d48bc.mp3": {
+  "text": "Nehmen Sie die Tabletten für eine Woche.",
+  "voice": "m",
+  "heard": "Nehmen Sie die Tabletten für eine Woche.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "936797eb.mp3": {
   "text": "Ich habe einen Bruder und zwei Schwestern.",
   "voice": "m",
@@ -8464,6 +9784,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "938d3825.mp3": {
+  "text": "sollen",
+  "voice": "m",
+  "heard": "Soll.",
+  "score": 0,
+  "take": 0,
+  "ok": false
  },
  "93ac8cff.mp3": {
   "text": "danken",
@@ -8485,6 +9813,14 @@
   "text": "Guten Tag, Herr Klein!",
   "voice": "f",
   "heard": "Guten Tag, Herr Klein.",
+  "ok": true
+ },
+ "93de0ba8.mp3": {
+  "text": "Mein Kopf tut weh.",
+  "voice": "m",
+  "heard": "Mein Kopf tut weh.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "93f3a0c3.mp3": {
@@ -8535,6 +9871,14 @@
   "text": "Das Mädchen ist sechs Jahre alt.",
   "voice": "f",
   "heard": "Das Mädchen ist sechs Jahre alt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "949a9f19.mp3": {
+  "text": "Ich habe Kopfschmerzen.",
+  "voice": "m",
+  "heard": "Ich habe Kopfschmerzen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -8683,6 +10027,14 @@
   "take": 0,
   "ok": true
  },
+ "97be9961.mp3": {
+  "text": "Ich gehe zum Arzt.",
+  "voice": "f",
+  "heard": "Ich gehe zum Arzt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "97c24c8a.mp3": {
   "text": "die Pause, die Pausen",
   "voice": "m",
@@ -8727,6 +10079,14 @@
   "text": "tanzen",
   "voice": "m",
   "heard": "Tanzen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "98924092.mp3": {
+  "text": "die Apotheke, die Apotheken",
+  "voice": "m",
+  "heard": "Die Apotheke, die Apotheken.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -8851,6 +10211,14 @@
   "text": "Sie studiert Medizin.",
   "voice": "f",
   "heard": "Sie studiert Medizin.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9b07020e.mp3": {
+  "text": "Hallo, hier ist ein Notfall in der Schulstraße fünf. Eine Frau ist krank und kann nicht sprechen.",
+  "voice": "m",
+  "heard": "Hallo, hier ist ein Notfall in der Schulstraße 5, eine Frau ist krank und kann nicht sprechen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -9337,6 +10705,14 @@
   "take": 0,
   "ok": true
  },
+ "a1caf9c9.mp3": {
+  "text": "Geht es am Montag um neun?",
+  "voice": "m",
+  "heard": "Geht es am Montag um 9 Uhr?",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
  "a1fbee38.mp3": {
   "text": "Das kostet neunzehn Euro neunzig.",
   "voice": "m",
@@ -9357,6 +10733,14 @@
   "text": "mieten",
   "voice": "m",
   "heard": "mieten",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a257eb04.mp3": {
+  "text": "Danke. Hier sind Ihre Tabletten. Nehmen Sie dreimal am Tag eine Tablette.",
+  "voice": "m",
+  "heard": "Danke, hier sind Ihre Tabletten. Nehmen Sie dreimal am Tag eine Tablette.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -9459,6 +10843,14 @@
   "take": 0,
   "ok": true
  },
+ "a38ff0b0.mp3": {
+  "text": "Ich habe Husten und Schnupfen.",
+  "voice": "m",
+  "heard": "Ich habe Husten und Schnupfen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a3930cf0.mp3": {
   "text": "Die Milch ist da hinten rechts, und die Eier sind links.",
   "voice": "m",
@@ -9472,6 +10864,14 @@
   "voice": "f",
   "heard": "Im Sommer ist es heiß.",
   "ok": true
+ },
+ "a3c6d43d.mp3": {
+  "text": "Für dieses Medikament brauchen Sie ein Rezept. Gehen Sie bitte zuerst zum Arzt.",
+  "voice": "m",
+  "heard": "Für dieses Medikament brauchen Sie eine Rezept. Gehen Sie bitte zuerst zum Arzt.",
+  "score": 1,
+  "take": 0,
+  "ok": false
  },
  "a3d1ae96.mp3": {
   "text": "Wie sieht dein Bruder aus?",
@@ -9489,10 +10889,50 @@
   "take": 1,
   "ok": true
  },
+ "a41a7c76.mp3": {
+  "text": "Nehmen Sie Medikamente?",
+  "voice": "f",
+  "heard": "Nehmen Sie Medikamente.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a43b0251.mp3": {
+  "text": "täglich",
+  "voice": "m",
+  "heard": "Täglich.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a43ed838.mp3": {
+  "text": "Ja, um neun Uhr. Mein Name ist Karim Hassan.",
+  "voice": "m",
+  "heard": "Ja, um 9 Uhr. Mein Name ist Karim Hassan.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a47d47e4.mp3": {
+  "text": "das Wartezimmer, die Wartezimmer",
+  "voice": "m",
+  "heard": "das Wartezimmer, die Wartezimmer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a490c29c.mp3": {
   "text": "Am liebsten trinke ich Saft.",
   "voice": "f",
   "heard": "Am liebsten trinke ich Saft.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a4a89b1b.mp3": {
+  "text": "der Mund, die Münder",
+  "voice": "m",
+  "heard": "Der Mund, die Münder",
   "score": 1,
   "take": 0,
   "ok": true
@@ -9565,6 +11005,14 @@
   "text": "Ich habe keine Milch.",
   "voice": "m",
   "heard": "Ich habe keine Milch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a6108eca.mp3": {
+  "text": "Sie sollen viel Wasser trinken.",
+  "voice": "m",
+  "heard": "Sie sollen viel Wasser trinken.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -9665,6 +11113,14 @@
   "take": 0,
   "ok": true
  },
+ "a78b6dda.mp3": {
+  "text": "ausfüllen",
+  "voice": "m",
+  "heard": "Ausfüllen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a7921e5d.mp3": {
   "text": "Leider habe ich am Samstag keine Zeit. Meine Schwester heiratet.",
   "voice": "m",
@@ -9703,6 +11159,30 @@
   "text": "Kein Problem. Guten Appetit!",
   "voice": "f",
   "heard": "Kein Problem. Guten Appetit.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a866be69.mp3": {
+  "text": "Oh nein! Hast du auch Fieber?",
+  "voice": "f",
+  "heard": "Oh nein, hast du auch Fieber.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a87e6605.mp3": {
+  "text": "die Tropfen (Plural)",
+  "voice": "m",
+  "heard": "die Tropfen plural",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
+ "a883fc43.mp3": {
+  "text": "Nach der Arbeit gehe ich zur Apotheke.",
+  "voice": "m",
+  "heard": "Nach der Arbeit gehe ich zur Apotheke.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -9825,6 +11305,14 @@
   "take": 0,
   "ok": true
  },
+ "aa27dafe.mp3": {
+  "text": "Nach dem Essen trinke ich Tee.",
+  "voice": "f",
+  "heard": "Nach dem Essen trinke ich Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "aa40de6b.mp3": {
   "text": "Und wie ist Ihre Telefonnummer?",
   "voice": "f",
@@ -9861,6 +11349,14 @@
   "text": "die Schule, die Schulen",
   "voice": "m",
   "heard": "Die Schule, die Schulen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ab0b9632.mp3": {
+  "text": "die Nase, die Nasen",
+  "voice": "m",
+  "heard": "Die Nase, die Nasen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -10007,6 +11503,14 @@
   "take": 0,
   "ok": true
  },
+ "adab5d1b.mp3": {
+  "text": "der Notfall, die Notfälle",
+  "voice": "m",
+  "heard": "Der Notfall die Notfälle",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "ae062e62.mp3": {
   "text": "Am Sonntag ist Ruhezeit. Da darf man keine Waschmaschine benutzen.",
   "voice": "f",
@@ -10107,6 +11611,14 @@
   "heard": "Die Wohnung ist leider nicht mehr frei. Aber im Mai ist eine Wohnung im dritten Stock frei.",
   "score": 1,
   "take": 0,
+  "ok": true
+ },
+ "af51e2c9.mp3": {
+  "text": "Der Arm tut mir weh.",
+  "voice": "f",
+  "heard": "Der Arm tut mir weh.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "af671b8f.mp3": {
@@ -10245,6 +11757,14 @@
   "take": 0,
   "ok": true
  },
+ "b19f1442.mp3": {
+  "text": "Guten Tag! Was kann ich für Sie tun?",
+  "voice": "m",
+  "heard": "Guten Tag, was kann ich für Sie tun?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b1a4a88d.mp3": {
   "text": "Was kostet das?",
   "voice": "f",
@@ -10375,6 +11895,14 @@
   "take": 0,
   "ok": true
  },
+ "b3620e03.mp3": {
+  "text": "Nehmen Sie die Tablette nach dem Essen.",
+  "voice": "m",
+  "heard": "Nehmen Sie die Tablette nach dem Essen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b36f51bc.mp3": {
   "text": "Ich muss heute arbeiten.",
   "voice": "f",
@@ -10459,6 +11987,14 @@
   "heard": "0, 1, 6, 0, 4, 7, 2, 8, 1, 5.",
   "ok": true
  },
+ "b4429bb3.mp3": {
+  "text": "Besser, danke. Er hat kein Fieber mehr. Aber er hustet noch ein bisschen.",
+  "voice": "f",
+  "heard": "Wesser, danke. Er hat kein Fieber mehr, aber er rustet noch ein bisschen.",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
+ },
  "b4543c60.mp3": {
   "text": "Noch einen Kaffee, bitte.",
   "voice": "f",
@@ -10477,6 +12013,14 @@
   "text": "ledig",
   "voice": "m",
   "heard": "LEADY",
+  "score": 0,
+  "take": 0,
+  "ok": false
+ },
+ "b4eb10ba.mp3": {
+  "text": "müde",
+  "voice": "m",
+  "heard": "Nö, ne?",
   "score": 0,
   "take": 0,
   "ok": false
@@ -10585,6 +12129,14 @@
   "take": 0,
   "ok": true
  },
+ "b6a8cc2d.mp3": {
+  "text": "Guten Tag! Ich habe hier ein Rezept.",
+  "voice": "f",
+  "heard": "Guten Tag. Ich habe hier ein Rezept.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b6c672db.mp3": {
   "text": "Deine Familie ist sehr groß!",
   "voice": "f",
@@ -10657,6 +12209,22 @@
   "text": "Ihre Haare sind sehr lang!",
   "voice": "f",
   "heard": "Ihre Haare sind sehr lang.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b7aca7a1.mp3": {
+  "text": "Ich esse manchmal Süßigkeiten.",
+  "voice": "m",
+  "heard": "Ich esse manchmal Süßigkeiten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b7c77552.mp3": {
+  "text": "Dreimal am Tag.",
+  "voice": "m",
+  "heard": "Dreimal am Tag.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -10774,6 +12342,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "b9bb9ab0.mp3": {
+  "text": "Diesen Saft nehmen Sie dreimal täglich, für fünf Tage. Nicht länger!",
+  "voice": "f",
+  "heard": "Diesen Saft nehmen Sie 3 Mal täglich für 5 Tage. Nicht länger.",
+  "score": 0.9,
+  "take": 0,
+  "ok": false
  },
  "b9cd54b7.mp3": {
   "text": "Entschuldigung, die Suppe ist leider kalt.",
@@ -10925,6 +12501,14 @@
   "take": 0,
   "ok": true
  },
+ "bbd2b6bd.mp3": {
+  "text": "Ich mache gern Sport.",
+  "voice": "f",
+  "heard": "Ich mache gern Sport.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "bbd6a958.mp3": {
   "text": "Nein, er ist erst vier. Er geht in den Kindergarten.",
   "voice": "m",
@@ -10959,6 +12543,14 @@
   "text": "Gestern war Sonntag.",
   "voice": "f",
   "heard": "Gestern war Sonntag.",
+  "ok": true
+ },
+ "bc894f0f.mp3": {
+  "text": "Nehmen Sie eine Tablette.",
+  "voice": "f",
+  "heard": "Nehmen Sie eine Tablette.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "bc971624.mp3": {
@@ -11079,6 +12671,14 @@
   "take": 0,
   "ok": true
  },
+ "bf0e8085.mp3": {
+  "text": "Meine Füße tun weh.",
+  "voice": "m",
+  "heard": "Meine Füße tun weh.",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "bf23cbd3.mp3": {
   "text": "Was isst du zum Frühstück? Ich esse Brot mit Käse.",
   "voice": "m",
@@ -11095,6 +12695,14 @@
   "take": 0,
   "ok": false
  },
+ "bf4a9ac7.mp3": {
+  "text": "Muss ich zu Hause bleiben?",
+  "voice": "m",
+  "heard": "Muss ich zu Hause bleiben?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "bf598db5.mp3": {
   "text": "der Aufzug, die Aufzüge",
   "voice": "m",
@@ -11107,6 +12715,14 @@
   "text": "Der Zug ist pünktlich.",
   "voice": "f",
   "heard": "Der Zug ist pünktlich.",
+  "ok": true
+ },
+ "bf63c62a.mp3": {
+  "text": "Sie sollen viel trinken.",
+  "voice": "f",
+  "heard": "Sie sollen viel trinken.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "bf8fbc7c.mp3": {
@@ -11361,6 +12977,14 @@
   "heard": "Hallo Herr Ali, hier ist die Praxiste her. Wer her? Ihr Termin am Montag geht leider nicht. Können Sie am Dienstag um 10 Uhr kommen. Bitte rufen Sie uns an. Danke.",
   "ok": false
  },
+ "c343754f.mp3": {
+  "text": "das Ohr, die Ohren",
+  "voice": "m",
+  "heard": "Das Ohr, die Ohren.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c348c3cf.mp3": {
   "text": "Trinkst du gern Kaffee?",
   "voice": "m",
@@ -11413,6 +13037,14 @@
   "heard": "0",
   "ok": true
  },
+ "c3d32d13.mp3": {
+  "text": "Wo ist hier eine Apotheke?",
+  "voice": "m",
+  "heard": "Wo ist hier eine Apotheke?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c3e0b9ae.mp3": {
   "text": "das Haus, die Häuser",
   "voice": "m",
@@ -11451,10 +13083,26 @@
   "take": 0,
   "ok": true
  },
+ "c42eb02f.mp3": {
+  "text": "der Kopf, die Köpfe",
+  "voice": "m",
+  "heard": "Der Kopf, die Köpfe.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c4758f12.mp3": {
   "text": "der Geburtstag, die Geburtstage",
   "voice": "m",
   "heard": "Der Geburtstag, die Geburtstage.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c484ab76.mp3": {
+  "text": "Kommen Sie am Mittwoch oder am Donnerstag?",
+  "voice": "f",
+  "heard": "Kommen Sie am Mittwoch oder am Donnerstag.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -11563,10 +13211,26 @@
   "take": 0,
   "ok": true
  },
+ "c62eebc8.mp3": {
+  "text": "Ein Kind ist verletzt.",
+  "voice": "m",
+  "heard": "Ein Kind ist verletzt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c64076a6.mp3": {
   "text": "Entschuldigung, ich bin zu spät.",
   "voice": "f",
   "heard": "Entschuldigung, ich bin zu spät.",
+  "ok": true
+ },
+ "c677cd39.mp3": {
+  "text": "Die Augen tun mir weh.",
+  "voice": "m",
+  "heard": "Die Augen tun mir weh.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "c6b5adc9.mp3": {
@@ -11641,10 +13305,26 @@
   "take": 0,
   "ok": true
  },
+ "c8cf04f6.mp3": {
+  "text": "Spricht der Arzt auch Englisch?",
+  "voice": "m",
+  "heard": "spricht der Arzt auch Englisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c8ded199.mp3": {
   "text": "Brot haben wir leider nicht mehr. Aber wir haben noch Brötchen.",
   "voice": "f",
   "heard": "Brot haben wir leider nicht mehr, aber wir haben noch Brötchen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c8f6f240.mp3": {
+  "text": "Guten Tag, Herr Hassan. Was fehlt Ihnen denn?",
+  "voice": "m",
+  "heard": "Guten Tag, Herr Hassan. Was fehlt Ihnen denn?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -11667,6 +13347,14 @@
   "text": "Auch gut, danke.",
   "voice": "f",
   "heard": "Auch gut, danke.",
+  "ok": true
+ },
+ "c93cac1b.mp3": {
+  "text": "Ich habe ein Rezept.",
+  "voice": "f",
+  "heard": "Ich habe ein Rezept.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "c9458c1d.mp3": {
@@ -11709,6 +13397,22 @@
   "take": 0,
   "ok": false
  },
+ "c9dba99f.mp3": {
+  "text": "Ich habe Fieber.",
+  "voice": "m",
+  "heard": "Ich habe Fieber.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c9ebb897.mp3": {
+  "text": "Seit einer Woche tut mein Rücken weh.",
+  "voice": "m",
+  "heard": "Seit einer Woche tut mein Rücken weh.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "ca2e5bc5.mp3": {
   "text": "Er ist dreiundzwanzig. Er ist verheiratet und hat ein Kind.",
   "voice": "f",
@@ -11722,6 +13426,14 @@
   "voice": "m",
   "heard": "und",
   "ok": true
+ },
+ "ca38d384.mp3": {
+  "text": "Bringen Sie bitte Ihre Versichertenkarte mit. Und kommen Sie zehn Minuten früher.",
+  "voice": "m",
+  "heard": "Bringen Sie bitte Ihre versicherten Karte mit und kommen Sie 10 Minuten früher.",
+  "score": 0.91,
+  "take": 0,
+  "ok": false
  },
  "ca40d624.mp3": {
   "text": "In einem Krankenhaus in Köln. Und Sie? Sind Sie nur Lehrerin?",
@@ -11795,6 +13507,14 @@
   "heard": "Noch einmal, bitte.",
   "ok": true
  },
+ "cb1502b8.mp3": {
+  "text": "In der Lindenstraße drei in Bonn.",
+  "voice": "m",
+  "heard": "in der Lindenstraße 3 in Bonn.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "cb23de86.mp3": {
   "text": "Es geht.",
   "voice": "m",
@@ -11807,6 +13527,14 @@
   "text": "Entschuldigung, der Fisch ist leider kalt.",
   "voice": "m",
   "heard": "Entschuldigung, der Fisch ist leider kalt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "cb51852b.mp3": {
+  "text": "Meine Nase ist zu.",
+  "voice": "f",
+  "heard": "Meine Nase ist zu.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -11870,6 +13598,14 @@
   "voice": "m",
   "heard": "Hallo Oma, hier ist Dana. Wir treffen uns morgen nicht um 6, sondern um 7. Ich habe bis halb 7 Kurs. Bis morgen.",
   "ok": false
+ },
+ "ccb2feb7.mp3": {
+  "text": "Mir geht es heute besser.",
+  "voice": "m",
+  "heard": "Mir geht es heute besser.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "ccd62032.mp3": {
   "text": "Mein Name ist Nadia Khalil.",
@@ -12067,6 +13803,14 @@
   "take": 0,
   "ok": true
  },
+ "cf530282.mp3": {
+  "text": "Das Bein tut mir weh.",
+  "voice": "f",
+  "heard": "Das Bein tut mir weh.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "cfb55520.mp3": {
   "text": "Jede Woche muss eine Familie die Treppe putzen.",
   "voice": "m",
@@ -12119,6 +13863,14 @@
   "take": 0,
   "ok": false
  },
+ "d0246c8d.mp3": {
+  "text": "Ich habe Bauchschmerzen.",
+  "voice": "f",
+  "heard": "Ich habe Bauchschmerzen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d026bf77.mp3": {
   "text": "Wer ist hier zuständig?",
   "voice": "m",
@@ -12153,6 +13905,14 @@
   "text": "Am Wochenende bin ich nach Hamburg gefahren. Dort habe ich meine Freundin besucht.",
   "voice": "f",
   "heard": "Am Wochenende bin ich nach Hamburg gefahren. Dort habe ich meine Freundin besucht.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "d1c9fbba.mp3": {
+  "text": "Vor oder nach dem Essen?",
+  "voice": "m",
+  "heard": "vor oder nach dem Essen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -12335,6 +14095,14 @@
   "heard": "v, v, x, y, z.",
   "ok": false
  },
+ "d4e97cd3.mp3": {
+  "text": "der Bauch, die Bäuche",
+  "voice": "m",
+  "heard": "Der Bauch, die Bräuche.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
  "d4f69dd9.mp3": {
   "text": "Ich trinke gern Tee.",
   "voice": "m",
@@ -12385,6 +14153,14 @@
   "take": 0,
   "ok": true
  },
+ "d5f0f735.mp3": {
+  "text": "Wie geht es Ihrem Sohn?",
+  "voice": "m",
+  "heard": "Wie geht es ihrem Sohn?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d5f2aa92.mp3": {
   "text": "Nour Punkt Said.",
   "voice": "f",
@@ -12431,10 +14207,26 @@
   "take": 0,
   "ok": true
  },
+ "d6942ecb.mp3": {
+  "text": "absagen",
+  "voice": "m",
+  "heard": "Absagen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d696bb88.mp3": {
   "text": "Ich gehe in den Supermarkt.",
   "voice": "f",
   "heard": "Ich gehe in den Supermarkt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "d6b7be8c.mp3": {
+  "text": "der Doktor, die Doktoren",
+  "voice": "m",
+  "heard": "der Doktor, die Doktoren.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -12489,6 +14281,14 @@
   "heard": "Er liest die Zeitung.",
   "ok": true
  },
+ "d7b72e05.mp3": {
+  "text": "der Sport",
+  "voice": "m",
+  "heard": "Der Sport.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d7d12df6.mp3": {
   "text": "Karim Hassan",
   "voice": "m",
@@ -12509,6 +14309,14 @@
   "text": "Seine Schwester heißt Mona.",
   "voice": "m",
   "heard": "Seine Schwester heißt Mona.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "d7e97826.mp3": {
+  "text": "Am Mittwoch arbeite ich. Donnerstag geht auch nicht. Ich komme am Freitag.",
+  "voice": "m",
+  "heard": "Am Mittwoch arbeite ich, Donnerstag geht auch nicht, ich komme am Freitag.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -12539,6 +14347,14 @@
   "text": "der Tisch, die Tische",
   "voice": "m",
   "heard": "Der Tisch, die Tische.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "d8304777.mp3": {
+  "text": "Guten Morgen! Haben Sie einen Termin?",
+  "voice": "f",
+  "heard": "Guten Morgen. Haben Sie einen Termin?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -12829,6 +14645,14 @@
   "heard": "Anrufen",
   "ok": true
  },
+ "dd59b23b.mp3": {
+  "text": "Bald sind Sie wieder gesund.",
+  "voice": "f",
+  "heard": "Weit sind sie wieder gesund.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
  "dd7d0dc9.mp3": {
   "text": "Meine Familie ist sehr klein.",
   "voice": "f",
@@ -13001,6 +14825,14 @@
   "heard": "Du.",
   "ok": false
  },
+ "dfa34cf5.mp3": {
+  "text": "seit",
+  "voice": "m",
+  "heard": "Set.",
+  "score": 0,
+  "take": 0,
+  "ok": false
+ },
  "e010b988.mp3": {
   "text": "Mein Großvater liest gern.",
   "voice": "f",
@@ -13101,6 +14933,14 @@
   "heard": "7 8 9 10 11 12",
   "ok": true
  },
+ "e19b2430.mp3": {
+  "text": "Ich soll viel Wasser trinken.",
+  "voice": "m",
+  "heard": "Ich soll viel Wasser trinken.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e1c1b40c.mp3": {
   "text": "Das ist Mona. Ihr Bruder heißt Omar.",
   "voice": "m",
@@ -13127,6 +14967,14 @@
   "heard": "Was darf es sein?",
   "score": 1,
   "take": 0,
+  "ok": true
+ },
+ "e26a8326.mp3": {
+  "text": "der Arm, die Arme",
+  "voice": "m",
+  "heard": "Der Arm, die Arme.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "e281a09c.mp3": {
@@ -13213,6 +15061,14 @@
   "heard": "Kommst du mit?",
   "ok": true
  },
+ "e567e8ff.mp3": {
+  "text": "Ich frühstücke immer.",
+  "voice": "f",
+  "heard": "Ich frühstücke immer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e57394e8.mp3": {
   "text": "Was nimmst du?",
   "voice": "f",
@@ -13281,6 +15137,22 @@
   "take": 0,
   "ok": true
  },
+ "e6734044.mp3": {
+  "text": "Vor dem Essen?",
+  "voice": "m",
+  "heard": "vor dem Essen",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "e67b8920.mp3": {
+  "text": "Meine Füße tun weh.",
+  "voice": "f",
+  "heard": "Meine Füße tun weh.",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "e690206f.mp3": {
   "text": "0176 3482 950: null, eins, sieben, sechs, drei, vier, acht, zwei, neun, fünf, null.",
   "voice": "m",
@@ -13291,6 +15163,14 @@
   "text": "Ich arbeite siebenunddreißig Stunden in der Woche.",
   "voice": "m",
   "heard": "Ich arbeite 37 Stunden in der Woche.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "e6bd6dd3.mp3": {
+  "text": "Oh, das tut mir leid! Gute Besserung!",
+  "voice": "m",
+  "heard": "Oh, das tut mir leid. Gute Besserung.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -13331,6 +15211,14 @@
   "text": "Danke.",
   "voice": "f",
   "heard": "Danke.",
+  "ok": true
+ },
+ "e7a5f71a.mp3": {
+  "text": "schlecht",
+  "voice": "m",
+  "heard": "Schlecht?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "e7d1f897.mp3": {
@@ -13507,6 +15395,14 @@
   "take": 2,
   "ok": true
  },
+ "e9ea56b6.mp3": {
+  "text": "Legen Sie sich bitte hin.",
+  "voice": "m",
+  "heard": "Legen Sie sich bitte hin.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e9ed908b.mp3": {
   "text": "Das ist Omar. Sein Vater heißt Ali.",
   "voice": "m",
@@ -13535,6 +15431,14 @@
   "text": "Ich komme aus Ägypten. Wohnen Sie schon lange hier?",
   "voice": "m",
   "heard": "Ich komme aus Ägypten. Wohnen Sie schon lange hier.",
+  "ok": true
+ },
+ "ea7dd59b.mp3": {
+  "text": "der Krankenwagen, die Krankenwagen",
+  "voice": "m",
+  "heard": "der Krankenwagen die Krankenwagen",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "eac9ba6d.mp3": {
@@ -13845,6 +15749,14 @@
   "take": 0,
   "ok": false
  },
+ "ee1ae21b.mp3": {
+  "text": "Notruf, Feuerwehr und Rettungsdienst. Wo ist der Notfall?",
+  "voice": "m",
+  "heard": "Notruf, Feuerwehr und Rettungsdienst. Wo ist der Notfall?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "ee62704f.mp3": {
   "text": "Ich heiße Amr Nabil. Und Sie?",
   "voice": "m",
@@ -13911,6 +15823,14 @@
   "text": "Ich heiße Rana Ibrahim.",
   "voice": "f",
   "heard": "Ich heiße Rana Ibrahim.",
+  "ok": true
+ },
+ "ef5cd210.mp3": {
+  "text": "Ich rauche nie.",
+  "voice": "m",
+  "heard": "Ich rauche nie.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "ef5fe312.mp3": {
@@ -13983,6 +15903,14 @@
   "take": 1,
   "ok": true
  },
+ "f04331ad.mp3": {
+  "text": "Ich habe Halsschmerzen und Husten.",
+  "voice": "m",
+  "heard": "Ich habe Halsschmerzen und Husten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f04cafd7.mp3": {
   "text": "Wir laden euch zum Essen ein.",
   "voice": "m",
@@ -14027,6 +15955,14 @@
   "text": "Bis morgen!",
   "voice": "m",
   "heard": "Bis morgen.",
+  "ok": true
+ },
+ "f10b12ae.mp3": {
+  "text": "Ich habe Husten.",
+  "voice": "f",
+  "heard": "Ich habe Husten.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "f1165943.mp3": {
@@ -14131,6 +16067,14 @@
   "take": 0,
   "ok": true
  },
+ "f30a2eaf.mp3": {
+  "text": "Gute Besserung!",
+  "voice": "f",
+  "heard": "Gute Besserung!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f3252b4a.mp3": {
   "text": "der Freund, die Freunde",
   "voice": "m",
@@ -14209,6 +16153,14 @@
   "heard": "99",
   "ok": true
  },
+ "f49d4b74.mp3": {
+  "text": "Ich bin erkältet.",
+  "voice": "m",
+  "heard": "Ich bin erkältet.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f4d1ef50.mp3": {
   "text": "Ich bin nicht verheiratet.",
   "voice": "m",
@@ -14261,6 +16213,30 @@
   "take": 0,
   "ok": true
  },
+ "f5a7dc46.mp3": {
+  "text": "Vielleicht gehe ich mal mit!",
+  "voice": "f",
+  "heard": "Vielleicht gehe ich mal mit.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f5ae47ad.mp3": {
+  "text": "Danke. Füllen Sie bitte dieses Formular aus. Dann nehmen Sie bitte im Wartezimmer Platz.",
+  "voice": "f",
+  "heard": "Danke. Fühlen Sie bitte dieses Formular aus, da nehmen Sie bitte im Wartezimmer Platz.",
+  "score": 0.86,
+  "take": 0,
+  "ok": false
+ },
+ "f5b8bbf2.mp3": {
+  "text": "Ich gehe oft spazieren.",
+  "voice": "f",
+  "heard": "Ich gehe oft spazieren.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f5e4cdf1.mp3": {
   "text": "Meine Mutter kocht sehr gut.",
   "voice": "f",
@@ -14289,6 +16265,14 @@
   "text": "der Sonntag, die Sonntage",
   "voice": "m",
   "heard": "Der Sonntag, die Sonntage.",
+  "ok": true
+ },
+ "f61314a7.mp3": {
+  "text": "Du siehst müde aus.",
+  "voice": "f",
+  "heard": "Du siehst müde aus.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "f6144e75.mp3": {
@@ -14361,6 +16345,14 @@
   "take": 0,
   "ok": true
  },
+ "f722c4d5.mp3": {
+  "text": "Gut, das mache ich. Vielen Dank!",
+  "voice": "f",
+  "heard": "Gut, das mache ich. Vielen Dank.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f72f1342.mp3": {
   "text": "Meine Tasche liegt unter dem Tisch.",
   "voice": "m",
@@ -14381,6 +16373,22 @@
   "text": "der Chef, die Chefs",
   "voice": "m",
   "heard": "Der Chef, die Chefs.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f76a4ddd.mp3": {
+  "text": "Mir geht es schlecht.",
+  "voice": "f",
+  "heard": "Mir geht es schlecht.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f7884db2.mp3": {
+  "text": "gesund",
+  "voice": "m",
+  "heard": "Gesund.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -14447,6 +16455,14 @@
   "take": 0,
   "ok": true
  },
+ "f88ad549.mp3": {
+  "text": "Mein Hausarzt ist sehr nett. Die Praxis ist in der Bergstraße.",
+  "voice": "m",
+  "heard": "Mein Hausarzt ist sehr nett. Die Praxis ist in der Bergstraße.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f89257a8.mp3": {
   "text": "Das macht fünf Euro zwanzig.",
   "voice": "m",
@@ -14454,6 +16470,14 @@
   "score": 1,
   "take": 0,
   "ok": false
+ },
+ "f8a918eb.mp3": {
+  "text": "Es ist dringend.",
+  "voice": "m",
+  "heard": "Es ist dringend.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "f8b0bf78.mp3": {
   "text": "Ich helfe dir gern.",
@@ -14511,10 +16535,26 @@
   "take": 0,
   "ok": true
  },
+ "fa191ceb.mp3": {
+  "text": "der Hals, die Hälse",
+  "voice": "m",
+  "heard": "der Hals die Helse",
+  "score": 0.75,
+  "take": 1,
+  "ok": false
+ },
  "fa50214e.mp3": {
   "text": "Die Lehrerin ist freundlich.",
   "voice": "f",
   "heard": "Die Lehrerin ist freundlich.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "fa52380f.mp3": {
+  "text": "manchmal",
+  "voice": "m",
+  "heard": "Manchmal.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -14535,6 +16575,14 @@
   "text": "Ich esse gern Reis.",
   "voice": "m",
   "heard": "Ich esse gern Reis.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "faabe17f.mp3": {
+  "text": "Hallo Sami! Wie geht es dir? Du siehst müde aus.",
+  "voice": "f",
+  "heard": "Hallo, Sami! Wie geht es dir? Du siehst müde aus.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -14637,6 +16685,14 @@
   "take": 0,
   "ok": true
  },
+ "fc1067ed.mp3": {
+  "text": "erkältet",
+  "voice": "m",
+  "heard": "erkältet.",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "fc10e404.mp3": {
   "text": "Unser Supermarkt ist am Sonntag geschlossen. Von Montag bis Samstag sind wir von acht bis zweiundzwanzig Uhr für Sie da.",
   "voice": "m",
@@ -14663,6 +16719,14 @@
   "text": "die Nacht, die Nächte",
   "voice": "m",
   "heard": "Die Nacht, die Nächte",
+  "ok": true
+ },
+ "fcb41259.mp3": {
+  "text": "das Rezept, die Rezepte",
+  "voice": "m",
+  "heard": "Das Rezept, die Rezepte.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "fcb905d4.mp3": {
@@ -14737,6 +16801,14 @@
   "text": "der Winter, die Winter",
   "voice": "m",
   "heard": "Der Winter, die Winter.",
+  "ok": true
+ },
+ "fdf75eae.mp3": {
+  "text": "Meine Tochter ist krank. Sie hat Fieber und Husten, aber Halsschmerzen hat sie nicht.",
+  "voice": "m",
+  "heard": "Meine Tochter ist krank. Sie hat Fieber und Husten, aber Halsschmerzen hat sie nicht.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "fdfa6cde.mp3": {

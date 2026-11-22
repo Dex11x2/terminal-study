@@ -14,8 +14,8 @@ const AUDIO = path.join(ROOT, 'audio', 'de'), INDEX = path.join(AUDIO, 'index.js
 
 // deHash, deLine, deSpeakers and deFile come from js/lang.js itself, so the file names can't drift apart
 const ctx = { console };
-vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'js', 'lang.js'), 'utf8') + '\n;this.L = {deHash, deLine, deSpeakers, deFile, deSpeech};', ctx);
-const { deLine, deSpeakers, deFile, deSpeech } = ctx.L;
+vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'js', 'lang.js'), 'utf8') + '\n;this.L = {deHash, deLine, deSpeakers, deFile, deSpeech, deExample};', ctx);
+const { deLine, deSpeakers, deFile, deSpeech, deExample } = ctx.L;
 
 function collect() {
   const lines = [];
@@ -33,7 +33,8 @@ function collect() {
           if (kind === 'words') {
             const [w, , ex] = l.split(' | ').map(s => (s || '').trim());
             lines.push({ text: w, voice: 'm', at, kind });
-            if (ex) lines.push({ text: ex, voice: 'f', at, kind });
+            const [exT, exV] = deExample(ex);
+            if (exT) lines.push({ text: exT, voice: exV, at, kind });
           } else {
             // questions and options have no sound, and neither has a reading text; their German still goes to LanguageTool
             if (kind === 'read' || (kind === 'hear' && (l.startsWith('? ') || l.startsWith('- ')))) {

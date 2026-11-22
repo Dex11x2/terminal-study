@@ -2,7 +2,7 @@
    They are fences in the same mini-markdown as teach and the solutions (mdHTML in app.js calls langFence):
      ~~~de [Lena=f Tom=m] [title]     German lines, each with ▶ and a slower ▶. «Lena: text» is spoken by Lena's voice
                                       (f = kerstin, m = thorsten), «text || عربي» shows a translation under it.
-     ~~~words [title]                 word cards: «der Name, die Namen | الاسم | Wie ist Ihr Name?» (word | meaning | example);
+     ~~~words [title]                 word cards: «der Name, die Namen | الاسم | Wie ist Ihr Name?» (word | meaning | example; «m: …» for the man's voice);
                                       core.js registers them, so they join «اختبرني» and «عليك مراجعة» like the lessons.
      ~~~dictate [title]               one sentence a line («f: text» for the woman's voice): the reader hears it, types it, and it is checked here.
                                       «S, A, L, A, H => Salah» plays the left side and expects the right one.
@@ -11,7 +11,7 @@
      ~~~read [title]                  reading like the exam (a note, an e-mail): the text lines («text || عربي», the translation stays closed),
                                       then «? statement» and «- option» lines like ~~~hear. No sound: reading is the skill. Several blocks.
      ~~~speak [title]                 lines to say: ▶ the model, then record yourself and play the two one after the other.
-     ~~~yt <id> [title]               an Easy German video (youtube-nocookie), with the tasks written under it as the fence body.
+     ~~~yt <id> [title]               a YouTube video (youtube-nocookie; the title says which channel), with the tasks written under it as the fence body.
      ~~~prompt [title]                a ready prompt for Claude or ChatGPT: the reader writes an answer, and one button copies prompt + answer.
    Every German line has an mp3 made once by tools/de/audio.js (Piper, then checked by whisper), named by deHash below;
    the same function is in that tool. Offline or in the single file, a missing file falls back to the hosted site, then to the browser's own German voice. */
@@ -35,6 +35,8 @@ function deLine(l, speakers){
   const voice = m ? (speakers[m[1]] || (/^[mf]$/.test(m[1]) ? m[1] : 'm')) : 'm';
   return {who, voice, de: de.trim(), ar: ar.trim()};
 }
+/* a word card's example is in the woman's voice; «m: …» puts it in the man's (Kerstin can't say «Hals», «Ohr», «fehlt»: whisper heard «Heiz», «Ort», «geht», 22 Nov) */
+const deExample = ex => { const m = (ex || '').match(/^([mf]):\s+(.*)$/); return m ? [m[2], m[1]] : [ex || '', 'f']; };
 const deSpeakers = head => { const sp = {}; head.replace(/(\S+)=([mf])\b/g, (_, n, v) => { sp[n] = v; return ''; }); return sp; };
 const deTitle = head => head.replace(/\S+=[mf]\b/g, '').trim();
 const sayBtns = (de, v) => '<span class="say" data-de="'+esc(de)+'" data-v="'+v+'"><button type="button" class="say-b" aria-label="اسمع">▶</button><button type="button" class="say-b say-slow" aria-label="اسمع أبطأ" title="أبطأ">🐢</button></span>';
@@ -86,9 +88,9 @@ function langFence(kind, lines, head){
   if (kind === 'words'){
     // cards, not a table: on a phone a 3-column table pushed the meaning and the example off the screen (measured at 400px)
     const rows = lines.filter(l => l.trim()).map(l => {
-      const [w, ar, ex] = l.split(' | ').map(s => (s || '').trim());
+      const [w, ar, ex0] = l.split(' | ').map(s => (s || '').trim()), [ex, exV] = deExample(ex0);
       return '<li class="de-wi"><div class="de-wd" dir="ltr" lang="de">'+sayBtns(w, 'm')+' <span class="de-w">'+deArt(w)+'</span></div><div class="de-wa">'+fmt(ar)+'</div>'+
-        (ex ? '<div class="de-wx" dir="ltr" lang="de">'+sayBtns(ex, 'f')+' <span>'+esc(ex)+'</span></div>' : '')+'</li>';
+        (ex ? '<div class="de-wx" dir="ltr" lang="de">'+sayBtns(ex, exV)+' <span>'+esc(ex)+'</span></div>' : '')+'</li>';
     });
     return box('de-words', head || '', '<ul class="de-wl">'+rows.join('')+'</ul>'+
       '<p class="de-note">الكلمات دي دخلت «اختبرني» و «عليك مراجعة»: السؤال بالعربي، وإنت تقول الكلمة بأداتها وجمعها.</p>');
@@ -117,7 +119,7 @@ function langFence(kind, lines, head){
     if (!/^[\w-]{11}$/.test(id)) return '';
     const link = 'https://www.youtube.com/watch?v='+id;
     return box('de-yt', title, '<div class="yt-f"><iframe loading="lazy" title="'+esc(title)+'" allow="encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube-nocookie.com/embed/'+id+'?hl=de&amp;cc_lang_pref=de"></iframe></div>'+
-      '<p class="de-note">مش ظاهر (من غير نت أو اتقفل)؟ <a href="'+link+'" target="_blank" rel="noopener">افتحه على YouTube</a>. الفيديو من قناة Easy German، مش من الموقع.</p>'+(lines.join('').trim() ? mdHTML(lines.join('\n')) : ''));
+      '<p class="de-note">مش ظاهر (من غير نت أو اتقفل)؟ <a href="'+link+'" target="_blank" rel="noopener">افتحه على YouTube</a>. الفيديو من YouTube (القناة مكتوبة تحت الفيديو)، مش من الموقع.</p>'+(lines.join('').trim() ? mdHTML(lines.join('\n')) : ''));
   }
   if (kind === 'hear'){
     // blocks: the sound (one or more lines, «f:»/«m:» or a speaker of the head), then «? question || عربي», then «- option» with « *» on the right one

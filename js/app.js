@@ -1012,7 +1012,7 @@ function fcReveal(){
   const x = fc.cur, sum = x.d ? x.d.split(/\n\s*\n/)[0] : '', sol = fc.mode==='exam' && SOL[x.tab+'|'+x.c];
   if (x.word){
     $('#fcAns').innerHTML = '<div class="fc-word" dir="ltr" lang="de">'+sayBtns(x.word.w, 'm')+' <span class="de-w">'+deArt(x.word.w)+'</span></div>'+
-      (x.word.ex ? '<div class="fc-word-ex" dir="ltr" lang="de">'+sayBtns(x.word.ex, 'f')+' '+esc(x.word.ex)+'</div>' : '')+'<p class="fc-word-from">من درس «'+esc(x.word.lesson)+'»</p>';
+      (x.word.ex ? '<div class="fc-word-ex" dir="ltr" lang="de">'+sayBtns(x.word.ex, x.word.exV || 'f')+' '+esc(x.word.ex)+'</div>' : '')+'<p class="fc-word-from">من درس «'+esc(x.word.lesson)+'»</p>';
   } else
   $('#fcAns').innerHTML = '<span class="name">'+esc(x.c)+'</span>'+(sum ? '<p>'+fmt(sum)+'</p>' : '')+(x.ex ? withTab(x.tab, () => termBlock(x.ex, x.c, x.flag)) : '')+
     (sol ? '<div class="fc-sol"><b>حل التجربة:</b>'+descHTML(sol.text)+'</div>' : '');

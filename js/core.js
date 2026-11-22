@@ -18,9 +18,9 @@ function wordsOf(key, cat, it){
   for (const m of it.teach.matchAll(/^~~~words[^\n]*\n([\s\S]*?)^~~~[ \t]*$/gm))
     for (const l of m[1].split('\n')) {
       if (!l.trim()) continue;
-      const [w, ar, ex] = l.split(' | ').map(s => (s || '').trim());
+      const [w, ar, ex0] = l.split(' | ').map(s => (s || '').trim()), exV = /^m:\s/.test(ex0 || '') ? 'm' : 'f', ex = (ex0 || '').replace(/^[mf]:\s+/, '');
       const list = WORDS[key] = WORDS[key] || [];
-      if (!list.some(x => x.w === w)) list.push({w, ar, ex, lesson: it.cmd, cat: cat.t, l: cat.l});
+      if (!list.some(x => x.w === w)) list.push({w, ar, ex, exV, lesson: it.cmd, cat: cat.t, l: cat.l});
     }
 }
 const LEVEL_INFO = {
