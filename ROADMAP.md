@@ -121,6 +121,8 @@
 
 **الدفعة ٧ (٢٢ نوفمبر) ✓: الوحدة الخامسة «السكن» (`js/tabs/dea1/05.js`):** ٦ دروس (الأوض والأدوار والكلمات المركّبة والحساب الألماني للأوض ووصف السكن، والعفش و in/auf/an + Dativ و im/am و stehen/liegen/hängen، والتدوير على شقة وفك الإعلان و Kalt/Warm/Nebenkosten/Kaution و können والإطار، والجيران والعزال و helfen/danken + mir/dir/Ihnen و um/ein/ausziehen، وقواعد العمارة و müssen و dürfen وفخ muss nicht ≠ darf nicht و man واليافطات وفصل الزبالة، وتدريب Lesen Teil 2 و Teil 3 بشكل Übungssatz 01)، و ٢٤ تمرين و ٦ مشاريع بحلول. كده كل أجزاء Goethe A1 (السمع والقراية والكتابة والكلام) اتدرّب عليها مرة على الأقل.
 
+**الدفعة ٨ (٢٢ نوفمبر) ✓: الوحدة السادسة «الشغل» (`js/tabs/dea1/06.js`):** ٦ دروس (الشغلانات و -in و als/bei/in والشغلانة من غير أداة، ويوم الشغل والورديات وجدول Dienstplan و Vollzeit/Teilzeit/Urlaub وطلب الإعادة، والأمر لـ Sie و ihr و du والتحذيرات والرد، و wollen ولا möchten و werden وإعلان الوظيفة والمهارات، والـ Perfekt بـ haben و sein وأفعال قايمة Goethe كلها، وتدريب Schreiben Teil 2 و Hören Teil 3 و Sprechen Teil 2 على موضوع الشغل)، و ٢٤ تمرين و ٦ مشاريع بحلول.
+
 ## الترتيب
 
 - [x] البنية اتكتبت والاسم اتغيّر لـ Road maps (١٨ نوفمبر).

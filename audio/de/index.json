@@ -85,6 +85,22 @@
   "take": 0,
   "ok": true
  },
+ "022ff07c.mp3": {
+  "text": "Karim, Vorsicht! Der Boden ist nass!",
+  "voice": "m",
+  "heard": "Karim, Vorsicht, der Boden ist nass.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "0288e681.mp3": {
+  "text": "studieren",
+  "voice": "m",
+  "heard": "studieren.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "0296f737.mp3": {
   "text": "Ich bin Koch von Beruf.",
   "voice": "m",
@@ -101,6 +117,14 @@
   "text": "Gehen wir ins Kino?",
   "voice": "m",
   "heard": "Gehen wir ins Kino.",
+  "ok": true
+ },
+ "0332fcc8.mp3": {
+  "text": "Gehen Sie geradeaus und dann links.",
+  "voice": "m",
+  "heard": "Gehen Sie geradeaus und dann links.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "034d5e01.mp3": {
@@ -171,6 +195,14 @@
   "take": 1,
   "ok": true
  },
+ "04d339ad.mp3": {
+  "text": "Kommen Sie bitte mal!",
+  "voice": "m",
+  "heard": "Kommen Sie bitte mal.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "04e6440a.mp3": {
   "text": "Die Treppe ist rechts.",
   "voice": "f",
@@ -195,6 +227,14 @@
   "text": "Möchtest du einen Kaffee?",
   "voice": "m",
   "heard": "Möchtest du einen Kaffee?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "0571783e.mp3": {
+  "text": "Sofort!",
+  "voice": "m",
+  "heard": "Sofort!",
   "score": 1,
   "take": 0,
   "ok": true
@@ -291,6 +331,14 @@
   "heard": "0, 1, 5, 7, 2, 8, 4, 6, 1, 3, 0.",
   "ok": true
  },
+ "07708f65.mp3": {
+  "text": "unterschreiben",
+  "voice": "m",
+  "heard": "Unterschreiben",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "079182b9.mp3": {
   "text": "Was trinkst du zum Frühstück?",
   "voice": "m",
@@ -315,10 +363,26 @@
   "take": 0,
   "ok": true
  },
+ "07f597a3.mp3": {
+  "text": "Frau Klein, von der Buchhaltung.",
+  "voice": "f",
+  "heard": "Frau Klein von der Buchheitung",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
  "07fb245a.mp3": {
   "text": "Sie lädt ihre Freunde ein.",
   "voice": "m",
   "heard": "Sie lädt ihre Freunde ein.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "081230dc.mp3": {
+  "text": "Herr Hassan, kommen Sie bitte mal!",
+  "voice": "m",
+  "heard": "Herr Hassan, kommen Sie bitte mal.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -369,6 +433,14 @@
   "heard": "21",
   "ok": true
  },
+ "09f3c6e4.mp3": {
+  "text": "der Feierabend",
+  "voice": "m",
+  "heard": "der Feierabend",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "0a1cc8e6.mp3": {
   "text": "Ja, einen Kaffee und eine Brezel.",
   "voice": "m",
@@ -397,6 +469,14 @@
   "text": "Das ist mein Kollege Paul. Seine Frau heißt Eva, und ihre Tochter heißt Mia.",
   "voice": "f",
   "heard": "Das ist mein Kollege Paul. Seine Frau heißt Eva und ihre Tochter heißt Mia.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "0ad10878.mp3": {
+  "text": "Ich habe eine Frage.",
+  "voice": "m",
+  "heard": "Ich habe eine Frage.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -433,6 +513,14 @@
   "heard": "Wir sprechen, ihr sprecht, sie sprechen.",
   "ok": true
  },
+ "0bc2d645.mp3": {
+  "text": "Ich habe gut geschlafen.",
+  "voice": "f",
+  "heard": "Ich habe gut geschlafen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "0bdd77c4.mp3": {
   "text": "Ich nehme ein halbes Kilo.",
   "voice": "f",
@@ -440,6 +528,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "0be3ae8b.mp3": {
+  "text": "Guten Morgen, Herr Said! Willkommen im Team.",
+  "voice": "f",
+  "heard": "Guten Morgen, Herr Seid. Willkommen im Team.",
+  "score": 0.86,
+  "take": 2,
+  "ok": false
  },
  "0c0c5d8c.mp3": {
   "text": "dreißig",
@@ -453,10 +549,34 @@
   "heard": "0.572.846.130",
   "ok": false
  },
+ "0c4a5fe9.mp3": {
+  "text": "Ich will als Mechaniker arbeiten.",
+  "voice": "m",
+  "heard": "Ich will als Mechaniker arbeiten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "0c4a753a.mp3": {
   "text": "Der Tisch steht in der Mitte.",
   "voice": "f",
   "heard": "Der Tisch steht in der Mitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "0c569ad7.mp3": {
+  "text": "Er arbeitet als Fahrer.",
+  "voice": "m",
+  "heard": "Er arbeitet als Fahrer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "0c5db9ac.mp3": {
+  "text": "Die Firma sucht eine Sekretärin in Teilzeit. Sie müssen gut Englisch sprechen.",
+  "voice": "f",
+  "heard": "Die Firma sucht eine Sekretärin in Teilzeit. Sie müssen gut Englisch sprechen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -482,6 +602,14 @@
   "voice": "m",
   "heard": "Und das sind Jusuf und Lisa.",
   "ok": false
+ },
+ "0d13b0fd.mp3": {
+  "text": "Von Montag bis Freitag arbeite ich.",
+  "voice": "m",
+  "heard": "Von Montag bis Freitag arbeite ich.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "0d14032b.mp3": {
   "text": "Ich trinke viel Wasser.",
@@ -533,6 +661,14 @@
   "text": "Nein, danke. Tschüss!",
   "voice": "m",
   "heard": "Nein, danke. Tschüss.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "0da97dce.mp3": {
+  "text": "Okay, mache ich.",
+  "voice": "m",
+  "heard": "Okay, mache ich.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -629,6 +765,14 @@
   "take": 0,
   "ok": true
  },
+ "1001106a.mp3": {
+  "text": "glauben",
+  "voice": "m",
+  "heard": "Glauben.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "1019bc7d.mp3": {
   "text": "mitbringen",
   "voice": "m",
@@ -659,6 +803,14 @@
   "take": 0,
   "ok": false
  },
+ "10d278ce.mp3": {
+  "text": "Morgen habe ich frei.",
+  "voice": "m",
+  "heard": "Morgen habe ich frei.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "1102b938.mp3": {
   "text": "die Butter",
   "voice": "m",
@@ -666,6 +818,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "11076730.mp3": {
+  "text": "Guten Tag, mein Name ist Lina Fawzi.",
+  "voice": "m",
+  "heard": "Guten Tag, mein Name ist Lina Fazzi.",
+  "score": 0.86,
+  "take": 2,
+  "ok": false
  },
  "110dc6f1.mp3": {
   "text": "woher",
@@ -799,6 +959,22 @@
   "heard": "13, 30, 14, 40, 16",
   "ok": true
  },
+ "136e764a.mp3": {
+  "text": "letzte Woche",
+  "voice": "m",
+  "heard": "Letzte Woche.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "13bd91d7.mp3": {
+  "text": "Mein Bruder ist Lehrer, aber er arbeitet jetzt als Taxifahrer.",
+  "voice": "m",
+  "heard": "Mein Bruder ist Lehrer, aber er arbeitet jetzt als Taxifahrer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "13c82e69.mp3": {
   "text": "Es ist Viertel nach acht.",
   "voice": "m",
@@ -810,6 +986,14 @@
   "voice": "m",
   "heard": "Woher kommen sie?",
   "ok": true
+ },
+ "14315479.mp3": {
+  "text": "wollen",
+  "voice": "m",
+  "heard": "Bye.",
+  "score": 0,
+  "take": 0,
+  "ok": false
  },
  "145da007.mp3": {
   "text": "Ja, bitte.",
@@ -823,6 +1007,14 @@
   "text": "Dann frühstücke ich.",
   "voice": "m",
   "heard": "Dann frühstücke ich.",
+  "ok": true
+ },
+ "148290ba.mp3": {
+  "text": "Mein Kollege Herr Klein kann meine Termine machen.",
+  "voice": "m",
+  "heard": "Mein Kollege Herr Klein kann meine Termine machen.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "148bf1ed.mp3": {
@@ -945,6 +1137,14 @@
   "take": 0,
   "ok": true
  },
+ "170f0836.mp3": {
+  "text": "Wie lange hast du Pause?",
+  "voice": "m",
+  "heard": "Wie lange hast du Pause?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "1729b82b.mp3": {
   "text": "Ein Wasser, bitte.",
   "voice": "m",
@@ -957,6 +1157,14 @@
   "text": "die Telefonnummer, die Telefonnummern",
   "voice": "m",
   "heard": "die Telefonnummer, die Telefonnummern.",
+  "ok": true
+ },
+ "173a16af.mp3": {
+  "text": "Hast du das verstanden?",
+  "voice": "f",
+  "heard": "Hast du das verstanden?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "175fb8fe.mp3": {
@@ -1015,6 +1223,14 @@
   "take": 1,
   "ok": false
  },
+ "181b4956.mp3": {
+  "text": "Hier ist die Praxis Doktor Wolf. Ihre Krankmeldung ist fertig. Sie können sie heute bis achtzehn Uhr abholen.",
+  "voice": "m",
+  "heard": "Hier ist die Praxis Dr. Wolf. Ihre Krankmeldung ist fertig. Sie können sie heute bis 18 Uhr abholen.",
+  "score": 0.94,
+  "take": 0,
+  "ok": false
+ },
  "18331136.mp3": {
   "text": "die Flasche, die Flaschen",
   "voice": "m",
@@ -1041,6 +1257,14 @@
   "text": "Mein Vater arbeitet viel.",
   "voice": "f",
   "heard": "Mein Vater arbeitet viel.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "18a091e7.mp3": {
+  "text": "Er arbeitet in einem Restaurant.",
+  "voice": "m",
+  "heard": "Er arbeitet in einem Restaurant.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1207,11 +1431,27 @@
   "take": 0,
   "ok": true
  },
+ "1c552dcf.mp3": {
+  "text": "Kommen Sie bitte!",
+  "voice": "m",
+  "heard": "kommen Sie bitte!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "1c683a6d.mp3": {
   "text": "Auf Wiedersehen, Herr Klein!",
   "voice": "f",
   "heard": "Auf Wiedersehen, Herr Klein.",
   "ok": true
+ },
+ "1c6f9dd2.mp3": {
+  "text": "Im August, zwei Wochen. Ich fliege nach Kairo.",
+  "voice": "m",
+  "heard": "Im August zwei Wochen. Ich fliege nach Cairo.",
+  "score": 0.86,
+  "take": 0,
+  "ok": false
  },
  "1c8ab3c6.mp3": {
   "text": "Meine Traumwohnung hat einen Garten.",
@@ -1291,6 +1531,14 @@
   "take": 0,
   "ok": false
  },
+ "1d524ed7.mp3": {
+  "text": "Am Samstag arbeitet Karim von vierzehn bis zweiundzwanzig Uhr.",
+  "voice": "m",
+  "heard": "An Samstag arbeitet Karim von 14 bis 22 Uhr.",
+  "score": 0.86,
+  "take": 0,
+  "ok": false
+ },
  "1de257e6.mp3": {
   "text": "die Nummer, die Nummern",
   "voice": "m",
@@ -1302,6 +1550,22 @@
   "voice": "f",
   "heard": "0157",
   "ok": false
+ },
+ "1e4c27ae.mp3": {
+  "text": "In Ägypten war ich Lehrer.",
+  "voice": "m",
+  "heard": "In Ägypten war ich Lehrer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "1e575b6f.mp3": {
+  "text": "Achtung!",
+  "voice": "m",
+  "heard": "Achtung!",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "1e80f5f8.mp3": {
   "text": "der Apfel, die Äpfel",
@@ -1325,10 +1589,26 @@
   "take": 0,
   "ok": true
  },
+ "1efa1b80.mp3": {
+  "text": "schwer",
+  "voice": "m",
+  "heard": "Schwier.",
+  "score": 0,
+  "take": 0,
+  "ok": false
+ },
  "1efe970b.mp3": {
   "text": "Der Film dauert zwei Stunden.",
   "voice": "f",
   "heard": "Der Film dauert zwei Stunden.",
+  "ok": true
+ },
+ "1f076242.mp3": {
+  "text": "Wann fängst du an?",
+  "voice": "f",
+  "heard": "Wann fängst du an?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "1f278f1c.mp3": {
@@ -1371,6 +1651,14 @@
   "take": 0,
   "ok": true
  },
+ "202125ad.mp3": {
+  "text": "Ich arbeite bei einer Firma in Hamburg.",
+  "voice": "m",
+  "heard": "Ich arbeite bei einer Firma in Hamburg.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "204cac97.mp3": {
   "text": "Das ist Reis mit Nudeln und Linsen.",
   "voice": "m",
@@ -1378,6 +1666,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "20575b14.mp3": {
+  "text": "Gern, vielen Dank!",
+  "voice": "m",
+  "heard": "Gerne. Vielen Dank.",
+  "score": 0.67,
+  "take": 0,
+  "ok": false
  },
  "20b21b1a.mp3": {
   "text": "unter",
@@ -1433,6 +1729,14 @@
   "take": 0,
   "ok": true
  },
+ "21458571.mp3": {
+  "text": "der Kunde, die Kunden",
+  "voice": "m",
+  "heard": "Der Kunde, die Kunden.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "21a2fe4e.mp3": {
   "text": "Um sieben Uhr frühstücke ich.",
   "voice": "f",
@@ -1449,6 +1753,14 @@
   "text": "schmecken",
   "voice": "m",
   "heard": "Schmecken!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "22074b27.mp3": {
+  "text": "Ja, ich bin nur Lehrerin. Das ist genug Arbeit!",
+  "voice": "f",
+  "heard": "Ja, ich bin nur Lehrerin. Das ist genug Arbeit.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1507,6 +1819,14 @@
   "text": "Frau Lang, können Sie mir bitte helfen? Mein Paket ist sehr schwer.",
   "voice": "m",
   "heard": "Frau Lang, können Sie mir bitte helfen? Mein Paket ist sehr schwer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "237055c3.mp3": {
+  "text": "Ich brauche Geld.",
+  "voice": "f",
+  "heard": "Ich brauche Geld.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1579,6 +1899,14 @@
   "take": 0,
   "ok": true
  },
+ "2479b959.mp3": {
+  "text": "Das Büro ist im ersten Stock.",
+  "voice": "f",
+  "heard": "Das Büro ist im ersten Stock.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "247e6847.mp3": {
   "text": "groß",
   "voice": "m",
@@ -1622,6 +1950,14 @@
   "score": 0.5,
   "take": 0,
   "ok": false
+ },
+ "2505e1b6.mp3": {
+  "text": "Guten Tag, Frau Ali. Hier ist die Firma Becker. Sie können am Donnerstag um vierzehn Uhr zum Gespräch kommen. Bitte bringen Sie Ihren Lebenslauf mit.",
+  "voice": "m",
+  "heard": "Guten Tag, Frau Ali. Hier ist die Firma Becker. Sie können am Donnerstag um 14 Uhr zum Gespräch kommen. Bitte bringen sie ihren Lebenslauf mit.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "25396544.mp3": {
   "text": "Langsam, bitte.",
@@ -1667,10 +2003,26 @@
   "take": 0,
   "ok": true
  },
+ "2613cd80.mp3": {
+  "text": "Ich bin Lehrerin.",
+  "voice": "m",
+  "heard": "Ich bin Lehrerin.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2627e92f.mp3": {
   "text": "langsam",
   "voice": "m",
   "heard": "Langsam.",
+  "ok": true
+ },
+ "26a22932.mp3": {
+  "text": "Sie arbeitet als Verkäuferin.",
+  "voice": "m",
+  "heard": "Sie arbeitet als Verkäuferin.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "26a71822.mp3": {
@@ -1741,6 +2093,14 @@
   "take": 0,
   "ok": true
  },
+ "278973e6.mp3": {
+  "text": "Der Verkäufer ist freundlich.",
+  "voice": "f",
+  "heard": "Der Verkäufer ist freundlich.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "27a42c22.mp3": {
   "text": "Hast du Geschwister?",
   "voice": "m",
@@ -1749,10 +2109,42 @@
   "take": 0,
   "ok": true
  },
+ "27dc556e.mp3": {
+  "text": "Mein Vater ist Lehrer.",
+  "voice": "f",
+  "heard": "Mein Vater ist Lehrer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "27f22d3c.mp3": {
   "text": "empfehlen",
   "voice": "m",
   "heard": "empfehlen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2804b3c2.mp3": {
+  "text": "Ah, gut. Alles klar.",
+  "voice": "m",
+  "heard": "Ah, gut. Alles klar.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2820cf79.mp3": {
+  "text": "werden",
+  "voice": "m",
+  "heard": "werden.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "285d3c18.mp3": {
+  "text": "Ich arbeite acht Stunden.",
+  "voice": "f",
+  "heard": "Ich arbeite acht Stunden.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1803,10 +2195,26 @@
   "take": 0,
   "ok": true
  },
+ "29051182.mp3": {
+  "text": "Gib mir bitte das Buch!",
+  "voice": "f",
+  "heard": "Gib mir bitte das Buch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "296e7671.mp3": {
   "text": "Das Schlafzimmer ist ruhig.",
   "voice": "f",
   "heard": "Das Schlafzimmer ist ruhig.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "29ae17a7.mp3": {
+  "text": "Wann kann ich anfangen?",
+  "voice": "m",
+  "heard": "Wann kann ich anfangen?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1865,6 +2273,14 @@
   "take": 0,
   "ok": true
  },
+ "2a19cba8.mp3": {
+  "text": "Von Montag bis Donnerstag arbeite ich von acht bis halb fünf.",
+  "voice": "m",
+  "heard": "Von Montag bis Donnerstag arbeite ich von 8 bis halb 5.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2a36c98c.mp3": {
   "text": "Beruf: Ich bin … von Beruf.",
   "voice": "m",
@@ -1901,10 +2317,34 @@
   "take": 0,
   "ok": true
  },
+ "2b070ede.mp3": {
+  "text": "die Achtung",
+  "voice": "m",
+  "heard": "Die Achtung.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2b96cf0d.mp3": {
   "text": "Mein Kollege heißt Jonas.",
   "voice": "f",
   "heard": "Mein Kollege heißt Jonas.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2bbfe00c.mp3": {
+  "text": "arbeiten",
+  "voice": "m",
+  "heard": "Arbeiten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2c028a8c.mp3": {
+  "text": "Meine Schwester ist Ärztin.",
+  "voice": "f",
+  "heard": "Meine Schwester ist Ärztin.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1965,6 +2405,14 @@
   "heard": "Ich bin Studentin.",
   "ok": true
  },
+ "2cd03b85.mp3": {
+  "text": "Ich will in Deutschland arbeiten.",
+  "voice": "f",
+  "heard": "Ich will in Deutschland arbeiten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2cf2a1c5.mp3": {
   "text": "Du musst nicht kommen.",
   "voice": "f",
@@ -1981,6 +2429,14 @@
   "take": 0,
   "ok": true
  },
+ "2d278b3c.mp3": {
+  "text": "Die Arbeit ist interessant.",
+  "voice": "f",
+  "heard": "Die Arbeit ist interessant.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2d4ab711.mp3": {
   "text": "Es gibt leider keinen Aufzug.",
   "voice": "m",
@@ -1993,6 +2449,14 @@
   "text": "Ich liebe meine Familie.",
   "voice": "f",
   "heard": "Ich liebe meine Familie.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2de18c6f.mp3": {
+  "text": "leider bin ich krank und kann morgen nicht zur Arbeit kommen.",
+  "voice": "m",
+  "heard": "Leider bin ich krank und kann morgen nicht zur Arbeit kommen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2021,6 +2485,22 @@
   "take": 0,
   "ok": true
  },
+ "2eb7142f.mp3": {
+  "text": "Ich suche eine Stelle.",
+  "voice": "f",
+  "heard": "Ich suche eine Stelle.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2ec4fa6f.mp3": {
+  "text": "Darum lerne ich jeden Tag Deutsch.",
+  "voice": "m",
+  "heard": "Darum lerne ich jeden Tag Deutsch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2eda97c7.mp3": {
   "text": "Nein danke, keinen Kaffee. Ich trinke lieber einen Tee.",
   "voice": "f",
@@ -2043,6 +2523,14 @@
   "heard": "Schlecht.",
   "ok": true
  },
+ "2f2e6b4f.mp3": {
+  "text": "Und wann hast du Urlaub?",
+  "voice": "f",
+  "heard": "Und wann hast du Urlaub?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2f575510.mp3": {
   "text": "Im Winter ist es kalt.",
   "voice": "f",
@@ -2055,10 +2543,34 @@
   "heard": "Liebe Frau Schmidt.",
   "ok": true
  },
+ "2f8fb343.mp3": {
+  "text": "Meine Freundin Nora ist Ärztin im Krankenhaus.",
+  "voice": "m",
+  "heard": "Meine Freundin Nora ist Erdstehen im Krankenhaus.",
+  "score": 0.86,
+  "take": 0,
+  "ok": false
+ },
  "2f969d8d.mp3": {
   "text": "Mein Opa ist sehr lustig.",
   "voice": "m",
   "heard": "Mein Opa ist sehr lustig.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2fb169e3.mp3": {
+  "text": "der Fahrer, die Fahrer",
+  "voice": "m",
+  "heard": "Der Fahrer die Fahrer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2fb34850.mp3": {
+  "text": "Was bist du von Beruf? Ich bin Verkäuferin.",
+  "voice": "m",
+  "heard": "Was bist du von Beruf? Ich bin Verkäuferin.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2137,6 +2649,14 @@
   "take": 0,
   "ok": true
  },
+ "30e33142.mp3": {
+  "text": "Ich arbeite Teilzeit, nur zwanzig Stunden. Aber ich verdiene genug.",
+  "voice": "m",
+  "heard": "Ich arbeite Teilzeit nur 20 Stunden, aber ich verdiene genug.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "30f798fa.mp3": {
   "text": "hundert",
   "voice": "m",
@@ -2197,6 +2717,14 @@
   "take": 0,
   "ok": false
  },
+ "31dd21cd.mp3": {
+  "text": "Die Arbeit ist okay, aber ich möchte wieder Lehrer sein.",
+  "voice": "m",
+  "heard": "Die Arbeit ist okay, aber ich möchte wieder Lehrer sein.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "321ec65b.mp3": {
   "text": "Schade. Und der Käse hier?",
   "voice": "f",
@@ -2209,6 +2737,14 @@
   "text": "Wir treffen uns um acht.",
   "voice": "f",
   "heard": "Wir treffen uns um acht.",
+  "ok": true
+ },
+ "3262df39.mp3": {
+  "text": "Kommen Sie bitte sofort!",
+  "voice": "f",
+  "heard": "kommen Sie bitte sofort.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "327f8051.mp3": {
@@ -2240,6 +2776,14 @@
   "voice": "f",
   "heard": "Ich bin Engineering von Beruf.",
   "ok": false
+ },
+ "32bdfabb.mp3": {
+  "text": "Er verdient gut.",
+  "voice": "f",
+  "heard": "Er verdient gut.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "32be6f2b.mp3": {
   "text": "Mein Vater ist Arzt.",
@@ -2293,6 +2837,14 @@
   "take": 0,
   "ok": true
  },
+ "338f6483.mp3": {
+  "text": "Gib mir bitte den Schlüssel!",
+  "voice": "m",
+  "heard": "Gib mir bitte den Schlüssel.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "33919219.mp3": {
   "text": "Das ist meine Frau.",
   "voice": "f",
@@ -2313,6 +2865,14 @@
   "text": "Gute Nacht, Mama!",
   "voice": "f",
   "heard": "Gute Nacht, Mama.",
+  "ok": true
+ },
+ "340495ca.mp3": {
+  "text": "Die Praxis ist am Montag geschlossen.",
+  "voice": "f",
+  "heard": "Die Praxis ist am Montag geschlossen.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "34378167.mp3": {
@@ -2361,6 +2921,14 @@
   "text": "Das Bad ist oben.",
   "voice": "f",
   "heard": "Das Bad ist oben.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "34bb4322.mp3": {
+  "text": "Um zwölf Uhr mache ich Pause.",
+  "voice": "m",
+  "heard": "Um 12 Uhr mache ich Pause.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2439,6 +3007,14 @@
   "heard": "Done.",
   "ok": false
  },
+ "35f2cbd0.mp3": {
+  "text": "Danke! Jonas, gib mir bitte die Handschuhe.",
+  "voice": "m",
+  "heard": "Danke Jonas, gib mir bitte die Handschuhe.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "35f5e0b5.mp3": {
   "text": "Ich helfe dir gern.",
   "voice": "m",
@@ -2485,6 +3061,22 @@
   "take": 1,
   "ok": false
  },
+ "36da1b4e.mp3": {
+  "text": "Wann hast du Feierabend? Um fünf Uhr.",
+  "voice": "m",
+  "heard": "Wann hast du feierabend um fünf Uhr?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "36efa85c.mp3": {
+  "text": "Letzte Woche hatte ich Urlaub.",
+  "voice": "f",
+  "heard": "Letzte Woche hatte ich Urlaub.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "36f04e13.mp3": {
   "text": "Gib mir bitte das Salz! Hier, bitte.",
   "voice": "m",
@@ -2517,10 +3109,26 @@
   "take": 0,
   "ok": true
  },
+ "376eb7a6.mp3": {
+  "text": "Ich bringe die Krankmeldung am Montag.",
+  "voice": "m",
+  "heard": "Ich bringe die Krankmeldung am Montag.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "378e928c.mp3": {
   "text": "die Kasse, die Kassen",
   "voice": "m",
   "heard": "die Kasse, die Kassen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "37980206.mp3": {
+  "text": "Ich arbeite bei einer Firma in Köln.",
+  "voice": "m",
+  "heard": "Ich arbeite bei einer Firma in Köln.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2583,6 +3191,14 @@
   "heard": "heißen sie wie mein Name.",
   "ok": true
  },
+ "382eba04.mp3": {
+  "text": "Sehr geehrter Herr Busch,",
+  "voice": "m",
+  "heard": "Sehr geehrter Herr Busch",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "3860e659.mp3": {
   "text": "Mansour.",
   "voice": "m",
@@ -2593,6 +3209,22 @@
   "text": "Gehst du oft ins Restaurant? Nein, nur am Wochenende.",
   "voice": "m",
   "heard": "Gehst du oft ins Restaurant? Nein, nur am Wochenende.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "38aa9527.mp3": {
+  "text": "Oh, das ist früh! Und hast du eine Pause?",
+  "voice": "f",
+  "heard": "Oh, das ist früh. Und hast du eine Pause.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "38c9ecbc.mp3": {
+  "text": "Meine Kollegen sind nett.",
+  "voice": "m",
+  "heard": "Meine Kollegen sind nett.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2635,6 +3267,14 @@
   "heard": "Der Wein",
   "score": 1,
   "take": 1,
+  "ok": true
+ },
+ "39d7e46f.mp3": {
+  "text": "leicht",
+  "voice": "m",
+  "heard": "leicht",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "39fe6fd7.mp3": {
@@ -2857,6 +3497,14 @@
   "take": 0,
   "ok": false
  },
+ "3e97ba31.mp3": {
+  "text": "Rufen Sie mich morgen an!",
+  "voice": "f",
+  "heard": "Rufen Sie mich morgen an.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "3ecad25f.mp3": {
   "text": "Magst du Fisch?",
   "voice": "m",
@@ -2929,6 +3577,14 @@
   "take": 0,
   "ok": true
  },
+ "3fe9cf83.mp3": {
+  "text": "bringen",
+  "voice": "m",
+  "heard": "bringen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "400607ce.mp3": {
   "text": "Für mich einen Tee, bitte.",
   "voice": "m",
@@ -2969,10 +3625,34 @@
   "take": 0,
   "ok": true
  },
+ "407d34ae.mp3": {
+  "text": "Kinder, seid bitte leise! Papa schläft.",
+  "voice": "f",
+  "heard": "Kinder, seid bitte leise. Papa schläft.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4088c466.mp3": {
+  "text": "Was ist passiert?",
+  "voice": "f",
+  "heard": "Was ist passiert?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "40930f29.mp3": {
   "text": "Hast du Kinder?",
   "voice": "m",
   "heard": "Hast du Kinder?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "409540fa.mp3": {
+  "text": "Am Sonntag bin ich nach Bonn gefahren.",
+  "voice": "m",
+  "heard": "Am Sonntag bin ich nach Bonn gefahren.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3029,6 +3709,22 @@
   "text": "Wir lieben unseren Opa.",
   "voice": "m",
   "heard": "Wir lieben unseren Opa.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "41dde993.mp3": {
+  "text": "Und was hast du dann gemacht?",
+  "voice": "f",
+  "heard": "Und was hast du dann gemacht?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "41ff4798.mp3": {
+  "text": "Pass auf, das ist heiß!",
+  "voice": "f",
+  "heard": "Pass auf, das ist heiß.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3107,6 +3803,22 @@
   "take": 0,
   "ok": true
  },
+ "42cd568b.mp3": {
+  "text": "Ich arbeite bei einer Firma.",
+  "voice": "f",
+  "heard": "Ich arbeite bei einer Firma.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "42ea03b8.mp3": {
+  "text": "Alles klar!",
+  "voice": "m",
+  "heard": "Alles klar.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "42f6a246.mp3": {
   "text": "Wann beginnt die Party? Um acht?",
   "voice": "f",
@@ -3123,6 +3835,14 @@
   "take": 0,
   "ok": true
  },
+ "432d3cc4.mp3": {
+  "text": "Was sind Sie von Beruf?",
+  "voice": "m",
+  "heard": "Was sind Sie von Beruf?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "43414362.mp3": {
   "text": "Ich zahle bar.",
   "voice": "f",
@@ -3131,10 +3851,26 @@
   "take": 0,
   "ok": true
  },
+ "434986b4.mp3": {
+  "text": "Die Arbeit ist schwer.",
+  "voice": "f",
+  "heard": "Die Arbeit ist schwer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4357fcd9.mp3": {
   "text": "Ich spreche Arabisch, Englisch und ein bisschen Deutsch.",
   "voice": "f",
   "heard": "Ich spreche Arabisch, Englisch und ein bisschen Deutsch.",
+  "ok": true
+ },
+ "438163e0.mp3": {
+  "text": "Ich habe einen neuen Job.",
+  "voice": "f",
+  "heard": "Ich habe einen neuen Job.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "438f5f2d.mp3": {
@@ -3177,6 +3913,14 @@
   "take": 0,
   "ok": true
  },
+ "44960d73.mp3": {
+  "text": "Am Montag hat Karim Frühschicht.",
+  "voice": "m",
+  "heard": "Am Montag hat Karim Frühschicht.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "451bb007.mp3": {
   "text": "Entschuldigung, wie spät ist es?",
   "voice": "m",
@@ -3195,6 +3939,14 @@
   "text": "Nein, ich bin ledig.",
   "voice": "m",
   "heard": "Nein, ich bin ledig.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "45a4a48b.mp3": {
+  "text": "Schön! Ich bin zu Hause geblieben. Ich war ein bisschen krank.",
+  "voice": "f",
+  "heard": "Schön. Ich bin zu Hause geblieben. Ich war ein bisschen krank.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3219,6 +3971,14 @@
   "text": "Hallo, Mia! Wie geht's?",
   "voice": "f",
   "heard": "Hallo, Mia! Wie geht's?",
+  "ok": true
+ },
+ "4624e865.mp3": {
+  "text": "Ich rufe wegen der Anzeige an. Ist die Stelle noch frei?",
+  "voice": "m",
+  "heard": "Ich rufe wegen der Anzeige an. Ist die Stelle noch frei?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "464a4d6e.mp3": {
@@ -3251,10 +4011,34 @@
   "heard": "Er schläft bis acht.",
   "ok": true
  },
+ "4667213b.mp3": {
+  "text": "fragen",
+  "voice": "m",
+  "heard": "Fragen",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "46695dfa.mp3": {
   "text": "die Banane, die Bananen",
   "voice": "m",
   "heard": "Die Banane, die Bananen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "467fd86b.mp3": {
+  "text": "der Computer, die Computer",
+  "voice": "m",
+  "heard": "Der Computer, die Computer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "46879c4a.mp3": {
+  "text": "Ich bin Lehrer von Beruf.",
+  "voice": "m",
+  "heard": "Ich bin Lehrer von Beruf.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3271,6 +4055,14 @@
   "text": "Kinder dürfen im Hof spielen.",
   "voice": "m",
   "heard": "Kinder dürfen im Hof spielen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "46a87e5f.mp3": {
+  "text": "Ich will als Mechaniker arbeiten. In Ägypten hatte ich eine Werkstatt.",
+  "voice": "m",
+  "heard": "Ich will als Mechaniker arbeiten. In Ägypten hatte ich eine Werkstatt.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3355,6 +4147,14 @@
   "heard": "Wie ist Ihre Nummer?",
   "ok": true
  },
+ "499c8085.mp3": {
+  "text": "Nächste Woche habe ich Spätschicht. Ich fange um vierzehn Uhr an.",
+  "voice": "f",
+  "heard": "Nächste Woche habe ich Bedschicht. Ich fange um 14 Uhr an.",
+  "score": 0.9,
+  "take": 0,
+  "ok": false
+ },
  "49caed21.mp3": {
   "text": "Zusammen oder getrennt?",
   "voice": "f",
@@ -3363,10 +4163,34 @@
   "take": 0,
   "ok": true
  },
+ "4a202746.mp3": {
+  "text": "Am Donnerstag hat Karim frei.",
+  "voice": "m",
+  "heard": "Am Donnerstag hat Karim frei.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4a25f2f0.mp3": {
+  "text": "Okay, mache ich. Wo ist das Lager?",
+  "voice": "m",
+  "heard": "Okay, mache ich. Wo ist das Lager?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4a2b2faf.mp3": {
   "text": "das Frühstück: Zum Frühstück trinke ich Tee.",
   "voice": "m",
   "heard": "Das Frühstück zum Frühstück trinke ich Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4a343eb2.mp3": {
+  "text": "der Job, die Jobs",
+  "voice": "m",
+  "heard": "Der Job, die Jobs.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3385,6 +4209,14 @@
   "take": 0,
   "ok": false
  },
+ "4a847afc.mp3": {
+  "text": "Mein Kind ist krank. Ich muss zu Hause bleiben.",
+  "voice": "m",
+  "heard": "Mein Kind ist krank. Ich muss zu Hause bleiben.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4a9e9a9c.mp3": {
   "text": "Ja, gut. Um elf Uhr.",
   "voice": "f",
@@ -3395,6 +4227,14 @@
   "text": "Gut, danke.",
   "voice": "f",
   "heard": "Gut, danke.",
+  "ok": true
+ },
+ "4aadbb3b.mp3": {
+  "text": "Er arbeitet im Krankenhaus.",
+  "voice": "f",
+  "heard": "Er arbeitet im Krankenhaus.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "4acdbbac.mp3": {
@@ -3499,6 +4339,14 @@
   "take": 0,
   "ok": true
  },
+ "4c5889ce.mp3": {
+  "text": "Rufen Sie bitte Frau Klein an!",
+  "voice": "m",
+  "heard": "Rufen Sie bitte Frau Klein an.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4c5d1e49.mp3": {
   "text": "Wie geht es Ihnen?",
   "voice": "f",
@@ -3581,6 +4429,14 @@
   "take": 0,
   "ok": true
  },
+ "4d7b6660.mp3": {
+  "text": "Pass auf!",
+  "voice": "m",
+  "heard": "Pass auf!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4dd7b0ef.mp3": {
   "text": "herzlich",
   "voice": "m",
@@ -3605,6 +4461,30 @@
   "take": 0,
   "ok": true
  },
+ "4e7eaf94.mp3": {
+  "text": "Ich habe den Chef gefragt.",
+  "voice": "f",
+  "heard": "Ich habe den Chef gefragt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4ea42b2c.mp3": {
+  "text": "Am Freitag arbeite ich nur bis eins.",
+  "voice": "m",
+  "heard": "Am Freitag arbeite ich nur bis eins.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4eb6676a.mp3": {
+  "text": "der Student, die Studenten",
+  "voice": "m",
+  "heard": "der Student, die Studenten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4ec70d1c.mp3": {
   "text": "zweitausendfünfundzwanzig",
   "voice": "m",
@@ -3615,6 +4495,22 @@
   "text": "Ich esse Brot mit Butter.",
   "voice": "f",
   "heard": "Ich esse Brot mit Butter.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4ed6a6ee.mp3": {
+  "text": "aufpassen",
+  "voice": "m",
+  "heard": "Aufpassen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4f400666.mp3": {
+  "text": "Wann hast du Pause? Um zwölf Uhr.",
+  "voice": "m",
+  "heard": "Wann hast du Pause? Um zwölf Uhr.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3773,6 +4669,14 @@
   "take": 0,
   "ok": true
  },
+ "5159b95e.mp3": {
+  "text": "arbeitslos",
+  "voice": "m",
+  "heard": "Arbeitslos!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "519c3fb6.mp3": {
   "text": "Sie ist sehr schön! Und wer ist der Mann?",
   "voice": "f",
@@ -3843,6 +4747,22 @@
   "heard": "schreiten",
   "ok": false
  },
+ "52a187ce.mp3": {
+  "text": "Ich hatte keine Zeit.",
+  "voice": "m",
+  "heard": "Ich hatte keine Zeit.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "52bd7633.mp3": {
+  "text": "das Praktikum, die Praktika",
+  "voice": "m",
+  "heard": "das Praktikum die Praktika",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "52be1b9e.mp3": {
   "text": "Freut mich!",
   "voice": "m",
@@ -3863,6 +4783,22 @@
   "heard": "Das Sofa, die Sofas.",
   "score": 1,
   "take": 2,
+  "ok": true
+ },
+ "53a60490.mp3": {
+  "text": "Ich will Lehrerin werden.",
+  "voice": "m",
+  "heard": "Ich will Lehrerin werden.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "53ae95f1.mp3": {
+  "text": "Wir haben Pizza gegessen.",
+  "voice": "m",
+  "heard": "Wir haben Pizza gegessen.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "53e8c45e.mp3": {
@@ -3959,6 +4895,14 @@
   "take": 0,
   "ok": false
  },
+ "56b42abd.mp3": {
+  "text": "Super! Du kannst sehr gut mit Menschen sprechen.",
+  "voice": "m",
+  "heard": "Super, du kannst sehr gut mit Menschen sprechen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "56bbaa5e.mp3": {
   "text": "Hallo, hier ist Anna. Ich habe am Samstag Geburtstag! Die Party ist um acht Uhr bei mir. Kommst du?",
   "voice": "f",
@@ -3987,12 +4931,28 @@
   "take": 0,
   "ok": true
  },
+ "56fc1499.mp3": {
+  "text": "Wo arbeiten Sie?",
+  "voice": "f",
+  "heard": "Wo arbeiten Sie?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "570e46bb.mp3": {
   "text": "die Ehefrau, die Ehefrauen",
   "voice": "m",
   "heard": "Die Ehefrau, die Ehefrauen.",
   "score": 1,
   "take": 1,
+  "ok": true
+ },
+ "5731e3e9.mp3": {
+  "text": "Die Arbeit ist interessant.",
+  "voice": "m",
+  "heard": "Die Arbeit ist interessant.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "57714fc9.mp3": {
@@ -4002,6 +4962,14 @@
   "score": 0.67,
   "take": 0,
   "ok": false
+ },
+ "5795d115.mp3": {
+  "text": "Nimm bitte nicht den Aufzug. Er ist kaputt. Nimm die Treppe.",
+  "voice": "m",
+  "heard": "Nimm bitte nicht den Aufzug. Er ist kaputt. Nimm die Treppe.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "579db242.mp3": {
   "text": "Am Montag ziehen wir aus. Unsere neue Wohnung ist in der Bergstraße.",
@@ -4081,6 +5049,14 @@
   "take": 0,
   "ok": true
  },
+ "58e74763.mp3": {
+  "text": "Hallo, hier ist Jonas aus dem Büro. Das Meeting ist nicht am Dienstag, sondern am Mittwoch. Die Uhrzeit bleibt gleich: neun Uhr. Bis dann!",
+  "voice": "m",
+  "heard": "Hallo, hier ist Jonas aus dem Büro. Das Meeting ist nicht am Dienstag, sondern am Mittwoch. Die Uhrzeit bleibt gleich, 9 Uhr. Bis dann.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "58f675be.mp3": {
   "text": "Wir wohnen alle zusammen.",
   "voice": "f",
@@ -4129,6 +5105,22 @@
   "heard": "aus dem Irak, im Irak.",
   "ok": true
  },
+ "596bd4c9.mp3": {
+  "text": "Der Deutschkurs beginnt im Mai.",
+  "voice": "f",
+  "heard": "Der Deutschkurs beginnt im Mai.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "59aeb1f9.mp3": {
+  "text": "Ich mache ein Praktikum.",
+  "voice": "f",
+  "heard": "Ich mache ein Praktikum.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "59af0828.mp3": {
   "text": "der Kiosk, die Kioske",
   "voice": "m",
@@ -4171,6 +5163,14 @@
   "text": "Mein Hobby ist Fußball.",
   "voice": "m",
   "heard": "Mein Hobby ist Fußball.",
+  "ok": true
+ },
+ "5aa90bad.mp3": {
+  "text": "Ich bin nach Hause gefahren.",
+  "voice": "m",
+  "heard": "Ich bin nach Hause gefahren.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "5b5f7046.mp3": {
@@ -4251,6 +5251,14 @@
   "take": 0,
   "ok": true
  },
+ "5ca7e094.mp3": {
+  "text": "Ich habe meine Eltern besucht.",
+  "voice": "m",
+  "heard": "Ich habe meine Eltern besucht.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "5ca93e87.mp3": {
   "text": "der Stock, die Stockwerke",
   "voice": "m",
@@ -4283,6 +5291,14 @@
   "take": 2,
   "ok": true
  },
+ "5ce1a2a9.mp3": {
+  "text": "Ich möchte die Firma anrufen.",
+  "voice": "m",
+  "heard": "Ich möchte die Firma anrufen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "5d183f64.mp3": {
   "text": "Liebe Mona,",
   "voice": "m",
@@ -4311,6 +5327,14 @@
   "text": "Er liegt auf dem Tisch.",
   "voice": "m",
   "heard": "Er liegt auf dem Tisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5d6baf64.mp3": {
+  "text": "Meine Schwester studiert Medizin.",
+  "voice": "m",
+  "heard": "Meine Schwester studiert Medizin.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4363,6 +5387,22 @@
   "take": 0,
   "ok": true
  },
+ "5e3c2c2a.mp3": {
+  "text": "der Kurs, die Kurse",
+  "voice": "m",
+  "heard": "Der Kurs, die Kurse.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5e3cd2c0.mp3": {
+  "text": "Gut! Am Samstag habe ich lange geschlafen.",
+  "voice": "m",
+  "heard": "Gut, am Samstag habe ich lange geschlafen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "5ea2961d.mp3": {
   "text": "das Kind, die Kinder",
   "voice": "m",
@@ -4370,6 +5410,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "5ea34118.mp3": {
+  "text": "Frau Ali, schicken Sie bitte die E-Mail an Herrn Busch. Nicht an Frau Klein!",
+  "voice": "m",
+  "heard": "Frau Ali, schicken Sie bitte die E-Mail an Herrn Busch, nicht ein Frau Klein.",
+  "score": 1,
+  "take": 0,
+  "ok": false
  },
  "5ecddc55.mp3": {
   "text": "Das Bett steht links.",
@@ -4439,6 +5487,14 @@
   "take": 0,
   "ok": true
  },
+ "60004641.mp3": {
+  "text": "Sie hat ein Geschäft.",
+  "voice": "f",
+  "heard": "Sie hat ein Geschäft.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "603bf130.mp3": {
   "text": "Meine Tochter ist fünf.",
   "voice": "f",
@@ -4454,6 +5510,14 @@
   "score": 0,
   "take": 0,
   "ok": false
+ },
+ "60543b93.mp3": {
+  "text": "Leider bin ich krank.",
+  "voice": "m",
+  "heard": "Leider bin ich krank.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "6090e70a.mp3": {
   "text": "Kann ich die Wohnung sehen?",
@@ -4495,6 +5559,14 @@
   "heard": "13, 14, 15, 16",
   "ok": true
  },
+ "613a376c.mp3": {
+  "text": "Nicht anfassen!",
+  "voice": "m",
+  "heard": "Nicht anfassen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "614bfc80.mp3": {
   "text": "Das ist mein Sohn.",
   "voice": "f",
@@ -4527,6 +5599,14 @@
   "take": 0,
   "ok": true
  },
+ "6176daec.mp3": {
+  "text": "Ich bin Verkäufer von Beruf.",
+  "voice": "m",
+  "heard": "Ich bin Verkäufer von Beruf.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "619a2ac2.mp3": {
   "text": "Rauchen ist hier verboten.",
   "voice": "f",
@@ -4539,6 +5619,30 @@
   "text": "Dann gehe ich zur Arbeit.",
   "voice": "f",
   "heard": "dann gehe ich zur Arbeit.",
+  "ok": true
+ },
+ "61b0cc2d.mp3": {
+  "text": "die Ärztin, die Ärztinnen",
+  "voice": "m",
+  "heard": "Die Ärztin, die Ärztinnen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "61bbd7f7.mp3": {
+  "text": "der Verkäufer, die Verkäufer",
+  "voice": "m",
+  "heard": "Der Verkäufer, die Verkäufer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "61e6e5b0.mp3": {
+  "text": "Ich bin zu Hause geblieben.",
+  "voice": "f",
+  "heard": "Ich bin zu Hause geblieben.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "61f410e9.mp3": {
@@ -4565,6 +5669,22 @@
   "take": 0,
   "ok": false
  },
+ "62376ec2.mp3": {
+  "text": "Das ist verschieden. Diese Woche habe ich Frühschicht, von sechs bis zwei.",
+  "voice": "m",
+  "heard": "Das ist verschieden. Diese Woche habe ich Frühschicht von 6 bis 2.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6297ffbe.mp3": {
+  "text": "verdienen",
+  "voice": "m",
+  "heard": "Verdienen!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "62dfabc1.mp3": {
   "text": "Es gibt keinen Aufzug.",
   "voice": "f",
@@ -4585,6 +5705,22 @@
   "text": "Schmeckt es Ihnen?",
   "voice": "m",
   "heard": "Schmeckt es Ihnen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "630cf553.mp3": {
+  "text": "Wie viel verdient man pro Stunde?",
+  "voice": "m",
+  "heard": "Wie viel verdient man pro Stunde?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6341198c.mp3": {
+  "text": "Meine Mutter arbeitet in einer Schule.",
+  "voice": "f",
+  "heard": "Meine Mutter arbeitet in einer Schule.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4615,6 +5751,14 @@
   "text": "Ein Jahr hat zwölf Monate.",
   "voice": "f",
   "heard": "Ein Jahr hat zwölf Monate.",
+  "ok": true
+ },
+ "64abcf26.mp3": {
+  "text": "Ich verstehe das nicht.",
+  "voice": "m",
+  "heard": "Ich verstehe das nicht.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "64b82d43.mp3": {
@@ -4659,6 +5803,14 @@
   "heard": "Es ist halb drei.",
   "ok": true
  },
+ "653fcf75.mp3": {
+  "text": "die Studentin, die Studentinnen",
+  "voice": "m",
+  "heard": "Die Studentin, die Studentinnen.",
+  "score": 1,
+  "take": 2,
+  "ok": true
+ },
  "6586522f.mp3": {
   "text": "Das Baby schläft.",
   "voice": "f",
@@ -4687,6 +5839,14 @@
   "text": "der Nachbar, die Nachbarn",
   "voice": "m",
   "heard": "der Nachbar, die Nachbarn",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "659e7bd5.mp3": {
+  "text": "Ich bin zu Hause geblieben.",
+  "voice": "m",
+  "heard": "Ich bin zu Hause geblieben.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4733,6 +5893,14 @@
   "text": "Das Schlafzimmer ist klein, aber sehr ruhig.",
   "voice": "m",
   "heard": "Das Schlafzimmer ist klein, aber sehr ruhig.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6696d7ab.mp3": {
+  "text": "Das ist eine Vollzeitstelle.",
+  "voice": "m",
+  "heard": "Das ist eine Vollzeitstelle.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4829,10 +5997,26 @@
   "take": 0,
   "ok": true
  },
+ "68e611c4.mp3": {
+  "text": "Ich arbeite von Montag bis Donnerstag. Am Freitag habe ich frei.",
+  "voice": "m",
+  "heard": "Ich arbeite von Montag bis Donnerstag. Am Freitag habe ich frei.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "68e9ed04.mp3": {
   "text": "Guten Tag! Ich möchte einen Tee und ein Stück Kuchen, bitte.",
   "voice": "m",
   "heard": "Guten Tag. Ich möchte einen Tee und ein Stück Kuchen, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "68f8ed74.mp3": {
+  "text": "Verdienst du gut? Es geht.",
+  "voice": "m",
+  "heard": "Verdienst du gut? Es geht.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4859,10 +6043,26 @@
   "take": 0,
   "ok": true
  },
+ "692e2337.mp3": {
+  "text": "Was machst du beruflich?",
+  "voice": "m",
+  "heard": "Was machst du beruflich?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "6947e0f9.mp3": {
   "text": "Der ist sehr gut. Nehmen Sie ihn!",
   "voice": "m",
   "heard": "Der ist sehr gut. Nehmen Sie ihn.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "69687e44.mp3": {
+  "text": "passieren",
+  "voice": "m",
+  "heard": "passieren.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4933,6 +6133,14 @@
   "take": 0,
   "ok": true
  },
+ "6ad3cff5.mp3": {
+  "text": "ich habe Ihre Anzeige gelesen und möchte gern im Café arbeiten.",
+  "voice": "m",
+  "heard": "Ich habe ihre Anzeige gelesen und möchte gerne im Café arbeiten.",
+  "score": 0.91,
+  "take": 0,
+  "ok": false
+ },
  "6aeac802.mp3": {
   "text": "Tut mir leid, ich habe kein Salz.",
   "voice": "m",
@@ -4992,6 +6200,14 @@
   "score": 0.83,
   "take": 1,
   "ok": false
+ },
+ "6c3ef393.mp3": {
+  "text": "Was ist passiert?",
+  "voice": "m",
+  "heard": "Was ist passiert?",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "6c487fbb.mp3": {
   "text": "ein bisschen",
@@ -5177,6 +6393,22 @@
   "take": 0,
   "ok": true
  },
+ "6e891628.mp3": {
+  "text": "Diese Woche habe ich Frühschicht.",
+  "voice": "m",
+  "heard": "Diese Woche habe ich Frühschicht.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6eadee5f.mp3": {
+  "text": "Gestern habe ich nicht gearbeitet. Ich war beim Arzt und bin dann zu Hause geblieben.",
+  "voice": "m",
+  "heard": "Gestern habe ich nicht gearbeitet, ich war beim Arzt und bin dann zu Hause geblieben.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "6eb3cec3.mp3": {
   "text": "die Frau, die Frauen",
   "voice": "m",
@@ -5243,6 +6475,14 @@
   "text": "Am Sonntag darf man keine Wäsche waschen.",
   "voice": "m",
   "heard": "Am Sonntag darf man keine Wäsche waschen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6fccea65.mp3": {
+  "text": "Meine Mutter ist Lehrerin. Sie arbeitet in einer Grundschule.",
+  "voice": "m",
+  "heard": "Meine Mutter ist Lehrerin. Sie arbeitet in einer Grundschule.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5337,6 +6577,14 @@
   "take": 0,
   "ok": true
  },
+ "71b9ab6d.mp3": {
+  "text": "Ich kann gut mit Kindern arbeiten.",
+  "voice": "m",
+  "heard": "Ich kann gut mit Kindern arbeiten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "71d39121.mp3": {
   "text": "Wann stehst du auf?",
   "voice": "m",
@@ -5371,6 +6619,14 @@
   "take": 0,
   "ok": true
  },
+ "727ad18b.mp3": {
+  "text": "Vorsicht, der Boden ist nass!",
+  "voice": "m",
+  "heard": "Vorsicht, der Boden ist nass.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "728d2208.mp3": {
   "text": "Guten Tag, Herr Braun!",
   "voice": "f",
@@ -5393,10 +6649,26 @@
   "take": 0,
   "ok": true
  },
+ "731f0176.mp3": {
+  "text": "Ich habe das nicht verstanden.",
+  "voice": "m",
+  "heard": "Ich habe das nicht verstanden.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "734db387.mp3": {
   "text": "Eine Flasche Wasser, bitte.",
   "voice": "f",
   "heard": "Eine Flasche Wasser, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "737a7f82.mp3": {
+  "text": "Wohin fährst du im Urlaub? Ich fahre nach Alexandria.",
+  "voice": "m",
+  "heard": "wohin fährst du im Urlaub? Ich fahre nach Alexandria.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5442,6 +6714,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "74af4804.mp3": {
+  "text": "Herr Nabil, was sind Sie von Beruf?",
+  "voice": "f",
+  "heard": "Herr Nabil, was sind Sie vom Beruf?",
+  "score": 0.86,
+  "take": 0,
+  "ok": false
  },
  "74dfd019.mp3": {
   "text": "verboten",
@@ -5493,6 +6773,14 @@
   "heard": "Der Buchstabe, die Buchstaben.",
   "ok": true
  },
+ "75394ca2.mp3": {
+  "text": "die Stelle, die Stellen",
+  "voice": "m",
+  "heard": "Die Stelle, die Stellen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "753b36c9.mp3": {
   "text": "Sie ist meine Freundin.",
   "voice": "f",
@@ -5524,6 +6812,14 @@
   "score": 0,
   "take": 0,
   "ok": false
+ },
+ "75561616.mp3": {
+  "text": "Hier ist Ihr Computer. Lesen Sie bitte zuerst die E-Mails.",
+  "voice": "f",
+  "heard": "Hier ist Ihr Computer. Lesen Sie bitte zuerst die E-Mails.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "75584ce9.mp3": {
   "text": "Woher kommen Sie?",
@@ -5566,6 +6862,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "7604553c.mp3": {
+  "text": "Arbeitest du gern im Team?",
+  "voice": "m",
+  "heard": "Arbeitest du gerne im Team?",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
  },
  "761082a2.mp3": {
   "text": "der Käse",
@@ -5693,6 +6997,14 @@
   "take": 0,
   "ok": false
  },
+ "77b8f7ff.mp3": {
+  "text": "Ich habe die E-Mail gelesen, aber ich habe sie nicht verstanden.",
+  "voice": "m",
+  "heard": "Ich habe die E-Mail gelesen, aber ich habe sie nicht verstanden.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "77ba28e6.mp3": {
   "text": "Wir besuchen unsere Großeltern.",
   "voice": "m",
@@ -5725,6 +7037,14 @@
   "take": 0,
   "ok": true
  },
+ "7823e902.mp3": {
+  "text": "Was bedeutet das?",
+  "voice": "m",
+  "heard": "Was bedeutet das?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7853cd69.mp3": {
   "text": "sechzig, siebzehn, siebzig, neunzehn, neunzig",
   "voice": "m",
@@ -5738,6 +7058,14 @@
   "score": 0.75,
   "take": 0,
   "ok": false
+ },
+ "78801fa0.mp3": {
+  "text": "Entschuldigung, wen soll ich anrufen?",
+  "voice": "m",
+  "heard": "Entschuldigung, wen soll ich anrufen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "789b367c.mp3": {
   "text": "Welche Größe haben Sie?",
@@ -5816,6 +7144,14 @@
   "score": 0.75,
   "take": 0,
   "ok": false
+ },
+ "79874fa1.mp3": {
+  "text": "Arbeitest du in einem Büro? Nein, ich arbeite im Geschäft.",
+  "voice": "m",
+  "heard": "Arbeitest du in einem Büro? Nein, ich arbeite im Geschäft.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "798851e7.mp3": {
   "text": "Gut, danke! Und unsere Großmutter wohnt jetzt auch dort.",
@@ -5979,6 +7315,14 @@
   "take": 0,
   "ok": true
  },
+ "7c5f09f3.mp3": {
+  "text": "Sie arbeitet als Verkäuferin.",
+  "voice": "f",
+  "heard": "Sie arbeitet als Verkäuferin.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7c7fe456.mp3": {
   "text": "Ja, ich habe einen Bruder und zwei Schwestern. Und du, Paul?",
   "voice": "f",
@@ -6025,12 +7369,28 @@
   "heard": "Sprachen, ich spreche.",
   "ok": true
  },
+ "7d93f96e.mp3": {
+  "text": "Was hast du am Wochenende gemacht?",
+  "voice": "m",
+  "heard": "Was hast du am Wochenende gemacht?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7e014c2a.mp3": {
   "text": "etwas",
   "voice": "m",
   "heard": "Etwas.",
   "score": 1,
   "take": 0,
+  "ok": true
+ },
+ "7e066e0b.mp3": {
+  "text": "Mona Adel",
+  "voice": "m",
+  "heard": "Mona Adel",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "7e2b534b.mp3": {
@@ -6043,6 +7403,14 @@
   "text": "Und wie geht es euren Eltern?",
   "voice": "m",
   "heard": "Und wie geht es euren Eltern?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "7e37a3bf.mp3": {
+  "text": "Bringen Sie mir bitte einen Kaffee!",
+  "voice": "f",
+  "heard": "Bringen Sie mir bitte einen Kaffee.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -6133,6 +7501,14 @@
   "text": "Der Kurs dauert zwei Stunden.",
   "voice": "f",
   "heard": "Der Kurs dauert zwei Stunden.",
+  "ok": true
+ },
+ "806cb96f.mp3": {
+  "text": "Wie war die Arbeit?",
+  "voice": "m",
+  "heard": "Wie war die Arbeit?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "808a7e81.mp3": {
@@ -6229,6 +7605,14 @@
   "take": 0,
   "ok": true
  },
+ "82680620.mp3": {
+  "text": "die Firma, die Firmen",
+  "voice": "m",
+  "heard": "Die Firma, die Firmen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "828a897f.mp3": {
   "text": "Die Kinder spielen im Hof.",
   "voice": "f",
@@ -6285,10 +7669,26 @@
   "take": 0,
   "ok": true
  },
+ "83e5b970.mp3": {
+  "text": "Mit freundlichen Grüßen",
+  "voice": "m",
+  "heard": "Mit freundlichen Grüßen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "84013c42.mp3": {
   "text": "Julia hat zwei Brüder.",
   "voice": "m",
   "heard": "Julia hat zwei Brüder.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "841f50a5.mp3": {
+  "text": "Ich arbeite jetzt als Verkäuferin, aber ich will Lehrerin werden.",
+  "voice": "f",
+  "heard": "Ich arbeite jetzt als Verkäuferin, aber ich will Lehrerin werden.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -6337,6 +7737,14 @@
   "take": 0,
   "ok": true
  },
+ "85778f1e.mp3": {
+  "text": "Der Arzt arbeitet im Krankenhaus.",
+  "voice": "f",
+  "heard": "der Arzt arbeitet im Krankenhaus.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "8590b71f.mp3": {
   "text": "Guten Abend! Was möchten Sie trinken?",
   "voice": "m",
@@ -6369,10 +7777,26 @@
   "take": 0,
   "ok": true
  },
+ "864ab6dc.mp3": {
+  "text": "das Krankenhaus, die Krankenhäuser",
+  "voice": "m",
+  "heard": "das Krankenhaus, die Krankenhäuser",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "865b94e1.mp3": {
   "text": "Ich möchte einen Kaffee, eine Brezel und ein Stück Kuchen.",
   "voice": "m",
   "heard": "Ich möchte einen Kaffee, eine Brezel und ein Stück Kuchen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8672dfcd.mp3": {
+  "text": "Und am Sonntag?",
+  "voice": "f",
+  "heard": "Und am Sonntag.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -6443,6 +7867,14 @@
   "take": 2,
   "ok": true
  },
+ "881e6996.mp3": {
+  "text": "Ich habe dreißig Tage Urlaub im Jahr.",
+  "voice": "m",
+  "heard": "Ich habe 30 Tage Urlaub im Jahr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "88231b75.mp3": {
   "text": "die Party, die Partys",
   "voice": "m",
@@ -6455,6 +7887,14 @@
   "text": "Wir haben keinen Reis mehr.",
   "voice": "m",
   "heard": "Wir haben keinen Reis mehr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8858c304.mp3": {
+  "text": "Ich kann gut kochen.",
+  "voice": "m",
+  "heard": "Ich kann gut kochen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -6479,6 +7919,14 @@
   "text": "die Uhr, die Uhren",
   "voice": "m",
   "heard": "Die Uhr, die Uhren.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "886f8200.mp3": {
+  "text": "Mein Vater ist Ingenieur. Er arbeitet bei einer Baufirma.",
+  "voice": "m",
+  "heard": "Mein Vater ist Ingenieur. Er arbeitet bei einer Baufirma.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -6543,10 +7991,26 @@
   "take": 0,
   "ok": true
  },
+ "89c90099.mp3": {
+  "text": "geben",
+  "voice": "m",
+  "heard": "lieben",
+  "score": 0,
+  "take": 0,
+  "ok": false
+ },
  "89ca40c7.mp3": {
   "text": "Meine Telefonnummer ist 0176 3482 950.",
   "voice": "f",
   "heard": "Meine Telefonnummer ist 01763402 und 80950.",
+  "ok": false
+ },
+ "8a22f7c4.mp3": {
+  "text": "Hallo Omar, hier ist Lea. Ich bin heute krank. Kannst du bitte meine Spätschicht machen? Ruf mich bitte an. Danke!",
+  "voice": "f",
+  "heard": "Hallo Oma, hier ist Lea. Ich bin heute krank. Kannst du bitte meine Spätschicht machen? Ruf mich bitte an. Danke.",
+  "score": 0.95,
+  "take": 0,
   "ok": false
  },
  "8a588cb4.mp3": {
@@ -6557,10 +8021,26 @@
   "take": 0,
   "ok": true
  },
+ "8a96c944.mp3": {
+  "text": "Was willst du werden?",
+  "voice": "f",
+  "heard": "Was willst du werden?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "8a9d1198.mp3": {
   "text": "der Fisch, die Fische",
   "voice": "m",
   "heard": "Der Fisch, die Fische.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8ad7fe9f.mp3": {
+  "text": "Schicken Sie mir bitte eine E-Mail!",
+  "voice": "f",
+  "heard": "Schicken Sie mir bitte eine E-Mail.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -6605,6 +8085,22 @@
   "take": 1,
   "ok": false
  },
+ "8b80479d.mp3": {
+  "text": "Meine Kollegen sind nett.",
+  "voice": "f",
+  "heard": "Meine Kollegen sind nett.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8ba17275.mp3": {
+  "text": "Ich habe lange gearbeitet.",
+  "voice": "m",
+  "heard": "Ich habe lange gearbeitet.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "8ba249a5.mp3": {
   "text": "Nein, es gibt keinen Garten.",
   "voice": "m",
@@ -6626,6 +8122,14 @@
   "score": 0.8,
   "take": 0,
   "ok": false
+ },
+ "8bf2569b.mp3": {
+  "text": "Bitte unterschreiben Sie hier.",
+  "voice": "f",
+  "heard": "Bitte unterschreiben Sie hier.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "8c29f280.mp3": {
   "text": "Es gibt keinen Kuchen mehr.",
@@ -6729,6 +8233,14 @@
   "take": 0,
   "ok": true
  },
+ "8e5630d8.mp3": {
+  "text": "Wann fängst du morgens an?",
+  "voice": "m",
+  "heard": "Wann fängst du morgens an?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "8ecd9b2c.mp3": {
   "text": "Am Mittwoch habe ich Zeit.",
   "voice": "f",
@@ -6787,6 +8299,22 @@
   "take": 0,
   "ok": true
  },
+ "9081bbaf.mp3": {
+  "text": "die Arbeit, die Arbeiten",
+  "voice": "m",
+  "heard": "Die Arbeit, die Arbeiten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "909ecb3e.mp3": {
+  "text": "Danke! Schau mal, hier ist eine Anzeige: Eine Werkstatt sucht einen Mechaniker.",
+  "voice": "f",
+  "heard": "Danke. Schau mal, hier ist eine Anzeige, eine Werkstatt sucht ein Mechaniker.",
+  "score": 0.92,
+  "take": 0,
+  "ok": false
+ },
  "90d16d0b.mp3": {
   "text": "A, E, I, O, U",
   "voice": "m",
@@ -6798,6 +8326,14 @@
   "voice": "m",
   "heard": "Ich komme aus Ägypten, aus Asiut.",
   "ok": false
+ },
+ "912b707d.mp3": {
+  "text": "Der Bus ist nicht gekommen. Ich komme zwanzig Minuten später.",
+  "voice": "m",
+  "heard": "Der Bus ist nicht gekommen. Ich komme 20 Minuten später.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "9141e701.mp3": {
   "text": "M, A, N, S, O, U, R.",
@@ -6849,6 +8385,14 @@
   "heard": "Danke. Buchstabieren Sie bitte Ihren Namen.",
   "ok": true
  },
+ "927c21b2.mp3": {
+  "text": "Was bist du von Beruf?",
+  "voice": "m",
+  "heard": "Was bist du von Beruf?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "929ea28f.mp3": {
   "text": "Danke schön, Omar! Schön, dass du da bist.",
   "voice": "f",
@@ -6864,6 +8408,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "92e3875b.mp3": {
+  "text": "Toll! Ich will Krankenschwester werden. Ich beginne im Herbst eine Ausbildung.",
+  "voice": "f",
+  "heard": "Toll, ich will krank können Schwester werden. Ich beginne im Herbst eine Ausbildung.",
+  "score": 0.91,
+  "take": 0,
+  "ok": false
  },
  "92eb5fbb.mp3": {
   "text": "Die Wohnung hat drei Zimmer.",
@@ -6971,6 +8523,14 @@
   "heard": "Am Sonntag ist sie geschlossen.",
   "ok": true
  },
+ "94422bca.mp3": {
+  "text": "Die Arbeit ist schwer, aber ich mache sie gern.",
+  "voice": "m",
+  "heard": "Die Arbeit ist schwer, aber ich mache sie gern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9497033b.mp3": {
   "text": "Das Mädchen ist sechs Jahre alt.",
   "voice": "f",
@@ -6991,6 +8551,14 @@
   "text": "Gehst du oft ins Restaurant?",
   "voice": "m",
   "heard": "Gehst du oft ins Restaurant?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "952d3d52.mp3": {
+  "text": "Bringen Sie bitte die Kartons ins Lager. Und schreiben Sie die Nummern auf.",
+  "voice": "m",
+  "heard": "Bringen Sie bitte die Kartons ins Lager und schreiben Sie die Nummern auf.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -7023,6 +8591,14 @@
   "heard": "Das ist eine Super aus Gemüse.",
   "score": 0.83,
   "take": 0,
+  "ok": false
+ },
+ "95a54016.mp3": {
+  "text": "der Beruf, die Berufe",
+  "voice": "m",
+  "heard": "Der Beruf, der Beruf.",
+  "score": 0.5,
+  "take": 1,
   "ok": false
  },
  "95e2dfe8.mp3": {
@@ -7107,10 +8683,42 @@
   "take": 0,
   "ok": true
  },
+ "97c24c8a.mp3": {
+  "text": "die Pause, die Pausen",
+  "voice": "m",
+  "heard": "Die Pause, die Pausen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "97d3498b.mp3": {
   "text": "das Restaurant, die Restaurants",
   "voice": "m",
   "heard": "Das Restaurant, die Restaurants.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "981397ad.mp3": {
+  "text": "Im August habe ich zwei Wochen Urlaub.",
+  "voice": "m",
+  "heard": "Im August habe ich zwei Wochen Urlaub.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9813d790.mp3": {
+  "text": "Rufen Sie dann bitte Frau Klein an. Die Nummer ist im Telefon.",
+  "voice": "f",
+  "heard": "Rufen Sie dann bitte Frau Klein an. Die Nummer ist im Telefon.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9858f955.mp3": {
+  "text": "Ich arbeite von acht bis fünf.",
+  "voice": "m",
+  "heard": "Ich arbeite von 8 bis 5.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -7149,6 +8757,14 @@
   "text": "Sie sind drei und sieben.",
   "voice": "m",
   "heard": "Sie sind 3 und 7.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "98d04c74.mp3": {
+  "text": "Es wird kalt.",
+  "voice": "m",
+  "heard": "Es wird kalt.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -7193,6 +8809,14 @@
   "take": 1,
   "ok": true
  },
+ "9a0b8425.mp3": {
+  "text": "Ab sechs Uhr habe ich Feierabend.",
+  "voice": "m",
+  "heard": "Ab 6 Uhr habe ich Feierabend.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9a24813f.mp3": {
   "text": "kommen",
   "voice": "m",
@@ -7223,10 +8847,26 @@
   "take": 0,
   "ok": false
  },
+ "9ae3bdc0.mp3": {
+  "text": "Sie studiert Medizin.",
+  "voice": "f",
+  "heard": "Sie studiert Medizin.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9b368988.mp3": {
   "text": "Wir wohnen im ersten Stock.",
   "voice": "m",
   "heard": "Wir wohnen im ersten Stock.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9b44c65e.mp3": {
+  "text": "Ich arbeite am Computer.",
+  "voice": "f",
+  "heard": "Ich arbeite am Computer.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -7259,6 +8899,14 @@
   "take": 2,
   "ok": true
  },
+ "9bb0f4e6.mp3": {
+  "text": "der Urlaub",
+  "voice": "m",
+  "heard": "Der Willow.",
+  "score": 0.5,
+  "take": 2,
+  "ok": false
+ },
  "9bb8b87c.mp3": {
   "text": "der Müll",
   "voice": "m",
@@ -7289,6 +8937,14 @@
   "heard": "Wir sind, ihr seid, sie sind, sie sind.",
   "ok": true
  },
+ "9c5cba40.mp3": {
+  "text": "Rufen Sie mich an!",
+  "voice": "m",
+  "heard": "Rufen Sie mich an!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9c863d73.mp3": {
   "text": "siebenundvierzig",
   "voice": "m",
@@ -7302,6 +8958,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "9cd7459e.mp3": {
+  "text": "Ich studiere noch. Am Wochenende arbeite ich als Kellnerin in einem Café.",
+  "voice": "f",
+  "heard": "Ich studiere noch. Am Wochenende arbeite ich als Kellnerin in Ancafé.",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
  },
  "9ce9e40b.mp3": {
   "text": "Der Tee ist heiß.",
@@ -7483,6 +9147,14 @@
   "heard": "Der Kurs fängt um 9 Uhr an.",
   "ok": false
  },
+ "9eb7a378.mp3": {
+  "text": "Mein Sohn wird bald fünf.",
+  "voice": "m",
+  "heard": "Mein Sohn wird bald fünf.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9f1599b2.mp3": {
   "text": "die Toilette, die Toiletten",
   "voice": "m",
@@ -7657,6 +9329,14 @@
   "take": 0,
   "ok": true
  },
+ "a18bb3f0.mp3": {
+  "text": "Ich arbeite von acht bis siebzehn Uhr.",
+  "voice": "m",
+  "heard": "Ich arbeite von 8 bis 17 Uhr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a1fbee38.mp3": {
   "text": "Das kostet neunzehn Euro neunzig.",
   "voice": "m",
@@ -7664,6 +9344,14 @@
   "score": 1,
   "take": 0,
   "ok": false
+ },
+ "a203c65e.mp3": {
+  "text": "Hallo Karim! Wie war das Wochenende?",
+  "voice": "f",
+  "heard": "Hallo Karim! Wie war das Wochenende?",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "a212c040.mp3": {
   "text": "mieten",
@@ -7693,6 +9381,14 @@
   "take": 0,
   "ok": true
  },
+ "a2df4fe5.mp3": {
+  "text": "Ich arbeite im Büro.",
+  "voice": "m",
+  "heard": "Ich arbeite im Büro.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a2efcddd.mp3": {
   "text": "das Geschenk, die Geschenke",
   "voice": "m",
@@ -7715,10 +9411,26 @@
   "take": 0,
   "ok": true
  },
+ "a34a096b.mp3": {
+  "text": "Wie viele Stunden sind es pro Woche?",
+  "voice": "m",
+  "heard": "Wie viele Stunden sind es pro Woche?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a3558e6e.mp3": {
   "text": "Ich habe einen Sohn und eine Tochter.",
   "voice": "m",
   "heard": "Ich habe einen Sohn und eine Tochter.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a358f587.mp3": {
+  "text": "vorgestern",
+  "voice": "m",
+  "heard": "Vorgestern.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -8001,6 +9713,38 @@
   "heard": "Ja, am Sonntag geht es. Um wie viel Uhr?",
   "ok": true
  },
+ "a8a9056d.mp3": {
+  "text": "Guten Morgen! Danke schön.",
+  "voice": "m",
+  "heard": "Guten Morgen. Danke schön.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a8d0885b.mp3": {
+  "text": "Ich arbeite Teilzeit, zwanzig Stunden in der Woche.",
+  "voice": "m",
+  "heard": "Ich arbeite Teilzeit 20 Stunden in der Woche.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a8dbb217.mp3": {
+  "text": "Vorsicht!",
+  "voice": "m",
+  "heard": "Vorsicht!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a8ef703b.mp3": {
+  "text": "Morgen habe ich frei.",
+  "voice": "f",
+  "heard": "Morgen habe ich frei.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a8f3a886.mp3": {
   "text": "Mai, Juni, Juli, August",
   "voice": "m",
@@ -8021,10 +9765,26 @@
   "take": 0,
   "ok": true
  },
+ "a9207d8f.mp3": {
+  "text": "Vorsicht, heiß!",
+  "voice": "f",
+  "heard": "Vorsicht heiß!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a96073a4.mp3": {
   "text": "Kannst du mir helfen?",
   "voice": "f",
   "heard": "Kannst du mir helfen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a99526e5.mp3": {
+  "text": "Ich suche einen Job am Wochenende. In der Woche besuche ich einen Deutschkurs.",
+  "voice": "m",
+  "heard": "Ich suche einen Job am Wochenende. In der Woche besuche ich einen Deutschkurs.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -8097,10 +9857,34 @@
   "heard": "alt",
   "ok": true
  },
+ "aae2c69a.mp3": {
+  "text": "die Schule, die Schulen",
+  "voice": "m",
+  "heard": "Die Schule, die Schulen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ab11dab4.mp3": {
+  "text": "Gut! Ich arbeite im Supermarkt, fünf Tage in der Woche.",
+  "voice": "m",
+  "heard": "Du, ich arbeite im Supermarkt fünf Tage in der Woche.",
+  "score": 0.89,
+  "take": 1,
+  "ok": false
+ },
  "ab4c46fe.mp3": {
   "text": "Wie alt ist dein Sohn?",
   "voice": "f",
   "heard": "Wie alt ist dein Sohn?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ab73e1f1.mp3": {
+  "text": "Steht bitte auf!",
+  "voice": "m",
+  "heard": "steht bitte auf.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -8159,6 +9943,22 @@
   "take": 0,
   "ok": true
  },
+ "ac988721.mp3": {
+  "text": "Gestern habe ich viel gearbeitet.",
+  "voice": "f",
+  "heard": "Gestern habe ich viel gearbeitet.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ac9aa0e9.mp3": {
+  "text": "Ich kann Auto fahren.",
+  "voice": "m",
+  "heard": "Ich kann Auto fahren.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "acb5ce7f.mp3": {
   "text": "die Entschuldigung, die Entschuldigungen",
   "voice": "m",
@@ -8177,6 +9977,14 @@
   "text": "Um wie viel Uhr?",
   "voice": "m",
   "heard": "Um wie viel Uhr?",
+  "ok": true
+ },
+ "ad2f33cc.mp3": {
+  "text": "Ich habe eine halbe Stunde Pause.",
+  "voice": "m",
+  "heard": "Ich habe eine halbe Stunde Pause.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "ad35f099.mp3": {
@@ -8229,6 +10037,14 @@
   "take": 0,
   "ok": true
  },
+ "ae85ba80.mp3": {
+  "text": "Was hast du gestern gemacht?",
+  "voice": "m",
+  "heard": "Was hast du gestern gemacht?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "ae9bf0ca.mp3": {
   "text": "Ja, sehr gut, danke!",
   "voice": "f",
@@ -8269,6 +10085,14 @@
   "take": 1,
   "ok": true
  },
+ "af2be091.mp3": {
+  "text": "der Arzt, die Ärzte",
+  "voice": "m",
+  "heard": "Der Arzt, die Ärzte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "af38cf25.mp3": {
   "text": "Rauchen ist verboten.",
   "voice": "m",
@@ -8291,10 +10115,26 @@
   "heard": "Ich lerne Deutsch.",
   "ok": true
  },
+ "af81156c.mp3": {
+  "text": "Die Firma sucht einen Fahrer.",
+  "voice": "f",
+  "heard": "Die Firma sucht einen Fahrer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "af95d0fb.mp3": {
   "text": "die Zahl, die Zahlen",
   "voice": "m",
   "heard": "Die Zahl, die Zahlen.",
+  "ok": true
+ },
+ "afb85bd1.mp3": {
+  "text": "Ja, gern.",
+  "voice": "m",
+  "heard": "Ja, gern.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "afecae1f.mp3": {
@@ -8331,6 +10171,30 @@
   "text": "Guten Tag! Haben Sie am Freitag einen Termin?",
   "voice": "f",
   "heard": "Guten Tag, haben Sie am Freitag einen Termin.",
+  "ok": true
+ },
+ "b05d9155.mp3": {
+  "text": "Ich arbeite gern im Team.",
+  "voice": "m",
+  "heard": "Ich arbeite gerne im Team.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
+ "b08211a8.mp3": {
+  "text": "Wie sind deine Kollegen? Sie sind sehr nett.",
+  "voice": "m",
+  "heard": "Wie sind deine Kollegen? Sie sind sehr nett.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b094f1d0.mp3": {
+  "text": "Ich habe schon in einer Bäckerei gearbeitet und ich kann früh aufstehen.",
+  "voice": "m",
+  "heard": "Ich habe schon in einer Bäckerei gearbeitet und ich kann früh aufstehen.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "b0beb336.mp3": {
@@ -8373,6 +10237,14 @@
   "take": 0,
   "ok": true
  },
+ "b13ce850.mp3": {
+  "text": "Er will Arzt werden.",
+  "voice": "f",
+  "heard": "Er will Arzt werden.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b1a4a88d.mp3": {
   "text": "Was kostet das?",
   "voice": "f",
@@ -8385,6 +10257,14 @@
   "text": "vermieten",
   "voice": "m",
   "heard": "vermieten",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b1a5cfae.mp3": {
+  "text": "Entschuldigung, das verstehe ich nicht.",
+  "voice": "m",
+  "heard": "Entschuldigung, das verstehe ich nicht.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -8463,6 +10343,14 @@
   "take": 0,
   "ok": true
  },
+ "b2a0ade9.mp3": {
+  "text": "Ich bin Ingenieur. Ich arbeite bei einer Baufirma.",
+  "voice": "m",
+  "heard": "Ich bin Ingenieur. Ich arbeite bei einer Baufirma.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b2d33233.mp3": {
   "text": "Ich heiße Karim.",
   "voice": "f",
@@ -8507,6 +10395,14 @@
   "text": "Ich bin jetzt dreißig.",
   "voice": "f",
   "heard": "Ich bin jetzt 30.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b3b85200.mp3": {
+  "text": "Ich habe das nicht geglaubt.",
+  "voice": "f",
+  "heard": "Ich habe das nicht geglaubt.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -8619,10 +10515,34 @@
   "heard": "Sprechen Sie Englisch?",
   "ok": true
  },
+ "b596a931.mp3": {
+  "text": "Zeig mal! Ich möchte die Firma gleich anrufen.",
+  "voice": "m",
+  "heard": "Zeig mal, ich möchte die Firma gleich anrufen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b5df4aa4.mp3": {
   "text": "Im Sommer! Schön.",
   "voice": "m",
   "heard": "Im Sommer. Schön.",
+  "ok": true
+ },
+ "b5e25d9d.mp3": {
+  "text": "Am Samstag und am Sonntag habe ich frei.",
+  "voice": "m",
+  "heard": "An Samstag und am Sonntag habe ich frei.",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
+ "b5fde4cc.mp3": {
+  "text": "verstehen",
+  "voice": "m",
+  "heard": "Verstehen.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "b61f1720.mp3": {
@@ -8680,6 +10600,14 @@
   "score": 0.8,
   "take": 0,
   "ok": false
+ },
+ "b767aa26.mp3": {
+  "text": "Mein Bruder ist Fahrer.",
+  "voice": "f",
+  "heard": "Mein Bruder ist Fahrer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "b77b2189.mp3": {
   "text": "danke für die Einladung!",
@@ -8803,6 +10731,14 @@
   "take": 0,
   "ok": true
  },
+ "b915872e.mp3": {
+  "text": "Ich suche eine Stelle als Fahrer.",
+  "voice": "m",
+  "heard": "Ich suche eine Stelle als Fahrer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b9294cd6.mp3": {
   "text": "Mein Opa trinkt gern Tee.",
   "voice": "f",
@@ -8843,6 +10779,14 @@
   "text": "Entschuldigung, die Suppe ist leider kalt.",
   "voice": "f",
   "heard": "Entschuldigung, die Suppe ist leider kalt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b9d3a9d6.mp3": {
+  "text": "Können Sie das noch einmal sagen?",
+  "voice": "m",
+  "heard": "Können Sie das noch einmal sagen?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -8989,6 +10933,14 @@
   "take": 0,
   "ok": true
  },
+ "bbdc0d0d.mp3": {
+  "text": "Meine Schwester ist Studentin. Sie studiert Medizin.",
+  "voice": "m",
+  "heard": "Meine Schwester ist Studentin. Sie studiert Medizin.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "bc05becf.mp3": {
   "text": "Wie alt ist deine Tochter?",
   "voice": "m",
@@ -9051,6 +11003,14 @@
   "take": 0,
   "ok": true
  },
+ "bd840ec8.mp3": {
+  "text": "Ich verdiene nicht viel.",
+  "voice": "m",
+  "heard": "Ich verdiene nicht viel.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "bdb1071b.mp3": {
   "text": "Hallo, wie geht's?",
   "voice": "f",
@@ -9103,6 +11063,14 @@
   "take": 0,
   "ok": true
  },
+ "bed1eb04.mp3": {
+  "text": "Und kommen Sie um zwölf Uhr in die Küche. Wir essen zusammen.",
+  "voice": "f",
+  "heard": "und kommen sie um 12 Uhr in die Küche. Wir essen zusammen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "bed4d306.mp3": {
   "text": "Ich kann am Freitag kommen.",
   "voice": "f",
@@ -9119,6 +11087,14 @@
   "take": 0,
   "ok": true
  },
+ "bf336826.mp3": {
+  "text": "Um zwölf habe ich Pause.",
+  "voice": "f",
+  "heard": "Und zwölf habe ich Pause.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
  "bf598db5.mp3": {
   "text": "der Aufzug, die Aufzüge",
   "voice": "m",
@@ -9131,6 +11107,14 @@
   "text": "Der Zug ist pünktlich.",
   "voice": "f",
   "heard": "Der Zug ist pünktlich.",
+  "ok": true
+ },
+ "bf8fbc7c.mp3": {
+  "text": "Nimm bitte einen Stuhl!",
+  "voice": "f",
+  "heard": "nimm bitte einen Stuhl.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "bf91dfca.mp3": {
@@ -9151,6 +11135,14 @@
   "text": "Deine Eltern sind sehr nett.",
   "voice": "f",
   "heard": "Deine Eltern sind sehr nett.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c032f456.mp3": {
+  "text": "Ich habe Deutsch gelernt und am Abend einen Film gesehen.",
+  "voice": "m",
+  "heard": "Ich habe Deutsch gelernt und am Abend einen Film gesehen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -9201,6 +11193,14 @@
   "take": 0,
   "ok": true
  },
+ "c0a4fbfc.mp3": {
+  "text": "Ich habe in Kairo zwei Jahre in einem Restaurant gearbeitet.",
+  "voice": "m",
+  "heard": "Ich habe in Cairo zwei Jahre in einem Restaurant gearbeitet.",
+  "score": 0.89,
+  "take": 0,
+  "ok": false
+ },
  "c0b58742.mp3": {
   "text": "Hier darf man nicht rauchen.",
   "voice": "f",
@@ -9213,6 +11213,30 @@
   "text": "Wo ist die Milch?",
   "voice": "m",
   "heard": "Wo ist die Milch?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c0d87faf.mp3": {
+  "text": "die Verkäuferin, die Verkäuferinnen",
+  "voice": "m",
+  "heard": "Die Verkäuferinnen, die Verkäuferinnen.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
+ "c130f769.mp3": {
+  "text": "Halt! Stopp!",
+  "voice": "m",
+  "heard": "Halt! Stopp!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c15f3c4e.mp3": {
+  "text": "Ich kann gut mit Kunden sprechen und ich lerne Deutsch.",
+  "voice": "m",
+  "heard": "Ich kann gut mit Kunden sprechen und ich lerne Deutsch.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -9353,6 +11377,14 @@
   "take": 0,
   "ok": true
  },
+ "c35440b6.mp3": {
+  "text": "Sie arbeitet bei einer Firma.",
+  "voice": "f",
+  "heard": "Sie arbeitet bei einer Firma.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c35adee0.mp3": {
   "text": "Mein Name ist Lang, Peter Lang. Woher kommen Sie?",
   "voice": "m",
@@ -9448,6 +11480,14 @@
   "voice": "m",
   "heard": "Hallo Jan. Ich bin Mona aus Cairo. Ich lerne Deutsch. Du lernst Arabisch, richtig?",
   "ok": false
+ },
+ "c51ecdf3.mp3": {
+  "text": "Ist dein Chef freundlich? Ja, er ist sehr freundlich.",
+  "voice": "m",
+  "heard": "Ist dein Chef freundlich? Ja, er ist sehr freundlich.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "c55beb89.mp3": {
   "text": "Ich gratuliere dir!",
@@ -9683,6 +11723,14 @@
   "heard": "und",
   "ok": true
  },
+ "ca40d624.mp3": {
+  "text": "In einem Krankenhaus in Köln. Und Sie? Sind Sie nur Lehrerin?",
+  "voice": "f",
+  "heard": "in einen Krankenhaus in Köln und sie sind sie nur Lehrerinnen.",
+  "score": 0.82,
+  "take": 0,
+  "ok": false
+ },
  "ca418c8f.mp3": {
   "text": "null, eins, sieben, sechs, drei, vier, acht, zwei",
   "voice": "m",
@@ -9771,6 +11819,14 @@
   "take": 0,
   "ok": true
  },
+ "cb5ca6c1.mp3": {
+  "text": "Die Aufgabe ist leicht.",
+  "voice": "f",
+  "heard": "Die Aufgabe ist leicht.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "cb85f136.mp3": {
   "text": "Danke! Der Bus kommt um halb drei.",
   "voice": "m",
@@ -9844,6 +11900,14 @@
   "score": 0.83,
   "take": 0,
   "ok": false
+ },
+ "cd34bdc7.mp3": {
+  "text": "Na, wie ist der neue Job?",
+  "voice": "f",
+  "heard": "Na, wie ist der neue Job?",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "cd45fa94.mp3": {
   "text": "bitte",
@@ -9934,6 +11998,14 @@
   "voice": "m",
   "heard": "Der Name, die Namen.",
   "ok": true
+ },
+ "ce8ab5ff.mp3": {
+  "text": "Um zwölf habe ich eine halbe Stunde Pause.",
+  "voice": "m",
+  "heard": "Und 12 habe ich eine halbe Stunde Pause.",
+  "score": 0.86,
+  "take": 0,
+  "ok": false
  },
  "ce8e46a3.mp3": {
   "text": "Heute Abend habe ich Zeit.",
@@ -10047,6 +12119,14 @@
   "take": 0,
   "ok": false
  },
+ "d026bf77.mp3": {
+  "text": "Wer ist hier zuständig?",
+  "voice": "m",
+  "heard": "Wer ist hier zuständig?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d12a9005.mp3": {
   "text": "Es ist fünf nach acht.",
   "voice": "f",
@@ -10065,6 +12145,14 @@
   "text": "Das Wasser ist kalt.",
   "voice": "f",
   "heard": "Das Wasser ist kalt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "d16d6e7a.mp3": {
+  "text": "Am Wochenende bin ich nach Hamburg gefahren. Dort habe ich meine Freundin besucht.",
+  "voice": "f",
+  "heard": "Am Wochenende bin ich nach Hamburg gefahren. Dort habe ich meine Freundin besucht.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -10097,6 +12185,14 @@
   "text": "Am Sonntag ist das Geschäft geschlossen.",
   "voice": "f",
   "heard": "Am Sonntag ist das Geschäft geschlossen.",
+  "ok": true
+ },
+ "d266e9d9.mp3": {
+  "text": "Mein Chef ist sehr nett.",
+  "voice": "f",
+  "heard": "Mein Chef ist sehr nett.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "d2daeb45.mp3": {
@@ -10149,10 +12245,26 @@
   "take": 0,
   "ok": false
  },
+ "d3dd8783.mp3": {
+  "text": "Achtung, Stufe!",
+  "voice": "f",
+  "heard": "Achtung, Stufe!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d3f176f6.mp3": {
   "text": "das Land, die Länder",
   "voice": "m",
   "heard": "Das Land, die Länder.",
+  "ok": true
+ },
+ "d42e3fd5.mp3": {
+  "text": "Mein Bruder arbeitet als Fahrer.",
+  "voice": "m",
+  "heard": "Mein Bruder arbeitet als Fahrer.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "d44a9b50.mp3": {
@@ -10265,6 +12377,14 @@
   "heard": "Am Abend rufe ich meine Mutter an.",
   "ok": true
  },
+ "d5dccf9d.mp3": {
+  "text": "Unsere Lehrerin ist sehr nett.",
+  "voice": "f",
+  "heard": "Unsere Lehrerin ist sehr nett.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d5f2aa92.mp3": {
   "text": "Nour Punkt Said.",
   "voice": "f",
@@ -10272,6 +12392,14 @@
   "score": 0.33,
   "take": 0,
   "ok": false
+ },
+ "d6020051.mp3": {
+  "text": "Ja, eine halbe Stunde. Um zehn Uhr.",
+  "voice": "m",
+  "heard": "Ja, eine halbe Stunde, um 10 Uhr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "d61708cd.mp3": {
   "text": "Das ist meine Mutter.",
@@ -10333,10 +12461,26 @@
   "take": 0,
   "ok": true
  },
+ "d6e7bca8.mp3": {
+  "text": "Um fünf habe ich Feierabend.",
+  "voice": "f",
+  "heard": "um fünf habe ich feierabend",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "d6f56940.mp3": {
   "text": "Und am Nachmittag?",
   "voice": "m",
   "heard": "und am Nachmittag",
+  "ok": true
+ },
+ "d6fd0f74.mp3": {
+  "text": "schicken",
+  "voice": "m",
+  "heard": "Schicken!",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "d7211e6a.mp3": {
@@ -10349,6 +12493,14 @@
   "text": "Karim Hassan",
   "voice": "m",
   "heard": "Karim Hassan",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "d7e7dc8e.mp3": {
+  "text": "Wie bitte? Können Sie das noch einmal sagen?",
+  "voice": "m",
+  "heard": "Wie bitte? Können Sie das noch einmal sagen?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -10398,6 +12550,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "d8698ce5.mp3": {
+  "text": "die Lehrerin, die Lehrerinnen",
+  "voice": "m",
+  "heard": "Die Lehrerinnen, die Lehrerinnen.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
  },
  "d88dea1a.mp3": {
   "text": "Guten Abend! Ich bin der neue Nachbar.",
@@ -10489,6 +12649,14 @@
   "text": "alles",
   "voice": "m",
   "heard": "Alles.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "dad8096b.mp3": {
+  "text": "die Praxis, die Praxen",
+  "voice": "m",
+  "heard": "Die Praxis, die Praxen",
   "score": 1,
   "take": 0,
   "ok": true
@@ -10589,6 +12757,14 @@
   "heard": "Welches Datum ist heute?",
   "ok": true
  },
+ "dc542ff6.mp3": {
+  "text": "Wie viele Tage Urlaub hast du?",
+  "voice": "m",
+  "heard": "Wie viele Tage urlaub hast du?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "dc663849.mp3": {
   "text": "Meine Familie ist groß.",
   "voice": "f",
@@ -10617,11 +12793,35 @@
   "take": 0,
   "ok": true
  },
+ "dcc50058.mp3": {
+  "text": "Ich kann heute nicht kommen.",
+  "voice": "m",
+  "heard": "Ich kann heute nicht kommen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "dcdeee8a.mp3": {
   "text": "wo",
   "voice": "m",
   "heard": "Boah.",
   "ok": false
+ },
+ "dce4414e.mp3": {
+  "text": "Ich habe viel gearbeitet.",
+  "voice": "m",
+  "heard": "Ich habe viel gearbeitet.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "dcf7391b.mp3": {
+  "text": "Was willst du in Deutschland machen?",
+  "voice": "f",
+  "heard": "Was willst du in Deutschland machen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "dd438437.mp3": {
   "text": "anrufen",
@@ -10709,6 +12909,14 @@
   "take": 0,
   "ok": true
  },
+ "de7c3841.mp3": {
+  "text": "Er kann gut kochen.",
+  "voice": "m",
+  "heard": "Er kann gut kochen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "de95985b.mp3": {
   "text": "Freut mich auch! Das ist Herr Braun, mein Lehrer.",
   "voice": "m",
@@ -10755,6 +12963,14 @@
   "take": 0,
   "ok": true
  },
+ "df0947a1.mp3": {
+  "text": "Was machst du nach der Arbeit?",
+  "voice": "m",
+  "heard": "Was machst du nach der Arbeit?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "df10e73e.mp3": {
   "text": "Die Nachbarin heißt Frau Lang.",
   "voice": "f",
@@ -10762,6 +12978,14 @@
   "score": 0.8,
   "take": 0,
   "ok": false
+ },
+ "df2b6691.mp3": {
+  "text": "bleiben",
+  "voice": "m",
+  "heard": "Bleiben",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "df6020d8.mp3": {
   "text": "Ja, natürlich.",
@@ -10789,6 +13013,14 @@
   "text": "das Café, die Cafés",
   "voice": "m",
   "heard": "Das Café, die Cafés.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "e06bb7ef.mp3": {
+  "text": "Am Samstag und am Sonntag habe ich Zeit.",
+  "voice": "m",
+  "heard": "Am Samstag und am Sonntag habe ich Zeit.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -11027,10 +13259,26 @@
   "take": 0,
   "ok": true
  },
+ "e60a2512.mp3": {
+  "text": "die Vorsicht",
+  "voice": "m",
+  "heard": "Die Vorsicht.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e639c1da.mp3": {
   "text": "Welche Sprachen sprechen Sie?",
   "voice": "m",
   "heard": "Welche Sprachen sprechen Sie?",
+  "ok": true
+ },
+ "e6444437.mp3": {
+  "text": "Mein Onkel hat ein Geschäft in Alexandria.",
+  "voice": "m",
+  "heard": "Mein Onkel hat ein Geschäft in Alexandria.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "e690206f.mp3": {
@@ -11038,6 +13286,14 @@
   "voice": "m",
   "heard": "01763402 und 80950 0 1 7 6 3 4 8 2 9 5 0",
   "ok": false
+ },
+ "e6932299.mp3": {
+  "text": "Ich arbeite siebenunddreißig Stunden in der Woche.",
+  "voice": "m",
+  "heard": "Ich arbeite 37 Stunden in der Woche.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "e6c1b727.mp3": {
   "text": "Hat die Wohnung einen Balkon?",
@@ -11145,6 +13401,14 @@
   "take": 0,
   "ok": true
  },
+ "e8c9bc71.mp3": {
+  "text": "Vorgestern war ich krank.",
+  "voice": "f",
+  "heard": "Vorgestern war ich krank.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e8d9dd4b.mp3": {
   "text": "Eine Cola, bitte.",
   "voice": "f",
@@ -11191,6 +13455,14 @@
   "take": 0,
   "ok": true
  },
+ "e91b7dc1.mp3": {
+  "text": "Ich bin Ärztin. Ich arbeite in einer Praxis, nicht im Krankenhaus.",
+  "voice": "f",
+  "heard": "Ich bin Ärztin. Ich arbeite in einer Praxis, nicht im Krankenhaus.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e91c28ec.mp3": {
   "text": "Das macht zwölf Euro achtzig.",
   "voice": "f",
@@ -11205,11 +13477,27 @@
   "heard": "Heute ist der 1. Juni.",
   "ok": false
  },
+ "e985fbb5.mp3": {
+  "text": "warten",
+  "voice": "m",
+  "heard": "warten",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e99658c2.mp3": {
   "text": "Ich brauche einen Termin.",
   "voice": "m",
   "heard": "Ich brauche einen Termin.",
   "ok": true
+ },
+ "e996d367.mp3": {
+  "text": "Ich will Krankenschwester werden.",
+  "voice": "m",
+  "heard": "Ich will kranken Schwester werden.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
  },
  "e9bcddac.mp3": {
   "text": "das Mittagessen",
@@ -11277,6 +13565,14 @@
   "text": "Ich trinke Wasser.",
   "voice": "m",
   "heard": "Ich trinke Wasser.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "eb207c81.mp3": {
+  "text": "das Formular, die Formulare",
+  "voice": "m",
+  "heard": "das Formular, die Formulare.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -11425,6 +13721,14 @@
   "take": 0,
   "ok": true
  },
+ "ece1c4b6.mp3": {
+  "text": "Die Arbeit ist sehr interessant.",
+  "voice": "f",
+  "heard": "Die Arbeit ist sehr interessant.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "ecf5f8ea.mp3": {
   "text": "Was isst du zum Frühstück?",
   "voice": "f",
@@ -11469,6 +13773,14 @@
   "heard": "Danke gut. Und dir!",
   "ok": true
  },
+ "ed849a7e.mp3": {
+  "text": "Bitte füllen Sie das Formular aus.",
+  "voice": "f",
+  "heard": "Bitte füllen Sie das Formular aus.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "eda33c60.mp3": {
   "text": "Ist das dein Sohn? — Nein, das ist mein Bruder. Mein Sohn ist noch ein Baby.",
   "voice": "f",
@@ -11485,6 +13797,22 @@
   "take": 0,
   "ok": true
  },
+ "edd7670e.mp3": {
+  "text": "Ja, ich komme.",
+  "voice": "m",
+  "heard": "Ja, ich komme.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "eddb9b09.mp3": {
+  "text": "Schreiben Sie die Nummer auf!",
+  "voice": "m",
+  "heard": "Schreiben Sie die Nummer auf.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "edf39887.mp3": {
   "text": "Dein Omar",
   "voice": "m",
@@ -11492,6 +13820,14 @@
   "score": 0.5,
   "take": 0,
   "ok": false
+ },
+ "ee0be870.mp3": {
+  "text": "Die Arbeit ist anstrengend.",
+  "voice": "m",
+  "heard": "Die Arbeit ist anstrengend.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "ee0e3333.mp3": {
   "text": "Hier ist die Speisekarte. Was möchten Sie trinken?",
@@ -11539,10 +13875,26 @@
   "take": 0,
   "ok": true
  },
+ "eec186e7.mp3": {
+  "text": "das Büro, die Büros",
+  "voice": "m",
+  "heard": "Das Büro, die Büros.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "eec86ec1.mp3": {
   "text": "Das Frühstück ist um sieben Uhr.",
   "voice": "f",
   "heard": "Das Frühstück ist um 7 Uhr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "eef761c6.mp3": {
+  "text": "Ich will Ärztin werden.",
+  "voice": "m",
+  "heard": "Ich will Ärztin werden.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -11615,6 +13967,22 @@
   "take": 0,
   "ok": false
  },
+ "efcee0a3.mp3": {
+  "text": "Was hast du gestern gemacht?",
+  "voice": "f",
+  "heard": "Was hast du gestern gemacht?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "effab895.mp3": {
+  "text": "Er ist leider arbeitslos.",
+  "voice": "f",
+  "heard": "Er ist leider arbeitslos.",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "f04cafd7.mp3": {
   "text": "Wir laden euch zum Essen ein.",
   "voice": "m",
@@ -11623,6 +13991,14 @@
   "take": 0,
   "ok": true
  },
+ "f072cb31.mp3": {
+  "text": "Ich fange um acht an.",
+  "voice": "f",
+  "heard": "Ich fange um Macht an.",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
  "f0b1fc77.mp3": {
   "text": "Ein Glas Wasser, bitte!",
   "voice": "m",
@@ -11630,6 +14006,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "f0cf8d24.mp3": {
+  "text": "Hallo Karim, hier ist Frau Berger. Morgen müssen Sie nicht um acht kommen, sondern erst um zehn. Wir haben am Morgen ein Meeting. Bis morgen!",
+  "voice": "f",
+  "heard": "Hallo Karim, hier ist Frau Berger. Morgen müssen Sie nicht um 8.00 Uhr kommen, sondern erst um 10.00 Uhr. Wir haben am Morgen ein Meeting. Bis Morgen.",
+  "score": 1,
+  "take": 0,
+  "ok": false
  },
  "f0d76d5f.mp3": {
   "text": "Oh, vielen Dank! Das ist aber lieb von dir!",
@@ -11656,6 +14040,14 @@
   "voice": "f",
   "heard": "Ich fahre für drei Wochen nach Cairo.",
   "ok": false
+ },
+ "f13a0b85.mp3": {
+  "text": "Hier in Deutschland arbeite ich jetzt als Fahrer.",
+  "voice": "m",
+  "heard": "Hier in Deutschland arbeite ich jetzt als Fahrer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "f1781a20.mp3": {
   "text": "Isst du gern Fisch?",
@@ -11703,6 +14095,22 @@
   "take": 0,
   "ok": true
  },
+ "f2a1b39d.mp3": {
+  "text": "Ich war krank.",
+  "voice": "m",
+  "heard": "Ich war krank.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f2cda587.mp3": {
+  "text": "Der Arzt sagt, ich muss bis Freitag zu Hause bleiben.",
+  "voice": "m",
+  "heard": "Der Arzt sagt, ich muss bis Freitag zur Hose bleiben.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
  "f2e24786.mp3": {
   "text": "noch einmal",
   "voice": "m",
@@ -11731,6 +14139,14 @@
   "take": 0,
   "ok": true
  },
+ "f33c3cd7.mp3": {
+  "text": "Ich arbeite bei einer Firma in Berlin.",
+  "voice": "m",
+  "heard": "Ich arbeite bei einer Firma in Berlin.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f33e0b53.mp3": {
   "text": "Die Miete ist zu teuer.",
   "voice": "f",
@@ -11753,6 +14169,22 @@
   "heard": "Die Party ist am Samstag.",
   "score": 1,
   "take": 1,
+  "ok": true
+ },
+ "f3a84ab8.mp3": {
+  "text": "Und Sie, Frau Kamal?",
+  "voice": "f",
+  "heard": "und Sie Frau Kamal.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f3db17d3.mp3": {
+  "text": "Hier. Und pass auf, die Kartons sind schwer!",
+  "voice": "m",
+  "heard": "Hier und pass auf, die Kartons sind schwer.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "f3f30e34.mp3": {
@@ -11798,6 +14230,14 @@
   "voice": "m",
   "heard": "Und wo wohnen sie jetzt?",
   "ok": true
+ },
+ "f513284b.mp3": {
+  "text": "Lea arbeitet am Mittwoch nicht.",
+  "voice": "m",
+  "heard": "Liehe arbeitet am Mittwoch nicht.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
  },
  "f53aa31b.mp3": {
   "text": "Ja, ab März.",
@@ -11891,6 +14331,22 @@
   "take": 0,
   "ok": true
  },
+ "f6da742c.mp3": {
+  "text": "Liebe Frau Berger,",
+  "voice": "m",
+  "heard": "Liebe Frau Berger",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f6f394c3.mp3": {
+  "text": "Am Sonntag bin ich nach Bonn gefahren. Meine Schwester wohnt da.",
+  "voice": "m",
+  "heard": "Am Sonntag bin ich nach Bonn gefahren. Meine Schwester wohnt da.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f70fe8de.mp3": {
   "text": "Guten Abend! Ich heiße Karim.",
   "voice": "m",
@@ -11917,6 +14373,14 @@
   "text": "Ich hätte gern ein halbes Kilo Käse und einen Liter Milch.",
   "voice": "f",
   "heard": "Ich hätte gern ein halbes Kilo Käse und einen Liter Milch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f764c0ac.mp3": {
+  "text": "der Chef, die Chefs",
+  "voice": "m",
+  "heard": "Der Chef, die Chefs.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -11951,6 +14415,14 @@
   "take": 0,
   "ok": true
  },
+ "f7e580f3.mp3": {
+  "text": "Warte bitte!",
+  "voice": "f",
+  "heard": "Warte bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f7fc3fc8.mp3": {
   "text": "Der Tisch steht am Fenster.",
   "voice": "f",
@@ -11963,6 +14435,14 @@
   "text": "Ich kaufe Brot.",
   "voice": "f",
   "heard": "Ich kaufe Brot.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f86a47cb.mp3": {
+  "text": "Mach bitte das Fenster auf!",
+  "voice": "m",
+  "heard": "Mach bitte das Fenster auf.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -12019,6 +14499,14 @@
   "text": "Wie heißt dein Sohn?",
   "voice": "m",
   "heard": "Wie heißt dein Sohn?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f9f8cefd.mp3": {
+  "text": "Ich komme morgen wieder.",
+  "voice": "m",
+  "heard": "Ich komme morgen wieder.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -12091,6 +14579,14 @@
   "text": "Ich bin dreißig Jahre alt.",
   "voice": "m",
   "heard": "Ich bin 30 Jahre alt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "fb71b0d8.mp3": {
+  "text": "Er ist Student in Berlin.",
+  "voice": "f",
+  "heard": "Er ist Student in Berlin.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -12271,10 +14767,26 @@
   "take": 0,
   "ok": true
  },
+ "fe4f47a9.mp3": {
+  "text": "Ich bin Krankenschwester. Aber hier in Deutschland arbeite ich jetzt als Pflegehelferin.",
+  "voice": "f",
+  "heard": "Ich bin krank, kein Schwester. Aber hier in Deutschland arbeite ich jetzt als Fliegeheferin.",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
+ },
  "fe51cfe2.mp3": {
   "text": "putzen",
   "voice": "m",
   "heard": "Putzen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "fe74ab20.mp3": {
+  "text": "Der Kunde wartet.",
+  "voice": "f",
+  "heard": "Der Kunde wartet.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -12285,6 +14797,14 @@
   "heard": "Was trinkst du gern?",
   "score": 1,
   "take": 0,
+  "ok": true
+ },
+ "fe9c0343.mp3": {
+  "text": "der Lehrer, die Lehrer",
+  "voice": "m",
+  "heard": "Der Lehrer, die Lehrer.",
+  "score": 1,
+  "take": 2,
   "ok": true
  },
  "feae2b4e.mp3": {
@@ -12305,6 +14825,22 @@
   "text": "Ja, ich bin verheiratet.",
   "voice": "m",
   "heard": "Ja, ich bin verheiratet.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ff4a8bf0.mp3": {
+  "text": "Was ist Ihr Beruf?",
+  "voice": "f",
+  "heard": "Was ist Ihr Beruf?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ff5a2e3d.mp3": {
+  "text": "Ich heiße Mona Adel und bin vierundzwanzig Jahre alt.",
+  "voice": "m",
+  "heard": "Ich heiße Mona Adel und bin 24 Jahre alt.",
   "score": 1,
   "take": 0,
   "ok": true
