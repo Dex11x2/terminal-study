@@ -1,7 +1,7 @@
 MORE("dea1", [
     {
       t: "الصحة (Gesundheit)",
-      l: 1,
+      l: 2,
       pre: ["dea1/Rufen Sie bitte an!", "dea1/Können Sie mir helfen?"],
       n: R`تقول إيه اللي بيوجعك وإنت حاسس بإيه، وتاخد ميعاد عند الدكتور وتملا بياناتك، وتفهم كلام الدكتور وتعليماته، وتشتري الدوا من الصيدلية وتفهم إمتى تاخده، وتعيش صحي، وتطلب الإسعاف لو حصل حاجة. والقواعد هنا: [[mir]] و [[dir]] مع [[wehtun]] و [[es geht]]، و [[seit]] ([[seit drei Tagen]])، و [[sollen]] ([[Sie sollen viel trinken]])، وحروف الوقت [[nach]] و [[vor]] و [[für]] ([[nach dem Essen]]، [[für eine Woche]])، و [[gut]]/[[besser]]/[[am besten]]. والوحدة بتنتهي بتدريب Hören Teil 1 و Lesen Teil 3 و Sprechen Teil 3 على موضوع الصحة.`,
       goal: [R`تقول حاسس بإيه وإيه اللي بيوجعك ([[Mir geht es nicht gut]]، [[Mein Kopf tut weh]]، [[Ich habe Fieber]])، وتسمّي أجزاء الجسم`, R`تاخد ميعاد عند الدكتور في التليفون، وتدّي بياناتك في الاستقبال وتملا الاستمارة`, R`تفهم أسئلة الدكتور وتجاوبها ([[Seit wann?]] ← [[Seit drei Tagen]])، وتفهم المطلوب منك بـ [[sollen]]`, R`تشتري دوا وتفهم إمتى وإزاي تاخده ([[dreimal am Tag nach dem Essen]]، [[für eine Woche]])، وتقرا أهم حاجة في نشرة الدوا`, R`تتكلم عن عاداتك الصحية ([[oft]]، [[manchmal]]، [[nie]]، [[besser]])، وتطلب الإسعاف وتقول فين وإيه اللي حصل`, R`تحل Hören Teil 1 و Lesen Teil 3 و Sprechen Teil 3 على موضوع الصحة`],

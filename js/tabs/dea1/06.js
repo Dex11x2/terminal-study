@@ -1,7 +1,7 @@
 MORE("dea1", [
     {
       t: "الشغل (Arbeit und Beruf)",
-      l: 1,
+      l: 2,
       pre: ["dea1/Hier darf man nicht rauchen", "dea1/Prüfung: Sprechen Teil 1"],
       n: R`بتشتغل إيه وفين، ويوم شغلك ماشي إزاي، وتفهم تعليمات المدير وتحذيرات الأمان، وتقرا إعلان وظيفة وتقول عايز تشتغل إيه، وتحكي عملت إيه امبارح، وتبلّغ إنك عيان. والقواعد الكبيرة هنا تلاتة: **الأمر** ([[Rufen Sie bitte an!]]، [[Komm bitte!]])، و [[wollen]] و [[werden]]، وأول **ماضي** حقيقي، الـ Perfekt ([[Ich habe viel gearbeitet]]، [[Ich bin nach Hause gefahren]]). والوحدة بتنتهي بتدريب Schreiben Teil 2 (إيميل اعتذار للشغل) و Hören Teil 3 (رسايل تليفون) و Sprechen Teil 2 على موضوع «Arbeit».`,
       goal: [R`تقول شغلانتك وفين بتشتغل ([[Ich bin Krankenpfleger]]، [[Ich arbeite als Fahrer bei einer Firma]])، وتفرّق الراجل من الست ([[Lehrer]] / [[Lehrerin]])`, R`تحكي يوم شغلك ومواعيده ([[Ich arbeite von acht bis fünf]]، [[Ich habe dreißig Minuten Pause]])، وتفهم جدول ورديات`, R`تفهم تعليمات وتحذيرات بالأمر وترد عليها ([[Schicken Sie bitte die E-Mail!]] ← [[Okay, mache ich.]])، وتطلب الإعادة`, R`تقرا إعلان وظيفة، وتقول عايز تبقى إيه ([[Ich will Ärztin werden]]) وبتعرف تعمل إيه كويس`, R`تحكي عملت إيه بالـ Perfekt ([[Gestern habe ich lange gearbeitet]]، [[Ich bin zu Hause geblieben]])`, R`تكتب إيميل اعتذار للشغل (Schreiben Teil 2)، وتفهم رسايل التليفون (Hören Teil 3)، وتسأل وتجاوب عن الشغل (Sprechen Teil 2)`],

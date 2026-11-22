@@ -1,7 +1,7 @@
 MORE("dea1", [
     {
       t: "المواصلات والمدينة (Verkehr und Stadt)",
-      l: 1,
+      l: 2,
       pre: ["dea1/Das Sofa steht im Wohnzimmer", "dea1/Rufen Sie bitte an!"],
       n: R`تسأل عن الطريق وتفهم الوصف، وتركب الأتوبيس والمترو والقطر، وتشتري تذكرة وتقرا جدول المواعيد وتفهم إعلانات المحطة، وتقول رايح فين وجاي منين، وتتكلم عن الطقس والأجازة والفندق. والقواعد هنا بتكمّل الـ Dativ: [[mit]] و [[zu]] و [[von]] و [[aus]] ([[mit dem Bus]]، [[zum Bahnhof]])، والفرق بين **فين** و **لفين**: [[in der Stadt]] (Dativ) و [[in die Stadt]] (Akkusativ). والوحدة بتنتهي بتدريب Hören Teil 2 (إعلانات المحطة) و Lesen Teil 2 (مواقع سفر) و Schreiben Teil 1 (استمارة حجز).`,
       goal: [R`تسأل عن الطريق وتفهم الوصف ([[Wie komme ich zum Bahnhof?]] ← [[Gehen Sie geradeaus und dann links]])`, R`تقول بتروح بإيه وبتاخد قد إيه ([[Ich fahre mit dem Bus]]، [[Es dauert zwanzig Minuten]])`, R`تشتري تذكرة وتقرا جدول القطر وتفهم الرصيف والتأخير والتغيير ([[Gleis 5]]، [[umsteigen]]، [[Verspätung]])`, R`تفرّق بين فين ولفين ومنين ([[in der Stadt]] / [[in die Stadt]]، [[nach Hause]] / [[zu Hause]]، [[aus Ägypten]])`, R`تتكلم عن الطقس وتحجز أوضة في فندق`, R`تحل Hören Teil 2 و Lesen Teil 2 و Schreiben Teil 1 على موضوع السفر`],

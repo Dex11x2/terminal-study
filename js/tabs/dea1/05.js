@@ -1,7 +1,7 @@
 MORE("dea1", [
     {
       t: "السكن (Wohnen)",
-      l: 1,
+      l: 2,
       pre: ["dea1/Sein Bruder, ihre Schwester", "dea1/Wo finde ich Reis?"],
       n: R`شقتك فيها كام أوضة وشكلها إيه، وفين كل حاجة فيها، وإزاي تقرا إعلان شقة وتتصل تسأل عليها، وتتعرف على جيرانك وتطلب منهم مساعدة، وتفهم قواعد العمارة واليافطات. والقواعد الكبيرة هنا اتنين: **Dativ للمكان** ([[im Wohnzimmer]]، [[auf dem Tisch]]: كنت بتقولها كده من غير ما تعرف ليه، ودلوقتي هتعرف)، والأفعال المساعدة [[können]] و [[müssen]] و [[dürfen]]. والوحدة بتنتهي بـ Lesen Teil 2 (إعلانات ومواقع: تختار المناسب) و Lesen Teil 3 (يافطات: صح ولا غلط).`,
       goal: [R`توصف شقتك وأوضها ([[Meine Wohnung hat drei Zimmer]]، [[Die Küche ist klein, aber hell]])`, R`تقول فين كل حاجة بـ Dativ ([[Das Sofa steht im Wohnzimmer]]، [[Der Schlüssel liegt auf dem Tisch]])`, R`تقرا إعلان شقة باختصاراته، وتتصل تسأل عن الإيجار والمعاينة بـ [[können]] ([[Kann ich die Wohnung sehen?]])`, R`تتعرّف على جيرانك وتطلب مساعدة وتشكر ([[Können Sie mir helfen?]]، [[Danke, das ist nett von Ihnen!]])`, R`تفهم قواعد العمارة واليافطات بـ [[müssen]] و [[dürfen]] و [[man]] ([[Hier darf man nicht rauchen]])`, R`تحل Lesen Teil 2 و Teil 3 بطريقة الامتحان`],

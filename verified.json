@@ -5829,6 +5829,21 @@
   "date": "2026-11-22",
   "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها أو اتنقلت لصوت الراجل)، و Chromium 400px"
  },
+ "dea1|Modelltest 1": {
+  "hash": "87fde02bfdef",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت، و Chromium 400px (عدد الأسئلة ١٥/١٥ في كل امتحان)"
+ },
+ "dea1|Modelltest 2": {
+  "hash": "490a06d1afa7",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت، و Chromium 400px (عدد الأسئلة ١٥/١٥ في كل امتحان)"
+ },
+ "dea1|Modelltest 3": {
+  "hash": "37be72f0da55",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت، و Chromium 400px (عدد الأسئلة ١٥/١٥ في كل امتحان)"
+ },
  "dea1|Prüfung: Hören Teil 1, Lesen Teil 3, Sprechen Teil 3": {
   "hash": "036ae872f014",
   "date": "2026-11-22",
