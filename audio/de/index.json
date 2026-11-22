@@ -1,4 +1,20 @@
 {
+ "00913469.mp3": {
+  "text": "Die Bananen sind billig.",
+  "voice": "f",
+  "heard": "Die Bananen sind billig.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "00df4640.mp3": {
+  "text": "Was kostet die Jacke?",
+  "voice": "m",
+  "heard": "Was kostet die Jacke?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "013cff9b.mp3": {
   "text": "Am Samstag kaufe ich ein.",
   "voice": "f",
@@ -23,10 +39,34 @@
   "take": 0,
   "ok": true
  },
+ "01c9895a.mp3": {
+  "text": "Das macht zwölf Euro.",
+  "voice": "f",
+  "heard": "Das macht 12 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "01e8e029.mp3": {
+  "text": "Ich trinke keinen Wein.",
+  "voice": "f",
+  "heard": "Ich trinke keinen Wein.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "01eec7b7.mp3": {
   "text": "Ich komme aus Ägypten.",
   "voice": "m",
   "heard": "Ich komme aus Ägypten.",
+  "ok": true
+ },
+ "021ed83b.mp3": {
+  "text": "Die Speisekarte, bitte.",
+  "voice": "f",
+  "heard": "Die Speisekarte bitte.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "0296f737.mp3": {
@@ -85,6 +125,30 @@
   "heard": "Am Dienstag habe ich leider keine Zeit. Geht es am Mittwoch.",
   "ok": true
  },
+ "05cf190c.mp3": {
+  "text": "Die Äpfel sind heute im Angebot.",
+  "voice": "m",
+  "heard": "Die Äpfel sind heute im Angebot.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "05f404b7.mp3": {
+  "text": "Die Suppe ist heiß.",
+  "voice": "f",
+  "heard": "Die Suppe ist heiß.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "060bff98.mp3": {
+  "text": "Für mich bitte ein Wasser. Nein, kein Wasser, einen Saft!",
+  "voice": "m",
+  "heard": "Für mich bitte ein Wasser. Nein, kein Wasser. Einen Saft.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "061d5d63.mp3": {
   "text": "Der Kurs fängt um acht an.",
   "voice": "f",
@@ -109,16 +173,80 @@
   "heard": "Der Monat, die Monate.",
   "ok": true
  },
+ "07566931.mp3": {
+  "text": "Das kostet neunundneunzig Cent.",
+  "voice": "m",
+  "heard": "Das kostet 99 Cent.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "07621918.mp3": {
   "text": "Null, eins, fünf, sieben, zwei, acht, vier, sechs, eins, drei, null.",
   "voice": "f",
   "heard": "0, 1, 5, 7, 2, 8, 4, 6, 1, 3, 0.",
   "ok": true
  },
+ "079182b9.mp3": {
+  "text": "Was trinkst du zum Frühstück?",
+  "voice": "m",
+  "heard": "Was trinkst du zum Frühstück?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "079c7ee0.mp3": {
+  "text": "Wann kaufst du ein? Am Samstag.",
+  "voice": "m",
+  "heard": "Wann kaufst du ein? Am Samstag.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "07b7120b.mp3": {
+  "text": "Wir brauchen Öl.",
+  "voice": "f",
+  "heard": "Wir brauchen Öl.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "08427bdd.mp3": {
+  "text": "das Ei, die Eier",
+  "voice": "m",
+  "heard": "Das Ei, die Eier.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "098ff816.mp3": {
+  "text": "Neunundvierzig Euro. Welche Größe haben Sie?",
+  "voice": "f",
+  "heard": "49 Euro. Welche Grüße haben Sie?",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
  "09cc14ec.mp3": {
   "text": "einundzwanzig",
   "voice": "f",
   "heard": "21",
+  "ok": true
+ },
+ "0a1cc8e6.mp3": {
+  "text": "Ja, einen Kaffee und eine Brezel.",
+  "voice": "m",
+  "heard": "Ja, einen Kaffee und eine Bretzel.",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
+ },
+ "0a64574b.mp3": {
+  "text": "Der Apfel ist rot.",
+  "voice": "f",
+  "heard": "Der Apfel ist rot.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "0b2cad8e.mp3": {
@@ -145,6 +273,14 @@
   "heard": "Wir sprechen, ihr sprecht, sie sprechen.",
   "ok": true
  },
+ "0bdd77c4.mp3": {
+  "text": "Ich nehme ein halbes Kilo.",
+  "voice": "f",
+  "heard": "Ich nehme ein halbes Kilo.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "0c0c5d8c.mp3": {
   "text": "dreißig",
   "voice": "f",
@@ -163,10 +299,34 @@
   "heard": "Und das sind Jusuf und Lisa.",
   "ok": false
  },
+ "0d14032b.mp3": {
+  "text": "Ich trinke viel Wasser.",
+  "voice": "f",
+  "heard": "Ich trinke viel Wasser.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "0d1c894c.mp3": {
+  "text": "Wir haben keinen Reis mehr.",
+  "voice": "f",
+  "heard": "Wir haben keinen Reis mehr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "0d341c9d.mp3": {
   "text": "einundzwanzig",
   "voice": "m",
   "heard": "21",
+  "ok": true
+ },
+ "0da5e3d8.mp3": {
+  "text": "Nein, danke. Tschüss!",
+  "voice": "m",
+  "heard": "Nein, danke. Tschüss.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "0ddd4c1f.mp3": {
@@ -175,16 +335,56 @@
   "heard": "Um sieben fährt sie zur Arbeit.",
   "ok": true
  },
+ "0de67c52.mp3": {
+  "text": "Ich esse nicht gern Fleisch.",
+  "voice": "m",
+  "heard": "Ich esse nicht gern Fleisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "0e7cd2a9.mp3": {
   "text": "Ich bin zweiunddreißig Jahre alt.",
   "voice": "m",
   "heard": "Ich bin 32 Jahre alt.",
   "ok": true
  },
+ "0e8b2f4b.mp3": {
+  "text": "Wann gehst du einkaufen?",
+  "voice": "m",
+  "heard": "Wann gehst du einkaufen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "0f1220b2.mp3": {
+  "text": "Das schmeckt sehr gut.",
+  "voice": "m",
+  "heard": "Das schmeckt sehr gut.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "0febe23e.mp3": {
+  "text": "lecker",
+  "voice": "m",
+  "heard": "Lecker!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "10508094.mp3": {
   "text": "Gestern war ich krank.",
   "voice": "f",
   "heard": "Gestern war ich krank.",
+  "ok": true
+ },
+ "10a4bbb3.mp3": {
+  "text": "Ich nehme die Tomatensuppe.",
+  "voice": "f",
+  "heard": "Ich nehme die Tomatensuppe.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "10a71aab.mp3": {
@@ -195,11 +395,27 @@
   "take": 0,
   "ok": false
  },
+ "1102b938.mp3": {
+  "text": "die Butter",
+  "voice": "m",
+  "heard": "Die Butter.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "110dc6f1.mp3": {
   "text": "woher",
   "voice": "m",
   "heard": "War her.",
   "ok": false
+ },
+ "11256c80.mp3": {
+  "text": "Und ich hätte gern das Hähnchen mit Kartoffeln.",
+  "voice": "m",
+  "heard": "Und ich hätte gern das Hähnchen mit Kartoffeln.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "11e2f039.mp3": {
   "text": "Es ist zehn vor neun.",
@@ -245,6 +461,22 @@
   "heard": "Am Mittwoch nur am Vormittag um 10 Uhr.",
   "ok": true
  },
+ "1309323e.mp3": {
+  "text": "Der Kuchen ist lecker.",
+  "voice": "f",
+  "heard": "Der Kuchen ist lecker.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "13129ee4.mp3": {
+  "text": "mehr",
+  "voice": "m",
+  "heard": "Mia.",
+  "score": 0,
+  "take": 0,
+  "ok": false
+ },
  "1329cd86.mp3": {
   "text": "Am Dienstag arbeite ich von acht bis vier.",
   "voice": "m",
@@ -275,6 +507,14 @@
   "heard": "Woher kommen sie?",
   "ok": true
  },
+ "145da007.mp3": {
+  "text": "Ja, bitte.",
+  "voice": "m",
+  "heard": "Ja, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "147b5167.mp3": {
   "text": "Dann frühstücke ich.",
   "voice": "m",
@@ -299,11 +539,27 @@
   "heard": "Ich komme aus der Schweiz, ich spreche Französisch und Deutsch.",
   "ok": true
  },
+ "151c6319.mp3": {
+  "text": "bar",
+  "voice": "m",
+  "heard": "Pa!",
+  "score": 0,
+  "take": 0,
+  "ok": false
+ },
  "1550219e.mp3": {
   "text": "treffen",
   "voice": "m",
   "heard": "Treffen.",
   "ok": true
+ },
+ "155c483a.mp3": {
+  "text": "Einen Kaffee, bitte! Gern.",
+  "voice": "m",
+  "heard": "Einen Kaffee, bitte. Gerne.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
  },
  "15ae6e82.mp3": {
   "text": "Ich spreche Arabisch und Englisch.",
@@ -317,6 +573,22 @@
   "heard": "Hallo, ich heiße Mona.",
   "ok": true
  },
+ "15caa1f3.mp3": {
+  "text": "Es gibt keine Eier mehr.",
+  "voice": "m",
+  "heard": "Es gibt keine Eier mehr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "15ce978f.mp3": {
+  "text": "Am liebsten trinke ich Saft.",
+  "voice": "m",
+  "heard": "Am liebsten trinke ich Saft.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "163085c2.mp3": {
   "text": "sechzehn, siebzehn, sechzig, siebzig",
   "voice": "m",
@@ -327,6 +599,22 @@
   "text": "Tarek: Gern! Ich bin Tarek.",
   "voice": "m",
   "heard": "Tarek, gern. Ich bin Tarek.",
+  "ok": true
+ },
+ "16f55d26.mp3": {
+  "text": "Gemüse ist gesund.",
+  "voice": "f",
+  "heard": "Gemüse ist gesund.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "1729b82b.mp3": {
+  "text": "Ein Wasser, bitte.",
+  "voice": "m",
+  "heard": "Ein Wasser, bitte.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "17309700.mp3": {
@@ -343,10 +631,90 @@
   "take": 0,
   "ok": true
  },
+ "17b2d285.mp3": {
+  "text": "ein Viertelkilo Käse",
+  "voice": "m",
+  "heard": "Ein Viertelkilo Käse.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "17e6599e.mp3": {
+  "text": "Die Suppe kostet fünf Euro fünfzig.",
+  "voice": "m",
+  "heard": "Die Suppe kostet 5,50 Euro.",
+  "score": 1,
+  "take": 1,
+  "ok": false
+ },
+ "18331136.mp3": {
+  "text": "die Flasche, die Flaschen",
+  "voice": "m",
+  "heard": "Die Flasche, die Flaschen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "18388212.mp3": {
   "text": "sprechen",
   "voice": "m",
   "heard": "Sprechen.",
+  "ok": true
+ },
+ "1860d43a.mp3": {
+  "text": "Zum Mittagessen esse ich das oft am Freitag.",
+  "voice": "f",
+  "heard": "Zum Mittagessen esse ich das oft am Fahrtag.",
+  "score": 0.88,
+  "take": 0,
+  "ok": false
+ },
+ "18d22195.mp3": {
+  "text": "billig",
+  "voice": "m",
+  "heard": "Billig.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "191290df.mp3": {
+  "text": "Ich trinke gern Kaffee.",
+  "voice": "m",
+  "heard": "Ich trinke gern Kaffee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "19d1b098.mp3": {
+  "text": "Kaffee. Und du?",
+  "voice": "f",
+  "heard": "Kaffee. Und du?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "19dffc8f.mp3": {
+  "text": "Ich esse Brot mit Käse.",
+  "voice": "f",
+  "heard": "Ich esse Brot mit Käse.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "1a3a403e.mp3": {
+  "text": "Mein Lieblingsessen ist Koschari.",
+  "voice": "m",
+  "heard": "Mein Lieblingsessen ist Koschari.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "1a980eeb.mp3": {
+  "text": "Die Eier sind da hinten rechts.",
+  "voice": "m",
+  "heard": "Die Eier sind da hinten rechts.",
+  "score": 1,
+  "take": 2,
   "ok": true
  },
  "1ab12715.mp3": {
@@ -375,6 +743,14 @@
   "heard": "Schade. Und am Sonntag?",
   "ok": true
  },
+ "1bc6e1c7.mp3": {
+  "text": "Die Jacke ist schwarz.",
+  "voice": "f",
+  "heard": "Die Jacke ist schwarz.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "1c683a6d.mp3": {
   "text": "Auf Wiedersehen, Herr Klein!",
   "voice": "f",
@@ -399,6 +775,14 @@
   "heard": "Der Abend, die Abende.",
   "ok": true
  },
+ "1d390bf8.mp3": {
+  "text": "Ich nehme ein Wasser.",
+  "voice": "m",
+  "heard": "Ich nehme ein Wasser.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "1d3c1088.mp3": {
   "text": "nie",
   "voice": "m",
@@ -410,6 +794,14 @@
   "voice": "f",
   "heard": "Mein Familienname ist Khalil.",
   "ok": true
+ },
+ "1d46bf3c.mp3": {
+  "text": "Ein Kilo Bananen kostet ein Euro neunundneunzig.",
+  "voice": "m",
+  "heard": "Ein Kilo Bananen kostet 1,99 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
  },
  "1de257e6.mp3": {
   "text": "die Nummer, die Nummern",
@@ -423,6 +815,14 @@
   "heard": "0157",
   "ok": false
  },
+ "1e80f5f8.mp3": {
+  "text": "der Apfel, die Äpfel",
+  "voice": "m",
+  "heard": "der Apfel, die Äpfel",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "1e837345.mp3": {
   "text": "Vor dem Kurs trinke ich Kaffee.",
   "voice": "m",
@@ -435,11 +835,59 @@
   "heard": "Der Film dauert zwei Stunden.",
   "ok": true
  },
+ "1f278f1c.mp3": {
+  "text": "Das ist ein Kaffee. Ich möchte einen Kaffee.",
+  "voice": "m",
+  "heard": "Das ist ein Kaffee. Ich möchte einen Kaffee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "1fd07bd4.mp3": {
+  "text": "der Salat, die Salate",
+  "voice": "m",
+  "heard": "Der Salat, die Salate.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "1fde7049.mp3": {
+  "text": "Danke! Und Sie?",
+  "voice": "m",
+  "heard": "Danke. Und Sie?",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
+ "204cac97.mp3": {
+  "text": "Das ist Reis mit Nudeln und Linsen.",
+  "voice": "m",
+  "heard": "Das ist Reis mit Nudeln und Linsen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "20be95b0.mp3": {
+  "text": "Es gibt heute Fisch.",
+  "voice": "m",
+  "heard": "Es gibt heute Fisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "20d08ee3.mp3": {
   "text": "Noch einmal, bitte. Langsam.",
   "voice": "m",
   "heard": "Noch einmal, bitte. Langsam.",
   "ok": true
+ },
+ "211b1f9f.mp3": {
+  "text": "Um zwölf Uhr essen wir zu Mittag.",
+  "voice": "m",
+  "heard": "Um 12 Uhr essen wir zum Mittag.",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
  },
  "212e9a56.mp3": {
   "text": "Ich sehe nie fern.",
@@ -461,11 +909,35 @@
   "heard": "Hast du am Sand stark Zeit.",
   "ok": false
  },
+ "21b65221.mp3": {
+  "text": "schmecken",
+  "voice": "m",
+  "heard": "Schmecken!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "226ed6c8.mp3": {
+  "text": "Die kleine Mia sucht ihre Mama. Mia wartet an der Information.",
+  "voice": "m",
+  "heard": "Die kleine Mia sucht ihre Mama. Mia erwartet an der Information.",
+  "score": 0.91,
+  "take": 0,
+  "ok": false
+ },
  "22b68022.mp3": {
   "text": "Am Montag habe ich um neun Uhr Deutschkurs.",
   "voice": "m",
   "heard": "Am Montag habe ich um 9 Uhr Deutschkurs.",
   "ok": true
+ },
+ "22c96f43.mp3": {
+  "text": "Gern. Sonst noch etwas?",
+  "voice": "f",
+  "heard": "Gerl. Sonst noch etwas.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
  },
  "22ded7f4.mp3": {
   "text": "Freut mich, Frau Khalil!",
@@ -473,11 +945,43 @@
   "heard": "Freut mich, Frau Khalil.",
   "ok": true
  },
+ "231b9740.mp3": {
+  "text": "der Reis",
+  "voice": "m",
+  "heard": "Der Reis.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2328b61e.mp3": {
   "text": "Der Zug kommt um vierzehn Uhr zwanzig.",
   "voice": "f",
   "heard": "Der Zug kommt um 14.20 Uhr.",
   "ok": false
+ },
+ "2384c6d7.mp3": {
+  "text": "Ich esse gern Kartoffeln.",
+  "voice": "f",
+  "heard": "Ich esse gern Kartoffeln.",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
+ "23a32646.mp3": {
+  "text": "Ich hätte gern ein Kilo Tomaten.",
+  "voice": "m",
+  "heard": "Ich hätte gern ein Kilo Tomaten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "241ed026.mp3": {
+  "text": "Ich habe Zeit. Ich habe keine Zeit.",
+  "voice": "m",
+  "heard": "Ich habe Zeit. Ich habe keine Zeit.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "241ed34b.mp3": {
   "text": "Die Bäckerei ist von Montag bis Freitag geöffnet.",
@@ -489,6 +993,14 @@
   "text": "Ich komme aus Ägypten.",
   "voice": "f",
   "heard": "Ich komme aus Ägypten.",
+  "ok": true
+ },
+ "244cb7c3.mp3": {
+  "text": "Er kauft einen Kuchen.",
+  "voice": "m",
+  "heard": "Er kauft einen Kuchen.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "24dbdb58.mp3": {
@@ -505,6 +1017,14 @@
   "take": 0,
   "ok": false
  },
+ "24f0c91f.mp3": {
+  "text": "Ich esse ein Ei.",
+  "voice": "f",
+  "heard": "Ich esse ein Ei.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "24faf51d.mp3": {
   "text": "Ja, am Mittwoch um halb elf.",
   "voice": "f",
@@ -517,10 +1037,26 @@
   "heard": "Langsam bitte.",
   "ok": true
  },
+ "25bee838.mp3": {
+  "text": "das Geld",
+  "voice": "m",
+  "heard": "Das Geld.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "25c984bc.mp3": {
   "text": "heißen",
   "voice": "m",
   "heard": "heißen",
+  "ok": true
+ },
+ "25d29311.mp3": {
+  "text": "teuer",
+  "voice": "m",
+  "heard": "teuer",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "2627e92f.mp3": {
@@ -533,6 +1069,30 @@
   "text": "Guten Tag!",
   "voice": "m",
   "heard": "Guten Tag!",
+  "ok": true
+ },
+ "26bf87c1.mp3": {
+  "text": "Das macht sechs Euro achtzig.",
+  "voice": "f",
+  "heard": "Das macht 6,80 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
+ "26c9080d.mp3": {
+  "text": "Was darf es sein?",
+  "voice": "f",
+  "heard": "Was darf es sein?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "26f15c22.mp3": {
+  "text": "das Öl",
+  "voice": "m",
+  "heard": "Das Öl.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "2722b6ff.mp3": {
@@ -549,10 +1109,26 @@
   "take": 0,
   "ok": false
  },
+ "27f22d3c.mp3": {
+  "text": "empfehlen",
+  "voice": "m",
+  "heard": "empfehlen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2866f97c.mp3": {
   "text": "Am Wochenende schlafe ich lange.",
   "voice": "f",
   "heard": "Am Wochenende schlafe ich lange.",
+  "ok": true
+ },
+ "286e5049.mp3": {
+  "text": "Dann nehme ich ein Stück.",
+  "voice": "m",
+  "heard": "Dann nehme ich ein Stück.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "29b6d511.mp3": {
@@ -561,16 +1137,56 @@
   "heard": "Guten Morgen. Wie geht es Ihnen?",
   "ok": true
  },
+ "29bb5fd8.mp3": {
+  "text": "Das ist alles, danke.",
+  "voice": "m",
+  "heard": "Das ist alles. Danke.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "29cade12.mp3": {
+  "text": "das Abendessen",
+  "voice": "m",
+  "heard": "Das Abendessen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "29dfa2f6.mp3": {
+  "text": "Wo finde ich Reis?",
+  "voice": "m",
+  "heard": "Wo finde ich Reis?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2a36c98c.mp3": {
   "text": "Beruf: Ich bin … von Beruf.",
   "voice": "m",
   "heard": "Beruf, ich bin von Beruf.",
   "ok": true
  },
+ "2a6e81e0.mp3": {
+  "text": "Ich nehme ein Brötchen.",
+  "voice": "f",
+  "heard": "Ich nehme ein Brötchen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2a94c673.mp3": {
   "text": "S, A, L, A, H",
   "voice": "m",
   "heard": "S-A-L-A-H",
+  "ok": true
+ },
+ "2ab82a5e.mp3": {
+  "text": "Ich habe noch Tomaten und Käse.",
+  "voice": "m",
+  "heard": "Ich habe noch Tomaten und Käse.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "2c085a0d.mp3": {
@@ -580,6 +1196,14 @@
   "score": 0.75,
   "take": 0,
   "ok": false
+ },
+ "2c1f60d9.mp3": {
+  "text": "Sie mag Schokolade.",
+  "voice": "m",
+  "heard": "Sie mag Schokolade.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "2c562561.mp3": {
   "text": "Der Deutschkurs beginnt am ersten September.",
@@ -593,16 +1217,56 @@
   "heard": "Jetzt wohne ich in Dresden.",
   "ok": true
  },
+ "2c677ba0.mp3": {
+  "text": "Die Banane kostet dreißig Cent.",
+  "voice": "m",
+  "heard": "Die Banane kostet 30 Cent.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2c8c0617.mp3": {
   "text": "achtundfünfzig",
   "voice": "m",
   "heard": "58",
   "ok": true
  },
+ "2c90a783.mp3": {
+  "text": "Sechs Eier kosten zwei Euro.",
+  "voice": "m",
+  "heard": "6 Eier kosten 2 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "2ccfce0a.mp3": {
   "text": "Ich bin Studentin.",
   "voice": "f",
   "heard": "Ich bin Studentin.",
+  "ok": true
+ },
+ "2d05b6a4.mp3": {
+  "text": "Das Kilo kostet drei Euro.",
+  "voice": "m",
+  "heard": "Das Kilo kostet 3 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2df44b6b.mp3": {
+  "text": "der Kuchen, die Kuchen",
+  "voice": "m",
+  "heard": "Der Kuchen, die Kuchen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "2e3e840c.mp3": {
+  "text": "Bitte schön.",
+  "voice": "m",
+  "heard": "Bitte schön.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "2f108d7c.mp3": {
@@ -621,6 +1285,14 @@
   "text": "Liebe Frau Schmidt,",
   "voice": "m",
   "heard": "Liebe Frau Schmidt.",
+  "ok": true
+ },
+ "3053a6b0.mp3": {
+  "text": "Zusammen oder getrennt?",
+  "voice": "m",
+  "heard": "zusammen oder getrennt.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "305a6137.mp3": {
@@ -655,16 +1327,72 @@
   "heard": "Hunde.",
   "ok": false
  },
+ "3113d498.mp3": {
+  "text": "Liebe Kunden, unser Supermarkt schließt in fünfzehn Minuten. Bitte kommen Sie zur Kasse.",
+  "voice": "m",
+  "heard": "Liebe Kunden, unser Supermarkt schließt in 15 Minuten. Bitte kommen Sie zur Kasse.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "3162f46e.mp3": {
+  "text": "Oh, das tut mir leid! Ich bringe Ihnen einen neuen Fisch.",
+  "voice": "f",
+  "heard": "Boah, das tut mir leid, ich bringe Ihnen einen neuen Fisch.",
+  "score": 0.91,
+  "take": 0,
+  "ok": false
+ },
  "31688a6d.mp3": {
   "text": "pünktlich",
   "voice": "m",
   "heard": "pünktlich.",
   "ok": true
  },
+ "318c1c25.mp3": {
+  "text": "das Wasser",
+  "voice": "m",
+  "heard": "Das Wasser.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "319282aa.mp3": {
+  "text": "Ich hätte gern einen Tee.",
+  "voice": "m",
+  "heard": "Ich hätte gerne einen Tee.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
+ "321ec65b.mp3": {
+  "text": "Schade. Und der Käse hier?",
+  "voice": "f",
+  "heard": "und der Käse hier.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
  "32227207.mp3": {
   "text": "Wir treffen uns um acht.",
   "voice": "f",
   "heard": "Wir treffen uns um acht.",
+  "ok": true
+ },
+ "3281f812.mp3": {
+  "text": "Das Restaurant ist neu.",
+  "voice": "f",
+  "heard": "Das Restaurant ist neu.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "32946762.mp3": {
+  "text": "Die Speisekarte, bitte.",
+  "voice": "m",
+  "heard": "Die Speisekarte, bitte.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "32a258a2.mp3": {
@@ -685,6 +1413,14 @@
   "heard": "Die Apotheke ist bis 20 Uhr geöffnet.",
   "ok": true
  },
+ "33689ee9.mp3": {
+  "text": "nehmen",
+  "voice": "m",
+  "heard": "Nehmen?",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "33ca4d7a.mp3": {
   "text": "Es ist zwanzig Uhr fünfzehn.",
   "voice": "m",
@@ -697,6 +1433,14 @@
   "text": "Gute Nacht, Mama!",
   "voice": "f",
   "heard": "Gute Nacht, Mama.",
+  "ok": true
+ },
+ "34378167.mp3": {
+  "text": "Ich esse eine Banane.",
+  "voice": "f",
+  "heard": "Ich esse eine Banane.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "349a6e03.mp3": {
@@ -737,10 +1481,50 @@
   "heard": "Hallo, Tarek.",
   "ok": true
  },
+ "350ada4b.mp3": {
+  "text": "Zum Frühstück esse ich ein Brötchen mit Butter und trinke Milch.",
+  "voice": "f",
+  "heard": "Zum Frühstück esse ich ein Brötchen mit Butter und trinke Milch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "352cc139.mp3": {
+  "text": "Wo kaufst du Brot?",
+  "voice": "m",
+  "heard": "Wo kaufst du Brot?",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
+ "359ecf33.mp3": {
+  "text": "Noch etwas?",
+  "voice": "m",
+  "heard": "Noch etwas?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "35b4f2f9.mp3": {
+  "text": "Zum Frühstück esse ich oft Ful.",
+  "voice": "m",
+  "heard": "Zum Frühstück esse ich oft Ful.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "35b9ac13.mp3": {
   "text": "dann",
   "voice": "m",
   "heard": "Done.",
+  "ok": false
+ },
+ "36131b4f.mp3": {
+  "text": "lieber",
+  "voice": "m",
+  "heard": "Liebe",
+  "score": 0,
+  "take": 0,
   "ok": false
  },
  "3630d5fa.mp3": {
@@ -749,10 +1533,66 @@
   "heard": "Und wie ist Ihre Telefonnummer?",
   "ok": true
  },
+ "36f04e13.mp3": {
+  "text": "Gib mir bitte das Salz! Hier, bitte.",
+  "voice": "m",
+  "heard": "Gib mir bitte das Salz. Hier, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "375876bd.mp3": {
+  "text": "Nein, danke. Das ist alles.",
+  "voice": "f",
+  "heard": "Nein, danke. Das ist alles.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "376994b8.mp3": {
+  "text": "das Glas, die Gläser",
+  "voice": "m",
+  "heard": "Das Glas, die Gläser.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "378e928c.mp3": {
+  "text": "die Kasse, die Kassen",
+  "voice": "m",
+  "heard": "die Kasse, die Kassen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "37db9648.mp3": {
   "text": "Schön! Auf Wiedersehen, Herr Lang!",
   "voice": "m",
   "heard": "Schön. Auf Wiedersehen. Herr Lang.",
+  "ok": true
+ },
+ "37dd8355.mp3": {
+  "text": "das Angebot, die Angebote",
+  "voice": "m",
+  "heard": "Das Angebot die Angebote.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "38059f7f.mp3": {
+  "text": "Möchten Sie den Kassenbon?",
+  "voice": "f",
+  "heard": "möchten Sie den Kassenbohnen?",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
+ "3809d658.mp3": {
+  "text": "der Schuh, die Schuhe",
+  "voice": "m",
+  "heard": "Der Schuh, die Schuhe.",
+  "score": 1,
+  "take": 2,
   "ok": true
  },
  "3811a356.mp3": {
@@ -781,6 +1621,38 @@
   "heard": "Mann, du ...",
   "ok": false
  },
+ "387d33f4.mp3": {
+  "text": "Gehst du oft ins Restaurant? Nein, nur am Wochenende.",
+  "voice": "m",
+  "heard": "Gehst du oft ins Restaurant? Nein, nur am Wochenende.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "39862e3f.mp3": {
+  "text": "Dann ein halbes Kilo Äpfel, bitte.",
+  "voice": "f",
+  "heard": "Dann ein halbes Kilo Äpfel bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "399b2dac.mp3": {
+  "text": "Ich trinke gern Kaffee. Aber am liebsten trinke ich Tee.",
+  "voice": "m",
+  "heard": "Ich trinke gern Kaffee, aber am liebsten trinke ich Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "39a65242.mp3": {
+  "text": "der Wein",
+  "voice": "m",
+  "heard": "Der Wein",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "39fe6fd7.mp3": {
   "text": "Englisch",
   "voice": "m",
@@ -801,16 +1673,56 @@
   "heard": "Wie bitte?",
   "ok": true
  },
+ "3b0b371b.mp3": {
+  "text": "Was kostet ein Kaffee in Kairo?",
+  "voice": "m",
+  "heard": "Was kostet ein Kaffee in Cairo?",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
+ "3b16a757.mp3": {
+  "text": "Danke schön! Und Sie?",
+  "voice": "m",
+  "heard": "Dankeschön. Und Sie?",
+  "score": 0.5,
+  "take": 0,
+  "ok": false
+ },
  "3b27b1c3.mp3": {
   "text": "zwanzig, dreißig, vierzig, fünfzig",
   "voice": "m",
   "heard": "20, 30, 40, 50",
   "ok": true
  },
+ "3b507915.mp3": {
+  "text": "Er isst nicht gern Gemüse.",
+  "voice": "m",
+  "heard": "Er ist nicht gern Gemüse.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
  "3b569ca0.mp3": {
   "text": "Guten Tag! Wie geht es Ihnen?",
   "voice": "m",
   "heard": "Guten Tag. Wie geht es Ihnen?",
+  "ok": true
+ },
+ "3b611eb3.mp3": {
+  "text": "Ein Glas Wasser, bitte.",
+  "voice": "f",
+  "heard": "Ein Glas Wasser, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "3b72b06c.mp3": {
+  "text": "Für mich ein Wasser, bitte.",
+  "voice": "m",
+  "heard": "Für mich ein Wasser, bitte.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "3baf1590.mp3": {
@@ -831,11 +1743,35 @@
   "heard": "Am Sonntag rufe ich am Abend meine Familie an.",
   "ok": true
  },
+ "3c966f59.mp3": {
+  "text": "Der Käse ist gut.",
+  "voice": "f",
+  "heard": "Der Käse ist gut.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "3cb43500.mp3": {
   "text": "früh",
   "voice": "m",
   "heard": "Früher.",
   "ok": false
+ },
+ "3d9acb2d.mp3": {
+  "text": "Der Salat kostet sieben Euro achtzig.",
+  "voice": "m",
+  "heard": "Der Salat kostet 7,80 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
+ "3db9315a.mp3": {
+  "text": "Der Käse ist gut. Ich nehme ihn.",
+  "voice": "m",
+  "heard": "Der Käse ist gut. Ich nehme ihn.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "3dfa9004.mp3": {
   "text": "Um drei?",
@@ -849,6 +1785,14 @@
   "heard": "Guten Morgen!",
   "ok": true
  },
+ "3e600f5e.mp3": {
+  "text": "Der Kuchen ist sehr gut.",
+  "voice": "f",
+  "heard": "Der Kuchen ist sehr gut.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "3e92df1e.mp3": {
   "text": "Wie ist Ihr Familienname?",
   "voice": "f",
@@ -857,12 +1801,68 @@
   "take": 0,
   "ok": false
  },
+ "3ecad25f.mp3": {
+  "text": "Magst du Fisch?",
+  "voice": "m",
+  "heard": "Magst du Fisch?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "3efb6ef5.mp3": {
+  "text": "der Platz, die Plätze",
+  "voice": "m",
+  "heard": "Der Platz die Plätze.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "3fa5fcf6.mp3": {
+  "text": "Ich habe kein Geld mehr.",
+  "voice": "f",
+  "heard": "Ich habe kein Geld mehr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "400607ce.mp3": {
+  "text": "Für mich einen Tee, bitte.",
+  "voice": "m",
+  "heard": "Für mich einen Tee, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "404bd9b8.mp3": {
+  "text": "Ich möchte einen Kaffee, bitte.",
+  "voice": "m",
+  "heard": "Ich möchte einen Kaffee, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "40adacd4.mp3": {
   "text": "Ich bin Lehrer.",
   "voice": "f",
   "heard": "Ich bin Lehrer.",
   "score": 1,
   "take": 1,
+  "ok": true
+ },
+ "413c875a.mp3": {
+  "text": "Bar, bitte. Hier sind zwanzig Euro.",
+  "voice": "m",
+  "heard": "Bar, bitte. Hier sind 20 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4174d8a7.mp3": {
+  "text": "Am Kiosk gibt es Zeitungen.",
+  "voice": "f",
+  "heard": "Am Kiosk gibt es Zeitungen.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "4224606e.mp3": {
@@ -877,10 +1877,42 @@
   "heard": "Ja, gern.",
   "ok": true
  },
+ "425eb485.mp3": {
+  "text": "Die Kleidung ist hier billig.",
+  "voice": "f",
+  "heard": "Die Kleidung ist hier billig.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "42794ed8.mp3": {
   "text": "ich, mich, Ihr Lehrer",
   "voice": "m",
   "heard": "Ich mich, ihr Lehrer.",
+  "ok": true
+ },
+ "428ee64f.mp3": {
+  "text": "das Mittagessen: Zum Mittagessen esse ich Reis.",
+  "voice": "m",
+  "heard": "Das Mittagessen. Zum Mittagessen esse ich Reis.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "43025923.mp3": {
+  "text": "Was trinkst du gern? Ich trinke gern Tee.",
+  "voice": "m",
+  "heard": "Was trinkst du gern? Ich trinke gern Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "43414362.mp3": {
+  "text": "Ich zahle bar.",
+  "voice": "f",
+  "heard": "Ich zahle Bar.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "4357fcd9.mp3": {
@@ -889,10 +1921,42 @@
   "heard": "Ich spreche Arabisch, Englisch und ein bisschen Deutsch.",
   "ok": true
  },
+ "438f5f2d.mp3": {
+  "text": "Ich esse gern Fisch.",
+  "voice": "m",
+  "heard": "Ich esse gern Fisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "445ecd07.mp3": {
+  "text": "Ich trinke lieber Tee.",
+  "voice": "f",
+  "heard": "Ich trinke lieber Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4462ff1d.mp3": {
+  "text": "Ich möchte einen Tee.",
+  "voice": "f",
+  "heard": "Ich möchte einen Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "451bb007.mp3": {
   "text": "Entschuldigung, wie spät ist es?",
   "voice": "m",
   "heard": "Entschuldigung, wie spät ist es?",
+  "ok": true
+ },
+ "453f4d87.mp3": {
+  "text": "Was nimmst du?",
+  "voice": "m",
+  "heard": "Was nimmst du?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "45d18b45.mp3": {
@@ -915,11 +1979,43 @@
   "heard": "Er schläft bis acht.",
   "ok": true
  },
+ "46695dfa.mp3": {
+  "text": "die Banane, die Bananen",
+  "voice": "m",
+  "heard": "Die Banane, die Bananen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "468e3e90.mp3": {
+  "text": "Das ist alles.",
+  "voice": "f",
+  "heard": "Das ist alles.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "46af4ead.mp3": {
   "text": "leider kann ich am Montag nicht zum Kurs kommen. Ich habe einen Termin beim Arzt. Kann ich am Mittwoch kommen? Und was sind die Hausaufgaben?",
   "voice": "m",
   "heard": "Leider kann ich am Montag nicht zum Kurs kommen, ich habe einen Termin beim Arzt, kann ich am Mittwoch kommen und was sind die Hausaufgaben?",
   "ok": true
+ },
+ "4776796c.mp3": {
+  "text": "Sonst noch etwas?",
+  "voice": "m",
+  "heard": "Sonst noch etwas?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "48d47f81.mp3": {
+  "text": "Isst du gern Fisch?",
+  "voice": "f",
+  "heard": "Ist du gern Fisch.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
  },
  "48e3cc5c.mp3": {
   "text": "Hallo, Lea! Es geht. Und dir?",
@@ -947,6 +2043,22 @@
   "heard": "Wie ist Ihre Nummer?",
   "ok": true
  },
+ "49caed21.mp3": {
+  "text": "Zusammen oder getrennt?",
+  "voice": "f",
+  "heard": "zusammen oder getrennt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4a2b2faf.mp3": {
+  "text": "das Frühstück: Zum Frühstück trinke ich Tee.",
+  "voice": "m",
+  "heard": "Das Frühstück zum Frühstück trinke ich Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4a5585ac.mp3": {
   "text": "Hallo! Ich bin Ben. Und du? Wie heißt du?",
   "voice": "m",
@@ -965,10 +2077,58 @@
   "heard": "Gut, danke.",
   "ok": true
  },
+ "4acdbbac.mp3": {
+  "text": "Ein Stück Kuchen, bitte.",
+  "voice": "f",
+  "heard": "Ein Stück Kuchen bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4b0dc3d0.mp3": {
+  "text": "Die Suppe ist leider kalt.",
+  "voice": "m",
+  "heard": "Die Suppe ist leider kalt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4b1462dd.mp3": {
+  "text": "Die Milch ist frisch. Ich kaufe die Milch.",
+  "voice": "m",
+  "heard": "Die Milch ist frisch. Ich kaufe die Milch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4b17e25c.mp3": {
+  "text": "Kochst du gern? Nein, nicht so gern.",
+  "voice": "m",
+  "heard": "Kochst du gern? Nein, nicht so gern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4b3b038b.mp3": {
+  "text": "Am Abend essen wir zu Abend.",
+  "voice": "m",
+  "heard": "An Abend essen wir zu Abend.",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
+ },
  "4b580d8b.mp3": {
   "text": "aus dem Sudan, im Sudan",
   "voice": "m",
   "heard": "aus dem Sudan, im Sudan.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4bb1dfc4.mp3": {
+  "text": "Ich möchte einen Kaffee.",
+  "voice": "m",
+  "heard": "Ich möchte einen Kaffee.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -991,10 +2151,26 @@
   "heard": "Guten Morgen. Mein Name ist Braun. Ich bin Ihr Lehrer.",
   "ok": true
  },
+ "4d04418d.mp3": {
+  "text": "Getrennt, bitte.",
+  "voice": "m",
+  "heard": "Getrennt bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4d2affc5.mp3": {
   "text": "Ich komme aus Ägypten, aus Kairo.",
   "voice": "f",
   "heard": "Ich komme aus Ägypten, aus Cairo.",
+  "ok": false
+ },
+ "4e0279f5.mp3": {
+  "text": "Das ist ein Ei. Ich nehme ein Ei.",
+  "voice": "m",
+  "heard": "Das ist ein Ei. Ich nehme ein Ein.",
+  "score": 1,
+  "take": 0,
   "ok": false
  },
  "4ec70d1c.mp3": {
@@ -1003,10 +2179,34 @@
   "heard": "2025",
   "ok": false
  },
+ "4ecebe6c.mp3": {
+  "text": "Ich esse Brot mit Butter.",
+  "voice": "f",
+  "heard": "Ich esse Brot mit Butter.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4f78e13a.mp3": {
+  "text": "Getrennt, bitte.",
+  "voice": "f",
+  "heard": "Getrennt, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4f8b4668.mp3": {
   "text": "frühstücken",
   "voice": "m",
   "heard": "Frühstücken",
+  "ok": true
+ },
+ "4f8bdeb2.mp3": {
+  "text": "zahlen",
+  "voice": "m",
+  "heard": "Zahlen.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "4f9370d2.mp3": {
@@ -1015,16 +2215,56 @@
   "heard": "Hast du an Samstag Zeit?",
   "ok": false
  },
+ "4fad8449.mp3": {
+  "text": "Das ist billig.",
+  "voice": "m",
+  "heard": "Das ist billig.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4fae9448.mp3": {
+  "text": "Für hier oder zum Mitnehmen?",
+  "voice": "m",
+  "heard": "für hier oder zu mitnehmen.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
  "4fbe0b7e.mp3": {
   "text": "Wann hast du Geburtstag?",
   "voice": "m",
   "heard": "Wann hast du Geburtstag?",
   "ok": true
  },
+ "4fc3478a.mp3": {
+  "text": "Und für mich einen Apfelsaft.",
+  "voice": "f",
+  "heard": "und für mich einen Apfelsaft.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4fd89160.mp3": {
+  "text": "Zum Abendessen gibt es Fisch.",
+  "voice": "f",
+  "heard": "zum Abendessen gibt es Fisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "504226dd.mp3": {
   "text": "das Datum, die Daten",
   "voice": "m",
   "heard": "Das Datum die Daten.",
+  "ok": true
+ },
+ "5080d269.mp3": {
+  "text": "Das Geschäft ist geschlossen.",
+  "voice": "f",
+  "heard": "Das Geschäft ist geschlossen.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "508ab4ba.mp3": {
@@ -1039,6 +2279,14 @@
   "heard": "Hallo Karim, hier ist Mona. Hast du am Freitag Zeit? Wir gehen um 7 Uhr ins Kino. Kommst du mit?",
   "ok": false
  },
+ "510c724d.mp3": {
+  "text": "Ich habe Hunger.",
+  "voice": "m",
+  "heard": "Ich habe Hunger.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "51109832.mp3": {
   "text": "Danke schön.",
   "voice": "f",
@@ -1051,6 +2299,38 @@
   "text": "Ja, schon zehn Jahre.",
   "voice": "m",
   "heard": "Ja, schon zehn Jahre.",
+  "ok": true
+ },
+ "51a26de2.mp3": {
+  "text": "das Obst",
+  "voice": "m",
+  "heard": "Das Obst.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "51ab47a8.mp3": {
+  "text": "Ich möchte zwei Brötchen, bitte.",
+  "voice": "m",
+  "heard": "Ich möchte zwei Brötchen, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "524388b6.mp3": {
+  "text": "Wir haben keinen Fisch.",
+  "voice": "f",
+  "heard": "Wir haben keinen Fisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5265ef09.mp3": {
+  "text": "Die Eier sind rechts.",
+  "voice": "f",
+  "heard": "Die Eier sind rechts.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "52a06e4f.mp3": {
@@ -1077,11 +2357,27 @@
   "heard": "Auf Wiedersehen. Bis bald.",
   "ok": true
  },
+ "543ccedc.mp3": {
+  "text": "Zahlen Sie bar oder mit Karte?",
+  "voice": "m",
+  "heard": "Zahlen Sie bar oder mit Karte?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "5450ca14.mp3": {
   "text": "Am Montag arbeite ich.",
   "voice": "m",
   "heard": "Am Montag arbeite ich.",
   "ok": true
+ },
+ "546c8dae.mp3": {
+  "text": "Liebe Kundinnen und Kunden, heute im Angebot: ein Kilo Äpfel für nur ein Euro neunundneunzig.",
+  "voice": "f",
+  "heard": "Liebe Kundinnen und Kunden, heute im Angebot an Kilo Äpfel für nur 1,99 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
  },
  "548480b6.mp3": {
   "text": "Am Abend kauft sie ein.",
@@ -1089,11 +2385,35 @@
   "heard": "Am Abend kauft sie ein.",
   "ok": true
  },
+ "54921f49.mp3": {
+  "text": "Ich esse gern Obst, aber Fleisch esse ich nicht gern.",
+  "voice": "f",
+  "heard": "Ich esse gern Obst, aber Fleisch esse ich nicht gern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "557f8dfe.mp3": {
+  "text": "Nein, wir haben keinen Fisch. Und Hähnchen gibt es heute auch nicht mehr.",
+  "voice": "m",
+  "heard": "Nein, wir haben keinen Fisch und Hähnchen gibt es heute auch nicht mehr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "56ab137a.mp3": {
   "text": "A, E, I, J, U, V, W, Z",
   "voice": "m",
   "heard": "a, e, i, j, u, v, w, z.",
   "ok": true
+ },
+ "56ae8dc5.mp3": {
+  "text": "Mein Lieblingsessen ist Molokhia.",
+  "voice": "f",
+  "heard": "Mein Lieblingsessen ist Molokia.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
  },
  "56bbaa5e.mp3": {
   "text": "Hallo, hier ist Anna. Ich habe am Samstag Geburtstag! Die Party ist um acht Uhr bei mir. Kommst du?",
@@ -1115,6 +2435,22 @@
   "heard": "Guten Morgen, Frau Weber.",
   "ok": true
  },
+ "57714fc9.mp3": {
+  "text": "Ein Tisch für zwei, bitte.",
+  "voice": "f",
+  "heard": "Enttisch für zwei, bitte.",
+  "score": 0.67,
+  "take": 0,
+  "ok": false
+ },
+ "57a4dace.mp3": {
+  "text": "Und sieben Euro zwanzig zurück.",
+  "voice": "f",
+  "heard": "und 7,20 Euro zurück.",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
  "57d691e7.mp3": {
   "text": "Ich heiße Karim Mansour.",
   "voice": "m",
@@ -1123,10 +2459,50 @@
   "take": 0,
   "ok": false
  },
+ "57d86190.mp3": {
+  "text": "Was kostet der Käse?",
+  "voice": "m",
+  "heard": "Was kostet der Käse?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "57eb6d32.mp3": {
+  "text": "Ich habe noch Milch und Butter.",
+  "voice": "m",
+  "heard": "Ich habe noch Milch und Butter.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "580aab89.mp3": {
+  "text": "Die Bäckerei öffnet um sechs.",
+  "voice": "f",
+  "heard": "Die Bäckerei öffnet um sechs.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "58215e1f.mp3": {
   "text": "Guten Abend! Willkommen! Wie heißen Sie?",
   "voice": "m",
   "heard": "Guten Abend. Willkommen. Wie heißen Sie?",
+  "ok": true
+ },
+ "58493fd9.mp3": {
+  "text": "Wir gehen ins Café.",
+  "voice": "f",
+  "heard": "Wir gehen ins Café.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "58ced86e.mp3": {
+  "text": "Ich habe keine Kartoffeln mehr.",
+  "voice": "m",
+  "heard": "Ich habe keine Kartoffeln mehr.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "590cf2c6.mp3": {
@@ -1153,11 +2529,35 @@
   "heard": "aus dem Irak, im Irak.",
   "ok": true
  },
+ "59af0828.mp3": {
+  "text": "der Kiosk, die Kioske",
+  "voice": "m",
+  "heard": "der Kiosk, die Kioske",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "59baffe1.mp3": {
   "text": "Ahmed",
   "voice": "m",
   "heard": "Amic.",
   "ok": false
+ },
+ "59ff3758.mp3": {
+  "text": "Die Jacke kostet heute nicht neunundfünfzig, sondern neununddreißig Euro.",
+  "voice": "m",
+  "heard": "Die Jacke kostet heute nicht 59, sondern 39 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5a280b1f.mp3": {
+  "text": "rechts",
+  "voice": "m",
+  "heard": "Rechts.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "5a6003d8.mp3": {
   "text": "Mein Hobby ist Fußball.",
@@ -1165,11 +2565,43 @@
   "heard": "Mein Hobby ist Fußball.",
   "ok": true
  },
+ "5b6e4fec.mp3": {
+  "text": "Wir möchten bitte zahlen.",
+  "voice": "f",
+  "heard": "Wir möchten bitte zahlen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "5bd8e95e.mp3": {
   "text": "Am Wochenende schlafe ich oft lange.",
   "voice": "m",
   "heard": "Am Wochenende schlafe ich oft lange.",
   "ok": true
+ },
+ "5c02315b.mp3": {
+  "text": "Ich trinke Kaffee mit Milch.",
+  "voice": "f",
+  "heard": "Ich trinke Kaffee mit Milch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5c30c695.mp3": {
+  "text": "Ja, gern. Hier, bitte.",
+  "voice": "m",
+  "heard": "Ja, gern. Hier, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5c35ca32.mp3": {
+  "text": "Ein Stück kostet zwei Euro fünfzig.",
+  "voice": "f",
+  "heard": "Ein Stück kostet 2,50 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
  },
  "5cac9099.mp3": {
   "text": "Schade. Und am Sonntag?",
@@ -1179,17 +2611,81 @@
   "take": 1,
   "ok": false
  },
+ "5d318e4b.mp3": {
+  "text": "Haben Sie Brot?",
+  "voice": "m",
+  "heard": "Haben Sie Brot?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5dada419.mp3": {
+  "text": "Der Käse ist gut. Ich nehme den Käse.",
+  "voice": "m",
+  "heard": "Der Käse ist gut. Ich nehme den Käse.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5dd6bd14.mp3": {
+  "text": "Ich esse gern Gemüse. Fleisch esse ich nicht so gern.",
+  "voice": "f",
+  "heard": "Ich esse gern Gemüse. Fleisch esse ich nicht so gern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5dda0850.mp3": {
+  "text": "Ein Glas Wasser, bitte! Ja, gern. Hier, bitte.",
+  "voice": "m",
+  "heard": "Ein Glas Wasser, bitte. Ja, gern. Hier, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "5f0de52f.mp3": {
   "text": "Ich bin 20 Jahre alt.",
   "voice": "f",
   "heard": "Ich bin 20 Jahre alt.",
   "ok": true
  },
+ "5f29c8c7.mp3": {
+  "text": "Wir essen oft Reis.",
+  "voice": "f",
+  "heard": "Wir essen oft Reis.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5f34966f.mp3": {
+  "text": "Isst du gern Obst? Ja, ich esse gern Bananen.",
+  "voice": "m",
+  "heard": "Ist du gern Obst? Ja, ich esse gern Bananen.",
+  "score": 0.89,
+  "take": 0,
+  "ok": false
+ },
  "5f41eed2.mp3": {
   "text": "Tschüss, bis morgen!",
   "voice": "f",
   "heard": "Tschüss, bis morgen!",
   "ok": true
+ },
+ "5f9ff4d1.mp3": {
+  "text": "Ich esse nicht gern Fleisch.",
+  "voice": "f",
+  "heard": "Ich esse nicht gern Fleisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "603ee22e.mp3": {
+  "text": "frei",
+  "voice": "m",
+  "heard": "Frau",
+  "score": 0,
+  "take": 0,
+  "ok": false
  },
  "60913eaa.mp3": {
   "text": "Und Deutsch spricht sie ein bisschen.",
@@ -1219,6 +2715,46 @@
   "text": "Dann gehe ich zur Arbeit.",
   "voice": "f",
   "heard": "dann gehe ich zur Arbeit.",
+  "ok": true
+ },
+ "61f410e9.mp3": {
+  "text": "Können Sie mir bitte die Speisekarte geben?",
+  "voice": "m",
+  "heard": "Können Sie mir bitte die Speisekarte geben?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "61f73795.mp3": {
+  "text": "Isst du gern Obst?",
+  "voice": "m",
+  "heard": "Ist du gern Obst.",
+  "score": 0.75,
+  "take": 1,
+  "ok": false
+ },
+ "620dabd5.mp3": {
+  "text": "Ich hätte gern ein Brötchen.",
+  "voice": "m",
+  "heard": "Ich hätte gerne ein Brötchen.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
+ "62e7a7f2.mp3": {
+  "text": "Reis ist da hinten links.",
+  "voice": "f",
+  "heard": "Reis ist da hinten links.",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
+ "62ff4d35.mp3": {
+  "text": "Schmeckt es Ihnen?",
+  "voice": "m",
+  "heard": "Schmeckt es Ihnen?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "63befcdd.mp3": {
@@ -1259,10 +2795,42 @@
   "take": 0,
   "ok": false
  },
+ "65e2ca7b.mp3": {
+  "text": "Sie möchte einen Tee.",
+  "voice": "m",
+  "heard": "Sie möchte einen Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "65f27c68.mp3": {
   "text": "fernsehen",
   "voice": "m",
   "heard": "Fernsehen!",
+  "ok": true
+ },
+ "682fe431.mp3": {
+  "text": "Dann hätte ich gern ein Kilo. Und zweihundert Gramm Käse.",
+  "voice": "f",
+  "heard": "dann hätte ich gern ein Kilo und 200 Gramm Käse",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
+ "68375d2a.mp3": {
+  "text": "Ich möchte bitte einen Apfel.",
+  "voice": "m",
+  "heard": "Ich möchte bitte einen Apfel.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6839f4a9.mp3": {
+  "text": "Ich habe kein Geld mehr.",
+  "voice": "m",
+  "heard": "Ich habe kein Geld mehr.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "684726cb.mp3": {
@@ -1285,11 +2853,35 @@
   "heard": "Der Kurs fängt an.",
   "ok": true
  },
+ "68949a4d.mp3": {
+  "text": "Zum Frühstück esse ich Brot mit Käse.",
+  "voice": "m",
+  "heard": "Zum Frühstück esse ich Brot mit Käse.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "68e9ed04.mp3": {
+  "text": "Guten Tag! Ich möchte einen Tee und ein Stück Kuchen, bitte.",
+  "voice": "m",
+  "heard": "Guten Tag. Ich möchte einen Tee und ein Stück Kuchen, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "6906f4b7.mp3": {
   "text": "Guten Tag, hier ist die Sprachschule Sonne. Der Deutschkurs beginnt nicht am ersten, sondern am achten September. Vielen Dank!",
   "voice": "f",
   "heard": "Guten Tag, hier ist die Sprachschule Sonne. Der Deutschkurs beginnt nicht am 1. sondern am 8. September. Vielen Dank.",
   "ok": false
+ },
+ "6947e0f9.mp3": {
+  "text": "Der ist sehr gut. Nehmen Sie ihn!",
+  "voice": "m",
+  "heard": "Der ist sehr gut. Nehmen Sie ihn.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "699ebf94.mp3": {
   "text": "Noch einmal, bitte.",
@@ -1303,16 +2895,56 @@
   "heard": "und 10 Uhr arbeite ich, und am Donnerstag, am Nachmittag.",
   "ok": false
  },
+ "6a55eb94.mp3": {
+  "text": "die Lebensmittel",
+  "voice": "m",
+  "heard": "Die Lebensmittel.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "6a7e5096.mp3": {
   "text": "Es ist Viertel nach zwei.",
   "voice": "m",
   "heard": "Es ist Viertel nach zwei.",
   "ok": true
  },
+ "6a9abbc0.mp3": {
+  "text": "Für mich ein Wasser.",
+  "voice": "m",
+  "heard": "Für mich ein Wasser.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6aeac802.mp3": {
+  "text": "Tut mir leid, ich habe kein Salz.",
+  "voice": "m",
+  "heard": "Tut mir leid, ich habe kein Salz.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6b5aca3e.mp3": {
+  "text": "der Laden, die Läden",
+  "voice": "m",
+  "heard": "Der laden die Leben.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
  "6b60713a.mp3": {
   "text": "Ich spreche ein bisschen Deutsch.",
   "voice": "f",
   "heard": "Ich spreche ein bisschen Deutsch.",
+  "ok": true
+ },
+ "6bd6fb68.mp3": {
+  "text": "Ich nehme ein Stück Kuchen.",
+  "voice": "m",
+  "heard": "Ich nehme ein Stück Kuchen.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "6c038f29.mp3": {
@@ -1335,6 +2967,30 @@
   "heard": "Ein bisschen.",
   "ok": true
  },
+ "6c5956b0.mp3": {
+  "text": "Der Salat ist frisch.",
+  "voice": "f",
+  "heard": "Der Salat ist frisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6c78a64b.mp3": {
+  "text": "Ich mag Kaffee.",
+  "voice": "m",
+  "heard": "Ich mag Kaffee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6cfe9b3c.mp3": {
+  "text": "anderthalb Kilo Kartoffeln",
+  "voice": "m",
+  "heard": "1,5 kg Kartoffeln",
+  "score": 0.33,
+  "take": 0,
+  "ok": false
+ },
  "6d11db3f.mp3": {
   "text": "Am siebten Juli.",
   "voice": "f",
@@ -1342,6 +2998,30 @@
   "score": 0.67,
   "take": 0,
   "ok": false
+ },
+ "6d41f136.mp3": {
+  "text": "Zum Mitnehmen, bitte. Was kostet der Kuchen?",
+  "voice": "m",
+  "heard": "Zum mitnehmen, bitte. Was kostet der Kuchen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6d63bb26.mp3": {
+  "text": "das Bier",
+  "voice": "m",
+  "heard": "Gas Bier.",
+  "score": 0.5,
+  "take": 0,
+  "ok": false
+ },
+ "6d97b545.mp3": {
+  "text": "Ich esse gern Hähnchen mit Reis.",
+  "voice": "m",
+  "heard": "Ich esse gern Hähnchen mit Reis.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "6ddf21b5.mp3": {
   "text": "M, A, N, S, O, U, R",
@@ -1363,10 +3043,34 @@
   "heard": "Tschüss, bis bald!",
   "ok": true
  },
+ "6df8dcfa.mp3": {
+  "text": "Ich nehme das Hähnchen mit Reis.",
+  "voice": "m",
+  "heard": "Ich nehme das Hähnchen mit Reis.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "6e20e293.mp3": {
+  "text": "Ein Liter Milch kostet ein Euro neunzehn.",
+  "voice": "m",
+  "heard": "Ein Liter Milch kostet 1,19 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
  "6e2f10e8.mp3": {
   "text": "Ich koche oft.",
   "voice": "f",
   "heard": "Ich koche oft.",
+  "ok": true
+ },
+ "6e507925.mp3": {
+  "text": "Wir möchten bitte zahlen.",
+  "voice": "m",
+  "heard": "Wir möchten bitte zahlen.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "6ed0a158.mp3": {
@@ -1374,6 +3078,30 @@
   "voice": "f",
   "heard": "Danke. Bitte.",
   "ok": true
+ },
+ "6fe02276.mp3": {
+  "text": "der Hunger",
+  "voice": "m",
+  "heard": "Der Hunger.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "7004f545.mp3": {
+  "text": "Guten Morgen! Ich möchte drei Brötchen und einen Kaffee, bitte.",
+  "voice": "m",
+  "heard": "Guten Morgen. Ich möchte drei Brötchen und einen Kaffee, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "702d2bf1.mp3": {
+  "text": "Der Fisch und das Wasser: sechzehn Euro zwanzig.",
+  "voice": "m",
+  "heard": "Der Fisch und das Wasser 16,20 €.",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
  },
  "704b870f.mp3": {
   "text": "der Familienname, die Familiennamen",
@@ -1401,6 +3129,14 @@
   "heard": "Das ist Amina.",
   "ok": true
  },
+ "714b3af3.mp3": {
+  "text": "das Stück, die Stücke",
+  "voice": "m",
+  "heard": "Das Stück, die Stücke.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "71d39121.mp3": {
   "text": "Wann stehst du auf?",
   "voice": "m",
@@ -1425,6 +3161,22 @@
   "heard": "Guten Tag, Herr Braun.",
   "ok": true
  },
+ "73041648.mp3": {
+  "text": "die Suppe, die Suppen",
+  "voice": "m",
+  "heard": "Die Suppe, die Suppen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "734db387.mp3": {
+  "text": "Eine Flasche Wasser, bitte.",
+  "voice": "f",
+  "heard": "Eine Flasche Wasser, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7382f17d.mp3": {
   "text": "Im Januar ist es kalt.",
   "voice": "m",
@@ -1437,10 +3189,26 @@
   "heard": "2000",
   "ok": false
  },
+ "73b96e96.mp3": {
+  "text": "Entschuldigung! Wir möchten bitte zahlen.",
+  "voice": "m",
+  "heard": "Entschuldigung, wir möchten bitte zahlen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "73f792a0.mp3": {
   "text": "Super! Und dir?",
   "voice": "f",
   "heard": "Super! Und dir!",
+  "ok": true
+ },
+ "7448c4cb.mp3": {
+  "text": "das Frühstück",
+  "voice": "m",
+  "heard": "Das Frühstück.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "750dd745.mp3": {
@@ -1455,10 +3223,26 @@
   "heard": "Grüezi!",
   "ok": true
  },
+ "752a9ccc.mp3": {
+  "text": "Ich habe Durst.",
+  "voice": "m",
+  "heard": "Ich habe Durst.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7531ee55.mp3": {
   "text": "der Buchstabe, die Buchstaben",
   "voice": "m",
   "heard": "Der Buchstabe, die Buchstaben.",
+  "ok": true
+ },
+ "753b7d65.mp3": {
+  "text": "Ich möchte bitte ein Brot. Tut mir leid, ich habe kein Brot.",
+  "voice": "m",
+  "heard": "Ich möchte bitte ein Brot. Tut mir leid. Ich habe kein Brot.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "75584ce9.mp3": {
@@ -1479,6 +3263,22 @@
   "heard": "Sie fährt mit dem Bus.",
   "ok": true
  },
+ "761082a2.mp3": {
+  "text": "der Käse",
+  "voice": "m",
+  "heard": "der Käse.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "762dc78a.mp3": {
+  "text": "die Kartoffel, die Kartoffeln",
+  "voice": "m",
+  "heard": "Die Kartoffel, die Kartoffeln.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7646c772.mp3": {
   "text": "Ich bin 29 Jahre alt.",
   "voice": "f",
@@ -1495,6 +3295,14 @@
   "text": "die Zeit, die Zeiten",
   "voice": "m",
   "heard": "Die Zeit, die Zeiten",
+  "ok": true
+ },
+ "76ba92ed.mp3": {
+  "text": "trinken",
+  "voice": "m",
+  "heard": "trinken",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "77119f1c.mp3": {
@@ -1517,6 +3325,14 @@
   "heard": "Wie heißen Sie?",
   "ok": true
  },
+ "778b8930.mp3": {
+  "text": "noch",
+  "voice": "m",
+  "heard": "Lor.",
+  "score": 0,
+  "take": 0,
+  "ok": false
+ },
  "7853cd69.mp3": {
   "text": "sechzig, siebzehn, siebzig, neunzehn, neunzig",
   "voice": "m",
@@ -1531,11 +3347,51 @@
   "take": 0,
   "ok": false
  },
+ "789b367c.mp3": {
+  "text": "Welche Größe haben Sie?",
+  "voice": "f",
+  "heard": "Welche Größe haben Sie?",
+  "score": 1,
+  "take": 2,
+  "ok": true
+ },
+ "78a35236.mp3": {
+  "text": "Ich esse Brot mit Käse und trinke Tee.",
+  "voice": "m",
+  "heard": "Ich esse Brot mit Käse und trinke Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "78dbe4b7.mp3": {
+  "text": "Zahlen Sie bar oder mit Karte?",
+  "voice": "f",
+  "heard": "Zeilen Sie bar oder mit Karte.",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
+ },
  "78e1b387.mp3": {
   "text": "Gut, danke.",
   "voice": "m",
   "heard": "Gut, danke.",
   "ok": true
+ },
+ "791fe41b.mp3": {
+  "text": "Was können Sie empfehlen?",
+  "voice": "m",
+  "heard": "Was können Sie empfehlen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "797219a0.mp3": {
+  "text": "Hast du einen Kuli?",
+  "voice": "m",
+  "heard": "Hast du einen Coolie?",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
  },
  "79cdffe7.mp3": {
   "text": "Praxis Dr. Berger, guten Tag!",
@@ -1543,11 +3399,51 @@
   "heard": "Praxis ihr! Berger, guten Tag!",
   "ok": false
  },
+ "79d62ecd.mp3": {
+  "text": "Das macht sieben Euro neunzig, bitte.",
+  "voice": "f",
+  "heard": "Das macht 7,90 Euro, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
+ "7a0c5059.mp3": {
+  "text": "Entschuldigung, wo sind die Eier?",
+  "voice": "f",
+  "heard": "Entschuldigung, wo sind die Eier?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "7a111780.mp3": {
+  "text": "der Appetit",
+  "voice": "m",
+  "heard": "Der Appetit!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "7a48703b.mp3": {
+  "text": "der Kaffee",
+  "voice": "m",
+  "heard": "der Kaffee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7abe346e.mp3": {
   "text": "Ich suche Partner für Deutsch und Arabisch.",
   "voice": "m",
   "heard": "Ich suche Partner für Deutsch und Arabisch.",
   "ok": true
+ },
+ "7b1196d1.mp3": {
+  "text": "Er isst nicht gern Fisch.",
+  "voice": "m",
+  "heard": "Er ist nicht gern Fisch.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
  },
  "7b1aa5db.mp3": {
   "text": "oft",
@@ -1561,10 +3457,34 @@
   "heard": "Land, ich komme aus.",
   "ok": true
  },
+ "7b4356e0.mp3": {
+  "text": "Wir zahlen bitte getrennt.",
+  "voice": "f",
+  "heard": "Wir zahlen bitte getrennt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7b52410b.mp3": {
   "text": "siebzehn",
   "voice": "f",
   "heard": "17",
+  "ok": true
+ },
+ "7b68d8d1.mp3": {
+  "text": "Ich nehme den Käse.",
+  "voice": "m",
+  "heard": "Ich nehme den Käse.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "7b8962db.mp3": {
+  "text": "Achtung, bitte! Kasse vier ist jetzt geöffnet.",
+  "voice": "f",
+  "heard": "Achtung, bitte. Kasse 4 ist jetzt geöffnet.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "7be24672.mp3": {
@@ -1577,6 +3497,22 @@
   "text": "ich bin, du bist, er ist, sie ist",
   "voice": "m",
   "heard": "Ich bin, du bist, er ist, sie ist.",
+  "ok": true
+ },
+ "7c3fe609.mp3": {
+  "text": "Sonst noch etwas?",
+  "voice": "f",
+  "heard": "Sonst noch etwas.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "7ca01fa3.mp3": {
+  "text": "Das ist zu teuer!",
+  "voice": "m",
+  "heard": "Das ist zu teuer.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "7cc3962f.mp3": {
@@ -1593,10 +3529,34 @@
   "heard": "Sprachen, ich spreche.",
   "ok": true
  },
+ "7e014c2a.mp3": {
+  "text": "etwas",
+  "voice": "m",
+  "heard": "Etwas.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7e2b534b.mp3": {
   "text": "Ich brauche einen Termin.",
   "voice": "f",
   "heard": "Ich brauche einen Termin.",
+  "ok": true
+ },
+ "7e417bd3.mp3": {
+  "text": "Das Hähnchen und das Wasser: fünfzehn Euro sechzig.",
+  "voice": "m",
+  "heard": "Das Hähnchen und das Wasser 15,60 €.",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
+ },
+ "7f1eda5f.mp3": {
+  "text": "die Milch",
+  "voice": "m",
+  "heard": "Die Milch.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "7f47657e.mp3": {
@@ -1611,6 +3571,22 @@
   "heard": "Der Morgen die Morgen.",
   "ok": true
  },
+ "7f88dd70.mp3": {
+  "text": "Hast du auch Durst?",
+  "voice": "f",
+  "heard": "Hast du auch Durst?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "7fa7b7ff.mp3": {
+  "text": "Ich brauche Tomaten.",
+  "voice": "f",
+  "heard": "Ich brauche Tomaten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7fc95450.mp3": {
   "text": "haben",
   "voice": "m",
@@ -1622,6 +3598,14 @@
   "voice": "f",
   "heard": "Der Kurs dauert zwei Stunden.",
   "ok": true
+ },
+ "808a7e81.mp3": {
+  "text": "Ich esse Molokhia mit Reis und Hähnchen.",
+  "voice": "f",
+  "heard": "Ich esse Molokia mit Reis und Hähnchen.",
+  "score": 0.86,
+  "take": 0,
+  "ok": false
  },
  "80cfe8b2.mp3": {
   "text": "aus der Türkei, in der Türkei",
@@ -1641,6 +3625,14 @@
   "heard": "Sie kommt aus dem Sudan.",
   "ok": true
  },
+ "81e43a17.mp3": {
+  "text": "Ich habe noch drei Eier.",
+  "voice": "m",
+  "heard": "Ich habe noch drei Eier.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "81f8b266.mp3": {
   "text": "Es ist halb sieben.",
   "voice": "f",
@@ -1653,10 +3645,42 @@
   "heard": "Der Kurs fängt um neun Uhr an.",
   "ok": true
  },
+ "82ed7d9d.mp3": {
+  "text": "der Tee",
+  "voice": "m",
+  "heard": "Der Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "83cb0554.mp3": {
+  "text": "Heute im Angebot: Bananen, nicht ein Euro neunundsiebzig, sondern nur ein Euro neunundzwanzig.",
+  "voice": "f",
+  "heard": "Heute im Angebot Bananen nicht ein Euro 79, sondern nur ein Euro 29.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "843f0eac.mp3": {
   "text": "das Wochenende, die Wochenenden",
   "voice": "m",
   "heard": "Das Wochenende, die Wochenenden.",
+  "ok": true
+ },
+ "8479ed53.mp3": {
+  "text": "Das ist eine Suppe. Ich möchte eine Suppe.",
+  "voice": "m",
+  "heard": "Das ist eine Suppe. Ich möchte eine Suppe.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "84d1c03e.mp3": {
+  "text": "Magst du Fisch?",
+  "voice": "f",
+  "heard": "Magst du Fisch?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "851a31b6.mp3": {
@@ -1665,10 +3689,50 @@
   "heard": "Sie frühstückt nie.",
   "ok": true
  },
+ "8590b71f.mp3": {
+  "text": "Guten Abend! Was möchten Sie trinken?",
+  "voice": "m",
+  "heard": "Guten Abend. Was möchten Sie trinken?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "86083c85.mp3": {
+  "text": "Ich esse Fleisch. Ich esse kein Fleisch.",
+  "voice": "m",
+  "heard": "Ich esse Fleisch. Ich esse kein Fleisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "86328dfe.mp3": {
+  "text": "brauchen",
+  "voice": "m",
+  "heard": "Brauchen!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "865b94e1.mp3": {
+  "text": "Ich möchte einen Kaffee, eine Brezel und ein Stück Kuchen.",
+  "voice": "m",
+  "heard": "Ich möchte einen Kaffee, eine Brezel und ein Stück Kuchen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "86b43748.mp3": {
   "text": "Jetzt wohne ich in Hamburg.",
   "voice": "f",
   "heard": "Jetzt wohne ich in Hamburg.",
+  "ok": true
+ },
+ "86c04024.mp3": {
+  "text": "Ich nehme den Fisch mit Reis.",
+  "voice": "m",
+  "heard": "Ich nehme den Fisch mit Reis.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "87462573.mp3": {
@@ -1681,6 +3745,22 @@
   "text": "Im Sommer habe ich Urlaub.",
   "voice": "m",
   "heard": "Im Sommer habe ich Urlaub.",
+  "ok": true
+ },
+ "87fa57db.mp3": {
+  "text": "Bitte zahlen Sie an der Kasse.",
+  "voice": "f",
+  "heard": "Bitte zahlen Sie an der Kasse.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8828ef8d.mp3": {
+  "text": "Wir haben keinen Reis mehr.",
+  "voice": "m",
+  "heard": "Wir haben keinen Reis mehr.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "886d7ab5.mp3": {
@@ -1697,17 +3777,73 @@
   "heard": "Sehr gut, danke.",
   "ok": true
  },
+ "8929c707.mp3": {
+  "text": "getrennt",
+  "voice": "m",
+  "heard": "getrennt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "895a50fe.mp3": {
   "text": "Am vierzehnten März. Und du?",
   "voice": "m",
   "heard": "Am 14. März. Und du?",
   "ok": false
  },
+ "8978c4a8.mp3": {
+  "text": "Die Tomaten zwei Euro fünfzig, die Äpfel ein Euro fünfzig. Das macht vier Euro.",
+  "voice": "m",
+  "heard": "die Tomaten 2,50 Euro, die Äpfel 1,50 Euro. Das macht 4 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
+ "89a0341a.mp3": {
+  "text": "Das ist zu teuer.",
+  "voice": "m",
+  "heard": "Das ist zu teuer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "89ab3f99.mp3": {
+  "text": "ein halbes Kilo Äpfel",
+  "voice": "m",
+  "heard": "Ein halbes Kilo Äpfel.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "89ca40c7.mp3": {
   "text": "Meine Telefonnummer ist 0176 3482 950.",
   "voice": "f",
   "heard": "Meine Telefonnummer ist 01763402 und 80950.",
   "ok": false
+ },
+ "8a9d1198.mp3": {
+  "text": "der Fisch, die Fische",
+  "voice": "m",
+  "heard": "Der Fisch, die Fische.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8b298134.mp3": {
+  "text": "Guten Appetit!",
+  "voice": "f",
+  "heard": "Guten Appetit!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8b42cfca.mp3": {
+  "text": "die Jacke, die Jacken",
+  "voice": "m",
+  "heard": "Die Jacke, die Jacken.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "8b721180.mp3": {
   "text": "Am Sonntag habe ich Zeit. Wann?",
@@ -1723,11 +3859,35 @@
   "heard": "Servus.",
   "ok": true
  },
+ "8c29f280.mp3": {
+  "text": "Es gibt keinen Kuchen mehr.",
+  "voice": "m",
+  "heard": "Es gibt keinen Kuchen mehr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "8cb864eb.mp3": {
   "text": "Ich bin 24 Jahre alt.",
   "voice": "f",
   "heard": "Ich bin 24 Jahre alt.",
   "ok": true
+ },
+ "8cbc7b01.mp3": {
+  "text": "Er trinkt kein Bier.",
+  "voice": "f",
+  "heard": "Er trinkt kein Bier.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8cdc008c.mp3": {
+  "text": "Ein Wasser, bitte.",
+  "voice": "f",
+  "heard": "in Wasser, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": false
  },
  "8d5ce68f.mp3": {
   "text": "Es ist Viertel vor neun.",
@@ -1737,11 +3897,27 @@
   "take": 0,
   "ok": false
  },
+ "8d617a82.mp3": {
+  "text": "die Speisekarte, die Speisekarten",
+  "voice": "m",
+  "heard": "Die Speisekarte, die Speisekarten",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "8ecd9b2c.mp3": {
   "text": "Am Mittwoch habe ich Zeit.",
   "voice": "f",
   "heard": "Am Mittwoch habe ich Zeit.",
   "ok": true
+ },
+ "8ef116f8.mp3": {
+  "text": "Der Saft kostet ein Euro siebzehn.",
+  "voice": "m",
+  "heard": "Der Saft kostet 1,17 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
  },
  "8efdb6d4.mp3": {
   "text": "A, B, C, D, E, F, G",
@@ -1763,6 +3939,14 @@
   "take": 0,
   "ok": false
  },
+ "8f94ddd6.mp3": {
+  "text": "Danke. Haben Sie auch Fisch?",
+  "voice": "f",
+  "heard": "Danke, haben Sie auch Fisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "90d16d0b.mp3": {
   "text": "A, E, I, O, U",
   "voice": "m",
@@ -1779,6 +3963,14 @@
   "text": "M, A, N, S, O, U, R.",
   "voice": "m",
   "heard": "n-a-n-s-o-u-r",
+  "ok": false
+ },
+ "92401ee6.mp3": {
+  "text": "Die Suppe und die Cola. Hier sind zehn Euro. Stimmt so.",
+  "voice": "f",
+  "heard": "Die Suppe und die Cola, die sind 10 Euro. Stimmt so.",
+  "score": 0.9,
+  "take": 0,
   "ok": false
  },
  "9252c62f.mp3": {
@@ -1801,6 +3993,14 @@
   "take": 0,
   "ok": false
  },
+ "93c76713.mp3": {
+  "text": "Was kosten die Tomaten?",
+  "voice": "f",
+  "heard": "Was kosten die Tomaten?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "93d545af.mp3": {
   "text": "Guten Tag, Herr Klein!",
   "voice": "f",
@@ -1813,10 +4013,26 @@
   "heard": "Wie ist Ihre Telefonnummer?",
   "ok": true
  },
+ "9403ccae.mp3": {
+  "text": "Ich trinke keinen Kaffee. Ich trinke nur Tee.",
+  "voice": "f",
+  "heard": "Ich trinke keinen Kaffee. Ich trinke nur Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "943c1699.mp3": {
   "text": "Am Sonntag ist sie geschlossen.",
   "voice": "m",
   "heard": "Am Sonntag ist sie geschlossen.",
+  "ok": true
+ },
+ "94e744c5.mp3": {
+  "text": "Gehst du oft ins Restaurant?",
+  "voice": "m",
+  "heard": "Gehst du oft ins Restaurant?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "954b71c8.mp3": {
@@ -1824,6 +4040,46 @@
   "voice": "m",
   "heard": "Das Viertel, die Viertel.",
   "ok": true
+ },
+ "958216f9.mp3": {
+  "text": "Wir haben keinen Fisch mehr.",
+  "voice": "m",
+  "heard": "Wir haben keinen Fisch mehr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9589e2e9.mp3": {
+  "text": "Das ist eine Suppe aus Gemüse.",
+  "voice": "f",
+  "heard": "Das ist eine Super aus Gemüse.",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
+ },
+ "95e2dfe8.mp3": {
+  "text": "die Größe, die Größen",
+  "voice": "m",
+  "heard": "Die Größe, die Größen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9608214f.mp3": {
+  "text": "Ich hätte gern einen Salat.",
+  "voice": "m",
+  "heard": "Ich hätte gerne einen Salat.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
+ "960a52e3.mp3": {
+  "text": "möchten",
+  "voice": "m",
+  "heard": "Maschten.",
+  "score": 0,
+  "take": 0,
+  "ok": false
  },
  "96699ff6.mp3": {
   "text": "Das ist …",
@@ -1837,16 +4093,56 @@
   "heard": "Ich bin 27 Jahre alt.",
   "ok": true
  },
+ "973752a8.mp3": {
+  "text": "Nein, danke. Das ist alles.",
+  "voice": "m",
+  "heard": "Nein, danke. Das ist alles.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9747f50f.mp3": {
   "text": "Ich rufe meine Mutter an.",
   "voice": "f",
   "heard": "Ich rufe meine Mutter an.",
   "ok": true
  },
+ "97d3498b.mp3": {
+  "text": "das Restaurant, die Restaurants",
+  "voice": "m",
+  "heard": "Das Restaurant, die Restaurants.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "98a3cd49.mp3": {
   "text": "Wie alt bist du?",
   "voice": "f",
   "heard": "Wie alt bist du?",
+  "ok": true
+ },
+ "98b57b10.mp3": {
+  "text": "Größe M. Haben Sie die Jacke auch in Schwarz?",
+  "voice": "m",
+  "heard": "Größe N. Haben Sie die Jacke auch in schwarz?",
+  "score": 0.89,
+  "take": 0,
+  "ok": false
+ },
+ "98d1586a.mp3": {
+  "text": "Die Rechnung, bitte!",
+  "voice": "f",
+  "heard": "Die Rechnung, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "99d48651.mp3": {
+  "text": "das Abendessen: Zum Abendessen esse ich Brot.",
+  "voice": "m",
+  "heard": "Das Abendessen. Zum Abendessen esse ich Brot.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "9a24813f.mp3": {
@@ -1875,6 +4171,22 @@
   "heard": "Ich frühstücke um 7 Uhr.",
   "ok": true
  },
+ "9bb96c3d.mp3": {
+  "text": "Was möchten Sie trinken?",
+  "voice": "m",
+  "heard": "Was möchten Sie trinken?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9c18a2a6.mp3": {
+  "text": "Entschuldigung, wo finde ich Reis?",
+  "voice": "m",
+  "heard": "Entschuldigung, wo finde ich Reis?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9c2d7e4a.mp3": {
   "text": "wir sind, ihr seid, sie sind, Sie sind",
   "voice": "m",
@@ -1887,11 +4199,43 @@
   "heard": "47.",
   "ok": true
  },
+ "9cd06375.mp3": {
+  "text": "Ich trinke nicht gern Kaffee.",
+  "voice": "m",
+  "heard": "Ich trinke nicht gern Kaffee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9ce9e40b.mp3": {
+  "text": "Der Tee ist heiß.",
+  "voice": "f",
+  "heard": "Der T ist heiß.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
+ "9cea0dba.mp3": {
+  "text": "Tomaten gibt es heute leider nicht. Aber die Kartoffeln sind sehr gut.",
+  "voice": "m",
+  "heard": "Tomaten gibt es heute leider nicht, aber die Kartoffeln sind sehr gut.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9cf02ab4.mp3": {
   "text": "Wie alt sind Sie? Ich bin 31.",
   "voice": "f",
   "heard": "Wie eizt sind Sie? Ich bin 31.",
   "ok": false
+ },
+ "9d17e5c2.mp3": {
+  "text": "Liebe Kundinnen und Kunden, Kasse drei ist geschlossen. Bitte gehen Sie zu Kasse fünf.",
+  "voice": "m",
+  "heard": "Liebe Kundinnen und Kunden, Kasse 3 ist geschlossen. Bitte gehen Sie zu Kasse 5.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "9d2e98f0.mp3": {
   "text": "Wie spät ist es?",
@@ -1899,10 +4243,26 @@
   "heard": "Wie spät ist es?",
   "ok": true
  },
+ "9d36d5cc.mp3": {
+  "text": "Das macht elf Euro vierzig. Zwölf, bitte. Stimmt so.",
+  "voice": "m",
+  "heard": "Das macht 11,40 Euro. 12, bitte. Stimmt so.",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
  "9d65c876.mp3": {
   "text": "Kommst du mit?",
   "voice": "f",
   "heard": "Kommst du mit?",
+  "ok": true
+ },
+ "9d660eaa.mp3": {
+  "text": "Ist hier noch frei?",
+  "voice": "f",
+  "heard": "Ist hier noch frei?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "9d69c8c1.mp3": {
@@ -1925,6 +4285,54 @@
   "heard": "Die Apotheke schließt um 20 Uhr.",
   "ok": true
  },
+ "9dbd8cd8.mp3": {
+  "text": "kaufen",
+  "voice": "m",
+  "heard": "kaufen",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9dfccc45.mp3": {
+  "text": "Das ist lecker!",
+  "voice": "m",
+  "heard": "Das ist Lecker.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9e10d5dd.mp3": {
+  "text": "Achtzehn, bitte.",
+  "voice": "m",
+  "heard": "18, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9e82f967.mp3": {
+  "text": "Lebensmittel kaufe ich im Supermarkt.",
+  "voice": "f",
+  "heard": "Lebensmittel kaufe ich im Supermarkt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9e9313fd.mp3": {
+  "text": "Hier sind zwölf Euro. Stimmt so.",
+  "voice": "f",
+  "heard": "Hier sind 12 Euro. Stimmt zu.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
+ "9e975822.mp3": {
+  "text": "Die Äpfel sind im Angebot.",
+  "voice": "f",
+  "heard": "Die Äpfel sind im Angebot.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9eac3e29.mp3": {
   "text": "Der Kurs fängt um neun an.",
   "voice": "f",
@@ -1943,6 +4351,14 @@
   "heard": "Frau Kalil, woher kommen Sie?",
   "ok": false
  },
+ "9f9d5ec6.mp3": {
+  "text": "Gern.",
+  "voice": "m",
+  "heard": "Gern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9fca1356.mp3": {
   "text": "Die Bibliothek ist ab Montag bis zwanzig Uhr geöffnet.",
   "voice": "m",
@@ -1953,6 +4369,14 @@
   "text": "Hobby: Mein Hobby ist …",
   "voice": "m",
   "heard": "Hobby. Mein Hobby ist...",
+  "ok": true
+ },
+ "9ff71f8d.mp3": {
+  "text": "der Supermarkt, die Supermärkte",
+  "voice": "m",
+  "heard": "der Supermarkt, die Supermärkte.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "a00122e2.mp3": {
@@ -1969,6 +4393,14 @@
   "take": 0,
   "ok": false
  },
+ "a0561d3a.mp3": {
+  "text": "das Salz",
+  "voice": "m",
+  "heard": "Das Salz.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a0a11656.mp3": {
   "text": "Ich stehe um halb sieben auf. Dann frühstücke ich. Um acht fängt meine Arbeit an.",
   "voice": "m",
@@ -1981,6 +4413,14 @@
   "heard": "Januar, Februar, März, April",
   "ok": true
  },
+ "a1042a3c.mp3": {
+  "text": "Der Orangensaft kostet drei Euro fünfzig.",
+  "voice": "m",
+  "heard": "Der Orangensaft kostet 3,50 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
  "a105165c.mp3": {
   "text": "eins, zwei, drei, vier, fünf",
   "voice": "m",
@@ -1992,6 +4432,22 @@
   "voice": "m",
   "heard": "Deutsch.",
   "ok": true
+ },
+ "a15c1c64.mp3": {
+  "text": "Ich trinke lieber Tee.",
+  "voice": "m",
+  "heard": "Ich trinke lieber Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a1fbee38.mp3": {
+  "text": "Das kostet neunzehn Euro neunzig.",
+  "voice": "m",
+  "heard": "Das kostet 19,90 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
  },
  "a267892e.mp3": {
   "text": "nach",
@@ -2011,10 +4467,26 @@
   "heard": "Okay.",
   "ok": false
  },
+ "a3930cf0.mp3": {
+  "text": "Die Milch ist da hinten rechts, und die Eier sind links.",
+  "voice": "m",
+  "heard": "Die Milch ist da hinten rechts und die Eier sind links.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a39775db.mp3": {
   "text": "Im Sommer ist es heiß.",
   "voice": "f",
   "heard": "Im Sommer ist es heiß.",
+  "ok": true
+ },
+ "a490c29c.mp3": {
+  "text": "Am liebsten trinke ich Saft.",
+  "voice": "f",
+  "heard": "Am liebsten trinke ich Saft.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "a4e329a7.mp3": {
@@ -2025,10 +4497,26 @@
   "take": 0,
   "ok": false
  },
+ "a4fc3136.mp3": {
+  "text": "Schade. Dann nehme ich den Käse hier.",
+  "voice": "m",
+  "heard": "Schade, da nehme ich den Käse hier.",
+  "score": 0.86,
+  "take": 0,
+  "ok": false
+ },
  "a55b9184.mp3": {
   "text": "Ich heiße Nadia.",
   "voice": "f",
   "heard": "Ich heiße Nadia",
+  "ok": true
+ },
+ "a560bb1b.mp3": {
+  "text": "die Bäckerei, die Bäckereien",
+  "voice": "m",
+  "heard": "Die Bäckerei, die Bäckereien.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "a58441a2.mp3": {
@@ -2037,16 +4525,40 @@
   "heard": "Wir treffen uns um 5 vor halb acht.",
   "ok": true
  },
+ "a5857d9b.mp3": {
+  "text": "mögen",
+  "voice": "m",
+  "heard": "mögen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a5947f15.mp3": {
   "text": "heute, morgen, gestern",
   "voice": "m",
   "heard": "Heute, morgen, gestern.",
   "ok": true
  },
+ "a5b15d7c.mp3": {
+  "text": "kalt",
+  "voice": "m",
+  "heard": "kalt",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a5b5b942.mp3": {
   "text": "Geht es am Dienstag um zehn?",
   "voice": "f",
   "heard": "geht es am Dienstag um zehn.",
+  "ok": true
+ },
+ "a5ee86d5.mp3": {
+  "text": "Ich habe keine Milch.",
+  "voice": "m",
+  "heard": "Ich habe keine Milch.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "a66fee20.mp3": {
@@ -2056,6 +4568,14 @@
   "score": 0,
   "take": 0,
   "ok": false
+ },
+ "a6835605.mp3": {
+  "text": "Ja, sehr gut, danke!",
+  "voice": "m",
+  "heard": "Ja, sehr gut, danke.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "a6932d01.mp3": {
   "text": "Sie öffnet um halb sieben.",
@@ -2081,6 +4601,30 @@
   "heard": "krank",
   "ok": true
  },
+ "a71fc9da.mp3": {
+  "text": "Ich suche die Milch.",
+  "voice": "f",
+  "heard": "Ich suche die Milch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a7274efb.mp3": {
+  "text": "Wir haben keinen Fisch.",
+  "voice": "m",
+  "heard": "Wir haben keinen Fisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a7c16dc5.mp3": {
+  "text": "Ein Kilo kostet zwei Euro fünfzig.",
+  "voice": "m",
+  "heard": "Ein Kilo kostet 2,50 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
  "a7c8277f.mp3": {
   "text": "zweiunddreißig",
   "voice": "m",
@@ -2097,6 +4641,14 @@
   "text": "Guten Abend!",
   "voice": "m",
   "heard": "Guten Abend!",
+  "ok": true
+ },
+ "a85153ee.mp3": {
+  "text": "Kein Problem. Guten Appetit!",
+  "voice": "f",
+  "heard": "Kein Problem. Guten Appetit.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "a89803c0.mp3": {
@@ -2161,10 +4713,34 @@
   "heard": "alt",
   "ok": true
  },
+ "ab977bd2.mp3": {
+  "text": "Ich habe Hunger.",
+  "voice": "f",
+  "heard": "Ich habe Hunger.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "ac0ae34a.mp3": {
   "text": "Das Alphabet hat 26 Buchstaben.",
   "voice": "f",
   "heard": "Das Alphabet hat 26 Buchstaben.",
+  "ok": true
+ },
+ "ac237f5a.mp3": {
+  "text": "Was kosten die Tomaten?",
+  "voice": "m",
+  "heard": "Was kosten die Tomaten?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ac3eea57.mp3": {
+  "text": "Zum Frühstück esse ich zwei Brötchen.",
+  "voice": "f",
+  "heard": "Zum Frühstück esse ich zwei Brötchen.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "acb5ce7f.mp3": {
@@ -2197,6 +4773,46 @@
   "heard": "Sprechen Sie Englisch.",
   "ok": true
  },
+ "ae2974c3.mp3": {
+  "text": "bezahlen",
+  "voice": "m",
+  "heard": "Bezahlen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ae9bf0ca.mp3": {
+  "text": "Ja, sehr gut, danke!",
+  "voice": "f",
+  "heard": "Ja, sehr gut, danke.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "aec9a871.mp3": {
+  "text": "der Kühlschrank, die Kühlschränke",
+  "voice": "m",
+  "heard": "der Kühlschrank die Kühlschränke",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "aee69f7a.mp3": {
+  "text": "Wir brauchen einen Tisch.",
+  "voice": "m",
+  "heard": "Wir brauchen einen Tisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "af03727c.mp3": {
+  "text": "Der Reis ist links.",
+  "voice": "f",
+  "heard": "Der Reis ist links.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "af671b8f.mp3": {
   "text": "Ich lerne Deutsch.",
   "voice": "f",
@@ -2219,6 +4835,14 @@
   "text": "Guten Tag! Haben Sie am Freitag einen Termin?",
   "voice": "f",
   "heard": "Guten Tag, haben Sie am Freitag einen Termin.",
+  "ok": true
+ },
+ "b1a4a88d.mp3": {
+  "text": "Was kostet das?",
+  "voice": "f",
+  "heard": "Was kostet das?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "b1c04c21.mp3": {
@@ -2263,16 +4887,56 @@
   "take": 0,
   "ok": true
  },
+ "b340b8bc.mp3": {
+  "text": "Ja, hier. Und die Schuhe hier kosten nur dreißig Euro.",
+  "voice": "f",
+  "heard": "Ja, hier und die Schuhe hier kosten nur 30 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b3bb04a2.mp3": {
+  "text": "bestellen",
+  "voice": "m",
+  "heard": "bestellen",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "b3cfb5d8.mp3": {
   "text": "Ab Februar habe ich einen Deutschkurs.",
   "voice": "m",
   "heard": "Ab Februar habe ich einen Deutschkurs.",
   "ok": true
  },
+ "b3dbd6e5.mp3": {
+  "text": "Wir frühstücken um sieben Uhr.",
+  "voice": "m",
+  "heard": "Wir frühstücken um 7 Uhr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b3ed5d8e.mp3": {
+  "text": "die Farbe, die Farben",
+  "voice": "m",
+  "heard": "Die Farbe, die Farben.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b435f211.mp3": {
   "text": "Null, eins, sechs, null, vier, sieben, zwei, acht, eins, fünf.",
   "voice": "m",
   "heard": "0, 1, 6, 0, 4, 7, 2, 8, 1, 5.",
+  "ok": true
+ },
+ "b4543c60.mp3": {
+  "text": "Noch einen Kaffee, bitte.",
+  "voice": "f",
+  "heard": "Noch einen Kaffee, bitte.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "b4be90cd.mp3": {
@@ -2313,6 +4977,22 @@
   "heard": "Im Sommer. Schön.",
   "ok": true
  },
+ "b682dc18.mp3": {
+  "text": "die Karte, die Karten",
+  "voice": "m",
+  "heard": "die Karte, die Karten",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b6dd8477.mp3": {
+  "text": "Gib mir bitte das Salz!",
+  "voice": "m",
+  "heard": "Gib mir bitte der Salz.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
  "b781b3ee.mp3": {
   "text": "Am Sonntag ist die Bäckerei geschlossen.",
   "voice": "f",
@@ -2325,10 +5005,34 @@
   "heard": "Mir geht es gut.",
   "ok": true
  },
+ "b80fe1c5.mp3": {
+  "text": "Ich hätte gern ein Kilo Äpfel.",
+  "voice": "m",
+  "heard": "Ich hätte gern ein Kilo Äpfel.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b8546655.mp3": {
   "text": "Ich spreche Arabisch und ein bisschen Deutsch.",
   "voice": "m",
   "heard": "Ich spreche Arabisch und ein bisschen Deutsch.",
+  "ok": true
+ },
+ "b8cf0b32.mp3": {
+  "text": "Was können Sie empfehlen?",
+  "voice": "f",
+  "heard": "Was können Sie empfehlen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "b92e2f5b.mp3": {
+  "text": "Zahlen Sie zusammen?",
+  "voice": "f",
+  "heard": "Zahlen sie zusammen.",
+  "score": 1,
+  "take": 2,
   "ok": true
  },
  "b93dd8c3.mp3": {
@@ -2343,6 +5047,14 @@
   "heard": "Um 8 Uhr, der Film beginnt um halb neun.",
   "ok": true
  },
+ "b9cd54b7.mp3": {
+  "text": "Entschuldigung, die Suppe ist leider kalt.",
+  "voice": "f",
+  "heard": "Entschuldigung, die Suppe ist leider kalt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "ba638dc8.mp3": {
   "text": "Freitag, Samstag, Sonntag",
   "voice": "m",
@@ -2353,6 +5065,22 @@
   "text": "Gute Nacht!",
   "voice": "m",
   "heard": "Gute Nacht!",
+  "ok": true
+ },
+ "babbe7c5.mp3": {
+  "text": "Guten Morgen! Was darf es sein?",
+  "voice": "f",
+  "heard": "Guten Morgen. Was darf es sein?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "bae992fa.mp3": {
+  "text": "es gibt",
+  "voice": "m",
+  "heard": "Es gibt",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "baee25c6.mp3": {
@@ -2367,10 +5095,58 @@
   "heard": "y, a, s, n, i, n",
   "ok": false
  },
+ "bb09ca2a.mp3": {
+  "text": "das Brötchen, die Brötchen",
+  "voice": "m",
+  "heard": "Das Brötchen die Brötchen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "bb2377fb.mp3": {
+  "text": "heiß",
+  "voice": "m",
+  "heard": "HALZ",
+  "score": 0,
+  "take": 0,
+  "ok": false
+ },
+ "bb441db0.mp3": {
+  "text": "Kochst du gern?",
+  "voice": "m",
+  "heard": "Kochst du gern?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "bb749617.mp3": {
   "text": "Am Montag arbeite ich.",
   "voice": "f",
   "heard": "Am Montag arbeite ich.",
+  "ok": true
+ },
+ "bbbd0a83.mp3": {
+  "text": "Der Preis ist gut.",
+  "voice": "f",
+  "heard": "Der Preis ist gut.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "bbc32e8d.mp3": {
+  "text": "Mein Freund möchte einen Tee, einen Apfelsaft und ein Brötchen.",
+  "voice": "m",
+  "heard": "Mein Freund möchte einen Tee, einen Apfelsaft und ein Brötchen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "bbc8ea6a.mp3": {
+  "text": "Ich nehme die Suppe.",
+  "voice": "m",
+  "heard": "Ich nehme die Suppe.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "bc757b73.mp3": {
@@ -2397,10 +5173,26 @@
   "heard": "0, 1, 7, 6, 34, 82",
   "ok": true
  },
+ "bcd40f85.mp3": {
+  "text": "Wir haben keine Eier.",
+  "voice": "m",
+  "heard": "Wir haben keine Eier.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "bcdc42b2.mp3": {
   "text": "der Punkt, die Punkte",
   "voice": "m",
   "heard": "Der Punkt die Punkte.",
+  "ok": true
+ },
+ "bd65ec0e.mp3": {
+  "text": "Welche Farbe möchten Sie?",
+  "voice": "f",
+  "heard": "Welche Farbe möchten Sie?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "bdb1071b.mp3": {
@@ -2417,16 +5209,48 @@
   "heard": "Guten Tag. Bitte stellen Sie sich vor.",
   "ok": true
  },
+ "be1fa183.mp3": {
+  "text": "Für hier oder zum Mitnehmen?",
+  "voice": "f",
+  "heard": "für hier oder zum Mitnehmen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "be3ea4cb.mp3": {
   "text": "Ich bin neunzehnhundertachtundneunzig geboren.",
   "voice": "m",
   "heard": "Ich bin 1998 geboren.",
   "ok": false
  },
+ "bec63a96.mp3": {
+  "text": "Er trinkt kein Bier.",
+  "voice": "m",
+  "heard": "Er trinkt kein Bier.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "bf23cbd3.mp3": {
+  "text": "Was isst du zum Frühstück? Ich esse Brot mit Käse.",
+  "voice": "m",
+  "heard": "Was isst du zum Frühstück? Ich esse Brot mit Käse.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "bf62d7d5.mp3": {
   "text": "Der Zug ist pünktlich.",
   "voice": "f",
   "heard": "Der Zug ist pünktlich.",
+  "ok": true
+ },
+ "bf91dfca.mp3": {
+  "text": "das Hähnchen, die Hähnchen",
+  "voice": "m",
+  "heard": "Das Hähnchen, die Hähnchen.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "bfb28920.mp3": {
@@ -2443,6 +5267,14 @@
   "take": 0,
   "ok": false
  },
+ "c03b77f4.mp3": {
+  "text": "Danke. Und haben Sie auch Fisch?",
+  "voice": "m",
+  "heard": "Danke und haben Sie auch Fisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c04cc48f.mp3": {
   "text": "N, O, U, R, Punkt, S, A, I, D, at, M, A, I, L, Punkt, D, E",
   "voice": "m",
@@ -2455,6 +5287,30 @@
   "text": "Gut. Bis Freitag!",
   "voice": "m",
   "heard": "Gut, bis Freitag!",
+  "ok": true
+ },
+ "c05f1c32.mp3": {
+  "text": "Ich hätte gern die Suppe und einen Salat.",
+  "voice": "f",
+  "heard": "Ich hätte gerne die Suppe und einen Salat.",
+  "score": 0.88,
+  "take": 0,
+  "ok": false
+ },
+ "c07e11f3.mp3": {
+  "text": "Was möchtest du?",
+  "voice": "m",
+  "heard": "Was möchtest du?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c0d56232.mp3": {
+  "text": "Wo ist die Milch?",
+  "voice": "m",
+  "heard": "Wo ist die Milch?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "c1a92d51.mp3": {
@@ -2515,16 +5371,56 @@
   "heard": "An Samstag? Leider nicht. Ich arbeite.",
   "ok": false
  },
+ "c2576e0b.mp3": {
+  "text": "Ich koche nicht.",
+  "voice": "f",
+  "heard": "Ich koche nicht.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c2666c4e.mp3": {
+  "text": "das Fleisch",
+  "voice": "m",
+  "heard": "das Fleisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c2f9bf06.mp3": {
+  "text": "nicht",
+  "voice": "m",
+  "heard": "Nicht!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c342c9b1.mp3": {
   "text": "Hallo Herr Ali, hier ist die Praxis Dr. Berger. Ihr Termin am Montag geht leider nicht. Können Sie am Dienstag um zehn Uhr kommen? Bitte rufen Sie uns an. Danke!",
   "voice": "f",
   "heard": "Hallo Herr Ali, hier ist die Praxiste her. Wer her? Ihr Termin am Montag geht leider nicht. Können Sie am Dienstag um 10 Uhr kommen. Bitte rufen Sie uns an. Danke.",
   "ok": false
  },
+ "c348c3cf.mp3": {
+  "text": "Trinkst du gern Kaffee?",
+  "voice": "m",
+  "heard": "Trinkst du gern Kaffee?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c35adee0.mp3": {
   "text": "Mein Name ist Lang, Peter Lang. Woher kommen Sie?",
   "voice": "m",
   "heard": "Mein Name ist Lang, Peter Lang. Woher kommen Sie?",
+  "ok": true
+ },
+ "c3972527.mp3": {
+  "text": "Guten Abend! Ein Tisch für zwei?",
+  "voice": "m",
+  "heard": "Guten Abend. Ein Tisch für zwei?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "c3c93de9.mp3": {
@@ -2538,6 +5434,22 @@
   "voice": "m",
   "heard": "Name, ich heiße mein Name ist.",
   "ok": true
+ },
+ "c3f4f0bc.mp3": {
+  "text": "Wir möchten bestellen.",
+  "voice": "f",
+  "heard": "Wir möchten bestellen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c41d715e.mp3": {
+  "text": "Die Bananen kosten heute nur ein Euro neunundzwanzig das Kilo.",
+  "voice": "m",
+  "heard": "Die Bananen kosten heute nur 1,29 Euro das Kilo.",
+  "score": 1,
+  "take": 0,
+  "ok": false
  },
  "c4758f12.mp3": {
   "text": "der Geburtstag, die Geburtstage",
@@ -2559,6 +5471,14 @@
   "heard": "Am Abend sehe ich Fern.",
   "ok": true
  },
+ "c5e98141.mp3": {
+  "text": "Ich esse viel Obst.",
+  "voice": "f",
+  "heard": "Ich esse viel Obst.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c5f23d67.mp3": {
   "text": "Am Freitag um elf Uhr?",
   "voice": "m",
@@ -2577,6 +5497,14 @@
   "heard": "Entschuldigung, ich bin zu spät.",
   "ok": true
  },
+ "c6b5adc9.mp3": {
+  "text": "Ich bezahle den Kaffee.",
+  "voice": "f",
+  "heard": "Ich bezahle den Kaffee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c6cc31a7.mp3": {
   "text": "Ich wohne in Mansoura.",
   "voice": "f",
@@ -2584,6 +5512,22 @@
   "score": 0.75,
   "take": 1,
   "ok": false
+ },
+ "c77ae207.mp3": {
+  "text": "Kann ich mit Karte zahlen?",
+  "voice": "f",
+  "heard": "Kann ich mit Kart zahlen?",
+  "score": 0.8,
+  "take": 2,
+  "ok": false
+ },
+ "c8ded199.mp3": {
+  "text": "Brot haben wir leider nicht mehr. Aber wir haben noch Brötchen.",
+  "voice": "f",
+  "heard": "Brot haben wir leider nicht mehr, aber wir haben noch Brötchen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "c9158a4b.mp3": {
   "text": "Montag, Dienstag, Mittwoch, Donnerstag",
@@ -2596,6 +5540,38 @@
   "voice": "f",
   "heard": "Auch gut, danke.",
   "ok": true
+ },
+ "c9458c1d.mp3": {
+  "text": "Was kosten die Äpfel?",
+  "voice": "m",
+  "heard": "Was kosten die Äpfel?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c953b7af.mp3": {
+  "text": "Was isst du gern?",
+  "voice": "f",
+  "heard": "Was ist du gern?",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
+ "c9ab6187.mp3": {
+  "text": "Es gibt heute Fisch.",
+  "voice": "f",
+  "heard": "Es gibt heute Fisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c9d7966a.mp3": {
+  "text": "Was isst du gern?",
+  "voice": "m",
+  "heard": "Was ist du gern?",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
  },
  "ca3202b1.mp3": {
   "text": "und",
@@ -2659,10 +5635,42 @@
   "take": 0,
   "ok": true
  },
+ "cb26b7b9.mp3": {
+  "text": "Entschuldigung, der Fisch ist leider kalt.",
+  "voice": "m",
+  "heard": "Entschuldigung, der Fisch ist leider kalt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "cb85f136.mp3": {
   "text": "Danke! Der Bus kommt um halb drei.",
   "voice": "m",
   "heard": "Danke, der Bus kommt um halb 3.",
+  "ok": true
+ },
+ "cb9a007b.mp3": {
+  "text": "die Rechnung, die Rechnungen",
+  "voice": "m",
+  "heard": "Die Rechnung, die Rechnungen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "cc190e9f.mp3": {
+  "text": "Ich finde den Reis nicht.",
+  "voice": "f",
+  "heard": "Ich finde den Reis nicht.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "cc6e709c.mp3": {
+  "text": "suchen",
+  "voice": "m",
+  "heard": "Suchen.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "cca9e6bb.mp3": {
@@ -2715,10 +5723,42 @@
   "heard": "Am Montag war der Kurs um 9.",
   "ok": true
  },
+ "ce13d0ae.mp3": {
+  "text": "Er nimmt ein Brötchen.",
+  "voice": "m",
+  "heard": "Er nimmt ein Brötchen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "ce1f5829.mp3": {
   "text": "Ich heiße Nadia Khalil.",
   "voice": "f",
   "heard": "Ich heiße Nadia Khalil.",
+  "ok": true
+ },
+ "ce21bd95.mp3": {
+  "text": "Der Laden ist klein.",
+  "voice": "f",
+  "heard": "Der Laden ist klein.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ce501913.mp3": {
+  "text": "Ein Stück Kuchen, bitte.",
+  "voice": "m",
+  "heard": "Ein Stück Kuchen, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ce6ad8d2.mp3": {
+  "text": "Für hier, bitte.",
+  "voice": "m",
+  "heard": "Für hier bitte.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "ce88dfc3.mp3": {
@@ -2733,10 +5773,34 @@
   "heard": "Heute Abend habe ich Zeit.",
   "ok": true
  },
+ "ce8e7f7f.mp3": {
+  "text": "der Saft, die Säfte",
+  "voice": "m",
+  "heard": "Der saft die Säfte.",
+  "score": 1,
+  "take": 2,
+  "ok": true
+ },
+ "ceb95c78.mp3": {
+  "text": "Das kostet zwei Euro fünfzig.",
+  "voice": "m",
+  "heard": "Das kostet 2,50 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
  "cf0968d3.mp3": {
   "text": "Gestern war ich krank.",
   "voice": "m",
   "heard": "Gestern war ich krank.",
+  "ok": true
+ },
+ "cfb7cc46.mp3": {
+  "text": "Ich esse gern Hähnchen mit Reis.",
+  "voice": "f",
+  "heard": "Ich esse gern Hähnchen mit Reis.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "cfd69d28.mp3": {
@@ -2745,16 +5809,48 @@
   "heard": "Ich komme in zehn Minuten.",
   "ok": true
  },
+ "cff5f7bf.mp3": {
+  "text": "Können Sie mir bitte die Speisekarte geben? Ja, natürlich.",
+  "voice": "m",
+  "heard": "Können Sie mir bitte die Speisekarte geben? Ja, natürlich.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d013e56a.mp3": {
   "text": "Ich spreche Arabisch, Englisch und ein bisschen Deutsch.",
   "voice": "m",
   "heard": "Ich spreche Arabisch, Englisch und ein bisschen Deutsch.",
   "ok": true
  },
+ "d02067c8.mp3": {
+  "text": "Ich hätte gern eine Brezel.",
+  "voice": "m",
+  "heard": "Ich hätte gerne eine Bretzel.",
+  "score": 0.6,
+  "take": 0,
+  "ok": false
+ },
  "d12a9005.mp3": {
   "text": "Es ist fünf nach acht.",
   "voice": "f",
   "heard": "Es ist fünf nach acht.",
+  "ok": true
+ },
+ "d1335400.mp3": {
+  "text": "Guten Tag! Was möchten Sie?",
+  "voice": "m",
+  "heard": "Guten Tag! Was möchten Sie?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "d1623db8.mp3": {
+  "text": "Das Wasser ist kalt.",
+  "voice": "f",
+  "heard": "Das Wasser ist kalt.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "d250a30f.mp3": {
@@ -2781,10 +5877,26 @@
   "heard": "Ich wohne in Berlin.",
   "ok": true
  },
+ "d367488d.mp3": {
+  "text": "Das kostet ein Euro.",
+  "voice": "m",
+  "heard": "Das kostet ein Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d3f176f6.mp3": {
   "text": "das Land, die Länder",
   "voice": "m",
   "heard": "Das Land, die Länder.",
+  "ok": true
+ },
+ "d44a9b50.mp3": {
+  "text": "Gib mir bitte einen Apfel! Bitte schön.",
+  "voice": "m",
+  "heard": "Gib mir bitte einen Apfel. Bitte schön.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "d45cd15f.mp3": {
@@ -2822,6 +5934,14 @@
   "voice": "m",
   "heard": "v, v, x, y, z.",
   "ok": false
+ },
+ "d4f69dd9.mp3": {
+  "text": "Ich trinke gern Tee.",
+  "voice": "m",
+  "heard": "Ich trinke gern Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "d5048e0a.mp3": {
   "text": "der Montag, die Montage",
@@ -2863,10 +5983,34 @@
   "heard": "Mein Name ist Braun.",
   "ok": true
  },
+ "d6715d91.mp3": {
+  "text": "Die Milch ist im Kühlschrank.",
+  "voice": "f",
+  "heard": "Die Milch ist im Kühlschrank.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "d696bb88.mp3": {
+  "text": "Ich gehe in den Supermarkt.",
+  "voice": "f",
+  "heard": "Ich gehe in den Supermarkt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d6c8f625.mp3": {
   "text": "Jetzt wohne ich in Köln.",
   "voice": "f",
   "heard": "Jetzt wohne ich in Köln.",
+  "ok": true
+ },
+ "d6d91da1.mp3": {
+  "text": "das Gemüse",
+  "voice": "m",
+  "heard": "Das Gemüse.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "d6f56940.mp3": {
@@ -2881,10 +6025,34 @@
   "heard": "Er liest die Zeitung.",
   "ok": true
  },
+ "d7f0409a.mp3": {
+  "text": "Ich trinke gern Tee.",
+  "voice": "f",
+  "heard": "Ich trinke gern Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "d7fd04fd.mp3": {
+  "text": "Zum Mitnehmen, bitte.",
+  "voice": "m",
+  "heard": "Zum mitnehmen, bitte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d81378bf.mp3": {
   "text": "Ich stehe um sieben Uhr auf.",
   "voice": "f",
   "heard": "Ich stehe um 7 Uhr auf.",
+  "ok": true
+ },
+ "d81c0070.mp3": {
+  "text": "der Tisch, die Tische",
+  "voice": "m",
+  "heard": "Der Tisch, die Tische.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "d88dea1a.mp3": {
@@ -2901,6 +6069,14 @@
   "take": 0,
   "ok": false
  },
+ "d91363a6.mp3": {
+  "text": "essen",
+  "voice": "m",
+  "heard": "Essen",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "d97f2674.mp3": {
   "text": "B, E, R, L, I, N",
   "voice": "m",
@@ -2908,6 +6084,22 @@
   "score": 0,
   "take": 0,
   "ok": false
+ },
+ "d9e4f2c0.mp3": {
+  "text": "Ich esse gern Fisch und Reis. Und du?",
+  "voice": "m",
+  "heard": "Ich esse gern Fisch und Reis. Und du?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "dac4933f.mp3": {
+  "text": "alles",
+  "voice": "m",
+  "heard": "Alles.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "db07fce7.mp3": {
   "text": "der Vorname, die Vornamen",
@@ -2925,6 +6117,14 @@
   "text": "Danke, gut. Und Ihnen?",
   "voice": "m",
   "heard": "Danke gut. Und Ihnen?",
+  "ok": true
+ },
+ "dc21050e.mp3": {
+  "text": "Siebzehn, bitte.",
+  "voice": "m",
+  "heard": "17 bitte.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "dc42e069.mp3": {
@@ -2945,6 +6145,14 @@
   "heard": "Komm.",
   "ok": false
  },
+ "dc96c59f.mp3": {
+  "text": "Was ist dein Lieblingsgetränk?",
+  "voice": "f",
+  "heard": "Was ist dein Lieblingsgetränk?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "dcdeee8a.mp3": {
   "text": "wo",
   "voice": "m",
@@ -2961,6 +6169,14 @@
   "text": "Tschüss! Bis morgen!",
   "voice": "m",
   "heard": "Tschüss, bis morgen.",
+  "ok": true
+ },
+ "de03b747.mp3": {
+  "text": "Ich esse einen Apfel.",
+  "voice": "m",
+  "heard": "Ich esse einen Apfel.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "de1f115d.mp3": {
@@ -2981,11 +6197,35 @@
   "heard": "Das Jahr die Jahre.",
   "ok": true
  },
+ "de774079.mp3": {
+  "text": "Wir zahlen zusammen.",
+  "voice": "f",
+  "heard": "Wir zahlen zusammen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "de95985b.mp3": {
   "text": "Freut mich auch! Das ist Herr Braun, mein Lehrer.",
   "voice": "m",
   "heard": "Freut mich auch, das ist Herr Bron, mein Lehrer.",
   "ok": false
+ },
+ "dea46148.mp3": {
+  "text": "Ich hätte gern ein Kilo Tomaten. Was kosten die Äpfel?",
+  "voice": "f",
+  "heard": "Ich hätte gern ein Kilo Tomaten. Was kosten die Äpfel?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "dea72a8a.mp3": {
+  "text": "Das ist ein Tee. Ich nehme einen Tee.",
+  "voice": "m",
+  "heard": "Das ist ein Tee. Ich nehme einen Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "defc96a8.mp3": {
   "text": "H, I, J, K, L, M, N",
@@ -2995,11 +6235,43 @@
   "take": 0,
   "ok": false
  },
+ "df009a14.mp3": {
+  "text": "Ich trinke lieber Wasser.",
+  "voice": "f",
+  "heard": "Ich trinke lieber Wasser.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "df068637.mp3": {
+  "text": "Nein, leider haben wir keinen Fisch.",
+  "voice": "f",
+  "heard": "Nein, leider haben wir keinen Fisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "df6020d8.mp3": {
+  "text": "Ja, natürlich.",
+  "voice": "m",
+  "heard": "Ja, natürlich.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "df83be68.mp3": {
   "text": "gut",
   "voice": "m",
   "heard": "Du.",
   "ok": false
+ },
+ "e02fc253.mp3": {
+  "text": "das Café, die Cafés",
+  "voice": "m",
+  "heard": "Das Café, die Cafés.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "e0795648.mp3": {
   "text": "Ich frühstücke immer um sieben.",
@@ -3019,11 +6291,27 @@
   "heard": "Hast du heute Abend Zeit?",
   "ok": true
  },
+ "e1491f75.mp3": {
+  "text": "Nein, ich trinke lieber Tee.",
+  "voice": "f",
+  "heard": "Nein, ich trinke lieber Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e15ce0dc.mp3": {
   "text": "Guten Abend! Mein Name ist Roth. Freut mich!",
   "voice": "f",
   "heard": "Guten Abend, mein Name ist Rod. Freut mich.",
   "ok": false
+ },
+ "e161c414.mp3": {
+  "text": "Ich brauche Salz und Öl.",
+  "voice": "f",
+  "heard": "Ich brauche Salz und Öl.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "e18cfabe.mp3": {
   "text": "Am Abend habe ich Zeit.",
@@ -3049,6 +6337,14 @@
   "heard": "Wie bitte? Noch einmal bitte.",
   "ok": true
  },
+ "e2339e1c.mp3": {
+  "text": "Was darf es sein?",
+  "voice": "m",
+  "heard": "Was darf es sein?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e281a09c.mp3": {
   "text": "Morgen früh habe ich einen Termin.",
   "voice": "m",
@@ -3059,6 +6355,14 @@
   "text": "Entschuldigung, ich bin zu spät.",
   "voice": "m",
   "heard": "Entschuldigung, ich bin zu spät.",
+  "ok": true
+ },
+ "e35835d8.mp3": {
+  "text": "Danke, das ist nett.",
+  "voice": "m",
+  "heard": "Danke, das ist nett.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "e35a4837.mp3": {
@@ -3093,10 +6397,34 @@
   "heard": "Kommst du mit?",
   "ok": true
  },
+ "e57394e8.mp3": {
+  "text": "Was nimmst du?",
+  "voice": "f",
+  "heard": "Was nimmst du?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "e599eb4c.mp3": {
+  "text": "Heute in unserer Bäckerei: zehn Brötchen für nur zwei Euro.",
+  "voice": "f",
+  "heard": "Heute in unserer Bäckerei, 10 Brötchen für nur 2 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e5b2a07e.mp3": {
   "text": "Ich spreche Arabisch und Englisch. Ich lerne Deutsch.",
   "voice": "f",
   "heard": "Ich spreche arabisch und englisch. Ich lerne Deutsch.",
+  "ok": true
+ },
+ "e5e786d7.mp3": {
+  "text": "Ja, sehr gut!",
+  "voice": "f",
+  "heard": "Ja, sehr gut.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "e639c1da.mp3": {
@@ -3123,10 +6451,50 @@
   "heard": "Wo wohnen sie?",
   "ok": true
  },
+ "e819109a.mp3": {
+  "text": "Hier ist ein Platz frei.",
+  "voice": "f",
+  "heard": "Hier ist ein Platz frei.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "e8204c31.mp3": {
+  "text": "Ich habe keinen Reis mehr.",
+  "voice": "m",
+  "heard": "Ich habe keinen Reis mehr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "e82ea859.mp3": {
+  "text": "das Geschäft, die Geschäfte",
+  "voice": "m",
+  "heard": "Das Geschäft, die Geschäfte.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e84d690e.mp3": {
   "text": "die Sprache, die Sprachen",
   "voice": "m",
   "heard": "Die Sprache, die Sprachen.",
+  "ok": true
+ },
+ "e850e329.mp3": {
+  "text": "Die Rechnung, bitte. Das Hähnchen und der Tee. Ach, und noch ein Wasser.",
+  "voice": "f",
+  "heard": "Die Rechnung bitte. Das Hähnchen und der Tee. Ach und noch ein Wasser.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "e8d9dd4b.mp3": {
+  "text": "Eine Cola, bitte.",
+  "voice": "f",
+  "heard": "Eine Cola, bitte.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "e8ede982.mp3": {
@@ -3134,6 +6502,22 @@
   "voice": "m",
   "heard": "Die Minute, die Minuten.",
   "ok": true
+ },
+ "e8fcdfd5.mp3": {
+  "text": "Das ist ein Apfel. Das ist kein Apfel.",
+  "voice": "m",
+  "heard": "Das ist ein Apfel. Das ist kein Apfel.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "e91c28ec.mp3": {
+  "text": "Das macht zwölf Euro achtzig.",
+  "voice": "f",
+  "heard": "Das macht 12,80 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
  },
  "e964f4bb.mp3": {
   "text": "Heute ist der erste Juni.",
@@ -3147,10 +6531,42 @@
   "heard": "Ich brauche einen Termin.",
   "ok": true
  },
+ "e9bcddac.mp3": {
+  "text": "das Mittagessen",
+  "voice": "m",
+  "heard": "das Mittagessen",
+  "score": 1,
+  "take": 2,
+  "ok": true
+ },
  "ea67c434.mp3": {
   "text": "Ich komme aus Ägypten. Wohnen Sie schon lange hier?",
   "voice": "m",
   "heard": "Ich komme aus Ägypten. Wohnen Sie schon lange hier.",
+  "ok": true
+ },
+ "eac9ba6d.mp3": {
+  "text": "Ich hätte gern drei Brötchen. Und einen Kaffee zum Mitnehmen.",
+  "voice": "f",
+  "heard": "Ich hätte gern drei Brötchen und einen Kaffee zu mitnehmen.",
+  "score": 0.89,
+  "take": 0,
+  "ok": false
+ },
+ "eb1989f0.mp3": {
+  "text": "Ich trinke Wasser.",
+  "voice": "m",
+  "heard": "Ich trinke Wasser.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "eb536f85.mp3": {
+  "text": "Und was trinkst du gern?",
+  "voice": "m",
+  "heard": "Und was trinkst du gern?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "eb6587e9.mp3": {
@@ -3158,6 +6574,14 @@
   "voice": "f",
   "heard": "Ich stehe um 6 Uhr auf. Der Kurs fängt um 8 Uhr an.",
   "ok": false
+ },
+ "eb68462d.mp3": {
+  "text": "Ich brauche einen Kuli.",
+  "voice": "f",
+  "heard": "Ich brauche einen Kuli.",
+  "score": 1,
+  "take": 1,
+  "ok": true
  },
  "ebb26ebb.mp3": {
   "text": "Mein Name ist Nadia Khalil.",
@@ -3185,6 +6609,38 @@
   "heard": "Gut um drei. Bis Sonntag.",
   "ok": true
  },
+ "ec5ec2bf.mp3": {
+  "text": "Die Schuhe sind neu.",
+  "voice": "f",
+  "heard": "Die Schuhe sind neu.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ecbbdb45.mp3": {
+  "text": "Der Kaffee ist nicht gut.",
+  "voice": "m",
+  "heard": "Der Kaffee ist nicht gut.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ecf5f8ea.mp3": {
+  "text": "Was isst du zum Frühstück?",
+  "voice": "f",
+  "heard": "Was ist du zum Frühstück?",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
+ },
+ "ed17a5de.mp3": {
+  "text": "Ich habe kein Brot mehr.",
+  "voice": "m",
+  "heard": "Ich habe kein Brot mehr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "ed195f89.mp3": {
   "text": "Der Kurs beginnt um halb neun.",
   "voice": "f",
@@ -3205,6 +6661,22 @@
   "heard": "Danke gut. Und dir!",
   "ok": true
  },
+ "ee0e3333.mp3": {
+  "text": "Hier ist die Speisekarte. Was möchten Sie trinken?",
+  "voice": "m",
+  "heard": "Hier ist die Speisekarte. Was möchten Sie trinken?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ee191f91.mp3": {
+  "text": "Die Butter kostet zwei Euro neunundzwanzig.",
+  "voice": "m",
+  "heard": "Die Butter kostet 2,29 €.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
  "ee62704f.mp3": {
   "text": "Ich heiße Amr Nabil. Und Sie?",
   "voice": "m",
@@ -3218,6 +6690,22 @@
   "voice": "m",
   "heard": "Ihre Arbeit fängt um 8 Uhr an.",
   "ok": false
+ },
+ "eeb5a99f.mp3": {
+  "text": "das Getränk, die Getränke",
+  "voice": "m",
+  "heard": "Das Getränk, die Getränke.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "eec86ec1.mp3": {
+  "text": "Das Frühstück ist um sieben Uhr.",
+  "voice": "f",
+  "heard": "Das Frühstück ist um 7 Uhr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "ef54cb59.mp3": {
   "text": "Ich heiße Rana Ibrahim.",
@@ -3235,6 +6723,46 @@
   "text": "Mein Hobby ist Fotografieren.",
   "voice": "f",
   "heard": "Mein Hobby ist Fotografieren.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ef7d062c.mp3": {
+  "text": "Trinkst du Kaffee?",
+  "voice": "f",
+  "heard": "Trinkst du Kaffee?",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
+ "ef84c92f.mp3": {
+  "text": "der Durst",
+  "voice": "m",
+  "heard": "Der Durst.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ef880b3f.mp3": {
+  "text": "kein",
+  "voice": "m",
+  "heard": "Kein.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "efab2a12.mp3": {
+  "text": "Sechs Eier kosten zwei Euro neunundvierzig.",
+  "voice": "m",
+  "heard": "6 Eier kosten 2,49 Euro",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
+ "f0b1fc77.mp3": {
+  "text": "Ein Glas Wasser, bitte!",
+  "voice": "m",
+  "heard": "Ein Glas Wasser, bitte.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3257,10 +6785,34 @@
   "heard": "Ich fahre für drei Wochen nach Cairo.",
   "ok": false
  },
+ "f1781a20.mp3": {
+  "text": "Isst du gern Fisch?",
+  "voice": "m",
+  "heard": "Ist du gern Fisch?",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
+ },
  "f178f3c5.mp3": {
   "text": "Ich habe keine Zeit.",
   "voice": "f",
   "heard": "Ich habe keine Zeit.",
+  "ok": true
+ },
+ "f225bc60.mp3": {
+  "text": "finden",
+  "voice": "m",
+  "heard": "finden",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f23719f2.mp3": {
+  "text": "kochen",
+  "voice": "m",
+  "heard": "kochen",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "f2e24786.mp3": {
@@ -3275,11 +6827,51 @@
   "heard": "Anfang!",
   "ok": false
  },
+ "f3022fbd.mp3": {
+  "text": "links",
+  "voice": "m",
+  "heard": "Links.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f3671970.mp3": {
+  "text": "Kann ich mit Karte zahlen?",
+  "voice": "m",
+  "heard": "Kann ich mit Karte zahlen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f3f30e34.mp3": {
+  "text": "Wo sind die Eier?",
+  "voice": "m",
+  "heard": "Wo sind die Eier?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f3f49eef.mp3": {
+  "text": "Das ist zu teuer.",
+  "voice": "f",
+  "heard": "Das ist zu teuer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f4384599.mp3": {
   "text": "neunundneunzig",
   "voice": "m",
   "heard": "99",
   "ok": true
+ },
+ "f5003a22.mp3": {
+  "text": "Das Mittagessen ist um zwölf.",
+  "voice": "f",
+  "heard": "Das Mittagessen ist um 12 Uhr.",
+  "score": 1,
+  "take": 0,
+  "ok": false
  },
  "f5062a97.mp3": {
   "text": "Und wo wohnen Sie jetzt?",
@@ -3293,10 +6885,26 @@
   "heard": "Danke.",
   "ok": true
  },
+ "f606b992.mp3": {
+  "text": "die Tomate, die Tomaten",
+  "voice": "m",
+  "heard": "die Tomate, die Tomaten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f60f7e86.mp3": {
   "text": "der Sonntag, die Sonntage",
   "voice": "m",
   "heard": "Der Sonntag, die Sonntage.",
+  "ok": true
+ },
+ "f6144e75.mp3": {
+  "text": "Zusammen macht das vierunddreißig Euro.",
+  "voice": "f",
+  "heard": "Zusammen macht das 34 Euro.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "f70fe8de.mp3": {
@@ -3305,10 +6913,26 @@
   "heard": "Guten Abend, ich heiße Karin.",
   "ok": false
  },
+ "f73191b0.mp3": {
+  "text": "Ich hätte gern ein halbes Kilo Käse und einen Liter Milch.",
+  "voice": "f",
+  "heard": "Ich hätte gern ein halbes Kilo Käse und einen Liter Milch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f78a6781.mp3": {
   "text": "Mein Hobby ist Lesen.",
   "voice": "f",
   "heard": "Mein Hobby ist Lesen.",
+  "ok": true
+ },
+ "f7ca718e.mp3": {
+  "text": "kosten",
+  "voice": "m",
+  "heard": "Kosten.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "f7e37655.mp3": {
@@ -3318,6 +6942,22 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "f8466eb4.mp3": {
+  "text": "Ich kaufe Brot.",
+  "voice": "f",
+  "heard": "Ich kaufe Brot.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f89257a8.mp3": {
+  "text": "Das macht fünf Euro zwanzig.",
+  "voice": "m",
+  "heard": "Das macht 5,20 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
  },
  "fa7c29a7.mp3": {
   "text": "Guten Tag! Haben Sie am Mittwoch einen Termin frei?",
@@ -3331,10 +6971,34 @@
   "heard": "Super, bis Sonntag!",
   "ok": true
  },
+ "fa939439.mp3": {
+  "text": "Ich esse gern Reis.",
+  "voice": "m",
+  "heard": "Ich esse gern Reis.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "fab2ca46.mp3": {
   "text": "Ich zähle bis hundert.",
   "voice": "f",
   "heard": "Ich zähle bis 100.",
+  "ok": true
+ },
+ "fac88b29.mp3": {
+  "text": "Der Kaffee kostet zwei Euro achtzig.",
+  "voice": "m",
+  "heard": "Der Kaffee kostet 2,80 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
+ "fadb954d.mp3": {
+  "text": "Die Rechnung, bitte!",
+  "voice": "m",
+  "heard": "Die Rechnung, bitte.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "faf73f31.mp3": {
@@ -3343,10 +7007,50 @@
   "heard": "Guten Abend. Wie geht es Ihnen?",
   "ok": true
  },
+ "fb2766b3.mp3": {
+  "text": "Ich koche gern.",
+  "voice": "f",
+  "heard": "Ich koche gern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "fb906f1c.mp3": {
+  "text": "Was kostet das?",
+  "voice": "m",
+  "heard": "Was kostet das?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "fb9953e0.mp3": {
+  "text": "Wo ist das Brot? Ich finde es nicht.",
+  "voice": "m",
+  "heard": "Wo ist das Brot? Ich finde es nicht.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "fbb20e88.mp3": {
   "text": "Guten Morgen!",
   "voice": "m",
   "heard": "Guten Morgen.",
+  "ok": true
+ },
+ "fc090c6f.mp3": {
+  "text": "Ich trinke keinen Kaffee.",
+  "voice": "m",
+  "heard": "Ich trinke keinen Kaffee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "fc10e404.mp3": {
+  "text": "Unser Supermarkt ist am Sonntag geschlossen. Von Montag bis Samstag sind wir von acht bis zweiundzwanzig Uhr für Sie da.",
+  "voice": "m",
+  "heard": "Unser Supermarkt ist am Sonntag geschlossen. Von Montag bis Samstag sind wir von 8 bis 22 Uhr für Sie da.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "fcae1fcc.mp3": {
@@ -3367,10 +7071,42 @@
   "heard": "Am Abend sehe ich hin.",
   "ok": false
  },
+ "fcf1ca99.mp3": {
+  "text": "Das schmeckt sehr gut.",
+  "voice": "f",
+  "heard": "Das schmeckt sehr gut.",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
+ "fd0fac1d.mp3": {
+  "text": "das Brot, die Brote",
+  "voice": "m",
+  "heard": "Das Brot, die Brote.",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "fd1faf78.mp3": {
   "text": "Bitte stellen Sie sich vor.",
   "voice": "m",
   "heard": "Bitte stellen Sie sich vor.",
+  "ok": true
+ },
+ "fd4784de.mp3": {
+  "text": "Die Suppe ist kalt. Ich esse sie nicht.",
+  "voice": "m",
+  "heard": "Die Suppe ist kalt. Ich esse sie nicht.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "fd497fd4.mp3": {
+  "text": "der Preis, die Preise",
+  "voice": "m",
+  "heard": "Der Preis, die Preise.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "fdad9497.mp3": {
@@ -3391,6 +7127,14 @@
   "heard": "Heute.",
   "ok": true
  },
+ "fe861051.mp3": {
+  "text": "Was trinkst du gern?",
+  "voice": "f",
+  "heard": "Was trinkst du gern?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "feae2b4e.mp3": {
   "text": "die Stunde, die Stunden",
   "voice": "m",
@@ -3401,6 +7145,14 @@
   "text": "Ja, am Donnerstag um vier.",
   "voice": "f",
   "heard": "Ja, am Donnerstag um vier.",
+  "ok": true
+ },
+ "ff99f837.mp3": {
+  "text": "Und was möchten Sie essen?",
+  "voice": "m",
+  "heard": "Und was möchten Sie essen?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "ffa97457.mp3": {
@@ -3419,6 +7171,14 @@
   "text": "Am Bahnhof.",
   "voice": "m",
   "heard": "Am Bahnhof.",
+  "ok": true
+ },
+ "fffc63b3.mp3": {
+  "text": "die Kleidung",
+  "voice": "m",
+  "heard": "Die Kleidung.",
+  "score": 1,
+  "take": 0,
   "ok": true
  }
 }

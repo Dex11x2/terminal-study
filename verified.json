@@ -5684,6 +5684,11 @@
   "date": "2026-11-21",
   "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
  },
+ "dea1|Die Rechnung, bitte!": {
+  "hash": "df50ccd1c7d5",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
+ },
  "dea1|Die Zahlen 0–100": {
   "hash": "eb813578781a",
   "date": "2026-11-21",
@@ -5699,6 +5704,11 @@
   "date": "2026-11-21",
   "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
  },
+ "dea1|Ich esse gern Fisch": {
+  "hash": "606619302570",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
+ },
  "dea1|Ich heiße …": {
   "hash": "3b6404f930c5",
   "date": "2026-11-21",
@@ -5707,6 +5717,11 @@
  "dea1|Ich komme aus …": {
   "hash": "8576f0e653a6",
   "date": "2026-11-21",
+  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
+ },
+ "dea1|Ich möchte einen Kaffee": {
+  "hash": "f45547a2df05",
+  "date": "2026-11-22",
   "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
  },
  "dea1|Ich stehe um sieben Uhr auf": {
@@ -5729,9 +5744,24 @@
   "date": "2026-11-21",
   "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
  },
+ "dea1|Prüfung: Sprechen Teil 2 und 3, Hören Teil 2": {
+  "hash": "7865c97c419b",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
+ },
+ "dea1|Was kostet das?": {
+  "hash": "524be2c11196",
+  "date": "2026-11-22",
+  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
+ },
  "dea1|Wie spät ist es?": {
   "hash": "f88f595f0866",
   "date": "2026-11-21",
+  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
+ },
+ "dea1|Wo finde ich Reis?": {
+  "hash": "d3064682ea82",
+  "date": "2026-11-22",
   "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
  },
  "diag|/health بيقول 200 والدخول بايظ": {
