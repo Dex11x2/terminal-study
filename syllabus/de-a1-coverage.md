@@ -1,0 +1,219 @@
+# قياس ألماني A1 على المنهج
+
+اتعمل بـ `node tools/de/syllabus.js --write` من `syllabus/de-a1.json` (١٢٩٤ بند) و `syllabus/de-a1-map.js` (مكان كل بند). البند «متغطي» لما الدرس اللي عليه فيه الدليل فعلًا. الكلمة «متغطية» لما ليها كارت في ~~~words، و«مذكورة» لما بتيجي في جملة بس (والفعل المنفصل لما بييجي متصرّف زي «gibt … ab» مش بيتحسب).
+
+| النوع | متغطي | ناقص | مستبعد | النسبة |
+|---|---|---|---|---|
+| أجزاء الامتحانات | 28 | 13 | 1 | 68٪ |
+| القواعد | 57 | 8 | 0 | 88٪ |
+| مجموعات الكلمات | 19 | 1 | 0 | 95٪ |
+| المواضيع | 41 | 7 | 0 | 85٪ |
+| أفعال الكلام (Sprechhandlungen) | 36 | 12 | 0 | 75٪ |
+| المفاهيم (Notionen) | 23 | 4 | 0 | 85٪ |
+| استراتيجيات الكلام | 6 | 9 | 0 | 40٪ |
+| مواقف منهج الاندماج | 111 | 74 | 0 | 60٪ |
+| جمل CEFR | 69 | 32 | 1 | 68٪ |
+| الكلمات | 419 (+188 مذكورة من غير كارت) | 135 | 0 | 56٪ |
+| **الكل** | **809** | | | **63٪** |
+
+## ناقص: أجزاء الامتحانات (13)
+
+- Lesen Aufgabe 3 — ٥ نصوص و ٦ صور: توصّل كل نص بصورته — مفيش تمرين بشكل ÖSD Lesen Aufgabe 3
+- Hören Aufgabe 1 — ٥ نصوص مسموعة و ٦ صور، مرة واحدة: توصّل كل نص بصورته — مفيش تمرين بشكل ÖSD Hören Aufgabe 1
+- Hören Aufgabe 2 — رسالة مسجّلة (أنسرماشين أو خدمة تليفون) بتتسمع مرتين: تكتب ٥ معلومات ناقصة وإنت بتسمع (أرقام، مواعيد، أسامي متهجّية) — مفيش تمرين بشكل ÖSD Hören Aufgabe 2 (الدرس ٢.٦ مرجعه بس)
+- Hören Aufgabe 3 — ٥ مقابلات قصيرة، مرة واحدة: تختار الإجابة الصح — مفيش تمرين بشكل ÖSD Hören Aufgabe 3
+- Sprechen Aufgabe 2 — تختار صورة من ٣ (موقف يومي) وتوصفها بمساعدة ٤ أسئلة — وصف الصورة في ÖSD متذكر في جدول المقارنة بس، من غير تمرين
+- Sprechen Aufgabe 3 — حوار مع الممتحن (رول بلاي) على نفس الصورة: تبادل الكلام، و Du ولا Sie — الحوار مع الممتحن في ÖSD متذكر في جدول المقارنة بس
+- Bestehen — جزئين: المكتوب (قراية وسمع وكتابة) ٧٥ نقطة والنجاح من ٣٨، بحد أدنى ٦ في القراية و ٦ في السمع و ٤ في الإيميل؛ والكلام ٢٥ نقطة والنجاح من ١٢، وقبله ١٠ دقايق تحضير — قاعدة نجاح ÖSD (أقل حاجة في القراية والسمع) مش مشروحة
+- Hören Teil A — ٤ أسئلة صح ولا غلط: تلقط معلومة محددة — مفيش تمرين بشكل telc Hören Teil A
+- Hören Teil B — ٥ أسئلة اختيار على التفاصيل، خصوصًا الأرقام والحروف — مفيش تمرين بشكل telc Hören Teil B
+- Hören und antworten Teil B — نفس الفكرة مع ٤ كلامات — الجزء التاني من «Hören und antworten» مش متمرّن عليه
+- Lesen Teil A — ٣ نصوص توصّلها بعناوينها (الفكرة العامة) — مفيش تمرين بشكل telc Lesen Teil A
+- Lesen Teil B — نص و ٣ جمل صح ولا غلط (التفاصيل) — مفيش تمرين بشكل telc Lesen Teil B
+- Bestehen — الامتحان ١٠٠ نقطة والنجاح من ٦٠: كلمات وقواعد ١٥، وسمع ٣١، وقراية ٢٤، وكتابة ١٠، وكلام ٢٠ — قاعدة نجاح telc مش مشروحة
+
+## ناقص: القواعد (8)
+
+- über (über 20 Minuten) — «über» للوقت (über 20 Minuten) مش مشروح
+- unter + Dativ (unter der Nummer) — «unter der Nummer» مش موجودة
+- aus + Dativ (aus Plastik) — «aus» للخامة (aus Plastik، aus Holz) مش موجودة
+- ohne + Akkusativ (ohne Hilfe) — «ohne» كحرف جر (ohne Milch) مش مشروح
+- Nomen auf -er (Arbeiter) und -ung (Wohnung) — تكوين الأسماء بـ -er و -ung مش مشروح كقاعدة
+- Partizip als Nomen (Reisender) — Reisende/Reisender مذكورة مرة في امتحان بس
+- Adjektive mit un-, -los, -bar (unbekannt, arbeitslos, erreichbar) — un- و -los و -bar مش موجودين
+- Farbkomposita (hellblau, dunkelblau) — hellblau و dunkelblau مش موجودين
+
+## ناقص: مجموعات الكلمات (1)
+
+- Meter, Zentimeter, Kilometer, Quadratmeter — Meter و Zentimeter و Kilometer و Quadratmeter مش متعلّمين
+
+## ناقص: المواضيع (7)
+
+- Geschlecht — Geschlecht (männlich/weiblich) في الاستمارة مش موجودة
+- Pflanzen — النباتات مش موضوع درس
+- Tiere — الحيوانات مش موضوع درس
+- Interessen — الهوايات متذكرة كموضوع في Sprechen Teil 1 بس، مفيش درس عنها
+- Radio/Fernsehen — Radio و Fernsehen مش موضوع درس
+- Internet — الإنترنت مذكور بس، مش موضوع درس
+- Lektüre/Presse — القراية والجرايد مش موضوع درس
+
+## ناقص: أفعال الكلام (Sprechhandlungen) (12)
+
+- Zweck und Bestimmung angeben — «wofür / für …» للغرض مش مشروح
+- Wissen/Unwissen — «Ich weiß (es) nicht» مش متعلّمة
+- Zufriedenheit/Unzufriedenheit — «zufrieden» مش موجودة
+- Gefallen/Missfallen — «Das gefällt mir» مش متعلّمة (مذكورة في الصحة بس)
+- Interesse/Desinteresse — «Das interessiert mich (nicht)» مش متعلّمة
+- verneinen/Widerspruch — «doch» والاعتراض (Nein, das stimmt nicht) مش متعلّمين
+- Hoffnung — «Ich hoffe …» مش موجودة
+- Sorge/Befürchtung — التعبير عن القلق مش موجود
+- Enttäuschung — التعبير عن خيبة الأمل مش موجود
+- Bestätigung — «Ja, genau / Richtig / Stimmt» مش متعلّمة
+- Versprechung — الوعد مش موجود
+- eine Anerkennung aussprechen/ein Kompliment machen — المجاملة (Das sieht toll aus) مش متعلّمة
+
+## ناقص: المفاهيم (Notionen) (4)
+
+- anwesend/abwesend sein — da / nicht da / anwesend مش متعلّمة
+- Inklusion/Exklusion — mit / ohne / inklusive للتضمين مش مشروحة
+- Dimension/Maßangabe — groß/klein/lang/breit مع المقاسات مش مشروحة
+- Bedingung — «wenn» للشرط مش مشروحة
+
+## ناقص: استراتيجيات الكلام (9)
+
+- eine Äußerung einleiten — «Also, … / Na ja, …» مش متعلّمة
+- eine Äußerung abschließen — ختم الكلام مش متعلّم
+- Zuhören signalisieren — «Aha / Ach so / Ja?» مش متعلّمة
+- gemeinsames Wissen andeuten — «Weißt du …» مش موجودة
+- Beispiele geben — «zum Beispiel» مش موجودة
+- das Thema wechseln — تغيير الموضوع مش متعلّم
+- etwas hervorheben — التأكيد (sehr / wirklich / besonders) مش مشروح كاستراتيجية
+- Vermeidung — تجنّب الموضوع مش متعلّم
+- Verständnishilfen anbieten — عرض المساعدة على الفهم مش متعلّم
+
+## ناقص: مواقف منهج الاندماج (74)
+
+- A 1.1 (am Gespräch teilnehmen) — يرفض بأدب يتكلم عن حاجات حصلت له في بلده أو في الطريق — الرفض المؤدب للكلام عن حاجات شخصية مش متعلّم
+- A 2.1 (am Gespräch teilnehmen) — يجاوب ببساطة: الحاجة دي عادية في بلدي ولا لأ — «Das ist in meinem Land (nicht) normal» مش موجودة
+- A 4.2 (am Gespräch teilnehmen) — يسأل لو الورق ده (جواب المدرسة، الطلبات) موجود بلغته أو بلغة يعرفها — السؤال عن الورق بلغة تانية مش موجود
+- A 4.2 (am Gespräch teilnehmen) — يقول للموظف إن فيه حد هيترجم له (حد من العيلة أو مترجم) — «Jemand übersetzt für mich» مش موجودة
+- B 1.5 (am Gespräch teilnehmen) — يقول الحاجة عجبته ولا لأ — «Das gefällt mir (nicht)» مش متعلّمة
+- B 2.1 (am Gespräch teilnehmen) — يقول إن السؤال يهمه أو مش فارق معاه — «Das interessiert mich (nicht)» مش متعلّمة
+- B 2.2 (am Gespräch teilnehmen) — يقول موافق أو مش موافق — الموافقة والاعتراض على رأي مش متعلّمين
+- C 1.1 (am Gespräch teilnehmen) — يقول إن رأيه مختلف — «Ich sehe das anders» مش موجودة
+- C 1.2 (am Gespräch teilnehmen) — وقت الخلاف (مع زميل أو مدرس) يسأل: أنا فهمت صح؟ — «Habe ich das richtig verstanden?» مش موجودة
+- C 1.4 (am Gespräch teilnehmen) — يعترض بكلام بسيط ومناسب (على كرسي محجوز، أو اتهام، أو طلب) — الاعتراض البسيط مش متعلّم
+- C 2.4 (am Gespräch teilnehmen) — في مشكلة، يوافق أو يرفض حل اتعرض عليه — قبول أو رفض حل مقترح مش متعلّم
+- D 1.4 (am Gespräch teilnehmen) — يعرض على زميل أو ضيف يقولوا لبعض Du — عرض الـ Du على حد مش متعلّم (الدرس ١.٢ بيشرح Du و Sie بس)
+- D 1.4 (am Gespräch teilnehmen) — يرد لما حد يعرض عليه Du — الرد على عرض الـ Du مش متعلّم
+- D 1.4 (am Gespräch teilnehmen) — يطلب من موظف حكومي يكلمه بالطريقة المناسبة — طلب المعاملة المناسبة من موظف مش متعلّم
+- D 2.7 (am Gespräch teilnehmen) — يجامل أو يمدح بكلمتين — المجاملة مش متعلّمة
+- D 2.7 (am Gespräch teilnehmen) — يشكر على المجاملة — الشكر على المجاملة مش متعلّم
+- E 1.1 (am Gespräch teilnehmen) — يطلب من اللي بيكلمه يصحّح له — «Korrigieren Sie mich, bitte» مش متعلّمة
+- E 1.1 (am Gespräch teilnehmen) — يطلب ترشيح مواد تعلّم زيادة — طلب مواد تعلّم زيادة مش متعلّم
+- E 1.1 (am Gespräch teilnehmen) — يسأل فيه كورس ألماني قريب؟ — السؤال عن كورس قريب مش متعلّم
+- E 2.1 (schreiben) — يعمل قاموس شخصي (كروت) — القاموس الشخصي مش مشروح كطريقة (فيه «تمرّن» بس)
+- E 2.1 (schreiben) — يقسّم الكلمات على مواضيع — تقسيم الكلمات على مواضيع مش مشروح كطريقة
+- E 2.1 (schreiben) — يستخدم طرق للحفظ — طرق الحفظ مش مشروحة
+- E 2.1 (schreiben) — يكتب الكلمات بإيده عشان تتحفظ — كتابة الكلمات باليد مش مشروحة كطريقة
+- E 2.1 (schreiben) — يطلّع من النصوص الكلمات المهمة له ويضيفها لقاموسه — استخراج الكلمات من النصوص مش مشروح
+- E 2.2 (hören) — يتمرّن على السمع لوحده بتسجيلات الكورس — التمرين على السمع لوحدك مش مشروح كطريقة
+- E 2.2 (hören) — يمسك في الكلمات الدولية والأرقام والأسامي كـ«جزر» يفهم منها — الكلمات الدولية والأرقام كجزر للفهم مش مشروحة
+- E 2.2 (hören) — يتوقع الكلام هيبقى عن إيه قبل ما يسمع (من الوقت ومين بيتكلم) ويستخدم ده في الفهم — التوقع قبل السمع مش مشروح
+- E 2.3 (sehen und hören) — يستخدم الترجمة اللي على الشاشة في الأفلام والفيديو للتمرين — الترجمة اللي على الشاشة مش مشروحة
+- E 2.3 (sehen und hören) — يستخدم الصورة في التلفزيون عشان يفهم — الصورة في التلفزيون مش مشروحة
+- E 2.3 (sehen und hören) — يفهم الفكرة العامة من الفيديو ويعدّي الكلمات اللي مش فاهمها — الفكرة العامة من الفيديو مش مشروحة
+- E 2.4 (lesen) — يخمّن معنى الكلمة من الأسامي والتواريخ والكلمات الدولية والكلمات الشبه الإنجليزي وقواعد تكوين الكلمة — تخمين المعنى من الكلمات الدولية وتكوين الكلمة مش مشروح
+- E 2.4 (lesen) — يستخدم شكل النص (نوعه، العناوين، التنسيق) عشان يفهم — استخدام شكل النص للفهم مش مشروح
+- E 2.4 (lesen) — يلاحظ الكلمات اللي بتربط النص (er، dort، dann) ويمشي وراها — كلمات الربط (er، dort، dann) كطريقة قراية مش مشروحة
+- E 2.5 (sprechen) — يحفظ جمل وتعبيرات جاهزة عشان يتكلم أسلس — حفظ الجمل الجاهزة مش مشروح كطريقة
+- E 2.5 (sprechen) — يعمل كروت تعبيرات (حتى ديجيتال) — كروت التعبيرات مش مشروحة
+- E 2.6 (schreiben) — ينقل نصوص بإيده عشان كتابته تتحسن — النقل باليد مش مشروح
+- E 2.6 (schreiben) — يستخدم المدقق الإملائي وهو بيكتب — المدقق الإملائي مش مشروح
+- E 2.7 (null) — يرسم القاعدة أو يفهمها من رسم — رسم القاعدة مش مشروح كطريقة
+- E 2.7 (null) — يكتشف القاعدة بنفسه (يعلّم، يجمع، يرتّب) ويصيغها — اكتشاف القاعدة بنفسك مش مشروح
+- E 2.7 (null) — يستخدم جمل حفظ (Merkverse) للقواعد — جمل الحفظ (Merkverse) مش موجودة
+- E 2.7 (null) — يستخدم الحركة واللمس عشان القاعدة تثبت — الحركة واللمس مش موجودين
+- E 2.7 (null) — يعمل تمارين قواعد لزمايله ويساعدهم يحلّوها — تمارين للزمايل مش موجودة
+- 1.1.1 (lesen) — يطلّع معلومات عن جهة حكومية من الإنترنت أو دليل التليفون — المعلومات عن جهة حكومية من النت مش متعلّمة
+- 1.3.4 (sprechen) — يعرّف بنفسه في مكتب استشارة — التعريف بالنفس في مكتب استشارة مش متعلّم
+- 2.1.3 (lesen) — يفهم معلومة مكتوبة بسيطة (عِدّة، خامات، كميات) — قراية معلومة مكتوبة عن العِدّة والخامات مش موجودة
+- 2.1.4 (lesen) — يفهم أهم حاجة في تعليمات الأمان في الشغل لو فيها صور — تعليمات الأمان في الشغل مش موجودة
+- 2.2.2 (schreiben) — يملا checklist أو استمارة متابعة بسيطة — الـ checklist واستمارة المتابعة مش موجودين
+- 3.2.1 (lesen) — يدوّر، حتى على الإنترنت، على أماكن استشارة الشغل — البحث عن استشارة الشغل مش موجود
+- 5.1.1 (am Gespräch teilnehmen) — يطلب من معارفه ترشيح بنك أو تأمين — طلب ترشيح بنك مش موجود
+- 5.1.1 (lesen) — يطلّع معلومات عن البنوك والتأمين من الإنترنت أو دليل التليفون — معلومات البنوك من النت مش موجودة
+- 5.2.2 (schreiben) — يبلّغ البنك كتابة بمعلومة مهمة (زي تغيير العنوان) — إبلاغ البنك بتغيير العنوان مش موجود
+- 5.2.3 (schreiben) — يملا استمارات الدفع المهمة (تحويل) — ملا استمارة التحويل مش متعلّم (Überweisung في امتحان تجريبي بس)
+- 5.4.1 (am Gespräch teilnehmen) — يطلب من موظف البنك أو التأمين ورق معلومات — طلب ورق معلومات من البنك مش موجود
+- 6.1.1 (am Gespräch teilnehmen) — يسأل الأهالي أو المعارف عن حضانات وروضات — السؤال عن الحضانات مش موجود
+- 6.1.1 (lesen) — يطلّع عناوين وأرقام تليفونات من الدليل أو الإنترنت — تطليع عناوين وأرقام من الدليل مش موجود
+- 6.2.2 (schreiben) — يملا الجزء اللي بيرجع من جوابات المدرسة — جوابات المدرسة مش موجودة
+- 6.2.3 (schreiben) — يملا ورقة غياب أو مرض الطفل للمدرسة — ورقة غياب الطفل مش موجودة
+- 6.3.1 (sprechen) — يحكي ببساطة عن دراسة ابنه في بلده — الكلام عن دراسة الأولاد في البلد مش موجود
+- 6.3.4 (am Gespräch teilnehmen) — يجاوب على أسئلة بسيطة في مقابلة استشارة عن ابنه — مقابلة الاستشارة عن الأولاد مش موجودة
+- 7.1.1 (am Gespräch teilnehmen) — يسأل معارفه أو جيرانه عن منتج بيدوّر عليه (الماركة، المحل، السعر) — السؤال عن منتج عند المعارف مش موجود
+- 7.1.1 (lesen) — يفهم أهم حاجة على المنتج (تاريخ الصلاحية، الحفظ، المكونات) — تاريخ الصلاحية والمكونات مش موجودين
+- 7.2.1 (am Gespräch teilnehmen) — يسأل لو فيه خصم (مثلًا على حاجة فيها عيب) — طلب الخصم مش موجود
+- 7.2.2 (schreiben) — يطلب أوردر، حتى أونلاين، ويملا البيانات (المقاس، العدد، العنوان) — الطلب أونلاين مش متعلّم
+- 8.1.1 (am Gespräch teilnehmen) — يسأل عن ترشيحات وعناوين دكاترة — طلب ترشيح دكتور مش موجود
+- 8.1.1 (lesen) — يطلّع معلومات العلاج المهمة من الإنترنت أو الدليل — معلومات العلاج من النت مش موجودة
+- 9.1.1 (lesen) — يطلّع المهم من جدول برامج التلفزيون — جدول برامج التلفزيون مش موجود
+- 9.1.1 (am Gespräch teilnehmen) — يسأل معارفه يلاقي معلومات فين — السؤال عن مكان المعلومات مش موجود
+- 9.3.1 (schreiben) — يكتب كلمات بحث على الإنترنت عن حاجات تهمه — البحث على النت مش متعلّم
+- 9.3.1 (lesen) — يفهم تعليمات بسيطة على المواقع — تعليمات المواقع مش موجودة
+- 9.3.1 (lesen) — يفهم قوايم الموبايل البسيطة ويستخدمها — قوايم الموبايل مش موجودة
+- 11.1.1 (lesen) — يفهم إعلانات وورق الكورس والامتحانات — إعلانات الكورس والامتحانات مش موجودة
+- 11.1.3 (hören) — يفهم شرح المدرس البسيط — فهم شرح المدرس مش متعلّم
+- 11.2.2 (am Gespräch teilnehmen) — يتفق مع زمايله يذاكروا سوا — الاتفاق على المذاكرة سوا مش موجود
+- 12.1.1 (am Gespräch teilnehmen) — يسأل عن سكن رخيص أو مساعدة في الإيجار — السكن الرخيص ومساعدة الإيجار مش موجودين
+
+## ناقص: جمل CEFR (32)
+
+- Understanding as a member of a live audience — يفهم معلومة بسيطة جدًا بتتشرح في موقف متوقع (جولة سياحية) لو الكلام بطيء وفيه وقفات — فهم شرح في جولة مش متمرّن عليه
+- Watching TV, film and video — يعرف كلمات مألوفة ويحدد موضوع عناوين الأخبار والمنتجات في الإعلانات بمساعدة الصورة — إعلانات وأخبار التلفزيون مش موجودة
+- Reading correspondence — يفهم رسايل قصيرة بسيطة على كارت بوستال — الكارت بوستال مش موجود
+- Reading for information and argument — ياخد فكرة عن محتوى نص معلومات بسيط، خصوصًا لو فيه صور — نص معلومات بسيط بصور مش موجود
+- Reading for information and argument — يفهم نصوص قصيرة عن حاجة تهمه (رياضة، مزيكا، سفر) بلغة بسيطة جدًا ومعاها صور — نصوص قصيرة عن الرياضة والمزيكا والسفر مش موجودة
+- Reading as a leisure activity — يفهم قصص قصيرة مصوّرة عن أنشطة يومية — القصص المصوّرة مش موجودة
+- Reading as a leisure activity — يفهم الفكرة العامة لقصص مصوّرة لو الصور بتساعده يخمّن — القصص المصوّرة مش موجودة
+- Identifying cues and inferring (spoken, signed and written) — يستنتج معنى كلمة جديدة (فعل أو حاجة) من نص بسيط جدًا في موضوع يومي — استنتاج معنى كلمة جديدة من النص مش متعلّم كمهارة
+- Addressing audiences — يقول كلمة قصيرة جاهزة ومتحضّرة (يقدّم حد، أو نخب) — كلمة قصيرة متحضّرة (تقديم أو نخب) مش موجودة
+- Correspondence — يكتب رسايل وبوستات جمل قصيرة جدًا عن هواياته وبيحب إيه، بمساعدة قاموس — البوستات والرسايل عن الهوايات مش موجودة
+- Correspondence — يكتب كارت بوستال قصير بسيط — الكارت بوستال مش موجود
+- Notes, messages and forms — يسيب رسالة بسيطة: راح فين وراجع إمتى («في السوق، راجع ٥») — «Bin im Supermarkt, zurück um 5» (رسالة فين وراجع إمتى) مش موجودة
+- Online conversation and discussion — يكتب رسايل وبوستات بسيطة جدًا عن هواياته بمساعدة أداة ترجمة — البوستات أونلاين مش موجودة
+- Online conversation and discussion — يرد على بوستات بسيطة بتعبيرات جاهزة (إعجاب أو اعتراض) ويرد على الأسئلة اللي بعدها — الرد على البوستات مش موجود
+- Goal-oriented online transactions and collaboration — يكمّل شرا أونلاين أو طلب بسيط جدًا بالبيانات الأساسية (اسم، إيميل، تليفون) — الشرا أونلاين مش متعلّم
+- Overall mediation — يوصّل معلومة بسيطة متوقعة من يافطة أو بوستر أو برنامج قصير، ويظهر اهتمامه بفكرة بكلمات وإشارات — Mediation: نقل معلومة من يافطة لحد تاني مش متمرّن عليه
+- Relaying specific information in speech or sign — ينقل (بالعربي) مواعيد وأماكن بسيطة اتقالت بالألماني (أو العكس) — Mediation: نقل مواعيد وأماكن بالعربي مش متمرّن عليه
+- Relaying specific information in writing — يكتب (بلغة تانية) أسامي وأرقام وأسعار ومعلومات بسيطة سمعها، لو الكلام بطيء ومتكرر — Mediation: كتابة معلومات سمعها بلغة تانية مش متمرّن عليها
+- Processing text in speech or sign — يقول (بلغة تانية) معلومة بسيطة من يافطة أو بوستر أو برنامج — Mediation مش متمرّن عليها
+- Processing text in writing — ينقل (بلغة تانية، بالقاموس) معنى جمل بسيطة في مواضيع يومية — Mediation مش متمرّن عليها
+- Processing text in writing — ينقل كلمات ونصوص قصيرة مطبوعة بإيده — Mediation مش متمرّن عليها
+- Translating a written text in speech or sign — يترجم شفوي ترجمة تقريبية لكلمات وجمل بسيطة على يافطات وبوسترات وبرامج — Mediation مش متمرّن عليها
+- Translating a written text in writing — يترجم كتابة كلمات وجمل بسيطة بالقاموس، حتى لو مش دايمًا بيختار المعنى الصح — Mediation مش متمرّن عليها
+- Expressing a personal response to creative texts (including literature) — يقول بكلمات بسيطة عمل فني خلّاه حاسس بإيه — Mediation مش متمرّن عليها
+- Facilitating collaborative interaction with peers — يطلب مشاركة الناس في مهمة بسيطة بجمل جاهزة، ويقول إنه فاهم ويسأل هم فاهمين — Mediation مش متمرّن عليها
+- Collaborating to construct meaning — يقول فكرة ويسأل الناس رأيهم بكلمات بسيطة، لو جهّز قبلها — Mediation مش متمرّن عليها
+- Encouraging conceptual talk — يستخدم كلمات متفرقة وإشارات عشان يبيّن إنه مهتم بفكرة — Mediation مش متمرّن عليها
+- Facilitating pluricultural space — يسهّل التعارف بين ثقافتين بترحيب واهتمام وكلمات بسيطة — Mediation مش متمرّن عليها
+- Acting as an intermediary in informal situations (with friends and colleagues) — ينقل (بلغة تانية) بيانات حد ومعلومات بسيطة متوقعة، لو حد ساعده في الصياغة — Mediation مش متمرّن عليها
+- Facilitating communication in delicate situations and disagreements — يلاحظ إن فيه خلاف أو حد عنده مشكلة، ويقول جملة محفوظة («فاهمك»، «إنت كويس؟») — Mediation مش متمرّن عليها
+- Plurilingual comprehension — يعرف الكلمات الدولية والمشتركة بين اللغات (Haus/house) ويستخدمها يفهم يافطات ورسايل بسيطة — الكلمات الدولية مش مشروحة كطريقة فهم
+- Building on plurilingual repertoire — يستخدم كلمات من لغات مختلفة عشان يخلّص حاجة بسيطة جدًا مع حد متعاون — استخدام كذا لغة مع بعض مش متعلّم
+
+## ناقص: الكلمات (135)
+
+abgeben، also، anbieten، der Anfang، anklicken، anmachen، der Anrufbeantworter، die Ansage, -n، der Anschluss، an sein، (sich) anziehen، das Apartment, -s، auf sein، der Ausgang، die Auskunft, -ü, e، der Ausländer, -، ausländisch، aus sein، die Autobahn, -en، automatisch، der Bahnsteig، der Baum, -ä, e، der Beamte, -n، beide، zum Beispiel/z. B.، bekannt، besichtigen، die Birne, -n، bitter، der Bleistift, -e، der Blick، die Blume, -n، der Bogen، böse، breit، die CD, -s، die Dame, -n، daneben، die Disco، drucken، der Drucker, –، drücken، eilig، enden، entschuldigen، das Ergebnis, -se، erlauben، erzählen، das Fax, -e، das Feuer، abfliegen، der Abflug، fremd، (sich) freuen، die Führung، das Geburtsjahr، das Gepäck، gestorben، das Gewicht، gewinnen، glücklich، die Gruppe, -n، die Halle، halten، die Heimat، holen، international، der Jugendliche, -n، kriegen، der Kugelschreiber، kulturell، sich kümmern، lachen، das Licht، das Lied, -er، der Lkw, -s، die Lösung, -en، männlich، die Maschine, -n، der Mensch, -en، mitmachen، möglich، die Papiere (pl.)، der Plan, -ä, e، die Pommes frites (pl.)، der Prospekt, -e، Rad fahren، das Reisebüro, -s، der Reiseführer، riechen، der Schinken, –، der Schluss، der Schüler, –، die Sehenswürdigkeit, -en، an sein، auf sein، zu sein، selbstständig، das Studium، tot، der Verein، der Verwandte, -n، die Vorwahl، wandern، weiblich، weiter، die Welt، wunderbar، zurzeit، die Zigarette, -n، zufrieden، zwischen، markieren، die Lücke, die Lücken، die Überschrift, die Überschriften، der Antwortbogen, die Antwortbögen، das Blatt, die Blätter، die Zeile, die Zeilen، beantworten، die Nachricht, die Nachrichten، die Temperatur, die Temperaturen، der Besucher, die Besucher، das Fest, die Feste، das Spiel, die Spiele، gemeinsam، doch، jemand، besonders، endlich، das Interesse, die Interessen، der Ruhetag, die Ruhetage، die Wäsche, die Wäschen، schauen، denken، interessieren
+
+
+## كلمات مذكورة من غير كارت (188)
+
+ab، aber، das Alter، an، ander-، ankreuzen، die Anrede، der Anruf, -e، antworten، der Arbeitsplatz, -ä, e، auch، auf، aufhören، aus، der Ausflug، ausmachen، die Aussage, -n، (sich) ausziehen، baden، die Bahn، bald، bedeuten، beginnen، bei، das Beispiel, -e، bekommen، benutzen، besetzt، bis، bisschen، bitten، das Buch, -ü, er، circa/ca.، da، der Dank، dein-، der, die, das، dich، dir، dort, -her, -hin، draußen، durch، die Durchsage, -n، (sich) duschen، einfach، der Eingang، einmal، der Eintritt، die E-Mail, -s، das Ende، er، der Erwachsene, -n، es، euer، fertig، der Film, -e، das Foto, -s، die Freizeit، früher، für، der Fußball، der Gast, -ä, e، geboren، der Geburtsort، gefallen، gerade، das Gespräch, -e، gleich، grillen، gültig، hallo، die Hausfrau, -en/، der Hausmann، hier، hinten، das Hobby, -s، hoch، hören، der Hund, -e، ich، ihr/ihm/ihn، in، ja، jed-، kaputt، kennenlernen، der Kindergarten، klar، die Klasse، lange، laufen، legen، lernen، lesen، Lieblings-، das Lokal، machen، man، mein، meist-، mitnehmen، der Moment، nächst-، nein، normal، nur، oder، öffnen، der Ort, -e، das Papier، die Postleitzahl، das Problem, -e، der Raum, -ä, e، reparieren، die Reparatur، die Rezeption، sagen، Satz, -ä, e، scheinen، das Schild, -er، schließen، schnell، schon، schwimmen، das Schwimmbad، sehen، sehr، weg sein، sich، sie، Sie، sitzen، so، später، spielen، stellen، der Teil, -e، telefonieren، der Test، der Text, -e، das Thema، tschüss، tun، über، übernachten، um، unser-، der Unterricht، verkaufen، viel، vielleicht، von، (sich) vorstellen، wann، warum، was، was für ein، (sich) waschen، wenig، wer، wichtig، wie، das Wiederhören، das Wiedersehen، wie viel، wir، wissen، die Zeitung, -en، der Zoll، zu، zurück، passend، die Situation, die Situationen، das Kreuz, die Kreuze، wählen، zweimal، die Fahrt, die Fahrten، die Medizin، kostenlos، der Besuch, die Besuche، die Idee, die Ideen، genau، wieder، sonst، die Person, die Personen، voll، zeigen، verschieden
+
+## مستبعد (2)
+
+- Deutsch-Test für Zuwanderer — امتحان A2 و B1، مش A1: بيدخل في منهج A2.
+- Signing competences (14 scales) — مقاييس لغة الإشارة: الكورس للغة المنطوقة والمكتوبة.
+
