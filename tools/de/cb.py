@@ -1,17 +1,29 @@
-# Course audio with Chatterbox Multilingual (tools/de/chatterbox/Dockerfile), the same contract as tools/de/tts.py:
-#   jobs.json: [{"text": "...", "voice": "m"|"f", "out": "path/to/file.mp3"}]  (paths relative to /w, the repo)
-#   prints JSON: [{"out": ..., "heard": "<what whisper wrote>", "score": 0–1, "take": 0–2, "sec": seconds}]
-# Chatterbox copies the voice of a short reference recording. The references are the course's own Piper lines
-# (Thorsten for m, Kerstin for f), so the two voices stay the two the readers already know, said more naturally.
-import json, re, subprocess, sys, tempfile, time, wave
+# Course audio with Chatterbox Multilingual (tools/de/chatterbox/Dockerfile). Same jobs as tools/de/tts.py (Piper):
+#   python tools/de/cb.py <jobs.json> [lang] [done.jsonl]
+#   jobs.json: [{"text": "...", "voice": "m"|"f", "out": "audio/de/<hash>.mp3"}]  (paths relative to /w, the repo)
+# Each finished line is appended to done.jsonl at once ({"out", "heard", "score", "take", "sec"}), and a line already in it
+# is skipped. So a run of many hours can stop (Docker restarts, the laptop sleeps) and start again where it was.
+# Without done.jsonl it prints the results as one JSON list at the end, like tts.py.
+# Chatterbox copies the voice of a short recording: tools/de/voices/ref-m.mp3 (Thorsten) and ref-f.mp3 (Kerstin), two
+# course lines Piper made, kept apart so the run doesn't overwrite its own references.
+import json, os, re, subprocess, sys, tempfile, time, wave
 import numpy as np
 import torch, torchaudio
 from chatterbox.mtl_tts import ChatterboxMultilingualTTS
 from faster_whisper import WhisperModel
 
-REF = {'m': 'audio/de/c2259c2b.mp3', 'f': 'audio/de/5102a5d9.mp3'}
+REF = {'m': 'tools/de/voices/ref-m.mp3', 'f': 'tools/de/voices/ref-f.mp3'}
 jobs = json.load(open(sys.argv[1], encoding='utf-8'))
 lang = sys.argv[2] if len(sys.argv) > 2 else 'de'
+log = sys.argv[3] if len(sys.argv) > 3 else None
+done = set()
+if log and os.path.exists(log):
+    for l in open(log, encoding='utf-8'):
+        if l.strip():
+            done.add(json.loads(l)['out'])
+todo = [j for j in jobs if j['out'] not in done]
+print(f'{len(jobs)} jobs, {len(done)} done before, {len(todo)} to make', file=sys.stderr, flush=True)
+
 dev = 'cuda' if torch.cuda.is_available() else 'cpu'
 tts = ChatterboxMultilingualTTS.from_pretrained(device=dev)
 whisper = WhisperModel('small', device='cpu', compute_type='int8', download_root='/w/.cache/de/whisper')
@@ -43,8 +55,8 @@ def score(text, heard):
 # a take whisper doesn't hear well is made again with a calmer setting, up to 3 takes, and the best one stays
 TAKES = [dict(exaggeration=0.5, cfg_weight=0.5), dict(exaggeration=0.4, cfg_weight=0.3), dict(exaggeration=0.3, cfg_weight=0.3, temperature=0.6)]
 out = []
-print(f'device {dev}', file=sys.stderr)
-for j in jobs:
+print(f'device {dev}', file=sys.stderr, flush=True)
+for i, j in enumerate(todo):
     best, t0 = None, time.time()
     for n, kw in enumerate(TAKES):
         path = f'{tmp}/take{n}.wav'
@@ -54,13 +66,16 @@ for j in jobs:
         heard = ' '.join(s.text.strip() for s in segs)
         sc = score(j['text'], heard)
         if best is None or sc > best[0]:
-            best = (sc, path, heard, n)
-            if n:  # keep the better take apart, the next one overwrites take{n}.wav
-                subprocess.run(['cp', path, f'{tmp}/best.wav'], check=True)
-                best = (sc, f'{tmp}/best.wav', heard, n)
+            subprocess.run(['cp', path, f'{tmp}/best.wav'], check=True)
+            best = (sc, heard, n)
         if sc >= 0.9:
             break
-    subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', best[1], '-ac', '1', '-b:a', '48k', '/w/' + j['out']], check=True)
-    out.append({'out': j['out'], 'heard': best[2], 'score': round(best[0], 2), 'take': best[3], 'sec': round(time.time() - t0, 1)})
-    print(json.dumps(out[-1], ensure_ascii=False), file=sys.stderr)
-json.dump(out, sys.stdout, ensure_ascii=False)
+    subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', f'{tmp}/best.wav', '-ac', '1', '-b:a', '48k', '/w/' + j['out']], check=True)
+    r = {'out': j['out'], 'heard': best[1], 'score': round(best[0], 2), 'take': best[2], 'sec': round(time.time() - t0, 1)}
+    out.append(r)
+    if log:
+        with open(log, 'a', encoding='utf-8') as f:
+            f.write(json.dumps(r, ensure_ascii=False) + '\n')
+    print(f'{i + 1}/{len(todo)} {r["score"]} {r["sec"]}s {j["text"][:60]}', file=sys.stderr, flush=True)
+if not log:
+    json.dump(out, sys.stdout, ensure_ascii=False)

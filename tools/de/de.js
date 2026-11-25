@@ -5,6 +5,8 @@
 //   node tools/de/de.js audio           makes the missing mp3s with Piper in Docker, has whisper write each one back, and
 //                                       records what it heard in audio/de/index.json; prints every line whisper heard differently
 //   node tools/de/de.js lt [04.js]      sends every line (or one file's lines) to LanguageTool (docker run -d --name lt -p 127.0.0.1:8010:8081 meyay/languagetool)
+//   node tools/de/de.js audio --cb      the same with Chatterbox on the GPU (image de-cb, tools/de/chatterbox), the course voice
+//   node tools/de/de.js cb start|status|collect   remakes every file with Chatterbox in a detached container (hours)
 //   node tools/de/de.js prune           lists mp3s no line uses any more (deletes them with --yes)
 // tools/check.js uses collect() so a line without its audio fails `npm run check`.
 const fs = require('fs'), path = require('path'), vm = require('vm'), { execFileSync } = require('child_process');
@@ -88,9 +90,12 @@ if (require.main === module) {
       fs.mkdirSync(path.dirname(jobs), { recursive: true });
       fs.writeFileSync(jobs, JSON.stringify(todo.map(l => ({ text: deSpeech(l.text), voice: l.voice, out: l.file }))));
       console.log(`making ${todo.length} files…`);
-      const res = JSON.parse(execFileSync('docker', ['run', '--rm', '-v', ROOT + ':/w', '-w', '/w', 'de-tools', 'python', 'tools/de/tts.py', '.cache/de/tts-jobs.json'],
-        { encoding: 'utf8', maxBuffer: 64 << 20, env: { ...process.env, MSYS_NO_PATHCONV: '1' } }));
-      for (const r of res) { const l = todo.find(x => x.file === r.out); idx[path.basename(r.out)] = { text: l.text, voice: l.voice, heard: r.heard, score: r.score, take: r.take }; }
+      // --cb: Chatterbox on the GPU (the course voice since 25 Nov), else Piper
+      const cb = process.argv.includes('--cb');
+      const args = cb ? ['run', '--rm', '--gpus', 'all', '-v', ROOT + ':/w', '-w', '/w', 'de-cb', 'python', 'tools/de/cb.py', '.cache/de/tts-jobs.json', 'de']
+        : ['run', '--rm', '-v', ROOT + ':/w', '-w', '/w', 'de-tools', 'python', 'tools/de/tts.py', '.cache/de/tts-jobs.json'];
+      const res = JSON.parse(execFileSync('docker', args, { encoding: 'utf8', maxBuffer: 64 << 20, env: { ...process.env, MSYS_NO_PATHCONV: '1' } }));
+      for (const r of res) { const l = todo.find(x => x.file === r.out); idx[path.basename(r.out)] = { text: l.text, voice: l.voice, heard: r.heard, score: r.score, take: r.take, ...(cb ? { engine: 'cb' } : {}) }; }
       const sorted = Object.fromEntries(Object.entries(idx).sort());
       fs.writeFileSync(INDEX, JSON.stringify(sorted, null, 1) + '\n');
     }
@@ -114,6 +119,40 @@ if (require.main === module) {
       }
       console.log(`${texts.length} lines checked, ${n} LanguageTool matches`);
     })();
+  }
+  // Remaking every file with Chatterbox takes hours, so it runs as a detached container (docker run -d) that survives this
+  // shell, writes each finished line to .cache/de/cb-done.jsonl, and skips lines already there when started again.
+  //   node tools/de/de.js cb start     every file not made by Chatterbox yet -> .cache/de/cb-jobs.json, then the container
+  //   node tools/de/de.js cb status    how far it is, and the time left at the current speed
+  //   node tools/de/de.js cb collect   moves the finished lines into audio/de/index.json (engine: "cb")
+  if (cmd === 'cb') {
+    const sub = process.argv[3] || 'status', idx = readIndex();
+    const jobsF = path.join(ROOT, '.cache', 'de', 'cb-jobs.json'), logF = path.join(ROOT, '.cache', 'de', 'cb-done.jsonl');
+    const doneRows = () => fs.existsSync(logF) ? fs.readFileSync(logF, 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l)) : [];
+    if (sub === 'start') {
+      const todo = all.filter(l => (idx[path.basename(l.file)] || {}).engine !== 'cb');
+      fs.mkdirSync(path.dirname(jobsF), { recursive: true });
+      fs.writeFileSync(jobsF, JSON.stringify(todo.map(l => ({ text: deSpeech(l.text), voice: l.voice, out: l.file }))));
+      const env = { ...process.env, MSYS_NO_PATHCONV: '1' };
+      try { execFileSync('docker', ['rm', '-f', 'de-cb-run'], { env, stdio: 'ignore' }); } catch (e) { /* not there */ }
+      execFileSync('docker', ['run', '-d', '--name', 'de-cb-run', '--gpus', 'all', '-v', ROOT + ':/w', '-w', '/w', 'de-cb',
+        'python', 'tools/de/cb.py', '.cache/de/cb-jobs.json', 'de', '.cache/de/cb-done.jsonl'], { env, stdio: 'inherit' });
+      console.log(`${todo.length} files queued; follow with: docker logs -f de-cb-run  or  node tools/de/de.js cb status`);
+    }
+    if (sub === 'status') {
+      const jobs = fs.existsSync(jobsF) ? JSON.parse(fs.readFileSync(jobsF, 'utf8')) : [], rows = doneRows();
+      const last = rows.slice(-50), sec = last.reduce((s, r) => s + r.sec, 0) / (last.length || 1), left = jobs.length - rows.length;
+      console.log(`${rows.length} of ${jobs.length} done, ${left} left, about ${(left * sec / 3600).toFixed(1)} hours at ${sec.toFixed(1)}s a file`);
+      console.log(`${rows.filter(r => r.score < 0.8).length} with under 80% of the words heard so far`);
+    }
+    if (sub === 'collect') {
+      const rows = doneRows(), byFile = new Map(all.map(l => [l.file, l]));
+      let n = 0;
+      for (const r of rows) { const l = byFile.get(r.out); if (!l) continue; idx[path.basename(r.out)] = { text: l.text, voice: l.voice, heard: r.heard, score: r.score, take: r.take, engine: 'cb' }; n++; }
+      for (const r of Object.values(idx)) r.ok = norm(r.heard) === norm(r.text);
+      fs.writeFileSync(INDEX, JSON.stringify(Object.fromEntries(Object.entries(idx).sort()), null, 1) + '\n');
+      console.log(`${n} files now marked as Chatterbox in audio/de/index.json`);
+    }
   }
   if (cmd === 'prune') {
     const used = new Set(all.map(l => path.basename(l.file)));
