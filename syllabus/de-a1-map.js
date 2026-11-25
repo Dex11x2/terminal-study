@@ -283,7 +283,7 @@ notion:zeit-zeitangaben | 2.2 | heute|morgen
 notion:zeit-dauer | 7.3 | seit
 notion:zeit-haufigkeit | 7.4 | dreimal|immer|oft
 notion:quantitat-zahlen-mengenangaben | 3.4 | Kilo
-notion:quantitat-menge | 3.4 | viel|wenig
+notion:quantitat-menge | 6.4 | die meisten
 notion:quantitat-grad | 1.4 | ein bisschen|sehr
 notion:quantitat-dimension-massangabe | gap | groß/klein/lang/breit مع المقاسات مش مشروحة
 notion:art-und-weise-physisch | 4.4 | groß|klein
@@ -351,22 +351,22 @@ rc:e-1-1-1 | 9.5 | richtig
 rc:e-1-1-2 | gap | «Korrigieren Sie mich, bitte» مش متعلّمة
 rc:e-1-1-3 | gap | طلب مواد تعلّم زيادة مش متعلّم
 rc:e-1-1-4 | gap | السؤال عن كورس قريب مش متعلّم
-rc:e-2-1-1 | gap | القاموس الشخصي مش مشروح كطريقة (فيه «تمرّن» بس)
-rc:e-2-1-2 | gap | تقسيم الكلمات على مواضيع مش مشروح كطريقة
-rc:e-2-1-3 | gap | طرق الحفظ مش مشروحة
-rc:e-2-1-4 | gap | كتابة الكلمات باليد مش مشروحة كطريقة
+rc:e-2-1-1 | 9.5 | احفظ الاسم بأداته وجمعه
+rc:e-2-1-2 | 9.5 | رتّب الكلمات بمواضيع
+rc:e-2-1-3 | 9.5 | راجع بانتظام
+rc:e-2-1-4 | 9.5 | اكتب الكلمة بإيدك
 rc:e-2-1-5 | gap | استخراج الكلمات من النصوص مش مشروح
 rc:e-2-2-1 | gap | التمرين على السمع لوحدك مش مشروح كطريقة
 rc:e-2-2-2 | gap | الكلمات الدولية والأرقام كجزر للفهم مش مشروحة
 rc:e-2-2-3 | gap | التوقع قبل السمع مش مشروح
-rc:e-2-3-1 | gap | الترجمة اللي على الشاشة مش مشروحة
-rc:e-2-3-2 | gap | الصورة في التلفزيون مش مشروحة
+rc:e-2-3-1 | 9.5 | اتفرّج بترجمة ألماني
+rc:e-2-3-2 | 9.5 | والصورة بتساعدك تفهم
 rc:e-2-3-3 | gap | الفكرة العامة من الفيديو مش مشروحة
 rc:e-2-4-1 | 5.7 | Anzeige
-rc:e-2-4-2 | gap | تخمين المعنى من الكلمات الدولية وتكوين الكلمة مش مشروح
+rc:e-2-4-2 | 9.5 | خمّن من السياق والكلمات الدولية
 rc:e-2-4-3 | gap | استخدام شكل النص للفهم مش مشروح
 rc:e-2-4-4 | gap | كلمات الربط (er، dort، dann) كطريقة قراية مش مشروحة
-rc:e-2-5-1 | gap | حفظ الجمل الجاهزة مش مشروح كطريقة
+rc:e-2-5-1 | 9.5 | احفظ جمل كاملة
 rc:e-2-5-2 | gap | كروت التعبيرات مش مشروحة
 rc:e-2-5-3 | 9.5 | Wie sagt man
 rc:e-2-5-4 | 8.1 | إشارة|شاور
@@ -423,7 +423,7 @@ rc:6-3-1-1 | gap | الكلام عن دراسة الأولاد في البلد �
 rc:6-3-4-1 | gap | مقابلة الاستشارة عن الأولاد مش موجودة
 rc:7-1-1-1 | gap | السؤال عن منتج عند المعارف مش موجود
 rc:7-1-1-2 | 3.4 | Angebot
-rc:7-1-1-3 | gap | تاريخ الصلاحية والمكونات مش موجودين
+rc:7-1-1-3 | gap | تاريخ الصلاحية والمكونات على المنتج مش موجودين (الوصفة فيها Zutaten بس)
 rc:7-2-1-1 | 3.3 | Wo finde ich
 rc:7-2-1-2 | 3.4 | kostet
 rc:7-2-1-3 | gap | طلب الخصم مش موجود
@@ -495,7 +495,7 @@ cefr:66 | 8.7 | Hören Teil 2
 cefr:80 | 2.6 | Hören Teil 3
 cefr:95 | gap | إعلانات وأخبار التلفزيون مش موجودة
 cefr:105 | 4.8 | Lesen Teil 1
-cefr:121 | gap | الكارت بوستال مش موجود
+cefr:121 | 8.5 | Postkarte aus Hamburg
 cefr:122 | 4.8 | E-Mail
 cefr:141 | 5.7 | Teil 3
 cefr:142 | 9.1 | Stock
@@ -506,7 +506,7 @@ cefr:171 | gap | نصوص قصيرة عن الرياضة والمزيكا وال
 cefr:186 | 8.1 | geradeaus
 cefr:204 | gap | القصص المصوّرة مش موجودة
 cefr:205 | gap | القصص المصوّرة مش موجودة
-cefr:223 | gap | استنتاج معنى كلمة جديدة من النص مش متعلّم كمهارة
+cefr:223 | 9.5 | خمّن من السياق
 cefr:224 | 1.2 | بالإنجليزي|زي الإنجليزي
 cefr:232 | 4.4 | sieht
 cefr:258 | 1.6 | Sprechen Teil 1
@@ -543,7 +543,7 @@ cefr:599 | 9.1 | Wie ist Ihr
 cefr:600 | 7.1 | tut .{0,12}weh
 cefr:621 | 8.7 | Schreiben Teil 1
 cefr:647 | gap | البوستات والرسايل عن الهوايات مش موجودة
-cefr:648 | gap | الكارت بوستال مش موجود
+cefr:648 | 8.5 | كارت بوستال من الأجازة
 cefr:649 | 2.6 | Schreiben Teil 2
 cefr:661 | 8.7 | Schreiben Teil 1
 cefr:662 | gap | «Bin im Supermarkt, zurück um 5» (رسالة فين وراجع إمتى) مش موجودة
@@ -559,7 +559,7 @@ cefr:833 | gap | Mediation مش متمرّن عليها
 cefr:850 | gap | Mediation مش متمرّن عليها
 cefr:851 | gap | Mediation مش متمرّن عليها
 cefr:861 | gap | Mediation مش متمرّن عليها
-cefr:870 | gap | Mediation مش متمرّن عليها
+cefr:870 | 9.5 | القاموس بيكتب الكلمة كده
 cefr:904 | gap | Mediation مش متمرّن عليها
 cefr:936 | 4.7 | Verstehst du
 cefr:955 | 4.6 | Wie findest du
@@ -568,7 +568,7 @@ cefr:1001 | gap | Mediation مش متمرّن عليها
 cefr:1012 | gap | Mediation مش متمرّن عليها
 cefr:1028 | gap | Mediation مش متمرّن عليها
 cefr:1103 | 2.1 | halb
-cefr:1117 | gap | الكلمات الدولية مش مشروحة كطريقة فهم
+cefr:1117 | 9.5 | الكلمات الدولية
 cefr:1136 | gap | استخدام كذا لغة مع بعض مش متعلّم
 cefr:1149 | 1.2 | Ich heiße
 cefr:1150 | 2.2 | Am Montag

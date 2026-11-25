@@ -611,6 +611,14 @@
   "take": 0,
   "ok": true
  },
+ "06714406.mp3": {
+  "text": "Die Hälfte der Leute kommt mit dem Bus.",
+  "voice": "f",
+  "heard": "Die Hälfte der Leute kommt mit dem Bus.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "06a316ea.mp3": {
   "text": "Das Sofa steht im Wohnzimmer.",
   "voice": "f",
@@ -871,6 +879,14 @@
   "text": "Er ist ungefähr dreißig Jahre alt.",
   "voice": "m",
   "heard": "Er ist ungefähr 30 Jahre alt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "091392dc.mp3": {
+  "text": "Ich hatte einen Unfall.",
+  "voice": "f",
+  "heard": "Ich hatte einen Unfall.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1841,6 +1857,14 @@
   "take": 0,
   "ok": true
  },
+ "13686c6f.mp3": {
+  "text": "der Esslöffel, die Esslöffel",
+  "voice": "m",
+  "heard": "der S-Löffel, die S-Löffel.",
+  "score": 0.5,
+  "take": 0,
+  "ok": false
+ },
  "136bcc1f.mp3": {
   "text": "dreizehn, dreißig, vierzehn, vierzig, sechzehn",
   "voice": "m",
@@ -1955,6 +1979,14 @@
   "heard": "Und wer ist das hier?",
   "score": 1,
   "take": 0,
+  "ok": true
+ },
+ "14e473de.mp3": {
+  "text": "Ich mache mir Notizen.",
+  "voice": "f",
+  "heard": "Ich mache mir Notizen.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "14f8f050.mp3": {
@@ -2415,6 +2447,14 @@
   "take": 0,
   "ok": true
  },
+ "19c7b136.mp3": {
+  "text": "Ich brauche eine Zwiebel.",
+  "voice": "f",
+  "heard": "Ich brauche eine Zwiebel.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "19d1b098.mp3": {
   "text": "Kaffee. Und du?",
   "voice": "f",
@@ -2451,6 +2491,14 @@
   "text": "Meine Großmutter ist achtzig.",
   "voice": "f",
   "heard": "Meine Großmutter ist 80.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "1a205c45.mp3": {
+  "text": "das Prozent, die Prozente",
+  "voice": "m",
+  "heard": "Das Prozent die Prozente.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2751,6 +2799,14 @@
   "text": "die Tür, die Türen",
   "voice": "m",
   "heard": "Die Tür, die Türen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "1cf703c3.mp3": {
+  "text": "die Notiz, die Notizen",
+  "voice": "m",
+  "heard": "Die Notiz, die Notizen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3441,6 +3497,14 @@
   "take": 0,
   "ok": true
  },
+ "23eb849b.mp3": {
+  "text": "Ich schneide die Zwiebel.",
+  "voice": "m",
+  "heard": "Ich schneide die Zwiebel.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "240242aa.mp3": {
   "text": "Ja, das ist ein Foto von meiner Hochzeit.",
   "voice": "m",
@@ -3819,6 +3883,14 @@
   "text": "Ich bin nicht zu Hause. Kannst du bitte mein Paket annehmen? Danke dir!",
   "voice": "m",
   "heard": "Ich bin nicht zu Hause. Kannst du bitte mein Paket annehmen? Danke dir!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "277299f5.mp3": {
+  "text": "Das Kind ist gefallen.",
+  "voice": "f",
+  "heard": "Das Kind ist gefallen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4373,6 +4445,14 @@
   "heard": "Du musst nicht kommen.",
   "score": 1,
   "take": 0,
+  "ok": true
+ },
+ "2cfac7aa.mp3": {
+  "text": "die Schüssel, die Schüsseln",
+  "voice": "m",
+  "heard": "Die Schüssel, die Schüsseln.",
+  "score": 1,
+  "take": 2,
   "ok": true
  },
  "2cfb7a06.mp3": {
@@ -5002,6 +5082,14 @@
   "voice": "f",
   "heard": "Ich bin Engineering von Beruf.",
   "ok": false
+ },
+ "32b705fb.mp3": {
+  "text": "der Unfall, die Unfälle",
+  "voice": "m",
+  "heard": "der Unfall, die Unfälle",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "32bdfabb.mp3": {
   "text": "Er verdient gut.",
@@ -6509,6 +6597,14 @@
   "take": 1,
   "ok": true
  },
+ "401ef90e.mp3": {
+  "text": "Die Kartoffeln schälen.",
+  "voice": "f",
+  "heard": "die Kartoffeln schälen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "402242ea.mp3": {
   "text": "Ich danke Ihnen.",
   "voice": "f",
@@ -6699,6 +6795,14 @@
   "heard": "Wann kommen wir an?",
   "score": 1,
   "take": 1,
+  "ok": true
+ },
+ "4218ac1c.mp3": {
+  "text": "Wo war das?",
+  "voice": "f",
+  "heard": "Wo war das?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "421ff368.mp3": {
@@ -8833,6 +8937,14 @@
   "take": 0,
   "ok": true
  },
+ "5441f153.mp3": {
+  "text": "die meisten",
+  "voice": "m",
+  "heard": "Die meisten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "544a128a.mp3": {
   "text": "Die Führung beginnt um zehn Uhr.",
   "voice": "f",
@@ -9405,6 +9517,14 @@
   "take": 0,
   "ok": true
  },
+ "59ad95c8.mp3": {
+  "text": "verletzt",
+  "voice": "m",
+  "heard": "verletzt",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "59aeb1f9.mp3": {
   "text": "Ich mache ein Praktikum.",
   "voice": "f",
@@ -9525,6 +9645,14 @@
   "text": "Ich bin nach Hause gefahren.",
   "voice": "m",
   "heard": "Ich bin nach Hause gefahren.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "5abc3f60.mp3": {
+  "text": "Hier, an der Ampel, um acht Uhr.",
+  "voice": "m",
+  "heard": "Hier an der Ampel um 8 Uhr.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -10107,6 +10235,14 @@
   "take": 0,
   "ok": true
  },
+ "608dda5e.mp3": {
+  "text": "Alles in eine Schüssel geben.",
+  "voice": "f",
+  "heard": "Alles in eine Schüssel geben.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "6090e70a.mp3": {
   "text": "Kann ich die Wohnung sehen?",
   "voice": "m",
@@ -10565,6 +10701,14 @@
   "take": 0,
   "ok": true
  },
+ "64957c99.mp3": {
+  "text": "Öl und Essig mischen.",
+  "voice": "m",
+  "heard": "Öl und Essig mischen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "649949b9.mp3": {
   "text": "Machen Sie bitte den Mund auf und sagen Sie „Aaah“.",
   "voice": "m",
@@ -10780,6 +10924,14 @@
   "score": 0.86,
   "take": 0,
   "ok": false
+ },
+ "6638e8c9.mp3": {
+  "text": "schneiden",
+  "voice": "m",
+  "heard": "Schneiden",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "664f2249.mp3": {
   "text": "Das Schlafzimmer ist klein, aber sehr ruhig.",
@@ -13083,6 +13235,14 @@
   "take": 0,
   "ok": true
  },
+ "7a876046.mp3": {
+  "text": "die Zwiebel, die Zwiebeln",
+  "voice": "m",
+  "heard": "Die Zwiebel, die Zwiebeln.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7a9b5584.mp3": {
   "text": "der Opa, die Opas",
   "voice": "m",
@@ -14609,6 +14769,14 @@
   "heard": "Meine Telefonnummer ist 01763402 und 80950.",
   "ok": false
  },
+ "89d5ea5d.mp3": {
+  "text": "schälen",
+  "voice": "m",
+  "heard": "Schälen",
+  "score": 1,
+  "take": 2,
+  "ok": true
+ },
  "8a22f7c4.mp3": {
   "text": "Hallo Omar, hier ist Lea. Ich bin heute krank. Kannst du bitte meine Spätschicht machen? Ruf mich bitte an. Danke!",
   "voice": "f",
@@ -15681,6 +15849,14 @@
   "text": "der Kugelschreiber, die Kugelschreiber",
   "voice": "m",
   "heard": "der Kugelschreiber, die Kugelschreiber",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "95592c8e.mp3": {
+  "text": "die Hälfte, die Hälften",
+  "voice": "m",
+  "heard": "Die Hälfte, die Hälften.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -16901,6 +17077,14 @@
   "take": 0,
   "ok": true
  },
+ "a13e50ea.mp3": {
+  "text": "Wir brauchen nur fünf Zutaten.",
+  "voice": "m",
+  "heard": "Wir brauchen nur fünf Zutaten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a144199d.mp3": {
   "text": "Vielen Dank! Ich danke Ihnen sehr.",
   "voice": "m",
@@ -17157,6 +17341,14 @@
   "heard": "Ich habe keine Geschwister, aber ich habe drei Kinder.",
   "score": 1,
   "take": 0,
+  "ok": true
+ },
+ "a372b66a.mp3": {
+  "text": "Ich bin gefallen, und mein Arm tut weh.",
+  "voice": "m",
+  "heard": "Ich bin gefallen und mein Arm tut weh.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "a3761d3c.mp3": {
@@ -17817,6 +18009,14 @@
   "text": "Ich arbeite Teilzeit, zwanzig Stunden in der Woche.",
   "voice": "m",
   "heard": "Ich arbeite Teilzeit 20 Stunden in der Woche.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a8d21bc2.mp3": {
+  "text": "fallen",
+  "voice": "m",
+  "heard": "Fallen",
   "score": 1,
   "take": 0,
   "ok": true
@@ -18907,6 +19107,14 @@
   "take": 0,
   "ok": false
  },
+ "b322ab13.mp3": {
+  "text": "die Zutat, die Zutaten",
+  "voice": "m",
+  "heard": "Die Zutat, die Zutaten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b340b8bc.mp3": {
   "text": "Ja, hier. Und die Schuhe hier kosten nur dreißig Euro.",
   "voice": "f",
@@ -19869,6 +20077,14 @@
   "text": "die Hausaufgabe, die Hausaufgaben",
   "voice": "m",
   "heard": "die Hausaufgabe, die Hausaufgaben",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "bc72c81c.mp3": {
+  "text": "Achtzig Prozent finden das gut.",
+  "voice": "m",
+  "heard": "80 Prozent finden das gut.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -22039,6 +22255,14 @@
   "text": "Das Kilo kostet zwei Euro vierzig. Heute zwei Kilo für vier Euro.",
   "voice": "f",
   "heard": "Das Kilo kostet 2,40 Euro. Heute 2 Kilo für 4 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
+ "d03e6ea5.mp3": {
+  "text": "Zwei Esslöffel Öl, bitte.",
+  "voice": "m",
+  "heard": "Zweie Esslöffel Öl bitte.",
   "score": 1,
   "take": 0,
   "ok": false
@@ -24497,6 +24721,14 @@
   "heard": "Heute ist der 1. Juni.",
   "ok": false
  },
+ "e971f2dd.mp3": {
+  "text": "Nur wenige fahren mit dem Fahrrad.",
+  "voice": "f",
+  "heard": "Nur wenige fahren mit dem Fahrrad.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e985fbb5.mp3": {
   "text": "warten",
   "voice": "m",
@@ -25243,6 +25475,14 @@
   "take": 0,
   "ok": false
  },
+ "efbc9c1f.mp3": {
+  "text": "mischen",
+  "voice": "m",
+  "heard": "Mischen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "efcee0a3.mp3": {
   "text": "Was hast du gestern gemacht?",
   "voice": "f",
@@ -25753,6 +25993,14 @@
   "heard": "Danke.",
   "ok": true
  },
+ "f5563c11.mp3": {
+  "text": "wenige",
+  "voice": "m",
+  "heard": "Wenige.",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "f562b0f9.mp3": {
   "text": "Kauf die Fahrkarte am Automaten.",
   "voice": "m",
@@ -25927,6 +26175,14 @@
   "take": 2,
   "ok": true
  },
+ "f6a16053.mp3": {
+  "text": "Ich bin mit dem Fahrrad gefahren. Ein Auto ist bei Rot gefahren.",
+  "voice": "m",
+  "heard": "Ich bin mit dem Fahrrad gefahren. Ein Auto ist bei Rot gefahren.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f6ad074e.mp3": {
   "text": "Nein, sie ist zwei Jahre älter. Mein Bruder ist am jüngsten.",
   "voice": "f",
@@ -26025,6 +26281,14 @@
   "text": "der Chef, die Chefs",
   "voice": "m",
   "heard": "Der Chef, die Chefs.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f76540d1.mp3": {
+  "text": "Die meisten Leute arbeiten am Vormittag.",
+  "voice": "m",
+  "heard": "Die meisten Leute arbeiten am Vormittag.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -26243,6 +26507,14 @@
   "take": 0,
   "ok": true
  },
+ "f8f05881.mp3": {
+  "text": "Zum Glück ist niemand verletzt.",
+  "voice": "m",
+  "heard": "Zum Glück ist niemand verletzt.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f907248d.mp3": {
   "text": "das Haar, die Haare",
   "voice": "m",
@@ -26271,6 +26543,14 @@
   "text": "Wie heißt dein Sohn?",
   "voice": "m",
   "heard": "Wie heißt dein Sohn?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "f981363f.mp3": {
+  "text": "Das Rezept ist ganz einfach.",
+  "voice": "f",
+  "heard": "Das Rezept ist ganz einfach.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -26961,6 +27241,14 @@
   "text": "Wie geht's?",
   "voice": "m",
   "heard": "Wie geht's?",
+  "ok": true
+ },
+ "ffe72129.mp3": {
+  "text": "Die Kartoffeln kochen zwanzig Minuten.",
+  "voice": "f",
+  "heard": "Die Kartoffeln kochen 20 Minuten.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "ffee0fb9.mp3": {

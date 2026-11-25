@@ -790,6 +790,44 @@ Es gibt heute Fisch. || فيه سمك النهارده.
 Es gibt keinen Kuchen mehr. || الكيكة خلصت.
 ~~~
 
+## وصفة: سلطة بطاطس (Kartoffelsalat)
+
+الوصفات بالألماني ليها شكل ثابت: **المكونات** بالكمية، وبعدها **الخطوات**. والخطوات غالبًا بتتكتب بالفعل في **آخر الجملة ومن غير فاعل** (المصدر)، كأنها أوامر مختصرة.
+
+~~~read Kartoffelsalat für 4 Personen
+Zutaten: 1 Kilo Kartoffeln, 1 Zwiebel, 2 Gurken, 4 Esslöffel Öl, 2 Esslöffel Essig, Salz, Pfeffer || المكونات: كيلو بطاطس، بصلة، ٢ خيار، ٤ معالق زيت، ٢ معلقة خل، ملح، فلفل
+1. Die Kartoffeln 20 Minuten kochen. || ١. البطاطس تتسلق ٢٠ دقيقة.
+2. Die Kartoffeln schälen und in Scheiben schneiden. || ٢. البطاطس تتقشر وتتقطع شرايح.
+3. Die Zwiebel und die Gurken klein schneiden. || ٣. البصل والخيار يتقطعوا صغير.
+4. Öl, Essig, Salz und Pfeffer mischen. || ٤. الزيت والخل والملح والفلفل يتخلطوا.
+5. Alles zusammen in eine Schüssel geben. Guten Appetit! || ٥. كله يتحط في طبق واحد. بالهنا والشفا!
+? Man braucht zwei Zwiebeln. || محتاج بصلتين
+- Richtig
+- Falsch *
+? Die Kartoffeln kocht man zwanzig Minuten. || البطاطس بتتسلق ٢٠ دقيقة
+- Richtig *
+- Falsch
+? Das Rezept ist für vier Personen. || الوصفة لأربع أشخاص
+- Richtig *
+- Falsch
+~~~
+
+- [[Die Kartoffeln kochen]] = «البطاطس: تتسلق». الفعل في الآخر بالمصدر، ومن غير [[ich]] ولا [[Sie]]. ده شكل الوصفات والإرشادات (زي اللي على علبة الدوا).
+- لو حد بيشرحلك بالكلام، هيقول بالأمر: [[Kochen Sie die Kartoffeln zwanzig Minuten]] (هتتعلمه في وحدة الشغل)، أو بـ [[man]]: [[Man kocht die Kartoffeln]].
+- [[der Esslöffel]] (معلقة أكل) = [[EL]] في الوصفات، و [[der Teelöffel]] (معلقة شاي) = [[TL]]. و [[eine Prise Salz]] = رشة ملح.
+
+~~~words الوصفة
+das Rezept, die Rezepte | الوصفة | Das Rezept ist ganz einfach.
+die Zutat, die Zutaten | المكوّن | m: Wir brauchen nur fünf Zutaten.
+kochen | يطبخ، يسلق | Die Kartoffeln kochen zwanzig Minuten.
+schneiden | يقطّع | m: Ich schneide die Zwiebel.
+schälen | يقشّر | Die Kartoffeln schälen.
+mischen | يخلط | m: Öl und Essig mischen.
+die Zwiebel, die Zwiebeln | البصلة | Ich brauche eine Zwiebel.
+der Esslöffel, die Esslöffel | المعلقة الكبيرة | m: Zwei Esslöffel Öl, bitte.
+die Schüssel, die Schüsseln | الطبق العميق، البولة | Alles in eine Schüssel geben.
+~~~
+
 ## الكلمات
 
 ~~~words في السوبرماركت

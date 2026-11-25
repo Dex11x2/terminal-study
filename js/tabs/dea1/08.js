@@ -1081,6 +1081,34 @@ Das Hotel war direkt am Meer. || الفندق كان على البحر على ط
 
 [[war]] للمكان والطقس، والـ Perfekt للحاجات اللي عملتها، زي ما اتعلمت في وحدة الشغل.
 
+## كارت بوستال من الأجازة
+
+الكارت بوستال (أو رسالة الأجازة على الموبايل) ليه شكل ثابت: **فين إنت**، و**الجو**، و**بتعمل إيه** أو **عملت إيه**، و**سلام**.
+
+~~~read Postkarte aus Hamburg
+Liebe Mona, || عزيزتي منى،
+viele Grüße aus Hamburg! || سلامات من هامبورج!
+Das Wetter ist leider nicht so gut. Es regnet viel, aber es ist warm. || الجو للأسف مش حلو أوي. بتمطر كتير، بس دافي.
+Gestern haben wir eine Hafenrundfahrt gemacht. Das war super! || امبارح عملنا جولة في الميناء. كانت جامدة!
+Morgen fahren wir nach Lübeck. || بكرة هنروح لوبيك.
+Bis bald! || أشوفك قريب!
+Dein Karim || صاحبك كريم
+? Das Wetter in Hamburg ist schön. || الجو في هامبورج حلو
+- Richtig
+- Falsch *
+? Karim war gestern am Hafen. || كريم كان في الميناء امبارح
+- Richtig *
+- Falsch
+? Karim ist schon in Lübeck. || كريم في لوبيك خلاص
+- Richtig
+- Falsch *
+~~~
+
+- البداية: [[Liebe …]] (لست) أو [[Lieber …]] (لراجل)، وبعدها فاصلة، والسطر اللي بعده بحرف صغير.
+- [[Viele Grüße aus …!]] = سلامات من…، أول جملة في أي كارت.
+- الحاضر للي بيحصل دلوقتي ([[Es regnet]])، والـ Perfekt للي حصل ([[Wir haben … gemacht]])، والحاضر كمان للي جاي ([[Morgen fahren wir]]).
+- النهاية: [[Bis bald!]] و [[Dein …]] (من راجل) أو [[Deine …]] (من ست).
+
 ## الكلمات: الطقس
 
 ~~~words الطقس

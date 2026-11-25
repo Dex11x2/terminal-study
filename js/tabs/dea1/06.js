@@ -914,6 +914,46 @@ Rufen Sie Herrn Becker an: 0221 556677 || كلّم أستاذ بيكر: ...
 
 **كلمات أي إعلان:** [[sucht]] (بيدوّر على)، و [[ab sofort]]، و [[(m/w/d)]]، و [[Vollzeit]]/[[Teilzeit]]، و [[Erfahrung]] (خبرة)، و [[Wir bieten]] (بنقدّم)، و [[Sie haben …]] (المطلوب منك). وفي ألمانيا الطريقة اللي الإعلان بيقولها للتقديم (تليفون، إيميل، أونلاين) مهمة: لو قال اتصل، اتصل.
 
+## تقرا إحصائية: Prozent
+
+في الجرايد والامتحان (Lesen) ممكن تقابل نتيجة استطلاع بالنسب. الكلمات اللي محتاجها قليلة:
+
+~~~read Wie fahren die Deutschen zur Arbeit?
+Mit dem Auto: 68 Prozent || بالعربية: ٦٨٪
+Mit Bus und Bahn: 14 Prozent || بالأتوبيس والقطر: ١٤٪
+Mit dem Fahrrad: 9 Prozent || بالعجلة: ٩٪
+Zu Fuß: 8 Prozent || مشي: ٨٪
+Die meisten Deutschen fahren mit dem Auto zur Arbeit. Nur wenige gehen zu Fuß. || أغلب الألمان بيروحوا الشغل بالعربية. وقليلين بس بيمشوا.
+? Mehr als die Hälfte fährt mit dem Auto. || أكتر من النص بيروحوا بالعربية
+- Richtig *
+- Falsch
+? Mit dem Fahrrad fahren mehr Leute als mit Bus und Bahn. || العجلة أكتر من الأتوبيس والقطر
+- Richtig
+- Falsch *
+? Acht Prozent gehen zu Fuß. || ٨٪ بيمشوا
+- Richtig *
+- Falsch
+~~~
+
+(الأرقام دي للتمرين بس، مش إحصائية حقيقية.)
+
+| الكلمة | المعنى |
+|---|---|
+| [[das Prozent]] (و [[%]]) | في المية: [[68 Prozent]] = «ثمانية وستين بروتسنت» |
+| [[die Hälfte]] | النص (٥٠٪) |
+| [[die meisten]] | الأغلبية، أكتر الناس |
+| [[viele]] / [[wenige]] | كتير / قليلين |
+| [[mehr als]] / [[weniger als]] | أكتر من / أقل من |
+
+[[die meisten]] من [[viel]] ← [[mehr]] ← [[am meisten]]، وهتشوف المقارنة كاملة في وحدة المواصلات.
+
+~~~words الإحصائية
+das Prozent, die Prozente | في المية | m: Achtzig Prozent finden das gut.
+die Hälfte, die Hälften | النص | Die Hälfte der Leute kommt mit dem Bus.
+die meisten | الأغلبية | m: Die meisten Leute arbeiten am Vormittag.
+wenige | قليلين | Nur wenige fahren mit dem Fahrrad.
+~~~
+
 ## الكلمات
 
 ~~~words الشغل الجاي

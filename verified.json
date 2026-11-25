@@ -5810,9 +5810,9 @@
   "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
  },
  "dea1|Ich will Ärztin werden": {
-  "hash": "d82339dafca3",
+  "hash": "268c11255488",
   "date": "2026-11-25",
-  "on": "الكروت الجديدة: LanguageTool على كل كلمة وجملة، و Piper + whisper small على كل ملف صوت (الجمل اللي صوت kerstin غلط فيها اتنقلت لصوت thorsten واتسمعت تاني)"
+  "on": "LanguageTool على الأقسام الجديدة (٦٩ سطر، ٠ ملاحظات)، و Piper + whisper small على كل ملف صوت جديد"
  },
  "dea1|Ich würde gern ein Konto eröffnen": {
   "hash": "fb80052e4b27",
@@ -5915,9 +5915,9 @@
   "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها أو اتنقلت لصوت الراجل)، و Chromium 400px"
  },
  "dea1|Ruf schnell einen Krankenwagen!": {
-  "hash": "5df60c6ce1cf",
+  "hash": "410bd93b18ed",
   "date": "2026-11-25",
-  "on": "الكروت الجديدة: LanguageTool على كل كلمة وجملة، و Piper + whisper small على كل ملف صوت (الجمل اللي صوت kerstin غلط فيها اتنقلت لصوت thorsten واتسمعت تاني)"
+  "on": "LanguageTool على الأقسام الجديدة (٦٩ سطر، ٠ ملاحظات)، و Piper + whisper small على كل ملف صوت جديد"
  },
  "dea1|Rufen Sie bitte an!": {
   "hash": "6ae306807b8e",
@@ -5950,9 +5950,9 @@
   "on": "الكروت الجديدة: LanguageTool على كل كلمة وجملة، و Piper + whisper small على كل ملف صوت (الجمل اللي صوت kerstin غلط فيها اتنقلت لصوت thorsten واتسمعت تاني)"
  },
  "dea1|Wie ist das Wetter?": {
-  "hash": "d7e4d12740ea",
+  "hash": "a24ebfff3604",
   "date": "2026-11-25",
-  "on": "الكروت الجديدة: LanguageTool على كل كلمة وجملة، و Piper + whisper small على كل ملف صوت (الجمل اللي صوت kerstin غلط فيها اتنقلت لصوت thorsten واتسمعت تاني)"
+  "on": "LanguageTool على الأقسام الجديدة (٦٩ سطر، ٠ ملاحظات)، و Piper + whisper small على كل ملف صوت جديد"
  },
  "dea1|Wie komme ich zum Bahnhof?": {
   "hash": "e7386f8104f4",
@@ -5960,9 +5960,9 @@
   "on": "الكروت الجديدة: LanguageTool على كل كلمة وجملة، و Piper + whisper small على كل ملف صوت (الجمل اللي صوت kerstin غلط فيها اتنقلت لصوت thorsten واتسمعت تاني)"
  },
  "dea1|Wie sagt man das auf Deutsch?": {
-  "hash": "6164bc695049",
+  "hash": "73154b8a0ccc",
   "date": "2026-11-25",
-  "on": "الكروت الجديدة: LanguageTool على كل كلمة وجملة، و Piper + whisper small على كل ملف صوت (الجمل اللي صوت kerstin غلط فيها اتنقلت لصوت thorsten واتسمعت تاني)"
+  "on": "LanguageTool على الأقسام الجديدة (٦٩ سطر، ٠ ملاحظات)، و Piper + whisper small على كل ملف صوت جديد"
  },
  "dea1|Wie sieht sie aus?": {
   "hash": "4076dce9ec08",
@@ -5975,9 +5975,9 @@
   "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
  },
  "dea1|Wo finde ich Reis?": {
-  "hash": "d3064682ea82",
-  "date": "2026-11-22",
-  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
+  "hash": "0e19f17db4cd",
+  "date": "2026-11-25",
+  "on": "LanguageTool على الأقسام الجديدة (٦٩ سطر، ٠ ملاحظات)، و Piper + whisper small على كل ملف صوت جديد"
  },
  "dea1|Wohin gehst du? Ins Kino": {
   "hash": "8d9503dbb52c",

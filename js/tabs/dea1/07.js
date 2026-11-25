@@ -1075,6 +1075,41 @@ das Feuer | النار، الحريقة | m: Hilfe, Feuer!
 eilig | مستعجل | Ich habe es eilig.
 ~~~
 
+## تحكي حادثة حصلت (بالماضي)
+
+بعد الحادثة الدكتور أو البوليس أو التأمين هيسألك: حصل إيه؟ فين؟ إمتى؟ والإجابة بالـ Perfekt اللي اتعلمته في وحدة الشغل، وأغلب أفعال الحركة بـ [[sein]].
+
+~~~de Polizistin=f Mann=m
+Polizistin: Was ist passiert? || حصل إيه؟
+Mann: Ich bin mit dem Fahrrad gefahren. Ein Auto ist bei Rot gefahren. || كنت راكب العجلة. عربية عدّت الإشارة وهي حمرا.
+Mann: Ich bin gefallen, und mein Arm tut weh. || وقعت، ودراعي بيوجعني.
+Polizistin: Wo war das? || ده كان فين؟
+Mann: Hier, an der Ampel, um acht Uhr. || هنا، عند الإشارة، الساعة ٨.
+~~~
+
+- [[Was ist passiert?]] = حصل إيه؟ ([[passieren]] بـ [[sein]]).
+- [[Ich bin gefallen]] من [[fallen]] (يقع)، و [[Ich bin gefahren]] من [[fahren]]: الحركة بـ [[sein]].
+- [[verletzt]] = متعوّر: [[Ist jemand verletzt?]] (فيه حد اتعوّر؟).
+
+**وتاخد ملاحظات (Notizen):** لو حد بيحكيلك أو بتكلم التأمين، اكتب كلمات بس، مش جمل:
+
+~~~text Notizen: Unfall
+Was?    Fahrrad – Auto
+Wo?     Ampel, Hauptstraße
+Wann?   Montag, 8 Uhr
+Wer?    Herr Lang (Arm verletzt)
+~~~
+
+الأسئلة الأربعة [[Was? Wo? Wann? Wer?]] بتكفي لأي ملاحظات: حادثة، أو ميعاد، أو رسالة تليفون.
+
+~~~words الحادثة
+der Unfall, die Unfälle | الحادثة | Ich hatte einen Unfall.
+passieren | يحصل | m: Was ist passiert?
+fallen | يقع | Das Kind ist gefallen.
+verletzt | متعوّر | m: Zum Glück ist niemand verletzt.
+die Notiz, die Notizen | الملاحظة | Ich mache mir Notizen.
+~~~
+
 ## قول بصوتك
 
 ~~~speak

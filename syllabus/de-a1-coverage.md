@@ -11,10 +11,10 @@
 | أفعال الكلام (Sprechhandlungen) | 47 | 1 | 0 | 98٪ |
 | المفاهيم (Notionen) | 23 | 4 | 0 | 85٪ |
 | استراتيجيات الكلام | 14 | 1 | 0 | 93٪ |
-| مواقف منهج الاندماج | 120 | 65 | 0 | 65٪ |
-| جمل CEFR | 71 | 30 | 1 | 70٪ |
-| الكلمات | 564 (+178 مذكورة من غير كارت) | 0 | 0 | 76٪ |
-| **الكل** | **998** | | | **77٪** |
+| مواقف منهج الاندماج | 128 | 57 | 0 | 69٪ |
+| جمل CEFR | 76 | 25 | 1 | 75٪ |
+| الكلمات | 565 (+177 مذكورة من غير كارت) | 0 | 0 | 76٪ |
+| **الكل** | **1012** | | | **78٪** |
 
 ## ناقص: القواعد (8)
 
@@ -55,7 +55,7 @@
 
 - gemeinsames Wissen andeuten — «Weißt du …» مش موجودة
 
-## ناقص: مواقف منهج الاندماج (65)
+## ناقص: مواقف منهج الاندماج (57)
 
 - A 2.1 (am Gespräch teilnehmen) — يجاوب ببساطة: الحاجة دي عادية في بلدي ولا لأ — «Das ist in meinem Land (nicht) normal» مش موجودة
 - A 4.2 (am Gespräch teilnehmen) — يسأل لو الورق ده (جواب المدرسة، الطلبات) موجود بلغته أو بلغة يعرفها — السؤال عن الورق بلغة تانية مش موجود
@@ -67,21 +67,13 @@
 - E 1.1 (am Gespräch teilnehmen) — يطلب من اللي بيكلمه يصحّح له — «Korrigieren Sie mich, bitte» مش متعلّمة
 - E 1.1 (am Gespräch teilnehmen) — يطلب ترشيح مواد تعلّم زيادة — طلب مواد تعلّم زيادة مش متعلّم
 - E 1.1 (am Gespräch teilnehmen) — يسأل فيه كورس ألماني قريب؟ — السؤال عن كورس قريب مش متعلّم
-- E 2.1 (schreiben) — يعمل قاموس شخصي (كروت) — القاموس الشخصي مش مشروح كطريقة (فيه «تمرّن» بس)
-- E 2.1 (schreiben) — يقسّم الكلمات على مواضيع — تقسيم الكلمات على مواضيع مش مشروح كطريقة
-- E 2.1 (schreiben) — يستخدم طرق للحفظ — طرق الحفظ مش مشروحة
-- E 2.1 (schreiben) — يكتب الكلمات بإيده عشان تتحفظ — كتابة الكلمات باليد مش مشروحة كطريقة
 - E 2.1 (schreiben) — يطلّع من النصوص الكلمات المهمة له ويضيفها لقاموسه — استخراج الكلمات من النصوص مش مشروح
 - E 2.2 (hören) — يتمرّن على السمع لوحده بتسجيلات الكورس — التمرين على السمع لوحدك مش مشروح كطريقة
 - E 2.2 (hören) — يمسك في الكلمات الدولية والأرقام والأسامي كـ«جزر» يفهم منها — الكلمات الدولية والأرقام كجزر للفهم مش مشروحة
 - E 2.2 (hören) — يتوقع الكلام هيبقى عن إيه قبل ما يسمع (من الوقت ومين بيتكلم) ويستخدم ده في الفهم — التوقع قبل السمع مش مشروح
-- E 2.3 (sehen und hören) — يستخدم الترجمة اللي على الشاشة في الأفلام والفيديو للتمرين — الترجمة اللي على الشاشة مش مشروحة
-- E 2.3 (sehen und hören) — يستخدم الصورة في التلفزيون عشان يفهم — الصورة في التلفزيون مش مشروحة
 - E 2.3 (sehen und hören) — يفهم الفكرة العامة من الفيديو ويعدّي الكلمات اللي مش فاهمها — الفكرة العامة من الفيديو مش مشروحة
-- E 2.4 (lesen) — يخمّن معنى الكلمة من الأسامي والتواريخ والكلمات الدولية والكلمات الشبه الإنجليزي وقواعد تكوين الكلمة — تخمين المعنى من الكلمات الدولية وتكوين الكلمة مش مشروح
 - E 2.4 (lesen) — يستخدم شكل النص (نوعه، العناوين، التنسيق) عشان يفهم — استخدام شكل النص للفهم مش مشروح
 - E 2.4 (lesen) — يلاحظ الكلمات اللي بتربط النص (er، dort، dann) ويمشي وراها — كلمات الربط (er، dort، dann) كطريقة قراية مش مشروحة
-- E 2.5 (sprechen) — يحفظ جمل وتعبيرات جاهزة عشان يتكلم أسلس — حفظ الجمل الجاهزة مش مشروح كطريقة
 - E 2.5 (sprechen) — يعمل كروت تعبيرات (حتى ديجيتال) — كروت التعبيرات مش مشروحة
 - E 2.6 (schreiben) — ينقل نصوص بإيده عشان كتابته تتحسن — النقل باليد مش مشروح
 - E 2.6 (schreiben) — يستخدم المدقق الإملائي وهو بيكتب — المدقق الإملائي مش مشروح
@@ -108,7 +100,7 @@
 - 6.3.1 (sprechen) — يحكي ببساطة عن دراسة ابنه في بلده — الكلام عن دراسة الأولاد في البلد مش موجود
 - 6.3.4 (am Gespräch teilnehmen) — يجاوب على أسئلة بسيطة في مقابلة استشارة عن ابنه — مقابلة الاستشارة عن الأولاد مش موجودة
 - 7.1.1 (am Gespräch teilnehmen) — يسأل معارفه أو جيرانه عن منتج بيدوّر عليه (الماركة، المحل، السعر) — السؤال عن منتج عند المعارف مش موجود
-- 7.1.1 (lesen) — يفهم أهم حاجة على المنتج (تاريخ الصلاحية، الحفظ، المكونات) — تاريخ الصلاحية والمكونات مش موجودين
+- 7.1.1 (lesen) — يفهم أهم حاجة على المنتج (تاريخ الصلاحية، الحفظ، المكونات) — تاريخ الصلاحية والمكونات على المنتج مش موجودين (الوصفة فيها Zutaten بس)
 - 7.2.1 (am Gespräch teilnehmen) — يسأل لو فيه خصم (مثلًا على حاجة فيها عيب) — طلب الخصم مش موجود
 - 7.2.2 (schreiben) — يطلب أوردر، حتى أونلاين، ويملا البيانات (المقاس، العدد، العنوان) — الطلب أونلاين مش متعلّم
 - 8.1.1 (am Gespräch teilnehmen) — يسأل عن ترشيحات وعناوين دكاترة — طلب ترشيح دكتور مش موجود
@@ -123,19 +115,16 @@
 - 11.2.2 (am Gespräch teilnehmen) — يتفق مع زمايله يذاكروا سوا — الاتفاق على المذاكرة سوا مش موجود
 - 12.1.1 (am Gespräch teilnehmen) — يسأل عن سكن رخيص أو مساعدة في الإيجار — السكن الرخيص ومساعدة الإيجار مش موجودين
 
-## ناقص: جمل CEFR (30)
+## ناقص: جمل CEFR (25)
 
 - Understanding as a member of a live audience — يفهم معلومة بسيطة جدًا بتتشرح في موقف متوقع (جولة سياحية) لو الكلام بطيء وفيه وقفات — فهم شرح في جولة مش متمرّن عليه
 - Watching TV, film and video — يعرف كلمات مألوفة ويحدد موضوع عناوين الأخبار والمنتجات في الإعلانات بمساعدة الصورة — إعلانات وأخبار التلفزيون مش موجودة
-- Reading correspondence — يفهم رسايل قصيرة بسيطة على كارت بوستال — الكارت بوستال مش موجود
 - Reading for information and argument — ياخد فكرة عن محتوى نص معلومات بسيط، خصوصًا لو فيه صور — نص معلومات بسيط بصور مش موجود
 - Reading for information and argument — يفهم نصوص قصيرة عن حاجة تهمه (رياضة، مزيكا، سفر) بلغة بسيطة جدًا ومعاها صور — نصوص قصيرة عن الرياضة والمزيكا والسفر مش موجودة
 - Reading as a leisure activity — يفهم قصص قصيرة مصوّرة عن أنشطة يومية — القصص المصوّرة مش موجودة
 - Reading as a leisure activity — يفهم الفكرة العامة لقصص مصوّرة لو الصور بتساعده يخمّن — القصص المصوّرة مش موجودة
-- Identifying cues and inferring (spoken, signed and written) — يستنتج معنى كلمة جديدة (فعل أو حاجة) من نص بسيط جدًا في موضوع يومي — استنتاج معنى كلمة جديدة من النص مش متعلّم كمهارة
 - Addressing audiences — يقول كلمة قصيرة جاهزة ومتحضّرة (يقدّم حد، أو نخب) — كلمة قصيرة متحضّرة (تقديم أو نخب) مش موجودة
 - Correspondence — يكتب رسايل وبوستات جمل قصيرة جدًا عن هواياته وبيحب إيه، بمساعدة قاموس — البوستات والرسايل عن الهوايات مش موجودة
-- Correspondence — يكتب كارت بوستال قصير بسيط — الكارت بوستال مش موجود
 - Notes, messages and forms — يسيب رسالة بسيطة: راح فين وراجع إمتى («في السوق، راجع ٥») — «Bin im Supermarkt, zurück um 5» (رسالة فين وراجع إمتى) مش موجودة
 - Online conversation and discussion — يكتب رسايل وبوستات بسيطة جدًا عن هواياته بمساعدة أداة ترجمة — البوستات أونلاين مش موجودة
 - Online conversation and discussion — يرد على بوستات بسيطة بتعبيرات جاهزة (إعجاب أو اعتراض) ويرد على الأسئلة اللي بعدها — الرد على البوستات مش موجود
@@ -147,18 +136,16 @@
 - Processing text in writing — ينقل (بلغة تانية، بالقاموس) معنى جمل بسيطة في مواضيع يومية — Mediation مش متمرّن عليها
 - Processing text in writing — ينقل كلمات ونصوص قصيرة مطبوعة بإيده — Mediation مش متمرّن عليها
 - Translating a written text in speech or sign — يترجم شفوي ترجمة تقريبية لكلمات وجمل بسيطة على يافطات وبوسترات وبرامج — Mediation مش متمرّن عليها
-- Translating a written text in writing — يترجم كتابة كلمات وجمل بسيطة بالقاموس، حتى لو مش دايمًا بيختار المعنى الصح — Mediation مش متمرّن عليها
 - Expressing a personal response to creative texts (including literature) — يقول بكلمات بسيطة عمل فني خلّاه حاسس بإيه — Mediation مش متمرّن عليها
 - Encouraging conceptual talk — يستخدم كلمات متفرقة وإشارات عشان يبيّن إنه مهتم بفكرة — Mediation مش متمرّن عليها
 - Facilitating pluricultural space — يسهّل التعارف بين ثقافتين بترحيب واهتمام وكلمات بسيطة — Mediation مش متمرّن عليها
 - Acting as an intermediary in informal situations (with friends and colleagues) — ينقل (بلغة تانية) بيانات حد ومعلومات بسيطة متوقعة، لو حد ساعده في الصياغة — Mediation مش متمرّن عليها
 - Facilitating communication in delicate situations and disagreements — يلاحظ إن فيه خلاف أو حد عنده مشكلة، ويقول جملة محفوظة («فاهمك»، «إنت كويس؟») — Mediation مش متمرّن عليها
-- Plurilingual comprehension — يعرف الكلمات الدولية والمشتركة بين اللغات (Haus/house) ويستخدمها يفهم يافطات ورسايل بسيطة — الكلمات الدولية مش مشروحة كطريقة فهم
 - Building on plurilingual repertoire — يستخدم كلمات من لغات مختلفة عشان يخلّص حاجة بسيطة جدًا مع حد متعاون — استخدام كذا لغة مع بعض مش متعلّم
 
-## كلمات مذكورة من غير كارت (178)
+## كلمات مذكورة من غير كارت (177)
 
-ab، aber، das Alter، an، ander-، ankreuzen، die Anrede، der Anruf, -e، antworten، der Arbeitsplatz, -ä, e، auch، auf، aufhören، aus، der Ausflug، ausmachen، die Aussage, -n، (sich) ausziehen، baden، die Bahn، bald، bedeuten، beginnen، bei، das Beispiel, -e، bekommen، benutzen، besetzt، bis، bisschen، bitten، das Buch, -ü, er، circa/ca.، da، der Dank، dein-، der, die, das، dich، dir، dort, -her, -hin، draußen، durch، die Durchsage, -n، (sich) duschen، einfach، der Eingang، einmal، der Eintritt، die E-Mail, -s، das Ende، er، der Erwachsene, -n، es، euer، fertig، der Film, -e، das Foto, -s، die Freizeit، früher، für، der Fußball، der Gast, -ä, e، geboren، der Geburtsort، gerade، das Gespräch, -e، gleich، grillen، gültig، hallo، die Hausfrau, -en/، der Hausmann، hier، hinten، das Hobby, -s، hören، der Hund, -e، ich، ihr/ihm/ihn، in، ja، jed-، kaputt، kennenlernen، der Kindergarten، klar، die Klasse، lange، laufen، lernen، lesen، Lieblings-، das Lokal، machen، man، mein، meist-، mitnehmen، der Moment، nächst-، nein، normal، nur، oder، öffnen، der Ort, -e، das Papier، die Postleitzahl، das Problem, -e، der Raum, -ä, e، reparieren، die Reparatur، die Rezeption، sagen، Satz, -ä, e، scheinen، das Schild, -er، schließen، schon، schwimmen، das Schwimmbad، sehen، sehr، weg sein، sich، sie، Sie، so، später، spielen، der Teil, -e، telefonieren، der Test، der Text, -e، das Thema، tschüss، tun، übernachten، um، unser-، der Unterricht، verkaufen، viel، vielleicht، von، (sich) vorstellen، wann، warum، was، was für ein، (sich) waschen، wenig، wer، wichtig، das Wiederhören، das Wiedersehen، wie viel، wir، die Zeitung, -en، der Zoll، zu، zurück، passend، die Situation, die Situationen، das Kreuz, die Kreuze، wählen، zweimal، die Fahrt, die Fahrten، die Medizin، kostenlos، der Besuch, die Besuche، die Idee, die Ideen، wieder، sonst، die Person, die Personen، voll، zeigen، verschieden
+ab، aber، das Alter، an، ander-، ankreuzen، die Anrede، der Anruf, -e، antworten، der Arbeitsplatz, -ä, e، auch، auf، aufhören، aus، der Ausflug، ausmachen، die Aussage, -n، (sich) ausziehen، baden، die Bahn، bald، bedeuten، beginnen، bei، das Beispiel, -e، bekommen، benutzen، besetzt، bis، bisschen، bitten، das Buch, -ü, er، circa/ca.، da، der Dank، dein-، der, die, das، dich، dir، dort, -her, -hin، draußen، durch، die Durchsage, -n، (sich) duschen، einfach، der Eingang، einmal، der Eintritt، die E-Mail, -s، das Ende، er، der Erwachsene, -n، es، euer، fertig، der Film, -e، das Foto, -s، die Freizeit، früher، für، der Fußball، der Gast, -ä, e، geboren، der Geburtsort، gerade، das Gespräch, -e، gleich، grillen، gültig، hallo، die Hausfrau, -en/، der Hausmann، hier، hinten، das Hobby, -s، hören، der Hund, -e، ich، ihr/ihm/ihn، in، ja، jed-، kaputt، kennenlernen، der Kindergarten، klar، die Klasse، lange، laufen، lernen، lesen، Lieblings-، das Lokal، machen، man، mein، mitnehmen، der Moment، nächst-، nein، normal، nur، oder، öffnen، der Ort, -e، das Papier، die Postleitzahl، das Problem, -e، der Raum, -ä, e، reparieren، die Reparatur، die Rezeption، sagen، Satz, -ä, e، scheinen، das Schild, -er، schließen، schon، schwimmen، das Schwimmbad، sehen، sehr، weg sein، sich، sie، Sie، so، später، spielen، der Teil, -e، telefonieren، der Test، der Text, -e، das Thema، tschüss، tun، übernachten، um، unser-، der Unterricht، verkaufen، viel، vielleicht، von، (sich) vorstellen، wann، warum، was، was für ein، (sich) waschen، wenig، wer، wichtig، das Wiederhören، das Wiedersehen، wie viel، wir، die Zeitung, -en، der Zoll، zu، zurück، passend، die Situation, die Situationen، das Kreuz, die Kreuze، wählen، zweimal، die Fahrt, die Fahrten، die Medizin، kostenlos، der Besuch, die Besuche، die Idee, die Ideen، wieder، sonst، die Person, die Personen، voll، zeigen، verschieden
 
 ## مستبعد (2)
 
