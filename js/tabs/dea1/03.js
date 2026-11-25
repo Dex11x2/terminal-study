@@ -1061,6 +1061,34 @@ Verkäuferin: Ja, hier. Und die Schuhe hier kosten nur dreißig Euro. || آه، 
 - بعد [[in]] اللون بحرف كبير: [[in Schwarz]]، [[in Blau]]. وبعد [[sein]] صغير: [[Die Jacke ist schwarz]].
 - [[der Schuh, die Schuhe]]: الجزمة اتنين، فـ [[Die Schuhe kosten …]] جمع.
 
+## الأرقام الكبيرة: من ١٠٠ لـ ١٠٠٠
+
+في المحل والإيجار والتليفون هتقابل أرقام أكبر من ١٠٠. وهي سهلة: **المية الأول، وبعدها الرقم الصغير زي ما اتعلمته** (الآحاد قبل العشرات).
+
+| الرقم | بالألماني | إزاي اتعمل |
+|---|---|---|
+| 100 | [[hundert]] (أو [[einhundert]]) | |
+| 101 | [[hunderteins]] | ١٠٠ + ١ |
+| 120 | [[hundertzwanzig]] | ١٠٠ + ٢٠ |
+| 199 | [[hundertneunundneunzig]] | ١٠٠ + (٩ و ٩٠) |
+| 250 | [[zweihundertfünfzig]] | ٢ × ١٠٠ + ٥٠ |
+| 345 | [[dreihundertfünfundvierzig]] | ٣ × ١٠٠ + (٥ و ٤٠) |
+| 999 | [[neunhundertneunundneunzig]] | ٩ × ١٠٠ + (٩ و ٩٠) |
+| 1000 | [[tausend]] (أو [[eintausend]]) | |
+
+- الرقم كله **كلمة واحدة** في الكتابة: [[dreihundertfünfundvierzig]]. محدش بيكتبه كده غير في الشيكات، بس بتسمعه كده.
+- ترتيب الكلام: **المية ← الآحاد ← العشرات**. يعني ٣٤٥ = «تلتمية وخمسة وأربعين»، زي ما بنقولها بالعربي بالظبط.
+- [[Das kostet hundertneunundneunzig Euro]] = ١٩٩ يورو. و [[Die Miete ist siebenhundertfünfzig Euro]] = ٧٥٠.
+
+~~~dictate الأرقام الكبيرة
+Das kostet hundertzwanzig Euro. => 120
+f: Die Miete ist siebenhundertfünfzig Euro. => 750
+Ihr Zimmer hat die Nummer dreihundertfünfundvierzig. => 345
+f: Der Fernseher kostet neunhundertneunundneunzig Euro. => 999
+~~~
+
+اكتب الرقم بس بالأرقام (مثلًا [[120]]).
+
 ## الكلمات
 
 ~~~words أسعار وكميات ودفع

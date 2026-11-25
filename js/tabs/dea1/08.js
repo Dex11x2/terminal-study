@@ -4,7 +4,7 @@ MORE("dea1", [
       l: 2,
       pre: ["dea1/Das Sofa steht im Wohnzimmer", "dea1/Rufen Sie bitte an!"],
       n: R`تسأل عن الطريق وتفهم الوصف، وتركب الأتوبيس والمترو والقطر، وتشتري تذكرة وتقرا جدول المواعيد وتفهم إعلانات المحطة، وتقول رايح فين وجاي منين، وتتكلم عن الطقس والأجازة والفندق. والقواعد هنا بتكمّل الـ Dativ: [[mit]] و [[zu]] و [[von]] و [[aus]] ([[mit dem Bus]]، [[zum Bahnhof]])، والفرق بين **فين** و **لفين**: [[in der Stadt]] (Dativ) و [[in die Stadt]] (Akkusativ). والوحدة بتنتهي بتدريب Hören Teil 2 (إعلانات المحطة) و Lesen Teil 2 (مواقع سفر) و Schreiben Teil 1 (استمارة حجز).`,
-      goal: [R`تسأل عن الطريق وتفهم الوصف ([[Wie komme ich zum Bahnhof?]] ← [[Gehen Sie geradeaus und dann links]])`, R`تقول بتروح بإيه وبتاخد قد إيه ([[Ich fahre mit dem Bus]]، [[Es dauert zwanzig Minuten]])`, R`تشتري تذكرة وتقرا جدول القطر وتفهم الرصيف والتأخير والتغيير ([[Gleis 5]]، [[umsteigen]]، [[Verspätung]])`, R`تفرّق بين فين ولفين ومنين ([[in der Stadt]] / [[in die Stadt]]، [[nach Hause]] / [[zu Hause]]، [[aus Ägypten]])`, R`تتكلم عن الطقس وتحجز أوضة في فندق`, R`تحل Hören Teil 2 و Lesen Teil 2 و Schreiben Teil 1 على موضوع السفر`],
+      goal: [R`تسأل عن الطريق وتفهم الوصف ([[Wie komme ich zum Bahnhof?]] ← [[Gehen Sie geradeaus und dann links]])`, R`تقول بتروح بإيه وبتاخد قد إيه ([[Ich fahre mit dem Bus]]، [[Es dauert zwanzig Minuten]])`, R`تشتري تذكرة وتقرا جدول القطر وتفهم الرصيف والتأخير والتغيير ([[Gleis 5]]، [[umsteigen]]، [[Verspätung]])`, R`تفرّق بين فين ولفين ومنين ([[in der Stadt]] / [[in die Stadt]]، [[nach Hause]] / [[zu Hause]]، [[aus Ägypten]])`, R`تتكلم عن الطقس وتحجز أوضة في فندق`, R`تحل Hören Teil 2 و Lesen Teil 2 و Schreiben Teil 1 على موضوع السفر`, R`تقارن مواصلات وأماكن وطقس ([[Der Zug ist schneller als der Bus]]، [[so teuer wie]]، [[am billigsten]])`],
       time: "حوالي ١٠ ساعات",
       projects: [
         { lvl: 'صغير', t: R`الطريق من بيتك`, what: R`اكتب وصف الطريق من بيتك لأقرب سوبرماركت أو محطة (٥–٦ جمل) كإنك بتوصفه لجار ألماني جديد. وارسم خريطة صغيرة جنبه.`,
@@ -1239,6 +1239,258 @@ Der Urlaub war super, aber zu kurz!
             { t: "DWDS: Wetter", url: "https://www.dwds.de/wb/Wetter" },
             { t: "DWDS: regnen", url: "https://www.dwds.de/wb/regnen" },
             { t: "DWDS: Doppelzimmer", url: "https://www.dwds.de/wb/Doppelzimmer" },
+          ],
+        },
+        {
+          cmd: "Der Zug ist schneller als der Bus",
+          title: "تقارن: schneller als، و so schnell wie، و am schnellsten",
+          pre: ["dea1/Ich esse gern Fisch", "dea1/Wie ist das Wetter?"],
+          desc: R`لحد دلوقتي اتعلمت [[gern]] ← [[lieber]] ← [[am liebsten]]، و [[gut]] ← [[besser]] ← [[am besten]]. الدرس ده بيعمم الفكرة على **أي صفة**: [[Der Zug ist schneller als der Bus]] (القطر أسرع من الأتوبيس)، و [[Berlin ist so groß wie Hamburg?]]، و [[Das Flugzeug ist am schnellsten]] (الطيارة الأسرع).
+
+القاعدة نفسها سهلة (زوّد [[-er]] وزوّد [[am -sten]])، والفخاخ تلاتة: النقطتين اللي بتظهر فوق الحرف ([[groß]] ← [[größer]])، والكلمات الشاذة، و [[als]] ولا [[wie]]. (في امتحان Goethe A1 المطلوب gern و gut بس، والباقي من A2، بس الكتب بتدرّسه في آخر A1 لأنه بيتقال كل يوم.)`,
+          teach: R`## الموقف
+
+عمر وليا بيخططوا رحلة لهامبورج. (منهج الاندماج: السفر والمواصلات.)
+
+~~~de Omar=m Lea=f
+Omar: Fahren wir mit dem Bus oder mit dem Zug nach Hamburg? || نروح هامبورج بالأتوبيس ولا بالقطر؟
+Lea: Der Bus ist billiger. Er kostet nur zwanzig Euro. || الأتوبيس أرخص. بـ ٢٠ يورو بس.
+Omar: Ja, aber der Zug ist viel schneller als der Bus. || أيوه، بس القطر أسرع بكتير من الأتوبيس.
+Lea: Wie lange fährt der Zug? || القطر بياخد قد إيه؟
+Omar: Zwei Stunden. Der Bus braucht vier Stunden. || ساعتين. والأتوبيس بياخد أربعة.
+Lea: Und das Flugzeug? || والطيارة؟
+Omar: Das Flugzeug ist am schnellsten, aber auch am teuersten. || الطيارة الأسرع، بس كمان الأغلى.
+Lea: Dann lieber der Zug. Er ist bequemer als der Bus und nicht so teuer wie das Flugzeug. || يبقى القطر أحسن. أريح من الأتوبيس ومش غالي زي الطيارة.
+~~~
+
+في الحوار تلات درجات: [[billig]] (رخيص) ← [[billiger]] (أرخص) ← [[am billigsten]] (الأرخص). ده كل الدرس.
+
+## الدرجات التلاتة
+
+| الصفة | أكتر (Komparativ) | الأكتر (Superlativ) |
+|---|---|---|
+| [[schnell]] (سريع) | [[schneller]] | [[am schnellsten]] |
+| [[billig]] (رخيص) | [[billiger]] | [[am billigsten]] |
+| [[klein]] (صغير) | [[kleiner]] | [[am kleinsten]] |
+| [[bequem]] (مريح) | [[bequemer]] | [[am bequemsten]] |
+
+- **أكتر:** الصفة + [[-er]]. زي العربي «أَفْعَل»: سريع ← أسرع.
+- **الأكتر:** [[am]] + الصفة + [[-sten]]. ودي بتيجي بعد [[sein]] في آخر الجملة: [[Der Zug ist am schnellsten]].
+- لو الصفة بتخلص بـ [[-t]] أو [[-d]] أو [[-s]] أو [[-ß]] أو [[-z]]، بنزوّد [[e]] عشان تتنطق: [[am kältesten]]، [[am heißesten]]، [[am kürzesten]]. لكن [[billig]] بتخلص بـ g، فمفيش e: [[am billigsten]].
+
+## النقطتين: a ← ä، و o ← ö، و u ← ü
+
+صفات كتير قصيرة (مقطع واحد) فيها [[a]] أو [[o]] أو [[u]] بتاخد النقطتين في الدرجتين:
+
+| الصفة | أكتر | الأكتر |
+|---|---|---|
+| [[alt]] (كبير في السن، قديم) | [[älter]] | [[am ältesten]] |
+| [[jung]] (صغير في السن) | [[jünger]] | [[am jüngsten]] |
+| [[groß]] (كبير) | [[größer]] | [[am größten]] |
+| [[warm]] (دافي) | [[wärmer]] | [[am wärmsten]] |
+| [[kalt]] (برد) | [[kälter]] | [[am kältesten]] |
+| [[lang]] (طويل) | [[länger]] | [[am längsten]] |
+| [[kurz]] (قصير) | [[kürzer]] | [[am kürzesten]] |
+
+مش كل صفة فيها a بتاخد نقطتين: [[langsam]] ← [[langsamer]]، و [[klar]] ← [[klarer]]. الأكيد: احفظ الجدول ده، وهو اللي بيتقال كل يوم.
+
+## الشاذين: احفظهم زي ما هم
+
+| | أكتر | الأكتر |
+|---|---|---|
+| [[gut]] | [[besser]] | [[am besten]] |
+| [[gern]] | [[lieber]] | [[am liebsten]] |
+| [[viel]] | [[mehr]] | [[am meisten]] |
+| [[hoch]] (عالي) | [[höher]] | [[am höchsten]] |
+| [[teuer]] (غالي) | [[teurer]] | [[am teuersten]] |
+
+[[gut]] و [[gern]] اتعلمتهم قبل كده. و [[viel]] ← [[mehr]] (زي more): [[Ich arbeite mehr als du]]. و [[hoch]] بيفقد الـ c في [[höher]]. و [[teuer]] بيفقد e في [[teurer]].
+
+## als ولا wie؟
+
+~~~de
+Der Zug ist schneller als der Bus. || القطر أسرع من الأتوبيس.
+Mein Bruder ist älter als ich. || أخويا أكبر مني.
+Der Bus ist so bequem wie der Zug. || الأتوبيس مريح زي القطر.
+Das Hotel ist nicht so teuer wie das Apartment. || الفندق مش غالي زي الشقة.
+~~~
+
+| | الشكل | العربي |
+|---|---|---|
+| مش زي بعض | **صفة‑er + [[als]]** | أفعل من |
+| زي بعض | **[[so]] + صفة + [[wie]]** | زي / قد |
+| أقل | **[[nicht so]] + صفة + [[wie]]** | مش قد |
+
+- [[als]] بعد [[-er]] دايمًا، و [[wie]] بعد [[so]] دايمًا. الألمان نفسهم أحيانًا بيقولوا «größer wie» في الكلام، بس ده غلط في الامتحان.
+- بعد [[als]] و [[wie]] الضمير بيفضل فاعل: [[älter als ich]]، [[so groß wie du]].
+- [[viel]] قبل المقارنة = «بكتير»: [[viel schneller]] (أسرع بكتير).
+
+## الطقس والأماكن
+
+~~~de
+Im Juli ist es wärmer als im April. || في يوليو الجو أدفى من أبريل.
+Im Winter ist es in Berlin kälter als in Kairo. || في الشتا برلين أبرد من القاهرة.
+Hamburg ist größer als Bremen, aber Berlin ist am größten. || هامبورج أكبر من بريمن، بس برلين الأكبر.
+~~~
+
+## الكلمات
+
+~~~words قارن
+schnell | سريع | m: Der Zug ist sehr schnell.
+bequem | مريح | Das Sofa ist bequem.
+hoch | عالي | m: Der Berg ist sehr hoch.
+als | من (في المقارنة) | Der Zug ist schneller als der Bus.
+wie | زي (في المقارنة) | m: Er ist so groß wie sein Bruder.
+mehr | أكتر | Ich möchte mehr Zeit.
+am meisten | الأكتر (في الكمية) | m: Er arbeitet am meisten.
+das Flugzeug, die Flugzeuge | الطيارة | Das Flugzeug ist am schnellsten.
+~~~
+
+## اقرا: تلات فنادق
+
+~~~read إعلانات فنادق
+Hotel Sonne: Doppelzimmer 90 Euro, 2 Kilometer vom Bahnhof, Frühstück 12 Euro. || فندق زونه: أوضة لاتنين بـ ٩٠، ٢ كيلو من المحطة، الفطار بـ ١٢.
+Hotel Krone: Doppelzimmer 120 Euro, direkt am Bahnhof, Frühstück inklusive. || فندق كرونه: أوضة لاتنين بـ ١٢٠، قدام المحطة على طول، الفطار شامل.
+Pension Maria: Doppelzimmer 70 Euro, 5 Kilometer vom Bahnhof, kein Frühstück. || بنسيون ماريا: أوضة لاتنين بـ ٧٠، ٥ كيلو من المحطة، من غير فطار.
+? Das Hotel Sonne ist billiger als die Pension Maria. || فندق زونه أرخص من بنسيون ماريا
+- Richtig
+- Falsch *
+? Das Hotel Krone ist am nächsten am Bahnhof. || فندق كرونه الأقرب للمحطة
+- Richtig *
+- Falsch
+? Die Pension Maria ist am teuersten. || بنسيون ماريا الأغلى
+- Richtig
+- Falsch *
+~~~
+
+[[nah]] (قريب) ← [[näher]] ← [[am nächsten]]: شاذ كمان (h بتبقى ch). وخلي بالك في التالت: ماريا [[am billigsten]] (٧٠)، مش الأغلى.
+
+## قول بصوتك
+
+~~~speak
+Der Zug ist schneller als der Bus. || القطر أسرع من الأتوبيس.
+Mein Bruder ist älter als ich. || أخويا أكبر مني.
+Im Sommer ist es wärmer als im Winter. || في الصيف أدفى من الشتا.
+Das Hotel ist nicht so teuer wie das Apartment. || الفندق مش غالي زي الشقة.
+Ich trinke am liebsten Tee. || أكتر حاجة بحب أشربها الشاي.
+~~~
+
+## سمع: مين أكتر؟
+
+~~~hear Frau=f Mann=m
+Mann: Ist deine Schwester jünger als du?
+Frau: Nein, sie ist zwei Jahre älter. Mein Bruder ist am jüngsten.
+? Wer ist am jüngsten? || مين الأصغر؟
+- die Frau
+- die Schwester
+- der Bruder *
+
+Frau: Die Jacke kostet sechzig Euro, der Mantel neunzig.
+Mann: Dann nehme ich die Jacke. Sie ist billiger und auch wärmer.
+? Warum nimmt der Mann die Jacke? || الراجل هياخد الجاكيت ليه؟
+- Sie ist teurer.
+- Sie ist billiger und wärmer. *
+- Sie ist schöner als der Mantel.
+
+Mann: Wie war das Wetter im Urlaub?
+Frau: Am Montag war es so warm wie hier, aber am Freitag war es viel heißer.
+? Wann war es am heißesten? || إمتى كان الجو أحر؟
+- am Montag
+- am Freitag *
+- hier
+~~~
+
+## إملا
+
+~~~dictate
+Der Zug ist schneller als der Bus.
+f: Mein Bruder ist älter als ich.
+Das Flugzeug ist am schnellsten.
+f: Ich trinke am liebsten Tee.
+~~~`,
+          deep: {
+            why: R`المقارنة بتتقال كل يوم: الأسعار في المحل، والمواصلات، والطقس، والشقق، والسن. وفي الكلام في الامتحان (Sprechen Teil 2) لما تتسأل [[Was trinkst du lieber?]] أو [[Was ist billiger?]]، المقارنة بتخلّي إجابتك أطول وأحسن. والكتب بتدرّسها في آخر A1 حتى لو Goethe بيطلبها كاملة في A2.`,
+            how: R`أكتر: صفة + [[-er]] + [[als]]. زي: [[so]] + صفة + [[wie]]. الأكتر: [[am]] + صفة + [[-sten]] (و [[-esten]] بعد t/d/s/ß/z). الصفات القصيرة بـ a/o/u بتاخد نقطتين ([[älter]]، [[größer]]، [[jünger]]). والشاذين: [[gut/besser/am besten]]، [[gern/lieber/am liebsten]]، [[viel/mehr/am meisten]]، [[hoch/höher/am höchsten]]، [[nah/näher/am nächsten]].`,
+            when: R`[[als]] لما فيه فرق، و [[wie]] لما زي بعض أو مع [[nicht so]]. و [[am …sten]] بعد [[sein]] أو فعل ([[Er läuft am schnellsten]]). أما «الأكبر» قبل اسم ([[der größte See]]) فده تصريف صفة، جاي في A2، فاعرفه لما تقراه بس.`,
+            mistakes: R`- [[mehr schnell]]: الألماني مبيقولش «more» قبل الصفة ← [[schneller]].
+- [[schneller wie]]: بعد [[-er]] ← [[als]].
+- [[so schnell als]]: بعد [[so]] ← [[wie]].
+- [[älter als mich]]: الضمير فاعل ← [[als ich]].
+- [[gröser]]: الصح [[größer]] (ß ونقطتين).
+- [[am bestens]] أو [[am gutesten]]: الصح [[am besten]].
+- [[Er ist der schnellsten]]: الصح [[Er ist am schnellsten]].`
+          },
+          try: R`قارن ٣ حاجات حواليك بصوت عالي: إنت وحد من عيلتك ([[älter]]/[[jünger]]/[[größer]])، ومدينتك ومدينة تانية ([[größer]]/[[wärmer]])، وأكلتين ([[lieber]]/[[am liebsten]]). وقول جملة بـ [[so … wie]] وجملة بـ [[nicht so … wie]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**الدرجات التلاتة:** اكتب «أكتر» و «الأكتر» لـ: (١) klein (٢) alt (٣) groß (٤) gut (٥) viel (٦) kalt (٧) teuer (٨) gern`,
+              done: R`التمانية صح، بالنقطتين في alt و groß و kalt، والشاذين gut و viel و gern، و teurer من غير e`,
+              sol: R`~~~text
+klein   kleiner   am kleinsten
+alt     älter     am ältesten
+groß    größer    am größten
+gut     besser    am besten
+viel    mehr      am meisten
+kalt    kälter    am kältesten
+teuer   teurer    am teuersten
+gern    lieber    am liebsten
+~~~
+
+**ليه:** [[klein]] عادية. [[alt]] و [[groß]] و [[kalt]] قصيرة وفيها a/o ← نقطتين. [[ältesten]] و [[kältesten]] بـ [[-esten]] لأنهم بيخلصوا بـ t. و [[größten]] بـ ß فمحتاجش e زيادة (الاستثنا الوحيد). و [[gut]] و [[viel]] و [[gern]] شاذين. و [[teuer]] بتقع منها e: [[teurer]] مش «teuerer».` },
+            { lvl: 'سريع', t: R`**als ولا wie؟** (١) Kairo ist größer ___ Alexandria. (٢) Mein Handy ist so alt ___ dein Handy. (٣) Ich bin nicht so groß ___ mein Vater. (٤) Tee trinke ich lieber ___ Kaffee. (٥) Heute ist es wärmer ___ gestern.`,
+              done: R`الخمسة صح: als بعد -er (١، ٤، ٥) و wie بعد so (٢، ٣)`,
+              sol: R`~~~de
+Kairo ist größer als Alexandria.
+Mein Handy ist so alt wie dein Handy.
+Ich bin nicht so groß wie mein Vater.
+Tee trinke ich lieber als Kaffee.
+Heute ist es wärmer als gestern.
+~~~
+
+**ليه:** القاعدة الوحيدة: فيه [[-er]] (أو [[lieber]]) ← [[als]]. فيه [[so]] ← [[wie]]. وفي (٤) [[lieber]] هو «أكتر» بتاع [[gern]]، فبرضه [[als]].` },
+            { lvl: 'تطبيق', t: R`**قارن بالجدول:** ٣ مواصلات من القاهرة لإسكندرية: 🚆 القطر: ٣ ساعات، ٢٠٠ جنيه. 🚌 الأتوبيس: ٣ ساعات ونص، ١٥٠ جنيه. 🚗 العربية: ساعتين ونص، ٤٠٠ جنيه (بنزين). اكتب ٥ جمل مقارنة، فيهم [[als]] و [[so … wie]] أو [[nicht so … wie]] و [[am …sten]] مرتين.`,
+              done: R`٥ جمل صح حسب الجدول، وفيهم الأشكال التلاتة`,
+              sol: R`**نسخة نموذجية:**
+
+~~~de
+Der Zug ist schneller als der Bus.
+Das Auto ist am schnellsten, aber auch am teuersten.
+Der Bus ist am billigsten.
+Der Bus ist nicht so schnell wie der Zug.
+Der Zug ist billiger als das Auto.
+~~~
+
+**ليه:** القطر (٣ ساعات) أسرع من الأتوبيس (٣ ونص) ← [[schneller als]]. العربية أقل وقت وأكتر فلوس ← [[am schnellsten]] و [[am teuersten]]. الأتوبيس ١٥٠ ← [[am billigsten]]. و [[nicht so schnell wie]] = مش سريع قده. ممكن كمان تقول [[Der Bus ist langsamer als der Zug]]. **الغلطة الشائعة:** تكتب [[Das Auto ist schnellste]] من غير [[am]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الغلطات:** (١) Mein Bruder ist mehr alt als ich. (٢) Der Bus ist billiger wie der Zug. (٣) Berlin ist am größte. (٤) Ich bin so groß als du. (٥) Das Essen hier ist gutter. (٦) Sie ist jünger als mich.`,
+              done: R`الستة اتصلحوا، ومع كل واحد سبب بالعربي`,
+              sol: R`~~~de
+Mein Bruder ist älter als ich.
+Der Bus ist billiger als der Zug.
+Berlin ist am größten.
+Ich bin so groß wie du.
+Das Essen hier ist besser.
+Sie ist jünger als ich.
+~~~
+
+**ليه:** (١) مفيش [[mehr]] قبل الصفة، و [[alt]] ← [[älter]]. (٢) بعد [[-er]] ← [[als]]. (٣) [[am]] + [[-sten]]: [[am größten]]. (٤) بعد [[so]] ← [[wie]]. (٥) [[gut]] شاذ ← [[besser]]. (٦) بعد [[als]] الضمير فاعل ← [[ich]].` },
+            { lvl: 'تحدي', t: R`**مصر ولا ألمانيا؟** اكتب فقرة ٦ جمل بتقارن فيها بلدك بألمانيا (أو بلد تانية): الطقس، والأكل، والمواصلات، والأسعار، والناس. استخدم ٤ صفات مختلفة على الأقل، وفيهم صفة شاذة، وجملة بـ [[am liebsten]].`,
+              done: R`٦ جمل، ٤ صفات مختلفة، صفة شاذة واحدة على الأقل، و [[als]] و [[wie]] كل واحدة مرة على الأقل، وجملة بـ [[am liebsten]]`,
+              sol: R`**نسخة نموذجية:**
+
+~~~de
+In Ägypten ist es wärmer als in Deutschland.
+Im Winter ist es in Berlin viel kälter als in Kairo.
+Das Essen in Ägypten finde ich besser, aber das Brot in Deutschland ist auch sehr gut.
+Die Züge in Deutschland sind schneller, aber auch teurer.
+Die Menschen in Kairo sind so freundlich wie in Hamburg.
+Am liebsten esse ich Koshari mit meiner Familie.
+~~~
+
+**ليه:** [[wärmer]] و [[kälter]] بنقطتين. [[besser]] الشاذة. [[schneller]] و [[teurer]] من غير [[als]] لأن المقارن بيه معروف من الجملة (الألمان بيعملوا كده كتير). [[so freundlich wie]] للتساوي. و [[Am liebsten esse ich …]]: [[am liebsten]] في الأول والفعل بعده على طول.` },
+          ],
+          ref: [
+            { t: "Goethe-Zertifikat A1: Komparation gern/lieber و gut/besser (ص ١٠٠)", url: "https://goethe.de/pro/relaunch/prf/et/Pruefungsziele_Testbeschreibung_A1_SD1.pdf" },
+            { t: "DWDS: als", url: "https://www.dwds.de/wb/als" },
+            { t: "DWDS: schnell (Komparativ und Superlativ)", url: "https://www.dwds.de/wb/schnell" },
           ],
         },
         {

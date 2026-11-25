@@ -4,7 +4,7 @@ MORE("dea1", [
       l: 2,
       pre: ["dea1/Sein Bruder, ihre Schwester", "dea1/Wo finde ich Reis?"],
       n: R`شقتك فيها كام أوضة وشكلها إيه، وفين كل حاجة فيها، وإزاي تقرا إعلان شقة وتتصل تسأل عليها، وتتعرف على جيرانك وتطلب منهم مساعدة، وتفهم قواعد العمارة واليافطات. والقواعد الكبيرة هنا اتنين: **Dativ للمكان** ([[im Wohnzimmer]]، [[auf dem Tisch]]: كنت بتقولها كده من غير ما تعرف ليه، ودلوقتي هتعرف)، والأفعال المساعدة [[können]] و [[müssen]] و [[dürfen]]. والوحدة بتنتهي بـ Lesen Teil 2 (إعلانات ومواقع: تختار المناسب) و Lesen Teil 3 (يافطات: صح ولا غلط).`,
-      goal: [R`توصف شقتك وأوضها ([[Meine Wohnung hat drei Zimmer]]، [[Die Küche ist klein, aber hell]])`, R`تقول فين كل حاجة بـ Dativ ([[Das Sofa steht im Wohnzimmer]]، [[Der Schlüssel liegt auf dem Tisch]])`, R`تقرا إعلان شقة باختصاراته، وتتصل تسأل عن الإيجار والمعاينة بـ [[können]] ([[Kann ich die Wohnung sehen?]])`, R`تتعرّف على جيرانك وتطلب مساعدة وتشكر ([[Können Sie mir helfen?]]، [[Danke, das ist nett von Ihnen!]])`, R`تفهم قواعد العمارة واليافطات بـ [[müssen]] و [[dürfen]] و [[man]] ([[Hier darf man nicht rauchen]])`, R`تحل Lesen Teil 2 و Teil 3 بطريقة الامتحان`],
+      goal: [R`توصف شقتك وأوضها ([[Meine Wohnung hat drei Zimmer]]، [[Die Küche ist klein, aber hell]])`, R`تقول فين كل حاجة بـ Dativ ([[Das Sofa steht im Wohnzimmer]]، [[Der Schlüssel liegt auf dem Tisch]])`, R`تفرّق بين فين (Dativ) ولفين (Akkusativ) مع الحروف التسعة، وتستخدم stellen/stehen و legen/liegen و hängen ([[Ich stelle die Vase auf den Tisch]])`, R`تقرا إعلان شقة باختصاراته، وتتصل تسأل عن الإيجار والمعاينة بـ [[können]] ([[Kann ich die Wohnung sehen?]])`, R`تتعرّف على جيرانك وتطلب مساعدة وتشكر ([[Können Sie mir helfen?]]، [[Danke, das ist nett von Ihnen!]])`, R`تفهم قواعد العمارة واليافطات بـ [[müssen]] و [[dürfen]] و [[man]] ([[Hier darf man nicht rauchen]])`, R`تحل Lesen Teil 2 و Teil 3 بطريقة الامتحان`],
       time: "حوالي ١٠ ساعات",
       projects: [
         { lvl: 'صغير', t: R`ارسم شقتك ووصفها`, what: R`ارسم رسمة بسيطة لشقتك (أو شقة أحلامك) من فوق، واكتب اسم كل أوضة بالألماني بأداتها. وبعدين اكتب ٦ جمل: الشقة فيها كام أوضة، وفي أنهي دور، وكل أوضة شكلها إيه (كبيرة؟ منوّرة؟ هادية؟).`,
@@ -1080,6 +1080,263 @@ Viele Grüße, Karim Hassan, 2. Stock
             { t: "DWDS: helfen", url: "https://www.dwds.de/wb/helfen" },
             { t: "DWDS: umziehen", url: "https://www.dwds.de/wb/umziehen" },
             { t: "DWDS: Nachbar", url: "https://www.dwds.de/wb/Nachbar" },
+          ],
+        },
+        {
+          cmd: "Wohin stellen wir das Sofa?",
+          title: "فين ولا لفين؟ stellen و legen و hängen، والحروف اللي بتاخد Dativ أو Akkusativ",
+          pre: ["dea1/Das Sofa steht im Wohnzimmer", "dea1/Können Sie mir helfen?"],
+          desc: R`في درس «Das Sofa steht im Wohnzimmer» اتعلمت **فين** الحاجة: [[Das Sofa steht an der Wand]] (Dativ). الدرس ده عن **لفين** بتحطها: [[Wir stellen das Sofa an die Wand]] (Akkusativ).
+
+نفس الحرف ([[an]]، [[auf]]، [[in]]…) ونفس المكان، بس الأداة بتتغيّر: لو الحاجة **ثابتة في مكانها** ← Dativ، ولو **بتتحرك ناحيته** ← Akkusativ. دي من أهم قواعد A1، والكتب بتسميها **Wechselpräpositionen** (حروف بتبدّل).`,
+          teach: R`## الموقف
+
+يوم العزال. سارة بتقول لصاحبها يوسف يحط العفش فين. (منهج الاندماج: العزال والسكن.)
+
+~~~de Sara=f Yusuf=m
+Yusuf: Wohin stellen wir das Sofa? || نحط الكنبة فين؟
+Sara: An die Wand, neben das Fenster. || على الحيطة، جنب الشباك.
+Yusuf: Gut. Und der Tisch? || تمام. والترابيزة؟
+Sara: Der Tisch kommt in die Küche. || الترابيزة تروح المطبخ.
+Yusuf: Und wohin hängen wir das Bild? || واللوحة نعلّقها فين؟
+Sara: Über das Sofa, bitte. || فوق الكنبة لو سمحت.
+Yusuf: Fertig! Das Sofa steht an der Wand, und das Bild hängt über dem Sofa. || خلاص! الكنبة واقفة على الحيطة، واللوحة متعلّقة فوق الكنبة.
+Sara: Super, danke! || جامد، شكرًا!
+~~~
+
+بص على آخر سطرين: [[an die Wand]] وهو **بيحط** الكنبة، و [[an der Wand]] لما الكنبة **واقفة** خلاص. نفس الحيطة، أداتين مختلفين.
+
+## فين ولا لفين؟ (Wo? ولا Wohin?)
+
+| السؤال | المعنى | الحالة | مثال |
+|---|---|---|---|
+| [[Wo?]] | فين؟ (الحاجة ثابتة) | **Dativ** | [[Das Sofa steht an der Wand.]] |
+| [[Wohin?]] | لفين؟ (بتتحرك) | **Akkusativ** | [[Ich stelle das Sofa an die Wand.]] |
+
+السر: اسأل نفسك **«الحاجة بتتحرك من مكان لمكان؟»**. لو أيوه ← Akkusativ. لو هي قاعدة في مكانها ← Dativ. وده نفس اللي اتعلمته في المواصلات: [[Wo bist du? Im Kino]] و [[Wohin gehst du? Ins Kino]]. الدرس ده بيطبّقه على العفش والحاجات.
+
+## الأداة بتتغيّر إزاي؟
+
+| | Wo? (Dativ) | Wohin? (Akkusativ) |
+|---|---|---|
+| [[der Tisch]] | [[auf dem Tisch]] | [[auf den Tisch]] |
+| [[die Wand]] | [[an der Wand]] | [[an die Wand]] |
+| [[das Regal]] | [[im Regal]] ([[in dem]]) | [[ins Regal]] ([[in das]]) |
+| [[die Bücher]] (جمع) | [[auf den Büchern]] | [[auf die Bücher]] |
+
+- **المؤنث والمحايد والجمع** في Akkusativ زي ما هما ([[die]]، [[das]]، [[die]])، والمذكر بس بيبقى [[den]]. يعني أغلب الشغل: [[den]] ولا [[dem]]؟ و [[die]] ولا [[der]]؟
+- الاختصارات: [[in dem]] ← [[im]]، و [[an dem]] ← [[am]] (Dativ)، و [[in das]] ← [[ins]]، و [[an das]] ← [[ans]] (Akkusativ).
+
+## الحروف التسعة
+
+الحروف دي بس هي اللي بتبدّل بين Dativ و Akkusativ:
+
+| الحرف | المعنى | Wohin? | Wo? |
+|---|---|---|---|
+| [[in]] | في / جوّه | [[in den Schrank]] | [[im Schrank]] |
+| [[an]] | على (حيطة، شباك، باب) | [[an die Wand]] | [[an der Wand]] |
+| [[auf]] | على (سطح فوقه) | [[auf den Tisch]] | [[auf dem Tisch]] |
+| [[über]] | فوق (من غير ما يلمس) | [[über das Sofa]] | [[über dem Sofa]] |
+| [[unter]] | تحت | [[unter das Bett]] | [[unter dem Bett]] |
+| [[vor]] | قدام | [[vor die Tür]] | [[vor der Tür]] |
+| [[hinter]] | ورا | [[hinter den Schrank]] | [[hinter dem Schrank]] |
+| [[neben]] | جنب | [[neben das Fenster]] | [[neben dem Fenster]] |
+| [[zwischen]] | بين | [[zwischen die Stühle]] | [[zwischen den Stühlen]] |
+
+**[[an]] ولا [[auf]]؟** [[auf]] لما الحاجة **فوق سطح نايم** (ترابيزة، أرض، سرير). [[an]] لما الحاجة **لازقة في حاجة واقفة** (حيطة، باب، شباك). اللوحة [[an der Wand]]، والكوباية [[auf dem Tisch]].
+
+وفيه حروف تانية **دايمًا Dativ** مهما حصل، زي [[mit]] و [[bei]] و [[zu]] و [[aus]] و [[von]] و [[nach]]: [[Ich gehe zum Arzt]] فيها حركة، وبرضه Dativ.
+
+## الأفعال: تحط ولا هي قاعدة؟
+
+الألماني بيفرّق بين **إنك تحط** الحاجة و **إنها قاعدة**. وكل حاجة على حسب شكلها: واقفة ولا نايمة.
+
+| إنت بتحطها (Wohin? + Akk) | هي موجودة (Wo? + Dat) | الحاجة شكلها |
+|---|---|---|
+| [[stellen]] | [[stehen]] | واقفة: دولاب، كوباية، زجاجة، كنبة |
+| [[legen]] | [[liegen]] | نايمة: كتاب، موبايل، سجادة، إنت على السرير |
+| [[hängen]] | [[hängen]] | متعلّقة: صورة، ساعة، جاكيت |
+| [[setzen]] (نفسك) | [[sitzen]] | قاعد: [[Ich setze mich aufs Sofa]] ← [[Ich sitze auf dem Sofa]] |
+
+~~~de
+Ich stelle die Flasche auf den Tisch. || بحط الإزازة على الترابيزة.
+Die Flasche steht auf dem Tisch. || الإزازة على الترابيزة.
+Ich lege das Handy auf das Bett. || بحط الموبايل على السرير.
+Das Handy liegt auf dem Bett. || الموبايل على السرير.
+Ich hänge die Jacke an die Tür. || بعلّق الجاكيت على الباب.
+Die Jacke hängt an der Tür. || الجاكيت متعلّق على الباب.
+~~~
+
+- [[stellen]] و [[legen]] و [[hängen]] (تحط) أفعال عادية: [[ich stelle]]، [[du stellst]]، [[er stellt]]. وبعدها **مفعول** (الحاجة) و **Akkusativ للمكان**.
+- [[stehen]] و [[liegen]] و [[hängen]] (موجودة): الحاجة هي الفاعل، والمكان **Dativ**.
+- [[hängen]] نفس الكلمة للاتنين: [[Ich hänge das Bild an die Wand]] ← [[Das Bild hängt an der Wand]].
+- وفي الكلام العادي بيقولوا كمان [[Wohin kommt …?]] (يروح فين؟) + Akkusativ: [[Der Tisch kommt in die Küche]].
+
+## الكلمات
+
+~~~words تحط فين؟
+stellen | يحط (واقف) | Ich stelle die Vase auf den Tisch.
+legen | يحط (نايم) | m: Ich lege das Buch ins Regal.
+hängen | يعلّق، متعلّق | Das Bild hängt an der Wand.
+setzen | يقعّد | Ich setze mich auf das Sofa.
+sitzen | قاعد | m: Ich sitze auf dem Stuhl.
+über | فوق | Die Lampe hängt über dem Tisch.
+unter | تحت | m: Die Katze liegt unter dem Bett.
+vor | قدام | Das Auto steht vor dem Haus.
+hinter | ورا | m: Der Garten ist hinter dem Haus.
+der Boden | الأرض (جوّه البيت) | Die Tasche liegt auf dem Boden.
+der Spiegel, die Spiegel | المراية | m: Der Spiegel hängt im Bad.
+der Teppich, die Teppiche | السجادة | Der Teppich liegt vor dem Sofa.
+die Vase, die Vasen | الفازة | m: Die Vase steht auf dem Tisch.
+~~~
+
+## اقرا: رسالة العزال
+
+~~~read رسالة من سارة
+Hallo Yusuf, danke für die Hilfe am Samstag! || أهلًا يوسف، شكرًا على المساعدة يوم السبت!
+Der Schrank steht jetzt im Schlafzimmer, aber der Spiegel liegt noch auf dem Boden. || الدولاب دلوقتي في أوضة النوم، بس المراية لسه على الأرض.
+Kannst du ihn am Sonntag an die Wand hängen? || ممكن تعلّقها على الحيطة يوم الحد؟
+Die Bücher sind noch in den Kisten. Ich stelle sie heute ins Regal. || الكتب لسه في الكراتين. هحطها النهارده في الرف.
+Bis Sonntag! Sara || أشوفك الحد! سارة
+? Der Spiegel hängt schon an der Wand. || المراية متعلّقة خلاص على الحيطة
+- Richtig
+- Falsch *
+? Die Bücher stehen schon im Regal. || الكتب في الرف خلاص
+- Richtig
+- Falsch *
+? Der Schrank ist im Schlafzimmer. || الدولاب في أوضة النوم
+- Richtig *
+- Falsch
+~~~
+
+الفخ في السؤالين الأولانيين: [[an die Wand hängen]] و [[ins Regal stellen]] **حاجة لسه هتحصل** (Akkusativ: حركة). والجملة [[Der Spiegel hängt an der Wand]] (Dativ) معناها إنها متعلّقة خلاص، وده مش اللي في الرسالة. و [[die Kiste, die Kisten]] = الكرتونة.
+
+## قول بصوتك
+
+~~~speak
+Wohin stellen wir das Sofa? || نحط الكنبة فين؟
+Ich stelle die Vase auf den Tisch. || بحط الفازة على الترابيزة.
+Die Vase steht auf dem Tisch. || الفازة على الترابيزة.
+Ich hänge das Bild an die Wand. || بعلّق اللوحة على الحيطة.
+Das Handy liegt unter dem Kissen. || الموبايل تحت المخدة.
+~~~
+
+## سمع: فين ولا لفين؟
+
+~~~hear Frau=f Mann=m
+Mann: Wo ist meine Brille?
+Frau: Sie liegt auf dem Schreibtisch, neben dem Computer.
+? Wo ist die Brille? || النضارة فين؟
+- auf dem Schreibtisch *
+- im Schrank
+- neben dem Bett
+
+Frau: Wohin stellen wir den Fernseher?
+Mann: In die Ecke, zwischen das Regal und das Fenster.
+? Wohin kommt der Fernseher? || التلفزيون هيروح فين؟
+- neben das Sofa
+- zwischen das Regal und das Fenster *
+- an die Wand im Flur
+
+Mann: Ich lege die Schlüssel immer in die Schublade. Heute liegen sie aber auf dem Boden!
+? Wo sind die Schlüssel heute? || المفاتيح فين النهارده؟
+- in der Schublade
+- auf dem Boden *
+- an der Tür
+~~~
+
+## إملا
+
+~~~dictate
+Ich stelle die Vase auf den Tisch.
+f: Das Bild hängt an der Wand.
+Wohin legst du das Buch?
+f: Die Katze liegt unter dem Bett.
+~~~`,
+          deep: {
+            why: R`ده من أكتر الحاجات اللي بتظهر في الكلام اليومي (فين حطيت المفتاح؟ حط ده هناك)، وفي الامتحان في الكتابة والكلام، وفي منهج الاندماج (العزال، والسكن، وقواعد العمارة). وقايمة Goethe A1 فيها [[an]] و [[in]] بالـ Dativ والـ Akkusativ بالاسم. ولو اتلخبطت فيها، كلامك هيتفهم بس هيبان غلط على طول.`,
+            how: R`اسأل: الحاجة بتتحرك ولا ثابتة؟ بتتحرك (لفين؟) ← Akkusativ: [[den]]/[[die]]/[[das]]/[[die]]، و [[ins]] و [[ans]]. ثابتة (فين؟) ← Dativ: [[dem]]/[[der]]/[[dem]]/[[den …n]]، و [[im]] و [[am]]. والفعل بيقولك: [[stellen]]/[[legen]]/[[hängen]] (تحط) مع Akkusativ، و [[stehen]]/[[liegen]]/[[hängen]] (موجودة) مع Dativ.`,
+            when: R`في الحروف التسعة بس: [[in]]، [[an]]، [[auf]]، [[über]]، [[unter]]، [[vor]]، [[hinter]]، [[neben]]، [[zwischen]]. الحروف التانية ثابتة: [[mit]]/[[bei]]/[[zu]]/[[aus]]/[[von]]/[[nach]] دايمًا Dativ، و [[für]]/[[ohne]] دايمًا Akkusativ.`,
+            mistakes: R`- [[Ich stelle die Vase auf dem Tisch]]: فيه حركة ← [[auf den Tisch]].
+- [[Das Bild hängt an die Wand]]: ثابتة ← [[an der Wand]].
+- [[Ich stehe das Glas auf den Tisch]]: تحط ← [[stelle]]. و [[stehen]] للحاجة اللي واقفة لوحدها.
+- [[Das Handy steht auf dem Bett]]: الموبايل نايم ← [[liegt]].
+- [[Ich gehe zu der Arzt]]: [[zu]] دايمًا Dativ ← [[zum Arzt]]، حتى مع الحركة.
+- تنسى [[ins]] و [[im]]: [[in das Regal]] صح، بس الألمان بيقولوا [[ins Regal]].`
+          },
+          try: R`لف في أوضتك وقول ٥ جمل عن مكان الحاجات ([[Das Buch liegt auf dem Tisch]])، وبعدين حرّك ٣ حاجات وقول وإنت بتحركهم ([[Ich lege das Buch ins Regal]]). قول الاتنين بصوت عالي: الثابت بـ Dativ، والحركة بـ Akkusativ.`,
+          practice: [
+            { lvl: 'سريع', t: R`**Dativ ولا Akkusativ؟** كمّل بالأداة: (١) Ich stelle den Stuhl an ___ Tisch. (٢) Der Stuhl steht an ___ Tisch. (٣) Ich lege das Buch auf ___ Bett (das). (٤) Das Buch liegt auf ___ Bett. (٥) Ich hänge die Lampe über ___ Tisch. (٦) Die Katze schläft unter ___ Sofa.`,
+              done: R`الستة صح: Akkusativ في ١ و ٣ و ٥ (فيهم حركة)، و Dativ في ٢ و ٤ و ٦`,
+              sol: R`~~~de
+Ich stelle den Stuhl an den Tisch.
+Der Stuhl steht an dem Tisch.
+Ich lege das Buch auf das Bett.
+Das Buch liegt auf dem Bett.
+Ich hänge die Lampe über den Tisch.
+Die Katze schläft unter dem Sofa.
+~~~
+
+**ليه:** في ١ و ٣ و ٥ الفعل «تحط» ([[stellen]]، [[legen]]، [[hängen]])، يعني حركة ← Akkusativ: [[den Tisch]]، [[das Bett]] (المحايد مبيتغيّرش). وفي ٢ و ٤ و ٦ الحاجة ثابتة ← Dativ: [[dem Tisch]]، [[dem Bett]]، [[dem Sofa]]. و [[an dem]] في الكلام بتبقى [[am]]: [[Der Stuhl steht am Tisch]]. وفي (٦) [[schlafen]] مفيهوش حركة، فـ Dativ.` },
+            { lvl: 'سريع', t: R`**stellen ولا stehen؟ legen ولا liegen؟** اختار: (١) Ich ___ die Tasse auf den Tisch. (٢) Der Teppich ___ vor dem Sofa. (٣) Wohin ___ du den Laptop? (نايم) (٤) Die Flaschen ___ im Kühlschrank. (٥) Wir ___ das Bild an die Wand.`,
+              done: R`الخمسة صح، وكل واحد بتصريفه مع الفاعل`,
+              sol: R`~~~de
+Ich stelle die Tasse auf den Tisch.
+Der Teppich liegt vor dem Sofa.
+Wohin legst du den Laptop?
+Die Flaschen stehen im Kühlschrank.
+Wir hängen das Bild an die Wand.
+~~~
+
+**ليه:** (١) بتحط كوباية واقفة ← [[stellen]]، و [[auf den Tisch]] Akkusativ. (٢) السجادة نايمة وثابتة ← [[liegt]] + [[vor dem Sofa]]. (٣) [[Wohin]] = حركة، واللابتوب نايم ← [[legst]]. (٤) الإزايز واقفة وثابتة ← [[stehen]] (جمع). (٥) اللوحة ← [[hängen]]. **الغلطة الشائعة:** [[Ich stehe die Tasse]]: [[stehen]] مبياخدش مفعول.` },
+            { lvl: 'تطبيق', t: R`**ارسم أوضتك بالكلام:** اكتب ٦ جمل عن أوضتك (فين كل حاجة)، تستخدم فيهم ٥ حروف مختلفة على الأقل من التسعة، و [[stehen]] و [[liegen]] و [[hängen]].`,
+              done: R`٦ جمل، ٥ حروف مختلفة، والتلات أفعال، وكل الأدوات Dativ`,
+              sol: R`**نسخة نموذجية:**
+
+~~~de
+Das Bett steht neben dem Fenster.
+Über dem Bett hängt ein Bild.
+Vor dem Bett liegt ein Teppich.
+Der Schreibtisch steht zwischen dem Schrank und der Tür.
+Mein Laptop liegt auf dem Schreibtisch.
+Hinter der Tür hängt meine Jacke.
+~~~
+
+**ليه:** كله وصف لحاجات ثابتة ← Dativ: [[dem Fenster]] (das)، و [[dem Bett]]، و [[dem Schrank]] (der)، و [[der Tür]] (die). وفي الجملة التانية والتالتة والأخيرة المكان في أول الجملة ([[Über dem Bett hängt …]])، فالفعل بييجي تاني والفاعل بعده. و [[zwischen]] بياخد حاجتين: [[zwischen dem Schrank und der Tür]].` },
+            { lvl: 'تطبيق', t: R`**صلّح الغلطات:** (١) Ich lege den Teller in dem Schrank. (٢) Die Uhr hängt an die Wand. (٣) Wir stellen das Sofa ins Wohnzimmer. (٤) Mein Handy steht auf dem Tisch. (٥) Ich gehe zu die Bank. (٦) Die Kinder sitzen auf das Sofa.`,
+              done: R`الغلطات الخمسة اتصلحت، وعرفت إن (٣) صح أصلًا`,
+              sol: R`~~~de
+Ich lege den Teller in den Schrank.
+Die Uhr hängt an der Wand.
+Wir stellen das Sofa ins Wohnzimmer.
+Mein Handy liegt auf dem Tisch.
+Ich gehe zur Bank.
+Die Kinder sitzen auf dem Sofa.
+~~~
+
+**ليه:** (١) [[legen]] = حركة ← [[in den Schrank]]. (٢) الساعة ثابتة ← [[an der Wand]]. (٣) **صح**: حركة و [[ins]] = [[in das]]. (٤) الموبايل نايم ← [[liegt]]. (٥) [[zu]] دايمًا Dativ: [[zu der]] ← [[zur]]. (٦) [[sitzen]] ثابت ← [[auf dem Sofa]].` },
+            { lvl: 'تحدي', t: R`**رسالة لصاحبك:** إنت مسافر، وصاحبك هيسقي النباتات ويطعم القطة. اكتب رسالة ٥–٦ جمل: فين الحاجات (المفتاح، أكل القطة، الإزازة)، وفين يحط حاجات (الجرايد، الزبالة). استخدم Dativ و Akkusativ.`,
+              done: R`٥–٦ جمل، فيهم ٣ على الأقل «فين» (Dativ) و ٢ على الأقل «لفين» (Akkusativ)، وتحية وسلام`,
+              sol: R`**نسخة نموذجية:**
+
+~~~de
+Hallo Omar,
+danke für deine Hilfe! Der Schlüssel liegt unter der Matte vor der Tür.
+Das Katzenfutter steht im Schrank in der Küche.
+Die Gießkanne steht auf dem Balkon.
+Bitte leg die Zeitungen auf den Tisch im Flur.
+Und stell den Müll am Montag vor das Haus.
+Viele Grüße
+Lea
+~~~
+
+**ليه:** المفتاح والأكل والإبريق **موجودين** ← [[liegt]]/[[steht]] + Dativ ([[unter der Matte]]، [[im Schrank]]، [[auf dem Balkon]]). والجرايد والزبالة **هيتحطوا** ← [[leg]]/[[stell]] (أمر لـ [[du]]، من وحدة الشغل) + Akkusativ ([[auf den Tisch]]، [[vor das Haus]]). و [[die Matte]] = الدواسة، و [[die Gießkanne]] = إبريق السقي، و [[der Müll]] = الزبالة.` },
+          ],
+          ref: [
+            { t: "Goethe-Zertifikat A1: Wortliste، Präpositionen an/in + Dativ/Akkusativ (ص ١٠٠)", url: "https://goethe.de/pro/relaunch/prf/et/Pruefungsziele_Testbeschreibung_A1_SD1.pdf" },
+            { t: "DWDS: stellen", url: "https://www.dwds.de/wb/stellen" },
+            { t: "DWDS: legen", url: "https://www.dwds.de/wb/legen" },
+            { t: "DWDS: hängen", url: "https://www.dwds.de/wb/h%C3%A4ngen" },
           ],
         },
         {

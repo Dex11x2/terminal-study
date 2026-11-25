@@ -223,6 +223,14 @@
   "take": 0,
   "ok": true
  },
+ "035234e3.mp3": {
+  "text": "Ihr Zimmer hat die Nummer dreihundertfünfundvierzig.",
+  "voice": "m",
+  "heard": "Ihr Zimmer hat die Nummer 345.",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
  "035842e5.mp3": {
   "text": "Nehmen wir ein Taxi?",
   "voice": "f",
@@ -387,6 +395,14 @@
   "take": 1,
   "ok": true
  },
+ "04c69aa2.mp3": {
+  "text": "Die Vase steht auf dem Tisch.",
+  "voice": "m",
+  "heard": "Die Vase steht auf dem Tisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "04c6b8d1.mp3": {
   "text": "Kennst du einen guten Zahnarzt?",
   "voice": "m",
@@ -495,10 +511,26 @@
   "take": 0,
   "ok": true
  },
+ "0583e36c.mp3": {
+  "text": "Der Zug ist billiger als das Auto.",
+  "voice": "m",
+  "heard": "Der Zug ist billiger als das Auto.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "05845fe8.mp3": {
   "text": "Am Dienstag habe ich leider keine Zeit. Geht es am Mittwoch?",
   "voice": "m",
   "heard": "Am Dienstag habe ich leider keine Zeit. Geht es am Mittwoch.",
+  "ok": true
+ },
+ "059cc9cd.mp3": {
+  "text": "bequem",
+  "voice": "m",
+  "heard": "Bequem.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "05aaf01a.mp3": {
@@ -795,6 +827,22 @@
   "take": 0,
   "ok": true
  },
+ "08a203c4.mp3": {
+  "text": "danke für deine Hilfe! Der Schlüssel liegt unter der Matte vor der Tür.",
+  "voice": "m",
+  "heard": "Danke für deine Hilfe. Der Schlüssel liegt unter der Mathe vor der Tür.",
+  "score": 0.92,
+  "take": 0,
+  "ok": false
+ },
+ "08b39e42.mp3": {
+  "text": "Das Flugzeug ist am schnellsten, aber auch am teuersten.",
+  "voice": "m",
+  "heard": "Das Flugzeug ist am schnellsten, aber auch am teuersten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "08cd971a.mp3": {
   "text": "Hallo Sara! Ich habe heute Geburtstag! Am Freitag mache ich eine Party. Kommst du?",
   "voice": "m",
@@ -981,6 +1029,14 @@
   "text": "Möchten Sie noch ein Stück Kuchen?",
   "voice": "f",
   "heard": "möchten Sie noch ein Stück Kuchen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "0abfcbc0.mp3": {
+  "text": "Der Zug ist sehr schnell.",
+  "voice": "m",
+  "heard": "Der Zug ist sehr schnell.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -1351,6 +1407,14 @@
   "take": 0,
   "ok": true
  },
+ "0e5bf89c.mp3": {
+  "text": "Das Bett steht neben dem Fenster.",
+  "voice": "m",
+  "heard": "Das Bett steht neben dem Fenster.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "0e7cd2a9.mp3": {
   "text": "Ich bin zweiunddreißig Jahre alt.",
   "voice": "m",
@@ -1377,6 +1441,14 @@
   "text": "Nein, immer nach dem Essen.",
   "voice": "f",
   "heard": "Nein, immer nach dem Essen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "0ed5dab9.mp3": {
+  "text": "Wohin stellen wir den Fernseher?",
+  "voice": "f",
+  "heard": "wohin stellen wir den Fernseher?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2051,6 +2123,14 @@
   "take": 0,
   "ok": true
  },
+ "17004a9b.mp3": {
+  "text": "Hamburg ist größer als Bremen, aber Berlin ist am größten.",
+  "voice": "m",
+  "heard": "Hamburg ist größer als Bremen, aber Berlin ist am größten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "170f0836.mp3": {
   "text": "Wie lange hast du Pause?",
   "voice": "m",
@@ -2254,6 +2334,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "18fd70dc.mp3": {
+  "text": "Die Miete ist siebenhundertfünfzig Euro.",
+  "voice": "f",
+  "heard": "Die Miete ist 750 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
  },
  "18fe934f.mp3": {
   "text": "Familienstand: verheiratet.",
@@ -2492,6 +2580,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "1b5a96f5.mp3": {
+  "text": "Und stell den Müll am Montag vor das Haus.",
+  "voice": "m",
+  "heard": "und stellt den Müll am Montag vor das Haus.",
+  "score": 0.89,
+  "take": 0,
+  "ok": false
  },
  "1b71b81f.mp3": {
   "text": "der Sommer, die Sommer",
@@ -2817,6 +2913,14 @@
   "take": 0,
   "ok": true
  },
+ "1e8147f0.mp3": {
+  "text": "Vor dem Bett liegt ein Teppich.",
+  "voice": "m",
+  "heard": "Vor dem Bett liegt ein Teppich.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "1e837345.mp3": {
   "text": "Vor dem Kurs trinke ich Kaffee.",
   "voice": "m",
@@ -2835,6 +2939,14 @@
   "text": "Doch, ich komme, aber ein bisschen später.",
   "voice": "f",
   "heard": "doch ich komme aber ein bisschen später",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "1ea8347c.mp3": {
+  "text": "Der Zug ist schneller als der Bus.",
+  "voice": "m",
+  "heard": "Der Zug ist schneller als der Bus.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -2961,6 +3073,14 @@
   "text": "Das ist Reis mit Nudeln und Linsen.",
   "voice": "m",
   "heard": "Das ist Reis mit Nudeln und Linsen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "204d6653.mp3": {
+  "text": "Der Garten ist hinter dem Haus.",
+  "voice": "m",
+  "heard": "Der Garten ist hinter dem Haus.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -3731,6 +3851,14 @@
   "text": "Ich fahre mit dem Zug.",
   "voice": "f",
   "heard": "Ich fahre mit dem Zug.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "27e5a1be.mp3": {
+  "text": "Wohin stellen wir das Sofa?",
+  "voice": "m",
+  "heard": "wohin stellen wir das Sofa?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -4915,6 +5043,14 @@
   "take": 0,
   "ok": true
  },
+ "332304c7.mp3": {
+  "text": "Ich stelle die Flasche auf den Tisch.",
+  "voice": "m",
+  "heard": "Ich stelle die Flasche auf den Tisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "333479ad.mp3": {
   "text": "Die Miete ist sechshundertzwanzig Euro.",
   "voice": "m",
@@ -5011,6 +5147,14 @@
   "text": "Das ist meine Frau.",
   "voice": "f",
   "heard": "Das ist meine Frau.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "33b6a4d1.mp3": {
+  "text": "Ich hänge die Jacke an die Tür.",
+  "voice": "m",
+  "heard": "Ich hänge die Jacke an die Tür.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5139,6 +5283,14 @@
   "text": "Um zwölf Uhr mache ich Pause.",
   "voice": "m",
   "heard": "Um 12 Uhr mache ich Pause.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "34c6e98e.mp3": {
+  "text": "Ich setze mich auf das Sofa.",
+  "voice": "f",
+  "heard": "Ich setze mich auf das Sofa.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5333,6 +5485,14 @@
   "text": "Ja, danke, das ist dann alles.",
   "voice": "f",
   "heard": "Ja, danke, das ist dann alles.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "36a8d1e5.mp3": {
+  "text": "sitzen",
+  "voice": "m",
+  "heard": "Sitzen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -5633,6 +5793,14 @@
   "take": 0,
   "ok": true
  },
+ "39193f50.mp3": {
+  "text": "Das Auto steht vor dem Haus.",
+  "voice": "f",
+  "heard": "Das Auto steht vor dem Haus.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "392544b0.mp3": {
   "text": "Sie ist neunzehn. Sie ist sehr nett und lustig.",
   "voice": "f",
@@ -5758,6 +5926,14 @@
   "score": 0.6,
   "take": 0,
   "ok": false
+ },
+ "3ae637ec.mp3": {
+  "text": "Ich trinke am liebsten Tee.",
+  "voice": "f",
+  "heard": "Ich trinke am liebsten Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "3affa19b.mp3": {
   "text": "die Nachricht, die Nachrichten",
@@ -5887,6 +6063,14 @@
   "heard": "Danke. Buchstabieren Sie bitte Ihren Vornamen.",
   "ok": true
  },
+ "3baf44fd.mp3": {
+  "text": "Wie lange fährt der Zug?",
+  "voice": "f",
+  "heard": "Wie lange fährt der Zug?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "3bdb1f9a.mp3": {
   "text": "Ich komme aus Ägypten und wohne in Kairo.",
   "voice": "m",
@@ -5973,6 +6157,14 @@
   "text": "Kein Problem. Kann ich Ihnen helfen?",
   "voice": "f",
   "heard": "Kein Problem. Kann ich Ihnen helfen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "3d6cc256.mp3": {
+  "text": "Hinter der Tür hängt meine Jacke.",
+  "voice": "m",
+  "heard": "Hinter der Tür hängt meine Jacke.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -6419,6 +6611,14 @@
   "heard": "Die Leute hier sind sehr nett.",
   "score": 1,
   "take": 0,
+  "ok": true
+ },
+ "412d44f8.mp3": {
+  "text": "der Teppich, die Teppiche",
+  "voice": "m",
+  "heard": "Der Teppich, die Teppiche.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "413c875a.mp3": {
@@ -6889,6 +7089,14 @@
   "heard": "Hallo, Mia! Wie geht's?",
   "ok": true
  },
+ "461374b8.mp3": {
+  "text": "Der Teppich liegt vor dem Sofa.",
+  "voice": "f",
+  "heard": "Der Teppich liegt vor dem Sofa.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4616b335.mp3": {
   "text": "Habe ich das richtig verstanden?",
   "voice": "m",
@@ -7045,6 +7253,14 @@
   "take": 0,
   "ok": true
  },
+ "46c9b72a.mp3": {
+  "text": "Ich möchte mehr Zeit.",
+  "voice": "f",
+  "heard": "Ich möchte mehr Zeit.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "46cd4315.mp3": {
   "text": "Möchten Sie einen Vertrag oder eine Prepaid-Karte?",
   "voice": "m",
@@ -7187,6 +7403,14 @@
   "heard": "Was kostet das Zimmer pro Nacht?",
   "score": 1,
   "take": 0,
+  "ok": true
+ },
+ "48691cb9.mp3": {
+  "text": "setzen",
+  "voice": "m",
+  "heard": "Setzen.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "4869c0f3.mp3": {
@@ -7437,6 +7661,14 @@
   "take": 0,
   "ok": true
  },
+ "4a916001.mp3": {
+  "text": "über",
+  "voice": "m",
+  "heard": "Uber.",
+  "score": 0,
+  "take": 0,
+  "ok": false
+ },
  "4a9e9a9c.mp3": {
   "text": "Ja, gut. Um elf Uhr.",
   "voice": "f",
@@ -7685,6 +7917,14 @@
   "take": 0,
   "ok": true
  },
+ "4cc76136.mp3": {
+  "text": "Die Züge in Deutschland sind schneller, aber auch teurer.",
+  "voice": "m",
+  "heard": "Die Züge in Deutschland sind schneller, aber auch teurer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4cc7ac8f.mp3": {
   "text": "Mein Familienname: H, A, S, S, A, N. Meine Telefonnummer ist null eins sieben sechs, zwei drei vier, fünf sechs.",
   "voice": "m",
@@ -7769,6 +8009,14 @@
   "heard": "Ich komme aus Ägypten, aus Cairo.",
   "ok": false
  },
+ "4d67a3b6.mp3": {
+  "text": "Dann lieber der Zug. Er ist bequemer als der Bus und nicht so teuer wie das Flugzeug.",
+  "voice": "f",
+  "heard": "Dann lieber der Zug. Er ist bequemer als der Bus und nicht zu teuer wie das Flugzeug.",
+  "score": 0.94,
+  "take": 0,
+  "ok": false
+ },
  "4d68934b.mp3": {
   "text": "Die Küche ist klein, aber hell.",
   "voice": "m",
@@ -7841,6 +8089,14 @@
   "take": 0,
   "ok": true
  },
+ "4e1d437d.mp3": {
+  "text": "Die Jacke kostet sechzig Euro, der Mantel neunzig.",
+  "voice": "f",
+  "heard": "Die Jacke kostet 60 Euro, der Mantel 90.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "4e235a78.mp3": {
   "text": "Kennst du deine Nachbarn? Ja, sie sind sehr nett.",
   "voice": "m",
@@ -7853,6 +8109,14 @@
   "text": "Danke! Ich verstehe die Aufgabe drei nicht. Was bedeutet „ankreuzen“?",
   "voice": "m",
   "heard": "Danke. Ich verstehe die Aufgabe drei nicht. Was bedeutet ankreuzen?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4e3da500.mp3": {
+  "text": "Bitte leg die Zeitungen auf den Tisch im Flur.",
+  "voice": "m",
+  "heard": "Bitte leg die Zeitungen auf den Tisch im Flur.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -7877,6 +8141,14 @@
   "text": "Man muss den Müll trennen.",
   "voice": "m",
   "heard": "Man muss den Müll trennen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "4e749819.mp3": {
+  "text": "Ich stelle die Vase auf den Tisch.",
+  "voice": "f",
+  "heard": "Ich stelle die Vase auf den Tisch.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -8453,6 +8725,14 @@
   "take": 0,
   "ok": true
  },
+ "533f0791.mp3": {
+  "text": "Ich trinke am liebsten Tee.",
+  "voice": "m",
+  "heard": "Ich trinke am liebsten Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "535a0c08.mp3": {
   "text": "Herzlichen Glückwunsch zum Geburtstag!",
   "voice": "m",
@@ -8525,6 +8805,14 @@
   "text": "Danke, mir geht es schon besser. Morgen komme ich wieder zur Arbeit.",
   "voice": "m",
   "heard": "Danke, mir geht es schon besser. Morgen komme ich wieder zur Arbeit.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "54206649.mp3": {
+  "text": "stellen",
+  "voice": "m",
+  "heard": "Stellen.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -8613,6 +8901,14 @@
   "take": 0,
   "ok": true
  },
+ "54a24897.mp3": {
+  "text": "am meisten",
+  "voice": "m",
+  "heard": "am meisten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "54c7b2a9.mp3": {
   "text": "langweilig",
   "voice": "m",
@@ -8665,6 +8961,14 @@
   "text": "Ich habe Angst vor dem Test.",
   "voice": "m",
   "heard": "Ich habe Angst vor dem Test.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "56512d62.mp3": {
+  "text": "Das Katzenfutter steht im Schrank in der Küche.",
+  "voice": "m",
+  "heard": "Das Katzenfutter steht im Schrank in der Küche.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -8790,6 +9094,14 @@
   "score": 1,
   "take": 1,
   "ok": true
+ },
+ "572578d5.mp3": {
+  "text": "Hallo Omar,",
+  "voice": "m",
+  "heard": "Hallo, Uma.",
+  "score": 0.5,
+  "take": 0,
+  "ok": false
  },
  "5731e3e9.mp3": {
   "text": "Die Arbeit ist interessant.",
@@ -8956,6 +9268,14 @@
   "score": 1,
   "take": 1,
   "ok": true
+ },
+ "58bae1cf.mp3": {
+  "text": "An die Wand, neben das Fenster.",
+  "voice": "f",
+  "heard": "An die Wand nehmen das Fenster.",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
  },
  "58ced86e.mp3": {
   "text": "Ich habe keine Kartoffeln mehr.",
@@ -9503,6 +9823,14 @@
   "take": 0,
   "ok": true
  },
+ "5da6d9ec.mp3": {
+  "text": "Das Essen in Ägypten finde ich besser, aber das Brot in Deutschland ist auch sehr gut.",
+  "voice": "m",
+  "heard": "Das Essen in Ägypten finde ich besser, aber das Brot in Deutschland ist auch sehr gut.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "5dada419.mp3": {
   "text": "Der Käse ist gut. Ich nehme den Käse.",
   "voice": "m",
@@ -9747,6 +10075,14 @@
   "take": 0,
   "ok": true
  },
+ "60040126.mp3": {
+  "text": "hinter",
+  "voice": "m",
+  "heard": "Hinter.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "603bf130.mp3": {
   "text": "Meine Tochter ist fünf.",
   "voice": "f",
@@ -9906,6 +10242,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "61751d78.mp3": {
+  "text": "Über dem Bett hängt ein Bild.",
+  "voice": "m",
+  "heard": "Über den Bett hängt ein Bild.",
+  "score": 0.8,
+  "take": 1,
+  "ok": false
  },
  "6176daec.mp3": {
   "text": "Ich bin Verkäufer von Beruf.",
@@ -10135,6 +10479,14 @@
   "heard": "Das Konto, die Konten.",
   "score": 1,
   "take": 2,
+  "ok": true
+ },
+ "63babdf0.mp3": {
+  "text": "Ich hänge das Bild an die Wand.",
+  "voice": "m",
+  "heard": "Ich hänge das Bild an die Wand.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "63befcdd.mp3": {
@@ -10391,6 +10743,14 @@
   "take": 0,
   "ok": true
  },
+ "65e567a7.mp3": {
+  "text": "In Ägypten ist es wärmer als in Deutschland.",
+  "voice": "m",
+  "heard": "In Ägypten ist es wärmer als in Deutschland.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "65f27c68.mp3": {
   "text": "fernsehen",
   "voice": "m",
@@ -10579,6 +10939,14 @@
   "heard": "Ich habe kein Geld mehr.",
   "score": 1,
   "take": 0,
+  "ok": true
+ },
+ "68466c9b.mp3": {
+  "text": "legen",
+  "voice": "m",
+  "heard": "Legen.",
+  "score": 1,
+  "take": 1,
   "ok": true
  },
  "684726cb.mp3": {
@@ -11231,6 +11599,14 @@
   "take": 0,
   "ok": true
  },
+ "6e1589a9.mp3": {
+  "text": "Die Jacke hängt an der Tür.",
+  "voice": "m",
+  "heard": "Die Jacke hängt an der Tür.",
+  "score": 1,
+  "take": 1,
+  "ok": true
+ },
  "6e20e293.mp3": {
   "text": "Ein Liter Milch kostet ein Euro neunzehn.",
   "voice": "m",
@@ -11339,6 +11715,14 @@
   "heard": "Danke. Bitte.",
   "ok": true
  },
+ "6eea276e.mp3": {
+  "text": "Der Bus ist so bequem wie der Zug.",
+  "voice": "m",
+  "heard": "Der Bus ist so bequem wie der Zug.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "6ef52c37.mp3": {
   "text": "Das ist Peters Vater.",
   "voice": "m",
@@ -11394,6 +11778,14 @@
   "score": 0.8,
   "take": 0,
   "ok": false
+ },
+ "6f86df97.mp3": {
+  "text": "Die Katze liegt unter dem Bett.",
+  "voice": "m",
+  "heard": "Die Katze liegt unter dem Bett.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "6fa4876a.mp3": {
   "text": "Das Bad hat eine Dusche.",
@@ -11612,6 +12004,14 @@
   "score": 1,
   "take": 1,
   "ok": true
+ },
+ "7165c936.mp3": {
+  "text": "Fertig! Das Sofa steht an der Wand, und das Bild hängt über dem Sofa.",
+  "voice": "m",
+  "heard": "Fertig! Das Sofa steht an der Wand und das Bild hängt über den Sofa.",
+  "score": 0.93,
+  "take": 0,
+  "ok": false
  },
  "717f20df.mp3": {
   "text": "Übrigens, ich habe morgen frei.",
@@ -11943,6 +12343,14 @@
   "take": 0,
   "ok": false
  },
+ "74c14008.mp3": {
+  "text": "Der Bus ist nicht so schnell wie der Zug.",
+  "voice": "m",
+  "heard": "Der Bus ist nicht so schnell wie der Zug.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "74c6776f.mp3": {
   "text": "Ich nehme die U-Bahn.",
   "voice": "f",
@@ -12095,6 +12503,14 @@
   "take": 0,
   "ok": true
  },
+ "75875dba.mp3": {
+  "text": "Der Fernseher kostet neunhundertneunundneunzig Euro.",
+  "voice": "f",
+  "heard": "Der Fernseher kostet 999 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
+ },
  "7588b765.mp3": {
   "text": "Meine Wohnung hat zwei Zimmer, aber ich möchte drei Zimmer.",
   "voice": "m",
@@ -12208,6 +12624,22 @@
   "score": 0.86,
   "take": 0,
   "ok": false
+ },
+ "7673cf2e.mp3": {
+  "text": "Ich stelle die Vase auf den Tisch.",
+  "voice": "m",
+  "heard": "Ich stelle die Vase auf den Tisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "767f88de.mp3": {
+  "text": "Wie war das Wetter im Urlaub?",
+  "voice": "m",
+  "heard": "Wie war das Wetter im Urlaub?",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "76852a6b.mp3": {
   "text": "wohnen",
@@ -12337,6 +12769,14 @@
   "take": 0,
   "ok": true
  },
+ "77ac7b75.mp3": {
+  "text": "der Boden",
+  "voice": "m",
+  "heard": "Der Boden.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "77b8f7ff.mp3": {
   "text": "Ich habe die E-Mail gelesen, aber ich habe sie nicht verstanden.",
   "voice": "m",
@@ -12422,6 +12862,14 @@
   "score": 0.75,
   "take": 0,
   "ok": false
+ },
+ "787760c3.mp3": {
+  "text": "Im Juli ist es wärmer als im April.",
+  "voice": "m",
+  "heard": "Im Juli ist es wärmer als im April.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "78801fa0.mp3": {
   "text": "Entschuldigung, wen soll ich anrufen?",
@@ -12995,6 +13443,14 @@
   "take": 0,
   "ok": true
  },
+ "7e413552.mp3": {
+  "text": "Das Handy liegt auf dem Bett.",
+  "voice": "m",
+  "heard": "Das Handy liegt auf dem Bett.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "7e417bd3.mp3": {
   "text": "Das Hähnchen und das Wasser: fünfzehn Euro sechzig.",
   "voice": "m",
@@ -13119,6 +13575,14 @@
   "text": "geschlossen",
   "voice": "m",
   "heard": "geschlossen",
+  "ok": true
+ },
+ "7f532ca9.mp3": {
+  "text": "Am Montag war es so warm wie hier, aber am Freitag war es viel heißer.",
+  "voice": "f",
+  "heard": "Am Montag war es so warm wie hier, aber am Freitag war es viel heißer.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "7f5d7d1f.mp3": {
@@ -13481,6 +13945,14 @@
   "take": 0,
   "ok": false
  },
+ "82d21c72.mp3": {
+  "text": "hoch",
+  "voice": "m",
+  "heard": "Hoch!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "82ed7d9d.mp3": {
   "text": "der Tee",
   "voice": "m",
@@ -13509,6 +13981,14 @@
   "text": "Und deine Schwestern?",
   "voice": "m",
   "heard": "und deine Schwestern",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "8385d59c.mp3": {
+  "text": "Er ist so groß wie sein Bruder.",
+  "voice": "m",
+  "heard": "Er ist so groß wie sein Bruder.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -13799,6 +14279,14 @@
   "text": "Ich nehme den Fisch mit Reis.",
   "voice": "m",
   "heard": "Ich nehme den Fisch mit Reis.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "86d5fcfb.mp3": {
+  "text": "Mein Laptop liegt auf dem Schreibtisch.",
+  "voice": "m",
+  "heard": "Mein Laptop liegt auf dem Schreibtisch.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -14145,6 +14633,14 @@
   "take": 0,
   "ok": true
  },
+ "8a7b3380.mp3": {
+  "text": "Der Spiegel hängt im Bad.",
+  "voice": "m",
+  "heard": "Der Spiegel hängt im Bad.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "8a96c944.mp3": {
   "text": "Was willst du werden?",
   "voice": "f",
@@ -14159,6 +14655,14 @@
   "heard": "Der Fisch, die Fische.",
   "score": 1,
   "take": 0,
+  "ok": true
+ },
+ "8ac0bf00.mp3": {
+  "text": "hängen",
+  "voice": "m",
+  "heard": "Hängen.",
+  "score": 1,
+  "take": 2,
   "ok": true
  },
  "8ad7fe9f.mp3": {
@@ -14429,6 +14933,14 @@
   "take": 0,
   "ok": true
  },
+ "8cbdf831.mp3": {
+  "text": "Im Winter ist es in Berlin kälter als in Kairo.",
+  "voice": "m",
+  "heard": "Im Winter ist es in Berlin kälter als in Cairo.",
+  "score": 0.9,
+  "take": 0,
+  "ok": false
+ },
  "8cdc008c.mp3": {
   "text": "Ein Wasser, bitte.",
   "voice": "f",
@@ -14659,6 +15171,22 @@
   "text": "Der Rücken tut mir weh.",
   "voice": "f",
   "heard": "Der Rücken tut mir weh.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "901b0271.mp3": {
+  "text": "Ich sitze auf dem Stuhl.",
+  "voice": "m",
+  "heard": "Ich sitze auf dem Stuhl.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "901d18ae.mp3": {
+  "text": "Mein Bruder ist älter als ich.",
+  "voice": "m",
+  "heard": "Mein Bruder ist älter als ich.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -14965,6 +15493,14 @@
   "take": 0,
   "ok": true
  },
+ "93888487.mp3": {
+  "text": "schnell",
+  "voice": "m",
+  "heard": "Schnell.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "938a8235.mp3": {
   "text": "Ich wohne im fünften Stock, und es gibt keinen Aufzug.",
   "voice": "m",
@@ -15037,6 +15573,14 @@
   "text": "Ich trinke keinen Kaffee. Ich trinke nur Tee.",
   "voice": "f",
   "heard": "Ich trinke keinen Kaffee. Ich trinke nur Tee.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "942694eb.mp3": {
+  "text": "Zwei Stunden. Der Bus braucht vier Stunden.",
+  "voice": "m",
+  "heard": "2 Stunden. Der Bus braucht 4 Stunden.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -15303,6 +15847,14 @@
   "take": 0,
   "ok": true
  },
+ "977de9b8.mp3": {
+  "text": "Das Handy liegt unter dem Kissen.",
+  "voice": "m",
+  "heard": "Das Handy liegt unter dem Kissen.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "97af66b4.mp3": {
   "text": "Ich bringe einen Kuchen mit.",
   "voice": "m",
@@ -15437,6 +15989,14 @@
   "take": 0,
   "ok": true
  },
+ "98d91908.mp3": {
+  "text": "Er arbeitet am meisten.",
+  "voice": "m",
+  "heard": "Er arbeitet am meisten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "98f7d71a.mp3": {
   "text": "schön",
   "voice": "m",
@@ -15457,6 +16017,14 @@
   "text": "Der Schlüssel liegt im Schrank.",
   "voice": "m",
   "heard": "Der Schlüssel liegt im Schrank.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "99443a55.mp3": {
+  "text": "Die Flasche steht auf dem Tisch.",
+  "voice": "m",
+  "heard": "Die Flasche steht auf dem Tisch.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -15522,6 +16090,14 @@
   "voice": "m",
   "heard": "Komm'n!",
   "ok": false
+ },
+ "9a5981ec.mp3": {
+  "text": "Die Tasche liegt auf dem Boden.",
+  "voice": "f",
+  "heard": "Die Tasche liegt auf dem Boden.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "9a699e07.mp3": {
   "text": "Ich habe ein Paket für Sie.",
@@ -15723,6 +16299,14 @@
   "text": "Die Pflanze ist leider tot.",
   "voice": "f",
   "heard": "Die Pflanze ist leider tot.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "9bf9c1cf.mp3": {
+  "text": "Über das Sofa, bitte.",
+  "voice": "f",
+  "heard": "Über das Sofa bitte.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -15939,6 +16523,14 @@
   "take": 0,
   "ok": false
  },
+ "9d92b1d2.mp3": {
+  "text": "Die Menschen in Kairo sind so freundlich wie in Hamburg.",
+  "voice": "m",
+  "heard": "Die Menschen in Cairo sind so freundlich wie in Hamburg.",
+  "score": 0.9,
+  "take": 0,
+  "ok": false
+ },
  "9d93f473.mp3": {
   "text": "Ach so! Und was nehmen wir mit?",
   "voice": "m",
@@ -16079,6 +16671,14 @@
   "take": 0,
   "ok": true
  },
+ "9f43ec7e.mp3": {
+  "text": "Die Katze liegt unter dem Bett.",
+  "voice": "f",
+  "heard": "Die Katze liegt unter dem Bett.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "9f8737da.mp3": {
   "text": "siebzehn, achtzehn, neunzehn",
   "voice": "m",
@@ -16172,6 +16772,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "a0110f75.mp3": {
+  "text": "Das kostet hundertzwanzig Euro.",
+  "voice": "m",
+  "heard": "Das kostet 120 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": false
  },
  "a021f03a.mp3": {
   "text": "Sind das deine Eltern?",
@@ -16285,6 +16893,14 @@
   "take": 0,
   "ok": true
  },
+ "a1351ca2.mp3": {
+  "text": "Das Auto ist am schnellsten, aber auch am teuersten.",
+  "voice": "m",
+  "heard": "Das Auto ist am schnellsten, aber auch am teuersten.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a144199d.mp3": {
   "text": "Vielen Dank! Ich danke Ihnen sehr.",
   "voice": "m",
@@ -16329,6 +16945,14 @@
   "text": "Ich arbeite von acht bis siebzehn Uhr.",
   "voice": "m",
   "heard": "Ich arbeite von 8 bis 17 Uhr.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "a1ab0768.mp3": {
+  "text": "Und das Flugzeug?",
+  "voice": "f",
+  "heard": "und das Flugzeug.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -16605,6 +17229,14 @@
   "take": 0,
   "ok": true
  },
+ "a3e52f39.mp3": {
+  "text": "Mein Bruder ist älter als ich.",
+  "voice": "f",
+  "heard": "Mein Bruder ist älter als ich.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a3e61735.mp3": {
   "text": "wissen",
   "voice": "m",
@@ -16636,6 +17268,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "a40ec9c9.mp3": {
+  "text": "Der Schreibtisch steht zwischen dem Schrank und der Tür.",
+  "voice": "m",
+  "heard": "Geschreibt dich, steht zwischen dem Schrank und der Tür.",
+  "score": 0.89,
+  "take": 0,
+  "ok": false
  },
  "a41a7c76.mp3": {
   "text": "Nehmen Sie Medikamente?",
@@ -16799,6 +17439,14 @@
   "take": 0,
   "ok": true
  },
+ "a5b5269f.mp3": {
+  "text": "Der Zug ist schneller als der Bus.",
+  "voice": "f",
+  "heard": "Der Zug ist schneller als der Bus.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a5b5a8d6.mp3": {
   "text": "Bin ich hier richtig?",
   "voice": "m",
@@ -16935,6 +17583,14 @@
   "take": 0,
   "ok": true
  },
+ "a6dd6b38.mp3": {
+  "text": "Am liebsten esse ich Koshari mit meiner Familie.",
+  "voice": "m",
+  "heard": "Am liebsten esse ich Koshari mit meiner Familie.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "a6f11c4e.mp3": {
   "text": "Ich finde die Jacke schön.",
   "voice": "m",
@@ -17051,6 +17707,14 @@
   "heard": "32",
   "ok": true
  },
+ "a7db8556.mp3": {
+  "text": "als",
+  "voice": "m",
+  "heard": "als",
+  "score": 1,
+  "take": 2,
+  "ok": true
+ },
  "a7e77598.mp3": {
   "text": "drucken",
   "voice": "m",
@@ -17164,6 +17828,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "a8d91661.mp3": {
+  "text": "Im Winter ist es in Berlin viel kälter als in Kairo.",
+  "voice": "m",
+  "heard": "Im Winter ist es in Berlin viel kälter als in Cairo.",
+  "score": 0.91,
+  "take": 0,
+  "ok": false
  },
  "a8dbb217.mp3": {
   "text": "Vorsicht!",
@@ -17347,6 +18019,14 @@
   "take": 0,
   "ok": true
  },
+ "aac977ac.mp3": {
+  "text": "Und wohin hängen wir das Bild?",
+  "voice": "m",
+  "heard": "Und wohin hängen wir das Bild?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "aad13d05.mp3": {
   "text": "Hin und zurück, bitte. Was kostet das?",
   "voice": "m",
@@ -17417,6 +18097,14 @@
   "text": "Wie alt ist dein Sohn?",
   "voice": "f",
   "heard": "Wie alt ist dein Sohn?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ab6839e7.mp3": {
+  "text": "Ist deine Schwester jünger als du?",
+  "voice": "m",
+  "heard": "Ist deine Schwester jünger als du?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -17527,6 +18215,14 @@
   "text": "die Vorwahl",
   "voice": "m",
   "heard": "Die Vorwahl.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ac852ea5.mp3": {
+  "text": "Der Tisch kommt in die Küche.",
+  "voice": "f",
+  "heard": "Der Tisch kommt in die Küche.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -17750,6 +18446,14 @@
   "voice": "m",
   "heard": "Am Sonntag fahre ich mit dem Zug nach Bonn.",
   "score": 0.89,
+  "take": 0,
+  "ok": false
+ },
+ "ae8d93ba.mp3": {
+  "text": "Lea",
+  "voice": "m",
+  "heard": "Leah.",
+  "score": 0,
   "take": 0,
   "ok": false
  },
@@ -18665,6 +19369,14 @@
   "take": 0,
   "ok": true
  },
+ "b7e2e12e.mp3": {
+  "text": "Ich lege das Handy auf das Bett.",
+  "voice": "m",
+  "heard": "Ich lege das Handy auf das Bett.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "b7f8e90e.mp3": {
   "text": "Gehört der Schlüssel dir?",
   "voice": "m",
@@ -18911,6 +19623,14 @@
   "text": "der Schlüssel, die Schlüssel",
   "voice": "m",
   "heard": "Der Schlüssel, die Schlüssel.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "ba473f81.mp3": {
+  "text": "der Spiegel, die Spiegel",
+  "voice": "m",
+  "heard": "Der Spiegel, die Spiegel.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -19285,6 +20005,14 @@
   "heard": "Fußball interessiert mich nicht.",
   "score": 1,
   "take": 0,
+  "ok": true
+ },
+ "bde343c7.mp3": {
+  "text": "wie",
+  "voice": "m",
+  "heard": "Wie?",
+  "score": 1,
+  "take": 2,
   "ok": true
  },
  "be036f2d.mp3": {
@@ -19767,6 +20495,14 @@
   "take": 0,
   "ok": true
  },
+ "c277c83e.mp3": {
+  "text": "Dann nehme ich die Jacke. Sie ist billiger und auch wärmer.",
+  "voice": "m",
+  "heard": "Dann nehme ich die Jacke. Sie ist billiger und auch wärmer.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c278a668.mp3": {
   "text": "Vielen Dank, das ist lieb von dir!",
   "voice": "m",
@@ -20019,6 +20755,14 @@
   "text": "Kommen Sie am Mittwoch oder am Donnerstag?",
   "voice": "f",
   "heard": "Kommen Sie am Mittwoch oder am Donnerstag.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "c496c34c.mp3": {
+  "text": "Gut. Und der Tisch?",
+  "voice": "m",
+  "heard": "Gut, und der Tisch?",
   "score": 1,
   "take": 0,
   "ok": true
@@ -20285,6 +21029,14 @@
   "take": 2,
   "ok": false
  },
+ "c787dbbd.mp3": {
+  "text": "Im Sommer ist es wärmer als im Winter.",
+  "voice": "m",
+  "heard": "Im Sommer ist es wärmer als im Winter.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "c78d91c0.mp3": {
   "text": "abgeben",
   "voice": "m",
@@ -20292,6 +21044,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "c7ac2de9.mp3": {
+  "text": "Das Flugzeug ist am schnellsten.",
+  "voice": "f",
+  "heard": "Das Flugtorch ist am schnellsten.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
  },
  "c81b1828.mp3": {
   "text": "Der Zug fährt um neun Uhr zehn ab und kommt um neun Uhr dreißig an.",
@@ -20687,6 +21447,14 @@
   "take": 0,
   "ok": true
  },
+ "cb3ba50c.mp3": {
+  "text": "Die Gießkanne steht auf dem Balkon.",
+  "voice": "m",
+  "heard": "Die Dieskanne steht auf dem Balkon.",
+  "score": 0.83,
+  "take": 0,
+  "ok": false
+ },
  "cb51852b.mp3": {
   "text": "Meine Nase ist zu.",
   "voice": "f",
@@ -21079,6 +21847,14 @@
   "heard": "Der saft die Säfte.",
   "score": 1,
   "take": 2,
+  "ok": true
+ },
+ "ceb65c2e.mp3": {
+  "text": "Wohin legst du das Buch?",
+  "voice": "m",
+  "heard": "wohin legst du das Buch?",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "ceb74ce1.mp3": {
@@ -21553,6 +22329,14 @@
   "take": 0,
   "ok": false
  },
+ "d3c74cad.mp3": {
+  "text": "Die Lampe hängt über dem Tisch.",
+  "voice": "f",
+  "heard": "Die Lampe hängt über dem Tisch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d3dd8783.mp3": {
   "text": "Achtung, Stufe!",
   "voice": "f",
@@ -21661,6 +22445,14 @@
   "text": "Hier wohnen Menschen aus vielen Ländern.",
   "voice": "f",
   "heard": "Hier wohnen Menschen aus vielen Ländern.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "d48cb161.mp3": {
+  "text": "Sie liegt auf dem Schreibtisch, neben dem Computer.",
+  "voice": "f",
+  "heard": "Sie liegt auf dem Schreibtisch neben dem Computer.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -21907,6 +22699,14 @@
   "take": 0,
   "ok": true
  },
+ "d6aa0915.mp3": {
+  "text": "Fahren wir mit dem Bus oder mit dem Zug nach Hamburg?",
+  "voice": "m",
+  "heard": "fahren wir mit dem Bus oder mit dem Zug nach Hamburg.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d6b7be8c.mp3": {
   "text": "der Doktor, die Doktoren",
   "voice": "m",
@@ -21964,6 +22764,14 @@
   "voice": "m",
   "heard": "Er liest die Zeitung.",
   "ok": true
+ },
+ "d73193c1.mp3": {
+  "text": "Das Sofa ist bequem.",
+  "voice": "f",
+  "heard": "Der Sofa ist bequem.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
  },
  "d754e116.mp3": {
   "text": "Das Zimmer kostet achtzig Euro pro Nacht. Das Frühstück kostet zehn Euro extra.",
@@ -22097,6 +22905,14 @@
   "heard": "Guten Abend. Ich bin der neue Nachbar.",
   "ok": true
  },
+ "d890a83b.mp3": {
+  "text": "Ich lege die Schlüssel immer in die Schublade. Heute liegen sie aber auf dem Boden!",
+  "voice": "m",
+  "heard": "Ich lege die Schlüssel immer in die Schubblade. Heute liegen sie aber auf dem Boden.",
+  "score": 0.93,
+  "take": 0,
+  "ok": false
+ },
  "d8c123b4.mp3": {
   "text": "nach Hause",
   "voice": "m",
@@ -22169,6 +22985,14 @@
   "take": 0,
   "ok": true
  },
+ "d924c3b4.mp3": {
+  "text": "Das Hotel ist nicht so teuer wie das Apartment.",
+  "voice": "m",
+  "heard": "Das Hotel ist nicht so teuer wie das Apartment.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "d93ad58a.mp3": {
   "text": "Na ja, ich weiß nicht.",
   "voice": "m",
@@ -22200,6 +23024,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "da0ac620.mp3": {
+  "text": "Der Bus ist am billigsten.",
+  "voice": "m",
+  "heard": "Der Bus ist am belegsten.",
+  "score": 0.8,
+  "take": 0,
+  "ok": false
  },
  "da75ccf7.mp3": {
   "text": "Guten Tag, hier ist die Praxis Doktor Yilmaz. Ihr Termin am Dienstag ist leider nicht möglich. Bitte rufen Sie uns an.",
@@ -22671,6 +23503,14 @@
   "take": 0,
   "ok": true
  },
+ "debe2a51.mp3": {
+  "text": "Wo ist meine Brille?",
+  "voice": "m",
+  "heard": "Wo ist meine Brille?",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "dec35d0a.mp3": {
   "text": "die Tasche, die Taschen",
   "voice": "m",
@@ -22731,6 +23571,14 @@
   "text": "Ja, natürlich.",
   "voice": "m",
   "heard": "Ja, natürlich.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
+ "df609f6f.mp3": {
+  "text": "Ja, aber der Zug ist viel schneller als der Bus.",
+  "voice": "m",
+  "heard": "Ja, aber der Zug ist viel schneller als der Bus.",
   "score": 1,
   "take": 0,
   "ok": true
@@ -23101,6 +23949,14 @@
   "take": 0,
   "ok": true
  },
+ "e49b276f.mp3": {
+  "text": "In die Ecke, zwischen das Regal und das Fenster.",
+  "voice": "m",
+  "heard": "in die Ecke zwischen das Regal und das Fenster.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "e4b8542d.mp3": {
   "text": "Ich rauche nie.",
   "voice": "f",
@@ -23362,6 +24218,14 @@
   "score": 0.75,
   "take": 2,
   "ok": false
+ },
+ "e7107fee.mp3": {
+  "text": "Ich lege das Buch ins Regal.",
+  "voice": "m",
+  "heard": "Ich lege das Buch ins Regal.",
+  "score": 1,
+  "take": 0,
+  "ok": true
  },
  "e729fa8a.mp3": {
   "text": "die Briefmarke, die Briefmarken",
@@ -24555,6 +25419,14 @@
   "take": 0,
   "ok": true
  },
+ "f1dc1fdf.mp3": {
+  "text": "Der Berg ist sehr hoch.",
+  "voice": "m",
+  "heard": "Der Berg ist sehr hoch.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f1f5540d.mp3": {
   "text": "Ich komme nicht, denn ich bin krank.",
   "voice": "f",
@@ -24757,6 +25629,14 @@
   "heard": "99",
   "ok": true
  },
+ "f466cc88.mp3": {
+  "text": "Super, danke!",
+  "voice": "f",
+  "heard": "Super, danke!",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "f4915d83.mp3": {
   "text": "der Anschluss, die Anschlüsse",
   "voice": "m",
@@ -24780,6 +25660,14 @@
   "score": 1,
   "take": 0,
   "ok": true
+ },
+ "f4a904d2.mp3": {
+  "text": "die Vase, die Vasen",
+  "voice": "m",
+  "heard": "Die Vase, die Vase.",
+  "score": 0.75,
+  "take": 0,
+  "ok": false
  },
  "f4bd7773.mp3": {
   "text": "Genau!",
@@ -25037,6 +25925,14 @@
   "heard": "Danke, das ist nett.",
   "score": 1,
   "take": 2,
+  "ok": true
+ },
+ "f6ad074e.mp3": {
+  "text": "Nein, sie ist zwei Jahre älter. Mein Bruder ist am jüngsten.",
+  "voice": "f",
+  "heard": "Nein, sie ist zwei Jahre älter. Mein Bruder ist am jüngsten.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "f6bd3e82.mp3": {
@@ -25757,6 +26653,14 @@
   "take": 0,
   "ok": true
  },
+ "fcb4ba7b.mp3": {
+  "text": "Der Bus ist billiger. Er kostet nur zwanzig Euro.",
+  "voice": "f",
+  "heard": "Der Bus ist billiger. Er kostet nur 20 Euro.",
+  "score": 1,
+  "take": 0,
+  "ok": true
+ },
  "fcb905d4.mp3": {
   "text": "Am Abend sehe ich fern.",
   "voice": "m",
@@ -25883,6 +26787,14 @@
   "text": "Der Kurs dauert zwei Stunden.",
   "voice": "m",
   "heard": "Der Kurs dauert zwei Stunden.",
+  "ok": true
+ },
+ "fe1628b2.mp3": {
+  "text": "Das Flugzeug ist am schnellsten.",
+  "voice": "m",
+  "heard": "Das Flugzeug ist am schnellsten.",
+  "score": 1,
+  "take": 0,
   "ok": true
  },
  "fe37fd7d.mp3": {

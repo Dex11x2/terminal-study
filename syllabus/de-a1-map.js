@@ -8,10 +8,10 @@ const units = [
   ['Wie spät ist es?', 'Am Montag um acht', 'Im Januar, im Sommer', 'Ich stehe um sieben Uhr auf', 'Hast du am Samstag Zeit?', 'Prüfung: Hören Teil 3, Schreiben Teil 2'],
   ['Ich esse gern Fisch', 'Ich möchte einen Kaffee', 'Wo finde ich Reis?', 'Was kostet das?', 'Die Rechnung, bitte!', 'Prüfung: Sprechen Teil 2 und 3, Hören Teil 2'],
   ['Das ist meine Mutter', 'Hast du Geschwister?', 'Sein Bruder, ihre Schwester', 'Wie sieht sie aus?', 'Herzlichen Glückwunsch!', 'Das gefällt mir!', 'Ach so! Stimmt genau.', 'Prüfung: Lesen Teil 1, Hören Teil 1'],
-  ['Meine Wohnung hat drei Zimmer', 'Das Sofa steht im Wohnzimmer', 'Ist die Wohnung noch frei?', 'Können Sie mir helfen?', 'Hier darf man nicht rauchen', 'Prüfung: Lesen Teil 2 und 3'],
+  ['Meine Wohnung hat drei Zimmer', 'Das Sofa steht im Wohnzimmer', 'Ist die Wohnung noch frei?', 'Können Sie mir helfen?', 'Wohin stellen wir das Sofa?', 'Hier darf man nicht rauchen', 'Prüfung: Lesen Teil 2 und 3'],
   ['Was sind Sie von Beruf?', 'Ich arbeite von acht bis fünf', 'Rufen Sie bitte an!', 'Ich will Ärztin werden', 'Was hast du gestern gemacht?', 'Prüfung: Schreiben Teil 2, Hören Teil 3, Sprechen Teil 2'],
   ['Mir geht es nicht gut', 'Ich brauche einen Termin', 'Seit wann haben Sie das?', 'Dreimal am Tag nach dem Essen', 'Ruf schnell einen Krankenwagen!', 'Prüfung: Hören Teil 1, Lesen Teil 3, Sprechen Teil 3'],
-  ['Wie komme ich zum Bahnhof?', 'Ich fahre mit dem Bus', 'Eine Fahrkarte nach Hamburg, bitte', 'Wohin gehst du? Ins Kino', 'Wie ist das Wetter?', 'Prüfung: Hören Teil 2, Lesen Teil 2, Schreiben Teil 1'],
+  ['Wie komme ich zum Bahnhof?', 'Ich fahre mit dem Bus', 'Eine Fahrkarte nach Hamburg, bitte', 'Wohin gehst du? Ins Kino', 'Wie ist das Wetter?', 'Der Zug ist schneller als der Bus', 'Prüfung: Hören Teil 2, Lesen Teil 2, Schreiben Teil 1'],
   ['Ich möchte mich anmelden', 'Ich würde gern ein Konto eröffnen', 'Dieses Paket geht nach Ägypten', 'Gehört das Ihnen?', 'Wie sagt man das auf Deutsch?', 'Prüfung: formeller Brief, Hören Teil 3, Sprechen Teil 2'],
   ['Modelltest 1', 'Modelltest 2', 'Modelltest 3', 'Modelltest 4: ÖSD', 'Modelltest 5: telc'],
 ];
@@ -20,12 +20,12 @@ units.forEach((u, i) => { alias['u' + (i + 1)] = 'unit:' + (i + 1); u.forEach((c
 const lines = String.raw`
 # ── exam parts ──
 exam:hoeren-1 | 7.6 | Hören Teil 1
-exam:hoeren-2 | 8.6 | Hören Teil 2
+exam:hoeren-2 | 8.7 | Hören Teil 2
 exam:hoeren-3 | 2.6 | Hören Teil 3
 exam:lesen-1 | 4.8 | Lesen Teil 1
-exam:lesen-2 | 5.6 | Teil 2
-exam:lesen-3 | 5.6 | Teil 3
-exam:schreiben-1 | 8.6 | Schreiben Teil 1
+exam:lesen-2 | 5.7 | Teil 2
+exam:lesen-3 | 5.7 | Teil 3
+exam:schreiben-1 | 8.7 | Schreiben Teil 1
 exam:schreiben-2 | 2.6 | Schreiben Teil 2
 exam:sprechen-1 | 1.6 | Sprechen Teil 1
 exam:sprechen-2 | 3.6 | Teil 2
@@ -82,7 +82,7 @@ grammar:artikelworter-unbestimmter-artikel-ein-eine-ein | 3.2 | einen
 grammar:artikelworter-nullartikel-ich-esse-gern-fleisch | 3.1 | Nullartikel
 grammar:artikelworter-possessivartikel-mein-dein-sein-ihr-ihr-unser-euer | 4.3 | unser
 grammar:artikelworter-negativartikel-kein | 3.3 | kein
-grammar:pronomen-indefinitpronomen-man-etwas-nichts-mehr-alles-welch | 5.5 | \bman\b
+grammar:pronomen-indefinitpronomen-man-etwas-nichts-mehr-alles-welch | 5.6 | \bman\b
 grammar:pronomen-personalpronomen-im-nominativ | 1.2 | \bich\b
 grammar:pronomen-personalpronomen-im-akkusativ-mich-dich-ihn-sie-es | 5.4 | \bihn\b
 grammar:pronomen-personalpronomen-im-dativ-bei-danken-gehoren-helfen-es-geht-mir-dir-euch-ihnen | 9.4 | gehört
@@ -101,11 +101,11 @@ grammar:praposition-temporal-uber-uber-20-minuten | gap | «über» للوقت (
 grammar:praposition-temporal-um-um-halb-sieben | 2.1 | um halb
 grammar:praposition-temporal-von-bis | 6.2 | von .{1,20} bis
 grammar:praposition-temporal-vor-dativ-vor-dem-konzert | 7.4 | vor dem
-grammar:praposition-lokal-an-dativ-akkusativ | 5.2 | \ban\b
+grammar:praposition-lokal-an-dativ-akkusativ | 5.5 | an die Wand
 grammar:praposition-lokal-auf-dativ | 5.2 | auf dem
 grammar:praposition-lokal-aus-dativ-aus-italien | 1.4 | aus
 grammar:praposition-lokal-bei-dativ-bei-familie-muller | 6.1 | \bbei\b
-grammar:praposition-lokal-in-dativ-akkusativ-im-park-in-die-stadt | 8.4 | in die
+grammar:praposition-lokal-in-dativ-akkusativ-im-park-in-die-stadt | 5.5 | in die Küche
 grammar:praposition-lokal-nach-landernamen-nach-paris | 8.3 | nach Hamburg
 grammar:praposition-lokal-von-nach | 8.4 | von .{1,25} nach
 grammar:praposition-lokal-unter-dativ-unter-der-nummer | gap | «unter der Nummer» مش موجودة
@@ -234,7 +234,7 @@ act:handlungsregulierung-bestatigung | 4.7 | Stimmt
 act:handlungsregulierung-hilfe-anbieten-annehmen-und-ablehnen | 5.4 | helfen
 act:handlungsregulierung-bestellung-wunsch | 3.2 | hätte gern|nehme
 act:handlungsregulierung-rat-empfehlung-warnung | 7.3 | sollen
-act:handlungsregulierung-erlaubnis-genehmigung | 5.5 | darf
+act:handlungsregulierung-erlaubnis-genehmigung | 5.6 | darf
 act:handlungsregulierung-vorschlag | 2.5 | Gehen wir|Wollen wir|Sollen wir
 act:handlungsregulierung-versprechung | 4.6 | Versprochen
 act:handlungsregulierung-einladung | 4.5 | einladen|Einladung
@@ -253,7 +253,7 @@ act:soziale-konventionen-verabschiedung | 1.1 | Tschüss
 # ── strategies ──
 strategy:redeorganisation-eine-ausserung-einleiten | 4.7 | Also, 
 strategy:redeorganisation-eine-ausserung-abschliessen | 4.7 | muss jetzt los
-strategy:redeorganisation-um-das-wort-bitten | 5.5 | Darf ich
+strategy:redeorganisation-um-das-wort-bitten | 5.6 | Darf ich
 strategy:redeorganisation-zuhoren-signalisieren | 4.7 | Ach so
 strategy:redeorganisation-zum-sprechen-auffordern | 1.2 | Und Sie\?|Und du\?
 strategy:redeorganisation-gemeinsames-wissen-andeuten | gap | «Weißt du …» مش موجودة
@@ -274,7 +274,7 @@ notion:existenz-besitz-zugehorigkeit-nicht-verfugbar-sein | 5.3 | noch frei
 notion:existenz-besitz-zugehorigkeit-nicht-vorkommen | 3.3 | Es gibt|gibt es
 notion:existenz-besitz-zugehorigkeit-inklusion-exklusion | gap | mit / ohne / inklusive للتضمين مش مشروحة
 notion:existenz-besitz-zugehorigkeit-besitz-zugehorigkeit-ausdrucken | 9.4 | gehört
-notion:raum-ort | 5.2 | im Wohnzimmer
+notion:raum-ort | 5.5 | Wo\? \(Dativ\)|steht an der Wand
 notion:raum-herkunft | 1.4 | Ich komme aus
 notion:raum-richtung | 8.1 | links|rechts
 notion:raum-distanz | 8.1 | weit|nah
@@ -288,12 +288,12 @@ notion:quantitat-grad | 1.4 | ein bisschen|sehr
 notion:quantitat-dimension-massangabe | gap | groß/klein/lang/breit مع المقاسات مش مشروحة
 notion:art-und-weise-physisch | 4.4 | groß|klein
 notion:art-und-weise-wertung | 4.6 | Ich finde
-notion:art-und-weise-vergleich | 3.1 | lieber
+notion:art-und-weise-vergleich | 8.6 | schneller als
 notion:logische-verknupfung-grund | 9.5 | \bdenn\b
 notion:logische-verknupfung-bedingung | gap | «wenn» للشرط مش مشروحة
 notion:logische-verknupfung-aufzahlung-alternative | 3.2 | \boder\b
 notion:modales-fahigkeit | 5.4 | können|kann
-notion:modales-moglichkeit | 5.6 | kann man
+notion:modales-moglichkeit | 5.7 | kann man
 notion:modales-notwendigkeit-verpflichtung | 7.2 | muss
 
 # ── integration curriculum situations (Rahmencurriculum) ──
@@ -362,7 +362,7 @@ rc:e-2-2-3 | gap | التوقع قبل السمع مش مشروح
 rc:e-2-3-1 | gap | الترجمة اللي على الشاشة مش مشروحة
 rc:e-2-3-2 | gap | الصورة في التلفزيون مش مشروحة
 rc:e-2-3-3 | gap | الفكرة العامة من الفيديو مش مشروحة
-rc:e-2-4-1 | 5.6 | Anzeige
+rc:e-2-4-1 | 5.7 | Anzeige
 rc:e-2-4-2 | gap | تخمين المعنى من الكلمات الدولية وتكوين الكلمة مش مشروح
 rc:e-2-4-3 | gap | استخدام شكل النص للفهم مش مشروح
 rc:e-2-4-4 | gap | كلمات الربط (er، dort، dann) كطريقة قراية مش مشروحة
@@ -444,7 +444,7 @@ rc:8-3-1-2 | 7.1 | geht
 rc:9-1-1-1 | gap | جدول برامج التلفزيون مش موجود
 rc:9-1-1-2 | gap | السؤال عن مكان المعلومات مش موجود
 rc:9-1-1-3 | 8.4 | Kino
-rc:9-2-1-1 | 5.6 | Anzeige
+rc:9-2-1-1 | 5.7 | Anzeige
 rc:9-3-1-1 | gap | البحث على النت مش متعلّم
 rc:9-3-1-2 | gap | تعليمات المواقع مش موجودة
 rc:9-3-1-3 | gap | قوايم الموبايل مش موجودة
@@ -473,14 +473,14 @@ rc:11-3-1-2 | 1.6 | Prüfer
 rc:11-3-1-3 | 3.6 | noch einmal
 rc:12-1-1-1 | 5.3 | Wohnung
 rc:12-1-1-2 | gap | السكن الرخيص ومساعدة الإيجار مش موجودين
-rc:12-3-1-1 | 5.5 | Hausverwaltung|Vermieter|Hausmeister
+rc:12-3-1-1 | 5.6 | Hausverwaltung|Vermieter|Hausmeister
 rc:12-3-1-2 | 5.3 | Nebenkosten
-rc:12-3-2-1 | 5.5 | Hausordnung
-rc:12-3-2-2 | 5.5 | verboten|nicht
-rc:12-3-2-3 | 5.5 | Treppe|putzen
+rc:12-3-2-1 | 5.6 | Hausordnung
+rc:12-3-2-2 | 5.6 | verboten|nicht
+rc:12-3-2-3 | 5.6 | Treppe|putzen
 rc:12-3-3-1 | 9.1 | Formular
 rc:12-4-1-1 | 5.4 | Nachbar
-rc:12-4-2-1 | 5.5 | Nachbar
+rc:12-4-2-1 | 5.6 | Nachbar
 rc:12-4-3-1 | 5.4 | helfen
 
 # ── CEFR descriptors ──
@@ -491,16 +491,16 @@ cefr:30 | 3.6 | Hören Teil 2
 cefr:49 | gap | فهم شرح في جولة مش متمرّن عليه
 cefr:64 | 6.3 | Imperativ
 cefr:65 | 5.2 | neben|im Wohnzimmer
-cefr:66 | 8.6 | Hören Teil 2
+cefr:66 | 8.7 | Hören Teil 2
 cefr:80 | 2.6 | Hören Teil 3
 cefr:95 | gap | إعلانات وأخبار التلفزيون مش موجودة
 cefr:105 | 4.8 | Lesen Teil 1
 cefr:121 | gap | الكارت بوستال مش موجود
 cefr:122 | 4.8 | E-Mail
-cefr:141 | 5.6 | Teil 3
+cefr:141 | 5.7 | Teil 3
 cefr:142 | 9.1 | Stock
 cefr:143 | 8.5 | Frühstück
-cefr:144 | 5.6 | Anzeige
+cefr:144 | 5.7 | Anzeige
 cefr:170 | gap | نص معلومات بسيط بصور مش موجود
 cefr:171 | gap | نصوص قصيرة عن الرياضة والمزيكا والسفر مش موجودة
 cefr:186 | 8.1 | geradeaus
@@ -516,7 +516,7 @@ cefr:314 | gap | كلمة قصيرة متحضّرة (تقديم أو نخب) م�
 cefr:322 | 6.6 | Schreiben
 cefr:323 | 2.6 | Schreiben
 cefr:346 | 4.3 | Sein Bruder
-cefr:347 | 5.2 | Wohnzimmer
+cefr:347 | 5.5 | Das Bett steht neben dem Fenster
 cefr:348 | 5.1 | groß|klein
 cefr:389 | 8.1 | إشارة|شاور
 cefr:411 | 3.6 | Sprechen Teil 3|Teil 3
@@ -541,11 +541,11 @@ cefr:577 | 3.4 | kostet
 cefr:578 | 3.4 | Farbe
 cefr:599 | 9.1 | Wie ist Ihr
 cefr:600 | 7.1 | tut .{0,12}weh
-cefr:621 | 8.6 | Schreiben Teil 1
+cefr:621 | 8.7 | Schreiben Teil 1
 cefr:647 | gap | البوستات والرسايل عن الهوايات مش موجودة
 cefr:648 | gap | الكارت بوستال مش موجود
 cefr:649 | 2.6 | Schreiben Teil 2
-cefr:661 | 8.6 | Schreiben Teil 1
+cefr:661 | 8.7 | Schreiben Teil 1
 cefr:662 | gap | «Bin im Supermarkt, zurück um 5» (رسالة فين وراجع إمتى) مش موجودة
 cefr:684 | gap | البوستات أونلاين مش موجودة
 cefr:685 | gap | الرد على البوستات مش موجود
