@@ -1261,6 +1261,7 @@ def serve():
 threading.Thread(target=serve, daemon=True).start()
 for i in range(100):
     s = socket.create_connection(('127.0.0.1', 38414)); s.sendall(b'GET'); s.recv(10); s.close()
+import time; time.sleep(0.5)  # the last connections finish closing before counting
 count = lambda f: len(subprocess.run(['ss', '-tan', 'state', 'time-wait', f], capture_output=True, text=True).stdout.strip().splitlines()) - 1
 client, server = count('( dport = :38414 )'), count('( sport = :38414 )')
 print('client holds TIME_WAIT:', client >= 100 and server == 0)`, expect: [R`client holds TIME_WAIT: True`] },

@@ -6105,9 +6105,9 @@
   "on": "headless Chrome 156 via CDP, nginx/postgres containers, pgbench, ss; cloud timeouts and SRE practice from docs"
  },
  "diag|slow query و TIME_WAIT": {
-  "hash": "91dacd3974ea",
-  "date": "2026-11-03",
-  "on": "headless Chrome 156 via CDP, nginx/postgres containers, pgbench, ss; cloud timeouts and SRE practice from docs"
+  "hash": "6e4c67edbeb8",
+  "date": "2026-11-25",
+  "on": "ubuntu (python:3.12-slim + iproute2 في Docker): فحص TIME_WAIT اتشغّل ٢٠ مرة بعد انتظار نص ثانية قبل العد، والـ ٢٠ طلعوا True"
  },
  "diag|smoke test": {
   "hash": "17f8b219a8ab",
