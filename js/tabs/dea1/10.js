@@ -3,9 +3,9 @@ MORE("dea1", [
       t: "الامتحانات التجريبية (Modelltests)",
       l: 3,
       pre: ["dea1/Prüfung: formeller Brief, Hören Teil 3, Sprechen Teil 2", "dea1/Wie sagt man das auf Deutsch?"],
-      n: R`٣ امتحانات كاملة بنفس شكل Goethe-Zertifikat A1 (Start Deutsch 1): **Hören** (١٥ سؤال، حوالي ٢٠ دقيقة)، و **Lesen** (١٥ سؤال، حوالي ٢٥ دقيقة)، و **Schreiben** (جزئين، حوالي ٢٠ دقيقة)، و **Sprechen** (٣ أجزاء، حوالي ١٥ دقيقة). المواضيع من الوحدات التسعة كلها، والأسامي والأماكن متخيّلة. حل كل امتحان مرة واحدة بالوقت ومن غير ما تبص على النص، وبعدين احسب درجتك بالجدول اللي في آخره، وارجع للدروس اللي غلطت فيها. والامتحان التالت فيه كمان الأجزاء اللي بتختلف في ÖSD و telc.`,
-      goal: [R`تحل امتحان A1 كامل بالوقت، من غير قاموس، وبنفس شكل الامتحان الرسمي`, R`تحسب درجتك بنفس حساب Goethe (٧٥ للمكتوب و ٢٥ للكلام، والنجاح ٦٠)`, R`تعرف إنت ضعيف في أنهي جزء وترجع للدرس بتاعه`, R`تعرف الفرق بين Goethe و ÖSD و telc وتختار الامتحان اللي يناسبك`],
-      time: "حوالي ٦ ساعات: ساعتين لكل امتحان مع التصحيح",
+      n: R`٥ امتحانات كاملة: ٣ بنفس شكل Goethe-Zertifikat A1 (Start Deutsch 1): **Hören** (١٥ سؤال، حوالي ٢٠ دقيقة)، و **Lesen** (١٥ سؤال، حوالي ٢٥ دقيقة)، و **Schreiben** (جزئين، حوالي ٢٠ دقيقة)، و **Sprechen** (٣ أجزاء، حوالي ١٥ دقيقة). المواضيع من الوحدات التسعة كلها، والأسامي والأماكن متخيّلة. حل كل امتحان مرة واحدة بالوقت ومن غير ما تبص على النص، وبعدين احسب درجتك بالجدول اللي في آخره، وارجع للدروس اللي غلطت فيها. والامتحان التالت فيه كمان الأجزاء اللي بتختلف في ÖSD و telc. وبعدهم امتحانين كاملين بشكل **ÖSD Zertifikat A1** (بقواعد نجاحه: حد أدنى لكل جزء) و **telc Deutsch A1 für Zuwanderer** (Sprachbausteine و «اسمع ورد»، والنجاح ٦٠ من ١٠٠).`,
+      goal: [R`تحل امتحان A1 كامل بالوقت، من غير قاموس، وبنفس شكل الامتحان الرسمي`, R`تحسب درجتك بنفس حساب Goethe (٧٥ للمكتوب و ٢٥ للكلام، والنجاح ٦٠)`, R`تعرف إنت ضعيف في أنهي جزء وترجع للدرس بتاعه`, R`تعرف الفرق بين Goethe و ÖSD و telc وتختار الامتحان اللي يناسبك`, R`تحل ÖSD كامل وتحسب درجتك بشروطه التلاتة (٣٨ من ٧٥، و ٦ قراية و ٦ سمع، و ٤ في الإيميل)`, R`تحل telc كامل وتحسب كل جزء بوزنه (١٠٠، والنجاح ٦٠)`],
+      time: "حوالي ١٠ ساعات: ساعتين لكل امتحان مع التصحيح",
       projects: [
         { lvl: 'صغير', t: R`جدول درجاتك`, what: R`بعد كل امتحان تجريبي، اكتب درجتك في جدول: كل جزء لوحده، والمجموع، وأكتر نوع فخ وقعت فيه. وبعد التلات امتحانات، قارن.`,
           done: R`جدول فيه التلات امتحانات، وكل جزء بدرجته، والمجموع بحساب Goethe، وسطر لكل امتحان بأكتر غلطة`,
@@ -1114,6 +1114,889 @@ Kann ich bitte kurz dein Handy haben? Ja, natürlich.
             { t: "Goethe-Zertifikat A1: Start Deutsch 1، وصف الامتحان كله والتقييم (ص ٢٧–٥٢)", url: "https://goethe.de/pro/relaunch/prf/et/Pruefungsziele_Testbeschreibung_A1_SD1.pdf" },
             { t: "ÖSD Zertifikat A1: Modellsatz (الأجزاء والوقت والدرجات)", url: "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf" },
             { t: "telc Deutsch A1 für Zuwanderer: Übungstest (Sprachbausteine و Hören und antworten)", url: "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf" },
+          ],
+        },
+        {
+          cmd: "Modelltest 4: ÖSD",
+          title: "الامتحان التجريبي الرابع: ÖSD Zertifikat A1 كامل",
+          pre: ["dea1/Modelltest 3"],
+          desc: R`امتحان كامل بنفس شكل **ÖSD Zertifikat A1** (الامتحان النمساوي، وبيتعمل في ألمانيا ومصر كمان): ٣ مهام قراية، و ٣ مهام سمع، ومهمتين كتابة، و ٣ مهام كلام.
+
+**الشروط:** القراية ٢٥ دقيقة، والسمع حوالي ١٠ دقايق (المهمة ١ و ٣ **مرة واحدة**، والمهمة ٢ مرتين)، والكتابة ٢٠ دقيقة، والكلام: ١٠ دقايق تحضير وبعدها حوالي ١٠ دقايق. من غير قاموس. وفي الآخر احسب درجتك بقواعد ÖSD، وهي مختلفة عن Goethe: فيه **حد أدنى لكل جزء**.`,
+          teach: R`## ÖSD مختلف عن Goethe في إيه؟
+
+| | Goethe A1 | ÖSD A1 |
+|---|---|---|
+| القراية | ٣ أجزاء، صح ولا غلط وأنهي إعلان | ٣ مهام: توصّل مواقف بإعلانات، و Ja/Nein، وتوصّل نصوص بصور |
+| السمع | ٣ أجزاء، اختيار وصح ولا غلط | ٣ مهام: توصّل حوارات بصور، و **تكتب** معلومات من رسالة، ومقابلات |
+| الكتابة | استمارة ٥ خانات، ورسالة | استمارة **١٠ خانات**، ورد على إيميل فيه ٣ أسئلة |
+| الكلام | مجموعة، من غير تحضير | لوحدك مع الممتحن، و **١٠ دقايق تحضير** |
+| النجاح | ٦٠ من ١٠٠ | المكتوب ٣٨ من ٧٥ **وبحد أدنى في كل جزء**، والكلام ١٢ من ٢٥ |
+
+وفيه حاجة تانية: نصوص ÖSD وأصواته من **النمسا وألمانيا وسويسرا**. فممكن تشوف [[Jänner]] (يناير في النمسا)، و [[Gasse]] (شارع صغير)، و [[Grüß Gott]] (أهلًا)، و [[Erdäpfel]] (بطاطس)، و [[Paradeiser]] (طماطم)، وفي سويسرا [[Grüezi]] و [[Velo]] (عجلة). الامتحان بيشرح الكلمات اللي محتاجها للإجابة، بس لو عرفتها مش هتتلخبط.
+
+## Lesen (٢٥ دقيقة، ٣٠ نقطة)
+
+### Aufgabe 1: أنهي إعلان؟ (٥ مواقف و ٦ إعلانات، واحد زيادة)
+
+~~~text Anzeigen
+1  Nachhilfe Mathematik für Schüler, Tel. 0664 22 81 450
+2  Deutschkurs für Erwachsene, abends 18–20 Uhr, Volkshochschule Linz
+3  Fahrrad zu verkaufen, fast neu, 90 Euro
+4  Babysitterin sucht Arbeit, nachmittags und am Wochenende
+5  Pizzeria Roma: Wir liefern auch nach Hause! Täglich 11–23 Uhr
+6  Zimmer frei: 15 m², 320 Euro im Monat, nur für Studenten
+~~~
+
+~~~read ÖSD Lesen Aufgabe 1
+Situationen
+? A: Sie arbeiten am Vormittag und möchten Deutsch lernen. || بتشتغل الصبح وعايز تتعلم ألماني
+- 1
+- 2 *
+- 3
+- 4
+- 5
+- 6
+? B: Sie haben kein Auto und möchten billig zur Arbeit fahren. || معاكش عربية وعايز تروح الشغل برخص
+- 1
+- 2
+- 3 *
+- 4
+- 5
+- 6
+? C: Sie haben heute keine Zeit zum Kochen. || معندكش وقت تطبخ النهارده
+- 1
+- 2
+- 3
+- 4
+- 5 *
+- 6
+? D: Sie gehen am Samstag ins Kino. Ihre Kinder sind klein. || هتروح السينما يوم السبت، وولادك صغيرين
+- 1
+- 2
+- 3
+- 4 *
+- 5
+- 6
+? E: Ihr Sohn hat Probleme in der Schule. || ابنك عنده مشاكل في المدرسة
+- 1 *
+- 2
+- 3
+- 4
+- 5
+- 6
+~~~
+
+الإعلان [[6]] (أوضة للطلبة) مالوش موقف، وده الإعلان الزيادة. وفي (E) مفيش كلمة «Mathematik» في الموقف: لازم تفهم إن [[Nachhilfe]] (درس خصوصي) [[für Schüler]] هي الحل لمشاكل المدرسة.
+
+### Aufgabe 2: Ja ولا Nein؟ (٣ نصوص، وعلى كل واحد سؤالين)
+
+~~~read ÖSD Lesen Aufgabe 2
+Stadtbad Graz || حمام سباحة المدينة في جراتس
+Montag bis Freitag 6:30–21:00 Uhr, Samstag und Sonntag 9:00–18:00 Uhr. || الاتنين للجمعة من ٦:٣٠ لـ ٩ بالليل، والسبت والحد من ٩ لـ ٦
+Kinder unter 6 Jahren: Eintritt frei. || العيال أقل من ٦ سنين: الدخول ببلاش
+? Kann man am Sonntag um 19 Uhr schwimmen? || ينفع تعوم يوم الحد الساعة ٧ بالليل؟
+- Ja
+- Nein *
+? Muss ein Kind mit 4 Jahren bezahlen? || عيل عنده ٤ سنين لازم يدفع؟
+- Ja
+- Nein *
+Flohmarkt im Park || سوق المستعمل في الجنينة
+Jeden ersten Samstag im Monat, 8–14 Uhr. Sie möchten etwas verkaufen? Ein Tisch kostet 10 Euro. Bitte melden Sie sich per E-Mail an: flohmarkt@stadtpark.at || أول سبت في كل شهر من ٨ لـ ٢. عايز تبيع حاجة؟ الترابيزة بـ ١٠ يورو. سجّل بالإيميل.
+? Kann man nur am ersten Samstag im Monat kommen? || ينفع تيجي بس أول سبت في الشهر؟
+- Ja *
+- Nein
+? Kann man sich telefonisch anmelden? || ينفع تسجّل بالتليفون؟
+- Ja
+- Nein *
+Wohnung in Zürich || شقة في زيورخ
+2 Zimmer, Küche, Bad, Balkon, 55 m². Miete: CHF 1500 inklusive Nebenkosten. Haustiere sind leider nicht erlaubt. Besichtigung: Dienstag, 17 Uhr. || أوضتين ومطبخ وحمام وبلكونة، ٥٥ متر. الإيجار ١٥٠٠ فرنك شامل المصاريف. الحيوانات للأسف ممنوعة. المعاينة الثلاث الساعة ٥.
+? Muss man für die Nebenkosten extra bezahlen? || لازم تدفع المصاريف زيادة؟
+- Ja
+- Nein *
+? Darf man eine Katze mitbringen? || مسموح تجيب قطة؟
+- Ja
+- Nein *
+~~~
+
+الأسئلة كلها [[Kann man …?]] و [[Muss man …?]] و [[Darf man …?]]، زي ما اتعلمت في وحدة السكن. والفخاخ: [[Samstag und Sonntag 9–18]] (يعني ٧ بالليل مقفول)، و [[inklusive]] (شامل)، و [[Haustiere]] (حيوانات البيت: القطة منهم). و [[CHF]] = فرنك سويسري.
+
+### Aufgabe 3: أنهي صورة؟ (٥ نصوص و ٦ صور، واحدة زيادة)
+
+| الصورة | |
+|---|---|
+| 1 | 🚲❌ عجلة عليها علامة ممنوع |
+| 2 | 🍽️ ناس بتاكل في مطعم |
+| 3 | 📵 موبايل عليه علامة ممنوع |
+| 4 | 🐕 كلب مربوط بحبل في جنينة |
+| 5 | 🚌✈️ أتوبيس قدام مطار |
+| 6 | 🛗 أسانسير ويافطة «مكسور» |
+
+~~~read ÖSD Lesen Aufgabe 3
+A: Liebe Patientinnen und Patienten! Bitte telefonieren Sie im Wartezimmer nicht mit dem Handy. || حضرات المرضى! من فضلكم متتكلموش في الموبايل في أوضة الانتظار.
+? Welches Bild passt zu Text A? || أنهي صورة للنص A؟
+- 1
+- 2
+- 3 *
+- 4
+- 5
+- 6
+B: Der Aufzug ist heute leider kaputt. Bitte nehmen Sie die Treppe. || الأسانسير للأسف عطلان النهارده. من فضلك خد السلم.
+? Welches Bild passt zu Text B? || أنهي صورة للنص B؟
+- 1
+- 2
+- 3
+- 4
+- 5
+- 6 *
+C: Hunde bitte nur an der Leine! Danke, Ihre Parkverwaltung. || الكلاب بالحبل بس! شكرًا، إدارة الجنينة.
+? Welches Bild passt zu Text C? || أنهي صورة للنص C؟
+- 1
+- 2
+- 3
+- 4 *
+- 5
+- 6
+D: Gasthaus Huber: Mittagsmenü mit Suppe und Salat, 9,50 Euro. Montag Ruhetag. || مطعم هوبر: وجبة الغدا بشوربة وسلطة بـ ٩٫٥٠. الاتنين قافل.
+? Welches Bild passt zu Text D? || أنهي صورة للنص D؟
+- 1
+- 2 *
+- 3
+- 4
+- 5
+- 6
+E: Mit dem Bus Nummer 7 sind Sie in 20 Minuten am Flughafen. || بأتوبيس رقم ٧ هتبقى في المطار في ٢٠ دقيقة.
+? Welches Bild passt zu Text E? || أنهي صورة للنص E؟
+- 1
+- 2
+- 3
+- 4
+- 5 *
+- 6
+~~~
+
+الصورة [[1]] (عجلة ممنوعة) هي الزيادة. والكلمات اللي تفتح الحل: [[Handy]]، و [[Aufzug]] و [[Treppe]]، و [[Leine]]، و [[Mittagsmenü]]، و [[Flughafen]]. في المهمة دي مش لازم تفهم كل كلمة: الكلمة الأساسية كفاية.
+
+## Hören (حوالي ١٠ دقايق، ٣٠ نقطة)
+
+### Aufgabe 1: أنهي صورة؟ (اسمع **مرة واحدة**، ٥ حوارات و ٦ صور)
+
+بص على الصور ٣٠ ثانية الأول:
+
+| الصورة | |
+|---|---|
+| A | 🛒 كاشير في سوبرماركت |
+| B | 🏔️ اتنين ماشيين في الجبل |
+| C | 💊 صيدلية |
+| D | 🍳 اتنين بيطبخوا في مطبخ |
+| E | 🚆 رصيف قطر |
+| F | 💻 حد قدام كمبيوتر في مكتب |
+
+~~~hear Frau=f Mann=m ÖSD Hören Aufgabe 1
+Frau: Das macht zwölf Euro dreißig. Haben Sie eine Kundenkarte?
+Mann: Nein, leider nicht. Hier sind fünfzehn Euro.
+? Welches Foto passt? || أنهي صورة؟
+- A *
+- B
+- C
+- D
+- E
+- F
+
+Mann: Ist es noch weit bis zur Hütte?
+Frau: Nein, noch eine halbe Stunde. Schau mal, die Berge sind so schön!
+? Welches Foto passt? || أنهي صورة؟
+- A
+- B *
+- C
+- D
+- E
+- F
+
+Frau: Die Tabletten nehmen Sie bitte zweimal am Tag, nach dem Essen.
+Mann: Gut, danke. Was kostet das?
+? Welches Foto passt? || أنهي صورة؟
+- A
+- B
+- C *
+- D
+- E
+- F
+
+Mann: Die Kartoffeln sind fertig. Kannst du bitte den Tisch decken?
+Frau: Moment, ich mache noch schnell den Salat.
+? Welches Foto passt? || أنهي صورة؟
+- A
+- B
+- C
+- D *
+- E
+- F
+
+Frau: Der Zug nach Salzburg hat zehn Minuten Verspätung.
+Mann: Oh nein, dann kommen wir zu spät!
+? Welches Foto passt? || أنهي صورة؟
+- A
+- B
+- C
+- D
+- E *
+- F
+~~~
+
+الصورة [[F]] (المكتب) هي الزيادة. وفي الحوار الأول مفيش كلمة «سوبرماركت»: [[Kundenkarte]] (كارت عميل) و [[zwölf Euro dreißig]] بيقولوا إنه كاشير. ودي فكرة المهمة: تفهم المكان من الكلام، مش من كلمة واحدة.
+
+### Aufgabe 2: اكتب المعلومات (اسمع **مرتين**)
+
+اقرا الورقة ٣٠ ثانية، وبعدين اسمع الرسالة واكتب الخمس معلومات:
+
+~~~text Notizen
+Was:            Fahrrad ansehen
+Wann:           am (1) ____________ , am Nachmittag,
+                (2) ______ . Juni, um (3) ______ Uhr
+Wo:             in der (4) ____________ gasse 7
+Telefonnummer:  0664 / (5) ____________
+~~~
+
+في الإملا تحت، كل سطر بيشغّل الرسالة كلها، وإنت تكتب **خانة واحدة**: السطر ١ = الخانة (١)، والسطر ٢ = الخانة (٢)، وهكذا. اكتب الأرقام **بالأرقام** ومن غير مسافات، والاسم المتهجّي بحرف كبير في الأول.
+
+~~~dictate ÖSD Hören Aufgabe 2
+f: Guten Tag, hier spricht Sabine Kranz. Sie möchten mein Fahrrad ansehen. Das geht am Donnerstag, am Nachmittag. Das ist der achtzehnte Juni. Kommen Sie bitte um siebzehn Uhr. Ich wohne in der Lindnergasse sieben. Ich buchstabiere: L, I, N, D, N, E, R. Meine Handynummer ist null sechs sechs vier, vier sieben eins, drei null neun zwei. Auf Wiederhören! => Donnerstag
+f: Guten Tag, hier spricht Sabine Kranz. Sie möchten mein Fahrrad ansehen. Das geht am Donnerstag, am Nachmittag. Das ist der achtzehnte Juni. Kommen Sie bitte um siebzehn Uhr. Ich wohne in der Lindnergasse sieben. Ich buchstabiere: L, I, N, D, N, E, R. Meine Handynummer ist null sechs sechs vier, vier sieben eins, drei null neun zwei. Auf Wiederhören! => 18
+f: Guten Tag, hier spricht Sabine Kranz. Sie möchten mein Fahrrad ansehen. Das geht am Donnerstag, am Nachmittag. Das ist der achtzehnte Juni. Kommen Sie bitte um siebzehn Uhr. Ich wohne in der Lindnergasse sieben. Ich buchstabiere: L, I, N, D, N, E, R. Meine Handynummer ist null sechs sechs vier, vier sieben eins, drei null neun zwei. Auf Wiederhören! => 17
+f: Guten Tag, hier spricht Sabine Kranz. Sie möchten mein Fahrrad ansehen. Das geht am Donnerstag, am Nachmittag. Das ist der achtzehnte Juni. Kommen Sie bitte um siebzehn Uhr. Ich wohne in der Lindnergasse sieben. Ich buchstabiere: L, I, N, D, N, E, R. Meine Handynummer ist null sechs sechs vier, vier sieben eins, drei null neun zwei. Auf Wiederhören! => Lindner
+f: Guten Tag, hier spricht Sabine Kranz. Sie möchten mein Fahrrad ansehen. Das geht am Donnerstag, am Nachmittag. Das ist der achtzehnte Juni. Kommen Sie bitte um siebzehn Uhr. Ich wohne in der Lindnergasse sieben. Ich buchstabiere: L, I, N, D, N, E, R. Meine Handynummer ist null sechs sechs vier, vier sieben eins, drei null neun zwei. Auf Wiederhören! => 4713092
+~~~
+
+**التصحيح في ÖSD:** غلطة إملا في كلمة عادية ([[Donerstag]]) مش بتتحسب. لكن **الاسم المتهجّي ورقم التليفون لازم يبقوا صح بالكامل**، وإلا الخانة صفر. عشان كده الحروف المتهجّية والأرقام هي أهم حاجة تكتبها وإنت بتسمع أول مرة، والمرة التانية تتأكد.
+
+### Aufgabe 3: مقابلات (اسمع **مرة واحدة**، ٥ أشخاص، سؤال واحد)
+
+المذيع بيسأل ٥ ناس نفس السؤال: [[Was machen Sie am Wochenende am liebsten?]] (بتحب تعمل إيه في الويك إند أكتر حاجة؟). لكل شخص إجابة واحدة.
+
+~~~hear ÖSD Hören Aufgabe 3
+f: Am Wochenende? Ich lese gern, aber am liebsten treffe ich meine Freundinnen. Wir gehen oft zusammen ins Café.
+? Person 1: Was macht sie am liebsten? || الأولى بتحب تعمل إيه أكتر؟
+- Sport
+- Freunde treffen *
+- Lesen
+- Kochen
+
+m: Ich spiele jeden Samstag Fußball im Verein. Das ist für mich das Beste an der Woche.
+? Person 2: Was macht er am liebsten? || التاني بيحب يعمل إيه أكتر؟
+- Sport *
+- Freunde treffen
+- Lesen
+- Kochen
+
+f: Na ja, Sport mache ich nicht so gern. Am Sonntag koche ich für die ganze Familie. Das macht mir am meisten Spaß.
+? Person 3: Was macht sie am liebsten? || التالتة بتحب تعمل إيه أكتر؟
+- Sport
+- Freunde treffen
+- Lesen
+- Kochen *
+
+m: In der Woche habe ich keine Zeit. Am Wochenende liege ich auf dem Sofa und lese ein gutes Buch. Herrlich!
+? Person 4: Was macht er am liebsten? || الرابع بيحب يعمل إيه أكتر؟
+- Sport
+- Freunde treffen
+- Lesen *
+- Kochen
+
+f: Ich gehe gern ins Kino, aber am liebsten laufe ich im Park. Jeden Samstag zehn Kilometer!
+? Person 5: Was macht sie am liebsten? || الخامسة بتحب تعمل إيه أكتر؟
+- Sport *
+- Freunde treffen
+- Lesen
+- Kochen
+~~~
+
+كل شخص بيقول حاجتين أو تلاتة، والإجابة هي اللي بعد [[am liebsten]] أو [[das Beste]] أو [[am meisten Spaß]]. والحاجات التانية ([[Ich lese gern, aber …]]، [[Sport mache ich nicht so gern]]) فخ.
+
+## Schreiben (٢٠ دقيقة، ١٥ نقطة)
+
+### Aufgabe 1: استمارة (١٠ خانات، ٥ نقط)
+
+> Ihre Freundin Elena Petrova möchte einen Deutschkurs in Wien machen. Sie ist am 3. März 1994 in Sofia geboren und kommt aus Bulgarien. Sie möchte im September beginnen und am Abend lernen. Sie kann schon ein bisschen Deutsch. Sie wohnt bei einer Familie. Sie bezahlt bar. In ihrer Freizeit schwimmt sie gern.
+
+~~~text Anmeldung: Sprachschule Donau
+Nachname:        Petrova
+Vorname:         (1) ____________
+Geburtsdatum:    (2) ____________
+Geburtsort:      (3) ____________
+Land:            (4) ____________
+Kursbeginn:      (5) ____________
+Kurszeit:        ☐ Vormittag   ☐ Abend          (6)
+Deutsch:         ☐ keine Kenntnisse   ☐ wenig   (7)
+Wohnen:          ☐ Hotel   ☐ Familie            (8)
+Bezahlung:       ☐ bar   ☐ Kreditkarte          (9)
+Hobby:           (10) ____________
+~~~
+
+### Aufgabe 2: رد على إيميل (حوالي ٣٠ كلمة، ١٠ نقط)
+
+> Ihr Freund Jonas wohnt in Salzburg und schreibt Ihnen:
+>
+> *Hallo! Toll, du kommst im Mai nach Salzburg! Ich habe ein Gästezimmer für dich. Schreib mir bitte: Wann kommst du an? Wie lange bleibst du? Was möchtest du in Salzburg machen? Liebe Grüße, Jonas*
+>
+> Antworten Sie Jonas. Beantworten Sie alle drei Fragen und schreiben Sie am Ende einen Gruß.
+
+**مهم:** في ÖSD لازم تاخد **٤ نقط على الأقل** في الإيميل ده، وإلا المكتوب كله يسقط حتى لو مجموعك عالي.
+
+## Sprechen (١٠ دقايق تحضير، وبعدها حوالي ١٠ دقايق)
+
+قبل الكلام بتاخد الورق ١٠ دقايق تحضّر. اكتب كلمات بس، مش جمل كاملة: في الامتحان مش هتقرا من الورقة.
+
+**Aufgabe 1 (تعرّف نفسك):** اختار **٤ مواضيع من ٦** واتكلم في كل واحد جملتين أو تلاتة. الممتحن ممكن يسألك سؤال في أي واحد منهم.
+
+[[Familie?]] [[Wohnort?]] [[Sprachen?]] [[Hobbys?]] [[Beruf?]] [[Lieblingsessen?]]
+
+**Aufgabe 2 (اوصف صورة):** اختار صورة من ٣، واتكلم عنها بالأسئلة الأربعة دي: [[Was sehen Sie?]] [[Wie viele Personen sehen Sie?]] [[Wo sind die Personen?]] [[Was machen die Personen?]]
+
+| الصورة | |
+|---|---|
+| 1 | 🎫 راجل بيشتري تذكرة من موظفة في شباك محطة قطر |
+| 2 | 🥖 ست وبنت صغيرة بيشتروا عيش في مخبز |
+| 3 | 🩺 دكتورة بتكشف على راجل في عيادة |
+
+**Aufgabe 3 (رول بلاي):** على **نفس الصورة** اللي اخترتها، إنت والممتحن بتمثلوا الموقف: لو الصورة ١، إنت المسافر وهو الموظف. خلي بالك تقول [[Sie]] للموظف والدكتور، و [[du]] لو الموقف بين صحاب.
+
+## احسب درجتك
+
+| الجزء | الأسئلة | النقط |
+|---|---|---|
+| Lesen 1 | ٥ | كل إجابة صح بـ ٢ = من ١٠ |
+| Lesen 2 | ٦ | من ١٠ |
+| Lesen 3 | ٥ | كل إجابة صح بـ ٢ = من ١٠ |
+| Hören 1 | ٥ | كل إجابة صح بـ ٢ = من ١٠ |
+| Hören 2 | ٥ | كل خانة صح بـ ٢ = من ١٠ |
+| Hören 3 | ٥ | كل إجابة صح بـ ٢ = من ١٠ |
+| Schreiben 1 | ١٠ خانات | من ٥ |
+| Schreiben 2 | إيميل | من ١٠ |
+| **المكتوب** | | **من ٧٥، والنجاح ٣٨** |
+| Sprechen | ٣ مهام | من ٢٥، والنجاح ١٢ |
+
+**والشروط التلاتة اللي لازم كلهم يتحققوا عشان المكتوب ينجح:**
+
+1. المجموع ٣٨ من ٧٥ أو أكتر.
+2. القراية ٦ من ٣٠ على الأقل، والسمع ٦ من ٣٠ على الأقل.
+3. الإيميل (Schreiben 2) ٤ من ١٠ على الأقل.
+
+والكلام امتحان لوحده (Modul): ممكن تنجح فيه وتسقط في المكتوب، وتعيد المكتوب بس. (من وثيقة ÖSD الرسمية، ص ٣٣.)`,
+          deep: {
+            why: R`ÖSD معترف بيه في النمسا وألمانيا وسويسرا، وفيه مراكز في مصر، ومواعيده وأسعاره بتفرق عن Goethe، فناس كتير بتختاره. والشكل مختلف بجد: فيه مهمة **بتكتب** فيها وإنت بتسمع، ومهمة توصيل بصور، وتحضير ١٠ دقايق قبل الكلام، وحد أدنى لكل جزء. لو دخلت الامتحان من غير ما تشوف الشكل ده، هتضيّع وقت في فهم التعليمات بدل الإجابة.`,
+            how: R`حط تايمر وحل بالترتيب: Lesen (٢٥) ← Hören (المهمة ١ و ٣ مرة واحدة، و ٢ مرتين) ← Schreiben (٢٠). وبعدها حضّر الكلام ١٠ دقايق بكلمات بس، وسجّل نفسك. وبعد كده صحّح بالتمارين، واحسب بالجدول، واتأكد من الشروط التلاتة.`,
+            when: R`بعد ما تخلص الامتحانات التلاتة بشكل Goethe. ولو ناوي تدخل ÖSD بجد، حل كمان النموذج الرسمي اللي على موقع ÖSD (ببلاش، ومعاه الصوت والحلول).`,
+            mistakes: R`- تسمع المهمة ١ أو ٣ مرتين: في الامتحان مرة واحدة.
+- تحاول توصّل كل الإعلانات أو الصور: فيه واحد زيادة.
+- في Hören 2 تكتب رقم التليفون أو الاسم المتهجّي بغلطة واحدة: الخانة كلها صفر.
+- تنسى سؤال من التلاتة في الإيميل: ممكن تنزل تحت ٤ نقط والمكتوب يسقط.
+- تكتب جمل كاملة في ورقة التحضير وتقراها: الممتحن عايز كلام، مش قراية.
+- تقول [[du]] للموظف في الرول بلاي: [[Sie]].`
+          },
+          try: R`حل الامتحان كله بالوقت مرة واحدة. وبعدين صحّح الكتابة والكلام بالتمارين تحت، واحسب درجتك، واكتب: الشروط التلاتة اتحققت ولا لأ؟`,
+          practice: [
+            { lvl: 'سريع', t: R`**Schreiben Aufgabe 1:** صحّح الخانات العشرة بتاعتك (كل خانة بنص نقطة).`,
+              done: R`العشر خانات صح، والتاريخ والبلد والشهر بالألماني`,
+              sol: R`~~~text Anmeldung: Sprachschule Donau
+Nachname:        Petrova
+Vorname:         Elena
+Geburtsdatum:    03.03.1994
+Geburtsort:      Sofia
+Land:            Bulgarien
+Kursbeginn:      September
+Kurszeit:        ☒ Abend
+Deutsch:         ☒ wenig
+Wohnen:          ☒ Familie
+Bezahlung:       ☒ bar
+Hobby:           Schwimmen
+~~~
+
+**ليه:** [[Geburtsort]] هي المدينة ([[Sofia]])، و [[Land]] هي الدولة ([[Bulgarien]])، ودي أكتر حاجة بتتلخبط. [[Sie kann schon ein bisschen Deutsch]] = [[wenig]] مش [[keine Kenntnisse]]. والتاريخ بالشكل الألماني: يوم.شهر.سنة. و [[Hobby: Schwimmen]] اسم بحرف كبير (من [[schwimmt gern]]). الإملا في الكلام العادي مش بتتحسب، لكن الأسامي والأرقام لازم تتنقل صح.` },
+            { lvl: 'تطبيق', t: R`**Schreiben Aufgabe 2:** قارن إيميلك بالنموذج. ادّي نفسك درجة: كل سؤال من الأسئلة التلاتة جاوبته صح ومفهوم = ٢٫٥، والتحية والإمضا والشكل = ٢٫٥.`,
+              done: R`الأسئلة التلاتة متجاوبة، وفيه تحية في الأول وسلام في الآخر، وحوالي ٣٠ كلمة، ودرجتك ٤ أو أكتر`,
+              sol: R`**نموذج:**
+
+~~~de
+Lieber Jonas,
+danke für die E-Mail! Ich komme am 12. Mai um 15 Uhr mit dem Zug an. Ich bleibe eine Woche. In Salzburg möchte ich die Altstadt sehen und viel spazieren gehen.
+Liebe Grüße
+Amira
+~~~
+
+**ليه:** (١) [[Wann kommst du an?]] ← اليوم والساعة والمواصلة ([[ankommen]] بيتقسم: [[Ich komme … an]]). (٢) [[Wie lange?]] ← [[eine Woche]]. (٣) [[Was möchtest du machen?]] ← [[möchte … sehen]] والفعل في الآخر. و [[Lieber Jonas]] لأنه راجل، و [[Liebe Grüße]] في سطر لوحده والاسم تحته. حوالي ٣٥ كلمة. **الغلطة الشائعة:** تكتب عن الرحلة كلام كتير وتنسى سؤال من التلاتة.` },
+            { lvl: 'تطبيق', t: R`**Sprechen Aufgabe 1:** اختار ٤ مواضيع من الست واكتب اللي هتقوله (جملتين أو تلاتة لكل موضوع)، وبعدين قوله بصوتك من غير ما تبص.`,
+              done: R`٤ مواضيع، كل واحد ٢–٣ جمل، وجملة واحدة على الأقل فيها سبب أو تفصيلة`,
+              sol: R`**نموذج (Familie، Wohnort، Sprachen، Lieblingsessen):**
+
+~~~de
+Familie: Ich bin verheiratet und habe zwei Kinder. Mein Sohn ist acht und meine Tochter ist fünf.
+Wohnort: Ich wohne in Alexandria. Die Stadt liegt am Meer, das gefällt mir sehr.
+Sprachen: Ich spreche Arabisch und Englisch. Deutsch lerne ich seit einem Jahr.
+Lieblingsessen: Mein Lieblingsessen ist Fisch mit Reis. Ich koche ihn oft am Freitag.
+~~~
+
+**ليه:** اختار المواضيع اللي عندك فيها كلام سهل، وسيب الصعب (لو مش بتشتغل، سيب [[Beruf]]). وكل موضوع جملة أساسية + تفصيلة ([[das gefällt mir sehr]]، [[seit einem Jahr]]): التفصيلة هي اللي بتفرق في الدرجة. والممتحن ممكن يسألك [[Wie alt sind Ihre Kinder?]]، فحضّر الأرقام.` },
+            { lvl: 'تحدي', t: R`**Sprechen Aufgabe 2 و 3:** اختار الصورة ١ (شباك التذاكر). اوصفها بالأسئلة الأربعة، وبعدين اكتب رول بلاي ٦ سطور: إنت المسافر والممتحن الموظف.`,
+              done: R`الوصف فيه الإجابات الأربعة، والرول بلاي فيه تحية، وطلب تذكرة بمكان ووقت، وسؤال عن السعر أو الرصيف، وشكر، و [[Sie]] للموظف`,
+              sol: R`**الوصف:**
+
+~~~de
+Ich sehe einen Mann und eine Frau. Das sind zwei Personen. Sie sind am Bahnhof, am Schalter. Der Mann kauft eine Fahrkarte, und die Frau arbeitet am Schalter.
+~~~
+
+**الرول بلاي:**
+
+~~~de Ich=m Prüferin=f
+Ich: Guten Tag! Eine Fahrkarte nach Innsbruck, bitte.
+Prüferin: Gern. Einfach oder hin und zurück?
+Ich: Hin und zurück, bitte. Was kostet das?
+Prüferin: Achtundfünfzig Euro.
+Ich: Und von welchem Gleis fährt der Zug?
+Prüferin: Von Gleis vier, um zehn Uhr fünfzehn.
+Ich: Vielen Dank! Auf Wiedersehen!
+~~~
+
+**ليه:** الوصف بيجاوب الأسئلة الأربعة بالترتيب، بجمل قصيرة وواضحة: [[Ich sehe …]]، والعدد، والمكان ([[am Bahnhof]])، والفعل ([[kauft]] و [[arbeitet]]). والرول بلاي من وحدة المواصلات: [[einfach oder hin und zurück]]، و [[von welchem Gleis]]. و [[Sie]] مش [[du]] لأنه موظف.` },
+            { lvl: 'تحدي', t: R`**احسب واحكم:** ٣ طلاب حلّوا ÖSD. مين نجح في المكتوب؟ (١) سارة: قراية ٢٤، وسمع ٨، وكتابة ١٢ (الإيميل منهم ٨). (٢) أحمد: قراية ٢٨، وسمع ٤، وكتابة ١٤ (الإيميل ٩). (٣) ليلى: قراية ١٦، وسمع ١٤، وكتابة ٨ (الإيميل ٣).`,
+              done: R`حسبت المجموع لكل واحد، وطبّقت الشروط التلاتة، وقلت السبب بجملة`,
+              sol: R`| | المجموع | القراية ≥ ٦ | السمع ≥ ٦ | الإيميل ≥ ٤ | النتيجة |
+|---|---|---|---|---|---|
+| سارة | ٤٤ | ✓ | ✓ | ✓ | **ناجحة** |
+| أحمد | ٤٦ | ✓ | ✗ (٤) | ✓ | **ساقط** |
+| ليلى | ٣٨ | ✓ | ✓ | ✗ (٣) | **ساقطة** |
+
+**ليه:** أحمد مجموعه أعلى من سارة، بس السمع ٤ بس، فالمكتوب كله ساقط. وليلى وصلت ٣٨ بالظبط، بس الإيميل ٣ من ١٠، وده تحت الحد. **الدرس:** في ÖSD متتكلش على جزء قوي يغطي جزء ضعيف زي في Goethe، لازم كل جزء يعدّي حده.` },
+          ],
+          ref: [
+            { t: "ÖSD Zertifikat A1: Modellsatzbroschüre (المهام والوقت والدرجات ص ٢١–٢٥، وشروط النجاح ص ٣٣)", url: "https://www.osd.at/wp-content/uploads/2024/09/ZA1-Modellsatzbroschure_WEB.pdf" },
+          ],
+        },
+        {
+          cmd: "Modelltest 5: telc",
+          title: "الامتحان التجريبي الخامس: telc Deutsch A1 für Zuwanderer كامل",
+          pre: ["dea1/Modelltest 3", "dea1/Ach so! Stimmt genau."],
+          desc: R`امتحان كامل بنفس شكل **telc Deutsch A1 für Zuwanderer**، وده الامتحان اللي كورسات الاندماج في ألمانيا بتستخدمه كتير: كلمات وقواعد (Sprachbausteine)، وسمع، و «اسمع ورد»، وقراية، وكتابة، وكلام في مجموعة.
+
+**الشروط:** Sprachbausteine ١٠ دقايق، والسمع كله حوالي ١٥ دقيقة (**كل حاجة بتتسمع مرتين**)، والقراية ٣٠ دقيقة، والكتابة ١٥ دقيقة، والكلام حوالي ١٥ دقيقة مع ٣ تانيين. والنجاح **٦٠ نقطة من ١٠٠** في الامتحان كله مع بعض.`,
+          teach: R`## شكل telc والدرجات
+
+| الجزء | المطلوب | الأسئلة | النقط |
+|---|---|---|---|
+| Sprachbausteine | كلمة لكل فراغ في نصين، a ولا b | ١٠ | كل واحد ١٫٥ = **١٥** |
+| Hören A | رسايل وإعلانات: صح ولا غلط | ٤ | كل واحد ٣ = **١٢** |
+| Hören B | أرقام وحروف: a ولا b | ٥ | كل واحد ١ = **٥** |
+| Hören und antworten A | تختار الرد المناسب (من ٤) | ٣ | كل واحد ٢ = **٦** |
+| Hören und antworten B | تختار الرد المناسب (من ٥) | ٤ | كل واحد ٢ = **٨** |
+| Lesen A | توصّل نص بعنوانه (عنوان زيادة) | ٣ | كل واحد ٣ = **٩** |
+| Lesen B | نص وصح ولا غلط | ٣ | كل واحد ٣ = **٩** |
+| Lesen C | أنهي إعلان؟ a ولا b | ٣ | كل واحد ٢ = **٦** |
+| Schreiben A | استمارة لحد تاني، ٥ خانات | ٥ | **٢٫٥** |
+| Schreiben B | إيميل فيه ٣ نقط (حوالي ٣٠ كلمة) | ١ | **٧٫٥** |
+| Sprechen A / B / C | تعرّف نفسك / تسأل وتجاوب / تطلب وترد | | **٦ + ٧ + ٧ = ٢٠** |
+| **المجموع** | | | **١٠٠، والنجاح ٦٠** |
+
+(من النموذج الرسمي لـ telc، ص ٥ و ٢٧.) والفرق الكبير عن ÖSD: مفيش حد أدنى لكل جزء، المهم المجموع. وعن Goethe: فيه جزء كلمات وقواعد، وجزء «اسمع ورد»، والكتابة والكلام نقطهم أقل.
+
+## Sprachbausteine (١٠ دقايق، ١٥ نقطة)
+
+اقرا الرسالتين، واختار الكلمة المناسبة لكل فراغ.
+
+~~~read telc Sprachbausteine
+Lieber Herr Klein, || أستاذ كلاين العزيز،
+ich (1) ___ leider krank und kann morgen nicht (2) ___ Kurs kommen. || أنا للأسف عيان ومش هقدر آجي الكورس بكرة.
+Können Sie (3) ___ bitte die Hausaufgaben schicken? || ممكن حضرتك تبعتلي الواجب؟
+Vielen Dank und (4) ___ Grüße || شكرًا جدًا ومع خالص التحية
+Ali Hassan || علي حسن
+? (1) || الفراغ ١
+- bin *
+- habe
+? (2) || الفراغ ٢
+- zum *
+- zur
+? (3) || الفراغ ٣
+- mich
+- mir *
+? (4) || الفراغ ٤
+- freundlichen *
+- freundlich
+Hallo Ali, || أهلًا يا علي،
+gute Besserung! Die Hausaufgaben (5) ___ im Buch auf Seite 34. || ألف سلامة! الواجب في الكتاب صفحة ٣٤.
+Am Freitag schreiben wir einen Test. (6) ___ du dann wieder da? || يوم الجمعة عندنا امتحان. هتكون موجود ساعتها؟
+Wenn nicht, ruf mich (7) ___ an. Meine Nummer (8) ___ du ja. || لو لأ، كلمني. رقمي معاك.
+Ich wünsche dir (9) ___ Gute. || بتمنالك كل خير.
+(10) ___ bald! || أشوفك قريب!
+Thomas Klein || توماس كلاين
+? (5) || الفراغ ٥
+- ist
+- sind *
+? (6) || الفراغ ٦
+- Bist *
+- Hast
+? (7) || الفراغ ٧
+- bitte *
+- danke
+? (8) || الفراغ ٨
+- hast *
+- bist
+? (9) || الفراغ ٩
+- alles *
+- viel
+? (10) || الفراغ ١٠
+- Bis *
+- Um
+~~~
+
+**الحاجات اللي بيختبرها الجزء ده:** [[sein]] ولا [[haben]] ([[ich bin krank]]، و [[Bist du da?]]، و [[Meine Nummer hast du]])، و [[zum]] ولا [[zur]] ([[der Kurs]] ← [[zum]])، و [[mir]] ولا [[mich]] (Dativ بعد [[schicken]]: تبعت لمين؟)، و [[Hausaufgaben]] جمع ← [[sind]]، والجمل الجاهزة ([[Mit freundlichen Grüßen]]، و [[alles Gute]]، و [[Bis bald!]]). كل ده اتعلمته في الوحدات.
+
+## Hören (حوالي ١٥ دقيقة، كل حاجة **مرتين**)
+
+### Teil A: صح ولا غلط (٤ أسئلة)
+
+~~~hear telc Hören Teil A
+f: Hallo, hier ist Nora. Ich kann heute leider nicht ins Kino kommen. Mein Sohn ist krank. Vielleicht am Samstag? Ruf mich an!
+? Situation: Nachricht auf der Mailbox. Nora kommt heute nicht ins Kino. || نورا مش جاية السينما النهارده
+- Richtig *
+- Falsch
+
+m: Liebe Kundinnen und Kunden, unser Markt schließt heute schon um achtzehn Uhr. Morgen sind wir wieder ab acht Uhr für Sie da.
+? Situation: Durchsage im Supermarkt. Der Supermarkt ist heute bis 20 Uhr offen. || السوبرماركت فاتح النهارده لحد ٨
+- Richtig
+- Falsch *
+
+f: Achtung am Gleis fünf: Der Zug nach Köln fährt heute nicht von Gleis fünf, sondern von Gleis neun.
+? Situation: Durchsage am Bahnhof. Der Zug nach Köln fährt von Gleis 9. || قطر كولونيا من رصيف ٩
+- Richtig *
+- Falsch
+
+m: Guten Tag, hier ist die Praxis Doktor Yilmaz. Ihr Termin am Dienstag ist leider nicht möglich. Bitte rufen Sie uns an.
+? Situation: Nachricht auf der Mailbox. Der Termin am Dienstag bleibt. || ميعاد الثلاث زي ما هو
+- Richtig
+- Falsch *
+~~~
+
+### Teil B: أرقام وحروف (٥ أسئلة، a ولا b)
+
+~~~hear Frau=f Mann=m telc Hören Teil B
+Frau: Was kostet die Jacke?
+Mann: Die Jacke kostet neunundvierzig Euro neunzig.
+? Wie viel kostet die Jacke? || الجاكيت بكام؟
+- 49,90 € *
+- 94,90 €
+
+Mann: Wann beginnt der Kurs?
+Frau: Am Montag um Viertel nach neun.
+? Wann beginnt der Kurs? || الكورس بيبدأ إمتى؟
+- 9:15 Uhr *
+- 8:45 Uhr
+
+Frau: Buchstabieren Sie bitte den Familiennamen.
+Mann: Gern. Badawi. B, A, D, A, W, I.
+? Wie schreibt man den Namen? || الاسم بيتكتب إزاي؟
+- B-A-D-A-W-I *
+- B-A-D-W-A-I
+
+Mann: In welchem Zimmer ist der Deutschkurs?
+Frau: Im Zimmer zweihundertdreizehn, im zweiten Stock.
+? Welches Zimmer? || أنهي أوضة؟
+- 230
+- 213 *
+
+Frau: Wie ist Ihre Telefonnummer?
+Mann: Null eins fünf sieben, sechs acht drei, zwei null.
+? Wie ist die Telefonnummer? || رقم التليفون إيه؟
+- 0157 683 20 *
+- 0157 638 20
+~~~
+
+### Hören und antworten, Teil A: الرد المناسب (٣ كلامات، ٤ ردود)
+
+اقرا الردود a–d الأول: [[a: Ach, das tut mir leid!]]، [[b: Für mich nicht, danke!]]، [[c: Gern, was soll ich tun?]]، [[d: Vielen Dank, das ist sehr nett.]] (واحد منهم زيادة.)
+
+~~~hear telc Hören und antworten Teil A
+m: Kannst du mir bitte kurz helfen?
+? Was antworten Sie? || ترد بإيه؟
+- a: Ach, das tut mir leid!
+- b: Für mich nicht, danke!
+- c: Gern, was soll ich tun? *
+- d: Vielen Dank, das ist sehr nett.
+
+f: Möchten Sie noch ein Stück Kuchen?
+? Was antworten Sie? || ترد بإيه؟
+- a: Ach, das tut mir leid!
+- b: Für mich nicht, danke! *
+- c: Gern, was soll ich tun?
+- d: Vielen Dank, das ist sehr nett.
+
+m: Meine Mutter ist im Krankenhaus.
+? Was antworten Sie? || ترد بإيه؟
+- a: Ach, das tut mir leid! *
+- b: Für mich nicht, danke!
+- c: Gern, was soll ich tun?
+- d: Vielen Dank, das ist sehr nett.
+~~~
+
+### Hören und antworten, Teil B: الرد المناسب (٤ كلامات، ٥ ردود)
+
+الردود: [[e: Danke, gut. Und Ihnen?]]، [[f: Nein, das ist nicht meine.]]، [[g: Ja, gern. Wann denn?]]، [[h: Einen Tee, bitte.]]، [[i: Kein Problem!]] (واحد زيادة.)
+
+~~~hear telc Hören und antworten Teil B
+f: Was möchten Sie trinken?
+? Was antworten Sie? || ترد بإيه؟
+- e: Danke, gut. Und Ihnen?
+- f: Nein, das ist nicht meine.
+- g: Ja, gern. Wann denn?
+- h: Einen Tee, bitte. *
+- i: Kein Problem!
+
+m: Ist das Ihre Tasche?
+? Was antworten Sie? || ترد بإيه؟
+- e: Danke, gut. Und Ihnen?
+- f: Nein, das ist nicht meine. *
+- g: Ja, gern. Wann denn?
+- h: Einen Tee, bitte.
+- i: Kein Problem!
+
+m: Wollen wir zusammen Deutsch lernen?
+? Was antworten Sie? || ترد بإيه؟
+- e: Danke, gut. Und Ihnen?
+- f: Nein, das ist nicht meine.
+- g: Ja, gern. Wann denn? *
+- h: Einen Tee, bitte.
+- i: Kein Problem!
+
+m: Guten Morgen, Frau Hassan! Wie geht es Ihnen?
+? Was antworten Sie? || ترد بإيه؟
+- e: Danke, gut. Und Ihnen? *
+- f: Nein, das ist nicht meine.
+- g: Ja, gern. Wann denn?
+- h: Einen Tee, bitte.
+- i: Kein Problem!
+~~~
+
+الرد الزيادة هو [[i: Kein Problem!]] (بترد بيه على [[Entschuldigung!]] أو [[Danke!]]). والفخ في الجزء ده: **متختارش الرد اللي فيه نفس الكلمة**. السؤال [[Was möchten Sie trinken?]] رده مشروب، مش حاجة فيها [[möchten]].
+
+## Lesen (٣٠ دقيقة)
+
+### Teil A: أنهي عنوان؟ (٣ نصوص و ٤ عناوين)
+
+~~~text Überschriften
+a  Neue Busse für die Stadt
+b  Kostenlos ins Museum
+c  Mehr Kinder lernen schwimmen
+d  Schwimmbad im Winter zu
+~~~
+
+~~~read telc Lesen Teil A
+Ab Montag fahren in Mannheim zwanzig neue Busse. Sie sind leiser und haben mehr Platz für Kinderwagen und Fahrräder. || من الاتنين فيه عشرين أتوبيس جديد في مانهايم. أهدى وفيهم مكان أكتر لعربيات الأطفال والعجل.
+? Welche Überschrift passt? || أنهي عنوان؟
+- a *
+- b
+- c
+- d
+Am ersten Sonntag im Monat bezahlen Besucher im Stadtmuseum keinen Eintritt. Das Angebot gilt für Erwachsene und Kinder. || أول حد في الشهر الزوار مش بيدفعوا دخول متحف المدينة. للكبار والصغيرين.
+? Welche Überschrift passt? || أنهي عنوان؟
+- a
+- b *
+- c
+- d
+Immer mehr Grundschulen bieten Schwimmkurse an. In diesem Jahr haben schon 3000 Kinder in Mannheim schwimmen gelernt. || مدارس ابتدائي أكتر بتعمل كورسات سباحة. السنة دي ٣٠٠٠ عيل في مانهايم اتعلموا العوم.
+? Welche Überschrift passt? || أنهي عنوان؟
+- a
+- b
+- c *
+- d
+~~~
+
+العنوان [[d]] هو الزيادة، وفيه فخ: كلمة [[Schwimmbad]] شبه النص التالت، بس النص عن **عيال بتتعلم العوم**، مش عن حمام سباحة قافل. في Lesen A دوّر على **الفكرة**، مش على كلمة مشتركة.
+
+### Teil B: صح ولا غلط (نص و ٣ جمل)
+
+~~~read telc Lesen Teil B
+Liebe Eltern, || أولياء الأمور الأعزاء،
+am Freitag, den 12. Juni, machen wir ein Sommerfest in der Schule. || يوم الجمعة ١٢ يونيو هنعمل حفلة صيف في المدرسة.
+Das Fest beginnt um 15 Uhr und endet um 19 Uhr. || الحفلة بتبدأ ٣ وبتخلص ٧.
+Bitte bringen Sie einen Kuchen oder einen Salat mit. Getränke gibt es in der Schule. || من فضلكم هاتوا كيكة أو سلطة. المشروبات موجودة في المدرسة.
+Mit freundlichen Grüßen || مع خالص التحية
+Ihre Schulleitung || إدارة المدرسة
+? Das Fest ist am Nachmittag. || الحفلة بعد الضهر
+- Richtig *
+- Falsch
+? Die Eltern sollen Getränke mitbringen. || الأهالي المفروض يجيبوا مشروبات
+- Richtig
+- Falsch *
+? Das Fest dauert vier Stunden. || الحفلة أربع ساعات
+- Richtig *
+- Falsch
+~~~
+
+### Teil C: أنهي إعلان؟ (٣ أسئلة، a ولا b)
+
+~~~read telc Lesen Teil C
+Sie suchen eine Wohnung für Ihre Familie (2 Kinder). || بتدوّر على شقة لعيلتك (عيلين)
+a: 1-Zimmer-Apartment, 30 m², ideal für Studenten. www.wohnen-klein.de || أ: شقة أوضة، ٣٠ متر، مناسبة للطلبة
+b: 4-Zimmer-Wohnung mit Garten, Schule in der Nähe. www.familienwohnung.de || ب: شقة ٤ أوض بجنينة، والمدرسة قريبة
+? Welche Internetadresse passt? || أنهي موقع؟
+- a: www.wohnen-klein.de
+- b: www.familienwohnung.de *
+Sie möchten am Abend einen Computerkurs machen. || عايز تاخد كورس كمبيوتر بالليل
+a: Computerkurs für Anfänger, Montag und Mittwoch, 18–20 Uhr. www.vhs-pc.de || أ: كورس كمبيوتر للمبتدئين، الاتنين والأربع، من ٦ لـ ٨
+b: Computer-Reparatur, schnell und billig, Mo–Fr 9–17 Uhr. www.pc-hilfe.de || ب: تصليح كمبيوتر، بسرعة ورخيص، من ٩ لـ ٥
+? Welche Internetadresse passt? || أنهي موقع؟
+- a: www.vhs-pc.de *
+- b: www.pc-hilfe.de
+Ihr Kind ist krank. Es ist Sonntag. || ابنك عيان والنهارده الحد
+a: Kinderarztpraxis Dr. Berg, Mo–Fr 8–12 Uhr. www.kinderarzt-berg.de || أ: عيادة أطفال، من الاتنين للجمعة الصبح
+b: Ärztlicher Notdienst: Tag und Nacht, auch am Wochenende. Tel. 116 117 www.notdienst.de || ب: طوارئ الدكاترة: ليل ونهار، وفي الويك إند كمان
+? Welche Internetadresse passt? || أنهي موقع؟
+- a: www.kinderarzt-berg.de
+- b: www.notdienst.de *
+~~~
+
+[[116 117]] رقم حقيقي في ألمانيا: دكتور الطوارئ لما العيادات تكون قافلة (مش إسعاف، الإسعاف ١١٢). وفي (٢) الإعلان [[b]] فيه كلمة [[Computer]] كمان، بس هو تصليح مش كورس.
+
+## Schreiben (١٥ دقيقة، ١٠ نقط)
+
+### Teil A: استمارة لحد تاني (٥ خانات، ٢٫٥ نقطة)
+
+> Ihre Freundin Samira Nasser möchte ihre Tochter im Sportverein anmelden. Die Tochter heißt Lina und ist am 9. Mai 2016 geboren. Sie möchte schwimmen. Die Familie wohnt in der Rosenstraße 21 in 68159 Mannheim. Die Telefonnummer ist 0621 457 330.
+
+~~~text Anmeldung: TSV Mannheim, Kinder und Jugend
+Name des Kindes:     Nasser, (1) ____________
+Geburtsdatum:        (2) ____________
+Sportart:            (3) ____________
+Straße, Hausnummer:  (4) ____________
+PLZ, Ort:            68159 Mannheim
+Telefon:             (5) ____________
+~~~
+
+### Teil B: إيميل (حوالي ٣٠ كلمة، ٧٫٥ نقط)
+
+> Ihre Nachbarin, Frau Weber, hat Ihnen beim Umzug geholfen. Schreiben Sie ihr eine kurze E-Mail:
+> - Danke für …
+> - Laden Sie Frau Weber zum Essen ein.
+> - Wann?
+>
+> Schreiben Sie zu jedem Punkt ein oder zwei Sätze. Vergessen Sie die Anrede und den Gruß nicht.
+
+## Sprechen (حوالي ١٥ دقيقة، في مجموعة من ٤)
+
+**Teil A (٦ نقط):** كل واحد بيعرّف نفسه بالكلمات دي، وبعدين الممتحن بيطلب منك **تتهجّى** حاجة (اسمك أو مدينتك) و **تقول رقم** (تليفونك أو سنة).
+
+[[Name?]] [[Alter?]] [[Wohnort?]] [[Familie?]] [[Sprachen?]] [[Beruf?]] [[Hobby?]]
+
+**Teil B (٧ نقط):** كروت عليها كلمة في موضوع. بتسحب كارت وتسأل اللي جنبك سؤال بالكلمة دي، وهو يجاوب. وبعدين هو يسأل اللي بعده. جولتين:
+
+| الموضوع ١: Freizeit | الموضوع ٢: Wohnen |
+|---|---|
+| [[Kino]] [[Sport]] [[Wochenende]] [[Musik]] [[Park]] [[Freunde]] | [[Miete]] [[Zimmer]] [[Nachbarn]] [[Küche]] [[Balkon]] [[Stadt]] |
+
+**Teil C (٧ نقط):** كروت عليها صورة. بتطلب حاجة أو تقترح أو تعرض أو تنصح، واللي جنبك يرد. جولتين:
+
+🍎 تفاحة · ☂️ شمسية · 🖊️ قلم · 🪟 الشباك · ☕ قهوة · 🚌 الأتوبيس
+
+**نصيحة مهمة:** في Teil B و C فيه ٣ تانيين معاك، فاسمع سؤالهم كويس عشان ترد صح. الرد على زميلك بيتحسب زي سؤالك بالظبط.
+
+## احسب درجتك
+
+اجمع نقط كل جزء من الجدول اللي فوق. السمع والقراية و Sprachbausteine بيتصححوا لوحدهم وإنت بتحل (✓ و ✗)، والكتابة والكلام صحّحهم بالتمارين تحت. **٦٠ من ١٠٠ = ناجح.** ولو عايز تعرف إنت فين: Sprachbausteine والسمع والقراية مع بعض = ٧٠ نقطة، فلو جبت فيهم ٥٠، محتاج ١٠ بس من الكتابة والكلام (من ٣٠).`,
+          deep: {
+            why: R`telc Deutsch A1 für Zuwanderer هو الامتحان اللي كتير من كورسات الاندماج والمكاتب في ألمانيا بيعتمدوا عليه، ومواضيعه كلها عن الحياة هناك: المدرسة، والدكتور، والسكن، والمصالح. وشكله مختلف عن Goethe و ÖSD: فيه Sprachbausteine (قواعد وكلمات مباشرة)، وجزء «اسمع ورد» بيختبر إنك تعرف ترد في المواقف اليومية، والكلام بيبقى في مجموعة.`,
+            how: R`حل بالترتيب بالوقت: Sprachbausteine (١٠) ← Hören و Hören und antworten (حوالي ١٥، وكل حاجة مرتين) ← Lesen (٣٠) ← Schreiben (١٥). وبعدها الكلام بصوتك وسجّل. وبعد كده صحّح واجمع، والنجاح ٦٠ من ١٠٠.`,
+            when: R`بعد الامتحانات التلاتة بشكل Goethe، ولو ناوي تعيش في ألمانيا أو داخل كورس اندماج. واسأل المكان اللي هتمتحن فيه بيطلب أنهي امتحان قبل ما تختار.`,
+            mistakes: R`- في Sprachbausteine تختار بالودن من غير ما تفكر في القاعدة: كل فراغ وراه قاعدة (sein/haben، zum/zur، mir/mich، المفرد والجمع).
+- في «Hören und antworten» تختار الرد اللي فيه نفس الكلمة: اختار الرد اللي **يناسب** السؤال.
+- في Lesen A تدوّر على كلمة مشتركة: الفكرة هي المهمة.
+- في Lesen C تختار الإعلان اللي فيه الكلمة: اقرا الشرط (بالليل، الحد، عيلة).
+- في Schreiben A تنقل الأرقام أو الاسم غلط: غلطة الإملا في كلمة عادية مقبولة، بس الأسامي والأرقام لأ.
+- في الكلام تحضّر نفسك بس: زمايلك هيسألوك، فلازم تفهم سؤالهم وترد.`
+          },
+          try: R`حل الامتحان كله بالوقت، وبعدين صحّح الكتابة والكلام بالتمارين، واجمع درجتك. وقارنها بدرجتك في ÖSD و Goethe: أنهي امتحان جبت فيه أعلى؟`,
+          practice: [
+            { lvl: 'سريع', t: R`**Schreiben Teil A:** صحّح الخانات الخمسة.`,
+              done: R`الخمسة صح، والتاريخ والشارع والرقم منقولين بالظبط`,
+              sol: R`~~~text Anmeldung: TSV Mannheim, Kinder und Jugend
+Name des Kindes:     Nasser, Lina
+Geburtsdatum:        09.05.2016
+Sportart:            Schwimmen
+Straße, Hausnummer:  Rosenstraße 21
+PLZ, Ort:            68159 Mannheim
+Telefon:             0621 457 330
+~~~
+
+**ليه:** الاستمارة للبنت مش للأم: [[Lina]] مش [[Samira]]، وده الفخ الأساسي (Samira هي اللي بتسجّل). و [[Sportart]] = نوع الرياضة ([[schwimmen]] ← [[Schwimmen]] اسم بحرف كبير). و [[Straße, Hausnummer]] الشارع والرقم بس، من غير المدينة.` },
+            { lvl: 'تطبيق', t: R`**Schreiben Teil B:** قارن إيميلك بالنموذج، وادّي نفسك درجة: كل نقطة من التلاتة متغطية ومفهومة = ٢، والتحية والسلام والشكل = ١٫٥.`,
+              done: R`النقط التلاتة موجودة، وفيه [[Liebe Frau Weber]] و [[Viele Grüße]]، وحوالي ٣٠ كلمة`,
+              sol: R`**نموذج:**
+
+~~~de
+Liebe Frau Weber,
+vielen Dank für Ihre Hilfe beim Umzug! Ich möchte Sie gern zum Essen einladen. Ich koche ägyptisch. Haben Sie am Samstag um 19 Uhr Zeit?
+Viele Grüße
+Karim Said
+~~~
+
+**ليه:** (١) الشكر: [[Danke für Ihre Hilfe]]، و [[Ihre]] بحرف كبير لأنها لحضرتك. (٢) العزومة: [[Ich möchte Sie … einladen]] ([[einladen]] بيتقسم والفعل في الآخر بعد [[möchte]]). (٣) الميعاد كسؤال: [[Haben Sie am Samstag um 19 Uhr Zeit?]]. و [[Sie]] مش [[du]] لأنها جارة بتقولها «مدام فيبر». حوالي ٣٠ كلمة.` },
+            { lvl: 'تطبيق', t: R`**Sprechen Teil B:** اكتب سؤال لكل كارت في الموضوعين (١٢ سؤال)، وجاوب على ٤ منهم.`,
+              done: R`١٢ سؤال، كل واحد فيه كلمة الكارت، ونصهم على الأقل بكلمة سؤال (W-Frage)، و ٤ إجابات بجمل كاملة`,
+              sol: R`~~~de
+Was ist dein Lieblingsfilm im Kino?
+Welchen Sport machst du?
+Was machst du am Wochenende?
+Welche Musik hörst du gern?
+Gehst du oft in den Park?
+Wann triffst du deine Freunde?
+Wie hoch ist deine Miete?
+Wie viele Zimmer hat deine Wohnung?
+Sind deine Nachbarn nett?
+Ist deine Küche groß?
+Hast du einen Balkon?
+Wohnst du gern in der Stadt?
+~~~
+
+**إجابات:**
+
+~~~de
+Am Wochenende besuche ich meine Familie.
+Meine Wohnung hat drei Zimmer.
+Ja, meine Nachbarn sind sehr nett.
+Nein, ich habe keinen Balkon.
+~~~
+
+**ليه:** الكارت كلمة واحدة، وإنت بتعمل منها سؤال طبيعي. أسهل طريقة: [[Was …?]] و [[Wie viele …?]] و [[Hast du …?]]. وفي telc بيقولوا لبعض [[du]] غالبًا لأنكم زمايل، بس لو الممتحن قال [[Sie]] امشي وراه. **الغلطة الشائعة:** تقول الكلمة بس بنبرة سؤال ([[Kino?]])، وده مش سؤال كامل.` },
+            { lvl: 'تحدي', t: R`**Sprechen Teil C:** لكل صورة من الست، اكتب طلب أو اقتراح أو عرض، والرد عليه. استخدم ٣ أشكال مختلفة على الأقل.`,
+              done: R`٦ طلبات بردودها، وفيهم [[Könnte ich …?]] و [[Kannst du …?]] و [[Möchtest du …?]] أو [[Wollen wir …?]]، وكل رد مناسب (قبول أو اعتذار بسبب)`,
+              sol: R`~~~de
+Könnte ich bitte einen Apfel haben? – Natürlich, bitte schön!
+Es regnet. Nimm doch einen Schirm mit! – Gute Idee, danke!
+Kannst du mir bitte einen Stift geben? – Ja, klar. Hier.
+Können Sie bitte das Fenster aufmachen? – Ja, gern.
+Möchtest du einen Kaffee? – Nein danke, ich trinke keinen Kaffee.
+Wollen wir mit dem Bus fahren? – Ja, gut. Der Bus kommt in fünf Minuten.
+~~~
+
+**ليه:** دي الأربع حاجات اللي Teil C بيطلبها: **طلب** ([[Könnte ich …?]] و [[Kannst du …?]])، و **نصيحة** ([[Nimm doch …!]])، و **عرض** ([[Möchtest du …?]])، و **اقتراح** ([[Wollen wir …?]]). والرد لازم يناسب: قبول ([[Natürlich]] و [[Gern]] و [[Gute Idee]]) أو رفض بأدب وسبب ([[Nein danke, ich trinke keinen Kaffee]]). وده كله من درس «Ach so! Stimmt genau.» ودروس الأكل.` },
+            { lvl: 'تحدي', t: R`**احسب درجة:** طالب جاب: Sprachbausteine ٧ من ١٠ أسئلة، و Hören A ٣ من ٤، و Hören B ٤ من ٥، و Hören und antworten A ٢ من ٣ و B ٣ من ٤، و Lesen A ٢ من ٣، و B ٣ من ٣، و C ٢ من ٣، و Schreiben A ٤ خانات من ٥، و Schreiben B ٥ من ٧٫٥، و Sprechen ١٢ من ٢٠. نجح؟`,
+              done: R`حسبت كل جزء بنقطه (مش بعدد الأسئلة)، والمجموع صح، والحكم صح`,
+              sol: R`| الجزء | الحساب | النقط |
+|---|---|---|
+| Sprachbausteine | ٧ × ١٫٥ | ١٠٫٥ |
+| Hören A | ٣ × ٣ | ٩ |
+| Hören B | ٤ × ١ | ٤ |
+| Hören und antworten A | ٢ × ٢ | ٤ |
+| Hören und antworten B | ٣ × ٢ | ٦ |
+| Lesen A | ٢ × ٣ | ٦ |
+| Lesen B | ٣ × ٣ | ٩ |
+| Lesen C | ٢ × ٢ | ٤ |
+| Schreiben A | ٤ × ٠٫٥ | ٢ |
+| Schreiben B | | ٥ |
+| Sprechen | | ١٢ |
+| **المجموع** | | **٧١٫٥ ← ناجح** |
+
+**ليه:** في telc كل سؤال وزنه مختلف: سؤال Hören A بـ ٣ نقط، وسؤال Hören B بنقطة واحدة. فمتعدّش الأسئلة، اضرب في وزنها. و Schreiben A: ٢٫٥ نقطة على ٥ خانات = نص نقطة للخانة. والنجاح ٦٠ من غير حد أدنى لكل جزء.` },
+          ],
+          ref: [
+            { t: "telc Deutsch A1 für Zuwanderer: Übungstest 1 (الشكل ص ٥، والنقط ص ٢٧، والكلام ص ١٧–٢٩)", url: "https://shop.telc.net/media/catalog/product/file//2/0/20201225_5069-b00-010104_web.pdf" },
           ],
         },
       ],

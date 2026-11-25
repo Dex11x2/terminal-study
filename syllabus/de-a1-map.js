@@ -13,7 +13,7 @@ const units = [
   ['Mir geht es nicht gut', 'Ich brauche einen Termin', 'Seit wann haben Sie das?', 'Dreimal am Tag nach dem Essen', 'Ruf schnell einen Krankenwagen!', 'Prüfung: Hören Teil 1, Lesen Teil 3, Sprechen Teil 3'],
   ['Wie komme ich zum Bahnhof?', 'Ich fahre mit dem Bus', 'Eine Fahrkarte nach Hamburg, bitte', 'Wohin gehst du? Ins Kino', 'Wie ist das Wetter?', 'Prüfung: Hören Teil 2, Lesen Teil 2, Schreiben Teil 1'],
   ['Ich möchte mich anmelden', 'Ich würde gern ein Konto eröffnen', 'Dieses Paket geht nach Ägypten', 'Gehört das Ihnen?', 'Wie sagt man das auf Deutsch?', 'Prüfung: formeller Brief, Hören Teil 3, Sprechen Teil 2'],
-  ['Modelltest 1', 'Modelltest 2', 'Modelltest 3'],
+  ['Modelltest 1', 'Modelltest 2', 'Modelltest 3', 'Modelltest 4: ÖSD', 'Modelltest 5: telc'],
 ];
 const alias = {};
 units.forEach((u, i) => { alias['u' + (i + 1)] = 'unit:' + (i + 1); u.forEach((c, j) => { alias[(i + 1) + '.' + (j + 1)] = c; }); });
@@ -33,33 +33,33 @@ exam:sprechen-3 | 3.6 | Teil 3
 exam:bewertung-schreiben | 2.6 | Bewertung|Kriterien
 exam:bewertung-sprechen | 1.6 | درج|نقط
 exam:bestehen | 10.1 | ٦٠|60
-exam:osd-lesen-1 | 10.3 | ÖSD Lesen Aufgabe 1
-exam:osd-lesen-2 | 5.6 | ÖSD Lesen Aufgabe 2
-exam:osd-lesen-3 | gap | مفيش تمرين بشكل ÖSD Lesen Aufgabe 3
-exam:osd-hoeren-1 | gap | مفيش تمرين بشكل ÖSD Hören Aufgabe 1
-exam:osd-hoeren-2 | gap | مفيش تمرين بشكل ÖSD Hören Aufgabe 2 (الدرس ٢.٦ مرجعه بس)
-exam:osd-hoeren-3 | gap | مفيش تمرين بشكل ÖSD Hören Aufgabe 3
-exam:osd-schreiben-1 | 8.6 | ÖSD Schreiben Aufgabe 1
-exam:osd-schreiben-2 | 2.6 | ÖSD Schreiben Aufgabe 2
-exam:osd-sprechen-1 | 1.6 | ٤ مواضيع من ٦
-exam:osd-sprechen-2 | gap | وصف الصورة في ÖSD متذكر في جدول المقارنة بس، من غير تمرين
-exam:osd-sprechen-3 | gap | الحوار مع الممتحن في ÖSD متذكر في جدول المقارنة بس
-exam:osd-bestehen | gap | قاعدة نجاح ÖSD (أقل حاجة في القراية والسمع) مش مشروحة
-exam:osd-plurizentrik | 1.1 | Grüß Gott
-exam:telc-sprachbausteine | 10.3 | telc Sprachbausteine
-exam:telc-hoeren-a | gap | مفيش تمرين بشكل telc Hören Teil A
-exam:telc-hoeren-b | gap | مفيش تمرين بشكل telc Hören Teil B
-exam:telc-hoeren-antworten-a | 10.3 | telc Hören und antworten
-exam:telc-hoeren-antworten-b | gap | الجزء التاني من «Hören und antworten» مش متمرّن عليه
-exam:telc-lesen-a | gap | مفيش تمرين بشكل telc Lesen Teil A
-exam:telc-lesen-b | gap | مفيش تمرين بشكل telc Lesen Teil B
-exam:telc-lesen-c | 5.6 | telc Lesen Teil C
-exam:telc-schreiben-a | 1.6 | telc Schreiben A
-exam:telc-schreiben-b | 2.6 | telc Schreiben Teil B
-exam:telc-sprechen-a | 1.6 | telc.{0,40}Sprechen Teil A
-exam:telc-sprechen-b | 3.6 | telc Sprechen Teil B
-exam:telc-sprechen-c | 3.6 | telc Sprechen Teil B و C
-exam:telc-bestehen | gap | قاعدة نجاح telc مش مشروحة
+exam:osd-lesen-1 | 10.4 | ÖSD Lesen Aufgabe 1
+exam:osd-lesen-2 | 10.4 | ÖSD Lesen Aufgabe 2
+exam:osd-lesen-3 | 10.4 | ÖSD Lesen Aufgabe 3
+exam:osd-hoeren-1 | 10.4 | ÖSD Hören Aufgabe 1
+exam:osd-hoeren-2 | 10.4 | ÖSD Hören Aufgabe 2
+exam:osd-hoeren-3 | 10.4 | ÖSD Hören Aufgabe 3
+exam:osd-schreiben-1 | 10.4 | Aufgabe 1: استمارة
+exam:osd-schreiben-2 | 10.4 | Aufgabe 2: رد على إيميل
+exam:osd-sprechen-1 | 10.4 | ٤ مواضيع من ٦
+exam:osd-sprechen-2 | 10.4 | Aufgabe 2 \(اوصف صورة\)
+exam:osd-sprechen-3 | 10.4 | Aufgabe 3 \(رول بلاي\)
+exam:osd-bestehen | 10.4 | ٣٨ من ٧٥
+exam:osd-plurizentrik | 10.4 | Jänner
+exam:telc-sprachbausteine | 10.5 | telc Sprachbausteine
+exam:telc-hoeren-a | 10.5 | telc Hören Teil A
+exam:telc-hoeren-b | 10.5 | telc Hören Teil B
+exam:telc-hoeren-antworten-a | 10.5 | telc Hören und antworten Teil A
+exam:telc-hoeren-antworten-b | 10.5 | telc Hören und antworten Teil B
+exam:telc-lesen-a | 10.5 | telc Lesen Teil A
+exam:telc-lesen-b | 10.5 | telc Lesen Teil B
+exam:telc-lesen-c | 10.5 | telc Lesen Teil C
+exam:telc-schreiben-a | 10.5 | Teil A: استمارة لحد تاني
+exam:telc-schreiben-b | 10.5 | Teil B: إيميل
+exam:telc-sprechen-a | 10.5 | Teil A \(٦ نقط\)
+exam:telc-sprechen-b | 10.5 | Teil B \(٧ نقط\)
+exam:telc-sprechen-c | 10.5 | Teil C \(٧ نقط\)
+exam:telc-bestehen | 10.5 | ١٠٠، والنجاح ٦٠
 
 # ── grammar ──
 grammar:verb-prasens-aller-verben-der-wortliste | 1.2 | Präsens|ich heiße
