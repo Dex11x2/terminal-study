@@ -678,6 +678,22 @@ Entschuldigung, das verstehe ich nicht. || آسف، مش فاهم.
 
 **مقارنة بالعربي:** «حاضر» عندنا ممكن تتقال حتى لو مش هتعمل حاجة دلوقتي. في الشغل الألماني [[mache ich]] معناها فعلًا هتعملها، وغالبًا هيتابعوا معاك. لو مش فاهم، قول على طول.
 
+## موجود ولا مش موجود؟ و «على رقم»
+
+لما تتصل بمكتب أو عيادة، هتسمع الجمل دي كتير:
+
+~~~de
+Frau Klein ist leider nicht da. || مدام كلاين للأسف مش موجودة.
+Herr Berg ist heute nicht im Büro. || أستاذ برج مش في المكتب النهارده.
+Ist Herr Weber da? || أستاذ فيبر موجود؟
+Sie erreichen mich unter der Nummer null eins fünf sieben. || تقدر توصلّي على رقم ٠١٥٧.
+Ich bin ab zwei Uhr wieder da. || هرجع من الساعة ٢.
+~~~
+
+- [[da sein]] = موجود، و [[nicht da sein]] = مش موجود. ودي أسهل من [[anwesend]] (حاضر) و [[abwesend]] (غايب) اللي هتشوفهم مكتوبين في الشغل.
+- [[unter der Nummer]] = على رقم. و [[unter]] هنا مش «تحت»، دي تعبير ثابت للتليفون، وبعده Dativ. و [[erreichen]] = يوصل لحد (على التليفون).
+- [[wieder da]] = راجع: [[Ich bin um drei wieder da]].
+
 ## الكلمات
 
 ~~~words أوامر وتحذيرات

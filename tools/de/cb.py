@@ -7,6 +7,7 @@
 # Chatterbox copies the voice of a short recording: tools/de/voices/ref-m.mp3 (Thorsten) and ref-f.mp3 (Kerstin), two
 # course lines Piper made, kept apart so the run doesn't overwrite its own references.
 import json, os, re, subprocess, sys, tempfile, time, wave
+from collections import Counter
 import numpy as np
 import torch, torchaudio
 from chatterbox.mtl_tts import ChatterboxMultilingualTTS
@@ -43,13 +44,23 @@ def read16k(path):
 
 
 NUM = re.compile(r'^(null|eins?|zwei|drei|vier|fünf|sechs|sieben|acht|neun|zehn|elf|zwölf|\w*zehn|\w*zig|\w*ßig|hundert|\w*tausend\w*|\w*hundert\w*|\d+)$')
-toks = lambda s: re.findall(r'[\wäöüß]+', s.lower())
+toks = lambda s: re.findall(r'[\wäöüß]+', s.lower().replace("'", ''))  # «geht's» and whisper's «gehts» are one word
+
+
+UNITS = {'cm', 'mm', 'm', 'km', 'kg', 'g', 'l', 'ml', 'qm', 'm²', 'ca', 'z', 'b'}  # whisper writes «90 cm» for «neunzig Zentimeter»
 
 
 def score(text, heard):
-    want = [w for w in toks(text) if not NUM.match(w)]
-    got = set(toks(heard))
-    return 1.0 if not want else sum(w in got for w in want) / len(want)
+    # the share of the line's words whisper heard, minus the words it heard that the line doesn't have: Chatterbox
+    # sometimes says the end twice («unmöglich, unmöglich») or adds a tail of nonsense, and that take must lose
+    want = Counter(w for w in toks(text) if not NUM.match(w))
+    got = Counter(w for w in toks(heard) if not NUM.match(w) and w not in UNITS)
+    n = sum(want.values())
+    if not n:
+        return 1.0
+    hit = sum(min(c, got[w]) for w, c in want.items())
+    extra = sum(max(0, c - want[w]) for w, c in got.items())
+    return max(0.0, (hit - extra) / n)
 
 
 # a take whisper doesn't hear well is made again with a calmer setting, up to 3 takes, and the best one stays

@@ -518,6 +518,19 @@ Für hier oder zum Mitnehmen? || هنا ولا تيك أواي؟
 Ein Stück Kuchen, bitte. || حتة كيكة لو سمحت.
 ~~~
 
+## مع ولا من غير: mit و ohne
+
+~~~de
+Einen Kaffee mit Milch, bitte. || قهوة بلبن لو سمحت.
+Einen Tee ohne Zucker, bitte. || شاي من غير سكر لو سمحت.
+Eine Pizza ohne Fleisch, bitte. || بيتزا من غير لحمة لو سمحت.
+Ich komme nicht ohne dich! || مش هاجي من غيرك!
+~~~
+
+- [[ohne]] = من غير، وبعده **Akkusativ** زي [[für]]: [[ohne den Zucker]]، [[ohne dich]]. وغالبًا بييجي من غير أداة: [[ohne Milch]]، [[ohne Zucker]].
+- عكسه [[mit]] (بـ / مع)، وبعده **Dativ**: [[mit der Milch]]، [[mit dir]]. وفي الطلب برضه من غير أداة: [[mit Milch]].
+- في المطعم والكافيه دي أكتر جملة هتحتاجها: [[ohne Fleisch]] (من غير لحمة)، و [[ohne Schweinefleisch]] (من غير لحم خنزير)، و [[ohne Alkohol]].
+
 ## الكلمات
 
 ~~~words في المخبز والكافيه

@@ -5690,9 +5690,9 @@
   "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
  },
  "dea1|Das Sofa steht im Wohnzimmer": {
-  "hash": "5840e45ce801",
+  "hash": "9be2280ac360",
   "date": "2026-11-25",
-  "on": "الكروت الجديدة: LanguageTool على كل كلمة وجملة، و Piper + whisper small على كل ملف صوت (الجمل اللي صوت kerstin غلط فيها اتنقلت لصوت thorsten واتسمعت تاني)"
+  "on": "LanguageTool على كل سطر جديد (٠ ملاحظات غير الأسامي)، و Chatterbox + whisper small على كل ملف صوت جديد بالـ score الجديد اللي بيخصم الكلام الزيادة، و Piper للي Chatterbox كرّره (٨ ملفات)"
  },
  "dea1|Das gefällt mir!": {
   "hash": "d6e0cc7898b5",
@@ -5708,6 +5708,11 @@
   "hash": "359f1e5bb88f",
   "date": "2026-11-25",
   "on": "LanguageTool على كل سطر جديد (الكلمات والجمل والأسئلة والقراية)، و Piper + whisper small على كل ملف صوت جديد («Ich lege» اتنقلت لصوت thorsten لأن kerstin قالتها liege)"
+ },
+ "dea1|Die Aussprache": {
+  "hash": "7b56b4a13f99",
+  "date": "2026-11-25",
+  "on": "LanguageTool على كل سطر جديد (٠ ملاحظات غير الأسامي)، و Chatterbox + whisper small على كل ملف صوت جديد بالـ score الجديد اللي بيخصم الكلام الزيادة، و Piper للي Chatterbox كرّره (٨ ملفات)"
  },
  "dea1|Die Rechnung, bitte!": {
   "hash": "7a83ac030eb1",
@@ -5725,9 +5730,9 @@
   "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها أو اتنقلت لصوت الراجل)، و Chromium 400px"
  },
  "dea1|Dreimal am Tag nach dem Essen": {
-  "hash": "c364e4c8276b",
-  "date": "2026-11-22",
-  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها أو اتنقلت لصوت الراجل)، و Chromium 400px"
+  "hash": "ca12be33dff9",
+  "date": "2026-11-25",
+  "on": "LanguageTool على كل سطر جديد (٠ ملاحظات غير الأسامي)، و Chatterbox + whisper small على كل ملف صوت جديد بالـ score الجديد اللي بيخصم الكلام الزيادة، و Piper للي Chatterbox كرّره (٨ ملفات)"
  },
  "dea1|Eine Fahrkarte nach Hamburg, bitte": {
   "hash": "be8d7eaff75f",
@@ -5780,9 +5785,9 @@
   "on": "الكروت الجديدة: LanguageTool على كل كلمة وجملة، و Piper + whisper small على كل ملف صوت (الجمل اللي صوت kerstin غلط فيها اتنقلت لصوت thorsten واتسمعت تاني)"
  },
  "dea1|Ich fahre mit dem Bus": {
-  "hash": "11c9c04dfca5",
+  "hash": "524395fbb2f4",
   "date": "2026-11-25",
-  "on": "الكروت الجديدة: LanguageTool على كل كلمة وجملة، و Piper + whisper small على كل ملف صوت (الجمل اللي صوت kerstin غلط فيها اتنقلت لصوت thorsten واتسمعت تاني)"
+  "on": "LanguageTool على كل سطر جديد (٠ ملاحظات غير الأسامي)، و Chatterbox + whisper small على كل ملف صوت جديد بالـ score الجديد اللي بيخصم الكلام الزيادة، و Piper للي Chatterbox كرّره (٨ ملفات)"
  },
  "dea1|Ich heiße …": {
   "hash": "ac5d0b3bbe50",
@@ -5795,9 +5800,9 @@
   "on": "الكروت الجديدة: LanguageTool على كل كلمة وجملة، و Piper + whisper small على كل ملف صوت (الجمل اللي صوت kerstin غلط فيها اتنقلت لصوت thorsten واتسمعت تاني)"
  },
  "dea1|Ich möchte einen Kaffee": {
-  "hash": "83373536995c",
+  "hash": "1d4136626dc1",
   "date": "2026-11-25",
-  "on": "الكروت الجديدة: LanguageTool على كل كلمة وجملة، و Piper + whisper small على كل ملف صوت (الجمل اللي صوت kerstin غلط فيها اتنقلت لصوت thorsten واتسمعت تاني)"
+  "on": "LanguageTool على كل سطر جديد (٠ ملاحظات غير الأسامي)، و Chatterbox + whisper small على كل ملف صوت جديد بالـ score الجديد اللي بيخصم الكلام الزيادة، و Piper للي Chatterbox كرّره (٨ ملفات)"
  },
  "dea1|Ich möchte mich anmelden": {
   "hash": "7a4415cd3acf",
@@ -5835,9 +5840,9 @@
   "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها)، و Chromium 400px (القراية والسمع والإملا)"
  },
  "dea1|Meine Wohnung hat drei Zimmer": {
-  "hash": "f248f3df432f",
-  "date": "2026-11-22",
-  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (والجمل اللي اتسمعت غلط اتعادت صياغتها)، و Chromium 400px (القراية والسمع والإملا)"
+  "hash": "7a54117a9c3a",
+  "date": "2026-11-25",
+  "on": "LanguageTool على كل سطر جديد (٠ ملاحظات غير الأسامي)، و Chatterbox + whisper small على كل ملف صوت جديد بالـ score الجديد اللي بيخصم الكلام الزيادة، و Piper للي Chatterbox كرّره (٨ ملفات)"
  },
  "dea1|Mir geht es nicht gut": {
   "hash": "e9a2d8b7a840",
@@ -5920,9 +5925,9 @@
   "on": "LanguageTool على الأقسام الجديدة (٦٩ سطر، ٠ ملاحظات)، و Piper + whisper small على كل ملف صوت جديد"
  },
  "dea1|Rufen Sie bitte an!": {
-  "hash": "6ae306807b8e",
+  "hash": "709bf9114526",
   "date": "2026-11-25",
-  "on": "الكروت الجديدة: LanguageTool على كل كلمة وجملة، و Piper + whisper small على كل ملف صوت (الجمل اللي صوت kerstin غلط فيها اتنقلت لصوت thorsten واتسمعت تاني)"
+  "on": "LanguageTool على كل سطر جديد (٠ ملاحظات غير الأسامي)، و Chatterbox + whisper small على كل ملف صوت جديد بالـ score الجديد اللي بيخصم الكلام الزيادة، و Piper للي Chatterbox كرّره (٨ ملفات)"
  },
  "dea1|Sein Bruder, ihre Schwester": {
   "hash": "19938c6e500e",
@@ -5988,6 +5993,11 @@
   "hash": "0837b12873d8",
   "date": "2026-11-25",
   "on": "LanguageTool على كل سطر جديد (الكلمات والجمل والأسئلة والقراية)، و Piper + whisper small على كل ملف صوت جديد («Ich lege» اتنقلت لصوت thorsten لأن kerstin قالتها liege)"
+ },
+ "dea1|Wohnen, die Wohnung, der Bewohner": {
+  "hash": "b576bbdee879",
+  "date": "2026-11-25",
+  "on": "LanguageTool على كل سطر جديد (٠ ملاحظات غير الأسامي)، و Chatterbox + whisper small على كل ملف صوت جديد بالـ score الجديد اللي بيخصم الكلام الزيادة، و Piper للي Chatterbox كرّره (٨ ملفات)"
  },
  "diag|/health بيقول 200 والدخول بايظ": {
   "hash": "76dcafffbad3",

@@ -844,6 +844,21 @@ Nicht länger als 7 Tage nehmen. || متاخدوش أكتر من ٧ أيام
 
 **ليه الإجابات كده:** (١) تحت ١٢ ← نص قرص مرتين. (٢) [[nach dem Essen]]. (٣) [[Nicht länger als 7 Tage]] = مش أكتر من ٧ أيام، والأسبوعين ١٤.
 
+## لو …، يبقى …: wenn
+
+~~~de
+Wenn Sie Fieber haben, nehmen Sie eine Tablette. || لو عندك سخونية، خد برشامة.
+Wenn es nicht besser wird, kommen Sie wieder. || لو محصلش تحسن، تعالى تاني.
+Wenn ich Zeit habe, gehe ich schwimmen. || لو عندي وقت، بروح أعوم.
+~~~
+
+[[wenn]] = لو (شرط). والترتيب فيه حاجتين جداد:
+
+1. بعد [[wenn]] **الفعل بيروح آخر الجملة**: [[Wenn Sie Fieber haben]]، [[wenn ich Zeit habe]].
+2. بعد الفاصلة الجملة التانية **بتبدأ بالفعل**: [[…, nehmen Sie eine Tablette]]، [[…, gehe ich schwimmen]].
+
+ده من A2، بس هتسمعه من أول يوم عند الدكتور وفي التعليمات، فخده جمل جاهزة دلوقتي.
+
 ## الكلمات
 
 ~~~words الصيدلية

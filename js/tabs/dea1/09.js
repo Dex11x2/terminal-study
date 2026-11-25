@@ -1282,6 +1282,277 @@ Omar Said
           ],
         },
         {
+          cmd: "Wohnen, die Wohnung, der Bewohner",
+          title: "تبني كلمات: -ung و -er و -in و un- و -los و -bar، والكلمات المركّبة",
+          pre: ["dea1/Meine Wohnung hat drei Zimmer", "dea1/Was sind Sie von Beruf?", "dea1/Wie sagt man das auf Deutsch?"],
+          desc: R`الألماني بيبني كلمات كتير من كلمة واحدة، بقطع ثابتة بتتلزق في الأول أو الآخر. لو عرفت القطع دي، هتفهم كلمات عمرك ما شفتها: [[wohnen]] (يسكن) ← [[die Wohnung]] (الشقة) ← [[der Bewohner]] (الساكن).
+
+الدرس ده بيجمع القطع اللي بتيجي في A1: [[-ung]] و [[-er]] و [[-in]] للأسامي، و [[un-]] و [[-los]] و [[-bar]] للصفات، والكلمات المركّبة ([[Haustür]])، و [[hellblau]]. ومعاهم قاعدة سهلة بتقولك **أداة** الكلمة الجديدة من غير ما تحفظها.`,
+          teach: R`## الفكرة: كلمة واحدة، كلمات كتير
+
+| الفعل | الحاجة (-ung) | الشخص (-er) | الست (-in) |
+|---|---|---|---|
+| [[wohnen]] (يسكن) | [[die Wohnung]] (الشقة) | [[der Bewohner]] (الساكن) | [[die Bewohnerin]] |
+| [[lehren]] (يدرّس) | | [[der Lehrer]] (المدرس) | [[die Lehrerin]] |
+| [[einladen]] (يعزم) | [[die Einladung]] (العزومة) | | |
+| [[spielen]] (يلعب) | | [[der Spieler]] (اللاعب) | [[die Spielerin]] |
+| [[anmelden]] (يسجّل) | [[die Anmeldung]] (التسجيل) | | |
+| [[fahren]] (يسوق) | [[die Fahrt]] (المشوار) | [[der Fahrer]] (السواق) | [[die Fahrerin]] |
+
+كل الكلمات دي اتعلمتها في وحدات مختلفة. الدرس ده بيوريك إنها عيلة واحدة.
+
+## -ung: الحاجة أو العملية، ودايمًا die
+
+الفعل من غير [[-en]] + [[-ung]] = اسم الحاجة. والقاعدة الذهبية: **كل كلمة بتخلص بـ -ung أداتها die**، وجمعها [[-ungen]].
+
+~~~de
+wohnen – die Wohnung || يسكن ← الشقة
+einladen – die Einladung || يعزم ← العزومة
+anmelden – die Anmeldung || يسجّل ← التسجيل
+rechnen – die Rechnung || يحسب ← الفاتورة
+zahlen – die Zahlung || يدفع ← الدفع
+erfahren – die Erfahrung || يعرف بالتجربة ← الخبرة
+~~~
+
+## -er: الشخص أو الحاجة اللي بتعمل، ودايمًا der
+
+الفعل من غير [[-en]] + [[-er]] = اللي بيعمل الفعل. أداته **der**، وجمعه زي المفرد: [[der Lehrer, die Lehrer]].
+
+~~~de
+lehren – der Lehrer || يدرّس ← المدرس
+spielen – der Spieler || يلعب ← اللاعب
+arbeiten – der Arbeiter || يشتغل ← العامل
+besuchen – der Besucher || يزور ← الزائر
+drucken – der Drucker || يطبع ← الطابعة
+verkaufen – der Verkäufer || يبيع ← البياع
+~~~
+
+- [[der Drucker]] حاجة مش شخص، بس نفس القاعدة: **اللي بيطبع**.
+- أحيانًا بتيجي نقطتين: [[verkaufen]] ← [[Verkäufer]]، و [[backen]] ← [[Bäcker]].
+- وللست زوّد [[-in]] (اتعلمتها في وحدة الشغل): [[die Lehrerin]]، [[die Verkäuferin]]، وجمعها [[-innen]].
+
+## الكلمات المركّبة: آخر كلمة هي اللي بتحكم
+
+الألماني بيلزق كلمتين أو أكتر في كلمة واحدة. **الأداة والمعنى الأساسي من آخر كلمة**، والأولانية بتوصفها:
+
+| الكلمة | من | الأداة من |
+|---|---|---|
+| [[die Haustür]] (باب البيت) | [[das Haus]] + [[die Tür]] | [[die Tür]] |
+| [[der Zahnarzt]] (دكتور السنان) | [[der Zahn]] + [[der Arzt]] | [[der Arzt]] |
+| [[das Passfoto]] (صورة الباسبور) | [[der Pass]] + [[das Foto]] | [[das Foto]] |
+| [[die Reisegruppe]] (مجموعة سفر) | [[reisen]] + [[die Gruppe]] | [[die Gruppe]] |
+| [[das Wohnzimmer]] (الصالة) | [[wohnen]] + [[das Zimmer]] | [[das Zimmer]] |
+
+فلو قابلت كلمة طويلة مش عارفها، **قطّعها من الآخر**: [[Fahrkartenautomat]] = [[Fahrkarte]] (تذكرة) + [[Automat]] (مكنة) = مكنة التذاكر، وأداتها [[der]] من [[der Automat]].
+
+## un-: العكس
+
+[[un-]] في أول الصفة بيعكس معناها، زي «غير» بالعربي:
+
+~~~de
+bekannt – unbekannt || معروف ← مش معروف
+freundlich – unfreundlich || لطيف ← مش لطيف
+möglich – unmöglich || ممكن ← مستحيل
+glücklich – unglücklich || سعيد ← تعيس
+~~~
+
+## -los و -bar: من غير، وينفع
+
+| | المعنى | مثال |
+|---|---|---|
+| [[-los]] | **من غير** | [[die Arbeit]] ← [[arbeitslos]] (من غير شغل)، [[kosten]] ← [[kostenlos]] (ببلاش) |
+| [[-bar]] | **ينفع يتعمل** | [[erreichen]] ← [[erreichbar]] (ينفع توصله)، [[zahlen]] ← [[zahlbar]] (ينفع يتدفع) |
+
+~~~de
+Er ist seit zwei Monaten arbeitslos. || هو من غير شغل من شهرين.
+Der Eintritt ist kostenlos. || الدخول ببلاش.
+Ich bin morgen nicht erreichbar. || مش هتعرف توصلّي بكرة.
+~~~
+
+## الألوان: فاتح وغامق
+
+[[hell]] (فاتح) و [[dunkel]] (غامق) بيتلزقوا في اللون، كلمة واحدة:
+
+~~~de
+Die Jacke ist hellblau. || الجاكيت لبني (أزرق فاتح).
+Das Auto ist dunkelgrün. || العربية خضرا غامق.
+~~~
+
+## من صفة لاسم: der Reisende و die Reisende
+
+فيه أسامي أصلها صفة أو فعل، وبتتغيّر زي الصفة: [[reisen]] ← [[der Reisende]] (المسافر، راجل) و [[die Reisende]] (مسافرة)، و [[ein Reisender]]، والجمع [[die Reisenden]]. وإنت شفت كام واحد زيهم قبل كده: [[der Jugendliche]]، و [[der Verwandte]]، و [[der Erwachsene]]، و [[der/die Deutsche]] (ألماني/ة).
+
+~~~de
+Liebe Reisende, der Zug hat zehn Minuten Verspätung. || حضرات المسافرين، القطر متأخر ١٠ دقايق.
+Erwachsene zahlen zehn Euro, Kinder fünf. || الكبار بيدفعوا ١٠ يورو، والعيال ٥.
+~~~
+
+[[Liebe Reisende]] هتسمعها كتير في المحطة والمطار. في A1 كفاية إنك تعرفها لما تسمعها.
+
+## الكلمات
+
+~~~words تبني كلمات
+die Wohnung, die Wohnungen | الشقة (من wohnen) | Die Wohnung ist schön.
+der Bewohner, die Bewohner | الساكن | m: Alle Bewohner haben einen Schlüssel.
+die Zahlung, die Zahlungen | الدفع | Die Zahlung ist per Karte möglich.
+die Erfahrung, die Erfahrungen | الخبرة | m: Ich habe viel Erfahrung.
+der Spieler, die Spieler | اللاعب | Der Spieler ist sehr gut.
+der Verkäufer, die Verkäufer | البياع | m: Der Verkäufer ist nett.
+unbekannt | مش معروف | Die Nummer ist unbekannt.
+unfreundlich | مش لطيف | m: Der Kellner war unfreundlich.
+unmöglich | مستحيل | Das ist unmöglich!
+arbeitslos | من غير شغل | m: Er ist seit einem Monat arbeitslos.
+kostenlos | ببلاش | Der Eintritt ist kostenlos.
+erreichbar | ينفع توصله | m: Ich bin immer erreichbar.
+hellblau | أزرق فاتح | Das Hemd ist hellblau.
+dunkel | غامق، ضلمة | m: Das Zimmer ist sehr dunkel.
+der Reisende, die Reisenden | المسافر | Alle Reisenden steigen aus.
+~~~
+
+## اقرا: إعلان شغل
+
+~~~read Stellenanzeige
+Café Mona sucht Verkäuferinnen und Verkäufer! || كافيه منى بيدوّر على بياعين وبياعات!
+Sie haben Erfahrung im Verkauf? Sie sind freundlich und immer pünktlich? || عندك خبرة في البيع؟ لطيف ومواعيدك مظبوطة؟
+Arbeitszeit: Montag bis Freitag, 7 bis 13 Uhr. || مواعيد الشغل: الاتنين للجمعة من ٧ لـ ١.
+Das Mittagessen ist für Mitarbeiter kostenlos. || الغدا ببلاش للموظفين.
+Bewerbung per E-Mail. Wir sind auch telefonisch erreichbar. || التقديم بالإيميل. وتقدر تكلمنا في التليفون كمان.
+? Das Café sucht Lehrer. || الكافيه بيدوّر على مدرسين
+- Richtig
+- Falsch *
+? Die Mitarbeiter bezahlen das Mittagessen nicht. || الموظفين مش بيدفعوا الغدا
+- Richtig *
+- Falsch
+? Man kann das Café anrufen. || ينفع تكلّم الكافيه
+- Richtig *
+- Falsch
+~~~
+
+في السؤال التاني [[kostenlos]] = ببلاش = مش بيدفعوا. وفي التالت [[telefonisch erreichbar]] = ينفع توصلهم بالتليفون. وكلمة [[Arbeitszeit]] = [[Arbeit]] + [[Zeit]]، وأداتها [[die]] من [[die Zeit]]. والـ [[s]] اللي في النص بتلزق الكلمتين وبس، ملهاش معنى.
+
+## قول بصوتك
+
+~~~speak
+Die Wohnung hat einen Balkon. || الشقة فيها بلكونة.
+Der Eintritt ist kostenlos. || الدخول ببلاش.
+Das ist leider unmöglich. || ده للأسف مستحيل.
+Ich bin ab Montag wieder erreichbar. || هتعرف توصلّي من الاتنين.
+Die Jacke ist hellblau. || الجاكيت لبني.
+~~~
+
+## سمع: يعني إيه؟
+
+~~~hear Frau=f Mann=m
+Mann: Wie war der neue Kellner?
+Frau: Leider sehr unfreundlich. Er hat nicht einmal Guten Tag gesagt.
+? Wie war der Kellner? || الجرسون كان عامل إزاي؟
+- nett
+- nicht freundlich *
+- neu im Café
+
+Frau: Kostet das Museum etwas?
+Mann: Nein, am Sonntag ist der Eintritt kostenlos.
+? Was kostet das Museum am Sonntag? || المتحف بكام يوم الحد؟
+- nichts *
+- fünf Euro
+- zehn Euro
+
+Mann: Warum arbeitet dein Bruder nicht?
+Frau: Er ist seit März arbeitslos. Er sucht eine neue Stelle.
+? Was ist richtig? || إيه الصح؟
+- Er hat keine Arbeit. *
+- Er arbeitet seit März.
+- Er hat eine neue Stelle.
+~~~
+
+## إملا
+
+~~~dictate
+Die Wohnung ist schön.
+f: Der Eintritt ist kostenlos.
+Das ist unmöglich.
+f: Ich bin immer erreichbar.
+~~~`,
+          deep: {
+            why: R`مش هتلحق تحفظ كل كلمة لوحدها. بس لو عرفت القطع دي، كل كلمة جديدة بتفتحلك ٣ أو ٤ كلمات. وقايمة Goethe A1 فيها «Wortbildung» بالاسم: [[-er]] و [[-ung]] و [[-in]]، والكلمات المركّبة، و [[un-]]/[[-los]]/[[-bar]]، و [[hellblau]]، و [[der Reisende]]. وفي الامتحان، Lesen مليان كلمات مركّبة طويلة، واللي بيعرف يقطّعها بيفهمها من غير قاموس.`,
+            how: R`فعل + [[-ung]] ← اسم الحاجة، و **die** دايمًا. فعل + [[-er]] ← اللي بيعمل، و **der** دايمًا، و + [[-in]] للست. الكلمة المركّبة: الأداة من **آخر** كلمة. [[un-]] = عكس، [[-los]] = من غير، [[-bar]] = ينفع. [[hell-]]/[[dunkel-]] + لون. وصفة أو فعل كاسم بيتغيّر زي الصفة: [[der Reisende]]، [[ein Reisender]].`,
+            when: R`لما تقابل كلمة طويلة: قطّعها من الآخر ودوّر على القطع اللي تعرفها. ولما تحتاج كلمة مش عارفها: جرّب تبنيها ([[Abfahrtszeit]] = [[Abfahrt]] + [[Zeit]])، والألماني غالبًا هيفهمك.`,
+            mistakes: R`- [[der Wohnung]]: كل [[-ung]] أداتها [[die]].
+- [[die Lehrer]] للست: الست [[die Lehrerin]]، و [[die Lehrer]] جمع.
+- [[das Haustür]]: الأداة من آخر كلمة ← [[die Haustür]].
+- [[nicht möglich]] صح، بس [[unmöglich]] أقوى (مستحيل).
+- [[kostenlos]] مش «costless» بمعنى رخيص: معناها ببلاش.
+- [[hell blau]] بمسافة: كلمة واحدة [[hellblau]].`
+          },
+          try: R`خد ٥ أفعال من اللي اتعلمتهم ([[spielen]]، [[fahren]]، [[besuchen]]، [[wohnen]]، [[einladen]]) وابني منهم كل الكلمات اللي تقدر عليها (-ung، -er، -in)، وقول كل واحدة بأداتها بصوت عالي.`,
+          practice: [
+            { lvl: 'سريع', t: R`**ابني الكلمة بأداتها:** (١) wohnen + -ung (٢) lehren + -er (٣) die Lehrerin لراجل؟ (٤) anmelden + -ung (٥) spielen + -er + -in (٦) besuchen + -er`,
+              done: R`الستة صح بالأداة: die مع -ung، و der مع -er، و die مع -in`,
+              sol: R`~~~text
+die Wohnung
+der Lehrer
+der Lehrer
+die Anmeldung
+die Spielerin
+der Besucher
+~~~
+
+**ليه:** [[-ung]] دايمًا [[die]] ([[die Wohnung]]، [[die Anmeldung]]). [[-er]] دايمًا [[der]] ([[der Lehrer]]، [[der Besucher]]). و [[-in]] بيخلّي الكلمة مؤنث: [[die Spielerin]]. وفي (٣) العكس: [[die Lehrerin]] من غير [[-in]] ← [[der Lehrer]].` },
+            { lvl: 'سريع', t: R`**أداة الكلمة المركّبة:** (١) Haus + Tür (٢) Kinder + Garten (٣) Bus + Haltestelle (٤) Telefon + Nummer (٥) Hand + Tasche (٦) Geburts + Tag`,
+              done: R`الستة صح، والأداة من آخر كلمة في كل واحدة`,
+              sol: R`~~~text
+die Haustür          (die Tür)
+der Kindergarten     (der Garten)
+die Bushaltestelle   (die Haltestelle)
+die Telefonnummer    (die Nummer)
+die Handtasche       (die Tasche)
+der Geburtstag       (der Tag)
+~~~
+
+**ليه:** الأداة دايمًا من **آخر** كلمة، والأولى بس بتوصفها: [[Kindergarten]] «جنينة» (للعيال)، فـ [[der]] زي [[der Garten]]. و [[Haustür]] «باب» (البيت)، فـ [[die]] زي [[die Tür]]. **الغلطة الشائعة:** تاخد أداة أول كلمة ([[das Haus]] ← «das Haustür»).` },
+            { lvl: 'تطبيق', t: R`**un- و -los و -bar:** كمّل بالكلمة المناسبة: (١) Das Museum kostet nichts. Der Eintritt ist ___. (٢) Er hat keine Arbeit. Er ist ___. (٣) Den Mann kenne ich nicht. Er ist mir ___. (٤) Du kannst mich immer anrufen. Ich bin immer ___. (٥) Das geht nicht! Das ist ___!`,
+              done: R`الخمسة صح، وكل واحدة من القطعة المناسبة`,
+              sol: R`~~~de
+Das Museum kostet nichts. Der Eintritt ist kostenlos.
+Er hat keine Arbeit. Er ist arbeitslos.
+Den Mann kenne ich nicht. Er ist mir unbekannt.
+Du kannst mich immer anrufen. Ich bin immer erreichbar.
+Das geht nicht! Das ist unmöglich!
+~~~
+
+**ليه:** «من غير فلوس» ← [[kosten]] + [[-los]]. «من غير شغل» ← [[Arbeit]] + [[-los]]. «مش معروف» ← [[un-]] + [[bekannt]]. «ينفع توصله» ← [[erreichen]] + [[-bar]]. «مش ممكن» ← [[un-]] + [[möglich]].` },
+            { lvl: 'تطبيق', t: R`**قطّع وافهم:** الكلمات دي مشفتهاش قبل كده. قطّعها، وقول معناها وأداتها: (١) die Abfahrtszeit (٢) das Kinderzimmer (٣) der Sprachkurs (٤) die Wohnungstür (٥) der Fahrkartenautomat`,
+              done: R`الخمسة مقطّعين صح، ومعنى مفهوم، والأداة من آخر جزء`,
+              sol: R`~~~text
+die Abfahrtszeit      = Abfahrt + Zeit          ميعاد القيام
+das Kinderzimmer      = Kinder + Zimmer         أوضة العيال
+der Sprachkurs        = Sprache + Kurs          كورس لغة
+die Wohnungstür       = Wohnung + Tür           باب الشقة
+der Fahrkartenautomat = Fahrkarte + Automat     مكنة التذاكر
+~~~
+
+**ليه:** في كل كلمة الجزء الأخير هو «الحاجة نفسها» وأداتها، واللي قبله بيقول «أنهي واحد». و [[s]] في [[Abfahrtszeit]] و [[Wohnungstür]] حرف لزق بس. و [[Sprache]] بتفقد [[e]] في [[Sprachkurs]]. مش لازم تحفظ القواعد دي، كفاية تعرف تقطّع.` },
+            { lvl: 'تحدي', t: R`**إعلان بنفسك:** اكتب إعلان شغل قصير (٤–٥ جمل) لمحل أو مطعم، تستخدم فيه ٦ كلمات على الأقل من الدرس: واحدة بـ [[-ung]]، وواحدة بـ [[-er]] أو [[-in]]، وكلمة مركّبة، وواحدة بـ [[un-]] أو [[-los]] أو [[-bar]].`,
+              done: R`٤–٥ جمل، و ٦ كلمات من الأنواع المطلوبة، وكل اسم بأداته الصح`,
+              sol: R`**نسخة نموذجية:**
+
+~~~de
+Die Bäckerei Sonne sucht eine Verkäuferin oder einen Verkäufer.
+Sie haben Erfahrung und sind nie unfreundlich?
+Die Arbeitszeit ist von sechs bis zwölf Uhr.
+Kaffee und Brötchen sind für Mitarbeiter kostenlos.
+Wir sind ab acht Uhr telefonisch erreichbar.
+~~~
+
+**ليه:** [[Erfahrung]] (-ung، [[die]])، و [[Verkäuferin]]/[[Verkäufer]] (-er و -in)، و [[Bäckerei]] و [[Arbeitszeit]] (مركّبة: [[die Zeit]] ← [[die Arbeitszeit]])، و [[unfreundlich]] و [[kostenlos]] و [[erreichbar]]. و [[eine Verkäuferin oder einen Verkäufer]] Akkusativ بعد [[suchen]].` },
+          ],
+          ref: [
+            { t: "Goethe-Zertifikat A1: Wortbildung (Nomen auf -er und -ung، -in، Komposita، Partizip als Nomen، un-/-los/-bar، Farbkomposita)", url: "https://goethe.de/pro/relaunch/prf/et/Pruefungsziele_Testbeschreibung_A1_SD1.pdf" },
+            { t: "DWDS: -ung", url: "https://www.dwds.de/wb/-ung" },
+            { t: "DWDS: -los", url: "https://www.dwds.de/wb/-los" },
+          ],
+        },
+        {
           cmd: "Prüfung: formeller Brief, Hören Teil 3, Sprechen Teil 2",
           title: "تدريب الامتحان: رسالة رسمية، ورسايل المصالح، وكروت الخدمات، ويوم الامتحان",
           pre: ["dea1/Prüfung: Schreiben Teil 2, Hören Teil 3, Sprechen Teil 2", "dea1/Wie sagt man das auf Deutsch?"],

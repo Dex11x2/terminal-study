@@ -5,31 +5,16 @@
 | النوع | متغطي | ناقص | مستبعد | النسبة |
 |---|---|---|---|---|
 | أجزاء الامتحانات | 41 | 0 | 1 | 100٪ |
-| القواعد | 57 | 8 | 0 | 88٪ |
-| مجموعات الكلمات | 19 | 1 | 0 | 95٪ |
+| القواعد | 65 | 0 | 0 | 100٪ |
+| مجموعات الكلمات | 20 | 0 | 0 | 100٪ |
 | المواضيع | 42 | 6 | 0 | 88٪ |
 | أفعال الكلام (Sprechhandlungen) | 47 | 1 | 0 | 98٪ |
-| المفاهيم (Notionen) | 23 | 4 | 0 | 85٪ |
+| المفاهيم (Notionen) | 27 | 0 | 0 | 100٪ |
 | استراتيجيات الكلام | 14 | 1 | 0 | 93٪ |
 | مواقف منهج الاندماج | 128 | 57 | 0 | 69٪ |
 | جمل CEFR | 76 | 25 | 1 | 75٪ |
-| الكلمات | 565 (+177 مذكورة من غير كارت) | 0 | 0 | 76٪ |
-| **الكل** | **1012** | | | **78٪** |
-
-## ناقص: القواعد (8)
-
-- über (über 20 Minuten) — «über» للوقت (über 20 Minuten) مش مشروح
-- unter + Dativ (unter der Nummer) — «unter der Nummer» مش موجودة
-- aus + Dativ (aus Plastik) — «aus» للخامة (aus Plastik، aus Holz) مش موجودة
-- ohne + Akkusativ (ohne Hilfe) — «ohne» كحرف جر (ohne Milch) مش مشروح
-- Nomen auf -er (Arbeiter) und -ung (Wohnung) — تكوين الأسماء بـ -er و -ung مش مشروح كقاعدة
-- Partizip als Nomen (Reisender) — Reisende/Reisender مذكورة مرة في امتحان بس
-- Adjektive mit un-, -los, -bar (unbekannt, arbeitslos, erreichbar) — un- و -los و -bar مش موجودين
-- Farbkomposita (hellblau, dunkelblau) — hellblau و dunkelblau مش موجودين
-
-## ناقص: مجموعات الكلمات (1)
-
-- Meter, Zentimeter, Kilometer, Quadratmeter — Meter و Zentimeter و Kilometer و Quadratmeter مش متعلّمين
+| الكلمات | 566 (+176 مذكورة من غير كارت) | 0 | 0 | 76٪ |
+| **الكل** | **1026** | | | **79٪** |
 
 ## ناقص: المواضيع (6)
 
@@ -43,13 +28,6 @@
 ## ناقص: أفعال الكلام (Sprechhandlungen) (1)
 
 - Zweck und Bestimmung angeben — «wofür / für …» للغرض مش مشروح
-
-## ناقص: المفاهيم (Notionen) (4)
-
-- anwesend/abwesend sein — da / nicht da / anwesend مش متعلّمة
-- Inklusion/Exklusion — mit / ohne / inklusive للتضمين مش مشروحة
-- Dimension/Maßangabe — groß/klein/lang/breit مع المقاسات مش مشروحة
-- Bedingung — «wenn» للشرط مش مشروحة
 
 ## ناقص: استراتيجيات الكلام (1)
 
@@ -143,9 +121,9 @@
 - Facilitating communication in delicate situations and disagreements — يلاحظ إن فيه خلاف أو حد عنده مشكلة، ويقول جملة محفوظة («فاهمك»، «إنت كويس؟») — Mediation مش متمرّن عليها
 - Building on plurilingual repertoire — يستخدم كلمات من لغات مختلفة عشان يخلّص حاجة بسيطة جدًا مع حد متعاون — استخدام كذا لغة مع بعض مش متعلّم
 
-## كلمات مذكورة من غير كارت (177)
+## كلمات مذكورة من غير كارت (176)
 
-ab، aber، das Alter، an، ander-، ankreuzen، die Anrede، der Anruf, -e، antworten، der Arbeitsplatz, -ä, e، auch، auf، aufhören، aus، der Ausflug، ausmachen، die Aussage, -n، (sich) ausziehen، baden، die Bahn، bald، bedeuten، beginnen، bei، das Beispiel, -e، bekommen، benutzen، besetzt، bis، bisschen، bitten، das Buch, -ü, er، circa/ca.، da، der Dank، dein-، der, die, das، dich، dir، dort, -her, -hin، draußen، durch، die Durchsage, -n، (sich) duschen، einfach، der Eingang، einmal، der Eintritt، die E-Mail, -s، das Ende، er، der Erwachsene, -n، es، euer، fertig، der Film, -e، das Foto, -s، die Freizeit، früher، für، der Fußball، der Gast, -ä, e، geboren، der Geburtsort، gerade، das Gespräch, -e، gleich، grillen، gültig، hallo، die Hausfrau, -en/، der Hausmann، hier، hinten، das Hobby, -s، hören، der Hund, -e، ich، ihr/ihm/ihn، in، ja، jed-، kaputt، kennenlernen، der Kindergarten، klar، die Klasse، lange، laufen، lernen، lesen، Lieblings-، das Lokal، machen، man، mein، mitnehmen، der Moment، nächst-، nein، normal، nur، oder، öffnen، der Ort, -e، das Papier، die Postleitzahl، das Problem, -e، der Raum, -ä, e، reparieren، die Reparatur، die Rezeption، sagen، Satz, -ä, e، scheinen، das Schild, -er، schließen، schon، schwimmen، das Schwimmbad، sehen، sehr، weg sein، sich، sie، Sie، so، später، spielen، der Teil, -e، telefonieren، der Test، der Text, -e، das Thema، tschüss، tun، übernachten، um، unser-، der Unterricht، verkaufen، viel، vielleicht، von، (sich) vorstellen، wann، warum، was، was für ein، (sich) waschen، wenig، wer، wichtig، das Wiederhören، das Wiedersehen، wie viel، wir، die Zeitung, -en، der Zoll، zu، zurück، passend، die Situation, die Situationen، das Kreuz, die Kreuze، wählen، zweimal، die Fahrt, die Fahrten، die Medizin، kostenlos، der Besuch, die Besuche، die Idee, die Ideen، wieder، sonst، die Person, die Personen، voll، zeigen، verschieden
+ab، aber، das Alter، an، ander-، ankreuzen، die Anrede، der Anruf, -e، antworten، der Arbeitsplatz, -ä, e، auch، auf، aufhören، aus، der Ausflug، ausmachen، die Aussage, -n، (sich) ausziehen، baden، die Bahn، bald، bedeuten، beginnen، bei، das Beispiel, -e، bekommen، benutzen، besetzt، bis، bisschen، bitten، das Buch, -ü, er، circa/ca.، da، der Dank، dein-، der, die, das، dich، dir، dort, -her, -hin، draußen، durch، die Durchsage, -n، (sich) duschen، einfach، der Eingang، einmal، der Eintritt، die E-Mail, -s، das Ende، er، der Erwachsene, -n، es، euer، fertig، der Film, -e، das Foto, -s، die Freizeit، früher، für، der Fußball، der Gast, -ä, e، geboren، der Geburtsort، gerade، das Gespräch, -e، gleich، grillen، gültig، hallo، die Hausfrau, -en/، der Hausmann، hier، hinten، das Hobby, -s، hören، der Hund, -e، ich، ihr/ihm/ihn، in، ja، jed-، kaputt، kennenlernen، der Kindergarten، klar، die Klasse، lange، laufen، lernen، lesen، Lieblings-، das Lokal، machen، man، mein، mitnehmen، der Moment، nächst-، nein، normal، nur، oder، öffnen، der Ort, -e، das Papier، die Postleitzahl، das Problem, -e، der Raum, -ä, e، reparieren، die Reparatur، die Rezeption، sagen، Satz, -ä, e، scheinen، das Schild, -er، schließen، schon، schwimmen، das Schwimmbad، sehen، sehr، weg sein، sich، sie، Sie، so، später، spielen، der Teil, -e، telefonieren، der Test، der Text, -e، das Thema، tschüss، tun، übernachten، um، unser-، der Unterricht، verkaufen، viel، vielleicht، von، (sich) vorstellen، wann، warum، was، was für ein، (sich) waschen، wenig، wer، wichtig، das Wiederhören، das Wiedersehen، wie viel، wir، die Zeitung, -en، der Zoll، zu، zurück، passend، die Situation, die Situationen، das Kreuz, die Kreuze، wählen، zweimal، die Fahrt, die Fahrten، die Medizin، der Besuch, die Besuche، die Idee, die Ideen، wieder، sonst، die Person, die Personen، voll، zeigen، verschieden
 
 ## مستبعد (2)
 

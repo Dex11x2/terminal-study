@@ -396,6 +396,16 @@ Ich brauche zwanzig Minuten. || باخد ٢٠ دقيقة.
 - [[dauern]] للحاجة: [[Die Fahrt dauert …]]. و [[brauchen]] للشخص: [[Ich brauche …]].
 - [[eine halbe Stunde]] = نص ساعة، و [[eine Viertelstunde]] = ربع ساعة، و [[anderthalb Stunden]] = ساعة ونص.
 
+## أكتر وأقل من رقم: über و unter
+
+~~~de
+Die Fahrt dauert über zwanzig Minuten. || المشوار بياخد أكتر من ٢٠ دقيقة.
+Kinder unter sechs Jahren fahren kostenlos. || العيال اللي أقل من ٦ سنين بيركبوا ببلاش.
+Das Ticket kostet unter zehn Euro. || التذكرة بأقل من ١٠ يورو.
+~~~
+
+مع الأرقام [[über]] = **أكتر من**، و [[unter]] = **أقل من**. هتشوفهم كتير على اليافطات والأسعار: [[Kinder unter 14 Jahren]] (أقل من ١٤)، و [[über 18]] (فوق ١٨). وده نفس [[über]] و [[unter]] اللي معناهم فوق وتحت.
+
 ## الكلمات
 
 ~~~words المواصلات

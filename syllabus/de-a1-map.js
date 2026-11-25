@@ -4,7 +4,7 @@
 // «gap» = known hole (evidence = what's missing), «skip» = doesn't apply (evidence = why).
 // evidence: a case-insensitive regex that must really be in that lesson, or the item counts as missing.
 const units = [
-  ['Hallo! Guten Tag!', 'Ich heiße …', 'Das Alphabet', 'Ich komme aus …', 'Die Zahlen 0–100', 'Prüfung: Sprechen Teil 1'],
+  ['Hallo! Guten Tag!', 'Ich heiße …', 'Das Alphabet', 'Die Aussprache', 'Ich komme aus …', 'Die Zahlen 0–100', 'Prüfung: Sprechen Teil 1'],
   ['Wie spät ist es?', 'Am Montag um acht', 'Im Januar, im Sommer', 'Ich stehe um sieben Uhr auf', 'Hast du am Samstag Zeit?', 'Prüfung: Hören Teil 3, Schreiben Teil 2'],
   ['Ich esse gern Fisch', 'Ich möchte einen Kaffee', 'Wo finde ich Reis?', 'Was kostet das?', 'Die Rechnung, bitte!', 'Prüfung: Sprechen Teil 2 und 3, Hören Teil 2'],
   ['Das ist meine Mutter', 'Hast du Geschwister?', 'Sein Bruder, ihre Schwester', 'Wie sieht sie aus?', 'Herzlichen Glückwunsch!', 'Das gefällt mir!', 'Ach so! Stimmt genau.', 'Prüfung: Lesen Teil 1, Hören Teil 1'],
@@ -12,7 +12,7 @@ const units = [
   ['Was sind Sie von Beruf?', 'Ich arbeite von acht bis fünf', 'Rufen Sie bitte an!', 'Ich will Ärztin werden', 'Was hast du gestern gemacht?', 'Prüfung: Schreiben Teil 2, Hören Teil 3, Sprechen Teil 2'],
   ['Mir geht es nicht gut', 'Ich brauche einen Termin', 'Seit wann haben Sie das?', 'Dreimal am Tag nach dem Essen', 'Ruf schnell einen Krankenwagen!', 'Prüfung: Hören Teil 1, Lesen Teil 3, Sprechen Teil 3'],
   ['Wie komme ich zum Bahnhof?', 'Ich fahre mit dem Bus', 'Eine Fahrkarte nach Hamburg, bitte', 'Wohin gehst du? Ins Kino', 'Wie ist das Wetter?', 'Der Zug ist schneller als der Bus', 'Prüfung: Hören Teil 2, Lesen Teil 2, Schreiben Teil 1'],
-  ['Ich möchte mich anmelden', 'Ich würde gern ein Konto eröffnen', 'Dieses Paket geht nach Ägypten', 'Gehört das Ihnen?', 'Wie sagt man das auf Deutsch?', 'Prüfung: formeller Brief, Hören Teil 3, Sprechen Teil 2'],
+  ['Ich möchte mich anmelden', 'Ich würde gern ein Konto eröffnen', 'Dieses Paket geht nach Ägypten', 'Gehört das Ihnen?', 'Wie sagt man das auf Deutsch?', 'Wohnen, die Wohnung, der Bewohner', 'Prüfung: formeller Brief, Hören Teil 3, Sprechen Teil 2'],
   ['Modelltest 1', 'Modelltest 2', 'Modelltest 3', 'Modelltest 4: ÖSD', 'Modelltest 5: telc'],
 ];
 const alias = {};
@@ -27,11 +27,11 @@ exam:lesen-2 | 5.7 | Teil 2
 exam:lesen-3 | 5.7 | Teil 3
 exam:schreiben-1 | 8.7 | Schreiben Teil 1
 exam:schreiben-2 | 2.6 | Schreiben Teil 2
-exam:sprechen-1 | 1.6 | Sprechen Teil 1
+exam:sprechen-1 | 1.7 | Sprechen Teil 1
 exam:sprechen-2 | 3.6 | Teil 2
 exam:sprechen-3 | 3.6 | Teil 3
 exam:bewertung-schreiben | 2.6 | Bewertung|Kriterien
-exam:bewertung-sprechen | 1.6 | درج|نقط
+exam:bewertung-sprechen | 1.7 | درج|نقط
 exam:bestehen | 10.1 | ٦٠|60
 exam:osd-lesen-1 | 10.4 | ÖSD Lesen Aufgabe 1
 exam:osd-lesen-2 | 10.4 | ÖSD Lesen Aufgabe 2
@@ -97,36 +97,36 @@ grammar:praposition-temporal-ab-dativ-ab-februar | 2.3 | \bab\b
 grammar:praposition-temporal-fur-akkusativ-fur-drei-wochen | 7.4 | für (drei|zwei|eine)
 grammar:praposition-temporal-in-dativ-im-sommer | 2.3 | im Sommer
 grammar:praposition-temporal-nach-dativ-nach-dem-essen | 7.4 | nach dem Essen
-grammar:praposition-temporal-uber-uber-20-minuten | gap | «über» للوقت (über 20 Minuten) مش مشروح
+grammar:praposition-temporal-uber-uber-20-minuten | 8.2 | über zwanzig Minuten
 grammar:praposition-temporal-um-um-halb-sieben | 2.1 | um halb
 grammar:praposition-temporal-von-bis | 6.2 | von .{1,20} bis
 grammar:praposition-temporal-vor-dativ-vor-dem-konzert | 7.4 | vor dem
 grammar:praposition-lokal-an-dativ-akkusativ | 5.5 | an die Wand
 grammar:praposition-lokal-auf-dativ | 5.2 | auf dem
-grammar:praposition-lokal-aus-dativ-aus-italien | 1.4 | aus
+grammar:praposition-lokal-aus-dativ-aus-italien | 1.5 | aus
 grammar:praposition-lokal-bei-dativ-bei-familie-muller | 6.1 | \bbei\b
 grammar:praposition-lokal-in-dativ-akkusativ-im-park-in-die-stadt | 5.5 | in die Küche
 grammar:praposition-lokal-nach-landernamen-nach-paris | 8.3 | nach Hamburg
 grammar:praposition-lokal-von-nach | 8.4 | von .{1,25} nach
-grammar:praposition-lokal-unter-dativ-unter-der-nummer | gap | «unter der Nummer» مش موجودة
+grammar:praposition-lokal-unter-dativ-unter-der-nummer | 6.3 | unter der Nummer
 grammar:praposition-lokal-zu-dativ-zur-schule | 8.1 | zum Bahnhof
-grammar:praposition-modal-aus-dativ-aus-plastik | gap | «aus» للخامة (aus Plastik، aus Holz) مش موجودة
+grammar:praposition-modal-aus-dativ-aus-plastik | 5.2 | aus Plastik
 grammar:praposition-modal-fur-akkusativ-fur-dich | 4.5 | für (dich|mich|Sie)
 grammar:praposition-modal-mit-dativ-mit-dem-auto | 8.2 | mit dem
-grammar:praposition-modal-ohne-akkusativ-ohne-hilfe | gap | «ohne» كحرف جر (ohne Milch) مش مشروح
+grammar:praposition-modal-ohne-akkusativ-ohne-hilfe | 3.2 | ohne Zucker
 grammar:syntax-verbzweitstellung | 2.2 | Am Montag (gehe|habe|arbeite|ist|bin)
 grammar:syntax-verberganzung-nominativ-akkusativ-dativ-danken-gehoren-geben-helfen-lokal-qualitativerganzung | 5.4 | helfen
 grammar:syntax-satzklammer-trennbare-verben-modalverb-infinitiv-perfekt | 2.4 | Satzklammer
 grammar:syntax-negation-mit-nicht-und-kein | 3.3 | nicht
-grammar:syntax-entscheidungsfrage-ja-nein | 1.4 | Kommst du|Sprechen Sie
+grammar:syntax-entscheidungsfrage-ja-nein | 1.5 | Kommst du|Sprechen Sie
 grammar:syntax-erganzungsfrage-w-fragen | 1.2 | Wie heißen
 grammar:syntax-satzverbindungen-und-oder-aber-denn-dann | 9.5 | \bdenn\b
-grammar:wortbildung-nomen-auf-er-arbeiter-und-ung-wohnung | gap | تكوين الأسماء بـ -er و -ung مش مشروح كقاعدة
+grammar:wortbildung-nomen-auf-er-arbeiter-und-ung-wohnung | 9.6 | -ung: الحاجة أو العملية
 grammar:wortbildung-feminine-formen-auf-in-kollegin | 6.1 | -in
-grammar:wortbildung-komposita-reisegruppe-zahnarzt-passfoto | 5.1 | Komposit|كلمتين|كلمة مركبة
-grammar:wortbildung-partizip-als-nomen-reisender | gap | Reisende/Reisender مذكورة مرة في امتحان بس
-grammar:wortbildung-adjektive-mit-un-los-bar-unbekannt-arbeitslos-erreichbar | gap | un- و -los و -bar مش موجودين
-grammar:wortbildung-farbkomposita-hellblau-dunkelblau | gap | hellblau و dunkelblau مش موجودين
+grammar:wortbildung-komposita-reisegruppe-zahnarzt-passfoto | 9.6 | Reisegruppe
+grammar:wortbildung-partizip-als-nomen-reisender | 9.6 | der Reisende
+grammar:wortbildung-adjektive-mit-un-los-bar-unbekannt-arbeitslos-erreichbar | 9.6 | arbeitslos
+grammar:wortbildung-farbkomposita-hellblau-dunkelblau | 9.6 | hellblau
 
 # ── word groups ──
 group:zahlen-grundzahlen-0-100-hundert-tausend-million-milliarde | 2.3 | tausend
@@ -142,25 +142,25 @@ group:tageszeiten-der-morgen-der-vormittag-der-mittag-der-nachmittag-der-abend-d
 group:monate-januar-bis-dezember | 2.3 | Januar
 group:jahreszeiten-der-fruhling-das-fruhjahr-der-sommer-der-herbst-der-winter | 2.3 | Herbst
 group:wahrungen-euro-cent | 3.4 | Cent
-group:masse-und-gewichte-meter-zentimeter-kilometer-quadratmeter | gap | Meter و Zentimeter و Kilometer و Quadratmeter مش متعلّمين
+group:masse-und-gewichte-meter-zentimeter-kilometer-quadratmeter | 5.1 | Quadratmeter
 group:masse-und-gewichte-grad-uber-unter-null-prozent | 8.5 | Grad
 group:masse-und-gewichte-liter-gramm-pfund-kilo | 3.4 | Liter
-group:lander-und-nationalitaten-land-bewohner-nationalitat-deutschland-der-die-deutsche-deutsch | 1.4 | Deutsch
-group:lander-und-nationalitaten-angabe-der-eigenen-herkunft-agypten-agypter-agypterin-agyptisch | 1.4 | Ägypten
+group:lander-und-nationalitaten-land-bewohner-nationalitat-deutschland-der-die-deutsche-deutsch | 1.5 | Deutsch
+group:lander-und-nationalitaten-angabe-der-eigenen-herkunft-agypten-agypter-agypterin-agyptisch | 1.5 | Ägypten
 group:farben-schwarz-weiss-grau-rot-blau-gelb-grun-braun | 4.4 | braun
 group:himmelsrichtungen-der-norden-der-suden-der-westen-der-osten | 8.5 | Norden
 
 # ── themes ──
 theme:person-name | 1.2 | Ich heiße
 theme:person-adresse | 9.1 | Adresse
-theme:person-telefon | 1.5 | Telefonnummer
+theme:person-telefon | 1.6 | Telefonnummer
 theme:person-geburtsdatum | 9.1 | geboren am|Geburtsdatum
 theme:person-geburtsort | 9.1 | Geburtsort
-theme:person-alter | 1.5 | Jahre alt
+theme:person-alter | 1.6 | Jahre alt
 theme:person-geschlecht | 9.1 | Geschlecht
 theme:person-familienstand-familie | 4.2 | verheiratet
 theme:person-personliche-beziehungen | 4.4 | Freund
-theme:person-staatsangehorigkeit-nationalitat-herkunft | 1.4 | Ich komme aus
+theme:person-staatsangehorigkeit-nationalitat-herkunft | 1.5 | Ich komme aus
 theme:person-aussehen | 4.4 | sieht .{0,20} aus
 theme:person-gewohnheiten-tagesablauf | 2.4 | stehe .{0,20} auf
 theme:wohnen-wohnung | 5.1 | Wohnung
@@ -262,20 +262,20 @@ strategy:redeorganisation-das-thema-wechseln | 4.7 | Übrigens
 strategy:redeorganisation-etwas-hervorheben | 4.7 | besonders wichtig
 strategy:redeorganisation-vermeidung | 4.7 | Darüber möchte ich nicht
 strategy:redeorganisation-hoflichkeit | 9.2 | würde gern|Könnten Sie
-strategy:redeorganisation-abschwachung | 1.4 | ein bisschen
+strategy:redeorganisation-abschwachung | 1.5 | ein bisschen
 strategy:verstandnissicherung-verstandnishilfen-anbieten | 4.7 | Ich sage es noch einmal
 strategy:verstandnissicherung-um-verstandnishilfen-bitten | 9.5 | langsam
 strategy:verstandnissicherung-kompensation | 9.5 | Wie sagt man
 
 # ── notions ──
 notion:existenz-besitz-zugehorigkeit-nicht-sein | 3.3 | Es gibt|gibt es
-notion:existenz-besitz-zugehorigkeit-anwesend-abwesend-sein | gap | da / nicht da / anwesend مش متعلّمة
+notion:existenz-besitz-zugehorigkeit-anwesend-abwesend-sein | 6.3 | nicht da
 notion:existenz-besitz-zugehorigkeit-nicht-verfugbar-sein | 5.3 | noch frei
 notion:existenz-besitz-zugehorigkeit-nicht-vorkommen | 3.3 | Es gibt|gibt es
-notion:existenz-besitz-zugehorigkeit-inklusion-exklusion | gap | mit / ohne / inklusive للتضمين مش مشروحة
+notion:existenz-besitz-zugehorigkeit-inklusion-exklusion | 3.2 | ohne Fleisch
 notion:existenz-besitz-zugehorigkeit-besitz-zugehorigkeit-ausdrucken | 9.4 | gehört
 notion:raum-ort | 5.5 | Wo\? \(Dativ\)|steht an der Wand
-notion:raum-herkunft | 1.4 | Ich komme aus
+notion:raum-herkunft | 1.5 | Ich komme aus
 notion:raum-richtung | 8.1 | links|rechts
 notion:raum-distanz | 8.1 | weit|nah
 notion:zeit-zeitpunkt | 2.1 | \bum\b
@@ -284,20 +284,20 @@ notion:zeit-dauer | 7.3 | seit
 notion:zeit-haufigkeit | 7.4 | dreimal|immer|oft
 notion:quantitat-zahlen-mengenangaben | 3.4 | Kilo
 notion:quantitat-menge | 6.4 | die meisten
-notion:quantitat-grad | 1.4 | ein bisschen|sehr
-notion:quantitat-dimension-massangabe | gap | groß/klein/lang/breit مع المقاسات مش مشروحة
+notion:quantitat-grad | 1.5 | ein bisschen|sehr
+notion:quantitat-dimension-massangabe | 5.1 | Meter lang
 notion:art-und-weise-physisch | 4.4 | groß|klein
 notion:art-und-weise-wertung | 4.6 | Ich finde
 notion:art-und-weise-vergleich | 8.6 | schneller als
 notion:logische-verknupfung-grund | 9.5 | \bdenn\b
-notion:logische-verknupfung-bedingung | gap | «wenn» للشرط مش مشروحة
+notion:logische-verknupfung-bedingung | 7.4 | Wenn Sie Fieber haben
 notion:logische-verknupfung-aufzahlung-alternative | 3.2 | \boder\b
 notion:modales-fahigkeit | 5.4 | können|kann
 notion:modales-moglichkeit | 5.7 | kann man
 notion:modales-notwendigkeit-verpflichtung | 7.2 | muss
 
 # ── integration curriculum situations (Rahmencurriculum) ──
-rc:a-1-1-1 | 1.4 | Ich komme aus
+rc:a-1-1-1 | 1.5 | Ich komme aus
 rc:a-1-1-2 | 4.7 | Darüber möchte ich nicht
 rc:a-2-1-1 | 1.2 | duzen
 rc:a-2-1-2 | gap | «Das ist in meinem Land (nicht) normal» مش موجودة
@@ -311,7 +311,7 @@ rc:a-4-2-5 | 9.5 | richtig
 rc:a-4-2-6 | gap | السؤال عن الورق بلغة تانية مش موجود
 rc:a-4-2-7 | 9.1 | helfen
 rc:a-4-2-8 | gap | «Jemand übersetzt für mich» مش موجودة
-rc:a-5-2-1 | 1.4 | spreche
+rc:a-5-2-1 | 1.5 | spreche
 rc:b-1-5-1 | 4.6 | gefällt mir
 rc:b-2-1-1 | 4.6 | interessiert mich
 rc:b-2-2-1 | 4.7 | Einverstanden
@@ -468,8 +468,8 @@ rc:11-1-4-2 | 2.5 | zu spät|komme später|Verspätung
 rc:11-2-1-1 | 9.5 | Hausaufgabe
 rc:11-2-1-2 | 9.5 | Hausaufgabe
 rc:11-2-2-1 | gap | الاتفاق على المذاكرة سوا مش موجود
-rc:11-3-1-1 | 1.6 | Prüfer
-rc:11-3-1-2 | 1.6 | Prüfer
+rc:11-3-1-1 | 1.7 | Prüfer
+rc:11-3-1-2 | 1.7 | Prüfer
 rc:11-3-1-3 | 3.6 | noch einmal
 rc:12-1-1-1 | 5.3 | Wohnung
 rc:12-1-1-2 | gap | السكن الرخيص ومساعدة الإيجار مش موجودين
@@ -509,7 +509,7 @@ cefr:205 | gap | القصص المصوّرة مش موجودة
 cefr:223 | 9.5 | خمّن من السياق
 cefr:224 | 1.2 | بالإنجليزي|زي الإنجليزي
 cefr:232 | 4.4 | sieht
-cefr:258 | 1.6 | Sprechen Teil 1
+cefr:258 | 1.7 | Sprechen Teil 1
 cefr:259 | 2.4 | stehe
 cefr:272 | 3.4 | Farbe
 cefr:314 | gap | كلمة قصيرة متحضّرة (تقديم أو نخب) مش موجودة
@@ -534,7 +534,7 @@ cefr:546 | 3.6 | Teil 3
 cefr:547 | 3.2 | möchte
 cefr:548 | 3.4 | kostet
 cefr:573 | 6.3 | Imperativ
-cefr:574 | 1.6 | Sprechen Teil 1
+cefr:574 | 1.7 | Sprechen Teil 1
 cefr:575 | 4.2 | Geschwister
 cefr:576 | 6.5 | letzte|nächste
 cefr:577 | 3.4 | kostet
@@ -583,7 +583,7 @@ cefr:1221 | 1.3 | buchstabier
 cefr:1222 | 1.3 | علامة الاستفهام|Fragezeichen|النقطة
 cefr:1247 | 1.1 | Bitte|Danke
 cefr:1309 | 2.4 | dann
-cefr:1321 | 1.6 | Sprechen Teil 1
-cefr:1332 | 1.6 | Sprechen Teil 1
+cefr:1321 | 1.7 | Sprechen Teil 1
+cefr:1332 | 1.7 | Sprechen Teil 1
 `;
 module.exports = { alias, lines };

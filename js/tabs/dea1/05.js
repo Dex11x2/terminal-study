@@ -247,6 +247,36 @@ Nein, es gibt keinen Garten. || لأ، مفيش جنينة.
 
 [[Die Wohnung hat …]] (الشقة عندها) أو [[Es gibt …]] (فيه): الاتنين بعدهم Akkusativ، فالمذكر [[einen]]/[[keinen]]: [[einen Balkon]]، [[keinen Aufzug]].
 
+## المقاسات: Meter و Quadratmeter
+
+~~~de
+Die Wohnung hat siebzig Quadratmeter. || الشقة ٧٠ متر مربع.
+Das Zimmer ist vier Meter lang und drei Meter breit. || الأوضة ٤ متر طول و ٣ متر عرض.
+Der Schrank ist zwei Meter hoch. || الدولاب ارتفاعه ٢ متر.
+Das Bett ist neunzig Zentimeter breit. || السرير عرضه ٩٠ سنتي.
+Bis zum Bahnhof sind es zwei Kilometer. || لحد المحطة ٢ كيلو.
+~~~
+
+| بالأرقام | بتتقال | |
+|---|---|---|
+| 70 m² | [[siebzig Quadratmeter]] | في إعلانات الشقق |
+| 4 m | [[vier Meter]] | |
+| 90 cm | [[neunzig Zentimeter]] | |
+| 2 km | [[zwei Kilometer]] | |
+
+- الألماني بيقول المقاس **قبل** الصفة: [[vier Meter lang]] (٤ متر طول)، [[drei Meter breit]] (عرض)، [[zwei Meter hoch]] (ارتفاع).
+- [[Meter]] و [[Kilometer]] و [[Zentimeter]] مبيتجمعوش بعد رقم: [[zwei Meter]] مش «zwei Meters».
+- وفي إعلان الشقة هتشوف [[70 m²]] أو [[70 qm]]، والاتنين = [[Quadratmeter]].
+
+~~~words المقاسات
+der Meter, die Meter | المتر | m: Das Zimmer ist vier Meter lang.
+der Zentimeter, die Zentimeter | السنتيمتر | Das Bett ist neunzig Zentimeter breit.
+der Kilometer, die Kilometer | الكيلومتر | m: Der Bahnhof ist zwei Kilometer weit.
+der Quadratmeter, die Quadratmeter | المتر المربع | Die Wohnung hat siebzig Quadratmeter.
+lang | طويل، طوله | m: Der Tisch ist zwei Meter lang.
+breit | عريض، عرضه | Das Fenster ist ein Meter breit.
+~~~
+
 ## الكلمات: البيت والأوض
 
 ~~~words البيت والأوض
@@ -482,6 +512,24 @@ Wo ist das Buch? Es liegt im Regal. || فين الكتاب؟ في الرف.
 ~~~
 
 الضمير بيتبع أداة الحاجة، مش هي إيه: [[der Schlüssel]] ← [[er]]، و [[die Lampe]] ← [[sie]]، و [[das Buch]] ← [[es]]. ودي نفس قاعدة الوحدة اللي فاتت.
+
+## معمول من إيه؟ aus
+
+~~~de
+Der Tisch ist aus Holz. || الترابيزة خشب.
+Die Tasche ist aus Leder. || الشنطة جلد.
+Die Flasche ist aus Glas. || الإزازة إزاز.
+Der Stuhl ist aus Plastik. || الكرسي بلاستيك.
+~~~
+
+[[aus]] = من، وهنا بمعنى **معمول من** (الخامة). وبعده الخامة **من غير أداة**: [[aus Holz]]، مش [[aus dem Holz]]. وده نفس [[aus]] اللي اتعلمته في [[Ich komme aus Ägypten]]: الحاجة «جاية من» الخامة دي.
+
+~~~words الخامات
+das Holz | الخشب | Der Tisch ist aus Holz.
+das Glas | الإزاز | m: Die Flasche ist aus Glas.
+das Plastik | البلاستيك | Der Stuhl ist aus Plastik.
+das Leder | الجلد | m: Die Tasche ist aus Leder.
+~~~
 
 ## الكلمات: العفش والحاجات
 
