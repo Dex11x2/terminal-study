@@ -798,6 +798,21 @@ wo | فين | Wo wohnen Sie?
 jetzt | دلوقتي | Jetzt wohne ich in Hamburg.
 ~~~
 
+## كلمات زيادة: ناس وبلاد
+
+كلمات بتيجي مع «منين؟». [[fremd]] هنا معناها «مش من المكان ده»: [[Ich bin fremd hier]] = أنا مش من هنا (وبتقولها لما تسأل على طريق).
+
+~~~words ناس وبلاد
+der Mensch, die Menschen | الإنسان، الناس | Hier wohnen Menschen aus vielen Ländern.
+die Welt | العالم | Ich möchte die Welt sehen.
+die Heimat | البلد الأصلي | Meine Heimat ist Ägypten.
+der Ausländer, die Ausländer | الأجنبي | In Berlin leben viele Ausländer.
+ausländisch | أجنبي (صفة) | Die Firma ist ausländisch.
+fremd | غريب، مش من هنا | Entschuldigung, ich bin fremd hier.
+international | دولي | Die Schule ist international.
+kulturell | ثقافي | Am Wochenende gibt es ein kulturelles Programm.
+~~~
+
 ## القاعدة ١: الأفعال العادية
 
 [[kommen]] و [[wohnen]] و [[lernen]] و [[machen]] وأغلب الأفعال: بتشيل [[-en]] وتحط النهاية:

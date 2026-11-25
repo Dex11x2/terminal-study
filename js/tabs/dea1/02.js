@@ -422,6 +422,18 @@ geöffnet | مفتوح | Die Apotheke ist bis 20 Uhr geöffnet.
 geschlossen | مقفول | Am Sonntag ist das Geschäft geschlossen.
 ~~~
 
+## كلمات زيادة: البداية والنهاية
+
+[[der Anfang]] و [[der Schluss]] بييجوا كتير مع [[am]]: [[am Anfang]] = في الأول، و [[am Schluss]] = في الآخر. و [[zurzeit]] = الفترة دي، مش «في الوقت».
+
+~~~words البداية والنهاية
+der Anfang | البداية | m: Am Anfang ist der Kurs leicht.
+enden | ينتهي | Der Film endet um zehn Uhr.
+der Schluss | الآخر، النهاية | Am Schluss machen wir einen Test.
+zurzeit | الفترة دي | Zurzeit habe ich viel Arbeit.
+endlich | أخيرًا | m: Endlich ist Wochenende!
+~~~
+
 ## قول بصوتك
 
 ~~~speak
@@ -1015,6 +1027,20 @@ zusammen | سوا | Wir lernen zusammen.
 krank | عيان | Gestern war ich krank.
 das Fieber | السخونية | Ich hatte Fieber.
 die Entschuldigung, die Entschuldigungen | الاعتذار، «آسف» | Entschuldigung, ich bin zu spät.
+~~~
+
+## كلمات زيادة: نتفق على حاجة
+
+[[doch]] هي «لأ، بالعكس» لما حد يسأل سؤال فيه نفي: [[Hast du keine Zeit?]] لو عندك وقت متقولش [[Ja]]، قول [[Doch!]]. و [[sich freuen auf]] = مستني حاجة جاية وفرحان بيها.
+
+~~~words نتفق على حاجة
+doch | بلى (رد على سؤال منفي) | m: Hast du keine Zeit? Doch, ich habe Zeit.
+möglich | ممكن | Ist Samstag möglich?
+gemeinsam | مع بعض | Wir kochen gemeinsam.
+der Plan, die Pläne | الخطة | Hast du schon Pläne für Samstag?
+(sich) freuen | يفرح | Ich freue mich auf Samstag.
+schauen | يبص | m: Ich schaue mal in meinen Kalender.
+entschuldigen | يعذر | Entschuldigen Sie bitte die Verspätung.
 ~~~
 
 ## قول بصوتك

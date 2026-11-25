@@ -1066,6 +1066,15 @@ die Polizei | البوليس | Die Polizei kommt sofort.
 die Hilfe | المساعدة | Ich brauche Hilfe!
 ~~~
 
+## كلمات زيادة: الحريقة
+
+في الحريقة بتقول [[Feuer!]] وتتصل بـ ١١٢. و [[eilig]] = مستعجل: [[Ich habe es eilig]].
+
+~~~words الحريقة
+das Feuer | النار، الحريقة | m: Hilfe, Feuer!
+eilig | مستعجل | Ich habe es eilig.
+~~~
+
 ## قول بصوتك
 
 ~~~speak

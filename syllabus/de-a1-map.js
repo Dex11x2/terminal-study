@@ -157,7 +157,7 @@ theme:person-telefon | 1.5 | Telefonnummer
 theme:person-geburtsdatum | 9.1 | geboren am|Geburtsdatum
 theme:person-geburtsort | 9.1 | Geburtsort
 theme:person-alter | 1.5 | Jahre alt
-theme:person-geschlecht | gap | Geschlecht (männlich/weiblich) في الاستمارة مش موجودة
+theme:person-geschlecht | 9.1 | Geschlecht
 theme:person-familienstand-familie | 4.2 | verheiratet
 theme:person-personliche-beziehungen | 4.4 | Freund
 theme:person-staatsangehorigkeit-nationalitat-herkunft | 1.4 | Ich komme aus

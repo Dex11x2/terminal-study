@@ -238,6 +238,23 @@ warten | يستنى | Bitte warten Sie hier.
 die Adresse, die Adressen | العنوان | Wie ist Ihre neue Adresse?
 ~~~
 
+## كلمات زيادة: الاستمارة والمكتب
+
+في الاستمارة هتلاقي [[Geschlecht]] وتحته [[männlich]] و [[weiblich]]. و [[der Beamte]] زي [[der Verwandte]]: أصله صفة، فتقول [[ein Beamter]].
+
+~~~words الاستمارة والمكتب
+das Geschlecht | النوع (ذكر أو أنثى) | Kreuzen Sie Ihr Geschlecht an.
+männlich | ذكر | Kreuzen Sie an: männlich oder weiblich?
+weiblich | أنثى | Meine Tochter ist ein Mädchen, also weiblich.
+das Geburtsjahr | سنة الميلاد | Mein Geburtsjahr ist neunzehnhundertneunzig.
+gestorben | مات، متوفي | Mein Großvater ist schon gestorben.
+die Papiere | الورق، المستندات (جمع) | Haben Sie alle Papiere dabei?
+der Beamte, die Beamten | الموظف الحكومي | Der Beamte hilft mir beim Formular.
+die Auskunft | الاستعلامات | Fragen Sie bitte an der Auskunft.
+der Ausgang, die Ausgänge | المخرج | Der Ausgang ist rechts.
+der Bogen, die Bögen | الورقة (الاستمارة) | m: Füllen Sie bitte den Bogen aus.
+~~~
+
 ## قول بصوتك
 
 ~~~speak
@@ -1103,6 +1120,29 @@ der Fehler, die Fehler | الغلطة | Das ist kein Fehler.
 richtig | صح | Das ist richtig.
 falsch | غلط | Die Antwort ist falsch.
 denn | لأن، عشان | Ich komme nicht, denn ich bin krank.
+~~~
+
+## كلمات زيادة: الفصل والامتحان
+
+دي كلمات تعليمات الامتحان والكتاب: لو فهمتها هتفهم المطلوب من غير ترجمة. و [[also]] في أول الجملة = «يعني» أو «يبقى»، والفعل بعدها على طول: [[Also komme ich um acht]]، أو بعد فاصلة: [[Also, ich komme um acht]].
+
+~~~words الفصل والامتحان
+der Bleistift, die Bleistifte | القلم الرصاص | Schreiben Sie mit Bleistift.
+der Kugelschreiber, die Kugelschreiber | القلم الجاف | Hast du einen Kugelschreiber für mich?
+das Blatt, die Blätter | الورقة | Nehmen Sie ein Blatt Papier.
+die Zeile, die Zeilen | السطر | Lesen Sie die erste Zeile.
+die Lücke, die Lücken | الفراغ | Ergänzen Sie die Lücken.
+die Überschrift, die Überschriften | العنوان | Welche Überschrift passt?
+markieren | يعلّم على | Markieren Sie die richtige Antwort.
+beantworten | يجاوب على | Beantworten Sie die Fragen.
+der Antwortbogen, die Antwortbögen | ورقة الإجابة | Schreiben Sie die Lösungen auf den Antwortbogen.
+die Lösung, die Lösungen | الحل | Die Lösung ist B.
+das Ergebnis, die Ergebnisse | النتيجة | Das Ergebnis kommt in vier Wochen.
+die Gruppe, die Gruppen | المجموعة | Wir arbeiten in Gruppen.
+der Schüler, die Schüler | التلميذ | Die Schüler lernen Deutsch.
+zum Beispiel | مثلًا (ومختصرها z. B.) | Ich esse gern Obst, zum Beispiel Äpfel.
+also | يعني، يبقى | Also, ich komme um acht.
+denken | يفكّر، يظن | Ich denke, das ist richtig.
 ~~~
 
 ## قول بصوتك

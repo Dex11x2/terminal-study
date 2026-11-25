@@ -7,14 +7,14 @@
 | أجزاء الامتحانات | 28 | 13 | 1 | 68٪ |
 | القواعد | 57 | 8 | 0 | 88٪ |
 | مجموعات الكلمات | 19 | 1 | 0 | 95٪ |
-| المواضيع | 41 | 7 | 0 | 85٪ |
+| المواضيع | 42 | 6 | 0 | 88٪ |
 | أفعال الكلام (Sprechhandlungen) | 36 | 12 | 0 | 75٪ |
 | المفاهيم (Notionen) | 23 | 4 | 0 | 85٪ |
 | استراتيجيات الكلام | 6 | 9 | 0 | 40٪ |
 | مواقف منهج الاندماج | 111 | 74 | 0 | 60٪ |
 | جمل CEFR | 69 | 32 | 1 | 68٪ |
-| الكلمات | 419 (+188 مذكورة من غير كارت) | 135 | 0 | 56٪ |
-| **الكل** | **809** | | | **63٪** |
+| الكلمات | 554 (+188 مذكورة من غير كارت) | 0 | 0 | 75٪ |
+| **الكل** | **945** | | | **73٪** |
 
 ## ناقص: أجزاء الامتحانات (13)
 
@@ -47,9 +47,8 @@
 
 - Meter, Zentimeter, Kilometer, Quadratmeter — Meter و Zentimeter و Kilometer و Quadratmeter مش متعلّمين
 
-## ناقص: المواضيع (7)
+## ناقص: المواضيع (6)
 
-- Geschlecht — Geschlecht (männlich/weiblich) في الاستمارة مش موجودة
 - Pflanzen — النباتات مش موضوع درس
 - Tiere — الحيوانات مش موضوع درس
 - Interessen — الهوايات متذكرة كموضوع في Sprechen Teil 1 بس، مفيش درس عنها
@@ -202,11 +201,6 @@
 - Facilitating communication in delicate situations and disagreements — يلاحظ إن فيه خلاف أو حد عنده مشكلة، ويقول جملة محفوظة («فاهمك»، «إنت كويس؟») — Mediation مش متمرّن عليها
 - Plurilingual comprehension — يعرف الكلمات الدولية والمشتركة بين اللغات (Haus/house) ويستخدمها يفهم يافطات ورسايل بسيطة — الكلمات الدولية مش مشروحة كطريقة فهم
 - Building on plurilingual repertoire — يستخدم كلمات من لغات مختلفة عشان يخلّص حاجة بسيطة جدًا مع حد متعاون — استخدام كذا لغة مع بعض مش متعلّم
-
-## ناقص: الكلمات (135)
-
-abgeben، also، anbieten، der Anfang، anklicken، anmachen، der Anrufbeantworter، die Ansage, -n، der Anschluss، an sein، (sich) anziehen، das Apartment, -s، auf sein، der Ausgang، die Auskunft, -ü, e، der Ausländer, -، ausländisch، aus sein، die Autobahn, -en، automatisch، der Bahnsteig، der Baum, -ä, e، der Beamte, -n، beide، zum Beispiel/z. B.، bekannt، besichtigen، die Birne, -n، bitter، der Bleistift, -e، der Blick، die Blume, -n، der Bogen، böse، breit، die CD, -s، die Dame, -n، daneben، die Disco، drucken، der Drucker, –، drücken، eilig، enden، entschuldigen، das Ergebnis, -se، erlauben، erzählen، das Fax, -e، das Feuer، abfliegen، der Abflug، fremd، (sich) freuen، die Führung، das Geburtsjahr، das Gepäck، gestorben، das Gewicht، gewinnen، glücklich، die Gruppe, -n، die Halle، halten، die Heimat، holen، international، der Jugendliche, -n، kriegen، der Kugelschreiber، kulturell، sich kümmern، lachen، das Licht، das Lied, -er، der Lkw, -s، die Lösung, -en، männlich، die Maschine, -n، der Mensch, -en، mitmachen، möglich، die Papiere (pl.)، der Plan, -ä, e، die Pommes frites (pl.)، der Prospekt, -e، Rad fahren، das Reisebüro, -s، der Reiseführer، riechen، der Schinken, –، der Schluss، der Schüler, –، die Sehenswürdigkeit, -en، an sein، auf sein، zu sein، selbstständig، das Studium، tot، der Verein، der Verwandte, -n، die Vorwahl، wandern، weiblich، weiter، die Welt، wunderbar، zurzeit، die Zigarette, -n، zufrieden، zwischen، markieren، die Lücke, die Lücken، die Überschrift, die Überschriften، der Antwortbogen, die Antwortbögen، das Blatt, die Blätter، die Zeile, die Zeilen، beantworten، die Nachricht, die Nachrichten، die Temperatur, die Temperaturen، der Besucher, die Besucher، das Fest, die Feste، das Spiel, die Spiele، gemeinsam، doch، jemand، besonders، endlich، das Interesse, die Interessen، der Ruhetag, die Ruhetage، die Wäsche, die Wäschen، schauen، denken، interessieren
-
 
 ## كلمات مذكورة من غير كارت (188)
 

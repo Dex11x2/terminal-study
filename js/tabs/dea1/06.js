@@ -219,6 +219,19 @@ der Chef, die Chefs | المدير | Mein Chef ist sehr nett.
 der Kunde, die Kunden | الزبون | Der Kunde wartet.
 ~~~
 
+## كلمات زيادة: الشغل
+
+[[kriegen]] = [[bekommen]] بس في الكلام العادي، متكتبهاش في إيميل رسمي. و [[sich kümmern um]] + Akkusativ = ياخد باله من.
+
+~~~words الشغل
+selbstständig | شغّال لحسابه | Mein Vater ist selbstständig.
+abgeben | يسلّم | Geben Sie das Formular bitte am Montag ab.
+holen | يجيب | Ich hole schnell einen Kaffee.
+sich kümmern | ياخد باله من | Ich kümmere mich um die Kinder.
+kriegen | ياخد (عامية) | Wann kriege ich mein Geld?
+die Maschine, die Maschinen | المكنة | Die Maschine ist sehr laut.
+~~~
+
 [[studieren]] للجامعة بس. والمدرسة أو الكورس: [[lernen]] ([[Ich lerne Deutsch]]، [[Mein Sohn geht zur Schule]]). وده فخ للمصريين لأن «بدرس» عندنا للاتنين.
 
 ## قول بصوتك
@@ -680,6 +693,22 @@ die Achtung | الانتباه | Achtung, Stufe!
 sofort | حالًا | Kommen Sie bitte sofort!
 ~~~
 
+## كلمات زيادة: التليفون والمكتب
+
+[[die Ansage]] الرسالة المسجّلة اللي بتسمعها لما تتصل، و [[der Anrufbeantworter]] المكنة اللي بتسجّل رسالتك. و [[anklicken]] = تدوس بالماوس.
+
+~~~words التليفون والمكتب
+der Anrufbeantworter | الأنسرماشين | Sprechen Sie bitte auf den Anrufbeantworter.
+die Ansage, die Ansagen | الرسالة المسجّلة | Hören Sie die Ansage.
+die Nachricht, die Nachrichten | الرسالة | m: Ich schicke dir eine Nachricht.
+die Vorwahl | كود المنطقة | m: Was ist die Vorwahl von Berlin?
+das Fax, die Faxe | الفاكس | Schicken Sie mir bitte ein Fax.
+der Drucker, die Drucker | الطابعة | Der Drucker ist kaputt.
+drucken | يطبع | m: Ich drucke das Formular.
+anklicken | يدوس (بالماوس) | Klicken Sie das Bild an.
+automatisch | أوتوماتيك | Die Tür öffnet automatisch.
+~~~
+
 ## قول بصوتك
 
 ~~~speak
@@ -897,6 +926,14 @@ das Praktikum, die Praktika | التدريب العملي | Ich mache ein Prakti
 der Kurs, die Kurse | الكورس | Der Deutschkurs beginnt im Mai.
 das Formular, die Formulare | الاستمارة | Bitte füllen Sie das Formular aus.
 unterschreiben | يمضي | Bitte unterschreiben Sie hier.
+~~~
+
+## كلمات زيادة: الدراسة
+
+[[das Studium]] = الدراسة في الجامعة، و [[studieren]] الفعل.
+
+~~~words الدراسة
+das Studium | الدراسة في الجامعة | Nach dem Studium arbeite ich als Ärztin.
 ~~~
 
 [[unterschreiben]] **مش** بيتقسم ([[Ich unterschreibe]])، عكس [[ausfüllen]] (يملا) اللي بيتقسم ([[Ich fülle das Formular aus]]). والفرق في النطق: [[UNterschreiben]]؟ لأ، النبرة على [[schreiben]]، وده بيقولك إنه مش بيتقسم.

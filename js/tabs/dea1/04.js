@@ -946,6 +946,23 @@ die Freundin, die Freundinnen | الصاحبة، والحبيبة | Sie ist mein
 die Leute (Plural) | الناس | Die Leute hier sind sehr nett.
 ~~~
 
+## كلمات زيادة: ناس ومشاعر
+
+[[der Jugendliche]] و [[der Verwandte]] أصلهم صفة، فبيتغيّروا زي الصفة: [[ein Verwandter]] و [[die Verwandten]]. و [[böse auf]] = زعلان من.
+
+~~~words ناس ومشاعر
+die Dame, die Damen | الست (بأدب) | Die Dame dort ist meine Lehrerin.
+der Jugendliche, die Jugendlichen | الشاب الصغير | Im Park spielen Jugendliche Fußball.
+der Verwandte, die Verwandten | القريب (من العيلة) | Am Sonntag besuchen wir Verwandte.
+bekannt | معروف | Der Sänger ist sehr bekannt.
+glücklich | سعيد | Sie ist sehr glücklich.
+böse | زعلان | Bist du böse auf mich?
+lachen | يضحك | Das Baby lacht viel.
+erzählen | يحكي | Erzähl mal, wie war der Urlaub?
+beide | الاتنين | Ich habe zwei Brüder, beide wohnen in Kairo.
+jemand | حد | Ist jemand zu Hause?
+~~~
+
 ## قول بصوتك
 
 ~~~speak
@@ -1189,6 +1206,18 @@ die Hochzeit, die Hochzeiten | الفرح | Die Hochzeit ist im Juni.
 heiraten | يتجوز | Meine Schwester heiratet bald.
 tanzen | يرقص | Wir tanzen gern.
 der Gruß, die Grüße | السلام (في آخر الرسالة) | Viele Grüße aus Berlin!
+~~~
+
+## كلمات زيادة: الحفلة
+
+[[das Fest]] أي حفلة أو مناسبة كبيرة، و [[wunderbar]] = رائع، بتقولها للأكل والحفلة والهدية.
+
+~~~words الحفلة
+das Fest, die Feste | الحفلة، المناسبة | Das Fest beginnt um acht.
+das Lied, die Lieder | الأغنية | Wir singen ein Lied für dich.
+wunderbar | رائع | Das Essen war wunderbar!
+die CD, die CDs | السي دي | Ich schenke ihr eine CD.
+die Disco, die Discos | الديسكو | Am Samstag gehen wir in die Disco.
 ~~~
 
 [[gratulieren]] بعده [[dir]] أو [[Ihnen]] (Dativ): [[Ich gratuliere dir]] (بهنّيك). ولو مش فاكر، [[Herzlichen Glückwunsch!]] بتغنيك عنه.

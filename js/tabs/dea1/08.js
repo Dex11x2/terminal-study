@@ -216,6 +216,16 @@ die Ecke, die Ecken | الناصية | m: Die Bank ist an der Ecke.
 der Weg, die Wege | الطريق | Ich kenne den Weg nicht.
 ~~~
 
+## كلمات زيادة: فين بالظبط؟
+
+[[zwischen]] زي [[neben]]: للمكان بعده Dativ. و [[daneben]] = جنبه (من غير ما تكرر الاسم).
+
+~~~words فين بالظبط؟
+zwischen | بين | m: Die Post ist zwischen der Bank und dem Café.
+daneben | جنبه | m: Da ist die Bank, und daneben ist die Post.
+weiter | كمّل | Gehen Sie weiter geradeaus.
+~~~
+
 ## قول بصوتك
 
 ~~~speak
@@ -404,6 +414,17 @@ fliegen | يطير، يسافر بالطيارة | Wir fliegen nach Kairo.
 dauern | ياخد (وقت) | Die Fahrt dauert eine Stunde.
 mit | بـ، مع | Ich fahre mit dem Zug.
 ohne | من غير | Ich fahre ohne Auto.
+~~~
+
+## كلمات زيادة: العربيات والعجل
+
+[[Rad fahren]] بتتكتب كلمتين، و [[Rad]] بحرف كبير: [[Ich fahre Rad]].
+
+~~~words العربيات والعجل
+die Autobahn, die Autobahnen | الطريق السريع | Wir fahren auf der Autobahn.
+der Lkw, die Lkws | النقل (اللوري) | Auf der Autobahn fahren viele Lkws.
+Rad fahren | يركب عجلة | Am Wochenende fahre ich Rad.
+halten | يقف (المواصلة) | m: Der Bus hält vor der Schule.
 ~~~
 
 ## قول بصوتك
@@ -617,6 +638,19 @@ pünktlich | في معاده | Der Zug ist pünktlich.
 die Reise, die Reisen | الرحلة | Gute Reise!
 ~~~
 
+## كلمات زيادة: المحطة والمطار
+
+[[abfliegen]] بينفصل زي [[abfahren]]: [[Wir fliegen um sechs Uhr ab]]. و [[der Anschluss]] = القطر أو الطيارة اللي هتركبها بعد كده.
+
+~~~words المحطة والمطار
+der Bahnsteig, die Bahnsteige | الرصيف | Der Zug fährt von Bahnsteig drei.
+der Anschluss, die Anschlüsse | التوصيلة (القطر اللي بعده) | In Köln haben Sie Anschluss nach Bonn.
+die Halle, die Hallen | الصالة | m: Treffen wir uns in der Halle?
+abfliegen | الطيارة تقوم | Wir fliegen um sechs Uhr ab.
+der Abflug, die Abflüge | ميعاد قيام الطيارة | Der Abflug ist um sechs Uhr.
+das Gepäck | الشنط | Wo kann ich mein Gepäck lassen?
+~~~
+
 [[umsteigen]] و [[die Verspätung]] (التأخير) مش في قايمة A1، بس مستحيل تركب قطر في ألمانيا من غيرهم.
 
 ## قول بصوتك
@@ -828,6 +862,23 @@ das Ausland | برّه البلد | Ich arbeite im Ausland.
 das Meer, die Meere | البحر | Wir fahren ans Meer.
 der See, die Seen | البحيرة | Der See ist sehr schön.
 gehen | يروح، يمشي | Wir gehen ins Kino.
+~~~
+
+## كلمات زيادة: الفُسح والهوايات
+
+[[interessieren]]: الحاجة هي الفاعل وإنت المفعول: [[Fußball interessiert mich]] = الكورة تهمّني. و [[Interesse an]] + Dativ: [[Ich habe Interesse an Musik]].
+
+~~~words الفُسح والهوايات
+das Spiel, die Spiele | الماتش، اللعبة | Das Spiel beginnt um drei.
+gewinnen | يكسب | Unsere Mannschaft gewinnt.
+der Verein, die Vereine | النادي | Ich spiele Fußball im Verein.
+der Besucher, die Besucher | الزائر | Das Museum hat viele Besucher.
+das Interesse, die Interessen | الاهتمام | Hast du Interesse an Musik?
+interessieren | يهم | Fußball interessiert mich nicht.
+besonders | خصوصًا | Ich mag Filme, besonders Komödien.
+der Ruhetag, die Ruhetage | يوم القفلة | Montag ist Ruhetag.
+wandern | يتمشّى في الطبيعة | Wir wandern gern in den Bergen.
+mitmachen | يشارك | Willst du mitmachen?
 ~~~
 
 [[der See]] (البحيرة) غير [[die See]] (البحر في الشمال). وفي A1 البحر [[das Meer]].
@@ -1055,6 +1106,25 @@ die Halbpension | فطار وعشا | Das Zimmer ist mit Halbpension.
 der Koffer, die Koffer | الشنطة (سفر) | Mein Koffer ist zu schwer.
 der Pass, die Pässe | الباسبور | Vergiss deinen Pass nicht!
 reisen | يسافر | m: Ich reise sehr gern.
+~~~
+
+## كلمات زيادة: الطبيعة والرحلات
+
+[[besichtigen]] = تزور مكان عشان تتفرج عليه (متحف، كنيسة)، و [[besuchen]] للناس والأماكن. و [[der Reiseführer]] ليها معنيين: المرشد، والكتاب.
+
+~~~words الطبيعة والرحلات
+die Temperatur, die Temperaturen | درجة الحرارة | Die Temperatur ist heute zwanzig Grad.
+der Baum, die Bäume | الشجرة | Vor dem Haus steht ein großer Baum.
+die Blume, die Blumen | الوردة | Ich kaufe Blumen für meine Mutter.
+tot | ميت | Die Pflanze ist leider tot.
+das Reisebüro, die Reisebüros | مكتب السفر | Ich buche die Reise im Reisebüro.
+der Reiseführer, die Reiseführer | المرشد السياحي | Der Reiseführer erklärt alles.
+die Sehenswürdigkeit, die Sehenswürdigkeiten | مكان سياحي | Berlin hat viele Sehenswürdigkeiten.
+besichtigen | يزور ويتفرج | Morgen besichtigen wir das Museum.
+die Führung, die Führungen | جولة بمرشد | Die Führung beginnt um zehn Uhr.
+der Prospekt, die Prospekte | البروشور | Im Prospekt stehen alle Preise.
+der Blick | المنظر | Das Zimmer hat einen Blick aufs Meer.
+das Apartment, die Apartments | شقة صغيرة مفروشة | m: Wir mieten ein Apartment am Meer.
 ~~~
 
 ## قول بصوتك

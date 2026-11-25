@@ -281,6 +281,17 @@ der Hunger | الجوع | Ich habe Hunger.
 der Durst | العطش | Hast du auch Durst?
 ~~~
 
+## كلمات زيادة: أكل وطعم
+
+[[riechen]] بتستخدمها للحاجة اللي ريحتها: [[Das riecht gut!]] = ريحته حلوة. و [[bitter]] = مر.
+
+~~~words أكل وطعم
+die Birne, die Birnen | الكمترى | m: Ich esse gern Birnen.
+der Schinken, die Schinken | لحم مدخّن (جامبون) | m: Ich esse keinen Schinken.
+bitter | مر | Der Kaffee ist bitter.
+riechen | يشم، ريحته | Das riecht gut!
+~~~
+
 [[Ich habe Hunger]] = أنا جعان (حرفيًا «عندي جوع»)، زي [[Ich habe Zeit]]. ومتقولش [[Ich bin hungrig]] في الأول: صح، بس أقل استخدام في الكلام.
 
 ## مقارنة بالعربي: أكلنا بالألماني
@@ -522,6 +533,15 @@ etwas | حاجة | Sonst noch etwas?
 alles | كل حاجة | Das ist alles.
 kaufen | يشتري | Ich kaufe Brot.
 brauchen | يحتاج | Ich brauche einen Kuli.
+~~~
+
+## كلمات زيادة: في الكافيه
+
+[[anbieten]] فعل بينفصل: [[Darf ich Ihnen etwas anbieten?]] = أقدّم لحضرتك حاجة؟ و [[Pommes frites]] جمع دايمًا، وفي الكلام بيقولوا [[Pommes]] بس.
+
+~~~words في الكافيه
+anbieten | يعرض، يقدّم | Darf ich Ihnen einen Kaffee anbieten?
+die Pommes frites | بطاطس محمّرة (جمع) | m: Einmal Pommes frites, bitte.
 ~~~
 
 ## مقارنة بالعربي
@@ -1063,6 +1083,15 @@ die Größe, die Größen | المقاس | Welche Größe haben Sie?
 die Farbe, die Farben | اللون | Welche Farbe möchten Sie?
 ~~~
 
+## كلمات زيادة: لبس ووزن
+
+[[sich anziehen]] = يلبس هدومه، و [[etwas anziehen]] = يلبس حاجة: [[Ich ziehe eine Jacke an]]. والفعل بينفصل زي [[aufstehen]].
+
+~~~words لبس ووزن
+(sich) anziehen | يلبس | Ich ziehe eine Jacke an.
+das Gewicht | الوزن | Das Gewicht ist zwei Kilo.
+~~~
+
 ## مقارنة بالعربي
 
 «كيلو طماطم» و [[ein Kilo Tomaten]] نفس التركيب بالظبط، من غير «من». والسعر: إحنا بنقول «اتنين جنيه ونص» أو «اتنين وخمسين»، والألماني [[zwei Euro fünfzig]]: نفس الترتيب، الكبير وبعدين الصغير. والفرق الوحيد: الألماني مبيقولش «و» بين اليورو والسنتات.
@@ -1296,6 +1325,14 @@ das Abendessen | العشا | Zum Abendessen gibt es Fisch.
 kochen | يطبخ | Ich koche gern.
 heiß | سخن | Der Tee ist heiß.
 kalt | بارد | Das Wasser ist kalt.
+~~~
+
+## كلمات زيادة: رأيك في المكان
+
+[[zufrieden mit]] + Dativ = راضي عن: [[Sind Sie mit dem Essen zufrieden?]]
+
+~~~words رأيك في المكان
+zufrieden | راضي | Sind Sie mit dem Essen zufrieden?
 ~~~
 
 ## مقارنة بالعربي

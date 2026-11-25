@@ -517,6 +517,22 @@ die Mitte | النص | Der Tisch steht in der Mitte.
 unter | تحت (حاجة) | Die Tasche liegt unter dem Tisch.
 ~~~
 
+## كلمات زيادة: شغّال ولا مقفول؟
+
+أربع جمل قصيرة في البيت: [[an sein]] = شغّال (النور، التلفزيون)، و [[aus sein]] = طافي، و [[auf sein]] = مفتوح (الباب، الشباك)، و [[zu sein]] = مقفول. ودول كلام عادي بتسمعه كل يوم؛ في الكتابة الرسمية بيكتبوا [[offen]] و [[geschlossen]]: [[Die Apotheke ist geöffnet]]. والفعل [[sein]] بيتصرّف عادي: [[Das Licht ist an]].
+
+~~~words شغّال ولا مقفول؟
+das Licht | النور | Mach bitte das Licht an.
+anmachen | يشغّل | Kannst du das Radio anmachen?
+an sein | شغّال | Das Licht ist noch an.
+aus sein | طافي | Der Fernseher ist aus.
+auf sein | مفتوح | Das Fenster ist auf.
+zu sein | مقفول | Die Tür ist zu.
+drücken | يدوس، يزق | Drücken Sie den Knopf.
+breit | عريض | Das Bett ist sehr breit.
+die Wäsche | الغسيل | Ich wasche heute die Wäsche.
+~~~
+
 ## قول بصوتك
 
 ~~~speak
@@ -1168,6 +1184,15 @@ der Müll | الزبالة | Wo ist der Müll?
 die Hausordnung, die Hausordnungen | قواعد العمارة | Die Hausordnung hängt im Flur.
 der Hof, die Höfe | الحوش | Die Kinder spielen im Hof.
 putzen | يمسح، ينضّف | Wir putzen die Treppe.
+~~~
+
+## كلمات زيادة: مسموح ولا ممنوع
+
+[[erlaubt]] = مسموح، و [[nicht erlaubt]] = ممنوع، وبتشوفهم على اليافطات جنب [[verboten]].
+
+~~~words مسموح ولا ممنوع
+erlauben | يسمح | m: Rauchen ist hier nicht erlaubt.
+die Zigarette, die Zigaretten | السيجارة | Hier darf man keine Zigarette rauchen.
 ~~~
 
 [[Alles in Ordnung?]] = كله تمام؟ — وده أشهر استخدام لكلمة [[Ordnung]]. و [[Bitte seien Sie leise!]] = اهدى لو سمحت (أمر مؤدّب، الأمر جاي في وحدة الصحة).
