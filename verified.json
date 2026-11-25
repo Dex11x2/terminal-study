@@ -5674,6 +5674,11 @@
   "date": "2026-11-05",
   "on": "PocketBase 0.40.4 + postgres:16-alpine in Docker; Supabase side docs: not run on a real project"
  },
+ "dea1|Ach so! Stimmt genau.": {
+  "hash": "487237d8592b",
+  "date": "2026-11-25",
+  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (جملتين اتغيّرت صياغتهم وسؤال سمع اتبدّل فيه المتكلم بعد ما whisper سمع mir ← dir و Kommst ← Konntest)"
+ },
  "dea1|Am Montag um acht": {
   "hash": "bdf737e7faef",
   "date": "2026-11-25",
@@ -5688,6 +5693,11 @@
   "hash": "5840e45ce801",
   "date": "2026-11-25",
   "on": "الكروت الجديدة: LanguageTool على كل كلمة وجملة، و Piper + whisper small على كل ملف صوت (الجمل اللي صوت kerstin غلط فيها اتنقلت لصوت thorsten واتسمعت تاني)"
+ },
+ "dea1|Das gefällt mir!": {
+  "hash": "d6e0cc7898b5",
+  "date": "2026-11-25",
+  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (جملتين اتغيّرت صياغتهم وسؤال سمع اتبدّل فيه المتكلم بعد ما whisper سمع mir ← dir و Kommst ← Konntest)"
  },
  "dea1|Das ist meine Mutter": {
   "hash": "f68314a79dbf",
@@ -5770,9 +5780,9 @@
   "on": "الكروت الجديدة: LanguageTool على كل كلمة وجملة، و Piper + whisper small على كل ملف صوت (الجمل اللي صوت kerstin غلط فيها اتنقلت لصوت thorsten واتسمعت تاني)"
  },
  "dea1|Ich heiße …": {
-  "hash": "3b6404f930c5",
-  "date": "2026-11-21",
-  "on": "LanguageTool على كل سطر ألماني، و Piper + whisper small (لحد ٣ محاولات) على كل ملف صوت، و Chromium 400px (السمع والإملا والكروت)"
+  "hash": "ac5d0b3bbe50",
+  "date": "2026-11-25",
+  "on": "LanguageTool على كل سطر ألماني (والأسئلة والاختيارات ونصوص القراية)، و Piper + whisper small على كل ملف صوت (جملتين اتغيّرت صياغتهم وسؤال سمع اتبدّل فيه المتكلم بعد ما whisper سمع mir ← dir و Kommst ← Konntest)"
  },
  "dea1|Ich komme aus …": {
   "hash": "39353be3cb7f",

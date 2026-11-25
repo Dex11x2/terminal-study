@@ -3,9 +3,9 @@ MORE("dea1", [
       t: "العيلة والناس (Familie und Freunde)",
       l: 1,
       pre: ["dea1/Ich möchte einen Kaffee", "dea1/Wo finde ich Reis?"],
-      n: R`مين في عيلتك، وعندك كام أخ وأخت وأعمارهم كام، ومتجوز ولا لأ، وإزاي توصف حد (شكله وطبعه)، وتهنّي في عيد ميلاد أو فرح، وتعزم حد أو ترد على عزومة. والقاعدة الكبيرة هنا هي أدوات الملكية ([[mein]] و [[dein]] و [[sein]] و [[ihr]]…: بتاعي وبتاعك وبتاعه وبتاعها)، ومعاها الجمع. والوحدة بتنتهي بجزئين من الامتحان: Lesen Teil 1 (إيميل وملاحظة: صح ولا غلط) و Hören Teil 1 (حوارات قصيرة: تختار من ٣).`,
-      goal: [R`تعرّف عيلتك من صورة: [[Das ist meine Mutter]]، [[Das sind meine Eltern]]، وتسأل [[Wer ist das?]]`, R`تقول عندك كام أخ وكام عيل وأعمارهم كام ([[Ich habe einen Bruder und zwei Schwestern]]، [[Er ist zwanzig]])، وحالتك الاجتماعية ([[verheiratet]]، [[ledig]])، وتجمع الأسامي صح`, R`تستخدم أدوات الملكية كلها ([[sein]]، [[ihr]]، [[unser]]، [[euer]]، [[Ihr]]) في الفاعل وفي المفعول ([[meinen Bruder]])، وتقول [[Annas Bruder]]`, R`توصف حد: شكله ([[groß]]، [[Seine Haare sind kurz]]) وطبعه ([[nett]]، [[lustig]])، وتفرّق بين [[ein Freund]] و [[mein Freund]]`, R`تهنّي وتعزم وترد على عزومة ([[Herzlichen Glückwunsch!]]، [[Ich lade dich ein]])`, R`تحل Lesen Teil 1 و Hören Teil 1 بنفس طريقة الامتحان`],
-      time: "حوالي ٩ ساعات",
+      n: R`مين في عيلتك، وعندك كام أخ وأخت وأعمارهم كام، ومتجوز ولا لأ، وإزاي توصف حد (شكله وطبعه)، وتهنّي في عيد ميلاد أو فرح، وتعزم حد أو ترد على عزومة. وبعدين رأيك وإحساسك (عاجبني ولا لأ، راضي، مهتم، بتمنى، قلقان، وتجامل وتوعد)، والكلمات الصغيرة اللي بتمسك الحوار (Stimmt و Doch و Ach so و Also و Übrigens، و «مش عارف»، و «فهمت صح؟»). والقاعدة الكبيرة هنا هي أدوات الملكية ([[mein]] و [[dein]] و [[sein]] و [[ihr]]…: بتاعي وبتاعك وبتاعه وبتاعها)، ومعاها الجمع. والوحدة بتنتهي بجزئين من الامتحان: Lesen Teil 1 (إيميل وملاحظة: صح ولا غلط) و Hören Teil 1 (حوارات قصيرة: تختار من ٣).`,
+      goal: [R`تعرّف عيلتك من صورة: [[Das ist meine Mutter]]، [[Das sind meine Eltern]]، وتسأل [[Wer ist das?]]`, R`تقول عندك كام أخ وكام عيل وأعمارهم كام ([[Ich habe einen Bruder und zwei Schwestern]]، [[Er ist zwanzig]])، وحالتك الاجتماعية ([[verheiratet]]، [[ledig]])، وتجمع الأسامي صح`, R`تستخدم أدوات الملكية كلها ([[sein]]، [[ihr]]، [[unser]]، [[euer]]، [[Ihr]]) في الفاعل وفي المفعول ([[meinen Bruder]])، وتقول [[Annas Bruder]]`, R`توصف حد: شكله ([[groß]]، [[Seine Haare sind kurz]]) وطبعه ([[nett]]، [[lustig]])، وتفرّق بين [[ein Freund]] و [[mein Freund]]`, R`تهنّي وتعزم وترد على عزومة ([[Herzlichen Glückwunsch!]]، [[Ich lade dich ein]])`, R`تقول رأيك وإحساسك: [[Das gefällt mir]]، [[Ich finde den Film langweilig]]، [[Das interessiert mich nicht]]، [[Ich hoffe, …]]، [[Schade!]]، وتجامل وترد بـ [[Danke!]]`, R`توافق وتعترض بأدب ([[Stimmt]]، [[Ich sehe das anders]])، وترد بـ [[Doch]] على سؤال فيه نفي، وتقول [[Ich weiß es nicht]]، وتبدأ وتغيّر الموضوع وتقفل، وتتأكد إنك فهمت`, R`تحل Lesen Teil 1 و Hören Teil 1 بنفس طريقة الامتحان`],
+      time: "حوالي ١١ ساعة",
       projects: [
         { lvl: 'صغير', t: R`شجرة عيلتك (Stammbaum)`, what: R`ارسم شجرة عيلتك على ورقة: جدودك، وأهلك، وإخواتك، وإنت. واكتب جنب كل واحد اسمه وسنه. وبعدين اكتب ٨ جمل عن الشجرة بـ [[Das ist mein …]] و [[Das ist meine …]] و [[Das sind meine …]]، وقولهم بصوتك وإنت بتشاور على الرسمة.`,
           done: R`٨ جمل، و [[mein]] قبل المذكر والمحايد، و [[meine]] قبل المؤنث والجمع، وجملتين على الأقل فيهم السن ([[Er ist …]])، وجملة بـ [[Das sind]]`,
@@ -1329,6 +1329,696 @@ Euer Karim
             { t: "DWDS: Glückwunsch", url: "https://www.dwds.de/wb/Gl%C3%BCckwunsch" },
             { t: "DWDS: einladen", url: "https://www.dwds.de/wb/einladen" },
             { t: "DWDS: gleichfalls", url: "https://www.dwds.de/wb/gleichfalls" },
+          ],
+        },
+        {
+          cmd: "Das gefällt mir!",
+          title: "رأيك ومشاعرك: عاجبك ولا لأ، راضي، مهتم، بتتمنى، قلقان، وتجامل وتوعد",
+          pre: ["dea1/Ich esse gern Fisch", "dea1/Wie sieht sie aus?", "dea1/Herzlichen Glückwunsch!"],
+          desc: R`لحد دلوقتي بتقول حاجات: اسمك، وعيلتك، وعايز تاكل إيه. الدرس ده عن **رأيك وإحساسك**: [[Das gefällt mir]] (عاجبني)، و [[Ich finde das toll]] (شايفه تحفة)، و [[Das interessiert mich nicht]] (مش فارق معايا)، و [[Ich hoffe, du kommst]] (يا رب تيجي)، و [[Schade!]] (خسارة!).
+
+وهتتعلم تجامل حد ([[Die Jacke steht dir gut!]]) وترد على المجاملة، وتوعد ([[Versprochen!]]). ودي جمل بتقولها كل يوم مع صحابك وزمايلك، وبتيجي في جزء الكلام في الامتحان لما تسأل وتجاوب.`,
+          teach: R`## الموقف
+
+كريم اشترى جاكيت جديد، وبيفرّجه لصاحبته ليا. (Rahmencurriculum: يقول الحاجة عجبته ولا لأ، ويقول رأيه، ويجامل ويشكر على المجاملة.)
+
+~~~de Karim=m Lea=f
+Karim: Schau mal, das ist meine neue Jacke. Gefällt sie dir? || بصي، ده الجاكيت الجديد بتاعي. عاجبك؟
+Lea: Ja, die Jacke gefällt mir sehr! Die Farbe ist toll. || أيوه، الجاكيت عاجبني أوي! اللون تحفة.
+Karim: Danke! Und die Schuhe? || ميرسي! والجزمة؟
+Lea: Die Schuhe gefallen mir nicht so. Ich finde sie ein bisschen groß. || همم، الجزمة مش عاجباني أوي. شايفاها كبيرة شوية.
+Karim: Wirklich? Ich finde sie super! || بجد؟ أنا شايفها جامدة!
+Lea: Okay, okay. Bist du mit der Jacke zufrieden? || ماشي ماشي. إنت مبسوط بالجاكيت؟
+Karim: Ja, sehr. Sie kostet nur dreißig Euro. || أيوه جدًا. ده بتلاتين يورو بس.
+Lea: Toll! Kommst du am Samstag zu meinem Geburtstag? || تحفة! هتيجي عيد ميلادي يوم السبت؟
+Karim: Ja, bestimmt. Versprochen! || أيوه أكيد. وعد!
+Lea: Super! Ich hoffe, Omar kommt auch. || جامد! يا رب عمر ييجي كمان.
+Karim: Ich weiß nicht. Er arbeitet am Samstag. || معرفش. هو بيشتغل يوم السبت.
+Lea: Oh, schade! || آه، خسارة!
+~~~
+
+في الحوار ده سبع حاجات جديدة: يعجبك ولا لأ، ورأيك، وراضي، ومفاجأة، وتتمنى، وتوعد، وخسارة. كل واحدة ليها جزء تحت.
+
+## Gefällt dir das? (عاجبك؟)
+
+[[gefallen]] = يعجب. والمهم فيه: **الحاجة هي اللي بتعمل الفعل، مش إنت**. زي العربي بالظبط: بنقول «الجاكيت **عاجبني**»، مش «أنا عاجب الجاكيت». الألماني نفس الفكرة:
+
+| العربي | الألماني | مين الفاعل؟ |
+|---|---|---|
+| الجاكيت عاجبني | [[Die Jacke gefällt mir.]] | [[die Jacke]] |
+| الجزمة عاجباني | [[Die Schuhe gefallen mir.]] | [[die Schuhe]] (جمع ← [[gefallen]]) |
+| الفيلم عاجبك؟ | [[Gefällt dir der Film?]] | [[der Film]] |
+| المطعم عاجب حضرتك؟ | [[Gefällt Ihnen das Restaurant?]] | [[das Restaurant]] |
+
+- الفعل بيتصرّف مع **الحاجة**: حاجة واحدة ← [[gefällt]] (بـ ä)، حاجات كتير ← [[gefallen]].
+- وإنت (اللي عاجبك) بتيجي في شكل تاني اسمه **Dativ**: [[mir]] (ليا)، و [[dir]] (ليك)، و [[Ihnen]] (لحضرتك). إنت شفتهم قبل كده في [[Wie geht es dir?]] و [[Wie geht es Ihnen?]]، ودي نفس الكلمات.
+
+| مين؟ | الشكل بعد gefallen | مثال |
+|---|---|---|
+| [[ich]] | [[mir]] | [[Das gefällt mir.]] |
+| [[du]] | [[dir]] | [[Gefällt dir das?]] |
+| [[er]] | [[ihm]] | [[Das Buch gefällt ihm.]] |
+| [[sie]] (هي) | [[ihr]] | [[Die Musik gefällt ihr.]] |
+| [[wir]] | [[uns]] | [[Berlin gefällt uns.]] |
+| [[Sie]] | [[Ihnen]] | [[Gefällt Ihnen das Zimmer?]] |
+
+(الـ Dativ كامل جاي في وحدة السكن. دلوقتي خد الجدول ده بس.)
+
+**النفي والدرجة:**
+
+~~~de
+Das gefällt mir sehr. || ده عاجبني أوي.
+Das gefällt mir gut. || ده عاجبني.
+Das gefällt mir nicht so. || ده مش عاجبني أوي.
+Das gefällt mir gar nicht. || ده مش عاجبني خالص.
+Wie gefällt dir Berlin? || إيه رأيك في برلين؟ (عاجباك إزاي؟)
+~~~
+
+[[nicht so]] أرق من [[nicht]]، وبيقولوها لما مش عايزين يزعّلوا حد. و [[gar nicht]] = خالص.
+
+### gern ولا mögen ولا gefallen؟
+
+التلاتة بيترجموا «بحب»، بس كل واحد له مكانه:
+
+| | امتى | مثال |
+|---|---|---|
+| [[gern]] + فعل | حاجة **بتعملها** وبتحبها | [[Ich schwimme gern.]] |
+| [[mögen]] | حاجة أو حد بتحبه **على طول** (أكل، ناس، نوع مزيكا) | [[Ich mag Fisch.]] |
+| [[gefallen]] | حاجة **شايفها أو سامعها أو جربتها** دلوقتي، ورأيك فيها | [[Die Jacke gefällt mir.]] |
+
+يعني في محل الهدوم: [[Die Jacke gefällt mir]]. لكن لو بتتكلم عن الأكل عمومًا: [[Ich mag Pizza]]. ولو عن هواية: [[Ich koche gern]].
+
+## رأيك: finden + صفة
+
+[[finden]] اتعلمتها بمعنى «يلاقي» ([[Wo finde ich Reis?]]). وليها معنى تاني: **«شايف إن…»** (رأيي إن):
+
+~~~de
+Ich finde die Jacke schön. || شايف الجاكيت حلو.
+Ich finde den Film langweilig. || شايف الفيلم ممل.
+Wie findest du den Kurs? || إيه رأيك في الكورس؟
+Ich finde ihn interessant. || شايفه ممتع.
+~~~
+
+- الشكل: [[finden]] + الحاجة + صفة. والحاجة هنا **مفعول** (Akkusativ): [[den Film]]، [[den Kurs]]، و [[ihn]] بدل [[der Kurs]] (زي ما اتعلمت في السوبرماركت: [[der]] ← [[den]]).
+- السؤال: [[Wie findest du …?]] = إيه رأيك في…؟ (حرفيًا: لاقيته إزاي؟)
+
+وفيه طريقة تانية لرأي في جملة كاملة: [[Ich glaube, …]] أو [[Ich denke, …]] (أظن إن…)، وبعد الفاصلة جملة عادية:
+
+~~~de
+Ich glaube, das ist richtig. || أظن ده صح.
+Ich denke, der Test ist leicht. || أظن الامتحان سهل.
+~~~
+
+**صفات الرأي:**
+
+| 👍 | 👎 |
+|---|---|
+| [[toll]] / [[super]] (تحفة، جامد) | [[schlecht]] (وحش) |
+| [[schön]] (حلو) | [[langweilig]] (ممل) |
+| [[gut]] (كويس) | [[nicht so gut]] (مش أوي) |
+| [[interessant]] (ممتع، يشد) | [[zu teuer]] / [[zu groß]] (غالي/كبير **زيادة**) |
+
+[[zu]] قبل الصفة = **زيادة عن اللزوم**: [[Die Schuhe sind zu groß]] = الجزمة كبيرة عليا (مش هتنفع). أما [[sehr groß]] = كبيرة أوي بس ممكن تنفع.
+
+**ترد على رأي حد:**
+
+~~~de
+Das finde ich auch. || وأنا كمان شايف كده.
+Ich finde das nicht. || أنا مش شايف كده.
+Ich sehe das anders. || أنا شايفها بشكل تاني.
+~~~
+
+[[Ich sehe das anders]] طريقة مؤدبة تقول «أنا مش معاك» من غير ما تقول [[Das ist falsch]] (غلط) في وش حد.
+
+## راضي ولا لأ: zufrieden
+
+[[zufrieden mit]] = راضي/مبسوط بـ. وبعد [[mit]] الكلمة بتبقى Dativ ([[dem]] للمذكر والمحايد، [[der]] للمؤنث):
+
+~~~de
+Ich bin mit dem Kurs sehr zufrieden. || أنا مبسوط جدًا بالكورس.
+Bist du mit der Jacke zufrieden? || إنت مبسوط بالجاكيت؟
+Wir sind nicht zufrieden. Das Essen ist kalt. || إحنا مش راضيين. الأكل بارد.
+~~~
+
+ودي بتقولها في المطعم والمحل والشغل. وفي الامتحان ممكن تسمع [[Sind Sie zufrieden?]] من بياع أو موظف.
+
+## يهمك؟ interessieren
+
+~~~de
+Fußball interessiert mich nicht. || الكورة مش فارقة معايا.
+Musik interessiert mich sehr. || المزيكا تهمني جدًا.
+Was interessiert dich? || إيه اللي يهمك؟
+Das ist mir egal. || مش فارقة معايا.
+~~~
+
+**فخ مهم:** [[interessieren]] زي [[gefallen]] في إن الحاجة هي الفاعل، **بس** بعده [[mich]] و [[dich]] (Akkusativ)، مش [[mir]] و [[dir]]:
+
+| | |
+|---|---|
+| [[Das gefällt mir.]] | عاجبني ← [[mir]] |
+| [[Das interessiert mich.]] | يهمني ← [[mich]] |
+
+ومتقولش «[[Ich bin interessiert]]» في الكلام العادي، الألمان بيقولوا [[Das interessiert mich]] أو [[Das finde ich interessant]]. و [[Das ist mir egal]] صريحة شوية، فقولها مع صحابك، ومع حد مش عارفه قول [[Beides ist okay]] (الاتنين ماشيين).
+
+## إحساسك: فرحان، متفاجئ، زعلان، بتتمنى، قلقان
+
+| الإحساس | بتقول | يعني |
+|---|---|---|
+| فرحة | [[Toll!]] [[Super!]] [[Wie schön!]] | تحفة! حلو أوي! |
+| مفاجأة | [[Wirklich?]] [[Echt?]] | بجد؟ (Echt مع الصحاب بس) |
+| خسارة / زعل | [[Schade!]] [[Das ist schade.]] | خسارة! |
+| خيبة أمل | [[Ich bin enttäuscht.]] | أنا متضايق (كان نفسي في حاجة أحسن) |
+| أمنية | [[Ich hoffe, …]] [[Hoffentlich!]] | يا رب… / إن شاء الله |
+| قلق | [[Ich habe Angst.]] [[Ich mache mir Sorgen.]] | خايف / قلقان |
+| تطمين حد | [[Keine Angst!]] [[Keine Sorge!]] | متخافش / متقلقش |
+
+~~~de
+Ich hoffe, du kommst morgen. || يا رب تيجي بكرة.
+Hoffentlich ist der Test leicht! || يا رب الامتحان يبقى سهل!
+Ich habe Angst vor dem Test. || أنا خايف من الامتحان.
+Keine Sorge, das schaffst du! || متقلقش، هتعديها!
+Das Konzert ist ausverkauft? Schade! || الحفلة التذاكر خلصت؟ خسارة!
+~~~
+
+- [[Ich hoffe, …]]: بعد الفاصلة جملة عادية والفعل تاني كلمة: [[Ich hoffe, du kommst]]. و [[Hoffentlich]] لوحدها كلمة واحدة في أول الجملة، والفعل بعدها على طول: [[Hoffentlich kommt er]].
+- [[Angst vor]] + Dativ = خايف من: [[vor dem Test]]، [[vor dem Hund]].
+- [[Ich mache mir Sorgen]] خدها جملة جاهزة. و [[das schaffst du]] = هتقدر عليها (من [[schaffen]]).
+- [[Schade!]] بتقولها لحد عنده خبر مش حلو، أو لنفسك لما حاجة متمشيش.
+
+## تجامل وترد على المجاملة
+
+~~~de
+Die Jacke steht dir gut! || الجاكيت لايق عليك!
+Das sieht toll aus! || شكله تحفة!
+Das Essen schmeckt super! || الأكل طعمه جامد!
+Du sprichst sehr gut Deutsch! || إنت بتتكلم ألماني كويس أوي!
+Danke, das ist nett von dir! || ميرسي، ده لطف منك!
+~~~
+
+- [[stehen]] مع الهدوم = **لايق**: [[Die Jacke steht dir gut]] (والشخص Dativ: [[dir]]، زي [[gefallen]]). و [[aussehen]] = شكله: [[Das sieht toll aus]] (الفعل بيتقسم).
+- **عادة مهمة:** في مصر لما حد يجاملك بتقول «لا ده عادي» أو «عيونك الحلوة». في ألمانيا لو قلت [[Nein, das ist nicht schön]] الشخص هيفتكرك مش موافق بجد. الرد الطبيعي: **[[Danke!]]** أو [[Danke, das ist nett!]] وخلاص.
+
+## توعد
+
+~~~de
+Ich komme bestimmt. || هاجي أكيد.
+Ich rufe dich morgen an. Versprochen! || هكلمك بكرة. وعد!
+Das mache ich, kein Problem. || هعملها، مفيش مشكلة.
+~~~
+
+[[bestimmt]] = أكيد (في الجملة)، و [[Versprochen!]] = وعد (لوحدها في الآخر). والفعل [[versprechen]] = يوعد: [[Ich verspreche es]].
+
+## الكلمات
+
+~~~words رأي وإحساس
+gefallen | يعجب | Die Jacke gefällt mir.
+toll | تحفة | m: Der Film ist toll!
+super | جامد، ممتاز | Das Essen ist super.
+interessant | ممتع، يشد | Der Kurs ist sehr interessant.
+langweilig | ممل | m: Ich finde das Buch langweilig.
+schade | خسارة | Du kannst nicht kommen? Schade!
+enttäuscht | متضايق (خيبة أمل) | m: Ich bin ein bisschen enttäuscht.
+hoffen | يتمنى، يرجو | Ich hoffe, du kommst.
+hoffentlich | يا رب، إن شاء الله | Hoffentlich ist das Wetter schön.
+die Angst, die Ängste | الخوف | m: Ich habe Angst vor Hunden.
+die Sorge, die Sorgen | القلق | Keine Sorge!
+versprechen | يوعد | Ich verspreche es dir.
+bestimmt | أكيد | m: Ich komme bestimmt.
+stehen | يليق على (والشخص Dativ) | Das Kleid steht dir gut.
+~~~
+
+## اقرا: رأي في مطعم
+
+~~~read تعليق على مطعم
+Wir waren am Samstag im Restaurant "Sonne". || كنا يوم السبت في مطعم «زونِه».
+Das Restaurant gefällt mir sehr. Es ist klein und schön. || المطعم عاجبني أوي. صغير وحلو.
+Die Suppe war super, aber die Pizza war kalt. || الشوربة كانت جامدة، بس البيتزا كانت باردة.
+Ich bin nicht ganz zufrieden. || أنا مش راضي أوي.
+Die Kellnerin war sehr nett. || الجرسونة كانت لطيفة جدًا.
+Hoffentlich ist die Pizza nächstes Mal warm! || يا رب البيتزا المرة الجاية تبقى سخنة!
+? Das Restaurant gefällt ihm nicht. || المطعم مش عاجبه
+- Richtig
+- Falsch *
+? Die Pizza war kalt. || البيتزا كانت باردة
+- Richtig *
+- Falsch
+? Er ist mit allem zufrieden. || هو راضي عن كل حاجة
+- Richtig
+- Falsch *
+~~~
+
+[[war]] = كان (هتتعلمه في وحدة الشغل)، وهنا بس عشان تقرا. وخلي بالك من [[aber]] في التالت: الجملة فيها حاجة حلوة وحاجة وحشة، والسؤال بيسأل عن الوحشة. وده فخ بييجي كتير في Lesen.
+
+## قول بصوتك
+
+~~~speak
+Die Jacke gefällt mir sehr! || الجاكيت عاجبني أوي!
+Wie findest du den Film? || إيه رأيك في الفيلم؟
+Ich finde ihn ein bisschen langweilig. || شايفه ممل شوية.
+Fußball interessiert mich nicht. || الكورة مش فارقة معايا.
+Ich hoffe, du kommst am Samstag. || يا رب تيجي يوم السبت.
+Danke, das ist nett von dir! || ميرسي، ده لطف منك!
+~~~
+
+## سمع: عاجبه ولا لأ؟
+
+~~~hear Frau=f Mann=m
+Frau: Das Hotel ist schön und das Frühstück ist gut. Aber das Zimmer ist zu klein.
+? Was gefällt der Frau nicht? || إيه اللي مش عاجب الست؟
+- das Frühstück
+- das Zimmer *
+- das Hotel
+
+Mann: Kommst du mit ins Kino? Der Film ist super!
+Frau: Nein danke, Filme interessieren mich nicht. Ich gehe lieber schwimmen.
+? Was macht die Frau gern? || الست بتحب تعمل إيه؟
+- ins Kino gehen
+- schwimmen *
+- Filme sehen
+
+Frau: Morgen habe ich einen Test. Ich habe ein bisschen Angst. Hoffentlich ist er nicht so schwer.
+? Wie fühlt sie sich? || هي حاسة بإيه؟
+- Sie ist froh.
+- Sie hat Angst. *
+- Sie ist enttäuscht.
+~~~
+
+## إملا
+
+~~~dictate
+Das gefällt mir.
+f: Ich finde den Kurs interessant.
+Schade!
+f: Hoffentlich kommst du.
+~~~`,
+          deep: {
+            why: R`منهج الاندماج بيطلب بالاسم: يقول الحاجة عجبته ولا لأ، ويقول إن الحاجة تهمه ولا لأ، ويقول بيحب إيه ومبيحبش إيه، ويجامل ويشكر على المجاملة. وقايمة Goethe A1 فيها «Gefallen/Missfallen» و «Interesse» و «Zufriedenheit» و «Hoffnung» و «Sorge» و «Versprechung». وفي الامتحان، Sprechen Teil 2 بيطلب منك تسأل وتجاوب عن حاجات زي الأكل والفلوس والويك إند، والرأي بيخلّي إجابتك طبيعية بدل «نعم» و «لا».`,
+            how: R`الرأي في حاجة قدامك: [[Das gefällt mir (nicht)]]، وفي حاجة بصفة: [[Ich finde … + صفة]]، وفي جملة: [[Ich glaube, …]]. الرضا: [[Ich bin (nicht) zufrieden mit …]]. الاهتمام: [[… interessiert mich (nicht)]]. الإحساس: [[Toll! / Schade! / Wirklich? / Ich hoffe, … / Ich habe Angst]]. المجاملة: [[… steht dir gut / sieht toll aus]] والرد [[Danke!]]. الوعد: [[bestimmt]] و [[Versprochen!]]`,
+            when: R`[[gefallen]] لما تشوف أو تسمع أو تجرّب حاجة (هدوم، مكان، فيلم). [[mögen]] للحاجات اللي بتحبها على طول. [[Ich finde …]] لما تحب تقول صفة. [[Echt?]] و [[Das ist mir egal]] و [[super]] مع الصحاب، ومع موظف أو حد كبير: [[Wirklich?]] و [[Das ist sehr schön]]. و [[nicht so]] بدل [[nicht]] لما مش عايز تجرح حد.`,
+            mistakes: R`- [[Ich gefalle die Jacke]]: الجاكيت هو الفاعل: [[Die Jacke gefällt mir]].
+- [[Die Schuhe gefällt mir]]: الجمع ← [[gefallen]].
+- [[Das gefällt ich]]: بعد gefallen ← [[mir]] و [[dir]] و [[Ihnen]].
+- [[Das interessiert mir]]: بعد interessieren ← [[mich]].
+- [[Ich finde der Film gut]]: بعد finden المفعول: [[den Film]].
+- [[Hoffentlich er kommt]]: الفعل بعد [[Hoffentlich]] على طول: [[Hoffentlich kommt er]].
+- ترد على مجاملة بـ «لا ده مش حلو»: في ألمانيا قول [[Danke!]].
+- [[zu groß]] ≠ [[sehr groß]]: [[zu]] = زيادة عن اللزوم (مش هينفع).`
+          },
+          try: R`بص حواليك وقول ٥ جمل رأي بصوت عالي: حاجتين بـ [[… gefällt mir]] (أو [[gefallen mir]] لو جمع)، وحاجتين بـ [[Ich finde … + صفة]]، وجملة بـ [[… interessiert mich nicht]]. وبعدين قول لحد في البيت مجاملة بالألماني وعلّمه يرد بـ [[Danke!]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**gefällt ولا gefallen؟ ومين؟** كمّل: (١) Die Jacke ___ ___ (ليا). (٢) ___ ___ die Schuhe? (ليك) (٣) ___ ___ das Restaurant? (لحضرتك، سؤال) (٤) Die Bilder ___ ___ nicht. (ليه هو) (٥) Berlin ___ ___ gut. (لينا)`,
+              done: R`الخمسة صح: [[gefällt]] مع حاجة واحدة و [[gefallen]] مع الجمع، والشخص [[mir]]/[[dir]]/[[Ihnen]]/[[ihm]]/[[uns]]`,
+              sol: R`~~~de
+Die Jacke gefällt mir.
+Gefallen dir die Schuhe?
+Gefällt Ihnen das Restaurant?
+Die Bilder gefallen ihm nicht.
+Berlin gefällt uns gut.
+~~~
+
+**ليه:** الفعل بيتصرّف مع الحاجة اللي عاجبة: [[die Jacke]] و [[das Restaurant]] و [[Berlin]] واحد ← [[gefällt]]، و [[die Schuhe]] و [[die Bilder]] جمع ← [[gefallen]]. والشخص اللي عاجبه بيبقى Dativ: [[mir]] و [[dir]] و [[Ihnen]] و [[ihm]] و [[uns]]. وفي السؤال الفعل أول كلمة. **الغلطة الشائعة:** [[Gefällt dir die Schuhe?]]: الجزمة جمع.` },
+            { lvl: 'تطبيق', t: R`**تقول إيه؟** رد بجملة ألماني على كل موقف: (١) صاحبك قالك إنه مش هيقدر ييجي حفلتك. (٢) زميلتك لابسة فستان جديد حلو. (٣) بكرة عندك امتحان وإنت قلقان. (٤) صاحبك بيسألك: «تيجي ماتش كورة؟» والكورة مش بتهمك. (٥) صاحبك قالك «بكرة إجازة!» وإنت مكنتش تعرف. (٦) صاحبك طلب منك تيجي بدري، وإنت هتيجي أكيد.`,
+              done: R`٦ ردود، كل واحد بالإحساس الصح: [[Schade!]]، مجاملة بـ [[steht dir gut]]، [[Ich habe Angst]] أو [[Hoffentlich]]، [[Fußball interessiert mich nicht]]، [[Wirklich?]]، [[bestimmt]] أو [[Versprochen!]]`,
+              sol: R`~~~de
+Oh, schade!
+Das Kleid steht dir gut!
+Morgen habe ich einen Test. Hoffentlich ist er leicht!
+Danke, aber Fußball interessiert mich nicht.
+Wirklich? Toll!
+Ich komme bestimmt früh. Versprochen!
+~~~
+
+**ليه:** (١) خبر مش حلو ← [[Schade!]]. (٢) المجاملة على الهدوم بـ [[stehen]] + Dativ. (٣) القلق ممكن [[Ich habe Angst]]، والأمنية بـ [[Hoffentlich]] والفعل بعدها على طول ([[ist]]). (٤) [[Danke, aber …]] أرق من «لأ»، و [[interessiert mich]] بـ [[mich]]. (٥) مفاجأة حلوة ← [[Wirklich? Toll!]]. (٦) [[bestimmt]] في الجملة و [[Versprochen!]] لوحدها.` },
+            { lvl: 'تطبيق', t: R`**رأيك بسببه:** اكتب ٤ جمل رأي عن حاجات من حياتك (فيلم، أكلة، مدينة، الكورس)، كل جملة فيها [[Ich finde …]] أو [[… gefällt mir]]، وبعدها السبب بـ [[denn]] (لأن) أو بجملة تانية. مثال: [[Ich finde Kairo toll. Die Stadt ist nie langweilig.]]`,
+              done: R`٤ جمل، اتنين على الأقل بـ [[finden]] والحاجة فيهم Akkusativ ([[den]] للمذكر)، وكل جملة ليها سبب`,
+              sol: R`**نسخة نموذجية:**
+
+~~~de
+Ich finde den Film "Lola rennt" super. Er ist schnell und spannend.
+Pizza gefällt mir nicht so, denn sie ist oft zu fett.
+Ich finde Alexandria schön, denn das Meer ist toll.
+Der Kurs gefällt mir sehr. Die Lehrerin ist nett und erklärt gut.
+~~~
+
+**ليه:** في الأولى [[den Film]] لأن [[der Film]] مذكر وبعد [[finden]] بيبقى مفعول. و [[denn]] = لأن، والجملة بعدها ترتيبها عادي (الفعل تاني: [[denn sie ist]]). و [[Alexandria]] زي اسم أي مدينة من غير أداة. و [[spannend]] = مشوّق، و [[fett]] = فيه دهون كتير. **الغلطة الشائعة:** [[Ich finde der Film]]؛ وبعد [[denn]] الناس بتحط الفعل في الآخر، والصح إنه تاني.` },
+            { lvl: 'تحدي', t: R`**صلّح الغلطات:** كل جملة فيها غلطة واحدة. اكتبها صح وقول الغلطة كانت إيه: (١) Ich gefalle das Buch. (٢) Die Blumen gefällt mir. (٣) Musik interessiert mir. (٤) Hoffentlich du hast Zeit. (٥) Ich finde der Kurs gut. (٦) A: Die Jacke steht dir gut! B: Nein, sie ist nicht schön.`,
+              done: R`الست جمل صح، وفي كل واحدة جملة بالعربي بالسبب`,
+              sol: R`~~~de
+Das Buch gefällt mir.
+Die Blumen gefallen mir.
+Musik interessiert mich.
+Hoffentlich hast du Zeit.
+Ich finde den Kurs gut.
+B: Danke, das ist nett!
+~~~
+
+**ليه:** (١) الكتاب هو اللي بيعجب، فهو الفاعل وإنت [[mir]]. (٢) [[die Blumen]] جمع ← [[gefallen]]. (٣) [[interessieren]] بعده [[mich]] مش [[mir]] (عكس [[gefallen]]). (٤) بعد [[Hoffentlich]] الفعل على طول. (٥) بعد [[finden]] المذكر ← [[den]]. (٦) مش غلطة لغة، غلطة عادة: الرد على المجاملة [[Danke]]، والإنكار هيبان إنك مش موافق.` },
+            { lvl: 'تحدي', t: R`**حوار المحل:** اكتب حوار ٨ سطور بينك وبين صاحبك في محل هدوم: هو بيجرب بنطلون وجاكيت، وإنت بتقول رأيك (حاجة عاجباك وحاجة لأ، وبصفة وبـ [[zu]])، وهو بيسأل عن السعر ويقول هو راضي ولا لأ، وفي الآخر بتجامله وبيرد.`,
+              done: R`٨ سطور، فيها [[gefällt]] و [[gefallen]]، و [[Ich finde … zu …]]، و [[zufrieden]]، ومجاملة ورد بـ [[Danke]]`,
+              sol: R`**نسخة نموذجية:**
+
+~~~de A=f B=m
+A: Wie findest du die Hose?
+B: Hm, ich finde sie zu lang.
+A: Und die Jacke? Gefällt sie dir?
+B: Ja, die Jacke gefällt mir sehr! Die Farbe ist toll.
+A: Sie kostet vierzig Euro. Ist das zu teuer?
+B: Nein, das ist okay.
+A: Gut, ich nehme die Jacke. Ich bin zufrieden.
+B: Sie steht dir wirklich gut!
+A: Danke, das ist nett!
+~~~
+
+**ليه:** [[die Hose]] مؤنث ← [[sie]] في الرد. و [[zu lang]] يعني مش هتنفعه (أطول من اللازم). [[Gefällt sie dir?]]: [[sie]] = الجاكيت ([[die Jacke]])، والفعل [[gefällt]] لأنها حاجة واحدة. [[Ich nehme die Jacke]] زي ما اتعلمت في السوبرماركت. والمجاملة [[steht dir gut]] والرد [[Danke]].` },
+          ],
+          ref: [
+            { t: "Goethe-Zertifikat A1: Prüfungsziele, Sprechhandlungen (Bewertung, Kommentar؛ Gefühlsausdruck؛ Handlungsregulierung)", url: "https://goethe.de/pro/relaunch/prf/et/Pruefungsziele_Testbeschreibung_A1_SD1.pdf" },
+            { t: "Rahmencurriculum für Integrationskurse: B (Gefühle, Haltungen und Meinungen) و D 2.7 (Komplimente)", url: "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf" },
+            { t: "DWDS: gefallen", url: "https://www.dwds.de/wb/gefallen" },
+            { t: "DWDS: interessieren", url: "https://www.dwds.de/wb/interessieren" },
+            { t: "DWDS: hoffentlich", url: "https://www.dwds.de/wb/hoffentlich" },
+          ],
+        },
+        {
+          cmd: "Ach so! Stimmt genau.",
+          title: "أدوات الكلام: توافق وتعترض، doch، مش عارف، بتسمع، تبدأ وتقفل، وتتأكد إنك فهمت",
+          pre: ["dea1/Das gefällt mir!", "dea1/Hast du am Samstag Zeit?"],
+          desc: R`الكلام الحقيقي مش أسئلة وأجوبة بس. فيه كلمات صغيرة بتمسك الحوار: [[Stimmt!]] (صح)، و [[Ach so!]] (آه فهمت)، و [[Also, …]] (بص يعني)، و [[Übrigens, …]] (على فكرة)، و [[Keine Ahnung]] (معرفش).
+
+الدرس ده بيعلّمك توافق وتعترض بأدب، وترد بـ [[Doch!]] على سؤال فيه نفي، وتقول [[Ich weiß es nicht]]، وتبيّن إنك سامع، وتبدأ كلام وتغيّر الموضوع وتقفله، وتتأكد إنك فهمت ([[Habe ich das richtig verstanden?]]). ودي بالظبط الحاجات اللي بتخلّي كلامك في الامتحان والحياة يبان طبيعي.`,
+          teach: R`## الموقف
+
+منى وعمر في البريك في الكورس. (Rahmencurriculum: يوافق أو يعترض، ويقول رأيه مختلف، ويسأل «فهمت صح؟».)
+
+~~~de Omar=m Mona=f
+Omar: Also, wie findest du den Kurs? || بصي، إيه رأيك في الكورس؟
+Mona: Na ja, ein bisschen schwer. Aber die Lehrerin ist super. || يعني، صعب شوية. بس المدرّسة جامدة.
+Omar: Stimmt, sie ist sehr nett. Und sie erklärt alles gut. || صح، هي لطيفة جدًا. وبتشرح كل حاجة كويس.
+Mona: Genau. Weißt du, wann der Test ist? || بالظبط. تعرف الامتحان إمتى؟
+Omar: Hm, ich weiß es nicht genau. Am Freitag, glaube ich. || همم، مش عارف بالظبط. يوم الجمعة، على ما أظن.
+Mona: Nein, das stimmt nicht. Der Test ist am Montag. || لأ، ده مش صح. الامتحان يوم الاتنين.
+Omar: Ach so! Danke. Übrigens, hast du am Sonntag Zeit? Wir lernen zusammen. || آه، فهمت! ميرسي. على فكرة، فاضية يوم الحد؟ هنذاكر سوا.
+Mona: Gute Idee! Ich komme gern. || فكرة حلوة! هاجي بكل سرور.
+Omar: Super. Also dann, ich muss jetzt los. Bis morgen! || جامد. طب يلا، لازم أمشي. أشوفك بكرة!
+Mona: Tschüss! || باي!
+~~~
+
+اقرا الحوار تاني من غير الكلمات الصغيرة ([[Also]]، [[Na ja]]، [[Stimmt]]، [[Genau]]، [[Ach so]]، [[Übrigens]]): هيبان زي روبوت. الكلمات دي هي موضوع الدرس.
+
+## توافق
+
+~~~de
+Stimmt! || صح!
+Genau! || بالظبط!
+Richtig! || مظبوط!
+Das finde ich auch. || وأنا كمان شايف كده.
+Einverstanden! || موافق!
+Okay, gute Idee! || ماشي، فكرة حلوة!
+~~~
+
+- [[Stimmt]] و [[Genau]] أكتر حاجتين هتسمعهم في ألمانيا، وبتقولهم وإنت بتسمع حد عشان تبيّن إنك معاه.
+- [[Einverstanden]] لما حد يقترح حاجة وإنت موافق عليها: [[Wir treffen uns um acht. – Einverstanden!]]
+
+## تعترض أو تصحّح، بأدب
+
+~~~de
+Nein, das stimmt nicht. || لأ، ده مش صح.
+Das ist falsch. || ده غلط.
+Ich sehe das anders. || أنا شايفها بشكل تاني.
+Ich bin nicht sicher. || أنا مش متأكد.
+Nicht am Freitag, sondern am Montag. || مش الجمعة، الاتنين.
+~~~
+
+- [[Das stimmt nicht]] أرق من [[Das ist falsch]]. ولو حد بيقول رأي (مش معلومة)، قول [[Ich sehe das anders]] أو [[Ich finde das nicht]].
+- [[nicht …, sondern …]] = مش …، لأ … (اتعلمتها في الامتحانات). بتصحّح بيها المعلومة الغلط.
+- [[Ich bin nicht sicher]] لما مش عايز تعترض بقوة: يمكن هو صح.
+
+## doch: «لأ، بالعكس»
+
+لما حد يسألك سؤال **فيه نفي** ([[nicht]] أو [[kein]])، الإجابة «أيوه» مش [[Ja]]، هي [[Doch]]:
+
+| السؤال | لو الإجابة «أيوه» | لو الإجابة «لأ» |
+|---|---|---|
+| [[Kommst du?]] (جاي؟) | [[Ja, ich komme.]] | [[Nein, ich komme nicht.]] |
+| [[Kommst du nicht?]] (مش جاي؟) | **[[Doch, ich komme!]]** | [[Nein, ich komme nicht.]] |
+| [[Hast du keine Zeit?]] (معندكش وقت؟) | **[[Doch, ich habe Zeit!]]** | [[Nein, leider nicht.]] |
+
+وبتستخدمها كمان لما حد يقول حاجة غلط عنك: [[Du sprichst kein Deutsch.]] ← [[Doch, ein bisschen!]] (لأ، بتكلم شوية!). وده زي «بلى» في الفصحى بالظبط.
+
+## عارف ولا لأ: wissen
+
+[[wissen]] = يعرف (معلومة). تصريفه شاذ، واحفظ إن [[ich]] و [[er]] نفس الشكل من غير t:
+
+| [[ich weiß]] | [[du weißt]] | [[er/sie weiß]] | [[wir wissen]] | [[ihr wisst]] | [[sie/Sie wissen]] |
+|---|---|---|---|---|---|
+
+~~~de
+Ich weiß es nicht. || معرفش.
+Ich weiß es nicht genau. || مش عارف بالظبط.
+Keine Ahnung! || معنديش فكرة!
+Weißt du, wann der Test ist? || تعرف الامتحان إمتى؟
+Weißt du, wo Omar wohnt? || تعرف عمر ساكن فين؟
+Ja, das weiß ich. || أيوه، دي أعرفها.
+~~~
+
+- [[Keine Ahnung]] مع الصحاب بس، مع موظف أو مدرس قول [[Das weiß ich leider nicht]].
+- [[Weißt du, wann …?]]: بعد [[wann]] و [[wo]] في السؤال ده **الفعل بيروح آخر الجملة**: [[wann der Test ist]] مش [[wann ist der Test]]. خدها كده دلوقتي، والقاعدة جاية في A2.
+- **wissen ولا kennen؟** [[kennen]] (اتعلمتها في الوحدة دي) لناس وأماكن وحاجات: [[Ich kenne Omar]]، [[Ich kenne Berlin]]. و [[wissen]] لمعلومة: [[Ich weiß, wo er wohnt]]، [[Ich weiß es]].
+
+## بتسمع: الكلمات الصغيرة اللي بتقولها وإنت سامع
+
+| الكلمة | امتى |
+|---|---|
+| [[Ja?]] / [[Mhm.]] | كمّل، أنا سامعك |
+| [[Aha.]] | فهمت، معلومة جديدة |
+| [[Ach so!]] | آه! دلوقتي فهمت (كنت فاهم غلط أو مش فاهم) |
+| [[Wirklich?]] / [[Echt?]] | بجد؟ (مفاجأة) |
+| [[Stimmt.]] / [[Genau.]] | معاك |
+
+في التليفون الكلمات دي مهمة جدًا: لو سكتّ خالص، اللي بيكلمك هيفتكر الخط قطع ويقول [[Hallo? Sind Sie noch da?]] (إنت لسه معايا؟).
+
+## تبدأ، وتدّي مثال، وتغيّر الموضوع، وتقفل
+
+~~~de
+Also, ich finde das gut. || بص، أنا شايف ده كويس.
+Na ja, ich weiß nicht. || يعني، مش عارف.
+Ich mag Obst, zum Beispiel Äpfel und Bananen. || بحب الفاكهة، مثلًا التفاح والموز.
+Übrigens, kommst du morgen? || على فكرة، جاي بكرة؟
+Das ist wirklich wichtig. || ده مهم بجد.
+Also dann, ich muss jetzt los. Tschüss! || طب يلا، لازم أمشي. باي!
+~~~
+
+- [[Also]] في الأول = «بص» أو «طيب»: بتبدأ بيها كلام أو رأي. وكمان بمعنى «يبقى»: [[Der Test ist am Montag? Also habe ich noch Zeit]] (يبقى لسه عندي وقت؛ والفعل بعدها على طول).
+- [[Na ja]] = «يعني…»، بتقولها لما مش متحمس أو مش موافق قوي.
+- [[zum Beispiel]] (ومختصرها z. B. في الكتابة) = مثلًا.
+- [[Übrigens]] = على فكرة: بتنقل بيها لموضوع تاني، والفعل بعدها على طول أو بعد فاصلة سؤال: [[Übrigens, hast du Zeit?]]
+- [[wirklich]] و [[sehr]] و [[besonders]] = بتأكد على حاجة: [[Das ist besonders wichtig]].
+- [[Ich muss jetzt los]] = لازم أمشي دلوقتي (خدها جملة جاهزة). و [[Also dann, …]] بتقفل بيها الكلام قبل الوداع.
+
+## تتأكد إنك فهمت، وتساعد غيرك يفهم
+
+**لو إنت مش متأكد:**
+
+~~~de
+Habe ich das richtig verstanden? Der Test ist am Montag? || فهمت صح؟ الامتحان يوم الاتنين؟
+Meinen Sie Montag oder Mittwoch? || حضرتك قصدك الاتنين ولا الأربع؟
+Wie bitte? Noch einmal, bitte. || أفندم؟ تاني لو سمحت.
+~~~
+
+**لو حد تاني مش فاهمك:**
+
+~~~de
+Verstehst du? || فاهم؟
+Ich sage es noch einmal: am Montag um neun. || هقولها تاني: الاتنين الساعة تسعة.
+Montag, also der erste Tag in der Woche. || الاتنين، يعني أول يوم في الأسبوع.
+~~~
+
+- [[Habe ich das richtig verstanden?]] خدها جملة جاهزة ([[verstanden]] من [[verstehen]]، والماضي ده جاي في وحدة الشغل). وبعدها كرّر المعلومة اللي فهمتها كسؤال.
+- [[meinen]] = يقصد: [[Meinen Sie …?]] = قصدك…؟
+- لما تشرح كلمة لحد مش فاهمها، قولها بكلام تاني بـ [[also]]: [[Montag, also der erste Tag]].
+
+## لو مش عايز تتكلم في حاجة
+
+~~~de
+Darüber möchte ich nicht sprechen. || مش حابب أتكلم في الموضوع ده.
+Das ist privat. || دي حاجة خاصة.
+~~~
+
+في ألمانيا مش عيب ترفض بأدب تتكلم عن حاجة شخصية (مرتبك، دينك، اللي حصلك قبل كده). قولها بهدوء ومن غير اعتذار كبير، وبعدها غيّر الموضوع بـ [[Übrigens, …]].
+
+## الكلمات
+
+~~~words أدوات الكلام
+stimmen | يبقى صح | Das stimmt nicht.
+genau | بالظبط | m: Genau, das ist richtig.
+richtig | صح، مظبوط | Die Antwort ist richtig.
+falsch | غلط | m: Das ist leider falsch.
+einverstanden | موافق | Ich bin einverstanden.
+sicher | متأكد | Bist du sicher?
+wissen | يعرف (معلومة) | Ich weiß es nicht.
+die Ahnung | الفكرة (عن حاجة) | m: Keine Ahnung!
+übrigens | على فكرة | Übrigens, ich habe morgen frei.
+wirklich | بجد، فعلًا | m: Das ist wirklich gut.
+meinen | يقصد | m: Meinen Sie den Montag?
+verstehen | يفهم | Verstehst du mich?
+privat | خاص | Das ist privat.
+~~~
+
+## اقرا: جروب الكورس
+
+~~~read رسايل في جروب الكورس
+Omar: Hallo! Der Test ist am Freitag, oder? || أهلًا! الامتحان يوم الجمعة، صح؟
+Mona: Nein, das stimmt nicht. Er ist am Montag um neun. || لأ، مش صح. هو يوم الاتنين الساعة تسعة.
+Lea: Genau, am Montag. Übrigens, lernen wir am Sonntag zusammen? || بالظبط، يوم الاتنين. على فكرة، هنذاكر سوا يوم الحد؟
+Omar: Gute Idee! Bei mir um drei? || فكرة حلوة! عندي الساعة تلاتة؟
+Mona: Um drei kann ich nicht. Geht es um fünf? || الساعة تلاتة مش هقدر. ينفع خمسة؟
+Lea: Einverstanden! Also Sonntag um fünf bei Omar. || موافقة! يبقى الحد الساعة خمسة عند عمر.
+? Der Test ist am Freitag. || الامتحان يوم الجمعة
+- Richtig
+- Falsch *
+? Sie lernen am Sonntag um drei. || هيذاكروا الحد الساعة تلاتة
+- Richtig
+- Falsch *
+? Sie lernen bei Omar. || هيذاكروا عند عمر
+- Richtig *
+- Falsch
+~~~
+
+السؤالين الأولانيين فخ: عمر قال «الجمعة» و «تلاتة»، بس اتصحّحوا بعدها ([[Nein, das stimmt nicht]] و [[Um drei kann ich nicht]]). في Lesen و Hören **آخر كلام هو اللي بيتحسب**، فدوّر على كلمات التصحيح: [[nicht]]، و [[sondern]]، و [[Nein]].
+
+## قول بصوتك
+
+~~~speak
+Stimmt, das finde ich auch. || صح، وأنا كمان شايف كده.
+Nein, das stimmt nicht. Der Test ist am Montag. || لأ، ده مش صح. الامتحان يوم الاتنين.
+Hast du keine Zeit? Doch, ich habe Zeit! || معندكش وقت؟ لأ، عندي وقت!
+Ich weiß es leider nicht. || للأسف معرفش.
+Habe ich das richtig verstanden? || فهمت صح؟
+Übrigens, kommst du morgen? || على فكرة، جاي بكرة؟
+~~~
+
+## سمع: موافق ولا لأ؟
+
+~~~hear Frau=f Mann=m
+Mann: Wir treffen uns um sieben am Bahnhof, okay?
+Frau: Ja, einverstanden. Bis später!
+? Ist die Frau einverstanden? || الست موافقة؟
+- Ja *
+- Nein
+- Sie weiß es nicht.
+
+Mann: Kommst du heute nicht zum Kurs?
+Frau: Doch, ich komme, aber ein bisschen später.
+? Kommt die Frau zum Kurs? || الست جاية الكورس؟
+- Nein, sie kommt nicht.
+- Ja, aber später. *
+- Sie weiß es nicht.
+
+Mann: Weißt du, wo die Lehrerin wohnt?
+Frau: Keine Ahnung. Frag doch Mona!
+? Was antwortet die Frau? || الست ردت بإيه؟
+- Sie weiß es.
+- Sie weiß es nicht. *
+- Sie wohnt bei Mona.
+~~~
+
+## إملا
+
+~~~dictate
+Das stimmt.
+f: Ich weiß es nicht.
+Doch, ich komme!
+f: Übrigens, hast du Zeit?
+~~~`,
+          deep: {
+            why: R`قايمة Goethe A1 فيها «Zustimmung/Ablehnung» و «verneinen/Widerspruch» و «Bestätigung» و «Wissen/Unwissen»، وجزء كامل اسمه **Redeorganisation und Verständnissicherung**: تبدأ وتقفل، وتبيّن إنك سامع، وتدّي مثال، وتغيّر الموضوع، وتتأكد إنك فهمت. ومنهج الاندماج بيطلب: يقول موافق أو لأ، ويقول رأيه مختلف، ويسأل «فهمت صح؟» وقت الخلاف، ويرفض بأدب يتكلم عن حاجات شخصية. وفي الامتحان: فخاخ التصحيح في Lesen و Hören كلها بالكلمات دي.`,
+            how: R`موافق: [[Stimmt / Genau / Richtig / Einverstanden]]. مش موافق: [[Das stimmt nicht / Ich sehe das anders / nicht …, sondern …]]. سؤال فيه نفي والإجابة أيوه: [[Doch]]. مش عارف: [[Ich weiß es nicht]] (و [[ich weiß]] من غير t). سامع: [[Aha / Ach so / Ja?]]. تبدأ: [[Also, …]]. مثال: [[zum Beispiel]]. موضوع تاني: [[Übrigens, …]]. تقفل: [[Also dann, ich muss los]]. تتأكد: [[Habe ich das richtig verstanden? / Meinen Sie …?]]. ترفض بأدب: [[Darüber möchte ich nicht sprechen]].`,
+            when: R`[[Stimmt]] و [[Genau]] كل شوية وإنت بتسمع. [[Doch]] بس بعد سؤال أو جملة فيها نفي. [[Keine Ahnung]] و [[Echt?]] مع الصحاب، ومع الموظف [[Das weiß ich leider nicht]] و [[Wirklich?]]. [[Habe ich das richtig verstanden?]] قبل ما تمشي من أي مكتب أو عيادة، عشان تتأكد من الميعاد أو الورق.`,
+            mistakes: R`- [[Hast du keine Zeit? – Ja, ich habe Zeit]]: بعد النفي الإجابة «أيوه» ← [[Doch]].
+- [[Ich weißt]] أو [[er weißt]]: الصح [[ich weiß]] و [[er weiß]].
+- [[Weißt du, wann ist der Test?]]: الفعل في الآخر: [[wann der Test ist]].
+- [[Ich weiß Omar]]: الناس بـ [[kennen]]: [[Ich kenne Omar]].
+- [[Das ist falsch!]] على رأي حد: قول [[Ich sehe das anders]].
+- [[Ach so]] بمعنى «بجد؟»: هي «آه فهمت»، والمفاجأة [[Wirklich?]].
+- تسكت خالص في التليفون: قول [[Ja]] و [[Mhm]] و [[Genau]].`
+          },
+          try: R`في أي حوار ألماني تسمعه (فيديو أو حلقة)، عدّ كام مرة سمعت [[Genau]] و [[Also]] و [[Ach so]]. وبعدين اتكلم دقيقة عن الويك إند بتاعك بصوت عالي، وابدأ بـ [[Also]]، وادّي مثال بـ [[zum Beispiel]]، وغيّر الموضوع مرة بـ [[Übrigens]]، واقفل بـ [[Also dann, tschüss!]].`,
+          practice: [
+            { lvl: 'سريع', t: R`**Ja ولا Nein ولا Doch؟** جاوب بـ «أيوه» أو «لأ» زي ما مكتوب: (١) Kommst du morgen? (أيوه) (٢) Kommst du morgen nicht? (أيوه) (٣) Hast du kein Auto? (لأ، معنديش) (٤) Sprichst du Deutsch? (أيوه، شوية) (٥) Du sprichst kein Deutsch, oder? (لأ، بتكلم!) (٦) Ist das nicht dein Handy? (أيوه، بتاعي)`,
+              done: R`الست صح، و [[Doch]] في (٢) و (٥) و (٦) بس`,
+              sol: R`~~~de
+Ja, ich komme.
+Doch, ich komme!
+Nein, ich habe kein Auto.
+Ja, ein bisschen.
+Doch, ich spreche Deutsch!
+Doch, das ist mein Handy.
+~~~
+
+**ليه:** (٢) و (٥) و (٦) فيهم نفي ([[nicht]] أو [[kein]])، فالـ «أيوه» = [[Doch]]. (٣) فيه نفي بس الإجابة «لأ» ← [[Nein]] عادي. (١) و (٤) من غير نفي ← [[Ja]]. **الغلطة الشائعة:** تقول [[Ja]] في (٢)، والسامع الألماني مش هيعرف إنت جاي ولا لأ.` },
+            { lvl: 'سريع', t: R`**wissen:** كمّل بالشكل الصح: (١) Ich ___ es nicht. (٢) ___ du, wo der Bahnhof ist? (٣) Mona ___ das. (٤) Wir ___ es auch nicht. (٥) ___ ihr, wann der Kurs beginnt? (٦) Und Sie? ___ Sie es?`,
+              done: R`الست صح، و [[weiß]] من غير t مع [[ich]] و [[Mona]]`,
+              sol: R`~~~de
+Ich weiß es nicht.
+Weißt du, wo der Bahnhof ist?
+Mona weiß das.
+Wir wissen es auch nicht.
+Wisst ihr, wann der Kurs beginnt?
+Und Sie? Wissen Sie es?
+~~~
+
+**ليه:** [[wissen]] شاذ: المفرد بـ ei ([[weiß]] و [[weißt]])، والجمع بـ i ([[wissen]] و [[wisst]]). و [[ich weiß]] و [[er/sie weiß]] نفس الشكل من غير نهاية، زي [[ich möchte]] و [[er möchte]]. وفي (٢) و (٥) الفعل في الآخر بعد [[wo]] و [[wann]]: [[wo der Bahnhof ist]]، [[wann der Kurs beginnt]].` },
+            { lvl: 'تطبيق', t: R`**صحّح بأدب:** صاحبك بيقول حاجات غلط. صحّحه بـ [[Nein, das stimmt nicht]] أو [[nicht …, sondern …]]: (١) «الكورس الساعة ٩» (هو ١٠). (٢) «ليا من فرنسا» (هي من النمسا). (٣) «الجاكيت بـ ٥٠ يورو» (بـ ٣٠). (٤) «بكرة الأربع» (بكرة الخميس). وبعدين صاحبك بيقول رأي: «الفيلم ممل». اعترض على الرأي بطريقة مناسبة.`,
+              done: R`٤ تصحيحات معلومات، كل واحد فيه المعلومة الصح، والرأي بـ [[Ich sehe das anders]] أو [[Ich finde das nicht]] مش [[Das ist falsch]]`,
+              sol: R`~~~de
+Nein, das stimmt nicht. Der Kurs ist um zehn.
+Lea kommt nicht aus Frankreich, sondern aus Österreich.
+Die Jacke kostet nicht fünfzig, sondern dreißig Euro.
+Nein, morgen ist nicht Mittwoch, sondern Donnerstag.
+Ich sehe das anders. Ich finde den Film interessant.
+~~~
+
+**ليه:** في المعلومات (ساعة، بلد، سعر، يوم) فيه صح وغلط، فـ [[Das stimmt nicht]] و [[nicht …, sondern …]] مناسبين. لكن الرأي مفيهوش صح وغلط، فبتقول إنك شايفها بشكل تاني ([[Ich sehe das anders]]) وتقول رأيك. و [[den Film]] لأن بعد [[finden]] المذكر ← [[den]].` },
+            { lvl: 'تطبيق', t: R`**رتّب الحوار:** الجمل دي متلخبطة. رتبها في حوار في التليفون بين نادية والدكتورة: (أ) Ach so, am Mittwoch. Um wie viel Uhr? (ب) Habe ich das richtig verstanden? Mittwoch um zehn? (ج) Ihr Termin ist nicht am Dienstag, sondern am Mittwoch. (د) Genau. Bis Mittwoch! (هـ) Um zehn Uhr. (و) Mhm, ja?`,
+              done: R`الترتيب منطقي: الخبر، والسماع، والتصحيح، والسؤال، والساعة، والتأكيد، والقفلة`,
+              sol: R`~~~de Ärztin=f Nadia=f
+Ärztin: Frau Nadia, es gibt eine Änderung.
+Nadia: Mhm, ja?
+Ärztin: Ihr Termin ist nicht am Dienstag, sondern am Mittwoch.
+Nadia: Ach so, am Mittwoch. Um wie viel Uhr?
+Ärztin: Um zehn Uhr.
+Nadia: Habe ich das richtig verstanden? Mittwoch um zehn?
+Ärztin: Genau. Bis Mittwoch!
+~~~
+
+**الترتيب:** (و) ← (ج) ← (أ) ← (هـ) ← (ب) ← (د). وزوّدت أول سطر عشان (و) يبقى ليها معنى ([[es gibt eine Änderung]] = فيه تغيير). [[Mhm, ja?]] = كمّلي أنا سامعة. [[Ach so]] بعد التصحيح = آه فهمت. و [[Habe ich das richtig verstanden?]] قبل القفلة عشان نادية تتأكد. و [[Genau]] من الدكتورة = أيوه صح.` },
+            { lvl: 'تحدي', t: R`**حوار كامل بالأدوات:** اكتب حوار ٨–١٠ سطور بينك وبين زميل في الكورس عن رحلة الكورس يوم السبت. لازم يكون فيه: [[Also]] في الأول، ورأي وحد يوافق ([[Stimmt]] أو [[Genau]])، ومعلومة غلط تتصحّح، و [[Doch]] مرة، و [[Ich weiß es nicht]]، و [[zum Beispiel]]، و [[Übrigens]]، و [[Habe ich das richtig verstanden?]]، وقفلة.`,
+              done: R`الحوار فيه الأدوات التسعة كلها، وكل واحدة في مكانها الصح (Doch بعد نفي، Ach so بعد تصحيح)`,
+              sol: R`**نسخة نموذجية:**
+
+~~~de A=m B=f
+A: Also, am Samstag fahren wir nach Potsdam. Toll, oder?
+B: Stimmt, das finde ich auch.
+A: Der Bus fährt um acht.
+B: Nein, das stimmt nicht. Er fährt um halb neun.
+A: Ach so! Und was nehmen wir mit?
+B: Essen und Wasser, zum Beispiel Brötchen und Obst.
+A: Kommt Omar nicht mit?
+B: Doch, er kommt! Aber Lea? Ich weiß es nicht.
+A: Übrigens, wie viel kostet die Fahrt?
+B: Zehn Euro.
+A: Habe ich das richtig verstanden? Zehn Euro?
+B: Genau. Also dann, bis Samstag!
+~~~
+
+**ليه:** [[Also]] بيفتح الكلام. [[Toll, oder?]] = تحفة، مش كده؟ و [[Stimmt]] موافقة. التصحيح بـ [[Das stimmt nicht]] والرد [[Ach so]]. [[Kommt Omar nicht mit?]] فيها [[nicht]]، فالـ «أيوه» = [[Doch]]. و [[Übrigens]] بتنقل للفلوس. و [[Habe ich das richtig verstanden?]] قبل الأرقام المهمة. و [[mitkommen]] بيتقسم ([[kommt … mit]]).` },
+          ],
+          ref: [
+            { t: "Goethe-Zertifikat A1: Prüfungsziele، Sprechhandlungen و Redeorganisation und Verständnissicherung", url: "https://goethe.de/pro/relaunch/prf/et/Pruefungsziele_Testbeschreibung_A1_SD1.pdf" },
+            { t: "Rahmencurriculum für Integrationskurse: B 2.2 و C 1 (Zustimmung، Widerspruch، Verständnissicherung) و A 1.1 (höflich ablehnen)", url: "https://www.goethe.de/resources/files/pdf209/rahmencurriculum-integrationskurs_20171.pdf" },
+            { t: "DWDS: doch", url: "https://www.dwds.de/wb/doch" },
+            { t: "DWDS: wissen", url: "https://www.dwds.de/wb/wissen" },
+            { t: "DWDS: übrigens", url: "https://www.dwds.de/wb/%C3%BCbrigens" },
           ],
         },
         {

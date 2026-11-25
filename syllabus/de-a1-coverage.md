@@ -8,13 +8,13 @@
 | القواعد | 57 | 8 | 0 | 88٪ |
 | مجموعات الكلمات | 19 | 1 | 0 | 95٪ |
 | المواضيع | 42 | 6 | 0 | 88٪ |
-| أفعال الكلام (Sprechhandlungen) | 36 | 12 | 0 | 75٪ |
+| أفعال الكلام (Sprechhandlungen) | 47 | 1 | 0 | 98٪ |
 | المفاهيم (Notionen) | 23 | 4 | 0 | 85٪ |
-| استراتيجيات الكلام | 6 | 9 | 0 | 40٪ |
-| مواقف منهج الاندماج | 111 | 74 | 0 | 60٪ |
-| جمل CEFR | 69 | 32 | 1 | 68٪ |
-| الكلمات | 554 (+188 مذكورة من غير كارت) | 0 | 0 | 75٪ |
-| **الكل** | **945** | | | **73٪** |
+| استراتيجيات الكلام | 14 | 1 | 0 | 93٪ |
+| مواقف منهج الاندماج | 120 | 65 | 0 | 65٪ |
+| جمل CEFR | 71 | 30 | 1 | 70٪ |
+| الكلمات | 557 (+185 مذكورة من غير كارت) | 0 | 0 | 75٪ |
+| **الكل** | **978** | | | **76٪** |
 
 ## ناقص: أجزاء الامتحانات (13)
 
@@ -56,20 +56,9 @@
 - Internet — الإنترنت مذكور بس، مش موضوع درس
 - Lektüre/Presse — القراية والجرايد مش موضوع درس
 
-## ناقص: أفعال الكلام (Sprechhandlungen) (12)
+## ناقص: أفعال الكلام (Sprechhandlungen) (1)
 
 - Zweck und Bestimmung angeben — «wofür / für …» للغرض مش مشروح
-- Wissen/Unwissen — «Ich weiß (es) nicht» مش متعلّمة
-- Zufriedenheit/Unzufriedenheit — «zufrieden» مش موجودة
-- Gefallen/Missfallen — «Das gefällt mir» مش متعلّمة (مذكورة في الصحة بس)
-- Interesse/Desinteresse — «Das interessiert mich (nicht)» مش متعلّمة
-- verneinen/Widerspruch — «doch» والاعتراض (Nein, das stimmt nicht) مش متعلّمين
-- Hoffnung — «Ich hoffe …» مش موجودة
-- Sorge/Befürchtung — التعبير عن القلق مش موجود
-- Enttäuschung — التعبير عن خيبة الأمل مش موجود
-- Bestätigung — «Ja, genau / Richtig / Stimmt» مش متعلّمة
-- Versprechung — الوعد مش موجود
-- eine Anerkennung aussprechen/ein Kompliment machen — المجاملة (Das sieht toll aus) مش متعلّمة
 
 ## ناقص: المفاهيم (Notionen) (4)
 
@@ -78,36 +67,19 @@
 - Dimension/Maßangabe — groß/klein/lang/breit مع المقاسات مش مشروحة
 - Bedingung — «wenn» للشرط مش مشروحة
 
-## ناقص: استراتيجيات الكلام (9)
+## ناقص: استراتيجيات الكلام (1)
 
-- eine Äußerung einleiten — «Also, … / Na ja, …» مش متعلّمة
-- eine Äußerung abschließen — ختم الكلام مش متعلّم
-- Zuhören signalisieren — «Aha / Ach so / Ja?» مش متعلّمة
 - gemeinsames Wissen andeuten — «Weißt du …» مش موجودة
-- Beispiele geben — «zum Beispiel» مش موجودة
-- das Thema wechseln — تغيير الموضوع مش متعلّم
-- etwas hervorheben — التأكيد (sehr / wirklich / besonders) مش مشروح كاستراتيجية
-- Vermeidung — تجنّب الموضوع مش متعلّم
-- Verständnishilfen anbieten — عرض المساعدة على الفهم مش متعلّم
 
-## ناقص: مواقف منهج الاندماج (74)
+## ناقص: مواقف منهج الاندماج (65)
 
-- A 1.1 (am Gespräch teilnehmen) — يرفض بأدب يتكلم عن حاجات حصلت له في بلده أو في الطريق — الرفض المؤدب للكلام عن حاجات شخصية مش متعلّم
 - A 2.1 (am Gespräch teilnehmen) — يجاوب ببساطة: الحاجة دي عادية في بلدي ولا لأ — «Das ist in meinem Land (nicht) normal» مش موجودة
 - A 4.2 (am Gespräch teilnehmen) — يسأل لو الورق ده (جواب المدرسة، الطلبات) موجود بلغته أو بلغة يعرفها — السؤال عن الورق بلغة تانية مش موجود
 - A 4.2 (am Gespräch teilnehmen) — يقول للموظف إن فيه حد هيترجم له (حد من العيلة أو مترجم) — «Jemand übersetzt für mich» مش موجودة
-- B 1.5 (am Gespräch teilnehmen) — يقول الحاجة عجبته ولا لأ — «Das gefällt mir (nicht)» مش متعلّمة
-- B 2.1 (am Gespräch teilnehmen) — يقول إن السؤال يهمه أو مش فارق معاه — «Das interessiert mich (nicht)» مش متعلّمة
-- B 2.2 (am Gespräch teilnehmen) — يقول موافق أو مش موافق — الموافقة والاعتراض على رأي مش متعلّمين
-- C 1.1 (am Gespräch teilnehmen) — يقول إن رأيه مختلف — «Ich sehe das anders» مش موجودة
-- C 1.2 (am Gespräch teilnehmen) — وقت الخلاف (مع زميل أو مدرس) يسأل: أنا فهمت صح؟ — «Habe ich das richtig verstanden?» مش موجودة
-- C 1.4 (am Gespräch teilnehmen) — يعترض بكلام بسيط ومناسب (على كرسي محجوز، أو اتهام، أو طلب) — الاعتراض البسيط مش متعلّم
 - C 2.4 (am Gespräch teilnehmen) — في مشكلة، يوافق أو يرفض حل اتعرض عليه — قبول أو رفض حل مقترح مش متعلّم
 - D 1.4 (am Gespräch teilnehmen) — يعرض على زميل أو ضيف يقولوا لبعض Du — عرض الـ Du على حد مش متعلّم (الدرس ١.٢ بيشرح Du و Sie بس)
 - D 1.4 (am Gespräch teilnehmen) — يرد لما حد يعرض عليه Du — الرد على عرض الـ Du مش متعلّم
 - D 1.4 (am Gespräch teilnehmen) — يطلب من موظف حكومي يكلمه بالطريقة المناسبة — طلب المعاملة المناسبة من موظف مش متعلّم
-- D 2.7 (am Gespräch teilnehmen) — يجامل أو يمدح بكلمتين — المجاملة مش متعلّمة
-- D 2.7 (am Gespräch teilnehmen) — يشكر على المجاملة — الشكر على المجاملة مش متعلّم
 - E 1.1 (am Gespräch teilnehmen) — يطلب من اللي بيكلمه يصحّح له — «Korrigieren Sie mich, bitte» مش متعلّمة
 - E 1.1 (am Gespräch teilnehmen) — يطلب ترشيح مواد تعلّم زيادة — طلب مواد تعلّم زيادة مش متعلّم
 - E 1.1 (am Gespräch teilnehmen) — يسأل فيه كورس ألماني قريب؟ — السؤال عن كورس قريب مش متعلّم
@@ -167,7 +139,7 @@
 - 11.2.2 (am Gespräch teilnehmen) — يتفق مع زمايله يذاكروا سوا — الاتفاق على المذاكرة سوا مش موجود
 - 12.1.1 (am Gespräch teilnehmen) — يسأل عن سكن رخيص أو مساعدة في الإيجار — السكن الرخيص ومساعدة الإيجار مش موجودين
 
-## ناقص: جمل CEFR (32)
+## ناقص: جمل CEFR (30)
 
 - Understanding as a member of a live audience — يفهم معلومة بسيطة جدًا بتتشرح في موقف متوقع (جولة سياحية) لو الكلام بطيء وفيه وقفات — فهم شرح في جولة مش متمرّن عليه
 - Watching TV, film and video — يعرف كلمات مألوفة ويحدد موضوع عناوين الأخبار والمنتجات في الإعلانات بمساعدة الصورة — إعلانات وأخبار التلفزيون مش موجودة
@@ -193,8 +165,6 @@
 - Translating a written text in speech or sign — يترجم شفوي ترجمة تقريبية لكلمات وجمل بسيطة على يافطات وبوسترات وبرامج — Mediation مش متمرّن عليها
 - Translating a written text in writing — يترجم كتابة كلمات وجمل بسيطة بالقاموس، حتى لو مش دايمًا بيختار المعنى الصح — Mediation مش متمرّن عليها
 - Expressing a personal response to creative texts (including literature) — يقول بكلمات بسيطة عمل فني خلّاه حاسس بإيه — Mediation مش متمرّن عليها
-- Facilitating collaborative interaction with peers — يطلب مشاركة الناس في مهمة بسيطة بجمل جاهزة، ويقول إنه فاهم ويسأل هم فاهمين — Mediation مش متمرّن عليها
-- Collaborating to construct meaning — يقول فكرة ويسأل الناس رأيهم بكلمات بسيطة، لو جهّز قبلها — Mediation مش متمرّن عليها
 - Encouraging conceptual talk — يستخدم كلمات متفرقة وإشارات عشان يبيّن إنه مهتم بفكرة — Mediation مش متمرّن عليها
 - Facilitating pluricultural space — يسهّل التعارف بين ثقافتين بترحيب واهتمام وكلمات بسيطة — Mediation مش متمرّن عليها
 - Acting as an intermediary in informal situations (with friends and colleagues) — ينقل (بلغة تانية) بيانات حد ومعلومات بسيطة متوقعة، لو حد ساعده في الصياغة — Mediation مش متمرّن عليها
@@ -202,9 +172,9 @@
 - Plurilingual comprehension — يعرف الكلمات الدولية والمشتركة بين اللغات (Haus/house) ويستخدمها يفهم يافطات ورسايل بسيطة — الكلمات الدولية مش مشروحة كطريقة فهم
 - Building on plurilingual repertoire — يستخدم كلمات من لغات مختلفة عشان يخلّص حاجة بسيطة جدًا مع حد متعاون — استخدام كذا لغة مع بعض مش متعلّم
 
-## كلمات مذكورة من غير كارت (188)
+## كلمات مذكورة من غير كارت (185)
 
-ab، aber، das Alter، an، ander-، ankreuzen، die Anrede، der Anruf, -e، antworten، der Arbeitsplatz, -ä, e، auch، auf، aufhören، aus، der Ausflug، ausmachen، die Aussage, -n، (sich) ausziehen، baden، die Bahn، bald، bedeuten، beginnen، bei، das Beispiel, -e، bekommen، benutzen، besetzt، bis، bisschen، bitten، das Buch, -ü, er، circa/ca.، da، der Dank، dein-، der, die, das، dich، dir، dort, -her, -hin، draußen، durch، die Durchsage, -n، (sich) duschen، einfach، der Eingang، einmal، der Eintritt، die E-Mail, -s، das Ende، er، der Erwachsene, -n، es، euer، fertig، der Film, -e، das Foto, -s، die Freizeit، früher، für، der Fußball، der Gast, -ä, e، geboren، der Geburtsort، gefallen، gerade، das Gespräch, -e، gleich، grillen، gültig، hallo، die Hausfrau, -en/، der Hausmann، hier، hinten، das Hobby, -s، hoch، hören، der Hund, -e، ich، ihr/ihm/ihn، in، ja، jed-، kaputt، kennenlernen، der Kindergarten، klar، die Klasse، lange، laufen، legen، lernen، lesen، Lieblings-، das Lokal، machen، man، mein، meist-، mitnehmen، der Moment، nächst-، nein، normal، nur، oder، öffnen، der Ort, -e، das Papier، die Postleitzahl، das Problem, -e، der Raum, -ä, e، reparieren، die Reparatur، die Rezeption، sagen، Satz, -ä, e، scheinen، das Schild, -er، schließen، schnell، schon، schwimmen، das Schwimmbad، sehen، sehr، weg sein، sich، sie، Sie، sitzen، so، später، spielen، stellen، der Teil, -e، telefonieren، der Test، der Text, -e، das Thema، tschüss، tun، über، übernachten، um، unser-، der Unterricht، verkaufen، viel، vielleicht، von، (sich) vorstellen، wann، warum، was، was für ein، (sich) waschen، wenig، wer، wichtig، wie، das Wiederhören، das Wiedersehen، wie viel، wir، wissen، die Zeitung, -en، der Zoll، zu، zurück، passend، die Situation, die Situationen، das Kreuz, die Kreuze، wählen، zweimal، die Fahrt, die Fahrten، die Medizin، kostenlos، der Besuch, die Besuche، die Idee, die Ideen، genau، wieder، sonst، die Person, die Personen، voll، zeigen، verschieden
+ab، aber، das Alter، an، ander-، ankreuzen، die Anrede، der Anruf, -e، antworten، der Arbeitsplatz, -ä, e، auch، auf، aufhören، aus، der Ausflug، ausmachen، die Aussage, -n، (sich) ausziehen، baden، die Bahn، bald، bedeuten، beginnen، bei، das Beispiel, -e، bekommen، benutzen، besetzt، bis، bisschen، bitten، das Buch, -ü, er، circa/ca.، da، der Dank، dein-، der, die, das، dich، dir، dort, -her, -hin، draußen، durch، die Durchsage, -n، (sich) duschen، einfach، der Eingang، einmal، der Eintritt، die E-Mail, -s، das Ende، er، der Erwachsene, -n، es، euer، fertig، der Film, -e، das Foto, -s، die Freizeit، früher، für، der Fußball، der Gast, -ä, e، geboren، der Geburtsort، gerade، das Gespräch, -e، gleich، grillen، gültig، hallo، die Hausfrau, -en/، der Hausmann، hier، hinten، das Hobby, -s، hoch، hören، der Hund, -e، ich، ihr/ihm/ihn، in، ja، jed-، kaputt، kennenlernen، der Kindergarten، klar، die Klasse، lange، laufen، legen، lernen، lesen، Lieblings-، das Lokal، machen، man، mein، meist-، mitnehmen، der Moment، nächst-، nein، normal، nur، oder، öffnen، der Ort, -e، das Papier، die Postleitzahl، das Problem, -e، der Raum, -ä, e، reparieren، die Reparatur، die Rezeption، sagen، Satz, -ä, e، scheinen، das Schild, -er، schließen، schnell، schon، schwimmen، das Schwimmbad، sehen، sehr، weg sein، sich، sie، Sie، sitzen، so، später، spielen، stellen، der Teil, -e، telefonieren، der Test، der Text, -e، das Thema، tschüss، tun، über، übernachten، um، unser-، der Unterricht، verkaufen، viel، vielleicht، von، (sich) vorstellen، wann، warum، was، was für ein، (sich) waschen، wenig، wer، wichtig، wie، das Wiederhören، das Wiedersehen، wie viel، wir، die Zeitung, -en، der Zoll، zu، zurück، passend، die Situation, die Situationen، das Kreuz, die Kreuze، wählen، zweimal، die Fahrt, die Fahrten، die Medizin، kostenlos، der Besuch, die Besuche، die Idee, die Ideen، wieder، sonst، die Person, die Personen، voll، zeigen، verschieden
 
 ## مستبعد (2)
 

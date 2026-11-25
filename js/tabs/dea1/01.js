@@ -418,7 +418,7 @@ wir sind, ihr seid, sie sind, Sie sind
 
 لو حد قالك [[Sag ruhig du!]] أو [[Wir können uns duzen.]] يبقى بيعرض عليك [[du]]. والأكبر سنًا أو الأعلى في الشغل هو اللي بيعرض عادة. (D 1.4 في منهج الاندماج: تعرض [[du]] وترد على العرض.)
 
-~~~de عرض «du»
+~~~de Frau_Weber=f Tarek=m عرض «du»
 Frau_Weber: Wir können uns duzen. Ich bin Anna. || ممكن نقول لبعض «إنت». أنا آنا.
 Tarek: Gern! Ich bin Tarek. || بكل سرور! أنا طارق.
 ~~~

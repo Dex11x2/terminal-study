@@ -7,7 +7,7 @@ const units = [
   ['Hallo! Guten Tag!', 'Ich heiße …', 'Das Alphabet', 'Ich komme aus …', 'Die Zahlen 0–100', 'Prüfung: Sprechen Teil 1'],
   ['Wie spät ist es?', 'Am Montag um acht', 'Im Januar, im Sommer', 'Ich stehe um sieben Uhr auf', 'Hast du am Samstag Zeit?', 'Prüfung: Hören Teil 3, Schreiben Teil 2'],
   ['Ich esse gern Fisch', 'Ich möchte einen Kaffee', 'Wo finde ich Reis?', 'Was kostet das?', 'Die Rechnung, bitte!', 'Prüfung: Sprechen Teil 2 und 3, Hören Teil 2'],
-  ['Das ist meine Mutter', 'Hast du Geschwister?', 'Sein Bruder, ihre Schwester', 'Wie sieht sie aus?', 'Herzlichen Glückwunsch!', 'Prüfung: Lesen Teil 1, Hören Teil 1'],
+  ['Das ist meine Mutter', 'Hast du Geschwister?', 'Sein Bruder, ihre Schwester', 'Wie sieht sie aus?', 'Herzlichen Glückwunsch!', 'Das gefällt mir!', 'Ach so! Stimmt genau.', 'Prüfung: Lesen Teil 1, Hören Teil 1'],
   ['Meine Wohnung hat drei Zimmer', 'Das Sofa steht im Wohnzimmer', 'Ist die Wohnung noch frei?', 'Können Sie mir helfen?', 'Hier darf man nicht rauchen', 'Prüfung: Lesen Teil 2 und 3'],
   ['Was sind Sie von Beruf?', 'Ich arbeite von acht bis fünf', 'Rufen Sie bitte an!', 'Ich will Ärztin werden', 'Was hast du gestern gemacht?', 'Prüfung: Schreiben Teil 2, Hören Teil 3, Sprechen Teil 2'],
   ['Mir geht es nicht gut', 'Ich brauche einen Termin', 'Seit wann haben Sie das?', 'Dreimal am Tag nach dem Essen', 'Ruf schnell einen Krankenwagen!', 'Prüfung: Hören Teil 1, Lesen Teil 3, Sprechen Teil 3'],
@@ -22,7 +22,7 @@ const lines = String.raw`
 exam:hoeren-1 | 7.6 | Hören Teil 1
 exam:hoeren-2 | 8.6 | Hören Teil 2
 exam:hoeren-3 | 2.6 | Hören Teil 3
-exam:lesen-1 | 4.6 | Lesen Teil 1
+exam:lesen-1 | 4.8 | Lesen Teil 1
 exam:lesen-2 | 5.6 | Teil 2
 exam:lesen-3 | 5.6 | Teil 3
 exam:schreiben-1 | 8.6 | Schreiben Teil 1
@@ -189,7 +189,7 @@ theme:dienstleistungen-post | 9.3 | Paket
 theme:dienstleistungen-telekommunikation | 6.3 | anrufen|Telefon
 theme:dienstleistungen-banken | 9.2 | Konto
 theme:dienstleistungen-polizei | 9.4 | Polizei
-theme:erziehung-ausbildung-lernen-kinderbetreuung | 4.6 | Kindergarten
+theme:erziehung-ausbildung-lernen-kinderbetreuung | 4.8 | Kindergarten
 theme:erziehung-ausbildung-lernen-schule | 6.1 | Schule
 theme:erziehung-ausbildung-lernen-sprachen-lernen | 9.5 | Wie sagt man
 theme:arbeit-beruf-arbeitsplatz | 6.1 | Beruf
@@ -208,17 +208,17 @@ act:informationsaustausch-berichten | 6.5 | gestern
 act:informationsaustausch-mitteilung-ankundigung | 2.6 | رسايل صوتية
 act:informationsaustausch-nachfrage | 1.3 | Wie bitte
 act:informationsaustausch-zweck-und-bestimmung-angeben | gap | «wofür / für …» للغرض مش مشروح
-act:informationsaustausch-wissen-unwissen | gap | «Ich weiß (es) nicht» مش متعلّمة
-act:bewertung-kommentar-meinung-ansicht | 3.3 | finde
-act:bewertung-kommentar-zufriedenheit-unzufriedenheit | gap | «zufrieden» مش موجودة
-act:bewertung-kommentar-gefallen-missfallen | gap | «Das gefällt mir» مش متعلّمة (مذكورة في الصحة بس)
-act:bewertung-kommentar-interesse-desinteresse | gap | «Das interessiert mich (nicht)» مش متعلّمة
+act:informationsaustausch-wissen-unwissen | 4.7 | weiß es nicht
+act:bewertung-kommentar-meinung-ansicht | 4.6 | Ich finde
+act:bewertung-kommentar-zufriedenheit-unzufriedenheit | 4.6 | zufrieden
+act:bewertung-kommentar-gefallen-missfallen | 4.6 | gefällt mir
+act:bewertung-kommentar-interesse-desinteresse | 4.6 | interessiert mich
 act:bewertung-kommentar-billigung-missbilligung | 2.5 | gute Idee
-act:bewertung-kommentar-zustimmung-ablehnung | 2.5 | Ja, gern|Nein, danke|leider nicht
+act:bewertung-kommentar-zustimmung-ablehnung | 4.7 | Einverstanden
 act:bewertung-kommentar-wunsch | 3.2 | möchte
 act:bewertung-kommentar-vorlieben | 3.1 | lieber
 act:bewertung-kommentar-wichtigkeit | 6.4 | wichtig
-act:bewertung-kommentar-verneinen-widerspruch | gap | «doch» والاعتراض (Nein, das stimmt nicht) مش متعلّمين
+act:bewertung-kommentar-verneinen-widerspruch | 4.7 | Doch
 act:bewertung-kommentar-beschwerde | 7.2 | Beschwerde
 act:bewertung-kommentar-rechtfertigung-begrundung | 9.5 | \bdenn\b
 act:gefuhlsausdruck-freude-bedauern | 2.5 | Schade
@@ -226,17 +226,17 @@ act:gefuhlsausdruck-neigung-abneigung | 3.1 | mag
 act:gefuhlsausdruck-gelassenheit-gleichgultigkeit | 5.2 | egal
 act:gefuhlsausdruck-mitgefuhl | 7.1 | Gute Besserung
 act:gefuhlsausdruck-erstaunen-uberraschung | 9.4 | Wirklich\?
-act:gefuhlsausdruck-hoffnung | gap | «Ich hoffe …» مش موجودة
-act:gefuhlsausdruck-sorge-befurchtung | gap | التعبير عن القلق مش موجود
-act:gefuhlsausdruck-enttauschung | gap | التعبير عن خيبة الأمل مش موجود
+act:gefuhlsausdruck-hoffnung | 4.6 | Ich hoffe
+act:gefuhlsausdruck-sorge-befurchtung | 4.6 | Sorgen
+act:gefuhlsausdruck-enttauschung | 4.6 | enttäuscht
 act:handlungsregulierung-bitte-aufforderung | 3.2 | bitte
-act:handlungsregulierung-bestatigung | gap | «Ja, genau / Richtig / Stimmt» مش متعلّمة
+act:handlungsregulierung-bestatigung | 4.7 | Stimmt
 act:handlungsregulierung-hilfe-anbieten-annehmen-und-ablehnen | 5.4 | helfen
 act:handlungsregulierung-bestellung-wunsch | 3.2 | hätte gern|nehme
 act:handlungsregulierung-rat-empfehlung-warnung | 7.3 | sollen
 act:handlungsregulierung-erlaubnis-genehmigung | 5.5 | darf
 act:handlungsregulierung-vorschlag | 2.5 | Gehen wir|Wollen wir|Sollen wir
-act:handlungsregulierung-versprechung | gap | الوعد مش موجود
+act:handlungsregulierung-versprechung | 4.6 | Versprochen
 act:handlungsregulierung-einladung | 4.5 | einladen|Einladung
 act:handlungsregulierung-verabredung | 2.5 | Zeit
 act:soziale-konventionen-kontaktaufnahme-ansprechen | 8.1 | Entschuldigung
@@ -245,25 +245,25 @@ act:soziale-konventionen-sich-jemanden-vorstellen | 1.2 | Freut mich
 act:soziale-konventionen-uber-das-befinden-sprechen | 1.1 | Wie geht
 act:soziale-konventionen-gute-wunsche | 4.5 | Viel (Glück|Spaß)|Schönes Wochenende|Gute Reise
 act:soziale-konventionen-gratulation | 4.5 | Glückwunsch
-act:soziale-konventionen-eine-anerkennung-aussprechen-ein-kompliment-machen | gap | المجاملة (Das sieht toll aus) مش متعلّمة
+act:soziale-konventionen-eine-anerkennung-aussprechen-ein-kompliment-machen | 4.6 | steht dir gut
 act:soziale-konventionen-dank | 1.1 | Danke
 act:soziale-konventionen-entschuldigung | 3.5 | Tut mir leid|Entschuldigung
 act:soziale-konventionen-verabschiedung | 1.1 | Tschüss
 
 # ── strategies ──
-strategy:redeorganisation-eine-ausserung-einleiten | gap | «Also, … / Na ja, …» مش متعلّمة
-strategy:redeorganisation-eine-ausserung-abschliessen | gap | ختم الكلام مش متعلّم
+strategy:redeorganisation-eine-ausserung-einleiten | 4.7 | Also, 
+strategy:redeorganisation-eine-ausserung-abschliessen | 4.7 | muss jetzt los
 strategy:redeorganisation-um-das-wort-bitten | 5.5 | Darf ich
-strategy:redeorganisation-zuhoren-signalisieren | gap | «Aha / Ach so / Ja?» مش متعلّمة
+strategy:redeorganisation-zuhoren-signalisieren | 4.7 | Ach so
 strategy:redeorganisation-zum-sprechen-auffordern | 1.2 | Und Sie\?|Und du\?
 strategy:redeorganisation-gemeinsames-wissen-andeuten | gap | «Weißt du …» مش موجودة
-strategy:redeorganisation-beispiele-geben | gap | «zum Beispiel» مش موجودة
-strategy:redeorganisation-das-thema-wechseln | gap | تغيير الموضوع مش متعلّم
-strategy:redeorganisation-etwas-hervorheben | gap | التأكيد (sehr / wirklich / besonders) مش مشروح كاستراتيجية
-strategy:redeorganisation-vermeidung | gap | تجنّب الموضوع مش متعلّم
+strategy:redeorganisation-beispiele-geben | 4.7 | zum Beispiel
+strategy:redeorganisation-das-thema-wechseln | 4.7 | Übrigens
+strategy:redeorganisation-etwas-hervorheben | 4.7 | besonders wichtig
+strategy:redeorganisation-vermeidung | 4.7 | Darüber möchte ich nicht
 strategy:redeorganisation-hoflichkeit | 9.2 | würde gern|Könnten Sie
 strategy:redeorganisation-abschwachung | 1.4 | ein bisschen
-strategy:verstandnissicherung-verstandnishilfen-anbieten | gap | عرض المساعدة على الفهم مش متعلّم
+strategy:verstandnissicherung-verstandnishilfen-anbieten | 4.7 | Ich sage es noch einmal
 strategy:verstandnissicherung-um-verstandnishilfen-bitten | 9.5 | langsam
 strategy:verstandnissicherung-kompensation | 9.5 | Wie sagt man
 
@@ -287,7 +287,7 @@ notion:quantitat-menge | 3.4 | viel|wenig
 notion:quantitat-grad | 1.4 | ein bisschen|sehr
 notion:quantitat-dimension-massangabe | gap | groß/klein/lang/breit مع المقاسات مش مشروحة
 notion:art-und-weise-physisch | 4.4 | groß|klein
-notion:art-und-weise-wertung | 3.3 | finde
+notion:art-und-weise-wertung | 4.6 | Ich finde
 notion:art-und-weise-vergleich | 3.1 | lieber
 notion:logische-verknupfung-grund | 9.5 | \bdenn\b
 notion:logische-verknupfung-bedingung | gap | «wenn» للشرط مش مشروحة
@@ -298,7 +298,7 @@ notion:modales-notwendigkeit-verpflichtung | 7.2 | muss
 
 # ── integration curriculum situations (Rahmencurriculum) ──
 rc:a-1-1-1 | 1.4 | Ich komme aus
-rc:a-1-1-2 | gap | الرفض المؤدب للكلام عن حاجات شخصية مش متعلّم
+rc:a-1-1-2 | 4.7 | Darüber möchte ich nicht
 rc:a-2-1-1 | 1.2 | duzen
 rc:a-2-1-2 | gap | «Das ist in meinem Land (nicht) normal» مش موجودة
 rc:a-3-1-1 | 6.4 | kann
@@ -312,13 +312,13 @@ rc:a-4-2-6 | gap | السؤال عن الورق بلغة تانية مش موج�
 rc:a-4-2-7 | 9.1 | helfen
 rc:a-4-2-8 | gap | «Jemand übersetzt für mich» مش موجودة
 rc:a-5-2-1 | 1.4 | spreche
-rc:b-1-5-1 | gap | «Das gefällt mir (nicht)» مش متعلّمة
-rc:b-2-1-1 | gap | «Das interessiert mich (nicht)» مش متعلّمة
-rc:b-2-2-1 | gap | الموافقة والاعتراض على رأي مش متعلّمين
+rc:b-1-5-1 | 4.6 | gefällt mir
+rc:b-2-1-1 | 4.6 | interessiert mich
+rc:b-2-2-1 | 4.7 | Einverstanden
 rc:b-2-3-1 | 3.1 | mag
-rc:c-1-1-1 | gap | «Ich sehe das anders» مش موجودة
-rc:c-1-2-1 | gap | «Habe ich das richtig verstanden?» مش موجودة
-rc:c-1-4-1 | gap | الاعتراض البسيط مش متعلّم
+rc:c-1-1-1 | 4.7 | Ich sehe das anders
+rc:c-1-2-1 | 4.7 | richtig verstanden
+rc:c-1-4-1 | 4.7 | das stimmt nicht
 rc:c-2-4-1 | gap | قبول أو رفض حل مقترح مش متعلّم
 rc:d-1-1-1 | 1.1 | Guten Tag
 rc:d-1-1-2 | 1.1 | Hallo
@@ -338,8 +338,8 @@ rc:d-2-1-2 | 1.1 | danke
 rc:d-2-5-1 | 2.5 | Zeit
 rc:d-2-5-2 | 2.5 | keine Zeit
 rc:d-2-6-1 | 2.5 | leider
-rc:d-2-7-1 | gap | المجاملة مش متعلّمة
-rc:d-2-7-2 | gap | الشكر على المجاملة مش متعلّم
+rc:d-2-7-1 | 4.6 | steht dir gut
+rc:d-2-7-2 | 4.6 | nett von dir
 rc:d-2-8-1 | 3.5 | Tut mir leid
 rc:d-2-8-2 | 5.4 | Kein Problem|Macht nichts
 rc:d-2-11-1 | 4.5 | Glückwunsch
@@ -486,7 +486,7 @@ rc:12-4-3-1 | 5.4 | helfen
 # ── CEFR descriptors ──
 cefr:12 | 2.6 | Hören
 cefr:13 | 2.6 | Hören Teil 3
-cefr:29 | 4.6 | Hören Teil 1
+cefr:29 | 4.8 | Hören Teil 1
 cefr:30 | 3.6 | Hören Teil 2
 cefr:49 | gap | فهم شرح في جولة مش متمرّن عليه
 cefr:64 | 6.3 | Imperativ
@@ -494,9 +494,9 @@ cefr:65 | 5.2 | neben|im Wohnzimmer
 cefr:66 | 8.6 | Hören Teil 2
 cefr:80 | 2.6 | Hören Teil 3
 cefr:95 | gap | إعلانات وأخبار التلفزيون مش موجودة
-cefr:105 | 4.6 | Lesen Teil 1
+cefr:105 | 4.8 | Lesen Teil 1
 cefr:121 | gap | الكارت بوستال مش موجود
-cefr:122 | 4.6 | E-Mail
+cefr:122 | 4.8 | E-Mail
 cefr:141 | 5.6 | Teil 3
 cefr:142 | 9.1 | Stock
 cefr:143 | 8.5 | Frühstück
@@ -561,8 +561,8 @@ cefr:851 | gap | Mediation مش متمرّن عليها
 cefr:861 | gap | Mediation مش متمرّن عليها
 cefr:870 | gap | Mediation مش متمرّن عليها
 cefr:904 | gap | Mediation مش متمرّن عليها
-cefr:936 | gap | Mediation مش متمرّن عليها
-cefr:955 | gap | Mediation مش متمرّن عليها
+cefr:936 | 4.7 | Verstehst du
+cefr:955 | 4.6 | Wie findest du
 cefr:984 | gap | Mediation مش متمرّن عليها
 cefr:1001 | gap | Mediation مش متمرّن عليها
 cefr:1012 | gap | Mediation مش متمرّن عليها
