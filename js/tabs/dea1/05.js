@@ -534,7 +534,7 @@ das Leder | الجلد | m: Die Tasche ist aus Leder.
 ## الكلمات: العفش والحاجات
 
 ~~~words العفش
-die Möbel (Plural) | العفش | Die Möbel sind neu.
+die Möbel | العفش (جمع بس) | Die Möbel sind neu.
 der Tisch, die Tische | الترابيزة | Der Tisch steht in der Küche.
 der Stuhl, die Stühle | الكرسي | Die Stühle stehen in der Küche.
 das Bett, die Betten | السرير | Das Bett steht im Schlafzimmer.

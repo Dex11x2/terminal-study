@@ -207,7 +207,7 @@ der Fuß, die Füße | القدم | Meine Füße tun weh.
 krank | عيان | Ich bin krank.
 müde | تعبان، نعسان | Du siehst müde aus.
 das Fieber | السخونية | Ich habe hohes Fieber.
-die Schmerzen (Plural) | الوجع | Ich habe starke Schmerzen.
+die Schmerzen | الوجع (جمع بس) | Ich habe starke Schmerzen.
 der Husten | الكحة | Ich habe Husten.
 wehtun | يوجع | Mein Kopf tut weh.
 schlecht | وحش، تعبان | Mir geht es schlecht.
@@ -866,7 +866,7 @@ die Apotheke, die Apotheken | الصيدلية | Die Apotheke ist neben der Prax
 das Rezept, die Rezepte | الروشتة | Ich habe ein Rezept.
 die Tablette, die Tabletten | القرص | Nehmen Sie eine Tablette.
 das Medikament, die Medikamente | الدوا | Nehmen Sie Medikamente?
-die Tropfen (Plural) | النقط | Nehmen Sie zehn Tropfen.
+die Tropfen | النقط (جمع بس) | Nehmen Sie zehn Tropfen.
 nehmen | ياخد | Nehmen Sie die Tabletten nach dem Essen.
 nach | بعد | Nach dem Essen trinke ich Tee.
 vor | قبل | Vor dem Schlafen lese ich.

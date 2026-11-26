@@ -231,17 +231,17 @@ Wie heißt dein Sohn? || ابنك اسمه إيه؟
 
 ~~~words العيلة
 die Familie, die Familien | العيلة | Meine Familie ist groß.
-die Eltern (Plural) | الأهل (الأب والأم) | Meine Eltern wohnen in Kairo.
+die Eltern | الأهل (الأب والأم)، جمع بس | Meine Eltern wohnen in Kairo.
 die Mutter, die Mütter | الأم | Meine Mutter kocht sehr gut.
 der Vater, die Väter | الأب | Mein Vater arbeitet viel.
 der Bruder, die Brüder | الأخ | Mein Bruder ist zwanzig.
 die Schwester, die Schwestern | الأخت | Meine Schwester studiert in Berlin.
-die Geschwister (Plural) | الإخوات (ولاد وبنات) | Hast du Geschwister?
+die Geschwister | الإخوات (ولاد وبنات)، جمع بس | Hast du Geschwister?
 das Kind, die Kinder | الطفل، العيّل | Wir haben zwei Kinder.
 der Sohn, die Söhne | الابن | Das ist mein Sohn.
 die Tochter, die Töchter | البنت (الابنة) | Meine Tochter ist fünf.
 das Baby, die Babys | البيبي | Das Baby schläft.
-die Großeltern (Plural) | الجد والجدة | Meine Großeltern wohnen bei uns.
+die Großeltern | الجد والجدة (جمع بس) | Meine Großeltern wohnen bei uns.
 die Großmutter, die Großmütter | الجدة | Meine Großmutter ist achtzig.
 der Großvater, die Großväter | الجد | Mein Großvater liest gern.
 die Oma, die Omas | تيتة | Meine Oma heißt Fatma.
@@ -943,7 +943,7 @@ lustig | دمه خفيف | Mein Opa ist sehr lustig.
 ruhig | هادي | Mein Bruder ist ruhig.
 der Freund, die Freunde | الصاحب، والحبيب | Das ist ein Freund von mir.
 die Freundin, die Freundinnen | الصاحبة، والحبيبة | Sie ist meine Freundin.
-die Leute (Plural) | الناس | Die Leute hier sind sehr nett.
+die Leute | الناس (جمع بس) | Die Leute hier sind sehr nett.
 ~~~
 
 ## كلمات زيادة: ناس ومشاعر
