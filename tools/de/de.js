@@ -192,7 +192,7 @@ if (require.main === module) {
       fs.writeFileSync(jobsF, JSON.stringify(todo.map(l => ({ text: deSpeech(l.text), voice: l.voice, out: l.file }))));
       const env = { ...process.env, MSYS_NO_PATHCONV: '1' };
       try { execFileSync('docker', ['rm', '-f', 'de-cb-run'], { env, stdio: 'ignore' }); } catch (e) { /* not there */ }
-      execFileSync('docker', ['run', '-d', '--name', 'de-cb-run', '--gpus', 'all', ...CB_KEEP, '-v', ROOT + ':/w', '-w', '/w', 'de-cb',
+      execFileSync('docker', ['run', '-d', '--name', 'de-cb-run', '--restart', 'on-failure:40', '--gpus', 'all', ...CB_KEEP, '-v', ROOT + ':/w', '-w', '/w', 'de-cb',
         'python', 'tools/de/cb.py', '.cache/de/cb-jobs.json', 'de', '.cache/de/cb-done.jsonl'], { env, stdio: 'inherit' });
       console.log(`${todo.length} files queued; follow with: docker logs -f de-cb-run  or  node tools/de/de.js cb status`);
     }

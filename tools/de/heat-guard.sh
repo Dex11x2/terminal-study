@@ -4,9 +4,11 @@
 # It ends when the container stops, printing how often it paused.
 #   bash tools/de/heat-guard.sh de-cb-run [HOT=85] [COOL=72]
 name=${1:?container name}; hot=${2:-85}; cool=${3:-72}; pauses=0
-while [ "$(docker inspect -f '{{.State.Running}}' "$name" 2>/dev/null)" = true ]; do
+# running, or restarting by itself (cb.py stops every 250 files and --restart on-failure starts it again)
+while docker inspect -f '{{.State.Status}}' "$name" 2>/dev/null | grep -qx 'running\|paused\|restarting'; do
   t=$(nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits | head -1 | cut -d. -f1)
   paused=$(docker inspect -f '{{.State.Paused}}' "$name")
+  [ "$(docker inspect -f '{{.State.Running}}' "$name")" = true ] || { sleep 30; continue; }
   if [ "$paused" = false ] && [ "$t" -ge "$hot" ]; then
     docker pause "$name" >/dev/null && pauses=$((pauses + 1)) && echo "$(date +%H:%M) $t°C: paused"
   elif [ "$paused" = true ] && [ "$t" -le "$cool" ]; then

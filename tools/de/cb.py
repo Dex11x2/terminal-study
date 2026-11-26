@@ -88,5 +88,10 @@ for i, j in enumerate(todo):
         with open(log, 'a', encoding='utf-8') as f:
             f.write(json.dumps(r, ensure_ascii=False) + '\n')
     print(f'{i + 1}/{len(todo)} {r["score"]} {r["sec"]}s {j["text"][:60]}', file=sys.stderr, flush=True)
+    # a long run gets slower and slower (12 s a file at the start, 66 s after 900 files, back to 12 after a restart), so
+    # with a log it stops after 250 files with exit code 3, and cb start's --restart on-failure starts it again from the log
+    if log and i + 1 >= 250 and i + 1 < len(todo):
+        print('250 files made, restarting to stay fast', file=sys.stderr, flush=True)
+        sys.exit(3)
 if not log:
     json.dump(out, sys.stdout, ensure_ascii=False)
